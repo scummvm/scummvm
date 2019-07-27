@@ -460,8 +460,8 @@ void CutScene::changeBackgroundPosition(uint16 newPosition, int16 sParm2)
 	//undefined *puVar3;
 
 	if (newPosition == 1) {
-		_vm->_scene->setBgLayerPriority(1);
-		_vm->_scene->setMgLayerPriority(2);
+		_vm->_scene->setBgLayerPriority(0); //TODO investigate why this is 0 not 1
+		_vm->_scene->setMgLayerPriority(1); //TODO investigate why this is 1 not 2
 		_vm->_scene->_camera.x = sParm2 + 0x3c0;
 		_vm->_scene->setFgLayerPriority(0);
 		//load_palette_into_frame_buffer(0,&SYSTEM_PALETTE_3);
