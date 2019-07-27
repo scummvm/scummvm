@@ -323,6 +323,25 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformDOS, 0, GUIO_STD16_UNDITHER	},
 
+	// Codename: Icmeman - English DOS Debug build, Version 1.009
+	// This is a special debug build Clint Basinger ("LGR") salvaged
+	// from a IBM PCjr previously owned by Ken Williams himself.
+	// It contains some additional shortcuts to help the original
+	// developers debugging the game.
+	// More information: https://www.youtube.com/watch?v=Z-VBITW94zI
+	{"iceman", "Debug Build", {
+		{"resource.000", 0, "6be3ab7d8caba5b1df9035bdfbe8cd71", 76934},
+		{"resource.001", 0, "ede1d50e33d87c613c80269d01ddc78d", 82352},
+		{"resource.map", 0, "fe502e0aa91cc9b1a6c00a4d1fc40da4", 6480},
+		{"resource.002", 0, "40f3fa2071dbe2ade614ed5d973e2c10", 270289},
+		{"resource.003", 0, "bd25e8e73c5cbc7d922a3c383a188efe", 270148},
+		{"resource.004", 0, "cf4f3a19feaa4d453f11cdaf65db3275", 276896},
+		{"resource.005", 0, "088c4ee2dcd4df1e60c629ee2fb96cad", 281861},
+		{"resource.006", 0, "7a2eebdba905f24c2828f749a38060db", 276073},
+		{"resource.007", 0, "00a71915aeacc15358fe12837c785e76", 281152},
+		AD_LISTEND},
+		Common::EN_ANY, Common::kPlatformDOS, 0, GUIO_STD16_UNDITHER	},
+
 	// Conquests of Camelot - English Amiga (from www.back2roots.org)
 	// Executable scanning reports "1.002.030"
 	// SCI interpreter version 0.000.685
@@ -3594,7 +3613,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 
 	// Police Quest 3 EGA
 	// Reported by musiclyinspired in bug report #3046573
-	{"pq3", "EGA", {
+	{"pq3", "", {
 		{"resource.map", 0, "1341f7c9643947414a8e238b88f68d82", 5901},
 		{"resource.000", 0, "7659713720d61d9465a59091b7ee63ea", 402208},
 		{"resource.001", 0, "0284ca44341fbc3cb7a047e49d230234", 703373},
