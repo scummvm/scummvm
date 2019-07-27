@@ -578,6 +578,8 @@ void DragonsEngine::updateHandler() {
 	_cursor->updateVisibility();
 	_inventory->updateVisibility();
 
+	_actorManager->updateActorDisplayOrder();
+
 	// 0x8001b200
 	if (isFlagSet(ENGINE_FLAG_8000) && !_sound->isSpeechPlaying()) {
 		clearFlags(ENGINE_FLAG_8000);

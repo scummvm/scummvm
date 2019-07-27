@@ -320,63 +320,7 @@ void SpecialOpcodes::spcSetCameraXToZero() {
 }
 
 void SpecialOpcodes::spcDiamondIntroSequenceLogic() {
-	Actor *actorId;
-	Actor *actorId_00;
-	Actor *actorId_01;
-	Actor *actorId_02;
-	Actor *actorId_03;
-
-//	pDVar4 = dragon_ini_pointer;
-	_vm->setUnkFlags(ENGINE_UNK1_FLAG_2);
-	actorId = _vm->getINI(0x257)->actor;
-	actorId_03 = _vm->getINI(0x259)->actor;
-	actorId_01 = _vm->getINI(0x258)->actor;
-	actorId_03->setFlag(ACTOR_FLAG_100);
-	actorId_03->priorityLayer = 4;
-//	uVar3 = scrFileData_maybe;
-	actorId_00 = _vm->getINI(0x256)->actor;
-//	uVar2 = *(ushort *)((&actor_dictionary)[(uint)actors[actorId_00].﻿actorFileDictionaryIndex * 2] + 10);
-	_vm->setFlags(ENGINE_FLAG_20000);
-	actorId_02 = _vm->getINI(0x25a)->actor;
-//	iVar5 = (&actor_dictionary)[(uint)actors[actorId_00].﻿actorFileDictionaryIndex * 2];
-	if ((_vm->_talk->somethingTextAndSpeechAndAnimRelated(actorId_02,1,0,0x4294a,0x2601) != 2) && !actorId->actorSetSequenceAndWaitAllowSkip(2)) {
-		actorId->updateSequence(3);
-		if (!actorId_01->actorSetSequenceAndWaitAllowSkip(0x18)) {
-			_vm->waitForFramesAllowSkip(0x2c);
-			//TODO fade_related_calls_with_1f();
-			//TODO load_palette_into_frame_buffer(0,(uint)uVar2 + iVar5);
-			_vm->_scene->_camera.x = 0x140;
-			//TODO call_fade_related_1f();
-			if (!actorId_00->actorSetSequenceAndWaitAllowSkip(0)) {
-				// TODO is this needed playSoundFromTxtIndex(0x42A66);
-				if (_vm->_talk->somethingTextAndSpeechAndAnimRelated(actorId_00,1,2,0x42a66,0x3c01) != 2) {
-					_vm->waitForFramesAllowSkip(0x13);
-					//TODO fade_related_calls_with_1f();
-					// TODO load_palette_into_frame_buffer(0,uVar3);
-					_vm->_scene->_camera.x = 0;
-					//TODO call_fade_related_1f();
-					actorId_01->updateSequence(0x19);
-					_vm->waitForFramesAllowSkip(0xf);
-					actorId->updateSequence(4);
-					_vm->waitForFramesAllowSkip(0x17);
-					actorId_03->updateSequence(9);
-					actorId_03->x_pos = 0x82;
-					actorId_03->y_pos = 0xc4;
-					actorId_03->priorityLayer = 4;
-					if (!actorId->waitUntilFlag4IsSetAllowSkip()) {
-						actorId->updateSequence(5);
-						if (_vm->_talk->somethingTextAndSpeechAndAnimRelated(actorId_01,0x10,2,0x42ac2,0x3c01) != 2 &&
-								_vm->_talk->somethingTextAndSpeechAndAnimRelated(actorId_02,1,0,0x42b56,0x2601) != 2) {
-							_vm->waitForFramesAllowSkip(0x3b);
-						}
-					}
-				}
-			}
-		}
-	}
-	_vm->clearUnkFlags(ENGINE_UNK1_FLAG_2);
-	_vm->clearFlags(ENGINE_FLAG_20000);
-	return;
+	_vm->_cutScene->diamondScene();
 }
 
 void SpecialOpcodes::spcLoadScene1() {

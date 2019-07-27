@@ -329,8 +329,8 @@ void Scene::draw() {
 			}
 		}
 
-		for (int16 i = DRAGONS_ENGINE_NUM_ACTORS - 1; i >= 0; i--) {
-			Actor *actor = _actorManager->getActor(i);
+		for (int16 i = 0; i < DRAGONS_ENGINE_NUM_ACTORS; i++) {
+			Actor *actor = _actorManager->getActorByDisplayOrder(i);
 			if (actor->x_pos == -100 && actor->y_pos == 100) {
 				actor->priorityLayer = 0;
 				continue;
