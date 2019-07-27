@@ -23,7 +23,6 @@
 #include "glk/frotz/windows.h"
 #include "glk/frotz/frotz.h"
 #include "glk/window_pair.h"
-#include "glk/window_text_grid.h"
 #include "glk/window_text_buffer.h"
 #include "glk/conf.h"
 
@@ -144,11 +143,6 @@ void Window::setPosition(const Point &newPos) {
 void Window::setCursor(const Point &newPos) {
 	int x = newPos.x, y = newPos.y;
 
-	if (!(_currStyle & FIXED_WIDTH_STYLE)) {
-		_currStyle |= FIXED_WIDTH_STYLE;
-		ensureGlkWindow();
-	}
-
 	if (y < 0) {
 		// Cursor on/off
 		if (y == -2)
@@ -232,10 +226,10 @@ uint Window::setFont(uint font) {
 	return result;
 }
 
-void Window::setStyle(uint style) {
+void Window::setStyle(int style) {
 	if (style == 0)
 		_currStyle = 0;
-	else if (style != 0xf000)
+	else if (style != -1)
 		// not tickle time
 		_currStyle |= style;
 
@@ -253,7 +247,8 @@ void Window::setStyle(uint style) {
 void Window::updateStyle() {
 	uint style = _currStyle;
 
-	ensureGlkWindow();
+	if (!_win)
+		createGlkWindow();
 
 	if (style & REVERSE_STYLE)
 		setReverseVideo(true);
@@ -294,14 +289,9 @@ void Window::setReverseVideo(bool reverse) {
 	_win->_stream->setReverseVideo(reverse);
 }
 
-void Window::ensureGlkWindow() {
+void Window::createGlkWindow() {
 	// Create a new window	
-	if (_win && (dynamic_cast<TextGridWindow *>(_win) != nullptr) != ((_currStyle & FIXED_WIDTH_STYLE) != 0)) {
-		g_vm->glk_window_close(_win);
-		_win = nullptr;
-	}
-
-	if (_currStyle & FIXED_WIDTH_STYLE) {
+	if (_index == 1) {
 		// Text grid window
 		_win = g_vm->glk_window_open(g_vm->glk_window_get_root(),
 			winmethod_Arbitrary | winmethod_Fixed, 0, wintype_TextGrid, 0);
