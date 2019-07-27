@@ -1414,7 +1414,6 @@ void AI::animEntFrames(AIEntity *e) {
 		e->draw = _pushrightGfx[e->animFrame];
 		max = _pushrightFrames;
 		break;
-
 	case STATE_GRABUP:
 		e->draw = _getGfx[DIR_UP];
 		max = 1;
@@ -1431,7 +1430,6 @@ void AI::animEntFrames(AIEntity *e) {
 		e->draw = _getGfx[DIR_RIGHT];
 		max = 1;
 		break;
-
 	case STATE_HORRIBLE1:
 		e->draw = _horrible1Gfx[e->animFrame];
 		max = _horrible1Frames;
@@ -1466,7 +1464,6 @@ void AI::animEntFrames(AIEntity *e) {
 		if (e->animFrame == max - 1)
 			e->state = STATE_DEAD;
 		break;
-
 	case STATE_PLUMMET:
 		e->draw = _plummetGfx[e->animFrame];
 		max = _plummetFrames;
