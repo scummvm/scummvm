@@ -43,8 +43,8 @@ namespace GoogleDrive {
 #define GOOGLEDRIVE_API_FILES "https://www.googleapis.com/drive/v3/files"
 #define GOOGLEDRIVE_API_ABOUT "https://www.googleapis.com/drive/v3/about?fields=storageQuota,user"
 
-GoogleDriveStorage::GoogleDriveStorage(Common::String token, Common::String refreshToken):
-	IdStorage(token, refreshToken) {}
+GoogleDriveStorage::GoogleDriveStorage(Common::String token, Common::String refreshToken, bool enabled):
+	IdStorage(token, refreshToken, enabled) {}
 
 GoogleDriveStorage::GoogleDriveStorage(Common::String code, Networking::ErrorCallback cb) {
 	getAccessToken(code, cb);
@@ -63,6 +63,7 @@ bool GoogleDriveStorage::canReuseRefreshToken() { return true; }
 void GoogleDriveStorage::saveConfig(Common::String keyPrefix) {
 	ConfMan.set(keyPrefix + "access_token", _token, ConfMan.kCloudDomain);
 	ConfMan.set(keyPrefix + "refresh_token", _refreshToken, ConfMan.kCloudDomain);
+	saveIsEnabledFlag(keyPrefix);
 }
 
 Common::String GoogleDriveStorage::name() const {
@@ -228,12 +229,13 @@ GoogleDriveStorage *GoogleDriveStorage::loadFromConfig(Common::String keyPrefix)
 
 	Common::String accessToken = ConfMan.get(keyPrefix + "access_token", ConfMan.kCloudDomain);
 	Common::String refreshToken = ConfMan.get(keyPrefix + "refresh_token", ConfMan.kCloudDomain);
-	return new GoogleDriveStorage(accessToken, refreshToken);
+	return new GoogleDriveStorage(accessToken, refreshToken, loadIsEnabledFlag(keyPrefix));
 }
 
 void GoogleDriveStorage::removeFromConfig(Common::String keyPrefix) {
 	ConfMan.removeKey(keyPrefix + "access_token", ConfMan.kCloudDomain);
 	ConfMan.removeKey(keyPrefix + "refresh_token", ConfMan.kCloudDomain);
+	removeIsEnabledFlag(keyPrefix);
 }
 
 Common::String GoogleDriveStorage::getRootDirectoryId() {

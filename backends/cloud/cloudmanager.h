@@ -230,6 +230,12 @@ public:
 	/** Returns whether given filename could be uploaded to or downloaded from storage. */
 	bool canSyncFilename(const Common::String &filename) const;
 
+	/** Returns whether current Storage is manually enabled by user (or false, if there is no active Storage). */
+	bool isStorageEnabled() const;
+
+	/** Sets Storage::_isEnabled to true and updates the config. */
+	void enableStorage();
+
 	/**
 	 * Starts saves syncing process in currently active storage if there is any.
 	 */

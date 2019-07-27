@@ -625,6 +625,16 @@
 				</layout>
 			</layout>
 			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '10' center = 'true'>
+				<layout type = 'vertical' padding = '0, 0, 8, 0' spacing = '4'>
+					<widget name = 'StorageDisabledHint'
+							height = 'Globals.Line.Height'
+					/>
+					<widget name = 'StorageEnableButton'
+							type = 'Button'
+					/>
+				</layout>
+			</layout>
+			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '10' center = 'true'>
 				<layout type = 'vertical' padding = '0, 0, 6, 0' spacing = '2'>
 					<widget name = 'StorageUsernameDesc'
 							type = 'CloudTabLabel'

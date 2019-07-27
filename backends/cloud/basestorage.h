@@ -77,9 +77,19 @@ protected:
 private:
 	void tokenRefreshed(BoolCallback callback, Networking::JsonResponse response);
 
+protected:
+	/** Helper function to save Storage::_isEnabled into config. */
+	void saveIsEnabledFlag(const Common::String &keyPrefix) const;
+
+	/** Helper function to load Storage::_isEnabled value from config. */
+	static bool loadIsEnabledFlag(const Common::String &keyPrefix);
+
+	/** Helper function to remove Storage::_isEnabled from config. */
+	static void removeIsEnabledFlag(const Common::String &keyPrefix);
+
 public:
 	BaseStorage();
-	BaseStorage(Common::String token, Common::String refreshToken);
+	BaseStorage(Common::String token, Common::String refreshToken, bool enabled = false);
 	virtual ~BaseStorage();
 
 	/**

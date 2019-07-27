@@ -42,8 +42,8 @@ namespace OneDrive {
 #define ONEDRIVE_API_SPECIAL_APPROOT_ID "https://graph.microsoft.com/v1.0/drive/special/approot:/"
 #define ONEDRIVE_API_SPECIAL_APPROOT "https://graph.microsoft.com/v1.0/drive/special/approot"
 
-OneDriveStorage::OneDriveStorage(Common::String token, Common::String refreshToken):
-	BaseStorage(token, refreshToken) {}
+OneDriveStorage::OneDriveStorage(Common::String token, Common::String refreshToken, bool enabled):
+	BaseStorage(token, refreshToken, enabled) {}
 
 OneDriveStorage::OneDriveStorage(Common::String code, Networking::ErrorCallback cb) {
 	getAccessToken(code, cb);
@@ -62,6 +62,7 @@ bool OneDriveStorage::canReuseRefreshToken() { return false; }
 void OneDriveStorage::saveConfig(Common::String keyPrefix) {
 	ConfMan.set(keyPrefix + "access_token", _token, ConfMan.kCloudDomain);
 	ConfMan.set(keyPrefix + "refresh_token", _refreshToken, ConfMan.kCloudDomain);
+	saveIsEnabledFlag(keyPrefix);
 }
 
 Common::String OneDriveStorage::name() const {
@@ -206,12 +207,13 @@ OneDriveStorage *OneDriveStorage::loadFromConfig(Common::String keyPrefix) {
 
 	Common::String accessToken = ConfMan.get(keyPrefix + "access_token", ConfMan.kCloudDomain);
 	Common::String refreshToken = ConfMan.get(keyPrefix + "refresh_token", ConfMan.kCloudDomain);
-	return new OneDriveStorage(accessToken, refreshToken);
+	return new OneDriveStorage(accessToken, refreshToken, loadIsEnabledFlag(keyPrefix));
 }
 
 void OneDriveStorage::removeFromConfig(Common::String keyPrefix) {
 	ConfMan.removeKey(keyPrefix + "access_token", ConfMan.kCloudDomain);
 	ConfMan.removeKey(keyPrefix + "refresh_token", ConfMan.kCloudDomain);
+	removeIsEnabledFlag(keyPrefix);
 }
 
 } // End of namespace OneDrive

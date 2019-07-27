@@ -31,7 +31,7 @@ namespace Box {
 
 class BoxStorage: public Id::IdStorage {
 	/** This private constructor is called from loadFromConfig(). */
-	BoxStorage(Common::String token, Common::String refreshToken);
+	BoxStorage(Common::String token, Common::String refreshToken, bool enabled);
 
 	/** Constructs StorageInfo based on JSON response from cloud. */
 	void infoInnerCallback(StorageInfoCallback outerCallback, Networking::JsonResponse json);

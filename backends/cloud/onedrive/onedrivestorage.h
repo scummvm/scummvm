@@ -31,7 +31,7 @@ namespace OneDrive {
 
 class OneDriveStorage: public Cloud::BaseStorage {
 	/** This private constructor is called from loadFromConfig(). */
-	OneDriveStorage(Common::String token, Common::String refreshToken);
+	OneDriveStorage(Common::String token, Common::String refreshToken, bool enabled);
 
 	/** Constructs StorageInfo based on JSON response from cloud. */
 	void infoInnerCallback(StorageInfoCallback outerCallback, Networking::JsonResponse json);

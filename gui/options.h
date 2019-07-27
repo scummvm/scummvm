@@ -298,6 +298,8 @@ protected:
 	uint32 _selectedStorageIndex;
 	StaticTextWidget *_storagePopUpDesc;
 	PopUpWidget      *_storagePopUp;
+	StaticTextWidget *_storageDisabledHint;
+	ButtonWidget	 *_storageEnableButton;
 	StaticTextWidget *_storageUsernameDesc;
 	StaticTextWidget *_storageUsername;
 	StaticTextWidget *_storageUsedSpaceDesc;
