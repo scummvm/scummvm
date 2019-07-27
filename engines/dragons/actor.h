@@ -64,6 +64,7 @@ public:
 private:
 	ActorResourceLoader *_actorResourceLoader;
 	Actors _actors;
+	uint16 _displayOrder[DRAGONS_ENGINE_NUM_ACTORS];
 public:
 	ActorManager(ActorResourceLoader *actorResourceLoader);
 
@@ -72,10 +73,13 @@ public:
 	Actor *loadActor(uint32 resourceId, uint32 sequenceId, int16 x, int16 y, uint16 priorityLayer);
 	Actor *loadActor(uint32 resourceId, uint16 actorId);
 	Actor *getActor(uint16 actorId);
+	Actor *getActorByDisplayOrder(uint16 position);
 	void clearActorFlags(uint16 startingActorId);
 	ActorResource *getActorResource(uint32 resourceId);
+	void updateActorDisplayOrder();
 private:
 	Actor *findFreeActor(int16 resourceID);
+	void resetDisplayOrder();
 };
 
 class Actor {

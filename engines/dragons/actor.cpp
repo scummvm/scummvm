@@ -32,6 +32,7 @@ ActorManager::ActorManager(ActorResourceLoader *actorResourceLoader) : _actorRes
 	for (uint16 i = 0; i < DRAGONS_ENGINE_NUM_ACTORS; i++) {
 		_actors.push_back(Actor(i));
 	}
+	resetDisplayOrder();
 }
 
 
@@ -54,6 +55,7 @@ Actor *ActorManager::loadActor(uint32 resourceId, uint32 sequenceId, int16 x, in
 		//TODO run find by resource and remove from mem logic here. @0x800358c8
 		debug("Unable to find free actor slot!!");
 	}
+	resetDisplayOrder();
 	return actor;
 }
 
@@ -90,6 +92,40 @@ Actor *ActorManager::loadActor(uint32 resourceId, uint16 actorId) { //TODO shoul
 
 ActorResource *ActorManager::getActorResource(uint32 resourceId) {
 	return _actorResourceLoader->load(resourceId);
+}
+
+void ActorManager::updateActorDisplayOrder() {
+	bool shouldContinue = true;
+
+	while(shouldContinue) {
+		shouldContinue = false;
+		for (int i = 0; i < DRAGONS_ENGINE_NUM_ACTORS - 1; i++) {
+			Actor *curActor = getActor(_displayOrder[i]);
+			Actor *nextActor = getActor(_displayOrder[i + 1]);
+			int16 curY = curActor->y_pos > 0 ? curActor->y_pos : 0;
+			int16 nextY = nextActor->y_pos > 0 ? nextActor->y_pos : 0;
+			if (nextActor->priorityLayer * 0x1000000 + nextY * 0x100 + nextActor->_actorID <
+				curActor->priorityLayer * 0x1000000 + curY * 0x100 + curActor->_actorID) {
+				_displayOrder[i] = nextActor->_actorID;
+				_displayOrder[i + 1] = curActor->_actorID;
+				shouldContinue = true;
+			}
+		}
+	}
+}
+
+void ActorManager::resetDisplayOrder() {
+	for (uint16 i = 0; i < DRAGONS_ENGINE_NUM_ACTORS; i++) {
+		Actor *actor = getActor(i);
+		_displayOrder[i] = i;
+		if (!actor->isFlagSet(ACTOR_FLAG_40)) {
+			actor->priorityLayer = 0;
+		}
+	}
+}
+
+Actor *ActorManager::getActorByDisplayOrder(uint16 position) {
+	return getActor(_displayOrder[position]);
 }
 
 Actor::Actor(uint16 id) : _actorID(id) {

@@ -54,15 +54,16 @@ public:
 	CutScene(DragonsEngine *vm);
 
 	void scene1();
+	void diamondScene();
 
 private:
 	//Scene 1 related functions
 	void FUN_8003c108(Actor *actor);
-	void FUN_8003d97c(uint16 resourceId, uint16 sequenceId, int16 x, uint32 param_4);
+	void closeUpShotOnActor(uint16 resourceId, uint16 sequenceId, int16 x, uint32 param_4);
 	void FUN_8003d8e8(uint16 resourceId,uint16 sequenceId,int16 x,uint32 param_4);
-	void FUN_8003d7d4();
+	void wideAngleEveryoneAtTable();
 	void FUN_8003d388();
-	void FUN_8003d7fc();
+	void closeUpKnightsAtTable();
 	uint16 FUN_8003dab8(uint32 textId,uint16 x,uint16 y,uint16 param_4,int16 param_5);
 	void cursorInventoryClearFlag400();
 	void changeBackgroundPosition(uint16 newPosition, int16 sParm2);
