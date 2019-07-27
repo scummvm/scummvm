@@ -109,6 +109,10 @@ Menu::Menu() {
 	_controlButtonGfx = NULL;
 
 	_controlsGfx = NULL;
+	_screenshots1gfx = NULL;
+	_screenshots1agfx = NULL;
+	_screenshots2gfx = NULL;
+	_demoPlaqueGfx = NULL;
 
 	_vortexian[0] = _vortexian[1] = _vortexian[2] = NULL;
 
@@ -284,6 +288,13 @@ void Menu::startMenu() {
 	_controlButtonGfx = g_hdb->_gfx->loadPic(MENU_CONTROLS);
 	_controlsGfx = g_hdb->_gfx->loadPic(PIC_CONTROLSSCREEN);
 
+	if (g_hdb->isDemo()) {
+		_screenshots1gfx = g_hdb->_gfx->loadPic(PIC_DEMOSCREEN);
+		_screenshots1agfx = g_hdb->_gfx->loadPic(PIC_DEMOSCREEN2);
+		_screenshots2gfx = g_hdb->_gfx->loadPic(PIC_DEMO_BUY);
+		_demoPlaqueGfx =  g_hdb->_gfx->loadPic(PIC_DEMO);
+	}
+
 	_vortexian[0] = g_hdb->_gfx->loadTile(GROUP_ENT_VORTEXIAN_STANDDOWN"01");
 	_vortexian[1] = g_hdb->_gfx->loadTile(GROUP_ENT_VORTEXIAN_STANDDOWN"02");
 	_vortexian[2] = g_hdb->_gfx->loadTile(GROUP_ENT_VORTEXIAN_STANDDOWN"03");
@@ -378,6 +389,10 @@ void Menu::drawMenu() {
 
 		// draw version #
 		_versionGfx->drawMasked(kScreenWidth - 6 * 8, kScreenHeight - 8);
+
+		if (g_hdb->isDemo()) {
+			_demoPlaqueGfx->drawMasked(kScreenWidth / 2 - _demoPlaqueGfx->_width / 2, 2);
+		}
 
 		//
 		// see if the Options/GameFiles menu has scrolled off
@@ -671,7 +686,13 @@ void Menu::drawMenu() {
 		//-------------------------------------------------------------------
 		g_hdb->_gfx->draw3DStars();
 		drawNebula();
-		{
+
+		if (_quitActive == 2) { // XXXX
+			_screenshots1gfx->drawMasked(kQuitX, kQuitY);
+			_screenshots2gfx->drawMasked(kQuitX, kScreenHeight - _screenshots2gfx->_height);
+		} else if (_quitActive == 1) {
+			_screenshots1agfx->drawMasked(kQuitX, kQuitY);
+		} else if (_quitActive == 3 || !g_hdb->isDemo()) {
 			if (!_quitScreen)
 				_quitScreen = g_hdb->_gfx->loadPic(PIC_QUITSCREEN);
 			_quitScreen->drawMasked(kQuitX, kQuitY);
@@ -725,6 +746,19 @@ void Menu::freeMenu() {
 	if (_hdbLogoScreen)
 		delete _hdbLogoScreen;
 	_hdbLogoScreen = NULL;
+
+	if (_screenshots1gfx)
+		delete _screenshots1gfx;
+	_screenshots1gfx = NULL;
+	if (_screenshots1agfx)
+		delete _screenshots1agfx;
+	_screenshots1agfx = NULL;
+	if (_screenshots2gfx)
+		delete _screenshots2gfx;
+	_screenshots2gfx = NULL;
+	if (_demoPlaqueGfx)
+		delete _demoPlaqueGfx;
+	_demoPlaqueGfx = NULL;
 
 	if (_nebulaGfx[0]) {
 		for (int i = 0; i < kNebulaCount; i++) {
@@ -1050,7 +1084,7 @@ void Menu::processInput(int x, int y) {
 			y >= kMenuY + kMQuitY && y < kMenuY + kMQuitY + kMenuItemHeight) {
 			g_hdb->_sound->playSound(SND_BYE);
 			_quitTimer = g_hdb->getTimeSlice() + 1000;
-			_quitActive = true;
+			_quitActive = 1;
 			_menuActive = false;
 			return;
 		} else if (x >= kMenuX && x < kMenuX + kMenuItemWidth &&
@@ -1323,17 +1357,36 @@ void Menu::processInput(int x, int y) {
 		//-------------------------------------------------------------------
 		int	xit = getMenuKey();
 
-		if ((x >= kQuitNoX1 && x <= kQuitNoX2 && y > kQuitNoY1 && y < kQuitNoY2 && _quitTimer < g_hdb->getTimeSlice()) || xit) {
-			g_hdb->_sound->playSound(SND_MENU_BACKOUT);
-			delete _quitScreen;
-			_quitScreen = NULL;
+		if (!g_hdb->isDemo()) {
+			if ((x >= kQuitNoX1 && x <= kQuitNoX2 && y > kQuitNoY1 && y < kQuitNoY2 && _quitTimer < g_hdb->getTimeSlice()) || xit) {
+				g_hdb->_sound->playSound(SND_MENU_BACKOUT);
+				delete _quitScreen;
+				_quitScreen = NULL;
 
-			_menuActive = true;
-			_quitActive = 0;
-		} else if (_quitTimer < g_hdb->getTimeSlice()) {
-			if (x >= kQuitYesX1 && x <= kQuitYesX2 && y > kQuitYesY1 && y < kQuitYesY2) {
-				writeConfig();
-				g_hdb->quitGame();
+				_menuActive = true;
+				_quitActive = 0;
+			} else if (_quitTimer < g_hdb->getTimeSlice()) {
+				if (x >= kQuitYesX1 && x <= kQuitYesX2 && y > kQuitYesY1 && y < kQuitYesY2) {
+					writeConfig();
+					g_hdb->quitGame();
+				}
+			}
+		} else {
+			if ((_quitActive == 1 || _quitActive == 2) && _quitTimer < g_hdb->getTimeSlice()) {
+				_quitActive++;
+				_quitTimer = g_hdb->getTimeSlice() + 1000;
+			} else {
+				if (_quitActive == 3 && (x >= kQuitNoX1 && x <= kQuitNoX2 && y > kQuitNoY1 && y < kQuitNoY2 && _quitTimer < g_hdb->getTimeSlice())) {
+					g_hdb->_sound->playSound(SND_MENU_BACKOUT);
+					delete _quitScreen;
+					_quitScreen = NULL;
+
+					_menuActive = true;
+					_quitActive = 0;
+				} else if (_quitActive == 3 && _quitTimer < g_hdb->getTimeSlice()){
+					writeConfig();
+					g_hdb->quitGame();
+				}
 			}
 		}
 	}

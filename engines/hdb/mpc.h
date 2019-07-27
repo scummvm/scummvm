@@ -567,6 +567,8 @@ namespace HDB {
 #define		MONKEYLOGO_SMILE				"monkeylogo_smile"
 #define		PIC_DEMOSCREEN					"pic_demoscreen"
 #define		PIC_DEMOSCREEN2					"pic_demoscreen2"
+#define		PIC_DEMO						"pic_demo"
+#define		PIC_DEMO_BUY					"pic_demo_buy"
 #define		BACKSCROLL_PLANET1				"backscroll_planet1"
 #define		BACKSCROLL_PLANET2				"backscroll_planet2"
 #define		BACKSCROLL_PLANET3				"backscroll_planet3"

@@ -216,6 +216,7 @@ public:
 	Picture	*_star[3], *_warpGfx;
 	uint32 _quitTimer;
 	Picture	*_starRedGfx[2], *_starGreenGfx[2], *_starBlueGfx[2], *_versionGfx;
+	Picture *_screenshots1gfx, *_screenshots1agfx, *_screenshots2gfx, *_demoPlaqueGfx;
 
 	bool _menuActive, _optionsScrolling, _newgameActive, _sayHDB;
 	int	_gamefilesActive, _clickDelay, _saveSlot, _optionsActive, _quitActive, _warpActive;
