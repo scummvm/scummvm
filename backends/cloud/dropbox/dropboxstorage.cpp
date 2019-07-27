@@ -40,7 +40,7 @@ namespace Dropbox {
 
 #define DROPBOX_API_FILES_DOWNLOAD "https://content.dropboxapi.com/2/files/download"
 
-DropboxStorage::DropboxStorage(Common::String accessToken, bool unused): BaseStorage(accessToken, "") {}
+DropboxStorage::DropboxStorage(Common::String accessToken, bool enabled): BaseStorage(accessToken, "", enabled) {}
 
 DropboxStorage::DropboxStorage(Common::String code, Networking::ErrorCallback cb): BaseStorage() {
 	getAccessToken(code, cb);
@@ -58,6 +58,7 @@ bool DropboxStorage::canReuseRefreshToken() { return false; }
 
 void DropboxStorage::saveConfig(Common::String keyPrefix) {
 	ConfMan.set(keyPrefix + "access_token", _token, ConfMan.kCloudDomain);
+	saveIsEnabledFlag(keyPrefix);
 }
 
 Common::String DropboxStorage::name() const {
@@ -108,12 +109,13 @@ DropboxStorage *DropboxStorage::loadFromConfig(Common::String keyPrefix) {
 		return nullptr;
 	}
 
-	Common::String accessToken = ConfMan.get(keyPrefix + "access_token", ConfMan.kCloudDomain);
-	return new DropboxStorage(accessToken, true);
+	Common::String accessToken = ConfMan.get(keyPrefix + "access_token", ConfMan.kCloudDomain);	
+	return new DropboxStorage(accessToken, loadIsEnabledFlag(keyPrefix));
 }
 
 void DropboxStorage::removeFromConfig(Common::String keyPrefix) {
 	ConfMan.removeKey(keyPrefix + "access_token", ConfMan.kCloudDomain);
+	removeIsEnabledFlag(keyPrefix);
 }
 
 } // End of namespace Dropbox

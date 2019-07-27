@@ -34,9 +34,17 @@ namespace Cloud {
 
 Storage::Storage():
 	_runningRequestsCount(0), _savesSyncRequest(nullptr), _syncRestartRequestsed(false),
-	_downloadFolderRequest(nullptr) {}
+	_downloadFolderRequest(nullptr), _isEnabled(false) {}
 
 Storage::~Storage() {}
+
+bool Storage::isEnabled() const {
+	return _isEnabled;
+}
+
+void Storage::enable() {
+	_isEnabled = true;
+}
 
 Networking::ErrorCallback Storage::getErrorPrintingCallback() {
 	return new Common::Callback<Storage, Networking::ErrorResponse>(this, &Storage::printErrorResponse);
@@ -121,6 +129,12 @@ Networking::Request *Storage::downloadById(Common::String remoteId, Common::Stri
 }
 
 Networking::Request *Storage::downloadFolder(Common::String remotePath, Common::String localPath, FileArrayCallback callback, Networking::ErrorCallback errorCallback, bool recursive) {
+	if (!_isEnabled) {
+		warning("Storage::downloadFolder: cannot be run while Storage is disabled");
+		if (errorCallback)
+			(*errorCallback)(Networking::ErrorResponse(nullptr, false, true, "Storage is disabled.", -1));
+		return nullptr;
+	}
 	if (!errorCallback)
 		errorCallback = getErrorPrintingCallback();
 	return addRequest(new FolderDownloadRequest(this, callback, errorCallback, remotePath, localPath, recursive));
@@ -128,6 +142,13 @@ Networking::Request *Storage::downloadFolder(Common::String remotePath, Common::
 
 SavesSyncRequest *Storage::syncSaves(BoolCallback callback, Networking::ErrorCallback errorCallback) {
 	_runningRequestsMutex.lock();
+	if (!_isEnabled) {
+		warning("Storage::syncSaves: cannot be run while Storage is disabled");
+		if (errorCallback)
+			(*errorCallback)(Networking::ErrorResponse(nullptr, false, true, "Storage is disabled.", -1));
+		_runningRequestsMutex.unlock();
+		return nullptr;
+	}
 	if (_savesSyncRequest) {
 		warning("Storage::syncSaves: there is a sync in progress already");
 		_syncRestartRequestsed = true;

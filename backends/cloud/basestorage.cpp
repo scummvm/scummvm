@@ -32,8 +32,10 @@ namespace Cloud {
 
 BaseStorage::BaseStorage() {}
 
-BaseStorage::BaseStorage(Common::String token, Common::String refreshToken):
-	_token(token), _refreshToken(refreshToken) {}
+BaseStorage::BaseStorage(Common::String token, Common::String refreshToken, bool enabled):
+	_token(token), _refreshToken(refreshToken) {
+	_isEnabled = enabled; 
+}
 
 BaseStorage::~BaseStorage() {}
 
@@ -210,6 +212,22 @@ void BaseStorage::tokenRefreshed(BoolCallback callback, Networking::JsonResponse
 		(*callback)(BoolResponse(nullptr, success));
 	delete json;
 	delete callback;
+}
+
+void BaseStorage::saveIsEnabledFlag(const Common::String &keyPrefix) const {
+	ConfMan.set(keyPrefix + "enabled", _isEnabled ? "true" : "false", ConfMan.kCloudDomain);
+}
+
+bool BaseStorage::loadIsEnabledFlag(const Common::String &keyPrefix) {
+	if (!ConfMan.hasKey(keyPrefix + "enabled", ConfMan.kCloudDomain))
+		return false;
+
+	Common::String enabled = ConfMan.get(keyPrefix + "enabled", ConfMan.kCloudDomain);
+	return (enabled == "true");
+}
+
+void BaseStorage::removeIsEnabledFlag(const Common::String &keyPrefix) {
+	ConfMan.removeKey(keyPrefix + "enabled", ConfMan.kCloudDomain);
 }
 
 } // End of namespace Cloud

@@ -53,7 +53,7 @@ protected:
 
 public:
 	IdStorage();
-	IdStorage(Common::String token, Common::String refreshToken);
+	IdStorage(Common::String token, Common::String refreshToken, bool enabled);
 	virtual ~IdStorage();
 
 	/** Public Cloud API comes down there. */

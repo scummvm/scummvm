@@ -32,7 +32,7 @@ namespace Dropbox {
 
 class DropboxStorage: public Cloud::BaseStorage {
 	/** This private constructor is called from loadFromConfig(). */
-	DropboxStorage(Common::String token, bool unused);
+	DropboxStorage(Common::String token, bool enabled);
 
 protected:
 	/**

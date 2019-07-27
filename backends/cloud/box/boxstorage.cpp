@@ -42,8 +42,8 @@ namespace Box {
 #define BOX_API_FILES_CONTENT "https://api.box.com/2.0/files/%s/content"
 #define BOX_API_USERS_ME "https://api.box.com/2.0/users/me"
 
-BoxStorage::BoxStorage(Common::String token, Common::String refreshToken):
-	IdStorage(token, refreshToken) {}
+BoxStorage::BoxStorage(Common::String token, Common::String refreshToken, bool enabled):
+	IdStorage(token, refreshToken, enabled) {}
 
 BoxStorage::BoxStorage(Common::String code, Networking::ErrorCallback cb) {
 	getAccessToken(code, cb);
@@ -62,6 +62,7 @@ bool BoxStorage::canReuseRefreshToken() { return false; }
 void BoxStorage::saveConfig(Common::String keyPrefix) {
 	ConfMan.set(keyPrefix + "access_token", _token, ConfMan.kCloudDomain);
 	ConfMan.set(keyPrefix + "refresh_token", _refreshToken, ConfMan.kCloudDomain);
+	saveIsEnabledFlag(keyPrefix);
 }
 
 Common::String BoxStorage::name() const {
@@ -224,12 +225,13 @@ BoxStorage *BoxStorage::loadFromConfig(Common::String keyPrefix) {
 
 	Common::String accessToken = ConfMan.get(keyPrefix + "access_token", ConfMan.kCloudDomain);
 	Common::String refreshToken = ConfMan.get(keyPrefix + "refresh_token", ConfMan.kCloudDomain);
-	return new BoxStorage(accessToken, refreshToken);
+	return new BoxStorage(accessToken, refreshToken, loadIsEnabledFlag(keyPrefix));
 }
 
 void BoxStorage::removeFromConfig(Common::String keyPrefix) {
 	ConfMan.removeKey(keyPrefix + "access_token", ConfMan.kCloudDomain);
 	ConfMan.removeKey(keyPrefix + "refresh_token", ConfMan.kCloudDomain);
+	removeIsEnabledFlag(keyPrefix);
 }
 
 Common::String BoxStorage::getRootDirectoryId() {

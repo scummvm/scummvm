@@ -114,7 +114,8 @@ enum {
 	kConnectStorageCmd = 'Cnnt',
 	kOpenUrlStorageCmd = 'OpUr',
 	kPasteCodeStorageCmd = 'PsCd',
-	kDisconnectStorageCmd = 'DcSt'
+	kDisconnectStorageCmd = 'DcSt',
+	kEnableStorageCmd = 'EnSt'
 };
 #endif
 
@@ -1481,6 +1482,8 @@ GlobalOptionsDialog::GlobalOptionsDialog(LauncherDialog *launcher)
 	_selectedStorageIndex = CloudMan.getStorageIndex();
 	_storagePopUpDesc = 0;
 	_storagePopUp = 0;
+	_storageDisabledHint = 0;
+	_storageEnableButton = 0;
 	_storageUsernameDesc = 0;
 	_storageUsername = 0;
 	_storageUsedSpaceDesc = 0;
@@ -1872,6 +1875,9 @@ void GlobalOptionsDialog::addCloudControls(GuiObject *boss, const Common::String
 		_storagePopUp->appendEntry(list[i], i);
 	_storagePopUp->setSelected(_selectedStorageIndex);
 
+	_storageDisabledHint = new StaticTextWidget(boss, prefix + "StorageDisabledHint", _c("4. Storage is yet disabled. Verify that username is correct and enable it:", context));
+	_storageEnableButton = new ButtonWidget(boss, prefix + "StorageEnableButton", _("Enable storage"), _("Confirm you want to use this account for this storage"), kEnableStorageCmd);
+
 	_storageUsernameDesc = new StaticTextWidget(boss, prefix + "StorageUsernameDesc", _("Username:"), _("Username used by this storage"));
 	_storageUsername = new StaticTextWidget(boss, prefix + "StorageUsernameLabel", "<none>", "", ThemeEngine::kFontStyleNormal);
 
@@ -2220,6 +2226,13 @@ void GlobalOptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 		reflowLayout();
 		break;
 	}
+	case kEnableStorageCmd: {
+		CloudMan.enableStorage();
+		_redrawCloudTab = true;
+
+		// also, automatically start saves sync when user enables the storage
+		// fall through
+	}
 	case kSyncSavesStorageCmd: {
 		CloudMan.syncSaves(
 			new Common::Callback<GlobalOptionsDialog, Cloud::Storage::BoolResponse>(this, &GlobalOptionsDialog::storageSavesSyncedCallback)
@@ -2467,8 +2480,27 @@ void GlobalOptionsDialog::setupCloudTab() {
 	bool storageConnected = (username != "");
 	bool shown = (_selectedStorageIndex != Cloud::kStorageNoneId);
 	bool shownConnectedInfo = (shown && storageConnected);
+	bool showingCurrentStorage = (shownConnectedInfo && _selectedStorageIndex == CloudMan.getStorageIndex());
+	bool enabled = (shownConnectedInfo && CloudMan.isStorageEnabled());
 
 	// there goes layout for connected Storage
+
+	if (_storageDisabledHint) _storageDisabledHint->setVisible(showingCurrentStorage && !enabled);
+	if (_storageEnableButton) _storageEnableButton->setVisible(showingCurrentStorage && !enabled);
+
+	// calculate shift
+	int16 x, y;
+	uint16 w, h;
+	int16 shiftUp = 0;
+	if (!showingCurrentStorage || enabled) {
+		// "storage is disabled" hint is not shown, shift everything up
+		if (!g_gui.xmlEval()->getWidgetData("GlobalOptions_Cloud_Container.StorageDisabledHint", x, y, w, h))
+			warning("GlobalOptions_Cloud_Container.StorageUsernameDesc's position is undefined");
+		shiftUp = y;
+		if (!g_gui.xmlEval()->getWidgetData("GlobalOptions_Cloud_Container.StorageUsernameDesc", x, y, w, h))
+			warning("GlobalOptions_Cloud_Container.StorageWizardNotConnectedHint's position is undefined");
+		shiftUp = y - shiftUp;
+	}
 
 	if (_storageUsernameDesc) _storageUsernameDesc->setVisible(shownConnectedInfo);
 	if (_storageUsername) {
@@ -2499,37 +2531,42 @@ void GlobalOptionsDialog::setupCloudTab() {
 		_storageLastSync->setLabel(sync);
 		_storageLastSync->setVisible(shownConnectedInfo);
 	}
-	if (_storageSyncSavesButton)
-		_storageSyncSavesButton->setVisible(shownConnectedInfo && _selectedStorageIndex == CloudMan.getStorageIndex());
+	if (_storageSyncSavesButton) {
+		_storageSyncSavesButton->setVisible(showingCurrentStorage);
+		_storageSyncSavesButton->setEnabled(enabled);
+	}
 
-	int16 x, y;
-	uint16 w, h;
-	int16 downloadHintY, downloadButtonY, disconnectHintY;
-	if (!g_gui.xmlEval()->getWidgetData("GlobalOptions_Cloud_Container.StorageDownloadHint", x, y, w, h))
-		warning("GlobalOptions_Cloud_Container.StorageDownloadHint's position is undefined");
-	downloadHintY = y;
-	if (!g_gui.xmlEval()->getWidgetData("GlobalOptions_Cloud_Container.DownloadButton", x, y, w, h))
-		warning("GlobalOptions_Cloud_Container.DownloadButton's position is undefined");
-	downloadButtonY = y;
-	if (!g_gui.xmlEval()->getWidgetData("GlobalOptions_Cloud_Container.StorageDisconnectHint", x, y, w, h))
-		warning("GlobalOptions_Cloud_Container.StorageDisconnectHint's position is undefined");
-	disconnectHintY = y;
-
-	bool showDownloadButton = (shownConnectedInfo && _selectedStorageIndex == CloudMan.getStorageIndex() && _selectedStorageIndex != Cloud::kStorageGoogleDriveId); // cannot download via Google Drive
+	bool showDownloadButton = (showingCurrentStorage && _selectedStorageIndex != Cloud::kStorageGoogleDriveId); // cannot download via Google Drive
 	if (_storageDownloadHint) _storageDownloadHint->setVisible(showDownloadButton);
-	if (_storageDownloadButton) _storageDownloadButton->setVisible(showDownloadButton);
+	if (_storageDownloadButton) {
+		_storageDownloadButton->setVisible(showDownloadButton);
+		_storageDownloadButton->setEnabled(enabled);
+	}
 	if (_storageDisconnectHint) _storageDisconnectHint->setVisible(shownConnectedInfo);
 	if (_storageDisconnectButton) _storageDisconnectButton->setVisible(shownConnectedInfo);
 
-	if (showDownloadButton) {
-		if (_storageDownloadHint) _storageDownloadHint->setPos(_storageDownloadHint->getRelX(), downloadHintY);
-		if (_storageDownloadButton) _storageDownloadButton->setPos(_storageDownloadButton->getRelX(), downloadButtonY);
-		if (_storageDisconnectHint) _storageDisconnectHint->setPos(_storageDisconnectHint->getRelX(), disconnectHintY);
-		if (_storageDisconnectButton)_storageDisconnectButton->setPos(_storageDisconnectButton->getRelX(), disconnectHintY + downloadButtonY - downloadHintY);
-	} else {
-		if (_storageDisconnectHint) _storageDisconnectHint->setPos(_storageDisconnectHint->getRelX(), downloadHintY);
-		if (_storageDisconnectButton)_storageDisconnectButton->setPos(_storageDisconnectButton->getRelX(), downloadButtonY);
+	int16 disconnectWidgetsAdditionalShift = 0;
+	if (!showDownloadButton) {
+		if (!g_gui.xmlEval()->getWidgetData("GlobalOptions_Cloud_Container.StorageDownloadHint", x, y, w, h))
+			warning("GlobalOptions_Cloud_Container.StorageDownloadHint's position is undefined");
+		disconnectWidgetsAdditionalShift = y;
+		if (!g_gui.xmlEval()->getWidgetData("GlobalOptions_Cloud_Container.StorageDisconnectHint", x, y, w, h))
+			warning("GlobalOptions_Cloud_Container.DownloadButton's position is undefined");
+		disconnectWidgetsAdditionalShift = y - disconnectWidgetsAdditionalShift;
 	}
+
+	shiftWidget(_storageUsernameDesc, "GlobalOptions_Cloud_Container.StorageUsernameDesc", 0, -shiftUp);
+	shiftWidget(_storageUsername, "GlobalOptions_Cloud_Container.StorageUsernameLabel", 0, -shiftUp);
+	shiftWidget(_storageUsedSpaceDesc, "GlobalOptions_Cloud_Container.StorageUsedSpaceDesc", 0, -shiftUp);
+	shiftWidget(_storageUsedSpace, "GlobalOptions_Cloud_Container.StorageUsedSpaceLabel", 0, -shiftUp);
+	shiftWidget(_storageSyncHint, "GlobalOptions_Cloud_Container.StorageSyncHint", 0, -shiftUp);
+	shiftWidget(_storageLastSyncDesc, "GlobalOptions_Cloud_Container.StorageLastSyncDesc", 0, -shiftUp);
+	shiftWidget(_storageLastSync, "GlobalOptions_Cloud_Container.StorageLastSyncLabel", 0, -shiftUp);
+	shiftWidget(_storageSyncSavesButton, "GlobalOptions_Cloud_Container.SyncSavesButton", 0, -shiftUp);
+	shiftWidget(_storageDownloadHint, "GlobalOptions_Cloud_Container.StorageDownloadHint", 0, -shiftUp);
+	shiftWidget(_storageDownloadButton, "GlobalOptions_Cloud_Container.DownloadButton", 0, -shiftUp);
+	shiftWidget(_storageDisconnectHint, "GlobalOptions_Cloud_Container.StorageDisconnectHint", 0, -shiftUp - disconnectWidgetsAdditionalShift);
+	shiftWidget(_storageDisconnectButton, "GlobalOptions_Cloud_Container.DisconnectButton", 0, -shiftUp - disconnectWidgetsAdditionalShift);
 
 	// there goes layout for non-connected Storage (connection wizard)
 
@@ -2560,8 +2597,7 @@ void GlobalOptionsDialog::setupCloudTab() {
 	}
 
 	if (!shownConnectedInfo) {
-		int16 shiftUp;
-		if (!g_gui.xmlEval()->getWidgetData("GlobalOptions_Cloud_Container.StorageUsernameDesc", x, y, w, h))
+		if (!g_gui.xmlEval()->getWidgetData("GlobalOptions_Cloud_Container.StorageDisabledHint", x, y, w, h))
 			warning("GlobalOptions_Cloud_Container.StorageUsernameDesc's position is undefined");
 		shiftUp = y;
 		if (!g_gui.xmlEval()->getWidgetData("GlobalOptions_Cloud_Container.StorageWizardNotConnectedHint", x, y, w, h))

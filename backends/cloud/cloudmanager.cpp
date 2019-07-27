@@ -159,7 +159,6 @@ void CloudManager::replaceStorage(Storage *storage, uint32 index) {
 	//do what should be done on first Storage connect
 	if (_activeStorage) {
 		_activeStorage->info(nullptr, nullptr); //automatically calls setStorageUsername()
-		_activeStorage->syncSaves(nullptr, nullptr);
 	}
 }
 
@@ -363,6 +362,21 @@ bool CloudManager::canSyncFilename(const Common::String &filename) const {
 		return false;
 
 	return true;
+}
+
+bool CloudManager::isStorageEnabled() const {
+	Storage *storage = getCurrentStorage();
+	if (storage)
+		return storage->isEnabled();
+	return false;
+}
+
+void CloudManager::enableStorage() {
+	Storage *storage = getCurrentStorage();
+	if (storage) {
+		storage->enable();
+		save();
+	}
 }
 
 SavesSyncRequest *CloudManager::syncSaves(Storage::BoolCallback callback, Networking::ErrorCallback errorCallback) {
