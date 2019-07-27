@@ -1427,7 +1427,7 @@ bool Sound::init() {
 	int index = 0;
 	while (soundList[index].idx != LAST_SOUND) {
 		int index2 = soundList[index].idx;
-		_soundCache[index2].loaded = false;
+		_soundCache[index2].loaded = 0;
 		_soundCache[index2].name = soundList[index].name;
 		_soundCache[index2].luaName = soundList[index].luaName;
 		if (!scumm_stricmp(_soundCache[index2].name, ".wav"))
@@ -1492,7 +1492,7 @@ bool Sound::playSound(int index) {
 		if (stream == nullptr)
 			return false;
 
-		if (_soundCache[index].ext) {
+		if (_soundCache[index].ext == 1) {
 #ifdef USE_MAD
 			_soundCache[index].audioStream = Audio::makeMP3Stream(stream, DisposeAfterUse::YES);
 			_soundCache[index].loaded = 1;
