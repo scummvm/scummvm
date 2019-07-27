@@ -73,11 +73,11 @@ AIStateDef guy[] = {
 	{ STATE_HORRIBLE3,      GROUP_ENT_GUY_HORRIBLE3 },
 	{ STATE_HORRIBLE4,      GROUP_ENT_GUY_HORRIBLE4 },
 	{ STATE_GOODJOB,        GROUP_ENT_GUY_GOODJOB },
-	{ STATE_ENDSTATES, "" }                            // end of list indicator
+	{ STATE_ENDSTATES,      "" }      // end of list indicator
 };
 
 AIStateDef gemAttack[] = {
-	{ STATE_MOVEDOWN,       GROUP_ENT_GEM_WHITE_SIT },
+	{ STATE_MOVEDOWN,  GROUP_ENT_GEM_WHITE_SIT },
 	{ STATE_ENDSTATES, "" }
 };
 
@@ -96,157 +96,157 @@ AIStateDef dolly[] = {
 	{ STATE_ANGRY,          GROUP_ENT_DOLLY_ANGRY },
 	{ STATE_LAUGH,          GROUP_ENT_DOLLY_LAUGH },
 	{ STATE_PANIC,          GROUP_ENT_DOLLY_PANIC },
-	{ STATE_ENDSTATES, "" }
+	{ STATE_ENDSTATES,      "" }
 };
 
 AIStateDef sergeant[] = {
-	{ STATE_STANDDOWN,      GROUP_ENT_SERGEANT_STANDDOWN },
-	{ STATE_STANDUP,        GROUP_ENT_SERGEANT_STANDUP },
-	{ STATE_STANDLEFT,      GROUP_ENT_SERGEANT_STANDLEFT },
-	{ STATE_STANDRIGHT,     GROUP_ENT_SERGEANT_STANDRIGHT },
-	{ STATE_YELL,           GROUP_ENT_SERGEANT_YELL },
-	{ STATE_MOVEDOWN,       GROUP_ENT_SERGEANT_WALKDOWN },
-	{ STATE_MOVEUP,         GROUP_ENT_SERGEANT_WALKUP },
-	{ STATE_MOVELEFT,       GROUP_ENT_SERGEANT_WALKLEFT },
-	{ STATE_MOVERIGHT,      GROUP_ENT_SERGEANT_WALKRIGHT },
-	{ STATE_ENDSTATES, "" }
+	{ STATE_STANDDOWN,  GROUP_ENT_SERGEANT_STANDDOWN },
+	{ STATE_STANDUP,    GROUP_ENT_SERGEANT_STANDUP },
+	{ STATE_STANDLEFT,  GROUP_ENT_SERGEANT_STANDLEFT },
+	{ STATE_STANDRIGHT, GROUP_ENT_SERGEANT_STANDRIGHT },
+	{ STATE_YELL,       GROUP_ENT_SERGEANT_YELL },
+	{ STATE_MOVEDOWN,   GROUP_ENT_SERGEANT_WALKDOWN },
+	{ STATE_MOVEUP,     GROUP_ENT_SERGEANT_WALKUP },
+	{ STATE_MOVELEFT,   GROUP_ENT_SERGEANT_WALKLEFT },
+	{ STATE_MOVERIGHT,  GROUP_ENT_SERGEANT_WALKRIGHT },
+	{ STATE_ENDSTATES,  "" }
 };
 
 AIStateDef spacedude[] = {
-	{ STATE_MOVEDOWN,       GROUP_ENT_SPACEDUDE_WALKDOWN },
-	{ STATE_MOVEUP,         GROUP_ENT_SPACEDUDE_WALKUP },
-	{ STATE_MOVELEFT,       GROUP_ENT_SPACEDUDE_WALKLEFT },
-	{ STATE_MOVERIGHT,      GROUP_ENT_SPACEDUDE_WALKRIGHT },
+	{ STATE_MOVEDOWN,  GROUP_ENT_SPACEDUDE_WALKDOWN },
+	{ STATE_MOVEUP,    GROUP_ENT_SPACEDUDE_WALKUP },
+	{ STATE_MOVELEFT,  GROUP_ENT_SPACEDUDE_WALKLEFT },
+	{ STATE_MOVERIGHT, GROUP_ENT_SPACEDUDE_WALKRIGHT },
 	{ STATE_ENDSTATES, "" }
 };
 
 AIStateDef chicken[] = {
-	{ STATE_STANDDOWN,      GROUP_ENT_CHICKEN_STANDDOWN },
-	{ STATE_STANDUP,        GROUP_ENT_CHICKEN_STANDUP },
-	{ STATE_STANDLEFT,      GROUP_ENT_CHICKEN_STANDLEFT },
-	{ STATE_STANDRIGHT,     GROUP_ENT_CHICKEN_STANDRIGHT },
-	{ STATE_MOVEDOWN,       GROUP_ENT_CHICKEN_WALKDOWN },
-	{ STATE_MOVEUP,         GROUP_ENT_CHICKEN_WALKUP },
-	{ STATE_MOVELEFT,       GROUP_ENT_CHICKEN_WALKLEFT },
-	{ STATE_MOVERIGHT,      GROUP_ENT_CHICKEN_WALKRIGHT },
-	{ STATE_ENDSTATES, "" }
+	{ STATE_STANDDOWN,  GROUP_ENT_CHICKEN_STANDDOWN },
+	{ STATE_STANDUP,    GROUP_ENT_CHICKEN_STANDUP },
+	{ STATE_STANDLEFT,  GROUP_ENT_CHICKEN_STANDLEFT },
+	{ STATE_STANDRIGHT, GROUP_ENT_CHICKEN_STANDRIGHT },
+	{ STATE_MOVEDOWN,   GROUP_ENT_CHICKEN_WALKDOWN },
+	{ STATE_MOVEUP,     GROUP_ENT_CHICKEN_WALKUP },
+	{ STATE_MOVELEFT,   GROUP_ENT_CHICKEN_WALKLEFT },
+	{ STATE_MOVERIGHT,  GROUP_ENT_CHICKEN_WALKRIGHT },
+	{ STATE_ENDSTATES,  "" }
 };
 
 AIStateDef vortexian[] = {
-	{ STATE_STANDDOWN,      GROUP_ENT_VORTEXIAN_STANDDOWN },
+	{ STATE_STANDDOWN, GROUP_ENT_VORTEXIAN_STANDDOWN },
 	{ STATE_ENDSTATES, "" }
 };
 
 AIStateDef maintBot[] = {
-	{ STATE_STANDDOWN,      GROUP_ENT_MAINTBOT_STANDDOWN },
-	{ STATE_STANDUP,        GROUP_ENT_MAINTBOT_STANDUP },
-	{ STATE_STANDLEFT,      GROUP_ENT_MAINTBOT_STANDLEFT },
-	{ STATE_STANDRIGHT,     GROUP_ENT_MAINTBOT_STANDRIGHT },
-	{ STATE_MOVEDOWN,       GROUP_ENT_MAINTBOT_WALKDOWN },
-	{ STATE_MOVEUP,         GROUP_ENT_MAINTBOT_WALKUP },
-	{ STATE_MOVELEFT,       GROUP_ENT_MAINTBOT_WALKLEFT },
-	{ STATE_MOVERIGHT,      GROUP_ENT_MAINTBOT_WALKRIGHT },
-	{ STATE_USEDOWN,        GROUP_ENT_MAINTBOT_USEDOWN },
-	{ STATE_USEUP,          GROUP_ENT_MAINTBOT_USEUP },
-	{ STATE_USELEFT,        GROUP_ENT_MAINTBOT_USELEFT },
-	{ STATE_USERIGHT,       GROUP_ENT_MAINTBOT_USERIGHT },
-	{ STATE_ENDSTATES, "" }
+	{ STATE_STANDDOWN,  GROUP_ENT_MAINTBOT_STANDDOWN },
+	{ STATE_STANDUP,    GROUP_ENT_MAINTBOT_STANDUP },
+	{ STATE_STANDLEFT,  GROUP_ENT_MAINTBOT_STANDLEFT },
+	{ STATE_STANDRIGHT, GROUP_ENT_MAINTBOT_STANDRIGHT },
+	{ STATE_MOVEDOWN,   GROUP_ENT_MAINTBOT_WALKDOWN },
+	{ STATE_MOVEUP,     GROUP_ENT_MAINTBOT_WALKUP },
+	{ STATE_MOVELEFT,   GROUP_ENT_MAINTBOT_WALKLEFT },
+	{ STATE_MOVERIGHT,  GROUP_ENT_MAINTBOT_WALKRIGHT },
+	{ STATE_USEDOWN,    GROUP_ENT_MAINTBOT_USEDOWN },
+	{ STATE_USEUP,      GROUP_ENT_MAINTBOT_USEUP },
+	{ STATE_USELEFT,    GROUP_ENT_MAINTBOT_USELEFT },
+	{ STATE_USERIGHT,   GROUP_ENT_MAINTBOT_USERIGHT },
+	{ STATE_ENDSTATES,  "" }
 };
 
 AIStateDef scientist[] = {
-	{ STATE_BLINK,          GROUP_ENT_SCIENTIST_BLINK },
-	{ STATE_STANDDOWN,      GROUP_ENT_SCIENTIST_STANDDOWN },
-	{ STATE_STANDUP,        GROUP_ENT_SCIENTIST_STANDUP },
-	{ STATE_STANDLEFT,      GROUP_ENT_SCIENTIST_STANDLEFT },
-	{ STATE_STANDRIGHT,     GROUP_ENT_SCIENTIST_STANDRIGHT },
-	{ STATE_MOVEDOWN,       GROUP_ENT_SCIENTIST_WALKDOWN },
-	{ STATE_MOVEUP,         GROUP_ENT_SCIENTIST_WALKUP },
-	{ STATE_MOVELEFT,       GROUP_ENT_SCIENTIST_WALKLEFT },
-	{ STATE_MOVERIGHT,      GROUP_ENT_SCIENTIST_WALKRIGHT },
-	{ STATE_ENDSTATES, "" }
+	{ STATE_BLINK,      GROUP_ENT_SCIENTIST_BLINK },
+	{ STATE_STANDDOWN,  GROUP_ENT_SCIENTIST_STANDDOWN },
+	{ STATE_STANDUP,    GROUP_ENT_SCIENTIST_STANDUP },
+	{ STATE_STANDLEFT,  GROUP_ENT_SCIENTIST_STANDLEFT },
+	{ STATE_STANDRIGHT, GROUP_ENT_SCIENTIST_STANDRIGHT },
+	{ STATE_MOVEDOWN,   GROUP_ENT_SCIENTIST_WALKDOWN },
+	{ STATE_MOVEUP,     GROUP_ENT_SCIENTIST_WALKUP },
+	{ STATE_MOVELEFT,   GROUP_ENT_SCIENTIST_WALKLEFT },
+	{ STATE_MOVERIGHT,  GROUP_ENT_SCIENTIST_WALKRIGHT },
+	{ STATE_ENDSTATES,  "" }
 };
 
 AIStateDef worker[] = {
-	{ STATE_BLINK,          GROUP_ENT_WORKER_BLINK },
-	{ STATE_STANDDOWN,      GROUP_ENT_WORKER_STANDDOWN },
-	{ STATE_STANDUP,        GROUP_ENT_WORKER_STANDUP },
-	{ STATE_STANDLEFT,      GROUP_ENT_WORKER_STANDLEFT },
-	{ STATE_STANDRIGHT,     GROUP_ENT_WORKER_STANDRIGHT },
-	{ STATE_MOVEDOWN,       GROUP_ENT_WORKER_WALKDOWN },
-	{ STATE_MOVEUP,         GROUP_ENT_WORKER_WALKUP },
-	{ STATE_MOVELEFT,       GROUP_ENT_WORKER_WALKLEFT },
-	{ STATE_MOVERIGHT,      GROUP_ENT_WORKER_WALKRIGHT },
-	{ STATE_ENDSTATES, "" }
+	{ STATE_BLINK,      GROUP_ENT_WORKER_BLINK },
+	{ STATE_STANDDOWN,  GROUP_ENT_WORKER_STANDDOWN },
+	{ STATE_STANDUP,    GROUP_ENT_WORKER_STANDUP },
+	{ STATE_STANDLEFT,  GROUP_ENT_WORKER_STANDLEFT },
+	{ STATE_STANDRIGHT, GROUP_ENT_WORKER_STANDRIGHT },
+	{ STATE_MOVEDOWN,   GROUP_ENT_WORKER_WALKDOWN },
+	{ STATE_MOVEUP,     GROUP_ENT_WORKER_WALKUP },
+	{ STATE_MOVELEFT,   GROUP_ENT_WORKER_WALKLEFT },
+	{ STATE_MOVERIGHT,  GROUP_ENT_WORKER_WALKRIGHT },
+	{ STATE_ENDSTATES,  "" }
 };
 
 AIStateDef deadWorker[] = {
-	{ STATE_STANDDOWN,      GROUP_ENT_DEAD_WORKER_SIT },
+	{ STATE_STANDDOWN, GROUP_ENT_DEAD_WORKER_SIT },
 	{ STATE_ENDSTATES, "" }
 };
 
 AIStateDef accountant[] = {
-	{ STATE_STANDDOWN,      GROUP_ENT_ACCOUNTANT_STANDDOWN },
-	{ STATE_STANDUP,        GROUP_ENT_ACCOUNTANT_STANDUP },
-	{ STATE_STANDLEFT,      GROUP_ENT_ACCOUNTANT_STANDLEFT },
-	{ STATE_STANDRIGHT,     GROUP_ENT_ACCOUNTANT_STANDRIGHT },
-	{ STATE_ENDSTATES, "" }
+	{ STATE_STANDDOWN,  GROUP_ENT_ACCOUNTANT_STANDDOWN },
+	{ STATE_STANDUP,    GROUP_ENT_ACCOUNTANT_STANDUP },
+	{ STATE_STANDLEFT,  GROUP_ENT_ACCOUNTANT_STANDLEFT },
+	{ STATE_STANDRIGHT, GROUP_ENT_ACCOUNTANT_STANDRIGHT },
+	{ STATE_ENDSTATES,  "" }
 };
 
 // Enemies
 
 AIStateDef pushBot[] = {
-	{ STATE_MOVEDOWN,       GROUP_ENT_PUSHBOT_WALKDOWN },
-	{ STATE_MOVEUP,         GROUP_ENT_PUSHBOT_WALKUP },
-	{ STATE_MOVELEFT,       GROUP_ENT_PUSHBOT_WALKLEFT },
-	{ STATE_MOVERIGHT,      GROUP_ENT_PUSHBOT_WALKRIGHT },
+	{ STATE_MOVEDOWN,  GROUP_ENT_PUSHBOT_WALKDOWN },
+	{ STATE_MOVEUP,    GROUP_ENT_PUSHBOT_WALKUP },
+	{ STATE_MOVELEFT,  GROUP_ENT_PUSHBOT_WALKLEFT },
+	{ STATE_MOVERIGHT, GROUP_ENT_PUSHBOT_WALKRIGHT },
 	{ STATE_ENDSTATES, "" }
 };
 
 AIStateDef rightBot[] = {
-	{ STATE_MOVEDOWN,       GROUP_ENT_RIGHTBOT_WALKDOWN },
-	{ STATE_MOVEUP,         GROUP_ENT_RIGHTBOT_WALKUP },
-	{ STATE_MOVELEFT,       GROUP_ENT_RIGHTBOT_WALKLEFT },
-	{ STATE_MOVERIGHT,      GROUP_ENT_RIGHTBOT_WALKRIGHT },
+	{ STATE_MOVEDOWN,  GROUP_ENT_RIGHTBOT_WALKDOWN },
+	{ STATE_MOVEUP,    GROUP_ENT_RIGHTBOT_WALKUP },
+	{ STATE_MOVELEFT,  GROUP_ENT_RIGHTBOT_WALKLEFT },
+	{ STATE_MOVERIGHT, GROUP_ENT_RIGHTBOT_WALKRIGHT },
 	{ STATE_ENDSTATES, "" }
 };
 
 AIStateDef omniBot[] = {
-	{ STATE_MOVEDOWN,       GROUP_ENT_OMNIBOT_WALKDOWN },
-	{ STATE_MOVEUP,         GROUP_ENT_OMNIBOT_WALKUP },
-	{ STATE_MOVELEFT,       GROUP_ENT_OMNIBOT_WALKLEFT },
-	{ STATE_MOVERIGHT,      GROUP_ENT_OMNIBOT_WALKRIGHT },
+	{ STATE_MOVEDOWN,  GROUP_ENT_OMNIBOT_WALKDOWN },
+	{ STATE_MOVEUP,    GROUP_ENT_OMNIBOT_WALKUP },
+	{ STATE_MOVELEFT,  GROUP_ENT_OMNIBOT_WALKLEFT },
+	{ STATE_MOVERIGHT, GROUP_ENT_OMNIBOT_WALKRIGHT },
 	{ STATE_ENDSTATES, "" }
 };
 
 AIStateDef laser[] = {
-	{ STATE_STANDRIGHT,     GROUP_ENT_LASER_RIGHT },
-	{ STATE_STANDLEFT,      GROUP_ENT_LASER_LEFT },
-	{ STATE_STANDUP,        GROUP_ENT_LASER_UP },
-	{ STATE_STANDDOWN,      GROUP_ENT_LASER_DOWN },
-	{ STATE_ENDSTATES, "" }
+	{ STATE_STANDRIGHT, GROUP_ENT_LASER_RIGHT },
+	{ STATE_STANDLEFT,  GROUP_ENT_LASER_LEFT },
+	{ STATE_STANDUP,    GROUP_ENT_LASER_UP },
+	{ STATE_STANDDOWN,  GROUP_ENT_LASER_DOWN },
+	{ STATE_ENDSTATES,  "" }
 };
 
 AIStateDef diverter[] = {
-	{ STATE_DIVERTER_BL,    GROUP_ENT_DEFLECTORBL_SIT },
-	{ STATE_DIVERTER_BR,    GROUP_ENT_DEFLECTORBR_SIT },
-	{ STATE_DIVERTER_TL,    GROUP_ENT_DEFLECTORTL_SIT },
-	{ STATE_DIVERTER_TR,    GROUP_ENT_DEFLECTORTR_SIT },
-	{ STATE_ENDSTATES, "" }
+	{ STATE_DIVERTER_BL, GROUP_ENT_DEFLECTORBL_SIT },
+	{ STATE_DIVERTER_BR, GROUP_ENT_DEFLECTORBR_SIT },
+	{ STATE_DIVERTER_TL, GROUP_ENT_DEFLECTORTL_SIT },
+	{ STATE_DIVERTER_TR, GROUP_ENT_DEFLECTORTR_SIT },
+	{ STATE_ENDSTATES,   "" }
 };
 
 AIStateDef turnBot[] = {
-	{ STATE_MOVEDOWN,       GROUP_ENT_TURNBOT_WALKDOWN },
-	{ STATE_MOVEUP,         GROUP_ENT_TURNBOT_WALKUP },
-	{ STATE_MOVELEFT,       GROUP_ENT_TURNBOT_WALKLEFT },
-	{ STATE_MOVERIGHT,      GROUP_ENT_TURNBOT_WALKRIGHT },
+	{ STATE_MOVEDOWN,  GROUP_ENT_TURNBOT_WALKDOWN },
+	{ STATE_MOVEUP,    GROUP_ENT_TURNBOT_WALKUP },
+	{ STATE_MOVELEFT,  GROUP_ENT_TURNBOT_WALKLEFT },
+	{ STATE_MOVERIGHT, GROUP_ENT_TURNBOT_WALKRIGHT },
 	{ STATE_ENDSTATES, "" }
 };
 
 AIStateDef deadEye[] = {
-	{ STATE_MOVEDOWN,       GROUP_ENT_DEADEYE_WALKDOWN },
-	{ STATE_MOVEUP,         GROUP_ENT_DEADEYE_WALKUP },
-	{ STATE_MOVELEFT,       GROUP_ENT_DEADEYE_WALKLEFT },
-	{ STATE_MOVERIGHT,      GROUP_ENT_DEADEYE_WALKRIGHT },
+	{ STATE_MOVEDOWN,  GROUP_ENT_DEADEYE_WALKDOWN },
+	{ STATE_MOVEUP,    GROUP_ENT_DEADEYE_WALKUP },
+	{ STATE_MOVELEFT,  GROUP_ENT_DEADEYE_WALKLEFT },
+	{ STATE_MOVERIGHT, GROUP_ENT_DEADEYE_WALKRIGHT },
 	{ STATE_ENDSTATES, "" }
 };
 
@@ -256,56 +256,56 @@ AIStateDef meerkat[] = {
 	{ STATE_MEER_BITE,      GROUP_ENT_MEERKAT_BITE },
 	{ STATE_MEER_DISAPPEAR, GROUP_ENT_MEERKAT_DISAPPEAR },
 	{ STATE_MEER_LOOK,      GROUP_ENT_MEERKAT_LOOK },
-	{ STATE_ENDSTATES, "" }
+	{ STATE_ENDSTATES,      "" }
 };
 
 AIStateDef goodFairy[] = {
-	{ STATE_MOVEDOWN,       GROUP_ENT_GOODFAIRY_WALKDOWN },
-	{ STATE_MOVEUP,         GROUP_ENT_GOODFAIRY_WALKUP },
-	{ STATE_MOVELEFT,       GROUP_ENT_GOODFAIRY_WALKLEFT },
-	{ STATE_MOVERIGHT,      GROUP_ENT_GOODFAIRY_WALKRIGHT },
+	{ STATE_MOVEDOWN,  GROUP_ENT_GOODFAIRY_WALKDOWN },
+	{ STATE_MOVEUP,    GROUP_ENT_GOODFAIRY_WALKUP },
+	{ STATE_MOVELEFT,  GROUP_ENT_GOODFAIRY_WALKLEFT },
+	{ STATE_MOVERIGHT, GROUP_ENT_GOODFAIRY_WALKRIGHT },
 	{ STATE_ENDSTATES, "" }
 };
 
 AIStateDef badFairy[] = {
-	{ STATE_MOVEDOWN,       GROUP_ENT_BADFAIRY_WALKDOWN },
-	{ STATE_MOVEUP,         GROUP_ENT_BADFAIRY_WALKUP },
-	{ STATE_MOVELEFT,       GROUP_ENT_BADFAIRY_WALKLEFT },
-	{ STATE_MOVERIGHT,      GROUP_ENT_BADFAIRY_WALKRIGHT },
+	{ STATE_MOVEDOWN,  GROUP_ENT_BADFAIRY_WALKDOWN },
+	{ STATE_MOVEUP,    GROUP_ENT_BADFAIRY_WALKUP },
+	{ STATE_MOVELEFT,  GROUP_ENT_BADFAIRY_WALKLEFT },
+	{ STATE_MOVERIGHT, GROUP_ENT_BADFAIRY_WALKRIGHT },
 	{ STATE_ENDSTATES, "" }
 };
 
 AIStateDef gatePuddle[] = {
-	{ STATE_MOVEDOWN,       GROUP_ENT_GATEPUDDLE_STANDDOWN },
+	{ STATE_MOVEDOWN,  GROUP_ENT_GATEPUDDLE_STANDDOWN },
 	{ STATE_ENDSTATES, "" }
 };
 
 AIStateDef icePuff[] = {
-	{ STATE_ICEP_PEEK,      GROUP_ENT_ICEPUFF_PEEK },
-	{ STATE_ICEP_APPEAR,    GROUP_ENT_ICEPUFF_APPEAR },
-	{ STATE_ICEP_THROWDOWN, GROUP_ENT_ICEPUFF_THROWDOWN },
-	{ STATE_ICEP_THROWRIGHT,GROUP_ENT_ICEPUFF_THROWRIGHT },
-	{ STATE_ICEP_THROWLEFT, GROUP_ENT_ICEPUFF_THROWLEFT },
-	{ STATE_ICEP_DISAPPEAR, GROUP_ENT_ICEPUFF_DISAPPEAR },
-	{ STATE_ENDSTATES, "" }
+	{ STATE_ICEP_PEEK,       GROUP_ENT_ICEPUFF_PEEK },
+	{ STATE_ICEP_APPEAR,     GROUP_ENT_ICEPUFF_APPEAR },
+	{ STATE_ICEP_THROWDOWN,  GROUP_ENT_ICEPUFF_THROWDOWN },
+	{ STATE_ICEP_THROWRIGHT, GROUP_ENT_ICEPUFF_THROWRIGHT },
+	{ STATE_ICEP_THROWLEFT,  GROUP_ENT_ICEPUFF_THROWLEFT },
+	{ STATE_ICEP_DISAPPEAR,  GROUP_ENT_ICEPUFF_DISAPPEAR },
+	{ STATE_ENDSTATES,       "" }
 };
 
 AIStateDef buzzfly[] = {
-	{ STATE_MOVEDOWN,      GROUP_ENT_BUZZFLY_WALKDOWN },
-	{ STATE_MOVEUP,        GROUP_ENT_BUZZFLY_WALKUP },
-	{ STATE_MOVELEFT,      GROUP_ENT_BUZZFLY_WALKLEFT },
-	{ STATE_MOVERIGHT,     GROUP_ENT_BUZZFLY_WALKRIGHT },
+	{ STATE_MOVEDOWN,  GROUP_ENT_BUZZFLY_WALKDOWN },
+	{ STATE_MOVEUP,    GROUP_ENT_BUZZFLY_WALKUP },
+	{ STATE_MOVELEFT,  GROUP_ENT_BUZZFLY_WALKLEFT },
+	{ STATE_MOVERIGHT, GROUP_ENT_BUZZFLY_WALKRIGHT },
 	{ STATE_ENDSTATES, "" }
 };
 
 AIStateDef fatFrog[] = {
-	{ STATE_STANDDOWN,              GROUP_ENT_FATFROG_STANDDOWN },
-	{ STATE_STANDLEFT,              GROUP_ENT_FATFROG_STANDLEFT },
-	{ STATE_STANDRIGHT,             GROUP_ENT_FATFROG_STANDRIGHT },
-	{ STATE_LICKDOWN,               GROUP_ENT_FATFROG_LICKDOWN },
-	{ STATE_LICKLEFT,               GROUP_ENT_FATFROG_LICKLEFT },
-	{ STATE_LICKRIGHT,              GROUP_ENT_FATFROG_LICKRIGHT },
-	{ STATE_ENDSTATES, "" }
+	{ STATE_STANDDOWN,  GROUP_ENT_FATFROG_STANDDOWN },
+	{ STATE_STANDLEFT,  GROUP_ENT_FATFROG_STANDLEFT },
+	{ STATE_STANDRIGHT, GROUP_ENT_FATFROG_STANDRIGHT },
+	{ STATE_LICKDOWN,   GROUP_ENT_FATFROG_LICKDOWN },
+	{ STATE_LICKLEFT,   GROUP_ENT_FATFROG_LICKLEFT },
+	{ STATE_LICKRIGHT,  GROUP_ENT_FATFROG_LICKRIGHT },
+	{ STATE_ENDSTATES,  "" }
 };
 
 AIStateDef dragon[] = {
@@ -315,123 +315,123 @@ AIStateDef dragon[] = {
 // These are in the demo
 
 AIStateDef omniBotMissile[] = {
-	{ STATE_MOVEDOWN,       GROUP_ENT_OMNIBOT_MISSILE },
+	{ STATE_MOVEDOWN,  GROUP_ENT_OMNIBOT_MISSILE },
 	{ STATE_ENDSTATES, "" }
 };
 
 AIStateDef fourFirer[] = {
-	{ STATE_STANDDOWN,      GROUP_ENT_FOUR_LASER_DOWN },
-	{ STATE_STANDUP,        GROUP_ENT_FOUR_LASER_UP },
-	{ STATE_STANDLEFT,      GROUP_ENT_FOUR_LASER_LEFT },
-	{ STATE_STANDRIGHT,     GROUP_ENT_FOUR_LASER_RIGHT },
-	{ STATE_ENDSTATES, "" }
+	{ STATE_STANDDOWN,  GROUP_ENT_FOUR_LASER_DOWN },
+	{ STATE_STANDUP,    GROUP_ENT_FOUR_LASER_UP },
+	{ STATE_STANDLEFT,  GROUP_ENT_FOUR_LASER_LEFT },
+	{ STATE_STANDRIGHT, GROUP_ENT_FOUR_LASER_RIGHT },
+	{ STATE_ENDSTATES,  "" }
 };
 
 AIStateDef railRider[] = {
-	{ STATE_STANDDOWN,      GROUP_ENT_RAILRIDER_STANDDOWN },
-	{ STATE_STANDUP,        GROUP_ENT_RAILRIDER_STANDUP },
-	{ STATE_MOVEDOWN,       GROUP_ENT_RAILRIDER_WALKDOWN },
-	{ STATE_MOVEUP,         GROUP_ENT_RAILRIDER_WALKUP },
-	{ STATE_MOVELEFT,       GROUP_ENT_RAILRIDER_WALKLEFT },
-	{ STATE_MOVERIGHT,      GROUP_ENT_RAILRIDER_WALKRIGHT },
+	{ STATE_STANDDOWN, GROUP_ENT_RAILRIDER_STANDDOWN },
+	{ STATE_STANDUP,   GROUP_ENT_RAILRIDER_STANDUP },
+	{ STATE_MOVEDOWN,  GROUP_ENT_RAILRIDER_WALKDOWN },
+	{ STATE_MOVEUP,    GROUP_ENT_RAILRIDER_WALKUP },
+	{ STATE_MOVELEFT,  GROUP_ENT_RAILRIDER_WALKLEFT },
+	{ STATE_MOVERIGHT, GROUP_ENT_RAILRIDER_WALKRIGHT },
 	{ STATE_ENDSTATES, "" }
 };
 
 AIStateDef shockBot[] = {
-	{ STATE_MOVEDOWN,       GROUP_ENT_SHOCKBOT_WALK },
-	{ STATE_SHOCKING,       GROUP_SHOCK_SPARK_SIT },
+	{ STATE_MOVEDOWN,  GROUP_ENT_SHOCKBOT_WALK },
+	{ STATE_SHOCKING,  GROUP_SHOCK_SPARK_SIT },
 	{ STATE_ENDSTATES, "" }
 };
 
 // Pushables
 
 AIStateDef crate[] = {
-	{ STATE_STANDDOWN,      GROUP_ENT_CRATE_SIT },
-	{ STATE_FLOATING,       GROUP_ENT_CRATE_FLOAT },
+	{ STATE_STANDDOWN, GROUP_ENT_CRATE_SIT },
+	{ STATE_FLOATING,  GROUP_ENT_CRATE_FLOAT },
 	{ STATE_ENDSTATES, "" }
 };
 
 AIStateDef barrelLight[] = {
-	{ STATE_FLOATING,       GROUP_ENT_BARREL_LIGHT_FLOAT },
-	{ STATE_MELTED,         GROUP_ENT_BARREL_LIGHT_MELT },
-	{ STATE_STANDDOWN,      GROUP_ENT_BARREL_LIGHT_SIT },
+	{ STATE_FLOATING,  GROUP_ENT_BARREL_LIGHT_FLOAT },
+	{ STATE_MELTED,    GROUP_ENT_BARREL_LIGHT_MELT },
+	{ STATE_STANDDOWN, GROUP_ENT_BARREL_LIGHT_SIT },
 	{ STATE_ENDSTATES, "" }
 };
 
 AIStateDef barrelHeavy[] = {
-	{ STATE_FLOATING,       GROUP_ENT_BARREL_HEAVY_FLOAT },
-	{ STATE_MELTED,         GROUP_ENT_BARREL_HEAVY_MELT },
-	{ STATE_STANDDOWN,      GROUP_ENT_BARREL_HEAVY_SIT },
+	{ STATE_FLOATING,  GROUP_ENT_BARREL_HEAVY_FLOAT },
+	{ STATE_MELTED,    GROUP_ENT_BARREL_HEAVY_MELT },
+	{ STATE_STANDDOWN, GROUP_ENT_BARREL_HEAVY_SIT },
 	{ STATE_ENDSTATES, "" }
 };
 
 AIStateDef barrelExplode[] = {
-	{ STATE_EXPLODING,      GROUP_EXPLOSION_BOOM_SIT },
-	{ STATE_STANDDOWN,      GROUP_ENT_BARREL_EXPLODE_SIT },
+	{ STATE_EXPLODING, GROUP_EXPLOSION_BOOM_SIT },
+	{ STATE_STANDDOWN, GROUP_ENT_BARREL_EXPLODE_SIT },
 	{ STATE_ENDSTATES, "" }
 };
 
 AIStateDef frogStatue[] = {
-	{ STATE_STANDDOWN,      GROUP_ENT_FROGSTATUE_SIT },
+	{ STATE_STANDDOWN, GROUP_ENT_FROGSTATUE_SIT },
 	{ STATE_ENDSTATES, "" }
 };
 
 // Weapons
 
 AIStateDef club[] = {
-	{ STATE_STANDDOWN,      GROUP_ENT_CLUB_SIT },
+	{ STATE_STANDDOWN, GROUP_ENT_CLUB_SIT },
 	{ STATE_ENDSTATES, "" }
 };
 
 AIStateDef roboStunner[] = {
-	{ STATE_STANDDOWN,      GROUP_ENT_ROBOSTUNNER_SIT },
+	{ STATE_STANDDOWN, GROUP_ENT_ROBOSTUNNER_SIT },
 	{ STATE_ENDSTATES, "" }
 };
 
 AIStateDef slugSlinger[] = {
-	{ STATE_STANDDOWN,      GROUP_ENT_SLUGSLINGER_SIT },
+	{ STATE_STANDDOWN, GROUP_ENT_SLUGSLINGER_SIT },
 	{ STATE_ENDSTATES, "" }
 };
 
 // Items
 
 AIStateDef itemChicken[] = {
-	{ STATE_STANDDOWN,      GROUP_ENT_CHICKEN_STANDDOWN },
+	{ STATE_STANDDOWN, GROUP_ENT_CHICKEN_STANDDOWN },
 	{ STATE_ENDSTATES, "" }
 };
 
 AIStateDef envelopeWhite[] = {
-	{ STATE_STANDDOWN,      GROUP_ENT_ENVELOPE_WHITE_SIT },
+	{ STATE_STANDDOWN, GROUP_ENT_ENVELOPE_WHITE_SIT },
 	{ STATE_ENDSTATES, "" }
 };
 
 AIStateDef envelopeBlue[] = {
-	{ STATE_STANDDOWN,      GROUP_ENT_ENVELOPE_BLUE_SIT },
+	{ STATE_STANDDOWN, GROUP_ENT_ENVELOPE_BLUE_SIT },
 	{ STATE_ENDSTATES, "" }
 };
 
 AIStateDef envelopeRed[] = {
-	{ STATE_STANDDOWN,      GROUP_ENT_ENVELOPE_RED_SIT },
+	{ STATE_STANDDOWN, GROUP_ENT_ENVELOPE_RED_SIT },
 	{ STATE_ENDSTATES, "" }
 };
 
 AIStateDef transceiver[] = {
-	{ STATE_STANDDOWN,      GROUP_ENT_TRANSCEIVER_SIT },
+	{ STATE_STANDDOWN, GROUP_ENT_TRANSCEIVER_SIT },
 	{ STATE_ENDSTATES, "" }
 };
 
 AIStateDef cell[] = {
-	{ STATE_STANDDOWN,      GROUP_ENT_CELL_SIT },
+	{ STATE_STANDDOWN, GROUP_ENT_CELL_SIT },
 	{ STATE_ENDSTATES, "" }
 };
 
 AIStateDef gooCup[] = {
-	{ STATE_STANDDOWN,      GROUP_ENT_GOO_CUP_SIT },
+	{ STATE_STANDDOWN, GROUP_ENT_GOO_CUP_SIT },
 	{ STATE_ENDSTATES, "" }
 };
 
 AIStateDef gemWhite[] = {
-	{ STATE_STANDDOWN,      GROUP_ENT_GEM_WHITE_SIT },
+	{ STATE_STANDDOWN, GROUP_ENT_GEM_WHITE_SIT },
 	{ STATE_ENDSTATES, "" }
 };
 
@@ -441,147 +441,147 @@ AIStateDef cabKey[] = {
 };
 
 AIStateDef envelopeGreen[] = {
-	{ STATE_STANDDOWN,      GROUP_ENT_ENVELOPE_GREEN_SIT },
+	{ STATE_STANDDOWN, GROUP_ENT_ENVELOPE_GREEN_SIT },
 	{ STATE_ENDSTATES, "" }
 };
 
 AIStateDef teaCup[] = {
-	{ STATE_STANDDOWN,      GROUP_ENT_TEACUP_SIT },
+	{ STATE_STANDDOWN, GROUP_ENT_TEACUP_SIT },
 	{ STATE_ENDSTATES, "" }
 };
 
 AIStateDef cookie[] = {
-	{ STATE_STANDDOWN,      GROUP_ENT_COOKIE_SIT },
+	{ STATE_STANDDOWN, GROUP_ENT_COOKIE_SIT },
 	{ STATE_ENDSTATES, "" }
 };
 
 AIStateDef burger[] = {
-	{ STATE_STANDDOWN,      GROUP_ENT_BURGER_SIT },
+	{ STATE_STANDDOWN, GROUP_ENT_BURGER_SIT },
 	{ STATE_ENDSTATES, "" }
 };
 
 AIStateDef pda[] = {
-	{ STATE_STANDDOWN,      GROUP_ENT_PDA_SIT },
+	{ STATE_STANDDOWN, GROUP_ENT_PDA_SIT },
 	{ STATE_ENDSTATES, "" }
 };
 
 AIStateDef book[] = {
-	{ STATE_STANDDOWN,      GROUP_ENT_BOOK_SIT },
+	{ STATE_STANDDOWN, GROUP_ENT_BOOK_SIT },
 	{ STATE_ENDSTATES, "" }
 };
 
 AIStateDef clipboard[] = {
-	{ STATE_STANDDOWN,      GROUP_ENT_CLIPBOARD_SIT },
+	{ STATE_STANDDOWN, GROUP_ENT_CLIPBOARD_SIT },
 	{ STATE_ENDSTATES, "" }
 };
 
 AIStateDef note[] = {
-	{ STATE_STANDDOWN,      GROUP_ENT_NOTE_SIT },
+	{ STATE_STANDDOWN, GROUP_ENT_NOTE_SIT },
 	{ STATE_ENDSTATES, "" }
 };
 
 AIStateDef keycardWhite[] = {
-	{ STATE_STANDDOWN,      GROUP_ENT_KEYCARD_WHITE_SIT },
+	{ STATE_STANDDOWN, GROUP_ENT_KEYCARD_WHITE_SIT },
 	{ STATE_ENDSTATES, "" }
 };
 
 AIStateDef keycardBlue[] = {
-	{ STATE_STANDDOWN,      GROUP_ENT_KEYCARD_BLUE_SIT },
+	{ STATE_STANDDOWN, GROUP_ENT_KEYCARD_BLUE_SIT },
 	{ STATE_ENDSTATES, "" }
 };
 
 AIStateDef keycardRed[] = {
-	{ STATE_STANDDOWN,      GROUP_ENT_KEYCARD_RED_SIT },
+	{ STATE_STANDDOWN, GROUP_ENT_KEYCARD_RED_SIT },
 	{ STATE_ENDSTATES, "" }
 };
 
 AIStateDef keycardGreen[] = {
-	{ STATE_STANDDOWN,      GROUP_ENT_KEYCARD_GREEN_SIT },
+	{ STATE_STANDDOWN, GROUP_ENT_KEYCARD_GREEN_SIT },
 	{ STATE_ENDSTATES, "" }
 };
 
 AIStateDef keycardPurple[] = {
-	{ STATE_STANDDOWN,      GROUP_ENT_KEYCARD_PURPLE_SIT },
+	{ STATE_STANDDOWN, GROUP_ENT_KEYCARD_PURPLE_SIT },
 	{ STATE_ENDSTATES, "" }
 };
 
 AIStateDef keycardBlack[] = {
-	{ STATE_STANDDOWN,      GROUP_ENT_KEYCARD_BLACK_SIT },
+	{ STATE_STANDDOWN, GROUP_ENT_KEYCARD_BLACK_SIT },
 	{ STATE_ENDSTATES, "" }
 };
 
 AIStateDef magicEgg[] = {
-	{ STATE_STANDDOWN,      GROUP_ENT_MAGIC_EGG_SIT },
+	{ STATE_STANDDOWN, GROUP_ENT_MAGIC_EGG_SIT },
 	{ STATE_ENDSTATES, "" }
 };
 
 AIStateDef iceBlock[] = {
-	{ STATE_STANDDOWN,      GROUP_ENT_ICE_BLOCK_SIT },
+	{ STATE_STANDDOWN, GROUP_ENT_ICE_BLOCK_SIT },
 	{ STATE_ENDSTATES, "" }
 };
 
 AIStateDef gemBlue[] = {
-	{ STATE_STANDDOWN,      GROUP_ENT_GEM_BLUE_SIT },
+	{ STATE_STANDDOWN, GROUP_ENT_GEM_BLUE_SIT },
 	{ STATE_ENDSTATES, "" }
 };
 
 AIStateDef gemRed[] = {
-	{ STATE_STANDDOWN,      GROUP_ENT_GEM_RED_SIT },
+	{ STATE_STANDDOWN, GROUP_ENT_GEM_RED_SIT },
 	{ STATE_ENDSTATES, "" }
 };
 
 AIStateDef gemGreen[] = {
-	{ STATE_STANDDOWN,      GROUP_ENT_GEM_GREEN_SIT },
+	{ STATE_STANDDOWN, GROUP_ENT_GEM_GREEN_SIT },
 	{ STATE_ENDSTATES, "" }
 };
 
 AIStateDef dollyTool1[] = {
-	{ STATE_STANDDOWN,      GROUP_ENT_DOLLY_TOOL1_SIT },
+	{ STATE_STANDDOWN, GROUP_ENT_DOLLY_TOOL1_SIT },
 	{ STATE_ENDSTATES, "" }
 };
 
 AIStateDef dollyTool2[] = {
-	{ STATE_STANDDOWN,      GROUP_ENT_DOLLY_TOOL2_SIT },
+	{ STATE_STANDDOWN, GROUP_ENT_DOLLY_TOOL2_SIT },
 	{ STATE_ENDSTATES, "" }
 };
 
 AIStateDef dollyTool3[] = {
-	{ STATE_STANDDOWN,      GROUP_ENT_DOLLY_TOOL3_SIT },
+	{ STATE_STANDDOWN, GROUP_ENT_DOLLY_TOOL3_SIT },
 	{ STATE_ENDSTATES, "" }
 };
 
 AIStateDef dollyTool4[] = {
-	{ STATE_STANDDOWN,      GROUP_ENT_DOLLY_TOOL4_SIT },
+	{ STATE_STANDDOWN, GROUP_ENT_DOLLY_TOOL4_SIT },
 	{ STATE_ENDSTATES, "" }
 };
 
 AIStateDef seed[] = {
-	{ STATE_STANDDOWN,      GROUP_ENT_SEED_SIT },
+	{ STATE_STANDDOWN, GROUP_ENT_SEED_SIT },
 	{ STATE_ENDSTATES, "" }
 };
 
 AIStateDef soda[] = {
-	{ STATE_STANDDOWN,      GROUP_ENT_SODA_SIT },
+	{ STATE_STANDDOWN, GROUP_ENT_SODA_SIT },
 	{ STATE_ENDSTATES, "" }
 };
 
 AIStateDef router[] = {
-	{ STATE_STANDDOWN,      GROUP_ENT_ROUTER_SIT },
+	{ STATE_STANDDOWN, GROUP_ENT_ROUTER_SIT },
 	{ STATE_ENDSTATES, "" }
 };
 
 AIStateDef slicer[] = {
-	{ STATE_STANDDOWN,      GROUP_ENT_SLICER_SIT },
+	{ STATE_STANDDOWN, GROUP_ENT_SLICER_SIT },
 	{ STATE_ENDSTATES, "" }
 };
 
 AIStateDef package[] = {
-	{ STATE_STANDDOWN,      GROUP_ENT_PACKAGE_SIT },
+	{ STATE_STANDDOWN, GROUP_ENT_PACKAGE_SIT },
 	{ STATE_ENDSTATES, "" }
 };
 
 AIStateDef monkeystone[] = {
-	{ STATE_STANDDOWN,      GROUP_ENT_MONKEYSTONE_SIT },
+	{ STATE_STANDDOWN, GROUP_ENT_MONKEYSTONE_SIT },
 	{ STATE_ENDSTATES, "" }
 };
 
@@ -958,25 +958,24 @@ AI::AI() {
 }
 
 AI::~AI() {
-	for (uint i = 0; i < _ents->size(); i++) {
+	for (uint i = 0; i < _ents->size(); i++)
 		delete _ents->operator[](i);
-	}
 	delete _ents;
-	for (uint i = 0; i < _floats->size(); i++) {
+
+	for (uint i = 0; i < _floats->size(); i++)
 		delete _floats->operator[](i);
-	}
 	delete _floats;
-	for (uint i = 0; i < _arrowPaths->size(); i++) {
+
+	for (uint i = 0; i < _arrowPaths->size(); i++)
 		delete _arrowPaths->operator[](i);
-	}
 	delete _arrowPaths;
-	for (uint i = 0; i < _triggerList->size(); i++) {
+
+	for (uint i = 0; i < _triggerList->size(); i++)
 		delete _triggerList->operator[](i);
-	}
 	delete _triggerList;
-	for (uint i = 0; i < _hereList->size(); i++) {
+
+	for (uint i = 0; i < _hereList->size(); i++)
 		delete _hereList->operator[](i);
-	}
 	delete _hereList;
 
 	memset(&_inventory, 0, sizeof(InvEnt) * kMaxInventory);
@@ -1009,7 +1008,6 @@ AI::~AI() {
 }
 
 bool AI::init() {
-
 	_debugQMark = g_hdb->_gfx->loadIcon("icon_question_mark");
 
 	// Clear Waypoint list and load Waypoint graphics
@@ -1245,7 +1243,6 @@ void AI::restartSystem() {
 	// Clear Cinematic System
 	_cineActive = _cameraLock = _playerLock = _cineAborted = false;
 
-	int i;
 	if (_icepSnowballGfxDown) {
 		delete _icepSnowballGfxDown;
 		_icepSnowballGfxDown = NULL;
@@ -1264,7 +1261,7 @@ void AI::restartSystem() {
 		_tileFroglickMiddleUD = NULL;
 	}
 	if (_tileFroglickWiggleUD[0]) {
-		for (i = 0; i < 3; i++) {
+		for (int i = 0; i < 3; i++) {
 			delete _tileFroglickWiggleUD[i];
 			_tileFroglickWiggleUD[i] = NULL;
 		}
@@ -1275,13 +1272,13 @@ void AI::restartSystem() {
 		_tileFroglickMiddleLR = NULL;
 	}
 	if (_tileFroglickWiggleLeft[0]) {
-		for (i = 0; i < 3; i++) {
+		for (int i = 0; i < 3; i++) {
 			delete _tileFroglickWiggleLeft[i];
 			_tileFroglickWiggleLeft[i] = NULL;
 		}
 	}
 	if (_tileFroglickWiggleRight[0]) {
-		for (i = 0; i < 3; i++) {
+		for (int i = 0; i < 3; i++) {
 			delete _tileFroglickWiggleRight[i];
 			_tileFroglickWiggleRight[i] = NULL;
 		}
@@ -1312,7 +1309,7 @@ void AI::restartSystem() {
 		delete g_hdb->_window->_pzInfo.gfxFace[1];
 		g_hdb->_window->_pzInfo.gfxFace[1] = NULL;
 
-		for (i = 0; i < 10; i++) {
+		for (int i = 0; i < 10; i++) {
 			delete g_hdb->_window->_pzInfo.gfxNumber[i];
 			g_hdb->_window->_pzInfo.gfxNumber[i] = NULL;
 		}
@@ -1321,7 +1318,7 @@ void AI::restartSystem() {
 
 	// laser beams
 	if (_gfxLaserbeamUD[0]) {
-		for (i = 0; i < 4; i++) {
+		for (int i = 0; i < 4; i++) {
 			delete _gfxLaserbeamUD[i];
 			delete _gfxLaserbeamUDTop[i];
 			delete _gfxLaserbeamUDBottom[i];
@@ -1343,8 +1340,6 @@ void AI::restartSystem() {
 }
 
 void AI::save(Common::OutSaveFile *out) {
-	int i;
-
 	// Misc Variables
 	out->writeByte(_playerInvisible);
 	out->writeByte(_playerOnIce);
@@ -1353,7 +1348,7 @@ void AI::save(Common::OutSaveFile *out) {
 	out->writeSint32LE((int)_weaponSelected);
 
 	// Save Teleporters
-	for (i = 0; i < kMaxTeleporters; i++) {
+	for (int i = 0; i < kMaxTeleporters; i++) {
 		out->writeUint16LE(_teleporters[i].x1);
 		out->writeUint16LE(_teleporters[i].y1);
 		out->writeUint16LE(_teleporters[i].x2);
@@ -1381,14 +1376,14 @@ void AI::save(Common::OutSaveFile *out) {
 	out->writeSint32LE(_numMonkeystones);
 
 	// Save Inventory
-	for (i = 0; i < kMaxInventory; i++) {
+	for (int i = 0; i < kMaxInventory; i++) {
 		out->writeUint16LE(_inventory[i].keep);
 		_inventory[i].ent.save(out);
 	}
 	out->writeUint32LE(_numInventory);
 
 	// Save Deliveries
-	for (i = 0; i < kMaxDeliveries; i++) {
+	for (int i = 0; i < kMaxDeliveries; i++) {
 		out->write(_deliveries[i].itemTextName, 32);
 		out->write(_deliveries[i].itemGfxName, 32);
 		out->write(_deliveries[i].destTextName, 32);
@@ -1398,7 +1393,7 @@ void AI::save(Common::OutSaveFile *out) {
 	out->writeUint32LE(_numDeliveries);
 
 	// Save Waypoints
-	for (i = 0; i < kMaxWaypoints; i++) {
+	for (int i = 0; i < kMaxWaypoints; i++) {
 		out->writeSint32LE(_waypoints[i].x);
 		out->writeSint32LE(_waypoints[i].y);
 		out->writeSint32LE(_waypoints[i].level);
@@ -1406,7 +1401,7 @@ void AI::save(Common::OutSaveFile *out) {
 	out->writeUint32LE(_numWaypoints);
 
 	// Save Bridges
-	for (i = 0; i < kMaxBridges; i++) {
+	for (int i = 0; i < kMaxBridges; i++) {
 		out->writeUint16LE(_bridges[i].x);
 		out->writeUint16LE(_bridges[i].y);
 		out->writeSint32LE((int)_bridges[i].dir);
@@ -1416,7 +1411,7 @@ void AI::save(Common::OutSaveFile *out) {
 	out->writeUint32LE(_numBridges);
 
 	// Save Lua List
-	for (i = 0; i < kMaxLuaEnts; i++) {
+	for (int i = 0; i < kMaxLuaEnts; i++) {
 		out->writeUint16LE(_luaList[i].x);
 		out->writeUint16LE(_luaList[i].y);
 		out->writeUint16LE(_luaList[i].value1);
@@ -1428,7 +1423,7 @@ void AI::save(Common::OutSaveFile *out) {
 	out->writeUint32LE(_numLuaList);
 
 	// Save Auto Actions
-	for (i = 0; i < kMaxAutoActions; i++) {
+	for (int i = 0; i < kMaxAutoActions; i++) {
 		out->writeUint16LE(_autoActions[i].x);
 		out->writeUint16LE(_autoActions[i].y);
 		out->writeByte(_autoActions[i].activated);
@@ -1438,7 +1433,7 @@ void AI::save(Common::OutSaveFile *out) {
 	}
 
 	// Save Actions
-	for (i = 0; i < kMaxActions; i++) {
+	for (int i = 0; i < kMaxActions; i++) {
 		out->writeUint16LE(_actions[i].x1);
 		out->writeUint16LE(_actions[i].y1);
 		out->writeUint16LE(_actions[i].x2);
@@ -1449,7 +1444,7 @@ void AI::save(Common::OutSaveFile *out) {
 	}
 
 	// Save Fairystones
-	for (i = 0; i < kMaxFairystones; i++) {
+	for (int i = 0; i < kMaxFairystones; i++) {
 		out->writeUint16LE(_fairystones[i].srcX);
 		out->writeUint16LE(_fairystones[i].srcY);
 		out->writeUint16LE(_fairystones[i].destX);
@@ -1457,7 +1452,7 @@ void AI::save(Common::OutSaveFile *out) {
 	}
 
 	// Save Callbacks
-	for (i = 0; i < kMaxCallbacks; i++) {
+	for (int i = 0; i < kMaxCallbacks; i++) {
 		out->writeSint32LE((int)_callbacks[i].type);
 		out->writeUint16LE(_callbacks[i].x);
 		out->writeUint16LE(_callbacks[i].y);
@@ -1469,7 +1464,7 @@ void AI::save(Common::OutSaveFile *out) {
 
 	// Save AnimTargets
 	out->writeUint32LE(_animTargets.size());
-	for (i = 0; (uint)i < _animTargets.size(); i++) {
+	for (int i = 0; (uint)i < _animTargets.size(); i++) {
 		out->writeUint16LE(_animTargets[i]->x);
 		out->writeUint16LE(_animTargets[i]->y);
 		out->writeUint16LE(_animTargets[i]->start);
@@ -1483,7 +1478,7 @@ void AI::save(Common::OutSaveFile *out) {
 
 	// Save ArrowPaths
 	out->writeUint32LE(_arrowPaths->size());
-	for (i = 0; (uint)i < _arrowPaths->size(); i++) {
+	for (int i = 0; (uint)i < _arrowPaths->size(); i++) {
 		out->writeUint16LE(_arrowPaths->operator[](i)->type);
 		out->writeSint32LE((int)_arrowPaths->operator[](i)->dir);
 		out->writeUint16LE(_arrowPaths->operator[](i)->tileX);
@@ -1492,7 +1487,7 @@ void AI::save(Common::OutSaveFile *out) {
 
 	// Save HereT List
 	out->writeUint32LE(_hereList->size());
-	for (i = 0; (uint)i < _hereList->size(); i++) {
+	for (int i = 0; (uint)i < _hereList->size(); i++) {
 		out->writeUint16LE(_hereList->operator[](i)->x);
 		out->writeUint16LE(_hereList->operator[](i)->y);
 		out->write(_hereList->operator[](i)->entName, 32);
@@ -1500,7 +1495,7 @@ void AI::save(Common::OutSaveFile *out) {
 
 	// Save Triggers
 	out->writeUint32LE(_triggerList->size());
-	for (i = 0; (uint)i < _triggerList->size(); i++) {
+	for (int i = 0; (uint)i < _triggerList->size(); i++) {
 		out->write(_triggerList->operator[](i)->id, 32);
 		out->writeUint16LE(_triggerList->operator[](i)->x);
 		out->writeUint16LE(_triggerList->operator[](i)->y);
@@ -1510,28 +1505,22 @@ void AI::save(Common::OutSaveFile *out) {
 		out->write(_triggerList->operator[](i)->luaFuncUse, 32);
 	}
 
-	AIEntity *e;
-
 	// Save Floats
 	out->writeUint32LE(_floats->size());
-	for (i = 0; (uint)i < _floats->size(); i++) {
-		e = _floats->operator[](i);
-
+	for (int i = 0; (uint)i < _floats->size(); i++) {
+		AIEntity *e = _floats->operator[](i);
 		e->save(out);
 	}
 
 	// Save Ents
 	out->writeUint32LE(_ents->size());
-	for (i = 0; (uint)i < _ents->size(); i++) {
-		e = _ents->operator[](i);
-
+	for (int i = 0; (uint)i < _ents->size(); i++) {
+		AIEntity *e = _ents->operator[](i);
 		e->save(out);
 	}
 }
 
 void AI::loadSaveFile(Common::InSaveFile *in) {
-	int i;
-
 	// Clean everything out
 	restartSystem();
 
@@ -1543,7 +1532,7 @@ void AI::loadSaveFile(Common::InSaveFile *in) {
 	_weaponSelected = (AIType)in->readSint32LE();
 
 	// Load Teleporters
-	for (i = 0; i < kMaxTeleporters; i++) {
+	for (int i = 0; i < kMaxTeleporters; i++) {
 		_teleporters[i].x1 = in->readUint16LE();
 		_teleporters[i].y1 = in->readUint16LE();
 		_teleporters[i].x2 = in->readUint16LE();
@@ -1571,14 +1560,14 @@ void AI::loadSaveFile(Common::InSaveFile *in) {
 	_numMonkeystones = in->readSint32LE();
 
 	// Load Inventory
-	for (i = 0; i < kMaxInventory; i++) {
+	for (int i = 0; i < kMaxInventory; i++) {
 		_inventory[i].keep = in->readUint16LE();
 		_inventory[i].ent.load(in);
 	}
 	_numInventory = in->readUint32LE();
 
 	// Load Deliveries
-	for (i = 0; i < kMaxDeliveries; i++) {
+	for (int i = 0; i < kMaxDeliveries; i++) {
 		in->read(_deliveries[i].itemTextName, 32);
 		in->read(_deliveries[i].itemGfxName, 32);
 		in->read(_deliveries[i].destTextName, 32);
@@ -1588,7 +1577,7 @@ void AI::loadSaveFile(Common::InSaveFile *in) {
 	_numDeliveries = in->readUint32LE();
 
 	// Load Waypoints
-	for (i = 0; i < kMaxWaypoints; i++) {
+	for (int i = 0; i < kMaxWaypoints; i++) {
 		_waypoints[i].x = in->readSint32LE();
 		_waypoints[i].y = in->readSint32LE();
 		_waypoints[i].level = in->readSint32LE();
@@ -1596,7 +1585,7 @@ void AI::loadSaveFile(Common::InSaveFile *in) {
 	_numWaypoints = in->readUint32LE();
 
 	// Load Bridges
-	for (i = 0; i < kMaxBridges; i++) {
+	for (int i = 0; i < kMaxBridges; i++) {
 		_bridges[i].x = in->readUint16LE();
 		_bridges[i].y = in->readUint16LE();
 		_bridges[i].dir = (AIDir)in->readSint32LE();
@@ -1606,7 +1595,7 @@ void AI::loadSaveFile(Common::InSaveFile *in) {
 	_numBridges = in->readUint32LE();
 
 	// Load Lua List
-	for (i = 0; i < kMaxLuaEnts; i++) {
+	for (int i = 0; i < kMaxLuaEnts; i++) {
 		_luaList[i].x = in->readUint16LE();
 		_luaList[i].y = in->readUint16LE();
 		_luaList[i].value1 = in->readUint16LE();
@@ -1618,7 +1607,7 @@ void AI::loadSaveFile(Common::InSaveFile *in) {
 	_numLuaList = in->readUint32LE();
 
 	// Load Auto Actions
-	for (i = 0; i < kMaxAutoActions; i++) {
+	for (int i = 0; i < kMaxAutoActions; i++) {
 		_autoActions[i].x = in->readUint16LE();
 		_autoActions[i].y = in->readUint16LE();
 		_autoActions[i].activated = in->readByte();
@@ -1628,7 +1617,7 @@ void AI::loadSaveFile(Common::InSaveFile *in) {
 	}
 
 	// Load Actions
-	for (i = 0; i < kMaxActions; i++) {
+	for (int i = 0; i < kMaxActions; i++) {
 		_actions[i].x1 = in->readUint16LE();
 		_actions[i].y1 = in->readUint16LE();
 		_actions[i].x2 = in->readUint16LE();
@@ -1639,7 +1628,7 @@ void AI::loadSaveFile(Common::InSaveFile *in) {
 	}
 
 	// Load Fairystones
-	for (i = 0; i < kMaxFairystones; i++) {
+	for (int i = 0; i < kMaxFairystones; i++) {
 		_fairystones[i].srcX = in->readUint16LE();
 		_fairystones[i].srcY = in->readUint16LE();
 		_fairystones[i].destX = in->readUint16LE();
@@ -1647,7 +1636,7 @@ void AI::loadSaveFile(Common::InSaveFile *in) {
 	}
 
 	// Load Callbacks
-	for (i = 0; i < kMaxCallbacks; i++) {
+	for (int i = 0; i < kMaxCallbacks; i++) {
 		_callbacks[i].type = (CallbackType)in->readSint32LE();
 		_callbacks[i].x = in->readUint16LE();
 		_callbacks[i].y = in->readUint16LE();
@@ -1658,7 +1647,7 @@ void AI::loadSaveFile(Common::InSaveFile *in) {
 	_gatePuddles = in->readSint32LE();
 
 	// Cache Gfx for Panic Zone, if needed
-	for (i = 0; i < _numTeleporters; i++)
+	for (int i = 0; i < _numTeleporters; i++)
 		if (((_teleporters[i].anim1 == 2) ||
 			 (_teleporters[i].anim2 == 2)) &&
 			!g_hdb->_window->_pzInfo.gfxPanic) {
@@ -1667,7 +1656,7 @@ void AI::loadSaveFile(Common::InSaveFile *in) {
 		}
 
 	// Cache Graphics for Inventory and Deliveries
-	for (i = 0; i < _numInventory; i++) {
+	for (int i = 0; i < _numInventory; i++) {
 		AIEntity *temp = &_inventory[i].ent;
 
 		// Clear out all ptrs in entity before writing out
@@ -1689,7 +1678,7 @@ void AI::loadSaveFile(Common::InSaveFile *in) {
 		cacheEntGfx(temp, false);
 	}
 
-	for (i = 0; i < _numDeliveries; i++) {
+	for (int i = 0; i < _numDeliveries; i++) {
 		_deliveries[i].itemGfx = g_hdb->_gfx->getTileGfx(_deliveries[i].itemGfxName, -1);
 		_deliveries[i].destGfx = g_hdb->_gfx->getTileGfx(_deliveries[i].destGfxName, -1);
 	}
@@ -1717,7 +1706,7 @@ void AI::loadSaveFile(Common::InSaveFile *in) {
 	// Load ArrowPaths
 
 	uint32 arrowPathSize = in->readUint32LE();
-	for (i = 0; (uint)i < arrowPathSize; i++) {
+	for (int i = 0; (uint)i < arrowPathSize; i++) {
 		ArrowPath *arrowPath = new ArrowPath;
 
 		arrowPath->type = in->readUint16LE();
@@ -1742,7 +1731,7 @@ void AI::loadSaveFile(Common::InSaveFile *in) {
 
 	// Load Triggers
 	uint32 tsize = in->readUint32LE();
-	for (i = 0; (uint)i < tsize; i++) {
+	for (int i = 0; (uint)i < tsize; i++) {
 		Trigger *t = new Trigger;
 
 		in->read(t->id, 32);
@@ -1756,12 +1745,10 @@ void AI::loadSaveFile(Common::InSaveFile *in) {
 		_triggerList->push_back(t);
 	}
 
-	AIEntity *e;
-
 	// Load Floats
 	uint32 fsize = in->readUint32LE();
-	for (i = 0; (uint)i < fsize; i++) {
-		e = new AIEntity;
+	for (int i = 0; (uint)i < fsize; i++) {
+		AIEntity *e = new AIEntity;
 
 		e->load(in);
 
@@ -1774,8 +1761,8 @@ void AI::loadSaveFile(Common::InSaveFile *in) {
 
 	// Load Ents
 	uint32 esize = in->readUint32LE();
-	for (i = 0; (uint)i < esize; i++) {
-		e = new AIEntity;
+	for (int i = 0; (uint)i < esize; i++) {
+		AIEntity *e = new AIEntity;
 
 		e->load(in);
 
