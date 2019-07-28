@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2019-07-28 16:23+0200\n"
-"PO-Revision-Date: 2019-07-27 15:12+0000\n"
+"PO-Revision-Date: 2019-07-28 14:30+0000\n"
 "Last-Translator: Lothar Serra Mari <serra@scummvm.org>\n"
 "Language-Team: German <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/de/>\n"
@@ -5155,11 +5155,11 @@ msgid "Use the floppy version's intro (CD version only)"
 msgstr "Verwendet den Vorspann der Diskettenversion (nur bei CD-Version)"
 
 #: engines/supernova/supernova.cpp:190
-#, fuzzy, c-format
+#, c-format
 msgid "Unable to locate the text for %s language in engine data file."
 msgstr ""
-"Der Text für die Sprache %s konnte nicht in der Engine-Datendatei '%s' "
-"gefunden werden."
+"Der Text für die Sprache %s konnte nicht in der Engine-Datendatei gefunden "
+"werden."
 
 #: engines/supernova/supernova.cpp:466
 #, c-format
@@ -5172,12 +5172,14 @@ msgstr ""
 #: engines/supernova/supernova.cpp:476
 #, c-format
 msgid "Unable to find block for part %d"
-msgstr ""
+msgstr "Block für Abschnitt %d konnte nicht gefunden werden"
 
 #: engines/supernova/supernova.cpp:518
-#, fuzzy, c-format
+#, c-format
 msgid "Unable to find '%s' in game folder or the engine data file."
-msgstr "'%s' konnte im Spiel-Ordner nicht gefunden werden."
+msgstr ""
+"'%s' konnte weder im Spiel-Ordner noch in der Engine-Datendatei gefunden "
+"werden."
 
 #: engines/sword1/animation.cpp:524
 #, c-format
