@@ -15,6 +15,7 @@ Programmcodes finden Sie auf Englisch unter:
    - Unterstützung für Might and Magic - World of Xeen hinzugefügt.
    - Unterstützung für Might and Magic - World of Xeen 2 CD Talkie (mit Sprachausgabe) hinzugefügt.
    - Unterstützung für Might and Magic - Swords of Xeen hinzugefügt.
+   - Unterstützung für Quest for Glory: Shadows of Darkness hinzugefügt.
    - Unterstützung für Versailles 1685 hinzugefügt.
 
  Neue Portierungen:
