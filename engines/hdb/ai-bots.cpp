@@ -935,7 +935,7 @@ void aiMaintBotAction(AIEntity *e) {
 		if (!e->value2)
 			switch (e->sequence) {
 			case 50:
-				if (e->onScreen && !e->int1) {
+				if (e->onScreen && !e->int1 && !g_hdb->isDemo()) {
 					if (g_hdb->_rnd->getRandomNumber(1))
 						g_hdb->_sound->playSound(SND_MBOT_HMMM2);
 					else
@@ -994,7 +994,7 @@ void aiMaintBotAction(AIEntity *e) {
 			switch (e->sequence) {
 			// HMM
 			case 50:
-				if (e->onScreen && !e->int1)
+				if (e->onScreen && !e->int1 && !g_hdb->isDemo())
 					g_hdb->_sound->playSound(SND_MBOT_HMMM);
 				break;
 			// Look Right
@@ -1009,7 +1009,7 @@ void aiMaintBotAction(AIEntity *e) {
 				break;
 			// HMM2
 			case 25:
-				if (e->onScreen && !e->int1)
+				if (e->onScreen && !e->int1 && !g_hdb->isDemo())
 					g_hdb->_sound->playSound(SND_MBOT_HMMM2);
 				break;
 			// Decide direction and GO
@@ -1017,7 +1017,7 @@ void aiMaintBotAction(AIEntity *e) {
 				int dir = (g_hdb->_rnd->getRandomNumber(3)) + 1;
 				e->dir = dirList[dir];
 				g_hdb->_ai->findPath(e);
-				if (e->onScreen)
+				if (e->onScreen && !g_hdb->isDemo())
 					g_hdb->_sound->playSound(whistles[g_hdb->_rnd->getRandomNumber(2)]);
 				break;
 			}
@@ -1030,7 +1030,8 @@ void aiMaintBotAction(AIEntity *e) {
 		g_hdb->_ai->animateEntity(e);
 		if (hitPlayer(e->x, e->y)) {
 			g_hdb->_ai->killPlayer(DEATH_GRABBED);
-			g_hdb->_sound->playSound(SND_MBOT_DEATH);
+			if (!g_hdb->isDemo())
+				g_hdb->_sound->playSound(SND_MBOT_DEATH);
 		}
 	} else {
 		// Check if there's an arrow UNDER the bot, and if its RED
@@ -1049,7 +1050,8 @@ void aiMaintBotAction(AIEntity *e) {
 				return;
 			} else if (ar->type == 1) {
 				g_hdb->_ai->findPath(e);
-				g_hdb->_sound->playSound(whistles[g_hdb->_rnd->getRandomNumber(2)]);
+				if (!g_hdb->isDemo())
+					g_hdb->_sound->playSound(whistles[g_hdb->_rnd->getRandomNumber(2)]);
 			} else {
 				e->sequence = 64;
 				e->dir2 = e->dir;

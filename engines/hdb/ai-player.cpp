@@ -761,7 +761,10 @@ void aiBarrelExplode(AIEntity *e) {
 	e->state = STATE_EXPLODING;
 	e->animDelay = e->animCycle;
 	e->animFrame = 0;
-	g_hdb->_sound->playSound(SND_BARREL_EXPLODE);
+
+	if (!g_hdb->isDemo())
+		g_hdb->_sound->playSound(SND_BARREL_EXPLODE);
+
 	g_hdb->_map->setBoomBarrel(e->tileX, e->tileY, 0);
 }
 
@@ -1052,6 +1055,9 @@ void aiSlugAttackDraw(AIEntity *e, int mx, int my) {
 }
 
 void aiSlugAttackInit(AIEntity *e) {
+	if (g_hdb->isDemo())
+		return;
+
 	int xv[5] = {9, 0, 0, -1, 1}, yv[5] = {9, -1, 1, 0, 0};
 	e->moveSpeed = kPlayerMoveSpeed << 1;
 	g_hdb->_ai->setEntityGoal(e, e->tileX + xv[e->dir], e->tileY + yv[e->dir]);
@@ -1416,7 +1422,10 @@ void aiMagicEggUse(AIEntity *e) {
 		if (spawned) {
 			g_hdb->_ai->addAnimateTarget(e->tileX * kTileWidth,
 			e->tileY * kTileHeight, 0, 3, ANIM_NORMAL, false, false, GROUP_EXPLOSION_BOOM_SIT);
-			g_hdb->_sound->playSound(SND_BARREL_EXPLODE);
+
+			if (!g_hdb->isDemo())
+				g_hdb->_sound->playSound(SND_BARREL_EXPLODE);
+
 			g_hdb->_ai->removeEntity(e);
 		}
 	}
