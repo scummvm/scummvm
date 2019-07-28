@@ -32,6 +32,7 @@
 #include "backends/platform/sdl/macosx/macosx.h"
 #include "backends/updates/macosx/macosx-updates.h"
 #include "backends/taskbar/macosx/macosx-taskbar.h"
+#include "backends/text-to-speech/macosx/macosx-text-to-speech.h"
 #include "backends/dialogs/macosx/macosx-dialogs.h"
 #include "backends/platform/sdl/macosx/macosx_wrapper.h"
 #include "backends/fs/posix/posix-fs.h"
@@ -84,6 +85,11 @@ void OSystem_MacOSX::initBackend() {
 #ifdef USE_SPARKLE
 	// Initialize updates manager
 	_updateManager = new MacOSXUpdateManager();
+#endif
+
+#ifdef USE_MACOSX_TTS
+	// Initialize Text to Speech manager
+	_textToSpeechManager = new MacOSXTextToSpeechManager();
 #endif
 
 	// Invoke parent implementation of this method
