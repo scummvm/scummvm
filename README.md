@@ -2704,7 +2704,7 @@ Sierra games using the SCI engine add the following non-standard keywords:
 
 Blade Runner adds the following non-standard keywords:
     shorty             bool     If true, game will shrink the actors and make
-                                their voices high pitched"
+                                their voices high pitched
     sitcom             bool     If true, game will add laughter after actor's
                                 line or narration
 
