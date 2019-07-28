@@ -23,6 +23,11 @@
 #ifndef SUPERNOVA_MSN_DEF_H
 #define SUPERNOVA_MSN_DEF_H
 
+// Avoid error on expansion of macro switch in the ObjectID enum below
+#ifdef SWITCH
+#undef SWITCH
+#endif
+
 #include "common/scummsys.h"
 
 namespace Supernova {
