@@ -5,11 +5,16 @@ For a more comprehensive changelog of the latest experimental code, see:
 
  New games:
    - Added support for Blade Runner.
+   - Added support for Hoyle Bridge.
+   - Added support for Hoyle Children's Collection.
+   - Added support for Hoyle Classic Games.
+   - Added support for Hoyle Solitaire.
    - Added support for Might and Magic IV - Clouds of Xeen.
    - Added support for Might and Magic V - Darkside of Xeen.
    - Added support for Might and Magic - World of Xeen.
    - Added support for Might and Magic - World of Xeen 2 CD Talkie.
    - Added support for Might and Magic - Swords of Xeen.
+   - Added support for Quest for Glory: Shadows of Darkness.
    - Added support for Versailles 1685.
 
  New ports:
