@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2019-07-18 10:16+0200\n"
+"POT-Creation-Date: 2019-07-28 16:23+0200\n"
 "PO-Revision-Date: 2018-08-06 21:35+0000\n"
 "Last-Translator: Fiodar <fedor_qd@mail.ru>\n"
 "Language-Team: Belarusian <https://translations.scummvm.org/projects/scummvm/"
@@ -2974,7 +2974,7 @@ msgstr "Правяраю абнаўленні..."
 #: engines/access/resources.cpp:44 engines/drascula/drascula.cpp:971
 #: engines/hugo/hugo.cpp:437 engines/lure/lure.cpp:64
 #: engines/mortevielle/mortevielle.cpp:306 engines/sky/compact.cpp:131
-#: engines/supernova/supernova.cpp:178 engines/teenagent/resources.cpp:97
+#: engines/supernova/supernova.cpp:454 engines/teenagent/resources.cpp:97
 #: engines/tony/tony.cpp:198 engines/toon/toon.cpp:4926
 #, c-format
 msgid "Unable to locate the '%s' engine data file."
@@ -2982,7 +2982,7 @@ msgstr "Не атрымалася знайсці файл рухавічка %s."
 
 #: engines/access/resources.cpp:52 engines/drascula/drascula.cpp:985
 #: engines/hugo/hugo.cpp:448 engines/lure/lure.cpp:73
-#: engines/mortevielle/mortevielle.cpp:314 engines/supernova/supernova.cpp:187
+#: engines/mortevielle/mortevielle.cpp:314 engines/supernova/supernova.cpp:459
 #: engines/tony/tony.cpp:210 engines/toon/toon.cpp:4938
 #, c-format
 msgid "The '%s' engine data file is corrupt."
@@ -5087,20 +5087,25 @@ msgstr "Уступ з дыскет"
 msgid "Use the floppy version's intro (CD version only)"
 msgstr "Выкарыстоўваць уступ з гнуткіх дыскаў (толькі для CD-версіі гульні)"
 
-#: engines/supernova/supernova.cpp:194
+#: engines/supernova/supernova.cpp:190
+#, fuzzy, c-format
+msgid "Unable to locate the text for %s language in engine data file."
+msgstr "Не атрымалася знайсці тэкст для %s мовы ў %s файле дадзеных."
+
+#: engines/supernova/supernova.cpp:466
 #, c-format
 msgid ""
 "Incorrect version of the '%s' engine data file found. Expected %d but got %d."
 msgstr "Няслушная версія файла дадзеных %s. Чакалася %d, але знойдзена %d."
 
-#: engines/supernova/supernova.cpp:220
+#: engines/supernova/supernova.cpp:476
 #, c-format
-msgid "Unable to locate the text for %s language in '%s' engine data file."
-msgstr "Не атрымалася знайсці тэкст для %s мовы ў %s файле дадзеных."
+msgid "Unable to find block for part %d"
+msgstr ""
 
-#: engines/supernova/supernova.cpp:441
+#: engines/supernova/supernova.cpp:518
 #, fuzzy, c-format
-msgid "Unable to find '%s' in game folder."
+msgid "Unable to find '%s' in game folder or the engine data file."
 msgstr "Не атрымалася знайсці файл рухавічка %s."
 
 #: engines/sword1/animation.cpp:524

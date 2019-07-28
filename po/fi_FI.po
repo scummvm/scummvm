@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2019-07-18 10:16+0200\n"
+"POT-Creation-Date: 2019-07-28 16:23+0200\n"
 "PO-Revision-Date: 2019-07-15 17:29+0000\n"
 "Last-Translator: jepael <kermespersialainen@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
@@ -2947,7 +2947,7 @@ msgstr "Tarkista päivitykset..."
 #: engines/access/resources.cpp:44 engines/drascula/drascula.cpp:971
 #: engines/hugo/hugo.cpp:437 engines/lure/lure.cpp:64
 #: engines/mortevielle/mortevielle.cpp:306 engines/sky/compact.cpp:131
-#: engines/supernova/supernova.cpp:178 engines/teenagent/resources.cpp:97
+#: engines/supernova/supernova.cpp:454 engines/teenagent/resources.cpp:97
 #: engines/tony/tony.cpp:198 engines/toon/toon.cpp:4926
 #, c-format
 msgid "Unable to locate the '%s' engine data file."
@@ -2955,7 +2955,7 @@ msgstr "\"%s\" pelimoottorin datatiedostoa ei löydetty."
 
 #: engines/access/resources.cpp:52 engines/drascula/drascula.cpp:985
 #: engines/hugo/hugo.cpp:448 engines/lure/lure.cpp:73
-#: engines/mortevielle/mortevielle.cpp:314 engines/supernova/supernova.cpp:187
+#: engines/mortevielle/mortevielle.cpp:314 engines/supernova/supernova.cpp:459
 #: engines/tony/tony.cpp:210 engines/toon/toon.cpp:4938
 #, c-format
 msgid "The '%s' engine data file is corrupt."
@@ -5082,7 +5082,12 @@ msgstr "Levykeversion intro"
 msgid "Use the floppy version's intro (CD version only)"
 msgstr "Käytä levykeversion introa (vain CD versiossa)"
 
-#: engines/supernova/supernova.cpp:194
+#: engines/supernova/supernova.cpp:190
+#, fuzzy, c-format
+msgid "Unable to locate the text for %s language in engine data file."
+msgstr "Kielen %s tekstejä ei löydetty tiedostosta '%s'."
+
+#: engines/supernova/supernova.cpp:466
 #, c-format
 msgid ""
 "Incorrect version of the '%s' engine data file found. Expected %d but got %d."
@@ -5090,14 +5095,14 @@ msgstr ""
 "Pelimoottorin \"%s\" datatiedostosta löytyi väärä versio. Odotettu versio "
 "%d, löytynyt versio %d."
 
-#: engines/supernova/supernova.cpp:220
+#: engines/supernova/supernova.cpp:476
 #, c-format
-msgid "Unable to locate the text for %s language in '%s' engine data file."
-msgstr "Kielen %s tekstejä ei löydetty tiedostosta '%s'."
+msgid "Unable to find block for part %d"
+msgstr ""
 
-#: engines/supernova/supernova.cpp:441
-#, c-format
-msgid "Unable to find '%s' in game folder."
+#: engines/supernova/supernova.cpp:518
+#, fuzzy, c-format
+msgid "Unable to find '%s' in game folder or the engine data file."
 msgstr "Tiedostoa \"%s\" ei löydetty pelin kansiosta."
 
 #: engines/sword1/animation.cpp:524
