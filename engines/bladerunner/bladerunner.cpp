@@ -343,6 +343,11 @@ Common::Error BladeRunnerEngine::run() {
 		// additional code for gracefully handling end-game after _endCredits->show()
 		_gameOver = false;
 		_gameIsRunning = true;
+		// reset ammo amounts
+		_settings->reset();
+		// need to clear kFlagKIAPrivacyAddon to remove Bob's Privacy Addon for KIA
+		// so it won't appear here after end credits
+		_gameFlags->reset(kFlagKIAPrivacyAddon);
 		if (!playerHasControl()) {
 			// force a player gains control
 			playerGainsControl(true);
@@ -1959,6 +1964,12 @@ void BladeRunnerEngine::playerDied() {
 
 #if BLADERUNNER_ORIGINAL_BUGS
 #else
+	// reset ammo amounts
+	_settings->reset();
+	// need to clear kFlagKIAPrivacyAddon to remove Bob's Privacy Addon for KIA
+	// so it won't appear here after end credits
+	_gameFlags->reset(kFlagKIAPrivacyAddon);
+
 	_ambientSounds->removeAllNonLoopingSounds(true);
 	_ambientSounds->removeAllLoopingSounds(4);
 	_music->stop(4);
