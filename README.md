@@ -712,7 +712,7 @@ The most up to date list of Engine data files can be found in our [source code r
 ### 3.6) Blade Runner notes
 
 Supported versions are English (both CD and DVD), French, German,
-Italian, Russian (by Fargus media) and Spanish. Other unofficial
+Italian, Russian (by Fargus Multimedia) and Spanish. Other unofficial
 versions exists but they are based on the English version.
 
 All *.mix, *.tlk and *.dat files are needed from all 4 CDs/DVD.
