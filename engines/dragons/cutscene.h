@@ -50,8 +50,12 @@ private:
 	Actor *DAT_80072e04;
 
 	uint16 DAT_80063514; //flags
+
+	byte *_palettes;
 public:
 	CutScene(DragonsEngine *vm);
+
+	virtual ~CutScene();
 
 	void scene1();
 	void diamondScene();
@@ -67,6 +71,7 @@ private:
 	uint16 FUN_8003dab8(uint32 textId,uint16 x,uint16 y,uint16 param_4,int16 param_5);
 	void cursorInventoryClearFlag400();
 	void changeBackgroundPosition(uint16 newPosition, int16 sParm2);
+	void loadPalettes();
 };
 
 } // End of namespace Dragons

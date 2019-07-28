@@ -436,4 +436,8 @@ void Scene::setFgLayerPriority(uint8 newPriority) {
 	_stage->setFgLayerPriority(newPriority);
 }
 
+void Scene::setStagePalette(byte *newPalette) {
+	_stage->setPalette(newPalette);
+}
+
 } // End of namespace Dragons

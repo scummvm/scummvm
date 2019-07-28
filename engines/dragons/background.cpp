@@ -85,15 +85,23 @@ void PriorityLayer::restoreTileMap(int16 x, int16 y, int16 w, int16 h) {
 }
 
 Background::Background() : _priorityLayer(0), _points1(0), _points2(0), _data(0) {
-	_layer[0] = NULL;
-	_layer[1] = NULL;
-	_layer[2] = NULL;
+	_layerSurface[0] = NULL;
+	_layerSurface[1] = NULL;
+	_layerSurface[2] = NULL;
 }
 
 Background::~Background() {
 	if(_data) {
 		delete _data;
 	}
+
+	for (int i = 0; i < 3; i++) {
+		if (_layerSurface[i]) {
+			_layerSurface[i]->free();
+			delete _layerSurface[i];
+		}
+	}
+
 }
 
 bool Background::load(byte *dataStart, uint32 size) {
@@ -143,7 +151,8 @@ bool Background::load(byte *dataStart, uint32 size) {
 	debug("tileIndexOffset: %d", _tileMap[0].tileIndexOffset);
 
 	for(int i = 0; i < 3; i++) {
-		_layer[i] = loadGfxLayer(_tileMap[i], _tileDataOffset);
+		_layerSurface[i] = initGfxLayer(_tileMap[i]);
+		loadGfxLayer(_layerSurface[i], _tileMap[i], _tileDataOffset);
 	}
 
 	layerPriority[0] = 1;
@@ -164,11 +173,14 @@ Common::Point *Background::loadPoints(Common::SeekableReadStream &stream) {
 	return points;
 }
 
-Graphics::Surface *Background::loadGfxLayer(TileMap &tileMap, byte *tiles) {
+Graphics::Surface *Background::initGfxLayer(TileMap &tileMap) {
 	Graphics::Surface *surface = new Graphics::Surface();
 	Graphics::PixelFormat pixelFormat16(2, 5, 5, 5, 1, 10, 5, 0, 15); //TODO move this to a better location.
 	surface->create(tileMap.w * TILE_WIDTH, tileMap.h * TILE_HEIGHT, pixelFormat16);
+	return surface;
+}
 
+void Background::loadGfxLayer(Graphics::Surface *surface, TileMap &tileMap, byte *tiles) {
 	for(int y = 0; y < tileMap.h; y++) {
 		for(int x = 0; x < tileMap.w; x++) {
 			uint16 idx = READ_LE_UINT16(&tileMap.map[(y * tileMap.w + x) * 2]) + tileMap.tileIndexOffset;
@@ -176,7 +188,6 @@ Graphics::Surface *Background::loadGfxLayer(TileMap &tileMap, byte *tiles) {
 			drawTileToSurface(surface, _palette, tiles + idx * 0x100, x * TILE_WIDTH, y * TILE_HEIGHT);
 		}
 	}
-	return surface;
 }
 
 void drawTileToSurface(Graphics::Surface *surface, byte *palette, byte *tile, uint32 x, uint32 y) {
@@ -198,13 +209,13 @@ Common::Point Background::getPoint2(uint32 pointIndex) {
 }
 
 uint16 Background::getWidth() {
-	assert (_layer[0]);
-	return _layer[0]->w;
+	assert (_layerSurface[0]);
+	return _layerSurface[0]->w;
 }
 
 uint16 Background::getHeight() {
-	assert (_layer[0]);
-	return _layer[0]->h;
+	assert (_layerSurface[0]);
+	return _layerSurface[0]->h;
 }
 
 int16 Background::getPriorityAtPoint(Common::Point pos) {
@@ -219,7 +230,7 @@ void Background::overlayImage(uint16 layerNum, byte *data, int16 x, int16 y, int
 	for(int i = 0; i < h; i++ ) {
 		for(int j = 0; j < w; j++ ) {
 			int16 idx = READ_LE_UINT16(data) + _tileMap[layerNum].tileIndexOffset;
-			drawTileToSurface(_layer[layerNum],
+			drawTileToSurface(_layerSurface[layerNum],
 					_palette,
 					_tileDataOffset + idx * 0x100,
 					(j + x) * TILE_WIDTH,
@@ -236,7 +247,7 @@ void Background::restoreTiles(uint16 layerNum, int16 x, int16 y, int16 w, int16 
 		for(int x = 0; x < tmw; x++) {
 			uint16 idx = READ_LE_UINT16(&_tileMap[layerNum].map[(y * _tileMap[layerNum].w + x) * 2]) + _tileMap[layerNum].tileIndexOffset;
 			//debug("tileIdx: %d", idx);
-			drawTileToSurface(_layer[layerNum], _palette, _tileDataOffset + idx * 0x100, x * TILE_WIDTH, y * TILE_HEIGHT);
+			drawTileToSurface(_layerSurface[layerNum], _palette, _tileDataOffset + idx * 0x100, x * TILE_WIDTH, y * TILE_HEIGHT);
 		}
 	}
 }
@@ -247,6 +258,13 @@ void Background::overlayPriorityTileMap(byte *data, int16 x, int16 y, int16 w, i
 
 void Background::restorePriorityTileMap(int16 x, int16 y, int16 w, int16 h) {
 	_priorityLayer->restoreTileMap(x, y, w, h);
+}
+
+void Background::setPalette(byte *newPalette) {
+	memcpy(_palette, newPalette, 512);
+	for (int i = 0; i < 3; i++) {
+		loadGfxLayer(_layerSurface[i], _tileMap[i], _tileDataOffset);
+	}
 }
 
 BackgroundResourceLoader::BackgroundResourceLoader(BigfileArchive *bigFileArchive, DragonRMS *dragonRMS) : _bigFileArchive(

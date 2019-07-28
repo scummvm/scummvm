@@ -105,7 +105,6 @@ struct opCode1AStruct {
 class BigfileArchive;
 class BackgroundResourceLoader;
 class Cursor;
-class CutScene;
 class DragonFLG;
 class DragonIMG;
 class DragonOBD;
@@ -139,7 +138,6 @@ public:
 	Cursor *_cursor;
 	Talk *_talk;
 	Sound *_sound;
-	CutScene *_cutScene;
 
 	uint16 unkArray_uint16[42];
 	opCode1AStruct opCode1A_tbl[8];

@@ -58,7 +58,7 @@ private:
 	TileMap _tileMap[4];
 	PriorityLayer *_priorityLayer;
 	byte _palette[512];
-	Graphics::Surface *_layer[3];
+	Graphics::Surface *_layerSurface[3];
 	Common::Point *_points1;
 	Common::Point *_points2;
 	uint8 layerPriority[3];
@@ -70,9 +70,9 @@ public:
 	bool load(byte *dataStart, uint32 size);
 	uint16 getWidth();
 	uint16 getHeight();
-	Graphics::Surface *getBgLayer() { return _layer[0]; }
-	Graphics::Surface *getMgLayer() { return _layer[1]; }
-	Graphics::Surface *getFgLayer() { return _layer[2]; }
+	Graphics::Surface *getBgLayer() { return _layerSurface[0]; }
+	Graphics::Surface *getMgLayer() { return _layerSurface[1]; }
+	Graphics::Surface *getFgLayer() { return _layerSurface[2]; }
 	uint8 getBgLayerPriority() { return layerPriority[0]; }
 	uint8 getMgLayerPriority() { return layerPriority[1]; }
 	uint8 getFgLayerPriority() { return layerPriority[2]; }
@@ -89,10 +89,13 @@ public:
 	void restorePriorityTileMap(int16 x, int16 y, int16 w, int16 h);
 	void overlayImage(uint16 layerNum, byte *data, int16 x, int16 y, int16 w, int16 h);
 	void restoreTiles(uint16 layerNum, int16 x, int16 y, int16 w, int16 h);
+	void setPalette(byte *newPalette);
 
 private:
 	Common::Point *loadPoints(Common::SeekableReadStream &stream);
-	Graphics::Surface *loadGfxLayer(TileMap &tileMap, byte *tiles);
+	Graphics::Surface *initGfxLayer(TileMap &tileMap);
+	void loadGfxLayer(Graphics::Surface *surface, TileMap &tileMap, byte *tiles);
+
 };
 
 class PriorityLayer {

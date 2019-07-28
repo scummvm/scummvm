@@ -29,7 +29,6 @@
 #include "background.h"
 #include "bigfile.h"
 #include "cursor.h"
-#include "cutscene.h"
 #include "dragonflg.h"
 #include "dragonimg.h"
 #include "dragonini.h"
@@ -67,7 +66,6 @@ DragonsEngine::DragonsEngine(OSystem *syst) : Engine(syst) {
 	_engine = this;
 	_inventory = new Inventory(this);
 	_cursor = new Cursor(this);
-	_cutScene = new CutScene(this);
 	_talk = NULL;
 	_sound = new Sound(this);
 	_fontManager = NULL;
