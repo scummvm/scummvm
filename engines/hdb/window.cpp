@@ -1320,7 +1320,7 @@ void Window::loadPanicZoneGfx() {
 }
 
 void Window::drawPanicZone() {
-	if (!_pzInfo.active)
+	if (!_pzInfo.active || !g_hdb->isDemo())
 		return;
 
 	switch (_pzInfo.sequence) {

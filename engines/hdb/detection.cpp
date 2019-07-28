@@ -121,7 +121,7 @@ static const ADGameDescription gameDescriptions[] = {
 	},
 	{
 		"hdb",
-		"alt",
+		"Handango",
 		AD_ENTRY1s("hyperdemo.msd", "2d4457b284a940b7058b36e5706b9951", 3094241),
 		Common::EN_ANY,
 		Common::kPlatformUnknown, // PPC
