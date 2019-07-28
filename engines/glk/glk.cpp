@@ -130,7 +130,7 @@ Common::Error GlkEngine::run() {
 	} else {
 		// Check for a secondary blorb file with the same filename
 		Common::StringArray blorbFilenames;
-		Blorb::getBlorbFilenames(filename, blorbFilenames, getInterpreterType());
+		Blorb::getBlorbFilenames(filename, blorbFilenames, getInterpreterType(), getGameID());
 
 		for (uint idx = 0; idx < blorbFilenames.size(); ++idx) {
 			if (Common::File::exists(blorbFilenames[idx])) {

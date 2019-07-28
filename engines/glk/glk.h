@@ -149,6 +149,11 @@ public:
 	virtual InterpreterType getInterpreterType() const = 0;
 
 	/**
+	 * Returns the game's Id
+	 */
+	const Common::String &getGameID() const { return _gameDescription._gameId; }
+
+	/**
 	 * Returns the game's md5
 	 */
 	const Common::String &getGameMD5() const { return _gameDescription._md5; }
