@@ -4,6 +4,7 @@ For a more comprehensive changelog of the latest experimental code, see:
 #### 2.1.0 (2019-??-??)
 
  New games:
+   - Added support for Blade Runner.
    - Added support for Might and Magic IV - Clouds of Xeen.
    - Added support for Might and Magic V - Darkside of Xeen.
    - Added support for Might and Magic - World of Xeen.

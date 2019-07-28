@@ -5,6 +5,7 @@ Programmcodes finden Sie auf Englisch unter:
 #### 2.1.0 (??.??.2019)
 
  Neue Spiele:
+   - Unterstützung für Blade Runner hinzugefügt.
    - Unterstützung für Might and Magic IV - Clouds of Xeen hinzugefügt.
    - Unterstützung für Might and Magic V - Darkside of Xeen hinzugefügt.
    - Unterstützung für Might and Magic - World of Xeen hinzugefügt.
