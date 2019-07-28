@@ -67,6 +67,7 @@ public:
 	void draw();
 	bool contains(DragonINI *ini);
 	byte *getPalette();
+	void setStagePalette(byte *newPalette);
 	uint16 getSceneId();
 	void setSceneId(int16 newSceneId);
 	Common::Point getPoint(uint32 pointIndex);

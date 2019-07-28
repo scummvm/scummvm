@@ -320,11 +320,15 @@ void SpecialOpcodes::spcSetCameraXToZero() {
 }
 
 void SpecialOpcodes::spcDiamondIntroSequenceLogic() {
-	_vm->_cutScene->diamondScene();
+	CutScene *cutScene = new CutScene(_vm);
+	cutScene->diamondScene();
+	delete cutScene;
 }
 
 void SpecialOpcodes::spcLoadScene1() {
-	_vm->_cutScene->scene1();
+	CutScene *cutScene = new CutScene(_vm);
+	cutScene->scene1();
+	delete cutScene;
 }
 
 void SpecialOpcodes::spcTransitionToMap() {

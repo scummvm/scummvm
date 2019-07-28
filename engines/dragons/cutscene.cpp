@@ -22,6 +22,7 @@
 #include "cutscene.h"
 #include "dragons.h"
 #include "dragons/actor.h"
+#include "dragons/actorresource.h"
 #include "dragons/background.h"
 #include "dragons/inventory.h"
 #include "dragons/cursor.h"
@@ -32,7 +33,13 @@
 namespace Dragons {
 
 CutScene::CutScene(DragonsEngine *vm): _vm(vm) {
+	loadPalettes();
+}
 
+CutScene::~CutScene() {
+	if (_palettes) {
+		free(_palettes);
+	}
 }
 
 void CutScene::scene1() {
@@ -145,7 +152,7 @@ void CutScene::scene1() {
 																	FUN_8003c108(DAT_80072de8);
 																	FUN_8003c108(DAT_80072dec);
 																	DAT_80063514 = DAT_80063514 & 0xffbf;
-																	closeUpKnightsAtTable(); // close up of knights at table. TODO draw order not right here
+																	closeUpKnightsAtTable(); // close up of knights at table.
 																	_vm->playSound(0x8003);
 																	//playSoundFromTxtIndex(0x5b96);
 																	if (_vm->_talk->somethingTextAndSpeechAndAnimRelated(DAT_80072dec,8,4,0x5b96,0xc01) != 2) {
@@ -456,15 +463,12 @@ void CutScene::cursorInventoryClearFlag400() {
 
 void CutScene::changeBackgroundPosition(uint16 newPosition, int16 sParm2)
 {
-	//TODO handle palette changes here.
-	//undefined *puVar3;
-
 	if (newPosition == 1) {
 		_vm->_scene->setBgLayerPriority(0); //TODO investigate why this is 0 not 1
 		_vm->_scene->setMgLayerPriority(1); //TODO investigate why this is 1 not 2
 		_vm->_scene->_camera.x = sParm2 + 0x3c0;
 		_vm->_scene->setFgLayerPriority(0);
-		//load_palette_into_frame_buffer(0,&SYSTEM_PALETTE_3);
+		_vm->_scene->setStagePalette(_palettes + 2 * 512);
 		for (int i = 2; i < 0x17; i++) {
 			Actor *actor = _vm->_actorManager->getActor(i);
 			actor->x_pos += 0x3c0;
@@ -475,14 +479,14 @@ void CutScene::changeBackgroundPosition(uint16 newPosition, int16 sParm2)
 			if (newPosition != 0) {
 				return;
 			}
-			//puVar3 = &SYSTEM_PALETTE_1;
+			_vm->_scene->setStagePalette(_palettes + 0 * 512);
 			_vm->_scene->setMgLayerPriority(0);
 			_vm->_scene->setFgLayerPriority(0);
 			_vm->_scene->_camera.x = 0;
 		}
 		else {
 			if (newPosition == 2) {
-				//puVar3 = &SYSTEM_PALETTE_4;
+				_vm->_scene->setStagePalette(_palettes + 3 * 512);
 				_vm->_scene->setMgLayerPriority(2);
 				_vm->_scene->setFgLayerPriority(3);
 				_vm->_scene->_camera.x = 0;
@@ -491,14 +495,13 @@ void CutScene::changeBackgroundPosition(uint16 newPosition, int16 sParm2)
 				if (newPosition != 3) {
 					return;
 				}
-				//puVar3 = &SYSTEM_PALETTE_2;
+				_vm->_scene->setStagePalette(_palettes + 1 * 512);
 				_vm->_scene->setMgLayerPriority(2);
 				_vm->_scene->setFgLayerPriority(0);
 				_vm->_scene->_camera.x = sParm2;
 			}
 		}
 		_vm->_scene->setBgLayerPriority(1);
-		//load_palette_into_frame_buffer(0,puVar3);
 	}
 }
 
@@ -508,26 +511,24 @@ void CutScene::diamondScene() {
 	Actor *actorId_01;
 	Actor *actorId_02;
 	Actor *actorId_03;
+	byte palette[512];
 
-//	pDVar4 = dragon_ini_pointer;
 	_vm->setUnkFlags(ENGINE_UNK1_FLAG_2);
 	actorId = _vm->getINI(0x257)->actor;
 	actorId_03 = _vm->getINI(0x259)->actor;
 	actorId_01 = _vm->getINI(0x258)->actor;
 	actorId_03->setFlag(ACTOR_FLAG_100);
 	actorId_03->priorityLayer = 4;
-//	uVar3 = scrFileData_maybe;
 	actorId_00 = _vm->getINI(0x256)->actor;
-//	uVar2 = *(ushort *)((&actor_dictionary)[(uint)actors[actorId_00].﻿actorFileDictionaryIndex * 2] + 10);
 	_vm->setFlags(ENGINE_FLAG_20000);
 	actorId_02 = _vm->getINI(0x25a)->actor;
-//	iVar5 = (&actor_dictionary)[(uint)actors[actorId_00].﻿actorFileDictionaryIndex * 2];
 	if ((_vm->_talk->somethingTextAndSpeechAndAnimRelated(actorId_02,1,0,0x4294a,0x2601) != 2) && !actorId->actorSetSequenceAndWaitAllowSkip(2)) {
 		actorId->updateSequence(3);
 		if (!actorId_01->actorSetSequenceAndWaitAllowSkip(0x18)) {
 			_vm->waitForFramesAllowSkip(0x2c);
 			//TODO fade_related_calls_with_1f();
-			//TODO load_palette_into_frame_buffer(0,(uint)uVar2 + iVar5);
+			memcpy(palette, _vm->_scene->getPalette(), 512);
+			_vm->_scene->setStagePalette(actorId_00->_actorResource->getPalette());
 			_vm->_scene->_camera.x = 0x140;
 			//TODO call_fade_related_1f();
 			if (!actorId_00->actorSetSequenceAndWaitAllowSkip(0)) {
@@ -535,7 +536,7 @@ void CutScene::diamondScene() {
 				if (_vm->_talk->somethingTextAndSpeechAndAnimRelated(actorId_00,1,2,0x42a66,0x3c01) != 2) {
 					_vm->waitForFramesAllowSkip(0x13);
 					//TODO fade_related_calls_with_1f();
-					// TODO load_palette_into_frame_buffer(0,uVar3);
+					_vm->_scene->setStagePalette(palette);
 					_vm->_scene->_camera.x = 0;
 					//TODO call_fade_related_1f();
 					actorId_01->updateSequence(0x19);
@@ -560,5 +561,17 @@ void CutScene::diamondScene() {
 	_vm->clearUnkFlags(ENGINE_UNK1_FLAG_2);
 	_vm->clearFlags(ENGINE_FLAG_20000);
 }
+
+void CutScene::loadPalettes() {
+	Common::File fd;
+	if (!fd.open("dragon.exe")) {
+		error("Failed to open dragon.exe");
+	}
+	fd.seek(0x5336c); //TODO handle other game variants
+
+	_palettes = (byte *)malloc(256 * 2 * 4);
+	fd.read(_palettes, 256 * 2 * 4);
+}
+
 
 } // End of namespace Dragons
