@@ -468,6 +468,7 @@ void SliceRenderer::drawInWorld(int animationId, int animationFrame, Vector3 pos
 		_setEffectColor.b = setEffectColor.b * 31.0f * 65536.0f;
 
 		if (frameY >= 0 && frameY < surface.h) {
+			// No need to CLIP frameY here in getBasePtr(), since it is within [0, surface.h - 1]
 			drawSlice((int)sliceLine, true, (uint16 *)surface.getBasePtr(0, frameY), zBufferLinePtr, frameY);
 		}
 
@@ -530,6 +531,7 @@ void SliceRenderer::drawOnScreen(int animationId, int animationFrame, int screen
 	while (currentSlice < _frameSliceCount) {
 		if (currentY >= 0 && currentY < surface.h) {
 			memset(lineZbuffer, 0xFF, 640 * 2);
+			// No need to CLIP currentY here in getBasePtr(), since it is within [0, surface.h - 1]
 			drawSlice(currentSlice, false, (uint16 *)surface.getBasePtr(0, currentY), lineZbuffer, currentY);
 			currentSlice += sliceStep;
 			currentY--;
@@ -721,7 +723,7 @@ void SliceRenderer::drawShadowPolygon(int transparency, Graphics::Surface &surfa
 
 		for (int x = MIN(xMin, xMax); x < MAX(xMin, xMax); ++x) {
 			uint16 z = zbuffer[x + y * 640];
-			uint16 *pixel = (uint16*)surface.getBasePtr(x, y);
+			uint16 *pixel = (uint16*)surface.getBasePtr(CLIP(x, 0, surface.w - 1), CLIP(y, 0, surface.h - 1));
 
 			if (z >= zMin) {
 				int index = (x & 3) + ((y & 3) << 2);

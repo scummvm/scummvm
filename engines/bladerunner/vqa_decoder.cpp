@@ -839,7 +839,7 @@ void VQADecoder::VQAVideoTrack::VPTRWriteBlock(Graphics::Surface *surface, unsig
 				uint16 outColor = (uint16)surface->format.RGBToColor(r, g, b);
 
 				if (!(alpha && a)) {
-					*(uint16 *)(surface->getBasePtr(dst_x + x, dst_y + y)) = outColor;
+					*(uint16 *)(surface->getBasePtr(CLIP(dst_x + x, (uint32)0, (uint32)(surface->w - 1)), CLIP(dst_y + y, (uint32)0, (uint32)(surface->h - 1)))) = outColor;
 				}
 			}
 		}

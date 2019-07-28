@@ -552,7 +552,7 @@ void DialogueMenu::darkenRect(Graphics::Surface &s, int x1, int y1, int x2, int 
 	if (x1 < x2 && y1 < y2) {
 		for (int y = y1; y != y2; ++y) {
 			for (int x = x1; x != x2; ++x) {
-				uint16 *p = (uint16 *)s.getBasePtr(x, y);
+				uint16 *p = (uint16 *)s.getBasePtr(CLIP(x, 0, s.w - 1), CLIP(y, 0, s.h - 1));
 				uint8 r, g, b;
 				s.format.colorToRGB(*p, r, g, b);
 				r /= 4;

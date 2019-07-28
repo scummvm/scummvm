@@ -1164,6 +1164,12 @@ void ESPER::copyImageScale(Graphics::Surface *src, Common::Rect srcRect, Graphic
 			int srcX = srcRect.left;
 			int srcXCounter = 0;
 			for (int dstX = dstRect.left; dstX < dstRect.right; ++dstX) {
+				srcX = CLIP(srcX, 0, src->w - 1);
+				srcY = CLIP(srcY, 0, src->h - 1);
+
+				dstX = CLIP(dstX, 0, dst->w - 1);
+				dstY = CLIP(dstY, 0, dst->h - 1);
+
 				uint16 *srcPtr = (uint16 *)src->getBasePtr(srcX, srcY);
 				uint16 *dstPtr = (uint16 *)dst->getBasePtr(dstX, dstY);
 
@@ -1203,6 +1209,13 @@ void ESPER::copyImageScale(Graphics::Surface *src, Common::Rect srcRect, Graphic
 					srcXCounter -= dstRect.width();
 					++srcX;
 				}
+
+				srcX = CLIP(srcX, 0, src->w - 1);
+				srcY = CLIP(srcY, 0, src->h - 1);
+
+				dstX = CLIP(dstX, 0, dst->w - 1);
+				dstY = CLIP(dstY, 0, dst->h - 1);
+
 				uint16 *srcPtr = (uint16 *)src->getBasePtr(srcX, srcY);
 				uint16 *dstPtr = (uint16 *)dst->getBasePtr(dstX, dstY);
 
@@ -1264,6 +1277,13 @@ void ESPER::copyImageBlur(Graphics::Surface *src, Common::Rect srcRect, Graphics
 					}
 					int skipX = 0;
 					while (dstX < dstRect.right && skipX < skipXMax) {
+
+						srcX = CLIP(srcX, 0, src->w - 1);
+						srcY = CLIP(srcY, 0, src->h - 1);
+
+						dstX = CLIP(dstX, 0, dst->w - 1);
+						dstY = CLIP(dstY, 0, dst->h - 1);
+
 						uint16 *srcPtr = (uint16 *)src->getBasePtr(srcX, srcY);
 						uint16 *dstPtr = (uint16 *)dst->getBasePtr(dstX, dstY);
 
@@ -1331,6 +1351,12 @@ void ESPER::copyImageBlur(Graphics::Surface *src, Common::Rect srcRect, Graphics
 							srcX += 1; // bug in original game? Is using 1 instead of skipX as for Y
 						}
 
+						srcX = CLIP(srcX, 0, src->w - 1);
+						srcY = CLIP(srcY, 0, src->h - 1);
+
+						dstX = CLIP(dstX, 0, dst->w - 1);
+						dstY = CLIP(dstY, 0, dst->h - 1);
+
 						uint16 *srcPtr = (uint16 *)src->getBasePtr(srcX, srcY);
 						uint16 *dstPtr = (uint16 *)dst->getBasePtr(dstX, dstY);
 
@@ -1364,8 +1390,8 @@ void ESPER::copyImageBlur(Graphics::Surface *src, Common::Rect srcRect, Graphics
 void ESPER::copyImageBlit(Graphics::Surface *src, Common::Rect srcRect, Graphics::Surface *dst, Common::Rect dstRect) {
 	for (int y = 0; y < dstRect.height(); ++y) {
 		for (int x = 0; x < dstRect.width(); ++x) {
-			uint16 *srcPtr = (uint16 *)src->getBasePtr(srcRect.left + x, srcRect.top + y);
-			uint16 *dstPtr = (uint16 *)dst->getBasePtr(dstRect.left + x, dstRect.top + y);
+			uint16 *srcPtr = (uint16 *)src->getBasePtr(CLIP(srcRect.left + x, 0, src->w - 1), CLIP(srcRect.top + y, 0, src->h - 1));
+			uint16 *dstPtr = (uint16 *)dst->getBasePtr(CLIP(dstRect.left + x, 0, dst->w - 1), CLIP(dstRect.top + y, 0, dst->h - 1));
 			*dstPtr = *srcPtr;
 		}
 	}

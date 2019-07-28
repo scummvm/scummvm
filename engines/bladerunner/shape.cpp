@@ -116,7 +116,7 @@ void Shape::draw(Graphics::Surface &surface, int x, int y) const {
 			uint16 outColor = (uint16)surface.format.RGBToColor(r, g, b);
 
 			if (!a) {
-				*(uint16 *)(surface.getBasePtr(dst_x + xi, dst_y + yi)) = outColor;
+				*(uint16 *)(surface.getBasePtr(CLIP(dst_x + xi, 0, surface.w - 1), CLIP(dst_y + yi, 0, surface.h - 1))) = outColor;
 			}
 		}
 		src_p += 2 * (_width - rect_w);

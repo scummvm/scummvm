@@ -2232,8 +2232,8 @@ Graphics::Surface BladeRunnerEngine::generateThumbnail() const {
 		for (int x = 0; x < thumbnail.w; ++x) {
 			uint8 r, g, b;
 
-			uint16  srcPixel = *(const uint16 *)_surfaceFront.getBasePtr(x * 8, y * 8);
-			uint16 *dstPixel = (uint16 *)thumbnail.getBasePtr(x, y);
+			uint16  srcPixel = *(const uint16 *)_surfaceFront.getBasePtr(CLIP(x * 8, 0, _surfaceFront.w - 1), CLIP(y * 8, 0, _surfaceFront.h - 1) );
+			uint16 *dstPixel = (uint16 *)thumbnail.getBasePtr(CLIP(x, 0, thumbnail.w - 1), CLIP(y, 0, thumbnail.h - 1));
 
 			// Throw away alpha channel as it is not needed
 			_surfaceFront.format.colorToRGB(srcPixel, r, g, b);

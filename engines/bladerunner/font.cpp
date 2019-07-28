@@ -118,7 +118,7 @@ void Font::drawChar(Graphics::Surface *dst, uint32 chr, int x, int y, uint32 col
 		return;
 	}
 
-	uint16 *dstPtr = (uint16 *)dst->getBasePtr(x + _characters[characterIndex].x, y + _characters[characterIndex].y);
+	uint16 *dstPtr = (uint16 *)dst->getBasePtr(CLIP(x + _characters[characterIndex].x, 0, dst->w - 1), CLIP(y + _characters[characterIndex].y, 0, dst->h - 1));
 	uint16 *srcPtr = &_data[_characters[characterIndex].dataOffset];
 	int width = _characters[characterIndex].width;
 	int height = _characters[characterIndex].height;
