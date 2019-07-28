@@ -960,6 +960,9 @@ void Gfx::getCursor(int *x, int *y) {
 }
 
 void Gfx::turnOnBonusStars(int which) {
+	if (!g_hdb->isDemo())
+		return;
+
 	_starsInfo.active = true;
 	for (int i = 0; i < 10; i++)
 		_starsInfo.starAngle[i] = (36 * (i + 1)) - 10;

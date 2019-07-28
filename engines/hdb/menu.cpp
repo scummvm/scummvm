@@ -1339,10 +1339,11 @@ void Menu::processInput(int x, int y) {
 			_warpActive = 0;
 
 			char string[16];
-			if (map < 10)
-				sprintf(string, "MAP0%d", map);
-			else
-				sprintf(string, "MAP%d", map);
+			sprintf(string, "MAP%02d", map);
+
+			if (g_hdb->isDemo())
+				strcat(string, "_DEMO");
+
 			freeMenu();
 			g_hdb->setGameState(GAME_PLAY);
 			g_hdb->_sound->stopMusic();
