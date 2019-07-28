@@ -6,6 +6,10 @@ Programmcodes finden Sie auf Englisch unter:
 
  Neue Spiele:
    - Unterstützung für Blade Runner hinzugefügt.
+   - Unterstützung für Hoyle Bridge hinzugefügt.
+   - Unterstützung für Hoyle Children's Collection hinzugefügt.
+   - Unterstützung für Hoyle Classic Games hinzugefügt.
+   - Unterstützung für Hoyle Solitaire hinzugefügt.
    - Unterstützung für Might and Magic IV - Clouds of Xeen hinzugefügt.
    - Unterstützung für Might and Magic V - Darkside of Xeen hinzugefügt.
    - Unterstützung für Might and Magic - World of Xeen hinzugefügt.
