@@ -169,6 +169,7 @@ _iconv=auto
 _tts=auto
 _linux_tts=no
 _windows_tts=no
+_macosx_tts=no
 # Default option behavior yes/no
 _debug_build=auto
 _release_build=auto
@@ -4224,6 +4225,9 @@ int main(void) { return 0; }
 EOF
 			cc_check -lspeechd && _tts=yes
 			;;
+		darwin*)
+			_tts=yes
+			;;
 	esac
 fi
 echo "$_tts"
@@ -5413,6 +5417,12 @@ else
 		_windows_tts=yes
 		define_in_config_if_yes $_windows_tts 'USE_WINDOWS_TTS'
 		append_var LIBS '-lsapi -lole32'
+		;;
+	darwin*)
+		echo "osx"
+		_tts=yes
+		_macosx_tts=yes
+		define_in_config_if_yes $_macosx_tts 'USE_MACOSX_TTS'
 		;;
 	*)
 		echo "no"

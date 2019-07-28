@@ -352,6 +352,10 @@ ifdef USE_WINDOWS_TTS
 MODULE_OBJS += \
 	text-to-speech/windows/windows-text-to-speech.o
 endif
+ifdef USE_MACOSX_TTS
+MODULE_OBJS += \
+	text-to-speech/macosx/macosx-text-to-speech.o
+endif
 
 # Include common rules
 include $(srcdir)/rules.mk
