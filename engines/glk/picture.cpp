@@ -135,8 +135,8 @@ Picture *Pictures::load(uint32 id) {
 		palCount = raw.getPaletteColorCount();
 		transColor = raw.getTransparentColor();
 	} else if (f.open(Common::String::format("pic%u.rect", id))) {
-		rectImg.w = f.readUint16LE();
-		rectImg.h = f.readUint16LE();
+		rectImg.w = f.readUint32BE();
+		rectImg.h = f.readUint32BE();
 		img = &rectImg;
 	} else {
 		// No such picture

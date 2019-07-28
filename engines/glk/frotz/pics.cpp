@@ -156,10 +156,10 @@ Common::SeekableReadStream *Pics::createReadStreamForMember(const Common::String
 				dest = decoder.decode(*src, e._flags, *_palette, kMCGA, e._width, e._height);
 				delete src;
 			} else {
-				byte *rect = (byte *)malloc(2 * sizeof(uint16));
-				WRITE_LE_UINT16(rect, e._width);
-				WRITE_LE_UINT16(rect + 2, e._height);
-				dest = new Common::MemoryReadStream(rect, 2 * sizeof(uint16), DisposeAfterUse::YES);
+				byte *rect = (byte *)malloc(2 * sizeof(uint32));
+				WRITE_BE_UINT32(rect, e._width);
+				WRITE_BE_UINT32(rect + 4, e._height);
+				dest = new Common::MemoryReadStream(rect, 2 * sizeof(uint32), DisposeAfterUse::YES);
 			}
 
 			f.close();
