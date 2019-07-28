@@ -18,49 +18,50 @@ page at: <https://www.scummvm.org/>
       - [3.3) Multi-CD games notes](#33-multi-cd-games-notes)
       - [3.4) Known Problems](#34-known-problems)
       - [3.5) Extra Data Files](#35-extra-data-files)
-      - [3.6) Broken Sword games notes](#36-broken-sword-games-notes)
-          - [3.6.1) Broken Sword](#361-broken-sword)
-          - [3.6.2) Broken Sword II](#362-broken-sword-ii)
-          - [3.6.3) Broken Sword games
-            cutscenes](#363-broken-sword-games-cutscenes)
-          - [3.6.4) Broken Sword games cutscenes, in
-            retrospect](#364-broken-sword-games-cutscenes-in-retrospect)
-      - [3.7) Day of the Tentacle notes](#37-day-of-the-tentacle-notes)
-      - [3.8) Dragon History notes](#38-dragon-history-notes)
-      - [3.9) Flight of the Amazon Queen
-        notes](#39-flight-of-the-amazon-queen-notes)
-      - [3.10) Gobliiins notes](#310-gobliiins-notes)
-      - [3.11) Inherit the Earth: Quest for the Orb
-        notes](#311-inherit-the-earth-quest-for-the-orb-notes)
-      - [3.12) Mickey's Space Adventure
-        notes](#312-mickeys-space-adventure-notes)
-      - [3.13) Might and Magic Xeen games
-        notes](#313-might-and-magic-xeen-games-notes)
-      - [3.14) Myst game notes](#314-myst-game-notes)
-      - [3.15) Quest for Glory notes](#315-quest-for-glory-notes)
-      - [3.16) Riven game notes](#316-riven-game-notes)
-      - [3.17) Simon the Sorcerer games
-        notes](#317-simon-the-sorcerer-games-notes)
-      - [3.18) Starship Titanic game
-        notes](#318-starship-titanic-game-notes)
-      - [3.19) The Curse of Monkey Island
-        notes](#319-the-curse-of-monkey-island-notes)
-      - [3.20) The Feeble Files notes](#320-the-feeble-files-notes)
-      - [3.21) The Legend of Kyrandia
-        notes](#321-the-legend-of-kyrandia-notes)
-      - [3.22) Troll's Tale notes](#322-trolls-tale-notes)
-      - [3.23) Winnie the Pooh notes](#323-winnie-the-pooh-notes)
-      - [3.24) Sierra AGI games: Predictive Input
-        Dialog](#324-sierra-agi-games-predictive-input-dialog)
-      - [3.25) Sierra SCI games: Simultaneous speech and
-        subtitles](#325-sierra-sci-games-simultaneous-speech-and-subtitles)
-      - [3.26) Zork games notes](#326-zork-games-notes)
-          - [3.26.1) Zork Nemesis: The Forbidden
-            Lands](#3261-zork-nemesis-the-forbidden-lands)
-          - [3.26.2) Zork: Grand
-            Inquisitor](#3262-zork-grand-inquisitor)
-      - [3.27) Commodore64 games notes](#327-commodore64-games-notes)
-      - [3.28) Macintosh games notes](#328-macintosh-games-notes)
+      - [3.6) Blade Runner notes](#36-blade-runner-notes)
+      - [3.7) Broken Sword games notes](#37-broken-sword-games-notes)
+          - [3.7.1) Broken Sword](#371-broken-sword)
+          - [3.7.2) Broken Sword II](#372-broken-sword-ii)
+          - [3.7.3) Broken Sword games
+            cutscenes](#373-broken-sword-games-cutscenes)
+          - [3.7.4) Broken Sword games cutscenes, in
+            retrospect](#374-broken-sword-games-cutscenes-in-retrospect)
+      - [3.8) Day of the Tentacle notes](#38-day-of-the-tentacle-notes)
+      - [3.9) Dragon History notes](#39-dragon-history-notes)
+      - [3.10) Flight of the Amazon Queen
+        notes](#310-flight-of-the-amazon-queen-notes)
+      - [3.11) Gobliiins notes](#311-gobliiins-notes)
+      - [3.12) Inherit the Earth: Quest for the Orb
+        notes](#312-inherit-the-earth-quest-for-the-orb-notes)
+      - [3.13) Mickey's Space Adventure
+        notes](#313-mickeys-space-adventure-notes)
+      - [3.14) Might and Magic Xeen games
+        notes](#314-might-and-magic-xeen-games-notes)
+      - [3.15) Myst game notes](#315-myst-game-notes)
+      - [3.16) Quest for Glory notes](#316-quest-for-glory-notes)
+      - [3.17) Riven game notes](#317-riven-game-notes)
+      - [3.18) Simon the Sorcerer games
+        notes](#318-simon-the-sorcerer-games-notes)
+      - [3.19) Starship Titanic game
+        notes](#319-starship-titanic-game-notes)
+      - [3.20) The Curse of Monkey Island
+        notes](#320-the-curse-of-monkey-island-notes)
+      - [3.21) The Feeble Files notes](#321-the-feeble-files-notes)
+      - [3.22) The Legend of Kyrandia
+        notes](#322-the-legend-of-kyrandia-notes)
+      - [3.23) Troll's Tale notes](#323-trolls-tale-notes)
+      - [3.24) Winnie the Pooh notes](#324-winnie-the-pooh-notes)
+      - [3.25) Sierra AGI games: Predictive Input
+        Dialog](#325-sierra-agi-games-predictive-input-dialog)
+      - [3.26) Sierra SCI games: Simultaneous speech and
+        subtitles](#326-sierra-sci-games-simultaneous-speech-and-subtitles)
+      - [3.27) Zork games notes](#327-zork-games-notes)
+          - [3.27.1) Zork Nemesis: The Forbidden
+            Lands](#3271-zork-nemesis-the-forbidden-lands)
+          - [3.27.2) Zork: Grand
+            Inquisitor](#3272-zork-grand-inquisitor)
+      - [3.28) Commodore64 games notes](#328-commodore64-games-notes)
+      - [3.29) Macintosh games notes](#329-macintosh-games-notes)
   - [4.0) Supported Platforms](#40-supported-platforms)
   - [5.0) Running ScummVM](#50-running-scummvm)
       - [5.1) Command Line Options](#51-command-line-options)
@@ -394,6 +395,7 @@ supported games can be found here:
 | 3 Skulls of the Toltecs                                             | \[toltecs\]     |
 | Amazon: Guardians of Eden                                           | \[access\]      |
 | Beavis and Butt-head in Virtual Stupidity                           | \[bbvs\]        |
+| Blade Runner                                                        | \[bladerunner\] |
 | Blue Force                                                          | \[blueforce\]   |
 | Broken Sword: The Return of the Templars                            | \[sword25\]     |
 | Bud Tucker in Double Trouble                                        | \[tucker\]      |
@@ -699,7 +701,7 @@ Some games require additional files that are not part of the original data. Thos
 
 Games that require additional data:
   - Beneath a Steel Sky (sky.cpt)
-  - Flight of the Amazon Queen 
+  - Flight of the Amazon Queen
   - Kyrandia Series (kyra.dat)
   - Lands of Lore Series (kyra.dat)
   - Lure of the Temptress (lure.dat)
@@ -707,7 +709,25 @@ Games that require additional data:
 
 The most up to date list of Engine data files can be found in our [source code repository](https://github.com/scummvm/scummvm/tree/master/dists/engine-data)
 
-### 3.6) Broken Sword games notes
+### 3.6) Blade Runner notes
+
+Supported versions are English (both CD and DVD), French, German,
+Italian, Russian (by Fargus media) and Spanish. Other unofficial
+versions exists but they are based on the English version.
+
+All *.mix, *.tlk and *.dat files are needed from all 4 CDs/DVD.
+Files named CDFRAMES.DAT need to be renamed to CDFRAMES1.DAT,
+CDFRAMES2.DAT, CDFRAMES3.DAT and CDFRAMES4.DAT according on
+the CD they came from. Other files with the same name on different
+CDs are the same and doesn't matter which one is used.
+
+To enable subtitles, download a file from our [Downloads](https://www.scummvm.org/games/#bladerunner) page
+and place file SUBTITLES.MIX next to the other files.
+
+"Blade Runner with restored content" is not yet supported and might
+contain game breaking bugs.
+
+### 3.7) Broken Sword games notes
 
 The instructions for the Broken Sword games are for the Sold-Out
 Software versions, with each game on two CDs, since these were the
@@ -715,7 +735,7 @@ versions most easily available at the time ScummVM gained support for
 them. Hopefully they are general enough to be useful to other releases
 as well.
 
-#### 3.6.1) Broken Sword
+#### 3.7.1) Broken Sword
 
 For this game, you will need all of the files from the clusters
 directories on both CDs. For the Windows and Macintosh versions, you
@@ -731,7 +751,7 @@ either identical or, in one case, so nearly identical that it makes
 little difference. The PlayStation version requires tunes.dat and
 tunes.tab.
 
-#### 3.6.2) Broken Sword II
+#### 3.7.2) Broken Sword II
 
 For this game, you will need all of the files from the clusters
 directories on both CDs. (Actually, a few of them may not be strictly
@@ -745,7 +765,7 @@ like.
 In addition, you will need the cd.inf and, optionally, the startup.inf
 files from the sword2 directory on CD 1.
 
-#### 3.6.3) Broken Sword games cutscenes
+#### 3.7.3) Broken Sword games cutscenes
 
 The cutscenes for the Broken Sword games have a bit of a history (see
 the next section, if you are interested), but in general all you need to
@@ -785,7 +805,7 @@ and follow the instructions in its readme.txt file. The subtitle pack
 currently does not work when running PlayStation videos. (Broken Sword
 II already has subtitles; no extra work is needed for them.)
 
-#### 3.6.4) Broken Sword games cutscenes, in retrospect
+#### 3.7.4) Broken Sword games cutscenes, in retrospect
 
 The original releases of the Broken Sword games used RAD Game Tools's
 Smacker(tm) format. As RAD was unwilling to open the older legacy
@@ -809,7 +829,7 @@ dropped. From a technical standpoint, this was a good thing since
 decoding MPEG movies added a lot of complexity, and they didn't look as
 good as the Smacker and DXA versions anyway.
 
-### 3.7) Day of the Tentacle notes
+### 3.8) Day of the Tentacle notes
 
 At one point in the game, you come across a computer that allows you to
 play the original Maniac Mansion as an easter egg. ScummVM supports
@@ -829,7 +849,7 @@ override the ID of the game to run. Be aware, though, that not all games
 support returning to the launcher, and setting it up to use Day of the
 Tentacle itself as the easter egg game is not recommended.
 
-### 3.8) Dragon History notes
+### 3.9) Dragon History notes
 
 There are 4 language variants of the game: Czech, English, Polish and
 German. Each of them is distributed in a separate archive. The only
@@ -847,7 +867,7 @@ All game files and the walkthrough can be downloaded from:
 
 <http://www.ucw.cz/draci-historie/index-en.html>
 
-### 3.9) Flight of the Amazon Queen notes
+### 3.10) Flight of the Amazon Queen notes
 
 Only the original non-freeware version of Flight of the Amazon Queen
 (from original CD), requires the `queen.tbl` datafile (available from the `Downloads` page on our website) in either the
@@ -860,7 +880,7 @@ specific version, and thus removing the run-time dependency on the
 `queen.tbl` file. This tool also allows you to compress the speech and
 sound effects with MP3, OGG or FLAC.
 
-### 3.10) Gobliiins notes
+### 3.11) Gobliiins notes
 
 The CD versions of the Gobliiins series contain one big audio track
 which you need to rip (see the section on using compressed audio files)
@@ -869,7 +889,7 @@ without the CD in the drive all the time. The speech is also in that
 track and its volume is therefore changed with the music volume control
 as well.
 
-### 3.11) Inherit the Earth: Quest for the Orb notes
+### 3.12) Inherit the Earth: Quest for the Orb notes
 
 In order to run the Mac OS X Wyrmkeep re-release of the game you will
 need to copy over data from the CD to your hard disk. If you're on a PC
@@ -888,7 +908,7 @@ For the old Mac OS 9 release you need to copy the files in MacBinary
 format, as they should include both resource and data forks. Copy all
 'ITE \*' files.
 
-### 3.12) Mickey's Space Adventure notes
+### 3.13) Mickey's Space Adventure notes
 
 To run Mickey's Space Adventure under ScummVM, the original executable
 of the game (mickey.exe) is needed together with the game's data files.
@@ -902,7 +922,7 @@ that direction. The player can then simply click on the edges of the
 game's screen to change location, similar to many adventure games, which
 is simpler and more straightforward than moving around using the menu.
 
-### 3.13) Might and Magic Xeen games notes
+### 3.14) Might and Magic Xeen games notes
 
 To properly play the World of Xeen CD Talkie using original discs, use
 LAME or some other encoder to rip the cd audio tracks to files, either
@@ -940,17 +960,17 @@ games in the ScummVM launcher. They are:
     allowing the relative strength/value of armor and weapons to be
     compared.
 
-### 3.14) Myst game notes
+### 3.15) Myst game notes
 
-Left Click: Move/action  
-Space: Pause the game  
-Esc: Skip cutscene  
+Left Click: Move/action
+Space: Pause the game
+Esc: Skip cutscene
 F5: Menu
 
 Myst will autosave to slot 0 if no save or an autosave is present in
 slot 0.
 
-### 3.15) Quest for Glory notes
+### 3.16) Quest for Glory notes
 
 It is possible to import characters, beginning with Quest for Glory II,
 from past games to future games and continue from the stats earned from
@@ -973,34 +993,34 @@ on the import screen.
 
 Example: qfg2-thief.sav
 
-### 3.16) Riven game notes
+### 3.17) Riven game notes
 
-Left Click: Move/action  
-Arrow Keys: Movement  
-Page Up: Look up  
-Page Down: Look down  
-Space: Pause the game  
-Esc: Skip cutscene  
-F5: Menu  
-Ctrl-o: Load game  
+Left Click: Move/action
+Arrow Keys: Movement
+Page Up: Look up
+Page Down: Look down
+Space: Pause the game
+Esc: Skip cutscene
+F5: Menu
+Ctrl-o: Load game
 Ctrl-s: Save game
 
 Riven will autosave to slot 0 if no save or an autosave is present in
 slot 0.
 
-### 3.17) Simon the Sorcerer games notes
+### 3.18) Simon the Sorcerer games notes
 
 If you have the dual version of Simon the Sorcerer 1 or 2 on CD, you
 will find the Windows version in the main directory of the CD and the
 DOS version in the DOS directory of the CD.
 
-### 3.18) Starship Titanic game notes
+### 3.19) Starship Titanic game notes
 
 For the purposes of solving the starfield puzzle, only mouse clicks, L
 and Tab are really needed, though the action glyph in the PET can be
 used instead of Tab.
 
-### 3.19) The Curse of Monkey Island notes
+### 3.20) The Curse of Monkey Island notes
 
 For this game, you will need the comi.la0, comi.la1 and comi.la2 files.
 The comi.la0 file can be found on either CD, but since they are
@@ -1011,7 +1031,7 @@ containing all of the files from -both- "resource" subdirectories on the
 two CDs. Some of the files appear on both CDs, but again they're
 identical.
 
-### 3.20) The Feeble Files notes
+### 3.21) The Feeble Files notes
 
 Amiga/Macintosh: You need to install a small pack of cutscenes that are
 missing in both of these versions of The Feeble Files. It's called "The
@@ -1037,7 +1057,7 @@ follows:
   - Rename voices.wav on CD3 to voices3.wav
   - Rename voices.wav on CD4 to voices4.wav
 
-### 3.21) The Legend of Kyrandia notes
+### 3.22) The Legend of Kyrandia notes
 
 To run The Legend of Kyrandia under ScummVM you need the `kyra.dat`
 file. The file should already be included in official ScummVM packages.
@@ -1047,13 +1067,13 @@ Windows release of ScummVM should contain the file embedded into the
 executable, thus you only need to grab it in case ScummVM complains
 about the file being missing.
 
-### 3.22) Troll's Tale notes
+### 3.23) Troll's Tale notes
 
 The original game came in a PC booter disk, therefore it is necessary to
 dump the contents of that disk in an image file and name it "troll.img"
 to be able to play the game under ScummVM.
 
-### 3.23) Winnie the Pooh notes
+### 3.24) Winnie the Pooh notes
 
 It is possible to import saved games from the original interpreter of
 the game into ScummVM.
@@ -1067,7 +1087,7 @@ that direction. The player can then simply click on the edges of the
 game's screen to change location, similar to many adventure games, which
 is simpler and more straightforward than moving around using the menu.
 
-### 3.24) Sierra AGI games: Predictive Input Dialog
+### 3.25) Sierra AGI games: Predictive Input Dialog
 
 The Predictive Input Dialog is a ScummVM aid for running AGI engine
 games (which notoriously require command line input) on devices with
@@ -1121,7 +1141,7 @@ been made in some ScummVM ports to make its use more comfortable by
 naturally mapping the functionality to the numeric keypad. Also, the
 dialog's buttons can be navigated with the arrow and the enter keys.
 
-### 3.25) Sierra SCI games: Simultaneous speech and subtitles
+### 3.26) Sierra SCI games: Simultaneous speech and subtitles
 
 Certain CD versions of Sierra SCI games had both speech and text
 resources. Some have an option to toggle between the two, but there are
@@ -1198,13 +1218,13 @@ Captioning" from the in-game "Game" menu. Speech can be disabled by
 selecting "Audio Mixer" from the in-game "Game" menu and setting the
 speech volume to zero.
 
-### 3.26) Zork games notes
+### 3.27) Zork games notes
 
 To run the supported Zork games (Zork Nemesis: The Forbidden Lands and
 Zork: Grand Inquisitor) you need to copy some (extra) data to its
 corresponding destination.
 
-#### 3.26.1) Zork Nemesis: The Forbidden Lands
+#### 3.27.1) Zork Nemesis: The Forbidden Lands
 
 Download the Liberation(tm) fonts package
 <https://releases.pagure.org/liberation-fonts/liberation-fonts-ttf-2.00.1.tar.gz>
@@ -1214,7 +1234,7 @@ time of writing these fonts cause some text rendering issues. Download
 the subtitles patch <https://www.thezorklibrary.com/installguides/znpatch.zip>
 and unzip the addon directory into the game root directory
 
-#### 3.26.2) Zork: Grand Inquisitor
+#### 3.27.2) Zork: Grand Inquisitor
 
 Download the Liberation(tm) fonts package
 <https://releases.pagure.org/liberation-fonts/liberation-fonts-ttf-2.00.1.tar.gz>
@@ -1222,7 +1242,7 @@ and unpack all the ttf files into your ScummVM extras directory.
 Alternatively, ScummVM comes with the GNU FreeFont fonts, though at the
 time of writing these fonts cause some text rendering issues.
 
-### 3.27) Commodore64 games notes
+### 3.28) Commodore64 games notes
 
 Both Maniac Mansion and Zak McKracken run but Maniac Mansion is not yet
 playable. Simply name the D64 disks "maniac1.d64" and "maniac2.d64"
@@ -1235,7 +1255,7 @@ autodetected by ScummVM, and you must make sure that the platform is set
 to Commodore64. We recommend using the much simpler approach described
 in the previous paragraph.
 
-### 3.28) Macintosh games notes
+### 3.29) Macintosh games notes
 
 All LucasArts SCUMM based adventures, except COMI, also exist in
 versions for the Macintosh. ScummVM can use most (all?) of them,
@@ -1338,11 +1358,11 @@ arguments -- see the next section.
 ### 5.1) Command Line Options
 
     Usage: scummvm [OPTIONS]... [GAME]
-    
+
     [GAME]                   Short name of game to load. For example, 'monkey'
                               for Monkey Island. This can be either a built-in
                               gameid, or a user configured target.
-    
+
     -v, --version            Display ScummVM version information and exit
     -h, --help               Display a brief help text and exit
     -z, --list-games         Display list of supported games and exit
@@ -1364,7 +1384,7 @@ arguments -- see the next section.
     --recursive              In combination with --add or --detect recurse down all
                               subdirectories
     --console                Enable the console window (default: enabled) (Windows only)
-    
+
     -c, --config=CONFIG      Use alternate configuration file
     -p, --path=PATH          Path to where the game is installed
     -x, --save-slot[=NUM]    Saved game slot to load (default: autosave)
@@ -1374,8 +1394,8 @@ arguments -- see the next section.
     --stretch-mode=MODE      Select stretch mode (center, integral, fit, stretch)
     --filtering              Force filtered graphics mode
     --no-filtering           Force unfiltered graphics mode
-    
-    
+
+
     --gui-theme=THEME        Select GUI theme (default, modern, classic)
     --themepath=PATH         Path to where GUI themes are stored
     --list-themes            Display list of all usable GUI themes
@@ -1394,7 +1414,7 @@ arguments -- see the next section.
                               (separated by commas)
     -u, --dump-scripts       Enable script dumping if a directory called 'dumps'
                               exists in the current directory
-    
+
     --cdrom=NUM              CD drive to play CD audio from (default: 0 = first
                               drive)
     --joystick[=NUM]         Enable joystick input (default: 0 = first joystick)
@@ -1414,7 +1434,7 @@ arguments -- see the next section.
     --render-mode=MODE       Enable additional render modes (hercGreen, hercAmber,
                               cga, ega, vga, amiga, fmtowns, pc9821, pc9801, 2gs,
                               atari, macintosh)
-    
+
     --alt-intro              Use alternative intro for CD versions of Beneath a
                               Steel Sky and Flight of the Amazon Queen
     --copy-protection        Enable copy protection in games, when
@@ -1437,19 +1457,19 @@ built-in gameid. A brief list of the latter can be found in section 3.0.
 
 Examples:
 
-  - Win32:  
-    Running Monkey Island, fullscreen, from a hard disk:  
+  - Win32:
+    Running Monkey Island, fullscreen, from a hard disk:
     `C:\Games\LucasArts\scummvm.exe -f -pC:\Games\LucasArts\monkey\
-    monkey`  
+    monkey`
     Running Full Throttle from CD, fullscreen and with subtitles
-    enabled:  
+    enabled:
     `C:\Games\LucasArts\scummvm.exe -f -n -pD:\resource\ ft`
 
-  - Unix:  
-    Running Monkey Island, fullscreen, from a hard disk:  
-    `/path/to/scummvm -f -p/games/LucasArts/monkey/ monkey`  
+  - Unix:
+    Running Monkey Island, fullscreen, from a hard disk:
+    `/path/to/scummvm -f -p/games/LucasArts/monkey/ monkey`
     Running Full Throttle from CD, fullscreen and with subtitles
-    enabled:  
+    enabled:
     `/path/to/scummvm -f -n -p/cdrom/resource/ ft`
 
 ### 5.2) Global Menu
@@ -1470,6 +1490,7 @@ Engines which currently support returning to the Launcher are:
 
     AGI
     AGOS
+    BLADERUNNER
     CINE
     COMPOSER
     CRUISE
@@ -1548,7 +1569,7 @@ Curse of Monkey Island or Broken Sword) will be scaled to 1280x960 and
 ScummVM supports various in-game hotkeys. They differ between SCUMM
 games and other games.
 
-``` 
+```
   Common:
     Ctrl-F5                - Displays the Global Menu
     Cmd-q                  - Quit (Mac OS X)
@@ -1604,6 +1625,20 @@ games and other games.
     F5                     - Displays a save/load box
     Escape                 - Skips the game intro
     Period (.)             - Skips current line of text
+
+  Blade Runner:
+    Ctrl-d                 - Starts the debugger
+    Space                  - Toggle combat mode
+    Enter or Escape        - Skips a video or a line of dialogue
+    Escape                 - Show game menu
+    Tab                    - Activate last database
+    F1                     - Online help
+    F2                     - Save game menu
+    F3                     - Load game menu
+    F4                     - Crime scene database
+    F5                     - Suspect database
+    F6                     - Clue database
+    F10                    - Quit game
 
   Broken Sword:
     F5 or Escape           - Displays save/load box
@@ -1680,19 +1715,19 @@ games and other games.
     s                      - Sound effects on/off
     Pause                  - Pauses
 
-  Starship Titanic:    
+  Starship Titanic:
     Ctrl-c                 - Open up the developer's cheat room
     Ctrl-d                 - Open up the ScummVM Debugger
     Left click             - Move action
-    Shift-Left click       - Edit room glyph chevrons and 
+    Shift-Left click       - Edit room glyph chevrons and
                               quick movement transitions
-    Right click            - Edit room glyph chevrons 
+    Right click            - Edit room glyph chevrons
                               and quick transitions
-    Mouse wheel            - Scroll through items (inventory, etc) 
+    Mouse wheel            - Scroll through items (inventory, etc)
                               and conversation log
     Arrow keys             - Movement. Down arrow/back is only available if the
-                              given view explicitly has a backwards movement 
-                              available.        
+                              given view explicitly has a backwards movement
+                              available.
     F1                     - Switch to Chat-O-Mat
     F2                     - Switch to Personal Baggage
     F3                     - Switch to Remote Thingummy
@@ -1715,7 +1750,7 @@ games and other games.
     Period (.)             - starmap move backward
     l                      - starmap lock coordinate
     d                      - starmap unlock coordinate
-    
+
   The Feeble Files:
     Ctrl-d                 - Starts the debugger
     Ctrl-f                 - Toggle fast mode
@@ -1796,12 +1831,12 @@ game speech will remain the same.
         fr  - French
         it  - Italian
         es  - Spanish
-    
+
     The Dig
         jp  - Japanese
         zh  - Chinese
         kr  - Korean
-    
+
     The Curse of Monkey Island
         en  - English (default)
         de  - German
@@ -1812,7 +1847,7 @@ game speech will remain the same.
         jp  - Japanese
         zh  - Chinese
         kr  - Korean
-    
+
     Beneath a Steel Sky
         gb  - English (Great Britain) (default)
         en  - English (USA)
@@ -1822,7 +1857,7 @@ game speech will remain the same.
         pt  - Portuguese
         es  - Spanish
         se  - Swedish
-    
+
     Broken Sword
         en  - English (default)
         de  - German
@@ -1907,51 +1942,60 @@ Using saved games from original versions isn't supported by all game
 engines. Only the following games can use saved games from their
 original versions.
 
+  - Blade Runner
+
+      - Use the debugger console and command "save" to save the game to
+        the original format and command "load" to load such a one
+      - Saved games between different languages are interchangeable
+      - It is not recommended to convert saved games from the version
+        with restored content as they might behave unexpectedly
+        or might cause game breaking bugs
+
   - Elvira 1
-    
+
       - Add 8 bytes (saved game name) to the start of the saved game
         file
       - Rename the saved game to `elvira1.xxx`
 
   - Elvira 2
-    
+
       - Add 8 bytes (saved game name) to the start of the saved game
         file
       - Rename the saved game to `elvira2-pc.xxx` (DOS version) or
         `elvira2.xxx` (Other versions)
 
   - Myst
-    
+
       - Rename the saved game to `myst-xxx.mys`
       - Saves from the masterpiece edition and the regular edition are
         interchangeable
 
   - Riven
-    
+
       - Rename the saved game to `riven-xxx.rvn`
       - Saves from the CD and DVD edition are not interchangeable
 
   - Simon the Sorcerer 1
-    
+
       - Rename the saved game to `simon1.xxx`
 
   - Simon the Sorcerer 2
-    
+
       - Rename the saved game to `simon2.xxx`
 
   - Starship Titanic
-    
+
       - Rename the saved game to `titanic-win.xxx` for saves from the
         English version and `titanic-win-de.xxx` for saves from the
         German version
       - Saved games between different languages are not interchangeable
 
   - The Feeble Files
-    
+
       - Rename the saved game to `feeble.xxx`
 
   - Waxworks
-    
+
       - Add 8 bytes (saved game name) to the start of the saved game
         file
       - Rename the saved game to `waxworks-pc.xxx` (DOS version) or
@@ -1974,6 +2018,7 @@ Engines which currently support `--list-saves` are:
 
   - AGI
   - AGOS
+  - BLADERUNNER
   - CGE
   - CINE
   - CRUISE
@@ -2012,6 +2057,7 @@ slot number.
 Engines which currently support `--save-slot` / `-x are`:
 
   - AGI
+  - BLADERUNNER
   - CGE
   - CINE
   - CRUISE
@@ -2047,7 +2093,7 @@ you want to use MIDI, you have several different choices of output,
 depending on your operating system and configuration.
 
     null       - Null output. Don't play any music.
-    
+
     adlib      - Internal AdLib emulation
     fluidsynth - FluidSynth MIDI emulation
     mt32       - Internal MT-32 emulation
@@ -2055,7 +2101,7 @@ depending on your operating system and configuration.
     pcspk      - Internal PC Speaker emulation
     towns      - Internal FM-TOWNS YM2612 emulation
                  (only usable in SCUMM FM-TOWNS games)
-    
+
     alsa       - Output using ALSA sequencer device. See below.
     core       - CoreAudio sound, for Mac OS X users.
     coremidi   - CoreMIDI sound, for Mac OS X users. Use only if you have
@@ -2099,7 +2145,7 @@ Some games which contain MIDI music data also have improved tracks
 designed for the MT-32 sound module. ScummVM can now emulate this
 device, however you must provide original MT-32 ROMs to make it work:
 
-`MT32_PCM.ROM` - IC21 (512KB)  
+`MT32_PCM.ROM` - IC21 (512KB)
 `MT32_CONTROL.ROM` - IC26 (32KB) and IC27 (32KB), interleaved byte-wise
 
 Place these ROMs in the game directory, in your extrapath, or in the
@@ -2185,7 +2231,7 @@ soundcard. In all cases, to obtain a list of all the sequencer ports you
 have, try the command `aconnect -o -l`. This should give output similar
 to:
 
-``` 
+```
     client 14: 'Midi Through' [type=kernel]
         0 'Midi Through Port-0'
     client 16: 'SBLive! Value [CT4832]' [type=kernel]
@@ -2247,7 +2293,7 @@ use the first port.
 To get a list of configured midi interfaces on your system, run
 "startmidi" without parameters. Example output:
 
-``` 
+```
   2 MIDI interfaces configured:
           Serial Port 2
           Software Synth
@@ -2356,7 +2402,7 @@ perform this task. You can choose between multiple target formats, but
 note that you can only use each if ScummVM was compiled with the
 respective decoder support enabled.
 
-``` 
+```
   compress_agos effects     (For Acorn CD version of Simon 1)
   compress_agos simon       (For Acorn CD version of Simon 1)
   compress_agos effects.voc (For DOS CD version of Simon 1)
@@ -2410,7 +2456,7 @@ perform this task. You can choose between multiple target formats, but
 note that you can only use each if ScummVM was compiled with the
 respective decoder support enabled.
 
-``` 
+```
   compress_sword2 speech1.clu
   compress_sword2 music1.clu
 ```
@@ -2505,7 +2551,7 @@ home directory)
 
 An example config file looks as follows:
 
-``` 
+```
     [scummvm]
     gfx_mode=supereagle
     fullscreen=true
@@ -2560,27 +2606,27 @@ The following keywords are recognized:
                                 format on macOS X.
     versioninfo        string   The version of the ScummVM that created the
                                 configuration file.
-    
+
     gameid             string   The real id of a game. Useful if you have
                                 several versions of the same game, and want
                                 different aliases for them. See the example.
     description        string   The description of the game as it will appear
                                 in the launcher.
-    
+
     language           string   Specify language (en, us, de, fr, it, pt, es,
                                 jp, zh, kr, se, gb, hb, cz, ru)
     speech_mute        bool     If true, speech is muted
     subtitles          bool     Set to true to enable subtitles.
     talkspeed          number   Text delay in SCUMM games, or text speed in
                                 other games.
-    
+
     fullscreen         bool     Fullscreen mode
     aspect_ratio       bool     Enable aspect ratio correction
     gfx_mode           string   Graphics mode (normal, 2x, 3x, 2xsai,
                                 super2xsai, supereagle, advmame2x, advmame3x,
                                 hq2x, hq3x, tv2x, dotmatrix, opengl)
     filtering          bool     Enable graphics filtering
-    
+
     confirm_exit       bool     Ask for confirmation by the user before
                                 quitting (SDL backend only).
     console            bool     Enable the console window (default: enabled)
@@ -2619,7 +2665,7 @@ The following keywords are recognized:
     speech_volume      number   The speech volume setting (0-255)
     midi_gain          number   The MIDI gain (0-1000) (default: 100) (Only
                                 supported by some MIDI drivers.)
-    
+
     copy_protection    bool     Enable copy protection in certain games, in
                                 those cases where ScummVM disables it by
                                 default.
@@ -2627,7 +2673,7 @@ The following keywords are recognized:
     alt_intro          bool     Use alternative intro for CD versions of
                                 Beneath a Steel Sky and Flight of the Amazon
                                 Queen
-    
+
     boot_param         number   Pass this number to the boot script
 
 Sierra games using the AGI engine add the following non-standard keywords:
@@ -2655,6 +2701,12 @@ Sierra games using the SCI engine add the following non-standard keywords:
                                 instead of the DOS ones (King's Quest 6)
     silver_cursors     bool     Use the alternate set of silver cursors,
                                 instead of the normal golden ones (Space Quest 4)
+
+Blade Runner adds the following non-standard keywords:
+    shorty             bool     If true, game will shrink the actors and make
+                                their voices high pitched"
+    sitcom             bool     If true, game will add laughter after actor's
+                                line or narration
 
 Broken Sword II adds the following non-standard keywords:
 
@@ -2829,113 +2881,113 @@ debug messages (see
 <https://docs.microsoft.com/en-us/windows-hardware/drivers/debugger/index>).
 
   - Windows:
-    
+
       - MinGW:
-      
+
           - Please refer to:
             <https://wiki.scummvm.org/index.php/Compiling_ScummVM/MinGW>
-            
+
       - Visual Studio (MSVC):
-      
+
           - Please refer to:
             <https://wiki.scummvm.org/index.php/Compiling_ScummVM/Visual_Studio>
 
   - Linux:
-    
+
       - GCC:
-      
+
           - Please refer to:
             <https://wiki.scummvm.org/index.php/Compiling_ScummVM/GCC>
 
   - AmigaOS4:
-    
+
       - Please refer to:
         <https://wiki.scummvm.org/index.php/Compiling_ScummVM/AmigaOS4>
 
   - Apple iPhone:
-    
+
       - Please refer to:
         <https://wiki.scummvm.org/index.php/Compiling_ScummVM/iPhone>
 
   - Atari/FreeMiNT:
-    
+
       - Please refer to:
         <https://wiki.scummvm.org/index.php/Compiling_ScummVM/Atari/FreeMiNT>
 
   - Bada/Tizen:
-    
+
       - Please refer to:
         <https://wiki.scummvm.org/index.php/Compiling_ScummVM/Bada/Tizen>
 
   - BeOS/ZETA/Haiku:
-    
+
       - Please refer to:
         <https://wiki.scummvm.org/index.php/Compiling_ScummVM/BeOS/ZETA/Haiku>
 
   - Google Android:
-    
+
       - Please refer to:
         <https://wiki.scummvm.org/index.php/Compiling_ScummVM/Android>
 
   - HP webOS:
-    
+
       - Please refer to:
         <https://wiki.scummvm.org/index.php/Compiling_ScummVM/WebOS>
 
   - Mac OS:
-    
+
       - Mac OS X:
-      
+
           - Please refer to:
             <https://wiki.scummvm.org/index.php/Compiling_ScummVM/macOS>
-            
+
       - Mac OS X 10.2.8:
-      
+
           - Please refer to:
             <https://wiki.scummvm.org/index.php/Compiling_ScummVM/Mac_OS_X_10.2.8>
-            
+
       - Mac OS X Crosscompiling:
-      
+
           - Please refer to:
             <https://wiki.scummvm.org/index.php/Compiling_ScummVM/Mac_OS_X_Crosscompiling>
 
   - Maemo:
-    
+
       - Please refer to:
         <https://wiki.scummvm.org/index.php/Compiling_ScummVM/Maemo>
 
   - Nintendo Wii and Gamecube:
-    
+
       - Please refer to:
         <https://wiki.scummvm.org/index.php/Compiling_ScummVM/Wii>
 
   - Raspberry Pi:
-    
+
       - Please refer to:
         <https://wiki.scummvm.org/index.php/Compiling_ScummVM/RPI>
 
   - Sega Dreamcast:
-    
+
       - Please refer to:
         <https://wiki.scummvm.org/index.php/Compiling_ScummVM/Dreamcast>
 
   - Sony Playstation:
-    
+
       - Sony PlayStation 2:
-      
+
           - Please refer to:
             <https://wiki.scummvm.org/index.php/Compiling_ScummVM/PlayStation_2>
-            
+
       - Sony PlayStation 3:
           - Please refer to:
             <https://wiki.scummvm.org/index.php/PlayStation_3#Building_from_source>
-            
+
       - Sony PlayStation Portable:
           - Please refer to:
             <https://wiki.scummvm.org/index.php/Compiling_ScummVM/PlayStation_Portable>
 
   - Symbian:
-    
+
       - Please refer to:
         <https://wiki.scummvm.org/index.php/Compiling_ScummVM/Symbian>
 
@@ -2949,6 +3001,6 @@ Please refer to our extensive Credits list [here](AUTHORS).
 
 -----
 
-> Good Luck and Happy Adventuring\!  
-> The ScummVM team.  
+> Good Luck and Happy Adventuring\!
+> The ScummVM team.
 > <https://www.scummvm.org/>
