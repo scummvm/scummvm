@@ -2286,7 +2286,7 @@ enum GoalIzo {
 };
 
 enum GoalSadik {
-	kGoalSadikDefaut = 100,
+	kGoalSadikDefault = 100,
 	kGoalSadikRunFromBB09 = 101,
 	kGoalSadikBB11Wait = 102,
 	kGoalSadikBB11ThrowMcCoy = 103,

@@ -46,7 +46,7 @@ void AIScriptSadik::Initialize() {
 
 	Actor_Put_In_Set(kActorSadik, kSetFreeSlotA);
 	Actor_Set_At_Waypoint(kActorSadik, 33, 0);
-	Actor_Set_Goal_Number(kActorSadik, kGoalSadikDefaut);
+	Actor_Set_Goal_Number(kActorSadik, kGoalSadikDefault);
 }
 
 bool AIScriptSadik::Update() {
@@ -264,7 +264,7 @@ int AIScriptSadik::GetFriendlinessModifierIfGetsClue(int otherActorId, int clueI
 
 bool AIScriptSadik::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 	switch (newGoalNumber) {
-	case kGoalSadikDefaut:
+	case kGoalSadikDefault:
 		AI_Movement_Track_Flush(kActorSadik);
 		AI_Movement_Track_Append(kActorSadik, 33, 0);
 		AI_Movement_Track_Repeat(kActorSadik);
