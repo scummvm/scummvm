@@ -148,6 +148,8 @@ public:
 	 * Says the given string
 	 *
 	 * @param str The string to say
+	 * @param charset The encoding of the string. If empty this is assumed to be the
+	 *        encoding used for the GUI.
 	 */
 	virtual bool say(String str, String charset = "") { return false; }
 
