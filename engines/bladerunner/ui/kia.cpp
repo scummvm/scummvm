@@ -91,11 +91,10 @@ KIA::KIA(BladeRunnerEngine *vm) {
 
 	_pogoPos = 0;
 
-	if (_vm->_cutContent) {
-		_buttons = new UIImagePicker(_vm, 23); // add description box for objects
-	} else {
-		_buttons = new UIImagePicker(_vm, 22);
-	}
+	// original imageCount was 22. We add +1 to have a description box for objects in cut content
+	// We don't have separated cases here, for _vm->_cutContent since that causes assertion fault if
+	// loading a "restoed content" save game in a "original game" version
+	_buttons = new UIImagePicker(_vm, 23);
 
 	_crimesSection     = new KIASectionCrimes(_vm, _vm->_playerActor->_clues);
 	_suspectsSection   = new KIASectionSuspects(_vm, _vm->_playerActor->_clues);
