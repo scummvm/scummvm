@@ -254,7 +254,7 @@ bool GlkInterface::initPictures() {
 	}
 
 	if (h_version == V6)
-		warning("Could not locate MG1 file");
+		error("Could not locate MG1 file");
 	return false;
 }
 
