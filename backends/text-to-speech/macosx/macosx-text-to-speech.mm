@@ -69,13 +69,14 @@ bool MacOSXTextToSpeechManager::say(Common::String text, Common::String encoding
 }
 
 bool MacOSXTextToSpeechManager::stop() {
-	[synthesizer stopSpeaking];
+	// Should we use NSSpeechImmediateBoundary, or even NSSpeechSentenceBoundary?
+	[synthesizer stopSpeakingAtBoundary:NSSpeechWordBoundary];
 	return true;
 }
 
 bool MacOSXTextToSpeechManager::pause() {
-	// Should we use NSSpeechWordBoundary, or even NSSpeechSentenceBoundary?
-	[synthesizer pauseSpeakingAtBoundary:NSSpeechImmediateBoundary];
+	// Should we use NSSpeechImmediateBoundary, or even NSSpeechSentenceBoundary?
+	[synthesizer pauseSpeakingAtBoundary:NSSpeechWordBoundary];
 	return true;
 }
 
