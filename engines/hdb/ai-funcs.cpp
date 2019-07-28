@@ -1209,7 +1209,8 @@ void AI::animateEntity(AIEntity *e) {
 						} else {
 							addAnimateTarget(e->x, e->y, 0, 3, ANIM_NORMAL, false, false, GROUP_STEAM_PUFF_SIT);
 							removeEntity(e);
-							g_hdb->_sound->playSound(SND_BARREL_MELTING);
+							if (!g_hdb->isDemo())
+								g_hdb->_sound->playSound(SND_BARREL_MELTING);
 							return;
 						}
 					}
@@ -1217,7 +1218,8 @@ void AI::animateEntity(AIEntity *e) {
 					if (!checkFloating(e->tileX, e->tileY)) {
 						addAnimateTarget(e->x, e->y, 0, 3, ANIM_NORMAL, false, false, GROUP_STEAM_PUFF_SIT);
 						floatEntity(e, STATE_MELTED);
-						g_hdb->_sound->playSound(SND_BARREL_MELTING);
+						if (!g_hdb->isDemo())
+							g_hdb->_sound->playSound(SND_BARREL_MELTING);
 					}
 				} else if (flags & kFlagSlide) {
 					int xv = 0, yv = 0;
