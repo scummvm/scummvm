@@ -821,6 +821,11 @@ void BladeRunnerEngine::shutdown() {
 		closeArchive("MUSIC.MIX");
 	}
 
+	// in case player closes the ScummVM window when in ESPER mode or similar
+	if (isArchiveOpen("MODE.MIX")) {
+		closeArchive("MODE.MIX");
+	}
+
 	if (_chapters) {
 		if (_chapters->hasOpenResources())
 			_chapters->closeResources();
