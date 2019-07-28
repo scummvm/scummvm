@@ -323,7 +323,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformDOS, 0, GUIO_STD16_UNDITHER	},
 
-	// Codename: Icmeman - English DOS Debug build, Version 1.009
+	// Codename: Iceman - English DOS Debug build, Version 1.009
 	// This is a special debug build Clint Basinger ("LGR") salvaged
 	// from a IBM PCjr previously owned by Ken Williams himself.
 	// It contains some additional shortcuts to help the original
