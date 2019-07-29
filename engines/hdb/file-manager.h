@@ -23,6 +23,8 @@
 #ifndef HDB_FILE_MANAGER_H
 #define HDB_FILE_MANAGER_H
 
+#include "common/zlib.h"
+
 namespace Common {
 	class File;
 }

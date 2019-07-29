@@ -42,7 +42,7 @@ bool FileMan::openMPC(const Common::String &filename) {
 	uint32 offset;
 
 	if (!_mpcFile->open(filename)) {
-		error("FileMan::openMSD(): Error reading the MSD file");
+		error("FileMan::openMPC(): Error reading the MSD/MPC file");
 		return false;
 	}
 
@@ -50,7 +50,7 @@ bool FileMan::openMPC(const Common::String &filename) {
 
 	if (_dataHeader.id == MKTAG('M', 'P', 'C', 'C')) {
 		_compressed = true;
-		debug("COMPRESSED FILE");
+		debug("COMPRESSED MPC FILE");
 		return false;
 	}
 	else if (_dataHeader.id == MKTAG('M', 'P', 'C', 'U')) {
@@ -64,7 +64,7 @@ bool FileMan::openMPC(const Common::String &filename) {
 
 		_dataHeader.dirSize = _mpcFile->readUint32LE();
 
-		debug(8, "MPC: Read %d entries", _dataHeader.dirSize);
+		debug(8, "MPCU: Read %d entries", _dataHeader.dirSize);
 
 		for (uint32 fileIndex = 0; fileIndex < _dataHeader.dirSize; fileIndex++) {
 			MPCEntry *dirEntry = new MPCEntry();
@@ -82,12 +82,43 @@ bool FileMan::openMPC(const Common::String &filename) {
 		}
 
 		return true;
+	} else if (_dataHeader.id == MKTAG('M', 'S', 'D', 'C')) {
+		_compressed = true;
+		
+		offset = _mpcFile->readUint32LE();
+		_mpcFile->seek((int32)offset);
 
+		// Note: The MPC archive format assumes the offset to be uint32,
+		// but Common::File::seek() takes the offset as int32.
+
+		_dataHeader.dirSize = _mpcFile->readUint32LE();
+
+		debug(8, "MSDC: Read %d entries", _dataHeader.dirSize);
+
+		for (uint32 fileIndex = 0; fileIndex < _dataHeader.dirSize; fileIndex++) {
+			MPCEntry *dirEntry = new MPCEntry();
+
+			for (int i = 0; i < 64; i++) {
+				dirEntry->filename[i] = tolower(_mpcFile->readByte());
+			}
+
+			dirEntry->offset = _mpcFile->readUint32LE();
+			dirEntry->length = _mpcFile->readUint32LE();
+			dirEntry->ulength = _mpcFile->readUint32LE();
+			dirEntry->type = (DataType)_mpcFile->readUint32LE();
+
+			_dir.push_back(dirEntry);
+		}
+
+		return true;
+	} else if (_dataHeader.id == MKTAG('M', 'S', 'D', 'U')) {
+		_compressed = false;
+		debug("UNCOMPRESSED MSD FILE");
+		return false;
 	}
 
-	error("Invalid MPC File.");
+	error("Invalid MPC/MSD File.");
 	return false;
-
 }
 
 void FileMan::closeMPC() {
@@ -139,7 +170,11 @@ Common::SeekableReadStream *FileMan::findFirstData(const char *string, DataType 
 	_mpcFile->read(buffer, file->ulength);
 
 	// Return buffer wrapped in a MemoryReadStream
-	return new Common::MemoryReadStream(buffer, file->ulength, DisposeAfterUse::YES);
+	
+	if (_compressed)
+		return Common::wrapCompressedReadStream(new Common::MemoryReadStream(buffer, file->ulength, DisposeAfterUse::YES));
+	else
+		return new Common::MemoryReadStream(buffer, file->ulength, DisposeAfterUse::YES);
 }
 
 int32 FileMan::getLength(const char *string, DataType type) {
