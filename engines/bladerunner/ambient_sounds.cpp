@@ -57,9 +57,9 @@ AmbientSounds::~AmbientSounds() {
 	delete[] _loopingSounds;
 }
 
-static inline void sort(int32 *a, int32 *b) {
+static inline void sort(int *a, int *b) {
 	if (*a > *b) {
-		int32 t = *a;
+		int t = *a;
 		*a = *b;
 		*b = t;
 	}
