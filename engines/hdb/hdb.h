@@ -157,6 +157,7 @@ public:
 	uint32 getGameFlags() const;
 	Common::Platform getPlatform() const;
 	bool isDemo() const;
+	bool isPPC() const;
 
 	/*
 	Game System Pointers
