@@ -146,6 +146,8 @@ protected:
 	virtual bool setGraphicsMode(int mode);
 	virtual int getGraphicsMode() const;
 #endif
+protected:
+	virtual char *convertEncoding(const char *to, const char *from, const char *string, size_t length);
 };
 
 #endif

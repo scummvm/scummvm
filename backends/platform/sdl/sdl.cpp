@@ -752,3 +752,13 @@ int SDL_SetColorKey_replacement(SDL_Surface *surface, Uint32 flag, Uint32 key) {
 }
 #endif
 
+char *OSystem_SDL::convertEncoding(const char *to, const char *from, const char *string, size_t length) {
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+	debug("Trying SDL...");
+	return SDL_iconv_string(to, from, string, length + 1);
+#else
+	debug("SDL isn't available");
+	return nullptr;
+#endif // SDL_VERSION_ATLEAST(2, 0, 0)
+}
+
