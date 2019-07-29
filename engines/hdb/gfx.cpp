@@ -486,6 +486,8 @@ int Gfx::getTileIndex(const char *name) {
 
 Picture *Gfx::getPicture(const char *name) {
 	Common::SeekableReadStream *stream = g_hdb->_fileMan->findFirstData(name, TYPE_PIC);
+	if (stream == nullptr)
+		return nullptr;
 	Picture *picture = new Picture;
 	picture->load(stream);
 	delete stream;
