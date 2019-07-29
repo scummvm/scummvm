@@ -268,6 +268,10 @@ void ListWidget::handleMouseMoved(int x, int y, int button) {
 	if (!isEnabled())
 		return;
 
+	// Determine if we are inside the widget
+	if (x < 0 || x > _w)
+		return;
+
 	// First check whether the selection changed
 	int item = findItem(x, y);
 
