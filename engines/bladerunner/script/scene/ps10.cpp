@@ -418,8 +418,10 @@ void SceneScriptPS10::InitializeScene() {
 	Ambient_Sounds_Add_Sound(kSfxBBMOVE3,  5, 100, 17, 27, -100, 100, -101, -101, 0, 0);
 #if BLADERUNNER_ORIGINAL_BUGS
 #else
-	// Moved here from PS15
-	Sound_Play(kSfxLABBUZZ1, 90, 0, 0, 50);
+	if (!Game_Flag_Query(kFlagPS11toPS10)) {
+		// Moved here from PS15
+		Sound_Play(kSfxLABBUZZ1, 90, 0, 0, 50);
+	}
 #endif // BLADERUNNER_ORIGINAL_BUGS
 }
 
