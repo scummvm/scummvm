@@ -43,6 +43,7 @@
 #include "backends/platform/sdl/win32/win32.h"
 #include "backends/platform/sdl/win32/win32-window.h"
 #include "backends/platform/sdl/win32/win32_wrapper.h"
+#include "backends/platform/sdl/win32/codepage.h"
 #include "backends/saves/windows/windows-saves.h"
 #include "backends/fs/windows/windows-fs-factory.h"
 #include "backends/taskbar/win32/win32-taskbar.h"
@@ -382,6 +383,31 @@ void OSystem_Win32::addSysArchivesToSearchSet(Common::SearchSet &s, int priority
 
 AudioCDManager *OSystem_Win32::createAudioCDManager() {
 	return createWin32AudioCDManager();
+}
+
+char *OSystem_Win32::convertEncoding(const char* to, const char *from, const char *string, size_t length) {
+	char *result = OSystem_SDL::convertEncoding(to, from, string, length);
+	if (result != nullptr)
+		return result;
+	if (Common::String(from).equalsIgnoreCase("utf-32"))
+		return nullptr;
+
+	WCHAR *tmpStr;
+	if (Common::String(from).equalsIgnoreCase("utf-16")) {
+		// Allocate space for string and 2 ending zeros
+		tmpStr = (WCHAR *) calloc(sizeof(char), length + 2);
+		memcpy(tmpStr, string, length);
+	} else {
+		tmpStr = Win32::ansiToUnicode(string, Win32::getCodePageId(from));
+	}
+
+	if (Common::String(to).equalsIgnoreCase("utf-16"))
+		return (char *) tmpStr;
+	else {
+		char *result = Win32::unicodeToAnsi(tmpStr, Win32::getCodePageId(to));
+		free(tmpStr);
+		return result;
+	}
 }
 
 #endif

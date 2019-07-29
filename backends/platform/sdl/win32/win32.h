@@ -54,6 +54,8 @@ protected:
 	virtual AudioCDManager *createAudioCDManager();
 	
 	HWND getHwnd() { return ((SdlWindow_Win32*)_window)->getHwnd(); }
+
+	virtual char *convertEncoding(const char *to, const char *from, const char *string, size_t length);
 };
 
 #endif
