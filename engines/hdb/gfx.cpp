@@ -725,9 +725,9 @@ int Gfx::animateTile(int tileIndex) {
 }
 
 bool Gfx::loadFont(const char *string) {
+
 	Common::SeekableReadStream *stream = g_hdb->_fileMan->findFirstData(string, TYPE_FONT);
 	if (!stream) {
-		delete stream;
 		return false;
 	}
 
