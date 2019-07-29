@@ -619,10 +619,16 @@ void Menu::drawMenu() {
 			_modeLoadGfx->drawMasked(centerPic(_modeLoadGfx), _oBannerY);
 			_menuBackoutGfx->drawMasked(kBackoutX, kBackoutY);
 
-
-			if (_saveGames[0].seconds) {
+			if (_saveGames[kAutoSaveSlot].seconds)
 				_vortexian[anim]->drawMasked(kVortSaveX, kVortSaveY);
+
+			if (g_hdb->isPPC()) {
+				g_hdb->_gfx->setCursor(kVortSaveTextX, kVortSaveY);
+				g_hdb->_gfx->drawText("Last Vortexian");
+				g_hdb->_gfx->setCursor(kVortSaveTextX, kVortSaveY + 12);
+				g_hdb->_gfx->drawText("Saved Game");
 			}
+
 			if (anim_time < g_hdb->getTimeSlice()) {
 				anim_time = g_hdb->getTimeSlice() + 50;
 				anim++;
@@ -759,6 +765,10 @@ void Menu::freeMenu() {
 	if (_demoPlaqueGfx)
 		delete _demoPlaqueGfx;
 	_demoPlaqueGfx = NULL;
+
+	if (g_hdb->isPPC()) {
+		warning("FIXME: When handangoGfx is added, free it here");
+	}
 
 	if (_nebulaGfx[0]) {
 		for (int i = 0; i < kNebulaCount; i++) {
@@ -1277,6 +1287,22 @@ void Menu::processInput(int x, int y) {
 			_optionsScrolling = true;
 			_optionsXV = -5;
 			g_hdb->_sound->playSound(SND_MENU_BACKOUT);
+		}
+
+		// Vortexian Load only exists on PocketPC!
+		if (g_hdb->isPPC()) {
+			// 5 Slots screen
+			// Vortexian autosave LOAD?
+			if (y > kVortSaveY && (y < kVortSaveY + 32) && (x >= kVortSaveX) && (x < kVortSaveX + 96) && _saveGames[kAutoSaveSlot].seconds) {
+				g_hdb->_sound->playSound(SND_VORTEX_SAVE);
+				if (g_hdb->loadGameState(kAutoSaveSlot).getCode() == Common::kNoError) {
+					_gamefilesActive = false;
+					freeMenu();
+					g_hdb->setGameState(GAME_PLAY);
+					return;
+				}
+			}
+
 		}
 
 		int i = 0;

@@ -379,6 +379,10 @@ void HDBGame::setTargetXY(int x, int y) {
 	if (p->touchpWait)
 		return;
 
+	// Double-Clicking on the player to open inventory?
+	if (g_hdb->isPPC())
+		warning("STUB: Add double-click to inventory functionality for PPC version");
+
 	// If we're attacking...don't do anything else
 	AIState stateList[] = {
 		STATE_ATK_CLUB_UP,	STATE_ATK_CLUB_DOWN, STATE_ATK_CLUB_LEFT, STATE_ATK_CLUB_RIGHT,
