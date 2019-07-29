@@ -266,7 +266,7 @@ void InterfacePanel::readSettings() {
 	_musicFrame = 1 + 40 * ConfMan.getInt("music_volume") / 255;
 	_sfxFrame = 1 + 30 * ConfMan.getInt("sfx_volume") / 255;
 	_subtitles = ConfMan.getBool("subtitles");
-	//_speedFrame = 1 + ConfMan.getInt("petka_speed") / 4;
+	_speedFrame = 1 + ConfMan.getInt("petka_speed") / 4;
 }
 
 void InterfacePanel::applySettings() {
@@ -279,7 +279,7 @@ void InterfacePanel::applySettings() {
 	ConfMan.setInt("music_volume", 255 * (_musicFrame - 1) / (41 - 1));
 	ConfMan.setInt("sfx_volume", 255 * (_sfxFrame - 1) / (31 - 1));
 	ConfMan.setBool("subtitles", _subtitles);
-	//ConfMan.setInt("petka_speed", 4 * (_speedFrame - 1));
+	ConfMan.setInt("petka_speed", 4 * (_speedFrame - 1));
 	ConfMan.flushToDisk();
 	g_vm->syncSoundSettings();
 }
