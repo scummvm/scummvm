@@ -263,6 +263,7 @@ void KIASectionPogo::draw(Graphics::Surface &surface) {
 	_vm->_mainFont->drawString(&surface, title, 313 - _vm->_mainFont->getStringWidth(title) / 2, 143, surface.w, surface.format.RGBToColor(240, 232, 192));
 
 	int y = 158;
+	int lineTextWidth;
 	for (int i = 0; i < kLineCount; ++i) {
 		if (updateTimeout) {
 			if (_lineTimeouts[i] > 0) {
@@ -270,7 +271,8 @@ void KIASectionPogo::draw(Graphics::Surface &surface) {
 			} else {
 				_lineTexts[i] = _strings[_stringIndex];
 				_lineTimeouts[i] = 63;
-				_lineOffsets[i] = _vm->_rnd.getRandomNumberRng(0, 306 - _vm->_mainFont->getStringWidth(_lineTexts[i])) + 155;
+				 lineTextWidth = _vm->_mainFont->getStringWidth(_lineTexts[i]);
+				_lineOffsets[i] = _vm->_rnd.getRandomNumberRng(0, (306 -  lineTextWidth) > 0 ? (306 - lineTextWidth) : 0) + 155;
 
 				_stringIndex = (_stringIndex + 1) % kStringCount;
 			}
