@@ -37,7 +37,7 @@ void SceneScriptBB09::InitializeScene() {
 #if BLADERUNNER_ORIGINAL_BUGS
 	Scene_Exit_Add_2D_Exit(0, 224, 213, 286, 353, 1);
 #else
-	// in the original McCoy could run ahead of Sadik to the next room
+	// in the original McCoy could run ahead of Sadik to the next room (BB10)
 	// if the player clicked quickly enough
 	// kFlagBB11SadikFight is set after Sadik exits this room in Chapter 2
 	// (and his goal is set to kGoalSadikBB11Wait)
@@ -133,7 +133,7 @@ void SceneScriptBB09::SceneFrameAdvanced(int frame) {
 void SceneScriptBB09::ActorChangedGoal(int actorId, int newGoal, int oldGoal, bool currentSet) {
 #if BLADERUNNER_ORIGINAL_BUGS
 #else
-	// in the original McCoy could run ahead of Sadik to the next room
+	// in the original McCoy could run ahead of Sadik to the next room (BB10)
 	// if the player clicked quickly enough
 	if (actorId == kActorSadik && newGoal == kGoalSadikBB11Wait) {
 		Scene_Exit_Add_2D_Exit(0, 224, 213, 286, 353, 1);

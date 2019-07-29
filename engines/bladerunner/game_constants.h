@@ -2278,6 +2278,7 @@ enum GoalIzo {
 	kGoalIzoRC03RunAway = 114,
 	kGoalIzoGetArrested = 120,
 	kGoalIzoGotArrested = 180,
+	kGoalIzoRC03RanAwayDone = 181, // new - added for bug fix of Izo getting stuck at RC03
 	kGoalIzoGoToHC01 = 150,
 	kGoalIzoGoToHC03 = 155,
 	kGoalIzoDieHidden = 198,

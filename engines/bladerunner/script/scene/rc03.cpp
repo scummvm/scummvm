@@ -321,6 +321,7 @@ void SceneScriptRC03::PlayerWalkedIn() {
 				// prevent re-apprehending of Izo
 				if (Actor_Query_Goal_Number(kActorIzo) != kGoalIzoDie
 				    && Actor_Query_Goal_Number(kActorIzo) != kGoalIzoDieHidden
+				    && Actor_Query_Goal_Number(kActorIzo) != kGoalIzoRC03RanAwayDone
 				    && Actor_Query_Goal_Number(kActorIzo) != kGoalIzoEscape
 				    && Actor_Query_Goal_Number(kActorSteele) != kGoalSteeleShootIzo
 				    && Actor_Query_Goal_Number(kActorSteele) != kGoalSteeleIzoBlockedByMcCoy
@@ -341,6 +342,7 @@ void SceneScriptRC03::PlayerWalkedIn() {
 				// prevent re-apprehending of Izo
 				if (Actor_Query_Goal_Number(kActorIzo) != kGoalIzoGetArrested
 				    && Actor_Query_Goal_Number(kActorIzo) != kGoalIzoGotArrested
+				    && Actor_Query_Goal_Number(kActorIzo) != kGoalIzoRC03RanAwayDone
 				    && Actor_Query_Goal_Number(kActorIzo) != kGoalIzoEscape
 				    && Actor_Query_Goal_Number(kActorSteele) != kGoalSteeleApprehendIzo
 				    && Actor_Query_Goal_Number(kActorSteele) != kGoalSteeleArrestIzo

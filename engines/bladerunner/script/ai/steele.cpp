@@ -364,6 +364,17 @@ void AIScriptSteele::ClickedByPlayer() {
 		return; //true;
 	}
 
+#if BLADERUNNER_ORIGINAL_BUGS
+#else
+	if (goal == kGoalSteeleApprehendIzo
+	    || goal == kGoalSteeleArrestIzo
+	    || goal == kGoalSteeleShootIzo
+	) {
+		// don't interrupt Steele before she apprehends Izo
+		return; //true;
+	}
+#endif // BLADERUNNER_ORIGINAL_BUGS
+
 	AI_Movement_Track_Pause(kActorSteele);
 	Actor_Face_Actor(kActorSteele, kActorMcCoy, true);
 	Actor_Face_Actor(kActorMcCoy, kActorSteele, true);
