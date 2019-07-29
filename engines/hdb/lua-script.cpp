@@ -977,13 +977,15 @@ static int animation(lua_State *L) {
 		break;
 	case 1:
 		g_hdb->_ai->addAnimateTarget((int)x, (int)y, 0, 3, ANIM_NORMAL, false, false, GROUP_EXPLOSION_BOOM_SIT);
-		if (playsnd)
-			g_hdb->_sound->playSound(SND_BARREL_EXPLODE);
+		if (!g_hdb->isDemo())
+			if (playsnd)
+				g_hdb->_sound->playSound(SND_BARREL_EXPLODE);
 		break;
 	case 2:
 		g_hdb->_ai->addAnimateTarget((int)x, (int)y, 0, 3, ANIM_FAST, false, false, GROUP_STEAM_PUFF_SIT);
-		if (playsnd)
-			g_hdb->_sound->playSound(SND_BARREL_MELTING);
+		if (!g_hdb->isDemo())
+			if (playsnd)
+				g_hdb->_sound->playSound(SND_BARREL_MELTING);
 		break;
 	case 3:
 		g_hdb->_ai->addAnimateTarget((int)x, (int)y, 0, 7, ANIM_NORMAL, false, false, TELEPORT_FLASH);
