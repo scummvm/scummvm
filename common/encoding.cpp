@@ -23,6 +23,7 @@
 #include "common/encoding.h"
 #include "common/debug.h"
 #include "common/textconsole.h"
+#include "common/system.h"
 #include <cerrno>
 
 namespace Common {
@@ -79,6 +80,11 @@ char *Encoding::doConversion(iconv_t iconvHandle, const String &to, const String
 #else
 	debug("Iconv is not available");
 #endif // USE_ICONV
+	if (result == nullptr)
+		result = g_system->convertEncoding(to.c_str(), from.c_str(), string, length);
+
+	if (result == nullptr)
+		debug("Could not convert from %s to %s using backend specific conversion", from.c_str(), to.c_str());
 
 	return result;
 }
