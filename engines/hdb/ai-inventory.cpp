@@ -305,7 +305,10 @@ bool AI::completeDelivery(const char *id) {
 			for (; i < _numDeliveries; i++)
 				memcpy(&_deliveries[i], &_deliveries[i + 1], sizeof(_deliveries[0]));
 			_numDeliveries--;
-			g_hdb->_sound->playVoice(GUY_COMPLETED, 1);
+			if (g_hdb->isPPC())
+				g_hdb->_sound->playSound(SND_QUEST_COMPLETE);
+			else
+				g_hdb->_sound->playVoice(GUY_COMPLETED, 1);
 			return true;
 		}
 	return false;

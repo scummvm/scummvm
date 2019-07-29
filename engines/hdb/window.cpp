@@ -131,12 +131,17 @@ bool Window::init() {
 
 	_invWinInfo.width = kInvItemSpaceX * 3;
 	_invWinInfo.height = kInvItemSpaceY * 4;
-	_invWinInfo.x = kScreenWidth - _gfxInfobar->_width + 16;
+
+	warning("FIXME: Fully separate the PC and PPC versions of Window");
+
+	if (!g_hdb->isPPC())
+		_invWinInfo.x = kScreenWidth - _gfxInfobar->_width + 16;
 	_invWinInfo.y = 40;
 
 	_dlvsInfo.width = kInvItemSpaceX * 3;
 	_dlvsInfo.height = kInvItemSpaceY * 4;
-	_dlvsInfo.x = (kScreenWidth - _gfxInfobar->_width) + 16;
+	if (!g_hdb->isPPC())
+		_dlvsInfo.x = (kScreenWidth - _gfxInfobar->_width) + 16;
 	_dlvsInfo.y = 272;
 
 	_gemGfx = NULL;

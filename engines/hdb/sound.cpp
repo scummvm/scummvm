@@ -1567,7 +1567,7 @@ bool Sound::playSoundEx(int index, int channel, bool loop) {
 }
 
 bool Sound::playVoice(int index, int actor) {
-	if (!_voicesOn)
+	if (!_voicesOn || g_hdb->isPPC())
 		return false;
 
 	// make sure we aren't playing a line more than once this time (only on CHANNEL 0)
