@@ -40,6 +40,8 @@ public:
 	virtual void show(bool v) {};
 	virtual void setPos(int x, int y) {};
 	virtual bool isInPoint(int x, int y) { return false; }
+	virtual void onMouseMove(int x, int y) {}
+	virtual void onClick(int x, int y) {}
 
 public:
 	int32 _resourceId;

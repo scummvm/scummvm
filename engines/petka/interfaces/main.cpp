@@ -26,7 +26,7 @@
 #include "common/ini-file.h"
 
 #include "petka/flc.h"
-#include "petka/objects/object.h"
+#include "petka/objects/object_star.h"
 #include "petka/interfaces/main.h"
 #include "petka/q_system.h"
 #include "petka/q_manager.h"
@@ -56,6 +56,8 @@ InterfaceMain::InterfaceMain() {
 			obj->_field18 = stream->readSint32LE();
 		}
 	}
+
+	_objs.push_back(g_vm->getQSystem()->_star.get());
 }
 
 void InterfaceMain::start() {
