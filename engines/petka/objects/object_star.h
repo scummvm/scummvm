@@ -28,7 +28,12 @@
 namespace Petka {
 
 class QObjectStar : public QObject {
-
+public:
+	QObjectStar();
+	void update(int time) override {}
+	bool isInPoint(int x, int y) override;
+	void onMouseMove(int x, int y) override;
+	void onClick(int x, int y) override;
 };
 
 } // End of namespace Petka
