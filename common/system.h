@@ -60,6 +60,7 @@ class HardwareInputSet;
 class Keymap;
 class KeymapperDefaultBindings;
 #endif
+class Encoding;
 }
 
 class AudioCDManager;
@@ -107,6 +108,7 @@ enum Type {
  * control audio CD playback, and sound output.
  */
 class OSystem : Common::NonCopyable {
+	friend class Common::Encoding;
 protected:
 	OSystem();
 	virtual ~OSystem();
@@ -1490,6 +1492,9 @@ public:
 	virtual bool isConnectionLimited();
 
 	//@}
+	
+	protected:
+	virtual char *convertEncoding(const char *to, const char *from, const char *string, size_t length) { return nullptr; }
 };
 
 
