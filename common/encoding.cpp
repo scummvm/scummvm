@@ -24,6 +24,7 @@
 #include "common/debug.h"
 #include "common/textconsole.h"
 #include "common/system.h"
+#include "common/translation.h"
 #include <cerrno>
 
 namespace Common {
@@ -83,8 +84,10 @@ char *Encoding::doConversion(iconv_t iconvHandle, const String &to, const String
 	if (result == nullptr)
 		result = g_system->convertEncoding(to.c_str(), from.c_str(), string, length);
 
-	if (result == nullptr)
+	if (result == nullptr) {
 		debug("Could not convert from %s to %s using backend specific conversion", from.c_str(), to.c_str());
+		result = convertTransManMapping(to.c_str(), from.c_str(), string, length);
+	}
 
 	return result;
 }
@@ -155,6 +158,63 @@ char *Encoding::convertIconv(iconv_t iconvHandle, const char *string, size_t len
 	debug("Iconv isn't available");
 	return nullptr;
 #endif //USE_ICONV
+}
+
+// This algorithm is able to convert only between the current TransMan charset
+// and UTF-32, but if it fails, it tries to at least convert from the current
+// TransMan encoding to UTF-32 and then it calls convert() again with that.
+char *Encoding::convertTransManMapping(const char *to, const char *from, const char *string, size_t length) {
+#ifdef USE_TRANSLATION
+	debug("Trying TransMan...");
+	String currentCharset = TransMan.getCurrentCharset();
+	if (currentCharset.equalsIgnoreCase(from)) {
+		// We can use the transMan mapping directly
+		uint32 *partialResult = (uint32 *) calloc(sizeof(uint32), (strlen(string) + 1));
+		if (!partialResult) {
+			warning("Couldn't allocate memory for encoding conversion");
+			return nullptr;
+		}
+		const uint32 *mapping = TransMan.getCharsetMapping();
+		if (mapping == 0) {
+			for(unsigned i = 0; i < strlen(string); i++) {
+				partialResult[i] = string[i];
+			}
+		} else {
+			for(unsigned i = 0; i < strlen(string); i++) {
+				partialResult[i] = mapping[(unsigned char) string[i]] & 0x7FFFFFFF;
+			}
+		}
+#ifdef SCUMM_BIG_ENDIAN
+		char *finalResult = convert(to, "UTF-32BE", (char *) partialResult, strlen(string) * 4);
+#else
+		char *finalResult = convert(to, "UTF-32LE", (char *) partialResult, strlen(string) * 4);
+#endif // SCUMM_BIG_ENDIAN
+		free(partialResult);
+		return finalResult;
+	} else if (currentCharset.equalsIgnoreCase(to) && String(from).equalsIgnoreCase("utf-32")) {
+		// We can do reverse mapping
+		const uint32 *mapping = TransMan.getCharsetMapping();
+		const uint32 *src = (const uint32 *) string;
+		char *result = (char *) calloc(sizeof(char), (length + 4));
+		if (!result) {
+			warning("Couldn't allocate memory for encoding conversion");
+			return nullptr;
+		}
+		for (unsigned i = 0; i < length; i++) {
+			for (int j = 0; j < 256; j++) {
+				if ((mapping[j] & 0x7FFFFFFF) == src[i]) {
+					result[i] = j;
+					break;
+				}
+			}
+		}
+		return result;
+	} else
+		return nullptr;
+#else
+	debug("TransMan isn't available");
+	return nullptr;
+#endif // USE_TRANSLATION
 }
 
 }
