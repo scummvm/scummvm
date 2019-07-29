@@ -687,15 +687,15 @@ void Menu::drawMenu() {
 		g_hdb->_gfx->draw3DStars();
 		drawNebula();
 
-		if (_quitActive == 2) { // XXXX
+		if (_quitActive == 3 || !g_hdb->isDemo()) {
+			if (!_quitScreen)
+				_quitScreen = g_hdb->_gfx->loadPic(PIC_QUITSCREEN);
+			_quitScreen->drawMasked(kQuitX, kQuitY);
+		} else if (_quitActive == 2) { // XXXX
 			_screenshots1gfx->drawMasked(kQuitX, kQuitY);
 			_screenshots2gfx->drawMasked(kQuitX, kScreenHeight - _screenshots2gfx->_height);
 		} else if (_quitActive == 1) {
 			_screenshots1agfx->drawMasked(kQuitX, kQuitY);
-		} else if (_quitActive == 3 || !g_hdb->isDemo()) {
-			if (!_quitScreen)
-				_quitScreen = g_hdb->_gfx->loadPic(PIC_QUITSCREEN);
-			_quitScreen->drawMasked(kQuitX, kQuitY);
 		}
 	}
 }
