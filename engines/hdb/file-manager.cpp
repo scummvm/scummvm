@@ -84,7 +84,7 @@ bool FileMan::openMPC(const Common::String &filename) {
 		return true;
 	} else if (_dataHeader.id == MKTAG('M', 'S', 'D', 'C')) {
 		_compressed = true;
-		
+
 		offset = _mpcFile->readUint32LE();
 		_mpcFile->seek((int32)offset);
 
@@ -170,7 +170,7 @@ Common::SeekableReadStream *FileMan::findFirstData(const char *string, DataType 
 	_mpcFile->read(buffer, file->ulength);
 
 	// Return buffer wrapped in a MemoryReadStream
-	
+
 	if (_compressed)
 		return Common::wrapCompressedReadStream(new Common::MemoryReadStream(buffer, file->ulength, DisposeAfterUse::YES));
 	else
