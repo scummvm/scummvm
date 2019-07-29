@@ -60,6 +60,7 @@ class Encoding {
 		iconv_t _iconvHandle;
 		static char *convertIconv(iconv_t iconvHandle, const char *string, size_t length);
 
+		static char *convertTransManMapping(const char *to, const char *from, const char *string, size_t length);
 };
 
 }
