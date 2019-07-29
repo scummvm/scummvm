@@ -147,7 +147,7 @@ Picture *Pictures::load(uint32 id) {
 	pic->_refCount = 1;
     pic->_id = id;
     pic->_scaled = false;
-	if (transColor != -1)
+	if (transColor != -1 || (!palette && img->format.aBits() > 0))
 		pic->clear(pic->getTransparentColor());
 
 	if (!img->getPixels()) {
