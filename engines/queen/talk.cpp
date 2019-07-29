@@ -734,8 +734,10 @@ void Talk::defaultAnimation(
 				_vm->update();
 			}
 
-			if (_vm->input()->talkQuit())
+			if (_vm->input()->talkQuit()) {
+				_vm->sound()->stopSpeech();
 				break;
+			}
 
 			if (_vm->logic()->joeWalk() == JWM_SPEAK) {
 				_vm->update();
