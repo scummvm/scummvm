@@ -713,16 +713,16 @@ The most up to date list of Engine data files can be found in our [source code r
 
 Supported versions are English (both CD and DVD), French, German,
 Italian, Russian (by Fargus Multimedia) and Spanish. Other unofficial
-versions exists but they are based on the English version.
+versions exist but they are based on the English version.
 
 All *.mix, *.tlk and *.dat files are needed from all 4 CDs/DVD.
 Files named CDFRAMES.DAT need to be renamed to CDFRAMES1.DAT,
 CDFRAMES2.DAT, CDFRAMES3.DAT and CDFRAMES4.DAT according on
 the CD they came from. Other files with the same name on different
-CDs are the same and doesn't matter which one is used.
+CDs are identical and it doesn't matter which one is used.
 
 To enable subtitles, download a file from our [Downloads](https://www.scummvm.org/games/#bladerunner) page
-and place file SUBTITLES.MIX next to the other files.
+and place file SUBTITLES.MIX next to the other game files.
 
 "Blade Runner with restored content" is not yet supported and might
 contain game breaking bugs.
