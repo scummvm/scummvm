@@ -41,7 +41,7 @@ ListWidget::ListWidget(Dialog *boss, const String &name, const char *tooltip, ui
 	// This ensures that _entriesPerPage is properly initialized.
 	reflowLayout();
 
-	_scrollBar = new ScrollBarWidget(this, _w - _scrollBarWidth + 1, 0, _scrollBarWidth, _h);
+	_scrollBar = new ScrollBarWidget(this, _w - _scrollBarWidth, 0, _scrollBarWidth, _h);
 	_scrollBar->setTarget(this);
 
 	setFlags(WIDGET_ENABLED | WIDGET_CLEARBG | WIDGET_RETAIN_FOCUS | WIDGET_WANT_TICKLE);
@@ -72,7 +72,7 @@ ListWidget::ListWidget(Dialog *boss, int x, int y, int w, int h, const char *too
 	// This ensures that _entriesPerPage is properly initialized.
 	reflowLayout();
 
-	_scrollBar = new ScrollBarWidget(this, _w - _scrollBarWidth + 1, 0, _scrollBarWidth, _h);
+	_scrollBar = new ScrollBarWidget(this, _w - _scrollBarWidth, 0, _scrollBarWidth, _h);
 	_scrollBar->setTarget(this);
 
 	setFlags(WIDGET_ENABLED | WIDGET_CLEARBG | WIDGET_RETAIN_FOCUS | WIDGET_WANT_TICKLE);
@@ -658,7 +658,7 @@ void ListWidget::reflowLayout() {
 	assert(_entriesPerPage > 0);
 
 	if (_scrollBar) {
-		_scrollBar->resize(_w - _scrollBarWidth + 1, 0, _scrollBarWidth, _h);
+		_scrollBar->resize(_w - _scrollBarWidth, 0, _scrollBarWidth, _h);
 		scrollBarRecalc();
 		scrollToCurrent();
 	}
