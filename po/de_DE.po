@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2019-07-30 21:42+0200\n"
-"PO-Revision-Date: 2019-07-28 14:30+0000\n"
+"PO-Revision-Date: 2019-07-30 19:53+0000\n"
 "Last-Translator: Lothar Serra Mari <serra@scummvm.org>\n"
 "Language-Team: German <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/de/>\n"
@@ -1260,22 +1260,22 @@ msgid "Apply"
 msgstr "Übernehmen"
 
 #: gui/options.cpp:1871
-#, fuzzy
 msgid "Active storage:"
-msgstr "Aktiver Cloud-Speicher"
+msgstr "Aktive Cloud:"
 
 #: gui/options.cpp:1871
 msgid "Active cloud storage"
 msgstr "Aktiver Cloud-Speicher"
 
 #: gui/options.cpp:1879
-#, fuzzy
 msgid "Enable storage"
-msgstr "Aktiviert Studio-Publikum"
+msgstr "Aktiviere Cloud"
 
 #: gui/options.cpp:1879
 msgid "Confirm you want to use this account for this storage"
 msgstr ""
+"Bitte bestätigen Sie, dass Sie dieses Konto für diesen Cloud-Speicher "
+"verwenden möchten"
 
 #: gui/options.cpp:1881 backends/platform/wii/options.cpp:114
 msgid "Username:"
@@ -1295,40 +1295,36 @@ msgstr ""
 "Von ScummVM-Spielständen belegter Speicherplatz auf diesem Cloud-Speicher"
 
 #: gui/options.cpp:1887
-#, fuzzy
 msgid "Last sync:"
 msgstr "Letzte Sync.:"
 
 #: gui/options.cpp:1887
-#, fuzzy
 msgid "When was the last time saved games were synced with this storage"
 msgstr "Zeitpunkt der letzten Spielstand-Synchronisierung"
 
 #: gui/options.cpp:1890
 msgid "Sync now"
-msgstr ""
+msgstr "Jetzt synchronisieren"
 
 #: gui/options.cpp:1890
 msgid "Start saves sync"
-msgstr ""
+msgstr "Starte Spielstand-Synchronisation"
 
 #: gui/options.cpp:1893
-#, fuzzy
 msgid "Download game files"
-msgstr "Download fehlgeschlagen."
+msgstr "Spieldateien herunterladen"
 
 #: gui/options.cpp:1893
 msgid "Open downloads manager dialog"
 msgstr "Öffnet den Download-Manager"
 
 #: gui/options.cpp:1896
-#, fuzzy
 msgid "Disconnect"
-msgstr "Verbinden"
+msgstr "Trennen"
 
 #: gui/options.cpp:1896
 msgid "Stop using this storage on this device"
-msgstr ""
+msgstr "Diesen Cloud-Speicher nicht mehr auf diesem Gerät verwenden"
 
 #: gui/options.cpp:1900
 msgid "Open URL"
@@ -1339,21 +1335,16 @@ msgid "Paste"
 msgstr "Einfügen"
 
 #: gui/options.cpp:1903
-#, fuzzy
 msgid "Paste code from clipboard"
-msgstr "In Zwischenablage kopieren"
+msgstr "Aus Zwischenablage einfügen"
 
 #: gui/options.cpp:1904
-#, fuzzy
 msgid "3. Connect"
-msgstr "Verbinden"
+msgstr "3. Verbinden"
 
 #: gui/options.cpp:1904
-#, fuzzy
 msgid "Connect your cloud storage account"
-msgstr ""
-"Öffnet den Assistenten, der Sie durch die Einrichtung Ihres Cloud-Speichers "
-"führt"
+msgstr "Verbinden Sie Ihr Konto Ihres Cloud-Anbieters"
 
 #: gui/options.cpp:1913
 msgid "Run server"
@@ -1368,9 +1359,9 @@ msgid "Not running"
 msgstr "Nicht gestartet"
 
 #: gui/options.cpp:1917 gui/options.cpp:1918
-#, fuzzy
 msgid "Select which directory will be shown as /root/ in the Files Manager"
-msgstr "Legt fest, auf welches Verzeichnis der Dateimanager zugreifen darf"
+msgstr ""
+"Legt fest, welches Verzeichnis als /root/ im Dateimanager angezeigt wird"
 
 #: gui/options.cpp:1923
 msgid "Server's port:"
@@ -1378,7 +1369,7 @@ msgstr "Server-Port:"
 
 #: gui/options.cpp:1923
 msgid "Port for server to use"
-msgstr ""
+msgstr "Port, der für den Server genutzt wird"
 
 #: gui/options.cpp:1997
 msgid "Failed to change cloud storage!"
@@ -1436,7 +1427,6 @@ msgstr ""
 "Sie sollten diese Seite manuell aufrufen."
 
 #: gui/options.cpp:2290
-#, fuzzy
 msgid "Another Storage is working now. Do you want to interrupt it?"
 msgstr ""
 "Ein anderer Cloud-Speicher arbeitet gerade. Möchten Sie ihn unterbrechen?"
@@ -1447,15 +1437,12 @@ msgstr ""
 "Warten Sie, bis der Cloud-Speicher fertig ist und versuchen Sie es erneut."
 
 #: gui/options.cpp:2312
-#, fuzzy
 msgid "Connecting..."
-msgstr "Verbinden"
+msgstr "Verbinden..."
 
 #: gui/options.cpp:2328
-#, fuzzy
 msgid "This Storage is working now. Do you want to interrupt it?"
-msgstr ""
-"Ein anderer Cloud-Speicher arbeitet gerade. Möchten Sie ihn unterbrechen?"
+msgstr "Dieser Cloud-Speicher arbeitet gerade. Möchten Sie ihn unterbrechen?"
 
 #: gui/options.cpp:2527
 msgid "<right now>"
@@ -1474,19 +1461,16 @@ msgid "Stop local webserver"
 msgstr "Lokalen Webserver anhalten"
 
 #: gui/options.cpp:2689
-#, fuzzy
 msgid "Storage connected."
-msgstr "Verbindungs-Assistent für %s"
+msgstr "Cloud-Speicher verbunden."
 
 #: gui/options.cpp:2691
-#, fuzzy
 msgid "Failed to connect storage."
-msgstr "Konnte den Cloud-Speicher nicht ändern!"
+msgstr "Verbindung mit Cloud-Speicher fehlgeschlagen."
 
 #: gui/options.cpp:2693
-#, fuzzy
 msgid "Failed to connect storage: "
-msgstr "Konnte den Cloud-Speicher nicht ändern!"
+msgstr "Verbindung mit Cloud-Speicher fehlgeschlagen: "
 
 #: gui/options.cpp:2713
 msgid ""
