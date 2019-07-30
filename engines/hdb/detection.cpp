@@ -86,7 +86,7 @@ static const ADGameDescription gameDescriptions[] = {
 		AD_ENTRY1s("hyperspace.msd", "a62468904beb3efe16d4d64f3955a32e", 6825555),
 		Common::EN_ANY,
 		Common::kPlatformUnknown, // PPC
-		kPPCFlag,
+		(uint32)kPPCFlag,
 		GUIO1(GUIO_NONE)
 	},
 
@@ -125,7 +125,7 @@ static const ADGameDescription gameDescriptions[] = {
 		AD_ENTRY1s("hyperdemo.msd", "312525298ca9f5ac904883d1ce19dc0f", 3088651),
 		Common::EN_ANY,
 		Common::kPlatformUnknown, // PPC
-		(ADGF_DEMO || kPPCFlag),
+		(ADGF_DEMO || (uint32)kPPCFlag),
 		GUIO1(GUIO_NONE)
 	},
 	{
@@ -134,7 +134,7 @@ static const ADGameDescription gameDescriptions[] = {
 		AD_ENTRY1s("hyperdemo.msd", "2d4457b284a940b7058b36e5706b9951", 3094241),
 		Common::EN_ANY,
 		Common::kPlatformUnknown, // PPC
-		(ADGF_DEMO || kPPCFlag),
+		(ADGF_DEMO || (uint32)kPPCFlag),
 		GUIO1(GUIO_NONE)
 	},
 	AD_TABLE_END_MARKER
