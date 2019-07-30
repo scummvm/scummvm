@@ -292,7 +292,7 @@ const PlainGameDescriptor GLULXE_GAME_LIST[] = {
 	// Spanish games
 	{ "alienlaaventura", "ALIEN: La Aventura" },
 	{ "conrumbo", "Con Rumbo" },
-	{ "elultimohogarglulx", "Misterio en el Último Hogar" },
+	{ "elultimohogarglulx", "Misterio en el Ultimo Hogar" },
 	{ "hhorcusglulx", "Homo Homini Orcus" },
 	{ "kerulenglulx", "Ke rulen los petas" },
 	{ "lanochedelensayo", "La Noche del Ensayo" },

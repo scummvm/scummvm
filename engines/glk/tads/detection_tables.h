@@ -256,7 +256,7 @@ const PlainGameDescriptor TADS3_GAME_LIST[] = {
 	{ "exoter", "Exoter" },
 
 	// German games
-	{ "pionierin", "Die Pionierin und die Tragödie des telematischen Typewriters" },
+	{ "pionierin", "Die Pionierin und die Tragodie des telematischen Typewriters" },
 
 	// Italian games
 	{ "remerook", "La missione di Kyle Remerook" },
