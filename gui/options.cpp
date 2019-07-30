@@ -1875,7 +1875,7 @@ void GlobalOptionsDialog::addCloudControls(GuiObject *boss, const Common::String
 		_storagePopUp->appendEntry(list[i], i);
 	_storagePopUp->setSelected(_selectedStorageIndex);
 
-	_storageDisabledHint = new StaticTextWidget(boss, prefix + "StorageDisabledHint", _c("4. Storage is yet disabled. Verify that username is correct and enable it:", context));
+	_storageDisabledHint = new StaticTextWidget(boss, prefix + "StorageDisabledHint", _c("4. Storage is not yet enabled. Verify that username is correct and enable it:", context));
 	_storageEnableButton = new ButtonWidget(boss, prefix + "StorageEnableButton", _("Enable storage"), _("Confirm you want to use this account for this storage"), kEnableStorageCmd);
 
 	_storageUsernameDesc = new StaticTextWidget(boss, prefix + "StorageUsernameDesc", _("Username:"), _("Username used by this storage"));
