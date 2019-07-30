@@ -32,44 +32,90 @@ namespace Common {
 Encoding::Encoding(const String &to, const String &from) 
 	: _to(to)
 	, _from(from) {
-#ifdef USE_ICONV
-		String toTranslit = to + "//TRANSLIT";
-		_iconvHandle = iconv_open(toTranslit.c_str(), from.c_str());
-#endif // USE_ICONV
+		_iconvHandle = initIconv(to, from);
 }
 
 Encoding::~Encoding() {
-#ifdef USE_ICONV
-	if (_iconvHandle != (iconv_t) -1)
-		iconv_close(_iconvHandle);
-#endif // USE_ICONV
+	deinitIconv(_iconvHandle);
 }
 
-char *Encoding::convert(const char *string, size_t size) {
-#ifndef USE_ICONV
-	_iconvHandle = 0;
-#endif
-	return doConversion(_iconvHandle, _to, _from, string, size);
-}
-
-char *Encoding::convert(const String &to, const String &from, const char *string, size_t size) {
+iconv_t Encoding::initIconv(const String &to, const String &from) {
 #ifdef USE_ICONV
-	String toTranslit = to + "//TRANSLIT";
-	iconv_t iconvHandle = iconv_open(toTranslit.c_str(), from.c_str());
+		String toTranslit = to + "//TRANSLIT";
+		return iconv_open(toTranslit.c_str(), from.c_str());
 #else
-	iconv_t iconvHandle = 0;
+		return 0;
 #endif // USE_ICONV
+}
 
-	char *result =  doConversion(iconvHandle, to, from, string, size);
-
+void Encoding::deinitIconv(iconv_t iconvHandle) {
 #ifdef USE_ICONV
 	if (iconvHandle != (iconv_t) -1)
 		iconv_close(iconvHandle);
 #endif // USE_ICONV
+}
+
+char *Encoding::convert(const char *string, size_t size) {
+	return conversion(_iconvHandle, _to, _from, string, size);
+}
+
+char *Encoding::convert(const String &to, const String &from, const char *string, size_t size) {
+	iconv_t iconvHandle = initIconv(to, from);
+
+	char *result = conversion(iconvHandle, to, from, string, size);
+
+	deinitIconv(iconvHandle);
 	return result;
 }
 
-char *Encoding::doConversion(iconv_t iconvHandle, const String &to, const String &from, const char *string, size_t length) {
+char *Encoding::conversion(iconv_t iconvHandle, const String &to, const String &from, const char *string, size_t length) {
+	char *newString = nullptr;
+	String newFrom = from;
+	size_t newLength = length;
+	if (String(from).equalsIgnoreCase("iso-8859-5") &&
+			!String(to).hasPrefixIgnoreCase("utf")) {
+		// There might be some cyrilic characters, which need to be transliterated.
+		newString = transliterateCyrilic(string);
+		newFrom = "ASCII";
+	}
+	if (String(from).hasPrefixIgnoreCase("utf") &&
+			!String(to).hasPrefixIgnoreCase("utf")) {
+		// There might be some cyrilic characters, which need to be transliterated.
+		char *tmpString;
+		if (String(from).hasPrefixIgnoreCase("utf-32"))
+			tmpString = nullptr;
+		else {
+			iconv_t tmpHandle = initIconv("UTF-32", from);
+			tmpString = conversion2(tmpHandle, "UTF-32", from, string, length);
+			deinitIconv(tmpHandle);
+			// find out the length in bytes of the tmpString
+			int i;
+			for (i = 0; ((const uint32 *)tmpString)[i]; i++) {}
+			newLength = i * 4;
+			newFrom = "UTF-32";
+		}
+		if (tmpString != nullptr) {
+			newString = (char *) transliterateUTF32((const uint32 *) tmpString, newLength);
+			free(tmpString);
+		} else
+			newString = (char *) transliterateUTF32((const uint32 *) string, newLength);
+	}
+	iconv_t newHandle = iconvHandle;
+	if (newFrom != from)
+		newHandle = initIconv(to, newFrom);
+	char *result;
+	if (newString != nullptr) {
+		result = conversion2(newHandle, to, newFrom, newString, newLength);
+		free(newString);
+	} else
+		result = conversion2(newHandle, to, newFrom, string, newLength);
+
+	if (newFrom != from)
+		deinitIconv(newHandle);
+	return result;
+}
+
+char *Encoding::conversion2(iconv_t iconvHandle, const String &to, const String &from, const char *string, size_t length) {
 	char *result = nullptr;
 #ifdef USE_ICONV
 	if (iconvHandle != (iconv_t) -1)
@@ -215,6 +261,45 @@ char *Encoding::convertTransManMapping(const char *to, const char *from, const c
 	debug("TransMan isn't available");
 	return nullptr;
 #endif // USE_TRANSLATION
+}
+
+static char g_cyrilicTransliterationTable[] = {
+	' ', 'E', 'D', 'G', 'E', 'Z', 'I', 'I', 'J', 'L', 'N', 'C', 'K', '-', 'U', 'D',
+	'A', 'B', 'V', 'G', 'D', 'E', 'Z', 'Z', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P',
+	'R', 'S', 'T', 'U', 'F', 'H', 'C', 'C', 'S', 'S', '\"', 'Y', '\'', 'E', 'U', 'A',
+	'a', 'b', 'v', 'g', 'd', 'e', 'z', 'z', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p',
+	'r', 's', 't', 'u', 'f', 'h', 'c', 'c', 's', 's', '\"', 'y', '\'', 'e', 'u', 'a',
+	'N', 'e', 'd', 'g', 'e', 'z', 'i', 'i', 'j', 'l', 'n', 'c', 'k', '?', 'u', 'd',
+};
+
+char *Encoding::transliterateCyrilic(const char *string) {
+	char *result = (char *) malloc(strlen(string) + 1);
+	if (!result) {
+		warning("Could not allocate memory for encoding conversion");
+		return nullptr;
+	}
+	for(unsigned i = 0; i <= strlen(string); i++) {
+		if ((unsigned char) string[i] >= 160)
+			result[i] = g_cyrilicTransliterationTable[(unsigned char) string[i] - 160];
+		else
+			result[i] = string[i];
+	}
+	return result;
+}
+
+uint32 *Encoding::transliterateUTF32(const uint32 *string, size_t length) {
+	uint32 *result = (uint32 *) malloc(length + 4);
+	if (!result) {
+		warning("Could not allocate memory for encoding conversion");
+		return nullptr;
+	}
+	for(unsigned i = 0; i <= length / 4; i++) {
+		if (string[i] >= 0x410 && string[i] <= 0x450)
+			result[i] = g_cyrilicTransliterationTable[string[i] - 160 - 864];
+		else
+			result[i] = string[i];
+	}
+	return result;
 }
 
 }
