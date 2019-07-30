@@ -93,7 +93,7 @@ class Encoding {
 		/**
 		 * @param from The encoding, to convert from
 		 */
-		void setFrom(const String &from) {_from = from;};
+		void setFrom(const String &from);
 
 		/**
 		 * @return The encoding, which is currently being converted to
@@ -103,7 +103,7 @@ class Encoding {
 		/**
 		 * @param to The encoding, to convert to
 		 */
-		void setTo(const String &to) {_to = to;};
+		void setTo(const String &to);
 	
 	private:
 		/** The encoding, which is currently being converted to */
