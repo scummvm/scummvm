@@ -55,6 +55,18 @@ void Encoding::deinitIconv(iconv_t iconvHandle) {
 #endif // USE_ICONV
 }
 
+void Encoding::setFrom(const String &from) {
+	deinitIconv(_iconvHandle);
+	_from = from;
+	_iconvHandle = initIconv(_to, _from);
+}
+
+void Encoding::setTo(const String &to) {
+	deinitIconv(_iconvHandle);
+	_to = to;
+	_iconvHandle = initIconv(_to, _from);
+}
+
 char *Encoding::convert(const char *string, size_t size) {
 	return conversion(_iconvHandle, _to, _from, string, size);
 }
