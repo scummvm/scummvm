@@ -75,7 +75,7 @@ bool Debugger::cmdDumpPic(int argc, const char **argv) {
 			} else {
 				debugPrintf("Could not find specified picture\n");
 			}
-		} else if (f.exists(Common::String::format("pic%d.rect"))) {
+		} else if (f.exists(Common::String::format("pic%d.rect", picNum))) {
 			debugPrintf("Picture is only a placeholder rectangle\n");
 		} else if (f.open(Common::String::format("pic%d.raw", picNum))) {
 			// Raw picture
