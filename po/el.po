@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2019-07-30 21:42+0200\n"
+"POT-Creation-Date: 2019-07-30 22:43+0200\n"
 "PO-Revision-Date: 2019-03-06 11:42+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
@@ -57,7 +57,7 @@ msgstr "Μετάβαση πάνω"
 #: gui/browser.cpp:82 gui/chooser.cpp:46 gui/editgamedialog.cpp:299
 #: gui/editrecorddialog.cpp:67 gui/filebrowser-dialog.cpp:65
 #: gui/fluidsynth-dialog.cpp:153 gui/KeysDialog.cpp:43 gui/massadd.cpp:92
-#: gui/options.cpp:1781 gui/predictivedialog.cpp:73 gui/recorderdialog.cpp:69
+#: gui/options.cpp:1786 gui/predictivedialog.cpp:73 gui/recorderdialog.cpp:69
 #: gui/recorderdialog.cpp:155 gui/remotebrowser.cpp:60
 #: gui/saveload-dialog.cpp:389 gui/saveload-dialog.cpp:451
 #: gui/saveload-dialog.cpp:746 gui/saveload-dialog.cpp:1140
@@ -123,7 +123,7 @@ msgstr ""
 #: gui/downloaddialog.cpp:119 gui/downloaddialog.cpp:153
 #: gui/filebrowser-dialog.cpp:133 gui/fluidsynth-dialog.cpp:218
 #: gui/launcher.cpp:326 gui/launcher.cpp:395 gui/launcher.cpp:455
-#: gui/options.cpp:2290 gui/options.cpp:2328
+#: gui/options.cpp:2321 gui/options.cpp:2359
 #: backends/events/symbiansdl/symbiansdl-events.cpp:191
 #: backends/platform/wince/CEActionsPocket.cpp:326
 #: backends/platform/wince/CEActionsSmartphone.cpp:287
@@ -136,7 +136,7 @@ msgstr "Ναι"
 #: gui/downloaddialog.cpp:119 gui/downloaddialog.cpp:154
 #: gui/filebrowser-dialog.cpp:133 gui/fluidsynth-dialog.cpp:218
 #: gui/launcher.cpp:326 gui/launcher.cpp:395 gui/launcher.cpp:455
-#: gui/options.cpp:2290 gui/options.cpp:2328
+#: gui/options.cpp:2321 gui/options.cpp:2359
 #: backends/events/symbiansdl/symbiansdl-events.cpp:191
 #: backends/platform/wince/CEActionsPocket.cpp:326
 #: backends/platform/wince/CEActionsSmartphone.cpp:287
@@ -160,7 +160,7 @@ msgstr ""
 
 #: gui/downloaddialog.cpp:147 gui/editgamedialog.cpp:300
 #: gui/fluidsynth-dialog.cpp:154 gui/KeysDialog.cpp:42 gui/launcher.cpp:504
-#: gui/launcher.cpp:508 gui/massadd.cpp:89 gui/options.cpp:1783
+#: gui/launcher.cpp:508 gui/massadd.cpp:89 gui/options.cpp:1788
 #: gui/saveload-dialog.cpp:1141 engines/engine.cpp:465 engines/engine.cpp:476
 #: backends/platform/wii/options.cpp:47
 #: backends/platform/wince/CELauncherDialog.cpp:54
@@ -395,22 +395,22 @@ msgstr "Φάκελος Αποθ.:"
 
 #: gui/editgamedialog.cpp:313 gui/editgamedialog.cpp:410
 #: gui/editgamedialog.cpp:469 gui/editgamedialog.cpp:530 gui/options.cpp:1627
-#: gui/options.cpp:1635 gui/options.cpp:1644 gui/options.cpp:1808
-#: gui/options.cpp:1814 gui/options.cpp:1822 gui/options.cpp:1846
-#: gui/options.cpp:1948 gui/options.cpp:1954 gui/options.cpp:1961
-#: gui/options.cpp:1970 gui/options.cpp:2175 gui/options.cpp:2178
-#: gui/options.cpp:2186 gui/options.cpp:2197
+#: gui/options.cpp:1635 gui/options.cpp:1644 gui/options.cpp:1813
+#: gui/options.cpp:1819 gui/options.cpp:1827 gui/options.cpp:1851
+#: gui/options.cpp:1979 gui/options.cpp:1985 gui/options.cpp:1992
+#: gui/options.cpp:2001 gui/options.cpp:2206 gui/options.cpp:2209
+#: gui/options.cpp:2217 gui/options.cpp:2228
 msgctxt "path"
 msgid "None"
 msgstr "Κανένα"
 
 #: gui/editgamedialog.cpp:318 gui/editgamedialog.cpp:416
-#: gui/editgamedialog.cpp:534 gui/options.cpp:1802 gui/options.cpp:1942
-#: gui/options.cpp:2181 backends/platform/wii/options.cpp:56
+#: gui/editgamedialog.cpp:534 gui/options.cpp:1807 gui/options.cpp:1973
+#: gui/options.cpp:2212 backends/platform/wii/options.cpp:56
 msgid "Default"
 msgstr "Προκαθορισμένο"
 
-#: gui/editgamedialog.cpp:462 gui/options.cpp:2191
+#: gui/editgamedialog.cpp:462 gui/options.cpp:2222
 msgid "Select SoundFont"
 msgstr "Επιλέξτε SoundFont"
 
@@ -418,7 +418,7 @@ msgstr "Επιλέξτε SoundFont"
 msgid "Select additional game directory"
 msgstr "Επιλέξτε πρόσθετο φάκελο παιχνιδιού"
 
-#: gui/editgamedialog.cpp:514 gui/options.cpp:2110
+#: gui/editgamedialog.cpp:514 gui/options.cpp:2141
 msgid "Select directory for saved games"
 msgstr "Επιλέξτε φάκελο για αποθηκευμένα παιχνίδια"
 
@@ -1262,150 +1262,251 @@ msgstr "Συχνότητα ελέγχου ενημερώσεων του ScummVM"
 msgid "Check now"
 msgstr "Ελέγξτε τώρα"
 
-#: gui/options.cpp:1782
+#: gui/options.cpp:1758
+msgid "Cloud"
+msgstr "Σύννεφο"
+
+#: gui/options.cpp:1760
+msgctxt "lowres"
+msgid "Cloud"
+msgstr "Σύννεφο"
+
+#: gui/options.cpp:1774
+msgid "LAN"
+msgstr ""
+
+#: gui/options.cpp:1776
+msgctxt "lowres"
+msgid "LAN"
+msgstr ""
+
+#: gui/options.cpp:1787
 msgid "Apply"
 msgstr "Εφαρμογή"
 
-#: gui/options.cpp:1871
+#: gui/options.cpp:1876
 #, fuzzy
 msgid "Active storage:"
 msgstr "Ενεργή αποθήκευση σύννεφου"
 
-#: gui/options.cpp:1871
+#: gui/options.cpp:1876
 msgid "Active cloud storage"
 msgstr "Ενεργή αποθήκευση σύννεφου"
 
-#: gui/options.cpp:1879
+#: gui/options.cpp:1884
+msgctxt "lowres"
+msgid ""
+"4. Storage is not yet enabled. Verify that username is correct and enable it:"
+msgstr ""
+
+#: gui/options.cpp:1886
+msgid ""
+"4. Storage is not yet enabled. Verify that username is correct and enable it:"
+msgstr ""
+
+#: gui/options.cpp:1887
 #, fuzzy
 msgid "Enable storage"
 msgstr "Ενεργοποίηση κοινού στούντιο"
 
-#: gui/options.cpp:1879
+#: gui/options.cpp:1887
 msgid "Confirm you want to use this account for this storage"
 msgstr ""
 
-#: gui/options.cpp:1881 backends/platform/wii/options.cpp:114
+#: gui/options.cpp:1889 backends/platform/wii/options.cpp:114
 msgid "Username:"
 msgstr "Όνομα χρήστη:"
 
-#: gui/options.cpp:1881
+#: gui/options.cpp:1889
 msgid "Username used by this storage"
 msgstr "Το όνομα χρήστη που χρησιμοποιείται από αυτή την αποθήκη"
 
-#: gui/options.cpp:1884
+#: gui/options.cpp:1892
 msgid "Used space:"
 msgstr "Χρησιμοποιημένος χώρος:"
 
-#: gui/options.cpp:1884
+#: gui/options.cpp:1892
 msgid "Space used by ScummVM's saved games on this storage"
 msgstr ""
 "Χώρος που χρησιμοποιείται από τα αποθηκευμένα παιχνίδια του ScummVM σε αυτή "
 "την αποθήκη"
 
-#: gui/options.cpp:1887
+#: gui/options.cpp:1895
 #, fuzzy
 msgid "Last sync:"
 msgstr "Τελευταία ώρα συγχρονισμού:"
 
-#: gui/options.cpp:1887
+#: gui/options.cpp:1895
 #, fuzzy
 msgid "When was the last time saved games were synced with this storage"
 msgstr ""
 "Πότε πραγματοποιήθηκε ο τελευταίος συγχρονισμός αποθηκευμένων παιχνιδιών"
 
-#: gui/options.cpp:1890
+#: gui/options.cpp:1898
+msgctxt "lowres"
+msgid "Saves sync automatically on launch, after saving and on loading."
+msgstr ""
+
+#: gui/options.cpp:1900
+msgid "Saves sync automatically on launch, after saving and on loading."
+msgstr ""
+
+#: gui/options.cpp:1901
 msgid "Sync now"
 msgstr ""
 
-#: gui/options.cpp:1890
+#: gui/options.cpp:1901
 msgid "Start saves sync"
 msgstr ""
 
-#: gui/options.cpp:1893
+#: gui/options.cpp:1904
+msgctxt "lowres"
+msgid "You can download game files from your cloud ScummVM folder:"
+msgstr ""
+
+#: gui/options.cpp:1906
+msgid "You can download game files from your cloud ScummVM folder:"
+msgstr ""
+
+#: gui/options.cpp:1907
 #, fuzzy
 msgid "Download game files"
 msgstr "Η μεταφόρτωση απέτυχε."
 
-#: gui/options.cpp:1893
+#: gui/options.cpp:1907
 msgid "Open downloads manager dialog"
 msgstr "Άνοιγμα διαλόγου διαχείρισης μεταφορτώσεων"
 
-#: gui/options.cpp:1896
+#: gui/options.cpp:1910
+msgctxt "lowres"
+msgid "To change account for this storage, disconnect and connect again:"
+msgstr ""
+
+#: gui/options.cpp:1912
+msgid "To change account for this storage, disconnect and connect again:"
+msgstr ""
+
+#: gui/options.cpp:1913
 #, fuzzy
 msgid "Disconnect"
 msgstr "Σύνδεση"
 
-#: gui/options.cpp:1896
+#: gui/options.cpp:1913
 msgid "Stop using this storage on this device"
 msgstr ""
 
-#: gui/options.cpp:1900
+#: gui/options.cpp:1916
+msgctxt "lowres"
+msgid "This storage is not connected yet! To connect,"
+msgstr ""
+
+#: gui/options.cpp:1918
+msgid "This storage is not connected yet! To connect,"
+msgstr ""
+
+#: gui/options.cpp:1920
 msgid "Open URL"
 msgstr "Άνοιγμα διεύθυνσης URL"
 
-#: gui/options.cpp:1903
+#: gui/options.cpp:1922
+msgctxt "lowres"
+msgid "2. Get the code and enter it here:"
+msgstr ""
+
+#: gui/options.cpp:1924
+msgid "2. Get the code and enter it here:"
+msgstr ""
+
+#: gui/options.cpp:1926
 msgid "Paste"
 msgstr "Επικόλληση"
 
-#: gui/options.cpp:1903
+#: gui/options.cpp:1926
 #, fuzzy
 msgid "Paste code from clipboard"
 msgstr "Αντιγραφή στο πρόχειρο"
 
-#: gui/options.cpp:1904
+#: gui/options.cpp:1927
 #, fuzzy
 msgid "3. Connect"
 msgstr "Σύνδεση"
 
-#: gui/options.cpp:1904
+#: gui/options.cpp:1927
 #, fuzzy
 msgid "Connect your cloud storage account"
 msgstr ""
 "Ανοίξτε το διάλογο οδηγού για να συνδέσετε το λογαριασμό τού σύννεφου "
 "αποθήκευσής σας"
 
-#: gui/options.cpp:1913
+#: gui/options.cpp:1936
 msgid "Run server"
 msgstr "Εκτέλεση διακομιστή"
 
-#: gui/options.cpp:1913
+#: gui/options.cpp:1936
 msgid "Run local webserver"
 msgstr "Εκτέλεση τοπικού διακομιστή web"
 
-#: gui/options.cpp:1914 gui/options.cpp:2644
+#: gui/options.cpp:1937 gui/options.cpp:2675
 msgid "Not running"
 msgstr "Δεν εκτελείται"
 
-#: gui/options.cpp:1917 gui/options.cpp:1918
+#: gui/options.cpp:1941
+msgctxt "lowres"
+msgid "/root/ Path:"
+msgstr "/root/ Διαδρομή:"
+
+#: gui/options.cpp:1941 gui/options.cpp:1943 gui/options.cpp:1944
 #, fuzzy
 msgid "Select which directory will be shown as /root/ in the Files Manager"
 msgstr "Καθορίζει το φάκελο στον οποίο έχει πρόσβαση ο File Manager"
 
-#: gui/options.cpp:1923
+#: gui/options.cpp:1943
+msgid "/root/ Path:"
+msgstr "/root/ Διαδρομή:"
+
+#: gui/options.cpp:1949
 msgid "Server's port:"
 msgstr "Θύρα εξυπηρετητή:"
 
-#: gui/options.cpp:1923
+#: gui/options.cpp:1949
 msgid "Port for server to use"
 msgstr ""
 
-#: gui/options.cpp:1997
+#: gui/options.cpp:1954
+msgctxt "lowres"
+msgid "Run server to manage files with browser (in the same network)."
+msgstr ""
+
+#: gui/options.cpp:1955
+msgctxt "lowres"
+msgid "Closing options dialog will stop the server."
+msgstr ""
+
+#: gui/options.cpp:1957
+msgid "Run server to manage files with browser (in the same network)."
+msgstr ""
+
+#: gui/options.cpp:1958
+msgid "Closing options dialog will stop the server."
+msgstr ""
+
+#: gui/options.cpp:2028
 msgid "Failed to change cloud storage!"
 msgstr "Αδυναμία αλλαγής αποθήκευσης σύννεφου!"
 
-#: gui/options.cpp:2000
+#: gui/options.cpp:2031
 msgid "Another cloud storage is already active."
 msgstr "Μια άλλη αποθήκευση σύννεφου είναι ήδη ενεργή."
 
-#: gui/options.cpp:2075
+#: gui/options.cpp:2106
 msgid "Theme does not support selected language!"
 msgstr "Το θέμα δεν υποστηρίζει την επιλεγμένη γλώσσα!"
 
-#: gui/options.cpp:2078
+#: gui/options.cpp:2109
 msgid "Theme cannot be loaded!"
 msgstr "Το θέμα δεν φορτώθηκε!"
 
-#: gui/options.cpp:2081
+#: gui/options.cpp:2112
 msgid ""
 "\n"
 "Misc settings will be restored."
@@ -1413,29 +1514,29 @@ msgstr ""
 "\n"
 "Οι λοιπές ρυθμίσεις θα επαναφερθούν στις αρχικές τους τιμές."
 
-#: gui/options.cpp:2117
+#: gui/options.cpp:2148
 msgid "The chosen directory cannot be written to. Please select another one."
 msgstr ""
 "Δεν ήταν δυνατή η εγγραφή στον επιλεγμένο φάκελο. Παρακαλώ επιλέξτε κάποιον "
 "άλλο."
 
-#: gui/options.cpp:2126
+#: gui/options.cpp:2157
 msgid "Select directory for GUI themes"
 msgstr "Επιλέξτε φάκελο για θέματα GUI"
 
-#: gui/options.cpp:2136
+#: gui/options.cpp:2167
 msgid "Select directory for extra files"
 msgstr "Επιλέξτε φάκελο για έξτρα αρχεία"
 
-#: gui/options.cpp:2147
+#: gui/options.cpp:2178
 msgid "Select directory for plugins"
 msgstr "Επιλέξτε φάκελο για πρόσθετα"
 
-#: gui/options.cpp:2160
+#: gui/options.cpp:2191
 msgid "Select directory for Files Manager /root/"
 msgstr "Επιλέξτε φάκελο για το /root/ του Διαχειριστή Αρχείων"
 
-#: gui/options.cpp:2265
+#: gui/options.cpp:2296
 msgid ""
 "Failed to open URL!\n"
 "Please navigate to this page manually."
@@ -1443,57 +1544,57 @@ msgstr ""
 "Αποτυχία ανοίγματος του URL!\n"
 "Παρακαλούμε, μεταφερθείτε σε αυτή τη σελίδα χειροκίνητα."
 
-#: gui/options.cpp:2290
+#: gui/options.cpp:2321
 #, fuzzy
 msgid "Another Storage is working now. Do you want to interrupt it?"
 msgstr "Κάποια άλλη Αποθήκευση είναι ενεργή. Επιθυμείτε να τη διακόψετε;"
 
-#: gui/options.cpp:2299 gui/options.cpp:2337
+#: gui/options.cpp:2330 gui/options.cpp:2368
 msgid "Wait until current Storage finishes up and try again."
 msgstr "Αναμονή μέχρι να ολοκληρωθεί η τρέχουσα Αποθήκευση και δοκιμάστε ξανά."
 
-#: gui/options.cpp:2312
+#: gui/options.cpp:2343
 #, fuzzy
 msgid "Connecting..."
 msgstr "Σύνδεση"
 
-#: gui/options.cpp:2328
+#: gui/options.cpp:2359
 #, fuzzy
 msgid "This Storage is working now. Do you want to interrupt it?"
 msgstr "Κάποια άλλη Αποθήκευση είναι ενεργή. Επιθυμείτε να τη διακόψετε;"
 
-#: gui/options.cpp:2527
+#: gui/options.cpp:2558
 msgid "<right now>"
 msgstr "<άμεσα>"
 
-#: gui/options.cpp:2529
+#: gui/options.cpp:2560
 msgid "<never>"
 msgstr "<ποτέ>"
 
-#: gui/options.cpp:2636
+#: gui/options.cpp:2667
 msgid "Stop server"
 msgstr "Διακοπή εξυπηρετητή"
 
-#: gui/options.cpp:2637
+#: gui/options.cpp:2668
 msgid "Stop local webserver"
 msgstr "Διακοπή τοπικού εξυπηρετητή web"
 
-#: gui/options.cpp:2689
+#: gui/options.cpp:2720
 #, fuzzy
 msgid "Storage connected."
 msgstr "%s Οδηγός Σύνδεσης Αποθήκευσης"
 
-#: gui/options.cpp:2691
+#: gui/options.cpp:2722
 #, fuzzy
 msgid "Failed to connect storage."
 msgstr "Αδυναμία αλλαγής αποθήκευσης σύννεφου!"
 
-#: gui/options.cpp:2693
+#: gui/options.cpp:2724
 #, fuzzy
 msgid "Failed to connect storage: "
 msgstr "Αδυναμία αλλαγής αποθήκευσης σύννεφου!"
 
-#: gui/options.cpp:2713
+#: gui/options.cpp:2744
 msgid ""
 "Request failed.\n"
 "Check your Internet connection."
@@ -5350,13 +5451,6 @@ msgstr ""
 "υποστηρίζει μόνο μέχρι την έκδοση%d. Θα χρειαστείτε μια ενημερωμένη έκδοση "
 "της μηχανής για να χρησιμοποιήσετε αυτό το αποθηκευμένο παιχνίδι."
 
-#~ msgid "Cloud"
-#~ msgstr "Σύννεφο"
-
-#~ msgctxt "lowres"
-#~ msgid "Cloud"
-#~ msgstr "Σύννεφο"
-
 #~ msgid "Storage:"
 #~ msgstr "Αποθήκευση:"
 
@@ -5373,13 +5467,6 @@ msgstr ""
 
 #~ msgid "Download"
 #~ msgstr "Μεταφόρτωση"
-
-#~ msgid "/root/ Path:"
-#~ msgstr "/root/ Διαδρομή:"
-
-#~ msgctxt "lowres"
-#~ msgid "/root/ Path:"
-#~ msgstr "/root/ Διαδρομή:"
 
 #~ msgid ""
 #~ "Which port is used by the server\n"
