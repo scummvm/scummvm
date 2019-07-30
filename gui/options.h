@@ -324,7 +324,7 @@ protected:
 	StaticTextWidget *_storageWizardConnectionStatusHint;
 	bool _redrawCloudTab;
 
-	void addCloudControls(GuiObject *boss, const Common::String &prefix, const char *context = nullptr);
+	void addCloudControls(GuiObject *boss, const Common::String &prefix, bool lowres);
 	void setupCloudTab();
 	void shiftWidget(Widget *widget, const char *widgetName, int32 xOffset, int32 yOffset);
 
@@ -349,7 +349,7 @@ protected:
 	StaticTextWidget *_featureDescriptionLine2;
 	bool _serverWasRunning;
 
-	void addNetworkControls(GuiObject *boss, const Common::String &prefix, const char *context = nullptr);
+	void addNetworkControls(GuiObject *boss, const Common::String &prefix, bool lowres);
 	void reflowNetworkTabLayout();
 #endif // USE_SDL_NET
 

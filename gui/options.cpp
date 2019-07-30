@@ -1750,26 +1750,31 @@ void GlobalOptionsDialog::build() {
 #endif
 
 #ifdef USE_CLOUD
-	const char *context = (g_system->getOverlayWidth() > 320 ? nullptr : "lowres");
 #ifdef USE_LIBCURL
 	//
 	// 7) The Cloud tab (remote storages)
 	//
-	tab->addTab(_c("Cloud", context));
+	if (g_system->getOverlayWidth() > 320)
+		tab->addTab(_("Cloud"));
+	else
+		tab->addTab(_c("Cloud", "lowres"));
 
 	ScrollContainerWidget *container = new ScrollContainerWidget(tab, "GlobalOptions_Cloud.Container", kCloudTabContainerReflowCmd);
 	container->setTarget(this);
 	container->setBackgroundType(ThemeEngine::kDialogBackgroundNone);
 	setTarget(container);
 
-	addCloudControls(container, "GlobalOptions_Cloud_Container.", context);
+	addCloudControls(container, "GlobalOptions_Cloud_Container.", g_system->getOverlayWidth() <= 320);
 #endif // USE_LIBCURL
 #ifdef USE_SDL_NET
 	//
 	// 8) The LAN tab (local "cloud" webserver)
 	//
-	tab->addTab(_c("LAN", context));
-	addNetworkControls(tab, "GlobalOptions_Network.", context);
+	if (g_system->getOverlayWidth() > 320)
+		tab->addTab(_("LAN"));
+	else
+		tab->addTab(_c("LAN", "lowres"));
+	addNetworkControls(tab, "GlobalOptions_Network.", g_system->getOverlayWidth() <= 320);
 #endif // USE_SDL_NET
 #endif // USE_CLOUD
 
@@ -1867,7 +1872,7 @@ void GlobalOptionsDialog::clean() {
 
 #ifdef USE_CLOUD
 #ifdef USE_LIBCURL
-void GlobalOptionsDialog::addCloudControls(GuiObject *boss, const Common::String &prefix, const char *context) {
+void GlobalOptionsDialog::addCloudControls(GuiObject *boss, const Common::String &prefix, bool lowres) {
 	_storagePopUpDesc = new StaticTextWidget(boss, prefix + "StoragePopupDesc", _("Active storage:"), _("Active cloud storage"));
 	_storagePopUp = new PopUpWidget(boss, prefix + "StoragePopup");
 	Common::StringArray list = CloudMan.listStorages();
@@ -1875,7 +1880,10 @@ void GlobalOptionsDialog::addCloudControls(GuiObject *boss, const Common::String
 		_storagePopUp->appendEntry(list[i], i);
 	_storagePopUp->setSelected(_selectedStorageIndex);
 
-	_storageDisabledHint = new StaticTextWidget(boss, prefix + "StorageDisabledHint", _c("4. Storage is not yet enabled. Verify that username is correct and enable it:", context));
+	if (lowres)
+		_storageDisabledHint = new StaticTextWidget(boss, prefix + "StorageDisabledHint", _c("4. Storage is not yet enabled. Verify that username is correct and enable it:", "lowres"));
+	else
+		_storageDisabledHint = new StaticTextWidget(boss, prefix + "StorageDisabledHint", _("4. Storage is not yet enabled. Verify that username is correct and enable it:"));
 	_storageEnableButton = new ButtonWidget(boss, prefix + "StorageEnableButton", _("Enable storage"), _("Confirm you want to use this account for this storage"), kEnableStorageCmd);
 
 	_storageUsernameDesc = new StaticTextWidget(boss, prefix + "StorageUsernameDesc", _("Username:"), _("Username used by this storage"));
@@ -1886,19 +1894,34 @@ void GlobalOptionsDialog::addCloudControls(GuiObject *boss, const Common::String
 
 	_storageLastSyncDesc = new StaticTextWidget(boss, prefix + "StorageLastSyncDesc", _("Last sync:"), _("When was the last time saved games were synced with this storage"));
 	_storageLastSync = new StaticTextWidget(boss, prefix + "StorageLastSyncLabel", "<never>", "", ThemeEngine::kFontStyleNormal);
-	_storageSyncHint = new StaticTextWidget(boss, prefix + "StorageSyncHint", _c("Saves sync automatically on launch, after saving and on loading.", context), "", ThemeEngine::kFontStyleNormal);
+	if (lowres)
+		_storageSyncHint = new StaticTextWidget(boss, prefix + "StorageSyncHint", _c("Saves sync automatically on launch, after saving and on loading.", "lowres"), "", ThemeEngine::kFontStyleNormal);
+	else
+		_storageSyncHint = new StaticTextWidget(boss, prefix + "StorageSyncHint", _("Saves sync automatically on launch, after saving and on loading."), "", ThemeEngine::kFontStyleNormal);
 	_storageSyncSavesButton = new ButtonWidget(boss, prefix + "SyncSavesButton", _("Sync now"), _("Start saves sync"), kSyncSavesStorageCmd);
 
-	_storageDownloadHint = new StaticTextWidget(boss, prefix + "StorageDownloadHint", _c("You can download game files from your cloud ScummVM folder:", context));
+	if (lowres)
+		_storageDownloadHint = new StaticTextWidget(boss, prefix + "StorageDownloadHint", _c("You can download game files from your cloud ScummVM folder:", "lowres"));
+	else
+		_storageDownloadHint = new StaticTextWidget(boss, prefix + "StorageDownloadHint", _("You can download game files from your cloud ScummVM folder:"));
 	_storageDownloadButton = new ButtonWidget(boss, prefix + "DownloadButton", _("Download game files"), _("Open downloads manager dialog"), kDownloadStorageCmd);
 
-	_storageDisconnectHint = new StaticTextWidget(boss, prefix + "StorageDisconnectHint", _c("To change account for this storage, disconnect and connect again:", context));
+	if (lowres)
+		_storageDisconnectHint = new StaticTextWidget(boss, prefix + "StorageDisconnectHint", _c("To change account for this storage, disconnect and connect again:", "lowres"));
+	else
+		_storageDisconnectHint = new StaticTextWidget(boss, prefix + "StorageDisconnectHint", _("To change account for this storage, disconnect and connect again:"));
 	_storageDisconnectButton = new ButtonWidget(boss, prefix + "DisconnectButton", _("Disconnect"), _("Stop using this storage on this device"), kDisconnectStorageCmd);
 
-	_storageWizardNotConnectedHint = new StaticTextWidget(boss, prefix + "StorageWizardNotConnectedHint", _c("This storage is not connected yet! To connect,", context));
+	if (lowres)
+		_storageWizardNotConnectedHint = new StaticTextWidget(boss, prefix + "StorageWizardNotConnectedHint", _c("This storage is not connected yet! To connect,", "lowres"));
+	else
+		_storageWizardNotConnectedHint = new StaticTextWidget(boss, prefix + "StorageWizardNotConnectedHint", _("This storage is not connected yet! To connect,"));
 	_storageWizardOpenLinkHint = new StaticTextWidget(boss, prefix + "StorageWizardOpenLinkHint", "1. Open this link:");
 	_storageWizardLink = new ButtonWidget(boss, prefix + "StorageWizardLink", "https://cloud.scummvm.org/", _("Open URL"), kOpenUrlStorageCmd);
-	_storageWizardCodeHint = new StaticTextWidget(boss, prefix + "StorageWizardCodeHint", _c("2. Get the code and enter it here:", context));
+	if (lowres)
+		_storageWizardCodeHint = new StaticTextWidget(boss, prefix + "StorageWizardCodeHint", _c("2. Get the code and enter it here:", "lowres"));
+	else
+		_storageWizardCodeHint = new StaticTextWidget(boss, prefix + "StorageWizardCodeHint", _("2. Get the code and enter it here:"));
 	_storageWizardCodeBox = new EditTextWidget(boss, prefix + "StorageWizardCodeBox", "", 0, 0, 0, ThemeEngine::kFontStyleConsole);
 	_storageWizardPasteButton = new ButtonWidget(boss, prefix + "StorageWizardPasteButton", _("Paste"), _("Paste code from clipboard"), kPasteCodeStorageCmd);
 	_storageWizardConnectButton = new ButtonWidget(boss, prefix + "StorageWizardConnectButton", _("3. Connect"), _("Connect your cloud storage account"), kConnectStorageCmd);
@@ -1909,12 +1932,15 @@ void GlobalOptionsDialog::addCloudControls(GuiObject *boss, const Common::String
 #endif // USE_LIBCURL
 
 #ifdef USE_SDL_NET
-void GlobalOptionsDialog::addNetworkControls(GuiObject *boss, const Common::String &prefix, const char *context) {
+void GlobalOptionsDialog::addNetworkControls(GuiObject *boss, const Common::String &prefix, bool lowres) {
 	_runServerButton = new ButtonWidget(boss, prefix + "RunServerButton", _("Run server"), _("Run local webserver"), kRunServerCmd);
 	_serverInfoLabel = new StaticTextWidget(boss, prefix + "ServerInfoLabel", _("Not running"));
 
 	// Root path
-	_rootPathButton = new ButtonWidget(boss, prefix + "RootPathButton", _c("/root/ Path:", context), _("Select which directory will be shown as /root/ in the Files Manager"), kChooseRootDirCmd);
+	if (lowres)
+		_rootPathButton = new ButtonWidget(boss, prefix + "RootPathButton", _c("/root/ Path:", "lowres"), _("Select which directory will be shown as /root/ in the Files Manager"), kChooseRootDirCmd);
+	else
+		_rootPathButton = new ButtonWidget(boss, prefix + "RootPathButton", _("/root/ Path:"), _("Select which directory will be shown as /root/ in the Files Manager"), kChooseRootDirCmd);
 	_rootPath = new StaticTextWidget(boss, prefix + "RootPath", "/foo/bar", _("Select which directory will be shown as /root/ in the Files Manager"));
 	_rootPathClearButton = addClearButton(boss, prefix + "RootPathClearButton", kRootPathClearCmd);
 
@@ -1924,8 +1950,13 @@ void GlobalOptionsDialog::addNetworkControls(GuiObject *boss, const Common::Stri
 	_serverPort = new EditTextWidget(boss, prefix + "ServerPortEditText", Common::String::format("%u", port), 0);
 	_serverPortClearButton = addClearButton(boss, prefix + "ServerPortClearButton", kServerPortClearCmd);
 
-	_featureDescriptionLine1 = new StaticTextWidget(boss, prefix + "FeatureDescriptionLine1", _c("Run server to manage files with browser (in the same network).", context), "", ThemeEngine::kFontStyleNormal);
-	_featureDescriptionLine2 = new StaticTextWidget(boss, prefix + "FeatureDescriptionLine2", _c("Closing options dialog will stop the server.", context), "", ThemeEngine::kFontStyleNormal);
+	if (lowres) {
+		_featureDescriptionLine1 = new StaticTextWidget(boss, prefix + "FeatureDescriptionLine1", _c("Run server to manage files with browser (in the same network).", "lowres"), "", ThemeEngine::kFontStyleNormal);
+		_featureDescriptionLine2 = new StaticTextWidget(boss, prefix + "FeatureDescriptionLine2", _c("Closing options dialog will stop the server.", "lowres"), "", ThemeEngine::kFontStyleNormal);
+	} else {
+		_featureDescriptionLine1 = new StaticTextWidget(boss, prefix + "FeatureDescriptionLine1", _("Run server to manage files with browser (in the same network)."), "", ThemeEngine::kFontStyleNormal);
+		_featureDescriptionLine2 = new StaticTextWidget(boss, prefix + "FeatureDescriptionLine2", _("Closing options dialog will stop the server."), "", ThemeEngine::kFontStyleNormal);
+	}
 	
 	reflowNetworkTabLayout();
 
