@@ -1430,11 +1430,11 @@ bool Sound::init() {
 		_soundCache[index2].loaded = 0;
 		_soundCache[index2].name = soundList[index].name;
 		_soundCache[index2].luaName = soundList[index].luaName;
-		if (!scumm_stricmp(_soundCache[index2].name, ".wav"))
+		if (index2 <= SND_UNLOCKED_ITEM || index2 == SND_BEEPBEEPBEEP)
 			_soundCache[index2].ext = -1;	// WAV
 		else
 			_soundCache[index2].ext = 1;		// MP3
-		debug(9, "Registering sound: sName: %s, \tsLuaName: %s, \tExtension: %s", soundList[index2].name, soundList[index2].luaName, _soundCache[index2].ext == 1 ? "MP3" : "WAV");
+		debug(9, "Registering sound: sName: %s, \tsLuaName: %s, \tExtension: %s", soundList[index].name, soundList[index].luaName, _soundCache[index].ext == 1 ? "MP3" : "WAV");
 		index++;
 		if (index > kMaxSounds)
 			error("Reached MAX_SOUNDS in Sound::Init() !");
@@ -1477,7 +1477,6 @@ void Sound::setMusicVolume(int volume) {
 }
 
 bool Sound::playSound(int index) {
-#if 0
 	if (index > _numSounds || !_sfxVolume)
 		return false;
 
@@ -1520,12 +1519,10 @@ bool Sound::playSound(int index) {
 	g_hdb->_mixer->setChannelVolume(_handles[soundChannel], _sfxVolume);
 
 	g_hdb->_mixer->playStream(Audio::Mixer::kSFXSoundType, &_handles[soundChannel], _soundCache[index].audioStream);
-#endif
 	return true;
 }
 
 bool Sound::playSoundEx(int index, int channel, bool loop) {
-#if 0
 	if (g_hdb->_mixer->isSoundHandleActive(_handles[channel]))
 		return false;
 
@@ -1543,7 +1540,7 @@ bool Sound::playSoundEx(int index, int channel, bool loop) {
 		if (stream == nullptr)
 			return false;
 
-		if (_soundCache[index].ext) {
+		if (_soundCache[index].ext == 1) {
 #ifdef USE_MAD
 			_soundCache[index].audioStream = Audio::makeMP3Stream(stream, DisposeAfterUse::YES);
 			_soundCache[index].loaded = 1;
@@ -1562,7 +1559,6 @@ bool Sound::playSoundEx(int index, int channel, bool loop) {
 	} else {
 		g_hdb->_mixer->playStream(Audio::Mixer::kSFXSoundType, &_handles[channel], _soundCache[index].audioStream);
 	}
-#endif
 	return true;
 }
 
@@ -1767,7 +1763,6 @@ int Sound::registerSound(const char *name) {
 
 bool Sound::freeSound(int index) {
 	if (_soundCache[index].loaded == 1) {
-		delete _soundCache[index].audioStream;
 		_soundCache[index].loaded = 0;
 		_soundCache[index].ext = 0;
 		return true;
