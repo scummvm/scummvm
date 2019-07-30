@@ -1624,7 +1624,7 @@ bool Sound::playVoice(int index, int actor) {
 		-1,
 		Audio::Mixer::kMaxChannelVolume,
 		0,
-		DisposeAfterUse::NO,
+		DisposeAfterUse::YES,
 		false,
 		false
 	);
@@ -1729,7 +1729,7 @@ bool Sound::beginMusic(SoundType song, bool fadeIn, int ramp) {
 			-1,
 			Audio::Mixer::kMaxChannelVolume,
 			0,
-			DisposeAfterUse::NO,
+			DisposeAfterUse::YES,
 			false,
 			false
 		);
@@ -1769,7 +1769,7 @@ bool Sound::beginMusic(SoundType song, bool fadeIn, int ramp) {
 			-1,
 			Audio::Mixer::kMaxChannelVolume,
 			0,
-			DisposeAfterUse::NO,
+			DisposeAfterUse::YES,
 			false,
 			false
 		);
