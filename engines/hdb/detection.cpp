@@ -29,6 +29,10 @@
 
 namespace HDB {
 
+enum HDBGameFeatures {
+	GF_HANDANGO = (1 << 0)
+};
+
 const char *HDBGame::getGameId() const { return _gameDescription->gameId; }
 Common::Platform HDBGame::getPlatform() const { return _gameDescription->platform; }
 
@@ -46,6 +50,10 @@ bool HDBGame::isDemo() const {
 
 bool HDBGame::isPPC() const {
 	return (getPlatform() & Common::kPlatformPocketPC);
+}
+
+bool HDBGame::isHandango() const {
+	return (getGameFlags() & GF_HANDANGO);
 }
 
 } // End of namespace HDB
@@ -130,7 +138,7 @@ static const ADGameDescription gameDescriptions[] = {
 		AD_ENTRY1s("hyperdemo.msd", "2d4457b284a940b7058b36e5706b9951", 3094241),
 		Common::EN_ANY,
 		Common::kPlatformPocketPC,
-		ADGF_DEMO,
+		(ADGF_DEMO | GF_HANDANGO),
 		GUIO1(GUIO_NONE)
 	},
 	AD_TABLE_END_MARKER

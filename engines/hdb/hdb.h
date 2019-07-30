@@ -158,6 +158,7 @@ public:
 	Common::Platform getPlatform() const;
 	bool isDemo() const;
 	bool isPPC() const;
+	bool isHandango() const;
 
 	/*
 	Game System Pointers
