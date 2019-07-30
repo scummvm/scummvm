@@ -45,6 +45,9 @@ bool Input::init() {
 	_keyDebug = Common::KEYCODE_F1;
 	_keyQuit = Common::KEYCODE_F10;
 
+	if (g_hdb->isPPC())
+		return true;
+
 	_mouseX = kScreenWidth / 2;
 	_mouseY = kScreenHeight / 2;
 
@@ -255,6 +258,10 @@ void Input::stylusMove(int x, int y) {
 }
 
 void Input::updateMouse(int newX, int newY) {
+
+	if (g_hdb->isPPC())
+		return;
+
 	_mouseX = newX;
 	_mouseY = newY;
 
@@ -280,6 +287,10 @@ void Input::updateMouse(int newX, int newY) {
 }
 
 void Input::updateMouseButtons(int l, int m, int r) {
+
+	if (g_hdb->isPPC())
+		return;
+
 	_mouseLButton += l;
 	_mouseMButton += m;
 	_mouseRButton += r;
@@ -322,6 +333,10 @@ void Input::updateMouseButtons(int l, int m, int r) {
 }
 
 void Input::updateKeys(Common::Event event, bool keyDown) {
+
+	if (g_hdb->isPPC())
+		return;
+
 	static int current = 0, last = 0;
 
 	if (keyDown && event.kbd.keycode == _keyQuit) {

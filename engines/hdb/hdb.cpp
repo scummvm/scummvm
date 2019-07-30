@@ -147,7 +147,8 @@ bool HDBGame::init() {
 	_gameShutdown = false;
 	_pauseFlag = 0;
 	_systemInit = true;
-	_loadingScreenGfx = _gfx->loadPic(PIC_LOADSCREEN);
+	if (!g_hdb->isPPC())
+		_loadingScreenGfx = _gfx->loadPic(PIC_LOADSCREEN);
 
 	return true;
 }
@@ -806,7 +807,10 @@ void HDBGame::checkProgress() {
 }
 
 void HDBGame::drawLoadingScreen() {
-	_loadingScreenGfx->draw(0, 0);
+	if (g_hdb->isPPC())
+		_gfx->fillScreen(0);
+	else
+		_loadingScreenGfx->draw(0, 0);
 }
 
 struct MapName {
