@@ -24,7 +24,9 @@
 #define GLK_DEBUGGER_H
 
 #include "common/scummsys.h"
+#include "common/stream.h"
 #include "gui/debugger.h"
+#include "glk/raw_decoder.h"
 
 namespace Glk {
 
@@ -33,6 +35,11 @@ class GlkEngine;
 class Debugger : public GUI::Debugger {
 private:
 	GlkEngine *_vm;
+
+	/**
+	 * Saves a decoded raw image to a PNG file
+	 */
+	void saveRawPicture(const RawDecoder &rd, Common::WriteStream &ws);
 
 	/**
 	 * Dump a picture
