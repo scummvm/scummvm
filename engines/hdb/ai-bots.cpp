@@ -362,7 +362,6 @@ void aiRightBotInit2(AIEntity *e) {
 		e->state = STATE_MOVERIGHT;
 		break;
 	case DIR_NONE:
-		warning("aiRightBotInit2: DIR_NONE found");
 		break;
 	}
 }
