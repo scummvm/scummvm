@@ -184,12 +184,20 @@ void Events::pollEvents() {
 		g_system->getEventManager()->pollEvent(event);
 
 		switch (event.type) {
-		case Common::EVENT_KEYDOWN:
-			if (!isModifierKey(event.kbd.keycode)) {
+		case Common::EVENT_KEYDOWN: {
+			// Check for debugger
+			Debugger *dbg = g_vm->_debugger;
+			if (dbg && event.kbd.keycode == Common::KEYCODE_d && (event.kbd.flags & Common::KBD_CTRL)) {
+				// Attach to the debugger
+				dbg->attach();
+				dbg->onFrame();
+			} else if (!isModifierKey(event.kbd.keycode)) {
+				// Handle all other keypresses
 				setCursor(CURSOR_NONE);
 				handleKeyDown(event.kbd);
 			}
 			return;
+		}
 
 		case Common::EVENT_LBUTTONDOWN:
 		case Common::EVENT_RBUTTONDOWN:

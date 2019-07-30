@@ -3,6 +3,7 @@ MODULE := engines/glk
 MODULE_OBJS := \
 	blorb.o \
 	conf.o \
+	debugger.o \
 	detection.o \
 	events.o \
 	fonts.o \
