@@ -55,12 +55,20 @@ class Encoding {
 		String _to;
 		String _from;
 
-		static char *doConversion(iconv_t iconvHandle, const String &to, const String &from, const char *string, size_t length);
+		static char *conversion(iconv_t iconvHandle, const String &to, const String &from, const char *string, size_t length);
+
+		static char *conversion2(iconv_t iconvHandle, const String &to, const String &from, const char *string, size_t length);
 
 		iconv_t _iconvHandle;
 		static char *convertIconv(iconv_t iconvHandle, const char *string, size_t length);
 
 		static char *convertTransManMapping(const char *to, const char *from, const char *string, size_t length);
+
+		static char *transliterateCyrilic(const char *string);
+		static uint32 *transliterateUTF32(const uint32 *string, size_t length);
+
+		static iconv_t initIconv(const String &to, const String &from);
+		static void deinitIconv(iconv_t iconvHandle);
 };
 
 }
