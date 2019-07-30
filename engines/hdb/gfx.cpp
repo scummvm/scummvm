@@ -218,9 +218,12 @@ void Gfx::loadSaveFile(Common::InSaveFile *in) {
 		_snowInfo.xvindex[i] = in->readSint32LE();
 
 	setSky(_currentSky);
-	turnOffSnow();
-	if (_snowInfo.active)
-		turnOnSnow();
+
+	if (!g_hdb->isPPC()) {
+		turnOffSnow();
+		if (_snowInfo.active)
+			turnOnSnow();
+	}
 }
 
 double Gfx::getSin(int index) {
@@ -254,6 +257,10 @@ void Gfx::updateVideo() {
 }
 
 void Gfx::drawPointer() {
+
+	if (g_hdb->isPPC())
+		return;
+
 	static int anim = 0;
 	static uint32 animTime = 0;
 
@@ -272,7 +279,8 @@ void Gfx::drawPointer() {
 }
 
 void Gfx::setPointerState(int value) {
-	_pointerDisplayable = value;
+	if (!g_hdb->isPPC())
+		_pointerDisplayable = value;
 }
 
 void Gfx::setFade(bool fadeIn, bool black, int steps) {

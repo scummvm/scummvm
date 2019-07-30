@@ -147,20 +147,32 @@ Menu::~Menu() {
 }
 
 bool Menu::init() {
-	_gCheckEmpty = g_hdb->_gfx->loadPic(G_CHECK_EMPTY);
-	_gCheckOff = g_hdb->_gfx->loadPic(G_CHECK_OFF);
-	_gCheckOn = g_hdb->_gfx->loadPic(G_CHECK_ON);
-	_gCheckLeft = g_hdb->_gfx->loadPic(G_CHECK_LEFT);
-	_gCheckRight = g_hdb->_gfx->loadPic(G_CHECK_RIGHT);
 
-	_contArrowUp = g_hdb->_gfx->loadPic(CTRL_ARROWUP);
-	_contArrowDown = g_hdb->_gfx->loadPic(CTRL_ARROWDN);
-	_contArrowLeft = g_hdb->_gfx->loadPic(CTRL_ARROWLEFT);
-	_contArrowRight = g_hdb->_gfx->loadPic(CTRL_ARROWRIGHT);
-	_contAssign = g_hdb->_gfx->loadPic(CTRL_ASSIGN);
+	if (g_hdb->isPPC()) {
+		if (g_hdb->isDemo()) {
+			warning("STUB: Load DEMOTITLESCREEN");
+			warning("STUB: Load PIC_HANDANGO");
+		}
+		else
+			_hdbLogoScreen = g_hdb->_gfx->loadPic(TITLESCREEN);
 
-	_warpPlaque = g_hdb->_gfx->loadPic(WARP_PLAQUE);
-	_hdbLogoScreen = g_hdb->_gfx->loadPic(TITLESCREEN);
+
+	} else {
+		_gCheckEmpty = g_hdb->_gfx->loadPic(G_CHECK_EMPTY);
+		_gCheckOff = g_hdb->_gfx->loadPic(G_CHECK_OFF);
+		_gCheckOn = g_hdb->_gfx->loadPic(G_CHECK_ON);
+		_gCheckLeft = g_hdb->_gfx->loadPic(G_CHECK_LEFT);
+		_gCheckRight = g_hdb->_gfx->loadPic(G_CHECK_RIGHT);
+
+		_contArrowUp = g_hdb->_gfx->loadPic(CTRL_ARROWUP);
+		_contArrowDown = g_hdb->_gfx->loadPic(CTRL_ARROWDN);
+		_contArrowLeft = g_hdb->_gfx->loadPic(CTRL_ARROWLEFT);
+		_contArrowRight = g_hdb->_gfx->loadPic(CTRL_ARROWRIGHT);
+		_contAssign = g_hdb->_gfx->loadPic(CTRL_ASSIGN);
+
+		_warpPlaque = g_hdb->_gfx->loadPic(WARP_PLAQUE);
+		_hdbLogoScreen = g_hdb->_gfx->loadPic(TITLESCREEN);
+	}
 
 	return true;
 }
@@ -1532,7 +1544,11 @@ void Menu::drawToggle(int x, int y, bool flag) {
 }
 
 void Menu::drawWarpScreen() {
-	_warpPlaque->drawMasked(centerPic(_warpPlaque), 64);
+	if (g_hdb->isPPC()) {
+		g_hdb->_gfx->setCursor(0, kWarpY + 176);
+		g_hdb->_gfx->centerPrint("MONKEYSTONE WARP ZONE!");
+	} else
+		_warpPlaque->drawMasked(centerPic(_warpPlaque), 64);
 }
 
 } // End of Namespace
