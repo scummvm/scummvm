@@ -1518,7 +1518,17 @@ bool Sound::playSound(int index) {
 
 	g_hdb->_mixer->setChannelVolume(_handles[soundChannel], _sfxVolume);
 
-	g_hdb->_mixer->playStream(Audio::Mixer::kSFXSoundType, &_handles[soundChannel], _soundCache[index].audioStream);
+	g_hdb->_mixer->playStream(
+		Audio::Mixer::kSFXSoundType,
+		&_handles[soundChannel],
+		_soundCache[index].audioStream,
+		-1,
+		Audio::Mixer::kMaxChannelVolume,
+		0,
+		DisposeAfterUse::NO,
+		false,
+		false
+	);
 	return true;
 }
 
@@ -1555,9 +1565,29 @@ bool Sound::playSoundEx(int index, int channel, bool loop) {
 
 	if (loop) {
 		Audio::AudioStream *loopingStream = new Audio::LoopingAudioStream(_soundCache[index].audioStream, 0, DisposeAfterUse::YES);
-		g_hdb->_mixer->playStream(Audio::Mixer::kSFXSoundType, &_handles[channel], loopingStream);
+		g_hdb->_mixer->playStream(
+			Audio::Mixer::kSFXSoundType,
+			&_handles[channel],
+			loopingStream,
+			-1,
+			Audio::Mixer::kMaxChannelVolume,
+			0,
+			DisposeAfterUse::NO,
+			false,
+			false
+		);
 	} else {
-		g_hdb->_mixer->playStream(Audio::Mixer::kSFXSoundType, &_handles[channel], _soundCache[index].audioStream);
+		g_hdb->_mixer->playStream(
+			Audio::Mixer::kSFXSoundType,
+			&_handles[channel],
+			_soundCache[index].audioStream,
+			-1,
+			Audio::Mixer::kMaxChannelVolume,
+			0,
+			DisposeAfterUse::NO,
+			false,
+			false
+		);
 	}
 	return true;
 }
@@ -1587,7 +1617,17 @@ bool Sound::playVoice(int index, int actor) {
 
 	g_hdb->_mixer->setChannelVolume(*_voices[actor].handle, _sfxVolume);
 
-	g_hdb->_mixer->playStream(Audio::Mixer::kSpeechSoundType, _voices[actor].handle, audioStream);
+	g_hdb->_mixer->playStream(
+		Audio::Mixer::kSpeechSoundType,
+		_voices[actor].handle,
+		audioStream,
+		-1,
+		Audio::Mixer::kMaxChannelVolume,
+		0,
+		DisposeAfterUse::NO,
+		false,
+		false
+	);
 
 	_voices[actor].active = true;
 	_voicePlayed[index - FIRST_VOICE] = 1;
@@ -1682,7 +1722,17 @@ bool Sound::beginMusic(SoundType song, bool fadeIn, int ramp) {
 			g_hdb->_mixer->setChannelVolume(*_song1.handle, 0);
 		}
 
-		g_hdb->_mixer->playStream(Audio::Mixer::kMusicSoundType, _song1.handle, loopingStream);
+		g_hdb->_mixer->playStream(
+			Audio::Mixer::kMusicSoundType,
+			_song1.handle,
+			loopingStream,
+			-1,
+			Audio::Mixer::kMaxChannelVolume,
+			0,
+			DisposeAfterUse::NO,
+			false,
+			false
+		);
 		_song1.playing = true;
 #endif
 	} else if (!_song2.playing) {
@@ -1712,7 +1762,17 @@ bool Sound::beginMusic(SoundType song, bool fadeIn, int ramp) {
 			g_hdb->_mixer->setChannelVolume(*_song2.handle, 0);
 		}
 
-		g_hdb->_mixer->playStream(Audio::Mixer::kMusicSoundType, _song2.handle, loopingStream);
+		g_hdb->_mixer->playStream(
+			Audio::Mixer::kMusicSoundType,
+			_song2.handle,
+			loopingStream,
+			-1,
+			Audio::Mixer::kMaxChannelVolume,
+			0,
+			DisposeAfterUse::NO,
+			false,
+			false
+		);
 		_song2.playing = true;
 #endif
 	} else
