@@ -44,6 +44,9 @@
 #include "common/file.h"
 #include "image/png.h"
 #endif
+#ifdef USE_TTS
+#include "common/text-to-speech.h"
+#endif
 
 static const OSystem::GraphicsMode s_supportedShaders[] = {
 	{"NONE", "Normal (no shader)", 0},
@@ -2303,6 +2306,9 @@ void SurfaceSdlGraphicsManager::drawMouse() {
 void SurfaceSdlGraphicsManager::displayMessageOnOSD(const char *msg) {
 	assert(_transactionMode == kTransactionNone);
 	assert(msg);
+#ifdef USE_TTS
+	Common::String textToSay = msg;
+#endif // USE_TTS
 
 	Common::StackLock lock(_graphicsMutex);	// Lock the mutex until this function ends
 
@@ -2376,6 +2382,14 @@ void SurfaceSdlGraphicsManager::displayMessageOnOSD(const char *msg) {
 
 	// Ensure a full redraw takes place next time the screen is updated
 	_forceRedraw = true;
+#ifdef USE_TTS
+	if (ConfMan.hasKey("tts_enabled", "scummvm") &&
+			ConfMan.getBool("tts_enabled", "scummvm")) {
+		Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
+		if (ttsMan)
+			ttsMan->say(textToSay);
+	}
+#endif // USE_TTS
 }
 
 SDL_Rect SurfaceSdlGraphicsManager::getOSDMessageRect() const {
