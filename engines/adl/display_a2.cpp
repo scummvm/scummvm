@@ -20,11 +20,18 @@
  *
  */
 
+// Based on AppleWin's code for NTSC emulation and its RGB Monitor palette
+// Copyright (C) 2010-2011, William S Simms
+// Copyright (C) 2014-2016, Michael Pohoreski, Tom Charlesworth
+// Licensed under GPLv2+
+
 #include "common/stream.h"
 #include "common/rect.h"
 #include "common/system.h"
 #include "common/str.h"
 #include "common/config-manager.h"
+#include "common/math.h"
+#include "common/memstream.h"
 
 #include "graphics/surface.h"
 #include "graphics/palette.h"
@@ -37,375 +44,456 @@
 
 namespace Adl {
 
-#define COLOR_PALETTE_ENTRIES 8
-static const byte colorPalette[COLOR_PALETTE_ENTRIES * 3] = {
-	0x00, 0x00, 0x00,
-	0xff, 0xff, 0xff,
-	0xc7, 0x34, 0xff,
-	0x38, 0xcb, 0x00,
-	0x00, 0x00, 0x00,
-	0xff, 0xff, 0xff,
-	0x0d, 0xa1, 0xff,
-	0xf2, 0x5e, 0x00
-};
-
-// Opacity of the optional scanlines (percentage)
-#define SCANLINE_OPACITY 75
-
-// Corresponding color in second palette
-#define PAL2(X) ((X) | 0x04)
-
-// Alternate color for odd pixel rows (for scanlines)
-#define ALTCOL(X) ((X) | 0x08)
-
-// Green monochrome palette
-#define MONO_PALETTE_ENTRIES 2
-static const byte monoPalette[MONO_PALETTE_ENTRIES * 3] = {
-	0x00, 0x00, 0x00,
-	0x00, 0xc0, 0x01
-};
+#define NTSC_REMOVE_BLACK_GHOSTING
+// #define NTSC_REMOVE_WHITE_RINGING
 
 // Uppercase-only Apple II font (manually created).
-static const byte font[64][5] = {
-	{ 0x7c, 0x82, 0xba, 0xb2, 0x9c }, { 0xf8, 0x24, 0x22, 0x24, 0xf8 }, // @A
-	{ 0xfe, 0x92, 0x92, 0x92, 0x6c }, { 0x7c, 0x82, 0x82, 0x82, 0x44 }, // BC
-	{ 0xfe, 0x82, 0x82, 0x82, 0x7c }, { 0xfe, 0x92, 0x92, 0x92, 0x82 }, // DE
-	{ 0xfe, 0x12, 0x12, 0x12, 0x02 }, { 0x7c, 0x82, 0x82, 0xa2, 0xe2 }, // FG
-	{ 0xfe, 0x10, 0x10, 0x10, 0xfe }, { 0x00, 0x82, 0xfe, 0x82, 0x00 }, // HI
-	{ 0x40, 0x80, 0x80, 0x80, 0x7e }, { 0xfe, 0x10, 0x28, 0x44, 0x82 }, // JK
-	{ 0xfe, 0x80, 0x80, 0x80, 0x80 }, { 0xfe, 0x04, 0x18, 0x04, 0xfe }, // LM
-	{ 0xfe, 0x08, 0x10, 0x20, 0xfe }, { 0x7c, 0x82, 0x82, 0x82, 0x7c }, // NO
-	{ 0xfe, 0x12, 0x12, 0x12, 0x0c }, { 0x7c, 0x82, 0xa2, 0x42, 0xbc }, // PQ
-	{ 0xfe, 0x12, 0x32, 0x52, 0x8c }, { 0x4c, 0x92, 0x92, 0x92, 0x64 }, // RS
-	{ 0x02, 0x02, 0xfe, 0x02, 0x02 }, { 0x7e, 0x80, 0x80, 0x80, 0x7e }, // TU
-	{ 0x3e, 0x40, 0x80, 0x40, 0x3e }, { 0xfe, 0x40, 0x30, 0x40, 0xfe }, // VW
-	{ 0xc6, 0x28, 0x10, 0x28, 0xc6 }, { 0x06, 0x08, 0xf0, 0x08, 0x06 }, // XY
-	{ 0xc2, 0xa2, 0x92, 0x8a, 0x86 }, { 0xfe, 0xfe, 0x82, 0x82, 0x82 }, // Z[
-	{ 0x04, 0x08, 0x10, 0x20, 0x40 }, { 0x82, 0x82, 0x82, 0xfe, 0xfe }, // \]
-	{ 0x20, 0x10, 0x08, 0x10, 0x20 }, { 0x80, 0x80, 0x80, 0x80, 0x80 }, // ^_
-	{ 0x00, 0x00, 0x00, 0x00, 0x00 }, { 0x00, 0x00, 0xbe, 0x00, 0x00 }, //  !
-	{ 0x00, 0x0e, 0x00, 0x0e, 0x00 }, { 0x28, 0xfe, 0x28, 0xfe, 0x28 }, // "#
-	{ 0x48, 0x54, 0xfe, 0x54, 0x24 }, { 0x46, 0x26, 0x10, 0xc8, 0xc4 }, // $%
-	{ 0x6c, 0x92, 0xac, 0x40, 0xa0 }, { 0x00, 0x00, 0x0e, 0x00, 0x00 }, // &'
-	{ 0x38, 0x44, 0x82, 0x00, 0x00 }, { 0x00, 0x00, 0x82, 0x44, 0x38 }, // ()
-	{ 0x44, 0x28, 0xfe, 0x28, 0x44 }, { 0x10, 0x10, 0x7c, 0x10, 0x10 }, // *+
-	{ 0x00, 0x80, 0x60, 0x00, 0x00 }, { 0x10, 0x10, 0x10, 0x10, 0x10 }, // ,-
-	{ 0x00, 0x00, 0x80, 0x00, 0x00 }, { 0x40, 0x20, 0x10, 0x08, 0x04 }, // ./
-	{ 0x7c, 0xa2, 0x92, 0x8a, 0x7c }, { 0x00, 0x84, 0xfe, 0x80, 0x00 }, // 01
-	{ 0xc4, 0xa2, 0x92, 0x92, 0x8c }, { 0x42, 0x82, 0x92, 0x9a, 0x66 }, // 23
-	{ 0x30, 0x28, 0x24, 0xfe, 0x20 }, { 0x4e, 0x8a, 0x8a, 0x8a, 0x72 }, // 45
-	{ 0x78, 0x94, 0x92, 0x92, 0x62 }, { 0x02, 0xe2, 0x12, 0x0a, 0x06 }, // 67
-	{ 0x6c, 0x92, 0x92, 0x92, 0x6c }, { 0x8c, 0x92, 0x92, 0x52, 0x3c }, // 89
-	{ 0x00, 0x00, 0x28, 0x00, 0x00 }, { 0x00, 0x80, 0x68, 0x00, 0x00 }, // :;
-	{ 0x10, 0x28, 0x44, 0x82, 0x00 }, { 0x28, 0x28, 0x28, 0x28, 0x28 }, // <=
-	{ 0x00, 0x82, 0x44, 0x28, 0x10 }, { 0x04, 0x02, 0xb2, 0x0a, 0x04 }  // >?
+const byte Display_A2::_font[64][8] = {
+	{ 0x00, 0x1c, 0x22, 0x2a, 0x3a, 0x1a, 0x02, 0x3c }, { 0x00, 0x08, 0x14, 0x22, 0x22, 0x3e, 0x22, 0x22 }, // @A
+	{ 0x00, 0x1e, 0x22, 0x22, 0x1e, 0x22, 0x22, 0x1e }, { 0x00, 0x1c, 0x22, 0x02, 0x02, 0x02, 0x22, 0x1c }, // BC
+	{ 0x00, 0x1e, 0x22, 0x22, 0x22, 0x22, 0x22, 0x1e }, { 0x00, 0x3e, 0x02, 0x02, 0x1e, 0x02, 0x02, 0x3e }, // DE
+	{ 0x00, 0x3e, 0x02, 0x02, 0x1e, 0x02, 0x02, 0x02 }, { 0x00, 0x3c, 0x02, 0x02, 0x02, 0x32, 0x22, 0x3c }, // FG
+	{ 0x00, 0x22, 0x22, 0x22, 0x3e, 0x22, 0x22, 0x22 }, { 0x00, 0x1c, 0x08, 0x08, 0x08, 0x08, 0x08, 0x1c }, // HI
+	{ 0x00, 0x20, 0x20, 0x20, 0x20, 0x20, 0x22, 0x1c }, { 0x00, 0x22, 0x12, 0x0a, 0x06, 0x0a, 0x12, 0x22 }, // JK
+	{ 0x00, 0x02, 0x02, 0x02, 0x02, 0x02, 0x02, 0x3e }, { 0x00, 0x22, 0x36, 0x2a, 0x2a, 0x22, 0x22, 0x22 }, // LM
+	{ 0x00, 0x22, 0x22, 0x26, 0x2a, 0x32, 0x22, 0x22 }, { 0x00, 0x1c, 0x22, 0x22, 0x22, 0x22, 0x22, 0x1c }, // NO
+	{ 0x00, 0x1e, 0x22, 0x22, 0x1e, 0x02, 0x02, 0x02 }, { 0x00, 0x1c, 0x22, 0x22, 0x22, 0x2a, 0x12, 0x2c }, // PQ
+	{ 0x00, 0x1e, 0x22, 0x22, 0x1e, 0x0a, 0x12, 0x22 }, { 0x00, 0x1c, 0x22, 0x02, 0x1c, 0x20, 0x22, 0x1c }, // RS
+	{ 0x00, 0x3e, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08 }, { 0x00, 0x22, 0x22, 0x22, 0x22, 0x22, 0x22, 0x1c }, // TU
+	{ 0x00, 0x22, 0x22, 0x22, 0x22, 0x22, 0x14, 0x08 }, { 0x00, 0x22, 0x22, 0x22, 0x2a, 0x2a, 0x36, 0x22 }, // VW
+	{ 0x00, 0x22, 0x22, 0x14, 0x08, 0x14, 0x22, 0x22 }, { 0x00, 0x22, 0x22, 0x14, 0x08, 0x08, 0x08, 0x08 }, // XY
+	{ 0x00, 0x3e, 0x20, 0x10, 0x08, 0x04, 0x02, 0x3e }, { 0x00, 0x3e, 0x06, 0x06, 0x06, 0x06, 0x06, 0x3e }, // Z[
+	{ 0x00, 0x00, 0x02, 0x04, 0x08, 0x10, 0x20, 0x00 }, { 0x00, 0x3e, 0x30, 0x30, 0x30, 0x30, 0x30, 0x3e }, // \]
+	{ 0x00, 0x00, 0x00, 0x08, 0x14, 0x22, 0x00, 0x00 }, { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x3e }, // ^_
+	{ 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 }, { 0x00, 0x08, 0x08, 0x08, 0x08, 0x08, 0x00, 0x08 }, //  !
+	{ 0x00, 0x14, 0x14, 0x14, 0x00, 0x00, 0x00, 0x00 }, { 0x00, 0x14, 0x14, 0x3e, 0x14, 0x3e, 0x14, 0x14 }, // "#
+	{ 0x00, 0x08, 0x3c, 0x0a, 0x1c, 0x28, 0x1e, 0x08 }, { 0x00, 0x06, 0x26, 0x10, 0x08, 0x04, 0x32, 0x30 }, // $%
+	{ 0x00, 0x04, 0x0a, 0x0a, 0x04, 0x2a, 0x12, 0x2c }, { 0x00, 0x08, 0x08, 0x08, 0x00, 0x00, 0x00, 0x00 }, // &'
+	{ 0x00, 0x08, 0x04, 0x02, 0x02, 0x02, 0x04, 0x08 }, { 0x00, 0x08, 0x10, 0x20, 0x20, 0x20, 0x10, 0x08 }, // ()
+	{ 0x00, 0x08, 0x2a, 0x1c, 0x08, 0x1c, 0x2a, 0x08 }, { 0x00, 0x00, 0x08, 0x08, 0x3e, 0x08, 0x08, 0x00 }, // *+
+	{ 0x00, 0x00, 0x00, 0x00, 0x00, 0x08, 0x08, 0x04 }, { 0x00, 0x00, 0x00, 0x00, 0x3e, 0x00, 0x00, 0x00 }, // ,-
+	{ 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x08 }, { 0x00, 0x00, 0x20, 0x10, 0x08, 0x04, 0x02, 0x00 }, // ./
+	{ 0x00, 0x1c, 0x22, 0x32, 0x2a, 0x26, 0x22, 0x1c }, { 0x00, 0x08, 0x0c, 0x08, 0x08, 0x08, 0x08, 0x1c }, // 01
+	{ 0x00, 0x1c, 0x22, 0x20, 0x18, 0x04, 0x02, 0x3e }, { 0x00, 0x3e, 0x20, 0x10, 0x18, 0x20, 0x22, 0x1c }, // 23
+	{ 0x00, 0x10, 0x18, 0x14, 0x12, 0x3e, 0x10, 0x10 }, { 0x00, 0x3e, 0x02, 0x1e, 0x20, 0x20, 0x22, 0x1c }, // 45
+	{ 0x00, 0x38, 0x04, 0x02, 0x1e, 0x22, 0x22, 0x1c }, { 0x00, 0x3e, 0x20, 0x10, 0x08, 0x04, 0x04, 0x04 }, // 67
+	{ 0x00, 0x1c, 0x22, 0x22, 0x1c, 0x22, 0x22, 0x1c }, { 0x00, 0x1c, 0x22, 0x22, 0x3c, 0x20, 0x10, 0x0e }, // 89
+	{ 0x00, 0x00, 0x00, 0x08, 0x00, 0x08, 0x00, 0x00 }, { 0x00, 0x00, 0x00, 0x08, 0x00, 0x08, 0x08, 0x04 }, // :;
+	{ 0x00, 0x10, 0x08, 0x04, 0x02, 0x04, 0x08, 0x10 }, { 0x00, 0x00, 0x00, 0x3e, 0x00, 0x3e, 0x00, 0x00 }, // <=
+	{ 0x00, 0x04, 0x08, 0x10, 0x20, 0x10, 0x08, 0x04 }, { 0x00, 0x1c, 0x22, 0x10, 0x08, 0x08, 0x00, 0x08 }  // >?
 };
 
-
-static byte processColorBits(uint16 &bits, bool &odd, bool secondPal) {
-	byte color = 0;
-
-	switch (bits & 0x7) {
-	case 0x3: // 011 (white)
-	case 0x6: // 110
-	case 0x7: // 111
-		color = 1;
-		break;
-	case 0x2: // 010 (color)
-		color = 2 + odd;
-		break;
-	case 0x5: // 101 (color)
-		color = 2 + !odd;
+struct LineDoubleBright {
+	static uint8 blend(uint8 c1, uint8 c2) {
+		return c1;
 	}
+};
 
-	if (secondPal)
-		color = PAL2(color);
-
-	odd = !odd;
-	bits >>= 1;
-
-	return color;
-}
-
-static void renderPixelRowColor(byte *dst, byte *src) {
-	uint16 bits = (src[0] & 0x7f) << 1;
-	byte pal = src[0] >> 7;
-
-	if (pal != 0)
-		*dst++ = 0;
-
-	bool odd = false;
-
-	for (uint i = 0; i < Display_A2::kGfxPitch; ++i) {
-		if (i != Display_A2::kGfxPitch - 1) {
-			bits |= (src[i + 1] & 0x7f) << 8;
-			pal |= (src[i + 1] >> 7) << 1;
-		}
-
-		// For the first 6 bits in the block we draw two pixels
-		for (uint j = 0; j < 6; ++j) {
-			byte color = processColorBits(bits, odd, pal & 1);
-			*dst++ = color;
-			*dst++ = color;
-		}
-
-		// Last bit of the block, draw one, two or three pixels
-		byte color = processColorBits(bits, odd, pal & 1);
-
-		// Draw the first pixel
-		*dst++ = color;
-
-		switch (pal) {
-			case 0x0:
-			case 0x3:
-				// If palette stays the same, draw a second pixel
-				*dst++ = color;
-				break;
-			case 0x2:
-				// If we're moving from first to second palette,
-				// draw a second pixel, and a third in the second
-				// palette.
-				*dst++ = color;
-				*dst++ = PAL2(color);
-		}
-
-		pal >>= 1;
+struct LineDoubleDim {
+	static uint8 blend(uint8 c1, uint8 c2) {
+		return (c1 >> 1) + (c1 >> 2);
 	}
-}
+};
 
-static void renderPixelRowMono(byte *dst, byte *src) {
-	byte pal = src[0] >> 7;
-
-	if (pal != 0)
-		*dst++ = 0;
-
-	for (uint i = 0; i < Display_A2::kGfxPitch; ++i) {
-		if (i != Display_A2::kGfxPitch - 1)
-			pal |= (src[i + 1] >> 7) << 1;
-
-		for (uint j = 0; j < 6; ++j) {
-			bool color = src[i] & (1 << j);
-			*dst++ = color;
-			*dst++ = color;
-		}
-
-		bool color = src[i] & (1 << 6);
-
-		*dst++ = color;
-
-		switch (pal) {
-			case 0x0:
-			case 0x3:
-				*dst++ = color;
-				break;
-			case 0x2:
-				*dst++ = color;
-				*dst++ = color;
-		}
-
-		pal >>= 1;
+struct BlendBright {
+	static uint8 blend(uint8 c1, uint8 c2) {
+		return (c1 + c2) >> 1;
 	}
-}
+};
 
-static void copyEvenSurfaceRows(Graphics::Surface &surf) {
-	byte *src = (byte *)surf.getPixels();
-
-	for (uint y = 0; y < surf.h / 2u; ++y) {
-		byte *dst = src + surf.pitch;
-		for (uint x = 0; x < surf.w; ++x)
-			dst[x] = ALTCOL(src[x]);
-		src += surf.pitch * 2;
+struct BlendDim {
+	static uint8 blend(uint8 c1, uint8 c2) {
+		// AppleWin does c1 >>= 2; return (c1 < c2 ? c2 - c1 : 0);
+		// I think the following looks a lot better:
+		return ((c1 + c2) >> 2) + ((c1 + c2) >> 3);
 	}
-}
+};
 
-class Display_A2_Monitor : public Display_A2 {
+static const uint kColorPhases = 4;
+// All PixelWriters have been adjusted to have 3 pixels of "pre-render" that
+// will be cut off when blitting to the screen
+static const uint kPreRender = 3;
+
+template<typename ColorType, typename T>
+class PixelWriter {
 public:
-	Display_A2_Monitor();
-	~Display_A2_Monitor();
+	PixelWriter() : _ptr(nullptr), _format(g_system->getScreenFormat()), _phase(0), _window(0) { }
 
-	enum {
-		kSplitHeight = 64
-	};
+	void setupWrite(ColorType *dest) {
+		_ptr = dest;
+		_phase = 3;
+		_window = 0;
+	}
 
-	void init() override;
+	void writePixels(uint bits) {
+		for (uint b = 0; b < 14; ++b) {
+			_window <<= 1;
+			_window |= bits & 1;
+			bits >>= 1;
+			*_ptr++ = static_cast<T *>(this)->getColor();
+			_phase = (_phase + 1) & 3;
+		}
+	}
+
+protected:
+	ColorType *_ptr;
+	Graphics::PixelFormat _format;
+	uint _phase;
+	uint _window;
+};
+
+template<typename ColorType>
+class PixelWriterColor : public PixelWriter<ColorType, PixelWriterColor<ColorType> > {
+public:
+	static const uint kColors = 16;
+	typedef LineDoubleBright BlendRegular;
+	typedef LineDoubleDim BlendScanlines;
+
+	PixelWriterColor() {
+		const byte palette[kColors][3] = {
+			{ 0x00, 0x00, 0x00 }, { 0x9d, 0x09, 0x66 }, { 0x2a, 0x2a, 0xe5 }, { 0xc7, 0x34, 0xff },
+			{ 0x00, 0x80, 0x00 }, { 0x80, 0x80, 0x80 }, { 0x0d, 0xa1, 0xff }, { 0xaa, 0xaa, 0xff },
+			{ 0x55, 0x55, 0x00 }, { 0xf2, 0x5e, 0x00 }, { 0xc0, 0xc0, 0xc0 }, { 0xff, 0x89, 0xe5 },
+			{ 0x38, 0xcb, 0x00 }, { 0xd5, 0xd5, 0x1a }, { 0x62, 0xf6, 0x99 }, { 0xff, 0xff, 0xff }
+		};
+
+		for (uint pattern = 0; pattern < kColors; ++pattern) {
+			uint color = ((pattern & 1) << 3) | ((pattern & 2) << 1) | ((pattern & 4) >> 1) | ((pattern & 8) >> 3);
+
+			for (uint phase = 0; phase < kColorPhases; ++phase) {
+				_colors[phase][pattern] = this->_format.RGBToColor(palette[color][0], palette[color][1], palette[color][2]);
+				color = ((color & 8) >> 3) | ((color << 1) & 0x0f);
+			}
+		}
+	}
+
+	// >> 2 to synchronize rendering output with NTSC
+	ColorType getColor() { return _colors[this->_phase][(this->_window >> 2) & (kColors - 1)]; }
+
+private:
+	ColorType _colors[kColorPhases][kColors];
+};
+
+template<typename ColorType, uint8 R, uint8 G, uint8 B>
+class PixelWriterMono : public PixelWriter<ColorType, PixelWriterMono<ColorType, R, G, B> > {
+public:
+	static const uint kColors = 2;
+
+	typedef LineDoubleBright BlendRegular;
+	typedef LineDoubleDim BlendScanlines;
+
+	PixelWriterMono() {
+		_colors[0] = this->_format.RGBToColor(0, 0, 0);
+		_colors[1] = this->_format.RGBToColor(R, G, B);
+	}
+
+	ColorType getColor() { return _colors[(this->_window >> 3) & (kColors - 1)]; }
+
+private:
+	ColorType _colors[kColors];
+};
+
+static double filterChroma(double z) {
+	static double x[3] = {0, 0, 0};
+	static double y[3] = {0, 0, 0};
+
+	x[0] = x[1];
+	x[1] = x[2];
+	x[2] = z / 7.438011255;
+
+	y[0] = y[1];
+	y[1] = y[2];
+	y[2] = -x[0] + x[2] + (-0.7318893645 * y[0]) + (1.2336442711 * y[1]);
+
+	return y[2];
+}
+
+static double filterLuma(double z) {
+	static double x[3] = {0, 0, 0};
+	static double y[3] = {0, 0, 0};
+
+	x[0] = x[1];
+	x[1] = x[2];
+	x[2] = z / 13.71331570;
+
+	y[0] = y[1];
+	y[1] = y[2];
+	y[2] = x[0] + x[2] + (2.f * x[1]) + (-0.3961075449 * y[0]) + (1.1044202472 * y[1]);
+
+	return y[2];
+}
+
+static double filterSignal(double z) {
+	static double x[3] = {0, 0, 0};
+	static double y[3] = {0, 0, 0};
+
+	x[0] = x[1];
+	x[1] = x[2];
+	x[2] = z / 7.614490548;
+
+	y[0] = y[1];
+	y[1] = y[2];
+	y[2] = x[0] + x[2] + (2.0 * x[1]) + (-0.2718798058 * y[0]) + (0.7465656072 * y[1]);
+
+	return y[2];
+}
+
+template<typename ColorType>
+class PixelWriterColorNTSC : public PixelWriter<ColorType, PixelWriterColorNTSC<ColorType> > {
+public:
+	static const uint kColors = 4096;
+
+	typedef BlendBright BlendRegular;
+	typedef BlendDim BlendScanlines;
+
+	PixelWriterColorNTSC() {
+		for (uint phase = 0; phase < kColorPhases; ++phase) {
+			double phi = Common::deg2rad(phase * 90.0 + 45.0);
+			for (uint s = 0; s < kColors; ++s) {
+				uint t = s;
+				double y;
+				double i = 0.0;
+				double q = 0.0;
+
+				for (uint n = 0; n < 12; ++n) {
+					double z = (double)(0 != (t & 0x800));
+					t = t << 1;
+
+					for (uint k = 0; k < 2; k++ ) {
+						const double zz = filterSignal(z);
+						double c = filterChroma(zz);
+						y = filterLuma(zz - c);
+
+						c = c * 2.0;
+						i = i + (c * cos(phi) - i) / 8.0;
+						q = q + (c * sin(phi) - q) / 8.0;
+
+						phi += Common::deg2rad(45.0);
+					}
+				}
+
+				// YIQ to RGB
+				const double r64 = y + (0.956 * i) + (0.621 * q);
+				const double g64 = y + (-0.272 * i) + (-0.647 * q);
+				const double b64 = y + (-1.105 * i) + (1.702 * q);
+
+				uint8 r = CLIP(r64, 0.0, 1.0) * 255;
+				uint8 g = CLIP(g64, 0.0, 1.0) * 255;
+				uint8 b = CLIP(b64, 0.0, 1.0) * 255;
+
+	#ifdef NTSC_REMOVE_WHITE_RINGING
+				if ((s & 0xf) == 15) {
+					// white
+					r = 255;
+					g = 255;
+					b = 255;
+				}
+	#endif			
+
+	#ifdef NTSC_REMOVE_BLACK_GHOSTING
+				if ((s & 0xf) == 0) {
+					// Black
+					r = 0;
+					g = 0;
+					b = 0;
+				}
+	#endif
+
+				_colors[phase][s] = this->_format.RGBToColor(r, g, b);
+			}
+		}
+	}
+
+	ColorType getColor() { return _colors[this->_phase][(this->_window >> 1) & (kColors - 1)]; }
+
+private:
+	ColorType _colors[kColorPhases][kColors];
+};
+
+template<typename ColorType>
+class PixelWriterMonoNTSC : public PixelWriter<ColorType, PixelWriterMonoNTSC<ColorType> > {
+public:
+	static const uint kColors = 4096;
+
+	typedef BlendBright BlendRegular;
+	typedef BlendDim BlendScanlines;
+
+	PixelWriterMonoNTSC() {
+		for (uint s = 0; s < kColors; ++s) {
+			uint t = s;
+			double y;
+
+			for (uint n = 0; n < 12; ++n) {
+				double z = (double)(0 != (t & 0x800));
+				t = t << 1;
+
+				for (uint k = 0; k < 2; k++ ) {
+					const double zz = filterSignal(z);
+					double c = filterChroma(zz);
+					y = filterLuma(zz - c);
+				}
+			}
+
+			const uint8 brightness = CLIP(y, 0.0, 1.0) * 255;
+			_colors[s] = this->_format.RGBToColor(brightness, brightness, brightness);
+		}
+	}
+
+	ColorType getColor() { return _colors[(this->_window >> 1) & (kColors - 1)]; }
+
+private:
+	ColorType _colors[kColors];
+};
+
+template<typename ColorType, typename GfxWriter, typename TextWriter>
+class DisplayImpl_A2 : public Display_A2 {
+public:
+	DisplayImpl_A2();
+	~DisplayImpl_A2();
+
 	void renderText() override;
 	void renderGraphics() override;
 
 private:
-	void updateTextSurface();
-	void updateGfxSurface();
-	void drawChar(byte c, int x, int y);
-	void createFont();
-	void showScanlines(bool enable);
-	void createSurfaces(uint gfxWidth, uint gfxHeight);
+	enum {
+		kRenderBufWidth = (kGfxPitch + 1) * 14, // one extra chunk to account for pre-render
+		kRenderBufHeight = (kGfxHeight * 2) + 1 // one extra line to simplify scanline mixing
+	};
 
-	Graphics::Surface *_textSurface;
-	Graphics::Surface *_gfxSurface;
-	Graphics::Surface *_font;
-	bool _scanlines;
-	bool _monochrome;
+	template<typename BlendFunc>
+	void blendScanlines(uint yStart, uint yEnd);
+
+	template<typename Reader, typename Writer>
+	void render(Writer &writer);
+
+	ColorType *_renderBuf;
+	uint16 _doublePixelMasks[128];
+
+	GfxWriter _writerColor;
+	TextWriter _writerMono;
 };
 
-Display_A2_Monitor::Display_A2_Monitor() :
-		_textSurface(nullptr),
-		_gfxSurface(nullptr),
-		_font(nullptr),
-		_scanlines(false),
-		_monochrome(false) { }
+template<typename ColorType, typename GfxWriter, typename TextWriter>
+DisplayImpl_A2<ColorType, GfxWriter, TextWriter>::DisplayImpl_A2() : _doublePixelMasks() {
+	_renderBuf = new ColorType[kRenderBufHeight * kRenderBufWidth]();
 
-Display_A2_Monitor::~Display_A2_Monitor() {
-	if (_font) {
-		_font->free();
-		delete _font;
+	for (uint8 val = 0; val < ARRAYSIZE(_doublePixelMasks); ++val)
+		for (uint8 mask = 0; mask < 7; mask++)
+			if (val & (1 << mask))
+				_doublePixelMasks[val] |= 3 << (mask * 2);
+}
+
+template<typename ColorType, typename GfxWriter, typename TextWriter>
+DisplayImpl_A2<ColorType, GfxWriter, TextWriter>::~DisplayImpl_A2() {
+	delete[] _renderBuf;
+}
+
+template<typename ColorType, typename GfxWriter, typename TextWriter>
+template<typename Reader, typename Writer>
+void DisplayImpl_A2<ColorType, GfxWriter, TextWriter>::render(Writer &writer) {
+	uint startY = Reader::getStartY(this);
+	const uint endY = Reader::getEndY(this);
+
+	ColorType *ptr = _renderBuf + startY * kRenderBufWidth * 2;
+
+	for (uint y = startY; y < endY; ++y) {
+		uint16 lastBit = 0;
+
+		writer.setupWrite(ptr);
+
+		for (uint x = 0; x < kGfxPitch; ++x) {
+			const uint8 m = Reader::getBits(this, y, x);
+
+			uint16 bits = _doublePixelMasks[m & 0x7F];
+
+			if (m & 0x80)
+				bits = (bits << 1) | lastBit;
+
+			lastBit = (bits >> 13) & 1;
+
+			writer.writePixels(bits);
+		}
+
+		// Because of the pre-render, we need to feed
+		// in some more bits to get the full picture
+		writer.writePixels(0);
+
+		// The odd lines will be filled in later, so skip a line
+		ptr += 2 * kRenderBufWidth;
 	}
 
-	_textSurface->free();
-	delete _textSurface;
-
-	_gfxSurface->free();
-	delete _gfxSurface;
-}
-
-void Display_A2_Monitor::createSurfaces(uint gfxWidth, uint gfxHeight) {
-	_gfxSurface = new Graphics::Surface;
-	_gfxSurface->create(gfxWidth, gfxHeight, Graphics::PixelFormat::createFormatCLUT8());
-	_textSurface = new Graphics::Surface;
-	_textSurface->create(gfxWidth, gfxHeight, Graphics::PixelFormat::createFormatCLUT8());
-}
-
-void Display_A2_Monitor::init() {
-	Display_A2::init();
-
-	// We need 2x scaling to properly render the half-pixel shift
-	// of the second palette
-	createSurfaces(Display_A2::kGfxWidth * 2, Display_A2::kGfxHeight * 2);
-
-	_monochrome = !ConfMan.getBool("color");
-	_scanlines = ConfMan.getBool("scanlines");
-
-	if (_monochrome)
-		g_system->getPaletteManager()->setPalette(monoPalette, 0, MONO_PALETTE_ENTRIES);
+	if (_enableScanlines)
+		blendScanlines<typename Writer::BlendScanlines>(startY, endY);
 	else
-		g_system->getPaletteManager()->setPalette(colorPalette, 0, COLOR_PALETTE_ENTRIES);
+		blendScanlines<typename Writer::BlendRegular>(startY, endY);
 
-	createFont();
-
-	showScanlines(_scanlines);
-}
-
-void Display_A2_Monitor::updateGfxSurface() {
-	byte *src = _frameBuf;
-	byte *dst = (byte *)_gfxSurface->getPixels();
-
-	for (uint i = 0; i < Display_A2::kGfxHeight; ++i) {
-		if (_monochrome)
-			renderPixelRowMono(dst, src);
+	// For the NTSC modes we need to redo the scanline that blends with our first line
+	if (GfxWriter::kColors == 4096 && startY > 0) {
+		--startY;
+		if (_enableScanlines)
+			blendScanlines<typename GfxWriter::BlendScanlines>(startY, startY + 1);
 		else
-			renderPixelRowColor(dst, src);
-		src += Display_A2::kGfxPitch;
-		dst += _gfxSurface->pitch * 2;
+			blendScanlines<typename GfxWriter::BlendRegular>(startY, startY + 1);
 	}
 
-	copyEvenSurfaceRows(*_gfxSurface);
-}
-
-void Display_A2_Monitor::updateTextSurface() {
-	for (uint row = 0; row < 24; ++row)
-		for (uint col = 0; col < Display_A2::kTextWidth; ++col) {
-			uint charPos = row * Display_A2::kTextWidth + col;
-			char c = _textBuf[row * Display_A2::kTextWidth + col];
-
-			if (charPos == _cursorPos && _showCursor)
-				c = (c & 0x3f) | 0x40;
-
-			Common::Rect r(7 * 2, 8 * 2);
-			r.translate(((c & 0x3f) % 16) * 7 * 2, (c & 0x3f) / 16 * 8 * 2);
-
-			if (!(c & 0x80)) {
-				if (!(c & 0x40) || ((g_system->getMillis() / 270) & 1))
-					r.translate(0, 4 * 8 * 2);
-			}
-
-			_textSurface->copyRectToSurface(*_font, col * 7 * 2, row * 8 * 2, r);
-		}
-}
-
-void Display_A2_Monitor::renderText() {
-	updateTextSurface();
-
-	if (_mode == Display::kModeText)
-		g_system->copyRectToScreen(_textSurface->getPixels(), _textSurface->pitch, 0, 0, _textSurface->w, _textSurface->h);
-	else if (_mode == Display::kModeMixed)
-		g_system->copyRectToScreen(_textSurface->getBasePtr(0, _textSurface->h - kSplitHeight), _textSurface->pitch, 0, _textSurface->h - kSplitHeight, _textSurface->w, kSplitHeight);
-
+	g_system->copyRectToScreen(_renderBuf + startY * 2 * kRenderBufWidth + kPreRender, kRenderBufWidth * sizeof(ColorType), 0, startY * 2, kGfxWidth * 2, (endY - startY) * 2);
 	g_system->updateScreen();
 }
 
-void Display_A2_Monitor::renderGraphics() {
-	updateGfxSurface();
+template<typename ColorType, typename GfxWriter, typename TextWriter>
+template<typename BlendType>
+void DisplayImpl_A2<ColorType, GfxWriter, TextWriter>::blendScanlines(uint yStart, uint yEnd) {
+	const Graphics::PixelFormat rgbFormat = g_system->getScreenFormat();
 
+	// Note: this reads line yEnd * 2 of _renderBuf!
+	for (uint y = yStart; y < yEnd; ++y) {
+		ColorType *buf = &_renderBuf[y * 2 * kRenderBufWidth];
+		for (uint x = 0; x < kRenderBufWidth; ++x) {
+			const ColorType color1 = buf[x];
+			const ColorType color2 = buf[2 * kRenderBufWidth + x];
+
+			uint8 r1, g1, b1, r2, g2, b2;
+
+			rgbFormat.colorToRGB(color1, r1, g1, b1);
+			rgbFormat.colorToRGB(color2, r2, g2, b2);
+
+			const uint8 r3 = BlendType::blend(r1, r2);
+			const uint8 g3 = BlendType::blend(g1, g2);
+			const uint8 b3 = BlendType::blend(b1, b2);
+
+			buf[kRenderBufWidth + x] = rgbFormat.RGBToColor(r3, g3, b3);
+		}
+	}
+}
+
+template<typename ColorType, typename GfxWriter, typename TextWriter>
+void DisplayImpl_A2<ColorType, GfxWriter, TextWriter>::renderText() {
 	if (_mode == kModeGraphics)
-		g_system->copyRectToScreen(_gfxSurface->getPixels(), _gfxSurface->pitch, 0, 0, _gfxSurface->w, _gfxSurface->h);
-	else if (_mode == kModeMixed)
-		g_system->copyRectToScreen(_gfxSurface->getPixels(), _gfxSurface->pitch, 0, 0, _gfxSurface->w, _gfxSurface->h - kSplitHeight);
+		return;
 
-	g_system->updateScreen();
+	_blink = (g_system->getMillis() / 270) & 1;
+
+	if (_mode == kModeMixed && _enableColor && !_enableMonoText)
+		render<TextReader>(_writerColor);
+	else
+		render<TextReader>(_writerMono);
 }
 
-void Display_A2_Monitor::drawChar(byte c, int x, int y) {
-	byte *buf = (byte *)_font->getPixels() + y * _font->pitch + x;
+template<typename ColorType, typename GfxWriter, typename TextWriter>
+void DisplayImpl_A2<ColorType, GfxWriter, TextWriter>::renderGraphics() {
+	if (_mode == kModeText)
+		return;
 
-	for (uint row = 0; row < 8; ++row) {
-		for (uint col = 1; col < 6; ++col) {
-			if (font[c][col - 1] & (1 << row)) {
-				buf[col * 2] = 1;
-				buf[col * 2 + 1] = 1;
-			}
-		}
-
-		buf += 2 * _font->pitch;
-	}
+	render<GfxReader>(_writerColor);
 }
 
-void Display_A2_Monitor::createFont() {
-	_font = new Graphics::Surface;
-	_font->create(16 * 7 * 2, 4 * 8 * 2 * 2, Graphics::PixelFormat::createFormatCLUT8());
-
-	for (uint i = 0; i < 4; ++i)
-		for (uint j = 0; j < 16; ++j)
-			drawChar(i * 16 + j, j * 7 * 2, i * 8 * 2);
-
-	// Create inverted font
-	byte *buf = (byte *)_font->getPixels();
-	byte *bufInv = buf + (_font->h / 2) * _font->pitch;
-
-	for (uint row = 0; row < _font->h / 2u; row += 2) {
-		for (uint col = 0; col < _font->w; ++col)
-			bufInv[col] = (buf[col] ? 0 : 1);
-
-		buf += _font->pitch * 2;
-		bufInv += _font->pitch * 2;
-	}
-
-	copyEvenSurfaceRows(*_font);
-}
-
-void Display_A2_Monitor::showScanlines(bool enable) {
-	byte pal[COLOR_PALETTE_ENTRIES * 3];
-
-	g_system->getPaletteManager()->grabPalette(pal, 0, COLOR_PALETTE_ENTRIES);
-
-	if (enable) {
-		for (uint i = 0; i < ARRAYSIZE(pal); ++i)
-			pal[i] = pal[i] * (100 - SCANLINE_OPACITY) / 100;
-	}
-
-	g_system->getPaletteManager()->setPalette(pal, COLOR_PALETTE_ENTRIES, COLOR_PALETTE_ENTRIES);
-}
-
-Display_A2::Display_A2() : _frameBuf(nullptr), _showCursor(false) {
-	initGraphics(Display_A2::kGfxWidth * 2, Display_A2::kGfxHeight * 2);
-}
+Display_A2::Display_A2() :
+		_frameBuf(nullptr),
+		_showCursor(false),
+		_enableColor(false),
+		_enableScanlines(false),
+		_enableMonoText(false),
+		_blink(false) { }
 
 Display_A2::~Display_A2() {
 	delete[] _frameBuf;
@@ -414,11 +502,14 @@ Display_A2::~Display_A2() {
 void Display_A2::init() {
 	createTextBuffer(Display_A2::kTextWidth, Display_A2::kTextHeight);
 
-	_frameBuf = new byte[Display_A2::kGfxSize];
-	memset(_frameBuf, 0, Display_A2::kGfxSize);
+	_frameBuf = new byte[Display_A2::kGfxSize]();
+
+	_enableColor = ConfMan.getBool("color");
+	_enableScanlines = ConfMan.getBool("scanlines");
+	_enableMonoText = ConfMan.getBool("monotext");
 }
 
-void Display_A2::loadFrameBuffer(Common::ReadStream &stream, byte *dst) {
+void Display_A2::loadFrameBuffer(Common::ReadStream &stream, byte *dst) const {
 	for (uint j = 0; j < 8; ++j) {
 		for (uint i = 0; i < 8; ++i) {
 			stream.read(dst, Display_A2::kGfxPitch);
@@ -442,7 +533,7 @@ void Display_A2::loadFrameBuffer(Common::ReadStream &stream) {
 }
 
 void Display_A2::putPixel(const Common::Point &p, byte color) {
-	byte offset = p.x / 7;
+	const byte offset = p.x / 7;
 	byte mask = 0x80 | (1 << (p.x % 7));
 
 	// Since white and black are in both palettes, we leave
@@ -484,14 +575,14 @@ byte Display_A2::getPixelByte(const Common::Point &p) const {
 bool Display_A2::getPixelBit(const Common::Point &p) const {
 	assert(p.x >= 0 && p.x < Display_A2::kGfxWidth && p.y >= 0 && p.y < Display_A2::kGfxHeight);
 
-	byte *b = _frameBuf + p.y * Display_A2::kGfxPitch + p.x / 7;
+	const byte *b = _frameBuf + p.y * Display_A2::kGfxPitch + p.x / 7;
 	return *b & (1 << (p.x % 7));
 }
 
 void Display_A2::clear(byte color) {
 	byte val = 0;
 
-	byte c = color << 1;
+	const byte c = color << 1;
 	if (c >= 0x40 && c < 0xc0)
 		val = 0x7f;
 
@@ -530,6 +621,47 @@ void Display_A2::writeFrameBuffer(const Common::Point &p, byte color, byte mask)
 	*b ^= color;
 }
 
-Display_A2 *Display_A2_create() { return new Display_A2_Monitor(); }
+template<typename ColorType>
+static Display_A2 *Display_A2_create_helper() {
+	const bool ntsc = ConfMan.getBool("ntsc");
+	const bool color = ConfMan.getBool("color");
+	const bool monotext = ConfMan.getBool("monotext");
+
+	typedef PixelWriterMono<ColorType, 0xff, 0xff, 0xff> PixelWriterMonoWhite;
+	typedef PixelWriterMono<ColorType, 0x00, 0xc0, 0x00> PixelWriterMonoGreen;
+
+	if (ntsc) {
+		if (color) {
+			if (monotext)
+				return new DisplayImpl_A2<ColorType, PixelWriterColorNTSC<ColorType>, PixelWriterMonoWhite>;
+			else
+				return new DisplayImpl_A2<ColorType, PixelWriterColorNTSC<ColorType>, PixelWriterMonoNTSC<ColorType> >;
+		} else {
+			if (monotext)
+				return new DisplayImpl_A2<ColorType, PixelWriterMonoNTSC<ColorType>, PixelWriterMonoWhite>;
+			else
+				return new DisplayImpl_A2<ColorType, PixelWriterMonoNTSC<ColorType>, PixelWriterMonoNTSC<ColorType> >;
+		}
+	}
+
+	if (color)
+		return new DisplayImpl_A2<ColorType, PixelWriterColor<ColorType>, PixelWriterMonoWhite>;
+	else
+		return new DisplayImpl_A2<ColorType, PixelWriterMonoGreen, PixelWriterMonoGreen>;
+}
+
+Display_A2 *Display_A2_create() {
+	initGraphics(Display_A2::kGfxWidth * 2, Display_A2::kGfxHeight * 2, new Graphics::PixelFormat(2, 5, 5, 5, 0, 10, 5, 0, 0));
+	debugN(1, "Initialized graphics with format: %s\n", g_system->getScreenFormat().toString().c_str());
+
+	const uint bpp = g_system->getScreenFormat().bytesPerPixel;
+
+	if (bpp == 4)
+		return Display_A2_create_helper<uint32>();
+	else if (bpp == 2)
+		return Display_A2_create_helper<uint16>();
+	else
+		error("Graphics format uses %d bytes per pixel", bpp);		
+}
 
 } // End of namespace Adl

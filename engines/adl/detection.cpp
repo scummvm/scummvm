@@ -41,13 +41,25 @@ namespace Adl {
 #define GAMEOPTION_COLOR_DEFAULT_OFF GUIO_GAMEOPTIONS1
 #define GAMEOPTION_SCANLINES         GUIO_GAMEOPTIONS2
 #define GAMEOPTION_COLOR_DEFAULT_ON  GUIO_GAMEOPTIONS3
+#define GAMEOPTION_NTSC              GUIO_GAMEOPTIONS4
+#define GAMEOPTION_MONO_TEXT         GUIO_GAMEOPTIONS5
 
 static const ADExtraGuiOptionsMap optionsList[] = {
 	{
+		GAMEOPTION_NTSC,
+		{
+			_s("TV emulation"),
+			_s("Emulate composite output to an NTSC TV"),
+			"ntsc",
+			true
+		}
+	},
+
+	{
 		GAMEOPTION_COLOR_DEFAULT_OFF,
 		{
-			_s("Color mode"),
-			_s("Use color graphics"),
+			_s("Color graphics"),
+			_s("Use color graphics instead of monochrome"),
 			"color",
 			false
 		}
@@ -56,8 +68,8 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 	{
 		GAMEOPTION_COLOR_DEFAULT_ON,
 		{
-			_s("Color mode"),
-			_s("Use color graphics"),
+			_s("Color graphics"),
+			_s("Use color graphics instead of monochrome"),
 			"color",
 			true
 		}
@@ -66,15 +78,28 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 	{
 		GAMEOPTION_SCANLINES,
 		{
-			_s("Scanlines"),
 			_s("Show scanlines"),
+			_s("Darken every other scanline to mimic the look of a CRT"),
 			"scanlines",
 			false
 		}
 	},
 
+	{
+		GAMEOPTION_MONO_TEXT,
+		{
+			_s("Always use sharp monochrome text"),
+			_s("Do not emulate NTSC artifacts for text"),
+			"monotext",
+			true
+		}
+	},
+
 	AD_EXTRA_GUI_OPTIONS_TERMINATOR
 };
+
+#define DEFAULT_OPTIONS GUIO4(GAMEOPTION_NTSC, GAMEOPTION_COLOR_DEFAULT_ON, GAMEOPTION_MONO_TEXT, GAMEOPTION_SCANLINES)
+#define MH_OPTIONS GUIO4(GAMEOPTION_NTSC, GAMEOPTION_COLOR_DEFAULT_OFF, GAMEOPTION_MONO_TEXT, GAMEOPTION_SCANLINES)
 
 static const PlainGameDescriptor adlGames[] = {
 	{ "hires0", "Hi-Res Adventure #0: Mission Asteroid" },
@@ -105,7 +130,7 @@ static const AdlGameDescription gameFileDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformApple2,
 			ADGF_NO_FLAGS,
-			GUIO2(GAMEOPTION_COLOR_DEFAULT_OFF, GAMEOPTION_SCANLINES)
+			MH_OPTIONS
 		},
 		GAME_TYPE_HIRES1,
 		GAME_VER_HR1_SIMI
@@ -121,7 +146,7 @@ static const AdlGameDescription gameFileDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformApple2,
 			ADGF_NO_FLAGS,
-			GUIO2(GAMEOPTION_COLOR_DEFAULT_OFF, GAMEOPTION_SCANLINES)
+			MH_OPTIONS
 		},
 		GAME_TYPE_HIRES1,
 		GAME_VER_HR1_COARSE
@@ -138,7 +163,7 @@ static const AdlGameDescription gameFileDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformApple2,
 			ADGF_NO_FLAGS,
-			GUIO2(GAMEOPTION_COLOR_DEFAULT_OFF, GAMEOPTION_SCANLINES)
+			MH_OPTIONS
 		},
 		GAME_TYPE_HIRES1,
 		GAME_VER_HR1_PD
@@ -157,7 +182,7 @@ static const AdlGameDescription gameDiskDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformApple2,
 			ADGF_NO_FLAGS,
-			GUIO2(GAMEOPTION_COLOR_DEFAULT_OFF, GAMEOPTION_SCANLINES)
+			MH_OPTIONS
 		},
 		GAME_TYPE_HIRES1,
 		GAME_VER_HR1_COARSE
@@ -172,7 +197,7 @@ static const AdlGameDescription gameDiskDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformApple2,
 			ADGF_NO_FLAGS,
-			GUIO2(GAMEOPTION_COLOR_DEFAULT_OFF, GAMEOPTION_SCANLINES)
+			MH_OPTIONS
 		},
 		GAME_TYPE_HIRES1,
 		GAME_VER_HR1_PD
@@ -187,7 +212,7 @@ static const AdlGameDescription gameDiskDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformApple2,
 			ADGF_NO_FLAGS,
-			GUIO2(GAMEOPTION_COLOR_DEFAULT_ON, GAMEOPTION_SCANLINES)
+			DEFAULT_OPTIONS
 		},
 		GAME_TYPE_HIRES2,
 		GAME_VER_NONE
@@ -202,7 +227,7 @@ static const AdlGameDescription gameDiskDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformApple2,
 			ADGF_NO_FLAGS,
-			GUIO2(GAMEOPTION_COLOR_DEFAULT_ON, GAMEOPTION_SCANLINES)
+			DEFAULT_OPTIONS
 		},
 		GAME_TYPE_HIRES0,
 		GAME_VER_NONE
@@ -217,7 +242,7 @@ static const AdlGameDescription gameDiskDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformApple2,
 			ADGF_NO_FLAGS,
-			GUIO2(GAMEOPTION_COLOR_DEFAULT_ON, GAMEOPTION_SCANLINES)
+			DEFAULT_OPTIONS
 		},
 		GAME_TYPE_HIRES3,
 		GAME_VER_NONE
@@ -233,7 +258,7 @@ static const AdlGameDescription gameDiskDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformApple2,
 			ADGF_NO_FLAGS,
-			GUIO2(GAMEOPTION_COLOR_DEFAULT_ON, GAMEOPTION_SCANLINES)
+			DEFAULT_OPTIONS
 		},
 		GAME_TYPE_HIRES4,
 		GAME_VER_NONE
@@ -277,7 +302,7 @@ static const AdlGameDescription gameDiskDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformApple2,
 			ADGF_NO_FLAGS,
-			GUIO2(GAMEOPTION_COLOR_DEFAULT_ON, GAMEOPTION_SCANLINES)
+			DEFAULT_OPTIONS
 		},
 		GAME_TYPE_HIRES5,
 		GAME_VER_NONE
@@ -295,7 +320,7 @@ static const AdlGameDescription gameDiskDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformApple2,
 			ADGF_NO_FLAGS,
-			GUIO2(GAMEOPTION_COLOR_DEFAULT_ON, GAMEOPTION_SCANLINES)
+			DEFAULT_OPTIONS
 		},
 		GAME_TYPE_HIRES6,
 		GAME_VER_NONE
@@ -313,7 +338,7 @@ static const AdlGameDescription gameDiskDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformApple2,
 			ADGF_NO_FLAGS,
-			GUIO2(GAMEOPTION_COLOR_DEFAULT_ON, GAMEOPTION_SCANLINES)
+			DEFAULT_OPTIONS
 		},
 		GAME_TYPE_HIRES6,
 		GAME_VER_NONE
