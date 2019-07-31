@@ -96,7 +96,7 @@ bool Gfx::init() {
 	_fadeBuffer2.create(g_hdb->_screenWidth, g_hdb->_screenHeight, g_hdb->_format);
 
 	// Load Game Font
-	if (!loadFont("normalprop"))
+	if (!loadFont(HDB_FONT))
 		return false;
 
 	// Read total number of tiles in game

@@ -32,6 +32,8 @@ namespace Common {
 
 namespace HDB {
 
+#define HDB_FONT "normalprop"
+
 struct TileLookup {
 	const char *filename;
 	Tile *tData;
