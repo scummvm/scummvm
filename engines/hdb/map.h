@@ -26,12 +26,8 @@
 namespace HDB {
 
 enum {
-	kScreenXTiles = 17,
-	kScreenYTiles = 16,
-	kScreenTileWidth = 16,
-	kScreenTileHeight = 16,
 	kMaxGratings = 250,
-	kMaxForegrounds = 250
+	kMaxForegrounds = 250,
 };
 
 struct MSMIcon {
@@ -90,11 +86,7 @@ public:
 		return _mapLoaded;
 	}
 
-	bool onScreen(int x, int y) {
-		if ((x >= _mapX / kTileWidth) && (x < (_mapX / kTileWidth) + kScreenXTiles) && (y >= _mapY / kTileHeight) && (y < (_mapY / kTileHeight) + kScreenYTiles))
-			return true;
-		return false;
-	}
+	bool onScreen(int x, int y);
 	int mapPixelWidth() {
 		return _width * kTileWidth;
 	}
@@ -145,6 +137,12 @@ public:
 	void clearLaserBeams() {
 		memset(_mapLaserBeams, 0, _width * _height);
 	}
+
+	// Platform-specific Constants;
+	int _screenXTiles;
+	int _screenYTiles;
+	int _screenTileWidth;
+	int _screenTileHeight;
 
 	uint16 _width, _height;
 	int _mapX, _mapY; // Coordinates of Map

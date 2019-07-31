@@ -98,6 +98,15 @@ struct ScriptPatch {
 };
 
 LuaScript::LuaScript() {
+
+	if (g_hdb->isPPC()) {
+		_cameraXOff = 0;
+		_cameraYOff = 0;
+	} else {
+		_cameraXOff = (32 * 3 + 24);	// 3.75 Tiles Extra
+		_cameraYOff = (32 * 2 + 16);	// 2.50 Tiles Extra
+	}
+
 	_state = NULL;
 	_systemInit = false;
 }
@@ -520,8 +529,8 @@ static int cineDrawPic(lua_State *L) {
 
 	g_hdb->_lua->checkParameters("cineDrawPic", 4);
 
-	x += kCameraXOff;
-	y += kCameraYOff;
+	x += g_hdb->_lua->_cameraXOff;
+	y += g_hdb->_lua->_cameraYOff;
 
 	lua_pop(L, 4);
 	g_hdb->_ai->cineDrawPic(id, pic, (int)x, (int)y);
@@ -537,8 +546,8 @@ static int cineDrawMaskedPic(lua_State *L) {
 
 	g_hdb->_lua->checkParameters("cineDrawMaskedPic", 4);
 
-	x += kCameraXOff;
-	y += kCameraYOff;
+	x += g_hdb->_lua->_cameraXOff;
+	y += g_hdb->_lua->_cameraYOff;
 
 	lua_pop(L, 4);
 	g_hdb->_ai->cineDrawMaskedPic(id, pic, (int)x, (int)y);
@@ -557,10 +566,10 @@ static int cineMovePic(lua_State *L) {
 
 	g_hdb->_lua->checkParameters("cineMovePic", 7);
 
-	x1 += kCameraXOff;
-	y1 += kCameraYOff;
-	x2 += kCameraXOff;
-	y2 += kCameraYOff;
+	x1 += g_hdb->_lua->_cameraXOff;
+	y1 += g_hdb->_lua->_cameraYOff;
+	x2 += g_hdb->_lua->_cameraXOff;
+	y2 += g_hdb->_lua->_cameraYOff;
 
 	lua_pop(L, 7);
 
@@ -580,10 +589,10 @@ static int cineMoveMaskedPic(lua_State *L) {
 
 	g_hdb->_lua->checkParameters("cineMoveMaskedPic", 7);
 
-	x1 += kCameraXOff;
-	y1 += kCameraYOff;
-	x2 += kCameraXOff;
-	y2 += kCameraYOff;
+	x1 += g_hdb->_lua->_cameraXOff;
+	y1 += g_hdb->_lua->_cameraYOff;
+	x2 += g_hdb->_lua->_cameraXOff;
+	y2 += g_hdb->_lua->_cameraYOff;
 
 	lua_pop(L, 7);
 
@@ -687,8 +696,8 @@ static int cineTextOut(lua_State *L) {
 
 	g_hdb->_lua->checkParameters("cineTextOut", 4);
 
-	x += kCameraXOff;
-	y += kCameraYOff;
+	x += g_hdb->_lua->_cameraXOff;
+	y += g_hdb->_lua->_cameraYOff;
 
 	lua_pop(L, 4);
 	g_hdb->_ai->cineTextOut(string, (int)x, (int)y, (int)timer);
@@ -702,7 +711,7 @@ static int cineCenterTextOut(lua_State *L) {
 
 	g_hdb->_lua->checkParameters("cineCenterTextOut", 3);
 
-	y += kCameraYOff;
+	y += g_hdb->_lua->_cameraYOff;
 
 	lua_pop(L, 3);
 	g_hdb->_ai->cineCenterTextOut(string, (int)y, (int)timer);

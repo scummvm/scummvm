@@ -49,13 +49,14 @@ HDBGame::HDBGame(OSystem *syst, const ADGameDescription *gameDesc) : Engine(syst
 		_screenHeight = 320;
 		_screenDrawWidth = 240;
 		_screenDrawHeight = 320;
+		_progressY = 280;
 	} else {
 		_screenWidth = 640;
 		_screenHeight = 480;
 		_screenDrawWidth = _screenWidth - 160;
 		_screenDrawHeight = 480;
+		_progressY = _screenHeight - 64;
 	}
-	_progressY = _screenHeight - 64;
 
 	_format = Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0);
 	_systemInit = false;
