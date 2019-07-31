@@ -257,10 +257,6 @@ void Gfx::updateVideo() {
 }
 
 void Gfx::drawPointer() {
-
-	if (g_hdb->isPPC())
-		return;
-
 	static int anim = 0;
 	static uint32 animTime = 0;
 
@@ -279,8 +275,7 @@ void Gfx::drawPointer() {
 }
 
 void Gfx::setPointerState(int value) {
-	if (!g_hdb->isPPC())
-		_pointerDisplayable = value;
+	_pointerDisplayable = value;
 }
 
 void Gfx::setFade(bool fadeIn, bool black, int steps) {

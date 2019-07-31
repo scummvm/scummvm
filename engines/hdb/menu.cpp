@@ -151,7 +151,8 @@ bool Menu::init() {
 	if (g_hdb->isPPC()) {
 		if (g_hdb->isDemo()) {
 			warning("STUB: Load DEMOTITLESCREEN");
-			warning("STUB: Load PIC_HANDANGO");
+			if (g_hdb->isHandango())
+				warning("STUB: Load PIC_HANDANGO");
 		}
 		else
 			_hdbLogoScreen = g_hdb->_gfx->loadPic(TITLESCREEN);
