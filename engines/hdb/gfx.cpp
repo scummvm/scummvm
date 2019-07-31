@@ -254,6 +254,8 @@ void Gfx::updateVideo() {
 	if (!clip.isEmpty()) {
 		g_system->copyRectToScreen(g_hdb->_gfx->_globalSurface.getBasePtr(clip.left, clip.top), g_hdb->_gfx->_globalSurface.pitch, clip.left, clip.top, clip.width(), clip.height());
 	}
+
+	g_system->updateScreen();
 }
 
 void Gfx::drawPointer() {
@@ -302,6 +304,9 @@ void Gfx::updateFade() {
 
 	if (!_fadeInfo.active && !_fadeInfo.stayFaded)
 		return;
+
+	debug(7, "updateFade: active: %d stayFaded: %d isBlack: %d speed: %d isFadeIn: %d curStep: %d", _fadeInfo.active,
+			_fadeInfo.stayFaded, _fadeInfo.isBlack, _fadeInfo.speed, _fadeInfo.isFadeIn, _fadeInfo.curStep);
 
 	Graphics::ManagedSurface fadeBuffer1, fadeBuffer2;
 	fadeBuffer1.create(g_hdb->_screenWidth, g_hdb->_screenHeight, g_hdb->_format);

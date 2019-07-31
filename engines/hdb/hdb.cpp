@@ -803,7 +803,6 @@ void HDBGame::drawProgressBar() {
 	GameState temp = _gameState;
 	_gameState = GAME_LOADING;
 	paint();
-	g_system->updateScreen();
 	_gameState = temp;
 }
 
@@ -1048,7 +1047,6 @@ Common::Error HDBGame::run() {
 
 		paint();
 
-		g_system->updateScreen();
 		if (g_hdb->getDebug()) {
 			g_hdb->_frames.push_back(g_system->getMillis());
 			while (g_hdb->_frames[0] < g_system->getMillis() - 1000)
