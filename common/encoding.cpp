@@ -173,7 +173,7 @@ char *Encoding::convertIconv(iconv_t iconvHandle, const char *string, size_t len
 
 	size_t inSize = length;
 	size_t outSize = inSize;
-	size_t stringSize = inSize > 4 ? inSize : outSize;
+	size_t stringSize = inSize > 4 ? inSize : 4;
 
 
 #ifdef ICONV_USES_CONST
@@ -184,12 +184,11 @@ char *Encoding::convertIconv(iconv_t iconvHandle, const char *string, size_t len
 	memcpy(src, string, length);
 #endif // ICONV_USES_CONST
 
-	char *buffer = (char *) malloc(sizeof(char) * stringSize);
+	char *buffer = (char *) calloc(sizeof(char), stringSize);
 	if (!buffer) {
 		warning ("Cannot allocate memory for converting string");
 		return nullptr;
 	}
-	memset(buffer, 0, stringSize);
 	char *dst = buffer;
 	bool error = false;
 
@@ -215,6 +214,7 @@ char *Encoding::convertIconv(iconv_t iconvHandle, const char *string, size_t len
 			}
 		}
 	}
+	iconv(iconvHandle, NULL, NULL, &dst, &outSize);
 	// Add a zero character to the end. Hopefuly UTF32 uses the most bytes from
 	// all possible encodings, so add 4 zero bytes.
 	buffer = (char *) realloc(buffer, stringSize + 4);
@@ -224,8 +224,11 @@ char *Encoding::convertIconv(iconv_t iconvHandle, const char *string, size_t len
 	delete[] originalSrc;
 #endif // ICONV_USES_CONST
 
-	if (error)
+	if (error) {
+		if (buffer)
+			free(buffer);
 		return nullptr;
+	}
 	debug("Size: %d", stringSize);
 
 	return buffer;
