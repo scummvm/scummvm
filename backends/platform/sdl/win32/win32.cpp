@@ -405,6 +405,10 @@ char *OSystem_Win32::convertEncoding(const char* to, const char *from, const cha
 	if (Common::String(from).equalsIgnoreCase("utf-16")) {
 		// Allocate space for string and 2 ending zeros
 		tmpStr = (WCHAR *) calloc(sizeof(char), length + 2);
+		if (!tmpStr) {
+			warning("Could not allocate memory for string conversion");
+			return nullptr;
+		}
 		memcpy(tmpStr, string, length);
 	} else {
 		tmpStr = Win32::ansiToUnicode(string, Win32::getCodePageId(from));
