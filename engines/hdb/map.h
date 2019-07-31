@@ -27,7 +27,7 @@ namespace HDB {
 
 enum {
 	kMaxGratings = 250,
-	kMaxForegrounds = 250,
+	kMaxForegrounds = 250
 };
 
 struct MSMIcon {
