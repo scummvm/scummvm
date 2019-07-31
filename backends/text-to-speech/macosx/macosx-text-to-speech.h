@@ -28,14 +28,14 @@
 #if defined(USE_MACOSX_TTS)
 
 #include "common/text-to-speech.h"
-#include "common/str.h"
+#include "common/queue.h"
 
 class MacOSXTextToSpeechManager : public Common::TextToSpeechManager {
 public:
 	MacOSXTextToSpeechManager();
 	virtual ~MacOSXTextToSpeechManager();
 
-	virtual bool say(Common::String str, Common::String charset = "");
+	virtual bool say(Common::String str, Action action, Common::String charset = "");
 
 	virtual bool stop();
 	virtual bool pause();
@@ -57,8 +57,17 @@ public:
 
 	virtual void freeVoiceData(void *data);
 
+	bool startNextSpeech();
+
 private:
 	virtual void updateVoices();
+
+	struct SpeechText {
+		Common::String text;
+		Common::String encoding;
+		SpeechText(const Common::String& txt, const Common::String& enc) : text(txt), encoding(enc) {}
+	};
+	Common::Queue<SpeechText> _messageQueue;
 };
 
 #endif
