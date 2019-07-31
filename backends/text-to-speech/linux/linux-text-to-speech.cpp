@@ -128,8 +128,11 @@ Common::String LinuxTextToSpeechManager::strToUtf8(Common::String str, Common::S
 #endif
 }
 
-bool LinuxTextToSpeechManager::say(Common::String str, Common::String charset) {
+bool LinuxTextToSpeechManager::say(Common::String str, Action action, Common::String charset) {
 	if (_speechState == BROKEN)
+		return true;
+
+	if (action == DROP && isSpeaking())
 		return true;
 	
 	if (charset.empty()) {
@@ -142,7 +145,7 @@ bool LinuxTextToSpeechManager::say(Common::String str, Common::String charset) {
 
 	str = strToUtf8(str, charset);
 
-	if (isSpeaking())
+	if (isSpeaking() && action == INTERRUPT)
 		stop();
 	if(spd_say(_connection, SPD_MESSAGE, str.c_str()) == -1) {
 		//restart the connection
