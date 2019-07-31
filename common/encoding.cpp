@@ -81,25 +81,40 @@ char *Encoding::convert(const String &to, const String &from, const char *string
 }
 
 char *Encoding::conversion(iconv_t iconvHandle, const String &to, const String &from, const char *string, size_t length) {
+	if (from.equalsIgnoreCase(to)) {
+		// don't convert, just copy the string and return it
+		char *result = (char *) calloc(sizeof(char), length + 4);
+		if (!result) {
+			warning("Could not allocate memory for string conversion");
+			return nullptr;
+		}
+		memcpy(result, string, length);
+		return result;
+	}
 	char *newString = nullptr;
 	String newFrom = from;
 	size_t newLength = length;
-	if (String(from).equalsIgnoreCase("iso-8859-5") &&
-			!String(to).hasPrefixIgnoreCase("utf")) {
+	if (from.equalsIgnoreCase("iso-8859-5") &&
+			!to.hasPrefixIgnoreCase("utf")) {
 		// There might be some cyrilic characters, which need to be transliterated.
 		newString = transliterateCyrilic(string);
+		if (!newString)
+			return nullptr;
 		newFrom = "ASCII";
 	}
-	if (String(from).hasPrefixIgnoreCase("utf") &&
-			!String(to).hasPrefixIgnoreCase("utf")) {
+	if (from.hasPrefixIgnoreCase("utf") &&
+			!to.hasPrefixIgnoreCase("utf") &&
+			!to.equalsIgnoreCase("iso-8859-5")) {
 		// There might be some cyrilic characters, which need to be transliterated.
 		char *tmpString;
-		if (String(from).hasPrefixIgnoreCase("utf-32"))
+		if (from.hasPrefixIgnoreCase("utf-32"))
 			tmpString = nullptr;
 		else {
 			iconv_t tmpHandle = initIconv("UTF-32", from);
 			tmpString = conversion2(tmpHandle, "UTF-32", from, string, length);
 			deinitIconv(tmpHandle);
+			if (!tmpString)
+				return nullptr;
 			// find out the length in bytes of the tmpString
 			int i;
 			for (i = 0; ((const uint32 *)tmpString)[i]; i++) {}
@@ -111,6 +126,8 @@ char *Encoding::conversion(iconv_t iconvHandle, const String &to, const String &
 			free(tmpString);
 		} else
 			newString = (char *) transliterateUTF32((const uint32 *) string, newLength);
+		if (!newString)
+			return nullptr;
 	}
 	iconv_t newHandle = iconvHandle;
 	if (newFrom != from)
