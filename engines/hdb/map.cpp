@@ -29,6 +29,19 @@
 namespace HDB {
 
 Map::Map() {
+
+	if (g_hdb->isPPC()) {
+		_screenXTiles = 9;
+		_screenYTiles = 11;
+		_screenTileWidth = 8;
+		_screenTileHeight = 10;
+	} else {
+		_screenXTiles = 17;
+		_screenYTiles = 16;
+		_screenTileWidth = 16;
+		_screenTileHeight = 16;
+	}
+
 	_mapLoaded = false;
 
 	_animCycle = 0;
@@ -836,8 +849,8 @@ void Map::draw() {
 		when we're at the very bottom of the map.
 	*/
 
-	int maxTileX = (_mapTileXOff >= -8) ? kScreenXTiles - 1 : kScreenXTiles;
-	int maxTileY = (!_mapTileYOff) ? kScreenYTiles - 1 : kScreenYTiles;
+	int maxTileX = (_mapTileXOff >= -8) ? g_hdb->_map->_screenXTiles - 1 : g_hdb->_map->_screenXTiles;
+	int maxTileY = (!_mapTileYOff) ? g_hdb->_map->_screenYTiles - 1 : g_hdb->_map->_screenYTiles;
 
 	if (matrixY + (maxTileY - 1)*_width > _height * _width) {
 		return;
@@ -933,7 +946,7 @@ void Map::draw() {
 }
 
 void Map::drawEnts() {
-	g_hdb->_ai->drawEnts(_mapX, _mapY, kScreenXTiles * kTileWidth, kScreenYTiles * kTileHeight);
+	g_hdb->_ai->drawEnts(_mapX, _mapY, g_hdb->_map->_screenXTiles * kTileWidth, g_hdb->_map->_screenYTiles * kTileHeight);
 }
 
 void Map::drawGratings() {
@@ -950,6 +963,12 @@ void Map::drawForegrounds() {
 	}
 
 	debug(8, "Foregrounds Count: %d", _numForegrounds);
+}
+
+bool Map::onScreen(int x, int y) {
+	if ((x >= _mapX / kTileWidth) && (x < (_mapX / kTileWidth) + g_hdb->_map->_screenXTiles) && (y >= _mapY / kTileHeight) && (y < (_mapY / kTileHeight) + g_hdb->_map->_screenYTiles))
+		return true;
+	return false;
 }
 
 uint32 Map::getMapBGTileFlags(int x, int y) {
@@ -1113,39 +1132,39 @@ void Map::centerMapXY(int x, int y) {
 	int minx, miny, maxx, maxy;
 
 	// Scan from centerX to right edge
-	maxx = (_width - (kScreenTileWidth / 2)) * kTileWidth;
-	for (int i = checkx + 1; i <= checkx + (kScreenTileWidth / 2); i++) {
+	maxx = (_width - (g_hdb->_map->_screenTileWidth / 2)) * kTileWidth;
+	for (int i = checkx + 1; i <= checkx + (g_hdb->_map->_screenTileWidth / 2); i++) {
 		if (!getMapBGTileIndex(i, checky)) {
-			maxx = (i - (kScreenTileWidth / 2)) * kTileWidth;
+			maxx = (i - (g_hdb->_map->_screenTileWidth / 2)) * kTileWidth;
 			break;
 		}
 	}
 
 	// Scan from centerX to left edge
 	minx = 0;
-	for (int i = checkx - 1; i >= checkx - (kScreenTileWidth / 2); i--) {
+	for (int i = checkx - 1; i >= checkx - (g_hdb->_map->_screenTileWidth / 2); i--) {
 		if (!getMapBGTileIndex(i, checky)) {
 			// +1 because we don't want to see one whole tile
-			minx = (1 + i + (kScreenTileWidth / 2)) * kTileWidth;
+			minx = (1 + i + (g_hdb->_map->_screenTileWidth / 2)) * kTileWidth;
 			break;
 		}
 	}
 
 	// Scan from centerY to bottom edge
-	maxy = (_height - (kScreenTileHeight / 2)) * kTileHeight;
-	for (int i = checky + 1; i <= checky + (kScreenTileHeight / 2); i++) {
+	maxy = (_height - (g_hdb->_map->_screenTileHeight / 2)) * kTileHeight;
+	for (int i = checky + 1; i <= checky + (g_hdb->_map->_screenTileHeight / 2); i++) {
 		if (!getMapBGTileIndex(checkx, i)) {
-			maxy = (i - (kScreenTileHeight / 2)) * kTileHeight;
+			maxy = (i - (g_hdb->_map->_screenTileHeight / 2)) * kTileHeight;
 			break;
 		}
 	}
 
 	// Scan from centerY to top edge
 	miny = 0;
-	for (int i = checky - 1; i >= checky - (kScreenTileHeight / 2); i--) {
+	for (int i = checky - 1; i >= checky - (g_hdb->_map->_screenTileHeight / 2); i--) {
 		if (!getMapBGTileIndex(checkx, i)) {
 			// +1 because we don't want to see one whole tile
-			miny = (1 + i + (kScreenTileHeight / 2)) * kTileHeight;
+			miny = (1 + i + (g_hdb->_map->_screenTileHeight / 2)) * kTileHeight;
 			break;
 		}
 	}
@@ -1169,11 +1188,11 @@ void Map::centerMapXY(int x, int y) {
 }
 
 bool Map::checkEntOnScreen(AIEntity *e) {
-	return ((e->x > _mapX - 32) && (e->x < _mapX + kScreenXTiles * kTileWidth) && (e->y > _mapY - 32) && (e->y < kScreenYTiles * kTileHeight));
+	return ((e->x > _mapX - 32) && (e->x < _mapX + g_hdb->_map->_screenXTiles * kTileWidth) && (e->y > _mapY - 32) && (e->y < g_hdb->_map->_screenYTiles * kTileHeight));
 }
 
 bool Map::checkXYOnScreen(int x, int y) {
-	return ((x > _mapX - 32) && (x < _mapX + kScreenXTiles * kTileWidth) && (y > _mapY - 32) && (y < kScreenYTiles * kTileHeight));
+	return ((x > _mapX - 32) && (x < _mapX + g_hdb->_map->_screenXTiles * kTileWidth) && (y > _mapY - 32) && (y < g_hdb->_map->_screenYTiles * kTileHeight));
 }
 
 bool Map::checkOneTileExistInRange(int tileIndex, int count) {
