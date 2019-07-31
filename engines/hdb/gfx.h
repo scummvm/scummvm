@@ -157,6 +157,8 @@ private:
 	TileLookup *_tLookupArray;
 	uint16 _skyTiles[kMaxSkies];
 
+	Graphics::ManagedSurface _fadeBuffer1, _fadeBuffer2;
+
 	Common::Array<GfxCache *> *_gfxCache;
 
 	int _currentSky;	// 0 if no Sky, 1+ for which Sky to use
