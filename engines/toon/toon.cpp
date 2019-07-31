@@ -3286,7 +3286,18 @@ void ToonEngine::drawConversationLine() {
 	if (_currentTextLine && _showConversationText) {
 		_fontRenderer->setFontColorByCharacter(_currentTextLineCharacterId);
 		_fontRenderer->setFont(_currentFont);
-		_fontRenderer->renderMultiLineText(_currentTextLineX, _currentTextLineY, _currentTextLine, 0);
+		_fontRenderer->renderMultiLineText(_currentTextLineX, _currentTextLineY, _currentTextLine, 0, *_mainSurface);
+	}
+}
+
+void ToonEngine::drawCustomText(int16 x, int16 y, char* line, Graphics::Surface* frame, char color) {
+	if (line) {
+		byte col = color; // 0xce
+		_fontRenderer->setFontColor(0, col, col);
+		//_fontRenderer->setFontColorByCharacter(_currentTextLineCharacterId);
+		_gameState->_currentScrollValue = 0;
+		_fontRenderer->setFont(_currentFont);
+		_fontRenderer->renderMultiLineText(x, y, line, 0, *frame);
 	}
 }
 

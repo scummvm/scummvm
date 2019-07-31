@@ -31,6 +31,7 @@
 #include "toon/audio.h"
 #include "toon/movie.h"
 #include "toon/toon.h"
+#include "toon/subtitles.h"
 
 namespace Toon {
 
@@ -67,6 +68,7 @@ Movie::Movie(ToonEngine *vm , ToonstruckSmackerDecoder *decoder) {
 	_vm = vm;
 	_playing = false;
 	_decoder = decoder;
+	_subtitle = new SubtitleRenderer(_vm);
 }
 
 Movie::~Movie() {
@@ -87,6 +89,7 @@ void Movie::play(const Common::String &video, int32 flags) {
 		_vm->getAudioManager()->setMusicVolume(0);
 	if (!_decoder->loadFile(video.c_str()))
 		error("Unable to play video %s", video.c_str());
+	_subtitle->load(video.c_str());
 	playVideo(isFirstIntroVideo);
 	_vm->flushPalette(true);
 	if (flags & 1)
@@ -103,6 +106,7 @@ void Movie::playVideo(bool isFirstIntroVideo) {
 	while (!_vm->shouldQuit() && !_decoder->endOfVideo()) {
 		if (_decoder->needsUpdate()) {
 			const Graphics::Surface *frame = _decoder->decodeNextFrame();
+			byte unused = 0;
 			if (frame) {
 				if (_decoder->isLowRes()) {
 					// handle manually 2x scaling here
@@ -115,9 +119,31 @@ void Movie::playVideo(bool isFirstIntroVideo) {
 				} else {
 					_vm->_system->copyRectToScreen(frame->getPixels(), frame->pitch, 0, 0, frame->w, frame->h);
 
+    				int32 currentFrame = _decoder->getCurFrame();
+
+					int len = frame->w * frame->h;
+					byte pixels[310000] = {0};
+					memcpy(pixels, frame->getPixels(), len);
+					for (byte i = 1; i < 256; i++) 
+					{
+						int j;
+						for (j = 0; j < len; j++) {
+							if (pixels[j] == i) {
+								break; 
+							}
+						}
+				
+						if (j == len && i != 255) {
+							unused = i;
+							break;
+						}
+					}
+
+					_subtitle->render(*frame, currentFrame, unused);
+
 					// WORKAROUND: There is an encoding glitch in the first intro video. This hides this using the adjacent pixels.
 					if (isFirstIntroVideo) {
-						int32 currentFrame = _decoder->getCurFrame();
+						// int32 currentFrame = _decoder->getCurFrame();
 						if (currentFrame >= 956 && currentFrame <= 1038) {
 							debugC(1, kDebugMovie, "Triggered workaround for glitch in first intro video...");
 							_vm->_system->copyRectToScreen(frame->getBasePtr(frame->w-188, 123), frame->pitch, frame->w-188, 124, 188, 1);
@@ -128,7 +154,17 @@ void Movie::playVideo(bool isFirstIntroVideo) {
 					}
 				}
 			}
-			_vm->_system->getPaletteManager()->setPalette(_decoder->getPalette(), 0, 256);
+
+			byte palette[768] = {0};
+			memcpy(palette, _decoder->getPalette(), 768);
+
+			if (unused) {
+				palette[3 * unused] = 0xff;
+				palette[3 * unused + 1] = 0xff;
+				palette[3 * unused + 2] = 0x0;
+			}
+
+			_vm->_system->getPaletteManager()->setPalette(palette, 0, 256);
 			_vm->_system->updateScreen();
 		}
 
