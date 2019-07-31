@@ -108,7 +108,7 @@ void AI::processCines() {
 					g_hdb->_lua->callFunction(func, 0);
 			}
 			break;
-		case C_STARTMAP: 
+		case C_STARTMAP:
 			{
 				const char *title = _cine[i]->title;
 				// free all gfx alloc'ed during cine
@@ -709,7 +709,7 @@ void AI::cineDialog(const char *title, const char *string, int seconds) {
 	if (!title || !string)
 		warning("cineDialog: Missing Title or Text");
 	cmd->cmdType = C_DIALOG;
-	debug("In cineDialog: C_DIALOG created. cmd->start: %d, cmd->title: %s", cmd->start, cmd->title);
+	debug(6, "In cineDialog: C_DIALOG created. cmd->start: %d, cmd->title: %s", cmd->start, cmd->title);
 	_cine.push_back(cmd);
 }
 
