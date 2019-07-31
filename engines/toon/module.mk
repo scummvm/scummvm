@@ -20,7 +20,8 @@ MODULE_OBJS := \
 	state.o \
 	text.o \
 	tools.o \
-	toon.o
+	toon.o \
+	subtitles.o
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_TOON), DYNAMIC_PLUGIN)

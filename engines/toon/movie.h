@@ -28,6 +28,8 @@
 
 namespace Toon {
 
+class SubtitleRenderer;
+
 class ToonstruckSmackerDecoder : public Video::SmackerDecoder {
 public:
 	ToonstruckSmackerDecoder();
@@ -57,6 +59,7 @@ protected:
 	ToonEngine *_vm;
 	ToonstruckSmackerDecoder *_decoder;
 	bool _playing;
+	SubtitleRenderer *_subtitle;
 };
 
 } // End of namespace Toon
