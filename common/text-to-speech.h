@@ -156,7 +156,7 @@ public:
 	 * @param charset The encoding of the string. If empty this is assumed to be the
 	 *        encoding used for the GUI.
 	 */
-	virtual bool say(String str, String charset = "") { return say(str, INTERRUPT, charset); }
+	bool say(String str, String charset = "") { return say(str, INTERRUPT, charset); }
 
 	/**
 	 * Says the given string
