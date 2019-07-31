@@ -91,6 +91,10 @@ bool Gfx::init() {
 	_eTop = 0;
 	_eBottom = g_hdb->_screenHeight;
 
+	// Need two main memory screen-sized surfaces for screen fading
+	_fadeBuffer1.create(g_hdb->_screenWidth, g_hdb->_screenHeight, g_hdb->_format);
+	_fadeBuffer2.create(g_hdb->_screenWidth, g_hdb->_screenHeight, g_hdb->_format);
+
 	// Load Game Font
 	if (!loadFont("normalprop"))
 		return false;
@@ -308,15 +312,11 @@ void Gfx::updateFade() {
 	debug(7, "updateFade: active: %d stayFaded: %d isBlack: %d speed: %d isFadeIn: %d curStep: %d", _fadeInfo.active,
 			_fadeInfo.stayFaded, _fadeInfo.isBlack, _fadeInfo.speed, _fadeInfo.isFadeIn, _fadeInfo.curStep);
 
-	Graphics::ManagedSurface fadeBuffer1, fadeBuffer2;
-	fadeBuffer1.create(g_hdb->_screenWidth, g_hdb->_screenHeight, g_hdb->_format);
-	fadeBuffer2.create(g_hdb->_screenWidth, g_hdb->_screenHeight, g_hdb->_format);
-
-	fadeBuffer2.blitFrom(_globalSurface);
+	_fadeBuffer2.blitFrom(_globalSurface);
 
 	do {
 		// Copy pristine copy of background to modification buffer
-		fadeBuffer1.blitFrom(fadeBuffer2);
+		_fadeBuffer1.blitFrom(_fadeBuffer2);
 
 		// do the actual alphablending
 
@@ -326,7 +326,7 @@ void Gfx::updateFade() {
 			// Black Fade
 
 			for (int y = 0; y < g_hdb->_screenHeight; y++) {
-				ptr = (uint16 *)fadeBuffer1.getBasePtr(0, y);
+				ptr = (uint16 *)_fadeBuffer1.getBasePtr(0, y);
 				for (int x = 0; x < g_hdb->_screenWidth; x++) {
 					value = *ptr;
 					if (value) {
@@ -343,7 +343,7 @@ void Gfx::updateFade() {
 			// White Fade
 
 			for (int y = 0; y < g_hdb->_screenHeight; y++) {
-				ptr = (uint16 *)fadeBuffer1.getBasePtr(0, y);
+				ptr = (uint16 *)_fadeBuffer1.getBasePtr(0, y);
 				for (int x = 0; x < g_hdb->_screenWidth; x++) {
 					value = *ptr;
 					g_hdb->_format.colorToRGB(value, r, g, b);
@@ -356,7 +356,7 @@ void Gfx::updateFade() {
 			}
 		}
 
-		_globalSurface.blitFrom(fadeBuffer1);
+		_globalSurface.blitFrom(_fadeBuffer1);
 
 		// step the fading values to the next one and
 		// see if we're done yet
