@@ -60,7 +60,7 @@ void Tooltip::setup(Dialog *parent, Widget *widget, int x, int y) {
 		Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
 		if (ttsMan == nullptr)
 			return;
-		ttsMan->say(widget->getTooltip());
+		ttsMan->say(widget->getTooltip(), Common::TextToSpeechManager::DROP);
 	}
 #endif
 }
