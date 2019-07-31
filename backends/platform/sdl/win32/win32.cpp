@@ -51,6 +51,8 @@
 #include "backends/dialogs/win32/win32-dialogs.h"
 
 #include "common/memstream.h"
+#include "common/ustr.h"
+#include "common/encoding.h"
 
 #define DEFAULT_CONFIG_FILE "scummvm.ini"
 
@@ -398,8 +400,22 @@ char *OSystem_Win32::convertEncoding(const char* to, const char *from, const cha
 	char *result = OSystem_SDL::convertEncoding(to, from, string, length);
 	if (result != nullptr)
 		return result;
-	if (Common::String(from).equalsIgnoreCase("utf-32"))
-		return nullptr;
+
+	// UTF-32 is really important for us, because it is used for the
+	// transliteration in Common::Encoding and Win32 cannot convert it
+	if (Common::String(from).hasPrefixIgnoreCase("utf-32")) {
+		Common::U32String UTF32Str((const uint32 *)string, length / 4);
+		Common::String UTF8Str = Common::convertUtf32ToUtf8(UTF32Str);
+		return Common::Encoding::convert(to, "utf-8", UTF8Str.c_str(), UTF8Str.size());
+	}
+	if (Common::String(to).hasPrefixIgnoreCase("utf-32")) {
+		char *UTF8Str = Common::Encoding::convert("utf-8", from, string, length);
+		Common::U32String UTF32Str = Common::convertUtf8ToUtf32(UTF8Str);
+		free(UTF8Str);
+		result = (char *) malloc((UTF32Str.size() + 1) * 4);
+		memcpy(result, UTF32Str.c_str(), (UTF32Str.size() + 1) * 4);
+		return result;
+	}
 
 	WCHAR *tmpStr;
 	if (Common::String(from).equalsIgnoreCase("utf-16")) {
@@ -417,7 +433,7 @@ char *OSystem_Win32::convertEncoding(const char* to, const char *from, const cha
 	if (Common::String(to).equalsIgnoreCase("utf-16"))
 		return (char *) tmpStr;
 	else {
-		char *result = Win32::unicodeToAnsi(tmpStr, Win32::getCodePageId(to));
+		result = Win32::unicodeToAnsi(tmpStr, Win32::getCodePageId(to));
 		free(tmpStr);
 		return result;
 	}
