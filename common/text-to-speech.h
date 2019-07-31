@@ -136,6 +136,11 @@ struct TTSState {
  */
 class TextToSpeechManager {
 public:
+	enum Action {
+		INTERRUPT,
+		QUEUE,
+		DROP
+	};
 	/**
 	 * The constructor sets the language to the translation manager language if 
 	 * USE_TRANSLATION is defined, or english when it isn't defined. It sets the rate,
@@ -145,13 +150,23 @@ public:
 	virtual ~TextToSpeechManager();
 
 	/**
-	 * Says the given string
+	 * Interrupts what's being said and says the given string
 	 *
 	 * @param str The string to say
 	 * @param charset The encoding of the string. If empty this is assumed to be the
 	 *        encoding used for the GUI.
 	 */
-	virtual bool say(String str, String charset = "") { return false; }
+	virtual bool say(String str, String charset = "") { return say(str, INTERRUPT, charset); }
+
+	/**
+	 * Says the given string
+	 *
+	 * @param str The string to say
+	 * @param action What to do if another string is just being said.
+	 * @param charset The encoding of the string. If empty this is assumed to be the
+	 *        encoding used for the GUI.
+	 */
+	virtual bool say(String str, Action action, String charset = "") { return false; }
 
 	/**
 	 * Stops the speech

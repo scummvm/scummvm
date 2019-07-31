@@ -42,7 +42,7 @@ public:
 	LinuxTextToSpeechManager();
 	virtual ~LinuxTextToSpeechManager();
 
-	virtual bool say(Common::String str, Common::String charset = "");
+	virtual bool say(Common::String str, Action action, Common::String charset = "");
 
 	virtual bool stop();
 	virtual bool pause();

@@ -96,11 +96,14 @@ WindowsTextToSpeechManager::~WindowsTextToSpeechManager() {
 	::CoUninitialize();
 }
 
-bool WindowsTextToSpeechManager::say(Common::String str, Common::String charset) {
-	if(_speechState == BROKEN || _speechState == NO_VOICE) {
+bool WindowsTextToSpeechManager::say(Common::String str, Action action, Common::String charset) {
+	if (_speechState == BROKEN || _speechState == NO_VOICE) {
 		warning("The tts cannot speak in this state");
 		return true;
 	}
+
+	if (isSpeaking() && action == DROP)
+		return true;
 
 	if (charset.empty()) {
 #ifdef USE_TRANSLATION
@@ -109,19 +112,18 @@ bool WindowsTextToSpeechManager::say(Common::String str, Common::String charset)
 		charset = "ASCII";
 #endif
 	}
-	if (isPaused()) {
-		resume();
-	}
-	_audio->SetState(SPAS_STOP, 0);
-	_audio->SetState(SPAS_RUN, 0);
 	// We have to set the pitch by prepending xml code at the start of the said string;
 	Common::String pitch= Common::String::format("<pitch absmiddle=\"%d\">", _ttsState->_pitch / 10);
 	str.replace((uint32)0, 0, pitch);
-
 	WCHAR *strW = Win32::ansiToUnicode(str.c_str(), Win32::getCodePageId(charset));
-	bool result = _voice->Speak(strW, SPF_ASYNC | SPF_PURGEBEFORESPEAK, NULL) != S_OK;
+
+	if ((isPaused() || isSpeaking()) && action == INTERRUPT)
+		stop();
+
+	bool result = _voice->Speak(strW, SPF_ASYNC, NULL) != S_OK;
 	free(strW);
-	_speechState = SPEAKING;
+	if (!isPaused())
+		_speechState = SPEAKING;
 	return result;
 }
 
