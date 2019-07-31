@@ -163,6 +163,8 @@ private:
 
 	uint16 run_func_ptr_unk_countdown_timer;
 
+	uint32 _randomState;
+
 	// input
 	bool _leftMouseButtonUp;
 	bool _rightMouseButtonUp;
@@ -225,6 +227,7 @@ public:
 	void (*getSceneUpdateFunction())();
 
 	bool checkForActionButtonRelease();
+	uint16 getRand(uint16 max);
 private:
 	bool savegame(const char *filename, const char *description);
 	bool loadgame(const char *filename);
@@ -246,7 +249,8 @@ private:
 	void walkFlickerToObject();
 	void FUN_80038994();
 
-	void FUN_8002931c();
+	void seedRandom(int32 seed);
+	uint32 shuffleRandState();
 };
 
 DragonsEngine *getEngine();

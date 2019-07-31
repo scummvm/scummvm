@@ -115,7 +115,7 @@ void ScriptOpcodes::initOpcodes() {
 	OPCODE(0x16, opUnk16);
 	OPCODE(0x17, opUnk17);
 	OPCODE(0x18, opUnk18);
-
+	OPCODE(0x19, opUnk19);
 	OPCODE(0x1A, opUnk1A);
 	OPCODE(0x1B, opUnk1B);
 	OPCODE(0x1C, opSetActorFlag0x1000);
@@ -786,60 +786,7 @@ void ScriptOpcodes::opUnk11FlickerTalk(ScriptOpCall &scriptOpCall) {
 	ARG_UINT32(textIndex)
 	// TODO implement me!
 
-    debug("Main actor talk: 0x%04x and text 0x%04x", iniId, textIndex);
-
-	if (textIndex == 0) {
-		return;
-	}
-	Actor *actor = NULL;
-	if (iniId == 0) {
-		//TODO playSoundFromTxtIndex(textIndex);
-		actor = _vm->_dragonINIResource->getFlickerRecord()->actor;
-		if (!_vm->isFlagSet(ENGINE_FLAG_2000000)) {
-			if (_vm->getCurrentSceneId() == 0x32) {
-				_vm->getINI(0x2b1)->actor->updateSequence(2);
-			}
-			else {
-				actor->setFlag(ACTOR_FLAG_2000);
-				if (actor->_sequenceID2 != -1) {
-					actor->updateSequence(actor->_sequenceID2 + 0x10);
-				}
-			}
-		}
-		else {
-			if (actor->_sequenceID == 5) {
-				actor->updateSequence(0x10);
-			}
-		}
-	}
-	// TODO sVar1 = findTextToDtSpeechIndex(textIndex);
-	uint16 dialog[2048];
-	dialog[0] = 0;
-	_vm->_talk->loadText(textIndex, dialog, 2048);
-
-//	pcVar2 = (char *)0x0;
-//	if (((unkFlags1 & 1) == 0) && (((engine_flags_maybe & 0x1000) == 0 || (sVar1 == -1)))) {
-//		pcVar2 = load_string_from_dragon_txt(textIndex,acStack2016);
-//	}
-	_vm->_talk->displayDialogAroundINI(iniId, dialog, textIndex); //TODO need to pass dialog here (pcVar2). not NULL
-	if (iniId == 0) {
-		if (!_vm->isFlagSet(ENGINE_FLAG_2000000)) {
-			if (_vm->getCurrentSceneId() != 0x32) {
-				actor->setFlag(ACTOR_FLAG_4);
-				actor->clearFlag(ACTOR_FLAG_2000);
-				_vm->waitForFrames(1);
-				return;
-			}
-			_vm->getINI(0x2b1)->actor->updateSequence(1);
-
-		}
-		else {
-			if (actor->_sequenceID != 0x10) {
-				return;
-			}
-			actor->updateSequence(5);
-		}
-	}
+	_vm->_talk->talkFromIni(iniId, textIndex);
 }
 
 void ScriptOpcodes::opUnk12LoadScene(ScriptOpCall &scriptOpCall) {
@@ -1007,8 +954,7 @@ void ScriptOpcodes::opCode_UnkA_setsProperty(ScriptOpCall &scriptOpCall) {
 					s2 -= s1;
 				} else {
 					if (fieldB == 3) {
-						//TODO s2 = sub_80023830(s1);
-						error("TODO s2 = sub_80023830(s1);");
+						s2 = _vm->getRand(s1);
 					}
 				}
 			}
@@ -1108,6 +1054,20 @@ void ScriptOpcodes::opUnk18(ScriptOpCall &scriptOpCall) {
 		fieldA = READ_LE_INT16(_vm->_dragonOBD->getFromOpt(fieldA - 1) + 6);
 	}
 	_vm->_talk->displayDialogAroundPoint(dialog,x,y,fieldA,1,field2);
+}
+
+void ScriptOpcodes::opUnk19(ScriptOpCall &scriptOpCall) {
+	ARG_INT16(field0);
+	ARG_INT16(size);
+
+	if (scriptOpCall._field8 == 3) {
+		ScriptOpCall newCall;
+		newCall._code = scriptOpCall._code;
+		newCall._codeEnd = scriptOpCall._code + size;
+		_vm->_scriptOpcodes->runScript(newCall);
+	}
+	scriptOpCall._code += size;
+
 }
 
 void ScriptOpcodes::opUnk1A(ScriptOpCall &scriptOpCall) {

@@ -1039,7 +1039,7 @@ void DragonsEngine::works_with_obd_data_1() {
 			uVar4 = uVar4 | uVar5;
 		}
 		if (((uVar4 & 0xffff) == 0) && ((uVar6 & 0xfffd) == 0)) {
-			FUN_8002931c();
+			_talk->flickerRandomDefaultResponse();
 		}
 	}
 	else {
@@ -1145,24 +1145,6 @@ void DragonsEngine::FUN_80038994() {
 	error("FUN_80038994"); //TODO
 }
 
-void DragonsEngine::FUN_8002931c() {
-
-	DragonINI *flicker = _dragonINIResource->getFlickerRecord();
-	if (flicker && flicker->actor) {
-		flicker->actor->clearFlag(ACTOR_FLAG_10);
-		if (getCurrentSceneId() != 0x2e || !flicker->actor->_actorResource || flicker->actor->_actorResource->_id != 0x91) {
-			flicker->actor->setFlag(ACTOR_FLAG_4);
-		}
-	}
-//TODO
-//	uVar1 = FUN_80023830(9);
-//	local_30 = 0x11;
-//	local_2c = local_280[(uint)DAT_800728b0 * 9 + (uVar1 & 0xffff)];
-//	FlickerTalkMaybe(&local_30);
-
-error("FUN_8002931c"); //TODO
-}
-
 void DragonsEngine::reset_screen_maybe() {
 	data_8006a3a0_flag &= ~0x10;
 	//TODO
@@ -1221,6 +1203,7 @@ void DragonsEngine::loadScene(uint16 sceneId) {
 }
 
 void DragonsEngine::reset() {
+	seedRandom(0x1dd); //TODO should we randomise this better? I got this value from a couple of runs in the emulator
 	_nextUpdatetime = 0;
 	_flags = 0;
 	_unkFlags1 = 0;
@@ -1237,7 +1220,7 @@ void DragonsEngine::reset() {
 	}
 
 	memset(unkArray_uint16, 0, sizeof(unkArray_uint16));
-
+	setSceneUpdateFunction(NULL);
 }
 
 void DragonsEngine::runSceneUpdaterFunction() {
@@ -1249,6 +1232,30 @@ void DragonsEngine::runSceneUpdaterFunction() {
 
 void DragonsEngine::setSceneUpdateFunction(void (*newUpdateFunction)()) {
 	_sceneUpdateFunction = newUpdateFunction;
+}
+
+void DragonsEngine::seedRandom(int32 seed) {
+		_randomState = seed * -0x2b0e2b0f;
+}
+
+uint32 DragonsEngine::shuffleRandState()
+{
+	uint32 returnBit;
+
+	returnBit = _randomState & 1;
+	_randomState = _randomState >> 1 |
+				  (_randomState << 0x1e ^ _randomState ^ _randomState << 0x1d ^ _randomState << 0x1b ^
+						  _randomState << 0x19) & 0x80000000;
+	return returnBit;
+}
+
+uint16 DragonsEngine::getRand(uint16 max) {
+	uint16 rand = 0;
+
+	for (int i = 0; i < 0x10; i++) {
+		rand = shuffleRandState() | rand << i;
+	}
+	return rand % max;
 }
 
 void (*DragonsEngine::getSceneUpdateFunction())() {

@@ -334,5 +334,75 @@ uint Talk::somethingTextAndSpeechAndAnimRelated(Actor *actor, int16 sequenceId1,
 	return 1; //TODO this should get return value from  displayDialogAroundActor();
 }
 
+void Talk::talkFromIni(uint32 iniId, uint32 textIndex) {
+	debug("Main actor talk: 0x%04x and text 0x%04x", iniId, textIndex);
+
+	if (textIndex == 0) {
+		return;
+	}
+	Actor *actor = NULL;
+	if (iniId == 0) {
+		//TODO playSoundFromTxtIndex(textIndex);
+		actor = _vm->_dragonINIResource->getFlickerRecord()->actor;
+		if (!_vm->isFlagSet(ENGINE_FLAG_2000000)) {
+			if (_vm->getCurrentSceneId() == 0x32) {
+				_vm->getINI(0x2b1)->actor->updateSequence(2);
+			}
+			else {
+				actor->setFlag(ACTOR_FLAG_2000);
+				if (actor->_sequenceID2 != -1) {
+					actor->updateSequence(actor->_sequenceID2 + 0x10);
+				}
+			}
+		}
+		else {
+			if (actor->_sequenceID == 5) {
+				actor->updateSequence(0x10);
+			}
+		}
+	}
+	// TODO sVar1 = findTextToDtSpeechIndex(textIndex);
+	uint16 dialog[2048];
+	dialog[0] = 0;
+	_vm->_talk->loadText(textIndex, dialog, 2048);
+
+//	pcVar2 = (char *)0x0;
+//	if (((unkFlags1 & 1) == 0) && (((engine_flags_maybe & 0x1000) == 0 || (sVar1 == -1)))) {
+//		pcVar2 = load_string_from_dragon_txt(textIndex,acStack2016);
+//	}
+	_vm->_talk->displayDialogAroundINI(iniId, dialog, textIndex); //TODO need to pass dialog here (pcVar2). not NULL
+	if (iniId == 0) {
+		if (!_vm->isFlagSet(ENGINE_FLAG_2000000)) {
+			if (_vm->getCurrentSceneId() != 0x32) {
+				actor->setFlag(ACTOR_FLAG_4);
+				actor->clearFlag(ACTOR_FLAG_2000);
+				_vm->waitForFrames(1);
+				return;
+			}
+			_vm->getINI(0x2b1)->actor->updateSequence(1);
+
+		}
+		else {
+			if (actor->_sequenceID != 0x10) {
+				return;
+			}
+			actor->updateSequence(5);
+		}
+	}
+}
+
+void Talk::flickerRandomDefaultResponse() {
+	DragonINI *flicker = _vm->_dragonINIResource->getFlickerRecord();
+	if (flicker && flicker->actor) {
+		flicker->actor->clearFlag(ACTOR_FLAG_10);
+		if (_vm->getCurrentSceneId() != 0x2e || !flicker->actor->_actorResource || flicker->actor->_actorResource->_id != 0x91) {
+			flicker->actor->setFlag(ACTOR_FLAG_4);
+		}
+	}
+	uint16 rand = _vm->getRand(9);
+	//TODO defaultResponseTable[_cursor->data_800728b0_cursor_seqID * 9 + rand];
+	talkFromIni(0x11, 0x1902);
+}
+
 
 } // End of namespace Dragons

@@ -128,7 +128,8 @@ bool DragonsEngine::loadgame(const char *filename) {
 	// TODO load game state here. _gameState->read(in);
 	uint16 newSceneId = (uint16)in->readByte();
 	_dragonFLG->loadState(in);
-	_dragonFLG->set(165, true); //TODO check why this is needed to load save games properly.
+	//_dragonFLG->set(165, true); //TODO check why this is needed to load save games properly.
+	_dragonFLG->set(125, false);  //TODO check why this is needed to load save games properly.
 	_dragonVAR->reset();
 
 	_dragonINIResource->reset();
