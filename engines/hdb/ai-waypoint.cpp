@@ -429,8 +429,8 @@ void AI::drawWayPoints() {
 		int	x = _waypoints[i].x * kTileWidth;
 		int	y = _waypoints[i].y * kTileHeight;
 
-		if (x > mapX - 32 && (x < (mapX + kScreenWidth)) &&
-			y > mapY - 32 && (y < (mapY + kScreenHeight)))
+		if (x > mapX - 32 && (x < (mapX + g_hdb->_screenWidth)) &&
+			y > mapY - 32 && (y < (mapY + g_hdb->_screenHeight)))
 			_waypointGfx[anim]->drawMasked(x - mapX, y - mapY, alpha);
 	}
 

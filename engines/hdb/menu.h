@@ -49,7 +49,7 @@ namespace HDB {
 #define	TITLE_DELAY2		0.5				// time to spend doing OOH OOH
 #define	TITLE_DELAY3		1				// time to wait before ending title
 
-#define centerPic(x)	(kScreenWidth / 2 - x->_width / 2)
+#define centerPic(x)	(g_hdb->_screenWidth / 2 - x->_width / 2)
 
 enum {
 	kStarRedX = 70,
@@ -71,7 +71,6 @@ enum {
 	kMLoadY = 48 * 1,
 	kMControlsY = 270,
 
-	kMenuExitY = kScreenHeight - 80,
 	kMenuExitXLeft = 60,
 	kMenuExitYTop = 48,
 	kMenuVortSaveY = 220,
@@ -131,10 +130,8 @@ enum {
 	kAssignY = kControlY + 150,
 
 	kBackoutX = 0,
-	kBackoutY = kScreenHeight - 32,
 
 	kWarpBackoutX = kBackoutX,
-	kWarpBackoutY = kBackoutY,
 
 	kWarpX = 214,
 	kWarpY = 160,
@@ -191,6 +188,11 @@ public:
 	int getMenuKey() {
 		return _menuKey;
 	}
+
+	// Platform-specific Constants
+	int _menuExitY;
+	int _backoutY;
+	int _warpBackoutY;
 
 	Save _saveGames[kNumSaveSlots + 1];
 

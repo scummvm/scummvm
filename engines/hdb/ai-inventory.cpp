@@ -272,7 +272,7 @@ void AI::printYouGotMsg(const char *name) {
 		return;
 
 	sprintf(_youGotBuffer, "Got %s", name);
-	g_hdb->_window->textOut(_youGotBuffer, kYouGotX, kYouGotY, 120);
+	g_hdb->_window->textOut(_youGotBuffer, kYouGotX, g_hdb->_ai->_youGotY, 120);
 }
 
 void AI::newDelivery(const char *itemTextName, const char *itemGfxName, const char *destTextName, const char *destGfxName, const char *id) {

@@ -33,6 +33,15 @@
 
 namespace HDB {
 
+Window::Window() {
+	_dlvItemTextY = (g_hdb->_screenHeight - 30);
+	_textOutCenterX = ((g_hdb->_screenWidth - kTileWidth * 5) / 2);
+	_pauseY = (g_hdb->_screenHeight / 2 - 64);
+	_tryY1 = (g_hdb->_screenHeight >> 2);	// TRY
+	_tryY2 = (_tryY1 + 32);			// AGAIN
+	_tryRestartY = ((g_hdb->_screenHeight >> 2) * 3);	// (ok)
+}
+
 Window::~Window() {
 	delete _gfxTL;
 	delete _gfxTM;
@@ -135,13 +144,13 @@ bool Window::init() {
 	warning("FIXME: Fully separate the PC and PPC versions of Window");
 
 	if (!g_hdb->isPPC())
-		_invWinInfo.x = kScreenWidth - _gfxInfobar->_width + 16;
+		_invWinInfo.x = g_hdb->_screenWidth - _gfxInfobar->_width + 16;
 	_invWinInfo.y = 40;
 
 	_dlvsInfo.width = kInvItemSpaceX * 3;
 	_dlvsInfo.height = kInvItemSpaceY * 4;
 	if (!g_hdb->isPPC())
-		_dlvsInfo.x = (kScreenWidth - _gfxInfobar->_width) + 16;
+		_dlvsInfo.x = (g_hdb->_screenWidth - _gfxInfobar->_width) + 16;
 	_dlvsInfo.y = 272;
 
 	_gemGfx = NULL;
@@ -446,11 +455,11 @@ void Window::setInfobarDark(int value) {
 
 void Window::drawPause() {
 	if (g_hdb->getPause())
-		_gfxPausePlaque->drawMasked(480 / 2 - _gfxPausePlaque->_width / 2, kPauseY);
+		_gfxPausePlaque->drawMasked(480 / 2 - _gfxPausePlaque->_width / 2, g_hdb->_window->_pauseY);
 }
 
 void Window::checkPause(int x, int y) {
-	if (x >= 480 / 2 - _gfxPausePlaque->_width / 2 && 480 / 2 + _gfxPausePlaque->_width / 2 > x && y >= kPauseY && y < kPauseY + _gfxPausePlaque->_height) {
+	if (x >= 480 / 2 - _gfxPausePlaque->_width / 2 && 480 / 2 + _gfxPausePlaque->_width / 2 > x && y >= g_hdb->_window->_pauseY && y < g_hdb->_window->_pauseY + _gfxPausePlaque->_height) {
 		g_hdb->togglePause();
 		g_hdb->_sound->playSound(SND_POP);
 	}
@@ -528,10 +537,10 @@ void Window::openDialog(const char *title, int tileIndex, const char *string, in
 
 	int px, py;
 	g_hdb->_ai->getPlayerXY(&px, &py);
-	if (py < (kScreenHeight >> 1) - 16)
-		_dialogInfo.y = (kScreenHeight >> 1) + 16;
+	if (py < (g_hdb->_screenHeight >> 1) - 16)
+		_dialogInfo.y = (g_hdb->_screenHeight >> 1) + 16;
 	else
-		_dialogInfo.y = (kScreenHeight >> 1) - (_dialogInfo.height + 64);
+		_dialogInfo.y = (g_hdb->_screenHeight >> 1) - (_dialogInfo.height + 64);
 
 	if (_dialogInfo.y < 16)
 		_dialogInfo.y = 16;
@@ -596,11 +605,11 @@ void Window::drawDialog() {
 
 	int e1, e2, e3, e4;
 	g_hdb->_gfx->getTextEdges(&e1, &e2, &e3, &e4);
-	g_hdb->_gfx->setTextEdges(_dialogInfo.x + 10, 480, 0, kScreenHeight);
+	g_hdb->_gfx->setTextEdges(_dialogInfo.x + 10, 480, 0, g_hdb->_screenHeight);
 	g_hdb->_gfx->setCursor(0, _dialogInfo.y - 7);
 	if (_dialogInfo.title)
 		g_hdb->_gfx->drawText(_dialogInfo.title);
-	g_hdb->_gfx->setTextEdges(_dialogInfo.x + 16, _dialogInfo.x + _dialogInfo.width - 16, 0, kScreenHeight);
+	g_hdb->_gfx->setTextEdges(_dialogInfo.x + 16, _dialogInfo.x + _dialogInfo.width - 16, 0, g_hdb->_screenHeight);
 	g_hdb->_gfx->setCursor(0, _dialogInfo.y + 16);
 	if (_dialogInfo.string)
 		g_hdb->_gfx->drawText(_dialogInfo.string);
@@ -751,7 +760,7 @@ void Window::openDialogChoice(const char *title, const char *text, const char *f
 	_dialogChoiceInfo.titleWidth = titleWidth;
 
 	_dialogChoiceInfo.x = (480 >> 1) - (_dialogChoiceInfo.width >> 1);
-	_dialogChoiceInfo.y = (kScreenHeight >> 1) - ((_dialogChoiceInfo.height >> 1) + 32);
+	_dialogChoiceInfo.y = (g_hdb->_screenHeight >> 1) - ((_dialogChoiceInfo.height >> 1) + 32);
 	if (_dialogChoiceInfo.y < 0)
 		_dialogChoiceInfo.y = 0;
 
@@ -951,7 +960,7 @@ void Window::nextMsgQueued() {
 
 	_msgInfo.width = width + 32;
 	_msgInfo.x = (480 >> 1) - (_msgInfo.width >> 1);
-	_msgInfo.y = (kScreenHeight >> 2) - (_msgInfo.height >> 1);
+	_msgInfo.y = (g_hdb->_screenHeight >> 2) - (_msgInfo.height >> 1);
 
 	for (xx = 0; xx < _numMsgQueue - 1; xx++)
 	{
@@ -979,7 +988,7 @@ void Window::drawInventory() {
 	if (_infobarDimmed > 1)
 		return;
 
-	_gfxInfobar->draw(kScreenWidth - _gfxInfobar->_width, 0);
+	_gfxInfobar->draw(g_hdb->_screenWidth - _gfxInfobar->_width, 0);
 
 	baseX = drawX = _invWinInfo.x;
 	drawY = _invWinInfo.y;
@@ -1037,7 +1046,7 @@ void Window::drawInventory() {
 		_gfxInvSelect->drawMasked(drawX, drawY);
 
 		if (sel) {
-			int centerX = baseX - 4 + (kScreenWidth - baseX) / 2;
+			int centerX = baseX - 4 + (g_hdb->_screenWidth - baseX) / 2;
 			drawY = _invWinInfo.y + (kInvItemSpaceY * 4) + 16;
 			g_hdb->_gfx->setCursor(centerX - g_hdb->_gfx->stringLength(sel->printedName) / 2, drawY);
 			g_hdb->_gfx->drawText(sel->printedName);
@@ -1159,7 +1168,7 @@ void Window::drawDeliveries() {
 	// Draw Delivery Items
 	int inv = 0;
 	for (; inv < g_hdb->_ai->getDeliveriesAmount(); inv++) {
-		int centerX = baseX + (kScreenWidth - baseX) / 2;
+		int centerX = baseX + (g_hdb->_screenWidth - baseX) / 2;
 		DlvEnt *d = g_hdb->_ai->getDeliveryItem(inv);
 		if (_dlvsInfo.animate && inv == g_hdb->_ai->getDeliveriesAmount() - 1) {
 			if (_dlvsInfo.go1) {
@@ -1169,7 +1178,7 @@ void Window::drawDeliveries() {
 					if (d->itemGfx)
 						d->itemGfx->drawMasked(drawX, drawY);
 
-					g_hdb->_gfx->setCursor(centerX - g_hdb->_gfx->stringLength(d->itemTextName) / 2, kDlvItemTextY);
+					g_hdb->_gfx->setCursor(centerX - g_hdb->_gfx->stringLength(d->itemTextName) / 2, g_hdb->_window->_dlvItemTextY);
 					g_hdb->_gfx->drawText(d->itemTextName);
 					if (!_dlvsInfo.go2) {
 						_dlvsInfo.go2 = true;
@@ -1183,7 +1192,7 @@ void Window::drawDeliveries() {
 					// Draw TO
 					_gfxArrowTo->drawMasked(_dlvsInfo.x + kDlvItemSpaceX * _dlvsInfo.selected + 8, drawY + kTileHeight);
 
-					g_hdb->_gfx->setCursor(centerX - g_hdb->_gfx->stringLength("to") / 2, kDlvItemTextY + 12);
+					g_hdb->_gfx->setCursor(centerX - g_hdb->_gfx->stringLength("to") / 2, g_hdb->_window->_dlvItemTextY + 12);
 					g_hdb->_gfx->drawText("to");
 					if (!_dlvsInfo.go3) {
 						_dlvsInfo.go3 = true;
@@ -1199,7 +1208,7 @@ void Window::drawDeliveries() {
 					if (d->destGfx)
 						d->destGfx->drawMasked(drawX, drawY + kTileHeight + 16);
 
-					g_hdb->_gfx->setCursor(centerX - (g_hdb->_gfx->stringLength(d->destTextName) + g_hdb->_gfx->stringLength("to")) / 2, kDlvItemTextY + 12);
+					g_hdb->_gfx->setCursor(centerX - (g_hdb->_gfx->stringLength(d->destTextName) + g_hdb->_gfx->stringLength("to")) / 2, g_hdb->_window->_dlvItemTextY + 12);
 					g_hdb->_gfx->drawText("to ");
 					g_hdb->_gfx->drawText(d->destTextName);
 
@@ -1219,15 +1228,15 @@ void Window::drawDeliveries() {
 				d->destGfx->drawMasked(drawX, drawY + kTileHeight + 16);
 
 			if (!_dlvsInfo.animate && inv == _dlvsInfo.selected) {
-				g_hdb->_gfx->setCursor(centerX - g_hdb->_gfx->stringLength(d->itemTextName)/2, kDlvItemTextY);
+				g_hdb->_gfx->setCursor(centerX - g_hdb->_gfx->stringLength(d->itemTextName)/2, g_hdb->_window->_dlvItemTextY);
 				g_hdb->_gfx->drawText(d->itemTextName);
-				g_hdb->_gfx->setCursor(centerX - (g_hdb->_gfx->stringLength(d->destTextName) + g_hdb->_gfx->stringLength("to ")) / 2, kDlvItemTextY + 12);
+				g_hdb->_gfx->setCursor(centerX - (g_hdb->_gfx->stringLength(d->destTextName) + g_hdb->_gfx->stringLength("to ")) / 2, g_hdb->_window->_dlvItemTextY + 12);
 				g_hdb->_gfx->drawText("to ");
 				g_hdb->_gfx->drawText(d->destTextName);
 			}
 
 			drawX += kDlvItemSpaceX;
-			if (drawX >= kScreenWidth) {
+			if (drawX >= g_hdb->_screenWidth) {
 				drawX = baseX;
 				drawY += kDlvItemSpaceY + 8;
 			}
@@ -1249,8 +1258,8 @@ void Window::drawDeliveries() {
 
 	// If the infobar is dimmed out, this where we dim the whole thing
 	if (_infobarDimmed) {
-		for (int j = 0; j < kScreenHeight; j += kTileHeight) {
-			for (int i = (kScreenWidth - _gfxInfobar->_width); i < kScreenWidth; i += kTileWidth)
+		for (int j = 0; j < g_hdb->_screenHeight; j += kTileHeight) {
+			for (int i = (g_hdb->_screenWidth - _gfxInfobar->_width); i < g_hdb->_screenWidth; i += kTileWidth)
 				_gfxDarken->drawMasked(i, j);
 		}
 	}
@@ -1286,8 +1295,8 @@ void Window::drawTryAgain() {
 		_gfxAgain = g_hdb->_gfx->loadPic(GAME_AGAIN);
 		_gfxLevelRestart = g_hdb->_gfx->loadPic(GAME_TA_LEVELRESTART);
 
-		_tryAgainInfo.y1 = kTryY1;
-		_tryAgainInfo.y2 = kTryY2;
+		_tryAgainInfo.y1 = g_hdb->_window->_tryY1;
+		_tryAgainInfo.y2 = g_hdb->_window->_tryY2;
 		_tryAgainInfo.x1 = 480 / 2 - _gfxTry->_width / 2;;
 		_tryAgainInfo.x2 = 480 / 2 - _gfxAgain->_width / 2;
 	}
@@ -1296,7 +1305,7 @@ void Window::drawTryAgain() {
 
 	_gfxTry->drawMasked((int)_tryAgainInfo.x1 + xv, (int)_tryAgainInfo.y1 + yv);
 	_gfxAgain->drawMasked((int)_tryAgainInfo.x2 + yv, (int)_tryAgainInfo.y2 + xv);
-	_gfxLevelRestart->drawMasked((int)(480 / 2 - _gfxLevelRestart->_width + xv), kTryRestartY + yv);
+	_gfxLevelRestart->drawMasked((int)(480 / 2 - _gfxLevelRestart->_width + xv), g_hdb->_window->_tryRestartY + yv);
 }
 
 void Window::clearTryAgain() {
@@ -1375,7 +1384,7 @@ void Window::drawPanicZone() {
 			_pzInfo.gfxPanic->drawMasked(_pzInfo.x1 + xx, _pzInfo.y1 + yy);
 			_pzInfo.gfxZone->drawMasked(_pzInfo.x2 + yy, _pzInfo.y2 + xx);
 			if (_pzInfo.y1 < -_pzInfo.gfxPanic->_height &&
-				_pzInfo.y2 > kScreenHeight) {
+				_pzInfo.y2 > g_hdb->_screenHeight) {
 				g_hdb->_sound->playSound(SND_PANIC_COUNT);
 				_pzInfo.sequence++;
 				_pzInfo.timer = 30 + g_hdb->getTime();
@@ -1420,9 +1429,9 @@ void Window::startPanicZone() {
 		loadPanicZoneGfx();
 
 	_pzInfo.x1 = -(_pzInfo.gfxPanic->_width + 5);
-	_pzInfo.y1 = (kScreenHeight / 4) - (_pzInfo.gfxPanic->_height >> 1);
+	_pzInfo.y1 = (g_hdb->_screenHeight / 4) - (_pzInfo.gfxPanic->_height >> 1);
 	_pzInfo.x2 = 480 + (_pzInfo.gfxZone->_width >> 1);
-	_pzInfo.y2 = (kScreenHeight / 4) * 3 - (_pzInfo.gfxZone->_height >> 1);
+	_pzInfo.y2 = (g_hdb->_screenHeight / 4) * 3 - (_pzInfo.gfxZone->_height >> 1);
 	_pzInfo.xv = 10;			// horizontal speed
 	_pzInfo.yv = -12;			// vertical speed
 	_pzInfo.timer = 30;			// 30 seconds to get out!
@@ -1443,7 +1452,7 @@ void Window::textOut(const char *text, int x, int y, int timer) {
 	if (x < 0) {
 		int pw, lines;
 		g_hdb->_gfx->getDimensions(t->text, &pw, &lines);
-		t->x = kTextOutCenterX - pw / 2;
+		t->x = g_hdb->_window->_textOutCenterX - pw / 2;
 	}
 
 	_textOutList.push_back(t);
@@ -1452,7 +1461,7 @@ void Window::textOut(const char *text, int x, int y, int timer) {
 void Window::centerTextOut(const char *text, int y, int timer) {
 	int width, lines;
 	g_hdb->_gfx->getDimensions(text, &width, &lines);
-	textOut(text, kTextOutCenterX - ((width - 8) >> 1), y, timer);
+	textOut(text, g_hdb->_window->_textOutCenterX - ((width - 8) >> 1), y, timer);
 }
 
 void Window::drawTextOut() {
@@ -1461,7 +1470,7 @@ void Window::drawTextOut() {
 
 	int e1, e2, e3, e4;
 	g_hdb->_gfx->getTextEdges(&e1, &e2, &e3, &e4);
-	g_hdb->_gfx->setTextEdges(0, 480, 0, kScreenHeight);
+	g_hdb->_gfx->setTextEdges(0, 480, 0, g_hdb->_screenHeight);
 
 	uint32 time = g_system->getMillis();
 

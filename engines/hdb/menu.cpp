@@ -125,6 +125,10 @@ Menu::Menu() {
 
 	_versionGfx = NULL;
 	_warpGfx = NULL;
+
+	_menuExitY = g_hdb->_screenHeight - 80;
+	_backoutY = g_hdb->_screenHeight - 32;
+	_warpBackoutY = _backoutY;
 }
 
 Menu::~Menu() {
@@ -343,7 +347,7 @@ void Menu::startMenu() {
 	if (!_fStars[0].y) {
 		for (int i = 0; i < kMaxStars; i++) {
 			_fStars[i].y = -30;
-			_fStars[i].x = g_hdb->_rnd->getRandomNumber(kScreenWidth - 1);
+			_fStars[i].x = g_hdb->_rnd->getRandomNumber(g_hdb->_screenWidth - 1);
 			_fStars[i].speed = g_hdb->_rnd->getRandomNumber(4) + 1;
 			_fStars[i].anim = g_hdb->_rnd->getRandomNumber(2);
 			_fStars[i].delay = 5;
@@ -357,7 +361,7 @@ void Menu::startMenu() {
 		g_hdb->_gfx->setup3DStars();	// setup the star info
 
 		_nebulaWhich = g_hdb->_rnd->getRandomNumber(kNebulaCount - 1);
-		_nebulaX = g_hdb->_rnd->getRandomNumber(kScreenWidth - 1) + 10;
+		_nebulaX = g_hdb->_rnd->getRandomNumber(g_hdb->_screenWidth - 1) + 10;
 		_nebulaY = -20;
 		_nebulaYVel = g_hdb->_rnd->getRandomNumber(9) + 2;
 	}
@@ -401,10 +405,10 @@ void Menu::drawMenu() {
 		drawRocketAndSelections();
 
 		// draw version #
-		_versionGfx->drawMasked(kScreenWidth - 6 * 8, kScreenHeight - 8);
+		_versionGfx->drawMasked(g_hdb->_screenWidth - 6 * 8, g_hdb->_screenHeight - 8);
 
 		if (g_hdb->isDemo()) {
-			_demoPlaqueGfx->drawMasked(kScreenWidth / 2 - _demoPlaqueGfx->_width / 2, 2);
+			_demoPlaqueGfx->drawMasked(g_hdb->_screenWidth / 2 - _demoPlaqueGfx->_width / 2, 2);
 		}
 
 		//
@@ -415,7 +419,7 @@ void Menu::drawMenu() {
 			_rocketX += -_optionsXV;
 			_oBannerY += _optionsXV / 3;
 			_optionsXV += 3;
-			if (_optionsScrollX > kScreenWidth + 10) {
+			if (_optionsScrollX > g_hdb->_screenWidth + 10) {
 				switch (_nextScreen) {
 				case 0: _optionsActive = true; break;
 				case 1: _gamefilesActive = 1; break;
@@ -468,7 +472,7 @@ void Menu::drawMenu() {
 		// Draw WARP
 		//
 		if (g_hdb->getCheatingOn() && _warpGfx)
-			_warpGfx->drawMasked(0, kScreenHeight - _warpGfx->_height);
+			_warpGfx->drawMasked(0, g_hdb->_screenHeight - _warpGfx->_height);
 		//#endif
 	} else if (_newgameActive) {
 		//-------------------------------------------------------------------
@@ -521,7 +525,7 @@ void Menu::drawMenu() {
 
 			// title logo
 			_titleLogo->drawMasked(centerPic(_titleLogo), _rocketY + kMTitleY);
-			_menuBackoutGfx->drawMasked(kBackoutX, kBackoutY);
+			_menuBackoutGfx->drawMasked(kBackoutX, g_hdb->_menu->_backoutY);
 		}
 	} else if (_optionsActive) {
 		//-------------------------------------------------------------------
@@ -585,7 +589,7 @@ void Menu::drawMenu() {
 
 			// title logo
 			_titleLogo->drawMasked(centerPic(_titleLogo), _rocketY + kMTitleY);
-			_menuBackoutGfx->drawMasked(kBackoutX, kBackoutY);
+			_menuBackoutGfx->drawMasked(kBackoutX, g_hdb->_menu->_backoutY);
 
 			// Ignore Controls Screen Button
 			//_controlButtonGfx->drawMasked(centerPic(_controlButtonGfx), kMControlsY);
@@ -630,7 +634,7 @@ void Menu::drawMenu() {
 			_titleLogo->drawMasked(centerPic(_titleLogo), _rocketY + kMTitleY);
 			// CHOOSE SLOT screen
 			_modeLoadGfx->drawMasked(centerPic(_modeLoadGfx), _oBannerY);
-			_menuBackoutGfx->drawMasked(kBackoutX, kBackoutY);
+			_menuBackoutGfx->drawMasked(kBackoutX, g_hdb->_menu->_backoutY);
 
 			if (_saveGames[kAutoSaveSlot].seconds)
 				_vortexian[anim]->drawMasked(kVortSaveX, kVortSaveY);
@@ -655,7 +659,7 @@ void Menu::drawMenu() {
 				_slotGfx->drawMasked(kSaveSlotX - 8, i * 32 + (kSaveSlotY - 4));
 				if (seconds || _saveGames[i].mapName[0]) {
 
-					g_hdb->_gfx->setTextEdges(0, kScreenWidth + 60, 0, kScreenHeight);
+					g_hdb->_gfx->setTextEdges(0, g_hdb->_screenWidth + 60, 0, g_hdb->_screenHeight);
 					g_hdb->_gfx->setCursor(kSaveSlotX, i * 32 + kSaveSlotY);
 					g_hdb->_gfx->drawText(_saveGames[i].mapName);
 
@@ -675,7 +679,7 @@ void Menu::drawMenu() {
 		drawWarpScreen();
 		// title logo
 		_titleLogo->drawMasked(centerPic(_titleLogo), _rocketY + kMTitleY);
-		_menuBackoutGfx->drawMasked(kWarpBackoutX, kWarpBackoutY);
+		_menuBackoutGfx->drawMasked(kWarpBackoutX, g_hdb->_menu->_warpBackoutY);
 
 		char string[32];
 		for (int i = 0; i < 10; i++) {
@@ -712,7 +716,7 @@ void Menu::drawMenu() {
 			_quitScreen->drawMasked(kQuitX, kQuitY);
 		} else if (_quitActive == 2) { // XXXX
 			_screenshots1gfx->drawMasked(kQuitX, kQuitY);
-			_screenshots2gfx->drawMasked(kQuitX, kScreenHeight - _screenshots2gfx->_height);
+			_screenshots2gfx->drawMasked(kQuitX, g_hdb->_screenHeight - _screenshots2gfx->_height);
 		} else if (_quitActive == 1) {
 			_screenshots1agfx->drawMasked(kQuitX, kQuitY);
 		}
@@ -935,9 +939,9 @@ void Menu::drawTitle() {
 		// draw nebula
 		_nebulaGfx[_nebulaWhich]->draw(_nebulaX, _nebulaY);
 		_nebulaY += _nebulaYVel;
-		if (_nebulaY > kScreenHeight + (kScreenHeight / 2)) {
+		if (_nebulaY > g_hdb->_screenHeight + (g_hdb->_screenHeight / 2)) {
 			_nebulaWhich = g_hdb->_rnd->getRandomNumber(kNebulaCount - 1);
-			_nebulaX = g_hdb->_rnd->getRandomNumber(kScreenWidth - 1) + 10;
+			_nebulaX = g_hdb->_rnd->getRandomNumber(g_hdb->_screenWidth - 1) + 10;
 			_nebulaY = -11 * 8;
 			_nebulaYVel = g_hdb->_rnd->getRandomNumber(3) + 1;
 			if (_nebulaWhich > 4)		// galaxy?
@@ -1035,13 +1039,13 @@ void Menu::drawTitle() {
 		g_hdb->_gfx->fillScreen(0);
 		{
 			_titleCycle++;
-			_rocketY = kScreenHeight;	// ycoord
+			_rocketY = g_hdb->_screenHeight;	// ycoord
 			_rocketYVel = -1;		// yspeed
 			_rocketEx = 0;			// exhaust toggle
 			g_hdb->_gfx->setup3DStars();	// setup the star info
 
 			_nebulaWhich = g_hdb->_rnd->getRandomNumber(kNebulaCount - 1);
-			_nebulaX = g_hdb->_rnd->getRandomNumber(kScreenWidth - 1) + 10;
+			_nebulaX = g_hdb->_rnd->getRandomNumber(g_hdb->_screenWidth - 1) + 10;
 			_nebulaY = -11 * 8;
 			_nebulaYVel = g_hdb->_rnd->getRandomNumber(9) + 2;
 			if (_nebulaWhich > 4)		// galaxy?
@@ -1192,7 +1196,7 @@ void Menu::processInput(int x, int y) {
 		if (!g_hdb->getCheatingOn())
 			open = (x >= _nebulaX && x < _nebulaX + 16 && y >= _nebulaY && y < _nebulaY + 16);
 		else
-			open = (y > kMenuExitY && x < kMenuExitXLeft);
+			open = (y > g_hdb->_menu->_menuExitY && x < kMenuExitXLeft);
 
 		if (open) {
 
@@ -1208,7 +1212,7 @@ void Menu::processInput(int x, int y) {
 		//-------------------------------------------------------------------
 		int	xit = getMenuKey();
 
-		if (y >= kMenuExitY || y < kMenuExitYTop || xit) {
+		if (y >= g_hdb->_menu->_menuExitY || y < kMenuExitYTop || xit) {
 			_optionsScrolling = true;
 			_optionsXV = -5;
 			g_hdb->_sound->playSound(SND_MENU_BACKOUT);
@@ -1221,7 +1225,7 @@ void Menu::processInput(int x, int y) {
 			_newgameActive = false;
 			g_hdb->changeGameState();
 			// that's it!  the Game Loop takes over from here...
-		} else if (y >= kModeActionY - 10 && y <= kMenuExitY) {
+		} else if (y >= kModeActionY - 10 && y <= g_hdb->_menu->_menuExitY) {
 			// ACTION MODE area
 			g_hdb->setActionMode(1);
 			g_hdb->_sound->playSound(SND_MENU_ACCEPT);
@@ -1277,11 +1281,11 @@ void Menu::processInput(int x, int y) {
 				g_hdb->_sound->setVoiceStatus(value);
 				g_hdb->_sound->playSound(SND_GUI_INPUT);
 			}
-		} else if (y >= kMenuExitY || y < kMenuExitYTop || xit) {
+		} else if (y >= g_hdb->_menu->_menuExitY || y < kMenuExitYTop || xit) {
 			g_hdb->_sound->playSound(SND_MENU_BACKOUT);
 			_optionsScrolling = true;
 			_optionsXV = -5;
-		} else if (x >= (kScreenWidth / 2 - _controlButtonGfx->_width / 2) && x < (kScreenWidth / 2 + _controlButtonGfx->_width / 2) &&
+		} else if (x >= (g_hdb->_screenWidth / 2 - _controlButtonGfx->_width / 2) && x < (g_hdb->_screenWidth / 2 + _controlButtonGfx->_width / 2) &&
 			y >= kMControlsY && y < kMControlsY + _controlButtonGfx->_height) {
 			// CONTROLS BUTTON!
 
@@ -1296,7 +1300,7 @@ void Menu::processInput(int x, int y) {
 		//-------------------------------------------------------------------
 		int	xit = getMenuKey();
 
-		if (y >= kMenuExitY + 15 || y < kMenuExitYTop || xit) {
+		if (y >= g_hdb->_menu->_menuExitY + 15 || y < kMenuExitYTop || xit) {
 			_optionsScrolling = true;
 			_optionsXV = -5;
 			g_hdb->_sound->playSound(SND_MENU_BACKOUT);
@@ -1353,7 +1357,7 @@ void Menu::processInput(int x, int y) {
 		//-------------------------------------------------------------------
 		int	xit = getMenuKey();
 
-		if ((y >= kMenuExitY && x < kMenuExitXLeft) || xit) {
+		if ((y >= g_hdb->_menu->_menuExitY && x < kMenuExitXLeft) || xit) {
 			_menuActive = true;
 			_warpActive = false;
 			g_hdb->_sound->playSound(SND_MENU_BACKOUT);
@@ -1443,9 +1447,9 @@ void Menu::drawNebula() {
 	_nebulaGfx[_nebulaWhich]->draw(_nebulaX, _nebulaY);
 	_nebulaY += _nebulaYVel;
 
-	if (_nebulaY > kScreenHeight + (kScreenHeight / 2)) {
+	if (_nebulaY > g_hdb->_screenHeight + (g_hdb->_screenHeight / 2)) {
 		_nebulaWhich = g_hdb->_rnd->getRandomNumber(kNebulaCount - 1);
-		_nebulaX = g_hdb->_rnd->getRandomNumber(kScreenWidth - 1) + 10;
+		_nebulaX = g_hdb->_rnd->getRandomNumber(g_hdb->_screenWidth - 1) + 10;
 		_nebulaY = -11 * 8;
 		_nebulaYVel = g_hdb->_rnd->getRandomNumber(3) + 1;
 		if (_nebulaWhich > 4)		// galaxy?
@@ -1457,7 +1461,7 @@ void Menu::drawNebula() {
 	//
 	for (int i = 0; i < kMaxStars; i++) {
 		_fStars[i].y += _fStars[i].speed;
-		if (_fStars[i].y > kScreenHeight) {
+		if (_fStars[i].y > g_hdb->_screenHeight) {
 			_fStars[i].y = (g_hdb->_rnd->getRandomNumber(29) + 30) * -1;
 			_fStars[i].speed = g_hdb->_rnd->getRandomNumber(4) + 1;
 		}
