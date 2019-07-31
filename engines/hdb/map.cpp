@@ -1162,8 +1162,8 @@ void Map::centerMapXY(int x, int y) {
 		y = maxy;
 	}
 
-	x -= (kScreenDrawWidth / 2);
-	y -= (kScreenDrawHeight / 2);
+	x -= (g_hdb->_screenDrawWidth / 2);
+	y -= (g_hdb->_screenDrawHeight / 2);
 
 	setMapXY(x, y);
 }

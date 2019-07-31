@@ -49,10 +49,6 @@ class Sound;
 class Window;
 
 enum {
-	kScreenWidth = 640,
-	kScreenHeight = 480,
-	kScreenDrawWidth = (kScreenWidth - 160), // visible pixels wide
-	kScreenDrawHeight = 480,
 	kTileWidth = 32,
 	kTileHeight = 32,
 	kMaxSkies = 10,
@@ -63,8 +59,7 @@ enum {
 	kAnimFrameDelay = kGameFPS / 30,
 	kAnimSlowFrames = kAnimFrameDelay * 10,
 	kAnimMediumFrames = kAnimFrameDelay * 6,
-	kAnimFastFrames = kAnimFrameDelay * 2,
-	kProgressY = (kScreenHeight - 64)
+	kAnimFastFrames = kAnimFrameDelay * 2
 };
 
 }
@@ -159,6 +154,14 @@ public:
 	bool isDemo() const;
 	bool isPPC() const;
 	bool isHandango() const;
+
+	// Platform-Specific Constants
+
+	int _screenWidth;
+	int _screenHeight;
+	int _screenDrawWidth; // visible pixels wide
+	int _screenDrawHeight;
+	int _progressY;
 
 	/*
 	Game System Pointers

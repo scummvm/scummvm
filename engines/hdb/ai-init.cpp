@@ -955,6 +955,8 @@ AI::AI() {
 
 	memset(_waypointGfx, 0, sizeof(_waypointGfx));
 	_debugQMark = NULL;
+
+	_youGotY = g_hdb->_screenHeight - 16;
 }
 
 AI::~AI() {

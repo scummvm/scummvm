@@ -44,6 +44,19 @@ namespace HDB {
 HDBGame* g_hdb;
 
 HDBGame::HDBGame(OSystem *syst, const ADGameDescription *gameDesc) : Engine(syst), _gameDescription(gameDesc) {
+	if (isPPC()) {
+		_screenWidth = 240;
+		_screenHeight = 320;
+		_screenDrawWidth = 240;
+		_screenDrawHeight = 320;
+	} else {
+		_screenWidth = 640;
+		_screenHeight = 480;
+		_screenDrawWidth = _screenWidth - 160;
+		_screenDrawHeight = 480;
+	}
+	_progressY = _screenHeight - 64;
+
 	_format = Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0);
 	_systemInit = false;
 	g_hdb = this;
@@ -330,9 +343,9 @@ void HDBGame::paint() {
 		// if the graphic has never been loaded, load it now and leave it in memory
 		if (!_logoGfx)
 			_logoGfx = _gfx->loadPic(TITLELOGO);
-		_logoGfx->drawMasked(kScreenWidth / 2 - _logoGfx->_width / 2, 10);
+		_logoGfx->drawMasked(_screenWidth / 2 - _logoGfx->_width / 2, 10);
 
-		int	x = kScreenWidth / 2 - _progressGfx->_width / 2;
+		int	x = _screenWidth / 2 - _progressGfx->_width / 2;
 		int pixels = _progressGfx->_width - _progressMarkGfx->_width;
 		_progressXOffset = (int)(((double)pixels / _progressMax) * (double)_progressCurrent) + x;
 		break;
@@ -342,7 +355,7 @@ void HDBGame::paint() {
 	if (_debugFlag == 1) {
 		_gfx->drawDebugInfo(_debugLogo, _frames.size());
 	} else if (_debugFlag == 2) {
-		_debugLogo->drawMasked(kScreenWidth - 32, 0);
+		_debugLogo->drawMasked(_screenWidth - 32, 0);
 	}
 
 	_gfx->updateVideo();
@@ -799,11 +812,11 @@ void HDBGame::checkProgress() {
 	if (!_progressActive)
 		return;
 
-	x = kScreenWidth / 2 - _progressGfx->_width / 2;
-	_progressGfx->drawMasked(x, kProgressY);
+	x = _screenWidth / 2 - _progressGfx->_width / 2;
+	_progressGfx->drawMasked(x, g_hdb->_progressY);
 	for (i = x; i < _progressXOffset; i += _progressMarkGfx->_width)
-		_progressMarkGfx->drawMasked(i, kProgressY);
-	_progressMarkGfx->drawMasked(_progressXOffset, kProgressY);
+		_progressMarkGfx->drawMasked(i, g_hdb->_progressY);
+	_progressMarkGfx->drawMasked(_progressXOffset, g_hdb->_progressY);
 }
 
 void HDBGame::drawLoadingScreen() {
@@ -873,7 +886,7 @@ Common::Error HDBGame::run() {
 	}
 
 	// Initializes Graphics
-	initGraphics(kScreenWidth, kScreenHeight, &_format);
+	initGraphics(_screenWidth, _screenHeight, &_format);
 
 	start();
 

@@ -57,7 +57,6 @@ enum {
 	kRunToggleDelay = 2,
 	kMsgDelay = 3,
 	kYouGotX = -1,
-	kYouGotY = (kScreenHeight - 16),
 	kNumSaveSlots = 8,
 	kAutoSaveSlot = 0
 };
@@ -1094,6 +1093,9 @@ public:
 	int getGatePuddles() {
 		return _gatePuddles;
 	}
+
+	// Platform-Specific Constants
+	int _youGotY;
 
 	// Player Variables
 	bool _playerDead;

@@ -48,8 +48,8 @@ bool Input::init() {
 	if (g_hdb->isPPC())
 		return true;
 
-	_mouseX = kScreenWidth / 2;
-	_mouseY = kScreenHeight / 2;
+	_mouseX = g_hdb->_screenWidth / 2;
+	_mouseY = g_hdb->_screenHeight / 2;
 
 	_mouseLButton = _mouseMButton = _mouseRButton = 0;
 
@@ -155,7 +155,7 @@ void Input::stylusDown(int x, int y) {
 		{
 		// Is Player Dead? Click on TRY AGAIN
 		if (g_hdb->_ai->playerDead()) {
-			if (y >= kTryRestartY && y <= kTryRestartY + 24) {
+			if (y >= g_hdb->_window->_tryRestartY && y <= g_hdb->_window->_tryRestartY + 24) {
 				if (g_hdb->loadGameState(kAutoSaveSlot).getCode() == Common::kNoError) {
 					g_hdb->_window->clearTryAgain();
 					g_hdb->setGameState(GAME_PLAY);
@@ -208,7 +208,7 @@ void Input::stylusDown(int x, int y) {
 		worldY = ((worldY + y) / kTileHeight) * kTileHeight;
 
 		// Don't allow a click into INV/DELIVERIES area to go into the world
-		if (x >= (kScreenWidth - 32 * 5))
+		if (x >= (g_hdb->_screenWidth - 32 * 5))
 			return;
 
 		// Toggle Walk Speed if we clicked Player
@@ -221,9 +221,9 @@ void Input::stylusDown(int x, int y) {
 			lastRunning = g_system->getMillis() + 1000 * kRunToggleDelay;
 			g_hdb->_ai->togglePlayerRunning();
 			if (g_hdb->_ai->playerRunning())
-				g_hdb->_window->centerTextOut("Running Speed", kScreenHeight - 32, kRunToggleDelay * kGameFPS);
+				g_hdb->_window->centerTextOut("Running Speed", g_hdb->_screenHeight - 32, kRunToggleDelay * kGameFPS);
 			else
-				g_hdb->_window->centerTextOut("Walking Speed", kScreenHeight - 32, kRunToggleDelay * kGameFPS);
+				g_hdb->_window->centerTextOut("Walking Speed", g_hdb->_screenHeight - 32, kRunToggleDelay * kGameFPS);
 			g_hdb->_sound->playSound(SND_SWITCH_USE);
 		}
 
@@ -267,13 +267,13 @@ void Input::updateMouse(int newX, int newY) {
 
 	if (_mouseX < 0)
 		_mouseX = 0;
-	else if (_mouseX >= kScreenWidth)
-		_mouseX = kScreenWidth - 1;
+	else if (_mouseX >= g_hdb->_screenWidth)
+		_mouseX = g_hdb->_screenWidth - 1;
 
 	if (_mouseY < 0)
 		_mouseY = 0;
-	else if (_mouseY >= kScreenHeight)
-		_mouseY = kScreenHeight - 1;
+	else if (_mouseY >= g_hdb->_screenHeight)
+		_mouseY = g_hdb->_screenHeight - 1;
 
 	// Turn Cursor back on?
 	if (!g_hdb->_gfx->getPointer()) {
@@ -298,9 +298,9 @@ void Input::updateMouseButtons(int l, int m, int r) {
 	// Check if LButton has been pressed
 	// Check if LButton has been lifted
 	if (_mouseLButton) {
-		if (_mouseX > (kScreenWidth - 32 * 5) && _mouseY < 240) {
+		if (_mouseX > (g_hdb->_screenWidth - 32 * 5) && _mouseY < 240) {
 			g_hdb->_window->checkInvSelect(_mouseX, _mouseY);
-		} else if (_mouseX > (kScreenWidth - 32 * 5) && _mouseY >= 240) {
+		} else if (_mouseX > (g_hdb->_screenWidth - 32 * 5) && _mouseY >= 240) {
 			g_hdb->_window->checkDlvSelect(_mouseX, _mouseY);
 		} else {
 			if (g_hdb->getPause() && g_hdb->getGameState() == GAME_PLAY) {

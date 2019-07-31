@@ -39,16 +39,10 @@ enum {
 	kDlvItemSpaceX = 48,
 	kDlvItemSpaceY = (kTileHeight * 2 + 16),
 	kDlvItemPerLine = 3,
-	kDlvItemTextY = (kScreenHeight - 30),
 	kPanicXStop = 480 / 3,
 	kPanicZoneFaceX = 480 - 32,
 	kPanicZoneFaceY = 5,
-	kNumCrazy = 37,
-	kTextOutCenterX = ((kScreenWidth - kTileWidth * 5) / 2),
-	kPauseY = (kScreenHeight / 2 - 64),
-	kTryY1 = (kScreenHeight >> 2),	// TRY
-	kTryY2 = (kTryY1 + 32),			// AGAIN
-	kTryRestartY = ((kScreenHeight >> 2) * 3)	// (ok)
+	kNumCrazy = 37
 };
 
 enum PZValue {
@@ -188,7 +182,7 @@ struct TOut {
 
 class Window {
 public:
-
+	Window();
 	~Window();
 
 	bool init();
@@ -290,6 +284,14 @@ public:
 		return (_textOutList.size());
 	}
 	void closeTextOut();
+
+	// Platform-specific Constants
+	int _dlvItemTextY;
+	int _textOutCenterX;
+	int _pauseY;
+	int _tryY1;	// TRY
+	int _tryY2;			// AGAIN
+	int _tryRestartY;	// (ok)
 
 	Tile *getGemGfx() {
 		return _gemGfx;
