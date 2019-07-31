@@ -5556,6 +5556,34 @@ static const uint16 laurabow1PatchLeftStairsLockupFix[] = {
 	PATCH_END
 };
 
+// LB1's fingerprint copy protection randomly rejects the correct answer and may
+//  even fail to draw a fingerprint. myCopy:init selects the fingerprint by
+//  generating random loop and cel numbers for view 553, but it passes incorrect
+//  ranges to kRandom. If kRandom returns the maximum value then the loop or cel
+//  overflow and a different image is displayed than what was intended.
+//
+// We correct the ranges from 0-600 and 1-1000 to 0-599 and 0-999 so that
+//  invalid cel 6 and loop 10 are never used after the script divides by 10.
+//
+// Applies to: DOS, Amiga, Atari ST
+// Responsible method: myCopy:init
+static const uint16 laurabow1SignatureCopyProtectionRandomFix[] = {
+	0x38, SIG_UINT16(0x0258),           // pushi 600d
+	SIG_ADDTOOFFSET(+10),
+	SIG_MAGICDWORD,
+	0x78,                               // push1
+	0x38, SIG_UINT16(0x03e8),           // pushi 1000d
+	SIG_END
+};
+
+static const uint16 laurabow1PatchCopyProtectionRandomFix[] = {
+	0x38, PATCH_UINT16(0x0257),         // pushi 599d
+	PATCH_ADDTOOFFSET(+10),
+	0x76,                               // push0
+	0x38, PATCH_UINT16(0x03e7),         // pushi 999d
+	PATCH_END
+};
+
 //          script, description,                                signature                                             patch
 static const SciScriptPatcherEntry laurabow1Signatures[] = {
 	{  true,     4, "easter egg view fix",                      1, laurabow1SignatureEasterEggViewFix,                laurabow1PatchEasterEggViewFix },
@@ -5568,6 +5596,7 @@ static const SciScriptPatcherEntry laurabow1Signatures[] = {
 	{  true,    58, "chapel candles persistence",               1, laurabow1SignatureChapelCandlesPersistence,        laurabow1PatchChapelCandlesPersistence },
 	{  true,   236, "tell Lilly about Gertie blocking fix 1/2", 1, laurabow1SignatureTellLillyAboutGerieBlockingFix1, laurabow1PatchTellLillyAboutGertieBlockingFix1 },
 	{  true,   236, "tell Lilly about Gertie blocking fix 2/2", 1, laurabow1SignatureTellLillyAboutGerieBlockingFix2, laurabow1PatchTellLillyAboutGertieBlockingFix2 },
+	{  true,   414, "copy protection random fix",               1, laurabow1SignatureCopyProtectionRandomFix,         laurabow1PatchCopyProtectionRandomFix },
 	{  true,   998, "obstacle collision lockups fix",           1, laurabow1SignatureObstacleCollisionLockupsFix,     laurabow1PatchObstacleCollisionLockupsFix },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
