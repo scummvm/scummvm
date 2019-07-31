@@ -31,10 +31,32 @@
 #include <Foundation/NSString.h>
 #include <CoreFoundation/CFString.h>
 
-NSSpeechSynthesizer* synthesizer;
+@interface MacOSXTextToSpeechManagerDelegate : NSObject<NSSpeechSynthesizerDelegate> {
+	MacOSXTextToSpeechManager *_ttsManager;
+}
+- (id)initWithManager:(MacOSXTextToSpeechManager*)ttsManager;
+- (void)speechSynthesizer:(NSSpeechSynthesizer *)sender didFinishSpeaking:(BOOL)finishedSpeaking;
+@end
+
+@implementation MacOSXTextToSpeechManagerDelegate
+- (id)initWithManager:(MacOSXTextToSpeechManager*)ttsManager {
+	self = [super init];
+	_ttsManager = ttsManager;
+	return self;
+}
+
+- (void)speechSynthesizer:(NSSpeechSynthesizer *)sender didFinishSpeaking:(BOOL)finishedSpeaking {
+	_ttsManager->startNextSpeech();
+}
+@end
+
+NSSpeechSynthesizer *synthesizer;
+MacOSXTextToSpeechManagerDelegate *synthesizerDelegate;
 
 MacOSXTextToSpeechManager::MacOSXTextToSpeechManager() : Common::TextToSpeechManager() {
 	synthesizer = [[NSSpeechSynthesizer alloc] init];
+	synthesizerDelegate = [[MacOSXTextToSpeechManagerDelegate alloc] initWithManager:this];
+	[synthesizer setDelegate:synthesizerDelegate];
 
 #ifdef USE_TRANSLATION
 	setLanguage(TransMan.getCurrentLanguage());
@@ -45,30 +67,52 @@ MacOSXTextToSpeechManager::MacOSXTextToSpeechManager() : Common::TextToSpeechMan
 
 MacOSXTextToSpeechManager::~MacOSXTextToSpeechManager() {
 	[synthesizer release];
+	[synthesizerDelegate release];
 }
 
-bool MacOSXTextToSpeechManager::say(Common::String text, Common::String encoding) {
+bool MacOSXTextToSpeechManager::say(Common::String text, Action action, Common::String encoding) {
+	if ([synthesizer isSpeaking]) {
+		if (action == DROP)
+			return true;
+		else if (action == INTERRUPT) {
+			_messageQueue.clear();
+			// Should we use NSSpeechImmediateBoundary, or even NSSpeechSentenceBoundary?
+			[synthesizer stopSpeakingAtBoundary:NSSpeechWordBoundary];
+		}
+	}
+
 	if (encoding.empty()) {
 #ifdef USE_TRANSLATION
 		encoding = TransMan.getCurrentCharset();
 #endif
 	}
 
+	_messageQueue.push(SpeechText(text, encoding));
+	if (![synthesizer isSpeaking])
+		startNextSpeech();
+	return true;
+}
+
+bool MacOSXTextToSpeechManager::startNextSpeech() {
+	if (_messageQueue.empty())
+		return false;
+	SpeechText text = _messageQueue.pop();
 	// Get current encoding
 	CFStringEncoding stringEncoding = kCFStringEncodingASCII;
-	if (!encoding.empty()) {
-		CFStringRef encStr = CFStringCreateWithCString(NULL, encoding.c_str(), kCFStringEncodingASCII);
+	if (!text.encoding.empty()) {
+		CFStringRef encStr = CFStringCreateWithCString(NULL, text.encoding.c_str(), kCFStringEncodingASCII);
 		stringEncoding = CFStringConvertIANACharSetNameToEncoding(encStr);
 		CFRelease(encStr);
 	}
 
-	CFStringRef textNSString = CFStringCreateWithCString(NULL, text.c_str(), stringEncoding);
+	CFStringRef textNSString = CFStringCreateWithCString(NULL, text.text.c_str(), stringEncoding);
 	bool status = [synthesizer startSpeakingString:(NSString *)textNSString];
 	CFRelease(textNSString);
 	return status;
 }
 
 bool MacOSXTextToSpeechManager::stop() {
+	_messageQueue.clear();
 	// Should we use NSSpeechImmediateBoundary, or even NSSpeechSentenceBoundary?
 	[synthesizer stopSpeakingAtBoundary:NSSpeechWordBoundary];
 	return true;
