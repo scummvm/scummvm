@@ -119,8 +119,7 @@ class Encoding {
 		iconv_t _iconvHandle;
 
 		/**
-		 * Takes care of transliteration and calls conversion2 for the encoding
-		 * conversion
+		 * Takes care of transliteration and calls conversion
 		 *
 		 * The result has to be freed after use.
 		 *
@@ -132,7 +131,7 @@ class Encoding {
 		 *
 		 * @return Converted string (must be freed) or nullptr if the conversion failed
 		 */
-		static char *conversion(iconv_t iconvHandle, const String &to, const String &from, const char *string, size_t length);
+		static char *convertWithTransliteration(iconv_t iconvHandle, const String &to, const String &from, const char *string, size_t length);
 
 		/**
 		 * Calls as many conversion functions as possible or until the conversion
@@ -149,7 +148,7 @@ class Encoding {
 		 *
 		 * @return Converted string (must be freed) or nullptr if the conversion failed
 		 */
-		static char *conversion2(iconv_t iconvHandle, const String &to, const String &from, const char *string, size_t length);
+		static char *conversion(iconv_t iconvHandle, const String &to, const String &from, const char *string, size_t length);
 
 		/**
 		 * Tries to convert the string using iconv.

@@ -68,19 +68,19 @@ void Encoding::setTo(const String &to) {
 }
 
 char *Encoding::convert(const char *string, size_t size) {
-	return conversion(_iconvHandle, _to, _from, string, size);
+	return convertWithTransliteration(_iconvHandle, _to, _from, string, size);
 }
 
 char *Encoding::convert(const String &to, const String &from, const char *string, size_t size) {
 	iconv_t iconvHandle = initIconv(to, from);
 
-	char *result = conversion(iconvHandle, to, from, string, size);
+	char *result = convertWithTransliteration(iconvHandle, to, from, string, size);
 
 	deinitIconv(iconvHandle);
 	return result;
 }
 
-char *Encoding::conversion(iconv_t iconvHandle, const String &to, const String &from, const char *string, size_t length) {
+char *Encoding::convertWithTransliteration(iconv_t iconvHandle, const String &to, const String &from, const char *string, size_t length) {
 	if (from.equalsIgnoreCase(to)) {
 		// don't convert, just copy the string and return it
 		char *result = (char *) calloc(sizeof(char), length + 4);
@@ -111,7 +111,7 @@ char *Encoding::conversion(iconv_t iconvHandle, const String &to, const String &
 			tmpString = nullptr;
 		else {
 			iconv_t tmpHandle = initIconv("UTF-32", from);
-			tmpString = conversion2(tmpHandle, "UTF-32", from, string, length);
+			tmpString = conversion(tmpHandle, "UTF-32", from, string, length);
 			deinitIconv(tmpHandle);
 			if (!tmpString)
 				return nullptr;
@@ -134,17 +134,17 @@ char *Encoding::conversion(iconv_t iconvHandle, const String &to, const String &
 		newHandle = initIconv(to, newFrom);
 	char *result;
 	if (newString != nullptr) {
-		result = conversion2(newHandle, to, newFrom, newString, newLength);
+		result = conversion(newHandle, to, newFrom, newString, newLength);
 		free(newString);
 	} else
-		result = conversion2(newHandle, to, newFrom, string, newLength);
+		result = conversion(newHandle, to, newFrom, string, newLength);
 
 	if (newFrom != from)
 		deinitIconv(newHandle);
 	return result;
 }
 
-char *Encoding::conversion2(iconv_t iconvHandle, const String &to, const String &from, const char *string, size_t length) {
+char *Encoding::conversion(iconv_t iconvHandle, const String &to, const String &from, const char *string, size_t length) {
 	char *result = nullptr;
 #ifdef USE_ICONV
 	if (iconvHandle != (iconv_t) -1)
