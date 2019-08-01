@@ -11,9 +11,8 @@
 #define IDI_ICON  1001
 #define IDI_COUNT 1002
 #define ID_GDF_XML __GDF_XML
-#define IDR_RT_MANIFEST1 1
 
-IDR_RT_MANIFEST1       RT_MANIFEST DISCARDABLE "dists/win32/scummvm.exe.manifest"
+CREATEPROCESS_MANIFEST_RESOURCE_ID RT_MANIFEST "dists/win32/scummvm.exe.manifest"
 IDI_ICON               ICON    DISCARDABLE     "icons/scummvm.ico"
 IDI_COUNT              ICON    DISCARDABLE     "icons/count.ico"
 
