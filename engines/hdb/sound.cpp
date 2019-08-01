@@ -1695,6 +1695,24 @@ void Sound::stopMusic() {
 }
 
 bool Sound::beginMusic(SoundType song, bool fadeIn, int ramp) {
+	const char *songName = soundList[song].name;
+
+	if (g_hdb->isPPC()) {
+		switch (song) {
+		case SONG_JEEBIES:
+			songName = "jeebies.mp3";
+			break;
+		case SONG_VIBRACIOUS:
+			songName = "vibracious.mp3";
+			break;
+		case SONG_ARETHERE:
+			songName = "are_we_there_yet.mp3";
+			break;
+		default:
+			break;
+		}
+	}
+
 	if (!_song1.playing) {
 		// Start fading out SONG2 if its playing
 		if (_song2.playing) {
@@ -1705,7 +1723,7 @@ bool Sound::beginMusic(SoundType song, bool fadeIn, int ramp) {
 
 		// Load up the song
 #ifdef USE_MAD
-		Common::SeekableReadStream *stream = SearchMan.createReadStreamForMember(soundList[song].name);
+		Common::SeekableReadStream *stream = SearchMan.createReadStreamForMember(songName);
 		if (stream == nullptr)
 			return false;
 
@@ -1745,7 +1763,7 @@ bool Sound::beginMusic(SoundType song, bool fadeIn, int ramp) {
 
 		// Load up the song
 #ifdef USE_MAD
-		Common::SeekableReadStream *stream = SearchMan.createReadStreamForMember(soundList[song].name);
+		Common::SeekableReadStream *stream = SearchMan.createReadStreamForMember(songName);
 		if (stream == nullptr)
 			return false;
 
