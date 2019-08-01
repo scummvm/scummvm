@@ -61,6 +61,7 @@ class Scene;
 class MusicPlayer;
 class Resources;
 class Inventory;
+class Pack;
 
 // Engine Debug Flags
 enum {
@@ -137,7 +138,7 @@ public:
 
 	void playMusic(byte id); //schedules play
 	void playSound(byte id, byte skipFrames);
-	void playSoundNow(byte id);
+	void playSoundNow(Pack *pack, byte id);
 	void enableObject(byte id, byte sceneId = 0);
 	void disableObject(byte id, byte sceneId = 0);
 	void hideActor();
