@@ -1110,14 +1110,14 @@ void Map::getMapXY(int *x, int *y) {
 void Map::setMapXY(int x, int y) {
 	if (x < 0) {
 		x = 0;
-	} else if (x > (_width * kTileWidth - 480)) {
-		x = _width * kTileWidth - 480;
+	} else if (x > (_width * kTileWidth - g_hdb->_screenDrawWidth)) {
+		x = _width * kTileWidth - g_hdb->_screenDrawWidth;
 	}
 
 	if (y < 0) {
 		y = 0;
-	} else if (y > (_height * kTileHeight - 480)) {
-		y = _height * kTileHeight - 480;
+	} else if (y > (_height * kTileHeight - g_hdb->_screenDrawHeight)) {
+		y = _height * kTileHeight - g_hdb->_screenDrawHeight;
 	}
 
 	_mapX = x;
