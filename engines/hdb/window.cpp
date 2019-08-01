@@ -34,12 +34,48 @@
 namespace HDB {
 
 Window::Window() {
-	_dlvItemTextY = (g_hdb->_screenHeight - 30);
-	_textOutCenterX = ((g_hdb->_screenWidth - kTileWidth * 5) / 2);
+	if (g_hdb->isPPC()) {
+		_weaponX = (g_hdb->_screenWidth - 34);
+		_weaponY = 2;
+		_invItemSpace = 36;
+		_invItemPerLine = 5;
+		_textOutCenterX = 120;
+		_dlvItemSpaceX = 0;
+		_dlvItemSpaceY = 0;
+		_dlvItemPerLine = 0;
+		_dlvItemTextY = 0;
+		_dialogTextLeft = 8;
+		_dialogTextRight = 208;
+		_openDialogTextLeft = 0;
+		_openDialogTextRight = 228;
+		_tryY1 = 60;	// TRY
+		_tryY2 = 100;			// AGAIN
+		_tryRestartY = 240;	// (ok)
+		_panicXStop = g_hdb->_screenDrawWidth / 4;
+		_panicZoneFaceX = g_hdb->_screenDrawWidth - 32;
+	} else {
+		_weaponX = (480 - 34);
+		_weaponY = 2;
+		_invItemSpaceX = 48;
+		_invItemSpaceY = 40;
+		_invItemPerLine = 3;
+		_textOutCenterX = ((g_hdb->_screenWidth - kTileWidth * 5) / 2);
+		_dlvItemSpaceX = 48;
+		_dlvItemSpaceY = kTileHeight * 2 + 16;
+		_dlvItemPerLine = 3;
+		_dlvItemTextY = (g_hdb->_screenHeight - 30);
+		_dialogTextLeft = 64;
+		_dialogTextRight = _dialogTextLeft + kTileWidth * 9;
+		_openDialogTextLeft = _dialogTextLeft;
+		_openDialogTextRight = _dialogTextRight + kTileWidth * 2;
+		_tryY1 = (g_hdb->_screenHeight >> 2);	// TRY
+		_tryY2 = (_tryY1 + 32);			// AGAIN
+		_tryRestartY = ((g_hdb->_screenHeight >> 2) * 3);	// (ok)
+		_panicXStop = g_hdb->_screenDrawWidth / 3;
+		_panicZoneFaceX = g_hdb->_screenDrawWidth - 32;
+	}
+
 	_pauseY = (g_hdb->_screenHeight / 2 - 64);
-	_tryY1 = (g_hdb->_screenHeight >> 2);	// TRY
-	_tryY2 = (_tryY1 + 32);			// AGAIN
-	_tryRestartY = ((g_hdb->_screenHeight >> 2) * 3);	// (ok)
 }
 
 Window::~Window() {
@@ -138,8 +174,8 @@ bool Window::init() {
 
 	_infobarDimmed = 0;
 
-	_invWinInfo.width = kInvItemSpaceX * 3;
-	_invWinInfo.height = kInvItemSpaceY * 4;
+	_invWinInfo.width = _invItemSpaceX * 3;
+	_invWinInfo.height = _invItemSpaceY * 4;
 
 	warning("FIXME: Fully separate the PC and PPC versions of Window");
 
@@ -147,8 +183,8 @@ bool Window::init() {
 		_invWinInfo.x = g_hdb->_screenWidth - _gfxInfobar->_width + 16;
 	_invWinInfo.y = 40;
 
-	_dlvsInfo.width = kInvItemSpaceX * 3;
-	_dlvsInfo.height = kInvItemSpaceY * 4;
+	_dlvsInfo.width = _invItemSpaceX * 3;
+	_dlvsInfo.height = _invItemSpaceY * 4;
 	if (!g_hdb->isPPC())
 		_dlvsInfo.x = (g_hdb->_screenWidth - _gfxInfobar->_width) + 16;
 	_dlvsInfo.y = 272;
@@ -524,7 +560,7 @@ void Window::openDialog(const char *title, int tileIndex, const char *string, in
 	else
 		strcpy(_dialogInfo.string, string);
 	g_hdb->_gfx->getTextEdges(&e1, &e2, &e3, &e4);
-	g_hdb->_gfx->setTextEdges(kDialogTextLeft, kDialogTextRight, 0, g_hdb->_screenDrawHeight);
+	g_hdb->_gfx->setTextEdges(_dialogTextLeft, _dialogTextRight, 0, g_hdb->_screenDrawHeight);
 	g_hdb->_gfx->getDimensions(string, &width, &height);
 	g_hdb->_gfx->getDimensions(title, &titleWidth, &titleHeight);
 	g_hdb->_gfx->setTextEdges(e1, e2, e3, e4);
@@ -573,8 +609,8 @@ void Window::drawDialog() {
 		if (gfx2) {
 			int xOff = 40 * _pzInfo.active;
 			Tile *gfx = g_hdb->_ai->getPlayerWeaponSelGfx();
-			gfx->drawMasked(kWeaponX - xOff - 1, kWeaponY);
-			gfx2->drawMasked(kWeaponX - xOff, kWeaponY);
+			gfx->drawMasked(_weaponX - xOff - 1, _weaponY);
+			gfx2->drawMasked(_weaponX - xOff, _weaponY);
 			drawWeapon();
 		}
 	}
@@ -742,7 +778,7 @@ void Window::openDialogChoice(const char *title, const char *text, const char *f
 	_dialogChoiceInfo.active = true;
 
 	g_hdb->_gfx->getTextEdges(&e1, &e2, &e3, &e4);
-	g_hdb->_gfx->setTextEdges(kOpenDialogTextLeft, kOpenDialogTextRight, 0, g_hdb->_screenDrawHeight);
+	g_hdb->_gfx->setTextEdges(_openDialogTextLeft, _openDialogTextRight, 0, g_hdb->_screenDrawHeight);
 	g_hdb->_gfx->getDimensions(text, &width, &height);
 	g_hdb->_gfx->getDimensions(title, &titleWidth, &titleHeight);
 
@@ -805,11 +841,11 @@ void Window::drawDialogChoice() {
 	}
 
 	g_hdb->_gfx->getTextEdges(&e1, &e2, &e3, &e4);
-	g_hdb->_gfx->setTextEdges(_dialogChoiceInfo.x + 10, kOpenDialogTextRight, 0, g_hdb->_screenDrawHeight);
+	g_hdb->_gfx->setTextEdges(_dialogChoiceInfo.x + 10, _openDialogTextRight, 0, g_hdb->_screenDrawHeight);
 	g_hdb->_gfx->setCursor(0, _dialogChoiceInfo.y - 7);
 	if (_dialogChoiceInfo.title)
 		g_hdb->_gfx->drawText(_dialogChoiceInfo.title);
-	g_hdb->_gfx->setTextEdges(_dialogChoiceInfo.x + 16, kOpenDialogTextRight, 0, g_hdb->_screenDrawHeight);
+	g_hdb->_gfx->setTextEdges(_dialogChoiceInfo.x + 16, _openDialogTextRight, 0, g_hdb->_screenDrawHeight);
 	g_hdb->_gfx->setCursor(0, _dialogChoiceInfo.y + 16);
 	if (_dialogChoiceInfo.text)
 		g_hdb->_gfx->drawText(_dialogChoiceInfo.text);
@@ -889,7 +925,7 @@ void Window::openMessageBar(const char *title, int time) {
 	strcpy(_msgInfo.title, title);
 
 	g_hdb->_gfx->getTextEdges(&e1, &e2, &e3, &e4);
-	g_hdb->_gfx->setTextEdges(kDialogTextLeft, kDialogTextRight, 0, g_hdb->_screenDrawHeight);
+	g_hdb->_gfx->setTextEdges(_dialogTextLeft, _dialogTextRight, 0, g_hdb->_screenDrawHeight);
 	g_hdb->_gfx->getDimensions(title, &width, &height);
 	g_hdb->_gfx->setTextEdges(e1, e2, e3, e4);
 
@@ -953,7 +989,7 @@ void Window::nextMsgQueued() {
 	_msgInfo.timer = (_msgQueueWait[0] * kGameFPS);
 
 	g_hdb->_gfx->getTextEdges(&e1, &e2, &e3, &e4);
-	g_hdb->_gfx->setTextEdges(kDialogTextLeft, kDialogTextRight, 0, g_hdb->_screenDrawHeight);
+	g_hdb->_gfx->setTextEdges(_dialogTextLeft, _dialogTextRight, 0, g_hdb->_screenDrawHeight);
 	g_hdb->_gfx->getDimensions(_msgInfo.title, &width, &height);
 	g_hdb->_gfx->setTextEdges(e1, e2, e3, e4);
 
@@ -1006,15 +1042,15 @@ void Window::drawInventory() {
 
 		e->standdownGfx[0]->drawMasked(drawX, drawY);
 
-		drawX += kInvItemSpaceX;
-		if (drawX >= baseX + (kInvItemSpaceX * kInvItemPerLine)) {
+		drawX += _invItemSpaceX;
+		if (drawX >= baseX + (_invItemSpaceX * _invItemPerLine)) {
 			drawX = baseX;
-			drawY += kInvItemSpaceY;
+			drawY += _invItemSpaceY;
 		}
 	}
 
 	// Draw the Gem
-	drawY = _invWinInfo.y + kInvItemSpaceY * 4 - 8;
+	drawY = _invWinInfo.y + _invItemSpaceY * 4 - 8;
 	drawX = baseX - 8;
 	_gemGfx->drawMasked(drawX, drawY);
 
@@ -1027,7 +1063,7 @@ void Window::drawInventory() {
 	// Draw the mini monkeystone
 	mstones = g_hdb->_ai->getMonkeystoneAmount();
 	if (mstones) {
-		drawX = baseX + kInvItemSpaceX * 2 - 8;
+		drawX = baseX + _invItemSpaceX * 2 - 8;
 		_mstoneGfx->drawMasked(drawX, drawY + 8);
 
 		// Draw the monkeystone amount
@@ -1042,13 +1078,13 @@ void Window::drawInventory() {
 			_invWinInfo.selection = 0;
 
 		// Draw the Inventory Select Cursor
-		drawX = baseX + (_invWinInfo.selection % kInvItemPerLine) * kInvItemSpaceX;
-		drawY = _invWinInfo.y + (_invWinInfo.selection / kInvItemPerLine) * kInvItemSpaceY;
+		drawX = baseX + (_invWinInfo.selection % _invItemPerLine) * _invItemSpaceX;
+		drawY = _invWinInfo.y + (_invWinInfo.selection / _invItemPerLine) * _invItemSpaceY;
 		_gfxInvSelect->drawMasked(drawX, drawY);
 
 		if (sel) {
 			int centerX = baseX - 4 + (g_hdb->_screenWidth - baseX) / 2;
-			drawY = _invWinInfo.y + (kInvItemSpaceY * 4) + 16;
+			drawY = _invWinInfo.y + (_invItemSpaceY * 4) + 16;
 			g_hdb->_gfx->setCursor(centerX - g_hdb->_gfx->stringLength(sel->printedName) / 2, drawY);
 			g_hdb->_gfx->drawText(sel->printedName);
 		}
@@ -1057,12 +1093,12 @@ void Window::drawInventory() {
 
 void Window::checkInvSelect(int x, int y) {
 	if (x >= _invWinInfo.x && x < _invWinInfo.x + _invWinInfo.width && y >= _invWinInfo.y && y < _invWinInfo.y + _invWinInfo.height) {
-		int xc = (x - _invWinInfo.x) / kInvItemSpaceX;
-		int yc = (y - _invWinInfo.y) / kInvItemSpaceY;
-		if (yc * kInvItemPerLine + xc > g_hdb->_ai->getInvAmount())
+		int xc = (x - _invWinInfo.x) / _invItemSpaceX;
+		int yc = (y - _invWinInfo.y) / _invItemSpaceY;
+		if (yc * _invItemPerLine + xc > g_hdb->_ai->getInvAmount())
 			return;
 
-		_invWinInfo.selection = yc * kInvItemPerLine + xc;
+		_invWinInfo.selection = yc * _invItemPerLine + xc;
 
 		// If this is a weapon, choose it
 		AIType t = g_hdb->_ai->getInvItemType(_invWinInfo.selection);
@@ -1191,7 +1227,7 @@ void Window::drawDeliveries() {
 			if (_dlvsInfo.go2) {
 				if (_dlvsInfo.delay2 < g_hdb->getTimeSlice()) {
 					// Draw TO
-					_gfxArrowTo->drawMasked(_dlvsInfo.x + kDlvItemSpaceX * _dlvsInfo.selected + 8, drawY + kTileHeight);
+					_gfxArrowTo->drawMasked(_dlvsInfo.x + _dlvItemSpaceX * _dlvsInfo.selected + 8, drawY + kTileHeight);
 
 					g_hdb->_gfx->setCursor(centerX - g_hdb->_gfx->stringLength("to") / 2, g_hdb->_window->_dlvItemTextY + 12);
 					g_hdb->_gfx->drawText("to");
@@ -1236,10 +1272,10 @@ void Window::drawDeliveries() {
 				g_hdb->_gfx->drawText(d->destTextName);
 			}
 
-			drawX += kDlvItemSpaceX;
+			drawX += _dlvItemSpaceX;
 			if (drawX >= g_hdb->_screenWidth) {
 				drawX = baseX;
-				drawY += kDlvItemSpaceY + 8;
+				drawY += _dlvItemSpaceY + 8;
 			}
 		}
 	}
@@ -1252,8 +1288,8 @@ void Window::drawDeliveries() {
 		int dx, dy, rowtwo;
 
 		rowtwo = _dlvsInfo.selected > 2;
-		dx = 8 + _dlvsInfo.x + kDlvItemSpaceX * (_dlvsInfo.selected % 3);
-		dy = _dlvsInfo.y + kTileHeight + (kDlvItemSpaceY + 8) * rowtwo;
+		dx = 8 + _dlvsInfo.x + _dlvItemSpaceX * (_dlvsInfo.selected % 3);
+		dy = _dlvsInfo.y + kTileHeight + (_dlvItemSpaceY + 8) * rowtwo;
 		_gfxArrowTo->drawMasked(dx, dy);
 	}
 
@@ -1279,9 +1315,9 @@ void Window::checkDlvSelect(int x, int y) {
 
 	// Click on a Delivery to select it for inspection?
 	if (x >= _dlvsInfo.x && x < _dlvsInfo.x + _dlvsInfo.width && y >= _dlvsInfo.y && y < _dlvsInfo.y + _dlvsInfo.height) {
-		int xc = (x - _dlvsInfo.x) / kDlvItemSpaceX;
-		int yc = (y - _dlvsInfo.y) / kDlvItemSpaceY;
-		int value = yc * kDlvItemPerLine + xc;
+		int xc = (x - _dlvsInfo.x) / _dlvItemSpaceX;
+		int yc = (y - _dlvsInfo.y) / _dlvItemSpaceY;
+		int value = yc * _dlvItemPerLine + xc;
 		if (value < amt)
 			setSelectedDelivery(value);
 	}
@@ -1357,7 +1393,7 @@ void Window::drawPanicZone() {
 			_pzInfo.y1++;
 			_pzInfo.x2 += _pzInfo.yv;
 			_pzInfo.y2--;
-			if (_pzInfo.x1 > kPanicXStop) {
+			if (_pzInfo.x1 > _panicXStop) {
 				_pzInfo.timer = 30;
 				_pzInfo.sequence++;
 			}
@@ -1395,7 +1431,7 @@ void Window::drawPanicZone() {
 	case PANICZONE_COUNTDOWN:
 		{
 			static int last_seconds = 0, seconds = 0;
-			_pzInfo.gfxFace[seconds & 1]->drawMasked(kPanicZoneFaceX, kPanicZoneFaceY);
+			_pzInfo.gfxFace[seconds & 1]->drawMasked(_panicZoneFaceX, kPanicZoneFaceY);
 
 			// make knocking timer sound
 			if (last_seconds != seconds)
@@ -1404,10 +1440,10 @@ void Window::drawPanicZone() {
 			last_seconds = seconds;
 			seconds = _pzInfo.timer - g_hdb->getTime();
 			if (seconds >= 10) {
-				_pzInfo.gfxNumber[seconds / 10]->drawMasked(kPanicZoneFaceX, kPanicZoneFaceY + 32);
-				_pzInfo.gfxNumber[seconds % 10]->drawMasked(kPanicZoneFaceX + 16, kPanicZoneFaceY + 32);
+				_pzInfo.gfxNumber[seconds / 10]->drawMasked(_panicZoneFaceX, kPanicZoneFaceY + 32);
+				_pzInfo.gfxNumber[seconds % 10]->drawMasked(_panicZoneFaceX + 16, kPanicZoneFaceY + 32);
 			} else
-				_pzInfo.gfxNumber[seconds]->drawMasked(kPanicZoneFaceX + 8, kPanicZoneFaceY + 32);
+				_pzInfo.gfxNumber[seconds]->drawMasked(_panicZoneFaceX + 8, kPanicZoneFaceY + 32);
 
 			// time until death!
 			if (!seconds) {
