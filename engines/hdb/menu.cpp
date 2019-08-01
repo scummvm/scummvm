@@ -100,8 +100,6 @@ Menu::Menu() {
 		_assignY = 0;
 		_backoutX = 0;
 		_backoutY = 0;
-		_warpBackoutX = (g_hdb->_screenWidth - _menuBackoutGfx->_width);
-		_warpBackoutY = (g_hdb->_screenHeight - _menuBackoutGfx->_height);
 		_warpX = 0;
 		_warpY = 4;
 	} else {
@@ -431,8 +429,12 @@ void Menu::startMenu() {
 	_quitGfx = g_hdb->_gfx->loadPic(MENU_QUIT);
 	_resumeGfx = g_hdb->_gfx->loadPic(MENU_RESUME);
 	_slotGfx = g_hdb->_gfx->loadPic(GAMEFILE_SLOT);
-	_menuBackoutGfx = g_hdb->_gfx->loadPic(MENU_BACK);
 	_menuBackspaceGfx = g_hdb->_gfx->loadPic(MENU_BACKSPACE);
+	_menuBackoutGfx = g_hdb->_gfx->loadPic(MENU_BACK);
+	if (g_hdb->isPPC()) {
+		_warpBackoutX = (g_hdb->_screenWidth - _menuBackoutGfx->_width);
+		_warpBackoutY = (g_hdb->_screenHeight - _menuBackoutGfx->_height);
+	}
 	_controlButtonGfx = g_hdb->_gfx->loadPic(MENU_CONTROLS);
 	_controlsGfx = g_hdb->_gfx->loadPic(PIC_CONTROLSSCREEN);
 
