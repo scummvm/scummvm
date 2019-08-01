@@ -46,6 +46,9 @@
 #ifdef USE_SDL_NET
 #include "testbed/webserver.h"
 #endif
+#ifdef USE_TTS
+#include "testbed/speech.h"
+#endif
 
 namespace Testbed {
 
@@ -120,8 +123,14 @@ TestbedEngine::TestbedEngine(OSystem *syst)
 	DebugMan.enableDebugChannel("LOG");
 
 	// Initialize testsuites here
+	Testsuite *ts;
+#ifdef USE_TTS
+	// TextToSpeech
+	ts = new SpeechTestSuite();
+	_testsuiteList.push_back(ts);
+#endif
 	// GFX
-	Testsuite *ts = new GFXTestSuite();
+	ts = new GFXTestSuite();
 	_testsuiteList.push_back(ts);
 	// FS
 	ts = new FSTestSuite();

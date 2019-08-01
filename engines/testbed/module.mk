@@ -12,6 +12,7 @@ MODULE_OBJS := \
 	savegame.o \
 	sound.o \
 	encoding.o \
+	speech.o \
 	testbed.o \
 	testsuite.o
 
