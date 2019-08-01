@@ -26,21 +26,7 @@
 namespace HDB {
 
 enum {
-	kDialogTextLeft = 64,
-	kDialogTextRight = (kDialogTextLeft + kTileWidth * 9),
-	kOpenDialogTextLeft = kDialogTextLeft,
-	kOpenDialogTextRight = (kDialogTextRight + kTileWidth * 2),
 	kMaxMsgQueue = 10,
-	kWeaponX = (480 - 34),
-	kWeaponY = 2,
-	kInvItemSpaceX = 48,
-	kInvItemSpaceY = 40,
-	kInvItemPerLine = 3,
-	kDlvItemSpaceX = 48,
-	kDlvItemSpaceY = (kTileHeight * 2 + 16),
-	kDlvItemPerLine = 3,
-	kPanicXStop = 480 / 3,
-	kPanicZoneFaceX = 480 - 32,
 	kPanicZoneFaceY = 5,
 	kNumCrazy = 37
 };
@@ -286,12 +272,24 @@ public:
 	void closeTextOut();
 
 	// Platform-specific Constants
+	int _weaponX, _weaponY;
+	int _invItemSpace, _invItemSpaceX, _invItemSpaceY;
+	int _invItemPerLine;
+	int _dlvItemSpaceX;
+	int _dlvItemSpaceY;
+	int _dlvItemPerLine;
 	int _dlvItemTextY;
+	int _dialogTextLeft;
+	int _dialogTextRight;
+	int _openDialogTextLeft;
+	int _openDialogTextRight;
 	int _textOutCenterX;
 	int _pauseY;
 	int _tryY1;	// TRY
 	int _tryY2;			// AGAIN
 	int _tryRestartY;	// (ok)
+	int _panicXStop;
+	int _panicZoneFaceX;
 
 	Tile *getGemGfx() {
 		return _gemGfx;
