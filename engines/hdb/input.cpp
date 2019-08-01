@@ -164,6 +164,10 @@ void Input::stylusDown(int x, int y) {
 			return;
 		}
 
+		if (g_hdb->isPPC()) {
+			warning("STUB: Add PPC code for Deliveries\Inventory");
+		}
+
 		// Is Dialog Active?
 		if (g_hdb->_window->dialogActive()) {
 			g_hdb->_window->closeDialog();
@@ -207,9 +211,11 @@ void Input::stylusDown(int x, int y) {
 		worldX = ((worldX + x) / kTileWidth) * kTileWidth;
 		worldY = ((worldY + y) / kTileHeight) * kTileHeight;
 
-		// Don't allow a click into INV/DELIVERIES area to go into the world
-		if (x >= (g_hdb->_screenWidth - 32 * 5))
-			return;
+		if (!g_hdb->isPPC()) {
+			// Don't allow a click into INV/DELIVERIES area to go into the world
+			if (x >= (g_hdb->_screenWidth - 32 * 5))
+				return;
+		}
 
 		// Toggle Walk Speed if we clicked Player
 		int nx, ny;

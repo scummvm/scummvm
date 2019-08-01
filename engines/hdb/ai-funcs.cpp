@@ -2224,11 +2224,14 @@ void AI::getItemSound(AIType type) {
 	case ITEM_ENV_RED:
 	case ITEM_ENV_BLUE:
 	case ITEM_ENV_GREEN:
-		if (g_hdb->_sound->getVoiceStatus())
-			g_hdb->_sound->playVoice(GUY_GOT_SOMETHING, 1);
-		else
-			g_hdb->_sound->playSound(SND_GET_THING);
-		break;
+		if (!g_hdb->isPPC()) {
+			if (g_hdb->_sound->getVoiceStatus())
+				g_hdb->_sound->playVoice(GUY_GOT_SOMETHING, 1);
+			else
+				g_hdb->_sound->playSound(SND_GET_THING);
+			break;
+		}
+		// fall through if it is PPC
 	default: g_hdb->_sound->playSound(SND_GET_THING);
 	}
 }

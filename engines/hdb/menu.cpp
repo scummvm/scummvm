@@ -706,17 +706,18 @@ void Menu::drawMenu() {
 
 			drawSlider(_optionsX, _optionsY + kOptionLineSPC * 2 + 20, g_hdb->_sound->getSFXVolume());
 
-			// Voices ON or OFF
-			drawToggle(_optionsX, _optionsY + kOptionLineSPC * 4 + 20, g_hdb->_sound->getVoiceStatus());
+			if (!g_hdb->isPPC()) {
+				// Voices ON or OFF
+				drawToggle(_optionsX, _optionsY + kOptionLineSPC * 4 + 20, g_hdb->_sound->getVoiceStatus());
 
-			if (!g_hdb->isVoiceless()) {
-				g_hdb->_gfx->setCursor(_optionsX + kOptionSPC + 24, _optionsY + kOptionLineSPC * 4 + 24);
-				if (!g_hdb->_sound->getVoiceStatus())
-					g_hdb->_gfx->drawText("Voice Dialogue OFF");
-				else
-					g_hdb->_gfx->drawText("Voice Dialogue ON");
+				if (!g_hdb->isVoiceless()) {
+					g_hdb->_gfx->setCursor(_optionsX + kOptionSPC + 24, _optionsY + kOptionLineSPC * 4 + 24);
+					if (!g_hdb->_sound->getVoiceStatus())
+						g_hdb->_gfx->drawText("Voice Dialogue OFF");
+					else
+						g_hdb->_gfx->drawText("Voice Dialogue ON");
+				}
 			}
-
 
 			// title logo
 			_titleLogo->drawMasked(centerPic(_titleLogo), _rocketY + _mTitleY);
@@ -767,8 +768,10 @@ void Menu::drawMenu() {
 			_modeLoadGfx->drawMasked(centerPic(_modeLoadGfx), _oBannerY);
 			_menuBackoutGfx->drawMasked(_backoutX, g_hdb->_menu->_backoutY);
 
-			if (_saveGames[kAutoSaveSlot].seconds)
-				_vortexian[anim]->drawMasked(_vortSaveX, _vortSaveY);
+			if (!g_hdb->isPPC()) {
+				if (_saveGames[kAutoSaveSlot].seconds)
+					_vortexian[anim]->drawMasked(_vortSaveX, _vortSaveY);
+			}
 
 			if (g_hdb->isPPC()) {
 				g_hdb->_gfx->setCursor(_vortSaveTextX, _vortSaveY);
@@ -1086,14 +1089,17 @@ void Menu::drawTitle() {
 		// exhaust
 		if (_rocketEx < 5) {
 			_rocketEx1->drawMasked(_mRocketX + _mRocketEXHX, _rocketY + _mRocketYBottom);
-			_rocketEx2->drawMasked(_mRocketX + _mRocketEXHX2, _rocketY + _mRocketYBottom);
+			if (!g_hdb->isPPC())
+				_rocketEx2->drawMasked(_mRocketX + _mRocketEXHX2, _rocketY + _mRocketYBottom);
 		} else if (_rocketEx >= 5 && _rocketEx < 10) {
 			_rocketEx2->drawMasked(_mRocketX + _mRocketEXHX, _rocketY + _mRocketYBottom);
-			_rocketEx1->drawMasked(_mRocketX + _mRocketEXHX2, _rocketY + _mRocketYBottom);
+			if (!g_hdb->isPPC())
+				_rocketEx1->drawMasked(_mRocketX + _mRocketEXHX2, _rocketY + _mRocketYBottom);
 		} else {
 			_rocketEx = 0;
 			_rocketEx1->drawMasked(_mRocketX + _mRocketEXHX, _rocketY + _mRocketYBottom);
-			_rocketEx2->drawMasked(_mRocketX + _mRocketEXHX2, _rocketY + _mRocketYBottom);
+			if (!g_hdb->isPPC())
+				_rocketEx2->drawMasked(_mRocketX + _mRocketEXHX2, _rocketY + _mRocketYBottom);
 		}
 		_rocketEx++;
 
@@ -1630,14 +1636,20 @@ void Menu::drawRocketAndSelections() {
 	// exhaust
 	if (_rocketEx < 5) {
 		_rocketEx1->drawMasked(_mRocketX + _mRocketEXHX, _rocketY + _mRocketYBottom);
-		_rocketEx2->drawMasked(_mRocketX + _mRocketEXHX2, _rocketY + _mRocketYBottom);
+		if (!g_hdb->isPPC()) {
+			_rocketEx2->drawMasked(_mRocketX + _mRocketEXHX2, _rocketY + _mRocketYBottom);
+		}
 	} else if (_rocketEx >= 5 && _rocketEx < 10) {
 		_rocketEx2->drawMasked(_mRocketX + _mRocketEXHX, _rocketY + _mRocketYBottom);
-		_rocketEx1->drawMasked(_mRocketX + _mRocketEXHX2, _rocketY + _mRocketYBottom);
+		if (!g_hdb->isPPC()) {
+			_rocketEx1->drawMasked(_mRocketX + _mRocketEXHX2, _rocketY + _mRocketYBottom);
+		}
 	} else {
 		_rocketEx = 0;
 		_rocketEx1->drawMasked(_mRocketX + _mRocketEXHX, _rocketY + _mRocketYBottom);
-		_rocketEx2->drawMasked(_mRocketX + _mRocketEXHX2, _rocketY + _mRocketYBottom);
+		if (!g_hdb->isPPC()) {
+			_rocketEx2->drawMasked(_mRocketX + _mRocketEXHX2, _rocketY + _mRocketYBottom);
+		}
 	}
 	_rocketEx++;
 
