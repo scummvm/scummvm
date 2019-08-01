@@ -327,6 +327,8 @@ void TownsMidiPart::addChannels(int num) {
 
 	_chanMissing += num;
 	programChange(_program);
+	pitchBend(_pitchBend);
+	controlChangeVolume(_volume << 1);
 }
 
 void TownsMidiPart::dropChannels(int num) {
