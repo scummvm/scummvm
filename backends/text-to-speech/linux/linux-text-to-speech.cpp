@@ -51,7 +51,10 @@ void speech_end_callback(size_t msg_id, size_t client_id, SPDNotificationType st
 void speech_cancel_callback(size_t msg_id, size_t client_id, SPDNotificationType state){
 	LinuxTextToSpeechManager *manager =
 		static_cast<LinuxTextToSpeechManager *> (g_system->getTextToSpeechManager());
-	manager->updateState(LinuxTextToSpeechManager::READY);
+	if (manager->isSpeaking())
+		manager->updateState(LinuxTextToSpeechManager::READY);
+	if (manager->isPaused())
+		manager->updateState(LinuxTextToSpeechManager::PAUSED);
 }
 
 void speech_resume_callback(size_t msg_id, size_t client_id, SPDNotificationType state){
@@ -170,8 +173,14 @@ bool LinuxTextToSpeechManager::stop() {
 bool LinuxTextToSpeechManager::pause() {
 	if (_speechState == READY || _speechState == PAUSED || _speechState == BROKEN)
 		return true;
+	bool result = spd_pause_all(_connection) == -1;
+	if (result)
+		return true;
+	result = spd_stop(_connection) == -1;
+	if (result)
+		return true;
 	_speechState = PAUSED;
-	return spd_pause(_connection) == -1;
+	return false;
 }
 
 bool LinuxTextToSpeechManager::resume() {
