@@ -72,6 +72,7 @@ private:
 	void createVoice(int typeNumber, Common::TTSVoice::Gender, Common::TTSVoice::Age, char *description);
 	SpeechState _speechState;
 	Common::String strToUtf8(Common::String str, Common::String charset);
+	Common::String _lastSaid;
 };
 
 #endif

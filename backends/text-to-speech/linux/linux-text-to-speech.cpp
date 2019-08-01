@@ -81,6 +81,7 @@ void LinuxTextToSpeechManager::init() {
 		warning("Couldn't initialize text to speech through speech-dispatcher");
 		return;
 	}
+	_lastSaid = "";
 
 	_connection->callback_begin = speech_begin_callback;
 	spd_set_notification_on(_connection, SPD_BEGIN);
@@ -137,6 +138,12 @@ bool LinuxTextToSpeechManager::say(Common::String str, Action action, Common::St
 
 	if (action == DROP && isSpeaking())
 		return true;
+
+	if (action == INTERRUPT_NO_REPEAT && _lastSaid == str && isSpeaking())
+		return true;
+
+	if (action == QUEUE_NO_REPEAT && _lastSaid == str && isSpeaking())
+		return true;
 	
 	if (charset.empty()) {
 #ifdef USE_TRANSLATION
@@ -148,10 +155,11 @@ bool LinuxTextToSpeechManager::say(Common::String str, Action action, Common::St
 
 	str = strToUtf8(str, charset);
 
-	if (isSpeaking() && action == INTERRUPT)
+	if (isSpeaking() && action == INTERRUPT || action == INTERRUPT_NO_REPEAT)
 		stop();
 	if (str.size() != 0)
 		_speechState = SPEAKING;
+	_lastSaid = str;
 	if(spd_say(_connection, SPD_MESSAGE, str.c_str()) == -1) {
 		//restart the connection
 		if (_connection != 0)

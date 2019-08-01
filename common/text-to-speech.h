@@ -138,7 +138,9 @@ class TextToSpeechManager {
 public:
 	enum Action {
 		INTERRUPT,
+		INTERRUPT_NO_REPEAT,
 		QUEUE,
+		QUEUE_NO_REPEAT,
 		DROP
 	};
 	/**
@@ -156,7 +158,7 @@ public:
 	 * @param charset The encoding of the string. If empty this is assumed to be the
 	 *        encoding used for the GUI.
 	 */
-	bool say(String str, String charset = "") { return say(str, INTERRUPT, charset); }
+	bool say(String str, String charset = "") { return say(str, INTERRUPT_NO_REPEAT, charset); }
 
 	/**
 	 * Says the given string

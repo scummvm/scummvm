@@ -88,6 +88,7 @@ void WindowsTextToSpeechManager::init() {
 		_speechState = READY;
 	else
 		_speechState = NO_VOICE;
+	_lastSaid = "";
 }
 
 WindowsTextToSpeechManager::~WindowsTextToSpeechManager() {
@@ -105,6 +106,12 @@ bool WindowsTextToSpeechManager::say(Common::String str, Action action, Common::
 	if (isSpeaking() && action == DROP)
 		return true;
 
+	if (isSpeaking() && action == INTERRUPT_NO_REPEAT && _lastSaid == str)
+		return true;
+
+	if (isSpeaking() && action == QUEUE_NO_REPEAT && _lastSaid == str)
+		return true;
+
 	if (charset.empty()) {
 #ifdef USE_TRANSLATION
 		charset = TransMan.getCurrentCharset();
@@ -112,6 +119,7 @@ bool WindowsTextToSpeechManager::say(Common::String str, Action action, Common::
 		charset = "ASCII";
 #endif
 	}
+	_lastSaid = str;
 	// We have to set the pitch by prepending xml code at the start of the said string;
 	Common::String pitch= Common::String::format("<pitch absmiddle=\"%d\">", _ttsState->_pitch / 10);
 	str.replace((uint32)0, 0, pitch);
