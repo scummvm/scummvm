@@ -37,6 +37,141 @@
 namespace HDB {
 
 Menu::Menu() {
+
+	if (g_hdb->isPPC()) {
+		_menuX = 18 * 8;
+		_menuY = 16;
+		_menuItemWidth = 88;
+		_menuItemHeight = 40;
+		_mResumeY = 48 * 4;
+		_mQuitY = 48 * 3;
+		_mOptionsY = 48 * 2;
+		_mLoadY = 48 * 1;
+		_mControlsY = 160;
+		_menuExitXLeft = 60;
+		_menuExitY = (g_hdb->_screenHeight - 80);
+		_menuExitYTop = 48;
+		_menuVortSaveY = 220;
+		_menuVortSaveX = 76;
+		_mRocketX = 0;
+		_mRocketY = 10;
+		_mRocketYBottom = 21 * 8;
+		_mRocketEXHX = 0;
+		_mRocketEXHX2 = 0;
+		_mTitleY = 27 * 8;
+		_oohOhhX = 88;
+		_oohOhhY = 128;
+		_newGameX = 20;
+		_newGameX2 = _newGameX + 50;
+		_modePuzzleY = 70;
+		_modeActionY = 160;
+		_optionsX = 2 * 8;
+		_optionsY = 6 * 8;
+		_vortSaveX = 80;
+		_vortSaveTextX = _vortSaveX + 40;
+		_vortSaveY = 220;
+		_saveSlotX = 8;
+		_saveSlotY = 68;
+		_quitX = 0;
+		_quitY = 0;
+		_quitYesX1 = (146 - 16);
+		_quitYesX2 = (211 - 16);
+		_quitYesY1 = (287);
+		_quitYesY2 = (312);
+		_quitNoX1 = (65 - 16);
+		_quitNoX2 = (130 - 16);
+		_quitNoY1 = (287);
+		_quitNoY2 = (312);
+		_controlX = 0;
+		_controlY = 0;
+		_controlUpX = 0;
+		_controlUpY = 0;
+		_controlDownX = 0;
+		_controlDownY = 0;
+		_controlLeftX = 0;
+		_controlLeftY = 0;
+		_controlRightX = 0;
+		_controlRightY = 0;
+		_controlUseX = 0;
+		_controlUseY = 0;
+		_controlWidth = 0;
+		_controlHeight = 0;
+		_assignX = 0;
+		_assignY = 0;
+		_backoutX = 0;
+		_backoutY = 0;
+		_warpBackoutX = (g_hdb->_screenWidth - _menuBackoutGfx->_width);
+		_warpBackoutY = (g_hdb->_screenHeight - _menuBackoutGfx->_height);
+		_warpX = 0;
+		_warpY = 4;
+	} else {
+		_menuX = 48 * 8;
+		_menuY = 80;
+		_menuItemWidth = 88;
+		_menuItemHeight = 40;
+		_mResumeY = 48 * 4;
+		_mQuitY = 48 * 3;
+		_mOptionsY = 48 * 2;
+		_mLoadY = 48 * 1;
+		_mControlsY = 270;
+		_menuExitXLeft = 60;
+		_menuExitY = (g_hdb->_screenHeight - 80);
+		_menuExitYTop = 48;
+		_menuVortSaveY = 220;
+		_menuVortSaveX = 76;
+		_mRocketX = 18 * 8;
+		_mRocketY = 48;
+		_mRocketYBottom = 28 * 8;
+		_mRocketEXHX = 6 * 8 - 4;
+		_mRocketEXHX2 = 11 * 8 - 4;
+		_mTitleY = 34 * 8;
+		_oohOhhX = 256;
+		_oohOhhY = 224;
+		_newGameX = 220;
+		_newGameX2 = _newGameX + 50;
+		_modePuzzleY = 130;
+		_modeActionY = 220;
+		_optionsX = 26 * 8;
+		_optionsY = 10 * 8;
+		_vortSaveX = (200 - 44);
+		_vortSaveTextX = _vortSaveX + 40;
+		_vortSaveY = 72;
+		_saveSlotX = 200;
+		_saveSlotY = 80;
+		_quitX = 0;
+		_quitY = 0;
+		_quitYesX1 = (30 * 8 + _quitX);
+		_quitYesX2 = (38 * 8 + 4 + _quitX);
+		_quitYesY1 = (50 * 8 + _quitY);
+		_quitYesY2 = (53 * 8 + 4 + _quitY);
+		_quitNoX1 = (41 * 8 + _quitX);
+		_quitNoX2 = (49 * 8 + 4 + _quitX);
+		_quitNoY1 = (50 * 8 + _quitY);
+		_quitNoY2 = (53 * 8 + 4 + _quitY);
+		_controlX = 60;
+		_controlY = 40;
+		_controlUpX = (276 + _controlX);
+		_controlUpY = (114 + _controlY);
+		_controlDownX = (276 + _controlX);
+		_controlDownY = (129 + _controlY);
+		_controlLeftX = (396 + _controlX);
+		_controlLeftY = (114 + _controlY);
+		_controlRightX = (396 + _controlX);
+		_controlRightY = (129 + _controlY);
+		_controlUseX = (330 + _controlX);
+		_controlUseY = (209 + _controlY);
+		_controlWidth = 32;
+		_controlHeight = 16;
+		_assignX = (_controlX + 20 * 8);
+		_assignY = (_controlY + 150);
+		_backoutX = 0;
+		_backoutY = g_hdb->_screenHeight - 32;
+		_warpBackoutX = _backoutX;
+		_warpBackoutY = _backoutY;
+		_warpX = 214;
+		_warpY = 160;
+	}
+
 	_starWarp = 0;
 	_rocketEx = 0;
 	_titleActive = false;
@@ -46,8 +181,8 @@ Menu::Menu() {
 	_newgameActive = false;
 	_warpActive = false;
 	_optionsScrolling = false;
-	_optionsScrollX = kMenuX;
-	_rocketX = kMRocketX;
+	_optionsScrollX = _menuX;
+	_rocketX = _mRocketX;
 	_sayHDB = false;
 	_menuKey = 0;
 
@@ -125,10 +260,6 @@ Menu::Menu() {
 
 	_versionGfx = NULL;
 	_warpGfx = NULL;
-
-	_menuExitY = g_hdb->_screenHeight - 80;
-	_backoutY = g_hdb->_screenHeight - 32;
-	_warpBackoutY = _backoutY;
 }
 
 Menu::~Menu() {
@@ -366,10 +497,10 @@ void Menu::startMenu() {
 		_nebulaYVel = g_hdb->_rnd->getRandomNumber(9) + 2;
 	}
 
-	_optionsScrollX = kMenuX;
+	_optionsScrollX = _menuX;
 	_oBannerY = -48;
-	_rocketY = kMRocketY;
-	_rocketX = kMRocketX;
+	_rocketY = _mRocketY;
+	_rocketX = _mRocketX;
 	_menuActive = true;
 	_clickDelay = 30;
 
@@ -432,9 +563,7 @@ void Menu::drawMenu() {
 			}
 		}
 
-		//
 		// Draw the Secret Stars! (tm)
-		//
 		if (g_hdb->getStarsMonkeystone7() == STARS_MONKEYSTONE_7 ||
 			g_hdb->getStarsMonkeystone14() == STARS_MONKEYSTONE_14 ||
 			g_hdb->getStarsMonkeystone21() == STARS_MONKEYSTONE_21) {
@@ -488,9 +617,9 @@ void Menu::drawMenu() {
 			_rocketX += -_optionsXV;
 			_oBannerY += _optionsXV / 3;
 			_optionsXV -= 3;
-			if (_optionsScrollX < kMenuX) {
-				_optionsScrollX = kMenuX;
-				_rocketX = kMRocketX;
+			if (_optionsScrollX < _menuX) {
+				_optionsScrollX = _menuX;
+				_rocketX = _mRocketX;
 				_oBannerY = -48;
 				_optionsScrolling = false;
 				_newgameActive = false;
@@ -502,30 +631,30 @@ void Menu::drawMenu() {
 			drawNebula();
 			_newGfx->drawMasked(centerPic(_newGfx), _oBannerY);
 
-			_modePuzzleGfx->drawMasked(kNewGameX, kModePuzzleY);
-			_modePuzzleGfx->drawMasked(kNewGameX, kModeActionY);
+			_modePuzzleGfx->drawMasked(_newGameX, _modePuzzleY);
+			_modePuzzleGfx->drawMasked(_newGameX, _modeActionY);
 
-			g_hdb->_gfx->setCursor(kNewGameX2, kModePuzzleY - 10);
+			g_hdb->_gfx->setCursor(_newGameX2, _modePuzzleY - 10);
 			g_hdb->_gfx->drawText("PUZZLE MODE");
-			g_hdb->_gfx->setCursor(kNewGameX2, kModePuzzleY + 10);
+			g_hdb->_gfx->setCursor(_newGameX2, _modePuzzleY + 10);
 			g_hdb->_gfx->drawText("In this mode, the focus");
-			g_hdb->_gfx->setCursor(kNewGameX2, kModePuzzleY + 22);
+			g_hdb->_gfx->setCursor(_newGameX2, _modePuzzleY + 22);
 			g_hdb->_gfx->drawText("is on solving puzzles and");
-			g_hdb->_gfx->setCursor(kNewGameX2, kModePuzzleY + 34);
+			g_hdb->_gfx->setCursor(_newGameX2, _modePuzzleY + 34);
 			g_hdb->_gfx->drawText("avoiding enemies.");
 
-			g_hdb->_gfx->setCursor(kNewGameX2, kModeActionY - 10);
+			g_hdb->_gfx->setCursor(_newGameX2, _modeActionY - 10);
 			g_hdb->_gfx->drawText("ACTION MODE");
-			g_hdb->_gfx->setCursor(kNewGameX2, kModeActionY + 10);
+			g_hdb->_gfx->setCursor(_newGameX2, _modeActionY + 10);
 			g_hdb->_gfx->drawText("In this mode, the focus");
-			g_hdb->_gfx->setCursor(kNewGameX2, kModeActionY + 22);
+			g_hdb->_gfx->setCursor(_newGameX2, _modeActionY + 22);
 			g_hdb->_gfx->drawText("is on solving puzzles and");
-			g_hdb->_gfx->setCursor(kNewGameX2, kModeActionY + 34);
+			g_hdb->_gfx->setCursor(_newGameX2, _modeActionY + 34);
 			g_hdb->_gfx->drawText("attacking enemies!");
 
 			// title logo
-			_titleLogo->drawMasked(centerPic(_titleLogo), _rocketY + kMTitleY);
-			_menuBackoutGfx->drawMasked(kBackoutX, g_hdb->_menu->_backoutY);
+			_titleLogo->drawMasked(centerPic(_titleLogo), _rocketY + _mTitleY);
+			_menuBackoutGfx->drawMasked(_backoutX, g_hdb->_menu->_backoutY);
 		}
 	} else if (_optionsActive) {
 		//-------------------------------------------------------------------
@@ -541,9 +670,9 @@ void Menu::drawMenu() {
 			_rocketX += -_optionsXV;
 			_oBannerY += _optionsXV / 3;
 			_optionsXV -= 3;
-			if (_optionsScrollX < kMenuX) {
-				_optionsScrollX = kMenuX;
-				_rocketX = kMRocketX;
+			if (_optionsScrollX < _menuX) {
+				_optionsScrollX = _menuX;
+				_rocketX = _mRocketX;
 				_oBannerY = -48;
 				_optionsScrolling = false;
 				_optionsActive = false;
@@ -559,27 +688,27 @@ void Menu::drawMenu() {
 			drawNebula();
 			_optionsGfx->drawMasked(centerPic(_optionsGfx), _oBannerY);
 
-			g_hdb->_gfx->setCursor(kOptionsX + kOptionSPC, kOptionsY);
+			g_hdb->_gfx->setCursor(_optionsX + kOptionSPC, _optionsY);
 			if (!g_hdb->_sound->getMusicVolume())
 				g_hdb->_gfx->drawText("Music OFF");
 			else
 				g_hdb->_gfx->drawText("Music Volume");
 
-			drawSlider(kOptionsX, kOptionsY + 20, g_hdb->_sound->getMusicVolume());
+			drawSlider(_optionsX, _optionsY + 20, g_hdb->_sound->getMusicVolume());
 
-			g_hdb->_gfx->setCursor(kOptionsX + kOptionSPC, kOptionsY + kOptionLineSPC * 2);
+			g_hdb->_gfx->setCursor(_optionsX + kOptionSPC, _optionsY + kOptionLineSPC * 2);
 			if (!g_hdb->_sound->getSFXVolume())
 				g_hdb->_gfx->drawText("Sound Effects OFF");
 			else
 				g_hdb->_gfx->drawText("Sound Effects Volume");
 
-			drawSlider(kOptionsX, kOptionsY + kOptionLineSPC * 2 + 20, g_hdb->_sound->getSFXVolume());
+			drawSlider(_optionsX, _optionsY + kOptionLineSPC * 2 + 20, g_hdb->_sound->getSFXVolume());
 
 			// Voices ON or OFF
-			drawToggle(kOptionsX, kOptionsY + kOptionLineSPC * 4 + 20, g_hdb->_sound->getVoiceStatus());
+			drawToggle(_optionsX, _optionsY + kOptionLineSPC * 4 + 20, g_hdb->_sound->getVoiceStatus());
 
 			if (!g_hdb->isVoiceless()) {
-				g_hdb->_gfx->setCursor(kOptionsX + kOptionSPC + 24, kOptionsY + kOptionLineSPC * 4 + 24);
+				g_hdb->_gfx->setCursor(_optionsX + kOptionSPC + 24, _optionsY + kOptionLineSPC * 4 + 24);
 				if (!g_hdb->_sound->getVoiceStatus())
 					g_hdb->_gfx->drawText("Voice Dialogue OFF");
 				else
@@ -588,11 +717,11 @@ void Menu::drawMenu() {
 
 
 			// title logo
-			_titleLogo->drawMasked(centerPic(_titleLogo), _rocketY + kMTitleY);
-			_menuBackoutGfx->drawMasked(kBackoutX, g_hdb->_menu->_backoutY);
+			_titleLogo->drawMasked(centerPic(_titleLogo), _rocketY + _mTitleY);
+			_menuBackoutGfx->drawMasked(_backoutX, g_hdb->_menu->_backoutY);
 
 			// Ignore Controls Screen Button
-			//_controlButtonGfx->drawMasked(centerPic(_controlButtonGfx), kMControlsY);
+			//_controlButtonGfx->drawMasked(centerPic(_controlButtonGfx), _mControlsY);
 		} else if (_optionsActive == 2) {
 			//
 			// Draw CONTROLS screen
@@ -616,9 +745,9 @@ void Menu::drawMenu() {
 			_rocketX += -_optionsXV;
 			_oBannerY += _optionsXV / 3;
 			_optionsXV -= 3;
-			if (_optionsScrollX < kMenuX) {
-				_optionsScrollX = kMenuX;
-				_rocketX = kMRocketX;
+			if (_optionsScrollX < _menuX) {
+				_optionsScrollX = _menuX;
+				_rocketX = _mRocketX;
 				_oBannerY = -48;
 				_optionsScrolling = false;
 				_gamefilesActive = false;
@@ -631,18 +760,18 @@ void Menu::drawMenu() {
 			static uint32 anim_time = 0;
 
 			drawNebula();
-			_titleLogo->drawMasked(centerPic(_titleLogo), _rocketY + kMTitleY);
+			_titleLogo->drawMasked(centerPic(_titleLogo), _rocketY + _mTitleY);
 			// CHOOSE SLOT screen
 			_modeLoadGfx->drawMasked(centerPic(_modeLoadGfx), _oBannerY);
-			_menuBackoutGfx->drawMasked(kBackoutX, g_hdb->_menu->_backoutY);
+			_menuBackoutGfx->drawMasked(_backoutX, g_hdb->_menu->_backoutY);
 
 			if (_saveGames[kAutoSaveSlot].seconds)
-				_vortexian[anim]->drawMasked(kVortSaveX, kVortSaveY);
+				_vortexian[anim]->drawMasked(_vortSaveX, _vortSaveY);
 
 			if (g_hdb->isPPC()) {
-				g_hdb->_gfx->setCursor(kVortSaveTextX, kVortSaveY);
+				g_hdb->_gfx->setCursor(_vortSaveTextX, _vortSaveY);
 				g_hdb->_gfx->drawText("Last Vortexian");
-				g_hdb->_gfx->setCursor(kVortSaveTextX, kVortSaveY + 12);
+				g_hdb->_gfx->setCursor(_vortSaveTextX, _vortSaveY + 12);
 				g_hdb->_gfx->drawText("Saved Game");
 			}
 
@@ -656,14 +785,14 @@ void Menu::drawMenu() {
 			for (int i = 0; i < kNumSaveSlots; i++) {
 				int seconds = _saveGames[i].seconds;
 
-				_slotGfx->drawMasked(kSaveSlotX - 8, i * 32 + (kSaveSlotY - 4));
+				_slotGfx->drawMasked(_saveSlotX - 8, i * 32 + (_saveSlotY - 4));
 				if (seconds || _saveGames[i].mapName[0]) {
 
 					g_hdb->_gfx->setTextEdges(0, g_hdb->_screenWidth + 60, 0, g_hdb->_screenHeight);
-					g_hdb->_gfx->setCursor(kSaveSlotX, i * 32 + kSaveSlotY);
+					g_hdb->_gfx->setCursor(_saveSlotX, i * 32 + _saveSlotY);
 					g_hdb->_gfx->drawText(_saveGames[i].mapName);
 
-					g_hdb->_gfx->setCursor(kSaveSlotX + 180, i * 32 + kSaveSlotY);
+					g_hdb->_gfx->setCursor(_saveSlotX + 180, i * 32 + _saveSlotY);
 					char buff[16];
 					sprintf(buff, "%02d:%02d", seconds / 3600, (seconds / 60) % 60);
 					g_hdb->_gfx->drawText(buff);
@@ -678,28 +807,28 @@ void Menu::drawMenu() {
 		drawNebula();
 		drawWarpScreen();
 		// title logo
-		_titleLogo->drawMasked(centerPic(_titleLogo), _rocketY + kMTitleY);
-		_menuBackoutGfx->drawMasked(kWarpBackoutX, g_hdb->_menu->_warpBackoutY);
+		_titleLogo->drawMasked(centerPic(_titleLogo), _rocketY + _mTitleY);
+		_menuBackoutGfx->drawMasked(_warpBackoutX, g_hdb->_menu->_warpBackoutY);
 
 		char string[32];
 		for (int i = 0; i < 10; i++) {
 			sprintf(string, "Map %2d", i);
-			g_hdb->_gfx->setCursor(kWarpX + 4, i * 16 + kWarpY);
+			g_hdb->_gfx->setCursor(_warpX + 4, i * 16 + _warpY);
 			g_hdb->_gfx->drawText(string);
 		}
 		for (int i = 0; i < 10; i++) {
 			sprintf(string, "Map %d", i + 10);
-			g_hdb->_gfx->setCursor(kWarpX + 80, i * 16 + kWarpY);
+			g_hdb->_gfx->setCursor(_warpX + 80, i * 16 + _warpY);
 			g_hdb->_gfx->drawText(string);
 		}
 		for (int i = 0; i < 10; i++) {
 			sprintf(string, "Map %d", i + 20);
-			g_hdb->_gfx->setCursor(kWarpX + 160, i * 16 + kWarpY);
+			g_hdb->_gfx->setCursor(_warpX + 160, i * 16 + _warpY);
 			g_hdb->_gfx->drawText(string);
 		}
 
 		if (_warpActive > 1) {
-			g_hdb->_gfx->setCursor(kWarpX + 60, kWarpY + 164);
+			g_hdb->_gfx->setCursor(_warpX + 60, _warpY + 164);
 			sprintf(string, "Warping to MAP%d", _warpActive - 2);
 			g_hdb->_gfx->centerPrint(string);
 		}
@@ -713,12 +842,12 @@ void Menu::drawMenu() {
 		if (_quitActive == 3 || !g_hdb->isDemo()) {
 			if (!_quitScreen)
 				_quitScreen = g_hdb->_gfx->loadPic(PIC_QUITSCREEN);
-			_quitScreen->drawMasked(kQuitX, kQuitY);
+			_quitScreen->drawMasked(_quitX, _quitY);
 		} else if (_quitActive == 2) { // XXXX
-			_screenshots1gfx->drawMasked(kQuitX, kQuitY);
-			_screenshots2gfx->drawMasked(kQuitX, g_hdb->_screenHeight - _screenshots2gfx->_height);
+			_screenshots1gfx->drawMasked(_quitX, _quitY);
+			_screenshots2gfx->drawMasked(_quitX, g_hdb->_screenHeight - _screenshots2gfx->_height);
 		} else if (_quitActive == 1) {
-			_screenshots1agfx->drawMasked(kQuitX, kQuitY);
+			_screenshots1agfx->drawMasked(_quitX, _quitY);
 		}
 	}
 }
@@ -919,7 +1048,7 @@ void Menu::drawTitle() {
 	case 2:
 		// draw entire screen & ooh ooh
 		_titleScreen->draw(0, 0);
-		_oohOohGfx->draw(kOohOhhX, kOohOhhY);
+		_oohOohGfx->draw(_oohOhhX, _oohOhhY);
 		break;
 
 	case 4: // fadeout monkeystone logo
@@ -949,25 +1078,25 @@ void Menu::drawTitle() {
 		}
 
 		// draw rocket
-		_rocketMain->drawMasked(kMRocketX, _rocketY);
-		_rocketSecond->drawMasked(kMRocketX + 40, _rocketY + kMRocketYBottom);
+		_rocketMain->drawMasked(_mRocketX, _rocketY);
+		_rocketSecond->drawMasked(_mRocketX + 40, _rocketY + _mRocketYBottom);
 
 		// exhaust
 		if (_rocketEx < 5) {
-			_rocketEx1->drawMasked(kMRocketX + kMRocketEXHX, _rocketY + kMRocketYBottom);
-			_rocketEx2->drawMasked(kMRocketX + kMRocketEXHX2, _rocketY + kMRocketYBottom);
+			_rocketEx1->drawMasked(_mRocketX + _mRocketEXHX, _rocketY + _mRocketYBottom);
+			_rocketEx2->drawMasked(_mRocketX + _mRocketEXHX2, _rocketY + _mRocketYBottom);
 		} else if (_rocketEx >= 5 && _rocketEx < 10) {
-			_rocketEx2->drawMasked(kMRocketX + kMRocketEXHX, _rocketY + kMRocketYBottom);
-			_rocketEx1->drawMasked(kMRocketX + kMRocketEXHX2, _rocketY + kMRocketYBottom);
+			_rocketEx2->drawMasked(_mRocketX + _mRocketEXHX, _rocketY + _mRocketYBottom);
+			_rocketEx1->drawMasked(_mRocketX + _mRocketEXHX2, _rocketY + _mRocketYBottom);
 		} else {
 			_rocketEx = 0;
-			_rocketEx1->drawMasked(kMRocketX + kMRocketEXHX, _rocketY + kMRocketYBottom);
-			_rocketEx2->drawMasked(kMRocketX + kMRocketEXHX2, _rocketY + kMRocketYBottom);
+			_rocketEx1->drawMasked(_mRocketX + _mRocketEXHX, _rocketY + _mRocketYBottom);
+			_rocketEx2->drawMasked(_mRocketX + _mRocketEXHX2, _rocketY + _mRocketYBottom);
 		}
 		_rocketEx++;
 
 		// title logo
-		_titleLogo->drawMasked(centerPic(_titleLogo), _rocketY + kMTitleY);
+		_titleLogo->drawMasked(centerPic(_titleLogo), _rocketY + _mTitleY);
 
 		break;
 	}
@@ -1058,8 +1187,8 @@ void Menu::drawTitle() {
 		_titleDelay = 1;
 
 		_rocketY += _rocketYVel;
-		if (_rocketY < kMRocketY) {
-			_rocketY = kMRocketY;
+		if (_rocketY < _mRocketY) {
+			_rocketY = _mRocketY;
 			_titleCycle = 12;
 			_titleDelay = 1;
 		}
@@ -1107,30 +1236,30 @@ void Menu::processInput(int x, int y) {
 	if (_menuActive) {
 		int	resume = getMenuKey();
 		// quit game?
-		if (x >= kMenuX && x < kMenuX + kMenuItemWidth &&
-			y >= kMenuY + kMQuitY && y < kMenuY + kMQuitY + kMenuItemHeight) {
+		if (x >= _menuX && x < _menuX + _menuItemWidth &&
+			y >= _menuY + _mQuitY && y < _menuY + _mQuitY + _menuItemHeight) {
 			g_hdb->_sound->playSound(SND_BYE);
 			_quitTimer = g_hdb->getTimeSlice() + 1000;
 			_quitActive = 1;
 			_menuActive = false;
 			return;
-		} else if (x >= kMenuX && x < kMenuX + kMenuItemWidth &&
-			y >= kMenuY && y < kMenuY + kMenuItemHeight) {
+		} else if (x >= _menuX && x < _menuX + _menuItemWidth &&
+			y >= _menuY && y < _menuY + _menuItemHeight) {
 			// new game?
 			_optionsScrolling = true;
 			_optionsXV = 5;
 			g_hdb->_sound->playSound(SND_MENU_ACCEPT);
 			g_hdb->_sound->freeSound(SND_HDB);
 			_nextScreen = 2;
-		} else if (x >= kMenuX && x < kMenuX + kMenuItemWidth &&
-			y >= kMenuY + kMLoadY && y < kMenuY + kMLoadY + kMenuItemHeight) {
+		} else if (x >= _menuX && x < _menuX + _menuItemWidth &&
+			y >= _menuY + _mLoadY && y < _menuY + _mLoadY + _menuItemHeight) {
 			// game files?
 				_optionsScrolling = true;
 				_optionsXV = 5;
 				g_hdb->_sound->playSound(SND_MENU_ACCEPT);
 				_nextScreen = 1;
-		} else if (x >= kMenuX && x < kMenuX + kMenuItemWidth &&
-			y >= kMenuY + kMOptionsY && y < kMenuY + kMOptionsY + kMenuItemHeight) {
+		} else if (x >= _menuX && x < _menuX + _menuItemWidth &&
+			y >= _menuY + _mOptionsY && y < _menuY + _mOptionsY + _menuItemHeight) {
 			// options?
 			SoundType temp;
 			temp = g_hdb->_sound->whatSongIsPlaying();
@@ -1140,8 +1269,8 @@ void Menu::processInput(int x, int y) {
 			_optionsXV = 5;
 			_nextScreen = 0;
 			g_hdb->_sound->playSound(SND_MENU_ACCEPT);
-		} else if (((x >= kMenuX && x < kMenuX + kMenuItemWidth &&
-			y >= kMenuY + kMResumeY && y < kMenuY + kMResumeY + kMenuItemHeight) || resume) &&
+		} else if (((x >= _menuX && x < _menuX + _menuItemWidth &&
+			y >= _menuY + _mResumeY && y < _menuY + _mResumeY + _menuItemHeight) || resume) &&
 			(true == g_hdb->_map->isLoaded() || _saveGames[5].seconds)) {
 			// resume game? ( must be playing already or have an autosave )
 			g_hdb->_sound->playSound(SND_POP);
@@ -1196,7 +1325,7 @@ void Menu::processInput(int x, int y) {
 		if (!g_hdb->getCheatingOn())
 			open = (x >= _nebulaX && x < _nebulaX + 16 && y >= _nebulaY && y < _nebulaY + 16);
 		else
-			open = (y > g_hdb->_menu->_menuExitY && x < kMenuExitXLeft);
+			open = (y > g_hdb->_menu->_menuExitY && x < _menuExitXLeft);
 
 		if (open) {
 
@@ -1212,20 +1341,20 @@ void Menu::processInput(int x, int y) {
 		//-------------------------------------------------------------------
 		int	xit = getMenuKey();
 
-		if (y >= g_hdb->_menu->_menuExitY || y < kMenuExitYTop || xit) {
+		if (y >= g_hdb->_menu->_menuExitY || y < _menuExitYTop || xit) {
 			_optionsScrolling = true;
 			_optionsXV = -5;
 			g_hdb->_sound->playSound(SND_MENU_BACKOUT);
 		}
 
 		// PUZZLE MODE area
-		if (y >= kModePuzzleY - 10 && y <= kModeActionY - 10) {
+		if (y >= _modePuzzleY - 10 && y <= _modeActionY - 10) {
 			g_hdb->setActionMode(0);
 			g_hdb->_sound->playSound(SND_MENU_ACCEPT);
 			_newgameActive = false;
 			g_hdb->changeGameState();
 			// that's it!  the Game Loop takes over from here...
-		} else if (y >= kModeActionY - 10 && y <= g_hdb->_menu->_menuExitY) {
+		} else if (y >= _modeActionY - 10 && y <= g_hdb->_menu->_menuExitY) {
 			// ACTION MODE area
 			g_hdb->setActionMode(1);
 			g_hdb->_sound->playSound(SND_MENU_ACCEPT);
@@ -1248,32 +1377,32 @@ void Menu::processInput(int x, int y) {
 
 		int	offset;
 		// Slider 1
-		if (x >= 0 && x <= kOptionsX + 200 &&
-			y >= kOptionsY + 20 && y <= kOptionsY + 36) {
+		if (x >= 0 && x <= _optionsX + 200 &&
+			y >= _optionsY + 20 && y <= _optionsY + 36) {
 			int oldVol = g_hdb->_sound->getMusicVolume();
-			if (x < kOptionsX) {
+			if (x < _optionsX) {
 				if (oldVol) {
 					g_hdb->_sound->stopMusic();
 					g_hdb->_sound->setMusicVolume(0);
 					g_hdb->_sound->playSound(SND_GUI_INPUT);
 				}
 			} else {
-				offset = ((x - kOptionsX) * 256) / 200;
+				offset = ((x - _optionsX) * 256) / 200;
 				g_hdb->_sound->setMusicVolume(offset);
 				if (!oldVol)
 					g_hdb->_sound->startMusic(_resumeSong);
 			}
-		} else if (x >= 0 && x <= kOptionsX + 200 &&
-			y >= kOptionsY + kOptionLineSPC * 2 + 20 && y <= kOptionsY + kOptionLineSPC * 2 + 36) {
+		} else if (x >= 0 && x <= _optionsX + 200 &&
+			y >= _optionsY + kOptionLineSPC * 2 + 20 && y <= _optionsY + kOptionLineSPC * 2 + 36) {
 			// Slider 2
-			if (x >= kOptionsX)
-				offset = ((x - kOptionsX) * 256) / 200;
+			if (x >= _optionsX)
+				offset = ((x - _optionsX) * 256) / 200;
 			else
 				offset = 0;
 			g_hdb->_sound->setSFXVolume(offset);
 			g_hdb->_sound->playSound(SND_MENU_SLIDER);
-		} else if (x >= kOptionsX && x <= kOptionsX + 200 &&
-			y >= kOptionsY + kOptionLineSPC * 4 + 24 && y <= kOptionsY + kOptionLineSPC * 4 + 40) {
+		} else if (x >= _optionsX && x <= _optionsX + 200 &&
+			y >= _optionsY + kOptionLineSPC * 4 + 24 && y <= _optionsY + kOptionLineSPC * 4 + 40) {
 			// Voices ON/OFF
 			if (!g_hdb->isVoiceless()) {
 				int value = g_hdb->_sound->getVoiceStatus();
@@ -1281,12 +1410,12 @@ void Menu::processInput(int x, int y) {
 				g_hdb->_sound->setVoiceStatus(value);
 				g_hdb->_sound->playSound(SND_GUI_INPUT);
 			}
-		} else if (y >= g_hdb->_menu->_menuExitY || y < kMenuExitYTop || xit) {
+		} else if (y >= g_hdb->_menu->_menuExitY || y < _menuExitYTop || xit) {
 			g_hdb->_sound->playSound(SND_MENU_BACKOUT);
 			_optionsScrolling = true;
 			_optionsXV = -5;
 		} else if (x >= (g_hdb->_screenWidth / 2 - _controlButtonGfx->_width / 2) && x < (g_hdb->_screenWidth / 2 + _controlButtonGfx->_width / 2) &&
-			y >= kMControlsY && y < kMControlsY + _controlButtonGfx->_height) {
+			y >= _mControlsY && y < _mControlsY + _controlButtonGfx->_height) {
 			// CONTROLS BUTTON!
 
 			// Ignore Controls Button
@@ -1300,7 +1429,7 @@ void Menu::processInput(int x, int y) {
 		//-------------------------------------------------------------------
 		int	xit = getMenuKey();
 
-		if (y >= g_hdb->_menu->_menuExitY + 15 || y < kMenuExitYTop || xit) {
+		if (y >= g_hdb->_menu->_menuExitY + 15 || y < _menuExitYTop || xit) {
 			_optionsScrolling = true;
 			_optionsXV = -5;
 			g_hdb->_sound->playSound(SND_MENU_BACKOUT);
@@ -1310,7 +1439,7 @@ void Menu::processInput(int x, int y) {
 		if (g_hdb->isPPC()) {
 			// 5 Slots screen
 			// Vortexian autosave LOAD?
-			if (y > kVortSaveY && (y < kVortSaveY + 32) && (x >= kVortSaveX) && (x < kVortSaveX + 96) && _saveGames[kAutoSaveSlot].seconds) {
+			if (y > _vortSaveY && (y < _vortSaveY + 32) && (x >= _vortSaveX) && (x < _vortSaveX + 96) && _saveGames[kAutoSaveSlot].seconds) {
 				g_hdb->_sound->playSound(SND_VORTEX_SAVE);
 				if (g_hdb->loadGameState(kAutoSaveSlot).getCode() == Common::kNoError) {
 					_gamefilesActive = false;
@@ -1324,7 +1453,7 @@ void Menu::processInput(int x, int y) {
 
 		int i = 0;
 		for (; i < kNumSaveSlots; i++)
-			if (y >= (i * 32 + kSaveSlotY - 4) && y <= (i * 32 + kSaveSlotY + 24))
+			if (y >= (i * 32 + _saveSlotY - 4) && y <= (i * 32 + _saveSlotY + 24))
 				break;
 		if (i >= kNumSaveSlots)
 			return;
@@ -1357,23 +1486,23 @@ void Menu::processInput(int x, int y) {
 		//-------------------------------------------------------------------
 		int	xit = getMenuKey();
 
-		if ((y >= g_hdb->_menu->_menuExitY && x < kMenuExitXLeft) || xit) {
+		if ((y >= g_hdb->_menu->_menuExitY && x < _menuExitXLeft) || xit) {
 			_menuActive = true;
 			_warpActive = false;
 			g_hdb->_sound->playSound(SND_MENU_BACKOUT);
 			_clickDelay = 10;
-		} else if (y >= kWarpY && y < kWarpY + 160) {
+		} else if (y >= _warpY && y < _warpY + 160) {
 			int map;
 
-			if (x > kWarpX + 160)
+			if (x > _warpX + 160)
 				map = 20;
 			else
-				if (x > kWarpX + 80)
+				if (x > _warpX + 80)
 					map = 10;
 				else
 					map = 0;
 
-			map += (y - kWarpY) / 16;
+			map += (y - _warpY) / 16;
 
 			_warpActive = map + 2;
 			g_hdb->paint();
@@ -1402,7 +1531,7 @@ void Menu::processInput(int x, int y) {
 		int	xit = getMenuKey();
 
 		if (!g_hdb->isDemo()) {
-			if ((x >= kQuitNoX1 && x <= kQuitNoX2 && y > kQuitNoY1 && y < kQuitNoY2 && _quitTimer < g_hdb->getTimeSlice()) || xit) {
+			if ((x >= _quitNoX1 && x <= _quitNoX2 && y > _quitNoY1 && y < _quitNoY2 && _quitTimer < g_hdb->getTimeSlice()) || xit) {
 				g_hdb->_sound->playSound(SND_MENU_BACKOUT);
 				delete _quitScreen;
 				_quitScreen = NULL;
@@ -1410,7 +1539,7 @@ void Menu::processInput(int x, int y) {
 				_menuActive = true;
 				_quitActive = 0;
 			} else if (_quitTimer < g_hdb->getTimeSlice()) {
-				if (x >= kQuitYesX1 && x <= kQuitYesX2 && y > kQuitYesY1 && y < kQuitYesY2) {
+				if (x >= _quitYesX1 && x <= _quitYesX2 && y > _quitYesY1 && y < _quitYesY2) {
 					writeConfig();
 					g_hdb->quitGame();
 				}
@@ -1420,7 +1549,7 @@ void Menu::processInput(int x, int y) {
 				_quitActive++;
 				_quitTimer = g_hdb->getTimeSlice() + 1000;
 			} else {
-				if (_quitActive == 3 && (x >= kQuitNoX1 && x <= kQuitNoX2 && y > kQuitNoY1 && y < kQuitNoY2 && _quitTimer < g_hdb->getTimeSlice())) {
+				if (_quitActive == 3 && (x >= _quitNoX1 && x <= _quitNoX2 && y > _quitNoY1 && y < _quitNoY2 && _quitTimer < g_hdb->getTimeSlice())) {
 					g_hdb->_sound->playSound(SND_MENU_BACKOUT);
 					delete _quitScreen;
 					_quitScreen = NULL;
@@ -1485,33 +1614,33 @@ void Menu::drawRocketAndSelections() {
 	}
 
 	// menu items
-	_newGfx->drawMasked(_optionsScrollX, kMenuY);
-	_modeLoadGfx->drawMasked(_optionsScrollX, kMenuY + kMLoadY);
-	_optionsGfx->drawMasked(_optionsScrollX, kMenuY + kMOptionsY);
-	_quitGfx->drawMasked(_optionsScrollX, kMenuY + kMQuitY);
+	_newGfx->drawMasked(_optionsScrollX, _menuY);
+	_modeLoadGfx->drawMasked(_optionsScrollX, _menuY + _mLoadY);
+	_optionsGfx->drawMasked(_optionsScrollX, _menuY + _mOptionsY);
+	_quitGfx->drawMasked(_optionsScrollX, _menuY + _mQuitY);
 	if (g_hdb->_map->isLoaded() || _saveGames[5].seconds)
-		_resumeGfx->drawMasked(_optionsScrollX, kMenuY + kMResumeY);
+		_resumeGfx->drawMasked(_optionsScrollX, _menuY + _mResumeY);
 
 	// draw rocket
 	_rocketMain->drawMasked(_rocketX, _rocketY);
-	_rocketSecond->drawMasked(_rocketX + 40, _rocketY + kMRocketYBottom);
+	_rocketSecond->drawMasked(_rocketX + 40, _rocketY + _mRocketYBottom);
 
 	// exhaust
 	if (_rocketEx < 5) {
-		_rocketEx1->drawMasked(kMRocketX + kMRocketEXHX, _rocketY + kMRocketYBottom);
-		_rocketEx2->drawMasked(kMRocketX + kMRocketEXHX2, _rocketY + kMRocketYBottom);
+		_rocketEx1->drawMasked(_mRocketX + _mRocketEXHX, _rocketY + _mRocketYBottom);
+		_rocketEx2->drawMasked(_mRocketX + _mRocketEXHX2, _rocketY + _mRocketYBottom);
 	} else if (_rocketEx >= 5 && _rocketEx < 10) {
-		_rocketEx2->drawMasked(kMRocketX + kMRocketEXHX, _rocketY + kMRocketYBottom);
-		_rocketEx1->drawMasked(kMRocketX + kMRocketEXHX2, _rocketY + kMRocketYBottom);
+		_rocketEx2->drawMasked(_mRocketX + _mRocketEXHX, _rocketY + _mRocketYBottom);
+		_rocketEx1->drawMasked(_mRocketX + _mRocketEXHX2, _rocketY + _mRocketYBottom);
 	} else {
 		_rocketEx = 0;
-		_rocketEx1->drawMasked(kMRocketX + kMRocketEXHX, _rocketY + kMRocketYBottom);
-		_rocketEx2->drawMasked(kMRocketX + kMRocketEXHX2, _rocketY + kMRocketYBottom);
+		_rocketEx1->drawMasked(_mRocketX + _mRocketEXHX, _rocketY + _mRocketYBottom);
+		_rocketEx2->drawMasked(_mRocketX + _mRocketEXHX2, _rocketY + _mRocketYBottom);
 	}
 	_rocketEx++;
 
 	// title logo
-	_titleLogo->drawMasked(centerPic(_titleLogo), _rocketY + kMTitleY);
+	_titleLogo->drawMasked(centerPic(_titleLogo), _rocketY + _mTitleY);
 }
 
 void Menu::drawSlider(int x, int y, int offset) {
@@ -1550,7 +1679,7 @@ void Menu::drawToggle(int x, int y, bool flag) {
 
 void Menu::drawWarpScreen() {
 	if (g_hdb->isPPC()) {
-		g_hdb->_gfx->setCursor(0, kWarpY + 176);
+		g_hdb->_gfx->setCursor(0, _warpY + 176);
 		g_hdb->_gfx->centerPrint("MONKEYSTONE WARP ZONE!");
 	} else
 		_warpPlaque->drawMasked(centerPic(_warpPlaque), 64);

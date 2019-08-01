@@ -59,89 +59,12 @@ enum {
 	kStarBlueX = 70,
 	kStarBlueY = 180,
 
-	kMenuX = 48 * 8,
-	kMenuY = 80,
-
-	kMenuItemWidth = 88,
-	kMenuItemHeight = 40,
-
-	kMResumeY =	48 * 4,
-	kMQuitY = 48 * 3,
-	kMOptionsY = 48 * 2,
-	kMLoadY = 48 * 1,
-	kMControlsY = 270,
-
-	kMenuExitXLeft = 60,
-	kMenuExitYTop = 48,
-	kMenuVortSaveY = 220,
-	kMenuVortSaveX = 76,
-
-	kMRocketX = 18 * 8,
-	kMRocketY = 48,
-	kMRocketYBottom = 28 * 8,
-	kMRocketEXHX = 6 * 8 - 4,
-	kMRocketEXHX2 = 11 * 8 - 4,
-	kMTitleY = 34 * 8,
-	kOohOhhX = 256,
-	kOohOhhY = 224,
-
-	kNewGameX = 220,
-	kNewGameX2 = kNewGameX + 50,
-
-	kModePuzzleY = 130,
-	kModeActionY = 220,
-
-	kOptionsX = 8 * 26,
-	kOptionsY = 8 * 10,
-
-	kVortSaveX = 200 - 44,
-	kVortSaveTextX = kVortSaveX + 40,
-	kVortSaveY = 72,
-	kSaveSlotX = 200,
-	kSaveSlotY = 80,
-
-	kQuitX = 0,
-	kQuitY = 0,
-	kQuitYesX1 = 30 * 8,
-	kQuitYesX2 = 38 * 8 + 4,
-	kQuitYesY1 = 50 * 8,
-	kQuitYesY2 = 53 * 8 + 4,
-	kQuitNoX1 = 41 * 8,
-	kQuitNoX2 = 49 * 8 + 4,
-	kQuitNoY1 = 50 * 8,
-	kQuitNoY2 = 53 * 8 + 4,
-
-	kControlX = 60,
-	kControlY = 40,
-	kControlUpX = 276 + kControlX,
-	kControlUpY = 114 + kControlY,
-	kControlDownX = 276 + kControlX,
-	kControlDownY = 129 + kControlY,
-	kControlLeftX = 396 + kControlX,
-	kControlLeftY = 114 + kControlY,
-	kControlRightX = 396 + kControlX,
-	kControlRightY = 129 + kControlY,
-	kControlUseX = 330 + kControlX,
-	kControlUseY = 209 + kControlY,
-	kControlWidth = 32,
-	kControlHeight = 16,
-
-	kAssignX = kControlX + 20 * 8,
-	kAssignY = kControlY + 150,
-
-	kBackoutX = 0,
-
-	kWarpBackoutX = kBackoutX,
-
-	kWarpX = 214,
-	kWarpY = 160,
+	kOptionSPC = 16,
+	kOptionLineSPC = 32,
 
 	kScreenFade = 512,
 	kNebulaCount = 7,
 	kMaxStars = 10,
-
-	kOptionSPC = 16,
-	kOptionLineSPC = 32
 };
 
 struct Star {
@@ -190,9 +113,70 @@ public:
 	}
 
 	// Platform-specific Constants
+	int _menuX, _menuY;
+	int _menuItemWidth;
+	int _menuItemHeight;
+	int _mResumeY;
+	int _mQuitY;
+	int _mOptionsY;
+	int _mLoadY;
+	int _mControlsY;
+	int _menuExitXLeft;
 	int _menuExitY;
+	int _menuExitYTop;
+	int _menuVortSaveY;
+	int _menuVortSaveX;
+	int _mRocketX;
+	int _mRocketY;
+	int _mRocketYBottom;
+	int _mRocketEXHX;
+	int _mRocketEXHX2;
+	int _mTitleY;
+	int _oohOhhX;
+	int _oohOhhY;
+	int _newGameX;
+	int _newGameX2;
+	int _modePuzzleY;
+	int _modeActionY;
+	int _optionsX;
+	int _optionsY;
+	int _vortSaveX;
+	int _vortSaveTextX;
+	int _vortSaveY;
+	int _saveSlotX;
+	int _saveSlotY;
+	int _quitX;
+	int _quitY;
+	int _quitYesX1;
+	int _quitYesX2;
+	int _quitYesY1;
+	int _quitYesY2;
+	int _quitNoX1;
+	int _quitNoX2;
+	int _quitNoY1;
+	int _quitNoY2;
+	int _controlX;
+	int _controlY;
+	int _controlUpX;
+	int _controlUpY;
+	int _controlDownX;
+	int _controlDownY;
+	int _controlLeftX;
+	int _controlLeftY;
+	int _controlRightX;
+	int _controlRightY;
+	int _controlUseX;
+	int _controlUseY;
+	int _controlWidth;
+	int _controlHeight;
+	int _assignX;
+	int _assignY;
+	int _backoutX;
 	int _backoutY;
+	int _warpBackoutX;
 	int _warpBackoutY;
+	int _warpX;
+	int _warpY;
 
 	Save _saveGames[kNumSaveSlots + 1];
 
