@@ -1015,8 +1015,8 @@ void Gfx::drawBonusStars() {
 
 	for (int i = 0; i < 10; i++) {
 		_starsInfo.gfx[_starsInfo.anim]->drawMasked(
-			(int)(480 / 2 + ((float)_starsInfo.radius / 2)) + (int)((double)_starsInfo.radius * _cosines->at(_starsInfo.starAngle[i]) - w),
-			(480 / 2) + (int)((double)_starsInfo.radius * _sines->at(_starsInfo.starAngle[i]) - h)
+			(int)(g_hdb->_screenDrawWidth / 2 + ((float)_starsInfo.radius / 2)) + (int)((double)_starsInfo.radius * _cosines->at(_starsInfo.starAngle[i]) - w),
+			(g_hdb->_screenDrawHeight / 2) + (int)((double)_starsInfo.radius * _sines->at(_starsInfo.starAngle[i]) - h)
 		);
 
 		int angle = (int)(_starsInfo.starAngle[i] + _starsInfo.angleSpeed);
