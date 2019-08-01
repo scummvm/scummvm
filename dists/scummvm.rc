@@ -11,7 +11,9 @@
 #define IDI_ICON  1001
 #define IDI_COUNT 1002
 #define ID_GDF_XML __GDF_XML
+#define IDR_RT_MANIFEST1 1
 
+IDR_RT_MANIFEST1       RT_MANIFEST DISCARDABLE "dists/win32/scummvm.exe.manifest"
 IDI_ICON               ICON    DISCARDABLE     "icons/scummvm.ico"
 IDI_COUNT              ICON    DISCARDABLE     "icons/count.ico"
 
@@ -31,13 +33,13 @@ fonts.dat              FILE    "dists/engine-data/fonts.dat"
 #endif
 
 #if PLUGIN_ENABLED_STATIC(ACCESS)
-access.dat           FILE    "dists/engine-data/access.dat"
+access.dat             FILE    "dists/engine-data/access.dat"
 #endif
 #if PLUGIN_ENABLED_STATIC(CRYO)
 cryo.dat               FILE    "dists/engine-data/cryo.dat"
 #endif
 #if PLUGIN_ENABLED_STATIC(CRYOMNI3D)
-cryomni3d.dat               FILE    "dists/engine-data/cryomni3d.dat"
+cryomni3d.dat          FILE    "dists/engine-data/cryomni3d.dat"
 #endif
 #if PLUGIN_ENABLED_STATIC(DRASCULA)
 drascula.dat           FILE    "dists/engine-data/drascula.dat"
@@ -82,7 +84,7 @@ toon.dat               FILE    "dists/engine-data/toon.dat"
 wintermute.zip         FILE    "dists/engine-data/wintermute.zip"
 #endif
 #if PLUGIN_ENABLED_STATIC(XEEN)
-xeen.ccs         FILE    "dists/engine-data/xeen.ccs"
+xeen.ccs               FILE    "dists/engine-data/xeen.ccs"
 #endif
 #if PLUGIN_ENABLED_STATIC(AGI)
 pred.dic               FILE    "dists/pred.dic"
