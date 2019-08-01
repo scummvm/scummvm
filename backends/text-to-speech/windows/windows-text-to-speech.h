@@ -71,6 +71,7 @@ private:
 	void createVoice(void *cpVoiceToken);
 	Common::String lcidToLocale(Common::String lcid);
 	SpeechState _speechState;
+	Common::String _lastSaid;
 };
 
 #endif
