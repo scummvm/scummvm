@@ -49,7 +49,7 @@ bool HDBGame::isDemo() const {
 }
 
 bool HDBGame::isPPC() const {
-	return (getPlatform() & Common::kPlatformPocketPC);
+	return (getPlatform() == Common::kPlatformPocketPC);
 }
 
 bool HDBGame::isHandango() const {
