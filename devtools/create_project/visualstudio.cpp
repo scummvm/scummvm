@@ -289,6 +289,7 @@ void VisualStudioProvider::createBuildProp(const BuildSetup &setup, bool isRelea
 		              "\t<Tool\n"
 		              "\t\tName=\"VCLinkerTool\"\n"
 		              "\t\tLinkIncremental=\"1\"\n"
+		              "\t\tGenerateManifest=\"false\"\n"
 		              "\t\tIgnoreDefaultLibraryNames=\"\"\n"
 		              "\t\tSetChecksum=\"true\"\n";
 	} else {
@@ -305,6 +306,7 @@ void VisualStudioProvider::createBuildProp(const BuildSetup &setup, bool isRelea
 		              "\t<Tool\n"
 		              "\t\tName=\"VCLinkerTool\"\n"
 		              "\t\tLinkIncremental=\"2\"\n"
+		              "\t\tGenerateManifest=\"false\"\n"
 		              "\t\tGenerateDebugInformation=\"true\"\n"
 		              "\t\tIgnoreDefaultLibraryNames=\"libcmt.lib\"\n";
 	}
