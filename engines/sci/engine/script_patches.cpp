@@ -2988,8 +2988,44 @@ static const uint16 icemanDestroyerTimer2Patch[] = {
 	PATCH_END
 };
 
+// At the pier in Honolulu, room 23, "climb down" causes ego to bypass boarding
+//  procedure, walk through the air, climb down the hatch, and get stuck in the
+//  submarine without triggering a room change. There is no "climb up" command.
+//
+// Boarding requires asking the officer permission. comeAboardScript gives him
+//  the orders, runs downTheHatchScript, and changes to room 31 when finished.
+//  downTheHatchScript only walks ego to the hatch and runs the climb animation.
+//  "climb down" simply runs downTheHatchScript and nothing else, leaving the
+//  room in a broken state by running this intermediate script out of context.
+//
+// We patch "climb down" to respond with the message for other hatch commands.
+//
+// Applies to: All versions
+// Responsible method: hatch:handleEvent
+// Fixes bug #11039
+static const uint16 icemanClimbDownHatchSignature[] = {
+	0x7a,                               // push2
+	SIG_MAGICDWORD,
+	0x39, 0x17,                         // pushi 17
+	0x39, 0x18,                         // pushi 18
+	0x47, 0xff, 0x00, 0x04,             // calle proc255_0 04 [ "You must follow proper boarding procedure." ]
+	0x32, SIG_UINT16(0x0021),           // jmp 0021 [ end of method ]
+	SIG_ADDTOOFFSET(+22),
+	0x39, SIG_SELECTOR8(setScript),     // pushi setScript
+	0x78,                               // push1
+	0x72, SIG_UINT16(0xfc24),           // lofsa downTheHatchScript
+	SIG_END,
+};
+
+static const uint16 icemanClimbDownHatchPatch[] = {
+	PATCH_ADDTOOFFSET(+34),
+	0x33, 0xdc,                         // jmp dc [ "You must follow proper boarding procedure." ]
+	PATCH_END
+};
+
 //         script, description,                                       signature                                      patch
 static const SciScriptPatcherEntry icemanSignatures[] = {
+	{ true,    23, "climb down hatch",                             1, icemanClimbDownHatchSignature,                 icemanClimbDownHatchPatch },
 	{ true,   314, "destroyer timer (1/2)",                        1, icemanDestroyerTimer1Signature,                icemanDestroyerTimer1Patch },
 	{ true,   391, "destroyer timer (2/2)",                        1, icemanDestroyerTimer2Signature,                icemanDestroyerTimer2Patch },
 	SCI_SIGNATUREENTRY_TERMINATOR
