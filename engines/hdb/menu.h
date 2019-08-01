@@ -64,7 +64,7 @@ enum {
 
 	kScreenFade = 512,
 	kNebulaCount = 7,
-	kMaxStars = 10,
+	kMaxStars = 10
 };
 
 struct Star {
