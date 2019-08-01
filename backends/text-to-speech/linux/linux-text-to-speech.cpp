@@ -147,6 +147,8 @@ bool LinuxTextToSpeechManager::say(Common::String str, Action action, Common::St
 
 	if (isSpeaking() && action == INTERRUPT)
 		stop();
+	if (str.size() != 0)
+		_speechState = SPEAKING;
 	if(spd_say(_connection, SPD_MESSAGE, str.c_str()) == -1) {
 		//restart the connection
 		if (_connection != 0)
@@ -154,24 +156,28 @@ bool LinuxTextToSpeechManager::say(Common::String str, Action action, Common::St
 		init();
 		return true;
 	}
+
 	return false;
 }
 
 bool LinuxTextToSpeechManager::stop() {
 	if (_speechState == READY || _speechState == BROKEN)
 		return true;
+	_speechState = READY;
 	return spd_cancel(_connection) == -1;
 }
 
 bool LinuxTextToSpeechManager::pause() {
 	if (_speechState == READY || _speechState == PAUSED || _speechState == BROKEN)
 		return true;
+	_speechState = PAUSED;
 	return spd_pause(_connection) == -1;
 }
 
 bool LinuxTextToSpeechManager::resume() {
 	if (_speechState == READY || _speechState == SPEAKING || _speechState == BROKEN)
 		return true;
+	_speechState = SPEAKING;
 	return spd_resume(_connection) == -1;
 }
 
