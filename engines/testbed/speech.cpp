@@ -51,6 +51,10 @@ TestExitStatus Speechtests::testMale() {
 	}
 	ttsMan->setVoice(maleVoices[0]);
 	ttsMan->say("Testing text to speech with male voice.");
+	if (!ttsMan->isSpeaking()) {
+		Testsuite::logDetailedPrintf("Male TTS failed\n");
+		return kTestFailed;
+	}
 	while (ttsMan->isSpeaking()) {
 		g_system->delayMillis(1000);
 	}
@@ -85,6 +89,10 @@ TestExitStatus Speechtests::testFemale() {
 	}
 	ttsMan->setVoice(femaleVoices[0]);
 	ttsMan->say("Testing text to speech with female voice.");
+	if (!ttsMan->isSpeaking()) {
+		Testsuite::logDetailedPrintf("Female TTS failed\n");
+		return kTestFailed;
+	}
 	while (ttsMan->isSpeaking()) {
 		g_system->delayMillis(1000);
 	}
@@ -117,6 +125,13 @@ TestExitStatus Speechtests::testStop() {
 	ttsMan->say("Testing text to speech, the speech should stop after approximately a second after it started, so it shouldn't have the time to read this.");
 	g_system->delayMillis(1000);
 	ttsMan->stop();
+	// It is allright if the voice isn't available right away, but a second should be
+	// enough for the TTS to recover and get ready.
+	g_system->delayMillis(1000);
+	if (!ttsMan->isReady()) {
+		Testsuite::logDetailedPrintf("TTS stop failed\n");
+		return kTestFailed;
+	}
 	Common::String prompt = "Did you hear a voice saying: \"Testing text to speech, the speech should stop after approximately a second after it started, so it shouldn't have the time to read this.\" but stopping in the middle?";
 	if (!Testsuite::handleInteractiveInput(prompt, "Yes", "No", kOptionLeft)) {
 		Testsuite::logDetailedPrintf("TTS stop failed\n");
@@ -146,8 +161,20 @@ TestExitStatus Speechtests::testPauseResume() {
 	ttsMan->say("Testing text to speech, the speech should pause after a second and then resume again.");
 	g_system->delayMillis(1000);
 	ttsMan->pause();
+	if (!ttsMan->isPaused()) {
+		Testsuite::logDetailedPrintf("TTS pause failed\n");
+		return kTestFailed;
+	}
 	g_system->delayMillis(2000);
+	if (!ttsMan->isPaused()) {
+		Testsuite::logDetailedPrintf("TTS pause failed\n");
+		return kTestFailed;
+	}
 	ttsMan->resume();
+	if (!ttsMan->isSpeaking()) {
+		Testsuite::logDetailedPrintf("TTS pause failed\n");
+		return kTestFailed;
+	}
 	while (ttsMan->isSpeaking())
 		g_system->delayMillis(1000);
 	Common::String prompt = "Did you hear a voice saying: \"Testing text to speech, the speech should pause after a second and then resume again.\" but with a second long pause in the middle?";
