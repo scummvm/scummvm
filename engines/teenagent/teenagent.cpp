@@ -535,6 +535,9 @@ bool TeenAgentEngine::showMetropolis() {
 }
 
 Common::Error TeenAgentEngine::run() {
+	const Common::FSNode gameDataDir(ConfMan.get("path"));
+	SearchMan.addSubDirectoryMatching(gameDataDir, "music");
+
 	if (!res->loadArchives(_gameDescription))
 		return Common::kUnknownError;
 
