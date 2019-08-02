@@ -30,6 +30,14 @@
 
 namespace Glk {
 
+Pictures::Pictures() : _refCount(0) {
+	Common::File f;
+	if (f.open("apal")) {
+		while (f.pos() < f.size())
+			_adaptivePics.push_back(f.readUint32BE());
+	}
+}
+
 void Pictures::clear() {
 	for (uint idx = 0; idx < _store.size(); ++idx) {
 		if (_store[idx]._picture)
@@ -120,10 +128,12 @@ Picture *Pictures::load(uint32 id) {
 
 	Common::File f;
 	if (f.open(Common::String::format("pic%u.png", id))) {
+		png.setKeepTransparencyPaletted(true);
 		png.loadStream(f);
 		img = png.getSurface();
 		palette = png.getPalette();
 		palCount = png.getPaletteColorCount();
+		transColor = png.getTransparentColor();
 	} else if (f.open(Common::String::format("pic%u.jpg", id))) {
 		jpg.setOutputPixelFormat(g_system->getScreenFormat());
 		jpg.loadStream(f);
@@ -143,6 +153,23 @@ Picture *Pictures::load(uint32 id) {
 		return nullptr;
 	}
 
+	// Also check if it's going to be an adaptive pic
+	bool isAdaptive = false;
+	for (uint idx = 0; idx < _adaptivePics.size() && !isAdaptive; ++idx)
+		isAdaptive = _adaptivePics[idx] == id;
+
+	if (isAdaptive) {
+		// It is, so used previously saved palette
+		assert(!_savedPalette.empty());
+		palette = &_savedPalette[0];
+		palCount = _savedPalette.size() / 3;
+	} else if (palette) {
+		// It's a picture with a valid palette, so save a copy of it for later
+		_savedPalette.resize(palCount * 3);
+		Common::copy(palette, palette + palCount * 3, &_savedPalette[0]);
+	}
+
+	// Create new picture based on the image
 	pic = new Picture(img->w, img->h, g_system->getScreenFormat());
 	pic->_refCount = 1;
     pic->_id = id;
