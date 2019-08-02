@@ -3,7 +3,7 @@
 # These must be incremented for each market upload
 ANDROID_VERSIONCODE = 1000
 
-ANDROID_TARGET_VERSION = 23
+ANDROID_TARGET_VERSION ?= 26
 
 NDK_BUILD = $(ANDROID_NDK)/ndk-build APP_ABI=$(ABI)
 SDK_ANDROID = $(ANDROID_SDK)/tools/android
