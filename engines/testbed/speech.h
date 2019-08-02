@@ -46,6 +46,8 @@ TestExitStatus testStateStacking();
 TestExitStatus testQueueing();
 TestExitStatus testInterrupting();
 TestExitStatus testDroping();
+TestExitStatus testInterruptNoRepeat();
+TestExitStatus testQueueNoRepeat();
 
 
 } // End of namespace Speechtests

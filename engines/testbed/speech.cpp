@@ -438,6 +438,77 @@ TestExitStatus Speechtests::testDroping() {
 	return kTestPassed;
 }
 
+TestExitStatus Speechtests::testInterruptNoRepeat() {
+	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
+	ttsMan->setLanguage("en");
+	ttsMan->setVolume(100);
+	ttsMan->setRate(0);
+	ttsMan->setPitch(0);
+	ttsMan->setVoice(0);
+	Testsuite::clearScreen();
+	Common::String info = "Text to speech inturrept no repeat test. You should expect a voice to start saying:\"This is the first sentence, this should get interrupted\", but the speech gets interrupted and \"This is the second sentence, it should play only once\" is said instead.";
+
+	Common::Point pt(0, 100);
+	Testsuite::writeOnScreen("Testing TTS Interrupt No Repeat", pt);
+
+	if (Testsuite::handleInteractiveInput(info, "OK", "Skip", kOptionRight)) {
+		Testsuite::logPrintf("Info! Skipping test : testInterruptNoRepeat\n");
+		return kTestSkipped;
+	}
+
+	ttsMan->say("This is the first sentence, this should get interrupted");
+	g_system->delayMillis(1000);
+	ttsMan->say("This is the second sentence, it should play only once", Common::TextToSpeechManager::INTERRUPT_NO_REPEAT);
+	g_system->delayMillis(1000);
+	ttsMan->say("This is the second sentence, it should play only once", Common::TextToSpeechManager::INTERRUPT_NO_REPEAT);
+	g_system->delayMillis(1000);
+	ttsMan->say("This is the second sentence, it should play only once", Common::TextToSpeechManager::INTERRUPT_NO_REPEAT);
+	while (ttsMan->isSpeaking())
+		g_system->delayMillis(1000);
+	Common::String prompt = "Did you hear a voice say: \"This is the first sentence, this should get interrupted\", but it got interrupted and \"This is the second sentence, it should play only once.\" got said instead?";
+	if (!Testsuite::handleInteractiveInput(prompt, "Yes", "No", kOptionLeft)) {
+		Testsuite::logDetailedPrintf("TTS interruptNoRepeat failed\n");
+		return kTestFailed;
+	}
+	return kTestPassed;
+}
+
+TestExitStatus Speechtests::testQueueNoRepeat() {
+	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
+	ttsMan->setLanguage("en");
+	ttsMan->setVolume(100);
+	ttsMan->setRate(0);
+	ttsMan->setPitch(0);
+	ttsMan->setVoice(0);
+	Testsuite::clearScreen();
+	Common::String info = "Text to speech queue no repeat test. You should expect a voice to start say:\"This is the first sentence. This is the second sentence\" and nothing else";
+
+	Common::Point pt(0, 100);
+	Testsuite::writeOnScreen("Testing TTS Queue No Repeat", pt);
+
+	if (Testsuite::handleInteractiveInput(info, "OK", "Skip", kOptionRight)) {
+		Testsuite::logPrintf("Info! Skipping test : testQueueNoRepeat\n");
+		return kTestSkipped;
+	}
+
+	ttsMan->say("This is the first sentence.");
+	ttsMan->say("This is the first sentence.", Common::TextToSpeechManager::QUEUE_NO_REPEAT);
+	g_system->delayMillis(1000);
+	ttsMan->say("This is the first sentence.", Common::TextToSpeechManager::QUEUE_NO_REPEAT);
+	ttsMan->say("This is the second sentence.", Common::TextToSpeechManager::QUEUE_NO_REPEAT);
+	ttsMan->say("This is the second sentence.", Common::TextToSpeechManager::QUEUE_NO_REPEAT);
+	g_system->delayMillis(1000);
+	ttsMan->say("This is the second sentence.", Common::TextToSpeechManager::QUEUE_NO_REPEAT);
+	while (ttsMan->isSpeaking())
+		g_system->delayMillis(1000);
+	Common::String prompt = "Did you hear a voice say: \"This is the first sentence. This the second sentence\" and nothing else?";
+	if (!Testsuite::handleInteractiveInput(prompt, "Yes", "No", kOptionLeft)) {
+		Testsuite::logDetailedPrintf("TTS QueueNoRepeat failed\n");
+		return kTestFailed;
+	}
+	return kTestPassed;
+}
+
 SpeechTestSuite::SpeechTestSuite() {
 	_isTsEnabled = true;
 	if (!g_system->getTextToSpeechManager())
@@ -453,6 +524,8 @@ SpeechTestSuite::SpeechTestSuite() {
 	addTest("testQueueing", &Speechtests::testQueueing, true);
 	addTest("testInterrupting", &Speechtests::testInterrupting, true);
 	addTest("testDroping", &Speechtests::testDroping, true);
+	addTest("testInterruptNoRepeat", &Speechtests::testInterruptNoRepeat, true);
+	addTest("testQueueNoRepeat", &Speechtests::testQueueNoRepeat, true);
 }
 
 } // End of namespace Testbed
