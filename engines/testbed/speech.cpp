@@ -85,7 +85,8 @@ TestExitStatus Speechtests::testFemale() {
 
 	Common::Array<int> femaleVoices = ttsMan->getVoiceIndicesByGender(Common::TTSVoice::FEMALE);
 	if (femaleVoices.size() == 0) {
-		Testsuite::displayMessage("No female voice available");
+		Testsuite::logDetailedPrintf("Female TTS failed\n");
+		return kTestFailed;
 	}
 	ttsMan->setVoice(femaleVoices[0]);
 	ttsMan->say("Testing text to speech with female voice.");
@@ -165,7 +166,7 @@ TestExitStatus Speechtests::testPauseResume() {
 		Testsuite::logDetailedPrintf("TTS pause failed\n");
 		return kTestFailed;
 	}
-	g_system->delayMillis(2000);
+	g_system->delayMillis(1000);
 	if (!ttsMan->isPaused()) {
 		Testsuite::logDetailedPrintf("TTS pause failed\n");
 		return kTestFailed;
@@ -384,7 +385,7 @@ TestExitStatus Speechtests::testInterrupting() {
 	ttsMan->setPitch(0);
 	ttsMan->setVoice(0);
 	Testsuite::clearScreen();
-	Common::String info = "Text to speech interrupt test. You should expect a voice to start saying english alphabet and after about a second it should get interrupted and say: \"Speech intprrupted\" instead.";
+	Common::String info = "Text to speech interrupt test. You should expect a voice to start saying english alphabet and after about a second it should get interrupted and say: \"Speech interrupted\" instead.";
 
 	Common::Point pt(0, 100);
 	Testsuite::writeOnScreen("Testing TTS interrupt", pt);
