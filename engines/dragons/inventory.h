@@ -91,7 +91,7 @@ public:
 	void closeInventionBook();
 
 	bool addItem(uint16 iniId);
-	Actor *addItemIfPositionIsEmpty(uint16 iniId, uint16 x, uint16 y);
+	bool addItemIfPositionIsEmpty(uint16 iniId, uint16 x, uint16 y);
 	void replaceItem(uint16 existingIniId, uint16 newIniId);
 	bool clearItem(uint16 iniId);
 

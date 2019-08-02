@@ -504,8 +504,8 @@ void DragonsEngine::gameLoop()
 			}
 			if (_cursor->iniItemInHand == 0) goto LAB_80027b58;
 			//drop item back into inventory
-			Actor *invActor = _inventory->addItemIfPositionIsEmpty(_cursor->iniItemInHand, _cursor->_x, _cursor->_y);
-			if (invActor != NULL) {
+			if (_inventory->addItemIfPositionIsEmpty(_cursor->iniItemInHand, _cursor->_x, _cursor->_y)) {
+				Actor *invActor = _inventory->getInventoryItemActor(_cursor->iniItemInHand);
 				invActor->flags = 0;
 				invActor->priorityLayer = 0;
 				invActor->field_e = 0x100;

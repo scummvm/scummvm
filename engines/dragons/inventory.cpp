@@ -88,8 +88,8 @@ void Inventory::init(ActorManager *actorManager, BackgroundResourceLoader *backg
 	_old_showing_value = 0;
 	_bag = bag;
 
-	for(int i = 0x17; i < 0x29; i++) {
-		actorManager->loadActor(0, i); // TODO need to share resource between inventory item actors.
+	for(int i = 0; i < 0x29; i++) {
+		actorManager->loadActor(0, i + 0x17); // TODO need to share resource between inventory item actors.
 	}
 
 	loadInventoryItemsFromSave();
@@ -362,7 +362,7 @@ void Inventory::replaceItem(uint16 existingIniId, uint16 newIniId) {
 	}
 }
 
-Actor *Inventory::addItemIfPositionIsEmpty(uint16 iniId, uint16 x, uint16 y) {
+bool Inventory::addItemIfPositionIsEmpty(uint16 iniId, uint16 x, uint16 y) {
 	for (int i = 0; i < 0x29; i++) {
 		Actor *actor = _vm->_actorManager->getActor(i + 0x17);
 		if ((((actor->x_pos - 0x10 <= x) &&
@@ -370,10 +370,10 @@ Actor *Inventory::addItemIfPositionIsEmpty(uint16 iniId, uint16 x, uint16 y) {
 			 (actor->y_pos - 0xc <= y)) &&
 			(y < actor->y_pos + 0xc)) {
 			unkArray_uint16[i] = iniId;
-			return actor;
+			return true;
 		}
 	}
-	return NULL;
+	return false;
 }
 
 bool Inventory::clearItem(uint16 iniId) {
