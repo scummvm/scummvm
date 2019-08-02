@@ -22,10 +22,19 @@
 
 #include "common/text-to-speech.h"
 #include "common/system.h"
+#include "common/events.h"
 #include "common/array.h"
 #include "engines/testbed/speech.h"
 
 namespace Testbed {
+
+void Speechtests::waitForSpeechEnd(Common::TextToSpeechManager *ttsMan) {
+	Common::Event event;
+	while (ttsMan->isSpeaking()) {
+		g_system->delayMillis(100);
+		g_system->getEventManager()->pollEvent(event);
+	}
+}
 
 TestExitStatus Speechtests::testMale() {
 	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
@@ -55,9 +64,7 @@ TestExitStatus Speechtests::testMale() {
 		Testsuite::logDetailedPrintf("Male TTS failed\n");
 		return kTestFailed;
 	}
-	while (ttsMan->isSpeaking()) {
-		g_system->delayMillis(1000);
-	}
+	waitForSpeechEnd(ttsMan);
 	Common::String prompt = "Did you hear male voice saying: \"Testing text to speech with male voice.\" ?";
 	if (!Testsuite::handleInteractiveInput(prompt, "Yes", "No", kOptionLeft)) {
 		Testsuite::logDetailedPrintf("Male TTS failed\n");
@@ -94,9 +101,7 @@ TestExitStatus Speechtests::testFemale() {
 		Testsuite::logDetailedPrintf("Female TTS failed\n");
 		return kTestFailed;
 	}
-	while (ttsMan->isSpeaking()) {
-		g_system->delayMillis(1000);
-	}
+	waitForSpeechEnd(ttsMan);
 	Common::String prompt = "Did you hear female voice saying: \"Testing text to speech with female voice.\" ?";
 	if (!Testsuite::handleInteractiveInput(prompt, "Yes", "No", kOptionLeft)) {
 		Testsuite::logDetailedPrintf("Female TTS failed\n");
@@ -176,8 +181,7 @@ TestExitStatus Speechtests::testPauseResume() {
 		Testsuite::logDetailedPrintf("TTS pause failed\n");
 		return kTestFailed;
 	}
-	while (ttsMan->isSpeaking())
-		g_system->delayMillis(1000);
+	waitForSpeechEnd(ttsMan);
 	Common::String prompt = "Did you hear a voice saying: \"Testing text to speech, the speech should pause after a second and then resume again.\" but with a second long pause in the middle?";
 	if (!Testsuite::handleInteractiveInput(prompt, "Yes", "No", kOptionLeft)) {
 		Testsuite::logDetailedPrintf("TTS pauseResume failed\n");
@@ -206,12 +210,11 @@ TestExitStatus Speechtests::testRate() {
 
 	ttsMan->setRate(-100);
 	ttsMan->say("Text to speech slow rate.");
-	while (ttsMan->isSpeaking())
-		g_system->delayMillis(1000);
+	waitForSpeechEnd(ttsMan);
 	ttsMan->setRate(100);
 	ttsMan->say("Text to speech fast rate.");
-	while (ttsMan->isSpeaking())
-		g_system->delayMillis(1000);
+	waitForSpeechEnd(ttsMan);
+
 	Common::String prompt = "Did you hear a voice saying: \"Text to speech slow rate.\" slowly and then \"Text to speech fast rate.\" fast?";
 	if (!Testsuite::handleInteractiveInput(prompt, "Yes", "No", kOptionLeft)) {
 		Testsuite::logDetailedPrintf("TTS rate failed\n");
@@ -240,12 +243,10 @@ TestExitStatus Speechtests::testVolume() {
 
 	ttsMan->setVolume(20);
 	ttsMan->say("Text to speech low volume.");
-	while (ttsMan->isSpeaking())
-		g_system->delayMillis(1000);
+	waitForSpeechEnd(ttsMan);
 	ttsMan->setVolume(100);
 	ttsMan->say("Text to speech max volume.");
-	while (ttsMan->isSpeaking())
-		g_system->delayMillis(1000);
+	waitForSpeechEnd(ttsMan);
 	Common::String prompt = "Did you hear a voice saying: \"Text to speech low volume.\" quietly and then \"Text to speech max volume.\" at a higher volume?";
 	if (!Testsuite::handleInteractiveInput(prompt, "Yes", "No", kOptionLeft)) {
 		Testsuite::logDetailedPrintf("TTS volume failed\n");
@@ -274,12 +275,10 @@ TestExitStatus Speechtests::testPitch() {
 
 	ttsMan->setPitch(100);
 	ttsMan->say("Text to speech high pitch.");
-	while (ttsMan->isSpeaking())
-		g_system->delayMillis(1000);
+	waitForSpeechEnd(ttsMan);
 	ttsMan->setPitch(-100);
 	ttsMan->say("Text to speech low pitch.");
-	while (ttsMan->isSpeaking())
-		g_system->delayMillis(1000);
+	waitForSpeechEnd(ttsMan);
 	Common::String prompt = "Did you hear a high pitched voice saying: \"Text to speech high pitch.\" and then a low pitched voice: \"Text to speech low pitch.\" ?";
 	if (!Testsuite::handleInteractiveInput(prompt, "Yes", "No", kOptionLeft)) {
 		Testsuite::logDetailedPrintf("TTS pitch failed\n");
@@ -307,8 +306,7 @@ TestExitStatus Speechtests::testStateStacking() {
 	}
 
 	ttsMan->say("Voice number 1 is speaking");
-	while (ttsMan->isSpeaking())
-		g_system->delayMillis(1000);
+	waitForSpeechEnd(ttsMan);
 	ttsMan->pushState();
 	Common::Array<int> femaleVoices = ttsMan->getVoiceIndicesByGender(Common::TTSVoice::FEMALE);
 	Common::Array<Common::TTSVoice> allVoices = ttsMan->getVoicesArray();
@@ -320,24 +318,20 @@ TestExitStatus Speechtests::testStateStacking() {
 	ttsMan->setPitch(40);
 	ttsMan->setRate(-30);
 	ttsMan->say("Voice number 2 is speaking");
-	while (ttsMan->isSpeaking())
-		g_system->delayMillis(1000);
+	waitForSpeechEnd(ttsMan);
 	ttsMan->pushState();
 	ttsMan->setVoice(2 % allVoices.size());
 	ttsMan->setVolume(90);
 	ttsMan->setPitch(-80);
 	ttsMan->setRate(-50);
 	ttsMan->say("Voice number 3 is speaking");
-	while (ttsMan->isSpeaking())
-		g_system->delayMillis(1000);
+	waitForSpeechEnd(ttsMan);
 	ttsMan->popState();
 	ttsMan->say("Voice number 2 is speaking");
-	while (ttsMan->isSpeaking())
-		g_system->delayMillis(1000);
+	waitForSpeechEnd(ttsMan);
 	ttsMan->popState();
 	ttsMan->say("Voice number 1 is speaking");
-	while (ttsMan->isSpeaking())
-		g_system->delayMillis(1000);
+	waitForSpeechEnd(ttsMan);
 
 	Common::String prompt = "Did you hear three different voices speaking in this order: 1, 2, 3, 2, 1 and each time the same voice spoke, it sounded the same?";
 	if (!Testsuite::handleInteractiveInput(prompt, "Yes", "No", kOptionLeft)) {
@@ -355,7 +349,7 @@ TestExitStatus Speechtests::testQueueing() {
 	ttsMan->setPitch(0);
 	ttsMan->setVoice(0);
 	Testsuite::clearScreen();
-	Common::String info = "Text to speech queue test. You should expect a voice to say: \"This is first speech. This is queued second speech\"";
+	Common::String info = "Text to speech queue test. You should expect a voice to say: \"This is first speech. This is  second speech\"";
 
 	Common::Point pt(0, 100);
 	Testsuite::writeOnScreen("Testing TTS queue", pt);
@@ -367,8 +361,7 @@ TestExitStatus Speechtests::testQueueing() {
 
 	ttsMan->say("This is first speech.");
 	ttsMan->say("This is second speech.", Common::TextToSpeechManager::QUEUE);
-	while (ttsMan->isSpeaking())
-		g_system->delayMillis(1000);
+	waitForSpeechEnd(ttsMan);
 	Common::String prompt = "Did you hear a voice saying: \"This is first speech. This is second speech\" ?";
 	if (!Testsuite::handleInteractiveInput(prompt, "Yes", "No", kOptionLeft)) {
 		Testsuite::logDetailedPrintf("TTS queue failed\n");
@@ -398,8 +391,7 @@ TestExitStatus Speechtests::testInterrupting() {
 	ttsMan->say("A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U, V, W, X, Y, Z");
 	g_system->delayMillis(1000);
 	ttsMan->say("Speech interrupted", Common::TextToSpeechManager::INTERRUPT);
-	while (ttsMan->isSpeaking())
-		g_system->delayMillis(1000);
+	waitForSpeechEnd(ttsMan);
 	Common::String prompt = "Did you hear a voice saying the engilsh alphabet, but it got interrupted and said: \"Speech interrupted\" instead?";
 	if (!Testsuite::handleInteractiveInput(prompt, "Yes", "No", kOptionLeft)) {
 		Testsuite::logDetailedPrintf("TTS interrupt failed\n");
@@ -428,8 +420,7 @@ TestExitStatus Speechtests::testDroping() {
 
 	ttsMan->say("Today is a really nice weather, perfect day to use ScummVM, don't you think?");
 	ttsMan->say("Speech interrupted, fail", Common::TextToSpeechManager::DROP);
-	while (ttsMan->isSpeaking())
-		g_system->delayMillis(1000);
+	waitForSpeechEnd(ttsMan);
 	Common::String prompt = "Did you hear a voice say: \"Today is a really nice weather, perfect day to use ScummVM, don't you think?\" and nothing else?";
 	if (!Testsuite::handleInteractiveInput(prompt, "Yes", "No", kOptionLeft)) {
 		Testsuite::logDetailedPrintf("TTS drop failed\n");
@@ -446,7 +437,7 @@ TestExitStatus Speechtests::testInterruptNoRepeat() {
 	ttsMan->setPitch(0);
 	ttsMan->setVoice(0);
 	Testsuite::clearScreen();
-	Common::String info = "Text to speech inturrept no repeat test. You should expect a voice to start saying:\"This is the first sentence, this should get interrupted\", but the speech gets interrupted and \"This is the second sentence, it should play only once\" is said instead.";
+	Common::String info = "Text to speech interrupt no repeat test. You should expect a voice to start saying:\"This is the first sentence, this should get interrupted\", but the speech gets interrupted and \"This is the second sentence, it should play only once\" is said instead.";
 
 	Common::Point pt(0, 100);
 	Testsuite::writeOnScreen("Testing TTS Interrupt No Repeat", pt);
@@ -463,8 +454,7 @@ TestExitStatus Speechtests::testInterruptNoRepeat() {
 	ttsMan->say("This is the second sentence, it should play only once", Common::TextToSpeechManager::INTERRUPT_NO_REPEAT);
 	g_system->delayMillis(1000);
 	ttsMan->say("This is the second sentence, it should play only once", Common::TextToSpeechManager::INTERRUPT_NO_REPEAT);
-	while (ttsMan->isSpeaking())
-		g_system->delayMillis(1000);
+	waitForSpeechEnd(ttsMan);
 	Common::String prompt = "Did you hear a voice say: \"This is the first sentence, this should get interrupted\", but it got interrupted and \"This is the second sentence, it should play only once.\" got said instead?";
 	if (!Testsuite::handleInteractiveInput(prompt, "Yes", "No", kOptionLeft)) {
 		Testsuite::logDetailedPrintf("TTS interruptNoRepeat failed\n");
@@ -499,8 +489,7 @@ TestExitStatus Speechtests::testQueueNoRepeat() {
 	ttsMan->say("This is the second sentence.", Common::TextToSpeechManager::QUEUE_NO_REPEAT);
 	g_system->delayMillis(1000);
 	ttsMan->say("This is the second sentence.", Common::TextToSpeechManager::QUEUE_NO_REPEAT);
-	while (ttsMan->isSpeaking())
-		g_system->delayMillis(1000);
+	waitForSpeechEnd(ttsMan);
 	Common::String prompt = "Did you hear a voice say: \"This is the first sentence. This the second sentence\" and nothing else?";
 	if (!Testsuite::handleInteractiveInput(prompt, "Yes", "No", kOptionLeft)) {
 		Testsuite::logDetailedPrintf("TTS QueueNoRepeat failed\n");
