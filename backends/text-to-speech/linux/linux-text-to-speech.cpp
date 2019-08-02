@@ -28,45 +28,42 @@
 #if defined(USE_LINUX_TTS)
 #include <speech-dispatcher/libspeechd.h>
 #include "backends/platform/sdl/sdl-sys.h"
-//#include <iconv.h>
 
 #include "common/translation.h"
 #include "common/system.h"
 #include "common/ustr.h"
 #include "common/config-manager.h"
+
 SPDConnection *_connection;
 
 void speech_begin_callback(size_t msg_id, size_t client_id, SPDNotificationType state){
 	LinuxTextToSpeechManager *manager =
 		static_cast<LinuxTextToSpeechManager *> (g_system->getTextToSpeechManager());
-	manager->updateState(LinuxTextToSpeechManager::SPEAKING);
+	manager->updateState(LinuxTextToSpeechManager::SPEECH_BEGUN);
 }
 
 void speech_end_callback(size_t msg_id, size_t client_id, SPDNotificationType state){
 	LinuxTextToSpeechManager *manager =
 		static_cast<LinuxTextToSpeechManager *> (g_system->getTextToSpeechManager());
-	manager->updateState(LinuxTextToSpeechManager::READY);
+	manager->updateState(LinuxTextToSpeechManager::SPEECH_ENDED);
 }
 
 void speech_cancel_callback(size_t msg_id, size_t client_id, SPDNotificationType state){
 	LinuxTextToSpeechManager *manager =
 		static_cast<LinuxTextToSpeechManager *> (g_system->getTextToSpeechManager());
-	if (manager->isSpeaking())
-		manager->updateState(LinuxTextToSpeechManager::READY);
-	if (manager->isPaused())
-		manager->updateState(LinuxTextToSpeechManager::PAUSED);
+	manager->updateState(LinuxTextToSpeechManager::SPEECH_CANCELED);
 }
 
 void speech_resume_callback(size_t msg_id, size_t client_id, SPDNotificationType state){
 	LinuxTextToSpeechManager *manager =
 		static_cast<LinuxTextToSpeechManager *> (g_system->getTextToSpeechManager());
-	manager->updateState(LinuxTextToSpeechManager::SPEAKING);
+	manager->updateState(LinuxTextToSpeechManager::SPEECH_RESUMED);
 }
 
 void speech_pause_callback(size_t msg_id, size_t client_id, SPDNotificationType state){
 	LinuxTextToSpeechManager *manager =
 		static_cast<LinuxTextToSpeechManager *> (g_system->getTextToSpeechManager());
-	manager->updateState(LinuxTextToSpeechManager::PAUSED);
+	manager->updateState(LinuxTextToSpeechManager::SPEECH_PAUSED);
 }
 
 LinuxTextToSpeechManager::LinuxTextToSpeechManager()
@@ -101,6 +98,7 @@ void LinuxTextToSpeechManager::init() {
 #else
 	setLanguage("en");
 #endif
+	_speechQueue.clear();
 }
 
 LinuxTextToSpeechManager::~LinuxTextToSpeechManager() {
@@ -108,8 +106,29 @@ LinuxTextToSpeechManager::~LinuxTextToSpeechManager() {
 		spd_close(_connection);
 }
 
-void LinuxTextToSpeechManager::updateState(LinuxTextToSpeechManager::SpeechState state) {
-	_speechState = state;
+void LinuxTextToSpeechManager::updateState(LinuxTextToSpeechManager::SpeechEvent event) {
+	if (_speechState == BROKEN)
+		return;
+	switch(event) {
+	case SPEECH_ENDED:
+		_speechQueue.pop_front();
+		if (_speechQueue.size() == 0)
+			_speechState = READY;
+		break;
+	case SPEECH_PAUSED:
+		_speechState = PAUSED;
+		break;
+	case SPEECH_CANCELED:
+		if (_speechState != PAUSED) {
+			_speechState = READY;
+		}
+		break;
+	case SPEECH_RESUMED:
+		break;
+	case SPEECH_BEGUN:
+		_speechState = SPEAKING;
+		break;
+	}
 }
 
 Common::String LinuxTextToSpeechManager::strToUtf8(Common::String str, Common::String charset) {
@@ -155,17 +174,19 @@ bool LinuxTextToSpeechManager::say(Common::String str, Action action, Common::St
 
 	str = strToUtf8(str, charset);
 
-	if (isSpeaking() && action == INTERRUPT || action == INTERRUPT_NO_REPEAT)
+	if (isSpeaking() && (action == INTERRUPT || action == INTERRUPT_NO_REPEAT))
 		stop();
-	if (str.size() != 0)
+	if (!str.empty()) {
 		_speechState = SPEAKING;
-	_lastSaid = str;
-	if(spd_say(_connection, SPD_MESSAGE, str.c_str()) == -1) {
-		//restart the connection
-		if (_connection != 0)
-			spd_close(_connection);
-		init();
-		return true;
+		_speechQueue.push_back(str);
+		_lastSaid = str;
+		if(spd_say(_connection, SPD_MESSAGE, str.c_str()) == -1) {
+			//restart the connection
+			if (_connection != 0)
+				spd_close(_connection);
+			init();
+			return true;
+		}
 	}
 
 	return false;
@@ -175,27 +196,35 @@ bool LinuxTextToSpeechManager::stop() {
 	if (_speechState == READY || _speechState == BROKEN)
 		return true;
 	_speechState = READY;
+	_speechQueue.clear();
 	return spd_cancel(_connection) == -1;
 }
 
 bool LinuxTextToSpeechManager::pause() {
 	if (_speechState == READY || _speechState == PAUSED || _speechState == BROKEN)
 		return true;
-	bool result = spd_pause_all(_connection) == -1;
-	if (result)
-		return true;
-	result = spd_stop(_connection) == -1;
-	if (result)
-		return true;
 	_speechState = PAUSED;
+	bool result = spd_cancel_all(_connection) == -1;
+	if (result)
+		return true;
+	if (result)
+		return true;
 	return false;
 }
 
 bool LinuxTextToSpeechManager::resume() {
 	if (_speechState == READY || _speechState == SPEAKING || _speechState == BROKEN)
 		return true;
-	_speechState = SPEAKING;
-	return spd_resume(_connection) == -1;
+	if (_speechQueue.size()) {
+		_speechState = SPEAKING;
+		for (Common::List<Common::String>::iterator i = _speechQueue.begin(); i != _speechQueue.end(); i++) {
+			if (spd_say(_connection, SPD_MESSAGE, i->c_str()) == -1)
+				return true;
+		}
+	}
+	else
+		_speechState = READY;
+	return false;
 }
 
 bool LinuxTextToSpeechManager::isSpeaking() {
