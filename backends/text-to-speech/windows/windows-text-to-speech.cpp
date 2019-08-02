@@ -165,9 +165,11 @@ bool WindowsTextToSpeechManager::resume() {
 bool WindowsTextToSpeechManager::isSpeaking() {
 	if(_speechState == BROKEN || _speechState == NO_VOICE)
 		return false;
-	SPVOICESTATUS eventStatus;
-	_voice->GetStatus(&eventStatus, NULL);
-	return eventStatus.dwRunningState == SPRS_IS_SPEAKING;
+	SPAUDIOSTATUS audioStatus;
+	SPVOICESTATUS voiceStatus;
+	_audio->GetStatus(&audioStatus);
+	_voice->GetStatus(&voiceStatus, NULL);
+	return audioStatus.State != SPAS_CLOSED || voiceStatus.dwRunningState != SPRS_DONE;
 }
 
 bool WindowsTextToSpeechManager::isPaused() {
