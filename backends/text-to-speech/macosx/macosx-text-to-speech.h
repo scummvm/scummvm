@@ -68,6 +68,8 @@ private:
 		SpeechText(const Common::String& txt, const Common::String& enc) : text(txt), encoding(enc) {}
 	};
 	Common::Queue<SpeechText> _messageQueue;
+	Common::String _currentSpeech;
+	bool _paused;
 };
 
 #endif

@@ -53,7 +53,7 @@
 NSSpeechSynthesizer *synthesizer;
 MacOSXTextToSpeechManagerDelegate *synthesizerDelegate;
 
-MacOSXTextToSpeechManager::MacOSXTextToSpeechManager() : Common::TextToSpeechManager() {
+MacOSXTextToSpeechManager::MacOSXTextToSpeechManager() : Common::TextToSpeechManager(), _paused(false) {
 	synthesizer = [[NSSpeechSynthesizer alloc] init];
 	synthesizerDelegate = [[MacOSXTextToSpeechManagerDelegate alloc] initWithManager:this];
 	[synthesizer setDelegate:synthesizerDelegate];
@@ -71,13 +71,27 @@ MacOSXTextToSpeechManager::~MacOSXTextToSpeechManager() {
 }
 
 bool MacOSXTextToSpeechManager::say(Common::String text, Action action, Common::String encoding) {
-	if ([synthesizer isSpeaking]) {
+	if (isSpeaking()) {
+		// Interruptions are done on word boundaries for nice transitions.
+		// Should we interrupt immediately?
 		if (action == DROP)
 			return true;
 		else if (action == INTERRUPT) {
 			_messageQueue.clear();
-			// Should we use NSSpeechImmediateBoundary, or even NSSpeechSentenceBoundary?
 			[synthesizer stopSpeakingAtBoundary:NSSpeechWordBoundary];
+		} else if (action == INTERRUPT_NO_REPEAT) {
+			// If the new speech is the one being currently said, continue that speech but clear the queue.
+			// And otherwise both clear the queue and interrupt the current speech.
+			_messageQueue.clear();
+			if (_currentSpeech == text)
+				return true;
+			[synthesizer stopSpeakingAtBoundary:NSSpeechWordBoundary];
+		} else if (action == QUEUE_NO_REPEAT) {
+			if (!_messageQueue.empty()) {
+				if (_messageQueue.back().text == text)
+					return true;
+			} else if (_currentSpeech == text)
+				return true;
 		}
 	}
 
@@ -88,12 +102,13 @@ bool MacOSXTextToSpeechManager::say(Common::String text, Action action, Common::
 	}
 
 	_messageQueue.push(SpeechText(text, encoding));
-	if (![synthesizer isSpeaking])
+	if (!isSpeaking())
 		startNextSpeech();
 	return true;
 }
 
 bool MacOSXTextToSpeechManager::startNextSpeech() {
+	_currentSpeech.clear();
 	if (_messageQueue.empty())
 		return false;
 	SpeechText text = _messageQueue.pop();
@@ -108,39 +123,56 @@ bool MacOSXTextToSpeechManager::startNextSpeech() {
 	CFStringRef textNSString = CFStringCreateWithCString(NULL, text.text.c_str(), stringEncoding);
 	bool status = [synthesizer startSpeakingString:(NSString *)textNSString];
 	CFRelease(textNSString);
+	if (status)
+		_currentSpeech = text.text;
+
 	return status;
 }
 
 bool MacOSXTextToSpeechManager::stop() {
 	_messageQueue.clear();
-	// Should we use NSSpeechImmediateBoundary, or even NSSpeechSentenceBoundary?
-	[synthesizer stopSpeakingAtBoundary:NSSpeechWordBoundary];
+	_currentSpeech.clear(); // so that it immediately reports that it is no longer speeking
+	// Stop as soon as possible
+	[synthesizer stopSpeakingAtBoundary:NSSpeechImmediateBoundary];
 	return true;
 }
 
 bool MacOSXTextToSpeechManager::pause() {
-	// Should we use NSSpeechImmediateBoundary, or even NSSpeechSentenceBoundary?
+	// Pause on a word boundary as pausing/resuming in a middle of words is strange.
 	[synthesizer pauseSpeakingAtBoundary:NSSpeechWordBoundary];
+	_paused = true;
 	return true;
 }
 
 bool MacOSXTextToSpeechManager::resume() {
+	_paused = false;
 	[synthesizer continueSpeaking];
 	return true;
 }
 
 bool MacOSXTextToSpeechManager::isSpeaking() {
-	return [synthesizer isSpeaking];
+	// Because the NSSpeechSynthesizer is asynchronous, it doesn't start speeking immediately
+	// and thus using [synthesizer isSpeaking] just after [synthesizer startSpeakingString:]] is
+	// likely to return NO. So instead we check the _currentSpeech string (set when calling
+	// startSpeakingString, and cleared when we receive the didFinishSpeaking message).
+	//return [synthesizer isSpeaking];
+	return !_currentSpeech.empty();
 }
 
 bool MacOSXTextToSpeechManager::isPaused() {
-	NSDictionary *statusDict = (NSDictionary*) [synthesizer objectForProperty:NSSpeechStatusProperty error:nil];
-	return [[statusDict objectForKey:NSSpeechStatusOutputBusy] boolValue] && [[statusDict objectForKey:NSSpeechStatusOutputPaused] boolValue];
+	// Because the NSSpeechSynthesizer is asynchronous, and because we pause at the end of a word
+	// and not immediately, we cannot check the speech status as it is likely to not be paused yet
+	// immediately after we requested the pause. So we keep our own flag.
+	//NSDictionary *statusDict = (NSDictionary*) [synthesizer objectForProperty:NSSpeechStatusProperty error:nil];
+	//return [[statusDict objectForKey:NSSpeechStatusOutputBusy] boolValue] && [[statusDict objectForKey:NSSpeechStatusOutputPaused] boolValue];
+	return _paused;
 }
 
 bool MacOSXTextToSpeechManager::isReady() {
-	NSDictionary *statusDict = (NSDictionary*) [synthesizer objectForProperty:NSSpeechStatusProperty error:nil];
-	return [[statusDict objectForKey:NSSpeechStatusOutputBusy] boolValue] == NO;
+	// See comments in isSpeaking() and isPaused()
+	//NSDictionary *statusDict = (NSDictionary*) [synthesizer objectForProperty:NSSpeechStatusProperty error:nil];
+	//return [[statusDict objectForKey:NSSpeechStatusOutputBusy] boolValue] == NO;
+	return _currentSpeech.empty() && !_paused;
 }
 
 void MacOSXTextToSpeechManager::setVoice(unsigned index) {
