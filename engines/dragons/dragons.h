@@ -139,7 +139,6 @@ public:
 	Talk *_talk;
 	Sound *_sound;
 
-	uint16 unkArray_uint16[42];
 	opCode1AStruct opCode1A_tbl[8];
 
 	uint16 data_800633fc;

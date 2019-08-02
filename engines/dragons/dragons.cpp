@@ -362,7 +362,6 @@ void DragonsEngine::gameLoop()
 						if ((_cursor->_iniUnderCursor & 0x8000) != 0) {
 							if (_cursor->_iniUnderCursor == 0x8002) {
 								LAB_80027294:
-								uVar7 = 0;
 								if (_cursor->iniItemInHand == 0) {
 									if ((bit_flags_8006fbd8 & 3) != 1) {
 										sequenceId = _dragonVAR->getVar(7);
@@ -372,19 +371,11 @@ void DragonsEngine::gameLoop()
 									}
 								}
 								else {
-									actorId = 0;
-									do {
-										if (unkArray_uint16[actorId] == 0) break;
-										uVar7 = uVar7 + 1;
-										actorId = (uint)uVar7;
-									} while (uVar7 < 0x29);
-									if (uVar7 < 0x29) {
+									if(_inventory->addItem(_cursor->iniItemInHand)) {
 										_cursor->_sequenceID = 1;
 										waitForFrames(1);
-										uVar6 = _cursor->iniItemInHand;
 										_cursor->iniItemInHand = 0;
 										_cursor->_iniUnderCursor = 0;
-										unkArray_uint16[(uint)uVar7] = uVar6;
 										actorId = uVar3;
 										continue;
 									}
@@ -478,7 +469,6 @@ void DragonsEngine::gameLoop()
 				continue;
 			}
 			if (_cursor->_iniUnderCursor != 0) {
-				actorId_00 = 0;
 				if ((_cursor->_sequenceID != 4) && (_cursor->_sequenceID != 2)) {
 					_cursor->data_800728b0_cursor_seqID = _cursor->_sequenceID;
 					_cursor->data_80072890 = _cursor->_iniUnderCursor;
@@ -490,27 +480,19 @@ void DragonsEngine::gameLoop()
 					walkFlickerToObject();
 					goto LAB_8002790c;
 				}
-				if (_cursor->_iniUnderCursor != unkArray_uint16[0]) {
-					actorId = 1;
-					do {
-						actorId_00 = actorId;
-						actorId = actorId_00 + 1;
-					} while (_cursor->_iniUnderCursor != unkArray_uint16[actorId_00 & 0xffff]);
-				}
-				puVar9 = unkArray_uint16 + (actorId_00 & 0xffff);
-				Actor *actor = _actorManager->getActor(actorId_00 + 0x17);
-				*puVar9 = _cursor->iniItemInHand;
+				Actor *actor = _inventory->getInventoryItemActor(_cursor->_iniUnderCursor);
+				uint16 tmpId = _cursor->iniItemInHand;
+				_inventory->replaceItem(_cursor->_iniUnderCursor, _cursor->iniItemInHand);
 				_cursor->data_8007283c = actor->_sequenceID;
 				actor->clearFlag(ACTOR_FLAG_40);
 				_cursor->iniItemInHand = _cursor->_iniUnderCursor;
 				_cursor->_sequenceID = 5;
 				actorId = uVar3;
-				if (*puVar9 != 0) {
-					actorId = actorId_00 + 0x17 & 0xffff;
+				if (tmpId != 0) {
 					actor->flags = 0;
 					actor->priorityLayer = 0;
 					actor->field_e = 0x100;
-					actor->updateSequence(getINI((uint)*puVar9 - 1)->field_8 * 2 + 10);
+					actor->updateSequence(getINI(tmpId - 1)->field_8 * 2 + 10);
 					actor->setFlag(ACTOR_FLAG_40);
 					actor->setFlag(ACTOR_FLAG_80);
 					actor->setFlag(ACTOR_FLAG_100);
@@ -520,38 +502,22 @@ void DragonsEngine::gameLoop()
 				}
 				continue;
 			}
-			uVar6 = 0;
 			if (_cursor->iniItemInHand == 0) goto LAB_80027b58;
 			//drop item back into inventory
-			actorId = 0;
-			do {
-				Actor *actor = _actorManager->getActor(actorId + 0x17);
-				if (((((int)(short)actor->x_pos - 0x10 <= (int)_cursor->_x) &&
-					  ((int)_cursor->_x < (int)(short)actor->x_pos + 0x10)) &&
-					 ((int)(short)actor->y_pos - 0xc <= (int)_cursor->_y)) &&
-					(actorId = (uint)uVar6, (int)_cursor->_y < (int)(short)actor->y_pos + 0xc)) {
-					break;
-				}
-				uVar6 = uVar6 + 1;
-				actorId = (uint)uVar6;
-			} while (uVar6 < 0x29);
-			if (actorId != 0x29) {
-				actorId_00 = (uint)(ushort)(uVar6 + 0x17);
-				unkArray_uint16[actorId] = _cursor->iniItemInHand;
-				Actor *actor = _actorManager->getActor(actorId_00);
-				actor->flags = 0;
-				actor->priorityLayer = 0;
-				actor->field_e = 0x100;
+			Actor *invActor = _inventory->addItemIfPositionIsEmpty(_cursor->iniItemInHand, _cursor->_x, _cursor->_y);
+			if (invActor != NULL) {
+				invActor->flags = 0;
+				invActor->priorityLayer = 0;
+				invActor->field_e = 0x100;
+				invActor->updateSequence(
+						 getINI(_cursor->iniItemInHand - 1)->field_8 * 2 + 10);
 				_cursor->iniItemInHand = 0;
-				actor->updateSequence(
-						 getINI((uint)unkArray_uint16[actorId] - 1)->field_8 * 2 + 10);
-				uVar6 = _cursor->_sequenceID;
-				actor->setFlag(ACTOR_FLAG_40);
-				actor->setFlag(ACTOR_FLAG_80);
-				actor->setFlag(ACTOR_FLAG_100);
-				actor->setFlag(ACTOR_FLAG_200);
-				actor->priorityLayer = 6;
-				if (uVar6 == 5) {
+				invActor->setFlag(ACTOR_FLAG_40);
+				invActor->setFlag(ACTOR_FLAG_80);
+				invActor->setFlag(ACTOR_FLAG_100);
+				invActor->setFlag(ACTOR_FLAG_200);
+				invActor->priorityLayer = 6;
+				if (_cursor->_sequenceID == 5) {
 					_cursor->_sequenceID = 4;
 				}
 			}
@@ -1219,7 +1185,6 @@ void DragonsEngine::reset() {
 		opCode1A_tbl[i].field8 = 0;
 	}
 
-	memset(unkArray_uint16, 0, sizeof(unkArray_uint16));
 	setSceneUpdateFunction(NULL);
 }
 

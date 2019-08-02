@@ -50,6 +50,7 @@ private:
 	uint16 inventionBookPrevFlickerINISceneId;
 	Common::Point inventionBookPrevFlickerINIPosition;
 
+	uint16 unkArray_uint16[42];
 public:
 	Inventory(DragonsEngine *vm);
 
@@ -88,6 +89,14 @@ public:
 
 	void openInventionBook();
 	void closeInventionBook();
+
+	bool addItem(uint16 iniId);
+	Actor *addItemIfPositionIsEmpty(uint16 iniId, uint16 x, uint16 y);
+	void replaceItem(uint16 existingIniId, uint16 newIniId);
+	bool clearItem(uint16 iniId);
+
+	Actor *getInventoryItemActor(uint16 iniId);
+
 private:
 	void setPositionFromSceneId(uint32 sceneId);
 	void animateBagIn();
