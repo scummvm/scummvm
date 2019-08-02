@@ -124,7 +124,7 @@ void Movie::playVideo(bool isFirstIntroVideo) {
 					int len = frame->w * frame->h;
 					byte pixels[310000] = {0};
 					memcpy(pixels, frame->getPixels(), len);
-					for (byte i = 1; i < 256; i++) 
+					for (int i = 1; i < 256; i++) 
 					{
 						int j;
 						for (j = 0; j < len; j++) {
