@@ -49,6 +49,8 @@ TestExitStatus testDroping();
 TestExitStatus testInterruptNoRepeat();
 TestExitStatus testQueueNoRepeat();
 
+// Utility function to avoid dupplicated code
+void waitForSpeechEnd(Common::TextToSpeechManager *);
 
 } // End of namespace Speechtests
 
