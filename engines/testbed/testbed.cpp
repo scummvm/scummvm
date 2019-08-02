@@ -124,11 +124,6 @@ TestbedEngine::TestbedEngine(OSystem *syst)
 
 	// Initialize testsuites here
 	Testsuite *ts;
-#ifdef USE_TTS
-	// TextToSpeech
-	ts = new SpeechTestSuite();
-	_testsuiteList.push_back(ts);
-#endif
 	// GFX
 	ts = new GFXTestSuite();
 	_testsuiteList.push_back(ts);
@@ -150,6 +145,11 @@ TestbedEngine::TestbedEngine(OSystem *syst)
 	// Midi
 	ts = new MidiTestSuite();
 	_testsuiteList.push_back(ts);
+#ifdef USE_TTS
+	 // TextToSpeech
+	 ts = new SpeechTestSuite();
+	 _testsuiteList.push_back(ts);
+#endif
 #if defined(USE_CLOUD) && defined(USE_LIBCURL)
 	// Cloud
 	ts = new CloudTestSuite();
