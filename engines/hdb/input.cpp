@@ -165,7 +165,7 @@ void Input::stylusDown(int x, int y) {
 		}
 
 		if (g_hdb->isPPC()) {
-			warning("STUB: Add PPC code for Deliveries\Inventory");
+			warning("STUB: Add PPC code for Deliveries\\Inventory");
 		}
 
 		// Is Dialog Active?

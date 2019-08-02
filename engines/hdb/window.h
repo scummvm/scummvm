@@ -236,6 +236,10 @@ public:
 	bool inventoryActive() {
 		return _invWinInfo.active;
 	}
+	// PPC Inventory
+	void openInventory();
+	bool checkInvClose(int x, int y);
+	void closeInv();
 
 	// Deliveries Functions
 	void openDeliveries(bool animate);
@@ -248,6 +252,12 @@ public:
 		return _dlvsInfo.animate;
 	}
 	void checkDlvSelect(int x, int y);
+	// PPC Deliveries
+	bool checkDlvsClose(int x, int y);
+	void closeDlvs();
+	bool deliveriesActive() {
+		return _dlvsInfo.active;
+	}
 
 	// Try Again Functions
 	void drawTryAgain();
@@ -332,6 +342,7 @@ private:
 	Picture *_mstoneGfx;
 
 	// Info Bar
+	Picture *_gfxResources, *_gfxDeliveries;
 	Picture *_gfxInfobar, *_gfxDarken;
 	int _infobarDimmed;
 };

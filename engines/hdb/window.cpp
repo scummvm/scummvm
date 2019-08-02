@@ -117,10 +117,16 @@ Window::~Window() {
 	delete _gfxInvSelect;
 	delete _gfxHandright;
 
-	delete _gfxInfobar;
-	delete _gfxDarken;
-	delete _gfxPausePlaque;
-	delete _mstoneGfx;
+	if (g_hdb->isPPC()) {
+		delete _gfxInfobar;
+		delete _gfxDarken;
+		delete _gfxPausePlaque;
+		delete _mstoneGfx;
+	} else {
+		delete _gfxResources;
+		delete _gfxDeliveries;
+	}
+
 
 	delete _gemGfx;
 }
@@ -167,27 +173,36 @@ bool Window::init() {
 	_gfxInvSelect = g_hdb->_gfx->loadPic(INVENTORY_NORMAL);
 	_gfxHandright = g_hdb->_gfx->loadPic(MENU_HAND_POINTRIGHT);
 
-	_gfxInfobar = g_hdb->_gfx->loadPic(PIC_INFOBAR);
-	_gfxDarken = g_hdb->_gfx->loadPic(SCREEN_DARKEN);
-	_gfxPausePlaque = g_hdb->_gfx->loadPic(PAUSE_PLAQUE);
-	_mstoneGfx = g_hdb->_gfx->loadPic(MINI_MSTONE);
+	if (g_hdb->isPPC()) {
 
-	_infobarDimmed = 0;
+		_gfxResources = g_hdb->_gfx->loadPic(MENU_TITLE_RESOURCES);
+		_gfxDeliveries = g_hdb->_gfx->loadPic(MENU_TITLE_DELIVERIES);
 
-	_invWinInfo.width = _invItemSpaceX * 3;
-	_invWinInfo.height = _invItemSpaceY * 4;
+		_invWinInfo.width = g_hdb->_screenWidth - 32;
+		_invWinInfo.height = 112;
 
-	warning("FIXME: Fully separate the PC and PPC versions of Window");
+		_dlvsInfo.width = g_hdb->_screenWidth - 48;
+		_dlvsInfo.height = 160;
+		_dlvsInfo.selected = 0;
 
-	if (!g_hdb->isPPC())
+	} else {
+		_gfxInfobar = g_hdb->_gfx->loadPic(PIC_INFOBAR);
+		_gfxDarken = g_hdb->_gfx->loadPic(SCREEN_DARKEN);
+		_gfxPausePlaque = g_hdb->_gfx->loadPic(PAUSE_PLAQUE);
+		_mstoneGfx = g_hdb->_gfx->loadPic(MINI_MSTONE);
+
+		_infobarDimmed = 0;
+
+		_invWinInfo.width = _invItemSpaceX * 3;
+		_invWinInfo.height = _invItemSpaceY * 4;
 		_invWinInfo.x = g_hdb->_screenWidth - _gfxInfobar->_width + 16;
-	_invWinInfo.y = 40;
+		_invWinInfo.y = 40;
 
-	_dlvsInfo.width = _invItemSpaceX * 3;
-	_dlvsInfo.height = _invItemSpaceY * 4;
-	if (!g_hdb->isPPC())
+		_dlvsInfo.width = _invItemSpaceX * 3;
+		_dlvsInfo.height = _invItemSpaceY * 4;
 		_dlvsInfo.x = (g_hdb->_screenWidth - _gfxInfobar->_width) + 16;
-	_dlvsInfo.y = 272;
+		_dlvsInfo.y = 272;
+	}
 
 	_gemGfx = NULL;
 
@@ -486,10 +501,14 @@ void Window::restartSystem() {
 }
 
 void Window::setInfobarDark(int value) {
+	if (g_hdb->isPPC())
+		return;
 	_infobarDimmed = value;
 }
 
 void Window::drawPause() {
+	if (g_hdb->isPPC())
+		return;
 	if (g_hdb->getPause())
 		_gfxPausePlaque->drawMasked(g_hdb->_screenDrawWidth / 2 - _gfxPausePlaque->_width / 2, g_hdb->_window->_pauseY);
 }
@@ -503,6 +522,16 @@ void Window::checkPause(int x, int y) {
 }
 
 void Window::drawWeapon() {
+	if (!g_hdb->isPPC())
+		return;
+
+	int	 xoff = 40 * _pzInfo.active;
+	char word[3];
+	if (ITEM_CLUB != g_hdb->_ai->getPlayerWeapon()) {
+		sprintf(word, "%d", g_hdb->_ai->getGemAmount());
+		g_hdb->_gfx->setCursor(_weaponX + 4 - xoff, _weaponY + kTileHeight + 2);
+		g_hdb->_gfx->drawText(word);
+	}
 }
 
 void Window::chooseWeapon(AIType wType) {
@@ -1015,78 +1044,159 @@ void Window::closeMsg() {
 
 void Window::drawInventory() {
 	int baseX, drawX, drawY;
-	// static uint32 timer = g_hdb->getTimeSlice() + 300; // unused
+	static uint32 timer = g_hdb->getTimeSlice() + 300; // unused
 	AIEntity *e, *sel;
 	char string[8];
 	int gems, mstones;
 
-	// INFOBAR blit - only once per frame
-	// note: if 2, don't draw ANY info at all
-	if (_infobarDimmed > 1)
-		return;
+	if (g_hdb->isPPC()) {
+		if (!_invWinInfo.active)
+			return;
 
-	_gfxInfobar->draw(g_hdb->_screenWidth - _gfxInfobar->_width, 0);
+		drawBorder(_invWinInfo.x, _invWinInfo.y, _invWinInfo.width, _invWinInfo.height, false);
 
-	baseX = drawX = _invWinInfo.x;
-	drawY = _invWinInfo.y;
+		_gfxTitleL->drawMasked(_invWinInfo.x, _invWinInfo.y - 10);
+		int blocks = _gfxResources->_width / 16;
+		for (int i = 0; i < blocks; i++)
+			_gfxTitleM->drawMasked(_invWinInfo.x + 16 * (i + 1), _invWinInfo.y - 10);
+		_gfxTitleR->drawMasked(_invWinInfo.x + 16 * (blocks + 1), _invWinInfo.y - 10);
 
-	// Draw Inv Items
-	sel = NULL;
-	if (_invWinInfo.selection >= g_hdb->_ai->getInvAmount())
-		_invWinInfo.selection = g_hdb->_ai->getInvAmount();
+		_gfxResources->drawMasked(_invWinInfo.x + 16, _invWinInfo.y - 6);
 
-	for (int inv = 0; inv < g_hdb->_ai->getInvAmount(); inv++) {
-		e = g_hdb->_ai->getInvItem(inv);
-		if (inv == _invWinInfo.selection)
-			sel = e;
+		//
+		// blink the INV hand...
+		//
+		if (g_hdb->getTimeSlice() > timer - 150)
+			_gfxHandright->drawMasked(g_hdb->_screenWidth - _gfxHandright->_width, _invWinInfo.y + _invItemSpace * 2);
 
-		e->standdownGfx[0]->drawMasked(drawX, drawY);
+		if (timer < g_hdb->getTimeSlice())
+			timer = g_hdb->getTimeSlice() + 300;
 
-		drawX += _invItemSpaceX;
-		if (drawX >= baseX + (_invItemSpaceX * _invItemPerLine)) {
-			drawX = baseX;
-			drawY += _invItemSpaceY;
+		baseX = drawX = _invWinInfo.x + 16;
+		drawY = _invWinInfo.y + 16;
+
+		// Draw Inv Items
+		sel = NULL;
+		if (_invWinInfo.selection >= g_hdb->_ai->getInvAmount())
+			_invWinInfo.selection = g_hdb->_ai->getInvAmount() - 1;
+
+		for (int inv = 0; inv < g_hdb->_ai->getInvAmount(); inv++) {
+			e = g_hdb->_ai->getInvItem(inv);
+			if (inv == _invWinInfo.selection)
+				sel = e;
+
+			e->standdownGfx[0]->drawMasked(drawX, drawY);
+
+			drawX += _invItemSpace;
+			if (drawX >= baseX + (_invItemSpace * _invItemPerLine)) {
+				drawX = baseX;
+				drawY += _invItemSpace;
+			}
 		}
-	}
 
-	// Draw the Gem
-	drawY = _invWinInfo.y + _invItemSpaceY * 4 - 8;
-	drawX = baseX - 8;
-	_gemGfx->drawMasked(drawX, drawY);
-
-	// Draw the Gem Amount
-	gems = g_hdb->_ai->getGemAmount();
-	sprintf(string, "%d", gems);
-	g_hdb->_gfx->setCursor(drawX + 32, drawY + 8);
-	g_hdb->_gfx->drawText(string);
-
-	// Draw the mini monkeystone
-	mstones = g_hdb->_ai->getMonkeystoneAmount();
-	if (mstones) {
-		drawX = baseX + _invItemSpaceX * 2 - 8;
-		_mstoneGfx->drawMasked(drawX, drawY + 8);
-
-		// Draw the monkeystone amount
-		sprintf(string, "%d", mstones);
-		g_hdb->_gfx->setCursor(drawX + 28, drawY + 8);
+		// Draw the gems
+		drawY = _invWinInfo.y + 8 + _invItemSpace * 2;
+		drawX = baseX + _invItemSpace * 4 + 8;
+		_gemGfx->drawMasked(drawX, drawY);
+		gems = g_hdb->_ai->getGemAmount();
+		sprintf(string, "%d", gems);
+		g_hdb->_gfx->setCursor(drawX + 22, drawY + 8);
 		g_hdb->_gfx->drawText(string);
-	}
 
-	// If you have an inventory, draw the selection cursor
-	if (g_hdb->_ai->getInvAmount()) {
-		if (_invWinInfo.selection < 0)
-			_invWinInfo.selection = 0;
+		// if you have an inventory, draw the selection cursor
+		if (g_hdb->_ai->getInvAmount()) {
+			if (_invWinInfo.selection < 0)
+				_invWinInfo.selection = 0;
 
-		// Draw the Inventory Select Cursor
-		drawX = baseX + (_invWinInfo.selection % _invItemPerLine) * _invItemSpaceX;
-		drawY = _invWinInfo.y + (_invWinInfo.selection / _invItemPerLine) * _invItemSpaceY;
-		_gfxInvSelect->drawMasked(drawX, drawY);
+			// Draw the inventory select cursor
+			if (_invWinInfo.selection > 4)
+				drawX = baseX + (_invWinInfo.selection - 5) * _invItemSpace;
+			else
+				drawX = baseX + _invWinInfo.selection * _invItemSpace;
 
-		if (sel) {
-			int centerX = baseX - 4 + (g_hdb->_screenWidth - baseX) / 2;
-			drawY = _invWinInfo.y + (_invItemSpaceY * 4) + 16;
-			g_hdb->_gfx->setCursor(centerX - g_hdb->_gfx->stringLength(sel->printedName) / 2, drawY);
-			g_hdb->_gfx->drawText(sel->printedName);
+			if (_invWinInfo.selection < 5)
+				drawY = _invWinInfo.y + 16;
+			else
+				drawY = _invWinInfo.y + 16 + _invItemSpace;
+
+			_gfxInvSelect->drawMasked(drawX, drawY);
+
+			// Draw the name of the inventory item
+			if (sel) {
+				drawY = _invWinInfo.y + 8 + _invItemSpace * 2;
+				g_hdb->_gfx->setCursor(baseX, drawY + 8);
+				g_hdb->_gfx->drawText(sel->printedName);
+			}
+		}
+	} else {
+		// INFOBAR blit - only once per frame
+		// note: if 2, don't draw ANY info at all
+		if (_infobarDimmed > 1)
+			return;
+
+		_gfxInfobar->draw(g_hdb->_screenWidth - _gfxInfobar->_width, 0);
+
+		baseX = drawX = _invWinInfo.x;
+		drawY = _invWinInfo.y;
+
+		// Draw Inv Items
+		sel = NULL;
+		if (_invWinInfo.selection >= g_hdb->_ai->getInvAmount())
+			_invWinInfo.selection = g_hdb->_ai->getInvAmount() - 1;
+
+		for (int inv = 0; inv < g_hdb->_ai->getInvAmount(); inv++) {
+			e = g_hdb->_ai->getInvItem(inv);
+			if (inv == _invWinInfo.selection)
+				sel = e;
+
+			e->standdownGfx[0]->drawMasked(drawX, drawY);
+
+			drawX += _invItemSpaceX;
+			if (drawX >= baseX + (_invItemSpaceX * _invItemPerLine)) {
+				drawX = baseX;
+				drawY += _invItemSpaceY;
+			}
+		}
+
+		// Draw the Gem
+		drawY = _invWinInfo.y + _invItemSpaceY * 4 - 8;
+		drawX = baseX - 8;
+		_gemGfx->drawMasked(drawX, drawY);
+
+		// Draw the Gem Amount
+		gems = g_hdb->_ai->getGemAmount();
+		sprintf(string, "%d", gems);
+		g_hdb->_gfx->setCursor(drawX + 32, drawY + 8);
+		g_hdb->_gfx->drawText(string);
+
+		// Draw the mini monkeystone
+		mstones = g_hdb->_ai->getMonkeystoneAmount();
+		if (mstones) {
+			drawX = baseX + _invItemSpaceX * 2 - 8;
+			_mstoneGfx->drawMasked(drawX, drawY + 8);
+
+			// Draw the monkeystone amount
+			sprintf(string, "%d", mstones);
+			g_hdb->_gfx->setCursor(drawX + 28, drawY + 8);
+			g_hdb->_gfx->drawText(string);
+		}
+
+		// If you have an inventory, draw the selection cursor
+		if (g_hdb->_ai->getInvAmount()) {
+			if (_invWinInfo.selection < 0)
+				_invWinInfo.selection = 0;
+
+			// Draw the Inventory Select Cursor
+			drawX = baseX + (_invWinInfo.selection % _invItemPerLine) * _invItemSpaceX;
+			drawY = _invWinInfo.y + (_invWinInfo.selection / _invItemPerLine) * _invItemSpaceY;
+			_gfxInvSelect->drawMasked(drawX, drawY);
+
+			if (sel) {
+				int centerX = baseX - 4 + (g_hdb->_screenWidth - baseX) / 2;
+				drawY = _invWinInfo.y + (_invItemSpaceY * 4) + 16;
+				g_hdb->_gfx->setCursor(centerX - g_hdb->_gfx->stringLength(sel->printedName) / 2, drawY);
+				g_hdb->_gfx->drawText(sel->printedName);
+			}
 		}
 	}
 }
@@ -1124,6 +1234,93 @@ void Window::checkInvSelect(int x, int y) {
 	return;
 }
 
+void Window::openInventory() {
+	if (!g_hdb->isPPC())
+		return;
+
+	int	px, py;
+
+	if (_invWinInfo.active)
+		return;
+
+	centerTextOut(g_hdb->getInMapName(), 304, 60 * 3);
+
+	if (!g_hdb->_ai->getInvAmount() && !g_hdb->_ai->getGemAmount()) {
+		if (!g_hdb->_ai->getDeliveriesAmount())
+			openMessageBar("You have nothing.", 3);
+		else
+			openDeliveries(false);
+		return;
+	}
+
+	_invWinInfo.x = (g_hdb->_screenWidth >> 1) - (_invWinInfo.width >> 1) - 8;
+
+	g_hdb->_ai->getPlayerXY(&px, &py);
+	if (py < (g_hdb->_screenHeight >> 1) - 16)
+		_invWinInfo.y = (g_hdb->_screenHeight >> 1) + 16;
+	else
+		_invWinInfo.y = 16;
+
+	g_hdb->_sound->playSound(SND_POP);
+	_invWinInfo.active = true;
+}
+
+bool Window::checkInvClose(int x, int y) {
+	if (!g_hdb->isPPC())
+		return false;
+
+	if (x >= g_hdb->_screenWidth - _gfxHandright->_width &&
+		y >= _invWinInfo.y && y < _invWinInfo.y + _invItemSpace * 3) {
+		closeInv();
+		openDeliveries(0);
+		return true;
+	} else if (x >= _invWinInfo.x && x < _invWinInfo.x + _invWinInfo.width &&
+		y >= _invWinInfo.y && y < _invWinInfo.y + _invWinInfo.height) {
+		int xc = (x - _invWinInfo.x) / _invItemSpace;
+		int yc = (y - _invWinInfo.y) / _invItemSpace;
+		if (yc * 5 + xc > g_hdb->_ai->getInvAmount()) {
+			closeInv();
+			return true;
+		}
+		_invWinInfo.selection = yc * 5 + xc;
+		g_hdb->_sound->playSound(SND_MENU_SLIDER);
+
+		static AIType lastWeaponSelected = AI_NONE;
+		Tile *gfx;
+
+		if (!g_hdb->getActionMode())
+			return false;
+
+		AIType t = g_hdb->_ai->getInvItemType(_invWinInfo.selection);
+		gfx = g_hdb->_ai->getInvItemGfx(_invWinInfo.selection);
+
+		switch (t) {
+		case ITEM_CLUB:
+		case ITEM_ROBOSTUNNER:
+		case ITEM_SLUGSLINGER:
+			g_hdb->_ai->setPlayerWeapon(t, gfx);
+			if (t == lastWeaponSelected) {
+				closeInv();
+				return false;
+			}
+			lastWeaponSelected = t;
+			g_hdb->_sound->playSound(SND_MENU_ACCEPT);
+			return true;
+		}
+		g_hdb->_sound->playSound(SND_CELLHOLDER_USE_REJECT);
+	}
+
+	return false;
+}
+
+void Window::closeInv() {
+	if (!g_hdb->isPPC())
+		return;
+
+	g_hdb->_sound->playSound(SND_DIALOG_CLOSE);
+	_invWinInfo.active = false;
+}
+
 void Window::openDeliveries(bool animate) {
 	// Load Gfx
 	for (int i = 0; i < g_hdb->_ai->getDeliveriesAmount(); i++) {
@@ -1132,6 +1329,19 @@ void Window::openDeliveries(bool animate) {
 			d->itemGfx = g_hdb->_gfx->loadTile(d->itemGfxName);
 		if (d->destGfxName[0])
 			d->destGfx = g_hdb->_gfx->loadTile(d->destGfxName);
+	}
+
+	if (g_hdb->isPPC()) {
+		// calc the X & Y for the window
+		_dlvsInfo.x = (g_hdb->_screenWidth >> 1) - (_dlvsInfo.width >> 1) - 8;
+
+		int px, py;
+
+		g_hdb->_ai->getPlayerXY(&px, &py);
+		if (py < (g_hdb->_screenHeight >> 1) - 16)
+			_dlvsInfo.y = (g_hdb->_screenHeight >> 1);
+		else
+			_dlvsInfo.y = 16;
 	}
 
 	g_hdb->_sound->playSound(SND_POP);
@@ -1147,11 +1357,15 @@ void Window::openDeliveries(bool animate) {
 	// Make sure cursor isn't on an empty delivery
 	if (_dlvsInfo.selected >= g_hdb->_ai->getDeliveriesAmount())
 		_dlvsInfo.selected = g_hdb->_ai->getDeliveriesAmount() - 1;
+
+	if (g_hdb->isPPC())
+		_dlvsInfo.active = true;
 }
 
 void Window::drawDeliveries() {
-	//static uint32 timer = g_hdb->getTimeSlice() + 300; //unused
-
+	static uint32 timer = g_hdb->getTimeSlice() + 300; //unused
+	int drawX, drawY, baseX;
+	DlvEnt *d;
 	int crazySounds[kNumCrazy] = {
 		SND_GUI_INPUT,
 		SND_MAIL_PROCESS,
@@ -1192,112 +1406,219 @@ void Window::drawDeliveries() {
 		SND_MANNY_CRASH
 	};
 
-	if (_infobarDimmed > 1)
-		return;
+	if (g_hdb->isPPC()) {
+		if (!_dlvsInfo.active)
+			return;
 
-	int baseX = _dlvsInfo.x;
-	int drawX = _dlvsInfo.x;
-	int drawY = _dlvsInfo.y;
+		// draw the window first
+		drawBorder(_dlvsInfo.x, _dlvsInfo.y, _dlvsInfo.width, _dlvsInfo.height, false);
 
-	if (_dlvsInfo.selected >= g_hdb->_ai->getDeliveriesAmount())
-		_dlvsInfo.selected = g_hdb->_ai->getDeliveriesAmount() - 1;
+		_gfxTitleL->drawMasked(_dlvsInfo.x, _dlvsInfo.y - 10);
+		int blocks = _gfxDeliveries->_width / 16;
+		for (int i = 0; i < blocks; i++)
+			_gfxTitleM->drawMasked(_dlvsInfo.x + 16 * (i + 1), _dlvsInfo.y - 10);
+		_gfxTitleR->drawMasked(_dlvsInfo.x + (blocks + 1) * 16, _dlvsInfo.y - 10);
 
-	// Draw Delivery Items
-	int inv = 0;
-	for (; inv < g_hdb->_ai->getDeliveriesAmount(); inv++) {
-		int centerX = baseX + (g_hdb->_screenWidth - baseX) / 2;
-		DlvEnt *d = g_hdb->_ai->getDeliveryItem(inv);
-		if (_dlvsInfo.animate && inv == g_hdb->_ai->getDeliveriesAmount() - 1) {
-			if (_dlvsInfo.go1) {
-				if (_dlvsInfo.delay1 < g_hdb->getTimeSlice()) {
-					// Draw Item
-					_gfxIndent->draw(drawX, drawY);
-					if (d->itemGfx)
+		_gfxDeliveries->drawMasked(_dlvsInfo.x + 16, _dlvsInfo.y - 6);
+
+		//
+		// blink the DELIVERY hand...
+		//
+		if (g_hdb->_ai->getInvAmount()) {
+			if (g_hdb->getTimeSlice() > timer - 150)
+				_gfxHandright->drawMasked(_dlvsInfo.x + _dlvsInfo.width, _dlvsInfo.y + _invItemSpace * 2);
+
+			if (timer < g_hdb->getTimeSlice())
+				timer = g_hdb->getTimeSlice() + 300;
+		}
+
+		baseX = drawX = _dlvsInfo.x + 16;
+		drawY = _dlvsInfo.y + 16;
+
+		// Draw delivery items
+		int inv;
+		for (inv = 0; inv < g_hdb->_ai->getInvAmount(); inv++) {
+			d = g_hdb->_ai->getDeliveryItem(inv);
+			if (_dlvsInfo.animate && inv == g_hdb->_ai->getDeliveriesAmount() - 1) {
+				if (_dlvsInfo.go1) {
+					if (_dlvsInfo.delay1 < g_hdb->getTimeSlice()) {
+						// draw Item
+						_gfxIndent->draw(drawX, drawY);
 						d->itemGfx->drawMasked(drawX, drawY);
 
-					g_hdb->_gfx->setCursor(centerX - g_hdb->_gfx->stringLength(d->itemTextName) / 2, g_hdb->_window->_dlvItemTextY);
-					g_hdb->_gfx->drawText(d->itemTextName);
-					if (!_dlvsInfo.go2) {
-						_dlvsInfo.go2 = true;
-						_dlvsInfo.delay2 = g_hdb->getTimeSlice() + 500;
-						g_hdb->_sound->playSound(crazySounds[g_hdb->_rnd->getRandomNumber(kNumCrazy - 1)]);
+						g_hdb->_gfx->setCursor(drawX, drawY + _invItemSpace * 2 + 20);
+						g_hdb->_gfx->centerPrint(d->itemTextName);
+						if (!_dlvsInfo.go2) {
+							_dlvsInfo.go2 = true;
+							_dlvsInfo.delay2 = g_hdb->getTimeSlice() + 500;
+							g_hdb->_sound->playSound(crazySounds[g_hdb->_rnd->getRandomNumber(kNumCrazy - 1)]);
+						}
 					}
 				}
-			}
-			if (_dlvsInfo.go2) {
-				if (_dlvsInfo.delay2 < g_hdb->getTimeSlice()) {
-					// Draw TO
-					_gfxArrowTo->drawMasked(_dlvsInfo.x + _dlvItemSpaceX * _dlvsInfo.selected + 8, drawY + kTileHeight);
+				if (_dlvsInfo.go2) {
+					if (_dlvsInfo.delay2 < g_hdb->getTimeSlice()) {
+						// arrow TO...
+						_gfxArrowTo->drawMasked(_dlvsInfo.x + 24 + _invItemSpace * _dlvsInfo.selected, drawY + _invItemSpace);
 
-					g_hdb->_gfx->setCursor(centerX - g_hdb->_gfx->stringLength("to") / 2, g_hdb->_window->_dlvItemTextY + 12);
-					g_hdb->_gfx->drawText("to");
-					if (!_dlvsInfo.go3) {
-						_dlvsInfo.go3 = true;
-						_dlvsInfo.delay3 = g_hdb->getTimeSlice() + 500;
-						g_hdb->_sound->playSound(crazySounds[g_hdb->_rnd->getRandomNumber(kNumCrazy - 1)]);
+						g_hdb->_gfx->setCursor(drawX, drawY + _invItemSpace * 2 + 32);
+						g_hdb->_gfx->centerPrint("to");
+						if (!_dlvsInfo.go3) {
+							_dlvsInfo.go3 = true;
+							_dlvsInfo.delay3 = g_hdb->getTimeSlice() + 500;
+							g_hdb->_sound->playSound(crazySounds[g_hdb->_rnd->getRandomNumber(kNumCrazy - 1)]);
+						}
 					}
 				}
-			}
-			if (_dlvsInfo.go3) {
-				if (_dlvsInfo.delay3 < g_hdb->getTimeSlice()) {
-					// Draw Delivery
-					_gfxIndent->draw(drawX, drawY + kTileHeight + 16);
-					if (d->destGfx)
-						d->destGfx->drawMasked(drawX, drawY + kTileHeight + 16);
+				if (_dlvsInfo.go3) {
+					if (_dlvsInfo.delay3 < g_hdb->getTimeSlice()) {
+						// draw Deliveree
+						_gfxIndent->draw(drawX, drawY + _invItemSpace + 16);
+						d->destGfx->drawMasked(drawX, drawY + _invItemSpace + 16);
 
-					g_hdb->_gfx->setCursor(centerX - (g_hdb->_gfx->stringLength(d->destTextName) + g_hdb->_gfx->stringLength("to")) / 2, g_hdb->_window->_dlvItemTextY + 12);
-					g_hdb->_gfx->drawText("to ");
-					g_hdb->_gfx->drawText(d->destTextName);
+						g_hdb->_gfx->setCursor(drawX, drawY + _invItemSpace * 2 + 44);
+						g_hdb->_gfx->centerPrint(d->destTextName);
 
-					g_hdb->_sound->playSound(crazySounds[g_hdb->_rnd->getRandomNumber(kNumCrazy - 1)]);
-					_dlvsInfo.animate = false;
+						g_hdb->_sound->playSound(crazySounds[g_hdb->_rnd->getRandomNumber(kNumCrazy - 1)]);
+						_dlvsInfo.animate = false;
+					}
 				}
-			}
-
-		} else {
-			// Draw Item
-			_gfxIndent->draw(drawX, drawY);
-			if (d->itemGfx)
+			} else {
+				// draw Item
+				_gfxIndent->draw(drawX, drawY);
 				d->itemGfx->drawMasked(drawX, drawY);
-			// Draw Delivery
-			_gfxIndent->draw(drawX, drawY + kTileHeight + 16);
-			if (d->destGfx)
-				d->destGfx->drawMasked(drawX, drawY + kTileHeight + 16);
 
-			if (!_dlvsInfo.animate && inv == _dlvsInfo.selected) {
-				g_hdb->_gfx->setCursor(centerX - g_hdb->_gfx->stringLength(d->itemTextName)/2, g_hdb->_window->_dlvItemTextY);
-				g_hdb->_gfx->drawText(d->itemTextName);
-				g_hdb->_gfx->setCursor(centerX - (g_hdb->_gfx->stringLength(d->destTextName) + g_hdb->_gfx->stringLength("to ")) / 2, g_hdb->_window->_dlvItemTextY + 12);
-				g_hdb->_gfx->drawText("to ");
-				g_hdb->_gfx->drawText(d->destTextName);
-			}
+				// draw Deliveree
+				_gfxIndent->draw(drawX, drawY + _invItemSpace + 16);
+				d->destGfx->drawMasked(drawX, drawY + _invItemSpace + 16);
 
-			drawX += _dlvItemSpaceX;
-			if (drawX >= g_hdb->_screenWidth) {
-				drawX = baseX;
-				drawY += _dlvItemSpaceY + 8;
+				if (!_dlvsInfo.animate && inv == _dlvsInfo.selected) {
+					g_hdb->_gfx->setCursor(drawX, drawY + _invItemSpace * 2 + 20);
+					g_hdb->_gfx->centerPrint(d->itemTextName);
+					g_hdb->_gfx->setCursor(drawX, drawY + _invItemSpace * 2 + 32);
+					g_hdb->_gfx->centerPrint("to");
+					g_hdb->_gfx->setCursor(drawX, drawY + _invItemSpace * 2 + 44);
+					g_hdb->_gfx->centerPrint(d->destTextName);
+				}
+
+				drawX += _invItemSpace;
 			}
 		}
-	}
 
-	// Draw "No Deliveries" or the arrow that points to the currently selected one
-	if (!inv) {
-		g_hdb->_gfx->setCursor(baseX + 16, _dlvsInfo.y);
-		g_hdb->_gfx->drawText("No Deliveries");
-	} else if (!_dlvsInfo.animate) {
-		int dx, dy, rowtwo;
+		if (!inv) {
+			g_hdb->_gfx->setCursor(baseX, _dlvsInfo.y + 32);
+			g_hdb->_gfx->drawText("No Deliveries");
+		} else if (!_dlvsInfo.animate) {
+			// arrow TO...
+			_gfxArrowTo->drawMasked(_dlvsInfo.x + 24 + _invItemSpace * _dlvsInfo.selected, drawY + _invItemSpace);
+		}
+	} else {
+		if (_infobarDimmed > 1)
+			return;
 
-		rowtwo = _dlvsInfo.selected > 2;
-		dx = 8 + _dlvsInfo.x + _dlvItemSpaceX * (_dlvsInfo.selected % 3);
-		dy = _dlvsInfo.y + kTileHeight + (_dlvItemSpaceY + 8) * rowtwo;
-		_gfxArrowTo->drawMasked(dx, dy);
-	}
+		baseX = _dlvsInfo.x;
+		drawX = _dlvsInfo.x;
+		drawY = _dlvsInfo.y;
 
-	// If the infobar is dimmed out, this where we dim the whole thing
-	if (_infobarDimmed) {
-		for (int j = 0; j < g_hdb->_screenHeight; j += kTileHeight) {
-			for (int i = (g_hdb->_screenWidth - _gfxInfobar->_width); i < g_hdb->_screenWidth; i += kTileWidth)
-				_gfxDarken->drawMasked(i, j);
+		if (_dlvsInfo.selected >= g_hdb->_ai->getDeliveriesAmount())
+			_dlvsInfo.selected = g_hdb->_ai->getDeliveriesAmount() - 1;
+
+		// Draw Delivery Items
+		int inv = 0;
+		for (; inv < g_hdb->_ai->getDeliveriesAmount(); inv++) {
+			int centerX = baseX + (g_hdb->_screenWidth - baseX) / 2;
+			d = g_hdb->_ai->getDeliveryItem(inv);
+			if (_dlvsInfo.animate && inv == g_hdb->_ai->getDeliveriesAmount() - 1) {
+				if (_dlvsInfo.go1) {
+					if (_dlvsInfo.delay1 < g_hdb->getTimeSlice()) {
+						// Draw Item
+						_gfxIndent->draw(drawX, drawY);
+						if (d->itemGfx)
+							d->itemGfx->drawMasked(drawX, drawY);
+
+						g_hdb->_gfx->setCursor(centerX - g_hdb->_gfx->stringLength(d->itemTextName) / 2, g_hdb->_window->_dlvItemTextY);
+						g_hdb->_gfx->drawText(d->itemTextName);
+						if (!_dlvsInfo.go2) {
+							_dlvsInfo.go2 = true;
+							_dlvsInfo.delay2 = g_hdb->getTimeSlice() + 500;
+							g_hdb->_sound->playSound(crazySounds[g_hdb->_rnd->getRandomNumber(kNumCrazy - 1)]);
+						}
+					}
+				}
+				if (_dlvsInfo.go2) {
+					if (_dlvsInfo.delay2 < g_hdb->getTimeSlice()) {
+						// Draw TO
+						_gfxArrowTo->drawMasked(_dlvsInfo.x + _dlvItemSpaceX * _dlvsInfo.selected + 8, drawY + kTileHeight);
+
+						g_hdb->_gfx->setCursor(centerX - g_hdb->_gfx->stringLength("to") / 2, g_hdb->_window->_dlvItemTextY + 12);
+						g_hdb->_gfx->drawText("to");
+						if (!_dlvsInfo.go3) {
+							_dlvsInfo.go3 = true;
+							_dlvsInfo.delay3 = g_hdb->getTimeSlice() + 500;
+							g_hdb->_sound->playSound(crazySounds[g_hdb->_rnd->getRandomNumber(kNumCrazy - 1)]);
+						}
+					}
+				}
+				if (_dlvsInfo.go3) {
+					if (_dlvsInfo.delay3 < g_hdb->getTimeSlice()) {
+						// Draw Delivery
+						_gfxIndent->draw(drawX, drawY + kTileHeight + 16);
+						if (d->destGfx)
+							d->destGfx->drawMasked(drawX, drawY + kTileHeight + 16);
+
+						g_hdb->_gfx->setCursor(centerX - (g_hdb->_gfx->stringLength(d->destTextName) + g_hdb->_gfx->stringLength("to")) / 2, g_hdb->_window->_dlvItemTextY + 12);
+						g_hdb->_gfx->drawText("to ");
+						g_hdb->_gfx->drawText(d->destTextName);
+
+						g_hdb->_sound->playSound(crazySounds[g_hdb->_rnd->getRandomNumber(kNumCrazy - 1)]);
+						_dlvsInfo.animate = false;
+					}
+				}
+
+			} else {
+				// Draw Item
+				_gfxIndent->draw(drawX, drawY);
+				if (d->itemGfx)
+					d->itemGfx->drawMasked(drawX, drawY);
+				// Draw Delivery
+				_gfxIndent->draw(drawX, drawY + kTileHeight + 16);
+				if (d->destGfx)
+					d->destGfx->drawMasked(drawX, drawY + kTileHeight + 16);
+
+				if (!_dlvsInfo.animate && inv == _dlvsInfo.selected) {
+					g_hdb->_gfx->setCursor(centerX - g_hdb->_gfx->stringLength(d->itemTextName) / 2, g_hdb->_window->_dlvItemTextY);
+					g_hdb->_gfx->drawText(d->itemTextName);
+					g_hdb->_gfx->setCursor(centerX - (g_hdb->_gfx->stringLength(d->destTextName) + g_hdb->_gfx->stringLength("to ")) / 2, g_hdb->_window->_dlvItemTextY + 12);
+					g_hdb->_gfx->drawText("to ");
+					g_hdb->_gfx->drawText(d->destTextName);
+				}
+
+				drawX += _dlvItemSpaceX;
+				if (drawX >= g_hdb->_screenWidth) {
+					drawX = baseX;
+					drawY += _dlvItemSpaceY + 8;
+				}
+			}
+		}
+
+		// Draw "No Deliveries" or the arrow that points to the currently selected one
+		if (!inv) {
+			g_hdb->_gfx->setCursor(baseX + 16, _dlvsInfo.y);
+			g_hdb->_gfx->drawText("No Deliveries");
+		} else if (!_dlvsInfo.animate) {
+			int dx, dy, rowtwo;
+
+			rowtwo = _dlvsInfo.selected > 2;
+			dx = 8 + _dlvsInfo.x + _dlvItemSpaceX * (_dlvsInfo.selected % 3);
+			dy = _dlvsInfo.y + kTileHeight + (_dlvItemSpaceY + 8) * rowtwo;
+			_gfxArrowTo->drawMasked(dx, dy);
+		}
+
+		// If the infobar is dimmed out, this where we dim the whole thing
+		if (_infobarDimmed) {
+			for (int j = 0; j < g_hdb->_screenHeight; j += kTileHeight) {
+				for (int i = (g_hdb->_screenWidth - _gfxInfobar->_width); i < g_hdb->_screenWidth; i += kTileWidth)
+					_gfxDarken->drawMasked(i, j);
+			}
 		}
 	}
 }
@@ -1321,6 +1642,47 @@ void Window::checkDlvSelect(int x, int y) {
 		if (value < amt)
 			setSelectedDelivery(value);
 	}
+}
+
+bool Window::checkDlvsClose(int x, int y) {
+	if (!g_hdb->isPPC())
+		return false;
+
+	if (_dlvsInfo.animate)
+		return false;
+
+	int amt = g_hdb->_ai->getDeliveriesAmount();
+
+	// click on a delivery to select it for inspection?
+	if (x >= _dlvsInfo.x + 16 && x < _dlvsInfo.x + 16 + amt * _invItemSpace &&
+		y >= _dlvsInfo.y && y < _dlvsInfo.y + _invItemSpace * 3) {
+		setSelectedDelivery(((x - _dlvsInfo.x + 16) / _invItemSpace) - 1);
+	} else if (g_hdb->_ai->getInvAmount() &&
+		x >= g_hdb->_screenWidth - _gfxHandright->_width &&
+		y >= _dlvsInfo.y && y < _dlvsInfo.y + _invItemSpace * 3) {
+		// click on HAND?
+		closeDlvs();
+		openInventory();
+		return true;
+	} else if (x >= _dlvsInfo.x && x < _dlvsInfo.x + _dlvsInfo.width &&
+		y >= _dlvsInfo.y && y < _dlvsInfo.y + _dlvsInfo.height) {
+		// click anywhere else in window to close it?
+		closeDlvs();
+		return true;
+	}
+
+	return false;
+}
+
+void Window::closeDlvs() {
+	if (!g_hdb->isPPC())
+		return;
+
+	if (_dlvsInfo.animate)
+		return;
+
+	g_hdb->_sound->playSound(SND_DIALOG_CLOSE);
+	_dlvsInfo.active = false;
 }
 
 void Window::drawTryAgain() {
