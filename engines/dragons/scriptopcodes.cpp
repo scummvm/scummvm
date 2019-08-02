@@ -1176,12 +1176,9 @@ void ScriptOpcodes::opCode_Unk7(ScriptOpCall &scriptOpCall) {
 				_vm->_cursor->iniItemInHand = 0;
 			}
 			else {
-				for (int i = 0; i < 0x29; i++) {
-					if (_vm->unkArray_uint16[i] - 1 == ini->id) {
-						_vm->unkArray_uint16[i] = 0;
-						if (_vm->_inventory->getType() == 1) {
-							ini->actor->clearFlag(ACTOR_FLAG_40);
-						}
+				if (_vm->_inventory->clearItem(ini->id + 1)) {
+					if (_vm->_inventory->getType() == 1) {
+						ini->actor->clearFlag(ACTOR_FLAG_40);
 					}
 				}
 			}
@@ -1189,19 +1186,13 @@ void ScriptOpcodes::opCode_Unk7(ScriptOpCall &scriptOpCall) {
 
 		if (sceneId == 1) {
 			if (_vm->_cursor->iniItemInHand != 0) {
-				uint16 freeSlot = 0;
-				for( ;_vm->unkArray_uint16[freeSlot] != 0; freeSlot++) {
-					if (_vm->unkArray_uint16[freeSlot] == 0) {
-						break;
-					}
-				}
-				_vm->unkArray_uint16[freeSlot] = _vm->_cursor->iniItemInHand;
+				_vm->_inventory->addItem(_vm->_cursor->iniItemInHand);
 				if (_vm->_inventory->getType() == 1) {
-					Actor *actor = _vm->_actorManager->getActor(freeSlot + 0x17);
+					Actor *actor = _vm->_inventory->getInventoryItemActor(_vm->_cursor->iniItemInHand);
 					actor->flags = 0;
 					actor->priorityLayer = 0;
 					actor->field_e = 0x100;
-					actor->updateSequence((_vm->getINI(_vm->unkArray_uint16[freeSlot] - 1)->field_8 * 2 + 10) & 0xfffe);
+					actor->updateSequence((_vm->getINI(_vm->_cursor->iniItemInHand - 1)->field_8 * 2 + 10) & 0xfffe);
 					actor->setFlag(ACTOR_FLAG_40);
 					actor->setFlag(ACTOR_FLAG_80);
 					actor->setFlag(ACTOR_FLAG_100);
