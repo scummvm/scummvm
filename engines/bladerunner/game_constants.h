@@ -1160,7 +1160,7 @@ enum Flags {
 	kflagPS01toPS02 = 718,
 	kFlagCT02McCoyFell = 719,
 	kFlagCT02McCoyCombatReady = 720,
-	kFlagNotUsed721 = 721,
+	kFlagCT02McCoyShouldCommentOnDumpedSoup = 721,	// Now: used for cut content for McCoy's monologue if he fails to dodge the soup, Original: was set but not used
 	kFlagChapter4Starting = 722,
 	kFlagZubenBountyPaid = 723,
 	kFlagUG15BridgeBreaks = 724,

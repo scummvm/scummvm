@@ -161,7 +161,7 @@ void AIScriptZuben::CompletedMovementTrack() {
 		AI_Countdown_Timer_Reset(kActorZuben, kActorTimerAIScriptCustomTask0);
 		Game_Flag_Reset(kFlagCT02McCoyFell);
 		Game_Flag_Set(kFlagCT02McCoyCombatReady);
-		Game_Flag_Set(kFlagNotUsed721);
+		Game_Flag_Set(kFlagCT02McCoyShouldCommentOnDumpedSoup);
 		Music_Stop(2);
 		Actor_Set_Goal_Number(kActorZuben, kGoalZubenFled);
 		Set_Enter(kSetCT02, kSceneCT02);

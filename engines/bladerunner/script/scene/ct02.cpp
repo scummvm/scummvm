@@ -44,6 +44,14 @@ void SceneScriptCT02::InitializeScene() {
 	} else {
 		Setup_Scene_Information(-119.02f, -145.11f, 240.99f, 768);
 	}
+	if (_vm->_cutContent
+	    && Global_Variable_Query(kVariableChapter) == 1
+	    && Game_Flag_Query(kFlagCT02McCoyShouldCommentOnDumpedSoup)
+	) {
+		Scene_2D_Region_Add(0, 115, 350, 430, 420);// dumped soup
+		Scene_2D_Region_Add(1, 180, 235, 255, 315);// use a region for the pot too (there's an object but it's better to have a region)
+	}
+
 	Scene_Exit_Add_2D_Exit(kCT02ExitCT01, 590, 0, 639, 479, 1);
 	if (Actor_Clue_Query(kActorMcCoy, kClueZubenRunsAway)) {
 		Scene_Exit_Add_2D_Exit(kCT02ExitCT03, 332, 163, 404, 297, 0);
@@ -279,6 +287,16 @@ bool SceneScriptCT02::ClickedOnExit(int exitId) {
 }
 
 bool SceneScriptCT02::ClickedOn2DRegion(int region) {
+	if (_vm->_cutContent
+	    && Game_Flag_Query(kFlagCT02McCoyShouldCommentOnDumpedSoup)
+	    && (region == 0 || region == 1)
+	) {
+		Game_Flag_Reset(kFlagCT02McCoyShouldCommentOnDumpedSoup);
+		Scene_2D_Region_Remove(0);
+		Scene_2D_Region_Remove(1);
+		Actor_Voice_Over(4270, kActorVoiceOver);
+		return true;
+	}
 	return false;
 }
 
