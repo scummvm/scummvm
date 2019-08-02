@@ -29,6 +29,7 @@
 
 #include "common/text-to-speech.h"
 #include "common/str.h"
+#include "common/list.h"
 
 class LinuxTextToSpeechManager : public Common::TextToSpeechManager {
 public:
@@ -37,6 +38,14 @@ public:
 		PAUSED,
 		SPEAKING,
 		BROKEN
+	};
+
+	enum SpeechEvent {
+		SPEECH_ENDED,
+		SPEECH_PAUSED,
+		SPEECH_CANCELED,
+		SPEECH_RESUMED,
+		SPEECH_BEGUN
 	};
 
 	LinuxTextToSpeechManager();
@@ -62,7 +71,7 @@ public:
 
 	virtual void setLanguage(Common::String language);
 
-	void updateState(SpeechState state);
+	void updateState(SpeechEvent event);
 
 	virtual void freeVoiceData(void *data);
 
@@ -70,9 +79,12 @@ private:
 	void init();
 	virtual void updateVoices();
 	void createVoice(int typeNumber, Common::TTSVoice::Gender, Common::TTSVoice::Age, char *description);
-	SpeechState _speechState;
 	Common::String strToUtf8(Common::String str, Common::String charset);
+	bool spdSay(const char *str);
+
+	SpeechState _speechState;
 	Common::String _lastSaid;
+	Common::List<Common::String> _speechQueue;
 };
 
 #endif
