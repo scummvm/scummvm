@@ -839,10 +839,6 @@ void ScriptOpcodes::opCodeActorTalk(ScriptOpCall &scriptOpCall) {
 		_vm->_talk->loadText(textIndex, dialog, 2048);
 	}
 
-	ushort uVar1;
-	int iVar2;
-	uint uVar3;
-
 	DragonINI *ini = iniId == 0 ? _vm->_dragonINIResource->getFlickerRecord() : _vm->getINI(iniId - 1);
 
 	if ((ini->field_1a_flags_maybe & 1) == 0) {

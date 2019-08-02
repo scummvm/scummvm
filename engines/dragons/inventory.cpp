@@ -31,6 +31,8 @@
 
 namespace Dragons {
 
+#define ACTOR_INVENTORY_OFFSET 0x17
+
 static const Common::Point positionTable[4] = {
 		{2,0},
 		{0xce,0},
@@ -88,8 +90,8 @@ void Inventory::init(ActorManager *actorManager, BackgroundResourceLoader *backg
 	_old_showing_value = 0;
 	_bag = bag;
 
-	for(int i = 0; i < 0x29; i++) {
-		actorManager->loadActor(0, i + 0x17); // TODO need to share resource between inventory item actors.
+	for(int i = 0; i < DRAGONS_MAX_INVENTORY_ITEMS; i++) {
+		actorManager->loadActor(0, i + ACTOR_INVENTORY_OFFSET); // TODO need to share resource between inventory item actors.
 	}
 
 	loadInventoryItemsFromSave();
@@ -154,8 +156,8 @@ void Inventory::openInventory() {
 
 	//TODO 0x800310e0 update cursor position.
 
-	for(int i = 0; i < 0x29; i++) {
-		Actor *item = _vm->_actorManager->getActor(i + 0x17);
+	for(int i = 0; i < DRAGONS_MAX_INVENTORY_ITEMS; i++) {
+		Actor *item = _vm->_actorManager->getActor(i + ACTOR_INVENTORY_OFFSET);
 
 		item->x_pos = item->target_x_pos = invXPosTable[i] + 0x10;
 		item->y_pos = item->target_y_pos = invYPosTable[i] + 0xc;
@@ -216,7 +218,7 @@ void Inventory::animateBagOut() {
 }
 
 void Inventory::closeInventory() {
-	_vm->_actorManager->clearActorFlags(0x17);
+	_vm->_actorManager->clearActorFlags(ACTOR_INVENTORY_OFFSET);
 	_screenPositionIndex = _vm->_dragonRMS->getInventoryPosition(_vm->getCurrentSceneId());
 
 	if (!_vm->isFlagSet(ENGINE_FLAG_400000)) {
@@ -246,9 +248,9 @@ void Inventory::draw() {
 }
 
 uint16 Inventory::getIniAtPosition(int16 x, int16 y) {
-	for (int i = 0; i < 0x29; i++) {
+	for (int i = 0; i < DRAGONS_MAX_INVENTORY_ITEMS; i++) {
 		if (inventoryItemTbl[i]) {
-			Actor *item = _vm->_actorManager->getActor(i + 0x17);
+			Actor *item = _vm->_actorManager->getActor(i + ACTOR_INVENTORY_OFFSET);
 			if (item->x_pos - 0x10 <= x && x < item->x_pos + 0x10
 				&& item->y_pos - 0xc <= y && y < item->y_pos + 0xc) {
 				return inventoryItemTbl[i];
@@ -261,7 +263,7 @@ uint16 Inventory::getIniAtPosition(int16 x, int16 y) {
 void Inventory::loadInventoryItemsFromSave() {
 	memset(inventoryItemTbl, 0, sizeof(inventoryItemTbl));
 	int j = 0;
-	for (int i=0; i < _vm->_dragonINIResource->totalRecords() && j < 0x29; i++ ) {
+	for (int i=0; i < _vm->_dragonINIResource->totalRecords() && j < DRAGONS_MAX_INVENTORY_ITEMS; i++ ) {
 		DragonINI *ini = _vm->_dragonINIResource->getRecord(i);
 		if (ini->sceneId == 1) {
 			inventoryItemTbl[j++] = i + 1;
@@ -334,7 +336,7 @@ void Inventory::setPositionFromSceneId(uint32 sceneId) {
 }
 
 bool Inventory::addItem(uint16 initId) {
-	for (int i = 0; i < 0x29; i++) {
+	for (int i = 0; i < DRAGONS_MAX_INVENTORY_ITEMS; i++) {
 		if (inventoryItemTbl[i] == 0) {
 			inventoryItemTbl[i] = initId;
 			return true;
@@ -345,16 +347,16 @@ bool Inventory::addItem(uint16 initId) {
 }
 
 Actor *Inventory::getInventoryItemActor(uint16 iniId) {
-	for (int i = 0; i < 0x29; i++) {
+	for (int i = 0; i < DRAGONS_MAX_INVENTORY_ITEMS; i++) {
 		if (inventoryItemTbl[i] == iniId) {
-			return _vm->_actorManager->getActor(i + 0x17);
+			return _vm->_actorManager->getActor(i + ACTOR_INVENTORY_OFFSET);
 		}
 	}
 	error("getInventoryItemActor(%d) not found", iniId);
 }
 
 void Inventory::replaceItem(uint16 existingIniId, uint16 newIniId) {
-	for (int i = 0; i < 0x29; i++) {
+	for (int i = 0; i < DRAGONS_MAX_INVENTORY_ITEMS; i++) {
 		if (inventoryItemTbl[i] == existingIniId) {
 			inventoryItemTbl[i] = newIniId;
 			return;
@@ -363,8 +365,8 @@ void Inventory::replaceItem(uint16 existingIniId, uint16 newIniId) {
 }
 
 bool Inventory::addItemIfPositionIsEmpty(uint16 iniId, uint16 x, uint16 y) {
-	for (int i = 0; i < 0x29; i++) {
-		Actor *actor = _vm->_actorManager->getActor(i + 0x17);
+	for (int i = 0; i < DRAGONS_MAX_INVENTORY_ITEMS; i++) {
+		Actor *actor = _vm->_actorManager->getActor(i + ACTOR_INVENTORY_OFFSET);
 		if ((((actor->x_pos - 0x10 <= x) &&
 			  (x < actor->x_pos + 0x10)) &&
 			 (actor->y_pos - 0xc <= y)) &&
@@ -377,7 +379,7 @@ bool Inventory::addItemIfPositionIsEmpty(uint16 iniId, uint16 x, uint16 y) {
 }
 
 bool Inventory::clearItem(uint16 iniId) {
-	for (int i = 0; i < 0x29; i++) {
+	for (int i = 0; i < DRAGONS_MAX_INVENTORY_ITEMS; i++) {
 		if(inventoryItemTbl[i] == iniId) {
 			inventoryItemTbl[i] = 0;
 		}
