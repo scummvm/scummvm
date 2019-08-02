@@ -162,6 +162,27 @@ Common::ErrorCode Blorb::load() {
 		}
 	}
 
+	// Check through any optional remaining chunks for an adaptive palette list
+	while (f.pos() < f.size()) {
+		uint chunkId = f.readUint32BE();
+		uint chunkSize = f.readUint32BE();
+
+		if (chunkId == ID_APal) {
+			// Found one, so create an entry so it can be opened as file named "apal"
+			ChunkEntry ce;
+			ce._filename = "apal";
+			ce._offset = f.pos();
+			ce._size = chunkSize;
+			ce._type = ID_APal;
+			_chunks.push_back(ce);
+			break;
+		}
+
+		if (chunkSize & 1)
+			++chunkSize;
+		f.skip(chunkSize);
+	}
+
 	return Common::kNoError;
 }
 
@@ -169,8 +190,9 @@ bool Blorb::readRIdx(Common::SeekableReadStream &stream, Common::Array<ChunkEntr
 	if (stream.readUint32BE() != ID_RIdx)
 		return false;
 
-	stream.readUint32BE();
+	uint chunkLen = stream.readUint32BE();
 	uint count = stream.readUint32BE();
+	assert(count == (chunkLen - 4) / 12);
 
 	// First read in the resource index
 	for (uint idx = 0; idx < count; ++idx) {
@@ -182,6 +204,9 @@ bool Blorb::readRIdx(Common::SeekableReadStream &stream, Common::Array<ChunkEntr
 		chunks.push_back(ce);
 	}
 
+	// Temporarily store the start of the next chunk of the file (if any)
+	size_t nextChunkOffset = stream.pos();
+
 	// Further iterate through the resources
 	for (uint idx = 0; idx < chunks.size(); ++idx) {
 		ChunkEntry &ce = chunks[idx];
@@ -192,6 +217,8 @@ bool Blorb::readRIdx(Common::SeekableReadStream &stream, Common::Array<ChunkEntr
 		ce._size = stream.readUint32BE();
 	}
 
+	// Reset back to the next chunk, and return that the index was successfully read
+	stream.seek(nextChunkOffset);
 	return true;
 }
 

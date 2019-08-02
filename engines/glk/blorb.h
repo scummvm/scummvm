@@ -46,6 +46,7 @@ enum {
 	ID_FORM = MKTAG('F', 'O', 'R', 'M'),
 	ID_IFRS = MKTAG('I', 'F', 'R', 'S'),
 	ID_RIdx = MKTAG('R', 'I', 'd', 'x'),
+	ID_APal = MKTAG('A', 'P', 'a', 'l'),
 
 	ID_Snd = MKTAG('S', 'n', 'd', ' '),
 	ID_Exec = MKTAG('E', 'x', 'e', 'c'),
