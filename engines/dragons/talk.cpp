@@ -42,7 +42,8 @@ Talk::Talk(DragonsEngine *vm, BigfileArchive *bigfileArchive): _vm(vm), _bigfile
 }
 
 void Talk::init() {
-
+	memset(defaultResponseTbl, 0, sizeof(defaultResponseTbl));
+	initDefaultResponseTable();
 }
 
 void Talk::loadText(uint32 textIndex, uint16 *textBuffer, uint16 bufferLength) {
@@ -399,9 +400,77 @@ void Talk::flickerRandomDefaultResponse() {
 			flicker->actor->setFlag(ACTOR_FLAG_4);
 		}
 	}
+	talkFromIni(0x11, getDefaultResponseTextIndex());
+}
+
+uint32 Talk::getDefaultResponseTextIndex() {
 	uint16 rand = _vm->getRand(9);
-	//TODO defaultResponseTable[_cursor->data_800728b0_cursor_seqID * 9 + rand];
-	talkFromIni(0x11, 0x1902);
+	return defaultResponseTbl[(_vm->_cursor->data_800728b0_cursor_seqID - 1) * 9 + rand];
+}
+
+uint32_t extractTextIndex(Common::File *fd, uint16_t offset) {
+	fd->seek(0x541b0 + offset * 4);
+	return fd->readUint32LE();
+}
+
+void Talk::initDefaultResponseTable() {
+	Common::File *fd = new Common::File();
+	if (!fd->open("dragon.exe")) {
+		error("Failed to open dragon.exe");
+	}
+
+	defaultResponseTbl[0] = extractTextIndex(fd, 19);
+	defaultResponseTbl[1] = extractTextIndex(fd, 20);
+	defaultResponseTbl[2] = extractTextIndex(fd, 21);
+	defaultResponseTbl[3] = extractTextIndex(fd, 22);
+	defaultResponseTbl[4] = extractTextIndex(fd, 19);
+	defaultResponseTbl[5] = extractTextIndex(fd, 20);
+	defaultResponseTbl[6] = extractTextIndex(fd, 21);
+	defaultResponseTbl[7] = extractTextIndex(fd, 22);
+	defaultResponseTbl[8] = extractTextIndex(fd, 19);
+
+	defaultResponseTbl[9] = extractTextIndex(fd, 0);
+	defaultResponseTbl[10] = extractTextIndex(fd, 1);
+	defaultResponseTbl[11] = extractTextIndex(fd, 2);
+	defaultResponseTbl[12] = extractTextIndex(fd, 3);
+	defaultResponseTbl[13] = extractTextIndex(fd, 4);
+	defaultResponseTbl[14] = extractTextIndex(fd, 5);
+	defaultResponseTbl[15] = extractTextIndex(fd, 2);
+	defaultResponseTbl[16] = extractTextIndex(fd, 3);
+	defaultResponseTbl[17] = extractTextIndex(fd, 4);
+
+	defaultResponseTbl[18] = extractTextIndex(fd, 6);
+	defaultResponseTbl[19] = extractTextIndex(fd, 7);
+	defaultResponseTbl[20] = extractTextIndex(fd, 8);
+	defaultResponseTbl[21] = extractTextIndex(fd, 9);
+	defaultResponseTbl[22] = extractTextIndex(fd, 7);
+	defaultResponseTbl[23] = extractTextIndex(fd, 8);
+	defaultResponseTbl[24] = extractTextIndex(fd, 9);
+	defaultResponseTbl[25] = extractTextIndex(fd, 6);
+	defaultResponseTbl[26] = extractTextIndex(fd, 7);
+
+	defaultResponseTbl[27] = extractTextIndex(fd, 10);
+	defaultResponseTbl[28] = extractTextIndex(fd, 11);
+	defaultResponseTbl[29] = extractTextIndex(fd, 12);
+	defaultResponseTbl[30] = extractTextIndex(fd, 13);
+	defaultResponseTbl[31] = extractTextIndex(fd, 14);
+	defaultResponseTbl[32] = extractTextIndex(fd, 15);
+	defaultResponseTbl[33] = extractTextIndex(fd, 16);
+	defaultResponseTbl[34] = extractTextIndex(fd, 17);
+	defaultResponseTbl[35] = extractTextIndex(fd, 18);
+
+	defaultResponseTbl[36] = extractTextIndex(fd, 23);
+	defaultResponseTbl[37] = extractTextIndex(fd, 24);
+	defaultResponseTbl[38] = extractTextIndex(fd, 25);
+	defaultResponseTbl[39] = extractTextIndex(fd, 26);
+	defaultResponseTbl[40] = extractTextIndex(fd, 27);
+	defaultResponseTbl[41] = extractTextIndex(fd, 28);
+	defaultResponseTbl[42] = extractTextIndex(fd, 29);
+	defaultResponseTbl[43] = extractTextIndex(fd, 30);
+	defaultResponseTbl[44] = extractTextIndex(fd, 31);
+
+	fd->close();
+	delete fd;
 }
 
 

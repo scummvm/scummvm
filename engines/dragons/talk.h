@@ -51,6 +51,7 @@ private:
 	DragonsEngine *_vm;
 	BigfileArchive *_bigfileArchive;
 	Common::List<TalkDialogEntry*> _dialogEntries;
+	uint32 defaultResponseTbl[45];
 
 public:
 	Talk(DragonsEngine *vm, BigfileArchive *bigfileArchive);
@@ -79,6 +80,8 @@ private:
 	uint32 wideStrLen(uint16 *text);
 	TalkDialogEntry *displayTalkDialogMenu();
 	void exitTalkMenu(bool isFlag8Set, bool isFlag100Set);
+	uint32 getDefaultResponseTextIndex();
+	void initDefaultResponseTable();
 };
 
 } // End of namespace Dragons
