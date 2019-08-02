@@ -34,6 +34,8 @@ class Background;
 class Bag;
 class DragonINIResource;
 
+#define DRAGONS_MAX_INVENTORY_ITEMS 0x29
+
 class Inventory {
 public:
 	int16 _old_showing_value;
@@ -50,7 +52,7 @@ private:
 	uint16 inventionBookPrevFlickerINISceneId;
 	Common::Point inventionBookPrevFlickerINIPosition;
 
-	uint16 inventoryItemTbl[42];
+	uint16 inventoryItemTbl[DRAGONS_MAX_INVENTORY_ITEMS];
 public:
 	Inventory(DragonsEngine *vm);
 
