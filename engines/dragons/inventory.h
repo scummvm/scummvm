@@ -50,7 +50,7 @@ private:
 	uint16 inventionBookPrevFlickerINISceneId;
 	Common::Point inventionBookPrevFlickerINIPosition;
 
-	uint16 unkArray_uint16[42];
+	uint16 inventoryItemTbl[42];
 public:
 	Inventory(DragonsEngine *vm);
 

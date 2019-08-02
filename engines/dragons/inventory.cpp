@@ -160,11 +160,11 @@ void Inventory::openInventory() {
 		item->x_pos = item->target_x_pos = invXPosTable[i] + 0x10;
 		item->y_pos = item->target_y_pos = invYPosTable[i] + 0xc;
 
-		if (unkArray_uint16[i]) {
+		if (inventoryItemTbl[i]) {
 			item->flags = 0; //clear all flags
 			item->field_e = 0x100;
 			item->priorityLayer = 0;
-			item->updateSequence(_vm->getINI(unkArray_uint16[i] - 1)->field_8 * 2 + 10);
+			item->updateSequence(_vm->getINI(inventoryItemTbl[i] - 1)->field_8 * 2 + 10);
 			item->setFlag(ACTOR_FLAG_200);
 			item->setFlag(ACTOR_FLAG_100);
 			item->setFlag(ACTOR_FLAG_80);
@@ -247,11 +247,11 @@ void Inventory::draw() {
 
 uint16 Inventory::getIniAtPosition(int16 x, int16 y) {
 	for (int i = 0; i < 0x29; i++) {
-		if (unkArray_uint16[i]) {
+		if (inventoryItemTbl[i]) {
 			Actor *item = _vm->_actorManager->getActor(i + 0x17);
 			if (item->x_pos - 0x10 <= x && x < item->x_pos + 0x10
 				&& item->y_pos - 0xc <= y && y < item->y_pos + 0xc) {
-				return unkArray_uint16[i];
+				return inventoryItemTbl[i];
 			}
 		}
 	}
@@ -259,12 +259,12 @@ uint16 Inventory::getIniAtPosition(int16 x, int16 y) {
 }
 
 void Inventory::loadInventoryItemsFromSave() {
-	memset(unkArray_uint16, 0, sizeof(unkArray_uint16));
+	memset(inventoryItemTbl, 0, sizeof(inventoryItemTbl));
 	int j = 0;
 	for (int i=0; i < _vm->_dragonINIResource->totalRecords() && j < 0x29; i++ ) {
 		DragonINI *ini = _vm->_dragonINIResource->getRecord(i);
 		if (ini->sceneId == 1) {
-			unkArray_uint16[j++] = i + 1;
+			inventoryItemTbl[j++] = i + 1;
 		}
 	}
 }
@@ -335,8 +335,8 @@ void Inventory::setPositionFromSceneId(uint32 sceneId) {
 
 bool Inventory::addItem(uint16 initId) {
 	for (int i = 0; i < 0x29; i++) {
-		if (unkArray_uint16[i] == 0) {
-			unkArray_uint16[i] = initId;
+		if (inventoryItemTbl[i] == 0) {
+			inventoryItemTbl[i] = initId;
 			return true;
 		}
 	}
@@ -346,7 +346,7 @@ bool Inventory::addItem(uint16 initId) {
 
 Actor *Inventory::getInventoryItemActor(uint16 iniId) {
 	for (int i = 0; i < 0x29; i++) {
-		if (unkArray_uint16[i] == iniId) {
+		if (inventoryItemTbl[i] == iniId) {
 			return _vm->_actorManager->getActor(i + 0x17);
 		}
 	}
@@ -355,8 +355,8 @@ Actor *Inventory::getInventoryItemActor(uint16 iniId) {
 
 void Inventory::replaceItem(uint16 existingIniId, uint16 newIniId) {
 	for (int i = 0; i < 0x29; i++) {
-		if (unkArray_uint16[i] == existingIniId) {
-			unkArray_uint16[i] = newIniId;
+		if (inventoryItemTbl[i] == existingIniId) {
+			inventoryItemTbl[i] = newIniId;
 			return;
 		}
 	}
@@ -369,7 +369,7 @@ bool Inventory::addItemIfPositionIsEmpty(uint16 iniId, uint16 x, uint16 y) {
 			  (x < actor->x_pos + 0x10)) &&
 			 (actor->y_pos - 0xc <= y)) &&
 			(y < actor->y_pos + 0xc)) {
-			unkArray_uint16[i] = iniId;
+			inventoryItemTbl[i] = iniId;
 			return true;
 		}
 	}
@@ -378,8 +378,8 @@ bool Inventory::addItemIfPositionIsEmpty(uint16 iniId, uint16 x, uint16 y) {
 
 bool Inventory::clearItem(uint16 iniId) {
 	for (int i = 0; i < 0x29; i++) {
-		if(unkArray_uint16[i] == iniId) {
-			unkArray_uint16[i] = 0;
+		if(inventoryItemTbl[i] == iniId) {
+			inventoryItemTbl[i] = 0;
 		}
 	}
 	return false;
