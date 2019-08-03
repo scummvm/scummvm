@@ -2262,8 +2262,8 @@ void GlobalOptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 		_redrawCloudTab = true;
 
 		// also, automatically start saves sync when user enables the storage
-		// fall through
 	}
+	// fall through
 	case kSyncSavesStorageCmd: {
 		CloudMan.syncSaves(
 			new Common::Callback<GlobalOptionsDialog, Cloud::Storage::BoolResponse>(this, &GlobalOptionsDialog::storageSavesSyncedCallback)
