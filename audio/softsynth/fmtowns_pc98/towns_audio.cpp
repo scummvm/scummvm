@@ -827,7 +827,7 @@ int TownsAudioInterfaceInternal::intf_unloadWaveTable(va_list &args) {
 					_waveTablesTotalDataSize -= _waveTables[i].size;
 					_waveTables[i].clear();
 					for (; i < _numWaveTables; i++)
-						memcpy(&_waveTables[i], &_waveTables[i + 1], sizeof(TownsAudio_WaveTable));
+						_waveTables[i] = _waveTables[i + 1];
 					return 0;
 				}
 			}
