@@ -249,6 +249,11 @@ public:
 	void store(EvType type, Window *win, uint val1 = 0, uint val2 = 0);
 
 	/**
+	 * Wait for a keypress
+	 */
+	uint getKeypress();
+
+	/**
 	 * Wait for a keyboard or mouse press
 	 */
 	void waitForPress();

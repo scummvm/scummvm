@@ -384,15 +384,25 @@ bool Events::isModifierKey(const Common::KeyCode &keycode) const {
 		|| keycode == Common::KEYCODE_SCROLLOCK;
 }
 
-void Events::waitForPress() {
+uint Events::getKeypress() {
 	Common::Event e;
 
-	do {
+	while (!g_vm->shouldQuit()) {
 		g_system->getEventManager()->pollEvent(e);
 		g_system->delayMillis(10);
 		checkForNextFrameCounter();
-	} while (!g_vm->shouldQuit() && (e.type != Common::EVENT_KEYDOWN || isModifierKey(e.kbd.keycode))
-		&& e.type != Common::EVENT_LBUTTONDOWN && e.type != Common::EVENT_RBUTTONDOWN && e.type != Common::EVENT_MBUTTONDOWN);
+
+		if (e.type == Common::EVENT_KEYDOWN && !isModifierKey(e.kbd.keycode))
+			return e.kbd.keycode;
+		if (e.type == Common::EVENT_LBUTTONDOWN)
+			return Common::KEYCODE_SPACE;
+	}
+
+	return 0;
+}
+
+void Events::waitForPress() {
+	getKeypress();
 }
 
 void Events::setCursor(CursorId cursorId) {

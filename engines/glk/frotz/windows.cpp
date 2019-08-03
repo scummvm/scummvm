@@ -339,5 +339,21 @@ void Window::checkRepositionLower() {
 	}
 }
 
+bool Window::imageDraw(uint image, int val1, int val2) {
+	if (!_win)
+		_win = g_vm->glk_window_open(g_vm->glk_window_get_root(),
+			winmethod_Arbitrary | winmethod_Fixed, 0, wintype_Graphics, 0);
+
+	return g_vm->glk_image_draw(_win, image, val1, val2);
+}
+
+bool Window::imageDrawScaled(uint image, int val1, int val2, uint width, uint height) {
+	if (!_win)
+		_win = g_vm->glk_window_open(g_vm->glk_window_get_root(),
+			winmethod_Arbitrary | winmethod_Fixed, 0, wintype_Graphics, 0);
+
+	return g_vm->glk_image_draw_scaled(_win, image, val1, val2, width, height);
+}
+
 } // End of namespace Frotz
 } // End of namespace Glk

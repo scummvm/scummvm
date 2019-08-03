@@ -197,6 +197,16 @@ public:
 	 * Set reverse video
 	 */
 	void setReverseVideo(bool reverse);
+
+	/**
+	 * Draw an image
+	 */
+	bool imageDraw(uint image, int val1, int val2);
+
+	/**
+	 * Draw a scaled image
+	 */
+	bool imageDrawScaled(uint image, int val1, int val2, uint width, uint height);
 };
 
 /**

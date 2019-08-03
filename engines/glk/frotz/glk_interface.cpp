@@ -542,9 +542,9 @@ void GlkInterface::showBeyondZorkTitle() {
 
 void GlkInterface::os_draw_picture(int picture, const Common::Point &pos) {
 	assert(pos.x != 0 && pos.y != 0);
-	if (_wp._cwin == 0) {
+	if (_wp._cwin == 0 && _wp._lower) {
 		// Picture embedded within the lower text area
-		glk_image_draw(_wp._lower, picture, imagealign_MarginLeft, 0);
+		_wp._lower.imageDraw(picture, imagealign_MarginLeft, 0);
 	} else {
 		glk_image_draw(_wp._background, picture,
 			(pos.x - 1) * g_conf->_monoInfo._cellW,
@@ -554,6 +554,7 @@ void GlkInterface::os_draw_picture(int picture, const Common::Point &pos) {
 
 void GlkInterface::os_draw_picture(int picture, const Common::Rect &r) {
 	Point cell(g_conf->_monoInfo._cellW, g_conf->_monoInfo._cellH);
+
 	glk_image_draw_scaled(_wp._background, picture, (r.left - 1) * cell.x, (r.top - 1) * cell.y,
 		r.width() * cell.x, r.height() * cell.y);
 }
@@ -584,38 +585,46 @@ int GlkInterface::os_peek_color() {
 }
 
 zchar GlkInterface::os_read_key(int timeout, bool show_cursor) {
-	event_t ev;
-	winid_t win = _wp.currWin() ? _wp.currWin() : _wp._lower;
+	Window &win = _wp.currWin() ? _wp.currWin() : _wp._lower;
+	uint key;
 
-	if (gos_linepending)
-		gos_cancel_pending_line();
+	if (win) {
+		// Get a keypress from a window
+		if (gos_linepending)
+			gos_cancel_pending_line();
 
-	glk_request_char_event_uni(win);
-	if (timeout != 0)
-		glk_request_timer_events(timeout * 100);
+		glk_request_char_event_uni(win);
+		if (timeout != 0)
+			glk_request_timer_events(timeout * 100);
 
-	while (!shouldQuit()) {
-		glk_select(&ev);
-		if (ev.type == evtype_Arrange) {
-			gos_update_height();
-			gos_update_width();
-		} else if (ev.type == evtype_Timer) {
-			glk_cancel_char_event(win);
-			glk_request_timer_events(0);
-			return ZC_TIME_OUT;
-		} else if (ev.type == evtype_CharInput)
-			break;
+		event_t ev;
+		while (!shouldQuit()) {
+			glk_select(&ev);
+			if (ev.type == evtype_Arrange) {
+				gos_update_height();
+				gos_update_width();
+			} else if (ev.type == evtype_Timer) {
+				glk_cancel_char_event(win);
+				glk_request_timer_events(0);
+				return ZC_TIME_OUT;
+			} else if (ev.type == evtype_CharInput)
+				break;
+		}
+		if (shouldQuit())
+			return 0;
+
+		glk_request_timer_events(0);
+
+		if (_wp._upper && mach_status_ht < curr_status_ht)
+			reset_status_ht();
+		curr_status_ht = 0;
+		key = ev.val1;
+	} else {
+		// No active window, so get a raw keypress
+		key = _events->getKeypress();
 	}
-	if (shouldQuit())
-		return 0;
 
-	glk_request_timer_events(0);
-
-	if (_wp._upper && mach_status_ht < curr_status_ht)
-		reset_status_ht();
-	curr_status_ht = 0;
-
-	switch (ev.val1) {
+	switch (key) {
 	case keycode_Escape: return ZC_ESCAPE;
 	case keycode_PageUp: return ZC_ARROW_MIN;
 	case keycode_PageDown: return ZC_ARROW_MAX;
@@ -627,7 +636,7 @@ zchar GlkInterface::os_read_key(int timeout, bool show_cursor) {
 	case keycode_Delete: return ZC_BACKSPACE;
 	case keycode_Tab: return ZC_INDENT;
 	default:
-		return ev.val1;
+		return key;
 	}
 }
 
