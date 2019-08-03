@@ -98,7 +98,8 @@ void OneDriveTokenRefresher::finishJson(Common::JSONValue *json) {
 				irrecoverable = false;
 
 			if (irrecoverable) {
-				finishError(Networking::ErrorResponse(this, false, true, json->stringify(true), httpResponseCode));
+				Common::String errorContents = "<irrecoverable> " + json->stringify(true);
+				finishError(Networking::ErrorResponse(this, false, true, errorContents, httpResponseCode));
 				delete json;
 				return;
 			}
