@@ -2439,8 +2439,7 @@ void GlobalOptionsDialog::handleTickle() {
 #ifdef USE_CLOUD
 #ifdef USE_LIBCURL
 	if (_redrawCloudTab) {
-		setupCloudTab();
-		g_gui.scheduleTopDialogRedraw();
+		reflowLayout(); // recalculates scrollbar as well
 		_redrawCloudTab = false;
 	}
 #endif // USE_LIBCURL
