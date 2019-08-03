@@ -1322,9 +1322,9 @@ MidiDriver_PC9801::MidiDriver_PC9801(Audio::Mixer *mixer, SciVersion version)
 	_polyphony(9), _channelMask1(0x10), _channelMask2(0x02) {
 	_pc98a =
 #ifdef SCI_PC98_AUDIO_EXTENDED
-		new PC98AudioCore(mixer, this, kType86, true);
+		new PC98AudioCore(mixer, this, kType86);
 #else
-		new PC98AudioCore(mixer, this, kType26, true);
+		new PC98AudioCore(mixer, this, kType26);
 #endif
 }
 
