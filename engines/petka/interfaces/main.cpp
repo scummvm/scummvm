@@ -81,10 +81,12 @@ void InterfaceMain::loadRoom(int id, bool fromSave) {
 	const BGInfo *info = findBGInfo(id);
 	QSystem *sys = g_vm->getQSystem();
 	QObjectBG *room = (QObjectBG *)sys->findObject(id);
+	g_vm->getQSystem()->_room = room;
 	g_vm->resMgr()->loadBitmap(room->_resourceId);
 	_objs.push_back(room);
 	for (uint i = 0; i < info->attachedObjIds.size(); ++i) {
 		QMessageObject *obj = g_vm->getQSystem()->findObject(info->attachedObjIds[i]);
+		debug("Added sound id %d", obj->_resourceId);
 		obj->_sound = g_vm->soundMgr()->addSound(g_vm->resMgr()->findSoundName(obj->_resourceId), Audio::Mixer::kSFXSoundType);
 		obj->_hasSound = obj->_sound != nullptr;
 		obj->_startSound = false;
@@ -157,4 +159,3 @@ void InterfaceMain::unloadRoom(bool fromSave) {
 }
 
 } // End of namespace Petka
-
