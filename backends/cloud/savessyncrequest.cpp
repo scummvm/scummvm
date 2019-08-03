@@ -137,14 +137,24 @@ void SavesSyncRequest::directoryListedCallback(Storage::ListDirectoryResponse re
 		}
 	}
 
-	debug(9, (_filesToDownload.size() > 0 ? "\nSavesSyncRequest: download files:" : "\nSavesSyncRequest: nothing to download"));
-	for (uint32 i = 0; i < _filesToDownload.size(); ++i) {
-		debug(9, " %s", _filesToDownload[i].name().c_str());
+	debug(9, "\nSavesSyncRequest: ");
+	if (_filesToDownload.size() > 0) {
+		debug(9, "nothing to download");
+	} else {
+		debug(9, "download files:");
+		for (uint32 i = 0; i < _filesToDownload.size(); ++i) {
+			debug(9, " %s", _filesToDownload[i].name().c_str());
+		}
+		debug(9, "%s", "");
 	}
-	if (_filesToDownload.size() > 0) debug(9, "");
-	debug(9, (_filesToUpload.size() > 0 ? "SavesSyncRequest: upload files:" : "SavesSyncRequest: nothing to upload"));
-	for (uint32 i = 0; i < _filesToUpload.size(); ++i) {
-		debug(9, " %s", _filesToUpload[i].c_str());
+	debug(9, "SavesSyncRequest: ");
+	if (_filesToUpload.size() > 0) {
+		debug(9, "nothing to upload");
+	} else {
+		debug(9, "upload files:");
+		for (uint32 i = 0; i < _filesToUpload.size(); ++i) {
+			debug(9, " %s", _filesToUpload[i].c_str());
+		}
 	}
 	_totalFilesToHandle = _filesToDownload.size() + _filesToUpload.size();
 
