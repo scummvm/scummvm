@@ -289,8 +289,6 @@ bool Menu::init() {
 		}
 		else
 			_hdbLogoScreen = g_hdb->_gfx->loadPic(TITLESCREEN);
-
-
 	} else {
 		_gCheckEmpty = g_hdb->_gfx->loadPic(G_CHECK_EMPTY);
 		_gCheckOff = g_hdb->_gfx->loadPic(G_CHECK_OFF);
