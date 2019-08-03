@@ -82,7 +82,7 @@ void Windows::setWindow(int win) {
 
 /*--------------------------------------------------------------------------*/
 
-Window::Window() : _windows(nullptr), _win(nullptr), _quotes(0), _dashes(0), _spaces(0),
+Window::Window() : _windows(nullptr), _win(nullptr), _quotes(0), _dashes(0), _spaces(0), _index(-1),
 		_currFont(TEXT_FONT), _prevFont(TEXT_FONT), _tempFont(TEXT_FONT), _currStyle(0), _oldStyle(0) {
 	Common::fill(_properties, _properties + TRUE_BG_COLOR + 1, 0);
 	_properties[Y_POS] = _properties[X_POS] = 1;
