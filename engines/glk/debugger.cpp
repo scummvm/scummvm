@@ -29,7 +29,7 @@
 
 namespace Glk {
 
-Debugger::Debugger(GlkEngine *vm) : GUI::Debugger(), _vm(vm) {
+Debugger::Debugger() : GUI::Debugger() {
 	registerCmd("dumppic", WRAP_METHOD(Debugger, cmdDumpPic));
 }
 

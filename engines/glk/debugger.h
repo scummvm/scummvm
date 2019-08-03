@@ -34,8 +34,6 @@ class GlkEngine;
 
 class Debugger : public GUI::Debugger {
 private:
-	GlkEngine *_vm;
-
 	/**
 	 * Saves a decoded raw image to a PNG file
 	 */
@@ -51,7 +49,7 @@ protected:
 	 */
 	int strToInt(const char *s);
 public:
-	Debugger(GlkEngine *vm);
+	Debugger();
 };
 
 } // End of namespace Glk

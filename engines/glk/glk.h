@@ -103,7 +103,7 @@ protected:
 	 * Creates a debugger instance
 	 */
 	virtual Debugger *createDebugger() {
-		return new Debugger(this);
+		return new Debugger();
 	}
 
 	/**
