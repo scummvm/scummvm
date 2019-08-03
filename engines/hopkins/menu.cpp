@@ -63,7 +63,7 @@ int MenuManager::menu() {
 		for (int idx = 0; idx < 31; ++idx)
 			_vm->_globals->_inventory[idx] = 0;
 
-		memset(_vm->_globals->_saveData, 0, 2000);
+		memset(_vm->_globals->_saveData->_data, 0, 2050-50);
 		_vm->_objectsMan->addObject(14);
 		memset(frameIndex, 0, sizeof(int) * ARRAYSIZE(frameIndex));
 
