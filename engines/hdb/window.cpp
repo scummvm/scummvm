@@ -1311,6 +1311,8 @@ bool Window::checkInvClose(int x, int y) {
 			lastWeaponSelected = t;
 			g_hdb->_sound->playSound(SND_MENU_ACCEPT);
 			return true;
+		default:
+			break;
 		}
 		g_hdb->_sound->playSound(SND_CELLHOLDER_USE_REJECT);
 	}

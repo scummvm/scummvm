@@ -178,6 +178,8 @@ void Input::setButtons(uint16 b) {
 						lastWeaponSelected = t;
 						g_hdb->_sound->playSound(SND_MENU_ACCEPT);
 						return;
+					default:
+						break;
 					}
 					g_hdb->_sound->playSound(SND_CELLHOLDER_USE_REJECT);
 					return;
