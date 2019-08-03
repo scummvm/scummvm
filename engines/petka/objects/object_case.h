@@ -28,7 +28,19 @@
 namespace Petka {
 
 class QObjectCase : public QObject {
+public:
+	QObjectCase();
+	void update(int time) override;
+	void show(bool v) override;
+	bool isInPoint(int x, int y) override;
+	void onMouseMove(int x, int y) override;
+	void onClick(int x, int y) override;
+	void fillWithItems();
 
+private:
+	Common::Array<int> _items;
+	uint _clickedObjIndex;
+	int _itemIndex;
 };
 
 } // End of namespace Petka

@@ -78,6 +78,8 @@ public:
 	int _isIniting;
 	int _fxId;
 	int _musicId;
+
+	QObjectBG *_room;
 };
 
 } // End of namespace Petka
