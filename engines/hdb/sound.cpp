@@ -1500,6 +1500,8 @@ bool Sound::playSound(int index) {
 			_soundCache[index].audioStream = Audio::makeWAVStream(stream, DisposeAfterUse::YES);
 			_soundCache[index].loaded = 1;
 		}
+	} else {
+		_soundCache[index].audioStream->rewind();
 	}
 
 	int soundChannel = 0;
@@ -1529,6 +1531,7 @@ bool Sound::playSound(int index) {
 		false,
 		false
 	);
+
 	return true;
 }
 
@@ -1559,6 +1562,8 @@ bool Sound::playSoundEx(int index, int channel, bool loop) {
 			_soundCache[index].audioStream = Audio::makeWAVStream(stream, DisposeAfterUse::YES);
 			_soundCache[index].loaded = 1;
 		}
+	} else {
+		_soundCache[index].audioStream->rewind();
 	}
 
 	g_hdb->_mixer->setChannelVolume(_handles[channel], _sfxVolume);
