@@ -157,23 +157,25 @@ bool Gfx::init() {
 	_tileSkyClouds = getTileIndex(TILE_SKY_CLOUDS); // Not completely sure about this filename.
 	_skyClouds = NULL;
 
-	// Load Mouse Pointer and Display Cursor
-	_mousePointer[0] = loadPic(PIC_MOUSE_CURSOR1);
-	_mousePointer[1] = loadPic(PIC_MOUSE_CURSOR2);
-	_mousePointer[2] = loadPic(PIC_MOUSE_CURSOR3);
-	_mousePointer[3] = loadPic(PIC_MOUSE_CURSOR4);
-	_mousePointer[4] = loadPic(PIC_MOUSE_CURSOR5);
-	_mousePointer[5] = loadPic(PIC_MOUSE_CURSOR6);
-	_mousePointer[6] = loadPic(PIC_MOUSE_CURSOR7);
-	_mousePointer[7] = loadPic(PIC_MOUSE_CURSOR8);
-	_showCursor = true;
+	if (!g_hdb->isPPC()) {
+		// Load Mouse Pointer and Display Cursor
+		_mousePointer[0] = loadPic(PIC_MOUSE_CURSOR1);
+		_mousePointer[1] = loadPic(PIC_MOUSE_CURSOR2);
+		_mousePointer[2] = loadPic(PIC_MOUSE_CURSOR3);
+		_mousePointer[3] = loadPic(PIC_MOUSE_CURSOR4);
+		_mousePointer[4] = loadPic(PIC_MOUSE_CURSOR5);
+		_mousePointer[5] = loadPic(PIC_MOUSE_CURSOR6);
+		_mousePointer[6] = loadPic(PIC_MOUSE_CURSOR7);
+		_mousePointer[7] = loadPic(PIC_MOUSE_CURSOR8);
+		_showCursor = true;
 
-	// Load all 4 levels of star colors
-	_starField[0] = getPicture(PIC_STAR64);
-	_starField[1] = getPicture(PIC_STAR128);
-	_starField[2] = getPicture(PIC_STAR192);
-	_starField[3] = getPicture(PIC_STAR256);
-	_snowflake = getPicture(PIC_SNOWFLAKE);
+		// Load all 4 levels of star colors
+		_starField[0] = getPicture(PIC_STAR64);
+		_starField[1] = getPicture(PIC_STAR128);
+		_starField[2] = getPicture(PIC_STAR192);
+		_starField[3] = getPicture(PIC_STAR256);
+		_snowflake = getPicture(PIC_SNOWFLAKE);
+	}
 
 	_systemInit = true;
 	return true;
@@ -448,6 +450,12 @@ Tile *Gfx::loadIcon(const char *tileName) {
 	return tile;
 }
 
+void Gfx::setPixel(int x, int y, uint16 color) {
+	uint16 *ptr = (uint16 *)_globalSurface.getBasePtr(0, y);
+	ptr += x;
+	*ptr = color;
+}
+
 Tile *Gfx::getTile(int index) {
 	if (index < 0 || index > _numTiles) {
 		if (index != 0xFFFF)
@@ -650,8 +658,12 @@ void Gfx::setup3DStars() {
 		_stars3D[i].x = g_hdb->_rnd->getRandomNumber(g_hdb->_screenWidth - 1);
 		_stars3D[i].y = g_hdb->_rnd->getRandomNumber(g_hdb->_screenHeight - 1);
 		_stars3D[i].speed = g_hdb->_rnd->getRandomNumber(255);
-		_stars3D[i].speed >>= 1;
-		_stars3D[i].color = _stars3D[i].speed / 64;
+		if (g_hdb->isPPC()) {
+			_stars3D[i].color = g_hdb->_format.RGBToColor(_stars3D[i].speed, _stars3D[i].speed, _stars3D[i].speed);
+		} else {
+			_stars3D[i].speed >>= 1;
+			_stars3D[i].color = _stars3D[i].speed / 64;
+		}
 	}
 }
 
@@ -660,15 +672,23 @@ void Gfx::setup3DStarsLeft() {
 		_stars3DSlow[i].x = g_hdb->_rnd->getRandomNumber(g_hdb->_screenWidth - 1);
 		_stars3DSlow[i].y = g_hdb->_rnd->getRandomNumber(g_hdb->_screenHeight - 1);
 		_stars3DSlow[i].speed = ((double) (1 + g_hdb->_rnd->getRandomNumber(4))) / 6.0;
-		_stars3DSlow[i].color = (int) (_stars3DSlow[i].speed * 4.00);
+		if (g_hdb->isPPC())
+			_stars3DSlow[i].color = g_hdb->_format.RGBToColor((int)(_stars3DSlow[i].speed * 250), (int)(_stars3DSlow[i].speed * 250), (int)(_stars3DSlow[i].speed * 250));
+		else
+			_stars3DSlow[i].color = (int) (_stars3DSlow[i].speed * 4.00);
 	}
 }
 
 void Gfx::draw3DStars() {
 	fillScreen(0);
 	for (int i = 0; i < kNum3DStars; i++) {
-		_starField[_stars3D[i].color]->drawMasked((int)_stars3D[i].x, (int)_stars3D[i].y);
-		_stars3D[i].y += (_stars3D[i].speed >> 5) + 1;
+		if (g_hdb->isPPC()) {
+			setPixel((int)_stars3D[i].x, (int)_stars3D[i].y, _stars3D[i].color);
+			_stars3D[i].y += (_stars3D[i].speed >> 5);
+		} else {
+			_starField[_stars3D[i].color]->drawMasked((int)_stars3D[i].x, (int)_stars3D[i].y);
+			_stars3D[i].y += (_stars3D[i].speed >> 5) + 1;
+		}
 		if (_stars3D[i].y > g_hdb->_screenHeight) {
 			_stars3D[i].y = 0;
 		}
@@ -678,7 +698,10 @@ void Gfx::draw3DStars() {
 void Gfx::draw3DStarsLeft() {
 	fillScreen(0);
 	for (int i = 0; i < kNum3DStars; i++) {
-		_starField[_stars3DSlow[i].color]->drawMasked((int)_stars3DSlow[i].x, (int)_stars3DSlow[i].y);
+		if (g_hdb->isPPC())
+			setPixel((int)_stars3DSlow[i].x, (int)_stars3DSlow[i].y, _stars3DSlow[i].color);
+		else
+			_starField[_stars3DSlow[i].color]->drawMasked((int)_stars3DSlow[i].x, (int)_stars3DSlow[i].y);
 		_stars3DSlow[i].x -= _stars3DSlow[i].speed;
 		if (_stars3DSlow[i].x < 0) {
 			_stars3DSlow[i].x = g_hdb->_screenWidth - 1;
@@ -718,7 +741,14 @@ void Gfx::drawSnow() {
 		return;
 
 	for (i = 0; i < MAX_SNOW; i++) {
-		_snowflake->drawMasked((int)_snowInfo.x[i], (int)_snowInfo.y[i]);
+		if (g_hdb->isPPC()) {
+			uint16 color = g_hdb->_format.RGBToColor(160, 160, 160);
+			setPixel((int)_snowInfo.x[i] + 1, (int)_snowInfo.y[i], color);
+			setPixel((int)_snowInfo.x[i] - 1, (int)_snowInfo.y[i], color);
+			setPixel((int)_snowInfo.x[i], (int)_snowInfo.y[i] + 1, color);
+			setPixel((int)_snowInfo.x[i], (int)_snowInfo.y[i] - 1, color);
+		} else
+			_snowflake->drawMasked((int)_snowInfo.x[i], (int)_snowInfo.y[i]);
 		_snowInfo.x[i] += snowXVList[_snowInfo.xvindex[i]++];
 		_snowInfo.y[i] += _snowInfo.yv[i];
 		if (_snowInfo.xvindex[i] == MAX_SNOW_XV)
@@ -893,7 +923,7 @@ void Gfx::getDimensions(const char *string, int *pixelsWide, int *lines) {
 				width -= _charInfoBlocks[c]->width + _fontHeader.kerning + kFontIncrement;
 				i--;
 			}
-			if (!i) {
+			if (!i && !g_hdb->isPPC()) {
 				maxWidth = oldWidth;
 				break;
 			}
@@ -1014,10 +1044,17 @@ void Gfx::drawBonusStars() {
 	int h = _starsInfo.gfx[0]->_height / 2;
 
 	for (int i = 0; i < 10; i++) {
-		_starsInfo.gfx[_starsInfo.anim]->drawMasked(
-			(int)(g_hdb->_screenDrawWidth / 2 + ((float)_starsInfo.radius / 2)) + (int)((double)_starsInfo.radius * _cosines->at(_starsInfo.starAngle[i]) - w),
-			(g_hdb->_screenDrawHeight / 2) + (int)((double)_starsInfo.radius * _sines->at(_starsInfo.starAngle[i]) - h)
-		);
+		if (g_hdb->isPPC()) {
+			_starsInfo.gfx[_starsInfo.anim]->drawMasked(
+				(g_hdb->_screenWidth / 2) + (int)((double)_starsInfo.radius * _cosines->at(_starsInfo.starAngle[i]) - w),
+				(g_hdb->_screenHeight / 2) + (int)((double)_starsInfo.radius * _sines->at(_starsInfo.starAngle[i]) - h)
+				);
+		} else {
+			_starsInfo.gfx[_starsInfo.anim]->drawMasked(
+				(int)(g_hdb->_screenDrawWidth / 2 + ((float)_starsInfo.radius / 2)) + (int)((double)_starsInfo.radius * _cosines->at(_starsInfo.starAngle[i]) - w),
+				(g_hdb->_screenDrawHeight / 2) + (int)((double)_starsInfo.radius * _sines->at(_starsInfo.starAngle[i]) - h)
+			);
+		}
 
 		int angle = (int)(_starsInfo.starAngle[i] + _starsInfo.angleSpeed);
 		if (angle >= 360)
