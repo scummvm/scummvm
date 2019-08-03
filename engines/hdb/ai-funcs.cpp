@@ -784,6 +784,11 @@ void AI::killPlayer(Death method) {
 	g_hdb->_window->closeDialogChoice();
 	g_hdb->_window->stopPanicZone();
 
+	if (g_hdb->isPPC()) {
+		g_hdb->_window->closeDlvs();
+		g_hdb->_window->closeInv();
+	}
+
 	switch (method) {
 	case DEATH_NORMAL:
 		_player->state = STATE_DYING;
@@ -811,8 +816,10 @@ void AI::killPlayer(Death method) {
 		g_hdb->_sound->playSound(SND_PANIC_DEATH);
 		break;
 	case DEATH_PLUMMET:
-		_player->state = STATE_PLUMMET;
-		g_hdb->_sound->playSound(SND_GUY_PLUMMET);
+		if (!g_hdb->isDemo()) {
+			_player->state = STATE_PLUMMET;
+			g_hdb->_sound->playSound(SND_GUY_PLUMMET);
+		}
 		break;
 	}
 
@@ -2312,6 +2319,15 @@ void AI::movePlayer(uint16 buttons) {
 
 	// Just trying to put away a dialog?
 	if (buttons & kButtonB) {
+		if (g_hdb->isPPC()) {
+			if (g_hdb->_window->deliveriesActive()) {
+				g_hdb->_window->closeDlvs();
+				return;
+			} else if (g_hdb->_window->inventoryActive()) {
+				g_hdb->_window->closeInv();
+				return;
+			}
+		}
 		if (g_hdb->_window->dialogActive()) {
 			g_hdb->_window->closeDialog();
 			return;
@@ -2471,6 +2487,13 @@ void AI::movePlayer(uint16 buttons) {
 	if (_player->touchpWait > kPlayerTouchPWait / 4)
 		return;
 
+	if (g_hdb->isPPC()) {
+		// Are the Deliveries active?
+		if (g_hdb->_window->deliveriesActive())
+			if (!g_hdb->_ai->cinematicsActive())
+				return;
+	}
+
 	// Is a dialog active?
 	if (g_hdb->_window->dialogActive()) {
 		if (!cinematicsActive())
@@ -2481,6 +2504,13 @@ void AI::movePlayer(uint16 buttons) {
 	if (g_hdb->_window->dialogChoiceActive()) {
 		if (!cinematicsActive())
 			return;
+	}
+
+	if (g_hdb->isPPC()) {
+		// Is the Inventory active?
+		if (g_hdb->_window->inventoryActive())
+			if (!g_hdb->_ai->cinematicsActive())
+				return;
 	}
 
 	// In a cinematic?

@@ -915,8 +915,10 @@ void Menu::freeMenu() {
 		delete _demoPlaqueGfx;
 	_demoPlaqueGfx = NULL;
 
-	if (g_hdb->isPPC()) {
-		warning("FIXME: When handangoGfx is added, free it here");
+	if (g_hdb->isPPC() && g_hdb->isHandango()) {
+		if (_handangoGfx)
+			delete _handangoGfx;
+		_handangoGfx = NULL;
 	}
 
 	if (_nebulaGfx[0]) {
@@ -1454,7 +1456,6 @@ void Menu::processInput(int x, int y) {
 					return;
 				}
 			}
-
 		}
 
 		int i = 0;

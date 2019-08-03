@@ -567,6 +567,11 @@ void Window::closeAll() {
 	closeDialogChoice();
 	closeMsg();
 	closeTextOut();
+
+	if (g_hdb->isPPC()) {
+		g_hdb->_window->closeDlvs();
+		g_hdb->_window->closeInv();
+	}
 }
 
 void Window::openDialog(const char *title, int tileIndex, const char *string, int more, const char *luaMore) {
