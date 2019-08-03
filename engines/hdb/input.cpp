@@ -77,6 +77,20 @@ void Input::setButtons(uint16 b) {
 		g_hdb->changeGameState();
 	}
 
+	if (g_hdb->isPPC()) {
+		if (_buttons & kButtonD) {
+			if (g_hdb->_window->inventoryActive()) {
+				g_hdb->_window->closeInv();
+				g_hdb->_window->openDeliveries(false);
+			} else if (g_hdb->_window->deliveriesActive()) {
+				g_hdb->_window->closeDlvs();
+			} else {
+				g_hdb->_window->openInventory();
+			}
+			return;
+		}
+	}
+
 	// Debug Mode Cycling
 	if ((_buttons & kButtonExit) && g_hdb->getCheatingOn()) {
 		int	debugFlag = g_hdb->getDebug();
@@ -106,6 +120,138 @@ void Input::setButtons(uint16 b) {
 				}
 			}
 			return;
+		}
+
+		if (g_hdb->isPPC()) {
+			// Deliveries screen?
+			if (g_hdb->_window->deliveriesActive() && !g_hdb->_window->animatingDelivery()) {
+				if (_buttons & kButtonLeft) {
+					int	amount = g_hdb->_ai->getDeliveriesAmount();
+					int	current = g_hdb->_window->getSelectedDelivery();
+
+					if (!current)
+						current = amount - 1;
+					else
+						current--;
+
+					g_hdb->_window->setSelectedDelivery(current);
+				} else if (_buttons & kButtonRight) {
+					int		amount = g_hdb->_ai->getDeliveriesAmount();
+					int		current = g_hdb->_window->getSelectedDelivery();
+
+					current++;
+					if (current == amount)
+						current = 0;
+
+					g_hdb->_window->setSelectedDelivery(current);
+				} else if (_buttons & kButtonB)
+					g_hdb->_window->closeDlvs();
+				return;
+			}
+
+			//
+			// Resources screen?  Move select cursor around
+			//
+			if (g_hdb->_window->inventoryActive()) {
+				// select weapon?
+				if (_buttons & kButtonB) {
+					static AIType lastWeaponSelected = AI_NONE;
+					Tile *gfx;
+
+					if (!g_hdb->getActionMode()) {
+						g_hdb->_window->closeInv();
+						return;
+					}
+
+					AIType t = g_hdb->_ai->getInvItemType(g_hdb->_window->getInvSelect());
+					gfx = g_hdb->_ai->getInvItemGfx(g_hdb->_window->getInvSelect());
+
+					switch (t) {
+					case ITEM_CLUB:
+					case ITEM_ROBOSTUNNER:
+					case ITEM_SLUGSLINGER:
+						g_hdb->_ai->setPlayerWeapon(t, gfx);
+						if (t == lastWeaponSelected) {
+							g_hdb->_window->closeInv();
+							return;
+						}
+						lastWeaponSelected = t;
+						g_hdb->_sound->playSound(SND_MENU_ACCEPT);
+						return;
+					}
+					g_hdb->_sound->playSound(SND_CELLHOLDER_USE_REJECT);
+					return;
+				}
+
+
+				if (_buttons & kButtonLeft) {
+					int	amount = g_hdb->_ai->getInvMax();
+					int	current = g_hdb->_window->getInvSelect();
+
+					if (!amount)
+						return;
+
+					if (current == 5)
+						current = amount - 1;
+					else if (!current && amount > 5)
+						current = 4;
+					else if (!current)
+						current = amount - 1;
+					else
+						current--;
+
+					g_hdb->_sound->playSound(SND_MENU_SLIDER);
+					g_hdb->_window->setInvSelect(current);
+				} else if (_buttons & kButtonRight) {
+					int		amount = g_hdb->_ai->getInvMax();
+					int		current = g_hdb->_window->getInvSelect();
+
+					if (!amount)
+						return;
+
+					if (amount > 5) {
+						if (current == amount - 1)
+							current = 5;
+						else if (current == 4)
+							current = 0;
+						else
+							current++;
+					} else if (current == amount - 1)
+						current = 0;
+					else
+						current++;
+
+					g_hdb->_sound->playSound(SND_MENU_SLIDER);
+					g_hdb->_window->setInvSelect(current);
+				} else if (_buttons & kButtonUp) {
+					int		amount = g_hdb->_ai->getInvMax();
+					int		current = g_hdb->_window->getInvSelect();
+
+					if (!amount || amount < 6)
+						return;
+
+					if (current - 5 >= 0)
+						current -= 5;
+
+					g_hdb->_sound->playSound(SND_MENU_SLIDER);
+					g_hdb->_window->setInvSelect(current);
+				} else if (_buttons & kButtonDown) {
+					int		amount = g_hdb->_ai->getInvMax();
+					int		current = g_hdb->_window->getInvSelect();
+
+					if (!amount || amount < 6)
+						return;
+
+					if (current + 5 < amount)
+						current += 5;
+					else if (current < 5)
+						current = amount - 1;
+
+					g_hdb->_sound->playSound(SND_MENU_SLIDER);
+					g_hdb->_window->setInvSelect(current);
+				}
+				return;
+			}
 		}
 
 		// Choose from DialogChoice
@@ -165,7 +311,21 @@ void Input::stylusDown(int x, int y) {
 		}
 
 		if (g_hdb->isPPC()) {
-			warning("STUB: Add PPC code for Deliveries\\Inventory");
+			// is Deliveries active?
+			if (g_hdb->_window->deliveriesActive()) {
+				if (!g_hdb->_window->checkDlvsClose(x, y))
+					return;
+				if (!g_hdb->_ai->cinematicsActive())
+					return;
+			}
+
+			// is Inventory active?
+			if (g_hdb->_window->inventoryActive()) {
+				if (!g_hdb->_window->checkInvClose(x, y))
+					return;
+				if (!g_hdb->_ai->cinematicsActive())
+					return;
+			}
 		}
 
 		// Is Dialog Active?
