@@ -31,7 +31,7 @@ namespace Glk {
 /**
  * Text Grid window
  */
-class TextGridWindow : public Window {
+class TextGridWindow : public TextWindow {
 	/**
 	 * Structure for a row within the grid window
 	 */

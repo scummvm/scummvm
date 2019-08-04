@@ -35,7 +35,7 @@ namespace Glk {
 /**
  * Text Buffer window
  */
-class TextBufferWindow : public Window, Speech {
+class TextBufferWindow : public TextWindow, Speech {
 	/**
 	 * Structure for a row within the window
 	 */

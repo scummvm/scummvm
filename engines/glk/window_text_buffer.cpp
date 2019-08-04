@@ -36,7 +36,7 @@ namespace Glk {
 #define SLOP (2 * GLI_SUBPIX)
 
 
-TextBufferWindow::TextBufferWindow(Windows *windows, uint rock) : Window(windows, rock),
+TextBufferWindow::TextBufferWindow(Windows *windows, uint rock) : TextWindow(windows, rock),
 		_font(g_conf->_propInfo), _historyPos(0), _historyFirst(0), _historyPresent(0),
 		_lastSeen(0), _scrollPos(0), _scrollMax(0), _scrollBack(SCROLLBACK), _width(-1), _height(-1),
 		_inBuf(nullptr), _lineTerminators(nullptr), _echoLineInput(true), _ladjw(0), _radjw(0),

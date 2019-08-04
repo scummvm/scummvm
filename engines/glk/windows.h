@@ -595,6 +595,17 @@ public:
 	BlankWindow(Windows *windows, uint rock);
 };
 
+/**
+ * Abstract common base for the text window classes
+ */
+class TextWindow : public Window {
+public:
+	/**
+	 * Constructor
+	 */
+	TextWindow(Windows *windows, uint rock) : Window(windows, rock) {}
+};
+
 } // End of namespace Glk
 
 #endif
