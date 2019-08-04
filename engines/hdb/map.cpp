@@ -1188,11 +1188,11 @@ void Map::centerMapXY(int x, int y) {
 }
 
 bool Map::checkEntOnScreen(AIEntity *e) {
-	return ((e->x > _mapX - 32) && (e->x < _mapX + g_hdb->_map->_screenXTiles * kTileWidth) && (e->y > _mapY - 32) && (e->y < g_hdb->_map->_screenYTiles * kTileHeight));
+	return ((e->x > _mapX - 32) && (e->x < _mapX + g_hdb->_map->_screenXTiles * kTileWidth) && (e->y > _mapY - 32) && (e->y < _mapY + g_hdb->_map->_screenYTiles * kTileHeight));
 }
 
 bool Map::checkXYOnScreen(int x, int y) {
-	return ((x > _mapX - 32) && (x < _mapX + g_hdb->_map->_screenXTiles * kTileWidth) && (y > _mapY - 32) && (y < g_hdb->_map->_screenYTiles * kTileHeight));
+	return ((x > _mapX - 32) && (x < _mapX + g_hdb->_map->_screenXTiles * kTileWidth) && (y > _mapY - 32) && (y < _mapY + g_hdb->_map->_screenYTiles * kTileHeight));
 }
 
 bool Map::checkOneTileExistInRange(int tileIndex, int count) {
