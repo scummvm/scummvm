@@ -5,6 +5,7 @@ MODULE_OBJS := \
 	ios7_osys_events.o \
 	ios7_osys_sound.o \
 	ios7_osys_video.o \
+	ios7_osys_misc.o \
 	ios7_main.o \
 	ios7_video.o \
 	ios7_keyboard.o \
