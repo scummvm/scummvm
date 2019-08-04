@@ -28,6 +28,7 @@
 
 #include "graphics/conversion.h"
 #include "backends/platform/ios7/ios7_app_delegate.h"
+#include "common/translation.h"
 
 @interface iOS7AlertHandler : NSObject<UIAlertViewDelegate>
 @end
@@ -602,4 +603,42 @@ void OSystem_iOS7::setShowKeyboard(bool show) {
 
 bool OSystem_iOS7::isKeyboardShown() const {
 	return [[iOS7AppDelegate iPhoneView] isKeyboardShown];
+}
+
+
+bool OSystem_iOS7::hasTextInClipboard() {
+	return [[UIPasteboard generalPasteboard] containsPasteboardTypes:UIPasteboardTypeListString];
+}
+
+Common::String OSystem_iOS7::getTextFromClipboard() {
+	if (!hasTextInClipboard())
+		return Common::String();
+
+	UIPasteboard *pb = [UIPasteboard generalPasteboard];
+	NSString *str = pb.string;
+	if (str == nil)
+		return Common::String();
+
+	// If translations are supported, use the current TranslationManager charset and otherwise
+	// use ASCII. If the string cannot be represented using the requested encoding we get a null
+	// pointer below, which is fine as ScummVM would not know what to do with the string anyway.
+#ifdef USE_TRANSLATION
+	NSString* encStr = [NSString stringWithCString:TransMan.getCurrentCharset().c_str() encoding:NSASCIIStringEncoding];
+	NSStringEncoding encoding = CFStringConvertEncodingToNSStringEncoding(CFStringConvertIANACharSetNameToEncoding((CFStringRef)encStr));
+#else
+	NSStringEncoding encoding = NSISOLatin1StringEncoding;
+#endif
+	return Common::String([str cStringUsingEncoding:encoding]);
+}
+
+bool OSystem_iOS7::setTextInClipboard(const Common::String &text) {
+#ifdef USE_TRANSLATION
+	NSString* encStr = [NSString stringWithCString:TransMan.getCurrentCharset().c_str() encoding:NSASCIIStringEncoding];
+	NSStringEncoding encoding = CFStringConvertEncodingToNSStringEncoding(CFStringConvertIANACharSetNameToEncoding((CFStringRef)encStr));
+#else
+	NSStringEncoding encoding = NSISOLatin1StringEncoding;
+#endif
+	UIPasteboard *pb = [UIPasteboard generalPasteboard];
+	[pb setString:[NSString stringWithCString:text.c_str() encoding:encoding]];
+	return true;
 }

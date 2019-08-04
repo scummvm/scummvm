@@ -206,6 +206,10 @@ public:
 	virtual void logMessage(LogMessageType::Type type, const char *message);
 	virtual void fatalError() override;
 
+	virtual bool hasTextInClipboard();
+	virtual Common::String getTextFromClipboard();
+	virtual bool setTextInClipboard(const Common::String &text);
+
 protected:
 	void initVideoContext();
 	void updateOutputSurface();

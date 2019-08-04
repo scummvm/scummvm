@@ -172,6 +172,7 @@ bool OSystem_iOS7::hasFeature(Feature f) {
 	case kFeatureCursorPalette:
 	case kFeatureFilteringMode:
 	case kFeatureVirtualKeyboard:
+	case kFeatureClipboardSupport:
 		return true;
 
 	default:
