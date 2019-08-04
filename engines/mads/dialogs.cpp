@@ -147,7 +147,7 @@ TextDialog::TextDialog(MADSEngine *vm, const Common::String &fontName,
 	: Dialog(vm) {
 	_font = _vm->_font->getFont(fontName);
 	_position = pos;
-	_icon = nullptr;
+	_portrait = nullptr;
 	_edgeSeries = nullptr;
 	_piecesPerCenter = 0;
 	_fontSpacing = 0;
@@ -158,10 +158,10 @@ TextDialog::TextDialog(MADSEngine *vm, const Common::String &fontName,
 }
 
 TextDialog::TextDialog(MADSEngine *vm, const Common::String &fontName,
-		const Common::Point &pos, MSurface *icon, int maxTextChars): Dialog(vm) {
+		const Common::Point &pos, MSurface *portrait, int maxTextChars): Dialog(vm) {
 	_font = _vm->_font->getFont(fontName);
 	_position = pos;
-	_icon = icon;
+	_portrait = portrait;
 	_edgeSeries = new SpriteAsset(_vm, "box.ss", PALFLAG_RESERVED);
 	_vm->_font->setColors(TEXTDIALOG_BLACK, TEXTDIALOG_BLACK, TEXTDIALOG_BLACK, TEXTDIALOG_BLACK);
 	_piecesPerCenter = _edgeSeries->getFrame(EDGE_UPPER_CENTER)->w / _edgeSeries->getFrame(EDGE_BOTTOM)->w;
@@ -174,6 +174,8 @@ TextDialog::TextDialog(MADSEngine *vm, const Common::String &fontName,
 void TextDialog::init(int maxTextChars) {
 	_innerWidth = (_font->maxWidth() + 1) * maxTextChars;
 	_width = _innerWidth + 10;
+	if (_portrait != nullptr)
+		_width += _portrait->w + 10;
 	_lineSize = maxTextChars * 2;
 	_lineWidth = 0;
 	_currentX = 0;
@@ -320,6 +322,20 @@ void TextDialog::draw() {
 	// Draw the underlying dialog
 	Dialog::draw();
 
+	// Draw the edges
+	if (_edgeSeries != nullptr) {
+		//_vm->_screen->transBlitFrom(*_edgeSeries->getFrame(EDGE_UPPER_LEFT), _position, 0xFF);
+		//_vm->_screen->transBlitFrom(*_edgeSeries->getFrame(EDGE_UPPER_RIGHT), _position);
+		//_vm->_screen->transBlitFrom(*_edgeSeries->getFrame(EDGE_LOWER_LEFT), Common::Point(_position.x, _position.y + _height));
+		//_vm->_screen->transBlitFrom(*_edgeSeries->getFrame(EDGE_LOWER_RIGHT), _position);
+	}
+
+	// Draw the portrait
+	if (_portrait != nullptr) {
+		Common::Point portraitPos = Common::Point(_position.x + 5, _position.y + 5);
+		_vm->_screen->transBlitFrom(*_portrait, portraitPos, 0xFF);
+	}
+
 	// Draw the text lines
 	int lineYp = _position.y + 5;
 	for (int lineNum = 0; lineNum <= _numLines; ++lineNum) {
@@ -334,6 +350,9 @@ void TextDialog::draw() {
 			int yp = lineYp;
 			if (_lineXp[lineNum] & 0x40)
 				++yp;
+
+			if (_portrait != nullptr)
+				xp += _portrait->w + 5;
 
 			_font->writeString(_vm->_screen, _lines[lineNum],
 				Common::Point(xp, yp), 1);
@@ -417,6 +436,8 @@ MessageDialog::MessageDialog(MADSEngine *vm, int maxChars, ...)
 Dialogs *Dialogs::init(MADSEngine *vm) {
 	if (vm->getGameID() == GType_RexNebular)
 		return new Nebular::DialogsNebular(vm);
+	//else if (vm->getGameID() == GType_Phantom)
+	//	return new Phantom::DialogsPhantom(vm);
 
 	// Throw a warning for now, since the associated Dialogs class isn't implemented yet
 	warning("Dialogs: Unknown game");

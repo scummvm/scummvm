@@ -127,7 +127,7 @@ protected:
 	Common::String _lines[TEXT_DIALOG_MAX_LINES];
 	int _lineXp[TEXT_DIALOG_MAX_LINES];
 	SpriteAsset *_edgeSeries;
-	MSurface *_icon;
+	MSurface *_portrait;
 	int _piecesPerCenter;
 	int _fontSpacing;
 
@@ -151,11 +151,11 @@ public:
 	 * @param vm			Engine reference
 	 * @param fontName		Font to use for display
 	 * @param pos			Position for window top-left
-	 * @param icon			Speaker portrait to show in dialog
+	 * @param portrait		Speaker portrait to show in dialog
 	 * @param maxTextChars	Horizontal width of text portion of window in characters
 	 */
 	TextDialog(MADSEngine *vm, const Common::String &fontName, const Common::Point &pos,
-		MSurface *icon, int maxTextChars);
+		MSurface *portrait, int maxTextChars);
 
 	/**
 	 * Destructor
