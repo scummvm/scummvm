@@ -13,8 +13,8 @@
 #define ID_GDF_XML __GDF_XML
 
 CREATEPROCESS_MANIFEST_RESOURCE_ID RT_MANIFEST "dists/win32/scummvm.exe.manifest"
-IDI_ICON               ICON    DISCARDABLE     "icons/scummvm.ico"
-IDI_COUNT              ICON    DISCARDABLE     "icons/count.ico"
+IDI_ICON               ICON    "icons/scummvm.ico"
+IDI_COUNT              ICON    "icons/count.ico"
 
 ID_GDF_XML             DATA    "dists/win32/scummvm.gdf.xml"
 
