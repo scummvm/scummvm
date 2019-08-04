@@ -94,6 +94,9 @@ struct ScriptPatch {
 	{"MAP30", "rots = 13 + random( 4 )", "rots = 13 + math.random( 4 )"}, // line 258
 	{"MAP30", "if i3 > getn(tiles)", "if i3 > #tiles"}, // line 261
 
+	// Jump straight to credits
+	//{"CINE_OUTRO", "-- delegate", "-- delegate\nCine_FadeOutBlack( 40 )\nCredits()"},
+
 	{NULL, NULL, NULL}
 };
 
