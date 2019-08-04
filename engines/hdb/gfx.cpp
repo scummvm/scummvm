@@ -359,6 +359,7 @@ void Gfx::updateFade() {
 		}
 
 		_globalSurface.blitFrom(_fadeBuffer1);
+		g_system->copyRectToScreen(_globalSurface.getBasePtr(0, 0), _globalSurface.pitch, 0, 0, _globalSurface.w, _globalSurface.h);
 
 		// step the fading values to the next one and
 		// see if we're done yet
@@ -388,8 +389,6 @@ void Gfx::updateFade() {
 			waitAFrame++;
 			return;
 		}
-
-		g_system->copyRectToScreen(_globalSurface.getBasePtr(0, 0), _globalSurface.pitch, 0, 0, _globalSurface.w, _globalSurface.h);
 
 		g_system->updateScreen();
 		if (g_hdb->getDebug()) {
