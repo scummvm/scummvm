@@ -218,8 +218,12 @@ bool LinuxTextToSpeechManager::resume() {
 	if (_speechQueue.size()) {
 		_speechState = SPEAKING;
 		for (Common::List<Common::String>::iterator i = _speechQueue.begin(); i != _speechQueue.end(); i++) {
-			if (spd_say(_connection, SPD_MESSAGE, i->c_str()) == -1)
+			if (spd_say(_connection, SPD_MESSAGE, i->c_str()) == -1) {
+				if (_connection != 0)
+					spd_close(_connection);
+				init();
 				return true;
+			}
 		}
 	}
 	else
