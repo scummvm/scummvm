@@ -42,12 +42,17 @@ Window &Windows::operator[](uint idx) {
 }
 
 void Windows::setup(bool isVersion6) {
+	MonoFontInfo &mi = g_vm->_conf->_monoInfo;
+
 	if (isVersion6) {
 		// For graphic games we have a background window covering the entire screen for greater
 		// flexibility of wher we draw pictures, and the lower and upper areas sit on top of them
 		_background = g_vm->glk_window_open(0, 0, 0, wintype_Graphics, 0);
 		_background->setBackgroundColor(0xffffff);
 
+		Window &w = _windows[0];
+		w[X_SIZE] = g_system->getWidth() / mi._cellW;
+		w[Y_SIZE] = g_system->getHeight() / mi._cellH;
 	} else {
 		_lower = g_vm->glk_window_open(0, 0, 0, wintype_TextBuffer, 0);
 		_upper = g_vm->glk_window_open(_lower, winmethod_Above | winmethod_Fixed, 0, wintype_TextGrid, 0);
@@ -57,7 +62,6 @@ void Windows::setup(bool isVersion6) {
 		g_vm->glk_set_window(_lower);
 	}
 
-	MonoFontInfo &mi = g_vm->_conf->_monoInfo;
 	for (size_t idx = 0; idx < 8; ++idx) {
 		Window &w = _windows[idx];
 		w._windows = this;
