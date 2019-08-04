@@ -695,8 +695,123 @@ static const uint16 camelotPatchFatimaRoomMessages[] = {
 	PATCH_END
 };
 
+// Sheathing the sword by pressing F8 while entering or exiting a room breaks
+//  the game by placing ego in an invalid state that allows walking through
+//  obstacles and prevents room changes. This affects rooms that subclass eRoom
+//  in areas that allow walking with sword drawn such as the monk's ruins and
+//  the desert. This is most likely to occur while battling the monk.
+//
+// eRoom walks ego in and out of rooms in handsOff mode. It sets ego:illegalBits
+//  to 0, enables ignoreActors, and sets a motion that cues when complete to
+//  restore ego's properties. Sheathing the sword interrupts the motion, which
+//  prevents eRoom:cue, and prematurely restores control to the user with ego in
+//  the temporary state. There are almost no restrictions on sheathing because
+//  it's used when input is disabled and during several handsOff scenes.
+//
+// We fix this by preventing sword scripts from starting when an eRoom is in the
+//  middle of controlling ego. eRoom tracks this with the comingIn and goingOut
+//  properties and we require that both be cleared to execute a sword command.
+//
+// Applies to: All versions
+// Responsible method: ARTHUR:doit
+// Fixes bug: #11042
+static const uint16 camelotSignatureSwordSheathing[] = {
+	SIG_MAGICDWORD,
+	0x89, 0x7d,                         // lsg 7d [ sword-command ]
+	0x3c,                               // dup
+	0x35, 0x01,                         // ldi 01
+	0x1a,                               // eq? [ sword-command == 1 (draw) ]
+	0x30, SIG_UINT16(0x0013),           // bnt 0013
+	0x39, SIG_SELECTOR8(setScript),     // pushi setScript
+	0x78,                               // push1
+	0x7a,                               // push2
+	0x38, SIG_UINT16(0x038e),           // pushi 910d
+	0x76,                               // push0
+	0x43, 0x02, 0x04,                   // callk ScriptID 04 [ ScriptID 910 0 (DrawSword) ]
+	0x36,                               // push
+	0x81, 0x00,                         // lag 00
+	0x4a, 0x06,                         // send 06 [ ego setScript: DrawSword ]
+	0x32, SIG_UINT16(0x0085),           // jmp 0085 [ end of switch ]
+	0x3c,                               // dup
+	0x35, 0x02,                         // ldi 02
+	0x1a,                               // eq? [ sword-command == 2 (sheath) ]
+	0x30, SIG_UINT16(0x0013),           // bnt 0013
+	0x39, SIG_SELECTOR8(setScript),     // pushi setScript
+	0x78,                               // push1
+	0x7a,                               // push2
+	0x38, SIG_UINT16(0x038e),           // pushi 910d
+	0x78,                               // push1
+	0x43, 0x02, 0x04,                   // callk ScriptID 04 [ ScriptID 910 1 (SheatheSword) ]
+	0x36,                               // push
+	0x81, 0x00,                         // lag 00
+	0x4a, 0x06,                         // send 06 [ ego setScript: SheatheSword ]
+	0x32, SIG_UINT16(0x006b),           // jmp 006b [ end of switch ]
+	0x3c,                               // dup
+	0x35, 0x03,                         // ldi 03
+	0x1a,                               // eq? [ sword-command == 3 (parry) ]
+	0x30, SIG_UINT16(0x0013),           // bnt 0013
+	0x39, SIG_SELECTOR8(setScript),     // pushi setScript
+	0x78,                               // push1
+	0x7a,                               // push2
+	0x38, SIG_UINT16(0x0390),           // pushi 912d
+	0x78,                               // push1
+	0x43, 0x02, 0x04,                   // callk ScriptID 04 [ ScriptID 912 1 (DoParry) ]
+	SIG_ADDTOOFFSET(+15),
+	0x81, 0x7c,                         // lag 7c [ start of sword-command == 0 handler ]
+	SIG_ADDTOOFFSET(+72),
+	0x3a,                               // toss [ end of switch ]
+	SIG_END
+};
+
+static const uint16 camelotPatchSwordSheathing[] = {
+	0x81, 0x7d,                         // lag 7d [ sword-command ]
+	0x31, 0x53,                         // bnt 53 [ sword-command == 0 handler ]
+	0x39, 0x03,                         // pushi 03
+	0x20,                               // ge? [ 3 >= sword-command ]
+	0x31, 0x3e,                         // bnt 3e [ exit if sword-command > 3 ]
+	0x7a,                               // push2
+	0x89, 0x02,                         // lsg 02
+	0x38, PATCH_UINT16(0x014b),         // pushi comingIn [ same value in all versions ]
+	0x43, 0x07, 0x04,                   // callk RespondsTo 04 [ RespondsTo currentRoom comingIn ]
+	0x31, 0x14,                         // bnt 14 [ skip eRoom checks if room isn't an eRoom ]
+	0x38, PATCH_UINT16(0x014b),         // pushi comingIn
+	0x76,                               // push0
+	0x81, 0x02,                         // lag 02
+	0x4a, 0x04,                         // send 04 [ currentRoom comingIn? ]
+	0x2f, 0x29,                         // bt 29   [ skip sword scripts if entering room ]
+	0x38, PATCH_UINT16(0x014c),         // pushi goingOut [ same value in all versions ]
+	0x76,                               // push0
+	0x81, 0x02,                         // lag 02
+	0x4a, 0x04,                         // send 04 [ currentRoom goingOut? ]
+	0x2f, 0x1f,                         // bt 1f   [ skip sword scripts if exiting room ]
+	0x39, PATCH_SELECTOR8(setScript),   // pushi setScript
+	0x78,                               // push1
+	0x7a,                               // push2
+	0x81, 0x7d,                         // lag 7d
+	0x7a,                               // push2
+	0x20,                               // ge? [ 2 >= sword-command ]
+	0x31, 0x05,                         // bnt 05
+	0x38, PATCH_UINT16(0x038e),         // pushi 910d
+	0x33, 0x03,                         // jmp 03
+	0x38, PATCH_UINT16(0x0390),         // pushi 912d
+	0x81, 0x7d,                         // lag 7d
+	0x78,                               // push1
+	0x1c,                               // ne? [ sword-command != 1 ]
+	0x36,                               // push
+	0x43, 0x02, 0x04,                   // callk ScriptID 04 [ ScriptID (sword-command <= 2) ? 910 : 912, (sword-command != 1) ]
+	0x36,                               // push
+	0x81, 0x00,                         // lag 00
+	0x4a, 0x06,                         // send 06 [ ego setScript: sword-script ]
+	0x48,                               // ret
+	PATCH_ADDTOOFFSET(+89),
+	0x48,                               // ret [ remove toss since dup instructions were removed ]
+	PATCH_END
+};
+
+
 //         script, description,                                       signature                             patch
 static const SciScriptPatcherEntry camelotSignatures[] = {
+	{ true,     0, "fix sword sheathing",                          1, camelotSignatureSwordSheathing,       camelotPatchSwordSheathing },
 	{ true,    11, "fix hunter missing points",                    1, camelotSignatureHunterMissingPoints,  camelotPatchHunterMissingPoints },
 	{ true,    62, "fix peepingTom Sierra bug",                    1, camelotSignaturePeepingTom,           camelotPatchPeepingTom },
 	{ true,    64, "fix Fatima room messages",                     2, camelotSignatureFatimaRoomMessages,   camelotPatchFatimaRoomMessages },
