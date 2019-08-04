@@ -165,6 +165,16 @@ public:
 	 *
 	 * @param str The string to say
 	 * @param action What to do if another string is just being said.
+	 * Possible actions are:
+	 *		INTERRUPT - interrupts the current speech
+	 *		INTERRUPT_NO_REPEAT - interrupts the current speech only if the str
+	 *			is different than the last string in the queue (or the string, that
+	 *			is currently being said if the queue is empty)
+	 *		QUEUE - queues the speech
+	 *		QUEUE_NO_REPEAT - queues the speech only if the str is different than
+	 *			the last string in the queue (or the string, that is currently
+	 *			being said if the queue is empty)
+	 *		DROP - does nothing if there is anything being said at the moment
 	 * @param charset The encoding of the string. If empty this is assumed to be the
 	 *        encoding used for the GUI.
 	 */
@@ -269,6 +279,14 @@ public:
 	 */
 	Array<TTSVoice> getVoicesArray() { return _ttsState->_availableVoices; }
 
+	/**
+	 * Returns array of indices of voices from the _availableVoices array, which
+	 * have the needed gender.
+	 *
+	 * @param gender Gender, which indices should be returned
+	 * 
+	 * @return Array of indices into _availableVoices
+	 */
 	Array<int> getVoiceIndicesByGender (TTSVoice::Gender gender);
 
 	/**
