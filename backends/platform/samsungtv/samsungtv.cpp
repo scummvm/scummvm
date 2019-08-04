@@ -57,4 +57,12 @@ void OSystem_SDL_SamsungTV::fatalError() {
 	for (;;) {}
 }
 
+Common::String OSystem_SDL_SamsungTV::getDefaultLogFileName() {
+	if (!Posix::assureDirectoryExists("/mtd_ram", nullptr)) {
+		return Common::String();
+	}
+
+	return "/mtd_ram/scummvm.log";
+}
+
 #endif

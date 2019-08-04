@@ -169,7 +169,6 @@ Common::String OSystem_PSP2::getDefaultConfigFileName() {
 	return "ux0:data/scummvm/" + _baseConfigName;
 }
 
-Common::WriteStream *OSystem_PSP2::createLogFile() {
-	Common::FSNode file("ux0:data/scummvm/scummvm.log");
-	return file.createWriteStream();
+Common::String OSystem_PSP2::getDefaultLogFileName() {
+	return "ux0:data/scummvm/scummvm.log";
 }

@@ -34,6 +34,7 @@
 #include "backends/taskbar/macosx/macosx-taskbar.h"
 #include "backends/dialogs/macosx/macosx-dialogs.h"
 #include "backends/platform/sdl/macosx/macosx_wrapper.h"
+#include "backends/fs/posix/posix-fs.h"
 
 #include "common/archive.h"
 #include "common/config-manager.h"
@@ -196,6 +197,19 @@ Common::String OSystem_MacOSX::getSystemLanguage() const {
 #else // USE_DETECTLANG
 	return OSystem_POSIX::getSystemLanguage();
 #endif // USE_DETECTLANG
+}
+
+Common::String OSystem_MacOSX::getDefaultLogFileName() {
+	const char *prefix = getenv("HOME");
+	if (prefix == nullptr) {
+		return Common::String();
+	}
+
+	if (!Posix::assureDirectoryExists("Library/Logs", prefix)) {
+		return Common::String();
+	}
+
+	return Common::String(prefix) + "/Library/Logs/scummvm.log";
 }
 
 Common::String OSystem_MacOSX::getScreenshotsPath() {

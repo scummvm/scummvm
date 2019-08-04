@@ -406,6 +406,22 @@ void OSystem_SDL::logMessage(LogMessageType::Type type, const char *message) {
 		_logger->print(message);
 }
 
+Common::WriteStream *OSystem_SDL::createLogFile() {
+	// Start out by resetting _logFilePath, so that in case
+	// of a failure, we know that no log file is open.
+	_logFilePath.clear();
+
+	Common::String logFile = getDefaultLogFileName();
+	if (logFile.empty())
+		return nullptr;
+
+	Common::FSNode file(logFile);
+	Common::WriteStream *stream = file.createWriteStream();
+	if (stream)
+		_logFilePath = logFile;
+	return stream;
+}
+
 Common::String OSystem_SDL::getSystemLanguage() const {
 #if defined(USE_DETECTLANG) && !defined(WIN32)
 	// Activating current locale settings

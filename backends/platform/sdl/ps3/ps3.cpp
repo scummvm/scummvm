@@ -78,7 +78,6 @@ Common::String OSystem_PS3::getDefaultConfigFileName() {
 	return PREFIX "/" + _baseConfigName;
 }
 
-Common::WriteStream *OSystem_PS3::createLogFile() {
-	Common::FSNode file(PREFIX "/scummvm.log");
-	return file.createWriteStream();
+Common::String OSystem_PS3::getDefaultLogFileName() {
+	return PREFIX "/scummvm.log";
 }
