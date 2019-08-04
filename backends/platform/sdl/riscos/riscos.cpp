@@ -119,24 +119,14 @@ Common::String OSystem_RISCOS::getDefaultConfigFileName() {
 	return "/<Choices$Write>/ScummVM/scummvmrc";
 }
 
-Common::WriteStream *OSystem_RISCOS::createLogFile() {
-	// Start out by resetting _logFilePath, so that in case
-	// of a failure, we know that no log file is open.
-	_logFilePath.clear();
-
+Common::String OSystem_RISCOS::getDefaultLogFileName() {
 	Common::String logFile = "/<Choices$Write>/ScummVM/Logs";
 
 	if (!Riscos::assureDirectoryExists(logFile)) {
-		return 0;
+		return Common::String();
 	}
 
-	logFile += "/scummvm";
-
-	Common::FSNode file(logFile);
-	Common::WriteStream *stream = file.createWriteStream();
-	if (stream)
-		_logFilePath = logFile;
-	return stream;
+	return logFile + "/scummvm";
 }
 
 #endif

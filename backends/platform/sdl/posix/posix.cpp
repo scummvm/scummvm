@@ -269,55 +269,29 @@ void OSystem_POSIX::addSysArchivesToSearchSet(Common::SearchSet &s, int priority
 	OSystem_SDL::addSysArchivesToSearchSet(s, priority);
 }
 
-Common::WriteStream *OSystem_POSIX::createLogFile() {
-	// Start out by resetting _logFilePath, so that in case
-	// of a failure, we know that no log file is open.
-	_logFilePath.clear();
-
-	const char *prefix = nullptr;
+Common::String OSystem_POSIX::getDefaultLogFileName() {
 	Common::String logFile;
-#ifdef MACOSX
-	prefix = getenv("HOME");
-	if (prefix == nullptr) {
-		return 0;
-	}
 
-	logFile = "Library/Logs";
-#elif SAMSUNGTV
-	prefix = nullptr;
-	logFile = "/mtd_ram";
-#else
 	// On POSIX systems we follow the XDG Base Directory Specification for
 	// where to store files. The version we based our code upon can be found
 	// over here: http://standards.freedesktop.org/basedir-spec/basedir-spec-0.8.html
-	prefix = getenv("XDG_CACHE_HOME");
+	const char *prefix = getenv("XDG_CACHE_HOME");
 	if (prefix == nullptr || !*prefix) {
 		prefix = getenv("HOME");
 		if (prefix == nullptr) {
-			return 0;
+			return Common::String();
 		}
 
 		logFile = ".cache/";
 	}
 
 	logFile += "scummvm/logs";
-#endif
 
 	if (!Posix::assureDirectoryExists(logFile, prefix)) {
-		return 0;
+		return Common::String();
 	}
 
-	if (prefix) {
-		logFile = Common::String::format("%s/%s", prefix, logFile.c_str());
-	}
-
-	logFile += "/scummvm.log";
-
-	Common::FSNode file(logFile);
-	Common::WriteStream *stream = file.createWriteStream();
-	if (stream)
-		_logFilePath = logFile;
-	return stream;
+	return Common::String::format("%s/%s/scummvm.log", prefix, logFile.c_str());
 }
 
 bool OSystem_POSIX::displayLogFile() {
