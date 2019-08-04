@@ -173,6 +173,7 @@ bool OSystem_iOS7::hasFeature(Feature f) {
 	case kFeatureFilteringMode:
 	case kFeatureVirtualKeyboard:
 	case kFeatureClipboardSupport:
+	case kFeatureOpenUrl:
 		return true;
 
 	default:

@@ -642,3 +642,16 @@ bool OSystem_iOS7::setTextInClipboard(const Common::String &text) {
 	[pb setString:[NSString stringWithCString:text.c_str() encoding:encoding]];
 	return true;
 }
+
+bool OSystem_iOS7::openUrl(const Common::String &url) {
+	UIApplication *application = [UIApplication sharedApplication];
+	NSURL *nsurl = [NSURL URLWithString:[NSString stringWithCString:url.c_str() encoding:NSISOLatin1StringEncoding]];
+	// The way to oipen a URL has changed in iOS 10. Check if the iOS 10 method is recognized
+	// and otherwise use the old method.
+	if ([application respondsToSelector:@selector(openURL:options:completionHandler:)]) {
+		[application openURL:nsurl options:@{} completionHandler:nil];
+		return true;
+	} else {
+		return [application openURL:nsurl];
+	}
+}
