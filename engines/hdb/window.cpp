@@ -118,13 +118,13 @@ Window::~Window() {
 	delete _gfxHandright;
 
 	if (g_hdb->isPPC()) {
+		delete _gfxResources;
+		delete _gfxDeliveries;
+	} else {
 		delete _gfxInfobar;
 		delete _gfxDarken;
 		delete _gfxPausePlaque;
 		delete _mstoneGfx;
-	} else {
-		delete _gfxResources;
-		delete _gfxDeliveries;
 	}
 
 
