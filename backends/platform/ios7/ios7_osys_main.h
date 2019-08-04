@@ -212,6 +212,8 @@ public:
 
 	virtual bool openUrl(const Common::String &url);
 
+	virtual Common::String getSystemLanguage() const;
+
 protected:
 	void initVideoContext();
 	void updateOutputSurface();

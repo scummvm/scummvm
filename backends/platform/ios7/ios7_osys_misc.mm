@@ -28,6 +28,13 @@
 #include <UIKit/UIKit.h>
 #include "common/translation.h"
 
+Common::String OSystem_iOS7::getSystemLanguage() const {
+	NSString *locale = [[NSLocale currentLocale] localeIdentifier];
+	if (locale == nil)
+		return Common::String();
+	return Common::String([locale cStringUsingEncoding:NSISOLatin1StringEncoding]);
+}
+
 bool OSystem_iOS7::hasTextInClipboard() {
 	return [[UIPasteboard generalPasteboard] containsPasteboardTypes:UIPasteboardTypeListString];
 }
