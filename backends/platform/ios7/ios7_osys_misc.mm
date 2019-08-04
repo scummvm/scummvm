@@ -29,6 +29,14 @@
 #include <SystemConfiguration/SCNetworkReachability.h>
 #include "common/translation.h"
 
+static inline void execute_on_main_thread_async(void (^block)(void)) {
+	if ([NSThread currentThread] == [NSThread mainThread]) {
+		block();
+	} else {
+		dispatch_async(dispatch_get_main_queue(), block);
+	}
+}
+
 Common::String OSystem_iOS7::getSystemLanguage() const {
 	NSString *locale = [[NSLocale currentLocale] localeIdentifier];
 	if (locale == nil)
@@ -79,11 +87,15 @@ bool OSystem_iOS7::openUrl(const Common::String &url) {
 	// The way to oipen a URL has changed in iOS 10. Check if the iOS 10 method is recognized
 	// and otherwise use the old method.
 	if ([application respondsToSelector:@selector(openURL:options:completionHandler:)]) {
-		[application openURL:nsurl options:@{} completionHandler:nil];
-		return true;
+		execute_on_main_thread_async(^ {
+			[application openURL:nsurl options:@{} completionHandler:nil];
+		});
 	} else {
-		return [application openURL:nsurl];
+		execute_on_main_thread_async(^ {
+			[application openURL:nsurl];
+		});
 	}
+	return true;
 }
 
 bool OSystem_iOS7::isConnectionLimited() {
