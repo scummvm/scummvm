@@ -26,6 +26,7 @@
 #include "backends/platform/ios7/ios7_osys_main.h"
 
 #include <UIKit/UIKit.h>
+#include <SystemConfiguration/SCNetworkReachability.h>
 #include "common/translation.h"
 
 Common::String OSystem_iOS7::getSystemLanguage() const {
@@ -83,4 +84,15 @@ bool OSystem_iOS7::openUrl(const Common::String &url) {
 	} else {
 		return [application openURL:nsurl];
 	}
+}
+
+bool OSystem_iOS7::isConnectionLimited() {
+	// If we are connected to the internet through a cellular network, return true
+	SCNetworkReachabilityRef ref = SCNetworkReachabilityCreateWithName(CFAllocatorGetDefault(), [@"www.google.com" UTF8String]);
+	if (!ref)
+		return false;
+	SCNetworkReachabilityFlags flags = 0;
+	SCNetworkReachabilityGetFlags(ref, &flags);
+	CFRelease(ref);
+	return (flags & kSCNetworkReachabilityFlagsIsWWAN);
 }

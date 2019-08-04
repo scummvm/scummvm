@@ -214,6 +214,8 @@ public:
 
 	virtual Common::String getSystemLanguage() const;
 
+	virtual bool isConnectionLimited();
+
 protected:
 	void initVideoContext();
 	void updateOutputSurface();
