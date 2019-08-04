@@ -154,6 +154,11 @@ public:
 	PropertyAccessor operator[](WindowProperty propType) { return PropertyAccessor(this, propType); }
 
 	/**
+	 * Ensures that the underlying window is a Glk text window
+	 */
+	void ensureTextWindow();
+
+	/**
 	 * Set the window size
 	 */
 	void setSize(const Point &newSize);

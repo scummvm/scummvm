@@ -104,6 +104,8 @@ uint32 Processor::zchar_to_unicode_rune(zchar c) {
 
 void Processor::screen_char(zchar c) {
 	Window &w = _wp.currWin();
+	w.ensureTextWindow();
+
 	if (gos_linepending && (w == gos_linewin)) {
 		gos_cancel_pending_line();
 		if (_wp.currWin() == _wp._upper) {

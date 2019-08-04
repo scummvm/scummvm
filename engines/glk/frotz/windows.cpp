@@ -23,6 +23,7 @@
 #include "glk/frotz/windows.h"
 #include "glk/frotz/frotz.h"
 #include "glk/window_pair.h"
+#include "glk/window_text_grid.h"
 #include "glk/window_text_buffer.h"
 #include "glk/conf.h"
 
@@ -123,6 +124,18 @@ Window &Window::operator=(winid_t win) {
 	return *this;
 }
 
+void Window::ensureTextWindow() {
+	if (_win) {
+		// There's a window present, so make sure it's a text grid or text buffer window
+		if (dynamic_cast<TextBufferWindow *>(_win) || dynamic_cast<TextGridWindow *>(_win))
+			return;
+
+		g_vm->glk_window_close(_win);
+		_win = nullptr;
+	}
+
+	createGlkWindow();
+}
 
 void Window::setSize(const Point &newSize) {
 	checkRepositionLower();
