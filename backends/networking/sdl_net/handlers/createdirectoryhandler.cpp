@@ -99,11 +99,8 @@ void CreateDirectoryHandler::handle(Client &client) {
 			return;
 		}
 	} else {
-		// create the <directory_name> in <path>
-		if (!node->create(true)) {
-			handleError(client, _("Failed to create the directory!"));
-			return;
-		}
+		handleError(client, _("Directory does not exist!"));
+		return;
 	}
 
 	// if json requested, respond with it

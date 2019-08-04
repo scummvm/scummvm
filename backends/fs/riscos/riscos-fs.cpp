@@ -198,35 +198,6 @@ Common::WriteStream *RISCOSFilesystemNode::createWriteStream() {
 	return StdioStream::makeFromPath(getPath(), true);
 }
 
-bool RISCOSFilesystemNode::create(bool isDirectoryFlag) {
-	bool success;
-
-	if (isDirectoryFlag) {
-		success = _swix(OS_File, _INR(0,1), 8, RISCOS_Utils::toRISCOS(_path).c_str()) == NULL;
-	} else {
-		int fd = open(_path.c_str(), O_WRONLY | O_CREAT | O_TRUNC, 0755);
-		success = fd >= 0;
-
-		if (fd >= 0) {
-			close(fd);
-		}
-	}
-
-	if (success) {
-		if (exists()) {
-			_isDirectory = _swi(OS_File, _INR(0,1)|_RETURN(0), 20, RISCOS_Utils::toRISCOS(_path).c_str()) == 2;
-			if (_isDirectory != isDirectoryFlag) warning("failed to create %s: got %s", isDirectoryFlag ? "directory" : "file", _isDirectory ? "directory" : "file");
-			return _isDirectory == isDirectoryFlag;
-		}
-
-		warning("RISCOSFilesystemNode: Attempting to create a %s was a success, but access indicates there is no such %s",
-			isDirectoryFlag ? "directory" : "file", isDirectoryFlag ? "directory" : "file");
-		return false;
-	}
-
-	return false;
-}
-
 namespace Riscos {
 
 bool assureDirectoryExists(const Common::String &dir, const char *prefix) {

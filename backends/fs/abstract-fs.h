@@ -191,15 +191,6 @@ public:
 	 * @return pointer to the stream object, 0 in case of a failure
 	 */
 	virtual Common::WriteStream *createWriteStream() = 0;
-
-	/**
-	* Creates a file referred by this node.
-	*
-	* @param isDirectoryFlag true if created file must be a directory
-	*
-	* @return true if file is created successfully
-	*/
-	virtual bool create(bool isDirectoryFlag) = 0;
 };
 
 

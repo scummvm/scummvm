@@ -211,11 +211,6 @@ Common::WriteStream *DSFileSystemNode::createWriteStream() {
 	return Common::wrapBufferedWriteStream(stream, WRITE_BUFFER_SIZE);
 }
 
-bool DSFileSystemNode::create(bool isDirectoryFlag) {
-	error("Not supported");
-	return false;
-}
-
 //////////////////////////////////////////////////////////////////////////
 // GBAMPFileSystemNode - File system using GBA Movie Player and CF card //
 //////////////////////////////////////////////////////////////////////////

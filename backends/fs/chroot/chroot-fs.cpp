@@ -100,11 +100,6 @@ Common::WriteStream *ChRootFilesystemNode::createWriteStream() {
 	return _realNode->createWriteStream();
 }
 
-bool ChRootFilesystemNode::create(bool isDirectoryFlag) {
-	error("Not supported");
-	return false;
-}
-
 Common::String ChRootFilesystemNode::addPathComponent(const Common::String &path, const Common::String &component) {
 	const char sep = '/';
 	if (path.lastChar() == sep && component.firstChar() == sep) {
