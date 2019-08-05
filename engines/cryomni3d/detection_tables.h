@@ -77,6 +77,23 @@ static const CryOmni3DGameDescription gameDescriptions[] = {
 	},
 
 	// Versailles 1685
+	// French DOS from hybrid Win95/DOS CD
+	// From legloutondunet, ticket #11035
+	{
+		{
+			"versailles",
+			"",
+			AD_ENTRY1s("VERSAILL.PGM", "1c992f034f43418a5da2e8ebd0b92620", 598767),
+			Common::FR_FRA,
+			Common::kPlatformDOS,
+			ADGF_TESTING,
+			GUI_OPTIONS_VERSAILLES
+		},
+		GType_VERSAILLES,
+		GF_VERSAILLES_AUDIOPADDING,
+	},
+
+	// Versailles 1685
 	// French Macintosh
 	// From criezy
 	{
