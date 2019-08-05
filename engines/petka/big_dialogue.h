@@ -69,7 +69,7 @@ public:
 	const Dialog *findDialog(uint objId, uint opcode, bool *res) const;
 	void setDialog(uint objId, uint opcode, int index);
 
-	const SpeechInfo *getSpeechInfo(int unk);
+	const Common::U32String *getSpeechInfo(int *talkerId, const char **soundName, int unk);
 
 private:
 	void loadSpeechesInfo();
