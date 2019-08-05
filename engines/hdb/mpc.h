@@ -700,6 +700,10 @@ namespace HDB {
 #define		PIC_SNOWFLAKE		"pic_snowflake"
 #define		PIC_INFOBAR		"pic_infobar"
 #define		PIC_LOADSCREEN		"pic_loadscreen"
+
+#define		PIC_HANDANGO	"pic_handango"
+#define		DEMOTITLESCREEN	"demotitlescreen"
+
 #define		BUZZFLY_AMBIENT_WAV		"BUZZFLY_AMBIENT_WAV"
 #define		CHICKEN_AMBIENT_WAV		"CHICKEN_AMBIENT_WAV"
 #define		CHICKEN_BAGAWK_WAV		"CHICKEN_BAGAWK_WAV"

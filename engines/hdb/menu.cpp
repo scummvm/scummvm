@@ -283,9 +283,9 @@ bool Menu::init() {
 
 	if (g_hdb->isPPC()) {
 		if (g_hdb->isDemo()) {
-			warning("STUB: Load DEMOTITLESCREEN");
+			_hdbLogoScreen = g_hdb->_gfx->loadPic(DEMOTITLESCREEN);
 			if (g_hdb->isHandango())
-				warning("STUB: Load PIC_HANDANGO");
+				_handangoGfx = g_hdb->_gfx->loadPic(PIC_HANDANGO);
 		}
 		else
 			_hdbLogoScreen = g_hdb->_gfx->loadPic(TITLESCREEN);
