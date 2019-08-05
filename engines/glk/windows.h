@@ -581,6 +581,16 @@ public:
 	 * Returns a pointer to the styles for the window
 	 */
 	virtual const WindowStyle *getStyles() const;
+
+	/**
+	 * In arbitrary window positioning mode, brings a window to the front of all other windows
+	 */
+	void bringToFront();
+
+	/**
+	 * In arbitrary window positioning mode, sends a window to the back of all other windows
+	 */
+	void sendToBack();
 };
 typedef Window *winid_t;
 

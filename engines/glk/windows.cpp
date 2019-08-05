@@ -735,6 +735,24 @@ void Window::getSize(uint *width, uint *height) const {
 		*height = 0;
 }
 
+void Window::bringToFront() {
+	PairWindow *pairWin = dynamic_cast<PairWindow *>(_parent);
+	
+	if (pairWin && pairWin->_dir == winmethod_Arbitrary && pairWin->_children.back() != this) {
+		pairWin->_children.remove(this);
+		pairWin->_children.push_back(this);
+	}
+}
+
+void Window::sendToBack() {
+	PairWindow *pairWin = dynamic_cast<PairWindow *>(_parent);
+
+	if (pairWin && pairWin->_dir == winmethod_Arbitrary && pairWin->_children.front() != this) {
+		pairWin->_children.remove(this);
+		pairWin->_children.insert_at(0, this);
+	}
+}
+
 /*--------------------------------------------------------------------------*/
 
 BlankWindow::BlankWindow(Windows *windows, uint rock) : Window(windows, rock) {
