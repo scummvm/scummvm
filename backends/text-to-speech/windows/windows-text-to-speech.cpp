@@ -125,7 +125,7 @@ bool WindowsTextToSpeechManager::say(Common::String str, Action action, Common::
 	str.replace((uint32)0, 0, pitch);
 	WCHAR *strW = Win32::ansiToUnicode(str.c_str(), Win32::getCodePageId(charset));
 
-	if ((isPaused() || isSpeaking()) && action == INTERRUPT)
+	if ((isPaused() || isSpeaking()) && (action == INTERRUPT || action == INTERRUPT_NO_REPEAT))
 		stop();
 
 	bool result = _voice->Speak(strW, SPF_ASYNC, NULL) != S_OK;
