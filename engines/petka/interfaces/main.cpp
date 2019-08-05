@@ -26,6 +26,8 @@
 #include "common/ini-file.h"
 
 #include "petka/flc.h"
+#include "petka/objects/object_case.h"
+#include "petka/objects/object_cursor.h"
 #include "petka/objects/object_star.h"
 #include "petka/interfaces/main.h"
 #include "petka/q_system.h"
@@ -156,6 +158,55 @@ void InterfaceMain::unloadRoom(bool fromSave) {
 				++i;
 		}
 	}
+}
+
+void InterfaceMain::onLeftButtonDown(const Common::Point p) {
+	if (!g_vm->getQSystem()->_cursor->_isShown) {
+		_dialog.sub_4155D0(-1);
+		return;
+	}
+	for (int i = _objs.size() - 1; i >= 0; --i) {
+		if (_objs[i]->isInPoint(p.x, p.y)) {
+			_objs[i]->onClick(p.x, p.y);
+		}
+	}
+}
+
+void InterfaceMain::onRightButtonDown(const Common::Point p) {
+	QObjectStar *star = g_vm->getQSystem()->_star.get();
+	QObjectCase *objCase = g_vm->getQSystem()->_case.get();
+	QObjectCursor *cursor = g_vm->getQSystem()->_cursor.get();
+	if (!star->_isActive)
+		return;
+	if (g_vm->getQSystem()->_case.get()->_isShown && cursor->_actionType == 6) {
+		cursor->show(0);
+		cursor->_resourceId = 5005;
+		cursor->_actionType = 3;
+		cursor->_invObj = nullptr;
+		cursor->setCursorPos(p.x, p.y, 1);
+	} else {
+		if (!star->_isShown) {
+			FlicDecoder *flc = g_vm->resMgr()->loadFlic(star->_resourceId);
+			int x = MAX(p.x - flc->getWidth() / 2, 0);
+			int y = MAX(p.y - flc->getHeight() / 2, 0);
+
+			star->_x = MIN(x, 639 - flc->getWidth());
+			star->_y = MIN(y, 479 - flc->getHeight());
+		}
+		star->show(star->_isShown == 0);
+	}
+}
+
+void InterfaceMain::onMouseMove(const Common::Point p) {
+	QObjectCursor *cursor = g_vm->getQSystem()->_cursor.get();
+	_objUnderCursor = nullptr;
+	for (int i = _objs.size() - 1; i >= 0; --i) {
+		if (_objs[i]->isInPoint(p.x, p.y)) {
+			_objs[i]->onMouseMove(p.x, p.y);
+		}
+	}
+	cursor->_animate = _objUnderCursor != nullptr;
+	cursor->setCursorPos(p.x, p.y, true);
 }
 
 } // End of namespace Petka
