@@ -100,7 +100,7 @@ void BigDialogue::loadSpeechesInfo() {
 	delete[] str;
 }
 
-const SpeechInfo *BigDialogue::getSpeechInfo(int unk) {
+const Common::U32String *BigDialogue::getSpeechInfo(int *talkerId, const char **soundName, int unk) {
 	if (!_ip)
 		return nullptr;
 	int *oldIp = _ip;
@@ -131,7 +131,9 @@ const SpeechInfo *BigDialogue::getSpeechInfo(int unk) {
 		}
 		uint index = (uint16)*_ip;
 		_ip = oldIp;
-		return &_speeches[index];
+		*soundName = _speeches[index].soundName;
+		*talkerId = _speeches[index].speakerId;
+		return &_speeches[index].text;
 	}
 	case 8:
 		_ip += 1;
@@ -142,7 +144,9 @@ const SpeechInfo *BigDialogue::getSpeechInfo(int unk) {
 		}
 		// fall through
 	case 7:
-		return &_speeches[(uint16)*_ip];
+		*soundName = _speeches[(uint16)*_ip].soundName;
+		*talkerId = _speeches[(uint16)*_ip].speakerId;
+		return &_speeches[(uint16)*_ip].text;
 	default:
 		break;
 	}

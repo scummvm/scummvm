@@ -75,13 +75,14 @@ void DialogInterface::restoreCursorState() {
 }
 
 void DialogInterface::sub_4155D0(int a) {
+	const char *soundName = nullptr;
 	if (_field14 == -1 || (a == -1 && _field18 == 2))
 		return;
 	if (_field18 == -1)
 		return;
 	int talkerId = -1;
 	if (a == -1 && !_field8) {
-		talkerId = g_vm->getBigDialogue()->getSpeechInfo(-1)->speakerId;
+		g_vm->getBigDialogue()->getSpeechInfo(&talkerId, &soundName, -1);
 	}
 	_field8 = _field4;
 	g_vm->getQSystem()->_cursor.get()->_isShown = 0;
@@ -93,19 +94,20 @@ void DialogInterface::sub_4155D0(int a) {
 		g_vm->getBigDialogue()->sub40B670(a);
 	switch (g_vm->getBigDialogue()->opcode()) {
 	case 1: {
-		const SpeechInfo *info = g_vm->getBigDialogue()->getSpeechInfo(-1);
+		int talkerId2;
+		const Common::U32String *text = g_vm->getBigDialogue()->getSpeechInfo(&talkerId2, &soundName, -1);
 		g_vm->soundMgr()->removeSound(_soundName);
-		if (talkerId != info->speakerId) {
+		if (talkerId != talkerId2) {
 			sendMsg(kSaid);
 		}
-		_soundName = g_vm->getSpeechPath() + info->soundName;
+		_soundName = g_vm->getSpeechPath() + soundName;
 		Sound *s = g_vm->soundMgr()->addSound(_soundName, Audio::Mixer::kSpeechSoundType);
 		if (s) {
 			s->play(0);
 		}
 		g_trackedSound = s;
-		_talker = g_vm->getQSystem()->findObject(info->speakerId);
-		if (talkerId != info->speakerId) {
+		_talker = g_vm->getQSystem()->findObject(talkerId2);
+		if (talkerId != talkerId2) {
 			sendMsg(kSay);
 		}
 		g_vm->getQSystem()->_mainInterface->setText(info->text, _talker->_dialogColor);
