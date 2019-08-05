@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2019-07-30 22:43+0200\n"
+"POT-Creation-Date: 2019-08-05 11:30+0200\n"
 "PO-Revision-Date: 2019-07-01 07:15+0000\n"
 "Last-Translator: Paolo Bossi <pbossi86@gmail.com>\n"
 "Language-Team: Italian <https://translations.scummvm.org/projects/scummvm/"
@@ -1428,7 +1428,7 @@ msgstr "Avvia server"
 msgid "Run local webserver"
 msgstr "Avvia webserver locale"
 
-#: gui/options.cpp:1937 gui/options.cpp:2675
+#: gui/options.cpp:1937 gui/options.cpp:2674
 msgid "Not running"
 msgstr "Non avviato"
 
@@ -1543,38 +1543,38 @@ msgstr "Connetti"
 msgid "This Storage is working now. Do you want to interrupt it?"
 msgstr "Un altro spazio di archiviazione è attivo. Vuoi interromperlo?"
 
-#: gui/options.cpp:2558
+#: gui/options.cpp:2557
 msgid "<right now>"
 msgstr "<adesso>"
 
-#: gui/options.cpp:2560
+#: gui/options.cpp:2559
 msgid "<never>"
 msgstr "<mai>"
 
-#: gui/options.cpp:2667
+#: gui/options.cpp:2666
 msgid "Stop server"
 msgstr "Arresta server"
 
-#: gui/options.cpp:2668
+#: gui/options.cpp:2667
 msgid "Stop local webserver"
 msgstr "Arresta webserver locale"
 
-#: gui/options.cpp:2720
+#: gui/options.cpp:2719
 #, fuzzy
 msgid "Storage connected."
 msgstr "Assistente di connessione per %s"
 
-#: gui/options.cpp:2722
+#: gui/options.cpp:2721
 #, fuzzy
 msgid "Failed to connect storage."
 msgstr "Impossibile cambiare dispositivo di archiviazione Cloud!"
 
-#: gui/options.cpp:2724
+#: gui/options.cpp:2723
 #, fuzzy
 msgid "Failed to connect storage: "
 msgstr "Impossibile cambiare dispositivo di archiviazione Cloud!"
 
-#: gui/options.cpp:2744
+#: gui/options.cpp:2743
 msgid ""
 "Request failed.\n"
 "Check your Internet connection."
@@ -2407,22 +2407,22 @@ msgstr "Fai scivolare tre dita verso destra per cambiare."
 msgid "OpenGL"
 msgstr "OpenGL"
 
-#: backends/graphics/opengl/opengl-graphics.cpp:240
+#: backends/graphics/opengl/opengl-graphics.cpp:231
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:75
 msgid "Center"
 msgstr "Centra"
 
-#: backends/graphics/opengl/opengl-graphics.cpp:241
+#: backends/graphics/opengl/opengl-graphics.cpp:232
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:76
 msgid "Pixel-perfect scaling"
 msgstr "Scaling pixel-perfect"
 
-#: backends/graphics/opengl/opengl-graphics.cpp:242
+#: backends/graphics/opengl/opengl-graphics.cpp:233
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:77
 msgid "Fit to window"
 msgstr "Adatta alla finestra"
 
-#: backends/graphics/opengl/opengl-graphics.cpp:243
+#: backends/graphics/opengl/opengl-graphics.cpp:234
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:78
 msgid "Stretch to window"
 msgstr "Stira l'immagine per riempire la finestra"

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2019-07-30 22:43+0200\n"
+"POT-Creation-Date: 2019-08-05 11:30+0200\n"
 "PO-Revision-Date: 2019-06-22 10:59+0000\n"
 "Last-Translator: DreadnoughtPT <Dreadnoughtpt@gmail.com>\n"
 "Language-Team: Portuguese (Portugal) <https://translations.scummvm.org/"
@@ -1428,7 +1428,7 @@ msgstr "Correr servidor"
 msgid "Run local webserver"
 msgstr "Executar o servidor local"
 
-#: gui/options.cpp:1937 gui/options.cpp:2675
+#: gui/options.cpp:1937 gui/options.cpp:2674
 msgid "Not running"
 msgstr "Parado"
 
@@ -1543,38 +1543,38 @@ msgstr "Ligar"
 msgid "This Storage is working now. Do you want to interrupt it?"
 msgstr "Já existe um armazenamento ativo. Deseja pará-lo?"
 
-#: gui/options.cpp:2558
+#: gui/options.cpp:2557
 msgid "<right now>"
 msgstr "<agora>"
 
-#: gui/options.cpp:2560
+#: gui/options.cpp:2559
 msgid "<never>"
 msgstr "<nunca>"
 
-#: gui/options.cpp:2667
+#: gui/options.cpp:2666
 msgid "Stop server"
 msgstr "Parar servidor"
 
-#: gui/options.cpp:2668
+#: gui/options.cpp:2667
 msgid "Stop local webserver"
 msgstr "Pára o servidor local"
 
-#: gui/options.cpp:2720
+#: gui/options.cpp:2719
 #, fuzzy
 msgid "Storage connected."
 msgstr "Assistente de ligação ao armazenamento %s"
 
-#: gui/options.cpp:2722
+#: gui/options.cpp:2721
 #, fuzzy
 msgid "Failed to connect storage."
 msgstr "Não foi possível alterar o armazenamento!"
 
-#: gui/options.cpp:2724
+#: gui/options.cpp:2723
 #, fuzzy
 msgid "Failed to connect storage: "
 msgstr "Não foi possível alterar o armazenamento!"
 
-#: gui/options.cpp:2744
+#: gui/options.cpp:2743
 msgid ""
 "Request failed.\n"
 "Check your Internet connection."
@@ -2402,22 +2402,22 @@ msgstr "Deslize três dedos para a direita para alterar."
 msgid "OpenGL"
 msgstr "OpenGL"
 
-#: backends/graphics/opengl/opengl-graphics.cpp:240
+#: backends/graphics/opengl/opengl-graphics.cpp:231
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:75
 msgid "Center"
 msgstr "Centrado"
 
-#: backends/graphics/opengl/opengl-graphics.cpp:241
+#: backends/graphics/opengl/opengl-graphics.cpp:232
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:76
 msgid "Pixel-perfect scaling"
 msgstr "Pixel-perfeito"
 
-#: backends/graphics/opengl/opengl-graphics.cpp:242
+#: backends/graphics/opengl/opengl-graphics.cpp:233
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:77
 msgid "Fit to window"
 msgstr "Ajustar à janela"
 
-#: backends/graphics/opengl/opengl-graphics.cpp:243
+#: backends/graphics/opengl/opengl-graphics.cpp:234
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:78
 msgid "Stretch to window"
 msgstr "Esticar à janela"

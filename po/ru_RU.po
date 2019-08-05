@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2019-07-30 22:43+0200\n"
+"POT-Creation-Date: 2019-08-05 11:30+0200\n"
 "PO-Revision-Date: 2018-12-18 21:54+0000\n"
 "Last-Translator: Alex ASP <hshunt@questzone.ru>\n"
 "Language-Team: Russian <https://translations.scummvm.org/projects/scummvm/"
@@ -1425,7 +1425,7 @@ msgstr "Запустить сервер"
 msgid "Run local webserver"
 msgstr "Запускает локальный веб-сервер"
 
-#: gui/options.cpp:1937 gui/options.cpp:2675
+#: gui/options.cpp:1937 gui/options.cpp:2674
 msgid "Not running"
 msgstr "Не запущен"
 
@@ -1540,38 +1540,38 @@ msgstr "Подключить"
 msgid "This Storage is working now. Do you want to interrupt it?"
 msgstr "Другое облако уже активно. Вы хотите прервать процесс?"
 
-#: gui/options.cpp:2558
+#: gui/options.cpp:2557
 msgid "<right now>"
 msgstr "<сейчас>"
 
-#: gui/options.cpp:2560
+#: gui/options.cpp:2559
 msgid "<never>"
 msgstr "<никогда>"
 
-#: gui/options.cpp:2667
+#: gui/options.cpp:2666
 msgid "Stop server"
 msgstr "Остановить сервер"
 
-#: gui/options.cpp:2668
+#: gui/options.cpp:2667
 msgid "Stop local webserver"
 msgstr "Останавливает локальный веб-сервер"
 
-#: gui/options.cpp:2720
+#: gui/options.cpp:2719
 #, fuzzy
 msgid "Storage connected."
 msgstr "Диалог подключения к облаку %s"
 
-#: gui/options.cpp:2722
+#: gui/options.cpp:2721
 #, fuzzy
 msgid "Failed to connect storage."
 msgstr "Не удалось сменить облако!"
 
-#: gui/options.cpp:2724
+#: gui/options.cpp:2723
 #, fuzzy
 msgid "Failed to connect storage: "
 msgstr "Не удалось сменить облако!"
 
-#: gui/options.cpp:2744
+#: gui/options.cpp:2743
 msgid ""
 "Request failed.\n"
 "Check your Internet connection."
@@ -2401,22 +2401,22 @@ msgstr "Проведите тремя пальцами вправо для переключения."
 msgid "OpenGL"
 msgstr "OpenGL"
 
-#: backends/graphics/opengl/opengl-graphics.cpp:240
+#: backends/graphics/opengl/opengl-graphics.cpp:231
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:75
 msgid "Center"
 msgstr "По центру"
 
-#: backends/graphics/opengl/opengl-graphics.cpp:241
+#: backends/graphics/opengl/opengl-graphics.cpp:232
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:76
 msgid "Pixel-perfect scaling"
 msgstr "Масштабирование пиксель-в-пиксель"
 
-#: backends/graphics/opengl/opengl-graphics.cpp:242
+#: backends/graphics/opengl/opengl-graphics.cpp:233
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:77
 msgid "Fit to window"
 msgstr "Уменьшить до размеров окна"
 
-#: backends/graphics/opengl/opengl-graphics.cpp:243
+#: backends/graphics/opengl/opengl-graphics.cpp:234
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:78
 msgid "Stretch to window"
 msgstr "Растянуть до размеров окна"

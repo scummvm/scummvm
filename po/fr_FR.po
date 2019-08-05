@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2019-07-30 22:43+0200\n"
+"POT-Creation-Date: 2019-08-05 11:30+0200\n"
 "PO-Revision-Date: 2019-07-30 21:03+0000\n"
 "Last-Translator: Thierry Crozat <criezy@scummvm.org>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
@@ -1379,14 +1379,14 @@ msgstr "Ouvrir le gestionnaire de téléchargement"
 msgctxt "lowres"
 msgid "To change account for this storage, disconnect and connect again:"
 msgstr ""
-"Pour modifier le compte de ce stockage, déconnectez-vous et reconnectez-vous "
-":"
+"Pour modifier le compte de ce stockage, déconnectez-vous et reconnectez-"
+"vous :"
 
 #: gui/options.cpp:1912
 msgid "To change account for this storage, disconnect and connect again:"
 msgstr ""
-"Pour modifier le compte de ce stockage, déconnectez-vous et reconnectez-vous "
-":"
+"Pour modifier le compte de ce stockage, déconnectez-vous et reconnectez-"
+"vous :"
 
 #: gui/options.cpp:1913
 msgid "Disconnect"
@@ -1442,7 +1442,7 @@ msgstr "Démarrer serveur"
 msgid "Run local webserver"
 msgstr "Démarre le serveur web local"
 
-#: gui/options.cpp:1937 gui/options.cpp:2675
+#: gui/options.cpp:1937 gui/options.cpp:2674
 msgid "Not running"
 msgstr "Arrêté"
 
@@ -1560,35 +1560,35 @@ msgstr "Connection en cours..."
 msgid "This Storage is working now. Do you want to interrupt it?"
 msgstr "Ce service de stockage est actif. Voulez-vous l'interrompre ?"
 
-#: gui/options.cpp:2558
+#: gui/options.cpp:2557
 msgid "<right now>"
 msgstr "<maintenant>"
 
-#: gui/options.cpp:2560
+#: gui/options.cpp:2559
 msgid "<never>"
 msgstr "<jamais>"
 
-#: gui/options.cpp:2667
+#: gui/options.cpp:2666
 msgid "Stop server"
 msgstr "Arrêter serveur"
 
-#: gui/options.cpp:2668
+#: gui/options.cpp:2667
 msgid "Stop local webserver"
 msgstr "Arrêter le serveur"
 
-#: gui/options.cpp:2720
+#: gui/options.cpp:2719
 msgid "Storage connected."
 msgstr "Stockage connecté."
 
-#: gui/options.cpp:2722
+#: gui/options.cpp:2721
 msgid "Failed to connect storage."
 msgstr "Échec de la connection au service de stockage."
 
-#: gui/options.cpp:2724
+#: gui/options.cpp:2723
 msgid "Failed to connect storage: "
 msgstr "Échec de la connection au service de stockage : "
 
-#: gui/options.cpp:2744
+#: gui/options.cpp:2743
 msgid ""
 "Request failed.\n"
 "Check your Internet connection."
@@ -2421,22 +2421,22 @@ msgstr "Glissez trois doigts vers la droite pour changer de mode."
 msgid "OpenGL"
 msgstr "OpenGL"
 
-#: backends/graphics/opengl/opengl-graphics.cpp:240
+#: backends/graphics/opengl/opengl-graphics.cpp:231
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:75
 msgid "Center"
 msgstr "Centrer"
 
-#: backends/graphics/opengl/opengl-graphics.cpp:241
+#: backends/graphics/opengl/opengl-graphics.cpp:232
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:76
 msgid "Pixel-perfect scaling"
 msgstr "Mise à l'échelle des pixels"
 
-#: backends/graphics/opengl/opengl-graphics.cpp:242
+#: backends/graphics/opengl/opengl-graphics.cpp:233
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:77
 msgid "Fit to window"
 msgstr "Adapter à la fenêtre"
 
-#: backends/graphics/opengl/opengl-graphics.cpp:243
+#: backends/graphics/opengl/opengl-graphics.cpp:234
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:78
 msgid "Stretch to window"
 msgstr "Étirer pour remplir la fenêtre"
