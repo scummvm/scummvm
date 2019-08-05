@@ -1144,14 +1144,11 @@ Graphics::Surface Picture::load(Common::SeekableReadStream *stream) {
 	if (g_hdb->isPPC()) {
 		_surface.create(_height, _width, g_hdb->_format);
 
-		uint16 *ptr;
-
 		for (int y = 0; y < _height; y++) {
 			for (int x = 0; x < _width; x++) {
-				int u, v;
-				u = y;
-				v = _height - x - 1;
-				ptr = (uint16 *)_surface.getBasePtr(u, v);
+				int u = y;
+				int v = _height - x - 1;
+				uint16 *ptr = (uint16 *)_surface.getBasePtr(u, v);
 				*ptr = TO_LE_16(stream->readUint16LE());
 			}
 		}
@@ -1212,14 +1209,11 @@ Graphics::Surface Tile::load(Common::SeekableReadStream *stream) {
 
 	_surface.create(32, 32, g_hdb->_format);
 	if (g_hdb->isPPC()) {
-		uint16 *ptr;
-
 		for (int y = 0; y < 32; y++) {
 			for (int x = 0; x < 32; x++) {
-				int u, v;
-				u = y;
-				v = 32 - x - 1;
-				ptr = (uint16 *)_surface.getBasePtr(u, v);
+				int u = y;
+				int v = 32 - x - 1;
+				uint16 *ptr = (uint16 *)_surface.getBasePtr(u, v);
 				*ptr = TO_LE_16(stream->readUint16LE());
 			}
 		}
