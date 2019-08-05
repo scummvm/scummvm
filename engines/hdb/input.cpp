@@ -136,8 +136,8 @@ void Input::setButtons(uint16 b) {
 
 					g_hdb->_window->setSelectedDelivery(current);
 				} else if (_buttons & kButtonRight) {
-					int		amount = g_hdb->_ai->getDeliveriesAmount();
-					int		current = g_hdb->_window->getSelectedDelivery();
+					int amount = g_hdb->_ai->getDeliveriesAmount();
+					int current = g_hdb->_window->getSelectedDelivery();
 
 					current++;
 					if (current == amount)
@@ -156,7 +156,6 @@ void Input::setButtons(uint16 b) {
 				// select weapon?
 				if (_buttons & kButtonB) {
 					static AIType lastWeaponSelected = AI_NONE;
-					Tile *gfx;
 
 					if (!g_hdb->getActionMode()) {
 						g_hdb->_window->closeInv();
@@ -164,7 +163,7 @@ void Input::setButtons(uint16 b) {
 					}
 
 					AIType t = g_hdb->_ai->getInvItemType(g_hdb->_window->getInvSelect());
-					gfx = g_hdb->_ai->getInvItemGfx(g_hdb->_window->getInvSelect());
+					Tile *gfx = g_hdb->_ai->getInvItemGfx(g_hdb->_window->getInvSelect());
 
 					switch (t) {
 					case ITEM_CLUB:
@@ -205,8 +204,8 @@ void Input::setButtons(uint16 b) {
 					g_hdb->_sound->playSound(SND_MENU_SLIDER);
 					g_hdb->_window->setInvSelect(current);
 				} else if (_buttons & kButtonRight) {
-					int		amount = g_hdb->_ai->getInvMax();
-					int		current = g_hdb->_window->getInvSelect();
+					int amount = g_hdb->_ai->getInvMax();
+					int current = g_hdb->_window->getInvSelect();
 
 					if (!amount)
 						return;
@@ -226,10 +225,10 @@ void Input::setButtons(uint16 b) {
 					g_hdb->_sound->playSound(SND_MENU_SLIDER);
 					g_hdb->_window->setInvSelect(current);
 				} else if (_buttons & kButtonUp) {
-					int		amount = g_hdb->_ai->getInvMax();
-					int		current = g_hdb->_window->getInvSelect();
+					int	amount = g_hdb->_ai->getInvMax();
+					int	current = g_hdb->_window->getInvSelect();
 
-					if (!amount || amount < 6)
+					if (amount < 6)
 						return;
 
 					if (current - 5 >= 0)
@@ -238,10 +237,10 @@ void Input::setButtons(uint16 b) {
 					g_hdb->_sound->playSound(SND_MENU_SLIDER);
 					g_hdb->_window->setInvSelect(current);
 				} else if (_buttons & kButtonDown) {
-					int		amount = g_hdb->_ai->getInvMax();
-					int		current = g_hdb->_window->getInvSelect();
+					int amount = g_hdb->_ai->getInvMax();
+					int current = g_hdb->_window->getInvSelect();
 
-					if (!amount || amount < 6)
+					if (amount < 6)
 						return;
 
 					if (current + 5 < amount)
@@ -346,9 +345,10 @@ void Input::stylusDown(int x, int y) {
 		}
 
 		// Is MessageBar active?
-		if (g_hdb->_window->msgBarActive())
+		if (g_hdb->_window->msgBarActive()) {
 			if (g_hdb->_window->checkMsgClose(x, y))
 				return;
+		}
 
 		// In a cinematic?
 		if (g_hdb->_ai->playerLocked())
@@ -380,8 +380,8 @@ void Input::stylusDown(int x, int y) {
 		}
 
 		// Toggle Walk Speed if we clicked Player
-		int nx, ny;
 		static uint32 lastRunning = g_system->getMillis();
+		int nx, ny;
 		g_hdb->_ai->getPlayerXY(&nx, &ny);
 		if (nx == worldX && ny == worldY) {
 			if (lastRunning > g_system->getMillis())
@@ -426,7 +426,6 @@ void Input::stylusMove(int x, int y) {
 }
 
 void Input::updateMouse(int newX, int newY) {
-
 	if (g_hdb->isPPC())
 		return;
 
@@ -579,11 +578,10 @@ void Input::updateKeys(Common::Event event, bool keyDown) {
 			g_hdb->_menu->setMenuKey(0);
 		}
 	} else if (event.kbd.keycode == _keyDebug) {
-		if (keyDown) {
+		if (keyDown)
 			buttons |= kButtonExit;
-		} else {
+		else
 			buttons &= ~kButtonExit;
-		}
 	}
 
 	setButtons(buttons);
