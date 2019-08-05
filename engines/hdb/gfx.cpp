@@ -451,9 +451,7 @@ Tile *Gfx::loadIcon(const char *tileName) {
 }
 
 void Gfx::setPixel(int x, int y, uint16 color) {
-	uint16 *ptr = (uint16 *)_globalSurface.getBasePtr(0, y);
-	ptr += x;
-	*ptr = color;
+	*(uint16 *)_globalSurface.getBasePtr(x, y) = color;
 }
 
 Tile *Gfx::getTile(int index) {
