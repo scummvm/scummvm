@@ -421,7 +421,6 @@ Picture *Gfx::loadPic(const char *picName) {
 	Picture *pic = new Picture;
 	Common::SeekableReadStream *stream = g_hdb->_fileMan->findFirstData(picName, TYPE_PIC);
 	if (!stream) {
-		delete stream;
 		return NULL;
 	}
 	pic->load(stream);
@@ -433,7 +432,6 @@ Tile *Gfx::loadTile(const char *tileName) {
 	Tile *tile = new Tile;
 	Common::SeekableReadStream *stream = g_hdb->_fileMan->findFirstData(tileName, TYPE_TILE32);
 	if (!stream) {
-		delete stream;
 		return NULL;
 	}
 	tile->load(stream);
@@ -445,7 +443,6 @@ Tile *Gfx::loadIcon(const char *tileName) {
 	Tile *tile = new Tile;
 	Common::SeekableReadStream *stream = g_hdb->_fileMan->findFirstData(tileName, TYPE_ICON32);
 	if (!stream) {
-		delete stream;
 		return NULL;
 	}
 	tile->load(stream);
