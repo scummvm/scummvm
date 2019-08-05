@@ -179,6 +179,10 @@ void QMessageObject::processMessage(const QMessage &msg) {
 			g_vm->playVideo(g_vm->openFile(videoName, false));
 			break;
 		}
+		case kContinue:
+			g_vm->getQSystem()->_mainInterface->_dialog._field4 = 0;
+			g_vm->getQSystem()->_mainInterface->_dialog.sub_4155D0(-1);
+			break;
 		case kDialog:
 			g_vm->getQSystem()->_mainInterface->_dialog.start(msg.arg1, this);
 			break;
