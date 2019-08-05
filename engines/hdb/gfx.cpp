@@ -787,6 +787,7 @@ bool Gfx::loadFont(const char *string) {
 
 	// Position after _fontHeader
 	int startPos = stream->pos();
+	uint16 *ptr;
 	for (int i = 0; i < _fontHeader.numChars; i++) {
 		CharInfo *cInfo = new CharInfo;
 		cInfo->width = (int16)stream->readUint32LE();
@@ -797,16 +798,32 @@ bool Gfx::loadFont(const char *string) {
 		// Position after reading cInfo
 		int curPos = stream->pos();
 
-		_fontSurfaces[i].create(cInfo->width, _fontHeader.height, g_hdb->_format);
+		if (g_hdb->isPPC())
+			_fontSurfaces[i].create(_fontHeader.height, cInfo->width, g_hdb->_format);
+		else
+			_fontSurfaces[i].create(cInfo->width, _fontHeader.height, g_hdb->_format);
 
 		// Go to character location
 		stream->seek(startPos+cInfo->offset);
 
-		for (int y = 0; y < _fontHeader.height; y++) {
-			uint16 *ptr = (uint16 *)_fontSurfaces[i].getBasePtr(0, y);
-			for (int x = 0; x < cInfo->width; x++) {
-				*ptr = TO_LE_16(stream->readUint16LE());
-				ptr++;
+		if (g_hdb->isPPC()) {
+
+			for (int y = 0; y < _fontHeader.height; y++) {
+				for (int x = 0; x < cInfo->width; x++) {
+					int u, v;
+					u = y;
+					v = _fontHeader.height - x - 1;
+					ptr = (uint16 *)_fontSurfaces[i].getBasePtr(u, v);
+					*ptr = TO_LE_16(stream->readUint16LE());
+				}
+			}
+		} else {
+			for (int y = 0; y < _fontHeader.height; y++) {
+				ptr = (uint16 *)_fontSurfaces[i].getBasePtr(0, y);
+				for (int x = 0; x < cInfo->width; x++) {
+					*ptr = TO_LE_16(stream->readUint16LE());
+					ptr++;
+				}
 			}
 		}
 
@@ -1124,14 +1141,31 @@ Graphics::Surface Picture::load(Common::SeekableReadStream *stream) {
 	debug(8, "Picture: _width: %d, _height: %d", _width, _height);
 	debug(8, "Picture: _name: %s", _name);
 
-	_surface.create(_width, _height, g_hdb->_format);
-	stream->readUint32LE(); // Skip Win32 Surface
+	if (g_hdb->isPPC()) {
+		_surface.create(_height, _width, g_hdb->_format);
 
-	for (int y = 0; y < _height; y++) {
-		uint16 *ptr = (uint16 *)_surface.getBasePtr(0, y);
-		for (int x = 0; x < _width; x++) {
-			*ptr = TO_LE_16(stream->readUint16LE());
-			ptr++;
+		uint16 *ptr;
+
+		for (int y = 0; y < _height; y++) {
+			for (int x = 0; x < _width; x++) {
+				int u, v;
+				u = y;
+				v = _height - x - 1;
+				ptr = (uint16 *)_surface.getBasePtr(u, v);
+				*ptr = TO_LE_16(stream->readUint16LE());
+			}
+		}
+
+	} else {
+		_surface.create(_width, _height, g_hdb->_format);
+		stream->readUint32LE(); // Skip Win32 Surface
+
+		for (int y = 0; y < _height; y++) {
+			uint16 *ptr = (uint16 *)_surface.getBasePtr(0, y);
+			for (int x = 0; x < _width; x++) {
+				*ptr = TO_LE_16(stream->readUint16LE());
+				ptr++;
+			}
 		}
 	}
 
@@ -1177,13 +1211,26 @@ Graphics::Surface Tile::load(Common::SeekableReadStream *stream) {
 	stream->read(_name, 64);
 
 	_surface.create(32, 32, g_hdb->_format);
-	stream->readUint32LE(); // Skip Win32 Surface
+	if (g_hdb->isPPC()) {
+		uint16 *ptr;
 
-	for (uint y = 0; y < 32; y++) {
-		uint16 *ptr = (uint16 *)_surface.getBasePtr(0, y);
-		for (uint x = 0; x < 32; x++) {
-			*ptr = TO_LE_16(stream->readUint16LE());
-			ptr++;
+		for (int y = 0; y < 32; y++) {
+			for (int x = 0; x < 32; x++) {
+				int u, v;
+				u = y;
+				v = 32 - x - 1;
+				ptr = (uint16 *)_surface.getBasePtr(u, v);
+				*ptr = TO_LE_16(stream->readUint16LE());
+			}
+		}
+	} else {
+		stream->readUint32LE(); // Skip Win32 Surface
+		for (uint y = 0; y < 32; y++) {
+			uint16 *ptr = (uint16 *)_surface.getBasePtr(0, y);
+			for (uint x = 0; x < 32; x++) {
+				*ptr = TO_LE_16(stream->readUint16LE());
+				ptr++;
+			}
 		}
 	}
 
