@@ -23,6 +23,8 @@
 #include "audio/audiostream.h"
 #include "audio/decoders/raw.h"
 #include "common/config-manager.h"
+#include "common/translation.h"
+#include "gui/error.h"
 
 #include "sci/sci.h"
 #include "sci/console.h"
@@ -153,6 +155,23 @@ void SciMusic::init() {
 			// of the Adlib driver (adl.drv) that it includes is unsupported. That demo
 			// doesn't have any sound anyway, so this shouldn't be fatal.
 		} else {
+			const char *missingFiles = _pMidiDrv->reportMissingFiles();
+			if (missingFiles) {
+				Common::String message = _(
+					"The selected audio driver requires the following file(s):\n\n"
+				);
+				message += missingFiles;
+				message += _("\n\n"
+					"Some audio drivers (at least for some games) were made\n"
+					"available by Sierra as aftermarket patches and thus might not\n"
+					"have been installed as part of the original game setup.\n\n"
+					"Please copy these file(s) into your game data directory.\n\n"
+					"However, please note that the file(s) might not be available\n"
+					"separately but only as content of (patched) resource bundles.\n"
+					"In that case you may need to apply the original Sierra patch.\n\n"
+				);
+				::GUI::displayErrorDialog(message.c_str());
+			}
 			error("Failed to initialize sound driver");
 		}
 	}

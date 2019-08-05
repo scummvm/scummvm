@@ -740,7 +740,7 @@ int MidiDriver_CMS::open() {
 	Resource *res = _resMan->findResource(ResourceId(kResourceTypePatch, 101), false);
 	if (!res)
 		return -1;
-	
+
 	_patchData->allocateFromSpan(_version < SCI_VERSION_1_EARLY ? res->subspan(30) : *res);
 
 	_rate = _mixer->getOutputRate();
@@ -1294,7 +1294,7 @@ void MidiDriver_CMS::generateSamples(int16 *buffer, int len) {
 
 class MidiPlayer_CMS : public MidiPlayer {
 public:
-	MidiPlayer_CMS(SciVersion version) : MidiPlayer(version) {}
+	MidiPlayer_CMS(SciVersion version) : MidiPlayer(version), _filesMissing(false) {}
 
 	int open(ResourceManager *resMan);
 	void close();
@@ -1306,6 +1306,12 @@ public:
 	int getPolyphony() const { return 12; }
 
 	void playSwitch(bool play) { _driver->property(MidiDriver_CMS::MIDI_PROP_PLAYSWITCH, play ? 1 : 0); }
+
+	const char *reportMissingFiles() { return _filesMissing ? _requiredFiles : 0; }
+
+private:
+	bool _filesMissing;
+	static const char _requiredFiles[];
 };
 
 int MidiPlayer_CMS::open(ResourceManager *resMan) {
@@ -1314,10 +1320,11 @@ int MidiPlayer_CMS::open(ResourceManager *resMan) {
 
 	_driver = new MidiDriver_CMS(g_system->getMixer(), resMan, _version);
 	int driverRetVal = _driver->open();
-	if (driverRetVal != 0)
-		return driverRetVal;
 
-	return 0;
+	if (driverRetVal == -1)
+		_filesMissing = true;
+
+	return driverRetVal;
 }
 
 void MidiPlayer_CMS::close() {
@@ -1331,6 +1338,8 @@ void MidiPlayer_CMS::initTrack(SciSpan<const byte>& header) {
 	if (_driver)
 		static_cast<MidiDriver_CMS*>(_driver)->initTrack(header);
 }
+
+const char MidiPlayer_CMS::_requiredFiles[] = "'PATCH.101'";
 
 MidiPlayer *MidiPlayer_CMS_create(SciVersion version) {
 	return new MidiPlayer_CMS(version);

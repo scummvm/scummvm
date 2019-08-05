@@ -126,6 +126,14 @@ public:
 	// Some drivers also do other things in here.
 	virtual void initTrack(SciSpan<const byte> &) {}
 
+	// There are several sound drivers which weren' part of the
+	// original game setup and came in the form of aftermarket patches.
+	// This method allows each driver to report missing patch or other
+	// required files which will then be displayed in an error dialog box.
+	// The method returns only a single string (instead of a string list),
+	// because no more than two files will be required.
+	virtual const char *reportMissingFiles() { return 0; }
+
 protected:
 	SciVersion _version;
 };
