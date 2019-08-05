@@ -1434,15 +1434,27 @@ struct Voice {
 	}
 };
 
+enum SndMem {
+	SNDMEM_FREEABLE = -1,
+	SNDMEM_NOTCACHED = 0,
+	SNDMEM_LOADED = 1
+};
+
+enum SndType {
+	SNDTYPE_NONE = 0,
+	SNDTYPE_WAV = -1,
+	SNDTYPE_MP3 = 1
+};
+
 struct SoundCache {
-	int	loaded;				// -1 = freeable; in memory, 0 = not cached, 1 = cached
+	SndMem loaded; // -1 = freeable; in memory, 0 = not cached, 1 = cached
 	int32 size;				// size of sound
 	const char *name;				// filename / MSD name
 	const char *luaName;			// name used by Lua for i.d.
-	int ext;				// 0 = Uninitialized, -1 = WAV, 1 = MP3
+	SndType ext;				// 0 = Uninitialized, -1 = WAV, 1 = MP3
 	Audio::SeekableAudioStream *audioStream;
 
-	SoundCache() : loaded(0), size(0), name(nullptr), luaName(nullptr), ext(0), audioStream(nullptr) {}
+	SoundCache() : loaded(SNDMEM_NOTCACHED), size(0), name(nullptr), luaName(nullptr), ext(SNDTYPE_NONE), audioStream(nullptr) {}
 };
 
 struct Song {
