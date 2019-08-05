@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2019-08-05 11:30+0200\n"
-"PO-Revision-Date: 2019-07-28 14:30+0000\n"
+"PO-Revision-Date: 2019-08-08 20:47+0000\n"
 "Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fi/>\n"
@@ -1254,21 +1254,20 @@ msgstr "Pilvi"
 
 #: gui/options.cpp:1774
 msgid "LAN"
-msgstr ""
+msgstr "LAN"
 
 #: gui/options.cpp:1776
 msgctxt "lowres"
 msgid "LAN"
-msgstr ""
+msgstr "LAN"
 
 #: gui/options.cpp:1787
 msgid "Apply"
 msgstr "K‰yt‰"
 
 #: gui/options.cpp:1876
-#, fuzzy
 msgid "Active storage:"
-msgstr "Aktiivinen pilvitallennus"
+msgstr "Aktiivinen tallennustila:"
 
 #: gui/options.cpp:1876
 msgid "Active cloud storage"
@@ -1279,20 +1278,23 @@ msgctxt "lowres"
 msgid ""
 "4. Storage is not yet enabled. Verify that username is correct and enable it:"
 msgstr ""
+"4. Tallennustilaa ei ole viel‰ aktivoitu. Tarkista ett‰ k‰ytt‰j‰nimi on "
+"oikein ja aktivoi se:"
 
 #: gui/options.cpp:1886
 msgid ""
 "4. Storage is not yet enabled. Verify that username is correct and enable it:"
 msgstr ""
+"4. Tallennustilaa ei ole viel‰ aktivoitu. Tarkista ett‰ k‰ytt‰j‰nimi on "
+"oikein ja aktivoi se:"
 
 #: gui/options.cpp:1887
-#, fuzzy
 msgid "Enable storage"
-msgstr "Studioyleisˆ p‰‰lle"
+msgstr "Aktivoi tallennustila"
 
 #: gui/options.cpp:1887
 msgid "Confirm you want to use this account for this storage"
-msgstr ""
+msgstr "Vahvista ett‰ haluat k‰ytt‰‰ t‰t‰ tili‰ t‰ss‰ tallennustilassa"
 
 #: gui/options.cpp:1889 backends/platform/wii/options.cpp:114
 msgid "Username:"
@@ -1311,12 +1313,10 @@ msgid "Space used by ScummVM's saved games on this storage"
 msgstr "ScummVM:n pelitallennusten k‰ytt‰m‰ tila tallennustilassa"
 
 #: gui/options.cpp:1895
-#, fuzzy
 msgid "Last sync:"
 msgstr "Viimeisin synkronointi:"
 
 #: gui/options.cpp:1895
-#, fuzzy
 msgid "When was the last time saved games were synced with this storage"
 msgstr "Milloin pelitallennukset viimeksi synkronoitiin t‰h‰n tallennustilaan"
 
@@ -1324,32 +1324,35 @@ msgstr "Milloin pelitallennukset viimeksi synkronoitiin t‰h‰n tallennustilaan"
 msgctxt "lowres"
 msgid "Saves sync automatically on launch, after saving and on loading."
 msgstr ""
+"Pelitallennukset synkronoidaan automaattisesti k‰ynnistyksen yhteydess‰, "
+"tallennuksen j‰lkeen sek‰ ladatessa."
 
 #: gui/options.cpp:1900
 msgid "Saves sync automatically on launch, after saving and on loading."
 msgstr ""
+"Pelitallennukset synkronoidaan automaattisesti k‰ynnistyksen yhteydess‰, "
+"tallennuksen j‰lkeen sek‰ ladatessa."
 
 #: gui/options.cpp:1901
 msgid "Sync now"
-msgstr ""
+msgstr "Synkronoi nyt"
 
 #: gui/options.cpp:1901
 msgid "Start saves sync"
-msgstr ""
+msgstr "Aloita pelitallennusten synkronointi"
 
 #: gui/options.cpp:1904
 msgctxt "lowres"
 msgid "You can download game files from your cloud ScummVM folder:"
-msgstr ""
+msgstr "Voit ladata pelitiedostoja ScummVM-pilvikansiostasi:"
 
 #: gui/options.cpp:1906
 msgid "You can download game files from your cloud ScummVM folder:"
-msgstr ""
+msgstr "Voit ladata pelitiedostoja ScummVM-pilvikansiostasi:"
 
 #: gui/options.cpp:1907
-#, fuzzy
 msgid "Download game files"
-msgstr "Lataus ep‰onnistui."
+msgstr "Lataa pelitiedostoja"
 
 #: gui/options.cpp:1907
 msgid "Open downloads manager dialog"
@@ -1359,28 +1362,33 @@ msgstr "Avaa lataustenhallintadialogi"
 msgctxt "lowres"
 msgid "To change account for this storage, disconnect and connect again:"
 msgstr ""
+"Vaihtaaksesi tilin jota t‰m‰ tallennustila k‰ytt‰‰, katkaise yhteys ja avaa "
+"se uudestaan:"
 
 #: gui/options.cpp:1912
 msgid "To change account for this storage, disconnect and connect again:"
 msgstr ""
+"Vaihtaaksesi tilin jota t‰m‰ tallennustila k‰ytt‰‰, katkaise yhteys ja avaa "
+"se uudestaan:"
 
 #: gui/options.cpp:1913
-#, fuzzy
 msgid "Disconnect"
-msgstr "Yhdist‰"
+msgstr "Katkaise yhteys"
 
 #: gui/options.cpp:1913
 msgid "Stop using this storage on this device"
-msgstr ""
+msgstr "Lakkaa k‰ytt‰m‰st‰ t‰t‰ tallennustilaa t‰ll‰ laitteella"
 
 #: gui/options.cpp:1916
 msgctxt "lowres"
 msgid "This storage is not connected yet! To connect,"
 msgstr ""
+"T‰h‰n tallennustilaan ei ole viel‰ avattu yhteytt‰! Avataksesi yhteyden,"
 
 #: gui/options.cpp:1918
 msgid "This storage is not connected yet! To connect,"
 msgstr ""
+"T‰h‰n tallennustilaan ei ole viel‰ avattu yhteytt‰! Avataksesi yhteyden,"
 
 #: gui/options.cpp:1920
 msgid "Open URL"
@@ -1389,30 +1397,27 @@ msgstr "Avaa osoite"
 #: gui/options.cpp:1922
 msgctxt "lowres"
 msgid "2. Get the code and enter it here:"
-msgstr ""
+msgstr "2. Kopioi koodi ja liit‰ se t‰nne:"
 
 #: gui/options.cpp:1924
 msgid "2. Get the code and enter it here:"
-msgstr ""
+msgstr "2. Kopioi koodi ja liit‰ se t‰nne:"
 
 #: gui/options.cpp:1926
 msgid "Paste"
 msgstr "Liit‰"
 
 #: gui/options.cpp:1926
-#, fuzzy
 msgid "Paste code from clipboard"
-msgstr "Kopioi leikepˆyd‰lle"
+msgstr "Liit‰ koodi leikepˆyd‰lt‰"
 
 #: gui/options.cpp:1927
-#, fuzzy
 msgid "3. Connect"
-msgstr "Yhdist‰"
+msgstr "3. Yhdist‰"
 
 #: gui/options.cpp:1927
-#, fuzzy
 msgid "Connect your cloud storage account"
-msgstr "Avaa velhodialogi pilvitilan tiliin kirjautumiseen"
+msgstr "Yhdist‰ pilvitallennustilatilisi"
 
 #: gui/options.cpp:1936
 msgid "Run server"
@@ -1432,9 +1437,8 @@ msgid "/root/ Path:"
 msgstr "/root/-polku:"
 
 #: gui/options.cpp:1941 gui/options.cpp:1943 gui/options.cpp:1944
-#, fuzzy
 msgid "Select which directory will be shown as /root/ in the Files Manager"
-msgstr "M‰‰ritt‰‰ hakemiston johon tiedostonhallinnalla on p‰‰sy"
+msgstr "Valitse mit‰ hakemistoa k‰ytet‰‰n tiedostoselaimen juurikansiona"
 
 #: gui/options.cpp:1943
 msgid "/root/ Path:"
@@ -1446,25 +1450,27 @@ msgstr "Palvelimen portti:"
 
 #: gui/options.cpp:1949
 msgid "Port for server to use"
-msgstr ""
+msgstr "Portti jota serveri k‰ytt‰‰"
 
 #: gui/options.cpp:1954
 msgctxt "lowres"
 msgid "Run server to manage files with browser (in the same network)."
 msgstr ""
+"K‰ynnist‰ palvelin tiedostojen hallintaan selaimen kautta (samassa verkossa)."
 
 #: gui/options.cpp:1955
 msgctxt "lowres"
 msgid "Closing options dialog will stop the server."
-msgstr ""
+msgstr "Asetusdialogin sulkeminen sulkee myˆs serverin."
 
 #: gui/options.cpp:1957
 msgid "Run server to manage files with browser (in the same network)."
 msgstr ""
+"K‰ynnist‰ palvelin tiedostojen hallintaan selaimen kautta (samassa verkossa)."
 
 #: gui/options.cpp:1958
 msgid "Closing options dialog will stop the server."
-msgstr ""
+msgstr "Asetusdialogin sulkeminen sulkee myˆs serverin."
 
 #: gui/options.cpp:2028
 msgid "Failed to change cloud storage!"
@@ -1519,7 +1525,6 @@ msgstr ""
 "Ole hyv‰ ja siirry osoitteeseen k‰sin."
 
 #: gui/options.cpp:2321
-#, fuzzy
 msgid "Another Storage is working now. Do you want to interrupt it?"
 msgstr "Toinen tallennustila on aktiivinen. Haluatko keskeytt‰‰ sen?"
 
@@ -1528,14 +1533,12 @@ msgid "Wait until current Storage finishes up and try again."
 msgstr "Odota kunnes aktiivinen Tallennus on valmis ja yrit‰ sitten uudestaan."
 
 #: gui/options.cpp:2343
-#, fuzzy
 msgid "Connecting..."
-msgstr "Yhdist‰"
+msgstr "Yhdistet‰‰n..."
 
 #: gui/options.cpp:2359
-#, fuzzy
 msgid "This Storage is working now. Do you want to interrupt it?"
-msgstr "Toinen tallennustila on aktiivinen. Haluatko keskeytt‰‰ sen?"
+msgstr "T‰m‰ tallennustila on nyt aktiivinen. Haluatko keskeytt‰‰ sen?"
 
 #: gui/options.cpp:2557
 msgid "<right now>"
@@ -1554,19 +1557,16 @@ msgid "Stop local webserver"
 msgstr "Pys‰yt‰ paikallinen webpalvelin"
 
 #: gui/options.cpp:2719
-#, fuzzy
 msgid "Storage connected."
-msgstr "%s Tallennustilan Yhdist‰misvelho"
+msgstr "Tallennustilan yhteys avattu."
 
 #: gui/options.cpp:2721
-#, fuzzy
 msgid "Failed to connect storage."
-msgstr "Pilvitallennustilan vaihtaminen ep‰onnistui!"
+msgstr "Tallennustilan yhteyden avaaminen ep‰onnistui."
 
 #: gui/options.cpp:2723
-#, fuzzy
 msgid "Failed to connect storage: "
-msgstr "Pilvitallennustilan vaihtaminen ep‰onnistui!"
+msgstr "Tallennustilan yhteyden avaaminen ep‰onnistui: "
 
 #: gui/options.cpp:2743
 msgid ""
