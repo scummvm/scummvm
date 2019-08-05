@@ -278,8 +278,12 @@ void Gfx::drawPointer() {
 		return;
 
 	// If we are in game and the cursor should be displayed, draw it
-	if (_showCursor || g_hdb->getGameState() != GAME_PLAY)
-		_mousePointer[anim]->drawMasked(g_hdb->_input->getMouseX() - 16, g_hdb->_input->getMouseY() - 16);
+	if (g_hdb->isPPC()) {
+		debug(9, "STUB: Draw Pointer in PPC");
+	} else {
+		if (_showCursor || g_hdb->getGameState() != GAME_PLAY)
+			_mousePointer[anim]->drawMasked(g_hdb->_input->getMouseX() - 16, g_hdb->_input->getMouseY() - 16);
+	}
 }
 
 void Gfx::setPointerState(int value) {
