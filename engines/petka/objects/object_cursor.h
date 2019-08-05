@@ -36,8 +36,9 @@ public:
 	void draw() override;
 	void show(bool v) override;
 
-private:
-
+public:
+	int _actionType;
+	QMessageObject *_invObj;
 };
 
 } // End of naespace Petka

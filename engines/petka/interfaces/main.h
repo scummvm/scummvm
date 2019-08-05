@@ -49,6 +49,10 @@ public:
 
 	void unloadRoom(bool fromSave);
 
+	void onLeftButtonDown(const Common::Point p) override;
+	void onRightButtonDown(const Common::Point p) override;
+	void onMouseMove(const Common::Point p) override;
+
 public:
 	DialogInterface _dialog;
 	Common::Array<BGInfo> _bgs;
