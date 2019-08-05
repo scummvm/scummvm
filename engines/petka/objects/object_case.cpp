@@ -100,7 +100,7 @@ void QObjectCase::onMouseMove(int x, int y) {
 		int i;
 		for (i = 0; i < 6; ++i) {
 			FlicDecoder *flc = g_vm->resMgr()->loadFlic(6001 + i);
-			if (flc->getMskRects()[i].contains(Common::Point(x - _x, y))) {
+			if (flc->getMskRects()[0].contains(Common::Point(x - _x, y))) {
 				break;
 			}
 		}
@@ -170,7 +170,7 @@ void QObjectCase::fillWithItems() {
 		}
 	}
 
-	for (int i = 0; i < objs.size();) {
+	for (int i = 0; i < objs.size(); ++i) {
 		if (objs[i]->_resourceId == 6000) {
 			g_vm->getQSystem()->_currInterface->_startIndex = i;
 		}
