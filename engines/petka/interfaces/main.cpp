@@ -35,6 +35,7 @@
 #include "petka/sound.h"
 #include "petka/petka.h"
 #include "petka/video.h"
+#include "petka/objects/heroes.h"
 
 namespace Petka {
 
@@ -65,6 +66,9 @@ InterfaceMain::InterfaceMain() {
 void InterfaceMain::start() {
 	g_vm->getQSystem()->update();
 	g_vm->getQSystem()->_isIniting = 0;
+
+	_objs.push_back(g_vm->getQSystem()->_petka.get());
+	_objs.push_back(g_vm->getQSystem()->_chapayev.get());
 
 	Common::ScopedPtr<Common::SeekableReadStream> bgsStream(g_vm->openFile("BGs.ini", false));
 	Common::INIFile bgsIni;
