@@ -65,7 +65,7 @@ bool QObjectStar::isInPoint(int x, int y) {
 }
 
 void QObjectStar::onMouseMove(int x, int y) {
-	uint frame = findButtonIndex(x - _x, y - _y) % 7 + 1;
+	uint frame = (findButtonIndex(x - _x, y - _y) + 1) % 7 + 1;
 	FlicDecoder *flc = g_vm->resMgr()->loadFlic(_resourceId);
 	if (flc && flc->getCurFrame() + 1 != frame) {
 		g_vm->videoSystem()->addDirtyRect(Common::Point(_x, _y), *flc);
