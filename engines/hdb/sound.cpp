@@ -1427,14 +1427,14 @@ bool Sound::init() {
 	int index = 0;
 	while (soundList[index].idx != LAST_SOUND) {
 		int index2 = soundList[index].idx;
-		_soundCache[index2].loaded = 0;
+		_soundCache[index2].loaded = SNDMEM_NOTCACHED;
 		_soundCache[index2].name = soundList[index].name;
 		_soundCache[index2].luaName = soundList[index].luaName;
 		if (index2 <= SND_UNLOCKED_ITEM || index2 == SND_BEEPBEEPBEEP)
-			_soundCache[index2].ext = -1;	// WAV
+			_soundCache[index2].ext = SNDTYPE_WAV;
 		else
-			_soundCache[index2].ext = 1;		// MP3
-		debug(9, "Registering sound: sName: %s, \tsLuaName: %s, \tExtension: %s", soundList[index].name, soundList[index].luaName, _soundCache[index].ext == 1 ? "MP3" : "WAV");
+			_soundCache[index2].ext = SNDTYPE_MP3;
+		debug(9, "Registering sound: sName: %s, \tsLuaName: %s, \tExtension: %s", soundList[index].name, soundList[index].luaName, _soundCache[index].ext == SNDTYPE_MP3 ? "MP3" : "WAV");
 		index++;
 		if (index > kMaxSounds)
 			error("Reached MAX_SOUNDS in Sound::Init() !");
@@ -1481,24 +1481,24 @@ bool Sound::playSound(int index) {
 		return false;
 
 	// is sound in memory at least?
-	if (_soundCache[index].loaded == -1)
-		_soundCache[index].loaded = 1;
+	if (_soundCache[index].loaded == SNDMEM_FREEABLE)
+		_soundCache[index].loaded = SNDMEM_LOADED;
 
 	// is sound marked as cached?
-	if (!_soundCache[index].loaded) {
+	if (_soundCache[index].loaded == SNDMEM_NOTCACHED) {
 
 		Common::SeekableReadStream *stream = g_hdb->_fileMan->findFirstData(_soundCache[index].name, TYPE_BINARY);
 		if (stream == nullptr)
 			return false;
 
-		if (_soundCache[index].ext == 1) {
+		if (_soundCache[index].ext == SNDTYPE_MP3) {
 #ifdef USE_MAD
 			_soundCache[index].audioStream = Audio::makeMP3Stream(stream, DisposeAfterUse::YES);
-			_soundCache[index].loaded = 1;
+			_soundCache[index].loaded = SNDMEM_LOADED;
 #endif // USE_MAD
 		} else {
 			_soundCache[index].audioStream = Audio::makeWAVStream(stream, DisposeAfterUse::YES);
-			_soundCache[index].loaded = 1;
+			_soundCache[index].loaded = SNDMEM_LOADED;
 		}
 	} else {
 		_soundCache[index].audioStream->rewind();
@@ -1543,24 +1543,24 @@ bool Sound::playSoundEx(int index, int channel, bool loop) {
 		return false;
 
 	// is sound in memory at least?
-	if (_soundCache[index].loaded == -1)
-		_soundCache[index].loaded = 1;
+	if (_soundCache[index].loaded == SNDMEM_FREEABLE)
+		_soundCache[index].loaded = SNDMEM_LOADED;
 
 	// is sound marked as cached?
-	if (!_soundCache[index].loaded) {
+	if (_soundCache[index].loaded == SNDMEM_NOTCACHED) {
 
 		Common::SeekableReadStream *stream = g_hdb->_fileMan->findFirstData(_soundCache[index].name, TYPE_BINARY);
 		if (stream == nullptr)
 			return false;
 
-		if (_soundCache[index].ext == 1) {
+		if (_soundCache[index].ext == SNDTYPE_MP3) {
 #ifdef USE_MAD
 			_soundCache[index].audioStream = Audio::makeMP3Stream(stream, DisposeAfterUse::YES);
-			_soundCache[index].loaded = 1;
+			_soundCache[index].loaded = SNDMEM_LOADED;
 #endif // USE_MAD
 		} else {
 			_soundCache[index].audioStream = Audio::makeWAVStream(stream, DisposeAfterUse::YES);
-			_soundCache[index].loaded = 1;
+			_soundCache[index].loaded = SNDMEM_LOADED;
 		}
 	} else {
 		_soundCache[index].audioStream->rewind();
@@ -1606,9 +1606,8 @@ bool Sound::playVoice(int index, int actor) {
 		return false;
 
 	// is voice channel already active?  if so, shut 'er down (automagically called StopVoice via callback)
-	if (_voices[actor].active) {
+	if (_voices[actor].active)
 		g_hdb->_mixer->stopHandle(*_voices[actor].handle);
-	}
 
 #ifdef USE_MAD
 	Common::SeekableReadStream *stream = g_hdb->_fileMan->findFirstData(soundList[index].name, TYPE_BINARY);
@@ -1831,8 +1830,7 @@ void Sound::updateMusic() {
 }
 
 int Sound::registerSound(const char *name) {
-	int		index = 0;
-
+	int index = 0;
 	while (_soundCache[index].name) {
 		index++;
 		if (index == kMaxSounds)
@@ -1840,14 +1838,14 @@ int Sound::registerSound(const char *name) {
 	}
 
 	_soundCache[index].name = name;
-	_soundCache[index].loaded = 0;		// just to be sure!
+	_soundCache[index].loaded = SNDMEM_NOTCACHED;   // just to be sure!
 	return index;
 }
 
 bool Sound::freeSound(int index) {
-	if (_soundCache[index].loaded == 1) {
-		_soundCache[index].loaded = 0;
-		_soundCache[index].ext = 0;
+	if (_soundCache[index].loaded == SNDMEM_LOADED) {
+		_soundCache[index].loaded = SNDMEM_NOTCACHED;
+		_soundCache[index].ext = SNDTYPE_NONE;
 		return true;
 	}
 	return false;
@@ -1885,8 +1883,8 @@ SoundType Sound::whatSongIsPlaying() {
 void Sound::markSoundCacheFreeable() {
 	int	i;
 	for (i = 0; i < kMaxSounds; i++) {
-		if (_soundCache[i].loaded == 1)
-			_soundCache[i].loaded = -1;
+		if (_soundCache[i].loaded == SNDMEM_LOADED)
+			_soundCache[i].loaded = SNDMEM_FREEABLE;
 	}
 }
 
