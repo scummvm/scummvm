@@ -1724,7 +1724,7 @@ static const WMEGameDescription gameDescriptions[] = {
 	// Reversion: The Meeting (Chinese)
 	WME_WINENTRY("reversion2", "",
 		WME_ENTRY2s("xlanguage_nz.dcp", "8c3709474a87a7876109025dff41ff3f", 8746015,
-					"data.dcp", "cb9865dc7e1db2990a8cf4bc13cf4999", 257643032), Common::ZH_CNA, ADGF_UNSTABLE, WME_1_9_3),
+					"data.dcp", "f7938cbfdc48f07934550245a3286921", 255672016), Common::ZH_CNA, ADGF_UNSTABLE, WME_1_9_3),
 
 	// Reversion: The Meeting (English)
 	WME_WINENTRY("reversion2", "",
