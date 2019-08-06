@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2019-08-05 11:30+0200\n"
-"PO-Revision-Date: 2019-07-01 07:15+0000\n"
+"PO-Revision-Date: 2019-08-08 20:47+0000\n"
 "Last-Translator: George Kormendi <grubycza@hotmail.com>\n"
 "Language-Team: Hungarian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/hu/>\n"
@@ -16,7 +16,7 @@ msgstr ""
 "Content-Type: text/plain; charset=iso-8859-2\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 3.3\n"
+"X-Generator: Weblate 3.7.1\n"
 "X-Poedit-SourceCharset: iso-8859-1\n"
 "X-Language-name: Magyar\n"
 
@@ -1247,21 +1247,20 @@ msgstr "Felhõ"
 
 #: gui/options.cpp:1774
 msgid "LAN"
-msgstr ""
+msgstr "LAN"
 
 #: gui/options.cpp:1776
 msgctxt "lowres"
 msgid "LAN"
-msgstr ""
+msgstr "LAN"
 
 #: gui/options.cpp:1787
 msgid "Apply"
 msgstr "Alkalmaz"
 
 #: gui/options.cpp:1876
-#, fuzzy
 msgid "Active storage:"
-msgstr "Aktív felhõ tároló"
+msgstr "Aktív tároló:"
 
 #: gui/options.cpp:1876
 msgid "Active cloud storage"
@@ -1272,20 +1271,23 @@ msgctxt "lowres"
 msgid ""
 "4. Storage is not yet enabled. Verify that username is correct and enable it:"
 msgstr ""
+"4. A tároló még nem engedélyezett. Ellenõrizd a felhasználóneved és "
+"engedélyezd:"
 
 #: gui/options.cpp:1886
 msgid ""
 "4. Storage is not yet enabled. Verify that username is correct and enable it:"
 msgstr ""
+"4. A tároló még nem engedélyezett. Ellenõrizd a felhasználóneved és "
+"engedélyezd:"
 
 #: gui/options.cpp:1887
-#, fuzzy
 msgid "Enable storage"
-msgstr "Stúdió közönség engedélyezése"
+msgstr "Tároló engedélyezése"
 
 #: gui/options.cpp:1887
 msgid "Confirm you want to use this account for this storage"
-msgstr ""
+msgstr "Erõsítsd meg, hogy ezt a fiókot akarod használni a tároláshoz"
 
 #: gui/options.cpp:1889 backends/platform/wii/options.cpp:114
 msgid "Username:"
@@ -1304,45 +1306,42 @@ msgid "Space used by ScummVM's saved games on this storage"
 msgstr "ScummVM mentésekhez használt hely ezen a tárolón"
 
 #: gui/options.cpp:1895
-#, fuzzy
 msgid "Last sync:"
-msgstr "Utolsó szinkron:"
+msgstr "Utolsó szink:"
 
 #: gui/options.cpp:1895
-#, fuzzy
 msgid "When was the last time saved games were synced with this storage"
-msgstr "Amikor az utolsó mentés szinkronizálás történt ezen a tárolón"
+msgstr "Mikor volt az utoljára mentett játékok szinkronizálása ezen a tárolón"
 
 #: gui/options.cpp:1898
 msgctxt "lowres"
 msgid "Saves sync automatically on launch, after saving and on loading."
-msgstr ""
+msgstr "Szink automatikus mentése indításkor, mentés után betöltéskor."
 
 #: gui/options.cpp:1900
 msgid "Saves sync automatically on launch, after saving and on loading."
-msgstr ""
+msgstr "Szink automatikus mentése indításkor, mentés után betöltéskor."
 
 #: gui/options.cpp:1901
 msgid "Sync now"
-msgstr ""
+msgstr "Szink most"
 
 #: gui/options.cpp:1901
 msgid "Start saves sync"
-msgstr ""
+msgstr "Szink mentés indítás"
 
 #: gui/options.cpp:1904
 msgctxt "lowres"
 msgid "You can download game files from your cloud ScummVM folder:"
-msgstr ""
+msgstr "Töltsd le a játék fájljait a saját felhõ ScummVM mappádból:"
 
 #: gui/options.cpp:1906
 msgid "You can download game files from your cloud ScummVM folder:"
-msgstr ""
+msgstr "Töltsd le a játék fájljait a saját felhõ ScummVM mappádból:"
 
 #: gui/options.cpp:1907
-#, fuzzy
 msgid "Download game files"
-msgstr "Letöltés nem sikerült."
+msgstr "Játék fájlok letöltése"
 
 #: gui/options.cpp:1907
 msgid "Open downloads manager dialog"
@@ -1351,29 +1350,28 @@ msgstr "Letöltéskezelõ párbeszédablak megnyitása"
 #: gui/options.cpp:1910
 msgctxt "lowres"
 msgid "To change account for this storage, disconnect and connect again:"
-msgstr ""
+msgstr "A tároló fiók megváltoztatásához lépj ki és csatlakozz újra:"
 
 #: gui/options.cpp:1912
 msgid "To change account for this storage, disconnect and connect again:"
-msgstr ""
+msgstr "A tároló fiók megváltoztatásához lépj ki és csatlakozz újra:"
 
 #: gui/options.cpp:1913
-#, fuzzy
 msgid "Disconnect"
-msgstr "Csatlakozás"
+msgstr "Szétkapcsolás"
 
 #: gui/options.cpp:1913
 msgid "Stop using this storage on this device"
-msgstr ""
+msgstr "Hagyd abba a tároló használatát ezen az eszközön"
 
 #: gui/options.cpp:1916
 msgctxt "lowres"
 msgid "This storage is not connected yet! To connect,"
-msgstr ""
+msgstr "A tároló még nincs csatlakoztatva! A kapcsolódáshoz,"
 
 #: gui/options.cpp:1918
 msgid "This storage is not connected yet! To connect,"
-msgstr ""
+msgstr "A tároló még nincs csatlakoztatva! A kapcsolódáshoz,"
 
 #: gui/options.cpp:1920
 msgid "Open URL"
@@ -1382,30 +1380,27 @@ msgstr "URL megnyitása"
 #: gui/options.cpp:1922
 msgctxt "lowres"
 msgid "2. Get the code and enter it here:"
-msgstr ""
+msgstr "2. Szerezd be a kódot, és írd be ide:"
 
 #: gui/options.cpp:1924
 msgid "2. Get the code and enter it here:"
-msgstr ""
+msgstr "2. Szerezd be a kódot, és írd be ide:"
 
 #: gui/options.cpp:1926
 msgid "Paste"
 msgstr "Beilleszt"
 
 #: gui/options.cpp:1926
-#, fuzzy
 msgid "Paste code from clipboard"
-msgstr "Másolás a vágólapra"
+msgstr "Kód beillesztése vágólapról"
 
 #: gui/options.cpp:1927
-#, fuzzy
 msgid "3. Connect"
-msgstr "Csatlakozás"
+msgstr "3. Kapcsolódás"
 
 #: gui/options.cpp:1927
-#, fuzzy
 msgid "Connect your cloud storage account"
-msgstr "Csatlakozás varázsló párbeszédablak megnyitása a felhõtároló fiókodhoz"
+msgstr "Csatlakozás a felhõtároló fiókodhoz"
 
 #: gui/options.cpp:1936
 msgid "Run server"
@@ -1425,9 +1420,8 @@ msgid "/root/ Path:"
 msgstr "/gyökér/ Útvonal:"
 
 #: gui/options.cpp:1941 gui/options.cpp:1943 gui/options.cpp:1944
-#, fuzzy
 msgid "Select which directory will be shown as /root/ in the Files Manager"
-msgstr "Meghatározza, hogy melyik könyvtárhoz férhet hozzá a Fájlkezelõ"
+msgstr "Válaszd ki, melyik könyvtár jelenjen meg /gyökér/ néven a Fájlkezelõben"
 
 #: gui/options.cpp:1943
 msgid "/root/ Path:"
@@ -1439,25 +1433,27 @@ msgstr "Szerver portja:"
 
 #: gui/options.cpp:1949
 msgid "Port for server to use"
-msgstr ""
+msgstr "Port a kiszolgáló számára"
 
 #: gui/options.cpp:1954
 msgctxt "lowres"
 msgid "Run server to manage files with browser (in the same network)."
 msgstr ""
+"Futtass kiszolgálót a fájlkezeléshez böngészõvel (ugyanabban a hálózatban)."
 
 #: gui/options.cpp:1955
 msgctxt "lowres"
 msgid "Closing options dialog will stop the server."
-msgstr ""
+msgstr "Az Opciók párbeszédpanel bezárása leállítja a szervert."
 
 #: gui/options.cpp:1957
 msgid "Run server to manage files with browser (in the same network)."
 msgstr ""
+"Futtass kiszolgálót a fájlkezeléshez böngészõvel (ugyanabban a hálózatban)."
 
 #: gui/options.cpp:1958
 msgid "Closing options dialog will stop the server."
-msgstr ""
+msgstr "Az Opciók párbeszédpanel bezárása leállítja a szervert."
 
 #: gui/options.cpp:2028
 msgid "Failed to change cloud storage!"
@@ -1512,23 +1508,20 @@ msgstr ""
 "Kérjük, navigálj az oldalra manuálisan."
 
 #: gui/options.cpp:2321
-#, fuzzy
 msgid "Another Storage is working now. Do you want to interrupt it?"
-msgstr "Egy másik tároló aktív. Meg akarod azt szakítani?"
+msgstr "Egy másik tároló már mûködik. Meg akarod szakítani?"
 
 #: gui/options.cpp:2330 gui/options.cpp:2368
 msgid "Wait until current Storage finishes up and try again."
 msgstr "Várj amíg a jelenlegi tároló befejezi és próbáld újra."
 
 #: gui/options.cpp:2343
-#, fuzzy
 msgid "Connecting..."
-msgstr "Csatlakozás"
+msgstr "Csatlakozás ..."
 
 #: gui/options.cpp:2359
-#, fuzzy
 msgid "This Storage is working now. Do you want to interrupt it?"
-msgstr "Egy másik tároló aktív. Meg akarod azt szakítani?"
+msgstr "Ez a tároló már aktív. Meg akarod szakítani?"
 
 #: gui/options.cpp:2557
 msgid "<right now>"
@@ -1547,19 +1540,16 @@ msgid "Stop local webserver"
 msgstr "Helyi webszerver leállítása"
 
 #: gui/options.cpp:2719
-#, fuzzy
 msgid "Storage connected."
-msgstr "%s Tároló csatlakozás varázsló"
+msgstr "Tároló csatlakoztatva."
 
 #: gui/options.cpp:2721
-#, fuzzy
 msgid "Failed to connect storage."
-msgstr "Felhõtároló csere nem sikerült!"
+msgstr "Nem sikerült csatlakoztatni a tárolót."
 
 #: gui/options.cpp:2723
-#, fuzzy
 msgid "Failed to connect storage: "
-msgstr "Felhõtároló csere nem sikerült!"
+msgstr "Nem sikerült csatlakoztatni a tárolót. "
 
 #: gui/options.cpp:2743
 msgid ""
@@ -5082,6 +5072,8 @@ msgid ""
 "This AMIGA version is missing (at least) the following file(s):\n"
 "\n"
 msgstr ""
+"Ebbõl az AMIGA verzióból hiány(oznak)zik a következõ fájl(ok):\n"
+"\n"
 
 #: engines/scumm/imuse/drivers/amiga.cpp:659
 msgid ""
@@ -5089,6 +5081,9 @@ msgid ""
 "Please copy these file(s) into the game data directory.\n"
 "\n"
 msgstr ""
+"\n"
+"Kérlek, másold ez(eke)t a fájl(oka)t a játék könyvtárába.\n"
+"\n"
 
 #: engines/sherlock/detection.cpp:81
 msgid "Pixellated scene transitions"
@@ -5148,10 +5143,9 @@ msgid "Use the floppy version's intro (CD version only)"
 msgstr "A floppy verzió intro használata (csak CD verziónál)"
 
 #: engines/supernova/supernova.cpp:190
-#, fuzzy, c-format
+#, c-format
 msgid "Unable to locate the text for %s language in engine data file."
-msgstr ""
-"Nem sikerült megtalálni a %s nyelvû szöveget a '%s' motor adat fájlban."
+msgstr "Nem sikerült megtalálni a %s nyelv szövegeit a motor adatfájlban."
 
 #: engines/supernova/supernova.cpp:466
 #, c-format
@@ -5164,12 +5158,12 @@ msgstr ""
 #: engines/supernova/supernova.cpp:476
 #, c-format
 msgid "Unable to find block for part %d"
-msgstr ""
+msgstr "Nem található blokk a %d részhez"
 
 #: engines/supernova/supernova.cpp:518
-#, fuzzy, c-format
+#, c-format
 msgid "Unable to find '%s' in game folder or the engine data file."
-msgstr "Nem található '%s' a játék mappában."
+msgstr "Nem található '%s' a játék mappában vagy a motor adat fájlban."
 
 #: engines/sword1/animation.cpp:524
 #, c-format
