@@ -35,6 +35,7 @@
 #include "petka/sound.h"
 #include "petka/petka.h"
 #include "petka/video.h"
+#include "petka/objects/object_case.h"
 #include "petka/objects/heroes.h"
 
 namespace Petka {
@@ -60,6 +61,8 @@ InterfaceMain::InterfaceMain() {
 		}
 	}
 
+	_objs.push_back(g_vm->getQSystem()->_cursor.get());
+	_objs.push_back(g_vm->getQSystem()->_case.get());
 	_objs.push_back(g_vm->getQSystem()->_star.get());
 }
 
