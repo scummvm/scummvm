@@ -23,6 +23,7 @@
 #include "common/cosinetables.h"
 #include "common/sinetables.h"
 #include "common/random.h"
+#include "common/memstream.h"
 
 #include "hdb/hdb.h"
 #include "hdb/ai.h"
@@ -769,44 +770,47 @@ bool Gfx::loadFont(const char *string) {
 		return false;
 	}
 
-	// Loading _fontHeader
-	_fontHeader.type = (int)stream->readUint32LE();
-	_fontHeader.numChars = (int)stream->readUint32LE();
-	_fontHeader.height = (int)stream->readUint32LE();
-	_fontHeader.kerning = (int)stream->readUint32LE();
-	_fontHeader.leading = (int)stream->readUint32LE();
+	if (g_hdb->isPPC()) {
+		const int32 ulength = g_hdb->_fileMan->getLength(string, TYPE_FONT);
+		byte *buffer = new byte[ulength];
+		stream->read(buffer, ulength);
+		Common::MemoryReadStream memoryStream(buffer, ulength, DisposeAfterUse::YES);
+		delete stream;
+		stream = &memoryStream;
 
-	debug(3, "Loaded _fontHeader with following data");
-	debug(3, "type: %d", _fontHeader.type);
-	debug(3, "numChars: %d", _fontHeader.numChars);
-	debug(3, "height: %d", _fontHeader.height);
-	debug(3, "kerning: %d", _fontHeader.kerning);
-	debug(3, "leading: %d", _fontHeader.leading);
+		// Loading _fontHeader
+		_fontHeader.type = (int)stream->readUint32LE();
+		_fontHeader.numChars = (int)stream->readUint32LE();
+		_fontHeader.height = (int)stream->readUint32LE();
+		_fontHeader.kerning = (int)stream->readUint32LE();
+		_fontHeader.leading = (int)stream->readUint32LE();
 
-	// Loading _charInfoBlocks & creating character surfaces
+		debug(3, "Loaded _fontHeader with following data");
+		debug(3, "type: %d", _fontHeader.type);
+		debug(3, "numChars: %d", _fontHeader.numChars);
+		debug(3, "height: %d", _fontHeader.height);
+		debug(3, "kerning: %d", _fontHeader.kerning);
+		debug(3, "leading: %d", _fontHeader.leading);
 
-	// Position after _fontHeader
-	int startPos = stream->pos();
-	uint16 *ptr;
-	for (int i = 0; i < _fontHeader.numChars; i++) {
-		CharInfo *cInfo = new CharInfo;
-		cInfo->width = (int16)stream->readUint32LE();
-		cInfo->offset = (int32)stream->readUint32LE();
+		// Loading _charInfoBlocks & creating character surfaces
 
-		debug(3, "Loaded _charInfoBlocks[%d]: width: %d, offset: %d", i, cInfo->width, cInfo->offset);
+		// Position after _fontHeader
+		int startPos = stream->pos();
+		uint16 *ptr;
+		for (int i = 0; i < _fontHeader.numChars; i++) {
+			CharInfo *cInfo = new CharInfo;
+			cInfo->width = (int16)stream->readUint32LE();
+			cInfo->offset = (int32)stream->readUint32LE();
 
-		// Position after reading cInfo
-		int curPos = stream->pos();
+			debug(3, "Loaded _charInfoBlocks[%d]: width: %d, offset: %d", i, cInfo->width, cInfo->offset);
 
-		if (g_hdb->isPPC())
+			// Position after reading cInfo
+			int curPos = stream->pos();
+
 			_fontSurfaces[i].create(_fontHeader.height, cInfo->width, g_hdb->_format);
-		else
-			_fontSurfaces[i].create(cInfo->width, _fontHeader.height, g_hdb->_format);
 
-		// Go to character location
-		stream->seek(startPos+cInfo->offset);
-
-		if (g_hdb->isPPC()) {
+			// Go to character location
+			stream->seek(startPos + cInfo->offset);
 
 			for (int y = 0; y < _fontHeader.height; y++) {
 				for (int x = 0; x < cInfo->width; x++) {
@@ -817,7 +821,50 @@ bool Gfx::loadFont(const char *string) {
 					*ptr = TO_LE_16(stream->readUint16LE());
 				}
 			}
-		} else {
+
+			stream->seek(curPos);
+
+			_charInfoBlocks.push_back(cInfo);
+		}
+
+		// Loading _fontGfx
+		_fontGfx = stream->readUint16LE();
+		delete stream;
+	} else {
+		// Loading _fontHeader
+		_fontHeader.type = (int)stream->readUint32LE();
+		_fontHeader.numChars = (int)stream->readUint32LE();
+		_fontHeader.height = (int)stream->readUint32LE();
+		_fontHeader.kerning = (int)stream->readUint32LE();
+		_fontHeader.leading = (int)stream->readUint32LE();
+
+		debug(3, "Loaded _fontHeader with following data");
+		debug(3, "type: %d", _fontHeader.type);
+		debug(3, "numChars: %d", _fontHeader.numChars);
+		debug(3, "height: %d", _fontHeader.height);
+		debug(3, "kerning: %d", _fontHeader.kerning);
+		debug(3, "leading: %d", _fontHeader.leading);
+
+		// Loading _charInfoBlocks & creating character surfaces
+
+		// Position after _fontHeader
+		int startPos = stream->pos();
+		uint16 *ptr;
+		for (int i = 0; i < _fontHeader.numChars; i++) {
+			CharInfo *cInfo = new CharInfo;
+			cInfo->width = (int16)stream->readUint32LE();
+			cInfo->offset = (int32)stream->readUint32LE();
+
+			debug(3, "Loaded _charInfoBlocks[%d]: width: %d, offset: %d", i, cInfo->width, cInfo->offset);
+
+			// Position after reading cInfo
+			int curPos = stream->pos();
+
+			_fontSurfaces[i].create(cInfo->width, _fontHeader.height, g_hdb->_format);
+
+			// Go to character location
+			stream->seek(startPos + cInfo->offset);
+
 			for (int y = 0; y < _fontHeader.height; y++) {
 				ptr = (uint16 *)_fontSurfaces[i].getBasePtr(0, y);
 				for (int x = 0; x < cInfo->width; x++) {
@@ -825,16 +872,16 @@ bool Gfx::loadFont(const char *string) {
 					ptr++;
 				}
 			}
+
+			stream->seek(curPos);
+
+			_charInfoBlocks.push_back(cInfo);
 		}
 
-		stream->seek(curPos);
-
-		_charInfoBlocks.push_back(cInfo);
+		// Loading _fontGfx
+		_fontGfx = stream->readUint16LE();
+		delete stream;
 	}
-
-	// Loading _fontGfx
-	_fontGfx = stream->readUint16LE();
-	delete stream;
 
 	return true;
 }
