@@ -818,7 +818,7 @@ bool Gfx::loadFont(const char *string) {
 					u = y;
 					v = _fontHeader.height - x - 1;
 					ptr = (uint16 *)_fontSurfaces[i].getBasePtr(u, v);
-					*ptr = TO_LE_16(stream->readUint16LE());
+					*ptr = stream->readUint16LE();
 				}
 			}
 
@@ -868,7 +868,7 @@ bool Gfx::loadFont(const char *string) {
 			for (int y = 0; y < _fontHeader.height; y++) {
 				ptr = (uint16 *)_fontSurfaces[i].getBasePtr(0, y);
 				for (int x = 0; x < cInfo->width; x++) {
-					*ptr = TO_LE_16(stream->readUint16LE());
+					*ptr = stream->readUint16LE();
 					ptr++;
 				}
 			}
@@ -1196,7 +1196,7 @@ Graphics::Surface Picture::load(Common::SeekableReadStream *stream) {
 				int u = y;
 				int v = _height - x - 1;
 				uint16 *ptr = (uint16 *)_surface.getBasePtr(u, v);
-				*ptr = TO_LE_16(stream->readUint16LE());
+				*ptr = stream->readUint16LE();
 			}
 		}
 
@@ -1207,7 +1207,7 @@ Graphics::Surface Picture::load(Common::SeekableReadStream *stream) {
 		for (int y = 0; y < _height; y++) {
 			uint16 *ptr = (uint16 *)_surface.getBasePtr(0, y);
 			for (int x = 0; x < _width; x++) {
-				*ptr = TO_LE_16(stream->readUint16LE());
+				*ptr = stream->readUint16LE();
 				ptr++;
 			}
 		}
@@ -1261,7 +1261,7 @@ Graphics::Surface Tile::load(Common::SeekableReadStream *stream) {
 				int u = y;
 				int v = 32 - x - 1;
 				uint16 *ptr = (uint16 *)_surface.getBasePtr(u, v);
-				*ptr = TO_LE_16(stream->readUint16LE());
+				*ptr = stream->readUint16LE();
 			}
 		}
 	} else {
@@ -1269,7 +1269,7 @@ Graphics::Surface Tile::load(Common::SeekableReadStream *stream) {
 		for (uint y = 0; y < 32; y++) {
 			uint16 *ptr = (uint16 *)_surface.getBasePtr(0, y);
 			for (uint x = 0; x < 32; x++) {
-				*ptr = TO_LE_16(stream->readUint16LE());
+				*ptr = stream->readUint16LE();
 				ptr++;
 			}
 		}
