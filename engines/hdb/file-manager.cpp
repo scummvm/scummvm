@@ -53,8 +53,7 @@ bool FileMan::openMPC(const Common::String &filename) {
 		_compressed = true;
 		debug("COMPRESSED MPC FILE");
 		return false;
-	}
-	else if (_dataHeader.id == MKTAG('M', 'P', 'C', 'U')) {
+	} else if (_dataHeader.id == MKTAG('M', 'P', 'C', 'U')) {
 		_compressed = false;
 
 		offset = _mpcFile->readUint32LE();
@@ -78,6 +77,8 @@ bool FileMan::openMPC(const Common::String &filename) {
 			dirEntry->length = _mpcFile->readUint32LE();
 			dirEntry->ulength = _mpcFile->readUint32LE();
 			dirEntry->type = (DataType)_mpcFile->readUint32LE();
+
+			debug(9, "%d: %s off:%d len:%d ulen: %d type: %d", fileIndex, dirEntry->filename, dirEntry->offset, dirEntry->length, dirEntry->ulength, dirEntry->type);
 
 			_dir.push_back(dirEntry);
 		}
@@ -107,6 +108,8 @@ bool FileMan::openMPC(const Common::String &filename) {
 			dirEntry->length = _mpcFile->readUint32LE();
 			dirEntry->ulength = _mpcFile->readUint32LE();
 			dirEntry->type = (DataType)_mpcFile->readUint32LE();
+
+			debug(9, "%d: %s off:%d len:%d ulen: %d type: %d", fileIndex, dirEntry->filename, dirEntry->offset, dirEntry->length, dirEntry->ulength, dirEntry->type);
 
 			_dir.push_back(dirEntry);
 		}
@@ -166,16 +169,16 @@ Common::SeekableReadStream *FileMan::findFirstData(const char *string, DataType 
 
 	// Load corresponding file into a buffer
 	_mpcFile->seek(file->offset);
-	byte *buffer = (byte *)malloc(file->ulength * sizeof(byte));
+	byte *buffer = (byte *)malloc(file->length);
 
-	_mpcFile->read(buffer, file->ulength);
+	_mpcFile->read(buffer, file->length);
 
 	// Return buffer wrapped in a MemoryReadStream
 
 	if (_compressed)
-		return Common::wrapCompressedReadStream(new Common::MemoryReadStream(buffer, file->ulength, DisposeAfterUse::YES));
+		return Common::wrapCompressedReadStream(new Common::MemoryReadStream(buffer, file->length, DisposeAfterUse::YES));
 	else
-		return new Common::MemoryReadStream(buffer, file->ulength, DisposeAfterUse::YES);
+		return new Common::MemoryReadStream(buffer, file->length, DisposeAfterUse::YES);
 }
 
 int32 FileMan::getLength(const char *string, DataType type) {
