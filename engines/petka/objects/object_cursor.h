@@ -35,6 +35,7 @@ public:
 	void update(int time) override;
 	void draw() override;
 	void show(bool v) override;
+	bool isInPoint(int x, int y) override { return 0; }
 
 public:
 	int _actionType;
