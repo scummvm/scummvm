@@ -172,6 +172,7 @@ void InterfaceMain::onLeftButtonDown(const Common::Point p) {
 	for (int i = _objs.size() - 1; i >= 0; --i) {
 		if (_objs[i]->isInPoint(p.x, p.y)) {
 			_objs[i]->onClick(p.x, p.y);
+			break;
 		}
 	}
 }
