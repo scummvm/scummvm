@@ -173,12 +173,9 @@ Common::SeekableReadStream *FileMan::findFirstData(const char *string, DataType 
 
 	_mpcFile->read(buffer, file->length);
 
-	// Return buffer wrapped in a MemoryReadStream
-
-	if (_compressed)
-		return Common::wrapCompressedReadStream(new Common::MemoryReadStream(buffer, file->length, DisposeAfterUse::YES));
-	else
-		return new Common::MemoryReadStream(buffer, file->length, DisposeAfterUse::YES);
+	// Return buffer wrapped in a MemoryReadStream, automatically
+	// uncompressed if it is zlib-compressed
+	return Common::wrapCompressedReadStream(new Common::MemoryReadStream(buffer, file->length, DisposeAfterUse::NO), file->length);
 }
 
 int32 FileMan::getLength(const char *string, DataType type) {
