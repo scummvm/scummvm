@@ -199,4 +199,15 @@ void QSystem::update() {
 	}
 }
 
+void QSystem::togglePanelInterface() {
+	if (_currInterface != _startupInterface.get() && _star->_isActive) {
+		_case->show(0);
+		if (_currInterface == _panelInterface.get()) {
+			_currInterface->stop();
+		} else if (_currInterface == _mainInterface.get()) {
+			_panelInterface->start();
+		}
+	}
+}
+
 }

@@ -58,6 +58,8 @@ public:
 	QMessageObject *findObject(int16 id);
 	QMessageObject *findObject(const Common::String &name);
 
+	void togglePanelInterface();
+
 public:
 	Common::Array<QObject> _objs;
 	Common::Array<QObjectBG> _bgs;

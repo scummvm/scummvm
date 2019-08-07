@@ -133,7 +133,7 @@ void QObjectCase::onClick(int x, int y) {
 			// setChapayev()
 			break;
 		case 1:
-			// loadPanel()
+			g_vm->getQSystem()->togglePanelInterface();
 			break;
 		case 2:
 			// loadMap()
