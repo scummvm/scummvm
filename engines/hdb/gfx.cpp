@@ -815,7 +815,7 @@ bool Gfx::loadFont(const char *string) {
 				for (int x = 0; x < cInfo->width; x++) {
 					int u, v;
 					u = y;
-					v = _fontHeader.height - x - 1;
+					v = cInfo->width - x - 1;
 					ptr = (uint16 *)_fontSurfaces[i].getBasePtr(u, v);
 					*ptr = memoryStream.readUint16LE();
 				}
@@ -1192,7 +1192,7 @@ Graphics::Surface Picture::load(Common::SeekableReadStream *stream) {
 		for (int y = 0; y < _height; y++) {
 			for (int x = 0; x < _width; x++) {
 				int u = y;
-				int v = _height - x - 1;
+				int v = _width - x - 1;
 				uint16 *ptr = (uint16 *)_surface.getBasePtr(u, v);
 				*ptr = stream->readUint16LE();
 			}
