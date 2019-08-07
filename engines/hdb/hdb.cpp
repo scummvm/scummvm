@@ -44,6 +44,7 @@ namespace HDB {
 HDBGame* g_hdb;
 
 HDBGame::HDBGame(OSystem *syst, const ADGameDescription *gameDesc) : Engine(syst), _gameDescription(gameDesc) {
+	g_hdb = this;
 	if (isPPC()) {
 		_screenWidth = 240;
 		_screenHeight = 320;
@@ -60,16 +61,16 @@ HDBGame::HDBGame(OSystem *syst, const ADGameDescription *gameDesc) : Engine(syst
 
 	_format = Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0);
 	_systemInit = false;
-	g_hdb = this;
-	_fileMan = new FileMan;
-	_gfx = new Gfx;
-	_lua = new LuaScript;
-	_menu = new Menu;
-	_map = new Map;
-	_ai = new AI;
-	_input = new Input;
-	_sound = new Sound;
-	_window = new Window;
+
+	_fileMan = nullptr;
+	_gfx = nullptr;
+	_lua = nullptr;
+	_menu = nullptr;
+	_map = nullptr;
+	_ai = nullptr;
+	_input = nullptr;
+	_sound = nullptr;
+	_window = nullptr;
 	_rnd = new Common::RandomSource("hdb");
 
 	_cheating = false;
@@ -122,6 +123,17 @@ bool HDBGame::init() {
 	/*
 		Game Subsystem Initializations
 	*/
+
+	_systemInit = false;
+	_fileMan = new FileMan;
+	_gfx = new Gfx;
+	_lua = new LuaScript;
+	_menu = new Menu;
+	_map = new Map;
+	_ai = new AI;
+	_input = new Input;
+	_sound = new Sound;
+	_window = new Window;
 
 	// Init fileMan
 
