@@ -776,14 +776,13 @@ bool Gfx::loadFont(const char *string) {
 		stream->read(buffer, ulength);
 		Common::MemoryReadStream memoryStream(buffer, ulength, DisposeAfterUse::YES);
 		delete stream;
-		stream = &memoryStream;
 
 		// Loading _fontHeader
-		_fontHeader.type = (int)stream->readUint32LE();
-		_fontHeader.numChars = (int)stream->readUint32LE();
-		_fontHeader.height = (int)stream->readUint32LE();
-		_fontHeader.kerning = (int)stream->readUint32LE();
-		_fontHeader.leading = (int)stream->readUint32LE();
+		_fontHeader.type = (int)memoryStream.readUint32LE();
+		_fontHeader.numChars = (int)memoryStream.readUint32LE();
+		_fontHeader.height = (int)memoryStream.readUint32LE();
+		_fontHeader.kerning = (int)memoryStream.readUint32LE();
+		_fontHeader.leading = (int)memoryStream.readUint32LE();
 
 		debug(3, "Loaded _fontHeader with following data");
 		debug(3, "type: %d", _fontHeader.type);
@@ -795,22 +794,22 @@ bool Gfx::loadFont(const char *string) {
 		// Loading _charInfoBlocks & creating character surfaces
 
 		// Position after _fontHeader
-		int startPos = stream->pos();
+		int startPos = memoryStream.pos();
 		uint16 *ptr;
 		for (int i = 0; i < _fontHeader.numChars; i++) {
 			CharInfo *cInfo = new CharInfo;
-			cInfo->width = (int16)stream->readUint32LE();
-			cInfo->offset = (int32)stream->readUint32LE();
+			cInfo->width = (int16)memoryStream.readUint32LE();
+			cInfo->offset = (int32)memoryStream.readUint32LE();
 
 			debug(3, "Loaded _charInfoBlocks[%d]: width: %d, offset: %d", i, cInfo->width, cInfo->offset);
 
 			// Position after reading cInfo
-			int curPos = stream->pos();
+			int curPos = memoryStream.pos();
 
 			_fontSurfaces[i].create(_fontHeader.height, cInfo->width, g_hdb->_format);
 
 			// Go to character location
-			stream->seek(startPos + cInfo->offset);
+			memoryStream.seek(startPos + cInfo->offset);
 
 			for (int y = 0; y < _fontHeader.height; y++) {
 				for (int x = 0; x < cInfo->width; x++) {
@@ -818,18 +817,17 @@ bool Gfx::loadFont(const char *string) {
 					u = y;
 					v = _fontHeader.height - x - 1;
 					ptr = (uint16 *)_fontSurfaces[i].getBasePtr(u, v);
-					*ptr = stream->readUint16LE();
+					*ptr = memoryStream.readUint16LE();
 				}
 			}
 
-			stream->seek(curPos);
+			memoryStream.seek(curPos);
 
 			_charInfoBlocks.push_back(cInfo);
 		}
 
 		// Loading _fontGfx
-		_fontGfx = stream->readUint16LE();
-		delete stream;
+		_fontGfx = memoryStream.readUint16LE();
 	} else {
 		// Loading _fontHeader
 		_fontHeader.type = (int)stream->readUint32LE();
