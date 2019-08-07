@@ -1430,7 +1430,7 @@ bool Sound::init() {
 		_soundCache[index2].loaded = SNDMEM_NOTCACHED;
 		_soundCache[index2].name = soundList[index].name;
 		_soundCache[index2].luaName = soundList[index].luaName;
-		if (g_hdb->getPlatform() == Common::Platform::kPlatformLinux)
+		if (g_hdb->getPlatform() == Common::kPlatformLinux)
 			_soundCache[index2].ext = SNDTYPE_OGG;
 		else {
 			if (index2 <= SND_UNLOCKED_ITEM || index2 == SND_BEEPBEEPBEEP)
@@ -1492,7 +1492,7 @@ bool Sound::playSound(int index) {
 	if (_soundCache[index].loaded == SNDMEM_NOTCACHED) {
 
 		Common::SeekableReadStream *stream = nullptr;
-		if (g_hdb->getPlatform() == Common::Platform::kPlatformLinux) {
+		if (g_hdb->getPlatform() == Common::kPlatformLinux) {
 			Common::String updatedName(_soundCache[index].name);
 			updatedName.replace(updatedName.begin() + updatedName.size() - 4, updatedName.end(), "_OGG");
 			stream = g_hdb->_fileMan->findFirstData(updatedName.c_str(), TYPE_BINARY);
@@ -1566,7 +1566,7 @@ bool Sound::playSoundEx(int index, int channel, bool loop) {
 	if (_soundCache[index].loaded == SNDMEM_NOTCACHED) {
 
 		Common::SeekableReadStream *stream = nullptr;
-		if (g_hdb->getPlatform() == Common::Platform::kPlatformLinux) {
+		if (g_hdb->getPlatform() == Common::kPlatformLinux) {
 			Common::String updatedName(_soundCache[index].name);
 			updatedName.replace(updatedName.begin() + updatedName.size() - 4, updatedName.end(), "_OGG");
 			stream = g_hdb->_fileMan->findFirstData(updatedName.c_str(), TYPE_BINARY);
@@ -1638,7 +1638,7 @@ bool Sound::playVoice(int index, int actor) {
 		g_hdb->_mixer->stopHandle(*_voices[actor].handle);
 
 	Common::SeekableReadStream *stream = nullptr;
-	if (g_hdb->getPlatform() == Common::Platform::kPlatformLinux) {
+	if (g_hdb->getPlatform() == Common::kPlatformLinux) {
 		Common::String updatedName(soundList[index].name);
 		updatedName.replace(updatedName.begin() + updatedName.size() - 4, updatedName.end(), "_OGG");
 		stream = g_hdb->_fileMan->findFirstData(updatedName.c_str(), TYPE_BINARY);
@@ -1648,7 +1648,7 @@ bool Sound::playVoice(int index, int actor) {
 	if (stream == nullptr)
 		return false;
 
-	if (g_hdb->getPlatform() == Common::Platform::kPlatformLinux) {
+	if (g_hdb->getPlatform() == Common::kPlatformLinux) {
 #ifdef USE_VORBIS
 		Audio::AudioStream *audioStream = Audio::makeVorbisStream(stream, DisposeAfterUse::YES);
 		if (audioStream == nullptr) {
@@ -1761,7 +1761,7 @@ void Sound::stopMusic() {
 bool Sound::beginMusic(SoundType song, bool fadeIn, int ramp) {
 	const char *songName = nullptr;
 
-	if (g_hdb->getPlatform() == Common::Platform::kPlatformLinux) {
+	if (g_hdb->getPlatform() == Common::kPlatformLinux) {
 		Common::String updatedName(soundList[song].name);
 		updatedName.replace(updatedName.begin() + updatedName.size() - 4, updatedName.end(), ".ogg");
 		songName = updatedName.c_str();
@@ -1798,7 +1798,7 @@ bool Sound::beginMusic(SoundType song, bool fadeIn, int ramp) {
 		if (stream == nullptr)
 			return false;
 
-		if (g_hdb->getPlatform() != Common::Platform::kPlatformLinux) {
+		if (g_hdb->getPlatform() != Common::kPlatformLinux) {
 #ifdef USE_MAD
 			Audio::SeekableAudioStream *audioStream = Audio::makeMP3Stream(stream, DisposeAfterUse::YES);
 			Audio::AudioStream *loopingStream = new Audio::LoopingAudioStream(audioStream, 0, DisposeAfterUse::YES);
@@ -1869,7 +1869,7 @@ bool Sound::beginMusic(SoundType song, bool fadeIn, int ramp) {
 		if (stream == nullptr)
 			return false;
 
-		if (g_hdb->getPlatform() != Common::Platform::kPlatformLinux) {
+		if (g_hdb->getPlatform() != Common::kPlatformLinux) {
 #ifdef USE_MAD
 
 			Audio::SeekableAudioStream *audioStream = Audio::makeMP3Stream(stream, DisposeAfterUse::YES);
