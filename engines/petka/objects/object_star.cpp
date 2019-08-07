@@ -85,6 +85,7 @@ void QObjectStar::onClick(int x, int y) {
 		QObjectCursor *cursor = g_vm->getQSystem()->_cursor.get();
 		cursor->show(0);
 		cursor->_resourceId = button + kFirstCursorId;
+		cursor->_actionType = button - 1;
 		cursor->show(1);
 	}
 	show(0);
