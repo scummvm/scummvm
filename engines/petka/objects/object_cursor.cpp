@@ -45,6 +45,7 @@ QObjectCursor::QObjectCursor() {
 	_x = pos.x;
 	_y = pos.y;
 	g_vm->resMgr()->loadFlic(5002);
+	_actionType = kLook;
 }
 
 void QObjectCursor::draw() {
