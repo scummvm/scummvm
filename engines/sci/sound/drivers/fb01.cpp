@@ -159,6 +159,8 @@ MidiPlayer_Fb01::MidiPlayer_Fb01(SciVersion version) : MidiPlayer(version), _pla
 }
 
 MidiPlayer_Fb01::~MidiPlayer_Fb01() {
+	if (_driver)
+		_driver->setTimerCallback(NULL, NULL);
 	Common::StackLock lock(_mutex);
 	close();
 	delete _driver;
@@ -526,6 +528,7 @@ void MidiPlayer_Fb01::midiTimerCallback(void *p) {
 }
 
 void MidiPlayer_Fb01::setTimerCallback(void *timer_param, Common::TimerManager::TimerProc timer_proc) {
+	Common::StackLock lock(_mutex);
 	_driver->setTimerCallback(NULL, NULL);
 
 	_timerParam = timer_param;
@@ -635,9 +638,12 @@ int MidiPlayer_Fb01::open(ResourceManager *resMan) {
 }
 
 void MidiPlayer_Fb01::close() {
+	if (_driver)
+		_driver->setTimerCallback(NULL, NULL);
 	Common::StackLock lock(_mutex);
 	_isOpen = false;
-	_driver->close();
+	if (_driver)
+		_driver->close();
 }
 
 void MidiPlayer_Fb01::initTrack(SciSpan<const byte>& header) {
