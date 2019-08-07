@@ -676,11 +676,11 @@ void IMuseDriver_Amiga::close() {
 
 	_isOpen = false;
 
-	Common::StackLock lock(_mutex);
-
 	stopPaula();
 	setTimerCallback(0, 0);
 	_mixer->stopHandle(_soundHandle);
+
+	Common::StackLock lock(_mutex);
 
 	unloadInstruments();
 
