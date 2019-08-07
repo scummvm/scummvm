@@ -51,6 +51,7 @@
 #include "audio/mixer.h"
 #include "audio/decoders/wave.h"
 #include "audio/decoders/mp3.h"
+#include "audio/decoders/vorbis.h"
 
 namespace HDB {
 
@@ -1443,7 +1444,8 @@ enum SndMem {
 enum SndType {
 	SNDTYPE_NONE = 0,
 	SNDTYPE_WAV = -1,
-	SNDTYPE_MP3 = 1
+	SNDTYPE_MP3 = 1,
+	SNDTYPE_OGG = 2
 };
 
 struct SoundCache {
