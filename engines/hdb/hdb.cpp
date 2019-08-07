@@ -177,6 +177,8 @@ bool HDBGame::init() {
 	_systemInit = true;
 	if (!g_hdb->isPPC())
 		_loadingScreenGfx = _gfx->loadPic(PIC_LOADSCREEN);
+	else
+		_loadingScreenGfx = NULL;
 
 	return true;
 }
