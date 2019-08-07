@@ -404,9 +404,9 @@ TownsAudioInterfaceInternal::TownsAudioInterfaceInternal(Audio::Mixer *mixer, To
 }
 
 TownsAudioInterfaceInternal::~TownsAudioInterfaceInternal() {
+	deinit();
 	Common::StackLock lock(_mutex);
 	_ready = false;
-	deinit();
 
 	delete[] _fmSaveReg[0];
 	delete[] _fmSaveReg[1];

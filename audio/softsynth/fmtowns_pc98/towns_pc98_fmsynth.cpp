@@ -1347,9 +1347,8 @@ int TownsPC98_FmSynth::getRate() const {
 }
 
 void TownsPC98_FmSynth::deinit() {
-	Common::StackLock lock(_mutex);
-	_ready = false;
 	_mixer->stopHandle(_soundHandle);
+	_ready = false;	
 	_timers[0].cb = _timers[1].cb = &TownsPC98_FmSynth::idleTimerCallback;
 }
 

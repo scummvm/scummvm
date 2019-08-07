@@ -80,9 +80,9 @@ PC98AudioCoreInternal::PC98AudioCoreInternal(Audio::Mixer *mixer, PC98AudioCore 
 }
 
 PC98AudioCoreInternal::~PC98AudioCoreInternal() {
+	deinit();
 	Common::StackLock lock(_mutex);
 	_ready = false;
-	deinit();
 
 	/*
 	
