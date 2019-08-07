@@ -43,7 +43,7 @@ bool FileMan::openMPC(const Common::String &filename) {
 	uint32 offset;
 
 	if (!_mpcFile->open(filename)) {
-		error("FileMan::openMPC(): Error reading the MSD/MPC file");
+		error("FileMan::openMPC(): Error reading the MSD/MPC file %s", filename.c_str());
 		return false;
 	}
 
