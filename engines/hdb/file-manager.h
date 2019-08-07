@@ -57,7 +57,6 @@ private:
 
 	Common::File *_mpcFile;
 	Common::Array<MPCEntry *> _dir;
-	bool _compressed;
 
 public:
 
