@@ -1430,10 +1430,14 @@ bool Sound::init() {
 		_soundCache[index2].loaded = SNDMEM_NOTCACHED;
 		_soundCache[index2].name = soundList[index].name;
 		_soundCache[index2].luaName = soundList[index].luaName;
-		if (index2 <= SND_UNLOCKED_ITEM || index2 == SND_BEEPBEEPBEEP)
-			_soundCache[index2].ext = SNDTYPE_WAV;
-		else
-			_soundCache[index2].ext = SNDTYPE_MP3;
+		if (g_hdb->getPlatform() == Common::Platform::kPlatformLinux)
+			_soundCache[index2].ext = SNDTYPE_OGG;
+		else {
+			if (index2 <= SND_UNLOCKED_ITEM || index2 == SND_BEEPBEEPBEEP)
+				_soundCache[index2].ext = SNDTYPE_WAV;
+			else
+				_soundCache[index2].ext = SNDTYPE_MP3;
+		}
 		debug(9, "Registering sound: sName: %s, \tsLuaName: %s, \tExtension: %s", soundList[index].name, soundList[index].luaName, _soundCache[index].ext == SNDTYPE_MP3 ? "MP3" : "WAV");
 		index++;
 		if (index > kMaxSounds)
@@ -1487,7 +1491,14 @@ bool Sound::playSound(int index) {
 	// is sound marked as cached?
 	if (_soundCache[index].loaded == SNDMEM_NOTCACHED) {
 
-		Common::SeekableReadStream *stream = g_hdb->_fileMan->findFirstData(_soundCache[index].name, TYPE_BINARY);
+		Common::SeekableReadStream *stream = nullptr;
+		if (g_hdb->getPlatform() == Common::Platform::kPlatformLinux) {
+			Common::String updatedName(_soundCache[index].name);
+			updatedName.replace(updatedName.begin() + updatedName.size() - 4, updatedName.end(), "_OGG");
+			stream = g_hdb->_fileMan->findFirstData(updatedName.c_str(), TYPE_BINARY);
+		} else
+			stream = g_hdb->_fileMan->findFirstData(_soundCache[index].name, TYPE_BINARY);
+
 		if (stream == nullptr)
 			return false;
 
@@ -1496,6 +1507,11 @@ bool Sound::playSound(int index) {
 			_soundCache[index].audioStream = Audio::makeMP3Stream(stream, DisposeAfterUse::YES);
 			_soundCache[index].loaded = SNDMEM_LOADED;
 #endif // USE_MAD
+		} else if (_soundCache[index].ext == SNDTYPE_OGG) {
+#ifdef USE_VORBIS
+			_soundCache[index].audioStream = Audio::makeVorbisStream(stream, DisposeAfterUse::YES);
+			_soundCache[index].loaded = SNDMEM_LOADED;
+#endif // USE_VORBIS
 		} else {
 			_soundCache[index].audioStream = Audio::makeWAVStream(stream, DisposeAfterUse::YES);
 			_soundCache[index].loaded = SNDMEM_LOADED;
@@ -1549,7 +1565,14 @@ bool Sound::playSoundEx(int index, int channel, bool loop) {
 	// is sound marked as cached?
 	if (_soundCache[index].loaded == SNDMEM_NOTCACHED) {
 
-		Common::SeekableReadStream *stream = g_hdb->_fileMan->findFirstData(_soundCache[index].name, TYPE_BINARY);
+		Common::SeekableReadStream *stream = nullptr;
+		if (g_hdb->getPlatform() == Common::Platform::kPlatformLinux) {
+			Common::String updatedName(_soundCache[index].name);
+			updatedName.replace(updatedName.begin() + updatedName.size() - 4, updatedName.end(), "_OGG");
+			stream = g_hdb->_fileMan->findFirstData(updatedName.c_str(), TYPE_BINARY);
+		} else
+			stream = g_hdb->_fileMan->findFirstData(_soundCache[index].name, TYPE_BINARY);
+
 		if (stream == nullptr)
 			return false;
 
@@ -1558,6 +1581,11 @@ bool Sound::playSoundEx(int index, int channel, bool loop) {
 			_soundCache[index].audioStream = Audio::makeMP3Stream(stream, DisposeAfterUse::YES);
 			_soundCache[index].loaded = SNDMEM_LOADED;
 #endif // USE_MAD
+		} else if (_soundCache[index].ext == SNDTYPE_OGG) {
+#ifdef USE_VORBIS
+			_soundCache[index].audioStream = Audio::makeVorbisStream(stream, DisposeAfterUse::YES);
+			_soundCache[index].loaded = SNDMEM_LOADED;
+#endif // USE_VORBIS
 		} else {
 			_soundCache[index].audioStream = Audio::makeWAVStream(stream, DisposeAfterUse::YES);
 			_soundCache[index].loaded = SNDMEM_LOADED;
@@ -1609,34 +1637,66 @@ bool Sound::playVoice(int index, int actor) {
 	if (_voices[actor].active)
 		g_hdb->_mixer->stopHandle(*_voices[actor].handle);
 
-#ifdef USE_MAD
-	Common::SeekableReadStream *stream = g_hdb->_fileMan->findFirstData(soundList[index].name, TYPE_BINARY);
+	Common::SeekableReadStream *stream = nullptr;
+	if (g_hdb->getPlatform() == Common::Platform::kPlatformLinux) {
+		Common::String updatedName(soundList[index].name);
+		updatedName.replace(updatedName.begin() + updatedName.size() - 4, updatedName.end(), "_OGG");
+		stream = g_hdb->_fileMan->findFirstData(updatedName.c_str(), TYPE_BINARY);
+	} else
+		stream = g_hdb->_fileMan->findFirstData(soundList[index].name, TYPE_BINARY);
+
 	if (stream == nullptr)
 		return false;
-	Audio::AudioStream *audioStream = Audio::makeMP3Stream(stream, DisposeAfterUse::YES);
-	if (audioStream == nullptr) {
-		delete stream;
-		return false;
+
+	if (g_hdb->getPlatform() == Common::Platform::kPlatformLinux) {
+#ifdef USE_VORBIS
+		Audio::AudioStream *audioStream = Audio::makeVorbisStream(stream, DisposeAfterUse::YES);
+		if (audioStream == nullptr) {
+			delete stream;
+			return false;
+		}
+
+		g_hdb->_mixer->setChannelVolume(*_voices[actor].handle, _sfxVolume);
+
+		g_hdb->_mixer->playStream(
+			Audio::Mixer::kSpeechSoundType,
+			_voices[actor].handle,
+			audioStream,
+			-1,
+			Audio::Mixer::kMaxChannelVolume,
+			0,
+			DisposeAfterUse::YES,
+			false,
+			false
+		);
+#endif
+	} else {
+#ifdef USE_MAD
+		Audio::AudioStream *audioStream = Audio::makeMP3Stream(stream, DisposeAfterUse::YES);
+		if (audioStream == nullptr) {
+			delete stream;
+			return false;
+		}
+
+		g_hdb->_mixer->setChannelVolume(*_voices[actor].handle, _sfxVolume);
+
+		g_hdb->_mixer->playStream(
+			Audio::Mixer::kSpeechSoundType,
+			_voices[actor].handle,
+			audioStream,
+			-1,
+			Audio::Mixer::kMaxChannelVolume,
+			0,
+			DisposeAfterUse::YES,
+			false,
+			false
+		);
+#endif
 	}
-
-	g_hdb->_mixer->setChannelVolume(*_voices[actor].handle, _sfxVolume);
-
-	g_hdb->_mixer->playStream(
-		Audio::Mixer::kSpeechSoundType,
-		_voices[actor].handle,
-		audioStream,
-		-1,
-		Audio::Mixer::kMaxChannelVolume,
-		0,
-		DisposeAfterUse::YES,
-		false,
-		false
-	);
 
 	_voices[actor].active = true;
 	_voicePlayed[index - FIRST_VOICE] = 1;
 
-#endif
 	return true;
 }
 
@@ -1699,7 +1759,14 @@ void Sound::stopMusic() {
 }
 
 bool Sound::beginMusic(SoundType song, bool fadeIn, int ramp) {
-	const char *songName = soundList[song].name;
+	const char *songName = nullptr;
+
+	if (g_hdb->getPlatform() == Common::Platform::kPlatformLinux) {
+		Common::String updatedName(soundList[song].name);
+		updatedName.replace(updatedName.begin() + updatedName.size() - 4, updatedName.end(), ".ogg");
+		songName = updatedName.c_str();
+	} else
+		songName = soundList[song].name;
 
 	if (g_hdb->isPPC()) {
 		switch (song) {
@@ -1726,37 +1793,68 @@ bool Sound::beginMusic(SoundType song, bool fadeIn, int ramp) {
 		}
 
 		// Load up the song
-#ifdef USE_MAD
+
 		Common::SeekableReadStream *stream = SearchMan.createReadStreamForMember(songName);
 		if (stream == nullptr)
 			return false;
 
-		Audio::SeekableAudioStream *audioStream = Audio::makeMP3Stream(stream, DisposeAfterUse::YES);
-		Audio::AudioStream *loopingStream = new Audio::LoopingAudioStream(audioStream, 0, DisposeAfterUse::YES);
+		if (g_hdb->getPlatform() != Common::Platform::kPlatformLinux) {
+#ifdef USE_MAD
+			Audio::SeekableAudioStream *audioStream = Audio::makeMP3Stream(stream, DisposeAfterUse::YES);
+			Audio::AudioStream *loopingStream = new Audio::LoopingAudioStream(audioStream, 0, DisposeAfterUse::YES);
 
-		g_hdb->_mixer->setChannelVolume(*_song1.handle, _musicVolume);
+			g_hdb->_mixer->setChannelVolume(*_song1.handle, _musicVolume);
 
-		// do we need to fade-in this song?
-		if (fadeIn) {
-			_song1.fadeInRamp = ramp;
-			_song1.fadingIn = true;
-			_song1.fadeInVol = 0;
-			g_hdb->_mixer->setChannelVolume(*_song1.handle, 0);
-		}
+			// do we need to fade-in this song?
+			if (fadeIn) {
+				_song1.fadeInRamp = ramp;
+				_song1.fadingIn = true;
+				_song1.fadeInVol = 0;
+				g_hdb->_mixer->setChannelVolume(*_song1.handle, 0);
+			}
 
-		g_hdb->_mixer->playStream(
-			Audio::Mixer::kMusicSoundType,
-			_song1.handle,
-			loopingStream,
-			-1,
-			Audio::Mixer::kMaxChannelVolume,
-			0,
-			DisposeAfterUse::YES,
-			false,
-			false
-		);
-		_song1.playing = true;
+			g_hdb->_mixer->playStream(
+				Audio::Mixer::kMusicSoundType,
+				_song1.handle,
+				loopingStream,
+				-1,
+				Audio::Mixer::kMaxChannelVolume,
+				0,
+				DisposeAfterUse::YES,
+				false,
+				false
+			);
+			_song1.playing = true;
 #endif
+		} else {
+#ifdef USE_VORBIS
+			Audio::SeekableAudioStream *audioStream = Audio::makeVorbisStream(stream, DisposeAfterUse::YES);
+			Audio::AudioStream *loopingStream = new Audio::LoopingAudioStream(audioStream, 0, DisposeAfterUse::YES);
+
+			g_hdb->_mixer->setChannelVolume(*_song1.handle, _musicVolume);
+
+			// do we need to fade-in this song?
+			if (fadeIn) {
+				_song1.fadeInRamp = ramp;
+				_song1.fadingIn = true;
+				_song1.fadeInVol = 0;
+				g_hdb->_mixer->setChannelVolume(*_song1.handle, 0);
+			}
+
+			g_hdb->_mixer->playStream(
+				Audio::Mixer::kMusicSoundType,
+				_song1.handle,
+				loopingStream,
+				-1,
+				Audio::Mixer::kMaxChannelVolume,
+				0,
+				DisposeAfterUse::YES,
+				false,
+				false
+			);
+			_song1.playing = true;
+#endif
+		}
 	} else if (!_song2.playing) {
 		// Start fading out SONG1 if its playing
 		if (_song1.playing) {
@@ -1766,37 +1864,69 @@ bool Sound::beginMusic(SoundType song, bool fadeIn, int ramp) {
 		}
 
 		// Load up the song
-#ifdef USE_MAD
+
 		Common::SeekableReadStream *stream = SearchMan.createReadStreamForMember(songName);
 		if (stream == nullptr)
 			return false;
 
-		Audio::SeekableAudioStream *audioStream = Audio::makeMP3Stream(stream, DisposeAfterUse::YES);
-		Audio::AudioStream *loopingStream = new Audio::LoopingAudioStream(audioStream, 0, DisposeAfterUse::YES);
+		if (g_hdb->getPlatform() != Common::Platform::kPlatformLinux) {
+#ifdef USE_MAD
 
-		g_hdb->_mixer->setChannelVolume(*_song2.handle, _musicVolume);
+			Audio::SeekableAudioStream *audioStream = Audio::makeMP3Stream(stream, DisposeAfterUse::YES);
+			Audio::AudioStream *loopingStream = new Audio::LoopingAudioStream(audioStream, 0, DisposeAfterUse::YES);
 
-		// do we need to fade-in this song?
-		if (fadeIn) {
-			_song2.fadeInRamp = ramp;
-			_song2.fadingIn = true;
-			_song2.fadeInVol = 0;
-			g_hdb->_mixer->setChannelVolume(*_song2.handle, 0);
-		}
+			g_hdb->_mixer->setChannelVolume(*_song2.handle, _musicVolume);
 
-		g_hdb->_mixer->playStream(
-			Audio::Mixer::kMusicSoundType,
-			_song2.handle,
-			loopingStream,
-			-1,
-			Audio::Mixer::kMaxChannelVolume,
-			0,
-			DisposeAfterUse::YES,
-			false,
-			false
-		);
-		_song2.playing = true;
+			// do we need to fade-in this song?
+			if (fadeIn) {
+				_song2.fadeInRamp = ramp;
+				_song2.fadingIn = true;
+				_song2.fadeInVol = 0;
+				g_hdb->_mixer->setChannelVolume(*_song2.handle, 0);
+			}
+
+			g_hdb->_mixer->playStream(
+				Audio::Mixer::kMusicSoundType,
+				_song2.handle,
+				loopingStream,
+				-1,
+				Audio::Mixer::kMaxChannelVolume,
+				0,
+				DisposeAfterUse::YES,
+				false,
+				false
+			);
+			_song2.playing = true;
 #endif
+		} else {
+#ifdef USE_VORBIS
+			Audio::SeekableAudioStream *audioStream = Audio::makeVorbisStream(stream, DisposeAfterUse::YES);
+			Audio::AudioStream *loopingStream = new Audio::LoopingAudioStream(audioStream, 0, DisposeAfterUse::YES);
+
+			g_hdb->_mixer->setChannelVolume(*_song2.handle, _musicVolume);
+
+			// do we need to fade-in this song?
+			if (fadeIn) {
+				_song2.fadeInRamp = ramp;
+				_song2.fadingIn = true;
+				_song2.fadeInVol = 0;
+				g_hdb->_mixer->setChannelVolume(*_song2.handle, 0);
+			}
+
+			g_hdb->_mixer->playStream(
+				Audio::Mixer::kMusicSoundType,
+				_song2.handle,
+				loopingStream,
+				-1,
+				Audio::Mixer::kMaxChannelVolume,
+				0,
+				DisposeAfterUse::YES,
+				false,
+				false
+			);
+			_song2.playing = true;
+#endif
+		}
 	} else
 		return false;
 
