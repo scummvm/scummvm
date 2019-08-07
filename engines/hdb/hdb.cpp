@@ -126,7 +126,7 @@ bool HDBGame::init() {
 	// Init fileMan
 
 	if (!_fileMan->openMPC(getGameFile())) {
-		error("FileMan::openMPC: Cannot find the hyperspace.mpc data file.");
+		error("FileMan::openMPC: Cannot find the %s data file", getGameFile());
 	}
 	if (!_gfx->init()) {
 		error("Gfx::init: Couldn't initialize Gfx");
