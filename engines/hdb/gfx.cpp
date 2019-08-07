@@ -176,6 +176,16 @@ bool Gfx::init() {
 		_starField[2] = getPicture(PIC_STAR192);
 		_starField[3] = getPicture(PIC_STAR256);
 		_snowflake = getPicture(PIC_SNOWFLAKE);
+	} else {
+		for (int i = 0; i < 7; i++)
+			_mousePointer[i] = NULL;
+
+		for (int i = 0; i < 4; i++)
+			_starField[i] = NULL;
+
+		_snowflake = NULL;
+
+		_showCursor = false;
 	}
 
 	_systemInit = true;
