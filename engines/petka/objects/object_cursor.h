@@ -27,6 +27,16 @@
 
 namespace Petka {
 
+enum ActionType {
+	kActionLook,
+	kActionWalk,
+	kActionUse,
+	kActionTake,
+	kActionTalk,
+	kActionObjUseChapayev,
+	kActionObjUse
+};
+
 class QObjectCursor : public QObject {
 public:
 	QObjectCursor();

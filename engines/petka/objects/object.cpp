@@ -38,6 +38,7 @@
 #include "petka/objects/object_star.h"
 #include "petka/objects/object_cursor.h"
 #include "petka/interfaces/main.h"
+#include "petka/objects/heroes.h"
 
 namespace Petka {
 
@@ -412,6 +413,35 @@ void QObject::setPos(int x, int y) {
 		g_vm->videoSystem()->addDirtyRectFromMsk(Common::Point(x, y), *flc);
 		_x = x;
 		_y = y;
+	}
+}
+
+void QObject::onClick(int x, int y) {
+	QObjectCursor *cursor = g_vm->getQSystem()->_cursor.get();
+	switch (cursor->_actionType) {
+	case kActionLook:
+		g_vm->getQSystem()->addMessage(_id, kLook, 0, 0, 0, 0, this);
+		break;
+	case kActionWalk:
+		g_vm->getQSystem()->addMessage(_id, kWalk, x, y, 0, 0, this);
+		break;
+	case kActionUse:
+		g_vm->getQSystem()->addMessage(_id, kUse, 0, 0, 0, 0, this);
+		break;
+	case kActionTake:
+		g_vm->getQSystem()->addMessage(_id, kTake, 0, 0, 0, 0, this);
+		break;
+	case kActionTalk:
+		g_vm->getQSystem()->addMessage(_id, kTalk, 0, 0, 0, 0, this);
+		break;
+	case kActionObjUse:
+		g_vm->getQSystem()->addMessage(_id, kObjectUse, x, y, 0, 0, g_vm->getQSystem()->_chapayev.get());
+		break;
+	case kActionObjUseChapayev:
+		g_vm->getQSystem()->addMessage(_id, kObjectUse, 0, 0, 0, 0, cursor->_invObj);
+		break;
+	default:
+		break;
 	}
 }
 
