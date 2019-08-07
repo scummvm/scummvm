@@ -632,6 +632,7 @@ bool Map::load(Common::SeekableReadStream *stream) {
 			case AI_DEADEYE:
 				if (_iconList[i].value1 == 1)	// For non-moving DeadEyes
 					break;
+				// fall through
 			case AI_FOURFIRER:
 			case AI_LISTENBOT:
 			case ITEM_CLUB:

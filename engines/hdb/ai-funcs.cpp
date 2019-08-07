@@ -2238,7 +2238,7 @@ void AI::getItemSound(AIType type) {
 				g_hdb->_sound->playSound(SND_GET_THING);
 			break;
 		}
-		// fall through if it is PPC
+		// fall through
 	default: g_hdb->_sound->playSound(SND_GET_THING);
 	}
 }
