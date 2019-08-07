@@ -782,7 +782,7 @@ bool Gfx::loadFont(const char *string) {
 
 	if (g_hdb->isPPC()) {
 		const int32 ulength = g_hdb->_fileMan->getLength(string, TYPE_FONT);
-		byte *buffer = new byte[ulength];
+		byte *buffer = (byte *)malloc(ulength);
 		stream->read(buffer, ulength);
 		Common::MemoryReadStream memoryStream(buffer, ulength, DisposeAfterUse::YES);
 		delete stream;
