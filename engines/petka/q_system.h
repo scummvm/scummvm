@@ -40,6 +40,7 @@ class InterfaceSaveLoad;
 class InterfaceMain;
 class InterfaceStartup;
 class InterfacePanel;
+class InterfaceMap;
 class Interface;
 
 class QSystem {
@@ -59,6 +60,7 @@ public:
 	QMessageObject *findObject(const Common::String &name);
 
 	void togglePanelInterface();
+	void toggleMapInterface();
 
 public:
 	Common::Array<QObject> _objs;
@@ -74,6 +76,7 @@ public:
 	Common::ScopedPtr<InterfaceSaveLoad> _saveLoadInterface;
 	Common::ScopedPtr<InterfaceStartup> _startupInterface;
 	Common::ScopedPtr<InterfacePanel> _panelInterface;
+	Common::ScopedPtr<InterfaceMap> _mapInterface;
 	Interface *_currInterface;
 	Interface *_prevInterface;
 

@@ -30,6 +30,7 @@
 #include "petka/interfaces/main.h"
 #include "petka/interfaces/save_load.h"
 #include "petka/interfaces/panel.h"
+#include "petka/interfaces/map.h"
 #include "petka/objects/object_cursor.h"
 #include "petka/objects/object_case.h"
 #include "petka/objects/object_star.h"
@@ -147,6 +148,7 @@ bool QSystem::init() {
 	_startupInterface.reset(new InterfaceStartup());
 	_saveLoadInterface.reset(new InterfaceSaveLoad());
 	_panelInterface.reset(new InterfacePanel());
+	_mapInterface.reset(new InterfaceMap());
 	if (g_vm->getPart() == 0) {
 		_startupInterface->start();
 		_prevInterface = _currInterface = _startupInterface.get();
@@ -206,6 +208,18 @@ void QSystem::togglePanelInterface() {
 			_currInterface->stop();
 		} else if (_currInterface == _mainInterface.get()) {
 			_panelInterface->start();
+		}
+	}
+}
+
+void QSystem::toggleMapInterface() {
+	if (_currInterface != _startupInterface.get() && _star->_isActive && _room->_showMap) {
+		_case->show(0);
+		if (_currInterface == _mapInterface.get()) {
+			_currInterface->stop();
+		} else if (_currInterface == _mainInterface.get()) {
+			// setText
+			_mapInterface->start();
 		}
 	}
 }
