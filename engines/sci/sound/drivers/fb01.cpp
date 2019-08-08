@@ -74,8 +74,6 @@ public:
 	void playSwitch(bool play);
 
 	bool isOpen() const { return _isOpen; }
-	void lockMutex() { _mutex.lock(); }
-	void unlockMutex() { _mutex.unlock(); }
 
 	const char *reportMissingFiles() { return _missingFiles; }
 
@@ -133,7 +131,6 @@ private:
 	int _numParts;
 
 	bool _isOpen;
-	Common::Mutex _mutex;
 
 	Channel _channels[16];
 	Voice _voices[kVoices];
@@ -161,7 +158,6 @@ MidiPlayer_Fb01::MidiPlayer_Fb01(SciVersion version) : MidiPlayer(version), _pla
 MidiPlayer_Fb01::~MidiPlayer_Fb01() {
 	if (_driver)
 		_driver->setTimerCallback(NULL, NULL);
-	Common::StackLock lock(_mutex);
 	close();
 	delete _driver;
 }
@@ -510,8 +506,6 @@ void MidiPlayer_Fb01::midiTimerCallback(void *p) {
 
 	MidiPlayer_Fb01 *m = (MidiPlayer_Fb01 *)p;
 
-	m->lockMutex();
-
 	if (!m->isOpen())
 		return;
 
@@ -523,12 +517,9 @@ void MidiPlayer_Fb01::midiTimerCallback(void *p) {
 
 	if (m->_timerProc)
 		m->_timerProc(m->_timerParam);
-
-	m->unlockMutex();
 }
 
 void MidiPlayer_Fb01::setTimerCallback(void *timer_param, Common::TimerManager::TimerProc timer_proc) {
-	Common::StackLock lock(_mutex);
 	_driver->setTimerCallback(NULL, NULL);
 
 	_timerParam = timer_param;
@@ -640,7 +631,6 @@ int MidiPlayer_Fb01::open(ResourceManager *resMan) {
 void MidiPlayer_Fb01::close() {
 	if (_driver)
 		_driver->setTimerCallback(NULL, NULL);
-	Common::StackLock lock(_mutex);
 	_isOpen = false;
 	if (_driver)
 		_driver->close();
