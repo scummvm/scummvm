@@ -164,13 +164,14 @@ TestExitStatus Speechtests::testPauseResume() {
 		return kTestSkipped;
 	}
 
-	ttsMan->say("Testing text to speech, the speech should pause after a second and then resume again.");
+	ttsMan->say("Testing text to speech, the speech should pause after a second");
 	g_system->delayMillis(1000);
 	ttsMan->pause();
 	if (!ttsMan->isPaused()) {
 		Testsuite::logDetailedPrintf("TTS pause failed\n");
 		return kTestFailed;
 	}
+	ttsMan->say("and then resume again", Common::TextToSpeechManager::QUEUE);
 	g_system->delayMillis(1000);
 	if (!ttsMan->isPaused()) {
 		Testsuite::logDetailedPrintf("TTS pause failed\n");
@@ -448,10 +449,13 @@ TestExitStatus Speechtests::testInterruptNoRepeat() {
 	}
 
 	ttsMan->say("This is the first sentence, this should get interrupted");
+	ttsMan->say("Failure", Common::TextToSpeechManager::QUEUE);
 	g_system->delayMillis(1000);
 	ttsMan->say("This is the second sentence, it should play only once", Common::TextToSpeechManager::INTERRUPT_NO_REPEAT);
+	ttsMan->say("Failure", Common::TextToSpeechManager::QUEUE);
 	g_system->delayMillis(1000);
 	ttsMan->say("This is the second sentence, it should play only once", Common::TextToSpeechManager::INTERRUPT_NO_REPEAT);
+	ttsMan->say("Failure", Common::TextToSpeechManager::QUEUE);
 	g_system->delayMillis(1000);
 	ttsMan->say("This is the second sentence, it should play only once", Common::TextToSpeechManager::INTERRUPT_NO_REPEAT);
 	waitForSpeechEnd(ttsMan);
