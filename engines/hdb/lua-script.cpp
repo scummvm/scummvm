@@ -1829,15 +1829,15 @@ bool LuaScript::initScript(Common::SeekableReadStream *stream, const char *scrip
 
 	// Make sure we start from the beginning
 	_globalLuaStream->seek(0);
-	if (!executeMPC(_globalLuaStream, "global code", "GLOBAL.LUA", _globalLuaLength)) {
+	if (!executeMPC(_globalLuaStream, "GLOBAL.LUA", "GLOBAL.LUA", _globalLuaLength)) {
 		error("LuaScript::initScript: 'global code' failed to execute");
 		return false;
 	}
 
 	// Load script and execute it
 
-	if (!executeMPC(stream, "level code", scriptName, length)) {
-		error("LuaScript::initScript: 'level code' failed to execute");
+	if (!executeMPC(stream, scriptName, scriptName, length)) {
+		error("LuaScript::initScript: %s failed to execute", scriptName);
 		return false;
 	}
 
