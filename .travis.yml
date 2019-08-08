@@ -44,7 +44,7 @@ matrix:
           - libsdl2-dev
           - libsdl2-net-dev
           - libcurl4-openssl-dev
-          - libjpeg-turbo8-dev
+          - libjpeg62-dev
           - libmpeg2-4-dev
           - libogg-dev
           - libvorbis-dev
@@ -58,7 +58,7 @@ matrix:
           - libfreetype6-dev
           - zlib1g-dev
       script:
-        - ln -sf dists/debian .
+        - dists/debian/prepare
         - dpkg-buildpackage -b -nc -uc -j4
       before_deploy:
         - mkdir artifacts && cp ../*deb artifacts
