@@ -30,6 +30,12 @@
 #include "common/text-to-speech.h"
 #include "common/str.h"
 #include "common/list.h"
+#include "common/mutex.h"
+
+struct StartSpeechParams {
+	pthread_mutex_t *mutex;
+	Common::List<Common::String> *speechQueue;
+};
 
 class LinuxTextToSpeechManager : public Common::TextToSpeechManager {
 public:
@@ -62,13 +68,9 @@ public:
 	virtual bool isReady();
 	
 	virtual void setVoice(unsigned index);
-
 	virtual void setRate(int rate);
-
 	virtual void setPitch(int pitch);
-
 	virtual void setVolume(unsigned volume);
-
 	virtual void setLanguage(Common::String language);
 
 	void updateState(SpeechEvent event);
@@ -80,11 +82,14 @@ private:
 	virtual void updateVoices();
 	void createVoice(int typeNumber, Common::TTSVoice::Gender, Common::TTSVoice::Age, char *description);
 	Common::String strToUtf8(Common::String str, Common::String charset);
-	bool spdSay(const char *str);
+	static void *startSpeech(void *p);
 
+	StartSpeechParams _params;
 	SpeechState _speechState;
-	Common::String _lastSaid;
 	Common::List<Common::String> _speechQueue;
+	pthread_mutex_t _speechMutex;
+	pthread_t _thread;
+	bool _threadCreated;
 };
 
 #endif

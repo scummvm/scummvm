@@ -33,6 +33,7 @@
 #include "common/system.h"
 #include "common/ustr.h"
 #include "common/config-manager.h"
+#include <pthread.h>
 
 SPDConnection *_connection;
 
@@ -66,8 +67,32 @@ void speech_pause_callback(size_t msg_id, size_t client_id, SPDNotificationType 
 	manager->updateState(LinuxTextToSpeechManager::SPEECH_PAUSED);
 }
 
+
+void *LinuxTextToSpeechManager::startSpeech(void *p) {
+	StartSpeechParams *params = (StartSpeechParams *) p;
+	pthread_mutex_lock(params->mutex);
+	if (!_connection || g_system->getTextToSpeechManager()->isPaused() ||
+			params->speechQueue->front().empty()) {
+		pthread_mutex_unlock(params->mutex);
+		return NULL;
+	}
+	if(spd_say(_connection, SPD_MESSAGE, params->speechQueue->front().c_str()) == -1) {
+		// close the connection
+		if (_connection != 0) {
+			spd_close(_connection);
+			_connection = 0;
+		}
+	}
+	pthread_mutex_unlock(params->mutex);
+	return NULL;
+}
+
 LinuxTextToSpeechManager::LinuxTextToSpeechManager()
 	: _speechState(READY) {
+	pthread_mutex_init(&_speechMutex, NULL);
+	_params.mutex = &_speechMutex;
+	_params.speechQueue = &_speechQueue;
+	_threadCreated = false;
 	init();
 }
 
@@ -78,7 +103,6 @@ void LinuxTextToSpeechManager::init() {
 		warning("Couldn't initialize text to speech through speech-dispatcher");
 		return;
 	}
-	_lastSaid = "";
 
 	_connection->callback_begin = speech_begin_callback;
 	spd_set_notification_on(_connection, SPD_BEGIN);
@@ -102,8 +126,12 @@ void LinuxTextToSpeechManager::init() {
 }
 
 LinuxTextToSpeechManager::~LinuxTextToSpeechManager() {
+	stop();
 	if (_connection != 0)
 		spd_close(_connection);
+	if (_threadCreated)
+		pthread_join(_thread, NULL);
+	pthread_mutex_destroy(&_speechMutex);
 }
 
 void LinuxTextToSpeechManager::updateState(LinuxTextToSpeechManager::SpeechEvent event) {
@@ -111,9 +139,25 @@ void LinuxTextToSpeechManager::updateState(LinuxTextToSpeechManager::SpeechEvent
 		return;
 	switch(event) {
 	case SPEECH_ENDED:
+		pthread_mutex_lock(&_speechMutex);
 		_speechQueue.pop_front();
 		if (_speechQueue.size() == 0)
 			_speechState = READY;
+		else {
+			// reinitialize if needed
+			if (!_connection)
+				init();
+			if (_speechState != BROKEN) {
+				if (_threadCreated)
+					pthread_join(_thread, NULL);
+				_threadCreated = true;
+				if (pthread_create(&_thread, NULL, startSpeech, &_params)) {
+					_threadCreated = false;
+					warning("TTS: Cannot start new speech");
+				}
+			}
+		}
+		pthread_mutex_unlock(&_speechMutex);
 		break;
 	case SPEECH_PAUSED:
 		_speechState = PAUSED;
@@ -152,18 +196,22 @@ Common::String LinuxTextToSpeechManager::strToUtf8(Common::String str, Common::S
 }
 
 bool LinuxTextToSpeechManager::say(Common::String str, Action action, Common::String charset) {
-	if (_speechState == BROKEN)
-		return true;
 
-	if (action == DROP && isSpeaking())
-		return true;
+	pthread_mutex_lock(&_speechMutex);
+	// reinitialize if needed
+	if (!_connection)
+		init();
 
-	if (action == INTERRUPT_NO_REPEAT && _lastSaid == str && isSpeaking())
+	if (_speechState == BROKEN) {
+		pthread_mutex_unlock(&_speechMutex);
 		return true;
+	}
 
-	if (action == QUEUE_NO_REPEAT && _lastSaid == str && isSpeaking())
+	if (action == DROP && isSpeaking()) {
+		pthread_mutex_unlock(&_speechMutex);
 		return true;
-	
+	}
+
 	if (charset.empty()) {
 #ifdef USE_TRANSLATION
 		charset = TransMan.getCurrentCharset();
@@ -174,18 +222,30 @@ bool LinuxTextToSpeechManager::say(Common::String str, Action action, Common::St
 
 	str = strToUtf8(str, charset);
 
+	if (!_speechQueue.empty() && action == INTERRUPT_NO_REPEAT &&
+			_speechQueue.front() == str && isSpeaking()) {
+		_speechQueue.clear();
+		_speechQueue.push_back(str);
+		pthread_mutex_unlock(&_speechMutex);
+		return true;
+	}
+
+	if (!_speechQueue.empty() && action == QUEUE_NO_REPEAT &&
+			_speechQueue.back() == str && isSpeaking()) {
+		pthread_mutex_unlock(&_speechMutex);
+		return true;
+	}
+
+	pthread_mutex_unlock(&_speechMutex);
 	if (isSpeaking() && (action == INTERRUPT || action == INTERRUPT_NO_REPEAT))
 		stop();
 	if (!str.empty()) {
-		_speechState = SPEAKING;
+		pthread_mutex_lock(&_speechMutex);
 		_speechQueue.push_back(str);
-		_lastSaid = str;
-		if(spd_say(_connection, SPD_MESSAGE, str.c_str()) == -1) {
-			//restart the connection
-			if (_connection != 0)
-				spd_close(_connection);
-			init();
-			return true;
+		pthread_mutex_unlock(&_speechMutex);
+		if (isReady()) {
+			_speechState = SPEAKING;
+			startSpeech((void *)(&_params));
 		}
 	}
 
@@ -196,17 +256,20 @@ bool LinuxTextToSpeechManager::stop() {
 	if (_speechState == READY || _speechState == BROKEN)
 		return true;
 	_speechState = READY;
+	pthread_mutex_lock(&_speechMutex);
 	_speechQueue.clear();
-	return spd_cancel(_connection) == -1;
+	bool result = spd_cancel(_connection) == -1;
+	pthread_mutex_unlock(&_speechMutex);
+	return result;
 }
 
 bool LinuxTextToSpeechManager::pause() {
 	if (_speechState == READY || _speechState == PAUSED || _speechState == BROKEN)
 		return true;
+	pthread_mutex_lock(&_speechMutex);
 	_speechState = PAUSED;
 	bool result = spd_cancel_all(_connection) == -1;
-	if (result)
-		return true;
+	pthread_mutex_unlock(&_speechMutex);
 	if (result)
 		return true;
 	return false;
@@ -215,16 +278,17 @@ bool LinuxTextToSpeechManager::pause() {
 bool LinuxTextToSpeechManager::resume() {
 	if (_speechState == READY || _speechState == SPEAKING || _speechState == BROKEN)
 		return true;
+	// If there is a thread from before pause() waiting, let it finish (it shouln't
+	// do anything). There shouldn't be any other threads getting created,
+	// because the speech is paused, so we don't need to synchronize
+	if (_threadCreated) {
+		pthread_join(_thread, NULL);
+		_threadCreated = false;
+	}
+	_speechState = PAUSED;
 	if (_speechQueue.size()) {
 		_speechState = SPEAKING;
-		for (Common::List<Common::String>::iterator i = _speechQueue.begin(); i != _speechQueue.end(); i++) {
-			if (spd_say(_connection, SPD_MESSAGE, i->c_str()) == -1) {
-				if (_connection != 0)
-					spd_close(_connection);
-				init();
-				return true;
-			}
-		}
+		startSpeech((void *) &_params);
 	}
 	else
 		_speechState = READY;
