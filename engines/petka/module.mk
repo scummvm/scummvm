@@ -13,6 +13,7 @@ MODULE_OBJS = \
     interfaces/dialog_interface.o \
     interfaces/interface.o \
     interfaces/main.o \
+    interfaces/map.o \
     interfaces/panel.o \
     interfaces/save_load.o \
     interfaces/startup.o \

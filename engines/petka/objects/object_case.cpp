@@ -136,7 +136,7 @@ void QObjectCase::onClick(int x, int y) {
 			g_vm->getQSystem()->togglePanelInterface();
 			break;
 		case 2:
-			// loadMap()
+			g_vm->getQSystem()->toggleMapInterface();
 			break;
 		case 3:
 			show(0);
