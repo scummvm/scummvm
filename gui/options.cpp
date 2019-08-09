@@ -1887,13 +1887,13 @@ void GlobalOptionsDialog::addCloudControls(GuiObject *boss, const Common::String
 	_storageEnableButton = new ButtonWidget(boss, prefix + "StorageEnableButton", _("Enable storage"), _("Confirm you want to use this account for this storage"), kEnableStorageCmd);
 
 	_storageUsernameDesc = new StaticTextWidget(boss, prefix + "StorageUsernameDesc", _("Username:"), _("Username used by this storage"));
-	_storageUsername = new StaticTextWidget(boss, prefix + "StorageUsernameLabel", "<none>", "", ThemeEngine::kFontStyleNormal);
+	_storageUsername = new StaticTextWidget(boss, prefix + "StorageUsernameLabel", _("<none>"), "", ThemeEngine::kFontStyleNormal);
 
 	_storageUsedSpaceDesc = new StaticTextWidget(boss, prefix + "StorageUsedSpaceDesc", _("Used space:"), _("Space used by ScummVM's saved games on this storage"));
 	_storageUsedSpace = new StaticTextWidget(boss, prefix + "StorageUsedSpaceLabel", "0 bytes", "", ThemeEngine::kFontStyleNormal);
 
 	_storageLastSyncDesc = new StaticTextWidget(boss, prefix + "StorageLastSyncDesc", _("Last sync:"), _("When was the last time saved games were synced with this storage"));
-	_storageLastSync = new StaticTextWidget(boss, prefix + "StorageLastSyncLabel", "<never>", "", ThemeEngine::kFontStyleNormal);
+	_storageLastSync = new StaticTextWidget(boss, prefix + "StorageLastSyncLabel", _("<never>"), "", ThemeEngine::kFontStyleNormal);
 	if (lowres)
 		_storageSyncHint = new StaticTextWidget(boss, prefix + "StorageSyncHint", _c("Saves sync automatically on launch, after saving and on loading.", "lowres"), "", ThemeEngine::kFontStyleNormal);
 	else
@@ -1916,7 +1916,7 @@ void GlobalOptionsDialog::addCloudControls(GuiObject *boss, const Common::String
 		_storageWizardNotConnectedHint = new StaticTextWidget(boss, prefix + "StorageWizardNotConnectedHint", _c("This storage is not connected yet! To connect,", "lowres"));
 	else
 		_storageWizardNotConnectedHint = new StaticTextWidget(boss, prefix + "StorageWizardNotConnectedHint", _("This storage is not connected yet! To connect,"));
-	_storageWizardOpenLinkHint = new StaticTextWidget(boss, prefix + "StorageWizardOpenLinkHint", "1. Open this link:");
+	_storageWizardOpenLinkHint = new StaticTextWidget(boss, prefix + "StorageWizardOpenLinkHint", _("1. Open this link:"));
 	_storageWizardLink = new ButtonWidget(boss, prefix + "StorageWizardLink", "https://cloud.scummvm.org/", _("Open URL"), kOpenUrlStorageCmd);
 	if (lowres)
 		_storageWizardCodeHint = new StaticTextWidget(boss, prefix + "StorageWizardCodeHint", _c("2. Get the code and enter it here:", "lowres"));
