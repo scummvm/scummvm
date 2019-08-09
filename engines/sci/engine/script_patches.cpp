@@ -14247,6 +14247,40 @@ static const uint16 sq4CdPatchRemovedRoomTimepodCode[] = {
 	PATCH_END
 };
 
+// Walking into Sock's dressing room (room 371) can cause ego to escape obstacle
+//  boundaries and get stuck behind the wall or counter. Similar problems occur
+//  in the original. The dressing room has no obstacle bounding the edge of the
+//  screen. Instead, rm371:doit detects if ego has hit the edge and moves him
+//  back to x coordinate 173 but doesn't change ego:y. If ego hits the edge on a
+//  diagonal pathfinding move then this can place ego around the corner of one
+//  of the obstacles that bound the top and bottom of the dressing room.
+//  rm371:doit will then move ego within the obstacle and out of bounds.
+//
+// We fix this by extending the two obstacles an additional 10 pixels past the
+//  edge of the screen so that ego can't get around their corners and get stuck.
+//  Sierra reduced one of these coordinates in later floppy versions, and it's
+//  not clear why, but this change wasn't included in the CD version.
+//
+// Applies to: All versions
+// Responsible method: rm371:init
+// Fixes bug #11055
+static const uint16 sq4SignatureSocksDressingRoomObstacles[] = {
+	0x38, SIG_ADDTOOFFSET(+2),          // pushi 321d or 319d [ x ]
+	0x39, 0x46,                         // pushi 70d  [ y ]
+	SIG_ADDTOOFFSET(+125),
+	0x38, SIG_MAGICDWORD,               // pushi 321d [ x ]
+	      SIG_UINT16(0x0141),
+	0x39, 0x49,                         // pushi 73d  [ y ]
+	SIG_END
+};
+
+static const uint16 sq4PatchSocksDressingRoomObstacles[] = {
+	0x38, PATCH_UINT16(0x014b),         // pushi 331d [ x ]
+	PATCH_ADDTOOFFSET(+127),
+	0x38, PATCH_UINT16(0x014b),         // pushi 331d [ x ]
+	PATCH_END
+};
+
 //          script, description,                                      signature                                      patch
 static const SciScriptPatcherEntry sq4Signatures[] = {
 	{  true,     1, "Floppy: EGA intro delay fix",                    2, sq4SignatureEgaIntroDelay,                     sq4PatchEgaIntroDelay },
@@ -14265,6 +14299,7 @@ static const SciScriptPatcherEntry sq4Signatures[] = {
 	{  true,   370, "CD: sock's door restore and message fix",        1, sq4CdSignatureSocksDoor,                       sq4CdPatchSocksDoor },
 	{  true,   370, "CD/Floppy: sock's sequel police flag fix (1/2)", 1, sq4SignatureSocksSequelPoliceFlag1,            sq4PatchSocksSequelPoliceFlag1 },
 	{  true,   370, "CD/Floppy: sock's sequel police flag fix (2/2)", 1, sq4SignatureSocksSequelPoliceFlag2,            sq4PatchSocksSequelPoliceFlag2 },
+	{  true,   371, "CD/Floppy: sock's dressing room obstacles fix",  1, sq4SignatureSocksDressingRoomObstacles,        sq4PatchSocksDressingRoomObstacles },
 	{ false,   370, "Amiga: dress purchase flag check fix",           1, sq4AmigaSignatureDressPurchaseFlagCheck,       sq4AmigaPatchDressPurchaseFlagCheck },
 	{ false,   371, "Amiga: dress purchase flag clear fix",           1, sq4AmigaSignatureDressPurchaseFlagClear,       sq4AmigaPatchDressPurchaseFlagClear },
 	{ false,   386, "Amiga: dress purchase flag check fix",           1, sq4AmigaSignatureDressPurchaseFlagCheck,       sq4AmigaPatchDressPurchaseFlagCheck },
