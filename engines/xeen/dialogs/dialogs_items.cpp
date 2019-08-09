@@ -604,6 +604,8 @@ void ItemsDialog::setEquipmentIcons() {
 				XeenItem &i = _itemsCharacter._armor[idx];
 				if (i._id <= 7)
 					i._frame = 3;
+				else if (i._id == 8)
+					i._frame = 2;
 				else if (i._id == 9)
 					i._frame = 5;
 				else if (i._id == 10)
