@@ -366,9 +366,14 @@ void WeaponItems::enchantItem(int itemIndex, int amount) {
 		tempCharacter.makeItem(amount, 0, 1);
 		XeenItem &tempItem = tempCharacter._weapons[0];
 
-		item._material = tempItem._material;
-		item._state = tempItem._state;
-		sound.playFX(19);
+		if (tempItem._material != 0 || !tempItem._state.empty()) {
+			item._material = tempItem._material;
+			item._state = tempItem._state;
+			sound.playFX(19);
+		} else {
+			// WORKAROUND: As an improvement on the original, show an error if the enchanting failed
+			ErrorScroll::show(g_vm, Res.SPELL_FAILED);
+		}
 	} else {
 		InventoryItems::enchantItem(itemIndex, amount);
 	}
@@ -533,9 +538,14 @@ void ArmorItems::enchantItem(int itemIndex, int amount) {
 		tempCharacter.makeItem(amount, 0, 2);
 		XeenItem &tempItem = tempCharacter._armor[0];
 
-		item._material = tempItem._material;
-		item._state = tempItem._state;
-		sound.playFX(19);
+		if (tempItem._material != 0 || !tempItem._state.empty()) {
+			item._material = tempItem._material;
+			item._state = tempItem._state;
+			sound.playFX(19);
+		} else {
+			// WORKAROUND: As an improvement on the original, show an error if the enchanting failed
+			ErrorScroll::show(g_vm, Res.SPELL_FAILED);
+		}
 	} else {
 		InventoryItems::enchantItem(itemIndex, amount);
 	}
