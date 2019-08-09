@@ -554,25 +554,25 @@ bool AIScriptZuben::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		switch (Random_Query(1, 8)) {
 		case 1:
 			AI_Movement_Track_Flush(kActorZuben);
-			AI_Movement_Track_Append(kActorZuben, 490, 0);
+			AI_Movement_Track_Append(kActorZuben, 490, 0); // kSetNR01
 			AI_Movement_Track_Append(kActorZuben, 491, 8);
 			AI_Movement_Track_Append(kActorZuben, 492, 2);
 			AI_Movement_Track_Append(kActorZuben, 493, 5);
 			AI_Movement_Track_Append(kActorZuben, 494, 0);
-			AI_Movement_Track_Append(kActorZuben, 39, 10);
-			AI_Movement_Track_Append(kActorZuben, 33, Random_Query(15, 45));
-			AI_Movement_Track_Append(kActorZuben, 39, 10);
+			AI_Movement_Track_Append(kActorZuben, 39, 10); // kSetFreeSlotG
+			AI_Movement_Track_Append(kActorZuben, 33, Random_Query(15, 45)); // kSetFreeSlotA
+			AI_Movement_Track_Append(kActorZuben, 39, 10); // kSetFreeSlotG
 			AI_Movement_Track_Repeat(kActorZuben);
 			break;
 		case 2:
 			AI_Movement_Track_Flush(kActorZuben);
-			AI_Movement_Track_Append(kActorZuben, 495, 0);
+			AI_Movement_Track_Append(kActorZuben, 495, 0); // kSetNR02
 			AI_Movement_Track_Append(kActorZuben, 496, 0);
 			AI_Movement_Track_Append(kActorZuben, 33, Random_Query(15, 45));
 			AI_Movement_Track_Repeat(kActorZuben);
 			break;
 		case 3:
-			AI_Movement_Track_Append(kActorZuben, 498, 0);
+			AI_Movement_Track_Append(kActorZuben, 498, 0); // kSetNR03
 			AI_Movement_Track_Append(kActorZuben, 497, 0);
 			AI_Movement_Track_Append(kActorZuben, 39, 10);
 			AI_Movement_Track_Append(kActorZuben, 33, 30);
@@ -581,7 +581,7 @@ bool AIScriptZuben::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 			break;
 		case 4:
 			AI_Movement_Track_Flush(kActorZuben);
-			AI_Movement_Track_Append(kActorZuben, 499, 2);
+			AI_Movement_Track_Append(kActorZuben, 499, 2); // kSetNR05_NR08
 			AI_Movement_Track_Append(kActorZuben, 500, 3);
 			AI_Movement_Track_Append(kActorZuben, 499, 2);
 			AI_Movement_Track_Append(kActorZuben, 39, 10);
@@ -591,7 +591,7 @@ bool AIScriptZuben::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 			break;
 		case 5:
 			AI_Movement_Track_Flush(kActorZuben);
-			AI_Movement_Track_Append(kActorZuben, 503, 0);
+			AI_Movement_Track_Append(kActorZuben, 503, 0); // kSetNR05_NR08
 			AI_Movement_Track_Append(kActorZuben, 504, 0);
 			AI_Movement_Track_Append(kActorZuben, 505, 5);
 			AI_Movement_Track_Append(kActorZuben, 39, 10);
@@ -601,7 +601,7 @@ bool AIScriptZuben::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 			break;
 		case 6:
 			AI_Movement_Track_Flush(kActorZuben);
-			AI_Movement_Track_Append(kActorZuben, 508, 0);
+			AI_Movement_Track_Append(kActorZuben, 508, 0); // kSetHF01
 			AI_Movement_Track_Append(kActorZuben, 509, 2);
 			AI_Movement_Track_Append(kActorZuben, 39, 10);
 			AI_Movement_Track_Append(kActorZuben, 33, 30);
@@ -610,7 +610,7 @@ bool AIScriptZuben::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 			break;
 		case 7:
 			AI_Movement_Track_Flush(kActorZuben);
-			AI_Movement_Track_Append(kActorZuben, 514, 0);
+			AI_Movement_Track_Append(kActorZuben, 514, 0); // kSetHF03
 			AI_Movement_Track_Append(kActorZuben, 515, 0);
 			AI_Movement_Track_Append(kActorZuben, 39, 10);
 			AI_Movement_Track_Append(kActorZuben, 33, 30);
@@ -619,7 +619,7 @@ bool AIScriptZuben::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 			break;
 		case 8:
 			AI_Movement_Track_Flush(kActorZuben);
-			AI_Movement_Track_Append(kActorZuben, 510, 0);
+			AI_Movement_Track_Append(kActorZuben, 510, 0); // kSetHF01
 			AI_Movement_Track_Append(kActorZuben, 511, 0);
 			AI_Movement_Track_Append(kActorZuben, 39, 10);
 			AI_Movement_Track_Append(kActorZuben, 33, 40);

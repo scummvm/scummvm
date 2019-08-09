@@ -288,6 +288,7 @@ bool SceneScriptCT02::ClickedOnExit(int exitId) {
 
 bool SceneScriptCT02::ClickedOn2DRegion(int region) {
 	if (_vm->_cutContent
+	    && Global_Variable_Query(kVariableChapter) == 1
 	    && Game_Flag_Query(kFlagCT02McCoyShouldCommentOnDumpedSoup)
 	    && (region == 0 || region == 1)
 	) {

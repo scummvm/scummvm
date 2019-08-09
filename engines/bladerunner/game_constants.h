@@ -491,7 +491,7 @@ enum Flags {
 	kFlagPS09GrigorianTalk1 = 49,
 	kFlagPS09GrigorianVKChosen = 50, // re-purposed, original is never used
 	kFlagGrigorianDislikeMcCoy = 51,
-	// 52 is never used
+	kFlagRC02McCoyCommentsOnVideoScreens = 52, // re-purposed, original is never used
 	kFlagPS09GrigorianDialogue = 53,
 	kFlagPS09GrigorianTalk2 = 54,
 	kFlagGrigorianArrested = 55,

@@ -39,6 +39,11 @@ void SceneScriptRC02::InitializeScene() {
 	if (Game_Flag_Query(kFlagRC51Available)) {
 		Scene_Exit_Add_2D_Exit(kRC02ExitRC51, 265, 58, 346, 154, 0);
 	}
+	if (_vm->_cutContent
+	    && Global_Variable_Query(kVariableChapter) == 1
+	    && !Game_Flag_Query(kFlagRC02McCoyCommentsOnVideoScreens)) {
+		Scene_2D_Region_Add(0, 187, 104, 235, 150);// broken screen
+	}
 	Ambient_Sounds_Remove_All_Non_Looping_Sounds(false);
 	Ambient_Sounds_Add_Looping_Sound(kSfxBRBED5,   50,   1, 1);
 	Ambient_Sounds_Add_Looping_Sound(kSfxWINDLOP8, 75,   1, 1);
@@ -164,8 +169,8 @@ bool SceneScriptRC02::ClickedOn3DObject(const char *objectName, bool a2) {
 	}
 
 	if (_vm->_cutContent
-	    && !Game_Flag_Query(kFlagMcCoyCommentsOnMurderedAnimals)
 	    && Global_Variable_Query(kVariableChapter) == 1
+	    && !Game_Flag_Query(kFlagMcCoyCommentsOnMurderedAnimals)
 	    && !Actor_Clue_Query(kActorMcCoy, kClueLabCorpses)
 	    && (Object_Query_Click("DRAPE01", objectName)
 	        || Object_Query_Click("DRAPE02", objectName)
@@ -175,6 +180,15 @@ bool SceneScriptRC02::ClickedOn3DObject(const char *objectName, bool a2) {
 	        || Object_Query_Click("DRAPE06", objectName)
 	        || Object_Query_Click("DRAPE07", objectName))
 	) {
+		if (Player_Query_Agenda() == kPlayerAgendaSurly
+		    || (Player_Query_Agenda() == kPlayerAgendaErratic && Random_Query(0, 1) == 1)
+		) {
+			Actor_Voice_Over(1940, kActorVoiceOver);
+		} else {
+			Actor_Voice_Over(9010, kActorMcCoy);
+			Actor_Voice_Over(9015, kActorMcCoy);
+			Actor_Voice_Over(9020, kActorMcCoy);
+		}
 		Game_Flag_Set(kFlagMcCoyCommentsOnMurderedAnimals);
 		Unclickable_Object("DRAPE01");
 		Unclickable_Object("DRAPE02");
@@ -183,7 +197,6 @@ bool SceneScriptRC02::ClickedOn3DObject(const char *objectName, bool a2) {
 		Unclickable_Object("DRAPE05");
 		Unclickable_Object("DRAPE06");
 		Unclickable_Object("DRAPE07");
-		Actor_Voice_Over(1940, kActorVoiceOver);
 		return true;
 	}
 	return false;
@@ -436,6 +449,19 @@ bool SceneScriptRC02::ClickedOnExit(int exitId) {
 }
 
 bool SceneScriptRC02::ClickedOn2DRegion(int region) {
+
+	if (_vm->_cutContent
+	    && Global_Variable_Query(kVariableChapter) == 1
+	    && !Game_Flag_Query(kFlagRC02McCoyCommentsOnVideoScreens)
+	    && region == 0
+	) {
+		Game_Flag_Set(kFlagRC02McCoyCommentsOnVideoScreens);
+		Scene_2D_Region_Remove(0);
+		Actor_Voice_Over(9025, kActorMcCoy);
+		Actor_Voice_Over(9030, kActorMcCoy);
+		Actor_Voice_Over(9035, kActorMcCoy);
+		return true;
+	}
 	return false;
 }
 
