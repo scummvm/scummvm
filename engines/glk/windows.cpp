@@ -741,6 +741,7 @@ void Window::bringToFront() {
 	if (pairWin && pairWin->_dir == winmethod_Arbitrary && pairWin->_children.back() != this) {
 		pairWin->_children.remove(this);
 		pairWin->_children.push_back(this);
+		Windows::_forceRedraw = true;
 	}
 }
 
@@ -750,6 +751,7 @@ void Window::sendToBack() {
 	if (pairWin && pairWin->_dir == winmethod_Arbitrary && pairWin->_children.front() != this) {
 		pairWin->_children.remove(this);
 		pairWin->_children.insert_at(0, this);
+		Windows::_forceRedraw = true;
 	}
 }
 

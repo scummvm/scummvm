@@ -106,6 +106,9 @@ void Processor::screen_char(zchar c) {
 	Window &w = _wp.currWin();
 	w.ensureTextWindow();
 
+	if (h_version == V6)
+		_wp.showTextWindows();
+
 	if (gos_linepending && (w == gos_linewin)) {
 		gos_cancel_pending_line();
 		if (_wp.currWin() == _wp._upper) {

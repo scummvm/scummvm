@@ -206,7 +206,7 @@ public:
 	/**
 	 * Draw an image
 	 */
-	bool imageDraw(uint image, int val1, int val2);
+	bool imageDraw(uint image, ImageAlign align, int val);
 
 	/**
 	 * Draw a scaled image
@@ -265,6 +265,11 @@ public:
 		assert(_windows[_cwin]._win);
 		return _windows[_cwin]._win;
 	}
+
+	/**
+	 * Places any text windows in front of the background in V6 games
+	 */
+	void showTextWindows();
 };
 
 } // End of namespace Frotz

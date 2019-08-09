@@ -23,8 +23,9 @@
 #include "glk/frotz/windows.h"
 #include "glk/frotz/frotz.h"
 #include "glk/window_pair.h"
-#include "glk/window_text_grid.h"
+#include "glk/window_graphics.h"
 #include "glk/window_text_buffer.h"
+#include "glk/window_text_grid.h"
 #include "glk/conf.h"
 
 namespace Glk {
@@ -85,6 +86,21 @@ void Windows::setWindow(int win) {
 		g_vm->glk_set_window(_windows[_cwin]._win);
 }
 
+void Windows::showTextWindows() {
+	// For v6, drawing graphics brings them to the front (such for title screens). So check for it
+	const PairWindow *pairWin = dynamic_cast<const PairWindow *>(g_vm->glk_window_get_root());
+	if (g_vm->h_version == V6 && pairWin && dynamic_cast<GraphicsWindow *>(pairWin->_children.back())) {
+		// Yep, it's at the forefront. So since we're now drawing text, ensure all text windows are in front of it
+		for (uint idx = 0; idx < size(); ++idx) {
+			if (_windows[idx]) {
+				winid_t win = _windows[idx];
+				if (dynamic_cast<TextWindow *>(win))
+					win->bringToFront();
+			}
+		}
+	}
+}
+
 /*--------------------------------------------------------------------------*/
 
 Window::Window() : _windows(nullptr), _win(nullptr), _quotes(0), _dashes(0), _spaces(0), _index(-1),
@@ -126,15 +142,17 @@ Window &Window::operator=(winid_t win) {
 
 void Window::ensureTextWindow() {
 	if (_win) {
-		// There's a window present, so make sure it's a text grid or text buffer window
-		if (dynamic_cast<TextBufferWindow *>(_win) || dynamic_cast<TextGridWindow *>(_win))
-			return;
-
-		g_vm->glk_window_close(_win);
-		_win = nullptr;
+		// There's a window present, so make sure it's textual
+		if (!dynamic_cast<TextWindow *>(_win)) {
+			g_vm->glk_window_close(_win);
+			_win = nullptr;
+			createGlkWindow();
+		}
+	} else {
+		createGlkWindow();
 	}
 
-	createGlkWindow();
+	_windows->showTextWindows();
 }
 
 void Window::setSize(const Point &newSize) {
@@ -307,6 +325,9 @@ void Window::setReverseVideo(bool reverse) {
 }
 
 void Window::createGlkWindow() {
+	if (g_vm->h_version == V6)
+		_windows->showTextWindows();
+
 	// Create a new window	
 	if (_index == 1) {
 		// Text grid window
@@ -356,19 +377,13 @@ void Window::checkRepositionLower() {
 	}
 }
 
-bool Window::imageDraw(uint image, int val1, int val2) {
-	if (!_win)
-		_win = g_vm->glk_window_open(g_vm->glk_window_get_root(),
-			winmethod_Arbitrary | winmethod_Fixed, 0, wintype_Graphics, 0);
-
-	return g_vm->glk_image_draw(_win, image, val1, val2);
+bool Window::imageDraw(uint image, ImageAlign align, int val) {
+	ensureTextWindow();
+	return g_vm->glk_image_draw(_win, image, align, val);
 }
 
 bool Window::imageDrawScaled(uint image, int val1, int val2, uint width, uint height) {
-	if (!_win)
-		_win = g_vm->glk_window_open(g_vm->glk_window_get_root(),
-			winmethod_Arbitrary | winmethod_Fixed, 0, wintype_Graphics, 0);
-
+	ensureTextWindow();
 	return g_vm->glk_image_draw_scaled(_win, image, val1, val2, width, height);
 }
 

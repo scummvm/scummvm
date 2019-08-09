@@ -541,14 +541,14 @@ void GlkInterface::showBeyondZorkTitle() {
 }
 
 void GlkInterface::os_draw_picture(int picture, const Common::Point &pos) {
-	assert(pos.x != 0 && pos.y != 0);
-	if (_wp._cwin == 0 && _wp._lower) {
-		// Picture embedded within the lower text area
-		_wp._lower.imageDraw(picture, imagealign_MarginLeft, 0);
-	} else {
+	if (pos.x && pos.y) {
+		_wp._background->bringToFront();
 		glk_image_draw(_wp._background, picture,
 			(pos.x - 1) * g_conf->_monoInfo._cellW,
 			(pos.y - 1) * g_conf->_monoInfo._cellH);
+	} else {
+		// Picture embedded within the lower text area
+		_wp.currWin().imageDraw(picture, imagealign_MarginLeft, 0);
 	}
 }
 
