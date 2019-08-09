@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.1.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2019-08-08 22:48+0200\n"
+"POT-Creation-Date: 2019-08-09 23:20+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1266,6 +1266,10 @@ msgstr ""
 msgid "Username used by this storage"
 msgstr ""
 
+#: gui/options.cpp:1890
+msgid "<none>"
+msgstr ""
+
 #: gui/options.cpp:1892
 msgid "Used space:"
 msgstr ""
@@ -1280,6 +1284,10 @@ msgstr ""
 
 #: gui/options.cpp:1895
 msgid "When was the last time saved games were synced with this storage"
+msgstr ""
+
+#: gui/options.cpp:1896 gui/options.cpp:2559
+msgid "<never>"
 msgstr ""
 
 #: gui/options.cpp:1898
@@ -1340,6 +1348,10 @@ msgstr ""
 
 #: gui/options.cpp:1918
 msgid "This storage is not connected yet! To connect,"
+msgstr ""
+
+#: gui/options.cpp:1919
+msgid "1. Open this link:"
 msgstr ""
 
 #: gui/options.cpp:1920
@@ -1488,10 +1500,6 @@ msgstr ""
 
 #: gui/options.cpp:2557
 msgid "<right now>"
-msgstr ""
-
-#: gui/options.cpp:2559
-msgid "<never>"
 msgstr ""
 
 #: gui/options.cpp:2666

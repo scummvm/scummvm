@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2019-08-08 22:48+0200\n"
+"POT-Creation-Date: 2019-08-09 23:20+0200\n"
 "PO-Revision-Date: 2019-03-06 11:42+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
@@ -1321,6 +1321,10 @@ msgstr "Όνομα χρήστη:"
 msgid "Username used by this storage"
 msgstr "Το όνομα χρήστη που χρησιμοποιείται από αυτή την αποθήκη"
 
+#: gui/options.cpp:1890
+msgid "<none>"
+msgstr "<καμία>"
+
 #: gui/options.cpp:1892
 msgid "Used space:"
 msgstr "Χρησιμοποιημένος χώρος:"
@@ -1341,6 +1345,10 @@ msgstr "Τελευταία ώρα συγχρονισμού:"
 msgid "When was the last time saved games were synced with this storage"
 msgstr ""
 "Πότε πραγματοποιήθηκε ο τελευταίος συγχρονισμός αποθηκευμένων παιχνιδιών"
+
+#: gui/options.cpp:1896 gui/options.cpp:2559
+msgid "<never>"
+msgstr "<ποτέ>"
 
 #: gui/options.cpp:1898
 msgctxt "lowres"
@@ -1402,6 +1410,10 @@ msgstr ""
 
 #: gui/options.cpp:1918
 msgid "This storage is not connected yet! To connect,"
+msgstr ""
+
+#: gui/options.cpp:1919
+msgid "1. Open this link:"
 msgstr ""
 
 #: gui/options.cpp:1920
@@ -1566,10 +1578,6 @@ msgstr "Κάποια άλλη Αποθήκευση είναι ενεργή. Επιθυμείτε να τη διακόψετε;"
 #: gui/options.cpp:2557
 msgid "<right now>"
 msgstr "<άμεσα>"
-
-#: gui/options.cpp:2559
-msgid "<never>"
-msgstr "<ποτέ>"
 
 #: gui/options.cpp:2666
 msgid "Stop server"
@@ -5475,9 +5483,6 @@ msgstr ""
 
 #~ msgid "Storage:"
 #~ msgstr "Αποθήκευση:"
-
-#~ msgid "<none>"
-#~ msgstr "<καμία>"
 
 #~ msgid "Refresh"
 #~ msgstr "Ανανέωση"

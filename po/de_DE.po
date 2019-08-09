@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2019-08-08 22:48+0200\n"
+"POT-Creation-Date: 2019-08-09 23:20+0200\n"
 "PO-Revision-Date: 2019-08-05 14:37+0000\n"
 "Last-Translator: Lothar Serra Mari <serra@scummvm.org>\n"
 "Language-Team: German <https://translations.scummvm.org/projects/scummvm/"
@@ -1318,6 +1318,10 @@ msgstr "Benutzername:"
 msgid "Username used by this storage"
 msgstr "Benutzername, der von diesem Cloud-Speicher verwendet wird"
 
+#: gui/options.cpp:1890
+msgid "<none>"
+msgstr "<keiner>"
+
 #: gui/options.cpp:1892
 msgid "Used space:"
 msgstr "Belegter Speicher:"
@@ -1334,6 +1338,10 @@ msgstr "Letzte Sync.:"
 #: gui/options.cpp:1895
 msgid "When was the last time saved games were synced with this storage"
 msgstr "Zeitpunkt der letzten Spielstand-Synchronisierung"
+
+#: gui/options.cpp:1896 gui/options.cpp:2559
+msgid "<never>"
+msgstr "<nie>"
 
 #: gui/options.cpp:1898
 msgctxt "lowres"
@@ -1406,6 +1414,10 @@ msgstr "Dieser Cloud-Speicher ist noch nicht verbunden! Zum Verbinden"
 #: gui/options.cpp:1918
 msgid "This storage is not connected yet! To connect,"
 msgstr "Dieser Cloud-Speicher ist noch nicht verbunden! Zum Verbinden"
+
+#: gui/options.cpp:1919
+msgid "1. Open this link:"
+msgstr ""
 
 #: gui/options.cpp:1920
 msgid "Open URL"
@@ -1568,10 +1580,6 @@ msgstr "Dieser Cloud-Speicher arbeitet gerade. Möchten Sie ihn unterbrechen?"
 #: gui/options.cpp:2557
 msgid "<right now>"
 msgstr "<gerade eben>"
-
-#: gui/options.cpp:2559
-msgid "<never>"
-msgstr "<nie>"
 
 #: gui/options.cpp:2666
 msgid "Stop server"
@@ -5501,9 +5509,6 @@ msgstr ""
 
 #~ msgid "Storage:"
 #~ msgstr "Cloud-Speicher:"
-
-#~ msgid "<none>"
-#~ msgstr "<keiner>"
 
 #~ msgid "Refresh"
 #~ msgstr "Aktualisieren"

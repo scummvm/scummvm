@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2019-08-08 22:48+0200\n"
+"POT-Creation-Date: 2019-08-09 23:20+0200\n"
 "PO-Revision-Date: 2018-08-06 21:35+0000\n"
 "Last-Translator: Fiodar <fedor_qd@mail.ru>\n"
 "Language-Team: Belarusian <https://translations.scummvm.org/projects/scummvm/"
@@ -1313,6 +1313,10 @@ msgstr "Карыстач:"
 msgid "Username used by this storage"
 msgstr "Імя карыстача ў гэтым воблаку"
 
+#: gui/options.cpp:1890
+msgid "<none>"
+msgstr "<няма>"
+
 #: gui/options.cpp:1892
 msgid "Used space:"
 msgstr "Карыстаны аб'ём:"
@@ -1330,6 +1334,10 @@ msgstr "Апошняя сінхранізацыя:"
 #, fuzzy
 msgid "When was the last time saved games were synced with this storage"
 msgstr "Калі рабілася апошняя сінхранізацыя з гэтым воблакам"
+
+#: gui/options.cpp:1896 gui/options.cpp:2559
+msgid "<never>"
+msgstr "<ніколі>"
 
 #: gui/options.cpp:1898
 msgctxt "lowres"
@@ -1391,6 +1399,10 @@ msgstr ""
 
 #: gui/options.cpp:1918
 msgid "This storage is not connected yet! To connect,"
+msgstr ""
+
+#: gui/options.cpp:1919
+msgid "1. Open this link:"
 msgstr ""
 
 #: gui/options.cpp:1920
@@ -1550,10 +1562,6 @@ msgstr "Іншае воблака ўжо актыўна. Вы жадаеце перапыніць працэс?"
 #: gui/options.cpp:2557
 msgid "<right now>"
 msgstr "<зараз>"
-
-#: gui/options.cpp:2559
-msgid "<never>"
-msgstr "<ніколі>"
 
 #: gui/options.cpp:2666
 msgid "Stop server"
@@ -5414,9 +5422,6 @@ msgstr ""
 
 #~ msgid "Storage:"
 #~ msgstr "Воблака:"
-
-#~ msgid "<none>"
-#~ msgstr "<няма>"
 
 #~ msgid "Refresh"
 #~ msgstr "Абнавіць"

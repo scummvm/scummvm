@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.7.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2019-08-08 22:48+0200\n"
+"POT-Creation-Date: 2019-08-09 23:20+0200\n"
 "PO-Revision-Date: 2018-04-18 10:09+0000\n"
 "Last-Translator: Adrian Frühwirth <bonki@scummvm.org>\n"
 "Language-Team: Czech <https://translations.scummvm.org/projects/scummvm/"
@@ -1311,6 +1311,10 @@ msgstr "U¾ivatelské jméno:"
 msgid "Username used by this storage"
 msgstr "U¾ivatelská jména která toto úlo¾i¹tì vyu¾ívají"
 
+#: gui/options.cpp:1890
+msgid "<none>"
+msgstr "<¾ádné>"
+
 #: gui/options.cpp:1892
 msgid "Used space:"
 msgstr "Vyu¾itý prostor:"
@@ -1328,6 +1332,10 @@ msgstr "Datum poslední synchronizace:"
 #, fuzzy
 msgid "When was the last time saved games were synced with this storage"
 msgstr "Kdy byla provedena poslední synchronizace ulo¾ených her"
+
+#: gui/options.cpp:1896 gui/options.cpp:2559
+msgid "<never>"
+msgstr "<nikdy>"
 
 #: gui/options.cpp:1898
 msgctxt "lowres"
@@ -1389,6 +1397,10 @@ msgstr ""
 
 #: gui/options.cpp:1918
 msgid "This storage is not connected yet! To connect,"
+msgstr ""
+
+#: gui/options.cpp:1919
+msgid "1. Open this link:"
 msgstr ""
 
 #: gui/options.cpp:1920
@@ -1552,10 +1564,6 @@ msgstr "Jiné úlo¾i¹tì je aktivní. Chcete ho pøeru¹it?"
 #: gui/options.cpp:2557
 msgid "<right now>"
 msgstr "<právì nyní>"
-
-#: gui/options.cpp:2559
-msgid "<never>"
-msgstr "<nikdy>"
 
 #: gui/options.cpp:2666
 msgid "Stop server"
@@ -5400,9 +5408,6 @@ msgstr ""
 
 #~ msgid "Storage:"
 #~ msgstr "Úlo¾i¹tì:"
-
-#~ msgid "<none>"
-#~ msgstr "<¾ádné>"
 
 #~ msgid "Refresh"
 #~ msgstr "Obnovit"

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2019-08-08 22:48+0200\n"
+"POT-Creation-Date: 2019-08-09 23:20+0200\n"
 "PO-Revision-Date: 2018-04-18 10:13+0000\n"
 "Last-Translator: Adrian Frühwirth <bonki@scummvm.org>\n"
 "Language-Team: Norwegian Nynorsk <https://translations.scummvm.org/projects/"
@@ -1304,6 +1304,10 @@ msgstr "Brukarnamn:"
 msgid "Username used by this storage"
 msgstr ""
 
+#: gui/options.cpp:1890
+msgid "<none>"
+msgstr ""
+
 #: gui/options.cpp:1892
 msgid "Used space:"
 msgstr ""
@@ -1319,6 +1323,11 @@ msgstr ""
 #: gui/options.cpp:1895
 msgid "When was the last time saved games were synced with this storage"
 msgstr ""
+
+#: gui/options.cpp:1896 gui/options.cpp:2559
+#, fuzzy
+msgid "<never>"
+msgstr "Aldri"
 
 #: gui/options.cpp:1898
 msgctxt "lowres"
@@ -1379,6 +1388,10 @@ msgstr ""
 
 #: gui/options.cpp:1918
 msgid "This storage is not connected yet! To connect,"
+msgstr ""
+
+#: gui/options.cpp:1919
+msgid "1. Open this link:"
 msgstr ""
 
 #: gui/options.cpp:1920
@@ -1538,11 +1551,6 @@ msgstr ""
 #: gui/options.cpp:2557
 msgid "<right now>"
 msgstr ""
-
-#: gui/options.cpp:2559
-#, fuzzy
-msgid "<never>"
-msgstr "Aldri"
 
 #: gui/options.cpp:2666
 #, fuzzy

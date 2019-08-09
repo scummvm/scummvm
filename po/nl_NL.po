@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2019-08-08 22:48+0200\n"
+"POT-Creation-Date: 2019-08-09 23:20+0200\n"
 "PO-Revision-Date: 2018-09-24 18:39+0000\n"
 "Last-Translator: Ben Castricum <github@bencastricum.nl>\n"
 "Language-Team: Dutch <https://translations.scummvm.org/projects/scummvm/"
@@ -1301,6 +1301,10 @@ msgstr "Gebruikersnaam:"
 msgid "Username used by this storage"
 msgstr "Gebruikersnaam gebruikt voor deze opslag"
 
+#: gui/options.cpp:1890
+msgid "<none>"
+msgstr "<geen>"
+
 #: gui/options.cpp:1892
 msgid "Used space:"
 msgstr "Gebruikte ruimte:"
@@ -1318,6 +1322,10 @@ msgstr "Laatste synchronisatie:"
 #, fuzzy
 msgid "When was the last time saved games were synced with this storage"
 msgstr "Wanneer de laatste synchronisatie voor deze opslag is geweest"
+
+#: gui/options.cpp:1896 gui/options.cpp:2559
+msgid "<never>"
+msgstr "<nooit>"
 
 #: gui/options.cpp:1898
 msgctxt "lowres"
@@ -1379,6 +1387,10 @@ msgstr ""
 
 #: gui/options.cpp:1918
 msgid "This storage is not connected yet! To connect,"
+msgstr ""
+
+#: gui/options.cpp:1919
+msgid "1. Open this link:"
 msgstr ""
 
 #: gui/options.cpp:1920
@@ -1539,10 +1551,6 @@ msgstr "Een andere opslag is actief. Wilt u die onderbreken?"
 #: gui/options.cpp:2557
 msgid "<right now>"
 msgstr "<nu>"
-
-#: gui/options.cpp:2559
-msgid "<never>"
-msgstr "<nooit>"
 
 #: gui/options.cpp:2666
 msgid "Stop server"
@@ -5414,9 +5422,6 @@ msgstr ""
 
 #~ msgid "Storage:"
 #~ msgstr "Opslag:"
-
-#~ msgid "<none>"
-#~ msgstr "<geen>"
 
 #~ msgid "Refresh"
 #~ msgstr "Ververs"

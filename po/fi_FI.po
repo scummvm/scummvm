@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2019-08-08 22:48+0200\n"
+"POT-Creation-Date: 2019-08-09 23:20+0200\n"
 "PO-Revision-Date: 2019-08-08 20:47+0000\n"
 "Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
@@ -1304,6 +1304,10 @@ msgstr "K‰ytt‰j‰nimi:"
 msgid "Username used by this storage"
 msgstr "Tallennustilan k‰ytt‰j‰nimi"
 
+#: gui/options.cpp:1890
+msgid "<none>"
+msgstr "<tyhj‰>"
+
 #: gui/options.cpp:1892
 msgid "Used space:"
 msgstr "K‰ytetty tila:"
@@ -1319,6 +1323,10 @@ msgstr "Viimeisin synkronointi:"
 #: gui/options.cpp:1895
 msgid "When was the last time saved games were synced with this storage"
 msgstr "Milloin pelitallennukset viimeksi synkronoitiin t‰h‰n tallennustilaan"
+
+#: gui/options.cpp:1896 gui/options.cpp:2559
+msgid "<never>"
+msgstr "<ei koskaan>"
 
 #: gui/options.cpp:1898
 msgctxt "lowres"
@@ -1389,6 +1397,10 @@ msgstr ""
 msgid "This storage is not connected yet! To connect,"
 msgstr ""
 "T‰h‰n tallennustilaan ei ole viel‰ avattu yhteytt‰! Avataksesi yhteyden,"
+
+#: gui/options.cpp:1919
+msgid "1. Open this link:"
+msgstr ""
 
 #: gui/options.cpp:1920
 msgid "Open URL"
@@ -1543,10 +1555,6 @@ msgstr "T‰m‰ tallennustila on nyt aktiivinen. Haluatko keskeytt‰‰ sen?"
 #: gui/options.cpp:2557
 msgid "<right now>"
 msgstr "<nyt>"
-
-#: gui/options.cpp:2559
-msgid "<never>"
-msgstr "<ei koskaan>"
 
 #: gui/options.cpp:2666
 msgid "Stop server"
@@ -5418,9 +5426,6 @@ msgstr ""
 
 #~ msgid "Storage:"
 #~ msgstr "Tallennustila:"
-
-#~ msgid "<none>"
-#~ msgstr "<tyhj‰>"
 
 #~ msgid "Refresh"
 #~ msgstr "P‰ivit‰"
