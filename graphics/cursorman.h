@@ -26,6 +26,7 @@
 #include "common/scummsys.h"
 #include "common/stack.h"
 #include "common/singleton.h"
+#include "graphics/cursor.h"
 #include "graphics/pixelformat.h"
 
 namespace Graphics {
@@ -98,6 +99,15 @@ public:
 	 *					CLUT8 will be used if this is NULL or not specified.
 	 */
 	void replaceCursor(const void *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, bool dontScale = false, const Graphics::PixelFormat *format = NULL);
+
+	/**
+	 * Replace the current cursor on the stack. If the stack is empty, the
+	 * cursor is pushed instead. It's a slightly more optimized way of
+	 * popping the old cursor before pushing the new one.
+	 *
+	 * @param cursor	the new cursor
+	 */
+	void replaceCursor(const Graphics::Cursor *cursor);
 
 	/**
 	 * Pop all of the cursors and cursor palettes from their respective stacks.

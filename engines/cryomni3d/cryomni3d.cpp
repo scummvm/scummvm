@@ -252,14 +252,12 @@ bool CryOmni3DEngine::displayHLZ(const Common::String &filename, uint32 timeout)
 }
 
 void CryOmni3DEngine::setCursor(const Graphics::Cursor &cursor) const {
-	CursorMan.replaceCursor(cursor.getSurface(), cursor.getWidth(), cursor.getHeight(),
-	                        cursor.getHotspotX(), cursor.getHotspotY(), cursor.getKeyColor());
+	CursorMan.replaceCursor(&cursor);
 }
 
 void CryOmni3DEngine::setCursor(uint cursorId) const {
 	const Graphics::Cursor &cursor = _sprites.getCursor(cursorId);
-	CursorMan.replaceCursor(cursor.getSurface(), cursor.getWidth(), cursor.getHeight(),
-	                        cursor.getHotspotX(), cursor.getHotspotY(), cursor.getKeyColor());
+	CursorMan.replaceCursor(&cursor);
 }
 
 bool CryOmni3DEngine::pollEvents() {

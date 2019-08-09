@@ -514,9 +514,7 @@ void GfxCursor::kernelSetMacCursor(GuiResourceId viewNum, int loopNum, int celNu
 		return;
 	}
 
-	CursorMan.replaceCursor(macCursor->getSurface(), macCursor->getWidth(), macCursor->getHeight(),
-			macCursor->getHotspotX(), macCursor->getHotspotY(), macCursor->getKeyColor());
-	CursorMan.replaceCursorPalette(macCursor->getPalette(), 0, 256);
+	CursorMan.replaceCursor(macCursor);
 
 	delete macCursor;
 	kernelShow();

@@ -147,6 +147,14 @@ void CursorManager::replaceCursor(const void *buf, uint w, uint h, int hotspotX,
 	g_system->setMouseCursor(cur->_data, w, h, hotspotX, hotspotY, keycolor, dontScale, format);
 }
 
+void CursorManager::replaceCursor(const Graphics::Cursor *cursor) {
+	replaceCursor(cursor->getSurface(), cursor->getWidth(), cursor->getHeight(), cursor->getHotspotX(),
+	              cursor->getHotspotY(), cursor->getKeyColor());
+
+	if (cursor->getPalette())
+		replaceCursorPalette(cursor->getPalette(), cursor->getPaletteStartIndex(), cursor->getPaletteCount());
+}
+
 bool CursorManager::supportsCursorPalettes() {
 	return g_system->hasFeature(OSystem::kFeatureCursorPalette);
 }
