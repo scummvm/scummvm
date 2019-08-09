@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2019-08-09 23:20+0200\n"
-"PO-Revision-Date: 2019-08-09 21:25+0000\n"
+"PO-Revision-Date: 2019-08-09 21:32+0000\n"
 "Last-Translator: Lothar Serra Mari <serra@scummvm.org>\n"
 "Language-Team: German <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/de/>\n"
@@ -1346,19 +1346,15 @@ msgstr "<nie>"
 #: gui/options.cpp:1898
 msgctxt "lowres"
 msgid "Saves sync automatically on launch, after saving and on loading."
-msgstr ""
-"Spielstände werden automatisch beim Start sowie nach dem Speichern und Laden "
-"von Spielständen synchronisiert."
+msgstr "Spielstände werden automatisch synchronisiert."
 
 #: gui/options.cpp:1900
 msgid "Saves sync automatically on launch, after saving and on loading."
-msgstr ""
-"Spielstände werden automatisch beim Start sowie nach dem Speichern und Laden "
-"von Spielständen synchronisiert."
+msgstr "Spielstände werden automatisch synchronisiert."
 
 #: gui/options.cpp:1901
 msgid "Sync now"
-msgstr "Jetzt synchronisieren"
+msgstr "Synchronisieren"
 
 #: gui/options.cpp:1901
 msgid "Start saves sync"
@@ -1367,15 +1363,11 @@ msgstr "Starte Spielstand-Synchronisation"
 #: gui/options.cpp:1904
 msgctxt "lowres"
 msgid "You can download game files from your cloud ScummVM folder:"
-msgstr ""
-"Sie können die Spieldateien von Ihrem ScummVM-Ordner Ihrer Cloud "
-"herunterladen:"
+msgstr "Laden Sie die Spieldateien des ScummVM-Ordners Ihrer Cloud herunter:"
 
 #: gui/options.cpp:1906
 msgid "You can download game files from your cloud ScummVM folder:"
-msgstr ""
-"Sie können die Spieldateien von Ihrem ScummVM-Ordner Ihrer Cloud "
-"herunterladen:"
+msgstr "Laden Sie die Spieldateien des ScummVM-Ordners Ihrer Cloud herunter:"
 
 #: gui/options.cpp:1907
 msgid "Download game files"
@@ -1388,15 +1380,11 @@ msgstr "Öffnet den Download-Manager"
 #: gui/options.cpp:1910
 msgctxt "lowres"
 msgid "To change account for this storage, disconnect and connect again:"
-msgstr ""
-"Um ein anderes Konto für diesen Cloud-Speicher auszuwählen, trennen Sie die "
-"Verbindung und stellen sie wieder her:"
+msgstr "Cloud trennen und neu verbinden, um ein anderes Konto zu wählen:"
 
 #: gui/options.cpp:1912
 msgid "To change account for this storage, disconnect and connect again:"
-msgstr ""
-"Um ein anderes Konto für diesen Cloud-Speicher auszuwählen, trennen Sie die "
-"Verbindung und stellen sie wieder her:"
+msgstr "Cloud trennen und neu verbinden, um ein anderes Konto zu wählen:"
 
 #: gui/options.cpp:1913
 msgid "Disconnect"
@@ -1486,8 +1474,7 @@ msgstr "Port, der für den Server genutzt wird"
 msgctxt "lowres"
 msgid "Run server to manage files with browser (in the same network)."
 msgstr ""
-"Startet einen Server, um Dateien im Browser innerhalb des gleichen Netzwerks "
-"zu verwalten."
+"Erlaubt das Verwalten von Dateien über einen Browser (im gleichen Netzwerk)."
 
 #: gui/options.cpp:1955
 msgctxt "lowres"
@@ -1497,8 +1484,7 @@ msgstr "Das Schließen des Optionen-Dialogs wird den Server beenden."
 #: gui/options.cpp:1957
 msgid "Run server to manage files with browser (in the same network)."
 msgstr ""
-"Startet einen Server, um Dateien im Browser innerhalb des gleichen Netzwerks "
-"zu verwalten."
+"Erlaubt das Verwalten von Dateien über einen Browser (im gleichen Netzwerk)."
 
 #: gui/options.cpp:1958
 msgid "Closing options dialog will stop the server."
