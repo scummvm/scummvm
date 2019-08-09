@@ -49,8 +49,9 @@ void Processor::z_draw_picture() {
 	flush_buffer();
 
 	Window &win = _wp[_wp._cwin];
-	if (_wp._cwin == 0) {
-		// Embedded picture within the text area
+	if (_storyId == ZORK_ZERO && _wp._cwin == 0) {
+		// WORKAROUND: Zork Zero has pictures for graphics embedded in the text with specific
+		// co-prdinates. We need to reset it to 0,0 to flag it should be drawn at the cursor
 		x = y = 0;
 	} else {
 		assert(x && y);
