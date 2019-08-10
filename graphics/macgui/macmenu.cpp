@@ -22,6 +22,7 @@
 
 #include "common/system.h"
 #include "common/keyboard.h"
+#include "common/macresman.h"
 
 #include "graphics/primitives.h"
 #include "graphics/font.h"
@@ -304,6 +305,52 @@ void MacMenu::calcDimensions() {
 		calcMenuBounds(_items[i]);
 
 		x += w + kMenuSpacing;
+	}
+}
+
+void MacMenu::loadMenuResource(Common::MacResManager *resFork, uint16 id) {
+	Common::SeekableReadStream *res = resFork->getResource(MKTAG('M', 'E', 'N', 'U'), id);
+	assert(res);
+
+	uint16 menuID = res->readUint16BE();
+	/* uint16 width = */ res->readUint16BE();
+	/* uint16 height = */ res->readUint16BE();
+	/* uint16 resourceID = */ res->readUint16BE();
+	/* uint16 placeholder = */ res->readUint16BE();
+	uint32 initialState = res->readUint32BE();
+	Common::String menuTitle = res->readPascalString();
+
+	if (!menuTitle.empty()) {
+		int menu = addMenuItem(menuTitle);
+		initialState >>= 1;
+
+		// Read submenu items
+		int action = menuID << 16;
+		while (true) {
+			Common::String subMenuTitle = res->readPascalString();
+			if (subMenuTitle.empty())
+				break;
+
+			/* uint8 icon = */ res->readByte();
+			uint8 key = res->readByte();
+			/* uint8 mark = */ res->readByte();
+			uint8 style = res->readByte();
+
+			addMenuSubItem(menu, subMenuTitle, action++, style, key, initialState & 1);
+			initialState >>= 1;
+		}
+	}
+
+	delete res;
+}
+
+void MacMenu::loadMenuBarResource(Common::MacResManager *resFork, uint16 id) {
+	Common::SeekableReadStream *res = resFork->getResource(MKTAG('M', 'B', 'A', 'R'), id);
+	assert(res);
+
+	uint16 count = res->readUint16BE();
+	for (int i = 0; i < count; i++) {
+		loadMenuResource(resFork, res->readUint16BE());
 	}
 }
 
