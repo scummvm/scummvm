@@ -47,8 +47,8 @@ static const int kAutoCloseDelay     = 200;
 InventoryWindow::InventoryWindow(Gfx::Driver *gfx, Cursor *cursor, ActionMenu *actionMenu) :
 		Window(gfx, cursor),
 	_actionMenu(actionMenu),
-	_selectedInventoryItem(-1),
 	_firstVisibleSlot(0),
+	_selectedInventoryItem(-1),
 	_autoCloseTimeRemaining(kAutoCloseDisabled) {
 	// The window has the same size as the game window
 	_position = Common::Rect(Gfx::Driver::kGameViewportWidth, Gfx::Driver::kGameViewportHeight);

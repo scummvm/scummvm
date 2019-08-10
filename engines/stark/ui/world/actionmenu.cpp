@@ -53,10 +53,10 @@ static const int kAutoCloseDelay     = 200;
 
 ActionMenu::ActionMenu(Gfx::Driver *gfx, Cursor *cursor) :
 		Window(gfx, cursor),
-		_inventory(nullptr),
-		_item(nullptr),
-		_itemDescription(nullptr),
 		_fromInventory(false),
+		_itemDescription(nullptr),
+		_item(nullptr),
+		_inventory(nullptr),
 		_autoCloseTimeRemaining(kAutoCloseDisabled) {
 
 	_background = StarkStaticProvider->getUIElement(StaticProvider::kActionMenuBg);
@@ -91,7 +91,12 @@ void ActionMenu::open(Resources::ItemVisual *item, const Common::Point &itemRela
 	_itemRelativePos = itemRelativePos;
 	_item = item;
 	_fromInventory = item->getSubType() == Resources::Item::kItemInventory;
-	_itemDescription->setText(StarkGameInterface->getItemTitleAt(item, itemRelativePos));
+
+	if (_fromInventory) {
+		_itemDescription->setText(StarkGameInterface->getItemTitle(item));
+	} else {
+		_itemDescription->setText(StarkGameInterface->getItemTitleAt(item, itemRelativePos));
+	}
 
 	_cursor->setMouseHint("");
 

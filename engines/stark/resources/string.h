@@ -36,16 +36,17 @@ class XRCReadStream;
 namespace Resources {
 
 /**
- * The top level element of the game resource tree.
+ * A character string resource.
  *
- * Contains all the levels.
+ * String resources are used by scripts to change the title
+ * of items.
  */
 class String : public Object {
 public:
 	static const Type::ResourceType TYPE = Type::kString;
 
 	String(Object *parent, byte subType, uint16 index, const Common::String &name);
-	virtual ~String();
+	~String() override;
 
 protected:
 	void printData() override;
