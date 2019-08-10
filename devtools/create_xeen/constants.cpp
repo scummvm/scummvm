@@ -1308,7 +1308,7 @@ const char *const ARMOR_NAMES[14] = {
 };
 
 const char *const ACCESSORY_NAMES[11] = {
-	nullptr, "ring ", "belt ", "broach ", "medal ", "charm ", "cameo ",
+	nullptr, "ring ", "belt ", "brooch ", "medal ", "charm ", "cameo ",
 	"scarab ", "pendant ", "necklace ", "amulet "
 };
 
