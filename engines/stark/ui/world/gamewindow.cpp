@@ -132,8 +132,6 @@ void GameWindow::onMouseMove(const Common::Point &pos) {
 
 	checkObjectAtPos(pos, selectedInventoryItem, singlePossibleAction, defaultAction);
 
-	Common::String mouseHint;
-
 	if (selectedInventoryItem != -1 && !defaultAction) {
 		VisualImageXMG *cursorImage = StarkGameInterface->getCursorImage(selectedInventoryItem);
 		_cursor->setCursorImage(cursorImage);
@@ -157,11 +155,14 @@ void GameWindow::onMouseMove(const Common::Point &pos) {
 				_cursor->setCursorImage(cursorImage);
 				break;
 		}
-
-		mouseHint = StarkGameInterface->getItemTitleAt(_objectUnderCursor, _objectRelativePosition);
 	} else {
 		// Not an object
 		_cursor->setCursorType(Cursor::kDefault);
+	}
+
+	Common::String mouseHint;
+	if (_objectUnderCursor) {
+		mouseHint = StarkGameInterface->getItemTitleAt(_objectUnderCursor, _objectRelativePosition);
 	}
 	_cursor->setMouseHint(mouseHint);
 }
