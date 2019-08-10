@@ -682,7 +682,8 @@ bool MacMenu::mouseMove(int x, int y) {
 bool MacMenu::mouseRelease(int x, int y) {
 	if (_menuActivated) {
 		_menuActivated = false;
-		_isVisible = false;
+		if (_wm->_mode & kWMModeAutohideMenu)
+			_isVisible = false;
 
 		if (_wm->_mode & kWMModalMenuMode) {
 			_wm->pauseEngine(false);
