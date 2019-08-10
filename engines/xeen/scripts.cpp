@@ -802,6 +802,8 @@ bool Scripts::cmdTakeOrGive(ParamsIterator &params) {
 			if (!party.giveTake(mode1, val1, mode2, val2, _charIndex - 1)) {
 				if (mode2 == 79)
 					windows.closeAll();
+			} else {
+				return cmdExit(params);
 			}
 		}
 		break;
