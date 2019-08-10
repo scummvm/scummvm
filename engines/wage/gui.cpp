@@ -102,11 +102,11 @@ Gui::Gui(WageEngine *engine) {
 	_menu->addStaticMenus(menuSubItems);
 	_menu->addMenuSubItem(kMenuAbout, _engine->_world->getAboutMenuItemName(), kMenuActionAbout);
 
-	_commandsMenuId = _menu->addMenuItem(_engine->_world->_commandsMenuName.c_str());
+	_commandsMenuId = _menu->addMenuItem(_engine->_world->_commandsMenuName);
 	regenCommandsMenu();
 
 	if (!_engine->_world->_weaponMenuDisabled) {
-		_weaponsMenuId = _menu->addMenuItem(_engine->_world->_weaponsMenuName.c_str());
+		_weaponsMenuId = _menu->addMenuItem(_engine->_world->_weaponsMenuName);
 
 		regenWeaponsMenu();
 	} else {
@@ -226,7 +226,7 @@ void Gui::regenWeaponsMenu() {
 			command += " ";
 			command += obj->_name;
 
-			_menu->addMenuSubItem(_weaponsMenuId, command.c_str(), kMenuActionCommand, 0, 0, true);
+			_menu->addMenuSubItem(_weaponsMenuId, command, kMenuActionCommand, 0, 0, true);
 
 			empty = false;
 		}

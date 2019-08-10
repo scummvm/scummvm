@@ -75,7 +75,7 @@ struct MacMenuSubItem {
 	bool enabled;
 	Common::Rect bbox;
 
-	MacMenuSubItem(const char *t, int a, int s = 0, char sh = 0, bool e = true) : text(t), unicode(false), action(a), style(s), shortcut(sh), enabled(e) {}
+	MacMenuSubItem(const Common::String &t, int a, int s = 0, char sh = 0, bool e = true) : text(t), unicode(false), action(a), style(s), shortcut(sh), enabled(e) {}
 	MacMenuSubItem(const Common::U32String &t, int a, int s = 0, char sh = 0, bool e = true) : unicodeText(t), unicode(true), action(a), style(s), shortcut(sh), enabled(e) {}
 };
 
@@ -89,7 +89,7 @@ struct MacMenuItem {
 	Common::Rect bbox;
 	Common::Rect subbbox;
 
-	MacMenuItem(const char *n) : name(n), unicode(false) {}
+	MacMenuItem(const Common::String &n) : name(n), unicode(false) {}
 	MacMenuItem(const Common::U32String &n) : unicodeName(n), unicode(true) {}
 };
 
@@ -260,7 +260,7 @@ void MacMenu::addStaticMenus(const MacMenuData *data) {
 	calcDimensions();
 }
 
-int MacMenu::addMenuItem(const char *name) {
+int MacMenu::addMenuItem(const Common::String &name) {
 	MacMenuItem *i = new MacMenuItem(name);
 	_items.push_back(i);
 
@@ -274,7 +274,7 @@ int MacMenu::addMenuItem(const Common::U32String &name) {
 	return _items.size() - 1;
 }
 
-void MacMenu::addMenuSubItem(int id, const char *text, int action, int style, char shortcut, bool enabled) {
+void MacMenu::addMenuSubItem(int id, const Common::String &text, int action, int style, char shortcut, bool enabled) {
 	_items[id]->subitems.push_back(new MacMenuSubItem(text, action, style, shortcut, enabled));
 
 	calcMenuBounds(_items[id]);
@@ -378,7 +378,7 @@ void MacMenu::createSubMenuFromString(int id, const char *str, int commandId) {
 					}
 			}
 
-			menu->subitems.push_back(new MacMenuSubItem(item.c_str(), commandId, style, shortcut, enabled));
+			menu->subitems.push_back(new MacMenuSubItem(item, commandId, style, shortcut, enabled));
 		}
 
 		item.clear();

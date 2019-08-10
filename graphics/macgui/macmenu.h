@@ -57,9 +57,9 @@ public:
 	void addStaticMenus(const MacMenuData *data);
 	void calcDimensions();
 
-	int addMenuItem(const char *name);
+	int addMenuItem(const Common::String &name);
 	int addMenuItem(const Common::U32String &name);
-	void addMenuSubItem(int id, const char *text, int action, int style = 0, char shortcut = 0, bool enabled = true);
+	void addMenuSubItem(int id, const Common::String &text, int action, int style = 0, char shortcut = 0, bool enabled = true);
 	void addMenuSubItem(int id, const Common::U32String &text, int action, int style = 0, char shortcut = 0, bool enabled = true);
 	void createSubMenuFromString(int id, const char *string, int commandId);
 	void clearSubMenu(int id);
