@@ -60,8 +60,8 @@ public:
 public:
 	int32 _x;
 	int32 _y;
-	int32 _field14;
-	int32 _field18;
+	int32 _walkX;
+	int32 _walkY;
 	int32 _time;
 	int32 _field20;
 	int32 _field24;
