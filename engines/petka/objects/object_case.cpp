@@ -176,13 +176,49 @@ void QObjectCase::fillWithItems() {
 		}
 	}
 
-	for (int i = _itemIndex; i < _itemIndex + 6 >= _items.size() ? _items.size() : _itemIndex + 6; ++i) {
+	for (int i = _itemIndex; i < ((_itemIndex + 6 >= _items.size()) ? _items.size() : _itemIndex + 6); ++i) {
 		QMessageObject *obj = g_vm->getQSystem()->findObject(_items[i]);
 		obj->_z = _z + 1;
 		objs.push_back(obj);
 		g_vm->resMgr()->loadFlic(obj->_resourceId);
 		_x = itemsLocation[i - _itemIndex].x;
 		_y = itemsLocation[i - _itemIndex].y;
+	}
+}
+
+void QObjectCase::addItem(int id) {
+	_items.push_back(id);
+	if (_isShown) {
+		show(0);
+		show(1);
+	}
+}
+
+void QObjectCase::removeItem(int id) {
+	for (uint i = 0; i < _items.size(); ++i) {
+		if (_items[i] == id) {
+			_items.remove_at(i);
+		}
+	}
+
+	_itemIndex = _items.size() - 6 < 0 ? 0 : _items.size() - 6;
+
+	if (_isShown) {
+		show(0);
+		show(1);
+	}
+}
+
+void QObjectCase::setInv(int id1, int id2) {
+	for (uint i = 0; i < _items.size(); ++i) {
+		if (_items[i] == id1) {
+			_items[i] = id2;
+		}
+	}
+
+	if (_isShown) {
+		show(0);
+		show(1);
 	}
 }
 

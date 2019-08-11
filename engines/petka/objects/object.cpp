@@ -39,6 +39,7 @@
 #include "petka/objects/object_cursor.h"
 #include "petka/interfaces/main.h"
 #include "petka/objects/heroes.h"
+#include "petka/objects/object_case.h"
 
 namespace Petka {
 
@@ -175,6 +176,14 @@ void QMessageObject::processMessage(const QMessage &msg) {
 
 	if (reacted || !g_vm->getBigDialogue()->findDialog(_id, msg.opcode, nullptr)) {
 		switch (msg.opcode) {
+		case kAddInv:
+			g_vm->getQSystem()->_case->addItem(msg.objId);
+			break;
+		case kDelInv:
+			g_vm->getQSystem()->_case->removeItem(msg.objId);
+			break;
+		case kSetInv:
+			g_vm->getQSystem()->_case->setInv(msg.sender->_id, msg.objId);
 		case kAvi: {
 			Common::String videoName = g_vm->resMgr()->findResourceName((uint16) msg.arg1);
 			g_vm->playVideo(g_vm->openFile(videoName, false));
