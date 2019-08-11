@@ -270,6 +270,12 @@ void QMessageObject::processMessage(const QMessage &msg) {
 		case kPassive:
 			_isActive = false;
 			break;
+		case kJump:
+			g_vm->getQSystem()->_petka->setPos((msg.arg1 == -1 ? _field14 : msg.arg1), (msg.arg2 == -1 ? _field18 : msg.arg2));
+			break;
+		case kJumpVich:
+			g_vm->getQSystem()->_petka->setPos((msg.arg1 == -1 ? _field14 : msg.arg1), (msg.arg2 == -1 ? _field18 : msg.arg2));
+			break;
 		}
 	} else {
 		g_vm->getBigDialogue()->setDialog(_id, msg.opcode, -1);
