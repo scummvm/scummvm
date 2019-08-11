@@ -164,14 +164,29 @@ public:
 	void setSize(const Point &newSize);
 
 	/**
+	 * Copys a window's size to the underlying Glk one, if present
+	 */
+	void setSize();
+
+	/**
 	 * Set the position of a window
 	 */
 	void setPosition(const Point &newPos);
 
 	/**
+	 * Copys a window's position to the underlying Glk one, if present
+	 */
+	void setPosition();
+
+	/**
 	 * Set the cursor position
 	 */
 	void setCursor(const Point &newPos);
+
+	/**
+	 * Copys a window's position to the underlying Glk one, if present
+	 */
+	void setCursor();
 
 	/**
 	 * Clear the window

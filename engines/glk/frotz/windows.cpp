@@ -161,8 +161,12 @@ void Window::setSize(const Point &newSize) {
 	_properties[X_SIZE] = newSize.x;
 	_properties[Y_SIZE] = newSize.y;
 
+	setSize();
+}
+
+void Window::setSize() {
 	if (_win)
-		_win->setSize(Point(newSize.x * g_conf->_monoInfo._cellW, newSize.y * g_conf->_monoInfo._cellH));
+		_win->setSize(Point(_properties[X_SIZE] * g_conf->_monoInfo._cellW, _properties[Y_SIZE] * g_conf->_monoInfo._cellH));
 }
 
 void Window::setPosition(const Point &newPos) {
@@ -171,8 +175,12 @@ void Window::setPosition(const Point &newPos) {
 	_properties[X_POS] = newPos.x;
 	_properties[Y_POS] = newPos.y;
 
+	setPosition();
+}
+
+void Window::setPosition() {
 	if (_win)
-		_win->setPosition(Point((newPos.x - 1) * g_conf->_monoInfo._cellW, (newPos.y - 1) * g_conf->_monoInfo._cellH));
+		_win->setPosition(Point((_properties[X_POS] - 1) * g_conf->_monoInfo._cellW, (_properties[Y_POS] - 1) * g_conf->_monoInfo._cellH));
 }
 
 void Window::setCursor(const Point &newPos) {
@@ -196,7 +204,14 @@ void Window::setCursor(const Point &newPos) {
 			y = _properties[Y_CURSOR];
 	}
 
-	g_vm->glk_window_move_cursor(_win, x - 1, y - 1);
+	_properties[X_CURSOR] = x;
+	_properties[Y_CURSOR] = y;
+
+	setCursor();
+}
+
+void Window::setCursor() {
+	g_vm->glk_window_move_cursor(_win, _properties[X_CURSOR] - 1, _properties[Y_CURSOR] - 1);
 }
 
 void Window::clear() {
@@ -280,11 +295,10 @@ void Window::setStyle(int style) {
 }
 
 void Window::updateStyle() {
-	uint style = _currStyle;
-
 	if (!_win)
-		createGlkWindow();
+		return;
 
+	uint style = _currStyle;
 	if (style & REVERSE_STYLE)
 		setReverseVideo(true);
 
@@ -339,8 +353,10 @@ void Window::createGlkWindow() {
 			winmethod_Arbitrary | winmethod_Fixed, 0, wintype_TextBuffer, 0);
 	}
 
-	setSize(Point(_properties[X_SIZE], _properties[Y_SIZE]));
-	setPosition(Point(_properties[X_POS], _properties[Y_POS]));
+	updateStyle();
+	setPosition();
+	setSize();
+	setCursor();
 
 	g_vm->glk_set_window(_win);
 }
@@ -366,7 +382,7 @@ void Window::setProperty(WindowProperty propType, uint value) {
 }
 
 void Window::checkRepositionLower() {
-	if (&_windows->_lower == this) {
+	if (&_windows->_lower == this && _win) {
 		PairWindow *parent = dynamic_cast<PairWindow *>(_win->_parent);
 		if (!parent)
 			error("Parent was not a pair window");
