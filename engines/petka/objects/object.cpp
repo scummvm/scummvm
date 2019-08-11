@@ -271,10 +271,10 @@ void QMessageObject::processMessage(const QMessage &msg) {
 			_isActive = false;
 			break;
 		case kJump:
-			g_vm->getQSystem()->_petka->setPos((msg.arg1 == -1 ? _field14 : msg.arg1), (msg.arg2 == -1 ? _field18 : msg.arg2));
+			g_vm->getQSystem()->_petka->setPos((msg.arg1 == -1 ? _walkX : msg.arg1), (msg.arg2 == -1 ? _walkY : msg.arg2));
 			break;
 		case kJumpVich:
-			g_vm->getQSystem()->_petka->setPos((msg.arg1 == -1 ? _field14 : msg.arg1), (msg.arg2 == -1 ? _field18 : msg.arg2));
+			g_vm->getQSystem()->_petka->setPos((msg.arg1 == -1 ? _walkX : msg.arg1), (msg.arg2 == -1 ? _walkY : msg.arg2));
 			break;
 		}
 	} else {
@@ -311,8 +311,8 @@ QObject::QObject() {
 	_sound = nullptr;
 	_x = 0;
 	_y = 0;
-	_field14 = -1;
-	_field18 = -1;
+	_walkX = -1;
+	_walkY = -1;
 	_field28 = 0;
 }
 

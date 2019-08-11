@@ -56,8 +56,8 @@ InterfaceMain::InterfaceMain() {
 			obj->_x = stream->readSint32LE();
 			obj->_y = stream->readSint32LE();
 			obj->_z = stream->readSint32LE();
-			obj->_field14 = stream->readSint32LE();
-			obj->_field18 = stream->readSint32LE();
+			obj->_walkX = stream->readSint32LE();
+			obj->_walkY = stream->readSint32LE();
 		}
 	}
 
