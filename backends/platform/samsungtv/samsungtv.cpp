@@ -35,6 +35,11 @@ OSystem_SDL_SamsungTV::OSystem_SDL_SamsungTV()
 }
 
 void OSystem_SDL_SamsungTV::initBackend() {
+	// Create the savefile manager
+	if (_savefileManager == 0) {
+		_savefileManager = new DefaultSaveFileManager("/mtd_wiselink/scummvm savegames");
+	}
+
 	// Create the events manager
 	if (_eventSource == 0)
 		_eventSource = new SamsungTVSdlEventSource();

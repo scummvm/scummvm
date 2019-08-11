@@ -77,7 +77,7 @@ void OSystem_Switch::initBackend() {
 
 	// Create the savefile manager
 	if (_savefileManager == 0) {
-		_savefileManager = new POSIXSaveFileManager();
+		_savefileManager = new DefaultSaveFileManager("./saves");
 	}
 
 	// Event source
