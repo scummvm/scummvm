@@ -44,7 +44,10 @@ struct ScriptPatch {
 } scriptPatches[] = {
 	{"GLOBAL", "return gsub( s, \"\\n\", \"\\\\\\n\" )", "return string.gsub( s, \"\\n\", \"\\\\\\n\" )"}, // line 10
 	{"GLOBAL", "strsub(", "string.sub("}, // line 15
-	{"GLOBAL", "if type(v) == 'userdata' or type(v) == 'function' then return end", "if type(v) == 'userdata' or type(v) == 'function' or i == 'package' or i == 'os' or i == 'io' or i == 'string' or i == 'table' or i == 'debug' or i == 'math' or i == 'coroutine' then return end" }, // Line 16
+	{"GLOBAL", "function save( i,v, nest )", "function func_namelookup(func)\nfor i,v in pairs(_G) do\nif type(v) == 'function' and v == func then\nreturn i\nend\nend\nend\nfunction save( i,v, nest )"}, // line 13
+	{"GLOBAL", "if type(v) == 'userdata' or type(v) == 'function' then return end", "if type(v) == 'userdata' or i == 'package' or i == 'os' or i == 'io' or i == 'string' or i == 'table' or i == 'debug' or i == 'math' or i == 'coroutine' then return end" }, // Line 16
+	{"GLOBAL", "local t=type(v)", "local t=type(v)\nif (t == 'function' and nest == 0) then return end"}, // line 18
+	{"GLOBAL", "then write_record(v, nest + 1)", "then write_record(v, nest + 1)\nelseif t=='function'    then write(savefile, func_namelookup(v)) if nest > 0 then write(savefile, ',' ) end"}, // line 32
 	{"GLOBAL", "for i,v in t do", "for i,v in pairs(t) do"},  // line 43
 	{"GLOBAL", "for i,v in globals() do", "for i,v in pairs(_G) do"}, // line 52
 	{"GLOBAL", "for npcname,npcdata in npcs do", "for npcname,npcdata in pairs(npcs) do"}, // Line 66
