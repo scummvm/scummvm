@@ -189,7 +189,7 @@ protected:
 	virtual void handleResizeImpl(const int width, const int height) override;
 
 	virtual int getGraphicsModeScale(int mode) const override;
-	virtual ScalerProc *getGraphicsScalerProc(int mode) const override;
+	virtual ScalerProc *getGraphicsScalerProc(int mode) const;
 
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 	/* SDL2 features a different API for 2D graphics. We create a wrapper
