@@ -37,6 +37,10 @@ public:
 	void onClick(int x, int y) override;
 	void fillWithItems();
 
+	void addItem(int id);
+	void removeItem(int id);
+	void setInv(int id1, int id2);
+
 private:
 	Common::Array<int> _items;
 	uint _clickedObjIndex;
