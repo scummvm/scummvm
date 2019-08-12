@@ -354,8 +354,8 @@ void Window::createGlkWindow() {
 	}
 
 	updateStyle();
-	setPosition();
 	setSize();
+	setPosition();
 	setCursor();
 
 	g_vm->glk_set_window(_win);
