@@ -217,6 +217,12 @@ void Window::setCursor() {
 void Window::clear() {
 	if (_win)
 		g_vm->glk_window_clear(_win);
+
+	if (_windows->_background) {
+		Rect r(_properties[X_SIZE] * g_conf->_monoInfo._cellW, _properties[Y_SIZE] * g_conf->_monoInfo._cellH);
+		r.moveTo((_properties[X_POS] - 1) * g_conf->_monoInfo._cellW, (_properties[Y_POS] - 1) * g_conf->_monoInfo._cellH);
+		_windows->_background->fillRect(g_conf->_windowColor, r);
+	}
 }
 
 void Window::updateColors() {
