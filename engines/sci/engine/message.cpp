@@ -453,9 +453,14 @@ Common::String MessageState::processString(const char *s, uint32 maxLength) {
 	uint index = 0;
 
 	while (index < inStr.size() && index < maxLength) {
-		// Check for hex escape sequence
-		if (stringHex(outStr, inStr, index))
-			continue;
+		// Check for hex escape sequence.
+		//  SQ4CD predates this interpreter feature but has a message on the
+		//  hintbook screen which appears to contain hex strings and renders
+		//  incorrectly if converted, so exclude it. Fixes #11070
+		if (g_sci->getGameId() != GID_SQ4) {
+			if (stringHex(outStr, inStr, index))
+				continue;
+		}
 
 		// Check for literal escape sequence
 		if (stringLit(outStr, inStr, index))
