@@ -1061,6 +1061,13 @@ void Menu::drawTitle() {
 		_titleScreen->draw(0, 0);
 		break;
 
+	case 20: // fadein Handango title screen
+	case 21: // wait
+	case 22: // fadeout Handango title screen
+	case 23:
+		_handangoGfx->draw(0, 0);
+		break;
+
 	case 5: // fadein HDB title screen
 	case 6: // wait
 	case 7: // fadeout HDB title screen
@@ -1118,23 +1125,23 @@ void Menu::drawTitle() {
 	// change title state...
 	//-------------------------------------------------------------------
 	switch (_titleCycle) {
-		//-------------------------------------------------------------------
-		// MONKEYSTONE LOGO
-		//-------------------------------------------------------------------
-		// time to OOH OOH
+	//-------------------------------------------------------------------
+	// MONKEYSTONE LOGO
+	//-------------------------------------------------------------------
+	// time to OOH OOH
 	case 1:
 		_titleDelay = (uint32)(g_system->getMillis() + 1000 * TITLE_DELAY2);
 		g_hdb->_sound->playSound(SND_MONKEY_OOHOOH);
 		_titleCycle++;
 		break;
 
-		// delay after OOH OOH
+	// delay after OOH OOH
 	case 2:
 		_titleDelay = g_system->getMillis() + 1000 * TITLE_DELAY3;
 		_titleCycle++;
 		break;
 
-		// done with delay; set up the fadeout...
+	// done with delay; set up the fadeout...
 	case 3:
 		time = g_hdb->getTimeSliceDelta();
 		g_hdb->_gfx->setFade(false, false, kScreenFade / time); // FADEOUT
@@ -1149,13 +1156,45 @@ void Menu::drawTitle() {
 
 		g_hdb->_gfx->setFade(true, false, kScreenFade / time); // FADEIN
 		g_hdb->_sound->startMusic(_titleSong);
-		_titleCycle++;
+
+		if (!g_hdb->isHandango())
+			_titleCycle++;
+		else
+			_titleCycle = 20;
 	break;
 
-		//-------------------------------------------------------------------
-		// HDB TITLE SCREEN
-		//-------------------------------------------------------------------
-		// wait for fadein to stop
+	//-------------------------------------------------------------------
+	// HANDANGO LOGO
+	//-------------------------------------------------------------------
+	case 20:        // fadein handango screen
+		if (g_hdb->_gfx->isFadeActive())
+			break;
+		_titleDelay = g_system->getMillis() + 750;
+		_titleCycle++;
+		break;
+
+	case 21:        // wait
+		g_hdb->_gfx->setFade(false, false, kScreenFade / time);                // FADEOUT
+		_titleCycle++;
+		break;
+
+	case 22:        // fadeout handango screen
+		if (g_hdb->_gfx->isFadeActive())
+			break;
+		_titleCycle++;
+		break;
+
+	case 23:        // fadein HDB title screen
+		if (g_hdb->_gfx->isFadeActive())
+			break;
+		g_hdb->_gfx->setFade(true, false, kScreenFade / time);         // FADEIN
+		_titleCycle = 5;
+		break;
+
+	//-------------------------------------------------------------------
+	// HDB TITLE SCREEN
+	//-------------------------------------------------------------------
+	// wait for fadein to stop
 	case 5:
 		if (g_hdb->_gfx->isFadeActive())
 			break;
@@ -1163,13 +1202,13 @@ void Menu::drawTitle() {
 		_titleCycle++;
 		break;
 
-		// set fadeout to stars
+	// set fadeout to stars
 	case 6:
 		g_hdb->_gfx->setFade(false, false, kScreenFade / time);		// FADEOUT
 		_titleCycle++;
 		break;
 
-		// get rocket ready
+	// get rocket ready
 	case 7:
 		if (g_hdb->_gfx->isFadeActive())
 			break;
