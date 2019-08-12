@@ -828,7 +828,7 @@ bool Gfx::loadFont(const char *string) {
 			// Position after reading cInfo
 			int curPos = memoryStream.pos();
 
-			_fontSurfaces[i].create(_fontHeader.height, cInfo->width, g_hdb->_format);
+			_fontSurfaces[i].create(cInfo->width, _fontHeader.height, g_hdb->_format);
 
 			// Go to character location
 			memoryStream.seek(startPos + cInfo->offset);
@@ -836,8 +836,8 @@ bool Gfx::loadFont(const char *string) {
 			for (int x = 0; x < cInfo->width; x++) {
 				for (int y = 0; y < _fontHeader.height; y++) {
 					int u, v;
-					u = y;
-					v = x;
+					u = x;
+					v = _fontHeader.height - y - 1;
 					ptr = (uint16 *)_fontSurfaces[i].getBasePtr(u, v);
 					*ptr = memoryStream.readUint16LE();
 				}
@@ -1209,12 +1209,12 @@ Graphics::Surface Picture::load(Common::SeekableReadStream *stream) {
 	debug(8, "Picture: _name: %s", _name);
 
 	if (g_hdb->isPPC()) {
-		_surface.create(_height, _width, g_hdb->_format);
+		_surface.create(_width, _height, g_hdb->_format);
 
 		for (int x = 0; x < _width; x++) {
 			for (int y = 0; y < _height; y++) {
-				int u = y;
-				int v = x;
+				int u = x;
+				int v = _height - y - 1;
 				uint16 *ptr = (uint16 *)_surface.getBasePtr(u, v);
 				*ptr = stream->readUint16LE();
 			}
