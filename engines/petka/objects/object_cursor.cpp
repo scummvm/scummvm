@@ -112,4 +112,11 @@ void QObjectCursor::show(bool v) {
 	QMessageObject::show(v);
 }
 
+void QObjectCursor::returnInvItem() {
+	if (_actionType == kActionObjUse) {
+		_invObj->show(1);
+		_invObj->_isActive = true;
+	}
+}
+
 }

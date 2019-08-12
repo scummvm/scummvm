@@ -46,6 +46,7 @@ public:
 	void draw() override;
 	void show(bool v) override;
 	bool isInPoint(int x, int y) override { return 0; }
+	void returnInvItem();
 
 public:
 	int _actionType;
