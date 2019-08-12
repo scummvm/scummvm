@@ -193,6 +193,21 @@ void QMessageObject::processMessage(const QMessage &msg) {
 			g_vm->getQSystem()->_mainInterface->_dialog._field4 = 0;
 			g_vm->getQSystem()->_mainInterface->_dialog.sub_4155D0(-1);
 			break;
+		case kCursor:
+			if (msg.arg1 == -1) {
+				g_vm->getQSystem()->_cursor->returnInvItem();
+				g_vm->getQSystem()->_cursor->_resourceId = 5002;
+				g_vm->getQSystem()->_cursor->_actionType = 0;
+				g_vm->getQSystem()->_cursor->_invObj = nullptr;
+			} else {
+				g_vm->getQSystem()->_cursor->returnInvItem();
+				g_vm->getQSystem()->_cursor->_resourceId = msg.arg1;
+				g_vm->getQSystem()->_cursor->_actionType = kActionObjUse;
+				g_vm->getQSystem()->_cursor->_invObj = this;
+				_isShown = 0;
+				_isActive = 0;
+			}
+			g_vm->videoSystem()->makeAllDirty();
 		case kDialog:
 			g_vm->getQSystem()->_mainInterface->_dialog.start(msg.arg1, this);
 			break;
