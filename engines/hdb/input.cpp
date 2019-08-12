@@ -455,6 +455,10 @@ void Input::updateMouseButtons(int l, int m, int r) {
 	// Check if LButton has been pressed
 	// Check if LButton has been lifted
 	if (_mouseLButton) {
+		if (g_hdb->isPPC()) {
+			stylusDown(_mouseX, _mouseY);
+			return;
+		}
 		if (_mouseX > (g_hdb->_screenWidth - 32 * 5) && _mouseY < 240) {
 			g_hdb->_window->checkInvSelect(_mouseX, _mouseY);
 		} else if (_mouseX > (g_hdb->_screenWidth - 32 * 5) && _mouseY >= 240) {
