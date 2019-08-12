@@ -698,16 +698,14 @@ bool OSystem_Android::pollEvent(Common::Event &event) {
 	if (_queuedEventTime && (getMillis() > _queuedEventTime)) {
 		event = _queuedEvent;
 		_queuedEventTime = 0;
-		unlockMutex(_event_queue_lock);
-		return true;
-	}
-
-	if (_event_queue.empty()) {
+		// unlockMutex(_event_queue_lock);
+		// return true;
+	} else if (_event_queue.empty()) {
 		unlockMutex(_event_queue_lock);
 		return false;
+	} else {
+		event = _event_queue.pop();
 	}
-
-	event = _event_queue.pop();
 
 	unlockMutex(_event_queue_lock);
 
