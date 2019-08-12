@@ -229,7 +229,7 @@ bool WindowsTextToSpeechManager::stop() {
 	WaitForSingleObject(_speechMutex, INFINITE);
 	while (!_speechQueue.empty()) {
 		if (_speechQueue.front() != NULL)
-		free(_speechQueue.front());
+			free(_speechQueue.front());
 		_speechQueue.pop_front();
 	}
 	_speechQueue.push_back(NULL);
