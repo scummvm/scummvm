@@ -186,8 +186,7 @@ static const tSageGameDescription gameDescriptions[] = {
 		GF_CD | GF_ALT_REGIONS | GF_DEMO
 	},
 
-	// Return to Ringworld. Spanish fan translation. They provide the entire game for download,
-	// so it's being treated as pirated, and not supported
+	// Return to Ringworld. Spanish fan translation.
 	{
 		{
 			"ringworld2",
@@ -195,7 +194,7 @@ static const tSageGameDescription gameDescriptions[] = {
 			AD_ENTRY1s("r2rw.rlb", "05f9af7b0153a0c5727022dc0122d02b", 47678672),
 			Common::ES_ESP,
 			Common::kPlatformDOS,
-			ADGF_CD | ADGF_PIRATED,
+			ADGF_CD,
 			GUIO0()
 		},
 		GType_Ringworld2,
