@@ -311,7 +311,7 @@ TestExitStatus Speechtests::testStateStacking() {
 	ttsMan->pushState();
 	Common::Array<int> femaleVoices = ttsMan->getVoiceIndicesByGender(Common::TTSVoice::FEMALE);
 	Common::Array<Common::TTSVoice> allVoices = ttsMan->getVoicesArray();
-	if (femaleVoices.size() == 0) 
+	if (femaleVoices.size() == 0)
 		ttsMan->setVoice(1 % allVoices.size());
 	else
 		ttsMan->setVoice(femaleVoices[0]);

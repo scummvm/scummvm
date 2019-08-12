@@ -36,7 +36,7 @@ TTSVoice::TTSVoice()
 	*_refCount = 1;
 }
 
-TTSVoice::TTSVoice(Gender gender, Age age, void *data, String description) 
+TTSVoice::TTSVoice(Gender gender, Age age, void *data, String description)
 	: _gender(gender)
 	, _age(age)
 	, _data(data)

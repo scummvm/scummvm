@@ -144,7 +144,7 @@ public:
 		DROP
 	};
 	/**
-	 * The constructor sets the language to the translation manager language if 
+	 * The constructor sets the language to the translation manager language if
 	 * USE_TRANSLATION is defined, or english when it isn't defined. It sets the rate,
 	 * pitch and volume to their middle values.
 	 */
@@ -209,7 +209,7 @@ public:
 	 * Returns true, if the TTS engine is ready to speak (isn't speaking and isn't paused)
 	 */
 	virtual bool isReady() { return false; }
-	
+
 	/**
 	 * Sets a voice to be used by the TTS.
 	 *
@@ -284,7 +284,7 @@ public:
 	 * have the needed gender.
 	 *
 	 * @param gender Gender, which indices should be returned
-	 * 
+	 *
 	 * @return Array of indices into _availableVoices
 	 */
 	Array<int> getVoiceIndicesByGender (TTSVoice::Gender gender);
