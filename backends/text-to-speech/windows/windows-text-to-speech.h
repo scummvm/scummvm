@@ -60,7 +60,7 @@ public:
 	virtual bool isSpeaking();
 	virtual bool isPaused();
 	virtual bool isReady();
-	
+
 	virtual void setVoice(unsigned index);
 
 	virtual void setRate(int rate);

@@ -838,7 +838,7 @@
 	</dialog>
 
 	<dialog name = 'GlobalOptions_Cloud_ConnectionWizard' overlays = 'Dialog.GlobalOptions'>
-		<layout type = 'vertical' padding = '0, 0, 0, 0'>		
+		<layout type = 'vertical' padding = '0, 0, 0, 0'>
 			<widget name = 'Container'/>
 		</layout>
 	</dialog>

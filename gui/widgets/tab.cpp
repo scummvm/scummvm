@@ -237,7 +237,7 @@ void TabWidget::handleMouseMoved(int x, int y, int button) {
 			_lastRead = tabID;
 		}
 	}
-	else 
+	else
 		_lastRead = -1;
 }
 

@@ -824,7 +824,7 @@
 	</dialog>
 
 	<dialog name = 'GlobalOptions_Cloud_ConnectionWizard' overlays = 'Dialog.GlobalOptions'>
-		<layout type = 'vertical' padding = '0, 0, 0, 0'>		
+		<layout type = 'vertical' padding = '0, 0, 0, 0'>
 			<widget name = 'Container'/>
 		</layout>
 	</dialog>
@@ -918,11 +918,11 @@
 
 	<dialog name='GlobalOptions_Accessibility' overlays='Dialog.GlobalOptions.TabWidget'>
 		<layout type='vertical' padding='16,16,16,16' spacing='16'>
-			<widget name='TTSCheckbox' 
-				type='Checkbox' 
+			<widget name='TTSCheckbox'
+				type='Checkbox'
 				/>
-			<widget name='TTSVoiceSelection' 
-				type='PopUp' 
+			<widget name='TTSVoiceSelection'
+				type='PopUp'
 				/>
 			</layout>
 		</dialog>
