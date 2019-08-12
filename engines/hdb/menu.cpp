@@ -536,9 +536,10 @@ void Menu::drawMenu() {
 		drawRocketAndSelections();
 
 		// draw version #
-		_versionGfx->drawMasked(g_hdb->_screenWidth - 6 * 8, g_hdb->_screenHeight - 8);
+		if (_versionGfx)
+			_versionGfx->drawMasked(g_hdb->_screenWidth - 6 * 8, g_hdb->_screenHeight - 8);
 
-		if (g_hdb->isDemo()) {
+		if (g_hdb->isDemo() && _demoPlaqueGfx) {
 			_demoPlaqueGfx->drawMasked(g_hdb->_screenWidth / 2 - _demoPlaqueGfx->_width / 2, 2);
 		}
 
