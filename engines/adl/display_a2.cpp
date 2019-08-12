@@ -277,9 +277,9 @@ public:
 				const double g64 = y + (-0.272 * i) + (-0.647 * q);
 				const double b64 = y + (-1.105 * i) + (1.702 * q);
 
-				uint8 r = CLIP(r64, 0.0, 1.0) * 255;
-				uint8 g = CLIP(g64, 0.0, 1.0) * 255;
-				uint8 b = CLIP(b64, 0.0, 1.0) * 255;
+				uint8 r = CLIP<double>(r64, 0.0, 1.0) * 255;
+				uint8 g = CLIP<double>(g64, 0.0, 1.0) * 255;
+				uint8 b = CLIP<double>(b64, 0.0, 1.0) * 255;
 
 	#ifdef NTSC_REMOVE_WHITE_RINGING
 				if ((s & 0xf) == 15) {
@@ -334,7 +334,7 @@ public:
 				}
 			}
 
-			const uint8 brightness = CLIP(y, 0.0, 1.0) * 255;
+			const uint8 brightness = CLIP<double>(y, 0.0, 1.0) * 255;
 			_colors[s] = this->_format.RGBToColor(brightness, brightness, brightness);
 		}
 	}
