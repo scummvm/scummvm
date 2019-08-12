@@ -4097,6 +4097,15 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformDOS, 0, GUIO_STD16	},
 
+	// Quest for Glory 4 - English DOS Non-Interactive Demo (from KQ6 CD-ROM)
+	// No interpreter version number, doesn't include FLYTHRU.SEQ intro
+	// Note: we are not using ADGF_DEMO here, to avoid a game ID like qfg4demo-demo
+	{"qfg4demo", "Demo", {
+		{ "resource.map", 0, "0d71869e3fa1d6a23c2a76ad845f693f", 922 },
+		{ "resource.000", 0, "41ba03f0b188b029132daa3ece0d3e14", 623154 },
+		AD_LISTEND},
+		Common::EN_ANY, Common::kPlatformDOS, 0, GUIO_STD16 },
+
 #ifdef ENABLE_SCI32
 
 #define GUIO_QFG4_FLOPPY GUIO2(GUIO_NOSPEECH, \
