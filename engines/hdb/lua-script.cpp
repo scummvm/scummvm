@@ -67,7 +67,7 @@ struct ScriptPatch {
 
 	{"MAP01", "strsub(", "string.sub("}, // line 23
 	{"MAP01", "if( covert_index < getn(covert_dialog) ) then", "if( covert_index < #covert_dialog ) then"}, // line 766
-	{"MAP01", "if( chiste_index < getn( chiste_dialog ) )then", "if( covert_index < #chiste_dialog ) then"}, // 845
+	{"MAP01", "if( chiste_index < getn( chiste_dialog ) )then", "if( chiste_index < #chiste_dialog ) then"}, // 845
 
 	{"MAP10", "if( getn( beds ) == 0 ) then", "if( #beds == 0 ) then"}, // line 119
 	{"MAP10", "emptybed_use( %x, %y, %v1, %v2 )", "emptybed_use( x, y, v1, v2 )"}, // line 121
