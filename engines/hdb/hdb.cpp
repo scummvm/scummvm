@@ -46,10 +46,10 @@ HDBGame* g_hdb;
 HDBGame::HDBGame(OSystem *syst, const ADGameDescription *gameDesc) : Engine(syst), _gameDescription(gameDesc) {
 	g_hdb = this;
 	if (isPPC()) {
-		_screenWidth = 320;
-		_screenHeight = 240;
-		_screenDrawWidth = 320;
-		_screenDrawHeight = 240;
+		_screenWidth = 240;
+		_screenHeight = 320;
+		_screenDrawWidth = 240;
+		_screenDrawHeight = 320;
 		_progressY = 280;
 	} else {
 		_screenWidth = 640;
