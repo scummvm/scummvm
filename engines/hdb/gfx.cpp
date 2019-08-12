@@ -24,6 +24,9 @@
 #include "common/sinetables.h"
 #include "common/random.h"
 #include "common/memstream.h"
+#include "graphics/cursor.h"
+#include "graphics/wincursor.h"
+#include "graphics/cursorman.h"
 
 #include "hdb/hdb.h"
 #include "hdb/ai.h"
@@ -86,6 +89,14 @@ bool Gfx::init() {
 
 	// Set the default cursor pos & char clipping
 	setCursor(0, 0);
+
+	if (g_hdb->isPPC()) {
+		Graphics::Cursor *cursor = Graphics::makeDefaultWinCursor();
+
+		CursorMan.replaceCursor(cursor->getSurface(), cursor->getWidth(), cursor->getHeight(), cursor->getHotspotX(), cursor->getHotspotY(), cursor->getKeyColor());
+		CursorMan.replaceCursorPalette(cursor->getPalette(), cursor->getPaletteStartIndex(), cursor->getPaletteCount());
+		delete cursor;
+	}
 
 	_eLeft = 0;
 	_eRight = g_hdb->_screenWidth;
@@ -289,11 +300,12 @@ void Gfx::drawPointer() {
 		return;
 
 	// If we are in game and the cursor should be displayed, draw it
-	if (g_hdb->isPPC()) {
-		debug(9, "STUB: Draw Pointer in PPC");
-	} else {
-		if (_showCursor || g_hdb->getGameState() != GAME_PLAY)
+	if (_showCursor || g_hdb->getGameState() != GAME_PLAY) {
+		if (g_hdb->isPPC()) {
+			CursorMan.showMouse(true);
+		} else {
 			_mousePointer[anim]->drawMasked(g_hdb->_input->getMouseX() - 16, g_hdb->_input->getMouseY() - 16);
+		}
 	}
 }
 
