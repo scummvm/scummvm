@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2019-08-13 23:16+0200\n"
-"PO-Revision-Date: 2019-08-13 21:24+0000\n"
+"PO-Revision-Date: 2019-08-13 21:32+0000\n"
 "Last-Translator: Thierry Crozat <criezy@scummvm.org>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fr/>\n"
@@ -3117,7 +3117,7 @@ msgstr "Toujours utiliser du text noir et blanc net"
 
 #: engines/adl/detection.cpp:92
 msgid "Do not emulate NTSC artifacts for text"
-msgstr ""
+msgstr "Ne pas émuler les artefacts NTSC pour le texte"
 
 #: engines/agi/detection.cpp:147 engines/cine/detection.cpp:70
 #: engines/drascula/detection.cpp:331 engines/dreamweb/detection.cpp:48
@@ -4442,6 +4442,8 @@ msgid ""
 "The selected audio driver requires the following file(s):\n"
 "\n"
 msgstr ""
+"Le pilote audio sélectionné nécessite le(s) fichier(s) suivant :\n"
+"\n"
 
 #: engines/sci/sound/music.cpp:164
 msgid ""
@@ -4458,6 +4460,20 @@ msgid ""
 "In that case you may need to apply the original Sierra patch.\n"
 "\n"
 msgstr ""
+"\n"
+"\n"
+"Certains pilotes audio (du moins pour certains jeux) ont été mis\n"
+"à disposition par Sierra en tant que correctifs après-vente  et\n"
+"n'ont donc peut-être pas été installés lors de la configuration\n"
+"originale du jeu.\n"
+"\n"
+"Veuillez copier ce(s) fichier(s) dans votre répertoire de données de jeu.\n"
+"\n"
+"Toutefois, veuillez noter que les fichiers peuvent ne pas être\n"
+"disponibles séparément, mais seulement sous forme de ressources\n"
+"groupées. Dans ce cas, vous devrez peut-être appliquer le patch\n"
+"Sierra original.\n"
+"\n"
 
 #: engines/scumm/detection.cpp:1123
 msgid ""
