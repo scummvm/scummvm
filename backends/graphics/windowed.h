@@ -34,7 +34,8 @@ enum {
 	STRETCH_CENTER = 0,
 	STRETCH_INTEGRAL = 1,
 	STRETCH_FIT = 2,
-	STRETCH_STRETCH = 3
+	STRETCH_STRETCH = 3,
+	STRETCH_FIT_FORCE_ASPECT = 4
 };
 
 class WindowedGraphicsManager : virtual public GraphicsManager {
@@ -341,6 +342,7 @@ private:
 		// Mode Integral = scale by an integral amount.
 		// Mode Fit      = scale to fit the window while respecting the aspect ratio
 		// Mode Stretch  = scale and stretch to fit the window without respecting the aspect ratio
+		// Mode Fit Force Aspect = scale to fit the window while forcing a 4:3 aspect ratio
 
 		int width = 0, height = 0;
 		if (mode == STRETCH_CENTER || mode == STRETCH_INTEGRAL) {
@@ -359,7 +361,13 @@ private:
 			frac_t windowAspect = intToFrac(_windowWidth) / _windowHeight;
 			width = _windowWidth;
 			height = _windowHeight;
-			if (mode != STRETCH_STRETCH) {
+			if (mode == STRETCH_FIT_FORCE_ASPECT) {
+				frac_t ratio = intToFrac(4) / 3;
+				if (windowAspect < ratio)
+					height = intToFrac(width) / ratio;
+				else if (windowAspect > ratio)
+					width = fracToInt(height * ratio);
+			} else if (mode != STRETCH_STRETCH) {
 				if (windowAspect < displayAspect)
 					height = intToFrac(width) / displayAspect;
 				else if (windowAspect > displayAspect)
