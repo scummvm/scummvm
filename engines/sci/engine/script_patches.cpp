@@ -14281,6 +14281,41 @@ static const uint16 sq4PatchSocksDressingRoomObstacles[] = {
 	PATCH_END
 };
 
+// SQ4CD lets you keep the unstable ordnance and its points for the entire game.
+//
+// The bomb in room 40 is a joke item with joke points which kills you when
+//  entering the sewer, therefore you're not allowed to pick it up after leaving
+//  the sewer. This was originally enforced in the floppy version by setting a
+//  short timer which summons the Sequel Police to kill you. The shootEgo script
+//  was refactored in the CD version and this code no longer works. Rather than
+//  fix this, Sierra left the broken code in place, and added new code to kill
+//  you when interacting with the tank if the previous room was the sewer. This
+//  is incorrect since you can walk right to room 45 and return to room 40,
+//  which defeats both checks and allows you to get and keep the bomb.
+//
+// We fix this by replacing the previous room test with a flag test. Flag 0 is
+//  set when the police are on the streets and is what the original code tested.
+//
+// Applies to: English PC CD
+// Responsible method: tankScript:changeState(2)
+// Fixes bug #11077
+static const uint16 sq4CdSignatureUnstableOrdnance[] = {
+	SIG_MAGICDWORD,
+	0x31, 0x2b,                         // bnt 2b
+	0x89, 0x0c,                         // lsg 0c [ previous room ]
+	0x35, 0x48,                         // ldi 48 [ sewer manhole ]
+	0x1a,                               // eq?    [ came from sewer? ]
+	SIG_END
+};
+
+static const uint16 sq4CdPatchUnstableOrdnance[] = {
+	PATCH_ADDTOOFFSET(+2),
+	0x78,                               // push1
+	0x76,                               // push0 [ flag 0, set when police are on streets ]
+	0x45, 0x06, 0x02,                   // callb proc0_6 02 [ is flag 0 set? ]
+	PATCH_END
+};
+
 //          script, description,                                      signature                                      patch
 static const SciScriptPatcherEntry sq4Signatures[] = {
 	{  true,     1, "Floppy: EGA intro delay fix",                    2, sq4SignatureEgaIntroDelay,                     sq4PatchEgaIntroDelay },
@@ -14289,6 +14324,7 @@ static const SciScriptPatcherEntry sq4Signatures[] = {
 	{  true,   376, "Floppy: click atm card on sequel police fix",    1, sq4FloppySignatureClickAtmCardOnSequelPolice,  sq4FloppyPatchClickAtmCardOnSequelPolice },
 	{  true,   376, "Floppy: throw stuff at sequel police fix",       1, sq4FloppySignatureThrowStuffAtSequelPolice,    sq4FloppyPatchThrowStuffAtSequelPolice },
 	{  true,   700, "Floppy: throw stuff at sequel police fix",       1, sq4FloppySignatureThrowStuffAtSequelPolice,    sq4FloppyPatchThrowStuffAtSequelPolice },
+	{  true,    40, "CD: unstable ordnance fix",                      1, sq4CdSignatureUnstableOrdnance,                sq4CdPatchUnstableOrdnance },
 	{  true,    45, "CD: walk in from below for room 45 fix",         1, sq4CdSignatureWalkInFromBelowRoom45,           sq4CdPatchWalkInFromBelowRoom45 },
 	{  true,   105, "Floppy: sewer lockup fix",                       1, sq4FloppySignatureSewerLockup,                 sq4FloppyPatchSewerLockup },
 	{  true,   105, "CD: sewer lockup fix",                           1, sq4CDSignatureSewerLockup,                     sq4CDPatchSewerLockup },
