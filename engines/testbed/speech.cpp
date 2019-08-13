@@ -154,7 +154,7 @@ TestExitStatus Speechtests::testPauseResume() {
 	ttsMan->setPitch(0);
 	ttsMan->setVoice(0);
 	Testsuite::clearScreen();
-	Common::String info = "Text to speech pause test. You should expect a voice to start speaking, then after approximately a second of speech, it should pause for about a second and then continue from where it left.";
+	Common::String info = "Text to speech pause test. You should expect a voice to start speaking, then after approximately a second of speech, it should pause and then continue from where it left.";
 
 	Common::Point pt(0, 100);
 	Testsuite::writeOnScreen("Testing TTS pause", pt);
@@ -172,7 +172,7 @@ TestExitStatus Speechtests::testPauseResume() {
 		return kTestFailed;
 	}
 	ttsMan->say("and then resume again", Common::TextToSpeechManager::QUEUE);
-	g_system->delayMillis(1000);
+	g_system->delayMillis(3000);
 	if (!ttsMan->isPaused()) {
 		Testsuite::logDetailedPrintf("TTS pause failed\n");
 		return kTestFailed;
@@ -183,7 +183,7 @@ TestExitStatus Speechtests::testPauseResume() {
 		return kTestFailed;
 	}
 	waitForSpeechEnd(ttsMan);
-	Common::String prompt = "Did you hear a voice saying: \"Testing text to speech, the speech should pause after a second and then resume again.\" but with a second long pause in the middle?";
+	Common::String prompt = "Did you hear a voice saying: \"Testing text to speech, the speech should pause after a second and then resume again.\" but with a pause in the middle?";
 	if (!Testsuite::handleInteractiveInput(prompt, "Yes", "No", kOptionLeft)) {
 		Testsuite::logDetailedPrintf("TTS pauseResume failed\n");
 		return kTestFailed;
