@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2019-08-09 23:20+0200\n"
+"POT-Creation-Date: 2019-08-13 23:16+0200\n"
 "PO-Revision-Date: 2019-08-08 20:47+0000\n"
 "Last-Translator: scootergrisen <scootergrisen@gmail.com>\n"
 "Language-Team: Danish <https://translations.scummvm.org/projects/scummvm/"
@@ -2424,27 +2424,27 @@ msgid "Resolution: %dx%d"
 msgstr "Opløsning: %dx%d"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:624
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2511
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2518
 msgid "Enabled aspect ratio correction"
 msgstr "Aktivér rettelse af højde-/breddeforhold"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:626
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2517
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2524
 msgid "Disabled aspect ratio correction"
 msgstr "Deaktivér rettelse af højde-/breddeforhold"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:646
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2534
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2541
 msgid "Filtering enabled"
 msgstr "Filtering aktiveret"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:648
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2536
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2543
 msgid "Filtering disabled"
 msgstr "Filtrering deaktiveret"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:676
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2565
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2572
 msgid "Stretch mode"
 msgstr "Stræktilstand"
 
@@ -2459,7 +2459,7 @@ msgctxt "lowres"
 msgid "Normal (no scaling)"
 msgstr "Normal (ingen skalering)"
 
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2627
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2634
 msgid "Active graphics filter:"
 msgstr "Aktive grafik filtre:"
 
@@ -3055,21 +3055,40 @@ msgstr ""
 "Ukorrekt version af '%s'-motorens datafil fundet. Forventet %d.%d, men fandt "
 "%d.%d."
 
-#: engines/adl/detection.cpp:49 engines/adl/detection.cpp:59
-msgid "Color mode"
-msgstr "Farvetilstand"
+#: engines/adl/detection.cpp:51
+#, fuzzy
+msgid "TV emulation"
+msgstr "MT-32-emulator"
 
-#: engines/adl/detection.cpp:50 engines/adl/detection.cpp:60
-msgid "Use color graphics"
+#: engines/adl/detection.cpp:52
+msgid "Emulate composite output to an NTSC TV"
+msgstr ""
+
+#: engines/adl/detection.cpp:61 engines/adl/detection.cpp:71
+#, fuzzy
+msgid "Color graphics"
 msgstr "Brug farve grafik"
 
-#: engines/adl/detection.cpp:69
-msgid "Scanlines"
-msgstr "Skanlinjer"
+#: engines/adl/detection.cpp:62 engines/adl/detection.cpp:72
+#, fuzzy
+msgid "Use color graphics instead of monochrome"
+msgstr "Brug farve grafik"
 
-#: engines/adl/detection.cpp:70
+#: engines/adl/detection.cpp:81
 msgid "Show scanlines"
 msgstr "Vis skanlinjer"
+
+#: engines/adl/detection.cpp:82
+msgid "Darken every other scanline to mimic the look of a CRT"
+msgstr ""
+
+#: engines/adl/detection.cpp:91
+msgid "Always use sharp monochrome text"
+msgstr ""
+
+#: engines/adl/detection.cpp:92
+msgid "Do not emulate NTSC artifacts for text"
+msgstr ""
 
 #: engines/agi/detection.cpp:147 engines/cine/detection.cpp:70
 #: engines/drascula/detection.cpp:331 engines/dreamweb/detection.cpp:48
@@ -5424,6 +5443,12 @@ msgstr ""
 "Det gemte spil bruger version %u, men motoren understøtter kun op til "
 "version %d. Du skal bruge en opdateret version af motoren for at bruge det "
 "gemte spil."
+
+#~ msgid "Color mode"
+#~ msgstr "Farvetilstand"
+
+#~ msgid "Scanlines"
+#~ msgstr "Skanlinjer"
 
 #~ msgid "Storage:"
 #~ msgstr "Lager:"

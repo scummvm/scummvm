@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2019-08-09 23:20+0200\n"
+"POT-Creation-Date: 2019-08-13 23:16+0200\n"
 "PO-Revision-Date: 2019-08-08 20:47+0000\n"
 "Last-Translator: George Kormendi <grubycza@hotmail.com>\n"
 "Language-Team: Hungarian <https://translations.scummvm.org/projects/scummvm/"
@@ -2412,27 +2412,27 @@ msgid "Resolution: %dx%d"
 msgstr "Felbontás: %dx%d"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:624
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2511
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2518
 msgid "Enabled aspect ratio correction"
 msgstr "Méretarány korrekció engedélyezve"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:626
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2517
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2524
 msgid "Disabled aspect ratio correction"
 msgstr "Méretarány korrekció letiltva"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:646
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2534
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2541
 msgid "Filtering enabled"
 msgstr "Szûrés engedélyezve"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:648
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2536
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2543
 msgid "Filtering disabled"
 msgstr "Szûrés letiltva"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:676
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2565
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2572
 msgid "Stretch mode"
 msgstr "Nyújtás mód"
 
@@ -2447,7 +2447,7 @@ msgctxt "lowres"
 msgid "Normal (no scaling)"
 msgstr "Normál (nincs átméretezés)"
 
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2627
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2634
 msgid "Active graphics filter:"
 msgstr "Aktív grafikus szûrõk:"
 
@@ -3040,21 +3040,40 @@ msgstr ""
 "Hibás verziójú '%s' motor adatfájlt találtam. Elvárt %d.%d helyett ez van %d."
 "%d."
 
-#: engines/adl/detection.cpp:49 engines/adl/detection.cpp:59
-msgid "Color mode"
-msgstr "Szines mód"
+#: engines/adl/detection.cpp:51
+#, fuzzy
+msgid "TV emulation"
+msgstr "MT-32 emulátor"
 
-#: engines/adl/detection.cpp:50 engines/adl/detection.cpp:60
-msgid "Use color graphics"
+#: engines/adl/detection.cpp:52
+msgid "Emulate composite output to an NTSC TV"
+msgstr ""
+
+#: engines/adl/detection.cpp:61 engines/adl/detection.cpp:71
+#, fuzzy
+msgid "Color graphics"
 msgstr "Szines grafikát használ"
 
-#: engines/adl/detection.cpp:69
-msgid "Scanlines"
-msgstr "Pászta"
+#: engines/adl/detection.cpp:62 engines/adl/detection.cpp:72
+#, fuzzy
+msgid "Use color graphics instead of monochrome"
+msgstr "Szines grafikát használ"
 
-#: engines/adl/detection.cpp:70
+#: engines/adl/detection.cpp:81
 msgid "Show scanlines"
 msgstr "Pászta megjelenítés"
+
+#: engines/adl/detection.cpp:82
+msgid "Darken every other scanline to mimic the look of a CRT"
+msgstr ""
+
+#: engines/adl/detection.cpp:91
+msgid "Always use sharp monochrome text"
+msgstr ""
+
+#: engines/adl/detection.cpp:92
+msgid "Do not emulate NTSC artifacts for text"
+msgstr ""
 
 #: engines/agi/detection.cpp:147 engines/cine/detection.cpp:70
 #: engines/drascula/detection.cpp:331 engines/dreamweb/detection.cpp:48
@@ -5404,6 +5423,12 @@ msgstr ""
 "Ez a mentett állás %u verziót használ, de ez a motor csak %d verzió felettit "
 "támogat. Szükséged van a motor frissített verziójára, hogy használd a "
 "mentett játékállást."
+
+#~ msgid "Color mode"
+#~ msgstr "Szines mód"
+
+#~ msgid "Scanlines"
+#~ msgstr "Pászta"
 
 #~ msgid "Storage:"
 #~ msgstr "Tároló:"

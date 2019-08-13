@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2019-08-09 23:20+0200\n"
+"POT-Creation-Date: 2019-08-13 23:16+0200\n"
 "PO-Revision-Date: 2019-08-09 22:14+0000\n"
 "Last-Translator: Lothar Serra Mari <serra@scummvm.org>\n"
 "Language-Team: German <https://translations.scummvm.org/projects/scummvm/"
@@ -2445,27 +2445,27 @@ msgid "Resolution: %dx%d"
 msgstr "Auflösung: %dx%d"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:624
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2511
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2518
 msgid "Enabled aspect ratio correction"
 msgstr "Seitenverhältniskorrektur an"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:626
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2517
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2524
 msgid "Disabled aspect ratio correction"
 msgstr "Seitenverhältniskorrektur aus"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:646
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2534
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2541
 msgid "Filtering enabled"
 msgstr "Bilineare Filterung aktiviert"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:648
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2536
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2543
 msgid "Filtering disabled"
 msgstr "Bilineare Filterung deaktiviert"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:676
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2565
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2572
 msgid "Stretch mode"
 msgstr "Skaliermodus"
 
@@ -2480,7 +2480,7 @@ msgctxt "lowres"
 msgid "Normal (no scaling)"
 msgstr "Normal ohn.Skalieren"
 
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2627
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2634
 msgid "Active graphics filter:"
 msgstr "Aktiver Grafikfilter:"
 
@@ -3077,21 +3077,40 @@ msgstr ""
 "Falsche Version der Engine-Datendatei '%s' gefunden. %d.%d erwartet, aber %d."
 "%d bekommen."
 
-#: engines/adl/detection.cpp:49 engines/adl/detection.cpp:59
-msgid "Color mode"
-msgstr "Farbmodus einschalten"
+#: engines/adl/detection.cpp:51
+#, fuzzy
+msgid "TV emulation"
+msgstr "MT-32-Emulator"
 
-#: engines/adl/detection.cpp:50 engines/adl/detection.cpp:60
-msgid "Use color graphics"
+#: engines/adl/detection.cpp:52
+msgid "Emulate composite output to an NTSC TV"
+msgstr ""
+
+#: engines/adl/detection.cpp:61 engines/adl/detection.cpp:71
+#, fuzzy
+msgid "Color graphics"
 msgstr "Farbgrafik verwenden"
 
-#: engines/adl/detection.cpp:69
-msgid "Scanlines"
-msgstr "Abtastzeilen/Scanlines"
+#: engines/adl/detection.cpp:62 engines/adl/detection.cpp:72
+#, fuzzy
+msgid "Use color graphics instead of monochrome"
+msgstr "Farbgrafik verwenden"
 
-#: engines/adl/detection.cpp:70
+#: engines/adl/detection.cpp:81
 msgid "Show scanlines"
 msgstr "Abtastzeilen (Scanlines) anzeigen"
+
+#: engines/adl/detection.cpp:82
+msgid "Darken every other scanline to mimic the look of a CRT"
+msgstr ""
+
+#: engines/adl/detection.cpp:91
+msgid "Always use sharp monochrome text"
+msgstr ""
+
+#: engines/adl/detection.cpp:92
+msgid "Do not emulate NTSC artifacts for text"
+msgstr ""
 
 #: engines/agi/detection.cpp:147 engines/cine/detection.cpp:70
 #: engines/drascula/detection.cpp:331 engines/dreamweb/detection.cpp:48
@@ -5508,6 +5527,12 @@ msgstr ""
 "Dieser Spielstand verwendet Version %u, diese Engine unterstützt jedoch nur "
 "Spielstände bis zu Version %d. Sie benötigen eine aktualisierte Version der "
 "Engine, um diesen Spielstand zu verwenden."
+
+#~ msgid "Color mode"
+#~ msgstr "Farbmodus einschalten"
+
+#~ msgid "Scanlines"
+#~ msgstr "Abtastzeilen/Scanlines"
 
 #~ msgid "Storage:"
 #~ msgstr "Cloud-Speicher:"
