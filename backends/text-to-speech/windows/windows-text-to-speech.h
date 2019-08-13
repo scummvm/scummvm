@@ -29,6 +29,8 @@
 
 #include "common/text-to-speech.h"
 #include "common/str.h"
+#include "common/list.h"
+
 
 class WindowsTextToSpeechManager : public Common::TextToSpeechManager {
 public:
@@ -38,6 +40,12 @@ public:
 		SPEAKING,
 		BROKEN,
 		NO_VOICE
+	};
+
+	struct SpeechParameters {
+		Common::List<WCHAR *> *queue;
+		SpeechState *state;
+		HANDLE *mutex;
 	};
 
 	WindowsTextToSpeechManager();
@@ -72,7 +80,12 @@ private:
 	Common::String lcidToLocale(Common::String lcid);
 	SpeechState _speechState;
 	Common::String _lastSaid;
+	HANDLE _thread;
+	Common::List<WCHAR *> _speechQueue;
+	SpeechParameters _threadParams;
+	HANDLE _speechMutex;
 };
+
 
 #endif
 

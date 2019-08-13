@@ -50,6 +50,15 @@ ISpAudio *_audio;
 WindowsTextToSpeechManager::WindowsTextToSpeechManager()
 	: _speechState(BROKEN){
 	init();
+	_threadParams.queue = &_speechQueue;
+	_threadParams.state = &_speechState;
+	_threadParams.mutex = &_speechMutex;
+	_thread = NULL;
+	_speechMutex = CreateMutex(NULL, FALSE, NULL);
+	if (_speechMutex == NULL) {
+		_speechState = BROKEN;
+		warning("Could not create TTS mutex");
+	}
 }
 
 void WindowsTextToSpeechManager::init() {
@@ -84,17 +93,65 @@ void WindowsTextToSpeechManager::init() {
 
 	_voice->SetOutput(_audio, FALSE);
 
-	if(_ttsState->_availableVoices.size() > 0)
+	if (_ttsState->_availableVoices.size() > 0)
 		_speechState = READY;
 	else
 		_speechState = NO_VOICE;
 	_lastSaid = "";
+	while (!_speechQueue.empty()) {
+		free(_speechQueue.front());
+		_speechQueue.pop_front();
+	}
 }
 
 WindowsTextToSpeechManager::~WindowsTextToSpeechManager() {
+	stop();
+	if (_thread != NULL) {
+		WaitForSingleObject(_thread, INFINITE);
+		CloseHandle(_thread);
+	}
+	if (_speechMutex != NULL) {
+		CloseHandle(_speechMutex);
+	}
 	if (_voice)
 		_voice->Release();
 	::CoUninitialize();
+}
+
+DWORD WINAPI startSpeech(LPVOID parameters) {
+	WindowsTextToSpeechManager::SpeechParameters *params =
+		(WindowsTextToSpeechManager::SpeechParameters *) parameters;
+	// wait for the previous speech, if the previous thread exited too early
+	_voice->WaitUntilDone(INFINITE);
+
+	while (!params->queue->empty()) {
+		WaitForSingleObject(*params->mutex, INFINITE);
+		// check again, when we have exclusive access to the queue
+		if (params->queue->empty() || *(params->state) == WindowsTextToSpeechManager::PAUSED) {
+			break;
+		}
+		WCHAR *currentSpeech = params->queue->front();
+		_voice->Speak(currentSpeech, SPF_PURGEBEFORESPEAK | SPF_ASYNC, 0);
+		ReleaseMutex(*params->mutex);
+
+		while (*(params->state) != WindowsTextToSpeechManager::PAUSED)
+			if (_voice->WaitUntilDone(10) == S_OK)
+				break;
+
+		WaitForSingleObject(*params->mutex, INFINITE);
+		if (!params->queue->empty() && params->queue->front() == currentSpeech) {
+			if (currentSpeech != NULL)
+				free(currentSpeech);
+			params->queue->pop_front();
+		}
+		ReleaseMutex(*params->mutex);
+	}
+
+	WaitForSingleObject(*params->mutex, INFINITE);
+	if (*(params->state) != WindowsTextToSpeechManager::PAUSED)
+		*(params->state) = WindowsTextToSpeechManager::READY;
+	ReleaseMutex(*params->mutex);
+	return 0;
 }
 
 bool WindowsTextToSpeechManager::say(Common::String str, Action action, Common::String charset) {
@@ -106,12 +163,6 @@ bool WindowsTextToSpeechManager::say(Common::String str, Action action, Common::
 	if (isSpeaking() && action == DROP)
 		return true;
 
-	if (isSpeaking() && action == INTERRUPT_NO_REPEAT && _lastSaid == str)
-		return true;
-
-	if (isSpeaking() && action == QUEUE_NO_REPEAT && _lastSaid == str)
-		return true;
-
 	if (charset.empty()) {
 #ifdef USE_TRANSLATION
 		charset = TransMan.getCurrentCharset();
@@ -119,65 +170,114 @@ bool WindowsTextToSpeechManager::say(Common::String str, Action action, Common::
 		charset = "ASCII";
 #endif
 	}
-	_lastSaid = str;
+
 	// We have to set the pitch by prepending xml code at the start of the said string;
 	Common::String pitch= Common::String::format("<pitch absmiddle=\"%d\">", _ttsState->_pitch / 10);
 	str.replace((uint32)0, 0, pitch);
 	WCHAR *strW = Win32::ansiToUnicode(str.c_str(), Win32::getCodePageId(charset));
 
-	if ((isPaused() || isSpeaking()) && (action == INTERRUPT || action == INTERRUPT_NO_REPEAT))
-		stop();
+	WaitForSingleObject(_speechMutex, INFINITE);
+	if (isSpeaking() && !_speechQueue.empty() && action == INTERRUPT_NO_REPEAT &&
+			_speechQueue.front() != NULL && !wcscmp(_speechQueue.front(), strW)) {
+		while (_speechQueue.size() != 1) {
+			free(_speechQueue.back());
+			_speechQueue.pop_back();
+		}
+		free(strW);
+		ReleaseMutex(_speechMutex);
+		return true;
+	}
 
-	bool result = _voice->Speak(strW, SPF_ASYNC, NULL) != S_OK;
-	free(strW);
-	if (!isPaused())
+	if (isSpeaking() && !_speechQueue.empty() && action == QUEUE_NO_REPEAT &&
+			_speechQueue.front() != NULL &&!wcscmp(_speechQueue.back(), strW)) {
+		ReleaseMutex(_speechMutex);
+		return true;
+	}
+
+	ReleaseMutex(_speechMutex);
+	if ((isPaused() || isSpeaking()) && (action == INTERRUPT || action == INTERRUPT_NO_REPEAT)) {
+		stop();
+	}
+
+	WaitForSingleObject(_speechMutex, INFINITE);
+	_speechQueue.push_back(strW);
+	ReleaseMutex(_speechMutex);
+
+	if (!isSpeaking() && !isPaused()) {
+		DWORD threadId;
+		if (_thread != NULL) {
+			WaitForSingleObject(_thread, INFINITE);
+			CloseHandle(_thread);
+		}
 		_speechState = SPEAKING;
-	return result;
+		_thread = CreateThread(NULL, 0, startSpeech, &_threadParams, 0, &threadId);
+		if (_thread == NULL) {
+			warning("Could not create speech thread");
+			_speechState = READY;
+			return true;
+		}
+	}
+	return false;
 }
 
 bool WindowsTextToSpeechManager::stop() {
-	if(_speechState == BROKEN || _speechState == NO_VOICE)
+	if (_speechState == BROKEN || _speechState == NO_VOICE)
 		return true;
 	if (isPaused())
 		resume();
 	_audio->SetState(SPAS_STOP, 0);
+	WaitForSingleObject(_speechMutex, INFINITE);
+	while (!_speechQueue.empty()) {
+		if (_speechQueue.front() != NULL)
+		free(_speechQueue.front());
+		_speechQueue.pop_front();
+	}
+	_speechQueue.push_back(NULL);
+	ReleaseMutex(_speechMutex);
+	if (_thread != NULL) {
+		WaitForSingleObject(_thread, INFINITE);
+		CloseHandle(_thread);
+		_thread = NULL;
+	}
 	_audio->SetState(SPAS_RUN, 0);
-	_voice->Speak(NULL, SPF_PURGEBEFORESPEAK | SPF_ASYNC | SPF_IS_NOT_XML, 0);
-	_speechState = READY;
 	return false;
 }
 
 bool WindowsTextToSpeechManager::pause() {
-	if(_speechState == BROKEN || _speechState == NO_VOICE)
+	if (_speechState == BROKEN || _speechState == NO_VOICE)
 		return true;
 	if (isPaused())
 		return false;
+	WaitForSingleObject(_speechMutex, INFINITE);
 	_voice->Pause();
 	_speechState = PAUSED;
+	ReleaseMutex(_speechMutex);
 	return false;
 }
 
 bool WindowsTextToSpeechManager::resume() {
-	if(_speechState == BROKEN || _speechState == NO_VOICE)
+	if (_speechState == BROKEN || _speechState == NO_VOICE)
 		return true;
 	if (!isPaused())
 		return false;
 	_voice->Resume();
-	if (isSpeaking())
-		_speechState = SPEAKING;
-	else
+	DWORD threadId;
+	if (_thread != NULL) {
+		WaitForSingleObject(_thread, INFINITE);
+		CloseHandle(_thread);
+	}
+	_speechState = SPEAKING;
+	_thread = CreateThread(NULL, 0, startSpeech, &_threadParams, 0, &threadId);
+	if (_thread == NULL) {
+		warning("Could not create speech thread");
 		_speechState = READY;
+		return true;
+	}
 	return false;
 }
 
 bool WindowsTextToSpeechManager::isSpeaking() {
-	if(_speechState == BROKEN || _speechState == NO_VOICE)
-		return false;
-	SPAUDIOSTATUS audioStatus;
-	SPVOICESTATUS voiceStatus;
-	_audio->GetStatus(&audioStatus);
-	_voice->GetStatus(&voiceStatus, NULL);
-	return audioStatus.State != SPAS_CLOSED || voiceStatus.dwRunningState != SPRS_DONE;
+	return _speechState == SPEAKING;
 }
 
 bool WindowsTextToSpeechManager::isPaused() {
@@ -185,7 +285,7 @@ bool WindowsTextToSpeechManager::isPaused() {
 }
 
 bool WindowsTextToSpeechManager::isReady() {
-	if(_speechState == BROKEN || _speechState == NO_VOICE)
+	if (_speechState == BROKEN || _speechState == NO_VOICE)
 		return false;
 	if (_speechState != PAUSED && !isSpeaking())
 		return true;
@@ -194,14 +294,14 @@ bool WindowsTextToSpeechManager::isReady() {
 }
 
 void WindowsTextToSpeechManager::setVoice(unsigned index) {
-	if(_speechState == BROKEN || _speechState == NO_VOICE)
+	if (_speechState == BROKEN || _speechState == NO_VOICE)
 		return;
 	_voice->SetVoice((ISpObjectToken *) _ttsState->_availableVoices[index].getData());
 	_ttsState->_activeVoice = index;
 }
 
 void WindowsTextToSpeechManager::setRate(int rate) {
-	if(_speechState == BROKEN || _speechState == NO_VOICE)
+	if (_speechState == BROKEN || _speechState == NO_VOICE)
 		return;
 	assert(rate >= -100 && rate <= 100);
 	_voice->SetRate(rate / 10);
@@ -209,14 +309,14 @@ void WindowsTextToSpeechManager::setRate(int rate) {
 }
 
 void WindowsTextToSpeechManager::setPitch(int pitch) {
-	if(_speechState == BROKEN || _speechState == NO_VOICE)
+	if (_speechState == BROKEN || _speechState == NO_VOICE)
 		return;
 	assert(pitch >= -100 && pitch <= 100);
 	_ttsState->_pitch = pitch;
 }
 
 void WindowsTextToSpeechManager::setVolume(unsigned volume) {
-	if(_speechState == BROKEN || _speechState == NO_VOICE)
+	if (_speechState == BROKEN || _speechState == NO_VOICE)
 		return;
 	assert(volume <= 100);
 	_voice->SetVolume(volume);
@@ -306,7 +406,7 @@ void WindowsTextToSpeechManager::createVoice(void *cpVoiceToken) {
 int strToInt(Common::String str) {
 	str.toUppercase();
 	int result = 0;
-	for(unsigned i = 0; i < str.size(); i++) {
+	for (unsigned i = 0; i < str.size(); i++) {
 		if (str[i] < '0' || (str[i] > '9' && str[i] < 'A') || str[i] > 'F')
 			break;
 		int num = (str[i] <= '9') ? str[i] - '0' : str[i] - 55;
@@ -342,7 +442,7 @@ void WindowsTextToSpeechManager::updateVoices() {
 	while (SUCCEEDED(hr) && ulCount--) {
 		hr = cpEnum->Next(1, &cpVoiceToken, NULL);
 		_voice->SetVoice(cpVoiceToken);
-		if(SUCCEEDED(_voice->Speak(L"hi, this is test", SPF_PURGEBEFORESPEAK | SPF_ASYNC | SPF_IS_NOT_XML, 0)))
+		if (SUCCEEDED(_voice->Speak(L"hi, this is test", SPF_PURGEBEFORESPEAK | SPF_ASYNC | SPF_IS_NOT_XML, 0)))
 			createVoice(cpVoiceToken);
 		else
 			cpVoiceToken->Release();
@@ -355,7 +455,7 @@ void WindowsTextToSpeechManager::updateVoices() {
 	_voice->SetVolume(_ttsState->_volume);
 	cpEnum->Release();
 
-	if(_ttsState->_availableVoices.size() == 0) {
+	if (_ttsState->_availableVoices.size() == 0) {
 		_speechState = NO_VOICE;
 		warning("No voice is available");
 	} else if (_speechState == NO_VOICE)
