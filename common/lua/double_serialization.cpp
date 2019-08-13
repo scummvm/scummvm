@@ -65,4 +65,4 @@ double decodeDouble(SerializedDouble value) {
 	return ((value.signAndSignificandTwo & 0x80000000) == 0x80000000) ? -returnValue : returnValue;
 }
 
-} // End of namespace Sword25
+} // End of namespace Util
