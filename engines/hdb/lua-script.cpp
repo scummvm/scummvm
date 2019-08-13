@@ -1370,13 +1370,31 @@ static int openFile(lua_State *L) {
 	return 1;
 }
 
+static int writeto(lua_State *L) {
+	g_hdb->_lua->checkParameters("writeto", 1);
+
+	lua_pop(L, 1);
+
+	return 1;
+}
+
 static int write(lua_State *L) {
 	Common::OutSaveFile *out = g_hdb->_currentOutSaveFile;
-	const char *data = lua_tostring(L, 2);
+	const char *data;
 
-	g_hdb->_lua->checkParameters("write", 2);
+	if (g_hdb->isDemo() && g_hdb->isPPC()) {
+		data = lua_tostring(L, 1);
 
-	lua_pop(L, 2);
+		g_hdb->_lua->checkParameters("write", 1);
+
+		lua_pop(L, 1);
+	} else {
+		data = lua_tostring(L, 2);
+
+		g_hdb->_lua->checkParameters("write", 2);
+
+		lua_pop(L, 2);
+	}
 
 	out->write(data, strlen(data));
 
@@ -1722,6 +1740,7 @@ struct FuncInit {
 	{	"write",				write,				},
 	{	"closefile",			closeFile,			},
 	{	"dofile",				dofile,				},
+	{	"writeto",				writeto,			},
 	{ NULL, NULL }
 };
 
