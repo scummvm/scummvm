@@ -79,14 +79,6 @@ PSP2SdlGraphicsManager::PSP2SdlGraphicsManager(SdlEventSource *sdlEventSource, S
 	_vitatex_hwscreen(nullptr),
 	_sdlpixels_hwscreen(nullptr) {
 
-	// do aspect ratio correction in hardware on the Vita
-	if (_videoMode.aspectRatioCorrection == true) {
-		_hardwareAspectRatioCorrection = true;
-	} else {
-		_hardwareAspectRatioCorrection = false;
-	}
-	_videoMode.aspectRatioCorrection = false;
-
 	// shader number 0 is the entry NONE (no shader)
 	const OSystem::GraphicsMode *p = s_supportedShadersPSP2;
 	_numShaders = 0;
@@ -100,6 +92,9 @@ PSP2SdlGraphicsManager::PSP2SdlGraphicsManager(SdlEventSource *sdlEventSource, S
 	}
 
 	_shaders[0] = NULL;
+
+	/* Vita display size is always 960x544 (that's just the hardware) */
+	handleResize(960, 544);
 }
 
 PSP2SdlGraphicsManager::~PSP2SdlGraphicsManager() {
@@ -214,27 +209,6 @@ void PSP2SdlGraphicsManager::updateShader() {
 	}
 }
 
-void PSP2SdlGraphicsManager::setAspectRatioCorrection(bool enable) {
-	Common::StackLock lock(_graphicsMutex);
-
-	if (_oldVideoMode.setup && _hardwareAspectRatioCorrection == enable)
-		return;
-
-	if (_transactionMode == kTransactionActive) {
-		_videoMode.aspectRatioCorrection = false;
-		_hardwareAspectRatioCorrection = enable;
-		// erase the screen for both buffers
-		if (_vitatex_hwscreen) {
-			for (int i = 0; i <= 10; i++) {
-				vita2d_start_drawing();
-				vita2d_clear_screen();
-				vita2d_end_drawing();
-				vita2d_swap_buffers();
-			}
-		}
-	}
-}
-
 SDL_Surface *PSP2SdlGraphicsManager::SDL_SetVideoMode(int width, int height, int bpp, Uint32 flags) {
 
 	SDL_Surface *screen = SurfaceSdlGraphicsManager::SDL_SetVideoMode(width, height, bpp, flags);
@@ -254,49 +228,13 @@ void PSP2SdlGraphicsManager::SDL_UpdateRects(SDL_Surface *screen, int numrects, 
 	int screenH = screen->h;
 	int screenW = screen->w;
 
-	bool fullscreen = _videoMode.fullscreen;
-	bool aspectRatioCorrection = _hardwareAspectRatioCorrection;
-
-	const int dispW = 960;
-	const int dispH = 544;
-
-	int x, y, w, h;
-	float sx, sy;
-	float ratio = (float)screenW / (float)screenH;
-
-	if (aspectRatioCorrection && (screenH == 200 || screenH == 400)) {
-		ratio = 4.0 / 3.0;
-	}
-
-	if (fullscreen || screenH >= dispH) {
-		h = dispH;
-		w = h * ratio;
-	} else {
-		if (screenH <= dispH / 2 && screenW <= dispW / 2) {
-			// Use Vita hardware 2x scaling if the picture is really small
-			// this uses the current shader and filtering mode
-			h = screenH * 2;
-			w = screenW * 2;
-		} else {
-			h = screenH;
-			w = screenW;
-		}
-		if (aspectRatioCorrection && (screenH == 200 || screenH == 400)) {
-			// stretch the height only if it fits, otherwise make the width smaller
-			if (((float)w * (1.0 / ratio)) <= (float)dispH) {
-				h = w * (1.0 / ratio);
-			} else {
-				w = h * ratio;
-			}
-		}
-	}
-
-	x = (dispW - w) / 2;
-	y = (dispH - h) / 2;
-	sx = (float)w / (float)screenW;
-	sy = (float)h / (float)screenH;
+	int x = _activeArea.drawRect.left;
+	int y = _activeArea.drawRect.top;
+	float sx = _activeArea.drawRect.width() / (float)screenW;
+	float sy = _activeArea.drawRect.height() / (float)screenH;
 	if (_vitatex_hwscreen) {
 		vita2d_start_drawing();
+		vita2d_clear_screen();
 		vita2d_draw_texture_scale(_vitatex_hwscreen, x, y, sx, sy);
 		vita2d_end_drawing();
 		vita2d_swap_buffers();
