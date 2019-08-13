@@ -392,6 +392,16 @@ char *OSystem_Win32::convertEncoding(const char* to, const char *from, const cha
 	if (result != nullptr)
 		return result;
 
+	// We accept only the machine endianness
+#ifdef SCUMM_BIG_ENDIAN
+	if (Common::String(from).hasSuffixIgnoreCase("le") ||
+			Common::String(to).hasSuffixIgnoreCase("le"))
+		return nullptr;
+#else
+	if (Common::String(from).hasSuffixIgnoreCase("be") ||
+			Common::String(to).hasSuffixIgnoreCase("be"))
+		return nullptr;
+#endif
 	// UTF-32 is really important for us, because it is used for the
 	// transliteration in Common::Encoding and Win32 cannot convert it
 	if (Common::String(from).hasPrefixIgnoreCase("utf-32")) {
