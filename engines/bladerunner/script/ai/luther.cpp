@@ -57,7 +57,7 @@ bool AIScriptLuther::Update() {
 	}
 
 	if (Actor_Query_Goal_Number(kActorLuther) == kGoalLutherDefault
-	 && Actor_Query_Goal_Number(kActorLuther) != kGoalLutherDead
+	 && Actor_Query_Goal_Number(kActorLuther) != kGoalLutherDead // A bug? this is redundant
 	) {
 		Actor_Set_Goal_Number(kActorLuther, kGoalLutherMoveAround);
 		return false;

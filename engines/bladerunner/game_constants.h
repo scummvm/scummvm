@@ -2121,7 +2121,7 @@ enum GoalDektora {
 	kGoalDektoraNR11BurningFallToNR10 = 279,
 	kGoalDektoraNR11RanAway = 290,
 	kGoalDektoraNR07RanAway = 295,
-
+	kGoalDektoraKP07Wait = 513, // new goal when in moonbus, Act 5
 	kGoalDektoraGone = 599
 };
 
@@ -2172,7 +2172,7 @@ enum GoalGordo {
 	kGoalGordoNR01Arrested = 260,
 	kGoalGordoNR01RanAway = 280,
 	kGoalGordoNR01Die = 299,
-
+	kGoalGordoKP07Wait = 513, // new goal when in moonbus, Act 5
 	kGoalGordoGone = 599
 };
 
@@ -2260,7 +2260,7 @@ enum GoalLucy {
 	kGoalLucyUG01Wait =	310,
 	kGoalLucyUG01VoightKampff = 311,
 	kGoalLucyUG01RunAway = 312,
-
+	kGoalLucyKP07Wait = 513, // new goal when in moonbus, Act 5
 	kGoalLucyGone = 599
 };
 
@@ -2283,6 +2283,7 @@ enum GoalIzo {
 	kGoalIzoGoToHC03 = 155,
 	kGoalIzoDieHidden = 198,
 	kGoalIzoDie = 199,
+	kGoalIzoKP07Wait = 513, // new goal when in moonbus, Act 5
 	kGoalIzoGone = 599
 };
 
@@ -2318,6 +2319,7 @@ enum GoalLuther {
 	kGoalLutherDyingCheck = 497,
 	kGoalLutherDie = 498,
 	kGoalLutherDead = 499,
+	kGoalLutherKP07Wait = 513, // new goal when in moonbus, Act 5
 	kGoalLutherGone = 599
 };
 
@@ -2439,6 +2441,7 @@ enum GoalZuben {
 	kGoalZubenFled = 20,
 	kGoalZubenMA01AttackMcCoy = 21,
 	kGoalZubenDiesInChapter1 = 99,
+	kGoalZubenKP07Wait = 513, // new goal when in moonbus, Act 5
 	kGoalZubenGone = 599
 };
 

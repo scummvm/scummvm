@@ -35,6 +35,16 @@ void SceneScriptKP07::InitializeScene() {
 		if (Game_Flag_Query(kFlagDektoraIsReplicant)
 		 && Actor_Query_Goal_Number(kActorDektora) < kGoalDektoraGone
 		) {
+#if BLADERUNNER_ORIGINAL_BUGS
+#else
+			if (Game_Flag_Query(kFlagNR11DektoraBurning)) {
+				Game_Flag_Reset(kFlagNR11DektoraBurning); // resolves a bug of an original game, where Dektora would default to burning state
+				Actor_Change_Animation_Mode(kActorDektora, kAnimationModeTalk); // dummy animation change to ensure that the next will trigger the mode change case
+				Actor_Change_Animation_Mode(kActorDektora, kAnimationModeIdle);
+			}
+			AI_Movement_Track_Flush(kActorDektora);
+			Actor_Set_Goal_Number(kActorDektora, kGoalDektoraKP07Wait); // new clear goal
+#endif // BLADERUNNER_ORIGINAL_BUGS
 			Actor_Set_Targetable(kActorDektora, true);
 			Global_Variable_Increment(kVariableReplicantsSurvivorsAtMoonbus, 1);
 			Actor_Put_In_Set(kActorDektora, kSetKP07);
@@ -42,6 +52,11 @@ void SceneScriptKP07::InitializeScene() {
 		}
 
 		if (Actor_Query_Goal_Number(kActorZuben) < kGoalZubenGone) {
+#if BLADERUNNER_ORIGINAL_BUGS
+#else
+			AI_Movement_Track_Flush(kActorZuben);
+			Actor_Set_Goal_Number(kActorZuben, kGoalZubenKP07Wait); // new clear goal
+#endif // BLADERUNNER_ORIGINAL_BUGS
 			Global_Variable_Increment(kVariableReplicantsSurvivorsAtMoonbus, 1);
 			Actor_Set_Targetable(kActorZuben, true);
 			Actor_Put_In_Set(kActorZuben, kSetKP07);
@@ -51,6 +66,11 @@ void SceneScriptKP07::InitializeScene() {
 		if (Game_Flag_Query(kFlagIzoIsReplicant)
 		 && Actor_Query_Goal_Number(kActorIzo) < 599
 		) {
+#if BLADERUNNER_ORIGINAL_BUGS
+#else
+			AI_Movement_Track_Flush(kActorIzo);
+			Actor_Set_Goal_Number(kActorIzo, kGoalIzoKP07Wait); // new clear goal
+#endif // BLADERUNNER_ORIGINAL_BUGS
 			Global_Variable_Increment(kVariableReplicantsSurvivorsAtMoonbus, 1);
 			Actor_Set_Targetable(kActorIzo, true);
 			Actor_Put_In_Set(kActorIzo, kSetKP07);
@@ -60,6 +80,11 @@ void SceneScriptKP07::InitializeScene() {
 		if (Game_Flag_Query(kFlagGordoIsReplicant)
 		 && Actor_Query_Goal_Number(kActorGordo) < kGoalGordoGone
 		) {
+#if BLADERUNNER_ORIGINAL_BUGS
+#else
+			AI_Movement_Track_Flush(kActorGordo);
+			Actor_Set_Goal_Number(kActorGordo, kGoalGordoKP07Wait); // new clear goal
+#endif // BLADERUNNER_ORIGINAL_BUGS
 			Global_Variable_Increment(kVariableReplicantsSurvivorsAtMoonbus, 1);
 			Actor_Set_Targetable(kActorGordo, true);
 			Actor_Put_In_Set(kActorGordo, kSetKP07);
@@ -69,12 +94,22 @@ void SceneScriptKP07::InitializeScene() {
 		if (Game_Flag_Query(kFlagLucyIsReplicant)
 		 && Actor_Query_Goal_Number(kActorLucy) < kGoalLucyGone
 		) {
+#if BLADERUNNER_ORIGINAL_BUGS
+#else
+			AI_Movement_Track_Flush(kActorLucy);
+			Actor_Set_Goal_Number(kActorLucy, kGoalLucyKP07Wait); // new clear goal
+#endif // BLADERUNNER_ORIGINAL_BUGS
 			Global_Variable_Increment(kVariableReplicantsSurvivorsAtMoonbus, 1);
 			Actor_Put_In_Set(kActorLucy, kSetKP07);
 			Actor_Set_At_XYZ(kActorLucy, 78.0f, -41.52f, -119.0f, 659);
 		}
 
 		if (Actor_Query_Goal_Number(kActorLuther) < kGoalLutherGone) {
+#if BLADERUNNER_ORIGINAL_BUGS
+#else
+			AI_Movement_Track_Flush(kActorLuther);
+			Actor_Set_Goal_Number(kActorLuther, kGoalLutherKP07Wait); // new goal to avoid resuming his walking around routine
+#endif // BLADERUNNER_ORIGINAL_BUGS
 			Global_Variable_Increment(kVariableReplicantsSurvivorsAtMoonbus, 1);
 			Actor_Put_In_Set(kActorLuther, kSetKP07);
 			Actor_Set_At_XYZ(kActorLuther, -47.0f, 0.0f, 151.0f, 531);
