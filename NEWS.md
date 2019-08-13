@@ -28,6 +28,11 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Updated the Roland MT-32 emulation code to Munt 2.3.0.
    - Improved unknown game variants reporting.
 
+ ADL:
+   - Improved color accuracy.
+   - Added a TV emulation mode.
+   - Added support for the WOZ disk image format.
+
  Drascula:
    - Fixed loading game from launcher when the game had been saved in chapter 1.
 
