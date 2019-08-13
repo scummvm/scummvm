@@ -525,9 +525,9 @@ void Window::drawWeapon() {
 	if (!g_hdb->isPPC())
 		return;
 
-	int	 xoff = 40 * _pzInfo.active;
-	char word[3];
+	int xoff = 40 * _pzInfo.active;
 	if (ITEM_CLUB != g_hdb->_ai->getPlayerWeapon()) {
+		char word[3];
 		sprintf(word, "%d", g_hdb->_ai->getGemAmount());
 		g_hdb->_gfx->setCursor(_weaponX + 4 - xoff, _weaponY + kTileHeight + 2);
 		g_hdb->_gfx->drawText(word);
@@ -535,8 +535,7 @@ void Window::drawWeapon() {
 }
 
 void Window::chooseWeapon(AIType wType) {
-	static	AIType lastWeaponSelected = AI_NONE;
-	Tile *gfx;
+	static AIType lastWeaponSelected = AI_NONE;
 	int	slot = g_hdb->_ai->queryInventoryTypeSlot(wType);
 
 	g_hdb->_sound->playSound(SND_MENU_SLIDER);
@@ -544,7 +543,7 @@ void Window::chooseWeapon(AIType wType) {
 	if (!g_hdb->getActionMode())
 		return;
 
-	gfx = g_hdb->_ai->getInvItemGfx(slot);
+	Tile *gfx = g_hdb->_ai->getInvItemGfx(slot);
 
 	switch (wType) {
 	case ITEM_CLUB:
@@ -584,22 +583,21 @@ void Window::openDialog(const char *title, int tileIndex, const char *string, in
 	strcpy(_dialogInfo.title, title);
 	_dialogInfo.active = true;
 
-	int e1, e2, e3, e4;
-	int width, height;
-	int titleWidth, titleHeight;
-	int w;
-
 	if (strlen(string) > sizeof(_dialogInfo.string))
 		strncpy(_dialogInfo.string, string, sizeof(_dialogInfo.string) - 1);
 	else
 		strcpy(_dialogInfo.string, string);
+
+	int e1, e2, e3, e4;
 	g_hdb->_gfx->getTextEdges(&e1, &e2, &e3, &e4);
 	g_hdb->_gfx->setTextEdges(_dialogTextLeft, _dialogTextRight, 0, g_hdb->_screenDrawHeight);
+	int width, height;
 	g_hdb->_gfx->getDimensions(string, &width, &height);
+	int titleWidth, titleHeight;
 	g_hdb->_gfx->getDimensions(title, &titleWidth, &titleHeight);
 	g_hdb->_gfx->setTextEdges(e1, e2, e3, e4);
 	_dialogInfo.height = (height + 2) * 16;
-	w = _dialogInfo.width = width + 32;
+	int w = _dialogInfo.width = width + 32;
 	_dialogInfo.titleWidth = titleWidth;
 	if (titleWidth > w)
 		w = titleWidth;
@@ -1048,11 +1046,7 @@ void Window::closeMsg() {
 }
 
 void Window::drawInventory() {
-	int baseX, drawX, drawY;
 	static uint32 timer = g_hdb->getTimeSlice() + 300; // unused
-	AIEntity *e, *sel;
-	char string[8];
-	int gems, mstones;
 
 	if (g_hdb->isPPC()) {
 		if (!_invWinInfo.active)
@@ -1077,16 +1071,17 @@ void Window::drawInventory() {
 		if (timer < g_hdb->getTimeSlice())
 			timer = g_hdb->getTimeSlice() + 300;
 
-		baseX = drawX = _invWinInfo.x + 16;
-		drawY = _invWinInfo.y + 16;
+		int drawX = _invWinInfo.x + 16;
+		int baseX = drawX;
+		int drawY = _invWinInfo.y + 16;
 
 		// Draw Inv Items
-		sel = NULL;
+		AIEntity *sel = NULL;
 		if (_invWinInfo.selection >= g_hdb->_ai->getInvAmount())
 			_invWinInfo.selection = g_hdb->_ai->getInvAmount() - 1;
 
 		for (int inv = 0; inv < g_hdb->_ai->getInvAmount(); inv++) {
-			e = g_hdb->_ai->getInvItem(inv);
+			AIEntity *e = g_hdb->_ai->getInvItem(inv);
 			if (inv == _invWinInfo.selection)
 				sel = e;
 
@@ -1103,7 +1098,8 @@ void Window::drawInventory() {
 		drawY = _invWinInfo.y + 8 + _invItemSpace * 2;
 		drawX = baseX + _invItemSpace * 4 + 8;
 		_gemGfx->drawMasked(drawX, drawY);
-		gems = g_hdb->_ai->getGemAmount();
+		int gems = g_hdb->_ai->getGemAmount();
+		char string[8];
 		sprintf(string, "%d", gems);
 		g_hdb->_gfx->setCursor(drawX + 22, drawY + 8);
 		g_hdb->_gfx->drawText(string);
@@ -1141,16 +1137,17 @@ void Window::drawInventory() {
 
 		_gfxInfobar->draw(g_hdb->_screenWidth - _gfxInfobar->_width, 0);
 
-		baseX = drawX = _invWinInfo.x;
-		drawY = _invWinInfo.y;
+		int drawX = _invWinInfo.x;
+		int baseX = drawX;
+		int drawY = _invWinInfo.y;
 
 		// Draw Inv Items
-		sel = NULL;
+		AIEntity *sel = NULL;
 		if (_invWinInfo.selection >= g_hdb->_ai->getInvAmount())
 			_invWinInfo.selection = g_hdb->_ai->getInvAmount() - 1;
 
 		for (int inv = 0; inv < g_hdb->_ai->getInvAmount(); inv++) {
-			e = g_hdb->_ai->getInvItem(inv);
+			AIEntity *e = g_hdb->_ai->getInvItem(inv);
 			if (inv == _invWinInfo.selection)
 				sel = e;
 
@@ -1169,13 +1166,14 @@ void Window::drawInventory() {
 		_gemGfx->drawMasked(drawX, drawY);
 
 		// Draw the Gem Amount
-		gems = g_hdb->_ai->getGemAmount();
+		int gems = g_hdb->_ai->getGemAmount();
+		char string[8];
 		sprintf(string, "%d", gems);
 		g_hdb->_gfx->setCursor(drawX + 32, drawY + 8);
 		g_hdb->_gfx->drawText(string);
 
 		// Draw the mini monkeystone
-		mstones = g_hdb->_ai->getMonkeystoneAmount();
+		int mstones = g_hdb->_ai->getMonkeystoneAmount();
 		if (mstones) {
 			drawX = baseX + _invItemSpaceX * 2 - 8;
 			_mstoneGfx->drawMasked(drawX, drawY + 8);
@@ -1243,8 +1241,6 @@ void Window::openInventory() {
 	if (!g_hdb->isPPC())
 		return;
 
-	int	px, py;
-
 	if (_invWinInfo.active)
 		return;
 
@@ -1260,6 +1256,7 @@ void Window::openInventory() {
 
 	_invWinInfo.x = (g_hdb->_screenWidth >> 1) - (_invWinInfo.width >> 1) - 8;
 
+	int	px, py;
 	g_hdb->_ai->getPlayerXY(&px, &py);
 	if (py < (g_hdb->_screenHeight >> 1) - 16)
 		_invWinInfo.y = (g_hdb->_screenHeight >> 1) + 16;
@@ -1343,7 +1340,6 @@ void Window::openDeliveries(bool animate) {
 		_dlvsInfo.x = (g_hdb->_screenWidth >> 1) - (_dlvsInfo.width >> 1) - 8;
 
 		int px, py;
-
 		g_hdb->_ai->getPlayerXY(&px, &py);
 		if (py < (g_hdb->_screenHeight >> 1) - 16)
 			_dlvsInfo.y = (g_hdb->_screenHeight >> 1);
@@ -1371,9 +1367,7 @@ void Window::openDeliveries(bool animate) {
 
 void Window::drawDeliveries() {
 	static uint32 timer = g_hdb->getTimeSlice() + 300; //unused
-	int drawX, drawY, baseX;
-	DlvEnt *d;
-	int crazySounds[kNumCrazy] = {
+	static const int crazySounds[kNumCrazy] = {
 		SND_GUI_INPUT,
 		SND_MAIL_PROCESS,
 		SND_MONKEY_OOHOOH,
@@ -1439,13 +1433,14 @@ void Window::drawDeliveries() {
 				timer = g_hdb->getTimeSlice() + 300;
 		}
 
-		baseX = drawX = _dlvsInfo.x + 16;
-		drawY = _dlvsInfo.y + 16;
+		int drawX = _dlvsInfo.x + 16;
+		int drawY = _dlvsInfo.y + 16;
+		int baseX = drawX;
 
 		// Draw delivery items
-		int inv;
-		for (inv = 0; inv < g_hdb->_ai->getDeliveriesAmount(); inv++) {
-			d = g_hdb->_ai->getDeliveryItem(inv);
+		int inv = 0;
+		for (; inv < g_hdb->_ai->getInvAmount(); inv++) {
+			DlvEnt *d = g_hdb->_ai->getDeliveryItem(inv);
 			if (_dlvsInfo.animate && inv == g_hdb->_ai->getDeliveriesAmount() - 1) {
 				if (_dlvsInfo.go1) {
 					if (_dlvsInfo.delay1 < g_hdb->getTimeSlice()) {
@@ -1522,9 +1517,9 @@ void Window::drawDeliveries() {
 		if (_infobarDimmed > 1)
 			return;
 
-		baseX = _dlvsInfo.x;
-		drawX = _dlvsInfo.x;
-		drawY = _dlvsInfo.y;
+		int baseX = _dlvsInfo.x;
+		int drawX = _dlvsInfo.x;
+		int drawY = _dlvsInfo.y;
 
 		if (_dlvsInfo.selected >= g_hdb->_ai->getDeliveriesAmount())
 			_dlvsInfo.selected = g_hdb->_ai->getDeliveriesAmount() - 1;
@@ -1533,7 +1528,7 @@ void Window::drawDeliveries() {
 		int inv = 0;
 		for (; inv < g_hdb->_ai->getDeliveriesAmount(); inv++) {
 			int centerX = baseX + (g_hdb->_screenWidth - baseX) / 2;
-			d = g_hdb->_ai->getDeliveryItem(inv);
+			DlvEnt *d = g_hdb->_ai->getDeliveryItem(inv);
 			if (_dlvsInfo.animate && inv == g_hdb->_ai->getDeliveriesAmount() - 1) {
 				if (_dlvsInfo.go1) {
 					if (_dlvsInfo.delay1 < g_hdb->getTimeSlice()) {
