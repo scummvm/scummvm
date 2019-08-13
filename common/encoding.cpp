@@ -39,10 +39,22 @@ Encoding::~Encoding() {
 	deinitIconv(_iconvHandle);
 }
 
+String Encoding::addUtfEndianness(const String &str) {
+	if (str.equalsIgnoreCase("utf-16") || str.equalsIgnoreCase("utf-32")) {
+#ifdef SCUMM_BIG_ENDIAN
+		return str + "BE";
+#else
+		return str + "LE";
+#endif
+	} else
+		return String(str);
+}
+
 iconv_t Encoding::initIconv(const String &to, const String &from) {
 #ifdef USE_ICONV
-		String toTranslit = to + "//TRANSLIT";
-		return iconv_open(toTranslit.c_str(), from.c_str());
+		String toTranslit = addUtfEndianness(to) + "//TRANSLIT";
+		return iconv_open(toTranslit.c_str(),
+							addUtfEndianness(from).c_str());
 #else
 		return 0;
 #endif // USE_ICONV
@@ -157,11 +169,12 @@ char *Encoding::conversion(iconv_t iconvHandle, const String &to, const String &
 	debug("Iconv is not available");
 #endif // USE_ICONV
 	if (result == nullptr)
-		result = g_system->convertEncoding(to.c_str(), from.c_str(), string, length);
+		result = g_system->convertEncoding(addUtfEndianness(to).c_str(),
+				addUtfEndianness(from).c_str(), string, length);
 
 	if (result == nullptr) {
 		debug("Could not convert from %s to %s using backend specific conversion", from.c_str(), to.c_str());
-		result = convertTransManMapping(to.c_str(), from.c_str(), string, length);
+		result = convertTransManMapping(addUtfEndianness(to).c_str(), addUtfEndianness(from).c_str(), string, length);
 	}
 
 	return result;
@@ -262,14 +275,18 @@ char *Encoding::convertTransManMapping(const char *to, const char *from, const c
 				partialResult[i] = mapping[(unsigned char) string[i]] & 0x7FFFFFFF;
 			}
 		}
-#ifdef SCUMM_BIG_ENDIAN
-		char *finalResult = convert(to, "UTF-32BE", (char *) partialResult, strlen(string) * 4);
-#else
-		char *finalResult = convert(to, "UTF-32LE", (char *) partialResult, strlen(string) * 4);
-#endif // SCUMM_BIG_ENDIAN
+		char *finalResult = convert(to, "UTF-32", (char *) partialResult, strlen(string) * 4);
 		free(partialResult);
 		return finalResult;
-	} else if (currentCharset.equalsIgnoreCase(to) && String(from).equalsIgnoreCase("utf-32")) {
+	} else if (currentCharset.equalsIgnoreCase(to) && String(from).hasPrefixIgnoreCase("utf-32")) {
+		// We accept only the machine endianness
+#ifdef SCUMM_BIG_ENDIAN
+		if (String(from).hasSuffixIgnoreCase("LE"))
+			return nullptr;
+#else
+		if (String(from).hasSuffixIgnoreCase("BE"))
+			return nullptr;
+#endif
 		// We can do reverse mapping
 		const uint32 *mapping = TransMan.getCharsetMapping();
 		const uint32 *src = (const uint32 *) string;

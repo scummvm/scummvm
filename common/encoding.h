@@ -221,6 +221,8 @@ class Encoding {
 		 * @param iconvHandle Handle that should be deinited
 		 */
 		static void deinitIconv(iconv_t iconvHandle);
+
+		static String addUtfEndianness(const String &str);
 };
 
 }
