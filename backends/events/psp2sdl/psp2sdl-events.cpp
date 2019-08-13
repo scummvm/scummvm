@@ -37,6 +37,9 @@
 
 #include "math.h"
 
+#define TOUCHSCREEN_WIDTH 960
+#define TOUCHSCREEN_HEIGHT 544
+
 PSP2EventSource::PSP2EventSource() {
 	for (int port = 0; port < SCE_TOUCH_PORT_MAX_NUM; port++) {
 		for (int i = 0; i < MAX_NUM_FINGERS; i++) {
@@ -372,48 +375,15 @@ void PSP2EventSource::convertTouchXYToGameXY(float touchX, float touchY, int *ga
 	int screenH = _km.y_max;
 	int screenW = _km.x_max;
 
-	int windowH = g_system->getHeight();
-	int windowW = g_system->getWidth();
-
-	bool fullscreen = ConfMan.getBool("fullscreen");
-	bool aspectRatioCorrection = ConfMan.getBool("aspect_ratio");
-
-	const int dispW = 960;
-	const int dispH = 544;
+	const int dispW = TOUCHSCREEN_WIDTH;
+	const int dispH = TOUCHSCREEN_HEIGHT;
 
 	int x, y, w, h;
 	float sx, sy;
 	float ratio = (float)screenW / (float)screenH;
 
-	if (aspectRatioCorrection && (windowH == 200 || windowH == 400)) {
-		ratio = 4.0 / 3.0;
-	}
-
-	if (fullscreen || screenH >= dispH) {
-		h = dispH;
-		if (aspectRatioCorrection && (windowH == 200 || windowH == 400)) {
-			ratio = ratio * 1.1;
-		}
-		w = h * ratio;
-	} else {
-		if (screenH <= dispH / 2 && screenW <= dispW / 2) {
-			// Use Vita hardware 2x scaling if the picture is really small
-			// this uses the current shader and filtering mode
-			h = screenH * 2;
-			w = screenW * 2;
-		} else {
-			h = screenH;
-			w = screenW;
-		}
-		if (aspectRatioCorrection && (windowH == 200 || windowH == 400)) {
-			// stretch the height only if it fits, otherwise make the width smaller
-			if (((float)w * (1.0 / ratio)) <= (float)dispH) {
-				h = w * (1.0 / ratio);
-			} else {
-				w = h * ratio;
-			}
-		}
-	}
+	h = dispH;
+	w = h * ratio;
 
 	x = (dispW - w) / 2;
 	y = (dispH - h) / 2;
@@ -421,23 +391,12 @@ void PSP2EventSource::convertTouchXYToGameXY(float touchX, float touchY, int *ga
 	sy = (float)h / (float)screenH;
 	sx = (float)w / (float)screenW;
 
-	// Find touch coordinates in terms of Vita screen pixels
+	// Find touch coordinates in terms of screen pixels
 	float dispTouchX = (touchX * (float)dispW);
 	float dispTouchY = (touchY * (float)dispH);
 
-	*gameX = (dispTouchX - x) / sx;
-	*gameY = (dispTouchY - y) / sy;
-
-	if (*gameX < 0) {
-		*gameX = 0;
-	} else if (*gameX > _km.x_max) {
-		*gameX = _km.x_max;
-	}
-	if (*gameY < 0) {
-		*gameY = 0;
-	} else if (*gameY > _km.y_max) {
-		*gameY = _km.y_max;
-	}
+	*gameX = CLIP((int)((dispTouchX - x) / sx), 0, (int)_km.x_max);
+	*gameY = CLIP((int)((dispTouchY - y) / sy), 0, (int)_km.y_max);
 }
 
 void PSP2EventSource::finishSimulatedMouseClicks() {
