@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2019-08-13 23:16+0200\n"
-"PO-Revision-Date: 2019-07-30 21:03+0000\n"
+"PO-Revision-Date: 2019-08-13 21:24+0000\n"
 "Last-Translator: Thierry Crozat <criezy@scummvm.org>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fr/>\n"
@@ -1415,7 +1415,7 @@ msgstr "Ce stockage n'est pas encore connecté ! Pour se connecter,"
 
 #: gui/options.cpp:1919
 msgid "1. Open this link:"
-msgstr ""
+msgstr "1. Ouvrez le lien suivant :"
 
 #: gui/options.cpp:1920
 msgid "Open URL"
@@ -3088,23 +3088,20 @@ msgstr ""
 "attendue : %d.%d ; version trouvée : %d.%d."
 
 #: engines/adl/detection.cpp:51
-#, fuzzy
 msgid "TV emulation"
-msgstr "Émulateur MT-32"
+msgstr "Émulation écran télé"
 
 #: engines/adl/detection.cpp:52
 msgid "Emulate composite output to an NTSC TV"
-msgstr ""
+msgstr "Émule la sortie composite vers un téléviseur NTSC"
 
 #: engines/adl/detection.cpp:61 engines/adl/detection.cpp:71
-#, fuzzy
 msgid "Color graphics"
 msgstr "Utiliser les graphiques en couleurs"
 
 #: engines/adl/detection.cpp:62 engines/adl/detection.cpp:72
-#, fuzzy
 msgid "Use color graphics instead of monochrome"
-msgstr "Utiliser les graphiques en couleurs"
+msgstr "Utiliser les graphiques en couleurs au lieu du noir et blanc"
 
 #: engines/adl/detection.cpp:81
 msgid "Show scanlines"
@@ -3112,11 +3109,11 @@ msgstr "Afficher le tracé par ligne"
 
 #: engines/adl/detection.cpp:82
 msgid "Darken every other scanline to mimic the look of a CRT"
-msgstr ""
+msgstr "Noircit une ligne sur deux pour imiter l'aspect d'un tube cathodique"
 
 #: engines/adl/detection.cpp:91
 msgid "Always use sharp monochrome text"
-msgstr ""
+msgstr "Toujours utiliser du text noir et blanc net"
 
 #: engines/adl/detection.cpp:92
 msgid "Do not emulate NTSC artifacts for text"
