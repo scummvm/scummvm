@@ -70,7 +70,6 @@ MODULE_OBJS += \
 	lua/lbaselib.o \
 	lua/lcode.o \
 	lua/ldblib.o \
-	lua/ldblib.o \
 	lua/ldebug.o \
 	lua/ldo.o \
 	lua/lfunc.o \
