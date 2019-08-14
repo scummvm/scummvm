@@ -12,7 +12,6 @@ MODULE_OBJS := \
 	savegame.o \
 	sound.o \
 	encoding.o \
-	speech.o \
 	testbed.o \
 	testsuite.o
 
@@ -26,6 +25,11 @@ endif
 ifdef USE_SDL_NET
 MODULE_OBJS += \
 	webserver.o
+endif
+
+ifdef USE_TTS
+MODULE_OBJS += \
+	speech.o
 endif
 
 MODULE_DIRS += \
