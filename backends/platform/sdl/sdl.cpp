@@ -754,7 +754,6 @@ int SDL_SetColorKey_replacement(SDL_Surface *surface, Uint32 flag, Uint32 key) {
 
 char *OSystem_SDL::convertEncoding(const char *to, const char *from, const char *string, size_t length) {
 #if SDL_VERSION_ATLEAST(2, 0, 0)
-	debug("Trying SDL...");
 	int zeroBytes = 1;
 	if (Common::String(from).hasPrefixIgnoreCase("utf-16"))
 		zeroBytes = 2;
@@ -762,7 +761,6 @@ char *OSystem_SDL::convertEncoding(const char *to, const char *from, const char 
 		zeroBytes = 4;
 	return SDL_iconv_string(to, from, string, length + zeroBytes);
 #else
-	debug("SDL isn't available");
 	return nullptr;
 #endif // SDL_VERSION_ATLEAST(2, 0, 0)
 }
