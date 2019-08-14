@@ -60,6 +60,7 @@ namespace StarTrek {
 
 class StarTrekEngine;
 class Room;
+class Console;
 
 typedef String(StarTrekEngine::*TextGetterFunc)(int, uintptr, String *);
 // FIXME: Eventually get rid of Common::SharedPtr and dispose of file streams properly
@@ -775,6 +776,7 @@ public:
 
 	Graphics *_gfx;
 	Sound *_sound;
+	Console *_console;
 	SharedPtr<IWFile> _iwFile;
 
 private:
