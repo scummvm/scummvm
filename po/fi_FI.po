@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2019-08-13 23:16+0200\n"
-"PO-Revision-Date: 2019-08-08 20:47+0000\n"
-"Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
+"PO-Revision-Date: 2019-08-20 19:14+0000\n"
+"Last-Translator: jepael <kermespersialainen@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fi/>\n"
 "Language: fi_FI\n"
@@ -1400,7 +1400,7 @@ msgstr ""
 
 #: gui/options.cpp:1919
 msgid "1. Open this link:"
-msgstr ""
+msgstr "1. Avaa tämä linkki:"
 
 #: gui/options.cpp:1920
 msgid "Open URL"
@@ -3060,23 +3060,20 @@ msgstr ""
 "%d, löytynyt versio %d.%d."
 
 #: engines/adl/detection.cpp:51
-#, fuzzy
 msgid "TV emulation"
-msgstr "MT-32 emulaattori"
+msgstr "TV-emulaatio"
 
 #: engines/adl/detection.cpp:52
 msgid "Emulate composite output to an NTSC TV"
-msgstr ""
+msgstr "Emuloi komposiittivideoulostuloa NTSC-televisioon"
 
 #: engines/adl/detection.cpp:61 engines/adl/detection.cpp:71
-#, fuzzy
 msgid "Color graphics"
-msgstr "Käytä värigrafiikkaa"
+msgstr "Värigrafiikka"
 
 #: engines/adl/detection.cpp:62 engines/adl/detection.cpp:72
-#, fuzzy
 msgid "Use color graphics instead of monochrome"
-msgstr "Käytä värigrafiikkaa"
+msgstr "Käytä värigrafiikkaa mustavalkoisen sijaan"
 
 #: engines/adl/detection.cpp:81
 msgid "Show scanlines"
@@ -3084,15 +3081,15 @@ msgstr "Näytä vaakajuovat"
 
 #: engines/adl/detection.cpp:82
 msgid "Darken every other scanline to mimic the look of a CRT"
-msgstr ""
+msgstr "Tummenna joka toista juovaa kuvaputken jäljittelyä varten"
 
 #: engines/adl/detection.cpp:91
 msgid "Always use sharp monochrome text"
-msgstr ""
+msgstr "Käytä aina terävää mustavalkotekstiä"
 
 #: engines/adl/detection.cpp:92
 msgid "Do not emulate NTSC artifacts for text"
-msgstr ""
+msgstr "Poista NTSC-häiriövärien emulointi tekstille"
 
 #: engines/agi/detection.cpp:147 engines/cine/detection.cpp:70
 #: engines/drascula/detection.cpp:331 engines/dreamweb/detection.cpp:48
@@ -4386,6 +4383,8 @@ msgid ""
 "The selected audio driver requires the following file(s):\n"
 "\n"
 msgstr ""
+"Valittu ääniajuri tarvitsee seuraavat tiedostot:\n"
+"\n"
 
 #: engines/sci/sound/music.cpp:164
 msgid ""
@@ -4402,6 +4401,19 @@ msgid ""
 "In that case you may need to apply the original Sierra patch.\n"
 "\n"
 msgstr ""
+"\n"
+"\n"
+"Jotkin ääniajurit (ainakin joillekin peleille) olivat tarjolla\n"
+"Sierralta jälkiasennuksena eivätkä ne ole välttämättä\n"
+"tulleet alkuperäisen pelin mukana.\n"
+"\n"
+"Ole hyvä ja kopioi nämä tiedostot pelin datakansioon.\n"
+"\n"
+"Huomioi kuitenkin etteivät tiedostot ole välttämättä\n"
+"tarjolla erikseen vaan ovat osana päivitettyä resurssipakettia.\n"
+"Tässä tapauksessa voit joutua asentamaan alkuperäisen\n"
+"Sierran päivityspaketin.\n"
+"\n"
 
 #: engines/scumm/detection.cpp:1123
 msgid ""
