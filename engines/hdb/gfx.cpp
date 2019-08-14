@@ -1043,7 +1043,7 @@ void Gfx::centerPrint(const char *string) {
 			totalWidth += _charInfoBlocks[string[i]]->width;
 	}
 
-	setCursor(g_hdb->_screenWidth / 2 - totalWidth / 2, _cursorX);
+	setCursor(g_hdb->_screenWidth / 2 - totalWidth / 2, _cursorY);
 	drawText(string);
 }
 
