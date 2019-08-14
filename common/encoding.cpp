@@ -21,7 +21,6 @@
  */
 
 #include "common/encoding.h"
-#include "common/debug.h"
 #include "common/textconsole.h"
 #include "common/system.h"
 #include "common/translation.h"
@@ -161,19 +160,12 @@ char *Encoding::conversion(iconv_t iconvHandle, const String &to, const String &
 #ifdef USE_ICONV
 	if (iconvHandle != (iconv_t) -1)
 		result = convertIconv(iconvHandle, string, length);
-	else
-		debug("Could not convert from %s to %s using iconv", from.c_str(), to.c_str());
-	if (result == nullptr)
-		debug("Error while converting with iconv");
-#else
-	debug("Iconv is not available");
 #endif // USE_ICONV
 	if (result == nullptr)
 		result = g_system->convertEncoding(addUtfEndianness(to).c_str(),
 				addUtfEndianness(from).c_str(), string, length);
 
 	if (result == nullptr) {
-		debug("Could not convert from %s to %s using backend specific conversion", from.c_str(), to.c_str());
 		result = convertTransManMapping(addUtfEndianness(to).c_str(), addUtfEndianness(from).c_str(), string, length);
 	}
 
@@ -182,7 +174,6 @@ char *Encoding::conversion(iconv_t iconvHandle, const String &to, const String &
 
 char *Encoding::convertIconv(iconv_t iconvHandle, const char *string, size_t length) {
 #ifdef USE_ICONV
-	debug("Trying iconv...");
 
 	size_t inSize = length;
 	size_t outSize = inSize;
@@ -222,7 +213,6 @@ char *Encoding::convertIconv(iconv_t iconvHandle, const char *string, size_t len
 				memset(dst, 0, stringSize / 2);
 			} else {
 				error = true;
-				debug("iconv failed");
 				break;
 			}
 		}
@@ -242,11 +232,8 @@ char *Encoding::convertIconv(iconv_t iconvHandle, const char *string, size_t len
 			free(buffer);
 		return nullptr;
 	}
-	debug("Size: %d", stringSize);
-
 	return buffer;
 #else
-	debug("Iconv isn't available");
 	return nullptr;
 #endif //USE_ICONV
 }
@@ -256,7 +243,6 @@ char *Encoding::convertIconv(iconv_t iconvHandle, const char *string, size_t len
 // TransMan encoding to UTF-32 and then it calls convert() again with that.
 char *Encoding::convertTransManMapping(const char *to, const char *from, const char *string, size_t length) {
 #ifdef USE_TRANSLATION
-	debug("Trying TransMan...");
 	String currentCharset = TransMan.getCurrentCharset();
 	if (currentCharset.equalsIgnoreCase(from)) {
 		// We can use the transMan mapping directly
@@ -307,7 +293,6 @@ char *Encoding::convertTransManMapping(const char *to, const char *from, const c
 	} else
 		return nullptr;
 #else
-	debug("TransMan isn't available");
 	return nullptr;
 #endif // USE_TRANSLATION
 }
