@@ -586,20 +586,25 @@ void Room::endMission(int16 score, int16 arg1, int16 arg2) {
 	// TODO: This is a stopgap measure (loading the next away mission immediately).
 	// Replace this with the proper code later.
 	_vm->_gameMode = GAMEMODE_BEAMDOWN;
-	if (_vm->_missionName == "DEMON")
-		_vm->_missionToLoad = "TUG";
-	if (_vm->_missionName == "TUG")
-		_vm->_missionToLoad = "LOVE";
-	if (_vm->_missionName == "LOVE")
-		_vm->_missionToLoad = "MUDD";
-	if (_vm->_missionName == "MUDD")
-		_vm->_missionToLoad = "FEATHER";
-	if (_vm->_missionName == "FEATHER")
-		_vm->_missionToLoad = "TRIAL";
-	if (_vm->_missionName == "TRIAL")
-		_vm->_missionToLoad = "SINS";
-	if (_vm->_missionName == "SINS")
-		_vm->_missionToLoad = "VENG";
+
+	const char *missionNames[] = {
+		"DEMON",
+		"TUG",
+		"LOVE",
+		"MUDD",
+		"FEATHER",
+		"TRIAL",
+		"SINS",
+		"VENG"
+	};
+
+	for (int i = 0; i < ARRAYSIZE(missionNames); i++) {
+		if (_vm->_missionName == missionNames[i]) {
+			_vm->_missionToLoad = missionNames[i + 1];
+			break;
+		}
+	}
+
 	_vm->_roomIndexToLoad = 0;
 }
 
