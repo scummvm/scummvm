@@ -817,6 +817,7 @@ begin_credits("Credits");
 			end_section();
 
 			begin_section("SCI");
+				add_person("Chris Benshoof", "sluicebox", "");
 				add_person("Greg Frieger", "_FRG_", "");
 				add_person("Paul Gilbert", "dreammaster", "");
 				add_person("Max Horn", "Fingolfin", "(retired)");
