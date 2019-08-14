@@ -346,16 +346,6 @@ class EncodingTestSuite : public CxxTest::TestSuite {
 			TS_ASSERT(result != NULL);
 			TS_ASSERT_SAME_DATA(result, iso_8859_2, 8);
 			free(result);
-
-			result = Common::Encoding::convert("ASCII", "UTF-8", (char *)utf8_2, 11);
-			TS_ASSERT(result != NULL);
-			TS_ASSERT_SAME_DATA(result, "Salecek", 8);
-			free(result);
-
-			result = Common::Encoding::convert("ASCII", "iso-8859-2", (char *)iso_8859_2, 7);
-			TS_ASSERT(result != NULL);
-			TS_ASSERT_SAME_DATA(result, "Salecek", 8);
-			free(result);
 		}
 };
 #endif
