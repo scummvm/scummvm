@@ -2351,7 +2351,7 @@ void AI::movePlayer(uint16 buttons) {
 		// there's a possibility that an actual entity and a LUA entity
 		// can share the same spot, so we need to be able to deal with
 		// the real entity first, then the LUA entity.
-		if (!hit || (hit && hit->type == AI_NONE)) {
+		if (!hit || hit->type == AI_NONE) {
 			switch (_player->state) {
 			case STATE_STANDUP:
 			case STATE_STANDDOWN:
