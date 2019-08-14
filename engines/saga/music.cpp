@@ -284,6 +284,12 @@ void Music::play(uint32 resourceId, MusicFlags flags) {
 	if (isPlaying() && _trackNumber == resourceId)
 		return;
 
+	// PC-98 version features music in a different, unidentified format.
+	if (_vm->getFeatures() & GF_ITE_PC98) {
+		warning("TODO: Music::play %d, %d for ITE PC-98", resourceId, flags);
+		return;
+	}
+
 	if (_vm->getFeatures() & GF_ITE_DOS_DEMO) {
 		warning("TODO: Music::play %d, %d for ITE DOS demo", resourceId, flags);
 		return;
