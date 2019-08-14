@@ -413,7 +413,12 @@ void HDBGame::setTargetXY(int x, int y) {
 		if (x == px && y == py) {
 			static uint32 dblClickTimer = 0;
 
-			if (dblClickTimer && ((int)(g_system->getMillis() - dblClickTimer) < (int)(kGameFPS * 5))) {
+			if (dblClickTimer) {
+				debug("Double Click Timer: %d", dblClickTimer);
+				debug("Click Timer Diff: %d", (int)(g_system->getMillis() - dblClickTimer));
+			}
+
+			if (dblClickTimer && ((int)(g_system->getMillis() - dblClickTimer) < (int)(kGameFPS * 5 * 1000 / 60))) {
 				g_hdb->_window->openInventory();
 				dblClickTimer = 0;
 			} else
