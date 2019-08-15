@@ -428,7 +428,7 @@ char *OSystem_Win32::convertEncoding(const char* to, const char *from, const cha
 	}
 
 	WCHAR *tmpStr;
-	if (Common::String(from).equalsIgnoreCase("utf-16")) {
+	if (Common::String(from).hasPrefixIgnoreCase("utf-16")) {
 		// Allocate space for string and 2 ending zeros
 		tmpStr = (WCHAR *) calloc(sizeof(char), length + 2);
 		if (!tmpStr) {
@@ -440,7 +440,7 @@ char *OSystem_Win32::convertEncoding(const char* to, const char *from, const cha
 		tmpStr = Win32::ansiToUnicode(string, Win32::getCodePageId(from));
 	}
 
-	if (Common::String(to).equalsIgnoreCase("utf-16"))
+	if (Common::String(to).hasPrefixIgnoreCase("utf-16"))
 		return (char *) tmpStr;
 	else {
 		result = Win32::unicodeToAnsi(tmpStr, Win32::getCodePageId(to));
