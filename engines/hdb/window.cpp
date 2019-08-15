@@ -1509,6 +1509,7 @@ void Window::drawDeliveries() {
 		if (!inv) {
 			g_hdb->_gfx->setCursor(baseX, _dlvsInfo.y + 32);
 			g_hdb->_gfx->drawText("No Deliveries");
+			_dlvsInfo.animate = false;
 		} else if (!_dlvsInfo.animate) {
 			// arrow TO...
 			_gfxArrowTo->drawMasked(_dlvsInfo.x + 24 + _invItemSpace * _dlvsInfo.selected, drawY + _invItemSpace);
