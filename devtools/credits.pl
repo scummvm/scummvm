@@ -841,6 +841,12 @@ begin_credits("Credits");
 				add_person("Joost Peters", "joostp", "");
 			end_section();
 
+			begin_section("Supernova");
+				add_person("Joseph-Eugene Winzer", "Joefish", "");
+				add_person("Jarom&iacute;r Wysoglad", "Vyzygold", "");
+				add_person("Thierry Crozat", "criezy", "");
+			end_section();
+
 			begin_section("Sword1");
 				add_person("Fabio Battaglia", "Hkz", "PSX version support");
 				add_person("Thierry Crozat", "criezy", "Mac version support");
@@ -957,6 +963,7 @@ begin_credits("Credits");
 			begin_section("iPhone / iPad");
 				add_person("Oystein Eftevaag", "vinterstum", "");
 				add_person("Vincent B&eacute;nony", "bSr43", "");
+				add_person("Thierry Crozat", "criezy", "");
 			end_section();
 
 			begin_section("LinuxMoto");
@@ -1143,7 +1150,7 @@ begin_credits("Credits");
 				add_person("Luc Schrijvers", "Begasus", "");
 			end_section();
 
-			begin_section("Mac OS X");
+			begin_section("macOS");
 				add_person("Max Horn", "Fingolfin", "(retired)");
 				add_person("Oystein Eftevaag", "vinterstum", "");
 				add_person("Thierry Crozat", "criezy", "");
@@ -1274,6 +1281,10 @@ begin_credits("Credits");
 				begin_section("Mortevielle");
 					add_person("Hugo Labrande", "", "Improve English translation");
 					add_person("Thierry Crozat", "criezy", "Improve English translation");
+				end_section();
+				begin_section("Supernova");
+					add_person("Joseph-Eugene Winzer", "Joefish", "English translation");
+					add_person("Thierry Crozat", "criezy", "English translation");
 				end_section();
 		end_section();
 

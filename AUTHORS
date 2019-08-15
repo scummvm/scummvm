@@ -259,6 +259,11 @@ ScummVM Team
        Oliver Kiehl                 - (retired)
        Joost Peters
 
+    Supernova:
+       Joseph-Eugene Winzer
+       Jaromir Wysoglad
+       Thierry Crozat
+
     Sword1:
        Fabio Battaglia              - PSX version support
        Thierry Crozat               - Mac version support
@@ -353,6 +358,7 @@ ScummVM Team
     iPhone / iPad:
        Oystein Eftevaag
        Vincent Benony
+       Thierry Crozat
 
     LinuxMoto:
        Lubomyr Lisen
@@ -514,7 +520,7 @@ Other contributions
     Haiku:
        Luc Schrijvers
 
-    Mac OS X:
+    macOS:
        Max Horn                     - (retired)
        Oystein Eftevaag
        Thierry Crozat
@@ -634,6 +640,10 @@ Other contributions
     Mortevielle:
        Hugo Labrande                - Improve English translation
        Thierry Crozat               - Improve English translation
+
+    Supernova:
+       Joseph-Eugene Winzer         - English translation
+       Thierry Crozat               - English translation
 
   Websites (design)
   -----------------
