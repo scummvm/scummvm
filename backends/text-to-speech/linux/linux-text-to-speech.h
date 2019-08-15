@@ -25,7 +25,7 @@
 
 #include "common/scummsys.h"
 
-#if defined(USE_TTS) && defined(POSIX)
+#if defined(USE_TTS) && defined(USE_SPEECH_DISPATCHER) && defined(POSIX)
 
 #include "common/text-to-speech.h"
 #include "common/str.h"
@@ -37,7 +37,7 @@ struct StartSpeechParams {
 	Common::List<Common::String> *speechQueue;
 };
 
-class LinuxTextToSpeechManager : public Common::TextToSpeechManager {
+class SpeechDispatcherManager : public Common::TextToSpeechManager {
 public:
 	enum SpeechState {
 		READY,
@@ -54,8 +54,8 @@ public:
 		SPEECH_BEGUN
 	};
 
-	LinuxTextToSpeechManager();
-	virtual ~LinuxTextToSpeechManager();
+	SpeechDispatcherManager();
+	virtual ~SpeechDispatcherManager();
 
 	virtual bool say(Common::String str, Action action, Common::String charset = "");
 

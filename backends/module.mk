@@ -167,9 +167,11 @@ MODULE_OBJS += \
 	saves/posix/posix-saves.o \
 	taskbar/unity/unity-taskbar.o
 
+ifdef USE_SPEECH_DISPATCHER
 ifdef USE_TTS
 MODULE_OBJS += \
 	text-to-speech/linux/linux-text-to-speech.o
+endif
 endif
 
 endif

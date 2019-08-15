@@ -5404,6 +5404,7 @@ else
 	linux*)
 		echo "linux"
 		_tts=yes
+		define_in_config_if_yes $_tts 'USE_SPEECH_DISPATCHER'
 		append_var LIBS '-lspeechd'
 		;;
 	mingw*)
