@@ -211,7 +211,8 @@ void Window::setCursor(const Point &newPos) {
 }
 
 void Window::setCursor() {
-	g_vm->glk_window_move_cursor(_win, _properties[X_CURSOR] - 1, _properties[Y_CURSOR] - 1);
+	if (dynamic_cast<TextGridWindow *>(_win))
+		g_vm->glk_window_move_cursor(_win, _properties[X_CURSOR] - 1, _properties[Y_CURSOR] - 1);
 }
 
 void Window::clear() {
