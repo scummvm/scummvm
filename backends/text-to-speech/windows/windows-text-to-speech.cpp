@@ -80,7 +80,7 @@ void WindowsTextToSpeechManager::init() {
 
 	// init voice
 	hr = CoCreateInstance(CLSID_SpVoice, NULL, CLSCTX_ALL, IID_ISpVoice, (void **)&_voice);
-	if (!SUCCEEDED(hr)) {
+	if (FAILED(hr)) {
 		warning("Could not initialize TTS voice");
 		return;
 	}
@@ -93,7 +93,7 @@ void WindowsTextToSpeechManager::init() {
 
 	_voice->SetOutput(_audio, FALSE);
 
-	if (_ttsState->_availableVoices.size() > 0)
+	if (!_ttsState->_availableVoices.empty())
 		_speechState = READY;
 	else
 		_speechState = NO_VOICE;
@@ -156,7 +156,7 @@ DWORD WINAPI startSpeech(LPVOID parameters) {
 
 bool WindowsTextToSpeechManager::say(Common::String str, Action action, Common::String charset) {
 	if (_speechState == BROKEN || _speechState == NO_VOICE) {
-		warning("The tts cannot speak in this state");
+		warning("The text to speech cannot speak in this state");
 		return true;
 	}
 
@@ -455,7 +455,7 @@ void WindowsTextToSpeechManager::updateVoices() {
 	_voice->SetVolume(_ttsState->_volume);
 	cpEnum->Release();
 
-	if (_ttsState->_availableVoices.size() == 0) {
+	if (_ttsState->_availableVoices.empty()) {
 		_speechState = NO_VOICE;
 		warning("No voice is available");
 	} else if (_speechState == NO_VOICE)
