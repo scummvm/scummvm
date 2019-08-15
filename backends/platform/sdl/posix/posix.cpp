@@ -55,7 +55,7 @@
 #include <spawn.h>
 #endif
 
-#ifdef USE_LINUX_TTS
+#ifdef USE_TTS
 #include "backends/text-to-speech/linux/linux-text-to-speech.h"
 #endif
 extern char **environ;
@@ -83,7 +83,7 @@ void OSystem_POSIX::initBackend() {
 	if (_savefileManager == 0)
 		_savefileManager = new POSIXSaveFileManager();
 
-#ifdef USE_LINUX_TTS
+#ifdef USE_TTS
 	// Initialize Text to Speech manager
 	_textToSpeechManager = new LinuxTextToSpeechManager();
 #endif

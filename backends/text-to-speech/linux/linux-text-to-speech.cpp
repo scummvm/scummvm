@@ -25,7 +25,7 @@
 
 #include "backends/text-to-speech/linux/linux-text-to-speech.h"
 
-#if defined(USE_LINUX_TTS)
+#if defined(USE_TTS) && defined(POSIX)
 #include <speech-dispatcher/libspeechd.h>
 #include "backends/platform/sdl/sdl-sys.h"
 

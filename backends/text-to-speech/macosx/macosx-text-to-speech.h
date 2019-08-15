@@ -25,7 +25,7 @@
 
 #include "common/scummsys.h"
 
-#if defined(USE_MACOSX_TTS)
+#if defined(USE_TTS) && defined(MACOSX)
 
 #include "common/text-to-speech.h"
 #include "common/queue.h"

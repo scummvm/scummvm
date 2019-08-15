@@ -54,7 +54,7 @@
 #include "common/ustr.h"
 #include "common/encoding.h"
 
-#ifdef USE_WINDOWS_TTS
+#if defined(USE_TTS)
 #include "backends/text-to-speech/windows/windows-text-to-speech.h"
 #endif
 
@@ -121,7 +121,7 @@ void OSystem_Win32::initBackend() {
 #endif
 
 	// Initialize text to speech
-#ifdef USE_WINDOWS_TTS
+#ifdef USE_TTS
 	_textToSpeechManager = new WindowsTextToSpeechManager();
 #endif
 

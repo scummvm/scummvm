@@ -25,7 +25,7 @@
 
 #include "common/scummsys.h"
 
-#if defined(USE_LINUX_TTS)
+#if defined(USE_TTS) && defined(POSIX)
 
 #include "common/text-to-speech.h"
 #include "common/str.h"

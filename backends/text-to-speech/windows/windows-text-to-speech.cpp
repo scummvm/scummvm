@@ -25,7 +25,7 @@
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif
-#if defined(USE_WINDOWS_TTS)
+#if defined(USE_TTS) && defined(WIN32)
 #include <basetyps.h>
 #include <windows.h>
 #include <Servprov.h>
