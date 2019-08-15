@@ -222,6 +222,16 @@ class Encoding {
 		 */
 		static void deinitIconv(iconv_t iconvHandle);
 
+		/**
+		 * If the string is "utf-16" or "utf-32", this adds either BE for big endian
+		 * or LE for little endian to the end of the string. Otherwise this does
+		 * nothing.
+		 *
+		 * @param str String to append the endianness to
+		 *
+		 * @return The same string with appended endianness if it is needed, or
+		 * the same string.
+		 */
 		static String addUtfEndianness(const String &str);
 };
 
