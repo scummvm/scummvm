@@ -253,7 +253,7 @@ static const CryOmni3DGameDescription gameDescriptions[] = {
 		{
 			"versailles",
 			"",
-			AD_ENTRY1s("PROGRAM.Z", "9e7c0c3125124010d45dde9dc62744ef", 346112),
+			AD_ENTRY1s("PROGRAM.Z", "9e7c0c3125124010d45dde9dc62744ef", 237800),
 			Common::ES_ESP,
 			Common::kPlatformWindows,
 			ADGF_TESTING,
