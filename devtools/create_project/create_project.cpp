@@ -428,7 +428,6 @@ int main(int argc, char *argv[]) {
 
 	if (ttsEnabled) {
 		setup.libraries.push_back("sapi");
-		setup.defines.push_back("USE_WINDOWS_TTS");
 	}
 
 	setup.defines.push_back("SDL_BACKEND");

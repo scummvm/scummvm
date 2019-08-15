@@ -25,7 +25,7 @@
 
 #include "common/scummsys.h"
 
-#if defined(USE_WINDOWS_TTS)
+#if defined(USE_TTS) && defined(WIN32)
 
 #include "common/text-to-speech.h"
 #include "common/str.h"

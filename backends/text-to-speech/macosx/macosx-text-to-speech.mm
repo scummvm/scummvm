@@ -25,7 +25,7 @@
 
 #include "backends/text-to-speech/macosx/macosx-text-to-speech.h"
 
-#if defined(USE_MACOSX_TTS)
+#if defined(USE_TTS) && defined(MACOSX)
 #include "common/translation.h"
 #include <AppKit/NSSpeechSynthesizer.h>
 #include <Foundation/NSString.h>

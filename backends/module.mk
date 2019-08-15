@@ -166,6 +166,12 @@ MODULE_OBJS += \
 	plugins/posix/posix-provider.o \
 	saves/posix/posix-saves.o \
 	taskbar/unity/unity-taskbar.o
+
+ifdef USE_TTS
+MODULE_OBJS += \
+	text-to-speech/linux/linux-text-to-speech.o
+endif
+
 endif
 
 ifdef MACOSX
@@ -176,6 +182,12 @@ MODULE_OBJS += \
 	midi/coremidi.o \
 	updates/macosx/macosx-updates.o \
 	taskbar/macosx/macosx-taskbar.o
+
+ifdef USE_TTS
+MODULE_OBJS += \
+	text-to-speech/macosx/macosx-text-to-speech.o
+endif
+
 endif
 
 ifdef WIN32
@@ -189,6 +201,12 @@ MODULE_OBJS += \
 	saves/windows/windows-saves.o \
 	updates/win32/win32-updates.o \
 	taskbar/win32/win32-taskbar.o
+
+ifdef USE_TTS
+MODULE_OBJS += \
+	text-to-speech/windows/windows-text-to-speech.o
+endif
+
 endif
 
 ifeq ($(BACKEND),android)
@@ -342,19 +360,6 @@ ifdef ENABLE_EVENTRECORDER
 MODULE_OBJS += \
 	mixer/nullmixer/nullsdl-mixer.o \
 	saves/recorder/recorder-saves.o
-endif
-
-ifdef USE_LINUX_TTS
-MODULE_OBJS += \
-	text-to-speech/linux/linux-text-to-speech.o
-endif
-ifdef USE_WINDOWS_TTS
-MODULE_OBJS += \
-	text-to-speech/windows/windows-text-to-speech.o
-endif
-ifdef USE_MACOSX_TTS
-MODULE_OBJS += \
-	text-to-speech/macosx/macosx-text-to-speech.o
 endif
 
 # Include common rules

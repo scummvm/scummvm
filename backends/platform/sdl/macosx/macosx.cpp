@@ -87,7 +87,7 @@ void OSystem_MacOSX::initBackend() {
 	_updateManager = new MacOSXUpdateManager();
 #endif
 
-#ifdef USE_MACOSX_TTS
+#ifdef USE_TTS
 	// Initialize Text to Speech manager
 	_textToSpeechManager = new MacOSXTextToSpeechManager();
 #endif
