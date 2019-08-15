@@ -1165,7 +1165,7 @@ static int startMusic(lua_State *L) {
 	g_hdb->_lua->checkParameters("startMusic", 1);
 
 	lua_pop(L, 1);
-	bool error = g_hdb->_sound->startMusic((SoundType)s1);
+	g_hdb->_sound->startMusic((SoundType)s1);
 
 	return 0;
 }
@@ -1180,7 +1180,7 @@ static int fadeInMusic(lua_State *L) {
 	g_hdb->_lua->checkParameters("fadeInMusic", 2);
 
 	lua_pop(L, 2);
-	bool error = g_hdb->_sound->fadeInMusic((SoundType)s1, ramp);
+	g_hdb->_sound->fadeInMusic((SoundType)s1, ramp);
 
 	return 0;
 }
