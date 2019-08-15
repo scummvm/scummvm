@@ -1678,105 +1678,106 @@ void InitScript::Init_Clues2() {
 }
 
 void InitScript::Init_World_Waypoints() {
-	World_Waypoint_Set(0, kSetDR01_DR02_DR04, -676.0f, -0.04f, -94.0f);
-	World_Waypoint_Set(1, kSetDR01_DR02_DR04, -807.0f, -0.04f, 109.0f);
-	World_Waypoint_Set(2, kSetPS05, 541.8f, 0.38f, -435.68f);
-	World_Waypoint_Set(3, kSetPS07, 561.01f, 0.34f, -606.67f);
-	World_Waypoint_Set(4, kSetPS10_PS11_PS12_PS13, -404.09f, -9.23f, 251.95f);
-	World_Waypoint_Set(5, kSetPS10_PS11_PS12_PS13, -99.0f, -9.23f, 690.0f);
-	World_Waypoint_Set(6, kSetPS10_PS11_PS12_PS13, -374.14f, -8.97f, 240.18f);
-	World_Waypoint_Set(7, kSetPS10_PS11_PS12_PS13, -766.02f, -8.82f, 271.44f);
-	World_Waypoint_Set(8, kSetPS10_PS11_PS12_PS13, -546.19f, -9.06f, 351.38f);
-	World_Waypoint_Set(9, kSetPS10_PS11_PS12_PS13, -522.66f, -8.6f, 1409.29f);
-	World_Waypoint_Set(10, kSetPS10_PS11_PS12_PS13, -324.21f, -9.01f, 1428.74f);
-	World_Waypoint_Set(11, kSetPS10_PS11_PS12_PS13, 23.72f, -8.87f, 1335.19f);
-	World_Waypoint_Set(12, kSetRC01, -132.0f, 6.09f, 91.0f);
-	World_Waypoint_Set(13, kSetDR01_DR02_DR04, 21.4f, 0.22f, -201.68f);
-	World_Waypoint_Set(14, kSetDR01_DR02_DR04, 164.44f, 0.29f, -265.69f);
-	World_Waypoint_Set(15, kSetDR01_DR02_DR04, 279.7f, 7.23f, -888.43f);
-	World_Waypoint_Set(16, kSetPS10_PS11_PS12_PS13, 41.35f, -8.98f, 556.2f);
-	World_Waypoint_Set(17, kSetPS10_PS11_PS12_PS13, -697.86f, -0.73f, 21.89f);
-	World_Waypoint_Set(18, kSetPS10_PS11_PS12_PS13, -678.17f, -0.77f, 1043.62f);
-	World_Waypoint_Set(19, kSetPS10_PS11_PS12_PS13, 116.89f, -0.74f, 1581.12f);
-	World_Waypoint_Set(20, kSetDR01_DR02_DR04, -312.92f, 0.17f, -345.2f);
-	World_Waypoint_Set(21, kSetDR01_DR02_DR04, -290.04f, 0.23f, -513.79f);
-	World_Waypoint_Set(22, kSetDR01_DR02_DR04, 6.97f, 0.54f, -759.56f);
-	World_Waypoint_Set(23, kSetDR01_DR02_DR04, 280.48f, 11.58f, -941.15f);
-	World_Waypoint_Set(24, kSetDR01_DR02_DR04, 231.14f, 7.14f, -688.96f);
-	World_Waypoint_Set(25, kSetDR01_DR02_DR04, 54.92f, 0.2f, -171.75f);
-	World_Waypoint_Set(26, kSetDR01_DR02_DR04, -56.77f, 0.18f, -166.99f);
-	World_Waypoint_Set(27, kSetDR01_DR02_DR04, -78.12f, 0.34f, -449.92f);
-	World_Waypoint_Set(28, kSetRC01, -30.0f, -625.51f, 366.15f);
-	World_Waypoint_Set(29, kSetRC01, -51.81f, -622.47f, 286.93f);
-	World_Waypoint_Set(30, kSetRC01, -320.58f, -625.53f, 301.58f);
-	World_Waypoint_Set(31, kSetPS07, 421.01f, 0.22f, -566.67f);
-	World_Waypoint_Set(32, kSetPS07, 336.0f, 0.22f, -520.0f);
-	World_Waypoint_Set(33, kSetFreeSlotA, 0.0f, 0.0f, 0.0f);
-	World_Waypoint_Set(34, kSetFreeSlotB, 0.0f, 0.0f, 0.0f);
-	World_Waypoint_Set(35, kSetFreeSlotC, 0.0f, 0.0f, 0.0f);
-	World_Waypoint_Set(36, kSetFreeSlotD, 0.0f, 0.0f, 0.0f);
-	World_Waypoint_Set(37, kSetFreeSlotE, 0.0f, 0.0f, 0.0f);
-	World_Waypoint_Set(38, kSetFreeSlotF, 0.0f, 0.0f, 0.0f);
-	World_Waypoint_Set(39, kSetFreeSlotG, 0.0f, 0.0f, 0.0f);
-	World_Waypoint_Set(40, kSetFreeSlotH, 0.0f, 0.0f, 0.0f);
-	World_Waypoint_Set(41, kSetFreeSlotI, 0.0f, 0.0f, 0.0f);
-	World_Waypoint_Set(42, kSetFreeSlotJ, 0.0f, 0.0f, 0.0f);
-	World_Waypoint_Set(43, kSetCT01_CT12, -427.0f, -6.5f, 1188.0f);
-	World_Waypoint_Set(44, kSetCT01_CT12, -255.2f, -6.5f, 455.2f);
-	World_Waypoint_Set(45, kSetCT02, -247.02f, -145.11f, 32.99f);
-	World_Waypoint_Set(46, kSetCT02, -154.83f, -145.11f, 9.39f);
-	World_Waypoint_Set(47, kSetCT03_CT04, -619.36f, -616.15f, 220.91f);
-	World_Waypoint_Set(48, kSetCT03_CT04, -82.86f, -621.3f, 769.03f);
-	World_Waypoint_Set(49, kSetCT06, -7.31f, -58.23f, 22.44f);
-	World_Waypoint_Set(50, kSetCT06, 132.16f, -58.23f, 767.0f);
-	World_Waypoint_Set(51, kSetCT03_CT04, -335.05f, -618.82f, 312.9f);
-	World_Waypoint_Set(52, kSetCT07, 189.7f, -58.23f, -4.72f);
-	World_Waypoint_Set(53, kSetCT01_CT12, -450.32f, -6.5f, 230.39f);
-	World_Waypoint_Set(54, kSetCT01_CT12, -70.04f, -6.5f, 150.17f);
-	World_Waypoint_Set(55, kSetPS07, 491.0f, 0.0f, -571.0f);
-	World_Waypoint_Set(56, kSetCT01_CT12, -221.68f, -6.5f, 150.15f);
-	World_Waypoint_Set(57, kSetRC01, -291.43f, -0.3f, 277.92f);
-	World_Waypoint_Set(58, kSetRC01, -272.91f, -0.3f, 369.1f);
-	World_Waypoint_Set(59, kSetDR01_DR02_DR04, -118.65f, 0.15f, -130.15f);
-	World_Waypoint_Set(60, kSetDR01_DR02_DR04, 22.27f, 0.15f, -69.81f);
-	World_Waypoint_Set(61, kSetRC02_RC51, -39.0f, -1238.0f, 108284.0f);
-	World_Waypoint_Set(62, kSetPS02, -11.0f, -40.0f, -45.0f);
-	World_Waypoint_Set(63, kSetCT03_CT04, -133.0f, -621.0f, 686.0f);
-	World_Waypoint_Set(64, kSetCT01_CT12, -360.0f, -6.13f, 380.0f);
-	World_Waypoint_Set(65, kSetPS05, 688.0f, 0.37f, -518.0f);
-	World_Waypoint_Set(66, kSetCT03_CT04, -83.0f, -621.0f, 627.0f);
-	World_Waypoint_Set(67, kSetCT01_CT12, -212.65f, -2.08f, 513.47f);
-	World_Waypoint_Set(68, kSetCT01_CT12, -219.43f, -2.08f, 584.8f);
-	World_Waypoint_Set(69, kSetCT01_CT12, -215.0f, -2.08f, 548.0f);
-	World_Waypoint_Set(71, kSetRC01, 210.0f, 5.55f, 146.19f);
-	World_Waypoint_Set(72, kSetRC01, -55.27f, 5.55f, 108.34f);
-	World_Waypoint_Set(73, kSetPS07, 338.75f, 0.22f, -612.0f);
-	World_Waypoint_Set(74, kSetPS07, 338.75f, 0.22f, -560.0f);
-	World_Waypoint_Set(75, kSetCT03_CT04, -138.45f, -621.3f, 778.52f);
-	World_Waypoint_Set(76, kSetPS03, -499.23f, -354.62f, -51.3f);
-	World_Waypoint_Set(77, kSetPS03, -903.0f, -354.62f, 676.0f);
-	World_Waypoint_Set(78, kSetPS03, -723.0f, -354.62f, -1272.0f);
-	World_Waypoint_Set(79, kSetPS09, 207.36f, 0.67f, -96.42f);
-	World_Waypoint_Set(80, kSetPS09, -134.43f, 0.43f, -180.46f);
-	World_Waypoint_Set(81, kSetPS09, -559.0f, 0.15f, -100.0f);
-	World_Waypoint_Set(82, kSetPS03, -1250.07f, -354.0f, -1186.9f);
-	World_Waypoint_Set(83, kSetRC02_RC51, -55.11f, -1238.89f, 107995.87f);
-	World_Waypoint_Set(84, kSetCT02, -161.62f, -145.11f, -53.73f);
-	World_Waypoint_Set(85, kSetCT02, -201.62f, -145.11f, -85.73f);
-	World_Waypoint_Set(86, kSetCT01_CT12, -171.55f, -2.08f, 361.01f);
-	World_Waypoint_Set(87, kSetCT01_CT12, -523.51f, -9.23f, 1384.76f);
-	World_Waypoint_Set(88, kSetCT01_CT12, -102.01f, -9.23f, 1375.38f);
-	World_Waypoint_Set(89, kSetRC02_RC51, 14.54f, -1238.89f, 108280.85f);
-	World_Waypoint_Set(91, kSetRC02_RC51, 9.68f, -1238.89f, 108427.73f);
-	World_Waypoint_Set(92, kSetRC02_RC51, -153.29f, -1238.89f, 108473.52f);
-	World_Waypoint_Set(93, kSetRC02_RC51, -104.0f, -1238.89f, 108413.0f);
-	World_Waypoint_Set(90, kSetRC02_RC51, 37.59f, -1238.89f, 108449.29f);
-	World_Waypoint_Set(94, kSetCT07, 302.32f, -58.23f, 35.14f);
-	World_Waypoint_Set(95, kSetDR05, 62.0f, 0.3f, 129.0f);
-	World_Waypoint_Set(96, kSetDR05, -134.63f, -0.3f, 171.41f);
-	World_Waypoint_Set(97, kSetDR01_DR02_DR04, -1135.0f, 6.98f, 441.0f);
-	World_Waypoint_Set(98, kSetDR01_DR02_DR04, -1015.0f, 7.18f, 354.75f);
-	World_Waypoint_Set(99, kSetDR01_DR02_DR04, -975.0f, -0.04f, 316.0f);
+	World_Waypoint_Set(  0, kSetDR01_DR02_DR04, -676.0f, -0.04f, -94.0f);
+	World_Waypoint_Set(  1, kSetDR01_DR02_DR04, -807.0f, -0.04f, 109.0f);
+	World_Waypoint_Set(  2, kSetPS05, 541.8f, 0.38f, -435.68f);
+	World_Waypoint_Set(  3, kSetPS07, 561.01f, 0.34f, -606.67f);
+	World_Waypoint_Set(  4, kSetPS10_PS11_PS12_PS13, -404.09f, -9.23f, 251.95f);
+	World_Waypoint_Set(  5, kSetPS10_PS11_PS12_PS13, -99.0f, -9.23f, 690.0f);
+	World_Waypoint_Set(  6, kSetPS10_PS11_PS12_PS13, -374.14f, -8.97f, 240.18f);
+	World_Waypoint_Set(  7, kSetPS10_PS11_PS12_PS13, -766.02f, -8.82f, 271.44f);
+	World_Waypoint_Set(  8, kSetPS10_PS11_PS12_PS13, -546.19f, -9.06f, 351.38f);
+	World_Waypoint_Set(  9, kSetPS10_PS11_PS12_PS13, -522.66f, -8.6f, 1409.29f);
+	World_Waypoint_Set( 10, kSetPS10_PS11_PS12_PS13, -324.21f, -9.01f, 1428.74f);
+	World_Waypoint_Set( 11, kSetPS10_PS11_PS12_PS13, 23.72f, -8.87f, 1335.19f);
+	World_Waypoint_Set( 12, kSetRC01, -132.0f, 6.09f, 91.0f);
+	World_Waypoint_Set( 13, kSetDR01_DR02_DR04, 21.4f, 0.22f, -201.68f);
+	World_Waypoint_Set( 14, kSetDR01_DR02_DR04, 164.44f, 0.29f, -265.69f);
+	World_Waypoint_Set( 15, kSetDR01_DR02_DR04, 279.7f, 7.23f, -888.43f);
+	World_Waypoint_Set( 16, kSetPS10_PS11_PS12_PS13, 41.35f, -8.98f, 556.2f);
+	World_Waypoint_Set( 17, kSetPS10_PS11_PS12_PS13, -697.86f, -0.73f, 21.89f);
+	World_Waypoint_Set( 18, kSetPS10_PS11_PS12_PS13, -678.17f, -0.77f, 1043.62f);
+	World_Waypoint_Set( 19, kSetPS10_PS11_PS12_PS13, 116.89f, -0.74f, 1581.12f);
+	World_Waypoint_Set( 20, kSetDR01_DR02_DR04, -312.92f, 0.17f, -345.2f);
+	World_Waypoint_Set( 21, kSetDR01_DR02_DR04, -290.04f, 0.23f, -513.79f);
+	World_Waypoint_Set( 22, kSetDR01_DR02_DR04, 6.97f, 0.54f, -759.56f);
+	World_Waypoint_Set( 23, kSetDR01_DR02_DR04, 280.48f, 11.58f, -941.15f);
+	World_Waypoint_Set( 24, kSetDR01_DR02_DR04, 231.14f, 7.14f, -688.96f);
+	World_Waypoint_Set( 25, kSetDR01_DR02_DR04, 54.92f, 0.2f, -171.75f);
+	World_Waypoint_Set( 26, kSetDR01_DR02_DR04, -56.77f, 0.18f, -166.99f);
+	World_Waypoint_Set( 27, kSetDR01_DR02_DR04, -78.12f, 0.34f, -449.92f);
+	World_Waypoint_Set( 28, kSetRC01, -30.0f, -625.51f, 366.15f);
+	World_Waypoint_Set( 29, kSetRC01, -51.81f, -622.47f, 286.93f);
+	World_Waypoint_Set( 30, kSetRC01, -320.58f, -625.53f, 301.58f);
+	World_Waypoint_Set( 31, kSetPS07, 421.01f, 0.22f, -566.67f);
+	World_Waypoint_Set( 32, kSetPS07, 336.0f, 0.22f, -520.0f);
+	World_Waypoint_Set( 33, kSetFreeSlotA, 0.0f, 0.0f, 0.0f);
+	World_Waypoint_Set( 34, kSetFreeSlotB, 0.0f, 0.0f, 0.0f);
+	World_Waypoint_Set( 35, kSetFreeSlotC, 0.0f, 0.0f, 0.0f);
+	World_Waypoint_Set( 36, kSetFreeSlotD, 0.0f, 0.0f, 0.0f);
+	World_Waypoint_Set( 37, kSetFreeSlotE, 0.0f, 0.0f, 0.0f);
+	World_Waypoint_Set( 38, kSetFreeSlotF, 0.0f, 0.0f, 0.0f);
+	World_Waypoint_Set( 39, kSetFreeSlotG, 0.0f, 0.0f, 0.0f);
+	World_Waypoint_Set( 40, kSetFreeSlotH, 0.0f, 0.0f, 0.0f);
+	World_Waypoint_Set( 41, kSetFreeSlotI, 0.0f, 0.0f, 0.0f);
+	World_Waypoint_Set( 42, kSetFreeSlotJ, 0.0f, 0.0f, 0.0f);
+	World_Waypoint_Set( 43, kSetCT01_CT12, -427.0f, -6.5f, 1188.0f);
+	World_Waypoint_Set( 44, kSetCT01_CT12, -255.2f, -6.5f, 455.2f);
+	World_Waypoint_Set( 45, kSetCT02, -247.02f, -145.11f, 32.99f);
+	World_Waypoint_Set( 46, kSetCT02, -154.83f, -145.11f, 9.39f);
+	World_Waypoint_Set( 47, kSetCT03_CT04, -619.36f, -616.15f, 220.91f);
+	World_Waypoint_Set( 48, kSetCT03_CT04, -82.86f, -621.3f, 769.03f);
+	World_Waypoint_Set( 49, kSetCT06, -7.31f, -58.23f, 22.44f);
+	World_Waypoint_Set( 50, kSetCT06, 132.16f, -58.23f, 767.0f);
+	World_Waypoint_Set( 51, kSetCT03_CT04, -335.05f, -618.82f, 312.9f);
+	World_Waypoint_Set( 52, kSetCT07, 189.7f, -58.23f, -4.72f);
+	World_Waypoint_Set( 53, kSetCT01_CT12, -450.32f, -6.5f, 230.39f);
+	World_Waypoint_Set( 54, kSetCT01_CT12, -70.04f, -6.5f, 150.17f);
+	World_Waypoint_Set( 55, kSetPS07, 491.0f, 0.0f, -571.0f);
+	World_Waypoint_Set( 56, kSetCT01_CT12, -221.68f, -6.5f, 150.15f);
+	World_Waypoint_Set( 57, kSetRC01, -291.43f, -0.3f, 277.92f);
+	World_Waypoint_Set( 58, kSetRC01, -272.91f, -0.3f, 369.1f);
+	World_Waypoint_Set( 59, kSetDR01_DR02_DR04, -118.65f, 0.15f, -130.15f);
+	World_Waypoint_Set( 60, kSetDR01_DR02_DR04, 22.27f, 0.15f, -69.81f);
+	World_Waypoint_Set( 61, kSetRC02_RC51, -39.0f, -1238.0f, 108284.0f);
+	World_Waypoint_Set( 62, kSetPS02, -11.0f, -40.0f, -45.0f);
+	World_Waypoint_Set( 63, kSetCT03_CT04, -133.0f, -621.0f, 686.0f);
+	World_Waypoint_Set( 64, kSetCT01_CT12, -360.0f, -6.13f, 380.0f);
+	World_Waypoint_Set( 65, kSetPS05, 688.0f, 0.37f, -518.0f);
+	World_Waypoint_Set( 66, kSetCT03_CT04, -83.0f, -621.0f, 627.0f);
+	World_Waypoint_Set( 67, kSetCT01_CT12, -212.65f, -2.08f, 513.47f);
+	World_Waypoint_Set( 68, kSetCT01_CT12, -219.43f, -2.08f, 584.8f);
+	World_Waypoint_Set( 69, kSetCT01_CT12, -215.0f, -2.08f, 548.0f);
+	// 70 - UNUSED
+	World_Waypoint_Set( 71, kSetRC01, 210.0f, 5.55f, 146.19f);
+	World_Waypoint_Set( 72, kSetRC01, -55.27f, 5.55f, 108.34f);
+	World_Waypoint_Set( 73, kSetPS07, 338.75f, 0.22f, -612.0f);
+	World_Waypoint_Set( 74, kSetPS07, 338.75f, 0.22f, -560.0f);
+	World_Waypoint_Set( 75, kSetCT03_CT04, -138.45f, -621.3f, 778.52f);
+	World_Waypoint_Set( 76, kSetPS03, -499.23f, -354.62f, -51.3f);
+	World_Waypoint_Set( 77, kSetPS03, -903.0f, -354.62f, 676.0f);
+	World_Waypoint_Set( 78, kSetPS03, -723.0f, -354.62f, -1272.0f);
+	World_Waypoint_Set( 79, kSetPS09, 207.36f, 0.67f, -96.42f);
+	World_Waypoint_Set( 80, kSetPS09, -134.43f, 0.43f, -180.46f);
+	World_Waypoint_Set( 81, kSetPS09, -559.0f, 0.15f, -100.0f);
+	World_Waypoint_Set( 82, kSetPS03, -1250.07f, -354.0f, -1186.9f);
+	World_Waypoint_Set( 83, kSetRC02_RC51, -55.11f, -1238.89f, 107995.87f);
+	World_Waypoint_Set( 84, kSetCT02, -161.62f, -145.11f, -53.73f);
+	World_Waypoint_Set( 85, kSetCT02, -201.62f, -145.11f, -85.73f);
+	World_Waypoint_Set( 86, kSetCT01_CT12, -171.55f, -2.08f, 361.01f);
+	World_Waypoint_Set( 87, kSetCT01_CT12, -523.51f, -9.23f, 1384.76f);
+	World_Waypoint_Set( 88, kSetCT01_CT12, -102.01f, -9.23f, 1375.38f);
+	World_Waypoint_Set( 89, kSetRC02_RC51, 14.54f, -1238.89f, 108280.85f);
+	World_Waypoint_Set( 90, kSetRC02_RC51, 37.59f, -1238.89f, 108449.29f);
+	World_Waypoint_Set( 91, kSetRC02_RC51, 9.68f, -1238.89f, 108427.73f);
+	World_Waypoint_Set( 92, kSetRC02_RC51, -153.29f, -1238.89f, 108473.52f);
+	World_Waypoint_Set( 93, kSetRC02_RC51, -104.0f, -1238.89f, 108413.0f);
+	World_Waypoint_Set( 94, kSetCT07, 302.32f, -58.23f, 35.14f);
+	World_Waypoint_Set( 95, kSetDR05, 62.0f, 0.3f, 129.0f);
+	World_Waypoint_Set( 96, kSetDR05, -134.63f, -0.3f, 171.41f);
+	World_Waypoint_Set( 97, kSetDR01_DR02_DR04, -1135.0f, 6.98f, 441.0f);
+	World_Waypoint_Set( 98, kSetDR01_DR02_DR04, -1015.0f, 7.18f, 354.75f);
+	World_Waypoint_Set( 99, kSetDR01_DR02_DR04, -975.0f, -0.04f, 316.0f);
 	World_Waypoint_Set(100, kSetCT01_CT12, -334.46f, -6.5f, 500.64f);
 	World_Waypoint_Set(101, kSetDR01_DR02_DR04, -334.46f, -6.5f, 500.64f);
 	World_Waypoint_Set(102, kSetRC02_RC51, 27.89f, -1238.89f, 108288.73f);
@@ -1806,6 +1807,8 @@ void InitScript::Init_World_Waypoints() {
 	World_Waypoint_Set(126, kSetMA01, 477.18f, 0.0f, -287.21f);
 	World_Waypoint_Set(127, kSetBB11, 31.39f, -10.27f, -64.52f);
 	World_Waypoint_Set(128, kSetBB11, 7.39f, -10.27f, -136.52f);
+	World_Waypoint_Set(127, kSetBB11, 102.98f, -30.89f, -121.02f); // a bug? Overwrites previous co-ordinates (this is the final value). Note: The 127 waypoint is UNUSED!
+	World_Waypoint_Set(128, kSetBB11, -20.0f, -30.89f, -121.02f);  // a bug? Overwrites previous co-ordinates (this is the final value). Note: The 128 waypoint is UNUSED!
 	World_Waypoint_Set(129, kSetBB11, -136.61f, -10.27f, -136.52f);
 	World_Waypoint_Set(130, kSetBB11, -36.61f, -10.27f, -136.52f);
 	World_Waypoint_Set(131, kSetBB09, 435.45f, -9.0f, 166.0f);
@@ -1817,15 +1820,15 @@ void InitScript::Init_World_Waypoints() {
 	World_Waypoint_Set(137, kSetBB05, 99.41f, -60.31f, 4.35f);
 	World_Waypoint_Set(138, kSetBB05, 99.41f, -60.34f, -115.65f);
 	World_Waypoint_Set(139, kSetBB05, 147.41f, -60.34f, -115.65f);
+	World_Waypoint_Set(140, kSetBB06_BB07, -43.88f, -0.04f, 172.95f);
+	World_Waypoint_Set(141, kSetBB06_BB07, 78.36f, -0.04f, 80.79f);
+	World_Waypoint_Set(142, kSetBB06_BB07, 81.74f, -0.04f, -94.0f);
+	World_Waypoint_Set(143, kSetBB06_BB07, -118.26f, -0.04f, -94.04f);
 	World_Waypoint_Set(144, kSetBB07, -654.56f, 252.59f, -1110.88f);
 	World_Waypoint_Set(145, kSetBB07, -578.56f, 252.59f, -1010.88f);
 	World_Waypoint_Set(146, kSetBB07, -470.56f, 252.59f, -1070.88f);
 	World_Waypoint_Set(147, kSetBB07, -510.56f, 252.59f, -1006.88f);
 	World_Waypoint_Set(148, kSetBB07, -646.56f, 252.59f, -1006.88f);
-	World_Waypoint_Set(140, kSetBB06_BB07, -43.88f, -0.04f, 172.95f);
-	World_Waypoint_Set(141, kSetBB06_BB07, 78.36f, -0.04f, 80.79f);
-	World_Waypoint_Set(142, kSetBB06_BB07, 81.74f, -0.04f, -94.0f);
-	World_Waypoint_Set(143, kSetBB06_BB07, -118.26f, -0.04f, -94.04f);
 	World_Waypoint_Set(149, kSetHC01_HC02_HC03_HC04, 647.0f, 1.6f, -81.87f);
 	World_Waypoint_Set(150, kSetUG02, -269.0f, 120.16f, -88.0f);
 	World_Waypoint_Set(151, kSetUG02, -181.0f, 120.16f, -96.0f);
@@ -1850,25 +1853,26 @@ void InitScript::Init_World_Waypoints() {
 	World_Waypoint_Set(170, kSetRC03, 265.0f, 1.72f, 36.0f);
 	World_Waypoint_Set(171, kSetRC03, -639.0f, 1.72f, -124.0f);
 	World_Waypoint_Set(172, kSetHC01_HC02_HC03_HC04, -225.0f, 1.0f, 39.0f);
-	World_Waypoint_Set(172, kSetHC01_HC02_HC03_HC04, -217.0f, 1.0f, 127.0f);
+	World_Waypoint_Set(172, kSetHC01_HC02_HC03_HC04, -217.0f, 1.0f, 127.0f); // a bug? Overwrites previous co-ordinates (this is the final value). Note: The 172 waypoint is UNUSED!
+	// 173 - UNUSED
 	World_Waypoint_Set(174, kSetRC03, 326.96f, -4.01f, 383.16f);
 	World_Waypoint_Set(175, kSetRC03, 264.43f, -4.01f, 313.73f);
 	World_Waypoint_Set(176, kSetUG06, -78.43f, 0.0f, 269.98f);
 	World_Waypoint_Set(177, kSetUG06, 19.0f, 0.0f, 269.98f);
 	World_Waypoint_Set(178, kSetUG06, 91.0f, 0.0f, 137.6f);
-	World_Waypoint_Set(185, kSetUG09, 115.0f, 156.94f, -310.0f);
-	World_Waypoint_Set(186, kSetUG09, 153.0f, 156.94f, -294.0f);
 	World_Waypoint_Set(179, kSetUG06, 40.14f, 0.0f, 276.62f);
 	World_Waypoint_Set(180, kSetUG06, -71.86f, 0.0f, 276.62f);
 	World_Waypoint_Set(181, kSetUG06, -112.56f, 0.0f, 228.03f);
-	World_Waypoint_Set(189, kSetUG14, 229.0f, 186.04f, -24.0f);
-	World_Waypoint_Set(190, kSetUG14, 157.0f, 186.04f, -24.0f);
-	World_Waypoint_Set(191, kSetUG14, 157.0f, 128.92f, -148.0f);
 	World_Waypoint_Set(182, kSetUG01, 143.45f, -50.13f, -12.22f);
 	World_Waypoint_Set(183, kSetUG01, 199.45f, -50.13f, -1400.22f);
 	World_Waypoint_Set(184, kSetUG01, -112.55f, -50.13f, -2360.22f);
+	World_Waypoint_Set(185, kSetUG09, 115.0f, 156.94f, -310.0f);
+	World_Waypoint_Set(186, kSetUG09, 153.0f, 156.94f, -294.0f);
 	World_Waypoint_Set(187, kSetUG14, -295.0f, 12.97f, -148.0f);
 	World_Waypoint_Set(188, kSetUG14, 157.0f, 129.0f, -504.0f);
+	World_Waypoint_Set(189, kSetUG14, 229.0f, 186.04f, -24.0f);
+	World_Waypoint_Set(190, kSetUG14, 157.0f, 186.04f, -24.0f);
+	World_Waypoint_Set(191, kSetUG14, 157.0f, 128.92f, -148.0f);
 	World_Waypoint_Set(192, kSetTB02_TB03, -136.19f, 0.0f, 1580.03f);
 	World_Waypoint_Set(193, kSetTB02_TB03, -308.0f, -81.46f, 1466.0f);
 	World_Waypoint_Set(194, kSetBB03, 82.26f, 60.16f, -124.35f);
@@ -1876,6 +1880,7 @@ void InitScript::Init_World_Waypoints() {
 	World_Waypoint_Set(196, kSetBB05, 39.41f, -60.31f, 308.35f);
 	World_Waypoint_Set(197, kSetBB05, 99.41f, -60.31f, 220.35f);
 	World_Waypoint_Set(198, kSetBB05, 267.41f, -60.31f, 180.35f);
+	// 199 - UNUSED?
 	World_Waypoint_Set(200, kSetBB06_BB07, -44.46f, -0.04f, 177.4f);
 	World_Waypoint_Set(201, kSetBB06_BB07, 137.0f, -0.04f, 17.0f);
 	World_Waypoint_Set(202, kSetRC03, -610.0f, -4.01f, 237.11f);
@@ -1972,13 +1977,6 @@ void InitScript::Init_World_Waypoints() {
 	World_Waypoint_Set(293, kSetNR04, 5.0f, 0.0f, 342.0f);
 	World_Waypoint_Set(294, kSetNR04, 173.0f, 0.0f, 226.0f);
 	World_Waypoint_Set(295, kSetNR04, 13.0f, 0.0f, -50.0f);
-	World_Waypoint_Set(354, kSetNR04, 57.0f, 0.0f, 18.0f);
-	World_Waypoint_Set(355, kSetNR04, 161.0f, 0.0f, 410.0f);
-	World_Waypoint_Set(358, kSetNR04, 33.0f, 0.0f, 198.0f);
-	World_Waypoint_Set(359, kSetNR04, 62.92f, 0.16f, 309.72f);
-	World_Waypoint_Set(549, kSetNR04, -15.0f, 0.0f, 338.0f);
-	World_Waypoint_Set(445, kSetNR04, 129.0f, 0.0f, 418.0f);
-	World_Waypoint_Set(546, kSetNR04, 13.0f, 0.0f, 206.0f);
 	World_Waypoint_Set(296, kSetUG04, 168.0f, 11.87f, -987.0f);
 	World_Waypoint_Set(297, kSetUG04, -178.5f, 23.73f, -2176.05f);
 	World_Waypoint_Set(298, kSetUG09, -145.0f, 156.94f, -370.0f);
@@ -1996,10 +1994,6 @@ void InitScript::Init_World_Waypoints() {
 	World_Waypoint_Set(310, kSetUG12, 459.0f, -126.21f, 152.0f);
 	World_Waypoint_Set(311, kSetUG12, -29.0f, -126.21f, 556.0f);
 	World_Waypoint_Set(312, kSetUG14, -311.0f, 129.0f, -488.0f);
-	World_Waypoint_Set(322, kSetNR04, 121.0f, 0.0f, -82.0f);
-	World_Waypoint_Set(323, kSetHC01_HC02_HC03_HC04, 600.58f, 0.14f, 32.82f);
-	World_Waypoint_Set(127, kSetBB11, 102.98f, -30.89f, -121.02f);
-	World_Waypoint_Set(128, kSetBB11, -20.0f, -30.89f, -121.02f);
 	World_Waypoint_Set(313, kSetBB11, 102.98f, -31.0f, -149.0f);
 	World_Waypoint_Set(314, kSetBB11, 20.0f, -31.0f, -109.0f);
 	World_Waypoint_Set(315, kSetBB11, -60.6f, -31.0f, -109.0f);
@@ -2009,10 +2003,24 @@ void InitScript::Init_World_Waypoints() {
 	World_Waypoint_Set(319, kSetBB11, 115.35f, -31.0f, 302.36f);
 	World_Waypoint_Set(320, kSetBB11, 104.38f, -31.0f, 260.0f);
 	World_Waypoint_Set(321, kSetBB11, 120.0f, -31.0f, 115.0f);
+	World_Waypoint_Set(322, kSetNR04, 121.0f, 0.0f, -82.0f);
+	World_Waypoint_Set(323, kSetHC01_HC02_HC03_HC04, 600.58f, 0.14f, 32.82f);
+	// 324 - 335 are also set in Bryant (Sebastian's bear) AI script, same co-ordinates
+	World_Waypoint_Set(324, kSetBB05, 267.0f, -60.3f, 203.0f);
+	World_Waypoint_Set(325, kSetBB05, 84.0f, -60.3f, 337.0f);
+	World_Waypoint_Set(326, kSetBB06_BB07, -36.0f, 0.0f, 185.0f);
+	World_Waypoint_Set(327, kSetBB06_BB07, -166.0f, 0.0f, -103.0f);
+	World_Waypoint_Set(328, kSetBB07, -556.0f, 252.59f, -1018.11f);
+	World_Waypoint_Set(329, kSetBB07, -655.0f, 252.6f, -1012.0f);
+	World_Waypoint_Set(330, kSetBB07, -657.0f, 253.0f, -1127.0f);
+	World_Waypoint_Set(331, kSetBB12, 163.8f, 0.0f, 67.0f);
+	World_Waypoint_Set(332, kSetBB06_BB07, -39.0f, 0.0f, 11.5f);
+	World_Waypoint_Set(333, kSetBB12, -34.0f, 0.0f, 33.0f);
+	World_Waypoint_Set(334, kSetBB05, 3.0f, -60.3f, -144.0f);
+	World_Waypoint_Set(335, kSetBB12, -50.0f, 0.0f, 212.0f);
 	World_Waypoint_Set(336, kSetNR07, -110.0f, -73.5f, -169.0f);
 	World_Waypoint_Set(337, kSetNR07, -161.0f, -73.5f, -105.0f);
 	World_Waypoint_Set(338, kSetNR07, -193.0f, -73.5f, -105.0f);
-	World_Waypoint_Set(350, kSetNR01, -416.0f, -31.93f, -841.0f);
 	World_Waypoint_Set(339, kSetUG07, 106.0f, -12.21f, -94.0f);
 	World_Waypoint_Set(340, kSetUG07, 98.02f, -12.21f, -126.0f);
 	World_Waypoint_Set(341, kSetUG07, 106.0f, -21.47f, -278.0f);
@@ -2023,11 +2031,23 @@ void InitScript::Init_World_Waypoints() {
 	World_Waypoint_Set(346, kSetDR01_DR02_DR04, -667.0f, -0.04f, -125.0f);
 	World_Waypoint_Set(347, kSetDR01_DR02_DR04, -471.0f, -0.04f, -110.0f);
 	World_Waypoint_Set(348, kSetDR01_DR02_DR04, -403.0f, -0.04f, -110.0f);
+	// 349 - kSetRC03 - Izo AI script
+	World_Waypoint_Set(350, kSetNR01, -416.0f, -31.93f, -841.0f);
 	World_Waypoint_Set(351, kSetCT09, 105.0f, 348.52f, 948.0f);
 	World_Waypoint_Set(352, kSetCT11, -426.0f, 9.68f, -33.0f);
 	World_Waypoint_Set(353, kSetCT11, -439.0f, 9.68f, -101.0f);
+	World_Waypoint_Set(354, kSetNR04, 57.0f, 0.0f, 18.0f);
+	World_Waypoint_Set(355, kSetNR04, 161.0f, 0.0f, 410.0f);
 	World_Waypoint_Set(356, kSetNR02, 19.01f, -24.0f, 20.21f);
 	World_Waypoint_Set(357, kSetNR02, 22.26f, 12.0f, -31.01f);
+	World_Waypoint_Set(358, kSetNR04, 33.0f, 0.0f, 198.0f);
+	World_Waypoint_Set(359, kSetNR04, 62.92f, 0.16f, 309.72f);
+	// 360 - kSetHF05 - CrazyLegs AI script
+	World_Waypoint_Set(361, kSetNR03, -185.0f, -70.19f, -1046.0f);
+	World_Waypoint_Set(362, kSetNR03, -121.0f, -70.19f, -778.0f);
+	World_Waypoint_Set(363, kSetNR03, -166.0f, -70.19f, -579.0f);
+	World_Waypoint_Set(364, kSetNR03, -160.0f, -70.19f, -164.0f);
+	World_Waypoint_Set(365, kSetNR03, 3.0f, -70.19f, -986.0f);
 	World_Waypoint_Set(366, kSetNR02, -94.21f, 12.0f, -26.15f);
 	World_Waypoint_Set(367, kSetNR02, -286.21f, -24.0f, 37.85f);
 	World_Waypoint_Set(368, kSetUG16, 176.91f, -40.67f, 225.92f);
@@ -2042,11 +2062,6 @@ void InitScript::Init_World_Waypoints() {
 	World_Waypoint_Set(377, kSetHF03, 397.6f, 47.76f, -823.23f);
 	World_Waypoint_Set(378, kSetHF03, 461.56f, 47.76f, -757.78f);
 	World_Waypoint_Set(379, kSetTB07, -260.15f, 12.0f, -19.16f);
-	World_Waypoint_Set(361, kSetNR03, -185.0f, -70.19f, -1046.0f);
-	World_Waypoint_Set(362, kSetNR03, -121.0f, -70.19f, -778.0f);
-	World_Waypoint_Set(363, kSetNR03, -166.0f, -70.19f, -579.0f);
-	World_Waypoint_Set(364, kSetNR03, -160.0f, -70.19f, -164.0f);
-	World_Waypoint_Set(365, kSetNR03, 3.0f, -70.19f, -986.0f);
 	World_Waypoint_Set(380, kSetHF02, 456.43f, 47.76f, -276.05f);
 	World_Waypoint_Set(381, kSetRC03, -160.0f, -4.01f, 496.0f);
 	World_Waypoint_Set(382, kSetRC03, 0.0f, 1.72f, 60.0f);
@@ -2077,6 +2092,7 @@ void InitScript::Init_World_Waypoints() {
 	World_Waypoint_Set(407, kSetUG10, 0.0f, 81.02f, -512.0f);
 	World_Waypoint_Set(408, kSetUG10, 0.0f, 1.15f, 400.0f);
 	World_Waypoint_Set(409, kSetUG04, -48.0f, -1.74f, -983.0f);
+	// 410 - UNUSED?
 	World_Waypoint_Set(411, kSetUG05, 80.0f, -16.72f, -4.0f);
 	World_Waypoint_Set(412, kSetUG05, -48.0f, -11.0f, -352.0f);
 	World_Waypoint_Set(413, kSetUG06, -109.0f, 0.0f, 285.0f);
@@ -2102,15 +2118,16 @@ void InitScript::Init_World_Waypoints() {
 	World_Waypoint_Set(433, kSetUG09, 115.0f, 156.0f, -310.0f);
 	World_Waypoint_Set(434, kSetUG09, -57.0f, 156.0f, -306.0f);
 	World_Waypoint_Set(435, kSetUG09, -121.0f, 156.0f, -426.0f);
-	World_Waypoint_Set(436, kSetUG18, -274.74f, 0.0f, 464.75f);
+	World_Waypoint_Set(436, kSetUG18, -274.74f, 0.0f, 464.75f); // A bug? redundant? 436 is also set as a kSetUG18 waypoin in Sadik's AI script. Different co-ordinates
 	World_Waypoint_Set(437, kSetHF05, 271.97f, 40.63f, 18.4f);
 	World_Waypoint_Set(438, kSetHF05, 203.97f, 40.63f, 18.4f);
-	World_Waypoint_Set(516, kSetHF05, -79.01f, 40.63f, 91.01f);
 	World_Waypoint_Set(439, kSetNR05_NR08, -1273.27f, 0.32f, 126.92f);
 	World_Waypoint_Set(440, kSetCT01_CT12, -453.0f, -6.5f, 1176.0f);
 	World_Waypoint_Set(441, kSetCT01_CT12, -497.0f, -6.5f, 1080.0f);
 	World_Waypoint_Set(442, kSetCT01_CT12, -623.0f, -6.5f, 787.0f);
 	World_Waypoint_Set(443, kSetCT01_CT12, -436.0f, -6.5f, 765.0f);
+	// 444 - kSetUG15 - Free Slot A (Rat) AI script
+	World_Waypoint_Set(445, kSetNR04, 129.0f, 0.0f, 418.0f);
 	World_Waypoint_Set(446, kSetUG04, 176.0f, 19.31f, -283.0f);
 	World_Waypoint_Set(447, kSetUG04, 40.0f, -1.74f, -247.0f);
 	World_Waypoint_Set(448, kSetUG04, 24.0f, -6.71f, -179.0f);
@@ -2122,12 +2139,16 @@ void InitScript::Init_World_Waypoints() {
 	World_Waypoint_Set(454, kSetHF06, 216.5f, 367.93f, 265.84f);
 	World_Waypoint_Set(455, kSetHF06, 216.5f, 367.93f, 389.84f);
 	World_Waypoint_Set(456, kSetNR11, -100.0f, 0.33f, -272.0f);
-	World_Waypoint_Set(462, kSetNR11, -119.0f, 0.33f, 77.0f);
 	World_Waypoint_Set(457, kSetUG05, 129.65f, 16.72f, -78.36f);
 	World_Waypoint_Set(458, kSetUG05, 44.2f, -11.64f, -390.86f);
 	World_Waypoint_Set(459, kSetUG05, 103.36f, -16.72f, -484.49f);
 	World_Waypoint_Set(460, kSetUG06, 103.0f, 0.0f, 413.0f);
 	World_Waypoint_Set(461, kSetUG06, 103.0f, 0.0f, 349.0f);
+	World_Waypoint_Set(462, kSetNR11, -119.0f, 0.33f, 77.0f);
+	// 463 - kSetUG01 or kSetUG04 or kSetUG07 or kSetUG09 or kSetUG12 - Free Slot A (Rat) AI script
+	// 464 - kSetUG01 or kSetUG04 or kSetUG07 or kSetUG09 or kSetUG12 - Free Slot A (Rat) AI script
+	// 465 - kSetUG01 or kSetUG04 or kSetUG07             or kSetUG12 - Free Slot A (Rat) AI script
+	// 466 - kSetUG01 or kSetUG04 or kSetUG07 or kSetUG09 or kSetUG12 - Free Slot B (Rat) AI script
 	World_Waypoint_Set(467, kSetNR05_NR08, -585.67f, 0.0f, 380.58f);
 	World_Waypoint_Set(468, kSetMA07, -312.0f, -162.8f, 156.0f);
 	World_Waypoint_Set(469, kSetMA07, 68.0f, -162.8f, 144.0f);
@@ -2145,6 +2166,10 @@ void InitScript::Init_World_Waypoints() {
 	World_Waypoint_Set(481, kSetUG10, -193.5f, 1.15f, 29.0f);
 	World_Waypoint_Set(482, kSetUG10, -329.5f, 1.15f, 29.0f);
 	World_Waypoint_Set(483, kSetUG10, -329.5f, 1.15f, -379.0f);
+	// 484 - kSetNR01 or kSetNR05_NR08 or kSetHF01 or kSetHF03 - Izo AI script
+	// 485 - kSetNR01 or kSetNR05_NR08 or kSetHF01 or kSetHF03 - Izo AI script
+	// 486 - kSetNR02                              or kSetHF02 - Izo AI script
+	// 487 - kSetNR02                              or kSetHF02 - Izo AI script
 	World_Waypoint_Set(488, kSetUG01, 22.0f, -50.13f, -650.0f);
 	World_Waypoint_Set(489, kSetUG01, -14.0f, -50.13f, -2354.0f);
 	World_Waypoint_Set(490, kSetNR01, -360.0f, 31.55f, -1457.0f);
@@ -2173,6 +2198,7 @@ void InitScript::Init_World_Waypoints() {
 	World_Waypoint_Set(513, kSetHF02, 446.46f, 47.76f, -509.98f);
 	World_Waypoint_Set(514, kSetHF03, 567.0f, 47.76f, -884.0f);
 	World_Waypoint_Set(515, kSetHF03, 203.0f, 47.76f, -880.0f);
+	World_Waypoint_Set(516, kSetHF05, -79.01f, 40.63f, 91.01f);
 	World_Waypoint_Set(517, kSetHF04, 1246.62f, -0.31f, -171.02f);
 	World_Waypoint_Set(518, kSetHF04, -72.89f, -0.31f, -154.77f);
 	World_Waypoint_Set(519, kSetHF04, 285.88f, -0.31f, -134.49f);
@@ -2180,6 +2206,12 @@ void InitScript::Init_World_Waypoints() {
 	World_Waypoint_Set(521, kSetHF04, 482.02f, -0.31f, -661.24f);
 	World_Waypoint_Set(522, kSetHF04, 1183.98f, -0.31f, -176.25f);
 	World_Waypoint_Set(523, kSetHF04, -45.0f, -0.34f, -351.0f);
+	// 524 - UNUSED?
+	// 525 - kSetKP02 - Free Slot A (Rat) AI script
+	// 526 - kSetKP02 - Free Slot A (Rat) AI script
+	// 527 - kSetKP02 - Free Slot B (Rat) AI script
+	// 528 - kSetKP02 - Free Slot B (Rat) AI script
+	// 529 - kSetKP02 - Free Slot B (Rat) AI script
 	World_Waypoint_Set(530, kSetKP01, 36.79f, -12.2f, -534.54f);
 	World_Waypoint_Set(531, kSetKP01, -279.21f, -12.2f, -594.54f);
 	World_Waypoint_Set(532, kSetUG14, -76.51f, 129.0f, -748.49f);
@@ -2196,20 +2228,14 @@ void InitScript::Init_World_Waypoints() {
 	World_Waypoint_Set(543, kSetKP05_KP06, -1046.4f, 8.26f, -312.12f);
 	World_Waypoint_Set(544, kSetUG01, 111.72f, -50.13f, -490.46f);
 	World_Waypoint_Set(545, kSetUG01, -143.86f, 490.46f, -300.38f);
+	World_Waypoint_Set(546, kSetNR04, 13.0f, 0.0f, 206.0f);
+	// 547 - kSetUG01 or kSetUG04 or kSetUG07 or kSetUG09 or kSetUG12 - Free Slot B (Rat) AI script
+	// 548 - kSetUG01 or kSetUG04 or kSetUG07             or kSetUG12 - Free Slot B (Rat) AI script
+	World_Waypoint_Set(549, kSetNR04, -15.0f, 0.0f, 338.0f);
 	World_Waypoint_Set(550, kSetKP05_KP06, -785.31f, 0.0f, -237.05f);
 	World_Waypoint_Set(551, kSetKP05_KP06, -737.31f, 0.0f, -145.05f);
-	World_Waypoint_Set(324, kSetBB05, 267.0f, -60.3f, 203.0f);
-	World_Waypoint_Set(325, kSetBB05, 84.0f, -60.3f, 337.0f);
-	World_Waypoint_Set(326, kSetBB06_BB07, -36.0f, 0.0f, 185.0f);
-	World_Waypoint_Set(327, kSetBB06_BB07, -166.0f, 0.0f, -103.0f);
-	World_Waypoint_Set(328, kSetBB07, -556.0f, 252.59f, -1018.11f);
-	World_Waypoint_Set(329, kSetBB07, -655.0f, 252.6f, -1012.0f);
-	World_Waypoint_Set(330, kSetBB07, -657.0f, 253.0f, -1127.0f);
-	World_Waypoint_Set(331, kSetBB12, 163.8f, 0.0f, 67.0f);
-	World_Waypoint_Set(332, kSetBB06_BB07, -39.0f, 0.0f, 11.5f);
-	World_Waypoint_Set(333, kSetBB12, -34.0f, 0.0f, 33.0f);
-	World_Waypoint_Set(334, kSetBB05, 3.0f, -60.3f, -144.0f);
-	World_Waypoint_Set(335, kSetBB12, -50.0f, 0.0f, 212.0f);
+	// 552 - UNUSED?
+	// 553 - kSetRC03 - Izo AI script
 }
 
 void InitScript::Init_SDB() {
@@ -2489,7 +2515,7 @@ void InitScript::Init_CDB() {
 	CDB_Set_Crime(kClueStaggeredbyPunches, kCrimeBradburyAssault);
 	CDB_Set_Crime(kClueAct2Ended, kCrimeBradburyAssault);
 
-	for(int i = 0; i != 288; ++i) {
+	for (int i = 0; i != 288; ++i) {
 		CDB_Set_Clue_Asset_Type(i, kClueTypeIntangible);
 	}
 
@@ -2693,16 +2719,16 @@ void InitScript::Init_CDB() {
 }
 
 void InitScript::Init_Spinner() {
-	Spinner_Set_Selectable_Destination_Flag(kSpinnerDestinationPoliceStation, true);
-	Spinner_Set_Selectable_Destination_Flag(kSpinnerDestinationMcCoysApartment, true);
+	Spinner_Set_Selectable_Destination_Flag(kSpinnerDestinationPoliceStation,    true);
+	Spinner_Set_Selectable_Destination_Flag(kSpinnerDestinationMcCoysApartment,  true);
 	Spinner_Set_Selectable_Destination_Flag(kSpinnerDestinationRuncitersAnimals, true);
-	Spinner_Set_Selectable_Destination_Flag(kSpinnerDestinationChinatown, false);
-	Spinner_Set_Selectable_Destination_Flag(kSpinnerDestinationAnimoidRow, false);
-	Spinner_Set_Selectable_Destination_Flag(kSpinnerDestinationTyrellBuilding, false);
-	Spinner_Set_Selectable_Destination_Flag(kSpinnerDestinationDNARow, false);
+	Spinner_Set_Selectable_Destination_Flag(kSpinnerDestinationChinatown,        false);
+	Spinner_Set_Selectable_Destination_Flag(kSpinnerDestinationAnimoidRow,       false);
+	Spinner_Set_Selectable_Destination_Flag(kSpinnerDestinationTyrellBuilding,   false);
+	Spinner_Set_Selectable_Destination_Flag(kSpinnerDestinationDNARow,           false);
 	Spinner_Set_Selectable_Destination_Flag(kSpinnerDestinationBradburyBuilding, false);
-	Spinner_Set_Selectable_Destination_Flag(kSpinnerDestinationNightclubRow, false);
-	Spinner_Set_Selectable_Destination_Flag(kSpinnerDestinationHysteriaHall, false);
+	Spinner_Set_Selectable_Destination_Flag(kSpinnerDestinationNightclubRow,     false);
+	Spinner_Set_Selectable_Destination_Flag(kSpinnerDestinationHysteriaHall,     false);
 }
 
 void InitScript::Init_Actor_Friendliness() {
