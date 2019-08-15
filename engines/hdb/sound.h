@@ -1462,7 +1462,6 @@ struct SoundCache {
 struct Song {
 	bool playing;
 	SoundType song;
-	const char *sndMusic;
 	Audio::SoundHandle *handle;
 
 	bool fadingOut;
@@ -1473,7 +1472,7 @@ struct Song {
 	int	fadeInVol;
 	int	fadeInRamp;
 
-	Song() : playing(false), song(SONG_NONE), sndMusic(nullptr), handle(new Audio::SoundHandle()),
+	Song() : playing(false), song(SONG_NONE), handle(new Audio::SoundHandle()),
 		fadingOut(false), fadeOutVol(0), fadeOutRamp(0),
 		fadingIn(false), fadeInVol(0), fadeInRamp(0) {}
 	~Song() {
@@ -1511,19 +1510,19 @@ public:
 		memset(&_voicePlayed[0], 0, sizeof(_voicePlayed));
 	}
 
-	bool playSound(int index);
-	bool playSoundEx(int index, int channel, bool loop);
-	bool playVoice(int index, int actor);
-	bool startMusic(SoundType song);
-	bool fadeInMusic(SoundType song, int ramp);
+	void playSound(int index);
+	void playSoundEx(int index, int channel, bool loop);
+	void playVoice(int index, int actor);
+	void startMusic(SoundType song);
+	void fadeInMusic(SoundType song, int ramp);
 	void fadeOutMusic(int ramp);
 	void stopMusic();
-	bool beginMusic(SoundType song, bool fadeIn, int ramp);
+	void beginMusic(SoundType song, bool fadeIn, int ramp);
 	void updateMusic();
 	bool songPlaying(SoundType song);
-	bool stopChannel(int channel);
+	void stopChannel(int channel);
 	int registerSound(const char *name);
-	bool freeSound(int index);
+	void freeSound(int index);
 	const char *getSNDLuaName(int index);
 	int getSNDIndex(const char *name);
 	int getNumSounds() {

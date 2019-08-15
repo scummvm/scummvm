@@ -2191,7 +2191,8 @@ bool AI::walkThroughEnt(AIType type) {
 // Play special sound for every item you get
 void AI::getItemSound(AIType type) {
 	switch (type) {
-	case ITEM_GOO_CUP: g_hdb->_sound->playSound(SND_GET_GOO);
+	case ITEM_GOO_CUP:
+		g_hdb->_sound->playSound(SND_GET_GOO);
 		break;
 	case ITEM_GEM_WHITE:
 	case ITEM_GEM_BLUE:
@@ -2239,7 +2240,8 @@ void AI::getItemSound(AIType type) {
 			break;
 		}
 		// fall through
-	default: g_hdb->_sound->playSound(SND_GET_THING);
+	default:
+		g_hdb->_sound->playSound(SND_GET_THING);
 	}
 }
 
