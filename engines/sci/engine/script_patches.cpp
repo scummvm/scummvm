@@ -1309,10 +1309,38 @@ static const uint16 ecoquest2PatchEcorderTutorial[] = {
 	PATCH_END
 };
 
-//          script, description,                                       signature                          patch
+// Clicking an icon during the icon bar tutorial in room 100 sends messages to
+//  an uninitialized temporary variable. This is supposed to be the dispatched
+//  Event object that's passed around earlier in the call stack. In Sierra's
+//  interpreter that's what happened to be at this location and it worked.
+//
+// We fix this by using the global variable that stores the current Event object
+//  instead of the uninitialized temp variable that accidentally points to it.
+//  User:handleEvent sets this global before dispatching an event.
+//
+// Applies to: All versions
+// Responsible methods: iconWalk:select, iconLook:select, ...
+// Fixes bug: #11081
+static const uint16 ecoquest2SignatureIconBarTutorial[] = {
+	0x7a,                               // push2
+	0x38, SIG_SELECTOR16(handleEvent),  // pushi handleEvent
+	SIG_MAGICDWORD,
+	0x8d, 0x01,                         // lst 01  [ uninitialized ]
+	0x4a, 0x08,                         // send 08 [ EventHandler firstTrue: handleEvent temp1 ]
+	SIG_END,
+};
+
+static const uint16 ecoquest2PatchIconBarTutorial[] = {
+	PATCH_ADDTOOFFSET(+4),
+	0x89, 0x18,                         // lsg 18 [ current event ]
+	PATCH_END
+};
+
+//          script, description,                                        signature                          patch
 static const SciScriptPatcherEntry ecoquest2Signatures[] = {
-	{  true,    50, "initial text not removed on ecorder",          1, ecoquest2SignatureEcorder,         ecoquest2PatchEcorder },
-	{  true,   333, "initial text not removed on ecorder tutorial", 1, ecoquest2SignatureEcorderTutorial, ecoquest2PatchEcorderTutorial },
+	{  true,     0, "icon bar tutorial",                            10, ecoquest2SignatureIconBarTutorial, ecoquest2PatchIconBarTutorial },
+	{  true,    50, "initial text not removed on ecorder",           1, ecoquest2SignatureEcorder,         ecoquest2PatchEcorder },
+	{  true,   333, "initial text not removed on ecorder tutorial",  1, ecoquest2SignatureEcorderTutorial, ecoquest2PatchEcorderTutorial },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
