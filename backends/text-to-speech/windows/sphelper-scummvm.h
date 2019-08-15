@@ -1,3 +1,30 @@
+// To get sphelper.h working with MinGW, several changes had to be made
+//
+// SUMMARY OF CHANGES:
+// 1. Unneeded functions got deleted
+//       SpCreateObjectFromToken
+//       SpCreateObjectFromTokenId
+//       SpCreateDefaultObjectFromCategoryId
+//       SpCreateBestObject
+//       SpCreatePhoneConverter
+//       SpBindToFile
+//       CreatePhraseFromWordArray
+//       CreatePhraseFromText
+//
+// 2. Unneeded includes got deleted
+//       crtdbg.h
+//       SPDebug.h
+//       atlbase.h
+//
+// 3. Include got added
+//       cwtype
+//
+// 4. Calls to SPDBG_ASSERT() got deleted
+// 5. CComPtr<> were replaced by plain C style pointers and code that works with
+//	  these was adjusted accordingly
+// 
+// More small changes were made throughout the whole file. The best way to
+// see all changes is probably to diff this and the original file.
 /*******************************************************************************
 * SPHelper.h *
 *------------*
@@ -754,140 +781,6 @@ inline HRESULT SpFindBestToken(
     return hr;
 }
 
-/*template<class T>
-HRESULT SpCreateObjectFromToken(ISpObjectToken * pToken, T ** ppObject,
-                       IUnknown * pUnkOuter = NULL, DWORD dwClsCtxt = CLSCTX_ALL)
-{
-    HRESULT hr;
-
-    hr = pToken->CreateInstance(pUnkOuter, dwClsCtxt, __uuidof(T), (void **)ppObject);
-    
-    return hr;
-}
-
-template<class T>
-HRESULT SpCreateObjectFromTokenId(const WCHAR * pszTokenId, T ** ppObject,
-                       IUnknown * pUnkOuter = NULL, DWORD dwClsCtxt = CLSCTX_ALL)
-{
-    
-    ISpObjectToken * pToken;
-    HRESULT hr = SpGetTokenFromId(pszTokenId, &pToken);
-    if (SUCCEEDED(hr))
-    {
-        hr = SpCreateObjectFromToken(pToken, ppObject, pUnkOuter, dwClsCtxt);
-        pToken->Release();
-    }
-
-    return hr;
-}*/
-/*
-template<class T>
-HRESULT SpCreateDefaultObjectFromCategoryId(const WCHAR * pszCategoryId, T ** ppObject,
-                       IUnknown * pUnkOuter = NULL, DWORD dwClsCtxt = CLSCTX_ALL)
-{
-    
-    ISpObjectToken * pToken;
-    HRESULT hr = SpGetDefaultTokenFromCategoryId(pszCategoryId, &pToken);
-    if (SUCCEEDED(hr))
-    {
-        hr = SpCreateObjectFromToken(pToken, ppObject, pUnkOuter, dwClsCtxt);
-        pToken->Release();
-    }
-
-    return hr;
-}
-
-template<class T>
-HRESULT SpCreateBestObject(
-    const WCHAR * pszCategoryId, 
-    const WCHAR * pszReqAttribs, 
-    const WCHAR * pszOptAttribs, 
-    T ** ppObject,
-    IUnknown * pUnkOuter = NULL, 
-    DWORD dwClsCtxt = CLSCTX_ALL)
-{
-    HRESULT hr;
-    
-    ISpObjectToken *cpToken;
-    hr = SpFindBestToken(pszCategoryId, pszReqAttribs, pszOptAttribs, &cpToken);
-
-    if (SUCCEEDED(hr))
-    {
-        hr = SpCreateObjectFromToken(cpToken, ppObject, pUnkOuter, dwClsCtxt);
-    }
-
-    if (hr != SPERR_NOT_FOUND)
-    {
-    }
-
-    return hr;
-}*/
-
-/*HRESULT SpCreateBestObject(
-    const WCHAR * pszCategoryId, 
-    const WCHAR * pszReqAttribs, 
-    const WCHAR * pszOptAttribs, 
-    ISpPhoneConverter ** ** ppObject,
-    IUnknown * pUnkOuter = NULL, 
-    DWORD dwClsCtxt = CLSCTX_ALL)
-{
-    HRESULT hr;
-    
-    ISpObjectToken *cpToken;
-    hr = SpFindBestToken(pszCategoryId, pszReqAttribs, pszOptAttribs, &cpToken);
-
-    if (SUCCEEDED(hr))
-    {
-        hr = SpCreateObjectFromToken(cpToken, ppObject, pUnkOuter, dwClsCtxt);
-    }
-
-    if (hr != SPERR_NOT_FOUND)
-    {
-    }
-
-    return hr;
-}*/
-
-/*inline HRESULT SpCreatePhoneConverter(
-    LANGID LangID,
-    const WCHAR * pszReqAttribs,
-    const WCHAR * pszOptAttribs,
-    ISpPhoneConverter ** ppPhoneConverter)
-{
-    HRESULT hr;
-
-    if (LangID == 0)
-    {
-        hr = E_INVALIDARG;
-    }
-    else
-    {
-        CSpDynamicString dstrReqAttribs;
-        if (pszReqAttribs)
-        {
-            dstrReqAttribs = pszReqAttribs;
-            dstrReqAttribs.Append(L";");
-        }
-
-        WCHAR szLang[MAX_PATH];
-
-        SpHexFromUlong(szLang, LangID);
-
-        WCHAR szLangCondition[MAX_PATH];
-        wcscpy(szLangCondition, L"Language=");
-        wcscat(szLangCondition, szLang);
-
-        dstrReqAttribs.Append(szLangCondition);
-
-        hr = SpCreateBestObject(SPCAT_PHONECONVERTERS, dstrReqAttribs, pszOptAttribs, ppPhoneConverter);
-    }
-
-    if (hr != SPERR_NOT_FOUND)
-    {
-    }
-
-    return hr;
-}*/
 
 /****************************************************************************
 * SpHrFromWin32 *
@@ -2402,247 +2295,5 @@ public:
         }
 };
 
-/**** Helper function used to create a new phrase object from an array of
-    test words. Each word in the string is converted to a phrase element.
-    This is useful to create a phrase to pass to the EmulateRecognition method.
-    The method can convert standard words as well as words with the
-    "/display_text/lexical_form/pronounciation;" word format.
-    You can also specify the DisplayAttributes for each element if desired. 
-    If prgDispAttribs is NULL then the DisplayAttribs for each element default to 
-    SPAF_ONE_TRAILING_SPACE. ****/
-/*inline HRESULT CreatePhraseFromWordArray(const WCHAR ** ppWords, ULONG cWords,
-                             SPDISPLYATTRIBUTES * prgDispAttribs,
-                             ISpPhraseBuilder **ppResultPhrase,
-                             LANGID LangId = 0,
-                             ISpPhoneConverter *cpPhoneConv = NULL)
-{
-    HRESULT hr = S_OK;
-
-    if ( cWords == 0 || ppWords == NULL || ::IsBadReadPtr(ppWords, sizeof(*ppWords) * cWords ) )
-    {
-        return E_INVALIDARG;
-    }
-
-    if ( prgDispAttribs != NULL && ::IsBadReadPtr(prgDispAttribs, sizeof(*prgDispAttribs) * cWords ) )
-    {
-        return E_INVALIDARG;
-    }
-
-    ULONG    cTotalChars = 0;
-    ULONG    i;
-    WCHAR** pStringPtrArray = (WCHAR**)::CoTaskMemAlloc( cWords * sizeof(WCHAR *));
-    if ( !pStringPtrArray )
-    {
-        return E_OUTOFMEMORY;
-    }
-    for (i = 0; i < cWords; i++)
-    {
-        cTotalChars += wcslen(ppWords[i])+1;
-    }
-
-    CSpDynamicString dsText(cTotalChars);
-    if(dsText.m_psz == NULL)
-    {
-        ::CoTaskMemFree(pStringPtrArray);
-        return E_OUTOFMEMORY;
-    }
-    CSpDynamicString dsPhoneId(cTotalChars);
-    if(dsPhoneId.m_psz == NULL)
-    {
-        ::CoTaskMemFree(pStringPtrArray);
-        return E_OUTOFMEMORY;
-    }
-    SPPHONEID* pphoneId = dsPhoneId;
-
-    SPPHRASE Phrase;
-    memset(&Phrase, 0, sizeof(Phrase));
-    Phrase.cbSize = sizeof(Phrase);
-
-    if(LangId == 0)
-    {
-        LangId = SpGetUserDefaultUILanguage();
-    }
-
-    if(cpPhoneConv == NULL)
-    {
-        hr = SpCreatePhoneConverter(LangId, NULL, NULL, &cpPhoneConv);
-        if(FAILED(hr))
-        {
-            ::CoTaskMemFree(pStringPtrArray);
-            return hr;
-        }
-    }
-
-    SPPHRASEELEMENT *pPhraseElement = new SPPHRASEELEMENT[cWords];
-    if(pPhraseElement == NULL)
-    {
-        ::CoTaskMemFree(pStringPtrArray);
-        return E_OUTOFMEMORY;
-    }
-    memset(pPhraseElement, 0, sizeof(SPPHRASEELEMENT) * cWords); // !!!
-    
-    WCHAR * pText = dsText;
-    for (i = 0; SUCCEEDED(hr) && i < cWords; i++)
-    {
-        WCHAR *p = pText;
-        pStringPtrArray[i] = pText;
-        wcscpy( pText, ppWords[i] );
-        pText += wcslen( p ) + 1;
-
-        if (*p == L'/')
-        {
-            //This is a compound word
-            WCHAR* pszFirstPart = ++p;
-            WCHAR* pszSecondPart = NULL;
-            WCHAR* pszThirdPart = NULL;
-
-            while (*p && *p != L'/')
-            {
-                p++;
-            }
-            if (*p == L'/')
-            {
-                //It means we stop at the second '/'
-                *p = L'\0';
-                pszSecondPart = ++p;
-                while (*p && *p != L'/')
-                {
-                    p++;
-                }
-                if (*p == L'/')
-                {
-                    //It means we stop at the third '/'
-                    *p = L'\0';
-                    pszThirdPart = ++p;
-                }
-            }
-
-            pPhraseElement[i].pszDisplayText = pszFirstPart;
-            pPhraseElement[i].pszLexicalForm = pszSecondPart ? pszSecondPart : pszFirstPart;
-
-            if ( pszThirdPart)
-            {
-                hr = cpPhoneConv->PhoneToId(pszThirdPart, pphoneId);
-                if (SUCCEEDED(hr))
-                {
-                    pPhraseElement[i].pszPronunciation = pphoneId;
-                    pphoneId += wcslen(pphoneId) + 1;
-                }
-            }
-        }
-        else
-        {
-            //It is the simple format, only have one form, use it for everything.
-            pPhraseElement[i].pszDisplayText = NULL;
-            pPhraseElement[i].pszLexicalForm = p;
-            pPhraseElement[i].pszPronunciation = NULL;
-        }
-
-        pPhraseElement[i].bDisplayAttributes = (BYTE)(prgDispAttribs ? prgDispAttribs[i] : SPAF_ONE_TRAILING_SPACE);
-        pPhraseElement[i].RequiredConfidence = SP_NORMAL_CONFIDENCE;
-        pPhraseElement[i].ActualConfidence =  SP_NORMAL_CONFIDENCE;
-    }
-
-    Phrase.Rule.ulCountOfElements = cWords;
-    Phrase.pElements = pPhraseElement;
-    Phrase.LangID = LangId;
-
-    ISpPhraseBuilder *cpPhrase;
-    if (SUCCEEDED(hr))
-    {
-        hr = cpPhrase.CoCreateInstance(CLSID_SpPhraseBuilder);
-    }
-
-    if (SUCCEEDED(hr))
-    {
-        hr = cpPhrase->InitFromPhrase(&Phrase);
-    }
-    if (SUCCEEDED(hr))
-    {
-        *ppResultPhrase = cpPhrase.Detach();
-    }
-
-    delete pPhraseElement;
-    ::CoTaskMemFree(pStringPtrArray);
-
-    return hr;
-}*/
-
-/**** Helper function used to create a new phrase object from a 
-    test string. Each word in the string is converted to a phrase element.
-    This is useful to create a phrase to pass to the EmulateRecognition method.
-    The method can convert standard words as well as words with the
-    "/display_text/lexical_form/pronounciation;" word format ****/
-/*inline HRESULT CreatePhraseFromText(const WCHAR *pszOriginalText,
-                             ISpPhraseBuilder **ppResultPhrase,
-                             LANGID LangId = 0,
-                             ISpPhoneConverter *cpPhoneConv = NULL)
-{
-    HRESULT hr = S_OK;
-
-    //We first trim the input text
-    CSpDynamicString dsText(pszOriginalText);
-    if(dsText.m_psz == NULL)
-    {
-        return E_OUTOFMEMORY;
-    }
-    dsText.TrimBoth();
-
-    ULONG cWords = 0;
-    BOOL fInCompoundword = FALSE;
-
-    // Set first array pointer (if *p).
-    WCHAR *p = dsText;
-    while (*p)
-    {
-        if( iswspace(*p) && !fInCompoundword)
-        {
-            cWords++;
-            *p++ = L'\0';
-            while (*p && iswspace(*p))
-            {
-                *p++ = L'\0';
-            }
-            // Add new array pointer.  Use vector.
-        }
-        else if (*p == L'/' && !fInCompoundword)
-        {
-            fInCompoundword = TRUE;
-        }
-        else if (*p == L';' && fInCompoundword)
-        {
-            fInCompoundword = FALSE;
-            *p++ = L'\0';
-            // Add new array element.
-        }
-        else
-        {
-            p++;
-        }
-    }
-
-    cWords++;
-
-    WCHAR** pStringPtrArray = (WCHAR**)::CoTaskMemAlloc( cWords * sizeof(WCHAR *));
-    if ( !pStringPtrArray )
-    {
-        hr = E_OUTOFMEMORY;
-    }
-
-    if ( SUCCEEDED( hr ) )
-    {
-        p = dsText;
-        for (ULONG i=0; i<cWords; i++)
-        {
-            pStringPtrArray[i] = p;
-            p += wcslen(p)+1;
-        }
-
-        hr = CreatePhraseFromWordArray((const WCHAR **)pStringPtrArray, cWords, NULL, ppResultPhrase, LangId, cpPhoneConv);
-
-        ::CoTaskMemFree(pStringPtrArray);
-    }
-    return hr;
-}*/
 
 #endif /* This must be the last line in the file */
