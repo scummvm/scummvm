@@ -113,9 +113,8 @@ bool Gfx::init() {
 
 	// Read total number of tiles in game
 	_numTiles = g_hdb->_fileMan->getCount("t32_", TYPE_TILE32);
-	if (!_numTiles) {
+	if (!_numTiles)
 		return false;
-	}
 
 	// Setup Tile Lookup Array
 	_tLookupArray = new TileLookup[_numTiles];
@@ -279,9 +278,8 @@ void Gfx::updateVideo() {
 	Common::Rect clip(g_hdb->_progressGfx->getSurface()->getBounds());
 	clip.moveTo(left, g_hdb->_progressY);
 	clip.clip(g_hdb->_gfx->_globalSurface.getBounds());
-	if (!clip.isEmpty()) {
+	if (!clip.isEmpty())
 		g_system->copyRectToScreen(g_hdb->_gfx->_globalSurface.getBasePtr(clip.left, clip.top), g_hdb->_gfx->_globalSurface.pitch, clip.left, clip.top, clip.width(), clip.height());
-	}
 
 	g_system->updateScreen();
 }
@@ -301,11 +299,10 @@ void Gfx::drawPointer() {
 
 	// If we are in game and the cursor should be displayed, draw it
 	if (_showCursor || g_hdb->getGameState() != GAME_PLAY) {
-		if (g_hdb->isPPC()) {
+		if (g_hdb->isPPC())
 			CursorMan.showMouse(true);
-		} else {
+		else
 			_mousePointer[anim]->drawMasked(g_hdb->_input->getMouseX() - 16, g_hdb->_input->getMouseY() - 16);
-		}
 	}
 }
 
@@ -317,22 +314,20 @@ void Gfx::setFade(bool fadeIn, bool black, int steps) {
 	_fadeInfo.isFadeIn = fadeIn;
 	_fadeInfo.isBlack = black;
 
-	if (!steps) {
+	if (!steps)
 		steps = 1;
-	}
+
 	_fadeInfo.speed = steps;
 
-	if (fadeIn) {
+	if (fadeIn)
 		_fadeInfo.curStep = 0;
-	} else {
+	else
 		_fadeInfo.curStep = 255;
-	}
 
 	_fadeInfo.active = true;
 }
 
 void Gfx::updateFade() {
-	uint8 r, g, b;
 	static int waitAFrame = 0;
 
 	if (!_fadeInfo.active && !_fadeInfo.stayFaded)
@@ -348,17 +343,15 @@ void Gfx::updateFade() {
 		_fadeBuffer1.blitFrom(_fadeBuffer2);
 
 		// do the actual alphablending
-
-		uint16 *ptr, value;
-
 		if (!_fadeInfo.isBlack) {
 			// Black Fade
 
 			for (int y = 0; y < g_hdb->_screenHeight; y++) {
-				ptr = (uint16 *)_fadeBuffer1.getBasePtr(0, y);
+				uint16 *ptr = (uint16 *)_fadeBuffer1.getBasePtr(0, y);
 				for (int x = 0; x < g_hdb->_screenWidth; x++) {
-					value = *ptr;
+					uint16 value = *ptr;
 					if (value) {
+						uint8 r, g, b;
 						g_hdb->_format.colorToRGB(value, r, g, b);
 						r = (r * _fadeInfo.curStep) >> 8;
 						g = (g * _fadeInfo.curStep) >> 8;
@@ -372,9 +365,10 @@ void Gfx::updateFade() {
 			// White Fade
 
 			for (int y = 0; y < g_hdb->_screenHeight; y++) {
-				ptr = (uint16 *)_fadeBuffer1.getBasePtr(0, y);
+				uint16 *ptr = (uint16 *)_fadeBuffer1.getBasePtr(0, y);
 				for (int x = 0; x < g_hdb->_screenWidth; x++) {
-					value = *ptr;
+					uint16 value = *ptr;
+					uint8 r, g, b;
 					g_hdb->_format.colorToRGB(value, r, g, b);
 					r += (255 - r) * (256 - _fadeInfo.curStep) / 256;
 					g += (255 - g) * (256 - _fadeInfo.curStep) / 256;
@@ -400,7 +394,7 @@ void Gfx::updateFade() {
 				_fadeInfo.stayFaded = false;
 			}
 		} else {
-			if (_fadeInfo.active == true)
+			if (_fadeInfo.active)
 				_fadeInfo.curStep -= _fadeInfo.speed;
 
 			if (_fadeInfo.curStep < 1) {
@@ -441,33 +435,33 @@ void Gfx::turnOnSnow() {
 }
 
 Picture *Gfx::loadPic(const char *picName) {
-	Picture *pic = new Picture;
 	Common::SeekableReadStream *stream = g_hdb->_fileMan->findFirstData(picName, TYPE_PIC);
-	if (!stream) {
+	if (!stream)
 		return NULL;
-	}
+
+	Picture *pic = new Picture;
 	pic->load(stream);
 	delete stream;
 	return pic;
 }
 
 Tile *Gfx::loadTile(const char *tileName) {
-	Tile *tile = new Tile;
 	Common::SeekableReadStream *stream = g_hdb->_fileMan->findFirstData(tileName, TYPE_TILE32);
-	if (!stream) {
+	if (!stream)
 		return NULL;
-	}
+
+	Tile *tile = new Tile;
 	tile->load(stream);
 	delete stream;
 	return tile;
 }
 
 Tile *Gfx::loadIcon(const char *tileName) {
-	Tile *tile = new Tile;
 	Common::SeekableReadStream *stream = g_hdb->_fileMan->findFirstData(tileName, TYPE_ICON32);
-	if (!stream) {
+	if (!stream)
 		return NULL;
-	}
+
+	Tile *tile = new Tile;
 	tile->load(stream);
 	delete stream;
 	return tile;
@@ -510,13 +504,12 @@ void Gfx::cacheTileSequence(int tileIndex, int count) {
 }
 
 int Gfx::getTileIndex(const char *name) {
-	if (!name) {
+	if (!name)
 		return -1;
-	}
+
 	for (int i = 0; i < _numTiles; i++) {
-		if (Common::matchString(_tLookupArray[i].filename, name)) {
+		if (Common::matchString(_tLookupArray[i].filename, name))
 			return i;
-		}
 	}
 	return -1;
 }
@@ -525,6 +518,7 @@ Picture *Gfx::getPicture(const char *name) {
 	Common::SeekableReadStream *stream = g_hdb->_fileMan->findFirstData(name, TYPE_PIC);
 	if (stream == nullptr)
 		return nullptr;
+
 	Picture *picture = new Picture;
 	picture->load(stream);
 	delete stream;
@@ -638,14 +632,12 @@ Picture *Gfx::getPicGfx(const char *name, int32 size) {
 }
 
 int Gfx::isSky(int index) {
-	if (!index) {
+	if (!index)
 		return 0;
-	}
 
 	for (int i = 0; i < kMaxSkies; i++) {
-		if (_skyTiles[i] == index) {
+		if (_skyTiles[i] == index)
 			return i + 1; // The skyTiles are indexed from 1. 0 => No Sky tile
-		}
 	}
 
 	return 0;
@@ -757,11 +749,10 @@ static const int snowXVList[13] = {0, -1, -1, -2, -2, -1, 0, 0, 0, -1, -2, -1, 0
 
 
 void Gfx::drawSnow() {
-	int		i;
 	if (_snowInfo.active == false)
 		return;
 
-	for (i = 0; i < MAX_SNOW; i++) {
+	for (int i = 0; i < MAX_SNOW; i++) {
 		if (g_hdb->isPPC()) {
 			uint16 color = g_hdb->_format.RGBToColor(160, 160, 160);
 			setPixel((int)_snowInfo.x[i] + 1, (int)_snowInfo.y[i], color);
@@ -788,9 +779,8 @@ int Gfx::animateTile(int tileIndex) {
 bool Gfx::loadFont(const char *string) {
 
 	Common::SeekableReadStream *stream = g_hdb->_fileMan->findFirstData(string, TYPE_FONT);
-	if (!stream) {
+	if (!stream)
 		return false;
-	}
 
 	if (g_hdb->isPPC()) {
 		const int32 ulength = g_hdb->_fileMan->getLength(string, TYPE_FONT);
@@ -817,7 +807,6 @@ bool Gfx::loadFont(const char *string) {
 
 		// Position after _fontHeader
 		int startPos = memoryStream.pos();
-		uint16 *ptr;
 		for (int i = 0; i < _fontHeader.numChars; i++) {
 			CharInfo *cInfo = new CharInfo;
 			cInfo->width = (int16)memoryStream.readUint32LE();
@@ -835,10 +824,9 @@ bool Gfx::loadFont(const char *string) {
 
 			for (int x = 0; x < cInfo->width; x++) {
 				for (int y = 0; y < _fontHeader.height; y++) {
-					int u, v;
-					u = x;
-					v = _fontHeader.height - y - 1;
-					ptr = (uint16 *)_fontSurfaces[i].getBasePtr(u, v);
+					int u = x;
+					int v = _fontHeader.height - y - 1;
+					uint16 *ptr = (uint16 *)_fontSurfaces[i].getBasePtr(u, v);
 					*ptr = memoryStream.readUint16LE();
 				}
 			}
@@ -869,7 +857,6 @@ bool Gfx::loadFont(const char *string) {
 
 		// Position after _fontHeader
 		int startPos = stream->pos();
-		uint16 *ptr;
 		for (int i = 0; i < _fontHeader.numChars; i++) {
 			CharInfo *cInfo = new CharInfo;
 			cInfo->width = (int16)stream->readUint32LE();
@@ -886,7 +873,7 @@ bool Gfx::loadFont(const char *string) {
 			stream->seek(startPos + cInfo->offset);
 
 			for (int y = 0; y < _fontHeader.height; y++) {
-				ptr = (uint16 *)_fontSurfaces[i].getBasePtr(0, y);
+				uint16 *ptr = (uint16 *)_fontSurfaces[i].getBasePtr(0, y);
 				for (int x = 0; x < cInfo->width; x++) {
 					*ptr = stream->readUint16LE();
 					ptr++;
