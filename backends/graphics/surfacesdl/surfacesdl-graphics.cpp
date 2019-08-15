@@ -171,18 +171,12 @@ SurfaceSdlGraphicsManager::SurfaceSdlGraphicsManager(SdlEventSource *sdlEventSou
 
 	_mouseBackup.x = _mouseBackup.y = _mouseBackup.w = _mouseBackup.h = 0;
 
-	memset(&_mouseCurState, 0, sizeof(_mouseCurState));
-
 	_graphicsMutex = g_system->createMutex();
 
 #ifdef USE_SDL_DEBUG_FOCUSRECT
 	if (ConfMan.hasKey("use_sdl_debug_focusrect"))
 		_enableFocusRectDebugCode = ConfMan.getBool("use_sdl_debug_focusrect");
 #endif
-
-	memset(&_oldVideoMode, 0, sizeof(_oldVideoMode));
-	memset(&_videoMode, 0, sizeof(_videoMode));
-	memset(&_transactionDetails, 0, sizeof(_transactionDetails));
 
 #if !defined(_WIN32_WCE) && !defined(__SYMBIAN32__) && defined(USE_SCALERS)
 	_videoMode.mode = GFX_DOUBLESIZE;
