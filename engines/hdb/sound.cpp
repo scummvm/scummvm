@@ -1480,9 +1480,9 @@ void Sound::setMusicVolume(int volume) {
 	}
 }
 
-bool Sound::playSound(int index) {
+void Sound::playSound(int index) {
 	if (index > _numSounds || !_sfxVolume)
-		return false;
+		return;
 
 	// is sound in memory at least?
 	if (_soundCache[index].loaded == SNDMEM_FREEABLE)
@@ -1500,7 +1500,7 @@ bool Sound::playSound(int index) {
 			stream = g_hdb->_fileMan->findFirstData(_soundCache[index].name, TYPE_BINARY);
 
 		if (stream == nullptr)
-			return false;
+			return;
 
 		if (_soundCache[index].ext == SNDTYPE_MP3) {
 #ifdef USE_MAD
@@ -1532,7 +1532,7 @@ bool Sound::playSound(int index) {
 
 	// If no free handles found
 	if (soundChannel == kLaserChannel)
-		return false;
+		return;
 
 	g_hdb->_mixer->setChannelVolume(_handles[soundChannel], _sfxVolume);
 
@@ -1547,16 +1547,14 @@ bool Sound::playSound(int index) {
 		false,
 		false
 	);
-
-	return true;
 }
 
-bool Sound::playSoundEx(int index, int channel, bool loop) {
+void Sound::playSoundEx(int index, int channel, bool loop) {
 	if (g_hdb->_mixer->isSoundHandleActive(_handles[channel]))
-		return false;
+		return;
 
 	if (index > _numSounds || !_sfxVolume)
-		return false;
+		return;
 
 	// is sound in memory at least?
 	if (_soundCache[index].loaded == SNDMEM_FREEABLE)
@@ -1574,7 +1572,7 @@ bool Sound::playSoundEx(int index, int channel, bool loop) {
 			stream = g_hdb->_fileMan->findFirstData(_soundCache[index].name, TYPE_BINARY);
 
 		if (stream == nullptr)
-			return false;
+			return;
 
 		if (_soundCache[index].ext == SNDTYPE_MP3) {
 #ifdef USE_MAD
@@ -1622,16 +1620,15 @@ bool Sound::playSoundEx(int index, int channel, bool loop) {
 			false
 		);
 	}
-	return true;
 }
 
-bool Sound::playVoice(int index, int actor) {
+void Sound::playVoice(int index, int actor) {
 	if (!_voicesOn || g_hdb->isPPC())
-		return false;
+		return;
 
 	// make sure we aren't playing a line more than once this time (only on CHANNEL 0)
 	if (!actor && _voicePlayed[index - FIRST_VOICE])
-		return false;
+		return;
 
 	// is voice channel already active?  if so, shut 'er down (automagically called StopVoice via callback)
 	if (_voices[actor].active)
@@ -1646,14 +1643,14 @@ bool Sound::playVoice(int index, int actor) {
 		stream = g_hdb->_fileMan->findFirstData(soundList[index].name, TYPE_BINARY);
 
 	if (stream == nullptr)
-		return false;
+		return;
 
 	if (g_hdb->getPlatform() == Common::kPlatformLinux) {
 #ifdef USE_VORBIS
 		Audio::AudioStream *audioStream = Audio::makeVorbisStream(stream, DisposeAfterUse::YES);
 		if (audioStream == nullptr) {
 			delete stream;
-			return false;
+			return;
 		}
 
 		g_hdb->_mixer->setChannelVolume(*_voices[actor].handle, _sfxVolume);
@@ -1675,7 +1672,7 @@ bool Sound::playVoice(int index, int actor) {
 		Audio::AudioStream *audioStream = Audio::makeMP3Stream(stream, DisposeAfterUse::YES);
 		if (audioStream == nullptr) {
 			delete stream;
-			return false;
+			return;
 		}
 
 		g_hdb->_mixer->setChannelVolume(*_voices[actor].handle, _sfxVolume);
@@ -1697,26 +1694,26 @@ bool Sound::playVoice(int index, int actor) {
 	_voices[actor].active = true;
 	_voicePlayed[index - FIRST_VOICE] = 1;
 
-	return true;
+	return;
 }
 
-bool Sound::startMusic(SoundType song) {
+void Sound::startMusic(SoundType song) {
 	g_hdb->_menu->saveSong(song);
 
 	if (!_musicVolume)
-		return false;
+		return;
 
-	return beginMusic(song, false, 0);
+	beginMusic(song, false, 0);
 }
 
-bool Sound::fadeInMusic(SoundType song, int ramp) {
+void Sound::fadeInMusic(SoundType song, int ramp) {
 	g_hdb->_menu->saveSong(song);
 
 	if (!_musicVolume)
-		return false;
+		return;
 
 	stopMusic();
-	return beginMusic(song, false, ramp);
+	beginMusic(song, false, ramp);
 }
 
 void Sound::fadeOutMusic(int ramp) {
@@ -1741,10 +1738,8 @@ bool Sound::songPlaying(SoundType song) {
 	return false;
 }
 
-bool Sound::stopChannel(int channel) {
+void Sound::stopChannel(int channel) {
 	g_hdb->_mixer->stopHandle(_handles[channel]);
-
-	return true;
 }
 
 void Sound::stopMusic() {
@@ -1758,7 +1753,7 @@ void Sound::stopMusic() {
 	}
 }
 
-bool Sound::beginMusic(SoundType song, bool fadeIn, int ramp) {
+void Sound::beginMusic(SoundType song, bool fadeIn, int ramp) {
 	const char *songName = nullptr;
 
 	if (g_hdb->getPlatform() == Common::kPlatformLinux) {
@@ -1796,7 +1791,7 @@ bool Sound::beginMusic(SoundType song, bool fadeIn, int ramp) {
 
 		Common::SeekableReadStream *stream = SearchMan.createReadStreamForMember(songName);
 		if (stream == nullptr)
-			return false;
+			return;
 
 		if (g_hdb->getPlatform() != Common::kPlatformLinux) {
 #ifdef USE_MAD
@@ -1867,7 +1862,7 @@ bool Sound::beginMusic(SoundType song, bool fadeIn, int ramp) {
 
 		Common::SeekableReadStream *stream = SearchMan.createReadStreamForMember(songName);
 		if (stream == nullptr)
-			return false;
+			return;
 
 		if (g_hdb->getPlatform() != Common::kPlatformLinux) {
 #ifdef USE_MAD
@@ -1927,10 +1922,7 @@ bool Sound::beginMusic(SoundType song, bool fadeIn, int ramp) {
 			_song2.playing = true;
 #endif
 		}
-	} else
-		return false;
-
-	return true;
+	}
 }
 
 void Sound::updateMusic() {
@@ -1972,13 +1964,11 @@ int Sound::registerSound(const char *name) {
 	return index;
 }
 
-bool Sound::freeSound(int index) {
+void Sound::freeSound(int index) {
 	if (_soundCache[index].loaded == SNDMEM_LOADED) {
 		_soundCache[index].loaded = SNDMEM_NOTCACHED;
 		_soundCache[index].ext = SNDTYPE_NONE;
-		return true;
 	}
-	return false;
 }
 
 const char *Sound::getSNDLuaName(int index) {
