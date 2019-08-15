@@ -195,8 +195,10 @@ public:
 		_changeLevel = true;
 	}
 
-	Common::Error saveGameState(int slot, const Common::String &desc);
-	Common::Error loadGameState(int slot);
+	virtual Common::Error saveGameState(int slot, const Common::String &desc);
+	virtual Common::Error loadGameState(int slot);
+	virtual bool canLoadGameStateCurrently();
+	virtual bool canSaveGameStateCurrently();
 	void saveGame(Common::OutSaveFile *out);
 	void loadGame(Common::InSaveFile *in);
 

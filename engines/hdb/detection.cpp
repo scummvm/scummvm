@@ -188,7 +188,7 @@ void HDBMetaEngine::removeSaveState(const char *target, int slot) const {
 	g_system->getSavefileManager()->removeSavefile(fileName);
 }
 
-int HDBMetaEngine::getMaximumSaveSlot() const { return 9; }
+int HDBMetaEngine::getMaximumSaveSlot() const { return 99; }
 
 SaveStateList HDBMetaEngine::listSaves(const char *target) const {
 	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
