@@ -151,6 +151,17 @@ void ScummEngine_v6::drawBlastTexts() {
 		_charset->_disableOffsX = _charset->_firstChar = true;
 		_charset->setCurID(_blastTextQueue[i].charset);
 
+		if (_game.version >= 7 && (_language == Common::HE_ISR || true)) {
+			byte rev[384] = {0};
+			int lens = strlen((const char *)buf);
+
+			for (int l = 0; l < lens; l++) {
+				rev[l] = buf[lens - l - 1];
+			}
+			rev[lens] = '\0';
+			strcpy((char *)buf, (const char *)rev);
+		}
+
 		do {
 			_charset->_left = _blastTextQueue[i].xpos;
 
@@ -236,9 +247,9 @@ void ScummEngine_v7::addSubtitleToQueue(const byte *text, const Common::Point &p
 		SubtitleText *st = &_subtitleQueue[_subtitleQueuePos];
 		int i = 0;
 
-		int len = strlen((const char *)text);
+		// int len = strlen((const char *)text);
 		while (1) {
-			st->text[i] = text[len - i - 1];
+			st->text[i] = text[i]; // text[len - i - 1];
 			if (!text[i])
 				break;
 			++i;
@@ -1478,16 +1489,16 @@ int ScummEngine::convertNameMessage(byte *dst, int dstSize, int var) {
 		if (ptr) {
 			int retval = convertMessageToString(ptr, dst, dstSize);
 
-			if (_game.version >= 7 && (_language == Common::HE_ISR || true)) {
-				byte rev[384] = {0};
-				int lens = strlen((const char *)dst);
+			// if (_game.version >= 7 && (_language == Common::HE_ISR || true)) {
+			// 	byte rev[384] = {0};
+			// 	int lens = strlen((const char *)dst);
 
-				for (int l = 0; l < lens; l++) {
-					rev[l] = dst[lens - l - 1];
-				}
-				rev[lens] = '\0';
-				strcpy((char *)dst, (const char *)rev);
-			}
+			// 	for (int l = 0; l < lens; l++) {
+			// 		rev[l] = dst[lens - l - 1];
+			// 	}
+			// 	rev[lens] = '\0';
+			// 	strcpy((char *)dst, (const char *)rev);
+			// }
 
 			return retval;
 		}
@@ -1519,16 +1530,16 @@ int ScummEngine::convertStringMessage(byte *dst, int dstSize, int var) {
 		if (ptr) {
 			int retval = convertMessageToString(ptr, dst, dstSize);
 
-			if (_game.version >= 7 && (_language == Common::HE_ISR || true)) {
-				byte rev[384] = {0};
-				int lens = strlen((const char *)dst);
+			// if (_game.version >= 7 && (_language == Common::HE_ISR || true)) {
+			// 	byte rev[384] = {0};
+			// 	int lens = strlen((const char *)dst);
 
-				for (int l = 0; l < lens; l++) {
-					rev[l] = dst[lens - l - 1];
-				}
-				rev[lens] = '\0';
-				strcpy((char *)dst, (const char *)rev);
-			}
+			// 	for (int l = 0; l < lens; l++) {
+			// 		rev[l] = dst[lens - l - 1];
+			// 	}
+			// 	rev[lens] = '\0';
+			// 	strcpy((char *)dst, (const char *)rev);
+			// }
 			return retval;
 		}
 	}
