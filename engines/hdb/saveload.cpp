@@ -32,6 +32,10 @@
 
 namespace HDB {
 
+bool HDBGame::canSaveGameStateCurrently() {
+	return (_gameState == GAME_PLAY && !_ai->cinematicsActive());
+}
+
 Common::Error HDBGame::saveGameState(int slot, const Common::String &desc) {
 
 	// If no map is loaded, don't try to save
@@ -77,6 +81,10 @@ Common::Error HDBGame::saveGameState(int slot, const Common::String &desc) {
 	delete out;
 
 	return Common::kNoError;
+}
+
+bool HDBGame::canLoadGameStateCurrently() {
+	return _gameState == GAME_PLAY;
 }
 
 Common::Error HDBGame::loadGameState(int slot) {
