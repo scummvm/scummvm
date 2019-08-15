@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2019-08-13 23:16+0200\n"
-"PO-Revision-Date: 2018-09-24 18:39+0000\n"
+"PO-Revision-Date: 2019-08-20 19:14+0000\n"
 "Last-Translator: Ben Castricum <github@bencastricum.nl>\n"
 "Language-Team: Dutch <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/nl/>\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=iso-8859-1\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 2.9\n"
+"X-Generator: Weblate 3.7.1\n"
 "X-Poedit-SourceCharset: iso-8859-1\n"
 "X-Language-name: Nederlands\n"
 
@@ -83,7 +83,7 @@ msgstr "Annuleren"
 #: backends/dialogs/macosx/macosx-dialogs.mm:148
 #: backends/dialogs/win32/win32-dialogs.cpp:145
 msgid "Choose"
-msgstr "Selecteer"
+msgstr "Selecteren"
 
 #: gui/downloaddialog.cpp:49
 msgid "Select directory where to download game data"
@@ -739,9 +739,8 @@ msgid "ScummVM could not find any game in the specified directory!"
 msgstr "ScummVM kon geen enkel spel vinden in de opgegeven map!"
 
 #: gui/launcher.cpp:588
-#, fuzzy
 msgid "Unknown variant"
-msgstr "Onbekende fout"
+msgstr "Onbekende variant"
 
 #: gui/launcher.cpp:594
 msgid "Pick the game:"
@@ -1211,7 +1210,7 @@ msgstr "Taal van de ScummVM GUI"
 
 #: gui/options.cpp:1715
 msgid "Switch the GUI language to the game language"
-msgstr ""
+msgstr "Schakel de taal van de GUI naar de taal van het spel"
 
 #: gui/options.cpp:1716
 msgid ""
@@ -1219,16 +1218,21 @@ msgid ""
 "if a game uses the ScummVM save and load dialogs, they are in the same "
 "language as the game."
 msgstr ""
+"Bij het starten van een spel, verander de taal van de GUI naar de taal van "
+"het spel. Op die manier, wanneer een spel de ScummVM bewaar en laad dialogen "
+"gebruikt, zijn die in dezelfde taal als het spel."
 
 #: gui/options.cpp:1729
 msgid "Use native system file browser"
-msgstr ""
+msgstr "Gebruik de standaard bestanden verkenner"
 
 #: gui/options.cpp:1730
 msgid ""
 "Use the native system file browser instead of the ScummVM one to select a "
 "file or directory."
 msgstr ""
+"Gebruik de standaard bestanden verkenner in plaats van die van ScummVM om "
+"een bestand of map te selecteren."
 
 #: gui/options.cpp:1737 gui/updates-dialog.cpp:86
 msgid "Update check:"
@@ -1253,21 +1257,20 @@ msgstr "Cloud"
 
 #: gui/options.cpp:1774
 msgid "LAN"
-msgstr ""
+msgstr "LAN"
 
 #: gui/options.cpp:1776
 msgctxt "lowres"
 msgid "LAN"
-msgstr ""
+msgstr "LAN"
 
 #: gui/options.cpp:1787
 msgid "Apply"
 msgstr "Toepassen"
 
 #: gui/options.cpp:1876
-#, fuzzy
 msgid "Active storage:"
-msgstr "Actieve cloud opslag"
+msgstr "Actieve opslag:"
 
 #: gui/options.cpp:1876
 msgid "Active cloud storage"
@@ -1278,20 +1281,23 @@ msgctxt "lowres"
 msgid ""
 "4. Storage is not yet enabled. Verify that username is correct and enable it:"
 msgstr ""
+"4. Opslag is nog niet geactiveerd. Verifieer dat de gebruikersnaam correct "
+"is en activeer het:"
 
 #: gui/options.cpp:1886
 msgid ""
 "4. Storage is not yet enabled. Verify that username is correct and enable it:"
 msgstr ""
+"4. Opslag is nog niet geactiveerd. Verifieer dat de gebruikersnaam correct "
+"is en activeer het:"
 
 #: gui/options.cpp:1887
-#, fuzzy
 msgid "Enable storage"
-msgstr "Publiek inschakelen"
+msgstr "Opslag inschakelen"
 
 #: gui/options.cpp:1887
 msgid "Confirm you want to use this account for this storage"
-msgstr ""
+msgstr "Bevestig dat u dit account wilt gebruiken voor deze opslag"
 
 #: gui/options.cpp:1889 backends/platform/wii/options.cpp:114
 msgid "Username:"
@@ -1314,12 +1320,10 @@ msgid "Space used by ScummVM's saved games on this storage"
 msgstr "Ruimte in gebruik door ScummVM's opgeslagen spellen op deze opslag"
 
 #: gui/options.cpp:1895
-#, fuzzy
 msgid "Last sync:"
 msgstr "Laatste synchronisatie:"
 
 #: gui/options.cpp:1895
-#, fuzzy
 msgid "When was the last time saved games were synced with this storage"
 msgstr "Wanneer de laatste synchronisatie voor deze opslag is geweest"
 
@@ -1331,32 +1335,35 @@ msgstr "<nooit>"
 msgctxt "lowres"
 msgid "Saves sync automatically on launch, after saving and on loading."
 msgstr ""
+"Opgeslagen spellen synchroniseren automatisch bij het starten, na het "
+"opslaan en bij laden."
 
 #: gui/options.cpp:1900
 msgid "Saves sync automatically on launch, after saving and on loading."
 msgstr ""
+"Opgeslagen spellen synchroniseren automatisch bij het starten, na het "
+"opslaan en bij laden."
 
 #: gui/options.cpp:1901
 msgid "Sync now"
-msgstr ""
+msgstr "Synchroniseer nu"
 
 #: gui/options.cpp:1901
 msgid "Start saves sync"
-msgstr ""
+msgstr "Start de synchronisatie van opgeslagen spellen"
 
 #: gui/options.cpp:1904
 msgctxt "lowres"
 msgid "You can download game files from your cloud ScummVM folder:"
-msgstr ""
+msgstr "U kan spelbestanden downloaden vanaf uw opslag ScummVM map:"
 
 #: gui/options.cpp:1906
 msgid "You can download game files from your cloud ScummVM folder:"
-msgstr ""
+msgstr "U kan spelbestanden downloaden vanaf uw opslag ScummVM map:"
 
 #: gui/options.cpp:1907
-#, fuzzy
 msgid "Download game files"
-msgstr "Download mislukt."
+msgstr "Spelbestanden downloaden"
 
 #: gui/options.cpp:1907
 msgid "Open downloads manager dialog"
@@ -1366,32 +1373,35 @@ msgstr "Open downloads manager dialoogvenster"
 msgctxt "lowres"
 msgid "To change account for this storage, disconnect and connect again:"
 msgstr ""
+"Om van account te wisselen voor deze opslag, verbreek de verbinding en "
+"verbind opnieuw:"
 
 #: gui/options.cpp:1912
 msgid "To change account for this storage, disconnect and connect again:"
 msgstr ""
+"Om van account te wisselen voor deze opslag, verbreek de verbinding en "
+"verbind opnieuw:"
 
 #: gui/options.cpp:1913
-#, fuzzy
 msgid "Disconnect"
-msgstr "Verbinden"
+msgstr "Verbinding vebreken"
 
 #: gui/options.cpp:1913
 msgid "Stop using this storage on this device"
-msgstr ""
+msgstr "Stop met het gebruik van deze opslag op dit apparaat"
 
 #: gui/options.cpp:1916
 msgctxt "lowres"
 msgid "This storage is not connected yet! To connect,"
-msgstr ""
+msgstr "De opslag is nog niet verbonden! Om te verbinden,"
 
 #: gui/options.cpp:1918
 msgid "This storage is not connected yet! To connect,"
-msgstr ""
+msgstr "De opslag is nog niet verbonden! Om te verbinden,"
 
 #: gui/options.cpp:1919
 msgid "1. Open this link:"
-msgstr ""
+msgstr "1. Open deze link:"
 
 #: gui/options.cpp:1920
 msgid "Open URL"
@@ -1400,31 +1410,27 @@ msgstr "Open URL"
 #: gui/options.cpp:1922
 msgctxt "lowres"
 msgid "2. Get the code and enter it here:"
-msgstr ""
+msgstr "2. Haal de code op en type het hier:"
 
 #: gui/options.cpp:1924
 msgid "2. Get the code and enter it here:"
-msgstr ""
+msgstr "2. Haal de code op en type het hier:"
 
 #: gui/options.cpp:1926
 msgid "Paste"
 msgstr "Plakken"
 
 #: gui/options.cpp:1926
-#, fuzzy
 msgid "Paste code from clipboard"
-msgstr "Kopiëer naar clipboard"
+msgstr "Plak vanaf klembord"
 
 #: gui/options.cpp:1927
-#, fuzzy
 msgid "3. Connect"
-msgstr "Verbinden"
+msgstr "3. Verbinden"
 
 #: gui/options.cpp:1927
-#, fuzzy
 msgid "Connect your cloud storage account"
-msgstr ""
-"Open de Wizard dialoogvenster voor verbinden met uw cloud opslag account"
+msgstr "Verbind uw cloud opslag account"
 
 #: gui/options.cpp:1936
 msgid "Run server"
@@ -1444,9 +1450,8 @@ msgid "/root/ Path:"
 msgstr "/root/ Pad:"
 
 #: gui/options.cpp:1941 gui/options.cpp:1943 gui/options.cpp:1944
-#, fuzzy
 msgid "Select which directory will be shown as /root/ in the Files Manager"
-msgstr "Bepaalt welke map de Bestanden Manager gebruiken mag"
+msgstr "Selecteer welke map als /root/ word getoond in de Bestanden Manager"
 
 #: gui/options.cpp:1943
 msgid "/root/ Path:"
@@ -1458,25 +1463,25 @@ msgstr "Serverport:"
 
 #: gui/options.cpp:1949
 msgid "Port for server to use"
-msgstr ""
+msgstr "Poort die de server kan gebruiken"
 
 #: gui/options.cpp:1954
 msgctxt "lowres"
 msgid "Run server to manage files with browser (in the same network)."
-msgstr ""
+msgstr "Run server om bestanden met browser te beheren (in hetzelfde netwerk)."
 
 #: gui/options.cpp:1955
 msgctxt "lowres"
 msgid "Closing options dialog will stop the server."
-msgstr ""
+msgstr "Sluiten van opties dialoog zal de server stoppen."
 
 #: gui/options.cpp:1957
 msgid "Run server to manage files with browser (in the same network)."
-msgstr ""
+msgstr "Run server om bestanden met browser te beheren (in hetzelfde netwerk)."
 
 #: gui/options.cpp:1958
 msgid "Closing options dialog will stop the server."
-msgstr ""
+msgstr "Sluiten van opties dialoog zal de server stoppen."
 
 #: gui/options.cpp:2028
 msgid "Failed to change cloud storage!"
@@ -1530,7 +1535,6 @@ msgid ""
 msgstr "URL openen mislukt! Navigeer a.u.b. handmatig naar deze pagina."
 
 #: gui/options.cpp:2321
-#, fuzzy
 msgid "Another Storage is working now. Do you want to interrupt it?"
 msgstr "Een andere opslag is actief. Wilt u die onderbreken?"
 
@@ -1539,14 +1543,12 @@ msgid "Wait until current Storage finishes up and try again."
 msgstr "Wacht totdat de huidige opslag klaar is en probeer het opnieuw."
 
 #: gui/options.cpp:2343
-#, fuzzy
 msgid "Connecting..."
-msgstr "Verbinden"
+msgstr "Bezig met verbinden..."
 
 #: gui/options.cpp:2359
-#, fuzzy
 msgid "This Storage is working now. Do you want to interrupt it?"
-msgstr "Een andere opslag is actief. Wilt u die onderbreken?"
+msgstr "Deze opslag is actief. Wilt u hem onderbreken?"
 
 #: gui/options.cpp:2557
 msgid "<right now>"
@@ -1561,19 +1563,16 @@ msgid "Stop local webserver"
 msgstr "Stop lokale webserver"
 
 #: gui/options.cpp:2719
-#, fuzzy
 msgid "Storage connected."
-msgstr "%s Opslag Verbindings Wizard"
+msgstr "Opslag verbonden."
 
 #: gui/options.cpp:2721
-#, fuzzy
 msgid "Failed to connect storage."
-msgstr "Veranderen van cloud opslag mislukt!"
+msgstr "Verbinden met opslag mislukt."
 
 #: gui/options.cpp:2723
-#, fuzzy
 msgid "Failed to connect storage: "
-msgstr "Veranderen van cloud opslag mislukt!"
+msgstr "Verbinden met opslag mislukt: "
 
 #: gui/options.cpp:2743
 msgid ""
@@ -1751,13 +1750,12 @@ msgid "Antialiased"
 msgstr "Antialiased"
 
 #: gui/unknown-game-dialog.cpp:52
-#, fuzzy
 msgid "Add anyway"
-msgstr "Evengoed starten"
+msgstr "Evengoed toevoegen"
 
 #: gui/unknown-game-dialog.cpp:59
 msgid "Copy to clipboard"
-msgstr "Kopiëer naar clipboard"
+msgstr "Kopieer naar klembord"
 
 #: gui/unknown-game-dialog.cpp:65
 msgid "Report game"
@@ -1768,8 +1766,8 @@ msgid ""
 "Use the button below to copy the required game information into your "
 "clipboard."
 msgstr ""
-"Gebruik de onderstaande knop om de benodigde spelinformatie naar het "
-"clipboard te kopiëren."
+"Gebruik de onderstaande knop om de benodigde spelinformatie naar uw klembord "
+"te kopiëren."
 
 #: gui/unknown-game-dialog.cpp:113
 msgid "You can also directly report your game to the Bug Tracker."
@@ -1778,12 +1776,11 @@ msgstr "Je kan ook direct je spel in de Bug Tracker rapporteren."
 #: gui/unknown-game-dialog.cpp:213
 msgid ""
 "All necessary information about your game has been copied into the clipboard"
-msgstr ""
-"Alle benodigde informatie van jouw spel is naar het clipboard gekopiëerd"
+msgstr "Alle benodigde informatie van jouw spel is naar het klembord gekopieerd"
 
 #: gui/unknown-game-dialog.cpp:215
 msgid "Copying the game information to the clipboard has failed!"
-msgstr "Kopiëren van de spelinformatie naar het clipboard is mislukt!"
+msgstr "Kopiëren van de spelinformatie naar het klembord is mislukt!"
 
 #: gui/updates-dialog.cpp:49
 msgid ""
@@ -2679,9 +2676,8 @@ msgid "Freefont License"
 msgstr "Freefont Licentie"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:224
-#, fuzzy
 msgid "OFL License"
-msgstr "GPL Licentie"
+msgstr "OFL Licentie"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:225
 msgid "BSD License"
@@ -3069,23 +3065,20 @@ msgstr ""
 "maar vond %d.%d."
 
 #: engines/adl/detection.cpp:51
-#, fuzzy
 msgid "TV emulation"
-msgstr "MT-32 emulator"
+msgstr "TV emulatie"
 
 #: engines/adl/detection.cpp:52
 msgid "Emulate composite output to an NTSC TV"
 msgstr ""
 
 #: engines/adl/detection.cpp:61 engines/adl/detection.cpp:71
-#, fuzzy
 msgid "Color graphics"
-msgstr "Gebruik kleurenafbeeldingen"
+msgstr "Kleurenafbeeldingen"
 
 #: engines/adl/detection.cpp:62 engines/adl/detection.cpp:72
-#, fuzzy
 msgid "Use color graphics instead of monochrome"
-msgstr "Gebruik kleurenafbeeldingen"
+msgstr "Gebruik kleurenafbeeldingen in plaats van monochroom"
 
 #: engines/adl/detection.cpp:81
 msgid "Show scanlines"
@@ -3262,18 +3255,16 @@ msgid "Continue"
 msgstr ""
 
 #: engines/bladerunner/detection.cpp:48
-#, fuzzy
 msgid "Sitcom mode"
-msgstr "Uitrekmodus"
+msgstr "Sitcom modus"
 
 #: engines/bladerunner/detection.cpp:49
 msgid "Game will add laughter after actor's line or narration"
 msgstr ""
 
 #: engines/bladerunner/detection.cpp:57
-#, fuzzy
 msgid "Shorty mode"
-msgstr "Uitrekmodus"
+msgstr "Shorty modus"
 
 #: engines/bladerunner/detection.cpp:58
 msgid "Game will shrink the actors and make their voices high pitched"
@@ -3318,24 +3309,21 @@ msgid "[ press any key to exit ]"
 msgstr ""
 
 #: engines/glk/quetzal.cpp:115 engines/glk/quetzal.cpp:124
-#, fuzzy
 msgid "Untitled Savegame"
 msgstr "Naamloos opgeslagen spel"
 
 # can this be changed into "Could not switch to video mode '%s'"?
 #: engines/glk/advsys/advsys.cpp:35
-#, fuzzy
 msgid "Could not start AdvSys game"
-msgstr "Kon niet schakelen naar videomodus: '"
+msgstr "Starten van AdvSys spel mislukt"
 
 #: engines/glk/advsys/advsys.cpp:48 engines/glk/advsys/vm.cpp:319
 msgid "Sorry, the savegame couldn't be restored"
 msgstr ""
 
 #: engines/glk/advsys/vm.cpp:314
-#, fuzzy
 msgid "Sorry, the savegame couldn't be created"
-msgstr "de videomodus kon niet veranderd worden"
+msgstr "Helaas, creëren van een opgeslagen spel is niet gelukt"
 
 #: engines/glk/advsys/vm.cpp:560
 msgid "Speak up! I can't hear you!\n"
@@ -3359,14 +3347,12 @@ msgid "This is not a valid Alan2 file."
 msgstr ""
 
 #: engines/glk/frotz/frotz.cpp:126
-#, fuzzy
 msgid "Error reading save file"
-msgstr "Fout tijdens het starten van spel:"
+msgstr "Fout tijdens het inladen van het opgeslagen spel"
 
 #: engines/glk/frotz/frotz.cpp:144
-#, fuzzy
 msgid "Error writing save file\n"
-msgstr "Fout tijdens het starten van spel:"
+msgstr "Fout tijdens het opslaan van het spel\n"
 
 #: engines/glk/glulxe/glulxe.cpp:79 engines/glk/magnetic/magnetic.cpp:73
 msgid "This is too short to be a valid Glulx file."
@@ -3405,9 +3391,8 @@ msgid "Light runs out in "
 msgstr ""
 
 #: engines/glk/scott/scott.cpp:131
-#, fuzzy
 msgid " turns. "
-msgstr "zet aaN"
+msgstr " beurten. "
 
 #: engines/glk/scott/scott.cpp:134
 msgid "Your light is growing dim. "
@@ -3454,9 +3439,8 @@ msgid ""
 msgstr ""
 
 #: engines/glk/scott/scott.cpp:438
-#, fuzzy
 msgid "none"
-msgstr "<geen>"
+msgstr "geen"
 
 #: engines/glk/scott/scott.cpp:447
 msgid ""
@@ -3471,9 +3455,8 @@ msgid ""
 msgstr ""
 
 #: engines/glk/scott/scott.cpp:533
-#, fuzzy
 msgid "Saved.\n"
-msgstr "Opslaan"
+msgstr "Opgeslagen.\n"
 
 #: engines/glk/scott/scott.cpp:624
 msgid "You use word(s) I don't know! "
@@ -3497,18 +3480,16 @@ msgid "I am dead.\n"
 msgstr ""
 
 #: engines/glk/scott/scott.cpp:799
-#, fuzzy
 msgid "The game is now over.\n"
-msgstr "Het spel was NIET geladen"
+msgstr "Het spel is nu over.\n"
 
 #: engines/glk/scott/scott.cpp:814
 msgid "You have stored "
 msgstr ""
 
 #: engines/glk/scott/scott.cpp:816
-#, fuzzy
 msgid "I've stored "
-msgstr "Laad"
+msgstr "Ik heb opgeslagen "
 
 #: engines/glk/scott/scott.cpp:818
 msgid " treasures.  On a scale of 0 to 100, that rates "
@@ -3571,9 +3552,8 @@ msgid "Nothing taken."
 msgstr ""
 
 #: engines/glk/scott/scott.cpp:1092 engines/glk/scott/scott.cpp:1140
-#, fuzzy
 msgid "What ? "
-msgstr "Wat is"
+msgstr "Wat ? "
 
 #: engines/glk/scott/scott.cpp:1105
 msgid "It is beyond your power to do that. "
@@ -4293,12 +4273,12 @@ msgid ""
 "was saved in: 'qfg1-' for Quest for Glory 1, 'qfg2-' for Quest for Glory 2. "
 "Example: 'qfg2-thief.sav'."
 msgstr ""
-"Karakters opgeslagen in ScummVM worden automatisch getoond. Karakters die "
-"zijn opgeslagen met de originele interpreter moeten geplaatst worden in de "
-"ScummVM opgeslagen spellen folder en een voorlooptekst moet worden "
-"toegevoegd afhankelijk van het spel waarin het karakter in opgeslagen is: "
-"'qfg1-' voor Quest for Glory 1, 'qfg2-' voor Quest for Glory 2. Voorbeeld: "
-"'qfg2-thief.sav'."
+"Personages opgeslagen in ScummVM worden automatisch getoond. Personage "
+"bestanden die zijn opgeslagen met de originele interpreter moeten geplaatst "
+"worden in de ScummVM opgeslagen spellen folder en een voorlooptekst moet "
+"worden toegevoegd afhankelijk van het spel waarin de personage in opgeslagen "
+"is: 'qfg1-' voor Quest for Glory 1, 'qfg2-' voor Quest for Glory 2. "
+"Voorbeeld: 'qfg2-thief.sav'."
 
 #: engines/sci/engine/kgraphics32.cpp:358
 #, c-format
@@ -5210,10 +5190,9 @@ msgid "Use the floppy version's intro (CD version only)"
 msgstr "Gebruik de floppy versie van de intro (alleen voor de CD versie)"
 
 #: engines/supernova/supernova.cpp:190
-#, fuzzy, c-format
+#, c-format
 msgid "Unable to locate the text for %s language in engine data file."
-msgstr ""
-"Kon de tekst voor de taal '%s' niet in de '%s' engine data file vinden."
+msgstr "Kon de tekst voor de taal '%s' niet in de engine data file vinden."
 
 #: engines/supernova/supernova.cpp:466
 #, c-format
@@ -5229,9 +5208,9 @@ msgid "Unable to find block for part %d"
 msgstr ""
 
 #: engines/supernova/supernova.cpp:518
-#, fuzzy, c-format
+#, c-format
 msgid "Unable to find '%s' in game folder or the engine data file."
-msgstr "Kon de '%s' engine data file niet vinden."
+msgstr "Kon '%s' niet in de spelmap of engine databestand vinden."
 
 #: engines/sword1/animation.cpp:524
 #, c-format
@@ -5373,6 +5352,8 @@ msgstr ""
 msgid ""
 "This game requires 3D characters support, which is out of ScummVM's scope."
 msgstr ""
+"Dit spel vereist 3D personages ondersteuning, wat niet in scope is van "
+"ScummVM."
 
 #: engines/xeen/detection.cpp:89
 msgid "Show item costs in standard inventory mode"
