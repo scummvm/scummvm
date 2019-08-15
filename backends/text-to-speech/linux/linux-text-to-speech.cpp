@@ -76,7 +76,7 @@ void *LinuxTextToSpeechManager::startSpeech(void *p) {
 		pthread_mutex_unlock(params->mutex);
 		return NULL;
 	}
-	if(spd_say(_connection, SPD_MESSAGE, params->speechQueue->front().c_str()) == -1) {
+	if (spd_say(_connection, SPD_MESSAGE, params->speechQueue->front().c_str()) == -1) {
 		// close the connection
 		if (_connection != 0) {
 			spd_close(_connection);
@@ -141,7 +141,7 @@ void LinuxTextToSpeechManager::updateState(LinuxTextToSpeechManager::SpeechEvent
 	case SPEECH_ENDED:
 		pthread_mutex_lock(&_speechMutex);
 		_speechQueue.pop_front();
-		if (_speechQueue.size() == 0)
+		if (_speechQueue.empty())
 			_speechState = READY;
 		else {
 			// reinitialize if needed
@@ -286,7 +286,7 @@ bool LinuxTextToSpeechManager::resume() {
 		_threadCreated = false;
 	}
 	_speechState = PAUSED;
-	if (_speechQueue.size()) {
+	if (!_speechQueue.empty()) {
 		_speechState = SPEAKING;
 		startSpeech((void *) &_params);
 	}
