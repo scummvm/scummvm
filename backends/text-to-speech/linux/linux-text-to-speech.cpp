@@ -25,7 +25,7 @@
 
 #include "backends/text-to-speech/linux/linux-text-to-speech.h"
 
-#if defined(USE_TTS) && defined(POSIX)
+#if defined(USE_TTS) && defined(USE_SPEECH_DISPATCHER) && defined(POSIX)
 #include <speech-dispatcher/libspeechd.h>
 #include "backends/platform/sdl/sdl-sys.h"
 
@@ -38,37 +38,37 @@
 SPDConnection *_connection;
 
 void speech_begin_callback(size_t msg_id, size_t client_id, SPDNotificationType state){
-	LinuxTextToSpeechManager *manager =
-		static_cast<LinuxTextToSpeechManager *> (g_system->getTextToSpeechManager());
-	manager->updateState(LinuxTextToSpeechManager::SPEECH_BEGUN);
+	SpeechDispatcherManager *manager =
+		static_cast<SpeechDispatcherManager *> (g_system->getTextToSpeechManager());
+	manager->updateState(SpeechDispatcherManager::SPEECH_BEGUN);
 }
 
 void speech_end_callback(size_t msg_id, size_t client_id, SPDNotificationType state){
-	LinuxTextToSpeechManager *manager =
-		static_cast<LinuxTextToSpeechManager *> (g_system->getTextToSpeechManager());
-	manager->updateState(LinuxTextToSpeechManager::SPEECH_ENDED);
+	SpeechDispatcherManager *manager =
+		static_cast<SpeechDispatcherManager *> (g_system->getTextToSpeechManager());
+	manager->updateState(SpeechDispatcherManager::SPEECH_ENDED);
 }
 
 void speech_cancel_callback(size_t msg_id, size_t client_id, SPDNotificationType state){
-	LinuxTextToSpeechManager *manager =
-		static_cast<LinuxTextToSpeechManager *> (g_system->getTextToSpeechManager());
-	manager->updateState(LinuxTextToSpeechManager::SPEECH_CANCELED);
+	SpeechDispatcherManager *manager =
+		static_cast<SpeechDispatcherManager *> (g_system->getTextToSpeechManager());
+	manager->updateState(SpeechDispatcherManager::SPEECH_CANCELED);
 }
 
 void speech_resume_callback(size_t msg_id, size_t client_id, SPDNotificationType state){
-	LinuxTextToSpeechManager *manager =
-		static_cast<LinuxTextToSpeechManager *> (g_system->getTextToSpeechManager());
-	manager->updateState(LinuxTextToSpeechManager::SPEECH_RESUMED);
+	SpeechDispatcherManager *manager =
+		static_cast<SpeechDispatcherManager *> (g_system->getTextToSpeechManager());
+	manager->updateState(SpeechDispatcherManager::SPEECH_RESUMED);
 }
 
 void speech_pause_callback(size_t msg_id, size_t client_id, SPDNotificationType state){
-	LinuxTextToSpeechManager *manager =
-		static_cast<LinuxTextToSpeechManager *> (g_system->getTextToSpeechManager());
-	manager->updateState(LinuxTextToSpeechManager::SPEECH_PAUSED);
+	SpeechDispatcherManager *manager =
+		static_cast<SpeechDispatcherManager *> (g_system->getTextToSpeechManager());
+	manager->updateState(SpeechDispatcherManager::SPEECH_PAUSED);
 }
 
 
-void *LinuxTextToSpeechManager::startSpeech(void *p) {
+void *SpeechDispatcherManager::startSpeech(void *p) {
 	StartSpeechParams *params = (StartSpeechParams *) p;
 	pthread_mutex_lock(params->mutex);
 	if (!_connection || g_system->getTextToSpeechManager()->isPaused() ||
@@ -87,7 +87,7 @@ void *LinuxTextToSpeechManager::startSpeech(void *p) {
 	return NULL;
 }
 
-LinuxTextToSpeechManager::LinuxTextToSpeechManager()
+SpeechDispatcherManager::SpeechDispatcherManager()
 	: _speechState(READY) {
 	pthread_mutex_init(&_speechMutex, NULL);
 	_params.mutex = &_speechMutex;
@@ -96,7 +96,7 @@ LinuxTextToSpeechManager::LinuxTextToSpeechManager()
 	init();
 }
 
-void LinuxTextToSpeechManager::init() {
+void SpeechDispatcherManager::init() {
 	_connection = spd_open("ScummVM", "main", NULL, SPD_MODE_THREADED);
 	if (_connection == 0) {
 		_speechState = BROKEN;
@@ -125,7 +125,7 @@ void LinuxTextToSpeechManager::init() {
 	_speechQueue.clear();
 }
 
-LinuxTextToSpeechManager::~LinuxTextToSpeechManager() {
+SpeechDispatcherManager::~SpeechDispatcherManager() {
 	stop();
 	if (_connection != 0)
 		spd_close(_connection);
@@ -134,7 +134,7 @@ LinuxTextToSpeechManager::~LinuxTextToSpeechManager() {
 	pthread_mutex_destroy(&_speechMutex);
 }
 
-void LinuxTextToSpeechManager::updateState(LinuxTextToSpeechManager::SpeechEvent event) {
+void SpeechDispatcherManager::updateState(SpeechDispatcherManager::SpeechEvent event) {
 	if (_speechState == BROKEN)
 		return;
 	switch(event) {
@@ -175,7 +175,7 @@ void LinuxTextToSpeechManager::updateState(LinuxTextToSpeechManager::SpeechEvent
 	}
 }
 
-Common::String LinuxTextToSpeechManager::strToUtf8(Common::String str, Common::String charset) {
+Common::String SpeechDispatcherManager::strToUtf8(Common::String str, Common::String charset) {
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 
 	char *conv_text = SDL_iconv_string("UTF-8", charset.c_str(), str.c_str(), str.size() + 1);
@@ -195,7 +195,7 @@ Common::String LinuxTextToSpeechManager::strToUtf8(Common::String str, Common::S
 #endif
 }
 
-bool LinuxTextToSpeechManager::say(Common::String str, Action action, Common::String charset) {
+bool SpeechDispatcherManager::say(Common::String str, Action action, Common::String charset) {
 
 	pthread_mutex_lock(&_speechMutex);
 	// reinitialize if needed
@@ -252,7 +252,7 @@ bool LinuxTextToSpeechManager::say(Common::String str, Action action, Common::St
 	return false;
 }
 
-bool LinuxTextToSpeechManager::stop() {
+bool SpeechDispatcherManager::stop() {
 	if (_speechState == READY || _speechState == BROKEN)
 		return true;
 	_speechState = READY;
@@ -263,7 +263,7 @@ bool LinuxTextToSpeechManager::stop() {
 	return result;
 }
 
-bool LinuxTextToSpeechManager::pause() {
+bool SpeechDispatcherManager::pause() {
 	if (_speechState == READY || _speechState == PAUSED || _speechState == BROKEN)
 		return true;
 	pthread_mutex_lock(&_speechMutex);
@@ -275,7 +275,7 @@ bool LinuxTextToSpeechManager::pause() {
 	return false;
 }
 
-bool LinuxTextToSpeechManager::resume() {
+bool SpeechDispatcherManager::resume() {
 	if (_speechState == READY || _speechState == SPEAKING || _speechState == BROKEN)
 		return true;
 	// If there is a thread from before pause() waiting, let it finish (it shouln't
@@ -295,19 +295,19 @@ bool LinuxTextToSpeechManager::resume() {
 	return false;
 }
 
-bool LinuxTextToSpeechManager::isSpeaking() {
+bool SpeechDispatcherManager::isSpeaking() {
 	return _speechState == SPEAKING;
 }
 
-bool LinuxTextToSpeechManager::isPaused() {
+bool SpeechDispatcherManager::isPaused() {
 	return _speechState == PAUSED;
 }
 
-bool LinuxTextToSpeechManager::isReady() {
+bool SpeechDispatcherManager::isReady() {
 	return _speechState == READY;
 }
 
-void LinuxTextToSpeechManager::setVoice(unsigned index) {
+void SpeechDispatcherManager::setVoice(unsigned index) {
 	if (_speechState == BROKEN)
 		return;
 	assert(index < _ttsState->_availableVoices.size());
@@ -316,7 +316,7 @@ void LinuxTextToSpeechManager::setVoice(unsigned index) {
 	_ttsState->_activeVoice = index;
 }
 
-void LinuxTextToSpeechManager::setRate(int rate) {
+void SpeechDispatcherManager::setRate(int rate) {
 	if (_speechState == BROKEN)
 		return;
 	assert(rate >= -100 && rate <= 100);
@@ -324,7 +324,7 @@ void LinuxTextToSpeechManager::setRate(int rate) {
 	_ttsState->_rate = rate;
 }
 
-void LinuxTextToSpeechManager::setPitch(int pitch) {
+void SpeechDispatcherManager::setPitch(int pitch) {
 	if (_speechState == BROKEN)
 		return;
 	assert(pitch >= -100 && pitch <= 100);
@@ -332,7 +332,7 @@ void LinuxTextToSpeechManager::setPitch(int pitch) {
 	_ttsState->_pitch = pitch;
 }
 
-void LinuxTextToSpeechManager::setVolume(unsigned volume) {
+void SpeechDispatcherManager::setVolume(unsigned volume) {
 	if (_speechState == BROKEN)
 		return;
 	assert(volume <= 100);
@@ -340,7 +340,7 @@ void LinuxTextToSpeechManager::setVolume(unsigned volume) {
 	_ttsState->_volume = volume;
 }
 
-void LinuxTextToSpeechManager::setLanguage(Common::String language) {
+void SpeechDispatcherManager::setLanguage(Common::String language) {
 	if (_speechState == BROKEN)
 		return;
 	spd_set_language(_connection, language.c_str());
@@ -348,14 +348,14 @@ void LinuxTextToSpeechManager::setLanguage(Common::String language) {
 	setVoice(_ttsState->_activeVoice);
 }
 
-void LinuxTextToSpeechManager::createVoice(int typeNumber, Common::TTSVoice::Gender gender, Common::TTSVoice::Age age, char *description) {
+void SpeechDispatcherManager::createVoice(int typeNumber, Common::TTSVoice::Gender gender, Common::TTSVoice::Age age, char *description) {
 	SPDVoiceType *type = (SPDVoiceType *) malloc(sizeof(SPDVoiceType));
 	*type = static_cast<SPDVoiceType>(typeNumber);
 	Common::TTSVoice voice(gender, age, (void *) type, description);
 	_ttsState->_availableVoices.push_back(voice);
 }
 
-void LinuxTextToSpeechManager::updateVoices() {
+void SpeechDispatcherManager::updateVoices() {
 	if (_speechState == BROKEN)
 		return;
 	/* just use these voices:
@@ -385,7 +385,7 @@ void LinuxTextToSpeechManager::updateVoices() {
 	free(voiceInfo);
 }
 
-void LinuxTextToSpeechManager::freeVoiceData(void *data) {
+void SpeechDispatcherManager::freeVoiceData(void *data) {
 	free(data);
 }
 
