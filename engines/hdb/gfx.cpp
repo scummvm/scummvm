@@ -522,7 +522,11 @@ Tile *Gfx::loadIcon(const char *tileName) {
 }
 
 void Gfx::setPixel(int x, int y, uint16 color) {
+	if (x < 0 || y < 0 || x >= _globalSurface.w || y >= _globalSurface.h)
+		return;
+
 	*(uint16 *)_globalSurface.getBasePtr(x, y) = color;
+	g_system->copyRectToScreen(_globalSurface.getBasePtr(x, y), _globalSurface.pitch, x, y, 1, 1);
 }
 
 Tile *Gfx::getTile(int index) {
