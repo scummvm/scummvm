@@ -437,10 +437,18 @@ void Menu::startMenu() {
 	_controlsGfx = g_hdb->_gfx->loadPic(PIC_CONTROLSSCREEN);
 
 	if (g_hdb->isDemo()) {
-		_screenshots1gfx = g_hdb->_gfx->loadPic(PIC_DEMOSCREEN);
-		_screenshots1agfx = g_hdb->_gfx->loadPic(PIC_DEMOSCREEN2);
-		_screenshots2gfx = g_hdb->_gfx->loadPic(PIC_DEMO_BUY);
-		_demoPlaqueGfx =  g_hdb->_gfx->loadPic(PIC_DEMO);
+
+		if (!g_hdb->isPPC()) {
+			_screenshots1gfx = g_hdb->_gfx->loadPic(PIC_DEMOSCREEN);
+			_screenshots1agfx = g_hdb->_gfx->loadPic(PIC_DEMOSCREEN2);
+			_screenshots2gfx = g_hdb->_gfx->loadPic(PIC_DEMO_BUY);
+			_demoPlaqueGfx =  g_hdb->_gfx->loadPic(PIC_DEMO);
+		} else {
+			_screenshots1agfx = g_hdb->_gfx->loadPic("pic_demoscreenshots");
+			_screenshots1gfx = g_hdb->_gfx->loadPic("pic_demoscreenshots2");
+			_screenshots2gfx = NULL;
+			_demoPlaqueGfx =  NULL;
+		}
 	}
 
 	_vortexian[0] = g_hdb->_gfx->loadTile(GROUP_ENT_VORTEXIAN_STANDDOWN"01");
@@ -535,12 +543,13 @@ void Menu::drawMenu() {
 	if (_menuActive) {
 		drawRocketAndSelections();
 
-		// draw version #
-		if (_versionGfx)
+		if (!g_hdb->isPPC()) {
+			// draw version #
 			_versionGfx->drawMasked(g_hdb->_screenWidth - 6 * 8, g_hdb->_screenHeight - 8);
 
-		if (g_hdb->isDemo() && _demoPlaqueGfx) {
-			_demoPlaqueGfx->drawMasked(g_hdb->_screenWidth / 2 - _demoPlaqueGfx->_width / 2, 2);
+			if (g_hdb->isDemo()) {
+				_demoPlaqueGfx->drawMasked(g_hdb->_screenWidth / 2 - _demoPlaqueGfx->_width / 2, 2);
+			}
 		}
 
 		//
@@ -847,11 +856,13 @@ void Menu::drawMenu() {
 			if (!_quitScreen)
 				_quitScreen = g_hdb->_gfx->loadPic(PIC_QUITSCREEN);
 			_quitScreen->drawMasked(_quitX, _quitY);
-		} else if (_quitActive == 2) { // XXXX
-			_screenshots1gfx->drawMasked(_quitX, _quitY);
-			_screenshots2gfx->drawMasked(_quitX, g_hdb->_screenHeight - _screenshots2gfx->_height);
 		} else if (_quitActive == 1) {
 			_screenshots1agfx->drawMasked(_quitX, _quitY);
+		} else if (_quitActive == 2) { // XXXX
+			_screenshots1gfx->drawMasked(_quitX, _quitY);
+
+			if (!g_hdb->isPPC())
+				_screenshots2gfx->drawMasked(_quitX, g_hdb->_screenHeight - _screenshots2gfx->_height);
 		}
 	}
 }
