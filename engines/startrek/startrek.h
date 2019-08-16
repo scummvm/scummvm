@@ -322,7 +322,7 @@ public:
 	bool isPositionSolid(int16 x, int16 y);
 	void loadRoomIndex(int roomIndex, int spawnIndex);
 
-	SharedPtr<Room> getRoom();
+	Room *getRoom();
 
 	// intro.cpp
 private:
@@ -673,7 +673,11 @@ public:
 	Common::Platform getPlatform() const;
 	uint8 getGameType() const;
 	Common::Language getLanguage() const;
-
+	
+	// _screenName = _missionName + _roomIndex
+	Common::String getScreenName() const {
+		return _missionName + (char)(_roomIndex + '0');
+	}
 
 	// Variables
 public:
@@ -690,8 +694,6 @@ public:
 
 	Common::String _missionName;
 	int _roomIndex;
-	Common::String _screenName; // _screenName = _missionName + _roomIndex
-	Common::String _mapFilename; // Similar to _screenName, but used for .map files?
 	Common::MemoryReadStreamEndian *_mapFile;
 	Fixed16 _playerActorScale;
 
@@ -782,9 +784,8 @@ public:
 private:
 	Common::RandomSource _randomSource;
 	Common::SineTable _sineTable;
-
+	Room *_room;
 	Common::MacResManager *_macResFork;
-	SharedPtr<Room> _room;
 };
 
 // Static function

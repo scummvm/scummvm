@@ -136,7 +136,8 @@ void Room::loadRoomMessages() {
 		while (*text != '#')
 			text++;
 
-		loadRoomMessage(text);
+		if (text[5] == '\\')
+			loadRoomMessage(text);
 
 		while (*text != '\0')
 			text++;
@@ -509,11 +510,11 @@ void Room::walkCrewmanC(int actorIndex, int16 destX, int16 destY, void (Room::*f
 }
 
 void Room::loadMapFile(const Common::String &name) {
-	_vm->_mapFilename = name;
-	_vm->_iwFile.reset();
 	delete _vm->_mapFile;
-	_vm->_iwFile = SharedPtr<IWFile>(new IWFile(_vm, name + ".iw"));
 	_vm->_mapFile = _vm->loadFile(name + ".map");
+
+	_vm->_iwFile.reset();
+	_vm->_iwFile = SharedPtr<IWFile>(new IWFile(_vm, name + ".iw"));
 }
 
 void Room::showBitmapFor5Ticks(const Common::String &bmpName, int priority) {

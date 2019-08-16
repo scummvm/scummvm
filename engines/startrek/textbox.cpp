@@ -159,7 +159,7 @@ void StarTrekEngine::getTextboxHeader(String *headerTextOutput, String speakerTe
 }
 
 String StarTrekEngine::readTextFromRdf(int choiceIndex, uintptr data, String *headerTextOutput) {
-	SharedPtr<Room> room = getRoom();
+	Room *room = getRoom();
 
 	int rdfVar = (size_t)data;
 

@@ -70,6 +70,7 @@ StarTrekEngine::StarTrekEngine(OSystem *syst, const StarTrekGameDescription *gam
 	_activeMenu = nullptr;
 	_sound = nullptr;
 	_macResFork = nullptr;
+	_room = nullptr;
 
 	memset(_actionOnWalkCompletionInUse, 0, sizeof(_actionOnWalkCompletionInUse));
 

@@ -1167,8 +1167,8 @@ lclick:
 	someSprite.bitmap.reset();
 	_gfx->popSprites();
 
-	_gfx->loadPri(_screenName);
-	_gfx->setBackgroundImage(_gfx->loadBitmap(_screenName));
+	_gfx->loadPri(getScreenName());
+	_gfx->setBackgroundImage(_gfx->loadBitmap(getScreenName()));
 	_gfx->copyBackgroundScreen();
 	_system->updateScreen();
 	_system->delayMillis(10);

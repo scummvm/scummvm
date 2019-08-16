@@ -488,8 +488,8 @@ int Room::demon6ShowCase(int visible) {
 
 	_vm->_gfx->fadeoutScreen();
 	_vm->_gfx->popSprites();
-	_vm->_gfx->loadPri(_vm->_screenName);
-	_vm->_gfx->setBackgroundImage(_vm->_gfx->loadBitmap(_vm->_screenName));
+	_vm->_gfx->loadPri(_vm->getScreenName());
+	_vm->_gfx->setBackgroundImage(_vm->_gfx->loadBitmap(_vm->getScreenName()));
 	_vm->_gfx->copyBackgroundScreen();
 	_vm->_gfx->forceDrawAllSprites();
 

@@ -212,10 +212,14 @@ private:
 	 */
 	void walkCrewman(int actorIndex, int16 destX, int16 destY, uint16 finishedAnimActionParam = 0);
 	void walkCrewmanC(int actorIndex, int16 destX, int16 destY, void (Room::*funcPtr)());      // Cmd 0x08
+
+public:
 	/**
 	 * Cmd 0x09: Loads a pair of .map and .iw files to change the room's collisions and pathfinding.
 	 */
 	void loadMapFile(const Common::String &name);
+
+private:
 	/**
 	 * Cmd 0x0a
 	 */
