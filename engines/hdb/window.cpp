@@ -1439,7 +1439,7 @@ void Window::drawDeliveries() {
 
 		// Draw delivery items
 		int inv = 0;
-		for (; inv < g_hdb->_ai->getInvAmount(); inv++) {
+		for (; inv < g_hdb->_ai->getDeliveriesAmount(); inv++) {
 			DlvEnt *d = g_hdb->_ai->getDeliveryItem(inv);
 			if (_dlvsInfo.animate && inv == g_hdb->_ai->getDeliveriesAmount() - 1) {
 				if (_dlvsInfo.go1) {
