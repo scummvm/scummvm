@@ -340,11 +340,10 @@ void Gfx::updateFade() {
 		if (!_fadeInfo.isBlack) {
 			// Black fade
 			for (int y = 0; y < g_hdb->_screenHeight; y++) {
-				uint16 *ptr = (uint16 *)_fadeBuffer1.getBasePtr(0, y);
+				 ptr = (uint16 *)_fadeBuffer1.getBasePtr(0, y);
 				for (int x = 0; x < g_hdb->_screenWidth; x++) {
-					uint16 value = *ptr;
+					 value = *ptr;
 					if (value) {
-						uint8 r, g, b;
 						g_hdb->_format.colorToRGB(value, r, g, b);
 						r = (r * _fadeInfo.curStep) >> 8;
 						g = (g * _fadeInfo.curStep) >> 8;
@@ -358,10 +357,9 @@ void Gfx::updateFade() {
 		} else {
 			// White fade
 			for (int y = 0; y < g_hdb->_screenHeight; y++) {
-				uint16 *ptr = (uint16 *)_fadeBuffer1.getBasePtr(0, y);
+				ptr = (uint16 *)_fadeBuffer1.getBasePtr(0, y);
 				for (int x = 0; x < g_hdb->_screenWidth; x++) {
-					uint16 value = *ptr;
-					uint8 r, g, b;
+					value = *ptr;
 					g_hdb->_format.colorToRGB(value, r, g, b);
 					r += (255 - r) * (256 - _fadeInfo.curStep) / 256;
 					g += (255 - g) * (256 - _fadeInfo.curStep) / 256;
