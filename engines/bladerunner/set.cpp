@@ -486,6 +486,12 @@ void Set::overrideSceneObjectInfo(int objectId) const {
 			_objects[objectId].bbox.setXYZ(695.63f, 42.65f, -628.10f, 706.71f, 69.22f, -614.47f);
 		}
 		break;
+	case kScenePS07:
+		// Make the mid-wall thinner to enable access to clickable object (buzzer)
+		if (objectId == 1 && _objects[objectId].name == "BOX01") {
+			_objects[objectId].bbox.setXYZ(526.91f, 0.0f, -582.62f, 531.50f, 48.43f, -511.72f);
+		}
+		break;
 	case kSceneNR05:
 		if (objectId == 10 && _objects[objectId].name == "BOX08") {
 			_objects[objectId].bbox.setXYZ(-748.75f, 0.0f, -257.39f, -685.37f, 32.01f, -211.47f);
@@ -577,6 +583,16 @@ void Set::patchInAdditionalObjectsInSet() {
 		// it causes McCoy to sometimes go behind the wall
 		bbox = BoundingBox(730.50f, -0.0f, -481.10f, 734.51f, 144.75f, -437.55f);
 		custObjName = "MAINFBLOCK";
+		setupNewObjectInSet(custObjName, bbox);
+		break;
+
+	case kScenePS07:
+		// add missing buzzer button to annoy Klein
+		bbox = BoundingBox(530.16f, 48.44f, -570.13f, 550.41f, 50.46f, -558.77f);
+		custObjName = "L.MOUSE";
+		setupNewObjectInSet(custObjName, bbox);
+		bbox = BoundingBox(541.18f, 28.95f, -566.66f, 555.18f, 44.46f, -548.79f);
+		custObjName = "L.MOUSE2";
 		setupNewObjectInSet(custObjName, bbox);
 		break;
 

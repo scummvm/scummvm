@@ -43,8 +43,14 @@ void SceneScriptPS07::InitializeScene() {
 }
 
 void SceneScriptPS07::SceneLoaded() {
-	Obstacle_Object("RICE BOX01", true);
+	Obstacle_Object("RICE BOX01", true); // garbage can
 	Unobstacle_Object("RICE BOX01", true);
+	if (_vm->_cutContent) {
+		Unobstacle_Object("L.MOUSE", true);
+		Unobstacle_Object("L.MOUSE2", true);
+		Clickable_Object("L.MOUSE");
+		Clickable_Object("L.MOUSE2");
+	}
 }
 
 bool SceneScriptPS07::MouseClick(int x, int y) {

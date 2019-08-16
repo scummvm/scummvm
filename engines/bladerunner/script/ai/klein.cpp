@@ -232,7 +232,15 @@ bool AIScriptKlein::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		AI_Movement_Track_Append(kActorKlein, 32, 5);  // kSetPS07
 		AI_Movement_Track_Repeat(kActorKlein);
 		break;
-	// TODO: missing kGoalKleinIsAnnoyedByMcCoyFinal case
+	case kGoalKleinIsAnnoyedByMcCoyFinal:
+		// Note: Original was missing the kGoalKleinIsAnnoyedByMcCoyFinal case
+		//       so we just "break" for the original behavior
+		if (_vm->_cutContent) {
+			AI_Movement_Track_Flush(kActorKlein);
+			AI_Movement_Track_Append(kActorKlein, 74, Random_Query(10, 20)); // kSetPS07
+			AI_Movement_Track_Repeat(kActorKlein);
+		}
+		break;
 	case kGoalKleinAwayAtEndOfActOne:
 		AI_Movement_Track_Flush(kActorKlein);
 		Actor_Put_In_Set(kActorKlein, kSetFreeSlotC);
