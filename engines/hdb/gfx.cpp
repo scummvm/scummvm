@@ -328,24 +328,17 @@ void Gfx::setFade(bool fadeIn, bool black, int steps) {
 }
 
 void Gfx::updateFade() {
+	uint8 r, g, b;
+	uint16 value;
+	uint16 *ptr;
 	static int waitAFrame = 0;
 
 	if (!_fadeInfo.active && !_fadeInfo.stayFaded)
 		return;
 
-	debug(7, "updateFade: active: %d stayFaded: %d isBlack: %d speed: %d isFadeIn: %d curStep: %d", _fadeInfo.active,
-			_fadeInfo.stayFaded, _fadeInfo.isBlack, _fadeInfo.speed, _fadeInfo.isFadeIn, _fadeInfo.curStep);
-
-	_fadeBuffer2.blitFrom(_globalSurface);
-
-	do {
-		// Copy pristine copy of background to modification buffer
-		_fadeBuffer1.blitFrom(_fadeBuffer2);
-
-		// do the actual alphablending
+	if (g_hdb->isPPC()) {
 		if (!_fadeInfo.isBlack) {
-			// Black Fade
-
+			// Black fade
 			for (int y = 0; y < g_hdb->_screenHeight; y++) {
 				uint16 *ptr = (uint16 *)_fadeBuffer1.getBasePtr(0, y);
 				for (int x = 0; x < g_hdb->_screenWidth; x++) {
@@ -361,9 +354,9 @@ void Gfx::updateFade() {
 					ptr++;
 				}
 			}
-		} else {
-			// White Fade
 
+		} else {
+			// White fade
 			for (int y = 0; y < g_hdb->_screenHeight; y++) {
 				uint16 *ptr = (uint16 *)_fadeBuffer1.getBasePtr(0, y);
 				for (int x = 0; x < g_hdb->_screenWidth; x++) {
@@ -379,11 +372,6 @@ void Gfx::updateFade() {
 			}
 		}
 
-		_globalSurface.blitFrom(_fadeBuffer1);
-		g_system->copyRectToScreen(_globalSurface.getBasePtr(0, 0), _globalSurface.pitch, 0, 0, _globalSurface.w, _globalSurface.h);
-
-		// step the fading values to the next one and
-		// see if we're done yet
 		if (_fadeInfo.isFadeIn) {
 			if (_fadeInfo.active)
 				_fadeInfo.curStep += _fadeInfo.speed;
@@ -400,28 +388,96 @@ void Gfx::updateFade() {
 			if (_fadeInfo.curStep < 1) {
 				_fadeInfo.curStep = 0;
 				_fadeInfo.active = false;
-				_fadeInfo.stayFaded = false;
+				_fadeInfo.stayFaded = true;
 			}
 		}
+	} else {
+		_fadeBuffer2.blitFrom(_globalSurface);
 
-		// make sure we wait one frame at least - some logic in the game
-		// doesn't draw the frame immediately
-		if (!waitAFrame) {
-			waitAFrame++;
-			return;
-		}
+		do {
+			// Copy pristine copy of background to modification buffer
+			_fadeBuffer1.blitFrom(_fadeBuffer2);
 
-		g_system->updateScreen();
-		if (g_hdb->getDebug()) {
-			g_hdb->_frames.push_back(g_system->getMillis());
-			while (g_hdb->_frames[0] < g_system->getMillis() - 1000)
-				g_hdb->_frames.remove_at(0);
-		}
-		g_system->delayMillis(1000 / kGameFPS);
+			// do the actual alphablending
 
-	} while (_fadeInfo.active);
+			if (!_fadeInfo.isBlack) {
+				// Black Fade
 
-	waitAFrame = 0;			// reset counter
+				for (int y = 0; y < g_hdb->_screenHeight; y++) {
+					ptr = (uint16 *)_fadeBuffer1.getBasePtr(0, y);
+					for (int x = 0; x < g_hdb->_screenWidth; x++) {
+						value = *ptr;
+						if (value) {
+							g_hdb->_format.colorToRGB(value, r, g, b);
+							r = (r * _fadeInfo.curStep) >> 8;
+							g = (g * _fadeInfo.curStep) >> 8;
+							b = (b * _fadeInfo.curStep) >> 8;
+							*ptr = g_hdb->_format.RGBToColor(r, g, b);
+						}
+						ptr++;
+					}
+				}
+			} else {
+				// White Fade
+
+				for (int y = 0; y < g_hdb->_screenHeight; y++) {
+					ptr = (uint16 *)_fadeBuffer1.getBasePtr(0, y);
+					for (int x = 0; x < g_hdb->_screenWidth; x++) {
+						value = *ptr;
+						g_hdb->_format.colorToRGB(value, r, g, b);
+						r += (255 - r) * (256 - _fadeInfo.curStep) / 256;
+						g += (255 - g) * (256 - _fadeInfo.curStep) / 256;
+						b += (255 - b) * (256 - _fadeInfo.curStep) / 256;
+						*ptr = g_hdb->_format.RGBToColor(r, g, b);
+						ptr++;
+					}
+				}
+			}
+
+			_globalSurface.blitFrom(_fadeBuffer1);
+			g_system->copyRectToScreen(_globalSurface.getBasePtr(0, 0), _globalSurface.pitch, 0, 0, _globalSurface.w, _globalSurface.h);
+
+			// step the fading values to the next one and
+			// see if we're done yet
+			if (_fadeInfo.isFadeIn) {
+				if (_fadeInfo.active)
+					_fadeInfo.curStep += _fadeInfo.speed;
+
+				if (_fadeInfo.curStep > 255) {
+					_fadeInfo.curStep = 255;
+					_fadeInfo.active = false;
+					_fadeInfo.stayFaded = false;
+				}
+			} else {
+				if (_fadeInfo.active == true)
+					_fadeInfo.curStep -= _fadeInfo.speed;
+
+				if (_fadeInfo.curStep < 1) {
+					_fadeInfo.curStep = 0;
+					_fadeInfo.active = false;
+					_fadeInfo.stayFaded = false;
+				}
+			}
+
+			// make sure we wait one frame at least - some logic in the game
+			// doesn't draw the frame immediately
+			if (!waitAFrame) {
+				waitAFrame++;
+				return;
+			}
+
+			g_system->updateScreen();
+			if (g_hdb->getDebug()) {
+				g_hdb->_frames.push_back(g_system->getMillis());
+				while (g_hdb->_frames[0] < g_system->getMillis() - 1000)
+					g_hdb->_frames.remove_at(0);
+			}
+			g_system->delayMillis(1000 / kGameFPS);
+
+		} while (_fadeInfo.active);
+
+		waitAFrame = 0;			// reset counter
+	}
 }
 
 void Gfx::turnOnSnow() {
