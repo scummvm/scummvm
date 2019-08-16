@@ -11,6 +11,7 @@ MODULE_OBJS := \
 	misc.o \
 	savegame.o \
 	sound.o \
+	encoding.o \
 	testbed.o \
 	testsuite.o
 
