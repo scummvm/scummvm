@@ -53,25 +53,27 @@ bool AIScriptKlein::Update() {
 
 	// The following if-clauses and flags circumvent the manual's explicit instruction that McCoy should upload his clues
 	// on the Mainframe, so that Dino Klein can acquire them.
-	if (Actor_Clue_Query(kActorMcCoy, kClueOfficersStatement)
-	    && !Game_Flag_Query(kFlagMcCoyHasOfficersStatement)
-	) {
-		Game_Flag_Set(kFlagMcCoyHasOfficersStatement);
-	}
-	if (Actor_Clue_Query(kActorMcCoy, kCluePaintTransfer)
-	    && !Game_Flag_Query(kFlagMcCoyHasPaintTransfer)
-	) {
-		Game_Flag_Set(kFlagMcCoyHasPaintTransfer);
-	}
-	if (Actor_Clue_Query(kActorMcCoy, kClueShellCasings)
-	    && !Game_Flag_Query(kFlagMcCoyHasShellCasings)
-	) {
-		Game_Flag_Set(kFlagMcCoyHasShellCasings);
-	}
-	if (Actor_Clue_Query(kActorMcCoy, kClueChromeDebris)
-	    && !Game_Flag_Query(kFlagMcCoyHasChromeDebris)
-	) {
-		Game_Flag_Set(kFlagMcCoyHasChromeDebris);
+	if (!_vm->_cutContent) {
+		if (Actor_Clue_Query(kActorMcCoy, kClueOfficersStatement)
+		    && !Game_Flag_Query(kFlagMcCoyHasOfficersStatement)
+		) {
+			Game_Flag_Set(kFlagMcCoyHasOfficersStatement);
+		}
+		if (Actor_Clue_Query(kActorMcCoy, kCluePaintTransfer)
+		    && !Game_Flag_Query(kFlagMcCoyHasPaintTransfer)
+		) {
+			Game_Flag_Set(kFlagMcCoyHasPaintTransfer);
+		}
+		if (Actor_Clue_Query(kActorMcCoy, kClueShellCasings)
+		    && !Game_Flag_Query(kFlagMcCoyHasShellCasings)
+		) {
+			Game_Flag_Set(kFlagMcCoyHasShellCasings);
+		}
+		if (Actor_Clue_Query(kActorMcCoy, kClueChromeDebris)
+		    && !Game_Flag_Query(kFlagMcCoyHasChromeDebris)
+		) {
+			Game_Flag_Set(kFlagMcCoyHasChromeDebris);
+		}
 	}
 
 	// The following deals with the case that Klein gets annoyed by McCoy and how he recovers from that
@@ -79,6 +81,7 @@ bool AIScriptKlein::Update() {
 	    && Actor_Query_Friendliness_To_Other(kActorKlein, kActorMcCoy) < 35
 	    && !Game_Flag_Query(kFlagPS07KleinInsulted)
 	) {
+		// kActorTimerAIScriptCustomTask2 causes the "Klein is annoyed dialogue" to occur after 5 seconds
 		AI_Countdown_Timer_Reset(kActorKlein, kActorTimerAIScriptCustomTask2);
 		AI_Countdown_Timer_Start(kActorKlein, kActorTimerAIScriptCustomTask2, 5);
 		Game_Flag_Set(kFlagPS07KleinInsulted);
@@ -219,17 +222,22 @@ bool AIScriptKlein::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		break;
 	case kGoalKleinIsAnnoyedByMcCoyInit:
 		AI_Movement_Track_Flush(kActorKlein);
-		AI_Movement_Track_Append(kActorKlein, 32, 5);  // kSetPS07
+		AI_Movement_Track_Append(kActorKlein, 32, 5);  // kSetPS07 (hidden spot)
 		AI_Movement_Track_Repeat(kActorKlein);
 		break;
 	case kGoalKleinIsAnnoyedByMcCoy01:
 		AI_Movement_Track_Flush(kActorKlein);
-		AI_Movement_Track_Append(kActorKlein, 35, 60); // kSetFreeSlotC
+		if (_vm->_cutContent) {
+			AI_Movement_Track_Append(kActorKlein, 35, Random_Query(8, 18)); // kSetFreeSlotC
+		} else {
+			// this never really gets triggered in the original game
+			AI_Movement_Track_Append(kActorKlein, 35, 60); // kSetFreeSlotC
+		}
 		AI_Movement_Track_Repeat(kActorKlein);
 		break;
 	case kGoalKleinIsAnnoyedByMcCoy02:
 		AI_Movement_Track_Flush(kActorKlein);
-		AI_Movement_Track_Append(kActorKlein, 32, 5);  // kSetPS07
+		AI_Movement_Track_Append(kActorKlein, 32, 5);  // kSetPS07 (hidden spot)
 		AI_Movement_Track_Repeat(kActorKlein);
 		break;
 	case kGoalKleinIsAnnoyedByMcCoyFinal:

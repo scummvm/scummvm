@@ -1138,6 +1138,12 @@ void InitScript::Init_Clues2() {
 	Actor_Clue_Add_To_Database(kActorKlein, kClueHollowayInterview, 65, false, false, -1);
 	Actor_Clue_Add_To_Database(kActorKlein, kClueRunciterConfession1, 65, false, false, -1);
 	Actor_Clue_Add_To_Database(kActorKlein, kClueRunciterConfession2, 65, false, false, -1);
+	if (_vm->_cutContent) {
+		Actor_Clue_Add_To_Database(kActorKlein, kClueShellCasings, 65, false, false, -1);
+		Actor_Clue_Add_To_Database(kActorKlein, kClueChromeDebris, 65, false, false, -1);
+		Actor_Clue_Add_To_Database(kActorKlein, kClueOfficersStatement, 65, false, false, -1);
+		Actor_Clue_Add_To_Database(kActorKlein, kCluePaintTransfer, 65, false, false, -1);
+	}
 	Actor_Clue_Add_To_Database(kActorMurray, kClueMcCoyShotZubenInTheBack, 55, false, false, -1);
 	Actor_Clue_Add_To_Database(kActorMurray, kClueMcCoyIsAnnoying, 55, false, false, -1);
 	Actor_Clue_Add_To_Database(kActorMurray, kClueMcCoyIsKind, 70, false, false, -1);

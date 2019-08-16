@@ -49,7 +49,7 @@ void SceneScriptPS07::SceneLoaded() {
 		Unobstacle_Object("L.MOUSE", true);
 		Unobstacle_Object("L.MOUSE2", true);
 		Clickable_Object("L.MOUSE");
-		Clickable_Object("L.MOUSE2");
+		Unclickable_Object("L.MOUSE2"); // TODO: we may not use this one (restored content version)
 	}
 }
 
@@ -58,10 +58,11 @@ bool SceneScriptPS07::MouseClick(int x, int y) {
 }
 
 bool SceneScriptPS07::ClickedOn3DObject(const char *objectName, bool a2) {
-	if (Object_Query_Click("L.MOUSE", objectName)) { // a bug? Which object is this?
+	if (Object_Query_Click("L.MOUSE", objectName)) { // this object is restored in the scene (buzzer button)
 		Sound_Play(kSfxLABBUZZ1, 70, 0, 0, 50);
 		if (Actor_Query_Goal_Number(kActorKlein) < kGoalKleinIsAnnoyedByMcCoyInit
-		    && Actor_Query_Goal_Number(kActorKlein) > kGoalKleinDefault) {
+		    && Actor_Query_Goal_Number(kActorKlein) > kGoalKleinDefault
+		) {
 			Actor_Face_Actor(kActorMcCoy, kActorKlein, true);
 			Actor_Set_Goal_Number(kActorKlein, kGoalKleinGotoLabSpeaker);
 			Actor_Modify_Friendliness_To_Other(kActorKlein, kActorMcCoy, -3);
@@ -73,101 +74,220 @@ bool SceneScriptPS07::ClickedOn3DObject(const char *objectName, bool a2) {
 
 bool SceneScriptPS07::ClickedOnActor(int actorId) {
 	if (actorId == kActorKlein) {
-		Actor_Face_Actor(kActorMcCoy, kActorKlein, true);
-		Actor_Set_Goal_Number(kActorKlein, kGoalKleinGotoLabSpeaker);
+		if (_vm->_cutContent) {
+			if (Actor_Query_Goal_Number(kActorKlein) >= kGoalKleinIsAnnoyedByMcCoyInit
+			    || (Actor_Query_Goal_Number(kActorKlein) < kGoalKleinIsAnnoyedByMcCoyInit
+			        && Actor_Query_Friendliness_To_Other(kActorKlein, kActorMcCoy) < 40)
+			) {
+				// Dino ignores McCoy
+				return true;
+			} else {
+				Actor_Face_Actor(kActorMcCoy, kActorKlein, true);
+				Actor_Set_Goal_Number(kActorKlein, kGoalKleinGotoLabSpeaker);
+				if (!Game_Flag_Query(kFlagPS07KleinTalkClues)) {
+					Actor_Says(kActorMcCoy, 4115, 13);
+				}
 
-		if (!Game_Flag_Query(kFlagPS07KleinTalkClues)) {
-			Actor_Says(kActorMcCoy, 4115, 13);
-		}
+				if (!Game_Flag_Query(kFlagPS07KleinTalkClues)
+				    && (Actor_Clue_Query(kActorKlein, kClueShellCasings)
+				        || Actor_Clue_Query(kActorKlein, kClueOfficersStatement)
+				        || Actor_Clue_Query(kActorKlein, kCluePaintTransfer)
+				        || Actor_Clue_Query(kActorKlein, kClueChromeDebris))
+				) {
+					Actor_Face_Actor(kActorKlein, kActorMcCoy, true);
+					Actor_Says(kActorKlein, 30, 12);
+					Game_Flag_Set(kFlagPS07KleinTalkClues);
+				} else {
+					if (Game_Flag_Query(kFlagPS07KleinTalkClues)) {
+						Actor_Says(kActorMcCoy, 4130, 18);
+					}
+				}
+				if (Actor_Clue_Query(kActorKlein, kClueShellCasings)
+				    && !Game_Flag_Query(kFlagPS07KleinTalkShellCasings)
+				) {
+					Game_Flag_Set(kFlagPS07KleinTalkShellCasings);
+					Actor_Clue_Acquire(kActorMcCoy, kClueLabShellCasings, false, kActorKlein);
+					Actor_Says(kActorKlein, 50, 16);
+					Actor_Says(kActorMcCoy, 4135, 13);
+					Actor_Says(kActorKlein, 60, 15);
+					Actor_Says(kActorKlein, 70, 12);
+					Actor_Says(kActorMcCoy, 4140, 18);
+					Actor_Says(kActorKlein, 80, 14);
+					Actor_Says(kActorKlein, 90, 14);
+					Actor_Set_Goal_Number(kActorKlein, kGoalKleinMovingInLab01);
+					return true;
+				}
 
-		if (!Game_Flag_Query(kFlagPS07KleinTalkClues)
-		    && (Game_Flag_Query(kFlagMcCoyHasShellCasings)
-		        || Game_Flag_Query(kFlagMcCoyHasOfficersStatement)
-		        || Game_Flag_Query(kFlagMcCoyHasPaintTransfer)
-		        || Game_Flag_Query(kFlagMcCoyHasChromeDebris))
-		) {
-			Actor_Face_Actor(kActorKlein, kActorMcCoy, true);
-			Actor_Says(kActorKlein, 30, 12);
-			Game_Flag_Set(kFlagPS07KleinTalkClues);
+				if (Actor_Clue_Query(kActorKlein, kClueOfficersStatement)
+				    && !Game_Flag_Query(kFlagPS07KleinTalkOfficersStatement)
+				) {
+					Game_Flag_Set(kFlagPS07KleinTalkOfficersStatement);
+					Actor_Clue_Acquire(kActorMcCoy, kClueLabCorpses, false, kActorKlein);
+					Actor_Says(kActorKlein, 100, 13);
+					Actor_Says(kActorMcCoy, 4145, 13);
+					Actor_Says(kActorKlein, 110, 12);
+					Actor_Says(kActorMcCoy, 4150, 13);
+					Actor_Says(kActorKlein, 120, 14);
+					Actor_Says(kActorMcCoy, 4155, 17);
+					Actor_Says(kActorKlein, 130, 15);
+					Actor_Says(kActorMcCoy, 4160, 13);
+					Actor_Says(kActorKlein, 140, 16);
+					Actor_Says(kActorMcCoy, 4165, 18);
+					Actor_Says(kActorKlein, 160, 13);
+					Actor_Says(kActorMcCoy, 4170, 19);
+					Actor_Says(kActorMcCoy, 4175, 19);
+					Actor_Modify_Friendliness_To_Other(kActorKlein, kActorMcCoy, 3);
+					Actor_Set_Goal_Number(kActorKlein, kGoalKleinMovingInLab01);
+					return true;
+				}
+
+				if (Actor_Clue_Query(kActorKlein, kCluePaintTransfer)
+				    && !Game_Flag_Query(kFlagPS07KleinTalkPaintTransfer)
+				) {
+					Game_Flag_Set(kFlagPS07KleinTalkPaintTransfer);
+					Actor_Clue_Acquire(kActorMcCoy, kClueLabPaintTransfer, false, kActorKlein);
+					Actor_Says(kActorKlein, 170, 14);
+					Actor_Says(kActorMcCoy, 4180, 13);
+					Actor_Says(kActorKlein, 180, 12);
+					Actor_Says(kActorKlein, 190, 13);
+					Actor_Says(kActorKlein, 200, 16);
+					Actor_Says(kActorMcCoy, 4185, 18);
+					Actor_Says(kActorKlein, 210, 12);
+					Actor_Modify_Friendliness_To_Other(kActorKlein, kActorMcCoy, -12);
+					Actor_Set_Goal_Number(kActorKlein, kGoalKleinMovingInLab01);
+					return true;
+				}
+
+				if (Actor_Clue_Query(kActorKlein, kClueChromeDebris)
+				    && !Game_Flag_Query(kFlagPS07KleinTalkChromeDebris)
+				) {
+					Game_Flag_Set(kFlagPS07KleinTalkChromeDebris);
+					Actor_Says(kActorKlein, 220, 12);
+					Actor_Says(kActorMcCoy, 4190, 13);
+					Actor_Says(kActorKlein, 230, 14);
+					if (_vm->_cutContent) {
+						Actor_Says(kActorMcCoy, 4195, 13);
+						Actor_Says(kActorKlein, 240, 16); // Car VIN
+					}
+					Actor_Set_Goal_Number(kActorKlein, kGoalKleinMovingInLab01);
+					return true;
+				}
+
+				switch (Random_Query(1, 4)) {
+				case 1:
+					Actor_Says(kActorKlein, 0, 13);
+					break;
+				case 2:
+					Actor_Says(kActorKlein, 40, 13);
+					break;
+				case 3:
+					Actor_Says(kActorKlein, 270, 13);
+					break;
+				case 4:
+					Actor_Says(kActorKlein, 280, 13);
+					break;
+				}
+				Actor_Set_Goal_Number(kActorKlein, kGoalKleinMovingInLab01);
+				return true;
+			}
 		} else {
-			if (Game_Flag_Query(kFlagPS07KleinTalkClues)) {
-				Actor_Says(kActorMcCoy, 4130, 18);
+			Actor_Face_Actor(kActorMcCoy, kActorKlein, true);
+			Actor_Set_Goal_Number(kActorKlein, kGoalKleinGotoLabSpeaker);
+
+			if (!Game_Flag_Query(kFlagPS07KleinTalkClues)) {
+				Actor_Says(kActorMcCoy, 4115, 13);
 			}
-		}
 
-		if (Game_Flag_Query(kFlagMcCoyHasShellCasings)
-		    && !Game_Flag_Query(kFlagPS07KleinTalkShellCasings)
-		) {
-			Game_Flag_Set(kFlagPS07KleinTalkShellCasings);
-			Actor_Clue_Acquire(kActorMcCoy, kClueLabShellCasings, false, kActorKlein);
-			Actor_Says(kActorKlein, 50, 16);
-			Actor_Says(kActorMcCoy, 4135, 13);
-			Actor_Says(kActorKlein, 60, 15);
-			Actor_Says(kActorKlein, 70, 12);
-			Actor_Says(kActorMcCoy, 4140, 18);
-			Actor_Says(kActorKlein, 80, 14);
-			Actor_Says(kActorKlein, 90, 14);
-			Actor_Set_Goal_Number(kActorKlein, kGoalKleinMovingInLab01);
-			return true;
-		}
-
-		if (Game_Flag_Query(kFlagMcCoyHasOfficersStatement)
-		    && !Game_Flag_Query(kFlagPS07KleinTalkOfficersStatement)
-		) {
-			Game_Flag_Set(kFlagPS07KleinTalkOfficersStatement);
-			Actor_Clue_Acquire(kActorMcCoy, kClueLabCorpses, false, kActorKlein);
-			Actor_Says(kActorKlein, 100, 13);
-			Actor_Says(kActorMcCoy, 4145, 13);
-			Actor_Says(kActorKlein, 110, 12);
-			Actor_Says(kActorMcCoy, 4150, 13);
-			Actor_Says(kActorKlein, 120, 14);
-			Actor_Says(kActorMcCoy, 4155, 17);
-			Actor_Says(kActorKlein, 130, 15);
-			Actor_Says(kActorMcCoy, 4160, 13);
-			Actor_Says(kActorKlein, 140, 16);
-			Actor_Says(kActorMcCoy, 4165, 18);
-			Actor_Says(kActorKlein, 160, 13);
-			Actor_Says(kActorMcCoy, 4170, 19);
-			Actor_Says(kActorMcCoy, 4175, 19);
-			Actor_Modify_Friendliness_To_Other(kActorKlein, kActorMcCoy, 3);
-			Actor_Set_Goal_Number(kActorKlein, kGoalKleinMovingInLab01);
-			return true;
-		}
-
-		if (Game_Flag_Query(kFlagMcCoyHasPaintTransfer)
-		    && !Game_Flag_Query(kFlagPS07KleinTalkPaintTransfer)
-		) {
-			Game_Flag_Set(kFlagPS07KleinTalkPaintTransfer);
-			Actor_Clue_Acquire(kActorMcCoy, kClueLabPaintTransfer, false, kActorKlein);
-			Actor_Says(kActorKlein, 170, 14);
-			Actor_Says(kActorMcCoy, 4180, 13);
-			Actor_Says(kActorKlein, 180, 12);
-			Actor_Says(kActorKlein, 190, 13);
-			Actor_Says(kActorKlein, 200, 16);
-			Actor_Says(kActorMcCoy, 4185, 18);
-			Actor_Says(kActorKlein, 210, 12);
-			Actor_Modify_Friendliness_To_Other(kActorKlein, kActorMcCoy, -12);
-			Actor_Set_Goal_Number(kActorKlein, kGoalKleinMovingInLab01);
-			return true;
-		}
-
-		if (Game_Flag_Query(kFlagMcCoyHasChromeDebris)
-		    && !Game_Flag_Query(kFlagPS07KleinTalkChromeDebris)
-		) {
-			Game_Flag_Set(kFlagPS07KleinTalkChromeDebris);
-			Actor_Says(kActorKlein, 220, 12);
-			Actor_Says(kActorMcCoy, 4190, 13);
-			Actor_Says(kActorKlein, 230, 14);
-			if (_vm->_cutContent) {
-				Actor_Says(kActorMcCoy, 4195, 13);
-				Actor_Says(kActorKlein, 240, 16); // Car VIN
+			if (!Game_Flag_Query(kFlagPS07KleinTalkClues)
+			    && (Game_Flag_Query(kFlagMcCoyHasShellCasings)
+			        || Game_Flag_Query(kFlagMcCoyHasOfficersStatement)
+			        || Game_Flag_Query(kFlagMcCoyHasPaintTransfer)
+			        || Game_Flag_Query(kFlagMcCoyHasChromeDebris))
+			) {
+				Actor_Face_Actor(kActorKlein, kActorMcCoy, true);
+				Actor_Says(kActorKlein, 30, 12);
+				Game_Flag_Set(kFlagPS07KleinTalkClues);
+			} else {
+				if (Game_Flag_Query(kFlagPS07KleinTalkClues)) {
+					Actor_Says(kActorMcCoy, 4130, 18);
+				}
 			}
+
+			if (Game_Flag_Query(kFlagMcCoyHasShellCasings)
+			    && !Game_Flag_Query(kFlagPS07KleinTalkShellCasings)
+			) {
+				Game_Flag_Set(kFlagPS07KleinTalkShellCasings);
+				Actor_Clue_Acquire(kActorMcCoy, kClueLabShellCasings, false, kActorKlein);
+				Actor_Says(kActorKlein, 50, 16);
+				Actor_Says(kActorMcCoy, 4135, 13);
+				Actor_Says(kActorKlein, 60, 15);
+				Actor_Says(kActorKlein, 70, 12);
+				Actor_Says(kActorMcCoy, 4140, 18);
+				Actor_Says(kActorKlein, 80, 14);
+				Actor_Says(kActorKlein, 90, 14);
+				Actor_Set_Goal_Number(kActorKlein, kGoalKleinMovingInLab01);
+				return true;
+			}
+
+			if (Game_Flag_Query(kFlagMcCoyHasOfficersStatement)
+			    && !Game_Flag_Query(kFlagPS07KleinTalkOfficersStatement)
+			) {
+				Game_Flag_Set(kFlagPS07KleinTalkOfficersStatement);
+				Actor_Clue_Acquire(kActorMcCoy, kClueLabCorpses, false, kActorKlein);
+				Actor_Says(kActorKlein, 100, 13);
+				Actor_Says(kActorMcCoy, 4145, 13);
+				Actor_Says(kActorKlein, 110, 12);
+				Actor_Says(kActorMcCoy, 4150, 13);
+				Actor_Says(kActorKlein, 120, 14);
+				Actor_Says(kActorMcCoy, 4155, 17);
+				Actor_Says(kActorKlein, 130, 15);
+				Actor_Says(kActorMcCoy, 4160, 13);
+				Actor_Says(kActorKlein, 140, 16);
+				Actor_Says(kActorMcCoy, 4165, 18);
+				Actor_Says(kActorKlein, 160, 13);
+				Actor_Says(kActorMcCoy, 4170, 19);
+				Actor_Says(kActorMcCoy, 4175, 19);
+				Actor_Modify_Friendliness_To_Other(kActorKlein, kActorMcCoy, 3);
+				Actor_Set_Goal_Number(kActorKlein, kGoalKleinMovingInLab01);
+				return true;
+			}
+
+			if (Game_Flag_Query(kFlagMcCoyHasPaintTransfer)
+			    && !Game_Flag_Query(kFlagPS07KleinTalkPaintTransfer)
+			) {
+				Game_Flag_Set(kFlagPS07KleinTalkPaintTransfer);
+				Actor_Clue_Acquire(kActorMcCoy, kClueLabPaintTransfer, false, kActorKlein);
+				Actor_Says(kActorKlein, 170, 14);
+				Actor_Says(kActorMcCoy, 4180, 13);
+				Actor_Says(kActorKlein, 180, 12);
+				Actor_Says(kActorKlein, 190, 13);
+				Actor_Says(kActorKlein, 200, 16);
+				Actor_Says(kActorMcCoy, 4185, 18);
+				Actor_Says(kActorKlein, 210, 12);
+				Actor_Modify_Friendliness_To_Other(kActorKlein, kActorMcCoy, -12);
+				Actor_Set_Goal_Number(kActorKlein, kGoalKleinMovingInLab01);
+				return true;
+			}
+
+			if (Game_Flag_Query(kFlagMcCoyHasChromeDebris)
+			    && !Game_Flag_Query(kFlagPS07KleinTalkChromeDebris)
+			) {
+				Game_Flag_Set(kFlagPS07KleinTalkChromeDebris);
+				Actor_Says(kActorKlein, 220, 12);
+				Actor_Says(kActorMcCoy, 4190, 13);
+				Actor_Says(kActorKlein, 230, 14);
+				if (_vm->_cutContent) { // TODO this can go, if we keep separate cases
+					Actor_Says(kActorMcCoy, 4195, 13);
+					Actor_Says(kActorKlein, 240, 16); // Car VIN
+				}
+				Actor_Set_Goal_Number(kActorKlein, kGoalKleinMovingInLab01);
+				return true;
+			}
+			Actor_Says(kActorKlein, 0, 13);
 			Actor_Set_Goal_Number(kActorKlein, kGoalKleinMovingInLab01);
 			return true;
+
 		}
-		Actor_Says(kActorKlein, 0, 13);
-		Actor_Set_Goal_Number(kActorKlein, kGoalKleinMovingInLab01);
-		return true;
 	}
 	return false;
 
