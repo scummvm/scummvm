@@ -140,7 +140,7 @@ void AIScriptGenericWalkerA::ClickedByPlayer() {
 			Actor_Says(kActorMcCoy, 1085, 3);
 			break;
 		case 9:
-			Actor_Says(kActorMcCoy, 365, 3);
+			Actor_Says(kActorMcCoy, 365, 3); // Re-used line, same as case 1
 			break;
 		case 10:
 			Actor_Says(kActorMcCoy, 7415, 3);
@@ -220,45 +220,77 @@ bool AIScriptGenericWalkerA::UpdateAnimation(int *animation, int *frame) {
 	case kGenericWalkerAStatesIdle:
 		switch (Global_Variable_Query(kVariableGenericWalkerAModel)) {
 		case 0:
-			*animation = 426;
+			*animation = 426; // Hatted Person with umbrella still
 			break;
 		case 1:
-			*animation = 430;
+			*animation = 430; // Hooded person with umbrella still
 			break;
 		case 2:
-			*animation = 437;
+			*animation = 437; // Hatted lady with wooden umbrella still (different from 436 model!)
 			break;
 		case 3:
-			*animation = 431;
+			*animation = 431; // Person with glasses and beard still
 			break;
 		case 4:
-			*animation = 427;
+			*animation = 427; // Hatted Person without umbrella still
 			break;
 		case 5:
-			*animation = 433;
+			*animation = 433; // Punk person with glasses still
+			break;
+		case 6:
+			*animation = 434; // Hatted child walking // frame 11 could be used for still
+			_animationFrame = 11;
+			break;
+		case 7:
+			*animation = 435; // Child walking // frame 5 could be used for still
+			_animationFrame = 5;
+			break;
+		case 8:
+			*animation = 422; // Hatted person walking fast // frame 1 could be used for still
+			_animationFrame = 1;
+			break;
+		case 9:
+			*animation = 423; // Hatted person walking lowered face // frame 6 could be used for still
+			_animationFrame = 6;
 			break;
 		}
-		_animationFrame = 0;
+		if (!_vm->_cutContent
+		    || Global_Variable_Query(kVariableGenericWalkerAModel) < 6
+		) {
+			_animationFrame = 0;
+		}
 		break;
 	case kGenericWalkerAStatesWalk:
 		switch (Global_Variable_Query(kVariableGenericWalkerAModel)) {
 		case 0:
-			*animation = 424;
+			*animation = 424; // Hatted person with umbrella walking
 			break;
 		case 1:
-			*animation = 428;
+			*animation = 428; // Hooded person with umbrella walking
 			break;
 		case 2:
-			*animation = 436;
+			*animation = 436; // Hatted person with wooden umbrella walking
 			break;
 		case 3:
-			*animation = 429;
+			*animation = 429; // Person with glasses and beard walking
 			break;
 		case 4:
-			*animation = 425;
+			*animation = 425; // Hatted Person without umbrella - walking small steps
 			break;
 		case 5:
-			*animation = 432;
+			*animation = 432; // Punk person with glasses walking
+			break;
+		case 6:
+			*animation = 434; // Hatted child walking
+			break;
+		case 7:
+			*animation = 435; // Child walking
+			break;
+		case 8:
+			*animation = 422; // Hatted person walking fast
+			break;
+		case 9:
+			*animation = 423; // Hatted person walking lowered face
 			break;
 		}
 		++_animationFrame;
@@ -267,6 +299,8 @@ bool AIScriptGenericWalkerA::UpdateAnimation(int *animation, int *frame) {
 		}
 		break;
 	case kGenericWalkerAStatesDie:
+		// This is an animation for Maggie (exploding) but is also used for generic death states (rats, generic walkers)
+		// probably for debug purposes
 		*animation = 874;
 		++_animationFrame;
 		if (++_animationFrame >= Slice_Animation_Query_Number_Of_Frames(874))
@@ -373,10 +407,15 @@ bool AIScriptGenericWalkerA::prepareWalker() {
 	int model = 0;
 	do {
 		if (isInside) {
-			model = Random_Query(3, 5);
+			model = Random_Query(3, 5); // 0, 1, 2 models have umbrellas so they should be in outdoors locations
 		} else {
-			model = Random_Query(0, 5);
+			if (_vm->_cutContent) {
+				model = Random_Query(0, 9);
+			} else {
+				model = Random_Query(0, 5);
+			}
 		}
+		// this while loop ensures choosing a different model for Walker A than the Walker B or Walker C
 	} while (model == Global_Variable_Query(kVariableGenericWalkerBModel) || model == Global_Variable_Query(kVariableGenericWalkerCModel));
 
 	Global_Variable_Set(kVariableGenericWalkerAModel, model);

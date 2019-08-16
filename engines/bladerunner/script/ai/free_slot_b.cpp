@@ -329,7 +329,8 @@ bool AIScriptFreeSlotB::UpdateAnimation(int *animation, int *frame) {
 		break;
 
 	case 5:
-		// a bug? This is an animation for Maggie (exploding)
+		// This is an animation for Maggie (exploding) but is also used for generic death states (rats, generic walkers)
+		// probably for debug purposes
 		*animation = 874;
 		_animationFrame++;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(874) - 1) {

@@ -1880,7 +1880,7 @@ void InitScript::Init_World_Waypoints() {
 	World_Waypoint_Set(196, kSetBB05, 39.41f, -60.31f, 308.35f);
 	World_Waypoint_Set(197, kSetBB05, 99.41f, -60.31f, 220.35f);
 	World_Waypoint_Set(198, kSetBB05, 267.41f, -60.31f, 180.35f);
-	// 199 - UNUSED?
+	// 199 - UNUSED
 	World_Waypoint_Set(200, kSetBB06_BB07, -44.46f, -0.04f, 177.4f);
 	World_Waypoint_Set(201, kSetBB06_BB07, 137.0f, -0.04f, 17.0f);
 	World_Waypoint_Set(202, kSetRC03, -610.0f, -4.01f, 237.11f);
@@ -2092,7 +2092,7 @@ void InitScript::Init_World_Waypoints() {
 	World_Waypoint_Set(407, kSetUG10, 0.0f, 81.02f, -512.0f);
 	World_Waypoint_Set(408, kSetUG10, 0.0f, 1.15f, 400.0f);
 	World_Waypoint_Set(409, kSetUG04, -48.0f, -1.74f, -983.0f);
-	// 410 - UNUSED?
+	// 410 - UNUSED
 	World_Waypoint_Set(411, kSetUG05, 80.0f, -16.72f, -4.0f);
 	World_Waypoint_Set(412, kSetUG05, -48.0f, -11.0f, -352.0f);
 	World_Waypoint_Set(413, kSetUG06, -109.0f, 0.0f, 285.0f);
@@ -2206,7 +2206,7 @@ void InitScript::Init_World_Waypoints() {
 	World_Waypoint_Set(521, kSetHF04, 482.02f, -0.31f, -661.24f);
 	World_Waypoint_Set(522, kSetHF04, 1183.98f, -0.31f, -176.25f);
 	World_Waypoint_Set(523, kSetHF04, -45.0f, -0.34f, -351.0f);
-	// 524 - UNUSED?
+	// 524 - UNUSED
 	// 525 - kSetKP02 - Free Slot A (Rat) AI script
 	// 526 - kSetKP02 - Free Slot A (Rat) AI script
 	// 527 - kSetKP02 - Free Slot B (Rat) AI script
@@ -2234,7 +2234,7 @@ void InitScript::Init_World_Waypoints() {
 	World_Waypoint_Set(549, kSetNR04, -15.0f, 0.0f, 338.0f);
 	World_Waypoint_Set(550, kSetKP05_KP06, -785.31f, 0.0f, -237.05f);
 	World_Waypoint_Set(551, kSetKP05_KP06, -737.31f, 0.0f, -145.05f);
-	// 552 - UNUSED?
+	// 552 - UNUSED
 	// 553 - kSetRC03 - Izo AI script
 }
 

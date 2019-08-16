@@ -1194,20 +1194,20 @@ enum Variables {
 	// variables 26 - 28 are not used
 	kVariableLutherLanceShot               = 29,
 	// variables 30 - 31 are not used
-	kVariableGenericWalkerAModel           = 32,
-	kVariableGenericWalkerBModel           = 33,
-	kVariableGenericWalkerCModel           = 34,
+	kVariableGenericWalkerAModel           = 32, // values: 0 1 2 3 4 5 (6 7 8 9 for restored content)
+	kVariableGenericWalkerBModel           = 33, // values: 0 1 2 3 4 5 (6 7 8 9 for restored content)
+	kVariableGenericWalkerCModel           = 34, // values: 0 1 2 3 4 5 (6 7 8 9 for restored content)
 	kVariableGenericWalkerConfig           = 35, // Re-purposed. Original: has no real use
 	kVariableBB10ShelvesAvailable          = 36,
 	kVariableWalkLoopActor                 = 37,
 	kVariableWalkLoopRun                   = 38,
 	kVariableDR06MannequinHeadOpened       = 39,
-	kVariableHollowayArrest                = 40, // 1 dektora, 2 gordo, 3 lucy
+	kVariableHollowayArrest                = 40, // values: 1 dektora, 2 gordo, 3 lucy
 	kVariableGordosJoke                    = 41,
 	kVariableMcCoyDrinks                   = 42, // is never checked
 	kVariableHanoiNR05Warnings             = 43,
 	kVariableHanoiNR04Warnings             = 44,
-	kVariableAffectionTowards              = 45, // 0 none, 1 steele, 2 dektora, 3 lucy
+	kVariableAffectionTowards              = 45, // values: 0 none, 1 steele, 2 dektora, 3 lucy
 	kVariableGunPulledInFrontOfSebastian   = 46,
 	kVariableNR01GetUpCounter              = 47,
 	kVariableDNAEvidence                   = 48,
@@ -1689,7 +1689,7 @@ enum GameItems {
 };
 
 enum GameModelAnimations {
-	// McCoy animations
+	//   0 -  53: McCoy animations
 	kModelAnimationMcCoyWithGunIdle              =   0,
 	kModelAnimationMcCoyWithGunGotHitRight       =   1,
 	kModelAnimationMcCoyWithGunGotHitLeft        =   2,
@@ -1744,7 +1744,9 @@ enum GameModelAnimations {
 	kModelAnimationMcCoyCrouchedIdle             =  51,
 	kModelAnimationMcCoyCrouchedGetsUp           =  52,
 	kModelAnimationMcCoyDrinkingBooze            =  53,
-	// Dektora animations
+	//  54 -  92: Steele animations
+	//  93 - 133: Gordo animations
+	// 134 - 171: Dektora animations
 	kModelAnimationDektoraCombatIdle             = 134,
 	kModelAnimationDektoraCombatWalkingA         = 135,
 	kModelAnimationDektoraCombatWalkingB         = 136,
@@ -1762,7 +1764,7 @@ enum GameModelAnimations {
 	kModelAnimationDektoraBackDodgeMove          = 148,
 	kModelAnimationDektoraFallsDead              = 149,
 	kModelAnimationDektoraSittingIdle            = 150,
-	kModelAnimationDektoraSittingShootingGun     = 151, // unused?
+	kModelAnimationDektoraSittingShootingGun     = 151, // UNUSED?
 	kModelAnimationDektoraSittingSubtleTalking   = 152,
 	kModelAnimationDektoraSittingIntenseTalking  = 153,
 	kModelAnimationDektoraSittingPullingGunOut   = 154,
@@ -1775,7 +1777,7 @@ enum GameModelAnimations {
 	kModelAnimationDektoraStandingTalkGestureC   = 161, // move both hands
 	kModelAnimationDektoraStandingTalkGestureD   = 162, // appreciative
 	kModelAnimationDektoraInFlamesA              = 163,
-	kModelAnimationDektoraInFlamesGotHit         = 164, // unused?
+	kModelAnimationDektoraInFlamesGotHit         = 164, // UNUSED?
 	kModelAnimationDektoraInFlamesStartFalling   = 165,
 	kModelAnimationDektoraInFlamesB              = 166,
 	kModelAnimationDektoraInFlamesEndFalling     = 167,
@@ -1783,7 +1785,16 @@ enum GameModelAnimations {
 	kModelAnimationDektoraDancingB               = 169,
 	kModelAnimationDektoraDancingC               = 170,
 	kModelAnimationDektoraDancingFinale          = 171,
-	//
+	// 172 - 207: Guzza animations
+	// 208 - 252: Clovis animations
+	// 253 - 276: Lucy animations
+	// 277 - 311: Izo animations
+	// 312 - 345: Sadik animations
+	// 316 - 359: Twins/Luther animations
+	// 360 - 387: EarlyQ animations
+	// 388 - 421: Zuben animations
+	// 422 - 437: Generic walker A/B/C animations (with/without umbrella, walking/still)
+	// 438 - 439: Dancer model animations (unused?)
 	kModelAnimationBulletBobsTrackingGun         = 440,
 	kModelAnimationMaleTargetEmptyHandsActive    = 441,
 	kModelAnimationMaleTargetEmptyHandsDead      = 442, // 441+1
@@ -1795,10 +1806,40 @@ enum GameModelAnimations {
 	kModelAnimationFemaleTargetWithBabyDead      = 448, // 447+1
 	kModelAnimationFemaleTargetWithGunActive     = 449,
 	kModelAnimationFemaleTargetWithGunDead       = 450, // 449+1
-	// Rachael Animations
+	//       451: T-Pose Security Guard (unused?)
+	// 452 - 469: CrazyLegs animations
+	// 470 - 486: Grigorian animations
+	// 487 - 505: Transient/Homeless animations
+	// 506 - 525: Bullet Bob animations
+	// 526 - 544: Runciter animations
+	// 545 - 554: Insect Dealer animations
+	// 555 - 565: Tyrell Guard animations
+	// 566 - 570: Mia animations
+	// 571 - 604: Officer Leary animations
+	// 605 - 641: Officer Grayford animations
+	// 642 - 660: Hanoi animations
+	// 661 - 670: Desk Clerk (Yukon) animations
+	// 671 - 681: Howie Lee animations
+	// 682 - 687: Fish Dealer animations
+	// 688 - 697: Dino Klein animations
+	// 698 - 704: Murray animations
+	// 705 - 715: Hawker's Barkeep animations
+	// 716 - 721: Holloway animations
+	// 722 - 731: Sergeant Walls animations
+	// 732 - 743: Moraji animations
+	// 744 - 750: Photographer animations
+	//       751: Rajif animations
+	// 752 - 757: EarlyQ Bartender animations
+	// 758 - 764: Shoeshine Man animations (UNUSED)
+	// 765 - 772: Tyrell animations
+	// 773 - 787: Chew animations
+	// 788 - 804: Gaff animations
+	// 805 - 808: Bear "Bryant" (Sebastian's toy) animations
+	// 809 - 821: Sebastian animations
+	// 822 - 832: Rachael animations
 	kModelAnimationRachaelWalking                  = 822,
 	kModelAnimationRachaelIdle                     = 823,
-	kModelAnimationRachaelIdleOscilate             = 824, // unused
+	kModelAnimationRachaelIdleOscilate             = 824, // UNUSED
 	kModelAnimationRachaelTalkSoftNod              = 825,
 	kModelAnimationRachaelTalkNodToLeft            = 826,
 	kModelAnimationRachaelTalkSuggestWithNodToLeft = 827,
@@ -1807,15 +1848,21 @@ enum GameModelAnimations {
 	kModelAnimationRachaelTalkHaltMovement         = 830,
 	kModelAnimationRachaelTalkHandOnChest          = 831,
 	kModelAnimationRachaelTalkHandWaveToRight      = 832,
-
+	// 833 - 837: "General" (Sebastian's toy) animations
+	// 838 - 845: Mama Isabella animations
+	// 846 - 856: Leon animations
+	// 857 - 862: Rat (Free Slot A/B) animations
+	// 863 - 876: Maggie animations
+	// 877 - 884: Hysteria Patron1 (dancer) animations
 	kModelAnimationHysteriaPatron1DanceStandingUpSemiSitAndUp = 877,
 	kModelAnimationHysteriaPatron1DanceStandingUpLeftMotion   = 878,
-	kModelAnimationHysteriaPatron1DanceStandingUpStowingMoney = 879, // original unused
+	kModelAnimationHysteriaPatron1DanceStandingUpStowingMoney = 879, // original UNUSED
 	kModelAnimationHysteriaPatron1DanceSplitsDuckAndDown      = 880,
 	kModelAnimationHysteriaPatron1DanceSplitsSemiUpAndDown    = 881,
 	kModelAnimationHysteriaPatron1DanceSplitsBackAndForth     = 882,
 	kModelAnimationHysteriaPatron1DanceStandingUpToSplits     = 883,
 	kModelAnimationHysteriaPatron1DanceSplitsToStandingUp     = 884,
+	// 885 - 892: Hysteria Patron2 (dancer) animations
 	kModelAnimationHysteriaPatron2DanceHandsBellyMotion       = 885, // most used
 	kModelAnimationHysteriaPatron2DanceHandsUpLeftMotion      = 886,
 	kModelAnimationHysteriaPatron2DanceHandsUpSitAndUp        = 887,
@@ -1824,7 +1871,11 @@ enum GameModelAnimations {
 	kModelAnimationHysteriaPatron2DanceHandsDownLeanBackForth = 890,
 	kModelAnimationHysteriaPatron2DanceHandsUpToHandsDown     = 891,
 	kModelAnimationHysteriaPatron2DanceHandsDownToHandsUp     = 892,
-
+	// 893 - 900: Mutant 1 animations
+	// 901 - 907: Mutant 2 animations
+	// 908 - 917: Mutant 3 animations
+	// 918 - 919: Taffy Patron (Gordo's hostage) animations
+	// 920 - 930: Hasan animations
 	kModelAnimationBadge                       = 931,
 	kModelAnimationBomb                        = 932,
 	kModelAnimationCandy                       = 933,
@@ -1843,7 +1894,7 @@ enum GameModelAnimations {
 	kModelAnimationFolderInKIA                 = 946,
 	kModelAnimationGoldfish                    = 947,
 	kModelAnimationFolder                      = 948,
-//	kModelAnimationLetter                      = 949, // unused?
+//	kModelAnimationLetter                      = 949, // UNUSED?
 	kModelAnimationGarterSnake                 = 950,
 	kModelAnimationLichenDogWrapper            = 951,
 	kModelAnimationLicensePlate                = 952,
@@ -1862,7 +1913,7 @@ enum GameModelAnimations {
 	kModelAnimationWeaponsOrderForm            = 965,
 	kModelAnimationShellCasings                = 966,
 	kModelAnimationSlug                        = 967,
-//	kModelAnimationKnife                       = 968, // unused - 3 frames - a knife? - spins badly
+//	kModelAnimationKnife                       = 968, // UNUSED - 3 frames - a knife? - spins badly
 	kModelAnimationStrangeScale                = 969,
 	kModelAnimationHysteriaToken               = 970,
 	kModelAnimationToyDog                      = 971,
@@ -1883,12 +1934,12 @@ enum GameModelAnimations {
 	kModelAnimationSpinnerKeys                 = 986,
 	kModelAnimationBriefcase                   = 987,
 	kModelAnimationDNAEvidence01OutOf6         = 988,
-//	kModelAnimationDNAEvidence02OutOf6         = 989, // unused - actual 2 parts of DNA
+//	kModelAnimationDNAEvidence02OutOf6         = 989, // UNUSED - actual 2 parts of DNA
 	kModelAnimationDNAEvidence03OutOf6         = 990, // used for two parts found
 	kModelAnimationDNAEvidence04OutOf6         = 991, // used for three parts found
-//	kModelAnimationDNAEvidence05OutOf6         = 992, // unused - actual 5 parts of DNA
+//	kModelAnimationDNAEvidence05OutOf6         = 992, // UNUSED - actual 5 parts of DNA
 	kModelAnimationDNAEvidenceComplete         = 993,
-//	kModelAnimationAmmoType00                  = 994, // unused - simple bullet
+//	kModelAnimationAmmoType00                  = 994, // UNUSED - simple bullet
 	kModelAnimationAmmoType01                  = 995, // from Bullet Bob's
 	kModelAnimationAmmoType02                  = 996  // from Izo stash (Act 4)
 };
