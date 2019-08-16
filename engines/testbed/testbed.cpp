@@ -38,6 +38,7 @@
 #include "testbed/misc.h"
 #include "testbed/savegame.h"
 #include "testbed/sound.h"
+#include "testbed/encoding.h"
 #include "testbed/testbed.h"
 #ifdef USE_CLOUD
 #include "testbed/cloud.h"
@@ -150,6 +151,8 @@ TestbedEngine::TestbedEngine(OSystem *syst)
 	ts = new WebserverTestSuite();
 	_testsuiteList.push_back(ts);
 #endif
+	ts = new EncodingTestSuite();
+	_testsuiteList.push_back(ts);
 }
 
 TestbedEngine::~TestbedEngine() {
