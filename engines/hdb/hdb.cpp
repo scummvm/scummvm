@@ -408,25 +408,6 @@ void HDBGame::setTargetXY(int x, int y) {
 	if (p->touchpWait)
 		return;
 
-	// Double-Clicking on the player to open inventory?
-	if (g_hdb->isPPC()) {
-		if (x == px && y == py) {
-			static uint32 dblClickTimer = 0;
-
-			if (dblClickTimer) {
-				debug("Double Click Timer: %d", dblClickTimer);
-				debug("Click Timer Diff: %d", (int)(g_system->getMillis() - dblClickTimer));
-			}
-
-			if (dblClickTimer && ((int)(g_system->getMillis() - dblClickTimer) < (int)(kGameFPS * 5 * 1000 / 60))) {
-				g_hdb->_window->openInventory();
-				dblClickTimer = 0;
-			} else
-				dblClickTimer = g_system->getMillis();
-			return;
-		}
-	}
-
 	// If we're attacking...don't do anything else
 	AIState stateList[] = {
 		STATE_ATK_CLUB_UP,	STATE_ATK_CLUB_DOWN, STATE_ATK_CLUB_LEFT, STATE_ATK_CLUB_RIGHT,

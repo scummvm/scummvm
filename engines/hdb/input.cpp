@@ -376,10 +376,30 @@ void Input::stylusDown(int x, int y) {
 				return;
 		}
 
-		// Toggle Walk Speed if we clicked Player
-		static uint32 lastRunning = g_system->getMillis();
+		// Double-Clicking on the player to open inventory?
 		int nx, ny;
 		g_hdb->_ai->getPlayerXY(&nx, &ny);
+		if (g_hdb->isPPC()) {
+			if (nx == worldX && ny == worldY) {
+				static uint32 dblClickTimer = 0;
+
+				if (dblClickTimer && ((int)(g_system->getMillis() - dblClickTimer) < (int)(kGameFPS * 1000 / 60))) {
+					g_hdb->_window->openInventory();
+					dblClickTimer = 0;
+					g_hdb->_ai->togglePlayerRunning();
+					if (g_hdb->_ai->playerRunning())
+						g_hdb->_window->centerTextOut("Running Speed", g_hdb->_screenHeight - 32, kRunToggleDelay * kGameFPS);
+					else
+						g_hdb->_window->centerTextOut("Walking Speed", g_hdb->_screenHeight - 32, kRunToggleDelay * kGameFPS);
+					g_hdb->_sound->playSound(SND_SWITCH_USE);
+					return;
+				} else
+					dblClickTimer = g_system->getMillis();
+			}
+		}
+
+		// Toggle Walk Speed if we clicked Player
+		static uint32 lastRunning = g_system->getMillis();
 		if (nx == worldX && ny == worldY) {
 			if (lastRunning > g_system->getMillis())
 				return;
