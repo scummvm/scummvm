@@ -138,6 +138,7 @@ static const char *const selectorNameTable[] = {
 	"size",         // EcoQuest 1
 	"signal",       // EcoQuest 1, GK1
 	"obstacles",    // EcoQuest 1, QFG4
+	"handleEvent",  // EcoQuest 2, Shivers
 #ifdef ENABLE_SCI32
 	"newWith",      // SCI2 array script
 	"scrollSelections", // GK2
@@ -145,7 +146,6 @@ static const char *const selectorNameTable[] = {
 	"detailLevel",  // GK2 benchmarking
 	"view",         // RAMA benchmarking, GK1, QFG4
 	"fade",         // Shivers
-	"handleEvent",  // Shivers
 	"test",         // Torin
 	"get",          // Torin, GK1
 	"newRoom",      // GK1
@@ -249,7 +249,8 @@ enum ScriptPatcherSelectors {
 	SELECTOR_delete,
 	SELECTOR_size,
 	SELECTOR_signal,
-	SELECTOR_obstacles
+	SELECTOR_obstacles,
+	SELECTOR_handleEvent
 #ifdef ENABLE_SCI32
 	,
 	SELECTOR_newWith,
@@ -258,7 +259,6 @@ enum ScriptPatcherSelectors {
 	SELECTOR_detailLevel,
 	SELECTOR_view,
 	SELECTOR_fade,
-	SELECTOR_handleEvent,
 	SELECTOR_test,
 	SELECTOR_get,
 	SELECTOR_newRoom,
