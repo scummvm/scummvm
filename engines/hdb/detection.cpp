@@ -22,6 +22,8 @@
 
 #include "base/plugins.h"
 
+#include "common/translation.h"
+
 #include "engines/advancedDetector.h"
 #include "graphics/thumbnail.h"
 
@@ -63,6 +65,8 @@ static const PlainGameDescriptor hdbGames[] = {
 	{0, 0}
 };
 
+#define GAMEOPTION_CHEATMODE GUIO_GAMEOPTIONS1
+
 namespace HDB {
 static const ADGameDescription gameDescriptions[] = {
 	{
@@ -72,7 +76,7 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::EN_ANY,
 		Common::kPlatformWindows,
 		ADGF_NO_FLAGS,
-		GUIO1(GUIO_NONE)
+		GAMEOPTION_CHEATMODE
 	},
 	{
 		"hdb",
@@ -81,7 +85,7 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::EN_ANY,
 		Common::kPlatformLinux,
 		ADGF_NO_FLAGS,
-		GUIO1(GUIO_NONE)
+		GAMEOPTION_CHEATMODE
 	},
 	// PocketPC Arm
 	{
@@ -91,7 +95,7 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::EN_ANY,
 		Common::kPlatformPocketPC,
 		ADGF_NO_FLAGS,
-		GUIO1(GUIO_NONE)
+		GAMEOPTION_CHEATMODE
 	},
 
 	// Demos
@@ -102,7 +106,7 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::EN_ANY,
 		Common::kPlatformLinux,
 		ADGF_DEMO,
-		GUIO1(GUIO_NONE)
+		GAMEOPTION_CHEATMODE
 	},
 	{
 		"hdb",
@@ -111,7 +115,7 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::EN_ANY,
 		Common::kPlatformWindows,
 		ADGF_DEMO,
-		GUIO1(GUIO_NONE)
+		GAMEOPTION_CHEATMODE
 	},
 	// provided by sev
 	{
@@ -121,7 +125,7 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::EN_ANY,
 		Common::kPlatformWindows,
 		ADGF_DEMO,
-		GUIO1(GUIO_NONE)
+		GAMEOPTION_CHEATMODE
 	},
 	{
 		"hdb",
@@ -130,7 +134,7 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::EN_ANY,
 		Common::kPlatformPocketPC,
 		ADGF_DEMO,
-		GUIO1(GUIO_NONE)
+		GAMEOPTION_CHEATMODE
 	},
 	{
 		"hdb",
@@ -139,15 +143,29 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::EN_ANY,
 		Common::kPlatformPocketPC,
 		(ADGF_DEMO | GF_HANDANGO),
-		GUIO1(GUIO_NONE)
+		GAMEOPTION_CHEATMODE
 	},
 	AD_TABLE_END_MARKER
 };
 } // End of namespace HDB
 
+static const ADExtraGuiOptionsMap optionsList[] = {
+		{
+				GAMEOPTION_CHEATMODE,
+				{
+						_s("Enable cheat mode"),
+						_s("Debug info and level selection becomes available"),
+						"hypercheat",
+						false
+				}
+		},
+
+		AD_EXTRA_GUI_OPTIONS_TERMINATOR
+};
+
 class HDBMetaEngine : public AdvancedMetaEngine {
 public:
-	HDBMetaEngine() : AdvancedMetaEngine(HDB::gameDescriptions, sizeof(ADGameDescription), hdbGames) {
+	HDBMetaEngine() : AdvancedMetaEngine(HDB::gameDescriptions, sizeof(ADGameDescription), hdbGames, optionsList) {
 		_singleId = "hdb";
 	}
 
