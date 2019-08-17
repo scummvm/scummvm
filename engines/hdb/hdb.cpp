@@ -925,7 +925,7 @@ Common::Error HDBGame::run() {
 #endif
 
 	if (ConfMan.hasKey("boot_param")) {
-		char mapname[11];
+		char mapname[20];
 		int arg = ConfMan.getInt("boot_param");
 		int actionMode = MIN(arg / 100, 1);
 		int level = MIN(arg % 100, 31);
@@ -936,6 +936,9 @@ Common::Error HDBGame::run() {
 			snprintf(mapname, 10, "MAP%02d", level);
 		else
 			strcpy(mapname, "CINE_OUTRO");
+
+		if (isDemo())
+			strncat(mapname, "_DEMO", 20);
 
 		debug("Starting level %s in %s", mapname, getActionMode() ? "Action Mode" : "Puzzle Mode");
 
