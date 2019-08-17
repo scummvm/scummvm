@@ -510,12 +510,12 @@ void Window::drawPause() {
 	if (g_hdb->isPPC())
 		return;
 	if (g_hdb->getPause())
-		_gfxPausePlaque->drawMasked(g_hdb->_screenDrawWidth / 2 - _gfxPausePlaque->_width / 2, g_hdb->_window->_pauseY);
+		_gfxPausePlaque->drawMasked(g_hdb->_screenDrawWidth / 2 - _gfxPausePlaque->_width / 2, _pauseY);
 }
 
 void Window::checkPause(int x, int y) {
 	if (x >= g_hdb->_screenDrawWidth / 2 - _gfxPausePlaque->_width / 2 && g_hdb->_screenDrawWidth / 2 + _gfxPausePlaque->_width / 2 > x
-		&& y >= g_hdb->_window->_pauseY && y < g_hdb->_window->_pauseY + _gfxPausePlaque->_height) {
+		&& y >= _pauseY && y < _pauseY + _gfxPausePlaque->_height) {
 		g_hdb->togglePause();
 		g_hdb->_sound->playSound(SND_POP);
 	}
@@ -568,8 +568,8 @@ void Window::closeAll() {
 	closeTextOut();
 
 	if (g_hdb->isPPC()) {
-		g_hdb->_window->closeDlvs();
-		g_hdb->_window->closeInv();
+		closeDlvs();
+		closeInv();
 	}
 }
 
@@ -1538,7 +1538,7 @@ void Window::drawDeliveries() {
 						if (d->itemGfx)
 							d->itemGfx->drawMasked(drawX, drawY);
 
-						g_hdb->_gfx->setCursor(centerX - g_hdb->_gfx->stringLength(d->itemTextName) / 2, g_hdb->_window->_dlvItemTextY);
+						g_hdb->_gfx->setCursor(centerX - g_hdb->_gfx->stringLength(d->itemTextName) / 2, _dlvItemTextY);
 						g_hdb->_gfx->drawText(d->itemTextName);
 						if (!_dlvsInfo.go2) {
 							_dlvsInfo.go2 = true;
@@ -1552,7 +1552,7 @@ void Window::drawDeliveries() {
 						// Draw TO
 						_gfxArrowTo->drawMasked(_dlvsInfo.x + _dlvItemSpaceX * _dlvsInfo.selected + 8, drawY + kTileHeight);
 
-						g_hdb->_gfx->setCursor(centerX - g_hdb->_gfx->stringLength("to") / 2, g_hdb->_window->_dlvItemTextY + 12);
+						g_hdb->_gfx->setCursor(centerX - g_hdb->_gfx->stringLength("to") / 2, _dlvItemTextY + 12);
 						g_hdb->_gfx->drawText("to");
 						if (!_dlvsInfo.go3) {
 							_dlvsInfo.go3 = true;
@@ -1568,7 +1568,7 @@ void Window::drawDeliveries() {
 						if (d->destGfx)
 							d->destGfx->drawMasked(drawX, drawY + kTileHeight + 16);
 
-						g_hdb->_gfx->setCursor(centerX - (g_hdb->_gfx->stringLength(d->destTextName) + g_hdb->_gfx->stringLength("to")) / 2, g_hdb->_window->_dlvItemTextY + 12);
+						g_hdb->_gfx->setCursor(centerX - (g_hdb->_gfx->stringLength(d->destTextName) + g_hdb->_gfx->stringLength("to")) / 2, _dlvItemTextY + 12);
 						g_hdb->_gfx->drawText("to ");
 						g_hdb->_gfx->drawText(d->destTextName);
 
@@ -1588,9 +1588,9 @@ void Window::drawDeliveries() {
 					d->destGfx->drawMasked(drawX, drawY + kTileHeight + 16);
 
 				if (!_dlvsInfo.animate && inv == _dlvsInfo.selected) {
-					g_hdb->_gfx->setCursor(centerX - g_hdb->_gfx->stringLength(d->itemTextName) / 2, g_hdb->_window->_dlvItemTextY);
+					g_hdb->_gfx->setCursor(centerX - g_hdb->_gfx->stringLength(d->itemTextName) / 2, _dlvItemTextY);
 					g_hdb->_gfx->drawText(d->itemTextName);
-					g_hdb->_gfx->setCursor(centerX - (g_hdb->_gfx->stringLength(d->destTextName) + g_hdb->_gfx->stringLength("to ")) / 2, g_hdb->_window->_dlvItemTextY + 12);
+					g_hdb->_gfx->setCursor(centerX - (g_hdb->_gfx->stringLength(d->destTextName) + g_hdb->_gfx->stringLength("to ")) / 2, _dlvItemTextY + 12);
 					g_hdb->_gfx->drawText("to ");
 					g_hdb->_gfx->drawText(d->destTextName);
 				}
@@ -1697,8 +1697,8 @@ void Window::drawTryAgain() {
 		_gfxAgain = g_hdb->_gfx->loadPic(GAME_AGAIN);
 		_gfxLevelRestart = g_hdb->_gfx->loadPic(GAME_TA_LEVELRESTART);
 
-		_tryAgainInfo.y1 = g_hdb->_window->_tryY1;
-		_tryAgainInfo.y2 = g_hdb->_window->_tryY2;
+		_tryAgainInfo.y1 = _tryY1;
+		_tryAgainInfo.y2 = _tryY2;
 		_tryAgainInfo.x1 = g_hdb->_screenDrawWidth / 2 - _gfxTry->_width / 2;;
 		_tryAgainInfo.x2 = g_hdb->_screenDrawWidth / 2 - _gfxAgain->_width / 2;
 	}
@@ -1707,7 +1707,7 @@ void Window::drawTryAgain() {
 
 	_gfxTry->drawMasked((int)_tryAgainInfo.x1 + xv, (int)_tryAgainInfo.y1 + yv);
 	_gfxAgain->drawMasked((int)_tryAgainInfo.x2 + yv, (int)_tryAgainInfo.y2 + xv);
-	_gfxLevelRestart->drawMasked((int)(g_hdb->_screenDrawWidth / 2 - _gfxLevelRestart->_width + xv), g_hdb->_window->_tryRestartY + yv);
+	_gfxLevelRestart->drawMasked((int)(g_hdb->_screenDrawWidth / 2 - _gfxLevelRestart->_width + xv), _tryRestartY + yv);
 }
 
 void Window::clearTryAgain() {
@@ -1854,7 +1854,7 @@ void Window::textOut(const char *text, int x, int y, int timer) {
 	if (x < 0) {
 		int pw, lines;
 		g_hdb->_gfx->getDimensions(t->text, &pw, &lines);
-		t->x = g_hdb->_window->_textOutCenterX - pw / 2;
+		t->x = _textOutCenterX - pw / 2;
 	}
 
 	_textOutList.push_back(t);
@@ -1863,7 +1863,7 @@ void Window::textOut(const char *text, int x, int y, int timer) {
 void Window::centerTextOut(const char *text, int y, int timer) {
 	int width, lines;
 	g_hdb->_gfx->getDimensions(text, &width, &lines);
-	textOut(text, g_hdb->_window->_textOutCenterX - ((width - 8) >> 1), y, timer);
+	textOut(text, _textOutCenterX - ((width - 8) >> 1), y, timer);
 }
 
 void Window::drawTextOut() {
