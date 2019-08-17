@@ -1002,8 +1002,6 @@ void ScummEngine_v7::drawVerb(int verb, int mode) {
 		// occur in FT; subtype 10, which is used for the speech associated
 		// with the string).
 		byte buf[384] = {0};
-		// byte rev[384] = {0};
-
 		convertMessageToString(msg, buf, sizeof(buf));
 		msg = buf;
 		while (*msg == 0xFF)
@@ -1012,23 +1010,6 @@ void ScummEngine_v7::drawVerb(int verb, int mode) {
 		// Set the specified charset id
 		int oldID = _charset->getCurID();
 		_charset->setCurID(vs->charset_nr);
-
-		// // reverse string for rtl support
-		// if ((_language == Common::HE_ISR || true)/* && !(_game.id == GID_FT && (_charset->getCurID() == 6 || _charset->getCurID() == 7))*/) {
-
-		// 	int lens = strlen((const char *)msg);
-
-		// 	for (int l = 0; l < lens; l++) {
-		// 		rev[l] = msg[lens - l - 1];
-		// 	}
-		// 	rev[lens] = '\0';
-		// 	msg = rev;
-		// }
-
-		// char numt[10] ={0};
-		// sprintf(numt, "%d, %d\n", _charset->getCurID(), oldID);
-		// warning(numt);
-
 
 		// Compute the text rect
 		if ((_language == Common::HE_ISR || true)/* && !(_game.id == GID_FT && (_charset->getCurID() == 6 || _charset->getCurID() == 7))*/) {
