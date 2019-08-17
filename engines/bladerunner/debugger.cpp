@@ -1640,9 +1640,9 @@ bool Debugger::cmdItem(int argc, const char **argv) {
 		debugPrintf("Usage 1: %s add    <id> <posX> <posY> <posZ> <facing> <height> <width> <animationId>\n", argv[0]);
 		debugPrintf("Usage 2: %s list   <id>\n", argv[0]);
 		debugPrintf("Usage 3: %s flags  <id> <isVisible> <isTarget>\n", argv[0]);
-		debugPrintf("Usage 4: %s bounds <id> <posX> <posY> <posZ>  <facing> <height> <width>\n", argv[0]);
+		debugPrintf("Usage 4: %s bounds <id> <posX> <posY> <posZ> <facing> <height> <width>\n", argv[0]);
 		debugPrintf("Usage 5: %s remove <id>\n", argv[0]);
-		debugPrintf("Usage 6: %s spin <animationId>\n", argv[0]);
+		debugPrintf("Usage 6: %s spin   <animationId>\n", argv[0]);
 	}
 	return true;
 }

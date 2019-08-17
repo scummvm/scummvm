@@ -37,8 +37,8 @@ void InitScript::SCRIPT_Initialize_Game() {
 
 	Init_Globals();
 	Init_Game_Flags();
-	Init_Clues();
-	Init_Clues2();
+	Init_Clues();  // Inits clues DB entries for McCoy (clues that McCoy can acquire)
+	Init_Clues2(); // Inits clues DB for everyone else (clues that the other actors, including the "Mainframe" (kActorVoiceover) can acquire)
 	Init_World_Waypoints();
 	Init_SDB();
 	Init_CDB();
