@@ -33,7 +33,6 @@ SymbianSdlGraphicsManager::SymbianSdlGraphicsManager(SdlEventSource *sdlEventSou
 
 bool SymbianSdlGraphicsManager::hasFeature(OSystem::Feature f) const {
 	switch (f) {
-	case OSystem::kFeatureFullscreenMode:
 	case OSystem::kFeatureAspectRatioCorrection:
 	case OSystem::kFeatureCursorPalette:
 		return true;

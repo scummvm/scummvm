@@ -84,7 +84,6 @@ namespace std
 #undef remove
 #endif
 
-#define GUI_ONLY_FULLSCREEN
 #define GUI_ENABLE_KEYSDIALOG
 
 #define DISABLE_COMMAND_LINE
