@@ -2583,15 +2583,17 @@ enum GoalDeskClerk {
 };
 
 enum GoalKlein {
-	kGoalKleinDefault               =   0,
-	kGoalKleinMovingInLab01         =   1,
-	kGoalKleinMovingInLab02         =   2,
-	kGoalKleinGotoLabSpeaker        =   3,
-	kGoalKleinIsAnnoyedByMcCoyInit  =   4,
-	kGoalKleinIsAnnoyedByMcCoy01    =   5,
-	kGoalKleinIsAnnoyedByMcCoy02    =   6,
-	kGoalKleinIsAnnoyedByMcCoyFinal =   7,
-	kGoalKleinAwayAtEndOfActOne     = 100
+	kGoalKleinDefault                 =   0,
+	kGoalKleinMovingInLab01           =   1,
+	kGoalKleinMovingInLab02           =   2,
+	kGoalKleinGotoLabSpeaker          =   3,
+	kGoalKleinIsAnnoyedByMcCoyInit    =   4,
+	kGoalKleinIsAnnoyedByMcCoy01      =   5,
+	kGoalKleinIsAnnoyedByMcCoy02      =   6,
+	kGoalKleinIsAnnoyedByMcCoyFinal   =   7,
+	kGoalKleinIsAnnoyedByMcCoyPreInit =   8, // new goal
+	kGoalKleinAwayAtEndOfActOne       = 100,
+	kGoalKleinAwayAtEndOfActThree     = 299  // new goal for restored content purposes
 };
 
 enum GoalHolloway {

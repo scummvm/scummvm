@@ -241,7 +241,10 @@ void SceneScriptPS07::PlayerWalkedIn() {
 }
 
 void SceneScriptPS07::PlayerWalkedOut() {
-	if (!Game_Flag_Query(kFlagPS07KleinInsulted) && Global_Variable_Query(kVariableChapter) == 1) {
+	if (!Game_Flag_Query(kFlagPS07KleinInsulted)
+	    && ((_vm->_cutContent && Global_Variable_Query(kVariableChapter) < 4)
+	        || (!_vm->_cutContent && Global_Variable_Query(kVariableChapter) == 1))
+	){
 		Actor_Set_Goal_Number(kActorKlein, kGoalKleinDefault);
 	}
 }
