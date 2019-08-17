@@ -48,7 +48,7 @@ void Talk::init() {
 	DAT_800633f8_talkDialogFlag = 0;
 }
 
-void Talk::loadText(uint32 textIndex, uint16 *textBuffer, uint16 bufferLength) {
+bool Talk::loadText(uint32 textIndex, uint16 *textBuffer, uint16 bufferLength) {
 	char filename[13] = "drag0000.txt";
 	uint32 fileNo = (textIndex >> 0xc) & 0xffff;
 	uint32 fileOffset = textIndex & 0xfff;
@@ -60,7 +60,9 @@ void Talk::loadText(uint32 textIndex, uint16 *textBuffer, uint16 bufferLength) {
 	printWideText(data + 10 + fileOffset);
 
 	copyTextToBuffer(textBuffer, data + 10 + fileOffset, bufferLength);
+	bool status = (READ_LE_INT16(data) != 0);
 	delete data;
+	return status;
 }
 
 void Talk::printWideText(byte *text) {
@@ -160,7 +162,7 @@ uint8 Talk::conversation_related_maybe(uint16 *dialogText, uint16 x, uint16 y, u
 			_vm->clearFlags(ENGINE_FLAG_8);
 		}
 		tmpTextPtr = findCharInU16Str(dialogText,0x5c);
-		while (tmpTextPtr != NULL) {
+		if (tmpTextPtr != NULL) {
 			sVar3 = tmpTextPtr[1];
 			*tmpTextPtr = sVar3;
 			while (sVar3 != 0) {
@@ -530,8 +532,8 @@ bool Talk::talkToActor(ScriptOpCall &scriptOpCall) {
 	uint iniId;
 	ScriptOpCall local_1d20;
 	short local_990 [5];
-	byte auStack2438 [390];
-	short local_800 [1000];
+	uint16 auStack2438 [195];
+	uint16 local_800 [1000];
 
 	bool isFlag8Set = _vm->isFlagSet(ENGINE_FLAG_8);
 	bool isFlag100Set = _vm->isFlagSet(ENGINE_FLAG_100);
@@ -567,29 +569,27 @@ bool Talk::talkToActor(ScriptOpCall &scriptOpCall) {
 			return 1;
 		}
 		_vm->clearFlags(ENGINE_FLAG_8);
-		strcpy((char *)local_990,selectedDialogText->dialogText);
-//		UTF16ToUTF16Z(auStack2438,selectedDialogText->dialogText + 10);
+		strcpy((char *)local_990, selectedDialogText->dialogText);
+		UTF16ToUTF16Z(auStack2438,(uint16 *)(selectedDialogText->dialogText + 10));
 //		load_string_from_dragon_txt(selectedDialogText->textIndex1,(char *)local_800);
-//		if (local_990[0] != 0) {
-//			flickerActor->setFlag(ACTOR_FLAG_2000);
-//			sequenceId = flickerActor->_sequenceID;
+		if (selectedDialogText->hasText) {
+			flickerActor->setFlag(ACTOR_FLAG_2000);
+			sequenceId = flickerActor->_sequenceID;
 //			playSoundFromTxtIndex(selectedDialogText->textIndex);
-//			if (flickerActor->_sequenceID2 != -1) {
-//				flickerActor->updateSequence(flickerActor->_sequenceID2 + 0x10);
-//			}
-//			displayDialogAroundINI(0,(uint8_t *)local_990,selectedDialogText->textIndex);
-//			flickerActor->updateSequence(sequenceId);
-//			flickerActor->clearFlag(ACTOR_FLAG_2000);
-//		}
+			if (flickerActor->_sequenceID2 != -1) {
+				flickerActor->updateSequence(flickerActor->_sequenceID2 + 0x10);
+			}
+			displayDialogAroundINI(0, auStack2438, selectedDialogText->textIndex);
+			flickerActor->updateSequence(sequenceId);
+			flickerActor->clearFlag(ACTOR_FLAG_2000);
+		}
 		if ((selectedDialogText->flags & 2) == 0) {
 			selectedDialogText->flags = selectedDialogText->flags | 1;
 		}
 		callMaybeResetData();
-		if (local_800[0] != 0) {
+		if (loadText(selectedDialogText->textIndex1, local_800, 1000)) {
 			if (selectedDialogText->field_26c == -1) {
-//				displayDialogAroundINI
-//						((uint)dragon_ini_index_under_active_cursor,(uint8_t *)local_800,
-//						 selectedDialogText->textIndex1);
+				displayDialogAroundINI(_vm->_cursor->_iniUnderCursor, local_800, selectedDialogText->textIndex1);
 			}
 			else {
 				iniId = _vm->_cursor->_iniUnderCursor; //dragon_ini_index_under_active_cursor;
@@ -599,9 +599,9 @@ bool Talk::talkToActor(ScriptOpCall &scriptOpCall) {
 				Actor *iniActor = _vm->_dragonINIResource->getRecord(iniId - 1)->actor;
 				sequenceId = iniActor->_sequenceID;
 //				playSoundFromTxtIndex(selectedDialogText->textIndex1);
-//				iniActor->updateSequence(selectedDialogText->field_26c);
-//				displayDialogAroundINI(iniId,(uint8_t *)local_800,selectedDialogText->textIndex1);
-//				iniActor->updateSequence(sequenceId);
+				iniActor->updateSequence(selectedDialogText->field_26c);
+				displayDialogAroundINI(iniId, local_800, selectedDialogText->textIndex1);
+				iniActor->updateSequence(sequenceId);
 			}
 		}
 		local_1d20._code = selectedDialogText->scriptCodeStartPtr;
@@ -622,8 +622,6 @@ bool Talk::talkToActor(ScriptOpCall &scriptOpCall) {
 }
 
 TalkDialogEntry *Talk::displayTalkDialogMenu() {
-	//return *_dialogEntries.begin();
-
 	bool bVar1;
 	short sVar2;
 	uint uVar3;
@@ -792,7 +790,7 @@ TalkDialogEntry *Talk::displayTalkDialogMenu() {
 									x = 4;
 								}
 								//TODO ProbablyShowUTF16Msg2(DAT_80083104,x,(uint)y,0x401,0xffffffff);
-								_vm->_fontManager->addText(x * 8, y * 8, DAT_80083104, wideStrLen(DAT_80083104), 0);
+								_vm->_fontManager->addText(x * 8, y * 8, DAT_80083104, wideStrLen(DAT_80083104), 1);
 								sVar2 = *DAT_80083104;
 								while (sVar2 != 0) {
 									sVar2 = DAT_80083104[1];
