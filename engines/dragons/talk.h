@@ -50,8 +50,17 @@ class Talk {
 private:
 	DragonsEngine *_vm;
 	BigfileArchive *_bigfileArchive;
-	Common::List<TalkDialogEntry*> _dialogEntries;
+	Common::Array<TalkDialogEntry*> _dialogEntries;
 	uint32 defaultResponseTbl[45];
+
+	uint8 DAT_800726ec_tfont_field0;
+	uint8 DAT_800726f0_tfont_field2;
+
+	uint32 DAT_8008e7e8_dialogBox_x1;
+	uint32 DAT_8008e844_dialogBox_y1;
+	uint32 DAT_8008e848_dialogBox_x2;
+	uint32 DAT_8008e874_dialogBox_y2;
+	uint8 DAT_800633f8_talkDialogFlag;
 
 public:
 	Talk(DragonsEngine *vm, BigfileArchive *bigfileArchive);
@@ -68,9 +77,10 @@ public:
 
 	void FUN_8003239c(uint16 *dialog, int16 x, int16 y, int32 param_4, uint16 param_5, Actor *actor, uint16 startSequenceId, uint16 endSequenceId, uint32 textId);
 
-	void conversation_related_maybe(uint16 *dialogText, uint16 x, uint16 y, uint16 param_4, int16 param_5, uint32 textId, int16 param_7);
+	uint8 conversation_related_maybe(uint16 *dialogText, uint16 x, uint16 y, uint16 param_4, int16 param_5, uint32 textId, int16 param_7);
 
 	void addTalkDialogEntry(TalkDialogEntry *talkDialogEntry);
+	void clearDialogEntries();
 
 	bool talkToActor(ScriptOpCall &scriptOpCall);
 
@@ -82,6 +92,14 @@ private:
 	void exitTalkMenu(bool isFlag8Set, bool isFlag100Set);
 	uint32 getDefaultResponseTextIndex();
 	void initDefaultResponseTable();
+	uint32 strlenUTF16(uint16 *text);
+	uint16 *findCharInU16Str(uint16 *text, uint16 chr);
+	void FUN_8001a4e4_draw_dialogbox(uint32 x1, uint32 y1, uint32 x2, uint32 y2, uint16 unk);
+	void FUN_8001a7c4(uint32 x1, uint32 y1, uint32 x2, uint32 y2); //clear box maybe?
+	uint16 *UTF16ToUTF16Z(uint16 *dest, uint16 *src);
+	uint16 FindLastPositionOf5cChar(uint16 *text);
+	uint32 FUN_80031c28(uint16 *srcText, uint16 *destText,uint32 cutLength, uint16 param_4);
+
 };
 
 } // End of namespace Dragons

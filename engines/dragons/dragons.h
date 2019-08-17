@@ -168,6 +168,10 @@ private:
 	bool _leftMouseButtonUp;
 	bool _rightMouseButtonUp;
 	bool _iKeyUp;
+	bool _downKeyUp;
+	bool _upKeyUp;
+	bool _enterKeyUp;
+
 	void (*_sceneUpdateFunction)();
 protected:
 	virtual bool hasFeature(EngineFeature f) const;
@@ -226,6 +230,9 @@ public:
 	void (*getSceneUpdateFunction())();
 
 	bool checkForActionButtonRelease();
+	bool checkForDownKeyRelease();
+	bool checkForUpKeyRelease();
+
 	uint16 getRand(uint16 max);
 private:
 	bool savegame(const char *filename, const char *description);

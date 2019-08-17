@@ -55,6 +55,7 @@ public:
 	void updateSequenceID(int16 sequenceID);
 	void updateVisibility();
 	void updatePosition(int16 x, int16 y);
+	void updateActorPosition(int16 x, int16 y);
 	int16 updateINIUnderCursor();
 	int16 executeScript(ScriptOpCall &scriptOpCall, uint16 unkFlag);
 	void selectPreviousCursor();

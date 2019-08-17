@@ -36,11 +36,14 @@ class Sound {
 private:
 	DragonsEngine *_vm;
 	Audio::SoundHandle _speechHandle;
+public:
+	uint16 DAT_8006bb60_sound_related;
 
 public:
 	Sound(DragonsEngine *vm);
 	void playSpeech(uint32 textIndex);
 	bool isSpeechPlaying();
+	void PauseCDMusic();
 private:
 	bool getSpeechLocation(uint32 talkId, struct SpeechLocation *location);
 
