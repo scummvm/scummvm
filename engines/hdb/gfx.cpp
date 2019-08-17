@@ -277,9 +277,9 @@ void Gfx::updateVideo() {
 
 	Common::Rect clip(g_hdb->_progressGfx->getSurface()->getBounds());
 	clip.moveTo(left, g_hdb->_progressY);
-	clip.clip(g_hdb->_gfx->_globalSurface.getBounds());
+	clip.clip(_globalSurface.getBounds());
 	if (!clip.isEmpty())
-		g_system->copyRectToScreen(g_hdb->_gfx->_globalSurface.getBasePtr(clip.left, clip.top), g_hdb->_gfx->_globalSurface.pitch, clip.left, clip.top, clip.width(), clip.height());
+		g_system->copyRectToScreen(_globalSurface.getBasePtr(clip.left, clip.top), _globalSurface.pitch, clip.left, clip.top, clip.width(), clip.height());
 
 	g_system->updateScreen();
 }
@@ -999,13 +999,13 @@ void Gfx::drawText(const char *string) {
 			width = kFontSpace;
 
 		// Blit the character
-		g_hdb->_gfx->_globalSurface.transBlitFrom(_fontSurfaces[c], Common::Point(_cursorX, _cursorY), 0xf81f);
+		_globalSurface.transBlitFrom(_fontSurfaces[c], Common::Point(_cursorX, _cursorY), 0xf81f);
 
 		Common::Rect clip(0, 0, width, _fontHeader.height);
 		clip.moveTo(_cursorX, _cursorY);
 		clip.clip(_globalSurface.getBounds());
 		if (!clip.isEmpty()) {
-			g_system->copyRectToScreen(g_hdb->_gfx->_globalSurface.getBasePtr(clip.left, clip.top), g_hdb->_gfx->_globalSurface.pitch, clip.left, clip.top, clip.width(), clip.height());
+			g_system->copyRectToScreen(_globalSurface.getBasePtr(clip.left, clip.top), _globalSurface.pitch, clip.left, clip.top, clip.width(), clip.height());
 		}
 
 		// Advance the cursor
