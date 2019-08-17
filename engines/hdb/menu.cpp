@@ -33,6 +33,7 @@
 #include "hdb/menu.h"
 #include "hdb/map.h"
 #include "hdb/mpc.h"
+#include "hdb/window.h"
 
 namespace HDB {
 

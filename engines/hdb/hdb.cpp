@@ -214,6 +214,7 @@ void HDBGame::changeGameState() {
 		break;
 	case GAME_PLAY:
 		_menu->startMenu();
+		_sound->stopVoices();
 		_gameState = GAME_MENU;
 		break;
 	case GAME_LOADING:
@@ -1021,6 +1022,11 @@ Common::Error HDBGame::run() {
 
 			_map->drawForegrounds();
 			_ai->animateTargets();
+
+			// Check for voice to interrupt
+			if (!_window->dialogActive() && !_window->dialogChoiceActive() && !_window->msgBarActive()) {
+				_sound->stopVoices();
+			}
 
 			_window->drawDialog();
 			_window->drawDialogChoice();
