@@ -1211,6 +1211,7 @@ void ScriptOpcodes::opCode_Unk7(ScriptOpCall &scriptOpCall) {
 void ScriptOpcodes::loadTalkDialogEntries(ScriptOpCall &scriptOpCall) {
 	scriptOpCall._field8 = 2;
 	scriptOpCall._result = 0;
+	_vm->_talk->clearDialogEntries();
 	_data_80071f5c = 0;
 	executeScriptLoop(scriptOpCall);
 

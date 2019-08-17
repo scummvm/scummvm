@@ -43,6 +43,7 @@ struct SpeechLocation {
 } SpeechLocation;
 
 Sound::Sound(DragonsEngine *vm): _vm(vm) {
+	DAT_8006bb60_sound_related = 0;
 }
 
 void CdIntToPos_0(uint32 param_1)//, byte *param_2)
@@ -132,6 +133,10 @@ bool Sound::getSpeechLocation(uint32 talkId, struct SpeechLocation *location) {
 	delete fd;
 
 	return foundId;
+}
+
+void Sound::PauseCDMusic() {
+	//TODO PauseCDMusic()
 }
 
 Sound::PSXAudioTrack::PSXAudioTrack(Common::SeekableReadStream *sector, Audio::Mixer::SoundType soundType) {

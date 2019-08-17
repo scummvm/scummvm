@@ -355,4 +355,10 @@ byte *Cursor::getPalette() {
 	return _actor->_actorResource->getPalette();
 }
 
+void Cursor::updateActorPosition(int16 x, int16 y) {
+	updatePosition(x, y);
+	_actor->x_pos = _x + _vm->_scene->_camera.x;
+	_actor->y_pos = _y + _vm->_scene->_camera.y;
+}
+
 } // End of namespace Dragons

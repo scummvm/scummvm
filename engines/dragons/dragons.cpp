@@ -74,6 +74,9 @@ DragonsEngine::DragonsEngine(OSystem *syst) : Engine(syst) {
 	_leftMouseButtonUp = false;
 	_rightMouseButtonUp = false;
 	_iKeyUp = false;
+	_downKeyUp = false;
+	_upKeyUp = false;
+	_enterKeyUp = false;
 	reset();
 }
 
@@ -87,6 +90,9 @@ void DragonsEngine::updateEvents() {
 	_leftMouseButtonUp = false;
 	_rightMouseButtonUp = false;
 	_iKeyUp = false;
+	_downKeyUp = false;
+	_upKeyUp = false;
+	_enterKeyUp = false;
 	while (_eventMan->pollEvent(event)) {
 //		_input->processEvent(event);
 		switch (event.type) {
@@ -105,6 +111,13 @@ void DragonsEngine::updateEvents() {
 			case Common::EVENT_KEYUP:
 				if (event.kbd.keycode == Common::KeyCode::KEYCODE_i) {
 					_iKeyUp = true;
+				} else if (event.kbd.keycode == Common::KeyCode::KEYCODE_DOWN) {
+					_downKeyUp = true;
+				} else if (event.kbd.keycode == Common::KeyCode::KEYCODE_UP) {
+					_upKeyUp = true;
+				} else if (event.kbd.keycode == Common::KeyCode::KEYCODE_RETURN ||
+							event.kbd.keycode == Common::KeyCode::KEYCODE_KP_ENTER) {
+					_enterKeyUp = true;
 				}
 			default:
 				break;
@@ -1024,7 +1037,7 @@ bool DragonsEngine::isInputEnabled() {
 }
 
 bool DragonsEngine::checkForActionButtonRelease() {
-	return _leftMouseButtonUp;
+	return _leftMouseButtonUp || _enterKeyUp;
 }
 
 void DragonsEngine::FUN_8003130c() {
@@ -1137,6 +1150,8 @@ void DragonsEngine::loadScene(uint16 sceneId) {
 	_flags |= 0x26;
 	_unkFlags1 = 0;
 
+	clearFlags(ENGINE_FLAG_1000_TEXT_ENABLED); //TODO wire this up to subtitle config.
+
 	_scriptOpcodes->_data_800728c0 = 0; //TODO this should be reset in scriptopcode.
 	_cursor->init(_actorManager, _dragonINIResource);
 	_inventory->init(_actorManager, _backgroundResourceLoader, new Bag(_bigfileArchive, _screen), _dragonINIResource);
@@ -1221,6 +1236,14 @@ uint16 DragonsEngine::getRand(uint16 max) {
 		rand = shuffleRandState() | rand << i;
 	}
 	return rand % max;
+}
+
+bool DragonsEngine::checkForDownKeyRelease() {
+	return _downKeyUp;
+}
+
+bool DragonsEngine::checkForUpKeyRelease() {
+	return _upKeyUp;
 }
 
 void (*DragonsEngine::getSceneUpdateFunction())() {
