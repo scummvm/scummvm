@@ -48,9 +48,9 @@ void Room::tug0Tick1() {
 
 void Room::tug0LookAtEngineer() {
 	if (_awayMission->tug.engineerConscious)
-		showDescription(TX_TUG0N002);
+		showDescription(2, true);
 	else
-		showDescription(TX_TUG0N014);
+		showDescription(14, true);
 }
 
 void Room::tug0GetEngineer() {
@@ -59,9 +59,9 @@ void Room::tug0GetEngineer() {
 
 void Room::tug0LookAtControls() {
 	if (_awayMission->tug.transporterRepaired)
-		showDescription(TX_TUG0N012);
+		showDescription(12, true);
 	else
-		showDescription(TX_TUG0N001);
+		showDescription(1, true);
 }
 
 void Room::tug0UseSpockOnControls() {
@@ -208,15 +208,15 @@ void Room::tug0KirkGotTransmogrifier() {
 
 void Room::tug0LookAtToolbox() {
 	if (_awayMission->tug.gotTransmogrifier)
-		showDescription(TX_TUG0N008);
+		showDescription(8, true);
 	else
-		showDescription(TX_TUG0N000);
+		showDescription(0, true);
 }
 
 void Room::tug0UsePhaserOnWelder() {
 	loseItem(OBJECT_IPWE);
 	giveItem(OBJECT_IPWF);
-	showDescription(TX_TUG0N006);
+	showDescription(6, true);
 
 	// BUGFIX: this following line didn't exist, despite it existing in TUG1; meaning this
 	// was supposed to give points, but it only did in a specific room.
@@ -224,7 +224,7 @@ void Room::tug0UsePhaserOnWelder() {
 }
 
 void Room::tug0UseWelderOnWireScraps() {
-	showDescription(TX_TUG0N010);
+	showDescription(10, true);
 	loseItem(OBJECT_IWIRSCRP);
 }
 
@@ -387,27 +387,27 @@ void Room::tug0WalkToDoor() {
 }
 
 void Room::tug0LookAtKirk() {
-	showDescription(TX_TUG0N003);
+	showDescription(3, true);
 }
 
 void Room::tug0LookAtSpock() {
-	showDescription(TX_TUG0N007);
+	showDescription(7, true);
 }
 
 void Room::tug0LookAtMccoy() {
-	showDescription(TX_TUG0N005);
+	showDescription(5, true);
 }
 
 void Room::tug0LookAtRedshirt() {
-	showDescription(TX_TUG0N004);
+	showDescription(4, true);
 }
 
 void Room::tug0LookAtTransporter() {
-	showDescription(TX_TUG0N013);
+	showDescription(13, true);
 }
 
 void Room::tug0LookAtDoor() {
-	showDescription(TX_TUG0N011);
+	showDescription(11, true);
 }
 
 void Room::tug0TalkToKirk() {
@@ -444,7 +444,7 @@ void Room::tug0UseCommunicator() {
 }
 
 void Room::tug0LookAnywhere() {
-	showDescription(TX_TUG0N009);
+	showDescription(9, true);
 }
 
 void Room::tug0UseSTricorderAnywhere() {
