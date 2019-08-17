@@ -248,9 +248,7 @@ bool GlkInterface::initPictures() {
 }
 
 int GlkInterface::os_char_width(zchar z) {
-	// Note: I'm presuming this is 1 because Glk Text Grid windows take care of font sizes internally,
-	// so we can pretend that any font has a 1x1 size
-	return 1;
+	return g_conf->_monoInfo._cellW;
 }
 
 int GlkInterface::os_string_width(const zchar *s) {
