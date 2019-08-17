@@ -153,8 +153,6 @@ private:
 	const RoomAction *_roomActionList;
 	int _numRoomActions;
 
-	Common::String _rdfName;
-	int _roomIndex; // ie. for DEMON2, this is 2
 	Common::HashMap<int, Common::String> _lookMessages;
 	Common::HashMap<int, Common::String> _lookWithTalkerMessages;
 	Common::HashMap<int, Common::String> _talkMessages;

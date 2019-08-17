@@ -52,9 +52,6 @@ Room::Room(StarTrekEngine *vm, const Common::String &name) : _vm(vm), _awayMissi
 	rdfFile->read(_rdfData, size);
 	delete rdfFile;
 
-	_rdfName = name;
-	_roomIndex = name.lastChar() - '0';
-
 	_roomActionList = nullptr;
 
 	ADD_ROOM_OLD(demon0);
@@ -133,7 +130,7 @@ void Room::loadRoomMessages() {
 	const char *text = (const char *)_rdfData + messagesOffset;
 
 	do {
-		while (*text != '#')
+		while (text[0] != '#' || text[1] != _vm->_missionName[0])
 			text++;
 
 		if (text[5] == '\\')
@@ -174,62 +171,22 @@ void Room::loadRoomMessage(const char *text) {
 
 }
 
-// HACK: We hardcode the other room messages here. Remove once we figure
-// how these are indexed
 void Room::loadOtherRoomMessages() {
-	int *offsets = nullptr;
+	uint16 startOffset = readRdfWord(14);
+	uint16 endOffset = readRdfWord(16);
+	uint16 offset = startOffset;
 
-	if (_rdfName == "DEMON0") {
-		int o[] = { 0x1d9, 0x422, 0x48f, 0x4d1, 0x536, 0x578, -1 };
-		offsets = o;
-	} else if (_rdfName == "DEMON1") {
-		int o[] = {
-			0x5d4, 0x716, 0x791, 0x7ec, 0x99e, 0xa06, 0xa51, 0xa96, 0xacc, 0xb5a,
-			0xb87, 0xc46, 0xcd5, 0xd82, 0xe55, 0x107e, 0x1186, 0x11d1, 0x1216, 0x1271,
-			0x12a4, 0x12f3, 0x1335, 0x1371, 0x13b4, 0x1419, 0x1467, 0x14b2, 0x14fd, -1
-		};
-		offsets = o;
-	} else if (_rdfName == "DEMON2") {
-		int o[] = {
-			0x165, 0x195, 0x1c6, 0x1f7, 0x24a, 0x27d, 0x2c6, 0x311, 0x41a, 0x489,
-			0x538, 0x5ba, 0x64d, 0x74d, 0x7ab, 0x817, 0x8a4, 0x950, 0x9e1, -1
-		};
-		offsets = o;
-	} else if (_rdfName == "DEMON3") {
-		int o[] = {
-			0x662, 0x6d3, 0x7a5, 0xa19, 0xa9a, 0xbd7, 0xc30, 0xcfe, 0xe13, 0xed2,
-			0x104e, 0x118e, 0x1248, 0x12a4, 0x12f4, 0x1383, 0x13d5, 0x1443, 0x14b1,
-			0x1522, 0x15ab, 0x15f5, 0x1648, 0x16ad, -1
-		};
-		offsets = o;
-	} else if (_rdfName == "DEMON4") {
-		int o[] = {
-			0x254, 0x2f3, 0x392, 0x41f, 0x642, 0x7b3, 0xa6a, 0xb34, 0xba4, 0xc7b,
-			-1
-		};
-		offsets = o;
-	} else if (_rdfName == "DEMON5") {
-		int o[] = {
-			0x27c, 0x2e7, 0x387, 0x438, 0x483, 0x4de, 0x58f, 0x5e2, 0x61f, 0x713,
-			0x783, 0x812, 0x8af, 0x904, 0x95e, 0x9b8, 0xb7e, 0xccc, -1
-		};
-		offsets = o;
-	} else if (_rdfName == "DEMON6") {
-		int o[] = {
-			0x265, 0x2cb, 0x40c, 0x473, 0x52a, 0x5cd, 0x697, 0x6e5, 0x787, 0x97b,
-			0x9f5, 0xa5f, 0xb7e, 0xbf1, 0xca7, 0xe54, 0xee4,
-			-1
-		};
-		offsets = o;
-	}
+	while (offset < endOffset) {
+		uint16 nextOffset = readRdfWord(offset + 4);
+		if (nextOffset >= endOffset)
+			break;
 
-	if (offsets == nullptr)
-		return;
+		while (offset < nextOffset) {
+			if (*(_rdfData + offset) == 0xeb && *(_rdfData + offset + 2) == '#')
+				loadRoomMessage((const char *)_rdfData + offset + 2);
 
-	int i = 0;
-	while (offsets[i] != -1) {
-		loadRoomMessage((const char *)_rdfData + offsets[i]);
-		i++;
+			offset++;
+		}
 	}
 }
 
