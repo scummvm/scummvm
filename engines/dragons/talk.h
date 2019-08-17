@@ -43,6 +43,7 @@ struct TalkDialogEntry {
 	uint8 yPosMaybe;
 	int16 field_26c;
 	uint16 iniId;
+	bool hasText;
 };
 
 
@@ -65,7 +66,7 @@ private:
 public:
 	Talk(DragonsEngine *vm, BigfileArchive *bigfileArchive);
 	void init();
-	void loadText(uint32 textIndex, uint16 *textBuffer, uint16 bufferLength);
+	bool loadText(uint32 textIndex, uint16 *textBuffer, uint16 bufferLength);
 	void printWideText(byte *text);
 
 	void talkFromIni(uint32 iniId, uint32 textIndex);

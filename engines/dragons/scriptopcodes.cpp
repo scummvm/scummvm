@@ -239,7 +239,7 @@ void ScriptOpcodes::opUnk2(ScriptOpCall &scriptOpCall) {
 		//TODO do something here.
 		TalkDialogEntry *talkDialogEntry = new TalkDialogEntry();
 
-		_vm->_talk->loadText(field2, (uint16 *)(&talkDialogEntry->dialogText[10]), 295);
+		talkDialogEntry->hasText = _vm->_talk->loadText(field2, (uint16 *)(&talkDialogEntry->dialogText[10]), 295);
 
 		talkDialogEntry->textIndex = field2;
 		talkDialogEntry->textIndex1 = field6;

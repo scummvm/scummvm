@@ -186,13 +186,13 @@ void FontManager::loadPalettes() {
 
 //	WRITE_LE_INT16(&_palettes[0x11 * 2], packColor(95, 95, 95));
 	WRITE_LE_INT16(&_palettes[0x10 * 2], packColor(0, 0, 0) | 0x8000);
-	WRITE_LE_INT16(&_palettes[0x11 * 2], packColor(254, 255, 0));
-	WRITE_LE_INT16(&_palettes[0x12 * 2], packColor(95, 95, 95));
+	WRITE_LE_INT16(&_palettes[0x11 * 2], 0x7fe0); //packColor(254, 255, 0));
+	WRITE_LE_INT16(&_palettes[0x12 * 2], 0); //packColor(95, 95, 95));
 	WRITE_LE_INT16(&_palettes[0x13 * 2], packColor(175, 175, 175));
 
 	WRITE_LE_INT16(&_palettes[0x20 * 2], packColor(0, 0, 0) | 0x8000);
-	WRITE_LE_INT16(&_palettes[0x21 * 2], packColor(254, 255, 0));
-	WRITE_LE_INT16(&_palettes[0x22 * 2], packColor(95, 95, 95));
+	WRITE_LE_INT16(&_palettes[0x21 * 2], packColor(175, 175, 175));
+	WRITE_LE_INT16(&_palettes[0x22 * 2], 0);
 	WRITE_LE_INT16(&_palettes[0x23 * 2], packColor(175, 175, 175));
 }
 
