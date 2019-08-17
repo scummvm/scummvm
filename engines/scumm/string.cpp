@@ -1265,7 +1265,7 @@ int ScummEngine::convertMessageToString(const byte *msg, byte *dst, int dstSize)
 	} else {
 		src = msg;
 	}
-	
+
 	num = 0;
 
 	while (1) {
