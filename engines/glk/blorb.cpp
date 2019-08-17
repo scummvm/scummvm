@@ -167,7 +167,7 @@ Common::ErrorCode Blorb::load() {
 		uint chunkId = f.readUint32BE();
 		uint chunkSize = f.readUint32BE();
 
-		if (chunkId == ID_APal) {
+		if (chunkId == ID_APal && chunkSize > 0) {
 			// Found one, so create an entry so it can be opened as file named "apal"
 			ChunkEntry ce;
 			ce._filename = "apal";
