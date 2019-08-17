@@ -126,8 +126,6 @@ void ThemeParser::cleanup() {
 Graphics::DrawStep *ThemeParser::defaultDrawStep() {
 	Graphics::DrawStep *step = new Graphics::DrawStep;
 
-	memset(step, 0, sizeof(Graphics::DrawStep));
-
 	step->xAlign = Graphics::DrawStep::kVectorAlignManual;
 	step->yAlign = Graphics::DrawStep::kVectorAlignManual;
 	step->factor = 1;
