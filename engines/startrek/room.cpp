@@ -151,12 +151,13 @@ void Room::loadRoomMessage(const char *text) {
 	int messageNum;
 	bool isTalkMessage;
 	bool isLookWithTalkerMessage;
+	char textType = text[10];	// _ and U: talk message, N: look message, L: look with talker message
 
 	if (text[5] != '\\')
 		error("loadRoomMessage: Invalid message");
 
-	isTalkMessage = (text[10] == '_' || text[10] == 'U');	// U = Uhura
-	isLookWithTalkerMessage = (text[10] == 'L');
+	isTalkMessage = (textType == '_' || textType == 'U');	// U = Uhura
+	isLookWithTalkerMessage = (textType == 'L');
 
 	sscanf((const char *)(text + 11), "%3d", &messageNum);
 	if (text[14] != '#')
