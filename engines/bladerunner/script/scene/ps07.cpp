@@ -47,9 +47,7 @@ void SceneScriptPS07::SceneLoaded() {
 	Unobstacle_Object("RICE BOX01", true);
 	if (_vm->_cutContent) {
 		Unobstacle_Object("L.MOUSE", true);
-//		Unobstacle_Object("L.MOUSE2", true);
 		Clickable_Object("L.MOUSE");
-//		Unclickable_Object("L.MOUSE2"); // TODO: we may not use this one (restored content version)
 	}
 }
 
