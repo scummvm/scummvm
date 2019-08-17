@@ -591,10 +591,6 @@ void Set::patchInAdditionalObjectsInSet() {
 		bbox = BoundingBox(530.16f, 48.44f, -570.13f, 550.41f, 50.46f, -558.77f);
 		custObjName = "L.MOUSE";
 		setupNewObjectInSet(custObjName, bbox);
-////    This extra object was added to be an additional buzzer hotspot, but ultimately it's deemed unnecessary
-//		bbox = BoundingBox(541.18f, 28.95f, -566.66f, 555.18f, 44.46f, -548.79f);
-//		custObjName = "L.MOUSE2";
-//		setupNewObjectInSet(custObjName, bbox);
 		break;
 
 	case kSceneNR05:
