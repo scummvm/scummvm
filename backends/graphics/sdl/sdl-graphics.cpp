@@ -343,6 +343,9 @@ bool SdlGraphicsManager::notifyEvent(const Common::Event &event) {
 }
 
 void SdlGraphicsManager::toggleFullScreen() {
+	if (!hasFeature(OSystem::kFeatureFullscreenMode))
+		return;
+
 	beginGFXTransaction();
 	setFeatureState(OSystem::kFeatureFullscreenMode, !getFeatureState(OSystem::kFeatureFullscreenMode));
 	endGFXTransaction();

@@ -311,13 +311,13 @@ void OptionsDialog::build() {
 			_stretchPopUp->setVisible(false);
 		}
 
-#ifdef GUI_ONLY_FULLSCREEN
-		_fullscreenCheckbox->setState(true);
-		_fullscreenCheckbox->setEnabled(false);
-#else // !GUI_ONLY_FULLSCREEN
 		// Fullscreen setting
-		_fullscreenCheckbox->setState(ConfMan.getBool("fullscreen", _domain));
-#endif // GUI_ONLY_FULLSCREEN
+		if (g_system->hasFeature(OSystem::kFeatureFullscreenMode)) {
+			_fullscreenCheckbox->setState(ConfMan.getBool("fullscreen", _domain));
+		} else {
+			_fullscreenCheckbox->setState(true);
+			_fullscreenCheckbox->setEnabled(false);
+		}
 
 		// Filtering setting
 		if (g_system->hasFeature(OSystem::kFeatureFilteringMode))
@@ -870,15 +870,16 @@ void OptionsDialog::setGraphicSettingsState(bool enabled) {
 	_stretchPopUpDesc->setEnabled(enabled);
 	_stretchPopUp->setEnabled(enabled);
 	_filteringCheckbox->setEnabled(enabled);
-#ifndef GUI_ENABLE_KEYSDIALOG
-#ifndef GUI_ONLY_FULLSCREEN
-	_fullscreenCheckbox->setEnabled(enabled);
-#endif // !GUI_ONLY_FULLSCREEN
+
+	if (g_system->hasFeature(OSystem::kFeatureFullscreenMode))
+		_fullscreenCheckbox->setEnabled(enabled);
+	else
+		_fullscreenCheckbox->setEnabled(false);
+
 	if (_guioptions.contains(GUIO_NOASPECT))
 		_aspectCheckbox->setEnabled(false);
 	else
 		_aspectCheckbox->setEnabled(enabled);
-#endif // !GUI_ENABLE_KEYSDIALOG
 }
 
 void OptionsDialog::setAudioSettingsState(bool enabled) {
