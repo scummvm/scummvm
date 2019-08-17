@@ -1153,26 +1153,22 @@ void ScummEngine::drawString(int a, const byte *msg) {
 				if (_charset->_center) {
 					_charset->_left = _charset->_startLeft - _charset->getStringWidth(a, buf + i);
 				} else if (_game.version >= 4 && _game.version < 7 && (_language == Common::HE_ISR || true)) {
-					if (_charset->getStringWidth(a, buf + i) > _screenWidth) {
-						int ll = 0;
-						byte* ltext = buf + i;
-						while (ltext[ll] == 0xFF) {
-							ll += 4;
-						}
-						byte lenbuf[270] = {0};
-						memcpy(lenbuf, ltext, ll);
-						int u = ll;
-						while (ltext[u]) {
-							if ((ltext[u] == 0xFF || (_game.version <= 6 && ltext[u] == 0xFE)) && ltext[u + 1] == 8) {
-								break;
-							}
-							u++;
-						}
-						memcpy(lenbuf, ltext, u);
-						_charset->_left = _screenWidth - _charset->_startLeft - _charset->getStringWidth(a, lenbuf);
-					} else {
-						_charset->_left = _screenWidth - _charset->_startLeft - _charset->getStringWidth(a, buf + i);
+					int ll = 0;
+					byte* ltext = buf + i;
+					while (ltext[ll] == 0xFF) {
+						ll += 4;
 					}
+					byte lenbuf[270] = {0};
+					memcpy(lenbuf, ltext, ll);
+					int u = ll;
+					while (ltext[u]) {
+						if ((ltext[u] == 0xFF || (_game.version <= 6 && ltext[u] == 0xFE)) && ltext[u + 1] == 8) {
+							break;
+						}
+						u++;
+					}
+					memcpy(lenbuf, ltext, u);
+					_charset->_left = _screenWidth - _charset->_startLeft - _charset->getStringWidth(a, lenbuf);
 				} else {
 					_charset->_left = _charset->_startLeft;
 				}
