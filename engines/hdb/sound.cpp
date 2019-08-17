@@ -1626,13 +1626,13 @@ void Sound::playVoice(int index, int actor) {
 	if (!_voicesOn || g_hdb->isPPC())
 		return;
 
-	// make sure we aren't playing a line more than once this time (only on CHANNEL 0)
-	if (!actor && _voicePlayed[index - FIRST_VOICE])
-		return;
-
 	// is voice channel already active?  if so, shut 'er down (automagically called StopVoice via callback)
 	if (_voices[actor].active)
 		g_hdb->_mixer->stopHandle(*_voices[actor].handle);
+
+	// make sure we aren't playing a line more than once this time (only on CHANNEL 0)
+	if (!actor && _voicePlayed[index - FIRST_VOICE])
+		return;
 
 	Common::SeekableReadStream *stream = nullptr;
 	if (g_hdb->getPlatform() == Common::kPlatformLinux) {

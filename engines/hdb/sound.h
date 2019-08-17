@@ -1513,6 +1513,16 @@ public:
 	void playSound(int index);
 	void playSoundEx(int index, int channel, bool loop);
 	void playVoice(int index, int actor);
+	void stopVoices() {
+		if (_voices[0].active) {
+			g_hdb->_mixer->stopHandle(*_voices[0].handle);
+			_voices[0].active = false;
+		}
+		if (_voices[1].active) {
+			g_hdb->_mixer->stopHandle(*_voices[1].handle);
+			_voices[1].active = false;
+		}
+	}
 	void startMusic(SoundType song);
 	void fadeInMusic(SoundType song, int ramp);
 	void fadeOutMusic(int ramp);
