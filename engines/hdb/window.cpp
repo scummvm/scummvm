@@ -1707,7 +1707,7 @@ void Window::drawTryAgain() {
 
 	_gfxTry->drawMasked((int)_tryAgainInfo.x1 + xv, (int)_tryAgainInfo.y1 + yv);
 	_gfxAgain->drawMasked((int)_tryAgainInfo.x2 + yv, (int)_tryAgainInfo.y2 + xv);
-	_gfxLevelRestart->drawMasked((int)(g_hdb->_screenDrawWidth / 2 - _gfxLevelRestart->_width + xv), _tryRestartY + yv);
+	_gfxLevelRestart->drawMasked((int)(g_hdb->_screenDrawWidth / 2 - _gfxLevelRestart->_width / 2 + xv), g_hdb->_window->_tryRestartY + yv);
 }
 
 void Window::clearTryAgain() {
