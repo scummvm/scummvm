@@ -557,7 +557,7 @@ void Room::endMission(int16 score, int16 arg1, int16 arg2) {
 		"VENG"
 	};
 
-	for (int i = 0; i < ARRAYSIZE(missionNames); i++) {
+	for (int i = 0; i < ARRAYSIZE(missionNames)-1; i++) {
 		if (_vm->_missionName == missionNames[i]) {
 			_vm->_missionToLoad = missionNames[i + 1];
 			break;
