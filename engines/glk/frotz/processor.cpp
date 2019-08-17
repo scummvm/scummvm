@@ -246,6 +246,7 @@ void Processor::load_all_operands(zbyte specifier) {
 void Processor::interpret() {
 	do {
 		zbyte opcode;
+//		debug("%.6x", pcp - zmp);
 		CODE_BYTE(opcode);
 		zargc = 0;
 

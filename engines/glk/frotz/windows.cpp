@@ -53,8 +53,8 @@ void Windows::setup(bool isVersion6) {
 		_background->setBackgroundColor(0xffffff);
 
 		Window &w = _windows[0];
-		w[X_SIZE] = g_system->getWidth() / mi._cellW;
-		w[Y_SIZE] = g_system->getHeight() / mi._cellH;
+		w[X_SIZE] = g_vm->h_screen_width;
+		w[Y_SIZE] = g_vm->h_screen_height;
 	} else {
 		_lower = g_vm->glk_window_open(0, 0, 0, wintype_TextBuffer, 0);
 		_upper = g_vm->glk_window_open(_lower, winmethod_Above | winmethod_Fixed, 0, wintype_TextGrid, 0);
@@ -114,22 +114,24 @@ Window::Window() : _windows(nullptr), _win(nullptr), _quotes(0), _dashes(0), _sp
 
 void Window::update() {
 	assert(_win);
+	int cellW = (g_vm->h_version < V5) ? g_vm->h_font_width : 1;
+	int cellH = (g_vm->h_version < V5) ? g_vm->h_font_height : 1;
 
-	_properties[X_POS] = _win->_bbox.left / g_conf->_monoInfo._cellW + 1;
-	_properties[Y_POS] = _win->_bbox.top / g_conf->_monoInfo._cellH + 1;
-	_properties[X_SIZE] = _win->_bbox.width() / g_conf->_monoInfo._cellW;
-	_properties[Y_SIZE] = _win->_bbox.height() / g_conf->_monoInfo._cellH;
+	_properties[X_POS] = _win->_bbox.left / cellW + 1;
+	_properties[Y_POS] = _win->_bbox.top / cellH + 1;
+	_properties[X_SIZE] = _win->_bbox.width() / cellW;
+	_properties[Y_SIZE] = _win->_bbox.height() / cellH;
 
 	Point pt = _win->getCursor();
-	_properties[X_CURSOR] = (g_vm->h_version != V6) ? pt.x + 1 : pt.x / g_conf->_monoInfo._cellW + 1;
-	_properties[Y_CURSOR] = (g_vm->h_version != V6) ? pt.y + 1 : pt.y / g_conf->_monoInfo._cellH + 1;
+	_properties[X_CURSOR] = (g_vm->h_version != V6) ? pt.x + 1 : pt.x / cellW + 1;
+	_properties[Y_CURSOR] = (g_vm->h_version != V6) ? pt.y + 1 : pt.y / cellH + 1;
 
 	TextBufferWindow *win = dynamic_cast<TextBufferWindow *>(_win);
-	_properties[LEFT_MARGIN] = (win ? win->_ladjw : 0) / g_conf->_monoInfo._cellW;
-	_properties[RIGHT_MARGIN] = (win ? win->_radjw : 0) / g_conf->_monoInfo._cellW;
+	_properties[LEFT_MARGIN] = (win ? win->_ladjw : 0) / cellW;
+	_properties[RIGHT_MARGIN] = (win ? win->_radjw : 0) / cellW;
 	_properties[FONT_SIZE] = (g_conf->_monoInfo._cellH << 8) | g_conf->_monoInfo._cellW;
 }
-
+ 
 Window &Window::operator=(winid_t win) {
 	_win = win;
 
@@ -165,8 +167,15 @@ void Window::setSize(const Point &newSize) {
 }
 
 void Window::setSize() {
-	if (_win)
-		_win->setSize(Point(_properties[X_SIZE] * g_conf->_monoInfo._cellW, _properties[Y_SIZE] * g_conf->_monoInfo._cellH));
+	if (_win) {
+		Point newSize(_properties[X_SIZE], _properties[Y_SIZE]);
+		if (g_vm->h_version < V5) {
+			newSize.x *= g_conf->_monoInfo._cellW;
+			newSize.y *= g_conf->_monoInfo._cellH;
+		}
+
+		_win->setSize(newSize);
+	}
 }
 
 void Window::setPosition(const Point &newPos) {
@@ -179,8 +188,15 @@ void Window::setPosition(const Point &newPos) {
 }
 
 void Window::setPosition() {
-	if (_win)
-		_win->setPosition(Point((_properties[X_POS] - 1) * g_conf->_monoInfo._cellW, (_properties[Y_POS] - 1) * g_conf->_monoInfo._cellH));
+	if (_win) {
+		Point newPos(_properties[X_POS] - 1, _properties[Y_POS] - 1);
+		if (g_vm->h_version < V5) {
+			newPos.x *= g_conf->_monoInfo._cellW;
+			newPos.y *= g_conf->_monoInfo._cellH;
+		}
+
+		_win->setPosition(newPos);
+	}
 }
 
 void Window::setCursor(const Point &newPos) {
@@ -211,8 +227,10 @@ void Window::setCursor(const Point &newPos) {
 }
 
 void Window::setCursor() {
-	if (dynamic_cast<TextGridWindow *>(_win))
-		g_vm->glk_window_move_cursor(_win, _properties[X_CURSOR] - 1, _properties[Y_CURSOR] - 1);
+	if (dynamic_cast<TextGridWindow *>(_win)) {
+		g_vm->glk_window_move_cursor(_win, (_properties[X_CURSOR] - 1) / g_vm->h_font_width,
+			(_properties[Y_CURSOR] - 1) / g_vm->h_font_height);
+	}
 }
 
 void Window::clear() {
@@ -220,8 +238,7 @@ void Window::clear() {
 		g_vm->glk_window_clear(_win);
 
 	if (_windows->_background) {
-		Rect r(_properties[X_SIZE] * g_conf->_monoInfo._cellW, _properties[Y_SIZE] * g_conf->_monoInfo._cellH);
-		r.moveTo((_properties[X_POS] - 1) * g_conf->_monoInfo._cellW, (_properties[Y_POS] - 1) * g_conf->_monoInfo._cellH);
+		Rect r = _windows->_background->_bbox;
 		_windows->_background->fillRect(g_conf->_windowColor, r);
 	}
 }

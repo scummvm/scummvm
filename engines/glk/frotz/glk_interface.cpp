@@ -46,8 +46,6 @@ GlkInterface::~GlkInterface() {
 }
 
 void GlkInterface::initialize() {
-	uint width, height;
-
 	/* Setup options */
 	UserOptions::initialize(h_version, _storyId);
 
@@ -123,23 +121,14 @@ void GlkInterface::initialize() {
 	 * Get the screen size
 	 */
 
-	_wp._lower = glk_window_open(0, 0, 0, wintype_TextGrid, 0);
-	if (!_wp._lower)
-		_wp._lower = glk_window_open(0, 0, 0, wintype_TextBuffer, 0);
-	glk_window_get_size(_wp._lower, &width, &height);
-	glk_window_close(_wp._lower, nullptr);
-	_wp._lower = nullptr;
-
 	gos_channel = nullptr;
 
-	h_screen_cols = width;
-	h_screen_rows = height;
-
-	h_screen_height = h_screen_rows;
-	h_screen_width = h_screen_cols;
-
-	h_font_width = 1;
-	h_font_height = 1;
+	h_screen_width = g_system->getWidth();
+	h_screen_height = g_system->getHeight();
+	h_font_width = g_conf->_monoInfo._cellW;
+	h_font_height = g_conf->_monoInfo._cellH;
+	h_screen_cols = h_screen_width / h_font_width;
+	h_screen_rows = h_screen_height / h_font_height;
 
 	// Must be after screen dimensions are computed
 	if (g_conf->_graphics) {
@@ -333,11 +322,8 @@ bool GlkInterface::os_picture_data(int picture, uint *height, uint *width) {
 		uint fullWidth, fullHeight;
 		bool result = glk_image_get_info(picture, &fullWidth, &fullHeight);
 
-		int x_scale = g_system->getWidth();
-		int y_scale = g_system->getHeight();
-
-		*width = roundDiv(fullWidth * h_screen_cols, x_scale);
-		*height = roundDiv(fullHeight * h_screen_rows, y_scale);
+		*width = fullWidth;
+		*height = fullHeight;
 
 		return result;
 	}
@@ -543,20 +529,17 @@ void GlkInterface::showBeyondZorkTitle() {
 void GlkInterface::os_draw_picture(int picture, const Common::Point &pos) {
 	if (pos.x && pos.y) {
 		_wp._background->bringToFront();
-		glk_image_draw(_wp._background, picture,
-			(pos.x - 1) * g_conf->_monoInfo._cellW,
-			(pos.y - 1) * g_conf->_monoInfo._cellH);
+		Point pt(pos.x - 1, pos.y - 1);
+		if (h_version < V5) {
+			pt.x *= g_conf->_monoInfo._cellW;
+			pt.y *= g_conf->_monoInfo._cellH;
+		}
+
+		glk_image_draw(_wp._background, picture, pt.x, pt.y);
 	} else {
 		// Picture embedded within the lower text area
 		_wp.currWin().imageDraw(picture, imagealign_MarginLeft, 0);
 	}
-}
-
-void GlkInterface::os_draw_picture(int picture, const Common::Rect &r) {
-	Point cell(g_conf->_monoInfo._cellW, g_conf->_monoInfo._cellH);
-
-	glk_image_draw_scaled(_wp._background, picture, (r.left - 1) * cell.x, (r.top - 1) * cell.y,
-		r.width() * cell.x, r.height() * cell.y);
 }
 
 int GlkInterface::os_peek_color() {
