@@ -238,7 +238,7 @@ void Window::clear() {
 		g_vm->glk_window_clear(_win);
 
 	if (_windows->_background) {
-		Rect r = _windows->_background->_bbox;
+		Rect r = getBounds();
 		_windows->_background->fillRect(g_conf->_windowColor, r);
 	}
 }
@@ -356,6 +356,19 @@ void Window::updateStyle() {
 
 	if (_currStyle == 0)
 		setReverseVideo(false);
+}
+
+Rect Window::getBounds() const {
+	if (_win)
+		return _win->_bbox;
+
+	if (g_vm->h_version < V5)
+		return Rect((_properties[X_POS] - 1) * g_vm->h_font_width, (_properties[Y_POS] - 1) * g_vm->h_font_height,
+			(_properties[X_POS] - 1 + _properties[X_SIZE]) * g_vm->h_font_width,
+			(_properties[Y_POS] - 1 + _properties[Y_SIZE]) * g_vm->h_font_height);
+
+	return Rect(_properties[X_POS] - 1, _properties[Y_POS] - 1, _properties[X_POS] - 1 + _properties[X_SIZE],
+		_properties[Y_POS] - 1 + _properties[Y_SIZE]);
 }
 
 void Window::setReverseVideo(bool reverse) {

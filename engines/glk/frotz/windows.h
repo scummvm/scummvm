@@ -110,6 +110,11 @@ private:
 	 * Updates the current font/style
 	 */
 	void updateStyle();
+
+	/**
+	 * Get the bounding area for the window
+	 */
+	Rect getBounds() const;
 public:
 	int _currFont;
 	int _prevFont;
