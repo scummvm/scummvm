@@ -44,6 +44,7 @@ bool Console::Cmd_Room(int argc, const char **argv) {
 	}
 
 	_vm->_missionToLoad = argv[1];
+	_vm->_missionToLoad.toUppercase();
 	_vm->_roomIndexToLoad = atoi(argv[2]);
 	_vm->runAwayMission();
 
@@ -55,6 +56,7 @@ bool Console::Cmd_Actions(int argc, const char **argv) {
 
 	if (argc == 3) {
 		Common::String missionName = argv[1];
+		missionName.toUppercase();
 		int roomIndex = atoi(argv[2]);
 
 		screenName = missionName + (char)(roomIndex + '0');
