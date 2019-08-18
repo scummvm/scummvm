@@ -242,9 +242,13 @@ void SceneScriptPS05::turnOnTV() {
 				ADQ_Add(kActorNewscaster, 130, kAnimationModeTalk);
 				ADQ_Add(kActorNewscaster, 140, kAnimationModeTalk);
 				ADQ_Add(kActorNewscaster, 150, kAnimationModeTalk);
-				ADQ_Add(kActorGuzza, 1570, kAnimationModeTalk);
-				ADQ_Add(kActorGuzza, 1580, kAnimationModeTalk);
-				ADQ_Add(kActorGuzza, 1590, kAnimationModeTalk);
+				if (_vm->_cutContent && Random_Query(1, 3) == 1) {
+					ADQ_Add(kActorGuzza, 1600, kAnimationModeTalk);
+				} else {
+					ADQ_Add(kActorGuzza, 1570, kAnimationModeTalk);
+					ADQ_Add(kActorGuzza, 1580, kAnimationModeTalk);
+					ADQ_Add(kActorGuzza, 1590, kAnimationModeTalk);
+				}
 			} else {
 				ADQ_Add(kActorNewscaster, 90, kAnimationModeTalk);
 				ADQ_Add(kActorNewscaster, 100, kAnimationModeTalk);

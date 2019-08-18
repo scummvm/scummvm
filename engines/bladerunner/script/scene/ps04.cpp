@@ -178,8 +178,16 @@ void SceneScriptPS04::dialogueWithGuzza() {
 
 	switch (answer) {
 	case 110: // REQUEST TYRELL MEETING
+		if (_vm->_cutContent) {
+			Actor_Says(kActorGuzza, 420, 31);
+		}
 		Actor_Says(kActorMcCoy, 3990, 19);
 		Actor_Says(kActorMcCoy, 3995, 17);
+		if (_vm->_cutContent) {
+			Actor_Says(kActorGuzza, 430, 33);
+			Actor_Says(kActorMcCoy, 4025, 18);
+			Actor_Says(kActorMcCoy, 4030, 12);
+		}
 		Actor_Says(kActorGuzza, 440, 31);
 		Actor_Says(kActorMcCoy, 4035, 13);
 		Actor_Says(kActorGuzza, 450, 34);
