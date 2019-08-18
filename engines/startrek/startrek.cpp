@@ -628,18 +628,25 @@ Common::String StarTrekEngine::getLoadedText(int textIndex) {
 
 	Common::String str;
 	byte cur;
-	while (textIndex != 0) {
+	int curIndex = 0;
+
+	while (!txtFile->eos()) {
 		do {
 			cur = txtFile->readByte();
-			if (cur != '\0')
-				str += cur;
+			str += cur;
 		} while (cur != '\0');
-		textIndex--;
+
+		if (curIndex == textIndex) {
+			delete txtFile;
+			return str;
+		}
+
+		curIndex++;
+		str = "";
 	}
-
+	
 	delete txtFile;
-
-	return str;
+	return "";
 }
 
 } // End of namespace StarTrek
