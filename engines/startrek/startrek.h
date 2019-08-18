@@ -231,6 +231,8 @@ public:
 	StarTrekEngine(OSystem *syst, const StarTrekGameDescription *gamedesc);
 	virtual ~StarTrekEngine();
 
+	friend class Console;
+
 	Common::Error run();
 	Common::Error runGameMode(int mode, bool resume);
 

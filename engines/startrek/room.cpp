@@ -183,8 +183,10 @@ void Room::loadOtherRoomMessages() {
 			break;
 
 		while (offset < nextOffset) {
-			if (*(_rdfData + offset) == 0xeb && *(_rdfData + offset + 2) == '#')
-				loadRoomMessage((const char *)_rdfData + offset + 2);
+			const char *text = (const char *)_rdfData + offset;
+
+			if (text[0] == '#' && text[1] == _vm->_missionName[0] && text[5] == '\\')
+				loadRoomMessage(text);
 
 			offset++;
 		}

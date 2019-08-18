@@ -66,6 +66,8 @@ public:
 	Room(StarTrekEngine *vm, const Common::String &name);
 	~Room();
 
+	friend class Console;
+
 	uint16 readRdfWord(int offset);
 
 	/**
