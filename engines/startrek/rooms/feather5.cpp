@@ -194,7 +194,7 @@ void Room::feather5UseSnakeOnRedshirt() {
 }
 
 void Room::feather5UseSnakeOnWater() {
-	showText(TX_FEA5N011);
+	showDescription(TX_FEA5N011);
 	loseItem(OBJECT_ISNAKE);
 }
 
@@ -227,12 +227,12 @@ void Room::feather5UseKnifeOnMonster() {
 }
 
 void Room::feather5GetFern() {
-	showText(TX_FEA5N008);
+	showDescription(TX_FEA5N008);
 }
 
 void Room::feather5UseKnifeOnFern() {
 	if (_awayMission->feather.gotFern)
-		showText(TX_FEA5N015);
+		showDescription(TX_FEA5N015);
 	else {
 		walkCrewmanC(OBJECT_KIRK, 0x106, 0x8a, &Room::feather5ReachedFern);
 		_awayMission->disableInput = true;
@@ -299,7 +299,7 @@ void Room::feather5UseRockOnRedshirt() {
 void Room::feather5UseCrewmanOnThrownFern() {
 	// This might be unused? The object in question (OBJECT_THROWN_FERN) shouldn't be
 	// visible while player control is active.
-	showText(TX_FEA5N003);
+	showDescription(TX_FEA5N003);
 }
 
 void Room::feather5UseSpockOnMonster() {
@@ -319,54 +319,54 @@ void Room::feather5UsePhaser() {
 }
 
 void Room::feather5LookAnywhere() {
-	showText(TX_FEA5N012);
+	showDescription(TX_FEA5N012);
 }
 
 void Room::feather5LookAtLog() {
-	showText(TX_FEA5N007);
+	showDescription(TX_FEA5N007);
 }
 
 void Room::feather5LookAtWater() {
-	showText(TX_FEA5N009);
+	showDescription(TX_FEA5N009);
 }
 
 void Room::feather5LookAtFern() {
-	showText(TX_FEA5N014);
+	showDescription(TX_FEA5N014);
 }
 
 void Room::feather5LookAtInsects() {
-	showText(TX_FEA5N005);
+	showDescription(TX_FEA5N005);
 }
 
 void Room::feather5LookAtCave() {
-	showText(TX_FEA5N013);
+	showDescription(TX_FEA5N013);
 }
 
 void Room::feather5LookAtMonster() {
-	showText(TX_FEA5N000);
+	showDescription(TX_FEA5N000);
 }
 
 void Room::feather5LookAtSpock() {
-	showText(TX_FEA5N006);
+	showDescription(TX_FEA5N006);
 }
 
 void Room::feather5LookAtKirk() {
 	if (!_awayMission->feather.waterMonsterRetreated)
-		showText(TX_FEA5N001);
+		showDescription(TX_FEA5N001);
 	else // ENHANCEMENT: Fall back to default behaviour instead of doing nothing
 		_awayMission->rdfStillDoDefaultAction = true;
 }
 
 void Room::feather5LookAtMccoy() {
 	if (!_awayMission->feather.waterMonsterRetreated)
-		showText(TX_FEA5N002);
+		showDescription(TX_FEA5N002);
 	else // ENHANCEMENT: Fall back to default behaviour instead of doing nothing
 		_awayMission->rdfStillDoDefaultAction = true;
 }
 
 void Room::feather5LookAtRedshirt() {
 	if (!_awayMission->feather.waterMonsterRetreated)
-		showText(TX_FEA5N004);
+		showDescription(TX_FEA5N004);
 	else // ENHANCEMENT: Fall back to default behaviour instead of doing nothing
 		_awayMission->rdfStillDoDefaultAction = true;
 }

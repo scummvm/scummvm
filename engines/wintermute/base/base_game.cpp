@@ -105,6 +105,7 @@ BaseGame::BaseGame(const Common::String &targetName) : BaseObject(this), _target
 	_keyboardState = nullptr;
 
 	_mathClass = nullptr;
+	_directoryClass = nullptr;
 
 	_debugLogFile = nullptr;
 	_debugDebugMode = false;
@@ -244,6 +245,7 @@ BaseGame::~BaseGame() {
 	delete _cachedThumbnail;
 
 	delete _mathClass;
+	delete _directoryClass;
 
 	delete _transMgr;
 	delete _scEngine;
@@ -261,6 +263,7 @@ BaseGame::~BaseGame() {
 	_cachedThumbnail = nullptr;
 
 	_mathClass = nullptr;
+	_directoryClass = nullptr;
 
 	_transMgr = nullptr;
 	_scEngine = nullptr;
@@ -415,6 +418,11 @@ bool BaseGame::initialize1() {
 			break;
 		}
 
+		_directoryClass = makeSXDirectory(this);
+		if (_directoryClass == nullptr) {
+			break;
+		}
+
 #if EXTENDED_DEBUGGER_ENABLED
 		_scEngine = new DebuggableScEngine(this);
 #else
@@ -451,6 +459,7 @@ bool BaseGame::initialize1() {
 		return STATUS_OK;
 	} else {
 		delete _mathClass;
+		delete _directoryClass;
 		delete _keyboardState;
 		delete _transMgr;
 		delete _surfaceStorage;
@@ -1657,7 +1666,8 @@ bool BaseGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 	// OpenDocument
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "OpenDocument") == 0) {
-		stack->correctParams(0);
+		stack->correctParams(1);
+		g_system->openUrl(stack->pop()->getString());
 		stack->pushNULL();
 		return STATUS_OK;
 	}
@@ -2287,7 +2297,7 @@ ScValue *BaseGame::scGetProperty(const Common::String &name) {
 	// SaveDirectory (RO)
 	//////////////////////////////////////////////////////////////////////////
 	else if (name == "SaveDirectory") {
-		AnsiString dataDir = "saves/";	// TODO: This is just to avoid telling the engine actual paths.
+		AnsiString dataDir = "saves"; // See also: SXDirectory::scGetProperty("TempDirectory")
 		_scValue->setString(dataDir.c_str());
 		return _scValue;
 	}
@@ -2742,6 +2752,16 @@ bool BaseGame::externalCall(ScScript *script, ScStack *stack, ScStack *thisStack
 		thisObj = thisStack->getTop();
 
 		thisObj->setNative(makeSXFile(_gameRef,  stack));
+		stack->pushNULL();
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Directory
+	//////////////////////////////////////////////////////////////////////////
+	else if (strcmp(name, "Directory") == 0) {
+		thisObj = thisStack->getTop();
+
+		thisObj->setNative(makeSXDirectory(_gameRef));
 		stack->pushNULL();
 	}
 

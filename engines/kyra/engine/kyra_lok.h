@@ -32,7 +32,7 @@
 namespace Kyra {
 
 class Movie;
-class SoundDigital;
+class SoundDigital_MR;
 class SeqPlayer;
 class Sprites;
 class Animator_LoK;

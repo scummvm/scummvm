@@ -43,9 +43,9 @@ void SceneScriptDR03::InitializeScene() {
 	}
 
 	Ambient_Sounds_Remove_All_Looping_Sounds(1);
-	Ambient_Sounds_Add_Looping_Sound(110,  7,  0, 1);
-	Ambient_Sounds_Add_Looping_Sound(109, 50,  0, 1);
-	Ambient_Sounds_Add_Looping_Sound( 95, 20, 70, 1);
+	Ambient_Sounds_Add_Looping_Sound(kSfxRESPRTR1,  7,  0, 1);
+	Ambient_Sounds_Add_Looping_Sound(kSfxBRBED3,   50,  0, 1);
+	Ambient_Sounds_Add_Looping_Sound(kSfxBOILPOT2, 20, 70, 1);
 }
 
 void SceneScriptDR03::SceneLoaded() {
@@ -68,8 +68,13 @@ bool SceneScriptDR03::ClickedOnActor(int actorId) {
 		Actor_Face_Actor(kActorChew, kActorMcCoy, true);
 
 		if (!Game_Flag_Query(kFlagDR03ChewTalk1)) {
-			Actor_Says(kActorMcCoy, 755, 18);
-			Actor_Says(kActorChew, 10, 14);
+			if (_vm->_cutContent && Random_Query(1, 2) == 1) {
+				Actor_Says(kActorMcCoy, 750, 18);
+				Actor_Says(kActorChew, 0, 14);
+			} else {
+				Actor_Says(kActorMcCoy, 755, 18);
+				Actor_Says(kActorChew, 10, 14);
+			}
 			Actor_Says(kActorMcCoy, 760, 18);
 			Actor_Says(kActorChew, 20, 14);
 			Actor_Says(kActorMcCoy, 765, 18);
@@ -142,7 +147,7 @@ bool SceneScriptDR03::ClickedOnItem(int itemId, bool a2) {
 
 bool SceneScriptDR03::ClickedOnExit(int exitId) {
 	if (exitId == 0) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 330.31f, 4.27f, -910.91f, 24, 1, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 330.31f, 4.27f, -910.91f, 24, true, false, false)) {
 			Game_Flag_Set(kFlagDR03toDR02);
 			Set_Enter(kSetDR01_DR02_DR04, kSceneDR02);
 		}
@@ -172,9 +177,9 @@ void SceneScriptDR03::SceneFrameAdvanced(int frame) {
 	 || frame == 49
 	) {
 		if (Random_Query(0, 1)) {
-			Sound_Play(97, Random_Query(20, 33), 80, 80, 50);
+			Sound_Play(kSfxNEON7, Random_Query(20, 33), 80, 80, 50);
 		} else {
-			Sound_Play(59, Random_Query(5, 6), 80, 80, 50);
+			Sound_Play(kSfxNEON5, Random_Query(5, 6), 80, 80, 50);
 		}
 	}
 }
@@ -185,14 +190,14 @@ void SceneScriptDR03::ActorChangedGoal(int actorId, int newGoal, int oldGoal, bo
 void SceneScriptDR03::PlayerWalkedIn() {
 	if (!Game_Flag_Query(kFlagDR02toDR03)) {
 		if (Random_Query(1, 2) == 1) {
-			Actor_Says(kActorChew, 660, 14);
-			Actor_Says(kActorChew, 680, 14);
+			Actor_Says(kActorChew, 660, 14); // (yells) Ah!
+			Actor_Says(kActorChew, 680, 14); // What you want? I busy.
 		} else if (Random_Query(1, 2) == 2) {
-			Actor_Says(kActorChew, 670, 14);
-			Actor_Says(kActorChew, 620, 14);
+			Actor_Says(kActorChew, 670, 14); // Hmph. (mumbles in Chinese)
+			Actor_Says(kActorChew, 620, 14); // (yells) What you do, huh?
 		} else {
-			Actor_Says(kActorChew, 690, 14);
-			Actor_Says(kActorChew, 710, 14);
+			Actor_Says(kActorChew, 690, 14); // Not good time now, come back later.
+			Actor_Says(kActorChew, 710, 14); // (Mumbles in Chinese)
 		}
 	}
 }
@@ -285,6 +290,9 @@ void SceneScriptDR03::dialogueWithChew() {
 
 	case 670: // TYRELL
 		Actor_Says(kActorMcCoy, 765, 12);
+		if (_vm->_cutContent) {
+			Actor_Says_With_Pause(kActorMcCoy, 785, 0.80f, 18);
+		}
 		Actor_Says(kActorMcCoy, 790, 13);
 		Actor_Says(kActorChew, 310, 12);
 		Actor_Says(kActorChew, 320, 3);

@@ -22,7 +22,6 @@
 
 #define FORBIDDEN_SYMBOL_EXCEPTION_mkdir
 #define FORBIDDEN_SYMBOL_EXCEPTION_time_h	// sys/stat.h includes sys/time.h
-#define FORBIDDEN_SYMBOL_EXCEPTION_unistd_h
 
 #include "common/scummsys.h"
 #include "common/config-manager.h"
@@ -83,9 +82,8 @@ void OSystem_PSP2::initBackend() {
 	ConfMan.registerDefault("touchpad_mouse_mode", false);
 	ConfMan.registerDefault("frontpanel_touchpad_mode", false);
 
-	if (!ConfMan.hasKey("fullscreen")) {
-		ConfMan.setBool("fullscreen", true);
-	}
+	ConfMan.setBool("fullscreen", true);
+
 	if (!ConfMan.hasKey("aspect_ratio")) {
 		ConfMan.setBool("aspect_ratio", false);
 	}
@@ -131,6 +129,8 @@ void OSystem_PSP2::initBackend() {
 }
 
 bool OSystem_PSP2::hasFeature(Feature f) {
+	if (f == kFeatureFullscreenMode)
+		return false;
 	return (f == kFeatureKbdMouseSpeed ||
 		f == kFeatureJoystickDeadzone ||
 		f == kFeatureShader ||
@@ -143,14 +143,21 @@ void OSystem_PSP2::setFeatureState(Feature f, bool enable) {
 	case kFeatureTouchpadMode:
 		ConfMan.setBool("touchpad_mouse_mode", enable);
 		break;
+	case kFeatureFullscreenMode:
+		break;
+	default:
+		OSystem_SDL::setFeatureState(f, enable);
+		break;
 	}
-	OSystem_SDL::setFeatureState(f, enable);
 }
 
 bool OSystem_PSP2::getFeatureState(Feature f) {
 	switch (f) {
 	case kFeatureTouchpadMode:
 		return ConfMan.getBool("touchpad_mouse_mode");
+		break;
+	case kFeatureFullscreenMode:
+		return true;
 		break;
 	default:
 		return OSystem_SDL::getFeatureState(f);
@@ -168,7 +175,6 @@ Common::String OSystem_PSP2::getDefaultConfigFileName() {
 	return "ux0:data/scummvm/" + _baseConfigName;
 }
 
-Common::WriteStream *OSystem_PSP2::createLogFile() {
-	Common::FSNode file("ux0:data/scummvm/scummvm.log");
-	return file.createWriteStream();
+Common::String OSystem_PSP2::getDefaultLogFileName() {
+	return "ux0:data/scummvm/scummvm.log";
 }

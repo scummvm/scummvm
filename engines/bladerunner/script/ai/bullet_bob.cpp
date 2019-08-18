@@ -58,15 +58,15 @@ bool AIScriptBulletBob::Update() {
 	 && !Game_Flag_Query(kFlagRC04McCoyCombatMode)
 	 &&  Global_Variable_Query(kVariableChapter) < 4
 	) {
-		AI_Countdown_Timer_Reset(kActorBulletBob, 2);
-		AI_Countdown_Timer_Start(kActorBulletBob, 2, 10);
+		AI_Countdown_Timer_Reset(kActorBulletBob, kActorTimerAIScriptCustomTask2);
+		AI_Countdown_Timer_Start(kActorBulletBob, kActorTimerAIScriptCustomTask2, 10);
 		Actor_Set_Goal_Number(kActorBulletBob, kGoalBulletBobWarningMcCoy);
 		Actor_Modify_Friendliness_To_Other(kActorBulletBob, kActorMcCoy, -15);
 		Game_Flag_Set(kFlagRC04McCoyCombatMode);
 	} else if ( Actor_Query_Goal_Number(kActorBulletBob) == kGoalBulletBobWarningMcCoy
 	        && !Player_Query_Combat_Mode()
 	) {
-		AI_Countdown_Timer_Reset(kActorBulletBob, 2);
+		AI_Countdown_Timer_Reset(kActorBulletBob, kActorTimerAIScriptCustomTask2);
 		Game_Flag_Reset(kFlagRC04McCoyCombatMode);
 		Game_Flag_Set(kFlagRC04McCoyWarned);
 		Actor_Set_Goal_Number(kActorBulletBob, kGoalBulletBobDefault);
@@ -96,11 +96,11 @@ bool AIScriptBulletBob::Update() {
 }
 
 void AIScriptBulletBob::TimerExpired(int timer) {
-	if (timer == 2
+	if (timer == kActorTimerAIScriptCustomTask2
 	 && Actor_Query_Goal_Number(kActorBulletBob) == kGoalBulletBobWarningMcCoy
 	) {
 		Actor_Set_Goal_Number(kActorBulletBob, kGoalBulletBobShootMcCoy);
-		AI_Countdown_Timer_Reset(kActorBulletBob, 2);
+		AI_Countdown_Timer_Reset(kActorBulletBob, kActorTimerAIScriptCustomTask2);
 		return; //true;
 	}
 	return; //false;
@@ -264,10 +264,10 @@ bool AIScriptBulletBob::UpdateAnimation(int *animation, int *frame) {
 			*animation = 506;
 		}
 		if (_animationFrame == 10) {
-			Sound_Play(492, 75, 0, 0, 50);
+			Sound_Play(kSfxSHOTCOK1, 75, 0, 0, 50);
 		}
 		if (_animationFrame == 5) {
-			Sound_Play(493, 90, 0, 0, 50);
+			Sound_Play(kSfxSHOTGUN1, 90, 0, 0, 50);
 			Actor_Set_Goal_Number(kActorBulletBob, kGoalBulletBobShotMcCoy);
 		}
 		break;
@@ -531,7 +531,7 @@ bool AIScriptBulletBob::ChangeAnimationMode(int mode) {
 		}
 		break;
 
-	case 48:
+	case kAnimationModeDie:
 		_animationState = 4;
 		_animationFrame = 0;
 		break;

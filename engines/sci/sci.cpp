@@ -308,14 +308,8 @@ Common::Error SciEngine::run() {
 	}
 
 	_kernel = new Kernel(_resMan, segMan);
-	_kernel->init();
-
 	_features = new GameFeatures(segMan, _kernel);
-	// Only SCI0, SCI01 and SCI1 EGA games used a parser
-	_vocabulary = (getSciVersion() <= SCI_VERSION_1_EGA_ONLY) ? new Vocabulary(_resMan, false) : NULL;
-	// Also, XMAS1990 apparently had a parser too. Refer to http://forums.scummvm.org/viewtopic.php?t=9135
-	if (getGameId() == GID_CHRISTMAS1990)
-		_vocabulary = new Vocabulary(_resMan, false);
+	_vocabulary = hasParser() ? new Vocabulary(_resMan, false) : NULL;
 
 	_gamestate = new EngineState(segMan);
 	_guestAdditions = new GuestAdditions(_gamestate, _features, _kernel);
@@ -387,24 +381,6 @@ Common::Error SciEngine::run() {
 
 	// Show any special warnings for buggy scripts with severe game bugs,
 	// which have been patched by Sierra
-	if (getGameId() == GID_LONGBOW) {
-		// Longbow 1.0 has a buggy script which prevents the game
-		// from progressing during the Green Man riddle sequence.
-		// A patch for this buggy script has been released by Sierra,
-		// and is necessary to complete the game without issues.
-		// The patched script is included in Longbow 1.1.
-		// Refer to bug #3036609.
-		Resource *buggyScript = _resMan->findResource(ResourceId(kResourceTypeScript, 180), 0);
-
-		if (buggyScript && (buggyScript->size() == 12354 || buggyScript->size() == 12362)) {
-			showScummVMDialog(_("A known buggy game script has been detected, which could "
-			                  "prevent you from progressing later on in the game, during "
-			                  "the sequence with the Green Man's riddles. Please, apply "
-			                  "the latest patch for this game by Sierra to avoid possible "
-			                  "problems."));
-		}
-	}
-
 	if (getGameId() == GID_KQ7 && ConfMan.getBool("subtitles")) {
 		showScummVMDialog(_("Subtitles are enabled, but subtitling in King's"
 						  " Quest 7 was unfinished and disabled in the release"
@@ -614,7 +590,7 @@ void SciEngine::initGraphics() {
 	} else {
 #endif
 		_gfxPalette16 = new GfxPalette(_resMan, _gfxScreen);
-		if (getGameId() == GID_QFG4DEMO || getGameId() == GID_CATDATE)
+		if (getGameId() == GID_QFG4DEMO || _resMan->testResource(ResourceId(kResourceTypeVocab, 184)))
 			_gfxRemap16 = new GfxRemap(_gfxPalette16);
 #ifdef ENABLE_SCI32
 	}
@@ -637,10 +613,9 @@ void SciEngine::initGraphics() {
 	} else {
 #endif
 		// SCI0-SCI1.1 graphic objects creation
-		_gfxCursor = new GfxCursor(_resMan, _gfxPalette16, _gfxScreen);
 		_gfxPorts = new GfxPorts(_gamestate->_segMan, _gfxScreen);
 		_gfxCoordAdjuster = new GfxCoordAdjuster16(_gfxPorts);
-		_gfxCursor->init(_gfxCoordAdjuster, _eventMan);
+		_gfxCursor = new GfxCursor(_resMan, _gfxPalette16, _gfxScreen, _gfxCoordAdjuster, _eventMan);
 		_gfxCompare = new GfxCompare(_gamestate->_segMan, _gfxCache, _gfxScreen, _gfxCoordAdjuster);
 		_gfxTransitions = new GfxTransitions(_gfxScreen, _gfxPalette16);
 		_gfxPaint16 = new GfxPaint16(_resMan, _gamestate->_segMan, _gfxCache, _gfxPorts, _gfxCoordAdjuster, _gfxScreen, _gfxPalette16, _gfxTransitions, _audio);
@@ -795,6 +770,13 @@ bool SciEngine::isBE() const{
 	default:
 		return false;
 	}
+}
+
+bool SciEngine::hasParser() const {
+	// Only SCI0, SCI01 and SCI1 EGA games used a parser, along with
+	//  multilingual LSL3 and SQ3 Amiga which are SCI_VERSION_1_MIDDLE
+	return getSciVersion() <= SCI_VERSION_1_EGA_ONLY ||
+			getGameId() == GID_LSL3 || getGameId() == GID_SQ3;
 }
 
 bool SciEngine::hasMacIconBar() const {

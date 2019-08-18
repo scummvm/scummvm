@@ -90,6 +90,11 @@ bool Set::open(const Common::String &name) {
 		_objects[i].isTarget = 0;
 		s->skip(4);
 	}
+#if BLADERUNNER_ORIGINAL_BUGS
+#else
+	patchInAdditionalObjectsInSet();
+	patchOutBadObjectsFromSet();
+#endif // BLADERUNNER_ORIGINAL_BUGS
 
 	_walkboxCount = s->readUint32LE();
 	assert(_walkboxCount <= 95);
@@ -130,7 +135,10 @@ bool Set::open(const Common::String &name) {
 
 void Set::addObjectsToScene(SceneObjects *sceneObjects) const {
 	for (int i = 0; i < _objectCount; i++) {
+#if BLADERUNNER_ORIGINAL_BUGS
+#else
 		overrideSceneObjectInfo(i); // For bugfixes with respect to clickable/targetable box positioning/bounding box
+#endif // BLADERUNNER_ORIGINAL_BUGS
 		sceneObjects->addObject(i + kSceneObjectOffsetObjects, _objects[i].bbox, _objects[i].isClickable, _objects[i].isObstacle, _objects[i].unknown1, _objects[i].isTarget);
 	}
 }
@@ -261,12 +269,12 @@ const Common::String &Set::objectGetName(int objectId) const {
 	return _objects[objectId].name;
 }
 
-void Set::setWalkboxStepSound(int walkboxId, int stepSound) {
-	_walkboxStepSound[walkboxId] = stepSound;
+void Set::setWalkboxStepSound(int walkboxId, int floorType) {
+	_walkboxStepSound[walkboxId] = floorType;
 }
 
-void Set::setFoodstepSoundOverride(int soundId) {
-	_footstepSoundOverride = soundId;
+void Set::setFoodstepSoundOverride(int floorType) {
+	_footstepSoundOverride = floorType;
 }
 
 void Set::resetFoodstepSoundOverride() {
@@ -274,48 +282,69 @@ void Set::resetFoodstepSoundOverride() {
 }
 
 int Set::getWalkboxSoundWalkLeft(int walkboxId) const{
-	int soundId;
+	int floorType;
 	if (_footstepSoundOverride >= 0) {
-		soundId = _footstepSoundOverride;
+		floorType = _footstepSoundOverride;
 	} else {
-		soundId = _walkboxStepSound[walkboxId];
+		floorType = _walkboxStepSound[walkboxId];
 	}
 
-	if (soundId == 0) { //stone floor
-		return _vm->_rnd.getRandomNumberRng(160, 164);
+	if (floorType == 0) { //stone floor
+		// one of kSfxCEMENTL1, kSfxCEMENTL2, kSfxCEMENTL3, kSfxCEMENTL4, kSfxCEMENTL5
+		return _vm->_rnd.getRandomNumberRng(kSfxCEMENTL1, kSfxCEMENTL5);
 	}
-	if (soundId == 1) { //gravel floor
-		return _vm->_rnd.getRandomNumberRng(164, 170);
+	if (floorType == 1) { //gravel floor
+#if BLADERUNNER_ORIGINAL_BUGS
+		// A bug?
+		// one of kSfxCEMENTL5, kSfxCEMENTR1, kSfxCEMENTR2, kSfxCEMENTR3, kSfxCEMENTR4, kSfxCEMENTR5, kSfxCEMWETL1
+		return _vm->_rnd.getRandomNumberRng(kSfxCEMENTL5, kSfxCEMWETL1);
+#else
+		// one of kSfxCEMWETL1, kSfxCEMWETL2, kSfxCEMWETL3, kSfxCEMWETL4, kSfxCEMWETL5
+		return _vm->_rnd.getRandomNumberRng(kSfxCEMWETL1, kSfxCEMWETL5);
+#endif // BLADERUNNER_ORIGINAL_BUGS
 	}
-	if (soundId == 2) { //wooden floor
-		return _vm->_rnd.getRandomNumberRng(476, 480);
+	if (floorType == 2) { //wooden floor
+		// one of kSfxWOODL1, kSfxWOODL2, kSfxWOODL3, kSfxWOODL4, kSfxWOODL5
+		return _vm->_rnd.getRandomNumberRng(kSfxWOODL1, kSfxWOODL5);
 	}
-	if (soundId == 3) { //metal floor
-		return _vm->_rnd.getRandomNumberRng(466, 470);
+	if (floorType == 3) { //metal floor
+		// one of kSfxMETALL1, kSfxMETALL2, kSfxMETALL3, kSfxMETALL4, kSfxMETALL5
+		return _vm->_rnd.getRandomNumberRng(kSfxMETALL1, kSfxMETALL5);
 	}
 
 	return -1;
 }
 
 int Set::getWalkboxSoundWalkRight(int walkboxId) const {
-	int soundId;
+	int floorType;
 	if (_footstepSoundOverride >= 0) {
-		soundId = _footstepSoundOverride;
+		floorType = _footstepSoundOverride;
 	} else {
-		soundId = _walkboxStepSound[walkboxId];
+		floorType = _walkboxStepSound[walkboxId];
 	}
 
-	if (soundId == 0) { //stone floor
-		return _vm->_rnd.getRandomNumberRng(165, 169);
+	if (floorType == 0) { //stone floor
+		// one of kSfxCEMENTR1, kSfxCEMENTR2, kSfxCEMENTR3, kSfxCEMENTR4, kSfxCEMENTR5
+		return _vm->_rnd.getRandomNumberRng(kSfxCEMENTR1, kSfxCEMENTR5);
 	}
-	if (soundId == 1) { //gravel floor
-		return _vm->_rnd.getRandomNumberRng(169, 175);
+	if (floorType == 1) { //gravel floor
+#if BLADERUNNER_ORIGINAL_BUGS
+		// A bug?
+		// one of kSfxCEMENTR5, kSfxCEMWETL1, kSfxCEMWETL2, kSfxCEMWETL3, kSfxCEMWETL4, kSfxCEMWETL5, kSfxCEMWETR1
+		return _vm->_rnd.getRandomNumberRng(kSfxCEMENTR5, kSfxCEMWETR1);
+#else
+		// one of kSfxCEMWETR1, kSfxCEMWETR2, kSfxCEMWETR3, kSfxCEMWETR4, kSfxCEMWETR5
+		return _vm->_rnd.getRandomNumberRng(kSfxCEMWETR1, kSfxCEMWETR5);
+#endif // BLADERUNNER_ORIGINAL_BUGS
+
 	}
-	if (soundId == 2) { //wooden floor
-		return _vm->_rnd.getRandomNumberRng(481, 485);
+	if (floorType == 2) { //wooden floor
+		// one of kSfxWOODR1, kSfxWOODR2, kSfxWOODR3, kSfxWOODR4, kSfxWOODR5
+		return _vm->_rnd.getRandomNumberRng(kSfxWOODR1, kSfxWOODR5);
 	}
-	if (soundId == 3) { //metal floor
-		return _vm->_rnd.getRandomNumberRng(471, 475);
+	if (floorType == 3) { //metal floor
+		// one of kSfxMETALR1, kSfxMETALR2, kSfxMETALR3, kSfxMETALR4, kSfxMETALR5
+		return _vm->_rnd.getRandomNumberRng(kSfxMETALR1, kSfxMETALR5);
 	}
 
 	return -1;
@@ -398,17 +427,253 @@ void Set::load(SaveFileReadStream &f) {
 	_footstepSoundOverride = f.readInt();
 }
 
+#if BLADERUNNER_ORIGINAL_BUGS
+#else
 /**
 * Used for bugfixes mainly with respect to bad box positioning / bounding box fixes
 * TODO If we have many such cases, perhaps we could use a lookup table
 *		using sceneId, objectId (or name) as keys
 */
-void Set::overrideSceneObjectInfo(int objectId) const { // For bugfixes with respect to clickable/targetable box positioning/bounding box
-	if (_vm->_scene->getSceneId() == kSceneBB06) { /// Sebastian's room with doll
-		if (_objects[objectId].name == "BOX31") { // dollhouse box in BB06
+void Set::overrideSceneObjectInfo(int objectId) const {
+	switch (_vm->_scene->getSceneId()) {
+	case kSceneRC02:
+		// improve path for Runciter to his desk
+		// this won't fix the issue entirely (of Runciter awkwardly walking around the cage to reach his desk)
+		// but it make it less of an occurrence
+		if (objectId == 0 && _objects[objectId].name == "TABLETOP") {
+			_objects[objectId].bbox.setXYZ(9.0f, -1235.57f, 108386.98f, 47.90f, -1214.99f, 108410.42f);
+		} else if (objectId == 2 && _objects[objectId].name == "OUTR_DESK") {
+			_objects[objectId].bbox.setXYZ(-4.0f, -1239.81f, 108315.97f, 83.98f, -1185.50f, 108387.42f);
+		} else if (objectId == 42 && _objects[objectId].name == "P_BURN01") {
+			_objects[objectId].bbox.setXYZ(-4.0f, -1239.81f, 108312.98f, 87.98f, -1185.50f, 108388.19f);
+		} else if (objectId == 15 && _objects[objectId].name == "POLE_ROP01") {
+			_objects[objectId].bbox.setXYZ(-76.48f, -1239.31f, 108308.19f, -56.32f, -1191.11f, 108326.42f);
+		} else if (objectId == 16 && _objects[objectId].name == "POLE_ROP02") {
+			_objects[objectId].bbox.setXYZ(-75.17f, -1239.29f, 108340.13f, -56.32f, -1221.16f, 108365.65f);
+		}
+		break;
+	case kSceneCT04:
+		// prevent McCoy or transient from blending/glitching with the right wall
+		if (objectId == 6 && _objects[objectId].name == "BOX04") {
+			_objects[objectId].bbox.setXYZ(-251.80f, -636.49f, 414.38f, -206.66f, -445.84f, 900.44f);
+		}
+		break;
+	case kSceneBB06:
+		// Sebastian's room with doll
+		if (objectId == 3 && _objects[objectId].name == "BOX31") {
+			// dollhouse box in BB06
 			_objects[objectId].bbox.setXYZ(-161.47f, 30.0f, 53.75f, -110.53f, 69.81f, 90.90f);
 		}
+		break;
+	case kSceneBB51:
+		// Sebastian's room with chess and egg boiler
+		if (objectId == 0 && _objects[objectId].name == "V2CHESSTBL01") {
+			// Chess
+			_objects[objectId].bbox.setXYZ(114.55f, 20.83f, -67.91f, 153.58f, 28.14f, -29.16f);
+		} else if (objectId == 1 && _objects[objectId].name == "TOP02") {
+			// egg boiler
+			_objects[objectId].bbox.setXYZ(60.00f, 16.00f, -141.21f, 91.60f, 39.94f, -116.00f);
+		}
+		break;
+	case kScenePS05:
+		if (objectId == 8 && _objects[objectId].name == "WIRE BASKET") {
+			// waste basket click box
+			_objects[objectId].bbox.setXYZ(706.32f, 0.0f, -350.80f, 724.90f, 15.15f, -330.09f);
+		} else if (objectId == 0 && _objects[objectId].name == "FIRE EXTINGISHER") {
+			// fire extinguisher is click-able (original game) but does nothing
+			// still it's best to fix its clickbox and remove clickable or restore functionality from
+			// the scene script
+			_objects[objectId].bbox.setXYZ(695.63f, 42.65f, -628.10f, 706.71f, 69.22f, -614.47f);
+		}
+		break;
+	case kScenePS07:
+		// Make the mid-wall thinner to enable access to clickable object (buzzer)
+		if (objectId == 1 && _objects[objectId].name == "BOX01") {
+			_objects[objectId].bbox.setXYZ(526.91f, 0.0f, -582.62f, 531.50f, 48.43f, -511.72f);
+		}
+		break;
+	case kSceneNR05:
+		if (objectId == 10 && _objects[objectId].name == "BOX08") {
+			_objects[objectId].bbox.setXYZ(-748.75f, 0.0f, -257.39f, -685.37f, 32.01f, -211.47f);
+		} else if (objectId == 11 && _objects[objectId].name == "BOX09") {
+			_objects[objectId].bbox.setXYZ(-729.00f, 0.0f, -179.27f, -690.00f, 33.47f, -15.80f);
+		} else if (objectId == 12 && _objects[objectId].name == "BOX11") {
+			_objects[objectId].bbox.setXYZ(-688.03f, 0.0f, -67.41f, -490.38f, 29.10f, -32.86f);
+		}
+		break;
+	case kSceneNR11:
+		// Right coat rack needs adjustment of bounding box
+		if (objectId == 1 && _objects[objectId].name == "COATRACK") {
+			_objects[objectId].bbox.setXYZ(14.91f, 0.0f, -368.79f, 114.67f, 87.04f, -171.28f);
+		}
+		break;
+
+	case kSceneUG09:
+		// block passage to buggy pipe
+		if (objectId == 7 && _objects[objectId].name == "BOXS FOR ARCHWAY 01") {
+			_objects[objectId].bbox.setXYZ(-168.99f, 151.38f, -139.10f, -105.95f, 239.59f, 362.70f);
+		}
+		break;
+
+	case kSceneUG13:
+		// fix obstacles map / stairs glitch
+		if (objectId == 31 && _objects[objectId].name == "BOX FOR ELEVATR WAL") {
+			_objects[objectId].bbox.setXYZ(-337.79f, 35.78f, -918.73f, -282.79f, 364.36f, -804.54f);
+		} else if (objectId == 32 && _objects[objectId].name == "BOX FOR ELEVATR WAL") {
+			_objects[objectId].bbox.setXYZ(-455.47f, 35.78f, -1071.24f, -335.98f, 364.36f, -824.54f);
+		}
+		break;
+
+	case kSceneUG18:
+		// fix obstacles map
+		if (objectId == 1 && _objects[objectId].name == "PIT_RAIL 03") {
+			_objects[objectId].bbox.setXYZ(-615.83f, 0.0f, -1237.04f, -602.30f, 37.66f, -13.48f);
+		} else  if (objectId == 4 && _objects[objectId].name == "WALL_LEFT") {
+			_objects[objectId].bbox.setXYZ(-1310.70f, 0.0f, -2105.59f, -910.95f, 840.0f, -111.55f);
+		} else  if (objectId == 5 && _objects[objectId].name == "OBSTACLE1") {
+			_objects[objectId].bbox.setXYZ(91.00f, -1.87f, 375.75f, 476.37f, 61.18f, 955.24f);
+		} else  if (objectId == 6 && _objects[objectId].name == "OBSTACLE02") {
+			_objects[objectId].bbox.setXYZ(-1191.22f, -1.87f, -2105.59f, -606.15f, 61.18f, -937.04f);
+		}
+		break;
+
+	default:
+		return;
 	}
 }
+
+void Set::setupNewObjectInSet(Common::String objName, BoundingBox objBbox) {
+	int objectId = _objectCount;
+	_objects[objectId].name = objName.c_str();
+	_objects[objectId].bbox = objBbox;
+	_objects[objectId].isObstacle  = 0; // init as false - Can be changed in Scene script eg. SceneLoaded() with (Un)Obstacle_Object()
+	_objects[objectId].isClickable = 0; // init as false - Can be changed in Scene script eg. SceneLoaded() with (Un)Clickable_Object()
+	_objects[objectId].isHotMouse  = 0;
+	_objects[objectId].unknown1    = 0;
+	_objects[objectId].isTarget    = 0; // init as false - Can be changed in Scene script eg. SceneLoaded() with (Un_)Combat_Target_Object
+	_objectCount++;
+}
+/**
+* Used for adding objects in a Set mainly to fix a few "McCoy walking to places he should not" issues
+* This is called in Set::open()
+* Note:
+* - ScummVM (post fix) save games will have the extra objects information
+* - Original save games will not have the extra objects if the save game room scene was an affected scene
+*   but they will get them if the player exits and re-enters. The code anticipates not finding an object in a scene
+*   so this should not be an issue.
+*/
+void Set::patchInAdditionalObjectsInSet() {
+	Common::String custObjName;
+	BoundingBox bbox;
+	switch (_vm->_scene->getSceneId()) {
+	case kSceneHF06:
+		// block clicking / path access to northern part of the scene
+		// which causes McCoy and Police officers/ rats to go behind the map
+		bbox = BoundingBox(220.00f, 350.02f, -90.86f, 310.00f, 380.02f, -70.71f);
+		custObjName = "FRONTBLOCK1";
+		setupNewObjectInSet(custObjName, bbox);
+
+		bbox = BoundingBox(20.00f, 350.02f, -90.86f, 170.00f, 380.02f, -45.71f);
+		custObjName = "FRONTBLOCK2";
+		setupNewObjectInSet(custObjName, bbox);
+		break;
+
+	case kScenePS05:
+		// block actual passage to ESPER room because
+		// it causes McCoy to sometimes go behind the wall
+		bbox = BoundingBox(730.50f, -0.0f, -481.10f, 734.51f, 144.75f, -437.55f);
+		custObjName = "MAINFBLOCK";
+		setupNewObjectInSet(custObjName, bbox);
+		break;
+
+	case kScenePS07:
+		// add missing buzzer button to annoy Klein
+		bbox = BoundingBox(530.16f, 48.44f, -570.13f, 550.41f, 50.46f, -558.77f);
+		custObjName = "L.MOUSE";
+		setupNewObjectInSet(custObjName, bbox);
+		break;
+
+	case kSceneNR05:
+		bbox = BoundingBox(-690.0f, 0.0f, -155.0f, -640.0f, 33.47f, -100.0f);
+		custObjName = "CUSTLFTBLOCK";
+		setupNewObjectInSet(custObjName, bbox);
+		break;
+
+	case kSceneUG08:
+		// block clicking / path access to northern part of the scene
+		// which causes McCoy and Police officers/ rats to go behind the map
+		bbox = BoundingBox(-386.26f, -8.07f, -1078.99f, 100.00f, 170.63f, -478.99f);
+		custObjName = "NORTHBLOCK";
+		setupNewObjectInSet(custObjName, bbox);
+		break;
+
+	case kSceneUG13:
+		// Underground homeless place
+		// block passage to empty elevator chute
+		bbox = BoundingBox(-80.00f, 35.78f, -951.75f, 74.36f, 364.36f, -810.56f);
+		custObjName = "ELEVBLOCK";
+		setupNewObjectInSet(custObjName, bbox);
+		break;
+	default:
+		return;
+	}
+}
+
+/**
+* Used for "removing" objects from a Set mainly to fix a few "McCoy walking to places he should not" issues
+* This is called in Set::open()
+* Note:
+* - ScummVM (post fix) save games will have the removed objects information
+* - Original save games will not have the removed objects info if the save game room scene was an affected scene
+*   but they will get them if the player exits and re-enters. This should not be an issue.
+*/
+void Set::patchOutBadObjectsFromSet() {
+	int removedIndexRef = 0;
+	bool removeCurrObj = false;
+	for (int objectId = 0; objectId < _objectCount; ++objectId) {
+		switch (_vm->_scene->getSceneId()) {
+		case kSceneNR05:
+			if ((objectId == 0 && _objects[objectId].name == "NM1-1+")
+			    || (objectId == 2 && _objects[objectId].name == "NM1-1+")
+			    || (objectId == 3 && _objects[objectId].name == "NM1-1+")
+			) {
+				// Remove objects that are named the same and set as clickables
+				// leave only objectId == 1, named "NM1-1+"
+				removeCurrObj = true;
+			}
+			break;
+		case kSceneNR11:
+			if ((objectId == 46 && _objects[objectId].name == "BOX53")
+			    || (objectId == 36 && _objects[objectId].name == "BOX43")
+			    || (objectId == 37 && _objects[objectId].name == "BOX44")
+			    || (objectId == 13 && _objects[objectId].name == "LOFT04")
+			) {
+				// Removing obj 46, 36, 37 (BOX53, BOX43, BOX44) fixes paths in the scene
+				// Removing obj 13 (LOFT04) fixes duplicate named box that confuses the engine
+				removeCurrObj = true;
+			}
+			break;
+		case kSceneDR02:
+			if ((objectId == 44 && _objects[objectId].name == "TRASH CAN WITH FIRE")) {
+				// Removing obj 44 (TRASH CAN WITH FIRE) fixes duplicate named box (id: 29) that confuses the engine
+				removeCurrObj = true;
+			}
+			break;
+		default:
+			break;
+		}
+		if (removeCurrObj) {
+			removeCurrObj = false;
+			_objects[objectId].name = Common::String::format("REMOVED%02d", removedIndexRef++);
+			_objects[objectId].isObstacle  = 0;
+			_objects[objectId].isClickable = 0;
+			_objects[objectId].isHotMouse  = 0;
+			_objects[objectId].unknown1    = 0;
+			_objects[objectId].isTarget    = 0;
+		}
+	}
+	return;
+}
+#endif // BLADERUNNER_ORIGINAL_BUGS
 
 } // End of namespace BladeRunner

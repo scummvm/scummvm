@@ -105,6 +105,25 @@ private:
 	 * Creates a new Glk window to attach to the window
 	 */
 	void createGlkWindow();
+
+	/**
+	 * Updates the current font/style
+	 */
+	void updateStyle();
+
+	/**
+	 * Get the bounding area for the window
+	 */
+	Rect getBounds() const;
+public:
+	int _currFont;
+	int _prevFont;
+	int _tempFont;
+	int _currStyle;
+	int _oldStyle;
+	int _quotes;
+	int _dashes;
+	int _spaces;
 public:
 	/**
 	 * Constructor
@@ -140,9 +159,19 @@ public:
 	PropertyAccessor operator[](WindowProperty propType) { return PropertyAccessor(this, propType); }
 
 	/**
+	 * Ensures that the underlying window is a Glk text window
+	 */
+	void ensureTextWindow();
+
+	/**
 	 * Set the window size
 	 */
 	void setSize(const Point &newSize);
+
+	/**
+	 * Copys a window's size to the underlying Glk one, if present
+	 */
+	void setSize();
 
 	/**
 	 * Set the position of a window
@@ -150,9 +179,19 @@ public:
 	void setPosition(const Point &newPos);
 
 	/**
+	 * Copys a window's position to the underlying Glk one, if present
+	 */
+	void setPosition();
+
+	/**
 	 * Set the cursor position
 	 */
 	void setCursor(const Point &newPos);
+
+	/**
+	 * Copys a window's position to the underlying Glk one, if present
+	 */
+	void setCursor();
 
 	/**
 	 * Clear the window
@@ -170,9 +209,29 @@ public:
 	void updateColors(uint fore, uint back);
 
 	/**
+	 * Set the font
+	 */
+	uint setFont(uint font);
+
+	/**
 	 * Set the textstyle
 	 */
-	void setStyle(uint style);
+	void setStyle(int style = -1);
+
+	/**
+	 * Set reverse video
+	 */
+	void setReverseVideo(bool reverse);
+
+	/**
+	 * Draw an image
+	 */
+	bool imageDraw(uint image, ImageAlign align, int val);
+
+	/**
+	 * Draw a scaled image
+	 */
+	bool imageDrawScaled(uint image, int val1, int val2, uint width, uint height);
 };
 
 /**
@@ -226,6 +285,11 @@ public:
 		assert(_windows[_cwin]._win);
 		return _windows[_cwin]._win;
 	}
+
+	/**
+	 * Places any text windows in front of the background in V6 games
+	 */
+	void showTextWindows();
 };
 
 } // End of namespace Frotz

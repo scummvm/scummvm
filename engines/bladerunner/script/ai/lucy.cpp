@@ -62,7 +62,7 @@ bool AIScriptLucy::Update() {
 
 	if (Global_Variable_Query(kVariableChapter) == 4
 	 && Actor_Query_Goal_Number(kActorLucy) == kGoalLucyGone
-	 && Actor_Query_Which_Set_In(kActorLucy) != 99
+	 && Actor_Query_Which_Set_In(kActorLucy) != kSetFreeSlotI
 	) {
 		if (Actor_Query_Which_Set_In(kActorLucy) != Player_Query_Current_Set()) {
 			Actor_Put_In_Set(kActorLucy, kSetFreeSlotI);
@@ -111,14 +111,14 @@ bool AIScriptLucy::Update() {
 }
 
 void AIScriptLucy::TimerExpired(int timer) {
-	AI_Countdown_Timer_Reset(kActorLucy, 0);
-	if (timer == 0
-	 && Actor_Query_Goal_Number(kActorLucy) == kGoalLucyGoToHF03
-	) {
-		if (Player_Query_Current_Scene() == kSceneHF03) {
-			AI_Countdown_Timer_Start(kActorLucy, 0, 20);
-		} else {
-			Actor_Set_Goal_Number(kActorLucy, kGoalLucyMoveAround);
+	if (timer == kActorTimerAIScriptCustomTask0) { // rephrased this to be more expandable (if required)
+		AI_Countdown_Timer_Reset(kActorLucy, kActorTimerAIScriptCustomTask0);
+		if (Actor_Query_Goal_Number(kActorLucy) == kGoalLucyGoToHF03) {
+			if (Player_Query_Current_Scene() == kSceneHF03) {
+				AI_Countdown_Timer_Start(kActorLucy, kActorTimerAIScriptCustomTask0, 20);
+			} else {
+				Actor_Set_Goal_Number(kActorLucy, kGoalLucyMoveAround);
+			}
 		}
 	}
 }
@@ -132,8 +132,8 @@ void AIScriptLucy::CompletedMovementTrack() {
 			Actor_Set_Goal_Number(kActorLucy, kGoalLucyReturnToHF03);
 			return; //true;
 		}
-		AI_Countdown_Timer_Reset(kActorLucy, 0);
-		AI_Countdown_Timer_Start(kActorLucy, 0, 30);
+		AI_Countdown_Timer_Reset(kActorLucy, kActorTimerAIScriptCustomTask0);
+		AI_Countdown_Timer_Start(kActorLucy, kActorTimerAIScriptCustomTask0, 30);
 		break;
 
 	case kGoalLucyHF03RunOutPhase1:
@@ -249,6 +249,28 @@ void AIScriptLucy::Retired(int byActorId) {
 		Actor_Modify_Friendliness_To_Other(kActorClovis, kActorMcCoy, -6);
 	}
 
+#if BLADERUNNER_ORIGINAL_BUGS
+#else
+	if (Actor_Query_In_Set(kActorLucy, kSetKP07)) {
+		Global_Variable_Decrement(kVariableReplicantsSurvivorsAtMoonbus, 1);
+		Actor_Set_Goal_Number(kActorLucy, kGoalLucyGone);
+
+		if (Global_Variable_Query(kVariableReplicantsSurvivorsAtMoonbus) == 0) {
+			Player_Loses_Control();
+			Delay(2000);
+			Player_Set_Combat_Mode(false);
+			Loop_Actor_Walk_To_XYZ(kActorMcCoy, -12.0f, -41.58f, 72.0f, 0, true, false, false);
+			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
+			Ambient_Sounds_Remove_All_Looping_Sounds(1);
+			Game_Flag_Set(kFlagKP07toKP06);
+			Game_Flag_Reset(kFlagMcCoyIsHelpingReplicants);
+			Set_Enter(kSetKP05_KP06, kSceneKP06);
+
+			return; //true;
+		}
+	}
+#endif // BLADERUNNER_ORIGINAL_BUGS
+
 	if ((byActorId == kActorSteele
 	  || byActorId == kActorMcCoy
 	 )
@@ -258,7 +280,7 @@ void AIScriptLucy::Retired(int byActorId) {
 		Non_Player_Actor_Combat_Mode_On(kActorSteele, kActorCombatStateUncover, true, kActorMcCoy, 15, kAnimationModeCombatIdle, kAnimationModeCombatWalk, kAnimationModeCombatRun, 0, 0, 100, 25, 300, false);
 	}
 
-	if (Query_Difficulty_Level() != 0
+	if (Query_Difficulty_Level() != kGameDifficultyEasy
 	 && byActorId == kActorMcCoy
 	 && Game_Flag_Query(kFlagLucyIsReplicant)
 	) {
@@ -505,7 +527,7 @@ bool AIScriptLucy::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 	case kGoalLucyUG01RunAway:
 		AI_Movement_Track_Flush(kActorLucy);
 		AI_Movement_Track_Append_Run(kActorLucy, 545, 0);
-		AI_Movement_Track_Append(kActorLucy, 33, 0);
+		AI_Movement_Track_Append(kActorLucy, 33, 0); // kSetFreeSlotA
 		AI_Movement_Track_Repeat(kActorLucy);
 		break;
 
@@ -795,7 +817,7 @@ bool AIScriptLucy::ChangeAnimationMode(int mode) {
 		_animationFrame = 0;
 		break;
 
-	case 48:
+	case kAnimationModeDie:
 		_animationState = 7;
 		_animationFrame = 0;
 		break;

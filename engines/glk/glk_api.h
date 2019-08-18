@@ -32,6 +32,18 @@
 
 namespace Glk {
 
+class GlkAPI;
+
+typedef void (GlkAPI::*GlkFunction)();
+
+struct gidispatch_function_struct {
+	uint32 id;
+	const char *name;
+	GlkFunction fnptr;
+};
+typedef gidispatch_function_struct gidispatch_function_t;
+
+
 /**
  * Implements the GLK interface
  */
@@ -283,6 +295,22 @@ public:
 
 	void garglk_window_get_cursor(winid_t win, uint *xpos, uint *ypos);
 	void garglk_window_get_cursor_current(uint *xpos, uint *ypos);
+
+	/* dispa methods */
+
+	void gidispatch_set_object_registry(gidispatch_rock_t(*regi)(void *obj, uint objclass),
+		void(*unregi)(void *obj, uint objclass, gidispatch_rock_t objrock));
+
+	void gidispatch_set_retained_registry(gidispatch_rock_t(*regi)(void *array, uint len, const char *typecode),
+		void(*unregi)(void *array, uint len, const char *typecode, gidispatch_rock_t objrock));
+
+	uint32 gidispatch_count_classes() const;
+	const gidispatch_intconst_t *gidispatch_get_class(uint32 index) const;
+	uint32 gidispatch_count_intconst() const;
+	const gidispatch_intconst_t *gidispatch_get_intconst(uint32 index) const;
+	const char *gidispatch_prototype(uint32 funcnum) const;
+	void gidispatch_call(uint32 funcnum, uint32 numargs, gluniversal_t *arglist);
+	gidispatch_rock_t gidispatch_get_objrock(void *obj, uint objclass);
 };
 
 } // End of namespace Glk

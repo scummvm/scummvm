@@ -698,7 +698,7 @@ builtIn(random) {
 	trimStack(fun->stack);
 	if (num <= 0)
 		num = 1;
-	fun->reg.setVariable(SVT_INT, 0 /*rand() % num*/); //TODO:false value
+	fun->reg.setVariable(SVT_INT, g_sludge->getRandomSource()->getRandomNumber(num - 1));
 	return BR_CONTINUE;
 }
 

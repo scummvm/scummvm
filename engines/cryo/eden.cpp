@@ -559,6 +559,8 @@ void EdenGame::move(Direction dir) {
 	case kCryoWest:
 		newLoc = room->_exits[3];
 		break;
+	default:
+		break;
 	}
 	deplaval((roomNum & 0xFF00) | newLoc);
 }
@@ -581,6 +583,8 @@ void EdenGame::move2(Direction dir) {
 		break;
 	case kCryoWest:
 		newLoc = room->_exits[3];
+		break;
+	default:
 		break;
 	}
 	deplaval((roomNum & 0xFF00) | newLoc);
@@ -3125,11 +3129,16 @@ void EdenGame::tyranDies(perso_t *perso) {
 }
 
 void EdenGame::specialObjects(perso_t *perso, char objid) {
+
+#include "common/pack-start.h"	// START STRUCT PACKING
+
 	struct SpecialObject {
 		int8  _characterType;
 		int8  _objectId;
 		void  (EdenGame::*dispFct)(perso_t *perso);
 	};
+
+#include "common/pack-end.h"	// END STRUCT PACKING
 
 	static SpecialObject kSpecialObjectActions[] = {
 		//    persoType, objectId, dispFct
@@ -7090,9 +7099,9 @@ void EdenGame::projectionFix(Cube *cubep, int n) {
 		int y = cubep->_vertices[i].y;
 		int z = cubep->_vertices[i].z;
 
-		int transformX = _passMat31 * x + _passMat21 * y + _passMat11 * z + (int)(_translationX * 256.0f);
-		int transformY = _passMat32 * x + _passMat22 * y + _passMat12 * z + (int)(_translationY * 256.0f);
-		int transformZ = _passMat33 * x + _passMat23 * y + _passMat13 * z + (int)(_translationZ * 256.0f);
+		int transformX = _passMat31 * x + _passMat21 * y + _passMat11 * z + (int)(_translationX * 256.0F);
+		int transformY = _passMat32 * x + _passMat22 * y + _passMat12 * z + (int)(_translationY * 256.0F);
+		int transformZ = _passMat33 * x + _passMat23 * y + _passMat13 * z + (int)(_translationZ * 256.0F);
 
 		transformZ >>= 8;
 		if (transformZ == -256)
@@ -7166,7 +7175,7 @@ void EdenGame::loadMap(int file_id, byte *buffer) {
 }
 
 void EdenGame::NEWcharge_objet_mob(Cube *cubep, int fileNum, byte *texturePtr) {
-	char *tmp1 = (char *)malloc(454);
+	char *tmp1 = new char[454];
 	if (_vm->getPlatform() == Common::kPlatformMacintosh)
 		loadpartoffile(fileNum, tmp1, 0, 454);
 	else {
@@ -7214,7 +7223,7 @@ void EdenGame::NEWcharge_objet_mob(Cube *cubep, int fileNum, byte *texturePtr) {
 		} else
 			tmp4[i]->ff_4 = 0;
 	}
-	free(tmp1);
+	delete[] tmp1;
 	cubep->_num = count2;
 	cubep->_faces = tmp4;
 	cubep->_projection = projection;

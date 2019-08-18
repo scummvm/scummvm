@@ -129,7 +129,7 @@ private:
 	static jint main(JNIEnv *env, jobject self, jobjectArray args);
 
 	static void pushEvent(JNIEnv *env, jobject self, int type, int arg1,
-							int arg2, int arg3, int arg4, int arg5);
+							int arg2, int arg3, int arg4, int arg5, int arg6);
 	static void enableZoning(JNIEnv *env, jobject self, jboolean enable);
 
 	static void setPause(JNIEnv *env, jobject self, jboolean value);

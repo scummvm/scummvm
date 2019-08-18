@@ -22,6 +22,7 @@
 
 #include "common/system.h"
 #include "common/keyboard.h"
+#include "common/macresman.h"
 
 #include "graphics/primitives.h"
 #include "graphics/font.h"
@@ -75,7 +76,7 @@ struct MacMenuSubItem {
 	bool enabled;
 	Common::Rect bbox;
 
-	MacMenuSubItem(const char *t, int a, int s = 0, char sh = 0, bool e = true) : text(t), unicode(false), action(a), style(s), shortcut(sh), enabled(e) {}
+	MacMenuSubItem(const Common::String &t, int a, int s = 0, char sh = 0, bool e = true) : text(t), unicode(false), action(a), style(s), shortcut(sh), enabled(e) {}
 	MacMenuSubItem(const Common::U32String &t, int a, int s = 0, char sh = 0, bool e = true) : unicodeText(t), unicode(true), action(a), style(s), shortcut(sh), enabled(e) {}
 };
 
@@ -89,7 +90,7 @@ struct MacMenuItem {
 	Common::Rect bbox;
 	Common::Rect subbbox;
 
-	MacMenuItem(const char *n) : name(n), unicode(false) {}
+	MacMenuItem(const Common::String &n) : name(n), unicode(false) {}
 	MacMenuItem(const Common::U32String &n) : unicodeName(n), unicode(true) {}
 };
 
@@ -183,7 +184,7 @@ static Common::U32String readUnicodeString(Common::SeekableReadStream *stream) {
 
 
 MacMenu *MacMenu::createMenuFromPEexe(Common::PEResources &exe, MacWindowManager *wm) {
-	Common::SeekableReadStream *menuData = exe.getResource(Common::kPEMenu, 128);
+	Common::SeekableReadStream *menuData = exe.getResource(Common::kWinMenu, 128);
 	if (!menuData)
 		return nullptr;
 
@@ -260,7 +261,7 @@ void MacMenu::addStaticMenus(const MacMenuData *data) {
 	calcDimensions();
 }
 
-int MacMenu::addMenuItem(const char *name) {
+int MacMenu::addMenuItem(const Common::String &name) {
 	MacMenuItem *i = new MacMenuItem(name);
 	_items.push_back(i);
 
@@ -274,7 +275,7 @@ int MacMenu::addMenuItem(const Common::U32String &name) {
 	return _items.size() - 1;
 }
 
-void MacMenu::addMenuSubItem(int id, const char *text, int action, int style, char shortcut, bool enabled) {
+void MacMenu::addMenuSubItem(int id, const Common::String &text, int action, int style, char shortcut, bool enabled) {
 	_items[id]->subitems.push_back(new MacMenuSubItem(text, action, style, shortcut, enabled));
 
 	calcMenuBounds(_items[id]);
@@ -304,6 +305,52 @@ void MacMenu::calcDimensions() {
 		calcMenuBounds(_items[i]);
 
 		x += w + kMenuSpacing;
+	}
+}
+
+void MacMenu::loadMenuResource(Common::MacResManager *resFork, uint16 id) {
+	Common::SeekableReadStream *res = resFork->getResource(MKTAG('M', 'E', 'N', 'U'), id);
+	assert(res);
+
+	uint16 menuID = res->readUint16BE();
+	/* uint16 width = */ res->readUint16BE();
+	/* uint16 height = */ res->readUint16BE();
+	/* uint16 resourceID = */ res->readUint16BE();
+	/* uint16 placeholder = */ res->readUint16BE();
+	uint32 initialState = res->readUint32BE();
+	Common::String menuTitle = res->readPascalString();
+
+	if (!menuTitle.empty()) {
+		int menu = addMenuItem(menuTitle);
+		initialState >>= 1;
+
+		// Read submenu items
+		int action = menuID << 16;
+		while (true) {
+			Common::String subMenuTitle = res->readPascalString();
+			if (subMenuTitle.empty())
+				break;
+
+			/* uint8 icon = */ res->readByte();
+			uint8 key = res->readByte();
+			/* uint8 mark = */ res->readByte();
+			uint8 style = res->readByte();
+
+			addMenuSubItem(menu, subMenuTitle, action++, style, key, initialState & 1);
+			initialState >>= 1;
+		}
+	}
+
+	delete res;
+}
+
+void MacMenu::loadMenuBarResource(Common::MacResManager *resFork, uint16 id) {
+	Common::SeekableReadStream *res = resFork->getResource(MKTAG('M', 'B', 'A', 'R'), id);
+	assert(res);
+
+	uint16 count = res->readUint16BE();
+	for (int i = 0; i < count; i++) {
+		loadMenuResource(resFork, res->readUint16BE());
 	}
 }
 
@@ -378,7 +425,7 @@ void MacMenu::createSubMenuFromString(int id, const char *str, int commandId) {
 					}
 			}
 
-			menu->subitems.push_back(new MacMenuSubItem(item.c_str(), commandId, style, shortcut, enabled));
+			menu->subitems.push_back(new MacMenuSubItem(item, commandId, style, shortcut, enabled));
 		}
 
 		item.clear();
@@ -682,7 +729,8 @@ bool MacMenu::mouseMove(int x, int y) {
 bool MacMenu::mouseRelease(int x, int y) {
 	if (_menuActivated) {
 		_menuActivated = false;
-		_isVisible = false;
+		if (_wm->_mode & kWMModeAutohideMenu)
+			_isVisible = false;
 
 		if (_wm->_mode & kWMModalMenuMode) {
 			_wm->pauseEngine(false);

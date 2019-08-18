@@ -169,7 +169,7 @@ reg_t kSetSynonyms(EngineState *s, int argc, reg_t *argv) {
 	Vocabulary *voc = g_sci->getVocabulary();
 
 	// Only SCI0-SCI1 EGA games had a parser. In newer versions, this is a stub
-	if (getSciVersion() > SCI_VERSION_1_EGA_ONLY)
+	if (!g_sci->hasParser())
 		return s->r_acc;
 
 	voc->clearSynonyms();

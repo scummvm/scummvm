@@ -28,14 +28,14 @@ void SceneScriptPS15::InitializeScene() {
 	Setup_Scene_Information(-360.0f, -113.43f, 50.0f, 0);
 	Scene_Exit_Add_2D_Exit(0, 0, 0, 20, 479, 3);
 	Scene_Exit_Add_2D_Exit(1, 620, 0, 639, 479, 1);
-	Ambient_Sounds_Add_Looping_Sound(384, 20, 1, 1);
-	Ambient_Sounds_Add_Looping_Sound(141, 80, 0, 1);
-	Ambient_Sounds_Add_Sound(385, 5, 50, 8, 8, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(156, 5, 20, 30, 30, -70, 70, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(157, 5, 20, 30, 30, -70, 70, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(158, 5, 20, 30, 30, -70, 70, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(73, 5, 20, 5, 9, -70, 70, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(74, 5, 20, 5, 9, -70, 70, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Looping_Sound(kSfxRUMLOOP1, 20, 1, 1);
+	Ambient_Sounds_Add_Looping_Sound(kSfxLABAMB3,  80, 0, 1);
+	Ambient_Sounds_Add_Sound(kSfxPHONE1, 5, 50,  8,  8, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxPAGE1,  5, 20, 30, 30,  -70,  70, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxPAGE2,  5, 20, 30, 30,  -70,  70, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxPAGE3,  5, 20, 30, 30,  -70,  70, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxSWEEP3, 5, 20,  5,  9,  -70,  70, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxSWEEP4, 5, 20,  5,  9,  -70,  70, -101, -101, 0, 0);
 	Actor_Put_In_Set(kActorSergeantWalls, kSetPS15);
 	Actor_Set_At_XYZ(kActorSergeantWalls, -265.4f, -113.43f, -31.29f, 623);
 }
@@ -43,7 +43,7 @@ void SceneScriptPS15::InitializeScene() {
 void SceneScriptPS15::SceneLoaded() {
 	Obstacle_Object("E.ARCH", true);
 	if (Global_Variable_Query(kVariableChapter) == 2) {
-		Item_Add_To_World(kItemWeaponsCrate, 983, 101, -208.0f, -113.43f, 30.28f, 750, 16, 12, false, true, false, true);
+		Item_Add_To_World(kItemWeaponsCrate, kModelAnimationWeaponsCrate, 101, -208.0f, -113.43f, 30.28f, 750, 16, 12, false, true, false, true);
 	}
 }
 
@@ -62,7 +62,7 @@ bool SceneScriptPS15::ClickedOnActor(int actorId) {
 		 )
 		 && !Actor_Clue_Query(kActorMcCoy, kClueShippingForm)
 		) {
-			if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -256.0f, -113.43f, 43.51f, 0, true, false, 0)) {
+			if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -256.0f, -113.43f, 43.51f, 0, true, false, false)) {
 				Actor_Face_Actor(kActorMcCoy, kActorSergeantWalls, true);
 				Actor_Face_Actor(kActorSergeantWalls, kActorMcCoy, true);
 				Actor_Says(kActorMcCoy, 4470, 17);
@@ -70,7 +70,7 @@ bool SceneScriptPS15::ClickedOnActor(int actorId) {
 				Actor_Says(kActorMcCoy, 4475, 18);
 				Actor_Says(kActorMcCoy, 4480, 13);
 				Actor_Says(kActorSergeantWalls, 140, 16);
-				Item_Pickup_Spin_Effect(965, 211, 239);
+				Item_Pickup_Spin_Effect(kModelAnimationWeaponsOrderForm, 211, 239);
 				Actor_Says(kActorSergeantWalls, 150, 14);
 				Actor_Clue_Acquire(kActorMcCoy, kClueShippingForm, true, kActorSergeantWalls);
 				if (!Game_Flag_Query(kFlagPS04WeaponsOrderForm)) {
@@ -100,8 +100,13 @@ bool SceneScriptPS15::ClickedOnItem(int itemId, bool a2) {
 			Actor_Says(kActorSergeantWalls, 160, 14);
 			Actor_Says(kActorMcCoy, 4490, 12);
 			Actor_Says(kActorSergeantWalls, 170, 13);
-			Actor_Clue_Acquire(kActorMcCoy, kClueWeaponsOrderForm, true, kActorMcCoy);
-			Actor_Clue_Acquire(kActorMcCoy, kCluePoliceIssueWeapons, true, kActorMcCoy);
+#if BLADERUNNER_ORIGINAL_BUGS
+			Actor_Clue_Acquire(kActorMcCoy, kClueWeaponsOrderForm,   true, kActorMcCoy); // A bug? Shouldn't the last argument be -1 or kActorSergeantWalls here?
+			Actor_Clue_Acquire(kActorMcCoy, kCluePoliceIssueWeapons, true, kActorMcCoy); // A bug? Shouldn't the last argument be -1 or kActorSergeantWalls here?
+#else
+			Actor_Clue_Acquire(kActorMcCoy, kClueWeaponsOrderForm,   true, kActorSergeantWalls);
+			Actor_Clue_Acquire(kActorMcCoy, kCluePoliceIssueWeapons, true, kActorSergeantWalls);
+#endif // BLADERUNNER_ORIGINAL_BUGS
 		}
 		return true;
 	}
@@ -110,7 +115,7 @@ bool SceneScriptPS15::ClickedOnItem(int itemId, bool a2) {
 
 bool SceneScriptPS15::ClickedOnExit(int exitId) {
 	if (exitId == 0) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -360.0f, -113.43f, 50.0f, 0, true, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -360.0f, -113.43f, 50.0f, 0, true, false, false)) {
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
 			Game_Flag_Set(kFlagPS15toPS05);
@@ -120,10 +125,15 @@ bool SceneScriptPS15::ClickedOnExit(int exitId) {
 	}
 
 	if (exitId == 1) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -183.58f, -113.43f, 91.7f, 0, true, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -183.58f, -113.43f, 91.7f, 0, true, false, false)) {
 			Actor_Says(kActorMcCoy, 4440, 18);
 			Actor_Says(kActorSergeantWalls, 150, 17);
-			Sound_Play(155, 90, 0, 0, 50);
+#if BLADERUNNER_ORIGINAL_BUGS
+			// Sometimes the scene transition code (or the Ambient_Sounds_Remove_All_Non_Looping_Sounds)
+			// would stop this from playing (rare occasions)
+			// Solution: moved into PS10 code
+			Sound_Play(kSfxLABBUZZ1, 90, 0, 0, 50);
+#endif // BLADERUNNER_ORIGINAL_BUGS
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
 			Set_Enter(kSetPS10_PS11_PS12_PS13, kScenePS10);
@@ -144,7 +154,7 @@ void SceneScriptPS15::ActorChangedGoal(int actorId, int newGoal, int oldGoal, bo
 }
 
 void SceneScriptPS15::PlayerWalkedIn() {
-	Loop_Actor_Walk_To_XYZ(kActorMcCoy, -326.93f, -113.43f, 101.42f, 0, false, false, 0);
+	Loop_Actor_Walk_To_XYZ(kActorMcCoy, -326.93f, -113.43f, 101.42f, 0, false, false, false);
 	if (!Game_Flag_Query(kFlagPS15Entered)) {
 		Actor_Face_Actor(kActorMcCoy, kActorSergeantWalls, true);
 		Actor_Face_Actor(kActorSergeantWalls, kActorMcCoy, true);
@@ -152,6 +162,16 @@ void SceneScriptPS15::PlayerWalkedIn() {
 		Actor_Says(kActorMcCoy, 4445, 18);
 		Actor_Says(kActorSergeantWalls, 10, 12);
 		Actor_Says(kActorMcCoy, 4450, 18);
+		if (_vm->_cutContent && !Game_Flag_Query(kFlagSergeantWallsMazeInstructions)) {
+			// TODO: These instructions don't make much sense... Is it better to not restore this at all?
+			//       Could there have been a system with a bell-tone that was removed from the original version?
+			Game_Flag_Set(kFlagSergeantWallsMazeInstructions);
+			Actor_Says(kActorSergeantWalls, 20, 13);
+			Actor_Says(kActorSergeantWalls, 30, 12);
+			Actor_Says(kActorMcCoy, 4455, 12);
+			Actor_Says(kActorSergeantWalls, 40, 12);
+			Actor_Says(kActorSergeantWalls, 50, 12);
+		}
 		Actor_Says(kActorSergeantWalls, 60, 13);
 		Actor_Says(kActorSergeantWalls, 70, 12);
 		Actor_Says(kActorMcCoy, 4460, 15);

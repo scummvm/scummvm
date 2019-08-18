@@ -32,6 +32,7 @@
 #include "bladerunner/game_info.h"
 #include "bladerunner/music.h"
 #include "bladerunner/settings.h"
+#include "bladerunner/subtitles.h"
 #include "bladerunner/text_resource.h"
 #include "bladerunner/ui/kia.h"
 #include "bladerunner/ui/kia_shapes.h"
@@ -64,8 +65,13 @@ KIASectionSettings::KIASectionSettings(BladeRunnerEngine *vm)
 	_speechVolume         = new UISlider(_vm, sliderCallback, this, Common::Rect(180, 210, 460, 220), _vm->_mixer->kMaxMixerVolume, 0);
 #endif
 
-	_directorsCut         = new UICheckBox(_vm, checkBoxCallback, this, Common::Rect(180, 364, 270, 374), 0, false);
-	_subtitlesEnable      = new UICheckBox(_vm, checkBoxCallback, this, Common::Rect(311, 364, 380, 374), 0, false); // moved further to the right to avoid overlap with 'Designer's Cut' in some language versions (ESP)
+	if (_vm->_language == Common::RU_RUS) {
+		_directorsCut         = new UICheckBox(_vm, checkBoxCallback, this, Common::Rect(180, 364, 436, 374), 0, false); // expanded click-bounding box x-axis
+		_subtitlesEnable      = new UICheckBox(_vm, checkBoxCallback, this, Common::Rect(276, 376, 345, 386), 0, false); // moved to new line
+	} else {
+		_directorsCut         = new UICheckBox(_vm, checkBoxCallback, this, Common::Rect(180, 364, 270, 374), 0, false);
+		_subtitlesEnable      = new UICheckBox(_vm, checkBoxCallback, this, Common::Rect(311, 364, 380, 374), 0, false); // moved further to the right to avoid overlap with 'Designer's Cut' in some language versions (ESP)
+	}
 	_playerAgendaSelector = new UIImagePicker(_vm, 5);
 
 	_uiContainer->add(_musicVolume);
@@ -76,7 +82,9 @@ KIASectionSettings::KIASectionSettings(BladeRunnerEngine *vm)
 	_uiContainer->add(_gammaCorrection);
 #endif
 	_uiContainer->add(_directorsCut);
-	_uiContainer->add(_subtitlesEnable);
+	if (_vm->_subtitles->isSystemActive()) {
+		_uiContainer->add(_subtitlesEnable);
+	}
 
 	_learyPos = 0;
 }
@@ -145,78 +153,83 @@ void KIASectionSettings::draw(Graphics::Surface &surface) {
 	const char *textLight = _vm->_textOptions->getText(15);
 #endif
 
-	// Allow this to be loading as an extra text item in the resource for text options
-	const char *subtitlesTranslation = "Subtitles";
-	if (_vm->_languageCode == "E") {
-		subtitlesTranslation = "Subtitles"; // EN_ANY
-	}
-	else if (_vm->_languageCode == "G") {
-		subtitlesTranslation = "Untertitel"; // DE_DEU
-	}
-	else if (_vm->_languageCode == "F") {
-		subtitlesTranslation = "Sous-titres"; // FR_FRA
-	}
-	else if (_vm->_languageCode == "I") {
-		subtitlesTranslation = "Sottotitoli"; // IT_ITA
-	}
-	else if (_vm->_languageCode == "R") {
-		subtitlesTranslation = "Subtitry";  // RU_RUS
-	}
-	else if (_vm->_languageCode == "S") {
-		subtitlesTranslation = "Subtitulos"; // ES_ESP
-	}
-
-	const char *textSubtitles  = strcmp(_vm->_textOptions->getText(42), "") == 0? subtitlesTranslation : _vm->_textOptions->getText(42); // +1 to the max of original index of textOptions which is 41
-
-	int posConversationChoices = 320 - _vm->_mainFont->getTextWidth(textConversationChoices) / 2;
-	int posMusic = 320 - _vm->_mainFont->getTextWidth(textMusic) / 2;
-	int posSoundEffects = 320 - _vm->_mainFont->getTextWidth(textSoundEffects) / 2;
-	int posSpeech = 320 - _vm->_mainFont->getTextWidth(textSpeech) / 2;
-	int posSoft = 178 - _vm->_mainFont->getTextWidth(textSoft);
+	int posConversationChoices = 320 - _vm->_mainFont->getStringWidth(textConversationChoices) / 2;
+	int posMusic = 320 - _vm->_mainFont->getStringWidth(textMusic) / 2;
+	int posSoundEffects = 320 - _vm->_mainFont->getStringWidth(textSoundEffects) / 2;
+	int posSpeech = 320 - _vm->_mainFont->getStringWidth(textSpeech) / 2;
+	int posSoft = 178 - _vm->_mainFont->getStringWidth(textSoft);
 #if BLADERUNNER_ORIGINAL_SETTINGS
-	int posAmbientSound = 320 - _vm->_mainFont->getTextWidth(textAmbientSound) / 2;
-	int posGammaCorrection = 320 - _vm->_mainFont->getTextWidth(textGammaCorrection) / 2;
-	int posDark = 178 - _vm->_mainFont->getTextWidth(textDark);
+	int posAmbientSound = 320 - _vm->_mainFont->getStringWidth(textAmbientSound) / 2;
+	int posGammaCorrection = 320 - _vm->_mainFont->getStringWidth(textGammaCorrection) / 2;
+	int posDark = 178 - _vm->_mainFont->getStringWidth(textDark);
 #endif
 
 	_uiContainer->draw(surface);
 	_playerAgendaSelector->draw(surface);
 
-	_vm->_mainFont->drawColor(textConversationChoices, surface, posConversationChoices, 280, 0x7751);
+	_vm->_mainFont->drawString(&surface, textConversationChoices, posConversationChoices, 280, surface.w, surface.format.RGBToColor(232, 208, 136));
 
-	_vm->_mainFont->drawColor(textMusic, surface, posMusic, 150, 0x7751);
-	_vm->_mainFont->drawColor(textSoft, surface, posSoft, 161, 0x6EEE);
-	_vm->_mainFont->drawColor(textLoud, surface, 462, 161, 0x6EEE);
+	_vm->_mainFont->drawString(&surface, textMusic, posMusic, 150, surface.w, surface.format.RGBToColor(232, 208, 136));
+	_vm->_mainFont->drawString(&surface, textSoft, posSoft, 161, surface.w, surface.format.RGBToColor(216, 184, 112));
+	_vm->_mainFont->drawString(&surface, textLoud, 462, 161, surface.w, surface.format.RGBToColor(216, 184, 112));
 
-	_vm->_mainFont->drawColor(textSoundEffects, surface, posSoundEffects, 175, 0x7751);
-	_vm->_mainFont->drawColor(textSoft, surface, posSoft, 186, 0x6EEE);
-	_vm->_mainFont->drawColor(textLoud, surface, 462, 186, 0x6EEE);
+	_vm->_mainFont->drawString(&surface, textSoundEffects, posSoundEffects, 175, surface.w, surface.format.RGBToColor(232, 208, 136));
+	_vm->_mainFont->drawString(&surface, textSoft, posSoft, 186, surface.w, surface.format.RGBToColor(216, 184, 112));
+	_vm->_mainFont->drawString(&surface, textLoud, 462, 186, surface.w, surface.format.RGBToColor(216, 184, 112));
 
 #if BLADERUNNER_ORIGINAL_SETTINGS
-	_vm->_mainFont->drawColor(textAmbientSound, surface, posAmbientSound, 200, 0x7751);
-	_vm->_mainFont->drawColor(textSoft, surface, posSoft, 211, 0x6EEE);
-	_vm->_mainFont->drawColor(textLoud, surface, 462, 211, 0x6EEE);
+	_vm->_mainFont->drawString(&surface, textAmbientSound, posAmbientSound, 200, surface.w, surface.format.RGBToColor(232, 208, 136));
+	_vm->_mainFont->drawString(&surface, textSoft, posSoft, 211, surface.w, surface.format.RGBToColor(216, 184, 112));
+	_vm->_mainFont->drawString(&surface, textLoud, 462, 211, surface.w, surface.format.RGBToColor(216, 184, 112));
 
-	_vm->_mainFont->drawColor(textSpeech, surface, posSpeech, 225, 0x7751);
-	_vm->_mainFont->drawColor(textSoft, surface, posSoft, 236, 0x6EEE);
-	_vm->_mainFont->drawColor(textLoud, surface, 462, 236, 0x6EEE);
+	_vm->_mainFont->drawString(&surface, textSpeech, posSpeech, 225, surface.w, surface.format.RGBToColor(232, 208, 136));
+	_vm->_mainFont->drawString(&surface, textSoft, posSoft, 236, surface.w, surface.format.RGBToColor(216, 184, 112));
+	_vm->_mainFont->drawString(&surface, textLoud, 462, 236, surface.w, surface.format.RGBToColor(216, 184, 112));
 
-	_vm->_mainFont->drawColor(textGammaCorrection, surface, posGammaCorrection, 250, 0x7751);
-	_vm->_mainFont->drawColor(textDark, surface, posDark, 261, 0x6EEE);
-	_vm->_mainFont->drawColor(textLight, surface, 462, 261, 0x6EEE);
+	_vm->_mainFont->drawString(&surface, textGammaCorrection, posGammaCorrection, 250, surface.w, surface.format.RGBToColor(232, 208, 136));
+	_vm->_mainFont->drawString(&surface, textDark, posDark, 261, surface.w, surface.format.RGBToColor(216, 184, 112));
+	_vm->_mainFont->drawString(&surface, textLight, 462, 261, surface.w, surface.format.RGBToColor(216, 184, 112));
 #else
-	_vm->_mainFont->drawColor(textSpeech, surface, posSpeech, 200, 0x7751);
-	_vm->_mainFont->drawColor(textSoft, surface, posSoft, 211, 0x6EEE);
-	_vm->_mainFont->drawColor(textLoud, surface, 462, 211, 0x6EEE);
+	_vm->_mainFont->drawString(&surface, textSpeech, posSpeech, 200, surface.w, surface.format.RGBToColor(232, 208, 136));
+	_vm->_mainFont->drawString(&surface, textSoft, posSoft, 211, surface.w, surface.format.RGBToColor(216, 184, 112));
+	_vm->_mainFont->drawString(&surface, textLoud, 462, 211, surface.w, surface.format.RGBToColor(216, 184, 112));
 #endif
 
-	_vm->_mainFont->drawColor(textDesignersCut, surface, 192, 365, 0x7751);
-	_vm->_mainFont->drawColor(textSubtitles, surface, 323, 365, 0x7751); // moved further to the right to avoid overlap with 'Designer's Cut' in some language versions (ESP)
+	_vm->_mainFont->drawString(&surface, textDesignersCut, 192, 365, surface.w, surface.format.RGBToColor(232, 208, 136));
+
+	if (_vm->_subtitles->isSystemActive()) {
+		// Allow this to be loading as an extra text item in the resource for text options
+		const char *subtitlesTranslation = "Subtitles";
+		if (_vm->_language == Common::EN_ANY) {
+			subtitlesTranslation = "Subtitles";        // EN_ANY
+		} else if (_vm->_language == Common::DE_DEU) {
+			subtitlesTranslation = "Untertitel";       // DE_DEU
+		} else if (_vm->_language == Common::FR_FRA) {
+			subtitlesTranslation = "Sous-titres";      // FR_FRA
+		} else if (_vm->_language == Common::IT_ITA) {
+			subtitlesTranslation = "Sottotitoli";      // IT_ITA
+		} else if (_vm->_language == Common::RU_RUS) {
+			// The supported Russian version is using its own KIA6PT.FON
+			// where it has replaced the mapping of Latin characters to Russian characters
+			// So the character string here does not make sense, but it will appear correctly
+			subtitlesTranslation = "CE,NBNHS";         // RU_RUS "Subtitry"
+		} else if (_vm->_language == Common::ES_ESP) {
+			subtitlesTranslation = "Subtitulos";       // ES_ESP
+		}
+
+		const char *textSubtitles  = strcmp(_vm->_textOptions->getText(42), "") == 0? subtitlesTranslation : _vm->_textOptions->getText(42); // +1 to the max of original index of textOptions which is 41
+
+		if (_vm->_language == Common::RU_RUS) {
+			_vm->_mainFont->drawString(&surface, textSubtitles, 288, 376, surface.w, surface.format.RGBToColor(232, 208, 136)); // special case for Russian version, put the option in a new line to avoid overlap
+		} else {
+			_vm->_mainFont->drawString(&surface, textSubtitles, 323, 365, surface.w, surface.format.RGBToColor(232, 208, 136)); // moved further to the right to avoid overlap with 'Designer's Cut' in some language versions (ESP)
+		}
+	}
 
 	_playerAgendaSelector->drawTooltip(surface, _mouseX, _mouseY);
 }
 
-void KIASectionSettings::handleKeyUp(const Common::KeyState &kbd) {
+void KIASectionSettings::handleKeyDown(const Common::KeyState &kbd) {
 	if (toupper(kbd.ascii) != kLeary[_learyPos]) {
 		_learyPos = 0;
 	}
@@ -279,17 +292,17 @@ void KIASectionSettings::sliderCallback(void *callbackData, void *source) {
 	}
 #else
 	if (source == self->_musicVolume) {
-		self->_vm->_mixer->setVolumeForSoundType(self->_vm->_mixer->kMusicSoundType, self->_musicVolume->_value);
-		self->_vm->_music->playSample();
 		ConfMan.setInt("music_volume", self->_musicVolume->_value);
+		self->_vm->syncSoundSettings();
+		self->_vm->_music->playSample();
 	} else if (source == self->_soundEffectVolume) {
-		self->_vm->_mixer->setVolumeForSoundType(self->_vm->_mixer->kSFXSoundType, self->_soundEffectVolume->_value);
-		self->_vm->_audioPlayer->playSample();
 		ConfMan.setInt("sfx_volume", self->_soundEffectVolume->_value);
+		self->_vm->syncSoundSettings();
+		self->_vm->_audioPlayer->playSample();
 	} else if (source == self->_speechVolume) {
-		self->_vm->_mixer->setVolumeForSoundType(self->_vm->_mixer->kSpeechSoundType, self->_speechVolume->_value);
-		self->_vm->_audioSpeech->playSample();
 		ConfMan.setInt("speech_volume", self->_speechVolume->_value);
+		self->_vm->syncSoundSettings();
+		self->_vm->_audioSpeech->playSample();
 	}
 #endif
 }
@@ -310,7 +323,7 @@ void KIASectionSettings::checkBoxCallback(void *callbackData, void *source) {
 
 void KIASectionSettings::mouseInCallback(int buttonId, void *callbackData) {
 	KIASectionSettings *self = (KIASectionSettings *)callbackData;
-	self->_vm->_audioPlayer->playAud(self->_vm->_gameInfo->getSfxTrack(508), 100, 0, 0, 50, 0);
+	self->_vm->_audioPlayer->playAud(self->_vm->_gameInfo->getSfxTrack(kSfxTEXT3), 100, 0, 0, 50, 0);
 }
 
 void KIASectionSettings::mouseUpCallback(int buttonId, void *callbackData) {
@@ -321,27 +334,27 @@ void KIASectionSettings::mouseUpCallback(int buttonId, void *callbackData) {
 void KIASectionSettings::onButtonPressed(int buttonId) {
 	switch (buttonId) {
 	case 0:
-		_vm->_audioPlayer->playAud(_vm->_gameInfo->getSfxTrack(513), 90, -30, -30, 50, 0);
+		_vm->_audioPlayer->playAud(_vm->_gameInfo->getSfxTrack(kSfxELECBP1), 90, -30, -30, 50, 0);
 		_vm->_settings->setPlayerAgenda(0);
 		initConversationChoices();
 		break;
 	case 1:
-		_vm->_audioPlayer->playAud(_vm->_gameInfo->getSfxTrack(513), 90, -15, -15, 50, 0);
+		_vm->_audioPlayer->playAud(_vm->_gameInfo->getSfxTrack(kSfxELECBP1), 90, -15, -15, 50, 0);
 		_vm->_settings->setPlayerAgenda(1);
 		initConversationChoices();
 		break;
 	case 2:
-		_vm->_audioPlayer->playAud(_vm->_gameInfo->getSfxTrack(513), 90, 0, 0, 50, 0);
+		_vm->_audioPlayer->playAud(_vm->_gameInfo->getSfxTrack(kSfxELECBP1), 90, 0, 0, 50, 0);
 		_vm->_settings->setPlayerAgenda(2);
 		initConversationChoices();
 		break;
 	case 3:
-		_vm->_audioPlayer->playAud(_vm->_gameInfo->getSfxTrack(513), 90, 15, 15, 50, 0);
+		_vm->_audioPlayer->playAud(_vm->_gameInfo->getSfxTrack(kSfxELECBP1), 90, 15, 15, 50, 0);
 		_vm->_settings->setPlayerAgenda(3);
 		initConversationChoices();
 		break;
 	case 4:
-		_vm->_audioPlayer->playAud(_vm->_gameInfo->getSfxTrack(513), 90, 30, 30, 50, 0);
+		_vm->_audioPlayer->playAud(_vm->_gameInfo->getSfxTrack(kSfxELECBP1), 90, 30, 30, 50, 0);
 		_vm->_settings->setPlayerAgenda(4);
 		initConversationChoices();
 		break;

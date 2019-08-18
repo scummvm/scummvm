@@ -72,7 +72,7 @@ protected:
 	int _languageIndexSize;
 	char _lastStringTag[12+1];
 
-#if defined(__SYMBIAN32__) || defined(_WIN32_WCE) // for some reason VC6 cannot find the base class TextObject
+#if defined(__SYMBIAN32__) // for some reason VC6 cannot find the base class TextObject
 	struct SubtitleText {
 		int16 xpos, ypos;
 		byte color;

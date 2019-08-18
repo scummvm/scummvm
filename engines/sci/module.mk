@@ -77,11 +77,13 @@ MODULE_OBJS := \
 	sound/drivers/fmtowns.o \
 	sound/drivers/midi.o \
 	sound/drivers/pcjr.o \
+	sound/drivers/pc9801.o \
 	video/seq_decoder.o
 
 
 ifdef ENABLE_SCI32
 MODULE_OBJS += \
+	engine/hoyle5poker.o \
 	engine/kgraphics32.o \
 	graphics/celobj32.o \
 	graphics/controls32.o \

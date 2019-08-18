@@ -27,6 +27,7 @@
 
 #include "common/config-manager.h"
 #include "backends/platform/wince/wince-sdl.h"
+#include "backends/platform/wince/missing/fopen.h"
 #include "backends/mixer/wincesdl/wincesdl-mixer.h"
 #include "common/system.h"
 #include "common/textconsole.h"

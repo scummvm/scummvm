@@ -144,9 +144,9 @@ bool SceneObjects::existsOnXZ(int exceptSceneObjectId, float x, float z, bool mo
 				if (sceneObject->isRetired) {
 					isObstacle = false;
 				} else if (sceneObject->isMoving) {
-					isObstacle = movingActorIsObstacle != 0;
+					isObstacle = movingActorIsObstacle;
 				} else {
-					isObstacle = standingActorIsObstacle != 0;
+					isObstacle = standingActorIsObstacle;
 				}
 			} else {
 				isObstacle = sceneObject->isObstacle;
@@ -156,6 +156,21 @@ bool SceneObjects::existsOnXZ(int exceptSceneObjectId, float x, float z, bool mo
 				float x1, y1, z1, x2, y2, z2;
 				sceneObject->boundingBox.getXYZ(&x1, &y1, &z1, &x2, &y2, &z2);
 				if (z1 <= zMax && z2 >= zMin && x1 <= xMax && x2 >= xMin) {
+//					if (sceneObject->type == kSceneObjectTypeObject) {
+//						Vector3 a(x1,y1,z1);
+//						Vector3 b(x2,y2,z2);
+//						Vector3 pos = _vm->_view->calculateScreenPosition(0.5 * (a + b));
+//						debug("%d: %s (Clk: %s, Trg: %s, Prs: %s, Obs: %s, Mvg: %s), Pos(%02.2f,%02.2f,%02.2f)\n     Bbox(%02.2f,%02.2f,%02.2f) ~ (%02.2f,%02.2f,%02.2f)\n",
+//								 sceneObject->id - kSceneObjectOffsetObjects,
+//								 _vm->_scene->objectGetName(sceneObject->id - kSceneObjectOffsetObjects).c_str(),
+//								 sceneObject->isClickable? "T" : "F",
+//								 sceneObject->isTarget?    "T" : "F",
+//								 sceneObject->isPresent?   "T" : "F",
+//								 sceneObject->isObstacle?  "T" : "F",
+//								 sceneObject->isMoving?    "T" : "F",
+//								 pos.x, pos.y, pos.z,
+//								 a.x, a.y, a.z, b.x, b.y, b.z);
+//					}
 					return true;
 				}
 			}

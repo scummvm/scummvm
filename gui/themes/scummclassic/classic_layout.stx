@@ -58,6 +58,12 @@
 		<widget name = 'SmallLabel'
 				size = '24, Globals.Line.Height'
 		/>
+		<widget name = 'CloudTabLabel'
+				size = '200, Globals.Line.Height'
+		/>
+		<widget name = 'CloudTabLabelValue'
+				size = '200, Globals.Line.Height'
+		/>
 
 		<widget name = 'ShortOptionsLabel'
 				size = '60, Globals.Line.Height'
@@ -65,6 +71,9 @@
 
 		<widget name = 'Button'
 				size = '108, 24'
+		/>
+		<widget name = 'WideButton'
+				size = '216, 24'
 		/>
 		<widget name = 'Slider'
 				size = '128, 18'
@@ -602,49 +611,139 @@
 
 	<dialog name = 'GlobalOptions_Cloud_Container' overlays = 'GlobalOptions_Cloud.Container'>
 		<layout type = 'vertical' padding = '16, 16, 16, 16' spacing = '8'>
-			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '10' center = 'true'>
-				<widget name = 'StoragePopupDesc'
-						type = 'OptionsLabel'
-				/>
-				<widget name = 'StoragePopup'
-						type = 'PopUp'
-				/>
+			<layout type = 'horizontal' padding = '-19, 7, 0, 0' spacing = '10'>
+				<layout type = 'vertical' padding = '0, 0, 2, 0' spacing = '2'>
+					<widget name = 'StoragePopupDesc'
+							type = 'OptionsLabel'
+							height = 'Globals.Line.Height'
+					/>
+				</layout>
+				<layout type = 'vertical' padding = '0, 0, 0, 0' spacing = '2'>
+					<widget name = 'StoragePopup'
+							type = 'PopUp'
+					/>
+				</layout>
 			</layout>
 			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '10' center = 'true'>
-				<widget name = 'StorageUsernameDesc'
-						type = 'OptionsLabel'
-				/>
-				<widget name = 'StorageUsernameLabel'
+				<layout type = 'vertical' padding = '0, 0, 8, 0' spacing = '4'>
+					<widget name = 'StorageDisabledHint'
+							height = 'Globals.Line.Height'
+					/>
+					<widget name = 'StorageEnableButton'
+							type = 'Button'
+					/>
+				</layout>
+			</layout>
+			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '10' center = 'true'>
+				<layout type = 'vertical' padding = '0, 0, 6, 0' spacing = '2'>
+					<widget name = 'StorageUsernameDesc'
+							type = 'CloudTabLabel'
+					/>
+					<widget name = 'StorageUsernameLabel'
+							type = 'CloudTabLabelValue'
+					/>
+				</layout>
+				<layout type = 'vertical' padding = '0, 0, 6, 0' spacing = '2'>
+					<widget name = 'StorageUsedSpaceDesc'
+							type = 'CloudTabLabel'
+					/>
+					<widget name = 'StorageUsedSpaceLabel'
+							type = 'CloudTabLabelValue'
+					/>
+				</layout>
+			</layout>
+			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '10' center = 'true'>
+				<layout type = 'vertical' padding = '0, 0, 6, 0' spacing = '2'>
+					<widget name = 'StorageLastSyncDesc'
+							type = 'CloudTabLabel'
+					/>
+					<widget name = 'StorageLastSyncLabel'
+							type = 'CloudTabLabelValue'
+					/>
+				</layout>
+				<layout type = 'vertical' padding = '0, 0, 7, 0' spacing = '2'>
+					<widget name = 'SyncSavesButton'
+							type = 'Button'
+					/>
+				</layout>
+			</layout>
+			<layout type = 'horizontal' padding = '0, 0, -4, 0' spacing = '10' center = 'true'>
+				<widget name = 'StorageSyncHint'
 						height = 'Globals.Line.Height'
 				/>
 			</layout>
 			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '10' center = 'true'>
-				<widget name = 'StorageUsedSpaceDesc'
-						type = 'OptionsLabel'
+				<layout type = 'vertical' padding = '0, 0, 6, 0' spacing = '4'>
+					<widget name = 'StorageDownloadHint'
+							height = 'Globals.Line.Height'
+					/>
+					<widget name = 'DownloadButton'
+							type = 'WideButton'
+					/>
+				</layout>
+			</layout>
+			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '10' center = 'true'>
+				<layout type = 'vertical' padding = '0, 0, 8, 0' spacing = '4'>
+					<widget name = 'StorageDisconnectHint'
+							height = 'Globals.Line.Height'
+					/>
+					<widget name = 'DisconnectButton'
+							type = 'Button'
+					/>
+				</layout>
+			</layout>
+
+			<!-- here goes unconnected Storage layout (connection wizard) -->
+			<layout type = 'vertical' padding = '0, 0, 6, 0' spacing = '2'>
+				<widget name = 'StorageWizardNotConnectedHint'
+						height = 'Globals.Line.Height'
 				/>
-				<widget name = 'StorageUsedSpaceLabel'
+			</layout>
+			<layout type = 'horizontal' padding = '0, 0, -2, 0' spacing = '10' center = 'true'>
+				<layout type = 'vertical' padding = '0, 0, 2, 0' spacing = '4'>
+					<widget name = 'StorageWizardOpenLinkHint'
+							width = '106'
+							height = 'Globals.Line.Height'
+					/>
+				</layout>
+				<layout type = 'vertical' padding = '0, 0, 1, 0' spacing = '4'>
+					<widget name = 'StorageWizardLink'
+							width = '192'
+							height = 'Globals.Line.Height'
+					/>
+				</layout>
+			</layout>
+			<layout type = 'horizontal' padding = '0, 0, -2, 0' spacing = '10' center = 'true'>
+				<widget name = 'StorageWizardCodeHint'
 						height = 'Globals.Line.Height'
 				/>
 			</layout>
 			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '10' center = 'true'>
-				<widget name = 'StorageLastSyncDesc'
-						type = 'OptionsLabel'
+				<layout type = 'vertical' padding = '0, 0, -2, 0' spacing = '2'>
+					<widget name = 'StorageWizardCodeBox'
+						width = '108'
+						height = '24'
+					/>
+				</layout>
+				<layout type = 'vertical' padding = '0, 0, -2, 0' spacing = '2'>
+					<widget name = 'StorageWizardPasteButton'
+							type = 'Button'
+					/>
+				</layout>
+			</layout>
+			<layout type = 'horizontal' padding = '0, 0, -2, 0' spacing = '10' center = 'true'>
+				<widget name = 'StorageWizardConnectButton'
+						type = 'Button'
 				/>
-				<widget name = 'StorageLastSyncLabel'
+				<widget name = 'StorageWizardConnectionStatusHint'
 						height = 'Globals.Line.Height'
 				/>
 			</layout>
-			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '10' center = 'true'>
-				<widget name = 'ConnectButton'
-						type = 'Button'
-				/>
-				<widget name = 'RefreshButton'
-						type = 'Button'
-				/>
-				<widget name = 'DownloadButton'
-						type = 'Button'
-				/>
-			</layout>
+		</layout>
+	</dialog>
+
+	<dialog name = 'GlobalOptions_Network' overlays = 'Dialog.GlobalOptions.TabWidget'>
+		<layout type = 'vertical' padding = '16, 16, 16, 16' spacing = '8'>
 			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '10' center = 'true'>
 				<widget name = 'RunServerButton'
 						type = 'Button'
@@ -676,6 +775,14 @@
 				<widget name = 'ServerPortClearButton'
 						height = 'Globals.Line.Height'
 						width = 'Globals.Line.Height'
+				/>
+			</layout>
+			<layout type = 'vertical' padding = '0, 0, 0, 0' spacing = '4' center = 'true'>
+				<widget name = 'FeatureDescriptionLine1'
+						height = 'Globals.Line.Height'
+				/>
+				<widget name = 'FeatureDescriptionLine2'
+						height = 'Globals.Line.Height'
 				/>
 			</layout>
 		</layout>
@@ -710,99 +817,6 @@
 				/>
 				<space/>
 				<widget name = 'CloseButton'
-						type = 'Button'
-				/>
-			</layout>
-		</layout>
-	</dialog>
-
-	<dialog name = 'GlobalOptions_Cloud_ConnectionWizard' overlays = 'Dialog.GlobalOptions'>
-		<layout type = 'vertical' padding = '0, 0, 0, 0'>		
-			<widget name = 'Container'/>
-		</layout>
-	</dialog>
-
-	<dialog name = 'GlobalOptions_Cloud_ConnectionWizard_Container' overlays = 'GlobalOptions_Cloud_ConnectionWizard.Container'>
-		<layout type = 'vertical' padding = '16, 16, 16, 16' spacing = '0'>
-			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '10' center = 'true'>
-				<layout type = 'vertical' padding = '0, 0, 0, 0' spacing = '6'>
-					<widget name = 'Picture'
-							width = '109'
-							height = '109'
-					/>
-					<widget name = 'OpenUrlButton'
-							type = 'Button'
-					/>
-					<widget name = 'PasteCodeButton'
-							type = 'Button'
-					/>
-				</layout>
-				<layout type = 'vertical' padding = '0, 0, 0, 0' spacing = '6'>
-					<widget name = 'Headline'
-							height = 'Globals.Line.Height'
-					/>
-					<space size = '4' />
-					<widget name = 'NavigateLine'
-							height = 'Globals.Line.Height'
-					/>
-					<widget name = 'URLLine'
-							height = 'Globals.Line.Height'
-					/>
-					<space size = '4' />
-					<widget name = 'ReturnLine1'
-							height = 'Globals.Line.Height'
-					/>
-					<widget name = 'ReturnLine2'
-							height = 'Globals.Line.Height'
-					/>
-					<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '4' center = 'true'>
-						<widget name = 'CodeBox1'
-							width = '70'
-							height = 'Globals.Line.Height'
-						/>
-						<widget name = 'CodeBox2'
-							width = '70'
-							height = 'Globals.Line.Height'
-						/>
-						<widget name = 'CodeBox3'
-							width = '70'
-							height = 'Globals.Line.Height'
-						/>
-						<widget name = 'CodeBox4'
-							width = '70'
-							height = 'Globals.Line.Height'
-						/>
-					</layout>
-					<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '4' center = 'true'>
-						<widget name = 'CodeBox5'
-							width = '70'
-							height = 'Globals.Line.Height'
-						/>
-						<widget name = 'CodeBox6'
-							width = '70'
-							height = 'Globals.Line.Height'
-						/>
-						<widget name = 'CodeBox7'
-							width = '70'
-							height = 'Globals.Line.Height'
-						/>
-						<widget name = 'CodeBox8'
-							width = '70'
-							height = 'Globals.Line.Height'
-						/>
-					</layout>
-					<widget name = 'MessageLine'
-							height = 'Globals.Line.Height'
-					/>
-					<space size = '6' />
-				</layout>
-			</layout>
-			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '10' center = 'true'>
-				<widget name = 'CancelButton'
-						type = 'Button'
-				/>
-				<space />
-				<widget name = 'ConnectButton'
 						type = 'Button'
 				/>
 			</layout>

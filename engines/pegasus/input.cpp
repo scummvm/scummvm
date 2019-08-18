@@ -175,6 +175,35 @@ void InputDeviceManager::waitInput(const InputBits filter) {
 	}
 }
 
+uint InputDeviceManager::convertJoystickToKey(uint joybutton) {
+	switch (joybutton) {
+	case Common::JOYSTICK_BUTTON_A:
+		return Common::KEYCODE_RETURN; // Action
+	case Common::JOYSTICK_BUTTON_B:
+		// nothing
+		break;
+	case Common::JOYSTICK_BUTTON_X:
+		return Common::KEYCODE_i; // Display Object Info
+	case Common::JOYSTICK_BUTTON_Y:
+		return Common::KEYCODE_t; // Toggle Data Display
+	case Common::JOYSTICK_BUTTON_LEFT_SHOULDER:
+		return Common::KEYCODE_TILDE; // Open Inventory Panel
+	case Common::JOYSTICK_BUTTON_RIGHT_SHOULDER:
+		return Common::KEYCODE_KP_MULTIPLY; // Open Biochip Panel
+	case Common::JOYSTICK_BUTTON_BACK:
+		return Common::KEYCODE_p; // Pause
+	case Common::JOYSTICK_BUTTON_DPAD_UP:
+		return Common::KEYCODE_UP;
+	case Common::JOYSTICK_BUTTON_DPAD_DOWN:
+		return Common::KEYCODE_DOWN;
+	case Common::JOYSTICK_BUTTON_DPAD_LEFT:
+		return Common::KEYCODE_LEFT;
+	case Common::JOYSTICK_BUTTON_DPAD_RIGHT:
+		return Common::KEYCODE_RIGHT;
+	}
+	return 0;
+}
+
 bool InputDeviceManager::notifyEvent(const Common::Event &event) {
 	if (GUI::GuiManager::instance().isActive()) {
 		// For some reason, the engine hooks in the event system using an EventObserver.
@@ -214,6 +243,16 @@ bool InputDeviceManager::notifyEvent(const Common::Event &event) {
 		// Set the key to up if we have it
 		if (_keyMap.contains(event.kbd.keycode))
 			_keyMap[event.kbd.keycode] = false;
+		break;
+	case Common::EVENT_JOYAXIS_MOTION:
+		break;
+	case Common::EVENT_JOYBUTTON_DOWN:
+		if (_keyMap.contains(convertJoystickToKey(event.joystick.button)))
+			_keyMap[convertJoystickToKey(event.joystick.button)] = true;
+		break;
+	case Common::EVENT_JOYBUTTON_UP:
+		if (_keyMap.contains(convertJoystickToKey(event.joystick.button)))
+			_keyMap[convertJoystickToKey(event.joystick.button)] = false;
 		break;
 	default:
 		break;

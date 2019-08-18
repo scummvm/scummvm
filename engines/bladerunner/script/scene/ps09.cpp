@@ -33,13 +33,13 @@ void SceneScriptPS09::InitializeScene() {
 
 	Scene_Exit_Add_2D_Exit(0, 0, 0, 30, 479, 3);
 
-	Ambient_Sounds_Remove_All_Non_Looping_Sounds(0);
-	Ambient_Sounds_Add_Looping_Sound(138, 50, 0, 0);
-	Ambient_Sounds_Add_Looping_Sound(137, 30, 0, 0);
-	Ambient_Sounds_Add_Looping_Sound(124, 30, 0, 0);
-	Ambient_Sounds_Add_Sound(125, 15, 60, 7, 10, 100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(126, 25, 60, 7, 10, 100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(127, 25, 60, 7, 10, 100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Remove_All_Non_Looping_Sounds(false);
+	Ambient_Sounds_Add_Looping_Sound(kSfxBRBED5X,  50, 0, 0);
+	Ambient_Sounds_Add_Looping_Sound(kSfxPRISAMB1, 30, 0, 0);
+	Ambient_Sounds_Add_Looping_Sound(kSfxPRISAMB3, 30, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxPRISSLM1, 15, 60, 7, 10, 100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxPRISSLM2, 25, 60, 7, 10, 100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxPRISSLM3, 25, 60, 7, 10, 100, 100, -101, -101, 0, 0);
 
 	if (!Game_Flag_Query(kFlagGrigorianArrested)) {
 		Actor_Put_In_Set(kActorGrigorian, kSetPS09);
@@ -76,7 +76,7 @@ bool SceneScriptPS09::ClickedOn3DObject(const char *objectName, bool a2) {
 
 bool SceneScriptPS09::ClickedOnActor(int actorId) {
 	if (actorId == kActorGrigorian) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -381.11f, 0.0f, -135.55f, 0, true, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -381.11f, 0.0f, -135.55f, 0, true, false, false)) {
 			Actor_Face_Actor(kActorMcCoy, kActorGrigorian, true);
 			Actor_Face_Actor(kActorGrigorian, kActorMcCoy, true);
 
@@ -142,7 +142,7 @@ bool SceneScriptPS09::ClickedOnActor(int actorId) {
 	}
 
 	if (actorId == kActorIzo) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -473.0f, 0.2f, -133.0f, 12, true, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -473.0f, 0.2f, -133.0f, 12, true, false, false)) {
 			Actor_Face_Actor(kActorMcCoy, kActorIzo, true);
 			Actor_Face_Actor(kActorIzo, kActorMcCoy, true);
 
@@ -177,7 +177,7 @@ bool SceneScriptPS09::ClickedOnActor(int actorId) {
 	}
 
 	if (actorId == kActorCrazylegs) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -295.0f, 0.34f, -193.0f, 12, true, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -295.0f, 0.34f, -193.0f, 12, true, false, false)) {
 			Actor_Face_Actor(kActorMcCoy, kActorCrazylegs, true);
 			Actor_Face_Actor(kActorCrazylegs, kActorMcCoy, true);
 
@@ -229,7 +229,7 @@ bool SceneScriptPS09::ClickedOnItem(int itemId, bool a2) {
 
 bool SceneScriptPS09::ClickedOnExit(int exitId) {
 	if (exitId == 0) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -559.15f, 0.0f, -85.06f, 0, 1, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -559.15f, 0.0f, -85.06f, 0, true, false, false)) {
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
 			Set_Enter(kSetPS02, kScenePS02);
@@ -254,7 +254,7 @@ void SceneScriptPS09::SceneFrameAdvanced(int frame) {
 	 || frame == 52
 	 || frame == 54
 	) {
-		Sound_Play(97, Random_Query(50, 33), 10, 10, 50);
+		Sound_Play(kSfxNEON7, Random_Query(50, 33), 10, 10, 50);
 	}
 	//return true;
 }
@@ -272,7 +272,7 @@ void SceneScriptPS09::PlayerWalkedIn() {
 	}
 	if (!Game_Flag_Query(kFlagPS09Entered)) {
 		Player_Loses_Control();
-		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -491.15f, 0.0f, -73.06f, 0, 0, false, 0);
+		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -491.15f, 0.0f, -73.06f, 0, false, false, false);
 		Player_Gains_Control();
 		Game_Flag_Set(kFlagPS09Entered);
 	}
@@ -296,9 +296,18 @@ void SceneScriptPS09::dialogueWithGrigorian() {
 	 || Actor_Clue_Query(kActorMcCoy, kClueGrigorianInterviewB1)
 	 || Actor_Clue_Query(kActorMcCoy, kClueGrigorianInterviewB2)
 	) {
-		DM_Add_To_List_Never_Repeat_Once_Selected(170, 5, 5, 3); // PROTEST
+		DM_Add_To_List_Never_Repeat_Once_Selected(170,  5, 5, 3); // PROTEST
 		DM_Add_To_List_Never_Repeat_Once_Selected(180, -1, 5, 5); // CARS
-		DM_Add_To_List_Never_Repeat_Once_Selected(200, -1, 3, 6); // VOIGT-KAMPFF
+		if ((_vm->_cutContent
+		     && (!Game_Flag_Query(kFlagPS09GrigorianVKChosen)
+		         && (!Actor_Clue_Query(kActorMcCoy, kClueVKGrigorianHuman) && !Actor_Clue_Query(kActorMcCoy, kClueVKGrigorianReplicant))))
+		    || !_vm->_cutContent
+		) {
+			if (_vm->_cutContent) {
+				Dialogue_Menu_Clear_Never_Repeat_Was_Selected_Flag(200);
+			}
+			DM_Add_To_List_Never_Repeat_Once_Selected(200, -1, 3, 6); // VOIGT-KAMPFF
+		}
 	}
 	if (Actor_Clue_Query(kActorMcCoy, kClueGrigoriansNote) // cut feature? it is impossible to obtain this clue
 	 && (Actor_Clue_Query(kActorMcCoy, kClueGrigorianInterviewA)
@@ -308,7 +317,11 @@ void SceneScriptPS09::dialogueWithGrigorian() {
 	) {
 		DM_Add_To_List_Never_Repeat_Once_Selected(190, 5, 6, -1); // NOTE
 	}
-	Dialogue_Menu_Add_To_List(210); // DONE
+#if BLADERUNNER_ORIGINAL_BUGS
+	Dialogue_Menu_Add_To_List(210); // DONE // A bug? why not Dialogue_Menu_Add_DONE_To_List?
+#else
+	Dialogue_Menu_Add_DONE_To_List(210); // DONE
+#endif // BLADERUNNER_ORIGINAL_BUGS
 
 	Dialogue_Menu_Appear(320, 240);
 	int answer = Dialogue_Menu_Query_Input();
@@ -343,6 +356,9 @@ void SceneScriptPS09::dialogueWithGrigorian() {
 			Actor_Says(kActorGrigorian, 170, 15);
 			Actor_Says(kActorGrigorian, 180, 16);
 			Actor_Says(kActorMcCoy, 4315, 18);
+			if (_vm->_cutContent) {
+				Actor_Says(kActorGrigorian, 190, kAnimationModeTalk); // Everything and anything.
+			}
 			Actor_Says(kActorGrigorian, 200, 13);
 			return;
 		}
@@ -355,11 +371,17 @@ void SceneScriptPS09::dialogueWithGrigorian() {
 		Actor_Says(kActorGrigorian, 220, 13);
 		Actor_Says(kActorGrigorian, 230, 14);
 		Actor_Says(kActorMcCoy, 4320, 14);
+		if (_vm->_cutContent) {
+			Actor_Says(kActorMcCoy, 4325, kAnimationModeTalk); // What else do you guys do besides wave signs
+		}
 		Actor_Says(kActorGrigorian, 240, 16);
 		Actor_Says(kActorGrigorian, 250, 15);
 		Actor_Says(kActorMcCoy, 4330, 13);
 		Actor_Says(kActorGrigorian, 260, 13);
 		Actor_Says(kActorGrigorian, 270, 12);
+		if (_vm->_cutContent) {
+			Actor_Says(kActorGrigorian, 280, 12); // A way for the slaves to escape
+		}
 		Actor_Says(kActorMcCoy, 4335, 18);
 		Actor_Says(kActorGrigorian, 290, 15);
 		Actor_Says(kActorMcCoy, 4340, 13);
@@ -387,6 +409,9 @@ void SceneScriptPS09::dialogueWithGrigorian() {
 			Actor_Says(kActorCrazylegs, 1080, kAnimationModeTalk);
 		} else {
 			Actor_Says(kActorGrigorian, 320, 13);
+			if (_vm->_cutContent) {
+				Actor_Says(kActorGrigorian, 330, kAnimationModeTalk); // Friends with access to vehicles
+			}
 			Actor_Says(kActorGrigorian, 340, 14);
 			Actor_Says(kActorGrigorian, 350, 12);
 			Actor_Says(kActorMcCoy, 4375, 18);
@@ -408,6 +433,9 @@ void SceneScriptPS09::dialogueWithGrigorian() {
 		break;
 
 	case 200: // VOIGT-KAMPFF
+		if (_vm->_cutContent) {
+			Game_Flag_Set(kFlagPS09GrigorianVKChosen);
+		}
 		Actor_Says(kActorMcCoy, 4265, 14);
 		Actor_Says(kActorGrigorian, 400, 13);
 		Actor_Says(kActorMcCoy, 4400, 13);

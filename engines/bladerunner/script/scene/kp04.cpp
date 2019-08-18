@@ -33,18 +33,18 @@ void SceneScriptKP04::InitializeScene() {
 	Scene_Exit_Add_2D_Exit(0,   0, 455, 639, 479, 2);
 	Scene_Exit_Add_2D_Exit(1, 475, 247, 514, 416, 1);
 
-	Ambient_Sounds_Add_Looping_Sound(464, 34, 1, 1);
-	Ambient_Sounds_Add_Looping_Sound(383, 27, 1, 1);
-	Ambient_Sounds_Add_Looping_Sound(384, 90, 1, 1);
-	Ambient_Sounds_Add_Sound(440, 2, 100, 25,  33, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(441, 2, 100, 25,  33, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(442, 2, 100, 25,  33, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(375, 5, 180, 50, 100, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(376, 5, 180, 50, 100, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(377, 5, 180, 50, 100, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(443, 2, 100, 25,  33, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(444, 2, 100, 25,  33, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(445, 2, 100, 25,  33, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Looping_Sound(kSfxKPAMB1,   34, 1, 1);
+	Ambient_Sounds_Add_Looping_Sound(kSfxSKINBED1, 27, 1, 1);
+	Ambient_Sounds_Add_Looping_Sound(kSfxRUMLOOP1, 90, 1, 1);
+	Ambient_Sounds_Add_Sound(kSfxSCARY1,  2, 100, 25,  33, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxSCARY2,  2, 100, 25,  33, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxSCARY3,  2, 100, 25,  33, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxTHNDER2, 5, 180, 50, 100, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxTHNDER3, 5, 180, 50, 100, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxTHNDER4, 5, 180, 50, 100, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxSCARY4,  2, 100, 25,  33, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxSCARY5,  2, 100, 25,  33, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxSCARY6,  2, 100, 25,  33, -100, 100, -101, -101, 0, 0);
 }
 
 void SceneScriptKP04::SceneLoaded() {
@@ -71,7 +71,7 @@ bool SceneScriptKP04::ClickedOnItem(int itemId, bool a2) {
 
 bool SceneScriptKP04::ClickedOnExit(int exitId) {
 	if (exitId == 0) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -905.0f, 94.89f, 1357.0f, 0, true, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -905.0f, 94.89f, 1357.0f, 0, true, false, false)) {
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
 			Game_Flag_Set(kFlagKP04toKP01);
@@ -81,7 +81,7 @@ bool SceneScriptKP04::ClickedOnExit(int exitId) {
 	}
 
 	if (exitId == 1) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -544.0f, 94.89f, 288.0f, 0, true, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -544.0f, 94.89f, 288.0f, 0, true, false, false)) {
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
 			Game_Flag_Set(kFlagKP04toKP05);
@@ -104,7 +104,7 @@ void SceneScriptKP04::ActorChangedGoal(int actorId, int newGoal, int oldGoal, bo
 
 void SceneScriptKP04::PlayerWalkedIn() {
 	if (Game_Flag_Query(kFlagKP05toKP04)) {
-		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -584.0f, 94.89f, 288.0f, 0, false, false, 0);
+		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -584.0f, 94.89f, 288.0f, 0, false, false, false);
 		Game_Flag_Reset(kFlagKP05toKP04);
 	} else {
 		Game_Flag_Reset(kFlagKP01toKP04);

@@ -7,3 +7,4 @@ engines/sci/engine/savegame.cpp
 engines/sci/graphics/controls32.cpp
 engines/sci/resource.cpp
 engines/sci/sci.cpp
+engines/sci/sound/music.cpp

@@ -25,8 +25,8 @@
 
 #include "scumm/scumm.h"
 #include "scumm/imuse/imuse.h"
+#include "scumm/imuse/drivers/fmtowns.h"
 #include "audio/softsynth/fmtowns_pc98/towns_euphony.h"
-#include "audio/softsynth/fmtowns_pc98/towns_midi.h"
 
 namespace Scumm {
 

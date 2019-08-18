@@ -21,6 +21,7 @@
  */
 
 #include "glk/scott/scott.h"
+#include "glk/quetzal.h"
 #include "common/config-manager.h"
 #include "common/translation.h"
 
@@ -508,41 +509,44 @@ void Scott::lineInput(char *buf, size_t n) {
 	buf[ev.val1] = 0;
 }
 
-Common::Error Scott::saveGameData(strid_t file, const Common::String &desc) {
+Common::Error Scott::writeGameData(Common::WriteStream *ws) {
 	Common::String msg;
 
 	for (int ct = 0; ct < 16; ct++) {
 		msg = Common::String::format("%d %d\n", _counters[ct], _roomSaved[ct]);
-		glk_put_string_stream(file, msg.c_str());
+		ws->write(msg.c_str(), msg.size());
+		ws->writeByte(0);
 	}
 
 	msg = Common::String::format("%u %d %d %d %d %d\n",
 								 _bitFlags, (_bitFlags & (1 << DARKBIT)) ? 1 : 0,
 								 MY_LOC, _currentCounter, _savedRoom, _gameHeader._lightTime);
-	glk_put_string_stream(file, msg.c_str());
+	ws->write(msg.c_str(), msg.size());
+	ws->writeByte(0);
 
 	for (int ct = 0; ct <= _gameHeader._numItems; ct++) {
 		msg = Common::String::format("%hd\n", (short)_items[ct]._location);
-		glk_put_string_stream(file, msg.c_str());
+		ws->write(msg.c_str(), msg.size());
+		ws->writeByte(0);
 	}
 
 	output(_("Saved.\n"));
 	return Common::kNoError;
 }
 
-Common::Error Scott::loadGameData(strid_t file) {
-	char buf[128];
+Common::Error Scott::readSaveData(Common::SeekableReadStream *rs) {
+	Common::String line;
 	int ct = 0;
 	short lo;
 	short darkFlag;
 
 	for (ct = 0; ct < 16; ct++) {
-		glk_get_line_stream(file, buf, sizeof buf);
-		sscanf(buf, "%d %d", &_counters[ct], &_roomSaved[ct]);
+		line = QuetzalReader::readString(rs);
+		sscanf(line.c_str(), "%d %d", &_counters[ct], &_roomSaved[ct]);
 	}
 
-	glk_get_line_stream(file, buf, sizeof buf);
-	sscanf(buf, "%u %hd %d %d %d %d\n",
+	line = QuetzalReader::readString(rs);
+	sscanf(line.c_str(), "%u %hd %d %d %d %d\n",
 		   &_bitFlags, &darkFlag, &MY_LOC, &_currentCounter, &_savedRoom,
 		   &_gameHeader._lightTime);
 
@@ -550,8 +554,8 @@ Common::Error Scott::loadGameData(strid_t file) {
 	if (darkFlag)
 		_bitFlags |= (1 << 15);
 	for (ct = 0; ct <= _gameHeader._numItems; ct++) {
-		glk_get_line_stream(file, buf, sizeof buf);
-		sscanf(buf, "%hd\n", &lo);
+		line = QuetzalReader::readString(rs);
+		sscanf(line.c_str(), "%hd\n", &lo);
 		_items[ct]._location = (unsigned char)lo;
 	}
 

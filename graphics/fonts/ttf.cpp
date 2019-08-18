@@ -32,6 +32,7 @@
 #include "graphics/surface.h"
 
 #include "common/file.h"
+#include "common/config-manager.h"
 #include "common/singleton.h"
 #include "common/stream.h"
 #include "common/memstream.h"
@@ -669,14 +670,24 @@ Font *loadTTFFont(Common::SeekableReadStream &stream, int size, TTFSizeMode size
 }
 
 Font *loadTTFFontFromArchive(const Common::String &filename, int size, TTFSizeMode sizeMode, uint dpi, TTFRenderMode renderMode, const uint32 *mapping) {
-	Common::Archive *archive;
-	if (!Common::File::exists("fonts.dat") || (archive = Common::makeZipArchive("fonts.dat")) == nullptr) {
-		return 0;
+	Common::SeekableReadStream *archiveStream = nullptr;
+	if (ConfMan.hasKey("extrapath")) {
+		Common::FSDirectory extrapath(ConfMan.get("extrapath"));
+		archiveStream = extrapath.createReadStreamForMember("fonts.dat");
+	}
+
+	if (!archiveStream) {
+		archiveStream = SearchMan.createReadStreamForMember("fonts.dat");
+	}
+
+	Common::Archive *archive = Common::makeZipArchive(archiveStream);
+	if (!archive) {
+		return nullptr;
 	}
 
 	Common::File f;
 	if (!f.open(filename, *archive)) {
-		return 0;
+		return nullptr;
 	}
 
 	Font *font = loadTTFFont(f, size, sizeMode, dpi, renderMode, mapping);

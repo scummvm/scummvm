@@ -37,18 +37,18 @@ void SceneScriptKP05::InitializeScene() {
 	Scene_Exit_Add_2D_Exit(1,   0, 0,  30, 479, 3);
 	Scene_Exit_Add_2D_Exit(2,   0, 0, 257, 204, 0);
 
-	Ambient_Sounds_Add_Looping_Sound(464, 34, 1, 1);
-	Ambient_Sounds_Add_Looping_Sound(383, 27, 1, 1);
-	Ambient_Sounds_Add_Looping_Sound(384, 90, 1, 1);
-	Ambient_Sounds_Add_Sound(440, 2, 100, 25,  33, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(441, 2, 100, 25,  33, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(442, 2, 100, 25,  33, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(375, 5, 180, 50, 100, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(376, 5, 180, 50, 100, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(377, 5, 180, 50, 100, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(443, 2, 100, 25,  33, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(444, 2, 100, 25,  33, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(445, 2, 100, 25,  33, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Looping_Sound(kSfxKPAMB1,   34, 1, 1);
+	Ambient_Sounds_Add_Looping_Sound(kSfxSKINBED1, 27, 1, 1);
+	Ambient_Sounds_Add_Looping_Sound(kSfxRUMLOOP1, 90, 1, 1);
+	Ambient_Sounds_Add_Sound(kSfxSCARY1,  2, 100, 25,  33, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxSCARY2,  2, 100, 25,  33, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxSCARY3,  2, 100, 25,  33, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxTHNDER2, 5, 180, 50, 100, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxTHNDER3, 5, 180, 50, 100, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxTHNDER4, 5, 180, 50, 100, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxSCARY4,  2, 100, 25,  33, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxSCARY5,  2, 100, 25,  33, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxSCARY6,  2, 100, 25,  33, -100, 100, -101, -101, 0, 0);
 }
 
 void SceneScriptKP05::SceneLoaded() {
@@ -59,7 +59,7 @@ void SceneScriptKP05::SceneLoaded() {
 	if (!Actor_Clue_Query(kActorMcCoy, kCluePowerSource)
 	 &&  Game_Flag_Query(kFlagMcCoyIsHelpingReplicants)
 	) {
-		Item_Add_To_World(kItemPowerSource, 960, kSetKP05_KP06, -1095.0f, 0.0f, 770.0f, 256, 24, 24, false, true, false, true);
+		Item_Add_To_World(kItemPowerSource, kModelAnimationPowerSource, kSetKP05_KP06, -1095.0f, 0.0f, 770.0f, 256, 24, 24, false, true, false, true);
 	}
 }
 
@@ -77,11 +77,11 @@ bool SceneScriptKP05::ClickedOnActor(int actorId) {
 
 bool SceneScriptKP05::ClickedOnItem(int itemId, bool a2) {
 	if (itemId == kItemPowerSource) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -1058.0f, 0.0f, 852.0f, 0, true, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -1058.0f, 0.0f, 852.0f, 0, true, false, false)) {
 			Actor_Face_Item(kActorMcCoy, kItemPowerSource, true);
 			Actor_Clue_Acquire(kActorMcCoy, kCluePowerSource, true, -1);
 			Item_Remove_From_World(kItemPowerSource);
-			Item_Pickup_Spin_Effect(960, 58, 321);
+			Item_Pickup_Spin_Effect(kModelAnimationPowerSource, 58, 321);
 		}
 	}
 	return false;
@@ -89,7 +89,7 @@ bool SceneScriptKP05::ClickedOnItem(int itemId, bool a2) {
 
 bool SceneScriptKP05::ClickedOnExit(int exitId) {
 	if (exitId == 0) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -802.0f, 0.0f, 972.0f, 0, true, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -802.0f, 0.0f, 972.0f, 0, true, false, false)) {
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
 			Game_Flag_Set(kFlagKP05toKP03);
@@ -99,7 +99,7 @@ bool SceneScriptKP05::ClickedOnExit(int exitId) {
 	}
 
 	if (exitId == 1) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -1142.0f, 0.0f, 932.0f, 0, true, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -1142.0f, 0.0f, 932.0f, 0, true, false, false)) {
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
 			Game_Flag_Set(kFlagKP05toKP04);
@@ -109,7 +109,7 @@ bool SceneScriptKP05::ClickedOnExit(int exitId) {
 	}
 
 	if (exitId == 2) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -868.0f, 0.0f, -68.0f, 0, true, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -868.0f, 0.0f, -68.0f, 0, true, false, false)) {
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
 			Game_Flag_Set(kFlagKP05toKP06);
@@ -135,10 +135,10 @@ void SceneScriptKP05::PlayerWalkedIn() {
 	if (Game_Flag_Query(kFlagKP06toKP05)) {
 		Game_Flag_Reset(kFlagKP06toKP05);
 	} else if (Game_Flag_Query(kFlagKP04toKP05)) {
-		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -1110.0f, 0.0f, 932.0f, 0, false, false, 0);
+		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -1110.0f, 0.0f, 932.0f, 0, false, false, false);
 		Game_Flag_Reset(kFlagKP04toKP05);
 	} else {
-		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -846.0f, 0.0f, 972.0f, 0, false, false, 0);
+		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -846.0f, 0.0f, 972.0f, 0, false, false, false);
 		Game_Flag_Query(kFlagKP03toKP05); // bug in game?
 	}
 

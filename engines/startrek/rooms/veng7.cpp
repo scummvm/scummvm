@@ -63,6 +63,11 @@ extern const RoomAction veng7ActionList[] = {
 	{ {ACTION_DONE_ANIM, 4,       0, 0}, &Room::veng7PickedUpCable },
 
 	// Common code
+	{ {ACTION_TICK, 0xff, 0xff, 0xff}, &Room::vengaTick },
+	{ {ACTION_USE, OBJECT_IPHASERS, 0xff,     0}, &Room::vengaUsePhaserAnywhere },
+	{ {ACTION_USE, OBJECT_IPHASERK, 0xff,     0}, &Room::vengaUsePhaserAnywhere },
+	{ {ACTION_LOOK, OBJECT_IHYPO,          0, 0}, &Room::vengaLookAtHypo },
+	{ {ACTION_USE, OBJECT_ICOMM, OBJECT_KIRK, 0}, &Room::vengaUseCommunicator },
 	{ {ACTION_USE, OBJECT_IMEDKIT,  OBJECT_DEAD_GUY, 0}, &Room::vengaUseMccoyOnDeadGuy },
 	{ {ACTION_USE, OBJECT_IMTRICOR, OBJECT_DEAD_GUY, 0}, &Room::vengaUseMccoyOnDeadGuy },
 	{ {ACTION_USE, OBJECT_MCCOY,    OBJECT_DEAD_GUY, 0}, &Room::vengaUseMccoyOnDeadGuy },
@@ -102,41 +107,41 @@ void Room::veng7TouchedTurboliftDoor() {
 }
 
 void Room::veng7LookAtCollapsedSection() {
-	showText(TX_VEN7N001);
+	showDescription(TX_VEN7N001);
 }
 
 void Room::veng7LookAtDeadGuy() {
 	// ENHANCEMENT: Original played TX_VEN0N016. This is reused and boring, and there is
 	// a more interesting unused audio file, so use that instead.
-	showText(TX_VEN7N000);
+	showDescription(TX_VEN7N000);
 }
 
 void Room::veng7LookAtDoor() {
-	showText(TX_VEN7N007);
+	showDescription(TX_VEN7N007);
 }
 
 void Room::veng7LookAtCable() {
-	showText(TX_VEN7N008);
+	showDescription(TX_VEN7N008);
 }
 
 void Room::veng7LookAtKirk() {
-	showText(TX_VEN7N003);
+	showDescription(TX_VEN7N003);
 }
 
 void Room::veng7LookAtSpock() {
-	showText(TX_VEN7N005);
+	showDescription(TX_VEN7N005);
 }
 
 void Room::veng7LookAtMccoy() {
-	showText(TX_VEN7N004);
+	showDescription(TX_VEN7N004);
 }
 
 void Room::veng7LookAtRedshirt() {
-	showText(TX_VEN7N002);
+	showDescription(TX_VEN7N002);
 }
 
 void Room::veng7LookAnywhere() {
-	showText(TX_VEN7N006);
+	showDescription(TX_VEN7N006);
 }
 
 void Room::veng7TalkToKirk() {
@@ -179,7 +184,7 @@ void Room::veng7ReachedCable() {
 
 void Room::veng7PickedUpCable() {
 	loadActorStandAnim(OBJECT_CABLE);
-	showText(TX_VEN7N009);
+	showDescription(TX_VEN7N009);
 	giveItem(OBJECT_ICABLE1);
 	_awayMission->veng.tookCableFromTransporterRoomHallway = true;
 	_awayMission->disableInput = false;

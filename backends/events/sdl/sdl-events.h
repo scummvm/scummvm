@@ -66,7 +66,8 @@ protected:
 	//@{
 
 	struct KbdMouse {
-		int16 x, y, x_vel, y_vel, x_max, y_max, x_down_count, y_down_count, joy_x, joy_y;
+		int32 x, y;
+		int16 x_vel, y_vel, x_max, y_max, x_down_count, y_down_count, joy_x, joy_y;
 		uint32 last_time, delay_time, x_down_time, y_down_time;
 		bool modifier;
 	};
@@ -137,18 +138,24 @@ protected:
 	virtual bool handleMouseMotion(SDL_Event &ev, Common::Event &event);
 	virtual bool handleMouseButtonDown(SDL_Event &ev, Common::Event &event);
 	virtual bool handleMouseButtonUp(SDL_Event &ev, Common::Event &event);
+	virtual bool handleSysWMEvent(SDL_Event &ev, Common::Event &event);
+	virtual int mapSDLJoystickButtonToOSystem(Uint8 sdlButton);
 	virtual bool handleJoyButtonDown(SDL_Event &ev, Common::Event &event);
 	virtual bool handleJoyButtonUp(SDL_Event &ev, Common::Event &event);
 	virtual bool handleJoyAxisMotion(SDL_Event &ev, Common::Event &event);
+	virtual bool handleJoyHatMotion(SDL_Event &ev, Common::Event &event);
 	virtual void updateKbdMouse();
 	virtual bool handleKbdMouse(Common::Event &event);
 
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 	virtual bool handleJoystickAdded(const SDL_JoyDeviceEvent &event);
 	virtual bool handleJoystickRemoved(const SDL_JoyDeviceEvent &device);
+	virtual int mapSDLControllerButtonToOSystem(Uint8 sdlButton);
 	virtual bool handleControllerButton(const SDL_Event &ev, Common::Event &event, bool buttonUp);
 	virtual bool handleControllerAxisMotion(const SDL_Event &ev, Common::Event &event);
 #endif
+
+	bool shouldGenerateMouseEvents();
 
 	//@}
 
@@ -217,6 +224,8 @@ protected:
 	 * window is not focused).
 	 */
 	Common::Event _fakeMouseMove;
+
+	uint8 _lastHatPosition;
 
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 	/**

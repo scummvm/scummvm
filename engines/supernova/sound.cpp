@@ -53,6 +53,14 @@ void Sound::play(MusicId index) {
 					   -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO);
 }
 
+void Sound::playSiren() {
+	Audio::AudioStream *stream = _resMan->getSirenStream();
+
+	stop();
+	_mixer->playStream(Audio::Mixer::kPlainSoundType, &_soundHandle, stream,
+					   -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO);
+}
+
 bool Sound::isPlaying() {
 	return _mixer->isSoundHandleActive(_soundHandle);
 }
@@ -60,6 +68,14 @@ bool Sound::isPlaying() {
 void Sound::stop() {
 	if (_mixer->isSoundHandleActive(_soundHandle))
 		_mixer->stopHandle(_soundHandle);
+}
+
+int Sound::getVolume() {
+	return _mixer->getChannelVolume(_soundHandle);
+}
+
+void Sound::setVolume(int volume) {
+	_mixer->setChannelVolume(_soundHandle, volume);
 }
 
 }

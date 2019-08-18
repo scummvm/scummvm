@@ -88,62 +88,6 @@ uint8 *EoBCoreEngine::loadTownsShape(Common::SeekableReadStream *stream) {
 	return shape;
 }
 
-const uint8 *EoBCoreEngine::loadMonsterProperties(const uint8 *data) {
-	uint8 cmd = *data++;
-	while (cmd != 0xFF) {
-		EoBMonsterProperty *d = &_monsterProps[cmd];
-		d->armorClass = (int8)*data++;
-		d->hitChance = (int8)*data++;
-		d->level = (int8)*data++;
-		d->hpDcTimes = *data++;
-		d->hpDcPips = *data++;
-		d->hpDcBase = *data++;
-		d->attacksPerRound = *data++;
-		d->dmgDc[0].times = *data++;
-		d->dmgDc[0].pips = *data++;
-		d->dmgDc[0].base = (int8)*data++;
-		d->dmgDc[1].times = *data++;
-		d->dmgDc[1].pips = *data++;
-		d->dmgDc[1].base = (int8)*data++;
-		d->dmgDc[2].times = *data++;
-		d->dmgDc[2].pips = *data++;
-		d->dmgDc[2].base = (int8)*data++;
-		d->immunityFlags = READ_LE_UINT16(data);
-		data += 2;
-		d->capsFlags = READ_LE_UINT16(data);
-		data += 2;
-		d->typeFlags = READ_LE_UINT16(data);
-		data += 2;
-		d->experience = READ_LE_UINT16(data);
-		data += 2;
-
-		d->u30 = *data++;
-		d->sound1 = (int8)*data++;
-		d->sound2 = (int8)*data++;
-		d->numRemoteAttacks = *data++;
-
-		if (*data++ != 0xFF) {
-			d->remoteWeaponChangeMode = *data++;
-			d->numRemoteWeapons = *data++;
-
-			for (int i = 0; i < d->numRemoteWeapons; i++) {
-				d->remoteWeapons[i] = (int8)*data;
-				data += 2;
-			}
-		}
-
-		d->tuResist = (int8)*data++;
-		d->dmgModifierEvade = *data++;
-
-		for (int i = 0; i < 3; i++)
-			d->decorations[i] = *data++;
-
-		cmd = *data++;
-	}
-
-	return data;
-}
-
 const uint8 *EoBCoreEngine::loadActiveMonsterData(const uint8 *data, int level) {
 	for (uint8 p = *data++; p != 0xFF; p = *data++) {
 		uint8 v = *data++;
@@ -363,6 +307,7 @@ void EoBCoreEngine::drawBlockObject(int flipped, int page, const uint8 *shape, i
 	const ScreenDim *d = _screen->getScreenDim(sd);
 	if (_flags.gameID == GI_EOB1)
 		x &= ~1;
+	
 	_screen->drawShape(page, shape, x - (d->sx << 3), y - d->sy, sd, flipped | (ovl ? 2 : 0), ovl);
 }
 
@@ -373,7 +318,7 @@ void EoBCoreEngine::drawMonsterShape(const uint8 *shape, int x, int y, int flipp
 		ovl = _monsterFlashOverlay;
 	else if (_flags.gameID == GI_EOB2 && flags & 0x20)
 		ovl = _monsterStoneOverlay;
-	else if (palIndex != -1)
+	else if (palIndex != -1 && _flags.platform != Common::kPlatformAmiga)
 		ovl = _monsterPalettes[palIndex];
 
 	drawBlockObject(flipped, 2, shape, x, y, 5, ovl);
@@ -1037,7 +982,10 @@ bool EoBCoreEngine::updateMonsterTryDistanceAttack(EoBMonsterInPlay *m) {
 			if (s < 20) {
 				monsterSpellCast(m, s);
 			} else if (s == 20) {
-				snd_processEnvironmentalSoundEffect(103, m->block);
+				if (_flags.platform == Common::kPlatformAmiga)
+					snd_processEnvironmentalSoundEffect(39, _currentBlock + 1);
+				else
+					snd_processEnvironmentalSoundEffect(103, m->block);
 				_txt->printMessage(_monsterSpecAttStrings[0]);
 				for (int i = 0; i < 6; i++)
 					statusAttack(i, 4, _monsterSpecAttStrings[1], 1, 5, 9, 1);

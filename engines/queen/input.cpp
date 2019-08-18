@@ -111,15 +111,22 @@ void Input::delay(uint amount) {
 
 			case Common::EVENT_LBUTTONDOWN:
 				_mouseButton |= MOUSE_LBUTTON;
+				if (_dialogueRunning)
+					_talkQuit = true;
 				break;
 
 			case Common::EVENT_RBUTTONDOWN:
 				_mouseButton |= MOUSE_RBUTTON;
+				if (_dialogueRunning)
+					_talkQuit = true;
 				break;
 			case Common::EVENT_RTL:
 			case Common::EVENT_QUIT:
 				if (_cutawayRunning)
 					_cutawayQuit = true;
+				// Allow using close button while dialogue is running
+				if (_dialogueRunning)
+					_talkQuit = true;
 				return;
 
 			default:

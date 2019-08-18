@@ -10,9 +10,9 @@ AppVersion={#ProductVersion}
 VersionInfoVersion={#FileVersion}
 AppVerName={#AppName} {#ProductVersion}
 AppPublisher=The ScummVM Team
-AppPublisherURL=http://www.scummvm.org/
-AppSupportURL=http://www.scummvm.org/
-AppUpdatesURL=http://www.scummvm.org/
+AppPublisherURL=https://www.scummvm.org/
+AppSupportURL=https://www.scummvm.org/
+AppUpdatesURL=https://www.scummvm.org/
 DefaultDirName={pf}\{#AppName}
 DefaultGroupName={#AppName}
 AllowNoIcons=true
@@ -204,9 +204,9 @@ Name: {group}\ScummVM; Filename: {app}\scummvm.exe; WorkingDir: {app}; Comment: 
 Name: {group}\ScummVM (noconsole); Filename: {app}\scummvm.exe; Parameters: "--no-console"; WorkingDir: {app}; Comment: scummvm; Flags: createonlyiffileexists; IconIndex: 0; Languages: not german
 Name: {group}\ScummVM (ohne Konsolenfenster); Filename: {app}\scummvm.exe; Parameters: "--no-console"; WorkingDir: {app}; Comment: scummvm; Flags: createonlyiffileexists; IconIndex:0; Languages: german
 Name: {group}\Saved Games\Saved Games; Filename: {userappdata}\ScummVM\Saved Games; WorkingDir: {userappdata}\ScummVM\Saved Games; Comment: Saved Games; IconIndex: 0; MinVersion: 0, 1; Languages: not german
-Name: {group}\Spielstï¿½nde\Spielstï¿½nde; Filename: {userappdata}\ScummVM\Saved Games; WorkingDir: {userappdata}\ScummVM\Saved Games; Comment: Spielstï¿½nde; IconIndex: 0; MinVersion: 0, 1; Languages: german
+Name: {group}\Spielstände\Spielstände; Filename: {userappdata}\ScummVM\Saved Games; WorkingDir: {userappdata}\ScummVM\Saved Games; Comment: Spielstände; IconIndex: 0; MinVersion: 0, 1; Languages: german
 Name: {group}\Saved Games\Saved Games (old default); Filename: {app}; WorkingDir: {app}; Comment: Saved Games (old default); IconIndex: 0; MinVersion: 0, 1; Languages: not german
-Name: {group}\Spielstï¿½nde\Spielstï¿½nde (alter Standard); Filename: {app}; WorkingDir: {app}; Comment: Spielstï¿½nde (alter Standard); IconIndex: 0; MinVersion: 0, 1; Languages: german
+Name: {group}\Spielstände\Spielstände (alter Standard); Filename: {app}; WorkingDir: {app}; Comment: Spielstände (alter Standard); IconIndex: 0; MinVersion: 0, 1; Languages: german
 
 ; DOCUMENTATION
 Name: {group}\Authors; Filename: {app}\AUTHORS.txt; WorkingDir: {app}; Comment: AUTHORS; Flags: createonlyiffileexists; Languages: not german
@@ -214,6 +214,7 @@ Name: {group}\Mitwirkende; Filename: {app}\AUTHORS.txt; WorkingDir: {app}; Comme
 Name: {group}\Copying; Filename: {app}\COPYING.txt; WorkingDir: {app}; Comment: COPYING; Flags: createonlyiffileexists
 Name: {group}\Copying.BSD; Filename: {app}\COPYING.BSD.txt; WorkingDir: {app}; Comment: COPYING.BSD; Flags: createonlyiffileexists
 Name: {group}\Copying.FREEFONT; Filename: {app}\COPYING.FREEFONT.txt; WorkingDir: {app}; Comment: COPYING.FREEFONT; Flags: createonlyiffileexists
+Name: {group}\Copying.OFL; Filename: {app}\COPYING.OFL.txt; WorkingDir: {app}; Comment: COPYING.OFL; Flags: createonlyiffileexists
 Name: {group}\Copying.LGPL; Filename: {app}\COPYING.LGPL.txt; WorkingDir: {app}; Comment: COPYING.LGPL; Flags: createonlyiffileexists
 Name: {group}\Copyright; Filename: {app}\COPYRIGHT.txt; WorkingDir: {app}; Comment: COPYRIGHT; Flags: createonlyiffileexists
 
@@ -256,6 +257,7 @@ Source: AUTHORS.txt; DestDir: {app}; Flags: ignoreversion
 Source: COPYING.txt; DestDir: {app}; Flags: ignoreversion
 Source: COPYING.BSD.txt; DestDir: {app}; Flags: ignoreversion
 Source: COPYING.FREEFONT.txt; DestDir: {app}; Flags: ignoreversion
+Source: COPYING.OFL.txt; DestDir: {app}; Flags: ignoreversion
 Source: COPYING.LGPL.txt; DestDir: {app}; Flags: ignoreversion
 Source: COPYRIGHT.txt; DestDir: {app}; Flags: ignoreversion
 

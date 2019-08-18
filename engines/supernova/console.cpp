@@ -23,7 +23,7 @@
 #include "gui/debugger.h"
 
 #include "supernova/supernova.h"
-#include "supernova/state.h"
+#include "supernova/game-manager.h"
 #include "supernova/console.h"
 
 namespace Supernova {

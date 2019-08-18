@@ -23,12 +23,14 @@
 #ifndef STARTREK_BITMAP_H
 #define STARTREK_BITMAP_H
 
-#include "startrek/filestream.h"
-
 #include "common/ptr.h"
 #include "common/stream.h"
+#include "common/memstream.h"
 
 namespace StarTrek {
+
+// FIXME: Eventually get rid of Common::SharedPtr and dispose of file streams properly
+typedef Common::SharedPtr<Common::MemoryReadStreamEndian> FileStream;
 
 struct Bitmap {
 	int16 xoffset;
@@ -37,7 +39,8 @@ struct Bitmap {
 	int16 height;
 	byte *pixels;
 
-	Bitmap(Common::SharedPtr<FileStream> stream);
+	Bitmap(FileStream stream);
+	Bitmap(Common::MemoryReadStreamEndian *stream);
 	Bitmap(const Bitmap &bitmap);
 	Bitmap(int w, int h);
 	~Bitmap();

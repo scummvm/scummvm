@@ -327,6 +327,8 @@ void TownsMidiPart::addChannels(int num) {
 
 	_chanMissing += num;
 	programChange(_program);
+	pitchBend(_pitchBend);
+	controlChangeVolume(_volume << 1);
 }
 
 void TownsMidiPart::dropChannels(int num) {
@@ -403,7 +405,7 @@ int TownsMidiPart::allocateChannel() {
 }
 
 MidiDriver_FMTowns::MidiDriver_FMTowns(Audio::Mixer *mixer, SciVersion version) : _version(version), _timerProc(0), _timerProcPara(0), _baseTempo(10080), _ready(false), _isOpen(false), _masterVolume(0x0f), _soundOn(true) {
-	_intf = new TownsAudioInterface(mixer, this, true);
+	_intf = new TownsAudioInterface(mixer, this);
 	_out = new TownsChannel*[6];
 	for (int i = 0; i < 6; i++)
 		_out[i] = new TownsChannel(this, i);

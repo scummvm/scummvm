@@ -56,10 +56,18 @@ bool AIScriptDektora::Update() {
 			 &&  Player_Query_Current_Scene() != kSceneAR01
 			 &&  Player_Query_Current_Scene() != kSceneAR02
 			) {
+#if BLADERUNNER_ORIGINAL_BUGS
 				if (Game_Flag_Query(kFlagAR02Entered)) {
-					Item_Remove_From_World(kItemScrorpions);
+					Item_Remove_From_World(kItemScorpions);
 				}
 				Game_Flag_Set(kFlagAR02DektoraBoughtScorpions);
+#else
+				if (Game_Flag_Query(kFlagScorpionsInAR02)) {
+					Item_Remove_From_World(kItemScorpions);
+					Game_Flag_Reset(kFlagScorpionsInAR02);
+				}
+				Game_Flag_Set(kFlagAR02DektoraBoughtScorpions);
+#endif
 			}
 		}
 		return true;
@@ -75,14 +83,21 @@ bool AIScriptDektora::Update() {
 				break;
 
 			case kGoalDektoraNR11BurningGoToMcCoy:
+#if BLADERUNNER_ORIGINAL_BUGS
 				if (Actor_Query_Inch_Distance_From_Actor(kActorDektora, kActorMcCoy) <= 48) {
 					Actor_Set_Goal_Number(kActorDektora, kGoalDektoraNR11BurningFallToNR10);
 					break;
 				}
+#else
+				if (Actor_Query_Inch_Distance_From_Actor(kActorDektora, kActorMcCoy) <= 54) {
+					Actor_Set_Goal_Number(kActorDektora, kGoalDektoraNR11BurningFallToNR10);
+					break;
+				}
+#endif // BLADERUNNER_ORIGINAL_BUGS
 
 				if (comp_distance(kActorMcCoy, _x, _y, _z) > 12.0f) {
 					Actor_Query_XYZ(kActorMcCoy, &_x, &_y, &_z);
-					Async_Actor_Walk_To_XYZ(kActorDektora, _x, _y, _z, 36, 0);
+					Async_Actor_Walk_To_XYZ(kActorDektora, _x, _y, _z, 36, false);
 				}
 				break;
 
@@ -110,20 +125,20 @@ bool AIScriptDektora::Update() {
 }
 
 void AIScriptDektora::TimerExpired(int timer) {
-	if (timer == 0) {
+	if (timer == kActorTimerAIScriptCustomTask0) {
 		if (Actor_Query_Goal_Number(kActorDektora) == kGoalDektoraNR08Dance) {
 			if (Player_Query_Current_Scene() == kSceneNR08) {
-				AI_Countdown_Timer_Reset(kActorDektora, 0);
-				AI_Countdown_Timer_Start(kActorDektora, 0, 10);
+				AI_Countdown_Timer_Reset(kActorDektora, kActorTimerAIScriptCustomTask0);
+				AI_Countdown_Timer_Start(kActorDektora, kActorTimerAIScriptCustomTask0, 10);
 			} else {
 				Actor_Set_Goal_Number(kActorDektora, kGoalDektoraNR08Leave);
-				AI_Countdown_Timer_Reset(kActorDektora, 0);
+				AI_Countdown_Timer_Reset(kActorDektora, kActorTimerAIScriptCustomTask0);
 			}
 			return; //true;
 		}
 
 		if (Actor_Query_Goal_Number(kActorDektora) == kGoalDektoraNR11Burning) {
-			AI_Countdown_Timer_Reset(kActorDektora, 0);
+			AI_Countdown_Timer_Reset(kActorDektora, kActorTimerAIScriptCustomTask0);
 			Actor_Set_Goal_Number(kActorDektora, kGoalDektoraNR11BurningGoToMcCoy);
 			return; //true;
 		}
@@ -170,10 +185,16 @@ void AIScriptDektora::CompletedMovementTrack() {
 		Actor_Set_Goal_Number(kActorDektora, kGoalDektoraNR11RanAway);
 		break;
 
-	case 272:
+	case kGoalDektoraNR11BurningGoToWindow:
 		AI_Movement_Track_Flush(kActorDektora);
+#if BLADERUNNER_ORIGINAL_BUGS
 		Actor_Face_Heading(kActorDektora, 0, 0);
-		Sound_Play(451, 71, 0, 0, 50);
+#else
+		// better positioning to lessen the bad overlap with the wall
+		// There is still some glitch there but it's not as bad as originally
+		Actor_Set_At_XYZ(kActorDektora, -100.0f, 10.33f, -312.0f, 220);
+#endif // BLADERUNNER_ORIGINAL_BUGS
+		Sound_Play(kSfxDEKGLAS1, 71, 0, 0, 50);
 
 		_animationState = 35;
 		_animationFrame = 0;
@@ -194,14 +215,14 @@ void AIScriptDektora::ReceivedClue(int clueId, int fromActorId) {
 void AIScriptDektora::ClickedByPlayer() {
 	if (Actor_Query_Goal_Number(kActorDektora) == kGoalDektoraGone) {
 		Actor_Face_Actor(0, kActorDektora, true);
-		Actor_Says(kActorMcCoy, 8630, 12);
+		Actor_Says(kActorMcCoy, 8630, 12);  // What a waste
 
 		return; //true;
 	}
 
 	if (Actor_Query_Goal_Number(kActorDektora) < kGoalDektoraStartChapter3) {
 		Actor_Face_Actor(kActorMcCoy, kActorDektora, true);
-		Actor_Says(kActorMcCoy, 8590, 13);
+		Actor_Says(kActorMcCoy, 8590, 13);  // Not the talkative type
 	}
 
 	if (Actor_Query_Goal_Number(kActorDektora) == kGoalDektoraNR08Dance) {
@@ -251,7 +272,19 @@ bool AIScriptDektora::ShotAtAndHit() {
 	 || Actor_Query_Goal_Number(kActorDektora) == kGoalDektoraNR11BurningGoToWindow
 	) {
 		Actor_Set_Health(kActorDektora, 100, 100);
-
+		if (_vm->_cutContent) {
+		// add hit sounds with small probability
+		switch (Random_Query(1, 10)) {
+			case 1:
+				Sound_Play_Speech_Line(kActorDektora, 9000, 65, 0, 99);
+				break;
+			case 2:
+				Sound_Play_Speech_Line(kActorDektora, 9005, 65, 0, 99);
+				break;
+			default:
+				break;
+			}
+		}
 		if (Actor_Query_Goal_Number(kActorDektora) != kGoalDektoraNR11BurningGoToWindow) {
 			Actor_Set_Goal_Number(kActorDektora, kGoalDektoraNR11BurningGoToWindow);
 		}
@@ -268,7 +301,11 @@ bool AIScriptDektora::ShotAtAndHit() {
 			Delay(2000);
 			Actor_Set_Goal_Number(kActorSteele, kGoalSteeleNR11Enter);
 		} else {
+			// Does this case ever happen?
 			Actor_Change_Animation_Mode(kActorDektora, kAnimationModeDie);
+			if (_vm->_cutContent) {
+				Sound_Play_Speech_Line(kActorDektora, 9020, 60, 0, 99); // add Dektora's death rattle here
+			}
 			Delay(2000);
 			Actor_Set_Goal_Number(kActorMcCoy, kGoalMcCoyArrested);
 		}
@@ -294,20 +331,19 @@ void AIScriptDektora::Retired(int byActorId) {
 	}
 
 	if (Actor_Query_In_Set(kActorDektora, kSetKP07)) {
-		Global_Variable_Decrement(kVariableReplicants, 1);
+		Global_Variable_Decrement(kVariableReplicantsSurvivorsAtMoonbus, 1);
 		Actor_Set_Goal_Number(kActorDektora, kGoalDektoraGone);
 
-		if (Global_Variable_Query(kVariableReplicants) == 0) {
+		if (Global_Variable_Query(kVariableReplicantsSurvivorsAtMoonbus) == 0) {
 			Player_Loses_Control();
 			Delay(2000);
 			Player_Set_Combat_Mode(false);
-			Loop_Actor_Walk_To_XYZ(kActorMcCoy, -12.0f, -41.58f, 72.0f, 0, true, false, 0);
+			Loop_Actor_Walk_To_XYZ(kActorMcCoy, -12.0f, -41.58f, 72.0f, 0, true, false, false);
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
 			Game_Flag_Set(kFlagKP07toKP06);
 			Game_Flag_Reset(kFlagMcCoyIsHelpingReplicants);
 			Set_Enter(kSetKP05_KP06, kSceneKP06);
-
 			return; //true;
 		}
 	}
@@ -418,8 +454,8 @@ bool AIScriptDektora::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		AI_Movement_Track_Flush(kActorDektora);
 		Actor_Put_In_Set(kActorDektora, kSetNR05_NR08);
 		Actor_Set_At_XYZ(kActorDektora, -923.93f, 127.85f, 413.46f, 30);
-		AI_Countdown_Timer_Reset(kActorDektora, 0);
-		AI_Countdown_Timer_Start(kActorDektora, 0, 45);
+		AI_Countdown_Timer_Reset(kActorDektora, kActorTimerAIScriptCustomTask0);
+		AI_Countdown_Timer_Start(kActorDektora, kActorTimerAIScriptCustomTask0, 45);
 		break;
 
 	case kGoalDektoraNR08Leave:
@@ -429,7 +465,7 @@ bool AIScriptDektora::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 			Game_Flag_Set(kFlagNR08Faded);
 			Actor_Put_In_Set(kActorDektora, kSetFreeSlotA);
 			Actor_Set_At_Waypoint(kActorDektora, 33, 0);
-			Actor_Change_Animation_Mode(kActorDektora, 0);
+			Actor_Change_Animation_Mode(kActorDektora, kAnimationModeIdle);
 			Actor_Set_Goal_Number(kActorDektora, kGoalDektoraNR07Sit);
 		}
 
@@ -441,8 +477,15 @@ bool AIScriptDektora::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		break;
 
 	case kGoalDektoraNR08ReadyToRun:
+#if BLADERUNNER_ORIGINAL_BUGS
 		Actor_Put_In_Set(kActorDektora, kSetNR05_NR08);
 		Actor_Set_At_XYZ(kActorDektora, -1558.41f, 0.32f, 319.48f, 264);
+#else
+		// better positioning to remove bad overlap with walls
+		AI_Movement_Track_Flush(kActorDektora);
+		Actor_Put_In_Set(kActorDektora, kSetNR05_NR08);
+		Actor_Set_At_XYZ(kActorDektora, -1633.27f, 0.32f, 353.00f, 831);
+#endif // BLADERUNNER_ORIGINAL_BUGS
 		break;
 
 	case kGoalDektoraNR08GoToNR10:
@@ -459,9 +502,9 @@ bool AIScriptDektora::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 
 	case kGoalDektoraNR11Hiding:
 		AI_Movement_Track_Flush(kActorDektora);
-		AI_Countdown_Timer_Reset(kActorDektora, 0);
-		AI_Countdown_Timer_Reset(kActorDektora, 1);
-		AI_Countdown_Timer_Reset(kActorDektora, 2);
+		AI_Countdown_Timer_Reset(kActorDektora, kActorTimerAIScriptCustomTask0);
+		AI_Countdown_Timer_Reset(kActorDektora, kActorTimerAIScriptCustomTask1);
+		AI_Countdown_Timer_Reset(kActorDektora, kActorTimerAIScriptCustomTask2);
 		Actor_Put_In_Set(kActorDektora, kSetNR11);
 		Actor_Set_At_XYZ(kActorDektora, -184.0f, 0.33f, -268.0f, 256);
 		break;
@@ -475,20 +518,22 @@ bool AIScriptDektora::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		break;
 
 	case kGoalDektoraNR11PrepareBurning:
+		// fall through
 	case kGoalDektoraNR11BurningGoToMcCoy:
+		// fall through
 	case kGoalDektoraGone:
 		break; // return true
 
 	case kGoalDektoraNR11Burning:
 		Game_Flag_Set(kFlagNR11DektoraBurning);
 		Actor_Set_Targetable(kActorDektora, true);
-		Loop_Actor_Walk_To_XYZ(kActorDektora, -135.0f, 0.33f, -267.0f, 0, false, false, 0);
+		Loop_Actor_Walk_To_XYZ(kActorDektora, -135.0f, 0.33f, -267.0f, 0, false, false, false);
 		Actor_Face_Actor(kActorMcCoy, kActorDektora, true);
 		if (Actor_Query_Goal_Number(kActorSteele) == kGoalSteeleNR11StopShooting) {
 			Actor_Face_Actor(kActorSteele, kActorDektora, true);
 			Actor_Change_Animation_Mode(kActorSteele, kAnimationModeCombatAttack);
 			Delay(250);
-			Sound_Play(3, 100, 0, 0, 50);
+			Sound_Play(kSfxFEMHURT1, 100, 0, 0, 50);
 			Actor_Set_Goal_Number(kActorDektora, kGoalDektoraNR11BurningGoToWindow);
 		} else {
 			Actor_Set_Goal_Number(kActorDektora, kGoalDektoraNR11BurningGoToMcCoy);
@@ -549,9 +594,9 @@ bool AIScriptDektora::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 bool AIScriptDektora::UpdateAnimation(int *animation, int *frame) {
 	switch (_animationState) {
 	case 0:
-		*animation = 156;
+		*animation = kModelAnimationDektoraStandingIdle;
 		_animationFrame++;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(156)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationDektoraStandingIdle)) {
 			_animationFrame = 0;
 		}
 		break;
@@ -562,154 +607,156 @@ bool AIScriptDektora::UpdateAnimation(int *animation, int *frame) {
 		break;
 
 	case 2:
-		*animation = 158;
+		*animation = kModelAnimationDektoraStandingNodShort;
 		if (_animationFrame == 0
 		 && _flag
 		) {
-			*animation = 156;
+			*animation = kModelAnimationDektoraStandingIdle;
 			_animationState = 0;
 		} else {
 			_animationFrame++;
-			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(158)) {
+			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationDektoraStandingNodShort)) {
 				_animationFrame = 0;
 			}
 		}
 		break;
 
 	case 3:
-		*animation = 159;
+		*animation = kModelAnimationDektoraStandingTalkAgreeing;
 		_animationFrame++;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(159)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationDektoraStandingTalkAgreeing)) {
 			_animationFrame = 0;
 			_animationState = 2;
-			*animation = 158;
+			*animation = kModelAnimationDektoraStandingNodShort;
 		}
 		break;
 
 	case 4:
-		*animation = 160;
+		*animation = kModelAnimationDektoraStandingTalkGestureB;
 		_animationFrame++;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(160)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationDektoraStandingTalkGestureB)) {
 			_animationFrame = 0;
 			_animationState = 2;
-			*animation = 158;
+			*animation = kModelAnimationDektoraStandingNodShort;
 		}
 		break;
 
 	case 5:
-		*animation = 161;
+		*animation = kModelAnimationDektoraStandingTalkGestureC;
 		_animationFrame++;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(161)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationDektoraStandingTalkGestureC)) {
 			_animationFrame = 0;
 			_animationState = 2;
-			*animation = 158;
+			*animation = kModelAnimationDektoraStandingNodShort;
 		}
 		break;
 
 	case 6:
-		*animation = 161;
+		//  case 6 is identical to case 5
+		*animation = kModelAnimationDektoraStandingTalkGestureC;
 		_animationFrame++;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(161)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationDektoraStandingTalkGestureC)) {
 			_animationFrame = 0;
 			_animationState = 2;
-			*animation = 158;
+			*animation = kModelAnimationDektoraStandingNodShort;
 		}
 		break;
 
 	case 7:
-		*animation = 162;
+		*animation = kModelAnimationDektoraStandingTalkGestureD;
 		_animationFrame++;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(162)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationDektoraStandingTalkGestureD)) {
 			_animationFrame = 0;
 			_animationState = 2;
-			*animation = 158;
+			*animation = kModelAnimationDektoraStandingNodShort;
 		}
 		break;
 
 	case 8:
-		*animation = 162;
+		//  case 8 is identical to case 7
+		*animation = kModelAnimationDektoraStandingTalkGestureD;
 		_animationFrame++;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(162)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationDektoraStandingTalkGestureD)) {
 			_animationFrame = 0;
 			_animationState = 2;
-			*animation = 158;
+			*animation = kModelAnimationDektoraStandingNodShort;
 		}
 		break;
 
 	case 9:
-		*animation = 134;
+		*animation = kModelAnimationDektoraCombatIdle;
 		_animationFrame++;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(134)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationDektoraCombatIdle)) {
 			_animationFrame = 0;
 		}
 		break;
 
 	case 10:
-		*animation = 139;
+		*animation = kModelAnimationDektoraCombatBegin;
 		_animationFrame++;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(139)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationDektoraCombatBegin)) {
 			_animationFrame = 0;
 			_animationState = 9;
-			*animation = 134;
+			*animation = kModelAnimationDektoraCombatIdle;
 		}
 		break;
 
 	case 11:
-		*animation = 140;
+		*animation = kModelAnimationDektoraCombatEnd;
 		_animationFrame++;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(140)) {
-			*animation = 156;
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationDektoraCombatEnd)) {
+			*animation = kModelAnimationDektoraStandingIdle;
 			_animationFrame = 0;
 			_animationState = 0;
 		}
 		break;
 
 	case 12:
-		*animation = 135;
+		*animation = kModelAnimationDektoraCombatWalkingA;
 		_animationFrame++;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(135)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationDektoraCombatWalkingA)) {
 			_animationFrame = 0;
 			_animationState = 9;
-			*animation = 134;
-			Actor_Change_Animation_Mode(kActorDektora, 4);
+			*animation = kModelAnimationDektoraCombatIdle;
+			Actor_Change_Animation_Mode(kActorDektora, kAnimationModeCombatIdle);
 		}
 		break;
 
 	case 13:
-		*animation = 136;
+		*animation = kModelAnimationDektoraCombatWalkingB;
 		_animationFrame++;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(136)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationDektoraCombatWalkingB)) {
 			_animationFrame = 0;
 			_animationState = 9;
-			*animation = 134;
-			Actor_Change_Animation_Mode(kActorDektora, 4);
+			*animation = kModelAnimationDektoraCombatIdle;
+			Actor_Change_Animation_Mode(kActorDektora, kAnimationModeCombatIdle);
 		}
 		break;
 
 	case 14:
-		*animation = 137;
+		*animation = kModelAnimationDektoraCombatGotHitRight;
 		_animationFrame++;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(137)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationDektoraCombatGotHitRight)) {
 			_animationFrame = 0;
 			_animationState = 9;
-			*animation = 134;
-			Actor_Change_Animation_Mode(kActorDektora, 4);
+			*animation = kModelAnimationDektoraCombatIdle;
+			Actor_Change_Animation_Mode(kActorDektora, kAnimationModeCombatIdle);
 		}
 		break;
 
 	case 15:
-		*animation = 138;
+		*animation = kModelAnimationDektoraCombatGotHitLeft;
 		_animationFrame++;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(138)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationDektoraCombatGotHitLeft)) {
 			_animationFrame = 0;
 			_animationState = 9;
-			*animation = 134;
-			Actor_Change_Animation_Mode(kActorDektora, 4);
+			*animation = kModelAnimationDektoraCombatIdle;
+			Actor_Change_Animation_Mode(kActorDektora, kAnimationModeCombatIdle);
 		}
 		break;
 
 	case 16:
-		*animation = 141;
+		*animation = kModelAnimationDektoraCombatLegAttack;
 		_animationFrame++;
 		if (_animationFrame == 2) {
 			int speech;
@@ -723,19 +770,19 @@ bool AIScriptDektora::UpdateAnimation(int *animation, int *frame) {
 		}
 
 		if (_animationFrame == 5) {
-			Actor_Combat_AI_Hit_Attempt(3);
+			Actor_Combat_AI_Hit_Attempt(kActorDektora);
 		}
 
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(141)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationDektoraCombatLegAttack)) {
 			_animationFrame = 0;
 			_animationState = 9;
-			*animation = 134;
+			*animation = kModelAnimationDektoraCombatIdle;
 			Actor_Change_Animation_Mode(kActorDektora, kAnimationModeCombatIdle);
 		}
 		break;
 
 	case 17:
-		*animation = 142;
+		*animation = kModelAnimationDektoraCombatPunchAttack;
 		_animationFrame++;
 		if (_animationFrame == 6
 		 && Actor_Query_Goal_Number(kActorDektora) == kGoalDektoraNR10AttackMcCoy
@@ -751,26 +798,26 @@ bool AIScriptDektora::UpdateAnimation(int *animation, int *frame) {
 			} else {
 				speech = 9015;
 			}
-			Sound_Play_Speech_Line(3, speech, 75, 0, 99);
+			Sound_Play_Speech_Line(kActorDektora, speech, 75, 0, 99);
 		}
 
 		if (_animationFrame == 6) {
-			Actor_Combat_AI_Hit_Attempt(3);
+			Actor_Combat_AI_Hit_Attempt(kActorDektora);
 		}
 
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(142)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationDektoraCombatPunchAttack)) {
 			_animationFrame = 0;
 			_animationState = 9;
-			*animation = 134;
+			*animation = kModelAnimationDektoraCombatIdle;
 			Actor_Change_Animation_Mode(kActorDektora, kAnimationModeCombatIdle);
 		}
 		break;
 
 	case 18:
-		*animation = 147;
+		*animation = kModelAnimationDektoraFrontShoveMove;
 		_animationFrame++;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(147)) {
-			*animation = 156;
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationDektoraFrontShoveMove)) {
+			*animation = kModelAnimationDektoraStandingIdle;
 			_animationFrame = 0;
 			_animationState = 0;
 			Actor_Change_Animation_Mode(kActorDektora, kAnimationModeIdle);
@@ -778,10 +825,10 @@ bool AIScriptDektora::UpdateAnimation(int *animation, int *frame) {
 		break;
 
 	case 19:
-		*animation = 148;
+		*animation = kModelAnimationDektoraBackDodgeMove;
 		_animationFrame++;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(148)) {
-			*animation = 156;
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationDektoraBackDodgeMove)) {
+			*animation = kModelAnimationDektoraStandingIdle;
 			_animationFrame = 0;
 			_animationState = 0;
 			Actor_Change_Animation_Mode(kActorDektora, kAnimationModeIdle);
@@ -789,141 +836,141 @@ bool AIScriptDektora::UpdateAnimation(int *animation, int *frame) {
 		break;
 
 	case 20:
-		*animation = 149;
-		if (_animationFrame < Slice_Animation_Query_Number_Of_Frames(149) - 1) {
+		*animation = kModelAnimationDektoraFallsDead;
+		if (_animationFrame < Slice_Animation_Query_Number_Of_Frames(kModelAnimationDektoraFallsDead) - 1) {
 			_animationFrame++;
 		}
 		break;
 
 	case 21:
-		*animation = 143;
+		*animation = kModelAnimationDektoraWalking;
 		_animationFrame++;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(143)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationDektoraWalking)) {
 			_animationFrame = 0;
 		}
 		break;
 
 	case 22:
-		*animation = 144;
+		*animation = kModelAnimationDektoraRunning;
 		_animationFrame++;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(144)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationDektoraRunning)) {
 			_animationFrame = 0;
 		}
 		break;
 
 	case 23:
-		*animation = 145;
+		*animation = kModelAnimationDektoraClimbStairsUp;
 		_animationFrame++;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(145)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationDektoraClimbStairsUp)) {
 			_animationFrame = 0;
 		}
 		break;
 
 	case 24:
-		*animation = 146;
+		*animation = kModelAnimationDektoraClimbStairsDown;
 		_animationFrame++;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(146)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationDektoraClimbStairsDown)) {
 			_animationFrame = 0;
 		}
 		break;
 
 	case 25:
-		*animation = 150;
+		*animation = kModelAnimationDektoraSittingIdle;
 		_animationFrame++;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(150)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationDektoraSittingIdle)) {
 			_animationFrame = 0;
 		}
 		break;
 
 	case 26:
-		*animation = 151;
+		*animation = kModelAnimationDektoraSittingShootingGun;
 		_animationFrame++;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(151)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationDektoraSittingShootingGun)) {
 			_animationFrame = 0;
 			_animationState = 31;
-			*animation = 155;
+			*animation = kModelAnimationDektoraSittingHoldingGun;
 		}
 		break;
 
 	case 27:
-		*animation = 152;
+		*animation = kModelAnimationDektoraSittingSubtleTalking;
 		if (!_animationFrame && _flag) {
-			*animation = 150;
+			*animation = kModelAnimationDektoraSittingIdle;
 			_animationState = 25;
 		} else {
 			_animationFrame++;
-			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(152)) {
+			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationDektoraSittingSubtleTalking)) {
 				_animationFrame = 0;
 			}
 		}
 		break;
 
 	case 28:
-		*animation = 153;
+		*animation = kModelAnimationDektoraSittingIntenseTalking;
 		_animationFrame++;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(153)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationDektoraSittingIntenseTalking)) {
 			_animationFrame = 0;
 			_animationState = 27;
-			*animation = 152;
+			*animation = kModelAnimationDektoraSittingSubtleTalking;
 		}
 		break;
 
 	case 29:
-		*animation = 154;
+		*animation = kModelAnimationDektoraSittingPullingGunOut;
 		_animationFrame++;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(154)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationDektoraSittingPullingGunOut)) {
 			_animationFrame = 0;
 			_animationState = 31;
-			*animation = 155;
+			*animation = kModelAnimationDektoraSittingHoldingGun;
 		}
 		break;
 
 	case 30:
-		*animation = 154;
+		*animation = kModelAnimationDektoraSittingPullingGunOut;
 		_animationFrame--;
 		if (_animationFrame == 0) {
 			_animationFrame = 0;
 			_animationState = 25;
-			*animation = 150;
+			*animation = kModelAnimationDektoraSittingIdle;
 		}
 		break;
 
 	case 31:
-		*animation = 155;
+		*animation = kModelAnimationDektoraSittingHoldingGun;
 		_animationFrame++;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(155)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationDektoraSittingHoldingGun)) {
 			_animationFrame = 0;
 		}
 		break;
 
 	case 32:
-		*animation = 163;
+		*animation = kModelAnimationDektoraInFlamesA;
 		_animationFrame++;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(163)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationDektoraInFlamesA)) {
 			_animationFrame = 0;
 		}
 		break;
 
 	case 33:
-		*animation = 166;
+		*animation = kModelAnimationDektoraInFlamesB;
 		_animationFrame++;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(166)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationDektoraInFlamesB)) {
 			_animationFrame = 0;
 		}
 		break;
 
 	case 34:
-		*animation = 164;
+		*animation = kModelAnimationDektoraInFlamesGotHit;
 		_animationFrame++;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(164)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationDektoraInFlamesGotHit)) {
 			_animationFrame = 0;
 			_animationState = 32;
-			*animation = 163;
+			*animation = kModelAnimationDektoraInFlamesA;
 		}
 		break;
 
 	case 35:
-		*animation = 165;
+		*animation = kModelAnimationDektoraInFlamesStartFalling;
 		_animationFrame++;
 		if (_animationFrame == 2) {
 			Game_Flag_Set(kFlagNR11BreakWindow);
@@ -932,63 +979,63 @@ bool AIScriptDektora::UpdateAnimation(int *animation, int *frame) {
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
 			_animationFrame = 0;
 			_animationState = 36;
-			*animation = 167;
+			*animation = kModelAnimationDektoraInFlamesEndFalling;
 			Actor_Set_Goal_Number(kActorDektora, kGoalDektoraNR11PrepareFallThroughWindow);
 		}
 		break;
 
 	case 36:
-		*animation = 167;
-		if (_animationFrame < Slice_Animation_Query_Number_Of_Frames(167) - 1) {
+		*animation = kModelAnimationDektoraInFlamesEndFalling;
+		if (_animationFrame < Slice_Animation_Query_Number_Of_Frames(kModelAnimationDektoraInFlamesEndFalling) - 1) {
 			_animationFrame++;
 		}
 
 		if (_animationFrame == 11) {
-			Ambient_Sounds_Play_Sound(206, 80, -20, -20, 20);
+			Ambient_Sounds_Play_Sound(kSfxZUBLAND1, 80, -20, -20, 20);
 		}
 		break;
 
 	case 37:
-		*animation = 168;
+		*animation = kModelAnimationDektoraDancingA;
 		if (_animationFrame == 1) {
 			switch (Random_Query(0, 2)) {
 			case 0:
-				Sound_Play(567, (100 / Random_Query(5, 9)), 0, 0, 50);
+				Sound_Play(kSfxWHISTLE1, (100 / Random_Query(5, 9)), 0, 0, 50);
 				break;
 
 			case 1:
-				Sound_Play(568, (100 / Random_Query(5, 9)), 0, 0, 50);
+				Sound_Play(kSfxWHISTLE2, (100 / Random_Query(5, 9)), 0, 0, 50);
 				break;
 
 			case 2:
-				Sound_Play(569, (100 / Random_Query(5, 9)), 0, 0, 50);
+				Sound_Play(kSfxWHISTLE3, (100 / Random_Query(5, 9)), 0, 0, 50);
 				break;
 			}
 		}
 
 		_animationFrame++;
-		if (_animationFrame > Slice_Animation_Query_Number_Of_Frames(168) - 1) {
+		if (_animationFrame > Slice_Animation_Query_Number_Of_Frames(kModelAnimationDektoraDancingA) - 1) {
 			_animationFrame = 0;
 			_animationState = 38;
-			*animation = 169;
+			*animation = kModelAnimationDektoraDancingB;
 		}
 		break;
 
 	case 38:
-		*animation = 169;
+		*animation = kModelAnimationDektoraDancingB;
 		_animationFrame++;
 		if (_animationFrame == 1) {
 			switch (Random_Query(0, 2)) {
 			case 0:
-				Sound_Play(567, (100 / Random_Query(5, 9)), 0, 0, 50);
+				Sound_Play(kSfxWHISTLE1, (100 / Random_Query(5, 9)), 0, 0, 50);
 				break;
 
 			case 1:
-				Sound_Play(568, (100 / Random_Query(5, 9)), 0, 0, 50);
+				Sound_Play(kSfxWHISTLE2, (100 / Random_Query(5, 9)), 0, 0, 50);
 				break;
 
 			case 2:
-				Sound_Play(569, (100 / Random_Query(5, 9)), 0, 0, 50);
+				Sound_Play(kSfxWHISTLE3, (100 / Random_Query(5, 9)), 0, 0, 50);
 				break;
 			}
 		}
@@ -996,25 +1043,25 @@ bool AIScriptDektora::UpdateAnimation(int *animation, int *frame) {
 		if (_animationFrame > Slice_Animation_Query_Number_Of_Frames(*animation) - 1) {
 			_animationFrame = 0;
 			_animationState = 39;
-			*animation = 170;
+			*animation = kModelAnimationDektoraDancingC;
 		}
 		break;
 
 	case 39:
-		*animation = 170;
+		*animation = kModelAnimationDektoraDancingC;
 		_animationFrame++;
 		if (_animationFrame == 1) {
 			switch (Random_Query(0, 2)) {
 			case 0:
-				Sound_Play(567, (100 / Random_Query(5, 9)), 0, 0, 50);
+				Sound_Play(kSfxWHISTLE1, (100 / Random_Query(5, 9)), 0, 0, 50);
 				break;
 
 			case 1:
-				Sound_Play(568, (100 / Random_Query(5, 9)), 0, 0, 50);
+				Sound_Play(kSfxWHISTLE2, (100 / Random_Query(5, 9)), 0, 0, 50);
 				break;
 
 			case 2:
-				Sound_Play(569, (100 / Random_Query(5, 9)), 0, 0, 50);
+				Sound_Play(kSfxWHISTLE3, (100 / Random_Query(5, 9)), 0, 0, 50);
 				break;
 			}
 		}
@@ -1022,50 +1069,50 @@ bool AIScriptDektora::UpdateAnimation(int *animation, int *frame) {
 		if (_animationFrame > Slice_Animation_Query_Number_Of_Frames(*animation) - 1) {
 			_animationFrame = 0;
 			_animationState = 40;
-			*animation = 171;
+			*animation = kModelAnimationDektoraDancingFinale;
 		}
 		break;
 
 	case 40:
-		*animation = 171;
+		*animation = kModelAnimationDektoraDancingFinale;
 		if (_animationFrame == 1) {
 			switch (Random_Query(0, 2)) {
 			case 0:
-				Sound_Play(567, (100 / Random_Query(5, 9)), 0, 0, 50);
+				Sound_Play(kSfxWHISTLE1, (100 / Random_Query(5, 9)), 0, 0, 50);
 				break;
 
 			case 1:
-				Sound_Play(568, (100 / Random_Query(5, 9)), 0, 0, 50);
+				Sound_Play(kSfxWHISTLE2, (100 / Random_Query(5, 9)), 0, 0, 50);
 				break;
 
 			case 2:
-				Sound_Play(569, (100 / Random_Query(5, 9)), 0, 0, 50);
+				Sound_Play(kSfxWHISTLE3, (100 / Random_Query(5, 9)), 0, 0, 50);
 				break;
 			}
 		}
 
-		if (_animationFrame < Slice_Animation_Query_Number_Of_Frames(171) - 1) {
+		if (_animationFrame < Slice_Animation_Query_Number_Of_Frames(kModelAnimationDektoraDancingFinale) - 1) {
 			_animationFrame++;
-			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(171) - 1) {
+			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationDektoraDancingFinale) - 1) {
 				Actor_Set_Goal_Number(kActorDektora, kGoalDektoraNR08Leave);
 			}
 		}
 		break;
 
 	case 41:
-		*animation = 157;
+		*animation = kModelAnimationDektoraStandingTalkGestureA;
 		_animationFrame++;
 		if (_animationFrame == 8
 		 && Actor_Query_In_Set(kActorDektora, kSetNR10)
 		) {
-			Scene_Loop_Start_Special(2, 4, 1);
+			Scene_Loop_Start_Special(kSceneLoopModeOnce, 4, true);
 		}
 
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(157)) {
-			*animation = 156;
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationDektoraStandingTalkGestureA)) {
+			*animation = kModelAnimationDektoraStandingIdle;
 			_animationFrame = 0;
 			_animationState = 0;
-			Actor_Change_Animation_Mode(kActorDektora, 0);
+			Actor_Change_Animation_Mode(kActorDektora, kAnimationModeIdle);
 		}
 		break;
 
@@ -1171,7 +1218,7 @@ bool AIScriptDektora::ChangeAnimationMode(int mode) {
 			break;
 		case 31:
 			_animationState = 30;
-			_animationFrame = Slice_Animation_Query_Number_Of_Frames(154) - 1;
+			_animationFrame = Slice_Animation_Query_Number_Of_Frames(kModelAnimationDektoraSittingPullingGunOut) - 1;
 			break;
 		default:
 			_animationState = 10;
@@ -1266,7 +1313,7 @@ bool AIScriptDektora::ChangeAnimationMode(int mode) {
 		}
 		break;
 
-	case 21:
+	case kAnimationModeHit:
 		if (Game_Flag_Query(kFlagNR11DektoraBurning)) {
 			_animationState = 34;
 			_animationFrame = 0;
@@ -1334,6 +1381,12 @@ bool AIScriptDektora::ChangeAnimationMode(int mode) {
 		break;
 
 	case kAnimationModeDie:
+		if (_vm->_cutContent && Global_Variable_Query(kVariableChapter) == 5) {
+			// only play the rattle sound in the Act 5 death (moon bud), but not in chapter 3 death
+			// The rattle also plays in ShotAtAndHit() in Act 3 (if Dektora is shot at the back in NR11,
+			// and she is Human) but that case is currently never triggered.
+			Sound_Play_Speech_Line(kActorDektora, 9020, 60, 0, 99); // add Dektora's death rattle here
+		}
 		_animationState = 20;
 		_animationFrame = 0;
 		break;
@@ -1371,7 +1424,6 @@ bool AIScriptDektora::ChangeAnimationMode(int mode) {
 		_animationFrame = 0;
 		break;
 	}
-
 	return true;
 }
 

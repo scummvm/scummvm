@@ -24,6 +24,8 @@
 #include "kyra/resource/resource.h"
 #include "kyra/sound/sound_intern.h"
 
+#include "common/memstream.h"
+
 
 namespace Kyra {
 
@@ -466,9 +468,18 @@ void EoBCoreEngine::initStaticResource() {
 	void *sndInfo_finale = 0;
 
 	if (_flags.platform == Common::kPlatformAmiga) {
-		const char *const *files = _staticres->loadStrings(kEoBBaseSoundFilesIngame, temp);
 		const char *const *map = _staticres->loadStrings(kEoBBaseSoundMap, temp2);
-		SoundResourceInfo_AmigaEoB ingame(files, temp, map, temp2);
+		_amigaSoundMap = new const char*[temp2];
+		for (int i = 0; i < temp2; ++i) {
+			assert(map[i]);
+			_amigaSoundMap[i] = map[i][0] ? map[i] : 0;
+		}
+
+		_amigaLevelSoundList1 = _staticres->loadStrings(kEoBBaseLevelSounds1, temp);
+		_amigaLevelSoundList2 = _staticres->loadStrings(kEoBBaseLevelSounds2, temp);
+
+		const char *const *files = _staticres->loadStrings(kEoBBaseSoundFilesIngame, temp);
+		SoundResourceInfo_AmigaEoB ingame(files, temp, _amigaSoundMap, temp2);
 		sndInfo_ingame = &ingame;
 		files = _staticres->loadStrings(kEoBBaseSoundFilesIntro, temp);
 		SoundResourceInfo_AmigaEoB intro(files, temp, 0, 0);
@@ -511,11 +522,12 @@ void EoBCoreEngine::initStaticResource() {
 	// EOB I doesn't have load and save menus, because there is only one single
 	// save slot. Instead of emulating this we provide a menu similiar to EOB II.
 
-	static const char *const saveLoadStrings[4][4] = {
+	static const char *const saveLoadStrings[5][4] = {
 		{   "Cancel",   "Empty Slot",		"Save Game",    "Load Game"     },
 		{   "Abbr.",    "Leerer Slot",		"Speichern",    "  Laden"       },
 		{	" < < ",	"Posizione Vuota",	"Salva",		"Carica"	    },
-		{   0,          0,					0,					0			}
+		{   0,          0,					0,					0			},
+		{	0,          0,					0,					0			}
 	};
 
 	static const char *const errorSlotEmptyString[5] = {
@@ -1353,6 +1365,12 @@ void DarkMoonEngine::initStaticResource() {
 	_monsterAcHitChanceTable1 = _monsterAcHitChanceTbl1;
 	_monsterAcHitChanceTable2 = _monsterAcHitChanceTbl2;
 
+	_amigaSoundMapExtra = _staticres->loadStrings(kEoB2SoundMapExtra, temp);
+	_amigaSoundFiles2 = _staticres->loadStrings(kEoB2SoundFilesIngame2, temp);
+	_amigaSoundIndex1 = (const int8*)_staticres->loadRawData(kEoB2SoundIndex1, temp);
+	_amigaSoundIndex2 = _staticres->loadRawData(kEoB2SoundIndex2, temp);
+	_amigaSoundPatch = _staticres->loadRawData(kEoB2MonsterSoundPatchData, _amigaSoundPatchSize);
+
 	static const char *const errorSlotNoNameString[3] = {
 		" You must specify\r a name for your\r save game!",
 		" Spielst[nde m]ssen\r einen Namen haben!",
@@ -1389,18 +1407,19 @@ void DarkMoonEngine::initSpells() {
 	EoBCoreEngine::initSpells();
 
 	int temp;
-	const uint8 *src = _staticres->loadRawData(kEoBBaseSpellProperties, temp);
+	const uint8 *data = _staticres->loadRawData(kEoBBaseSpellProperties, temp);
+	Common::MemoryReadStreamEndian *src = new Common::MemoryReadStreamEndian(data, temp, _flags.platform == Common::kPlatformAmiga);
 
 	for (int i = 0; i < _numSpells; i++) {
 		EoBSpell *s = &_spells[i];
-		src += 8;
-		s->flags = READ_LE_UINT16(src);
-		src += 10;
-		s->sound = *src++;
-		s->effectFlags = READ_LE_UINT32(src);
-		src += 4;
-		s->damageFlags = READ_LE_UINT16(src);
-		src += 2;
+		src->skip(8);
+		s->flags = src->readUint16();
+		src->skip(8);
+		s->sound = src->readByte();
+		if (_flags.platform == Common::kPlatformAmiga)
+			src->skip(1);
+		s->effectFlags = src->readUint32();
+		s->damageFlags = src->readUint16();
 	}
 }
 
@@ -1412,6 +1431,11 @@ const KyraRpgGUISettings DarkMoonEngine::_guiSettingsFMTowns = {
 const KyraRpgGUISettings DarkMoonEngine::_guiSettingsDOS = {
 	{ 9, 15, 95, 9, 7, { 221, 76 }, { 189, 162 }, { 95, 95 } },
 	{ 186, 181, 183, 183, 184, 17, 23, 20, 186, 181, 183, 182, 177, 180, 15, 6, 8, 9, 2, 5, 4, 3, 12 }
+};
+
+const KyraRpgGUISettings DarkMoonEngine::_guiSettingsAmiga = {
+	{ 28, 31, 95, 9, 7, { 221, 76 }, { 189, 162 }, { 95, 95 } },
+	{ 18, 17, 10, 17, 11, 10, 12, 25, 18, 9, 10, 18, 9, 10, 31, 24, 25, 28, 29, 7, 26, 27, 19 }
 };
 
 const uint8 DarkMoonEngine::_egaDefaultPalette[] = {

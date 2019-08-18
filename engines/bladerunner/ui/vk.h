@@ -37,6 +37,8 @@ class UIImagePicker;
 class VQAPlayer;
 
 class VK {
+	friend class Debugger;
+
 	struct Question {
 		bool isPresent;
 		bool wasAsked;
@@ -53,13 +55,13 @@ class VK {
 
 	VQAPlayer *_vqaPlayerMain;
 	VQAPlayer *_vqaPlayerEye;
-	int _vqaFrameMain;
+	int  _vqaFrameMain;
 	bool _vqaLoopEnded;
 
 	Graphics::Surface _surfaceEye;
 
 	bool _isOpen;
-	int _actorId;
+	int  _actorId;
 	bool _calibrationStarted;
 	bool _testStarted;
 
@@ -75,50 +77,52 @@ class VK {
 	int _calibrationRatio;
 	int _calibrationCounter;
 
-	int _humanProbability;
-	int _humanGauge;
-	int _humanGaugeTarget;
-	int _humanGaugeDelta;
-	int _timeNextHumanGaugeStep;
+	int    _humanProbability;
+	int    _humanGauge;
+	int    _humanGaugeTarget;
+	int    _humanGaugeDelta;
+	uint32 _timeNextHumanGaugeStepDiff;
+	uint32 _timeNextHumanGaugeStepStart;
 
-	int _replicantProbability;
-	int _replicantGauge;
-	int _replicantGaugeTarget;
-	int _replicantGaugeDelta;
-	int _timeNextReplicantGaugeStep;
+	int    _replicantProbability;
+	int    _replicantGauge;
+	int    _replicantGaugeTarget;
+	int    _replicantGaugeDelta;
+	uint32 _timeNextReplicantGaugeStepDiff;
+	uint32 _timeNextReplicantGaugeStepStart;
 
-	int _anxiety;
+	int    _anxiety;
 
-	int _needleValue;
-	int _needleValueMax;
-	int _needleValueTarget;
-	int _needleValueDelta;
-	int _timeNextNeedleStep;
-	int _timeNextNeedleOscillate;
-	int _timeNeedleReturn;
+	int    _needleValue;
+	int    _needleValueMax;
+	int    _needleValueTarget;
+	int    _needleValueDelta;
+	uint32 _timeNextNeedleStepStart;
+	uint32 _timeNextNeedleOscillateStart;
+	uint32 _timeNeedleReturnStart;
 
-	bool _isClosing;
-	int _timeClose;
+	bool   _isClosing;
+	uint32 _timeCloseStart;
 
-	int _blinkState;
-	int _timeNextBlink;
-	int _timeNextGaugesBlink;
+	int    _blinkState;
+	uint32 _timeNextBlinkStart;
+	uint32 _timeNextGaugesBlinkStart;
 
-	bool _isAdjusting;
-	int _adjustment;
-	int _adjustmentTarget;
-	int _adjustmentDelta;
-	int _timeNextAdjustementStep;
+	bool   _isAdjusting;
+	int    _adjustment;
+	int    _adjustmentTarget;
+	int    _adjustmentDelta;
+	uint32 _timeNextAdjustementStepStart;
 
-	int _eyeLineSelected;
-	int _eyeLineX;
-	int _eyeLineXLast;
-	int _eyeLineY;
-	int _eyeLineYLast;
-	int _eyeLineXDelta;
-	int _eyeLineYDelta;
-	int _timeNextEyeLineStep;
-	int _timeNextEyeLineStart;
+	int    _eyeLineSelected;
+	int    _eyeLineX;
+	int    _eyeLineXLast;
+	int    _eyeLineY;
+	int    _eyeLineYLast;
+	int    _eyeLineXDelta;
+	int    _eyeLineYDelta;
+	uint32 _timeNextEyeLineStepStart;
+	uint32 _timeNextEyeLineStart;
 
 public:
 	VK(BladeRunnerEngine *vm);
@@ -152,7 +156,7 @@ private:
 
 	void drawNeedle(Graphics::Surface &surface);
 	void drawEye(Graphics::Surface &surface);
-	void drawEyeCrosshair(Graphics::Surface &surface, int timeNow);
+	void drawEyeCrosshair(Graphics::Surface &surface, uint32 timeNow);
 	void drawMouse(Graphics::Surface &surface);
 	void drawGauge(Graphics::Surface &surface, int value, int x, int y, int width);
 	void drawHumanGauge(Graphics::Surface &surface);
@@ -167,6 +171,7 @@ private:
 	void setAdjustment(int x);
 	void setAdjustmentFromMouse();
 
+	void findRelatedQuestionBySentenceId(int inSentenceId, int &outRelatedQuestionId, int &outRelatedIntensity);
 	void askQuestion(int intensity);
 };
 

@@ -839,7 +839,7 @@ void Processor::z_print_addr() {
 }
 
 void Processor::z_print_char() {
-	print_char (translate_from_zscii(zargs[0]));
+	print_char(translate_from_zscii(zargs[0]));
 }
 
 void Processor::z_print_form() {

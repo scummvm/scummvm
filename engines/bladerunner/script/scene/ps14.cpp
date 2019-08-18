@@ -35,13 +35,13 @@ void SceneScriptPS14::InitializeScene() {
 	Scene_Exit_Add_2D_Exit(0, 610,  0, 639, 479, 1);
 	Scene_Exit_Add_2D_Exit(1,  46, 51, 125, 192, 0);
 
-	Ambient_Sounds_Add_Looping_Sound(381, 100, 1, 1);
-	Ambient_Sounds_Add_Sound(374, 100, 300, 16,  25, 0, 0, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound( 68,  60, 180, 16,  25, 0, 0, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound( 69,  60, 180, 16,  25, 0, 0, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(375,  60, 180, 50, 100, 0, 0, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(376,  50, 180, 50, 100, 0, 0, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(377,  50, 180, 50, 100, 0, 0, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Looping_Sound(kSfxRAIN10, 100, 1, 1);
+	Ambient_Sounds_Add_Sound(kSfxCOLONY,  100, 300, 16,  25, 0, 0, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxSPIN2B,   60, 180, 16,  25, 0, 0, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxSPIN3A,   60, 180, 16,  25, 0, 0, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxTHNDER2,  60, 180, 50, 100, 0, 0, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxTHNDER3,  50, 180, 50, 100, 0, 0, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxTHNDER4,  50, 180, 50, 100, 0, 0, -101, -101, 0, 0);
 }
 
 void SceneScriptPS14::SceneLoaded() {
@@ -69,7 +69,7 @@ bool SceneScriptPS14::ClickedOnItem(int itemId, bool a2) {
 
 bool SceneScriptPS14::ClickedOnExit(int exitId) {
 	if (exitId == 1) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -2101.0f, 508.14f, -1361.0f, 0, true, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -2101.0f, 508.14f, -1361.0f, 0, true, false, false)) {
 			Actor_Face_Heading(kActorMcCoy, 819, false);
 			Loop_Actor_Travel_Stairs(kActorMcCoy, 3, true, kAnimationModeIdle);
 
@@ -95,7 +95,7 @@ bool SceneScriptPS14::ClickedOnExit(int exitId) {
 	}
 
 	if (exitId == 0) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -785.45f, 508.14f, -1652.0f, 0, 1, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -785.45f, 508.14f, -1652.0f, 0, true, false, false)) {
 			Game_Flag_Set(kFlagPS14toMA07);
 			Game_Flag_Reset(kFlagMcCoyInPoliceStation);
 			Game_Flag_Set(kFlagMcCoyInMcCoyApartment);
@@ -118,7 +118,7 @@ void SceneScriptPS14::ActorChangedGoal(int actorId, int newGoal, int oldGoal, bo
 
 void SceneScriptPS14::PlayerWalkedIn() {
 	if (Game_Flag_Query(kFlagMA07toPS14)) {
-		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -801.45f, 508.14f, -1596.68f, 0, false, false, 0);
+		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -801.45f, 508.14f, -1596.68f, 0, false, false, false);
 		Game_Flag_Reset(kFlagMA07toPS14);
 	}
 	//return false;

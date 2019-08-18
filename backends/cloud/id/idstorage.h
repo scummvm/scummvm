@@ -23,7 +23,7 @@
 #ifndef BACKENDS_CLOUD_ID_IDSTORAGE_H
 #define BACKENDS_CLOUD_ID_IDSTORAGE_H
 
-#include "backends/cloud/storage.h"
+#include "backends/cloud/basestorage.h"
 #include "backends/networking/curl/curljsonrequest.h"
 
 /*
@@ -43,7 +43,7 @@
 namespace Cloud {
 namespace Id {
 
-class IdStorage: public Cloud::Storage {
+class IdStorage: public Cloud::BaseStorage {
 protected:
 	void printFiles(FileArrayResponse response);
 	void printBool(BoolResponse response);
@@ -52,6 +52,8 @@ protected:
 	ListDirectoryCallback getPrintFilesCallback();
 
 public:
+	IdStorage();
+	IdStorage(Common::String token, Common::String refreshToken, bool enabled);
 	virtual ~IdStorage();
 
 	/** Public Cloud API comes down there. */

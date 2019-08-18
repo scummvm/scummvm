@@ -30,11 +30,15 @@
 #include "sci/engine/kernel.h"
 #include "sci/engine/gc.h"
 #include "sci/graphics/cursor.h"
+#include "sci/graphics/palette.h"
 #ifdef ENABLE_SCI32
 #include "sci/graphics/cursor32.h"
 #endif
 #include "sci/graphics/maciconbar.h"
 #include "sci/console.h"
+#ifdef ENABLE_SCI32
+#include "sci/engine/hoyle5poker.h"
+#endif
 
 namespace Sci {
 
@@ -503,8 +507,7 @@ reg_t kIconBar(EngineState *s, int argc, reg_t *argv) {
 
 	switch (argv[0].toUint16()) {
 	case 0: // InitIconBar
-		for (int i = 0; i < argv[1].toUint16(); i++)
-			g_sci->_gfxMacIconBar->addIcon(argv[i + 2]);
+		g_sci->_gfxMacIconBar->initIcons(argv[1].toUint16(), &argv[2]);
 		break;
 	case 1: // DisposeIconBar
 		warning("kIconBar(Dispose)");
@@ -710,11 +713,8 @@ reg_t kWinDLL(EngineState *s, int argc, reg_t *argv) {
 		if (dllName == "PENGIN16.DLL") {
 			// Poker engine logic for Hoyle 5
 			// This is originally a call to the Watcom function InvokeIndirectFunction()
-			// TODO: we need to reverse the logic in PENGIN16.DLL and call it directly
-			//SciArray *data = s->_segMan->lookupArray(argv[2]);
-			warning("The Poker game logic has not been implemented yet");
-			showScummVMDialog("The Poker game logic has not been implemented yet");
-			return NULL_REG;
+			SciArray *data = s->_segMan->lookupArray(argv[2]);
+			return hoyle5PokerEngine(data);
 		} else {
 			error("kWinDLL: Unknown DLL to invoke: %s", dllName.c_str());
 			return NULL_REG;
@@ -732,16 +732,32 @@ reg_t kKawaHacks(EngineState *s, int argc, reg_t *argv) {
 		showScummVMDialog(s->_segMan->getString(argv[1]));
 		return NULL_REG;
 	}
-	case 1: // ZaWarudo
-		// Unused, would invert the color palette for the specified range.
-		return NULL_REG;
-	case 2: // SetTitleColors
+	case 1: { // ZaWarudo
+		// Invert the color palette for the specified range.
+		uint16 from = argv[1].toUint16();
+		uint16 to = argv[2].toUint16();
+		Palette pal = g_sci->_gfxPalette16->_sysPalette;
+		for (uint16 i = from; i <= to; i++)
+		{
+			pal.colors[i].r = 255 - pal.colors[i].r;
+			pal.colors[i].g = 255 - pal.colors[i].g;
+			pal.colors[i].b = 255 - pal.colors[i].b;
+		}
+		g_sci->_gfxPalette16->set(&pal, true);
+ 		return NULL_REG;
+	}
+ 	case 2: // SetTitleColors
 		// Unused, would change the colors for plain windows' title bars.
 		return NULL_REG;
 	case 3: // IsDebug
-		// Should return 1 if running with an internal debugger, 2 if we have AddMenu support, 3 if both.
-		return TRUE_REG;
+ 		// Return 1 if running with an internal debugger, 2 if we have AddMenu support, 3 if both.
+		return make_reg(0, 3);
 	}
+	return NULL_REG;
+}
+reg_t kKawaDbugStr(EngineState *s, int argc, reg_t *argv)
+{
+	debug("%s", Common::String::format(s->_segMan->getString(argv[0]).c_str(), argc - 1, argv + 1).c_str());
 	return NULL_REG;
 }
 

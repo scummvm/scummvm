@@ -66,23 +66,6 @@ struct StreamResult {
 };
 typedef StreamResult stream_result_t;
 
-struct SavegameHeader {
-	uint8 _version;
-	byte _interpType;
-	byte _language;
-	Common::String _md5;
-	Common::String _saveName;
-	int _year, _month, _day;
-	int _hour, _minute;
-	int _totalFrames;
-
-	/**
-	 * Constructor
-	 */
-	SavegameHeader() : _version(0), _interpType(0), _language(0), _year(0), _month(0), _day(0),
-		_hour(0), _minute(0), _totalFrames(0) {}
-};
-
 /**
  * File details
  */
@@ -98,14 +81,17 @@ struct FileReference {
 	/**
 	 * Constructor
 	 */
-	FileReference() : _rock(0), _slotNumber(-1), _fileType(fileusage_Data), _textMode(false) {}
+	FileReference();
 
 	/**
 	 * Constructor
 	 */
-	FileReference(int slot, const Common::String &desc, uint usage, uint rock = 0) :
-		_rock(rock), _slotNumber(slot), _description(desc),
-		_fileType((FileUsage)(usage & fileusage_TypeMask)), _textMode(usage & fileusage_TextMode) {}
+	FileReference(int slot, const Common::String &desc, uint usage, uint rock = 0);
+
+	/**
+	 * Destructor
+	 */
+	~FileReference();
 
 	/**
 	 * Get savegame filename
@@ -136,6 +122,7 @@ public:
 	Stream *_prev;
 	Stream *_next;
 	uint _rock;
+	gidispatch_rock_t _dispRock;
 	bool _unicode;
 	uint _readCount;
 	uint _writeCount;
@@ -377,11 +364,17 @@ private:
 	void *_bufEnd;
 	void *_bufEof;
 	size_t _bufLen; ///< # of bytes for latin1, # of 4-byte words for unicode
+	gidispatch_rock_t _arrayRock;
 public:
 	/**
 	 * Constructor
 	 */
 	MemoryStream(Streams *streams, void *buf, size_t buflen, FileMode mode, uint rock = 0, bool unicode = true);
+
+	/**
+	 * Destructor
+	 */
+	virtual ~MemoryStream();
 
 	/**
 	 * Write a character
@@ -464,16 +457,6 @@ private:
 	 * Get a UTF8 character
 	 */
 	int getCharUtf8();
-public:
-	/**
-	 * Read a savegame header from a stream
-	 */
-	static bool readSavegameHeader(Common::SeekableReadStream *stream, SavegameHeader &header);
-
-	/**
-	 * Write out a savegame header
-	 */
-	static void writeSavegameHeader(Common::WriteStream *stream, const Common::String &saveName);
 public:
 	/**
 	 * Constructor

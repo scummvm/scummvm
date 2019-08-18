@@ -13,7 +13,7 @@ all: $(EXECUTABLE).dwp
 endif
 
 ifdef USE_PANDOC
-all: readme
+all: README$(PANDOCEXT) NEWS$(PANDOCEXT) doc/de/NEUES$(PANDOCEXT)
 endif
 
 ######################################################################
@@ -236,9 +236,10 @@ DISTDIR := dist
 VERFILE := $(DISTDIR)/$(DISTNAME)/base/internal_version.h
 
 ifdef USE_PANDOC
-# Convert README.md to plain text for any platform that might require it
-readme: README.md
-	$(QUIET_PANDOC)$(PANDOC) -f gfm -t $(PANDOCFORMAT) -o $(PANDOCOUTPUT) README.md
+# Convert README.md and NEWS.md to plain text for any platform that might require it
+%$(PANDOCEXT): %.md
+	$(QUIET)$(MKDIR) $(*D)
+	$(QUIET_PANDOC)$(PANDOC) -f gfm -t $(PANDOCFORMAT) --metadata pagetitle=$(basename $(notdir $@)) -s -o $@ $<
 endif
 
 # TODO git via $(GITROOT)
@@ -270,15 +271,18 @@ dist-src: \
 	@#DEB-src?
 
 # Common files
-DIST_FILES_DOCS:=$(addprefix $(srcdir)/,AUTHORS COPYING COPYING.BSD COPYING.LGPL COPYING.FREEFONT COPYRIGHT NEWS README.md)
+DIST_FILES_DOCS:=$(addprefix $(srcdir)/,AUTHORS COPYING COPYING.BSD COPYING.LGPL COPYING.FREEFONT COPYING.OFL COPYRIGHT NEWS.md README.md)
 ifdef USE_PANDOC
-DIST_FILES_DOCS+=$(PANDOCOUTPUT)
+DIST_FILES_DOCS+=README$(PANDOCEXT) NEWS$(PANDOCEXT)
 endif
 
 DIST_FILES_DOCS_languages=cz da de es fr it no-nb se
 DIST_FILES_DOCS_cz:=$(addprefix $(srcdir)/doc/cz/,PrectiMe)
 DIST_FILES_DOCS_da:=$(addprefix $(srcdir)/doc/da/,HurtigStart)
-DIST_FILES_DOCS_de:=$(addprefix $(srcdir)/doc/de/,LIESMICH NEUES Schnellstart)
+DIST_FILES_DOCS_de:=$(addprefix $(srcdir)/doc/de/,LIESMICH NEUES.md Schnellstart)
+ifdef USE_PANDOC
+DIST_FILES_DOCS_de+=doc/de/NEUES$(PANDOCEXT)
+endif
 DIST_FILES_DOCS_es:=$(addprefix $(srcdir)/doc/es/,InicioRapido)
 DIST_FILES_DOCS_fr:=$(addprefix $(srcdir)/doc/fr/,DemarrageRapide)
 DIST_FILES_DOCS_it:=$(addprefix $(srcdir)/doc/it/,GuidaRapida)
@@ -286,7 +290,7 @@ DIST_FILES_DOCS_no-nb:=$(addprefix $(srcdir)/doc/no-nb/,HurtigStart)
 DIST_FILES_DOCS_se:=$(addprefix $(srcdir)/doc/se/,LasMig Snabbstart)
 
 # Themes files
-DIST_FILES_THEMES=scummmodern.zip scummclassic.zip
+DIST_FILES_THEMES=scummmodern.zip scummclassic.zip scummremastered.zip
 ifdef USE_TRANSLATION
 DIST_FILES_THEMES+=translations.dat
 endif
@@ -298,6 +302,12 @@ ifdef USE_SDL_NET
 DIST_FILES_NETWORKING:=$(addprefix $(srcdir)/dists/networking/,wwwroot.zip)
 endif
 
+# Virtual keyboard files
+DIST_FILES_VKEYBD=
+ifdef ENABLE_VKEYBD
+DIST_FILES_VKEYBD:=$(addprefix $(srcdir)/backends/vkeybd/packs/,vkeybd_default.zip vkeybd_small.zip)
+endif
+
 # Engine data files
 DIST_FILES_ENGINEDATA=
 ifdef ENABLE_ACCESS
@@ -305,6 +315,9 @@ DIST_FILES_ENGINEDATA+=access.dat
 endif
 ifdef ENABLE_CRYO
 DIST_FILES_ENGINEDATA+=cryo.dat
+endif
+ifdef ENABLE_CRYOMNI3D
+DIST_FILES_ENGINEDATA+=cryomni3d.dat
 endif
 ifdef ENABLE_DRASCULA
 DIST_FILES_ENGINEDATA+=drascula.dat

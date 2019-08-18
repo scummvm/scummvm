@@ -92,10 +92,12 @@ void ComposerEngine::loadAnimation(Animation *&anim, uint16 animId, int16 x, int
 		Pipe *pipe = *j;
 		if (!pipe->hasResource(ID_ANIM, animId))
 			continue;
+
 		stream = pipe->getResource(ID_ANIM, animId, false);
 
 		// When loading from savegame, make sure we have the correct stream
-		if ((!size) || (stream->size() >= size)) break;
+		if ((!size) || (stream->size() >= size))
+			break;
 		stream = NULL;
 	}
 
@@ -107,10 +109,14 @@ void ComposerEngine::loadAnimation(Animation *&anim, uint16 animId, int16 x, int
 		}
 		Common::List<Library>::iterator j;
 		for (j = _libraries.begin(); j != _libraries.end(); j++) {
+			if (!j->_archive->hasResource(ID_ANIM, animId))
+				continue;
+
 			stream = j->_archive->getResource(ID_ANIM, animId);
 
 			// When loading from savegame, make sure we have the correct stream
-			if ((!size) || (stream->size() >= size)) break;
+			if ((!size) || (stream->size() >= size))
+				break;
 			stream = NULL;
 		}
 
@@ -145,8 +151,10 @@ void ComposerEngine::playAnimation(uint16 animId, int16 x, int16 y, int16 eventP
 
 	Animation *anim = NULL;
 	loadAnimation(anim, animId, x, y, eventParam);
-	_anims.push_back(anim);
-	runEvent(kEventAnimStarted, animId, eventParam, 0);
+	if (anim != NULL) {
+		_anims.push_back(anim);
+		runEvent(kEventAnimStarted, animId, eventParam, 0);
+	}
 }
 
 void ComposerEngine::stopAnimation(Animation *anim, bool localOnly, bool pipesOnly) {

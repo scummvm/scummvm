@@ -34,19 +34,11 @@ public:
 
 	virtual bool openUrl(const Common::String &url);
 
-protected:
-	/**
-	 * The path of the currently open log file, if any.
-	 *
-	 * @note This is currently a string and not an FSNode for simplicity;
-	 * e.g. we don't need to include fs.h here, and currently the
-	 * only use of this value is to use it to open the log file in an
-	 * editor; for that, we need it only as a string anyway.
-	 */
-	Common::String _logFilePath;
+	virtual void logMessage(LogMessageType::Type type, const char *message);
 
+protected:
 	virtual Common::String getDefaultConfigFileName();
-	virtual Common::WriteStream *createLogFile();
+	virtual Common::String getDefaultLogFileName();
 };
 
 #endif

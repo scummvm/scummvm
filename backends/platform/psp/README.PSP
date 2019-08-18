@@ -99,7 +99,7 @@ Notes
   plugin files in the plugin directory and copying the new ones over again.
 
 - This README may be outdated, for more up-to-date instructions and notes see
-  the PSP Port Wiki: http://wiki.scummvm.org/index.php/PlayStation_Portable
+  the PSP Port Wiki: https://wiki.scummvm.org/index.php/PlayStation_Portable
 
 Frequently Asked Questions
 ==========================
@@ -115,7 +115,7 @@ A:  A PSP that can run homebrew and the necessary datafiles for the game you wan
 
 Q:  Can I run game X with this?
 A:  You can find the list of supported games on the compatibility page
-    at http://www.scummvm.org
+    at https://www.scummvm.org
     Note that ScummVM is NOT an emulator. The supported games engines have been painstakingly rewritten.
     It's not easy to add support for a game you want that currently isn't supported.
 
@@ -140,7 +140,7 @@ Building the source code
 ========================
 To build ScummVM for PSP you need:
 
-- ScummVM source code (svn co https://scummvm.svn.sourceforge.net/svnroot/scummvm/scummvm/trunk)
+- ScummVM source code (git clone https://github.com/scummvm/scummvm.git)
 
 - PSP toolchain (svn co svn://svn.pspdev.org/psp/trunk/psptoolchain)
 

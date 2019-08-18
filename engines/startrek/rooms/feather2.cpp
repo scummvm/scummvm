@@ -97,7 +97,7 @@ void Room::feather2TalkToRedshirt() {
 
 void Room::feather2LookAtVines() {
 	// NOTE: This might be unused? I can't find where HOTSPOT_VINES is supposed to be.
-	showText(TX_FEA2N000);
+	showDescription(TX_FEA2N000);
 	showText(TX_SPEAKER_STRAGEY, TX_FEA2_010);
 	showText(TX_SPEAKER_MCCOY,   TX_FEA2_005);
 }
@@ -111,35 +111,35 @@ void Room::feather2WalkToLeftExit() {
 }
 
 void Room::feather2LookAtEyes() {
-	showText(TX_FEA2N001);
+	showDescription(TX_FEA2N001);
 }
 
 void Room::feather2LookAtBigTree() {
-	showText(TX_FEA2N006);
+	showDescription(TX_FEA2N006);
 }
 
 void Room::feather2LookAtTrees() {
-	showText(TX_FEA2N007);
+	showDescription(TX_FEA2N007);
 }
 
 void Room::feather2LookAnywhere() {
-	showText(TX_FEA2N008);
+	showDescription(TX_FEA2N008);
 }
 
 void Room::feather2LookAtKirk() {
-	showText(TX_FEA2N002);
+	showDescription(TX_FEA2N002);
 }
 
 void Room::feather2LookAtSpock() {
-	showText(TX_FEA2N005);
+	showDescription(TX_FEA2N005);
 }
 
 void Room::feather2LookAtMccoy() {
-	showText(TX_FEA2N004);
+	showDescription(TX_FEA2N004);
 }
 
 void Room::feather2LookAtRedshirt() {
-	showText(TX_FEA2N003);
+	showDescription(TX_FEA2N003);
 }
 
 }

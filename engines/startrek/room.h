@@ -26,6 +26,7 @@
 #include "common/rect.h"
 #include "common/ptr.h"
 #include "common/str.h"
+#include "common/hashmap.h"
 
 #include "startrek/action.h"
 #include "startrek/awaymission.h"
@@ -36,17 +37,20 @@
 
 using Common::SharedPtr;
 
-
 namespace StarTrek {
 
 class StarTrekEngine;
 class Room;
+
+#include "common/pack-start.h"	// START STRUCT PACKING
 
 // Per-room action functions
 struct RoomAction {
 	const Action action;
 	void (Room::*funcPtr)();
 };
+
+#include "common/pack-end.h"	// END STRUCT PACKING
 
 // Offsets of data in RDF files
 
@@ -149,8 +153,13 @@ private:
 	const RoomAction *_roomActionList;
 	int _numRoomActions;
 
-	int _roomIndex; // ie. for DEMON2, this is 2
+	Common::HashMap<int, Common::String> _lookMessages;
+	Common::HashMap<int, Common::String> _lookWithTalkerMessages;
+	Common::HashMap<int, Common::String> _talkMessages;
 
+	void loadRoomMessages();
+	void loadOtherRoomMessages();
+	void loadRoomMessage(const char *text);
 
 	int findFunctionPointer(int action, void (Room::*funcPtr)());
 
@@ -177,9 +186,10 @@ private:
 	 * Cmd 0x03
 	 */
 	int showRoomSpecificText(const char **textAddr);
-	int showText(const TextRef *text);
-	int showText(TextRef speaker, TextRef text);
-	int showText(TextRef text);
+	int showMultipleTexts(const TextRef *text, bool fromRDF = false, bool lookWithTalker = false);
+	int showDescription(TextRef text, bool fromRDF = false, bool lookWithTalker = false);
+	int showText(TextRef speaker, TextRef text, bool fromRDF = false, bool lookWithTalker = false);
+
 	/**
 	 * Cmd 0x04
 	 */
@@ -200,10 +210,14 @@ private:
 	 */
 	void walkCrewman(int actorIndex, int16 destX, int16 destY, uint16 finishedAnimActionParam = 0);
 	void walkCrewmanC(int actorIndex, int16 destX, int16 destY, void (Room::*funcPtr)());      // Cmd 0x08
+
+public:
 	/**
 	 * Cmd 0x09: Loads a pair of .map and .iw files to change the room's collisions and pathfinding.
 	 */
 	void loadMapFile(const Common::String &name);
+
+private:
 	/**
 	 * Cmd 0x0a
 	 */
@@ -590,6 +604,8 @@ public:
 	void demon6TalkToKirk();
 	void demon6TalkToRedshirt();
 	void demon6TalkToStephen();
+	void demon6StephenIsInsulted();
+	void demon6StephenDescribesItemsInCase();
 	void demon6UseBerryOnStephen();
 	void demon6UseBerryOnSynthesizer();
 	void demon6MccoyReachedSynthesizer();
@@ -623,6 +639,8 @@ public:
 	void demon6GetCase();
 	void demon6KirkReachedCase();
 	int demon6ShowCase(int visible);
+	int demon6ShowCaseProcessInput(Sprite *sprites, Sprite *buttonSprite, int visible);
+	int demon6ShowCaseProcessSelection(Sprite *sprites, Sprite *clickedSprite, int visible);
 
 	// TUG0
 	void tug0Tick1();
@@ -2476,7 +2494,6 @@ public:
 	void veng0UseMccoyOnLivingCrewman();
 	void veng0MccoyReachedCrewman();
 	void veng0MccoyScannedCrewman();
-	// TODO: common code
 
 	// VENG1
 	void veng1Tick1();
@@ -2523,7 +2540,6 @@ public:
 	void veng1GetDebris();
 	void veng1ReachedDebrisToGet();
 	void veng1TriedToGetDebris();
-	// TODO: common code
 
 	// VENG2
 	void veng2Tick1();
@@ -2590,7 +2606,6 @@ public:
 	void veng2GetMTricorder();
 	void veng2ReachedMTricorderToGet();
 	void veng2PickedUpMTricorder();
-	// TODO: common code
 
 	// VENG3
 	void veng3Tick1();
@@ -2636,7 +2651,6 @@ public:
 	void veng3GetCable();
 	void veng3ReachedCable();
 	void veng3PickedUpCable();
-	// TODO: Common code
 
 	// VENG4
 	void veng4Tick1();
@@ -2664,7 +2678,7 @@ public:
 	void veng4LookAtLeftBedReadings();
 	void veng4LookAtBrittany();
 	void veng4LookAtDrill();
-	void veng4LookAtHypo();
+	void veng4LookAtHypoOnTable();
 	void veng4LookAtDoorObject();
 	void veng4LookAnywhere();
 	void veng4GetHypo();
@@ -2675,7 +2689,6 @@ public:
 	void veng4PickedUpDrill();
 	void veng4TouchedHotspot0();
 	void veng4WalkToDoor();
-	// TODO: common code
 
 	// VENG5
 	void veng5Tick1();
@@ -2712,7 +2725,6 @@ public:
 	void veng5GetPowerPack();
 	void veng5ReachedPowerPack();
 	void veng5PickedUpPowerPack();
-	// TODO: common code
 
 	// VENG6
 	void veng6Tick1();
@@ -2768,7 +2780,6 @@ public:
 	void veng6GetEngineeringJournal();
 	void veng6ReachedEngineeringJournal();
 	void veng6TookEngineeringJournal();
-	// TODO: common code
 
 	// VENG7
 	void veng7Tick1();
@@ -2794,12 +2805,56 @@ public:
 	void veng7GetCable();
 	void veng7ReachedCable();
 	void veng7PickedUpCable();
-	// TODO: common code
 
 	// VENG8
 	void veng8Tick1();
+	void veng8WalkToDoor();
+	void veng8ReachedDoor();
+	void veng8DoorOpened();
+	void veng8Timer0Expired();
+	void veng8SparkAnim1Done();
+	void veng8Timer1Expired();
+	void veng8SparkAnim2Done();
+	void veng8LookAtPowerPack();
+	void veng8LookAtDoor();
+	void veng8LookAtPowerCircuits();
+	void veng8LookAtControls();
+	void veng8LookAtDeadGuy();
+	void veng8LookAtSlider();
+	void veng8LookAtKirk();
+	void veng8LookAtSpock();
+	void veng8LookAtMccoy();
+	void veng8LookAtRedshirt();
+	void veng8LookAtTransporter();
+	void veng8LookAnywhere();
+	void veng8TalkToKirk();
+	void veng8TalkToSpock();
+	void veng8TalkToMccoy();
+	void veng8TalkToRedshirt();
+	void veng8UseKirkOnControls();
+	void veng8UseSpockOnControls();
+	void veng8SpockReachedControls();
+	void veng8SpockUsedControls();
+	void veng8UsePowerPackOnPowerCircuit();
+	void veng8SpockReachedPowerCircuit();
+	void veng8SpockConnectedPowerPack();
+	void veng8TransporterPoweredUp();
+	void veng8UseKirkOnSlider();
+	void veng8UseSpockOnSlider();
+	void veng8SpockReachedSlider();
+	void veng8RedshirtReachedTransporter();
+	void veng8SpockPulledSliderToBeamOut();
+	void veng8RedshirtBeamedOut();
+	void veng8SpockPulledSliderToBeamIn();
+	void veng8RedshirtBeamedIn();
+	void veng8UseSTricorderOnConsole();
 
 	// VENGA (common code)
+	void vengaTick();
+	void vengaElasiBeamOver();
+	void vengaUsePhaserAnywhere();
+	void vengaLookAtHypo();
+	void vengaUseCommunicator();
 	void vengaUseMccoyOnDeadGuy();
 
 public:
@@ -3132,6 +3187,25 @@ public:
 
 			// venga (common)
 			bool walkingToDoor; // 0xcb (veng1), 0xca (veng4)
+
+			void saveLoadWithSerializer(Common::Serializer &ser) {
+				// veng1
+				ser.syncAsByte(doorOpenCounter);
+
+				// veng2
+				ser.syncAsByte(numCrewmenReadyToBeamOut);
+
+				// veng4
+				ser.syncAsByte(usingMedkitOnBrittany);
+
+				// veng6
+				ser.syncAsByte(kirkAndSpockReadyToAttachLeftCable);
+				ser.syncAsByte(kirkAndSpockReadyToAttachRightCable);
+				ser.syncAsByte(cableInUse);
+
+				// venga (common)
+				ser.syncAsByte(walkingToDoor);
+			}
 		} veng;
 
 	} _roomVar;

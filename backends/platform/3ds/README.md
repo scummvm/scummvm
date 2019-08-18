@@ -96,7 +96,7 @@ release of the mouse buttons. At the moment, this is only a left-click.
 3.0) Supported Games
 --------------------
 The full game engine compatibility list can be found here:
-http://scummvm.org/compatibility/
+https://scummvm.org/compatibility/
 
 While all the above games should run on the 3DS (report if they do not), there are
 many games which are unplayable due to the lack of CPU speed on the 3DS. So if

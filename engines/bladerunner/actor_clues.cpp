@@ -66,16 +66,25 @@ ActorClues::ActorClues(BladeRunnerEngine *vm, int cluesLimit) {
 
 void ActorClues::acquire(int clueId, bool flag2, int fromActorId) {
 	int clueIndex = findClueIndex(clueId);
-	_clues[clueIndex].flags |= 0x01;
-	_clues[clueIndex].flags = (_clues[clueIndex].flags & ~0x02) | ((flag2 << 1) & 0x02);
-	_clues[clueIndex].fromActorId = fromActorId;
-
+	if (clueIndex == -1) { // prevent assertion fault
+	//	debug("Actor could not acquire clue: \"%s\" from %d", _vm->_crimesDatabase->getClueText(clueId), fromActorId);
+		return;
+	} else {
+		_clues[clueIndex].flags |= 0x01;
+		_clues[clueIndex].flags = (_clues[clueIndex].flags & ~0x02) | ((flag2 << 1) & 0x02);
+		_clues[clueIndex].fromActorId = fromActorId;
 	// debug("Actor acquired clue: \"%s\" from %d", _vm->_crimesDatabase->getClueText(clueId), fromActorId);
+	}
 }
 
 void ActorClues::lose(int clueId) {
 	int clueIndex = findClueIndex(clueId);
-	_clues[clueIndex].flags = 0;
+	if (clueIndex == -1) { // prevent assertion fault
+	//	debug("Actor could not lose clue: \"%s\"", _vm->_crimesDatabase->getClueText(clueId));
+		return;
+	} else {
+		_clues[clueIndex].flags = 0;
+	}
 }
 
 bool ActorClues::isAcquired(int clueId) const {

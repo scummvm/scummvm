@@ -28,6 +28,7 @@
 #include "bladerunner/savefile.h"
 #include "bladerunner/text_resource.h"
 #include "bladerunner/time.h"
+#include "bladerunner/game_constants.h"
 #include "bladerunner/ui/kia.h"
 #include "bladerunner/ui/kia_shapes.h"
 #include "bladerunner/ui/ui_container.h"
@@ -43,10 +44,11 @@ KIASectionLoad::KIASectionLoad(BladeRunnerEngine *vm) : KIASectionBase(vm) {
 	_scrollBox   = new UIScrollBox(_vm, scrollBoxCallback, this, 1025, 0, true, Common::Rect(155, 158, 461, 346), Common::Rect(506, 160, 506, 350));
 	_uiContainer->add(_scrollBox);
 
-	_timeLast = 0;
-	_timeLeft = 0;
+	_timeLast = 0u;
+	_timeLeft = 0u;
 
 	_hoveredLineId = -1;
+	_displayingLineId = -1;
 	_newGameEasyLineId = -1;
 	_newGameMediumLineId = -1;
 	_newGameHardLineId = -1;
@@ -84,7 +86,7 @@ void KIASectionLoad::open() {
 
 	_hoveredLineId = -1;
 	_timeLast = _vm->_time->currentSystem();
-	_timeLeft = 800;
+	_timeLeft = 800u;
 }
 
 void KIASectionLoad::close() {
@@ -94,7 +96,7 @@ void KIASectionLoad::close() {
 	_saveList.clear();
 }
 
-void KIASectionLoad::draw(Graphics::Surface &surface){
+void KIASectionLoad::draw(Graphics::Surface &surface) {
 	_vm->_kia->_shapes->get(69)->draw(surface, 501, 123);
 
 	_uiContainer->draw(surface);
@@ -102,33 +104,36 @@ void KIASectionLoad::draw(Graphics::Surface &surface){
 	int selectedLineId = _scrollBox->getSelectedLineData();
 
 	if (_hoveredLineId != selectedLineId) {
-		if (selectedLineId >= 0 && selectedLineId < (int)_saveList.size()) {
-			if (_timeLeft == 0) {
+		if (selectedLineId >= 0 && selectedLineId < (int)_saveList.size() && _displayingLineId != selectedLineId) {
+			if (_timeLeft == 0u) {
 				SaveStateDescriptor desc = SaveFileManager::queryMetaInfos(_vm->getTargetName(), selectedLineId);
 				const Graphics::Surface *thumbnail = desc.getThumbnail();
 				if (thumbnail != nullptr) {
 					_vm->_kia->playImage(*thumbnail);
+					_displayingLineId = selectedLineId;
 				}
 			}
 		} else {
 			_vm->_kia->playerReset();
-			_timeLeft = 800;
+			_timeLeft = 800u;
+			_displayingLineId = -1;
 		}
 		_hoveredLineId = selectedLineId;
 	}
 
 	uint32 now = _vm->_time->currentSystem();
-	if (selectedLineId >= 0 && selectedLineId < (int)_saveList.size()) {
+	if (selectedLineId >= 0 && selectedLineId < (int)_saveList.size() && _displayingLineId != selectedLineId) {
 		if (_timeLeft) {
-			uint32 timeDiff = now - _timeLast;
+			uint32 timeDiff = now - _timeLast; // unsigned difference is intentional
 			if (timeDiff >= _timeLeft) {
 				SaveStateDescriptor desc = SaveFileManager::queryMetaInfos(_vm->getTargetName(), _saveList[selectedLineId].getSaveSlot());
 				const Graphics::Surface *thumbnail = desc.getThumbnail();
 				if (thumbnail != nullptr) {
 					_vm->_kia->playImage(*thumbnail);
+					_displayingLineId = selectedLineId;
 				}
 			} else {
-				_timeLeft -= timeDiff;
+				_timeLeft = (_timeLeft < timeDiff) ? 0u : (_timeLeft - timeDiff);
 			}
 		}
 	}
@@ -148,21 +153,25 @@ void KIASectionLoad::handleMouseUp(bool mainButton) {
 	_uiContainer->handleMouseUp(!mainButton);
 }
 
+void KIASectionLoad::handleMouseScroll(int direction) {
+	_uiContainer->handleMouseScroll(direction);
+}
+
 void KIASectionLoad::scrollBoxCallback(void *callbackData, void *source, int lineData, int mouseButton) {
 	KIASectionLoad *self = (KIASectionLoad *)callbackData;
 
 	if (mouseButton == 0 && source == self->_scrollBox && lineData >= 0) {
 		if (lineData == self->_newGameEasyLineId) {
-			self->_vm->newGame(0);
+			self->_vm->newGame(kGameDifficultyEasy);
 		} else if (lineData == self->_newGameMediumLineId) {
-			self->_vm->newGame(1);
+			self->_vm->newGame(kGameDifficultyMedium);
 		} else if (lineData == self->_newGameHardLineId) {
-			self->_vm->newGame(2);
+			self->_vm->newGame(kGameDifficultyHard);
 		} else {
 			self->_vm->loadGameState(self->_saveList[lineData].getSaveSlot());
 		}
 
-		self->_vm->_audioPlayer->playAud(self->_vm->_gameInfo->getSfxTrack(513), 90, 0, 0, 50, 0);
+		self->_vm->_audioPlayer->playAud(self->_vm->_gameInfo->getSfxTrack(kSfxELECBP1), 90, 0, 0, 50, 0);
 		self->_vm->_kia->resume();
 		self->_scheduledSwitch = true;
 	}

@@ -159,13 +159,17 @@ public:
 	/**
 	 * Returns true if the concept has a word with a given Id
 	 */
-	bool isWordId(int id) const;
+	bool isTheWordId(int id) const;
 
 	/**
 	 * If a word is associated, return it's Id
 	 */
-	int getWordId() const;
+	int getTheWordId() const;
 };
+
+extern bool isWordId(const TTconcept *concept, int id);
+
+extern int getWordId(const TTconcept *concept);
 
 } // End of namespace Titanic
 

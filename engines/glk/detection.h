@@ -102,6 +102,36 @@ struct GameDescriptor {
 	}
 };
 
+/**
+ * Derived game descriptor class to simplifying setting up needed properties
+ */
+class GlkDetectedGame : public DetectedGame {
+public:
+	GlkDetectedGame(const char *id, const char *desc, const Common::String &filename);
+	GlkDetectedGame(const char *id, const char *desc, const Common::String &filename,
+		Common::Language lang);
+	GlkDetectedGame(const char *id, const char *desc, const Common::String &filename,
+		const Common::String &md5, size_t filesize);
+};
+
+/**
+ * Game detection entry
+ */
+struct GlkDetectionEntry {
+	const char *const _gameId;
+	const char *const _extra;
+	const char *const _md5;
+	size_t _filesize;
+	Common::Language _language;
+};
+
+#define DT_ENTRY0(ID, MD5, FILESIZE) { ID, "", MD5, FILESIZE, Common::EN_ANY }
+#define DT_ENTRY1(ID, EXTRA, MD5, FILESIZE) { ID, EXTRA, MD5, FILESIZE, Common::EN_ANY }
+#define DT_ENTRYL0(ID, LANG, MD5, FILESIZE) { ID, "", MD5, FILESIZE, LANG }
+#define DT_ENTRYL1(ID, LANG, EXTRA, MD5, FILESIZE) { ID, EXTRA, MD5, FILESIZE, LANG }
+
+#define DT_END_MARKER { nullptr, nullptr, nullptr, 0, Common::EN_ANY }
+
 } // End of namespace Glk
 
 #endif

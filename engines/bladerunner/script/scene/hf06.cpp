@@ -29,14 +29,14 @@ void SceneScriptHF06::InitializeScene() {
 	Game_Flag_Reset(kFlagHF05toHF06);
 	Scene_Exit_Add_2D_Exit(0, 195, 197, 271, 237, 2);
 
-	Ambient_Sounds_Add_Looping_Sound( 54, 50,    0, 1);
-	Ambient_Sounds_Add_Looping_Sound( 99, 40, -100, 1);
-	Ambient_Sounds_Add_Looping_Sound(100, 40,  100, 1);
-	Ambient_Sounds_Add_Sound( 68, 10, 100, 25, 50, 0, 0, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound( 69, 10, 100, 25, 50, 0, 0, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(375, 10, 70, 50, 100, 0, 0, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(376, 10, 70, 50, 100, 0, 0, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(377, 10, 70, 50, 100, 0, 0, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Looping_Sound(kSfxCTRAIN1,  50,    0, 1);
+	Ambient_Sounds_Add_Looping_Sound(kSfxROOFAIR1, 40, -100, 1);
+	Ambient_Sounds_Add_Looping_Sound(kSfxROOFRMB1, 40,  100, 1);
+	Ambient_Sounds_Add_Sound(kSfxSPIN2B,  10, 100, 25,  50, 0, 0, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxSPIN3A,  10, 100, 25,  50, 0, 0, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxTHNDER2, 10,  70, 50, 100, 0, 0, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxTHNDER3, 10,  70, 50, 100, 0, 0, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxTHNDER4, 10,  70, 50, 100, 0, 0, -101, -101, 0, 0);
 
 	if (Game_Flag_Query(kFlagHF06SteelInterruption)) {
 		Scene_Loop_Set_Default(3);
@@ -49,6 +49,11 @@ void SceneScriptHF06::InitializeScene() {
 void SceneScriptHF06::SceneLoaded() {
 	Unobstacle_Object("BOX22", true);
 	Unobstacle_Object("BOX34", true);
+#if BLADERUNNER_ORIGINAL_BUGS
+#else
+	Obstacle_Object("FRONTBLOCK1", true);
+	Obstacle_Object("FRONTBLOCK2", true);
+#endif // BLADERUNNER_ORIGINAL_BUGS
 	Clickable_Object("BOX19");
 	Clickable_Object("BOX21");
 	Clickable_Object("BOX23");
@@ -68,7 +73,7 @@ bool SceneScriptHF06::ClickedOn3DObject(const char *objectName, bool a2) {
 	 || Object_Query_Click("BOX30", objectName)
 	 || Object_Query_Click("HOOD BOX", objectName)
 	) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 14.33f, 367.93f, 399.0f, 0, true, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 14.33f, 367.93f, 399.0f, 0, true, false, false)) {
 			Actor_Face_Heading(kActorMcCoy, 486, true);
 			if (Actor_Query_In_Set(kActorDektora, kSetHF06)
 			 && Actor_Query_Goal_Number(kActorDektora) != kGoalDektoraGone
@@ -92,15 +97,15 @@ bool SceneScriptHF06::ClickedOn3DObject(const char *objectName, bool a2) {
 	if (Object_Query_Click("BOX19", objectName)
 	 || Object_Query_Click("BOX21", objectName)
 	) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 290.0f, 367.93f, 318.0f, 0, true, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 290.0f, 367.93f, 318.0f, 0, true, false, false)) {
 			Actor_Face_Heading(kActorMcCoy, 85, true);
 			Actor_Says(kActorMcCoy, 8522, 0);
 		}
 		return false;
 	}
 
-	if (Object_Query_Click("BOX13", objectName)) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 63.0f, 367.93f, 120.0f, 0, true, false, 0)) {
+	if (Object_Query_Click("BOX23", objectName)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 63.0f, 367.93f, 120.0f, 0, true, false, false)) {
 			Actor_Face_Heading(kActorMcCoy, 568, true);
 			Actor_Says(kActorMcCoy, 8522, 0);
 		}
@@ -138,7 +143,7 @@ bool SceneScriptHF06::ClickedOnItem(int itemId, bool a2) {
 
 bool SceneScriptHF06::ClickedOnExit(int exitId) {
 	if (exitId == 0) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 170.0f, 367.93f, 497.0f, 0, true, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 170.0f, 367.93f, 497.0f, 0, true, false, false)) {
 			Actor_Face_Heading(kActorMcCoy, 730, false);
 			Loop_Actor_Travel_Stairs(kActorMcCoy, 2, false, kAnimationModeIdle);
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
@@ -160,8 +165,8 @@ void SceneScriptHF06::SceneFrameAdvanced(int frame) {
 
 void SceneScriptHF06::ActorChangedGoal(int actorId, int newGoal, int oldGoal, bool currentSet) {
 	if (actorId == kActorSteele
-	 && oldGoal != 599
-	 && newGoal == 599
+	 && oldGoal != kGoalSteeleGone
+	 && newGoal == kGoalSteeleGone
 	) {
 		Loop_Actor_Walk_To_Actor(kActorMcCoy, kActorSteele, 24, false, false);
 		Actor_Says(kActorSteele, 250, -1);
@@ -181,14 +186,14 @@ void SceneScriptHF06::ActorChangedGoal(int actorId, int newGoal, int oldGoal, bo
 		}
 
 		if (otherActorId != -1) {
-			Music_Play(21, 35, 0, 3, -1, 0, 0);
+			Music_Play(kMusicLoveSong, 35, 0, 3, -1, 0, 0);
 			Player_Set_Combat_Mode(false);
 			Delay(1000);
 			Actor_Voice_Over(990, kActorVoiceOver);
 			Actor_Voice_Over(1000, kActorVoiceOver);
 			Actor_Voice_Over(1010, kActorVoiceOver);
 			Loop_Actor_Walk_To_Actor(kActorMcCoy, otherActorId, 24, false, false);
-			Item_Pickup_Spin_Effect(932, 355, 200);
+			Item_Pickup_Spin_Effect(kModelAnimationBomb, 355, 200);
 			Actor_Voice_Over(1020, kActorVoiceOver);
 			Actor_Voice_Over(1030, kActorVoiceOver);
 			Actor_Voice_Over(1040, kActorVoiceOver);
@@ -261,7 +266,7 @@ void SceneScriptHF06::steelInterruption() {
 	}
 
 	Actor_Set_Targetable(actorId, true);
-	Loop_Actor_Walk_To_XYZ(kActorMcCoy, 14.33f, 367.93f, 399.0f, 0, false, true, 0);
+	Loop_Actor_Walk_To_XYZ(kActorMcCoy, 14.33f, 367.93f, 399.0f, 0, false, true, false);
 	Actor_Face_Heading(kActorMcCoy, 486, true);
 	addAmbientSounds();
 	Actor_Put_In_Set(kActorSteele, kSetHF06);
@@ -279,7 +284,7 @@ void SceneScriptHF06::steelInterruption() {
 	Player_Set_Combat_Mode(true);
 	Actor_Change_Animation_Mode(kActorMcCoy, kAnimationModeCombatAim);
 	Actor_Change_Animation_Mode(kActorSteele, kAnimationModeCombatWalk);
-	Loop_Actor_Walk_To_XYZ(kActorSteele, 92.0f, 367.93f, 107.0f, 0, false, false, 0);
+	Loop_Actor_Walk_To_XYZ(kActorSteele, 92.0f, 367.93f, 107.0f, 0, false, false, false);
 	Actor_Face_Actor(kActorSteele, kActorMcCoy, true);
 	Actor_Change_Animation_Mode(kActorSteele, kAnimationModeCombatIdle);
 	Actor_Says(kActorSteele, 290, 58);
@@ -301,23 +306,23 @@ void SceneScriptHF06::steelInterruption() {
 	Delay(500);
 	Scene_Loop_Set_Default(3);
 	Scene_Loop_Start_Special(kSceneLoopModeOnce, 2, true);
-	Sound_Play(562, 50, 0, 0, 50);
+	Sound_Play(kSfxBOMBFAIL, 50, 0, 0, 50);
 	Game_Flag_Set(kFlagHF06SteelInterruption);
 	Scene_Exits_Disable();
 	Non_Player_Actor_Combat_Mode_On(kActorSteele, kActorCombatStateUncover, true, actorId, 15, kAnimationModeCombatIdle, kAnimationModeCombatWalk, kAnimationModeCombatRun, 0, 0, 100, 10, 300, false);
 }
 
 void SceneScriptHF06::addAmbientSounds() {
-	Ambient_Sounds_Add_Sound(87, 20, 80, 20, 100, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Speech_Sound(23, 250, 5, 70, 7, 10, -50, 50, -101, -101, 1, 1);
-	Ambient_Sounds_Add_Speech_Sound(23, 330, 5, 70, 7, 10, -50, 50, -101, -101, 1, 1);
-	Ambient_Sounds_Add_Speech_Sound(23, 340, 5, 90, 7, 10, -50, 50, -101, -101, 1, 1);
-	Ambient_Sounds_Add_Speech_Sound(23, 360, 5, 70, 7, 10, -50, 50, -101, -101, 1, 1);
-	Ambient_Sounds_Add_Speech_Sound(24, 380, 5, 70, 7, 10, -50, 50, -101, -101, 1, 1);
-	Ambient_Sounds_Add_Speech_Sound(24, 510, 5, 70, 7, 10, -50, 50, -101, -101, 1, 1);
-	Ambient_Sounds_Add_Speech_Sound(38,  80, 5, 70, 7, 10, -50, 50, -101, -101, 1, 1);
-	Ambient_Sounds_Add_Speech_Sound(38, 160, 5, 70, 7, 10, -50, 50, -101, -101, 1, 1);
-	Ambient_Sounds_Add_Speech_Sound(38, 280, 5, 70, 7, 10, -50, 50, -101, -101, 1, 1);
+	Ambient_Sounds_Add_Sound(kSfxSIREN2, 20, 80, 20, 100, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Speech_Sound(kActorOfficerLeary,    250, 5, 70, 7, 10, -50, 50, -101, -101, 1, 1);
+	Ambient_Sounds_Add_Speech_Sound(kActorOfficerLeary,    330, 5, 70, 7, 10, -50, 50, -101, -101, 1, 1);
+	Ambient_Sounds_Add_Speech_Sound(kActorOfficerLeary,    340, 5, 90, 7, 10, -50, 50, -101, -101, 1, 1);
+	Ambient_Sounds_Add_Speech_Sound(kActorOfficerLeary,    360, 5, 70, 7, 10, -50, 50, -101, -101, 1, 1);
+	Ambient_Sounds_Add_Speech_Sound(kActorOfficerGrayford, 380, 5, 70, 7, 10, -50, 50, -101, -101, 1, 1);
+	Ambient_Sounds_Add_Speech_Sound(kActorOfficerGrayford, 510, 5, 70, 7, 10, -50, 50, -101, -101, 1, 1);
+	Ambient_Sounds_Add_Speech_Sound(kActorDispatcher,       80, 5, 70, 7, 10, -50, 50, -101, -101, 1, 1);
+	Ambient_Sounds_Add_Speech_Sound(kActorDispatcher,      160, 5, 70, 7, 10, -50, 50, -101, -101, 1, 1);
+	Ambient_Sounds_Add_Speech_Sound(kActorDispatcher,      280, 5, 70, 7, 10, -50, 50, -101, -101, 1, 1);
 }
 
 } // End of namespace BladeRunner

@@ -132,7 +132,15 @@ public:
 		 * If this feature is supported, then the corresponding MetaEngine *must*
 		 * support the kSupportsListSaves feature.
 		 */
-		kSupportsSavingDuringRuntime
+		kSupportsSavingDuringRuntime,
+
+		/**
+		 * Engine must receive joystick events because the game uses them.
+		 * For engines which have not this feature, joystick events are converted
+		 * to mouse events.
+		 */
+		kSupportsJoystick
+
 	};
 
 

@@ -29,7 +29,7 @@ void SceneScriptNR07::InitializeScene() {
 
 	Scene_Exit_Add_2D_Exit(0, 429, 137, 506, 251, 0);
 
-	Ambient_Sounds_Add_Looping_Sound(111, 25, 0, 1);
+	Ambient_Sounds_Add_Looping_Sound(kSfxDRAMB5, 25, 0, 1);
 }
 
 void SceneScriptNR07::SceneLoaded() {
@@ -130,7 +130,7 @@ bool SceneScriptNR07::ClickedOnItem(int itemId, bool a2) {
 
 bool SceneScriptNR07::ClickedOnExit(int exitId) {
 	if (exitId == 0) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -102.0f, -73.5f, -233.0f, 0, true, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -102.0f, -73.5f, -233.0f, 0, true, false, false)) {
 			Actor_Set_Goal_Number(kActorHanoi, kGoalHanoiResetTimer);
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
@@ -153,7 +153,7 @@ void SceneScriptNR07::ActorChangedGoal(int actorId, int newGoal, int oldGoal, bo
 }
 
 void SceneScriptNR07::PlayerWalkedIn() {
-	Loop_Actor_Walk_To_XYZ(kActorMcCoy, -110.0f, -73.5f, -169.0f, 0, false, false, 0);
+	Loop_Actor_Walk_To_XYZ(kActorMcCoy, -110.0f, -73.5f, -169.0f, 0, false, false, false);
 
 	if (Actor_Query_In_Set(kActorDektora, kSetNR07)) {
 		if (!Game_Flag_Query(kFlagNR07Entered)) {
@@ -171,7 +171,7 @@ void SceneScriptNR07::PlayerWalkedIn() {
 			Actor_Says(kActorMcCoy, 3585, 14);
 			Actor_Says(kActorDektora, 510, 30);
 			Actor_Start_Speech_Sample(kActorMcCoy, 3590);
-			Loop_Actor_Walk_To_XYZ(kActorMcCoy, -112.0f, -73.0f, -89.0f, 525, false, false, 0);
+			Loop_Actor_Walk_To_XYZ(kActorMcCoy, -112.0f, -73.0f, -89.0f, 525, false, false, false);
 			Actor_Says(kActorDektora, 520, kAnimationModeSit);
 		} else {
 			Actor_Modify_Friendliness_To_Other(kActorDektora, kActorMcCoy, -2);
@@ -195,7 +195,7 @@ void SceneScriptNR07::dektoraRunAway() {
 	Actor_Set_At_XYZ(kActorDektora, -136.0f, -73.0f, -18.0f, 300);
 	Actor_Change_Animation_Mode(kActorDektora, 71);
 	Actor_Change_Animation_Mode(kActorMcCoy, 21);
-	Loop_Actor_Walk_To_XYZ(kActorDektora, -102.0f, -73.5f, -233.0f, 0, false, true, 0);
+	Loop_Actor_Walk_To_XYZ(kActorDektora, -102.0f, -73.5f, -233.0f, 0, false, true, false);
 
 	if (Game_Flag_Query(kFlagDektoraIsReplicant)) {
 		Actor_Set_Goal_Number(kActorDektora, kGoalDektoraNR08ReadyToRun);
@@ -233,7 +233,7 @@ void SceneScriptNR07::callHolloway() {
 }
 
 void SceneScriptNR07::clickedOnVase() {
-	Loop_Actor_Walk_To_XYZ(kActorMcCoy, -109.0f, -73.0f, -89.0f, 0, false, false, 0);
+	Loop_Actor_Walk_To_XYZ(kActorMcCoy, -109.0f, -73.0f, -89.0f, 0, false, false, false);
 	Actor_Face_Object(kActorMcCoy, "VASE", true);
 	if (Actor_Query_Is_In_Current_Set(kActorDektora)) {
 		if (!Actor_Clue_Query(kActorMcCoy, kClueDektoraInterview3)) {
@@ -244,17 +244,30 @@ void SceneScriptNR07::clickedOnVase() {
 			} else {
 				Actor_Modify_Friendliness_To_Other(kActorDektora, kActorMcCoy, -2);
 			}
-			Actor_Says(kActorMcCoy, 3600, 19);
-			Actor_Says(kActorDektora, 550, 30);
-			Actor_Says(kActorMcCoy, 3605, 19);
-			Actor_Says(kActorDektora, 560, 31);
-			Actor_Says(kActorMcCoy, 3610, 19);
+#if BLADERUNNER_ORIGINAL_BUGS
+			Actor_Says(kActorMcCoy, 3600, 19);  // The flowers are beautiful. (McCoy fake fan voice)
+			Actor_Says(kActorDektora, 550, 30); // And a extremely rare (...)
+			Actor_Says(kActorMcCoy, 3605, 19);  // That's a pretty card. (McCoy fake fan voice)
+			Actor_Says(kActorDektora, 560, 31); // Please don't touch that. It's private.
+			Actor_Says(kActorMcCoy, 3610, 19);  // Sorry (McCoy fake fan voice)
+#else
+			if (!Game_Flag_Query(kFlagNR07McCoyIsCop)) {
+				Actor_Says(kActorMcCoy, 3600, 19);  // The flowers are beautiful. (McCoy fake fan voice)
+				Actor_Says(kActorDektora, 550, 30); // And a extremely rare (...)
+				Actor_Says(kActorMcCoy, 3605, 19);  // That's a pretty card. (McCoy fake fan voice)
+				Actor_Says(kActorDektora, 560, 31); // Please don't touch that. It's private.
+				Actor_Says(kActorMcCoy, 3610, 19);  // Sorry (McCoy fake fan voice)
+			} else {
+				Actor_Says(kActorDektora, 560, 31); // Please don't touch that. It's private.
+				Actor_Says(kActorMcCoy, 8525, 19);  // Hmph.
+			}
+#endif // BLADERUNNER_ORIGINAL_BUGS
 		}
 	} else if (!Actor_Clue_Query(kActorMcCoy, kClueDektorasCard)) {
 		Actor_Clue_Acquire(kActorMcCoy, kClueDektorasCard, true, -1);
 		Loop_Actor_Walk_To_Scene_Object(kActorMcCoy, "VASE", 100, true, false);
 		Actor_Change_Animation_Mode(kActorMcCoy, 23);
-		Item_Pickup_Spin_Effect(935, 526, 268);
+		Item_Pickup_Spin_Effect(kModelAnimationDektorasCard, 526, 268);
 		Actor_Voice_Over(1690, kActorVoiceOver);
 		Actor_Voice_Over(1700, kActorVoiceOver);
 	} else {
@@ -270,8 +283,8 @@ void SceneScriptNR07::talkAboutBelt1() {
 	Actor_Says(kActorMcCoy, 3630, 13);
 	Actor_Says_With_Pause(kActorDektora, 590, 1.0f, 30);
 	Actor_Says(kActorDektora, 600, 30);
-	Actor_Start_Speech_Sample(kActorMcCoy, 3640);
-	Loop_Actor_Walk_To_XYZ(kActorMcCoy, -109.0f, -73.0f, -89.0f, 0, false, false, 0);
+	Actor_Start_Speech_Sample(kActorMcCoy, 3640);  // Tell you the truth, I'm from the LPD. (...)
+	Loop_Actor_Walk_To_XYZ(kActorMcCoy, -109.0f, -73.0f, -89.0f, 0, false, false, false);
 	Actor_Face_Actor(kActorMcCoy, kActorDektora, true);
 	Actor_Face_Actor(kActorDektora, kActorMcCoy, true);
 
@@ -324,7 +337,7 @@ void SceneScriptNR07::talkAboutBelt2() {
 void SceneScriptNR07::talkAboutVoightKampff() {
 	Actor_Clue_Acquire(kActorMcCoy, kClueDektoraInterview1, true, -1);
 	Actor_Start_Speech_Sample(kActorMcCoy, 3660);
-	Loop_Actor_Walk_To_XYZ(kActorMcCoy, -109.0f, -73.0f, -89.0f, 0, 0, false, 0);
+	Loop_Actor_Walk_To_XYZ(kActorMcCoy, -109.0f, -73.0f, -89.0f, 0, false, false, false);
 	Actor_Face_Actor(kActorMcCoy, kActorDektora, true);
 	Actor_Says(kActorDektora, 650, 30);
 	Actor_Says(kActorDektora, 660, 31);
@@ -353,7 +366,7 @@ void SceneScriptNR07::talkAboutVoightKampff() {
 void SceneScriptNR07::talkAboutSteele() {
 	Actor_Says(kActorMcCoy, 3690, 14);
 	Actor_Start_Speech_Sample(kActorDektora, 750);
-	Loop_Actor_Walk_To_XYZ(kActorMcCoy, -109.0f, -73.0f, -89.0f, 0, false, false, 0);
+	Loop_Actor_Walk_To_XYZ(kActorMcCoy, -109.0f, -73.0f, -89.0f, 0, false, false, false);
 	Actor_Face_Actor(kActorMcCoy, kActorDektora, true);
 	Actor_Face_Actor(kActorDektora, kActorMcCoy, true);
 	Actor_Says(kActorMcCoy, 3695, 15);
@@ -379,7 +392,7 @@ void SceneScriptNR07::talkAboutMoonbus() {
 	} else {
 		Actor_Modify_Friendliness_To_Other(kActorDektora, kActorMcCoy, -3);
 		Actor_Start_Speech_Sample(kActorMcCoy, 3710);
-		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -109.0f, -73.0f, -89.0f, 0, false, false, 0);
+		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -109.0f, -73.0f, -89.0f, 0, false, false, false);
 		Actor_Face_Actor(kActorMcCoy, kActorDektora, true);
 		dektoraRunAway();
 	}

@@ -85,22 +85,18 @@ void StarTrekEngine::loadRoom(const Common::String &missionName, int roomIndex) 
 	_gfx->fadeoutScreen();
 	_sound->stopAllVocSounds();
 
-	_screenName = _missionName + (char)(_roomIndex + '0');
-
-	_gfx->setBackgroundImage(_gfx->loadBitmap(_screenName));
-	_gfx->loadPri(_screenName);
+	_gfx->setBackgroundImage(_gfx->loadBitmap(getScreenName()));
+	_gfx->loadPri(getScreenName());
 	_gfx->loadPalette("palette");
 	_gfx->copyBackgroundScreen();
 
-	_room = SharedPtr<Room>(new Room(this, _screenName));
+	_room = new Room(this, getScreenName());
 
 	// Original sets up bytes 0-3 of rdf file as "remote function caller"
 
-	// Load map file
+	_room->loadMapFile(getScreenName());
+
 	_awayMission.activeAction = ACTION_WALK;
-	_mapFilename = _screenName;
-	_mapFile = loadFile(_mapFilename + ".map");
-	_iwFile = SharedPtr<IWFile>(new IWFile(this, _mapFilename + ".iw"));
 
 	actorFunc1();
 	initActors();
@@ -410,8 +406,8 @@ void StarTrekEngine::awayMissionUseObject(int16 clickedObject) {
 	else if (_awayMission.activeObject == OBJECT_MCCOY && _room->actionHasCode(ACTION_USE, OBJECT_IMEDKIT, _awayMission.passiveObject, 0))
 		tryWalkToHotspot = true;
 	// CHECKME: Identical to the previous check, thus never used
-	else if (_awayMission.activeObject == OBJECT_MCCOY && _room->actionHasCode(ACTION_USE, OBJECT_IMEDKIT, _awayMission.passiveObject, 0))
-		tryWalkToHotspot = true;
+	//else if (_awayMission.activeObject == OBJECT_MCCOY && _room->actionHasCode(ACTION_USE, OBJECT_IMEDKIT, _awayMission.passiveObject, 0))
+	//	tryWalkToHotspot = true;
 	else if (_awayMission.activeObject == OBJECT_SPOCK && _room->actionHasCode(ACTION_USE, OBJECT_ISTRICOR, _awayMission.passiveObject, 0))
 		tryWalkToHotspot = true;
 
@@ -467,8 +463,10 @@ void StarTrekEngine::unloadRoom() {
 	_gfx->fadeoutScreen();
 	// sub_2394b(); // TODO
 	actorFunc1();
-	_room.reset();
-	_mapFile.reset();
+	delete _room;
+	_room = nullptr;
+	delete _mapFile;
+	_mapFile = nullptr;
 }
 
 int StarTrekEngine::loadActorAnimWithRoomScaling(int actorIndex, const Common::String &animName, int16 x, int16 y) {
@@ -489,7 +487,7 @@ Fixed8 StarTrekEngine::getActorScaleAtPosition(int16 y) {
 	return Fixed8(_playerActorScale * (y - minY)) + minScale;
 }
 
-SharedPtr<Room> StarTrekEngine::getRoom() {
+Room *StarTrekEngine::getRoom() {
 	return _room;
 }
 

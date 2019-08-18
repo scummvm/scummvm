@@ -113,7 +113,14 @@ bool AIScriptInsectDealer::GoalChanged(int currentGoalNumber, int newGoalNumber)
 
 		if (!Game_Flag_Query(kFlagAR02DektoraBoughtScorpions)) {
 			Game_Flag_Set(kFlagAR02DektoraBoughtScorpions);
-			Item_Remove_From_World(kItemScrorpions);
+#if BLADERUNNER_ORIGINAL_BUGS
+			Item_Remove_From_World(kItemScorpions);
+#else
+			if (Game_Flag_Query(kFlagScorpionsInAR02)) {
+				Game_Flag_Reset(kFlagScorpionsInAR02);
+				Item_Remove_From_World(kItemScorpions);
+			}
+#endif
 		}
 	}
 

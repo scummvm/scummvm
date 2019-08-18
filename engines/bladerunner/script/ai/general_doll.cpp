@@ -61,10 +61,10 @@ bool AIScriptGeneralDoll::Update() {
 }
 
 void AIScriptGeneralDoll::TimerExpired(int timer) {
-	if (timer == 2) {
+	if (timer == kActorTimerAIScriptCustomTask2) {
 		Actor_Change_Animation_Mode(kActorMcCoy, kAnimationModeDie);
 		Actor_Change_Animation_Mode(kActorGeneralDoll, kAnimationModeDie);
-		AI_Countdown_Timer_Reset(kActorGeneralDoll, 2);
+		AI_Countdown_Timer_Reset(kActorGeneralDoll, kActorTimerAIScriptCustomTask2);
 		return; //true;
 	}
 	return; //false;
@@ -73,7 +73,7 @@ void AIScriptGeneralDoll::TimerExpired(int timer) {
 void AIScriptGeneralDoll::CompletedMovementTrack() {
 	switch (Actor_Query_Goal_Number(kActorGeneralDoll)) {
 	case 101:
-		if (Player_Query_Current_Scene() == 6) {
+		if (Player_Query_Current_Scene() == kSceneBB05) {
 			switch (Random_Query(0, 5)) {
 			case 0:
 				Ambient_Sounds_Play_Speech_Sound(kActorGeneralDoll, 0, 80, 0, 0, 0);
@@ -156,7 +156,7 @@ bool AIScriptGeneralDoll::ShotAtAndHit() {
 	if (!Game_Flag_Query(kFlagGeneralDollShot)
 	 &&  Global_Variable_Query(kVariableGeneralDollShot) == 1
 	) {
-		Sound_Play(121, 100, 0, 0, 50);
+		Sound_Play(kSfxSERVOD1, 100, 0, 0, 50);
 		Game_Flag_Set(kFlagGeneralDollShot);
 		Actor_Set_Goal_Number(kActorGeneralDoll, 104);
 		ChangeAnimationMode(kAnimationModeDie);
@@ -366,7 +366,7 @@ bool AIScriptGeneralDoll::ChangeAnimationMode(int mode) {
 		_animationFrame = 0;
 		break;
 
-	case 48:
+	case kAnimationModeDie:
 		_animationState = 4;
 		_animationFrame = 0;
 		break;

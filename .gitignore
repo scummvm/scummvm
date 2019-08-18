@@ -37,7 +37,13 @@ lib*.a
 /Icon.*
 /scummvm-conf.cpp
 /tmp_*.cpp
+
 /README
+/README.html
+/NEWS
+/NEWS.html
+/doc/de/NEUES
+/doc/de/NEUES.html
 
 /build
 /staging
@@ -65,6 +71,11 @@ lib*.a
 /backends/platform/ds/arm9/scummvm-?
 
 /backends/platform/maemo/scummvm
+
+/backends/platform/symbian/mmp/*.mmp
+/backends/platform/symbian/*/ScummVM_*.mmp
+!/backends/platform/symbian/*/ScummVM_*_App.mmp
+/backends/platform/symbian/*/BLD.INF
 
 /backends/platform/wince/scummvm.exe*
 /backends/platform/wince/sound
@@ -99,14 +110,14 @@ project.xcworkspace
 /dists/macosx/scummvm.xcodeproj
 /dists/macosx/create_project
 
-/dists/msvc*/[Dd]ebug*/
-/dists/msvc*/[Rr]elease*/
-/dists/msvc*/[Aa]nalysis*/
-/dists/msvc*/*.lib
-/dists/msvc*/*.SAV
-/dists/msvc*/*.dat
-/dists/msvc*/*.dll
-/dists/msvc*/test_runner.cpp
+/dists/msvc/[Dd]ebug*/
+/dists/msvc/[Rr]elease*/
+/dists/msvc/[Aa]nalysis*/
+/dists/msvc/*.lib
+/dists/msvc/*.SAV
+/dists/msvc/*.dat
+/dists/msvc/*.dll
+/dists/msvc/test_runner.cpp
 
 /dists/engine-data/testbed-audiocd-files/testbed.config
 /dists/engine-data/testbed-audiocd-files/testbed.out
@@ -134,7 +145,9 @@ project.xcworkspace
 /devtools/make-scumm-fontdata
 /devtools/create_access/create_access
 /devtools/create_cryo/create_cryo_dat
+/devtools/create_cryomni3d/create_cryomni3d_dat
 /devtools/create_drascula/create_drascula
+/devtools/create_glk/create_glk
 /devtools/create_hugo/create_hugo
 /devtools/create_kyradat/create_kyradat
 /devtools/create_lure/create_lure
@@ -187,6 +200,7 @@ ipch/
 *.tss
 *.VC.db
 .vs/
+UpgradeLog.htm
 
 #Ignore default Visual Studio build folders
 [Dd]ebug/
@@ -217,11 +231,18 @@ ScummVM.includes
 .DS_Store
 
 #Ignore MS Visual C++ temporary files/subdirectories (except create_project.bat)
-dists/msvc*/**
-!dists/msvc*/create_project.bat
+dists/msvc/**
+!dists/msvc/create_project.bat
 
 #Ignore bison debug output
 *.output
+
+#Ignore CMake build files
+CMakeFiles
+CMakeCache.txt
+cmake_install.cmake
+.ninja_*
+*.ninja
 
 #Ignore Xcode output/project files
 out/
@@ -231,6 +252,12 @@ out/
 psp2pkg/
 *.velf
 *.vpk
+
+#Ignore Switch files
+switch_release/
+scummvm.elf
+scummvm.nro
+scummvm_switch.zip
 
 #Ignore gmon.out created by gprof
 gmon.out

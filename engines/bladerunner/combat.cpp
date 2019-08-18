@@ -61,7 +61,7 @@ void Combat::reset() {
 }
 
 void Combat::activate() {
-	if(_enabled) {
+	if (_enabled) {
 		_vm->_playerActor->combatModeOn(-1, true, -1, -1, kAnimationModeCombatIdle, kAnimationModeCombatWalk, kAnimationModeCombatRun, -1, -1, -1, _vm->_combat->_ammoDamage[_vm->_settings->getAmmoType()], 0, false);
 		_active = true;
 	}
@@ -97,19 +97,19 @@ void Combat::disable() {
 }
 
 void Combat::setHitSound(int ammoType, int column, int soundId) {
-	_hitSoundId[ammoType * 3 + column] = soundId;
+	_hitSoundId[(kSoundCount/_vm->_settings->getAmmoTypesCount()) * ammoType + column] = soundId;
 }
 
 void Combat::setMissSound(int ammoType, int column, int soundId) {
-	_missSoundId[ammoType * 3 + column] = soundId;
+	_missSoundId[(kSoundCount/_vm->_settings->getAmmoTypesCount()) * ammoType + column] = soundId;
 }
 
 int Combat::getHitSound() const {
-	return _hitSoundId[3 * _vm->_settings->getAmmoType() + _vm->_rnd.getRandomNumber(2)];
+	return _hitSoundId[(kSoundCount/_vm->_settings->getAmmoTypesCount()) * _vm->_settings->getAmmoType() + _vm->_rnd.getRandomNumber(2)];
 }
 
 int Combat::getMissSound() const {
-	return _hitSoundId[3 * _vm->_settings->getAmmoType() + _vm->_rnd.getRandomNumber(2)];
+	return _missSoundId[(kSoundCount/_vm->_settings->getAmmoTypesCount()) * _vm->_settings->getAmmoType() + _vm->_rnd.getRandomNumber(2)];
 }
 
 void Combat::shoot(int actorId, Vector3 &to, int screenX) {
@@ -158,6 +158,11 @@ void Combat::shoot(int actorId, Vector3 &to, int screenX) {
 		if (actor->inCombat()) {
 			actor->combatModeOff();
 		}
+#if BLADERUNNER_ORIGINAL_BUGS
+#else
+		// make sure the dead enemy won't pick a pending movement track and re-spawn
+		actor->_movementTrack->flush();
+#endif
 		actor->stopWalking(false);
 		actor->changeAnimationMode(kAnimationModeDie, false);
 

@@ -78,16 +78,16 @@ class KIA {
 
 	int _transitionId;
 
-	int                _playerVqaTimeLast;
+	uint32             _playerVqaTimeLast;
 	VQAPlayer         *_playerVqaPlayer;
-	int                _playerVqaFrame;
-	int                _playerVisualizerState;
+	uint32             _playerVqaFrame;
+	uint32             _playerVisualizerState;
 	int                _playerPhotographId;
 	Shape             *_playerPhotograph;
 	int                _playerSliceModelId;
 	float              _playerSliceModelAngle;
 	Graphics::Surface  _playerImage;
-	int                _timeLast;
+	uint32             _timeLast;
 
 	ActorDialogueQueueEntry _playerActorDialogueQueue[kPlayerActorDialogueQueueCapacity];
 	int                     _playerActorDialogueQueuePosition;
@@ -141,6 +141,7 @@ public:
 
 	void handleMouseDown(int mouseX, int mouseY, bool mainButton);
 	void handleMouseUp(int mouseX, int mouseY, bool mainButton);
+	void handleMouseScroll(int mouseX, int mouseY, int direction); // Added by ScummVM team
 	void handleKeyUp(const Common::KeyState &kbd);
 	void handleKeyDown(const Common::KeyState &kbd);
 
@@ -170,6 +171,7 @@ private:
 	void playTransitionSound(int transitionId);
 
 	void playPrivateAddon();
+	void playObjectDescription(); // for restored content mode
 };
 
 } // End of namespace BladeRunner

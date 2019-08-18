@@ -62,13 +62,7 @@ public:
 	Pics *_pics;
 	zchar statusline[256];
 	uint zcolors[zcolor_NUMCOLORS];
-	int oldstyle;
-	int curstyle;
 	int fixforced;
-
-	int curr_font;
-	int prev_font;
-	int temp_font;
 
 	int curr_status_ht;
 	int mach_status_ht;
@@ -182,11 +176,6 @@ protected:
 	void os_draw_picture(int picture, const Common::Point &pos);
 
 	/**
-	 * Display a picture using the specified bounds
-	 */
-	void os_draw_picture(int picture, const Common::Rect &r);
-
-	/**
 	 * Return the colour of the pixel below the cursor. This is used by V6 games to print
 	 * text on top of pictures. The coulor need not be in the standard set of Z-machine colours.
 	 */
@@ -248,11 +237,6 @@ protected:
 	 * Waits for the user to type an input line
 	 */
 	zchar os_read_line(int max, zchar *buf, int timeout, int width, int continued);
-
-	/**
-	 * Set whether reverse video mode is active
-	 */
-	void os_set_reverse_video(bool flag);
 public:
 	/**
 	 * Constructor

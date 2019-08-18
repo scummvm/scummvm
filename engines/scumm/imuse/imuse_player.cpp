@@ -163,7 +163,7 @@ void Player::clear() {
 }
 
 void Player::hook_clear() {
-	memset(&_hook, 0, sizeof(_hook));
+	_hook.reset();
 }
 
 int Player::start_seq_sound(int sound, bool reset_vars) {
@@ -375,7 +375,8 @@ void Player::sysEx(const byte *p, uint16 len) {
 	if (a != IMUSE_SYSEX_ID) {
 		if (a == ROLAND_SYSEX_ID) {
 			// Roland custom instrument definition.
-			if (_isMIDI || _isMT32) {
+			// There is at least one (pointless) attempt in INDY4 Amiga to send this, too.
+			if ((_isMIDI && !_se->_isAmiga) || _isMT32) {
 				part = getPart(p[0] & 0x0F);
 				if (part) {
 					part->_instrument.roland(p - 1);

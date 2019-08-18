@@ -45,7 +45,7 @@ public:
 
 class PC98AudioCore {
 public:
-	PC98AudioCore(Audio::Mixer *mixer, PC98AudioPluginDriver *driver, PC98AudioPluginDriver::EmuType type, bool externalMutexHandling = false);
+	PC98AudioCore(Audio::Mixer *mixer, PC98AudioPluginDriver *driver, PC98AudioPluginDriver::EmuType type);
 	~PC98AudioCore();
 
 	bool init();

@@ -108,7 +108,7 @@ const JNINativeMethod JNI::_natives[] = {
 		(void *)JNI::setSurface },
 	{ "main", "([Ljava/lang/String;)I",
 		(void *)JNI::main },
-	{ "pushEvent", "(IIIIII)V",
+	{ "pushEvent", "(IIIIIII)V",
 		(void *)JNI::pushEvent },
 	{ "enableZoning", "(Z)V",
 		(void *)JNI::enableZoning },
@@ -260,9 +260,8 @@ bool JNI::openUrl(const char *url) {
 }
 
 bool JNI::hasTextInClipboard() {
-	bool hasText = false;
 	JNIEnv *env = JNI::getEnv();
-	hasText = env->CallBooleanMethod(_jobj, _MID_hasTextInClipboard);
+	bool hasText = env->CallBooleanMethod(_jobj, _MID_hasTextInClipboard);
 
 	if (env->ExceptionCheck()) {
 		LOGE("Failed to check the contents of the clipboard");
@@ -299,13 +298,12 @@ Common::String JNI::getTextFromClipboard() {
 }
 
 bool JNI::setTextInClipboard(const Common::String &text) {
-	bool success = true;
 	JNIEnv *env = JNI::getEnv();
 
 	jbyteArray javaText = env->NewByteArray(text.size());
 	env->SetByteArrayRegion(javaText, 0, text.size(), reinterpret_cast<const jbyte*>(text.c_str()));
 
-	success = env->CallBooleanMethod(_jobj, _MID_setTextInClipboard, javaText);
+	bool success = env->CallBooleanMethod(_jobj, _MID_setTextInClipboard, javaText);
 
 	if (env->ExceptionCheck()) {
 		LOGE("Failed to add text to the clipboard");
@@ -320,9 +318,8 @@ bool JNI::setTextInClipboard(const Common::String &text) {
 }
 
 bool JNI::isConnectionLimited() {
-	bool limited = false;
 	JNIEnv *env = JNI::getEnv();
-	limited = env->CallBooleanMethod(_jobj, _MID_isConnectionLimited);
+	bool limited = env->CallBooleanMethod(_jobj, _MID_isConnectionLimited);
 
 	if (env->ExceptionCheck()) {
 		LOGE("Failed to check whether connection's limited");
@@ -638,7 +635,7 @@ cleanup:
 }
 
 void JNI::pushEvent(JNIEnv *env, jobject self, int type, int arg1, int arg2,
-					int arg3, int arg4, int arg5) {
+					int arg3, int arg4, int arg5, int arg6) {
 	// drop events until we're ready and after we quit
 	if (!_ready_for_events) {
 		LOGW("dropping event");
@@ -647,7 +644,7 @@ void JNI::pushEvent(JNIEnv *env, jobject self, int type, int arg1, int arg2,
 
 	assert(_system);
 
-	_system->pushEvent(type, arg1, arg2, arg3, arg4, arg5);
+	_system->pushEvent(type, arg1, arg2, arg3, arg4, arg5, arg6);
 }
 
 void JNI::enableZoning(JNIEnv *env, jobject self, jboolean enable) {

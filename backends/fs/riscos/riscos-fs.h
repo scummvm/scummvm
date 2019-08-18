@@ -67,25 +67,12 @@ public:
 
 	virtual Common::SeekableReadStream *createReadStream();
 	virtual Common::WriteStream *createWriteStream();
-	virtual bool create(bool isDirectoryFlag);
-
+	virtual bool createDirectory();
 private:
 	/**
-	 * Converts a Unix style path to a RISC OS style path.
-	 *
-	 * @param str Unix style path to convert.
-	 * @return RISC OS style path.
+	 * Tests and sets the _isValid and _isDirectory flags, using OS_File 20.
 	 */
-	static Common::String toRISCOS(Common::String &path);
-
-	/**
-	 * Converts a RISC OS style path to a Unix style path.
-	 *
-	 * @param str RISC OS style path to convert.
-	 * @return Unix style path.
-	 */
-	static Common::String toUnix(Common::String &path);
-
+	virtual void setFlags();
 };
 
 namespace Riscos {

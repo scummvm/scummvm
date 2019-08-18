@@ -134,6 +134,7 @@ done
 # Default settings
 #
 # Default lib behavior yes/no/auto
+_sdl=no
 _ogg=auto
 _vorbis=auto
 _sdlnet=auto
@@ -172,6 +173,7 @@ _use_cxx11=no
 _verbose_build=no
 _text_console=no
 _mt32emu=yes
+_lua=yes
 _build_scalers=yes
 _build_hq_scalers=yes
 _enable_prof=no
@@ -214,6 +216,7 @@ _amigaospath="Games:ScummVM"
 _staticlibpath=
 _xcodetoolspath=
 _sparklepath=
+_pkgconfig=pkg-config
 _sdlconfig=sdl2-config
 _libcurlconfig=curl-config
 _freetypeconfig=freetype-config
@@ -227,8 +230,8 @@ NASM=""
 _tainted_build=no
 PANDOC=""
 _pandocpath="$PATH"
-_pandocoutput="README"
-_pandocformat="plain"
+_pandocformat="default"
+_pandocext="default"
 # The following variables are automatically detected, and should not
 # be modified otherwise. Consider them read-only.
 _posix=no
@@ -251,8 +254,7 @@ add_feature png "PNG" "_png"
 add_feature theoradec "libtheoradec" "_theoradec"
 add_feature vorbis "Vorbis file support" "_vorbis _tremor"
 add_feature zlib "zlib" "_zlib"
-
-
+add_feature lua "lua" "_lua"
 
 # Directories for installing ScummVM.
 # This list is closely based on what GNU autoconf does,
@@ -524,7 +526,7 @@ get_system_exe_extension() {
 	riscos)
 		_exeext=",e1f"
 		;;
-	3ds | dreamcast | ds | gamecube | n64 | ps2 | psp | wii)
+	3ds | dreamcast | ds | gamecube | n64 | ps2 | psp | switch | wii)
 		_exeext=".elf"
 		;;
 	gph-linux)
@@ -657,6 +659,26 @@ engine_enable_all() {
 engine_disable_all() {
 	for engine in $_engines; do
 		set_var _engine_${engine}_build "no"
+	done
+}
+
+# Enable all unstable engines
+engine_enable_all_unstable() {
+	for engine in $_engines; do
+		engine_build_default=`get_engine_build_default $engine`
+		if test $engine_build_default = no ; then
+			set_var _engine_${engine}_build "yes"
+		fi
+	done
+}
+
+# Disable all unstable engines
+engine_disable_all_unstable() {
+	for engine in $_engines; do
+		engine_build_default=`get_engine_build_default $engine`
+		if test $engine_build_default = no ; then
+			set_var _engine_${engine}_build "no"
+		fi
 	done
 }
 
@@ -917,7 +939,7 @@ Configuration:
   -h, --help              display this help and exit
   --backend=BACKEND       backend to build (3ds, android, dc, dingux, ds, gcw0,
                           gph, iphone, ios7, linuxmoto, maemo, n64, null, openpandora,
-                          ps2, psp, psp2, samsungtv, sdl, tizen, webos, wii, wince) [sdl]
+                          ps2, psp, psp2, samsungtv, sdl, switch, tizen, webos, wii, wince) [sdl]
 
 Installation directories:
   --prefix=PREFIX         install architecture-independent files in PREFIX
@@ -970,6 +992,7 @@ Special configuration feature:
                                            psp2 for PlayStation Vita
                                            psp for PlayStation Portable
                                            samsungtv for Samsung TV
+                                           switch for Nintendo Switch
                                            tizen for Samsung Tizen
                                            webos for HP Palm WebOS
                                            wii for Nintendo Wii
@@ -979,6 +1002,10 @@ Game engines:
   --enable-all-engines     enable all engines, including those which are
                            broken or unsupported
   --disable-all-engines    disable all engines
+  --enable-all-unstable-engines     enable the engines which are
+                                    broken or unsupported
+  --disable-all-unstable-engines    disable only the engines which are
+                                    broken or unsupported
   --enable-engine=<engine name>[,<engine name>...] enable engine(s) listed
   --disable-engine=<engine name>[,<engine name>...] disable engine(s) listed
   --enable-engine-static=<engine name>[,<engine name>...]
@@ -1000,6 +1027,7 @@ Optional Features:
   --enable-plugins         enable the support for dynamic plugins
   --default-dynamic        make plugins dynamic by default
   --disable-mt32emu        don't enable the integrated MT-32 emulator
+  --disable-lua            don't enable Lua support
   --disable-nuked-opl      don't build Nuked OPL driver
   --disable-16bit          don't enable 16bit color support
   --disable-highres        don't enable support for high resolution engines >320x240
@@ -1094,8 +1122,7 @@ Optional Libraries:
   --with-nasm-prefix=DIR   prefix where nasm executable is installed (optional)
   --disable-nasm           disable assembly language optimizations [autodetect]
 
-	--with-pandoc-output=FILE  filename to convert README.md to (optional)
-	--with-pandoc-format=FORMAT   pandoc format to use during the conversion (optional)
+  --with-pandoc-format=FORMAT   pandoc format to use during the conversion (optional)
 
   --with-readline-prefix=DIR   prefix where readline is installed (optional)
   --disable-readline       disable readline support in text console [autodetect]
@@ -1153,94 +1180,96 @@ EOF
 
 for ac_option in $@; do
 	case "$ac_option" in
-	--enable-static)         _static_build=yes    ;;
-	--disable-16bit)          _16bit=no       ;;
-	--enable-highres)         _highres=yes    ;;
-	--disable-highres)        _highres=no     ;;
+	--enable-static)              _static_build=yes      ;;
+	--disable-16bit)              _16bit=no              ;;
+	--enable-highres)             _highres=yes           ;;
+	--disable-highres)            _highres=no            ;;
 	--disable-savegame-timestamp) _savegame_timestamp=no ;;
-	--disable-scalers)        _build_scalers=no ;;
-	--disable-hq-scalers)     _build_hq_scalers=no ;;
-	--enable-alsa)            _alsa=yes       ;;
-	--disable-alsa)           _alsa=no        ;;
-	--enable-seq-midi)        _seq_midi=yes   ;;
-	--disable-seq-midi)       _seq_midi=no    ;;
-	--enable-sndio)           _sndio=yes      ;;
-	--disable-sndio)          _sndio=no       ;;
-	--enable-timidity)        _timidity=yes   ;;
-	--disable-timidity)       _timidity=no    ;;
-	--enable-ogg)             _ogg=yes        ;;
-	--disable-ogg)            _ogg=no         ;;
-	--enable-vorbis)          _vorbis=yes     ;;
-	--disable-vorbis)         _vorbis=no      ;;
-	--enable-tremor)          _tremor=yes     ;;
-	--disable-tremor)         _tremor=no      ;;
-	--enable-opl2lpt)         _opl2lpt=yes    ;;
-	--disable-opl2lpt)        _opl2lpt=no     ;;
-	--enable-flac)            _flac=yes       ;;
-	--disable-flac)           _flac=no        ;;
-	--enable-mad)             _mad=yes        ;;
-	--disable-mad)            _mad=no         ;;
-	--enable-zlib)            _zlib=yes       ;;
-	--disable-zlib)           _zlib=no        ;;
-	--enable-sparkle)         _sparkle=yes    ;;
-	--disable-sparkle)        _sparkle=no     ;;
-	--enable-osx-dock-plugin) _osxdockplugin=yes;;
-	--disable-osx-dock-plugin) _osxdockplugin=no;;
-	--enable-nasm)            _nasm=yes       ;;
-	--disable-nasm)           _nasm=no        ;;
-	--enable-mpeg2)           _mpeg2=yes      ;;
-	--disable-mpeg2)          _mpeg2=no       ;;
-	--enable-a52)             _a52=yes        ;;
-	--disable-a52)            _a52=no         ;;
-	--disable-jpeg)           _jpeg=no        ;;
-	--enable-jpeg)            _jpeg=yes       ;;
-	--disable-png)            _png=no         ;;
-	--enable-png)             _png=yes        ;;
-	--disable-theoradec)      _theoradec=no   ;;
-	--enable-theoradec)       _theoradec=yes  ;;
-	--disable-faad)           _faad=no        ;;
-	--enable-faad)            _faad=yes       ;;
-	--disable-fluidsynth)     _fluidsynth=no  ;;
-	--enable-readline)        _readline=yes   ;;
-	--disable-readline)       _readline=no    ;;
-	--enable-freetype2)       _freetype2=yes  ;;
-	--disable-freetype2)      _freetype2=no   ;;
-	--enable-taskbar)         _taskbar=yes    ;;
-	--disable-taskbar)        _taskbar=no     ;;
-	--enable-system-dialogs)  _dialogs=yes    ;;
-	--disable-system-dialogs) _dialogs=no     ;;
-	--enable-sdlnet)          _sdlnet=yes     ;;
-	--disable-sdlnet)         _sdlnet=no      ;;
-	--enable-libcurl)         _libcurl=yes     ;;
-	--disable-libcurl)        _libcurl=no      ;;
-	--enable-cloud)           _cloud=yes      ;;
-	--disable-cloud)          _cloud=no       ;;
-	--enable-updates)         _updates=yes    ;;
-	--disable-updates)        _updates=no     ;;
-	--enable-libunity)        _libunity=yes   ;;
-	--disable-libunity)       _libunity=no    ;;
-	--enable-bink)            _bink=yes       ;;
-	--disable-bink)           _bink=no        ;;
+	--disable-scalers)            _build_scalers=no      ;;
+	--disable-hq-scalers)         _build_hq_scalers=no   ;;
+	--enable-alsa)                _alsa=yes              ;;
+	--disable-alsa)               _alsa=no               ;;
+	--enable-seq-midi)            _seq_midi=yes          ;;
+	--disable-seq-midi)           _seq_midi=no           ;;
+	--enable-sndio)               _sndio=yes             ;;
+	--disable-sndio)              _sndio=no              ;;
+	--enable-timidity)            _timidity=yes          ;;
+	--disable-timidity)           _timidity=no           ;;
+	--enable-ogg)                 _ogg=yes               ;;
+	--disable-ogg)                _ogg=no                ;;
+	--enable-vorbis)              _vorbis=yes            ;;
+	--disable-vorbis)             _vorbis=no             ;;
+	--enable-tremor)              _tremor=yes            ;;
+	--disable-tremor)             _tremor=no             ;;
+	--enable-opl2lpt)             _opl2lpt=yes           ;;
+	--disable-opl2lpt)            _opl2lpt=no            ;;
+	--enable-flac)                _flac=yes              ;;
+	--disable-flac)               _flac=no               ;;
+	--enable-mad)                 _mad=yes               ;;
+	--disable-mad)                _mad=no                ;;
+	--enable-zlib)                _zlib=yes              ;;
+	--disable-zlib)               _zlib=no               ;;
+	--enable-sparkle)             _sparkle=yes           ;;
+	--disable-sparkle)            _sparkle=no            ;;
+	--enable-osx-dock-plugin)     _osxdockplugin=yes     ;;
+	--disable-osx-dock-plugin)    _osxdockplugin=no      ;;
+	--enable-nasm)                _nasm=yes              ;;
+	--disable-nasm)               _nasm=no               ;;
+	--enable-mpeg2)               _mpeg2=yes             ;;
+	--disable-mpeg2)              _mpeg2=no              ;;
+	--enable-a52)                 _a52=yes               ;;
+	--disable-a52)                _a52=no                ;;
+	--disable-jpeg)               _jpeg=no               ;;
+	--enable-jpeg)                _jpeg=yes              ;;
+	--disable-png)                _png=no                ;;
+	--enable-png)                 _png=yes               ;;
+	--disable-theoradec)          _theoradec=no          ;;
+	--enable-theoradec)           _theoradec=yes         ;;
+	--disable-faad)               _faad=no               ;;
+	--enable-faad)                _faad=yes              ;;
+	--disable-fluidsynth)         _fluidsynth=no         ;;
+	--enable-readline)            _readline=yes          ;;
+	--disable-readline)           _readline=no           ;;
+	--enable-freetype2)           _freetype2=yes         ;;
+	--disable-freetype2)          _freetype2=no          ;;
+	--enable-taskbar)             _taskbar=yes           ;;
+	--disable-taskbar)            _taskbar=no            ;;
+	--enable-system-dialogs)      _dialogs=yes           ;;
+	--disable-system-dialogs)     _dialogs=no            ;;
+	--enable-sdlnet)              _sdlnet=yes            ;;
+	--disable-sdlnet)             _sdlnet=no             ;;
+	--enable-libcurl)             _libcurl=yes           ;;
+	--disable-libcurl)            _libcurl=no            ;;
+	--enable-cloud)               _cloud=yes             ;;
+	--disable-cloud)              _cloud=no              ;;
+	--enable-updates)             _updates=yes           ;;
+	--disable-updates)            _updates=no            ;;
+	--enable-libunity)            _libunity=yes          ;;
+	--disable-libunity)           _libunity=no           ;;
+	--enable-bink)                _bink=yes              ;;
+	--disable-bink)               _bink=no               ;;
 	--opengl-mode=*)
 		_opengl_mode=`echo $ac_option | cut -d '=' -f 2`
 		;;
-	--enable-verbose-build)   _verbose_build=yes ;;
-	--enable-plugins)         _dynamic_modules=yes ;;
-	--default-dynamic)        _plugins_default=dynamic ;;
-	--enable-mt32emu)         _mt32emu=yes    ;;
-	--disable-mt32emu)        _mt32emu=no     ;;
-	--enable-nuked-opl)       _nuked_opl=yes    ;;
-	--disable-nuked-opl)      _nuked_opl=no     ;;
-	--enable-translation)     _translation=yes ;;
-	--disable-translation)    _translation=no ;;
-	--enable-vkeybd)          _vkeybd=yes     ;;
-	--disable-vkeybd)         _vkeybd=no      ;;
-	--enable-keymapper)       _keymapper=yes  ;;
-	--disable-keymapper)      _keymapper=no   ;;
-	--enable-eventrecorder)   _eventrec=yes  ;;
-	--disable-eventrecorder)  _eventrec=no   ;;
-	--enable-text-console)    _text_console=yes ;;
-	--disable-text-console)   _text_console=no ;;
+	--enable-verbose-build)      _verbose_build=yes      ;;
+	--enable-plugins)            _dynamic_modules=yes    ;;
+	--default-dynamic)           _plugins_default=dynamic;;
+	--enable-mt32emu)            _mt32emu=yes            ;;
+	--disable-mt32emu)           _mt32emu=no             ;;
+	--enable-lua)                _lua=yes                ;;
+	--disable-lua)               _lua=no                 ;;
+	--enable-nuked-opl)          _nuked_opl=yes          ;;
+	--disable-nuked-opl)         _nuked_opl=no           ;;
+	--enable-translation)        _translation=yes        ;;
+	--disable-translation)       _translation=no         ;;
+	--enable-vkeybd)             _vkeybd=yes             ;;
+	--disable-vkeybd)            _vkeybd=no              ;;
+	--enable-keymapper)          _keymapper=yes          ;;
+	--disable-keymapper)         _keymapper=no           ;;
+	--enable-eventrecorder)      _eventrec=yes           ;;
+	--disable-eventrecorder)     _eventrec=no            ;;
+	--enable-text-console)       _text_console=yes       ;;
+	--disable-text-console)      _text_console=no        ;;
 	--with-fluidsynth-prefix=*)
 		arg=`echo $ac_option | cut -d '=' -f 2`
 		FLUIDSYNTH_CFLAGS="-I$arg/include"
@@ -1398,11 +1427,6 @@ for ac_option in $@; do
 		arg=`echo $ac_option | cut -d '=' -f 2`
 		_nasmpath="$arg:$arg/bin"
 		;;
-	--with-pandoc-output=*)
-		arg=`echo $ac_option | cut -d '=' -f 2`
-		_pandocoutput="$arg"
-		_pandoc=yes
-		;;
 	--with-pandoc-format=*)
 		arg=`echo $ac_option | cut -d '=' -f 2`
 		_pandocformat="$arg"
@@ -1447,6 +1471,12 @@ for ac_option in $@; do
 	--disable-all-engines)
 		engine_disable_all
 		;;
+	--enable-all-unstable-engines)
+		engine_enable_all_unstable
+		;;
+	--disable-all-unstable-engines)
+		engine_disable_all_unstable
+		;;
 	--enable-engine=* | --enable-engines=*)
 		for engine_name in `echo $ac_option | cut -d '=' -f 2- | tr ',' '\n'`; do
 			engine_enable "${engine_name}"
@@ -1487,6 +1517,11 @@ android | android-arm | android-v7a | android-arm-v7a | ouya)
 	_host_os=android
 	_host_cpu=arm
 	_host_alias=arm-linux-androideabi
+	;;
+android-arm64-v8a)
+	_host_os=android
+	_host_cpu=aarch64
+	_host_alias=aarch64-linux-android
 	;;
 android-mips)
 	_host_os=android
@@ -1684,6 +1719,15 @@ samsungtv)
 	_host_cpu=arm
 	_host_alias=arm-linux-gnueabi
 	;;
+switch)
+	_host_os=switch
+	_host_cpu=aarch64
+	_host_alias=aarch64-none-elf
+	test "x$prefix" = xNONE && prefix=.
+	datarootdir='${prefix}/data'
+	datadir='${datarootdir}'
+	docdir='${prefix}/doc'
+	;;
 tizen)
  	_host_os=tizen
 	_host_cpu=arm
@@ -1737,7 +1781,7 @@ else
 fi
 
 case $_host in
-caanoo | gp2x | gp2xwiz | openpandora | ps2 | psp2)
+arm-*riscos | caanoo | gp2x | gp2xwiz | openpandora | ps2 | psp | psp2 | switch)
 	if test "$_debug_build" = auto; then
 		# If you want to debug one of these platforms, use '--disable-optimizations --enable-debug'
 		_debug_build=no
@@ -1783,7 +1827,7 @@ android)
 		exit 1
 	fi
 	;;
-3ds | ds | gamecube | wii)
+3ds | ds | gamecube | switch | wii)
 	if test -z "$DEVKITPRO"; then
 		echo "Please set DEVKITPRO in your environment. export DEVKITPRO=<path to devkitPRO>"
 		exit 1
@@ -1835,6 +1879,15 @@ psp)
 		echo "Please set PSPSDK in your environment. export PSPSDK=<path to psp sdk>"
 		exit 1
 	fi
+
+	# These have to be set early because the compiler will not link successfully
+	# during testing otherwise
+	if test -d "$PSPDEV/psp/lib"; then
+		append_var LDFLAGS "-L$PSPDEV/psp/lib"
+	fi
+	append_var LDFLAGS "-L$PSPSDK/lib"
+	append_var LDFLAGS "-specs=$_srcdir/backends/platform/psp/psp.spec"
+
 	;;
 riscos)
 	if test -z "$GCCSDK_INSTALL_ENV"; then
@@ -1846,6 +1899,11 @@ riscos)
 		add_line_to_config_mk "TOKENIZE := $GCCSDK_INSTALL_ENV/bin/tokenize"
 	elif `which tokenize >/dev/null 2>&1`; then
 		add_line_to_config_mk "TOKENIZE := tokenize"
+	fi
+	if test -e "$GCCSDK_INSTALL_ENV/bin/bindhelp"; then
+		add_line_to_config_mk "BINDHELP := $GCCSDK_INSTALL_ENV/bin/bindhelp"
+	elif `which bindhelp >/dev/null 2>&1`; then
+		add_line_to_config_mk "BINDHELP := bindhelp"
 	fi
 	;;
 tizen)
@@ -2086,7 +2144,7 @@ if test "$have_gcc" = yes ; then
 			case $_host_os in
 			# newlib-based system include files suppress non-C89 function
 			# declarations under __STRICT_ANSI__
-			3ds | amigaos* | android | androidsdl | dreamcast | ds | gamecube | mingw* | mint* | n64 | psp | ps2 | ps3 | psp2 | tizen | wii | wince )
+			3ds | amigaos* | android | androidsdl | dreamcast | ds | gamecube | mingw* | mint* | n64 | psp | ps2 | ps3 | psp2 | switch | tizen | wii | wince )
 				;;
 			*)
 				append_var CXXFLAGS "-ansi"
@@ -2160,7 +2218,7 @@ fi
 # However, some platforms use GNU extensions in system header files, so
 # for these we must not use -pedantic.
 case $_host_os in
-3ds | android | androidsdl | gamecube | ps2 | psp | tizen | wii | webos)
+3ds | android | androidsdl | gamecube | ps2 | psp | switch | tizen | wii | webos)
 	;;
 *)
 	# ICC does not support pedantic, while GCC and clang do.
@@ -2241,14 +2299,14 @@ unsigned short ebcdic_mm[] = { 0xC2C9, 0xC785, 0x95C4, 0x8981, 0x95E2, 0xA8E2, 0
 void _ebcdic() { char* s = (char*) ebcdic_mm; s = (char*) ebcdic_ii; }
 int main() { _ascii (); _ebcdic (); return 0; }
 EOF
-$CXX $CXXFLAGS -c -o $TMPO.o tmp_endianness_check.cpp
-if $_strings $TMPO.o | grep BIGenDianSyS >/dev/null; then
+$CXX $LDFLAGS $CXXFLAGS -o $TMPO$HOSTEXEEXT tmp_endianness_check.cpp
+if $_strings $TMPO$HOSTEXEEXT | grep BIGenDianSyS >/dev/null; then
 	_endian=big
-elif $_strings $TMPO.o | grep LiTTleEnDian >/dev/null; then
+elif $_strings $TMPO$HOSTEXEEXT | grep LiTTleEnDian >/dev/null; then
 	_endian=little
 fi
 echo $_endian;
-cc_check_clean tmp_endianness_check.cpp
+cc_check_clean tmp_endianness_check.cpp tmp_endianness_check.dwo
 
 case $_endian in
 	big)
@@ -2485,10 +2543,8 @@ case $_host_os in
 			android | android-arm)
 				append_var CXXFLAGS "-march=armv5te"
 				append_var CXXFLAGS "-mtune=xscale"
-				append_var CXXFLAGS "-msoft-float"
+				append_var CXXFLAGS "-mfloat-abi=softfp"
 				ABI="armeabi"
-				ANDROID_PLATFORM=9
-				ANDROID_PLATFORM_ARCH="arm"
 				;;
 			android-v7a | android-arm-v7a)
 				append_var CXXFLAGS "-march=armv7-a"
@@ -2496,24 +2552,21 @@ case $_host_os in
 				append_var CXXFLAGS "-mfpu=vfp"
 				append_var LDFLAGS "-Wl,--fix-cortex-a8"
 				ABI="armeabi-v7a"
-				ANDROID_PLATFORM=9
-				ANDROID_PLATFORM_ARCH="arm"
+				;;
+			android-arm64-v8a)
+				ABI="arm64-v8a"
 				;;
 			android-mips)
 				append_var CXXFLAGS "-march=mips32"
 				append_var CXXFLAGS "-mtune=mips32"
 				ABI="mips"
 				# Platform version 9 is needed as earlier versions of platform do not support this arch.
-				ANDROID_PLATFORM=9
-				ANDROID_PLATFORM_ARCH="mips"
 				;;
 			android-x86)
 				append_var CXXFLAGS "-march=i686"
 				append_var CXXFLAGS "-mtune=i686"
 				ABI="x86"
 				# Platform version 9 is needed as earlier versions of platform do not support this arch.
-				ANDROID_PLATFORM=9
-				ANDROID_PLATFORM_ARCH="x86"
 				;;
 			ouya)
 				append_var CXXFLAGS "-march=armv7-a"
@@ -2521,14 +2574,8 @@ case $_host_os in
 				append_var CXXFLAGS "-mfloat-abi=softfp"
 				append_var CXXFLAGS "-mfpu=neon"
 				ABI="armeabi-v7a"
-				ANDROID_PLATFORM=16
-				ANDROID_PLATFORM_ARCH="arm"
 				;;
 		esac
-
-		# Setup platform version and arch
-		append_var CXXFLAGS "--sysroot=$ANDROID_NDK/platforms/android-$ANDROID_PLATFORM/arch-$ANDROID_PLATFORM_ARCH"
-		append_var LDFLAGS "--sysroot=$ANDROID_NDK/platforms/android-$ANDROID_PLATFORM/arch-$ANDROID_PLATFORM_ARCH"
 
 		append_var CXXFLAGS "-fpic"
 		append_var CXXFLAGS "-ffunction-sections"
@@ -2540,36 +2587,9 @@ case $_host_os in
 			append_var CXXFLAGS "-fomit-frame-pointer"
 			append_var CXXFLAGS "-fstrict-aliasing"
 		fi
-		append_var CXXFLAGS "-finline-limit=300"
 		_optimization_level=-Os
 
-		if test "$_host" = android -o "$_host" = android-arm; then
-			append_var CXXFLAGS "-mthumb-interwork"
-			# FIXME: Why is the following in CXXFLAGS and not in DEFINES? Change or document this.
-			append_var CXXFLAGS "-D__ARM_ARCH_5__"
-			append_var CXXFLAGS "-D__ARM_ARCH_5T__"
-			append_var CXXFLAGS "-D__ARM_ARCH_5E__"
-			append_var CXXFLAGS "-D__ARM_ARCH_5TE__"
-		fi
-
-		# surpress 'mangling of 'va_list' has changed in GCC 4.4' warning
-		append_var CXXFLAGS "-Wno-psabi"
-
-		if test "$_host" = android -o "$_host" = android-arm; then
-			append_var LDFLAGS "-mthumb-interwork"
-		fi
-
-		append_var INCLUDES "-isystem $ANDROID_NDK/sources/cxx-stl/gnu-libstdc++/`$CXX -dumpversion`/include/"
-		append_var INCLUDES "-isystem $ANDROID_NDK/sources/cxx-stl/gnu-libstdc++/`$CXX -dumpversion`/libs/$ABI/include/"
-		append_var LDFLAGS "-L$ANDROID_NDK/sources/cxx-stl/gnu-libstdc++/`$CXX -dumpversion`/libs/$ABI/"
-		append_var LIBS "-lsupc++"
 		add_line_to_config_mk "ANDROID_SDK = $ANDROID_SDK"
-		if test -d "$ANDROID_SDK"/build-tools; then
-			_build_tools_version=`cd "$ANDROID_SDK"/build-tools && ls -1 | sort -rn | head -1`
-			add_line_to_config_mk "ANDROID_BTOOLS = build-tools/$_build_tools_version"
-		else
-			add_line_to_config_mk "ANDROID_BTOOLS = platform-tools"
-		fi
 		_seq_midi=no
 		;;
 	beos*)
@@ -2696,6 +2716,16 @@ case $_host_os in
 				echo "Could not determine path for Xcode Tools"
 			fi
 		fi
+
+		# Use pandoc to generate README and NEWS file for the bundle
+		# Also default to  HTML rather than plain text as it gives a nicer
+		# formating, especially for the README. We could consider using RTF
+		# as well, but TextEdit does not support links within the document,
+		# and having a TOC with links, which we do with html, is quite convenient.
+		_pandoc=yes
+		if test "$_pandocformat" = "default"; then
+			_pandocformat="html"
+		fi
 		;;
 	dreamcast)
 		append_var DEFINES "-D__DC__"
@@ -2783,7 +2813,7 @@ case $_host_os in
 		;;
 	mingw*)
 		append_var DEFINES "-DWIN32"
-		append_var DEFINES "-D__USE_MINGW_ANSI_STDIO=0"
+		# append_var DEFINES "-D__USE_MINGW_ANSI_STDIO=0"  # Modern MinGW does not need it
 		append_var LDFLAGS "-static-libgcc -static-libstdc++"
 		append_var LIBS "-lmingw32 -lwinmm -lgdi32"
 		append_var OBJS "dists/scummvm.o"
@@ -2865,12 +2895,7 @@ case $_host_os in
 		add_line_to_config_h "#define PREFIX \"${prefix}\""
 		;;
 	psp)
-		if test -d "$PSPDEV/psp/lib"; then
-			append_var LDFLAGS "-L$PSPDEV/psp/lib"
-		fi
-		append_var LDFLAGS "-L$PSPSDK/lib"
-		append_var LDFLAGS "-specs=$_srcdir/backends/platform/psp/psp.spec"
-		_optimization_level=-O3
+		_optimization_level=-O2
 		append_var CXXFLAGS "-I$PSPSDK/include"
 		# FIXME: Why is the following in CXXFLAGS and not in DEFINES? Change or document this.
 		append_var CXXFLAGS "-D_PSP_FW_VERSION=150"
@@ -2881,6 +2906,7 @@ case $_host_os in
 		add_line_to_config_mk 'RISCOS = 1'
 		append_var LDFLAGS "-L$GCCSDK_INSTALL_ENV/lib"
 		append_var CXXFLAGS "-I$GCCSDK_INSTALL_ENV/include"
+		_pkgconfig=$GCCSDK_INSTALL_ENV/ro-pkg-config
 		_sdlpath=$GCCSDK_INSTALL_ENV/bin
 		_freetypepath=$GCCSDK_INSTALL_ENV/bin
 		_libcurlpath=$GCCSDK_INSTALL_ENV/bin
@@ -2892,12 +2918,30 @@ case $_host_os in
 		append_var CXXFLAGS "-fdata-sections"
 		append_var LDFLAGS "-Wl,--gc-sections"
 		_port_mk="backends/platform/sdl/riscos/riscos.mk"
+		_pandoc=yes
 		;;
 	solaris*)
 		append_var DEFINES "-DSOLARIS"
 		append_var DEFINES "-DSYSTEM_NOT_SUPPORTING_D_TYPE"
 		# Needs -lbind -lsocket for the timidity MIDI driver
 		append_var LIBS "-lnsl -lsocket"
+		;;
+	switch)
+		_pkgconfig="$DEVKITPRO/portlibs/switch/bin/aarch64-none-elf-pkg-config"
+		_libcurlpath="$DEVKITPRO/portlibs/switch/bin"
+		_sdlpath="$DEVKITPRO/portlibs/switch/bin"
+		append_var DEFINES "-DSWITCH -D__SWITCH__ -DNINTENDO_SWITCH"
+		append_var CXXFLAGS "-march=armv8-a -mtune=cortex-a57 -mtp=soft -fPIE -ftls-model=local-exec"
+		append_var CXXFLAGS "-ffunction-sections -fdata-sections"
+		append_var CXXFLAGS "-I$DEVKITPRO/libnx/include -I$DEVKITPRO/portlibs/switch/include"
+		append_var LDFLAGS "-L$DEVKITPRO/libnx/lib -L$DEVKITPRO/portlibs/switch/lib"
+		append_var LDFLAGS "-specs=$DEVKITPRO/libnx/switch.specs"
+		add_line_to_config_mk 'SWITCH = 1'
+		if test "$_debug_build" = yes; then
+			append_var DEFINES "-D__SWITCH_DEBUG__"
+		else
+			_optimization_level=-O3
+		fi
 		;;
 	tizen)
 		add_line_to_config_mk "TIZEN_ROOTSTRAP = $TIZEN_ROOTSTRAP"
@@ -2977,7 +3021,7 @@ if test -n "$_host"; then
 			_vorbis=no
 			_port_mk="backends/platform/3ds/3ds.mk"
 			;;
-		android | android-arm | android-v7a | android-arm-v7a | android-mips | android-x86 | ouya)
+		android | android-arm | android-v7a | android-arm-v7a | android-arm64-v8a | android-mips | android-x86 | ouya)
 			# we link a .so as default
 			append_var LDFLAGS "-shared"
 			append_var LDFLAGS "-Wl,-Bsymbolic,--no-undefined"
@@ -2987,7 +3031,6 @@ if test -n "$_host"; then
 			_port_mk="backends/platform/android/android.mk"
 			_build_scalers=no
 			_seq_midi=no
-			_mt32emu=no
 			_timidity=no
 			;;
 		androidsdl | androidsdl-armeabi | androidsdl-armeabi-v7a | androidsdl-mips | androidsdl-x86 | androidsdl-arm64-v8a | androidsdl-x86_64)
@@ -3116,6 +3159,8 @@ if test -n "$_host"; then
 			_build_scalers=no
 			_mt32emu=no
 			_nuked_opl=no
+			_bink=no
+			_lua=no
 			_port_mk="backends/platform/ds/ds.mk"
 			;;
 		gamecube)
@@ -3135,7 +3180,7 @@ if test -n "$_host"; then
 		gcw0)
 			_sysroot=`$CXX --print-sysroot`
 			_sdlpath=$_sysroot/usr/bin
-			append_var DEFINES "-DDINGUX -DGCW0 -DGUI_ONLY_FULLSCREEN"
+			append_var DEFINES "-DDINGUX -DGCW0"
 			append_var DEFINES "-DREDUCE_MEMORY_USAGE"
 			append_var CXXFLAGS "-mips32"
 			_backend="dingux"
@@ -3219,7 +3264,7 @@ if test -n "$_host"; then
 		*mingw32*)
 			_sdlconfig=$_host-sdl-config
 			_windres=$_host-windres
-			_ar="$_host-ar cru"
+			_ar="$_host-ar cr"
 			_ranlib=$_host-ranlib
 			;;
 		mips-sgi*)
@@ -3376,7 +3421,6 @@ if test -n "$_host"; then
 			_port_mk="backends/platform/sdl/psp2/psp2.mk"
 			;;
 		psp)
-			append_var DEFINES "-DGUI_ONLY_FULLSCREEN"
 			_backend="psp"
 			_build_scalers=no
 			_mt32emu=no
@@ -3390,6 +3434,16 @@ if test -n "$_host"; then
 			_backend="samsungtv"
 			_mt32emu=no
 			_vkeybd=yes
+			;;
+		switch)
+			_backend="switch"
+			# Switch port crashes when switching between SDL2 and OpenGL
+			# graphics. But OpenGL works when it is enabled from the start.
+			# This might be related to a known crash on OpenGL de-init due
+			# to the OpenGL implementation on this platform.
+			_opengl_mode=gles2
+			_vkeybd=yes
+			_port_mk="backends/platform/sdl/switch/switch.mk"
 			;;
 		tizen)
 			_unix=yes
@@ -3431,7 +3485,9 @@ if test -n "$_host"; then
 			;;
 		wince)
 			append_var LDFLAGS "-Wl,--stack,65536"
-			_tremolo=yes
+			if test "$_tremor" = auto; then
+				_tremolo=yes
+			fi
 			_backend="wince"
 			_detectlang=yes
 			_mt32emu=no
@@ -3456,6 +3512,7 @@ case $_backend in
 		append_var INCLUDES "-isystem $ANDROID_NDK/sources/cxx-stl/system/include"
 		;;
 	androidsdl)
+		_sdl=auto
 		;;
 	dc)
 		append_var INCLUDES '-I$(srcdir)/backends/platform/dc'
@@ -3475,6 +3532,7 @@ case $_backend in
 		;;
 	dingux)
 		append_var DEFINES "-DDINGUX"
+		_sdl=auto
 		;;
 	ds)
 		append_var INCLUDES '-I$(srcdir)/backends/platform/ds/arm9/source'
@@ -3489,6 +3547,7 @@ case $_backend in
 		if test "$_debug_build" = yes; then
 			append_var DEFINES "-DGPH_DEBUG"
 		fi
+		_sdl=auto
 		;;
 	iphone)
 		append_var LIBS "-lobjc -framework UIKit -framework CoreGraphics -framework OpenGLES"
@@ -3498,7 +3557,7 @@ case $_backend in
 	ios7)
 		append_var LIBS "-lobjc -framework UIKit -framework CoreGraphics -framework OpenGLES"
 		append_var LIBS "-framework QuartzCore -framework CoreFoundation -framework Foundation"
-		append_var LIBS "-framework AudioToolbox -framework CoreAudio"
+		append_var LIBS "-framework AudioToolbox -framework CoreAudio -framework SystemConfiguration "
 		append_var LDFLAGS "-miphoneos-version-min=7.1 -arch armv7"
 		append_var CFLAGS "-miphoneos-version-min=7.1 -arch armv7"
 		append_var CXXFLAGS "-miphoneos-version-min=7.1 -arch armv7"
@@ -3510,9 +3569,11 @@ case $_backend in
 		;;
 	linuxmoto)
 		append_var DEFINES "-DLINUXMOTO"
+		_sdl=auto
 		;;
 	maemo)
 		append_var DEFINES "-DMAEMO"
+		_sdl=auto
 		;;
 	n64)
 		append_var INCLUDES '-I$(N64SDK)/include'
@@ -3526,6 +3587,7 @@ case $_backend in
 		append_var DEFINES "-DUSE_NULL_DRIVER"
 		;;
 	openpandora)
+		_sdl=auto
 		;;
 	ps2)
 		append_var DEFINES "-D_EE"
@@ -3561,9 +3623,8 @@ case $_backend in
 		append_var LIBS "-lSceAudio_stub -lSceCtrl_stub -lScePower_stub"
 		append_var LIBS "-lSceNet_stub -lSceNetCtl_stub -lSceAppMgr_stub -lScePgf_stub"
 		append_var LIBS "-lSceTouch_stub -lSceHid_stub"
-		append_var DEFINES "-DSDL_BACKEND"
-		add_line_to_config_mk "SDL_BACKEND = 1"
-		add_line_to_config_mk "USE_SDL2 = 1"
+		_sdl=yes
+		_sdlversion=2.0.0
 		append_var MODULES "backends/platform/sdl"
 		append_var INCLUDES "-I$VITASDK/arm-vita-eabi/include/SDL2"
 		;;
@@ -3571,8 +3632,14 @@ case $_backend in
 		append_var DEFINES "-DSAMSUNGTV"
 		append_var LDFLAGS "-shared"
 		append_var LDFLAGS "-fpic"
+		_sdl=auto
 		;;
 	sdl)
+		_sdl=auto
+		;;
+	switch)
+		_sdl=auto
+		append_var MODULES "backends/platform/sdl"
 		;;
 	tizen)
 		# dirent.h not available. NONSTANDARD_PORT==ensure portdefs.h is included
@@ -3598,9 +3665,9 @@ case $_backend in
 		# The PDL library acts as the WebOS device toolchain, and is required to control the virtual keyboard among other OS-level events.
 		append_var LIBS "-lSDL -lpdl"
 		append_var DEFINES "-DWEBOS"
-		append_var DEFINES "-DSDL_BACKEND"
-		add_line_to_config_mk "SDL_BACKEND = 1"
 		append_var MODULES "backends/platform/sdl"
+		_sdl=yes
+		_sdlversion=1.2.0
 		;;
 	wii)
 		append_var DEFINES "-D__WII__"
@@ -3618,9 +3685,10 @@ case $_backend in
 		append_var INCLUDES '-I$(srcdir)/backends/platform/wince'
 		append_var INCLUDES '-I$(srcdir)/backends/platform/wince/CEgui'
 		append_var INCLUDES '-I$(srcdir)/backends/platform/wince/CEkeys'
+		append_var INCLUDES '-I$(srcdir)/backends/platform/wince/missing'
 		append_var LIBS "-static -lSDL"
-		append_var DEFINES "-DSDL_BACKEND"
-		add_line_to_config_mk "SDL_BACKEND = 1"
+		_sdl=yes
+		_sdlversion=1.2.0
 		;;
 	*)
 		echo "support for $_backend backend not implemented in configure script yet"
@@ -3632,56 +3700,68 @@ append_var MODULES "backends/platform/$_backend"
 #
 # Setup SDL specifics for SDL based backends
 #
-case $_backend in
-	androidsdl | dingux | gph | linuxmoto | maemo | openpandora | samsungtv | sdl)
-		find_sdlconfig
-		append_var INCLUDES "`$_sdlconfig --prefix="$_sdlpath" --cflags`"
-		if test "$_static_build" = yes ; then
-			append_var LIBS "`$_sdlconfig --prefix="$_sdlpath" --static-libs`"
-		else
-			append_var LIBS "`$_sdlconfig --prefix="$_sdlpath" --libs`"
-		fi
-		append_var DEFINES "-DSDL_BACKEND"
-		add_line_to_config_mk "SDL_BACKEND = 1"
+if test "$_sdl" = auto ; then
+	find_sdlconfig
+	append_var SDL_CFLAGS "`$_sdlconfig --prefix="$_sdlpath" --cflags`"
+	if test "$_static_build" = yes ; then
+		append_var SDL_LIBS "`$_sdlconfig --prefix="$_sdlpath" --static-libs`"
+	else
+		append_var SDL_LIBS "`$_sdlconfig --prefix="$_sdlpath" --libs`"
+	fi
+	_sdlversion=`$_sdlconfig --version`
 
-		_sdlversion=`$_sdlconfig --version`
-		case $_sdlversion in
-			2.0.*)
-				add_line_to_config_mk "USE_SDL2 = 1"
-				append_var SDL_NET_LIBS "-lSDL2_net"
-				;;
-			*)
-				append_var SDL_NET_LIBS "-lSDL_net"
-				;;
-		esac
+	echocheck "SDL"
+	_sdl=no
+	cat > $TMPC << EOF
+#include "SDL.h"
+int main(int argc, char *argv[]) { SDL_Init(0); return 0; }
+EOF
+	cc_check $LIBS $SDL_LIBS $INCLUDES $SDL_CFLAGS && _sdl=yes
+	echo "$_sdl"
+	if test "$_sdl" = no ; then
+		exit 1
+	fi
+fi
+if test "$_sdl" = yes ; then
+	append_var DEFINES "-DSDL_BACKEND"
+	add_line_to_config_mk "SDL_BACKEND = 1"
+	append_var INCLUDES "$SDL_CFLAGS"
+	append_var LIBS "$SDL_LIBS"
+	case $_sdlversion in
+		2.0.*)
+			add_line_to_config_mk "USE_SDL2 = 1"
+			append_var SDL_NET_LIBS "-lSDL2_net"
+			;;
+		*)
+			append_var SDL_NET_LIBS "-lSDL_net"
+			;;
+	esac
 
-		# Check for SDL_Net
-		echocheck "SDL_Net"
-		if test "$_sdlnet" = auto ; then
-			_sdlnet=no
-			cat > $TMPC << EOF
+	# Check for SDL_Net
+	echocheck "SDL_Net"
+	if test "$_sdlnet" = auto ; then
+		_sdlnet=no
+		cat > $TMPC << EOF
 #include "SDL_net.h"
 int main(int argc, char *argv[]) { SDLNet_Init(); return 0; }
 EOF
-			cc_check $SDL_NET_LIBS $LIBS $INCLUDES $SDL_NET_CFLAGS && _sdlnet=yes
-		fi
-		if test "$_sdlnet" = yes ; then
-			# Some platforms require SDL to be after SDL_Net, thus we prepend var
-			prepend_var LIBS "$SDL_NET_LIBS"
-			append_var INCLUDES "$SDL_NET_CFLAGS"
-		fi
-		define_in_config_if_yes "$_sdlnet" 'USE_SDL_NET'
-		echo "$_sdlnet"
-
-		;;
-esac
+		cc_check $SDL_NET_LIBS $LIBS $INCLUDES $SDL_NET_CFLAGS && _sdlnet=yes
+	fi
+	if test "$_sdlnet" = yes ; then
+		# Some platforms require SDL to be after SDL_Net, thus we prepend var
+		prepend_var LIBS "$SDL_NET_LIBS"
+		append_var INCLUDES "$SDL_NET_CFLAGS"
+	fi
+	define_in_config_if_yes "$_sdlnet" 'USE_SDL_NET'
+	echo "$_sdlnet"
+fi
 
 
 #
 # Enable 16bit support only for backends which support it
 #
 case $_backend in
-	3ds | android | androidsdl | dingux | dc | gph | iphone | ios7 | maemo | openpandora | psp | psp2 | samsungtv | sdl | tizen | webos | wii)
+	3ds | android | androidsdl | dingux | dc | gph | iphone | ios7 | maemo | openpandora | psp | psp2 | samsungtv | sdl | switch | tizen | webos | wii)
 		if test "$_16bit" = auto ; then
 			_16bit=yes
 		else
@@ -3760,7 +3840,7 @@ case $_host_os in
 	amigaos* | cygwin* | dreamcast | ds | gamecube | mingw* | n64 | ps2 | ps3 | psp2 | psp | riscos | wii | wince)
 		_posix=no
 		;;
-	3ds | android | androidsdl | beos* | bsd* | darwin* | freebsd* | gnu* | gph-linux | haiku* | hpux* | iphone | ios7 | irix*| k*bsd*-gnu* | linux* | maemo | mint* | netbsd* | openbsd* | solaris* | sunos* | uclinux* | webos)
+	3ds | android | androidsdl | beos* | bsd* | darwin* | freebsd* | gnu* | gph-linux | haiku* | hpux* | iphone | ios7 | irix*| k*bsd*-gnu* | linux* | maemo | mint* | netbsd* | openbsd* | solaris* | sunos* | switch | uclinux* | webos)
 		_posix=yes
 		;;
 	os2-emx*)
@@ -4032,6 +4112,11 @@ fi
 define_in_config_if_yes "$_mt32emu" 'USE_MT32EMU'
 
 #
+# Check whether Lua support is requested
+#
+define_in_config_if_yes "$_lua" 'USE_LUA'
+
+#
 # Check whether Nuked OPL emulator support is disabled
 #
 define_in_config_if_no "$_nuked_opl" 'DISABLE_NUKED_OPL'
@@ -4074,7 +4159,7 @@ cc_check -lm && append_var LIBS "-lm"
 #
 echocheck "pkg-config"
 _pkg_config=no
-command -v pkg-config >/dev/null 2>&1 && _pkg_config=yes
+command -v $_pkgconfig >/dev/null 2>&1 && _pkg_config=yes
 echo "$_pkg_config"
 
 if test "$_pkg_config" = yes && test -n "$_host" && test -z "$PKG_CONFIG_LIBDIR"; then
@@ -4578,7 +4663,11 @@ if test "$_libcurl" != "no"; then
 	if test -z "$_libcurlconfig"; then
 		_libcurl=no
 	else
-		LIBCURL_LIBS=`$_libcurlconfig --libs`
+		if test -n "$_staticlibpath"; then
+			LIBCURL_LIBS=`$_libcurlconfig --static-libs`
+		else
+			LIBCURL_LIBS=`$_libcurlconfig --libs`
+		fi
 		LIBCURL_CFLAGS=`$_libcurlconfig --cflags`
 
 		case $_host_os in
@@ -4807,8 +4896,8 @@ if test "$_libunity" = auto ; then
 			;;
 		*)
 			# Unity has a lots of dependencies, update the libs and cflags var with them
-			LIBUNITY_LIBS="$LIBUNITY_LIBS `pkg-config --libs 'unity > 3.8.1' 2>> "$TMPLOG"`"
-			LIBUNITY_CFLAGS="$LIBUNITY_CFLAGS `pkg-config --cflags 'unity > 3.8.1' 2>> "$TMPLOG"`"
+			LIBUNITY_LIBS="$LIBUNITY_LIBS `$_pkgconfig --libs 'unity > 3.8.1' 2>> "$TMPLOG"`"
+			LIBUNITY_CFLAGS="$LIBUNITY_CFLAGS `$_pkgconfig --cflags 'unity > 3.8.1' 2>> "$TMPLOG"`"
 			_libunity=no
 			cat > $TMPC << EOF
 #include <unity.h>
@@ -4823,8 +4912,8 @@ EOF
 fi
 if test "$_libunity" = yes ; then
 	if test "$LIBUNITY_CFLAGS" = "" || test "$LIBUNITY_LIBS" = ""; then
-		LIBUNITY_LIBS="$LIBUNITY_LIBS `pkg-config --libs 'unity > 3.8.1' 2>> "$TMPLOG"`"
-		LIBUNITY_CFLAGS="$LIBUNITY_CFLAGS `pkg-config --cflags 'unity > 3.8.1' 2>> "$TMPLOG"`"
+		LIBUNITY_LIBS="$LIBUNITY_LIBS `$_pkgconfig --libs 'unity > 3.8.1' 2>> "$TMPLOG"`"
+		LIBUNITY_CFLAGS="$LIBUNITY_CFLAGS `$_pkgconfig --cflags 'unity > 3.8.1' 2>> "$TMPLOG"`"
 	fi
 	append_var LIBS "$LIBUNITY_LIBS"
 	append_var CXXFLAGS "$LIBUNITY_CFLAGS"
@@ -4838,14 +4927,14 @@ echo "$_libunity"
 #
 find_freetype() {
         # Wrapper function which tries to find freetype
-        # either by callimg freetype-config or by using
+        # either by calling freetype-config or by using
         # pkg-config.
         # As of freetype-2.9.1 the freetype-config file
         # no longer gets installed by default.
-	if test "$_pkg_config" = "yes" && pkg-config --exists freetype2; then
-		FREETYPE2_LIBS=`pkg-config --libs freetype2`
-		FREETYPE2_CFLAGS=`pkg-config --cflags freetype2`
-		FREETYPE2_STATIC_LIBS=`pkg-config --static --libs freetype2`
+	if test "$_pkg_config" = "yes" && $_pkgconfig --exists freetype2; then
+		FREETYPE2_LIBS=`$_pkgconfig --libs freetype2`
+		FREETYPE2_CFLAGS=`$_pkgconfig --cflags freetype2`
+		FREETYPE2_STATIC_LIBS=`$_pkgconfig --static --libs freetype2`
 		_freetype_found="true"
 	else
 		# Look for the freetype-config script
@@ -5091,27 +5180,40 @@ define_in_config_if_yes $_nasm 'USE_NASM'
 # Check for pandoc
 #
 if test "$_pandoc" = yes ; then
-  echocheck "pandoc"
+	echocheck "pandoc"
 
-  IFS="${IFS= 	}"; ac_save_ifs="$IFS"; IFS=$SEPARATOR
+	IFS="${IFS= 	}"; ac_save_ifs="$IFS"; IFS=$SEPARATOR
 
-  for path_dir in $_pandocpath; do
-    if test -x "$path_dir/pandoc$NATIVEEXEEXT" ; then
-      PANDOC="$path_dir/pandoc$NATIVEEXEEXT"
-      break
-    fi
-  done
+	for path_dir in $_pandocpath; do
+		if test -x "$path_dir/pandoc$NATIVEEXEEXT" ; then
+			PANDOC="$path_dir/pandoc$NATIVEEXEEXT"
+			break
+		fi
+	done
 
 	IFS="$ac_save_ifs"
 
-  if ! test "$PANDOC" ; then
-    _pandoc = no
-  fi
+	if ! test "$PANDOC" ; then
+		_pandoc=no
+	fi
 
 	echo $_pandoc
 fi
 
 define_in_config_if_yes $_pandoc 'USE_PANDOC'
+
+# Default to plain text output for pandoc
+if test -z "$_pandocformat" -o "$_pandocformat" = "default"; then
+	_pandocformat="plain"
+fi
+
+if test "$_pandocext" = "default"; then
+	if test "$_pandocformat" = plain; then
+		_pandocext=""
+	else
+		_pandocext=".$_pandocformat"
+	fi
+fi
 
 #
 # Enable vkeybd / keymapper / event recorder
@@ -5310,6 +5412,10 @@ fi
 
 if test "$_mt32emu" = yes ; then
 	echo_n ", MT-32 emulator"
+fi
+
+if test "$_lua" = yes ; then
+	echo_n ", Lua"
 fi
 
 if test "$_nuked_opl" = yes ; then
@@ -5590,8 +5696,8 @@ EXEEXT := $HOSTEXEEXT
 NASM := $NASM
 NASMFLAGS := $NASMFLAGS
 PANDOC := $PANDOC
-PANDOCOUTPUT := $_pandocoutput
 PANDOCFORMAT := $_pandocformat
+PANDOCEXT := $_pandocext
 ZLIB_LIBS := $ZLIB_LIBS
 ZLIB_CFLAGS := $ZLIB_CFLAGS
 
@@ -5652,6 +5758,7 @@ vpath %.asm \$(srcdir)
 vpath %.s \$(srcdir)
 vpath %.S \$(srcdir)
 vpath %.rc \$(srcdir)
+vpath %.md \$(srcdir)
 include \$(srcdir)/Makefile
 EOF
 

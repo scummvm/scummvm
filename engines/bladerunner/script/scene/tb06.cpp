@@ -27,9 +27,9 @@ namespace BladeRunner {
 void SceneScriptTB06::InitializeScene() {
 	Setup_Scene_Information(-16.0f, 149.0f, -466.0f, 990);
 	Scene_Exit_Add_2D_Exit(0, 330, 195, 417, 334, 0);
-	Ambient_Sounds_Add_Looping_Sound(236, 50, 0, 1);
-	Ambient_Sounds_Add_Looping_Sound(237, 50, 0, 1);
-	Ambient_Sounds_Add_Looping_Sound(285, 66, 0, 1);
+	Ambient_Sounds_Add_Looping_Sound(kSfxTB5LOOP1, 50, 0, 1);
+	Ambient_Sounds_Add_Looping_Sound(kSfxTB5LOOP2, 50, 0, 1);
+	Ambient_Sounds_Add_Looping_Sound(kSfxTBLOOP1,  66, 0, 1);
 	if (!Game_Flag_Query(kFlagNotUsed103)) {
 		Actor_Put_In_Set(kActorMarcus, kSetTB06);
 		Actor_Set_At_XYZ(kActorMarcus, 135.0f, 151.0f, -671.0f, 800);
@@ -50,17 +50,17 @@ void SceneScriptTB06::SceneLoaded() {
 	if (!Game_Flag_Query(kFlagTB06DogCollarTaken)
 	 &&  Actor_Query_Goal_Number(kActorPhotographer) != 199
 	) {
-		Item_Add_To_World(kItemDogCollar, 942, kSetTB06, 36.54f, 149.48f, -565.67f, 0, 6, 6, false, true, false, true);
+		Item_Add_To_World(kItemDogCollar, kModelAnimationDogCollar, kSetTB06, 36.54f, 149.48f, -565.67f, 0, 6, 6, false, true, false, true);
 	}
 
 	if (!Game_Flag_Query(kFlagTB06KitchenBoxTaken)) {
-		Item_Add_To_World(kItemKitchenBox, 955, kSetTB06, 18.0f, 149.65f, -599.0f, 0, 6, 6, false, true, false, true);
+		Item_Add_To_World(kItemKitchenBox, kModelAnimationKingstonKitchenBox, kSetTB06, 18.0f, 149.65f, -599.0f, 0, 6, 6, false, true, false, true);
 	}
 
 	if (Actor_Query_Goal_Number(kActorPhotographer) != 199) {
-		Item_Add_To_World(kItemDeadDogA, 978, kSetTB06, -46.82f, 149.6f, -666.88f, 0, 12, 12, false, true, false, true);
-		Item_Add_To_World(kItemDeadDogB, 979, kSetTB06, -30.27f, 149.6f, -610.7f, 0, 15, 45, false, true, false, true);
-		Item_Add_To_World(kItemDeadDogC, 980, kSetTB06, 9.87f, 149.6f, -683.5f, 0, 12, 12, false, true, false, true);
+		Item_Add_To_World(kItemDeadDogA, kModelAnimationDeadDogA, kSetTB06, -46.82f, 149.6f, -666.88f, 0, 12, 12, false, true, false, true);
+		Item_Add_To_World(kItemDeadDogB, kModelAnimationDeadDogB, kSetTB06, -30.27f, 149.6f, -610.7f, 0, 15, 45, false, true, false, true);
+		Item_Add_To_World(kItemDeadDogC, kModelAnimationDeadDogC, kSetTB06, 9.87f, 149.6f, -683.5f, 0, 12, 12, false, true, false, true);
 	}
 }
 
@@ -78,7 +78,7 @@ bool SceneScriptTB06::ClickedOnActor(int actorId) {
 			if (!Actor_Clue_Query(kActorMcCoy, kClueDetonatorWire)) {
 				Actor_Voice_Over(2300, kActorVoiceOver);
 				Actor_Voice_Over(2310, kActorVoiceOver);
-				Item_Pickup_Spin_Effect(974, 66, 397);
+				Item_Pickup_Spin_Effect(kModelAnimationDetonatorWire, 66, 397);
 				Actor_Voice_Over(2320, kActorVoiceOver);
 				if (Game_Flag_Query(kFlagSadikIsReplicant)) {
 					Actor_Voice_Over(2330, kActorVoiceOver);
@@ -100,7 +100,7 @@ bool SceneScriptTB06::ClickedOnItem(int itemId, bool a2) {
 		if (!Loop_Actor_Walk_To_Item(kActorMcCoy, kItemDogCollar, 12, true, false)) {
 			Actor_Face_Item(kActorMcCoy, kItemDogCollar, true);
 			Actor_Clue_Acquire(kActorMcCoy, kClueDogCollar1, true, -1);
-			Item_Pickup_Spin_Effect(942, 341, 368);
+			Item_Pickup_Spin_Effect(kModelAnimationDogCollar, 341, 368);
 			Item_Remove_From_World(kItemDogCollar);
 			Actor_Voice_Over(4160, kActorVoiceOver);
 			Game_Flag_Set(kFlagTB06DogCollarTaken);
@@ -112,7 +112,7 @@ bool SceneScriptTB06::ClickedOnItem(int itemId, bool a2) {
 			Actor_Face_Item(kActorMcCoy, kItemKitchenBox, true);
 			Actor_Clue_Acquire(kActorMcCoy, kClueKingstonKitchenBox1, true, -1);
 			Item_Remove_From_World(kItemKitchenBox);
-			Item_Pickup_Spin_Effect(955, 390, 368);
+			Item_Pickup_Spin_Effect(kModelAnimationKingstonKitchenBox, 390, 368);
 			Actor_Says(kActorMcCoy, 8775, kAnimationModeTalk);
 			Game_Flag_Set(kFlagTB06KitchenBoxTaken);
 			return true;
@@ -135,6 +135,9 @@ bool SceneScriptTB06::ClickedOnItem(int itemId, bool a2) {
 			Actor_Voice_Over(2380, kActorVoiceOver);
 			Actor_Voice_Over(2390, kActorVoiceOver);
 			Actor_Voice_Over(2400, kActorVoiceOver);
+			if (_vm->_cutContent) {
+				Actor_Says_With_Pause(kActorMcCoy, 8516, 0.70f, kAnimationModeTalk); // Any idea if they were real dogs? (gets no answer)
+			}
 			return true;
 		}
 	}
@@ -143,7 +146,7 @@ bool SceneScriptTB06::ClickedOnItem(int itemId, bool a2) {
 
 bool SceneScriptTB06::ClickedOnExit(int exitId) {
 	if (exitId == 0) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -16.0f, 149.0f, -427.0f, 12, true, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -16.0f, 149.0f, -427.0f, 12, true, false, false)) {
 			Game_Flag_Set(kFlagTB06toTB05);
 			Set_Enter(kSetTB05, kSceneTB05);
 			Scene_Loop_Start_Special(kSceneLoopModeChangeSet, 2, true);
@@ -159,10 +162,10 @@ bool SceneScriptTB06::ClickedOn2DRegion(int region) {
 
 void SceneScriptTB06::SceneFrameAdvanced(int frame) {
 	if (frame == 61) {
-		Sound_Play(150, Random_Query(52, 52), 0, 0, 50);
+		Sound_Play(kSfxLABMISC5, Random_Query(52, 52), 0, 0, 50);
 	}
 	if (frame == 63) {
-		Sound_Play(283, Random_Query(55, 55), 0, 0, 50);
+		Sound_Play(kSfxTBDOOR1,  Random_Query(55, 55), 0, 0, 50);
 	}
 	//return true;
 }
@@ -176,15 +179,30 @@ void SceneScriptTB06::PlayerWalkedIn() {
 	) {
 		Actor_Face_Actor(kActorMcCoy, kActorMarcus, true);
 		Actor_Says(kActorMcCoy, 5290, kAnimationModeTalk);
-		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -10.0f, 149.0f, -631.0f, 0, false, false, 0);
-		AI_Movement_Track_Pause(kActorPhotographer);
-		Actor_Face_Actor(kActorMcCoy, kActorPhotographer, true);
-		Actor_Face_Actor(kActorPhotographer, kActorMcCoy, true);
-		Actor_Says(kActorPhotographer, 0, kAnimationModeTalk);
-		Actor_Says(kActorMcCoy, 5295, kAnimationModeTalk);
-		Actor_Face_Actor(kActorPhotographer, kActorMarcus, true);
-		Actor_Says(kActorPhotographer, 10, kAnimationModeTalk);
-		AI_Movement_Track_Unpause(kActorPhotographer);
+		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -10.0f, 149.0f, -631.0f, 0, false, false, false);
+
+#if BLADERUNNER_ORIGINAL_BUGS
+		bool talkWithPhotographer = true;
+#else
+		// It's possible for McCoy to go to AR01 (so the kActorPhotographer will go away from TB06)
+		// without ever going into this scene (TB06)
+		// so later on in the Act, if McCoy visits this scene the Photographer would be gone
+		// but the dialogue would play as if he was there. This fixes that bug.
+		bool talkWithPhotographer = false;
+		if (Actor_Query_Is_In_Current_Set(kActorPhotographer)) {
+			talkWithPhotographer = true;
+		}
+#endif // BLADERUNNER_ORIGINAL_BUGS
+		if (talkWithPhotographer) {
+			AI_Movement_Track_Pause(kActorPhotographer);
+			Actor_Face_Actor(kActorMcCoy, kActorPhotographer, true);
+			Actor_Face_Actor(kActorPhotographer, kActorMcCoy, true);
+			Actor_Says(kActorPhotographer, 0, kAnimationModeTalk);
+			Actor_Says(kActorMcCoy, 5295, kAnimationModeTalk);
+			Actor_Face_Actor(kActorPhotographer, kActorMarcus, true);
+			Actor_Says(kActorPhotographer, 10, kAnimationModeTalk);
+			AI_Movement_Track_Unpause(kActorPhotographer);
+		}
 		Game_Flag_Set(kFlagTB06Introduction);
 		//return true;
 		return;

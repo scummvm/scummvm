@@ -48,6 +48,7 @@ class Overlays {
 		Common::String  name;
 		int32           hash;
 		int             loopId;
+		int             enqueuedLoopId;
 		bool            loopForever;
 		int             frame;
 	};

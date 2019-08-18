@@ -26,6 +26,7 @@
  * Copyright (c) 2011 Jan Nedoma
  */
 
+#include "engines/wintermute/base/base_engine.h"
 #include "engines/wintermute/base/file/base_package.h"
 #include "engines/wintermute/base/file/base_file_entry.h"
 #include "engines/wintermute/base/file/dcpackage.h"
@@ -90,6 +91,15 @@ void TPackageHeader::readFromStream(Common::ReadStream *stream) {
 	_gameVersion = stream->readUint32LE();
 
 	_priority = stream->readByte();
+	
+	// HACK: reversion1 and reversion2 for Linux & Mac use some hacked Wintermute
+	// They provide "xlanguage_*.dcp" packages with 0x00 priority and change priority for a single package in runtime
+	// We already filter unwanted "xlanguage_*.dcp" packages at BaseFileManager::registerPackages()
+	// So, let's just raise the priority for all "xlanguage_*.dcp" here to the value of Windows version packages
+	if (_priority == 0 && BaseEngine::instance().getGameId().hasPrefix("reversion")) {
+		_priority = 0x02;
+	}
+	
 	_cd = stream->readByte();
 	_masterIndex = stream->readByte();
 	stream->readByte(); // To align the next byte...
@@ -206,6 +216,7 @@ PackageSet::PackageSet(Common::FSNode file, const Common::String &filename, bool
 				fileEntry->_length = length;
 				fileEntry->_compressedLength = compLength;
 				fileEntry->_flags = flags;
+				fileEntry->_filename = upcName;
 
 				_files[upcName] = Common::ArchiveMemberPtr(fileEntry);
 			} else {

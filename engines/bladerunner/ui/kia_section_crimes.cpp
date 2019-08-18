@@ -142,15 +142,15 @@ void KIASectionCrimes::draw(Graphics::Surface &surface) {
 	}
 	if (_suspectPhotoShapeId == 14 || _suspectPhotoShapeId == 13) {
 		text = _vm->_textKIA->getText(49);
-		_vm->_mainFont->drawColor(text, surface, 201 - _vm->_mainFont->getTextWidth(text) / 2, 218, 0x7FFF);
+		_vm->_mainFont->drawString(&surface, text, 201 - _vm->_mainFont->getStringWidth(text) / 2, 218, surface.w, surface.format.RGBToColor(255, 255, 255));
 	}
 
 	surface.fillRect(Common::Rect(120, 134, 250, 145), 0);
-	surface.hLine(120, 133, 250, 0x18A5);
-	surface.hLine(120, 146, 250, 0x2D4C);
-	surface.vLine(119, 134, 145, 0x18A5);
-	surface.vLine(251, 134, 145, 0x2D4C);
-	surface.hLine(251, 146, 251, 0x2509);
+	surface.hLine(120, 133, 250, surface.format.RGBToColor(48, 40, 40));
+	surface.hLine(120, 146, 250, surface.format.RGBToColor(88, 80, 96));
+	surface.vLine(119, 134, 145, surface.format.RGBToColor(48, 40, 40));
+	surface.vLine(251, 134, 145, surface.format.RGBToColor(88, 80, 96));
+	surface.hLine(251, 146, 251, surface.format.RGBToColor(72, 64, 72));
 
 	if (_crimeSelected == -1) {
 		text = _vm->_textKIA->getText(49);
@@ -158,14 +158,14 @@ void KIASectionCrimes::draw(Graphics::Surface &surface) {
 		text = _vm->_textCrimes->getText(_crimeSelected);
 	}
 
-	_vm->_mainFont->drawColor(text, surface, 185 - _vm->_mainFont->getTextWidth(text) / 2, 136, 0x46BF);
+	_vm->_mainFont->drawString(&surface, text, 185 - _vm->_mainFont->getStringWidth(text) / 2, 136, surface.w, surface.format.RGBToColor(136, 168, 255));
 
 	surface.fillRect(Common::Rect(136, 304, 266, 315), 0);
-	surface.hLine(136, 303, 266, 0x18A5);
-	surface.hLine(136, 316, 266, 0x2D4C);
-	surface.vLine(135, 304, 315, 0x18A5);
-	surface.vLine(267, 304, 315, 0x2D4C);
-	surface.hLine(267, 316, 267, 0x2509);
+	surface.hLine(136, 303, 266, surface.format.RGBToColor(48, 40, 40));
+	surface.hLine(136, 316, 266, surface.format.RGBToColor(88, 80, 96));
+	surface.vLine(135, 304, 315, surface.format.RGBToColor(48, 40, 40));
+	surface.vLine(267, 304, 315, surface.format.RGBToColor(88, 80, 96));
+	surface.hLine(267, 316, 267, surface.format.RGBToColor(72, 64, 72));
 
 	char generatedText[64];
 	if (_suspectSelected == -1) {
@@ -182,7 +182,7 @@ void KIASectionCrimes::draw(Graphics::Surface &surface) {
 			text = generatedText;
 		}
 	}
-	_vm->_mainFont->drawColor(text, surface, 201 - _vm->_mainFont->getTextWidth(text) / 2, 306, 0x46BF);
+	_vm->_mainFont->drawString(&surface, text, 201 - _vm->_mainFont->getStringWidth(text) / 2, 306, surface.w, surface.format.RGBToColor(136, 168, 255));
 
 	_uiContainer->draw(surface);
 	_buttons->draw(surface);
@@ -208,6 +208,10 @@ void KIASectionCrimes::handleMouseUp(bool mainButton) {
 		_buttons->handleMouseAction(_mouseX, _mouseY, false, true, false);
 	}
 	_uiContainer->handleMouseUp(!mainButton);
+}
+
+void KIASectionCrimes::handleMouseScroll(int direction) {
+	_uiContainer->handleMouseScroll(direction);
 }
 
 void KIASectionCrimes::saveToLog() {
@@ -236,7 +240,7 @@ void KIASectionCrimes::scrollBoxCallback(void *callbackData, void *source, int l
 	if (source == self->_cluesScrollBox && lineData >= 0) {
 		if (mouseButton) {
 			if (self->_vm->_gameFlags->query(kFlagKIAPrivacyAddon)) {
-				self->_vm->_audioPlayer->playAud(self->_vm->_gameInfo->getSfxTrack(511), 70, 0, 0, 50, 0);
+				self->_vm->_audioPlayer->playAud(self->_vm->_gameInfo->getSfxTrack(kSfxBEEP15), 70, 0, 0, 50, 0);
 
 				if (self->_clues->isPrivate(lineData)) {
 					self->_clues->setPrivate(lineData, false);
@@ -434,7 +438,7 @@ void KIASectionCrimes::nextCrime() {
 	if (_crimesFoundCount >= 2) {
 		while (true) {
 			++_crimeSelected;
-			if (_crimeSelected >= (int)_vm->_gameInfo->getCrimeCount()){
+			if (_crimeSelected >= (int)_vm->_gameInfo->getCrimeCount()) {
 				_crimeSelected = 0;
 			}
 
@@ -466,7 +470,7 @@ void KIASectionCrimes::nextSuspect() {
 	if (_suspectsFoundCount >= 2) {
 		while (true) {
 			++_suspectSelected;
-			if (_suspectSelected >= (int)_vm->_gameInfo->getSuspectCount()){
+			if (_suspectSelected >= (int)_vm->_gameInfo->getSuspectCount()) {
 				_suspectSelected = 0;
 			}
 
@@ -482,7 +486,7 @@ void KIASectionCrimes::prevSuspect() {
 	if (_suspectsFoundCount >= 2) {
 		while (true) {
 			--_suspectSelected;
-			if (_suspectSelected < 0){
+			if (_suspectSelected < 0) {
 				_suspectSelected = _vm->_gameInfo->getSuspectCount() - 1;
 			}
 

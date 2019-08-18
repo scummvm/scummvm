@@ -161,6 +161,11 @@ public:
 	virtual void loadSoundFile(Common::String file) = 0;
 
 	/**
+	* Unload a specifc sound file that has been loaded before.
+	*/
+	virtual void unloadSoundFile(Common::String file) {}
+
+	/**
 	 * Load a sound file for playing sound
 	 * effects from.
 	 */
@@ -207,6 +212,7 @@ public:
 	 * playing a new track or sound effect.
 	 */
 	virtual void beginFadeOut() = 0;
+	virtual void beginFadeOut(int) { beginFadeOut(); }
 
 	/**
 	* Stops all audio playback when paused. Continues after end of pause.

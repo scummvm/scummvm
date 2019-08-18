@@ -20,6 +20,7 @@
  *
  */
 
+#include "startrek/startrek.h"
 #include "startrek/room.h"
 
 namespace StarTrek {
@@ -28,7 +29,7 @@ namespace StarTrek {
 // mission, despite being mostly the same.
 
 void Room::muddaUseLenseOnDegrimer() {
-	assert(_roomIndex >= 0 && _roomIndex <= 5);
+	assert(_vm->_roomIndex >= 0 && _vm->_roomIndex <= 5);
 
 	const TextRef text[] = {
 		TX_MUD0N011, // All of these audio files are identical, but there's one for each room.
@@ -44,12 +45,12 @@ void Room::muddaUseLenseOnDegrimer() {
 	loseItem(OBJECT_ILENSES);
 
 	_awayMission->mudd.missionScore++;
-	showText(text[_roomIndex]);
+	showDescription(text[_vm->_roomIndex]);
 }
 
 
 void Room::muddaUseAlienDevice() {
-	assert(_roomIndex >= 0 && _roomIndex <= 5);
+	assert(_vm->_roomIndex >= 0 && _vm->_roomIndex <= 5);
 
 	const int deviceObjectIndices[] = { // Each room's object index for the explosion is different
 		9,  // MUDD0
@@ -65,12 +66,12 @@ void Room::muddaUseAlienDevice() {
 	_awayMission->crewDirectionsAfterWalk[OBJECT_KIRK] = DIR_S;
 	loadActorStandAnim(OBJECT_KIRK);
 	Common::Point pos = getActorPos(OBJECT_KIRK);
-	loadActorAnimC(deviceObjectIndices[_roomIndex], "s4cbxp", pos.x, 10, &Room::muddaFiredAlienDevice);
+	loadActorAnimC(deviceObjectIndices[_vm->_roomIndex], "s4cbxp", pos.x, 10, &Room::muddaFiredAlienDevice);
 	playVoc("EXPLO3");
 }
 
 void Room::muddaFiredAlienDevice() {
-	assert(_roomIndex >= 0 && _roomIndex <= 5);
+	assert(_vm->_roomIndex >= 0 && _vm->_roomIndex <= 5);
 
 	const TextRef text[] = {
 		TX_MUD0_002, // These audio files aren't identical, but the text is mostly the same.
@@ -85,13 +86,13 @@ void Room::muddaFiredAlienDevice() {
 	if (!_awayMission->mudd.discoveredLenseAndDegrimerFunction) {
 		_awayMission->mudd.discoveredLenseAndDegrimerFunction = true;
 		_awayMission->mudd.missionScore += 5; // BUGFIX: didn't happen if done in MUDD5
-		showText(TX_SPEAKER_KIRK, text[_roomIndex]);
+		showText(TX_SPEAKER_KIRK, text[_vm->_roomIndex]);
 	}
 }
 
 
 void Room::muddaUseDegrimer() {
-	assert(_roomIndex >= 0 && _roomIndex <= 5);
+	assert(_vm->_roomIndex >= 0 && _vm->_roomIndex <= 5);
 
 	const TextRef text[] = {
 		TX_MUD0N002, // All of these audio files are identical, but there's one for each room.
@@ -102,7 +103,7 @@ void Room::muddaUseDegrimer() {
 		TX_MUD5N001,
 	};
 
-	showText(text[_roomIndex]);
+	showDescription(text[_vm->_roomIndex]);
 }
 
 void Room::muddaTick() {
@@ -114,7 +115,7 @@ void Room::muddaTick() {
 	// To simplify things, and since it makes more sense, now they'll just collapse on the
 	// spot instead.
 
-	assert(_roomIndex >= 0 && _roomIndex <= 5);
+	assert(_vm->_roomIndex >= 0 && _vm->_roomIndex <= 5);
 
 	/*
 	// Unused: The positions to they originally walked to before collapsing.
@@ -172,10 +173,10 @@ void Room::muddaTick() {
 
 			for (int i = OBJECT_KIRK; i <= OBJECT_REDSHIRT; i++) {
 				Common::String anim = getCrewmanAnimFilename(i, "getd");
-				anim += directions[i][_roomIndex];
+				anim += directions[i][_vm->_roomIndex];
 				loadActorAnim2(i, anim);
 			}
-			showText(deathText[_roomIndex]);
+			showDescription(deathText[_vm->_roomIndex]);
 			showGameOverMenu();
 		}
 	}

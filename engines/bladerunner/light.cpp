@@ -115,7 +115,7 @@ void Light::readVqa(Common::ReadStream *stream, int frameCount, int frame, int a
 
 	int size = stream->readUint32LE();
 
-	if(_animationData != nullptr) {
+	if (_animationData != nullptr) {
 		delete[] _animationData;
 	}
 

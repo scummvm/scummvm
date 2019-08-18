@@ -31,33 +31,10 @@ SymbianSdlGraphicsManager::SymbianSdlGraphicsManager(SdlEventSource *sdlEventSou
 	: SurfaceSdlGraphicsManager(sdlEventSource, window) {
 }
 
-int SymbianSdlGraphicsManager::getDefaultGraphicsMode() const {
-	return GFX_NORMAL;
-}
-
-static const OSystem::GraphicsMode s_supportedGraphicsModes[] = {
-	{"1x", "Fullscreen", GFX_NORMAL},
-	{0, 0, 0}
-};
-
-const OSystem::GraphicsMode *SymbianSdlGraphicsManager::getSupportedGraphicsModes() const {
-	return s_supportedGraphicsModes;
-}
-
-// make sure we always go to normal, even if the string might be set wrong!
-bool SymbianSdlGraphicsManager::setGraphicsMode(int /*name*/) {
-	// let parent OSystem_SDL handle it
-	return SurfaceSdlGraphicsManager::setGraphicsMode(getDefaultGraphicsMode());
-}
-
 bool SymbianSdlGraphicsManager::hasFeature(OSystem::Feature f) const {
 	switch (f) {
-	case OSystem::kFeatureFullscreenMode:
 	case OSystem::kFeatureAspectRatioCorrection:
 	case OSystem::kFeatureCursorPalette:
-#ifdef  USE_VIBRA_SE_PXXX
-	case OSystem::kFeatureVibration:
-#endif
 		return true;
 	default:
 		return false;

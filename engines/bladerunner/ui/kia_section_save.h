@@ -64,6 +64,7 @@ class KIASectionSave : public KIASectionBase {
 	int           _mouseY;
 
 	int           _hoveredLineId;
+	int           _displayingLineId;
 	int           _selectedLineId;
 	int           _newSaveLineId;
 
@@ -81,6 +82,7 @@ public:
 	void handleMouseMove(int mouseX, int mouseY) override;
 	void handleMouseDown(bool mainButton) override;
 	void handleMouseUp(bool mainButton) override;
+	void handleMouseScroll(int direction) override;
 
 private:
 	static void scrollBoxCallback(void *callbackData, void *source, int lineData, int mouseButton);

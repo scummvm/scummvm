@@ -81,7 +81,7 @@ void StarTrekEngine::drawStarfield() {
 	int16 yvar = var2a / 2;
 	int16 var8 = _starfieldPointDivisor << 3;
 
-	SharedPtr<FileStream> file = loadFile("stars.shp");
+	Common::MemoryReadStreamEndian *file = loadFile("stars.shp");
 
 	for (int i = 0; i < NUM_STARS; i++) {
 		Star *star = &_starList[i];
@@ -115,11 +115,11 @@ void StarTrekEngine::drawStarfield() {
 			Common::Rect drawRect = _starfieldRect.findIntersectingRect(starRect);
 
 			file->seek(fileOffset, SEEK_SET);
-			SharedPtr<Bitmap> bitmap = SharedPtr<Bitmap>(new Bitmap(file));
 
+			Bitmap *bitmap = new Bitmap(file);
 			if (!drawRect.isEmpty())
 				_gfx->drawBitmapToBackground(starRect, drawRect, bitmap);
-			bitmap.reset();
+			delete bitmap;
 		} else {
 			star->active = false;
 
@@ -128,6 +128,8 @@ void StarTrekEngine::drawStarfield() {
 			file->seek(file->pos() + offset2, SEEK_SET);
 		}
 	}
+
+	delete file;
 }
 
 /**
@@ -325,13 +327,13 @@ void StarTrekEngine::drawR3Shape(R3 *r3) {
 			int16 index1 = i;
 			int16 index2 = (i + 1) & 3;
 
-			if (thing[index1 + 1] > thing[index2 + 1]) {
+			if (thing[index1 * 2 + 1] > thing[index2 * 2 + 1]) {
 				index1 = index2;
 				index2 = i;
 			}
 
-			int16 top = ceil(thing[index1 + 1]);
-			int16 bottom = floor(thing[index2 + 1]);
+			int16 top = ceil(thing[index1 * 2 + 1]);
+			int16 bottom = floor(thing[index2 * 2 + 1]);
 
 			if (top > bottom)
 				continue;
@@ -350,29 +352,29 @@ void StarTrekEngine::drawR3Shape(R3 *r3) {
 				shpImageBottom = bottom;
 
 			double dbl3f4;
-			if (thing[index2 + 1] == thing[index1 + 1])
+			if (thing[index2 * 2 + 1] == thing[index1 * 2 + 1])
 				dbl3f4 = 0.0;
 			else
-				dbl3f4 = (thing[index2] - thing[index1]) / (thing[index2 + 1] - thing[index1 + 1]);
+				dbl3f4 = (thing[index2 * 2] - thing[index1 * 2]) / (thing[index2 * 2 + 1] - thing[index1 * 2 + 1]);
 
-			int32 var3ec = (int32)(0x10000 * dbl3f4);
-			int32 var3e8 = (int32)(((top - thing[index1 + 1]) * dbl3f4 + thing[index1]) * 0x10000);
+			int32 boundDiff = (int32)(0x10000 * dbl3f4); // var3ec
+			int32 boundBase = (int32)(((top - thing[index1 * 2 + 1]) * dbl3f4 + thing[index1 * 2]) * 0x10000); // var3e8
 
 			for (int y = top; y <= bottom; y++) {
-				int16 var3f6 = var3e8 >> 16;
-				int16 var3f8 = (var3e8 + 0xffff) >> 16;
+				int16 rightBound = boundBase >> 16; // var3f6
+				int16 leftBound = (boundBase + 0xffff) >> 16; // var3f8
 
-				if (var3f8 < _starfieldRect.left)
-					var3f8 = _starfieldRect.left;
-				if (var3f8 < leftBounds[y])
-					leftBounds[y] = var3f8;
+				if (leftBound < _starfieldRect.left)
+					leftBound = _starfieldRect.left;
+				if (leftBound < leftBounds[y])
+					leftBounds[y] = leftBound;
 
-				if (var3f6 > _starfieldRect.right - 1)
-					var3f6 = _starfieldRect.right - 1;
-				if (var3f6 > rightBounds[y])
-					rightBounds[y] = var3f6;
+				if (rightBound > _starfieldRect.right - 1)
+					rightBound = _starfieldRect.right - 1;
+				if (rightBound > rightBounds[y])
+					rightBounds[y] = rightBound;
 
-				var3e8 += var3ec;
+				boundBase += boundDiff;
 			}
 		}
 
@@ -389,7 +391,6 @@ void StarTrekEngine::drawR3Shape(R3 *r3) {
 				break;
 		}
 
-		debug("Top: %d, Bot: %d", shpImageTop, shpImageBottom);
 		if (shpImageTop <= shpImageBottom) {
 			bool var3fa = false;
 			if (r3->field1e == 2) {
@@ -406,8 +407,10 @@ void StarTrekEngine::drawR3Shape(R3 *r3) {
 				}
 			}
 
+			// Amount added to X/Y positions after each pixel is drawn
 			int16 xDiff = (int16)(dbl60 * 256);
 			int16 yDiff = (int16)(dbl58 * 256);
+
 			int16 var3f2 = (int16)(dbl50 * 256);
 			int16 var3f4 = (int16)(dbl48 * 256);
 
@@ -447,6 +450,7 @@ void StarTrekEngine::drawR3Shape(R3 *r3) {
 			for (int y = shpImageTop; y <= shpImageBottom; y++) {
 				int16 leftBound = leftBounds[y];
 				int16 rowWidth = rightBounds[y] - leftBound;
+
 				int16 srcX = leftBound * xDiff + var3f6;
 				int16 srcY = leftBound * yDiff + var3f8;
 				var3f6 += var3f2;
@@ -457,8 +461,6 @@ void StarTrekEngine::drawR3Shape(R3 *r3) {
 
 				if (rowWidth == 0)
 					continue;
-
-				debug("Width: %d", rowWidth);
 
 				if (var3fa) {
 					srcX += 0x80;
@@ -473,7 +475,7 @@ void StarTrekEngine::drawR3Shape(R3 *r3) {
 						cx += xDiff;
 						bx += yDiff;
 						if (b == 0)
-							*(di++) = 8; // FIXME: shouldn't assign anything, fix after done testing
+							di++;
 						else
 							*(di++) = b;
 					}

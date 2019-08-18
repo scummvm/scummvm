@@ -175,7 +175,7 @@ void KIASectionSuspects::draw(Graphics::Surface &surface) {
 	}
 	if (_suspectPhotoShapeId == 14 || _suspectPhotoShapeId == 13) {
 		text = _vm->_textKIA->getText(49);
-		_vm->_mainFont->drawColor(text, surface, 190 - _vm->_mainFont->getTextWidth(text) / 2, 201, 0x7FFF);
+		_vm->_mainFont->drawString(&surface, text, 190 - _vm->_mainFont->getStringWidth(text) / 2, 201, surface.w, surface.format.RGBToColor(255, 255, 255));
 	}
 
 	_whereaboutsCheckBox->setChecked(_whereaboutsFilter);
@@ -186,22 +186,22 @@ void KIASectionSuspects::draw(Graphics::Surface &surface) {
 
 	_uiContainer->draw(surface);
 
-	_vm->_mainFont->drawColor(_vm->_textKIA->getText(0),  surface, 300, 162, 0x77DF);
-	_vm->_mainFont->drawColor(_vm->_textKIA->getText(46), surface, 142, 248, 0x77DF);
-	_vm->_mainFont->drawColor(_vm->_textKIA->getText(47), surface, 142, 308, 0x77DF);
-	_vm->_mainFont->drawColor(_vm->_textKIA->getText(14), surface, 154, 319, 0x25B3);
-	_vm->_mainFont->drawColor(_vm->_textKIA->getText(15), surface, 154, 329, 0x31F7);
-	_vm->_mainFont->drawColor(_vm->_textKIA->getText(16), surface, 154, 339, 0x3A5B);
-	_vm->_mainFont->drawColor(_vm->_textKIA->getText(17), surface, 154, 349, 0x31F7);
-	_vm->_mainFont->drawColor(_vm->_textKIA->getText(48), surface, 154, 359, 0x25B3);
+	_vm->_mainFont->drawString(&surface, _vm->_textKIA->getText(0),  300, 162, surface.w, surface.format.RGBToColor(232, 240, 248));
+	_vm->_mainFont->drawString(&surface, _vm->_textKIA->getText(46), 142, 248, surface.w, surface.format.RGBToColor(232, 240, 248));
+	_vm->_mainFont->drawString(&surface, _vm->_textKIA->getText(47), 142, 308, surface.w, surface.format.RGBToColor(232, 240, 248));
+	_vm->_mainFont->drawString(&surface, _vm->_textKIA->getText(14), 154, 319, surface.w, surface.format.RGBToColor(72, 104, 152));
+	_vm->_mainFont->drawString(&surface, _vm->_textKIA->getText(15), 154, 329, surface.w, surface.format.RGBToColor(96, 120, 184));
+	_vm->_mainFont->drawString(&surface, _vm->_textKIA->getText(16), 154, 339, surface.w, surface.format.RGBToColor(112, 144, 216));
+	_vm->_mainFont->drawString(&surface, _vm->_textKIA->getText(17), 154, 349, surface.w, surface.format.RGBToColor(96, 120, 184));
+	_vm->_mainFont->drawString(&surface, _vm->_textKIA->getText(48), 154, 359, surface.w, surface.format.RGBToColor(72, 104, 152));
 
 
 	surface.fillRect(Common::Rect(120, 134, 250, 145), 0);
-	surface.hLine(120, 133, 250, 0x18A5);
-	surface.hLine(120, 146, 250, 0x2D4C);
-	surface.vLine(119, 134, 145, 0x18A5);
-	surface.vLine(251, 134, 145, 0x2D4C);
-	surface.hLine(251, 146, 251, 0x2509);
+	surface.hLine(120, 133, 250, surface.format.RGBToColor(48, 40, 40));
+	surface.hLine(120, 146, 250, surface.format.RGBToColor(88, 80, 96));
+	surface.vLine(119, 134, 145, surface.format.RGBToColor(48, 40, 40));
+	surface.vLine(251, 134, 145, surface.format.RGBToColor(88, 80, 96));
+	surface.hLine(251, 146, 251, surface.format.RGBToColor(72, 64, 72));
 
 	char generatedText[64];
 	if (_suspectSelected == -1) {
@@ -219,7 +219,7 @@ void KIASectionSuspects::draw(Graphics::Surface &surface) {
 		}
 	}
 
-	_vm->_mainFont->drawColor(text, surface, 185 - _vm->_mainFont->getTextWidth(text) / 2, 136, 0x46BF);
+	_vm->_mainFont->drawString(&surface, text, 185 - _vm->_mainFont->getStringWidth(text) / 2, 136, surface.w, surface.format.RGBToColor(136, 168, 248));
 
 	_buttons->draw(surface);
 	_buttons->drawTooltip(surface, _mouseX, _mouseY);
@@ -244,6 +244,10 @@ void KIASectionSuspects::handleMouseUp(bool mainButton) {
 		_buttons->handleMouseAction(_mouseX, _mouseY, false, true, false);
 	}
 	_uiContainer->handleMouseUp(!mainButton);
+}
+
+void KIASectionSuspects::handleMouseScroll(int direction) {
+	_uiContainer->handleMouseScroll(direction);
 }
 
 void KIASectionSuspects::saveToLog() {
@@ -288,7 +292,7 @@ const char *KIASectionSuspects::scrambleSuspectsName(const char *name) {
 	for (int i = 0 ; i < 6; ++i) {
 		if (Common::isAlpha(*namePtr)) {
 			char upper = toupper(*namePtr);
-			if ( upper < 'J' ){
+			if ( upper < 'J' ) {
 				*bufferPtr++ = upper - 16;
 			} else {
 				*bufferPtr++ = upper - 9;
@@ -313,7 +317,7 @@ void KIASectionSuspects::scrollBoxCallback(void *callbackData, void *source, int
 	if (source == self->_cluesScrollBox && lineData >= 0) {
 		if (mouseButton) {
 			if (self->_vm->_gameFlags->query(kFlagKIAPrivacyAddon)) {
-				self->_vm->_audioPlayer->playAud(self->_vm->_gameInfo->getSfxTrack(511), 70, 0, 0, 50, 0);
+				self->_vm->_audioPlayer->playAud(self->_vm->_gameInfo->getSfxTrack(kSfxBEEP15), 70, 0, 0, 50, 0);
 
 				if (self->_clues->isPrivate(lineData)) {
 					self->_clues->setPrivate(lineData, false);
@@ -526,7 +530,7 @@ void KIASectionSuspects::nextSuspect() {
 	if (_suspectsFoundCount >= 2) {
 		while (true) {
 			++_suspectSelected;
-			if (_suspectSelected >= (int)_vm->_gameInfo->getSuspectCount()){
+			if (_suspectSelected >= (int)_vm->_gameInfo->getSuspectCount()) {
 				_suspectSelected = 0;
 			}
 
@@ -542,7 +546,7 @@ void KIASectionSuspects::prevSuspect() {
 	if (_suspectsFoundCount >= 2) {
 		while (true) {
 			--_suspectSelected;
-			if (_suspectSelected < 0){
+			if (_suspectSelected < 0) {
 				_suspectSelected = _vm->_gameInfo->getSuspectCount() - 1;
 			}
 

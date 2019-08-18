@@ -30,6 +30,8 @@ namespace BladeRunner {
 class BladeRunnerEngine;
 
 class VKScript : ScriptBase {
+	friend class Debugger;
+
 	int _inScriptCounter;
 	int _calibrationQuestionCounter;
 	int _questionCounter;
@@ -62,9 +64,6 @@ private:
 	void askCalibrationQuestion1(int actorId, int notUsed);
 	void askCalibrationQuestion2(int actorId, int notUsed);
 	void askCalibrationQuestion3(int actorId, int notUsed);
-	void askCalibrationDektora3(int questionId);
-	void askCalibrationDektora2(int questionId);
-	void askCalibrationDektora1(int questionId);
 };
 
 } // End of namespace BladeRunner

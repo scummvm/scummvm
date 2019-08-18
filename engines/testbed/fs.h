@@ -41,6 +41,7 @@ bool readDataFromFile(Common::FSDirectory *directory, const char *file);
 // will contain function declarations for FS tests
 TestExitStatus testReadFile();
 TestExitStatus testWriteFile();
+TestExitStatus testCreateDir();
 TestExitStatus testOpeningSaveFile();
 // add more here
 

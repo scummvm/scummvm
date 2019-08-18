@@ -47,8 +47,7 @@ protected:
 	Common::String _baseConfigName;
 
 	virtual Common::String getDefaultConfigFileName() override;
-
-	virtual Common::WriteStream *createLogFile() override;
+	virtual Common::String getDefaultLogFileName() override;
 };
 
 #endif

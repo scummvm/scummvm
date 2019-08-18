@@ -53,39 +53,7 @@ MODULE_OBJS := \
 	script/luascript.o \
 	script/lua_extensions.o \
 	sfx/soundengine.o \
-	sfx/soundengine_script.o \
-	util/lua/lapi.o \
-	util/lua/lauxlib.o \
-	util/lua/lbaselib.o \
-	util/lua/lcode.o \
-	util/lua/ldblib.o \
-	util/lua/ldebug.o \
-	util/lua/ldo.o \
-	util/lua/lfunc.o \
-	util/lua/lgc.o \
-	util/lua/linit.o \
-	util/lua/liolib.o \
-	util/lua/llex.o \
-	util/lua/lmathlib.o \
-	util/lua/lmem.o \
-	util/lua/loadlib.o \
-	util/lua/lobject.o \
-	util/lua/lopcodes.o \
-	util/lua/loslib.o \
-	util/lua/lparser.o \
-	util/lua/lstate.o \
-	util/lua/lstring.o \
-	util/lua/lstrlib.o \
-	util/lua/ltable.o \
-	util/lua/ltablib.o \
-	util/lua/ltm.o \
-	util/lua/lvm.o \
-	util/lua/lzio.o \
-	util/lua/scummvm_file.o \
-	util/double_serialization.o \
-	util/lua_persistence_util.o \
-	util/lua_persist.o \
-	util/lua_unpersist.o
+	sfx/soundengine_script.o 
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_SWORD25), DYNAMIC_PLUGIN)

@@ -42,6 +42,7 @@ public:
 	void handleMouseMove(int mouseX, int mouseY);
 	void handleMouseDown(bool alternateButton);
 	void handleMouseUp(bool alternateButton);
+	void handleMouseScroll(int direction); // Added by ScummVM team
 	void handleKeyUp(const Common::KeyState &kbd);
 	void handleKeyDown(const Common::KeyState &kbd);
 

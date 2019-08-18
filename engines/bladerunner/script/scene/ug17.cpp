@@ -35,11 +35,11 @@ void SceneScriptUG17::InitializeScene() {
 	Scene_Exit_Add_2D_Exit(0, 610,   0, 639, 479, 1);
 	Scene_Exit_Add_2D_Exit(1, 551, 347, 594, 386, 0);
 
-	Ambient_Sounds_Add_Looping_Sound(589, 100, 1, 1);
-	Ambient_Sounds_Add_Looping_Sound(384,  50, 1, 1);
-	Ambient_Sounds_Add_Sound(72, 5, 80, 10, 11, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(73, 5, 80, 10, 11, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(74, 5, 80, 10, 11, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Looping_Sound(kSfxWINDLOOP, 100, 1, 1);
+	Ambient_Sounds_Add_Looping_Sound(kSfxRUMLOOP1,  50, 1, 1);
+	Ambient_Sounds_Add_Sound(kSfxSWEEP2, 5, 80, 10, 11, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxSWEEP3, 5, 80, 10, 11, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxSWEEP4, 5, 80, 10, 11, -100, 100, -101, -101, 0, 0);
 
 	Overlay_Play("UG17OVER", 0, true, false, 0);
 }
@@ -67,7 +67,7 @@ bool SceneScriptUG17::ClickedOnItem(int itemId, bool a2) {
 
 bool SceneScriptUG17::ClickedOnExit(int exitId) {
 	if (exitId == 0) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 1000.0f, 67.96f, -1539.0f, 0, true, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 1000.0f, 67.96f, -1539.0f, 0, true, false, false)) {
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
 			Game_Flag_Set(kFlagUG17toUG15);
@@ -77,7 +77,7 @@ bool SceneScriptUG17::ClickedOnExit(int exitId) {
 	}
 
 	if (exitId == 1) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 1013.0f, 67.96f, -1892.0f, 0, true, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 1013.0f, 67.96f, -1892.0f, 0, true, false, false)) {
 			Actor_Face_Heading(kActorMcCoy, 89, false);
 			if (Global_Variable_Query(kVariableChapter) == 5) {
 				Actor_Says(kActorMcCoy, 8522, 14);
@@ -106,7 +106,7 @@ void SceneScriptUG17::ActorChangedGoal(int actorId, int newGoal, int oldGoal, bo
 
 void SceneScriptUG17::PlayerWalkedIn() {
 	if (Game_Flag_Query(kFlagUG15toUG17)) {
-		Loop_Actor_Walk_To_XYZ(kActorMcCoy, 961.0f, 67.96f, -1539.0f, 0, false, false, 0);
+		Loop_Actor_Walk_To_XYZ(kActorMcCoy, 961.0f, 67.96f, -1539.0f, 0, false, false, false);
 		Game_Flag_Reset(kFlagUG15toUG17);
 	}
 	//return false;

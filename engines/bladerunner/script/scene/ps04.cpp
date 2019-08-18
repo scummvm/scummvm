@@ -24,6 +24,11 @@
 
 namespace BladeRunner {
 
+enum kPS04Loops {
+	kPS04LoopPanToPS04                 = 0, //   0 -  29
+	kPS04LoopMainLoop                  = 1  //  30 -  90 (actually 31-90)
+};
+
 void SceneScriptPS04::InitializeScene() {
 	AI_Movement_Track_Pause(kActorGuzza);
 	if (Game_Flag_Query(kFlagPS03toPS04)) {
@@ -36,18 +41,19 @@ void SceneScriptPS04::InitializeScene() {
 		Actor_Change_Animation_Mode(kActorGuzza, 53);
 	}
 	Scene_Exit_Add_2D_Exit(0, 347, 113, 469, 302, 0);
-	Ambient_Sounds_Remove_All_Non_Looping_Sounds(0);
-	Ambient_Sounds_Add_Looping_Sound(45, 16, 1, 1);
-	Ambient_Sounds_Add_Looping_Sound(46, 50, 1, 1);
-	Ambient_Sounds_Add_Sound(47, 9, 40, 20, 20, 0, 0, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(48, 9, 40, 20, 20, 0, 0, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(49, 9, 40, 20, 20, 0, 0, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(50, 9, 40, 20, 20, 0, 0, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(51, 9, 40, 20, 20, 0, 0, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(52, 9, 40, 20, 20, 0, 0, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(53, 9, 40, 20, 20, 0, 0, -101, -101, 0, 0);
-	Scene_Loop_Start_Special(0, 0, 0);
-	Scene_Loop_Set_Default(1);
+	Ambient_Sounds_Remove_All_Non_Looping_Sounds(false);
+	Ambient_Sounds_Add_Looping_Sound(kSfxPSAMB6, 16, 1, 1);
+	Ambient_Sounds_Add_Looping_Sound(kSfxRTONE3, 50, 1, 1);
+	Ambient_Sounds_Add_Sound(kSfxSCANNER1, 9, 40, 20, 20, 0, 0, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxSCANNER2, 9, 40, 20, 20, 0, 0, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxSCANNER3, 9, 40, 20, 20, 0, 0, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxSCANNER4, 9, 40, 20, 20, 0, 0, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxSCANNER5, 9, 40, 20, 20, 0, 0, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxSCANNER6, 9, 40, 20, 20, 0, 0, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxSCANNER7, 9, 40, 20, 20, 0, 0, -101, -101, 0, 0);
+
+	Scene_Loop_Start_Special(kSceneLoopModeLoseControl, kPS04LoopPanToPS04, false);
+	Scene_Loop_Set_Default(kPS04LoopMainLoop);
 }
 
 void SceneScriptPS04::SceneLoaded() {
@@ -56,12 +62,16 @@ void SceneScriptPS04::SceneLoaded() {
 	Unobstacle_Object("B.DOOR", true);
 	Unobstacle_Object("B.CHAIR01", true);
 	Unclickable_Object("CHAIR07");
+#if BLADERUNNER_ORIGINAL_BUGS
+#else
+	Unclickable_Object("FLOOR");
+#endif // BLADERUNNER_ORIGINAL_BUGS
 
 	if ( Global_Variable_Query(kVariableChapter) == 2
 	 && !Actor_Clue_Query(kActorMcCoy, kClueWeaponsOrderForm)
 	 && !Game_Flag_Query(kFlagPS04WeaponsOrderForm)
 	) {
-		Item_Add_To_World(kItemWeaponsOrderForm, 958, kSetPS04, -643.5f, -318.82f, 1148.87f, 525, 16, 12, false, true, false, true);
+		Item_Add_To_World(kItemWeaponsOrderForm, kModelAnimationOriginalRequisitionForm, kSetPS04, -643.5f, -318.82f, 1148.87f, 525, 16, 12, false, true, false, true);
 		Game_Flag_Set(kFlagPS04WeaponsOrderForm);
 	}
 
@@ -97,16 +107,20 @@ bool SceneScriptPS04::ClickedOnItem(int itemId, bool a2) {
 		Actor_Says(kActorGuzza, 560, 30);
 	} else if (!Actor_Clue_Query(kActorMcCoy, kClueWeaponsOrderForm)) {
 		Item_Remove_From_World(kItemWeaponsOrderForm);
-		Item_Pickup_Spin_Effect(958, 464, 362);
+		Item_Pickup_Spin_Effect(kModelAnimationOriginalRequisitionForm, 464, 362);
 		Actor_Says(kActorMcCoy, 4485, kAnimationModeTalk);
-		Actor_Clue_Acquire(kActorMcCoy, kClueWeaponsOrderForm, true, kActorMcCoy);
+#if BLADERUNNER_ORIGINAL_BUGS
+		Actor_Clue_Acquire(kActorMcCoy, kClueWeaponsOrderForm, true, kActorMcCoy); // A bug? Shouldn't the last argument be -1 here?
+#else
+		Actor_Clue_Acquire(kActorMcCoy, kClueWeaponsOrderForm, true, -1);
+#endif // BLADERUNNER_ORIGINAL_BUGS
 	}
 	return false;
 }
 
 bool SceneScriptPS04::ClickedOnExit(int exitId) {
 	if (exitId == 0) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -668.0f, -350.85f, 962.0f, 0, true, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -668.0f, -350.85f, 962.0f, 0, true, false, false)) {
 			Game_Flag_Set(kFlagPS04toPS03);
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
@@ -128,7 +142,7 @@ void SceneScriptPS04::ActorChangedGoal(int actorId, int newGoal, int oldGoal, bo
 }
 
 void SceneScriptPS04::PlayerWalkedIn() {
-	if (Actor_Query_Which_Set_In(kActorGuzza) == 64) {
+	if (Actor_Query_Which_Set_In(kActorGuzza) == kSetPS04) {
 		Actor_Face_Actor(kActorMcCoy, kActorGuzza, true);
 	}
 	//return false;
@@ -164,8 +178,16 @@ void SceneScriptPS04::dialogueWithGuzza() {
 
 	switch (answer) {
 	case 110: // REQUEST TYRELL MEETING
+		if (_vm->_cutContent) {
+			Actor_Says(kActorGuzza, 420, 31);
+		}
 		Actor_Says(kActorMcCoy, 3990, 19);
 		Actor_Says(kActorMcCoy, 3995, 17);
+		if (_vm->_cutContent) {
+			Actor_Says(kActorGuzza, 430, 33);
+			Actor_Says(kActorMcCoy, 4025, 18);
+			Actor_Says(kActorMcCoy, 4030, 12);
+		}
 		Actor_Says(kActorGuzza, 440, 31);
 		Actor_Says(kActorMcCoy, 4035, 13);
 		Actor_Says(kActorGuzza, 450, 34);
@@ -176,21 +198,36 @@ void SceneScriptPS04::dialogueWithGuzza() {
 
 	case 120: // MONEY
 		Actor_Says(kActorMcCoy, 4000, 18);
-#if BLADERUNNER_ORIGINAL_BUGS
-		Actor_Clue_Acquire(kActorMcCoy, kClueGuzzasCash, true, kActorGuzza);
-		Actor_Says(kActorGuzza, 520, 33);
-		Actor_Says(kActorMcCoy, 4055, 13);
-		Actor_Says(kActorGuzza, 530, 31);
-		Actor_Says(kActorMcCoy, 4060, 13);
-		Actor_Says(kActorGuzza, 540, 31);
-		Actor_Says(kActorGuzza, 550, 32);
-		Actor_Says(kActorMcCoy, 4065, 18);
-		Actor_Says(kActorGuzza, 560, 34);
-		if (Query_Difficulty_Level() != 0) {
-			Global_Variable_Increment(kVariableChinyen, 100);
-		}
-#else
-		if (Global_Variable_Query(kVariableChinyen) < 300) { // basically if McCoy hasn't retired Zuben or drunk away his money at the bar
+		if (_vm->_cutContent) {
+			// Using cut content we have two cases:
+			// 1. Guzza can accept the loan (as in ORIGINAL)
+			// 2. Guzza can refuse the loan (CUT)
+			// Basically, if McCoy hasn't retired Zuben or if he drunk away his money at the bar
+			// then he'll have a small amount of chinyen and Guzza should accept the loan
+			if (Global_Variable_Query(kVariableChinyen) <= 100) {
+				Actor_Clue_Acquire(kActorMcCoy, kClueGuzzasCash, true, kActorGuzza);
+				Actor_Says(kActorGuzza, 520, 33);
+				Actor_Says(kActorMcCoy, 4055, 13);
+				Actor_Says(kActorGuzza, 530, 31);
+				Actor_Says(kActorMcCoy, 4060, 13);
+				Actor_Says(kActorGuzza, 540, 31);
+				Actor_Says(kActorGuzza, 550, 32);
+				Actor_Says(kActorMcCoy, 4065, 18);
+				Actor_Says(kActorGuzza, 560, 34);
+				if (Query_Difficulty_Level() != kGameDifficultyEasy) {
+					Global_Variable_Increment(kVariableChinyen, 100);
+				}
+			} else {
+				// McCoy has plenty cash already - Guzza denies the loan
+				Actor_Says(kActorGuzza, 470, 33);	// Hey, I'd love to be your own personal ATM but the department's strapped right now.
+				Actor_Says(kActorGuzza, 480, 31);
+				Actor_Says(kActorGuzza, 490, 31);
+				Actor_Says(kActorGuzza, 500, 32);
+				Actor_Says(kActorMcCoy, 4045, 16);
+				Actor_Says(kActorGuzza, 510, 31);	// Hey, you track down a Rep, you get an advance.
+				Actor_Says(kActorMcCoy, 4050, 18);
+			}
+		} else {
 			Actor_Clue_Acquire(kActorMcCoy, kClueGuzzasCash, true, kActorGuzza);
 			Actor_Says(kActorGuzza, 520, 33);
 			Actor_Says(kActorMcCoy, 4055, 13);
@@ -200,19 +237,10 @@ void SceneScriptPS04::dialogueWithGuzza() {
 			Actor_Says(kActorGuzza, 550, 32);
 			Actor_Says(kActorMcCoy, 4065, 18);
 			Actor_Says(kActorGuzza, 560, 34);
-			if (Query_Difficulty_Level() != 0) {
+			if (Query_Difficulty_Level() != kGameDifficultyEasy) {
 				Global_Variable_Increment(kVariableChinyen, 100);
 			}
-		} else {	// Guzza denies the loan
-			Actor_Says(kActorGuzza, 470, 33);	// Hey, I'd love to be your own personal ATM but the department's strapped right now.
-			Actor_Says(kActorGuzza, 480, 31);
-			Actor_Says(kActorGuzza, 490, 31);
-			Actor_Says(kActorGuzza, 500, 32);
-			Actor_Says(kActorMcCoy, 4045, 16);
-			Actor_Says(kActorGuzza, 510, 31);
-			Actor_Says(kActorMcCoy, 4050, 18);
 		}
-#endif // BLADERUNNER_ORIGINAL_BUGS
 		break;
 
 	case 130: // REPORT IN
@@ -227,7 +255,7 @@ void SceneScriptPS04::dialogueWithGuzza() {
 			Actor_Says(kActorMcCoy, 3925, 18);
 			Actor_Face_Actor(kActorGuzza, kActorMcCoy, true);
 			Actor_Says(kActorGuzza, 170, 33);
-			Loop_Actor_Walk_To_XYZ(kActorMcCoy, -716.0f, -354.85f, 1042.0f, 0, false, false, 0);
+			Loop_Actor_Walk_To_XYZ(kActorMcCoy, -716.0f, -354.85f, 1042.0f, 0, false, false, false);
 			Actor_Face_Actor(kActorMcCoy, kActorGuzza, true);
 			Actor_Says(kActorMcCoy, 3930, 13);
 			Actor_Face_Actor(kActorGuzza, kActorMcCoy, true);
@@ -254,13 +282,13 @@ void SceneScriptPS04::dialogueWithGuzza() {
 			Actor_Says(kActorGuzza, 270, 32);
 			Game_Flag_Set(kFlagPS04GuzzaTalkZubenRetired);
 #if BLADERUNNER_ORIGINAL_BUGS
-			if (Query_Difficulty_Level() != 0) {
+			if (Query_Difficulty_Level() != kGameDifficultyEasy) {
 				Global_Variable_Increment(kVariableChinyen, 200);
 			}
 			Game_Flag_Set(kFlagZubenBountyPaid);
 #else
 			if (!Game_Flag_Query(kFlagZubenBountyPaid)) { // get retirement money only if haven't been auto-paid at end of Day 1 (sleep trigger)
-				if (Query_Difficulty_Level() != 0) {
+				if (Query_Difficulty_Level() != kGameDifficultyEasy) {
 					Global_Variable_Increment(kVariableChinyen, 200);
 				}
 				Game_Flag_Set(kFlagZubenBountyPaid); // not a proper bug, but was missing from original code, so the flag would remain in non-consistent state in this case
@@ -341,16 +369,33 @@ void SceneScriptPS04::dialogueWithGuzza() {
 		Actor_Says(kActorGuzza, 610, 33);
 		Actor_Face_Heading(kActorGuzza, 400, false);
 		Actor_Says(kActorGuzza, 620, 32);
-		Actor_Face_Actor(kActorGuzza, kActorMcCoy, true);
+		if (_vm->_cutContent) {
+			// add a fade-out here while Guzza calls-in for favors
+			Scene_Loop_Start_Special(kSceneLoopModeOnce, kPS04LoopPanToPS04, true);
+			Scene_Loop_Set_Default(kPS04LoopMainLoop);
+			Delay(1000);
+			Actor_Face_Actor(kActorGuzza, kActorMcCoy, true);
+			Delay(1000);
+			// if McCoy confesses before the body is dumped, then the body should be found (even if in dumpster)
+			if (!Game_Flag_Query(kFlagCT04HomelessBodyThrownAway)) {
+				Game_Flag_Set(kFlagCT04HomelessBodyFound);
+				// return false;
+			}
+		}
 		Actor_Says(kActorGuzza, 700, 34);
 		Actor_Says(kActorMcCoy, 4100, 13);
 		Actor_Says(kActorGuzza, 710, 31);
 		Actor_Says(kActorGuzza, 720, 34);
 		Actor_Says(kActorMcCoy, 4105, 18);
-		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -668.0f, -350.85f, 962.0f, 0, false, false, 0);
+#if BLADERUNNER_ORIGINAL_BUGS
+		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -668.0f, -350.85f, 962.0f, 0, false, false, false);
+#else
+		// enforce stop running (if was running) - McCoy running in Guzza's office in this scene looks bad
+		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -668.0f, -350.85f, 962.0f, 0, false, false, true);
+#endif // BLADERUNNER_ORIGINAL_BUGS
 		Actor_Says(kActorGuzza, 730, 32);
 		Actor_Face_Actor(kActorMcCoy, kActorGuzza, true);
-		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -716.0f, -354.85f, 1042.0f, 0, false, false, 0);
+		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -716.0f, -354.85f, 1042.0f, 0, false, false, false);
 		Actor_Face_Actor(kActorGuzza, kActorMcCoy, true);
 		Actor_Says(kActorGuzza, 740, 31);
 		Actor_Says(kActorGuzza, 750, 32);

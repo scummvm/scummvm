@@ -491,7 +491,7 @@ protected:
 	uint8 *loadTownsShape(Common::SeekableReadStream *stream);
 	virtual void generateMonsterPalettes(const char *file, int16 monsterIndex) {}
 	virtual void loadMonsterDecoration(Common::SeekableReadStream *stream, int16 monsterIndex) {}
-	const uint8 *loadMonsterProperties(const uint8 *data);
+	virtual const uint8 *loadMonsterProperties(const uint8 *data) { return 0; }
 	const uint8 *loadActiveMonsterData(const uint8 *data, int level);
 	void initMonster(int index, int unit, uint16 block, int pos, int dir, int type, int shpIndex, int mode, int i, int randItem, int fixedItem);
 	void placeMonster(EoBMonsterInPlay *m, uint16 block, int dir);
@@ -1179,7 +1179,14 @@ protected:
 	void snd_playSong(int id);
 	void snd_playSoundEffect(int id, int volume=0xFF);
 	void snd_stopSound();
-	void snd_fadeOut();
+	void snd_fadeOut(int del = 160);
+	virtual void snd_loadAmigaSounds(int level, int sub) = 0;
+
+	const char **_amigaSoundMap;
+	const char *const *_amigaLevelSoundList1;
+	const char *const *_amigaLevelSoundList2;
+
+	int _amigaCurSoundFile;
 
 	// keymap
 	static const char *const kKeymapName;

@@ -81,9 +81,6 @@ public:
 
 	bool getLoopBeginAndEndFrame(int loop, int *begin, int *end);
 
-protected:
-
-private:
 	struct Header {
 		uint16 version;     // 0x00
 		uint16 flags;       // 0x02
@@ -141,7 +138,6 @@ private:
 	class VQAAudioTrack;
 
 	Common::SeekableReadStream *_s;
-	// Graphics::Surface *_surface;
 
 	Header   _header;
 	int      _readingFrame;

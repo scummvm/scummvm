@@ -35,7 +35,7 @@ namespace StarTrek {
 // Main Sound Functions
 
 Sound::Sound(StarTrekEngine *vm) : _vm(vm) {
-	_midiDevice = MT_INVALID;
+	_midiDevice = MT_AUTO;
 	_midiDriver = nullptr;
 	_loopingMidiTrack = false;
 
@@ -346,7 +346,7 @@ void Sound::loadPCMusicFile(const Common::String &baseSoundName) {
 	}
 
 	debugC(5, kDebugSound, "Loading midi \'%s\'\n", soundName.c_str());
-	SharedPtr<FileStream> soundStream = _vm->loadFile(soundName.c_str());
+	Common::MemoryReadStreamEndian *soundStream = _vm->loadFile(soundName.c_str());
 
 	if (loadedSoundData != nullptr)
 		delete[] loadedSoundData;
@@ -355,6 +355,8 @@ void Sound::loadPCMusicFile(const Common::String &baseSoundName) {
 
 	// FIXME: should music start playing when this is called?
 	//_midiSlots[0].midiParser->loadMusic(loadedSoundData, soundStream->size());
+
+	delete soundStream;
 }
 
 void Sound::clearMidiSlot(int slot) {

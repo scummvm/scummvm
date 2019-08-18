@@ -35,21 +35,21 @@ void SceneScriptNR04::InitializeScene() {
 	Scene_2D_Region_Add(1, 62, 327,  92, 479);
 	Scene_2D_Region_Add(2, 93, 343, 239, 479);
 
-	Ambient_Sounds_Add_Looping_Sound(408, 16, 0, 1);
-	Ambient_Sounds_Add_Looping_Sound(384, 16, 0, 1);
-	Ambient_Sounds_Add_Sound(259, 3, 60, 9, 9, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(260, 3, 60, 9, 9, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(261, 3, 60, 9, 9, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(262, 3, 60, 9, 9, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(182, 5, 70, 8, 8, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(184, 5, 70, 8, 8, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(185, 5, 70, 8, 8, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(186, 5, 70, 8, 8, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(188, 5, 70, 8, 8, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(189, 5, 70, 8, 8, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(191, 5, 70, 8, 8, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(192, 5, 70, 8, 8, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(195, 5, 70, 8, 8, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Looping_Sound(kSfxAPRTFAN1, 16, 0, 1);
+	Ambient_Sounds_Add_Looping_Sound(kSfxRUMLOOP1, 16, 0, 1);
+	Ambient_Sounds_Add_Sound(kSfxCLINK1,   3, 60, 9, 9, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxCLINK2,   3, 60, 9, 9, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxCLINK3,   3, 60, 9, 9, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxCLINK4,   3, 60, 9, 9, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfx67_0480R, 5, 70, 8, 8, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfx67_0540R, 5, 70, 8, 8, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfx67_0560R, 5, 70, 8, 8, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfx67_0870R, 5, 70, 8, 8, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfx67_0900R, 5, 70, 8, 8, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfx67_0940R, 5, 70, 8, 8, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfx67_1070R, 5, 70, 8, 8, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfx67_1080R, 5, 70, 8, 8, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfx67_1160R, 5, 70, 8, 8, -100, 100, -101, -101, 0, 0);
 
 	Scene_Loop_Set_Default(0);
 }
@@ -95,7 +95,7 @@ bool SceneScriptNR04::ClickedOn3DObject(const char *objectName, bool a2) {
 					Actor_Voice_Over(1610, kActorVoiceOver);
 				} else if (!Actor_Clue_Query(kActorMcCoy, kClueCollectionReceipt)) {
 					Actor_Clue_Acquire(kActorMcCoy, kClueCollectionReceipt, false, -1);
-					Item_Pickup_Spin_Effect(961, 247, 141);
+					Item_Pickup_Spin_Effect(kModelAnimationCollectionReceipt, 247, 141);
 					Actor_Voice_Over(1560, kActorVoiceOver);
 					Actor_Voice_Over(1570, kActorVoiceOver);
 					Actor_Voice_Over(1580, kActorVoiceOver);
@@ -114,7 +114,7 @@ bool SceneScriptNR04::ClickedOn3DObject(const char *objectName, bool a2) {
 	}
 
 	if ( Object_Query_Click("TORUS01", objectName)
-	 && !Loop_Actor_Walk_To_XYZ(kActorMcCoy, 18.56f, 0.0f, 38.86f, 0, true, false, 0)
+	 && !Loop_Actor_Walk_To_XYZ(kActorMcCoy, 18.56f, 0.0f, 38.86f, 0, true, false, false)
 	 && !Game_Flag_Query(kFlagNR04DiscFound)
 	) {
 		Unclickable_Object("TORUS01");
@@ -122,7 +122,7 @@ bool SceneScriptNR04::ClickedOn3DObject(const char *objectName, bool a2) {
 		Player_Loses_Control();
 		Game_Flag_Set(kFlagNR04DiscFound);
 		Actor_Face_Object(kActorMcCoy, "TORUS01", true);
-		Item_Pickup_Spin_Effect(975, 358, 160);
+		Item_Pickup_Spin_Effect(kModelAnimationVideoDisc, 358, 160);
 		Actor_Voice_Over(1620, kActorVoiceOver);
 		Actor_Voice_Over(1630, kActorVoiceOver);
 		Actor_Clue_Acquire(kActorMcCoy, kClueEarlyQsClub, false, -1);
@@ -153,7 +153,7 @@ bool SceneScriptNR04::ClickedOnItem(int itemId, bool a2) {
 
 bool SceneScriptNR04::ClickedOnExit(int exitId) {
 	if (exitId == 0) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 45.0f, 0.0f, -106.0f, 0, true, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 45.0f, 0.0f, -106.0f, 0, true, false, false)) {
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
 			Game_Flag_Set(kFlagNR04toNR03);
@@ -183,7 +183,7 @@ bool SceneScriptNR04::ClickedOn2DRegion(int region) {
 				Player_Loses_Control();
 				Actor_Voice_Over(4180, kActorVoiceOver);
 				Actor_Change_Animation_Mode(kActorMcCoy, kAnimationModeDie);
-				Ambient_Sounds_Play_Sound(555, 90, 99, 0, 0);
+				Ambient_Sounds_Play_Sound(kSfxMALEHURT, 90, 99, 0, 0);
 				Delay(350);
 				Actor_Set_At_XYZ(kActorMcCoy, 109.0f, 0.0f, 374.0f, 0);
 				Actor_Retired_Here(kActorMcCoy, 12, 12, true, -1);
@@ -268,7 +268,7 @@ void SceneScriptNR04::ActorChangedGoal(int actorId, int newGoal, int oldGoal, bo
 
 		case kGoalEarlyQNR04Talk3:
 			Actor_Clue_Acquire(kActorMcCoy, kClueDektorasDressingRoom, false, kActorEarlyQ);
-			Item_Pickup_Spin_Effect(984, 200, 160);
+			Item_Pickup_Spin_Effect(kModelAnimationPhoto, 200, 160);
 			Actor_Says(kActorEarlyQ, 200, 30);
 			Actor_Says(kActorEarlyQ, 210, 30);
 			Actor_Says(kActorEarlyQ, 220, 30);
@@ -297,7 +297,12 @@ void SceneScriptNR04::ActorChangedGoal(int actorId, int newGoal, int oldGoal, bo
 }
 
 void SceneScriptNR04::PlayerWalkedIn() {
-	Loop_Actor_Walk_To_XYZ(kActorMcCoy, 53.0f, 0.0f, -26.0f, 0, false, false, 0);
+#if BLADERUNNER_ORIGINAL_BUGS
+#else
+	Game_Flag_Reset(kFlagNR03toNR04);
+#endif // BLADERUNNER_ORIGINAL_BUGS
+
+	Loop_Actor_Walk_To_XYZ(kActorMcCoy, 53.0f, 0.0f, -26.0f, 0, false, false, false);
 	if (Game_Flag_Query(kFlagAR02DektoraBoughtScorpions)) {
 		Overlay_Play("nr04over", 0, true, false, 0);
 		Delay(4000);
@@ -307,6 +312,14 @@ void SceneScriptNR04::PlayerWalkedIn() {
 }
 
 void SceneScriptNR04::PlayerWalkedOut() {
+#if BLADERUNNER_ORIGINAL_BUGS
+#else
+	if (Game_Flag_Query(kFlagNR03McCoyThrownOut)) {
+		Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
+		Ambient_Sounds_Remove_All_Looping_Sounds(1);
+		Music_Stop(1);
+	}
+#endif // BLADERUNNER_ORIGINAL_BUGS
 }
 
 void SceneScriptNR04::DialogueQueueFlushed(int a1) {
@@ -382,11 +395,11 @@ void SceneScriptNR04::druggedEffect(int frame) {
 void SceneScriptNR04::playNextMusic() {
 	int track = Global_Variable_Query(kVariableEarlyQFrontMusic);
 	if (track == 0) {
-		Music_Play(14, 11, 80, 2, -1, 0, 0);
+		Music_Play(kMusicGothic2, 11, 80, 2, -1, 0, 0);
 	} else if (track == 1) {
-		Music_Play(13, 11, 80, 2, -1, 0, 0);
+		Music_Play(kMusicGothic1, 11, 80, 2, -1, 0, 0);
 	} else if (track == 2) {
-		Music_Play(5, 11, 80, 2, -1, 0, 0);
+		Music_Play(kMusicGothic3, 11, 80, 2, -1, 0, 0);
 	}
 	track++;
 	if (track > 2) {

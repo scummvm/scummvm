@@ -40,6 +40,22 @@ static const SherlockGameDescription gameDescriptions[] = {
 	},
 
 	{
+		// Case of the Serrated Scalpel - French
+		// Provided by InsertDisk2 - Patch #11040
+		{
+			"scalpel",
+			0,
+			AD_ENTRY1s("talk.lib", "295ef96a50641d44f44c02c90cf7948e", 259541),
+			Common::FR_FRA,
+			Common::kPlatformDOS,
+			ADGF_UNSTABLE,
+			GUIO6(GUIO_NOSPEECH, GAMEOPTION_ORIGINAL_SAVES, GAMEOPTION_FADE_STYLE, GAMEOPTION_HELP_STYLE,
+				GAMEOPTION_PORTRAITS_ON, GAMEOPTION_WINDOW_STYLE)
+		},
+		GType_SerratedScalpel,
+	},
+
+	{
 		// Case of the Serrated Scalpel - German CD (from multilingual CD)
 		// Provided by m_kiewitz
 		{

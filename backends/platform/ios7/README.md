@@ -6,7 +6,7 @@ I tried to use all the latest iOS features to replace the old code. For instance
 
 ## Compilation ##
 
-See http://wiki.scummvm.org/index.php/Compiling_ScummVM/iPhone
+See https://wiki.scummvm.org/index.php/Compiling_ScummVM/iPhone
 
 ## Usage ##
 

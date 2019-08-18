@@ -839,6 +839,7 @@ void GuestAdditions::syncMessageTypeFromScummVMUsingDefaultStrategy() const {
 		_state->variables[VAR_GLOBAL][kGlobalVarMessageType] = make_reg(0, value);
 	}
 
+#ifdef ENABLE_SCI32
 	if (g_sci->getGameId() == GID_GK1 && value == kMessageTypeSubtitles) {
 		// The narrator speech needs to be forced off if speech has been
 		// disabled in ScummVM, but otherwise the narrator toggle should just
@@ -847,6 +848,19 @@ void GuestAdditions::syncMessageTypeFromScummVMUsingDefaultStrategy() const {
 		// is no equivalent option in the ScummVM GUI
 		_state->variables[VAR_GLOBAL][kGlobalVarGK1NarratorMode] = NULL_REG;
 	}
+
+	if (g_sci->getGameId() == GID_QFG4) {
+		// QFG4 uses a game flag to control the Audio button's state in the control panel.
+		//  This flag must be kept in sync with the standard global 90 speech bit.
+		uint flagNumber = 400;
+		uint globalNumber = kGlobalVarQFG4Flags + (flagNumber / 16);
+		if (value & kMessageTypeSpeech) {
+			_state->variables[VAR_GLOBAL][globalNumber] |= (int16)0x8000;
+		} else {
+			_state->variables[VAR_GLOBAL][globalNumber] &= (int16)~0x8000;
+		}
+	}
+#endif
 }
 
 #ifdef ENABLE_SCI32
@@ -919,6 +933,9 @@ void GuestAdditions::syncMessageTypeToScummVMUsingDefaultStrategy(const int inde
 
 		ConfMan.setBool("subtitles", value.toSint16() & kMessageTypeSubtitles);
 		ConfMan.setBool("speech_mute", !(value.toSint16() & kMessageTypeSpeech));
+
+		// need to update sound mixer volumes so that speech_mute will take effect
+		g_sci->updateSoundMixerVolumes();
 	}
 }
 

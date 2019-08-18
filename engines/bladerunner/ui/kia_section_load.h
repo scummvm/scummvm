@@ -49,6 +49,7 @@ class KIASectionLoad : public KIASectionBase {
 	SaveStateList _saveList;
 
 	int           _hoveredLineId;
+	int           _displayingLineId;
 	int           _newGameEasyLineId;
 	int           _newGameMediumLineId;
 	int           _newGameHardLineId;
@@ -65,6 +66,7 @@ public:
 	void handleMouseMove(int mouseX, int mouseY) override;
 	void handleMouseDown(bool mainButton) override;
 	void handleMouseUp(bool mainButton) override;
+	void handleMouseScroll(int direction) override;
 
 private:
 	static void scrollBoxCallback(void *callbackData, void *source, int lineData, int mouseButton);

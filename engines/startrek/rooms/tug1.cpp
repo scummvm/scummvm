@@ -53,7 +53,7 @@ void Room::tug1UseSTricorderOnAnything() {
 void Room::tug1LookAtBridgeDoor() {
 	if (_awayMission->tug.bridgeForceFieldDown)
 		return;
-	showText(TX_TUG1N005);
+	showDescription(TX_TUG1N005);
 }
 
 void Room::tug1UseSTricorderOnBridgeDoor() {
@@ -68,7 +68,7 @@ void Room::tug1UseSTricorderOnBridgeDoor() {
 
 void Room::tug1UsePhaserOnBridgeDoor() {
 	if (_awayMission->tug.bridgeForceFieldDown)
-		showText(TX_TUG1N007);
+		showDescription(TX_TUG1N007);
 	else {
 		_awayMission->disableInput = true;
 		_awayMission->crewDirectionsAfterWalk[OBJECT_KIRK] = DIR_N;
@@ -104,7 +104,7 @@ void Room::tug1UseSTricorderOnJunkPile() {
 }
 
 void Room::tug1LookAtJunkPile() {
-	showText(TX_TUG1N000);
+	showDescription(TX_TUG1N000);
 }
 
 void Room::tug1GetJunkPile() {
@@ -130,13 +130,13 @@ void Room::tug1KirkFinishedTakingJunkPile() {
 void Room::tug1UsePhaserOnWelder() {
 	loseItem(OBJECT_IPWE);
 	giveItem(OBJECT_IPWF);
-	showText(TX_TUG1N004);
+	showDescription(TX_TUG1N004);
 
 	_awayMission->tug.missionScore += 3;
 }
 
 void Room::tug1UseWelderOnWireScraps() {
-	showText(TX_TUG1N009);
+	showDescription(TX_TUG1N009);
 	loseItem(OBJECT_IWIRSCRP);
 }
 
@@ -155,7 +155,7 @@ void Room::tug1UseCombBitOnTransmogrifier() {
 
 void Room::tug1UsePhaserWelderOnBridgeDoor() {
 	if (_awayMission->tug.bridgeForceFieldDown)
-		showText(TX_TUG1N008);
+		showDescription(TX_TUG1N008);
 	else {
 		_awayMission->disableInput = true;
 		_awayMission->crewDirectionsAfterWalk[OBJECT_KIRK] = DIR_N;
@@ -165,7 +165,7 @@ void Room::tug1UsePhaserWelderOnBridgeDoor() {
 
 void Room::tug1UsePhaserWelderOnBridgeDoorInLeftSpot() {
 	if (_awayMission->tug.bridgeForceFieldDown)
-		showText(TX_TUG1N007);
+		showDescription(TX_TUG1N007);
 	else {
 		_awayMission->disableInput = true;
 		_awayMission->crewDirectionsAfterWalk[OBJECT_KIRK] = DIR_N;
@@ -200,19 +200,19 @@ void Room::tug1KirkFinishedUsingWelderInLeftSpot() {
 }
 
 void Room::tug1LookAnywhere() {
-	showText(TX_TUG1N013);
+	showDescription(TX_TUG1N013);
 }
 
 void Room::tug1LookAtMccoy() {
-	showText(TX_TUG1N003);
+	showDescription(TX_TUG1N003);
 }
 
 void Room::tug1LookAtSpock() {
-	showText(TX_TUG1N006);
+	showDescription(TX_TUG1N006);
 }
 
 void Room::tug1LookAtRedshirt() {
-	showText(TX_TUG1N002);
+	showDescription(TX_TUG1N002);
 }
 
 void Room::tug1TalkToMccoy() {
@@ -224,15 +224,15 @@ void Room::tug1TalkToRedshirt() {
 }
 
 void Room::tug1LookAtTerminal() {
-	showText(TX_TUG1N010);
+	showDescription(TX_TUG1N010);
 }
 
 void Room::tug1LookAtDebris() {
-	showText(TX_TUG1N011);
+	showDescription(TX_TUG1N011);
 }
 
 void Room::tug1LookAtBrigDoor() {
-	showText(TX_TUG1N001);
+	showDescription(TX_TUG1N001);
 }
 
 void Room::tug1UseSTricorderOnBrigDoor() {

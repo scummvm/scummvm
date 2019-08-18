@@ -133,7 +133,8 @@ int main(int argc, char *argv[]) {
 	setup.features = getAllFeatures();
 
 	ProjectType projectType = kProjectNone;
-	int msvcVersion = 12;
+	const MSVCVersion* msvc = NULL;
+	int msvcVersion = 0;
 
 	// Parse command line arguments
 	using std::cout;
@@ -192,10 +193,6 @@ int main(int argc, char *argv[]) {
 
 			msvcVersion = atoi(argv[++i]);
 
-			if (msvcVersion != 9 && msvcVersion != 10 && msvcVersion != 11 && msvcVersion != 12 && msvcVersion != 14 && msvcVersion != 15) {
-				std::cerr << "ERROR: Unsupported version: \"" << msvcVersion << "\" passed to \"--msvc-version\"!\n";
-				return -1;
-			}
 		} else if (!strncmp(argv[i], "--enable-engine=", 16)) {
 			const char *names = &argv[i][16];
 			if (!*names) {
@@ -369,6 +366,7 @@ int main(int argc, char *argv[]) {
 	StringList featureDefines = getFeatureDefines(setup.features);
 	setup.defines.splice(setup.defines.begin(), featureDefines);
 
+	bool backendWin32 = false;
 	if (projectType == kProjectXcode) {
 		setup.defines.push_back("POSIX");
 		// Define both MACOSX, and IPHONE, but only one of them will be associated to the
@@ -379,13 +377,14 @@ int main(int argc, char *argv[]) {
 		setup.defines.push_back("MACOSX");
 		setup.defines.push_back("IPHONE");
 	} else if (projectType == kProjectMSVC || projectType == kProjectCodeBlocks) {
-		// Windows only has support for the SDL backend, so we hardcode it here (along with winmm)
 		setup.defines.push_back("WIN32");
+		backendWin32 = true;
 	} else {
 		// As a last resort, select the backend files to build based on the platform used to build create_project.
 		// This is broken when cross compiling.
 #if defined(_WIN32) || defined(WIN32)
 		setup.defines.push_back("WIN32");
+		backendWin32 = true;
 #else
 		setup.defines.push_back("POSIX");
 #endif
@@ -405,16 +404,25 @@ int main(int argc, char *argv[]) {
 
 	if (updatesEnabled) {
 		setup.defines.push_back("USE_SPARKLE");
-		if (projectType != kProjectXcode)
+		if (backendWin32)
 			setup.libraries.push_back("winsparkle");
 		else
 			setup.libraries.push_back("sparkle");
 	}
 
-	if (curlEnabled && projectType == kProjectMSVC)
-		setup.defines.push_back("CURL_STATICLIB");
-	if (sdlnetEnabled && projectType == kProjectMSVC)
-		setup.libraries.push_back("iphlpapi");
+	if (backendWin32) {
+		if (curlEnabled) {
+			setup.defines.push_back("CURL_STATICLIB");
+			setup.libraries.push_back("ws2_32");
+			setup.libraries.push_back("wldap32");
+			setup.libraries.push_back("crypt32");
+			setup.libraries.push_back("normaliz");
+		}
+		if (sdlnetEnabled) {
+			setup.libraries.push_back("iphlpapi");
+		}
+		setup.libraries.push_back("winmm");
+	}
 
 	setup.defines.push_back("SDL_BACKEND");
 	if (!setup.useSDL2) {
@@ -428,7 +436,6 @@ int main(int argc, char *argv[]) {
 		setup.defines.push_back("USE_SDL2");
 		setup.libraries.push_back("sdl2");
 	}
-	setup.libraries.push_back("winmm");
 
 	// Add additional project-specific library
 #ifdef ADDITIONAL_LIBRARY
@@ -482,12 +489,27 @@ int main(int argc, char *argv[]) {
 		break;
 
 	case kProjectMSVC:
+		// Auto-detect if no version is specified
+		if (msvcVersion == 0) {
+			msvcVersion = getInstalledMSVC();
+			if (msvcVersion == 0) {
+				std::cerr << "ERROR: No Visual Studio versions found, please specify one with \"--msvc-version\"\n";
+				return -1;
+			} else {
+				cout << "Visual Studio " << msvcVersion << " detected\n\n";
+			}
+		}
+
+		msvc = getMSVCVersion(msvcVersion);
+		if (!msvc) {
+			std::cerr << "ERROR: Unsupported version: \"" << msvcVersion << "\" passed to \"--msvc-version\"!\n";
+			return -1;
+		}
+
 		////////////////////////////////////////////////////////////////////////////
 		// For Visual Studio, all warnings are on by default in the project files,
 		// so we pass a list of warnings to disable globally or per-project
 		//
-		// Tracker reference:
-		// https://sourceforge.net/tracker/?func=detail&aid=2909981&group_id=37116&atid=418822
 		////////////////////////////////////////////////////////////////////////////
 		//
 		// 4068 (unknown pragma)
@@ -584,7 +606,7 @@ int main(int argc, char *argv[]) {
 		globalWarnings.push_back("6385");
 		globalWarnings.push_back("6386");
 
-		if (msvcVersion == 14 || msvcVersion == 15) {
+		if (msvcVersion >= 14) {
 			globalWarnings.push_back("4267");
 			globalWarnings.push_back("4577");
 		}
@@ -608,9 +630,9 @@ int main(int argc, char *argv[]) {
 		projectWarnings["sci"].push_back("4373");
 
 		if (msvcVersion == 9)
-			provider = new CreateProjectTool::VisualStudioProvider(globalWarnings, projectWarnings, msvcVersion);
+			provider = new CreateProjectTool::VisualStudioProvider(globalWarnings, projectWarnings, msvcVersion, *msvc);
 		else
-			provider = new CreateProjectTool::MSBuildProvider(globalWarnings, projectWarnings, msvcVersion);
+			provider = new CreateProjectTool::MSBuildProvider(globalWarnings, projectWarnings, msvcVersion, *msvc);
 
 		break;
 
@@ -700,14 +722,13 @@ void displayHelp(const char *exe) {
 	        "                          directory\n"
 	        "\n"
 	        "MSVC specific settings:\n"
-	        " --msvc-version version   set the targeted MSVC version. Possible values:\n"
-	        "                           9 stands for \"Visual Studio 2008\"\n"
-	        "                           10 stands for \"Visual Studio 2010\"\n"
-	        "                           11 stands for \"Visual Studio 2012\"\n"
-	        "                           12 stands for \"Visual Studio 2013\"\n"
-	        "                           14 stands for \"Visual Studio 2015\"\n"
-	        "                           15 stands for \"Visual Studio 2017\"\n"
-	        "                           The default is \"12\", thus \"Visual Studio 2013\"\n"
+	        " --msvc-version version   set the targeted MSVC version. Possible values:\n";
+
+	const MSVCList msvc = getAllMSVCVersions();
+	for (MSVCList::const_iterator i = msvc.begin(); i != msvc.end(); ++i)
+		cout << "                           " << i->version << " stands for \"" << i->name << "\"\n";
+
+	cout << "                           If no version is set, the latest installed version is used\n"
 	        " --build-events           Run custom build events as part of the build\n"
 	        "                          (default: false)\n"
 	        " --installer              Create installer after the build (implies --build-events)\n"
@@ -1047,25 +1068,27 @@ const Feature s_features[] = {
 	{    "sdlnet",     "USE_SDL_NET", "SDL_net",          true, "SDL_net support" },
 
 	// Feature flags
-	{            "bink",             "USE_BINK",         "", true,  "Bink video support" },
-	{         "scalers",          "USE_SCALERS",         "", true,  "Scalers" },
-	{       "hqscalers",       "USE_HQ_SCALERS",         "", true,  "HQ scalers" },
-	{           "16bit",        "USE_RGB_COLOR",         "", true,  "16bit color support" },
-	{         "highres",          "USE_HIGHRES",         "", true,  "high resolution" },
-	{         "mt32emu",          "USE_MT32EMU",         "", true,  "integrated MT-32 emulator" },
-	{            "nasm",             "USE_NASM",         "", true,  "IA-32 assembly support" }, // This feature is special in the regard, that it needs additional handling.
-	{          "opengl",           "USE_OPENGL",         "", true,  "OpenGL support" },
-	{        "opengles",             "USE_GLES",         "", true,  "forced OpenGL ES mode" },
-	{         "taskbar",          "USE_TASKBAR",         "", true,  "Taskbar integration support" },
-	{           "cloud",            "USE_CLOUD",         "", true,  "Cloud integration support" },
-	{     "translation",      "USE_TRANSLATION",         "", true,  "Translation support" },
-	{          "vkeybd",        "ENABLE_VKEYBD",         "", false, "Virtual keyboard support"},
-	{       "keymapper",     "ENABLE_KEYMAPPER",         "", false, "Keymapper support"},
-	{   "eventrecorder", "ENABLE_EVENTRECORDER",         "", false, "Event recorder support"},
-	{         "updates",          "USE_UPDATES",         "", false, "Updates support"},
-	{         "dialogs",       "USE_SYSDIALOGS",         "", true,  "System dialogs support"},
-	{      "langdetect",       "USE_DETECTLANG",         "", true,  "System language detection support" } // This feature actually depends on "translation", there
-	                                                                                                      // is just no current way of properly detecting this...
+	{            "bink",                      "USE_BINK",  "", true,  "Bink video support" },
+	{         "scalers",                   "USE_SCALERS",  "", true,  "Scalers" },
+	{       "hqscalers",                "USE_HQ_SCALERS",  "", true,  "HQ scalers" },
+	{           "16bit",                 "USE_RGB_COLOR",  "", true,  "16bit color support" },
+	{         "highres",                   "USE_HIGHRES",  "", true,  "high resolution" },
+	{         "mt32emu",                   "USE_MT32EMU",  "", true,  "integrated MT-32 emulator" },
+	{             "lua",                       "USE_LUA",  "", true,  "lua" },
+	{            "nasm",                      "USE_NASM",  "", true,  "IA-32 assembly support" }, // This feature is special in the regard, that it needs additional handling.
+	{          "opengl",                    "USE_OPENGL",  "", true,  "OpenGL support" },
+	{        "opengles",                      "USE_GLES",  "", true,  "forced OpenGL ES mode" },
+	{         "taskbar",                   "USE_TASKBAR",  "", true,  "Taskbar integration support" },
+	{           "cloud",                     "USE_CLOUD",  "", true,  "Cloud integration support" },
+	{     "translation",               "USE_TRANSLATION",  "", true,  "Translation support" },
+	{          "vkeybd",                 "ENABLE_VKEYBD",  "", false, "Virtual keyboard support"},
+	{       "keymapper",              "ENABLE_KEYMAPPER",  "", false, "Keymapper support"},
+	{   "eventrecorder",          "ENABLE_EVENTRECORDER",  "", false, "Event recorder support"},
+	{         "updates",                   "USE_UPDATES",  "", false, "Updates support"},
+	{         "dialogs",                "USE_SYSDIALOGS",  "", true,  "System dialogs support"},
+	{      "langdetect",                "USE_DETECTLANG",  "", true,  "System language detection support" }, // This feature actually depends on "translation", there
+	                                                                                                         // is just no current way of properly detecting this...
+	{    "text-console", "USE_TEXT_CONSOLE_FOR_DEBUGGER",  "", false, "Text console debugger" } // This feature is always applied in xcode projects
 };
 
 const Tool s_tools[] = {
@@ -1081,6 +1104,17 @@ const Tool s_tools[] = {
 	{ "create_toon",         true},
 	{ "create_translations", true},
 	{ "qtable",              true}
+};
+
+const MSVCVersion s_msvc[] = {
+//    Ver    Name                     Solution                     Project    Toolset    LLVM
+	{  9,    "Visual Studio 2008",    "10.00",          "2008",     "4.0",     "v90",    "LLVM-vs2008" },
+	{ 10,    "Visual Studio 2010",    "11.00",          "2010",     "4.0",    "v100",    "LLVM-vs2010" },
+	{ 11,    "Visual Studio 2012",    "11.00",          "2012",     "4.0",    "v110",    "LLVM-vs2012" },
+	{ 12,    "Visual Studio 2013",    "12.00",          "2013",    "12.0",    "v120",    "LLVM-vs2013" },
+	{ 14,    "Visual Studio 2015",    "12.00",            "14",    "14.0",    "v140",    "LLVM-vs2014" },
+	{ 15,    "Visual Studio 2017",    "12.00",            "15",    "15.0",    "v141",    "llvm"        },
+	{ 16,    "Visual Studio 2019",    "12.00",    "Version 16",    "16.0",    "v142",    "llvm"        }
 };
 } // End of anonymous namespace
 
@@ -1145,6 +1179,63 @@ ToolList getAllTools() {
 		tools.push_back(s_tools[i]);
 
 	return tools;
+}
+
+MSVCList getAllMSVCVersions() {
+	const size_t msvcCount = sizeof(s_msvc) / sizeof(s_msvc[0]);
+
+	MSVCList msvcVersions;
+	for (size_t i = 0; i < msvcCount; ++i)
+		msvcVersions.push_back(s_msvc[i]);
+
+	return msvcVersions;
+}
+
+const MSVCVersion *getMSVCVersion(int version) {
+	const size_t msvcCount = sizeof(s_msvc) / sizeof(s_msvc[0]);
+
+	for (size_t i = 0; i < msvcCount; ++i) {
+		if (s_msvc[i].version == version)
+			return &s_msvc[i];
+	}
+
+	return NULL;
+}
+
+int getInstalledMSVC() {
+	int latest = 0;
+#if defined(_WIN32) || defined(WIN32)
+	// Use the Visual Studio Installer to get the latest version
+	const char *vsWhere = "\"\"%PROGRAMFILES(X86)%\\Microsoft Visual Studio\\Installer\\vswhere.exe\" -latest -legacy -property installationVersion\"";
+	FILE *pipe = _popen(vsWhere, "rt");
+	if (pipe != NULL) {
+		char version[50];
+		if (fgets(version, 50, pipe) != NULL) {
+			latest = atoi(version);
+		}
+		_pclose(pipe);
+	}
+
+	// Use the registry to get the latest version
+	if (latest == 0) {
+		HKEY key;
+		LSTATUS err = RegOpenKeyEx(HKEY_LOCAL_MACHINE, "SOFTWARE\\Microsoft\\VisualStudio\\SxS\\VS7", 0, KEY_QUERY_VALUE | KEY_WOW64_32KEY, &key);
+		if (err == ERROR_SUCCESS && key != NULL) {
+			const MSVCList msvc = getAllMSVCVersions();
+			for (MSVCList::const_reverse_iterator i = msvc.rbegin(); i != msvc.rend(); ++i) {
+				std::ostringstream version;
+				version << i->version << ".0";
+				err = RegQueryValueEx(key, version.str().c_str(), NULL, NULL, NULL, NULL);
+				if (err == ERROR_SUCCESS) {
+					latest = i->version;
+					break;
+				}
+			}
+			RegCloseKey(key);
+		}
+	}
+#endif
+	return latest;
 }
 
 namespace CreateProjectTool {
@@ -1414,7 +1505,7 @@ void ProjectProvider::createProject(BuildSetup &setup) {
 	}
 
 	// We also need to add the UUID of the main project file.
-	const std::string svmUUID = _uuidMap[setup.projectName] = createUUID();
+	const std::string svmUUID = _uuidMap[setup.projectName] = createUUID(setup.projectName);
 
 	createWorkspace(setup);
 
@@ -1472,6 +1563,7 @@ void ProjectProvider::createProject(BuildSetup &setup) {
 		in.push_back(setup.srcDir + "/COPYING.LGPL");
 		in.push_back(setup.srcDir + "/COPYING.BSD");
 		in.push_back(setup.srcDir + "/COPYING.FREEFONT");
+		in.push_back(setup.srcDir + "/COPYING.OFL");
 		in.push_back(setup.srcDir + "/COPYRIGHT");
 		in.push_back(setup.srcDir + "/NEWS");
 		in.push_back(setup.srcDir + "/README");
@@ -1498,7 +1590,7 @@ ProjectProvider::UUIDMap ProjectProvider::createUUIDMap(const BuildSetup &setup)
 		if (!i->enable || isSubEngine(i->name, setup.engines))
 			continue;
 
-		result[i->name] = createUUID();
+		result[i->name] = createUUID(i->name);
 	}
 
 	return result;
@@ -1512,17 +1604,20 @@ ProjectProvider::UUIDMap ProjectProvider::createToolsUUIDMap() const {
 		if (!i->enable)
 			continue;
 
-		result[i->name] = createUUID();
+		result[i->name] = createUUID(i->name);
 	}
 
 	return result;
 }
 
+const int kUUIDLen = 16;
+
 std::string ProjectProvider::createUUID() const {
 #ifdef USE_WIN32_API
 	UUID uuid;
-	if (UuidCreate(&uuid) != RPC_S_OK)
-		error("UuidCreate failed");
+	RPC_STATUS status = UuidCreateSequential(&uuid);
+	if (status != RPC_S_OK && status != RPC_S_UUID_LOCAL_ONLY)
+		error("UuidCreateSequential failed");
 
 	unsigned char *string = 0;
 	if (UuidToStringA(&uuid, &string) != RPC_S_OK)
@@ -1533,25 +1628,81 @@ std::string ProjectProvider::createUUID() const {
 	RpcStringFreeA(&string);
 	return result;
 #else
-	unsigned char uuid[16];
+	unsigned char uuid[kUUIDLen];
 
-	for (int i = 0; i < 16; ++i)
+	for (int i = 0; i < kUUIDLen; ++i)
 		uuid[i] = (unsigned char)((std::rand() / (double)(RAND_MAX)) * 0xFF);
 
 	uuid[8] &= 0xBF; uuid[8] |= 0x80;
 	uuid[6] &= 0x4F; uuid[6] |= 0x40;
 
+	return UUIDToString(uuid);
+#endif
+}
+
+std::string ProjectProvider::createUUID(const std::string &name) const {
+#ifdef USE_WIN32_API
+	HCRYPTPROV hProv = NULL;
+	if (!CryptAcquireContext(&hProv, NULL, NULL, PROV_RSA_FULL, CRYPT_VERIFYCONTEXT)) {
+		error("CryptAcquireContext failed");
+	}
+	
+	// Use MD5 hashing algorithm
+	HCRYPTHASH hHash = NULL;
+	if (!CryptCreateHash(hProv, CALG_MD5, 0, 0, &hHash)) {
+		CryptReleaseContext(hProv, 0);
+		error("CryptCreateHash failed");
+	}
+
+	// Hash unique ScummVM namespace {5f5b43e8-35ff-4f1e-ad7e-a2a87e9b5254}
+	const BYTE uuidNs[kUUIDLen] =
+		{ 0x5f, 0x5b, 0x43, 0xe8, 0x35, 0xff, 0x4f, 0x1e, 0xad, 0x7e, 0xa2, 0xa8, 0x7e, 0x9b, 0x52, 0x54 };
+	if (!CryptHashData(hHash, uuidNs, kUUIDLen, 0)) {
+		CryptDestroyHash(hHash);
+		CryptReleaseContext(hProv, 0);
+		error("CryptHashData failed");
+	}
+
+	// Hash project name
+	if (!CryptHashData(hHash, (const BYTE *)name.c_str(), name.length(), 0)) {
+		CryptDestroyHash(hHash);
+		CryptReleaseContext(hProv, 0);
+		error("CryptHashData failed");
+	}
+
+	// Get resulting UUID
+	BYTE uuid[kUUIDLen];
+	DWORD len = kUUIDLen;
+	if (!CryptGetHashParam(hHash, HP_HASHVAL, uuid, &len, 0)) {
+		CryptDestroyHash(hHash);
+		CryptReleaseContext(hProv, 0);
+		error("CryptGetHashParam failed");
+	}
+
+	// Add version and variant
+	uuid[6] &= 0x0F; uuid[6] |= 0x30;
+	uuid[8] &= 0x3F; uuid[8] |= 0x80;
+
+	CryptDestroyHash(hHash);
+	CryptReleaseContext(hProv, 0);
+
+	return UUIDToString(uuid);
+#else
+	// Fallback to random UUID
+	return createUUID();
+#endif
+}
+
+std::string ProjectProvider::UUIDToString(unsigned char *uuid) const {
 	std::stringstream uuidString;
 	uuidString << std::hex << std::uppercase << std::setfill('0');
-	for (int i = 0; i < 16; ++i) {
+	for (int i = 0; i < kUUIDLen; ++i) {
 		uuidString << std::setw(2) << (int)uuid[i];
 		if (i == 3 || i == 5 || i == 7 || i == 9) {
 			uuidString << std::setw(0) << '-';
 		}
 	}
-
 	return uuidString.str();
-#endif
 }
 
 std::string ProjectProvider::getLastPathComponent(const std::string &path) {

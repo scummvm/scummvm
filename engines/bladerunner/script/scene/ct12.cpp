@@ -49,18 +49,18 @@ void SceneScriptCT12::InitializeScene() {
 		Scene_Exit_Add_2D_Exit(4, 324, 150, 435, 340, 0);
 	}
 
-	Ambient_Sounds_Add_Looping_Sound(54, 33,    1, 1);
-	Ambient_Sounds_Add_Looping_Sound(55, 20, -100, 1);
-	Ambient_Sounds_Add_Looping_Sound(56, 20, -100, 1);
-	Ambient_Sounds_Add_Speech_Sound(60,  0, 10, 260, 17, 24, -100, 100, -101, -101, 1, 1);
-	Ambient_Sounds_Add_Speech_Sound(60, 20, 10, 260, 17, 24, -100, 100, -101, -101, 1, 1);
-	Ambient_Sounds_Add_Speech_Sound(60, 40, 10, 260, 17, 24, -100, 100, -101, -101, 1, 1);
-	Ambient_Sounds_Add_Speech_Sound(60, 50, 10, 260, 17, 24, -100, 100, -101, -101, 1, 1);
-	Ambient_Sounds_Add_Sound( 68, 60, 180, 20,  33, 0, 0, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound( 69, 60, 180, 16,  25, 0, 0, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(375, 60, 180, 50, 100, 0, 0, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(376, 50, 180, 50, 100, 0, 0, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(377, 50, 180, 50, 100, 0, 0, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Looping_Sound(kSfxCTRAIN1, 33,    1, 1);
+	Ambient_Sounds_Add_Looping_Sound(kSfxCTAMBL1, 20, -100, 1);
+	Ambient_Sounds_Add_Looping_Sound(kSfxCTAMBR1, 20, -100, 1);
+	Ambient_Sounds_Add_Speech_Sound(kActorBlimpGuy,  0, 10, 260, 17, 24, -100, 100, -101, -101, 1, 1);
+	Ambient_Sounds_Add_Speech_Sound(kActorBlimpGuy, 20, 10, 260, 17, 24, -100, 100, -101, -101, 1, 1);
+	Ambient_Sounds_Add_Speech_Sound(kActorBlimpGuy, 40, 10, 260, 17, 24, -100, 100, -101, -101, 1, 1);
+	Ambient_Sounds_Add_Speech_Sound(kActorBlimpGuy, 50, 10, 260, 17, 24, -100, 100, -101, -101, 1, 1);
+	Ambient_Sounds_Add_Sound(kSfxSPIN2B,  60, 180, 20,  33, 0, 0, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxSPIN3A,  60, 180, 16,  25, 0, 0, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxTHNDER2, 60, 180, 50, 100, 0, 0, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxTHNDER3, 50, 180, 50, 100, 0, 0, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxTHNDER4, 50, 180, 50, 100, 0, 0, -101, -101, 0, 0);
 
 	if (Global_Variable_Query(kVariableChapter) < 2
 	 && Actor_Query_Goal_Number(kActorGaff) == kGoalGaffCT12WaitForMcCoy
@@ -69,6 +69,16 @@ void SceneScriptCT12::InitializeScene() {
 		Actor_Set_At_XYZ(kActorGaff, -534.0f, -6.5f, 952.0f, 367);
 		Game_Flag_Set(kFlagCT12GaffSpinner);
 	}
+
+#if BLADERUNNER_ORIGINAL_BUGS
+#else
+	if (!Actor_Query_In_Set(kActorHowieLee, kSetCT01_CT12)
+	    && Global_Variable_Query(kVariableChapter) < 4) {
+		AI_Movement_Track_Flush(kActorHowieLee);
+		AI_Movement_Track_Append(kActorHowieLee, 67, 0); // in kSetCT01_CT12
+		Actor_Set_Goal_Number(kActorHowieLee, kGoalHowieLeeDefault);
+	}
+#endif // BLADERUNNER_ORIGINAL_BUGS
 
 	if (Game_Flag_Query(kFlagCT01toCT12)
 	 && Game_Flag_Query(kFlagSpinnerAtCT01)
@@ -110,6 +120,12 @@ void SceneScriptCT12::SceneLoaded() {
 	Unobstacle_Object("SPINNER BODY", true);
 	Unobstacle_Object("HOWFLOOR", true);
 	Unclickable_Object("TURBINE");
+#if BLADERUNNER_ORIGINAL_BUGS
+#else
+	Unclickable_Object("OBJECT03");
+	Unclickable_Object("OBJECT04");
+	Unclickable_Object("OBJECT05");
+#endif // BLADERUNNER_ORIGINAL_BUGS
 }
 
 bool SceneScriptCT12::MouseClick(int x, int y) {
@@ -127,6 +143,7 @@ bool SceneScriptCT12::ClickedOnActor(int actorId) {
 	}
 
 	// cut off feature? grayford never visit CT12 as goal 308 is never triggered
+	// bug? Marking this as a bug to revisit at a later time
 	if (actorId == kActorOfficerGrayford
 	 && Global_Variable_Query(kVariableChapter) == 4
 	 && Game_Flag_Query(kFlagUG18GuzzaScene)
@@ -134,7 +151,7 @@ bool SceneScriptCT12::ClickedOnActor(int actorId) {
 	) {
 		Actor_Face_Actor(kActorOfficerGrayford, kActorMcCoy, true);
 		Actor_Face_Actor(kActorMcCoy, kActorOfficerGrayford, true);
-		Actor_Says(kActorMcCoy, 710, kAnimationModeTalk);
+		Actor_Says(kActorMcCoy, 710, kAnimationModeTalk); // Hold it! I'm not a Replicant, I got proof!
 		Actor_Says(kActorOfficerGrayford, 20, kAnimationModeTalk);
 		Actor_Says(kActorMcCoy, 715, kAnimationModeTalk);
 		Actor_Says(kActorOfficerGrayford, 30, kAnimationModeTalk);
@@ -145,9 +162,9 @@ bool SceneScriptCT12::ClickedOnActor(int actorId) {
 		Actor_Says(kActorMcCoy, 725, kAnimationModeTalk);
 		Actor_Says(kActorOfficerGrayford, 70, kAnimationModeTalk);
 		Actor_Says(kActorOfficerGrayford, 80, kAnimationModeTalk);
-		Actor_Says(kActorOfficerGrayford, 90, kAnimationModeTalk);
-		Actor_Says(kActorOfficerGrayford, 100, kAnimationModeTalk);
-		Actor_Says(kActorOfficerGrayford, 110, kAnimationModeTalk);
+		Actor_Says(kActorOfficerGrayford, 90, kAnimationModeTalk); // if you are lying...
+		Actor_Says(kActorOfficerGrayford, 100, kAnimationModeTalk); // you gonna wish...
+		Actor_Says(kActorOfficerGrayford, 110, kAnimationModeTalk); // Take him in!
 		Game_Flag_Set(kFlagUnpauseGenWalkers);
 		Game_Flag_Set(kFlagMcCoyFreedOfAccusations);
 		Actor_Set_Goal_Number(kActorMcCoy, kGoalMcCoyStartChapter5);
@@ -161,7 +178,7 @@ bool SceneScriptCT12::ClickedOnItem(int itemId, bool a2) {
 
 bool SceneScriptCT12::ClickedOnExit(int exitId) {
 	if (exitId == 0) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -419.15f, -6.5f, 696.94f, 0, true, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -419.15f, -6.5f, 696.94f, 0, true, false, false)) {
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 			Game_Flag_Set(kFlagCT12toCT01);
 			Set_Enter(kSetCT01_CT12, kSceneCT01);
@@ -170,7 +187,7 @@ bool SceneScriptCT12::ClickedOnExit(int exitId) {
 	}
 
 	if (exitId == 1) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -182.69f, -6.5f, 696.94f, 0, true, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -182.69f, -6.5f, 696.94f, 0, true, false, false)) {
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
 			Game_Flag_Set(kFlagCT12toCT03);
@@ -180,7 +197,7 @@ bool SceneScriptCT12::ClickedOnExit(int exitId) {
 	}
 
 	if (exitId == 2) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -386.13f, -6.5f, 1132.72f, 0, true, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -386.13f, -6.5f, 1132.72f, 0, true, false, false)) {
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
 			Game_Flag_Set(kFlagCT12toCT05);
@@ -190,7 +207,7 @@ bool SceneScriptCT12::ClickedOnExit(int exitId) {
 	}
 
 	if (exitId == 3) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -493.0f, -6.5f, 1174.0f, 0, true, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -493.0f, -6.5f, 1174.0f, 0, true, false, false)) {
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
 			Game_Flag_Set(kFlagCT12toCT11);
@@ -200,7 +217,7 @@ bool SceneScriptCT12::ClickedOnExit(int exitId) {
 	}
 
 	if (exitId == 4) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -292.0f, -6.5f, 990.0f, 0, true, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -292.0f, -6.5f, 990.0f, 0, true, false, false)) {
 			if (Global_Variable_Query(kVariableChapter) == 4) {
 				Game_Flag_Set(kFlagUnpauseGenWalkers);
 			}
@@ -220,7 +237,7 @@ bool SceneScriptCT12::ClickedOn2DRegion(int region) {
 
 void SceneScriptCT12::SceneFrameAdvanced(int frame) {
 	if (((frame - 1) % 10) == 0) {
-		Sound_Play(Random_Query(59, 60), 10, -80, -80, 50);
+		Sound_Play(Random_Query(kSfxNEON5, kSfxNEON6), 10, -80, -80, 50);
 	}
 
 	if (frame == 160) {
@@ -228,15 +245,15 @@ void SceneScriptCT12::SceneFrameAdvanced(int frame) {
 	}
 
 	if (frame == 152) {
-		Sound_Play(116, 100, 40, 0, 50);
+		Sound_Play(kSfxSPINOPN4, 100, 40, 0, 50);
 	}
 
 	if (frame == 203) {
-		Sound_Play(119, 100, 40, 0, 50);
+		Sound_Play(kSfxSPINCLS1, 100, 40, 0, 50);
 	}
 
 	if (frame == 212) {
-		Sound_Play(117, 40, 0, 0, 50);
+		Sound_Play(kSfxCARUP3,    40, 0, 0, 50);
 	}
 
 	if (frame == 269) {
@@ -254,6 +271,13 @@ void SceneScriptCT12::PlayerWalkedIn() {
 	 && !Game_Flag_Query(kFlagGaffApproachedMcCoyAboutZuben)
 	 &&  Actor_Query_Goal_Number(kActorGaff) == kGoalGaffCT12WaitForMcCoy
 	) {
+#if !BLADERUNNER_ORIGINAL_BUGS
+		// Disable NPC walkers until Gaff goes to his spinner
+		Actor_Set_Goal_Number(kActorGenwalkerA, kGoalGenwalkerDefault);
+		Actor_Set_Goal_Number(kActorGenwalkerB, kGoalGenwalkerDefault);
+		Actor_Set_Goal_Number(kActorGenwalkerC, kGoalGenwalkerDefault);
+		Global_Variable_Set(kVariableGenericWalkerConfig, -1);
+#endif // !BLADERUNNER_ORIGINAL_BUGS
 		Player_Loses_Control();
 		Loop_Actor_Walk_To_Actor(kActorGaff, kActorMcCoy, 48, false, false);
 		Actor_Face_Actor(kActorGaff, kActorMcCoy, true);
@@ -270,7 +294,7 @@ void SceneScriptCT12::PlayerWalkedIn() {
 		Actor_Says(kActorMcCoy, 690, kAnimationModeTalk);
 		Actor_Clue_Acquire(kActorMcCoy, kClueGaffsInformation, true, kActorGaff);
 		Game_Flag_Set(kFlagGaffApproachedMcCoyAboutZuben);
-		CDB_Set_Crime(kClueZuben, kCrimeMoonbusHijacking);
+		CDB_Set_Crime(kClueZubenSquadPhoto, kCrimeMoonbusHijacking);
 
 		if (Game_Flag_Query(kFlagGaffApproachedMcCoyAboutZuben)
 		 && Game_Flag_Query(kFlagZubenRetired)
@@ -291,21 +315,40 @@ void SceneScriptCT12::PlayerWalkedIn() {
 			Actor_Clue_Acquire(kActorGaff, kClueMcCoyLetZubenEscape, true, -1);
 		}
 
+#if !BLADERUNNER_ORIGINAL_BUGS
+		// unpause generic walkers here, less chance to collide with Gaff
+		// while he walks to his spinner
+		// This happens when Gaff starts walking towards his spinner rather than
+		// when he's reached his spinner, in order to keep this NPC code in one place
+		// and because the walkers won't have time to interfere with his path even if
+		// they're enabled early.
+		if (Global_Variable_Query(kVariableGenericWalkerConfig) < 0
+		) {
+			Global_Variable_Set(kVariableGenericWalkerConfig, 2);
+		}
+#endif
 		Actor_Set_Goal_Number(kActorGaff, kGoalGaffCT12GoToSpinner);
 	}
 
 	if (Game_Flag_Query(kFlagCT11toCT12)) {
-		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -520.0f, -6.5f, 1103.0f, 0, false, false, 0);
+		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -520.0f, -6.5f, 1103.0f, 0, false, false, false);
 		Game_Flag_Reset(kFlagCT11toCT12);
 	}
 }
 
 void SceneScriptCT12::PlayerWalkedOut() {
-	Game_Flag_Reset(kFlagGenericWalkerWaiting);
+	Game_Flag_Reset(kFlagGenericWalkerWaiting); // A bug? why is this here? Left over code?
 	if (Game_Flag_Query(kFlagCT12ToUG09)) {
 		Game_Flag_Reset(kFlagMcCoyInChinaTown);
 		Game_Flag_Set(kFlagMcCoyInUnderground);
 	}
+#if BLADERUNNER_ORIGINAL_BUGS
+#else
+	// this enforces existing awry saved games from having a bad flag value
+	else {
+		Game_Flag_Set(kFlagMcCoyInChinaTown);
+	}
+#endif // BLADERUNNER_ORIGINAL_BUGS
 }
 
 void SceneScriptCT12::DialogueQueueFlushed(int a1) {

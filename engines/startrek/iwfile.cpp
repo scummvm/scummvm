@@ -29,7 +29,7 @@ IWFile::IWFile(StarTrekEngine *vm, const Common::String &filename) {
 
 	_vm = vm;
 
-	SharedPtr<FileStream> file = _vm->loadFile(filename);
+	Common::MemoryReadStreamEndian *file = _vm->loadFile(filename);
 	_numEntries = file->readUint16();
 
 	assert(_numEntries < MAX_KEY_POSITIONS);
@@ -43,6 +43,8 @@ IWFile::IWFile(StarTrekEngine *vm, const Common::String &filename) {
 	for (int i = 0; i < _numEntries; i++) {
 		file->read(_iwEntries[i], _numEntries);
 	}
+
+	delete file;
 }
 
 // FIXME: same issue with sorting as with "compareSpritesByLayer" in graphics.cpp.

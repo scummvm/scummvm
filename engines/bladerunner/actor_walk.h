@@ -49,6 +49,8 @@ public:
 	ActorWalk(BladeRunnerEngine *vm);
 	~ActorWalk();
 
+	void reset(); // added method for bug fix (bad new game state for player actor) and better management of object
+
 	bool setup(int actorId, bool runFlag, const Vector3 &from, const Vector3 &to, bool mustReach, bool *arrived);
 	void getCurrentPosition(int actorId, Vector3 *pos, int *facing) const;
 	bool tick(int actorId, float stepDistance, bool flag);

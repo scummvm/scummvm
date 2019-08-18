@@ -70,7 +70,7 @@ public:
 	void drawExplosion(int scale, int radius, int numElements, int stepSize, int aspectRatio, const uint8 *colorTable, int colorTableSize);
 	void drawVortex(int numElements, int radius, int stepSize, int, int disorder, const uint8 *colorTable, int colorTableSize);
 
-	void fadeTextColor(Palette *pal, int color1, int fadeTextColor);
+	void fadeTextColor(Palette *pal, int color, int rate);
 	bool delayedFadePalStep(Palette *fadePal, Palette *destPal, int rate);
 
 	void setTextColorMap(const uint8 *cmap) {}
@@ -89,6 +89,15 @@ public:
 	void decodeSHP(const uint8 *data, int dstPage);
 	void convertToHiColor(int page);
 	void shadeRect(int x1, int y1, int x2, int y2, int shadingLevel);
+
+	// Amiga specific
+	void loadSpecialAmigaCPS(const char *fileName, int destPage, bool isGraphics);
+
+	// This is a simple way of emulating the Amiga copper list palette magic for more than 32 colors.
+	// I use colors 32 to 63 for these extra colors (which the Amiga copper sends to the color
+	// registers on the fly at vertical beam position 120).
+	void setupDualPalettesSplitScreen(Palette &top, Palette &bottom);
+	void disableDualPalettesSplitScreen();
 
 private:
 	void updateDirtyRects();
@@ -119,6 +128,7 @@ private:
 	uint8 *_dsTempPage;
 	uint8 *_shpBuffer;
 	uint8 *_convertHiColorBuffer;
+	bool _dualPaletteMode;
 
 	uint16 *_cgaDitheringTables[2];
 	const uint8 *_cgaMappingDefault;

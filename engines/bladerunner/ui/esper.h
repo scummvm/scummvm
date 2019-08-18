@@ -119,19 +119,20 @@ class ESPER {
 	bool _isMouseDown;
 	int  _mouseOverScroll;
 
-	float _zoomHorizontal;
-	float _zoomVertical;
-	float _zoom;
-	float _zoomMin;
-	float _zoomTarget;
-	float _zoomDelta;
-	float _blur;
-	int   _zoomSteps;
-	int   _zoomStep;
-	int   _timeZoomNext;
+	float  _zoomHorizontal;
+	float  _zoomVertical;
+	float  _zoom;
+	float  _zoomMin;
+	float  _zoomTarget;
+	float  _zoomDelta;
+	float  _blur;
+	int    _zoomSteps;
+	int    _zoomStep;
+	uint32 _timeZoomNextDiff;
+	uint32 _timeZoomNextStart;
 
-	bool _isZoomingOut;
-	int  _timeZoomOutNext;
+	bool   _isZoomingOut;
+	uint32 _timeZoomOutNextStart;
 
 	Common::Rect _screen;
 
@@ -159,20 +160,21 @@ class ESPER {
 	int          _selectionCrosshairX;
 	int          _selectionCrosshairY;
 
-	int _selectionBlinkingCounter;
-	int _selectionBlinkingStyle;
-	int _timeSelectionBlinkingNext;
+	int    _selectionBlinkingCounter;
+	int    _selectionBlinkingStyle;
+	uint32 _timeSelectionBlinkingNextStart;
 
-	int _selectionZoomStep;
-	int _timeSelectionZoomNext;
+	int    _selectionZoomStep;
+	uint32 _timeSelectionZoomNextStart;
 
-	int _photoOpeningWidth;
-	int _photoOpeningHeight;
-	int _timePhotoOpeningNext;
+	int    _photoOpeningWidth;
+	int    _photoOpeningHeight;
+	uint32 _timePhotoOpeningNextDiff;
+	uint32 _timePhotoOpeningNextStart;
 
-	bool _isScrolling;
-	int  _scrollingDirection;
-	int  _timeScrollNext;
+	bool   _isScrolling;
+	int    _scrollingDirection;
+	uint32 _timeScrollNextStart;
 
 	int _soundId1;
 	int _volume1;
@@ -218,7 +220,7 @@ private:
 	void setStateMain(EsperMainStates state);
 	void setStatePhoto(EsperPhotoStates state);
 
-	void wait(int timeout);
+	void wait(uint32 timeout);
 	void playSound(int soundId, int volume);
 
 	void draw(Graphics::Surface &surface);

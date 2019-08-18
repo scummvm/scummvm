@@ -57,43 +57,22 @@ int LinuxmotoSdlGraphicsManager::getDefaultGraphicsMode() const {
 	return GFX_NORMAL;
 }
 
-bool LinuxmotoSdlGraphicsManager::setGraphicsMode(int mode) {
-	Common::StackLock lock(_graphicsMutex);
-
-	assert(_transactionMode == kTransactionActive);
-
-	if (_oldVideoMode.setup && _oldVideoMode.mode == mode)
-		return true;
-
-	int newScaleFactor = 1;
-
+int LinuxmotoSdlGraphicsManager::getGraphicsModeScale(int mode) const {
+	int scale;
 	switch (mode) {
 	case GFX_NORMAL:
-		newScaleFactor = 1;
-		break;
 	case GFX_HALF:
-		newScaleFactor = 1;
+		scale = 1;
 		break;
 	default:
-		warning("unknown gfx mode %d", mode);
-		return false;
+		scale = -1;
 	}
 
-	if (_oldVideoMode.setup && _oldVideoMode.scaleFactor != newScaleFactor)
-		_transactionDetails.needHotswap = true;
-
-	_transactionDetails.needUpdatescreen = true;
-
-	_videoMode.mode = mode;
-	_videoMode.scaleFactor = newScaleFactor;
-
-	return true;
+	return scale;
 }
 
-void LinuxmotoSdlGraphicsManager::setGraphicsModeIntern() {
-	Common::StackLock lock(_graphicsMutex);
+ScalerProc *LinuxmotoSdlGraphicsManager::getGraphicsScalerProc(int mode) const {
 	ScalerProc *newScalerProc = 0;
-
 	switch (_videoMode.mode) {
 	case GFX_NORMAL:
 		newScalerProc = Normal1x;
@@ -101,27 +80,33 @@ void LinuxmotoSdlGraphicsManager::setGraphicsModeIntern() {
 	case GFX_HALF:
 		newScalerProc = DownscaleAllByHalf;
 		break;
-
-	default:
-		error("Unknown gfx mode %d", _videoMode.mode);
 	}
 
-	_scalerProc = newScalerProc;
-
-	if (!_screen || !_hwscreen)
-		return;
-
-	// Blit everything to the screen
-	_forceFull = true;
-
-	// Even if the old and new scale factors are the same, we may have a
-	// different scaler for the cursor now.
-	blitCursor();
+	return newScalerProc;
 }
 
-
-void LinuxmotoSdlGraphicsManager::initSize(uint w, uint h) {
+void LinuxmotoSdlGraphicsManager::initSize(uint w, uint h, const Graphics::PixelFormat *format) {
 	assert(_transactionMode == kTransactionActive);
+
+	_gameScreenShakeOffset = 0;
+
+#ifdef USE_RGB_COLOR
+	// Avoid redundant format changes
+	Graphics::PixelFormat newFormat;
+	if (!format)
+		newFormat = Graphics::PixelFormat::createFormatCLUT8();
+	else
+		newFormat = *format;
+
+	assert(newFormat.bytesPerPixel > 0);
+
+	if (newFormat != _videoMode.format) {
+		_videoMode.format = newFormat;
+		_transactionDetails.formatChanged = true;
+		_screenFormat = newFormat;
+	}
+#endif
+
 
 	// Avoid redundant res changes
 	if ((int)w == _videoMode.screenWidth && (int)h == _videoMode.screenHeight)
@@ -264,15 +249,16 @@ void LinuxmotoSdlGraphicsManager::internUpdateScreen() {
 #endif
 
 	// If the shake position changed, fill the dirty area with blackness
-	if (_currentShakePos != _newShakePos) {
-		SDL_Rect blackrect = {0, 0, _videoMode.screenWidth * _videoMode.scaleFactor, _newShakePos * _videoMode.scaleFactor};
+	if (_currentShakePos != _gameScreenShakeOffset ||
+		(_cursorNeedsRedraw && _mouseBackup.y <= _currentShakePos)) {
+		SDL_Rect blackrect = {0, 0, (Uint16)(_videoMode.screenWidth * _videoMode.scaleFactor), (Uint16)(_gameScreenShakeOffset * _videoMode.scaleFactor)};
 
 		if (_videoMode.aspectRatioCorrection && !_overlayVisible)
 			blackrect.h = real2Aspect(blackrect.h - 1) + 1;
 
 		SDL_FillRect(_hwscreen, &blackrect, 0);
 
-		_currentShakePos = _newShakePos;
+		_currentShakePos = _gameScreenShakeOffset;
 
 		_forceFull = true;
 	}

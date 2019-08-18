@@ -44,7 +44,7 @@ struct AudioInfo {
 
 static Common::MemoryReadStream *convertToMod(const char *filename, int version = 1);
 
-static const AudioInfo audioInfo[kAudioNumSamples] = {
+static const AudioInfo audioInfo1[] = {
 	{44,     0,    -1},
 	{45,     0,    -1},
 	{46,     0,  2510},
@@ -64,7 +64,29 @@ static const AudioInfo audioInfo[kAudioNumSamples] = {
 	{54,  8010, 24020},
 	{54, 24020, 30030},
 	{54, 30030, 31040},
-	{54, 31040,    -1}
+	{54, 31040,    -1},
+};
+
+static const AudioInfo audioInfo2[] = {
+	{55,     18230,    -1},
+	{47,     0,     16010},
+	{47,     16010, 17020},
+	{49,     8010,     -1},
+	{49,     0,      8010},
+	{53,     30020,    -1},
+	{55,     7010,  17020},
+	{55,     0,      7010},
+	{53,     5010,  30020},
+	{55,     18230,    -1},
+	{55,     17020, 18230},
+	{53,     0,      5010},
+	{47,     17020,    -1},
+	{51,     9020,     -1},
+	{51,     0,      6010},
+	{50,     0,        -1},
+	{51,     6010,   9020},
+	{54,     0,        -1},
+	{48,     0,        -1}
 };
 
 static const byte mouseNormal[64] = {
@@ -92,53 +114,36 @@ static const byte mouseWait[64] = {
 };
 
 
-ResourceManager::ResourceManager()
-	: _audioRate(11931) {
-	initSoundFiles();
+ResourceManager::ResourceManager(SupernovaEngine *vm)
+	: _audioRate(11931)
+	, _vm(vm) {
+	if (_vm->_MSPart == 1)
+		_soundSamples = new Common::ScopedPtr<Audio::SeekableAudioStream>[kAudioNumSamples1];
+	else if (_vm->_MSPart == 2)
+		_soundSamples = new Common::ScopedPtr<Audio::SeekableAudioStream>[kAudioNumSamples2];
 	initGraphics();
 }
 
-void ResourceManager::initSoundFiles() {
-	// Sound
-	// Note:
-	//   - samples start with a header of 6 bytes: 01 SS SS 00 AD 00
-	//     where SS SS (LE uint16) is the size of the sound sample + 2
-	//   - samples end with a footer of 4 bytes: 00 00
-	// Skip those in the buffer
-	Common::File file;
-
-	for (int i = 0; i < kAudioNumSamples; ++i) {
-		if (!file.open(Common::String::format("msn_data.%03d", audioInfo[i]._filenumber))) {
-			error("File %s could not be read!", file.getName());
-		}
-
-		int length = 0;
-		byte *buffer = nullptr;
-
-		if (audioInfo[i]._offsetEnd == -1) {
-			file.seek(0, SEEK_END);
-			length = file.pos() - audioInfo[i]._offsetStart - 10;
-		} else {
-			length = audioInfo[i]._offsetEnd - audioInfo[i]._offsetStart - 10;
-		}
-		buffer = new byte[length];
-		file.seek(audioInfo[i]._offsetStart + 6);
-		file.read(buffer, length);
-		file.close();
-
-		byte streamFlag = Audio::FLAG_UNSIGNED | Audio::FLAG_LITTLE_ENDIAN;
-		_soundSamples[i].reset(Audio::makeRawStream(buffer, length, _audioRate,
-													streamFlag, DisposeAfterUse::YES));
+ResourceManager::~ResourceManager() {
+	if (_vm->_MSPart == 1) {	
+		for (int i = 0; i < 44; i++)
+			delete _images[i];
 	}
-
-	_musicIntroBuffer.reset(convertToMod("msn_data.052"));
-	_musicOutroBuffer.reset(convertToMod("msn_data.049"));
+	if (_vm->_MSPart == 2) {	
+		for (int i = 0; i < 47; i++)
+			delete _images[i];
+	}
+	delete[] _soundSamples;
+	delete[] _images;
 }
 
 void ResourceManager::initGraphics() {
 	Screen::initPalette();
 	initCursorGraphics();
-	initImages();
+	if (_vm->_MSPart == 1)
+		initImages1();
+	else if (_vm->_MSPart == 2)
+		initImages2();
 }
 
 void ResourceManager::initCursorGraphics() {
@@ -162,17 +167,103 @@ void ResourceManager::initCursorGraphics() {
 	}
 }
 
-void ResourceManager::initImages() {
-	for (int i = 0; i < 44; ++i) {
-		if (!_images[i].init(i))
-			error("Failed reading image file msn_data.%03d", i);
+void ResourceManager::initImages1() {
+	_images = new MSNImage *[kNumImageFiles1];
+	for (int i = 0; i < kNumImageFiles1; ++i) {
+		_images[i] = nullptr;
 	}
-	if (!_images[44].init(55))
-			error("Failed reading image file msn_data.055");
+}
+
+void ResourceManager::initImages2() {
+	_images = new MSNImage *[kNumImageFiles2];
+	for (int i = 0; i < kNumImageFiles2; ++i) {
+		_images[i] = nullptr;
+	}
+}
+
+// Sound
+// Note:
+//   - samples start with a header of 6 bytes: 01 SS SS 00 AD 00
+//     where SS SS (LE uint16) is the size of the sound sample + 2
+//   - samples end with a footer of 4 bytes: 00 00
+// Skip those in the buffer
+void ResourceManager::loadSound1(AudioId id) {
+	Common::File file;
+	if (!file.open(Common::String::format("msn_data.%03d", audioInfo1[id]._filenumber))) {
+		error("File %s could not be read!", file.getName());
+	}
+
+	int length = 0;
+	byte *buffer = nullptr;
+
+	if (audioInfo1[id]._offsetEnd == -1) {
+		file.seek(0, SEEK_END);
+		length = file.pos() - audioInfo1[id]._offsetStart - 10;
+	} else {
+		length = audioInfo1[id]._offsetEnd - audioInfo1[id]._offsetStart - 10;
+	}
+	buffer = new byte[length];
+	file.seek(audioInfo1[id]._offsetStart + 6);
+	file.read(buffer, length);
+	file.close();
+
+	byte streamFlag = Audio::FLAG_UNSIGNED | Audio::FLAG_LITTLE_ENDIAN;
+	_soundSamples[id].reset(Audio::makeRawStream(buffer, length, _audioRate,
+												streamFlag, DisposeAfterUse::YES));
+}
+
+void ResourceManager::loadSound2(AudioId id) {
+	Common::File file;
+	if (!file.open(Common::String::format("ms2_data.%03d", audioInfo2[id]._filenumber))) {
+		error("File %s could not be read!", file.getName());
+	}
+
+	int length = 0;
+	byte *buffer = nullptr;
+
+	if (audioInfo2[id]._offsetEnd == -1) {
+		file.seek(0, SEEK_END);
+		length = file.pos() - audioInfo2[id]._offsetStart - 10;
+	} else {
+		length = audioInfo2[id]._offsetEnd - audioInfo2[id]._offsetStart - 10;
+	}
+	buffer = new byte[length];
+	file.seek(audioInfo2[id]._offsetStart + 6);
+	file.read(buffer, length);
+	file.close();
+
+	byte streamFlag = Audio::FLAG_UNSIGNED | Audio::FLAG_LITTLE_ENDIAN;
+	_soundSamples[id].reset(Audio::makeRawStream(buffer, length, _audioRate,
+												streamFlag, DisposeAfterUse::YES));
+}
+
+void ResourceManager::loadImage(int filenumber) {
+	if (_vm->_MSPart == 1) {
+		if (filenumber < 44) {
+			_images[filenumber] = new MSNImage(_vm);
+			if (!_images[filenumber]->init(filenumber))
+				error("Failed reading image file msn_data.%03d", filenumber);
+		} else {
+			_images[44] = new MSNImage(_vm);
+			if (!_images[44]->init(filenumber))
+				error("Failed reading image file msn_data.%03d", filenumber);
+		}
+	} else if (_vm->_MSPart == 2) {
+		_images[filenumber] = new MSNImage(_vm);
+		if (!_images[filenumber]->init(filenumber))
+			error("Failed reading image file ms2_data.%03d", filenumber);
+	}
 }
 
 Audio::SeekableAudioStream *ResourceManager::getSoundStream(AudioId index) {
-	Audio::SeekableAudioStream *stream = _soundSamples[index].get();
+	if (!_soundSamples[index]) {
+		if (_vm->_MSPart == 1)
+			loadSound1(index);
+		else if (_vm->_MSPart == 2)
+			loadSound2(index);
+	}
+	Audio::SeekableAudioStream *stream;
+	stream = _soundSamples[index].get();
 	stream->rewind();
 
 	return stream;
@@ -181,9 +272,23 @@ Audio::SeekableAudioStream *ResourceManager::getSoundStream(AudioId index) {
 Audio::AudioStream *ResourceManager::getSoundStream(MusicId index) {
 	switch (index) {
 	case kMusicIntro:
+		if (!_musicIntroBuffer) {
+			if (_vm->_MSPart == 1)
+				_musicIntroBuffer.reset(convertToMod("msn_data.052", 1));
+			else if (_vm->_MSPart == 2)
+				_musicIntroBuffer.reset(convertToMod("ms2_data.052", 2));
+		}
 		_musicIntro.reset(Audio::makeProtrackerStream(_musicIntroBuffer.get()));
 		return _musicIntro.get();
+	case kMusicMadMonkeys:
+		// fall through
 	case kMusicOutro:
+		if (!_musicOutroBuffer) {
+			if (_vm->_MSPart == 1)
+				_musicOutroBuffer.reset(convertToMod("msn_data.049", 1));
+			else if (_vm->_MSPart == 2)
+				_musicOutroBuffer.reset(convertToMod("ms2_data.056", 2));
+		}
 		_musicOutro.reset(Audio::makeProtrackerStream(_musicOutroBuffer.get()));
 		return _musicOutro.get();
 	default:
@@ -191,24 +296,69 @@ Audio::AudioStream *ResourceManager::getSoundStream(MusicId index) {
 	}
 }
 
-const MSNImage *ResourceManager::getImage(int filenumber) const {
-	if (filenumber < 44)
-		return &_images[filenumber];
-	else if (filenumber == 55)
-		return &_images[44];
-	else
-		return nullptr;
+Audio::AudioStream *ResourceManager::getSirenStream() {
+	if (!_sirenStream)
+		initSiren();
+	return _sirenStream.get();
 }
 
-const byte *ResourceManager::getImage(CursorId id) const {
-	switch (id) {
-	case kCursorNormal:
-		return _cursorNormal;
-	case kCursorWait:
-		return _cursorWait;
-	default:
+MSNImage *ResourceManager::getImage(int filenumber) {
+	//check array boundaries
+	if (_vm->_MSPart == 1 && filenumber > 43 && filenumber != 55)
 		return nullptr;
+	if (_vm->_MSPart == 2 && filenumber > 46)
+		return nullptr;
+
+	if (filenumber == 55) {
+		if (!_images[44])
+			loadImage(filenumber);
+		return _images[44];
+	} else {
+		if (!_images[filenumber])
+			loadImage(filenumber);
+		return _images[filenumber];
 	}
+}
+
+// Generate a tone which minimal length is the length and ends at the end
+// of sine period
+// NOTE: Size of the SineTable has to be the same as audioRate and a multiple of 4
+byte *ResourceManager::generateTone(byte *buffer, int frequency, int length, int audioRate, Common::SineTable &table) {
+	int i = 0;
+
+	// Make sure length is a multiple of audioRate / frequency to end on a full sine wave and not in the middle.
+	// Also the length we have is a minimum length, so only increase it.
+	int r = 1 + (length - 1) * frequency / audioRate;
+	length = (1 + 2 * r * audioRate / frequency) / 2;
+	for(; i < length; i++) {
+		buffer[i] = (byte)
+			((table.at((i * frequency) % audioRate) * 127) + 127);
+	}
+	return buffer + length;
+}
+
+// Tones with frequencies between 1500 Hz and 1800 Hz, frequencies go up and down
+// with a step of 10 Hz.
+void ResourceManager::initSiren() {
+	int audioRate = 44000;
+	int length = audioRate / 90; // minimal length of each tone
+
+	// * 60 for the minimal length, another 20 * length as a spare, for longer tones
+	byte *buffer = new byte[length * 80]; 
+	byte *pBuffer = buffer;
+	Common::SineTable table(audioRate);
+
+	for (int i = 0; i < 30; i++)
+		pBuffer = generateTone(pBuffer, 1800 - i * 10, length, audioRate, table);
+
+	for (int i = 0; i < 30; i++)
+		pBuffer = generateTone(pBuffer, 1500 + i * 10, length, audioRate, table);
+
+	byte streamFlag = Audio::FLAG_UNSIGNED;
+
+	_sirenStream.reset(Audio::makeLoopingAudioStream(
+			Audio::makeRawStream(buffer, pBuffer - buffer, audioRate,
+									streamFlag, DisposeAfterUse::YES), 0));
 }
 
 static Common::MemoryReadStream *convertToMod(const char *filename, int version) {
@@ -395,6 +545,21 @@ static Common::MemoryReadStream *convertToMod(const char *filename, int version)
 		buffer.write(buf, nb);
 
 	return new Common::MemoryReadStream(buffer.getData(), buffer.size(), DisposeAfterUse::YES);
+}
+
+int ResourceManager::getAudioRate() {
+	return _audioRate;
+}
+
+const byte *ResourceManager::getCursor(CursorId id) const {
+	switch (id) {
+	case kCursorNormal:
+		return _cursorNormal;
+	case kCursorWait:
+		return _cursorWait;
+	default:
+		return nullptr;
+	}
 }
 
 }

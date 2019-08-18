@@ -17,7 +17,7 @@
 #
 # The package is now in the "portdist" folder.
 #
-# See http://wiki.scummvm.org/index.php/Compiling_ScummVM/WebOS for
+# See https://wiki.scummvm.org/index.php/Compiling_ScummVM/WebOS for
 # more detailed build instructions.
 #
 #
@@ -80,7 +80,7 @@ endif
 	$(QUIET)$(INSTALL) -d "$(DESTDIR)$(docdir)"
 	$(QUIET)$(INSTALL) -c -m 644 $(DIST_FILES_DOCS) "$(DESTDIR)$(docdir)"
 	$(QUIET)$(INSTALL) -d "$(DESTDIR)$(datadir)"
-	$(QUIET)$(INSTALL) -c -m 644 $(DIST_FILES_THEMES) $(DIST_FILES_ENGINEDATA) "$(DESTDIR)$(datadir)/"
+	$(QUIET)$(INSTALL) -c -m 644 $(DIST_FILES_THEMES) $(DIST_FILES_NETWORKING) $(DIST_FILES_VKEYBD) $(DIST_FILES_ENGINEDATA) "$(DESTDIR)$(datadir)/"
 ifdef DYNAMIC_MODULES
 	$(QUIET)$(INSTALL) -d "$(DESTDIR)$(libdir)/"
 	$(QUIET)$(INSTALL) -c -m 644 $(PLUGINS) "$(DESTDIR)$(libdir)/"

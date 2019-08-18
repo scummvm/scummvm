@@ -264,7 +264,7 @@ bool AIScriptPhotographer::UpdateAnimation(int *animation, int *frame) {
 	case 6:
 		*animation = 746;
 		if (_animationFrame == 11) {
-			Ambient_Sounds_Play_Sound(463, 80, -20, -20, 20);
+			Ambient_Sounds_Play_Sound(kSfxCAMCOP1, 80, -20, -20, 20);
 		}
 		if (_var1) {
 			--_var1;

@@ -32,31 +32,6 @@ namespace Common {
 template<class T> class Array;
 class SeekableReadStream;
 
-/** The default Windows resources. */
-enum NEResourceType {
-	kNECursor       = 0x01,
-	kNEBitmap       = 0x02,
-	kNEIcon         = 0x03,
-	kNEMenu         = 0x04,
-	kNEDialog       = 0x05,
-	kNEString       = 0x06,
-	kNEFontDir      = 0x07,
-	kNEFont         = 0x08,
-	kNEAccelerator  = 0x09,
-	kNERCData       = 0x0A,
-	kNEMessageTable = 0x0B,
-	kNEGroupCursor  = 0x0C,
-	kNEGroupIcon    = 0x0E,
-	kNEVersion      = 0x10,
-	kNEDlgInclude   = 0x11,
-	kNEPlugPlay     = 0x13,
-	kNEVXD          = 0x14,
-	kNEAniCursor    = 0x15,
-	kNEAniIcon      = 0x16,
-	kNEHTML         = 0x17,
-	kNEManifest     = 0x18
-};
-
 /**
  * A class able to load resources from a Windows New Executable, such
  * as cursors, bitmaps, and sounds.

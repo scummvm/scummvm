@@ -41,7 +41,11 @@ enum AudioPlayerFlags {
 };
 
 class AudioPlayer {
+#if BLADERUNNER_ORIGINAL_BUGS
 	static const int kTracks = 6;
+#else
+	static const int kTracks = 12;
+#endif // BLADERUNNER_ORIGINAL_BUGS
 
 	struct Track {
 		bool                isActive;
@@ -66,8 +70,8 @@ public:
 	bool isActive(int track) const;
 	void stop(int track, bool immediately);
 	void stopAll();
-	void adjustVolume(int track, int volume, int delay, bool overrideVolume);
-	void adjustPan(int track, int pan, int delay);
+	void adjustVolume(int track, int volume, uint32 delay, bool overrideVolume);
+	void adjustPan(int track, int pan, uint32 delay);
 
 	void setVolume(int volume);
 	int getVolume() const;

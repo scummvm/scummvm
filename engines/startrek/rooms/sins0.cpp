@@ -93,15 +93,15 @@ void Room::sins0Tick1() {
 }
 
 void Room::sins0LookAnywhere() {
-	showText(TX_SIN0N009);
+	showDescription(TX_SIN0N009);
 }
 
 void Room::sins0LookAtOpenDoor() {
-	showText(TX_SIN0N005);
+	showDescription(TX_SIN0N005);
 }
 
 void Room::sins0LookAtClosedDoor() {
-	showText(TX_SIN0N008);
+	showDescription(TX_SIN0N008);
 }
 
 void Room::sins0TalkToSpock() {
@@ -127,7 +127,7 @@ void Room::sins0TalkToRedshirt() {
 }
 
 void Room::sins0LookAtGround() {
-	showText(TX_SIN0N006);
+	showDescription(TX_SIN0N006);
 }
 
 void Room::sins0GetRock() {
@@ -139,7 +139,7 @@ void Room::sins0GetRock() {
 void Room::sins0PickedUpRock() {
 	_awayMission->disableInput = false;
 	loadActorStandAnim(OBJECT_KIRK);
-	showText(TX_SIN0N010);
+	showDescription(TX_SIN0N010);
 	giveItem(OBJECT_IS8ROCKS);
 }
 
@@ -172,7 +172,7 @@ void Room::sins0Tick40() {
 }
 
 void Room::sins0LookAtStatue() {
-	showText(TX_SIN0N011);
+	showDescription(TX_SIN0N011);
 	showText(TX_SPEAKER_MCCOY,  TX_SIN0_015);
 	showText(TX_SPEAKER_SPOCK,  TX_SIN0_021);
 	showText(TX_SPEAKER_MOSHER, TX_SIN0_027);
@@ -180,28 +180,28 @@ void Room::sins0LookAtStatue() {
 }
 
 void Room::sins0LookAtPlanet() {
-	showText(TX_SIN0N007);
+	showDescription(TX_SIN0N007);
 }
 
 void Room::sins0LookAtSky() {
 	// This seems unused, due to HOTSPOT_SKY not being mapped anywhere?
-	showText(TX_SIN0N004);
+	showDescription(TX_SIN0N004);
 }
 
 void Room::sins0LookAtKirk() {
-	showText(TX_SIN0N002);
+	showDescription(TX_SIN0N002);
 }
 
 void Room::sins0LookAtSpock() {
-	showText(TX_SIN0N003);
+	showDescription(TX_SIN0N003);
 }
 
 void Room::sins0LookAtMccoy() {
-	showText(TX_SIN0N000);
+	showDescription(TX_SIN0N000);
 }
 
 void Room::sins0LookAtRedshirt() {
-	showText(TX_SIN0N001);
+	showDescription(TX_SIN0N001);
 }
 
 void Room::sins0UseSTricorderOnClosedDoor() {

@@ -241,7 +241,7 @@ Error DebuggerController::setValue(const Common::String &name, const Common::Str
 			// Something funny happened here.
 		}
 	} else if (var->_type == VAL_BOOL) {
-		Common::String str = Common::String(trimmed);
+		//Common::String str = Common::String(trimmed);
 		bool valAsBool;
 		if (Common::parseBool(trimmed, valAsBool)) {
 			var->setBool(valAsBool);

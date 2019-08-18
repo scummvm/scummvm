@@ -748,7 +748,7 @@ const int AGE_RANGES_ADJUST[2][10] = {
 
 const int STAT_VALUES[24] = {
 	3, 5, 7, 9, 11, 13, 15, 17, 19, 21, 25, 30, 35, 40,
-	50, 75, 100, 125, 150, 175, 200, 225, 250,
+	50, 75, 100, 125, 150, 175, 200, 225, 250, 65535
 };
 
 const int STAT_BONUSES[24] = {
@@ -807,7 +807,10 @@ const int METAL_DAMAGE_PERCENT[22] = {
 	1, 2, 2, 3, 4, 5, 6, 7, 8, 9, 10
 };
 
-const int METAL_LAC[9] = { -3, 0, -2, -1, 1, 2, 4, 6, 8 };
+const int METAL_LAC[22] = {
+	-3, 0, -2, -1, 1, 2, 4, 6, 8, 0, 1,
+	1, 2, 2, 3, 4, 5, 10, 12, 14, 16, 20
+};
 
 const int ARMOR_STRENGTHS[14] = { 0, 2, 4, 5, 6, 7, 8, 10, 4, 2, 1, 1, 1, 1 };
 
@@ -1203,10 +1206,10 @@ const char *const CURRENT_MAXIMUM_TEXT = "\x2\x3""c%s\n"
 	"\x3r\t054%u\x3l\t058/ %u";
 
 const char *const RATING_TEXT[24] = {
-	"Nonexistant", "Very Poor", "Poor", "Very Low", "Low", "Averarage", "Good",
+	"Nonexistant", "Very Poor", "Poor", "Very Low", "Low", "Average", "Good",
 	"Very Good", "High", "Very High", "Great", "Super", "Amazing", "Incredible",
 	"Gigantic", "Fantastic", "Astoundig", "Astonishing", "Monumental", "Tremendous",
-	"Collosal", "Awesome", "AweInspiring", "aUltimate"
+	"Collosal", "Awesome", "Awe Inspiring", "Ultimate"
 };
 
 const char *const AGE_TEXT = "\x2\x3""c%s\n"
@@ -1314,7 +1317,7 @@ const char *const ARMOR_NAMES[14] = {
 };
 
 const char *const ACCESSORY_NAMES[11] = {
-	nullptr, "ring ", "belt ", "broach ", "medal ", "charm ", "cameo ",
+	nullptr, "ring ", "belt ", "brooch ", "medal ", "charm ", "cameo ",
 	"scarab ", "pendant ", "necklace ", "amulet "
 };
 
@@ -2057,7 +2060,7 @@ void writeConstants(CCArchive &cc) {
 	file.syncNumbers(WEAPON_DAMAGE_MULTIPLIER, 35);
 	file.syncNumbers(METAL_DAMAGE, 22);
 	file.syncNumbers(METAL_DAMAGE_PERCENT, 22);
-	file.syncNumbers(METAL_LAC, 9);
+	file.syncNumbers(METAL_LAC, 22);
 	file.syncNumbers(ARMOR_STRENGTHS, 14);
 	file.syncNumbers(MAKE_ITEM_ARR1, 6);
 	file.syncNumbers3D((const int *)MAKE_ITEM_ARR2, 6, 7, 2);

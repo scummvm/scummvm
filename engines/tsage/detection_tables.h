@@ -185,6 +185,22 @@ static const tSageGameDescription gameDescriptions[] = {
 		GType_Ringworld2,
 		GF_CD | GF_ALT_REGIONS | GF_DEMO
 	},
+
+	// Return to Ringworld. Spanish fan translation.
+	{
+		{
+			"ringworld2",
+			"CD",
+			AD_ENTRY1s("r2rw.rlb", "05f9af7b0153a0c5727022dc0122d02b", 47678672),
+			Common::ES_ESP,
+			Common::kPlatformDOS,
+			ADGF_CD,
+			GUIO0()
+		},
+		GType_Ringworld2,
+		GF_CD | GF_ALT_REGIONS
+	},
+
 #ifdef TSAGE_SHERLOCK_ENABLED
 	// The Lost Files of Sherlock Holmes - The Case of the Serrated Scalpel (Logo)
 	{

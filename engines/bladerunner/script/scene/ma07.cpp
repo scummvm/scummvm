@@ -35,13 +35,13 @@ void SceneScriptMA07::InitializeScene() {
 		Setup_Scene_Information( 104.0f, -162.16f,  56.0f, 519);
 	}
 
-	Ambient_Sounds_Add_Looping_Sound(381, 100, 1, 1);
-	Ambient_Sounds_Add_Sound(374, 100, 300, 16,  25, 0, 0, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound( 68,  60, 180, 16,  25, 0, 0, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound( 69,  60, 180, 16,  25, 0, 0, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(375,  60, 180, 50, 100, 0, 0, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(376,  50, 180, 50, 100, 0, 0, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(377,  50, 180, 50, 100, 0, 0, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Looping_Sound(kSfxRAIN10, 100, 1, 1);
+	Ambient_Sounds_Add_Sound(kSfxCOLONY,  100, 300, 16,  25, 0, 0, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxSPIN2B,   60, 180, 16,  25, 0, 0, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxSPIN3A,   60, 180, 16,  25, 0, 0, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxTHNDER2,  60, 180, 50, 100, 0, 0, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxTHNDER3,  50, 180, 50, 100, 0, 0, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxTHNDER4,  50, 180, 50, 100, 0, 0, -101, -101, 0, 0);
 
 	if (Global_Variable_Query(kVariableChapter) > 1) {
 		Scene_Exit_Add_2D_Exit(1, 0, 200, 50, 479, 3);
@@ -54,6 +54,11 @@ void SceneScriptMA07::InitializeScene() {
 
 void SceneScriptMA07::SceneLoaded() {
 	Obstacle_Object("BARRICADE", true);
+	if (_vm->_cutContent) {
+		if (Actor_Query_Goal_Number(kActorRachael) == kGoalRachaelShouldBeOutsideMcCoysAct3) {
+			Actor_Set_Goal_Number(kActorRachael, kGoalRachaelIsOutsideMcCoysBuildingAct3);
+		}
+	}
 }
 
 bool SceneScriptMA07::MouseClick(int x, int y) {
@@ -74,7 +79,7 @@ bool SceneScriptMA07::ClickedOnItem(int itemId, bool a2) {
 
 bool SceneScriptMA07::ClickedOnExit(int exitId) {
 	if (exitId == 0) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 104.0f, -162.0f, 56.0f, 12, true, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 104.0f, -162.0f, 56.0f, 12, true, false, false)) {
 			if (Global_Variable_Query(kVariableChapter) == 4
 			 && Game_Flag_Query(kFlagUG18GuzzaScene)
 			) {
@@ -90,7 +95,7 @@ bool SceneScriptMA07::ClickedOnExit(int exitId) {
 	}
 
 	if (exitId == 1) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -400.0f, -162.8f, 185.08f, 0, true, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -400.0f, -162.8f, 185.08f, 0, true, false, false)) {
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
 			Game_Flag_Set(kFlagMA07toPS14);
@@ -102,7 +107,7 @@ bool SceneScriptMA07::ClickedOnExit(int exitId) {
 	}
 
 	if (exitId == 2) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 8.0f, -172.43f, 356.0f, 0, true, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 8.0f, -172.43f, 356.0f, 0, true, false, false)) {
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
 			Game_Flag_Set(kFlagMA07toUG19);
@@ -130,13 +135,15 @@ void SceneScriptMA07::ActorChangedGoal(int actorId, int newGoal, int oldGoal, bo
 
 void SceneScriptMA07::PlayerWalkedIn() {
 	if (Game_Flag_Query(kFlagPS14toMA07)) {
-		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -268.0f, -162.8f, 188.0f, 0, false, false, 0);
+		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -268.0f, -162.8f, 188.0f, 0, false, false, false);
 		Game_Flag_Reset(kFlagPS14toMA07);
 	}
 
-	if (Actor_Query_Goal_Number(kActorRachael) == 300) {
-		Actor_Set_Goal_Number(kActorRachael, 305);
-	}
+	if (Actor_Query_Goal_Number(kActorRachael) == kGoalRachaelIsOutsideMcCoysBuildingAct3) {
+		Actor_Set_Goal_Number(kActorRachael, kGoalRachaelIsOutWalksToPoliceHQAct3);
+	} else if (_vm->_cutContent && Actor_Query_Goal_Number(kActorRachael) == kGoalRachaelIsOutsideMcCoysBuildingAct4) {
+		Actor_Set_Goal_Number(kActorRachael, kGoalRachaelIsOutWalksToPoliceHQAct4);
+    }
 
 	if (Game_Flag_Query(kFlagMA06toMA07)) {
 		Game_Flag_Reset(kFlagMA06toMA07);
@@ -147,6 +154,11 @@ void SceneScriptMA07::PlayerWalkedIn() {
 	 &&  Global_Variable_Query(kVariableChapter) == 4
 	) {
 		Scene_Exits_Disable();
+#if BLADERUNNER_ORIGINAL_BUGS
+#else
+		// don't have McCoy with his gun drawn out when talking to Gaff here
+		Player_Set_Combat_Mode(false);
+#endif // BLADERUNNER_ORIGINAL_BUGS
 		Actor_Set_Goal_Number(kActorGaff, kGoalGaffMA07Wait);
 	}
 
@@ -166,6 +178,20 @@ void SceneScriptMA07::PlayerWalkedIn() {
 }
 
 void SceneScriptMA07::PlayerWalkedOut() {
+	if (_vm->_cutContent) {
+		if (Actor_Query_Goal_Number(kActorRachael) == kGoalRachaelIsOutsideMcCoysBuildingAct3
+			|| Actor_Query_Goal_Number(kActorRachael) == kGoalRachaelIsOutWalksToPoliceHQAct3
+			|| Actor_Query_Goal_Number(kActorRachael) == kGoalRachaelIsOutFleeingToPoliceHQAct3
+		) {
+			Actor_Set_Goal_Number(kActorRachael, kGoalRachaelAtEndOfAct3IfNotMetWithMcCoy);
+		} else if (Actor_Query_Goal_Number(kActorRachael) == kGoalRachaelIsOutResumesWalkToPoliceHQAct3) {
+			Actor_Set_Goal_Number(kActorRachael, kGoalRachaelAtEndOfAct3IfMetWithMcCoy);
+		} else if (Actor_Query_Goal_Number(kActorRachael) == kGoalRachaelIsOutsideMcCoysBuildingAct4
+			|| Actor_Query_Goal_Number(kActorRachael) == kGoalRachaelIsOutWalksToPoliceHQAct4
+		) {
+			Actor_Set_Goal_Number(kActorRachael, kGoalRachaelAtEndOfAct4);
+		}
+	}
 }
 
 void SceneScriptMA07::DialogueQueueFlushed(int a1) {

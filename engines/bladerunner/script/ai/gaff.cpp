@@ -57,8 +57,8 @@ bool AIScriptGaff::Update() {
 }
 
 void AIScriptGaff::TimerExpired(int timer) {
-	if (timer == 0) {
-		AI_Countdown_Timer_Reset(kActorGaff, 0);
+	if (timer == kActorTimerAIScriptCustomTask0) {
+		AI_Countdown_Timer_Reset(kActorGaff, kActorTimerAIScriptCustomTask0);
 		Actor_Set_Goal_Number(kActorGaff, kGoalGaffMA07TalkToMcCoy);
 	}
 	//return false;
@@ -94,7 +94,7 @@ void AIScriptGaff::CompletedMovementTrack() {
 		Actor_Says(kActorGaff, 40, kAnimationModeTalk);
 		Actor_Says(kActorMcCoy, 690, kAnimationModeTalk);
 		Actor_Clue_Acquire(kActorMcCoy, kClueGaffsInformation, true, kActorGaff);
-		CDB_Set_Crime(kClueZuben, kCrimeMoonbusHijacking);
+		CDB_Set_Crime(kClueZubenSquadPhoto, kCrimeMoonbusHijacking);
 		Actor_Clue_Acquire(kActorGaff, kClueMcCoyRetiredZuben, true, -1);
 		Game_Flag_Set(kFlagGaffApproachedMcCoyAboutZuben);
 		Player_Gains_Control();
@@ -171,7 +171,7 @@ void AIScriptGaff::OtherAgentEnteredCombatMode(int otherActorId, int combatMode)
 	 && Actor_Query_In_Set(kActorMcCoy, kSetMA07)
 	 && Actor_Query_Goal_Number(kActorGaff) == kGoalGaffMA07Wait
 	) {
-		AI_Countdown_Timer_Reset(kActorGaff, 0);
+		AI_Countdown_Timer_Reset(kActorGaff, kActorTimerAIScriptCustomTask0);
 		Actor_Set_Goal_Number(kActorGaff, kGoalGaffMA07ShootMcCoy);
 	}
 	// return false;
@@ -316,7 +316,7 @@ bool AIScriptGaff::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 	case kGoalGaffMA07ShootMcCoy:
 		Actor_Face_Actor(kActorGaff, kActorMcCoy, true);
 		Actor_Change_Animation_Mode(kActorGaff, kAnimationModeCombatAttack);
-		Sound_Play(27, 100, 0, 0, 50);
+		Sound_Play(kSfxSMCAL3, 100, 0, 0, 50);
 		Actor_Change_Animation_Mode(kActorMcCoy, kAnimationModeDie);
 		Actor_Retired_Here(kActorMcCoy, 12, 12, true, -1);
 		return true;

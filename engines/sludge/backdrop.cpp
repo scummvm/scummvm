@@ -367,7 +367,7 @@ void GraphicsManager::drawBackDrop() {
 		return;
 	// draw backdrop
 	Graphics::TransparentSurface tmp(_backdropSurface, false);
-	tmp.blit(_renderSurface, 0, 0);
+	tmp.blit(_renderSurface, -_cameraX, -_cameraY);
 }
 
 bool GraphicsManager::loadLightMap(int v) {

@@ -24,6 +24,86 @@
 
 namespace StarTrek {
 
+void Room::vengaTick() {
+	if (_awayMission->veng.counterUntilElasiBoardWithShieldsDown != 0) {
+		_awayMission->veng.counterUntilElasiBoardWithShieldsDown--;
+		if (_awayMission->veng.counterUntilElasiBoardWithShieldsDown == 0 && _awayMission->veng.poweredSystem != 2) {
+			// BUG: Should check you're now lowering the shields in the next phase (this
+			// is only meant for when they initially appear with your shields down)
+			vengaElasiBeamOver();
+			return;
+		}
+	}
+
+	if (_awayMission->veng.counterUntilElasiAttack != 0) {
+		_awayMission->veng.counterUntilElasiAttack--;
+		if (_awayMission->veng.counterUntilElasiAttack == 0 && !_awayMission->veng.toldElasiToBeamOver) {
+			// BUG: Message should say that they destroyed the ship, since shields are
+			// probably up right now...
+			vengaElasiBeamOver();
+			return;
+		}
+	}
+
+	if (_awayMission->veng.counterUntilElasiNagToDisableShields != 0) {
+		_awayMission->veng.counterUntilElasiNagToDisableShields--;
+		if (_awayMission->veng.counterUntilElasiNagToDisableShields == 0 && !_awayMission->veng.firedTorpedo) {
+			// Elasi tells you to lower your shields already.
+			// BUG: Should add a check to above condition that shields aren't down
+			// already?
+			showText(TX_SPEAKER_ELASI_CAPTAIN, TX_VEN2_098);
+			_awayMission->veng.counterUntilElasiDestroyShip = 2700;
+		}
+	}
+
+	if (_awayMission->veng.counterUntilElasiDestroyShip != 0) {
+		_awayMission->veng.counterUntilElasiDestroyShip--;
+		if (_awayMission->veng.counterUntilElasiDestroyShip == 0 && !_awayMission->veng.firedTorpedo) {
+			// Elasi fire torpedoes at you since you wouldn't lower your shields.
+			showDescription(TX_VENA_F40);
+			showGameOverMenu();
+			return;
+		}
+	}
+
+	if (_awayMission->veng.counterUntilElasiBoardWithInvitation != 0) {
+		_awayMission->veng.counterUntilElasiBoardWithInvitation--;
+		if (_awayMission->veng.counterUntilElasiBoardWithInvitation == 0 && !_awayMission->veng.firedTorpedo) {
+			vengaElasiBeamOver();
+			return;
+		}
+	}
+}
+
+void Room::vengaElasiBeamOver() {
+	showDescription(TX_VENA_F32);
+	showGameOverMenu();
+}
+
+void Room::vengaUsePhaserAnywhere() {
+	showText(TX_SPEAKER_SPOCK, TX_VENA_F34);
+}
+
+void Room::vengaLookAtHypo() {
+	if (_awayMission->veng.oilInHypo)
+		showDescription(TX_VEN4N007);
+	else
+		showDescription(TX_VEN4N010);
+}
+
+void Room::vengaUseCommunicator() {
+	// Use communicator in any room except VENG2
+	if (!_awayMission->veng.enterpriseLeftForDistressCall) {
+		showText(TX_SPEAKER_KIRK,  TX_MUD4_018);
+		showText(TX_SPEAKER_UHURA, TX_BRIDU146);
+	} else if (!_awayMission->veng.elasiShipDecloaked) {
+		showText(TX_SPEAKER_KIRK,  TX_MUD4_018);
+		showText(TX_SPEAKER_UHURA, TX_VEN2U093);
+		showText(TX_SPEAKER_KIRK,  TX_VEN2_028);
+	} else
+		showText(TX_SPEAKER_SPOCK, TX_VEN2_066);
+}
+
 void Room::vengaUseMccoyOnDeadGuy() {
 	int val = getRandomWordInRange(0, 5);
 

@@ -26,7 +26,7 @@ namespace BladeRunner {
 
 enum kRC51Loops {
 	kRC51LoopInshotFromRC02 = 0,
-	kRC51LoopMain           = 1
+	kRC51LoopMainLoop       = 1
 };
 
 enum kRC51Exits {
@@ -37,7 +37,7 @@ void SceneScriptRC51::InitializeScene() {
 	Setup_Scene_Information(-8.87f, -1238.89f, 108164.27f, 66);
 	Scene_Exit_Add_2D_Exit(kRC51ExitRC02, 0, 460, 639, 479, 2);
 	Scene_Loop_Start_Special(kSceneLoopModeLoseControl, kRC51LoopInshotFromRC02, false);
-	Scene_Loop_Set_Default(kRC51LoopMain);
+	Scene_Loop_Set_Default(kRC51LoopMainLoop);
 }
 
 void SceneScriptRC51::SceneLoaded() {
@@ -47,14 +47,27 @@ void SceneScriptRC51::SceneLoaded() {
 	Unclickable_Object("GRL_DSK");
 	Unclickable_Object("GRL_DSKLEG");
 	Unclickable_Object("CURTAIN");
+#if BLADERUNNER_ORIGINAL_BUGS
+#else
+	Unclickable_Object("SCRTY CA03");
+	Unclickable_Object("DRAPE01");
+	Unclickable_Object("DRAPE02");
+	Unclickable_Object("DRAPE03");
+	Unclickable_Object("DRAPE04");
+	Unclickable_Object("DRAPE05");
+	Unclickable_Object("DRAPE06");
+	Unclickable_Object("DRAPE07");
+	Unclickable_Object("DRAPE08");
+#endif // BLADERUNNER_ORIGINAL_BUGS
+
 	if (!Game_Flag_Query(kFlagRC51ChopstickWrapperTaken)) {
-		Item_Add_To_World(kItemChopstickWrapper, 937, kSetRC02_RC51, 47.56f, -1238.89f, 108048.61f, 0, 6, 18, false, true, false, true);
+		Item_Add_To_World(kItemChopstickWrapper, kModelAnimationChopstickWrapper, kSetRC02_RC51, 47.56f, -1238.89f, 108048.61f, 0, 6, 18, false, true, false, true);
 	}
 	if (!Game_Flag_Query(kFlagRC51CandyTaken)) {
-		Item_Add_To_World(kItemCandy, 933, kSetRC02_RC51, 67.28f, -1193.38f, 108011.27f, 0, 6, 6, false, true, false, true);
+		Item_Add_To_World(kItemCandy, kModelAnimationCandy, kSetRC02_RC51, 67.28f, -1193.38f, 108011.27f, 0, 6, 6, false, true, false, true);
 	}
 	if (!Game_Flag_Query(kFlagRC51ToyDogTaken)) {
-		Item_Add_To_World(kItemToyDog, 971, kSetRC02_RC51, -69.65f, -1238.89f, 107995.24f, 256, 18, 18, false, true, false, true);
+		Item_Add_To_World(kItemToyDog, kModelAnimationToyDog, kSetRC02_RC51, -69.65f, -1238.89f, 107995.24f, 256, 18, 18, false, true, false, true);
 	}
 }
 
@@ -77,11 +90,11 @@ bool SceneScriptRC51::ClickedOnActor(int actorId) {
 
 bool SceneScriptRC51::ClickedOnItem(int itemId, bool a2) {
 	if (itemId == kItemChopstickWrapper) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 17.97f, -1238.89f, 108053.5f, 0, false, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 17.97f, -1238.89f, 108053.5f, 0, false, false, false)) {
 			Actor_Face_Item(kActorMcCoy, kItemChopstickWrapper, true);
 			Actor_Clue_Acquire(kActorMcCoy, kClueChopstickWrapper, true, -1);
 			Item_Remove_From_World(kItemChopstickWrapper);
-			Item_Pickup_Spin_Effect(937, 437, 407);
+			Item_Pickup_Spin_Effect(kModelAnimationChopstickWrapper, 437, 407);
 			Actor_Voice_Over(2010, kActorVoiceOver);
 			Game_Flag_Set(kFlagRC51ChopstickWrapperTaken);
 			return true;
@@ -93,7 +106,7 @@ bool SceneScriptRC51::ClickedOnItem(int itemId, bool a2) {
 			Actor_Face_Item(kActorMcCoy, kItemCandy, true);
 			Actor_Clue_Acquire(kActorMcCoy, kClueCandy, true, -1);
 			Item_Remove_From_World(kItemCandy);
-			Item_Pickup_Spin_Effect(933, 445, 230);
+			Item_Pickup_Spin_Effect(kModelAnimationCandy, 445, 230);
 			Actor_Says(kActorMcCoy, 8735, 3);
 			Actor_Says(kActorMcCoy, 8529, 3);
 			Game_Flag_Set(kFlagRC51CandyTaken);
@@ -106,7 +119,7 @@ bool SceneScriptRC51::ClickedOnItem(int itemId, bool a2) {
 			Actor_Face_Item(kActorMcCoy, kItemToyDog, true);
 			Actor_Clue_Acquire(kActorMcCoy, kClueToyDog, true, -1);
 			Item_Remove_From_World(kItemToyDog);
-			Item_Pickup_Spin_Effect(971, 55, 376);
+			Item_Pickup_Spin_Effect(kModelAnimationToyDog, 55, 376);
 			Actor_Says(kActorMcCoy, 8525, 3);
 			Actor_Says(kActorMcCoy, 8740, 3);
 			Game_Flag_Set(kFlagRC51ToyDogTaken);
@@ -118,7 +131,7 @@ bool SceneScriptRC51::ClickedOnItem(int itemId, bool a2) {
 
 bool SceneScriptRC51::ClickedOnExit(int exitId) {
 	if (exitId == kRC51ExitRC02) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -8.87f, -1238.89f, 108173.27f, 0, true, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -8.87f, -1238.89f, 108173.27f, 0, true, false, false)) {
 			Set_Enter(kSetRC02_RC51, kSceneRC02);
 			return true;
 		}

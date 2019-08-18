@@ -34,17 +34,17 @@ void SceneScriptTB05::InitializeScene() {
 	}
 	Scene_Exit_Add_2D_Exit(0, 62, 193, 206, 419, 0);
 	Scene_Exit_Add_2D_Exit(1,  0, 455, 639, 479, 2);
-	Ambient_Sounds_Add_Looping_Sound(236, 100, 0, 1);
-	Ambient_Sounds_Add_Looping_Sound(237, 100, 0, 1);
-	Ambient_Sounds_Add_Sound(217, 5, 30, 25, 33, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(218, 5, 30, 25, 33, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(219, 5, 30, 25, 33, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(220, 5, 30, 25, 33, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(146, 2, 30, 20, 25,    0,   0, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(147, 2, 30, 20, 25,    0,   0, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(148, 2, 30, 20, 25,    0,   0, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(149, 2, 30, 20, 25,    0,   0, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(151, 2, 30, 20, 25,    0,   0, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Looping_Sound(kSfxTB5LOOP1, 100, 0, 1);
+	Ambient_Sounds_Add_Looping_Sound(kSfxTB5LOOP2, 100, 0, 1);
+	Ambient_Sounds_Add_Sound(kSfxHUMMER1,  5, 30, 25, 33, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxHUMMER2,  5, 30, 25, 33, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxHUMMER3,  5, 30, 25, 33, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxHUMMER4,  5, 30, 25, 33, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxLABMISC1, 2, 30, 20, 25,    0,   0, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxLABMISC2, 2, 30, 20, 25,    0,   0, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxLABMISC3, 2, 30, 20, 25,    0,   0, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxLABMISC4, 2, 30, 20, 25,    0,   0, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxLABMISC6, 2, 30, 20, 25,    0,   0, -101, -101, 0, 0);
 	Scene_Loop_Set_Default(0);
 }
 
@@ -52,15 +52,15 @@ void SceneScriptTB05::SceneLoaded() {
 	Clickable_Object("MONITOR05");
 	Unclickable_Object("SMUDGE_GLASS01");
 	if (!Actor_Clue_Query(kActorMcCoy, kClueDragonflyEarring)) {
-		Item_Add_To_World(kItemDragonflyEarring, 940, kSetTB05, 76.16f, 147.36f, -235.15f, 0, 6, 6, false, true, false, true);
+		Item_Add_To_World(kItemDragonflyEarring, kModelAnimationDragonflyEarring, kSetTB05, 76.16f, 147.36f, -235.15f, 0, 6, 6, false, true, false, true);
 	}
-	if (!Actor_Clue_Query(kActorMcCoy, kClueTyrellSalesPamphlet1)
-	 && !Actor_Clue_Query(kActorMcCoy, kClueTyrellSalesPamphlet2)
+	if (!Actor_Clue_Query(kActorMcCoy, kClueTyrellSalesPamphletEntertainModel)
+	 && !Actor_Clue_Query(kActorMcCoy, kClueTyrellSalesPamphletLolita)
 	 && (Game_Flag_Query(kFlagGordoIsReplicant)
 	  || Game_Flag_Query(kFlagLucyIsReplicant)
 	 )
 	) {
-		Item_Add_To_World(kItemTyrellSalesPamphlet, 972, kSetTB05, 129.01f, 147.12f, -162.98f, 0, 8, 8, false, true, false, true);
+		Item_Add_To_World(kItemTyrellSalesPamphlet, kModelAnimationTyrellSalesPamphlet, kSetTB05, 129.01f, 147.12f, -162.98f, 0, 8, 8, false, true, false, true);
 	}
 }
 
@@ -70,7 +70,7 @@ bool SceneScriptTB05::MouseClick(int x, int y) {
 
 bool SceneScriptTB05::ClickedOn3DObject(const char *objectName, bool a2) {
 	if (Object_Query_Click("MONITOR05", objectName)) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 122.54f, 147.12f, -197.17f, 0, true, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 122.54f, 147.12f, -197.17f, 0, true, false, false)) {
 			Actor_Face_Heading(kActorMcCoy, 38, false);
 
 			if (!Actor_Clue_Query(kActorMcCoy, kClueDNAMarcus)
@@ -93,7 +93,7 @@ bool SceneScriptTB05::ClickedOn3DObject(const char *objectName, bool a2) {
 				) {
 					Actor_Clue_Acquire(kActorMcCoy, kClueDNAMarcus, true, -1);
 					Actor_Voice_Over(2230, kActorVoiceOver);
-					Item_Pickup_Spin_Effect(941, 352, 333);
+					Item_Pickup_Spin_Effect(kModelAnimationDNADataDisc, 352, 333);
 					Actor_Voice_Over(2240, kActorVoiceOver);
 					Actor_Voice_Over(2250, kActorVoiceOver);
 					Actor_Voice_Over(2260, kActorVoiceOver);
@@ -114,7 +114,7 @@ bool SceneScriptTB05::ClickedOn3DObject(const char *objectName, bool a2) {
 				) {
 					Actor_Clue_Acquire(kActorMcCoy, kClueDNAMarcus, true, -1);
 					Actor_Voice_Over(2230, kActorVoiceOver);
-					Item_Pickup_Spin_Effect(941, 352, 333);
+					Item_Pickup_Spin_Effect(kModelAnimationDNADataDisc, 352, 333);
 					Actor_Voice_Over(2240, kActorVoiceOver);
 					Actor_Voice_Over(2250, kActorVoiceOver);
 					Actor_Voice_Over(2260, kActorVoiceOver);
@@ -142,10 +142,10 @@ bool SceneScriptTB05::ClickedOnActor(int actorId) {
 
 bool SceneScriptTB05::ClickedOnItem(int itemId, bool a2) {
 	if (itemId == kItemDragonflyEarring) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 54.0f, 147.12f, -209.0f, 0, true, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 54.0f, 147.12f, -209.0f, 0, true, false, false)) {
 			Actor_Face_Heading(kActorMcCoy, 126, false);
 			Item_Remove_From_World(kItemDragonflyEarring);
-			Item_Pickup_Spin_Effect(940, 295, 408);
+			Item_Pickup_Spin_Effect(kModelAnimationDragonflyEarring, 295, 408);
 			Actor_Voice_Over(2140, kActorVoiceOver);
 			Actor_Voice_Over(2150, kActorVoiceOver);
 			Actor_Voice_Over(2160, kActorVoiceOver);
@@ -155,17 +155,17 @@ bool SceneScriptTB05::ClickedOnItem(int itemId, bool a2) {
 	}
 
 	if (itemId == kItemTyrellSalesPamphlet) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 107.89f, 147.12f, -156.26f, 0, true, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 107.89f, 147.12f, -156.26f, 0, true, false, false)) {
 			Actor_Face_Heading(kActorMcCoy, 126, false);
 			Item_Remove_From_World(kItemTyrellSalesPamphlet);
-			Item_Pickup_Spin_Effect(972, 449, 431);
+			Item_Pickup_Spin_Effect(kModelAnimationTyrellSalesPamphlet, 449, 431);
 			Actor_Voice_Over(4280, kActorVoiceOver);
 			if (Game_Flag_Query(kFlagGordoIsReplicant)) {
 				Actor_Voice_Over(4290, kActorVoiceOver);
-				Actor_Clue_Acquire(kActorMcCoy, kClueTyrellSalesPamphlet1, true, -1);
+				Actor_Clue_Acquire(kActorMcCoy, kClueTyrellSalesPamphletEntertainModel, true, -1);
 			} else {
 				Actor_Voice_Over(4300, kActorVoiceOver);
-				Actor_Clue_Acquire(kActorMcCoy, kClueTyrellSalesPamphlet2, true, -1);
+				Actor_Clue_Acquire(kActorMcCoy, kClueTyrellSalesPamphletLolita, true, -1);
 			}
 		}
 	}
@@ -174,15 +174,15 @@ bool SceneScriptTB05::ClickedOnItem(int itemId, bool a2) {
 
 bool SceneScriptTB05::ClickedOnExit(int exitId) {
 	if (exitId == 0) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 23.0f, 151.53f, -205.0f, 12, true, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 23.0f, 151.53f, -205.0f, 12, true, false, false)) {
 			Game_Flag_Set(kFlagTB05toTB06);
 			Set_Enter(kSetTB06, kSceneTB06);
-			Scene_Loop_Start_Special(kSceneLoopModeChangeSet, 2, 1);
+			Scene_Loop_Start_Special(kSceneLoopModeChangeSet, 2, true);
 		}
 		return true;
 	}
 	if (exitId == 1) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 14.0f, 147.12f, 123.0f, 0, true, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 14.0f, 147.12f, 123.0f, 0, true, false, false)) {
 			Game_Flag_Set(kFlagTB05toTB02);
 			Set_Enter(kSetTB02_TB03, kSceneTB02);
 		}
@@ -197,10 +197,10 @@ bool SceneScriptTB05::ClickedOn2DRegion(int region) {
 
 void SceneScriptTB05::SceneFrameAdvanced(int frame) {
 	if (frame == 61) {
-		Sound_Play(150, Random_Query(52, 52), 0, 0, 50);
+		Sound_Play(kSfxLABMISC5, Random_Query(52, 52), 0, 0, 50);
 	}
 	if (frame == 63) {
-		Sound_Play(283, Random_Query(55, 55), 0, 0, 50);
+		Sound_Play(kSfxTBDOOR1,  Random_Query(55, 55), 0, 0, 50);
 	}
 	//return true;
 }

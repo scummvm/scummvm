@@ -244,7 +244,7 @@ void Elevator::reset() {
 	_imagePicker = nullptr;
 	_actorId = -1;
 	_sentenceId = -1;
-	_timeSpeakDescription = 0;
+	_timeSpeakDescriptionStart = 0u;
 	_buttonClicked = false;
 }
 
@@ -283,18 +283,19 @@ void Elevator::buttonFocus(int buttonId) {
 void Elevator::setupDescription(int actorId, int sentenceId) {
 	_actorId = actorId;
 	_sentenceId = sentenceId;
-	_timeSpeakDescription = _vm->_time->current() + 600;
+	_timeSpeakDescriptionStart = _vm->_time->current();
 }
 
 void Elevator::resetDescription() {
 	_actorId = -1;
 	_sentenceId = -1;
-	_timeSpeakDescription = 0;
+	_timeSpeakDescriptionStart = 0u;
 }
 
 void Elevator::tickDescription() {
-	int now = _vm->_time->current();
-	if (_actorId <= 0 || now < _timeSpeakDescription) {
+	uint32 now = _vm->_time->current();
+	// unsigned difference is intentional
+	if (_actorId <= 0 || (now - _timeSpeakDescriptionStart < 600u)) {
 		return;
 	}
 
@@ -313,7 +314,7 @@ void Elevator::mouseOutCallback(int, void *self) {
 
 void Elevator::mouseDownCallback(int, void *self) {
 	Elevator *elevator = ((Elevator *)self);
-	elevator->_vm->_audioPlayer->playAud(elevator->_vm->_gameInfo->getSfxTrack(515), 100, 0, 0, 50, 0);
+	elevator->_vm->_audioPlayer->playAud(elevator->_vm->_gameInfo->getSfxTrack(kSfxELEBUTN1), 100, 0, 0, 50, 0);
 }
 
 void Elevator::mouseUpCallback(int buttonId, void *self) {

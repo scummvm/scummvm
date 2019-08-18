@@ -45,12 +45,12 @@ void Room::demon6Tick30() {
 	if (_awayMission->demon.stephenWelcomedToStudy)
 		return;
 
-	showText(TX_SPEAKER_STEPHEN, TX_DEM6_042);
+	showText(TX_SPEAKER_STEPHEN, 42, true);
 	_awayMission->demon.stephenWelcomedToStudy = true;
 }
 
 void Room::demon6SpockReachedComputer() {
-	showText(TX_SPEAKER_SPOCK, TX_DEM6_014);
+	showText(TX_SPEAKER_SPOCK, 14, true);
 }
 
 void Room::demon6WalkToDoor() {
@@ -73,71 +73,71 @@ void Room::demon6DoorOpenedOrReachedDoor() {
 }
 
 void Room::demon6UsePhaserOnStephen() {
-	showText(TX_SPEAKER_STEPHEN, TX_DEM6_028);
+	showText(TX_SPEAKER_STEPHEN, 28, true);
 }
 
 void Room::demon6UsePhaserOnCase() {
-	showText(TX_SPEAKER_MCCOY, TX_DEM6_017);
+	showText(TX_SPEAKER_MCCOY, 17, true);
 }
 
 void Room::demon6LookAtWorkspace() {
-	showText(TX_DEM6N003);
+	showDescription(3, true);
 }
 
 void Room::demon6LookAtCase() {
-	showText(TX_DEM6N001);
+	showDescription(1, true);
 }
 
 void Room::demon6LookAtTable() {
-	showText(TX_DEM6N007);
+	showDescription(7, true);
 }
 
 void Room::demon6LookAtMineral() {
-	showText(TX_DEM6N016);
+	showDescription(16, true);
 }
 
 void Room::demon6LookAtShells() {
-	showText(TX_DEM6N011);
+	showDescription(11, true);
 }
 
 void Room::demon6LookAtSkull() {
-	showText(TX_DEM6N017);
+	showDescription(17, true);
 }
 
 void Room::demon6LookAtMetal() {
-	showText(TX_DEM6N005);
+	showDescription(5, true);
 }
 
 void Room::demon6LookAtMeteor() {
-	showText(TX_DEM6N000);
+	showDescription(0, true);
 }
 
 void Room::demon6LookAtMountain() {
-	showText(TX_DEM6N002);
+	showDescription(2, true);
 }
 
 void Room::demon6LookAtSynthesizer() {
-	showText(TX_DEM6N004);
+	showDescription(4, true);
 }
 
 void Room::demon6LookAtKirk() {
-	showText(TX_DEM6N008);
+	showDescription(8, true);
 }
 
 void Room::demon6LookAtSpock() {
-	showText(TX_DEM6N015);
+	showDescription(15, true);
 }
 
 void Room::demon6LookAtMccoy() {
-	showText(TX_DEM6N009);
+	showDescription(9, true);
 }
 
 void Room::demon6LookAtRedshirt() {
-	showText(TX_DEM6N010);
+	showDescription(10, true);
 }
 
 void Room::demon6LookAtComputer() {
-	showText(TX_DEM6N006);
+	showDescription(6, true);
 	if (!_awayMission->demon.lookedAtComputer) {
 		_awayMission->demon.lookedAtComputer = true;
 		_awayMission->demon.missionScore++;
@@ -145,38 +145,38 @@ void Room::demon6LookAtComputer() {
 }
 
 void Room::demon6LookAnywhere() {
-	showText(TX_DEM6N024);
+	showDescription(24, true);
 }
 
 void Room::demon6LookAtStephen() {
-	showText(TX_DEM6N021);
+	showDescription(21, true);
 }
 
 void Room::demon6TalkToMccoy() {
-	showText(TX_SPEAKER_MCCOY, TX_DEM6_020);
+	showText(TX_SPEAKER_MCCOY, 20, true);
 }
 
 void Room::demon6TalkToSpock() {
-	showText(TX_SPEAKER_SPOCK, TX_DEM6_025);
+	showText(TX_SPEAKER_SPOCK, 25, true);
 }
 
 void Room::demon6TalkToKirk() {
-	showText(TX_SPEAKER_KIRK, TX_DEM6_002);
+	showText(TX_SPEAKER_KIRK, 2, true);
 }
 
 void Room::demon6TalkToRedshirt() {
-	showText(TX_SPEAKER_EVERTS, TX_DEM6_053);
+	showText(TX_SPEAKER_EVERTS, 53, true);
 }
 
 void Room::demon6TalkToStephen() {
-	showText(TX_SPEAKER_STEPHEN, TX_DEM6_035);
+	showText(TX_SPEAKER_STEPHEN, 35, true);
 }
 
 void Room::demon6UseBerryOnStephen() {
 	if (_awayMission->demon.knowAboutHypoDytoxin) {
-		showText(TX_SPEAKER_STEPHEN, TX_DEM6_027);
+		showText(TX_SPEAKER_STEPHEN, 27, true);
 	} else {
-		showText(TX_SPEAKER_STEPHEN, TX_DEM6_026);
+		showText(TX_SPEAKER_STEPHEN, 26, true);
 	}
 }
 
@@ -193,8 +193,8 @@ void Room::demon6MccoyReachedSynthesizer() {
 
 void Room::demon6FinishedMakingHypoDytoxin() {
 	playMidiMusicTracks(-1, -1);
-	showText(TX_DEM6N023);
-	showText(TX_SPEAKER_MCCOY, TX_DEM6_018);
+	showDescription(23, true);
+	showText(TX_SPEAKER_MCCOY, 18, true);
 
 	giveItem(OBJECT_IDETOXIN);
 	_awayMission->demon.madeHypoDytoxin = true;
@@ -208,10 +208,10 @@ void Room::demon6FinishedMakingHypoDytoxin() {
 
 void Room::demon6UseHandOnWorkspace() {
 	if (_awayMission->demon.repairedHand) {
-		showText(TX_SPEAKER_SPOCK, TX_DEM6N018); // FIXME
+		showText(TX_SPEAKER_SPOCK, 18, true); // FIXME
 	} else {
 		_awayMission->disableInput = true;
-		showText(TX_SPEAKER_KIRK, TX_DEM6_005);
+		showText(TX_SPEAKER_KIRK, 5, true);
 		walkCrewman(OBJECT_SPOCK, 0xb3, 0xbb, 2);
 	}
 }
@@ -221,7 +221,7 @@ void Room::demon6SpockReachedWorkspace() {
 }
 
 void Room::demon6SpockFinishedRepairingHand() {
-	showText(TX_SPEAKER_SPOCK, TX_DEM6_024);
+	showText(TX_SPEAKER_SPOCK, 24, true);
 	_awayMission->demon.repairedHand = true;
 	_awayMission->demon.missionScore += 2;
 	loadActorStandAnim(OBJECT_SPOCK);
@@ -230,86 +230,91 @@ void Room::demon6SpockFinishedRepairingHand() {
 
 // FIXME: doesn't work
 void Room::demon6UseAnythingOnWorkspace() {
-	showText(TX_DEM6N020);
+	showDescription(20, true);
+}
+
+void Room::demon6StephenIsInsulted() {
+	showText(TX_SPEAKER_STEPHEN, 30, true);
+	_roomVar.demon.insultedStephenRecently = true;
+	_awayMission->demon.insultedStephen = true;
+}
+
+void Room::demon6StephenDescribesItemsInCase() {
+	while (true) {
+		showText(TX_SPEAKER_STEPHEN, 51, true);
+		TextRef choices2[] = { TX_SPEAKER_STEPHEN, 45, 46, 47, 48, 49, 50, TX_BLANK };
+		TextRef choice = showMultipleTexts(choices2, true);
+
+		switch (choice) {
+		case 0:
+			showText(TX_SPEAKER_STEPHEN, 40, true);
+			break;
+		case 1:
+			showText(TX_SPEAKER_STEPHEN, 33, true);
+			break;
+		case 2:
+			showText(TX_SPEAKER_STEPHEN, 36, true);
+			break;
+		case 3:
+			showText(TX_SPEAKER_STEPHEN, 38, true);
+			break;
+		case 4:
+			showText(TX_SPEAKER_STEPHEN, 39, true);
+			break;
+		case 5:
+			showText(TX_SPEAKER_STEPHEN, 41, true);
+			_roomVar.demon.caseOpened = true;
+			return;
+		default:
+			showDescription(TX_DIALOG_ERROR);
+		}
+	}
 }
 
 void Room::demon6UseCrewmanOnCase() {
 	if (_roomVar.demon.stephenInRoom) {
 		if (_roomVar.demon.insultedStephenRecently)
 			return;
-		showText(TX_SPEAKER_STEPHEN, TX_DEM6_044);
-		TextRef choices1[] = {TX_SPEAKER_KIRK, TX_DEM6_001, TX_DEM6_006, TX_DEM6_003, TX_BLANK};
-		TextRef choice = showText(choices1);
+		showText(TX_SPEAKER_STEPHEN, 44, true);
+		TextRef choices1[] = {TX_SPEAKER_KIRK, 1, 6, 3, TX_BLANK};
+		TextRef choice = showMultipleTexts(choices1, true);
 
 		if (choice == 0) {
-insult:
-			showText(TX_SPEAKER_STEPHEN, TX_DEM6_030);
-			_roomVar.demon.insultedStephenRecently = true;
-			_awayMission->demon.insultedStephen = true;
+			demon6StephenIsInsulted();
 		} else if (choice == 1) {
-			showText(TX_SPEAKER_STEPHEN, TX_DEM6_034);
-explain:
-			while (true) {
-				showText(TX_SPEAKER_STEPHEN, TX_DEM6_051);
-				TextRef choices2[] = {TX_SPEAKER_STEPHEN, TX_DEM6_045, TX_DEM6_046, TX_DEM6_047, TX_DEM6_048, TX_DEM6_049, TX_DEM6_050, TX_BLANK};
-				choice = showText(choices2);
-
-				switch (choice) {
-				case 0:
-					showText(TX_SPEAKER_STEPHEN, TX_DEM6_040);
-					break;
-				case 1:
-					showText(TX_SPEAKER_STEPHEN, TX_DEM6_033);
-					break;
-				case 2:
-					showText(TX_SPEAKER_STEPHEN, TX_DEM6_036);
-					break;
-				case 3:
-					showText(TX_SPEAKER_STEPHEN, TX_DEM6_038);
-					break;
-				case 4:
-					showText(TX_SPEAKER_STEPHEN, TX_DEM6_039);
-					break;
-				case 5:
-					showText(TX_SPEAKER_STEPHEN, TX_DEM6_041);
-					_roomVar.demon.caseOpened = true;
-					return;
-				default:
-					goto error;
-				}
-			}
+			showText(TX_SPEAKER_STEPHEN, 34, true);
+			demon6StephenDescribesItemsInCase();
 		} else if (choice == 2) {
-			showText(TX_SPEAKER_STEPHEN, TX_DEM6_031);
-			TextRef choices3[] = {TX_SPEAKER_KIRK, TX_DEM6_001, TX_DEM6_006, TX_BLANK};
-			choice = showText(choices3);
+			showText(TX_SPEAKER_STEPHEN, 31, true);
+			TextRef choices3[] = {TX_SPEAKER_KIRK, 1, 6, TX_BLANK};
+			choice = showMultipleTexts(choices3, true);
 
 			if (choice == 0)
-				goto insult;
+				demon6StephenIsInsulted();
 			else if (choice == 1)
-				goto explain;
+				demon6StephenDescribesItemsInCase();
 			else
-				goto error;
+				showDescription(TX_DIALOG_ERROR);
 		} else {
-error:
-			showText(TX_DIALOG_ERROR);
+			showDescription(TX_DIALOG_ERROR);
 		}
 	} else {
-		showText(TX_DEM6N012);
-		showText(TX_SPEAKER_MCCOY, TX_DEM6_019);
+		showDescription(12, true);
+		showText(TX_SPEAKER_MCCOY, 19, true);
 	}
 }
 
 void Room::demon6UseKirkOnComputer() {
-	showText(TX_SPEAKER_KIRK, TX_DEM6_004);
+	showText(TX_SPEAKER_KIRK, 4, true);
 	demon6UseSpockOnComputer();
 }
 
 void Room::demon6UseMccoyOnComputer() {
-	showText(TX_SPEAKER_MCCOY, TX_DEM6_015);
+	showText(TX_SPEAKER_MCCOY, 15, true);
 }
 
 void Room::demon6UseRedshirtOnComputer() {
-	showText(TX_SPEAKER_EVERTS, TX_DEM6_052);
+	showText(TX_SPEAKER_EVERTS, 52, true);
 }
 
 void Room::demon6UseSpockOnComputer() {
@@ -343,80 +348,80 @@ void Room::demon6UseMetalOnStephen() {
 
 void Room::demon6ReturnItemToStephen(int item) {
 	loseItem(item);
-	showText(TX_DEM6N019);
-	showText(TX_SPEAKER_STEPHEN, TX_DEM6_029);
+	showDescription(19, true);
+	showText(TX_SPEAKER_STEPHEN, 29, true);
 }
 
 void Room::demon6UseHandOnStephen() {
 	if (_awayMission->demon.repairedHand)
-		showText(TX_SPEAKER_STEPHEN, TX_DEM6_037);
+		showText(TX_SPEAKER_STEPHEN, 37, true);
 	else
-		showText(TX_SPEAKER_STEPHEN, TX_DEM6_043);
+		showText(TX_SPEAKER_STEPHEN, 43, true);
 }
 
 void Room::demon6UseMTricoderOnStephen() {
 	loadActorAnim2(OBJECT_MCCOY, "mscans", -1, -1, 0);
 	playSoundEffectIndex(4);
-	showText(TX_SPEAKER_MCCOY, TX_DEM6_016);
+	showText(TX_SPEAKER_MCCOY, 16, true);
 }
 
 void Room::demon6UseSTricoderOnTable() {
 	loadActorAnim2(OBJECT_SPOCK, "sscans", -1, -1, 0);
 	playSoundEffectIndex(4);
-	showText(TX_SPEAKER_SPOCK, TX_DEM6_009);
+	showText(TX_SPEAKER_SPOCK, 9, true);
 }
 
 void Room::demon6UseSTricoderOnComputer() {
 	loadActorAnim2(OBJECT_SPOCK, "sscans", -1, -1, 0);
 	playSoundEffectIndex(4);
-	showText(TX_SPEAKER_SPOCK, TX_DEM6_007);
+	showText(TX_SPEAKER_SPOCK, 7, true);
 }
 
 void Room::demon6UseSTricoderOnMineral() {
 	loadActorAnim2(OBJECT_SPOCK, "sscans", -1, -1, 0);
 	playSoundEffectIndex(4);
-	showText(TX_SPEAKER_SPOCK, TX_DEM6_013);
+	showText(TX_SPEAKER_SPOCK, 13, true);
 }
 
 void Room::demon6UseSTricoderOnShells() {
 	loadActorAnim2(OBJECT_SPOCK, "sscans", -1, -1, 0);
 	playSoundEffectIndex(4);
-	showText(TX_SPEAKER_SPOCK, TX_DEM6_021);
+	showText(TX_SPEAKER_SPOCK, 21, true);
 }
 
 void Room::demon6UseSTricoderOnSkull() {
 	loadActorAnim2(OBJECT_SPOCK, "sscans", -1, -1, 0);
 	playSoundEffectIndex(4);
-	showText(TX_SPEAKER_SPOCK, TX_DEM6_012);
+	showText(TX_SPEAKER_SPOCK, 12, true);
 }
 
 void Room::demon6UseSTricoderOnMetal() {
 	loadActorAnim2(OBJECT_SPOCK, "sscans", -1, -1, 0);
 	playSoundEffectIndex(4);
-	showText(TX_SPEAKER_SPOCK, TX_DEM6_011);
+	showText(TX_SPEAKER_SPOCK, 11, true);
 }
 
 void Room::demon6UseSTricoderOnMeteor() {
 	loadActorAnim2(OBJECT_SPOCK, "sscans", -1, -1, 0);
 	playSoundEffectIndex(4);
-	showText(TX_SPEAKER_SPOCK, TX_DEM6_010);
+	showText(TX_SPEAKER_SPOCK, 10, true);
 }
 
 void Room::demon6UseSTricoderOnCase() {
 	loadActorAnim2(OBJECT_SPOCK, "sscans", -1, -1, 0);
 	playSoundEffectIndex(4);
-	showText(TX_SPEAKER_SPOCK, TX_DEM6_023);
+	showText(TX_SPEAKER_SPOCK, 23, true);
 }
 
 void Room::demon6UseSTricoderOnSynthesizer() {
 	loadActorAnim2(OBJECT_SPOCK, "sscans", -1, -1, 0);
 	playSoundEffectIndex(4);
-	showText(TX_SPEAKER_SPOCK, TX_DEM6_008);
+	showText(TX_SPEAKER_SPOCK, 8, true);
 }
 
 void Room::demon6GetCase() {
 	if (!_roomVar.demon.caseOpened)
-		showText(TX_DEM6N022);
+		showDescription(22, true);
 	else
 		walkCrewman(OBJECT_KIRK, 0xff, 0xba, 5);
 }
@@ -465,7 +470,6 @@ int Room::demon6ShowCase(int visible) {
 	}
 
 	Sprite buttonSprite;
-	_vm->_gfx->addSprite(&buttonSprite);
 
 	// BUGFIX: use draw mode 2 so the entire button is clickable (not just non-transparent parts)
 	buttonSprite.drawMode = 2;
@@ -476,9 +480,23 @@ int Room::demon6ShowCase(int visible) {
 	buttonSprite.bitmapChanged = true;
 	buttonSprite.bitmap = _vm->_gfx->loadBitmap("donebutt");
 
+	_vm->_gfx->addSprite(&buttonSprite);
 	_vm->_gfx->forceDrawAllSprites();
 	_vm->_gfx->fadeinScreen();
 
+	visible = demon6ShowCaseProcessInput(sprites, &buttonSprite, visible);
+
+	_vm->_gfx->fadeoutScreen();
+	_vm->_gfx->popSprites();
+	_vm->_gfx->loadPri(_vm->getScreenName());
+	_vm->_gfx->setBackgroundImage(_vm->_gfx->loadBitmap(_vm->getScreenName()));
+	_vm->_gfx->copyBackgroundScreen();
+	_vm->_gfx->forceDrawAllSprites();
+
+	return visible;
+}
+
+int Room::demon6ShowCaseProcessInput(Sprite *sprites, Sprite *buttonSprite, int visible) {
 	bool exitLoop = false;
 
 	while (!exitLoop) {
@@ -492,35 +510,11 @@ int Room::demon6ShowCase(int visible) {
 			break;
 
 		case TREKEVENT_LBUTTONDOWN: {
-lclick:
 			Sprite *clickedSprite = _vm->_gfx->getSpriteAt(_vm->_gfx->getMousePos());
-			if (clickedSprite == &buttonSprite)
+			if (clickedSprite == buttonSprite)
 				exitLoop = true;
-			else if (clickedSprite != nullptr) {
-				while (clickedSprite->pos.y < SCREEN_HEIGHT) { // Move the selected item down and off the screen.
-					clickedSprite->drawPriority = 8;
-					clickedSprite->bitmapChanged = true;
-					_vm->_gfx->drawAllSprites();
-
-					// WORKAROUND: original game had no bound on how fast the items move
-					// off the screen. Here I bind it to the tick event.
-					// (This was probably the intended behaviour since the original game
-					// does check the clock cycle, but doesn't do a proper comparison with
-					// it.)
-					while (event.type != TREKEVENT_TICK) {
-						if (!_vm->popNextEvent(&event))
-							continue;
-					}
-					clickedSprite->pos.y++;
-				}
-
-				clickedSprite->dontDrawNextFrame();
-				_vm->_gfx->drawAllSprites();
-				_vm->_gfx->delSprite(clickedSprite);
-				clickedSprite->bitmap.reset();
-				int i = clickedSprite - sprites;
-				visible ^= (0x10 >> i);
-			}
+			else if (clickedSprite != nullptr)
+				visible = demon6ShowCaseProcessSelection(sprites, clickedSprite, visible);
 			break;
 		}
 
@@ -536,8 +530,14 @@ lclick:
 
 			case Common::KEYCODE_RETURN:
 			case Common::KEYCODE_KP_ENTER:
-			case Common::KEYCODE_F1:
-				goto lclick;
+			case Common::KEYCODE_F1: {
+				Sprite *clickedSprite = _vm->_gfx->getSpriteAt(_vm->_gfx->getMousePos());
+				if (clickedSprite == buttonSprite)
+					exitLoop = true;
+				else if (clickedSprite != nullptr)
+					visible = demon6ShowCaseProcessSelection(sprites, clickedSprite, visible);
+				break;
+			}
 
 			case Common::KEYCODE_F2:
 				exitLoop = true;
@@ -553,13 +553,35 @@ lclick:
 		}
 	}
 
-	_vm->_gfx->fadeoutScreen();
-	_vm->_gfx->popSprites();
-	_vm->_gfx->loadPri(_vm->_screenName);
-	_vm->_gfx->setBackgroundImage(_vm->_gfx->loadBitmap(_vm->_screenName));
-	_vm->_gfx->copyBackgroundScreen();
-	_vm->_gfx->forceDrawAllSprites();
+	return visible;
+}
 
+int Room::demon6ShowCaseProcessSelection(Sprite *sprites, Sprite *clickedSprite, int visible) {
+	while (clickedSprite->pos.y < SCREEN_HEIGHT) { // Move the selected item down and off the screen.
+		clickedSprite->drawPriority = 8;
+		clickedSprite->bitmapChanged = true;
+		_vm->_gfx->drawAllSprites();
+
+		// WORKAROUND: original game had no bound on how fast the items move
+		// off the screen. Here I bind it to the tick event.
+		// (This was probably the intended behaviour since the original game
+		// does check the clock cycle, but doesn't do a proper comparison with
+		// it.)
+		TrekEvent event;
+		do {
+			if (!_vm->popNextEvent(&event))
+				continue;
+		} while (event.type != TREKEVENT_TICK);
+		clickedSprite->pos.y++;
+	}
+
+	clickedSprite->dontDrawNextFrame();
+	_vm->_gfx->drawAllSprites();
+	_vm->_gfx->delSprite(clickedSprite);
+	clickedSprite->bitmap.reset();
+	int i = clickedSprite - sprites;
+	visible ^= (0x10 >> i);
+	
 	return visible;
 }
 

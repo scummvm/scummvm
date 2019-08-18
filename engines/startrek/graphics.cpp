@@ -20,6 +20,7 @@
  */
 
 #include "startrek/common.h"
+#include "startrek/console.h"
 #include "startrek/graphics.h"
 
 #include "common/algorithm.h"
@@ -83,7 +84,7 @@ void Graphics::setBackgroundImage(SharedPtr<Bitmap> bitmap) {
 	_backgroundImage = SharedPtr<Bitmap>(new Bitmap(*bitmap));
 }
 
-void Graphics::drawBitmapToBackground(const Common::Rect &origRect, const Common::Rect &drawRect, SharedPtr<Bitmap> bitmap) {
+void Graphics::drawBitmapToBackground(const Common::Rect &origRect, const Common::Rect &drawRect, Bitmap *bitmap) {
 	byte *dest = _backgroundImage->pixels + drawRect.top * SCREEN_WIDTH + drawRect.left;
 	byte *src = bitmap->pixels + (drawRect.left - origRect.left)
 	            + (drawRect.top - origRect.top) * bitmap->width;
@@ -131,6 +132,7 @@ void Graphics::clearScreenAndPriBuffer() {
 	surface->fillRect(_screenRect, 0);
 	_vm->_system->unlockScreen();
 	_vm->_system->updateScreen();
+	_vm->_system->delayMillis(10);
 }
 
 void Graphics::loadPalette(const Common::String &paletteName) {
@@ -138,13 +140,14 @@ void Graphics::loadPalette(const Common::String &paletteName) {
 	Common::String palFile = paletteName + ".PAL";
 	Common::String lutFile = paletteName + ".LUT";
 
-	SharedPtr<FileStream> palStream = _vm->loadFile(palFile.c_str());
+	Common::MemoryReadStreamEndian *palStream = _vm->loadFile(palFile.c_str());
 	palStream->read(_palData, 256 * 3);
+	delete palStream;
 
 	// Load LUT file
-	SharedPtr<FileStream> lutStream = _vm->loadFile(lutFile.c_str());
-
+	Common::MemoryReadStreamEndian *lutStream = _vm->loadFile(lutFile.c_str());
 	lutStream->read(_lutData, 256);
+	delete lutStream;
 }
 
 void Graphics::copyRectBetweenBitmaps(Bitmap *destBitmap, int destX, int destY, Bitmap *srcBitmap, int srcX, int srcY, int width, int height) {
@@ -200,6 +203,7 @@ void Graphics::setPaletteFadeLevel(byte *palData, int fadeLevel) {
 	// FIXME: this isn't supposed to flush changes to graphics, only palettes.
 	// Might not matter...
 	_vm->_system->updateScreen();
+	_vm->_system->delayMillis(10);
 }
 
 void Graphics::incPaletteFadeLevel() {
@@ -218,8 +222,9 @@ void Graphics::decPaletteFadeLevel() {
 
 
 void Graphics::loadPri(const Common::String &priFile) {
-	SharedPtr<FileStream> priStream = _vm->loadFile(priFile + ".pri");
+	Common::MemoryReadStream *priStream = _vm->loadFile(priFile + ".pri");
 	priStream->read(_priData, SCREEN_WIDTH * SCREEN_HEIGHT / 2);
+	delete priStream;
 }
 
 void Graphics::clearPri() {
@@ -242,7 +247,7 @@ byte Graphics::getPriValue(int x, int y) {
 }
 
 SharedPtr<Bitmap> Graphics::loadBitmap(Common::String basename) {
-	return SharedPtr<Bitmap>(new Bitmap(_vm->loadFile(basename + ".BMP")));
+	return SharedPtr<Bitmap>(new Bitmap(SharedPtr<Common::MemoryReadStreamEndian>(_vm->loadFile(basename + ".BMP"))));
 }
 
 Common::Point Graphics::getMousePos() {
@@ -497,7 +502,8 @@ void Graphics::drawAllSprites(bool updateScreenFlag) {
 					if (rect.isEmpty())
 						spr->rect2Valid = 0;
 					else {
-						spr->rectangle2 = getRectEncompassing(spr->drawRect, spr->lastDrawRect);
+						spr->rectangle2 = spr->drawRect;
+						spr->rectangle2.extend(spr->lastDrawRect);
 						spr->rect2Valid = 1;
 					}
 				} else {
@@ -560,7 +566,7 @@ void Graphics::drawAllSprites(bool updateScreenFlag) {
 
 					if (rect1.width() != 0 && rect1.height() != 0) {
 						if (mustRedrawSprite)
-							rect2 = getRectEncompassing(rect1, rect2);
+							rect2.extend(rect1);
 						else
 							rect2 = rect1;
 						mustRedrawSprite = true;
@@ -634,7 +640,9 @@ void Graphics::updateScreen() {
 		_mouseWarpY = -1;
 	}
 
+	_vm->_console->onFrame();
 	_vm->_system->updateScreen();
+	_vm->_system->delayMillis(10);
 }
 
 Sprite *Graphics::getSpriteAt(int16 x, int16 y) {
@@ -733,14 +741,15 @@ void Graphics::loadEGAData(const char *filename) {
 	if (!_egaData)
 		_egaData = new byte[256];
 
-	SharedPtr<FileStream> egaStream = _vm->loadFile(filename);
+	Common::MemoryReadStreamEndian *egaStream = _vm->loadFile(filename);
 	egaStream->read(_egaData, 256);
+	delete egaStream;
 }
 
 void Graphics::drawBackgroundImage(const char *filename) {
 	// Draw an stjr BGD image (palette built-in)
 
-	SharedPtr<FileStream> imageStream = _vm->loadFile(filename);
+	Common::MemoryReadStreamEndian *imageStream = _vm->loadFile(filename);
 	byte *palette = new byte[256 * 3];
 	imageStream->read(palette, 256 * 3);
 
@@ -755,11 +764,14 @@ void Graphics::drawBackgroundImage(const char *filename) {
 
 	byte *pixels = new byte[width * height];
 	imageStream->read(pixels, width * height);
+	delete imageStream;
 
 	_vm->_system->getPaletteManager()->setPalette(palette, 0, 256);
 	_vm->_system->copyRectToScreen(pixels, width, xoffset, yoffset, width, height);
-	_vm->_system->updateScreen();
+	//_vm->_system->updateScreen();
+	//_vm->_system->delayMillis(10);
 
+	delete[] pixels;
 	delete[] palette;
 }
 

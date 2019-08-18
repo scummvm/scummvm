@@ -52,6 +52,8 @@ public:
 
 	void pumpEvents();
 
+	uint convertJoystickToKey(uint joybutton);
+
 protected:
 	friend class Common::Singleton<SingletonBaseType>;
 

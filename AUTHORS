@@ -72,8 +72,10 @@ ScummVM Team
        Benjamin Haisch
 
     Blade Runner:
+       Thanasis Antoniou
        Thomas Fach-Pedersen
        Peter Kohaut
+       Eugene Sandulenko
 
     CGE:
        Arnaud Boutonne
@@ -97,6 +99,9 @@ ScummVM Team
     CruisE:
        Paul Gilbert
        Vincent Hamm                 - (retired)
+
+    Cryomni3D:
+       Philippe Valembois
 
     Draci:
        Denis Kasak
@@ -233,6 +238,7 @@ ScummVM Team
        Eugene Sandulenko
 
     SCI:
+       Chris Benshoof
        Greg Frieger
        Paul Gilbert
        Max Horn                     - (retired)
@@ -252,6 +258,11 @@ ScummVM Team
        Robert Goeffringmann         - (retired)
        Oliver Kiehl                 - (retired)
        Joost Peters
+
+    Supernova:
+       Joseph-Eugene Winzer
+       Jaromir Wysoglad
+       Thierry Crozat
 
     Sword1:
        Fabio Battaglia              - PSX version support
@@ -347,6 +358,7 @@ ScummVM Team
     iPhone / iPad:
        Oystein Eftevaag
        Vincent Benony
+       Thierry Crozat
 
     LinuxMoto:
        Lubomyr Lisen
@@ -364,6 +376,10 @@ ScummVM Team
     Nintendo DS:
        Bertrand Augereau            - HQ software scaler
        Neil Millstone
+
+    Nintendo Switch:
+       Cpasjuste
+       rsn8887
 
     OpenPandora:
        John Willis
@@ -416,6 +432,7 @@ ScummVM Team
        Johannes Schickel            - (retired)
 
     GUI:
+       Max Horn                     - (retired)
        Vicent Marti
        Eugene Sandulenko
        Johannes Schickel            - (retired)
@@ -503,7 +520,7 @@ Other contributions
     Haiku:
        Luc Schrijvers
 
-    Mac OS X:
+    macOS:
        Max Horn                     - (retired)
        Oystein Eftevaag
        Thierry Crozat
@@ -623,6 +640,10 @@ Other contributions
     Mortevielle:
        Hugo Labrande                - Improve English translation
        Thierry Crozat               - Improve English translation
+
+    Supernova:
+       Joseph-Eugene Winzer         - English translation
+       Thierry Crozat               - English translation
 
   Websites (design)
   -----------------

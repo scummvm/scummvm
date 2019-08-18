@@ -74,7 +74,7 @@ void Room::mudd3LookAtScreen() {
 	if (_awayMission->mudd.translatedAlienLanguage)
 		showText(TX_SPEAKER_SPOCK, TX_MUD3_038);
 	else
-		showText(TX_MUD3N017);
+		showDescription(TX_MUD3N017);
 }
 
 void Room::mudd3UseSTricorderOnScreen() {
@@ -87,7 +87,7 @@ void Room::mudd3UseSTricorderOnScreen() {
 // BUGFIX: Event was actually "use screen on kirk", which makes no sense.
 void Room::mudd3UseKirkOnScreen() {
 	if (!_awayMission->mudd.translatedAlienLanguage) {
-		showText(TX_MUD3N011);
+		showDescription(TX_MUD3N011);
 		showText(TX_SPEAKER_SPOCK, TX_MUD3_037);
 	}
 }
@@ -98,7 +98,7 @@ void Room::mudd3UseSpockOnSphere() {
 
 	if (_awayMission->mudd.computerDataErasedOrDestroyed) {
 		if (!_awayMission->mudd.databaseDestroyed) {
-			showText(TX_MUD3N000);
+			showDescription(TX_MUD3N000);
 			showText(TX_SPEAKER_SPOCK, TX_MUD3_052);
 			showText(TX_SPEAKER_KIRK,  TX_MUD3_012);
 			showText(TX_SPEAKER_MCCOY, TX_MUD3_024);
@@ -259,7 +259,7 @@ void Room::mudd3Timer2Expired() {
 	_awayMission->mudd.computerDataErasedOrDestroyed = true;
 
 	showText(TX_SPEAKER_MUDD, TX_MUD3_065);
-	int choice = showText(choices);
+	int choice = showMultipleTexts(choices);
 
 	if (choice == 0) { // Allow him to access the database (he ends up erasing it)
 		showText(TX_SPEAKER_MUDD, TX_MUD3_066);
@@ -269,7 +269,7 @@ void Room::mudd3Timer2Expired() {
 		// Otherwise, the end of the mission when you confront Mudd doesn't make sense
 		// unless the player happened to try accessing the database again. Also, if you
 		// talk to the crew, they berate him for no apparent reason if this isn't clear.
-		showText(TX_MUD3N000);
+		showDescription(TX_MUD3N000);
 		showText(TX_SPEAKER_MCCOY, TX_MUD3_031);
 
 	} else { // Don't allow it (he destroys it by accident)
@@ -296,21 +296,21 @@ void Room::mudd3UseMemoryDiskOnSphere() {
 	loadActorStandAnim(OBJECT_KIRK);
 
 	if (_awayMission->mudd.databaseDestroyed)
-		showText(TX_MUD3N014);
+		showDescription(TX_MUD3N014);
 	else if (_awayMission->mudd.translatedAlienLanguage && !_awayMission->mudd.muddErasedDatabase) {
-		showText(TX_MUD3N020);
+		showDescription(TX_MUD3N020);
 		if (!_awayMission->mudd.gotPointsForDownloadingData) {
 			_awayMission->mudd.missionScore += 3;
 			_awayMission->mudd.gotPointsForDownloadingData = true;
 		}
 	} else
-		showText(TX_MUD3N019);
+		showDescription(TX_MUD3N019);
 }
 
 
 void Room::mudd3GetRepairTool() {
 	if (_awayMission->mudd.tookRepairTool)
-		showText(TX_MUD3N018); // NOTE: unused, since the object disappears, can't be selected again
+		showDescription(TX_MUD3N018); // NOTE: unused, since the object disappears, can't be selected again
 	else {
 		_awayMission->disableInput = true;
 		_awayMission->crewDirectionsAfterWalk[OBJECT_KIRK] = DIR_N;
@@ -336,7 +336,7 @@ void Room::mudd3LookAtSphere() {
 	_awayMission->crewDirectionsAfterWalk[OBJECT_KIRK] = DIR_S;
 	loadActorStandAnim(OBJECT_KIRK);
 
-	showText(TX_MUD3N015);
+	showDescription(TX_MUD3N015);
 }
 
 void Room::mudd3WalkToNorthDoor() {
@@ -366,34 +366,34 @@ void Room::mudd3TouchedHotspot1() {
 
 void Room::mudd3LookAtKirk() {
 	if (!_awayMission->mudd.muddInDatabaseRoom)
-		showText(TX_MUD3N005);
+		showDescription(TX_MUD3N005);
 	else
-		showText(TX_MUD3N004);
+		showDescription(TX_MUD3N004);
 }
 
 void Room::mudd3LookAtSpock() {
 	if (!_awayMission->mudd.muddInDatabaseRoom)
-		showText(TX_MUD3N012);
+		showDescription(TX_MUD3N012);
 	else
-		showText(TX_MUD3N002);
+		showDescription(TX_MUD3N002);
 }
 
 void Room::mudd3LookAtMccoy() {
 	if (!_awayMission->mudd.muddInDatabaseRoom)
-		showText(TX_MUD3N010);
+		showDescription(TX_MUD3N010);
 	else
-		showText(TX_MUD3N009);
+		showDescription(TX_MUD3N009);
 }
 
 void Room::mudd3LookAtRedshirt() {
 	if (!_awayMission->mudd.muddInDatabaseRoom)
-		showText(TX_MUD3N007);
+		showDescription(TX_MUD3N007);
 	else
-		showText(TX_MUD3N006);
+		showDescription(TX_MUD3N006);
 }
 
 void Room::mudd3LookAtMudd() {
-	showText(TX_MUD3N003);
+	showDescription(TX_MUD3N003);
 }
 
 void Room::mudd3TalkToKirk() {

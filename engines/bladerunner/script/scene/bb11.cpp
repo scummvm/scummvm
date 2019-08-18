@@ -28,16 +28,20 @@ void SceneScriptBB11::InitializeScene() {
 	Setup_Scene_Information(43.39f, -10.27f, -20.52f, 200);
 	if (!Game_Flag_Query(kFlagBB11SadikFight)) {
 		Scene_Exit_Add_2D_Exit(0, 280, 154, 388, 247, 2);
+		if (_vm->_cutContent && !Game_Flag_Query(kFlagMcCoyCommentsOnFans)) {
+			Scene_2D_Region_Add(0, 454, 1, 639, 228);// right fans
+			Scene_2D_Region_Add(1, 1, 1, 240, 375);  // left fans
+		}
 	}
 
-	Ambient_Sounds_Add_Looping_Sound(101, 90, 0, 1);
-	Ambient_Sounds_Add_Looping_Sound( 99, 45, 0, 1);
-	Ambient_Sounds_Add_Looping_Sound(100, 76, 0, 1);
-	Ambient_Sounds_Add_Sound( 68, 5, 180, 16,  25, 0, 0, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound( 69, 5, 180, 16,  25, 0, 0, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(375, 5, 180, 50, 100, 0, 0, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(376, 5, 180, 50, 100, 0, 0, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(377, 5, 180, 50, 100, 0, 0, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Looping_Sound(kSfxROOFRAN1, 90, 0, 1);
+	Ambient_Sounds_Add_Looping_Sound(kSfxROOFAIR1, 45, 0, 1);
+	Ambient_Sounds_Add_Looping_Sound(kSfxROOFRMB1, 76, 0, 1);
+	Ambient_Sounds_Add_Sound(kSfxSPIN2B,  5, 180, 16,  25, 0, 0, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxSPIN3A,  5, 180, 16,  25, 0, 0, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxTHNDER2, 5, 180, 50, 100, 0, 0, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxTHNDER3, 5, 180, 50, 100, 0, 0, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxTHNDER4, 5, 180, 50, 100, 0, 0, -101, -101, 0, 0);
 
 	if (Game_Flag_Query(kFlagBB11SadikFight)) {
 		Preload(19);
@@ -85,7 +89,7 @@ bool SceneScriptBB11::ClickedOnItem(int itemId, bool a2) {
 
 bool SceneScriptBB11::ClickedOnExit(int exitId) {
 	if (exitId == 0) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 43.39f, -10.27f, -68.52f, 0, true, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 43.39f, -10.27f, -68.52f, 0, true, false, false)) {
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
 			Game_Flag_Set(kFlagBB11toBB10);
@@ -97,6 +101,17 @@ bool SceneScriptBB11::ClickedOnExit(int exitId) {
 }
 
 bool SceneScriptBB11::ClickedOn2DRegion(int region) {
+	if (_vm->_cutContent) {
+		if (!Game_Flag_Query(kFlagMcCoyCommentsOnFans) && (region == 0 || region == 1) ) {
+			Game_Flag_Set(kFlagMcCoyCommentsOnFans);
+			Actor_Face_Heading(kActorMcCoy, 550, false);
+			Actor_Voice_Over(3740, kActorVoiceOver);
+			Actor_Voice_Over(3750, kActorVoiceOver);
+			Scene_2D_Region_Remove(0);
+			Scene_2D_Region_Remove(1);
+			return true;
+		}
+	}
 	return false;
 }
 
@@ -108,7 +123,7 @@ void SceneScriptBB11::SceneFrameAdvanced(int frame) {
 		Game_Flag_Set(kFlagBB11SadikPunchedMcCoy);
 	} else {
 		if (frame == 1) {
-			Sound_Play(74, 10, -100, 100, 50);
+			Sound_Play(kSfxSWEEP4, 10, -100, 100, 50);
 		}
 	}
 }
@@ -122,7 +137,7 @@ void SceneScriptBB11::PlayerWalkedIn() {
 	) {
 		Actor_Set_Invisible(kActorMcCoy, true);
 		Actor_Set_Goal_Number(kActorSadik, kGoalSadikBB11ThrowMcCoy);
-		Music_Play(11, 61, 0, 1, -1, 0, 0);
+		Music_Play(kMusicBeating1, 61, 0, 1, -1, 0, 0);
 		Player_Loses_Control();
 	}
 }

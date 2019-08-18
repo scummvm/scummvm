@@ -34,25 +34,25 @@ void SceneScriptUG02::InitializeScene() {
 	Scene_Exit_Add_2D_Exit(0, 529, 130, 607, 277, 0);
 	Scene_Exit_Add_2D_Exit(1, 305,  36, 335, 192, 0);
 
-	Ambient_Sounds_Add_Looping_Sound(332, 43, 0, 1);
-	Ambient_Sounds_Add_Looping_Sound(333, 43, 0, 1);
-	Ambient_Sounds_Add_Sound(303, 5, 50, 17, 37, 100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(304, 5, 50, 17, 37, 100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(123, 2, 50, 17, 37, -50, -20, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(130, 2, 50, 17, 37, -50, -20, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(131, 2, 50, 17, 37, -50, -20, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(132, 2, 50, 17, 37, -50, -20, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(133, 2, 50, 17, 37, -50, -20, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(134, 2, 50, 17, 37, -50, -20, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(135, 2, 50, 17, 37, -50, -20, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(136, 2, 50, 17, 37, -50, -20, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound( 47, 2, 50, 27, 27,  10,  30, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound( 48, 2, 50, 27, 27,  10,  30, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound( 49, 2, 50, 27, 27,  10,  30, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound( 50, 2, 50, 27, 27,  10,  30, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound( 51, 2, 50, 27, 27,  10,  30, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound( 52, 2, 50, 27, 27,  10,  30, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound( 53, 2, 50, 27, 27,  10,  30, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Looping_Sound(kSfxUGBED1, 43, 0, 1);
+	Ambient_Sounds_Add_Looping_Sound(kSfxUGBED2, 43, 0, 1);
+	Ambient_Sounds_Add_Sound(kSfxBBGRN1,   5, 50, 17, 37, 100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxBBGRN2,   5, 50, 17, 37, 100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxSPNBEEP9, 2, 50, 17, 37, -50, -20, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxSPNBEEP2, 2, 50, 17, 37, -50, -20, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxSPNBEEP3, 2, 50, 17, 37, -50, -20, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxSPNBEEP4, 2, 50, 17, 37, -50, -20, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxSPNBEEP5, 2, 50, 17, 37, -50, -20, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxSPNBEEP6, 2, 50, 17, 37, -50, -20, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxSPNBEEP7, 2, 50, 17, 37, -50, -20, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxSPNBEEP8, 2, 50, 17, 37, -50, -20, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxSCANNER1, 2, 50, 27, 27,  10,  30, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxSCANNER2, 2, 50, 27, 27,  10,  30, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxSCANNER3, 2, 50, 27, 27,  10,  30, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxSCANNER4, 2, 50, 27, 27,  10,  30, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxSCANNER5, 2, 50, 27, 27,  10,  30, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxSCANNER6, 2, 50, 27, 27,  10,  30, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxSCANNER7, 2, 50, 27, 27,  10,  30, -101, -101, 0, 0);
 }
 
 void SceneScriptUG02::SceneLoaded() {
@@ -73,7 +73,7 @@ void SceneScriptUG02::SceneLoaded() {
 	if (!Game_Flag_Query(kFlagUG02RagiationGooglesTaken)
 	  && Game_Flag_Query(kFlagIzoIsReplicant)
 	) {
-		Item_Add_To_World(kItemRadiationGoogles, 963, kSetUG02, -300.37f, 120.16f, -81.31f, 0, 8, 8, false, true, false, true);
+		Item_Add_To_World(kItemRadiationGoogles, kModelAnimationRadiationGoggles, kSetUG02, -300.37f, 120.16f, -81.31f, 0, 8, 8, false, true, false, true);
 	}
 }
 
@@ -130,9 +130,16 @@ bool SceneScriptUG02::ClickedOn3DObject(const char *objectName, bool a2) {
 			} else if (!Actor_Clue_Query(kActorMcCoy, kClueWeaponsCache)) {
 				Actor_Voice_Over(2510, kActorVoiceOver);
 				Actor_Voice_Over(2520, kActorVoiceOver);
-				Actor_Voice_Over(2530, kActorVoiceOver);
+#if BLADERUNNER_ORIGINAL_BUGS
+				Actor_Voice_Over(2530, kActorVoiceOver); // But there was no way to tell what was missing without Izo standing there checking his inventory.
+#else
+				// This voice over says that Izo is there in Chapter 4 checking out his weapon's cache
+				// This does not happen in the original game (Izo being there) although this case can be triggered
+				// TODO Restore this quote ONLY IF we restore the related cut-content so that Izo may appear here in Chapter 4.
+				//Actor_Voice_Over(2530, kActorVoiceOver); // But there was no way to tell what was missing without Izo standing there checking his inventory.
+#endif // BLADERUNNER_ORIGINAL_BUGS
 			} else if (!Game_Flag_Query(kFlagUG02AmmoTaken)) {
-				Item_Pickup_Spin_Effect(996, 360, 440);
+				Item_Pickup_Spin_Effect(kModelAnimationAmmoType02, 360, 440);
 				Actor_Says(kActorMcCoy, 8525, 14);
 				Give_McCoy_Ammo(2, 18);
 				Game_Flag_Set(kFlagUG02AmmoTaken);
@@ -157,7 +164,7 @@ bool SceneScriptUG02::ClickedOnItem(int itemId, bool a2) {
 		Actor_Clue_Acquire(kActorMcCoy, kClueRadiationGoggles, true, -1);
 		Game_Flag_Set(kFlagUG02RagiationGooglesTaken);
 		Item_Remove_From_World(kItemRadiationGoogles);
-		Item_Pickup_Spin_Effect(963, 426, 316);
+		Item_Pickup_Spin_Effect(kModelAnimationRadiationGoggles, 426, 316);
 		return true;
 	}
 	return false;
@@ -168,13 +175,13 @@ bool SceneScriptUG02::ClickedOnExit(int exitId) {
 		if ( Game_Flag_Query(kFlagUG02FromUG01)
 		 || !walkToCenter()
 		) {
-			if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -202.0f, 120.16f, -74.0f, 0, 1, Player_Query_Combat_Mode(), 0)) {
+			if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -202.0f, 120.16f, -74.0f, 0, true, Player_Query_Combat_Mode(), false)) {
 				Actor_Face_Heading(kActorMcCoy, 270, false);
 				Footstep_Sound_Override_On(2);
 				Loop_Actor_Travel_Stairs(kActorMcCoy, 4, false, kAnimationModeIdle);
 				Footstep_Sound_Override_Off();
-				Loop_Actor_Walk_To_XYZ(kActorMcCoy, -96.57f, 74.87f, -271.28f, 0, false, Player_Query_Combat_Mode(), 0);
-				Loop_Actor_Walk_To_XYZ(kActorMcCoy, -95.0f, 74.87f, -503.0f, 0, false, Player_Query_Combat_Mode(), 0);
+				Loop_Actor_Walk_To_XYZ(kActorMcCoy, -96.57f, 74.87f, -271.28f, 0, false, Player_Query_Combat_Mode(), false);
+				Loop_Actor_Walk_To_XYZ(kActorMcCoy, -95.0f, 74.87f, -503.0f, 0, false, Player_Query_Combat_Mode(), false);
 				Game_Flag_Set(kFlagUG02toUG01);
 				Set_Enter(kSetUG01, kSceneUG01);
 			}
@@ -187,10 +194,10 @@ bool SceneScriptUG02::ClickedOnExit(int exitId) {
 			if (walkToCenter()) {
 				return true;
 			}
-			Loop_Actor_Walk_To_XYZ(kActorMcCoy, -368.75f, 155.75f,  -63.0f, 0, false, false, 0);
-			Loop_Actor_Walk_To_XYZ(kActorMcCoy, -340.75f, 155.75f, -119.0f, 0, false, false, 0);
+			Loop_Actor_Walk_To_XYZ(kActorMcCoy, -368.75f, 155.75f,  -63.0f, 0, false, false, false);
+			Loop_Actor_Walk_To_XYZ(kActorMcCoy, -340.75f, 155.75f, -119.0f, 0, false, false, false);
 		}
-		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -304.75f, 155.75f, -171.0f, 0, false, false, 0);
+		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -304.75f, 155.75f, -171.0f, 0, false, false, false);
 		Actor_Face_Heading(kActorMcCoy, 14, false);
 		Loop_Actor_Travel_Ladder(kActorMcCoy, 9, true, kAnimationModeIdle);
 		Game_Flag_Set(kFlagUG02toHC03);
@@ -221,7 +228,7 @@ void SceneScriptUG02::ActorChangedGoal(int actorId, int newGoal, int oldGoal, bo
 void SceneScriptUG02::PlayerWalkedIn() {
 	if (Game_Flag_Query(kFlagUG01toUG02)) {
 		Actor_Set_At_XYZ(kActorMcCoy, -106.01f, 84.13f, -228.62f, 575);
-		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -148.0f, 84.13f, -67.0f, 0, false, false, 0);
+		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -148.0f, 84.13f, -67.0f, 0, false, false, false);
 		Actor_Face_Heading(kActorMcCoy, 761, false);
 		Footstep_Sound_Override_On(2);
 		Loop_Actor_Travel_Stairs(kActorMcCoy, 4, true, kAnimationModeIdle);
@@ -230,7 +237,7 @@ void SceneScriptUG02::PlayerWalkedIn() {
 		Game_Flag_Set(kFlagUG02FromUG01);
 	} else if (Game_Flag_Query(kFlagHC03toUG02)) {
 		Actor_Set_At_XYZ(kActorMcCoy, -304.75f, 265.0f, -171.0f, 0);
-		Loop_Actor_Travel_Ladder(kActorMcCoy, 9, false, 0);
+		Loop_Actor_Travel_Ladder(kActorMcCoy, 9, false, kAnimationModeIdle);
 		Game_Flag_Reset(kFlagHC03toUG02);
 		Game_Flag_Reset(kFlagUG02FromUG01);
 	} else {
@@ -252,9 +259,9 @@ void SceneScriptUG02::DialogueQueueFlushed(int a1) {
 bool SceneScriptUG02::walkToCenter() {
 	if (!Game_Flag_Query(kFlagUG02FromUG01)) {
 		int combatMode = Player_Query_Combat_Mode();
-		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -340.75f, 155.75f, -119.0f, 0, 0, combatMode, 0);
-		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -368.75f, 155.75f,  -63.0f, 0, 0, combatMode, 0);
-		Loop_Actor_Walk_To_XYZ(kActorMcCoy,  -365.0f, 155.65f,  -19.0f, 0, 0, combatMode, 0);
+		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -340.75f, 155.75f, -119.0f, 0, false, combatMode, false);
+		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -368.75f, 155.75f,  -63.0f, 0, false, combatMode, false);
+		Loop_Actor_Walk_To_XYZ(kActorMcCoy,  -365.0f, 155.65f,  -19.0f, 0, false, combatMode, false);
 		Actor_Face_Heading(kActorMcCoy, 318, false);
 		Footstep_Sound_Override_On(2);
 		Loop_Actor_Travel_Stairs(kActorMcCoy, 4, false, kAnimationModeIdle);
@@ -263,7 +270,7 @@ bool SceneScriptUG02::walkToCenter() {
 		return false;
 	}
 
-	if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -312.75f, 120.16f, 1.01f, 0, true, false, 0)) {
+	if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -312.75f, 120.16f, 1.01f, 0, true, false, false)) {
 		Actor_Face_Heading(kActorMcCoy, 830, false);
 		Footstep_Sound_Override_On(2);
 		Loop_Actor_Travel_Stairs(kActorMcCoy, 4, true, kAnimationModeIdle);

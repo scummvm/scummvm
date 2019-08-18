@@ -218,7 +218,11 @@ reg_t disassemble(EngineState *s, reg_t pos, const Object *obj, bool printBWTag,
 					if (obj != nullptr) {
 						const Object *const super = obj->getClass(s->_segMan);
 						assert(super);
-						selectorName = kernel->getSelectorName(super->getVarSelector(param_value / 2)).c_str();
+						if (param_value / 2 < super->getVarCount()) {
+							selectorName = kernel->getSelectorName(super->getVarSelector(param_value / 2)).c_str();
+						} else {
+							selectorName = "<invalid>";
+						}
 					} else {
 						selectorName = "<unavailable>";
 					}
@@ -365,6 +369,8 @@ reg_t disassemble(EngineState *s, reg_t pos, const Object *obj, bool printBWTag,
 						break;
 					case kSelectorNone:
 						debugN("INVALID");
+						break;
+					default:
 						break;
 					}
 				}
@@ -934,6 +940,8 @@ void debugSelectorCall(reg_t send_obj, Selector selector, int argc, StackPtr arg
 				}
 			}
 		break;
+	default:
+		break;
 	}	// switch
 }
 
@@ -1035,7 +1043,7 @@ void logKernelCall(const KernelFunction *kernelCall, const KernelSubFunction *ke
 						// TODO: Any other segment types which could
 						// use special handling?
 
-						if (kernelCall->function == kSaid) {
+						if (kernelCall->function == &kSaid) {
 							SegmentRef saidSpec = s->_segMan->dereference(argv[parmNr]);
 							if (saidSpec.isRaw) {
 								debugN(" ('");
@@ -1081,7 +1089,8 @@ void logBacktrace() {
 		switch (call.type) {
 		case EXEC_STACK_TYPE_CALL: // Normal function
 			if (call.type == EXEC_STACK_TYPE_CALL)
-			con->debugPrintf(" %x: script %d - ", i, s->_segMan->getScript(call.addr.pc.getSegment())->getScriptNumber());
+				con->debugPrintf(" %x: script %d - ", i, s->_segMan->getScript(call.addr.pc.getSegment())->getScriptNumber());
+			
 			if (call.debugSelector != -1) {
 				con->debugPrintf("%s::%s(", objname, g_sci->getKernel()->getSelectorName(call.debugSelector).c_str());
 			} else if (call.debugExportId != -1) {

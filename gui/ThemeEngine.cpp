@@ -61,10 +61,6 @@ const char *const ThemeEngine::kImageStopSmallButton = "stopbtn_small.bmp";
 const char *const ThemeEngine::kImageEditSmallButton = "editbtn_small.bmp";
 const char *const ThemeEngine::kImageSwitchModeSmallButton = "switchbtn_small.bmp";
 const char *const ThemeEngine::kImageFastReplaySmallButton = "fastreplay_small.bmp";
-const char *const ThemeEngine::kImageDropboxLogo = "dropbox.bmp";
-const char *const ThemeEngine::kImageOneDriveLogo = "onedrive.bmp";
-const char *const ThemeEngine::kImageGoogleDriveLogo = "googledrive.bmp";
-const char *const ThemeEngine::kImageBoxLogo = "box.bmp";
 
 struct TextDrawData {
 	const Graphics::Font *_fontPtr;
@@ -526,17 +522,25 @@ bool ThemeEngine::addFont(TextData textId, const Common::String &file, const Com
 		_texts[textId]->_fontPtr = loadFont(localized, scalableFile, charset, pointsize, textId == kTextDataDefault);
 
 		if (!_texts[textId]->_fontPtr) {
+			warning("Failed to load localized font '%s'", localized.c_str());
 			// Try standard fonts
 			_texts[textId]->_fontPtr = loadFont(file, scalableFile, Common::String(), pointsize, textId == kTextDataDefault);
 
-			if (!_texts[textId]->_fontPtr)
+			if (!_texts[textId]->_fontPtr) {
 				error("Couldn't load font '%s'/'%s'", file.c_str(), scalableFile.c_str());
-
+#ifdef USE_TRANSLATION
+				TransMan.setLanguage("C");
+#endif
+				return false; // fall-back attempt failed
+			}
+			// Success in fall-back attempt to standard (non-localized) font.
+			// However, still returns false here, probably to avoid ugly / garbage glyphs side-effects
+			// FIXME If we return false anyway why would we attempt the fall-back in the first place?
 #ifdef USE_TRANSLATION
 			TransMan.setLanguage("C");
 #endif
-			warning("Failed to load localized font '%s'.", localized.c_str());
-
+			// Returning true here, would allow falling back to standard fonts for the missing ones,
+			// but that leads to "garbage" glyphs being displayed on screen for non-Latin languages
 			return false;
 		}
 	}
@@ -1026,7 +1030,7 @@ void ThemeEngine::drawScrollbar(const Common::Rect &r, int sliderY, int sliderHe
 	drawDD(kDDScrollbarBase, r);
 
 	Common::Rect r2 = r;
-	const int buttonExtra = (r.width() * 120) / 100;
+	const int buttonExtra = r.width() + 1; // scrollbar.cpp's UP_DOWN_BOX_HEIGHT
 
 	r2.bottom = r2.top + buttonExtra;
 	drawDD(scrollState == kScrollbarStateUp ? kDDScrollbarButtonHover : kDDScrollbarButtonIdle, r2,
@@ -1793,7 +1797,7 @@ void ThemeEngine::listUsableThemes(const Common::FSNode &node, Common::List<Them
 
 Common::String ThemeEngine::getThemeFile(const Common::String &id) {
 	// FIXME: Actually "default" rather sounds like it should use
-	// our default theme which would mean "scummmodern" instead
+	// our default theme which would mean "scummremastered" instead
 	// of the builtin one.
 	if (id.equalsIgnoreCase("default"))
 		return Common::String();

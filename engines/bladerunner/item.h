@@ -66,6 +66,7 @@ public:
 	void getXYZ(float *x, float *y, float *z) const;
 	void setXYZ(Vector3 position);
 	void getWidthHeight(int *width, int *height) const;
+	void getAnimationId(int *animationId) const;
 
 	const BoundingBox &getBoundingBox() { return _boundingBox; }
 	const Common::Rect &getScreenRectangle() { return _screenRectangle; }

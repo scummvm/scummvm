@@ -418,8 +418,9 @@ int Character::statColor(int amount, int threshold) {
 
 int Character::statBonus(uint statValue) const {
 	int idx;
-	for (idx = 0; Res.STAT_VALUES[idx] <= (int)statValue; ++idx)
-		;
+	for (idx = 0; idx < ARRAYSIZE(Res.STAT_VALUES) - 1; ++idx)
+		if (Res.STAT_VALUES[idx] > (int)statValue)
+			break;
 
 	return Res.STAT_BONUSES[idx];
 }
@@ -1169,7 +1170,8 @@ ItemCategory Character::makeItem(int p1, int itemIndex, int p3) {
 			break;
 
 		case 4:
-			miscCharges = vm->getRandomNumber(Res.MAKE_ITEM_ARR5[p1][0], Res.MAKE_ITEM_ARR5[p1][1]);
+			miscId = vm->getRandomNumber(Res.MAKE_ITEM_ARR5[p1][0], Res.MAKE_ITEM_ARR5[p1][1]);
+			miscCharges = vm->getRandomNumber(1, 8);
 			break;
 
 		default:

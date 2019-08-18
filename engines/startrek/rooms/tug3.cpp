@@ -54,7 +54,7 @@ void Room::tug3Tick40() {
 }
 
 void Room::tug3LookAnywhere() {
-	showText(TX_TUG3N007);
+	showDescription(TX_TUG3N007);
 }
 
 void Room::tug3ElasiSurrendered() {
@@ -231,7 +231,7 @@ void Room::tug3TalkToElasi1() {
 		TX_TUG3_002,
 		TX_BLANK
 	};
-	int choice = showText(choices);
+	int choice = showMultipleTexts(choices);
 
 	switch (choice) {
 	case 0: // They surrender
@@ -290,15 +290,15 @@ void Room::tug3Elasi1ShotConsoleAndSurrenders() {
 }
 
 void Room::tug3LookAtMccoy() {
-	showText(TX_TUG3N000);
+	showDescription(TX_TUG3N000);
 }
 
 void Room::tug3LookAtSpock() {
-	showText(TX_TUG3N002);
+	showDescription(TX_TUG3N002);
 }
 
 void Room::tug3LookAtRedshirt() {
-	showText(TX_TUG3N001);
+	showDescription(TX_TUG3N001);
 }
 
 void Room::tug3LookAtElasi1() {
@@ -309,32 +309,32 @@ void Room::tug3LookAtElasi1() {
 	// instead of just checking if he's stunned.
 
 	if (_awayMission->tug.bridgeElasi1Status == GUARDSTAT_STUNNED || _awayMission->tug.bridgeElasi1Status == GUARDSTAT_DEAD)
-		showText(TX_TUG3N003);
+		showDescription(TX_TUG3N003);
 	else
-		showText(TX_TUG3N008);
+		showDescription(TX_TUG3N008);
 }
 
 void Room::tug3LookAtElasi2() {
 	// BUGFIX: also check if stunned. They can't "glare at the crewmembers" if they're
 	// unconscious. (applies to below functions too.)
 	if (_awayMission->tug.bridgeElasi2Status == GUARDSTAT_DEAD || _awayMission->tug.bridgeElasi2Status == GUARDSTAT_STUNNED)
-		showText(TX_TUG3N004);
+		showDescription(TX_TUG3N004);
 	else
-		showText(TX_TUG3N005);
+		showDescription(TX_TUG3N005);
 }
 
 void Room::tug3LookAtElasi3() {
 	if (_awayMission->tug.bridgeElasi3Status == GUARDSTAT_DEAD || _awayMission->tug.bridgeElasi2Status == GUARDSTAT_STUNNED)
-		showText(TX_TUG3N004);
+		showDescription(TX_TUG3N004);
 	else
-		showText(TX_TUG3N005);
+		showDescription(TX_TUG3N005);
 }
 
 void Room::tug3LookAtElasi4() {
 	if (_awayMission->tug.bridgeElasi4Status == GUARDSTAT_DEAD || _awayMission->tug.bridgeElasi2Status == GUARDSTAT_STUNNED)
-		showText(TX_TUG3N004);
+		showDescription(TX_TUG3N004);
 	else
-		showText(TX_TUG3N005);
+		showDescription(TX_TUG3N005);
 }
 
 void Room::tug3TalkToMccoy() {
@@ -462,7 +462,7 @@ void Room::tug3Timer1Expired() {
 		_awayMission->timers[1] = 100;
 		_awayMission->tug.orbitalDecayCounter++;
 	} else { // Game over
-		showText(TX_TUG3N006);
+		showDescription(TX_TUG3N006);
 		showGameOverMenu();
 	}
 }

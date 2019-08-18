@@ -30,6 +30,7 @@
 #include "common/endian.h"
 #include "common/stream.h"
 #include "common/textconsole.h"
+#include "common/util.h"
 #include "graphics/pixelformat.h"
 
 #ifdef USE_JPEG
@@ -44,11 +45,22 @@ extern "C" {
 
 namespace Image {
 
-JPEGDecoder::JPEGDecoder() : _surface(), _colorSpace(kColorSpaceRGBA) {
+JPEGDecoder::JPEGDecoder() :
+		_surface(),
+		_colorSpace(kColorSpaceRGB),
+		_requestedPixelFormat(getByteOrderRgbPixelFormat()) {
 }
 
 JPEGDecoder::~JPEGDecoder() {
 	destroy();
+}
+
+Graphics::PixelFormat JPEGDecoder::getByteOrderRgbPixelFormat() const {
+#ifdef SCUMM_BIG_ENDIAN
+	return Graphics::PixelFormat(3, 8, 8, 8, 0, 16, 8, 0, 0);
+#else
+	return Graphics::PixelFormat(3, 8, 8, 8, 0, 0, 8, 16, 0);
+#endif
 }
 
 const Graphics::Surface *JPEGDecoder::getSurface() const {
@@ -171,6 +183,48 @@ void outputMessage(j_common_ptr cinfo) {
 	debug(3, "libjpeg: %s", buffer);
 }
 
+J_COLOR_SPACE fromScummvmPixelFormat(const Graphics::PixelFormat &format) {
+#if defined(JCS_EXTENSIONS) || defined(JCS_ALPHA_EXTENSIONS)
+	struct PixelFormatMapping {
+		Graphics::PixelFormat pixelFormat;
+		J_COLOR_SPACE bigEndianColorSpace;
+		J_COLOR_SPACE littleEndianColorSpace;
+	};
+
+	static const PixelFormatMapping mappings[] = {
+#ifdef JCS_EXTENSIONS
+		{ Graphics::PixelFormat(4, 8, 8, 8, 0, 24, 16,  8,  0), JCS_EXT_RGBX, JCS_EXT_XBGR },
+		{ Graphics::PixelFormat(4, 8, 8, 8, 0,  0,  8, 16, 24), JCS_EXT_XBGR, JCS_EXT_RGBX },
+		{ Graphics::PixelFormat(4, 8, 8, 8, 0, 16,  8,  0, 24), JCS_EXT_XRGB, JCS_EXT_BGRX },
+		{ Graphics::PixelFormat(4, 8, 8, 8, 0,  8, 16, 24,  0), JCS_EXT_BGRX, JCS_EXT_XRGB },
+		{ Graphics::PixelFormat(3, 8, 8, 8, 0, 16,  8,  0,  0), JCS_EXT_RGB,  JCS_EXT_BGR  },
+		{ Graphics::PixelFormat(3, 8, 8, 8, 0,  0,  8, 16,  0), JCS_EXT_BGR,  JCS_EXT_RGB  }
+#endif
+#if defined(JCS_EXTENSIONS) && defined(JCS_ALPHA_EXTENSIONS)
+		,
+#endif
+#ifdef JCS_ALPHA_EXTENSIONS
+		{ Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16,  8,  0), JCS_EXT_RGBA, JCS_EXT_ABGR },
+		{ Graphics::PixelFormat(4, 8, 8, 8, 8,  0,  8, 16, 24), JCS_EXT_ABGR, JCS_EXT_RGBA },
+		{ Graphics::PixelFormat(4, 8, 8, 8, 8, 16,  8,  0, 24), JCS_EXT_ARGB, JCS_EXT_BGRA },
+		{ Graphics::PixelFormat(4, 8, 8, 8, 8,  8, 16, 24,  0), JCS_EXT_BGRA, JCS_EXT_ARGB }
+#endif
+	};
+
+	for (uint i = 0; i < ARRAYSIZE(mappings); i++) {
+		if (mappings[i].pixelFormat == format) {
+#ifdef SCUMM_BIG_ENDIAN
+			return mappings[i].bigEndianColorSpace;
+#else
+			return mappings[i].littleEndianColorSpace;
+#endif
+		}
+	}
+#endif
+
+	return JCS_UNKNOWN;
+}
+
 } // End of anonymous namespace
 #endif
 
@@ -198,10 +252,19 @@ bool JPEGDecoder::loadStream(Common::SeekableReadStream &stream) {
 
 	// We can request YUV output because Groovie requires it
 	switch (_colorSpace) {
-	case kColorSpaceRGBA:
-		cinfo.out_color_space = JCS_RGB;
-		break;
+	case kColorSpaceRGB: {
+		J_COLOR_SPACE colorSpace = fromScummvmPixelFormat(_requestedPixelFormat);
 
+		if (colorSpace == JCS_UNKNOWN) {
+			// When libjpeg-turbo is not available or an unhandled pixel
+			// format was requested, ask libjpeg to decode to byte order RGB
+			// as it's always available.
+			colorSpace = JCS_RGB;
+		}
+
+		cinfo.out_color_space = colorSpace;
+		break;
+	}
 	case kColorSpaceYUV:
 		cinfo.out_color_space = JCS_YCbCr;
 		break;
@@ -212,11 +275,16 @@ bool JPEGDecoder::loadStream(Common::SeekableReadStream &stream) {
 
 	// Allocate buffers for the output data
 	switch (_colorSpace) {
-	case kColorSpaceRGBA:
-		// We use RGBA8888 in this scenario
-		_surface.create(cinfo.output_width, cinfo.output_height, Graphics::PixelFormat(4, 8, 8, 8, 0, 24, 16, 8, 0));
+	case kColorSpaceRGB: {
+		Graphics::PixelFormat outputPixelFormat;
+		if (cinfo.out_color_space == JCS_RGB) {
+			outputPixelFormat = getByteOrderRgbPixelFormat();
+		} else {
+			outputPixelFormat = _requestedPixelFormat;
+		}
+		_surface.create(cinfo.output_width, cinfo.output_height, outputPixelFormat);
 		break;
-
+	}
 	case kColorSpaceYUV:
 		// We use YUV with 3 bytes per pixel otherwise.
 		// This is pretty ugly since our PixelFormat cannot express YUV...
@@ -225,8 +293,7 @@ bool JPEGDecoder::loadStream(Common::SeekableReadStream &stream) {
 	}
 
 	// Allocate buffer for one scanline
-	assert(cinfo.output_components == 3);
-	JDIMENSION pitch = cinfo.output_width * cinfo.output_components;
+	JDIMENSION pitch = cinfo.output_width * _surface.format.bytesPerPixel;
 	assert(_surface.pitch >= pitch);
 	JSAMPARRAY buffer = (*cinfo.mem->alloc_sarray)((j_common_ptr)&cinfo, JPOOL_IMAGE, pitch, 1);
 
@@ -236,37 +303,16 @@ bool JPEGDecoder::loadStream(Common::SeekableReadStream &stream) {
 
 		jpeg_read_scanlines(&cinfo, buffer, 1);
 
-		const byte *src = buffer[0];
-		switch (_colorSpace) {
-		case kColorSpaceRGBA: {
-			for (int remaining = cinfo.output_width; remaining > 0; --remaining) {
-				byte r = *src++;
-				byte g = *src++;
-				byte b = *src++;
-				// We need to insert a alpha value of 255 (opaque) here.
-#ifdef SCUMM_BIG_ENDIAN
-				*dst++ = r;
-				*dst++ = g;
-				*dst++ = b;
-				*dst++ = 0xFF;
-#else
-				*dst++ = 0xFF;
-				*dst++ = b;
-				*dst++ = g;
-				*dst++ = r;
-#endif
-			}
-			} break;
-
-		case kColorSpaceYUV:
-			memcpy(dst, src, pitch);
-			break;
-		}
+		memcpy(dst, buffer[0], pitch);
 	}
 
 	// We are done with decompressing, thus free all the data
 	jpeg_finish_decompress(&cinfo);
 	jpeg_destroy_decompress(&cinfo);
+
+	if (_colorSpace == kColorSpaceRGB && _surface.format != _requestedPixelFormat) {
+		_surface.convertToInPlace(_requestedPixelFormat); // Slow path
+	}
 
 	return true;
 #else

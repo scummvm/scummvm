@@ -13,7 +13,7 @@ Summary		: ScummVM-related tools
 Group		: Interpreters
 License		: GPL
 
-Url             : http://www.scummvm.org
+Url             : https://www.scummvm.org
 
 Source		: %{name}-%{version}.tar.xz
 BuildRoot	: %{_tmppath}/%{name}-%{version}-root

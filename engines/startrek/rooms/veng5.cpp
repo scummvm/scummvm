@@ -78,6 +78,11 @@ extern const RoomAction veng5ActionList[] = {
 	{ {ACTION_DONE_ANIM, 7,           0, 0}, &Room::veng5PickedUpPowerPack },
 
 	// Common code
+	{ {ACTION_TICK, 0xff, 0xff, 0xff}, &Room::vengaTick },
+	{ {ACTION_USE, OBJECT_IPHASERS, 0xff,     0}, &Room::vengaUsePhaserAnywhere },
+	{ {ACTION_USE, OBJECT_IPHASERK, 0xff,     0}, &Room::vengaUsePhaserAnywhere },
+	{ {ACTION_LOOK, OBJECT_IHYPO,          0, 0}, &Room::vengaLookAtHypo },
+	{ {ACTION_USE, OBJECT_ICOMM, OBJECT_KIRK, 0}, &Room::vengaUseCommunicator },
 	{ {ACTION_USE, OBJECT_IMEDKIT,  OBJECT_DEAD_GUY, 0}, &Room::vengaUseMccoyOnDeadGuy },
 	{ {ACTION_USE, OBJECT_IMTRICOR, OBJECT_DEAD_GUY, 0}, &Room::vengaUseMccoyOnDeadGuy },
 	{ {ACTION_USE, OBJECT_MCCOY,    OBJECT_DEAD_GUY, 0}, &Room::vengaUseMccoyOnDeadGuy },
@@ -125,43 +130,43 @@ void Room::veng5TouchedTurboliftDoor() {
 }
 
 void Room::veng5LookAtDoor() {
-	showText(TX_VEN5N007);
+	showDescription(TX_VEN5N007);
 }
 
 void Room::veng5LookAtLadder() {
-	showText(TX_VEN5N008);
+	showDescription(TX_VEN5N008);
 }
 
 void Room::veng5LookAtDeadGuy() {
-	showText(TX_VEN5N000);
+	showDescription(TX_VEN5N000);
 }
 
 void Room::veng5LookAtPowerPack() {
-	showText(TX_VEN5N009);
+	showDescription(TX_VEN5N009);
 }
 
 void Room::veng5LookAtDebris() {
-	showText(TX_VEN5N001);
+	showDescription(TX_VEN5N001);
 }
 
 void Room::veng5LookAtKirk() {
-	showText(TX_VEN5N003);
+	showDescription(TX_VEN5N003);
 }
 
 void Room::veng5LookAtSpock() {
-	showText(TX_VEN5N002);
+	showDescription(TX_VEN5N002);
 }
 
 void Room::veng5LookAtMccoy() {
-	showText(TX_VEN5N004);
+	showDescription(TX_VEN5N004);
 }
 
 void Room::veng5LookAtRedshirt() {
-	showText(TX_VEN5N005);
+	showDescription(TX_VEN5N005);
 }
 
 void Room::veng5LookAnywhere() {
-	showText(TX_VEN5N006);
+	showDescription(TX_VEN5N006);
 }
 
 void Room::veng5UsePhaserOnPowerPack() {
@@ -254,7 +259,7 @@ void Room::veng5ReachedPowerPack() {
 void Room::veng5PickedUpPowerPack() {
 	if (!_awayMission->veng.havePowerPack) {
 		loadActorStandAnim(OBJECT_POWER_PACK);
-		showText(TX_VEN5N010);
+		showDescription(TX_VEN5N010);
 		_awayMission->veng.havePowerPack = true;
 		giveItem(OBJECT_IFUSION);
 	}

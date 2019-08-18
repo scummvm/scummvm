@@ -21,6 +21,10 @@
  */
 
 #include "bladerunner/script/scene_script.h"
+#if BLADERUNNER_ORIGINAL_BUGS
+#else
+#include "bladerunner/items.h"
+#endif // BLADERUNNER_ORIGINAL_BUGS
 
 namespace BladeRunner {
 
@@ -178,7 +182,10 @@ bool SceneScript::mouseClick(int x, int y) {
 	_inScriptCounter++;
 	_mouseX = x;
 	_mouseY = y;
-	bool result = _currentScript->MouseClick(x, y);
+	bool result = false;
+	if (_currentScript != nullptr) {
+		result = _currentScript->MouseClick(x, y);
+	}
 	_vm->_runningActorId = -1;
 	_inScriptCounter--;
 	_mouseX = -1;
@@ -214,6 +221,13 @@ bool SceneScript::clickedOnItem(int itemId, bool combatMode) {
 	if (_inScriptCounter > 0) {
 		return true;
 	}
+#if BLADERUNNER_ORIGINAL_BUGS
+#else
+	if (combatMode
+	     && (!_vm->_items->isTarget(itemId) )) { // bugfix for overlapping items, "shooting" the wrong one (untargetable) because the correct one is near enough
+		return true;
+	}
+#endif // BLADERUNNER_ORIGINAL_BUGS
 
 	_inScriptCounter++;
 	bool result = _currentScript->ClickedOnItem(itemId, combatMode);
@@ -254,7 +268,7 @@ void SceneScript::sceneFrameAdvanced(int frame) {
 
 void SceneScript::actorChangedGoal(int actorId, int newGoal, int oldGoal, bool currentSet) {
 	_inScriptCounter++;
-	if(_currentScript)
+	if (_currentScript)
 		_currentScript->ActorChangedGoal(actorId, newGoal, oldGoal, currentSet);
 	_inScriptCounter--;
 }

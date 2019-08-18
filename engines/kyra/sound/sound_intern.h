@@ -24,17 +24,17 @@
 #define KYRA_SOUND_INTERN_H
 
 
-
 #include "kyra/sound/sound.h"
 #include "kyra/sound/sound_adlib.h"
 
+#include "audio/midiparser.h"
+#include "audio/softsynth/emumidi.h"
+#include "audio/softsynth/fmtowns_pc98/towns_audio.h"
+
 #include "common/mutex.h"
 
-#include "audio/softsynth/fmtowns_pc98/towns_pc98_driver.h"
-#include "audio/softsynth/fmtowns_pc98/towns_euphony.h"
-
-#include "audio/softsynth/emumidi.h"
-#include "audio/midiparser.h"
+class EuphonyPlayer;
+class TownsPC98_AudioDriver;
 
 namespace Audio {
 class PCSpeaker;
@@ -110,10 +110,10 @@ private:
 	Common::Mutex _mutex;
 };
 
-class SoundTowns : public Sound {
+class SoundTowns_LoK : public Sound {
 public:
-	SoundTowns(KyraEngine_v1 *vm, Audio::Mixer *mixer);
-	virtual ~SoundTowns();
+	SoundTowns_LoK(KyraEngine_v1 *vm, Audio::Mixer *mixer);
+	virtual ~SoundTowns_LoK();
 
 	virtual kType getMusicType() const { return kTowns; }
 
@@ -164,10 +164,10 @@ private:
 	const uint8 *_sfxWDTable;
 };
 
-class SoundPC98 : public Sound {
+class SoundPC98_LoK : public Sound {
 public:
-	SoundPC98(KyraEngine_v1 *vm, Audio::Mixer *mixer);
-	virtual ~SoundPC98();
+	SoundPC98_LoK(KyraEngine_v1 *vm, Audio::Mixer *mixer);
+	virtual ~SoundPC98_LoK();
 
 	virtual kType getMusicType() const override { return kPC98; }
 
@@ -315,10 +315,10 @@ struct AmigaSfxTable {
 	uint8 pan;
 };
 
-class SoundAmiga : public Sound {
+class SoundAmiga_LoK : public Sound {
 public:
-	SoundAmiga(KyraEngine_v1 *vm, Audio::Mixer *mixer);
-	virtual ~SoundAmiga();
+	SoundAmiga_LoK(KyraEngine_v1 *vm, Audio::Mixer *mixer);
+	virtual ~SoundAmiga_LoK();
 
 	virtual kType getMusicType() const override { return kAmiga; } //FIXME
 
@@ -348,6 +348,8 @@ protected:
 	const AmigaSfxTable *_tableSfxGame;
 	int _tableSfxGame_Size;
 };
+
+#ifdef ENABLE_EOB
 
 class SoundTowns_Darkmoon : public Sound, public TownsAudioInterfacePluginDriver {
 public:
@@ -417,17 +419,18 @@ public:
 	void initAudioResourceInfo(int set, void *info);
 	void selectAudioResourceSet(int set);
 	bool hasSoundFile(uint file) const { return false; }
-	void loadSoundFile(uint file);
+	void loadSoundFile(uint) {}
 	void loadSoundFile(Common::String file);
+	void unloadSoundFile(Common::String file);
 	void playTrack(uint8 track);
 	void haltTrack();
 	void playSoundEffect(uint8 track, uint8 volume = 0xFF);
-	void beginFadeOut();
+	void beginFadeOut() { beginFadeOut(160); }
+	void beginFadeOut(int delay);
 	void updateVolumeSettings();
+	int checkTrigger();
 
 private:
-	void unloadLevelSounds();
-
 	uint8 *_fileBuffer;
 
 	KyraEngine_v1 *_vm;
@@ -436,13 +439,11 @@ private:
 	Common::String _lastSound;
 
 	int _currentResourceSet;
-	int _currentFile;
-
-	const char *const *_levelSoundList1;
-	const char *const *_levelSoundList2;
 
 	bool _ready;
 };
+
+#endif
 
 } // End of namespace Kyra
 

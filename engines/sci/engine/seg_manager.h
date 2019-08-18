@@ -98,10 +98,11 @@ public:
 	 * Determines the segment occupied by a certain script. Optionally
 	 * load it, or load & lock it.
 	 * @param[in] script_nr	Number of the script to look up
-	 * @param[in] load		flag determining whether to load/lock the script
-	 * @return				The script's segment ID, or 0 on failure
+	 * @param[in] load		           Flag determining whether to load/lock the script
+	 * @param[in] applyScriptPatches   Apply patches for the script, if available
+	 * @return				           The script's segment ID, or 0 on failure
 	 */
-	SegmentId getScriptSegment(int script_nr, ScriptLoadType load);
+	SegmentId getScriptSegment(int script_nr, ScriptLoadType load, bool applyScriptPatches = true);
 
 	/**
 	 * Makes sure that a script and its superclasses get loaded to the heap.
@@ -109,10 +110,11 @@ public:
 	 * increased. All scripts containing superclasses of this script are loaded
 	 * recursively as well, unless 'recursive' is set to zero. The
 	 * complementary function is "uninstantiateScript()" below.
-	 * @param[in] script_nr		The script number to load
-	 * @return					The script's segment ID or 0 if out of heap
+	 * @param[in] script_nr		       The script number to load
+	 * @param[in] applyScriptPatches   Apply patches for the script, if available
+	 * @return					       The script's segment ID or 0 if out of heap
 	 */
-	int instantiateScript(int script_nr);
+	int instantiateScript(int script_nr, bool applyScriptPatches = true);
 
 	/**
 	 * Decreases the numer of lockers of a script and unloads it if that number
@@ -128,7 +130,7 @@ private:
 
 public:
 	// TODO: document this
-	reg_t getClassAddress(int classnr, ScriptLoadType lock, uint16 callerSegment);
+	reg_t getClassAddress(int classnr, ScriptLoadType lock, uint16 callerSegment, bool applyScriptPatches = true);
 
 	/**
 	 * Return a pointer to the specified script.

@@ -39,10 +39,6 @@
 #define USE_SDL_DEBUG_FOCUSRECT
 #endif
 
-#if !defined(_WIN32_WCE) && !defined(__SYMBIAN32__)
-#define USE_OSD	1
-#endif
-
 enum {
 	GFX_NORMAL = 0,
 	GFX_DOUBLESIZE = 1,
@@ -74,7 +70,7 @@ public:
 /**
  * SDL graphics manager
  */
-class SurfaceSdlGraphicsManager : public SdlGraphicsManager, public Common::EventObserver {
+class SurfaceSdlGraphicsManager : public SdlGraphicsManager {
 public:
 	SurfaceSdlGraphicsManager(SdlEventSource *sdlEventSource, SdlWindow *window);
 	virtual ~SurfaceSdlGraphicsManager();
@@ -130,7 +126,6 @@ public:
 	virtual void unlockScreen() override;
 	virtual void fillScreen(uint32 col) override;
 	virtual void updateScreen() override;
-	virtual void setShakePos(int shakeOffset) override;
 	virtual void setFocusRectangle(const Common::Rect& rect) override;
 	virtual void clearFocusRectangle() override;
 
@@ -193,6 +188,7 @@ protected:
 	virtual void handleResizeImpl(const int width, const int height) override;
 
 	virtual int getGraphicsModeScale(int mode) const override;
+	virtual ScalerProc *getGraphicsScalerProc(int mode) const;
 
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 	/* SDL2 features a different API for 2D graphics. We create a wrapper
@@ -245,6 +241,20 @@ protected:
 #ifdef USE_RGB_COLOR
 		bool formatChanged;
 #endif
+
+		TransactionDetails() {
+			sizeChanged = false;
+			needHotswap = false;
+			needUpdatescreen = false;
+
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+			needTextureUpdate = false;
+			needDisplayResize = false;
+#endif
+#ifdef USE_RGB_COLOR
+			formatChanged = false;
+#endif
+		}
 	};
 	TransactionDetails _transactionDetails;
 
@@ -255,7 +265,7 @@ protected:
 		bool aspectRatioCorrection;
 		AspectRatio desiredAspectRatio;
 		bool filtering;
-		
+
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 		int stretchMode;
 #endif
@@ -269,6 +279,31 @@ protected:
 #ifdef USE_RGB_COLOR
 		Graphics::PixelFormat format;
 #endif
+
+		VideoState() {
+			setup = false;
+			fullscreen = false;
+			aspectRatioCorrection = false;
+			// desiredAspectRatio set to (0, 0) by AspectRatio constructor
+			filtering = false;
+
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+			stretchMode = 0;
+#endif
+
+			mode = 0;
+			scaleFactor = 0;
+
+			screenWidth = 0;
+			screenHeight = 0;
+			overlayWidth = 0;
+			overlayHeight = 0;
+			hardwareWidth = 0;
+			hardwareHeight = 0;
+#ifdef USE_RGB_COLOR
+			// format set to 0 values by Graphics::PixelFormat constructor
+#endif
+		}
 	};
 	VideoState _videoMode, _oldVideoMode;
 
@@ -351,8 +386,8 @@ protected:
 	};
 
 	// Shake mode
+	// This is always set to 0 when building with SDL2.
 	int _currentShakePos;
-	int _newShakePos;
 
 	// Palette data
 	SDL_Color *_currentPalette;
@@ -389,14 +424,13 @@ protected:
 	virtual void setAspectRatioCorrection(bool enable);
 	void setFilteringMode(bool enable);
 
-	virtual bool saveScreenshot(const char *filename);
+	virtual bool saveScreenshot(const Common::String &filename) const;
 	virtual void setGraphicsModeIntern();
 
 private:
 	void setFullscreenMode(bool enable);
 	bool handleScalerHotkeys(Common::KeyCode key);
 	bool isScalerHotkey(const Common::Event &event);
-	void toggleFullScreen();
 
 	/**
 	 * Converts the given point from the overlay's coordinate space to the

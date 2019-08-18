@@ -51,7 +51,7 @@ void MessageDialog::execute(const Common::String &msg, MessageWaitType waitType)
 		break;
 
 	case WT_ANIMATED_WAIT:
-		if (windows[11]._enabled || _vm->_mode == MODE_INTERACTIVE7) {
+		if (g_vm->_locations->isActive() && (windows[11]._enabled || _vm->_mode == MODE_INTERACTIVE7)) {
 			g_vm->_locations->wait();
 			break;
 		}

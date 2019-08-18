@@ -180,23 +180,38 @@ void Windows::windowClose(Window *win, StreamResult *result) {
 		PairWindow *pairWin = dynamic_cast<PairWindow *>(win->_parent);
 		PairWindow *grandparWin;
 
-		int index = pairWin->_children.indexOf(win);
-		if (index == -1) {
-			warning("windowClose: window tree is corrupted");
-			return;
-		}
+		if (pairWin) {
+			int index = pairWin->_children.indexOf(win);
+			if (index == -1) {
+				warning("windowClose: window tree is corrupted");
+				return;
+			}
 
-		sibWin = (index = ((int)pairWin->_children.size() - 1)) ?
-			pairWin->_children.front() : pairWin->_children[index + 1];
+			// Detach window being closed from parent pair window
+			pairWin->_children.remove_at(index);
+			win->_parent = nullptr;
 
-		grandparWin = dynamic_cast<PairWindow *>(pairWin->_parent);
-		if (!grandparWin) {
-			_rootWin = sibWin;
-			sibWin->_parent = nullptr;
-		} else {
-			index = grandparWin->_children.indexOf(pairWin);
-			grandparWin->_children[index] = sibWin;
-			sibWin->_parent = grandparWin;
+			if (!(pairWin->_dir & winmethod_Arbitrary)) {
+				// Get the remaining child window
+				assert(pairWin->_children.size() == 1);
+				sibWin = pairWin->_children.front();
+
+				// Detach it from the pair window
+				index = pairWin->_children.indexOf(sibWin);
+				assert(index >= 0);
+				pairWin->_children.remove_at(index);
+
+				// Set up window as either the singular root, or grandparent pair window if one exists
+				grandparWin = dynamic_cast<PairWindow *>(pairWin->_parent);
+				if (!grandparWin) {
+					_rootWin = sibWin;
+					sibWin->_parent = nullptr;
+				} else {
+					index = grandparWin->_children.indexOf(pairWin);
+					grandparWin->_children[index] = sibWin;
+					sibWin->_parent = grandparWin;
+				}
+			}
 		}
 
 		// Begin closation
@@ -206,12 +221,9 @@ void Windows::windowClose(Window *win, StreamResult *result) {
 		// crawl up the tree to the root window.
 		win->close(true);
 
-		// This probably isn't necessary, but the child *is* gone, so just in case.
-		index = pairWin->_children.indexOf(win);
-		pairWin->_children[index] = nullptr;
-
-		// Now we can delete the parent pair.
-		pairWin->close(false);
+		if (pairWin && !(pairWin->_dir & winmethod_Arbitrary))
+			// Now we can delete the parent pair.
+			pairWin->close(false);
 
 		// Sort out the arrangements
 		rearrange();
@@ -452,7 +464,12 @@ uint Windows::rgbShift(uint color) {
 /*--------------------------------------------------------------------------*/
 
 Windows::iterator &Windows::iterator::operator++() {
-	_current = _windows->iterateTreeOrder(_current);
+	_current = _current->_next;
+	return *this;
+}
+
+Windows::iterator &Windows::iterator::operator--() {
+	_current = _current->_prev;
 	return *this;
 }
 
@@ -506,9 +523,9 @@ Window::Window(Windows *windows, uint rock) : _windows(windows), _rock(rock),
 	_lineRequest(0), _lineRequestUni(0), _charRequest(0), _charRequestUni(0),
 	_mouseRequest(0), _hyperRequest(0), _moreRequest(0), _scrollRequest(0), _imageLoaded(0),
 	_echoLineInputBase(true), _lineTerminatorsBase(nullptr), _termCt(0), _echoStream(nullptr) {
-	_attr.fgset = 0;
-	_attr.bgset = 0;
-	_attr.reverse = 0;
+	_attr.fgset = false;
+	_attr.bgset = false;
+	_attr.reverse = false;
 	_attr.style = 0;
 	_attr.fgcolor = 0;
 	_attr.bgcolor = 0;
@@ -516,27 +533,25 @@ Window::Window(Windows *windows, uint rock) : _windows(windows), _rock(rock),
 
 	_bgColor = g_conf->_windowColor;
 	_fgColor = g_conf->_propInfo._moreColor;
-	_dispRock.num = 0;
 
 	Streams &streams = *g_vm->_streams;
 	_stream = streams.openWindowStream(this);
+
+	if (g_vm->gli_register_obj)
+		_dispRock = (*g_vm->gli_register_obj)(this, gidisp_Class_Window);
 }
 
 Window::~Window() {
 	if (g_vm->gli_unregister_obj)
 		(*g_vm->gli_unregister_obj)(this, gidisp_Class_Window, _dispRock);
 
-	// Remove the window from any parent
+	// Remove the window from the parent's children list
 	PairWindow *parent = dynamic_cast<PairWindow *>(_parent);
 	if (parent) {
 		int index = parent->_children.indexOf(this);
 		if (index != -1)
-			parent->_children[index] = nullptr;
+			parent->_children.remove_at(index);
 	}
-
-	// Delete any attached window stream
-	_echoStream = nullptr;
-	delete _stream;
 
 	delete[] _lineTerminatorsBase;
 
@@ -550,6 +565,10 @@ Window::~Window() {
 		_windows->_windowList = next;
 	if (next)
 		next->_prev = prev;
+
+	// Delete any attached window stream
+	_echoStream = nullptr;
+	delete _stream;
 }
 
 void Window::close(bool recurse) {
@@ -716,6 +735,26 @@ void Window::getSize(uint *width, uint *height) const {
 		*height = 0;
 }
 
+void Window::bringToFront() {
+	PairWindow *pairWin = dynamic_cast<PairWindow *>(_parent);
+	
+	if (pairWin && pairWin->_dir == winmethod_Arbitrary && pairWin->_children.back() != this) {
+		pairWin->_children.remove(this);
+		pairWin->_children.push_back(this);
+		Windows::_forceRedraw = true;
+	}
+}
+
+void Window::sendToBack() {
+	PairWindow *pairWin = dynamic_cast<PairWindow *>(_parent);
+
+	if (pairWin && pairWin->_dir == winmethod_Arbitrary && pairWin->_children.front() != this) {
+		pairWin->_children.remove(this);
+		pairWin->_children.insert_at(0, this);
+		Windows::_forceRedraw = true;
+	}
+}
+
 /*--------------------------------------------------------------------------*/
 
 BlankWindow::BlankWindow(Windows *windows, uint rock) : Window(windows, rock) {
@@ -733,8 +772,8 @@ WindowStyle::WindowStyle(const WindowStyleStatic &src) : font(src.font), reverse
 /*--------------------------------------------------------------------------*/
 
 void Attributes::clear() {
-	fgset = 0;
-	bgset = 0;
+	fgset = false;
+	bgset = false;
 	fgcolor = 0;
 	bgcolor = 0;
 	reverse = false;

@@ -184,8 +184,6 @@ private:
 	bool control_f1_prcStart(uint8 para);
 	bool control_ff_endOfTrack(uint8 para);
 
-	uint8 _algorithm;
-
 	typedef Common::Functor1Mem<uint8, bool, TownsPC98_MusicChannelPCM> ControlEvent;
 	Common::Array<const ControlEvent*> _controlEvents;
 };
@@ -983,7 +981,7 @@ void TownsPC98_SfxChannel::reset() {
 #ifndef DISABLE_PC98_RHYTHM_CHANNEL
 #define CONTROL(x) _controlEvents.push_back(new ControlEvent(this, &TownsPC98_MusicChannelPCM::control_##x))
 TownsPC98_MusicChannelPCM::TownsPC98_MusicChannelPCM(TownsPC98_AudioDriver *driver, uint8 regOffs, uint8 flgs, uint8 num, uint8 key, uint8 prt, uint8 id) :
-TownsPC98_MusicChannel(driver, regOffs, flgs, num, key, prt, id), _algorithm(0x80) {
+TownsPC98_MusicChannel(driver, regOffs, flgs, num, key, prt, id) {
 	CONTROL(dummy);
 	CONTROL(f1_prcStart);
 	CONTROL(dummy);

@@ -30,7 +30,57 @@
 #include "bladerunner/script/police_maze.h"
 #include "bladerunner/script/scene_script.h"
 #include "bladerunner/time.h"
-
+#include "bladerunner/subtitles.h"
+#include "bladerunner/debugger.h"
+#include "bladerunner/settings.h"
+// ----------------------
+// Maze point system info
+// ----------------------
+// Maze score starts at zero (0) points at the first room and it can get a negative value later on.
+// Exiting each room deducts from maze score the number of targets that were not activated for that room
+// Each room has a max number of 20 targets that can be activated for it in total (kPoliceMazePS1xTargetCount).
+// Entering a room always auto-activates a set of predefined targets: 4 for PS10, PS11, PS12 and 5 for PS12
+//
+// - Leaving a room from the forward exit (moving properly through the maze)
+//   will mark the old room as complete. So, returning to an old room
+//   (which McCoy had exited from the *forward* exit) won't affect the score.
+//
+// - Leaving a room from the *backwards* exit (moving backwards through the maze)
+//   will NOT mark the room that McCoy just left as complete, if it was not already.
+//   So returning to a previous room (which McCoy had exited from the *backwards* exit)
+//   may still affect the score and combat may resume. However, upon re-entering that room,
+//   it will again activate the predefined set of targets for it and those will count
+//   additively to the total activated targets for that room. So, the room can be resumed at most
+//   four (PS12) or five (PS10, PS11, PS13) times until it becomes completed (reaches its max activated targets).
+//
+// Running quickly through the maze (not stopping to shoot targets) amounts to a negative score of:
+//      0 - (3 * (20 - 4)) - (20 - 5) = -63 points
+//
+// However, that is not the lowest score McCoy can get, since points are deducted when:
+//  a) shooting innocents
+//  b) shooting unrevealed enemies
+//  c) getting shot
+//
+// Combat Point System:
+//      + 1: gain a point when an enemy (revealed) is shot             (at Item_Spin_In_World)
+//      - 1: lose a point when an innocent or unrevealed enemy is shot (at Item_Spin_In_World)
+//      + 1: gain a point when an innocent escapes                     (at kPMTILeave instruction)
+//      - 1: lose a point when an enemy shoots McCoy                   (at kPMTIShoot)
+//
+// For the maximum score, all 4 * 20 = 80 targets have to get activated and handled properly.
+// Since McCoy always gains one (1) point per target (enemy or innocent) for that,
+// the maximum score *should be*: 80 points.
+//
+// However, there are some *special* target types:
+//      1. Targets that will count as multiple targets without increasing
+//         the active target count more than once.
+//      2. Targets that won't increase the active target count at all,
+//         and act as bonus points themselves. (eg. kItemPS12Target10, kItemPS12Target14)
+//
+// With the account of special targets the maximum achievable score will be greater than 80 points.
+// Since the special targets can appear randomly (by use of the kPMTIPausedReset1of2, kPMTIPausedReset1of3 instructions)
+// the highest score is not a predefined fixed number and will differ per run. It will always be above 80 points.
+//
 namespace BladeRunner {
 
 PoliceMaze::PoliceMaze(BladeRunnerEngine *vm) : ScriptBase(vm) {
@@ -70,10 +120,10 @@ void PoliceMaze::setPauseState(bool state) {
 	warning("PAUSE: %d", state);
 	_isPaused = state;
 
-	uint32 t = _vm->_time->current();
+	uint32 timeNow = _vm->_time->current();
 
 	for (int i = 0; i < kNumMazeTracks; i++) {
-		_tracks[i]->setTime(t);
+		_tracks[i]->setTime(timeNow);
 	}
 }
 
@@ -103,6 +153,11 @@ void PoliceMaze::tick() {
 		}
 	}
 
+	if (_vm->_debugger->_showMazeScore && _isActive && !_isEnding) {
+		_vm->_subtitles->setGameSubsText(Common::String::format("Score: %02d", Global_Variable_Query(kVariablePoliceMazeScore)), true);
+		_vm->_subtitles->show();
+	}
+
 	if (notFound && _isActive && !_isEnding) {
 		_isActive = false;
 		_isEnding = true;
@@ -113,6 +168,7 @@ void PoliceMaze::tick() {
 			Actor_Voice_Over(310, kActorAnsweringMachine);
 		}
 	}
+
 }
 
 void PoliceMaze::save(SaveFileWriteStream &f) {
@@ -200,22 +256,36 @@ bool PoliceMazeTargetTrack::tick() {
 
 	uint32 oldTime = _time;
 	_time = _vm->_time->current();
-	int32 timeDiff = _time - oldTime;
-	_timeLeftUpdate -= timeDiff;
+	uint32 timeDiff = _time - oldTime;  // unsigned difference is intentional
+	_timeLeftUpdate = _timeLeftUpdate - (int32)timeDiff; // should be ok
 
 	if (_timeLeftUpdate > 0) {
 		return false;
 	}
 
-	_timeLeftUpdate = 66;
+#if BLADERUNNER_ORIGINAL_BUGS
+#else
+	// here _timeLeftUpdate is <= 0
+	if (_vm->_settings->getDifficulty() > kGameDifficultyEasy) {
+		timeDiff = abs(_timeLeftUpdate);
+	}
+#endif // BLADERUNNER_ORIGINAL_BUGS
+	_timeLeftUpdate = 66; // update the target track 15 times per second
 
 	if (_isPaused) {
 		return false;
 	}
 
 	if (_isWaiting) {
+#if BLADERUNNER_ORIGINAL_BUGS
 		_timeLeftWait -= timeDiff;
-
+#else
+		if (_vm->_settings->getDifficulty() == kGameDifficultyEasy) {
+			_timeLeftWait -= timeDiff; // original behavior
+		} else {
+			_timeLeftWait = _timeLeftWait - (int32)(timeDiff + _timeLeftUpdate); // this deducts an amount >= 66 // should be ok
+		}
+#endif // BLADERUNNER_ORIGINAL_BUGS
 		if (_timeLeftWait > 0) {
 			return true;
 		}
@@ -247,8 +317,9 @@ bool PoliceMazeTargetTrack::tick() {
 
 		_vm->_items->setFacing(_itemId, angle);
 
-		if (_isRotating)
-			return false;
+		if (_isRotating) {
+			return true;
+		}
 	}
 
 	bool advancePoint = false;
@@ -440,7 +511,7 @@ bool PoliceMazeTargetTrack::tick() {
 				int trackId2 = _data[_dataIndex++];
 				int trackId3 = _data[_dataIndex++];
 #if BLADERUNNER_DEBUG_CONSOLE
-				debug("ItemId: %3i, Pause reset 1 of 3, TrackId1: %i, TrackId2: %i, TrackId3: %i", _itemId, trackId1, trackId2, trackId3);
+				debug("ItemId: %3i, Pause reset 1 of 3, OtherItemId1: %i, OtherItemId2: %i, OtherItemId3: %i", _itemId, trackId1, trackId2, trackId3);
 #endif
 				switch (Random_Query(1, 3)) {
 				case 1:
@@ -464,7 +535,7 @@ bool PoliceMazeTargetTrack::tick() {
 				int trackId1 = _data[_dataIndex++];
 				int trackId2 = _data[_dataIndex++];
 #if BLADERUNNER_DEBUG_CONSOLE
-				debug("ItemId: %3i, Pause reset 1 of 2, TrackId1: %i, TrackId2: %i", _itemId, trackId1, trackId2);
+				debug("ItemId: %3i, Pause reset 1 of 2, OtherItemId1: %i, OtherItemId2: %i", _itemId, trackId1, trackId2);
 #endif
 				if (Random_Query(1, 2) == 1) {
 					_vm->_policeMaze->_tracks[trackId1]->resetPaused();
@@ -478,7 +549,7 @@ bool PoliceMazeTargetTrack::tick() {
 			{
 				int trackId = _data[_dataIndex++];
 #if BLADERUNNER_DEBUG_CONSOLE
-				debug("ItemId: %3i, Pause set, TrackId: %i", _itemId, trackId);
+				debug("ItemId: %3i, Pause set, OtherItemId: %i", _itemId, trackId);
 #endif
 				_vm->_policeMaze->_tracks[trackId]->setPaused();
 				break;
@@ -488,7 +559,7 @@ bool PoliceMazeTargetTrack::tick() {
 			{
 				int trackId = _data[_dataIndex++];
 #if BLADERUNNER_DEBUG_CONSOLE
-				debug("ItemId: %3i, Pause reset, TrackId: %i", _itemId, trackId);
+				debug("ItemId: %3i, Pause reset, OtherItemId: %i", _itemId, trackId);
 #endif
 				_vm->_policeMaze->_tracks[trackId]->resetPaused();
 				break;
@@ -533,6 +604,9 @@ bool PoliceMazeTargetTrack::tick() {
 				debug("ItemId: %3i, Wait random, Min: %i, Max: %i", _itemId, randomMin, randomMax);
 #endif
 				_timeLeftWait = Random_Query(randomMin, randomMax);
+#if BLADERUNNER_DEBUG_CONSOLE
+				debug("ItemId: %3i, Wait for = %i", _itemId, _timeLeftWait);
+#endif
 				_isWaiting = true;
 
 				cont = false;

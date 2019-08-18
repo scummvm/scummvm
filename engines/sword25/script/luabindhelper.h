@@ -34,8 +34,8 @@
 
 #include "sword25/kernel/common.h"
 
-#include "sword25/util/lua/lua.h"
-#include "sword25/util/lua/lauxlib.h"
+#include "common/lua/lua.h"
+#include "common/lua/lauxlib.h"
 
 namespace Sword25 {
 

@@ -74,7 +74,7 @@ GuiManager::GuiManager() : _redrawStatus(kRedrawDisabled), _stateIsSaved(false),
 	TransMan.setLanguage(ConfMan.get("gui_language").c_str());
 #endif // USE_TRANSLATION
 
-	ConfMan.registerDefault("gui_theme", "scummmodern");
+	ConfMan.registerDefault("gui_theme", "scummremastered");
 	Common::String themefile(ConfMan.get("gui_theme"));
 
 	ConfMan.registerDefault("gui_renderer", ThemeEngine::findModeConfigName(ThemeEngine::_defaultRendererMode));
@@ -597,9 +597,7 @@ void GuiManager::processEvent(const Common::Event &event, Dialog *const activeDi
 		screenChange();
 		break;
 	default:
-	#ifdef ENABLE_KEYMAPPER
 		activeDialog->handleOtherEvent(event);
-	#endif
 		break;
 	}
 }

@@ -25,7 +25,7 @@
 namespace BladeRunner {
 
 void SceneScriptHC01::InitializeScene() {
-	Music_Play(0, 31, 0, 2, -1, 1, 2);
+	Music_Play(kMusicArabLoop, 31, 0, 2, -1, 1, 2);
 	if (Game_Flag_Query(kFlagHC02toHC01)) {
 		Setup_Scene_Information( 64.0f, 0.14f,  83.0f, 266);
 	} else if (Game_Flag_Query(kFlagHC03toHC01)) {
@@ -39,31 +39,35 @@ void SceneScriptHC01::InitializeScene() {
 		Scene_Exit_Add_2D_Exit(1, 394, 229, 485, 371, 1);
 	}
 	Scene_Exit_Add_2D_Exit(2, 117, 0, 286, 319, 0);
+	if (_vm->_cutContent && !Game_Flag_Query(kFlagMcCoyCommentsOnAnimoids)) {
+		Scene_2D_Region_Add(0, 110, 385, 200, 450); // cage 1
+		Scene_2D_Region_Add(1, 20, 249, 110, 319);  // cage 2
+	}
 
-	Ambient_Sounds_Add_Looping_Sound(103, 50, 50, 0);
-	Ambient_Sounds_Add_Looping_Sound(241, 50, 50, 0);
-	Ambient_Sounds_Add_Sound(242, 3, 30, 16, 16, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(243, 3, 30, 16, 16, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(244, 3, 30, 16, 16, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(245, 3, 30, 16, 16, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(246, 3, 30, 16, 16, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(247, 3, 30, 16, 16, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(248, 3, 30, 16, 16, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(249, 3, 30, 16, 16, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(181, 5, 70, 12, 12, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(182, 5, 70, 12, 12, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(183, 5, 70, 12, 12, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(184, 5, 70, 12, 12, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(185, 5, 70, 12, 12, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(186, 5, 70, 12, 12, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(188, 5, 70, 12, 12, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(189, 5, 70, 12, 12, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(190, 5, 70, 12, 12, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(191, 5, 70, 12, 12, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(192, 5, 70, 12, 12, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(193, 5, 70, 12, 12, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(194, 5, 70, 12, 12, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(195, 5, 70, 12, 12, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Looping_Sound(kSfxRAINAWN1, 50, 50, 0);
+	Ambient_Sounds_Add_Looping_Sound(kSfxHCLOOP1,  50, 50, 0);
+	Ambient_Sounds_Add_Sound(kSfxHCANM8,   3, 30, 16, 16, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxHCANM2,   3, 30, 16, 16, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxHCANM3,   3, 30, 16, 16, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxHCANM4,   3, 30, 16, 16, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxHCANM5,   3, 30, 16, 16, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxHCANM6,   3, 30, 16, 16, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxHCANM7,   3, 30, 16, 16, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxHCANM1,   3, 30, 16, 16, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfx67_0470R, 5, 70, 12, 12, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfx67_0480R, 5, 70, 12, 12, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfx67_0500R, 5, 70, 12, 12, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfx67_0540R, 5, 70, 12, 12, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfx67_0560R, 5, 70, 12, 12, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfx67_0870R, 5, 70, 12, 12, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfx67_0900R, 5, 70, 12, 12, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfx67_0940R, 5, 70, 12, 12, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfx67_0960R, 5, 70, 12, 12, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfx67_1070R, 5, 70, 12, 12, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfx67_1080R, 5, 70, 12, 12, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfx67_1100R, 5, 70, 12, 12, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfx67_1140R, 5, 70, 12, 12, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfx67_1160R, 5, 70, 12, 12, -100, 100, -101, -101, 0, 0);
 	Scene_Loop_Set_Default(0);
 }
 
@@ -101,9 +105,12 @@ bool SceneScriptHC01::ClickedOnActor(int actorId) {
 	 )
 	) {
 		AI_Movement_Track_Pause(kActorIzo);
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 624.43f, 0.14f, 83.0f, 0, true, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 624.43f, 0.14f, 83.0f, 0, true, false, false)) {
 			if (!Game_Flag_Query(kFlagHC01IzoTalk1)) {
 				Actor_Face_Actor(kActorIzo, kActorMcCoy, true);
+				if (_vm->_cutContent) {
+					Actor_Says_With_Pause(kActorIzo,  0, 0.2f, 13);
+				}
 				Actor_Says_With_Pause(kActorIzo, 10, 0.2f, 13);
 				Actor_Face_Actor(kActorMcCoy, kActorIzo, true);
 				Actor_Says(kActorIzo, 20, 17);
@@ -125,17 +132,26 @@ bool SceneScriptHC01::ClickedOnActor(int actorId) {
 		}
 		AI_Movement_Track_Unpause(kActorIzo);
 	}
+#if BLADERUNNER_ORIGINAL_BUGS
+#else
+	// barkeep is click-able from afar
+	// Add behavior similar to Howie Lee (CT12), Hasan, and Insect Dealer (AR01).
+	else if (actorId == kActorHawkersBarkeep) {
+		Actor_Face_Actor(kActorMcCoy, actorId, true);
+		Actor_Says(kActorMcCoy, 8910, 14);
+	}
+#endif // BLADERUNNER_ORIGINAL_BUGS
 	return false;
 }
 
 bool SceneScriptHC01::ClickedOnItem(int itemId, bool a2) {
 	if (itemId == kItemCamera) {
 		Item_Remove_From_World(kItemCamera);
-		Item_Pickup_Spin_Effect(977, 361, 381);
+		Item_Pickup_Spin_Effect(kModelAnimationIzoCamera, 361, 381);
 		Delay(1500);
-		Item_Pickup_Spin_Effect(984, 377, 397);
+		Item_Pickup_Spin_Effect(kModelAnimationPhoto, 377, 397);
 		Delay(1500);
-		Item_Pickup_Spin_Effect(984, 330, 384);
+		Item_Pickup_Spin_Effect(kModelAnimationPhoto, 330, 384);
 		if (Game_Flag_Query(kFlagAR02DektoraBoughtScorpions)) {
 			Actor_Clue_Acquire(kActorMcCoy, kCluePhotoOfMcCoy1, true, kActorIzo);
 		} else {
@@ -149,7 +165,7 @@ bool SceneScriptHC01::ClickedOnItem(int itemId, bool a2) {
 
 bool SceneScriptHC01::ClickedOnExit(int exitId) {
 	if (exitId == 0) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 814.0f, 0.14f, 153.0f, 0, true, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 814.0f, 0.14f, 153.0f, 0, true, false, false)) {
 			Music_Adjust(12, 0, 2);
 			Game_Flag_Set(kFlagHC01toAR01);
 			Set_Enter(kSetAR01_AR02, kSceneAR01);
@@ -160,7 +176,7 @@ bool SceneScriptHC01::ClickedOnExit(int exitId) {
 	}
 
 	if (exitId == 1) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 607.0f, 0.14f, 9.0f, 0, true, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 607.0f, 0.14f, 9.0f, 0, true, false, false)) {
 			Game_Flag_Set(kFlagHC01toHC03);
 			Set_Enter(kSetHC01_HC02_HC03_HC04, kSceneHC03);
 		}
@@ -168,7 +184,7 @@ bool SceneScriptHC01::ClickedOnExit(int exitId) {
 	}
 
 	if (exitId == 2) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 105.0f, 0.14f, 103.0f, 0, true, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 105.0f, 0.14f, 103.0f, 0, true, false, false)) {
 			Game_Flag_Set(kFlagHC01toHC02);
 			Async_Actor_Walk_To_XYZ(kActorMcCoy, -57.0f, 0.14f, 83.0f, 0, false);
 			Set_Enter(kSetHC01_HC02_HC03_HC04, kSceneHC02);
@@ -179,6 +195,18 @@ bool SceneScriptHC01::ClickedOnExit(int exitId) {
 }
 
 bool SceneScriptHC01::ClickedOn2DRegion(int region) {
+	if (_vm->_cutContent) {
+		if (!Game_Flag_Query(kFlagMcCoyCommentsOnAnimoids) && (region == 0 || region == 1) ) {
+			Game_Flag_Set(kFlagMcCoyCommentsOnAnimoids);
+			//Actor_Face_Heading(kActorMcCoy, 389, false);
+			Actor_Face_XYZ(kActorMcCoy, 740.89f, 60.29f, 220.12f, true);
+			Actor_Voice_Over(890, kActorVoiceOver);
+			Actor_Voice_Over(900, kActorVoiceOver);
+			Scene_2D_Region_Remove(0);
+			Scene_2D_Region_Remove(1);
+			return true;
+		}
+	}
 	return false;
 }
 
@@ -201,16 +229,16 @@ void SceneScriptHC01::SceneFrameAdvanced(int frame) {
 	}
 
 	if (frame == 61) {
-		Ambient_Sounds_Play_Sound(312, 90, 0, 0, 0);
+		Ambient_Sounds_Play_Sound(kSfxCAMERA2,  90,   0,   0, 0);
 	}
 
 	if (frame == 65) {
-		Ambient_Sounds_Play_Sound(315, 50, 0, 100, 0);
+		Ambient_Sounds_Play_Sound(kSfxRUNAWAY1, 50,   0, 100, 0);
 	}
 
 	if (frame == 80) {
-		Ambient_Sounds_Play_Sound(316, 40, 100, 100, 0);
-		Item_Add_To_World(kItemGreenPawnLock, 931, kSetHC01_HC02_HC03_HC04, 582.0f, 27.0f, -41.0f, 0, 8, 8, true, true, false, true);
+		Ambient_Sounds_Play_Sound(kSfxTRPDOOR1, 40, 100, 100, 0);
+		Item_Add_To_World(kItemGreenPawnLock, kModelAnimationBadge, kSetHC01_HC02_HC03_HC04, 582.0f, 27.0f, -41.0f, 0, 8, 8, true, true, false, true); // TODO a bug? reusing still animation of kModelAnimationBadge
 	}
 }
 
@@ -219,7 +247,7 @@ void SceneScriptHC01::ActorChangedGoal(int actorId, int newGoal, int oldGoal, bo
 
 void SceneScriptHC01::PlayerWalkedIn() {
 	if (Game_Flag_Query(kFlagHC02toHC01)) {
-		Loop_Actor_Walk_To_XYZ(kActorMcCoy, 105.0f, 0.14f, 103.0f, 0, false, false, 0);
+		Loop_Actor_Walk_To_XYZ(kActorMcCoy, 105.0f, 0.14f, 103.0f, 0, false, false, false);
 		Game_Flag_Reset(kFlagHC02toHC01);
 	}
 
@@ -264,21 +292,42 @@ void SceneScriptHC01::dialogueWithIzo() {
 	} else if (Actor_Clue_Query(kActorMcCoy, kClueShellCasings)) {
 		DM_Add_To_List_Never_Repeat_Once_Selected(1040, 4, 4, 6); // SHELL CASINGS
 	}
+#if BLADERUNNER_ORIGINAL_BUGS
 	if (Actor_Clue_Query(kActorMcCoy, kClueGrigorianInterviewB2)) {
 		DM_Add_To_List_Never_Repeat_Once_Selected(1050, -1, 3, 8); // GRIGORIAN 1
 	} else if (Actor_Clue_Query(kActorMcCoy, kClueGrigorianInterviewB1)) {
 		DM_Add_To_List_Never_Repeat_Once_Selected(1060, -1, 3, 8); // GRIGORIAN 2
 	}
+#else
+	// When McCoy has kClueGrigorianInterviewB1 then Izo is a Replicant
+	// and when he has kClueGrigorianInterviewB2 then Izo is a human
+	// However the dialogue menu options are actually reversed in the original
+	// and inconsistent with what Grigorian says in his interviews.
+	// The 1050 dialogue menu option belongs to the case where Izo is a Replicant
+	// because in that dialogue McCoy mentions that Grigorian described him to a tee (which he does in kClueGrigorianInterviewB1)
+	// And the 1060 dialogue menu option belongs to the case where Izo is a human
+	// because in that dialogue McCoy talks about how Izo is a psychopath and was thrown out of CARS
+	// which is what Grigorian says in kClueGrigorianInterviewB2
+	if (Actor_Clue_Query(kActorMcCoy, kClueGrigorianInterviewB1)) {
+		DM_Add_To_List_Never_Repeat_Once_Selected(1050, -1, 3, 8); // GRIGORIAN 1
+	} else if (Actor_Clue_Query(kActorMcCoy, kClueGrigorianInterviewB2)) {
+		DM_Add_To_List_Never_Repeat_Once_Selected(1060, -1, 3, 8); // GRIGORIAN 2
+	}
+#endif // BLADERUNNER_ORIGINAL_BUGS
 
 	if (Dialogue_Menu_Query_List_Size() == 0) {
 		Actor_Says_With_Pause(kActorMcCoy, 1105, 1.2f, 13);
 		if (Actor_Query_Friendliness_To_Other(kActorIzo, kActorMcCoy) < 50) {
 			Actor_Says(kActorIzo, 550, 15);
+			if (_vm->_cutContent) {
+				Actor_Says(kActorMcCoy, 1220, 14); // you can bet...
+				Actor_Says(kActorIzo, 560, kAnimationModeTalk); // i'll be here
+			}
 		} else {
 			Actor_Says(kActorIzo, 250, 13);
 			Actor_Modify_Friendliness_To_Other(kActorIzo, kActorMcCoy, -1);
 			if (Actor_Query_Friendliness_To_Other(kActorIzo, kActorMcCoy) < 47
-			 && Query_Difficulty_Level() == 0
+			 && Query_Difficulty_Level() == kGameDifficultyEasy
 			) {
 				takePhotoAndRunAway();
 			}
@@ -303,19 +352,25 @@ void SceneScriptHC01::dialogueWithIzo() {
 			Actor_Says(kActorIzo, 220, 16);
 			Actor_Says(kActorIzo, 230, kAnimationModeTalk);
 			Actor_Says(kActorIzo, 240, 15);
-			if (Query_Difficulty_Level() < 2) {
+			if (Query_Difficulty_Level() < kGameDifficultyHard) {
 				Actor_Modify_Friendliness_To_Other(kActorIzo, kActorMcCoy, -1);
 			}
 		}
 		if (answer == 1020) { // DRAGONFLY JEWERLY
 			Dialogue_Menu_Remove_From_List(1020);
 			Actor_Says(kActorMcCoy, 1065, 15);
-			Actor_Says(kActorIzo, 160, kAnimationModeTalk);
-			Actor_Says(kActorMcCoy, 1110, 16);
-			Actor_Says(kActorIzo, 170, kAnimationModeTalk);
-			Actor_Says(kActorIzo, 180, kAnimationModeTalk);
-			Actor_Says(kActorIzo, 190, 12);
-			if (Query_Difficulty_Level() < 2) {
+			if (_vm->_cutContent && Game_Flag_Query(kFlagIzoIsReplicant)) {
+				// Restored: if Izo is a Replicant, he would probably lie
+				// so this line goes here
+				Actor_Says(kActorIzo, 150, kAnimationModeTalk);
+			} else {
+				Actor_Says(kActorIzo, 160, kAnimationModeTalk);
+				Actor_Says(kActorMcCoy, 1110, 16);
+				Actor_Says(kActorIzo, 170, kAnimationModeTalk);
+				Actor_Says(kActorIzo, 180, kAnimationModeTalk);
+				Actor_Says(kActorIzo, 190, 12);
+			}
+			if (Query_Difficulty_Level() < kGameDifficultyHard) {
 				Actor_Modify_Friendliness_To_Other(kActorIzo, kActorMcCoy, -2);
 			}
 		}
@@ -342,7 +397,7 @@ void SceneScriptHC01::dialogueWithIzo() {
 			Actor_Says(kActorIzo, 300, 12);
 			Actor_Says(kActorIzo, 310, 17);
 			Actor_Says(kActorMcCoy, 1140, kAnimationModeTalk);
-			if (Query_Difficulty_Level() < 2) {
+			if (Query_Difficulty_Level() < kGameDifficultyHard) {
 				Actor_Modify_Friendliness_To_Other(kActorIzo, kActorMcCoy, -2);
 			}
 			if (Actor_Query_Friendliness_To_Other(kActorIzo, kActorMcCoy) < 47) {
@@ -361,20 +416,20 @@ void SceneScriptHC01::dialogueWithIzo() {
 			Actor_Says(kActorIzo, 350, 12);
 			end = true;
 		}
-		if (answer == 1050) { // GRIGORIAN 1
+		if (answer == 1050) { // GRIGORIAN 1 // Izo is Replicant
 			Dialogue_Menu_Remove_From_List(1050);
-			Actor_Says(kActorMcCoy, 1090, 18);
+			Actor_Says(kActorMcCoy, 1090, 18); // Ever consort with a group called CARS? C.A.R.S.?
 			Actor_Says(kActorIzo, 360, 14);
 			Actor_Says(kActorMcCoy, 1150, 17);
 			Actor_Says(kActorIzo, 370, 13);
 			Actor_Says(kActorMcCoy, 1155, 15);
 			Actor_Says(kActorIzo, 380, 12);
-			Actor_Says(kActorMcCoy, 1160, 14);
-			Actor_Says(kActorMcCoy, 1165, 18);
+			Actor_Says(kActorMcCoy, 1160, 14); // He described you to a tee
+			Actor_Says(kActorMcCoy, 1165, 18); // Even down to that stupid little ponytail you got.
 			Actor_Says(kActorIzo, 390, 16);
-			Actor_Says(kActorMcCoy, 1170, 12);
+			Actor_Says(kActorMcCoy, 1170, 12); // What would you say if I told you Grigorian named you
 			Actor_Says(kActorIzo, 400, 13);
-			Actor_Says(kActorMcCoy, 1180, 14);
+			Actor_Says(kActorMcCoy, 1180, 14); // So, you're denying all involvement?
 			Actor_Says(kActorIzo, 410, 12);
 			Actor_Says(kActorIzo, 420, 16);
 			Actor_Says(kActorIzo, 430, 17);
@@ -385,15 +440,15 @@ void SceneScriptHC01::dialogueWithIzo() {
 			}
 			end = true;
 		}
-		if (answer == 1060) { // GRIGORIAN 2
+		if (answer == 1060) { // GRIGORIAN 2 - Izo is a human, ex member of CARS
 			Dialogue_Menu_Remove_From_List(1060);
 			Actor_Says(kActorMcCoy, 1095, 15);
-			Actor_Says_With_Pause(kActorMcCoy, 1100, 1.2f, 18);
+			Actor_Says_With_Pause(kActorMcCoy, 1100, 1.2f, 18); // That go for your old buddy Spencer Grigorian, too?
 			Actor_Says(kActorIzo, 450, 12);
 			Actor_Says(kActorIzo, 460, 13);
-			Actor_Says(kActorMcCoy, 1185, 18);
+			Actor_Says(kActorMcCoy, 1185, 18); // Calfskin?
 			Actor_Says(kActorIzo, 470, 14);
-			Actor_Says(kActorMcCoy, 1190, 14);
+			Actor_Says(kActorMcCoy, 1190, 14); // Grigorian said you were thrown out of C.A.R.S.
 			Actor_Says(kActorIzo, 480, 13);
 			Actor_Says(kActorMcCoy, 1195, 16);
 			Actor_Says(kActorMcCoy, 1200, 18);
@@ -411,6 +466,9 @@ void SceneScriptHC01::dialogueWithIzo() {
 			end = true;
 		}
 		if (answer == 100) { // DONE
+			if (_vm->_cutContent) {
+				Actor_Says(kActorMcCoy, 1215, 16); // All right
+			}
 			end = true;
 		}
 	} while (!end);

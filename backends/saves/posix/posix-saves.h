@@ -35,14 +35,6 @@
 class POSIXSaveFileManager : public DefaultSaveFileManager {
 public:
 	POSIXSaveFileManager();
-
-protected:
-	/**
-	 * Checks the given path for read access, existence, etc.
-	 * In addition, tries to create a missing savedir, if possible.
-	 * Sets the internal error and error message accordingly.
-	 */
-	virtual void checkPath(const Common::FSNode &dir);
 };
 #endif
 

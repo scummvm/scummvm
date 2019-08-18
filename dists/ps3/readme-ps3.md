@@ -1,8 +1,8 @@
 Prerequisites
 =============
 - A homebrew enabled PlayStation 3 console. As of now that mostly means having a custom firmware installed. Obtaining and installing such a software is out of the scope of this document. Sorry, but you're on your own for that one.
-- At least one ScummVM supported game. The list of compatible games can be seen here: http://www.scummvm.org/compatibility/
-The page http://wiki.scummvm.org/index.php/Where_to_get_the_games references some places where those games can be bought. Demonstration versions for most of the supported games are downloadable on http://scummvm.org/demos/
+- At least one ScummVM supported game. The list of compatible games can be seen here: https://www.scummvm.org/compatibility/
+The page https://wiki.scummvm.org/index.php/Where_to_get_the_games references some places where those games can be bought. Demonstration versions for most of the supported games are downloadable on https://scummvm.org/demos/
 - An USB drive.
 
 Installing
@@ -12,7 +12,7 @@ After having plugged the USB drive to you PS3, the installation package should a
 
 Configuring and playing games
 =============================
-The user manual describes how to add games to ScummVM and launch them : http://wiki.scummvm.org/index.php/User_Manual
+The user manual describes how to add games to ScummVM and launch them : https://wiki.scummvm.org/index.php/User_Manual
 
 PlayStation 3 Specifics
 =======================

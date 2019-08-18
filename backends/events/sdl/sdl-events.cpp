@@ -30,6 +30,8 @@
 #include "common/config-manager.h"
 #include "common/textconsole.h"
 #include "common/fs.h"
+#include "engines/engine.h"
+#include "gui/gui-manager.h"
 
 // FIXME move joystick defines out and replace with confile file options
 // we should really allow users to map any key to a joystick button
@@ -99,7 +101,7 @@ void SdlEventSource::loadGameControllerMappingFile() {
 #endif
 
 SdlEventSource::SdlEventSource()
-    : EventSource(), _scrollLock(false), _joystick(0), _lastScreenID(0), _graphicsManager(0), _queuedFakeMouseMove(false)
+    : EventSource(), _scrollLock(false), _joystick(0), _lastScreenID(0), _graphicsManager(0), _queuedFakeMouseMove(false), _lastHatPosition(SDL_HAT_CENTERED)
 #if SDL_VERSION_ATLEAST(2, 0, 0)
       , _queuedFakeKeyUp(false), _fakeKeyUp(), _controller(nullptr)
 #endif
@@ -170,8 +172,14 @@ int SdlEventSource::mapKey(SDLKey sdlKey, SDLMod mod, Uint16 unicode) {
 	if (key >= Common::KEYCODE_F1 && key <= Common::KEYCODE_F9) {
 		return key - Common::KEYCODE_F1 + Common::ASCII_F1;
 	} else if (key >= Common::KEYCODE_KP0 && key <= Common::KEYCODE_KP9) {
-		if ((mod & KMOD_NUM) == 0)
-			return 0; // In case Num-Lock is NOT enabled, return 0 for ascii, so that directional keys on numpad work
+		// WORKAROUND:  Disable this change for AmigaOS4 as it is breaking numpad usage ("fighting") on that platform.
+		// This fixes bug #10558.
+		// The actual issue here is that the SCUMM engine uses ASCII codes instead of keycodes for input.
+		// See also the relevant FIXME in SCUMM's input.cpp.
+		#ifndef __amigaos4__
+			if ((mod & KMOD_NUM) == 0)
+				return 0; // In case Num-Lock is NOT enabled, return 0 for ascii, so that directional keys on numpad work
+		#endif
 		return key - Common::KEYCODE_KP0 + '0';
 	} else if (key >= Common::KEYCODE_UP && key <= Common::KEYCODE_PAGEDOWN) {
 		return key;
@@ -281,8 +289,8 @@ void SdlEventSource::updateKbdMouse() {
 }
 
 bool SdlEventSource::handleKbdMouse(Common::Event &event) {
-	int16 oldKmX = _km.x;
-	int16 oldKmY = _km.y;
+	int32 oldKmX = _km.x;
+	int32 oldKmY = _km.y;
 
 	updateKbdMouse();
 
@@ -561,6 +569,8 @@ bool SdlEventSource::dispatchSDLEvent(SDL_Event &ev, Common::Event &event) {
 		return handleMouseButtonDown(ev, event);
 	case SDL_MOUSEBUTTONUP:
 		return handleMouseButtonUp(ev, event);
+	case SDL_SYSWMEVENT:
+		return handleSysWMEvent(ev, event);
 
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 	case SDL_MOUSEWHEEL: {
@@ -634,6 +644,12 @@ bool SdlEventSource::dispatchSDLEvent(SDL_Event &ev, Common::Event &event) {
 
 	case SDL_JOYDEVICEREMOVED:
 		return handleJoystickRemoved(ev.jdevice);
+
+	case SDL_DROPFILE:
+		event.type = Common::EVENT_DROP_FILE;
+		event.path = Common::String(ev.drop.file);
+		SDL_free(ev.drop.file);
+		return true;
 #else
 	case SDL_VIDEOEXPOSE:
 		if (_graphicsManager)
@@ -658,6 +674,8 @@ bool SdlEventSource::dispatchSDLEvent(SDL_Event &ev, Common::Event &event) {
 			return handleJoyButtonUp(ev, event);
 		case SDL_JOYAXISMOTION:
 			return handleJoyAxisMotion(ev, event);
+		case SDL_JOYHATMOTION:
+			return handleJoyHatMotion(ev, event);
 		}
 	}
 
@@ -848,6 +866,10 @@ bool SdlEventSource::handleMouseButtonUp(SDL_Event &ev, Common::Event &event) {
 	return processMouseEvent(event, ev.button.x, ev.button.y);
 }
 
+bool SdlEventSource::handleSysWMEvent(SDL_Event &ev, Common::Event &event) {
+	return false;
+}
+
 void SdlEventSource::openJoystick(int joystickIndex) {
 	if (SDL_NumJoysticks() > joystickIndex) {
 #if SDL_VERSION_ATLEAST(2, 0, 0)
@@ -884,7 +906,45 @@ void SdlEventSource::closeJoystick() {
 	}
 }
 
+bool SdlEventSource::shouldGenerateMouseEvents() {
+	// Engine doesn't support joystick -> emulate mouse events
+	if (g_engine && !g_engine->hasFeature(Engine::kSupportsJoystick)) {
+		return true;
+	}
+	if (g_gui.isActive()) {
+		return true;
+	}
+	return false;
+}
+
+int SdlEventSource::mapSDLJoystickButtonToOSystem(Uint8 sdlButton) {
+	Common::JoystickButton osystemButtons[] = {
+	    Common::JOYSTICK_BUTTON_A,
+	    Common::JOYSTICK_BUTTON_B,
+	    Common::JOYSTICK_BUTTON_X,
+	    Common::JOYSTICK_BUTTON_Y,
+	    Common::JOYSTICK_BUTTON_LEFT_SHOULDER,
+	    Common::JOYSTICK_BUTTON_RIGHT_SHOULDER,
+	    Common::JOYSTICK_BUTTON_BACK,
+	    Common::JOYSTICK_BUTTON_START,
+	    Common::JOYSTICK_BUTTON_LEFT_STICK,
+	    Common::JOYSTICK_BUTTON_RIGHT_STICK
+	};
+
+	if (sdlButton >= ARRAYSIZE(osystemButtons)) {
+		return -1;
+	}
+
+	return osystemButtons[sdlButton];
+}
+
 bool SdlEventSource::handleJoyButtonDown(SDL_Event &ev, Common::Event &event) {
+	if (!shouldGenerateMouseEvents()) {
+		event.type = Common::EVENT_JOYBUTTON_DOWN;
+		event.joystick.button = mapSDLJoystickButtonToOSystem(ev.jbutton.button);
+		return true;
+	}
+
 	if (ev.jbutton.button == JOY_BUT_LMOUSE) {
 		event.type = Common::EVENT_LBUTTONDOWN;
 		return processMouseEvent(event, _km.x / MULTIPLIER, _km.y / MULTIPLIER);
@@ -921,6 +981,12 @@ bool SdlEventSource::handleJoyButtonDown(SDL_Event &ev, Common::Event &event) {
 }
 
 bool SdlEventSource::handleJoyButtonUp(SDL_Event &ev, Common::Event &event) {
+	if (!shouldGenerateMouseEvents()) {
+		event.type = Common::EVENT_JOYBUTTON_UP;
+		event.joystick.button = mapSDLJoystickButtonToOSystem(ev.jbutton.button);
+		return true;
+	}
+
 	if (ev.jbutton.button == JOY_BUT_LMOUSE) {
 		event.type = Common::EVENT_LBUTTONUP;
 		return processMouseEvent(event, _km.x / MULTIPLIER, _km.y / MULTIPLIER);
@@ -957,6 +1023,16 @@ bool SdlEventSource::handleJoyButtonUp(SDL_Event &ev, Common::Event &event) {
 }
 
 bool SdlEventSource::handleJoyAxisMotion(SDL_Event &ev, Common::Event &event) {
+	// TODO: move handleAxisToMouseMotion to Common?
+#if 0
+	if (!shouldGenerateMouseEvents()) {
+		event.type = Common::EVENT_JOYAXIS_MOTION;
+		event.joystick.axis = ev.jaxis.axis;
+		event.joystick.position = ev.jaxis.value;
+		return true;
+	}
+#endif
+
 	if (ev.jaxis.axis == JOY_XAXIS) {
 		_km.joy_x = ev.jaxis.value;
 		return handleAxisToMouseMotion(_km.joy_x, _km.joy_y);
@@ -964,6 +1040,39 @@ bool SdlEventSource::handleJoyAxisMotion(SDL_Event &ev, Common::Event &event) {
 		_km.joy_y = ev.jaxis.value;
 		return handleAxisToMouseMotion(_km.joy_x, _km.joy_y);
 	}
+
+	return false;
+}
+
+#define HANDLE_HAT_UP(new, old, mask, joybutton) \
+	if ((old & mask) && !(new & mask)) { \
+		event.joystick.button = joybutton; \
+		g_system->getEventManager()->pushEvent(event); \
+	}
+
+#define HANDLE_HAT_DOWN(new, old, mask, joybutton) \
+	if ((new & mask) && !(old & mask)) { \
+		event.joystick.button = joybutton; \
+		g_system->getEventManager()->pushEvent(event); \
+	}
+
+bool SdlEventSource::handleJoyHatMotion(SDL_Event &ev, Common::Event &event) {
+	if (shouldGenerateMouseEvents())
+		return false;
+
+	event.type = Common::EVENT_JOYBUTTON_UP;
+	HANDLE_HAT_UP(ev.jhat.value, _lastHatPosition, SDL_HAT_UP, Common::JOYSTICK_BUTTON_DPAD_UP)
+	HANDLE_HAT_UP(ev.jhat.value, _lastHatPosition, SDL_HAT_DOWN, Common::JOYSTICK_BUTTON_DPAD_DOWN)
+	HANDLE_HAT_UP(ev.jhat.value, _lastHatPosition, SDL_HAT_LEFT, Common::JOYSTICK_BUTTON_DPAD_LEFT)
+	HANDLE_HAT_UP(ev.jhat.value, _lastHatPosition, SDL_HAT_RIGHT, Common::JOYSTICK_BUTTON_DPAD_RIGHT)
+
+	event.type = Common::EVENT_JOYBUTTON_DOWN;
+	HANDLE_HAT_DOWN(ev.jhat.value, _lastHatPosition, SDL_HAT_UP, Common::JOYSTICK_BUTTON_DPAD_UP)
+	HANDLE_HAT_DOWN(ev.jhat.value, _lastHatPosition, SDL_HAT_DOWN, Common::JOYSTICK_BUTTON_DPAD_DOWN)
+	HANDLE_HAT_DOWN(ev.jhat.value, _lastHatPosition, SDL_HAT_LEFT, Common::JOYSTICK_BUTTON_DPAD_LEFT)
+	HANDLE_HAT_DOWN(ev.jhat.value, _lastHatPosition, SDL_HAT_RIGHT, Common::JOYSTICK_BUTTON_DPAD_RIGHT)
+
+	_lastHatPosition = ev.jhat.value;
 
 	return false;
 }
@@ -1004,6 +1113,32 @@ bool SdlEventSource::handleJoystickRemoved(const SDL_JoyDeviceEvent &device) {
 	}
 
 	return false;
+}
+
+int SdlEventSource::mapSDLControllerButtonToOSystem(Uint8 sdlButton) {
+	Common::JoystickButton osystemButtons[] = {
+	    Common::JOYSTICK_BUTTON_A,
+	    Common::JOYSTICK_BUTTON_B,
+	    Common::JOYSTICK_BUTTON_X,
+	    Common::JOYSTICK_BUTTON_Y,
+	    Common::JOYSTICK_BUTTON_BACK,
+	    Common::JOYSTICK_BUTTON_GUIDE,
+	    Common::JOYSTICK_BUTTON_START,
+	    Common::JOYSTICK_BUTTON_LEFT_STICK,
+	    Common::JOYSTICK_BUTTON_RIGHT_STICK,
+	    Common::JOYSTICK_BUTTON_LEFT_SHOULDER,
+	    Common::JOYSTICK_BUTTON_RIGHT_SHOULDER,
+	    Common::JOYSTICK_BUTTON_DPAD_UP,
+	    Common::JOYSTICK_BUTTON_DPAD_DOWN,
+	    Common::JOYSTICK_BUTTON_DPAD_LEFT,
+	    Common::JOYSTICK_BUTTON_DPAD_RIGHT
+	};
+
+	if (sdlButton >= ARRAYSIZE(osystemButtons)) {
+		return -1;
+	}
+
+	return osystemButtons[sdlButton];
 }
 
 bool SdlEventSource::handleControllerButton(const SDL_Event &ev, Common::Event &event, bool buttonUp) {
@@ -1053,6 +1188,15 @@ bool SdlEventSource::handleControllerButton(const SDL_Event &ev, Common::Event &
 			{ EVENT_KEYDOWN, KeyState(KEYCODE_KP6, 0), EVENT_KEYDOWN, KeyState(KEYCODE_KP3, 0) }
 	};
 
+	if (!shouldGenerateMouseEvents()) {
+		event.type = buttonUp ? Common::EVENT_JOYBUTTON_UP : Common::EVENT_JOYBUTTON_DOWN;
+		event.joystick.button = mapSDLControllerButtonToOSystem(ev.cbutton.button);
+		if (event.joystick.button == -1)
+				return false;
+
+		return true;
+	}
+
 	if (ev.cbutton.button > SDL_CONTROLLER_BUTTON_DPAD_RIGHT) {
 		warning("Unknown SDL controller button: '%d'", ev.cbutton.button);
 		return false;
@@ -1097,6 +1241,16 @@ bool SdlEventSource::handleControllerButton(const SDL_Event &ev, Common::Event &
 }
 
 bool SdlEventSource::handleControllerAxisMotion(const SDL_Event &ev, Common::Event &event) {
+	// TODO: move handleAxisToMouseMotion to Common?
+#if 0
+	if (!shouldGenerateMouseEvents()) {
+		event.type = Common::EVENT_JOYAXIS_MOTION;
+		event.joystick.axis = ev.caxis.axis;
+		event.joystick.position = ev.caxis.value;
+		return true;
+	}
+#endif
+
 	if (ev.caxis.axis == SDL_CONTROLLER_AXIS_LEFTX) {
 		_km.joy_x = ev.caxis.value;
 		return handleAxisToMouseMotion(_km.joy_x, _km.joy_y);

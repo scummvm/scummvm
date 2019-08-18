@@ -91,7 +91,7 @@ void Room::feather7KirkSatDown() {
 		TX_FEA7_005, TX_FEA7_006, TX_FEA7_010,
 		TX_BLANK
 	};
-	int choice = showText(choices1);
+	int choice = showMultipleTexts(choices1);
 
 	if (choice == 0) {
 		_roomVar.feather.insultedQuetzecoatl = true;
@@ -108,7 +108,7 @@ void Room::feather7KirkSatDown() {
 		TX_FEA7_007, TX_FEA7_004, TX_FEA7_012,
 		TX_BLANK
 	};
-	choice = showText(choices2);
+	choice = showMultipleTexts(choices2);
 
 	if (choice == 0) {
 		_roomVar.feather.insultedQuetzecoatl = true;
@@ -128,7 +128,7 @@ void Room::feather7KirkSatDown() {
 		TX_FEA7_008, TX_FEA7_009, TX_FEA7_011,
 		TX_BLANK
 	};
-	choice = showText(choices3);
+	choice = showMultipleTexts(choices3);
 
 	if (choice == 0) {
 		_roomVar.feather.insultedQuetzecoatl = true;

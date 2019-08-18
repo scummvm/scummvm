@@ -71,7 +71,7 @@ class Obstacles {
 	bool     _backup;
 
 	static bool lineLineIntersection(LineSegment a, LineSegment b, Vector2 *intersectionPoint);
-	static bool linePolygonIntersection(LineSegment lineA, VertexType lineAType, Polygon *polyB, Vector2 *intersectionPoint, int *intersectionIndex);
+	static bool linePolygonIntersection(LineSegment lineA, VertexType lineAType, Polygon *polyB, Vector2 *intersectionPoint, int *intersectionIndex, int pathLengthSinceLastIntersection);
 
 	bool mergePolygons(Polygon &polyA, Polygon &PolyB);
 
@@ -93,7 +93,7 @@ public:
 
 	float pathTotalDistance(const Vector2 *path, int pathSize, Vector2 from, Vector2 to) const;
 	bool findPolygonVerticeByXZ(int *polygonIndex, int *verticeIndex, int *verticeCount, float x, float z) const;
-	bool findPolygonVerticeByXZWithinTolerance(float x, float z, int *polygonIndex, int *verticeIndex) const;
+	bool findPolygonVerticeByXZWithinTolerance(float x, float z, int *polygonIndex, int *verticeIndex, int startSearchFromPolygonIdx) const;
 
 	void clearPath();
 	int  buildNegativePath(int polyIndex, int vertStartIndex, Vector2 startPos, int vertEndIndex, Vector2 endPos, Vector2 *path, int pathCapacity, bool *pathBlocked);

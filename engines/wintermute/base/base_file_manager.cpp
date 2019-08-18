@@ -29,6 +29,7 @@
 #include "engines/wintermute/base/base_file_manager.h"
 #include "engines/wintermute/base/base_persistence_manager.h"
 #include "engines/wintermute/base/file/base_disk_file.h"
+#include "engines/wintermute/base/file/base_savefile_manager_file.h"
 #include "engines/wintermute/base/file/base_save_thumb_file.h"
 #include "engines/wintermute/base/file/base_package.h"
 #include "engines/wintermute/base/base_engine.h"
@@ -218,13 +219,6 @@ bool BaseFileManager::registerPackages() {
 				searchSignature = true;
 			}
 
-			// HACK: for Reversion1, avoid loading xlanguage_pt.dcp from the main folder:
-			if (_language != Common::PT_BRA && targetName.hasPrefix("reversion1")) {
-				if (fileName == "xlanguage_pt.dcp") {
-					continue;
-				}
-			}
-
 			// Again, make the parent's name all lowercase to avoid any case
 			// issues.
 			Common::String parentName = it->getName();
@@ -232,38 +226,65 @@ bool BaseFileManager::registerPackages() {
 
 			// Avoid registering all the language files
 			// TODO: Select based on the gameDesc.
-			if (_language != Common::UNK_LANG && (parentName == "language" || parentName == "languages")) {
+			if (_language != Common::UNK_LANG) {
 				// English
-				if (_language == Common::EN_ANY && (fileName != "english.dcp" && fileName != "xlanguage_en.dcp")) {
-					continue;
+				if (fileName == "english.dcp" || fileName == "xlanguage_en.dcp" || fileName == "english_language_pack.dcp") {
+					if (_language != Common::EN_ANY) {
+						continue;
+					}
 				// Chinese
-				} else if (_language == Common::ZH_CNA && (fileName != "chinese.dcp" && fileName != "xlanguage_nz.dcp")) {
-					continue;
+				} else if (fileName == "chinese.dcp" || fileName == "xlanguage_nz.dcp" || fileName == "chinese_language_pack.dcp") {
+					if (_language != Common::ZH_CNA) {
+						continue;
+					}
 				// Czech
-				} else if (_language == Common::CZ_CZE && (fileName != "czech.dcp" && fileName != "xlanguage_cz.dcp")) {
-					continue;
+				} else if (fileName == "czech.dcp" || fileName == "xlanguage_cz.dcp" || fileName == "czech_language_pack.dcp") {
+					if (_language != Common::CZ_CZE) {
+						continue;
+					}
 				// French
-				} else if (_language == Common::FR_FRA && (fileName != "french.dcp" && fileName != "xlanguage_fr.dcp")) {
-					continue;
+				} else if (fileName == "french.dcp" || fileName == "xlanguage_fr.dcp" || fileName == "french_language_pack.dcp") {
+					if (_language != Common::FR_FRA) {
+						continue;
+					}
 				// German
-				} else if (_language == Common::DE_DEU && (fileName != "german.dcp" && fileName != "xlanguage_de.dcp")) {
-					continue;
+				} else if (fileName == "german.dcp" || fileName == "xlanguage_de.dcp" || fileName == "german_language_pack.dcp") {
+					if (_language != Common::DE_DEU) {
+						continue;
+					}
 				// Italian
-				} else if (_language == Common::IT_ITA && (fileName != "italian.dcp" && fileName != "xlanguage_it.dcp")) {
-					continue;
+				} else if (fileName == "italian.dcp" || fileName == "xlanguage_it.dcp" || fileName == "italian_language_pack.dcp") {
+					if (_language != Common::IT_ITA) {
+						continue;
+					}
 				// Latvian
-				} else if (_language == Common::LV_LAT && (fileName != "latvian.dcp" && fileName != "xlanguage_lv.dcp")) {
-					// TODO: 'latvian.dcp' is just guesswork. Is there any
-					// game using Latvian and using this filename?
-					continue;
+				} else if (fileName == "latvian.dcp" || fileName == "xlanguage_lv.dcp" || fileName == "latvian_language_pack.dcp") {
+					if (_language != Common::LV_LAT) {
+						continue;
+					}
 				// Polish
-				} else if (_language == Common::PL_POL && (fileName != "polish.dcp" && fileName != "xlanguage_pl.dcp")) {
-					continue;
+				} else if (fileName == "polish.dcp" || fileName == "xlanguage_pl.dcp" || fileName == "polish_language_pack.dcp") {
+					if (_language != Common::PL_POL) {
+						continue;
+					}
 				// Portuguese
-				} else if (_language == Common::PT_BRA && (fileName != "portuguese.dcp" && fileName != "xlanguage_pt.dcp")) {
-					continue;
+				} else if (fileName == "portuguese.dcp" || fileName == "xlanguage_pt.dcp" || fileName == "portuguese_language_pack.dcp") {
+					if (_language != Common::PT_BRA) {
+						continue;
+					}
 				// Russian
-				} else if (_language == Common::RU_RUS && (fileName != "russian.dcp" && fileName != "xlanguage_ru.dcp")) {
+				} else if (fileName == "russian.dcp" || fileName == "xlanguage_ru.dcp" || fileName == "russian_language_pack.dcp") {
+					if (_language != Common::RU_RUS) {
+						continue;
+					}
+				// Spanish
+				} else if (fileName == "spanish.dcp" || fileName == "xlanguage_es.dcp" || fileName == "spanish_language_pack.dcp") {
+					if (_language != Common::ES_ESP) {
+						continue;
+					}
+				// generic
+				} else if (fileName.hasPrefix("xlanguage_")) {
+					warning("Unknown language package: %s", fileName.c_str());
 					continue;
 				}
 			}
@@ -325,6 +346,9 @@ bool BaseFileManager::hasFile(const Common::String &filename) {
 		int slot = atoi(filename.c_str() + 9);
 		return pm.getSaveExists(slot);
 	}
+	if (sfmFileExists(filename)) {
+		return true;
+	}
 	if (diskFileExists(filename)) {
 		return true;
 	}
@@ -335,6 +359,10 @@ bool BaseFileManager::hasFile(const Common::String &filename) {
 		return true;
 	}
 	return false;
+}
+
+int BaseFileManager::listMatchingMembers(Common::ArchiveMemberList &list, const Common::String &pattern) {
+	return _packages.listMatchingMembers(list, pattern);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -349,6 +377,17 @@ Common::SeekableReadStream *BaseFileManager::openFile(const Common::String &file
 		_openFiles.push_back(file);
 	}
 	return file;
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+Common::WriteStream *BaseFileManager::openFileForWrite(const Common::String &filename) {
+	if (strcmp(filename.c_str(), "") == 0) {
+		return nullptr;
+	}
+	debugC(kWintermuteDebugFileAccess, "Open file %s for write", filename.c_str());
+
+	return openFileForWriteRaw(filename);
 }
 
 
@@ -381,6 +420,11 @@ Common::SeekableReadStream *BaseFileManager::openFileRaw(const Common::String &f
 		return ret;
 	}
 
+	ret = openSfmFile(filename);
+	if (ret) {
+		return ret;
+	}
+
 	ret = openDiskFile(filename);
 	if (ret) {
 		return ret;
@@ -394,6 +438,19 @@ Common::SeekableReadStream *BaseFileManager::openFileRaw(const Common::String &f
 	if (!_detectionMode) {
 		ret = _resources->createReadStreamForMember(filename);
 	}
+	if (ret) {
+		return ret;
+	}
+
+	debugC(kWintermuteDebugFileAccess ,"BFileManager::OpenFileRaw - Failed to open %s", filename.c_str());
+	return nullptr;
+}
+
+//////////////////////////////////////////////////////////////////////////
+Common::WriteStream *BaseFileManager::openFileForWriteRaw(const Common::String &filename) {
+	Common::WriteStream *ret = nullptr;
+
+	ret = openSfmFileForWrite(filename);
 	if (ret) {
 		return ret;
 	}

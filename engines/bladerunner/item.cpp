@@ -52,7 +52,7 @@ Item::Item(BladeRunnerEngine *vm) {
 	_isSpinning = false;
 	_facingChange = 0;
 	_isVisible = true;
-	_isPoliceMazeEnemy = true;
+	_isPoliceMazeEnemy = false;
 	_screenRectangle.bottom = -1;
 	_screenRectangle.right = -1;
 	_screenRectangle.top = -1;
@@ -68,6 +68,10 @@ void Item::getXYZ(float *x, float *y, float *z) const {
 void Item::getWidthHeight(int *width, int *height) const {
 	*width = _width;
 	*height = _height;
+}
+
+void Item::getAnimationId(int *animationId) const {
+	*animationId = _animationId;
 }
 
 void Item::setFacing(int facing) {
@@ -125,6 +129,9 @@ bool Item::tick(Common::Rect *screenRect, bool special) {
 	return isVisibleFlag;
 }
 
+// setXYZ() recalculates the item's bounding box,
+// but in addition to the item's (Vector3) position
+// it takes into account the item's width and height
 void Item::setXYZ(Vector3 position) {
 	_position = position;
 	int halfWidth = _width / 2;

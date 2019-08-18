@@ -66,7 +66,7 @@ PersonaAnimation::PersonaAnimation(int num, VariableStack *&stacky) {
 	theSprites = nullptr;
 	numFrames = num;
 	frames = new AnimFrame[num];
-	int a = num, frameNum, howMany;
+	int a = num, frameNum = 0, howMany = 0;
 
 	while (a) {
 		a--;
@@ -837,7 +837,7 @@ void PeopleManager::killMostPeople() {
 	for (OnScreenPersonList::iterator it = _allPeople->begin(); it != _allPeople->end(); ++it) {
 		if (!((*it)->extra & EXTRA_NOREMOVE)) {
 			OnScreenPerson *killPeople = (*it);
-			_allPeople->reverse_erase(it);
+			it = _allPeople->reverse_erase(it);
 
 			// Gone from the list... now free some memory
 			if (killPeople->continueAfterWalking)

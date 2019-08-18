@@ -106,7 +106,15 @@ struct HookDatas {
 
 	int query_param(int param, byte chan);
 	int set(byte cls, byte value, byte chan);
-	HookDatas() { memset(this, 0, sizeof(HookDatas)); }
+	HookDatas() { reset(); }
+	void reset() {
+		_transpose = 0;
+		memset(_jump, 0, sizeof(_jump));
+		memset(_part_onoff, 0, sizeof(_part_onoff));
+		memset(_part_volume, 0, sizeof(_part_volume));
+		memset(_part_program, 0, sizeof(_part_program));
+		memset(_part_transpose, 0, sizeof(_part_transpose));
+	}
 };
 
 struct ParameterFader {
@@ -211,9 +219,7 @@ protected:
 	// Player part
 	void hook_clear();
 	void uninit_parts();
-	byte *parse_midi(byte *s);
 	void part_set_transpose(uint8 chan, byte relative, int8 b);
-	void parse_sysex(byte *p, uint len);
 	void maybe_jump(byte cmd, uint track, uint beat, uint tick);
 	void maybe_set_transpose(byte *data);
 	void maybe_part_onoff(byte *data);
@@ -232,7 +238,6 @@ protected:
 	// Sequencer part
 	int start_seq_sound(int sound, bool reset_vars = true);
 	void loadStartParameters(int sound);
-	int query_param(int param);
 
 public:
 	IMuseInternal *_se;
@@ -344,7 +349,6 @@ struct Part : public Common::Serializable {
 	void off();
 	void set_instrument(uint b);
 	void set_instrument(byte *data);
-	void set_instrument_pcspk(byte *data);
 	void load_global_instrument(byte b);
 
 	void set_transpose(int8 transpose);
@@ -364,6 +368,7 @@ struct Part : public Common::Serializable {
 
 private:
 	void sendPitchBend();
+	void sendTranspose();
 	void sendPanPosition(uint8 value);
 	void sendEffectLevel(uint8 value);
 };
@@ -391,6 +396,7 @@ class IMuseInternal : public IMuse {
 protected:
 	bool _native_mt32;
 	bool _enable_gs;
+	bool _isAmiga;
 	MidiDriver *_midi_adlib;
 	MidiDriver *_midi_native;
 	TimerCallbackInfo _timer_info_adlib;
@@ -493,7 +499,6 @@ protected:
 	int set_volchan_entry(uint a, uint b);
 	int set_channel_volume(uint chan, uint vol);
 	void update_volumes();
-	void reset_tick();
 
 	int set_volchan(int sound, int volchan);
 

@@ -84,6 +84,7 @@
 "..\..\..\vkeybd\packs\vkeybd_small.zip"-"c:\shared\scummvm\vkeybd_small.zip"
 "..\..\..\..\gui\themes\translations.dat"-"c:\shared\scummvm\translations.dat"
 "..\..\..\..\gui\themes\scummmodern.zip"-"c:\shared\scummvm\scummmodern.zip"
+"..\..\..\..\gui\themes\scummremastered.zip"-"c:\shared\scummvm\scummremastered.zip"
 
 ; Config/log files: 'empty' will automagically be removed on uninstall
 ""-"c:\shared\scummvm\scummvm.ini",FILENULL

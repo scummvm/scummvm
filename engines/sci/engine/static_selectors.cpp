@@ -224,11 +224,14 @@ Common::StringArray Kernel::checkStaticSelectorNames() {
 void Kernel::findSpecificSelectors(Common::StringArray &selectorNames) {
 	// Now, we need to find out selectors which keep changing place...
 	// We do that by dissecting game objects, and looking for selectors at
-	// specified locations.
+	// specified locations. We need to load some game scripts here to
+	// find these selectors, but all of the loaded scripts will be
+	// purged at the end of this function, as the segment manager will be
+	// reset.
 
 	// We need to initialize script 0 here, to make sure that it's always
 	// located at segment 1.
-	_segMan->instantiateScript(0);
+	_segMan->instantiateScript(0, false);
 
 	// The Actor class contains the init, xLast and yLast selectors, which
 	// we reference directly. It's always in script 998, so we need to
@@ -242,7 +245,7 @@ void Kernel::findSpecificSelectors(Common::StringArray &selectorNames) {
 #endif
 
 		if (_resMan->testResource(ResourceId(kResourceTypeScript, actorScript))) {
-			_segMan->instantiateScript(actorScript);
+			_segMan->instantiateScript(actorScript, false);
 
 			const Object *actorClass = _segMan->getObject(_segMan->findObjectByName("Actor"));
 
@@ -284,7 +287,7 @@ void Kernel::findSpecificSelectors(Common::StringArray &selectorNames) {
 		if (!_resMan->testResource(ResourceId(kResourceTypeScript, classReferences[i].script)))
 			continue;
 
-		_segMan->instantiateScript(classReferences[i].script);
+		_segMan->instantiateScript(classReferences[i].script, false);
 
 		const Object *targetClass = _segMan->getObject(_segMan->findObjectByName(classReferences[i].className));
 		int targetSelectorPos = 0;

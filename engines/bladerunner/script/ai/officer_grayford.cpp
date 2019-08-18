@@ -21,6 +21,7 @@
  */
 
 #include "bladerunner/script/ai_script.h"
+//#include "common/debug.h"
 namespace BladeRunner {
 
 AIScriptOfficerGrayford::AIScriptOfficerGrayford(BladeRunnerEngine *vm) : AIScriptBase(vm) {
@@ -40,47 +41,47 @@ void AIScriptOfficerGrayford::Initialize() {
 	_var3 = 0;
 
 	Actor_Put_In_Set(kActorOfficerGrayford, kSetFreeSlotG);
-	Actor_Set_At_Waypoint(kActorOfficerGrayford, 39, 0);
-	Actor_Set_Goal_Number(kActorOfficerGrayford, 0);
+	Actor_Set_At_Waypoint(kActorOfficerGrayford, 39, 0); // kSetFreeSlotG
+	Actor_Set_Goal_Number(kActorOfficerGrayford, kGoalOfficerGrayfordDefault);
 }
 
 bool AIScriptOfficerGrayford::Update() {
 	if (Global_Variable_Query(kVariableChapter) == 4
-	 && Actor_Query_Goal_Number(kActorOfficerGrayford) < 300) {
+	 && Actor_Query_Goal_Number(kActorOfficerGrayford) < kGoalOfficerGrayfordStartOfAct4) {
 		AI_Movement_Track_Flush(kActorOfficerGrayford);
-		Actor_Set_Goal_Number(kActorOfficerGrayford, 300);
+		Actor_Set_Goal_Number(kActorOfficerGrayford, kGoalOfficerGrayfordStartOfAct4);
 		return false;
 	}
 
 	if (Global_Variable_Query(kVariableChapter) == 5
-	 && Actor_Query_Goal_Number(kActorOfficerGrayford) < 400
+	 && Actor_Query_Goal_Number(kActorOfficerGrayford) < kGoalOfficerGrayfordStartOfAct5
 	) {
 		AI_Movement_Track_Flush(kActorOfficerGrayford);
-		Actor_Set_Goal_Number(kActorOfficerGrayford, 400);
+		Actor_Set_Goal_Number(kActorOfficerGrayford, kGoalOfficerGrayfordStartOfAct5);
 		return false;
 	}
 
 	if (!Game_Flag_Query(kFlagMcCoyInDNARow)
-	 &&  Actor_Query_Goal_Number(kActorOfficerGrayford) > 102
-	 &&  Actor_Query_Goal_Number(kActorOfficerGrayford) < 110
+	 &&  Actor_Query_Goal_Number(kActorOfficerGrayford) > kGoalOfficerGrayfordArrivedAtDR04
+	 &&  Actor_Query_Goal_Number(kActorOfficerGrayford) < kGoalOfficerGrayfordLeavesWithMorajiCorpseDR04
 	) {
-		Actor_Set_Goal_Number(kActorOfficerGrayford, 110);
+		Actor_Set_Goal_Number(kActorOfficerGrayford, kGoalOfficerGrayfordLeavesWithMorajiCorpseDR04);
 		return false;
 	}
 
-	if (Actor_Query_Goal_Number(kActorOfficerGrayford) == 0) {
-		Actor_Set_Goal_Number(kActorOfficerGrayford, 1);
+	if (Actor_Query_Goal_Number(kActorOfficerGrayford) == kGoalOfficerGrayfordDefault) {
+		Actor_Set_Goal_Number(kActorOfficerGrayford, kGoalOfficerGrayfordWalksInPS03a);
 		return false;
 	}
 
-	if (Actor_Query_Goal_Number(kActorOfficerGrayford) == 10) {
+	if (Actor_Query_Goal_Number(kActorOfficerGrayford) == kGoalOfficerGrayfordPrepareToRestartWalkAround) {
 		AI_Movement_Track_Flush(kActorOfficerGrayford);
-		Actor_Set_Goal_Number(kActorOfficerGrayford, 0);
+		Actor_Set_Goal_Number(kActorOfficerGrayford, kGoalOfficerGrayfordDefault);
 		return false;
 	}
 
-	if (Actor_Query_Goal_Number(kActorOfficerGrayford) == 102) {
-		Actor_Set_Goal_Number(kActorOfficerGrayford, 103);
+	if (Actor_Query_Goal_Number(kActorOfficerGrayford) == kGoalOfficerGrayfordArrivedAtDR04) {
+		Actor_Set_Goal_Number(kActorOfficerGrayford, kGoalOfficerGrayfordTalkToMcCoyAndReportAtDR04);
 		return false;
 	}
 
@@ -91,106 +92,110 @@ bool AIScriptOfficerGrayford::Update() {
 		return false;
 	}
 
-	if (Actor_Query_Goal_Number(kActorOfficerGrayford) == 310
+	if (Actor_Query_Goal_Number(kActorOfficerGrayford) == kGoalOfficerGrayfordAttackMcCoyAct4
 	 && Actor_Query_Which_Set_In(kActorOfficerGrayford) != Player_Query_Current_Set()
 	) {
 		Non_Player_Actor_Combat_Mode_Off(kActorOfficerGrayford);
-		Actor_Set_Goal_Number(kActorOfficerGrayford, 305);
+		Actor_Set_Goal_Number(kActorOfficerGrayford, kGoalOfficerGrayfordHuntingAroundAct4);
 		return false;
 	}
 
-	if (Actor_Query_Goal_Number(kActorOfficerGrayford) == 599
+	if (Actor_Query_Goal_Number(kActorOfficerGrayford) == kGoalOfficerGrayfordDead
 	 && Actor_Query_Which_Set_In(kActorOfficerGrayford) != Player_Query_Current_Set()
 	) {
+		// dead officer gets revived and re-used
 		Actor_Set_Health(kActorOfficerGrayford, 50, 50);
-		Actor_Set_Goal_Number(kActorOfficerGrayford, 305);
+		Actor_Set_Goal_Number(kActorOfficerGrayford, kGoalOfficerGrayfordHuntingAroundAct4);
 		return false;
 	}
 
-	if (Actor_Query_Goal_Number(kActorOfficerGrayford) == 305) {
+	if (Actor_Query_Goal_Number(kActorOfficerGrayford) == kGoalOfficerGrayfordHuntingAroundAct4) {
 		switch (Actor_Query_Which_Set_In(kActorOfficerGrayford)) {
 		case kSetRC03:
 			if (Actor_Query_Which_Set_In(kActorOfficerGrayford) == Player_Query_Current_Set()) {
-				Actor_Set_Goal_Number(kActorOfficerGrayford, 310);
+				Actor_Set_Goal_Number(kActorOfficerGrayford, kGoalOfficerGrayfordAttackMcCoyAct4);
 				Non_Player_Actor_Combat_Mode_On(kActorOfficerGrayford, kActorCombatStateIdle, true, kActorMcCoy, 18, kAnimationModeCombatIdle, kAnimationModeCombatWalk, kAnimationModeCombatRun, -1, -1, -1, 10, 300, false);
 			}
 			break;
 
 		case kSetUG01:
 			if (Actor_Query_Which_Set_In(kActorOfficerGrayford) == Player_Query_Current_Set()) {
-				Actor_Set_Goal_Number(kActorOfficerGrayford, 310);
+				Actor_Set_Goal_Number(kActorOfficerGrayford, kGoalOfficerGrayfordAttackMcCoyAct4);
 				Non_Player_Actor_Combat_Mode_On(kActorOfficerGrayford, kActorCombatStateIdle, true, kActorMcCoy, 11, kAnimationModeCombatIdle, kAnimationModeCombatWalk, kAnimationModeCombatRun, -1, -1, -1, 10, 300, false);
 			}
 			break;
 
 		case kSetUG04:
+			// fall through
 		case kSetUG05:
+			// fall through
 		case kSetUG06:
 			if (Actor_Query_Which_Set_In(kActorOfficerGrayford) == Player_Query_Current_Set()) {
-				Actor_Set_Goal_Number(kActorOfficerGrayford, 310);
+				Actor_Set_Goal_Number(kActorOfficerGrayford, kGoalOfficerGrayfordAttackMcCoyAct4);
 				Non_Player_Actor_Combat_Mode_On(kActorOfficerGrayford, kActorCombatStateIdle, true, kActorMcCoy, 10, kAnimationModeCombatIdle, kAnimationModeCombatWalk, kAnimationModeCombatRun, -1, -1, -1, 10, 300, false);
 			}
 			break;
-
+// TODO missing UG07 case - would be a type 10 combat, 12 flee?
 		case kSetUG08:
 			if (Actor_Query_Which_Set_In(kActorOfficerGrayford) == Player_Query_Current_Set()) {
-				Actor_Set_Goal_Number(kActorOfficerGrayford, 310);
+				Actor_Set_Goal_Number(kActorOfficerGrayford, kGoalOfficerGrayfordAttackMcCoyAct4);
 				Non_Player_Actor_Combat_Mode_On(kActorOfficerGrayford, kActorCombatStateIdle, true, kActorMcCoy, 13, kAnimationModeCombatIdle, kAnimationModeCombatWalk, kAnimationModeCombatRun, -1, -1, -1, 10, 300, false);
 			}
 			break;
+// TODO missing UG09 case - would be a type ?? //
 
 		case kSetUG10:
 			if (Actor_Query_Which_Set_In(kActorOfficerGrayford) == Player_Query_Current_Set()) {
-				Actor_Set_Goal_Number(kActorOfficerGrayford, 310);
+				Actor_Set_Goal_Number(kActorOfficerGrayford, kGoalOfficerGrayfordAttackMcCoyAct4);
 				Non_Player_Actor_Combat_Mode_On(kActorOfficerGrayford, kActorCombatStateIdle, true, kActorMcCoy, 14, kAnimationModeCombatIdle, kAnimationModeCombatWalk, kAnimationModeCombatRun, -1, -1, -1, 10, 300, false);
 			}
 			break;
 
 		case kSetUG12:
 			if (Actor_Query_Which_Set_In(kActorOfficerGrayford) == Player_Query_Current_Set()) {
-				Actor_Set_Goal_Number(kActorOfficerGrayford, 310);
+				Actor_Set_Goal_Number(kActorOfficerGrayford, kGoalOfficerGrayfordAttackMcCoyAct4);
 				Non_Player_Actor_Combat_Mode_On(kActorOfficerGrayford, kActorCombatStateIdle, true, kActorMcCoy, 16, kAnimationModeCombatIdle, kAnimationModeCombatWalk, kAnimationModeCombatRun, -1, -1, -1, 10, 300, false);
 			}
 			break;
 
 		case kSetUG14:
 			if (Actor_Query_Which_Set_In(kActorOfficerGrayford) == Player_Query_Current_Set()) {
-				Actor_Set_Goal_Number(kActorOfficerGrayford, 310);
+				Actor_Set_Goal_Number(kActorOfficerGrayford, kGoalOfficerGrayfordAttackMcCoyAct4);
 				Non_Player_Actor_Combat_Mode_On(kActorOfficerGrayford, kActorCombatStateIdle, true, kActorMcCoy, 17, kAnimationModeCombatIdle, kAnimationModeCombatWalk, kAnimationModeCombatRun, -1, -1, -1, 10, 300, false);
 			}
 			break;
 
 		case kSetMA07:
 			if (Actor_Query_Which_Set_In(kActorOfficerGrayford) == Player_Query_Current_Set()) {
-				Actor_Set_Goal_Number(kActorOfficerGrayford, 310);
+				Actor_Set_Goal_Number(kActorOfficerGrayford, kGoalOfficerGrayfordAttackMcCoyAct4);
 				Non_Player_Actor_Combat_Mode_On(kActorOfficerGrayford, kActorCombatStateIdle, true, kActorMcCoy, 7, kAnimationModeCombatIdle, kAnimationModeCombatWalk, kAnimationModeCombatRun, -1, -1, -1, 10, 300, false);
 			}
 			break;
 
 		case kSetNR01:
 			if (Actor_Query_Which_Set_In(kActorOfficerGrayford) == Player_Query_Current_Set()) {
-				Actor_Set_Goal_Number(kActorOfficerGrayford, 310);
+				Actor_Set_Goal_Number(kActorOfficerGrayford, kGoalOfficerGrayfordAttackMcCoyAct4);
 				Non_Player_Actor_Combat_Mode_On(kActorOfficerGrayford, kActorCombatStateIdle, true, kActorMcCoy, 3, kAnimationModeCombatIdle, kAnimationModeCombatWalk, kAnimationModeCombatRun, -1, -1, -1, 10, 300, false);
 			}
 			break;
 
 		case kSetDR01_DR02_DR04:
 			if (Actor_Query_Which_Set_In(kActorOfficerGrayford) == Player_Query_Current_Set()) {
-				Actor_Set_Goal_Number(kActorOfficerGrayford, 310);
+				Actor_Set_Goal_Number(kActorOfficerGrayford, kGoalOfficerGrayfordAttackMcCoyAct4);
 				Non_Player_Actor_Combat_Mode_On(kActorOfficerGrayford, kActorCombatStateIdle, true, kActorMcCoy, 0, kAnimationModeCombatIdle, kAnimationModeCombatWalk, kAnimationModeCombatRun, -1, -1, -1, 10, 300, false);
 			}
 			break;
 
 		case kSetBB01:
 			if (Actor_Query_Which_Set_In(kActorOfficerGrayford) == Player_Query_Current_Set()) {
-				Actor_Set_Goal_Number(kActorOfficerGrayford, 310);
+				Actor_Set_Goal_Number(kActorOfficerGrayford, kGoalOfficerGrayfordAttackMcCoyAct4);
 				Non_Player_Actor_Combat_Mode_On(kActorOfficerGrayford, kActorCombatStateIdle, true, kActorMcCoy, 1, kAnimationModeCombatIdle, kAnimationModeCombatWalk, kAnimationModeCombatRun, -1, -1, -1, 10, 300, false);
 			}
 			break;
 
 		case kSetCT11:
 			if (Actor_Query_Which_Set_In(kActorOfficerGrayford) == Player_Query_Current_Set()) {
-				Actor_Set_Goal_Number(kActorOfficerGrayford, 310);
+				Actor_Set_Goal_Number(kActorOfficerGrayford, kGoalOfficerGrayfordAttackMcCoyAct4);
 				Non_Player_Actor_Combat_Mode_On(kActorOfficerGrayford, kActorCombatStateIdle, true, kActorMcCoy, 5, kAnimationModeCombatIdle, kAnimationModeCombatWalk, kAnimationModeCombatRun, -1, -1, -1, 10, 300, false);
 			}
 			break;
@@ -202,75 +207,78 @@ bool AIScriptOfficerGrayford::Update() {
 }
 
 void AIScriptOfficerGrayford::TimerExpired(int timer) {
-	if (timer == 2) {
-		AI_Countdown_Timer_Reset(kActorOfficerGrayford, 2);
-		if (Actor_Query_Goal_Number(kActorOfficerGrayford) == 104) {
-			Actor_Set_Goal_Number(kActorOfficerGrayford, 105);
-		} else if (Actor_Query_Goal_Number(kActorOfficerGrayford) == 105) {
-			Actor_Set_Goal_Number(kActorOfficerGrayford, 104);
+	if (timer == kActorTimerAIScriptCustomTask2) {
+		AI_Countdown_Timer_Reset(kActorOfficerGrayford, kActorTimerAIScriptCustomTask2);
+		if (Actor_Query_Goal_Number(kActorOfficerGrayford) == kGoalOfficerGrayfordPatrolsAtDR04a) {
+			Actor_Set_Goal_Number(kActorOfficerGrayford, kGoalOfficerGrayfordPatrolsAtDR04b);
+		} else if (Actor_Query_Goal_Number(kActorOfficerGrayford) == kGoalOfficerGrayfordPatrolsAtDR04b) {
+			Actor_Set_Goal_Number(kActorOfficerGrayford, kGoalOfficerGrayfordPatrolsAtDR04a);
 		}
 	}
 }
 
 void AIScriptOfficerGrayford::CompletedMovementTrack() {
 	switch (Actor_Query_Goal_Number(kActorOfficerGrayford)) {
-	case 1:
-		Actor_Set_Goal_Number(kActorOfficerGrayford, 2);
+	case kGoalOfficerGrayfordWalksInPS03a:
+		Actor_Set_Goal_Number(kActorOfficerGrayford, kGoalOfficerGrayfordWalksInPS03b);
 		break;
 
-	case 2:
-		Actor_Set_Goal_Number(kActorOfficerGrayford, 3);
+	case kGoalOfficerGrayfordWalksInPS03b:
+		Actor_Set_Goal_Number(kActorOfficerGrayford, kGoalOfficerGrayfordWalksInPS03c);
 		break;
 
-	case 3:
-		Actor_Set_Goal_Number(kActorOfficerGrayford, 4);
+	case kGoalOfficerGrayfordWalksInPS03c:
+		Actor_Set_Goal_Number(kActorOfficerGrayford, kGoalOfficerGrayfordWalksInPS03d);
 		break;
 
-	case 4:
-		Actor_Set_Goal_Number(kActorOfficerGrayford, 5);
+	case kGoalOfficerGrayfordWalksInPS03d:
+		Actor_Set_Goal_Number(kActorOfficerGrayford, kGoalOfficerGrayfordWalksInFreeSlotC);
 		break;
 
-	case 5:
-		Actor_Set_Goal_Number(kActorOfficerGrayford, 6);
+	case kGoalOfficerGrayfordWalksInFreeSlotC:
+		Actor_Set_Goal_Number(kActorOfficerGrayford, kGoalOfficerGrayfordWalksInPS09a);
 		break;
 
-	case 6:
-		Actor_Set_Goal_Number(kActorOfficerGrayford, 7);
+	case kGoalOfficerGrayfordWalksInPS09a:
+		Actor_Set_Goal_Number(kActorOfficerGrayford, kGoalOfficerGrayfordWalksInPS09b);
 		break;
 
-	case 7:
-		Actor_Set_Goal_Number(kActorOfficerGrayford, 8);
+	case kGoalOfficerGrayfordWalksInPS09b:
+		Actor_Set_Goal_Number(kActorOfficerGrayford, kGoalOfficerGrayfordWalksInPS09c);
 		break;
 
-	case 8:
-		Actor_Set_Goal_Number(kActorOfficerGrayford, 9);
+	case kGoalOfficerGrayfordWalksInPS09c:
+		Actor_Set_Goal_Number(kActorOfficerGrayford, kGoalOfficerGrayfordWalksInPS03e);
 		break;
 
-	case 9:
-		Actor_Set_Goal_Number(kActorOfficerGrayford, 10);
+	case kGoalOfficerGrayfordWalksInPS03e:
+		Actor_Set_Goal_Number(kActorOfficerGrayford, kGoalOfficerGrayfordPrepareToRestartWalkAround);
 		break;
 
-	case 104:
-	case 105:
+	case kGoalOfficerGrayfordPatrolsAtDR04a:
+		// fall through
+	case kGoalOfficerGrayfordPatrolsAtDR04b:
 		if (Random_Query(0, 2)) {
 			Actor_Change_Animation_Mode(kActorOfficerGrayford, 43);
 		} else {
-			AI_Countdown_Timer_Reset(kActorOfficerGrayford, 2);
-			AI_Countdown_Timer_Start(kActorOfficerGrayford, 2, Random_Query(6, 12));
+			AI_Countdown_Timer_Reset(kActorOfficerGrayford, kActorTimerAIScriptCustomTask2);
+			AI_Countdown_Timer_Start(kActorOfficerGrayford, kActorTimerAIScriptCustomTask2, Random_Query(6, 12));
 		}
-		Actor_Face_Waypoint(kActorOfficerGrayford, 97, true);
+		Actor_Face_Waypoint(kActorOfficerGrayford, 97, true); // kSetDR01_DR02_DR04
 		// return false;
 		break;
 
-	case 305:
-		Actor_Set_Goal_Number(kActorOfficerGrayford, 306);
+	case kGoalOfficerGrayfordHuntingAroundAct4:
+//		debug("Grayford completed Movement");
+		Actor_Set_Goal_Number(kActorOfficerGrayford, kGoalOfficerGrayfordPrepareToHuntAroundAct4);
 		break;
 
-	case 307:
+	case kGoalOfficerGrayfordBlockingUG07:
+		// UG07 before McCoy visits his apartment in Act 4
 		Non_Player_Actor_Combat_Mode_On(kActorOfficerGrayford, kActorCombatStateIdle, true, kActorMcCoy, 12, kAnimationModeCombatIdle, kAnimationModeCombatWalk, kAnimationModeCombatRun, 0, -1, -1, 15, 300, false);
 		break;
 
-	case 308:
+	case kGoalOfficerGrayfordArrestsMcCoyAct4CT12:
 		Actor_Change_Animation_Mode(kActorOfficerGrayford, kAnimationModeCombatIdle);
 		Actor_Face_Actor(kActorOfficerGrayford, kActorMcCoy, true);
 		break;
@@ -286,9 +294,9 @@ void AIScriptOfficerGrayford::ReceivedClue(int clueId, int fromActorId) {
 
 void AIScriptOfficerGrayford::ClickedByPlayer() {
 	switch (Actor_Query_Goal_Number(kActorOfficerGrayford)) {
-	case 1:
+	case kGoalOfficerGrayfordWalksInPS03a:
 		AI_Movement_Track_Flush(kActorOfficerGrayford);
-		Actor_Set_Goal_Number(kActorOfficerGrayford, 99);
+		Actor_Set_Goal_Number(kActorOfficerGrayford, kGoalOfficerGrayfordStopAndTalk1);
 		Actor_Face_Actor(kActorMcCoy, kActorOfficerGrayford, true);
 		Actor_Face_Actor(kActorOfficerGrayford, kActorMcCoy, true);
 		if (Random_Query(1, 2) == 1) {
@@ -297,12 +305,12 @@ void AIScriptOfficerGrayford::ClickedByPlayer() {
 			Actor_Says(kActorMcCoy, 4515, 13);
 			Actor_Says(kActorOfficerGrayford, 230, 13);
 		}
-		Actor_Set_Goal_Number(kActorOfficerGrayford, 1);
+		Actor_Set_Goal_Number(kActorOfficerGrayford, kGoalOfficerGrayfordWalksInPS03a);
 		break;
 
-	case 2:
+	case kGoalOfficerGrayfordWalksInPS03b:
 		AI_Movement_Track_Flush(kActorOfficerGrayford);
-		Actor_Set_Goal_Number(kActorOfficerGrayford, 99);
+		Actor_Set_Goal_Number(kActorOfficerGrayford, kGoalOfficerGrayfordStopAndTalk1);
 		Actor_Face_Actor(kActorMcCoy, kActorOfficerGrayford, true);
 		Actor_Face_Actor(kActorOfficerGrayford, kActorMcCoy, true);
 		if (Random_Query(1, 2) == 1) {
@@ -311,25 +319,25 @@ void AIScriptOfficerGrayford::ClickedByPlayer() {
 			Actor_Says(kActorMcCoy, 4515, 13);
 			Actor_Says(kActorOfficerGrayford, 330, 13);
 		}
-		Actor_Set_Goal_Number(kActorOfficerGrayford, 2);
+		Actor_Set_Goal_Number(kActorOfficerGrayford, kGoalOfficerGrayfordWalksInPS03b);
 		break;
 
-	case 3:
+	case kGoalOfficerGrayfordWalksInPS03c:
 		AI_Movement_Track_Flush(kActorOfficerGrayford);
-		Actor_Set_Goal_Number(kActorOfficerGrayford, 99);
+		Actor_Set_Goal_Number(kActorOfficerGrayford, kGoalOfficerGrayfordStopAndTalk1);
 		Actor_Face_Actor(kActorMcCoy, kActorOfficerGrayford, true);
 		Actor_Face_Actor(kActorOfficerGrayford, kActorMcCoy, true);
 		if (Random_Query(1, 2) == 1) {
-			Actor_Says(kActorMcCoy, 5075, 14);
+			Actor_Says(kActorMcCoy, 5075, 14); // Hey, pal.
 		} else {
-			Actor_Says(kActorMcCoy, 5075, 14); // bug in the original? Matches the above statement
+			Actor_Says(kActorMcCoy, 5075, 14); // Hey, pal. TODO  bug in the original? Matches the above statement
 		}
-		Actor_Set_Goal_Number(kActorOfficerGrayford, 3);
+		Actor_Set_Goal_Number(kActorOfficerGrayford, kGoalOfficerGrayfordWalksInPS03c);
 		break;
 
-	case 4:
+	case kGoalOfficerGrayfordWalksInPS03d:
 		AI_Movement_Track_Flush(kActorOfficerGrayford);
-		Actor_Set_Goal_Number(kActorOfficerGrayford, 99);
+		Actor_Set_Goal_Number(kActorOfficerGrayford, kGoalOfficerGrayfordStopAndTalk1);
 		Actor_Face_Actor(kActorMcCoy, kActorOfficerGrayford, true);
 		Actor_Face_Actor(kActorOfficerGrayford, kActorMcCoy, true);
 		if (Random_Query(1, 2) == 1) {
@@ -339,60 +347,60 @@ void AIScriptOfficerGrayford::ClickedByPlayer() {
 			Actor_Says(kActorMcCoy, 4515, 13);
 			Actor_Says(kActorOfficerGrayford, 330, 13);
 		}
-		Actor_Set_Goal_Number(kActorOfficerGrayford, 4);
+		Actor_Set_Goal_Number(kActorOfficerGrayford, kGoalOfficerGrayfordWalksInPS03d);
 		break;
 
-	case 7:
+	case kGoalOfficerGrayfordWalksInPS09b:
 		AI_Movement_Track_Flush(kActorOfficerGrayford);
-		Actor_Set_Goal_Number(kActorOfficerGrayford, 99);
+		Actor_Set_Goal_Number(kActorOfficerGrayford, kGoalOfficerGrayfordStopAndTalk1);
 		Actor_Face_Actor(kActorMcCoy, kActorOfficerGrayford, true);
 		Actor_Says(kActorMcCoy, 4515, 14);
 		Actor_Says(kActorOfficerGrayford, 330, 13);
-		Actor_Set_Goal_Number(kActorOfficerGrayford, 7);
+		Actor_Set_Goal_Number(kActorOfficerGrayford, kGoalOfficerGrayfordWalksInPS09b);
 		break;
-
-	case 8:
+// TODO goals 6 and 9?
+	case kGoalOfficerGrayfordWalksInPS09c:
 		AI_Movement_Track_Flush(kActorOfficerGrayford);
-		Actor_Set_Goal_Number(kActorOfficerGrayford, 99);
+		Actor_Set_Goal_Number(kActorOfficerGrayford, kGoalOfficerGrayfordStopAndTalk1);
 		Actor_Face_Actor(kActorMcCoy, kActorOfficerGrayford, true);
 		Actor_Face_Actor(kActorOfficerGrayford, kActorMcCoy, true);
 		Actor_Says(kActorMcCoy, 5075, 13);
-		Actor_Set_Goal_Number(kActorOfficerGrayford, 8);
+		Actor_Set_Goal_Number(kActorOfficerGrayford, kGoalOfficerGrayfordWalksInPS09c);
 		break;
 
-	case 104:
-		Actor_Set_Goal_Number(kActorOfficerGrayford, 199);
+	case kGoalOfficerGrayfordPatrolsAtDR04a:
+		Actor_Set_Goal_Number(kActorOfficerGrayford, kGoalOfficerGrayfordStopAndTalkDR04);
 		Actor_Face_Actor(kActorMcCoy, kActorOfficerGrayford, true);
-		Actor_Says(kActorMcCoy, 1005, kAnimationModeTalk);
+		Actor_Says(kActorMcCoy, 1005, kAnimationModeTalk); // Don't miss anything.
 		AI_Movement_Track_Flush(kActorOfficerGrayford);
-		AI_Countdown_Timer_Reset(kActorOfficerGrayford, 2);
+		AI_Countdown_Timer_Reset(kActorOfficerGrayford, kActorTimerAIScriptCustomTask2);
 		if (_animationState == 35 || _animationState == 34) {
 			_animationState = 37;
 			_animationFrame = 0;
 		}
 		Actor_Face_Actor(kActorOfficerGrayford, kActorMcCoy, true);
 		Actor_Says(kActorOfficerGrayford, 190, 19);
-		Actor_Set_Goal_Number(kActorOfficerGrayford, 104);
+		Actor_Set_Goal_Number(kActorOfficerGrayford, kGoalOfficerGrayfordPatrolsAtDR04a);
 		break;
 
-	case 105:
-		Actor_Set_Goal_Number(kActorOfficerGrayford, 199);
+	case kGoalOfficerGrayfordPatrolsAtDR04b:
+		Actor_Set_Goal_Number(kActorOfficerGrayford, kGoalOfficerGrayfordStopAndTalkDR04);
 		Actor_Face_Actor(kActorMcCoy, kActorOfficerGrayford, true);
-		Actor_Says(kActorMcCoy, 1005, kAnimationModeTalk);
+		Actor_Says(kActorMcCoy, 1005, kAnimationModeTalk); // Don't miss anything.
 		AI_Movement_Track_Flush(kActorOfficerGrayford);
-		AI_Countdown_Timer_Reset(kActorOfficerGrayford, 2);
+		AI_Countdown_Timer_Reset(kActorOfficerGrayford, kActorTimerAIScriptCustomTask2);
 		if (_animationState == 35 || _animationState == 34) {
 			_animationState = 37;
 			_animationFrame = 0;
 		}
-		Actor_Face_Actor(kActorOfficerGrayford, kActorMcCoy, 1);
+		Actor_Face_Actor(kActorOfficerGrayford, kActorMcCoy, true);
 		Actor_Says(kActorOfficerGrayford, 190, 19);
-		Actor_Set_Goal_Number(kActorOfficerGrayford, 105);
+		Actor_Set_Goal_Number(kActorOfficerGrayford, kGoalOfficerGrayfordPatrolsAtDR04b);
 		break;
 
 	default:
 		return; //false;
-		break;
+//		break; // redundant
 	}
 
 	return; //true;
@@ -419,14 +427,15 @@ void AIScriptOfficerGrayford::ShotAtAndMissed() {
 }
 
 bool AIScriptOfficerGrayford::ShotAtAndHit() {
-	if (Actor_Query_Goal_Number(kActorOfficerGrayford) == 307)
+	// Grayford is invincible while blocking the UG07 (before McCoy visits his apartment in Act 4)
+	if (Actor_Query_Goal_Number(kActorOfficerGrayford) == kGoalOfficerGrayfordBlockingUG07) {
 		Actor_Set_Health(kActorOfficerGrayford, 50, 50);
-
+	}
 	return false;
 }
 
 void AIScriptOfficerGrayford::Retired(int byActorId) {
-	Actor_Set_Goal_Number(kActorOfficerGrayford, 599);
+	Actor_Set_Goal_Number(kActorOfficerGrayford, kGoalOfficerGrayfordDead);
 	Game_Flag_Set(kFlagMcCoyRetiredHuman);
 }
 
@@ -436,61 +445,71 @@ int AIScriptOfficerGrayford::GetFriendlinessModifierIfGetsClue(int otherActorId,
 
 bool AIScriptOfficerGrayford::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 	switch (newGoalNumber) {
-	case 1:
+	case kGoalOfficerGrayfordWalksInPS03a:
+		// kSetPS03
 		AI_Movement_Track_Flush(kActorOfficerGrayford);
 		AI_Movement_Track_Append(kActorOfficerGrayford, 82, Random_Query(5, 20));
 		AI_Movement_Track_Repeat(kActorOfficerGrayford);
 		return true;
 
-	case 2:
+	case kGoalOfficerGrayfordWalksInPS03b:
+		// kSetPS03
 		AI_Movement_Track_Flush(kActorOfficerGrayford);
 		AI_Movement_Track_Append(kActorOfficerGrayford, 76, Random_Query(10, 20));
 		AI_Movement_Track_Repeat(kActorOfficerGrayford);
 		return true;
 
-	case 3:
+	case kGoalOfficerGrayfordWalksInPS03c:
+		// kSetPS03
 		AI_Movement_Track_Flush(kActorOfficerGrayford);
 		AI_Movement_Track_Append(kActorOfficerGrayford, 77, Random_Query(5, 15));
 		AI_Movement_Track_Repeat(kActorOfficerGrayford);
 		return true;
 
-	case 4:
+	case kGoalOfficerGrayfordWalksInPS03d:
+		// kSetPS03
 		AI_Movement_Track_Flush(kActorOfficerGrayford);
 		AI_Movement_Track_Append(kActorOfficerGrayford, 78, Random_Query(5, 15));
 		AI_Movement_Track_Repeat(kActorOfficerGrayford);
 		return true;
 
-	case 5:
+	case kGoalOfficerGrayfordWalksInFreeSlotC:
+		// kSetFreeSlotC
 		AI_Movement_Track_Flush(kActorOfficerGrayford);
-		AI_Movement_Track_Append(kActorOfficerGrayford, 35, 30);
+		AI_Movement_Track_Append(kActorOfficerGrayford, 35, 30); // kSetFreeSlotC
 		AI_Movement_Track_Repeat(kActorOfficerGrayford);
 		return true;
 
-	case 6:
+	case kGoalOfficerGrayfordWalksInPS09a:
+		// kSetPS09
 		AI_Movement_Track_Flush(kActorOfficerGrayford);
 		AI_Movement_Track_Append(kActorOfficerGrayford, 79, Random_Query(5, 15));
 		AI_Movement_Track_Repeat(kActorOfficerGrayford);
 		return true;
 
-	case 7:
+	case kGoalOfficerGrayfordWalksInPS09b:
+		// kSetPS09
 		AI_Movement_Track_Flush(kActorOfficerGrayford);
 		AI_Movement_Track_Append(kActorOfficerGrayford, 80, 1);
 		AI_Movement_Track_Repeat(kActorOfficerGrayford);
 		return true;
 
-	case 8:
+	case kGoalOfficerGrayfordWalksInPS09c:
+		// kSetPS09
 		AI_Movement_Track_Flush(kActorOfficerGrayford);
 		AI_Movement_Track_Append(kActorOfficerGrayford, 81, Random_Query(5, 15));
 		AI_Movement_Track_Repeat(kActorOfficerGrayford);
 		return true;
 
-	case 9:
+	case kGoalOfficerGrayfordWalksInPS03e:
+		// kSetPS03
 		AI_Movement_Track_Flush(kActorOfficerGrayford);
 		AI_Movement_Track_Append(kActorOfficerGrayford, 82, Random_Query(5, 15));
 		AI_Movement_Track_Repeat(kActorOfficerGrayford);
 		return true;
 
-	case 101:
+	case kGoalOfficerGrayfordArrivesToDR04:
+		// kSetDR01_DR02_DR04
 		Player_Loses_Control();
 		AI_Movement_Track_Flush(kActorOfficerGrayford);
 		Actor_Put_In_Set(kActorOfficerGrayford, kSetDR01_DR02_DR04);
@@ -513,13 +532,14 @@ bool AIScriptOfficerGrayford::GoalChanged(int currentGoalNumber, int newGoalNumb
 		}
 		return true;
 
-	case 102:
+	case kGoalOfficerGrayfordArrivedAtDR04:
 		return true;
 
-	case 103:
+	case kGoalOfficerGrayfordTalkToMcCoyAndReportAtDR04:
+		// kSetDR01_DR02_DR04
 		Actor_Says(kActorOfficerGrayford, 120, 19);
-		Actor_Says_With_Pause(kActorMcCoy, 970, 0.2f, 13);
-		Actor_Says(kActorMcCoy, 975, 12);
+		Actor_Says_With_Pause(kActorMcCoy, 970, 0.2f, 13); // Got a dead man here. Victim of an explosion.
+		Actor_Says(kActorMcCoy, 975, 12); // TODO - a bug? McCoy may not know Moraji's name here(?)
 
 		if (Actor_Clue_Query(kActorMcCoy, kClueMorajiInterview) == 1) {
 			Actor_Says(kActorMcCoy, 980, 16);
@@ -535,37 +555,39 @@ bool AIScriptOfficerGrayford::GoalChanged(int currentGoalNumber, int newGoalNumb
 		Player_Gains_Control();
 
 		if (Actor_Query_Goal_Number(kActorMoraji) == kGoalMorajiDead) {
-			Actor_Face_Actor(kActorOfficerGrayford, kActorMoraji, 1);
+			Actor_Face_Actor(kActorOfficerGrayford, kActorMoraji, true);
 		} else {
-			Actor_Face_Waypoint(kActorOfficerGrayford, 97, 1);
+			Actor_Face_Waypoint(kActorOfficerGrayford, 97, true);
 		}
 
 		Actor_Change_Animation_Mode(kActorOfficerGrayford, 43);
 
-		if (Player_Query_Current_Scene() == 28) {
-			Actor_Says(kActorOfficerGrayford, 170, kAnimationModeTalk);
+		if (Player_Query_Current_Scene() == kSceneDR04) {
+			Actor_Says(kActorOfficerGrayford, 170, kAnimationModeTalk); // This is 32, Sector 3. Reporting a homicide. Possible act of terrorism.
 		}
 		return true;
 
-	case 104:
-		AI_Countdown_Timer_Reset(kActorOfficerGrayford, 2);
+	case kGoalOfficerGrayfordPatrolsAtDR04a:
+		// kSetDR01_DR02_DR04
+		AI_Countdown_Timer_Reset(kActorOfficerGrayford, kActorTimerAIScriptCustomTask2);
 		AI_Movement_Track_Flush(kActorOfficerGrayford);
 		AI_Movement_Track_Append(kActorOfficerGrayford, 112, 0);
 		AI_Movement_Track_Repeat(kActorOfficerGrayford);
 		return true;
 
-	case 105:
-		AI_Countdown_Timer_Reset(kActorOfficerGrayford, 2);
+	case kGoalOfficerGrayfordPatrolsAtDR04b:
+		// kSetDR01_DR02_DR04
+		AI_Countdown_Timer_Reset(kActorOfficerGrayford, kActorTimerAIScriptCustomTask2);
 		AI_Movement_Track_Flush(kActorOfficerGrayford);
 		AI_Movement_Track_Append(kActorOfficerGrayford, 113, 0);
 		AI_Movement_Track_Repeat(kActorOfficerGrayford);
 		return true;
 
-	case 106:
+	case kGoalOfficerGrayfordStopPatrolToTalkToMcCoyAtDR04:
 		Actor_Face_Actor(kActorMcCoy, kActorOfficerGrayford, true);
-		Actor_Says(kActorMcCoy, 1000, 14);
+		Actor_Says(kActorMcCoy, 1000, 14); // You got a sheet or something...?
 		AI_Movement_Track_Flush(kActorOfficerGrayford);
-		AI_Countdown_Timer_Reset(kActorOfficerGrayford, 2);
+		AI_Countdown_Timer_Reset(kActorOfficerGrayford, kActorTimerAIScriptCustomTask2);
 
 		if (_animationState == 35
 		 || _animationState == 34
@@ -579,23 +601,27 @@ bool AIScriptOfficerGrayford::GoalChanged(int currentGoalNumber, int newGoalNumb
 		Actor_Set_Goal_Number(kActorOfficerGrayford, currentGoalNumber);
 		return true; // possible bugfix: was break;
 
-	case 110:
+	case kGoalOfficerGrayfordLeavesWithMorajiCorpseDR04:
+		// kSetFreeSlotC
 		AI_Movement_Track_Flush(kActorOfficerGrayford);
-		AI_Movement_Track_Append(kActorOfficerGrayford, 35, 0);
+		AI_Movement_Track_Append(kActorOfficerGrayford, 35, 0); // kSetFreeSlotC
 		AI_Movement_Track_Repeat(kActorOfficerGrayford);
 		AI_Movement_Track_Flush(kActorMoraji);
-		AI_Movement_Track_Append(kActorMoraji, 41, 0);
+		AI_Movement_Track_Append(kActorMoraji, 41, 0); // kSetFreeSlotI
 		AI_Movement_Track_Repeat(kActorMoraji);
 		return true;
 
-	case 300:
-		Actor_Set_Goal_Number(kActorOfficerGrayford, 305);
+	case kGoalOfficerGrayfordStartOfAct4:
+		Actor_Set_Goal_Number(kActorOfficerGrayford, kGoalOfficerGrayfordHuntingAroundAct4);
 		return true;
 
-	case 305:
+	case kGoalOfficerGrayfordHuntingAroundAct4:
+//		debug("Flushing Grayford movement track");
 		AI_Movement_Track_Flush(kActorOfficerGrayford);
 		switch (Random_Query(1, 10)) {
 		case 1:
+			// kSetNR01
+//			debug("gray 1 kSetNR01");
 			AI_Movement_Track_Append(kActorOfficerGrayford, 398, 15);
 			AI_Movement_Track_Append(kActorOfficerGrayford, 399, 0);
 			AI_Movement_Track_Append(kActorOfficerGrayford, 400, 0);
@@ -604,57 +630,72 @@ bool AIScriptOfficerGrayford::GoalChanged(int currentGoalNumber, int newGoalNumb
 			AI_Movement_Track_Append(kActorOfficerGrayford, 403, 0);
 			AI_Movement_Track_Append(kActorOfficerGrayford, 404, 15);
 			AI_Movement_Track_Repeat(kActorOfficerGrayford);
-			Actor_Set_Goal_Number(kActorOfficerGrayford, 305);
+			//Actor_Set_Goal_Number(kActorOfficerGrayford, kGoalOfficerGrayfordHuntingAroundAct4); // redundant
 			return true;
 
 		case 2:
+			// kSetCT11
+//			debug("gray 2 kSetCT11");
 			AI_Movement_Track_Append(kActorOfficerGrayford, 385, 10);
 			AI_Movement_Track_Append(kActorOfficerGrayford, 242, 2);
 			AI_Movement_Track_Append(kActorOfficerGrayford, 386, 2);
 			AI_Movement_Track_Append(kActorOfficerGrayford, 387, 15);
 			AI_Movement_Track_Repeat(kActorOfficerGrayford);
-			Actor_Set_Goal_Number(kActorOfficerGrayford, 305);
+			//Actor_Set_Goal_Number(kActorOfficerGrayford, kGoalOfficerGrayfordHuntingAroundAct4); // redundant
 			return true;
 
 		case 3:
+			// kSetDR01_DR02_DR04
+//			debug("gray 3 kSetDR01_DR02_DR04");
 			AI_Movement_Track_Append(kActorOfficerGrayford, 390, 10);
 			AI_Movement_Track_Append(kActorOfficerGrayford, 391, 0);
 			AI_Movement_Track_Append(kActorOfficerGrayford, 392, 5);
 			AI_Movement_Track_Append(kActorOfficerGrayford, 345, 0);
 			AI_Movement_Track_Append(kActorOfficerGrayford, 393, 15);
 			AI_Movement_Track_Repeat(kActorOfficerGrayford);
-			Actor_Set_Goal_Number(kActorOfficerGrayford, 305);
+			//Actor_Set_Goal_Number(kActorOfficerGrayford, kGoalOfficerGrayfordHuntingAroundAct4); // redundant
 			return true;
 
 		case 4:
+			// kSetRC03 -> kSetFreeSlotC
+//			debug("gray 4 kSetRC03 -> kSetFreeSlotC");
 			AI_Movement_Track_Append(kActorOfficerGrayford, 381, 15);
 			AI_Movement_Track_Append(kActorOfficerGrayford, 382, 0);
 			AI_Movement_Track_Append(kActorOfficerGrayford, 383, 15);
 			AI_Movement_Track_Append(kActorOfficerGrayford, 382, 3);
 			AI_Movement_Track_Append(kActorOfficerGrayford, 384, 0);
-			AI_Movement_Track_Append(kActorOfficerGrayford, 35, 30);
+			AI_Movement_Track_Append(kActorOfficerGrayford, 35, 30); // kSetFreeSlotC
 			AI_Movement_Track_Repeat(kActorOfficerGrayford);
-			Actor_Set_Goal_Number(kActorOfficerGrayford, 305);
+			//Actor_Set_Goal_Number(kActorOfficerGrayford, kGoalOfficerGrayfordHuntingAroundAct4); // redundant
 			return true;
 
 		case 5:
+			// kSetBB01 -> kSetFreeSlotC
+//			debug("gray 5 kSetBB01 -> kSetFreeSlotC");
 			AI_Movement_Track_Append(kActorOfficerGrayford, 388, 10);
 			AI_Movement_Track_Append(kActorOfficerGrayford, 389, 10);
-			AI_Movement_Track_Append(kActorOfficerGrayford, 35, 30);
+			AI_Movement_Track_Append(kActorOfficerGrayford, 35, 30); // kSetFreeSlotC
 			AI_Movement_Track_Repeat(kActorOfficerGrayford);
-			Actor_Set_Goal_Number(kActorOfficerGrayford, 305);
+			//Actor_Set_Goal_Number(kActorOfficerGrayford, kGoalOfficerGrayfordHuntingAroundAct4); // redundant
 			return true;
 
 		case 6:
+			// kSetCT11 - identical to case 2
+//			debug("gray 6 kSetCT11");
 			AI_Movement_Track_Append(kActorOfficerGrayford, 385, 10);
 			AI_Movement_Track_Append(kActorOfficerGrayford, 242, 2);
 			AI_Movement_Track_Append(kActorOfficerGrayford, 386, 2);
 			AI_Movement_Track_Append(kActorOfficerGrayford, 387, 15);
 			AI_Movement_Track_Repeat(kActorOfficerGrayford);
-			Actor_Set_Goal_Number(kActorOfficerGrayford, 305);
+			//Actor_Set_Goal_Number(kActorOfficerGrayford, kGoalOfficerGrayfordHuntingAroundAct4); // redundant
 			return true;
 
+#if BLADERUNNER_ORIGINAL_BUGS
+		// Gaff is waiting at MA07 and he will trigger a non-interactive dialogue with McCoy.
+		// When the police officer is there as well he will kill McCoy because player cannot control him.
+
 		case 7:
+			// kSetMA07 -> kSetFreeSlotC
 			AI_Movement_Track_Append(kActorOfficerGrayford, 394, 15);
 			AI_Movement_Track_Append(kActorOfficerGrayford, 395, 0);
 			AI_Movement_Track_Append(kActorOfficerGrayford, 396, 0);
@@ -662,137 +703,211 @@ bool AIScriptOfficerGrayford::GoalChanged(int currentGoalNumber, int newGoalNumb
 			AI_Movement_Track_Append(kActorOfficerGrayford, 396, 0);
 			AI_Movement_Track_Append(kActorOfficerGrayford, 395, 0);
 			AI_Movement_Track_Append(kActorOfficerGrayford, 430, 15);
-			AI_Movement_Track_Append(kActorOfficerGrayford, 35, 30);
+			AI_Movement_Track_Append(kActorOfficerGrayford, 35, 30); // kSetFreeSlotC
 			AI_Movement_Track_Repeat(kActorOfficerGrayford);
-			Actor_Set_Goal_Number(kActorOfficerGrayford, 305);
+			//Actor_Set_Goal_Number(kActorOfficerGrayford, kGoalOfficerGrayfordHuntingAroundAct4); // redundant
 			return true;
+#else
+		case 7:
+//			debug("gray 7 MA07 changed to kSetFreeSlotC");
+			// just put him away for a few seconds
+			AI_Movement_Track_Append(kActorOfficerGrayford, 35, 30); // kSetFreeSlotC
+			AI_Movement_Track_Repeat(kActorOfficerGrayford);
+			return true;
+#endif // BLADERUNNER_ORIGINAL_BUGS
 
 		case 8:
 			switch (Random_Query(1, 7)) {
 			case 1:
+				// kSetUG10 -> kSetFreeSlotC
+//				debug("gray 8-1 kSetUG10 -> kSetFreeSlotC");
 				AI_Movement_Track_Append(kActorOfficerGrayford, 302, 0);
 				AI_Movement_Track_Append(kActorOfficerGrayford, 407, 0);
 				AI_Movement_Track_Append(kActorOfficerGrayford, 408, 0);
-				AI_Movement_Track_Append(kActorOfficerGrayford, 35, 30);
+				AI_Movement_Track_Append(kActorOfficerGrayford, 35, 30); // kSetFreeSlotC
 				AI_Movement_Track_Repeat(kActorOfficerGrayford);
-				break; // and go to case 9 below
+				break;
 
 			case 2:
+				// kSetUG14
+//				debug("gray 8-2 kSetUG14");
 				AI_Movement_Track_Append(kActorOfficerGrayford, 536, 0);
 				AI_Movement_Track_Append(kActorOfficerGrayford, 537, 0);
 				AI_Movement_Track_Append(kActorOfficerGrayford, 538, 5);
 				AI_Movement_Track_Append(kActorOfficerGrayford, 537, 0);
 				AI_Movement_Track_Append(kActorOfficerGrayford, 536, 0);
 				AI_Movement_Track_Repeat(kActorOfficerGrayford);
-				break; // and go to case 9 below
+				break;
 
 			case 3:
+				// kSetUG04 -> kSetFreeSlotC
+//				debug("gray 8-3  kSetUG04 -> kSetFreeSlotC");
 				AI_Movement_Track_Append(kActorOfficerGrayford, 296, 10);
 				AI_Movement_Track_Append(kActorOfficerGrayford, 409, 2);
 				AI_Movement_Track_Append(kActorOfficerGrayford, 296, 10);
-				AI_Movement_Track_Append(kActorOfficerGrayford, 35, 30);
+				AI_Movement_Track_Append(kActorOfficerGrayford, 35, 30); // kSetFreeSlotC
 				AI_Movement_Track_Repeat(kActorOfficerGrayford);
-				break; // and go to case 9 below
+				break;
 
 			case 4:
+				// kSetUG05 -> kSetFreeSlotC
+//				debug("gray 8-4 kSetUG05 -> kSetFreeSlotC");
 				AI_Movement_Track_Append(kActorOfficerGrayford, 411, 10);
 				AI_Movement_Track_Append(kActorOfficerGrayford, 412, 5);
 				AI_Movement_Track_Append(kActorOfficerGrayford, 411, 0);
-				AI_Movement_Track_Append(kActorOfficerGrayford, 35, 30);
+				AI_Movement_Track_Append(kActorOfficerGrayford, 35, 30); // kSetFreeSlotC
 				AI_Movement_Track_Repeat(kActorOfficerGrayford);
-				break; // and go to case 9 below
+				break;
 
 			case 5:
+#if BLADERUNNER_ORIGINAL_BUGS
+				// kSetUG06 -> kSetFreeSlotC
+				// debug("gray 8-5 kSetUG06 -> kSetFreeSlotC");
 				AI_Movement_Track_Append(kActorOfficerGrayford, 413, 10);
 				AI_Movement_Track_Append(kActorOfficerGrayford, 414, 0);
 				AI_Movement_Track_Append_With_Facing(kActorOfficerGrayford, 431, 0, 1017);
 				AI_Movement_Track_Append(kActorOfficerGrayford, 432, 10);
-				AI_Movement_Track_Append(kActorOfficerGrayford, 35, 30);
+				AI_Movement_Track_Append(kActorOfficerGrayford, 35, 30); // kSetFreeSlotC
 				AI_Movement_Track_Repeat(kActorOfficerGrayford);
-				break; // and go to case 9 below
+				break;
+#else
+				// Don't allow police officers to shoot McCoy while he is
+				// disabled reciting his monologue at start of Act 4
+				if (Game_Flag_Query(kFlagUG06Chapter4Started)) {
+					// kSetUG06 -> kSetFreeSlotC
+					// debug("gray 8-5 kSetUG06 -> kSetFreeSlotC");
+					AI_Movement_Track_Append(kActorOfficerGrayford, 413, 10);
+					AI_Movement_Track_Append(kActorOfficerGrayford, 414, 0);
+					AI_Movement_Track_Append_With_Facing(kActorOfficerGrayford, 431, 0, 1017);
+					AI_Movement_Track_Append(kActorOfficerGrayford, 432, 10);
+					AI_Movement_Track_Append(kActorOfficerGrayford, 35, 30); // kSetFreeSlotC
+					AI_Movement_Track_Repeat(kActorOfficerGrayford);
+					break;
+				}
+#endif // BLADERUNNER_ORIGINAL_BUGS
+				// fall through
 
 			case 6:
+				// kSetUG07 -> kSetFreeSlotC
+#if BLADERUNNER_ORIGINAL_BUGS
+				// debug("gray 8-6 kSetUG07 -> kSetFreeSlotC");
 				AI_Movement_Track_Append(kActorOfficerGrayford, 415, 0);
 				AI_Movement_Track_Append_With_Facing(kActorOfficerGrayford, 416, 0, 620);
 				AI_Movement_Track_Append(kActorOfficerGrayford, 417, 0);
 				AI_Movement_Track_Append(kActorOfficerGrayford, 418, 0);
-				AI_Movement_Track_Append(kActorOfficerGrayford, 35, 30);
+				AI_Movement_Track_Append(kActorOfficerGrayford, 35, 30); // kSetFreeSlotC
 				AI_Movement_Track_Repeat(kActorOfficerGrayford);
-				break; // and go to case 9 below
+				break;
+#else
+				// Don't put police in UG07 after the UG18 Guzza scene
+				// since Clovis may be there too and that does not work well
+				if (!Game_Flag_Query(kFlagUG18GuzzaScene)) {
+					// kSetUG07 -> kSetFreeSlotC
+					// debug("gray 8-6 kSetUG07 -> kSetFreeSlotC");
+					AI_Movement_Track_Append(kActorOfficerGrayford, 415, 0);
+					AI_Movement_Track_Append_With_Facing(kActorOfficerGrayford, 416, 0, 620);
+					AI_Movement_Track_Append(kActorOfficerGrayford, 417, 0);
+					AI_Movement_Track_Append(kActorOfficerGrayford, 418, 0);
+					AI_Movement_Track_Append(kActorOfficerGrayford, 35, 30); // kSetFreeSlotC
+					AI_Movement_Track_Repeat(kActorOfficerGrayford);
+					break;
+				}
+#endif // BLADERUNNER_ORIGINAL_BUGS
+				// fall through
 
 			case 7:
+				// kSetUG01 -> kSetFreeSlotC
+//				debug("gray 8-7 kSetUG01 -> kSetFreeSlotC");
 				AI_Movement_Track_Append(kActorOfficerGrayford, 405, 10);
 				AI_Movement_Track_Append(kActorOfficerGrayford, 406, 0);
-				AI_Movement_Track_Append(kActorOfficerGrayford, 35, 30);
+				AI_Movement_Track_Append(kActorOfficerGrayford, 35, 30); // kSetFreeSlotC
 				AI_Movement_Track_Repeat(kActorOfficerGrayford);
 				return false;
 
 			}
+#if !BLADERUNNER_ORIGINAL_BUGS
+			// does it matter if false or true? case 9 and 10 return false
+			return false;
+#endif // BLADERUNNER_ORIGINAL_BUGS
+			// bug in the game - there should be nothing track related after AI_Movement_Track_Repeat
 			// fall through
-			// TODO bug in the game? there should be nothing track related after AI_Movement_Track_Repeat
-
 		case 9:
 			if (Random_Query(0, 1)) {
+				// kSetUG09 -> kSetFreeSlotC
+//				debug("gray 9-1 kSetUG09 -> kSetFreeSlotC");
 				AI_Movement_Track_Append(kActorOfficerGrayford, 433, 10);
 				AI_Movement_Track_Append(kActorOfficerGrayford, 434, 0);
 				AI_Movement_Track_Append(kActorOfficerGrayford, 435, 0);
-				AI_Movement_Track_Append(kActorOfficerGrayford, 35, 30);
+				AI_Movement_Track_Append(kActorOfficerGrayford, 35, 30); // kSetFreeSlotC
 				AI_Movement_Track_Repeat(kActorOfficerGrayford);
 			} else {
+				// kSetUG08 -> kSetFreeSlotC
+//				debug("gray 9-0 kSetUG08 -> kSetFreeSlotC");
 				AI_Movement_Track_Append(kActorOfficerGrayford, 420, 10);
 				AI_Movement_Track_Append(kActorOfficerGrayford, 422, 2);
 				AI_Movement_Track_Append(kActorOfficerGrayford, 421, 1);
 				AI_Movement_Track_Append_With_Facing(kActorOfficerGrayford, 422, 4, 182);
 				AI_Movement_Track_Append(kActorOfficerGrayford, 420, 10);
-				AI_Movement_Track_Append(kActorOfficerGrayford, 35, 30);
+				AI_Movement_Track_Append(kActorOfficerGrayford, 35, 30); // kSetFreeSlotC
 				AI_Movement_Track_Repeat(kActorOfficerGrayford);
-				// TODO bug in the game? Same code bellow looks like a case 10 and are from set 84 whereas upper one are from set 81
+#if BLADERUNNER_ORIGINAL_BUGS
+				// bug in the game? Same code bellow looks like a case 10 and are from set 84 whereas upper one are from set 81
 				AI_Movement_Track_Append(kActorOfficerGrayford, 310, 0);
 				AI_Movement_Track_Append(kActorOfficerGrayford, 307, 0);
 				AI_Movement_Track_Append(kActorOfficerGrayford, 309, 0);
 				AI_Movement_Track_Append(kActorOfficerGrayford, 310, 0);
-				AI_Movement_Track_Append(kActorOfficerGrayford, 35, 30);
+				AI_Movement_Track_Append(kActorOfficerGrayford, 35, 30); // kSetFreeSlotC
 				AI_Movement_Track_Repeat(kActorOfficerGrayford);
+#endif
 			}
 			return false;
 
 		case 10:
+			// kSetUG12 -> kSetFreeSlotC
+//			debug("gray 10 kSetUG12 -> kSetFreeSlotC");
 			AI_Movement_Track_Append(kActorOfficerGrayford, 310, 0);
 			AI_Movement_Track_Append(kActorOfficerGrayford, 307, 0);
 			AI_Movement_Track_Append(kActorOfficerGrayford, 309, 0);
 			AI_Movement_Track_Append(kActorOfficerGrayford, 310, 0);
-			AI_Movement_Track_Append(kActorOfficerGrayford, 35, 30);
+			AI_Movement_Track_Append(kActorOfficerGrayford, 35, 30); // kSetFreeSlotC
 			AI_Movement_Track_Repeat(kActorOfficerGrayford);
 			return false;
 
 		}
 		return false;
 
-	case 306:
-		Actor_Set_Goal_Number(kActorOfficerGrayford, 305);
+	case kGoalOfficerGrayfordPrepareToHuntAroundAct4:
+		// aux goal in order to immediately switch back to kGoalOfficerGrayfordHuntingAroundAct4 goal
+		// and run GoalChanged() for kGoalOfficerGrayfordHuntingAroundAct4 again
+//		debug("Setting Grayford goal to kGoalOfficerGrayfordHuntingAroundAct4");
+		Actor_Set_Goal_Number(kActorOfficerGrayford, kGoalOfficerGrayfordHuntingAroundAct4);
 		return true;
 
-	case 307:
+	case kGoalOfficerGrayfordBlockingUG07:
+		// kSetUG07
 		AI_Movement_Track_Flush(kActorOfficerGrayford);
 		AI_Movement_Track_Append_With_Facing(kActorOfficerGrayford, 419, 0, 512);
 		AI_Movement_Track_Repeat(kActorOfficerGrayford);
 		return true;
 
-	case 308:
+	case kGoalOfficerGrayfordArrestsMcCoyAct4CT12:
+		// kSetCT01_CT12
+		// never triggered in original game
 		AI_Movement_Track_Flush(kActorOfficerGrayford);
 		AI_Movement_Track_Append_Run(kActorOfficerGrayford, 440, 0);
 		AI_Movement_Track_Append_Run(kActorOfficerGrayford, 441, 0);
 		AI_Movement_Track_Repeat(kActorOfficerGrayford);
 		return true;
 
-	case 399:
+	case kGoalOfficerGrayfordArrestMcCoyInTB03Act4:
+		// kSetTB02_TB03
 		AI_Movement_Track_Flush(kActorOfficerGrayford);
 		Actor_Put_In_Set(kActorOfficerGrayford, kSetTB02_TB03);
 		Actor_Set_At_XYZ(kActorOfficerGrayford, -173.89f, 0.0f, 2084.22f, 859);
 		Actor_Change_Animation_Mode(kActorOfficerGrayford, kAnimationModeCombatIdle);
 		return true;
 
-	case 599:
+	case kGoalOfficerGrayfordDead:
 		_animationState = 32;
 		_animationFrame = Slice_Animation_Query_Number_Of_Frames(624) - 1;
 		return true;
@@ -973,15 +1088,15 @@ bool AIScriptOfficerGrayford::UpdateAnimation(int *animation, int *frame) {
 		*animation = 616;
 		_animationFrame++;
 		if (_animationFrame == 11) {
-			Ambient_Sounds_Play_Sound(556, 25, 0, 0, 25);
+			Ambient_Sounds_Play_Sound(kSfxHOLSTER1, 25, 0, 0, 25);
 		}
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
 			*animation = 625;
 			_animationFrame = 0;
 			_animationState = 0;
 			_var1 = 0;
-			if (Actor_Query_Goal_Number(kActorOfficerGrayford) == 101) {
-				Actor_Set_Goal_Number(kActorOfficerGrayford, 102);
+			if (Actor_Query_Goal_Number(kActorOfficerGrayford) == kGoalOfficerGrayfordArrivesToDR04) {
+				Actor_Set_Goal_Number(kActorOfficerGrayford, kGoalOfficerGrayfordArrivedAtDR04);
 			}
 		}
 		break;
@@ -1148,13 +1263,14 @@ bool AIScriptOfficerGrayford::UpdateAnimation(int *animation, int *frame) {
 			_animationFrame = 0;
 
 			switch (Actor_Query_Goal_Number(kActorOfficerGrayford)) {
-			case 103:
-			case 104:
-				Actor_Set_Goal_Number(kActorOfficerGrayford, 105);
+			case kGoalOfficerGrayfordTalkToMcCoyAndReportAtDR04:
+				// fall through
+			case kGoalOfficerGrayfordPatrolsAtDR04a:
+				Actor_Set_Goal_Number(kActorOfficerGrayford, kGoalOfficerGrayfordPatrolsAtDR04b);
 				break;
 
-			case 105:
-				Actor_Set_Goal_Number(kActorOfficerGrayford, 104);
+			case kGoalOfficerGrayfordPatrolsAtDR04b:
+				Actor_Set_Goal_Number(kActorOfficerGrayford, kGoalOfficerGrayfordPatrolsAtDR04a);
 				break;
 			}
 		}
@@ -1215,7 +1331,7 @@ bool AIScriptOfficerGrayford::ChangeAnimationMode(int mode) {
 		break;
 
 	case kAnimationModeWalk:
-		if (Actor_Query_Goal_Number(kActorOfficerGrayford) == 101) {
+		if (Actor_Query_Goal_Number(kActorOfficerGrayford) == kGoalOfficerGrayfordArrivesToDR04) {
 			_animationState = 6;
 			_animationFrame = 0;
 		} else if (_animationState != 1) {
@@ -1225,7 +1341,7 @@ bool AIScriptOfficerGrayford::ChangeAnimationMode(int mode) {
 		break;
 
 	case kAnimationModeRun:
-		if (Actor_Query_Goal_Number(kActorOfficerGrayford) == 101) {
+		if (Actor_Query_Goal_Number(kActorOfficerGrayford) == kGoalOfficerGrayfordArrivesToDR04) {
 			_animationState = 5;
 			_animationFrame = 0;
 		} else if (_animationState != 2) {
@@ -1447,6 +1563,7 @@ void AIScriptOfficerGrayford::SetAnimationState(int animationState, int animatio
 }
 
 bool AIScriptOfficerGrayford::ReachedMovementTrackWaypoint(int waypointId) {
+//	debug("Grayford reached waypoint: %d", waypointId);
 	return true;
 }
 

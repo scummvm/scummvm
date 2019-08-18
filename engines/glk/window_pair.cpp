@@ -39,8 +39,10 @@ PairWindow::PairWindow(Windows *windows, uint method, Window *key, uint size) :
 }
 
 PairWindow::~PairWindow() {
-	for (uint idx = 0; idx < _children.size(); ++idx)
+	for (uint idx = 0; idx < _children.size(); ++idx) {
+		_children[idx]->_parent = nullptr;
 		delete _children[idx];
+	}
 }
 
 void PairWindow::rearrange(const Rect &box) {
@@ -50,25 +52,18 @@ void PairWindow::rearrange(const Rect &box) {
 
 	_bbox = box;
 
+	if (_dir == winmethod_Arbitrary) {
+		// When a pair window is in "arbitrary" mode, each child window has it's own independant positioning,
+		// so thre's no need to be readjusting it
+		return;
+	}
+
 	if (!_backward) {
 		ch1 = _children[0];
 		ch2 = _children[1];
 	} else {
 		ch1 = _children[1];
 		ch2 = _children[0];
-	}
-
-	if (_dir == winmethod_Arbitrary) {
-		// When a pair window is in "arbitrary" mode, each child window has it's own independant positioning,
-		// so thre's no need to be readjusting it
-		/*
-		for (int ctr = 0, idx = (_backward ? (int)_children.size() - 1 : 0); ctr < (int)_children.size();
-				++ctr, idx += (_backward ? -1 : 1)) {
-			Window *w = _children[idx];
-			w->rearrange();
-		}
-		*/
-		return;
 	}
 
 	if (_vertical) {

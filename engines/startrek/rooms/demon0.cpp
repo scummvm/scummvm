@@ -46,14 +46,14 @@ void Room::demon0Tick100() {
 	if (_awayMission->demon.talkedToPrelate || _awayMission->demon.prelateWelcomedCrew)
 		return;
 	_awayMission->demon.prelateWelcomedCrew = true;
-	showText(TX_SPEAKER_ANGIVEN, TX_DEM0_036);
+	showText(TX_SPEAKER_ANGIVEN, 36, true);
 }
 
 void Room::demon0Tick140() {
 	if (_awayMission->demon.mccoyMentionedFlora)
 		return;
 
-	showText(TX_SPEAKER_MCCOY, TX_DEM0_016);
+	showText(TX_SPEAKER_MCCOY, 16, true);
 
 	_awayMission->demon.mccoyMentionedFlora = true;
 }
@@ -106,51 +106,51 @@ void Room::demon0ReachedTopDoor() {
 void Room::demon0TalkToPrelate() {
 	const TextRef options1[] = {
 		TX_SPEAKER_KIRK,
-		TX_DEM0_006,
-		TX_DEM0_008,
-		TX_DEM0_003,
+		6,
+		8,
+		3,
 		TX_BLANK
 	};
 	const TextRef firstResponse0[] = {
 		TX_SPEAKER_ANGIVEN,
-		TX_DEM0_038,
+		38,
 		TX_BLANK
 	};
 	const TextRef firstResponse1[] = {
 		TX_SPEAKER_ANGIVEN,
-		TX_DEM0_032,
+		32,
 		TX_BLANK
 	};
 	const TextRef options2[] = {
 		TX_SPEAKER_KIRK,
-		TX_DEM0_002,
-		TX_DEM0_005,
+		2,
+		5,
 		TX_BLANK
 	};
 	const TextRef secondResponse[] = {
 		TX_SPEAKER_ANGIVEN,
-		TX_DEM0_031,
+		31,
 		TX_BLANK
 	};
 	const TextRef options3[] = {
 		TX_SPEAKER_KIRK,
-		TX_DEM0_010,
-		TX_DEM0_012,
+		10,
+		12,
 		TX_BLANK
 	};
 	const TextRef thirdResponse[] = {
 		TX_SPEAKER_ANGIVEN,
-		TX_DEM0_035,
+		35,
 		TX_BLANK
 	};
 	const TextRef badConclusion[] = {
 		TX_SPEAKER_ANGIVEN,
-		TX_DEM0_037,
+		37,
 		TX_BLANK
 	};
 	const TextRef goodConclusion[] = {
 		TX_SPEAKER_ANGIVEN,
-		TX_DEM0_034,
+		34,
 		TX_BLANK
 	};
 
@@ -162,7 +162,7 @@ void Room::demon0TalkToPrelate() {
 
 	const TextRef *response = nullptr;
 
-	switch (showText(options1)) {
+	switch (showMultipleTexts(options1, true)) {
 	case 0:
 		response = firstResponse0;
 		break;
@@ -175,46 +175,46 @@ void Room::demon0TalkToPrelate() {
 	}
 
 	if (response != nullptr)
-		showText(response);
+		showMultipleTexts(response, true);
 
-	if (showText(options2) == 1)
+	if (showMultipleTexts(options2, true) == 1)
 		demon0BadResponse();
 
-	showText(secondResponse);
+	showMultipleTexts(secondResponse, true);
 
-	if (showText(options3) == 1)
+	if (showMultipleTexts(options3, true) == 1)
 		demon0BadResponse();
 
-	showText(thirdResponse);
+	showMultipleTexts(thirdResponse, true);
 
 	if (_awayMission->demon.wasRudeToPrelate)
-		showText(badConclusion);
+		showMultipleTexts(badConclusion, true);
 	else
-		showText(goodConclusion);
+		showMultipleTexts(goodConclusion, true);
 }
 
 void Room::demon0LookAtPrelate() {
-	showText(TX_DEM0N004);
+	showDescription(4, true);
 }
 
 void Room::demon0UsePhaserOnSnow() {
 	// BUG: doesn't check if redshirt is dead.
-	showText(TX_SPEAKER_EVERTS, TX_DEM0_039);
+	showText(TX_SPEAKER_EVERTS, 39, true);
 }
 
 void Room::demon0UsePhaserOnSign() {
-	showText(TX_SPEAKER_MCCOY, TX_DEM0_017);
+	showText(TX_SPEAKER_MCCOY, 17, true);
 }
 
 void Room::demon0UsePhaserOnShelter() {
-	showText(TX_SPEAKER_MCCOY, TX_DEM0_015);
-	showText(TX_SPEAKER_SPOCK, TX_DEM0_013);
+	showText(TX_SPEAKER_MCCOY, 15, true);
+	showText(TX_SPEAKER_SPOCK, 13, true);
 	if (!_awayMission->redshirtDead)
-		showText(TX_SPEAKER_EVERTS, TX_DEM0_040);
+		showText(TX_SPEAKER_EVERTS, 40, true);
 }
 
 void Room::demon0UsePhaserOnPrelate() {
-	showText(TX_SPEAKER_MCCOY, TX_DEM0_020);
+	showText(TX_SPEAKER_MCCOY, 20, true);
 }
 
 void Room::demon0LookAtSign() {
@@ -222,66 +222,66 @@ void Room::demon0LookAtSign() {
 }
 
 void Room::demon0LookAtTrees() {
-	showText(TX_DEM0N006);
+	showDescription(6, true);
 }
 
 void Room::demon0LookAtSnow() {
-	showText(TX_DEM0N007);
+	showDescription(7, true);
 }
 
 void Room::demon0LookAnywhere() {
-	showText(TX_DEM0N000);
+	showDescription(0, true);
 }
 
 void Room::demon0LookAtBushes() {
-	showText(TX_DEM0N010);
+	showDescription(10, true);
 }
 
 void Room::demon0LookAtKirk() {
-	showText(TX_DEM0N005);
+	showDescription(5, true);
 }
 
 void Room::demon0LookAtMcCoy() {
-	showText(TX_DEM0N002);
+	showDescription(2, true);
 }
 
 void Room::demon0LookAtRedShirt() {
-	showText(TX_DEM0N003);
+	showDescription(3, true);
 }
 
 void Room::demon0LookAtSpock() {
-	showText(TX_DEM0N009);
+	showDescription(9, true);
 }
 
 void Room::demon0LookAtShelter() {
-	showText(TX_DEM0N001);
+	showDescription(1, true);
 }
 
 void Room::demon0TalkToKirk() {
-	showText(TX_SPEAKER_KIRK,  TX_DEM0_009);
-	showText(TX_SPEAKER_MCCOY, TX_DEM0_027);
-	showText(TX_SPEAKER_KIRK,  TX_DEM0_004);
-	showText(TX_SPEAKER_MCCOY, TX_DEM0_024);
+	showText(TX_SPEAKER_KIRK,  9, true);
+	showText(TX_SPEAKER_MCCOY, 27, true);
+	showText(TX_SPEAKER_KIRK,  4, true);
+	showText(TX_SPEAKER_MCCOY, 24, true);
 }
 
 void Room::demon0TalkToRedshirt() {
-	showText(TX_SPEAKER_EVERTS, TX_DEM0_043);
-	showText(TX_SPEAKER_MCCOY,  TX_DEM0_026);
-	showText(TX_SPEAKER_EVERTS, TX_DEM0_042);
-	showText(TX_SPEAKER_MCCOY,  TX_DEM0_025);
-	showText(TX_SPEAKER_KIRK,   TX_DEM0_007);
-	showText(TX_SPEAKER_EVERTS, TX_DEM0_044);
+	showText(TX_SPEAKER_EVERTS, 43, true);
+	showText(TX_SPEAKER_MCCOY,  26, true);
+	showText(TX_SPEAKER_EVERTS, 42, true);
+	showText(TX_SPEAKER_MCCOY,  25, true);
+	showText(TX_SPEAKER_KIRK,   7, true);
+	showText(TX_SPEAKER_EVERTS, 44, true);
 }
 
 void Room::demon0TalkToMcCoy() {
 	if (_awayMission->demon.talkedToPrelate) {
-		showText(TX_SPEAKER_KIRK,  TX_DEM0_011);
-		showText(TX_SPEAKER_MCCOY, TX_DEM0_023);
-		showText(TX_SPEAKER_SPOCK, TX_DEM0_029);
+		showText(TX_SPEAKER_KIRK,  11, true);
+		showText(TX_SPEAKER_MCCOY, 23, true);
+		showText(TX_SPEAKER_SPOCK, 29, true);
 		if (!_awayMission->redshirtDead)
-			showText(TX_SPEAKER_EVERTS, TX_DEM0_041);
+			showText(TX_SPEAKER_EVERTS, 41, true);
 	} else {
-		showText(TX_SPEAKER_MCCOY, TX_DEM0_019);
+		showText(TX_SPEAKER_MCCOY, 19, true);
 		if (!_awayMission->demon.askedPrelateAboutSightings) {
 			demon0AskPrelateAboutSightings();
 		}
@@ -289,15 +289,15 @@ void Room::demon0TalkToMcCoy() {
 }
 
 void Room::demon0TalkToSpock() {
-	showText(TX_SPEAKER_SPOCK, TX_DEM0_014);
+	showText(TX_SPEAKER_SPOCK, 14, true);
 
 	if (!_awayMission->demon.talkedToPrelate && !_awayMission->demon.askedPrelateAboutSightings)
 		demon0AskPrelateAboutSightings();
 }
 
 void Room::demon0AskPrelateAboutSightings() {
-	showText(TX_SPEAKER_KIRK, TX_DEM0_001);
-	showText(TX_SPEAKER_ANGIVEN, TX_DEM0_030);
+	showText(TX_SPEAKER_KIRK, 1, true);
+	showText(TX_SPEAKER_ANGIVEN, 30, true);
 
 	_awayMission->demon.askedPrelateAboutSightings = true;
 }
@@ -305,13 +305,13 @@ void Room::demon0AskPrelateAboutSightings() {
 void Room::demon0UseSTricorderAnywhere() {
 	loadActorAnim2(OBJECT_SPOCK, "sscans", -1, -1, 0);
 	playSoundEffectIndex(0x04);
-	showText(TX_SPEAKER_SPOCK, TX_DEM0_028);
+	showText(TX_SPEAKER_SPOCK, 28, true);
 }
 
 void Room::demon0UseMTricorderAnywhere() {
 	loadActorAnim2(OBJECT_MCCOY, "mscans", -1, -1, 0);
 	playSoundEffectIndex(0x04);
-	showText(TX_SPEAKER_MCCOY, TX_DEM0_021);
+	showText(TX_SPEAKER_MCCOY, 21, true);
 }
 
 void Room::demon0UseMTricorderOnPrelate() {
@@ -319,9 +319,9 @@ void Room::demon0UseMTricorderOnPrelate() {
 	playSoundEffectIndex(0x04);
 
 	if (_awayMission->demon.talkedToPrelate)
-		showText(TX_SPEAKER_MCCOY, TX_DEM0_018);
+		showText(TX_SPEAKER_MCCOY, 18, true);
 	else
-		showText(TX_SPEAKER_MCCOY, TX_DEM0_022);
+		showText(TX_SPEAKER_MCCOY, 22, true);
 }
 
 // Helper functions
@@ -332,7 +332,7 @@ void Room::demon0BadResponse() {
 	_awayMission->demon.missionScore -= 3;
 	_awayMission->demon.wasRudeToPrelate = true;
 
-	showText(TX_SPEAKER_ANGIVEN, TX_DEM0_033);
+	showText(TX_SPEAKER_ANGIVEN, 33, true);
 }
 }
 

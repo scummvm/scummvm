@@ -19,12 +19,26 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
+#include "common/stream.h"
+#include "common/memstream.h"
+
 #include "startrek/bitmap.h"
 #include "startrek/startrek.h"
 
 namespace StarTrek {
 
-Bitmap::Bitmap(SharedPtr<FileStream> stream) {
+Bitmap::Bitmap(FileStream stream) {
+	xoffset = stream->readUint16();
+	yoffset = stream->readUint16();
+	width = stream->readUint16();
+	height = stream->readUint16();
+
+	pixelsArraySize = width * height;
+	pixels = new byte[pixelsArraySize];
+	stream->read(pixels, width * height);
+}
+
+Bitmap::Bitmap(Common::MemoryReadStreamEndian *stream) {
 	xoffset = stream->readUint16();
 	yoffset = stream->readUint16();
 	width = stream->readUint16();

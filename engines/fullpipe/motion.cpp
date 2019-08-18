@@ -1230,7 +1230,7 @@ MessageQueue *MovGraph::makeWholeQueue(StaticANIObject *ani, MovArr *movarr, int
 
 		MakeQueueStruct mkQueue;
 
-		memset(&mkQueue, 0, sizeof(mkQueue));
+		mkQueue.reset();
 		mkQueue.ani = ani;
 		mkQueue.staticsId2 = id2;
 		mkQueue.staticsId1 = id1;
@@ -1996,7 +1996,7 @@ MessageQueue *MctlGraph::makeWholeQueue(MctlMQ &mctlMQ) {
 			} else {
 				MakeQueueStruct mkQueue;
 
-				memset(&mkQueue, 0, sizeof(mkQueue));
+				mkQueue.reset();
 
 				mkQueue.ani = _items2[mctlMQ.index]._obj;
 				mkQueue.staticsId2 = mg2i->_mov->_staticsObj2->_staticsId;

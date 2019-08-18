@@ -38,15 +38,25 @@ namespace BladeRunner {
 ActorWalk::ActorWalk(BladeRunnerEngine *vm) {
 	_vm = vm;
 
+	reset();
+}
+
+ActorWalk::~ActorWalk() {}
+
+// added method for bug fix (bad new game state for player actor) and better management of object
+void ActorWalk::reset() {
 	_walking = false;
 	_running = false;
 	_facing = -1;
 	_status = 0;
 
+	_destination = Vector3(0.0f, 0.0f, 0.0f);
+	_originalDestination = Vector3(0.0f, 0.0f, 0.0f);
+	_current = Vector3(0.0f, 0.0f, 0.0f);
+	_next = Vector3(0.0f, 0.0f, 0.0f);
+
 	_nearActors.clear();
 }
-
-ActorWalk::~ActorWalk() {}
 
 bool ActorWalk::setup(int actorId, bool runFlag, const Vector3 &from, const Vector3 &to, bool mustReach, bool *arrived) {
 	Vector3 next;
@@ -63,12 +73,14 @@ bool ActorWalk::setup(int actorId, bool runFlag, const Vector3 &from, const Vect
 		} else {
 			stop(actorId, true, kAnimationModeCombatIdle, kAnimationModeIdle);
 		}
+//		debug("actor id: %d, arrived: %d - false setup 01", actorId, (*arrived)? 1:0);
 		return false;
 	}
 
 	if (r == -1) {
 		stop(actorId, true, kAnimationModeCombatIdle, kAnimationModeIdle);
 		*arrived = true;
+//		debug("actor id: %d, arrived: %d - false setup 02", actorId, (*arrived)? 1:0);
 		return false;
 	}
 
@@ -97,6 +109,7 @@ bool ActorWalk::setup(int actorId, bool runFlag, const Vector3 &from, const Vect
 	if (next.x == _current.x && next.z == _current.z) {
 		stop(actorId, true, kAnimationModeCombatIdle, kAnimationModeIdle);
 		*arrived = true;
+//		debug("actor id: %d, arrived: %d - false setup 03", actorId, (*arrived)? 1:0);
 		return false;
 	}
 
@@ -105,6 +118,7 @@ bool ActorWalk::setup(int actorId, bool runFlag, const Vector3 &from, const Vect
 	_running = runFlag;
 	_status = 2;
 
+//	debug("actor id: %d, arrived: %d - true setup 01", actorId, (*arrived)? 1:0);
 	return true;
 }
 
@@ -174,7 +188,7 @@ bool ActorWalk::tick(int actorId, float stepDistance, bool mustReachWalkDestinat
 		int r = nextOnPath(actorId, _current, _destination, next);
 		obstaclesRestore();
 		if (r == 0) {
-			stop(actorId, actorId == 0, kAnimationModeCombatIdle, kAnimationModeIdle);
+			stop(actorId, actorId == kActorMcCoy, kAnimationModeCombatIdle, kAnimationModeIdle);
 			return false;
 		}
 		if (r != -1) {
@@ -191,9 +205,24 @@ bool ActorWalk::tick(int actorId, float stepDistance, bool mustReachWalkDestinat
 			if (nextIsCloseEnough) {
 				return false;
 			}
+		} else {
+			stop(actorId, true, kAnimationModeCombatIdle, kAnimationModeIdle); // too close
+			return true;
 		}
 	}
 
+#if !BLADERUNNER_ORIGINAL_BUGS
+	// safety-guard / validator  check
+	if (_facing >= 1024) {
+		_facing = (_facing % 1024);
+	} else if (_facing < 0) {
+		_facing  = (-1) * _facing;
+		_facing = (_facing % 1024);
+		if (_facing > 0) {
+			_facing  = 1024 - _facing; // this will always be in [1, 1023]
+		}
+	}
+#endif
 	_current.x += stepDistance * _vm->_sinTable1024->at(_facing);
 	_current.z -= stepDistance * _vm->_cosTable1024->at(_facing);
 	_current.y = _vm->_scene->_set->getAltitudeAtXZ(_current.x, _current.z, &walkboxFound);
@@ -409,6 +438,7 @@ int ActorWalk::nextOnPath(int actorId, const Vector3 &from, const Vector3 &to, V
 	next = from;
 
 	if (distance(from, to) < 6.0) {
+//		debug("Id: %d Distance: %f::Result -1", actorId, distance(from, to));
 		return -1;
 	}
 
@@ -417,9 +447,11 @@ int ActorWalk::nextOnPath(int actorId, const Vector3 &from, const Vector3 &to, V
 		return 1;
 	}
 	if (_vm->_scene->_set->findWalkbox(to.x, to.z) == -1) {
+//		debug("Id: %d No walkbox::Result 0", actorId);
 		return 0;
 	}
 	if (_vm->_sceneObjects->existsOnXZ(actorId + kSceneObjectOffsetActors, to.x, to.z, false, false)) {
+//		debug("Actor Id: %d existsOnXZ::Result 0", actorId);
 		return 0;
 	}
 	Vector3 next1;
@@ -427,6 +459,7 @@ int ActorWalk::nextOnPath(int actorId, const Vector3 &from, const Vector3 &to, V
 		next = next1;
 		return 1;
 	}
+//	debug("Id: %d DEFAULTED::Result 0", actorId);
 	return 0;
 }
 

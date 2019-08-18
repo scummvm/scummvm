@@ -25,6 +25,7 @@
 
 #include "common/scummsys.h"
 #include "image/image_decoder.h"
+#include "supernova/supernova.h"
 
 namespace Common {
 class SeekableReadStream;
@@ -35,10 +36,11 @@ struct Surface;
 }
 
 namespace Supernova {
+class SupernovaEngine;
 
 class MSNImage : public Image::ImageDecoder {
 public:
-	MSNImage();
+	MSNImage(SupernovaEngine *vm);
 	virtual ~MSNImage();
 
 	virtual void destroy();
@@ -79,7 +81,9 @@ public:
 	} _clickField[kMaxClickFields];
 
 private:
+	SupernovaEngine *_vm;
 	bool loadFromEngineDataFile();
+	bool loadPbmFromEngineDataFile();
 	bool loadSections();
 };
 

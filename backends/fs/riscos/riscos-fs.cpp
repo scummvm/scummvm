@@ -26,6 +26,7 @@
 #define FORBIDDEN_SYMBOL_EXCEPTION_unistd_h
 #define FORBIDDEN_SYMBOL_EXCEPTION_mkdir
 
+#include "backends/platform/sdl/riscos/riscos-utils.h"
 #include "backends/fs/riscos/riscos-fs.h"
 #include "backends/fs/stdiostream.h"
 #include "common/algorithm.h"
@@ -51,63 +52,28 @@ bool RISCOSFilesystemNode::isWritable() const {
 	return access(_path.c_str(), W_OK) == 0;
 }
 
+void RISCOSFilesystemNode::setFlags() {
+	int type = _swi(OS_File, _INR(0,1)|_RETURN(0), 20, RISCOS_Utils::toRISCOS(_path).c_str());
+	if (type == 0) {
+		_isDirectory = false;
+		_isValid = false;
+	} else if (type == 2) {
+		_isDirectory = true;
+		_isValid = true;
+	} else {
+		_isDirectory = false;
+		_isValid = true;
+	}
+}
+
 RISCOSFilesystemNode::RISCOSFilesystemNode(const Common::String &p) {
 	_path = p;
 	if (p == "/") {
 		_isDirectory = true;
 		_isValid = true;
 	} else {
-		int type = _swi(OS_File, _INR(0,1)|_RETURN(0), 20, toRISCOS(_path).c_str());
-		if (type == 0) {
-			_isDirectory = false;
-			_isValid = false;
-		} else if (type == 2) {
-			_isDirectory = true;
-			_isValid = true;
-		} else {
-			_isDirectory = false;
-			_isValid = true;
-		}
+		setFlags();
 	}
-}
-
-Common::String RISCOSFilesystemNode::toRISCOS(Common::String &path) {
-	char start[PATH_MAX];
-	char *end = __riscosify_std(path.c_str(), 0, start, PATH_MAX, 0);
-	return Common::String(start, end);
-}
-
-Common::String RISCOSFilesystemNode::toUnix(Common::String &path) {
-	Common::String out = Common::String(path);
-	uint32 start = 0;
-	if (out.contains("$")) {
-		char *x = strstr(out.c_str(), "$");
-		start = x ? x - out.c_str() : -1;
-	} else if (out.contains(":")) {
-		char *x = strstr(out.c_str(), ":");
-		start = x ? x - out.c_str() : -1;
-	}
-
-	for (uint32 ptr = start; ptr < out.size(); ptr += 1) {
-		switch (out.c_str()[ptr]) {
-		case '.':
-			out.setChar('/', ptr);
-			break;
-		case '/':
-			out.setChar('.', ptr);
-			break;
-		case '\xA0':
-			out.setChar(' ', ptr);
-			break;
-		default:
-			break;
-		}
-	}
-
-	if (out.contains("$") || out.contains(":"))
-		out = "/" + out;
-
-	return out;
 }
 
 AbstractFSNode *RISCOSFilesystemNode::getChild(const Common::String &n) const {
@@ -169,7 +135,7 @@ bool RISCOSFilesystemNode::getChildren(AbstractFSList &myList, ListMode mode, bo
 	Common::String dir = _path;
 
 	while (count != -1) {
-		_swix(OS_GBPB, _INR(0,5)|_OUTR(3,4), 9, toRISCOS(dir).c_str(), file, 1, count, sizeof(file), &read, &count);
+		_swix(OS_GBPB, _INR(0,5)|_OUTR(3,4), 9, RISCOS_Utils::toRISCOS(dir).c_str(), file, 1, count, sizeof(file), &read, &count);
 
 		if (count == -1)
 			continue;
@@ -177,12 +143,12 @@ bool RISCOSFilesystemNode::getChildren(AbstractFSList &myList, ListMode mode, bo
 		// Start with a clone of this node, with the correct path set
 		RISCOSFilesystemNode entry(*this);
 		entry._displayName = file;
-		entry._displayName = toUnix(entry._displayName);
+		entry._displayName = RISCOS_Utils::toUnix(entry._displayName);
 		if (_path.lastChar() != '/')
 			entry._path += '/';
 		entry._path += entry._displayName;
 
-		int type = _swi(OS_File, _INR(0,1)|_RETURN(0), 20, toRISCOS(entry._path).c_str());
+		int type = _swi(OS_File, _INR(0,1)|_RETURN(0), 20, RISCOS_Utils::toRISCOS(entry._path).c_str());
 		if (type == 0) {
 			continue;
 		} else if (type == 2) {
@@ -236,33 +202,11 @@ Common::WriteStream *RISCOSFilesystemNode::createWriteStream() {
 	return StdioStream::makeFromPath(getPath(), true);
 }
 
-bool RISCOSFilesystemNode::create(bool isDirectoryFlag) {
-	bool success;
+bool RISCOSFilesystemNode::createDirectory() {
+	if (_swix(OS_File, _INR(0,1), 8, RISCOS_Utils::toRISCOS(_path).c_str()) == NULL)
+		setFlags();
 
-	if (isDirectoryFlag) {
-		success = _swix(OS_File, _INR(0,1), 8, toRISCOS(_path).c_str()) == NULL;
-	} else {
-		int fd = open(_path.c_str(), O_WRONLY | O_CREAT | O_TRUNC, 0755);
-		success = fd >= 0;
-
-		if (fd >= 0) {
-			close(fd);
-		}
-	}
-
-	if (success) {
-		if (exists()) {
-			_isDirectory = _swi(OS_File, _INR(0,1)|_RETURN(0), 20, toRISCOS(_path).c_str()) == 2;
-			if (_isDirectory != isDirectoryFlag) warning("failed to create %s: got %s", isDirectoryFlag ? "directory" : "file", _isDirectory ? "directory" : "file");
-			return _isDirectory == isDirectoryFlag;
-		}
-
-		warning("RISCOSFilesystemNode: Attempting to create a %s was a success, but access indicates there is no such %s",
-			isDirectoryFlag ? "directory" : "file", isDirectoryFlag ? "directory" : "file");
-		return false;
-	}
-
-	return false;
+	return _isValid && _isDirectory;
 }
 
 namespace Riscos {
@@ -308,7 +252,7 @@ bool assureDirectoryExists(const Common::String &dir, const char *prefix) {
 		}
 
 		node = new RISCOSFilesystemNode(path);
-		if (!node->create(true)) {
+		if (!node->createDirectory()) {
 			if (node->exists()) {
 				if (!node->isDirectory()) {
 					return false;

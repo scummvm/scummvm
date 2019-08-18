@@ -48,7 +48,7 @@ uint16 EventParameters::Iterator::readUint16LE() {
 }
 
 uint32 EventParameters::Iterator::readUint32LE() {
-	uint16 result = ((_index + 3) >= _data.size()) ? 0 :
+	uint32 result = ((_index + 3) >= _data.size()) ? 0 :
 		READ_LE_UINT32(&_data[_index]);
 	_index += 4;
 	return result;
@@ -802,6 +802,8 @@ bool Scripts::cmdTakeOrGive(ParamsIterator &params) {
 			if (!party.giveTake(mode1, val1, mode2, val2, _charIndex - 1)) {
 				if (mode2 == 79)
 					windows.closeAll();
+			} else {
+				return cmdExit(params);
 			}
 		}
 		break;

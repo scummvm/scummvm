@@ -96,6 +96,8 @@ extern void checkGlError(const char *expr, const char *file, int line);
 #define GLTHREADCHECK do {  } while (false)
 #endif
 
+class MutexManager;
+
 class OSystem_Android : public EventsBaseBackend, public PaletteManager {
 private:
 	// passed from the dark side
@@ -145,6 +147,7 @@ private:
 	bool _enable_zoning;
 	bool _virtkeybd_on;
 
+	MutexManager *_mutexManager;
 	Audio::MixerImpl *_mixer;
 	timeval _startTime;
 
@@ -207,7 +210,7 @@ public:
 	}
 
 public:
-	void pushEvent(int type, int arg1, int arg2, int arg3, int arg4, int arg5);
+	void pushEvent(int type, int arg1, int arg2, int arg3, int arg4, int arg5, int arg6);
 
 private:
 	Common::Queue<Common::Event> _event_queue;
@@ -265,6 +268,7 @@ public:
 								const Graphics::PixelFormat *format);
 	virtual void setCursorPalette(const byte *colors, uint start, uint num);
 
+	virtual void pushEvent(const Common::Event &event);
 	virtual bool pollEvent(Common::Event &event);
 	virtual uint32 getMillis(bool skipRecord = false);
 	virtual void delayMillis(uint msecs);
@@ -289,6 +293,7 @@ public:
 	virtual bool hasTextInClipboard();
 	virtual Common::String getTextFromClipboard();
 	virtual bool setTextInClipboard(const Common::String &text);
+	virtual bool isConnectionLimited();
 	virtual Common::String getSystemLanguage() const;
 };
 

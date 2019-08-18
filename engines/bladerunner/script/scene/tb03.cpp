@@ -34,28 +34,28 @@ void SceneScriptTB03::InitializeScene() {
 	Scene_Exit_Add_2D_Exit(0, 25, 227, 81, 300, 0);
 	Scene_Exit_Add_2D_Exit(1, 298, 0, 639, 305, 0);
 
-	Ambient_Sounds_Add_Looping_Sound(211, 16, 0, 1);
-	Ambient_Sounds_Add_Sound(212, 2, 15, 16, 20, 0, 0, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(213, 2, 15, 16, 20, 0, 0, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(214, 2, 20, 16, 20, 0, 0, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(215, 2, 15, 16, 20, 0, 0, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(216, 2, 15, 16, 20, 0, 0, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Looping_Sound(kSfxFOUNTAIN, 16, 0, 1);
+	Ambient_Sounds_Add_Sound(kSfxBELLY1, 2, 15, 16, 20, 0, 0, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxBELLY2, 2, 15, 16, 20, 0, 0, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxBELLY3, 2, 20, 16, 20, 0, 0, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxBELLY4, 2, 15, 16, 20, 0, 0, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxBELLY5, 2, 15, 16, 20, 0, 0, -101, -101, 0, 0);
 	if (Global_Variable_Query(kVariableChapter) <= 3) {
-		Ambient_Sounds_Add_Looping_Sound(45, 25, 0, 1);
-		Ambient_Sounds_Add_Sound(181, 5, 70, 12, 12, -100, 100, -101, -101, 0, 0);
-		Ambient_Sounds_Add_Sound(182, 5, 70, 12, 12, -100, 100, -101, -101, 0, 0);
-		Ambient_Sounds_Add_Sound(183, 5, 70, 12, 12, -100, 100, -101, -101, 0, 0);
-		Ambient_Sounds_Add_Sound(184, 5, 70, 12, 12, -100, 100, -101, -101, 0, 0);
-		Ambient_Sounds_Add_Sound(185, 5, 70, 12, 12, -100, 100, -101, -101, 0, 0);
-		Ambient_Sounds_Add_Sound(186, 5, 70, 12, 12, -100, 100, -101, -101, 0, 0);
-		Ambient_Sounds_Add_Sound(188, 5, 70, 12, 12, -100, 100, -101, -101, 0, 0);
-		Ambient_Sounds_Add_Sound(189, 5, 70, 12, 12, -100, 100, -101, -101, 0, 0);
-		Ambient_Sounds_Add_Sound(190, 5, 70, 12, 12, -100, 100, -101, -101, 0, 0);
-		Ambient_Sounds_Add_Sound(191, 5, 70, 12, 12, -100, 100, -101, -101, 0, 0);
-		Ambient_Sounds_Add_Sound(192, 5, 70, 12, 12, -100, 100, -101, -101, 0, 0);
-		Ambient_Sounds_Add_Sound(193, 5, 70, 12, 12, -100, 100, -101, -101, 0, 0);
-		Ambient_Sounds_Add_Sound(194, 5, 70, 12, 12, -100, 100, -101, -101, 0, 0);
-		Ambient_Sounds_Add_Sound(195, 5, 70, 12, 12, -100, 100, -101, -101, 0, 0);
+		Ambient_Sounds_Add_Looping_Sound(kSfxPSAMB6, 25, 0, 1);
+		Ambient_Sounds_Add_Sound(kSfx67_0470R, 5, 70, 12, 12, -100, 100, -101, -101, 0, 0);
+		Ambient_Sounds_Add_Sound(kSfx67_0480R, 5, 70, 12, 12, -100, 100, -101, -101, 0, 0);
+		Ambient_Sounds_Add_Sound(kSfx67_0500R, 5, 70, 12, 12, -100, 100, -101, -101, 0, 0);
+		Ambient_Sounds_Add_Sound(kSfx67_0540R, 5, 70, 12, 12, -100, 100, -101, -101, 0, 0);
+		Ambient_Sounds_Add_Sound(kSfx67_0560R, 5, 70, 12, 12, -100, 100, -101, -101, 0, 0);
+		Ambient_Sounds_Add_Sound(kSfx67_0870R, 5, 70, 12, 12, -100, 100, -101, -101, 0, 0);
+		Ambient_Sounds_Add_Sound(kSfx67_0900R, 5, 70, 12, 12, -100, 100, -101, -101, 0, 0);
+		Ambient_Sounds_Add_Sound(kSfx67_0940R, 5, 70, 12, 12, -100, 100, -101, -101, 0, 0);
+		Ambient_Sounds_Add_Sound(kSfx67_0960R, 5, 70, 12, 12, -100, 100, -101, -101, 0, 0);
+		Ambient_Sounds_Add_Sound(kSfx67_1070R, 5, 70, 12, 12, -100, 100, -101, -101, 0, 0);
+		Ambient_Sounds_Add_Sound(kSfx67_1080R, 5, 70, 12, 12, -100, 100, -101, -101, 0, 0);
+		Ambient_Sounds_Add_Sound(kSfx67_1100R, 5, 70, 12, 12, -100, 100, -101, -101, 0, 0);
+		Ambient_Sounds_Add_Sound(kSfx67_1140R, 5, 70, 12, 12, -100, 100, -101, -101, 0, 0);
+		Ambient_Sounds_Add_Sound(kSfx67_1160R, 5, 70, 12, 12, -100, 100, -101, -101, 0, 0);
 	}
 
 	Actor_Put_In_Set(kActorTyrellGuard, kSetTB02_TB03);
@@ -64,7 +64,7 @@ void SceneScriptTB03::InitializeScene() {
 		int goal = Actor_Query_Goal_Number(kActorTyrellGuard);
 		if (goal == kGoalTyrellGuardWait) {
 			Actor_Change_Animation_Mode(kActorTyrellGuard, kAnimationModeIdle);
-			Actor_Set_Goal_Number(kActorOfficerGrayford, 399);
+			Actor_Set_Goal_Number(kActorOfficerGrayford, kGoalOfficerGrayfordArrestMcCoyInTB03Act4);
 		} else if (goal != kGoalTyrellGuardWakeUp) {
 			Actor_Set_Goal_Number(kActorTyrellGuard, kGoalTyrellGuardSleeping);
 		}
@@ -107,7 +107,7 @@ bool SceneScriptTB03::ClickedOnItem(int itemId, bool a2) {
 
 bool SceneScriptTB03::ClickedOnExit(int exitId) {
 	if (exitId == 0) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -260.0f, 0.15f, 2014.0f, 0, true, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -260.0f, 0.15f, 2014.0f, 0, true, false, false)) {
 			Actor_Set_Goal_Number(kActorTyrellGuard, kGoalTyrellGuardWait);
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
@@ -118,7 +118,7 @@ bool SceneScriptTB03::ClickedOnExit(int exitId) {
 	}
 
 	if (exitId == 1) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -152.0f, 0.0f, 1774.0f, 0, true, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -152.0f, 0.0f, 1774.0f, 0, true, false, false)) {
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
 			Game_Flag_Set(kFlagTB03toTB02);

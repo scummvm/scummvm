@@ -1,6 +1,6 @@
 Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
 Upstream-Name: ScummVM
-Source: http://www.scummvm.org/
+Source: https://www.scummvm.org/
 Comment:
  ScummVM was debianized by Bastien Nocera <hadess@hadess.net> the 5th Apr 2002.
  It was adopted by Tore Anderson <tore@linpro.no> the 4th Oct 2002,
@@ -187,6 +187,7 @@ License: GPL-2+ and Expat
 
 Files: gui/themes/fonts/Free*.ttf
        gui/themes/scummmodern/Free*.ttf
+       gui/themes/scummremastered/Free*.ttf
 Copyright: 2002-2009 Free Software Foundation.
 License: GPL-3+
  This program is free software; you can redistribute it and/or modify

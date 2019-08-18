@@ -67,7 +67,7 @@ void SetEffects::read(Common::ReadStream *stream, int frameCount) {
 			fog = new FogBox();
 			break;
 		default:
-			error("Uknown fog type %d", type);
+			error("Unknown fog type %d", type);
 		}
 		if (fog != nullptr) {
 			fog->read(stream, frameCount);

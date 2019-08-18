@@ -70,8 +70,8 @@ extern const RoomAction veng4ActionList[] = {
 
 	{ {ACTION_USE,  OBJECT_ISTRICOR, OBJECT_DRILL, 0}, &Room::veng4LookAtDrill },
 	{ {ACTION_LOOK, OBJECT_DRILL,               0, 0}, &Room::veng4LookAtDrill },
-	{ {ACTION_USE,  OBJECT_ISTRICOR, OBJECT_HYPO,  0}, &Room::veng4LookAtHypo },
-	{ {ACTION_LOOK, OBJECT_HYPO,                0, 0}, &Room::veng4LookAtHypo },
+	{ {ACTION_USE,  OBJECT_ISTRICOR, OBJECT_HYPO,  0}, &Room::veng4LookAtHypoOnTable },
+	{ {ACTION_LOOK, OBJECT_HYPO,                0, 0}, &Room::veng4LookAtHypoOnTable },
 	{ {ACTION_LOOK, OBJECT_DOOR,                0, 0}, &Room::veng4LookAtDoorObject },
 	{ {ACTION_LOOK, 0xff,                       0, 0}, &Room::veng4LookAnywhere },
 
@@ -86,6 +86,13 @@ extern const RoomAction veng4ActionList[] = {
 	{ {ACTION_TOUCHED_HOTSPOT, 0, 0, 0}, &Room::veng4TouchedHotspot0 },
 	{ {ACTION_WALK, OBJECT_DOOR,  0, 0}, &Room::veng4WalkToDoor },
 	{ {ACTION_WALK, HOTSPOT_DOOR, 0, 0}, &Room::veng4WalkToDoor },
+
+	// Common code
+	{ {ACTION_TICK, 0xff, 0xff, 0xff}, &Room::vengaTick },
+	{ {ACTION_USE, OBJECT_IPHASERS, 0xff,     0}, &Room::vengaUsePhaserAnywhere },
+	{ {ACTION_USE, OBJECT_IPHASERK, 0xff,     0}, &Room::vengaUsePhaserAnywhere },
+	{ {ACTION_LOOK, OBJECT_IHYPO,          0, 0}, &Room::vengaLookAtHypo },
+	{ {ACTION_USE, OBJECT_ICOMM, OBJECT_KIRK, 0}, &Room::vengaUseCommunicator },
 
 	// ENHANCEMENT (let object count for the "look" action, not just the hotspot)
 	{ {ACTION_LOOK, OBJECT_LEFT_READINGS, 0, 0}, &Room::veng4LookAtLeftBedReadings },
@@ -227,19 +234,19 @@ void Room::veng4TalkToBrittany() {
 }
 
 void Room::veng4LookAtDeadGuy() {
-	showText(TX_VEN4N014);
+	showDescription(TX_VEN4N014);
 }
 
 void Room::veng4LookAtRightBedReadings() {
-	showText(TX_VEN4N013);
+	showDescription(TX_VEN4N013);
 }
 
 void Room::veng4LookAtDoorHotspot() {
-	showText(TX_VEN4N008);
+	showDescription(TX_VEN4N008);
 }
 
 void Room::veng4LookAtKirk() {
-	showText(TX_VEN4N002);
+	showDescription(TX_VEN4N002);
 }
 
 void Room::veng4LookAtSpock() {
@@ -259,45 +266,45 @@ void Room::veng4LookAtLeftBed() {
 		// ENHANCEMENT: Original game showed a string with no corresponding audio ("This
 		// bed contains the body of a recently deceaced crewman." Yes that's a typo.)
 		// Instead, show some appropriate voiced text.
-		showText(TX_VEN4N017);
+		showDescription(TX_VEN4N017);
 	} else
-		showText(TX_VEN4N007);
+		showDescription(TX_VEN4N007);
 }
 
 void Room::veng4LookAtLeftBedReadings() {
 	if (!_awayMission->veng.brittanyDead)
-		showText(TX_VEN4N006);
+		showDescription(TX_VEN4N006);
 	else
-		showText(TX_VEN4N005);
+		showDescription(TX_VEN4N005);
 }
 
 void Room::veng4LookAtBrittany() {
 	if (_awayMission->veng.brittanyDead)
-		showText(TX_VEN4N017);
+		showDescription(TX_VEN4N017);
 	else if (!_awayMission->veng.lookedAtBrittany) {
 		_awayMission->veng.lookedAtBrittany = true;
 		showText(TX_SPEAKER_KIRK,  TX_VEN4_005);
 		showText(TX_SPEAKER_MCCOY, TX_VEN4_014);
 	} else if (_awayMission->veng.talkedToBrittany)
-		showText(TX_VEN4N017);
+		showDescription(TX_VEN4N017);
 	else
-		showText(TX_VEN4N004);
+		showDescription(TX_VEN4N004);
 }
 
 void Room::veng4LookAtDrill() {
-	showText(TX_VEN4N012);
+	showDescription(TX_VEN4N012);
 }
 
-void Room::veng4LookAtHypo() {
-	showText(TX_VEN4N010);
+void Room::veng4LookAtHypoOnTable() {
+	showDescription(TX_VEN4N010);
 }
 
 void Room::veng4LookAtDoorObject() {
-	showText(TX_VEN4N009);
+	showDescription(TX_VEN4N009);
 }
 
 void Room::veng4LookAnywhere() {
-	showText(TX_VEN4N011);
+	showDescription(TX_VEN4N011);
 }
 
 void Room::veng4GetHypo() {
@@ -313,7 +320,7 @@ void Room::veng4PickedUpHypo() {
 	giveItem(OBJECT_IHYPO);
 	_awayMission->veng.tookHypoFromSickbay = true;
 	loadActorStandAnim(OBJECT_HYPO);
-	showText(TX_VEN4N015);
+	showDescription(TX_VEN4N015);
 	walkCrewman(OBJECT_KIRK, 0xcd, 0xc2);
 	_awayMission->disableInput = false;
 }
@@ -331,7 +338,7 @@ void Room::veng4PickedUpDrill() {
 	giveItem(OBJECT_IDRILL);
 	_awayMission->veng.tookDrillFromSickbay = true;
 	loadActorStandAnim(OBJECT_DRILL);
-	showText(TX_VEN4N016);
+	showDescription(TX_VEN4N016);
 	walkCrewman(OBJECT_KIRK, 0xcd, 0xc2);
 	_awayMission->disableInput = false;
 }

@@ -106,6 +106,12 @@ bool OSystem_iOS7::pollEvent(Common::Event &event) {
 				return false;
 			break;
 
+		case kInputMainMenu:
+			event.type = Common::EVENT_MAINMENU;
+			_queuedInputEvent.type = Common::EVENT_INVALID;
+			_queuedEventTime = getMillis() + kQueuedInputEventDelay;
+			break;
+
 		default:
 			break;
 		}
@@ -383,54 +389,12 @@ void  OSystem_iOS7::handleEvent_keyPressed(Common::Event &event, int keyPressed)
 	int ascii = keyPressed;
 	//printf("key: %i\n", keyPressed);
 
-	// We remap some of the iPhone keyboard keys.
-	// The first ten here are the row of symbols below the numeric keys.
-	switch (keyPressed) {
-	case 45:
-		keyPressed = Common::KEYCODE_F1;
-		ascii = Common::ASCII_F1;
-		break;
-	case 47:
-		keyPressed = Common::KEYCODE_F2;
-		ascii = Common::ASCII_F2;
-		break;
-	case 58:
-		keyPressed = Common::KEYCODE_F3;
-		ascii = Common::ASCII_F3;
-		break;
-	case 59:
-		keyPressed = Common::KEYCODE_F4;
-		ascii = Common::ASCII_F4;
-		break;
-	case 40:
-		keyPressed = Common::KEYCODE_F5;
-		ascii = Common::ASCII_F5;
-		break;
-	case 41:
-		keyPressed = Common::KEYCODE_F6;
-		ascii = Common::ASCII_F6;
-		break;
-	case 36:
-		keyPressed = Common::KEYCODE_F7;
-		ascii = Common::ASCII_F7;
-		break;
-	case 38:
-		keyPressed = Common::KEYCODE_F8;
-		ascii = Common::ASCII_F8;
-		break;
-	case 64:
-		keyPressed = Common::KEYCODE_F9;
-		ascii = Common::ASCII_F9;
-		break;
-	case 34:
-		keyPressed = Common::KEYCODE_F10;
-		ascii = Common::ASCII_F10;
-		break;
-	case 10:
+	// Map LF character to Return key/CR character
+	if (keyPressed == 10) {
 		keyPressed = Common::KEYCODE_RETURN;
 		ascii = Common::ASCII_RETURN;
-		break;
 	}
+
 	event.type = Common::EVENT_KEYDOWN;
 	_queuedInputEvent.type = Common::EVENT_KEYUP;
 
@@ -441,63 +405,23 @@ void  OSystem_iOS7::handleEvent_keyPressed(Common::Event &event, int keyPressed)
 }
 
 bool OSystem_iOS7::handleEvent_swipe(Common::Event &event, int direction, int touches) {
-	if (touches == 1) {
+	if (touches == 3) {
 		Common::KeyCode keycode = Common::KEYCODE_INVALID;
-		switch (_screenOrientation) {
-		case kScreenOrientationPortrait:
-			switch ((UIViewSwipeDirection)direction) {
-				case kUIViewSwipeUp:
-					keycode = Common::KEYCODE_UP;
-					break;
-				case kUIViewSwipeDown:
-					keycode = Common::KEYCODE_DOWN;
-					break;
-				case kUIViewSwipeLeft:
-					keycode = Common::KEYCODE_LEFT;
-					break;
-				case kUIViewSwipeRight:
-					keycode = Common::KEYCODE_RIGHT;
-					break;
-				default:
-					return false;
-			}
-			break;
-		case kScreenOrientationLandscape:
-			switch ((UIViewSwipeDirection)direction) {
-				case kUIViewSwipeUp:
-					keycode = Common::KEYCODE_LEFT;
-					break;
-				case kUIViewSwipeDown:
-					keycode = Common::KEYCODE_RIGHT;
-					break;
-				case kUIViewSwipeLeft:
-					keycode = Common::KEYCODE_DOWN;
-					break;
-				case kUIViewSwipeRight:
-					keycode = Common::KEYCODE_UP;
-					break;
-				default:
-					return false;
-			}
-			break;
-		case kScreenOrientationFlippedLandscape:
-			switch ((UIViewSwipeDirection)direction) {
-				case kUIViewSwipeUp:
-					keycode = Common::KEYCODE_RIGHT;
-					break;
-				case kUIViewSwipeDown:
-					keycode = Common::KEYCODE_LEFT;
-					break;
-				case kUIViewSwipeLeft:
-					keycode = Common::KEYCODE_UP;
-					break;
-				case kUIViewSwipeRight:
-					keycode = Common::KEYCODE_DOWN;
-					break;
-				default:
-					return false;
-			}
-			break;
+		switch ((UIViewSwipeDirection)direction) {
+			case kUIViewSwipeUp:
+				keycode = Common::KEYCODE_UP;
+				break;
+			case kUIViewSwipeDown:
+				keycode = Common::KEYCODE_DOWN;
+				break;
+			case kUIViewSwipeLeft:
+				keycode = Common::KEYCODE_LEFT;
+				break;
+			case kUIViewSwipeRight:
+				keycode = Common::KEYCODE_RIGHT;
+				break;
+			default:
+				return false;
 		}
 
 		event.kbd.keycode = _queuedInputEvent.kbd.keycode = keycode;

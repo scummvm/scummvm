@@ -39,8 +39,8 @@ namespace BladeRunner {
 Settings::Settings(BladeRunnerEngine *vm) {
 	_vm = vm;
 
-	_difficulty = 1;
-	_playerAgenda = 1;
+	_difficulty = kGameDifficultyMedium;
+	_playerAgenda = kPlayerAgendaNormal;
 
 	_chapter = 1;
 	_scene = -1;
@@ -65,6 +65,7 @@ Settings::Settings(BladeRunnerEngine *vm) {
 	_fullHDFrames = true;
 	_mst3k = false;
 
+	// TODO: A bug? why is this set again here?
 	_ammoType = 0;
 	_ammoAmounts[0] = 0;
 	_ammoAmounts[1] = 0;
@@ -148,6 +149,10 @@ bool Settings::openNewScene() {
 	return true;
 }
 
+int Settings::getAmmoTypesCount() {
+	return kAmmoTypesCount;
+}
+
 int Settings::getAmmoType() const {
 	return _ammoType;
 }
@@ -170,7 +175,7 @@ void Settings::addAmmo(int ammoType, int ammo) {
 }
 
 void Settings::decreaseAmmo() {
-	if (_difficulty == 0 || _ammoType == 0) {
+	if (_difficulty == kGameDifficultyEasy || _ammoType == 0) {
 		return;
 	}
 
@@ -220,7 +225,7 @@ void Settings::save(SaveFileWriteStream &f) {
 	f.writeInt(_unk0);
 	f.writeInt(_difficulty);
 	f.writeInt(_ammoType);
-	for (int i = 0; i != 3; ++i) {
+	for (int i = 0; i != kAmmoTypesCount; ++i) {
 		f.writeInt(_ammoAmounts[i]);
 	}
 }
@@ -233,7 +238,7 @@ void Settings::load(SaveFileReadStream &f) {
 	_unk0 = f.readInt();
 	_difficulty = f.readInt();
 	_ammoType = f.readInt();
-	for (int i = 0; i != 3; ++i) {
+	for (int i = 0; i != kAmmoTypesCount; ++i) {
 		_ammoAmounts[i] = f.readInt();
 	}
 }

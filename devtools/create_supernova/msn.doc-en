@@ -1,0 +1,93 @@
+                            Instructions
+                            --------
+In this game you take over the role of Horst Hummel, the
+ship's cook of the "Supernova". You can determine his actions
+by clicking on commands with the mouse.
+
+Press F1 during the game for help. You can run SETUP.BAT to
+change the sound settings.
+If you have problems with the game (especially with the
+sound) read the PROBLEME.TXT file.
+
+1. Commands selection
+------------------
+A command is composed of 1 verb and 1 or 2 objects.
+You can select a verb by clicking on the desired verb in the
+command bar (e.g. Look, Take). It will then appear in the
+line above the command bar. This is the record line (it
+contains the current command that you are building).
+
+You can select an object in two different ways:
+-You click on an object in the graphics window. Important
+ items in the graphics window appear in the record line when
+ you move the mouse over them.
+-You click on an item in your inventory. Your inventory is
+ located at the bottom of the screen. There you will see all
+ the items you carry with you. You can take as many items as
+ you want during the game. If you have more than 8 items,
+ arrows will appear to the right of the inventory. With these
+ arrows you can scroll the list.
+
+If you have selected a verb and an object, the command is
+usually executed.
+  Examples: Open Hatch
+            Look Chessboard
+            Take Chessboard
+            Look Keycard
+  You can try these examples directly in the room in which
+  you start the game.
+
+The verb "Use" sometimes requires 2 objects. The verb "Give"
+always requires 2 objects.
+ Example: You are in the room in which you start the game.
+          Select the verb "Use" and as object the keycard
+          from your inventory. The sentence line says:
+          "Use keycard with". Now click on the slot of the
+          middle cabinet to open the cabinet.
+
+Additional information about the commands:
+-After a command has been executed, the game always
+ switches to the verb "Go to".
+-Some actions can be simplified by pressing the right mouse
+ button:
+ -Opening and closing hatches/doors etc.
+ -Pushing buttons.
+ -Talking with people.
+ -Looking at objects.
+ Example: You want to open a closed hatch.
+          Move the mouse over the hatch and press the right
+          mouse button. The hatch opens. If you press the
+          right mouse button again, the hatch closes.
+
+ For objects where it is not quite obvious that you can open,
+ close, push or talk to them, pressing the right mouse button
+ automatically executes the command "Look".
+
+2. Moving around
+-------------
+You can move around in two ways.
+-Click a box in the small area at the bottom right of the
+ screen while selecting the Go To command. The boxes
+ symbolize the exits of the room you are in.
+-You can also click on an exit directly in the graphics
+ window (e.g. an open hatch).
+
+ Important: The graphics window does not always show all the
+            exits that a room really has. Some exits can only
+            be used in the exit view at the bottom right.
+
+3. Load/save
+-----------
+You can save or load a game at any time. To do this, press
+"F5". A menu appears.
+If you want to save a game, select one of the 10 slots with
+the mouse or the arrow keys. Then type in a name
+under which you want to save the game and click on "Save".
+To load a savegame, simply click on the desired savegame and
+then on "Load".
+
+4. Talking to other creatures
+----------------------------
+Later in the game you will meet other creatures. When talking
+to them you have different questions/answers. Select one of
+these options with the mouse.

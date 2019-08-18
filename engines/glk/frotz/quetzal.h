@@ -24,49 +24,20 @@
 #define GLK_FROTZ_QUETZAL
 
 #include "glk/glk_types.h"
+#include "glk/quetzal.h"
 #include "glk/frotz/frotz_types.h"
 
 namespace Glk {
 namespace Frotz {
-
-enum QueztalTag {
-	ID_FORM = MKTAG('F', 'O', 'R', 'M'),
-	ID_IFZS = MKTAG('I', 'F', 'Z', 'S'),
-	ID_IFhd = MKTAG('I', 'F', 'h', 'd'),
-	ID_UMem = MKTAG('U', 'M', 'e', 'm'),
-	ID_CMem = MKTAG('C', 'M', 'e', 'm'),
-	ID_Stks = MKTAG('S', 't', 'k', 's'),
-	ID_ANNO = MKTAG('A', 'N', 'N', 'O'),
-	ID_SCVM = MKTAG('S', 'C', 'V', 'M')
-};
 
 class Processor;
 
 class Quetzal {
 private:
 	Common::SeekableReadStream *_storyFile;
-	Common::WriteStream *_out;
+	QuetzalReader _reader;
+	QuetzalWriter _writer;
 	zword frames[STACK_SIZE / 4 + 1];
-private:
-	/**
-	 * Read a 16-bit value from the file
-	 */
-	bool read_word(Common::ReadStream *f, zword *result);
-
-	/**
-	 * Read  32-bit value from the file
-	 */
-	bool read_long(Common::ReadStream *f, uint *result);
-
-	void write_byte(zbyte b) { _out->writeByte(b); }
-	void write_bytx(zword b) { _out->writeByte(b & 0xFF); }
-	void write_word(zword w) { _out->writeUint16BE(w); }
-	void write_long(uint l) { _out->writeUint32BE(l); }
-	void write_run(zword run) { write_byte(0); write_byte(run); }
-	void write_chnk(QueztalTag id, zword len) {
-		_out->writeUint32BE(id);
-		_out->writeUint32BE(len);
-	}
 public:
 	/**
 	 * Constructor

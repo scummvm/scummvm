@@ -107,7 +107,7 @@ protected:
 	bool Loop_Actor_Walk_To_Item(int actorId, int itemId, int proximity, bool interruptible, bool run);
 	bool Loop_Actor_Walk_To_Scene_Object(int actorId, const char *objectName, int proximity, bool interruptible, bool run);
 	bool Loop_Actor_Walk_To_Waypoint(int actorId, int waypointId, int proximity, bool interruptible, bool run);
-	bool Loop_Actor_Walk_To_XYZ(int actorId, float x, float y, float z, int proximity, bool interruptible, bool run, bool a7);
+	bool Loop_Actor_Walk_To_XYZ(int actorId, float x, float y, float z, int proximity, bool interruptible, bool run, bool force);
 	void Async_Actor_Walk_To_Waypoint(int actorId, int waypointId, int proximity, bool run);
 	void Async_Actor_Walk_To_XYZ(int actorId, float x, float y, float z, int proximity, bool run);
 	void Actor_Force_Stop_Walking(int actorId);
@@ -117,8 +117,8 @@ protected:
 	void Actor_Clue_Acquire(int actorId, int clueId, bool unknownFlag, int fromActorId);
 	void Actor_Clue_Lose(int actorId, int clueId);
 	bool Actor_Clue_Query(int actorId, int clueId);
-	void Actor_Clues_Transfer_New_To_Mainframe(int actorId);
-	void Actor_Clues_Transfer_New_From_Mainframe(int actorId);
+	bool Actor_Clues_Transfer_New_To_Mainframe(int actorId);
+	bool Actor_Clues_Transfer_New_From_Mainframe(int actorId);
 	void Actor_Set_Invisible(int actorId, bool isInvisible);
 	void Actor_Set_Immunity_To_Obstacles(int actorId, bool isImmune);
 	void Item_Add_To_World(int itemId, int animationId, int setId, float x, float y, float z, signed int facing, int height, int width, bool isTargetable, bool isObstacle, bool isPoliceMazeEnemy, bool updateOnly);
@@ -126,13 +126,21 @@ protected:
 	void Item_Spin_In_World(int itemId);
 	void Item_Flag_As_Target(int itemId);
 	void Item_Flag_As_Non_Target(int itemId);
-	void Item_Pickup_Spin_Effect(int a1, int a2, int a3);
+	void Item_Pickup_Spin_Effect(int animationId, int x, int y);
+	bool Item_Query_Visible(int itemId);
+	void Set_Subtitle_Text_On_Screen(Common::String displayText);
+#if BLADERUNNER_ORIGINAL_BUGS
+#else
+	void Screen_Effect_Skip(int effectInc);
+	void Screen_Effect_Restore(int effectInc);
+	void Screen_Effect_Restore_All();
+#endif // BLADERUNNER_ORIGINAL_BUGS
 	int Animation_Open();
 	int Animation_Close();
 	int Animation_Start();
 	int Animation_Stop();
 	int Animation_Skip_To_Frame();
-	void Delay(int miliseconds);
+	void Delay(uint32 miliseconds);
 	void Player_Loses_Control();
 	void Player_Gains_Control();
 	void Player_Set_Combat_Mode(bool activate);
@@ -164,26 +172,26 @@ protected:
 	void Footstep_Sounds_Set(int index, int value);
 	void Footstep_Sound_Override_On(int footstepSoundOverride);
 	void Footstep_Sound_Override_Off();
-	bool Music_Play(int musicId, int volume, int pan, int timeFadeIn, int timePlay, int loop, int timeFadeOut);
-	void Music_Adjust(int volume, int pan, int delay);
-	void Music_Stop(int delay);
+	bool Music_Play(int musicId, int volume, int pan, int32 timeFadeIn, int32 timePlay, int loop, int32 timeFadeOut);
+	void Music_Adjust(int volume, int pan, uint32 delay);
+	void Music_Stop(uint32 delay);
 	bool Music_Is_Playing();
 	void Overlay_Play(const char *overlay, int loopId, bool loopForever, bool startNow, int a5);
 	void Overlay_Remove(const char *overlay);
 	void Scene_Loop_Set_Default(int loopId);
 	void Scene_Loop_Start_Special(int sceneLoopMode, int loopId, bool immediately);
 	void Outtake_Play(int id, int noLocalization = false, int container = -1);
-	void Ambient_Sounds_Add_Sound(int sfxId, int timeMin, int timeMax, int volumeMin, int volumeMax, int panStartMin, int panStartMax, int panEndMin, int panEndMax, int priority, int unk);
+	void Ambient_Sounds_Add_Sound(int sfxId, uint32 timeMin, uint32 timeMax, int volumeMin, int volumeMax, int panStartMin, int panStartMax, int panEndMin, int panEndMax, int priority, int unk);
 	void Ambient_Sounds_Remove_Sound(int sfxId, bool stopPlaying);
-	void Ambient_Sounds_Add_Speech_Sound(int actorId, int sentenceId, int timeMin, int timeMax, int volumeMin, int volumeMax, int panStartMin, int panStartMax, int panEndMin, int panEndMax, int priority, int unk);
+	void Ambient_Sounds_Add_Speech_Sound(int actorId, int sentenceId, uint32 timeMin, uint32 timeMax, int volumeMin, int volumeMax, int panStartMin, int panStartMax, int panEndMin, int panEndMax, int priority, int unk);
 	// Ambient_Sounds_Remove_Speech_Sound
 	void Ambient_Sounds_Play_Sound(int sfxId, int volume, int panStart, int panEnd, int priority);
 	void Ambient_Sounds_Play_Speech_Sound(int actorId, int sfxId, int volume, int panStart, int panEnd, int priority);
 	void Ambient_Sounds_Remove_All_Non_Looping_Sounds(bool stopPlaying);
-	void Ambient_Sounds_Add_Looping_Sound(int sfxId, int volume, int pan, int delay);
-	void Ambient_Sounds_Adjust_Looping_Sound(int sfxId, int volume, int pan, int delay);
-	void Ambient_Sounds_Remove_Looping_Sound(int sfxId, int delay);
-	void Ambient_Sounds_Remove_All_Looping_Sounds(int delay);
+	void Ambient_Sounds_Add_Looping_Sound(int sfxId, int volume, int pan, uint32 delay);
+	void Ambient_Sounds_Adjust_Looping_Sound(int sfxId, int volume, int pan, uint32 delay);
+	void Ambient_Sounds_Remove_Looping_Sound(int sfxId, uint32 delay);
+	void Ambient_Sounds_Remove_All_Looping_Sounds(uint32 delay);
 	void Setup_Scene_Information(float actorX, float actorY, float actorZ, int actorFacing);
 	bool Dialogue_Menu_Appear(int x, int y);
 	bool Dialogue_Menu_Disappear();
@@ -193,6 +201,7 @@ protected:
 	bool Dialogue_Menu_Add_To_List_Never_Repeat_Once_Selected(int answer);
 	bool DM_Add_To_List(int answer, int priorityPolite, int priorityNormal, int prioritySurly);
 	bool DM_Add_To_List_Never_Repeat_Once_Selected(int answer, int priorityPolite, int priorityNormal, int prioritySurly);
+	bool Dialogue_Menu_Clear_Never_Repeat_Was_Selected_Flag(int answer);
 	bool Dialogue_Menu_Remove_From_List(int answer);
 	int Dialogue_Menu_Query_Input();
 	int Dialogue_Menu_Query_List_Size();
@@ -256,20 +265,21 @@ protected:
 	void Set_Fog_Density(const char *fogName, float density);
 	void ADQ_Flush();
 	void ADQ_Add(int actorId, int sentenceId, int animationMode);
-	void ADQ_Add_Pause(int delay);
+	void ADQ_Add_Pause(int32 delay);
+	void ADQ_Wait_For_All_Queued_Dialogue();
 	bool Game_Over();
 	void Autosave_Game(int textId);
 	void I_Sez(const char *str);
 
-	void AI_Countdown_Timer_Start(int actorId, signed int timer, int seconds);
+	void AI_Countdown_Timer_Start(int actorId, signed int timer, int32 seconds);
 	void AI_Countdown_Timer_Reset(int actorId, int timer);
 	void AI_Movement_Track_Unpause(int actorId);
 	void AI_Movement_Track_Pause(int actorId);
 	void AI_Movement_Track_Repeat(int actorId);
-	void AI_Movement_Track_Append_Run_With_Facing(int actorId, int waypointId, int delay, int angle);
-	void AI_Movement_Track_Append_With_Facing(int actorId, int waypointId, int delay, int angle);
-	void AI_Movement_Track_Append_Run(int actorId, int waypointId, int delay);
-	void AI_Movement_Track_Append(int actorId, int waypointId, int delay);
+	void AI_Movement_Track_Append_Run_With_Facing(int actorId, int waypointId, int32 delay, int angle);
+	void AI_Movement_Track_Append_With_Facing(int actorId, int waypointId, int32 delay, int angle);
+	void AI_Movement_Track_Append_Run(int actorId, int waypointId, int32 delay);
+	void AI_Movement_Track_Append(int actorId, int waypointId, int32 delay);
 	void AI_Movement_Track_Flush(int actorId);
 
 	void ESPER_Add_Photo(const char *name, int photoId, int shapeId);

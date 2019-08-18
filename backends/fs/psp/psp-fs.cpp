@@ -239,9 +239,9 @@ Common::WriteStream *PSPFilesystemNode::createWriteStream() {
 	return Common::wrapBufferedWriteStream(stream, WRITE_BUFFER_SIZE);
 }
 
-bool PSPFilesystemNode::create(bool isDirectoryFlag) {
-	error("Not supported");
-	return false;
+bool PSPFilesystemNode::createDirectory() {
+	warning("PSPFilesystemNode::createDirectory(): Not supported");
+	return _isValid && _isDirectory;
 }
 
 #endif //#ifdef __PSP__

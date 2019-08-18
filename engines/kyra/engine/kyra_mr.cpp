@@ -28,7 +28,7 @@
 #include "kyra/gui/debugger.h"
 #include "kyra/gui/gui_mr.h"
 #include "kyra/resource/resource.h"
-#include "kyra/sound/sound_digital.h"
+#include "kyra/sound/sound_digital_mr.h"
 
 #include "common/system.h"
 #include "common/config-manager.h"
@@ -211,7 +211,7 @@ Common::Error KyraEngine_MR::init() {
 	KyraEngine_v1::init();
 	initStaticResource();
 
-	_soundDigital = new SoundDigital(this, _mixer);
+	_soundDigital = new SoundDigital_MR(this, _mixer);
 	assert(_soundDigital);
 	KyraEngine_v1::_text = _text = new TextDisplayer_MR(this, _screen);
 	assert(_text);

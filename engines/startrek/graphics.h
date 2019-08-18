@@ -57,7 +57,7 @@ public:
 	 *                 whole bitmap, even if some is outside the drawable space)
 	 * @param drawRect The clipped rectangle to draw at (must be within the drawable space)
 	 */
-	void drawBitmapToBackground(const Common::Rect &origRect, const Common::Rect &drawRect, SharedPtr<Bitmap> bitmap);
+	void drawBitmapToBackground(const Common::Rect &origRect, const Common::Rect &drawRect, Bitmap *bitmap);
 
 	void fillBackgroundRect(const Common::Rect &rect, byte color);
 	byte *getBackgroundPixels();
@@ -104,7 +104,6 @@ public:
 	SharedPtr<Bitmap> getMouseBitmap();
 	void warpMouse(int16 x, int16 y);
 
-	void drawTextChar(::Graphics::Surface *surface, const Sprite &sprite, int x, int y, const Common::Rect &rect);
 	void drawSprite(const Sprite &sprite, ::Graphics::Surface *surface);
 	/**
 	 * @param sprite The sprite to draw

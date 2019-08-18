@@ -169,19 +169,19 @@ void Mouse::getXY(int *x, int *y) const {
 
 void Mouse::setMouseJitterUp() {
 	switch (_vm->_settings->getDifficulty()) {
-	case 0:
+	case kGameDifficultyEasy:
 		_randomCountdownX = 2;
 		_randomX = _vm->_rnd.getRandomNumberRng(0, 6) - 3;
 		_randomY = _vm->_rnd.getRandomNumberRng(0, 10) - 20;
 		break;
 
-	case 1:
+	case kGameDifficultyMedium:
 		_randomCountdownX = 3;
 		_randomX = _vm->_rnd.getRandomNumberRng(0, 8) - 4;
 		_randomY = _vm->_rnd.getRandomNumberRng(0, 10) - 25;
 		break;
 
-	case 2:
+	case kGameDifficultyHard:
 		_randomCountdownX = 4;
 		_randomX = _vm->_rnd.getRandomNumberRng(0, 10) - 5;
 		_randomY = _vm->_rnd.getRandomNumberRng(0, 10) - 30;
@@ -191,19 +191,19 @@ void Mouse::setMouseJitterUp() {
 
 void Mouse::setMouseJitterDown() {
 	switch (_vm->_settings->getDifficulty()) {
-	case 0:
+	case kGameDifficultyEasy:
 		_randomCountdownY = 2;
 		_randomX = _vm->_rnd.getRandomNumberRng(0, 6) - 3;
 		_randomY = _vm->_rnd.getRandomNumberRng(10, 20);
 		break;
 
-	case 1:
+	case kGameDifficultyMedium:
 		_randomCountdownY = 3;
 		_randomX = _vm->_rnd.getRandomNumberRng(0, 8) - 4;
 		_randomY = _vm->_rnd.getRandomNumberRng(15, 25);
 		break;
 
-	case 2:
+	case kGameDifficultyHard:
 		_randomCountdownY = 4;
 		_randomX = _vm->_rnd.getRandomNumberRng(0, 10) - 5;
 		_randomY = _vm->_rnd.getRandomNumberRng(20, 30);
@@ -218,8 +218,8 @@ void Mouse::disable() {
 	_randomCountdownY = 0;
 }
 
-void Mouse::enable() {
-	if (--_disabledCounter <= 0) {
+void Mouse::enable(bool force) {
+	if (force || --_disabledCounter <= 0) {
 		_disabledCounter = 0;
 	}
 }
@@ -242,7 +242,7 @@ void Mouse::draw(Graphics::Surface &surface, int x, int y) {
 
 		if (!_randomCountdownX)
 			setMouseJitterDown();
-	} else if (_randomCountdownY > 0){
+	} else if (_randomCountdownY > 0) {
 		_randomCountdownY--;
 		x += _randomX;
 		y += _randomY;
@@ -387,7 +387,7 @@ void Mouse::tick(int x, int y) {
 	int actorId = Actor::findTargetUnderMouse(_vm, x, y);
 	int itemId = _vm->_items->findTargetUnderMouse(x, y);
 
-	bool isObject = isTarget && sceneObjectId >= kSceneObjectOffsetObjects && sceneObjectId <= 293;
+	bool isObject = isTarget && sceneObjectId >= kSceneObjectOffsetObjects && sceneObjectId <= (95 + kSceneObjectOffsetObjects);
 
 	if (!_vm->_playerActor->isMoving()) {
 		if (actorId >= 0) {
@@ -412,7 +412,7 @@ void Mouse::tick(int x, int y) {
 			break;
 		}
 
-		if (!_vm->_playerActor->isMoving() && animationMode != kAnimationModeCombatAim && animationMode != 22 && animationMode != 49) {
+		if (!_vm->_playerActor->isMoving() && animationMode != kAnimationModeCombatAim && animationMode != kAnimationModeCombatHit && animationMode != kAnimationModeCombatDie) {
 			_vm->_playerActor->changeAnimationMode(kAnimationModeCombatAim, false);
 		}
 	} else {
@@ -427,7 +427,7 @@ void Mouse::tick(int x, int y) {
 			cursorId = 10;
 			break;
 		}
-		if (!_vm->_playerActor->isMoving() && animationMode != kAnimationModeCombatIdle && animationMode != 22 && animationMode != 49) {
+		if (!_vm->_playerActor->isMoving() && animationMode != kAnimationModeCombatIdle && animationMode != kAnimationModeCombatHit && animationMode != kAnimationModeCombatDie) {
 			_vm->_playerActor->changeAnimationMode(kAnimationModeCombatIdle, false);
 		}
 	}

@@ -28,10 +28,28 @@
 #include "bladerunner/game_info.h"
 #include "bladerunner/text_resource.h"
 #include "bladerunner/time.h"
+#include "bladerunner/game_constants.h"
 
 namespace BladeRunner {
 
-const int KIASectionPogo::kTextColors[] = { 0x0000, 0x0821, 0x1061, 0x1C82, 0x24C2, 0x2CE3, 0x3524, 0x4145, 0x4586, 0x4DC7, 0x5609, 0x5E4B, 0x668C, 0x6EEE, 0x7730, 0x7B92 };
+const Color256 KIASectionPogo::kTextColors[] = {
+	{ 0, 0, 0 },
+	{ 16, 8, 8 },
+	{ 32, 24, 8 },
+	{ 56, 32, 16 },
+	{ 72, 48, 16 },
+	{ 88, 56, 24 },
+	{ 104, 72, 32 },
+	{ 128, 80, 40 },
+	{ 136, 96, 48 },
+	{ 152, 112, 56 },
+	{ 168, 128, 72 },
+	{ 184, 144, 88 },
+	{ 200, 160, 96 },
+	{ 216, 184, 112 },
+	{ 232, 200, 128 },
+	{ 240, 224, 144 }
+};
 
 const char *KIASectionPogo::kStrings[] = {
 	"Air Conditioning",
@@ -228,22 +246,24 @@ void KIASectionPogo::open() {
 
 	_timeLast = _vm->_time->currentSystem();
 
-	_vm->_audioPlayer->playAud(_vm->_gameInfo->getSfxTrack(319), 100, 0, 0, 50, 0);
+	_vm->_audioPlayer->playAud(_vm->_gameInfo->getSfxTrack(kSfxAUDLAFF1), 100, 0, 0, 50, 0);
 }
 
 void KIASectionPogo::draw(Graphics::Surface &surface) {
 	// Timing fixed for 60Hz by ScummVM team
-	int timeNow = _vm->_time->currentSystem();
+	uint32 timeNow = _vm->_time->currentSystem();
 	bool updateTimeout = false;
-	if (timeNow - _timeLast > 1000 / 60) {
+	// unsigned difference is intentional
+	if (timeNow - _timeLast > (1000u / 60u)) {
 		updateTimeout = true;
 		_timeLast = timeNow;
 	}
 
 	const char *title = "We 3 coders give special thanks to:";
-	_vm->_mainFont->drawColor(title, surface, 313 - _vm->_mainFont->getTextWidth(title) / 2, 143, 0x7BB8);
+	_vm->_mainFont->drawString(&surface, title, 313 - _vm->_mainFont->getStringWidth(title) / 2, 143, surface.w, surface.format.RGBToColor(240, 232, 192));
 
 	int y = 158;
+	int lineTextWidth;
 	for (int i = 0; i < kLineCount; ++i) {
 		if (updateTimeout) {
 			if (_lineTimeouts[i] > 0) {
@@ -251,7 +271,8 @@ void KIASectionPogo::draw(Graphics::Surface &surface) {
 			} else {
 				_lineTexts[i] = _strings[_stringIndex];
 				_lineTimeouts[i] = 63;
-				_lineOffsets[i] = _vm->_rnd.getRandomNumberRng(0, 306 - _vm->_mainFont->getTextWidth(_lineTexts[i])) + 155;
+				 lineTextWidth = _vm->_mainFont->getStringWidth(_lineTexts[i]);
+				_lineOffsets[i] = _vm->_rnd.getRandomNumberRng(0, (306 -  lineTextWidth) > 0 ? (306 - lineTextWidth) : 0) + 155;
 
 				_stringIndex = (_stringIndex + 1) % kStringCount;
 			}
@@ -263,7 +284,7 @@ void KIASectionPogo::draw(Graphics::Surface &surface) {
 				colorIndex = 63 - colorIndex;
 			}
 			colorIndex /= 2;
-			_vm->_mainFont->drawColor(_lineTexts[i], surface, _lineOffsets[i], y, kTextColors[colorIndex]);
+			_vm->_mainFont->drawString(&surface, _lineTexts[i], _lineOffsets[i], y, surface.w, surface.format.RGBToColor(kTextColors[colorIndex].r, kTextColors[colorIndex].g, kTextColors[colorIndex].b));
 		}
 		y += 10;
 	}

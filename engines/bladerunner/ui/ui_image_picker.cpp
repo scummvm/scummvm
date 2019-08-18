@@ -167,7 +167,7 @@ void UIImagePicker::activate(UIImagePickerCallback *mouseInCallback,
 	_mouseDownCallback   = mouseDownCallback;
 	_mouseUpCallback     = mouseUpCallback;
 	_callbackData        = callbackData;
-	_hoverStartTimestamp = 0;
+	_hoverStartTimestamp = 0u;
 	_isVisible           = true;
 	_hoveredImageIndex   = -1;
 	_pressedImageIndex   = -1;
@@ -180,7 +180,7 @@ void UIImagePicker::deactivate() {
 	_mouseDownCallback   = nullptr;
 	_mouseUpCallback     = nullptr;
 	_callbackData        = nullptr;
-	_hoverStartTimestamp = 0;
+	_hoverStartTimestamp = 0u;
 	_isVisible           = false;
 	_hoveredImageIndex   = -1;
 	_pressedImageIndex   = -1;
@@ -197,27 +197,24 @@ void UIImagePicker::draw(Graphics::Surface &surface) {
 			continue;
 		}
 
-		if (i == _hoveredImageIndex && i == _pressedImageIndex && _isButtonDown) {
-			if (!_vm->_mouse->isDisabled()) {
-				if (img.shapeDown) {
-					img.shapeDown->draw(surface, img.rect.left, img.rect.top);
-				}
-			}
-		} else if (i == _hoveredImageIndex && !_isButtonDown) {
-			if (!_vm->_mouse->isDisabled()) {
-				if (img.shapeHovered) {
-					img.shapeHovered->draw(surface, img.rect.left, img.rect.top);
-				}
-			}
+		if (i == _hoveredImageIndex && i == _pressedImageIndex && _isButtonDown
+			&& !_vm->_mouse->isDisabled()
+			&& img.shapeDown) {
+			img.shapeDown->draw(surface, img.rect.left, img.rect.top);
+		} else if (i == _hoveredImageIndex && !_isButtonDown
+			&& !_vm->_mouse->isDisabled()
+			&& img.shapeHovered) {
+			img.shapeHovered->draw(surface, img.rect.left, img.rect.top);
 		} else {
+			// this shape should always be the fall back shape to prevent blinking
 			if (img.shapeUp) {
 				img.shapeUp->draw(surface, img.rect.left, img.rect.top);
 			}
 		}
 
 		if (_vm->_debugger->_viewUI) {
-			surface.frameRect(img.rect, 0x7fff);
-			_vm->_mainFont->drawColor(Common::String::format("%d", i), surface, (img.rect.left + img.rect.right) / 2, (img.rect.top + img.rect.bottom) / 2, 0x7fff);
+			surface.frameRect(img.rect, surface.format.RGBToColor(255, 255, 255));
+			_vm->_mainFont->drawString(&surface, Common::String::format("%d", i), (img.rect.left + img.rect.right) / 2, (img.rect.top + img.rect.bottom) / 2, surface.w, surface.format.RGBToColor(255, 255, 255));
 		}
 	}
 }
@@ -231,8 +228,8 @@ void UIImagePicker::drawTooltip(Graphics::Surface &surface, int x, int y) {
 		(_hoveredImageIndex == -1) ||
 		(_vm->_mouse->isDisabled()) ||
 		(!_images[_hoveredImageIndex].active) ||
-		(_vm->_time->current() < _hoverStartTimestamp + 1000)
-	) {
+		(_vm->_time->current() - _hoverStartTimestamp < 1000u)
+	) { // unsigned difference is intentional (time difference)
 		return;
 	}
 
@@ -242,8 +239,8 @@ void UIImagePicker::drawTooltip(Graphics::Surface &surface, int x, int y) {
 		return;
 	}
 
-	int width = _vm->_mainFont->getTextWidth(tooltip) + 1;
-	int height = _vm->_mainFont->getTextHeight(tooltip) + 1;
+	int width = _vm->_mainFont->getStringWidth(tooltip) + 1;
+	int height = _vm->_mainFont->getFontHeight() + 1;
 
 	Common::Rect rect;
 	rect.left = x - ((width / 2) + 1);
@@ -268,9 +265,9 @@ void UIImagePicker::drawTooltip(Graphics::Surface &surface, int x, int y) {
 		rect.top = 478 - height;
 	}
 
-	surface.fillRect(rect, 0);
-	surface.frameRect(rect, 0x7FFF);
-	_vm->_mainFont->drawColor(tooltip, surface, rect.left + 2, rect.top, 0x7FFF);
+	surface.fillRect(rect, surface.format.RGBToColor(0, 0, 0));
+	surface.frameRect(rect, surface.format.RGBToColor(255, 255, 255));
+	_vm->_mainFont->drawString(&surface, tooltip, rect.left + 2, rect.top, surface.w, surface.format.RGBToColor(255, 255, 255));
 }
 
 bool UIImagePicker::handleMouseAction(int x, int y, bool down, bool up, bool ignore) {
@@ -355,7 +352,7 @@ void UIImagePicker::reset() {
 	_isVisible           = false;
 	_hoveredImageIndex   = -1;
 	_pressedImageIndex   = -1;
-	_hoverStartTimestamp = 0;
+	_hoverStartTimestamp = 0u;
 	_isButtonDown        = false;
 	_mouseInCallback     = nullptr;
 	_mouseOutCallback    = nullptr;

@@ -418,9 +418,9 @@ enum kExtractID {
 	kEoBBaseSoundFilesIntro,
 	kEoBBaseSoundFilesIngame,
 	kEoBBaseSoundFilesFinale,
+	kEoBBaseLevelSoundFiles1,
+	kEoBBaseLevelSoundFiles2,
 
-	kEoB1LevelSoundFiles1,
-	kEoB1LevelSoundFiles2,
 	kEoB1MainMenuStrings,
 	kEoB1BonusStrings,
 
@@ -558,6 +558,9 @@ enum kExtractID {
 	kEoB2IntroShapes01,
 	kEoB2IntroShapes04,
 	kEoB2IntroShapes07,
+	kEoB2IntroShapes13,
+	kEoB2IntroShapes14,
+	kEoB2IntroShapes15,
 
 	kEoB2FinaleStrings,
 	kEoB2CreditsData,
@@ -856,6 +859,12 @@ enum kExtractID {
 	kEoB2PcmSoundEffectsIngame,
 	kEoB2PcmSoundEffectsIntro,
 	kEoB2PcmSoundEffectsFinale,
+
+	kEoB2SoundMapExtra,
+	kEoB2SoundIndex1,
+	kEoB2SoundIndex2,
+	kEoB2SoundFilesIngame2,
+	kEoB2MonsterSoundPatchData,
 
 	kLoLIngamePakFiles,
 	kLoLCharacterDefs,

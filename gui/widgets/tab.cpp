@@ -62,7 +62,7 @@ void TabWidget::init() {
 	_bodyLP = g_gui.xmlEval()->getVar("Globals.TabWidget.Body.Padding.Left");
 	_bodyRP = g_gui.xmlEval()->getVar("Globals.TabWidget.Body.Padding.Right");
 
-	_butRP = g_gui.xmlEval()->getVar("Globals.TabWidget.NavButtonPadding.Right", 0);
+	_butRP = g_gui.xmlEval()->getVar("Globals.TabWidget.NavButton.Padding.Right", 0);
 	_butTP = g_gui.xmlEval()->getVar("Globals.TabWidget.NavButton.Padding.Top", 0);
 	_butW = g_gui.xmlEval()->getVar("Globals.TabWidget.NavButton.Width", 10);
 	_butH = g_gui.xmlEval()->getVar("Globals.TabWidget.NavButton.Height", 10);
@@ -258,9 +258,9 @@ void TabWidget::reflowLayout() {
 	_minTabWidth = g_gui.xmlEval()->getVar("Globals.TabWidget.Tab.Width");
 	_titleVPad = g_gui.xmlEval()->getVar("Globals.TabWidget.Tab.Padding.Top");
 
-	_butRP = g_gui.xmlEval()->getVar("Globals.TabWidget.NavButton.PaddingRight", 0);
+	_butRP = g_gui.xmlEval()->getVar("Globals.TabWidget.NavButton.Padding.Right", 0);
 	_butTP = g_gui.xmlEval()->getVar("Globals.TabWidget.NavButton.Padding.Top", 0);
-	_butW = g_gui.xmlEval()->getVar("GlobalsTabWidget.NavButton.Width", 10);
+	_butW = g_gui.xmlEval()->getVar("Globals.TabWidget.NavButton.Width", 10);
 	_butH = g_gui.xmlEval()->getVar("Globals.TabWidget.NavButton.Height", 10);
 
 	// If widgets were added or removed in the current tab, without tabs
@@ -375,7 +375,7 @@ Widget *TabWidget::findWidget(int x, int y) {
 void TabWidget::computeLastVisibleTab(bool adjustFirstIfRoom) {
 	int availableWidth = _w;
 	if (_navButtonsVisible)
-		availableWidth -= 2 + _butW * 2;
+		availableWidth -= 2 + _butW * 2 + _butRP;
 
 	_lastVisibleTab = _tabs.size() - 1;
 	for (int i = _firstVisibleTab; i < (int)_tabs.size(); ++i) {

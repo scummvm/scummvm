@@ -20,6 +20,9 @@
  *
  */
 
+#include "common/stream.h"
+#include "common/memstream.h"
+
 #include "startrek/iwfile.h"
 #include "startrek/room.h"
 #include "startrek/startrek.h"
@@ -32,10 +35,10 @@ void StarTrekEngine::initActors() {
 	for (int i = 0; i < MAX_BAN_FILES; i++)
 		_banFiles[i].reset();
 
-	strcpy(_kirkActor->animationString, "kstnd");
-	strcpy(_spockActor->animationString, "sstnd");
-	strcpy(_mccoyActor->animationString, "mstnd");
-	strcpy(_redshirtActor->animationString, "rstnd");
+	_kirkActor->animationString = "kstnd";
+	_spockActor->animationString = "sstnd";
+	_mccoyActor->animationString = "mstnd";
+	_redshirtActor->animationString = "rstnd";
 }
 
 int StarTrekEngine::loadActorAnim(int actorIndex, const Common::String &animName, int16 x, int16 y, Fixed8 scale) {
@@ -65,7 +68,7 @@ void StarTrekEngine::loadBanFile(const Common::String &name) {
 	debugC(kDebugGeneral, 7, "Load BAN file: %s.ban", name.c_str());
 	for (int i = 0; i < MAX_BAN_FILES; i++) {
 		if (!_banFiles[i]) {
-			_banFiles[i] = loadFile(name + ".ban");
+			_banFiles[i] = SharedPtr<Common::MemoryReadStreamEndian>(loadFile(name + ".ban"));
 			_banFileOffsets[i] = 0;
 			return;
 		}
@@ -91,7 +94,7 @@ bool StarTrekEngine::actorWalkToPosition(int actorIndex, const Common::String &a
 	actor->spriteDrawn = true;
 	actor->animType = 1;
 	actor->frameToStartNextAnim = _frameIndex + 1;
-	strcpy(actor->animationString2, animFile.c_str());
+	actor->animationString2 = animFile;
 
 	actor->dest.x = destX;
 	actor->dest.y = destY;
@@ -111,7 +114,7 @@ bool StarTrekEngine::actorWalkToPosition(int actorIndex, const Common::String &a
 
 		if (actor->iwSrcPosition == -1 || actor->iwDestPosition == -1) {
 			// No path exists; face south by default.
-			strcat(actor->animationString2, "S");
+			actor->animationString2 += "S";
 			actor->direction = 'S';
 
 			updateActorPositionWhileWalking(actor, srcX, srcY);
@@ -152,7 +155,7 @@ void StarTrekEngine::updateActorAnimations() {
 
 				actor->animFrame = nextAnimFrame;
 				if (actor->animFrame >= actor->numAnimFrames) {
-					if (actor->animationString[0] == '\0')
+					if (actor->animationString.empty())
 						removeActorFromScreen(i);
 					else
 						initStandAnim(i);
@@ -164,8 +167,7 @@ void StarTrekEngine::updateActorAnimations() {
 					actor->animFile->read(animFrameFilename, 16);
 					sprite->setBitmap(loadAnimationFrame(animFrameFilename, actor->scale));
 
-					memset(actor->bitmapFilename, 0, 10);
-					strncpy(actor->bitmapFilename, animFrameFilename, 9);
+					actor->bitmapFilename = animFrameFilename;
 
 					actor->animFile->seek(10 + actor->animFrame * 22, SEEK_SET);
 					uint16 xOffset = actor->animFile->readUint16();
@@ -222,7 +224,7 @@ void StarTrekEngine::updateActorAnimations() {
 					initStandAnim(i);
 				} else { // actor->iwSrcPosition != -1
 					if (actor->iwSrcPosition == actor->iwDestPosition) {
-						actor->animationString2[strlen(actor->animationString2) - 1] = '\0';
+						actor->animationString2.deleteLastChar();
 						actor->iwDestPosition = -1;
 						actor->iwSrcPosition = -1;
 						chooseActorDirectionForWalking(actor, actor->pos.x, actor->pos.y, actor->dest.x, actor->dest.y);
@@ -230,7 +232,7 @@ void StarTrekEngine::updateActorAnimations() {
 						int index = _iwFile->_iwEntries[actor->iwSrcPosition][actor->iwDestPosition];
 						actor->iwSrcPosition = index;
 						Common::Point dest = _iwFile->_keyPositions[actor->iwSrcPosition];
-						actor->animationString2[strlen(actor->animationString2) - 1] = '\0';
+						actor->animationString2.deleteLastChar();
 						chooseActorDirectionForWalking(actor, actor->pos.x, actor->pos.y, dest.x, dest.y);
 					}
 				}
@@ -279,7 +281,7 @@ void StarTrekEngine::renderBanBelowSprites() {
 	_gfx->unlockScreenPixels();
 }
 
-void StarTrekEngine::renderBan(byte *destPixels, SharedPtr<FileStream> banFile) {
+void StarTrekEngine::renderBan(byte *destPixels, FileStream banFile) {
 	uint16 offset = banFile->readUint16();
 	int32 size = banFile->readUint16();
 
@@ -430,10 +432,10 @@ void StarTrekEngine::drawActorToScreen(Actor *actor, const Common::String &_anim
 	Common::String animFilename = _animName;
 	if (_animName.hasPrefixIgnoreCase("stnd") /* && word_45d20 == -1 */) // TODO
 		animFilename += 'j';
-	memcpy(actor->animFilename, _animName.c_str(), sizeof(actor->animFilename));
 
+	actor->animFilename = _animName;
 	actor->animType = 2;
-	actor->animFile = loadFile(animFilename + ".anm");
+	actor->animFile = SharedPtr<Common::MemoryReadStreamEndian>(loadFile(animFilename + ".anm"));
 	actor->numAnimFrames = actor->animFile->size() / 22;
 	actor->animFrame = 0;
 	actor->pos.x = x;
@@ -454,12 +456,10 @@ void StarTrekEngine::drawActorToScreen(Actor *actor, const Common::String &_anim
 		_gfx->addSprite(sprite);
 
 	sprite->setBitmap(loadAnimationFrame(firstFrameFilename, scale));
-	memset(actor->bitmapFilename, 0, sizeof(char) * 10);
-	strncpy(actor->bitmapFilename, firstFrameFilename, sizeof(char) * 9);
-
+	actor->bitmapFilename = firstFrameFilename;
 	actor->scale = scale;
-
 	actor->animFile->seek(10, SEEK_SET);
+
 	uint16 xOffset = actor->animFile->readUint16();
 	uint16 yOffset = actor->animFile->readUint16();
 	uint16 basePriority = actor->animFile->readUint16();
@@ -512,9 +512,9 @@ void StarTrekEngine::initStandAnim(int actorIndex) {
 
 	Common::String animName;
 	if (actor->direction != 0)
-		animName = Common::String(actor->animationString) + (char)actor->direction;
+		animName = actor->animationString + (char)actor->direction;
 	else // Default to facing south
-		animName = Common::String(actor->animationString) + 's';
+		animName = actor->animationString + 's';
 
 	Fixed8 scale = getActorScaleAtPosition(actor->pos.y);
 	loadActorAnim(actorIndex, animName, actor->pos.x, actor->pos.y, scale);
@@ -523,11 +523,9 @@ void StarTrekEngine::initStandAnim(int actorIndex) {
 
 void StarTrekEngine::updateActorPositionWhileWalking(Actor *actor, int16 x, int16 y) {
 	actor->scale = getActorScaleAtPosition(y);
-	Common::String animName = Common::String::format("%s%02d", actor->animationString2, actor->field92 & 7);
+	Common::String animName = Common::String::format("%s%02d", actor->animationString2.c_str(), actor->field92 & 7);
 	actor->sprite.setBitmap(loadAnimationFrame(animName, actor->scale));
-
-	memset(actor->bitmapFilename, 0, 10);
-	strncpy(actor->bitmapFilename, animName.c_str(), 9);
+	actor->bitmapFilename = animName;
 
 	Sprite *sprite = &actor->sprite;
 	sprite->drawPriority = _gfx->getPriValue(0, y);
@@ -557,8 +555,7 @@ void StarTrekEngine::chooseActorDirectionForWalking(Actor *actor, int16 srcX, in
 			d = 'W';
 
 		// Append direction to animation string
-		actor->animationString2[strlen(actor->animationString2) + 1] = '\0';
-		actor->animationString2[strlen(actor->animationString2)] = d;
+		actor->animationString2 += d;
 
 		actor->direction = d;
 		actor->field90 = absDistX;
@@ -579,8 +576,7 @@ void StarTrekEngine::chooseActorDirectionForWalking(Actor *actor, int16 srcX, in
 			d = 'N';
 
 		// Append direction to animation string
-		actor->animationString2[strlen(actor->animationString2) + 1] = '\0';
-		actor->animationString2[strlen(actor->animationString2)] = d;
+		actor->animationString2 += d;
 
 		actor->direction = d;
 		actor->field90 = absDistY;
@@ -768,7 +764,7 @@ SharedPtr<Bitmap> StarTrekEngine::loadAnimationFrame(const Common::String &filen
 				}
 
 				// Redraw face with xor file
-				SharedPtr<FileStream> xorFile = loadFile(filename + ".xor");
+				Common::MemoryReadStreamEndian *xorFile = loadFile(filename + ".xor");
 				xorFile->seek(0, SEEK_SET);
 				uint16 xoffset = bitmap->xoffset - xorFile->readUint16();
 				uint16 yoffset = bitmap->yoffset - xorFile->readUint16();
@@ -782,6 +778,8 @@ SharedPtr<Bitmap> StarTrekEngine::loadAnimationFrame(const Common::String &filen
 						*dest++ ^= xorFile->readByte();
 					dest += (bitmap->width - xorWidth);
 				}
+
+				delete xorFile;
 			}
 		}
 	} else {

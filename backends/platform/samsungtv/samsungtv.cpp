@@ -35,6 +35,11 @@ OSystem_SDL_SamsungTV::OSystem_SDL_SamsungTV()
 }
 
 void OSystem_SDL_SamsungTV::initBackend() {
+	// Create the savefile manager
+	if (_savefileManager == 0) {
+		_savefileManager = new DefaultSaveFileManager("/mtd_wiselink/scummvm savegames");
+	}
+
 	// Create the events manager
 	if (_eventSource == 0)
 		_eventSource = new SamsungTVSdlEventSource();
@@ -55,6 +60,14 @@ void OSystem_SDL_SamsungTV::fatalError() {
 	// FIXME
 	warning("fatal error");
 	for (;;) {}
+}
+
+Common::String OSystem_SDL_SamsungTV::getDefaultLogFileName() {
+	if (!Posix::assureDirectoryExists("/mtd_ram", nullptr)) {
+		return Common::String();
+	}
+
+	return "/mtd_ram/scummvm.log";
 }
 
 #endif

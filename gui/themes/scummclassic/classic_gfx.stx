@@ -64,6 +64,9 @@
 		<font	id = 'tooltip_normal'
 				file = 'fixed5x8.bdf'
 		/>
+		<font	id = 'console'
+				file = 'builtinConsole'
+		/>
 
 		<text_color	id = 'color_normal'
 				color = 'green'

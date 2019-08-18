@@ -384,11 +384,11 @@ Graphics::Surface *GraphicsManager::applyLightmapToSprite(Graphics::Surface *&bl
 
 	// calculate light map color
 	float fr, fg, fb;
-	fr = fg = fb = 0.f;
+	fr = fg = fb = 0.0F;
 	if (thisPerson->colourmix) {
-		fr = curLight[0]*thisPerson->r * thisPerson->colourmix / 65025 / 255.f;
-		fg = curLight[1]*thisPerson->g * thisPerson->colourmix / 65025 / 255.f;
-		fb = curLight[2]*thisPerson->b * thisPerson->colourmix / 65025 / 255.f;
+		fr = curLight[0]*thisPerson->r * thisPerson->colourmix / 65025 / 255.0F;
+		fg = curLight[1]*thisPerson->g * thisPerson->colourmix / 65025 / 255.0F;
+		fb = curLight[2]*thisPerson->b * thisPerson->colourmix / 65025 / 255.0F;
 	}
 
 	uint32 primaryColor = TS_ARGB((uint8)(255 - thisPerson->transparency),

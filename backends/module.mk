@@ -23,6 +23,7 @@ ifdef USE_CLOUD
 
 ifdef USE_LIBCURL
 MODULE_OBJS += \
+	cloud/basestorage.o \
 	cloud/cloudicon.o \
 	cloud/cloudmanager.o \
 	cloud/iso8601.o \
@@ -156,15 +157,6 @@ MODULE_OBJS += \
 endif
 endif
 
-# Connection::isLimited
-ifeq ($(BACKEND),android)
-MODULE_OBJS += \
-	networking/connection/islimited-android.o
-else
-MODULE_OBJS += \
-	networking/connection/islimited-default.o
-endif
-
 ifdef POSIX
 MODULE_OBJS += \
 	fs/posix/posix-fs.o \
@@ -199,6 +191,11 @@ MODULE_OBJS += \
 	taskbar/win32/win32-taskbar.o
 endif
 
+ifeq ($(BACKEND),android)
+MODULE_OBJS += \
+	mutex/pthread/pthread-mutex.o
+endif
+
 ifeq ($(BACKEND),androidsdl)
 MODULE_OBJS += \
 	events/androidsdl/androidsdl-events.o \
@@ -214,8 +211,10 @@ endif
 
 ifdef RISCOS
 MODULE_OBJS += \
+	events/riscossdl/riscossdl-events.o \
 	fs/riscos/riscos-fs.o \
-	fs/riscos/riscos-fs-factory.o
+	fs/riscos/riscos-fs-factory.o \
+	platform/sdl/riscos/riscos-utils.o
 endif
 
 ifdef PLAYSTATION3
@@ -332,6 +331,11 @@ MODULE_OBJS += \
 	fs/wii/wii-fs.o \
 	fs/wii/wii-fs-factory.o \
 	plugins/wii/wii-provider.o
+endif
+
+ifeq ($(BACKEND),switch)
+MODULE_OBJS += \
+	events/switchsdl/switchsdl-events.o
 endif
 
 ifdef ENABLE_EVENTRECORDER

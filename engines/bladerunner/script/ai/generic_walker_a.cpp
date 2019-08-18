@@ -43,22 +43,30 @@ void AIScriptGenericWalkerA::Initialize() {
 	isInside = false;
 	deltaX = 0.0f;
 	deltaZ = 0.0f;
-	Actor_Set_Goal_Number(kActorGenwalkerA, 0);
+	Actor_Set_Goal_Number(kActorGenwalkerA, kGoalGenwalkerDefault);
 }
 
 bool AIScriptGenericWalkerA::Update() {
+#if !BLADERUNNER_ORIGINAL_BUGS
+	// extra check for possible fix of Bullet Bob's gun missing
+	if (Player_Query_Current_Set() == kSetRC04
+	    && Actor_Query_Goal_Number(kActorGenwalkerA) != kGoalGenwalkerABulletBobsTrackGun
+	) {
+		Actor_Set_Goal_Number(kActorGenwalkerA, kGoalGenwalkerABulletBobsTrackGun);
+	}
+#endif // !BLADERUNNER_ORIGINAL_BUGS
 	switch (Actor_Query_Goal_Number(kActorGenwalkerA)) {
-		case 0:
+		case kGoalGenwalkerDefault:
 			if (prepareWalker()) {
 				return true;
 			}
 			break;
-		case 1:
+		case kGoalGenwalkerMoving:
 			if (deltaX != 0.0f || deltaZ != 0.0f) {
 				movingUpdate();
 			}
 			break;
-		case 200: // Automatic gun at Bullet Bob
+		case kGoalGenwalkerABulletBobsTrackGun: // Automatic gun at Bullet Bob
 			Actor_Face_Actor(kActorGenwalkerA, kActorMcCoy, true);
 			break;
 	}
@@ -66,8 +74,8 @@ bool AIScriptGenericWalkerA::Update() {
 }
 
 void AIScriptGenericWalkerA::TimerExpired(int timer) {
-	if (timer == 2) {
-		AI_Countdown_Timer_Reset(kActorGenwalkerA, 2);
+	if (timer == kActorTimerAIScriptCustomTask2) {
+		AI_Countdown_Timer_Reset(kActorGenwalkerA, kActorTimerAIScriptCustomTask2);
 		Game_Flag_Reset(kFlagGenericWalkerWaiting);
 		return;// true;
 	}
@@ -75,12 +83,22 @@ void AIScriptGenericWalkerA::TimerExpired(int timer) {
 }
 
 void AIScriptGenericWalkerA::CompletedMovementTrack() {
-	if (Actor_Query_Goal_Number(kActorGenwalkerA) > 0) {
-		Actor_Set_Goal_Number(kActorGenwalkerA, 0);
+#if !BLADERUNNER_ORIGINAL_BUGS
+	// extra check for possible fix of Bullet Bob's gun missing
+	if (Player_Query_Current_Set() == kSetRC04
+	    && Actor_Query_Goal_Number(kActorGenwalkerA) != kGoalGenwalkerABulletBobsTrackGun
+	) {
+		Actor_Set_Goal_Number(kActorGenwalkerA, kGoalGenwalkerABulletBobsTrackGun);
+		return;
+	}
+#endif // !BLADERUNNER_ORIGINAL_BUGS
+
+	if (Actor_Query_Goal_Number(kActorGenwalkerA) > kGoalGenwalkerDefault) {
+		Actor_Set_Goal_Number(kActorGenwalkerA, kGoalGenwalkerDefault);
 		if (!Game_Flag_Query(kFlagGenericWalkerWaiting)) {
 			Game_Flag_Set(kFlagGenericWalkerWaiting);
-			AI_Countdown_Timer_Reset(kActorGenwalkerA, 2);
-			AI_Countdown_Timer_Start(kActorGenwalkerA, 2, Random_Query(6, 10));
+			AI_Countdown_Timer_Reset(kActorGenwalkerA, kActorTimerAIScriptCustomTask2);
+			AI_Countdown_Timer_Start(kActorGenwalkerA, kActorTimerAIScriptCustomTask2, Random_Query(6, 10));
 		}
 		// return true;
 	}
@@ -93,8 +111,8 @@ void AIScriptGenericWalkerA::ReceivedClue(int clueId, int fromActorId) {
 
 void AIScriptGenericWalkerA::ClickedByPlayer() {
 	Actor_Face_Actor(kActorMcCoy, kActorGenwalkerA, true);
-	if (Actor_Query_Goal_Number(kActorGenwalkerA) == 200) {
-		Actor_Says(kActorMcCoy, 5290, 18);
+	if (Actor_Query_Goal_Number(kActorGenwalkerA) == kGoalGenwalkerABulletBobsTrackGun) {
+		Actor_Says(kActorMcCoy, 5290, 18);   // kActorGenwalkerA here is actually the tracking gun in Bullet Bob's
 	} else {
 		switch (Random_Query(1, 10)) {
 		case 1:
@@ -122,7 +140,7 @@ void AIScriptGenericWalkerA::ClickedByPlayer() {
 			Actor_Says(kActorMcCoy, 1085, 3);
 			break;
 		case 9:
-			Actor_Says(kActorMcCoy, 365, 3);
+			Actor_Says(kActorMcCoy, 365, 3); // Re-used line, same as case 1
 			break;
 		case 10:
 			Actor_Says(kActorMcCoy, 7415, 3);
@@ -141,8 +159,8 @@ void AIScriptGenericWalkerA::OtherAgentEnteredThisScene(int otherActorId) {
 }
 
 void AIScriptGenericWalkerA::OtherAgentExitedThisScene(int otherActorId) {
-	if (Actor_Query_Goal_Number(kActorGenwalkerA) && otherActorId == kActorMcCoy) {
-		Actor_Set_Goal_Number(kActorGenwalkerA, 0);
+	if (Actor_Query_Goal_Number(kActorGenwalkerA) > kGoalGenwalkerDefault && otherActorId == kActorMcCoy) {
+		Actor_Set_Goal_Number(kActorGenwalkerA, kGoalGenwalkerDefault);
 	}
 	//return false;
 }
@@ -156,11 +174,11 @@ void AIScriptGenericWalkerA::ShotAtAndMissed() {
 }
 
 bool AIScriptGenericWalkerA::ShotAtAndHit() {
-	if (Actor_Query_Goal_Number(kActorGenwalkerA)) {
+	if (Actor_Query_Goal_Number(kActorGenwalkerA) > kGoalGenwalkerDefault) {
 		AI_Movement_Track_Flush(kActorGenwalkerA);
 		_animationState = kGenericWalkerAStatesDie;
 		_animationFrame = 0;
-		Sound_Play(203, 100, 0, 0, 50);
+		Sound_Play(kSfxPOTSPL5, 100, 0, 0, 50);
 		movingStart();
 		return true;
 	}
@@ -176,14 +194,19 @@ int AIScriptGenericWalkerA::GetFriendlinessModifierIfGetsClue(int otherActorId, 
 }
 
 bool AIScriptGenericWalkerA::GoalChanged(int currentGoalNumber, int newGoalNumber) {
-	if (newGoalNumber == 0) {
+	if (newGoalNumber == kGoalGenwalkerDefault) {
 		AI_Movement_Track_Flush(kActorGenwalkerA);
 		Actor_Put_In_Set(kActorGenwalkerA, kSetFreeSlotH);
 		Global_Variable_Set(kVariableGenericWalkerAModel, -1);
 		return false;
-	} else if (newGoalNumber == 1) {
+	} else if (newGoalNumber == kGoalGenwalkerMoving) {
 		return true;
-	} else if (newGoalNumber == 200) {
+	} else if (newGoalNumber == kGoalGenwalkerABulletBobsTrackGun) {
+		// Bullet Bob's tracking gun
+#if !BLADERUNNER_ORIGINAL_BUGS
+		// Possible bug fix for disappearing gun - don't allow track complete events to interfere with Gun state
+		AI_Movement_Track_Flush(kActorGenwalkerA);
+#endif
 		Actor_Put_In_Set(kActorGenwalkerA, kSetRC04);
 		Actor_Set_At_XYZ(kActorGenwalkerA, 0.0, 36.0, -172.0, 491);
 		Actor_Change_Animation_Mode(kActorGenwalkerA, kAnimationModeCombatIdle);
@@ -197,45 +220,77 @@ bool AIScriptGenericWalkerA::UpdateAnimation(int *animation, int *frame) {
 	case kGenericWalkerAStatesIdle:
 		switch (Global_Variable_Query(kVariableGenericWalkerAModel)) {
 		case 0:
-			*animation = 426;
+			*animation = 426; // Hatted Person with umbrella still
 			break;
 		case 1:
-			*animation = 430;
+			*animation = 430; // Hooded person with umbrella still
 			break;
 		case 2:
-			*animation = 437;
+			*animation = 437; // Hatted lady with wooden umbrella still (different from 436 model!)
 			break;
 		case 3:
-			*animation = 431;
+			*animation = 431; // Person with glasses and beard still
 			break;
 		case 4:
-			*animation = 427;
+			*animation = 427; // Hatted Person without umbrella still
 			break;
 		case 5:
-			*animation = 433;
+			*animation = 433; // Punk person with glasses still
+			break;
+		case 6:
+			*animation = 434; // Hatted child walking // frame 11 could be used for still
+			_animationFrame = 11;
+			break;
+		case 7:
+			*animation = 435; // Child walking // frame 5 could be used for still
+			_animationFrame = 5;
+			break;
+		case 8:
+			*animation = 422; // Hatted person walking fast // frame 1 could be used for still
+			_animationFrame = 1;
+			break;
+		case 9:
+			*animation = 423; // Hatted person walking lowered face // frame 6 could be used for still
+			_animationFrame = 6;
 			break;
 		}
-		_animationFrame = 0;
+		if (!_vm->_cutContent
+		    || Global_Variable_Query(kVariableGenericWalkerAModel) < 6
+		) {
+			_animationFrame = 0;
+		}
 		break;
 	case kGenericWalkerAStatesWalk:
-		switch (Global_Variable_Query(kVariableGenericWalkerAModel)){
+		switch (Global_Variable_Query(kVariableGenericWalkerAModel)) {
 		case 0:
-			*animation = 424;
+			*animation = 424; // Hatted person with umbrella walking
 			break;
 		case 1:
-			*animation = 428;
+			*animation = 428; // Hooded person with umbrella walking
 			break;
 		case 2:
-			*animation = 436;
+			*animation = 436; // Hatted person with wooden umbrella walking
 			break;
 		case 3:
-			*animation = 429;
+			*animation = 429; // Person with glasses and beard walking
 			break;
 		case 4:
-			*animation = 425;
+			*animation = 425; // Hatted Person without umbrella - walking small steps
 			break;
 		case 5:
-			*animation = 432;
+			*animation = 432; // Punk person with glasses walking
+			break;
+		case 6:
+			*animation = 434; // Hatted child walking
+			break;
+		case 7:
+			*animation = 435; // Child walking
+			break;
+		case 8:
+			*animation = 422; // Hatted person walking fast
+			break;
+		case 9:
+			*animation = 423; // Hatted person walking lowered face
 			break;
 		}
 		++_animationFrame;
@@ -244,21 +299,23 @@ bool AIScriptGenericWalkerA::UpdateAnimation(int *animation, int *frame) {
 		}
 		break;
 	case kGenericWalkerAStatesDie:
+		// This is an animation for Maggie (exploding) but is also used for generic death states (rats, generic walkers)
+		// probably for debug purposes
 		*animation = 874;
 		++_animationFrame;
 		if (++_animationFrame >= Slice_Animation_Query_Number_Of_Frames(874))
 		{
 			_animationFrame = 0;
-			Actor_Set_Goal_Number(kActorGenwalkerA, 0);
+			Actor_Set_Goal_Number(kActorGenwalkerA, kGoalGenwalkerDefault);
 			_animationState = kGenericWalkerAStatesIdle;
 			deltaX = 0.0f;
 			deltaZ = 0.0f;
 		}
 		break;
 	case kGenericWalkerAStatesGun:
-		*animation = 440;
+		*animation = kModelAnimationBulletBobsTrackingGun;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(440)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationBulletBobsTrackingGun)) {
 			_animationFrame = 0;
 		}
 		break;
@@ -350,17 +407,22 @@ bool AIScriptGenericWalkerA::prepareWalker() {
 	int model = 0;
 	do {
 		if (isInside) {
-			model = Random_Query(3, 5);
+			model = Random_Query(3, 5); // 0, 1, 2 models have umbrellas so they should be in outdoors locations
 		} else {
-			model = Random_Query(0, 5);
+			if (_vm->_cutContent) {
+				model = Random_Query(0, 9);
+			} else {
+				model = Random_Query(0, 5);
+			}
 		}
+		// this while loop ensures choosing a different model for Walker A than the Walker B or Walker C
 	} while (model == Global_Variable_Query(kVariableGenericWalkerBModel) || model == Global_Variable_Query(kVariableGenericWalkerCModel));
 
 	Global_Variable_Set(kVariableGenericWalkerAModel, model);
 	Game_Flag_Set(kFlagGenericWalkerWaiting);
-	AI_Countdown_Timer_Reset(kActorGenwalkerA, 2);
-	AI_Countdown_Timer_Start(kActorGenwalkerA, 2, Random_Query(4, 12));
-	Actor_Set_Goal_Number(kActorGenwalkerA, 1);
+	AI_Countdown_Timer_Reset(kActorGenwalkerA, kActorTimerAIScriptCustomTask2);
+	AI_Countdown_Timer_Start(kActorGenwalkerA, kActorTimerAIScriptCustomTask2, Random_Query(4, 12));
+	Actor_Set_Goal_Number(kActorGenwalkerA, kGoalGenwalkerMoving);
 	return true;
 }
 

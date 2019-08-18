@@ -634,6 +634,9 @@ int CharacterGenerator::alignmentMenu(int cClass) {
 }
 
 int CharacterGenerator::getInput(Button *buttonList) {
+	if (_vm->gameFlags().platform == Common::kPlatformAmiga)
+		return _vm->checkInput(buttonList, false, 0);
+
 	if (_vm->game() == GI_EOB1 && _vm->sound()->checkTrigger()) {
 		_vm->sound()->resetTrigger();
 		_vm->snd_playSong(20);
@@ -644,6 +647,7 @@ int CharacterGenerator::getInput(Button *buttonList) {
 		_vm->delay(3 * _vm->_tickLength);
 		_vm->snd_playSong(13);
 	}
+
 	return _vm->checkInput(buttonList, false, 0);
 }
 
@@ -1530,6 +1534,7 @@ TransferPartyWiz::TransferPartyWiz(EoBCoreEngine *vm, Screen_EoB *screen) : _vm(
 }
 
 TransferPartyWiz::~TransferPartyWiz() {
+	_vm->gui()->notifyUpdateSaveSlotsList();
 	delete[] _oldItems;
 }
 
@@ -1846,6 +1851,8 @@ void TransferPartyWiz::convertInventory() {
 				c->inventory[slot] = convertItem(itm);
 			}
 		}
+
+		_vm->recalcArmorClass(i);
 	}
 }
 

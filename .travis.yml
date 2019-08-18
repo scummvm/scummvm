@@ -25,22 +25,40 @@ addons:
     - libieee1284-3-dev
     - libsndio-dev
     - libunity-dev
-
-before_install:
-  - "if [ ${TRAVIS_OS_NAME:-'linux'} = 'osx' ]; then brew update; fi"
-  - "if [ ${TRAVIS_OS_NAME:-'linux'} = 'osx' ]; then brew install sdl2 sdl2_net libvorbis flac mad theora faad2 libmpeg2; fi"
-
+  homebrew:
+    packages:
+    - sdl2
+    - sdl2_net
+    - curl
+    - jpeg-turbo
+    - libmpeg2
+    - a52dec
+    - libogg
+    - libvorbis
+    - flac
+    - mad
+    - libpng
+    - theora
+    - faad2
+    - fluid-synth
+    - freetype
+    - zlib
+    - pandoc
+    - jack
+    update: true
 
 branches:
  only:
    - master
 
-compiler:
-  - gcc
-  - clang
-
-os:
-  - linux
+matrix:
+  include:
+    - os: linux
+      compiler: gcc
+    - os: linux
+      compiler: clang
+    - os: osx
+      compiler: clang
 
 dist: trusty
 

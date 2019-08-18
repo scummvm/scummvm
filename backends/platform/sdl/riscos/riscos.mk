@@ -23,6 +23,9 @@ endif
 ifdef DIST_FILES_ENGINEDATA
 	cp $(DIST_FILES_ENGINEDATA) $(APP_NAME)/data/
 endif
+ifdef DIST_FILES_VKEYBD
+	cp $(DIST_FILES_VKEYBD) $(APP_NAME)/data/
+endif
 ifdef DYNAMIC_MODULES
 	mkdir -p $(APP_NAME)/plugins
 	cp $(PLUGINS) $(APP_NAME)/plugins/
@@ -39,5 +42,36 @@ clean: riscosclean
 
 riscosclean:
 	$(RM_REC) $(APP_NAME)
+
+ifdef BINDHELP
+ifdef PANDOC
+
+riscosdist: $(APP_NAME)/docs/ScummVM,3d6 # $(APP_NAME)/docs/de/ScummVM,3d6 $(APP_NAME)/docs/cz/ScummVM,3d6 $(APP_NAME)/se/ScummVM,3d6
+
+README=${srcdir}/README.md
+NEWS=${srcdir}/NEWS.md
+$(APP_NAME)/docs/de/ScummVM,3d6: README=${srcdir}/doc/de/LIESMICH
+$(APP_NAME)/docs/de/ScummVM,3d6: NEWS=${srcdir}/doc/de/NEUES.md
+$(APP_NAME)/docs/cz/ScummVM,3d6: README=${srcdir}/doc/cz/PrectiMe
+$(APP_NAME)/docs/se/ScummVM,3d6: README=${srcdir}/doc/se/LasMig
+
+define manual-markdown
+	echo Converting markdown file '$1'
+	echo "ScummVM - $(notdir $(basename $1)) " > $(APP_NAME)/tmp/$2,fff
+	$(PANDOC) -f gfm -t ${srcdir}/dists/riscos/manual/stronghelp.lua $1 | iconv --to-code=$(ENCODING) >> $(APP_NAME)/tmp/$2,fff
+endef
+
+%,3d6: $(README) $(NEWS) ${srcdir}/dists/riscos/manual/stronghelp.lua ${srcdir}/devtools/credits.pl $(DIST_FILES_DOCS)
+	$(MKDIR) $(APP_NAME)/tmp
+	@$(call manual-markdown,$(README),!Root)
+	@$(call manual-markdown,$(NEWS),NEWS)
+	@$(call manual-markdown,${srcdir}/CONTRIBUTING.md,CONTRIBUTING)
+	${srcdir}/devtools/credits.pl --stronghelp > $(APP_NAME)/tmp/AUTHORS,fff
+	$(MKDIR) $(APP_NAME)/docs
+	$(BINDHELP) $(APP_NAME)/tmp $@ -r -f
+	$(RM_REC) $(APP_NAME)/tmp
+
+endif
+endif
 
 .PHONY: riscosdist riscosclean

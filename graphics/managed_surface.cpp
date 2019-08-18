@@ -124,6 +124,17 @@ void ManagedSurface::free() {
 	_offsetFromOwner = Common::Point(0, 0);
 }
 
+void ManagedSurface::copyFrom(const ManagedSurface &surf) {
+	// Surface::copyFrom free pixel pointer so let's free up ManagedSurface to be coherent
+	free();
+
+	_innerSurface.copyFrom(surf._innerSurface);
+	markAllDirty();
+
+	// Pixels data is now owned by us
+	_disposeAfterUse = DisposeAfterUse::YES;
+}
+
 bool ManagedSurface::clip(Common::Rect &srcBounds, Common::Rect &destBounds) {
 	if (destBounds.left >= this->w || destBounds.top >= this->h ||
 			destBounds.right <= 0 || destBounds.bottom <= 0)
@@ -227,19 +238,19 @@ void ManagedSurface::blitFrom(const Surface &src, const Common::Rect &srcRect,
 
 void ManagedSurface::transBlitFrom(const Surface &src, uint transColor, bool flipped, uint overrideColor) {
 	transBlitFrom(src, Common::Rect(0, 0, src.w, src.h), Common::Rect(0, 0, this->w, this->h),
-		transColor, false, overrideColor);
+		transColor, flipped, overrideColor);
 }
 
 void ManagedSurface::transBlitFrom(const Surface &src, const Common::Point &destPos,
 		uint transColor, bool flipped, uint overrideColor) {
 	transBlitFrom(src, Common::Rect(0, 0, src.w, src.h), Common::Rect(destPos.x, destPos.y,
-		destPos.x + src.w, destPos.y + src.h), transColor, false, overrideColor);
+		destPos.x + src.w, destPos.y + src.h), transColor, flipped, overrideColor);
 }
 
 void ManagedSurface::transBlitFrom(const Surface &src, const Common::Rect &srcRect,
 		const Common::Point &destPos, uint transColor, bool flipped, uint overrideColor) {
 	transBlitFrom(src, srcRect, Common::Rect(destPos.x, destPos.y,
-		destPos.x + src.w, destPos.y + src.h), transColor, false, overrideColor);
+		destPos.x + srcRect.width(), destPos.y + srcRect.height()), transColor, flipped, overrideColor);
 }
 
 template<typename TSRC, typename TDEST>

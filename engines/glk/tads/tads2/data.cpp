@@ -20,51 +20,53 @@
  *
  */
 
-#include "engines/glk/tads/tads2/data.h"
-#include "engines/glk/tads/tads2/types.h"
-#include "engines/glk/tads/tads2/vocabulary.h"
+#include "glk/tads/tads2/data.h"
+#include "glk/tads/tads2/lib.h"
+#include "glk/tads/tads2/run.h"
+#include "glk/tads/tads2/vocabulary.h"
+#include "glk/tads/os_glk.h"
 #include "common/algorithm.h"
 
 namespace Glk {
 namespace TADS {
 namespace TADS2 {
 
-Data::Data(DataType type) : _type(type) {
-}
+/* return size of a data value */
+uint datsiz(dattyp typ, const void *val)
+{
+    switch(typ)
+    {
+    case DAT_NUMBER:
+        return(4);                /* numbers are in 4-byte lsb-first format */
 
-size_t Data::size() const {
-	switch (_type) {
-	case DAT_NUMBER:
-		return 4;		// numbers are in 4-byte lsb-first format
+    case DAT_OBJECT:
+        return(2);         /* object numbers are in 2-byte lsb-first format */
 
-	case DAT_OBJECT:
-		return 2;      // object numbers are in 2-byte lsb-first format
+    case DAT_SSTRING:
+    case DAT_DSTRING:
+    case DAT_LIST:
+        return(osrp2((const char *)val));
 
-	case DAT_SSTRING:
-	case DAT_DSTRING:
-	case DAT_LIST:
-		return osrp2(_ptr);
+    case DAT_NIL:
+    case DAT_TRUE:
+        return(0);
 
-	case DAT_NIL:
-	case DAT_TRUE:
-		return 0;
+    case DAT_PROPNUM:
+    case DAT_SYN:
+    case DAT_FNADDR:
+    case DAT_REDIR:
+        return(2);
+        
+    case DAT_TPL:
+        /* template is counted array of 10-byte entries, plus length byte */
+        return(1 + ((*(const uchar *)val) * VOCTPLSIZ));
 
-	case DAT_PROPNUM:
-	case DAT_SYN:
-	case DAT_FNADDR:
-	case DAT_REDIR:
-		return 2;
+    case DAT_TPL2:
+        return(1 + ((*(const uchar *)val) * VOCTPL2SIZ));
 
-	case DAT_TPL:
-		// template is counted array of 10-byte entries, plus length byte */
-		return 1 + ((*(uchar *)_ptr) * VOCTPLSIZ);
-
-	case DAT_TPL2:
-		return 1 + ((*(uchar *)_ptr) * VOCTPL2SIZ);
-
-	default:
-		return 0;
-	}
+    default:
+        return(0);
+    }
 }
 
 } // End of namespace TADS2

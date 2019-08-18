@@ -40,19 +40,19 @@ void SceneScriptBB06::InitializeScene() {
 	Scene_Exit_Add_2D_Exit(1, 425,   0, 639, 361, 0);
 	Scene_Exit_Add_2D_Exit(3, 195, 164, 239, 280, 3);
 
-	Ambient_Sounds_Add_Looping_Sound(103, 28, 0, 1);
-	Ambient_Sounds_Add_Sound(303, 5,  50, 17, 27, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(304, 5,  50, 17, 27, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(443, 2, 180, 14, 16, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(444, 2, 180, 14, 16, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(445, 2, 180, 14, 16, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(446, 2, 180, 14, 16, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(305, 5,  50, 17, 27, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(306, 5,  50, 17, 27, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(307, 5,  50, 17, 27, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(308, 5,  50, 17, 27, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(309, 5,  50, 17, 27, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(310, 5,  50, 17, 27, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Looping_Sound(kSfxRAINAWN1, 28, 0, 1);
+	Ambient_Sounds_Add_Sound(kSfxBBGRN1,  5,  50, 17, 27, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxBBGRN2,  5,  50, 17, 27, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxSCARY4,  2, 180, 14, 16, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxSCARY5,  2, 180, 14, 16, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxSCARY6,  2, 180, 14, 16, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxSCARY7,  2, 180, 14, 16, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxBBGRN3,  5,  50, 17, 27, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxBBMOVE1, 5,  50, 17, 27, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxBBMOVE2, 5,  50, 17, 27, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxBBMOVE3, 5,  50, 17, 27, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxHAUNT1,  5,  50, 17, 27, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxHAUNT2,  5,  50, 17, 27, -100, 100, -101, -101, 0, 0);
 
 	if (Game_Flag_Query(kFlagBB51toBB06a)
 	 || Game_Flag_Query(kFlagBB51toBB06b)
@@ -67,7 +67,7 @@ void SceneScriptBB06::InitializeScene() {
 #else
 		// bugfix: case of not transitioning from BB51: chess/ egg boiler sub-space
 		if (Game_Flag_Query(kFlagBB06AndroidDestroyed)) {
-			Overlay_Play("BB06OVER", 1, false, false, 0);
+			Overlay_Play("BB06OVER", 1, true, true, 0);
 		}
 #endif // BLADERUNNER_ORIGINAL_BUGS
 	}
@@ -84,8 +84,8 @@ void SceneScriptBB06::SceneLoaded() {
 	Clickable_Object("BOX31");
 #if BLADERUNNER_ORIGINAL_BUGS // Sebastian's Doll Fix
 	// This Item_Add_To_World call is only ok for the transition from BB51 to BB06,
-	// otherwise the doll item is not placed in the current set
-	Item_Add_To_World(kItemBB06ControlBox, 931, kSetBB06_BB07, -127.0f, 68.42f, 57.0f, 0, 8, 8, true, true, false, true);
+	// otherwise the "doll" item (actually the badge item) is not placed in the current set
+	Item_Add_To_World(kItemBB06ControlBox, kModelAnimationBadge, kSetBB06_BB07, -127.0f, 68.42f, 57.0f, 0, 8, 8, true, true, false, true);
 #else
 	if (!Game_Flag_Query(kFlagBB06AndroidDestroyed)) {
 		Combat_Target_Object("BOX31"); //
@@ -111,8 +111,17 @@ bool SceneScriptBB06::ClickedOn3DObject(const char *objectName, bool a2) {
 		}
 #else
 		if (Player_Query_Combat_Mode()) {
-			Overlay_Play("BB06OVER", 0, false, true, 0); // explosion - don't loop
+			// Doll Explosion case:
+			// We need to use enqueued overlays for this.
+			// Note: Queuing only works on top of a video that is repeating itself.
+			// First we load the "exploding animation state" as a forever loop (even though it will only play once)
+			// Then we enqueue the final exploded state loop, also as a forever loop.
+			// This (along with some fixes in the Overlays class will ensure
+			// that the second overlay will play after the first has completed one loop
+			// and it will persist (across save games too).
 			Game_Flag_Set(kFlagBB06AndroidDestroyed);
+			Overlay_Play("BB06OVER", 0, true, true,  0);
+			Overlay_Play("BB06OVER", 1, true, false, 0);
 			Un_Combat_Target_Object("BOX31");
 			return true;
 		} else {
@@ -151,7 +160,7 @@ bool SceneScriptBB06::ClickedOnItem(int itemId, bool a2) {
 
 bool SceneScriptBB06::ClickedOnExit(int exitId) {
 	if (exitId == 0) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -37.0f, 0.0f, 178.0f, 0, true, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -37.0f, 0.0f, 178.0f, 0, true, false, false)) {
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
 			Game_Flag_Set(kFlagBB06toBB05);
@@ -161,7 +170,7 @@ bool SceneScriptBB06::ClickedOnExit(int exitId) {
 	}
 
 	if (exitId == 1) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 101.0f, 0.0f, -25.0f, 0, true, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 101.0f, 0.0f, -25.0f, 0, true, false, false)) {
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
 			Game_Flag_Set(kFlagBB06toBB51);
@@ -171,7 +180,7 @@ bool SceneScriptBB06::ClickedOnExit(int exitId) {
 	}
 
 	if (exitId == 3) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -115.0f, 0.0f, -103.0f, 0, true, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -115.0f, 0.0f, -103.0f, 0, true, false, false)) {
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
 			Game_Flag_Set(kFlagBB06toBB07);
@@ -188,28 +197,28 @@ bool SceneScriptBB06::ClickedOn2DRegion(int region) {
 
 void SceneScriptBB06::SceneFrameAdvanced(int frame) {
 	if (frame == 34) {
-		Ambient_Sounds_Play_Sound(447, 40, -50, -50, 10);
+		Ambient_Sounds_Play_Sound(kSfxPNEUM5,  40, -50, -50, 10);
 	}
 #if BLADERUNNER_ORIGINAL_BUGS // Sebastian's Doll Fix
 #else
 	// last frame of transition is 15, try 13 for better transition - minimize weird effect
 	if (frame == 13) { // executed once during transition FROM bb51 (chess sub space)
 		if (Game_Flag_Query(kFlagBB06AndroidDestroyed)) {
-			Overlay_Play("BB06OVER", 1, false, false, 0);
+			Overlay_Play("BB06OVER", 1, true, true, 0);
 		}
 	}
 #endif // BLADERUNNER_ORIGINAL_BUGS
 	if (frame == 16) {
-		Ambient_Sounds_Play_Sound(448, 20, -50, -50, 10);
+		Ambient_Sounds_Play_Sound(kSfxROBOTMV1, 20, -50, -50, 10);
 	}
 	if (frame == 20) {
-		Ambient_Sounds_Play_Sound(448, 20, -50, -50, 10);
+		Ambient_Sounds_Play_Sound(kSfxROBOTMV1, 20, -50, -50, 10);
 	}
 	if (frame == 25) {
-		Ambient_Sounds_Play_Sound(448, 20, -50, -50, 10);
+		Ambient_Sounds_Play_Sound(kSfxROBOTMV1, 20, -50, -50, 10);
 	}
 	if (frame == 29) {
-		Ambient_Sounds_Play_Sound(448, 20, -50, -50, 10);
+		Ambient_Sounds_Play_Sound(kSfxROBOTMV1, 20, -50, -50, 10);
 	}
 }
 
@@ -218,7 +227,7 @@ void SceneScriptBB06::ActorChangedGoal(int actorId, int newGoal, int oldGoal, bo
 
 void SceneScriptBB06::PlayerWalkedIn() {
 	if (Game_Flag_Query(kFlagBB05toBB06)) {
-		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -36.0f, 0.0f, 145.0f, 0, false, false, 0);
+		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -36.0f, 0.0f, 145.0f, 0, false, false, false);
 		Game_Flag_Reset(kFlagBB05toBB06);
 	}
 }

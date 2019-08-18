@@ -27,7 +27,7 @@
 #include "common/stream.h"
 
 #include "adl/adl_v2.h"
-#include "adl/display.h"
+#include "adl/display_a2.h"
 #include "adl/graphics.h"
 #include "adl/disk.h"
 
@@ -59,7 +59,7 @@ HiResBaseEngine::HiResBaseEngine(OSystem *syst, const AdlGameDescription *gd, co
 }
 
 void HiResBaseEngine::init() {
-	_graphics = new GraphicsMan_v2(*_display);
+	_graphics = new GraphicsMan_v2<Display_A2>(*static_cast<Display_A2 *>(_display));
 
 	_disk = new DiskImage();
 	if (!_disk->open(getDiskImageName(0)))
@@ -157,7 +157,7 @@ void HiRes2Engine::runIntro() {
 	_disk->setSectorLimit(0);
 	StreamPtr stream(_disk->createReadStream(0x00, 0xd, 0x17, 1));
 
-	_display->setMode(DISPLAY_MODE_TEXT);
+	_display->setMode(Display::kModeText);
 
 	Common::String str = readString(*stream);
 

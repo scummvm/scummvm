@@ -142,7 +142,7 @@ bool DetectionResults::foundUnknownGames() const {
 	return false;
 }
 
-DetectedGames DetectionResults::listRecognizedGames() {
+DetectedGames DetectionResults::listRecognizedGames() const {
 	DetectedGames candidates;
 	for (uint i = 0; i < _detectedGames.size(); i++) {
 		if (_detectedGames[i].canBeAdded) {
@@ -152,8 +152,16 @@ DetectedGames DetectionResults::listRecognizedGames() {
 	return candidates;
 }
 
+DetectedGames DetectionResults::listDetectedGames() const {
+	return _detectedGames;
+}
+
 Common::String DetectionResults::generateUnknownGameReport(bool translate, uint32 wordwrapAt) const {
-	assert(!_detectedGames.empty());
+	return ::generateUnknownGameReport(_detectedGames, translate, false, wordwrapAt);
+}
+
+Common::String generateUnknownGameReport(const DetectedGames &detectedGames, bool translate, bool fullPath, uint32 wordwrapAt) {
+	assert(!detectedGames.empty());
 
 	const char *reportStart = _s("The game in '%s' seems to be an unknown game variant.\n\n"
 	                             "Please report the following data to the ScummVM team at %s "
@@ -162,7 +170,8 @@ Common::String DetectionResults::generateUnknownGameReport(bool translate, uint3
 	const char *reportEngineHeader = _s("Matched game IDs for the %s engine:");
 
 	Common::String report = Common::String::format(
-			translate ? _(reportStart) : reportStart, _detectedGames[0].path.c_str(),
+			translate ? _(reportStart) : reportStart,
+			fullPath ? detectedGames[0].path.c_str() : detectedGames[0].shortPath.c_str(),
 			"https://bugs.scummvm.org/"
 	);
 	report += "\n";
@@ -170,8 +179,8 @@ Common::String DetectionResults::generateUnknownGameReport(bool translate, uint3
 	FilePropertiesMap matchedFiles;
 
 	const char *currentEngineName = nullptr;
-	for (uint i = 0; i < _detectedGames.size(); i++) {
-		const DetectedGame &game = _detectedGames[i];
+	for (uint i = 0; i < detectedGames.size(); i++) {
+		const DetectedGame &game = detectedGames[i];
 
 		if (!game.hasUnknownFiles) continue;
 
@@ -213,4 +222,11 @@ Common::String DetectionResults::generateUnknownGameReport(bool translate, uint3
 	report += "\n";
 
 	return report;
+}
+
+Common::String generateUnknownGameReport(const DetectedGame &detectedGame, bool translate, bool fullPath, uint32 wordwrapAt) {
+	DetectedGames detectedGames;
+	detectedGames.push_back(detectedGame);
+
+	return generateUnknownGameReport(detectedGames, translate, fullPath, wordwrapAt);
 }

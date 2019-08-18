@@ -105,9 +105,7 @@ Common::Error ComposerEngine::run() {
 	_screen.create(width, height, Graphics::PixelFormat::createFormatCLUT8());
 
 	Graphics::Cursor *cursor = Graphics::makeDefaultWinCursor();
-	CursorMan.replaceCursor(cursor->getSurface(), cursor->getWidth(), cursor->getHeight(), cursor->getHotspotX(),
-		cursor->getHotspotY(), cursor->getKeyColor());
-	CursorMan.replaceCursorPalette(cursor->getPalette(), cursor->getPaletteStartIndex(), cursor->getPaletteCount());
+	CursorMan.replaceCursor(cursor);
 	delete cursor;
 
 	_console = new Console(this);
@@ -535,7 +533,8 @@ void ComposerEngine::unloadLibrary(uint id) {
 		return;
 	}
 
-	error("tried to unload library %d, which isn't loaded", id);
+	warning("tried to unload library %d, which isn't loaded", id);
+	return;
 }
 
 bool ComposerEngine::hasResource(uint32 tag, uint16 id) {

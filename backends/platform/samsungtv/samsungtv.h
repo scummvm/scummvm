@@ -34,6 +34,9 @@ public:
 	virtual void initBackend();
 	virtual void quit();
 	virtual void fatalError();
+
+protected:
+	virtual Common::String getDefaultLogFileName();
 };
 
 #endif

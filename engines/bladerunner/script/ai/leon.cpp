@@ -73,18 +73,18 @@ bool AIScriptLeon::Update() {
 }
 
 void AIScriptLeon::TimerExpired(int timer) {
-	if (timer == 0
+	if (timer == kActorTimerAIScriptCustomTask0
 	 && Actor_Query_Goal_Number(kActorLeon) == kGoalLeonLeave
 	) {
-		AI_Countdown_Timer_Reset(kActorLeon, 0);
+		AI_Countdown_Timer_Reset(kActorLeon, kActorTimerAIScriptCustomTask0);
 		Actor_Set_Goal_Number(kActorLeon, kGoalLeonGone);
 	}
 }
 
 void AIScriptLeon::CompletedMovementTrack() {
 	if (Actor_Query_Goal_Number(kActorLeon) == kGoalLeonLeave) {
-		AI_Countdown_Timer_Reset(kActorLeon, 0);
-		AI_Countdown_Timer_Start(kActorLeon, 0, 8);
+		AI_Countdown_Timer_Reset(kActorLeon, kActorTimerAIScriptCustomTask0);
+		AI_Countdown_Timer_Start(kActorLeon, kActorTimerAIScriptCustomTask0, 8);
 		//return true;
 	}
 	//return false;
@@ -111,7 +111,7 @@ void AIScriptLeon::OtherAgentEnteredThisScene(int otherActorId) {
 	if (otherActorId == kActorMcCoy
 	 && Actor_Query_Goal_Number(kActorLeon) == kGoalLeonLeave
 	) {
-		AI_Countdown_Timer_Reset(kActorLeon, 0);
+		AI_Countdown_Timer_Reset(kActorLeon, kActorTimerAIScriptCustomTask0);
 		AI_Movement_Track_Flush(kActorLeon);
 		AI_Movement_Track_Append(kActorLeon, 353, 0);
 		AI_Movement_Track_Repeat(kActorLeon);
@@ -199,14 +199,14 @@ bool AIScriptLeon::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		Actor_Says(kActorMcCoy, 505, 23);
 		Actor_Says(kActorLeon, 60, 13);
 		Player_Gains_Control();
-		Loop_Actor_Walk_To_XYZ(kActorLeon, 233.0f, 349.0f, 849.0f, 0, false, false, 0);
+		Loop_Actor_Walk_To_XYZ(kActorLeon, 233.0f, 349.0f, 849.0f, 0, false, false, false);
 		Actor_Face_Actor(kActorLeon, kActorMcCoy, true);
 		Actor_Face_Actor(kActorMcCoy, kActorLeon, true);
 		Actor_Says(kActorMcCoy, 515, 18);
 		Actor_Says_With_Pause(kActorLeon, 70, 0.3f, 12);
 		Actor_Says(kActorMcCoy, 520, 15);
 		Actor_Says(kActorLeon, 80, 12);
-		Loop_Actor_Walk_To_XYZ(kActorLeon, 198.0f, 349.0f, 865.0f, 0, false, false, 0);
+		Loop_Actor_Walk_To_XYZ(kActorLeon, 198.0f, 349.0f, 865.0f, 0, false, false, false);
 		Actor_Face_Actor(kActorLeon, kActorMcCoy, true);
 		Actor_Face_Actor(kActorMcCoy, kActorLeon, true);
 		if (Actor_Clue_Query(kActorMcCoy, kClueWantedPoster)) { // there is no way how to obtain this poster

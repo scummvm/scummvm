@@ -32,8 +32,8 @@ namespace CreateProjectTool {
 // Visual Studio Provider (Visual Studio 2008)
 //////////////////////////////////////////////////////////////////////////
 
-VisualStudioProvider::VisualStudioProvider(StringList &global_warnings, std::map<std::string, StringList> &project_warnings, const int version)
-	: MSVCProvider(global_warnings, project_warnings, version) {
+VisualStudioProvider::VisualStudioProvider(StringList &global_warnings, std::map<std::string, StringList> &project_warnings, const int version, const MSVCVersion& msvc)
+	: MSVCProvider(global_warnings, project_warnings, version, msvc) {
 }
 
 const char *VisualStudioProvider::getProjectExtension() {
@@ -42,13 +42,6 @@ const char *VisualStudioProvider::getProjectExtension() {
 
 const char *VisualStudioProvider::getPropertiesExtension() {
 	return ".vsprops";
-}
-
-int VisualStudioProvider::getVisualStudioVersion() {
-	if (_version == 9)
-		return 2008;
-
-	error("Unsupported version passed to getVisualStudioVersion");
 }
 
 void VisualStudioProvider::createProjectFile(const std::string &name, const std::string &uuid, const BuildSetup &setup, const std::string &moduleDir,
@@ -296,6 +289,7 @@ void VisualStudioProvider::createBuildProp(const BuildSetup &setup, bool isRelea
 		              "\t<Tool\n"
 		              "\t\tName=\"VCLinkerTool\"\n"
 		              "\t\tLinkIncremental=\"1\"\n"
+		              "\t\tGenerateManifest=\"false\"\n"
 		              "\t\tIgnoreDefaultLibraryNames=\"\"\n"
 		              "\t\tSetChecksum=\"true\"\n";
 	} else {
@@ -312,6 +306,7 @@ void VisualStudioProvider::createBuildProp(const BuildSetup &setup, bool isRelea
 		              "\t<Tool\n"
 		              "\t\tName=\"VCLinkerTool\"\n"
 		              "\t\tLinkIncremental=\"2\"\n"
+		              "\t\tGenerateManifest=\"false\"\n"
 		              "\t\tGenerateDebugInformation=\"true\"\n"
 		              "\t\tIgnoreDefaultLibraryNames=\"libcmt.lib\"\n";
 	}

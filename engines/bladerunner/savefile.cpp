@@ -79,6 +79,7 @@ SaveStateDescriptor SaveFileManager::queryMetaInfos(const Common::String &target
 	desc.setThumbnail(header._thumbnail);
 	desc.setSaveDate(header._year, header._month, header._day);
 	desc.setSaveTime(header._hour, header._minute);
+	desc.setPlayTime(header._playTime);
 	return desc;
 }
 
@@ -99,14 +100,13 @@ void SaveFileManager::remove(const Common::String &target, int slot) {
 
 bool SaveFileManager::readHeader(Common::SeekableReadStream &in, SaveFileHeader &header, bool skipThumbnail) {
 	SaveFileReadStream s(in);
-
 	if (s.readUint32BE() != kTag) {
 		warning("No header found in save file");
 		return false;
 	}
 
 	header._version = s.readByte();
-	if (header._version != kVersion) {
+	if (header._version > kVersion) {
 		warning("Unsupported version of save file %u, supported is %u", header._version, kVersion);
 		return false;
 	}
@@ -119,20 +119,38 @@ bool SaveFileManager::readHeader(Common::SeekableReadStream &in, SaveFileHeader 
 	header._hour   = s.readUint16LE();
 	header._minute = s.readUint16LE();
 
+	header._playTime = 0;
+	if (header._version >= 2) {
+		header._playTime = s.readUint32LE();
+	}
+
 	header._thumbnail = nullptr;
+
+	// Early check of possible corrupted save file (missing thumbnail and other data)
+	int32 pos = s.pos();
+	int32 sizeOfSaveFile = s.size();
+	if (sizeOfSaveFile > 0 && sizeOfSaveFile < (int32) (pos + 4 + kThumbnailSize)) {
+		warning("Unexpected end of save file \"%s\" (%02d:%02d %02d/%02d/%04d) reached. Size of file was: %d bytes",
+		         header._name.c_str(),
+		         header._hour,
+		         header._minute,
+		         header._day,
+		         header._month,
+		         header._year,
+		         sizeOfSaveFile);
+		return false;
+	}
 
 	if (!skipThumbnail) {
 		header._thumbnail = new Graphics::Surface(); // freed by ScummVM's smartptr
-
-		int32 pos = s.pos();
 
 		s.skip(4); //skip size;
 
 		void *thumbnailData = malloc(kThumbnailSize); // freed by ScummVM's smartptr
 		s.read(thumbnailData, kThumbnailSize);
 
-		header._thumbnail->init(80, 60, 160, thumbnailData, createRGB555());
-
+		header._thumbnail->init(80, 60, 160, thumbnailData, gameDataPixelFormat());
+		header._thumbnail->convertToInPlace(screenPixelFormat());
 		s.seek(pos);
 	}
 
@@ -155,6 +173,8 @@ bool SaveFileManager::writeHeader(Common::WriteStream &out, SaveFileHeader &head
 	s.writeUint16LE(td.tm_hour);
 	s.writeUint16LE(td.tm_min);
 
+	s.writeUint32LE(header._playTime);
+
 	return true;
 }
 
@@ -170,7 +190,7 @@ void SaveFileWriteStream::padBytes(int count) {
 	}
 }
 
-void SaveFileWriteStream::writeInt(int v) {
+void SaveFileWriteStream::writeInt(int32 v) {
 	writeUint32LE(v);
 }
 
@@ -228,7 +248,7 @@ void SaveFileWriteStream::writeBoundingBox(const BoundingBox &v, bool serialized
 
 SaveFileReadStream::SaveFileReadStream(Common::SeekableReadStream &s) : _s(s) {}
 
-int SaveFileReadStream::readInt() {
+int32 SaveFileReadStream::readInt() {
 	return readUint32LE();
 }
 
@@ -241,9 +261,10 @@ bool SaveFileReadStream::readBool() {
 }
 
 Common::String SaveFileReadStream::readStringSz(uint sz) {
-	char *buf = new char[sz];
+	char *buf = new char[sz + 1];
 	read(buf, sz);
-	Common::String result(buf, sz);
+	buf[sz] = 0;
+	Common::String result(buf);
 	delete[] buf;
 	return result;
 }

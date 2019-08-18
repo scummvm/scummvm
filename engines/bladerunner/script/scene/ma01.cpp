@@ -25,10 +25,10 @@
 namespace BladeRunner {
 
 enum kMA01Loops {
-	kMA01LoopInshotRoof  = 0,
-	kMA01LoopMain        = 1,
-	kMA01LoopOutDoorAnim = 3,
-	kMA01LoopOutshotRoof = 4
+	kMA01LoopInshotRoof   = 0,
+	kMA01LoopMainLoop = 1,
+	kMA01LoopOutDoorAnim  = 3,
+	kMA01LoopOutshotRoof  = 4
 };
 
 enum kMA01Exits {
@@ -50,23 +50,23 @@ void SceneScriptMA01::InitializeScene() {
 		Scene_Exit_Add_2D_Exit(kMA01ExitSpinner, 234, 240, 398, 328, 2);
 	}
 
-	Ambient_Sounds_Add_Looping_Sound(101, 90,    0, 1);
-	Ambient_Sounds_Add_Looping_Sound( 99, 40, -100, 1);
-	Ambient_Sounds_Add_Looping_Sound(100, 40,  100, 1);
-	Ambient_Sounds_Add_Sound( 68, 10, 100, 25, 50, 0, 0, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound( 69, 10, 100, 25, 50, 0, 0, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(375, 10, 70, 50, 100, 0, 0, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(376, 10, 70, 50, 100, 0, 0, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(377, 10, 70, 50, 100, 0, 0, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Looping_Sound(kSfxROOFRAN1, 90,    0, 1);
+	Ambient_Sounds_Add_Looping_Sound(kSfxROOFAIR1, 40, -100, 1);
+	Ambient_Sounds_Add_Looping_Sound(kSfxROOFRMB1, 40,  100, 1);
+	Ambient_Sounds_Add_Sound(kSfxSPIN2B,  10, 100, 25,  50, 0, 0, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxSPIN3A,  10, 100, 25,  50, 0, 0, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxTHNDER2, 10,  70, 50, 100, 0, 0, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxTHNDER3, 10,  70, 50, 100, 0, 0, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxTHNDER4, 10,  70, 50, 100, 0, 0, -101, -101, 0, 0);
 
 	if (Game_Flag_Query(kFlagMA06toMA01)) {
-		Scene_Loop_Set_Default(kMA01LoopMain);
+		Scene_Loop_Set_Default(kMA01LoopMainLoop);
 		Game_Flag_Reset(kFlagMA06toMA01);
 	} else {
 		Actor_Set_Invisible(kActorMcCoy, true);
 		Game_Flag_Set(kFlagArrivedFromSpinner2);
 		Scene_Loop_Start_Special(kSceneLoopModeLoseControl, kMA01LoopInshotRoof, false);
-		Scene_Loop_Set_Default(kMA01LoopMain);
+		Scene_Loop_Set_Default(kMA01LoopMainLoop);
 	}
 
 	if (Game_Flag_Query(kFlagMA01GaffApproachMcCoy)) {
@@ -107,11 +107,11 @@ bool SceneScriptMA01::ClickedOnExit(int exitId) {
 
 	if (exitId == kMA01ExitMA06) {
 		if (Actor_Query_Goal_Number(kActorZuben) == kGoalZubenFled) {
-			if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 1446.0f, 0.0f, -725.0f, 72, true, false, 0)) {
+			if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 1446.0f, 0.0f, -725.0f, 72, true, false, false)) {
 				Actor_Set_Goal_Number(kActorZuben, kGoalZubenMA01AttackMcCoy);
 				Scene_Exits_Disable();
 			}
-		} else if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 1446.0f, 0.0f, -725.0f, 12, true, false, 0)) {
+		} else if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 1446.0f, 0.0f, -725.0f, 12, true, false, false)) {
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
 			Game_Flag_Set(kFlagMA01toMA06);
@@ -121,7 +121,7 @@ bool SceneScriptMA01::ClickedOnExit(int exitId) {
 	}
 
 	if (exitId == kMA01ExitSpinner) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 381.0f, 0.0f, 54.0f, 0, true, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 381.0f, 0.0f, 54.0f, 0, true, false, false)) {
 			Player_Loses_Control();
 			Actor_Face_Heading(kActorMcCoy, 736, false);
 			Game_Flag_Reset(kFlagMcCoyInChinaTown);
@@ -215,31 +215,31 @@ bool SceneScriptMA01::ClickedOn2DRegion(int region) {
 
 void SceneScriptMA01::SceneFrameAdvanced(int frame) {
 	if (frame == 15) {
-		Ambient_Sounds_Play_Sound(102, 70, -100, 100, 0);
+		Ambient_Sounds_Play_Sound(kSfxROOFLIT1,  70, -100, 100,  0);
 	}
 
 	if (frame == 61
 	 || frame == 183
 	) {
-		Ambient_Sounds_Play_Sound(116, 100, 40, 0, 99);
+		Ambient_Sounds_Play_Sound(kSfxSPINOPN4, 100,   40,   0, 99);
 	}
 
 	if (frame == 107
 	 || frame == 227
 	) {
-		Ambient_Sounds_Play_Sound(119, 100, 40, 0, 99);
+		Ambient_Sounds_Play_Sound(kSfxSPINCLS1, 100,   40,   0, 99);
 	}
 
 	if (frame == 1) {
-		Ambient_Sounds_Play_Sound(118, 40, -60, 20, 99);
+		Ambient_Sounds_Play_Sound(kSfxCARDOWN3,  40,  -60,  20, 99);
 	}
 
 	if (frame == 241) {
-		Ambient_Sounds_Play_Sound(117, 40, 0, 0, 99);
+		Ambient_Sounds_Play_Sound(kSfxCARUP3,    40,    0,   0, 99);
 	}
 
 	if (frame == 58) {
-		Sound_Play(122, 17, 20, 20, 50);
+		Sound_Play(kSfxMTLHIT1, 17, 20, 20, 50);
 	}
 
 	if ((frame == 75
@@ -269,20 +269,61 @@ void SceneScriptMA01::ActorChangedGoal(int actorId, int newGoal, int oldGoal, bo
 }
 
 void SceneScriptMA01::PlayerWalkedIn() {
+	if (_vm->_cutContent) {
+		if (!Game_Flag_Query(kFlagCT01Visited) && !Actor_Clue_Query(kActorMcCoy, kClueDispatchHitAndRun)) {
+			Actor_Clue_Acquire(kActorMcCoy, kClueDispatchHitAndRun, false, kActorDispatcher);
+			ADQ_Add(kActorDispatcher, 80, kAnimationModeTalk);
+			if (Game_Flag_Query(kFlagRC01PoliceDone)) {
+				ADQ_Add(kActorOfficerLeary, 340, kAnimationModeTalk);  // sector 3 - go ahead
+			} else {
+				ADQ_Add(kActorOfficerGrayford, 360, kAnimationModeTalk);  // sector 3 - go ahead
+			}
+			ADQ_Add(kActorDispatcher, 90, kAnimationModeTalk);
+			ADQ_Add(kActorDispatcher, 100, kAnimationModeTalk);
+			ADQ_Add(kActorDispatcher, 110, kAnimationModeTalk);
+			if (Game_Flag_Query(kFlagRC01PoliceDone)) {
+				ADQ_Add(kActorOfficerLeary, 350, kAnimationModeTalk);  // sector 3 - responding code 3
+			} else {
+				ADQ_Add(kActorOfficerGrayford, 370, kAnimationModeTalk);  // sector 3 - responding code 3
+			}
+			ADQ_Add_Pause(1000);
+			ADQ_Add(kActorDispatcher, 120, kAnimationModeTalk);
+			ADQ_Add(kActorDispatcher, 130, kAnimationModeTalk);
+			ADQ_Add(kActorDispatcher, 140, kAnimationModeTalk);
+			ADQ_Add(kActorDispatcher, 150, kAnimationModeTalk);
+		}
+	}
 }
 
 void SceneScriptMA01::PlayerWalkedOut() {
 	Actor_Set_Invisible(kActorMcCoy, false);
 	Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 	Ambient_Sounds_Remove_All_Looping_Sounds(1);
-	if (!Game_Flag_Query(kFlagMA01toMA06)
-	 &&  Global_Variable_Query(kVariableChapter) == 1
-	) {
-		Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
-		Ambient_Sounds_Remove_All_Looping_Sounds(1);
-		Outtake_Play(kOuttakeTowards2, true, -1);
-		Outtake_Play(kOuttakeInside1, true, -1);
-		Outtake_Play(kOuttakeTowards1, true, -1);
+
+	if (_vm->_cutContent) {
+		ADQ_Flush(); // for dispatcher queue cleanup
+	}
+
+	if (!Game_Flag_Query(kFlagMA01toMA06)) {
+		if (Global_Variable_Query(kVariableChapter) == 1) {
+			Outtake_Play(kOuttakeTowards2, true, -1);
+			Outtake_Play(kOuttakeInside1,  true, -1);
+//			// Commented out - Has no sound - TODO can we use external SFX for it?
+//			if (_vm->_cutContent) {
+//				Outtake_Play(kOuttakeFlyThrough,  true, -1);
+//			}
+			Outtake_Play(kOuttakeTowards1, true, -1);
+		}
+#if BLADERUNNER_ORIGINAL_BUGS
+#else
+		else {
+			// Acts 2, 3 - should still use a spinner fly-through transition
+			if (!Game_Flag_Query(kFlagMcCoyInTyrellBuilding)) {
+				// don't play an extra outtake when going to Tyrell Building
+				Outtake_Play(kOuttakeAway1,    true, -1); // available in Acts 2, 3
+			}
+		}
+#endif // BLADERUNNER_ORIGINAL_BUGS
 	}
 }
 

@@ -271,6 +271,7 @@ void Scene101::step() {
 		_talkCounter = 0;
 	}
 
+	// Monsieur Brie beckons Raul
 	if (_game._trigger == 50) {
 		_vm->_gameConv->run(0);
 		_callingStatus = 1;

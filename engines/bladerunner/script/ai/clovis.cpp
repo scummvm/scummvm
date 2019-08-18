@@ -188,22 +188,24 @@ bool AIScriptClovis::ShotAtAndHit() {
 void AIScriptClovis::Retired(int byActorId) {
 	if (Game_Flag_Query(kFlagMcCoyIsHelpingReplicants)) {
 		if (Actor_Query_In_Set(kActorClovis, kSetKP07)) {
-			Global_Variable_Decrement(kVariableReplicants, 1);
+			Global_Variable_Decrement(kVariableReplicantsSurvivorsAtMoonbus, 1);
 			Actor_Set_Goal_Number(kActorClovis, kGoalClovisGone);
 
-			if (Global_Variable_Query(kVariableReplicants) == 0) {
+			if (Global_Variable_Query(kVariableReplicantsSurvivorsAtMoonbus) == 0) {
 				Player_Loses_Control();
 				Delay(2000);
 				Player_Set_Combat_Mode(false);
-				Loop_Actor_Walk_To_XYZ(kActorMcCoy, -12.0f, -41.58f, 72.0f, 0, true, false, 0);
+				Loop_Actor_Walk_To_XYZ(kActorMcCoy, -12.0f, -41.58f, 72.0f, 0, true, false, false);
 				Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 				Ambient_Sounds_Remove_All_Looping_Sounds(1);
 				Game_Flag_Set(kFlagKP07toKP06);
 				Game_Flag_Reset(kFlagMcCoyIsHelpingReplicants);
 				Set_Enter(kSetKP05_KP06, kSceneKP06);
+				return; //true;
 			}
 		}
 	}
+	return; //false;
 }
 
 int AIScriptClovis::GetFriendlinessModifierIfGetsClue(int otherActorId, int clueId) {
@@ -316,8 +318,11 @@ bool AIScriptClovis::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		return true;
 
 	case kGoalClovisUG18SadikWillShootGuzza:
+		// fall through
 	case kGoalClovisUG18SadikIsShootingGuzza:
+		// fall through
 	case kGoalClovisUG18GuzzaDied:
+		// fall through
 	case kGoalClovisUG18Leave:
 		return true;
 
@@ -351,8 +356,13 @@ bool AIScriptClovis::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		} else {
 			Actor_Change_Animation_Mode(kActorMcCoy, kAnimationModeDie);
 		}
+#if BLADERUNNER_ORIGINAL_BUGS
 		Delay(3000);
 		Actor_Retired_Here(kActorMcCoy, 12, 48, true, kActorClovis);
+#else
+		Actor_Retired_Here(kActorMcCoy, 12, 48, true, kActorClovis);
+		Delay(3000);
+#endif // BLADERUNNER_ORIGINAL_BUGS
 		return true;
 
 	case kGoalClovisStartChapter5:
@@ -388,11 +398,19 @@ bool AIScriptClovis::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		Actor_Put_In_Set(kActorClovis, kSetKP07);
 		Actor_Set_Targetable(kActorClovis, true);
 		if (Game_Flag_Query(kFlagMcCoyIsHelpingReplicants)) {
-			Global_Variable_Set(kVariableReplicants, 0);
-			Global_Variable_Increment(kVariableReplicants, 1);
+			Global_Variable_Set(kVariableReplicantsSurvivorsAtMoonbus, 0);
+			Global_Variable_Increment(kVariableReplicantsSurvivorsAtMoonbus, 1);
 			Actor_Set_At_XYZ(kActorClovis, 45.0f, -41.52f, -85.0f, 750);
 		} else {
+#if BLADERUNNER_ORIGINAL_BUGS
 			Actor_Set_At_XYZ(kActorClovis, 84.85f, -50.56f, -68.87f, 800);
+#else
+			// same as kGoalClovisKP07LayDown
+			// Actor_Set_Targetable(kActorClovis, true) is already done above
+			Game_Flag_Set(kFlagClovisLyingDown);
+			// prevent Clovis rotating while lying on the bed when McCoy enters KP07
+			Actor_Set_At_XYZ(kActorClovis, 84.85f, -50.56f, -68.87f, 1022);
+#endif // BLADERUNNER_ORIGINAL_BUGS
 			Actor_Face_Heading(kActorClovis, 1022, false);
 		}
 		someAnim();
@@ -437,17 +455,17 @@ bool AIScriptClovis::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		Actor_Says(kActorClovis, 1310, kAnimationModeTalk);
 		Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 		Ambient_Sounds_Remove_All_Looping_Sounds(1);
-		Outtake_Play(kOuttakeEnd4A, 0, -1);
+		Outtake_Play(kOuttakeEnd4A, false, -1);
 		if (Global_Variable_Query(kVariableAffectionTowards) == kAffectionTowardsLucy
 		 && Game_Flag_Query(kFlagLucyIsReplicant)
 		) {
-			Outtake_Play(kOuttakeEnd4B, 0, -1);
+			Outtake_Play(kOuttakeEnd4B, false, -1);
 		} else if (Global_Variable_Query(kVariableAffectionTowards) == kAffectionTowardsDektora
 		       && Game_Flag_Query(kFlagDektoraIsReplicant)
 		) {
-			Outtake_Play(kOuttakeEnd4C, 0, -1);
+			Outtake_Play(kOuttakeEnd4C, false, -1);
 		}
-		Outtake_Play(kOuttakeEnd4D, 0, -1);
+		Outtake_Play(kOuttakeEnd4D, false, -1);
 		Game_Over();
 		return true;
 
@@ -455,15 +473,27 @@ bool AIScriptClovis::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		if (Global_Variable_Query(kVariableChapter) == 5
 		 && Actor_Query_In_Set(kActorLucy, kSetKP07)
 		) {
+#if BLADERUNNER_ORIGINAL_BUGS
+			// Lucy's retirement on the moonbus should be handled in her ai script AIScriptLucy::Retired()
+			// like the others - even if she won't attack McCoy, she should be retired immediately (with one shot)
 			Actor_Set_Goal_Number(kActorLucy, kGoalLucyGone);
-			Global_Variable_Decrement(kVariableReplicants, 1);
+			Global_Variable_Decrement(kVariableReplicantsSurvivorsAtMoonbus, 1);
+#else
+			// This is her code if she's attacked when escaping with McCoy
+			// will this work?
+			Non_Player_Actor_Combat_Mode_On(kActorLucy, kActorCombatStateIdle, false, kActorMcCoy, 4, kAnimationModeIdle, kAnimationModeWalk, kAnimationModeRun, -1, 0, 0, 10, 300, false);
+#endif // BLADERUNNER_ORIGINAL_BUGS
 		}
 
 		if (Global_Variable_Query(kVariableChapter) == 5
 		 && Actor_Query_In_Set(kActorLuther, kSetKP07)
 		) {
+#if BLADERUNNER_ORIGINAL_BUGS
+			// Luther's retirement on the moonbus should be handled in his ai script AIScriptLuther:Retired()
+			// like the others - even if he won't attack McCoy, he should be retired immediately (with one shot)
 			Actor_Set_Goal_Number(kActorLuther, kGoalLutherGone);
-			Global_Variable_Decrement(kVariableReplicants, 1);
+			Global_Variable_Decrement(kVariableReplicantsSurvivorsAtMoonbus, 1);
+#endif // BLADERUNNER_ORIGINAL_BUGS
 		}
 
 		if (Global_Variable_Query(kVariableChapter) == 5
@@ -503,8 +533,13 @@ bool AIScriptClovis::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		}
 		return true;
 
-	case 518:
+	case kGoalClovisKP07LayDown:
+#if BLADERUNNER_ORIGINAL_BUGS
 		Actor_Set_At_XYZ(kActorClovis, 84.85f, -50.56f, -68.87f, 800);
+#else
+		// prevent Clovis rotating while lying on the bed when McCoy enters KP07
+		Actor_Set_At_XYZ(kActorClovis, 84.85f, -50.56f, -68.87f, 1022);
+#endif // BLADERUNNER_ORIGINAL_BUGS
 		Actor_Face_Heading(kActorClovis, 1022, false);
 		Actor_Set_Targetable(kActorClovis, true);
 		Game_Flag_Set(kFlagClovisLyingDown);
@@ -818,10 +853,10 @@ bool AIScriptClovis::UpdateAnimation(int *animation, int *frame) {
 			} else {
 				snd = 9015;
 			}
-			Sound_Play_Speech_Line(5, snd, 75, 0, 99);
+			Sound_Play_Speech_Line(kActorClovis, snd, 75, 0, 99);
 		}
 		if (_animationFrame == 4) {
-			Actor_Combat_AI_Hit_Attempt(5);
+			Actor_Combat_AI_Hit_Attempt(kActorClovis);
 		}
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
 			flag = true;
@@ -1422,13 +1457,28 @@ bool AIScriptClovis::ChangeAnimationMode(int mode) {
 
 	case kAnimationModeSit:
 		switch (_animationState) {
+#if BLADERUNNER_ORIGINAL_BUGS
+#else
+		// Sometimes the animationState will be 0 here (seems to happen randomly if skipping fast through the dialogue)
+		// and this would cause Clovis to not switch to his sitting animation
+		// and thus the BB11 rooftop scene would get stuck there
+		case 0:
+			// fall through
+#endif // BLADERUNNER_ORIGINAL_BUGS
 		case 4:
+			// fall through
 		case 5:
+			// fall through
 		case 6:
+			// fall through
 		case 7:
+			// fall through
 		case 8:
+			// fall through
 		case 9:
+			// fall through
 		case 10:
+			// fall through
 		case 11:
 			_animationState = 3;
 			_animationFrame = 0;

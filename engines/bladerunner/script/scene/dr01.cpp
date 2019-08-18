@@ -25,15 +25,11 @@
 namespace BladeRunner {
 
 enum kDR01Loops {
-	kDR01LoopInshotWithCrowd   = 0,
-	kDR01LoopWithCrowd         = 1,
-	kDR01LoopDoorAnimWithCrowd = 3,
-	kDR01LoopOutshotWithCrowd  = 4,
-	kDR01LoopInshotNoCrowd     = 5,
-	kDR01LoopNoCrowd           = 6,
-	kDR01LoopDoorAnimNoCrowd   = 8,
-	kDR01LoopOutshotNoCrowd    = 9,
-	kDR01LoopNoCrowdNoSpinner  = 10
+	kDR01LoopBikerInshot          = 0,
+	kDR01LoopPanFromDR02          = 1,
+	kDR01LoopPanFromDR04Pre       = 2,
+	kDR01LoopPanFromDR04Post      = 3,
+	kDR01LoopMainLoop             = 4
 };
 
 void SceneScriptDR01::InitializeScene() {
@@ -58,38 +54,44 @@ void SceneScriptDR01::InitializeScene() {
 		Scene_Exit_Add_2D_Exit(3, 0, 45, 142, 201, 0);
 	}
 
-	Ambient_Sounds_Remove_All_Non_Looping_Sounds(0);
-	Ambient_Sounds_Add_Looping_Sound( 54, 50,  0, 1);
-	Ambient_Sounds_Add_Looping_Sound(219, 12, 85, 1);
-	Ambient_Sounds_Add_Looping_Sound( 98, 14, 85, 1);
-	Ambient_Sounds_Add_Speech_Sound(60,  0, 10, 260, 17, 24, -100, 100, -101, -101, 1, 1);
-	Ambient_Sounds_Add_Speech_Sound(60, 20, 10, 260, 17, 24, -100, 100, -101, -101, 1, 1);
-	Ambient_Sounds_Add_Speech_Sound(60, 40, 10, 260, 17, 24, -100, 100, -101, -101, 1, 1);
-	Ambient_Sounds_Add_Speech_Sound(60, 50, 10, 260, 17, 24, -100, 100, -101, -101, 1, 1);
-	Ambient_Sounds_Add_Sound( 67, 5, 80, 16,  25, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound( 66, 5, 80, 16,  25, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(378, 5, 80, 50, 100, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(379, 5, 80, 50, 100, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(380, 5, 80, 50, 100, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Remove_All_Non_Looping_Sounds(false);
+	Ambient_Sounds_Add_Looping_Sound(kSfxCTRAIN1, 50,  0, 1);
+	Ambient_Sounds_Add_Looping_Sound(kSfxHUMMER3, 12, 85, 1);
+	Ambient_Sounds_Add_Looping_Sound(kSfxBIGFAN2, 14, 85, 1);
+	Ambient_Sounds_Add_Speech_Sound(kActorBlimpGuy,  0, 10, 260, 17, 24, -100, 100, -101, -101, 1, 1);
+	Ambient_Sounds_Add_Speech_Sound(kActorBlimpGuy, 20, 10, 260, 17, 24, -100, 100, -101, -101, 1, 1);
+	Ambient_Sounds_Add_Speech_Sound(kActorBlimpGuy, 40, 10, 260, 17, 24, -100, 100, -101, -101, 1, 1);
+	Ambient_Sounds_Add_Speech_Sound(kActorBlimpGuy, 50, 10, 260, 17, 24, -100, 100, -101, -101, 1, 1);
+	Ambient_Sounds_Add_Sound(kSfxSPIN2A, 5, 80, 16,  25, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxSPIN1A, 5, 80, 16,  25, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxTHNDR1, 5, 80, 50, 100, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxTHNDR2, 5, 80, 50, 100, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxTHNDR3, 5, 80, 50, 100, -100, 100, -101, -101, 0, 0);
 
 	if (Game_Flag_Query(kFlagDR05BombExploded)
 	 && Game_Flag_Query(kFlagDR04toDR01)
 	) {
-		Scene_Loop_Start_Special(0, 3, false);
-		Scene_Loop_Set_Default(4);
+		Scene_Loop_Start_Special(kSceneLoopModeLoseControl, kDR01LoopPanFromDR04Post, false);
+		Scene_Loop_Set_Default(kDR01LoopMainLoop);
 	} else if (!Game_Flag_Query(kFlagDR05BombExploded)
 	        &&  Game_Flag_Query(kFlagDR04toDR01)
 	) {
-		Scene_Loop_Start_Special(0, 2, false);
-		Scene_Loop_Set_Default(4);
+		Scene_Loop_Start_Special(kSceneLoopModeLoseControl, kDR01LoopPanFromDR04Pre, false);
+		Scene_Loop_Set_Default(kDR01LoopMainLoop);
 	} else if (Game_Flag_Query(kFlagDR02toDR01)) {
-		Scene_Loop_Start_Special(0, 1, false);
-		Scene_Loop_Set_Default(4);
+		Scene_Loop_Start_Special(kSceneLoopModeLoseControl, kDR01LoopPanFromDR02, false);
+		Scene_Loop_Set_Default(kDR01LoopMainLoop);
 	} else if (Game_Flag_Query(kFlagCT11toDR01)) {
-		Scene_Loop_Set_Default(4);
+		Scene_Loop_Set_Default(kDR01LoopMainLoop);
 	} else {
-		Scene_Loop_Start_Special(0, 0, false);
-		Scene_Loop_Set_Default(4);
+		if ((!Game_Flag_Query(kFlagDR01Visited) && Global_Variable_Query(kVariableChapter) == 2)
+		     || Random_Query(1, 3) == 1)
+		{
+			// enhancement: don't always play after first visit
+			// But first visit in 2nd chapter should always show it.
+			Scene_Loop_Start_Special(kSceneLoopModeLoseControl, kDR01LoopBikerInshot, false);
+		}
+		Scene_Loop_Set_Default(kDR01LoopMainLoop);
 	}
 }
 
@@ -127,17 +129,42 @@ bool SceneScriptDR01::ClickedOnItem(int itemId, bool a2) {
 
 bool SceneScriptDR01::ClickedOnExit(int exitId) {
 	if (exitId == 0) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -835.0f, -0.04f, -118.0f, 0, true, false, 0)) {
-			Async_Actor_Walk_To_XYZ(kActorMcCoy, -911.0f, -0.04f, -118.0f, 0, false);
-			Ambient_Sounds_Adjust_Looping_Sound(112, 10, -100, 1);
-			Game_Flag_Set(kFlagDR01toDR02);
-			Set_Enter(kSetDR01_DR02_DR04, kSceneDR02);
+		if (_vm->_cutContent) {
+			float x, y, z;
+			Actor_Query_XYZ(kActorMcCoy, &x, &y, &z);
+			bool exitFlag = true;
+			bool fromFarTop = false;
+			if (x < -1088) {
+				fromFarTop = true;
+				exitFlag = Loop_Actor_Walk_To_XYZ(kActorMcCoy, -1149.80f, 0.56f, -94.45f, 0, true, false, false);
+			} else if (-1088 < x && x < -642) {
+				exitFlag = Loop_Actor_Walk_To_XYZ(kActorMcCoy, -1271.89f, 6.71f, -268.63f, 0, true, false, false);
+			} else {
+				exitFlag = Loop_Actor_Walk_To_XYZ(kActorMcCoy, -835.0f, -0.04f, -118.0f, 0, true, false, false);
+			}
+			if (!exitFlag) {
+				if (fromFarTop) {
+					Async_Actor_Walk_To_XYZ(kActorMcCoy,  -1066.51f, 0.51f, -110.60f, 0, false);
+				} else {
+					Async_Actor_Walk_To_XYZ(kActorMcCoy, -911.0f, -0.04f, -118.0f, 0, false);
+				}
+				Ambient_Sounds_Adjust_Looping_Sound(kSfxFACTAMB2, 10, -100, 1);
+				Game_Flag_Set(kFlagDR01toDR02);
+				Set_Enter(kSetDR01_DR02_DR04, kSceneDR02);
+			}
+		} else {
+			if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -835.0f, -0.04f, -118.0f, 0, true, false, false)) {
+				Async_Actor_Walk_To_XYZ(kActorMcCoy, -911.0f, -0.04f, -118.0f, 0, false);
+				Ambient_Sounds_Adjust_Looping_Sound(kSfxFACTAMB2, 10, -100, 1);
+				Game_Flag_Set(kFlagDR01toDR02);
+				Set_Enter(kSetDR01_DR02_DR04, kSceneDR02);
+			}
 		}
 		return true;
 	}
 
 	if (exitId == 1) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -711.0f, -0.04f, 70.0f, 0, true, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -711.0f, -0.04f, 70.0f, 0, true, false, false)) {
 			Async_Actor_Walk_To_XYZ(kActorMcCoy, -796.0f, -0.04f, 166.0f, 0, false);
 			Game_Flag_Set(kFlagDR01toDR04);
 			Set_Enter(kSetDR01_DR02_DR04, kSceneDR04);
@@ -146,7 +173,7 @@ bool SceneScriptDR01::ClickedOnExit(int exitId) {
 	}
 
 	if (exitId == 2) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -372.0f, -0.04f, -82.0f, 0, true, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -372.0f, -0.04f, -82.0f, 0, true, false, false)) {
 			Game_Flag_Reset(kFlagMcCoyInChinaTown);
 			Game_Flag_Reset(kFlagMcCoyInRunciters);
 			Game_Flag_Reset(kFlagMcCoyInMcCoyApartment);
@@ -214,7 +241,7 @@ bool SceneScriptDR01::ClickedOnExit(int exitId) {
 			default:
 				Player_Loses_Control();
 				Game_Flag_Set(kFlagMcCoyInDNARow);
-				Loop_Actor_Walk_To_XYZ(kActorMcCoy, -447.39f, 0.16f, -92.38f, 0, false, true, 0);
+				Loop_Actor_Walk_To_XYZ(kActorMcCoy, -447.39f, 0.16f, -92.38f, 0, false, true, false);
 				Player_Gains_Control();
 				break;
 			}
@@ -227,7 +254,7 @@ bool SceneScriptDR01::ClickedOnExit(int exitId) {
 		Actor_Query_XYZ(kActorMcCoy, &x, &y, &z);
 		bool v7 = false;
 		if (-1200 < x) {
-			v7 = Loop_Actor_Walk_To_XYZ(kActorMcCoy, -1236.4f, -0.04f, -13.91f, 0, 1, false, 0);
+			v7 = Loop_Actor_Walk_To_XYZ(kActorMcCoy, -1236.4f, -0.04f, -13.91f, 0, true, false, false);
 		}
 		if (!v7) {
 			Game_Flag_Set(kFlagDR01toCT11);
@@ -251,7 +278,7 @@ void SceneScriptDR01::SceneFrameAdvanced(int frame) {
 		Actor_Set_Invisible(kActorMcCoy, false);
 	}
 	if (frame == 2) {
-		Ambient_Sounds_Play_Sound(487, 40, -40, 100, 99);
+		Ambient_Sounds_Play_Sound(kSfxBIKEMIX4, 40, -40, 100, 99);
 	}
 }
 
@@ -265,7 +292,27 @@ void SceneScriptDR01::PlayerWalkedIn() {
 	        && !Game_Flag_Query(kFlagDR04toDR01)
 	) {
 		Player_Loses_Control();
-		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -447.39f, 0.16f, -92.38f, 0, false, false, 0);
+		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -447.39f, 0.16f, -92.38f, 0, false, false, false);
+		if (!Game_Flag_Query(kFlagDR01Visited)) {
+			Game_Flag_Set(kFlagDR01Visited);
+			// Make use of the kFlagDirectorsCut like in CT01 case
+			// extra flags and chapter check are for compatibility / sane behavior
+			// in imported original save games (or "exported" save games for the original)
+			if (_vm->_cutContent) {
+				if (
+					Global_Variable_Query(kVariableChapter) == 2
+					&& !Game_Flag_Query(kFlagDR03ChewTalk1)
+					&& !Game_Flag_Query(kFlagDR05MorajiTalk)
+					&& !Game_Flag_Query(kFlagDirectorsCut)) {
+					Actor_Voice_Over(600, kActorVoiceOver);
+					Actor_Voice_Over(610, kActorVoiceOver);
+					Actor_Voice_Over(620, kActorVoiceOver);
+					Actor_Voice_Over(630, kActorVoiceOver);
+					Actor_Voice_Over(640, kActorVoiceOver);
+					Actor_Voice_Over(650, kActorVoiceOver);
+				}
+			}
+		}
 		Player_Gains_Control();
 	}
 	Game_Flag_Reset(kFlagDR02toDR01);
@@ -281,6 +328,14 @@ void SceneScriptDR01::PlayerWalkedOut() {
 		Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 		Ambient_Sounds_Remove_All_Looping_Sounds(1);
 		Outtake_Play(kOuttakeInside2, true, -1);
+#if BLADERUNNER_ORIGINAL_BUGS
+#else
+		// add another transition to make it less abrupt
+		if (!Game_Flag_Query(kFlagMcCoyInTyrellBuilding)) {
+			// but don't play this extra outtake when going to Tyrell Building
+			Outtake_Play(kOuttakeAway1,   true, -1);
+		}
+#endif // BLADERUNNER_ORIGINAL_BUGS
 	}
 }
 

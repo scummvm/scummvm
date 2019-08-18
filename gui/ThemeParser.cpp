@@ -40,7 +40,8 @@ static const TextDataInfo kTextDataDefaults[] = {
 	{ kTextDataDefault,			"text_default" },
 	{ kTextDataButton,			"text_button" },
 	{ kTextDataNormalFont,		"text_normal" },
-	{ kTextDataTooltip,			"tooltip_normal" }
+	{ kTextDataTooltip,			"tooltip_normal" },
+	{ kTextDataConsole,			"console" }
 };
 
 
@@ -124,8 +125,6 @@ void ThemeParser::cleanup() {
 
 Graphics::DrawStep *ThemeParser::defaultDrawStep() {
 	Graphics::DrawStep *step = new Graphics::DrawStep;
-
-	memset(step, 0, sizeof(Graphics::DrawStep));
 
 	step->xAlign = Graphics::DrawStep::kVectorAlignManual;
 	step->yAlign = Graphics::DrawStep::kVectorAlignManual;

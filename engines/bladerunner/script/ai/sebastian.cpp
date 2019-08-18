@@ -103,13 +103,13 @@ void AIScriptSebastian::OtherAgentEnteredCombatMode(int otherActorId, int combat
 		if (Global_Variable_Query(kVariableGunPulledInFrontOfSebastian) == 1) {
 			Actor_Says(kActorSebastian, 680, 12);
 			Actor_Face_Actor(kActorMcCoy, kActorSebastian, true);
-			Actor_Says_With_Pause(kActorMcCoy, 7265, 0.0, kAnimationModeCombatIdle);
+			Actor_Says_With_Pause(kActorMcCoy, 7265, 0.0f, kAnimationModeCombatIdle);
 			Actor_Change_Animation_Mode(kActorMcCoy, kAnimationModeCombatIdle);
 			Delay(500);
 			Actor_Says(kActorSebastian, 690, 16);
 		} else {
 			Actor_Says(kActorSebastian, 700, 15);
-			Actor_Says_With_Pause(kActorMcCoy, 7270, 0.0, kAnimationModeCombatIdle);
+			Actor_Says_With_Pause(kActorMcCoy, 7270, 0.0f, kAnimationModeCombatIdle);
 			Actor_Change_Animation_Mode(kActorMcCoy, kAnimationModeCombatIdle);
 		}
 		AI_Movement_Track_Unpause(kActorSebastian);
@@ -395,6 +395,11 @@ void AIScriptSebastian::dialogue() {
 	DM_Add_To_List_Never_Repeat_Once_Selected(990, 7, 3, -1); // NEXUS-6
 
 	if (Dialogue_Menu_Query_List_Size()) {
+		// This condition clause for non-empty dialogue menu options before adding the DONE option
+		// only occurs in Sebastian's AI script.
+		// Probably because, selecting "DONE" here, McCoy has nothing to say
+		// so there's no point to add it as a "auto-selected" last option
+		// if no other options exist in the list
 		Dialogue_Menu_Add_DONE_To_List(1000); // DONE
 		Dialogue_Menu_Appear(320, 240);
 		int answer = Dialogue_Menu_Query_Input();
@@ -416,7 +421,7 @@ void AIScriptSebastian::dialogue() {
 			Actor_Says(kActorSebastian, 350, kAnimationModeTalk);
 			Actor_Says(kActorMcCoy, 7125, 13);
 			Actor_Says(kActorSebastian, 360, 17);
-			Actor_Says_With_Pause(kActorMcCoy, 7130, 1.0, kAnimationModeTalk);
+			Actor_Says_With_Pause(kActorMcCoy, 7130, 1.0f, kAnimationModeTalk);
 			Actor_Says(kActorMcCoy, 7135, 18);
 			break;
 
@@ -425,7 +430,7 @@ void AIScriptSebastian::dialogue() {
 			Actor_Says_With_Pause(kActorSebastian, 370, 0.30f, 13);
 			Actor_Says_With_Pause(kActorSebastian, 380, 0.70f, 17);
 			Actor_Says(kActorSebastian, 390, 14);
-			if (Actor_Clue_Query(kActorMcCoy, kClueChessTable)) { // cut feature? it is impossible to obtain this clue
+			if (Actor_Clue_Query(kActorMcCoy, kClueChessTable)) {
 				Actor_Says(kActorMcCoy, 7140, kAnimationModeTalk);
 				Actor_Says(kActorSebastian, 400, 12);
 				Actor_Says(kActorMcCoy, 7145, 16);

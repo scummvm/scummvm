@@ -119,10 +119,6 @@
 		<bitmap filename = 'editbtn_small.bmp'/>
 		<bitmap filename = 'switchbtn_small.bmp'/>
 		<bitmap filename = 'fastreplay_small.bmp'/>
-		<bitmap filename = 'dropbox.bmp'/>
-		<bitmap filename = 'onedrive.bmp'/>
-		<bitmap filename = 'googledrive.bmp'/>
-		<bitmap filename = 'box.bmp'/>
 	</bitmaps>
 
 	<fonts>
@@ -159,6 +155,23 @@
 		<font	id = 'tooltip_normal'
 				file = 'fixed5x8.bdf'
 				scalable_file = 'FreeMonoBold.ttf'
+				point_size = '8'
+		/>
+		<font	id = 'console'
+				file = 'builtinConsole'
+				scalable_file = 'SourceCodeVariable-Roman.ttf'
+				point_size = '12'
+		/>
+		<font	resolution = 'y<800'
+				id = 'console'
+				file = 'builtinConsole'
+				scalable_file = 'SourceCodeVariable-Roman.ttf'
+				point_size = '10'
+		/>
+		<font	resolution = 'y<400'
+				id = 'console'
+				file = 'builtinConsole'
+				scalable_file = 'SourceCodeVariable-Roman.ttf'
 				point_size = '8'
 		/>
 

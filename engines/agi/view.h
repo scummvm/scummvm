@@ -133,7 +133,8 @@ struct ScreenObjEntry {
 	// end of motion related variables
 	uint8 loop_flag;
 
-	ScreenObjEntry() { memset(this, 0, sizeof(ScreenObjEntry)); }
+	void reset() { memset(this, 0, sizeof(ScreenObjEntry)); }
+	ScreenObjEntry() { reset(); }
 }; // struct vt_entry
 
 } // End of namespace Agi

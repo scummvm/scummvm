@@ -58,6 +58,7 @@ const uint8 *EoBCoreEngine::initScriptTimers(const uint8 *pos) {
 		_scriptTimers[_scriptTimersCount].ticks = ticks;
 		pos += 2;
 		_scriptTimers[_scriptTimersCount++].next = _system->getMillis() + ticks * _tickLength;
+		debugC(3, kDebugLevelTimer, "EoBCoreEngine::initScriptTimers()   - CTIME: %08d   SCRIPT TIMER[%02d].NEXT: %08d", _system->getMillis(), _scriptTimersCount - 1, _scriptTimers[_scriptTimersCount - 1].next);
 	}
 
 	return pos;
@@ -76,6 +77,7 @@ void EoBCoreEngine::updateScriptTimers() {
 			if (_scriptTimers[i].next < _system->getMillis()) {
 				_inf->run(_scriptTimers[i].func, _flags.gameID == GI_EOB1 ? 0x20 : 0x80);
 				_scriptTimers[i].next = _system->getMillis() + _scriptTimers[i].ticks * _tickLength;
+				debugC(3, kDebugLevelTimer, "EoBCoreEngine::updateScriptTimers() - CTIME: %08d   SCRIPT TIMER[%02d].NEXT: %08d", _system->getMillis(), i, _scriptTimers[i].next);
 				_sceneUpdateRequired = true;
 				timerUpdate = true;
 			}
@@ -518,7 +520,6 @@ int EoBInfProcessor::oeob_moveInventoryItemToBlock(int8 *data) {
 }
 
 int EoBInfProcessor::oeob_printMessage_v1(int8 *data) {
-	static const char amigaColorMap[16] = { 0x00, 0x06, 0x1d, 0x1b, 0x1a, 0x17, 0x18, 0x0e, 0x19, 0x1c, 0x1c, 0x1e, 0x13, 0x0a, 0x11, 0x1f };
 	static const char colorConfig[] = "\x6\x21\x2\x21";
 	char col[5];
 	int8 *pos = data;
@@ -533,8 +534,8 @@ int EoBInfProcessor::oeob_printMessage_v1(int8 *data) {
 	if (_vm->gameFlags().platform == Common::kPlatformAmiga) {
 		assert((uint8)col[1] < 16);
 		assert((uint8)col[3] < 16);
-		col[1] = amigaColorMap[(uint8)col[1]];
-		col[3] = amigaColorMap[(uint8)col[3]];
+		col[1] = _amigaColorMap[(uint8)col[1]];
+		col[3] = _amigaColorMap[(uint8)col[3]];
 	}
 
 	_vm->txt()->printMessage(col);
@@ -549,6 +550,7 @@ int EoBInfProcessor::oeob_printMessage_v1(int8 *data) {
 }
 
 int EoBInfProcessor::oeob_printMessage_v2(int8 *data) {
+	
 	int8 *pos = data;
 	uint16 str = READ_LE_UINT16(pos);
 	pos += 2;
@@ -556,6 +558,12 @@ int EoBInfProcessor::oeob_printMessage_v2(int8 *data) {
 	pos += 2;
 
 	int c = 0;
+	_vm->_dialogueFieldAmiga = true;
+	if (_vm->gameFlags().platform == Common::kPlatformAmiga) {
+		assert(col < 16);
+		col = _amigaColorMap[col];
+	}
+	
 	if (_activeCharacter == -1) {
 		c = _vm->rollDice(1, 6, -1);
 		while (!_vm->testCharacter(c, 3))
@@ -1319,6 +1327,9 @@ int EoBInfProcessor::oeob_loadNewLevelOrMonsters(int8 *data) {
 		_vm->gui_drawAllCharPortraitsWithStats();
 		_subroutineStackPos = 0;
 
+		if (_vm->_flags.gameID == GI_EOB2 && _vm->_flags.platform == Common::kPlatformAmiga)
+			_vm->gui_restorePlayField();
+
 	} else {
 		cmd = *pos++;
 		_vm->releaseMonsterShapes(cmd * 18, 18);
@@ -1528,6 +1539,8 @@ int EoBInfProcessor::oeob_delay(int8 *data) {
 }
 
 int EoBInfProcessor::oeob_drawScene(int8 *data) {
+	if (_vm->game() == GI_EOB2 && _vm->gameFlags().platform == Common::kPlatformAmiga)
+		_screen->setupDualPalettesSplitScreen(_screen->getPalette(6), _screen->getPalette(7));
 	_vm->drawScene(1);
 	return 0;
 }
@@ -1629,6 +1642,10 @@ int EoBInfProcessor::oeob_specialEvent(int8 *data) {
 
 	return pos - data;
 }
+
+const uint8 EoBInfProcessor::_amigaColorMap[16] = {
+	0x00, 0x06, 0x1d, 0x1b, 0x1a, 0x17, 0x18, 0x0e, 0x19, 0x1c, 0x1c, 0x1e, 0x13, 0x0a, 0x11, 0x1f
+};
 
 } // End of namespace Kyra
 

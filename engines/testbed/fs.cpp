@@ -172,6 +172,35 @@ TestExitStatus FStests::testWriteFile() {
 }
 
 
+/**
+ * This test creates a directory testbed.dir, and confirms if the directory is created successfully
+ */
+TestExitStatus FStests::testCreateDir() {
+	const Common::String &path = ConfMan.get("path");
+	Common::FSNode gameRoot(path);
+	if (!gameRoot.exists()) {
+		Testsuite::logPrintf("Couldn't open the game data directory %s", path.c_str());
+		 return kTestFailed;
+	}
+
+	Common::FSNode dirToCreate = gameRoot.getChild("testbed.dir");
+
+	// TODO: Delete the directory after creating it
+	if (dirToCreate.exists()) {
+		Testsuite::logDetailedPrintf("Directory already exists in game data dir\n");
+		return kTestSkipped;
+	}
+
+	if (!dirToCreate.createDirectory()) {
+		Testsuite::logDetailedPrintf("Can't create directory in game data dir\n");
+		return kTestFailed;
+	}
+
+	Testsuite::logDetailedPrintf("Directory created successfully\n");
+	return kTestPassed;
+}
+
+
 
 FSTestSuite::FSTestSuite() {
 	// FS tests depend on Game Data files.
@@ -187,6 +216,7 @@ FSTestSuite::FSTestSuite() {
 	}
 	addTest("ReadingFile", &FStests::testReadFile, false);
 	addTest("WritingFile", &FStests::testWriteFile, false);
+	addTest("CreateDir",   &FStests::testCreateDir, false);
 }
 
 void FSTestSuite::enable(bool flag) {

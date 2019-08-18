@@ -57,7 +57,7 @@ bool AIScriptLuther::Update() {
 	}
 
 	if (Actor_Query_Goal_Number(kActorLuther) == kGoalLutherDefault
-	 && Actor_Query_Goal_Number(kActorLuther) != kGoalLutherDead
+	 && Actor_Query_Goal_Number(kActorLuther) != kGoalLutherDead // A bug? this is redundant
 	) {
 		Actor_Set_Goal_Number(kActorLuther, kGoalLutherMoveAround);
 		return false;
@@ -72,8 +72,8 @@ bool AIScriptLuther::Update() {
 	if ( Actor_Query_Goal_Number(kActorLuther) == kGoalLutherDyingStarted
 	 && !Game_Flag_Query(kFlagUG15LutherLanceStartedDying)
 	) {
-		AI_Countdown_Timer_Reset(kActorLuther, 2);
-		AI_Countdown_Timer_Start(kActorLuther, 2, 5);
+		AI_Countdown_Timer_Reset(kActorLuther, kActorTimerAIScriptCustomTask2);
+		AI_Countdown_Timer_Start(kActorLuther, kActorTimerAIScriptCustomTask2, 5);
 		Actor_Set_Goal_Number(kActorLuther, kGoalLutherDyingWait);
 		Game_Flag_Set(kFlagUG15LutherLanceStartedDying);
 		return false;
@@ -90,8 +90,8 @@ bool AIScriptLuther::Update() {
 		Actor_Set_Targetable(kActorLuther, false);
 		Scene_Loop_Set_Default(5); // UG16MainLoopNoComputerLight
 		Scene_Loop_Start_Special(kSceneLoopModeOnce, 4, true); // UG16SparkLoop
-		Ambient_Sounds_Play_Sound(559, 50, 0, 0, 99);
-		Ambient_Sounds_Remove_Looping_Sound(516, 1);
+		Ambient_Sounds_Play_Sound(kSfxCOMPDWN4, 50, 0, 0, 99);
+		Ambient_Sounds_Remove_Looping_Sound(kSfxELECLAB1, 1);
 		return false;
 	}
 
@@ -116,8 +116,8 @@ bool AIScriptLuther::Update() {
 }
 
 void AIScriptLuther::TimerExpired(int timer) {
-	if (timer == 2) {
-		AI_Countdown_Timer_Reset(kActorLuther, 2);
+	if (timer == kActorTimerAIScriptCustomTask2) {
+		AI_Countdown_Timer_Reset(kActorLuther, kActorTimerAIScriptCustomTask2);
 		Actor_Set_Goal_Number(kActorLuther, kGoalLutherDyingCheck);
 		// return true;
 	}
@@ -161,6 +161,16 @@ void AIScriptLuther::ShotAtAndMissed() {
 }
 
 bool AIScriptLuther::ShotAtAndHit() {
+#if BLADERUNNER_ORIGINAL_BUGS
+#else
+	if (Actor_Query_In_Set(kActorLuther, kSetKP07)) {
+		AI_Movement_Track_Flush(kActorLuther);
+		ChangeAnimationMode(kAnimationModeDie);
+		Actor_Retired_Here(kActorLuther, 6, 6, true, kActorMcCoy);
+		Actor_Set_Goal_Number(kActorLuther, kGoalLutherDie);
+		return false;
+	}
+#endif
 	if (Actor_Query_Which_Set_In(kActorLuther) == kSetUG16) {
 		Actor_Set_Health(kActorLuther, 50, 50);
 	}
@@ -181,6 +191,26 @@ bool AIScriptLuther::ShotAtAndHit() {
 
 void AIScriptLuther::Retired(int byActorId) {
 	Actor_Set_Goal_Number(kActorLuther, kGoalLutherGone);
+#if BLADERUNNER_ORIGINAL_BUGS
+#else
+	if (Actor_Query_In_Set(kActorLuther, kSetKP07)) {
+		Global_Variable_Decrement(kVariableReplicantsSurvivorsAtMoonbus, 1);
+		Actor_Set_Goal_Number(kActorLuther, kGoalLutherGone);
+
+		if (Global_Variable_Query(kVariableReplicantsSurvivorsAtMoonbus) == 0) {
+			Player_Loses_Control();
+			Delay(2000);
+			Player_Set_Combat_Mode(false);
+			Loop_Actor_Walk_To_XYZ(kActorMcCoy, -12.0f, -41.58f, 72.0f, 0, true, false, false);
+			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
+			Ambient_Sounds_Remove_All_Looping_Sounds(1);
+			Game_Flag_Set(kFlagKP07toKP06);
+			Game_Flag_Reset(kFlagMcCoyIsHelpingReplicants);
+			Set_Enter(kSetKP05_KP06, kSceneKP06);
+			return; //true;
+		}
+	}
+#endif // BLADERUNNER_ORIGINAL_BUGS
 }
 
 int AIScriptLuther::GetFriendlinessModifierIfGetsClue(int otherActorId, int clueId) {
@@ -205,7 +235,7 @@ bool AIScriptLuther::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		AI_Movement_Track_Flush(kActorLuther);
 		break;
 
-	case 499:
+	case kGoalLutherDead:
 		Actor_Set_Goal_Number(kActorLuther, kGoalLutherGone);
 		break;
 	}
@@ -340,7 +370,7 @@ bool AIScriptLuther::UpdateAnimation(int *animation, int *frame) {
 	case 12:
 		*animation = 359;
 		if (_animationFrame == 12) {
-			Ambient_Sounds_Play_Sound(557, 59, 0, 0, 20);
+			Ambient_Sounds_Play_Sound(kSfxHEADHIT2, 59, 0, 0, 20);
 		}
 		if (_animationFrame < Slice_Animation_Query_Number_Of_Frames(*animation) - 1) {
 			_animationFrame++;
@@ -417,7 +447,7 @@ bool AIScriptLuther::ChangeAnimationMode(int mode) {
 		_animationFrame = 0;
 		break;
 
-	case 48:
+	case kAnimationModeDie:
 		_animationState = 12;
 		_animationFrame = 0;
 		break;

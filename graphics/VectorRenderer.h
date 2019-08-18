@@ -43,9 +43,15 @@ typedef void (VectorRenderer::*DrawingFunctionCallback)(const Common::Rect &, co
 
 
 struct DrawStep {
+	DrawingFunctionCallback drawingCall; /**< Pointer to drawing function */
+	Graphics::Surface* blitSrc;
+	Graphics::TransparentSurface* blitAlphaSrc;
+
 	struct Color {
 		uint8 r, g, b;
 		bool set;
+
+		Color () : r(0), g(0), b(0), set(false) {}
 	};
 	Color fgColor; /**< Foreground color */
 	Color bgColor; /**< background color */
@@ -82,9 +88,22 @@ struct DrawStep {
 
 	GUI::ThemeEngine::AutoScaleMode autoscale; /**< scale alphaimage if present */
 
-	DrawingFunctionCallback drawingCall; /**< Pointer to drawing function */
-	Graphics::Surface *blitSrc;
-	Graphics::TransparentSurface *blitAlphaSrc;
+	DrawStep() {
+		drawingCall = nullptr;
+		blitSrc = nullptr;
+		blitAlphaSrc = nullptr;
+		// fgColor, bgColor, gradColor1, gradColor2, bevelColor initialized by Color default constructor
+		autoWidth = autoHeight = false;
+		x = y = w = h = 0;
+		// padding initialized by Common::Rect default constructor
+		xAlign = yAlign = kVectorAlignManual;
+		shadow = stroke = factor = radius = bevel = 0;
+		fillMode = 0;
+		shadowFillMode = 0;
+		extraData = 0;
+		scale = 0;
+		autoscale = GUI::ThemeEngine::kAutoScaleNone;
+	}
 };
 
 VectorRenderer *createRenderer(int mode);

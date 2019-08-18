@@ -33,9 +33,15 @@ namespace BladeRunner {
 class BladeRunnerEngine;
 
 class AudioMixer {
-	static const int kChannels = 9;
-	static const int kUsableChannels = 8;
-	static const int kMusicChannel = 8;
+#if BLADERUNNER_ORIGINAL_BUGS
+	static const int kChannels         = 9;
+	static const int kUsableChannels   = 8;
+	static const int kMusicChannel     = 8;
+#else
+	static const int kChannels         = 15;
+	static const int kUsableChannels   = 14;
+	static const int kMusicChannel     = 14;
+#endif // BLADERUNNER_ORIGINAL_BUGS
 	static const int kUpdatesPerSecond = 40;
 
 	struct Channel {
@@ -65,13 +71,13 @@ public:
 
 	int play(Audio::Mixer::SoundType type, Audio::RewindableAudioStream *stream, int priority, bool loop, int volume, int pan, void(*endCallback)(int, void *), void *callbackData);
 	int playMusic(Audio::RewindableAudioStream *stream, int volume, void(*endCallback)(int, void *), void *callbackData);
-	void stop(int channel, int delay);
+	void stop(int channel, uint32 delay);
 
-	void adjustVolume(int channel, int newVolume, int time);
-	void adjustPan(int channel, int newPan, int time);
+	void adjustVolume(int channel, int newVolume, uint32 time);
+	void adjustPan(int channel, int newPan, uint32 time);
 
-	void resume(int channel, int delay);
-	void pause(int channel, int delay);
+	void resume(int channel, uint32 delay);
+	void pause(int channel, uint32 delay);
 
 private:
 	int playInChannel(int channel, Audio::Mixer::SoundType type, Audio::RewindableAudioStream *stream, int priority, bool loop, int volume, int pan, void(*endCallback)(int, void *), void *callbackData);

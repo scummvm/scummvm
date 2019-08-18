@@ -167,10 +167,9 @@ POGO_TEXT_RESOURCE_TUPLE_LIST = [
 	(157, "Zion National Park"),
 	(158, "We 3 coders give special thanks to:")
  ]
-#
-#
-#
-class pogoTextResource:
+
+
+class pogoTextResource(object):
 	m_traceModeEnabled = True
 	# traceModeEnabled is bool to enable more printed debug messages
 	def __init__(self, traceModeEnabled = True):
@@ -178,20 +177,26 @@ class pogoTextResource:
 		return
 	
 	def printPogo(self):
+		if self.m_traceModeEnabled:
+			print "[Trace] printing Pogo..."
 		for (idTre, textTre) in POGO_TEXT_RESOURCE_TUPLE_LIST:
 			print "%s\t%s" % (idTre, textTre)
 		return
 		
 	def getPogoEntriesList(self):
+		if self.m_traceModeEnabled:
+			print "[Trace] getPogoEntriesList()"
 		return POGO_TEXT_RESOURCE_TUPLE_LIST
-
+		
+#
+#
+#
 if __name__ == '__main__':
-	#	 main()
+	# main()
 	print "[Debug] Running %s as main module" % (my_module_name)
 	traceModeEnabled = False
 	pogoTRInstance = pogoTextResource(traceModeEnabled)
 	pogoTRInstance.printPogo()
-	
 else:
 	#debug
 	#print "[Debug] Running	 %s imported from another module" % (my_module_name)

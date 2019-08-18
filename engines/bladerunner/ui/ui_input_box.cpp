@@ -53,12 +53,12 @@ void UIInputBox::draw(Graphics::Surface &surface) {
 	}
 
 	int rectHalfWidth = (_rect.right + _rect.left) / 2;
-	int textHalfWidth = _vm->_mainFont->getTextWidth(_text) / 2;
+	int textHalfWidth = _vm->_mainFont->getStringWidth(_text) / 2;
 
-	_vm->_mainFont->drawColor(_text, surface, rectHalfWidth - textHalfWidth, _rect.top, 0x4DC7); // 10011 01110 00111
+	_vm->_mainFont->drawString(&surface, _text, rectHalfWidth - textHalfWidth, _rect.top, surface.w, surface.format.RGBToColor(152, 112, 56));
 
 	if (_cursorIsVisible) {
-		surface.vLine(textHalfWidth + rectHalfWidth + 2, _rect.top, _rect.bottom - 1, 0x7FDD); // 11111 11110 11101
+		surface.vLine(textHalfWidth + rectHalfWidth + 2, _rect.top, _rect.bottom - 1, surface.format.RGBToColor(248, 240, 232));
 	}
 
 	if (_vm->_time->currentSystem() - _timeLast > 500) {
@@ -83,24 +83,16 @@ void UIInputBox::hide() {
 	_isVisible = false;
 }
 
-void UIInputBox::handleKeyUp(const Common::KeyState &kbd) {
-	if (_isVisible) {
-		// Check for "Enter" in keyUp instead of in keyDown as keyDown is repeating characters
-		// and that can screw up UX (which is not great in the original game either).
-		if (kbd.keycode == Common::KEYCODE_RETURN && !_text.empty()) {
-			if (_valueChangedCallback) {
-				_valueChangedCallback(_callbackData, this);
-			}
-		}
-	}
-}
-
 void UIInputBox::handleKeyDown(const Common::KeyState &kbd) {
 	if (_isVisible) {
 		if (charIsValid(kbd) && _text.size() < _maxLength) {
 			_text += kbd.ascii;
 		} else if (kbd.keycode == Common::KEYCODE_BACKSPACE) {
 			_text.deleteLastChar();
+		} else if (kbd.keycode == Common::KEYCODE_RETURN && !_text.empty()) {
+			if (_valueChangedCallback) {
+				_valueChangedCallback(_callbackData, this);
+			}
 		}
 	}
 }

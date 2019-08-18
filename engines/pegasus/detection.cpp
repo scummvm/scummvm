@@ -43,7 +43,8 @@ bool PegasusEngine::hasFeature(EngineFeature f) const {
 	return
 		(f == kSupportsRTL)
 		|| (f == kSupportsLoadingDuringRuntime)
-		|| (f == kSupportsSavingDuringRuntime);
+		|| (f == kSupportsSavingDuringRuntime)
+		|| (f == kSupportsJoystick);
 }
 
 bool PegasusEngine::isDemo() const {

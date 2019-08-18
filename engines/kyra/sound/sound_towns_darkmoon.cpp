@@ -20,11 +20,12 @@
  *
  */
 
+#ifdef ENABLE_EOB
+
 #include "kyra/sound/sound_intern.h"
 #include "kyra/resource/resource.h"
 
 #include "common/config-manager.h"
-#include "common/system.h"
 
 #include "backends/audiocd/audiocd.h"
 
@@ -34,7 +35,7 @@
 namespace Kyra {
 
 SoundTowns_Darkmoon::SoundTowns_Darkmoon(KyraEngine_v1 *vm, Audio::Mixer *mixer) : Sound(vm, mixer) {
-	_intf = new TownsAudioInterface(mixer, this, false);
+	_intf = new TownsAudioInterface(mixer, this);
 	_pcmData = 0;
 	_pcmVol = 0;
 	_timer = 0;
@@ -284,3 +285,5 @@ void SoundTowns_Darkmoon::resetTrigger() {
 }
 
 } // End of namespace Kyra
+
+#endif

@@ -61,8 +61,15 @@ void EoBCoreEngine::gui_drawPlayField(bool refresh) {
 		_screen->updateScreen();
 
 	_screen->loadEoBBitmap("INVENT", _cgaMappingInv, 5, 3, 2);
-	if (_flags.platform == Common::kPlatformAmiga)
-		_screen->getPalette(0).copy(_screen->getPalette(1), 1, 5, 1);
+
+	if (_flags.platform == Common::kPlatformAmiga) {
+		if (_flags.gameID == GI_EOB1) {
+			_screen->getPalette(0).copy(_screen->getPalette(1), 1, 5, 1);
+		} else {
+			_screen->setupDualPalettesSplitScreen(_screen->getPalette(6), _screen->getPalette(1));
+			_screen->getPalette(7).copy(_screen->getPalette(1), 0, 32);
+		}
+	}
 }
 
 void EoBCoreEngine::gui_restorePlayField() {
@@ -368,7 +375,7 @@ void EoBCoreEngine::gui_drawHitpoints(int index) {
 		y = 16;
 		w = 51;
 		h = 5;
-		if (_flags.platform == Common::kPlatformAmiga)
+		if (_flags.platform == Common::kPlatformAmiga && _flags.gameID == GI_EOB1)
 			bgCol = guiSettings()->colors.sfill;
 	}
 
@@ -500,7 +507,7 @@ void EoBCoreEngine::gui_drawInventoryItem(int slot, int redraw, int pageNum) {
 
 		uint8 col1 = guiSettings()->colors.frame1;
 		uint8 col2 = guiSettings()->colors.frame2;
-		if (_flags.platform == Common::kPlatformAmiga) {
+		if (_flags.gameID == GI_EOB1 && _flags.platform == Common::kPlatformAmiga) {
 			col1 = guiSettings()->colors.inactiveTabFrame1;
 			col2 = guiSettings()->colors.inactiveTabFrame2;
 		} else if (_configRenderMode == Common::kRenderCGA) {
@@ -3233,7 +3240,7 @@ void GUI_EoB::runMemorizePrayMenu(int charIndex, int spellType) {
 		if (updateDesc) {
 			updateDesc = false;
 			_screen->set16bitShadingLevel(4);
-			_screen->printShadedText(Common::String::format(_vm->_menuStringsMgc[1], np[lastHighLightButton] - numAssignedSpellsPerBookPage[lastHighLightButton], np[lastHighLightButton]).c_str(), 8, 38, 9, _vm->guiSettings()->colors.fill, _vm->guiSettings()->colors.guiColorBlack);
+			_screen->printShadedText(Common::String::format(_vm->_menuStringsMgc[1], np[lastHighLightButton] - numAssignedSpellsPerBookPage[lastHighLightButton], np[lastHighLightButton]).c_str(), 8, 38, _vm->guiSettings()->colors.guiColorLightBlue, _vm->guiSettings()->colors.fill, _vm->guiSettings()->colors.guiColorBlack);
 			_screen->set16bitShadingLevel(0);
 		}
 
@@ -4327,7 +4334,7 @@ void GUI_EoB::restParty_updateRestTime(int hours, bool init) {
 		_vm->_txt->clearCurDim();
 		drawMenuButtonBox(_screen->_curDim->sx << 3, _screen->_curDim->sy, _screen->_curDim->w << 3, _screen->_curDim->h, false, false);
 		_screen->copyRegion(_screen->_curDim->sx << 3, _screen->_curDim->sy, _screen->_curDim->sx << 3, _screen->_curDim->sy, _screen->_curDim->w << 3, _screen->_curDim->h, 0, 2, Screen::CR_NO_P_CHECK);
-		_screen->printShadedText(getMenuString(42), (_screen->_curDim->sx + 1) << 3, _screen->_curDim->sy + 5, 9, 0, _vm->guiSettings()->colors.guiColorBlack);
+		_screen->printShadedText(getMenuString(42), (_screen->_curDim->sx + 1) << 3, _screen->_curDim->sy + 5, _vm->guiSettings()->colors.guiColorLightBlue, 0, _vm->guiSettings()->colors.guiColorBlack);
 	}
 
 	_screen->setCurPage(0);

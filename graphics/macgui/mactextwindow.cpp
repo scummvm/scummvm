@@ -190,7 +190,7 @@ void MacTextWindow::drawSelection() {
 	end = MIN((int)getInnerDimensions().height(), end);
 
 	int numLines = 0;
-	int x1, x2;
+	int x1 = 0, x2 = 0;
 
 	for (int y = start; y < end; y++) {
 		if (!numLines) {

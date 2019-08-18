@@ -34,18 +34,18 @@ void SceneScriptKP06::InitializeScene() {
 	Scene_Exit_Add_2D_Exit(0, 270, 445, 639, 479, 2);
 	Scene_Exit_Add_2D_Exit(1, 320, 158, 352, 220, 0);
 
-	Ambient_Sounds_Add_Looping_Sound(464, 34, 1, 1);
-	Ambient_Sounds_Add_Looping_Sound(383, 27, 1, 1);
-	Ambient_Sounds_Add_Looping_Sound(384, 90, 1, 1);
-	Ambient_Sounds_Add_Sound(440, 2, 100, 25,  33, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(441, 2, 100, 25,  33, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(442, 2, 100, 25,  33, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(375, 5, 180, 50, 100, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(376, 5, 180, 50, 100, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(377, 5, 180, 50, 100, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(443, 2, 100, 25,  33, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(444, 2, 100, 25,  33, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(445, 2, 100, 25,  33, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Looping_Sound(kSfxKPAMB1,   34, 1, 1);
+	Ambient_Sounds_Add_Looping_Sound(kSfxSKINBED1, 27, 1, 1);
+	Ambient_Sounds_Add_Looping_Sound(kSfxRUMLOOP1, 90, 1, 1);
+	Ambient_Sounds_Add_Sound(kSfxSCARY1,  2, 100, 25,  33, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxSCARY2,  2, 100, 25,  33, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxSCARY3,  2, 100, 25,  33, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxTHNDER2, 5, 180, 50, 100, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxTHNDER3, 5, 180, 50, 100, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxTHNDER4, 5, 180, 50, 100, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxSCARY4,  2, 100, 25,  33, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxSCARY5,  2, 100, 25,  33, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxSCARY6,  2, 100, 25,  33, -100, 100, -101, -101, 0, 0);
 
 	if (Game_Flag_Query(kFlagKP05toKP06) ) {
 		Scene_Loop_Start_Special(kSceneLoopModeLoseControl, 0, false);
@@ -102,7 +102,7 @@ bool SceneScriptKP06::ClickedOnItem(int itemId, bool a2) {
 
 bool SceneScriptKP06::ClickedOnExit(int exitId) {
 	if (exitId == 0) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -868.0f, 8.26f, -68.0f, 0, 1, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -868.0f, 8.26f, -68.0f, 0, true, false, false)) {
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
 			Game_Flag_Set(kFlagKP06toKP05);
@@ -113,9 +113,9 @@ bool SceneScriptKP06::ClickedOnExit(int exitId) {
 
 	if (exitId == 1) {
 		if (Actor_Clue_Query(kActorSadik, kCluePowerSource)
-		 || Actor_Query_Goal_Number(kActorSadik) != kGoalSadikUG18NeedsReactorCoreFromMcCoy
+		 || Actor_Query_Goal_Number(kActorSadik) != kGoalSadikKP06NeedsReactorCoreFromMcCoy
 		) {
-			if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -731.0f, 8.26f, -657.0f, 0, true, false, 0)) {
+			if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -731.0f, 8.26f, -657.0f, 0, true, false, false)) {
 				if (Game_Flag_Query(kFlagMcCoyIsHelpingReplicants)) {
 					if (!Game_Flag_Query(kFlagMcCoyAttackedReplicants)) {
 						Player_Set_Combat_Mode(false);
@@ -134,7 +134,7 @@ bool SceneScriptKP06::ClickedOnExit(int exitId) {
 			Actor_Says(kActorSadik, 280, kAnimationModeTalk);
 			Actor_Says(kActorSadik, 290, kAnimationModeTalk);
 			Actor_Clue_Acquire(kActorSadik, kCluePowerSource, true, kActorMcCoy);
-			Loop_Actor_Walk_To_XYZ(kActorMcCoy, -731.0f, 8.26f, -657.0f, 0, false, true, 0);
+			Loop_Actor_Walk_To_XYZ(kActorMcCoy, -731.0f, 8.26f, -657.0f, 0, false, true, false);
 			Player_Set_Combat_Mode(false);
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
@@ -181,7 +181,7 @@ void SceneScriptKP06::PlayerWalkedIn() {
 				Actor_Says(kActorSteele, 2580, 15);
 				Actor_Says(kActorSteele, 2590, 12);
 			}
-			Async_Actor_Walk_To_Waypoint(kActorMcCoy, 551, 0, 0);
+			Async_Actor_Walk_To_Waypoint(kActorMcCoy, 551, 0, false);
 			Delay(1000);
 			Actor_Says(kActorMcCoy, 6220, -1);
 			Delay(3000);
@@ -212,18 +212,26 @@ void SceneScriptKP06::PlayerWalkedIn() {
 			Actor_Says(kActorGaff, 290, 14);
 			Actor_Says(kActorGaff, 300, 15);
 			Actor_Says(kActorMcCoy, 6270, 11);
-			Async_Actor_Walk_To_Waypoint(kActorMcCoy, 550, 0, 0);
-			Async_Actor_Walk_To_Waypoint(kActorGaff, 551, 0, 0);
+			Async_Actor_Walk_To_Waypoint(kActorMcCoy, 550, 0, false);
+			Async_Actor_Walk_To_Waypoint(kActorGaff, 551, 0, false);
 			Actor_Says(kActorGaff, 310, -1);
 			Delay(3000);
 			Outtake_Play(kOuttakeEnd7, false, -1);
+#if BLADERUNNER_ORIGINAL_BUGS
+#else
+			// match behavior of other ending outtakes
+			// but do it after the cutscene,
+			// since this particular cutscene has no sound
+			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
+			Ambient_Sounds_Remove_All_Looping_Sounds(1);
+#endif // BLADERUNNER_ORIGINAL_BUGS
 			Game_Over();
 		}
 		return; // true;
 	}
 
 	if (Actor_Query_Goal_Number(kActorSadik) == 414) {
-		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -809.0f, 8.26f, -619.0f, 0, 0, false, 0);
+		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -809.0f, 8.26f, -619.0f, 0, false, false, false);
 		Actor_Face_Actor(kActorMcCoy, kActorSadik, true);
 		Actor_Set_Goal_Number(kActorSadik, 415);
 	}

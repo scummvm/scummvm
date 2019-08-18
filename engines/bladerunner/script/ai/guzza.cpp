@@ -40,15 +40,20 @@ void AIScriptGuzza::Initialize() {
 	_counter = 0;
 	_state = 0;
 	_flag = false;
+#if BLADERUNNER_ORIGINAL_BUGS
+	// Guzza begins with -1 as a goal number in the original, it is unset until Act 2
+#else
+	Actor_Set_Goal_Number(kActorGuzza, kGoalGuzzaDefault);
+#endif // BLADERUNNER_ORIGINAL_BUGS
 }
 
 bool AIScriptGuzza::Update() {
 	if (Global_Variable_Query(kVariableChapter) == 2) {
-		if (!Game_Flag_Query(kFlagPS04GuzzaLeft)) {
-			Game_Flag_Set(kFlagPS04GuzzaLeft);
+		if (!Game_Flag_Query(kFlagGuzzaIsMovingAround)) {
+			Game_Flag_Set(kFlagGuzzaIsMovingAround);
 			Actor_Put_In_Set(kActorGuzza, kSetFreeSlotC);
 			Actor_Set_At_Waypoint(kActorGuzza, 35, 0);
-			Actor_Set_Goal_Number(kActorGuzza, kGoalGuzzaLeaveOffice);
+			Actor_Set_Goal_Number(kActorGuzza, kGoalGuzzaLeftOffice);
 			return true;
 		}
 
@@ -69,28 +74,54 @@ void AIScriptGuzza::TimerExpired(int timer) {
 }
 
 void AIScriptGuzza::CompletedMovementTrack() {
+	// For Guzza, his movement tracks and goals are used to make him move around
+	// If McCoy enters his office (PS04) his movement is paused (and unpaused when McCoy exits),
+	// so ,while McCoy is there, Guzza won't blink in or out of the office.
+	// Guzza starts moving around from Act 2. In Act 1 he has no movement tracks and stays in his office -- and in original his goal is -1 (undefined).
+	//
+	// In Act 2, he may appear at HC01 when McCoy enters HC01 from AR01 (goal  (if he hasn't been there already
+	// After that he can be there by 50% after he leaves the office (if his goal is set to kGoalGuzzaGoToHawkersCircle1)
+	//
+	// In Acts 2, 3: if McCoy enters the Police Elevator from ground floor, Guzza's goal is reset to "kGoalGuzzaLeftOffice"
+	// so Guzza can't get "stuck" away from his office forever during those Acts
+	//
+	// TODO Check if in Act 4: is it possible (albeit highly unlikely) that he will be at Hawker's Circle (but hidden at final waypoint of kGoalGuzzaGoToHawkersCircle1) (before UG18 meeting)?
+	//
+	// In Act 4, after his scene in UG18, he goes to kSetFreeSlotI and stays there
 	switch (Actor_Query_Goal_Number(kActorGuzza)) {
-	case kGoalGuzzaLeaveOffice:
-		Actor_Set_Goal_Number(kActorGuzza, kGoalGuzzaGoToOffice);
+	case kGoalGuzzaLeftOffice:
+		// This puts Guzza back to his office, when his time away (track) is complete
+		// Guzza stays in his office for 600 seconds (10 minutes)
+		Actor_Set_Goal_Number(kActorGuzza, kGoalGuzzaAtOffice);
 		// return true;
 		break;
 
-	case kGoalGuzzaGoToOffice:
+	case kGoalGuzzaAtOffice:
+		// after his time in the office is complete:
 		if (Random_Query(1, 2) == 1) {
+			// Guzza goes to Hawker's Circle
+			// (and stays at final way point awaiting a goal change)
 			Actor_Set_Goal_Number(kActorGuzza, kGoalGuzzaGoToHawkersCircle1);
 		} else {
+			// Guzza goes "away" for 60 seconds (1 minute)
+			// (and stays at final way point awaiting a goal change)
 			Actor_Set_Goal_Number(kActorGuzza, kGoalGuzzaGoToFreeSlotB);
 		}
 		// return true;
 		break;
 
 	case kGoalGuzzaGoToHawkersCircle2:
-		Actor_Set_Goal_Number(kActorGuzza, kGoalGuzzaLeaveOffice);
+		// After the short walk in Hawker's Circle:
+		// Guzza will "leave his office", stay for 90 seconds in kSetFreeSlotC
+		// (after that he'll be back in his office)
+		Actor_Set_Goal_Number(kActorGuzza, kGoalGuzzaLeftOffice);
 		// return true;
 		break;
 
-	case kGoalGuzzaGoToFreeSlotG:
-		Actor_Set_Goal_Number(kActorGuzza, kGoalGuzzaLeaveOffice);
+	case kGoalGuzzaGoToFreeSlotG: // bug? when does this happen?
+		// Guzza will "leave his office", stay for 90 seconds in kSetFreeSlotC
+		// (after that he'll be back in his office)
+		Actor_Set_Goal_Number(kActorGuzza, kGoalGuzzaLeftOffice);
 		// return true;
 		break;
 
@@ -104,21 +135,25 @@ void AIScriptGuzza::ReceivedClue(int clueId, int fromActorId) {
 
 void AIScriptGuzza::ClickedByPlayer() {
 	if (Global_Variable_Query(kVariableChapter) == 2
-	 && Game_Flag_Query(kFlagPS04GuzzaLeft)
+	 && Game_Flag_Query(kFlagGuzzaIsMovingAround)
 	) {
 		Actor_Face_Actor(kActorMcCoy, kActorGuzza, true);
-		if (Actor_Query_Friendliness_To_Other(kActorGordo, kActorMcCoy) < 48) {
+
+#if BLADERUNNER_ORIGINAL_BUGS
+		if (Actor_Query_Friendliness_To_Other(kActorGordo, kActorMcCoy) < 48) { // a bug? shouldn't this be Gordo?
 			Actor_Says(kActorMcCoy, 3970, 13);
 			Actor_Says(kActorGuzza, 780, -1);
 		}
-		//TODO: test this, looks like a bug in game
+		// TODO: test this, looks like a bug in game
+		// At the very least Random_Query(1, 4) should only be calculated once
+		// and clicking on Guzza should probably always produce a quote?
 		if (Random_Query(1, 4) == 1) {
-			AI_Movement_Track_Pause(4);
+			AI_Movement_Track_Pause(kActorGuzza);
 			Actor_Says(kActorMcCoy, 4005, 15);
 			Actor_Says(kActorGuzza, 780, -1);
 			AI_Movement_Track_Unpause(kActorGuzza);
 		} else if (Random_Query(1, 4) == 2) {
-			AI_Movement_Track_Pause(4);
+			AI_Movement_Track_Pause(kActorGuzza);
 			Actor_Says(kActorMcCoy, 3970, 14);
 			Actor_Says(kActorGuzza, 780, -1);
 			AI_Movement_Track_Unpause(kActorGuzza);
@@ -127,6 +162,36 @@ void AIScriptGuzza::ClickedByPlayer() {
 		} else if (Random_Query(1, 4) == 4) {
 			Actor_Says(kActorMcCoy, 3970, 13);
 		}
+#else
+		if (Actor_Query_Friendliness_To_Other(kActorGuzza, kActorMcCoy) < 48) {
+			Actor_Says(kActorMcCoy, 3970, 13);	// Hey
+			Actor_Says(kActorGuzza, 780, -1);   // Get lost
+		} else {
+			// At the very least Random_Query(1, 4) should only be calculated once
+			switch (Random_Query(1, 4)) {
+			case 1:
+				AI_Movement_Track_Pause(kActorGuzza);
+				Actor_Says(kActorMcCoy, 4005, 15);
+				Actor_Says(kActorGuzza, 780, -1);
+				AI_Movement_Track_Unpause(kActorGuzza);
+				break;
+			case 2:
+				AI_Movement_Track_Pause(kActorGuzza);
+				Actor_Says(kActorMcCoy, 3970, 14);
+				Actor_Says(kActorGuzza, 780, -1);
+				AI_Movement_Track_Unpause(kActorGuzza);
+				break;
+			case 3:
+				Actor_Says(kActorMcCoy, 3970, 16);
+				break;
+			case 4:
+				// fall through
+			default:
+				Actor_Says(kActorMcCoy, 3970, 13);
+				break;
+			}
+		}
+#endif // BLADERUNNER_ORIGINAL_BUGS
 	}
 	// return false;
 }
@@ -174,7 +239,8 @@ int AIScriptGuzza::GetFriendlinessModifierIfGetsClue(int otherActorId, int clueI
 
 bool AIScriptGuzza::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 	switch (newGoalNumber) {
-	case kGoalGuzzaLeaveOffice:
+	case kGoalGuzzaLeftOffice:
+		// Guzza stays for a few seconds in his office (waypoint 263) then goes to kSetFreeSlotC (waypoint 35) for 90 seconds
 		AI_Movement_Track_Flush(kActorGuzza);
 		AI_Movement_Track_Append_With_Facing(kActorGuzza, 263, 0, 150);
 		AI_Movement_Track_Append_With_Facing(kActorGuzza, 263, 5, 150);
@@ -183,6 +249,7 @@ bool AIScriptGuzza::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		return true;
 
 	case kGoalGuzzaGoToHawkersCircle1:
+		// walk around in kSetHC01_HC02_HC03_HC04 for a short while
 		AI_Movement_Track_Flush(kActorGuzza);
 		AI_Movement_Track_Append(kActorGuzza, 258, 0);
 		AI_Movement_Track_Append(kActorGuzza, 260, 8);
@@ -191,14 +258,16 @@ bool AIScriptGuzza::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		AI_Movement_Track_Repeat(kActorGuzza);
 		return true;
 
-	case kGoalGuzzaGoToOffice:
+	case kGoalGuzzaAtOffice:
+		// stay for 600 seconds in office
 		AI_Movement_Track_Flush(kActorGuzza);
-		AI_Movement_Track_Flush(kActorGuzza);
+		AI_Movement_Track_Flush(kActorGuzza); // a bug? is this needed twice?
 		AI_Movement_Track_Append_With_Facing(kActorGuzza, 263, 600, 150);
 		AI_Movement_Track_Repeat(kActorGuzza);
 		return true;
 
 	case kGoalGuzzaGoToHawkersCircle2:
+		// walk around in kSetHC01_HC02_HC03_HC04 for few seconds
 		AI_Movement_Track_Flush(kActorGuzza);
 		AI_Movement_Track_Append(kActorGuzza, 258, 0);
 		AI_Movement_Track_Append(kActorGuzza, 259, 1);
@@ -207,12 +276,14 @@ bool AIScriptGuzza::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		return true;
 
 	case kGoalGuzzaGoToFreeSlotB:
+		// stay in kSetFreeSlotB for 60 seconds
 		AI_Movement_Track_Flush(kActorGuzza);
 		AI_Movement_Track_Append(kActorGuzza, 34, 60);
 		AI_Movement_Track_Repeat(kActorGuzza);
 		return true;
 
 	case kGoalGuzzaGoToFreeSlotG:
+		// stay in kSetFreeSlotG for 39 seconds // a bug? this goal is never set
 		AI_Movement_Track_Flush(kActorGuzza);
 		AI_Movement_Track_Append(kActorGuzza, 39, 120);
 		AI_Movement_Track_Repeat(kActorGuzza);
@@ -953,7 +1024,7 @@ bool AIScriptGuzza::ChangeAnimationMode(int mode) {
 		_animationFrame = 0;
 		break;
 
-	case 48:
+	case kAnimationModeDie:
 		_animationState = 28;
 		_animationFrame = 0;
 		break;

@@ -32,12 +32,11 @@ namespace Glk {
 namespace Frotz {
 
 GlkInterface::GlkInterface(OSystem *syst, const GlkGameDescription &gameDesc) :
-		GlkAPI(syst, gameDesc),
-		_pics(nullptr), oldstyle(0), curstyle(0), curr_font(1), prev_font(1), temp_font(0),
-		curr_status_ht(0), mach_status_ht(0), gos_status(nullptr), gos_linepending(0), gos_linebuf(nullptr),
-		gos_linewin(nullptr), gos_channel(nullptr), mwin(0), mouse_x(0), mouse_y(0), fixforced(0), menu_selected(0),
-		enable_wrapping(false), enable_scripting(false), enable_scrolling(false), enable_buffering(false),
-		next_sample(0), next_volume(0), _soundLocked(false), _soundPlaying(false), _reverseVideo(false) {
+		GlkAPI(syst, gameDesc), _pics(nullptr), curr_status_ht(0), mach_status_ht(0), gos_status(nullptr),
+		gos_linepending(0), gos_linebuf(nullptr), gos_linewin(nullptr), gos_channel(nullptr), mwin(0),
+		mouse_x(0), mouse_y(0), fixforced(0), menu_selected(0), enable_wrapping(false), enable_scripting(false),
+		enable_scrolling(false), enable_buffering(false), next_sample(0), next_volume(0), _soundLocked(false),
+		_soundPlaying(false), _reverseVideo(false) {
 	Common::fill(&statusline[0], &statusline[256], '\0');
 	Common::fill(&zcolors[0], &zcolors[zcolor_NUMCOLORS], 0);
 }
@@ -47,8 +46,6 @@ GlkInterface::~GlkInterface() {
 }
 
 void GlkInterface::initialize() {
-	uint width, height;
-
 	/* Setup options */
 	UserOptions::initialize(h_version, _storyId);
 
@@ -124,23 +121,14 @@ void GlkInterface::initialize() {
 	 * Get the screen size
 	 */
 
-	_wp._lower = glk_window_open(0, 0, 0, wintype_TextGrid, 0);
-	if (!_wp._lower)
-		_wp._lower = glk_window_open(0, 0, 0, wintype_TextBuffer, 0);
-	glk_window_get_size(_wp._lower, &width, &height);
-	glk_window_close(_wp._lower, nullptr);
-	_wp._lower = nullptr;
-
 	gos_channel = nullptr;
 
-	h_screen_cols = width;
-	h_screen_rows = height;
-
-	h_screen_height = h_screen_rows;
-	h_screen_width = h_screen_cols;
-
-	h_font_width = 1;
-	h_font_height = 1;
+	h_screen_width = g_system->getWidth();
+	h_screen_height = g_system->getHeight();
+	h_font_width = g_conf->_monoInfo._cellW;
+	h_font_height = g_conf->_monoInfo._cellH;
+	h_screen_cols = h_screen_width / h_font_width;
+	h_screen_rows = h_screen_height / h_font_height;
 
 	// Must be after screen dimensions are computed
 	if (g_conf->_graphics) {
@@ -255,14 +243,12 @@ bool GlkInterface::initPictures() {
 	}
 
 	if (h_version == V6)
-		warning("Could not locate MG1 file");
+		error("Could not locate MG1 file");
 	return false;
 }
 
 int GlkInterface::os_char_width(zchar z) {
-	// Note: I'm presuming this is 1 because Glk Text Grid windows take care of font sizes internally,
-	// so we can pretend that any font has a 1x1 size
-	return 1;
+	return g_conf->_monoInfo._cellW;
 }
 
 int GlkInterface::os_string_width(const zchar *s) {
@@ -334,11 +320,8 @@ bool GlkInterface::os_picture_data(int picture, uint *height, uint *width) {
 		uint fullWidth, fullHeight;
 		bool result = glk_image_get_info(picture, &fullWidth, &fullHeight);
 
-		int x_scale = g_system->getWidth();
-		int y_scale = g_system->getHeight();
-
-		*width = roundDiv(fullWidth * h_screen_cols, x_scale);
-		*height = roundDiv(fullHeight * h_screen_rows, y_scale);
+		*width = fullWidth;
+		*height = fullHeight;
 
 		return result;
 	}
@@ -542,21 +525,19 @@ void GlkInterface::showBeyondZorkTitle() {
 }
 
 void GlkInterface::os_draw_picture(int picture, const Common::Point &pos) {
-	assert(pos.x != 0 && pos.y != 0);
-	if (_wp._cwin == 0) {
-		// Picture embedded within the lower text area
-		glk_image_draw(_wp._lower, picture, imagealign_MarginLeft, 0);
-	} else {
-		glk_image_draw(_wp._background, picture,
-			(pos.x - 1) * g_conf->_monoInfo._cellW,
-			(pos.y - 1) * g_conf->_monoInfo._cellH);
-	}
-}
+	if (pos.x && pos.y) {
+		_wp._background->bringToFront();
+		Point pt(pos.x - 1, pos.y - 1);
+		if (h_version < V5) {
+			pt.x *= g_conf->_monoInfo._cellW;
+			pt.y *= g_conf->_monoInfo._cellH;
+		}
 
-void GlkInterface::os_draw_picture(int picture, const Common::Rect &r) {
-	Point cell(g_conf->_monoInfo._cellW, g_conf->_monoInfo._cellH);
-	glk_image_draw_scaled(_wp._background, picture, (r.left - 1) * cell.x, (r.top - 1) * cell.y,
-		r.width() * cell.x, r.height() * cell.y);
+		glk_image_draw(_wp._background, picture, pt.x, pt.y);
+	} else {
+		// Picture embedded within the lower text area
+		_wp.currWin().imageDraw(picture, imagealign_MarginLeft, 0);
+	}
 }
 
 int GlkInterface::os_peek_color() {
@@ -566,7 +547,7 @@ int GlkInterface::os_peek_color() {
 		return (_reverseVideo) ? h_default_foreground : h_default_background;
 	}
 /*
- if (u_setup.color_enabled) {
+ if (u_setup.color_enabled) { */
 #ifdef COLOR_SUPPORT
 	short fg, bg;
 	pair_content(PAIR_NUMBER(inch() & A_COLOR), &fg, &bg);
@@ -585,38 +566,46 @@ int GlkInterface::os_peek_color() {
 }
 
 zchar GlkInterface::os_read_key(int timeout, bool show_cursor) {
-	event_t ev;
-	winid_t win = _wp.currWin() ? _wp.currWin() : _wp._lower;
+	Window &win = _wp.currWin() ? _wp.currWin() : _wp._lower;
+	uint key;
 
-	if (gos_linepending)
-		gos_cancel_pending_line();
+	if (win) {
+		// Get a keypress from a window
+		if (gos_linepending)
+			gos_cancel_pending_line();
 
-	glk_request_char_event_uni(win);
-	if (timeout != 0)
-		glk_request_timer_events(timeout * 100);
+		glk_request_char_event_uni(win);
+		if (timeout != 0)
+			glk_request_timer_events(timeout * 100);
 
-	while (!shouldQuit()) {
-		glk_select(&ev);
-		if (ev.type == evtype_Arrange) {
-			gos_update_height();
-			gos_update_width();
-		} else if (ev.type == evtype_Timer) {
-			glk_cancel_char_event(win);
-			glk_request_timer_events(0);
-			return ZC_TIME_OUT;
-		} else if (ev.type == evtype_CharInput)
-			break;
+		event_t ev;
+		while (!shouldQuit()) {
+			glk_select(&ev);
+			if (ev.type == evtype_Arrange) {
+				gos_update_height();
+				gos_update_width();
+			} else if (ev.type == evtype_Timer) {
+				glk_cancel_char_event(win);
+				glk_request_timer_events(0);
+				return ZC_TIME_OUT;
+			} else if (ev.type == evtype_CharInput)
+				break;
+		}
+		if (shouldQuit())
+			return 0;
+
+		glk_request_timer_events(0);
+
+		if (_wp._upper && mach_status_ht < curr_status_ht)
+			reset_status_ht();
+		curr_status_ht = 0;
+		key = ev.val1;
+	} else {
+		// No active window, so get a raw keypress
+		key = _events->getKeypress();
 	}
-	if (shouldQuit())
-		return 0;
 
-	glk_request_timer_events(0);
-
-	if (_wp._upper && mach_status_ht < curr_status_ht)
-		reset_status_ht();
-	curr_status_ht = 0;
-
-	switch (ev.val1) {
+	switch (key) {
 	case keycode_Escape: return ZC_ESCAPE;
 	case keycode_PageUp: return ZC_ARROW_MIN;
 	case keycode_PageDown: return ZC_ARROW_MAX;
@@ -628,7 +617,7 @@ zchar GlkInterface::os_read_key(int timeout, bool show_cursor) {
 	case keycode_Delete: return ZC_BACKSPACE;
 	case keycode_Tab: return ZC_INDENT;
 	default:
-		return ev.val1;
+		return key;
 	}
 }
 
@@ -692,13 +681,6 @@ uint GlkInterface::roundDiv(uint x, uint y) {
 	if ((dblremain > y) || ((dblremain == y) && (quotient & 1)))
 		quotient++;
 	return quotient;
-}
-
-void GlkInterface::os_set_reverse_video(bool flag) {
-#ifdef GARGLK
-	_reverseVideo = flag;
-	garglk_set_reversevideo(flag);
-#endif
 }
 
 } // End of namespace Frotz

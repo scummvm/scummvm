@@ -553,7 +553,7 @@ bool GameFeatures::supportsSpeechWithSubtitles() const {
 	case GID_LAURABOW2:
 	case GID_KQ6:
 #ifdef ENABLE_SCI32
-	// TODO: Hoyle5, SCI3
+	// TODO: SCI3
 	case GID_GK1:
 	case GID_KQ7:
 	case GID_LSL6HIRES:
@@ -598,7 +598,7 @@ MessageTypeSyncStrategy GameFeatures::getMessageTypeSyncStrategy() const {
 
 #ifdef ENABLE_SCI32
 	switch (g_sci->getGameId()) {
-	// TODO: Hoyle5, SCI3
+	// TODO: SCI3
 	case GID_GK1:
 	case GID_PQ4:
 	case GID_QFG4:
@@ -772,6 +772,56 @@ PseudoMouseAbilityType GameFeatures::detectPseudoMouseAbility() {
 		}
 	}
 	return _pseudoMouseAbility;
+}
+
+// GetLongest(), which calculates the number of characters in a string that can fit
+//  within a width, had two subtle changes which started to appear in interpreters
+//  in late 1990. An off-by-one bug was fixed where the character that exceeds the
+//  width would be applied to the result if a space character hadn't been reached.
+//  The pixel width test was also changed from a greater than or equals to greater
+//  than, but again only if a space character hadn't been reached.
+//
+// The notebook in LB1 (bug #10000) is currently the only known script that depended
+//  on the original behavior. This appears to be an isolated fix to an interpreter
+//  edge case, a corresponding script change to allow autodetection hasn't been found.
+//
+// The Japanese interpreters have their own versions of GetLongest() to support
+//  double byte characters which seems to be how QFG1 Japanese reintroduced it
+//  even though its interpreter is later than SQ3/LSL3 multilingual versions.
+bool GameFeatures::useEarlyGetLongestTextCalculations() const {
+	switch (getSciVersion()) {
+
+	// All SCI0, confirmed:
+	// - LSL2 English PC 1.000.011
+	// - LB1 PC 1.000.046
+	// - ICEMAN PC 1.033
+	// - SQ3 English PC 1.018
+	// - PQ2 Japanese 1.000.052
+	case SCI_VERSION_0_EARLY:
+	case SCI_VERSION_0_LATE:
+		return true;
+
+	// SCI01: confirmed KQ1 and QFG1 Japanese,
+	// fixed in SQ3 and LSL3 multilingual PC
+	case SCI_VERSION_01:
+		return (g_sci->getGameId() == GID_KQ1 || g_sci->getGameId() == GID_QFG1);
+
+	// QFG2, confirmed 1.000 and 1.105 (first and last versions)
+	case SCI_VERSION_1_EGA_ONLY:
+		return true;
+
+	// SCI1 Early: just KQ5 English PC versions,
+	// confirmed fixed in:
+	// - LSL1 Demo
+	// - XMAS1990 EGA
+	// - SQ4 1.052
+	case SCI_VERSION_1_EARLY:
+		return (g_sci->getGameId() == GID_KQ5);
+
+	// Fixed in all other versions
+	default:
+		return false;
+	}
 }
 
 } // End of namespace Sci

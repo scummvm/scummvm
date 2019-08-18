@@ -132,7 +132,7 @@ void Room::mudd2UseCommunicator() {
 }
 
 void Room::mudd2LookAtCapsules() {
-	showText(TX_MUD2N008);
+	showDescription(TX_MUD2N008);
 }
 
 void Room::mudd2UseMTricorderOnCapsules() {
@@ -324,31 +324,31 @@ void Room::mudd2MccoyCuredMudd() {
 
 
 void Room::mudd2LookAtKirk() {
-	showText(TX_MUD2N003);
+	showDescription(TX_MUD2N003);
 }
 
 void Room::mudd2LookAtSpock() {
-	showText(TX_MUD2N006);
+	showDescription(TX_MUD2N006);
 }
 
 void Room::mudd2LookAtMccoy() {
-	showText(TX_MUD2N000);
+	showDescription(TX_MUD2N000);
 }
 
 void Room::mudd2LookAtRedshirt() {
-	showText(TX_MUD2N004);
+	showDescription(TX_MUD2N004);
 }
 
 void Room::mudd2LookAtMudd() {
-	showText(TX_MUD2N002);
+	showDescription(TX_MUD2N002);
 }
 
 void Room::mudd2LookAtControlPanel() {
-	showText(TX_MUD2N011);
+	showDescription(TX_MUD2N011);
 }
 
 void Room::mudd2LookAtBed() {
-	showText(TX_MUD2N007);
+	showDescription(TX_MUD2N007);
 }
 
 void Room::mudd2TalkToKirk() {

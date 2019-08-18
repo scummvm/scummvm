@@ -38,6 +38,7 @@ class SaveFileReadStream;
 class SaveFileWriteStream;
 
 class PoliceMazeTargetTrack : ScriptBase {
+	friend class PoliceMaze;
 	uint32     _time;
 	bool       _isPresent;
 	int        _itemId;

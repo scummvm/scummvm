@@ -59,7 +59,7 @@ void Room::feather0TalkToQuetzecoatl() {
 	};
 
 	showText(TX_SPEAKER_QUETZECOATL, TX_FEA0_028);
-	int choice = showText(choices);
+	int choice = showMultipleTexts(choices);
 	bool alreadyAngered = false;
 
 	if (choice == 0) {
@@ -70,7 +70,7 @@ void Room::feather0TalkToQuetzecoatl() {
 			TX_BLANK
 		};
 		showText(TX_SPEAKER_QUETZECOATL, TX_FEA0_032);
-		choice = showText(choices0);
+		choice = showMultipleTexts(choices0);
 	} else if (choice == 1) {
 		const TextRef choices0[] = {
 			TX_SPEAKER_KIRK,
@@ -79,7 +79,7 @@ void Room::feather0TalkToQuetzecoatl() {
 			TX_BLANK
 		};
 		showText(TX_SPEAKER_QUETZECOATL, TX_FEA0_031);
-		choice = showText(choices0);
+		choice = showMultipleTexts(choices0);
 	} else if (choice == 2) {
 		const TextRef choices0[] = {
 			TX_SPEAKER_KIRK,
@@ -88,14 +88,14 @@ void Room::feather0TalkToQuetzecoatl() {
 			TX_BLANK
 		};
 		showText(TX_SPEAKER_QUETZECOATL, TX_FEA0_033);
-		choice = showText(choices0);
+		choice = showMultipleTexts(choices0);
 
 		if (choice == 0) {
 			alreadyAngered = true;
 			showText(TX_SPEAKER_QUETZECOATL, TX_FEA0_024);
 		}
 	} else
-		showText(TX_DIALOG_ERROR);
+		showDescription(TX_DIALOG_ERROR);
 
 	if (!alreadyAngered) {
 		if (choice == 0)
@@ -111,7 +111,7 @@ void Room::feather0TalkToQuetzecoatl() {
 			TX_FEA0_005,
 			TX_BLANK
 		};
-		choice = showText(choices1);
+		choice = showMultipleTexts(choices1);
 
 		if (choice == 0) {
 			showText(TX_SPEAKER_QUETZECOATL, TX_FEA0_029);
@@ -156,43 +156,43 @@ void Room::feather0UseMedkit() {
 }
 
 void Room::feather0LookAtQuetzecoatl() {
-	showText(TX_FEA0N008);
+	showDescription(TX_FEA0N008);
 }
 
 void Room::feather0LookAtMoon() {
-	showText(TX_FEA0N007);
+	showDescription(TX_FEA0N007);
 }
 
 void Room::feather0LookAtLog() {
-	showText(TX_FEA0N006);
+	showDescription(TX_FEA0N006);
 }
 
 void Room::feather0LookAtHut() {
-	showText(TX_FEA0N001);
+	showDescription(TX_FEA0N001);
 }
 
 void Room::feather0LookAnywhere() {
-	showText(TX_FEA0N009);
+	showDescription(TX_FEA0N009);
 }
 
 void Room::feather0LookAtEyes() {
-	showText(TX_FEA0N000);
+	showDescription(TX_FEA0N000);
 }
 
 void Room::feather0LookAtTree() {
-	showText(TX_FEA0N003);
+	showDescription(TX_FEA0N003);
 }
 
 void Room::feather0LookAtMccoy() {
-	showText(TX_FEA0N004);
+	showDescription(TX_FEA0N004);
 }
 
 void Room::feather0LookAtSpock() {
-	showText(TX_FEA0N005);
+	showDescription(TX_FEA0N005);
 }
 
 void Room::feather0LookAtRedshirt() {
-	showText(TX_FEA0N002);
+	showDescription(TX_FEA0N002);
 }
 
 void Room::feather0TalkToMccoy() {

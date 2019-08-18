@@ -28,7 +28,7 @@
 
 namespace Glk {
 
-TextGridWindow::TextGridWindow(Windows *windows, uint rock) : Window(windows, rock),
+TextGridWindow::TextGridWindow(Windows *windows, uint rock) : TextWindow(windows, rock),
 		_font(g_conf->_monoInfo) {
 	_type = wintype_TextGrid;
 	_width = _height = 0;

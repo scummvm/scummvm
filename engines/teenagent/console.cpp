@@ -21,6 +21,7 @@
  */
 
 #include "teenagent/console.h"
+#include "teenagent/resources.h"
 #include "teenagent/teenagent.h"
 
 namespace TeenAgent {
@@ -33,6 +34,8 @@ Console::Console(TeenAgentEngine *engine) : _engine(engine) {
 	registerCmd("animation",			WRAP_METHOD(Console, playAnimation));
 	registerCmd("actor_animation",	WRAP_METHOD(Console, playActorAnimation));
 	registerCmd("call",				WRAP_METHOD(Console, call));
+	registerCmd("playSound",			WRAP_METHOD(Console, playSound));
+	registerCmd("playVoice",			WRAP_METHOD(Console, playVoice));
 }
 
 bool Console::enableObject(int argc, const char **argv) {
@@ -160,6 +163,40 @@ bool Console::call(int argc, const char **argv) {
 	if (!_engine->processCallback(addr))
 		debugPrintf("calling callback %04x failed\n", addr);
 
+	return true;
+}
+
+bool Console::playSound(int argc, const char **argv) {
+	uint32 fileCount = _engine->res->sam_sam.fileCount();
+	if (argc < 2) {
+		debugPrintf("usage: %s index(1-%d)\n", argv[0], fileCount);
+		return true;
+	}
+
+	uint index = atoi(argv[1]);
+	if (index <= 0 || index > fileCount) {
+		debugPrintf("invalid value\n");
+		return true;
+	}
+
+	_engine->playSoundNow(&_engine->res->sam_sam, index);
+	return true;
+}
+
+bool Console::playVoice(int argc, const char **argv) {
+	uint32 fileCount = _engine->res->voices.fileCount();
+	if (argc < 2) {
+		debugPrintf("usage: %s index(1-%d)\n", argv[0], fileCount);
+		return true;
+	}
+
+	uint index = atoi(argv[1]);
+	if (index <= 0 || index > fileCount) {
+		debugPrintf("invalid value\n");
+		return true;
+	}
+
+	_engine->playSoundNow(&_engine->res->voices, index);
 	return true;
 }
 

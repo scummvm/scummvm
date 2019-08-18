@@ -142,7 +142,7 @@ void Room::sins4UsePhaserOnPanel() {
 
 void Room::sins4UseIDCardOnPanel() {
 	if (_awayMission->sins.unlockedIDCardDoor)
-		showText(TX_SIN4N006);
+		showDescription(TX_SIN4N006);
 	else
 		walkCrewmanC(OBJECT_KIRK, 0xb8, 0x86, &Room::sins4KirkReachedPanel);
 }
@@ -170,7 +170,7 @@ void Room::sins4KirkReachedPanelWithRock() {
 }
 
 void Room::sins4KirkUsedRockOnPanel() {
-	showText(TX_SIN4N012);
+	showDescription(TX_SIN4N012);
 	showText(TX_SPEAKER_SPOCK, TX_SIN4_022);
 
 	if (_awayMission->sins.gatheredClues == 7) {
@@ -180,19 +180,19 @@ void Room::sins4KirkUsedRockOnPanel() {
 }
 
 void Room::sins4LookAtWestDoor() {
-	showText(TX_SIN4N009);
+	showDescription(TX_SIN4N009);
 }
 
 void Room::sins4LookAtEastDoor() {
-	showText(TX_SIN4N010);
+	showDescription(TX_SIN4N010);
 }
 
 void Room::sins4LookAnywhere() {
-	showText(TX_SIN4N013);
+	showDescription(TX_SIN4N013);
 }
 
 void Room::sins4LookAtPanel() {
-	showText(TX_SIN4N011);
+	showDescription(TX_SIN4N011);
 }
 
 void Room::sins4Tick40() {
@@ -211,35 +211,35 @@ void Room::sins4Tick40() {
 }
 
 void Room::sins4LookAtKirk() {
-	showText(TX_SIN4N002);
+	showDescription(TX_SIN4N002);
 }
 
 void Room::sins4LookAtSpock() {
-	showText(TX_SIN4N004);
+	showDescription(TX_SIN4N004);
 }
 
 void Room::sins4LookAtMccoy() {
-	showText(TX_SIN4N003);
+	showDescription(TX_SIN4N003);
 }
 
 void Room::sins4LookAtRedshirt() {
-	showText(TX_SIN4N001);
+	showDescription(TX_SIN4N001);
 }
 
 void Room::sins4LookAtLight() {
-	showText(TX_SIN4N000);
+	showDescription(TX_SIN4N000);
 }
 
 void Room::sins4LookAtBeam() {
-	showText(TX_SIN4N005);
+	showDescription(TX_SIN4N005);
 }
 
 void Room::sins4LookAtOpenNorthDoor() {
-	showText(TX_SIN4N008);
+	showDescription(TX_SIN4N008);
 }
 
 void Room::sins4LookAtClosedNorthDoor() {
-	showText(TX_SIN4N007);
+	showDescription(TX_SIN4N007);
 }
 
 void Room::sins4TalkToKirk() {

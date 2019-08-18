@@ -37,7 +37,7 @@
 #include "graphics/pixelformat.h"
 
 
-#define SCUMMVM_THEME_VERSION_STR "SCUMMVM_STX0.8.26"
+#define SCUMMVM_THEME_VERSION_STR "SCUMMVM_STX0.8.27"
 
 class OSystem;
 
@@ -131,6 +131,7 @@ enum TextData {
 	kTextDataButton,
 	kTextDataNormalFont,
 	kTextDataTooltip,
+	kTextDataConsole,
 	kTextDataMAX
 };
 
@@ -220,6 +221,7 @@ public:
 		kFontStyleFixedBold = 4,    ///< Fixed size bold font.
 		kFontStyleFixedItalic = 5,  ///< Fixed size italic font.
 		kFontStyleTooltip = 6,      ///< Tiny console font
+		kFontStyleConsole = 7,      ///< Debug console font
 		kFontStyleMax
 	};
 
@@ -261,10 +263,6 @@ public:
 	static const char *const kImageEditSmallButton; ///< Edit recording metadata in recorder onscreen dialog (for 320xY)
 	static const char *const kImageSwitchModeSmallButton; ///< Switch mode button in recorder onscreen dialog (for 320xY)
 	static const char *const kImageFastReplaySmallButton; ///< Fast playback mode button in recorder onscreen dialog (for 320xY)
-	static const char *const kImageDropboxLogo;      ///< Dropbox logo used in the StorageWizardDialog
-	static const char *const kImageOneDriveLogo;      ///< OneDrive logo used in the StorageWizardDialog
-	static const char *const kImageGoogleDriveLogo;      ///< Google Drive logo used in the StorageWizardDialog
-	static const char *const kImageBoxLogo;      ///< Box logo used in the StorageWizardDialog
 
 	/**
 	 * Graphics mode enumeration.
@@ -361,6 +359,8 @@ public:
 			return kTextDataNormalFont;
 		if (font == kFontStyleTooltip)
 			return kTextDataTooltip;
+		if (font == kFontStyleConsole)
+			return kTextDataConsole;
 		return kTextDataDefault;
 	}
 

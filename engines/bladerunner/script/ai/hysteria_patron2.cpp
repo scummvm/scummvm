@@ -94,10 +94,18 @@ bool AIScriptHysteriaPatron2::GoalChanged(int currentGoalNumber, int newGoalNumb
 	return false;
 }
 
-const int animationList[30] = {
-	885, 886, 887, 891, 888, 889, 890, 892, 886, 885,
-	885, 885, 885, 886, 891, 889, 888, 890, 892, 887,
-	885, 885, 885, 885, 885, 891, 888, 888, 890, 892
+const int kAnimationsCount = 30;
+const int animationList[kAnimationsCount] = {
+	kModelAnimationHysteriaPatron2DanceHandsBellyMotion,       kModelAnimationHysteriaPatron2DanceHandsUpLeftMotion,      kModelAnimationHysteriaPatron2DanceHandsUpSitAndUp,
+	kModelAnimationHysteriaPatron2DanceHandsUpToHandsDown,     kModelAnimationHysteriaPatron2DanceHandsDownHipsSwirl,     kModelAnimationHysteriaPatron2DanceHandsDownLegSwirl,
+	kModelAnimationHysteriaPatron2DanceHandsDownLeanBackForth, kModelAnimationHysteriaPatron2DanceHandsDownToHandsUp,     kModelAnimationHysteriaPatron2DanceHandsUpLeftMotion,
+	kModelAnimationHysteriaPatron2DanceHandsBellyMotion,       kModelAnimationHysteriaPatron2DanceHandsBellyMotion,       kModelAnimationHysteriaPatron2DanceHandsBellyMotion,
+	kModelAnimationHysteriaPatron2DanceHandsBellyMotion,       kModelAnimationHysteriaPatron2DanceHandsUpLeftMotion,      kModelAnimationHysteriaPatron2DanceHandsUpToHandsDown,
+	kModelAnimationHysteriaPatron2DanceHandsDownLegSwirl,      kModelAnimationHysteriaPatron2DanceHandsDownHipsSwirl,     kModelAnimationHysteriaPatron2DanceHandsDownLeanBackForth,
+	kModelAnimationHysteriaPatron2DanceHandsDownToHandsUp,     kModelAnimationHysteriaPatron2DanceHandsUpSitAndUp,        kModelAnimationHysteriaPatron2DanceHandsBellyMotion,
+	kModelAnimationHysteriaPatron2DanceHandsBellyMotion,       kModelAnimationHysteriaPatron2DanceHandsBellyMotion,       kModelAnimationHysteriaPatron2DanceHandsBellyMotion,
+	kModelAnimationHysteriaPatron2DanceHandsBellyMotion,       kModelAnimationHysteriaPatron2DanceHandsUpToHandsDown,     kModelAnimationHysteriaPatron2DanceHandsDownHipsSwirl,
+	kModelAnimationHysteriaPatron2DanceHandsDownHipsSwirl,     kModelAnimationHysteriaPatron2DanceHandsDownLeanBackForth, kModelAnimationHysteriaPatron2DanceHandsDownToHandsUp
 };
 
 bool AIScriptHysteriaPatron2::UpdateAnimation(int *animation, int *frame) {
@@ -106,7 +114,7 @@ bool AIScriptHysteriaPatron2::UpdateAnimation(int *animation, int *frame) {
 	if (++_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
 		_animationFrame = 0;
 
-		if (++_animationState >= 30)
+		if (++_animationState >= kAnimationsCount)
 			_animationState = 0;
 
 		*animation = animationList[_animationState];

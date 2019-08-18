@@ -38,14 +38,21 @@ enum {
 	kCopyToClipboard = 'cpcl',
 	kOpenBugtrackerURL = 'ourl',
 	kClose = 'clse',
+	kAddAnyway = 'adda',
 	kScrollContainerReflow = 'SCRf'
 };
 
-UnknownGameDialog::UnknownGameDialog(const DetectionResults &detectionResults) :
+UnknownGameDialog::UnknownGameDialog(const DetectedGame &detectedGame) :
 		Dialog(30, 20, 260, 124),
-		_detectionResults(detectionResults) {
+		_detectedGame(detectedGame) {
 	// For now place the buttons with a default place and size. They will be resized and moved when rebuild() is called.
-	_closeButton = new ButtonWidget(this, 0, 0, 0, 0, _("Close"), 0, kClose);
+	_closeButton = new ButtonWidget(this, 0, 0, 0, 0, detectedGame.canBeAdded ? _("Cancel") : _("Close"), 0, kClose);
+
+	if (detectedGame.canBeAdded) {
+		_addAnywayButton = new ButtonWidget(this, 0, 0, 0, 0, _("Add anyway"), 0, kAddAnyway);
+	} else {
+		_addAnywayButton = nullptr;
+	}
 
 	//Check if we have clipboard functionality
 	if (g_system->hasFeature(OSystem::kFeatureClipboardSupport)) {
@@ -53,25 +60,10 @@ UnknownGameDialog::UnknownGameDialog(const DetectionResults &detectionResults) :
 	} else
 		_copyToClipboardButton = nullptr;
 
-#if 0
-	// Do not create the button for reporting the game directly to the bugtracker
-	// for now until we find a proper solution for the problem that a change
-	// to our bugtracker system might break the URL generation. A possible approach
-	// for solving this would be to have a ULR under the .scummvm.org (of the type
-	// https://www.scummvm.org/unknowngame?engine=Foo&description=Bar) that would
-	// redirect to whatever our bugtracker system is.
-
 	//Check if we have support for opening URLs
 	if (g_system->hasFeature(OSystem::kFeatureOpenUrl)) {
-		buttonPos -= openBugtrackerURLButtonWidth + 5;
 		_openBugTrackerUrlButton = new ButtonWidget(this, 0, 0, 0, 0, _("Report game"), 0, kOpenBugtrackerURL);
-		//Formatting the reportData for bugtracker submission [replace line breaks]...
-		_bugtrackerGameData = _reportData;
-		while (_bugtrackerGameData.contains("\n")) {
-			Common::replace(_bugtrackerGameData, "\n", "%0A");
-		}
 	} else
-#endif
 		_openBugTrackerUrlButton = nullptr;
 
 	// Use a ScrollContainer for the report in case we have a lot of lines.
@@ -91,6 +83,8 @@ void UnknownGameDialog::reflowLayout() {
 }
 
 void UnknownGameDialog::rebuild() {
+	// TODO: Use a theme layout dialog definition
+
 	// First remove the old text widgets
 	for (uint i = 0; i < _textWidgets.size() ; i++) {
 		_textContainer->removeWidget(_textWidgets[i]);
@@ -106,21 +100,18 @@ void UnknownGameDialog::rebuild() {
 	int buttonHeight = g_gui.xmlEval()->getVar("Globals.Button.Height", 0);
 	int buttonWidth = g_gui.xmlEval()->getVar("Globals.Button.Width", 0);
 
-	Common::String reportTranslated = _detectionResults.generateUnknownGameReport(true);
+	Common::String reportTranslated = generateUnknownGameReport(_detectedGame, true, true);
 
 	// Check if we have clipboard functionality and expand the reportTranslated message if needed...
 	if (g_system->hasFeature(OSystem::kFeatureClipboardSupport)) {
 		reportTranslated += "\n";
 		reportTranslated += _("Use the button below to copy the required game information into your clipboard.");
 	}
-
-#if 0
 	// Check if we have support for opening URLs and expand the reportTranslated message if needed...
 	if (g_system->hasFeature(OSystem::kFeatureOpenUrl)) {
 		reportTranslated += "\n";
 		reportTranslated += _("You can also directly report your game to the Bug Tracker.");
 	}
-#endif
 
 	// We use a ScrollContainer to display the text, with a 2 * 8 pixels margin to the dialog border,
 	// the scrollbar, and 2 * 10 margin for the text in the container.
@@ -134,7 +125,9 @@ void UnknownGameDialog::rebuild() {
 	_h = MIN(screenH - 20, lineCount * kLineHeight + kLineHeight + buttonHeight + 24);
 
 	int closeButtonWidth = MAX(buttonWidth, g_gui.getFont().getStringWidth(_closeButton->getLabel()) + 10);
-	int copyToClipboardButtonWidth = 0, openBugtrackerURLButtonWidth = 0, totalButtonWidth = closeButtonWidth;
+	int copyToClipboardButtonWidth = 0, openBugtrackerURLButtonWidth = 0, addAnywayButtonWidth = 0;
+	int totalButtonWidth = closeButtonWidth;
+
 	if (_copyToClipboardButton) {
 		copyToClipboardButtonWidth = MAX(buttonWidth, g_gui.getFont().getStringWidth(_copyToClipboardButton->getLabel()) + 10);
 		totalButtonWidth += copyToClipboardButtonWidth + 10;
@@ -142,6 +135,10 @@ void UnknownGameDialog::rebuild() {
 	if (_openBugTrackerUrlButton) {
 		openBugtrackerURLButtonWidth = MAX(buttonWidth, g_gui.getFont().getStringWidth(_openBugTrackerUrlButton->getLabel()) + 10);
 		totalButtonWidth += openBugtrackerURLButtonWidth + 10;
+	}
+	if (_addAnywayButton) {
+		addAnywayButtonWidth = MAX(buttonWidth, g_gui.getFont().getStringWidth(_addAnywayButton->getLabel()) + 10);
+		totalButtonWidth += addAnywayButtonWidth + 10;
 	}
 
 	_w = MAX(MAX(maxlineWidth, 0) + 16 + scrollbarWidth, totalButtonWidth) + 20;
@@ -151,7 +148,12 @@ void UnknownGameDialog::rebuild() {
 	_y = (g_system->getOverlayHeight() - _h) / 2;
 
 	// Now move the buttons and text container to their proper place
-	int buttonPos = _w - closeButtonWidth - 10;
+	int buttonPos = _w - 10;
+	if (_addAnywayButton) {
+		buttonPos -= addAnywayButtonWidth + 5;
+		_addAnywayButton->resize(buttonPos, _h - buttonHeight - 8, addAnywayButtonWidth, buttonHeight);
+	}
+	buttonPos -= closeButtonWidth + 5;
 	_closeButton->resize(buttonPos, _h - buttonHeight - 8, closeButtonWidth, buttonHeight);
 	if (_copyToClipboardButton) {
 		buttonPos -= copyToClipboardButtonWidth + 5;
@@ -174,29 +176,37 @@ void UnknownGameDialog::rebuild() {
 	}
 }
 
+Common::String UnknownGameDialog::encodeUrlString(const Common::String &string) {
+	Common::String encoded;
+	for (uint i = 0 ; i < string.size() ; ++i) {
+		char c = string[i];
+		if ((c >= 'a' && c <= 'z') || (c >= 'A'  && c <= 'Z') || (c >= '0' && c <= '9') ||
+			c == '~' || c == '-' || c == '.' || c == '_')
+			encoded += c;
+		else
+			encoded += Common::String::format("%%%02X", c);
+	}
+	return encoded;
+}
 
 Common::String UnknownGameDialog::generateBugtrackerURL() {
-	// TODO: Remove the filesystem path from the bugtracker report
-	Common::String report = _detectionResults.generateUnknownGameReport(false);
+	Common::String report = generateUnknownGameReport(_detectedGame, false, false);
+	report = encodeUrlString(report);
 
-	// Formatting the report for bugtracker submission [replace line breaks]...
-	while (report.contains("\n")) {
-		Common::replace(report, "\n", "%0A");
-	}
+	Common::String engineName = encodeUrlString(_detectedGame.engineName);
 
 	return Common::String::format(
-		"https://bugs.scummvm.org/newticket?"
-		"&description=%s"
-		"&type=enhancement"
-		"&keywords=unknown-game",
+		"https://www.scummvm.org/unknowngame?"
+		"engine=%s"
+		"&description=%s",
+		engineName.c_str(),
 		report.c_str());
 }
 
 void UnknownGameDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
 	switch(cmd) {
 	case kCopyToClipboard: {
-		// TODO: Remove the filesystem path from the report
-		Common::String report = _detectionResults.generateUnknownGameReport(false);
+		Common::String report = generateUnknownGameReport(_detectedGame, false, false);
 
 		if (g_system->setTextInClipboard(report)) {
 			g_system->displayMessageOnOSD(
@@ -207,8 +217,12 @@ void UnknownGameDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 
 		break;
 	}
 	case kClose:
+		// The user cancelled adding the game
+		setResult(-1);
+		close();
+		break;
+	case kAddAnyway:
 		// When the detection entry comes from the fallback detector, the game can be added / launched anyways.
-		// TODO: Add a button to cancel adding the game. And make it clear that launching the game may not work properly.
 		close();
 		break;
 	case kOpenBugtrackerURL:

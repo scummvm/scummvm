@@ -47,6 +47,7 @@ public:
 	void saveState(Archive &archive);
 
 	bool isPlaying() { return _context != nullptr; }
+	bool isSkipping() { return _isSkipping; }
 	void update();
 
 	void authorSequence(Sequence *sequence, bool loadingSave);
@@ -72,6 +73,7 @@ private:
 	Array<Sequence *> _sequences;
 	Array<SeqTimer *> _timers;
 	uint _time;
+	bool _isSkipping;
 };
 
 } // End of namespace Pink

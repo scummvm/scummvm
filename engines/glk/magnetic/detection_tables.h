@@ -38,16 +38,33 @@ struct MagneticGameDescription {
 	Common::Language _language;
 };
 
-const MagneticDescriptor MAGNETIC_GAME_LIST[] = {
+const PlainGameDescriptor MAGNETIC_GAME_LIST[] = {
 	{ "magnetic", "Magnetic Scrolls Game" },
+
+	{ "corruption", "Corruption" },
+	{ "fish", "Fish!" },
+	{ "guild", "The Guild of Thieves" },
+	{ "myth", "Myth" },
+	{ "pawn", "the Pawn" },
+	{ "wonderland", "Wonderland" },
 
 	{ nullptr, nullptr }
 };
 
 #define ENTRY0(ID, MD5, FILESIZE) { ID, nullptr, MD5, FILESIZE, Common::EN_ANY }
+#define ENTRY1(ID, EXTRA, MD5, FILESIZE) { ID, EXTRA, MD5, FILESIZE, Common::EN_ANY }
 #define TABLE_END_MARKER { nullptr, nullptr, nullptr, 0, Common::EN_ANY }
 
 const MagneticGameDescription MAGNETIC_GAMES[] = {
+	ENTRY0("corruption", "313880cbe0f15bfa259ebaf228b4d0e9", 167466),
+	ENTRY1("corruption", "Collection", "6fe35b357fa0311450d3a9c809e60ba8", 177185),
+	ENTRY0("fish", "2efb8118f4cb9a36bb54646ce41a950e", 162858),
+	ENTRY1("fish", "Collection", "cfe333306597d36c8aa3fc64f6be94ba", 172517),
+	ENTRY0("guild", "bab78740d39ee5e058faf4912fdbf33d", 130858),
+	ENTRY1("guild", "Collection", "36af907a4ec9db909148f308287586f1", 141766),
+	ENTRY0("myth", "9c2a5272a9c0b1e173401ba4df32567a", 99370),
+	ENTRY0("pawn", "4a7847980f9e942acd7aa51ea12a6586", 103466),
+	ENTRY0("wonderland", "2cea8fccf42d570be8836416c2802613", 183916),
 	TABLE_END_MARKER
 };
 

@@ -20,6 +20,9 @@
  *
  */
 
+#include "common/stream.h"
+#include "common/memstream.h"
+
 #include "startrek/font.h"
 
 namespace StarTrek {
@@ -28,12 +31,14 @@ static const byte CHARACTER_COUNT = 0x80;
 static const byte CHARACTER_SIZE = 0x40;
 
 Font::Font(StarTrekEngine *vm) : _vm(vm) {
-	SharedPtr<FileStream> fontStream = _vm->loadFile("FONT.FNT");
+	Common::MemoryReadStreamEndian *fontStream = _vm->loadFile("FONT.FNT");
 
 	_characters = new Character[CHARACTER_COUNT];
 
 	for (byte i = 0; i < CHARACTER_COUNT; i++)
 		fontStream->read(_characters[i].data, CHARACTER_SIZE);
+
+	delete fontStream;
 }
 
 Font::~Font() {

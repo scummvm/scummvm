@@ -45,7 +45,9 @@
 #include "supernova/screen.h"
 #include "supernova/sound.h"
 #include "supernova/supernova.h"
-#include "supernova/state.h"
+#include "supernova/supernova1/state.h"
+#include "supernova/supernova2/state.h"
+#include "supernova/game-manager.h"
 
 namespace Supernova {
 
@@ -85,10 +87,19 @@ SupernovaEngine::SupernovaEngine(OSystem *syst)
 	, _sleepAutoSave(nullptr)
 	, _sleepAuoSaveVersion(-1)
 	, _delay(33)
-	, _textSpeed(kTextSpeed[2]) {
+	, _textSpeed(kTextSpeed[2])
+	, _improved(false) {
 	if (ConfMan.hasKey("textspeed"))
 		_textSpeed = ConfMan.getInt("textspeed");
 
+	if (ConfMan.get("gameid") == "msn1")
+		_MSPart = 1;
+	else if (ConfMan.get("gameid") == "msn2")
+		_MSPart = 2;
+	else
+		_MSPart = 0;
+
+	_improved = ConfMan.getBool("improved");
 	DebugMan.addDebugChannel(kDebugGeneral, "general", "Supernova general debug channel");
 }
 
@@ -133,10 +144,13 @@ void SupernovaEngine::init() {
 	if (status.getCode() != Common::kNoError)
 		error("Failed reading game strings");
 
-	_resMan = new ResourceManager();
+	_resMan = new ResourceManager(this);
 	_sound = new Sound(_mixer, _resMan);
-	_gm = new GameManager(this, _sound);
 	_screen = new Screen(this, _resMan);
+	if (_MSPart == 1)
+		_gm = new GameManager1(this, _sound);
+	else if (_MSPart == 2)
+		_gm = new GameManager2(this, _sound);
 	_console = new Console(this, _gm);
 
 	setTotalPlayTime(0);
@@ -167,58 +181,26 @@ void SupernovaEngine::pauseEngineIntern(bool pause) {
 }
 
 Common::Error SupernovaEngine::loadGameStrings() {
-	Common::String cur_lang = ConfMan.get("language");
 	Common::String string_id("TEXT");
 
-	// Note: we don't print any warning or errors here if we cannot find the file
-	// or the format is not as expected. We will get those warning when reading the
-	// strings anyway (actually the engine will even refuse to start).
-	Common::File f;
-	if (!f.open(SUPERNOVA_DAT)) {
-		GUIErrorMessageFormat(_("Unable to locate the '%s' engine data file."), SUPERNOVA_DAT);
+	Common::SeekableReadStream *stream = getBlockFromDatFile(string_id);
+
+	if (stream == nullptr) {
+		Common::Language l = Common::parseLanguage(ConfMan.get("language"));
+		GUIErrorMessageFormat(_("Unable to locate the text for %s language in engine data file."), Common::getLanguageDescription(l));
 		return Common::kReadingFailed;
 	}
 
-	// Validate the data file header
-	char id[5], lang[5];
-	id[4] = lang[4] = '\0';
-	f.read(id, 3);
-	if (strncmp(id, "MSN", 3) != 0) {
-		GUIErrorMessageFormat(_("The '%s' engine data file is corrupt."), SUPERNOVA_DAT);
-		return Common::kReadingFailed;
+	int size = stream->size();
+	while (size > 0) {
+		Common::String s;
+		char ch;
+		while ((ch = (char)stream->readByte()) != '\0')
+			s += ch;
+		_gameStrings.push_back(s);
+		size -= s.size() + 1;
 	}
-
-	int version = f.readByte();
-	if (version != SUPERNOVA_DAT_VERSION) {
-		GUIErrorMessageFormat(
-			_("Incorrect version of the '%s' engine data file found. Expected %d but got %d."),
-			SUPERNOVA_DAT, SUPERNOVA_DAT_VERSION, version);
-		return Common::kReadingFailed;
-	}
-
-	while (!f.eos()) {
-		f.read(id, 4);
-		f.read(lang, 4);
-		uint32 size = f.readUint32LE();
-		if (f.eos())
-			break;
-		if (string_id == id && cur_lang == lang) {
-			while (size > 0) {
-				Common::String s;
-				char ch;
-				while ((ch = (char)f.readByte()) != '\0')
-					s += ch;
-				_gameStrings.push_back(s);
-				size -= s.size() + 1;
-			}
-			return Common::kNoError;
-		} else
-			f.skip(size);
-	}
-
-	Common::Language l = Common::parseLanguage(cur_lang);
-	GUIErrorMessageFormat(_("Unable to locate the text for %s language in '%s' engine data file."), Common::getLanguageDescription(l), SUPERNOVA_DAT);
-	return Common::kReadingFailed;
+	return Common::kNoError;
 }
 
 const Common::String &SupernovaEngine::getGameString(int idx) const {
@@ -236,18 +218,17 @@ void SupernovaEngine::setGameString(int idx, const Common::String &string) {
 }
 
 void SupernovaEngine::playSound(AudioId sample) {
-	_sound->play(sample);
+	if (!shouldQuit())
+		_sound->play(sample);
 }
 
 void SupernovaEngine::playSound(MusicId index) {
-	_sound->play(index);
+	if (!shouldQuit())
+		_sound->play(index);
 }
 
 void SupernovaEngine::renderImage(int section) {
-	if (section > 128)
-		_gm->_currentRoom->setSectionVisible(section - 128, false);
-	else
-		_gm->_currentRoom->setSectionVisible(section, true);
+	_gm->_currentRoom->setSectionVisible(section, true);
 
 	_screen->renderImage(section);
 }
@@ -264,6 +245,7 @@ bool SupernovaEngine::setCurrentImage(int filenumber) {
 void SupernovaEngine::saveScreen(int x, int y, int width, int height) {
 	_screen->saveScreen(x, y, width, height);
 }
+
 void SupernovaEngine::saveScreen(const GuiElement &guiElement) {
 	_screen->saveScreen(guiElement);
 }
@@ -286,9 +268,14 @@ void SupernovaEngine::renderMessage(const Common::String &text, MessagePosition 
 	_screen->renderMessage(text, position);
 }
 
-void SupernovaEngine::renderMessage(StringId stringId, MessagePosition position, Common::String var1, Common::String var2) {
+void SupernovaEngine::renderMessage(int stringId, MessagePosition position, Common::String var1, Common::String var2) {
 	_gm->_messageDuration = (getGameString(stringId).size() + 20) * _textSpeed / 10;
 	_screen->renderMessage(stringId, position, var1, var2);
+}
+
+void SupernovaEngine::renderMessage(int stringId, int x, int y) {
+	_gm->_messageDuration = (getGameString(stringId).size() + 20) * _textSpeed / 10;
+	_screen->renderMessage(getGameString(stringId).c_str(), kMessageNormal, x, y);
 }
 
 void SupernovaEngine::removeMessage() {
@@ -307,7 +294,7 @@ void SupernovaEngine::renderText(const Common::String &text) {
 	_screen->renderText(text);
 }
 
-void SupernovaEngine::renderText(StringId stringId) {
+void SupernovaEngine::renderText(int stringId) {
 	_screen->renderText(stringId);
 }
 
@@ -327,7 +314,7 @@ void SupernovaEngine::renderText(const Common::String &text, int x, int y, byte 
 	_screen->renderText(text, x, y, color);
 }
 
-void SupernovaEngine::renderText(StringId stringId, int x, int y, byte color) {
+void SupernovaEngine::renderText(int stringId, int x, int y, byte color) {
 	_screen->renderText(stringId, x, y, color);
 }
 
@@ -343,13 +330,16 @@ void SupernovaEngine::paletteBrightness() {
 	_screen->paletteBrightness();
 }
 
-void SupernovaEngine::paletteFadeOut() {
-	_screen->paletteFadeOut();
+void SupernovaEngine::paletteFadeOut(int minBrightness) {
+	if (!shouldQuit())
+		_screen->paletteFadeOut(minBrightness);
 }
 
 void SupernovaEngine::paletteFadeIn() {
-	_gm->roomBrightness();
-	_screen->paletteFadeIn(_gm->_roomBrightness);
+	if (!shouldQuit()) {
+		_gm->roomBrightness();
+		_screen->paletteFadeIn(_gm->_roomBrightness);
+	}
 }
 
 void SupernovaEngine::setColor63(byte value) {
@@ -410,6 +400,195 @@ void SupernovaEngine::setTextSpeed() {
 	_gm->animationOn();
 }
 
+void SupernovaEngine::showHelpScreen1() {
+	if (_screen->isMessageShown())
+		_screen->removeMessage();
+	_gm->animationOff();
+	_gm->saveTime();
+
+	paletteFadeOut();
+	renderImage(kImageHelpScreen);
+	renderBox(100, 100, 192, 78, kColorWhite35);
+	renderText(kStringHelpOverview1, 105, 105, kColorWhite99);
+	renderText(kStringHelpOverview2, 105, 115, kColorWhite99);
+	renderText(kStringHelpOverview3, 105, 125, kColorWhite99);
+	renderText(kStringHelpOverview4, 105, 135, kColorWhite99);
+	renderText(kStringHelpOverview5, 105, 145, kColorWhite99);
+	renderText(kStringHelpOverview6, 105, 155, kColorWhite99);
+	renderText(kStringHelpOverview7, 105, 165, kColorWhite99);
+	paletteFadeIn();
+	_gm->getInput(true);
+
+	paletteFadeOut();
+
+	_gm->loadTime();
+	_gm->animationOn();
+}
+
+void SupernovaEngine::showHelpScreen2() {
+	if (_screen->isMessageShown())
+		_screen->removeMessage();
+	_gm->animationOff();
+	_gm->saveTime();
+
+	paletteFadeOut();
+	setCurrentImage(27);
+	renderImage(0);
+	paletteFadeIn();
+	_gm->getInput(true);
+
+	paletteFadeOut();
+
+	_gm->loadTime();
+	_gm->animationOn();
+}
+
+Common::SeekableReadStream *SupernovaEngine::getBlockFromDatFile(Common::String name) {
+	Common::String cur_lang = ConfMan.get("language");
+
+	// Validate the data file header
+	Common::File f;
+	char id[5], lang[5];
+	id[4] = lang[4] = '\0';
+	if (!f.open(SUPERNOVA_DAT)) {
+		GUIErrorMessageFormat(_("Unable to locate the '%s' engine data file."), SUPERNOVA_DAT);
+		return nullptr;
+	}
+	f.read(id, 3);
+	if (strncmp(id, "MSN", 3) != 0) {
+		GUIErrorMessageFormat(_("The '%s' engine data file is corrupt."), SUPERNOVA_DAT);
+		return nullptr;
+	}
+
+	int version = f.readByte();
+	if (version != SUPERNOVA_DAT_VERSION) {
+		GUIErrorMessageFormat(
+			_("Incorrect version of the '%s' engine data file found. Expected %d but got %d."),
+			SUPERNOVA_DAT, SUPERNOVA_DAT_VERSION, version);
+		return nullptr;
+	}
+
+	uint32 gameBlockSize;
+	while (!f.eos()) {
+		int part = f.readByte();
+		gameBlockSize = f.readUint32LE();
+		if (f.eos()){
+			GUIErrorMessageFormat(_("Unable to find block for part %d"), _MSPart);
+			return nullptr;
+		}
+		if (part == _MSPart) {
+			break;
+		} else
+			f.skip(gameBlockSize);
+	}
+
+	uint32 readSize = 0;
+
+	while (readSize < gameBlockSize) {
+		f.read(id, 4);
+		f.read(lang, 4);
+		uint32 size = f.readUint32LE();
+		if (f.eos())
+			break;
+		if (name == id && cur_lang == lang) {
+			return f.readStream(size);
+		} else {
+			f.skip(size);
+			readSize += size;
+		}
+	}
+
+	return nullptr;
+}
+
+Common::Error SupernovaEngine::showTextReader(const char *extension) {
+	Common::SeekableReadStream *stream;
+	Common::String blockName;
+	blockName = Common::String::format("%s%d", extension, _MSPart);
+	blockName.toUppercase();
+	if ((stream = getBlockFromDatFile(blockName)) == nullptr) {
+		Common::File file;
+		Common::String filename;
+		if (_MSPart == 1)
+			filename = Common::String::format("msn.%s", extension);
+		if (_MSPart == 2)
+			filename = Common::String::format("ms2.%s", extension);
+
+		if (!file.open(filename)) {
+			GUIErrorMessageFormat(_("Unable to find '%s' in game folder or the engine data file."), filename.c_str());
+			return Common::kReadingFailed;
+		}
+		stream = file.readStream(file.size());
+	}
+	int linesInFile = 0;
+	while (!stream->eos()) {
+		stream->readLine();
+		++linesInFile;
+	}
+	--linesInFile;
+	stream->seek(0);
+	stream->clearErr();
+
+	if (_screen->isMessageShown())
+		_screen->removeMessage();
+	_gm->animationOff();
+	_gm->saveTime();
+	paletteFadeOut();
+	g_system->fillScreen(kColorWhite35);
+	for (int y = 6; y < (200 - kFontHeight); y += (kFontHeight + 2)) {
+		Common::String line = stream->readLine();
+		if (stream->eos())
+			break;
+		_screen->renderText(line, 6, y, kColorWhite99);
+	}
+	paletteFadeIn();
+
+	const int linesPerPage = 19;
+	int lineNumber = 0;
+	bool exitReader = false;
+	do {
+		stream->seek(0);
+		stream->clearErr();
+		for (int i = 0; i < lineNumber; ++i)
+			stream->readLine();
+		g_system->fillScreen(kColorWhite35);
+		for (int y = 6; y < (_screen->getScreenHeight() - kFontHeight); y += (kFontHeight + 2)) {
+			Common::String line = stream->readLine();
+			if (stream->eos())
+				break;
+			_screen->renderText(line, 6, y, kColorWhite99);
+		}
+		_gm->getInput(true);
+		switch (_gm->_key.keycode) {
+		case Common::KEYCODE_ESCAPE:
+			exitReader = true;
+			break;
+		case Common::KEYCODE_UP:
+			lineNumber = lineNumber > 0 ? lineNumber - 1 : 0;
+			break;
+		case Common::KEYCODE_DOWN:
+			lineNumber = lineNumber < linesInFile - (linesPerPage + 1) ? lineNumber + 1
+			                                                           : linesInFile - linesPerPage;
+			break;
+		case Common::KEYCODE_PAGEUP:
+			lineNumber = lineNumber > linesPerPage ? lineNumber - linesPerPage : 0;
+			break;
+		case Common::KEYCODE_PAGEDOWN:
+			lineNumber = lineNumber < linesInFile - (linesPerPage * 2) ? lineNumber + linesPerPage
+			                                                           : linesInFile - linesPerPage;
+			break;
+		default:
+			break;
+		}
+	} while (!exitReader && !shouldQuit());
+
+	paletteFadeOut();
+	_gm->loadTime();
+	_gm->animationOn();
+
+	return Common::kNoError;
+}
+
 bool SupernovaEngine::quitGameDialog() {
 	bool quit = false;
 
@@ -430,7 +609,6 @@ bool SupernovaEngine::quitGameDialog() {
 	guiQuitNo.setTextPosition(173, 112);
 
 	_gm->animationOff();
-	_gm->saveTime();
 	saveScreen(guiQuitBox);
 
 	renderBox(guiQuitBox);
@@ -464,7 +642,6 @@ bool SupernovaEngine::quitGameDialog() {
 
 	_gm->resetInputState();
 	restoreScreen();
-	_gm->loadTime();
 	_gm->animationOn();
 
 	return quit;
@@ -481,7 +658,7 @@ Common::Error SupernovaEngine::loadGameState(int slot) {
 
 bool SupernovaEngine::canSaveGameStateCurrently() {
 	// Do not allow saving when either _allowSaveGame, _animationEnabled or _guiEnabled is false
-	return _allowSaveGame && _gm->_animationEnabled && _gm->_guiEnabled;
+	return _allowSaveGame && _gm->canSaveGameStateCurrently();
 }
 
 Common::Error SupernovaEngine::saveGameState(int slot, const Common::String &desc) {
@@ -528,13 +705,18 @@ bool SupernovaEngine::loadGame(int slot) {
 		// continue to try to load it from there.
 	}
 
-	Common::String filename = Common::String::format("msn_save.%03d", slot);
+	Common::String filename;
+	if (_MSPart == 1)
+		filename = Common::String::format("msn_save.%03d", slot);
+	else if (_MSPart == 2)
+		filename = Common::String::format("ms2_save.%03d", slot);
 	Common::InSaveFile *savefile = _saveFileMan->openForLoading(filename);
 	if (!savefile)
 		return false;
 
 	uint saveHeader = savefile->readUint32LE();
-	if (saveHeader != SAVEGAME_HEADER) {
+	if ((_MSPart == 1 && saveHeader != SAVEGAME_HEADER) ||
+		(_MSPart == 2 && saveHeader != SAVEGAME_HEADER2)) {
 		warning("No header found in '%s'", filename.c_str());
 		delete savefile;
 		return false; //Common::kUnknownError
@@ -542,7 +724,7 @@ bool SupernovaEngine::loadGame(int slot) {
 
 	byte saveVersion = savefile->readByte();
 	// Save version 1 was used during development and is no longer supported
-	if (saveVersion > SAVEGAME_VERSION || saveVersion == 1) {
+	if (saveVersion > SAVEGAME_VERSION || saveVersion < 10) {
 		warning("Save game version %i not supported", saveVersion);
 		delete savefile;
 		return false; //Common::kUnknownError;
@@ -590,12 +772,20 @@ bool SupernovaEngine::saveGame(int slot, const Common::String &description) {
 		return true;
 	}
 
-	Common::String filename = Common::String::format("msn_save.%03d", slot);
+	Common::String filename;
+	if (_MSPart == 1)
+		filename = Common::String::format("msn_save.%03d", slot);
+	else if (_MSPart == 2)
+		filename = Common::String::format("ms2_save.%03d", slot);
+
 	Common::OutSaveFile *savefile = _saveFileMan->openForSaving(filename);
 	if (!savefile)
 		return false;
 
-	savefile->writeUint32LE(SAVEGAME_HEADER);
+	if (_MSPart == 1)
+		savefile->writeUint32LE(SAVEGAME_HEADER);
+	else if (_MSPart == 2)
+		savefile->writeUint32LE(SAVEGAME_HEADER2);
 	savefile->writeByte(SAVEGAME_VERSION);
 
 	TimeDate currentDate;
@@ -629,6 +819,10 @@ void SupernovaEngine::errorTempSave(bool saving) {
 		? "Failed to save temporary game state. Make sure your save game directory is set in ScummVM and that you can write to it."
 		: "Failed to load temporary game state.");
 	error("Unrecoverable error");
+}
+
+void SupernovaEngine::stopSound() {
+	_sound->stop();
 }
 
 

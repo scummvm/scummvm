@@ -22,10 +22,14 @@
 
 #include "backends/graphics/sdl/sdl-graphics.h"
 #include "backends/platform/sdl/sdl-sys.h"
+#include "backends/platform/sdl/sdl.h"
 #include "backends/events/sdl/sdl-events.h"
 #include "common/config-manager.h"
 #include "common/textconsole.h"
 #include "graphics/scaler/aspect.h"
+#ifdef USE_OSD
+#include "common/translation.h"
+#endif
 
 SdlGraphicsManager::SdlGraphicsManager(SdlEventSource *source, SdlWindow *window)
 	: _eventSource(source), _window(window), _hwScreen(nullptr)
@@ -265,3 +269,90 @@ bool SdlGraphicsManager::createOrUpdateWindow(int width, int height, const Uint3
 	return true;
 }
 #endif
+
+void SdlGraphicsManager::saveScreenshot() {
+	Common::String filename;
+
+	Common::String screenshotsPath;
+	OSystem_SDL *sdl_g_system = dynamic_cast<OSystem_SDL*>(g_system);
+	if (sdl_g_system)
+		screenshotsPath = sdl_g_system->getScreenshotsPath();
+
+	for (int n = 0;; n++) {
+		SDL_RWops *file;
+
+#ifdef USE_PNG
+		filename = Common::String::format("scummvm%05d.png", n);
+#else
+		filename = Common::String::format("scummvm%05d.bmp", n);
+#endif
+
+		file = SDL_RWFromFile((screenshotsPath + filename).c_str(), "r");
+
+		if (!file)
+			break;
+		SDL_RWclose(file);
+	}
+
+	if (saveScreenshot(screenshotsPath + filename)) {
+		if (screenshotsPath.empty())
+			debug("Saved screenshot '%s' in current directory", filename.c_str());
+		else
+			debug("Saved screenshot '%s' in directory '%s'", filename.c_str(), screenshotsPath.c_str());
+	} else {
+		if (screenshotsPath.empty())
+			warning("Could not save screenshot in current directory");
+		else
+			warning("Could not save screenshot in directory '%s'", screenshotsPath.c_str());
+	}
+}
+
+bool SdlGraphicsManager::notifyEvent(const Common::Event &event) {
+	switch ((int)event.type) {
+	case Common::EVENT_KEYDOWN:
+		// Alt-Return and Alt-Enter toggle full screen mode
+		if (event.kbd.hasFlags(Common::KBD_ALT) &&
+			(event.kbd.keycode == Common::KEYCODE_RETURN ||
+			 event.kbd.keycode == Common::KEYCODE_KP_ENTER)) {
+			toggleFullScreen();
+			return true;
+		}
+
+		// Alt-S: Create a screenshot
+		if (event.kbd.hasFlags(Common::KBD_ALT) && event.kbd.keycode == 's') {
+			saveScreenshot();
+			return true;
+		}
+
+		break;
+
+	case Common::EVENT_KEYUP:
+		if (event.kbd.hasFlags(Common::KBD_ALT)) {
+			return    event.kbd.keycode == Common::KEYCODE_RETURN
+			       || event.kbd.keycode == Common::KEYCODE_KP_ENTER
+			       || event.kbd.keycode == Common::KEYCODE_s;
+		}
+
+		break;
+
+	default:
+		break;
+	}
+
+	return false;
+}
+
+void SdlGraphicsManager::toggleFullScreen() {
+	if (!hasFeature(OSystem::kFeatureFullscreenMode))
+		return;
+
+	beginGFXTransaction();
+	setFeatureState(OSystem::kFeatureFullscreenMode, !getFeatureState(OSystem::kFeatureFullscreenMode));
+	endGFXTransaction();
+#ifdef USE_OSD
+	if (getFeatureState(OSystem::kFeatureFullscreenMode))
+		displayMessageOnOSD(_("Fullscreen mode"));
+	else
+		displayMessageOnOSD(_("Windowed mode"));
+#endif
+}

@@ -394,9 +394,9 @@ reg_t kTextSize(EngineState *s, int argc, reg_t *argv) {
 }
 
 reg_t kWait(EngineState *s, int argc, reg_t *argv) {
-	int sleep_time = argv[0].toUint16();
+	uint16 ticks = argv[0].toUint16();
 
-	const int delta = s->wait(sleep_time);
+	const uint16 delta = s->wait(ticks);
 
 	if (g_sci->_guestAdditions->kWaitHook()) {
 		return NULL_REG;
@@ -492,7 +492,12 @@ reg_t kNumLoops(EngineState *s, int argc, reg_t *argv) {
 	GuiResourceId viewId = readSelectorValue(s->_segMan, object, SELECTOR(view));
 	int16 loopCount;
 
-	loopCount = g_sci->_gfxCache->kernelViewGetLoopCount(viewId);
+#ifdef ENABLE_SCI32
+	if (getSciVersion() >= SCI_VERSION_2) {
+		loopCount = CelObjView::getNumLoops(viewId);
+	} else
+#endif
+		loopCount = g_sci->_gfxCache->kernelViewGetLoopCount(viewId);
 
 	debugC(9, kDebugLevelGraphics, "NumLoops(view.%d) = %d", viewId, loopCount);
 
@@ -505,7 +510,12 @@ reg_t kNumCels(EngineState *s, int argc, reg_t *argv) {
 	int16 loopNo = readSelectorValue(s->_segMan, object, SELECTOR(loop));
 	int16 celCount;
 
-	celCount = g_sci->_gfxCache->kernelViewGetCelCount(viewId, loopNo);
+#ifdef ENABLE_SCI32
+	if (getSciVersion() >= SCI_VERSION_2) {
+		celCount = CelObjView::getNumCels(viewId, loopNo);
+	} else
+#endif
+		celCount = g_sci->_gfxCache->kernelViewGetCelCount(viewId, loopNo);
 
 	debugC(9, kDebugLevelGraphics, "NumCels(view.%d, %d) = %d", viewId, loopNo, celCount);
 
@@ -553,8 +563,13 @@ reg_t kDrawPic(EngineState *s, int argc, reg_t *argv) {
 		if (flags & K_DRAWPIC_FLAGS_ANIMATIONBLACKOUT)
 			animationBlackoutFlag = true;
 		animationNr = flags & 0xFF;
-		if (flags & K_DRAWPIC_FLAGS_MIRRORED)
-			mirroredFlag = true;
+		// Mac interpreters ignored the mirrored flag and didn't mirror pics.
+		//  KQ6 PC room 390 drew pic 390 mirrored so Mac added pic 395, which
+		//  is a mirror of 390, but the script continued to pass this flag.
+		if (g_sci->getPlatform() != Common::kPlatformMacintosh) {
+			if (flags & K_DRAWPIC_FLAGS_MIRRORED)
+				mirroredFlag = true;
+		}
 	}
 	if (argc >= 3) {
 		if (!argv[2].isNull())
@@ -646,18 +661,17 @@ reg_t kPaletteAnimate(EngineState *s, int argc, reg_t *argv) {
 	bool paletteChanged = false;
 
 	// Palette animation in non-VGA SCI1 games has been removed
-	if (g_sci->_gfxPalette16->getTotalColorCount() < 256)
-		return s->r_acc;
-
-	for (argNr = 0; argNr < argc; argNr += 3) {
-		uint16 fromColor = argv[argNr].toUint16();
-		uint16 toColor = argv[argNr + 1].toUint16();
-		int16 speed = argv[argNr + 2].toSint16();
-		if (g_sci->_gfxPalette16->kernelAnimate(fromColor, toColor, speed))
-			paletteChanged = true;
+	if (g_sci->_gfxPalette16->getTotalColorCount() == 256) {
+		for (argNr = 0; argNr < argc; argNr += 3) {
+			uint16 fromColor = argv[argNr].toUint16();
+			uint16 toColor = argv[argNr + 1].toUint16();
+			int16 speed = argv[argNr + 2].toSint16();
+			if (g_sci->_gfxPalette16->kernelAnimate(fromColor, toColor, speed))
+				paletteChanged = true;
+		}
+		if (paletteChanged)
+			g_sci->_gfxPalette16->kernelAnimateSet();
 	}
-	if (paletteChanged)
-		g_sci->_gfxPalette16->kernelAnimateSet();
 
 	// WORKAROUND: The game scripts in SQ4 floppy count the number of elapsed
 	// cycles in the intro from the number of successive kAnimate calls during
@@ -668,8 +682,10 @@ reg_t kPaletteAnimate(EngineState *s, int argc, reg_t *argv) {
 	// speed throttler gets called) between the different palette animation calls.
 	// Thus, we add a small delay between each animate call to make the whole
 	// palette animation effect slower and visible, and not have the logo screen
-	// get skipped because the scripts don't wait between animation steps. Fixes
-	// bug #3537232.
+	// get skipped because the scripts don't wait between animation steps. This
+	// workaround is applied to non-VGA versions as well because even though they
+	// don't use palette animation they still call this function and use it for
+	// timing. Fixes bugs #6057, #6193.
 	// The original workaround was for the intro SQ4 logo (room#1).
 	// This problem also happens in the time pod (room#531).
 	// This problem also happens in the ending cutscene time rip (room#21).

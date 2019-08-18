@@ -96,7 +96,7 @@ void EoBCoreEngine::loadLevel(int level, int sub) {
 
 	loadVcnData(gfxFile.c_str(), (_flags.gameID == GI_EOB1 && _flags.platform == Common::kPlatformDOS) ? _cgaMappingLevel[_cgaLevelMappingIndex[level - 1]] : 0);
 	_screen->loadEoBBitmap("INVENT", _cgaMappingInv, 5, 3, 2);
-	if (_flags.platform == Common::kPlatformAmiga)
+	if (_flags.platform == Common::kPlatformAmiga && _flags.gameID == GI_EOB1)
 		_screen->getPalette(0).copy(_screen->getPalette(1), 1, 5, 1);
 
 	delayUntil(end);
@@ -132,7 +132,12 @@ void EoBCoreEngine::readLevelFileData(int level) {
 
 	if (s) {
 		s->seek(0);
-		_screen->loadFileDataToPage(s, 5, 15000);
+		if (s->readSint32BE() + 12 == s->size()) {
+			_screen->loadSpecialAmigaCPS(file.c_str(), 5, false);
+		} else {
+			s->seek(0);
+			_screen->loadFileDataToPage(s, 5, 15000);
+		}
 		delete s;
 	}
 }
@@ -159,8 +164,13 @@ Common::String EoBCoreEngine::initLevelData(int sub) {
 		uint16 size = (_flags.platform == Common::kPlatformFMTowns) ? 2916 : s->readUint16();
 		delete[] _vmpPtr;
 		_vmpPtr = new uint16[size];
-		for (int i = 0; i < size; i++)
-			_vmpPtr[i] = s->readUint16();
+		if (_flags.gameID == GI_EOB1) {
+			for (int i = 0; i < size; i++)
+				_vmpPtr[i] = s->readUint16();
+		} else {
+			for (int i = 0; i < size; i++)
+				_vmpPtr[i] = s->readUint16LE();
+		}
 		delete s;
 
 		const char *paletteFilePattern = (_flags.gameID == GI_EOB2 && _configRenderMode == Common::kRenderEGA) ? "%s.EGA" : "%s.PAL";
@@ -180,8 +190,8 @@ Common::String EoBCoreEngine::initLevelData(int sub) {
 			_screen->enableShapeBackgroundFading(false);
 		}
 
-		if (_flags.platform != Common::kPlatformAmiga && (_flags.gameID == GI_EOB2 || _configRenderMode != Common::kRenderEGA))
-			_screen->loadPalette(tmpStr.c_str(), _screen->getPalette(0));
+		if (_flags.gameID == GI_EOB2 || (_flags.platform != Common::kPlatformAmiga && _configRenderMode != Common::kRenderCGA && _configRenderMode != Common::kRenderEGA))
+			_screen->loadPalette(tmpStr.c_str(), _screen->getPalette(_flags.platform == Common::kPlatformAmiga ? 6 : 0));
 
 		if (_flags.platform == Common::kPlatformFMTowns) {
 			uint16 *src = (uint16*)_screen->getPalette(0).getData();
@@ -212,13 +222,15 @@ Common::String EoBCoreEngine::initLevelData(int sub) {
 		}
 	}
 
-	if (_flags.gameID == GI_EOB2) {
+	if (_flags.platform == Common::kPlatformAmiga) {
+		delay(3 * _tickLength);
+		snd_loadAmigaSounds(_currentLevel, sub);
+		if (_flags.gameID == GI_EOB2)
+			pos += 13;
+	} else if (_flags.gameID == GI_EOB2) {
 		delay(3 * _tickLength);
 		_sound->loadSoundFile((const char *)pos);
 		pos += 13;
-	} else if (_flags.platform == Common::kPlatformAmiga) {
-		delay(3 * _tickLength);
-		_sound->loadSoundFile(_currentLevel);
 	}
 
 	releaseDoorShapes();
@@ -258,7 +270,7 @@ Common::String EoBCoreEngine::initLevelData(int sub) {
 		} else {
 			if (*pos++ != 0xEC)
 				continue;
-			loadMonsterShapes((const char *)(pos + 2), pos[1] * 18, pos[15] ? true : false, *pos * 18);
+			loadMonsterShapes((const char *)(pos + 2), pos[1] * 18, pos[15] ? true : false, *pos * (_flags.platform == Common::kPlatformAmiga ? 6 : 18));
 			pos += 16;
 		}
 	}
@@ -315,7 +327,7 @@ void EoBCoreEngine::loadVcnData(const char *file, const uint8 *cgaMapping) {
 	const char *filePattern = ((_flags.gameID == GI_EOB1 && (_configRenderMode == Common::kRenderEGA || _configRenderMode == Common::kRenderCGA)) ? "%s.ECN" : "%s.VCN");
 	Common::String fn = Common::String::format(filePattern, _lastBlockDataFile);
 
-	if (_flags.platform == Common::kPlatformAmiga) {
+	if (_flags.gameID == GI_EOB1 && _flags.platform == Common::kPlatformAmiga) {
 		Common::SeekableReadStream *in = _res->createReadStream(fn);
 		vcnSize = in->readUint16LE() * (_vcnSrcBitsPerPixel << 3);
 		_vcnBlocks = new uint8[vcnSize];
@@ -358,7 +370,7 @@ void EoBCoreEngine::loadVcnData(const char *file, const uint8 *cgaMapping) {
 			}
 		}
 	} else {
-		if (!(_flags.gameID == GI_EOB1 && _configRenderMode == Common::kRenderEGA))
+		if (_flags.platform != Common::kPlatformAmiga && !(_flags.gameID == GI_EOB1 && _configRenderMode == Common::kRenderEGA))
 			memcpy(_vcnColTable, colMap, 32);
 		
 		memcpy(_vcnBlocks, pos, vcnSize);
@@ -536,7 +548,7 @@ void EoBCoreEngine::drawScene(int refresh) {
 
 	if (_sceneDrawPage2) {
 		if (refresh)
-			_screen->fillRect(0, 0, 176, 120, 12);
+			_screen->fillRect(0, 0, 176, 120, guiSettings()->colors.guiColorBlack);
 
 		if (!_loading)
 			_screen->setScreenPalette(_screen->getPalette(0));

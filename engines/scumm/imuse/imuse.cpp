@@ -45,6 +45,7 @@ namespace Scumm {
 IMuseInternal::IMuseInternal() :
 	_native_mt32(false),
 	_enable_gs(false),
+	_isAmiga(false),
 	_midi_adlib(NULL),
 	_midi_native(NULL),
 	_sysex(NULL),
@@ -157,9 +158,11 @@ bool IMuseInternal::isMT32(int sound) {
 	case MKTAG('S', 'P', 'K', ' '):
 		return false;
 
-	case MKTAG('A', 'M', 'I', ' '):
-	case MKTAG('R', 'O', 'L', ' '):
-		return true;
+	case MKTAG('A', 'M', 'I', ' '): // MI2 Amiga
+		return false;
+
+	case MKTAG('R', 'O', 'L', ' '): // Unfortunately FOA Amiga also uses this resource type
+		return !_isAmiga;
 
 	case MKTAG('M', 'A', 'C', ' '): // Occurs in the Mac version of FOA and MI2
 		return false;
@@ -199,7 +202,9 @@ bool IMuseInternal::isMIDI(int sound) {
 	case MKTAG('S', 'P', 'K', ' '):
 		return false;
 
-	case MKTAG('A', 'M', 'I', ' '):
+	case MKTAG('A', 'M', 'I', ' '): // Amiga (return true, since the driver is initalized as native midi)
+		return true;
+
 	case MKTAG('R', 'O', 'L', ' '):
 		return true;
 
@@ -236,9 +241,11 @@ bool IMuseInternal::supportsPercussion(int sound) {
 	case MKTAG('S', 'P', 'K', ' '):
 		return false;
 
-	case MKTAG('A', 'M', 'I', ' '):
-	case MKTAG('R', 'O', 'L', ' '):
-		return true;
+	case MKTAG('A', 'M', 'I', ' '): // MI2 Amiga
+		return false;
+
+	case MKTAG('R', 'O', 'L', ' '): // Roland LAPC/MT-32/CM32L track, but also used by INDY4 Amiga
+		return !_isAmiga;
 
 	case MKTAG('M', 'A', 'C', ' '): // Occurs in the Mac version of FOA and MI2
 		// This is MIDI, i.e. uses MIDI style program changes, but without a
@@ -473,6 +480,10 @@ uint32 IMuseInternal::property(int prop, uint32 value) {
 			_native_mt32 = true;
 			initGM(_midi_native);
 		}
+		break;
+
+	case IMuse::PROP_AMIGA:
+		_isAmiga = (value > 0);
 		break;
 
 	case IMuse::PROP_LIMIT_PLAYERS:

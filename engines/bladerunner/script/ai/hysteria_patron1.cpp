@@ -93,22 +93,46 @@ bool AIScriptHysteriaPatron1::GoalChanged(int currentGoalNumber, int newGoalNumb
 	return false;
 }
 
-const int animationList[27] = {
-	877, 878, 877, 883, 880, 881, 882, 884, 878, 877,
-	883, 881, 880, 884, 877, 877, 878, 883, 882, 884,
-	878, 877, 883, 882, 880, 881, 884
+const int kAnimationsCount = 27;
+const int animationList[kAnimationsCount] = {
+	kModelAnimationHysteriaPatron1DanceStandingUpSemiSitAndUp, kModelAnimationHysteriaPatron1DanceStandingUpLeftMotion, kModelAnimationHysteriaPatron1DanceStandingUpSemiSitAndUp,
+	kModelAnimationHysteriaPatron1DanceStandingUpToSplits,     kModelAnimationHysteriaPatron1DanceSplitsDuckAndDown,    kModelAnimationHysteriaPatron1DanceSplitsSemiUpAndDown,
+	kModelAnimationHysteriaPatron1DanceSplitsBackAndForth,     kModelAnimationHysteriaPatron1DanceSplitsToStandingUp,   kModelAnimationHysteriaPatron1DanceStandingUpLeftMotion,
+	kModelAnimationHysteriaPatron1DanceStandingUpSemiSitAndUp, kModelAnimationHysteriaPatron1DanceStandingUpToSplits,   kModelAnimationHysteriaPatron1DanceSplitsSemiUpAndDown,
+	kModelAnimationHysteriaPatron1DanceSplitsDuckAndDown,      kModelAnimationHysteriaPatron1DanceSplitsToStandingUp,   kModelAnimationHysteriaPatron1DanceStandingUpSemiSitAndUp,
+	kModelAnimationHysteriaPatron1DanceStandingUpSemiSitAndUp, kModelAnimationHysteriaPatron1DanceStandingUpLeftMotion, kModelAnimationHysteriaPatron1DanceStandingUpToSplits,
+	kModelAnimationHysteriaPatron1DanceSplitsBackAndForth,     kModelAnimationHysteriaPatron1DanceSplitsToStandingUp,   kModelAnimationHysteriaPatron1DanceStandingUpLeftMotion,
+	kModelAnimationHysteriaPatron1DanceStandingUpSemiSitAndUp, kModelAnimationHysteriaPatron1DanceStandingUpToSplits,   kModelAnimationHysteriaPatron1DanceSplitsBackAndForth,
+	kModelAnimationHysteriaPatron1DanceSplitsDuckAndDown,      kModelAnimationHysteriaPatron1DanceSplitsSemiUpAndDown,  kModelAnimationHysteriaPatron1DanceSplitsToStandingUp
 };
 
 bool AIScriptHysteriaPatron1::UpdateAnimation(int *animation, int *frame) {
-	*animation = animationList[_animationState];
+	if (_vm->_cutContent
+	    && (_animationState == 2 || _animationState == 16 || _animationState == 21)
+	) {
+		// replace a few of the repeated "standing up" animations
+		// with the cut animation kModelAnimationHysteriaPatron1DanceStandingUpStowingMoney
+		*animation = kModelAnimationHysteriaPatron1DanceStandingUpStowingMoney;
+	} else {
+		*animation = animationList[_animationState];
+	}
 
 	if (++_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
 		_animationFrame = 0;
 
-		if (++_animationState >= 27)
+		if (++_animationState >= kAnimationsCount) {
 			_animationState = 0;
+		}
 
-		*animation = animationList[_animationState];
+		if (_vm->_cutContent
+		    && (_animationState == 2 || _animationState == 16 || _animationState == 21)
+		) {
+			// replace a few of the repeated "standing up" animations
+			// with the cut animation kModelAnimationHysteriaPatron1DanceStandingUpStowingMoney
+			*animation = kModelAnimationHysteriaPatron1DanceStandingUpStowingMoney;
+		} else {
+			*animation = animationList[_animationState];
+		}
 	}
 
 	*frame = _animationFrame;

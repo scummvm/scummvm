@@ -20,6 +20,8 @@
  *
  */
 
+#ifdef ENABLE_EOB
+
 #include "kyra/sound/sound_intern.h"
 #include "kyra/resource/resource.h"
 #include "kyra/sound/drivers/audiomaster2.h"
@@ -30,7 +32,7 @@
 namespace Kyra {
 
 SoundAmiga_EoB::SoundAmiga_EoB(KyraEngine_v1 *vm, Audio::Mixer *mixer) : Sound(vm, mixer),
-	_vm(vm), _driver(0), _currentResourceSet(-1), _currentFile(-1), _levelSoundList1(0), _levelSoundList2(0), _ready(false) {
+	_vm(vm), _driver(0), _currentResourceSet(-1), _ready(false) {
 	_fileBuffer = new uint8[64000];
 	memset(_resInfo, 0, sizeof(_resInfo));
 }
@@ -51,11 +53,8 @@ bool SoundAmiga_EoB::init() {
 	if (!_driver->init())
 		return false;
 
-	int temp = 0;
-	_levelSoundList1 = _vm->staticres()->loadStrings(kEoB1BaseLevelSounds1, temp);
-	_levelSoundList2 = _vm->staticres()->loadStrings(kEoB1BaseLevelSounds2, temp);
-
 	_ready = true;
+
 	return true;
 }
 
@@ -78,46 +77,34 @@ void SoundAmiga_EoB::selectAudioResourceSet(int set) {
 	_currentResourceSet = set;
 }
 
-void SoundAmiga_EoB::loadSoundFile(uint file) {
-	if (_vm->gameFlags().platform != Common::kPlatformAmiga || _currentResourceSet != kMusicIngame || !_ready)
-		return;
-
-	unloadLevelSounds();
-
-	for (int i = 0; i < 2; ++i) {
-		if (_levelSoundList1[file * 2 + i][0])
-			loadSoundFile(Common::String::format("%s.CPS", _levelSoundList1[file * 2 + i]));
-		if (_levelSoundList2[file * 2 + i][0])
-			loadSoundFile(Common::String::format("%s.CPS", _levelSoundList2[file * 2 + i]));
-	}
-
-	loadSoundFile(Common::String::format("LEVELSAM%d.CPS", file));
-
-	_currentFile = file;
-}
-
 void SoundAmiga_EoB::loadSoundFile(Common::String file) {
 	if (!_ready)
 		return;
 
 	Common::SeekableReadStream *in = _vm->resource()->createReadStream(file);
+	debugC(6, kDebugLevelSound, "SoundAmiga_EoB::loadSoundFile(): Attempting to load sound file '%s'...%s", file.c_str(), in ? "SUCCESS" : "FILE NOT FOUND");
 	if (!in)
 		return;
 
+	// This value can deviate up to 5 bytes from the real size in EOB II Amiga.
+	// The original simply tries to read 64000 bytes from the file (ignoring this
+	// value). We do the same.
+	// EOB I strangely always seems to have correct values. 
 	uint16 readSize = in->readUint16LE() - 10;
 	uint8 cmp = in->readByte();
 	in->seek(1, SEEK_CUR);
 	uint32 outSize = in->readUint32LE();
 	in->seek(2, SEEK_CUR);
 
-	if (in->read(_fileBuffer, readSize) != readSize)
-		error("SoundAmiga_EoB::loadSoundFile(): Failed to load sound file '%s'", file.c_str());
+	readSize = in->read(_fileBuffer, 64000);
 	delete in;
+
+	if (cmp == 0 && readSize < outSize)
+		outSize = readSize;
 
 	uint8 *buf = new uint8[outSize];
 
 	if (cmp == 0) {
-		assert(readSize == outSize);
 		memcpy(buf, _fileBuffer, outSize);
 	} else if (cmp == 3) {			
 		Screen::decodeFrame3(_fileBuffer, buf, outSize, true);
@@ -134,8 +121,15 @@ void SoundAmiga_EoB::loadSoundFile(Common::String file) {
 	delete[] buf;
 }
 
+void SoundAmiga_EoB::unloadSoundFile(Common::String file) {
+	if (!_ready)
+		return;
+	debugC(5, kDebugLevelSound, "SoundAmiga_EoB::unloadSoundFile(): Attempting to free resource '%s'...%s", file.c_str(), _driver->stopSound(file) ? "SUCCESS" : "FAILURE");
+	_driver->flushResource(file);
+}
+
 void SoundAmiga_EoB::playTrack(uint8 track) {
-	if (!_musicEnabled)
+	if (!_musicEnabled || !_ready)
 		return;
 
 	Common::String newSound;
@@ -149,7 +143,17 @@ void SoundAmiga_EoB::playTrack(uint8 track) {
 			newSound = "FINALE.SMUS";
 		}
 	} else if (_vm->game() == GI_EOB2) {
-		
+		if (_currentResourceSet == kMusicIntro) {
+			if (track > 11 && track < 16) {
+				const char *const songs[] = { "INTRO1A.SMUS", "CHARGEN3.SMUS", "INTRO1B.SMUS", "INTRO1C.SMUS" };
+				newSound = songs[track - 12];
+			}
+		} else if (_currentResourceSet == kMusicFinale) {
+			if (track > 0 && track < 4) {
+				const char *const songs[] = { "FINALE1B.SMUS", "FINALE1C.SMUS", "FINALE1D.SMUS" };
+				newSound = songs[track - 1];
+			}
+		}
 	}
 
 	if (!newSound.empty() && _ready) {
@@ -161,37 +165,57 @@ void SoundAmiga_EoB::playTrack(uint8 track) {
 void SoundAmiga_EoB::haltTrack() {
 	if (!_lastSound.empty())
 		_driver->stopSound(_lastSound);
+	_lastSound.clear();
 }
 
 void SoundAmiga_EoB::playSoundEffect(uint8 track, uint8 volume) {
-	if (_currentResourceSet == -1 || !_ready)
+	if (_currentResourceSet == -1 || !_sfxEnabled || !_ready)
 		return;
+
+	if (_vm->game() == GI_EOB2 && _currentResourceSet == kMusicIntro && track == 14) {
+		_driver->startSound("TELEPORT.SAM");
+		return;
+	}
 
 	if (!_resInfo[_currentResourceSet]->soundList || track >= 120 || !_sfxEnabled)
 		return;
 
+	if (_vm->game() == GI_EOB2 && track == 2) {
+		beginFadeOut(60);
+		return;
+	}
+
 	Common::String newSound = _resInfo[_currentResourceSet]->soundList[track];
+	const char *suffix = (_vm->game() == GI_EOB1) ? "1.SAM" : ((track > 51 && track < 68) ? ".SMUS" : ".SAM");
 
 	if (!newSound.empty()) {
 		if (volume == 255) {
-			if (_driver->startSound(newSound + "1.SAM")) {
-				_lastSound = newSound + "1.SAM";
+			if (_driver->startSound(newSound + suffix)) {
+				_lastSound = newSound + suffix;
 				return;
 			} else {
 				volume = 1;
 			}
 		}
 
-		if (volume > 0 && volume < 5) {
-			newSound = Common::String::format("%s%d", newSound.c_str(), volume);		
-			_driver->startSound(newSound);
+		if (volume > 0 && volume < 5)
+			newSound = Common::String::format("%s%d", newSound.c_str(), volume);
+
+		if (!_driver->startSound(newSound)) {
+			// WORKAROUND for wrongly named resources. This applies to at least 'BLADE' in the EOB II dungeons (instead of 'BLADE1').
+			newSound = _resInfo[_currentResourceSet]->soundList[track];
+			if (_driver->startSound(newSound))
+				debugC(5, kDebugLevelSound, "SoundAmiga_EoB::playSoundEffect(): Triggered workaround for wrongly named resource: '%s'", newSound.c_str());
 		}
 
 		_lastSound = newSound;
 	}
 }
 
-void SoundAmiga_EoB::beginFadeOut() {
+void SoundAmiga_EoB::beginFadeOut(int delay) {
+	_driver->fadeOut(delay);	
+	while (_driver->isFading() && !_vm->shouldQuit())
+		_vm->delay(5);
 	haltTrack();
 }
 
@@ -207,23 +231,10 @@ void SoundAmiga_EoB::updateVolumeSettings() {
 	_driver->setSoundEffectVolume((mute ? 0 : ConfMan.getInt("sfx_volume")));
 }
 
-void SoundAmiga_EoB::unloadLevelSounds() {
-	if (_currentFile != -1) {
-		_driver->flushResource(Common::String::format("L%dM1A1", _currentFile));
-		_driver->flushResource(Common::String::format("L%dM2A1", _currentFile));
-
-		for (int i = 1; i < 5; ++i) {
-			_driver->flushResource(Common::String::format("L%dM1M%d", _currentFile, i));
-			_driver->flushResource(Common::String::format("L%dM2M%d", _currentFile, i));
-		}
-
-		for (int i = 0; i < 2; ++i) {
-			if (_levelSoundList1[_currentFile * 2 + i][0])
-				_driver->flushResource(_levelSoundList1[_currentFile * 2 + i]);
-			if (_levelSoundList2[_currentFile * 2 + i][0])
-				_driver->flushResource(_levelSoundList2[_currentFile * 2 + i]);
-		}
-	}
+int SoundAmiga_EoB::checkTrigger() {
+	return _driver->getPlayDuration();
 }
 
 } // End of namespace Kyra
+
+#endif

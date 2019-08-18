@@ -28,7 +28,7 @@
 #include "common/memstream.h"
 
 #include "adl/adl_v5.h"
-#include "adl/display.h"
+#include "adl/display_a2.h"
 #include "adl/graphics.h"
 #include "adl/disk.h"
 
@@ -44,25 +44,24 @@ public:
 
 private:
 	// AdlEngine
-	void gameLoop();
-	void setupOpcodeTables();
-	void runIntro();
-	void init();
-	void initGameState();
-	void showRoom();
-	Common::String formatVerbError(const Common::String &verb) const;
-	Common::String formatNounError(const Common::String &verb, const Common::String &noun) const;
-	void loadState(Common::ReadStream &stream);
-	void saveState(Common::WriteStream &stream);
+	void gameLoop() override;
+	void setupOpcodeTables() override;
+	void runIntro() override;
+	void init() override;
+	void initGameState() override;
+	void showRoom() override;
+	int goDirection(ScriptEnv &e, Direction dir) override;
+	Common::String formatVerbError(const Common::String &verb) const override;
+	Common::String formatNounError(const Common::String &verb, const Common::String &noun) const override;
+	void loadState(Common::ReadStream &stream) override;
+	void saveState(Common::WriteStream &stream) override;
 
 	// AdlEngine_v2
-	void printString(const Common::String &str);
+	void printString(const Common::String &str) override;
 
 	// Engine
-	bool canSaveGameStateCurrently();
+	bool canSaveGameStateCurrently() override;
 
-	template <Direction D>
-	int o_goDirection(ScriptEnv &e);
 	int o_fluteSound(ScriptEnv &e);
 
 	static const uint kRegions = 3;
@@ -94,80 +93,16 @@ void HiRes6Engine::gameLoop() {
 	}
 }
 
-typedef Common::Functor1Mem<ScriptEnv &, int, HiRes6Engine> OpcodeH6;
-#define SetOpcodeTable(x) table = &x;
-#define Opcode(x) table->push_back(new OpcodeH6(this, &HiRes6Engine::x))
-#define OpcodeUnImpl() table->push_back(new OpcodeH6(this, 0))
-
 void HiRes6Engine::setupOpcodeTables() {
-	Common::Array<const Opcode *> *table = 0;
+	AdlEngine_v5::setupOpcodeTables();
 
-	SetOpcodeTable(_condOpcodes);
-	// 0x00
-	OpcodeUnImpl();
-	Opcode(o2_isFirstTime);
-	Opcode(o2_isRandomGT);
-	Opcode(o4_isItemInRoom);
-	// 0x04
-	Opcode(o5_isNounNotInRoom);
-	Opcode(o1_isMovesGT);
-	Opcode(o1_isVarEQ);
-	Opcode(o2_isCarryingSomething);
-	// 0x08
-	Opcode(o4_isVarGT);
-	Opcode(o1_isCurPicEQ);
-	Opcode(o5_abortScript);
-
-	SetOpcodeTable(_actOpcodes);
-	// 0x00
-	OpcodeUnImpl();
-	Opcode(o1_varAdd);
-	Opcode(o1_varSub);
-	Opcode(o1_varSet);
-	// 0x04
-	Opcode(o1_listInv);
-	Opcode(o4_moveItem);
-	Opcode(o1_setRoom);
-	Opcode(o2_setCurPic);
-	// 0x08
-	Opcode(o2_setPic);
-	Opcode(o1_printMsg);
-	Opcode(o5_dummy);
-	Opcode(o5_setTextMode);
-	// 0x0c
-	Opcode(o4_moveAllItems);
-	Opcode(o1_quit);
-	Opcode(o5_dummy);
-	Opcode(o4_save);
-	// 0x10
-	Opcode(o4_restore);
-	Opcode(o1_restart);
-	Opcode(o5_setRegionRoom);
-	Opcode(o5_dummy);
-	// 0x14
-	Opcode(o1_resetPic);
-	Opcode(o_goDirection<IDI_DIR_NORTH>);
-	Opcode(o_goDirection<IDI_DIR_SOUTH>);
-	Opcode(o_goDirection<IDI_DIR_EAST>);
-	// 0x18
-	Opcode(o_goDirection<IDI_DIR_WEST>);
-	Opcode(o_goDirection<IDI_DIR_UP>);
-	Opcode(o_goDirection<IDI_DIR_DOWN>);
-	Opcode(o1_takeItem);
-	// 0x1c
-	Opcode(o1_dropItem);
-	Opcode(o5_setRoomPic);
-	Opcode(o_fluteSound);
-	OpcodeUnImpl();
-	// 0x20
-	Opcode(o2_initDisk);
+	_actOpcodes[0x1e] = opcode(&HiRes6Engine::o_fluteSound);
 }
 
-template <Direction D>
-int HiRes6Engine::o_goDirection(ScriptEnv &e) {
-	OP_DEBUG_0((Common::String("\tGO_") + dirStr(D) + "()").c_str());
+int HiRes6Engine::goDirection(ScriptEnv &e, Direction dir) {
+	OP_DEBUG_0((Common::String("\tGO_") + dirStr(dir) + "()").c_str());
 
-	byte room = getCurRoom().connections[D];
+	byte room = getCurRoom().connections[dir];
 
 	if (room == 0) {
 		// Don't penalize invalid directions at escapable Garthim encounter
@@ -257,20 +192,22 @@ static Common::MemoryReadStream *loadSectors(DiskImage *disk, byte track, byte s
 }
 
 void HiRes6Engine::runIntro() {
+	Display_A2 *display = static_cast<Display_A2 *>(_display);
+
 	insertDisk(0);
 
 	StreamPtr stream(loadSectors(_disk, 11, 1, 96));
 
-	_display->setMode(DISPLAY_MODE_HIRES);
-	_display->loadFrameBuffer(*stream);
-	_display->updateHiResScreen();
+	display->setMode(Display::kModeGraphics);
+	display->loadFrameBuffer(*stream);
+	display->renderGraphics();
 	delay(256 * 8609 / 1000);
 
-	_display->loadFrameBuffer(*stream);
-	_display->updateHiResScreen();
+	display->loadFrameBuffer(*stream);
+	display->renderGraphics();
 	delay(256 * 8609 / 1000);
 
-	_display->loadFrameBuffer(*stream);
+	display->loadFrameBuffer(*stream);
 
 	// Load copyright string from boot file
 	Files_AppleDOS *files(new Files_AppleDOS());
@@ -279,20 +216,20 @@ void HiRes6Engine::runIntro() {
 		error("Failed to open disk volume 0");
 
 	stream.reset(files->createReadStream("\010\010\010\010\010\010"));
-	Common::String copyright(readStringAt(*stream, 0x103, APPLECHAR('\r')));
+	Common::String copyright(readStringAt(*stream, 0x103, _display->asciiToNative('\r')));
 
 	delete files;
 
-	_display->updateHiResScreen();
-	_display->home();
-	_display->setMode(DISPLAY_MODE_MIXED);
-	_display->moveCursorTo(Common::Point(0, 21));
-	_display->printString(copyright);
+	display->renderGraphics();
+	display->home();
+	display->setMode(Display::kModeMixed);
+	display->moveCursorTo(Common::Point(0, 21));
+	display->printString(copyright);
 	delay(256 * 8609 / 1000);
 }
 
 void HiRes6Engine::init() {
-	_graphics = new GraphicsMan_v3(*_display);
+	_graphics = new GraphicsMan_v3<Display_A2>(*static_cast<Display_A2 *>(_display));
 
 	insertDisk(0);
 
@@ -391,7 +328,7 @@ void HiRes6Engine::showRoom() {
 	if (!_state.isDark)
 		drawItems();
 
-	_display->updateHiResScreen();
+	_display->renderGraphics();
 	setVar(2, 0xff);
 	printString(_roomData.description);
 }
@@ -402,13 +339,15 @@ Common::String HiRes6Engine::formatVerbError(const Common::String &verb) const {
 	for (uint i = 0; i < verb.size(); ++i)
 		err.setChar(verb[i], i + 24);
 
-	err.setChar(APPLECHAR(' '), 32);
+	const char spaceChar = _display->asciiToNative(' ');
+
+	err.setChar(spaceChar, 32);
 
 	uint i = 24;
-	while (err[i] != APPLECHAR(' '))
+	while (err[i] != spaceChar)
 		++i;
 
-	err.setChar(APPLECHAR('.'), i);
+	err.setChar(_display->asciiToNative('.'), i);
 
 	return err;
 }
@@ -419,16 +358,18 @@ Common::String HiRes6Engine::formatNounError(const Common::String &verb, const C
 	for (uint i = 0; i < noun.size(); ++i)
 		err.setChar(noun[i], i + 24);
 
+	const char spaceChar = _display->asciiToNative(' ');
+
 	for (uint  i = 35; i > 31; --i)
-		err.setChar(APPLECHAR(' '), i);
+		err.setChar(spaceChar, i);
 
 	uint i = 24;
-	while (err[i] != APPLECHAR(' '))
+	while (err[i] != spaceChar)
 		++i;
 
-	err.setChar(APPLECHAR('I'), i + 1);
-	err.setChar(APPLECHAR('S'), i + 2);
-	err.setChar(APPLECHAR('.'), i + 3);
+	err.setChar(_display->asciiToNative('I'), i + 1);
+	err.setChar(_display->asciiToNative('S'), i + 2);
+	err.setChar(_display->asciiToNative('.'), i + 3);
 
 	return err;
 }
@@ -472,7 +413,7 @@ void HiRes6Engine::printString(const Common::String &str) {
 	if (getVar(2) == 0xff) {
 		if (getVar(26) == 0) {
 			// This checks for special room description string " "
-			if (str.size() == 1 && APPLECHAR(str[0]) == APPLECHAR(' ')) {
+			if (str.size() == 1 && _display->asciiToNative(str[0]) == _display->asciiToNative(' ')) {
 				setVar(2, 160);
 			} else {
 				AdlEngine_v5::printString(s);

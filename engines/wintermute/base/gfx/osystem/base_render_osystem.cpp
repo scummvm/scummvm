@@ -576,7 +576,7 @@ void BaseRenderOSystem::endSaveLoad() {
 	_skipThisFrame = true;
 	_lastFrameIter = _renderQueue.end();
 
-	_renderSurface->fillRect(Common::Rect(0, 0, _renderSurface->h, _renderSurface->w), _renderSurface->format.ARGBToColor(255, 0, 0, 0));
+	_renderSurface->fillRect(Common::Rect(0, 0, _renderSurface->w, _renderSurface->h), _renderSurface->format.ARGBToColor(255, 0, 0, 0));
 	g_system->copyRectToScreen((byte *)_renderSurface->getPixels(), _renderSurface->pitch, 0, 0, _renderSurface->w, _renderSurface->h);
 	g_system->updateScreen();
 }

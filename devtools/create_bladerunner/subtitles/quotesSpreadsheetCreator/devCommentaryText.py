@@ -28,7 +28,7 @@ EXTRA_SPEECH_AUDIO_TUPLE_LIST = [
 	('67_1080R.AUD', "*Crowd talk*"),
 	('67_1100R.AUD', "*Crowd talk*"),
 	('67_1140R.AUD', "*Crowd talk*"),
-	('67_1160R.AUD', "*Crowd talk*")	
+	('67_1160R.AUD', "*Crowd talk*")
 ]
 
 # we use the spoken quote id that triggers the comment as an ID for the DEV commentary quote
@@ -40,7 +40,7 @@ DEV_ISEZ_QUOTES_TUPLE_LIST = [
 	("IS-23-0130.AUD", "JM: Did it have a huge, ugly piece of chrome on it?"), # Officer Leary
 	("IS-23-0090.AUD", "JM: This officer has a talent for vivid metaphors."), # Officer Leary
 	("IS-00-4540.AUD", "DL: What is that supposed to mean?  I didn't write this line..."),
-	("IS-00-4515.AUD", "MG: Hey, leave that officer alone. Can't you see he's busy?\nJM: (...mmm, donuts...)"), # clicking on Leary after we get his statement 
+	("IS-00-4515.AUD", "MG: Hey, leave that officer alone. Can't you see he's busy?\nJM: (...mmm, donuts...)"), # clicking on Leary after we get his statement
 	("IS-23-0060.AUD", "MG: It's all fun and games until someone loses a tiger cub."), # Officer Leary
 	("IS-00-9991.AUD", "JM: Chrome...is that what that is?"), # pick up chrome
 	("IS-00-4510.AUD", "JM: It's hard to imagine that thing on either a car or a horse.\nMG: McCoy! What a witty chap...\nJM: He keeps me chuckling non-stop!"),
@@ -50,7 +50,7 @@ DEV_ISEZ_QUOTES_TUPLE_LIST = [
 #
 #
 #
-class devCommentaryText:
+class devCommentaryText(object):
 	m_traceModeEnabled = True
 	# traceModeEnabled is bool to enable more printed debug messages
 	def __init__(self, traceModeEnabled = True):
@@ -58,6 +58,8 @@ class devCommentaryText:
 		return
 	
 	def printTexts(self):
+		if self.m_traceModeEnabled:
+			print "[Trace] Printing all dev commentary text"
 		print "\nAUDIO COMMENTARY"
 		print "------------------"
 		for (idTre, textTre) in DEV_AUDIO_COMMENTARY_TUPLE_LIST:
@@ -73,23 +75,30 @@ class devCommentaryText:
 		return
 		
 	def getAudioCommentaryTextEntriesList(self):
+		if self.m_traceModeEnabled:
+			print "[Trace] getAudioCommentaryTextEntriesList"
 		return DEV_AUDIO_COMMENTARY_TUPLE_LIST
 		
 	def getISEZTextEntriesList(self):
+		
+		if self.m_traceModeEnabled:
+			print "[Trace] getISEZTextEntriesList"
 		return DEV_ISEZ_QUOTES_TUPLE_LIST
-
+		
 	def getExtraSpeechAudioEntriesList(self):
+		if self.m_traceModeEnabled:
+			print "[Trace] getExtraSpeechAudioEntriesList"
 		return EXTRA_SPEECH_AUDIO_TUPLE_LIST
-
+#
+#
+#
 if __name__ == '__main__':
-	#	 main()
+	# main()
 	print "[Debug] Running %s as main module" % (my_module_name)
 	traceModeEnabled = False
 	devCommentaryTextInstance = devCommentaryText(traceModeEnabled)
 	devCommentaryTextInstance.printTexts()
-	
 else:
 	#debug
 	#print "[Debug] Running	 %s imported from another module" % (my_module_name)
 	pass
-	

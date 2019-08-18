@@ -24,7 +24,6 @@
 
 #include "pink/archive.h"
 #include "pink/pink.h"
-#include "pink/objects/actions/action_play_with_sfx.h"
 #include "pink/objects/actors/lead_actor.h"
 #include "pink/objects/pages/game_page.h"
 #include "pink/objects/sequences/sequencer.h"
@@ -35,7 +34,7 @@
 namespace Pink {
 
 Sequencer::Sequencer(GamePage *page)
-	: _context(nullptr), _page(page), _time(0) {}
+	: _context(nullptr), _page(page), _time(0), _isSkipping(false) {}
 
 Sequencer::~Sequencer() {
 	for (uint i = 0; i < _sequences.size(); ++i) {
@@ -145,25 +144,25 @@ void Sequencer::removeContext(SequenceContext *context) {
 
 void Sequencer::skipSubSequence() {
 	if (_context) {
-		g_skipping = true;
+		_isSkipping = true;
 		_context->getSequence()->skipSubSequence();
-		g_skipping = false;
+		_isSkipping = false;
 	}
 }
 
 void Sequencer::restartSequence() {
 	if (_context) {
-		g_skipping = true;
+		_isSkipping = true;
 		_context->getSequence()->restart();
-		g_skipping = false;
+		_isSkipping = false;
 	}
 }
 
 void Sequencer::skipSequence() {
 	if (_context && _context->getSequence()->isSkippingAllowed()) {
-		g_skipping = true;
+		_isSkipping = true;
 		_context->getSequence()->skip();
-		g_skipping = false;
+		_isSkipping = false;
 	}
 }
 

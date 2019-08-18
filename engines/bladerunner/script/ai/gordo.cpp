@@ -101,8 +101,8 @@ bool AIScriptGordo::Update() {
 }
 
 void AIScriptGordo::TimerExpired(int timer) {
-	if (timer == 0) {
-		AI_Countdown_Timer_Reset(kActorGordo, 0);
+	if (timer == kActorTimerAIScriptCustomTask0) {
+		AI_Countdown_Timer_Reset(kActorGordo, kActorTimerAIScriptCustomTask0);
 		if (Player_Query_Combat_Mode()) {
 			Actor_Set_Goal_Number(kActorGordo, kGoalGordoNR01RunAway);
 		} else {
@@ -121,7 +121,13 @@ void AIScriptGordo::CompletedMovementTrack() {
 	}
 
 	if (Actor_Query_Goal_Number(kActorGordo) == kGoalGordoCT05WalkThrough) {
-		if (Player_Query_Current_Set() == kSetCT05) {
+		if (Player_Query_Current_Set() == kSetCT05
+#if !BLADERUNNER_ORIGINAL_BUGS
+		    // prevent this dialogue scene if McCoy is climbing the stairs up-again
+		    // to avoid a game freeze bug
+		    && _vm->playerHasControl()
+#endif
+		) {
 			Actor_Force_Stop_Walking(kActorMcCoy);
 			Player_Loses_Control();
 			Player_Set_Combat_Mode(true);
@@ -160,7 +166,7 @@ void AIScriptGordo::CompletedMovementTrack() {
 
 	if (Actor_Query_Goal_Number(kActorGordo) == kGoalGordoNR02GoToPodium) {
 		if (Player_Query_Current_Set() == kSetNR02) {
-			Ambient_Sounds_Play_Sound(581, 58, 0, 0, 0);
+			Ambient_Sounds_Play_Sound(kSfxCOMEDY, 58, 0, 0, 0);
 			Actor_Face_Heading(kActorGordo, 0, false);
 			Loop_Actor_Travel_Stairs(kActorGordo, 4, true, kAnimationModeIdle);
 			Actor_Face_Heading(kActorGordo, 506, false);
@@ -280,7 +286,7 @@ void AIScriptGordo::Retired(int byActorId) {
 		Actor_Voice_Over(1410, kActorVoiceOver);
 		Actor_Voice_Over(1430, kActorVoiceOver);
 		Actor_Voice_Over(1440, kActorVoiceOver);
-		if (Query_Difficulty_Level() > 0) {
+		if (Query_Difficulty_Level() > kGameDifficultyEasy) {
 			Global_Variable_Increment(kVariableChinyen, 200);
 		}
 		Player_Gains_Control();
@@ -288,20 +294,22 @@ void AIScriptGordo::Retired(int byActorId) {
 	}
 
 	if (Actor_Query_In_Set(kActorGordo, kSetKP07)) {
-		Global_Variable_Decrement(kVariableReplicants, 1);
+		Global_Variable_Decrement(kVariableReplicantsSurvivorsAtMoonbus, 1);
 		Actor_Set_Goal_Number(kActorGordo, kGoalGordoGone);
-		if (Global_Variable_Query(kVariableReplicants) == 0) {
+		if (Global_Variable_Query(kVariableReplicantsSurvivorsAtMoonbus) == 0) {
 			Player_Loses_Control();
 			Delay(2000);
 			Player_Set_Combat_Mode(false);
+#if BLADERUNNER_ORIGINAL_BUGS
 			Player_Gains_Control();
-			Loop_Actor_Walk_To_XYZ(kActorMcCoy, -12.0f, -41.58f, 72.0f, 0, true, false, 0);
+#endif // BLADERUNNER_ORIGINAL_BUGS
+			Loop_Actor_Walk_To_XYZ(kActorMcCoy, -12.0f, -41.58f, 72.0f, 0, true, false, false);
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
 			Game_Flag_Set(kFlagKP07toKP06);
 			Game_Flag_Reset(kFlagMcCoyIsHelpingReplicants);
 			Set_Enter(kSetKP05_KP06, kSceneKP06);
-			return;// true;
+			return; //true;
 		}
 	}
 
@@ -492,7 +500,7 @@ bool AIScriptGordo::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		break;
 
 	case kGoalGordoNR02NextAct:
-		switch(Global_Variable_Query(kVariableGordosJoke)) {
+		switch (Global_Variable_Query(kVariableGordosJoke)) {
 		case 0:
 			Global_Variable_Increment(kVariableGordosJoke, 1);
 			Actor_Set_Goal_Number(kActorGordo, kGoalGordoNR02TellJoke1);
@@ -542,8 +550,8 @@ bool AIScriptGordo::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		Music_Stop(1);
 		Actor_Face_Actor(kActorMcCoy, kActorGordo, true);
 		Actor_Says(kActorGordo, 740, 17);
-		Sound_Play(575, 50, 0, 0, 50);
-		Sound_Play(319, 50, 0, 0, 50);
+		Sound_Play(kSfxRIMSHOT1, 50, 0, 0, 50);
+		Sound_Play(kSfxAUDLAFF1, 50, 0, 0, 50);
 		Actor_Says(kActorGordo, 750, 16);
 		Actor_Says(kActorGordo, 760, 15);
 		Actor_Says(kActorGordo, 770, 14);
@@ -555,8 +563,8 @@ bool AIScriptGordo::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 			Actor_Says(kActorMcCoy, 3910, 16);
 			if (Global_Variable_Query(kVariableHollowayArrest) == 2) {
 				Actor_Says(kActorGordo, 870, 16);
-				Sound_Play(576, 50, 0, 0, 50);
-				Sound_Play(319, 50, 0, 0, 50);
+				Sound_Play(kSfxRIMSHOT2, 50, 0, 0, 50);
+				Sound_Play(kSfxAUDLAFF1, 50, 0, 0, 50);
 				Actor_Set_Goal_Number(kActorHolloway, kGoalHollowayGoToNR02);
 				Actor_Says(kActorGordo, 880, 17);
 				Actor_Set_Goal_Number(kActorGordo, kGoalGordoNR02WaitAtPodium);
@@ -567,8 +575,8 @@ bool AIScriptGordo::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		} else {
 			Actor_Says(kActorGordo, 790, 12);
 			Actor_Says(kActorMcCoy, 3890, 15);
-			Sound_Play(577, 50, 0, 0, 50);
-			Sound_Play(321, 50, 0, 0, 50);
+			Sound_Play(kSfxRIMSHOT3, 50, 0, 0, 50);
+			Sound_Play(kSfxAUDLAFF3, 50, 0, 0, 50);
 			Actor_Says(kActorGordo, 800, 15);
 			Actor_Says(kActorGordo, 810, 17);
 			Actor_Says(kActorMcCoy, 3895, 16);
@@ -577,8 +585,8 @@ bool AIScriptGordo::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 			Actor_Says(kActorGordo, 830, 15);
 			Actor_Says(kActorMcCoy, 3905, 13);
 			Actor_Says(kActorGordo, 840, 13);
-			Sound_Play(578, 50, 0, 0, 50);
-			Sound_Play(321, 50, 0, 0, 50);
+			Sound_Play(kSfxRIMSHOT4, 50, 0, 0, 50);
+			Sound_Play(kSfxAUDLAFF3, 50, 0, 0, 50);
 			Actor_Set_Goal_Number(kActorGordo, kGoalGordoNR02RunAway1);
 		}
 		break;
@@ -593,7 +601,7 @@ bool AIScriptGordo::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		AI_Movement_Track_Flush(kActorGordo);
 		AI_Movement_Track_Append_Run(kActorGordo, 366, 0);
 		AI_Movement_Track_Repeat(kActorGordo);
-		Music_Play(1, 50, 0, 2, -1, 0, 0);
+		Music_Play(kMusicBatl226M, 50, 0, 2, -1, 0, 0);
 		break;
 
 	case kGoalGordoNR02RunAway2:
@@ -627,7 +635,7 @@ bool AIScriptGordo::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 
 	case kGoalGordoNR01GiveUp:
 		ADQ_Add(kActorGordo, 170, 18);
-		AI_Countdown_Timer_Start(kActorGordo, 0, 10);
+		AI_Countdown_Timer_Start(kActorGordo, kActorTimerAIScriptCustomTask0, 10);
 		break;
 
 	case kGoalGordoNR01TalkToMcCoy:
@@ -687,7 +695,7 @@ bool AIScriptGordo::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 
 	case kGoalGordoNR01Die:
 		Music_Stop(2);
-		AI_Countdown_Timer_Reset(kActorGordo, 0);
+		AI_Countdown_Timer_Reset(kActorGordo, kActorTimerAIScriptCustomTask0);
 		ADQ_Flush();
 		AI_Movement_Track_Flush(kActorGordo);
 		if (Game_Flag_Query(kFlagGordoIsReplicant)) {
@@ -1128,9 +1136,9 @@ bool AIScriptGordo::UpdateAnimation(int *animation, int *frame) {
 			if (Game_Flag_Query(kFlagNR02GordoLeaveLighter)) {
 				Game_Flag_Reset(kFlagNR02GordoLeaveLighter);
 				if (Game_Flag_Query(kFlagGordoIsReplicant)) {
-					Item_Add_To_World(kItemGordosLighter1, 953, kSetNR02, 148.94f, 22.19f, 476.1f, 0, 6, 6, false, true, false, false);
+					Item_Add_To_World(kItemGordosLighterReplicant, kModelAnimationGordosLighterReplicant, kSetNR02, 148.94f, 22.19f, 476.1f, 0, 6, 6, false, true, false, false);
 				} else {
-					Item_Add_To_World(kItemGordosLighter2, 954, kSetNR02, 148.94f, 22.19f, 476.1f, 0, 6, 6, false, true, false, false);
+					Item_Add_To_World(kItemGordosLighterHuman, kModelAnimationGordosLighterHuman, kSetNR02, 148.94f, 22.19f, 476.1f, 0, 6, 6, false, true, false, false);
 				}
 				Actor_Set_Goal_Number(kActorGordo, kGoalGordoNR02GoToPodium);
 			}
@@ -1626,7 +1634,7 @@ void AIScriptGordo::talkToMcCoyInCity() {
 		Game_Flag_Set(kFlagGordoTalk2);
 		AI_Movement_Track_Unpause(kActorGordo);
 	} else {
-		switch(Random_Query(1, 4)) {
+		switch (Random_Query(1, 4)) {
 			case 1:
 				Actor_Says(kActorMcCoy, 6460, 13);
 				break;
@@ -1671,8 +1679,8 @@ void AIScriptGordo::talkToMcCoyAtNR02() {
 void AIScriptGordo::dialogue2() {
 	Music_Stop(5);
 	Dialogue_Menu_Clear_List();
-	DM_Add_To_List_Never_Repeat_Once_Selected(820, -1, 5, 7);
-	DM_Add_To_List_Never_Repeat_Once_Selected(830, 7, 5, -1);
+	DM_Add_To_List_Never_Repeat_Once_Selected(820, -1, 5,  7); // ARREST
+	DM_Add_To_List_Never_Repeat_Once_Selected(830,  7, 5, -1); // LET GO
 
 	Dialogue_Menu_Appear(320, 240);
 	int answer = Dialogue_Menu_Query_Input();
@@ -1698,7 +1706,7 @@ void AIScriptGordo::dialogue2() {
 	} else if (answer == 830) { // LET GO
 		Actor_Says(kActorMcCoy, 3100, 16);
 		Actor_Says(kActorGordo, 240, 14);
-		if (Actor_Clue_Query(0, 102)) {
+		if (Actor_Clue_Query(kActorMcCoy, kClueStolenCheese)) {
 			Actor_Says(kActorMcCoy, 3105, 15);
 			Actor_Says(kActorMcCoy, 3110, 17);
 			Actor_Says(kActorGordo, 250, 13);

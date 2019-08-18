@@ -94,6 +94,7 @@ private:
 	// Monsters
 	void generateMonsterPalettes(const char *file, int16 monsterIndex);
 	void loadMonsterDecoration(Common::SeekableReadStream *stream, int16 monsterIndex);
+	const uint8 *loadMonsterProperties(const uint8 *data);
 	void replaceMonster(int unit, uint16 block, int d, int dir, int type, int shpIndex, int mode, int h2, int randItem, int fixedItem);
 	bool killMonsterExtra(EoBMonsterInPlay *m);
 
@@ -115,6 +116,18 @@ private:
 	void restParty_npc();
 	bool restParty_extraAbortCondition();
 
+	// Sound
+	void snd_loadAmigaSounds(int level, int sub);
+
+	const char *const *_amigaSoundFiles2;
+	const char *const *_amigaSoundMapExtra;
+	const int8 *_amigaSoundIndex1;
+	const uint8 *_amigaSoundIndex2;
+	const uint8 *_amigaSoundPatch;
+	int _amigaSoundPatchSize;
+
+	int _amigaCurSoundIndex;
+
 	// misc
 	void useHorn(int charIndex, int weaponSlot);
 	bool checkPartyStatusExtra();
@@ -132,6 +145,7 @@ private:
 
 	static const KyraRpgGUISettings _guiSettingsDOS;
 	static const KyraRpgGUISettings _guiSettingsFMTowns;
+	static const KyraRpgGUISettings _guiSettingsAmiga;
 	static const uint8 _egaDefaultPalette[];
 };
 

@@ -39,7 +39,7 @@
 #include "constants.h"
 #include "map.h"
 
-#define VERSION_NUMBER 1
+#define VERSION_NUMBER 2
 
 Common::File outputFile;
 

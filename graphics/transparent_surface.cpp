@@ -177,14 +177,17 @@ void doBlitAlphaBlend(byte *ino, byte *outo, uint32 width, uint32 height, uint32
 			for (uint32 j = 0; j < width; j++) {
 
 				uint32 ina = in[kAIndex] * ca >> 8;
-				out[kAIndex] = 255;
-				out[kBIndex] = (out[kBIndex] * (255 - ina) >> 8);
-				out[kGIndex] = (out[kGIndex] * (255 - ina) >> 8);
-				out[kRIndex] = (out[kRIndex] * (255 - ina) >> 8);
 
-				out[kBIndex] = out[kBIndex] + (in[kBIndex] * ina * cb >> 16);
-				out[kGIndex] = out[kGIndex] + (in[kGIndex] * ina * cg >> 16);
-				out[kRIndex] = out[kRIndex] + (in[kRIndex] * ina * cr >> 16);
+				if (ina != 0) {
+					out[kAIndex] = 255;
+					out[kBIndex] = (out[kBIndex] * (255 - ina) >> 8);
+					out[kGIndex] = (out[kGIndex] * (255 - ina) >> 8);
+					out[kRIndex] = (out[kRIndex] * (255 - ina) >> 8);
+
+					out[kBIndex] = out[kBIndex] + (in[kBIndex] * ina * cb >> 16);
+					out[kGIndex] = out[kGIndex] + (in[kGIndex] * ina * cg >> 16);
+					out[kRIndex] = out[kRIndex] + (in[kRIndex] * ina * cr >> 16);
+				}
 
 				in += inStep;
 				out += 4;

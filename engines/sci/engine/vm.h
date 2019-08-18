@@ -178,6 +178,7 @@ enum GlobalVar {
 	kGlobalVarPhant2MasterVolume   = 236, // 0 to 127
 	kGlobalVarPhant2ControlPanel   = 250,
 	kGlobalVarShivers1Score        = 349,
+	kGlobalVarQFG4Flags            = 500,
 	kGlobalVarHoyle5MusicVolume    = 897,
 	kkGlobalVarHoyle5ResponseTime  = 899
 };

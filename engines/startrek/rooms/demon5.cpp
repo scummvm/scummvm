@@ -59,26 +59,26 @@ void Room::demon5DoorOpenedOrReachedDoor() {
 void Room::demon5UseSTricorderOnCrate() {
 	loadActorAnim(OBJECT_SPOCK, "sscans", -1, -1, 0);
 	playSoundEffectIndex(0x04);
-	showText(TX_SPEAKER_SPOCK, TX_DEM5_006);
+	showText(TX_SPEAKER_SPOCK, 6, true);
 }
 
 // FIXME: should work when used on people as well, but doesn't
 void Room::demon5UsePhaserOnAnything() {
-	showText(TX_SPEAKER_SPOCK, TX_DEM5_007);
+	showText(TX_SPEAKER_SPOCK, 7, true);
 }
 
 void Room::demon5UseHandOnStephen() {
 	if (_awayMission->demon.repairedHand)
-		showText(TX_SPEAKER_STEPHEN, TX_DEM5_036);
+		showText(TX_SPEAKER_STEPHEN, 36, true);
 	else
-		showText(TX_SPEAKER_STEPHEN, TX_DEM5_039);
+		showText(TX_SPEAKER_STEPHEN, 39, true);
 }
 
 void Room::demon5UseBerryOnStephen() {
 	if (_awayMission->demon.knowAboutHypoDytoxin)
-		showText(TX_SPEAKER_STEPHEN, TX_DEM5_033);
+		showText(TX_SPEAKER_STEPHEN, 33, true);
 	else
-		showText(TX_SPEAKER_STEPHEN, TX_DEM5_037);
+		showText(TX_SPEAKER_STEPHEN, 37, true);
 }
 
 void Room::demon5UseHypoDytoxinOnChub() {
@@ -92,84 +92,84 @@ void Room::demon5MccoyReachedChub() {
 void Room::demon5MccoyHealedChub() {
 	walkCrewman(OBJECT_MCCOY, 0xc8, 0xba, 0);
 	_awayMission->crewDirectionsAfterWalk[OBJECT_MCCOY] = DIR_W;
-	showText(TX_SPEAKER_CHUB, TX_DEM5L027);
+	showText(TX_SPEAKER_CHUB, 27, true);
 	loseItem(OBJECT_IDETOXIN);
 	_awayMission->demon.curedChub = true;
 	_awayMission->demon.missionScore += 2;
 }
 
 void Room::demon5UseHypoDytoxinOnAnything() {
-	showText(TX_SPEAKER_MCCOY, TX_DEM5_008);
+	showText(TX_SPEAKER_MCCOY, 8, true);
 }
 
 void Room::demon5UseBerryOnChub() {
-	showText(TX_SPEAKER_MCCOY, TX_DEM5_009);
+	showText(TX_SPEAKER_MCCOY, 9, true);
 }
 
 void Room::demon5LookAtRoberts() {
-	showText(TX_DEM5N001);
+	showDescription(1, true);
 }
 
 void Room::demon5LookAtGrisnash() {
-	showText(TX_DEM5N009);
+	showDescription(9, true);
 }
 
 void Room::demon5LookAtStephen() {
-	showText(TX_DEM5N003);
+	showDescription(3, true);
 }
 
 void Room::demon5LookAtKirk() {
-	showText(TX_DEM5N006);
+	showDescription(6, true);
 }
 
 void Room::demon5LookAtSpock() {
-	showText(TX_DEM5N008);
+	showDescription(8, true);
 }
 
 void Room::demon5LookAtMccoy() {
-	showText(TX_DEM5N007);
+	showDescription(7, true);
 }
 
 void Room::demon5LookAtRedshirt() {
-	showText(TX_DEM5N005);
+	showDescription(5, true);
 }
 
 void Room::demon5LookAtMountain() {
-	showText(TX_DEM5N002);
+	showDescription(2, true);
 }
 
 void Room::demon5LookAtCrate() {
-	showText(TX_DEM5N004);
+	showDescription(4, true);
 }
 
 void Room::demon5LookAnywhere() {
-	showText(TX_DEM5N000);
+	showDescription(0, true);
 }
 
 void Room::demon5LookAtChub() {
-	showText(TX_SPEAKER_CHUB, TX_DEM5L028);
+	showText(TX_SPEAKER_CHUB, 28, true, true);
 }
 
 void Room::demon5TalkToRoberts() {
 	if (_awayMission->demon.curedChub) {
-		showText(TX_SPEAKER_ROBERTS, TX_DEM5_030);
+		showText(TX_SPEAKER_ROBERTS, 30, true);
 		if (!_roomVar.demon.talkedToRoberts) {
 			_roomVar.demon.talkedToRoberts = true;
 			_roomVar.demon.numTalkedTo++;
 			demon5CheckCompletedStudy();
 		}
 	} else {
-		showText(TX_DEM5N010);
+		showDescription(10, true);
 	}
 }
 
 void Room::demon5TalkToChub() {
 	if (_awayMission->demon.curedChub) {
-		showText(TX_SPEAKER_CHUB, TX_DEM5L029);
-		showText(TX_SPEAKER_KIRK, TX_DEM5_002);
-		showText(TX_SPEAKER_CHUB, TX_DEM5L030);
-		showText(TX_SPEAKER_KIRK, TX_DEM5_005);
-		showText(TX_SPEAKER_CHUB, TX_DEM5L031);
+		showText(TX_SPEAKER_CHUB, 29, true, true);
+		showText(TX_SPEAKER_KIRK, 2, true);
+		showText(TX_SPEAKER_CHUB, 30, true, true);
+		showText(TX_SPEAKER_KIRK, 5, true);
+		showText(TX_SPEAKER_CHUB, 31, true, true);
 
 		if (!_roomVar.demon.talkedToChub) {
 			_roomVar.demon.talkedToChub = true;
@@ -177,16 +177,16 @@ void Room::demon5TalkToChub() {
 			demon5CheckCompletedStudy();
 		}
 	} else {
-		showText(TX_DEM5N013);
+		showDescription(13, true);
 	}
 }
 
 void Room::demon5TalkToGrisnash() {
 	if (_awayMission->demon.curedChub) {
-		showText(TX_SPEAKER_GRISNASH, TX_DEM5_028);
-		showText(TX_SPEAKER_SPOCK, TX_DEM5_024);
-		showText(TX_SPEAKER_GRISNASH, TX_DEM5_029);
-		showText(TX_SPEAKER_SPOCK, TX_DEM5_025);
+		showText(TX_SPEAKER_GRISNASH, 28, true);
+		showText(TX_SPEAKER_SPOCK, 24, true);
+		showText(TX_SPEAKER_GRISNASH, 29, true);
+		showText(TX_SPEAKER_SPOCK, 25, true);
 
 		if (!_roomVar.demon.talkedToGrisnash) {
 			_roomVar.demon.talkedToGrisnash = true;
@@ -194,17 +194,17 @@ void Room::demon5TalkToGrisnash() {
 			demon5CheckCompletedStudy();
 		}
 	} else {
-		showText(TX_DEM5N011);
+		showDescription(11, true);
 	}
 }
 
 void Room::demon5TalkToStephen() {
 	if (_awayMission->demon.curedChub) {
-		showText(TX_SPEAKER_STEPHEN, TX_DEM5_041);
-		showText(TX_SPEAKER_MCCOY, TX_DEM5_022);
-		showText(TX_SPEAKER_STEPHEN, TX_DEM5_043);
-		showText(TX_SPEAKER_ROBERTS, TX_DEM5_031);
-		showText(TX_SPEAKER_STEPHEN, TX_DEM5_042);
+		showText(TX_SPEAKER_STEPHEN, 41, true);
+		showText(TX_SPEAKER_MCCOY, 22, true);
+		showText(TX_SPEAKER_STEPHEN, 43, true);
+		showText(TX_SPEAKER_ROBERTS, 31, true);
+		showText(TX_SPEAKER_STEPHEN, 42, true);
 
 		if (!_roomVar.demon.talkedToStephen) {
 			_roomVar.demon.talkedToStephen = true;
@@ -212,46 +212,46 @@ void Room::demon5TalkToStephen() {
 			demon5CheckCompletedStudy();
 		}
 	} else if (!_awayMission->demon.knowAboutHypoDytoxin) {
-		showText(TX_SPEAKER_ROBERTS, TX_DEM5_034);
+		showText(TX_SPEAKER_ROBERTS, 34, true);
 	} else if (_awayMission->demon.madeHypoDytoxin) {
-		showText(TX_SPEAKER_ROBERTS, TX_DEM5_035);
+		showText(TX_SPEAKER_ROBERTS, 35, true);
 	} else if (_awayMission->demon.gotBerries) {
-		showText(TX_SPEAKER_ROBERTS, TX_DEM5_032);
+		showText(TX_SPEAKER_ROBERTS, 32, true);
 		_awayMission->demon.field3e = false;
 	} else if (_awayMission->demon.field3e) {
-		showText(TX_SPEAKER_ROBERTS, TX_DEM5_038);
+		showText(TX_SPEAKER_ROBERTS, 38, true);
 	} else {
-		showText(TX_SPEAKER_ROBERTS, TX_DEM5_034);
+		showText(TX_SPEAKER_ROBERTS, 34, true);
 	}
 }
 
 void Room::demon5TalkToKirk() {
-	showText(TX_SPEAKER_KIRK, TX_DEM5_001);
+	showText(TX_SPEAKER_KIRK, 1, true);
 }
 
 void Room::demon5TalkToSpock() {
-	showText(TX_SPEAKER_SPOCK, TX_DEM5_027);
-	showText(TX_SPEAKER_MCCOY, TX_DEM5_018);
+	showText(TX_SPEAKER_SPOCK, 27, true);
+	showText(TX_SPEAKER_MCCOY, 18, true);
 }
 
 void Room::demon5TalkToRedshirt() {
-	showText(TX_SPEAKER_EVERTS, TX_DEM5_045);
-	showText(TX_SPEAKER_MCCOY,  TX_DEM5_021);
-	showText(TX_SPEAKER_KIRK,   TX_DEM5_003);
+	showText(TX_SPEAKER_EVERTS, 45, true);
+	showText(TX_SPEAKER_MCCOY,  21, true);
+	showText(TX_SPEAKER_KIRK,   3, true);
 }
 
 void Room::demon5TalkToMccoy() {
 	if (_awayMission->demon.curedChub) {
-		showText(TX_SPEAKER_MCCOY, TX_DEM5_023);
-		showText(TX_SPEAKER_KIRK,  TX_DEM5_004);
+		showText(TX_SPEAKER_MCCOY, 23, true);
+		showText(TX_SPEAKER_KIRK,  4, true);
 		if (!_awayMission->redshirtDead) {
-			showText(TX_SPEAKER_EVERTS, TX_DEM5_044);
-			showText(TX_SPEAKER_MCCOY, TX_DEM5_020);
-			showText(TX_SPEAKER_SPOCK, TX_DEM5_026);
-			showText(TX_SPEAKER_MCCOY, TX_DEM5_019);
+			showText(TX_SPEAKER_EVERTS, 44, true);
+			showText(TX_SPEAKER_MCCOY, 20, true);
+			showText(TX_SPEAKER_SPOCK, 26, true);
+			showText(TX_SPEAKER_MCCOY, 19, true);
 		}
 	} else {
-		showText(TX_SPEAKER_MCCOY, TX_DEM5_017);
+		showText(TX_SPEAKER_MCCOY, 17, true);
 	}
 }
 
@@ -260,7 +260,7 @@ void Room::demon5UseMTricorderOnRoberts() {
 		return;
 	loadActorAnim2(OBJECT_MCCOY, "mscane", -1, -1, 0);
 	playSoundEffectIndex(0x04);
-	showText(TX_SPEAKER_MCCOY, TX_DEM5_015);
+	showText(TX_SPEAKER_MCCOY, 15, true);
 
 	_roomVar.demon.scannedRoberts = true;
 	_roomVar.demon.numScanned++;
@@ -274,16 +274,16 @@ void Room::demon5UseMTricorderOnChub() {
 	if (_awayMission->demon.curedChub) {
 		if (_roomVar.demon.scannedChub)
 			return;
-		showText(TX_SPEAKER_MCCOY, TX_DEM5_016);
+		showText(TX_SPEAKER_MCCOY, 16, true);
 		_roomVar.demon.scannedChub = true;
 		_roomVar.demon.numScanned++;
 		demon5CheckCompletedStudy();
 	} else {
 		if (_awayMission->demon.field3e)
-			showText(TX_SPEAKER_MCCOY, TX_DEM5_010);
+			showText(TX_SPEAKER_MCCOY, 10, true);
 		else {
-			showText(TX_SPEAKER_MCCOY, TX_DEM5_012);
-			showText(TX_SPEAKER_STEPHEN, TX_DEM5_040);
+			showText(TX_SPEAKER_MCCOY, 12, true);
+			showText(TX_SPEAKER_STEPHEN, 40, true);
 			_awayMission->demon.knowAboutHypoDytoxin = true;
 			_awayMission->demon.field3e = true;
 		}
@@ -296,7 +296,7 @@ void Room::demon5UseMTricorderOnGrisnash() {
 		return;
 	loadActorAnim2(OBJECT_MCCOY, "mscane", -1, -1, 0);
 	playSoundEffectIndex(0x04);
-	showText(TX_SPEAKER_MCCOY, TX_DEM5_013);
+	showText(TX_SPEAKER_MCCOY, 13, true);
 
 	_roomVar.demon.scannedGrisnash = true;
 	_roomVar.demon.numScanned++;
@@ -308,7 +308,7 @@ void Room::demon5UseMTricorderOnStephen() {
 		return;
 	loadActorAnim2(OBJECT_MCCOY, "mscanw", -1, -1, 0);
 	playSoundEffectIndex(0x04);
-	showText(TX_SPEAKER_MCCOY, TX_DEM5_014);
+	showText(TX_SPEAKER_MCCOY, 14, true);
 
 	_roomVar.demon.scannedStephen = true;
 	_roomVar.demon.numScanned++;
@@ -317,13 +317,13 @@ void Room::demon5UseMTricorderOnStephen() {
 
 void Room::demon5CheckCompletedStudy() {
 	if (_roomVar.demon.numScanned == 4 && _roomVar.demon.numTalkedTo == 4) {
-		showText(TX_SPEAKER_MCCOY, TX_DEM5_011);
+		showText(TX_SPEAKER_MCCOY, 11, true);
 		_roomVar.demon.numTalkedTo = 5;
 	}
 }
 
 void Room::demon5GetCrate() {
-	showText(TX_DEM5N012);
+	showDescription(12, true);
 }
 
 }

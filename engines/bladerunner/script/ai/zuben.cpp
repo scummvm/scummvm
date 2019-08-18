@@ -58,8 +58,8 @@ bool AIScriptZuben::Update() {
 	 &&  Player_Query_Current_Scene() == kSceneCT01
 	 && !Game_Flag_Query(kFlagCT01ZubenMcCoyCheck)
 	) {
-		AI_Countdown_Timer_Reset(kActorZuben, 2);
-		AI_Countdown_Timer_Start(kActorZuben, 2, 30);
+		AI_Countdown_Timer_Reset(kActorZuben, kActorTimerAIScriptCustomTask2);
+		AI_Countdown_Timer_Start(kActorZuben, kActorTimerAIScriptCustomTask2, 30);
 		Game_Flag_Set(kFlagCT01ZubenMcCoyCheck);
 		return true;
 	}
@@ -99,7 +99,7 @@ bool AIScriptZuben::Update() {
 	if (Actor_Query_Goal_Number(kActorZuben) == kGoalZubenCT06AttackMcCoy
 	 && Player_Query_Current_Scene() == kSceneCT07
 	) {
-		AI_Countdown_Timer_Reset(kActorZuben, 0);
+		AI_Countdown_Timer_Reset(kActorZuben, kActorTimerAIScriptCustomTask0);
 		Game_Flag_Set(kFlagCT05WarehouseOpen);
 		Actor_Set_Targetable(kActorZuben, true);
 		if (Actor_Query_Goal_Number(kActorGordo) == kGoalGordoDefault) {
@@ -118,7 +118,7 @@ bool AIScriptZuben::Update() {
 }
 
 void AIScriptZuben::TimerExpired(int timer) {
-	if (timer == 2) { // Check on McCoy every 30s
+	if (timer == kActorTimerAIScriptCustomTask2) { // Check on McCoy every 30s
 		if (Actor_Query_Goal_Number(kActorZuben) == kGoalZubenDefault
 		 && Player_Query_Current_Scene() == kSceneCT01
 		 && Random_Query(1, 3) < 3
@@ -127,19 +127,19 @@ void AIScriptZuben::TimerExpired(int timer) {
 		}
 		Game_Flag_Reset(kFlagCT01ZubenMcCoyCheck);
 		// return true;
-	} else if (timer == 1) {
+	} else if (timer == kActorTimerAIScriptCustomTask1) {
 		if (Actor_Query_Goal_Number(kActorZuben) == kGoalZubenCT02RunToFreeSlotG) { // Zuben fleeing, after 10s
 			Music_Stop(10);
 			Actor_Set_Goal_Number(kActorZuben, kGoalZubenCT06HideAtFreeSlotA);
-			AI_Countdown_Timer_Reset(kActorZuben, 1);
+			AI_Countdown_Timer_Reset(kActorZuben, kActorTimerAIScriptCustomTask1);
 			// return true;
 		}
-	} else if (timer == 0) { // Zuben fleeing, after 70s
+	} else if (timer == kActorTimerAIScriptCustomTask0) { // Zuben fleeing, after 70s
 		if (Player_Query_Current_Set() != kSetCT01_CT12) {
 			Music_Stop(2);
 		}
 		Actor_Set_Goal_Number(kActorZuben, kGoalZubenFled); // Let Zuben flee completly, he will catch McCoy on MA01
-		AI_Countdown_Timer_Reset(kActorZuben, 0);
+		AI_Countdown_Timer_Reset(kActorZuben, kActorTimerAIScriptCustomTask0);
 		// return true;
 	}
 	// return false;
@@ -158,10 +158,10 @@ void AIScriptZuben::CompletedMovementTrack() {
 	} else if (Actor_Query_Goal_Number(kActorZuben) == kGoalZubenCT06HideAtFreeSlotA
 	        && Game_Flag_Query(kFlagCT02McCoyFell)
 	) {
-		AI_Countdown_Timer_Reset(kActorZuben, 0);
+		AI_Countdown_Timer_Reset(kActorZuben, kActorTimerAIScriptCustomTask0);
 		Game_Flag_Reset(kFlagCT02McCoyFell);
 		Game_Flag_Set(kFlagCT02McCoyCombatReady);
-		Game_Flag_Set(kFlagNotUsed721);
+		Game_Flag_Set(kFlagCT02McCoyShouldCommentOnDumpedSoup);
 		Music_Stop(2);
 		Actor_Set_Goal_Number(kActorZuben, kGoalZubenFled);
 		Set_Enter(kSetCT02, kSceneCT02);
@@ -172,7 +172,7 @@ void AIScriptZuben::CompletedMovementTrack() {
 	} else {
 		if (Actor_Query_Goal_Number(kActorZuben) == kGoalZubenCT07RunToFreeSlotA) {
 			Music_Stop(2);
-			Sound_Play(574, 40, 100, 100, 50);
+			Sound_Play(kSfxDOORLOCK, 40, 100, 100, 50);
 			Delay(2000);
 			Game_Flag_Set(kFlagCT07toCT06);
 			Game_Flag_Set(kFlagZubenSpared);
@@ -288,16 +288,20 @@ bool AIScriptZuben::ShotAtAndHit() {
 
 void AIScriptZuben::Retired(int byActorId) {
 	if (!Actor_Query_In_Set(kActorZuben, kSetKP07)) {
+#if BLADERUNNER_ORIGINAL_BUGS
+#else
+		Actor_Set_Goal_Number(kActorZuben, kGoalZubenDiesInChapter1);
+#endif // BLADERUNNER_ORIGINAL_BUGS
 		// return false;
 		return;
 	}
-	Global_Variable_Decrement(kVariableReplicants, 1);
+	Global_Variable_Decrement(kVariableReplicantsSurvivorsAtMoonbus, 1);
 	Actor_Set_Goal_Number(kActorZuben, kGoalZubenGone);
-	if (Global_Variable_Query(kVariableReplicants) == 0) {
+	if (Global_Variable_Query(kVariableReplicantsSurvivorsAtMoonbus) == 0) {
 		Player_Loses_Control();
 		Delay(2000);
 		Player_Set_Combat_Mode(false);
-		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -12.0f, -41.58f, 72.0f, 0, true, false, 0);
+		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -12.0f, -41.58f, 72.0f, 0, true, false, false);
 		Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 		Ambient_Sounds_Remove_All_Looping_Sounds(1);
 		Game_Flag_Set(kFlagKP07toKP06);
@@ -328,10 +332,10 @@ bool AIScriptZuben::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		AI_Movement_Track_Append_Run(kActorZuben, 84, 0);
 		AI_Movement_Track_Append_Run(kActorZuben, 85, 0);
 		AI_Movement_Track_Append(kActorZuben, 39, 0);
-		AI_Countdown_Timer_Reset(kActorZuben, 1);
-		AI_Countdown_Timer_Start(kActorZuben, 1, 10);
-		AI_Countdown_Timer_Reset(kActorZuben, 0);
-		AI_Countdown_Timer_Start(kActorZuben, 0, 70);
+		AI_Countdown_Timer_Reset(kActorZuben, kActorTimerAIScriptCustomTask1);
+		AI_Countdown_Timer_Start(kActorZuben, kActorTimerAIScriptCustomTask1, 10);
+		AI_Countdown_Timer_Reset(kActorZuben, kActorTimerAIScriptCustomTask0);
+		AI_Countdown_Timer_Start(kActorZuben, kActorTimerAIScriptCustomTask0, 70);
 		AI_Movement_Track_Repeat(kActorZuben);
 		return false;
 
@@ -396,7 +400,7 @@ bool AIScriptZuben::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		return false;
 
 	case kGoalZubenCT06JumpDown:
-		AI_Countdown_Timer_Reset(kActorZuben, 0);
+		AI_Countdown_Timer_Reset(kActorZuben, kActorTimerAIScriptCustomTask0);
 		Actor_Put_In_Set(kActorZuben, kSetCT06);
 		Actor_Set_At_XYZ(kActorZuben, 37.14f, -58.23f, 4.0f, 256);
 		_animationFrame = 0;
@@ -447,10 +451,16 @@ bool AIScriptZuben::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		AI_Movement_Track_Repeat(kActorZuben);
 		return false;
 
-	case 99:
+	case kGoalZubenDiesInChapter1:
+#if BLADERUNNER_ORIGINAL_BUGS
 		AI_Movement_Track_Flush(kActorZuben);
+#endif // BLADERUNNER_ORIGINAL_BUGS
 		Scene_Exits_Enable();
 		Music_Stop(2);
+#if BLADERUNNER_ORIGINAL_BUGS
+#else
+		Actor_Set_Goal_Number(kActorZuben, kGoalZubenDie);
+#endif // BLADERUNNER_ORIGINAL_BUGS
 		return false;
 
 	case 100:
@@ -480,7 +490,7 @@ bool AIScriptZuben::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 					AI_Movement_Track_Append_With_Facing(kActorZuben, 470, 3, 506);
 					AI_Movement_Track_Append(kActorZuben, 471, 5);
 					AI_Movement_Track_Append(kActorZuben, 472, 0);
-				} else if (rnd2 == 3){
+				} else if (rnd2 == 3) {
 					AI_Movement_Track_Flush(kActorZuben);
 					AI_Movement_Track_Append(kActorZuben, 468, 0);
 					AI_Movement_Track_Append(kActorZuben, 469, 3);
@@ -544,25 +554,25 @@ bool AIScriptZuben::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		switch (Random_Query(1, 8)) {
 		case 1:
 			AI_Movement_Track_Flush(kActorZuben);
-			AI_Movement_Track_Append(kActorZuben, 490, 0);
+			AI_Movement_Track_Append(kActorZuben, 490, 0); // kSetNR01
 			AI_Movement_Track_Append(kActorZuben, 491, 8);
 			AI_Movement_Track_Append(kActorZuben, 492, 2);
 			AI_Movement_Track_Append(kActorZuben, 493, 5);
 			AI_Movement_Track_Append(kActorZuben, 494, 0);
-			AI_Movement_Track_Append(kActorZuben, 39, 10);
-			AI_Movement_Track_Append(kActorZuben, 33, Random_Query(15, 45));
-			AI_Movement_Track_Append(kActorZuben, 39, 10);
+			AI_Movement_Track_Append(kActorZuben, 39, 10); // kSetFreeSlotG
+			AI_Movement_Track_Append(kActorZuben, 33, Random_Query(15, 45)); // kSetFreeSlotA
+			AI_Movement_Track_Append(kActorZuben, 39, 10); // kSetFreeSlotG
 			AI_Movement_Track_Repeat(kActorZuben);
 			break;
 		case 2:
 			AI_Movement_Track_Flush(kActorZuben);
-			AI_Movement_Track_Append(kActorZuben, 495, 0);
+			AI_Movement_Track_Append(kActorZuben, 495, 0); // kSetNR02
 			AI_Movement_Track_Append(kActorZuben, 496, 0);
 			AI_Movement_Track_Append(kActorZuben, 33, Random_Query(15, 45));
 			AI_Movement_Track_Repeat(kActorZuben);
 			break;
 		case 3:
-			AI_Movement_Track_Append(kActorZuben, 498, 0);
+			AI_Movement_Track_Append(kActorZuben, 498, 0); // kSetNR03
 			AI_Movement_Track_Append(kActorZuben, 497, 0);
 			AI_Movement_Track_Append(kActorZuben, 39, 10);
 			AI_Movement_Track_Append(kActorZuben, 33, 30);
@@ -571,7 +581,7 @@ bool AIScriptZuben::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 			break;
 		case 4:
 			AI_Movement_Track_Flush(kActorZuben);
-			AI_Movement_Track_Append(kActorZuben, 499, 2);
+			AI_Movement_Track_Append(kActorZuben, 499, 2); // kSetNR05_NR08
 			AI_Movement_Track_Append(kActorZuben, 500, 3);
 			AI_Movement_Track_Append(kActorZuben, 499, 2);
 			AI_Movement_Track_Append(kActorZuben, 39, 10);
@@ -581,7 +591,7 @@ bool AIScriptZuben::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 			break;
 		case 5:
 			AI_Movement_Track_Flush(kActorZuben);
-			AI_Movement_Track_Append(kActorZuben, 503, 0);
+			AI_Movement_Track_Append(kActorZuben, 503, 0); // kSetNR05_NR08
 			AI_Movement_Track_Append(kActorZuben, 504, 0);
 			AI_Movement_Track_Append(kActorZuben, 505, 5);
 			AI_Movement_Track_Append(kActorZuben, 39, 10);
@@ -591,7 +601,7 @@ bool AIScriptZuben::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 			break;
 		case 6:
 			AI_Movement_Track_Flush(kActorZuben);
-			AI_Movement_Track_Append(kActorZuben, 508, 0);
+			AI_Movement_Track_Append(kActorZuben, 508, 0); // kSetHF01
 			AI_Movement_Track_Append(kActorZuben, 509, 2);
 			AI_Movement_Track_Append(kActorZuben, 39, 10);
 			AI_Movement_Track_Append(kActorZuben, 33, 30);
@@ -600,7 +610,7 @@ bool AIScriptZuben::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 			break;
 		case 7:
 			AI_Movement_Track_Flush(kActorZuben);
-			AI_Movement_Track_Append(kActorZuben, 514, 0);
+			AI_Movement_Track_Append(kActorZuben, 514, 0); // kSetHF03
 			AI_Movement_Track_Append(kActorZuben, 515, 0);
 			AI_Movement_Track_Append(kActorZuben, 39, 10);
 			AI_Movement_Track_Append(kActorZuben, 33, 30);
@@ -609,7 +619,7 @@ bool AIScriptZuben::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 			break;
 		case 8:
 			AI_Movement_Track_Flush(kActorZuben);
-			AI_Movement_Track_Append(kActorZuben, 510, 0);
+			AI_Movement_Track_Append(kActorZuben, 510, 0); // kSetHF01
 			AI_Movement_Track_Append(kActorZuben, 511, 0);
 			AI_Movement_Track_Append(kActorZuben, 39, 10);
 			AI_Movement_Track_Append(kActorZuben, 33, 40);
@@ -862,10 +872,12 @@ bool AIScriptZuben::UpdateAnimation(int *animation, int *frame) {
 		*animation = 405;
 		_animationFrame++;
 		if (_animationFrame == 7) {
-			Sound_Play(207, 30, 0, 0, 50);
+			Sound_Play(kSfxZUBDEAD1, 30, 0, 0, 50);
 		}
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
+#if BLADERUNNER_ORIGINAL_BUGS
 			Actor_Set_Goal_Number(kActorZuben, kGoalZubenDie);
+#endif // BLADERUNNER_ORIGINAL_BUGS
 			_animationState = 15;
 			_animationFrame = Slice_Animation_Query_Number_Of_Frames(*animation) - 1;
 			Actor_Set_Targetable(kActorZuben, false);
@@ -876,10 +888,12 @@ bool AIScriptZuben::UpdateAnimation(int *animation, int *frame) {
 		*animation = 393;
 		_animationFrame++;
 		if (_animationFrame == 7) {
-			Sound_Play(207, 30, 0, 0, 50);
+			Sound_Play(kSfxZUBDEAD1, 30, 0, 0, 50);
 		}
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
+#if BLADERUNNER_ORIGINAL_BUGS
 			Actor_Set_Goal_Number(kActorZuben, kGoalZubenDie);
+#endif // BLADERUNNER_ORIGINAL_BUGS
 			_animationState = 16;
 			_animationFrame = Slice_Animation_Query_Number_Of_Frames(*animation) - 1;
 			Actor_Set_Targetable(kActorZuben, false);
@@ -889,7 +903,11 @@ bool AIScriptZuben::UpdateAnimation(int *animation, int *frame) {
 	case 15:
 		*animation = 405;
 		_animationFrame = Slice_Animation_Query_Number_Of_Frames(*animation) - 1;
+#if BLADERUNNER_ORIGINAL_BUGS
+		// This enables exits when it should not at the moonbus massacre
+		// but it was also used to enable the exits when Zuben is retired at McCoy's roof top.
 		Scene_Exits_Enable();
+#endif // BLADERUNNER_ORIGINAL_BUGS
 		break;
 
 	case 16:
@@ -1006,7 +1024,7 @@ bool AIScriptZuben::UpdateAnimation(int *animation, int *frame) {
 			Overlay_Play("ct02over", 1, false, true, 0);
 		}
 		if (_animationFrame == 6) {
-			Sound_Play(201, 40, 0, 0, 50);
+			Sound_Play(kSfxMTLDOOR2, 40, 0, 0, 50);
 		}
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
 			Actor_Set_Frame_Rate_FPS(kActorZuben, -2);
@@ -1020,7 +1038,7 @@ bool AIScriptZuben::UpdateAnimation(int *animation, int *frame) {
 		*animation = 421;
 		_animationFrame++;
 		if (_animationFrame == 1) {
-			Sound_Play(206, 80, 0, 0, 50);
+			Sound_Play(kSfxZUBLAND1, 80, 0, 0, 50);
 		}
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
 			_animationFrame = 0;
@@ -1162,11 +1180,10 @@ bool AIScriptZuben::ChangeAnimationMode(int mode) {
 		break;
 	case kAnimationModeDie:
 		Actor_Set_Targetable(kActorZuben, false);
-#if BLADERUNNER_ORIGINAL_BUGS
-			// original code uses no voice here
-#else
-		Sound_Play_Speech_Line(kActorZuben, 9020, 75, 0, 99); // add Zuben's death rattle here
-#endif // BLADERUNNER_ORIGINAL_BUGS
+		if (_vm->_cutContent) {
+			// original code used no voice here
+			Sound_Play_Speech_Line(kActorZuben, 9020, 75, 0, 99); // add Zuben's death rattle here
+		}
 		switch (_animationState) {
 			case 2:
 			case 4:
@@ -1217,12 +1234,12 @@ void AIScriptZuben::FledCombat() {
 
 void AIScriptZuben::dialogue() {
 	Dialogue_Menu_Clear_List();
-	DM_Add_To_List_Never_Repeat_Once_Selected(1490, 5, 5, -1);
+	DM_Add_To_List_Never_Repeat_Once_Selected(1490, 5, 5, -1); // CLOVIS
 	if (Actor_Query_Goal_Number(kActorLucy) != kGoalLucyGone) {
-		DM_Add_To_List_Never_Repeat_Once_Selected(1500, 5, 5, 5);
+		DM_Add_To_List_Never_Repeat_Once_Selected(1500, 5, 5, 5); // LUCY
 	}
-	DM_Add_To_List_Never_Repeat_Once_Selected(1510, -1, 5, 5);
-	Dialogue_Menu_Add_DONE_To_List(1520);
+	DM_Add_To_List_Never_Repeat_Once_Selected(1510, -1, 5, 5); // RUNCITER
+	Dialogue_Menu_Add_DONE_To_List(1520); // DONE
 	Dialogue_Menu_Appear(320, 240);
 	int answer = Dialogue_Menu_Query_Input();
 	Dialogue_Menu_Disappear();

@@ -1,8 +1,8 @@
 Prerequisites
 =============
 - A homebrew enabled PlayStation Vita console.
-- At least one ScummVM supported game. The list of compatible games can be seen here: http://www.scummvm.org/compatibility/
-The page http://wiki.scummvm.org/index.php/Where_to_get_the_games references some places where those games can be bought. Demonstration versions for most of the supported games are downloadable on http://scummvm.org/demos/
+- At least one ScummVM supported game. The list of compatible games can be seen here: https://www.scummvm.org/compatibility/
+The page https://wiki.scummvm.org/index.php/Where_to_get_the_games references some places where those games can be bought. Demonstration versions for most of the supported games are downloadable on https://scummvm.org/demos/
 
 Installing
 ==========
@@ -10,7 +10,7 @@ From a computer, download the installable package. Unzip and copy the .vpk file 
 
 Configuring and playing games
 =============================
-The user manual describes how to add games to ScummVM and launch them : http://wiki.scummvm.org/index.php/User_Manual
+The user manual describes how to add games to ScummVM and launch them : https://wiki.scummvm.org/index.php/User_Manual
 
 PlayStation Vita Specifics
 ==========================

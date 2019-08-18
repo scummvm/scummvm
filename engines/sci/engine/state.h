@@ -114,7 +114,8 @@ public:
 	uint32 _screenUpdateTime;	/**< The last time the game updated the screen */
 
 	void speedThrottler(uint32 neededSleep);
-	int wait(int16 ticks);
+	uint16 wait(uint16 ticks);
+	void sleep(uint16 ticks);
 
 #ifdef ENABLE_SCI32
 	uint32 _eventCounter; /**< total times kGetEvent was invoked since the last call to kFrameOut */

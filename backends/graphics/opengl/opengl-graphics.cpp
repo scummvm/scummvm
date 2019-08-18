@@ -54,9 +54,9 @@ namespace OpenGL {
 
 OpenGLGraphicsManager::OpenGLGraphicsManager()
     : _currentState(), _oldState(), _transactionMode(kTransactionNone), _screenChangeID(1 << (sizeof(int) * 8 - 2)),
-      _pipeline(nullptr),
+      _pipeline(nullptr), _stretchMode(STRETCH_FIT),
       _defaultFormat(), _defaultFormatAlpha(),
-      _gameScreen(nullptr), _gameScreenShakeOffset(0), _overlay(nullptr),
+      _gameScreen(nullptr), _overlay(nullptr),
       _cursor(nullptr),
       _cursorHotspotX(0), _cursorHotspotY(0),
       _cursorHotspotXScaled(0), _cursorHotspotYScaled(0), _cursorWidthScaled(0), _cursorHeightScaled(0),
@@ -88,6 +88,7 @@ bool OpenGLGraphicsManager::hasFeature(OSystem::Feature f) const {
 	case OSystem::kFeatureAspectRatioCorrection:
 	case OSystem::kFeatureCursorPalette:
 	case OSystem::kFeatureFilteringMode:
+	case OSystem::kFeatureStretchMode:
 		return true;
 
 	case OSystem::kFeatureOverlaySupportsAlpha:
@@ -184,7 +185,94 @@ int OpenGLGraphicsManager::getGraphicsMode() const {
 Graphics::PixelFormat OpenGLGraphicsManager::getScreenFormat() const {
 	return _currentState.gameFormat;
 }
+
+Common::List<Graphics::PixelFormat> OpenGLGraphicsManager::getSupportedFormats() const {
+	Common::List<Graphics::PixelFormat> formats;
+
+	// Our default mode is (memory layout wise) RGBA8888 which is a different
+	// logical layout depending on the endianness. We chose this mode because
+	// it is the only 32bit color mode we can safely assume to be present in
+	// OpenGL and OpenGL ES implementations. Thus, we need to supply different
+	// logical formats based on endianness.
+#ifdef SCUMM_LITTLE_ENDIAN
+	// ABGR8888
+	formats.push_back(Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24));
+#else
+	// RGBA8888
+	formats.push_back(Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0));
 #endif
+	// RGB565
+	formats.push_back(Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0));
+	// RGBA5551
+	formats.push_back(Graphics::PixelFormat(2, 5, 5, 5, 1, 11, 6, 1, 0));
+	// RGBA4444
+	formats.push_back(Graphics::PixelFormat(2, 4, 4, 4, 4, 12, 8, 4, 0));
+
+	// These formats are not natively supported by OpenGL ES implementations,
+	// we convert the pixel format internally.
+#ifdef SCUMM_LITTLE_ENDIAN
+	// RGBA8888
+	formats.push_back(Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0));
+#else
+	// ABGR8888
+	formats.push_back(Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24));
+#endif
+	// RGB555, this is used by SCUMM HE 16 bit games.
+	formats.push_back(Graphics::PixelFormat(2, 5, 5, 5, 0, 10, 5, 0, 0));
+
+	formats.push_back(Graphics::PixelFormat::createFormatCLUT8());
+
+	return formats;
+}
+#endif
+
+namespace {
+const OSystem::GraphicsMode glStretchModes[] = {
+	{"center", _s("Center"), STRETCH_CENTER},
+	{"pixel-perfect", _s("Pixel-perfect scaling"), STRETCH_INTEGRAL},
+	{"fit", _s("Fit to window"), STRETCH_FIT},
+	{"stretch", _s("Stretch to window"), STRETCH_STRETCH},
+	{nullptr, nullptr, 0}
+};
+
+} // End of anonymous namespace
+
+const OSystem::GraphicsMode *OpenGLGraphicsManager::getSupportedStretchModes() const {
+	return glStretchModes;
+}
+
+int OpenGLGraphicsManager::getDefaultStretchMode() const {
+	return STRETCH_FIT;
+}
+
+bool OpenGLGraphicsManager::setStretchMode(int mode) {
+	assert(getTransactionMode() != kTransactionNone);
+
+	if (mode == _stretchMode)
+		return true;
+
+	// Check this is a valid mode
+	const OSystem::GraphicsMode *sm = getSupportedStretchModes();
+	bool found = false;
+	while (sm->name) {
+		if (sm->id == mode) {
+			found = true;
+			break;
+		}
+		sm++;
+	}
+	if (!found) {
+		warning("unknown stretch mode %d", mode);
+		return false;
+	}
+
+	_stretchMode = mode;
+	return true;
+}
+
+int OpenGLGraphicsManager::getStretchMode() const {
+	return _stretchMode;
+}
 
 void OpenGLGraphicsManager::beginGFXTransaction() {
 	assert(_transactionMode == kTransactionNone);
@@ -368,13 +456,6 @@ void OpenGLGraphicsManager::fillScreen(uint32 col) {
 	_gameScreen->fill(col);
 }
 
-void OpenGLGraphicsManager::setShakePos(int shakeOffset) {
-	if (_gameScreenShakeOffset != shakeOffset) {
-		_gameScreenShakeOffset = shakeOffset;
-		_forceRedraw = true;
-	}
-}
-
 void OpenGLGraphicsManager::updateScreen() {
 	if (!_gameScreen) {
 		return;
@@ -420,13 +501,11 @@ void OpenGLGraphicsManager::updateScreen() {
 		_backBuffer.enableScissorTest(true);
 	}
 
-	const GLfloat shakeOffset = _gameScreenShakeOffset * (GLfloat)_gameDrawRect.height() / _gameScreen->getHeight();
-
 	// Alpha blending is disabled when drawing the screen
 	_backBuffer.enableBlend(Framebuffer::kBlendModeDisabled);
 
 	// First step: Draw the (virtual) game screen.
-	g_context.getActivePipeline()->drawTexture(_gameScreen->getGLTexture(), _gameDrawRect.left, _gameDrawRect.top + shakeOffset, _gameDrawRect.width(), _gameDrawRect.height());
+	g_context.getActivePipeline()->drawTexture(_gameScreen->getGLTexture(), _gameDrawRect.left, _gameDrawRect.top, _gameDrawRect.width(), _gameDrawRect.height());
 
 	// Second step: Draw the overlay if visible.
 	if (_overlayVisible) {
@@ -438,13 +517,9 @@ void OpenGLGraphicsManager::updateScreen() {
 	if (_cursorVisible && _cursor) {
 		_backBuffer.enableBlend(Framebuffer::kBlendModePremultipliedTransparency);
 
-		// Adjust game screen shake position, but only when the overlay is not
-		// visible.
-		const GLfloat cursorOffset = _overlayVisible ? 0 : shakeOffset;
-
 		g_context.getActivePipeline()->drawTexture(_cursor->getGLTexture(),
 		                         _cursorX - _cursorHotspotXScaled,
-		                         _cursorY - _cursorHotspotYScaled + cursorOffset,
+		                         _cursorY - _cursorHotspotYScaled,
 		                         _cursorWidthScaled, _cursorHeightScaled);
 	}
 
@@ -1012,9 +1087,14 @@ Surface *OpenGLGraphicsManager::createSurface(const Graphics::PixelFormat &forma
 		// OpenGL ES does not support a texture format usable for RGB555.
 		// Since SCUMM uses this pixel format for some games (and there is no
 		// hope for this to change anytime soon) we use pixel format
-		// conversion to a supported texture format. However, this is a one
-		// time exception.
+		// conversion to a supported texture format.
 		return new TextureRGB555();
+#ifdef SCUMM_LITTLE_ENDIAN
+	} else if (isGLESContext() && format == Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0)) { // RGBA8888
+#else
+	} else if (isGLESContext() && format == Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24)) { // ABGR8888
+#endif
+		return new TextureRGBA8888Swap();
 #endif // !USE_FORCED_GL
 	} else {
 		const bool supported = getGLPixelFormat(format, glIntFormat, glFormat, glType);

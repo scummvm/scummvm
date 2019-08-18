@@ -74,6 +74,11 @@ public:
 		iterator &operator++();
 
 		/**
+		 * Move to previous
+		 */
+		iterator &operator--();
+
+		/**
 		 * Equality test
 		 */
 		bool operator==(const iterator &i) {
@@ -316,11 +321,11 @@ struct WindowStyle {
  * Window attributes
  */
 struct Attributes {
-	unsigned fgset   : 1;
-	unsigned bgset   : 1;
-	unsigned reverse : 1;
-	unsigned         : 1;
-	unsigned style   : 4;
+	bool fgset      : 1;
+	bool bgset      : 1;
+	bool reverse    : 1;
+	unsigned        : 1;
+	unsigned style  : 4;
 	uint fgcolor;
 	uint bgcolor;
 	uint hyper;
@@ -576,6 +581,16 @@ public:
 	 * Returns a pointer to the styles for the window
 	 */
 	virtual const WindowStyle *getStyles() const;
+
+	/**
+	 * In arbitrary window positioning mode, brings a window to the front of all other windows
+	 */
+	void bringToFront();
+
+	/**
+	 * In arbitrary window positioning mode, sends a window to the back of all other windows
+	 */
+	void sendToBack();
 };
 typedef Window *winid_t;
 
@@ -588,6 +603,17 @@ public:
 	 * Constructor
 	 */
 	BlankWindow(Windows *windows, uint rock);
+};
+
+/**
+ * Abstract common base for the text window classes
+ */
+class TextWindow : public Window {
+public:
+	/**
+	 * Constructor
+	 */
+	TextWindow(Windows *windows, uint rock) : Window(windows, rock) {}
 };
 
 } // End of namespace Glk

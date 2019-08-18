@@ -25,6 +25,7 @@
 #include "common/debug-channels.h"
 #include "common/events.h"
 #include "common/file.h"
+#include "common/language.h"
 #include "engines/util.h"
 #include "graphics/scaler.h"
 #include "graphics/thumbnail.h"
@@ -33,6 +34,7 @@
 #include "glk/conf.h"
 #include "glk/events.h"
 #include "glk/picture.h"
+#include "glk/quetzal.h"
 #include "glk/screen.h"
 #include "glk/selection.h"
 #include "glk/sound.h"
@@ -45,10 +47,17 @@ GlkEngine *g_vm;
 
 GlkEngine::GlkEngine(OSystem *syst, const GlkGameDescription &gameDesc) :
 		_gameDescription(gameDesc), Engine(syst), _random("Glk"), _blorb(nullptr),
-		_clipboard(nullptr), _conf(nullptr), _events(nullptr), _pictures(nullptr),
-		_screen(nullptr), _selection(nullptr), _sounds(nullptr), _windows(nullptr),
-		_copySelect(false), _terminated(false), gli_unregister_obj(nullptr),
-		_pcSpeaker(nullptr), gli_register_arr(nullptr), gli_unregister_arr(nullptr) {
+		_clipboard(nullptr), _conf(nullptr), _debugger(nullptr), _events(nullptr), _pictures(nullptr),
+		_screen(nullptr), _selection(nullptr), _sounds(nullptr), _streams(nullptr), _windows(nullptr),
+		_copySelect(false), _terminated(false), _pcSpeaker(nullptr), _loadSaveSlot(-1),
+		gli_register_obj(nullptr), gli_unregister_obj(nullptr), gli_register_arr(nullptr),
+		gli_unregister_arr(nullptr) {
+	// Set up debug channels
+	DebugMan.addDebugChannel(kDebugCore, "core", "Core engine debug level");
+	DebugMan.addDebugChannel(kDebugScripts, "scripts", "Game scripts");
+	DebugMan.addDebugChannel(kDebugGraphics, "graphics", "Graphics handling");
+	DebugMan.addDebugChannel(kDebugSound, "sound", "Sound and Music handling");
+
 	g_vm = this;
 }
 
@@ -56,6 +65,7 @@ GlkEngine::~GlkEngine() {
 	delete _blorb;
 	delete _clipboard;
 	delete _conf;
+	delete _debugger;
 	delete _events;
 	delete _pcSpeaker;
 	delete _pictures;
@@ -67,15 +77,10 @@ GlkEngine::~GlkEngine() {
 }
 
 void GlkEngine::initialize() {
-	// Set up debug channels
-	DebugMan.addDebugChannel(kDebugCore, "core", "Core engine debug level");
-	DebugMan.addDebugChannel(kDebugScripts, "scripts", "Game scripts");
-	DebugMan.addDebugChannel(kDebugGraphics, "graphics", "Graphics handling");
-	DebugMan.addDebugChannel(kDebugSound, "sound", "Sound and Music handling");
-
 	initGraphicsMode();
 
 	_conf = new Conf(getInterpreterType());
+	_debugger = createDebugger();
 	_screen = createScreen();
 	_screen->initialize();
 	_clipboard = new Clipboard();
@@ -86,6 +91,9 @@ void GlkEngine::initialize() {
 	_sounds = new Sounds();
 	_streams = new Streams();
 	_windows = new Windows(_screen);
+
+	// Setup mixer
+	syncSoundSettings();
 }
 
 Screen *GlkEngine::createScreen() {
@@ -123,16 +131,15 @@ Common::Error GlkEngine::run() {
 			return Common::kNoGameDataFoundError;
 	} else {
 		// Check for a secondary blorb file with the same filename
-		Common::String baseName = filename;
-		while (baseName.contains('.'))
-			baseName.deleteLastChar();
+		Common::StringArray blorbFilenames;
+		Blorb::getBlorbFilenames(filename, blorbFilenames, getInterpreterType(), getGameID());
 
-		if (Common::File::exists(baseName + ".blorb")) {
-			_blorb = new Blorb(baseName + ".blorb", getInterpreterType());
-			SearchMan.add("blorb", _blorb, 99, false);
-		} else if (Common::File::exists(baseName + ".blb")) {
-			_blorb = new Blorb(baseName + ".blb", getInterpreterType());
-			SearchMan.add("blorb", _blorb, 99, false);
+		for (uint idx = 0; idx < blorbFilenames.size(); ++idx) {
+			if (Common::File::exists(blorbFilenames[idx])) {
+				_blorb = new Blorb(blorbFilenames[idx], getInterpreterType());
+				SearchMan.add("blorb", _blorb, 99, false);
+				break;
+			}
 		}
 
 		// Open up the game file
@@ -181,10 +188,44 @@ Common::Error GlkEngine::loadGameState(int slot) {
 	if (file == nullptr)
 		return Common::kReadingFailed;
 
-	Common::Error result = loadGameData(file);
+	Common::ErrorCode errCode = Common::kNoError;
+	QuetzalReader r;
+	if (r.open(*file, ID_IFSF)) {
+		// First scan for a SCVM chunk. It has information of the game the save is for,
+		// so if present we can validate the save is for this game
+		for (QuetzalReader::Iterator it = r.begin(); it != r.end(); ++it) {
+			if ((*it)._id == ID_SCVM) {
+				// Skip over date/time & playtime
+				Common::SeekableReadStream *rs = it.getStream();
+				rs->skip(14);
+
+				uint32 interpType = rs->readUint32BE();
+				Common::String langCode = QuetzalReader::readString(rs);
+				Common::String md5 = QuetzalReader::readString(rs);
+				delete rs;
+
+				if (interpType != INTERPRETER_IDS[getInterpreterType()] ||
+					parseLanguage(langCode) !=getLanguage() || md5 != getGameMD5())
+					errCode = Common::kReadingFailed;
+			}
+		}
+
+		if (errCode == Common::kNoError) {
+			// Scan for an uncompressed memory chunk
+			errCode = Common::kReadingFailed;		// Presume we won't find chunk
+			for (QuetzalReader::Iterator it = r.begin(); it != r.end(); ++it) {
+				if ((*it)._id == ID_UMem) {
+					Common::SeekableReadStream *rs = it.getStream();
+					errCode = readSaveData(rs).getCode();
+					delete rs;
+					break;
+				}
+			}
+		}
+	}
 
 	file->close();
-	return result;
+	return errCode;
 }
 
 Common::Error GlkEngine::saveGameState(int slot, const Common::String &desc) {
@@ -195,10 +236,28 @@ Common::Error GlkEngine::saveGameState(int slot, const Common::String &desc) {
 	if (file == nullptr)
 		return Common::kWritingFailed;
 
-	Common::Error result = saveGameData(file, desc);
+	Common::ErrorCode errCode = Common::kNoError;
+	QuetzalWriter w;
+
+	// Add the uncompressed memory chunk with the game's save data
+	{
+		Common::WriteStream &ws = w.add(ID_UMem);
+		errCode = writeGameData(&ws).getCode();
+	}
+
+	if (errCode == Common::kNoError) {
+		w.save(*file, desc);
+	}
 
 	file->close();
-	return result;
+	return errCode;
+}
+
+void GlkEngine::syncSoundSettings() {
+	Engine::syncSoundSettings();
+
+	int volume = ConfMan.getBool("sfx_mute") ? 0 : CLIP(ConfMan.getInt("sfx_volume"), 0, 255);
+	_mixer->setVolumeForSoundType(Audio::Mixer::kPlainSoundType, volume);
 }
 
 void GlkEngine::beep() {

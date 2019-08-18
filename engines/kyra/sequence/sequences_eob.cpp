@@ -1058,6 +1058,9 @@ void EoBAmigaFinalePlayer::start() {
 	surprise();
 	congratulation();
 
+	_vm->_allowSkip = false;
+	_vm->_eventList.clear();
+
 	_screen->fadeToBlack();
 }
 

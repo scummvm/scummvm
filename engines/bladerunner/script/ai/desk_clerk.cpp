@@ -248,7 +248,7 @@ bool AIScriptDeskClerk::UpdateAnimation(int *animation, int *frame) {
 		*animation = 670;
 		_animationFrame++;
 		if (_animationFrame > Slice_Animation_Query_Number_Of_Frames(670) - 2) {
-			Ambient_Sounds_Play_Sound(206, 40, 30, 30, 99);
+			Ambient_Sounds_Play_Sound(kSfxZUBLAND1, 40, 30, 30, 99);
 			Actor_Set_Goal_Number(kActorDeskClerk, kGoalDeskClerkKnockedOut);
 			Actor_Change_Animation_Mode(kActorDeskClerk, kAnimationModeIdle);
 			*animation = 661;

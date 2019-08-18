@@ -153,8 +153,6 @@ public:
 	Kernel(ResourceManager *resMan, SegManager *segMan);
 	~Kernel();
 
-	void init();
-
 	uint getSelectorNamesSize() const;
 	const Common::String &getSelectorName(uint selector);
 	int findKernelFuncPos(Common::String kernelFuncName);
@@ -169,8 +167,6 @@ public:
 	 * @return The appropriate selector ID, or -1 on error
 	 */
 	int findSelector(const char *selectorName) const;
-
-	bool selectorNamesAvailable();
 
 	// Script dissection/dumping functions
 	void dissectScript(int scriptNumber, Vocabulary *vocab);
@@ -412,6 +408,7 @@ reg_t kEmpty(EngineState *s, int argc, reg_t *argv);
 reg_t kStub(EngineState *s, int argc, reg_t *argv);
 reg_t kStubNull(EngineState *s, int argc, reg_t *argv);
 reg_t kKawaHacks(EngineState *s, int argc, reg_t *argv);
+reg_t kKawaDbugStr(EngineState *s, int argc, reg_t *argv);
 
 #ifdef ENABLE_SCI32
 // SCI2 Kernel Functions

@@ -281,15 +281,32 @@ void DefaultEventManager::purgeMouseEvents() {
 	while (!_eventQueue.empty()) {
 		Common::Event event = _eventQueue.pop();
 		switch (event.type) {
-		case Common::EVENT_MOUSEMOVE:
+		// Update button state even when purging events to avoid desynchronisation with real button state
 		case Common::EVENT_LBUTTONDOWN:
+			_mousePos = event.mouse;
+			_buttonState |= LBUTTON;
+			break;
+
 		case Common::EVENT_LBUTTONUP:
+			_mousePos = event.mouse;
+			_buttonState &= ~LBUTTON;
+			break;
+
 		case Common::EVENT_RBUTTONDOWN:
+			_mousePos = event.mouse;
+			_buttonState |= RBUTTON;
+			break;
+
 		case Common::EVENT_RBUTTONUP:
+			_mousePos = event.mouse;
+			_buttonState &= ~RBUTTON;
+			break;
+
 		case Common::EVENT_WHEELUP:
 		case Common::EVENT_WHEELDOWN:
 		case Common::EVENT_MBUTTONDOWN:
 		case Common::EVENT_MBUTTONUP:
+		case Common::EVENT_MOUSEMOVE:
 			// do nothing
 			break;
 		default:

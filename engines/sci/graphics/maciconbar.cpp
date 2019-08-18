@@ -24,7 +24,6 @@
 #include "sci/engine/kernel.h"
 #include "sci/engine/selector.h"
 #include "sci/engine/state.h"
-#include "sci/event.h"
 #include "sci/graphics/maciconbar.h"
 #include "sci/graphics/palette.h"
 #include "sci/graphics/screen.h"
@@ -49,6 +48,23 @@ GfxMacIconBar::GfxMacIconBar() {
 }
 
 GfxMacIconBar::~GfxMacIconBar() {
+	freeIcons();
+}
+
+void GfxMacIconBar::initIcons(uint16 count, reg_t *objs) {
+	// free icons and reset state in case game is restarting
+	freeIcons();
+	_iconBarItems.clear();
+	_lastX = 0;
+	_inventoryIcon = 0;
+	_allDisabled = true;
+
+	for (uint16 i = 0; i < count; i++) {
+		addIcon(objs[i]);
+	}
+}
+
+void GfxMacIconBar::freeIcons() {
 	if (_inventoryIcon) {
 		_inventoryIcon->free();
 		delete _inventoryIcon;
@@ -242,21 +258,17 @@ bool GfxMacIconBar::pointOnIcon(uint32 iconIndex, Common::Point point) {
 	return _iconBarItems[iconIndex].rect.contains(point);
 }
 
-reg_t GfxMacIconBar::handleEvents() {
-	// Peek event queue for a mouse button press
+bool GfxMacIconBar::handleEvents(SciEvent evt, reg_t &iconObj) {
 	EventManager *evtMgr = g_sci->getEventManager();
-	SciEvent evt = evtMgr->getSciEvent(kSciEventMousePress | kSciEventPeek);
+	iconObj = NULL_REG;
 
-	// No mouse press found
-	if (evt.type == kSciEventNone)
-		return NULL_REG;
+	// Not a mouse press
+	if (evt.type != kSciEventMousePress)
+		return false;
 
 	// If the mouse is not over the icon bar, return
 	if (evt.mousePos.y < g_sci->_gfxScreen->getHeight())
-		return NULL_REG;
-
-	// Remove event from queue
-	evtMgr->getSciEvent(kSciEventMousePress);
+		return false;
 
 	// Mouse press on the icon bar, check the icon rectangles
 	uint iconNr;
@@ -265,9 +277,10 @@ reg_t GfxMacIconBar::handleEvents() {
 			break;
 	}
 
-	// Mouse press not on an icon
+	// Mouse press on the icon bar but not on an enabled icon,
+	// return true to indicate that this mouse press was handled
 	if (iconNr == _iconBarItems.size())
-		return NULL_REG;
+		return true;
 
 	drawIcon(iconNr, true);
 	bool isSelected = true;
@@ -288,9 +301,10 @@ reg_t GfxMacIconBar::handleEvents() {
 
 	// If user moved away from the icon, we do nothing
 	if (pointOnIcon(iconNr, evt.mousePos))
-		return _iconBarItems[iconNr].object;
+		iconObj = _iconBarItems[iconNr].object;
 
-	return NULL_REG;
+	// The mouse press was handled
+	return true;
 }
 
 } // End of namespace Sci

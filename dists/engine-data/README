@@ -7,6 +7,11 @@ TODO
 cryo.dat
 This file contains a lot of hardcoded tables used by the Cryo engine.
 
+cryomni3d.dat
+This file contains all strings and some file names depending only on platform/localization.
+Some filenames depend on the edition, these are handled by game flags in engine code.
+Those informations were stored in the original executables.
+
 drascula.dat
 TODO
 

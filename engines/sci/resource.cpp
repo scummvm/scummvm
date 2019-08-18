@@ -31,6 +31,7 @@
 #include "common/memstream.h"
 #endif
 
+#include "sci/engine/workarounds.h"
 #include "sci/parser/vocabulary.h"
 #include "sci/resource.h"
 #include "sci/resource_intern.h"
@@ -224,10 +225,14 @@ void Resource::unalloc() {
 }
 
 void Resource::writeToStream(Common::WriteStream *stream) const {
-	stream->writeByte(getType() | 0x80); // 0x80 is required by old Sierra SCI, otherwise it wont accept the patch file
-	stream->writeByte(_headerSize);
-	if (_headerSize > 0)
+	if (_headerSize == 0) {
+		// create patch file header
+		stream->writeByte(getType() | 0x80); // 0x80 is required by old Sierra SCI, otherwise it wont accept the patch file
+		stream->writeByte(_headerSize);
+	} else {
+		// use existing patch file header
 		stream->write(_header, _headerSize);
+	}
 	stream->write(_data, _size);
 }
 
@@ -1130,6 +1135,12 @@ Common::List<ResourceId> ResourceManager::listResources(ResourceType type, int m
 }
 
 Resource *ResourceManager::findResource(ResourceId id, bool lock) {
+	// remap known incorrect audio36 and sync36 resource ids
+	if (id.getType() == kResourceTypeAudio36) {
+		id = remapAudio36ResourceId(id);
+	} else if (id.getType() == kResourceTypeSync36) {
+		id = remapSync36ResourceId(id);
+	}
 	Resource *retval = testResource(id);
 
 	if (!retval)

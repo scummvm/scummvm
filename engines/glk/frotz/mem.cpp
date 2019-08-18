@@ -224,9 +224,9 @@ void Mem::free_undo(int count) {
 		undo_count--;
 	}
 	if (first_undo)
-		first_undo->prev = NULL;
+		first_undo->prev = nullptr;
 	else
-		last_undo = NULL;
+		last_undo = nullptr;
 }
 
 void Mem::reset_memory() {

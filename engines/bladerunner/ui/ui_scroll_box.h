@@ -23,6 +23,7 @@
 #ifndef BLADERUNNER_UI_SCROLLBOX_H
 #define BLADERUNNER_UI_SCROLLBOX_H
 
+#include "bladerunner/color.h"
 #include "bladerunner/ui/ui_component.h"
 
 #include "common/array.h"
@@ -35,18 +36,18 @@ typedef void UIScrollBoxCallback(void *callbackData, void *source, int lineData,
 
 class UIScrollBox : public UIComponent {
 	static const int kLineHeight = 10;
-	static const int k3DFrameColors[];
-	static const int kTextBackgroundColors[];
-	static const int kTextColors1[];
-	static const int kTextColors2[];
-	static const int kTextColors3[];
-	static const int kTextColors4[];
+	static const Color256 k3DFrameColors[];
+	static const Color256 kTextBackgroundColors[];
+	static const Color256 kTextColors1[];
+	static const Color256 kTextColors2[];
+	static const Color256 kTextColors3[];
+	static const Color256 kTextColors4[];
 
 	struct Line {
 		Common::String text;
-		int lineData;
-		int flags;
-		int checkboxFrame;
+		int    lineData;
+		int    flags;
+		uint32 checkboxFrame;
 	};
 
 	int                   _selectedLineState;
@@ -74,9 +75,9 @@ class UIScrollBox : public UIComponent {
 	int                   _style;
 	bool                  _center;
 
-	int                   _timeLastScroll;
-	int                   _timeLastCheckbox;
-	int                   _timeLastHighlight;
+	uint32                _timeLastScroll;
+	uint32                _timeLastCheckbox;
+	uint32                _timeLastHighlight;
 
 	int                   _highlightFrame;
 
@@ -89,15 +90,18 @@ class UIScrollBox : public UIComponent {
 	int                   _maxLinesVisible;
 	int                   _firstLineVisible;
 
+	bool                  _mouseOver;
+
 public:
 	UIScrollBox(BladeRunnerEngine *vm, UIScrollBoxCallback *lineSelectedCallback, void *callbackData, int maxLineCount, int style, bool center, Common::Rect rect,Common::Rect scrollBarRect);
 	~UIScrollBox();
 
-	void draw(Graphics::Surface &surface);
+	void draw(Graphics::Surface &surface) override;
 
-	void handleMouseMove(int mouseX, int mouseY);
-	void handleMouseDown(bool alternateButton);
-	void handleMouseUp(bool alternateButton);
+	void handleMouseMove(int mouseX, int mouseY) override;
+	void handleMouseDown(bool alternateButton) override;
+	void handleMouseUp(bool alternateButton) override;
+	void handleMouseScroll(int direction) override;
 
 	void show();
 	void hide();

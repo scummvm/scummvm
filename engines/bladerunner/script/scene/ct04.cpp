@@ -24,35 +24,38 @@
 
 namespace BladeRunner {
 
-enum kCT03Loops {
-	kCT03LoopInshoot = 0,
-	kCT03LoopMain    = 1
+enum kCT04Loops {
+	kCT04LoopInshot   = 0,
+	kCT04LoopMainLoop = 1
 };
 
 void SceneScriptCT04::InitializeScene() {
 	if (Game_Flag_Query(kFlagCT03toCT04)) {
-		Scene_Loop_Start_Special(kSceneLoopModeLoseControl, kCT03LoopInshoot, false);
-		Scene_Loop_Set_Default(kCT03LoopMain);
+		Scene_Loop_Start_Special(kSceneLoopModeLoseControl, kCT04LoopInshot, false);
+		Scene_Loop_Set_Default(kCT04LoopMainLoop);
 		Setup_Scene_Information(-150.0f, -621.3f, 357.0f, 533);
 	} else {
-		Scene_Loop_Set_Default(kCT03LoopMain);
+		Scene_Loop_Set_Default(kCT04LoopMainLoop);
 		Setup_Scene_Information(-82.86f, -621.3f, 769.03f, 1020);
 	}
 
 	Scene_Exit_Add_2D_Exit(0, 590,  0, 639, 479, 1);
 	Scene_Exit_Add_2D_Exit(1, 194, 84, 320, 274, 0);
+	if (_vm->_cutContent) {
+		Scene_Exit_Add_2D_Exit(2, 0, 440, 590, 479, 2);
+	}
 
-	Ambient_Sounds_Add_Looping_Sound(54, 50,    1, 1);
-	Ambient_Sounds_Add_Looping_Sound(56, 15, -100, 1);
-	Ambient_Sounds_Add_Looping_Sound(105, 34, 100, 1);
-	Ambient_Sounds_Add_Sound(68, 10, 40, 33, 50, 0, 0, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(69, 10, 40, 33, 50, 0, 0, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Speech_Sound(60,  0, 10, 260, 17, 24, -100, 100, -101, -101, 1, 1);
-	Ambient_Sounds_Add_Speech_Sound(60, 20, 10, 260, 17, 24, -100, 100, -101, -101, 1, 1);
-	Ambient_Sounds_Add_Speech_Sound(60, 40, 10, 260, 17, 24, -100, 100, -101, -101, 1, 1);
-	Ambient_Sounds_Add_Speech_Sound(60, 50, 10, 260, 17, 24, -100, 100, -101, -101, 1, 1);
-	Ambient_Sounds_Add_Sound(376, 10, 60, 33, 50, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(377, 10, 60, 33, 50, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Looping_Sound(kSfxCTRAIN1,  50,    1, 1);
+	Ambient_Sounds_Add_Looping_Sound(kSfxCTAMBR1,  15, -100, 1);
+	Ambient_Sounds_Add_Looping_Sound(kSfxCTRUNOFF, 34,  100, 1);
+	Ambient_Sounds_Add_Sound(kSfxSPIN2B,  10, 40, 33, 50,    0,   0, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxSPIN3A,  10, 40, 33, 50,    0,   0, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Speech_Sound(kActorBlimpGuy,  0, 10, 260, 17, 24, -100, 100, -101, -101, 1, 1);
+	Ambient_Sounds_Add_Speech_Sound(kActorBlimpGuy, 20, 10, 260, 17, 24, -100, 100, -101, -101, 1, 1);
+	Ambient_Sounds_Add_Speech_Sound(kActorBlimpGuy, 40, 10, 260, 17, 24, -100, 100, -101, -101, 1, 1);
+	Ambient_Sounds_Add_Speech_Sound(kActorBlimpGuy, 50, 10, 260, 17, 24, -100, 100, -101, -101, 1, 1);
+	Ambient_Sounds_Add_Sound(kSfxTHNDER3, 10, 60, 33, 50, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxTHNDER4, 10, 60, 33, 50, -100, 100, -101, -101, 0, 0);
 }
 
 void SceneScriptCT04::SceneLoaded() {
@@ -89,7 +92,7 @@ bool SceneScriptCT04::ClickedOn3DObject(const char *objectName, bool a2) {
 		 && !Game_Flag_Query(kFlagCT04HomelessBodyThrownAway)
 		 &&  Global_Variable_Query(kVariableChapter) == 1
 		) {
-			if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -147.41f, -621.3f, 724.57f, 0, true, false, 0)) {
+			if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -147.41f, -621.3f, 724.57f, 0, true, false, false)) {
 				Player_Loses_Control();
 				Actor_Face_Heading(kActorMcCoy, 792, false);
 				Actor_Put_In_Set(kActorTransient, kSetFreeSlotI);
@@ -124,7 +127,7 @@ bool SceneScriptCT04::ClickedOn3DObject(const char *objectName, bool a2) {
 				Actor_Face_Heading(kActorMcCoy, 707, false);
 				Actor_Change_Animation_Mode(kActorMcCoy, 38);
 				Actor_Clue_Acquire(kActorMcCoy, kClueLicensePlate, true, -1);
-				Item_Pickup_Spin_Effect(952, 392, 225);
+				Item_Pickup_Spin_Effect(kModelAnimationLicensePlate, 392, 225);
 				Game_Flag_Set(kFlagCT04LicensePlaceFound);
 				return true;
 			}
@@ -133,7 +136,7 @@ bool SceneScriptCT04::ClickedOn3DObject(const char *objectName, bool a2) {
 		if (!Loop_Actor_Walk_To_Waypoint(kActorMcCoy, 75, 0, true, false)) {
 			Actor_Face_Heading(kActorMcCoy, 707, false);
 			Actor_Change_Animation_Mode(kActorMcCoy, 38);
-			Ambient_Sounds_Play_Sound(553, 45, 30, 30, 0);
+			Ambient_Sounds_Play_Sound(kSfxGARBAGE, 45, 30, 30, 0);
 			Actor_Voice_Over(1810, kActorVoiceOver);
 			Actor_Voice_Over(1820, kActorVoiceOver);
 			return true;
@@ -145,7 +148,7 @@ bool SceneScriptCT04::ClickedOn3DObject(const char *objectName, bool a2) {
 void SceneScriptCT04::dialogueWithHomeless() {
 	Dialogue_Menu_Clear_List();
 	if (Global_Variable_Query(kVariableChinyen) > 10
-	 || Query_Difficulty_Level() == 0
+	 || Query_Difficulty_Level() == kGameDifficultyEasy
 	) {
 		DM_Add_To_List_Never_Repeat_Once_Selected(410, 8, 4, -1); // YES
 	}
@@ -157,17 +160,17 @@ void SceneScriptCT04::dialogueWithHomeless() {
 
 	switch (answer) {
 	case 410: // YES
-		Actor_Says(kActorTransient, 10, 14);
-		Actor_Says(kActorTransient, 20, 14);
+		Actor_Says(kActorTransient, 10, 14); // Thanks. The big man. He kind of limping.
+		Actor_Says(kActorTransient, 20, 14); // That way.
 		Actor_Modify_Friendliness_To_Other(kActorTransient, kActorMcCoy, 5);
-		if (Query_Difficulty_Level() != 0) {
+		if (Query_Difficulty_Level() != kGameDifficultyEasy) {
 			Global_Variable_Decrement(kVariableChinyen, 10);
 		}
 		break;
 
 	case 420: // NO
 		Actor_Says(kActorMcCoy, 430, 3);
-		Actor_Says(kActorTransient, 30, 14);
+		Actor_Says(kActorTransient, 30, 14); // Hey, that'd work.
 		Actor_Modify_Friendliness_To_Other(kActorTransient, kActorMcCoy, -5);
 		break;
 	}
@@ -192,7 +195,7 @@ bool SceneScriptCT04::ClickedOnActor(int actorId) {
 					} else {
 						Music_Stop(3);
 						Actor_Says(kActorMcCoy, 425, kAnimationModeTalk);
-						Actor_Says(kActorTransient, 0, 13);
+						Actor_Says(kActorTransient, 0, 13); // Hey, maybe spare some chinyen?
 						dialogueWithHomeless();
 						Actor_Set_Goal_Number(kActorTransient, kGoalTransientCT04Leave);
 					}
@@ -214,7 +217,7 @@ bool SceneScriptCT04::ClickedOnItem(int itemId, bool a2) {
 
 bool SceneScriptCT04::ClickedOnExit(int exitId) {
 	if (exitId == 1) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -82.86f, -621.3f, 769.03f, 0, 1, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -82.86f, -621.3f, 769.03f, 0, true, false, false)) {
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
 			if (Actor_Query_Goal_Number(kActorTransient) == kGoalTransientDefault) {
@@ -226,13 +229,24 @@ bool SceneScriptCT04::ClickedOnExit(int exitId) {
 		return true;
 	}
 	if (exitId == 0) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -187.0f, -621.3f, 437.0f, 0, 1, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -187.0f, -621.3f, 437.0f, 0, true, false, false)) {
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
 			Game_Flag_Set(kFlagCT04toCT03);
 			Set_Enter(kSetCT03_CT04, kSceneCT03);
 		}
 		return true;
+	}
+	if (_vm->_cutContent) {
+		if (exitId == 2) {
+			if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -106.94f, -619.08f, 429.20f, 0, true, false, false)) {
+				Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
+				Ambient_Sounds_Remove_All_Looping_Sounds(1);
+				Game_Flag_Set(kFlagCT04toCT03);
+				Set_Enter(kSetCT03_CT04, kSceneCT03);
+			}
+			return true;
+		}
 	}
 	return false;
 }
@@ -244,7 +258,7 @@ bool SceneScriptCT04::ClickedOn2DRegion(int region) {
 void SceneScriptCT04::SceneFrameAdvanced(int frame) {
 	if (Game_Flag_Query(kFlagCT04BodyDumped)) {
 		Game_Flag_Reset(kFlagCT04BodyDumped);
-		Sound_Play(180, 100, 80, 80, 50);
+		Sound_Play(kSfxGARBAGE4, 100, 80, 80, 50);
 	}
 }
 

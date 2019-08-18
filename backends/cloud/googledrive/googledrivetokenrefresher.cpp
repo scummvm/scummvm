@@ -100,7 +100,7 @@ void GoogleDriveTokenRefresher::finishJson(Common::JSONValue *json) {
 
 			pause();
 			delete json;
-			_parentStorage->getAccessToken(new Common::Callback<GoogleDriveTokenRefresher, Storage::BoolResponse>(this, &GoogleDriveTokenRefresher::tokenRefreshed));
+			_parentStorage->refreshAccessToken(new Common::Callback<GoogleDriveTokenRefresher, Storage::BoolResponse>(this, &GoogleDriveTokenRefresher::tokenRefreshed));
 			return;
 		}
 	}

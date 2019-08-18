@@ -42,7 +42,6 @@
 
 #include "startrek/action.h"
 #include "startrek/awaymission.h"
-#include "startrek/filestream.h"
 #include "startrek/graphics.h"
 #include "startrek/items.h"
 #include "startrek/object.h"
@@ -61,9 +60,11 @@ namespace StarTrek {
 
 class StarTrekEngine;
 class Room;
+class Console;
 
 typedef String(StarTrekEngine::*TextGetterFunc)(int, uintptr, String *);
-
+// FIXME: Eventually get rid of Common::SharedPtr and dispose of file streams properly
+typedef Common::SharedPtr<Common::MemoryReadStreamEndian> FileStream;
 
 const int SAVEGAME_DESCRIPTION_LEN = 30;
 
@@ -159,10 +160,9 @@ struct Menu {
 	Sprite sprites[MAX_MENUBUTTONS];
 	uint16 retvals[MAX_MENUBUTTONS];
 	uint32 disabledButtons;
-	SharedPtr<FileStream> menuFile;
 	uint16 numButtons;
 	int16 selectedButton;
-	SharedPtr<Menu> nextMenu;
+	Menu *nextMenu;
 };
 
 // Special events that can be returned by handleMenuEvents.
@@ -247,11 +247,11 @@ public:
 	void playSpeech(const Common::String &filename);
 	void stopPlayingSpeech();
 
-	SharedPtr<FileStream> loadFile(Common::String filename, int fileIndex = 0);
+	Common::MemoryReadStreamEndian *loadFile(Common::String filename, int fileIndex = 0);
 	/**
 	 * TODO: Figure out what the extra parameters are, and if they're important.
 	 */
-	SharedPtr<FileStream> loadFileWithParams(Common::String filename, bool unk1, bool unk2, bool unk3);
+	Common::MemoryReadStreamEndian *loadFileWithParams(Common::String filename, bool unk1, bool unk2, bool unk3);
 
 	void playMovie(Common::String filename);
 	void playMovieMac(Common::String filename);
@@ -322,7 +322,7 @@ public:
 	bool isPositionSolid(int16 x, int16 y);
 	void loadRoomIndex(int roomIndex, int spawnIndex);
 
-	SharedPtr<Room> getRoom();
+	Room *getRoom();
 
 	// intro.cpp
 private:
@@ -379,7 +379,7 @@ public:
 	 * "renderBanAboveSprites()" redraws sprites above them if necessary.
 	 */
 	void renderBanBelowSprites();
-	void renderBan(byte *pixelDest, SharedPtr<FileStream> file);
+	void renderBan(byte *pixelDest, FileStream file);
 	void renderBanAboveSprites();
 	void removeActorFromScreen(int actorIndex);
 	void actorFunc1();
@@ -646,7 +646,7 @@ private:
 	uint32 _textboxVar2;
 	uint16 _textboxVar6;
 	bool _textboxHasMultipleChoices;
-	SharedPtr<Menu> _activeMenu;
+	Menu *_activeMenu;
 	// Saved value of StarTrekEngine::_keyboardControlsMouse when menus are up
 	bool _keyboardControlsMouseOutsideMenu;
 
@@ -673,7 +673,11 @@ public:
 	Common::Platform getPlatform() const;
 	uint8 getGameType() const;
 	Common::Language getLanguage() const;
-
+	
+	// _screenName = _missionName + _roomIndex
+	Common::String getScreenName() const {
+		return _missionName + (char)(_roomIndex + '0');
+	}
 
 	// Variables
 public:
@@ -690,9 +694,7 @@ public:
 
 	Common::String _missionName;
 	int _roomIndex;
-	Common::String _screenName; // _screenName = _missionName + _roomIndex
-	Common::String _mapFilename; // Similar to _screenName, but used for .map files?
-	SharedPtr<FileStream> _mapFile;
+	Common::MemoryReadStreamEndian *_mapFile;
 	Fixed16 _playerActorScale;
 
 	Common::String _txtFilename;
@@ -717,7 +719,7 @@ public:
 
 	// ".BAN" files provide extra miscellaneous animations in the room, ie. flashing
 	// pixels on computer consoles, or fireflies in front of the screen.
-	SharedPtr<FileStream> _banFiles[MAX_BAN_FILES];
+	FileStream _banFiles[MAX_BAN_FILES];
 	uint16 _banFileOffsets[MAX_BAN_FILES];
 
 	Sprite _inventoryIconSprite;
@@ -776,14 +778,14 @@ public:
 
 	Graphics *_gfx;
 	Sound *_sound;
+	Console *_console;
 	SharedPtr<IWFile> _iwFile;
 
 private:
 	Common::RandomSource _randomSource;
 	Common::SineTable _sineTable;
-
+	Room *_room;
 	Common::MacResManager *_macResFork;
-	SharedPtr<Room> _room;
 };
 
 // Static function

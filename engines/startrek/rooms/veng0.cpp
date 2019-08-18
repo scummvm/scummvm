@@ -97,6 +97,13 @@ extern const RoomAction veng0ActionList[] = {
 	{ {ACTION_USE, OBJECT_MCCOY,    HOTSPOT_CREWMAN_1, 0}, &Room::veng0UseMccoyOnLivingCrewman },
 	{ {ACTION_DONE_WALK, 3,                         0, 0}, &Room::veng0MccoyReachedCrewman },
 	{ {ACTION_DONE_ANIM, 1,                         0, 0}, &Room::veng0MccoyScannedCrewman },
+
+	// Common code
+	{ {ACTION_TICK, 0xff, 0xff, 0xff}, &Room::vengaTick },
+	{ {ACTION_USE, OBJECT_IPHASERS, 0xff,     0}, &Room::vengaUsePhaserAnywhere },
+	{ {ACTION_USE, OBJECT_IPHASERK, 0xff,     0}, &Room::vengaUsePhaserAnywhere },
+	{ {ACTION_LOOK, OBJECT_IHYPO,          0, 0}, &Room::vengaLookAtHypo },
+	{ {ACTION_USE, OBJECT_ICOMM, OBJECT_KIRK, 0}, &Room::vengaUseCommunicator },
 };
 
 extern const int veng0NumActions = ARRAYSIZE(veng0ActionList);
@@ -138,7 +145,7 @@ void Room::veng0Tick50() {
 		showText(TX_SPEAKER_KIRK,  TX_VEN0_011);
 		showText(TX_SPEAKER_KIRK,  TX_VEN0_010);
 		showText(TX_SPEAKER_MCCOY, TX_VEN0_017);
-		_awayMission->veng.field36 = true;
+		_awayMission->veng.enterpriseLeftForDistressCall = true;
 	}
 }
 
@@ -210,7 +217,7 @@ void Room::veng0UseMccoyOnDeadCrewman() {
 
 void Room::veng0UseSawOnBeam() {
 	if (_awayMission->veng.beamState == 1 || _awayMission->veng.beamState == 2)
-		showText(TX_VEN0N008);
+		showDescription(TX_VEN0N008);
 	else {
 		_awayMission->disableInput = true;
 		walkCrewmanC(OBJECT_KIRK, 0x24, 0xc2, &Room::veng0KirkReachedSaw);
@@ -234,7 +241,7 @@ void Room::veng0DoneCuttingBeam() {
 	loadActorStandAnim(OBJECT_9);
 	loadActorStandAnim(OBJECT_10);
 
-	showText(TX_VEN0N007);
+	showDescription(TX_VEN0N007);
 
 	_awayMission->veng.beamState = 1;
 	veng0GetBeam();
@@ -242,12 +249,12 @@ void Room::veng0DoneCuttingBeam() {
 
 void Room::veng0GetBeam() {
 	if (_awayMission->veng.beamState == 1) {
-		showText(TX_VEN0N019);
+		showDescription(TX_VEN0N019);
 		_awayMission->veng.beamState = 2;
 		giveItem(OBJECT_IBEAM);
 		loadActorAnim2(OBJECT_BEAM, "s7r0bf", 0x0e, 0x9a);
 	} else
-		showText(TX_VEN0N009);
+		showDescription(TX_VEN0N009);
 }
 
 void Room::veng0TalkToKirk() {
@@ -270,62 +277,62 @@ void Room::veng0TalkToRedshirt() {
 }
 
 void Room::veng0LookAtPatterson() {
-	showText(TX_VEN0N004);
+	showDescription(TX_VEN0N004);
 }
 
 void Room::veng0LookAtDeadCrewman2() {
-	showText(TX_VEN0N017);
+	showDescription(TX_VEN0N017);
 }
 
 void Room::veng0LookAtComputerBank() {
-	showText(TX_VEN0N005);
+	showDescription(TX_VEN0N005);
 }
 
 void Room::veng0LookAtChair() {
-	showText(TX_VEN0N015);
+	showDescription(TX_VEN0N015);
 }
 
 void Room::veng0LookAtKirk() {
-	showText(TX_VEN0N001);
+	showDescription(TX_VEN0N001);
 }
 
 void Room::veng0LookAtSpock() {
-	showText(TX_VEN0N006);
+	showDescription(TX_VEN0N006);
 }
 
 void Room::veng0LookAtMccoy() {
-	showText(TX_VEN0N002);
+	showDescription(TX_VEN0N002);
 }
 
 void Room::veng0LookAtRedshirt() {
-	showText(TX_VEN0N003);
+	showDescription(TX_VEN0N003);
 }
 
 void Room::veng0LookAtViewscreen() {
-	showText(TX_VEN0N010);
+	showDescription(TX_VEN0N010);
 }
 
 void Room::veng0LookAtHelmConsole() {
-	showText(TX_VEN0N011);
+	showDescription(TX_VEN0N011);
 }
 
 void Room::veng0LookAtNavConsole() {
-	showText(TX_VEN0N012);
+	showDescription(TX_VEN0N012);
 }
 
 void Room::veng0LookAtBeam() {
 	if (_awayMission->veng.beamState == 1)
-		showText(TX_VEN0N013);
+		showDescription(TX_VEN0N013);
 	else
-		showText(TX_VEN0N000);
+		showDescription(TX_VEN0N000);
 }
 
 void Room::veng0LookAnywhere() {
-	showText(TX_VEN0N018);
+	showDescription(TX_VEN0N018);
 }
 
 void Room::veng0LookAtDeadCrewman1() {
-	showText(TX_VEN0N016);
+	showDescription(TX_VEN0N016);
 }
 
 void Room::veng0UseMccoyOnLivingCrewman() {

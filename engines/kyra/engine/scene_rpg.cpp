@@ -534,20 +534,20 @@ void KyraRpgEngine::vcnDraw_bw_trans_hiCol(uint8 *&dst, const uint8 *&src) {
 
 void KyraRpgEngine::vcnDraw_fw_Amiga(uint8 *&dst, const uint8 *&src) {
 	for (int blockX = 0; blockX < 8; blockX++) {
-		*dst = 0;
+		uint8 col = 0;
 		for (int i = 0; i < 5; ++i)
-			*dst |= (((src[i] & (0x80 >> blockX)) >> (7 - blockX)) << i);
-		dst++;
+			col |= (((src[i] & (0x80 >> blockX)) >> (7 - blockX)) << i);
+		*dst++ = col;
 	}
 	src += 5;
 }
 
 void KyraRpgEngine::vcnDraw_bw_Amiga(uint8 *&dst, const uint8 *&src) {
 	for (int blockX = 7; blockX >= 0; blockX--) {
-		*dst = 0;
+		uint8 col = 0;
 		for (int i = 0; i < 5; ++i)
-			*dst |= (((src[i] & (0x80 >> blockX)) >> (7 - blockX)) << i);
-		dst++;
+			col |= (((src[i] & (0x80 >> blockX)) >> (7 - blockX)) << i);
+		*dst++ = col;
 	}
 	src += 5;
 }

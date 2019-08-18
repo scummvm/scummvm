@@ -233,7 +233,7 @@ Common::Error GnapEngine::run() {
 		error("Could not load ufos.exe");
 
 #ifdef USE_FREETYPE2
-	Common::SeekableReadStream *stream = _exe->getResource(Common::kPEFont, 2000);
+	Common::SeekableReadStream *stream = _exe->getResource(Common::kWinFont, 2000);
 	_font = Graphics::loadTTFFont(*stream, 24);
 	if (!_font)
 		warning("Unable to load font");
@@ -547,9 +547,7 @@ void GnapEngine::setCursor(int cursorIndex) {
 		Graphics::WinCursorGroup *cursorGroup = Graphics::WinCursorGroup::createCursorGroup(*_exe, Common::WinResourceID(cursorName));
 		if (cursorGroup) {
 			Graphics::Cursor *cursor = cursorGroup->cursors[0].cursor;
-			CursorMan.replaceCursor(cursor->getSurface(), cursor->getWidth(), cursor->getHeight(),
-				cursor->getHotspotX(), cursor->getHotspotY(), cursor->getKeyColor());
-			CursorMan.replaceCursorPalette(cursor->getPalette(), 0, 256);
+			CursorMan.replaceCursor(cursor);
 			delete cursorGroup;
 		}
 		_cursorIndex = cursorIndex;

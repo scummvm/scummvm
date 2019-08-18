@@ -32,7 +32,7 @@ AIScriptMcCoy::AIScriptMcCoy(BladeRunnerEngine *vm) : AIScriptBase(vm) {
 	_animationLoopFrameMax = 0;
 	_animationStateNextSpecial = 0;
 	_animationNextSpecial = 0;
-	_nextSoundId = 0;
+	_nextSoundId = -1;
 	_NR10SteeleShooting = false;
 	_fallSpeed = 0.0f;
 	_fallHeightCurrent = 0.0f;
@@ -48,7 +48,7 @@ void AIScriptMcCoy::Initialize() {
 	_animationLoopFrameMin = 0;
 	_animationLoopFrameMax = 3;
 	_animationStateNextSpecial = 3;
-	_animationNextSpecial = 20;
+	_animationNextSpecial = kModelAnimationMcCoyProtestingTalk;
 	_nextSoundId = -1;
 	_NR10SteeleShooting = false;
 	_fallSpeed = 0;
@@ -82,10 +82,10 @@ bool AIScriptMcCoy::Update() {
 	case kGoalMcCoyNRxxStandUp:
 		Actor_Set_Goal_Number(kActorMcCoy, kGoalMcCoyDefault);
 		if (Player_Query_Current_Set() == kSetNR03) {
-			Loop_Actor_Walk_To_XYZ(kActorMcCoy, -166.0f, -70.19f, -501.0f, 0, false, false, 0);
+			Loop_Actor_Walk_To_XYZ(kActorMcCoy, -166.0f, -70.19f, -501.0f, 0, false, false, false);
 			Actor_Face_Heading(kActorMcCoy, 300, false);
 		} else {
-			Loop_Actor_Walk_To_XYZ(kActorMcCoy, -461.0f, 0.0f, -373.0f, 0, false, false, 0);
+			Loop_Actor_Walk_To_XYZ(kActorMcCoy, -461.0f, 0.0f, -373.0f, 0, false, false, false);
 		}
 		Player_Gains_Control();
 		return true;
@@ -127,19 +127,24 @@ void AIScriptMcCoy::CompletedMovementTrack() {
 
 void AIScriptMcCoy::ReceivedClue(int clueId, int fromActorId) {
 	switch (clueId) {
+	case kClueDispatchHitAndRun: // added case for cut content
+		// fall through
 	case kClueChopstickWrapper:
+		// fall through
 	case kClueSushiMenu:
 		Spinner_Set_Selectable_Destination_Flag(kSpinnerDestinationChinatown, true);
 		break;
 
 	case kClueDragonflyEarring:
+		// fall through
 	case kClueBombingSuspect:
 		Spinner_Set_Selectable_Destination_Flag(kSpinnerDestinationAnimoidRow, true);
 		break;
 
 	case kClueKingstonKitchenBox1:
+		// fall through
 	case kClueKingstonKitchenBox2:
-		if (Query_Difficulty_Level() == 0) {
+		if (Query_Difficulty_Level() == kGameDifficultyEasy) {
 			Spinner_Set_Selectable_Destination_Flag(kSpinnerDestinationAnimoidRow, true);
 		}
 		break;
@@ -149,17 +154,24 @@ void AIScriptMcCoy::ReceivedClue(int clueId, int fromActorId) {
 		break;
 
 	case kClueHysteriaToken:
+		// fall through
 	case kClueCarRegistration1:
+		// fall through
 	case kClueCarRegistration2:
+		// fall through
 	case kClueCarRegistration3:
+		// fall through
 	case kClueLichenDogWrapper:
 		Spinner_Set_Selectable_Destination_Flag(kSpinnerDestinationHysteriaHall, true);
 		Spinner_Set_Selectable_Destination_Flag(kSpinnerDestinationNightclubRow, true);
 		break;
 
 	case kClueWeaponsCache:
+		// fall through
 	case kClueWeaponsOrderForm:
+		// fall through
 	case kClueShippingForm:
+		// fall through
 	case kCluePoliceIssueWeapons:
 		Global_Variable_Increment(kVariableCorruptedGuzzaEvidence, 1);
 		break;
@@ -169,20 +181,27 @@ void AIScriptMcCoy::ReceivedClue(int clueId, int fromActorId) {
 		break;
 
 	case kClueHomelessManKid:
+		// fall through
 	case kClueOriginalRequisitionForm:
 		Global_Variable_Increment(kVariableCorruptedGuzzaEvidence, 3);
 		break;
 
 	case kClueScaryChair:
+		// fall through
 	case kClueIzosStashRaided:
 		Global_Variable_Increment(kVariableCorruptedGuzzaEvidence, 2);
 		break;
 
 	case kClueDNATyrell:
+		// fall through
 	case kClueDNASebastian:
+		// fall through
 	case kClueDNAChew:
+		// fall through
 	case kClueDNAMoraji:
+		// fall through
 	case kClueDNALutherLance:
+		// fall through
 	case kClueDNAMarcus:
 		Global_Variable_Increment(kVariableDNAEvidence, 1);
 		break;
@@ -196,10 +215,15 @@ void AIScriptMcCoy::ReceivedClue(int clueId, int fromActorId) {
 		Actor_Voice_Over(3320, kActorVoiceOver);
 		switch (clueId) {
 		case kClueWeaponsCache:
+			// fall through
 		case kClueWeaponsOrderForm:
+			// fall through
 		case kClueGuzzasCash:
+			// fall through
 		case kCluePoliceIssueWeapons:
+			// fall through
 		case kClueIzosStashRaided:
+			// fall through
 		case kClueOriginalRequisitionForm:
 			Actor_Voice_Over(3340, kActorVoiceOver);
 			Actor_Voice_Over(3350, kActorVoiceOver);
@@ -222,10 +246,12 @@ void AIScriptMcCoy::ReceivedClue(int clueId, int fromActorId) {
 		Actor_Clue_Acquire(kActorMcCoy, kClueGuzzaFramedMcCoy, true, -1);
 
 		if (clueId == kClueFolder) {
+			// if McCoy just got the folder
 			Actor_Voice_Over(2780, kActorVoiceOver);
 			Actor_Voice_Over(2800, kActorVoiceOver);
 			Actor_Voice_Over(2810, kActorVoiceOver);
 		} else if (Actor_Clue_Query(kActorMcCoy, kClueFolder)) {
+			// if McCoy already had the folder
 			Actor_Voice_Over(3430, kActorVoiceOver);
 			Actor_Voice_Over(3440, kActorVoiceOver);
 			Actor_Voice_Over(3450, kActorVoiceOver);
@@ -235,6 +261,7 @@ void AIScriptMcCoy::ReceivedClue(int clueId, int fromActorId) {
 			Actor_Voice_Over(3490, kActorVoiceOver);
 			Actor_Voice_Over(3500, kActorVoiceOver);
 		} else {
+			// if McCoy never got the folder
 			Actor_Voice_Over(3510, kActorVoiceOver);
 			Actor_Voice_Over(3520, kActorVoiceOver);
 			Actor_Voice_Over(3530, kActorVoiceOver);
@@ -427,41 +454,46 @@ bool AIScriptMcCoy::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		return true;
 
 	case kGoalMcCoyCallWithGuzza:
-		Sound_Play(123, 50, 0, 0, 50);
+		Sound_Play(kSfxSPNBEEP9, 50, 0, 0, 50);
 		Delay(1000);
-		Sound_Play(403, 30, 0, 0, 50);
+		Sound_Play(kSfxVIDFONE1, 30, 0, 0, 50);
 		Delay(1000);
-		Sound_Play(123, 50, 0, 0, 50);
-		Actor_Says(kActorGuzza, 1380, 3);
+		Sound_Play(kSfxSPNBEEP9, 50, 0, 0, 50);
+		Actor_Says(kActorGuzza, 1380, kAnimationModeTalk);
 		Actor_Says(kActorMcCoy, 6610, 13);
-		Actor_Says(kActorGuzza, 1390, 3);
+		Actor_Says(kActorGuzza, 1390, kAnimationModeTalk);
 		Actor_Says(kActorMcCoy, 6615, 18);
-		Actor_Says(kActorGuzza, 1420, 3);
+		if (_vm->_cutContent) {
+			Actor_Says(kActorGuzza, 1400, kAnimationModeTalk);
+			Actor_Says(kActorGuzza, 1410, kAnimationModeTalk);
+			Actor_Says(kActorMcCoy, 6620, 15);
+		}
+		Actor_Says(kActorGuzza, 1420, kAnimationModeTalk);
 		Actor_Says(kActorMcCoy, 6625, 11);
-		Actor_Says(kActorGuzza, 1430, 3);
+		Actor_Says(kActorGuzza, 1430, kAnimationModeTalk);
 		Actor_Says(kActorMcCoy, 6630, 12);
 		Actor_Says(kActorMcCoy, 6635, 17);
 		Actor_Says(kActorMcCoy, 6640, 13);
 		Actor_Says(kActorMcCoy, 6645, 19);
 		Actor_Says(kActorMcCoy, 6650, 18);
 		Actor_Says(kActorMcCoy, 6655, 11);
-		Actor_Says(kActorGuzza, 1440, 3);
+		Actor_Says(kActorGuzza, 1440, kAnimationModeTalk);
 		Actor_Says(kActorMcCoy, 6660, 17);
 		Actor_Says(kActorMcCoy, 6665, 13);
 		Delay(1000);
-		Actor_Says(kActorGuzza, 1450, 3);
+		Actor_Says(kActorGuzza, 1450, kAnimationModeTalk);
 		Actor_Says(kActorMcCoy, 6670, 14);
 		Actor_Says(kActorMcCoy, 6675, 11);
-		Actor_Says(kActorGuzza, 1460, 3);
+		Actor_Says(kActorGuzza, 1460, kAnimationModeTalk);
 		Actor_Says(kActorMcCoy, 6680, 12);
-		Actor_Says(kActorGuzza, 1470, 3);
+		Actor_Says(kActorGuzza, 1470, kAnimationModeTalk);
 		Actor_Says(kActorMcCoy, 6685, 13);
 		Delay(500);
 		Actor_Says(kActorMcCoy, 6695, 16);
 		Actor_Says(kActorMcCoy, 6700, 17);
-		Actor_Says(kActorGuzza, 1480, 3);
+		Actor_Says(kActorGuzza, 1480, kAnimationModeTalk);
 		Actor_Says(kActorMcCoy, 6705, 11);
-		Sound_Play(123, 50, 0, 0, 50);
+		Sound_Play(kSfxSPNBEEP9, 50, 0, 0, 50);
 		return true;
 
 	case kGoalMcCoyUG15Fall:
@@ -547,7 +579,7 @@ bool AIScriptMcCoy::UpdateAnimation(int *animation, int *frame) {
 	int v7;
 	switch (_animationState) {
 	case 0:
-		*animation = 19;
+		*animation = kModelAnimationMcCoyIdle;
 		if (_animationLoopCounter < _animationLoopLength) {
 			_animationFrame += _animationLoopDirection;
 			if (_animationFrame > _animationLoopFrameMax) {
@@ -599,14 +631,14 @@ bool AIScriptMcCoy::UpdateAnimation(int *animation, int *frame) {
 			_animationState = _animationStateNextSpecial;
 			*animation = _animationNextSpecial;
 			_animationStateNextSpecial = 4;
-			_animationNextSpecial = 20;
+			_animationNextSpecial = kModelAnimationMcCoyProtestingTalk;
 		} else if (_animationFrame <= 4 && Game_Flag_Query(kFlagMcCoyAnimation1)) {
 			Game_Flag_Reset(kFlagMcCoyAnimation1);
-			*animation = 19;
+			*animation = kModelAnimationMcCoyIdle;
 			_animationFrame = 0;
 			_animationState = 0;
 		} else {
-			*animation = 20;
+			*animation = kModelAnimationMcCoyProtestingTalk;
 			_animationFrame++;
 			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
 				_animationFrame = 0;
@@ -615,87 +647,87 @@ bool AIScriptMcCoy::UpdateAnimation(int *animation, int *frame) {
 		break;
 
 	case 5:
-		*animation = 21;
+		*animation = kModelAnimationMcCoyScratchHeadTalk;
 		_animationFrame++;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
 			_animationFrame = 0;
 			_animationState = 3;
-			*animation = 20;
+			*animation = kModelAnimationMcCoyProtestingTalk;
 		}
 		break;
 
 	case 6:
-		*animation = 27;
+		*animation = kModelAnimationMcCoyScratchEarLongerTalk;
 		_animationFrame++;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
 			_animationFrame = 0;
 			_animationState = 3;
-			*animation = 20;
+			*animation = kModelAnimationMcCoyProtestingTalk;
 		}
 		break;
 
 	case 7:
-		*animation = 22;
+		*animation = kModelAnimationMcCoyPointingTalk;
 		_animationFrame++;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
 			_animationFrame = 0;
 			_animationState = 3;
-			*animation = 20;
+			*animation = kModelAnimationMcCoyProtestingTalk;
 		}
 		break;
 
 	case 8:
-		*animation = 23;
+		*animation = kModelAnimationMcCoyUpsetTalk;
 		_animationFrame++;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
 			_animationFrame = 0;
 			_animationState = 3;
-			*animation = 20;
+			*animation = kModelAnimationMcCoyProtestingTalk;
 		}
 		break;
 
 	case 9:
-		*animation = 24;
+		*animation = kModelAnimationMcCoyDismissiveTalk;
 		_animationFrame++;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
 			_animationFrame = 0;
 			_animationState = 3;
-			*animation = 20;
+			*animation = kModelAnimationMcCoyProtestingTalk;
 		}
 		break;
 
 	case 10:
-		*animation = 25;
+		*animation = kModelAnimationMcCoyScratchEarTalk;
 		_animationFrame++;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
 			_animationFrame = 0;
 			_animationState = 3;
-			*animation = 20;
+			*animation = kModelAnimationMcCoyProtestingTalk;
 		}
 		break;
 
 	case 11:
-		*animation = 26;
+		*animation = kModelAnimationMcCoyHandsOnWaistTalk;
 		_animationFrame++;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
 			_animationFrame = 0;
 			_animationState = 3;
-			*animation = 20;
+			*animation = kModelAnimationMcCoyProtestingTalk;
 		}
 		break;
 
 	case 12:
-		*animation = 27;
+		*animation = kModelAnimationMcCoyScratchEarLongerTalk;
 		_animationFrame++;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
 			_animationFrame = 0;
 			_animationState = 3;
-			*animation = 20;
+			*animation = kModelAnimationMcCoyProtestingTalk;
 		}
 		break;
 
 	case 13:
-		*animation = 19;
+		*animation = kModelAnimationMcCoyIdle;
 		if (_animationFrame < Slice_Animation_Query_Number_Of_Frames(*animation) / 2) {
 			_animationFrame -= 3;
 			if (_animationFrame <= 0) {
@@ -714,7 +746,7 @@ bool AIScriptMcCoy::UpdateAnimation(int *animation, int *frame) {
 		break;
 
 	case 14:
-		*animation = 0;
+		*animation = kModelAnimationMcCoyWithGunIdle;
 		_animationFrame++;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
 			_animationState = 14;
@@ -723,27 +755,29 @@ bool AIScriptMcCoy::UpdateAnimation(int *animation, int *frame) {
 		break;
 
 	case 15:
-		*animation = 8;
+		*animation = kModelAnimationMcCoyWithGunUnholsterGun;
 		_animationFrame++;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
 			_animationFrame = 0;
 			_animationState = 14;
-			*animation = 0;
+			*animation = kModelAnimationMcCoyWithGunIdle;
 		}
 		break;
 
 	case 16:
-		*animation = 9;
+		*animation = kModelAnimationMcCoyWithGunHolsterGun;
 		_animationFrame++;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
-			*animation = 19;
+			*animation = kModelAnimationMcCoyIdle;
 			_animationFrame = 0;
 			_animationState = 0;
 		}
 		break;
 
 	case 17:
-		*animation = 12;
+		// this is just frame 0 always, McCoy doesn't animated shoot in this animation State
+		// animation state 21 is for the full shooting animation
+		*animation = kModelAnimationMcCoyWithGunShooting;
 		_animationFrame = 0;
 		// weird, but thats in game code
 		if (Slice_Animation_Query_Number_Of_Frames(*animation) <= 0) {
@@ -753,43 +787,49 @@ bool AIScriptMcCoy::UpdateAnimation(int *animation, int *frame) {
 		break;
 
 	case 18:
-		*animation = 10;
+		*animation = kModelAnimationMcCoyWithGunAiming;
 		_animationFrame++;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
 			_animationFrame = 0;
 			_animationState = 17;
-			*animation = 12;
+			*animation = kModelAnimationMcCoyWithGunShooting;
 		}
 		break;
 
 	case 19:
-		*animation = 11;
+		*animation = kModelAnimationMcCoyWithGunStopAimResumeIdle;
 		_animationFrame++;
 		if (_animationFrame >= 12) {
 			_animationFrame = 0;
 			_animationState = 14;
-			*animation = 0;
+			*animation = kModelAnimationMcCoyWithGunIdle;
 		}
 		break;
 
 	case 21:
-		*animation = 12;
+		*animation = kModelAnimationMcCoyWithGunShooting;
 		_animationFrame++;
 		if (_animationFrame == 1
 		 && Actor_Query_Goal_Number(kActorMcCoy) == kGoalMcCoyNR11Shoot
 		 && _NR10SteeleShooting
 		) {
-			_nextSoundId = 27;
+			_nextSoundId = kSfxSMCAL3;
 		}
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
 			_animationState = 17;
 			_animationFrame = 0;
-			*animation = 12;
+			*animation = kModelAnimationMcCoyWithGunShooting;
+#if BLADERUNNER_ORIGINAL_BUGS
+#else
+			// Resume combat idle position even when shot at a target -- if it's no longer a target (dead or moved)
+			ChangeAnimationMode(kAnimationModeCombatIdle);
+#endif // BLADERUNNER_ORIGINAL_BUGS
+
 			if (Actor_Query_Goal_Number(kActorMcCoy) == kGoalMcCoyNR11Shoot) {
 				_animationFrame = 0;
 				_animationState = 21;
 				_NR10SteeleShooting = true;
-				*animation = 12;
+				*animation = kModelAnimationMcCoyWithGunShooting;
 			}
 		}
 		break;
@@ -797,36 +837,36 @@ bool AIScriptMcCoy::UpdateAnimation(int *animation, int *frame) {
 	case 22:
 		_animationFrame = 0;
 		_animationState = 17;
-		*animation = 12;
+		*animation = kModelAnimationMcCoyWithGunShooting;
 		break;
 
 	case 23:
-		*animation = 1;
+		*animation = kModelAnimationMcCoyWithGunGotHitRight;
 		_animationFrame++;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
 			_animationFrame = 0;
 			_animationState = 14;
-			*animation = 0;
+			*animation = kModelAnimationMcCoyWithGunIdle;
 			Actor_Change_Animation_Mode(kActorMcCoy, kAnimationModeCombatIdle);
 		}
 		break;
 
 	case 24:
-		*animation = 1;
+		*animation = kModelAnimationMcCoyWithGunGotHitRight;
 		_animationFrame++;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
 			_animationFrame = 0;
 			_animationState = 14;
-			*animation = 0;
+			*animation = kModelAnimationMcCoyWithGunIdle;
 			Actor_Change_Animation_Mode(kActorMcCoy, kAnimationModeCombatIdle);
 		}
 		break;
 
 	case 25:
-		*animation = 17;
+		*animation = kModelAnimationMcCoyGotHitRight;
 		_animationFrame++;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
-			*animation = 19;
+			*animation = kModelAnimationMcCoyIdle;
 			_animationFrame = 0;
 			_animationState = 0;
 			Actor_Change_Animation_Mode(kActorMcCoy, kAnimationModeIdle);
@@ -834,10 +874,10 @@ bool AIScriptMcCoy::UpdateAnimation(int *animation, int *frame) {
 		break;
 
 	case 26:
-		*animation = 17;
+		*animation = kModelAnimationMcCoyGotHitRight;
 		_animationFrame++;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
-			*animation = 19;
+			*animation = kModelAnimationMcCoyIdle;
 			_animationFrame = 0;
 			_animationState = 0;
 			Actor_Change_Animation_Mode(kActorMcCoy, kAnimationModeIdle);
@@ -845,7 +885,7 @@ bool AIScriptMcCoy::UpdateAnimation(int *animation, int *frame) {
 		break;
 
 	case 27:
-		*animation = 18;
+		*animation = kModelAnimationMcCoyFallsOnHisBack;
 		_animationFrame++;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
 			_animationFrame = Slice_Animation_Query_Number_Of_Frames(*animation) - 1;
@@ -858,7 +898,7 @@ bool AIScriptMcCoy::UpdateAnimation(int *animation, int *frame) {
 		break;
 
 	case 28:
-		*animation = 5;
+		*animation = kModelAnimationMcCoyWithGunShotDead;
 		_animationFrame++;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
 			_animationFrame = Slice_Animation_Query_Number_Of_Frames(*animation) - 1;
@@ -868,21 +908,21 @@ bool AIScriptMcCoy::UpdateAnimation(int *animation, int *frame) {
 		break;
 
 	case 29:
-		*animation = 18;
+		*animation = kModelAnimationMcCoyFallsOnHisBack;
 		_animationFrame += _animationLoopDirection;
 		if (_animationFrame < 14) {
 			_animationLoopDirection = 1;
 		}
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
 			Actor_Change_Animation_Mode(kActorMcCoy, kAnimationModeDie);
-			*animation = 18;
+			*animation = kModelAnimationMcCoyFallsOnHisBack;
 			_animationState = 27;
 			_animationFrame = Slice_Animation_Query_Number_Of_Frames(*animation) - 1;
 		}
 		break;
 
 	case 30:
-		*animation = 13;
+		*animation = kModelAnimationMcCoyWalking;
 		_animationFrame++;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
 			_animationFrame = 0;
@@ -895,7 +935,7 @@ bool AIScriptMcCoy::UpdateAnimation(int *animation, int *frame) {
 		break;
 
 	case 31:
-		*animation = 14;
+		*animation = kModelAnimationMcCoyRunning;
 		_animationFrame++;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
 			_animationFrame = 0;
@@ -910,11 +950,11 @@ bool AIScriptMcCoy::UpdateAnimation(int *animation, int *frame) {
 	case 32:
 		_animationFrame = 1;
 		_animationState = 30;
-		*animation = 13;
+		*animation = kModelAnimationMcCoyWalking;
 		break;
 
 	case 36:
-		*animation = 3;
+		*animation = kModelAnimationMcCoyWithGunWalking;
 		_animationFrame++;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
 			_animationFrame = 0;
@@ -928,7 +968,7 @@ bool AIScriptMcCoy::UpdateAnimation(int *animation, int *frame) {
 		break;
 
 	case 37:
-		*animation = 4;
+		*animation = kModelAnimationMcCoyWithGunRunning;
 		_animationFrame++;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
 			_animationFrame = 0;
@@ -942,7 +982,7 @@ bool AIScriptMcCoy::UpdateAnimation(int *animation, int *frame) {
 		break;
 
 	case 38:
-		*animation = 15;
+		*animation = kModelAnimationMcCoyClimbStairsUp;
 		_animationFrame++;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
 			_animationFrame = 0;
@@ -958,7 +998,7 @@ bool AIScriptMcCoy::UpdateAnimation(int *animation, int *frame) {
 		break;
 
 	case 39:
-		*animation = 16;
+		*animation = kModelAnimationMcCoyClimbStairsDown;
 		_animationFrame++;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
 			_animationFrame = 0;
@@ -974,7 +1014,7 @@ bool AIScriptMcCoy::UpdateAnimation(int *animation, int *frame) {
 		break;
 
 	case 40:
-		*animation = 6;
+		*animation = kModelAnimationMcCoyWithGunClimbStairsUp;
 		_animationFrame++;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
 			_animationFrame = 0;
@@ -990,7 +1030,7 @@ bool AIScriptMcCoy::UpdateAnimation(int *animation, int *frame) {
 		break;
 
 	case 41:
-		*animation = 7;
+		*animation = kModelAnimationMcCoyWithGunClimbStairsDown;
 		_animationFrame++;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
 			_animationFrame = 0;
@@ -1006,7 +1046,7 @@ bool AIScriptMcCoy::UpdateAnimation(int *animation, int *frame) {
 		break;
 
 	case 42:
-		*animation = 37;
+		*animation = kModelAnimationMcCoyClimbsLadderUp;
 		_animationFrame++;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation) - 1) { //why -1?
 			_animationFrame = 0;
@@ -1025,7 +1065,7 @@ bool AIScriptMcCoy::UpdateAnimation(int *animation, int *frame) {
 		break;
 
 	case 43:
-		*animation = 38;
+		*animation = kModelAnimationMcCoyClimbsLadderDown;
 		_animationFrame++;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation) - 1) { //why -1?
 			_animationFrame = 0;
@@ -1044,13 +1084,13 @@ bool AIScriptMcCoy::UpdateAnimation(int *animation, int *frame) {
 		break;
 
 	case 44:
-		*animation = 30;
+		*animation = kModelAnimationMcCoyThrowsBeggarInTrash;
 		_animationFrame++;
 		if (_animationFrame == 127) {
 			Game_Flag_Set(kFlagCT04BodyDumped);
 		}
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
-			*animation = 19;
+			*animation = kModelAnimationMcCoyIdle;
 			_animationFrame = 0;
 			ChangeAnimationMode(kAnimationModeIdle);
 			Actor_Set_At_XYZ(kActorMcCoy, -203.41f, -621.3f, 724.57f, 538);
@@ -1059,11 +1099,11 @@ bool AIScriptMcCoy::UpdateAnimation(int *animation, int *frame) {
 		break;
 
 	case 45:
-		*animation = 35;
+		*animation = kModelAnimationMcCoyEntersSpinner;
 		_animationFrame++;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
 			Actor_Set_Invisible(kActorMcCoy, true);
-			*animation = 19;
+			*animation = kModelAnimationMcCoyIdle;
 			_animationFrame = 0;
 			ChangeAnimationMode(kAnimationModeIdle);
 		}
@@ -1071,10 +1111,10 @@ bool AIScriptMcCoy::UpdateAnimation(int *animation, int *frame) {
 
 	case 46:
 		Actor_Set_Invisible(kActorMcCoy, false);
-		*animation = 36;
+		*animation = kModelAnimationMcCoyExitsSpinner;
 		_animationFrame++;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
-			*animation = 19;
+			*animation = kModelAnimationMcCoyIdle;
 			_animationFrame = 0;
 			Player_Gains_Control();
 			ChangeAnimationMode(kAnimationModeIdle);
@@ -1083,43 +1123,43 @@ bool AIScriptMcCoy::UpdateAnimation(int *animation, int *frame) {
 		break;
 
 	case 47:
-		*animation = 29;
+		*animation = kModelAnimationMcCoyLeaningOver;
 		_animationFrame++;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
 			_animationFrame = 0;
 			_animationState = 48;
-			*animation = 33;
+			*animation = kModelAnimationMcCoyLeaningOverSearching;
 		}
 		break;
 
 	case 48:
-		*animation = 33;
+		*animation = kModelAnimationMcCoyLeaningOverSearching;
 		_animationFrame++;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
 			_animationFrame = 0;
 			_animationState = 49;
-			*animation = 34;
+			*animation = kModelAnimationMcCoyLeaningOverResumeIdle;
 		}
 		break;
 
 	case 49:
-		*animation = 34;
+		*animation = kModelAnimationMcCoyLeaningOverResumeIdle;
 		_animationFrame++;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
 			Actor_Set_Goal_Number(kActorMcCoy, kGoalMcCoyDefault);
-			*animation = 19;
+			*animation = kModelAnimationMcCoyIdle;
 			_animationFrame = 0;
 			ChangeAnimationMode(kAnimationModeIdle);
 		}
 		break;
 
 	case 50:
-		*animation = 18;
+		*animation = kModelAnimationMcCoyFallsOnHisBack;
 		_animationFrame = Slice_Animation_Query_Number_Of_Frames(*animation) - 1;
 		break;
 
 	case 51:
-		*animation = 28;
+		*animation = kModelAnimationMcCoyDodgeAndDrawGun;
 		_animationFrame++;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
 			Player_Set_Combat_Mode(true);
@@ -1131,7 +1171,7 @@ bool AIScriptMcCoy::UpdateAnimation(int *animation, int *frame) {
 		break;
 
 	case 52:
-		*animation = 31;
+		*animation = kModelAnimationMcCoyDiesInAgony;
 		_animationFrame++;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
 			_animationFrame = Slice_Animation_Query_Number_Of_Frames(*animation) - 1;
@@ -1140,11 +1180,11 @@ bool AIScriptMcCoy::UpdateAnimation(int *animation, int *frame) {
 		break;
 
 	case 53:
-		*animation = 18;
+		*animation = kModelAnimationMcCoyFallsOnHisBack;
 		_animationFrame--;
 		if (_animationFrame <= 0) {
 			Actor_Change_Animation_Mode(kActorMcCoy, kAnimationModeIdle);
-			*animation = 19;
+			*animation = kModelAnimationMcCoyIdle;
 			_animationFrame = 0;
 			_animationState = 0;
 			if (Actor_Query_Goal_Number(kActorMcCoy) == kGoalMcCoyBB11GetUp) {
@@ -1157,26 +1197,26 @@ bool AIScriptMcCoy::UpdateAnimation(int *animation, int *frame) {
 		break;
 
 	case 55:
-		*animation = 32;
+		*animation = kModelAnimationMcCoyGivesFromPocket;
 		_animationFrame++;
 		if (_animationFrame == 7) {
 			Actor_Change_Animation_Mode(kActorMaggie, kAnimationModeFeeding);
 		}
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
-			*animation = 19;
+			*animation = kModelAnimationMcCoyIdle;
 			_animationState = 0;
 		}
 		break;
 
 	case 56:
-		*animation = 49;
+		*animation = kModelAnimationMcCoyStartled;
 		_animationFrame++;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
 			_animationFrame = 0;
 			if (Actor_Query_Which_Set_In(kActorMcCoy) == kSetUG15) {
 				_animationState = 27;
 			} else {
-				*animation = 19;
+				*animation = kModelAnimationMcCoyIdle;
 				_animationState = 0;
 				Actor_Change_Animation_Mode(kActorMcCoy, kAnimationModeIdle);
 			}
@@ -1184,7 +1224,7 @@ bool AIScriptMcCoy::UpdateAnimation(int *animation, int *frame) {
 		break;
 
 	case 57:
-		*animation = 46;
+		*animation = kModelAnimationMcCoyTiedInChairIdle;
 		_animationFrame++;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
 			_animationFrame = 0;
@@ -1192,46 +1232,47 @@ bool AIScriptMcCoy::UpdateAnimation(int *animation, int *frame) {
 		if (!Game_Flag_Query(kFlagMcCoyTiedDown)) {
 			_animationFrame = 0;
 			_animationState = 59;
-			*animation = 48;
+			*animation = kModelAnimationMcCoyTiedInChairFreed;
 		}
 		break;
 
 	case 58:
-		*animation = 47;
+		*animation = kModelAnimationMcCoyTiedInChairMoving;
 		_animationFrame++;
 		if (_animationFrame == 6) {
-			Ambient_Sounds_Play_Sound(Random_Query(593, 595), 39, 0, 0, 99);
+			// Play one of kSfxCHARMTL7, kSfxCHARMTL8, kSfxCHARMTL9
+			Ambient_Sounds_Play_Sound(Random_Query(kSfxCHARMTL7, kSfxCHARMTL9), 39, 0, 0, 99);
 		}
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation) - 1) { //why -1?
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation) - 1) { //why -1? a bug?
 			_animationFrame = 0;
 		}
 		break;
 
 	case 59:
-		*animation = 48;
+		*animation = kModelAnimationMcCoyTiedInChairFreed;
 		_animationFrame++;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
-			*animation = 19;
+			*animation = kModelAnimationMcCoyIdle;
 			_animationFrame = 0;
 			_animationLoopLength = 0;
 			_animationState = 0;
 			Player_Gains_Control();
-			Item_Add_To_World(kItemChair, 982, kSetCT08_CT51_UG12, -110.0, 0.0, -192.0, 0, 48, 32, false, true, false, false);
+			Item_Add_To_World(kItemChair, kModelAnimationYukonHotelChair, kSetCT08_CT51_UG12, -110.0, 0.0, -192.0, 0, 48, 32, false, true, false, false);
 		}
 		break;
 
 	case 60:
-		*animation = 41;
+		*animation = kModelAnimationMcCoySittingToUseConsole;
 		if (_animationFrame < Slice_Animation_Query_Number_Of_Frames(*animation) - 1) {
 			_animationFrame++;
 		}
 		break;
 
 	case 61:
-		*animation = 41;
+		*animation = kModelAnimationMcCoySittingToUseConsole;
 		_animationFrame--;
 		if (_animationFrame <= 0) {
-			*animation = 19;
+			*animation = kModelAnimationMcCoyIdle;
 			_animationFrame = 0;
 			_animationState = 0;
 			if (Actor_Query_Goal_Number(kActorMcCoy) == kGoalMcCoyNRxxSitAtTable) {
@@ -1241,17 +1282,17 @@ bool AIScriptMcCoy::UpdateAnimation(int *animation, int *frame) {
 		break;
 
 	case 62:
-		*animation = 42;
+		*animation = kModelAnimationMcCoyWithGunGrabbedByArm0;
 		_animationFrame++;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
 			_animationFrame = 0;
 			_animationState = 63;
-			*animation = 43;
+			*animation = kModelAnimationMcCoyWithGunGrabbedByArm1;
 		}
 		break;
 
 	case 63:
-		*animation = 43;
+		*animation = kModelAnimationMcCoyWithGunGrabbedByArm1;
 		_animationFrame++;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
 			_animationFrame = 0;
@@ -1259,43 +1300,43 @@ bool AIScriptMcCoy::UpdateAnimation(int *animation, int *frame) {
 		break;
 
 	case 64:
-		*animation = 44;
+		*animation = kModelAnimationMcCoyWithGunGrabbedByArmHurt;
 		_animationFrame++;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
 			_animationFrame = 0;
 			_animationState = 63;
-			*animation = 43;
+			*animation = kModelAnimationMcCoyWithGunGrabbedByArm1;
 		}
 		break;
 
 	case 65:
-		*animation = 45;
+		*animation = kModelAnimationMcCoyWithGunGrabbedByArmFreed;
 		_animationFrame++;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
 			_animationFrame = 0;
 			_animationState = 14;
-			*animation = 0;
+			*animation = kModelAnimationMcCoyWithGunIdle;
 			Actor_Set_Goal_Number(kActorMcCoy, kGoalMcCoyDefault);
 		}
 		break;
 
 	case 66:
-		*animation = 40;
+		*animation = kModelAnimationMcCoyGiveMovement;
 		_animationFrame++;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
 			Actor_Change_Animation_Mode(kActorMcCoy, kAnimationModeIdle);
-			*animation = 19;
+			*animation = kModelAnimationMcCoyIdle;
 			_animationFrame = 0;
 			_animationState = 0;
 		}
 		break;
 
 	case 67:
-		*animation = 53;
+		*animation = kModelAnimationMcCoyDrinkingBooze;
 		_animationFrame++;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
 			Actor_Change_Animation_Mode(kActorMcCoy, kAnimationModeIdle);
-			*animation = 19;
+			*animation = kModelAnimationMcCoyIdle;
 			_animationState = 0;
 			_animationFrame = 0;
 			if (Actor_Query_Goal_Number(kActorMcCoy) == kGoalMcCoyNR04Drink) {
@@ -1305,7 +1346,7 @@ bool AIScriptMcCoy::UpdateAnimation(int *animation, int *frame) {
 		break;
 
 	case 68:
-		*animation = 18;
+		*animation = kModelAnimationMcCoyFallsOnHisBack;
 		v7 = Slice_Animation_Query_Number_Of_Frames(*animation) - 1 - Global_Variable_Query(kVariableNR01GetUpCounter);
 		if (_animationFrame < v7) {
 			_animationFrame++;
@@ -1314,7 +1355,7 @@ bool AIScriptMcCoy::UpdateAnimation(int *animation, int *frame) {
 		}
 		if (_animationFrame <= 0) {
 			Actor_Change_Animation_Mode(kActorMcCoy, kAnimationModeIdle);
-			*animation = 19;
+			*animation = kModelAnimationMcCoyIdle;
 			_animationState = 0;
 			_animationFrame = 0;
 			Game_Flag_Reset(kFlagNR01McCoyIsDrugged);
@@ -1325,16 +1366,16 @@ bool AIScriptMcCoy::UpdateAnimation(int *animation, int *frame) {
 		break;
 
 	case 69:
-		*animation = 50;
+		*animation = kModelAnimationMcCoyCrouchingDown;
 		_animationFrame++;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
 			Actor_Change_Animation_Mode(kActorMcCoy, kAnimationModeSit);
-			*animation = 51;
+			*animation = kModelAnimationMcCoyCrouchedIdle;
 		}
 		break;
 
 	case 70:
-		*animation = 51;
+		*animation = kModelAnimationMcCoyCrouchedIdle;
 		_animationFrame++;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
 			_animationFrame = 0;
@@ -1342,11 +1383,11 @@ bool AIScriptMcCoy::UpdateAnimation(int *animation, int *frame) {
 		break;
 
 	case 71:
-		*animation = 52;
+		*animation = kModelAnimationMcCoyCrouchedGetsUp;
 		_animationFrame++;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
 			Actor_Change_Animation_Mode(kActorMcCoy, kAnimationModeIdle);
-			*animation = 19;
+			*animation = kModelAnimationMcCoyIdle;
 			_animationFrame = 0;
 			_animationState = 0;
 			Player_Gains_Control();
@@ -1362,7 +1403,8 @@ bool AIScriptMcCoy::ChangeAnimationMode(int mode) {
 	case kAnimationModeIdle:
 		if (Game_Flag_Query(kFlagMcCoyTiedDown)) {
 			if (_animationFrame <= 6) {
-				Ambient_Sounds_Play_Sound(Random_Query(593, 595), 39, 0, 0, 99);
+				// Play one of kSfxCHARMTL7, kSfxCHARMTL8, kSfxCHARMTL9
+				Ambient_Sounds_Play_Sound(Random_Query(kSfxCHARMTL7, kSfxCHARMTL9), 39, 0, 0, 99);
 			}
 			_animationState = 57;
 			_animationFrame = 0;
@@ -1446,11 +1488,11 @@ bool AIScriptMcCoy::ChangeAnimationMode(int mode) {
 		if (_animationState < 3 || _animationState > 12) {
 			_animationState = 13;
 			_animationStateNext = 3;
-			_animationNext = 20;
+			_animationNext = kModelAnimationMcCoyProtestingTalk;
 		} else {
 			Game_Flag_Reset(kFlagMcCoyAnimation1);
 			_animationStateNextSpecial = 4;
-			_animationNextSpecial = 20;
+			_animationNextSpecial = kModelAnimationMcCoyProtestingTalk;
 		}
 		break;
 
@@ -1538,11 +1580,11 @@ bool AIScriptMcCoy::ChangeAnimationMode(int mode) {
 		if (_animationState < 3 || _animationState > 12) {
 			_animationState = 13;
 			_animationStateNext = 5;
-			_animationNext = 21;
+			_animationNext = kModelAnimationMcCoyScratchHeadTalk;
 		} else {
 			Game_Flag_Reset(kFlagMcCoyAnimation1);
 			_animationStateNextSpecial = 5;
-			_animationNextSpecial = 21;
+			_animationNextSpecial = kModelAnimationMcCoyScratchHeadTalk;
 		}
 		break;
 
@@ -1551,11 +1593,11 @@ bool AIScriptMcCoy::ChangeAnimationMode(int mode) {
 		if (_animationState < 3 || _animationState > 12) {
 			_animationState = 13;
 			_animationStateNext = 6;
-			_animationNext = 27;
+			_animationNext = kModelAnimationMcCoyScratchEarLongerTalk;
 		} else {
 			Game_Flag_Reset(kFlagMcCoyAnimation1);
 			_animationStateNextSpecial = 6;
-			_animationNextSpecial = 27;
+			_animationNextSpecial = kModelAnimationMcCoyScratchEarLongerTalk;
 		}
 		break;
 
@@ -1564,11 +1606,11 @@ bool AIScriptMcCoy::ChangeAnimationMode(int mode) {
 		if (_animationState < 3 || _animationState > 12) {
 			_animationState = 13;
 			_animationStateNext = 7;
-			_animationNext = 22;
+			_animationNext = kModelAnimationMcCoyPointingTalk;
 		} else {
 			Game_Flag_Reset(kFlagMcCoyAnimation1);
 			_animationStateNextSpecial = 7;
-			_animationNextSpecial = 22;
+			_animationNextSpecial = kModelAnimationMcCoyPointingTalk;
 		}
 		break;
 
@@ -1576,11 +1618,11 @@ bool AIScriptMcCoy::ChangeAnimationMode(int mode) {
 		if (_animationState < 3 || _animationState > 12) {
 			_animationState = 13;
 			_animationStateNext = 8;
-			_animationNext = 23;
+			_animationNext = kModelAnimationMcCoyUpsetTalk;
 		} else {
 			Game_Flag_Reset(kFlagMcCoyAnimation1);
 			_animationStateNextSpecial = 8;
-			_animationNextSpecial = 23;
+			_animationNextSpecial = kModelAnimationMcCoyUpsetTalk;
 		}
 		break;
 
@@ -1588,11 +1630,11 @@ bool AIScriptMcCoy::ChangeAnimationMode(int mode) {
 		if (_animationState < 3 || _animationState > 12) {
 			_animationState = 13;
 			_animationStateNext = 9;
-			_animationNext = 24;
+			_animationNext = kModelAnimationMcCoyDismissiveTalk;
 		} else {
 			Game_Flag_Reset(kFlagMcCoyAnimation1);
 			_animationStateNextSpecial = 9;
-			_animationNextSpecial = 24;
+			_animationNextSpecial = kModelAnimationMcCoyDismissiveTalk;
 		}
 		break;
 
@@ -1600,11 +1642,11 @@ bool AIScriptMcCoy::ChangeAnimationMode(int mode) {
 		if (_animationState < 3 || _animationState > 12) {
 			_animationState = 13;
 			_animationStateNext = 10;
-			_animationNext = 25;
+			_animationNext = kModelAnimationMcCoyScratchEarTalk;
 		} else {
 			Game_Flag_Reset(kFlagMcCoyAnimation1);
 			_animationStateNextSpecial = 10;
-			_animationNextSpecial = 25;
+			_animationNextSpecial = kModelAnimationMcCoyScratchEarTalk;
 		}
 		break;
 
@@ -1612,11 +1654,11 @@ bool AIScriptMcCoy::ChangeAnimationMode(int mode) {
 		if (_animationState < 3 || _animationState > 12) {
 			_animationState = 13;
 			_animationStateNext = 11;
-			_animationNext = 26;
+			_animationNext = kModelAnimationMcCoyHandsOnWaistTalk;
 		} else {
 			Game_Flag_Reset(kFlagMcCoyAnimation1);
 			_animationStateNextSpecial = 11;
-			_animationNextSpecial = 26;
+			_animationNextSpecial = kModelAnimationMcCoyHandsOnWaistTalk;
 		}
 		break;
 
@@ -1624,11 +1666,11 @@ bool AIScriptMcCoy::ChangeAnimationMode(int mode) {
 		if (_animationState < 3 || _animationState > 12) {
 			_animationState = 13;
 			_animationStateNext = 12;
-			_animationNext = 27;
+			_animationNext = kModelAnimationMcCoyScratchEarLongerTalk;
 		} else {
 			Game_Flag_Reset(kFlagMcCoyAnimation1);
 			_animationStateNextSpecial = 12;
-			_animationNextSpecial = 27;
+			_animationNextSpecial = kModelAnimationMcCoyScratchEarLongerTalk;
 		}
 		break;
 

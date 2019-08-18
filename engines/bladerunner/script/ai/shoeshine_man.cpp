@@ -58,7 +58,7 @@ void AIScriptShoeshineMan::ClickedByPlayer() {
 		return;
 	}
 
-	if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -1098.15f, -0.04f, -201.53f, 0, true, false, 0)) {
+	if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -1098.15f, -0.04f, -201.53f, 0, true, false, false)) {
 		Actor_Set_Goal_Number(kActorShoeshineMan, 102);
 		Actor_Face_Actor(kActorMcCoy, kActorShoeshineMan, true);
 		Actor_Says_With_Pause(kActorShoeshineMan, 0, 1.2f, 13);

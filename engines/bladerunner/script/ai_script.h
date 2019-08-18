@@ -186,7 +186,7 @@ DECLARE_SCRIPT(Izo)
 END_SCRIPT
 
 DECLARE_SCRIPT(Sadik)
-	int _var1;
+	int _nextSoundId;
 	int _var2;
 	int _var3;
 	int _var4;
@@ -420,7 +420,7 @@ DECLARE_SCRIPT(Rachael)
 	void dialogue_start();
 	void dialogue_agenda1();
 	void dialogue_agenda2();
-	void dialogue_agenda3();
+	void dialogue_act4();
 END_SCRIPT
 
 DECLARE_SCRIPT(GeneralDoll)
@@ -467,7 +467,7 @@ DECLARE_SCRIPT(FreeSlotB)
 	int _var1;
 	int _var2;
 
-	void processGoal301();
+	void goToRandomUGxx();
 END_SCRIPT
 
 DECLARE_SCRIPT(Maggie)

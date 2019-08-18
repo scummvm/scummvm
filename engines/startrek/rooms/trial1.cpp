@@ -238,47 +238,47 @@ void Room::trial1PickedUpRod() {
 }
 
 void Room::trial1LookAtKirk() {
-	showText(TX_TRI1N003);
+	showDescription(TX_TRI1N003);
 }
 
 void Room::trial1LookAtSpock() {
-	showText(TX_TRI1N017);
+	showDescription(TX_TRI1N017);
 }
 
 void Room::trial1LookAtMccoy() {
-	showText(TX_TRI1N016);
+	showDescription(TX_TRI1N016);
 }
 
 void Room::trial1LookAtRedshirt() {
-	showText(TX_TRI1N015);
+	showDescription(TX_TRI1N015);
 }
 
 void Room::trial1LookAtWall() {
-	showText(TX_TRI1N011);
+	showDescription(TX_TRI1N011);
 }
 
 void Room::trial1LookAtFloor() {
-	showText(TX_TRI1N006);
+	showDescription(TX_TRI1N006);
 }
 
 void Room::trial1LookAtRods() {
-	showText(TX_TRI1N009);
+	showDescription(TX_TRI1N009);
 }
 
 void Room::trial1LookAtDoor() {
-	showText(TX_TRI1N001);
+	showDescription(TX_TRI1N001);
 }
 
 void Room::trial1LookAtLock() {
-	showText(TX_TRI1N002);
+	showDescription(TX_TRI1N002);
 }
 
 void Room::trial1LookAtEntity() {
-	showText(TX_TRI1N000);
+	showDescription(TX_TRI1N000);
 }
 
 void Room::trial1LookAtMoltenRock() {
-	showText(TX_TRI1N007);
+	showDescription(TX_TRI1N007);
 }
 
 void Room::trial1TalkToKirk() {
@@ -307,11 +307,11 @@ void Room::trial1UsePhaserOnCrewman() {
 }
 
 void Room::trial1UsePhaserOnEntity() {
-	showText(TX_TRI1N004);
+	showDescription(TX_TRI1N004);
 }
 
 void Room::trial1UsePhaserOnWall() {
-	showText(TX_TRI1N008);
+	showDescription(TX_TRI1N008);
 }
 
 
@@ -345,7 +345,7 @@ void Room::trial1ReachedFloorToUseKillPhaser() {
 }
 
 void Room::trial1DoneShootingFloorWithKillPhaser() {
-	showText(TX_TRI1N014);
+	showDescription(TX_TRI1N014);
 	loadActorAnim2(OBJECT_MOLTEN_ROCK, "t1mltd", 0xca, 0xbc);
 
 	_awayMission->crewDirectionsAfterWalk[OBJECT_KIRK] = DIR_E;
@@ -357,7 +357,7 @@ void Room::trial1DoneShootingFloorWithKillPhaser() {
 }
 
 void Room::trial1UsePhaserOnRod() {
-	showText(TX_TRI1N012);
+	showDescription(TX_TRI1N012);
 }
 
 void Room::trial1UsePhaserOnDoor() {
@@ -434,7 +434,7 @@ void Room::trial1UseCommunicator() {
 			TX_TRI1_005, TX_TRI1_004, TX_TRI1_009,
 			TX_BLANK
 		};
-		int choice = showText(choices);
+		int choice = showMultipleTexts(choices);
 
 		if (choice == 0) { // "Beam us back to the enterprise"
 			_awayMission->trial.missionEndMethod = 1;
@@ -461,7 +461,7 @@ void Room::trial1UseCommunicator() {
 					TX_TRI1_006, TX_TRI1_002,
 					TX_BLANK
 				};
-				int choice = showText(choices);
+				int choice = showMultipleTexts(choices);
 
 				if (choice == 0) { // Don't analyze the anomolous program
 					showText(TX_SPEAKER_UHURA, TX_TRI1U079);
@@ -476,7 +476,7 @@ void Room::trial1UseCommunicator() {
 						TX_TRI1_003, TX_TRI1_008,
 						TX_BLANK
 					};
-					choice = showText(choices2);
+					choice = showMultipleTexts(choices2);
 
 					if (choice == 0) { // Activate the program
 						showText(TX_SPEAKER_UHURA, TX_TRI1U095);
@@ -625,7 +625,7 @@ void Room::trial1UseRodOnRedshirt() {
 }
 
 void Room::trial1UseRodOnFloorOrWall() {
-	showText(TX_TRI1C002);
+	showDescription(TX_TRI1C002);
 }
 
 
@@ -645,7 +645,7 @@ void Room::trial1DoneThrowingWoodRod() {
 
 
 void Room::trial1UseWoodRodOnLock() {
-	showText(TX_TRI1N005);
+	showDescription(TX_TRI1N005);
 }
 
 
@@ -660,7 +660,7 @@ void Room::trial1ReachedMoltenRock() {
 
 void Room::trial1DoneCoatingWoodRod() {
 	_awayMission->disableInput = false;
-	showText(TX_TRI1N013);
+	showDescription(TX_TRI1N013);
 	loseItem(OBJECT_IWROD);
 	giveItem(OBJECT_IIROD);
 
@@ -699,7 +699,7 @@ void Room::trial1DoneThrowingIronRod() {
 
 
 void Room::trial1UseIronRodOnLock() {
-	showText(TX_TRI1N004);
+	showDescription(TX_TRI1N004);
 }
 
 void Room::trial1GetThrownIronRod() {

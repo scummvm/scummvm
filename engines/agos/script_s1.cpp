@@ -29,10 +29,6 @@
 #include "agos/intern.h"
 #include "agos/sound.h"
 
-#ifdef _WIN32_WCE
-extern bool isSmartphone();
-#endif
-
 namespace AGOS {
 
 #define OPCODE(x)	_OPCODE(AGOSEngine_Simon1, x)

@@ -27,9 +27,9 @@
 #include "bladerunner/bladerunner.h"
 #include "bladerunner/game_info.h"
 #include "bladerunner/savefile.h"
+#include "bladerunner/game_constants.h"
 
 #include "common/timer.h"
-
 namespace BladeRunner {
 
 Music::Music(BladeRunnerEngine *vm) {
@@ -54,7 +54,7 @@ Music::~Music() {
 	_vm->getTimerManager()->removeTimerProc(timerCallbackNext);
 }
 
-bool Music::play(const Common::String &trackName, int volume, int pan, int timeFadeIn, int timePlay, int loop, int timeFadeOut) {
+bool Music::play(const Common::String &trackName, int volume, int pan, int32 timeFadeIn, int32 timePlay, int loop, int32 timeFadeOut) {
 	//Common::StackLock lock(_mutex);
 
 	if (_musicVolume <= 0) {
@@ -82,6 +82,9 @@ bool Music::play(const Common::String &trackName, int volume, int pan, int timeF
 			_isNextPresent = true;
 		} else {
 			_current.loop = loop;
+			if (timeFadeIn < 0) {
+				timeFadeIn = 0;
+			}
 			adjustVolume(volumeAdjusted, timeFadeIn);
 			adjustPan(volumeAdjusted, timeFadeIn);
 		}
@@ -125,7 +128,7 @@ bool Music::play(const Common::String &trackName, int volume, int pan, int timeF
 	return true;
 }
 
-void Music::stop(int delay) {
+void Music::stop(uint32 delay) {
 	Common::StackLock lock(_mutex);
 
 	if (_channel < 0) {
@@ -138,10 +141,10 @@ void Music::stop(int delay) {
 #endif
 
 	_current.loop = false;
-	_vm->_audioMixer->stop(_channel, 60 * delay);
+	_vm->_audioMixer->stop(_channel, 60u * delay);
 }
 
-void Music::adjust(int volume, int pan, int delay) {
+void Music::adjust(int volume, int pan, uint32 delay) {
 	if (volume != -1) {
 		adjustVolume(_musicVolume * volume/ 100, delay);
 	}
@@ -169,7 +172,7 @@ int Music::getVolume() {
 
 void Music::playSample() {
 	if (!isPlaying()) {
-		play(_vm->_gameInfo->getSfxTrack(512), 100, 0, 2, -1, 0, 3);
+		play(_vm->_gameInfo->getSfxTrack(kSfxMUSVOL8), 100, 0, 2, -1, 0, 3);
 	}
 }
 
@@ -235,13 +238,13 @@ void Music::load(SaveFileReadStream &f) {
 	}
 }
 
-void Music::adjustVolume(int volume, int delay) {
+void Music::adjustVolume(int volume, uint32 delay) {
 	if (_channel >= 0) {
 		_vm->_audioMixer->adjustVolume(_channel, volume, delay);
 	}
 }
 
-void Music::adjustPan(int pan, int delay) {
+void Music::adjustPan(int pan, uint32 delay) {
 	if (_channel >= 0) {
 		_vm->_audioMixer->adjustPan(_channel, pan, delay);
 	}
@@ -262,7 +265,10 @@ void Music::ended() {
 void Music::fadeOut() {
 	_vm->getTimerManager()->removeTimerProc(timerCallbackFadeOut);
 	if (_channel >= 0) {
-		_vm->_audioMixer->stop(_channel, 60 * _current.timeFadeOut);
+		if (_current.timeFadeOut < 0) {
+			_current.timeFadeOut = 0;
+		}
+		_vm->_audioMixer->stop(_channel, 60u * _current.timeFadeOut);
 	}
 }
 

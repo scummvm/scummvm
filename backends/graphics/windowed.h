@@ -34,7 +34,8 @@ enum {
 	STRETCH_CENTER = 0,
 	STRETCH_INTEGRAL = 1,
 	STRETCH_FIT = 2,
-	STRETCH_STRETCH = 3
+	STRETCH_STRETCH = 3,
+	STRETCH_FIT_FORCE_ASPECT = 4
 };
 
 class WindowedGraphicsManager : virtual public GraphicsManager {
@@ -43,6 +44,7 @@ public:
 		_windowWidth(0),
 		_windowHeight(0),
 		_overlayVisible(false),
+		_gameScreenShakeOffset(0),
 		_forceRedraw(false),
 		_cursorVisible(false),
 		_cursorX(0),
@@ -70,6 +72,14 @@ public:
 		_activeArea.height = getHeight();
 		_overlayVisible = false;
 		_forceRedraw = true;
+	}
+
+	virtual void setShakePos(int shakeOffset) override {
+		if (_gameScreenShakeOffset != shakeOffset) {
+			_gameScreenShakeOffset = shakeOffset;
+			recalculateDisplayAreas();
+			_cursorNeedsRedraw = true;
+		}
 	}
 
 protected:
@@ -194,6 +204,7 @@ protected:
 			_activeArea.height = getHeight();
 		}
 	}
+
 	/**
 	 * Sets the position of the hardware mouse cursor in the host system,
 	 * relative to the window.
@@ -271,6 +282,11 @@ protected:
 	bool _overlayVisible;
 
 	/**
+	 * The offset by which the screen is moved vertically.
+	 */
+	int _gameScreenShakeOffset;
+
+	/**
 	 * The scaled draw rectangle for the game surface within the window.
 	 */
 	Common::Rect _gameDrawRect;
@@ -341,6 +357,7 @@ private:
 		// Mode Integral = scale by an integral amount.
 		// Mode Fit      = scale to fit the window while respecting the aspect ratio
 		// Mode Stretch  = scale and stretch to fit the window without respecting the aspect ratio
+		// Mode Fit Force Aspect = scale to fit the window while forcing a 4:3 aspect ratio
 
 		int width = 0, height = 0;
 		if (mode == STRETCH_CENTER || mode == STRETCH_INTEGRAL) {
@@ -359,7 +376,13 @@ private:
 			frac_t windowAspect = intToFrac(_windowWidth) / _windowHeight;
 			width = _windowWidth;
 			height = _windowHeight;
-			if (mode != STRETCH_STRETCH) {
+			if (mode == STRETCH_FIT_FORCE_ASPECT) {
+				frac_t ratio = intToFrac(4) / 3;
+				if (windowAspect < ratio)
+					height = intToFrac(width) / ratio;
+				else if (windowAspect > ratio)
+					width = fracToInt(height * ratio);
+			} else if (mode != STRETCH_STRETCH) {
 				if (windowAspect < displayAspect)
 					height = intToFrac(width) / displayAspect;
 				else if (windowAspect > displayAspect)
@@ -367,8 +390,8 @@ private:
 			}
 		}
 
-		drawRect.left = (_windowWidth - width) / 2;
-		drawRect.top = (_windowHeight - height) / 2;
+		drawRect.left = ((_windowWidth - width) / 2);
+		drawRect.top = ((_windowHeight - height) / 2) + _gameScreenShakeOffset;
 		drawRect.setWidth(width);
 		drawRect.setHeight(height);
 	}

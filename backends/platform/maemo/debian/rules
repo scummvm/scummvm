@@ -44,11 +44,12 @@ install: build
 	install -m0755 scummvm debian/scummvm/opt/scummvm/bin
 	install -m0644 -d debian/scummvm/opt/scummvm/share
 	install -m0644 dists/pred.dic debian/scummvm/opt/scummvm/share
-	install -m0644 gui/themes/scummclassic.zip  gui/themes/scummmodern.zip debian/scummvm/opt/scummvm/share
+	install -m0644 gui/themes/scummclassic.zip  gui/themes/scummmodern.zip gui/themes/scummremastered.zip debian/scummvm/opt/scummvm/share
 	install -m0644 backends/vkeybd/packs/vkeybd_default.zip debian/scummvm/opt/scummvm/share
 	install -m0644 backends/vkeybd/packs/vkeybd_small.zip debian/scummvm/opt/scummvm/share
 # for optified version we can also add engine datafiles
 	install -m0644 dists/engine-data/access.dat debian/scummvm/opt/scummvm/share
+	install -m0644 dists/engine-data/cryomni3d.dat debian/scummvm/opt/scummvm/share
 	install -m0644 dists/engine-data/drascula.dat debian/scummvm/opt/scummvm/share
 	install -m0644 dists/engine-data/fonts.dat debian/scummvm/opt/scummvm/share
 	install -m0644 dists/engine-data/hugo.dat debian/scummvm/opt/scummvm/share
@@ -64,7 +65,7 @@ install: build
 	install -m0644 dists/engine-data/wintermute.zip debian/scummvm/opt/scummvm/share
 
 	install -m0644 -d debian/scummvm/usr/share/doc/scummvm
-	install -m0644 AUTHORS COPYING COPYING.BSD COPYING.FREEFONT COPYING.LGPL COPYRIGHT NEWS README debian/scummvm/usr/share/doc/scummvm
+	install -m0644 AUTHORS COPYING COPYING.BSD COPYING.FREEFONT COPYING.LGPL COPYING.OFL COPYRIGHT NEWS README debian/scummvm/usr/share/doc/scummvm
 binary: binary-arch
 
 binary-arch: build install

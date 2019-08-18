@@ -535,6 +535,9 @@ bool TeenAgentEngine::showMetropolis() {
 }
 
 Common::Error TeenAgentEngine::run() {
+	const Common::FSNode gameDataDir(ConfMan.get("path"));
+	SearchMan.addSubDirectoryMatching(gameDataDir, "music");
+
 	if (!res->loadArchives(_gameDescription))
 		return Common::kUnknownError;
 
@@ -1029,15 +1032,15 @@ void TeenAgentEngine::wait(uint16 frames) {
 	scene->push(event);
 }
 
-void TeenAgentEngine::playSoundNow(byte id) {
-	uint size = res->sam_sam.getSize(id);
+void TeenAgentEngine::playSoundNow(Pack *pack, byte id) {
+	uint size = pack->getSize(id);
 	if (size == 0) {
 		warning("skipping invalid sound %u", id);
 		return;
 	}
 
 	byte *data = (byte *)malloc(size);
-	res->sam_sam.read(id, data, size);
+	pack->read(id, data, size);
 	debug(3, "playing %u samples...", size);
 
 	Audio::AudioStream *stream = Audio::makeRawStream(data, size, 11025, 0);

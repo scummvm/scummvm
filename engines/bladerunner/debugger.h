@@ -36,29 +36,62 @@ namespace BladeRunner {
 class BladeRunnerEngine;
 class View;
 
+enum DebuggerDrawnObjectType {
+	debuggerObjTypeUndefined     = 99,
+	debuggerObjTypeActor 	     =  0,
+	debuggerObjType3dObject      =  1,
+	debuggerObjTypeItem          =  2,
+	debuggerObjTypeRegionNormal  =  3,
+	debuggerObjTypeRegionExit    =  4,
+	debuggerObjTypeWaypointNorm  =  5,
+	debuggerObjTypeWaypoingFlee  =  6,
+	debuggerObjTypeWaypointCover =  7,
+	debuggerObjTypeWalkbox       =  8,
+	debuggerObjTypeEffect        =  9,
+	debuggerObjTypeLight         = 10,
+	debuggerObjTypeFog           = 11
+};
+
 class Debugger : public GUI::Debugger{
 	BladeRunnerEngine *_vm;
+
+	static const uint kMaxSpecificObjectsDrawnCount = 100;
+
+	struct DebuggerDrawnObject {
+		int                     sceneId;
+		int                     setId;
+		int                     objId;
+		DebuggerDrawnObjectType type;
+	};
 
 public:
 	bool _isDebuggerOverlay;
 
-	bool _viewActorsOnly;
+	bool _viewActorsToggle;
+	bool _view3dObjectsToggle;
+	bool _viewItemsToggle;
 	bool _viewFogs;
 	bool _viewLights;
 	bool _viewScreenEffects;
-	bool _viewSceneObjects;
 	bool _viewObstacles;
-	bool _viewRegions;
+	bool _viewRegionsNormalToggle;
+	bool _viewRegionsExitsToggle;
 	bool _viewUI;
-	bool _viewWaypoints;
+	bool _viewWaypointsNormalToggle;
+	bool _viewWaypointsFleeToggle;
+	bool _viewWaypointsCoverToggle;
 	bool _viewWalkboxes;
 	bool _viewZBuffer;
-
+	bool _playFullVk;
+	bool _showStatsVk;
+	bool _showMazeScore;
+	bool _showMouseClickInfo;
 
 	Debugger(BladeRunnerEngine *vm);
 	~Debugger();
 
 	bool cmdAnimation(int argc, const char **argv);
+	bool cmdHealth(int argc, const char **argv);
 	bool cmdChapter(int argc, const char **argv);
 	bool cmdDraw(int argc, const char **argv);
 	bool cmdFlag(int argc, const char **argv);
@@ -74,18 +107,48 @@ public:
 	bool cmdLoad(int argc, const char **argv);
 	bool cmdSave(int argc, const char **argv);
 	bool cmdOverlay(int argc, const char **argv);
+	bool cmdSubtitle(int argc, const char **argv);
+	bool cmdMazeScore(int argc, const char **argv);
+	bool cmdObject(int argc, const char **argv);
+	bool cmdItem(int argc, const char **argv);
+	bool cmdRegion(int argc, const char **argv);
+	bool cmdClick(int argc, const char **argv);
+#if BLADERUNNER_ORIGINAL_BUGS
+#else
+	bool cmdEffect(int argc, const char **argv);
+#endif // BLADERUNNER_ORIGINAL_BUGS
+	bool cmdList(int argc, const char **argv);
+	bool cmdVk(int argc, const char **argv);
 
 	void drawDebuggerOverlay();
 
 	void drawBBox(Vector3 start, Vector3 end, View *view, Graphics::Surface *surface, int color);
 	void drawSceneObjects();
-	void drawActors();
 	void drawLights();
 	void drawFogs();
 	void drawRegions();
 	void drawWaypoints();
 	void drawWalkboxes();
 	void drawScreenEffects();
+
+private:
+	Common::Array<DebuggerDrawnObject> _specificDrawnObjectsList;
+	bool _specificActorsDrawn;
+	bool _specific3dObjectsDrawn;
+	bool _specificItemsDrawn;
+	bool _specificEffectsDrawn;
+	bool _specificLightsDrawn;
+	bool _specificFogsDrawn;
+	bool _specificRegionNormalDrawn;
+	bool _specificRegionExitsDrawn;
+	bool _specificWaypointNormalDrawn;
+	bool _specificWaypointFleeDrawn;
+	bool _specificWaypointCoverDrawn;
+	bool _specificWalkboxesDrawn;
+
+	void toggleObjectInDbgDrawList(DebuggerDrawnObject &drObj);
+	int findInDbgDrawList(DebuggerDrawnObjectType objType, int objId, int setId, int sceneId);
+	void updateTogglesForDbgDrawListInCurrentSetAndScene();
 };
 
 } // End of namespace BladeRunner

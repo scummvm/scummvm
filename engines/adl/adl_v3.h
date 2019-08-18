@@ -35,12 +35,11 @@ protected:
 	AdlEngine_v3(OSystem *syst, const AdlGameDescription *gd);
 
 	// AdlEngine
-	virtual void setupOpcodeTables();
-	Common::String getItemDescription(const Item &item) const;
+	Common::String getItemDescription(const Item &item) const override;
 
 	void loadItemDescriptions(Common::SeekableReadStream &stream, byte count);
 
-	int o3_isNounNotInRoom(ScriptEnv &e);
+	int o_isNounNotInRoom(ScriptEnv &e) override;
 
 	Common::Array<Common::String> _itemDesc;
 };

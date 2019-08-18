@@ -117,27 +117,27 @@ void Room::sins1Tick1() {
 }
 
 void Room::sins1LookAnywhere() {
-	showText(TX_SIN1N001);
+	showDescription(TX_SIN1N001);
 }
 
 void Room::sins1LookAtLock() {
-	showText(TX_SIN1N009);
+	showDescription(TX_SIN1N009);
 }
 
 void Room::sins1LookAtDoor() {
 	// NOTE: This function had two implementations (one unused).
 	if (true)
-		showText(TX_SIN1N010);
+		showDescription(TX_SIN1N010);
 	else
-		showText(TX_SIN1N008);
+		showDescription(TX_SIN1N008);
 }
 
 void Room::sins1LookAtPanel() {
-	showText(TX_SIN1N003);
+	showDescription(TX_SIN1N003);
 }
 
 void Room::sins1LookAtKeypad() {
-	showText(TX_SIN1N011);
+	showDescription(TX_SIN1N011);
 }
 
 void Room::sins1UseSTricorderOnPanel() {
@@ -169,7 +169,7 @@ void Room::sins1UseSTricorderOnLens() {
 }
 
 void Room::sins1UseRockOnDoor() {
-	showText(TX_SIN1N007);
+	showDescription(TX_SIN1N007);
 }
 
 void Room::sins1UseRedshirtOnKeypad() {
@@ -298,23 +298,23 @@ void Room::sins1TalkToRedshirt() {
 }
 
 void Room::sins1LookAtKirk() {
-	showText(TX_SIN1N005);
+	showDescription(TX_SIN1N005);
 }
 
 void Room::sins1LookAtSpock() {
-	showText(TX_SIN1N004);
+	showDescription(TX_SIN1N004);
 }
 
 void Room::sins1LookAtMccoy() {
-	showText(TX_SIN1N006);
+	showDescription(TX_SIN1N006);
 }
 
 void Room::sins1LookAtRedshirt() {
-	showText(TX_SIN1N002);
+	showDescription(TX_SIN1N002);
 }
 
 void Room::sins1LookAtLens() {
-	showText(TX_SIN1N000);
+	showDescription(TX_SIN1N000);
 }
 
 void Room::sins1UseCommunicator() {

@@ -104,6 +104,16 @@ static const ADGameDescription gameDescriptions[] = {
 		},
 		Common::EN_ANY, Common::kPlatformDOS, ADGF_DEMO, GUIO0()
 	},
+	{
+		// English 2-CD "Sold out" release
+		"toon", "",
+		{
+			{"local.pak", 0, "3290209ef9bc92692108dd2f45df0736", 3237611},
+			{"generic.svl", 0, "331eead1d20af7ee809a9e2f35b8362f", 6945180},
+			AD_LISTEND
+		},
+		Common::EN_ANY, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO0()
+	},
 
 	AD_TABLE_END_MARKER
 };

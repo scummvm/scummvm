@@ -24,9 +24,6 @@
  * @file
  * YUV to RGB conversion.
  *
- * Used in graphics:
- * - JPEGDecoder
- *
  * Used in video:
  * - BinkDecoder
  * - Indeo3Decoder

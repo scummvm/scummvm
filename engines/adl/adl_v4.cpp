@@ -420,7 +420,22 @@ void AdlEngine_v4::switchRoom(byte roomNr) {
 	restoreRoomState(_state.room);
 }
 
-int AdlEngine_v4::o4_isItemInRoom(ScriptEnv &e) {
+void AdlEngine_v4::setupOpcodeTables() {
+	AdlEngine_v3::setupOpcodeTables();
+
+	_condOpcodes[0x08] = opcode(&AdlEngine_v4::o_isVarGT);
+	_condOpcodes[0x0a].reset();
+
+	_actOpcodes[0x0a] = opcode(&AdlEngine_v4::o_setRegionToPrev);
+	_actOpcodes[0x0b].reset();
+	_actOpcodes[0x0e] = opcode(&AdlEngine_v4::o_setRegion);
+	_actOpcodes[0x12] = opcode(&AdlEngine_v4::o_setRegionRoom);
+	_actOpcodes[0x13].reset();
+	_actOpcodes[0x1e].reset();
+	_actOpcodes[0x1f].reset();
+}
+
+int AdlEngine_v4::o_isItemInRoom(ScriptEnv &e) {
 	OP_DEBUG_2("\t&& GET_ITEM_ROOM(%s) == %s", itemStr(e.arg(1)).c_str(), itemRoomStr(e.arg(2)).c_str());
 
 	const Item &item = getItem(e.arg(1));
@@ -434,7 +449,7 @@ int AdlEngine_v4::o4_isItemInRoom(ScriptEnv &e) {
 	return -1;
 }
 
-int AdlEngine_v4::o4_isVarGT(ScriptEnv &e) {
+int AdlEngine_v4::o_isVarGT(ScriptEnv &e) {
 	OP_DEBUG_2("\t&& VARS[%d] > %d", e.arg(1), e.arg(2));
 
 	if (getVar(e.arg(1)) > e.arg(2))
@@ -443,13 +458,13 @@ int AdlEngine_v4::o4_isVarGT(ScriptEnv &e) {
 	return -1;
 }
 
-int AdlEngine_v4::o4_moveItem(ScriptEnv &e) {
-	o2_moveItem(e);
+int AdlEngine_v4::o_moveItem(ScriptEnv &e) {
+	AdlEngine_v3::o_moveItem(e);
 	getItem(e.arg(1)).region = _state.region;
 	return 2;
 }
 
-int AdlEngine_v4::o4_setRegionToPrev(ScriptEnv &e) {
+int AdlEngine_v4::o_setRegionToPrev(ScriptEnv &e) {
 	OP_DEBUG_0("\tREGION = PREV_REGION");
 
 	switchRegion(_state.prevRegion);
@@ -458,7 +473,7 @@ int AdlEngine_v4::o4_setRegionToPrev(ScriptEnv &e) {
 	return -1;
 }
 
-int AdlEngine_v4::o4_moveAllItems(ScriptEnv &e) {
+int AdlEngine_v4::o_moveAllItems(ScriptEnv &e) {
 	OP_DEBUG_2("\tMOVE_ALL_ITEMS(%s, %s)", itemRoomStr(e.arg(1)).c_str(), itemRoomStr(e.arg(2)).c_str());
 
 	byte room1 = roomArg(e.arg(1));
@@ -495,7 +510,7 @@ int AdlEngine_v4::o4_moveAllItems(ScriptEnv &e) {
 	return 2;
 }
 
-int AdlEngine_v4::o4_setRegion(ScriptEnv &e) {
+int AdlEngine_v4::o_setRegion(ScriptEnv &e) {
 	OP_DEBUG_1("\tREGION = %d", e.arg(1));
 
 	switchRegion(e.arg(1));
@@ -504,7 +519,7 @@ int AdlEngine_v4::o4_setRegion(ScriptEnv &e) {
 	return -1;
 }
 
-int AdlEngine_v4::o4_save(ScriptEnv &e) {
+int AdlEngine_v4::o_save(ScriptEnv &e) {
 	OP_DEBUG_0("\tSAVE_GAME()");
 
 	_display->printString(_strings_v2.saveReplace);
@@ -513,7 +528,7 @@ int AdlEngine_v4::o4_save(ScriptEnv &e) {
 	if (shouldQuit())
 		return -1;
 
-	if (key != APPLECHAR('Y'))
+	if (key != _display->asciiToNative('Y'))
 		return 0;
 
 	const int slot = askForSlot(_strings_v2.saveInsert);
@@ -525,7 +540,7 @@ int AdlEngine_v4::o4_save(ScriptEnv &e) {
 	return 0;
 }
 
-int AdlEngine_v4::o4_restore(ScriptEnv &e) {
+int AdlEngine_v4::o_restore(ScriptEnv &e) {
 	OP_DEBUG_0("\tRESTORE_GAME()");
 
 	const int slot = askForSlot(_strings_v2.restoreInsert);
@@ -544,7 +559,7 @@ int AdlEngine_v4::o4_restore(ScriptEnv &e) {
 	return -1;
 }
 
-int AdlEngine_v4::o4_restart(ScriptEnv &e) {
+int AdlEngine_v4::o_restart(ScriptEnv &e) {
 	OP_DEBUG_0("\tRESTART_GAME()");
 
 	while (true) {
@@ -554,9 +569,9 @@ int AdlEngine_v4::o4_restart(ScriptEnv &e) {
 		if (shouldQuit())
 			return -1;
 
-		if (input.firstChar() == APPLECHAR('N')) {
-			return o1_quit(e);
-		} else if (input.firstChar() == APPLECHAR('Y')) {
+		if (input.firstChar() == _display->asciiToNative('N')) {
+			return o_quit(e);
+		} else if (input.firstChar() == _display->asciiToNative('Y')) {
 			// The original game loads a special save game from volume 3
 			initState();
 			// Long jump
@@ -566,7 +581,7 @@ int AdlEngine_v4::o4_restart(ScriptEnv &e) {
 	}
 }
 
-int AdlEngine_v4::o4_setRegionRoom(ScriptEnv &e) {
+int AdlEngine_v4::o_setRegionRoom(ScriptEnv &e) {
 	OP_DEBUG_2("\tSET_REGION_ROOM(%d, %d)", e.arg(1), e.arg(2));
 
 	switchRegion(e.arg(1));
@@ -576,8 +591,8 @@ int AdlEngine_v4::o4_setRegionRoom(ScriptEnv &e) {
 	return -1;
 }
 
-int AdlEngine_v4::o4_setRoomPic(ScriptEnv &e) {
-	o1_setRoomPic(e);
+int AdlEngine_v4::o_setRoomPic(ScriptEnv &e) {
+	AdlEngine_v3::o_setRoomPic(e);
 	backupRoomState(e.arg(1));
 	return 2;
 }

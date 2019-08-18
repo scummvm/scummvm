@@ -42,7 +42,9 @@ public:
 
 	bool closeFile(Common::SeekableReadStream *File);
 	bool hasFile(const Common::String &filename);
+	int listMatchingMembers(Common::ArchiveMemberList &list, const Common::String &pattern);
 	Common::SeekableReadStream *openFile(const Common::String &filename, bool absPathWarning = true, bool keepTrackOf = true);
+	Common::WriteStream *openFileForWrite(const Common::String &filename);
 	byte *readWholeFile(const Common::String &filename, uint32 *size = nullptr, bool mustExist = true);
 
 	BaseFileManager(Common::Language lang, bool detectionMode = false);
@@ -61,6 +63,7 @@ private:
 	bool registerPackages();
 	void initResources();
 	Common::SeekableReadStream *openFileRaw(const Common::String &filename);
+	Common::WriteStream *openFileForWriteRaw(const Common::String &filename);
 	Common::SeekableReadStream *openPkgFile(const Common::String &filename);
 	Common::FSList _packagePaths;
 	bool registerPackage(Common::FSNode package, const Common::String &filename = "", bool searchSignature = false);

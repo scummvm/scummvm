@@ -91,6 +91,10 @@ bool Scene::open(int setId, int sceneId, bool isLoadingGame) {
 	} else {
 		_regions->clear();
 		_exits->clear();
+#if BLADERUNNER_ORIGINAL_BUGS
+#else
+		_vm->_screenEffects->toggleEntry(-1, false); // clear the skip list
+#endif
 		_vm->_screenEffects->_entries.clear();
 		_vm->_overlays->removeAll();
 		_defaultLoop = 0;
@@ -132,7 +136,15 @@ bool Scene::open(int setId, int sceneId, bool isLoadingGame) {
 
 	if (isLoadingGame) {
 		resume(true);
-		if (sceneId == kScenePS10 || sceneId == kScenePS11 || sceneId == kScenePS12 || sceneId == kScenePS13) { // police maze?
+		if (sceneId == kScenePS10    // police maze
+		    || sceneId == kScenePS11 // police maze
+		    || sceneId == kScenePS12 // police maze
+		    || sceneId == kScenePS13 // police maze
+#if BLADERUNNER_ORIGINAL_BUGS
+#else
+		    || sceneId == kSceneUG01 // Steam room
+#endif // BLADERUNNER_ORIGINAL_BUGS
+		) {
 			_vm->_sceneScript->sceneLoaded();
 		}
 		return true;

@@ -25,7 +25,6 @@
 #if defined(SDL_BACKEND)
 #include "backends/graphics/surfacesdl/surfacesdl-graphics.h"
 #include "backends/events/sdl/sdl-events.h"
-#include "backends/platform/sdl/sdl.h"
 #include "common/config-manager.h"
 #include "common/mutex.h"
 #include "common/textconsole.h"
@@ -77,6 +76,7 @@ const OSystem::GraphicsMode s_supportedStretchModes[] = {
 	{"pixel-perfect", _s("Pixel-perfect scaling"), STRETCH_INTEGRAL},
 	{"fit", _s("Fit to window"), STRETCH_FIT},
 	{"stretch", _s("Stretch to window"), STRETCH_STRETCH},
+	{"fit_force_aspect", _s("Fit to window (4:3)"), STRETCH_FIT_FORCE_ASPECT},
 	{nullptr, nullptr, 0}
 };
 #endif
@@ -155,7 +155,7 @@ SurfaceSdlGraphicsManager::SurfaceSdlGraphicsManager(SdlEventSource *sdlEventSou
 	_scalerProc(0), _screenChangeCount(0),
 	_mouseData(nullptr), _mouseSurface(nullptr),
 	_mouseOrigSurface(nullptr), _cursorDontScale(false), _cursorPaletteDisabled(true),
-	_currentShakePos(0), _newShakePos(0),
+	_currentShakePos(0),
 	_paletteDirtyStart(0), _paletteDirtyEnd(0),
 	_screenIsLocked(false),
 	_graphicsMutex(0),
@@ -171,18 +171,12 @@ SurfaceSdlGraphicsManager::SurfaceSdlGraphicsManager(SdlEventSource *sdlEventSou
 
 	_mouseBackup.x = _mouseBackup.y = _mouseBackup.w = _mouseBackup.h = 0;
 
-	memset(&_mouseCurState, 0, sizeof(_mouseCurState));
-
 	_graphicsMutex = g_system->createMutex();
 
 #ifdef USE_SDL_DEBUG_FOCUSRECT
 	if (ConfMan.hasKey("use_sdl_debug_focusrect"))
 		_enableFocusRectDebugCode = ConfMan.getBool("use_sdl_debug_focusrect");
 #endif
-
-	memset(&_oldVideoMode, 0, sizeof(_oldVideoMode));
-	memset(&_videoMode, 0, sizeof(_videoMode));
-	memset(&_transactionDetails, 0, sizeof(_transactionDetails));
 
 #if !defined(_WIN32_WCE) && !defined(__SYMBIAN32__) && defined(USE_SCALERS)
 	_videoMode.mode = GFX_DOUBLESIZE;
@@ -470,6 +464,14 @@ OSystem::TransactionError SurfaceSdlGraphicsManager::endGFXTransaction() {
 	return (OSystem::TransactionError)errors;
 }
 
+Graphics::PixelFormat SurfaceSdlGraphicsManager::convertSDLPixelFormat(SDL_PixelFormat *in) const {
+	return Graphics::PixelFormat(in->BytesPerPixel,
+		8 - in->Rloss, 8 - in->Gloss,
+		8 - in->Bloss, 8 - in->Aloss,
+		in->Rshift, in->Gshift,
+		in->Bshift, in->Ashift);
+}
+
 #ifdef USE_RGB_COLOR
 Common::List<Graphics::PixelFormat> SurfaceSdlGraphicsManager::getSupportedFormats() const {
 	assert(!_supportedFormats.empty());
@@ -492,14 +494,6 @@ static void maskToBitCount(Uint32 mask, uint8 &numBits, uint8 &shift) {
 	}
 }
 #endif
-
-Graphics::PixelFormat SurfaceSdlGraphicsManager::convertSDLPixelFormat(SDL_PixelFormat *in) const {
-	return Graphics::PixelFormat(in->BytesPerPixel,
-		8 - in->Rloss, 8 - in->Gloss,
-		8 - in->Bloss, 8 - in->Aloss,
-		in->Rshift, in->Gshift,
-		in->Bshift, in->Ashift);
-}
 
 void SurfaceSdlGraphicsManager::detectSupportedFormats() {
 	_supportedFormats.clear();
@@ -675,12 +669,8 @@ bool SurfaceSdlGraphicsManager::setGraphicsMode(int mode) {
 	return true;
 }
 
-void SurfaceSdlGraphicsManager::setGraphicsModeIntern() {
-	Common::StackLock lock(_graphicsMutex);
+ScalerProc *SurfaceSdlGraphicsManager::getGraphicsScalerProc(int mode) const {
 	ScalerProc *newScalerProc = 0;
-
-	updateShader();
-
 	switch (_videoMode.mode) {
 	case GFX_NORMAL:
 		newScalerProc = Normal1x;
@@ -723,8 +713,19 @@ void SurfaceSdlGraphicsManager::setGraphicsModeIntern() {
 		newScalerProc = DotMatrix;
 		break;
 #endif // USE_SCALERS
+	}
 
-	default:
+	return newScalerProc;
+}
+
+void SurfaceSdlGraphicsManager::setGraphicsModeIntern() {
+	Common::StackLock lock(_graphicsMutex);
+
+	updateShader();
+
+	ScalerProc *newScalerProc = getGraphicsScalerProc(_videoMode.mode);
+
+	if (!newScalerProc) {
 		error("Unknown gfx mode %d", _videoMode.mode);
 	}
 
@@ -818,7 +819,7 @@ int SurfaceSdlGraphicsManager::getStretchMode() const {
 void SurfaceSdlGraphicsManager::initSize(uint w, uint h, const Graphics::PixelFormat *format) {
 	assert(_transactionMode == kTransactionActive);
 
-	_newShakePos = 0;
+	_gameScreenShakeOffset = 0;
 
 #ifdef USE_RGB_COLOR
 	//avoid redundant format changes
@@ -1198,20 +1199,24 @@ void SurfaceSdlGraphicsManager::internUpdateScreen() {
 	ScalerProc *scalerProc;
 	int scale1;
 
+#if !SDL_VERSION_ATLEAST(2, 0, 0)
 	// If the shake position changed, fill the dirty area with blackness
-	if (_currentShakePos != _newShakePos ||
+	// When building with SDL2, the shake offset is added to the active rect instead,
+	// so this isn't needed there.
+	if (_currentShakePos != _gameScreenShakeOffset ||
 		(_cursorNeedsRedraw && _mouseBackup.y <= _currentShakePos)) {
-		SDL_Rect blackrect = {0, 0, (Uint16)(_videoMode.screenWidth * _videoMode.scaleFactor), (Uint16)(_newShakePos * _videoMode.scaleFactor)};
+		SDL_Rect blackrect = {0, 0, (Uint16)(_videoMode.screenWidth * _videoMode.scaleFactor), (Uint16)(_gameScreenShakeOffset * _videoMode.scaleFactor)};
 
 		if (_videoMode.aspectRatioCorrection && !_overlayVisible)
 			blackrect.h = real2Aspect(blackrect.h - 1) + 1;
 
 		SDL_FillRect(_hwScreen, &blackrect, 0);
 
-		_currentShakePos = _newShakePos;
+		_currentShakePos = _gameScreenShakeOffset;
 
 		_forceRedraw = true;
 	}
+#endif
 
 	// Check whether the palette was changed in the meantime and update the
 	// screen surface accordingly.
@@ -1419,7 +1424,7 @@ void SurfaceSdlGraphicsManager::internUpdateScreen() {
 	_cursorNeedsRedraw = false;
 }
 
-bool SurfaceSdlGraphicsManager::saveScreenshot(const char *filename) {
+bool SurfaceSdlGraphicsManager::saveScreenshot(const Common::String &filename) const {
 	assert(_hwScreen != NULL);
 
 	Common::StackLock lock(_graphicsMutex);
@@ -1484,7 +1489,7 @@ bool SurfaceSdlGraphicsManager::saveScreenshot(const char *filename) {
 
 	return success;
 #else
-	return SDL_SaveBMP(_hwScreen, filename) == 0;
+	return SDL_SaveBMP(_hwScreen, filename.c_str()) == 0;
 #endif
 }
 
@@ -1745,12 +1750,6 @@ void SurfaceSdlGraphicsManager::setCursorPalette(const byte *colors, uint start,
 
 	_cursorPaletteDisabled = false;
 	blitCursor();
-}
-
-void SurfaceSdlGraphicsManager::setShakePos(int shake_pos) {
-	assert(_transactionMode == kTransactionNone);
-
-	_newShakePos = shake_pos;
 }
 
 void SurfaceSdlGraphicsManager::setFocusRectangle(const Common::Rect &rect) {
@@ -2672,69 +2671,9 @@ bool SurfaceSdlGraphicsManager::isScalerHotkey(const Common::Event &event) {
 	return false;
 }
 
-void SurfaceSdlGraphicsManager::toggleFullScreen() {
-	beginGFXTransaction();
-		setFullscreenMode(!_videoMode.fullscreen);
-	endGFXTransaction();
-#ifdef USE_OSD
-	if (_videoMode.fullscreen)
-		displayMessageOnOSD(_("Fullscreen mode"));
-	else
-		displayMessageOnOSD(_("Windowed mode"));
-#endif
-}
-
 bool SurfaceSdlGraphicsManager::notifyEvent(const Common::Event &event) {
 	switch ((int)event.type) {
 	case Common::EVENT_KEYDOWN:
-		// Alt-Return and Alt-Enter toggle full screen mode
-		if (event.kbd.hasFlags(Common::KBD_ALT) &&
-			(event.kbd.keycode == Common::KEYCODE_RETURN ||
-			event.kbd.keycode == (Common::KeyCode)SDLK_KP_ENTER)) {
-			toggleFullScreen();
-			return true;
-		}
-
-		// Alt-S: Create a screenshot
-		if (event.kbd.hasFlags(Common::KBD_ALT) && event.kbd.keycode == 's') {
-			Common::String filename;
-
-			Common::String screenshotsPath;
-			OSystem_SDL *sdl_g_system = dynamic_cast<OSystem_SDL*>(g_system);
-			if (sdl_g_system)
-				screenshotsPath = sdl_g_system->getScreenshotsPath();
-
-			for (int n = 0;; n++) {
-				SDL_RWops *file;
-
-#ifdef USE_PNG
-				filename = Common::String::format("scummvm%05d.png", n);
-#else
-				filename = Common::String::format("scummvm%05d.bmp", n);
-#endif
-
-				file = SDL_RWFromFile((screenshotsPath + filename).c_str(), "r");
-
-				if (!file)
-					break;
-				SDL_RWclose(file);
-			}
-
-			if (saveScreenshot((screenshotsPath + filename).c_str())) {
-				if (screenshotsPath.empty())
-					debug("Saved screenshot '%s' in current directory", filename.c_str());
-				else
-					debug("Saved screenshot '%s' in directory '%s'", filename.c_str(), screenshotsPath.c_str());
-			} else {
-				if (screenshotsPath.empty())
-					warning("Could not save screenshot in current directory");
-				else
-					warning("Could not save screenshot in directory '%s'", screenshotsPath.c_str());
-			}
-
-			return true;
-		}
-
 		// Ctrl-Alt-<key> will change the GFX mode
 		if (event.kbd.hasFlags(Common::KBD_CTRL|Common::KBD_ALT)) {
 			if (handleScalerHotkeys(event.kbd.keycode))
@@ -2744,13 +2683,16 @@ bool SurfaceSdlGraphicsManager::notifyEvent(const Common::Event &event) {
 		break;
 
 	case Common::EVENT_KEYUP:
-		return isScalerHotkey(event);
+		if (isScalerHotkey(event))
+			return true;
+
+		break;
 
 	default:
 		break;
 	}
 
-	return false;
+	return SdlGraphicsManager::notifyEvent(event);
 }
 
 void SurfaceSdlGraphicsManager::notifyVideoExpose() {

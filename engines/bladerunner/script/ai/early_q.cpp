@@ -78,11 +78,11 @@ bool AIScriptEarlyQ::Update() {
 }
 
 void AIScriptEarlyQ::TimerExpired(int timer) {
-	if (timer == 0
+	if (timer == kActorTimerAIScriptCustomTask0
 	 && Actor_Query_Goal_Number(kActorEarlyQ) == kGoalEarlyQNR05WillLeave
 	) {
 		if (Player_Query_Current_Scene() == kSceneNR05) {
-			AI_Countdown_Timer_Reset(kActorEarlyQ, 0);
+			AI_Countdown_Timer_Reset(kActorEarlyQ, kActorTimerAIScriptCustomTask0);
 			Actor_Set_Goal_Number(kActorEarlyQ, kGoalEarlyQNR05Leave);
 		} else {
 			Actor_Set_Goal_Number(kActorEarlyQ, kGoalEarlyQNR05Wait);
@@ -90,19 +90,19 @@ void AIScriptEarlyQ::TimerExpired(int timer) {
 		return; //true;
 	}
 
-	if (timer == 0
+	if (timer == kActorTimerAIScriptCustomTask0
 	 && Actor_Query_Goal_Number(kActorEarlyQ) == kGoalEarlyQNR04GoToMcCoy
 	) {
 		Player_Loses_Control();
-		AI_Countdown_Timer_Reset(kActorEarlyQ, 0);
+		AI_Countdown_Timer_Reset(kActorEarlyQ, kActorTimerAIScriptCustomTask0);
 		Actor_Set_Goal_Number(kActorEarlyQ, kGoalEarlyQNR04HandDrink);
 		return; //true;
 	}
 
-	if (timer == 1
+	if (timer == kActorTimerAIScriptCustomTask1
 	 && Actor_Query_Goal_Number(kActorEarlyQ) == kGoalEarlyQNR04WaitForPulledGun
 	) {
-		AI_Countdown_Timer_Reset(kActorEarlyQ, 1);
+		AI_Countdown_Timer_Reset(kActorEarlyQ, kActorTimerAIScriptCustomTask1);
 		Player_Loses_Control();
 		Actor_Change_Animation_Mode(kActorEarlyQ, 29);
 		Delay(2500);
@@ -207,7 +207,7 @@ void AIScriptEarlyQ::OtherAgentEnteredCombatMode(int otherActorId, int combatMod
 			Game_Flag_Set(kFlagNotUsed565);
 		}
 		Game_Flag_Set(kFlagNR04McCoyAimedAtEarlyQ);
-		AI_Countdown_Timer_Reset(kActorEarlyQ, 0);
+		AI_Countdown_Timer_Reset(kActorEarlyQ, kActorTimerAIScriptCustomTask0);
 		Actor_Set_Goal_Number(kActorEarlyQ, kGoalEarlyQNR04McCoyPulledGun);
 		return; // true;
 	}
@@ -219,7 +219,7 @@ void AIScriptEarlyQ::OtherAgentEnteredCombatMode(int otherActorId, int combatMod
 		if (Game_Flag_Query(kFlagNotUsed565)) {
 			Game_Flag_Reset(kFlagNotUsed565);
 		}
-		AI_Countdown_Timer_Reset(kActorEarlyQ, 1);
+		AI_Countdown_Timer_Reset(kActorEarlyQ, kActorTimerAIScriptCustomTask1);
 		Actor_Set_Goal_Number(kActorEarlyQ, kGoalEarlyQNR04Talk3);
 		return; //true;
 	}
@@ -334,9 +334,9 @@ bool AIScriptEarlyQ::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		break;
 
 	case kGoalEarlyQNR04GoToMcCoy:
-		Loop_Actor_Walk_To_Actor(kActorEarlyQ, 0, 36, 0, 0);
-		AI_Countdown_Timer_Reset(kActorEarlyQ, 0);
-		AI_Countdown_Timer_Start(kActorEarlyQ, 0, 4);
+		Loop_Actor_Walk_To_Actor(kActorEarlyQ, 0, 36, false, false);
+		AI_Countdown_Timer_Reset(kActorEarlyQ, kActorTimerAIScriptCustomTask0);
+		AI_Countdown_Timer_Start(kActorEarlyQ, kActorTimerAIScriptCustomTask0, 4);
 		break;
 
 	case kGoalEarlyQNR04McCoyPulledGun:
@@ -347,13 +347,13 @@ bool AIScriptEarlyQ::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		_vm->_aiScripts->callChangeAnimationMode(kActorMcCoy, kAnimationModeCombatAim);
 		Actor_Says(kActorEarlyQ, 130, kAnimationModeTalk);
 		Actor_Says(kActorMcCoy, 3400, kAnimationModeCombatAim);
-		Actor_Says_With_Pause(kActorEarlyQ, 140, 1.0, kAnimationModeTalk);
-		Actor_Says_With_Pause(kActorEarlyQ, 150, 1.0, kAnimationModeTalk);
+		Actor_Says_With_Pause(kActorEarlyQ, 140, 1.0f, kAnimationModeTalk);
+		Actor_Says_With_Pause(kActorEarlyQ, 150, 1.0f, kAnimationModeTalk);
 		Actor_Says(kActorMcCoy, 3405, kAnimationModeCombatAim);
 		Actor_Says(kActorEarlyQ, 160, kAnimationModeTalk);
 		Actor_Says(kActorMcCoy, 3410, kAnimationModeCombatAim);
 		_vm->_aiScripts->callChangeAnimationMode(kActorMcCoy, kAnimationModeCombatIdle);
-		Loop_Actor_Walk_To_XYZ(kActorMcCoy, 31.22f, 0.0f, 267.51f, 0, true, false, 0);
+		Loop_Actor_Walk_To_XYZ(kActorMcCoy, 31.22f, 0.0f, 267.51f, 0, true, false, false);
 		Actor_Set_Goal_Number(kActorEarlyQ, kGoalEarlyQNR04SitDown);
 		break;
 
@@ -378,8 +378,8 @@ bool AIScriptEarlyQ::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		break;
 
 	case kGoalEarlyQNR04WaitForPulledGun:
-		AI_Countdown_Timer_Reset(kActorEarlyQ, 1);
-		AI_Countdown_Timer_Start(kActorEarlyQ, 1, 5);
+		AI_Countdown_Timer_Reset(kActorEarlyQ, kActorTimerAIScriptCustomTask1);
+		AI_Countdown_Timer_Start(kActorEarlyQ, kActorTimerAIScriptCustomTask1, 5);
 		break;
 
 	case kGoalEarlyQNR04TakeDisk:
@@ -395,13 +395,13 @@ bool AIScriptEarlyQ::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 
 	case kGoalEarlyQNR04HandDrink:
 		if (Actor_Query_Inch_Distance_From_Actor(kActorMcCoy, kActorEarlyQ) > 36) {
-			Loop_Actor_Walk_To_Actor(kActorEarlyQ, kActorMcCoy, 36, kActorMcCoy, kActorMcCoy);
+			Loop_Actor_Walk_To_Actor(kActorEarlyQ, kActorMcCoy, 36, false, false);
 		}
 		Actor_Face_Actor(kActorMcCoy, kActorEarlyQ, true);
 		Actor_Face_Actor(kActorEarlyQ, kActorMcCoy, true);
 		Actor_Change_Animation_Mode(kActorEarlyQ, 23);
 		Scene_Loop_Start_Special(kSceneLoopModeOnce, 2, false);
-		Ambient_Sounds_Play_Sound(582, 50, 99, 0, 0);
+		Ambient_Sounds_Play_Sound(kSfxDRUGOUT, 50, 99, 0, 0);
 		Actor_Set_Goal_Number(kActorMcCoy, kGoalMcCoyNR04Drink);
 		break;
 
@@ -432,8 +432,8 @@ bool AIScriptEarlyQ::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		break;
 
 	case kGoalEarlyQNR05WillLeave:
-		AI_Countdown_Timer_Reset(kActorEarlyQ, 0);
-		AI_Countdown_Timer_Start(kActorEarlyQ, 0, 20);
+		AI_Countdown_Timer_Reset(kActorEarlyQ, kActorTimerAIScriptCustomTask0);
+		AI_Countdown_Timer_Start(kActorEarlyQ, kActorTimerAIScriptCustomTask0, 20);
 		break;
 
 	case kGoalEarlyQNR05Leave:
@@ -460,7 +460,7 @@ bool AIScriptEarlyQ::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 
 	case 229:
 		AI_Movement_Track_Flush(kActorEarlyQ);
-		AI_Countdown_Timer_Reset(kActorEarlyQ, 0);
+		AI_Countdown_Timer_Reset(kActorEarlyQ, kActorTimerAIScriptCustomTask0);
 		break;
 
 	case kGoalEarlyQNR04Wait:
@@ -539,7 +539,7 @@ bool AIScriptEarlyQ::UpdateAnimation(int *animation, int *frame) {
 		*animation = 381;
 		_animationFrame++;
 		if (_animationFrame == 18) {
-			Ambient_Sounds_Play_Sound(255, 99, 0, 0, 20);
+			Ambient_Sounds_Play_Sound(kSfxBARSFX4, 99, 0, 0, 20);
 		}
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
 			Actor_Change_Animation_Mode(kActorEarlyQ, 74);
@@ -641,16 +641,16 @@ bool AIScriptEarlyQ::UpdateAnimation(int *animation, int *frame) {
 			_animationFrame++;
 		}
 		if (_animationFrame == 1) {
-			Ambient_Sounds_Play_Sound(555, 59, 0, 0, 20);
+			Ambient_Sounds_Play_Sound(kSfxMALEHURT, 59, 0, 0, 20);
 		}
 		if (_animationFrame == 8) {
-			Ambient_Sounds_Play_Sound(254, 47, 0, 0, 20);
+			Ambient_Sounds_Play_Sound(kSfxBARSFX3,  47, 0, 0, 20);
 		}
 		if (_animationFrame == 11) {
-			Ambient_Sounds_Play_Sound(560, 27, 0, 0, 20);
+			Ambient_Sounds_Play_Sound(kSfxDROPGLAS, 27, 0, 0, 20);
 		}
 		if (_animationFrame == 14) {
-			Ambient_Sounds_Play_Sound(206, 41, 0, 0, 20);
+			Ambient_Sounds_Play_Sound(kSfxZUBLAND1, 41, 0, 0, 20);
 		}
 		break;
 
@@ -686,7 +686,7 @@ bool AIScriptEarlyQ::UpdateAnimation(int *animation, int *frame) {
 		*animation = 364;
 		_animationFrame++;
 		if (_animationFrame == 2) {
-			Ambient_Sounds_Play_Sound(12, 60, 0, 0, 20);
+			Ambient_Sounds_Play_Sound(kSfxLGCAL1, 60, 0, 0, 20);
 		}
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(364)) {
 			_animationFrame = 0;

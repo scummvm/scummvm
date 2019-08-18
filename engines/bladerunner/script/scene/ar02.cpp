@@ -25,7 +25,7 @@
 namespace BladeRunner {
 
 void SceneScriptAR02::InitializeScene() {
-	Music_Play(0, 22, 0, 2, -1, 1, 2);
+	Music_Play(kMusicArabLoop, 22, 0, 2, -1, 1, 2);
 	if (Game_Flag_Query(kFlagRC03toAR02)) {
 		Setup_Scene_Information(-560.0f, 0.0f, -799.0f, 333);
 	} else {
@@ -33,35 +33,35 @@ void SceneScriptAR02::InitializeScene() {
 	}
 	Scene_Exit_Add_2D_Exit(0,  0, 439, 212, 479, 2);
 	Scene_Exit_Add_2D_Exit(1, 81, 202, 215, 406, 3);
-	Ambient_Sounds_Add_Looping_Sound(54, 50,   1, 1);
-	Ambient_Sounds_Add_Looping_Sound(81, 60, 100, 1);
-	Ambient_Sounds_Add_Looping_Sound(241, 50,   1, 1);
-	Ambient_Sounds_Add_Sound(182, 5, 70, 12, 12, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(184, 5, 70, 12, 12, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(185, 5, 70, 12, 12, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(186, 5, 70, 12, 12, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(188, 5, 70, 12, 12, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(189, 5, 70, 12, 12, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(191, 5, 70, 12, 12, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(192, 5, 70, 12, 12, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(195, 5, 70, 12, 12, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(242, 3, 30, 16, 16, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(243, 3, 30, 16, 16, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(244, 3, 30, 16, 16, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(245, 3, 30, 16, 16, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(246, 3, 30, 16, 16, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(247, 3, 30, 16, 16, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(248, 3, 30, 16, 16, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(249, 3, 30, 16, 16, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Speech_Sound(60,  0, 10, 260, 17, 24, -100, 100, -101, -101, 1, 1);
-	Ambient_Sounds_Add_Speech_Sound(60, 20, 10, 260, 17, 24, -100, 100, -101, -101, 1, 1);
-	Ambient_Sounds_Add_Speech_Sound(60, 40, 10, 260, 17, 24, -100, 100, -101, -101, 1, 1);
-	Ambient_Sounds_Add_Speech_Sound(60, 50, 10, 260, 17, 24, -100, 100, -101, -101, 1, 1);
-	Ambient_Sounds_Add_Sound( 68, 10, 180, 16,  25, 0, 0, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound( 69, 10, 180, 16,  25, 0, 0, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(375, 10, 180, 50, 100, 0, 0, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(376, 10, 180, 50, 100, 0, 0, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(377, 10, 180, 50, 100, 0, 0, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Looping_Sound(kSfxCTRAIN1, 50,   1, 1);
+	Ambient_Sounds_Add_Looping_Sound(kSfxRCAMBR1, 60, 100, 1);
+	Ambient_Sounds_Add_Looping_Sound(kSfxHCLOOP1, 50,   1, 1);
+	Ambient_Sounds_Add_Sound(kSfx67_0480R, 5,  70, 12,  12, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfx67_0540R, 5,  70, 12,  12, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfx67_0560R, 5,  70, 12,  12, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfx67_0870R, 5,  70, 12,  12, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfx67_0900R, 5,  70, 12,  12, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfx67_0940R, 5,  70, 12,  12, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfx67_1070R, 5,  70, 12,  12, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfx67_1080R, 5,  70, 12,  12, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfx67_1160R, 5,  70, 12,  12, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxHCANM8,   3,  30, 16,  16, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxHCANM2,   3,  30, 16,  16, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxHCANM3,   3,  30, 16,  16, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxHCANM4,   3,  30, 16,  16, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxHCANM5,   3,  30, 16,  16, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxHCANM6,   3,  30, 16,  16, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxHCANM7,   3,  30, 16,  16, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxHCANM1,   3,  30, 16,  16, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Speech_Sound(kActorBlimpGuy,  0, 10, 260, 17, 24, -100, 100, -101, -101, 1, 1);
+	Ambient_Sounds_Add_Speech_Sound(kActorBlimpGuy, 20, 10, 260, 17, 24, -100, 100, -101, -101, 1, 1);
+	Ambient_Sounds_Add_Speech_Sound(kActorBlimpGuy, 40, 10, 260, 17, 24, -100, 100, -101, -101, 1, 1);
+	Ambient_Sounds_Add_Speech_Sound(kActorBlimpGuy, 50, 10, 260, 17, 24, -100, 100, -101, -101, 1, 1);
+	Ambient_Sounds_Add_Sound(kSfxSPIN2B,  10, 180, 16,  25,    0,   0, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxSPIN3A,  10, 180, 16,  25,    0,   0, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxTHNDER2, 10, 180, 50, 100,    0,   0, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxTHNDER3, 10, 180, 50, 100,    0,   0, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxTHNDER4, 10, 180, 50, 100,    0,   0, -101, -101, 0, 0);
 	if (Game_Flag_Query(kFlagSpinnerAtAR01)
 	 && Game_Flag_Query(kFlagAR01toAR02)) {
 		Scene_Loop_Start_Special(kSceneLoopModeLoseControl, 1, false);
@@ -79,15 +79,34 @@ void SceneScriptAR02::InitializeScene() {
 
 void SceneScriptAR02::SceneLoaded() {
 	Obstacle_Object("DF_BOOTH", true);
+#if BLADERUNNER_ORIGINAL_BUGS
 	if (!Game_Flag_Query(kFlagAR02DektoraBoughtScorpions)) {
-		Item_Add_To_World(kItemScrorpions, 976, kSetAR01_AR02, -442.84f, 36.77f, -1144.51f, 360, 36, 36, false, true, false, true);
+		Item_Add_To_World(kItemScorpions, kModelAnimationCageOfScorpions, kSetAR01_AR02, -442.84f, 36.77f, -1144.51f, 360, 36, 36, false, true, false, true);
 	}
 	if ( Global_Variable_Query(kVariableChapter) == 4
 	 && !Game_Flag_Query(kFlagAR02DektoraBoughtScorpions)
 	) {
 		Game_Flag_Set(kFlagNotUsed0);
-		Item_Remove_From_World(kItemScrorpions);
+		Item_Remove_From_World(kItemScorpions);
 	}
+#else
+	if (Global_Variable_Query(kVariableChapter) < 4
+	    && !Game_Flag_Query(kFlagAR02DektoraBoughtScorpions)
+	    && !Game_Flag_Query(kFlagScorpionsInAR02)
+	) {
+		// the kFlagScorpionsInAR02 flag helps keep track of the item in AR
+		// and make it not blink in and out of existence
+		// in the transition from AR01 to AR02
+		Game_Flag_Set(kFlagScorpionsInAR02);
+		Item_Add_To_World(kItemScorpions, kModelAnimationCageOfScorpions, kSetAR01_AR02, -442.84f, 36.77f, -1144.51f, 360, 36, 36, false, true, false, true);
+	} else if (Global_Variable_Query(kVariableChapter) >= 4
+	           && !Game_Flag_Query(kFlagAR02DektoraBoughtScorpions)
+	           && Game_Flag_Query(kFlagScorpionsInAR02)
+	) {
+		Game_Flag_Reset(kFlagScorpionsInAR02);
+		Item_Remove_From_World(kItemScorpions);
+	}
+#endif // BLADERUNNER_ORIGINAL_BUGS
 }
 
 bool SceneScriptAR02::MouseClick(int x, int y) {
@@ -100,7 +119,7 @@ bool SceneScriptAR02::ClickedOn3DObject(const char *objectName, bool a2) {
 
 bool SceneScriptAR02::ClickedOnActor(int actorId) {
 	if (actorId == kActorInsectDealer) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -386.96f, 0.0f, -1078.45f, 12, 1, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -386.96f, 0.0f, -1078.45f, 12, true, false, false)) {
 			Actor_Face_Actor(kActorMcCoy, kActorInsectDealer, true);
 			Actor_Face_Actor(kActorInsectDealer, kActorMcCoy, true);
 			if (Global_Variable_Query(kVariableChapter) == 2) {
@@ -111,13 +130,13 @@ bool SceneScriptAR02::ClickedOnActor(int actorId) {
 					Player_Loses_Control();
 					ADQ_Flush();
 					ADQ_Add(kActorInsectDealer, 210, 14);
-					Loop_Actor_Walk_To_XYZ(kActorMcCoy, -350.66f, 0.0f, -1117.19f, 0, false, false, 0);
+					Loop_Actor_Walk_To_XYZ(kActorMcCoy, -350.66f, 0.0f, -1117.19f, 0, false, false, false);
 					Actor_Face_Actor(kActorMcCoy, kActorInsectDealer, true);
 					Actor_Says(kActorMcCoy, 110, 18);
 					Actor_Says(kActorInsectDealer, 230, 14);
 					Actor_Says(kActorMcCoy, 115, 18);
 					Actor_Says(kActorInsectDealer, 240, 14);
-					Item_Pickup_Spin_Effect(956, 288, 257);
+					Item_Pickup_Spin_Effect(kModelAnimationMaggieBracelet, 288, 257);
 					Actor_Says(kActorInsectDealer, 250, 14);
 					Player_Gains_Control();
 					dialogueWithInsectDealer2();
@@ -164,7 +183,7 @@ bool SceneScriptAR02::ClickedOnActor(int actorId) {
 	if (actorId == kActorHasan
 	 && Global_Variable_Query(kVariableChapter) == 2
 	) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -240.79f, 0.0f, -1328.89f, 12, true, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -240.79f, 0.0f, -1328.89f, 12, true, false, false)) {
 			Actor_Face_Actor(kActorMcCoy, kActorHasan, true);
 			Actor_Face_Actor(kActorHasan, kActorMcCoy, true);
 			if (!Game_Flag_Query(kFlagAR02HassanTalk)) {
@@ -180,8 +199,8 @@ bool SceneScriptAR02::ClickedOnActor(int actorId) {
 }
 
 bool SceneScriptAR02::ClickedOnItem(int itemId, bool a2) {
-	if (itemId == kItemScrorpions) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -386.96f, 0.0f, -1078.45f, 12, true, false, 0)) {
+	if (itemId == kItemScorpions) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -386.96f, 0.0f, -1078.45f, 12, true, false, false)) {
 			Actor_Face_Actor(kActorMcCoy, kActorInsectDealer, true);
 			if (!Game_Flag_Query(kFlagAR02ScorpionsChecked)) {
 				Actor_Says(kActorInsectDealer, 0, 14);
@@ -210,7 +229,7 @@ bool SceneScriptAR02::ClickedOnItem(int itemId, bool a2) {
 
 bool SceneScriptAR02::ClickedOnExit(int exitId) {
 	if (exitId == 0) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -182.0f, 0.0f, -551.0f, 0, 1, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -182.0f, 0.0f, -551.0f, 0, true, false, false)) {
 			Game_Flag_Set(kFlagAR02toAR01);
 			Async_Actor_Walk_To_XYZ(kActorMcCoy, -182.0f, 0.0f, -407.0f, 0, false);
 			Set_Enter(kSetAR01_AR02, kSceneAR01);
@@ -219,8 +238,8 @@ bool SceneScriptAR02::ClickedOnExit(int exitId) {
 	}
 
 	if (exitId == 1) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -465.0f, 0.0f, -799.0f, 0, 1, false, 0)) {
-			Loop_Actor_Walk_To_XYZ(kActorMcCoy, -560.0f, 0.0f, -799.0f, 0, 0, false, 0);
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -465.0f, 0.0f, -799.0f, 0, true, false, false)) {
+			Loop_Actor_Walk_To_XYZ(kActorMcCoy, -560.0f, 0.0f, -799.0f, 0, false, false, false);
 			Game_Flag_Set(kFlagAR02toRC03);
 			Game_Flag_Reset(kFlagMcCoyInAnimoidRow);
 			Game_Flag_Set(kFlagMcCoyInRunciters);
@@ -244,7 +263,7 @@ void SceneScriptAR02::ActorChangedGoal(int actorId, int newGoal, int oldGoal, bo
 
 void SceneScriptAR02::PlayerWalkedIn() {
 	if (Game_Flag_Query(kFlagRC03toAR02)) {
-		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -465.0f, 0.0f, -799.0f, 0, false, false, 0);
+		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -465.0f, 0.0f, -799.0f, 0, false, false, false);
 		Game_Flag_Reset(kFlagRC03toAR02);
 	}
 	Game_Flag_Set(kFlagAR02Entered);
@@ -323,7 +342,7 @@ void SceneScriptAR02::dialogueWithInsectDealer2() {
 	Dialogue_Menu_Clear_List();
 
 	if (Global_Variable_Query(kVariableChinyen) >= 15
-	 || Query_Difficulty_Level() == 0
+	 || Query_Difficulty_Level() == kGameDifficultyEasy
 	) {
 		DM_Add_To_List_Never_Repeat_Once_Selected(530, 7, 5, 3); // BUY
 	}
@@ -335,7 +354,7 @@ void SceneScriptAR02::dialogueWithInsectDealer2() {
 
 	if (answerValue == 530) { // BUY
 		Actor_Says(kActorMcCoy, 120, 12);
-		if (Query_Difficulty_Level() != 0) {
+		if (Query_Difficulty_Level() != kGameDifficultyEasy) {
 			Global_Variable_Decrement(kVariableChinyen, 15);
 		}
 		Actor_Clue_Acquire(kActorMcCoy, kClueMaggieBracelet, true, kActorInsectDealer);

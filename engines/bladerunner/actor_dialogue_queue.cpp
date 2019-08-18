@@ -52,7 +52,7 @@ ActorDialogueQueue::~ActorDialogueQueue() {
 }
 
 void ActorDialogueQueue::add(int actorId, int sentenceId, int animationMode) {
-	if (actorId == 0 || actorId == BladeRunnerEngine::kActorVoiceOver) {
+	if (actorId == kActorMcCoy || actorId == kActorVoiceOver) {
 		animationMode = -1;
 	}
 	if (_entries.size() < kMaxEntries) {
@@ -68,7 +68,7 @@ void ActorDialogueQueue::add(int actorId, int sentenceId, int animationMode) {
 	}
 }
 
-void ActorDialogueQueue::addPause(int delay) {
+void ActorDialogueQueue::addPause(int32 delay) {
 	if (_entries.size() < kMaxEntries) {
 		Entry entry;
 		entry.isNotPause = false;
@@ -97,7 +97,7 @@ void ActorDialogueQueue::flush(int a1, bool callScript) {
 	if (_isPause) {
 		_isPause = false;
 		_delay = 0;
-		_timeLast = 0;
+		_timeLast = 0u;
 	}
 	clear();
 	if (callScript) {
@@ -105,19 +105,34 @@ void ActorDialogueQueue::flush(int a1, bool callScript) {
 	}
 }
 
+/**
+* return true when queue is empty and object is flushed
+*/
+bool ActorDialogueQueue::isEmpty() {
+	return _entries.empty() \
+	        && !_isNotPause \
+	        && !_isPause \
+	        && _actorId == -1 \
+	        && _sentenceId == -1 \
+	        && _animationMode == -1 \
+	        && _animationModePrevious == -1 \
+	        && _delay == 0 \
+	        && _timeLast == 0u;
+}
+
 void ActorDialogueQueue::tick() {
 	if (!_vm->_audioSpeech->isPlaying()) {
 		if (_isPause) {
-			int time = _vm->_time->current();
-			int timeDiff = time - _timeLast;
+			uint32 time = _vm->_time->current();
+			uint32 timeDiff = time - _timeLast; // unsigned difference is intentional
 			_timeLast = time;
-			_delay -= timeDiff;
+			_delay = (_delay < 0 || ((uint32)_delay < timeDiff) ) ? 0 : ((uint32)_delay - timeDiff);
 			if (_delay > 0) {
 				return;
 			}
 			_isPause = false;
 			_delay = 0;
-			_timeLast = 0;
+			_timeLast = 0u;
 			if (_entries.empty()) {
 				flush(0, true);
 			}
@@ -209,8 +224,7 @@ void ActorDialogueQueue::load(SaveFileReadStream &f) {
 	_animationModePrevious = f.readInt();
 	_isPause = f.readBool();
 	_delay = f.readInt();
-
-	_timeLast = 0;
+	_timeLast = 0u;
 }
 
 void ActorDialogueQueue::clear() {
@@ -222,7 +236,7 @@ void ActorDialogueQueue::clear() {
 	_animationModePrevious = -1;
 	_isPause = false;
 	_delay = 0;
-	_timeLast = 0;
+	_timeLast = 0u;
 }
 
 } // End of namespace BladeRunner

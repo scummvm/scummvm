@@ -887,7 +887,7 @@ public:
 	 * This method could be called very often by engines. Backends are hence
 	 * supposed to only perform any redrawing if it is necessary, and otherwise
 	 * return immediately. See
-	 * <http://wiki.scummvm.org/index.php/HOWTO-Backends#updateScreen.28.29_method>
+	 * <https://wiki.scummvm.org/index.php/HOWTO-Backends#updateScreen.28.29_method>
 	 */
 	virtual void updateScreen() = 0;
 
@@ -1481,6 +1481,13 @@ public:
 	 * @return locale of the system
 	 */
 	virtual Common::String getSystemLanguage() const;
+
+	/**
+	 * Returns whether connection's limited (if available on the target system).
+	 *
+	 * Returns true if connection seems limited.
+	 */
+	virtual bool isConnectionLimited();
 
 	//@}
 };

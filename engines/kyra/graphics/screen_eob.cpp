@@ -29,8 +29,11 @@
 
 #include "kyra/engine/eobcommon.h"
 #include "kyra/resource/resource.h"
+#include "kyra/engine/util.h"
 
 #include "common/system.h"
+#include "common/translation.h"
+#include "common/memstream.h"
 
 #include "graphics/cursorman.h"
 #include "graphics/palette.h"
@@ -59,7 +62,7 @@ Screen_EoB::Screen_EoB(EoBCoreEngine *vm, OSystem *system) : Screen(vm, system, 
 	_egaDitheringTempPage = 0;
 	_cgaMappingDefault = 0;
 	_cgaDitheringTables[0] = _cgaDitheringTables[1] = 0;
-	_useHiResEGADithering = false;
+	_useHiResEGADithering = _dualPaletteMode = false;
 }
 
 Screen_EoB::~Screen_EoB() {
@@ -162,6 +165,13 @@ void Screen_EoB::setMouseCursor(int x, int y, const byte *shape, const uint8 *ov
 	else
 		copyRegionToBuffer(6, 0, 0, mouseW, mouseH, cursor);
 
+	// Mouse cursor post processing for EOB II Amiga	
+	if (_dualPaletteMode) {
+		int len = mouseW * mouseH;
+		while (--len > -1)
+			cursor[len] |= 0x20;
+	}
+
 	// Mouse cursor post processing for CGA mode. Unlike the original (which uses drawShape for the mouse cursor)
 	// the cursor manager cannot know whether a pixel value of 0 is supposed to be black or transparent. Thus, we
 	// go over the transparency mask again and turn the black pixels to color 4.
@@ -228,16 +238,25 @@ void Screen_EoB::loadBitmap(const char *filename, int tempPage, int dstPage, Pal
 	Common::SeekableReadStream *str = _vm->resource()->createReadStream(filename);
 	str->skip(4);
 	uint32 imgSize = str->readUint32LE();
-	delete str;
 
 	if (_isAmiga && !skip) {
-		if ((dstPage == 3 || dstPage == 4) && imgSize == 40064) {
+		if (_vm->game() == GI_EOB1 && (dstPage == 3 || dstPage == 4) && imgSize == 40064) {
 			// Yay, this is where EOB1 Amiga hides the palette data
 			loadPalette(_pagePtrs[dstPage] + 40000, *_palettes[0], 64);
 			_palettes[0]->fill(0, 1, 0);
+		} else if (_vm->game() == GI_EOB2) {
+			uint16 palSize = str->readUint16LE();
+			// EOB II Amiga CPS files may contain more than one palette (each one 64 bytes,
+			// one after the other). We load them all...
+			if (pal && palSize) {
+				for (int i = 1; i <= palSize >> 6; ++i)
+					_palettes[i]->loadAmigaPalette(*str, 0, 32);
+			}
 		}
 		Screen::convertAmigaGfx(getPagePtr(dstPage), 320, 200);
 	}
+
+	delete str;
 }
 
 void Screen_EoB::loadEoBBitmap(const char *file, const uint8 *cgaMapping, int tempPage, int destPage, int convertToPage) {
@@ -251,12 +270,25 @@ void Screen_EoB::loadEoBBitmap(const char *file, const uint8 *cgaMapping, int te
 			error("Screen_EoB::loadEoBBitmap(): Failed to load file '%s'", file);	
 		s->read(_shpBuffer, s->size());
 		decodeSHP(_shpBuffer, destPage);
+
 	} else if (s) {
 		// This additional check is necessary since some localized versions of EOB II seem to contain invalid (size zero) cps files
-		if (s->size())
-			loadBitmap(tmp.c_str(), tempPage, destPage, 0);
-		else
+		if (s->size() == 0) {			
 			loadAlternative = true;
+
+		// This check is due to EOB II Amiga German. That version simply checks
+		// for certain file names which aren't actual CPS files. These files use
+		// a diffenrent format and compression type. I check the header size
+		// info to identify these.
+		} else if (_vm->gameFlags().platform == Common::kPlatformAmiga) {
+			// Tolerance for diffenrences up to 2 bytes is needed in some cases
+			if ((((s->readUint16LE()) + 5) & ~3) != (((s->size()) + 3) & ~3))
+				loadAlternative = true;
+		} 
+
+		if (!loadAlternative)
+			loadBitmap(tmp.c_str(), tempPage, destPage, _vm->gameFlags().platform == Common::kPlatformAmiga ? _palettes[0] : 0);
+
 	} else {
 		loadAlternative = true;
 	}
@@ -267,11 +299,17 @@ void Screen_EoB::loadEoBBitmap(const char *file, const uint8 *cgaMapping, int te
 		if (_vm->game() == GI_EOB1) {
 			tmp.insertChar('1', tmp.size() - 4);
 			loadBitmap(tmp.c_str(), tempPage, destPage, 0);
+
+		} else if (_vm->gameFlags().platform == Common::kPlatformAmiga) {
+			loadSpecialAmigaCPS(tmp.c_str(), destPage, true);
+
 		} else {
 			tmp.setChar('X', 0);
 			s = _vm->resource()->createReadStream(tmp);
+
 			if (!s)
 				error("Screen_EoB::loadEoBBitmap(): Failed to load file '%s'", file);
+
 			s->seek(768);
 			loadFileDataToPage(s, destPage, 64000);
 			delete s;
@@ -1218,21 +1256,21 @@ void Screen_EoB::drawVortex(int numElements, int radius, int stepSize, int, int 
 	showMouse();
 }
 
-void Screen_EoB::fadeTextColor(Palette *pal, int color1, int rate) {
+void Screen_EoB::fadeTextColor(Palette *pal, int color, int rate) {
+	assert(rate);
 	uint8 *col = pal->getData();
 
 	for (bool loop = true; loop;) {
-		loop = true;
 		uint32 end = _system->getMillis() + _vm->tickLength();
 
 		loop = false;
 		for (int ii = 0; ii < 3; ii++) {
-			uint8 c = col[color1 * 3 + ii];
+			uint8 c = col[color * 3 + ii];
 			if (c > rate) {
-				col[color1 * 3 + ii] -= rate;
+				col[color * 3 + ii] -= rate;
 				loop = true;
 			} else if (c) {
-				col[color1 * 3 + ii] = 0;
+				col[color * 3 + ii] = 0;
 				loop = true;
 			}
 		}
@@ -1252,8 +1290,9 @@ bool Screen_EoB::delayedFadePalStep(Palette *fadePal, Palette *destPal, int rate
 
 	uint8 *s = fadePal->getData();
 	uint8 *d = destPal->getData();
+	int numBytes = (fadePal->getNumColors() - 1) * 3;
 
-	for (int i = 0; i < 765; i++) {
+	for (int i = 0; i < numBytes; i++) {
 		int fadeVal = *s++;
 		int dstCur = *d;
 		int diff = ABS(fadeVal - dstCur);
@@ -1489,23 +1528,185 @@ void Screen_EoB::shadeRect(int x1, int y1, int x2, int y2, int shadingLevel) {
 	_16bitShadingLevel = l;
 }
 
+static uint32 _decodeFrameAmiga_x = 0;
+
+bool decodeFrameAmiga_readNextBit(const uint8 *&data, uint32 &code, uint32 &chk) {
+	_decodeFrameAmiga_x = code & 1;
+	code >>= 1;
+	if (code)
+		return _decodeFrameAmiga_x;
+
+	data -= 4;
+	code = READ_BE_UINT32(data);
+	chk ^= code;
+	_decodeFrameAmiga_x = code & 1;
+	code = (code >> 1) | (1 << 31);
+
+	return _decodeFrameAmiga_x;
+}
+
+uint32 decodeFrameAmiga_readBits(const uint8 *&data, uint32 &code, uint32 &chk, int count) {
+	uint32 res = 0;
+	while (count--) {
+		decodeFrameAmiga_readNextBit(data, code, chk);
+		uint32 bt1 = _decodeFrameAmiga_x;
+		_decodeFrameAmiga_x = res >> 31;
+		res = (res << 1) | bt1;
+	}
+	return res;
+}
+
+void Screen_EoB::loadSpecialAmigaCPS(const char *fileName, int destPage, bool isGraphics) {
+	uint32 fileSize = 0;
+	const uint8 *file = _vm->resource()->fileData(fileName, &fileSize);
+
+	if (!file)
+		error("Screen_EoB::loadSpecialAmigaCPS(): Failed to load file '%s'", file);
+
+	uint32 inSize = READ_BE_UINT32(file);
+	const uint8 *pos = file;
+
+	// Check whether the file starts with the actual compression header.
+	// If this is not the case, there should a palette before the header.
+	// Unlike normal CPS files these files never have more than one palette.
+	if (((inSize + 15) & ~3) != ((fileSize + 3) & ~3)) {
+		Common::MemoryReadStream in(pos, 64);
+		_palettes[0]->loadAmigaPalette(in, 0, 32);
+		pos += 64;
+	}
+
+	inSize = READ_BE_UINT32(pos);
+	uint32 outSize = READ_BE_UINT32(pos + 4);
+	uint32 chk = READ_BE_UINT32(pos + 8);
+
+	pos = pos + 8 + inSize;
+	uint8 *dstStart = _pagePtrs[destPage];
+	uint8 *dst = dstStart + outSize;
+
+	uint32 val = READ_BE_UINT32(pos);
+	_decodeFrameAmiga_x = 0;
+	chk ^= val;
+
+	while (dst > dstStart) {
+		int para = -1;
+		int para2 = 0;
+
+		if (decodeFrameAmiga_readNextBit(pos, val, chk)) {
+			uint32 code = decodeFrameAmiga_readBits(pos, val, chk, 2);
+
+			if (code == 3) {
+				para = para2 = 8;
+			} else {
+				int cnt = 0;
+				if (code < 2) {
+					cnt = 3 + code;
+					para2 = 9 + code;
+				} else {
+					cnt = decodeFrameAmiga_readBits(pos, val, chk, 8) + 1;
+					para2 = 12;
+				}
+					
+				code = decodeFrameAmiga_readBits(pos, val, chk, para2);
+				while (cnt--) {
+					dst--;
+					*dst = dst[code & 0xFFFF];
+				}
+			}
+		} else {
+			if (decodeFrameAmiga_readNextBit(pos, val, chk)) {
+				uint32 code = decodeFrameAmiga_readBits(pos, val, chk, 8);
+				dst--;
+				*dst = dst[code & 0xFFFF];
+				dst--;
+				*dst = dst[code & 0xFFFF];
+
+			} else {
+				para = 3;				
+			}
+		}
+
+		if (para > 0) {
+			uint32 code = decodeFrameAmiga_readBits(pos, val, chk, para);
+			uint32 cnt = (code & 0xFFFF) + para2 + 1;
+
+			while (cnt--) {
+				for (int i = 0; i < 8; ++i) {
+					decodeFrameAmiga_readNextBit(pos, val, chk);
+					uint32 bt1 = _decodeFrameAmiga_x;
+					_decodeFrameAmiga_x = code >> 31;
+					code = (code << 1) | bt1;
+				}
+				*(--dst) = code & 0xFF;
+			}
+		}
+	}
+
+	delete[] file;
+
+	if (chk)
+		error("Screen_EoB::loadSpecialAmigaCPS(): Checksum error");
+
+	if (isGraphics)
+		convertAmigaGfx(_pagePtrs[destPage], 320, 200);
+}
+
+void Screen_EoB::setupDualPalettesSplitScreen(Palette &top, Palette &bottom) {
+	// The original supports simultaneous fading of both palettes, but doesn't make any use of that
+	// feature. The fade rate is always set to 0. So I see no need to implement that.
+	_palettes[0]->copy(top, 0, 32, 0);
+	_palettes[0]->copy(bottom, 0, 32, 32);
+	setScreenPalette(*_palettes[0]);
+	_dualPaletteMode = _forceFullUpdate = true;
+}
+
+void Screen_EoB::disableDualPalettesSplitScreen() {
+	_dualPaletteMode = false;
+	_forceFullUpdate = true;
+}
+
 void Screen_EoB::updateDirtyRects() {
-	if (!_useHiResEGADithering) {
+	if (!_useHiResEGADithering && !_dualPaletteMode) {
 		Screen::updateDirtyRects();
 		return;
 	}
 
-	if (_forceFullUpdate) {
+	if (_dualPaletteMode && _forceFullUpdate) {
+		uint32 *pos = (uint32*)(_pagePtrs[0] + 120 * SCREEN_W);
+		uint16 h = 80 * (SCREEN_W >> 2);
+		while (h--)
+			*pos++ |= 0x20202020;		
+		_system->copyRectToScreen(getCPagePtr(0), SCREEN_W, 0, 0, SCREEN_W, SCREEN_H);
+
+	} else if (_dualPaletteMode) {
+		Common::List<Common::Rect>::iterator it;
+		for (it = _dirtyRects.begin(); it != _dirtyRects.end(); ++it) {
+			if (it->bottom > 119) {
+				int16 startY = MAX<int16>(120, it->top);
+				int16 h = it->bottom - startY + 1;
+				int16 w = it->width();
+				uint8 *pos = _pagePtrs[0] + startY * SCREEN_W + it->left;
+				while (h--) {
+					for (int x = 0; x < w; ++x)
+						*pos++ |= 0x20;
+					pos += (SCREEN_W - w);
+				}
+			}
+			_system->copyRectToScreen(_pagePtrs[0] + it->top * SCREEN_W + it->left, SCREEN_W, it->left, it->top, it->width(), it->height());
+		}
+
+	} else if (_forceFullUpdate) {
 		ditherRect(getCPagePtr(0), _egaDitheringTempPage, SCREEN_W * 2, SCREEN_W, SCREEN_H);
 		_system->copyRectToScreen(_egaDitheringTempPage, SCREEN_W * 2, 0, 0, SCREEN_W * 2, SCREEN_H * 2);
+
 	} else {
-		const byte *page0 = getCPagePtr(0);
+		const uint8 *page0 = getCPagePtr(0);
 		Common::List<Common::Rect>::iterator it;
 		for (it = _dirtyRects.begin(); it != _dirtyRects.end(); ++it) {
 			ditherRect(page0 + it->top * SCREEN_W + it->left, _egaDitheringTempPage, SCREEN_W * 2, it->width(), it->height());
 			_system->copyRectToScreen(_egaDitheringTempPage, SCREEN_W * 2, it->left * 2, it->top * 2, it->width() * 2, it->height() * 2);
 		}
 	}
+
 	_forceFullUpdate = false;
 	_dirtyRects.clear();
 }
@@ -1936,7 +2137,7 @@ void OldDOSFont::unload() {
 	_bitmapOffsets = 0;
 }
 
-AmigaDOSFont::AmigaDOSFont(Resource *res) : _res(res), _width(0), _height(0), _first(0), _last(0), _content(0), _numElements(0), _selectedElement(0), _maxPathLen(256) {
+AmigaDOSFont::AmigaDOSFont(Resource *res, bool needsLocalizedFont) : _res(res), _needsLocalizedFont(needsLocalizedFont), _width(0), _height(0), _first(0), _last(0), _content(0), _numElements(0), _selectedElement(0), _maxPathLen(256) {
 	assert(_res);
 }
 
@@ -2039,6 +2240,35 @@ void AmigaDOSFont::drawChar(uint16 c, byte *dst, int pitch, int) const {
 	}
 }
 
+uint8 AmigaDOSFont::_errorDialogDisplayed = 0;
+
+void AmigaDOSFont::errorDialog(int index) {
+	if (_errorDialogDisplayed & (1 << index))
+		return;
+	_errorDialogDisplayed |= (1 << index);
+
+	// I've made rather elaborate dialogs here, since the Amiga font file handling is quite prone to cause problems for users.
+	// This will hopefully prevent unnecessary forum posts and bug reports.
+	if (index == 0) {
+		::GUI::displayErrorDialog(_(
+			"This AMIGA version requires the following font files:\n\nEOBF6.FONT\nEOBF6/6\nEOBF8.FONT\nEOBF8/8\n\n"
+			"If you used the orginal installer for the installation these files\nshould be located in the AmigaDOS system 'Fonts/' folder.\n"
+			"Please copy them into the EOB game data directory.\n"
+		));
+		
+		error("Failed to load font files.");
+	} else if (index == 1) {
+		::GUI::displayErrorDialog(_(
+			"This AMIGA version requires the following font files:\n\nEOBF6.FONT\nEOBF6/6\nEOBF8.FONT\nEOBF8/8\n\n"
+			"This is a localized (non-English) version of EOB II which uses language specific characters\n"
+			"contained only in the specific font files that came with your game. You cannot use the font\n"
+			"files from the English version or from any EOB I game which seems to be what you are doing.\n\n"
+			"The game will continue, but the language specific characters will not be displayed.\n"
+			"Please copy the correct font files into your EOB II game data directory.\n\n"
+		));
+	}
+}
+
 void AmigaDOSFont::unload() {
 	delete[] _content;
 }
@@ -2066,12 +2296,8 @@ AmigaDOSFont::TextFont *AmigaDOSFont::loadContentFile(const Common::String fileN
 			str = _res->createEndianAwareReadStream(fileNameAlt);
 		}
 
-		if (!str) {
-			::GUI::displayErrorDialog("This AMIGA version requires the following font files:\n\nEOBF6.FONT\nEOBF6/6\nEOBF8.FONT\nEOBF8/8\n\n"
-				"If you used the orginal installer for the installation these files\nshould be located in the AmigaDOS system 'Fonts/' folder.\n"
-				"Please copy them into the EOB game data directory.\n");
-			error("Failed to load font files.");
-		}
+		if (!str)
+			errorDialog(0);
 	}
 
 	uint32 hunkId = str->readUint32();
@@ -2097,6 +2323,9 @@ AmigaDOSFont::TextFont *AmigaDOSFont::loadContentFile(const Common::String fileN
 	str->seek(4, SEEK_CUR);
 	fnt->firstChar = str->readByte();
 	fnt->lastChar = str->readByte();
+
+	if (_needsLocalizedFont && fnt->lastChar <= 127)
+		errorDialog(1);
 
 	str->seek(18, SEEK_CUR);
 	int32 curPos = str->pos();

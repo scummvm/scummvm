@@ -35,7 +35,7 @@ namespace BladeRunner {
 
 OuttakePlayer::OuttakePlayer(BladeRunnerEngine *vm) {
 	_vm = vm;
-	_surfaceVideo.create(_vm->_surfaceBack.w, _vm->_surfaceBack.h, createRGB555());
+	_surfaceVideo.create(_vm->_surfaceBack.w, _vm->_surfaceBack.h, screenPixelFormat());
 }
 
 OuttakePlayer::~OuttakePlayer() {
@@ -83,7 +83,7 @@ void OuttakePlayer::play(const Common::String &name, bool noLocalization, int co
 		}
 
 		if (frame >= 0) {
-			_vm->_subtitles->getOuttakeSubsText(resNameNoVQASuffix, frame);
+			_vm->_subtitles->loadOuttakeSubsText(resNameNoVQASuffix, frame);
 			_vm->_subtitles->tickOuttakes(_vm->_surfaceFront);
 			_vm->blitToScreen(_vm->_surfaceFront);
 		}

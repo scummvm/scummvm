@@ -184,12 +184,20 @@ void Events::pollEvents() {
 		g_system->getEventManager()->pollEvent(event);
 
 		switch (event.type) {
-		case Common::EVENT_KEYDOWN:
-			if (!isModifierKey(event.kbd.keycode)) {
+		case Common::EVENT_KEYDOWN: {
+			// Check for debugger
+			Debugger *dbg = g_vm->_debugger;
+			if (dbg && event.kbd.keycode == Common::KEYCODE_d && (event.kbd.flags & Common::KBD_CTRL)) {
+				// Attach to the debugger
+				dbg->attach();
+				dbg->onFrame();
+			} else if (!isModifierKey(event.kbd.keycode)) {
+				// Handle all other keypresses
 				setCursor(CURSOR_NONE);
 				handleKeyDown(event.kbd);
 			}
 			return;
+		}
 
 		case Common::EVENT_LBUTTONDOWN:
 		case Common::EVENT_RBUTTONDOWN:
@@ -376,15 +384,25 @@ bool Events::isModifierKey(const Common::KeyCode &keycode) const {
 		|| keycode == Common::KEYCODE_SCROLLOCK;
 }
 
-void Events::waitForPress() {
+uint Events::getKeypress() {
 	Common::Event e;
 
-	do {
+	while (!g_vm->shouldQuit()) {
 		g_system->getEventManager()->pollEvent(e);
 		g_system->delayMillis(10);
 		checkForNextFrameCounter();
-	} while (!g_vm->shouldQuit() && (e.type != Common::EVENT_KEYDOWN || isModifierKey(e.kbd.keycode))
-		&& e.type != Common::EVENT_LBUTTONDOWN && e.type != Common::EVENT_RBUTTONDOWN && e.type != Common::EVENT_MBUTTONDOWN);
+
+		if (e.type == Common::EVENT_KEYDOWN && !isModifierKey(e.kbd.keycode))
+			return e.kbd.keycode;
+		if (e.type == Common::EVENT_LBUTTONDOWN)
+			return Common::KEYCODE_SPACE;
+	}
+
+	return 0;
+}
+
+void Events::waitForPress() {
+	getKeypress();
 }
 
 void Events::setCursor(CursorId cursorId) {

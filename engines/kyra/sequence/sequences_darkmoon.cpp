@@ -44,8 +44,9 @@ public:
 	DarkmoonSequenceHelper(OSystem *system, DarkMoonEngine *vm, Screen_EoB *screen, Mode mode);
 	~DarkmoonSequenceHelper();
 
-	void loadScene(int index, int pageNum);
+	void loadScene(int index, int pageNum, bool ignorePalette = false);
 	void animCommand(int index, int del = -1);
+	void setPlatformAnimIndexOffset(int offset);
 
 	void printText(int index, int color);
 	void fadeText();
@@ -61,8 +62,10 @@ public:
 
 	void delay(uint32 ticks);
 	void waitForSongNotifier(int index, bool introUpdateAnim = false);
+	void updateAmigaSound();
 
 private:
+	void init(Mode mode);
 	void setPaletteWithoutTextColor(int index);
 
 	OSystem *_system;
@@ -98,12 +101,21 @@ private:
 	int _fadePalRate;
 	int _fadePalIndex;
 
+	uint8 _sndNextTrack;
+	uint16 _sndNextTrackMarker;
+	const uint16 *_sndMarkersFMTowns;
+
+	uint8 _textColor[3];
+
+	int _platformAnimOffset;
+
 	Screen::FontId _prevFont;
 
 	static const char *const _palFilesIntroVGA[];
 	static const char *const _palFilesIntroEGA[];
 	static const char *const _palFilesFinaleVGA[];
 	static const char *const _palFilesFinaleEGA[];
+	static const char *const _palFilesFinaleAmiga[];
 };
 
 int DarkMoonEngine::mainMenu() {
@@ -120,7 +132,7 @@ int DarkMoonEngine::mainMenu() {
 	while (menuChoice >= 0 && !shouldQuit()) {
 		switch (menuChoice) {
 		case 0: {
-			if (_flags.platform == Common::kPlatformFMTowns) {
+			if (_flags.platform == Common::kPlatformFMTowns || _flags.platform == Common::kPlatformAmiga) {
 				_screen->loadPalette("MENU.PAL", _screen->getPalette(0));
 				_screen->setScreenPalette(_screen->getPalette(0));
 				_screen->loadEoBBitmap("MENU", 0, 3, 3, 2);
@@ -144,11 +156,12 @@ int DarkMoonEngine::mainMenu() {
 			of = _screen->setFont(Screen::FID_6_FNT);
 			op = _screen->setCurPage(2);
 			Common::String versionString(Common::String::format("ScummVM %s", gScummVMVersion));
-			_screen->printText(versionString.c_str(), 267 - versionString.size() * 6, _flags.platform == Common::kPlatformFMTowns ? 152 : 160, 13, 0);
+			_screen->printText(versionString.c_str(), 267 - versionString.size() * 6, _flags.platform == Common::kPlatformFMTowns ? 152 : 160, _flags.platform == Common::kPlatformAmiga ? 18 : 13, 0);
 			_screen->setFont(of);
 			_screen->_curPage = op;
 			_screen->copyRegion(0, 0, 0, 0, 320, 200, 2, 0, Screen::CR_NO_P_CHECK);
 			_screen->shadeRect(78, 99, 249, 141, 4);
+			_screen->showMouse();
 			_screen->updateScreen();
 			_allowImport = true;
 			menuChoice = mainMenuLoop();
@@ -227,6 +240,19 @@ void DarkMoonEngine::seq_playIntro() {
 	snd_stopSound();
 
 	sq.loadScene(4, 2);
+
+	uint8 textColor1 = 16;
+	uint8 textColor2 = 15;
+
+	if (_flags.platform == Common::kPlatformAmiga) {
+		textColor1 = textColor2 = 31;
+		sq.loadScene(13, 2);
+		sq.loadScene(14, 2);
+		sq.loadScene(15, 2);
+	} else if (_configRenderMode == Common::kRenderEGA) {
+		textColor1 = 15;
+	}
+
 	sq.loadScene(0, 2);
 	sq.delay(1);
 
@@ -248,50 +274,53 @@ void DarkMoonEngine::seq_playIntro() {
 	sq.animCommand(6, 18);
 	sq.animCommand(0);
 
-	sq.waitForSongNotifier(_flags.platform == Common::kPlatformFMTowns ? 229 : 1);
+	sq.waitForSongNotifier(1);
 
 	sq.animCommand(_configRenderMode == Common::kRenderEGA ? 12 : 11);
 	sq.animCommand(7, 6);
 	sq.animCommand(2, 6);
 
-	sq.waitForSongNotifier(_flags.platform == Common::kPlatformFMTowns ? 447 : 2);
+	sq.waitForSongNotifier(2);
 
-	sq.animCommand(_configRenderMode == Common::kRenderEGA ? 39 : 38);
+	sq.animCommand(_flags.platform == Common::kPlatformAmiga ? 37 : (_configRenderMode == Common::kRenderEGA ? 39 : 38));
 	sq.animCommand(3);
 	sq.animCommand(8);
 	sq.animCommand(1, 10);
 	sq.animCommand(0, 6);
 	sq.animCommand(2);
 
-	sq.waitForSongNotifier(_flags.platform == Common::kPlatformFMTowns ? 670 : 3);
+	sq.waitForSongNotifier(3);
 
 	_screen->setClearScreenDim(17);
 	_screen->setCurPage(2);
 	_screen->setClearScreenDim(17);
 	_screen->setCurPage(0);
-
-	sq.animCommand(_configRenderMode == Common::kRenderEGA ? 41 : 40);
+	
+	sq.animCommand(_flags.platform == Common::kPlatformAmiga ? 38 : (_configRenderMode == Common::kRenderEGA ? 41 : 40));
 	sq.animCommand(7, 18);
 
-	sq.printText(0, 16);    // You were settling...
+	if (_flags.platform == Common::kPlatformAmiga)
+		sq.fadeText();
+
+	sq.printText(0, textColor1);    // You were settling...
 	sq.animCommand(7, 90);
 	sq.fadeText();
 
-	sq.printText(1, 16);    // Then a note was slipped to you
+	sq.printText(1, textColor1);    // Then a note was slipped to you
 	sq.animCommand(8);
 	sq.animCommand(2, 72);
 	sq.fadeText();
 
-	sq.printText(2, 16);    // It was from your friend Khelben Blackstaff...
+	sq.printText(2, textColor1);    // It was from your friend Khelben Blackstaff...
 	sq.animCommand(2);
 	sq.animCommand(6, 36);
 	sq.animCommand(3);
 	sq.fadeText();
 
-	sq.printText(3, 16);    // The message was urgent.
+	sq.printText(3, textColor1);    // The message was urgent.
 
 	sq.loadScene(1, 2);
-	sq.waitForSongNotifier(_flags.platform == Common::kPlatformFMTowns ? 1380 : 4);
+	sq.waitForSongNotifier(4);
 
 	// intro scroll
 	if (!skipFlag() && !shouldQuit()) {
@@ -313,8 +342,12 @@ void DarkMoonEngine::seq_playIntro() {
 				_screen->copyRegion(11, 8, 8, 8, 301, 128, 0, 0, Screen::CR_NO_P_CHECK);
 				_screen->copyRegion(i, 0, 309, 8, 3, 128, 2, 0, Screen::CR_NO_P_CHECK);
 				_screen->updateScreen();
-				if (i == 96)
+				if (_flags.platform == Common::kPlatformAmiga) {
+					if (i == 4 || i == 24 || i == 36)
+						sq.animCommand(39);
+				} else if (i == 96) {
 					sq.animCommand(42);
+				}
 				delayUntil(endtime);
 			}
 		}
@@ -329,34 +362,54 @@ void DarkMoonEngine::seq_playIntro() {
 	sq.update(2);
 	sq.delay(10);
 
-	sq.printText(4, 16);    // What could Khelben want?
+	sq.printText(4, textColor1);    // What could Khelben want?
 	sq.delay(25);
 
 	sq.loadScene(3, 2);
 	sq.delay(54);
-	sq.animCommand(13);
+	sq.animCommand(_flags.platform == Common::kPlatformAmiga ? 12 : 13);
 	_screen->copyRegion(104, 16, 96, 8, 120, 100, 0, 2, Screen::CR_NO_P_CHECK);
 	sq.fadeText();
+	
+	if (_flags.platform == Common::kPlatformAmiga)
+		sq.animCommand(9);
 
-	sq.printText(5, 15);    // Welcome, please come in
+	sq.printText(5, textColor2);    // Welcome, please come in
 	sq.animCommand(10);
 	sq.animCommand(10);
 	sq.animCommand(9);
 	sq.animCommand(9);
 	sq.fadeText();
 
-	sq.printText(6, 15);    // Khelben awaits you in his study
+	sq.printText(6, textColor2);    // Khelben awaits you in his study
 	for (int i = 0; i < 3; i++)
 		sq.animCommand(10);
 	sq.animCommand(9);
+
+	if (_flags.platform == Common::kPlatformAmiga)
+		sq.setPlatformAnimIndexOffset(-1);
+
 	sq.animCommand(14);
+
+	if (_flags.platform == Common::kPlatformAmiga)
+		_sound->beginFadeOut();
+
 	sq.loadScene(5, 2);
 
-	sq.waitForSongNotifier(_flags.platform == Common::kPlatformFMTowns ? 2037 : 5);
-
-	sq.fadeText();
-	_screen->clearCurPage();
-	_screen->updateScreen();
+	if (!skipFlag() && !shouldQuit()) {
+		if (_flags.platform == Common::kPlatformAmiga) {
+			_screen->fadeToBlack(5);
+			_screen->clearCurPage();
+			_screen->fadeFromBlack(1);
+			sq.fadeText();
+			snd_playSong(14);
+		} else {
+			sq.waitForSongNotifier(5);
+			sq.fadeText();
+			_screen->clearCurPage();
+			_screen->updateScreen();
+		}
+	}
 
 	for (int i = 0; i < 6; i++)
 		sq.animCommand(15);
@@ -371,8 +424,11 @@ void DarkMoonEngine::seq_playIntro() {
 	_screen->clearCurPage();
 	sq.update(2);
 
+	if (_flags.platform == Common::kPlatformAmiga && !skipFlag() && !shouldQuit())
+		snd_playSong(15);
+
 	sq.animCommand(16);
-	sq.printText(7, 15);    // Thank you for coming so quickly
+	sq.printText(7, textColor2);    // Thank you for coming so quickly
 	sq.animCommand(16);
 	sq.animCommand(17);
 	for (int i = 0; i < 3; i++)
@@ -380,39 +436,39 @@ void DarkMoonEngine::seq_playIntro() {
 	sq.fadeText();
 	sq.animCommand(16);
 
-	sq.loadScene(8, 2);
+	sq.loadScene(8, 2, true);
 	sq.update(2);
 	sq.animCommand(32);
-	sq.printText(8, 15);    // I am troubled my friend
+	sq.printText(8, textColor2);    // I am troubled my friend
 	sq.animCommand(33);
 	sq.animCommand(33);
 	for (int i = 0; i < 4; i++)
 		sq.animCommand(32);
 	sq.fadeText();
 
-	sq.printText(9, 15);    // Ancient evil stirs in the Temple Darkmoon
+	sq.printText(9, textColor2);    // Ancient evil stirs in the Temple Darkmoon
 	sq.animCommand(33);
-	sq.animCommand(43);
+	sq.animCommand(_flags.platform == Common::kPlatformAmiga ? 41 : 43);
 	sq.animCommand(33);
 	for (int i = 0; i < 3; i++)
 		sq.animCommand(32);
 	sq.fadeText();
 
-	sq.printText(10, 15);   // I fear for the safety of our city
+	sq.printText(10, textColor2);   // I fear for the safety of our city
 	for (int i = 0; i < 4; i++)
 		sq.animCommand(33);
 	sq.animCommand(32);
 	sq.animCommand(32);
 
-	sq.loadScene(9, 2);
 	sq.fadeText();
+	sq.loadScene(9, 2);
 
-	sq.waitForSongNotifier(_flags.platform == Common::kPlatformFMTowns ? 3000 : 6);
+	sq.waitForSongNotifier(6);
 
 	sq.update(2);
 	sq.animCommand(34);
 
-	sq.printText(11, 15);   // I need your help
+	sq.printText(11, textColor2);   // I need your help
 	for (int i = 0; i < 3; i++)
 		sq.animCommand(34);
 	sq.animCommand(35);
@@ -422,10 +478,10 @@ void DarkMoonEngine::seq_playIntro() {
 
 	sq.loadScene(12, 2);
 	sq.update(2);
-	sq.loadScene(6, 2);
+	sq.loadScene(6, 2, true);
 	sq.animCommand(18);
 
-	sq.printText(12, 15);   // Three nights ago I sent forth a scout
+	sq.printText(12, textColor2);   // Three nights ago I sent forth a scout
 	sq.animCommand(19);
 	sq.animCommand(20);
 	sq.animCommand(22);
@@ -434,7 +490,7 @@ void DarkMoonEngine::seq_playIntro() {
 	sq.animCommand(18);
 	sq.fadeText();
 
-	sq.printText(13, 15);   // She has not yet returned
+	sq.printText(13, textColor2);   // She has not yet returned
 	sq.animCommand(20);
 	sq.animCommand(19);
 	sq.animCommand(23);
@@ -445,7 +501,7 @@ void DarkMoonEngine::seq_playIntro() {
 	sq.animCommand(18);
 	sq.fadeText();
 
-	sq.printText(14, 15);   // I fear for her safety
+	sq.printText(14, textColor2);   // I fear for her safety
 	sq.animCommand(19);
 	sq.animCommand(20);
 	sq.animCommand(20);
@@ -457,7 +513,7 @@ void DarkMoonEngine::seq_playIntro() {
 	sq.animCommand(18);
 	sq.animCommand(18);
 
-	sq.printText(15, 15);   // Take this coin
+	sq.printText(15, textColor2);   // Take this coin
 	sq.animCommand(28);
 	sq.animCommand(19);
 	sq.animCommand(20);
@@ -466,7 +522,13 @@ void DarkMoonEngine::seq_playIntro() {
 	sq.fadeText();
 
 	sq.loadScene(10, 2);
+
+	if (_flags.platform == Common::kPlatformAmiga)
+		_screen->fadeToBlack(10);
+
 	_screen->clearCurPage();
+	if (_flags.platform == Common::kPlatformAmiga)
+		sq.setPalette(0);
 	_screen->updateScreen();
 
 	sq.animCommand(37, 18);
@@ -476,8 +538,8 @@ void DarkMoonEngine::seq_playIntro() {
 	_screen->clearCurPage();
 	sq.update(2);
 
-	sq.loadScene(11, 2);
-	sq.printText(16, 15);   // I will use it to contact you
+	sq.loadScene(11, 2, true);
+	sq.printText(16, textColor2);   // I will use it to contact you
 	sq.animCommand(19);
 	sq.animCommand(20);
 	sq.animCommand(20);
@@ -485,7 +547,7 @@ void DarkMoonEngine::seq_playIntro() {
 	sq.animCommand(18);
 	sq.fadeText();
 
-	sq.printText(17, 15);   // You must act quickly
+	sq.printText(17, textColor2);   // You must act quickly
 	sq.animCommand(19);
 	sq.animCommand(20);
 	sq.animCommand(19);
@@ -494,7 +556,7 @@ void DarkMoonEngine::seq_playIntro() {
 	sq.fadeText();
 	sq.animCommand(18);
 
-	sq.printText(18, 15);   // I will teleport you near Darkmoon
+	sq.printText(18, textColor2);   // I will teleport you near Darkmoon
 	sq.animCommand(20);
 	sq.animCommand(27);
 	sq.animCommand(20);
@@ -504,7 +566,7 @@ void DarkMoonEngine::seq_playIntro() {
 	sq.fadeText();
 	sq.animCommand(18);
 
-	sq.printText(19, 15);   // May luck be with you my friend
+	sq.printText(19, textColor2);   // May luck be with you my friend
 	sq.animCommand(19);
 	sq.animCommand(19);
 	sq.animCommand(20);
@@ -512,16 +574,25 @@ void DarkMoonEngine::seq_playIntro() {
 	sq.fadeText();
 	sq.animCommand(29);
 
-	sq.waitForSongNotifier(_flags.platform == Common::kPlatformFMTowns ? 4475 : 7);
+	sq.waitForSongNotifier(7);
 
 	sq.animCommand(30);
 	sq.animCommand(31);
 
-	sq.waitForSongNotifier(_flags.platform == Common::kPlatformFMTowns ? 4825 : 8, true);
+	sq.waitForSongNotifier(8, true);
 
-	if (skipFlag() || shouldQuit()) {
+	if (_flags.platform == Common::kPlatformAmiga && !skipFlag() && !shouldQuit()) {
+		static const uint8 magicHandsCol[] = { 0x15, 0x1D, 0x3A, 0x32, 0x32, 0x3F };
 		snd_fadeOut();
-	} else {
+		_screen->getPalette(0).copy(magicHandsCol, 0, 1, 31);
+		_screen->fadePalette(_screen->getPalette(0), 32);
+		_screen->getPalette(0).copy(magicHandsCol, 1, 1, 31);
+		_screen->fadePalette(_screen->getPalette(0), 32);
+	}
+
+	if (skipFlag() || shouldQuit())
+		snd_fadeOut();
+	else {
 		_screen->setScreenDim(17);
 		_screen->clearCurDim();
 		snd_playSoundEffect(14);
@@ -538,6 +609,10 @@ void DarkMoonEngine::seq_playIntro() {
 }
 
 void DarkMoonEngine::seq_playFinale() {
+	_screen->fadeToBlack();
+	_screen->clearCurPage();
+	_screen->clearPage(2);
+
 	DarkmoonSequenceHelper sq(_system, this, _screen, DarkmoonSequenceHelper::kFinale);
 
 	_screen->setCurPage(0);
@@ -545,15 +620,22 @@ void DarkMoonEngine::seq_playFinale() {
 	_sound->loadSoundFile(0);
 	snd_stopSound();
 	sq.delay(3);
-
-	_screen->clearCurPage();
-	_screen->clearPage(2);
 	_screen->updateScreen();
+
+	uint8 textColor1 = 10;
+	uint8 textColor2 = 15;
+
+	if (_flags.platform == Common::kPlatformAmiga) {
+		textColor1 = 29;
+		textColor2 = 31;
+	} else if (_configRenderMode == Common::kRenderEGA) {
+		textColor1 = 15;
+	}
 
 	sq.loadScene(0, 2);
 	sq.delay(18);
 
-	if (!skipFlag() && !shouldQuit())
+	if (!skipFlag() && !shouldQuit() && _flags.platform != Common::kPlatformAmiga)
 		snd_playSong(1);
 	sq.update(2);
 
@@ -567,21 +649,21 @@ void DarkMoonEngine::seq_playFinale() {
 	sq.animCommand(2);
 	sq.animCommand(2);
 
-	sq.printText(0, 10);            // Finally, Dran has been defeated
+	sq.printText(0, textColor1);            // Finally, Dran has been defeated
 	for (int i = 0; i < 7; i++)
 		sq.animCommand(2);
 	sq.fadeText();
 	sq.animCommand(2);
 
-	sq.waitForSongNotifier(_flags.platform == Common::kPlatformFMTowns ? 475 : 1);
+	sq.waitForSongNotifier(1);
 
-	sq.printText(1, 10);            // Suddenly, your friend Khelben appears
+	sq.printText(1, textColor1);            // Suddenly, your friend Khelben appears
 	sq.animCommand(4);
 	for (int i = 0; i < 3; i++)
 		sq.animCommand(2);
 	sq.fadeText();
 
-	sq.printText(2, 15);            // Greetings, my victorious friends
+	sq.printText(2, textColor2);            // Greetings, my victorious friends
 	for (int i = 0; i < 4; i++)
 		sq.animCommand(5);
 	sq.animCommand(2);
@@ -589,42 +671,42 @@ void DarkMoonEngine::seq_playFinale() {
 	sq.fadeText();
 	sq.animCommand(6);
 
-	sq.printText(3, 15);            // You have defeated Dran
+	sq.printText(3, textColor2);            // You have defeated Dran
 	for (int i = 0; i < 5; i++)
 		sq.animCommand(5);
 	sq.animCommand(2);
 	sq.animCommand(2);
 	sq.fadeText();
 
-	sq.printText(4, 15);            // I did not know Dran was a dragon
+	sq.printText(4, textColor2);            // I did not know Dran was a dragon
 	for (int i = 0; i < 4; i++)
 		sq.animCommand(5);
 	sq.animCommand(2);
 	sq.animCommand(2);
 	sq.fadeText();
 
-	sq.printText(5, 15);            // He must have been over 300 years old
+	sq.printText(5, textColor2);            // He must have been over 300 years old
 	for (int i = 0; i < 4; i++)
 		sq.animCommand(5);
 	sq.animCommand(2);
 	sq.animCommand(2);
 	sq.fadeText();
 
-	sq.printText(6, 15);            // His power is gone
+	sq.printText(6, textColor2);            // His power is gone
 	for (int i = 0; i < 3; i++)
 		sq.animCommand(5);
 	sq.animCommand(2);
 	sq.animCommand(2);
 	sq.fadeText();
 
-	sq.printText(7, 15);            // But Darkmoon is still a source of great evil
+	sq.printText(7, textColor2);            // But Darkmoon is still a source of great evil
 	for (int i = 0; i < 4; i++)
 		sq.animCommand(5);
 	sq.animCommand(2);
 	sq.animCommand(2);
 	sq.fadeText();
 
-	sq.printText(8, 15);            // And many of his minions remain
+	sq.printText(8, textColor2);            // And many of his minions remain
 	for (int i = 0; i < 4; i++)
 		sq.animCommand(5);
 	sq.animCommand(2);
@@ -636,14 +718,14 @@ void DarkMoonEngine::seq_playFinale() {
 	sq.loadScene(3, 2);
 	_screen->copyRegion(8, 8, 0, 0, 304, 128, 0, 2, Screen::CR_NO_P_CHECK);
 
-	sq.printText(9, 15);            // Now we must leave this place
+	sq.printText(9, textColor2);            // Now we must leave this place
 	sq.animCommand(7);
 	sq.animCommand(8);
 	sq.animCommand(7);
 	sq.animCommand(7, 36);
 	sq.fadeText();
 
-	sq.printText(10, 15);           // So my forces can destroy it..
+	sq.printText(10, textColor2);           // So my forces can destroy it..
 	for (int i = 0; i < 3; i++)
 		sq.animCommand(7);
 	sq.animCommand(8);
@@ -652,7 +734,7 @@ void DarkMoonEngine::seq_playFinale() {
 	sq.animCommand(8, 18);
 	sq.fadeText();
 
-	sq.printText(11, 15);           // Follow me
+	sq.printText(11, textColor2);           // Follow me
 	sq.animCommand(7, 18);
 	sq.animCommand(9, 18);
 	sq.animCommand(8, 18);
@@ -660,12 +742,11 @@ void DarkMoonEngine::seq_playFinale() {
 
 	sq.loadScene(7, 2);
 
-	if (_configRenderMode != Common::kRenderEGA)
-		sq.copyPalette(3, 0);
+	sq.copyPalette(3, 0);
 
 	sq.loadScene(4, 2);
 
-	sq.waitForSongNotifier(_flags.platform == Common::kPlatformFMTowns ? 2030 : 2);
+	sq.waitForSongNotifier(2);
 
 	_screen->clearCurPage();
 	sq.update(2);
@@ -674,11 +755,11 @@ void DarkMoonEngine::seq_playFinale() {
 	sq.loadScene(6, 6);
 	sq.delay(10);
 
-	sq.printText(12, 10);           // Powerful mages stand ready for the final assault...
+	sq.printText(12, textColor1);           // Powerful mages stand ready for the final assault...
 	sq.delay(90);
 	sq.fadeText();
 
-	sq.waitForSongNotifier(_flags.platform == Common::kPlatformFMTowns ? 2200 : 3);
+	sq.waitForSongNotifier(3);
 
 	if (!skipFlag() && !shouldQuit())
 		snd_playSoundEffect(7);
@@ -686,14 +767,16 @@ void DarkMoonEngine::seq_playFinale() {
 
 	sq.animCommand(10);
 	sq.animCommand(13);
-	sq.initDelayedPaletteFade(4, 1);
+	if (_flags.platform != Common::kPlatformAmiga)
+		sq.initDelayedPaletteFade(4, 1);
 
 	sq.animCommand(14);
 	sq.animCommand(13);
 	sq.animCommand(14);
 	sq.animCommand(14);
 	sq.animCommand(13);
-	sq.initDelayedPaletteFade(2, 1);
+	if (_flags.platform != Common::kPlatformAmiga)
+		sq.initDelayedPaletteFade(2, 1);
 
 	sq.animCommand(15);
 	sq.animCommand(14);
@@ -702,22 +785,23 @@ void DarkMoonEngine::seq_playFinale() {
 	sq.animCommand(15);
 	sq.animCommand(11);
 
-	sq.printText(13, 10);           // The temple's evil is very strong
+	sq.printText(13, textColor1);           // The temple's evil is very strong
 	sq.delay(72);
 	sq.fadeText();
 
-	sq.printText(14, 10);           // It must not be allowed...
+	sq.printText(14, textColor1);           // It must not be allowed...
 	sq.delay(72);
 	sq.fadeText();
 
-	sq.waitForSongNotifier(_flags.platform == Common::kPlatformFMTowns ? 2752 : 4);
+	sq.waitForSongNotifier(4);
 
 	if (!skipFlag() && !shouldQuit())
 		snd_playSoundEffect(7);
 	sq.delay(8);
 
 	sq.animCommand(10);
-	sq.initDelayedPaletteFade(5, 1);
+	if (_flags.platform != Common::kPlatformAmiga)
+		sq.initDelayedPaletteFade(5, 1);
 	sq.animCommand(13);
 	sq.animCommand(14);
 	sq.animCommand(13);
@@ -728,13 +812,22 @@ void DarkMoonEngine::seq_playFinale() {
 	sq.animCommand(14);
 	sq.animCommand(13);
 	sq.animCommand(12);
+	if (_flags.platform == Common::kPlatformAmiga)
+		sq.fadePalette(2, 3);
 	for (int i = 0; i < 4; i++)
 		sq.animCommand(16);
+	if (_flags.platform == Common::kPlatformAmiga)
+		sq.fadePalette(4, 3);
 	sq.animCommand(17);
 	sq.animCommand(18);
 
-	sq.printText(15, 10);           // The temple ceases to exist
-	sq.initDelayedPaletteFade(6, 1);
+	sq.printText(15, textColor1);           // The temple ceases to exist
+	if (_flags.platform != Common::kPlatformAmiga) {
+		sq.initDelayedPaletteFade(6, 1);
+	} else {
+		_screen->fadePalette(_screen->getPalette(5), 127);
+		sq.copyPalette(5, 0);
+	}
 	sq.delay(36);
 
 	if (!skipFlag() && !shouldQuit())
@@ -743,11 +836,14 @@ void DarkMoonEngine::seq_playFinale() {
 	sq.delay(54);
 	sq.fadeText();
 	sq.loadScene(12, 2);
-
-	sq.waitForSongNotifier(_flags.platform == Common::kPlatformFMTowns ? 3475 : 5);
+	
+	sq.waitForSongNotifier(5);
 
 	if (!skipFlag() && !shouldQuit())
 		snd_playSoundEffect(6);
+
+	if (_flags.platform == Common::kPlatformAmiga)
+		sq.copyPalette(6, 0);
 
 	if (!skipFlag() && !shouldQuit()) {
 		if (_configRenderMode != Common::kRenderEGA)
@@ -756,7 +852,7 @@ void DarkMoonEngine::seq_playFinale() {
 	}
 	sq.delay(18);
 
-	sq.printText(16, 15);           // My friends, our work is done
+	sq.printText(16, textColor2);           // My friends, our work is done
 	sq.animCommand(20);
 	sq.animCommand(19);
 	sq.animCommand(19, 36);
@@ -764,12 +860,12 @@ void DarkMoonEngine::seq_playFinale() {
 		snd_playSoundEffect(12);
 	sq.fadeText();
 
-	sq.printText(17, 15);           // Thank you
+	sq.printText(17, textColor2);           // Thank you
 	sq.animCommand(19);
 	sq.animCommand(20, 36);
 	sq.fadeText();
 
-	sq.printText(18, 15);           // You have earned my deepest respect
+	sq.printText(18, textColor2);           // You have earned my deepest respect
 	if (!skipFlag() && !shouldQuit())
 		snd_playSoundEffect(11);
 	sq.animCommand(20);
@@ -780,7 +876,7 @@ void DarkMoonEngine::seq_playFinale() {
 	sq.delay(36);
 	sq.fadeText();
 
-	sq.printText(19, 15);           // We will remember you always
+	sq.printText(19, textColor2);           // We will remember you always
 	sq.animCommand(19);
 	sq.animCommand(19, 18);
 	if (!skipFlag() && !shouldQuit())
@@ -797,6 +893,7 @@ void DarkMoonEngine::seq_playFinale() {
 	if (skipFlag() || shouldQuit()) {
 		_screen->copyRegion(0, 0, 8, 8, 304, 128, 2, 0, Screen::CR_NO_P_CHECK);
 	} else {
+		sq.updateAmigaSound();
 		snd_playSoundEffect(6);
 		if (_configRenderMode != Common::kRenderEGA)
 			sq.setPaletteWithoutTextColor(0);
@@ -817,6 +914,7 @@ void DarkMoonEngine::seq_playFinale() {
 	sq.delay(12);
 	if (!skipFlag() && !shouldQuit())
 		snd_playSoundEffect(12);
+	sq.updateAmigaSound();
 
 	removeInputTop();
 	resetSkipFlag(true);
@@ -824,29 +922,35 @@ void DarkMoonEngine::seq_playFinale() {
 	sq.loadScene(10, 2);
 	sq.loadScene(9, 2);
 
-	snd_stopSound();
-	sq.delay(3);
-
-	_sound->loadSoundFile(1);
+	if (_flags.platform == Common::kPlatformAmiga) {
+		sq.setPalette(7);
+		sq.delay(3);
+	} else {
+		snd_stopSound();
+		sq.delay(3);
+		_sound->loadSoundFile(1);
+	}
 
 	sq.delay(18);
-	if (!skipFlag() && !shouldQuit())
+	if (!skipFlag() && !shouldQuit() && _flags.platform != Common::kPlatformAmiga)
 		snd_playSong(_flags.platform == Common::kPlatformFMTowns ? 16 : 1);
 
 	int temp = 0;
-	const uint8 *creditsData = (_flags.platform == Common::kPlatformFMTowns) ? _res->fileData("CREDITS.TXT", 0) : _staticres->loadRawData(kEoB2CreditsData, temp);
+	const uint8 *creditsData = (_flags.platform != Common::kPlatformDOS) ? _res->fileData("CREDITS.TXT", 0) : _staticres->loadRawData(kEoB2CreditsData, temp);
 	
 	seq_playCredits(&sq, creditsData, 18, 2, 6, 2);
 	
-	if (_flags.platform == Common::kPlatformFMTowns)
+	if (_flags.platform != Common::kPlatformDOS)
 		delete[] creditsData;
 
 	sq.delay(90);
 
+	removeInputTop();
 	resetSkipFlag(true);
 
 	if (_configRenderMode != Common::kRenderEGA) {
-		sq.setPalette(11);
+		if (_flags.platform != Common::kPlatformAmiga)
+			sq.setPalette(11);
 		sq.fadePalette(9, 10);
 	}
 
@@ -867,14 +971,20 @@ void DarkMoonEngine::seq_playFinale() {
 
 	if (_flags.platform == Common::kPlatformFMTowns)
 		sq.copyPalette(12, 0);
-	
-	sq.setPalette(9);
+
+	if (_flags.platform != Common::kPlatformAmiga)
+		sq.setPalette(9);
 	sq.fadePalette(0, 18);
 
-	while (!skipFlag() && !shouldQuit())
+	while (!skipFlag() && !shouldQuit()) {
+		sq.updateAmigaSound();
 		delay(_tickLength);
+	}
 
 	snd_stopSound();
+	removeInputTop();
+	resetSkipFlag(true);
+
 	sq.fadePalette(9, 10);
 }
 
@@ -886,6 +996,8 @@ void DarkMoonEngine::seq_playCredits(DarkmoonSequenceHelper *sq, const uint8 *da
 	_screen->setScreenDim(sd);
 
 	const ScreenDim *dm = _screen->_curDim;
+	const uint8 col1 = _flags.platform == Common::kPlatformAmiga ? 19 : 12;
+	const uint8 col2 = _flags.platform == Common::kPlatformAmiga ? 29 : 240;
 
 	_screen->copyRegion(dm->sx << 3, dm->sy, dm->sx << 3, dm->sy, dm->w << 3, dm->h, 0, backupPage, Screen::CR_NO_P_CHECK);
 
@@ -961,6 +1073,7 @@ void DarkMoonEngine::seq_playCredits(DarkmoonSequenceHelper *sq, const uint8 *da
 		}
 
 		_screen->copyRegion(dm->sx << 3, dm->sy, dm->sx << 3, dm->sy, dm->w << 3, dm->h, backupPage, tempPage, Screen::CR_NO_P_CHECK);
+		sq->updateAmigaSound();
 
 		for (int h = 0; h < i; h++) {
 			if (items[h + 1].y < dm->h) {
@@ -972,8 +1085,8 @@ void DarkMoonEngine::seq_playCredits(DarkmoonSequenceHelper *sq, const uint8 *da
 					if (items[h + 1].size == 6)
 						_screen->setFont(Screen::FID_6_FNT);
 
-					_screen->printText(items[h + 1].str, (dm->sx << 3) + items[h + 1].x - 1, dm->sy + items[h + 1].y + 1, 12, 0);
-					_screen->printText(items[h + 1].str, (dm->sx << 3) + items[h + 1].x, dm->sy + items[h + 1].y, 240, 0);
+					_screen->printText(items[h + 1].str, (dm->sx << 3) + items[h + 1].x - 1, dm->sy + items[h + 1].y + 1, col1, 0);
+					_screen->printText(items[h + 1].str, (dm->sx << 3) + items[h + 1].x, dm->sy + items[h + 1].y, col2, 0);
 
 					if (items[h + 1].size == 6)
 						_screen->setFont(Screen::FID_8_FNT);
@@ -1008,134 +1121,17 @@ void DarkMoonEngine::seq_playCredits(DarkmoonSequenceHelper *sq, const uint8 *da
 		delete[] items[i].str;
 }
 
-DarkmoonSequenceHelper::DarkmoonSequenceHelper(OSystem *system, DarkMoonEngine *vm, Screen_EoB *screen, Mode mode) :
-	_system(system), _vm(vm), _screen(screen) {
-	
-	int size = 0;
-
-	if (mode == kIntro) {
-		_config = new Config(
-			_vm->staticres()->loadStrings(kEoB2IntroStrings, size),
-			_vm->staticres()->loadStrings(kEoB2IntroCPSFiles, size),
-			new const uint8*[13],
-			_vm->_configRenderMode == Common::kRenderEGA ? _palFilesIntroEGA : _palFilesIntroVGA,
-			new const DarkMoonShapeDef*[13],
-			new const DarkMoonAnimCommand *[44],
-			false,
-			false,
-			true,
-			true,
-			0,
-			0,
-			false,
-			2
-			);
-
-		for (int i = 0; i < 44; i++)
-			_config->animData[i] = _vm->staticres()->loadEoB2SeqData(kEoB2IntroAnimData00 + i, size);
-
-		for (int i = 0; i < 13; i++)
-			_config->cpsData[i] = _vm->staticres()->loadRawData(kEoB2IntroCpsDataStreet1 + i, size);
-
-		memset(_config->shapeDefs, 0, 13 * sizeof(DarkMoonShapeDef*));
-		_config->shapeDefs[0] = _vm->staticres()->loadEoB2ShapeData(kEoB2IntroShapes00, size);
-		_config->shapeDefs[1] = _vm->staticres()->loadEoB2ShapeData(kEoB2IntroShapes01, size);
-		_config->shapeDefs[4] = _vm->staticres()->loadEoB2ShapeData(kEoB2IntroShapes04, size);
-		_config->shapeDefs[7] = _vm->staticres()->loadEoB2ShapeData(kEoB2IntroShapes07, size);
-
-	} else {
-		_config = new Config(
-			_vm->staticres()->loadStrings(kEoB2FinaleStrings, size),
-			_vm->staticres()->loadStrings(kEoB2FinaleCPSFiles, size),
-			new const uint8*[13],
-			_vm->_configRenderMode == Common::kRenderEGA ? _palFilesFinaleEGA : _palFilesFinaleVGA,
-			new const DarkMoonShapeDef*[13],
-			new const DarkMoonAnimCommand *[21],
-			true,
-			true,
-			false,
-			false,
-			1,
-			18,
-			true,
-			6
-			);
-
-		for (int i = 0; i < 21; i++)
-			_config->animData[i] = _vm->staticres()->loadEoB2SeqData(kEoB2FinaleAnimData00 + i, size);
-
-		for (int i = 0; i < 13; i++)
-			_config->cpsData[i] = _vm->staticres()->loadRawData(kEoB2FinaleCpsDataDragon1 + i, size);
-
-		memset(_config->shapeDefs, 0, 13 * sizeof(DarkMoonShapeDef*));
-		_config->shapeDefs[0] = _vm->staticres()->loadEoB2ShapeData(kEoB2FinaleShapes00, size);
-		_config->shapeDefs[3] = _vm->staticres()->loadEoB2ShapeData(kEoB2FinaleShapes03, size);
-		_config->shapeDefs[7] = _vm->staticres()->loadEoB2ShapeData(kEoB2FinaleShapes07, size);
-		_config->shapeDefs[9] = _vm->staticres()->loadEoB2ShapeData(kEoB2FinaleShapes09, size);
-		_config->shapeDefs[10] = _vm->staticres()->loadEoB2ShapeData(kEoB2FinaleShapes10, size);
-	}
-
-	_screen->enableHiColorMode(false);
-
-	for (int i = 0; _config->palFiles[i]; i++) {
-		if (i < 4)
-			_palettes[i] = &_screen->getPalette(i);
-		else
-			_palettes[i] = new Palette(256);
-		_screen->loadPalette(_config->palFiles[i], *_palettes[i]);
-	}
-
-	for (int i = 9; i < 13; ++i)
-		_palettes[i] = new Palette(256);
-
-	_palettes[9]->fill(0, 256, 0);
-	_palettes[10]->fill(0, 256, 63);
-	_palettes[11]->fill(0, 256, 0);
-
-	if (_vm->gameFlags().platform == Common::kPlatformFMTowns)
-		_screen->loadPalette("PALETTE.COL", *_palettes[12]);
-
-	for (int i = 0; i < 7; i++)
-		_fadingTables[i] = 0;
-
-	uint8 *fadeData = (_vm->_configRenderMode != Common::kRenderCGA && _vm->_configRenderMode != Common::kRenderEGA) ? _vm->resource()->fileData("FADING.DAT", 0) : 0;
-	
-	if (fadeData) {
-		for (int i = 0; i < 7; i++) {
-			_fadingTables[i] = new uint8[256];
-			memcpy(_fadingTables[i], fadeData + (i << 8), 256);
-		}
-	} else {
-		if (_vm->_configRenderMode != Common::kRenderCGA && _vm->_configRenderMode != Common::kRenderEGA) {
-			uint8 *pal = _vm->resource()->fileData("PALETTE1.PAL", 0);
-			for (int i = 0; i < 7; i++)
-				_screen->createFadeTable(pal, _fadingTables[i], 18, (i + 1) * 36);
-			delete[] pal;
-		}
-	}
-
-	delete[] fadeData;
-
-	_shapes = new const uint8*[30];
-	memset(_shapes, 0, 30 * sizeof(uint8 *));
-
-	_fadePalTimer = 0;
-	_fadePalRate = 0;
-
-	_screen->setScreenPalette(*_palettes[0]);
-	_prevFont = _screen->setFont(_vm->gameFlags().platform == Common::kPlatformFMTowns ? Screen::FID_SJIS_LARGE_FNT : Screen::FID_8_FNT);
-	_screen->hideMouse();
-
-	_vm->delay(150);
-	_vm->_eventList.clear();
-	_vm->_allowSkip = true;
+DarkmoonSequenceHelper::DarkmoonSequenceHelper(OSystem *system, DarkMoonEngine *vm, Screen_EoB *screen, DarkmoonSequenceHelper::Mode mode) : _system(system), _vm(vm), _screen(screen) {
+	init(mode);
 }
 
 DarkmoonSequenceHelper::~DarkmoonSequenceHelper() {
-	for (int i = 4; _config->palFiles[i]; i++)
-		delete _palettes[i];
-	for (int i = 9; i < 13; ++i)
-		delete _palettes[i];
+	if (_vm->_flags.platform != Common::kPlatformAmiga) {
+		for (int i = 4; _config->palFiles[i]; i++)
+			delete _palettes[i];
+		for (int i = 9; i < 13; ++i)
+			delete _palettes[i];
+	}
 
 	for (int i = 0; i < 7; i++)
 		delete[] _fadingTables[i];
@@ -1152,7 +1148,6 @@ DarkmoonSequenceHelper::~DarkmoonSequenceHelper() {
 	_screen->enableHiColorMode(true);
 	_screen->clearCurPage();
 	_screen->setFont(_prevFont);
-	_screen->showMouse();
 	_screen->updateScreen();
 
 	_system->delayMillis(150);
@@ -1160,13 +1155,14 @@ DarkmoonSequenceHelper::~DarkmoonSequenceHelper() {
 	_vm->_allowSkip = false;
 }
 
-void DarkmoonSequenceHelper::loadScene(int index, int pageNum) {
-	char file[13] = "";
+void DarkmoonSequenceHelper::loadScene(int index, int pageNum, bool ignorePalette) {
+	Common::String file;
 	Common::SeekableReadStream *s = 0;
 	uint32 chunkID = 0;
+	bool isRawData = false;
 
 	if (_config->cpsFiles) {
-		strcpy(file, _config->cpsFiles[index]);
+		file = _config->cpsFiles[index];
 		s = _vm->resource()->createReadStream(file);
 	}
 	
@@ -1175,18 +1171,33 @@ void DarkmoonSequenceHelper::loadScene(int index, int pageNum) {
 		s->seek(0);
 	}
 
+	if (_vm->gameFlags().platform == Common::kPlatformAmiga) {
+		// Tolerance for diffenrences up to 2 bytes is needed in some cases
+		if ((((int32)(chunkID & 0xFFFF) + 5) & ~3) != (((s->size()) + 3) & ~3))
+			isRawData = true;
+	} else if (file.firstChar() == 'X') {
+		isRawData = true;
+	}
+
 	if (_config->cpsData[index]) {
 		_screen->decodeSHP(_config->cpsData[index], pageNum);
 	} else if (s && chunkID == MKTAG('F', 'O', 'R', 'M')) {
-		// The original code also handles files with FORM chunks and ILBM and PBM sub chunks. This will probably be necessary for Amiga versions.
-		// The DOS versions do not need this, but still have the code for it. We error out for now.
+		// The original code also handles files with FORM chunks and ILBM and PBM sub chunks.
+		// Up until now I haven't found any need for these (Amiga versions included).
+		// We error out here theoretically, but this should never happen.
 		error("DarkmoonSequenceHelper::loadScene(): CPS file loading failure in scene %d - unhandled FORM chunk encountered", index);
-	} else if (s && file[0] != 'X') {
+
+	} else if (s && !isRawData) {
 		delete s;
-		_screen->loadBitmap(_config->cpsFiles[index], pageNum | 1, pageNum | 1, _palettes[0]);
+		_screen->loadBitmap(_config->cpsFiles[index], pageNum | 1, pageNum | 1, ignorePalette ? 0 : _palettes[0]);
+
+	} else if (s && _vm->gameFlags().platform == Common::kPlatformAmiga) {
+		delete s;
+		_screen->loadSpecialAmigaCPS(_config->cpsFiles[index], pageNum | 1, true);
+
 	} else {
 		if (!s) {
-			file[0] = 'X';
+			file.setChar('X', 0);
 			s = _vm->resource()->createReadStream(file);
 		}
 
@@ -1227,10 +1238,14 @@ void DarkmoonSequenceHelper::animCommand(int index, int del) {
 	if (_vm->skipFlag() || _vm->shouldQuit())
 		return;
 
+	index += _platformAnimOffset;
 	uint32 end = 0;
 
 	for (const DarkMoonAnimCommand *s = _config->animData[index]; s->command != 0xFF && !_vm->skipFlag() && !_vm->shouldQuit(); s++) {
+		updateAmigaSound();
+
 		int palIndex = s->pal + _config->animPalOffs;
+
 		int x = s->x1;
 		if (x >= Screen::SCREEN_W)
 			x >>= 1;
@@ -1312,6 +1327,20 @@ void DarkmoonSequenceHelper::animCommand(int index, int del) {
 					_screen->copyRegion(s->x1 - 8, s->y1 - 8, s->x1, s->y1, (_shapes[s->obj][2] + 1) << 3, _shapes[s->obj][3], 2, 0, Screen::CR_NO_P_CHECK);
 				_screen->updateScreen();
 				delay(s->delay /** 7*/);
+			} else if (_vm->gameFlags().platform == Common::kPlatformAmiga) {
+				end = _system->getMillis() + s->delay * _vm->tickLength();
+
+				if (--palIndex) {
+					uint8 obj = (palIndex - 1) * 10 + s->obj;
+					_screen->copyRegion(s->x1 - 8, s->y1 - 8, 0, 0, (_shapes[obj][2] + 1) << 3, _shapes[obj][3], 2, 4, Screen::CR_NO_P_CHECK);
+					_screen->drawShape(4, _shapes[obj], s->x1 & 7, 0, 0);
+					_screen->copyRegion(0, 0, s->x1, s->y1, (_shapes[obj][2] + 1) << 3, _shapes[obj][3], 4, 0, Screen::CR_NO_P_CHECK);
+				} else {
+					_screen->copyRegion(s->x1 - 8, s->y1 - 8, s->x1, s->y1, (_shapes[s->obj][2] + 1) << 3, _shapes[s->obj][3], 2, 0, Screen::CR_NO_P_CHECK);
+				}
+				_screen->updateScreen();
+
+				_vm->delayUntil(end);
 			} else {
 				_screen->enableShapeBackgroundFading(true);
 				_screen->setShapeFadingLevel(1);
@@ -1368,17 +1397,24 @@ void DarkmoonSequenceHelper::animCommand(int index, int del) {
 		delay(del);
 }
 
+void DarkmoonSequenceHelper::setPlatformAnimIndexOffset(int offset) {
+	_platformAnimOffset = offset;
+}
+
 void DarkmoonSequenceHelper::printText(int index, int color) {
 	if (_vm->skipFlag() || _vm->shouldQuit())
 		return;
 
 	_screen->setClearScreenDim(17);
-	uint8 col1 = 15;
 
-	if (_vm->_configRenderMode != Common::kRenderEGA) {
+	if (_vm->gameFlags().platform == Common::kPlatformAmiga) {
+		memset(_textColor, 58, 3);
+		_palettes[0]->copy(_textColor, 0, 1, 31);
+		color = 31;
+	} else if (_vm->_configRenderMode != Common::kRenderEGA) {
 		_palettes[0]->copy(*_palettes[0], color, 1, 255);
 		setPalette(0);
-		col1 = 255;
+		color = 255;
 	}
 
 	char *temp = new char[strlen(_config->strings[index]) + 1];
@@ -1395,7 +1431,7 @@ void DarkmoonSequenceHelper::printText(int index, int color) {
 			*cr = 0;
 
 		uint32 len = strlen(str);
-		_screen->printText(str, (dm->sx + ((dm->w - len) >> 1)) << 3, dm->sy + yOffs, col1, dm->unkA);
+		_screen->printText(str, (dm->sx + ((dm->w - len) >> 1)) << 3, dm->sy + yOffs, color, dm->unkA);
 
 		if (cr) {
 			*cr = 13;
@@ -1406,14 +1442,23 @@ void DarkmoonSequenceHelper::printText(int index, int color) {
 	}
 
 	delete[] temp;
-	_screen->updateScreen();
+
+	if (_vm->gameFlags().platform == Common::kPlatformAmiga)
+		_screen->fadePalette(*_palettes[0], 20);
+	else
+		_screen->updateScreen();
 }
 
 void DarkmoonSequenceHelper::fadeText() {
 	if (_vm->skipFlag() || _vm->shouldQuit())
 		return;
-	if (_vm->_configRenderMode != Common::kRenderEGA)
+
+	if (_vm->gameFlags().platform == Common::kPlatformAmiga)
+		_screen->fadeTextColor(_palettes[0], 31, 8);
+	else if (_vm->_configRenderMode != Common::kRenderEGA)
 		_screen->fadeTextColor(_palettes[0], 255, 8);
+	
+	memset(_textColor, 0, 3);
 	_screen->clearCurDim();
 }
 
@@ -1421,21 +1466,186 @@ void DarkmoonSequenceHelper::update(int srcPage) {
 	if (_vm->skipFlag() || _vm->shouldQuit())
 		return;
 
+	if (_vm->gameFlags().platform == Common::kPlatformAmiga)
+		_screen->fadeToBlack(5);
+
 	_screen->copyRegion(0, 0, 8, 8, 304, 128, srcPage, 0, Screen::CR_NO_P_CHECK);
 
 	if (_vm->_configRenderMode != Common::kRenderEGA)
 		setPaletteWithoutTextColor(0);
+
+	_screen->updateScreen();
+}
+
+void DarkmoonSequenceHelper::init(DarkmoonSequenceHelper::Mode mode) {
+	assert(mode == kIntro || mode == kFinale);
+
+	static const uint16 soundMarkersFMTowns[2][8] = {
+		{  229,  447,  670, 1380, 2037, 3000, 4475, 4825 },
+		{  475, 2030, 2200, 2752, 3475,    0,    0,    0 }
+	};
+
+	int size = 0;
+	_platformAnimOffset = 0;
+	_sndNextTrack = 1;
+	_sndNextTrackMarker = 0;
+	_sndMarkersFMTowns = soundMarkersFMTowns[mode];
+
+	if (mode == kIntro) {
+		_config = new Config(
+			_vm->staticres()->loadStrings(kEoB2IntroStrings, size),
+			_vm->staticres()->loadStrings(kEoB2IntroCPSFiles, size),
+			new const uint8*[16],
+			_vm->_flags.platform == Common::kPlatformAmiga ? 0 : (_vm->_configRenderMode == Common::kRenderEGA ? _palFilesIntroEGA : _palFilesIntroVGA),
+			new const DarkMoonShapeDef*[16],
+			new const DarkMoonAnimCommand *[44],
+			false,
+			false,
+			true,
+			true,
+			_vm->_flags.platform == Common::kPlatformAmiga ? 1 : 0,
+			0,
+			false,
+			2
+		);
+
+		for (int i = 0; i < 44; i++)
+			_config->animData[i] = _vm->staticres()->loadEoB2SeqData(kEoB2IntroAnimData00 + i, size);
+
+		for (int i = 0; i < 16; i++)
+			_config->cpsData[i] = _vm->staticres()->loadRawData(kEoB2IntroCpsDataStreet1 + i, size);
+
+		memset(_config->shapeDefs, 0, 16 * sizeof(DarkMoonShapeDef*));
+		_config->shapeDefs[0] = _vm->staticres()->loadEoB2ShapeData(kEoB2IntroShapes00, size);
+		_config->shapeDefs[1] = _vm->staticres()->loadEoB2ShapeData(kEoB2IntroShapes01, size);
+		_config->shapeDefs[4] = _vm->staticres()->loadEoB2ShapeData(kEoB2IntroShapes04, size);
+		_config->shapeDefs[7] = _vm->staticres()->loadEoB2ShapeData(kEoB2IntroShapes07, size);
+		_config->shapeDefs[13] = _vm->staticres()->loadEoB2ShapeData(kEoB2IntroShapes13, size);
+		_config->shapeDefs[14] = _vm->staticres()->loadEoB2ShapeData(kEoB2IntroShapes14, size);
+		_config->shapeDefs[15] = _vm->staticres()->loadEoB2ShapeData(kEoB2IntroShapes15, size);
+
+	} else {
+		_config = new Config(
+			_vm->staticres()->loadStrings(kEoB2FinaleStrings, size),
+			_vm->staticres()->loadStrings(kEoB2FinaleCPSFiles, size),
+			new const uint8*[13],
+			_vm->_flags.platform == Common::kPlatformAmiga ? _palFilesFinaleAmiga : (_vm->_configRenderMode == Common::kRenderEGA ? _palFilesFinaleEGA : _palFilesFinaleVGA),
+			new const DarkMoonShapeDef*[13],
+			new const DarkMoonAnimCommand *[21],
+			true,
+			true,
+			false,
+			false,
+			_vm->_flags.platform == Common::kPlatformAmiga ? 2 : 1,
+			18,
+			true,
+			6
+		);
+
+		for (int i = 0; i < 21; i++)
+			_config->animData[i] = _vm->staticres()->loadEoB2SeqData(kEoB2FinaleAnimData00 + i, size);
+
+		for (int i = 0; i < 13; i++)
+			_config->cpsData[i] = _vm->staticres()->loadRawData(kEoB2FinaleCpsDataDragon1 + i, size);
+
+		memset(_config->shapeDefs, 0, 13 * sizeof(DarkMoonShapeDef*));
+		_config->shapeDefs[0] = _vm->staticres()->loadEoB2ShapeData(kEoB2FinaleShapes00, size);
+		_config->shapeDefs[3] = _vm->staticres()->loadEoB2ShapeData(kEoB2FinaleShapes03, size);
+		_config->shapeDefs[7] = _vm->staticres()->loadEoB2ShapeData(kEoB2FinaleShapes07, size);
+		_config->shapeDefs[9] = _vm->staticres()->loadEoB2ShapeData(kEoB2FinaleShapes09, size);
+		_config->shapeDefs[10] = _vm->staticres()->loadEoB2ShapeData(kEoB2FinaleShapes10, size);
+	}
+
+	_screen->enableHiColorMode(false);
+	_screen->disableDualPalettesSplitScreen();
+	int numColors = 256;
+
+	if (_vm->_flags.platform == Common::kPlatformAmiga) {
+		static const int8 palIndex[13] = { -1, -1, 3, 2, 4, 5, 6, 7, -1, -1, -1, -1, -1 };
+		for (int i = 0; i < 13; ++i)
+			_palettes[i] = &_screen->getPalette(i);
+		Common::SeekableReadStream *s = _config->palFiles ? _vm->resource()->createReadStream(_config->palFiles[0]) : 0;
+		numColors = 32;
+		for (int i = 0; i < 13; ++i) {
+			if (s && palIndex[i] != -1)
+				_palettes[palIndex[i]]->loadAmigaPalette(*s, 0, 32);
+		}
+		delete s;
+	} else {
+		for (int i = 0; _config->palFiles[i]; i++) {
+			if (i < 4)
+				_palettes[i] = &_screen->getPalette(i);
+			else
+				_palettes[i] = new Palette(256);
+			_screen->loadPalette(_config->palFiles[i], *_palettes[i]);
+		}
+
+		for (int i = 9; i < 13; ++i)
+			_palettes[i] = new Palette(256);
+	}
+
+	_palettes[9]->fill(0, numColors, 0);
+	_palettes[10]->fill(0, numColors, 63);
+	_palettes[11]->fill(0, numColors, 0);
+
+
+	if (_vm->gameFlags().platform == Common::kPlatformFMTowns)
+		_screen->loadPalette("PALETTE.COL", *_palettes[12]);
+
+	for (int i = 0; i < 7; i++)
+		_fadingTables[i] = 0;
+
+	uint8 *fadeData = (_vm->_configRenderMode != Common::kRenderCGA && _vm->_configRenderMode != Common::kRenderEGA) ? _vm->resource()->fileData("FADING.DAT", 0) : 0;
+
+	if (fadeData) {
+		for (int i = 0; i < 7; i++) {
+			_fadingTables[i] = new uint8[256];
+			memcpy(_fadingTables[i], fadeData + (i << 8), 256);
+		}
+	} else {
+		if (_vm->_flags.platform != Common::kPlatformAmiga && _vm->_configRenderMode != Common::kRenderCGA && _vm->_configRenderMode != Common::kRenderEGA) {
+			uint8 *pal = _vm->resource()->fileData("PALETTE1.PAL", 0);
+			for (int i = 0; i < 7; i++)
+				_screen->createFadeTable(pal, _fadingTables[i], 18, (i + 1) * 36);
+			delete[] pal;
+		}
+	}
+
+	delete[] fadeData;
+
+	_shapes = new const uint8*[54];
+	memset(_shapes, 0, 54 * sizeof(uint8 *));
+
+	_fadePalTimer = 0;
+	_fadePalRate = 0;
+
+	memset(_textColor, 0, 3);
+
+	_screen->setScreenPalette(*_palettes[0]);
+	_prevFont = _screen->setFont(_vm->gameFlags().platform == Common::kPlatformFMTowns ? Screen::FID_SJIS_LARGE_FNT : Screen::FID_8_FNT);
+	_screen->hideMouse();
+
+	_vm->delay(150);
+	_vm->_eventList.clear();
+	_vm->_allowSkip = true;
 }
 
 void DarkmoonSequenceHelper::setPaletteWithoutTextColor(int index) {
 	if (_vm->_configRenderMode == Common::kRenderEGA || _vm->skipFlag() || _vm->shouldQuit())
 		return;
 
-	if (!memcmp(_palettes[11]->getData(), _palettes[index]->getData(), 765))
-		return;
+	int numCol = (_vm->gameFlags().platform == Common::kPlatformAmiga) ? 31 : 255;
 
-	_palettes[11]->copy(*_palettes[index], 0, 255);
-	_palettes[11]->copy(*_palettes[0], 255, 1, 255);
+	if (_vm->gameFlags().platform != Common::kPlatformAmiga) {
+		if (!memcmp(_palettes[11]->getData(), _palettes[index]->getData(), numCol * 3))
+			return;
+	}
+
+	_palettes[11]->copy(*_palettes[index], 0, numCol);
+	if (_vm->gameFlags().platform == Common::kPlatformAmiga)
+		_palettes[11]->copy(_textColor, 0, 1, numCol);
+	else
+		_palettes[11]->copy(*_palettes[0], numCol, 1, numCol);
 	setPalette(11);
 
 	_screen->updateScreen();
@@ -1506,7 +1716,13 @@ void DarkmoonSequenceHelper::delay(uint32 ticks) {
 }
 
 void DarkmoonSequenceHelper::waitForSongNotifier(int index, bool introUpdateAnim) {
+	if (_vm->gameFlags().platform == Common::kPlatformFMTowns)
+		index = _sndMarkersFMTowns[index - 1];
+	else if (_vm->gameFlags().platform == Common::kPlatformAmiga)
+		return;
+
 	int seq = 0;
+
 	while (_vm->sound()->checkTrigger() < index && !(_vm->skipFlag() || _vm->shouldQuit())) {
 		if (introUpdateAnim) {
 			animCommand(30 | seq);
@@ -1518,6 +1734,22 @@ void DarkmoonSequenceHelper::waitForSongNotifier(int index, bool introUpdateAnim
 
 		_vm->updateInput();
 	}
+}
+
+void DarkmoonSequenceHelper::updateAmigaSound() {
+	if (_vm->gameFlags().platform != Common::kPlatformAmiga)
+		return;
+
+	int ct = _vm->sound()->checkTrigger();
+	if (ct < _sndNextTrackMarker)
+		return;
+
+	_vm->snd_playSong(_sndNextTrack++);
+	if (_sndNextTrack == 4)
+		_sndNextTrack = 1;
+
+	static const uint16 interval[4] = { 0, 1015, 4461, 1770 };
+	_sndNextTrackMarker = interval[_sndNextTrack];
 }
 
 const char *const DarkmoonSequenceHelper::_palFilesIntroVGA[] = {
@@ -1550,15 +1782,20 @@ const char *const DarkmoonSequenceHelper::_palFilesFinaleVGA[] = {
 };
 
 const char *const DarkmoonSequenceHelper::_palFilesFinaleEGA[] = {
-	"FINALE_0.PAL",
+	"FINALE_6.PAL",
 	"FINALE_0.PAL",
 	"FINALE_1.PAL",
-	"FINALE_2.PAL",
+	"FINALE_7.PAL",
 	"FINALE_3.PAL",
 	"FINALE_4.PAL",
 	"FINALE_5.PAL",
 	"FINALE_0.PAL",
 	"FINALE_0.PAL",
+	0
+};
+
+const char *const DarkmoonSequenceHelper::_palFilesFinaleAmiga[] = {
+	"FINALE.PAL",
 	0
 };
 

@@ -49,16 +49,17 @@ protected:
 	AdlEngine_v4(OSystem *syst, const AdlGameDescription *gd);
 
 	// AdlEngine
-	virtual void gameLoop();
-	virtual void loadState(Common::ReadStream &stream);
-	virtual void saveState(Common::WriteStream &stream);
-	virtual Common::String loadMessage(uint idx) const;
-	virtual Common::String getItemDescription(const Item &item) const;
-	virtual void switchRegion(byte region);
-	virtual void switchRoom(byte roomNr);
+	void setupOpcodeTables() override;
+	void gameLoop() override;
+	void loadState(Common::ReadStream &stream) override;
+	void saveState(Common::WriteStream &stream) override;
+	Common::String loadMessage(uint idx) const override;
+	Common::String getItemDescription(const Item &item) const override;
+	void switchRegion(byte region) override;
+	void switchRoom(byte roomNr) override;
 
 	// AdlEngine_v2
-	virtual void adjustDataBlockPtr(byte &track, byte &sector, byte &offset, byte &size) const;
+	void adjustDataBlockPtr(byte &track, byte &sector, byte &offset, byte &size) const override;
 
 	enum RegionChunkType {
 		kRegionChunkUnknown,
@@ -84,17 +85,17 @@ protected:
 	void backupVars();
 	void restoreVars();
 
-	int o4_isItemInRoom(ScriptEnv &e);
-	int o4_isVarGT(ScriptEnv &e);
-	int o4_moveItem(ScriptEnv &e);
-	int o4_setRegionToPrev(ScriptEnv &e);
-	int o4_moveAllItems(ScriptEnv &e);
-	int o4_setRegion(ScriptEnv &e);
-	int o4_save(ScriptEnv &e);
-	int o4_restore(ScriptEnv &e);
-	int o4_restart(ScriptEnv &e);
-	int o4_setRegionRoom(ScriptEnv &e);
-	int o4_setRoomPic(ScriptEnv &e);
+	int o_isItemInRoom(ScriptEnv &e) override;
+	virtual int o_isVarGT(ScriptEnv &e);
+	int o_moveItem(ScriptEnv &e) override;
+	virtual int o_setRegionToPrev(ScriptEnv &e);
+	int o_moveAllItems(ScriptEnv &e) override;
+	virtual int o_setRegion(ScriptEnv &e);
+	int o_save(ScriptEnv &e) override;
+	int o_restore(ScriptEnv &e) override;
+	int o_restart(ScriptEnv &e) override;
+	virtual int o_setRegionRoom(ScriptEnv &e);
+	int o_setRoomPic(ScriptEnv &e) override;
 
 	Common::Array<RegionLocation> _regionLocations;
 	Common::Array<RegionInitDataOffset> _regionInitDataOffsets;

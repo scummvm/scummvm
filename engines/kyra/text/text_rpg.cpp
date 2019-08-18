@@ -37,6 +37,10 @@ TextDisplayer_rpg::TextDisplayer_rpg(KyraRpgEngine *engine, Screen *scr) : _vm(e
 	_lineCount(0), _printFlag(false), _lineWidth(0), _numCharsTotal(0), _allowPageBreak(true),
 	_numCharsLeft(0), _numCharsPrinted(0), _sjisTextModeLineBreak(false), _waitButtonMode(1) {
 
+	static const uint8 amigaColorMap[16] = {
+		0x00, 0x06, 0x1d, 0x1b, 0x1a, 0x17, 0x18, 0x0e, 0x19, 0x1c, 0x1c, 0x1e, 0x13, 0x0a, 0x11, 0x1f
+	};
+
 	_dialogueBuffer = new char[kEoBTextBufferSize];
 	memset(_dialogueBuffer, 0, kEoBTextBufferSize);
 
@@ -48,14 +52,8 @@ TextDisplayer_rpg::TextDisplayer_rpg(KyraRpgEngine *engine, Screen *scr) : _vm(e
 	for (int i = 0; i < 256; ++i)
 		_colorMap[i] = i;
 
-	if (_vm->game() != GI_LOL) {
-		_colorMap[15] = _vm->guiSettings()->colors.guiColorWhite;
-		_colorMap[6] = _vm->guiSettings()->colors.guiColorLightRed;
-		_colorMap[8] = _vm->guiSettings()->colors.guiColorDarkRed;
-		_colorMap[9] = _vm->guiSettings()->colors.guiColorLightBlue;
-		_colorMap[2] = _vm->guiSettings()->colors.guiColorBlue;
-		_colorMap[12] = _vm->guiSettings()->colors.guiColorBlack;
-	}
+	if (_vm->gameFlags().platform == Common::kPlatformAmiga)
+		memcpy(_colorMap, amigaColorMap, 16);
 
 	for (int i = 0; i < _screen->screenDimTableCount(); i++) {
 		const ScreenDim *d = _screen->getScreenDim(i);
@@ -94,6 +92,8 @@ void TextDisplayer_rpg::setupField(int dim, bool mode) {
 	} else {
 		resetDimTextPositions(dim);
 	}
+
+	_vm->_dialogueFieldAmiga = false;
 }
 
 void TextDisplayer_rpg::resetDimTextPositions(int dim) {
@@ -116,6 +116,7 @@ void TextDisplayer_rpg::removePageBreakFlag() {
 }
 
 void TextDisplayer_rpg::displayText(char *str, ...) {
+	convertString(str);
 	_printFlag = false;
 
 	_lineWidth = 0;
@@ -189,11 +190,17 @@ void TextDisplayer_rpg::displayText(char *str, ...) {
 		case 1:
 			printLine(_currentLine);
 			_textDimData[sdx].color2 = parseCommand();
+			// EOB II Amiga does not use a color table here. EOB I doesn't do any color mapping here.
+			/*if (_vm->gameFlags().platform == Common::kPlatformAmiga)
+				_textDimData[sdx].color2 = _colorMap[_textDimData[sdx].color2];*/
 			break;
 
 		case 5:
 			printLine(_currentLine);
 			_textDimData[sdx].color1 = parseCommand();
+			// EOB I doesn't do any color mapping here.
+			if (_vm->gameFlags().platform == Common::kPlatformAmiga && _vm->game() == GI_EOB2)
+				_textDimData[sdx].color1 = _colorMap[_textDimData[sdx].color1];
 			break;
 
 		case 8:
@@ -531,6 +538,8 @@ void TextDisplayer_rpg::printDialogueText(int stringId, const char *pageBreakStr
 			resetPageBreakString();
 		}
 	}
+
+	_vm->_dialogueFieldAmiga = true;
 }
 
 void TextDisplayer_rpg::printDialogueText(const char *str, bool wait) {
@@ -744,6 +753,27 @@ void TextDisplayer_rpg::displayWaitButton() {
 	_screen->updateScreen();
 	_vm->_dialogueButtonWidth = 95;
 	SWAP(_vm->_dialogueButtonLabelColor1, _vm->_dialogueButtonLabelColor2);
+}
+
+void TextDisplayer_rpg::convertString(char *str) {
+	static const char convertTable_EOB2_Amiga_DE[] = {
+		'\x84', '\x7F', '\x8E', '\x7F', '\x81', '\x7D', '\x9A', '\x7D', '\x94', '\x7E', '\x99', '\x7E', '\0', '\0'
+	};
+
+	const char *table = 0;
+
+	if (_vm->game() == GI_EOB2 && _vm->gameFlags().platform == Common::kPlatformAmiga && _vm->gameFlags().lang == Common::DE_DEU)
+		table = convertTable_EOB2_Amiga_DE;
+
+	if (!table)
+		return;
+
+	for (; *str; ++str) {
+		for (const char *c = table; *c; c += 2) {
+			if ((*str) == c[0])
+				*str = c[1];
+		}
+	}	
 }
 
 } // End of namespace Kyra

@@ -32,7 +32,7 @@ class HuffmanTestSuite : public CxxTest::TestSuite {
 		const uint32 codes[]  = {0x2, 0x3, 0x3, 0x0, 0x2};
 		const uint32 symbols[]  = {0xA, 0xB, 0xC, 0xD, 0xE};
 
-		Common::Huffman h(maxLength, codeCount, codes, lengths, symbols);
+		Common::Huffman<Common::BitStream8MSB> h(maxLength, codeCount, codes, lengths, symbols);
 
 		byte input[] = {0x4F, 0x20};
 		// Provided input...
@@ -78,60 +78,13 @@ class HuffmanTestSuite : public CxxTest::TestSuite {
 		const uint8 lengths[] = {3,3,2,2,2};
 		const uint32 codes[]  = {0x2, 0x3, 0x3, 0x0, 0x2};
 
-		Common::Huffman h(0, codeCount, codes, lengths, 0);
+		Common::Huffman<Common::BitStream8MSB> h(0, codeCount, codes, lengths, 0);
 
 		byte input[] = {0x4F, 0x20};
 		uint32 expected[] = {0, 1, 2, 3, 4, 3 ,3};
 
 		Common::MemoryReadStream ms(input, sizeof(input));
 		Common::BitStream8MSB bs(ms);
-
-		TS_ASSERT_EQUALS(h.getSymbol(bs), expected[0]);
-		TS_ASSERT_EQUALS(h.getSymbol(bs), expected[1]);
-		TS_ASSERT_EQUALS(h.getSymbol(bs), expected[2]);
-		TS_ASSERT_EQUALS(h.getSymbol(bs), expected[3]);
-		TS_ASSERT_EQUALS(h.getSymbol(bs), expected[4]);
-		TS_ASSERT_EQUALS(h.getSymbol(bs), expected[5]);
-		TS_ASSERT_EQUALS(h.getSymbol(bs), expected[6]);
-	}
-
-	void test_get_after_set_symbols() {
-
-		/*
-		 * Another variation of test_get_with_full_symbols.
-		 * I use the setSymbols method to define, a posteriori,
-		 * an alphabet to be used in place of array indices.
-		 * The encoding is, at first,
-		 * 0=010
-		 * 1=011
-		 * 2=11
-		 * 3=00
-		 * 4=10
-		 * (=array indices).
-		 */
-
-		uint32 codeCount = 5;
-		const uint8 lengths[] = {3,3,2,2,2};
-		const uint32 codes[]  = {0x2, 0x3, 0x3, 0x0, 0x2};
-
-		Common::Huffman h(0, codeCount, codes, lengths, 0);
-
-		const uint32 symbols[]  = {0xA, 0xB, 0xC, 0xD, 0xE};
-		h.setSymbols(symbols);
-
-		byte input[] = {0x4F, 0x20};
-		uint32 expected[] = {0xA, 0xB, 0xC, 0xD, 0xE, 0xD, 0xD};
-
-		Common::MemoryReadStream ms(input, sizeof(input));
-		Common::BitStream8MSB bs(ms);
-
-		/* New symbols:
-		 * A=010
-		 * B=011
-		 * C=11
-		 * D=00
-		 * E=10
-		 */
 
 		TS_ASSERT_EQUALS(h.getSymbol(bs), expected[0]);
 		TS_ASSERT_EQUALS(h.getSymbol(bs), expected[1]);

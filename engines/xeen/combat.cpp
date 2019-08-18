@@ -1156,7 +1156,7 @@ Common::String Combat::getMonsterDescriptions() {
 
 	if (_attackDurationCtr == 2 && _attackMonsters[2] != -1) {
 		_monster2Attack = _attackMonsters[2];
-	} if (_attackDurationCtr == 1 && _attackMonsters[1] != -1) {
+	} else if (_attackDurationCtr == 1 && _attackMonsters[1] != -1) {
 		_monster2Attack = _attackMonsters[1];
 	} else {
 		_monster2Attack = _attackMonsters[0];

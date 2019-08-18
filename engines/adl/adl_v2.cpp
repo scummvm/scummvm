@@ -54,73 +54,19 @@ void AdlEngine_v2::insertDisk(byte volume) {
 	_currentVolume = volume;
 }
 
-typedef Common::Functor1Mem<ScriptEnv &, int, AdlEngine_v2> OpcodeV2;
-#define SetOpcodeTable(x) table = &x;
-#define Opcode(x) table->push_back(new OpcodeV2(this, &AdlEngine_v2::x))
-#define OpcodeUnImpl() table->push_back(new OpcodeV2(this, 0))
-
 void AdlEngine_v2::setupOpcodeTables() {
-	Common::Array<const Opcode *> *table = 0;
+	AdlEngine::setupOpcodeTables();
 
-	SetOpcodeTable(_condOpcodes);
-	// 0x00
-	OpcodeUnImpl();
-	Opcode(o2_isFirstTime);
-	Opcode(o2_isRandomGT);
-	Opcode(o1_isItemInRoom);
-	// 0x04
-	Opcode(o2_isNounNotInRoom);
-	Opcode(o1_isMovesGT);
-	Opcode(o1_isVarEQ);
-	Opcode(o2_isCarryingSomething);
-	// 0x08
-	OpcodeUnImpl();
-	Opcode(o1_isCurPicEQ);
-	Opcode(o1_isItemPicEQ);
+	_condOpcodes[0x01] = opcode(&AdlEngine_v2::o_isFirstTime);
+	_condOpcodes[0x02] = opcode(&AdlEngine_v2::o_isRandomGT);
+	_condOpcodes[0x04] = opcode(&AdlEngine_v2::o_isNounNotInRoom);
+	_condOpcodes[0x07] = opcode(&AdlEngine_v2::o_isCarryingSomething);
 
-	SetOpcodeTable(_actOpcodes);
-	// 0x00
-	OpcodeUnImpl();
-	Opcode(o1_varAdd);
-	Opcode(o1_varSub);
-	Opcode(o1_varSet);
-	// 0x04
-	Opcode(o1_listInv);
-	Opcode(o2_moveItem);
-	Opcode(o1_setRoom);
-	Opcode(o2_setCurPic);
-	// 0x08
-	Opcode(o2_setPic);
-	Opcode(o1_printMsg);
-	Opcode(o1_setLight);
-	Opcode(o1_setDark);
-	// 0x0c
-	Opcode(o2_moveAllItems);
-	Opcode(o1_quit);
-	OpcodeUnImpl();
-	Opcode(o2_save);
-	// 0x10
-	Opcode(o2_restore);
-	Opcode(o1_restart);
-	Opcode(o2_placeItem);
-	Opcode(o1_setItemPic);
-	// 0x14
-	Opcode(o1_resetPic);
-	Opcode(o1_goDirection<IDI_DIR_NORTH>);
-	Opcode(o1_goDirection<IDI_DIR_SOUTH>);
-	Opcode(o1_goDirection<IDI_DIR_EAST>);
-	// 0x18
-	Opcode(o1_goDirection<IDI_DIR_WEST>);
-	Opcode(o1_goDirection<IDI_DIR_UP>);
-	Opcode(o1_goDirection<IDI_DIR_DOWN>);
-	Opcode(o1_takeItem);
-	// 0x1c
-	Opcode(o1_dropItem);
-	Opcode(o1_setRoomPic);
-	Opcode(o2_tellTime);
-	Opcode(o2_setRoomFromVar);
-	// 0x20
-	Opcode(o2_initDisk);
+	_actOpcodes.resize(0x21);
+	_actOpcodes[0x0c] = opcode(&AdlEngine_v2::o_moveAllItems);
+	_actOpcodes[0x1e] = opcode(&AdlEngine_v2::o_tellTime);
+	_actOpcodes[0x1f] = opcode(&AdlEngine_v2::o_setRoomFromVar);
+	_actOpcodes[0x20] = opcode(&AdlEngine_v2::o_initDisk);
 }
 
 void AdlEngine_v2::initState() {
@@ -155,7 +101,7 @@ void AdlEngine_v2::advanceClock() {
 }
 
 void AdlEngine_v2::checkTextOverflow(char c) {
-	if (c != APPLECHAR('\r'))
+	if (c != _display->asciiToNative('\r'))
 		return;
 
 	++_linesPrinted;
@@ -166,7 +112,7 @@ void AdlEngine_v2::checkTextOverflow(char c) {
 
 void AdlEngine_v2::handleTextOverflow() {
 	_linesPrinted = 0;
-	_display->updateTextScreen();
+	_display->renderText();
 
 	if (_inputScript) {
 		// Set pause flag to activate regular behaviour of delay and inputKey
@@ -189,7 +135,7 @@ void AdlEngine_v2::handleTextOverflow() {
 		if (shouldQuit())
 			return;
 
-		if (key == APPLECHAR('\r'))
+		if (key == _display->asciiToNative('\r'))
 			break;
 
 		bell(3);
@@ -207,21 +153,25 @@ Common::String AdlEngine_v2::loadMessage(uint idx) const {
 
 void AdlEngine_v2::printString(const Common::String &str) {
 	Common::String s(str);
-	uint endPos = TEXT_WIDTH - 1;
+	const uint textWidth = _display->getTextWidth();
+	uint endPos = textWidth - 1;
 	uint startPos = 0;
 	uint pos = 0;
 
+	const char spaceChar = _display->asciiToNative(' ');
+	const char returnChar = _display->asciiToNative('\r');
+
 	while (pos < s.size()) {
-		s.setChar(APPLECHAR(s[pos]), pos);
+		s.setChar(_display->asciiToNative(s[pos]), pos);
 
 		if (pos == endPos) {
-			while (s[pos] != APPLECHAR(' ') && s[pos] != APPLECHAR('\r')) {
+			while (s[pos] != spaceChar && s[pos] != returnChar) {
 				if (pos-- == startPos)
 					error("Word wrapping failed");
 			}
 
-			s.setChar(APPLECHAR('\r'), pos);
-			endPos = pos + TEXT_WIDTH;
+			s.setChar(returnChar, pos);
+			endPos = pos + textWidth;
 			startPos = pos + 1;
 		}
 
@@ -233,9 +183,9 @@ void AdlEngine_v2::printString(const Common::String &str) {
 		_display->printChar(s[pos]);
 	}
 
-	checkTextOverflow(APPLECHAR('\r'));
-	_display->printChar(APPLECHAR('\r'));
-	_display->updateTextScreen();
+	checkTextOverflow(returnChar);
+	_display->printChar(returnChar);
+	_display->renderText();
 }
 
 void AdlEngine_v2::drawItem(Item &item, const Common::Point &pos) {
@@ -313,7 +263,7 @@ void AdlEngine_v2::showRoom() {
 	if (!_state.isDark)
 		drawItems();
 
-	_display->updateHiResScreen();
+	_display->renderGraphics();
 	printString(_roomData.description);
 }
 
@@ -466,7 +416,7 @@ void AdlEngine_v2::loadItemPictures(Common::ReadStream &stream, byte count) {
 	}
 }
 
-int AdlEngine_v2::o2_isFirstTime(ScriptEnv &e) {
+int AdlEngine_v2::o_isFirstTime(ScriptEnv &e) {
 	OP_DEBUG_0("\t&& IS_FIRST_TIME()");
 
 	bool oldFlag = getCurRoom().isFirstTime;
@@ -479,7 +429,7 @@ int AdlEngine_v2::o2_isFirstTime(ScriptEnv &e) {
 	return 0;
 }
 
-int AdlEngine_v2::o2_isRandomGT(ScriptEnv &e) {
+int AdlEngine_v2::o_isRandomGT(ScriptEnv &e) {
 	OP_DEBUG_1("\t&& RAND() > %d", e.arg(1));
 
 	byte rnd = _random->getRandomNumber(255);
@@ -490,7 +440,7 @@ int AdlEngine_v2::o2_isRandomGT(ScriptEnv &e) {
 	return -1;
 }
 
-int AdlEngine_v2::o2_isNounNotInRoom(ScriptEnv &e) {
+int AdlEngine_v2::o_isNounNotInRoom(ScriptEnv &e) {
 	OP_DEBUG_1("\t&& NO_SUCH_ITEMS_IN_ROOM(%s)", itemRoomStr(e.arg(1)).c_str());
 
 	Common::List<Item>::const_iterator item;
@@ -502,7 +452,7 @@ int AdlEngine_v2::o2_isNounNotInRoom(ScriptEnv &e) {
 	return 1;
 }
 
-int AdlEngine_v2::o2_isCarryingSomething(ScriptEnv &e) {
+int AdlEngine_v2::o_isCarryingSomething(ScriptEnv &e) {
 	OP_DEBUG_0("\t&& IS_CARRYING_SOMETHING()");
 
 	Common::List<Item>::const_iterator item;
@@ -513,7 +463,7 @@ int AdlEngine_v2::o2_isCarryingSomething(ScriptEnv &e) {
 	return -1;
 }
 
-int AdlEngine_v2::o2_moveItem(ScriptEnv &e) {
+int AdlEngine_v2::o_moveItem(ScriptEnv &e) {
 	OP_DEBUG_2("\tSET_ITEM_ROOM(%s, %s)", itemStr(e.arg(1)).c_str(), itemRoomStr(e.arg(2)).c_str());
 
 	byte room = roomArg(e.arg(2));
@@ -531,21 +481,21 @@ int AdlEngine_v2::o2_moveItem(ScriptEnv &e) {
 	return 2;
 }
 
-int AdlEngine_v2::o2_setCurPic(ScriptEnv &e) {
+int AdlEngine_v2::o_setCurPic(ScriptEnv &e) {
 	OP_DEBUG_1("\tSET_CURPIC(%d)", e.arg(1));
 
 	getCurRoom().curPicture = _state.curPicture = e.arg(1);
 	return 1;
 }
 
-int AdlEngine_v2::o2_setPic(ScriptEnv &e) {
+int AdlEngine_v2::o_setPic(ScriptEnv &e) {
 	OP_DEBUG_1("\tSET_PIC(%d)", e.arg(1));
 
 	getCurRoom().picture = getCurRoom().curPicture = _state.curPicture = e.arg(1);
 	return 1;
 }
 
-int AdlEngine_v2::o2_moveAllItems(ScriptEnv &e) {
+int AdlEngine_v2::o_moveAllItems(ScriptEnv &e) {
 	OP_DEBUG_2("\tMOVE_ALL_ITEMS(%s, %s)", itemRoomStr(e.arg(1)).c_str(), itemRoomStr(e.arg(2)).c_str());
 
 	byte room1 = roomArg(e.arg(1));
@@ -567,7 +517,7 @@ int AdlEngine_v2::o2_moveAllItems(ScriptEnv &e) {
 	return 2;
 }
 
-int AdlEngine_v2::o2_save(ScriptEnv &e) {
+int AdlEngine_v2::o_save(ScriptEnv &e) {
 	OP_DEBUG_0("\tSAVE_GAME()");
 
 	int slot = askForSlot(_strings_v2.saveInsert);
@@ -582,7 +532,7 @@ int AdlEngine_v2::o2_save(ScriptEnv &e) {
 	return 0;
 }
 
-int AdlEngine_v2::o2_restore(ScriptEnv &e) {
+int AdlEngine_v2::o_restore(ScriptEnv &e) {
 	OP_DEBUG_0("\tRESTORE_GAME()");
 
 	int slot = askForSlot(_strings_v2.restoreInsert);
@@ -600,7 +550,7 @@ int AdlEngine_v2::o2_restore(ScriptEnv &e) {
 	return 0;
 }
 
-int AdlEngine_v2::o2_placeItem(ScriptEnv &e) {
+int AdlEngine_v2::o_placeItem(ScriptEnv &e) {
 	OP_DEBUG_4("\tPLACE_ITEM(%s, %s, (%d, %d))", itemStr(e.arg(1)).c_str(), itemRoomStr(e.arg(2)).c_str(), e.arg(3), e.arg(4));
 
 	Item &item = getItem(e.arg(1));
@@ -613,29 +563,31 @@ int AdlEngine_v2::o2_placeItem(ScriptEnv &e) {
 	return 4;
 }
 
-int AdlEngine_v2::o2_tellTime(ScriptEnv &e) {
+int AdlEngine_v2::o_tellTime(ScriptEnv &e) {
 	OP_DEBUG_0("\tTELL_TIME()");
 
 	Common::String time = _strings_v2.time;
 
-	time.setChar(APPLECHAR('0') + _state.time.hours / 10, 12);
-	time.setChar(APPLECHAR('0') + _state.time.hours % 10, 13);
-	time.setChar(APPLECHAR('0') + _state.time.minutes / 10, 15);
-	time.setChar(APPLECHAR('0') + _state.time.minutes % 10, 16);
+	const char zeroChar = _display->asciiToNative('0');
+
+	time.setChar(zeroChar + _state.time.hours / 10, 12);
+	time.setChar(zeroChar + _state.time.hours % 10, 13);
+	time.setChar(zeroChar + _state.time.minutes / 10, 15);
+	time.setChar(zeroChar + _state.time.minutes % 10, 16);
 
 	printString(time);
 
 	return 0;
 }
 
-int AdlEngine_v2::o2_setRoomFromVar(ScriptEnv &e) {
+int AdlEngine_v2::o_setRoomFromVar(ScriptEnv &e) {
 	OP_DEBUG_1("\tROOM = VAR[%d]", e.arg(1));
 	getCurRoom().curPicture = getCurRoom().picture;
 	_state.room = getVar(e.arg(1));
 	return 1;
 }
 
-int AdlEngine_v2::o2_initDisk(ScriptEnv &e) {
+int AdlEngine_v2::o_initDisk(ScriptEnv &e) {
 	OP_DEBUG_0("\tINIT_DISK()");
 
 	_display->printAsciiString("NOT REQUIRED\r");
@@ -664,8 +616,8 @@ int AdlEngine_v2::askForSlot(const Common::String &question) {
 		if (shouldQuit())
 			return -1;
 
-		if (input.size() > 0 && input[0] >= APPLECHAR('A') && input[0] <= APPLECHAR('O'))
-			return input[0] - APPLECHAR('A');
+		if (input.size() > 0 && input[0] >= _display->asciiToNative('A') && input[0] <= _display->asciiToNative('O'))
+			return input[0] - _display->asciiToNative('A');
 	}
 }
 

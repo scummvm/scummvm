@@ -37,28 +37,28 @@ void SceneScriptUG03::InitializeScene() {
 	Scene_Exit_Add_2D_Exit(0,  46, 137, 131, 296, 0);
 	Scene_Exit_Add_2D_Exit(1, 559, 141, 639, 380, 1);
 
-	Ambient_Sounds_Add_Looping_Sound(331, 15, 0, 1);
-	Ambient_Sounds_Add_Looping_Sound(332, 40, 0, 1);
-	Ambient_Sounds_Add_Looping_Sound(333, 40, 0, 1);
-	Ambient_Sounds_Add_Sound(402, 2, 120, 10, 11,    0, 100,    0,  100, 0, 0);
-	Ambient_Sounds_Add_Sound(370, 2, 120, 10, 11,    0, 100,    0,  100, 0, 0);
-	Ambient_Sounds_Add_Sound(396, 2, 120, 10, 11,    0, 100,    0,  100, 0, 0);
-	Ambient_Sounds_Add_Sound(395, 2, 120, 10, 11,    0, 100,    0,  100, 0, 0);
-	Ambient_Sounds_Add_Sound(234, 2, 190, 12, 16, -100, 100, -100,  100, 0, 0);
-	Ambient_Sounds_Add_Sound(235, 2, 190, 12, 16, -100, 100, -100,  100, 0, 0);
-	Ambient_Sounds_Add_Sound(391, 2, 190, 12, 16, -100, 100, -100,  100, 0, 0);
-	Ambient_Sounds_Add_Sound(392, 2, 190, 12, 16, -100, 100, -100,  100, 0, 0);
-	Ambient_Sounds_Add_Sound(393, 2, 190, 12, 16, -100, 100, -100,  100, 0, 0);
-	Ambient_Sounds_Add_Sound(394, 2, 190, 12, 16, -100, 100, -100,  100, 0, 0);
-	Ambient_Sounds_Add_Sound(224, 2, 190, 12, 16, -100, 100, -100,  100, 0, 0);
-	Ambient_Sounds_Add_Sound(225, 2, 190, 12, 16, -100, 100, -100,  100, 0, 0);
-	Ambient_Sounds_Add_Sound(226, 2, 190, 12, 16, -100, 100, -100,  100, 0, 0);
-	Ambient_Sounds_Add_Sound(227, 2, 190, 12, 16, -100, 100, -100,  100, 0, 0);
-	Ambient_Sounds_Add_Sound(228, 2, 190, 12, 16, -100, 100, -100,  100, 0, 0);
-	Ambient_Sounds_Add_Sound(229, 2, 190, 12, 16, -100, 100, -100,  100, 0, 0);
-	Ambient_Sounds_Add_Sound(303, 5,  50, 17, 37, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(304, 5,  50, 17, 37, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(305, 5,  50, 17, 37, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Looping_Sound(kSfxSTMLOOP7, 15, 0, 1);
+	Ambient_Sounds_Add_Looping_Sound(kSfxUGBED1,   40, 0, 1);
+	Ambient_Sounds_Add_Looping_Sound(kSfxUGBED2,   40, 0, 1);
+	Ambient_Sounds_Add_Sound(kSfxYELL1M3,  2, 120, 10, 11,    0, 100,    0,  100, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxGRUNT2M1, 2, 120, 10, 11,    0, 100,    0,  100, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxGRUNT1M3, 2, 120, 10, 11,    0, 100,    0,  100, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxGRUNT1M2, 2, 120, 10, 11,    0, 100,    0,  100, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxPIPER1,   2, 190, 12, 16, -100, 100, -100,  100, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxSQUEAK1,  2, 190, 12, 16, -100, 100, -100,  100, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxSQUEAK2,  2, 190, 12, 16, -100, 100, -100,  100, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxSQUEAK3,  2, 190, 12, 16, -100, 100, -100,  100, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxSQUEAK4,  2, 190, 12, 16, -100, 100, -100,  100, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxSQUEAK5,  2, 190, 12, 16, -100, 100, -100,  100, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxBANG1,    2, 190, 12, 16, -100, 100, -100,  100, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxBANG2,    2, 190, 12, 16, -100, 100, -100,  100, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxBANG3,    2, 190, 12, 16, -100, 100, -100,  100, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxBANG4,    2, 190, 12, 16, -100, 100, -100,  100, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxBANG5,    2, 190, 12, 16, -100, 100, -100,  100, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxBANG6,    2, 190, 12, 16, -100, 100, -100,  100, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxBBGRN1,   5,  50, 17, 37, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxBBGRN2,   5,  50, 17, 37, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxBBGRN3,   5,  50, 17, 37, -100, 100, -101, -101, 0, 0);
 }
 
 void SceneScriptUG03::SceneLoaded() {
@@ -69,6 +69,16 @@ void SceneScriptUG03::SceneLoaded() {
 	Clickable_Object("CHAIR_SEAT");
 	Clickable_Object("CHAIR_STRAPLEGLEFT");
 	Clickable_Object("CHAIR_STRAPLEGRIGHT");
+#if BLADERUNNER_ORIGINAL_BUGS
+#else
+	if (Actor_Clue_Query(kActorMcCoy, kClueScaryChair)) {
+		Unclickable_Object("CHAIR_HEADZAPPER");
+		Unclickable_Object("CHAIR_BACK");
+		Unclickable_Object("CHAIR_SEAT");
+		Unclickable_Object("CHAIR_STRAPLEGLEFT");
+		Unclickable_Object("CHAIR_STRAPLEGRIGHT");
+	}
+#endif // BLADERUNNER_ORIGINAL_BUGS
 }
 
 bool SceneScriptUG03::MouseClick(int x, int y) {
@@ -79,6 +89,11 @@ bool SceneScriptUG03::ClickedOn3DObject(const char *objectName, bool a2) {
 	if (Object_Query_Click("CHAIR_BACK", objectName)
 	 || Object_Query_Click("CHAIR_SEAT", objectName)
 	 || Object_Query_Click("CHAIR_HEADZAPPER", objectName)
+#if BLADERUNNER_ORIGINAL_BUGS
+#else
+	 || Object_Query_Click("CHAIR_STRAPLEGLEFT", objectName)
+	 || Object_Query_Click("CHAIR_STRAPLEGRIGHT", objectName)
+#endif // BLADERUNNER_ORIGINAL_BUGS
 	) {
 		if (!Loop_Actor_Walk_To_Scene_Object(kActorMcCoy, "CHAIR_BACK", 36, true, false)) {
 			Actor_Face_Object(kActorMcCoy, "CHAIR_BACK", true);
@@ -89,6 +104,14 @@ bool SceneScriptUG03::ClickedOn3DObject(const char *objectName, bool a2) {
 				Actor_Voice_Over(2580, kActorVoiceOver);
 				Actor_Voice_Over(2590, kActorVoiceOver);
 				Actor_Clue_Acquire(kActorMcCoy, kClueScaryChair, true, -1);
+#if BLADERUNNER_ORIGINAL_BUGS
+#else
+				Unclickable_Object("CHAIR_HEADZAPPER");
+				Unclickable_Object("CHAIR_BACK");
+				Unclickable_Object("CHAIR_SEAT");
+				Unclickable_Object("CHAIR_STRAPLEGLEFT");
+				Unclickable_Object("CHAIR_STRAPLEGRIGHT");
+#endif // BLADERUNNER_ORIGINAL_BUGS
 			}
 		}
 	}
@@ -105,7 +128,7 @@ bool SceneScriptUG03::ClickedOnItem(int itemId, bool a2) {
 
 bool SceneScriptUG03::ClickedOnExit(int exitId) {
 	if (exitId == 0) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -139.0f, 0.0f, -13.0f, 0, true, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -139.0f, 0.0f, -13.0f, 0, true, false, false)) {
 			if (Global_Variable_Query(kVariableChapter) < 4) {
 				Actor_Says(kActorMcCoy, 8522, 14);
 			} else {
@@ -119,7 +142,7 @@ bool SceneScriptUG03::ClickedOnExit(int exitId) {
 	}
 
 	if (exitId == 1) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -51.0f, 0.0f, 255.0f, 0, true, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -51.0f, 0.0f, 255.0f, 0, true, false, false)) {
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
 			Game_Flag_Set(kFlagUG03toUG04);

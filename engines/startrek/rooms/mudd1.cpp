@@ -161,7 +161,7 @@ void Room::mudd1SpockPressedRedButton() {
 		TX_BLANK
 	};
 
-	int choice = showText(choices);
+	int choice = showMultipleTexts(choices);
 
 	switch (choice) {
 	case 0:
@@ -169,7 +169,8 @@ void Room::mudd1SpockPressedRedButton() {
 
 		// ENHANCEMENT: Original text was just "(Spock raises eyebrow)" without any audio.
 		// This changes it to a narration to make it flow better.
-		showText(TX_DEM0N009);
+		// TODO: This needs to be refactored
+		showDescription(TX_DEM0N009);
 		break;
 
 	case 1:
@@ -185,7 +186,7 @@ void Room::mudd1SpockPressedRedButton() {
 
 
 void Room::mudd1GetTorpedo() {
-	showText(TX_MUD1N014);
+	showDescription(TX_MUD1N014);
 }
 
 void Room::mudd1UseSTricorderOnTorpedo() {
@@ -215,51 +216,51 @@ void Room::mudd1UseMedkitAnywhere() {
 }
 
 void Room::mudd1LookAnywhere() {
-	showText(TX_MUD1N011);
+	showDescription(TX_MUD1N011);
 }
 
 void Room::mudd1LookAtTorpedo() {
-	showText(TX_MUD1N002);
+	showDescription(TX_MUD1N002);
 }
 
 void Room::mudd1LookAtFallenTorpedo() {
-	showText(TX_MUD1N012);
+	showDescription(TX_MUD1N012);
 }
 
 void Room::mudd1LookAtTorpedoLauncher() {
-	showText(TX_MUD1N003);
+	showDescription(TX_MUD1N003);
 }
 
 void Room::mudd1LookAtKirk() {
-	showText(TX_MUD1N005);
+	showDescription(TX_MUD1N005);
 }
 
 void Room::mudd1LookAtSpock() {
-	showText(TX_MUD1N009);
+	showDescription(TX_MUD1N009);
 }
 
 void Room::mudd1LookAtMccoy() {
-	showText(TX_MUD1N008);
+	showDescription(TX_MUD1N008);
 }
 
 void Room::mudd1LookAtRedshirt() {
-	showText(TX_MUD1N006);
+	showDescription(TX_MUD1N006);
 }
 
 void Room::mudd1LookAtCrane() {
-	showText(TX_MUD1N000);
+	showDescription(TX_MUD1N000);
 }
 
 void Room::mudd1LookAtRedButton() {
-	showText(TX_MUD1N001);
+	showDescription(TX_MUD1N001);
 }
 
 void Room::mudd1LookAtBlueButton() {
-	showText(TX_MUD1N015);
+	showDescription(TX_MUD1N015);
 }
 
 void Room::mudd1LookAtYellowButton() {
-	showText(TX_MUD1N016);
+	showDescription(TX_MUD1N016);
 }
 
 void Room::mudd1TalkToKirk() {

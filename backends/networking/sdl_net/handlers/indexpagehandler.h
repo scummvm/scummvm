@@ -30,12 +30,10 @@ namespace Networking {
 class LocalWebserver;
 
 class IndexPageHandler: public BaseHandler, public GUI::CommandSender {
-	Common::String _code;
 public:
 	IndexPageHandler();
 	virtual ~IndexPageHandler();
 
-	Common::String code() const;
 	virtual void handle(Client &client);
 	virtual bool minimalModeSupported();
 };

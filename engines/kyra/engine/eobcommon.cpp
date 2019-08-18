@@ -221,6 +221,9 @@ EoBCoreEngine::EoBCoreEngine(OSystem *system, const GameFlags &flags) : KyraRpgE
 	_mnNumWord = _numSpells = _mageSpellListSize = _spellLevelsMageSize = _spellLevelsClericSize = 0;
 	_inventorySlotsX = _slotValidationFlags = _encodeMonsterShpTable = 0;
 	_cgaMappingDefault = _cgaMappingAlt = _cgaMappingInv = _cgaLevelMappingIndex = _cgaMappingItemsL = _cgaMappingItemsS = _cgaMappingThrown = _cgaMappingIcons = _cgaMappingDeco = 0;
+	_amigaLevelSoundList1 = _amigaLevelSoundList2 = 0;
+	_amigaSoundMap = 0;
+	_amigaCurSoundFile = -1;
 	memset(_cgaMappingLevel, 0, sizeof(_cgaMappingLevel));
 	memset(_expRequirementTables, 0, sizeof(_expRequirementTables));
 	memset(_saveThrowTables, 0, sizeof(_saveThrowTables));
@@ -321,6 +324,9 @@ EoBCoreEngine::~EoBCoreEngine() {
 
 	delete[] _menuDefs;
 	_menuDefs = 0;
+
+	delete[] _amigaSoundMap;
+	_amigaSoundMap = 0;
 
 	delete _inf;
 	_inf = 0;
@@ -438,27 +444,20 @@ Common::Error EoBCoreEngine::init() {
 	assert(_debugger);
 
 	if (_flags.platform == Common::kPlatformAmiga) {
-		bool showErrorDlg = false;
 		if (_res->exists("EOBF6.FONT"))
 			_screen->loadFont(Screen::FID_6_FNT, "EOBF6.FONT");
 		else if (_res->exists("FONTS/EOBF6.FONT"))
 			_screen->loadFont(Screen::FID_6_FNT, "FONTS/EOBF6.FONT");
 		else
-			showErrorDlg = true;
+			AmigaDOSFont::errorDialog(0);
 
 		if (_res->exists("EOBF8.FONT"))
 			_screen->loadFont(Screen::FID_8_FNT, "EOBF8.FONT");
 		else if (_res->exists("FONTS/EOBF8.FONT"))
 			_screen->loadFont(Screen::FID_8_FNT, "FONTS/EOBF8.FONT");
 		else
-			showErrorDlg = true;
+			AmigaDOSFont::errorDialog(0);
 
-		if (showErrorDlg) {
-			::GUI::displayErrorDialog("This AMIGA version requires the following font files:\n\nEOBF6.FONT\nEOBF6/6\nEOBF8.FONT\nEOBF8/8\n\n"
-				"If you used the orginal installer for the installation these files\nshould be located in the AmigaDOS system 'Fonts/' folder.\n"
-				"Please copy them into the EOB game data directory.\n");
-			error("Failed to load font files.");
-		}
 	} else {
 		_screen->loadFont(Screen::FID_6_FNT, "FONT6.FNT");
 		_screen->loadFont(Screen::FID_8_FNT, "FONT8.FNT");
@@ -544,7 +543,7 @@ Common::Error EoBCoreEngine::init() {
 	_monsterFlashOverlay = new uint8[16];
 	_monsterStoneOverlay = new uint8[16];
 	memset(_monsterFlashOverlay, (_configRenderMode == Common::kRenderCGA) ? 0xFF : guiSettings()->colors.guiColorWhite, 16 * sizeof(uint8));
-	memset(_monsterStoneOverlay, 0x0D, 16 * sizeof(uint8));
+	memset(_monsterStoneOverlay, (_flags.platform == Common::kPlatformAmiga) ? guiSettings()->colors.guiColorWhite : 0x0D, 16 * sizeof(uint8));
 	_monsterFlashOverlay[0] = _monsterStoneOverlay[0] = 0;
 
 	// Prevent autosave on game startup
@@ -813,12 +812,13 @@ void EoBCoreEngine::loadItemsAndDecorationsShapes() {
 		for (int i = 0; i < _numItemIconShapes; i++)
 			_itemIconShapes[i] = _screen->encodeShape((i % 0x14) << 1, (i / 0x14) << 4, 2, 0x10, false, _cgaMappingIcons);
 		
-		if (_flags.platform == Common::kPlatformAmiga && _flags.gameID == GI_EOB1) {
+		if (_flags.platform == Common::kPlatformAmiga) {
+			const uint8 offsY = (_flags.gameID == GI_EOB1) ? 80 : 96;
 			_amigaBlueItemIconShapes = new const uint8*[_numItemIconShapes];
 			for (int i = 0; i < _numItemIconShapes; i++) {
 				int bx = (i % 0x14) << 1;
 				int by = (i / 0x14) << 4;
-				_amigaBlueItemIconShapes[i] = _screen->getPagePixel(2, (bx << 3) + 8, by + 88) ? _screen->encodeShape(bx, by + 80, 2, 0x10, false, 0) : _screen->encodeShape(bx, by, 2, 0x10, false, 0);
+				_amigaBlueItemIconShapes[i] = _screen->getPagePixel(2, (bx << 3) + 8, by + offsY + 8) ? _screen->encodeShape(bx, by + offsY, 2, 0x10, false, 0) : _screen->encodeShape(bx, by, 2, 0x10, false, 0);
 			}
 		}
 	}
@@ -1352,7 +1352,15 @@ void EoBCoreEngine::npcSequence(int npcIndex) {
 	drawNpcScene(npcIndex);
 
 	Common::SeekableReadStream *s = _res->createReadStream("TEXT.DAT");
-	_screen->loadFileDataToPage(s, 5, 32000);
+	if (s) {
+		_screen->loadFileDataToPage(s, 5, 32000);
+	} else {
+		s = _res->createReadStream("TEXT.CPS");
+		if (s->readSint32BE() + 12 == s->size())
+			_screen->loadSpecialAmigaCPS("TEXT.CPS", 5, false);
+		else
+			_screen->loadBitmap("TEXT.CPS", 5, 5, 0, true);
+	}		
 	delete s;
 
 	gui_drawBox(0, 121, 320, 79, guiSettings()->colors.frame1, guiSettings()->colors.frame2, guiSettings()->colors.fill);
@@ -1586,7 +1594,6 @@ void EoBCoreEngine::initDialogueSequence() {
 	_npcSequenceSub = -1;
 	_txt->setWaitButtonMode(0);
 	_dialogueField = true;
-
 	_dialogueLastBitmap[0] = 0;
 
 	_txt->resetPageBreakString();
@@ -1600,14 +1607,23 @@ void EoBCoreEngine::initDialogueSequence() {
 		snd_stopSound();
 
 	Common::SeekableReadStream *s = _res->createReadStream("TEXT.DAT");
-	_screen->loadFileDataToPage(s, 5, 32000);
-	_txt->setupField(9, 0);
+	if (s) {
+		_screen->loadFileDataToPage(s, 5, 32000);
+	} else {
+		s = _res->createReadStream("TEXT.CPS");
+		if (s->readSint32BE() + 12 == s->size())
+			_screen->loadSpecialAmigaCPS("TEXT.CPS", 5, false);
+		else
+			_screen->loadBitmap("TEXT.CPS", 5, 5, 0, true);
+	}
 	delete s;
+
+	_txt->setupField(9, 0);
 }
 
 void EoBCoreEngine::restoreAfterDialogueSequence() {
 	_txt->allowPageBreak(false);
-	_dialogueField = false;
+	_dialogueField = _dialogueFieldAmiga = false;
 
 	_dialogueLastBitmap[0] = 0;
 
@@ -1628,12 +1644,15 @@ void EoBCoreEngine::drawSequenceBitmap(const char *file, int destRect, int x1, i
 	static const uint8 frameH[] = { 96, 121 };
 
 	int page = ((flags & 2) || destRect) ? 0 : 6;
+	int amigaPalIndex = (x1 ? 1 : 0) + (y1 ? 2 : 0) + 1;
 
 	if (scumm_stricmp(_dialogueLastBitmap, file)) {
 		_screen->clearPage(2);
 		if (!destRect) {
 			if (!(flags & 1)) {
 				_screen->loadEoBBitmap("BORDER", 0, 3, 3, 2);
+				if (_flags.platform == Common::kPlatformAmiga)
+					_screen->copyRegion(0, 0, 0, 0, 320, 122, 2, 0, Screen::CR_NO_P_CHECK);
 				_screen->copyRegion(0, 0, 0, 0, 184, 121, 2, page, Screen::CR_NO_P_CHECK);
 			} else {
 				_screen->copyRegion(0, 0, 0, 0, 184, 121, 0, page, Screen::CR_NO_P_CHECK);
@@ -1647,13 +1666,25 @@ void EoBCoreEngine::drawSequenceBitmap(const char *file, int destRect, int x1, i
 		strcpy(_dialogueLastBitmap, file);
 	}
 
+	if (_flags.platform == Common::kPlatformAmiga) {
+		int cp = _screen->setCurPage(0);
+		if (!_dialogueFieldAmiga)
+			gui_drawDialogueBox();
+		_screen->drawClippedLine(0, 120, 319, 120, 9);
+		_screen->drawClippedLine(0, 121, 319, 121, guiSettings()->colors.fill);
+		_screen->setPagePixel(0, 319, 121, 9);
+		_screen->setCurPage(cp);
+		_screen->setupDualPalettesSplitScreen(_screen->getPalette(amigaPalIndex), _screen->getPalette(7));
+		_dialogueFieldAmiga = true;
+	}
+
 	if (flags & 2)
 		_screen->crossFadeRegion(x1 << 3, y1, frameX[destRect] << 3, frameY[destRect], frameW[destRect] << 3, frameH[destRect], 2, page);
 	else
 		_screen->copyRegion(x1 << 3, y1, frameX[destRect] << 3, frameY[destRect], frameW[destRect] << 3, frameH[destRect], 2, page, Screen::CR_NO_P_CHECK);
 
 	if (page == 6)
-		_screen->copyRegion(0, 0, 0, 0, 184, 121, 6, 0, Screen::CR_NO_P_CHECK);
+		_screen->copyRegion(0, 0, 0, 0, 184, (_flags.platform == Common::kPlatformAmiga) ? 110 : 121, 6, 0, Screen::CR_NO_P_CHECK);
 
 	_screen->updateScreen();
 }
@@ -1804,7 +1835,16 @@ void EoBCoreEngine::displayParchment(int id) {
 	if (id >= 0) {
 		// display text
 		Common::SeekableReadStream *s = _res->createReadStream("TEXT.DAT");
-		_screen->loadFileDataToPage(s, 5, 32000);
+		if (s) {
+			_screen->loadFileDataToPage(s, 5, 32000);
+		} else {
+			s = _res->createReadStream("TEXT.CPS");
+			if (s->readSint32BE() + 12 == s->size())
+				_screen->loadSpecialAmigaCPS("TEXT.CPS", 5, false);
+			else
+				_screen->loadBitmap("TEXT.CPS", 5, 5, 0, true);
+		}
+		delete s;
 		_screen->set16bitShadingLevel(4);
 		gui_drawBox(0, 0, 176, 175, guiSettings()->colors.frame1, guiSettings()->colors.frame2, guiSettings()->colors.fill);
 		_screen->set16bitShadingLevel(0);
@@ -1815,9 +1855,13 @@ void EoBCoreEngine::displayParchment(int id) {
 
 	} else {
 		// display bitmap
-		id = -id - 1;
 		static const uint8 x[] = { 0, 20, 0 };
 		static const uint8 y[] = { 0, 0, 96 };
+		id = -id - 1;
+
+		if (_flags.platform == Common::kPlatformAmiga)
+			_txt->setupField(9, 0);
+
 		drawSequenceBitmap("MAP", 0, x[id], y[id], 0);
 
 		removeInputTop();
@@ -2630,8 +2674,8 @@ void EoBCoreEngine::snd_stopSound() {
 	_sound->stopAllSoundEffects();
 }
 
-void EoBCoreEngine::snd_fadeOut() {
-	_sound->beginFadeOut();
+void EoBCoreEngine::snd_fadeOut(int del) {
+	_sound->beginFadeOut(del);
 }
 
 } // End of namespace Kyra

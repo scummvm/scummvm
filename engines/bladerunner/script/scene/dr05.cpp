@@ -25,7 +25,7 @@
 namespace BladeRunner {
 
 enum kDR05Loops {
-	kDR05LoopMain          = 0,
+	kDR05LoopMainLoop      = 0,
 	kDR05LoopMainDestroyed = 2
 };
 
@@ -36,7 +36,7 @@ void SceneScriptDR05::InitializeScene() {
 
 	Scene_Exit_Add_2D_Exit(0, 0, 38, 80, 467, 3);
 
-	Ambient_Sounds_Add_Looping_Sound(383, 25, 0, 1);
+	Ambient_Sounds_Add_Looping_Sound(kSfxSKINBED1, 25, 0, 1);
 
 	if (!Game_Flag_Query(kFlagDR05BombExploded)) {
 		Overlay_Play("DR05OVER", 0, true, false, 0);
@@ -44,7 +44,7 @@ void SceneScriptDR05::InitializeScene() {
 	if (Game_Flag_Query(kFlagDR05BombExploded)) {
 		Scene_Loop_Set_Default(kDR05LoopMainDestroyed);
 	} else {
-		Scene_Loop_Set_Default(kDR05LoopMain);
+		Scene_Loop_Set_Default(kDR05LoopMainLoop);
 	}
 }
 
@@ -55,9 +55,9 @@ void SceneScriptDR05::SceneLoaded() {
 	Clickable_Object("T2 DOORWAY");
 
 	if (!Game_Flag_Query(kFlagDR05BombExploded)) {
-		Item_Add_To_World(kItemBomb, 932, kSetDR05, -1.57f, 31.33f, 75.21f, 540, 16, 16, true, true, false, true);
+		Item_Add_To_World(kItemBomb, kModelAnimationBomb, kSetDR05, -1.57f, 31.33f, 75.21f, 540, 16, 16, true, true, false, true);
 		if (Actor_Query_Goal_Number(kActorMoraji) == kGoalMorajiDefault) {
-			Item_Add_To_World(kItemChain, 931, kSetDR05, 37.35f, 1.59f, 46.72f, 0, 20, 20, true, true, false, true);
+			Item_Add_To_World(kItemChain, kModelAnimationBadge, kSetDR05, 37.35f, 1.59f, 46.72f, 0, 20, 20, true, true, false, true); // TODO a bug? reusing still animation of kModelAnimationBadge
 		}
 	}
 }
@@ -75,7 +75,7 @@ bool SceneScriptDR05::ClickedOn3DObject(const char *objectName, bool a2) {
 			Actor_Says(kActorMcCoy, 1020, 14);
 			Actor_Says(kActorMoraji, 90, 13);
 		} else {
-			if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 57.61f, 0.3f, 69.27f, 0, true, false, 0)) {
+			if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 57.61f, 0.3f, 69.27f, 0, true, false, false)) {
 				Actor_Face_Object(kActorMcCoy, "T2 DOORWAY", true);
 				Actor_Says(kActorMcCoy, 8522, 13);
 				Actor_Says(kActorMcCoy, 8521, 14);
@@ -111,13 +111,13 @@ bool SceneScriptDR05::ClickedOnItem(int itemId, bool a2) {
 
 	if (itemId == kItemChain
 	 && Player_Query_Combat_Mode()
-	 && Actor_Query_Goal_Number(kActorMoraji) == kGoalOfficerLearyDefault
+	 && Actor_Query_Goal_Number(kActorMoraji) == kGoalMorajiDefault
 	) {
 		Overlay_Play("DR05OVER", 1, false, true, 0);
 		Item_Remove_From_World(kItemChain);
 		Game_Flag_Set(kFlagDR05ChainShot);
 		Actor_Set_Goal_Number(kActorMoraji, kGoalMorajiFreed);
-		Music_Play(18, 71, 0, 0, -1, 0, 2);
+		Music_Play(kMusicMoraji, 71, 0, 0, -1, 0, 2);
 		return true;
 	}
 	return false;
@@ -125,7 +125,7 @@ bool SceneScriptDR05::ClickedOnItem(int itemId, bool a2) {
 
 bool SceneScriptDR05::ClickedOnExit(int exitId) {
 	if (exitId == 0) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -22.0f, 0.3f, 221.0f, 0, true, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -22.0f, 0.3f, 221.0f, 0, true, false, false)) {
 			Game_Flag_Reset(kFlagNotUsed232);
 			Game_Flag_Set(kFlagDR05toDR04);
 			Set_Enter(kSetDR01_DR02_DR04, kSceneDR04);
@@ -141,7 +141,7 @@ bool SceneScriptDR05::ClickedOn2DRegion(int region) {
 
 void SceneScriptDR05::SceneFrameAdvanced(int frame) {
 	if (frame == 49) {
-		Sound_Play(148, Random_Query(50, 50), 80, 80, 50);
+		Sound_Play(kSfxLABMISC3, Random_Query(50, 50), 80, 80, 50);
 	}
 
 	if (Game_Flag_Query(kFlagDR05BombWillExplode)) {
@@ -164,7 +164,7 @@ void SceneScriptDR05::PlayerWalkedIn() {
 	}
 
 	if (Game_Flag_Query(kFlagDR05BombExploded)) {
-		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -10.0f, 0.3f, 133.0f, 0, false, false, 0);
+		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -10.0f, 0.3f, 133.0f, 0, false, false, false);
 		if (!Game_Flag_Query(kFlagDR05ExplodedEntered)) {
 			Game_Flag_Set(kFlagDR05ExplodedEntered);
 			if (Game_Flag_Query(kFlagSadikIsReplicant)) {
@@ -183,7 +183,7 @@ void SceneScriptDR05::PlayerWalkedIn() {
 			}
 		}
 	} else {
-		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -10.0f, 0.3f, 133.0f, 0, false, true, 0);
+		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -10.0f, 0.3f, 133.0f, 0, false, true, false);
 	}
 
 	if (!Game_Flag_Query(kFlagDR05MorajiTalk)

@@ -118,6 +118,11 @@ extern const RoomAction veng6ActionList[] = {
 	{ {ACTION_DONE_ANIM, 12,                              0, 0}, &Room::veng6TookEngineeringJournal },
 
 	// Common code
+	{ {ACTION_TICK, 0xff, 0xff, 0xff}, &Room::vengaTick },
+	{ {ACTION_USE, OBJECT_IPHASERS, 0xff,     0}, &Room::vengaUsePhaserAnywhere },
+	{ {ACTION_USE, OBJECT_IPHASERK, 0xff,     0}, &Room::vengaUsePhaserAnywhere },
+	{ {ACTION_LOOK, OBJECT_IHYPO,          0, 0}, &Room::vengaLookAtHypo },
+	{ {ACTION_USE, OBJECT_ICOMM, OBJECT_KIRK, 0}, &Room::vengaUseCommunicator },
 	{ {ACTION_USE, OBJECT_IMEDKIT,  OBJECT_DEAD_GUY, 0}, &Room::vengaUseMccoyOnDeadGuy },
 	{ {ACTION_USE, OBJECT_IMTRICOR, OBJECT_DEAD_GUY, 0}, &Room::vengaUseMccoyOnDeadGuy },
 	{ {ACTION_USE, OBJECT_MCCOY,    OBJECT_DEAD_GUY, 0}, &Room::vengaUseMccoyOnDeadGuy },
@@ -184,72 +189,72 @@ void Room::veng6DoorOpened() {
 }
 
 void Room::veng6LookAtLeftPort() {
-	showText(TX_VEN6N018);
+	showDescription(TX_VEN6N018);
 }
 
 void Room::veng6LookAtRightPort() {
-	showText(TX_VEN6N016);
+	showDescription(TX_VEN6N016);
 }
 
 void Room::veng6LookAtDoor() {
-	showText(TX_VEN5N007);
+	showDescription(TX_VEN5N007);
 }
 
 void Room::veng6LookAtOilCanister() {
-	showText(TX_VEN6N011);
+	showDescription(TX_VEN6N011);
 }
 
 void Room::veng6LookAtCabinet() {
-	showText(TX_VEN6N015);
+	showDescription(TX_VEN6N015);
 }
 
 void Room::veng6LookAtCable() {
-	showText(TX_VEN6N013);
+	showDescription(TX_VEN6N013);
 }
 
 void Room::veng6LookAtRightConsole() {
-	showText(TX_VEN6N017);
+	showDescription(TX_VEN6N017);
 }
 
 void Room::veng6LookAtImpulseEngines() {
-	showText(TX_VEN6N010);
+	showDescription(TX_VEN6N010);
 }
 
 void Room::veng6LookAtLeftConsole() {
-	showText(TX_VEN6N009);
+	showDescription(TX_VEN6N009);
 }
 
 void Room::veng6LookAtJunctionBox() {
-	showText(TX_VEN6N012);
+	showDescription(TX_VEN6N012);
 }
 
 void Room::veng6LookAtJournal() {
-	showText(TX_VEN6N025);
+	showDescription(TX_VEN6N025);
 	showText(TX_SPEAKER_SPOCK, TX_VEN6_021);
 }
 
 void Room::veng6LookAtKirk() {
-	showText(TX_VEN6N001);
+	showDescription(TX_VEN6N001);
 }
 
 void Room::veng6LookAtSpock() {
-	showText(TX_VEN6N003);
+	showDescription(TX_VEN6N003);
 }
 
 void Room::veng6LookAtMccoy() {
-	showText(TX_VEN6N002);
+	showDescription(TX_VEN6N002);
 }
 
 void Room::veng6LookAtRedshirt() {
-	showText(TX_VEN6N000);
+	showDescription(TX_VEN6N000);
 }
 
 void Room::veng6LookAtDeadGuy() {
-	showText(TX_VEN0N016);
+	showDescription(TX_VEN0N016);
 }
 
 void Room::veng6LookAnywhere() {
-	showText(TX_VEN6N019);
+	showDescription(TX_VEN6N019);
 }
 
 void Room::veng6TalkToKirk() {
@@ -298,7 +303,7 @@ void Room::veng6KirkOrSpockReachedLeftPort() {
 
 void Room::veng6AttachedLeftCable() {
 	loadActorAnim(OBJECT_CABLE_1, "s7r6cl", CABLE_1_X, CABLE_1_Y);
-	showText(TX_VEN6N020);
+	showDescription(TX_VEN6N020);
 	_awayMission->veng.junctionCablesConnected |= 1;
 	loseItem(_roomVar.veng.cableInUse);
 	_awayMission->disableInput = false;
@@ -332,7 +337,7 @@ void Room::veng6KirkOrSpockReachedRightPort() {
 
 void Room::veng6AttachedRightCable() {
 	loadActorAnim(OBJECT_CABLE_2, "s7r6cr", CABLE_2_X, CABLE_2_Y);
-	showText(TX_VEN6N022);
+	showDescription(TX_VEN6N022);
 	_awayMission->veng.junctionCablesConnected |= 2;
 	loseItem(_roomVar.veng.cableInUse);
 	_awayMission->disableInput = false;
@@ -369,7 +374,7 @@ void Room::veng6SpockAdjustedJunctionBox() {
 
 void Room::veng6UseHypoOnOilCanister() {
 	if (_awayMission->veng.oilInHypo)
-		showText(TX_VEN6N006);
+		showDescription(TX_VEN6N006);
 	else {
 		_awayMission->disableInput = true;
 		walkCrewmanC(OBJECT_KIRK, 0x3c, 0x9e, &Room::veng6ReachedOilCanister);
@@ -382,7 +387,7 @@ void Room::veng6ReachedOilCanister() {
 
 void Room::veng6FilledHypoWithOil() {
 	_awayMission->disableInput = false;
-	showText(TX_VEN6N007);
+	showDescription(TX_VEN6N007);
 	_awayMission->veng.oilInHypo = true;
 }
 
@@ -407,7 +412,7 @@ void Room::veng6OpenedOrClosedCabinet() {
 		playSoundEffectIndex(SND_DOOR1);
 		_awayMission->veng.engineeringCabinetOpen = true;
 		if (!_awayMission->veng.tookEngineeringJournal)
-			showText(TX_VEN6N005);
+			showDescription(TX_VEN6N005);
 	}
 }
 
@@ -437,11 +442,11 @@ void Room::veng6UsePowerPackOnLeftConsole() {
 }
 
 void Room::veng6GetJunctionBox() {
-	showText(TX_MUD1N014);
+	showDescription(TX_MUD1N014);
 }
 
 void Room::veng6GetOilCanister() {
-	showText(TX_VEN6N008);
+	showDescription(TX_VEN6N008);
 }
 
 void Room::veng6GetEngineeringJournal() {
@@ -456,7 +461,7 @@ void Room::veng6ReachedEngineeringJournal() {
 void Room::veng6TookEngineeringJournal() {
 	loadActorStandAnim(OBJECT_JOURNAL);
 	_awayMission->disableInput = false;
-	showText(TX_VEN6N024);
+	showDescription(TX_VEN6N024);
 	_awayMission->veng.tookEngineeringJournal = true;
 	giveItem(OBJECT_ITECH);
 }

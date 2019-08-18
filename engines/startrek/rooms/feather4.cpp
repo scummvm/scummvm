@@ -125,39 +125,39 @@ void Room::feather4TalkToRedshirt() {
 }
 
 void Room::feather4LookAtEyes() {
-	showText(TX_FEA4N003);
+	showDescription(TX_FEA4N003);
 }
 
 void Room::feather4LookAnywhere() {
-	showText(TX_FEA4N008);
+	showDescription(TX_FEA4N008);
 }
 
 void Room::feather4LookAtMushroom() {
-	showText(TX_FEA4N001);
+	showDescription(TX_FEA4N001);
 }
 
 void Room::feather4LookAtFern() {
-	showText(TX_FEA4N000);
+	showDescription(TX_FEA4N000);
 }
 
 void Room::feather4LookAtLight() {
-	showText(TX_FEA4N002);
+	showDescription(TX_FEA4N002);
 }
 
 void Room::feather4LookAtKirk() {
-	showText(TX_FEA4N004);
+	showDescription(TX_FEA4N004);
 }
 
 void Room::feather4LookAtSpock() {
-	showText(TX_FEA4N007);
+	showDescription(TX_FEA4N007);
 }
 
 void Room::feather4LookAtMccoy() {
-	showText(TX_FEA4N006);
+	showDescription(TX_FEA4N006);
 }
 
 void Room::feather4LookAtRedshirt() {
-	showText(TX_FEA4N005);
+	showDescription(TX_FEA4N005);
 }
 
 }

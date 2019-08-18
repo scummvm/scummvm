@@ -220,7 +220,7 @@ void Room::trial3CheckShowUhuraText() {
 			TX_TRI3_006, TX_TRI3_002, TX_TRI3_003,
 			TX_BLANK
 		};
-		int choice = showText(choices);
+		int choice = showMultipleTexts(choices);
 
 		if (choice == 0) { // Don't beam out
 		} else if (choice == 1) { // Beam to enterprise
@@ -260,27 +260,27 @@ void Room::trial3KirkExploded() {
 }
 
 void Room::trial3LookAtKirk() {
-	showText(TX_TRI3N000);
+	showDescription(TX_TRI3N000);
 }
 
 void Room::trial3LookAtSpock() {
-	showText(TX_TRI3N004);
+	showDescription(TX_TRI3N004);
 }
 
 void Room::trial3LookAtMccoy() {
-	showText(TX_TRI3N001);
+	showDescription(TX_TRI3N001);
 }
 
 void Room::trial3LookAtRedshirt() {
-	showText(TX_TRI3N002);
+	showDescription(TX_TRI3N002);
 }
 
 void Room::trial3LookAtExit() {
-	showText(TX_TRI3N005);
+	showDescription(TX_TRI3N005);
 }
 
 void Room::trial3LookAtWall() {
-	showText(TX_TRI3N007);
+	showDescription(TX_TRI3N007);
 }
 
 void Room::trial3TalkToKirk() {
@@ -300,7 +300,7 @@ void Room::trial3TalkToRedshirt() {
 }
 
 void Room::trial3UsePhaserOnWall() {
-	showText(TX_TRI3N006);
+	showDescription(TX_TRI3N006);
 }
 
 void Room::trial3UseStunPhaserOnKlingon1() {
@@ -346,7 +346,7 @@ void Room::trial3ReadyToShootKlingon1OnKill() {
 }
 
 void Room::trial3UsePhaserAnywhere() {
-	showText(TX_TRI3N003);
+	showDescription(TX_TRI3N003);
 }
 
 void Room::trial3UseMTricorderOnKirk() {
@@ -395,7 +395,7 @@ void Room::trial3UseCommunicator() {
 			TX_TRI3_103, TX_TRI3_104, TX_TRI3_107,
 			TX_BLANK
 		};
-		int choice = showText(choices);
+		int choice = showMultipleTexts(choices);
 
 		if (choice == 0) { // "Beam us back to the enterprise"
 			_awayMission->trial.missionEndMethod = 1;

@@ -30,7 +30,7 @@
 #include "common/array.h"
 #include "common/events.h"
 
-class OpenGLSdlGraphicsManager : public OpenGL::OpenGLGraphicsManager, public SdlGraphicsManager, public Common::EventObserver {
+class OpenGLSdlGraphicsManager : public OpenGL::OpenGLGraphicsManager, public SdlGraphicsManager {
 public:
 	OpenGLSdlGraphicsManager(uint desktopWidth, uint desktopHeight, SdlEventSource *eventSource, SdlWindow *window);
 	virtual ~OpenGLSdlGraphicsManager();
@@ -43,17 +43,7 @@ public:
 	virtual void setFeatureState(OSystem::Feature f, bool enable) override;
 	virtual bool getFeatureState(OSystem::Feature f) const override;
 
-	virtual const OSystem::GraphicsMode *getSupportedStretchModes() const override;
-	virtual int getDefaultStretchMode() const override;
-	virtual bool setStretchMode(int mode) override;
-	virtual int getStretchMode() const override;
-
 	virtual void initSize(uint w, uint h, const Graphics::PixelFormat *format) override;
-
-#ifdef USE_RGB_COLOR
-	virtual Common::List<Graphics::PixelFormat> getSupportedFormats() const override;
-#endif
-
 	virtual void updateScreen() override;
 
 	// EventObserver API
@@ -72,6 +62,8 @@ protected:
 
 	virtual void handleResizeImpl(const int width, const int height) override;
 
+	virtual bool saveScreenshot(const Common::String &filename) const override;
+
 	virtual int getGraphicsModeScale(int mode) const override { return 1; }
 
 private:
@@ -87,7 +79,6 @@ private:
 	uint _lastRequestedWidth;
 	uint _lastRequestedHeight;
 	uint _graphicsScale;
-	int _stretchMode;
 	bool _ignoreLoadVideoMode;
 	bool _gotResize;
 

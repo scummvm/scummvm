@@ -138,11 +138,11 @@ Common::DialogManager::DialogResult Win32DialogManager::showFileBrowser(const ch
 			hr = dialog->SetOptions(dwOptions);
 		}
 
-		LPWSTR str = Win32::ansiToUnicode(title);
+		LPWSTR str = Win32::ansiToUnicode(title, Win32::getCurrentCharset());
 		hr = dialog->SetTitle(str);
 		delete[] str;
 
-		str = Win32::ansiToUnicode(_("Choose"));
+		str = Win32::ansiToUnicode(_("Choose"), Win32::getCurrentCharset());
 		hr = dialog->SetOkButtonLabel(str);
 		delete[] str;
 

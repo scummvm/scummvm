@@ -491,7 +491,7 @@ bool AIScriptMutant3::UpdateAnimation(int *animation, int *frame) {
 		*animation = 917;
 		_animationFrame += _var1;
 		if (_animationFrame == 3) {
-			Sound_Play(400, 100, 0, 0, 50);
+			Sound_Play(kSfxHURT1M3, 100, 0, 0, 50);
 			_var1 = -1;
 		} else {
 			if (!_animationFrame) {
@@ -586,7 +586,7 @@ bool AIScriptMutant3::ChangeAnimationMode(int mode) {
 		}
 		break;
 
-	case 48:
+	case kAnimationModeDie:
 		_animationState = 6;
 		_animationFrame = 0;
 		break;

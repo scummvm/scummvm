@@ -109,6 +109,9 @@ private:
 
 	const char *const *_turnUndeadString;
 
+	// Sound
+	void snd_loadAmigaSounds(int level, int);
+
 	// Misc
 	bool checkPartyStatusExtra();
 	int resurrectionSelectDialogue();

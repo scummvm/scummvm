@@ -151,6 +151,20 @@ protected:
 		Common::Point point3;
 		int32 deltaXFactor, deltaYFactor;
 		uint16 xfrac, yfrac;
+
+		void reset() {
+			dest.x = dest.y = 0;
+			destbox = 0;
+			destdir = 0;
+			cur.x = cur.y = 0;
+			curbox = 0;
+			next.x = next.y = 0;
+			point3.x = point3.y = 0;
+			deltaXFactor = 0;
+			deltaYFactor = 0;
+			xfrac = 0;
+			yfrac = 0;
+		}
 	};
 
 

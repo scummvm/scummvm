@@ -123,18 +123,25 @@ void FogSphere::read(Common::ReadStream *stream, int frameCount) {
 void FogSphere::calculateCoeficient(Vector3 position, Vector3 viewPosition, float *coeficient) {
 	*coeficient = 0.0f;
 
-	// ray - sphere intersection, where sphere center is always at 0, 0, 0 as everything else tranformed by the fog matrix
+	// Ray - sphere intersection, where sphere center is always at 0, 0, 0 as everything else tranformed by the fog matrix.
+	// Quadratic formula can and was simplified becasue rayDirection is normalized and hence a = 1.
+	// Explained on wikipedia https://en.wikipedia.org/wiki/Line%E2%80%93sphere_intersection
+
+	// There is also alternative approach which will end-up with this formula where plane is created from ray origin, ray destination
+	// and sphere center, then there is only need to solve two right triangles.
+	// Explained in book Andrew S. Glassner (1995), Graphics Gems I (p. 388-389)
+
 	Vector3 rayOrigin = _matrix * position;
 	Vector3 rayDestination = _matrix * viewPosition;
 	Vector3 rayDirection = (rayDestination - rayOrigin).normalize();
 
 	float b = Vector3::dot(rayDirection, rayOrigin);
 	float c = Vector3::dot(rayOrigin, rayOrigin) - (_radius * _radius);
-	float t = b * b - c;
+	float d = b * b - c;
 
-	if (t >= 0.0f) { // there is an interstection between ray and the sphere
-		Vector3 intersection1 = rayOrigin + (-b - sqrt(t)) * rayDirection;
-		Vector3 intersection2 = rayOrigin + (-b + sqrt(t)) * rayDirection;
+	if (d >= 0.0f) { // there is an interstection between ray and the sphere
+		Vector3 intersection1 = rayOrigin + (-b - sqrt(d)) * rayDirection;
+		Vector3 intersection2 = rayOrigin + (-b + sqrt(d)) * rayDirection;
 
 		Vector3 intersection1World = _inverted * intersection1;
 		Vector3 intersection2World = _inverted * intersection2;

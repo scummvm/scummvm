@@ -23,56 +23,18 @@
 #ifndef GLK_ALAN2_DECODE
 #define GLK_ALAN2_DECODE
 
-#include "glk/alan2/alan2.h"
-#include "glk/alan2/acode.h"
-#include "common/file.h"
+#include "glk/alan2/types.h"
+
+/* Arithmetic decoding module in Arun
+ */
 
 namespace Glk {
 namespace Alan2 {
 
-// Structure for saved decode info
-struct DecodeInfo {
-	long fpos;
-	int buffer;
-	int bits;
-	CodeValue value;
-	CodeValue high;
-	CodeValue low;
-};
-
-class Decode {
-public:
-	Decode(Common::File *txtFile, Aword *freq): _txtFile(txtFile), _freq(freq) {}
-	void startDecoding();
-	int decodeChar();
-	
-	/**
-	 * Save so much about the decoding process, so it is possible to restore
-	 * and continue later.
-	 */
-	DecodeInfo *pushDecode();
-	
-	/**
-	 * Restore enough info about the decoding process, so it is possible to
-	 * continue after having decoded something else.
-	 */
-	void popDecode(DecodeInfo *info);
-	
-	int inputBit();
-
-private:
-	// Bit output
-	int _decodeBuffer;	// Bits to be input
-	int _bitsToGo;		// Bits still in buffer
-	int _garbageBits;	// Bits past EOF
-
-	Aword *_freq;
-	Common::File *_txtFile;
-
-	// Current state of decoding
-	CodeValue _value;			// Currently seen code value
-	CodeValue _low, _high;		// Current code region
-};
+extern void startDecoding(void);
+extern int decodeChar(void);
+extern void *pushDecode(void);
+extern void popDecode(void *info);
 
 } // End of namespace Alan2
 } // End of namespace Glk

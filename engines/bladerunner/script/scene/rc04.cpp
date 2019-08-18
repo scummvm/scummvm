@@ -38,10 +38,10 @@ void SceneScriptRC04::InitializeScene() {
 		Actor_Change_Animation_Mode(kActorBulletBob, 88);
 	}
 
-	Ambient_Sounds_Add_Looping_Sound(381, 100, 1, 1);
-	Ambient_Sounds_Add_Sound(82, 5, 30, 10, 20, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(83, 5, 30, 10, 20, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(84, 5, 30, 10, 20, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Looping_Sound(kSfxRAIN10, 100, 1, 1);
+	Ambient_Sounds_Add_Sound(kSfxRCCARBY1, 5, 30, 10, 20, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxRCCARBY2, 5, 30, 10, 20, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxRCCARBY3, 5, 30, 10, 20, -100, 100, -101, -101, 0, 0);
 }
 
 void SceneScriptRC04::SceneLoaded() {
@@ -51,7 +51,7 @@ void SceneScriptRC04::SceneLoaded() {
 	Obstacle_Object("GRNDNEON07", true);
 	Unobstacle_Object("DisplayTrim", true);
 	Unobstacle_Object("Display01", true);
-	Actor_Set_Goal_Number(kActorGenwalkerA, 200);
+	Actor_Set_Goal_Number(kActorGenwalkerA, kGoalGenwalkerABulletBobsTrackGun);
 }
 
 bool SceneScriptRC04::MouseClick(int x, int y) {
@@ -126,7 +126,11 @@ void SceneScriptRC04::dialogueWithBulletBob() {
 			Actor_Says(kActorBulletBob, 380, 37);
 			Actor_Says(kActorBulletBob, 390, 11);
 			Actor_Says(kActorBulletBob, 400, 37);
-			Actor_Clue_Acquire(kActorMcCoy, kClueBobInterview1, true, kActorMcCoy);
+#if BLADERUNNER_ORIGINAL_BUGS
+			Actor_Clue_Acquire(kActorMcCoy, kClueBobInterview1, true, kActorMcCoy);  // A bug? Shouldn't the last argument be -1 or kActorBulletBob here?
+#else
+			Actor_Clue_Acquire(kActorMcCoy, kClueBobInterview1, true, kActorBulletBob);
+#endif // BLADERUNNER_ORIGINAL_BUGS
 		} else {
 			Actor_Says(kActorBulletBob, 410, 11);
 			Actor_Says(kActorBulletBob, 420, 37);
@@ -136,7 +140,11 @@ void SceneScriptRC04::dialogueWithBulletBob() {
 			Actor_Says(kActorBulletBob, 450, 32);
 			Actor_Says(kActorMcCoy, 5030, 16);
 			Actor_Says(kActorBulletBob, 460, 37);
-			Actor_Clue_Acquire(kActorMcCoy, kClueBobInterview2, true, kActorMcCoy);
+#if BLADERUNNER_ORIGINAL_BUGS
+			Actor_Clue_Acquire(kActorMcCoy, kClueBobInterview2, true, kActorMcCoy);  // A bug? Shouldn't the last argument be -1 or kActorBulletBob here?
+#else
+			Actor_Clue_Acquire(kActorMcCoy, kClueBobInterview2, true, kActorBulletBob);
+#endif // BLADERUNNER_ORIGINAL_BUGS
 		}
 		return;
 
@@ -165,7 +173,11 @@ void SceneScriptRC04::dialogueWithBulletBob() {
 			Actor_Says(kActorBulletBob, 380, 33);
 			Actor_Says(kActorBulletBob, 390, 37);
 			Actor_Says(kActorBulletBob, 400, 32);
-			Actor_Clue_Acquire(kActorMcCoy, kClueBobInterview1, true, kActorMcCoy);
+#if BLADERUNNER_ORIGINAL_BUGS
+			Actor_Clue_Acquire(kActorMcCoy, kClueBobInterview1, true, kActorMcCoy);  // A bug? Shouldn't the last argument be -1 or kActorBulletBob here?
+#else
+			Actor_Clue_Acquire(kActorMcCoy, kClueBobInterview1, true, kActorBulletBob);
+#endif // BLADERUNNER_ORIGINAL_BUGS
 		} else {
 			Actor_Says(kActorBulletBob, 410, 32);
 			Actor_Says(kActorBulletBob, 420, 30);
@@ -175,7 +187,11 @@ void SceneScriptRC04::dialogueWithBulletBob() {
 			Actor_Says(kActorBulletBob, 450, 37);
 			Actor_Says(kActorMcCoy, 5030, 16);
 			Actor_Says(kActorBulletBob, 460, 30);
-			Actor_Clue_Acquire(kActorMcCoy, kClueBobInterview2, true, kActorMcCoy);
+#if BLADERUNNER_ORIGINAL_BUGS
+			Actor_Clue_Acquire(kActorMcCoy, kClueBobInterview2, true, kActorMcCoy);  // A bug? Shouldn't the last argument be -1 or kActorBulletBob here?
+#else
+			Actor_Clue_Acquire(kActorMcCoy, kClueBobInterview2, true, kActorBulletBob);
+#endif // BLADERUNNER_ORIGINAL_BUGS
 		}
 		break;
 
@@ -205,7 +221,11 @@ void SceneScriptRC04::dialogueWithBulletBob() {
 			Actor_Says(kActorBulletBob, 720, 30);
 			Actor_Says(kActorMcCoy, 5080, 11);
 			Actor_Says(kActorBulletBob, 730, 37);
-			Actor_Clue_Acquire(kActorMcCoy, kClueBobInterview1, true, kActorMcCoy);
+#if BLADERUNNER_ORIGINAL_BUGS
+			Actor_Clue_Acquire(kActorMcCoy, kClueBobInterview1, true, kActorMcCoy);  // A bug? Shouldn't the last argument be -1 or kActorBulletBob here?
+#else
+			Actor_Clue_Acquire(kActorMcCoy, kClueBobInterview1, true, kActorBulletBob);
+#endif // BLADERUNNER_ORIGINAL_BUGS
 		} else {
 			Actor_Says(kActorBulletBob, 560, 37);
 			Actor_Says(kActorMcCoy, 5070, 13);
@@ -222,7 +242,11 @@ void SceneScriptRC04::dialogueWithBulletBob() {
 			Actor_Says(kActorBulletBob, 650, 35);
 			Actor_Says(kActorBulletBob, 660, 30);
 			Actor_Says(kActorMcCoy, 5060, 13);
-			Actor_Clue_Acquire(kActorMcCoy, kClueGogglesReplicantIssue, true, kActorMcCoy);
+#if BLADERUNNER_ORIGINAL_BUGS
+			Actor_Clue_Acquire(kActorMcCoy, kClueGogglesReplicantIssue, true, kActorMcCoy);  // A bug? Shouldn't the last argument be -1 or kActorBulletBob here?
+#else
+			Actor_Clue_Acquire(kActorMcCoy, kClueGogglesReplicantIssue, true, kActorBulletBob);
+#endif // BLADERUNNER_ORIGINAL_BUGS
 		}
 		break;
 
@@ -238,7 +262,7 @@ void SceneScriptRC04::dialogueWithBulletBob() {
 		Actor_Says(kActorBulletBob, 880, 34);
 		Actor_Clue_Acquire(kActorBulletBob, kClueHoldensBadge, true, kActorMcCoy);
 		Actor_Modify_Friendliness_To_Other(kActorBulletBob, kActorMcCoy, 8);
-		if (Query_Difficulty_Level() != 0) {
+		if (Query_Difficulty_Level() != kGameDifficultyEasy) {
 			Global_Variable_Increment(kVariableChinyen, 60);
 		}
 		break;
@@ -259,13 +283,13 @@ void SceneScriptRC04::dialogueWithBulletBob() {
 		}
 		Actor_Says(kActorBulletBob, 2120, 31);
 		if (Global_Variable_Query(kVariableChinyen) > 40
-		 || Query_Difficulty_Level() == 0
+		 || Query_Difficulty_Level() == kGameDifficultyEasy
 		) {
 			Actor_Says(kActorMcCoy, 4940, 13);
-			if (Query_Difficulty_Level() != 0) {
+			if (Query_Difficulty_Level() != kGameDifficultyEasy) {
 				Global_Variable_Decrement(kVariableChinyen, 40);
 			}
-			Item_Pickup_Spin_Effect(995, 405, 192);
+			Item_Pickup_Spin_Effect(kModelAnimationAmmoType01, 405, 192);
 			Give_McCoy_Ammo(1, 24);
 		} else {
 			Actor_Says(kActorMcCoy, 125, 13);
@@ -363,14 +387,14 @@ bool SceneScriptRC04::ClickedOnActor(int actorId) {
 				Delay(1000);
 				Actor_Says(kActorBulletBob, 2010, 35);
 				if (Global_Variable_Query(kVariableChinyen) > 50
-				 || Query_Difficulty_Level() == 0
+				 || Query_Difficulty_Level() == kGameDifficultyEasy
 				) {
 					Actor_Says(kActorMcCoy, 8975, 16);
-					if (Query_Difficulty_Level() != 0) {
+					if (Query_Difficulty_Level() != kGameDifficultyEasy) {
 						Global_Variable_Decrement(kVariableChinyen, 50);
 					}
 					Delay(3000);
-					Item_Pickup_Spin_Effect(941, 405, 192);
+					Item_Pickup_Spin_Effect(kModelAnimationDNADataDisc, 405, 192);
 					Actor_Says(kActorBulletBob, 2030, 30);
 					Game_Flag_Set(kFlagKIAPrivacyAddon);
 				} else {
@@ -414,7 +438,7 @@ bool SceneScriptRC04::ClickedOnItem(int itemId, bool a2) {
 
 bool SceneScriptRC04::ClickedOnExit(int exitId) {
 	if (exitId == 0) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 45.0f, 0.15f, 68.0f, 0, 1, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 45.0f, 0.15f, 68.0f, 0, true, false, false)) {
 			Game_Flag_Set(kFlagRC04toRC03);
 			Set_Enter(kSetRC03, kSceneRC03);
 		}

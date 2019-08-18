@@ -69,7 +69,7 @@ void Room::mudd5Timer1Expired() { // Mudd enters room through hatch
 	};
 
 	showText(TX_SPEAKER_MUDD, TX_MUD5_034);
-	showText(choices);
+	showMultipleTexts(choices);
 	showText(TX_SPEAKER_MUDD, TX_MUD5_037);
 
 	loadActorAnim2(OBJECT_MUDD, "s4ephc");
@@ -175,16 +175,16 @@ void Room::mudd5KirkTimer3Expired() { // Mudd popped back in after repairing gen
 }
 
 void Room::mudd5LookAtHatch() {
-	showText(TX_MUD5N011);
+	showDescription(TX_MUD5N011);
 	showText(TX_SPEAKER_SPOCK, TX_MUD5_031);
 	showText(TX_SPEAKER_KIRK,  TX_MUD5_009);
 }
 
 void Room::mudd5LookAtLifeSupportGenerator() {
 	if (_awayMission->mudd.lifeSupportMalfunctioning)
-		showText(TX_MUD5N008);
+		showDescription(TX_MUD5N008);
 	else {
-		showText(TX_MUD5N012);
+		showDescription(TX_MUD5N012);
 		showText(TX_SPEAKER_SPOCK, TX_MUD5_026);
 	}
 }
@@ -203,31 +203,31 @@ void Room::mudd5WalkToDoor() {
 }
 
 void Room::mudd5LookAtKirk() {
-	showText(TX_MUD5N002);
+	showDescription(TX_MUD5N002);
 }
 
 void Room::mudd5LookAtSpock() {
-	showText(TX_MUD5N005);
+	showDescription(TX_MUD5N005);
 }
 
 void Room::mudd5LookAtMccoy() {
-	showText(TX_MUD5N004);
+	showDescription(TX_MUD5N004);
 }
 
 void Room::mudd5LookAtRedshirt() {
-	showText(TX_MUD5N003);
+	showDescription(TX_MUD5N003);
 }
 
 void Room::mudd5LookAtDoor() {
-	showText(TX_MUD5N010);
+	showDescription(TX_MUD5N010);
 }
 
 void Room::mudd5LookAtCrane() {
-	showText(TX_MUD5N000);
+	showDescription(TX_MUD5N000);
 }
 
 void Room::mudd5LookAtEngine() {
-	showText(TX_MUD5N006);
+	showDescription(TX_MUD5N006);
 }
 
 void Room::mudd5TalkToKirk() {

@@ -27,8 +27,6 @@
 
 namespace StarTrek {
 
-class FileStream;
-
 template<typename T>
 struct TPoint {
 	T x;
@@ -136,7 +134,7 @@ public:
 		*this = *this * m2;
 	}
 
-	TMatrix<T> invert() {
+	TMatrix<T> invert() const {
 		TMatrix<T> ret;
 		for (int i = 0; i < 3; i++) {
 			for (int j = 0; j < 3; j++) {
@@ -172,7 +170,7 @@ struct R3 {
 	int32 field54; // 0x54 (used for sorting by draw priority?)
 	int16 field58; // 0x58
 	int16 field5a; // 0x5a
-	SharedPtr<FileStream> shpFile; // 0x68
+	FileStream shpFile; // 0x68
 	int16 bitmapOffset; // 0x6a
 	double field80; // 0x80
 	double field88; // 0x88

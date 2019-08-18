@@ -37,10 +37,10 @@ void SceneScriptCT09::InitializeScene() {
 	Scene_Exit_Add_2D_Exit(1,   0,   0,  15, 479, 3);
 	Scene_Exit_Add_2D_Exit(2, 198, 177, 263, 311, 0);
 
-	Ambient_Sounds_Add_Looping_Sound(336, 28, 0, 1);
-	Ambient_Sounds_Add_Sound(375, 6, 180, 33, 33, 0, 0, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(376, 5, 180, 33, 33, 0, 0, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(377, 5, 180, 33, 33, 0, 0, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Looping_Sound(kSfxFLORBUZZ, 28, 0, 1);
+	Ambient_Sounds_Add_Sound(kSfxTHNDER2, 6, 180, 33, 33, 0, 0, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxTHNDER3, 5, 180, 33, 33, 0, 0, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxTHNDER4, 5, 180, 33, 33, 0, 0, -101, -101, 0, 0);
 }
 
 void SceneScriptCT09::SceneLoaded() {
@@ -57,9 +57,9 @@ bool SceneScriptCT09::MouseClick(int x, int y) {
 bool SceneScriptCT09::ClickedOn3DObject(const char *objectName, bool a2) {
 	if (Object_Query_Click("BELL", objectName)) {
 		if (Actor_Query_Which_Set_In(kActorLeon) != kSetCT09) {
-			if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 229.0f, 348.52f, 851.0f, 36, true, false, 0)) {
+			if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 229.0f, 348.52f, 851.0f, 36, true, false, false)) {
 				Actor_Face_Object(kActorMcCoy, "BELL", true);
-				Sound_Play(337, 100, 0, 0, 50);
+				Sound_Play(kSfxDESKBELL, 100, 0, 0, 50);
 				if (!Actor_Query_Goal_Number(kActorDeskClerk)) {
 					Actor_Says(kActorDeskClerk, 160, kAnimationModeTalk);
 				}
@@ -75,7 +75,7 @@ bool SceneScriptCT09::ClickedOnActor(int actorId) {
 		if (Actor_Query_Goal_Number(kActorDeskClerk) == kGoalDeskClerkDefault
 		 && Actor_Query_Which_Set_In(kActorLeon) != kSetCT09
 		) {
-			if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 270.0f, 348.52f, 846.0f, 12, true, false, 0)) {
+			if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 270.0f, 348.52f, 846.0f, 12, true, false, false)) {
 				Player_Loses_Control();
 				Actor_Face_Actor(kActorMcCoy, kActorDeskClerk, true);
 				if (Global_Variable_Query(kVariableChapter) < 3) { // it is impossible to get here before chapter 3
@@ -111,8 +111,8 @@ bool SceneScriptCT09::ClickedOnItem(int itemId, bool a2) {
 
 bool SceneScriptCT09::ClickedOnExit(int exitId) {
 	if (exitId == 0) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 206.0f, 348.52f, 599.0f, 0, true, false, 0)) {
-			Loop_Actor_Walk_To_XYZ(kActorMcCoy, 235.0f, 348.52f, 599.0f, 0, false, false, 0);
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 206.0f, 348.52f, 599.0f, 0, true, false, false)) {
+			Loop_Actor_Walk_To_XYZ(kActorMcCoy, 235.0f, 348.52f, 599.0f, 0, false, false, false);
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
 			Game_Flag_Set(kFlagCT09toCT08);
@@ -122,7 +122,7 @@ bool SceneScriptCT09::ClickedOnExit(int exitId) {
 	}
 
 	if (exitId == 1) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 107.0f, 348.52f, 927.0f, 0, true, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 107.0f, 348.52f, 927.0f, 0, true, false, false)) {
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
 			Game_Flag_Set(kFlagCT09toCT11);
@@ -132,7 +132,7 @@ bool SceneScriptCT09::ClickedOnExit(int exitId) {
 	}
 
 	if (exitId == 2) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 159.0f, 349.0f, 570.0f, 0, true, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 159.0f, 349.0f, 570.0f, 0, true, false, false)) {
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
 			Game_Flag_Set(kFlagCT09toCT10);
@@ -155,7 +155,7 @@ void SceneScriptCT09::SceneFrameAdvanced(int frame) {
 	 || frame == 46
 	 || frame == 59
 	) {
-		Sound_Play(97, Random_Query(47, 47), 70, 70, 50);
+		Sound_Play(kSfxNEON7, Random_Query(47, 47), 70, 70, 50);
 	}
 }
 
@@ -179,14 +179,14 @@ void SceneScriptCT09::PlayerWalkedIn() {
 		if (leonScene) {
 			Async_Actor_Walk_To_XYZ(kActorMcCoy, 206.0f, 348.52f, 599.0f, 0, false);
 		} else {
-			Loop_Actor_Walk_To_XYZ(kActorMcCoy, 206.0f, 348.52f, 599.0f, 0, false, false, 0);
+			Loop_Actor_Walk_To_XYZ(kActorMcCoy, 206.0f, 348.52f, 599.0f, 0, false, false, false);
 		}
 		Game_Flag_Reset(kFlagCT08toCT09);
 	} else {
 		if (leonScene) {
 			Async_Actor_Walk_To_XYZ(kActorMcCoy, 124.0f, 348.52f, 886.0f, 0, false);
 		} else {
-			Loop_Actor_Walk_To_XYZ(kActorMcCoy, 124.0f, 348.52f, 886.0f, 0, false, false, 0);
+			Loop_Actor_Walk_To_XYZ(kActorMcCoy, 124.0f, 348.52f, 886.0f, 0, false, false, false);
 		}
 		Game_Flag_Reset(kFlagCT11toCT09);
 	}

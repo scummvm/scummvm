@@ -120,6 +120,7 @@ KyraRpgEngine::KyraRpgEngine(OSystem *system, const GameFlags &flags) : KyraEngi
 	memset(_lvlTempData, 0, sizeof(_lvlTempData));
 
 	_dialogueField = false;
+	_dialogueFieldAmiga = true;
 
 	_environmentSfx = _environmentSfxVol = _envSfxDistThreshold = 0;
 	_monsterStepCounter = _monsterStepMode = 0;

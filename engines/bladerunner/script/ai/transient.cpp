@@ -76,41 +76,41 @@ bool AIScriptTransient::Update() {
 	 && !Game_Flag_Query(kFlagCT04HomelessTrashFinish)
 	) {
 		Game_Flag_Set(kFlagCT04HomelessTrashFinish);
-		AI_Countdown_Timer_Reset(kActorTransient, 1);
-		AI_Countdown_Timer_Start(kActorTransient, 1, 12);
+		AI_Countdown_Timer_Reset(kActorTransient, kActorTimerAIScriptCustomTask1);
+		AI_Countdown_Timer_Start(kActorTransient, kActorTimerAIScriptCustomTask1, 12);
 	}
 
 	return false;
 }
 
 void AIScriptTransient::TimerExpired(int timer) {
-	if (timer == 0) {
+	if (timer == kActorTimerAIScriptCustomTask0) {
 		if (Actor_Query_Goal_Number(kActorTransient) == 395 && Actor_Query_Which_Set_In(kActorMcCoy) == kSetUG13) {
-			AI_Countdown_Timer_Start(kActorTransient, 0, Random_Query(20, 10));
+			AI_Countdown_Timer_Start(kActorTransient, kActorTimerAIScriptCustomTask0, Random_Query(20, 10));
 			switch (Random_Query(1, 3)) {
 			case 1:
-				Sound_Play(356, 50, 0, 0, 50);
+				Sound_Play(kSfxBUMSNOR1, 50, 0, 0, 50);
 				break;
 			case 2:
-				Sound_Play(357, 50, 0, 0, 50);
+				Sound_Play(kSfxBUMSNOR2, 50, 0, 0, 50);
 				break;
 			case 3:
-				Sound_Play(358, 50, 0, 0, 50);
+				Sound_Play(kSfxBUMSNOR3, 50, 0, 0, 50);
 				break;
 			}
 		} else if (Actor_Query_Goal_Number(kActorTransient) != 599) {
 			Actor_Set_Goal_Number(kActorTransient, 391);
-			AI_Countdown_Timer_Reset(kActorTransient, 0);
+			AI_Countdown_Timer_Reset(kActorTransient, kActorTimerAIScriptCustomTask0);
 		}
 	}
-	if (timer == 1) {
+	if (timer == kActorTimerAIScriptCustomTask1) {
 		if (Actor_Query_Goal_Number(kActorTransient) == kGoalTransientDefault) { // stop diggin the trash
 			Actor_Set_Goal_Number(kActorTransient, 10);
 			Actor_Change_Animation_Mode(kActorTransient, kAnimationModeIdle);
 		}
 		Actor_Set_Goal_Number(kActorTransient, 10);
 		Actor_Set_Targetable(kActorTransient, false);
-		AI_Countdown_Timer_Reset(kActorTransient, 1);
+		AI_Countdown_Timer_Reset(kActorTransient, kActorTimerAIScriptCustomTask1);
 	}
 }
 
@@ -199,6 +199,7 @@ bool AIScriptTransient::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		Actor_Set_At_Waypoint(kActorTransient, 40, 0);
 		return true;
 	case 390:
+		// laying on the couch - not sleeping
 		Actor_Put_In_Set(kActorTransient, kSetUG13);
 		Actor_Set_At_XYZ(kActorTransient, -310.0, 55.0, -350.0, 400);
 		Actor_Change_Animation_Mode(kActorTransient, 53);
@@ -206,14 +207,16 @@ bool AIScriptTransient::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		Game_Flag_Set(kFlagUG13HomelessLayingdown);
 		return true;
 	case 391:
+		// laying on the couch - sleeping - dialogue exhausted pre-flask - awaiting flask
 		Actor_Change_Animation_Mode(kActorTransient, 53);
 		return true;
 	case 395:
+		// laying on the couch - sleeping - post flask
 		Actor_Change_Animation_Mode(kActorTransient, 55);
-		AI_Countdown_Timer_Start(kActorTransient, 0, Random_Query(30, 40));
+		AI_Countdown_Timer_Start(kActorTransient, kActorTimerAIScriptCustomTask0, Random_Query(30, 40));
 		return true;
 	case 599:
-		AI_Countdown_Timer_Reset(kActorTransient, 0);
+		AI_Countdown_Timer_Reset(kActorTransient, kActorTimerAIScriptCustomTask0);
 		return true;
 	}
 	return false;

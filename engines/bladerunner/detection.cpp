@@ -37,6 +37,7 @@ namespace BladeRunner {
 
 static const PlainGameDescriptor bladeRunnerGames[] = {
 	{"bladerunner", "Blade Runner"},
+	{"bladerunner-final", "Blade Runner with restored content"},
 	{0, 0}
 };
 
@@ -107,6 +108,8 @@ bool BladeRunnerMetaEngine::hasFeature(MetaEngineFeature f) const {
 		f == kSupportsDeleteSave ||
 		f == kSavesSupportMetaInfo ||
 		f == kSavesSupportThumbnail ||
+		f == kSavesSupportCreationDate ||
+		f == kSavesSupportPlayTime ||
 		f == kSimpleSavesNames;
 }
 

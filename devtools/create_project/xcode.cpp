@@ -133,12 +133,6 @@ bool shouldSkipFileForTarget(const std::string &fileID, const std::string &targe
 		}
 	}
 	else {
-		// Ugly hack: explicitly remove the browser.cpp file.
-		// The problem is that we have only one project for two different targets,
-		// and the parsing of the "mk" files added this file for both targets...
-		if (fileID.length() > 12 && fileID.substr(fileID.length() - 12) == "/browser.cpp") {
-			return true;
-		}
 		// macOS target: we skip all files with the "_ios" suffix
 		if (name.length() > 4 && name.substr(name.length() - 4) == "_ios") {
 			return true;
@@ -451,6 +445,7 @@ void XcodeProvider::setupFrameworksBuildPhase(const BuildSetup &setup) {
 	DEF_SYSFRAMEWORK("OpenGLES");
 	DEF_SYSFRAMEWORK("QuartzCore");
 	DEF_SYSFRAMEWORK("UIKit");
+	DEF_SYSFRAMEWORK("SystemConfiguration");
 	DEF_SYSTBD("libiconv");
 
 	// Local libraries
@@ -530,6 +525,7 @@ void XcodeProvider::setupFrameworksBuildPhase(const BuildSetup &setup) {
 	frameworks_iOS.push_back("CoreFoundation.framework");
 	frameworks_iOS.push_back("Foundation.framework");
 	frameworks_iOS.push_back("UIKit.framework");
+	frameworks_iOS.push_back("SystemConfiguration.framework");
 	frameworks_iOS.push_back("AudioToolbox.framework");
 	frameworks_iOS.push_back("QuartzCore.framework");
 	frameworks_iOS.push_back("OpenGLES.framework");
@@ -753,9 +749,11 @@ XcodeProvider::ValueList& XcodeProvider::getResourceFiles() const {
 	if (files.empty()) {
 		files.push_back("gui/themes/scummclassic.zip");
 		files.push_back("gui/themes/scummmodern.zip");
+		files.push_back("gui/themes/scummremastered.zip");
 		files.push_back("gui/themes/translations.dat");
 		files.push_back("dists/engine-data/access.dat");
 		files.push_back("dists/engine-data/cryo.dat");
+		files.push_back("dists/engine-data/cryomni3d.dat");
 		files.push_back("dists/engine-data/drascula.dat");
 		files.push_back("dists/engine-data/fonts.dat");
 		files.push_back("dists/engine-data/hugo.dat");
@@ -780,6 +778,7 @@ XcodeProvider::ValueList& XcodeProvider::getResourceFiles() const {
 		files.push_back("COPYING.LGPL");
 		files.push_back("COPYING.BSD");
 		files.push_back("COPYING.FREEFONT");
+		files.push_back("COPYING.OFL");
 		files.push_back("NEWS");
 		files.push_back("README");
 	}
@@ -1136,7 +1135,9 @@ void XcodeProvider::setupDefines(const BuildSetup &setup) {
 	REMOVE_DEFINE(_defines, "IPHONE_IOS7");
 	REMOVE_DEFINE(_defines, "IPHONE_SANDBOXED");
 	REMOVE_DEFINE(_defines, "SDL_BACKEND");
-	ADD_DEFINE(_defines, "USE_TEXT_CONSOLE_FOR_DEBUGGER");
+	if (!CONTAINS_DEFINE(_defines, "USE_TEXT_CONSOLE_FOR_DEBUGGER")) {
+		ADD_DEFINE(_defines, "USE_TEXT_CONSOLE_FOR_DEBUGGER");
+	}
 	ADD_DEFINE(_defines, "CONFIG_H");
 	ADD_DEFINE(_defines, "UNIX");
 	ADD_DEFINE(_defines, "SCUMMVM");

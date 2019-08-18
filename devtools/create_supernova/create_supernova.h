@@ -26,7 +26,7 @@
 #ifndef CREATE_SUPERNOVA_H
 #define CREATE_SUPERNOVA_H
 
-#define VERSION 1
+#define VERSION 3
 
 
 

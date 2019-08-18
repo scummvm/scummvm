@@ -33,9 +33,10 @@
 #include "supernova/console.h"
 #include "supernova/graphics.h"
 #include "supernova/msn_def.h"
-#include "supernova/rooms.h"
+#include "supernova/room.h"
 #include "supernova/sound.h"
 #include "supernova/imageid.h"
+#include "supernova/game-manager.h"
 
 namespace Common {
 	class MemoryReadWriteStream;
@@ -44,16 +45,18 @@ namespace Common {
 namespace Supernova {
 
 #define SAVEGAME_HEADER MKTAG('M','S','N','1')
-#define SAVEGAME_VERSION 9
+#define SAVEGAME_HEADER2 MKTAG('M','S','N','2')
+#define SAVEGAME_VERSION 10
 
 #define SUPERNOVA_DAT "supernova.dat"
-#define SUPERNOVA_DAT_VERSION 1
+#define SUPERNOVA_DAT_VERSION 3
 
 class GuiElement;
 class ResourceManager;
 class Sound;
 class console;
 class GameManager;
+class GameManager1;
 class Screen;
 
 class SupernovaEngine : public Engine {
@@ -83,6 +86,8 @@ public:
 
 	uint _delay;
 	int  _textSpeed;
+	char _MSPart;
+	bool _improved;
 
 	Common::Error loadGameStrings();
 	void init();
@@ -95,12 +100,16 @@ public:
 	void setTextSpeed();
 	const Common::String &getGameString(int idx) const;
 	void setGameString(int idx, const Common::String &string);
+	void showHelpScreen1();
+	void showHelpScreen2();
+	Common::SeekableReadStream *getBlockFromDatFile(Common::String name);
+	Common::Error showTextReader(const char *extension);
 
 	// forwarding calls
 	void playSound(AudioId sample);
 	void playSound(MusicId index);
 	void paletteFadeIn();
-	void paletteFadeOut();
+	void paletteFadeOut(int minBrightness = 0);
 	void paletteBrightness();
 	void renderImage(int section);
 	void renderImage(ImageId id, bool removeImage = false);
@@ -111,21 +120,23 @@ public:
 	void renderRoom(Room &room);
 	void renderMessage(const char *text, MessagePosition position = kMessageNormal);
 	void renderMessage(const Common::String &text, MessagePosition position = kMessageNormal);
-	void renderMessage(StringId stringId, MessagePosition position = kMessageNormal,
+	void renderMessage(int stringId, MessagePosition position = kMessageNormal,
 					   Common::String var1 = "", Common::String var2 = "");
+	void renderMessage(int stringId, int x, int y);
 	void removeMessage();
 	void renderText(const uint16 character);
 	void renderText(const char *text);
 	void renderText(const Common::String &text);
-	void renderText(StringId stringId);
+	void renderText(int stringId);
 	void renderText(const uint16 character, int x, int y, byte color);
 	void renderText(const char *text, int x, int y, byte color);
 	void renderText(const Common::String &text, int x, int y, byte color);
-	void renderText(StringId stringId, int x, int y, byte color);
+	void renderText(int stringId, int x, int y, byte color);
 	void renderText(const GuiElement &guiElement);
 	void renderBox(int x, int y, int width, int height, byte color);
 	void renderBox(const GuiElement &guiElement);
 	void setColor63(byte value);
+	void stopSound();
 };
 
 }
