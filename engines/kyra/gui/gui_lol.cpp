@@ -798,7 +798,6 @@ void LoLEngine::gui_updateInput() {
 
 void LoLEngine::gui_triggerEvent(int eventType) {
 	Common::Event evt;
-	memset(&evt, 0, sizeof(Common::Event));
 	evt.mouse.x = _mouseX;
 	evt.mouse.y = _mouseY;
 
