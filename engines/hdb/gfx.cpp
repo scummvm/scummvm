@@ -85,8 +85,7 @@ Gfx::~Gfx() {
 	delete _skyClouds;
 }
 
-bool Gfx::init() {
-
+void Gfx::init() {
 	// Set the default cursor pos & char clipping
 	setCursor(0, 0);
 
@@ -109,12 +108,12 @@ bool Gfx::init() {
 
 	// Load Game Font
 	if (!loadFont(HDB_FONT))
-		return false;
+		error("Gfx::init: Couldn't load fonts");
 
 	// Read total number of tiles in game
 	_numTiles = g_hdb->_fileMan->getCount("t32_", TYPE_TILE32);
 	if (!_numTiles)
-		return false;
+		error("Gfx::init: No tiles in game");
 
 	// Setup Tile Lookup Array
 	_tLookupArray = new TileLookup[_numTiles];
@@ -199,7 +198,6 @@ bool Gfx::init() {
 	}
 
 	_systemInit = true;
-	return true;
 }
 
 void Gfx::save(Common::OutSaveFile *out) {
@@ -835,7 +833,6 @@ int Gfx::animateTile(int tileIndex) {
 }
 
 bool Gfx::loadFont(const char *string) {
-
 	Common::SeekableReadStream *stream = g_hdb->_fileMan->findFirstData(string, TYPE_FONT);
 	if (!stream)
 		return false;

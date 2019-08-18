@@ -803,7 +803,7 @@ public:
 	AI();
 	~AI();
 
-	bool init();
+	void init();
 	void clearPersistent();
 	void restartSystem();
 	const char *funcLookUp(void(*function)(AIEntity *e));

@@ -1012,7 +1012,7 @@ AI::~AI() {
 	}
 }
 
-bool AI::init() {
+void AI::init() {
 	_debugQMark = g_hdb->_gfx->loadIcon("icon_question_mark");
 
 	// Clear Waypoint list and load Waypoint graphics
@@ -1114,7 +1114,6 @@ bool AI::init() {
 	_weaponSelGfx = NULL;
 
 	restartSystem();
-	return true;
 }
 
 void AI::clearPersistent() {

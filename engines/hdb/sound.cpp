@@ -1418,7 +1418,7 @@ void Sound::test() {
 	#endif
 }
 
-bool Sound::init() {
+void Sound::init() {
 	_song1.playing = _song2.playing = false;
 
 	//
@@ -1448,8 +1448,6 @@ bool Sound::init() {
 	// voices are on by default
 	_voicesOn = 1;
 	memset(&_voicePlayed[0], 0, sizeof(_voicePlayed));
-
-	return true;
 }
 
 void Sound::save(Common::OutSaveFile *out) {

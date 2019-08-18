@@ -1487,7 +1487,7 @@ public:
 
 	void test(); // FIXME. Remove
 
-	bool init();
+	void init();
 	void save(Common::OutSaveFile *out);
 	void loadSaveFile(Common::InSaveFile *in);
 	void setMusicVolume(int value);

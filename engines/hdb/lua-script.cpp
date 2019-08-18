@@ -125,16 +125,13 @@ LuaScript::~LuaScript() {
 		delete _globalLuaStream;
 }
 
-bool LuaScript::init() {
+void LuaScript::init() {
 	// Load Global Lua Code
 	_globalLuaStream = g_hdb->_fileMan->findFirstData("GLOBAL.LUA", TYPE_BINARY);
 	_globalLuaLength = g_hdb->_fileMan->getLength("GLOBAL.LUA", TYPE_BINARY);
 	if (_globalLuaStream == NULL || _globalLuaLength == 0) {
 		error("LuaScript::initScript: 'global code' failed to load");
-		return false;
 	}
-
-	return true;
 }
 
 bool LuaScript::loadLua(const char *name) {

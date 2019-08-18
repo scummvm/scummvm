@@ -52,7 +52,7 @@ public:
 	void save(Common::OutSaveFile *out);
 	void loadSaveFile(Common::InSaveFile *in);
 
-	bool init();
+	void init();
 	bool initScript(Common::SeekableReadStream *stream, const char *scriptName, int32 length);
 
 	void pushInt(int value);

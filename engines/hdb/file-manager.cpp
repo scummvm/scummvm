@@ -39,33 +39,27 @@ FileMan::~FileMan() {
 		delete _dir[i];
 }
 
-bool FileMan::openMPC(const Common::String &filename) {
-	uint32 offset;
-
+void FileMan::openMPC(const Common::String &filename) {
 	if (!_mpcFile->open(filename)) {
 		error("FileMan::openMPC(): Error reading the MSD/MPC file %s", filename.c_str());
-		return false;
 	}
 
 	_dataHeader.id = _mpcFile->readUint32BE();
 
 	if (_dataHeader.id == MKTAG('M', 'P', 'C', 'C')) {
-		debug("COMPRESSED MPC FILE");
-		return false;
+		error("FileMan::openMPC: Compressed MPC File");
 	} else if (_dataHeader.id == MKTAG('M', 'P', 'C', 'U')) {
 		// we're fine
 	} else if (_dataHeader.id == MKTAG('M', 'S', 'D', 'C')) {
 		// we're fine
 	} else if (_dataHeader.id == MKTAG('M', 'S', 'D', 'U')) {
-		debug("UNCOMPRESSED MSD FILE");
-		return false;
+		error("FileMan::openMPC: Uncompressed MSD File");
 	} else {
-		error("Invalid MPC/MSD File.");
-		return false;
+		error("FileMan::openMPC: Invalid MPC/MSD File.");
 	}
 
 	// read the directory
-	offset = _mpcFile->readUint32LE();
+	uint32 offset = _mpcFile->readUint32LE();
 	_mpcFile->seek((int32)offset);
 
 	// Note: The MPC archive format assumes the offset to be uint32,
@@ -91,8 +85,6 @@ bool FileMan::openMPC(const Common::String &filename) {
 
 		_dir.push_back(dirEntry);
 	}
-
-	return true;
 }
 
 void FileMan::closeMPC() {

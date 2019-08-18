@@ -137,28 +137,14 @@ bool HDBGame::init() {
 
 	// Init fileMan
 
-	if (!_fileMan->openMPC(getGameFile())) {
-		error("FileMan::openMPC: Cannot find the %s data file", getGameFile());
-	}
-	if (!_gfx->init()) {
-		error("Gfx::init: Couldn't initialize Gfx");
-	}
-	if (!_sound->init()) {
-		error("Window::init: Couldn't initialize Sound");
-	}
-	if (!_ai->init()) {
-		error("AI::init: Couldn't initialize AI");
-	}
-	if (!_window->init()) {
-		error("Window::init: Couldn't initialize Window");
-	}
-	if (!_input->init()) {
-		error("Input::init: Couldn't initialize Input");
-	}
-	if (!_lua->init()) {
-		error("LuaScript::init: Couldn't load the GLOBAL.LUA code.");
-	}
+	_fileMan->openMPC(getGameFile());
 
+	_gfx->init();
+	_sound->init();
+	_ai->init();
+	_window->init();
+	_input->init();
+	_lua->init();
 	_menu->init();
 
 	_debugLogo = _gfx->loadIcon("icon_debug_logo");
