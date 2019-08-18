@@ -150,7 +150,7 @@ asgn: tPUT expr tINTO ID 		{
 		$$ = $4;
 		delete $2; }
 	| tSET THEENTITY '=' expr	{
-		g_lingo->codeConst(0); // Put dummy id
+		g_lingo->codeInt(0); // Put dummy id
 		g_lingo->code1(g_lingo->c_theentityassign);
 		inst e = 0, f = 0;
 		WRITE_UINT32(&e, $2[0]);
@@ -172,7 +172,7 @@ asgn: tPUT expr tINTO ID 		{
 		$$ = $4;
 		delete $2; }
 	| tSET THEENTITY tTO expr	{
-		g_lingo->codeConst(0); // Put dummy id
+		g_lingo->codeInt(0); // Put dummy id
 		g_lingo->code1(g_lingo->c_theentityassign);
 		inst e = 0, f = 0;
 		WRITE_UINT32(&e, $2[0]);
@@ -414,9 +414,9 @@ tell:	  tTELL				{
 		$$ = g_lingo->code1(g_lingo->c_tellcode);
 		g_lingo->code1(STOP); }
 
-expr: INT		{ $$ = g_lingo->codeConst($1); }
+expr: INT		{ $$ = g_lingo->codeInt($1); }
 	| FLOAT		{
-		$$ = g_lingo->code1(g_lingo->c_fconstpush);
+		$$ = g_lingo->code1(g_lingo->c_floatpush);
 		g_lingo->codeFloat($1); }
 	| SYMBOL	{											// D3
 		$$ = g_lingo->code1(g_lingo->c_symbolpush);
@@ -440,7 +440,7 @@ expr: INT		{ $$ = g_lingo->codeConst($1); }
 		g_lingo->codeString($1->c_str());
 		delete $1; }
 	| THEENTITY	{
-		$$ = g_lingo->codeConst(0); // Put dummy id
+		$$ = g_lingo->codeInt(0); // Put dummy id
 		g_lingo->code1(g_lingo->c_theentitypush);
 		inst e = 0, f = 0;
 		WRITE_UINT32(&e, $1[0]);
@@ -545,13 +545,13 @@ gotofunc: tGO tLOOP				{ g_lingo->code1(g_lingo->c_gotoloop); }
 	| tGO tNEXT					{ g_lingo->code1(g_lingo->c_gotonext); }
 	| tGO tPREVIOUS				{ g_lingo->code1(g_lingo->c_gotoprevious); }
 	| tGO gotoframe 			{
-		g_lingo->codeConst(1);
+		g_lingo->codeInt(1);
 		g_lingo->code1(g_lingo->c_goto); }
 	| tGO gotoframe gotomovie	{
-		g_lingo->codeConst(3);
+		g_lingo->codeInt(3);
 		g_lingo->code1(g_lingo->c_goto); }
 	| tGO gotomovie				{
-		g_lingo->codeConst(2);
+		g_lingo->codeInt(2);
 		g_lingo->code1(g_lingo->c_goto); }
 	;
 
@@ -565,13 +565,13 @@ gotomovie: tOF tMOVIE expr
 
 playfunc: tPLAY tDONE			{ g_lingo->code1(g_lingo->c_playdone); }
 	| tPLAY gotoframe 			{
-		g_lingo->codeConst(1);
+		g_lingo->codeInt(1);
 		g_lingo->code1(g_lingo->c_play); }
 	| tPLAY gotoframe gotomovie	{
-		g_lingo->codeConst(3);
+		g_lingo->codeInt(3);
 		g_lingo->code1(g_lingo->c_play); }
 	| tPLAY gotomovie				{
-		g_lingo->codeConst(2);
+		g_lingo->codeInt(2);
 		g_lingo->code1(g_lingo->c_play); }
 	| tPLAYACCEL { g_lingo->codeSetImmediate(true); } arglist	{
 		g_lingo->codeSetImmediate(false);

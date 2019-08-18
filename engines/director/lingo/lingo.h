@@ -208,7 +208,7 @@ public:
 	int code3(inst code_1, inst code_2, inst code_3) { int o = code1(code_1); code1(code_2); code1(code_3); return o; }
 	int codeString(const char *s);
 	void codeLabel(int label);
-	int codeConst(int val);
+	int codeInt(int val);
 	int codeArray(int arraySize);
 
 	int calcStringAlignment(const char *s) {
@@ -261,9 +261,9 @@ public:
 	static void c_wordOf();
 	static void c_wordToOf();
 
-	static void c_constpush();
+	static void c_intpush();
 	static void c_voidpush();
-	static void c_fconstpush();
+	static void c_floatpush();
 	static void c_stringpush();
 	static void c_symbolpush();
 	static void c_varpush();

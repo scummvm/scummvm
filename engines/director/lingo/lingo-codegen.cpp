@@ -274,8 +274,8 @@ int Lingo::codeFloat(double f) {
 	return _currentScript->size();
 }
 
-int Lingo::codeConst(int val) {
-	int res = g_lingo->code1(g_lingo->c_constpush);
+int Lingo::codeInt(int val) {
+	int res = g_lingo->code1(g_lingo->c_intpush);
 	inst i = 0;
 	WRITE_UINT32(&i, val);
 	g_lingo->code1(i);
