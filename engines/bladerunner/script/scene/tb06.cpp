@@ -135,6 +135,9 @@ bool SceneScriptTB06::ClickedOnItem(int itemId, bool a2) {
 			Actor_Voice_Over(2380, kActorVoiceOver);
 			Actor_Voice_Over(2390, kActorVoiceOver);
 			Actor_Voice_Over(2400, kActorVoiceOver);
+			if (_vm->_cutContent) {
+				Actor_Says_With_Pause(kActorMcCoy, 8516, 0.70f, kAnimationModeTalk); // Any idea if they were real dogs? (gets no answer)
+			}
 			return true;
 		}
 	}

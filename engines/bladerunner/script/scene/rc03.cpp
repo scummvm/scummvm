@@ -311,9 +311,9 @@ void SceneScriptRC03::PlayerWalkedIn() {
 			Actor_Face_Actor(kActorIzo, kActorMcCoy, true);
 			Actor_Face_Actor(kActorMcCoy, kActorIzo, true);
 			Actor_Change_Animation_Mode(kActorIzo, kAnimationModeCombatIdle);
-			Actor_Says_With_Pause(kActorIzo, 630, 0, -1);
-			Actor_Says_With_Pause(kActorIzo, 640, 0, -1);
-			Actor_Says_With_Pause(kActorIzo, 650, 0, -1);
+			Actor_Says_With_Pause(kActorIzo, 630, 0.0f, -1); // TODO: A bug? why is animation mode set as -1? and why is "With_Pause" version used?
+			Actor_Says_With_Pause(kActorIzo, 640, 0.0f, -1); // TODO: A bug? why is animation mode set as -1? and why is "With_Pause" version used?
+			Actor_Says_With_Pause(kActorIzo, 650, 0.0f, -1); // TODO: A bug? why is animation mode set as -1? and why is "With_Pause" version used?
 			if (Game_Flag_Query(kFlagIzoIsReplicant) ) {
 #if BLADERUNNER_ORIGINAL_BUGS
 				Actor_Set_Goal_Number(kActorSteele, kGoalSteeleApprehendIzo);

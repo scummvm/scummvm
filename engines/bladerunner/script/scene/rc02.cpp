@@ -304,10 +304,24 @@ bool SceneScriptRC02::ClickedOnActor(int actorId) {
 		if (Global_Variable_Query(kVariableChapter) == 4) {
 			Actor_Face_Actor(kActorMcCoy, kActorRunciter, true);
 			if (Actor_Query_Goal_Number(kActorRunciter) == kGoalRunciterDead) {
-				if (Random_Query(1, 2) == 1) {
-					Actor_Says(kActorMcCoy, 8715, 17);
+				if (_vm->_cutContent) {
+					switch (Random_Query(1, 3)) {
+					case 1:
+						Actor_Says(kActorMcCoy, 8715, 17);
+						break;
+					case 2:
+						Actor_Says(kActorMcCoy, 8720, 17);
+						break;
+					case 3:
+						Actor_Says(kActorMcCoy, 8725, 17);
+						break;
+					}
 				} else {
-					Actor_Says(kActorMcCoy, 8720, 17);
+					if (Random_Query(1, 2) == 1) {
+						Actor_Says(kActorMcCoy, 8715, 17);
+					} else {
+						Actor_Says(kActorMcCoy, 8720, 17);
+					}
 				}
 				return true;
 			}

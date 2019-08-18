@@ -162,6 +162,16 @@ void SceneScriptPS15::PlayerWalkedIn() {
 		Actor_Says(kActorMcCoy, 4445, 18);
 		Actor_Says(kActorSergeantWalls, 10, 12);
 		Actor_Says(kActorMcCoy, 4450, 18);
+		if (_vm->_cutContent && !Game_Flag_Query(kFlagSergeantWallsMazeInstructions)) {
+			// TODO: These instructions don't make much sense... Is it better to not restore this at all?
+			//       Could there have been a system with a bell-tone that was removed from the original version?
+			Game_Flag_Set(kFlagSergeantWallsMazeInstructions);
+			Actor_Says(kActorSergeantWalls, 20, 13);
+			Actor_Says(kActorSergeantWalls, 30, 12);
+			Actor_Says(kActorMcCoy, 4455, 12);
+			Actor_Says(kActorSergeantWalls, 40, 12);
+			Actor_Says(kActorSergeantWalls, 50, 12);
+		}
 		Actor_Says(kActorSergeantWalls, 60, 13);
 		Actor_Says(kActorSergeantWalls, 70, 12);
 		Actor_Says(kActorMcCoy, 4460, 15);

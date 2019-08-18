@@ -103,13 +103,13 @@ void AIScriptSebastian::OtherAgentEnteredCombatMode(int otherActorId, int combat
 		if (Global_Variable_Query(kVariableGunPulledInFrontOfSebastian) == 1) {
 			Actor_Says(kActorSebastian, 680, 12);
 			Actor_Face_Actor(kActorMcCoy, kActorSebastian, true);
-			Actor_Says_With_Pause(kActorMcCoy, 7265, 0.0, kAnimationModeCombatIdle);
+			Actor_Says_With_Pause(kActorMcCoy, 7265, 0.0f, kAnimationModeCombatIdle);
 			Actor_Change_Animation_Mode(kActorMcCoy, kAnimationModeCombatIdle);
 			Delay(500);
 			Actor_Says(kActorSebastian, 690, 16);
 		} else {
 			Actor_Says(kActorSebastian, 700, 15);
-			Actor_Says_With_Pause(kActorMcCoy, 7270, 0.0, kAnimationModeCombatIdle);
+			Actor_Says_With_Pause(kActorMcCoy, 7270, 0.0f, kAnimationModeCombatIdle);
 			Actor_Change_Animation_Mode(kActorMcCoy, kAnimationModeCombatIdle);
 		}
 		AI_Movement_Track_Unpause(kActorSebastian);
@@ -421,7 +421,7 @@ void AIScriptSebastian::dialogue() {
 			Actor_Says(kActorSebastian, 350, kAnimationModeTalk);
 			Actor_Says(kActorMcCoy, 7125, 13);
 			Actor_Says(kActorSebastian, 360, 17);
-			Actor_Says_With_Pause(kActorMcCoy, 7130, 1.0, kAnimationModeTalk);
+			Actor_Says_With_Pause(kActorMcCoy, 7130, 1.0f, kAnimationModeTalk);
 			Actor_Says(kActorMcCoy, 7135, 18);
 			break;
 

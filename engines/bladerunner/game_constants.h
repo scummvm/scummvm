@@ -596,7 +596,7 @@ enum Flags {
 	kFlagTB02toTB03                           = 154, // is never checked
 	kFlagTB03toTB02                           = 155,
 	kFlagPS07KleinInsultedTalk                = 156,
-	// 157 is never used
+	kFlagSergeantWallsMazeInstructions        = 157, // Re-purposed. Original: 157 is never used
 	kFlagSergeantWallsBuzzInDone              = 158,
 	kFlagPS04GuzzaTalkZubenRetired            = 159,
 	kFlagPS04GuzzaTalkZubenEscaped            = 160,

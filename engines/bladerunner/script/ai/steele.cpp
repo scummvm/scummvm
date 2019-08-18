@@ -801,7 +801,7 @@ bool AIScriptSteele::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		Actor_Face_Actor(kActorSteele, kActorIzo, true);
 		Actor_Change_Animation_Mode(kActorIzo, kAnimationModeIdle);
 		Actor_Face_Actor(kActorIzo, kActorSteele, true);
-		Actor_Says_With_Pause(kActorSteele, 2010, 0.0, kAnimationModeCombatIdle);
+		Actor_Says_With_Pause(kActorSteele, 2010, 0.0f, kAnimationModeCombatIdle);
 		Actor_Change_Animation_Mode(kActorSteele, kAnimationModeCombatIdle);
 		Loop_Actor_Walk_To_Actor(kActorSteele, kActorIzo, 60, false, false);
 		Actor_Change_Animation_Mode(kActorSteele, kAnimationModeCombatIdle);
