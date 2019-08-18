@@ -2197,7 +2197,7 @@ yyreduce:
   case 15:
 #line 152 "engines/director/lingo/lingo-gr.y"
     {
-		g_lingo->codeConst(0); // Put dummy id
+		g_lingo->codeInt(0); // Put dummy id
 		g_lingo->code1(g_lingo->c_theentityassign);
 		inst e = 0, f = 0;
 		WRITE_UINT32(&e, (yyvsp[(2) - (4)].e)[0]);
@@ -2231,7 +2231,7 @@ yyreduce:
   case 18:
 #line 174 "engines/director/lingo/lingo-gr.y"
     {
-		g_lingo->codeConst(0); // Put dummy id
+		g_lingo->codeInt(0); // Put dummy id
 		g_lingo->code1(g_lingo->c_theentityassign);
 		inst e = 0, f = 0;
 		WRITE_UINT32(&e, (yyvsp[(2) - (4)].e)[0]);
@@ -2532,13 +2532,13 @@ yyreduce:
 
   case 60:
 #line 417 "engines/director/lingo/lingo-gr.y"
-    { (yyval.code) = g_lingo->codeConst((yyvsp[(1) - (1)].i)); ;}
+    { (yyval.code) = g_lingo->codeInt((yyvsp[(1) - (1)].i)); ;}
     break;
 
   case 61:
 #line 418 "engines/director/lingo/lingo-gr.y"
     {
-		(yyval.code) = g_lingo->code1(g_lingo->c_fconstpush);
+		(yyval.code) = g_lingo->code1(g_lingo->c_floatpush);
 		g_lingo->codeFloat((yyvsp[(1) - (1)].f)); ;}
     break;
 
@@ -2598,7 +2598,7 @@ yyreduce:
   case 70:
 #line 442 "engines/director/lingo/lingo-gr.y"
     {
-		(yyval.code) = g_lingo->codeConst(0); // Put dummy id
+		(yyval.code) = g_lingo->codeInt(0); // Put dummy id
 		g_lingo->code1(g_lingo->c_theentitypush);
 		inst e = 0, f = 0;
 		WRITE_UINT32(&e, (yyvsp[(1) - (1)].e)[0]);
@@ -2905,21 +2905,21 @@ yyreduce:
   case 133:
 #line 547 "engines/director/lingo/lingo-gr.y"
     {
-		g_lingo->codeConst(1);
+		g_lingo->codeInt(1);
 		g_lingo->code1(g_lingo->c_goto); ;}
     break;
 
   case 134:
 #line 550 "engines/director/lingo/lingo-gr.y"
     {
-		g_lingo->codeConst(3);
+		g_lingo->codeInt(3);
 		g_lingo->code1(g_lingo->c_goto); ;}
     break;
 
   case 135:
 #line 553 "engines/director/lingo/lingo-gr.y"
     {
-		g_lingo->codeConst(2);
+		g_lingo->codeInt(2);
 		g_lingo->code1(g_lingo->c_goto); ;}
     break;
 
@@ -2931,21 +2931,21 @@ yyreduce:
   case 141:
 #line 567 "engines/director/lingo/lingo-gr.y"
     {
-		g_lingo->codeConst(1);
+		g_lingo->codeInt(1);
 		g_lingo->code1(g_lingo->c_play); ;}
     break;
 
   case 142:
 #line 570 "engines/director/lingo/lingo-gr.y"
     {
-		g_lingo->codeConst(3);
+		g_lingo->codeInt(3);
 		g_lingo->code1(g_lingo->c_play); ;}
     break;
 
   case 143:
 #line 573 "engines/director/lingo/lingo-gr.y"
     {
-		g_lingo->codeConst(2);
+		g_lingo->codeInt(2);
 		g_lingo->code1(g_lingo->c_play); ;}
     break;
 

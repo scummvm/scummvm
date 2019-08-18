@@ -59,9 +59,9 @@ static struct FuncDescr {
 	{ Lingo::c_xpop,		"c_xpop",		"" },
 	{ Lingo::c_arraypush,	"c_arraypush",		"i" },
 	{ Lingo::c_printtop,	"c_printtop",	"" },
-	{ Lingo::c_constpush,	"c_constpush",	"i" },
+	{ Lingo::c_intpush,	    "c_intpush",	"i" },
 	{ Lingo::c_voidpush,	"c_voidpush",	"" },
-	{ Lingo::c_fconstpush,	"c_fconstpush",	"f" },
+	{ Lingo::c_floatpush,	"c_floatpush",	"f" },
 	{ Lingo::c_stringpush,	"c_stringpush",	"s" },
 	{ Lingo::c_symbolpush,	"c_symbolpush",	"s" },	// D3
 	{ Lingo::c_varpush,		"c_varpush",	"s" },
@@ -196,8 +196,8 @@ void Lingo::c_printtop(void) {
 	}
 }
 
-void Lingo::c_constpush() {
-	Datum d;
+void Lingo::c_intpush() {
+    Datum d;
 	inst i = (*g_lingo->_currentScript)[g_lingo->_pc++];
 	d.u.i = READ_UINT32(&i);
 	d.type = INT;
@@ -211,7 +211,7 @@ void Lingo::c_voidpush() {
 	g_lingo->push(d);
 }
 
-void Lingo::c_fconstpush() {
+void Lingo::c_floatpush() {
 	Datum d;
 	inst i = (*g_lingo->_currentScript)[g_lingo->_pc];
 	d.u.f = *(double *)(&i);
@@ -243,7 +243,7 @@ void Lingo::c_arraypush() {
 	Datum d;
 	inst v = (*g_lingo->_currentScript)[g_lingo->_pc++];
 	int arraySize = READ_UINT32(&v);
-
+`
 	warning("STUB: c_arraypush()");
 
 	for (int i = 0; i < arraySize; i++)
