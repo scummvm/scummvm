@@ -766,8 +766,6 @@ bool OSystem_Android::pollEvent(Common::Event &event) {
 		}
 
 		if (JNI::pause) {
-			deinitSurface();
-
 			LOGD("main thread going to sleep");
 			sem_wait(&JNI::pause_sem);
 			LOGD("main thread woke up");
