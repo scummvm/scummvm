@@ -42,7 +42,7 @@ enum Button {
 class Input {
 public:
 
-	bool init();
+	void init();
 
 	void setButtons(uint16 b);
 	uint16 getButtons();

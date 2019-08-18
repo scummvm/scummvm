@@ -77,7 +77,7 @@ public:
 
 	Graphics::ManagedSurface _globalSurface;
 
-	bool init();
+	void init();
 	void save(Common::OutSaveFile *out);
 	void loadSaveFile(Common::InSaveFile *in);
 	void fillScreen(uint32 color);

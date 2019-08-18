@@ -131,8 +131,7 @@ Window::~Window() {
 	delete _gemGfx;
 }
 
-bool Window::init() {
-
+void Window::init() {
 	_gfxTL = g_hdb->_gfx->loadPic(MENU_BACK_TOPLEFT);
 	_gfxTM = g_hdb->_gfx->loadPic(MENU_BACK_TOP);
 	_gfxTR = g_hdb->_gfx->loadPic(MENU_BACK_TOPRIGHT);
@@ -207,8 +206,6 @@ bool Window::init() {
 	_gemGfx = NULL;
 
 	restartSystem();
-
-	return true;
 }
 
 void Window::save(Common::OutSaveFile *out) {

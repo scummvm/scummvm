@@ -300,7 +300,7 @@ void AI::newDelivery(const char *itemTextName, const char *itemGfxName, const ch
 }
 
 bool AI::completeDelivery(const char *id) {
-	for (int i = 0; i < _numDeliveries; i++)
+	for (int i = 0; i < _numDeliveries; i++) {
 		if (!scumm_stricmp(_deliveries[i].id, id)) {
 			for (; i < _numDeliveries; i++)
 				memcpy(&_deliveries[i], &_deliveries[i + 1], sizeof(_deliveries[0]));
@@ -311,6 +311,7 @@ bool AI::completeDelivery(const char *id) {
 				g_hdb->_sound->playVoice(GUY_COMPLETED, 1);
 			return true;
 		}
+	}
 	return false;
 }
 

@@ -68,7 +68,7 @@ public:
 		uint32 dirSize;
 	} _dataHeader;
 
-	bool openMPC(const Common::String &filename);
+	void openMPC(const Common::String &filename);
 	void closeMPC();
 	void seek(int32 offset, int flag);
 

@@ -31,7 +31,7 @@
 
 namespace HDB {
 
-bool Input::init() {
+void Input::init() {
 	_stylusDown = false;
 	_buttons = 0;
 
@@ -49,8 +49,6 @@ bool Input::init() {
 	_mouseY = g_hdb->_screenHeight / 2;
 
 	_mouseLButton = _mouseMButton = _mouseRButton = 0;
-
-	return true;
 }
 
 void Input::setButtons(uint16 b) {
