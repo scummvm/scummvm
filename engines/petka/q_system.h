@@ -24,6 +24,7 @@
 #define PETKA_Q_SYSTEM_H
 
 #include "common/ptr.h"
+#include "common/stream.h"
 #include "common/list.h"
 
 #include "petka/objects/object_bg.h"
@@ -49,6 +50,8 @@ public:
 	~QSystem();
 
 	bool init();
+	void load(Common::ReadStream *s);
+	void save(Common::WriteStream *s);
 
 	void update();
 

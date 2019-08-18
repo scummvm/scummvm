@@ -71,6 +71,9 @@ public:
 
 	const Common::U32String *getSpeechInfo(int *talkerId, const char **soundName, int unk);
 
+	void load(Common::ReadStream *s);
+	void save(Common::WriteStream *s);
+
 private:
 	void loadSpeechesInfo();
 

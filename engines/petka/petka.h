@@ -24,8 +24,11 @@
 #define PETKA_PETKA_H
 
 #include "common/random.h"
+#include "common/stream.h"
+#include "common/savefile.h"
 
 #include "engines/engine.h"
+#include "engines/savestate.h"
 
 #include "gui/debugger.h"
 
@@ -86,6 +89,12 @@ public:
 	Common::RandomSource &getRnd();
 	const Common::String &getSpeechPath();
 
+	virtual Common::Error loadGameState(int slot) override;
+	bool canLoadGameStateCurrently() override;
+
+	Common::Error saveGameState(int slot, const Common::String &desc) override;
+	bool canSaveGameStateCurrently() override;
+
 private:
 	void loadStores();
 
@@ -107,7 +116,10 @@ private:
 	Common::String _chapterStoreName;
 
 	uint8 _part;
+	uint8 _nextPart;
 	uint8 _chapter;
+	bool _shouldChangePart;
+	Common::String _saveName;
 };
 
 class Console : public GUI::Debugger {
@@ -117,6 +129,9 @@ public:
 };
 
 extern PetkaEngine *g_vm;
+
+WARN_UNUSED_RESULT bool readSaveHeader(Common::InSaveFile &in, SaveStateDescriptor &desc, bool skipThumbnail = true);
+Common::String generateSaveName(int slot, const char *gameId);
 
 } // End of namespace Petka
 
