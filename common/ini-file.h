@@ -115,8 +115,11 @@ public:
 
 	void listKeyValues(StringMap &kv);
 
+	void enable8BitMode();
+
 private:
 	SectionList _sections;
+	bool _8bitMode;
 
 	Section *getSection(const String &section);
 	const Section *getSection(const String &section) const;

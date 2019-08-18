@@ -36,6 +36,7 @@ bool INIFile::isValidName(const String &name) {
 }
 
 INIFile::INIFile() {
+	_8bitMode = false;
 }
 
 INIFile::~INIFile() {
@@ -108,7 +109,7 @@ bool INIFile::loadFromStream(SeekableReadStream &stream) {
 			// is, verify that it only consists of alphanumerics,
 			// periods, dashes and underscores). Mohawk Living Books games
 			// can have periods in their section names.
-			while (*p && (isAlnum(*p) || *p == '-' || *p == '_' || *p == '.' || *p == ' '))
+			while (*p && ((_8bitMode && *p != ']') || isAlnum(*p) || *p == '-' || *p == '_' || *p == '.'))
 				p++;
 
 			if (*p == '\0')
@@ -125,7 +126,7 @@ bool INIFile::loadFromStream(SeekableReadStream &stream) {
 			section.comment = comment;
 			comment.clear();
 
-			assert(isValidName(section.name));
+			assert(_8bitMode || isValidName(section.name));
 		} else {
 			// This line should be a line with a 'key=value' pair, or an empty one.
 
@@ -160,7 +161,7 @@ bool INIFile::loadFromStream(SeekableReadStream &stream) {
 			kv.comment = comment;
 			comment.clear();
 
-			assert(isValidName(kv.key));
+			assert(_8bitMode || isValidName(kv.key));
 
 			section.keys.push_back(kv);
 		}
@@ -237,7 +238,7 @@ void INIFile::addSection(const String &section) {
 }
 
 void INIFile::removeSection(const String &section) {
-	assert(isValidName(section));
+	assert(_8bitMode || isValidName(section));
 	for (List<Section>::iterator i = _sections.begin(); i != _sections.end(); ++i) {
 		if (section.equalsIgnoreCase(i->name)) {
 			_sections.erase(i);
@@ -247,14 +248,14 @@ void INIFile::removeSection(const String &section) {
 }
 
 bool INIFile::hasSection(const String &section) const {
-	assert(isValidName(section));
+	assert(_8bitMode || isValidName(section));
 	const Section *s = getSection(section);
 	return s != nullptr;
 }
 
 void INIFile::renameSection(const String &oldName, const String &newName) {
-	assert(isValidName(oldName));
-	assert(isValidName(newName));
+	assert(_8bitMode || isValidName(oldName));
+	assert(_8bitMode || isValidName(newName));
 
 	Section *os = getSection(oldName);
 	const Section *ns = getSection(newName);
@@ -275,8 +276,8 @@ void INIFile::renameSection(const String &oldName, const String &newName) {
 
 
 bool INIFile::hasKey(const String &key, const String &section) const {
-	assert(isValidName(key));
-	assert(isValidName(section));
+	assert(_8bitMode || isValidName(key));
+	assert(_8bitMode || isValidName(section));
 
 	const Section *s = getSection(section);
 	if (!s)
@@ -285,8 +286,8 @@ bool INIFile::hasKey(const String &key, const String &section) const {
 }
 
 void INIFile::removeKey(const String &key, const String &section) {
-	assert(isValidName(key));
-	assert(isValidName(section));
+	assert(_8bitMode || isValidName(key));
+	assert(_8bitMode || isValidName(section));
 
 	Section *s = getSection(section);
 	if (s)
@@ -294,8 +295,8 @@ void INIFile::removeKey(const String &key, const String &section) {
 }
 
 bool INIFile::getKey(const String &key, const String &section, String &value) const {
-	assert(isValidName(key));
-	assert(isValidName(section));
+	assert(_8bitMode || isValidName(key));
+	assert(_8bitMode || isValidName(section));
 
 	const Section *s = getSection(section);
 	if (!s)
@@ -308,8 +309,8 @@ bool INIFile::getKey(const String &key, const String &section, String &value) co
 }
 
 void INIFile::setKey(const String &key, const String &section, const String &value) {
-	assert(isValidName(key));
-	assert(isValidName(section));
+	assert(_8bitMode || isValidName(key));
+	assert(_8bitMode || isValidName(section));
 	// TODO: Verify that value is valid, too. In particular, it shouldn't
 	// contain CR or LF...
 
@@ -387,6 +388,10 @@ void INIFile::Section::removeKey(const String &key) {
 			return;
 		}
 	}
+}
+
+void INIFile::enable8BitMode() {
+	_8bitMode = true;
 }
 
 } // End of namespace Common
