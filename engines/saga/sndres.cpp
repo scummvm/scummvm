@@ -288,6 +288,8 @@ bool SndRes::load(ResourceContext *context, uint32 resourceId, SoundBuffer &buff
 		} else if (_vm->getFeatures() & GF_8BIT_UNSIGNED_PCM) {	// older ITE demos
 			rawFlags |= Audio::FLAG_UNSIGNED;
 			rawFlags &= ~Audio::FLAG_16BITS;
+		} else if (_vm->getFeatures() & GF_ITE_PC98) { // PC-98 versions are 8-bit signed
+			rawFlags &= ~Audio::FLAG_16BITS;
 		} else if (!uncompressedSound && !scumm_stricmp(context->fileName(), "voicesd.rsc")) {
 			// Voice files in newer ITE demo versions are OKI ADPCM (VOX) encoded.
 			resourceType = kSoundVOX;
@@ -310,7 +312,15 @@ bool SndRes::load(ResourceContext *context, uint32 resourceId, SoundBuffer &buff
 		if ((soundResourceLength & 1) && (rawFlags & Audio::FLAG_16BITS))
 			soundResourceLength &= ~1;
 
-		Audio::SeekableAudioStream *audStream = Audio::makeRawStream(READ_STREAM(soundResourceLength), 22050, rawFlags);
+		int frequency;
+		// PC-98 is 8-bit PCM at a lower frequency than other releases.
+		if (_vm->getFeatures() & GF_ITE_PC98) {
+			frequency = 10000;
+		} else {
+			frequency = 22050;
+		}
+
+		Audio::SeekableAudioStream *audStream = Audio::makeRawStream(READ_STREAM(soundResourceLength), frequency, rawFlags);
 		buffer.stream = audStream;
 		buffer.streamLength = audStream->getLength();
 		result = true;
