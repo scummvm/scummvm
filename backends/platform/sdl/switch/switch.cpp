@@ -53,11 +53,10 @@ void OSystem_Switch::initBackend() {
 	ConfMan.registerDefault("output_rate", 48000);
 	ConfMan.registerDefault("touchpad_mouse_mode", false);
 
+	ConfMan.setBool("fullscreen", true);
+
 	if (!ConfMan.hasKey("joystick_num")) {
 		ConfMan.setInt("joystick_num", 0);
-	}
-	if (!ConfMan.hasKey("fullscreen")) {
-		ConfMan.setBool("fullscreen", true);
 	}
 	if (!ConfMan.hasKey("aspect_ratio")) {
 		ConfMan.setBool("aspect_ratio", false);
@@ -90,6 +89,8 @@ void OSystem_Switch::initBackend() {
 }
 
 bool OSystem_Switch::hasFeature(Feature f) {
+	if (f == kFeatureFullscreenMode)
+		return false;
 	return (f == kFeatureTouchpadMode ||
 		OSystem_SDL::hasFeature(f));
 }
@@ -98,6 +99,8 @@ void OSystem_Switch::setFeatureState(Feature f, bool enable) {
 	switch (f) {
 	case kFeatureTouchpadMode:
 		ConfMan.setBool("touchpad_mouse_mode", enable);
+		break;
+	case kFeatureFullscreenMode:
 		break;
 	default:
 		OSystem_SDL::setFeatureState(f, enable);
@@ -109,6 +112,9 @@ bool OSystem_Switch::getFeatureState(Feature f) {
 	switch (f) {
 	case kFeatureTouchpadMode:
 		return ConfMan.getBool("touchpad_mouse_mode");
+		break;
+	case kFeatureFullscreenMode:
+		return true;
 		break;
 	default:
 		return OSystem_SDL::getFeatureState(f);
