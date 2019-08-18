@@ -155,7 +155,7 @@ continue_input:
 
 	// Handle timeouts
 	if (key == ZC_TIME_OUT)
-		if (direct_call (routine) == 0)
+		if (direct_call(routine) == 0)
 			goto continue_input;
 
 	// Return key
@@ -490,22 +490,34 @@ void Processor::z_output_stream() {
 	flush_buffer();
 
 	switch ((short) zargs[0]) {
-	case  1: ostream_screen = true;
-		 break;
-	case -1: ostream_screen = false;
-		 break;
-	case  2: if (!ostream_script) script_open();
-		 break;
-	case -2: if (ostream_script) script_close();
-		 break;
-	case  3: memory_open(zargs[1], zargs[2], zargc >= 3);
-		 break;
-	case -3: memory_close();
-		 break;
-	case  4: if (!ostream_record) record_open();
-		 break;
-	case -4: if (ostream_record) record_close();
-		 break;
+	case 1:
+		ostream_screen = true;
+		break;
+	case -1:
+		ostream_screen = false;
+		break;
+	case  2:
+		if (!ostream_script)
+			script_open();
+		break;
+	case -2:
+		if (ostream_script)
+			script_close();
+		break;
+	case 3:
+		memory_open(zargs[1], zargs[2], zargc >= 3);
+		break;
+	case -3:
+		memory_close();
+		break;
+	case 4:
+		if (!ostream_record)
+			record_open();
+		break;
+	case -4:
+		if (ostream_record)
+			record_close();
+		break;
 	default:
 		break;
 	}

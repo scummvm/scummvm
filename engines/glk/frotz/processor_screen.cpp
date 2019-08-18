@@ -451,8 +451,8 @@ void Processor::z_show_status() {
 		brief = true;
 
 	// Print the object description for the global variable 0
-	print_char (' ');
-	print_object (global0);
+	print_char(' ');
+	print_object(global0);
 
 	// A header flag tells us whether we have to display the current
 	// time or the score/moves information
@@ -462,34 +462,34 @@ void Processor::z_show_status() {
 
 		pad_status_line (brief ? 15 : 20);
 
-		print_string ("Time: ");
+		print_string("Time: ");
 
 		if (hours < 10)
-			print_char (' ');
-		print_num (hours);
+			print_char(' ');
+		print_num(hours);
 
-		print_char (':');
+		print_char(':');
 
 		if (global2 < 10)
-			print_char ('0');
-		print_num (global2);
+			print_char('0');
+		print_num(global2);
 
-		print_char (' ');
+		print_char(' ');
 
-		print_char ((global1 >= 12) ? 'p' : 'a');
-		print_char ('m');
+		print_char((global1 >= 12) ? 'p' : 'a');
+		print_char('m');
 
 	} else {
 		// print score and moves
 		pad_status_line (brief ? 15 : 30);
 
-		print_string (brief ? "S: " : "Score: ");
-		print_num (global1);
+		print_string(brief ? "S: " : "Score: ");
+		print_num(global1);
 
 		pad_status_line (brief ? 8 : 14);
 
-		print_string (brief ? "M: " : "Moves: ");
-		print_num (global2);
+		print_string(brief ? "M: " : "Moves: ");
+		print_num(global2);
 	}
 
 	// Pad the end of the status line with spaces

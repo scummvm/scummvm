@@ -253,7 +253,7 @@ void Processor::encode_text(int padding) {
 			// Search character in the alphabet
 			for (set = 0; set < 3; set++)
 				for (index = 0; index < 26; index++)
-					if (c == alphabet (set, index))
+					if (c == alphabet(set, index))
 						goto letter_found;
 
 			// Character not found, store its ZSCII value
@@ -871,7 +871,7 @@ void Processor::z_print_form() {
 }
 
 void Processor::z_print_num() {
-	print_num (zargs[0]);
+	print_num(zargs[0]);
 }
 
 void Processor::z_print_obj() {
