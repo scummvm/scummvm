@@ -62,6 +62,8 @@ public:
 	void togglePanelInterface();
 	void toggleMapInterface();
 
+	void setChapayev();
+
 public:
 	Common::Array<QObject> _objs;
 	Common::Array<QObjectBG> _bgs;

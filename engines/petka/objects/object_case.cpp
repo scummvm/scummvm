@@ -130,7 +130,7 @@ void QObjectCase::onMouseMove(int x, int y) {
 void QObjectCase::onClick(int x, int y) {
 	switch (_clickedObjIndex) {
 		case 0:
-			// setChapayev()
+			g_vm->getQSystem()->setChapayev();
 			break;
 		case 1:
 			g_vm->getQSystem()->togglePanelInterface();

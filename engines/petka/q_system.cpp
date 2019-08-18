@@ -224,4 +224,14 @@ void QSystem::toggleMapInterface() {
 	}
 }
 
+void QSystem::setChapayev() {
+	if (_star->_isActive && _currInterface == _mainInterface.get() && _chapayev->_isShown) {
+		_cursor->show(false);
+		_cursor->_resourceId = 5007;
+		_cursor->returnInvItem();
+		_cursor->_actionType = kActionObjUseChapayev;
+		_cursor->show(true);
+	}
+}
+
 }
