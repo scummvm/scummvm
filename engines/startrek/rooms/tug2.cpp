@@ -113,25 +113,25 @@ void Room::tug2Tick1() {
 void Room::tug2Tick60() {
 	if (!_awayMission->tug.guard1Status || !_awayMission->tug.guard2Status) {
 		_awayMission->timers[0] = 60;
-		showText(TX_SPEAKER_ELASI_GUARD, TX_TUG2L085);
+		showText(TX_SPEAKER_ELASI_GUARD, 85, true, true);
 		tug2ElasiReadyPhaser();
 	}
 }
 
 void Room::tug2LookAtButton() {
-	showDescription(TX_TUG2N011);
+	showDescription(11, true);
 }
 
 void Room::tug2LookAtMccoy() {
-	showDescription(TX_TUG2N005);
+	showDescription(5, true);
 }
 
 void Room::tug2LookAtSpock() {
-	showDescription(TX_TUG2N007);
+	showDescription(7, true);
 }
 
 void Room::tug2LookAtRedshirt() {
-	showDescription(TX_TUG2N004);
+	showDescription(4, true);
 }
 
 void Room::tug2GetBomb() {
@@ -140,7 +140,7 @@ void Room::tug2GetBomb() {
 		_awayMission->crewDirectionsAfterWalk[OBJECT_KIRK] = DIR_N;
 		walkCrewman(OBJECT_KIRK, 0xc9, 0xa0, 12);
 	} else
-		showDescription(TX_TUG2N024);
+		showDescription(24, true);
 }
 
 void Room::tug2KirkReachedBomb() {
@@ -155,33 +155,33 @@ void Room::tug2KirkGotBomb() {
 }
 
 void Room::tug2LookAtBomb() {
-	showDescription(TX_TUG2N000);
+	showDescription(0, true);
 }
 
 void Room::tug2LookAtGuard1() {
 	if (_awayMission->tug.guard1Status == 0)
-		showDescription(TX_TUG2N001);
+		showDescription(1, true);
 	else if (_awayMission->tug.guard1Status == 1)
-		showDescription(TX_TUG2N013);
+		showDescription(13, true);
 	else if (_awayMission->tug.guard1Status == 8)
-		showDescription(TX_TUG2N015);
+		showDescription(15, true);
 	else if (_awayMission->tug.guard1Status == 2)
-		showDescription(TX_TUG2N106);
+		showDescription(106, true);
 }
 
 void Room::tug2LookAtGuard2() {
 	if (_awayMission->tug.guard2Status == 0)
-		showDescription(TX_TUG2N037);
+		showDescription(37, true);
 	else if (_awayMission->tug.guard2Status == 1)
-		showDescription(TX_TUG2N014);
+		showDescription(14, true);
 	else if (_awayMission->tug.guard2Status == 8)
-		showDescription(TX_TUG2N016);
+		showDescription(16, true);
 	else if (_awayMission->tug.guard2Status == 2)
-		showDescription(TX_TUG2N106);
+		showDescription(106, true);
 }
 
 void Room::tug2LookAtWires() {
-	showDescription(TX_TUG2N010);
+	showDescription(10, true);
 }
 
 void Room::tug2UseSTricorderOnButton() {
@@ -193,17 +193,17 @@ void Room::tug2UseSTricorderOnButton() {
 void Room::tug2UseMccoyOnWires() {
 	if (_awayMission->tug.field35 != 0)
 		return;
-	showText(TX_SPEAKER_MCCOY, TX_TUG2_009);
+	showText(TX_SPEAKER_MCCOY, 9, true);
 }
 
 void Room::tug2UseMccoyOnBomb() {
-	showText(TX_SPEAKER_MCCOY, TX_TUG2_011);
+	showText(TX_SPEAKER_MCCOY, 11, true);
 }
 
 void Room::tug2UseRedshirtOnWires() {
 	if (_awayMission->disableWalking || _awayMission->tug.field35 != 0)
 		return;
-	showText(TX_SPEAKER_CHRISTENSEN, TX_TUG2L007);
+	showText(TX_SPEAKER_CHRISTENSEN, 7, true, true);
 	_awayMission->crewDirectionsAfterWalk[OBJECT_REDSHIRT] = DIR_N;
 	_awayMission->disableInput = true;
 	walkCrewman(OBJECT_REDSHIRT, 0xc9, 0xa0, 6);
@@ -215,7 +215,7 @@ void Room::tug2RedshirtReachedWires() {
 
 void Room::tug2RedshirtDefusedBomb() {
 	showDescription(TX_TUG2C001);
-	showText(TX_SPEAKER_CHRISTENSEN, TX_TUG2L011);
+	showText(TX_SPEAKER_CHRISTENSEN, 11, true, true);
 	_awayMission->tug.field35 = 4;
 	_awayMission->crewDirectionsAfterWalk[OBJECT_REDSHIRT] = DIR_E;
 	walkCrewman(OBJECT_REDSHIRT, 0x44, 0xc2, 8);
@@ -235,8 +235,8 @@ void Room::tug2UseKirkOnWires() {
 }
 
 void Room::tug2KirkReachedWires() {
-	showText(TX_SPEAKER_KIRK,  TX_TUG2_003);
-	showText(TX_SPEAKER_SPOCK, TX_TUG2_023);
+	showText(TX_SPEAKER_KIRK,  3, true);
+	showText(TX_SPEAKER_SPOCK, 23, true);
 
 	_awayMission->crewDirectionsAfterWalk[OBJECT_KIRK] = DIR_E;
 	walkCrewman(OBJECT_KIRK, 0x66, 0xb8, 0);
@@ -255,11 +255,11 @@ void Room::tug2UseSpockOnWires() {
 void Room::tug2SpockReachedWires() {
 	loadActorAnim2(OBJECT_SPOCK, "suseme", -1, -1, 0);
 	playVoc("WIRESNIP");
-	showText(TX_SPEAKER_SPOCK, TX_TUG2_024);
+	showText(TX_SPEAKER_SPOCK, 24, true);
 	_awayMission->tug.field35 = 4;
 
 	if (_awayMission->tug.spockExaminedTransporter)
-		showText(TX_SPEAKER_SPOCK, TX_TUG2_008);
+		showText(TX_SPEAKER_SPOCK, 8, true);
 
 	_awayMission->crewDirectionsAfterWalk[OBJECT_SPOCK] = DIR_E;
 	walkCrewman(OBJECT_SPOCK, 0x56, 0xa9, 11);
@@ -376,25 +376,25 @@ void Room::tug2TurnedOffForceField() {
 
 void Room::tug2PrisonersDead() {
 	loadActorAnim2(OBJECT_BRIG, "zapdon", 0, 0, 0);
-	showDescription(TX_TUG2N026);
+	showDescription(26, true);
 }
 
 void Room::tug2PrisonersReleased() {
 	loadActorAnim2(OBJECT_BRIG, "fld10d", 0, 0, 0);
-	showText(TX_SPEAKER_MASADA_CREWMAN, TX_TUG2_029);
-	showText(TX_SPEAKER_MASADA_CREWMAN, TX_TUG2_030);
-	showText(TX_SPEAKER_MASADA_CREWMAN, TX_TUG2_028);
+	showText(TX_SPEAKER_MASADA_CREWMAN, 29, true);
+	showText(TX_SPEAKER_MASADA_CREWMAN, 30, true);
+	showText(TX_SPEAKER_MASADA_CREWMAN, 28, true);
 	_awayMission->tug.savedPrisoners = true;
 }
 
 void Room::tug2UsePhaserOnBrig() {
 	if (_awayMission->tug.field35 == 0)
-		showText(TX_SPEAKER_SPOCK, TX_TUG2_006);
+		showText(TX_SPEAKER_SPOCK, 6, true);
 	else if (_awayMission->tug.brigForceFieldDown) {
 		// BUGFIX: this function had two implementations; one for firing on the brig, and
 		// one for firing on the masada crewman (who replaces the brig object). The first
 		// took priority, meaning the latter code never ran. That's fixed here.
-		showText(TX_SPEAKER_MASADA_CREWMAN, TX_TUG2_025);
+		showText(TX_SPEAKER_MASADA_CREWMAN, 25, true);
 	}
 }
 
@@ -526,7 +526,7 @@ void Room::tug2KirkKillGuard2() {
 void Room::tug2UsePhaserOnWelder() {
 	loseItem(OBJECT_IPWE);
 	giveItem(OBJECT_IPWF);
-	showDescription(TX_TUG2N006);
+	showDescription(6, true);
 
 	// BUGFIX: this following line didn't exist, despite it existing in TUG1; meaning this
 	// was supposed to give points, but it only did in a specific room.
@@ -534,25 +534,25 @@ void Room::tug2UsePhaserOnWelder() {
 }
 
 void Room::tug2UseWelderOnWireScraps() {
-	showDescription(TX_TUG2N009);
+	showDescription(9, true);
 	loseItem(OBJECT_IWIRSCRP);
 }
 
 void Room::tug2UseWelderOnMetalScraps() {
-	showText(TX_SPEAKER_SPOCK, TX_TUG2_112);
+	showText(TX_SPEAKER_SPOCK, 112, true);
 	loseItem(OBJECT_IJNKMETL);
 	giveItem(OBJECT_ICOMBBIT);
 }
 
 void Room::tug2UseCombBitOnTransmogrifier() {
-	showText(TX_SPEAKER_SPOCK, TX_TUG2_021);
+	showText(TX_SPEAKER_SPOCK, 21, true);
 	loseItem(OBJECT_ICOMBBIT);
 	loseItem(OBJECT_IRT);
 	giveItem(OBJECT_IRTWB);
 }
 
 void Room::tug2ShotByElasi() {
-	showDescription(TX_TUG2N025);
+	showDescription(25, true);
 	showGameOverMenu();
 
 	// Unused: additional textbox that says "***Game over man!***"
@@ -563,25 +563,25 @@ void Room::tug2WalkToDoor() {
 }
 
 void Room::tug2LookAtDoor() {
-	showDescription(TX_TUG2N012);
+	showDescription(12, true);
 }
 
 void Room::tug2LookAtKirk() {
-	showDescription(TX_TUG2N003);
+	showDescription(3, true);
 }
 
 void Room::tug2TalkToKirk() {
 	if (_awayMission->tug.field35 == 6)
-		showText(TX_SPEAKER_KIRK, TX_TUG2_001);
+		showText(TX_SPEAKER_KIRK, 1, true);
 	else
-		showText(TX_SPEAKER_KIRK, TX_TUG2_002);
+		showText(TX_SPEAKER_KIRK, 2, true);
 }
 
 void Room::tug2TalkToMccoy() {
 	if (_awayMission->tug.field35 == 6)
-		showText(TX_SPEAKER_MCCOY, TX_TUG2_018);
+		showText(TX_SPEAKER_MCCOY, 18, true);
 	else
-		showText(TX_SPEAKER_MCCOY, TX_TUG2_010);
+		showText(TX_SPEAKER_MCCOY, 10, true);
 }
 
 void Room::tug2TalkToRedshirt() {
@@ -589,7 +589,7 @@ void Room::tug2TalkToRedshirt() {
 	// precedence, however, it's just generic, unhelpful text. The second implementation
 	// is more interesting, so that one is used instead.
 	if (_awayMission->tug.field35 == 6)
-		showText(TX_SPEAKER_CHRISTENSEN, TX_TUG2L004);
+		showText(TX_SPEAKER_CHRISTENSEN, 4, true, true);
 	else
 		showText(TX_SPEAKER_CHRISTENSEN, TX_TUG2J003);
 
@@ -599,9 +599,9 @@ void Room::tug2TalkToRedshirt() {
 
 void Room::tug2TalkToSpock() {
 	if (_awayMission->tug.field35 == 6)
-		showText(TX_SPEAKER_SPOCK, TX_TUG2_005);
+		showText(TX_SPEAKER_SPOCK, 5, true);
 	else
-		showText(TX_SPEAKER_SPOCK, TX_TUG2_020);
+		showText(TX_SPEAKER_SPOCK, 20, true);
 }
 
 void Room::tug2UseCommunicator() {
@@ -796,47 +796,47 @@ void Room::tug2UseMTricorderOnGuard2() {
 
 void Room::tug2TalkToGuard1() {
 	if (_awayMission->tug.guard1Status == GUARDSTAT_TIED)
-		showText(TX_SPEAKER_ELASI_GUARD, TX_TUG2L086);
+		showText(TX_SPEAKER_ELASI_GUARD, 86, true, true);
 	else if (_awayMission->tug.guard1Status == GUARDSTAT_STUNNED)
-		showText(TX_SPEAKER_MCCOY, TX_TUG2_012);
+		showText(TX_SPEAKER_MCCOY, 12, true);
 }
 
 void Room::tug2TalkToGuard2() {
 	if (_awayMission->tug.guard2Status == GUARDSTAT_TIED)
-		showText(TX_SPEAKER_ELASI_GUARD, TX_TUG2L086);
+		showText(TX_SPEAKER_ELASI_GUARD, 86, true, true);
 	else if (_awayMission->tug.guard2Status == GUARDSTAT_STUNNED)
-		showText(TX_SPEAKER_MCCOY, TX_TUG2_013);
+		showText(TX_SPEAKER_MCCOY, 13, true);
 }
 
 void Room::tug2UseMedkitOnBomb() {
-	showText(TX_SPEAKER_MCCOY, TX_TUG2_017);
+	showText(TX_SPEAKER_MCCOY, 17, true);
 }
 
 void Room::tug2UseMedkitOnGuard1() {
 	if (_awayMission->tug.guard1Status == GUARDSTAT_STUNNED)
-		showText(TX_SPEAKER_MCCOY, TX_TUG2_014);
+		showText(TX_SPEAKER_MCCOY, 14, true);
 }
 
 void Room::tug2UseMedkitOnGuard2() {
 	if (_awayMission->tug.guard2Status == GUARDSTAT_STUNNED)
-		showText(TX_SPEAKER_MCCOY, TX_TUG2_014);
+		showText(TX_SPEAKER_MCCOY, 14, true);
 }
 
 void Room::tug2LookAnywhere() {
 	if (_awayMission->tug.guard1Status == GUARDSTAT_DEAD && _awayMission->tug.guard2Status == GUARDSTAT_DEAD && _awayMission->tug.field35 == 6)
-		showDescription(TX_TUG2N019);
+		showDescription(19, true);
 	else if (_awayMission->tug.guard1Status == GUARDSTAT_DEAD && _awayMission->tug.guard2Status == GUARDSTAT_DEAD && !_awayMission->tug.brigForceFieldDown)
-		showDescription(TX_TUG2N017);
+		showDescription(17, true);
 	else if (_awayMission->tug.guard1Status == GUARDSTAT_STUNNED && _awayMission->tug.guard2Status == GUARDSTAT_STUNNED && _awayMission->tug.field35 == 6)
-		showDescription(TX_TUG2N020);
+		showDescription(20, true);
 	else if (_awayMission->tug.guard1Status == GUARDSTAT_STUNNED && _awayMission->tug.guard2Status == GUARDSTAT_STUNNED && !_awayMission->tug.brigForceFieldDown)
-		showDescription(TX_TUG2N018);
+		showDescription(18, true);
 	else if (_awayMission->tug.guard1Status == GUARDSTAT_STUNNED && _awayMission->tug.guard2Status == GUARDSTAT_STUNNED && _awayMission->tug.brigForceFieldDown)
-		showDescription(TX_TUG2N021);
+		showDescription(21, true);
 	else if (_awayMission->tug.guard1Status == GUARDSTAT_DEAD && _awayMission->tug.guard2Status == GUARDSTAT_DEAD && _awayMission->tug.brigForceFieldDown)
-		showDescription(TX_TUG2N022);
+		showDescription(22, true);
 	else
-		showDescription(TX_TUG2N023);
+		showDescription(23, true);
 }
 
 void Room::tug2TalkToBrig() {
@@ -845,12 +845,12 @@ void Room::tug2TalkToBrig() {
 
 	if (_awayMission->tug.brigForceFieldDown && !_awayMission->tug.talkedToBrigCrewman) {
 		loadActorAnim2(OBJECT_BRIG, "fld10d", 0, 0, 0);
-		showText(TX_SPEAKER_MASADA_CREWMAN, TX_TUG2_026);
+		showText(TX_SPEAKER_MASADA_CREWMAN, 26, true);
 		_awayMission->tug.talkedToBrigCrewman = true;
 	}
 
 	if (_awayMission->tug.brigForceFieldDown && _awayMission->tug.talkedToBrigCrewman)
-		showText(TX_SPEAKER_MASADA_CREWMAN, TX_TUG2_027);
+		showText(TX_SPEAKER_MASADA_CREWMAN, 27, true);
 	else if (!_awayMission->tug.brigForceFieldDown)
 		mccoyScan(DIR_E, TX_TUG2_015, true);
 }
