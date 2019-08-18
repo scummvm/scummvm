@@ -350,6 +350,7 @@ void OSystem_Android::initBackend() {
 	ConfMan.registerDefault("fullscreen", true);
 	ConfMan.registerDefault("aspect_ratio", true);
 	ConfMan.registerDefault("touchpad_mouse_mode", true);
+	ConfMan.registerDefault("onscreen_control", true);
 
 	ConfMan.setInt("autosave_period", 0);
 	ConfMan.setBool("FM_high_quality", false);
@@ -359,6 +360,11 @@ void OSystem_Android::initBackend() {
 		_touchpad_mode = ConfMan.getBool("touchpad_mouse_mode");
 	else
 		ConfMan.setBool("touchpad_mouse_mode", true);
+
+	if (ConfMan.hasKey("onscreen_control"))
+		JNI::showKeyboardControl(ConfMan.getBool("onscreen_control"));
+	else
+		ConfMan.setBool("onscreen_control", true);
 
 	// must happen before creating TimerManager to avoid race in
 	// creating EventManager
@@ -411,6 +417,7 @@ bool OSystem_Android::hasFeature(Feature f) {
 			f == kFeatureOverlaySupportsAlpha ||
 			f == kFeatureOpenUrl ||
 			f == kFeatureTouchpadMode ||
+			f == kFeatureOnScreenControl ||
 			f == kFeatureClipboardSupport);
 }
 
@@ -439,6 +446,10 @@ void OSystem_Android::setFeatureState(Feature f, bool enable) {
 		ConfMan.setBool("touchpad_mouse_mode", enable);
 		_touchpad_mode = enable;
 		break;
+	case kFeatureOnScreenControl:
+		ConfMan.setBool("onscreen_control", enable);
+		JNI::showKeyboardControl(enable);
+		break;
 	default:
 		break;
 	}
@@ -456,6 +467,8 @@ bool OSystem_Android::getFeatureState(Feature f) {
 		return _use_mouse_palette;
 	case kFeatureTouchpadMode:
 		return ConfMan.getBool("touchpad_mouse_mode");
+	case kFeatureOnScreenControl:
+		return ConfMan.getBool("onscreen_control");
 	default:
 		return false;
 	}

@@ -21,7 +21,11 @@ RESOURCES = \
 	$(PATH_BUILD_RES)/drawable/scummvm.png \
 	$(PATH_BUILD_RES)/drawable/scummvm_big.png \
 	$(PATH_BUILD_RES)/drawable-xhdpi/leanback_icon.png \
-	$(PATH_BUILD_RES)/drawable-xhdpi/ouya_icon.png
+	$(PATH_BUILD_RES)/drawable-xhdpi/ouya_icon.png \
+	$(PATH_BUILD_RES)/drawable-hdpi/ic_action_settings.png \
+	$(PATH_BUILD_RES)/drawable-mdpi/ic_action_settings.png \
+	$(PATH_BUILD_RES)/drawable-xhdpi/ic_action_settings.png \
+	$(PATH_BUILD_RES)/drawable-xxhdpi/ic_action_settings.png
 
 DIST_ANDROID_MK = $(PATH_DIST)/jni/Android.mk
 DIST_BUILD_XML = $(PATH_DIST)/custom_rules.xml

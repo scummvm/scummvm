@@ -61,6 +61,7 @@ public abstract class ScummVM implements SurfaceHolder.Callback, Runnable {
 	abstract protected boolean isConnectionLimited();
 	abstract protected void setWindowCaption(String caption);
 	abstract protected void showVirtualKeyboard(boolean enable);
+	abstract protected void showKeyboardControl(boolean enable);
 	abstract protected String[] getSysArchives();
 
 	public ScummVM(AssetManager asset_manager, SurfaceHolder holder) {
