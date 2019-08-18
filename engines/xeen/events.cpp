@@ -32,7 +32,7 @@
 namespace Xeen {
 
 EventsManager::EventsManager(XeenEngine *vm) : _vm(vm), _playTime(0), _gameCounter(0),
-		_frameCounter(0), _priorFrameCounterTime(0), _priorScreenRefreshTime(0),
+		_frameCounter(0), _priorFrameCounterTime(0), _priorScreenRefreshTime(0), _lastAutosaveTime(0),
 		_mousePressed(false), _sprites("mouse.icn") {
 	Common::fill(&_gameCounters[0], &_gameCounters[6], 0);
 }
@@ -69,12 +69,19 @@ void EventsManager::pollEvents() {
 		_priorScreenRefreshTime = timer;
 		g_vm->_screen->update();
 	}
+
 	if (timer >= (_priorFrameCounterTime + GAME_FRAME_TIME)) {
 		// Time to build up next game frame
 		_priorFrameCounterTime = timer;
 		nextFrame();
 	}
 
+	// Handle auto saves
+	if (!_lastAutosaveTime)
+		_lastAutosaveTime = timer;
+	g_vm->autoSaveCheck(_lastAutosaveTime);
+
+	// Event handling
 	Common::Event event;
 	while (g_system->getEventManager()->pollEvent(event)) {
 		switch (event.type) {

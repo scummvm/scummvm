@@ -266,7 +266,7 @@ void XeenEngine::gameLoop() {
 			// Load any pending savegame
 			int saveSlot = _loadSaveSlot;
 			_loadSaveSlot = -1;
-			_saves->loadGameState(saveSlot);
+			(void)_saves->loadGameState(saveSlot);
 			_interface->drawParty(true);
 		}
 
@@ -320,6 +320,18 @@ void XeenEngine::saveSettings() {
 
 	ConfMan.setInt("final_score", _finalScore);
 	ConfMan.flushToDisk();
+}
+
+void XeenEngine::GUIError(const Common::String &msg) {
+	GUIErrorMessage(msg);
+}
+
+void XeenEngine::autoSaveCheck(int &lastSaveTime) {
+	if (shouldPerformAutoSave(lastSaveTime) && canSaveGameStateCurrently() &&
+			(_map && !(_map->mazeData()._mazeFlags & RESTRICTION_SAVE))) {
+		_saves->doAutosave();
+		lastSaveTime = g_system->getMillis();
+	}
 }
 
 } // End of namespace Xeen

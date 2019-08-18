@@ -149,11 +149,6 @@ private:
 	 * Plays the actual game
 	 */
 	void play();
-
-	/**
-	 * Shows a please wait dialog
-	 */
-	void pleaseWait();
 protected:
 	int _loadSaveSlot;
 protected:
@@ -275,6 +270,16 @@ public:
 	 * Saves engine settings
 	 */
 	void saveSettings();
+
+	/**
+	 * Show an error message in a GUI dialog
+	 */
+	void GUIError(const Common::String &msg);
+
+	/**
+	 * Checks if an auto save should be done, and if so, takes care of it
+	 */
+	void autoSaveCheck(int &lastSaveTime);
 };
 
 extern XeenEngine *g_vm;
