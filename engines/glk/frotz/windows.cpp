@@ -315,6 +315,7 @@ void Window::setStyle(int style) {
 	if (g_vm->gos_linepending && _windows->currWin() == g_vm->gos_linewin)
 		return;
 
+	_currStyle = style;
 	updateStyle();
 }
 
@@ -380,7 +381,7 @@ void Window::createGlkWindow() {
 		_windows->showTextWindows();
 
 	// Create a new window	
-	if (_index == 1) {
+	if (_index != 0 || (_currStyle & FIXED_WIDTH_STYLE)) {
 		// Text grid window
 		_win = g_vm->glk_window_open(g_vm->glk_window_get_root(),
 			winmethod_Arbitrary | winmethod_Fixed, 0, wintype_TextGrid, 0);
