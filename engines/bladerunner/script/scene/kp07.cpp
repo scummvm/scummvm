@@ -166,6 +166,10 @@ bool SceneScriptKP07::ClickedOn3DObject(const char *objectName, bool a2) {
 
 bool SceneScriptKP07::ClickedOnActor(int actorId) {
 	if (actorId == kActorClovis) {
+#if BLADERUNNER_ORIGINAL_BUGS
+#else
+		Actor_Face_Actor(kActorMcCoy, kActorClovis, true);
+#endif // BLADERUNNER_ORIGINAL_BUGS
 		if (!Game_Flag_Query(kFlagKP07McCoyPulledGun)
 		 &&  Actor_Query_Goal_Number(kActorClovis) != kGoalClovisGone
 		 &&  Actor_Query_Goal_Number(kActorClovis) != kGoalClovisKP07SayFinalWords
