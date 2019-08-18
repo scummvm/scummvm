@@ -41,7 +41,7 @@ public:
 	void removeItem(int id);
 	void setInv(int id1, int id2);
 
-private:
+public:
 	Common::Array<int> _items;
 	uint _clickedObjIndex;
 	int _itemIndex;

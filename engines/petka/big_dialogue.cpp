@@ -20,6 +20,7 @@
  *
  */
 
+#include "common/debug.h"
 #include "common/stream.h"
 
 #include "petka/base.h"
@@ -340,6 +341,17 @@ label:
 			break;
 		}
 	}
+}
+
+void BigDialogue::load(Common::ReadStream *s) {
+	_codeSize = s->readUint32LE();
+	s->read(_code, 4 * _codeSize);
+
+}
+
+void BigDialogue::save(Common::WriteStream *s) {
+	s->writeUint32LE(_codeSize);
+	s->write(_code, 4 * _codeSize);
 }
 
 } // End of namespace Petka

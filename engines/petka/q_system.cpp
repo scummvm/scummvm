@@ -35,7 +35,9 @@
 #include "petka/objects/object_case.h"
 #include "petka/objects/object_star.h"
 #include "petka/objects/heroes.h"
+#include "petka/big_dialogue.h"
 #include "petka/q_system.h"
+#include "petka/video.h"
 
 namespace Petka {
 
@@ -231,6 +233,96 @@ void QSystem::setChapayev() {
 		_cursor->returnInvItem();
 		_cursor->_actionType = kActionObjUseChapayev;
 		_cursor->show(true);
+	}
+}
+
+static Common::String readString(Common::ReadStream *s) {
+	Common::String string;
+	uint32 len = s->readUint32LE();
+	char *buffer = (char *)malloc(len);
+	s->read(buffer, len);
+	string = Common::String(buffer, len);
+	free(buffer);
+	return string;
+}
+
+static void writeString(Common::WriteStream *s, const Common::String &string) {
+	s->writeUint32LE(string.size());
+	s->write(string.c_str(), string.size());
+}
+
+void QSystem::load(Common::ReadStream *s) {
+	uint count = s->readUint32LE();
+	for (uint i = 0; i < count; ++i) {
+		QMessageObject *obj = findObject(readString(s));
+		obj->_field_38 = s->readUint32LE();
+		obj->_status = s->readUint32LE();
+		obj->_resourceId = s->readUint32LE();
+		obj->_z = s->readUint32LE();
+		obj->_x = s->readUint32LE();
+		obj->_y = s->readUint32LE();
+		obj->_isShown = s->readUint32LE();
+		obj->_isActive = s->readUint32LE();
+		obj->_animate = s->readUint32LE();
+	}
+
+	uint itemSize = s->readUint32LE();
+	_case->_items.clear();
+	for (uint i = 0; i < itemSize; ++i) {
+		_case->_items.push_back(s->readSint32LE());
+	}
+
+	_room = (QObjectBG *)findObject(readString(s));
+	if (_room) {
+		_mainInterface->loadRoom(_room->_id, true);
+	}
+
+	g_vm->getBigDialogue()->load(s);
+
+	_cursor->_resourceId = s->readUint32LE();
+	_cursor->_actionType = s->readUint32LE();
+	int invObjId = s->readSint32LE();
+	if (invObjId != -1) {
+		_cursor->_invObj = findObject(invObjId);
+	} else {
+		_cursor->_invObj = nullptr;
+	}
+
+	g_vm->videoSystem()->makeAllDirty();
+}
+
+void QSystem::save(Common::WriteStream *s) {
+	s->writeUint32LE(_allObjects.size());
+	for (uint i = 0; i < _allObjects.size(); ++i) {
+		writeString(s, _allObjects[i]->_name);
+		s->writeUint32LE(_allObjects[i]->_field_38);
+		s->writeUint32LE(_allObjects[i]->_status);
+		s->writeUint32LE(_allObjects[i]->_resourceId);
+		s->writeUint32LE(_allObjects[i]->_z);
+		s->writeUint32LE(_allObjects[i]->_x);
+		s->writeUint32LE(_allObjects[i]->_y);
+		s->writeUint32LE(_allObjects[i]->_isShown);
+		s->writeUint32LE(_allObjects[i]->_isActive);
+		s->writeUint32LE(_allObjects[i]->_animate);
+	}
+
+	s->writeUint32LE(_case->_items.size());
+	for (uint i = 0; i < _case->_items.size(); ++i) {
+		s->writeSint32LE(_case->_items[i]);
+	}
+
+	writeString(s, _room->_name);
+
+	// heroes (no impl)
+
+	g_vm->getBigDialogue()->save(s);
+
+	s->writeUint32LE(_cursor->_resourceId);
+	s->writeUint32LE(_cursor->_actionType);
+	if (_cursor->_invObj) {
+		s->writeSint32LE(_cursor->_invObj->_resourceId);
+	} else {
+		s->writeSint32LE(-1);
 	}
 }
 

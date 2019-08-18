@@ -6,6 +6,7 @@ MODULE_OBJS = \
     file_mgr.o \
     flc.o \
     petka.o \
+    saveload.o \
     q_manager.o \
     q_system.o \
     sound.o \

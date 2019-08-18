@@ -20,6 +20,9 @@
  *
  */
 
+#include "common/system.h"
+#include "common/savefile.h"
+
 #include "engines/advancedDetector.h"
 
 #include "petka/petka.h"
@@ -48,8 +51,66 @@ public:
 		return "Red Comrades (C) S.K.I.F";
 	}
 
+	virtual bool hasFeature(MetaEngineFeature f) const;
+	virtual int getMaximumSaveSlot() const { return 18; }
+	virtual SaveStateList listSaves(const char *target) const;
+	virtual void removeSaveState(const char *target, int slot) const;
+	virtual SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const;
 	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const;
 };
+
+bool PetkaMetaEngine::hasFeature(MetaEngineFeature f) const {
+	return
+		(f == kSupportsListSaves) ||
+		(f == kSupportsDeleteSave) ||
+		(f == kSavesSupportMetaInfo) ||
+		(f == kSavesSupportThumbnail) ||
+		(f == kSavesSupportCreationDate) ||
+		(f == kSavesSupportPlayTime);
+}
+
+SaveStateList PetkaMetaEngine::listSaves(const char *target) const {
+	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
+	Common::String pattern = Common::String::format("%s.s##", target);
+	Common::StringArray filenames = saveFileMan->listSavefiles(pattern);
+
+	SaveStateList saveList;
+	for (Common::StringArray::const_iterator file = filenames.begin(); file != filenames.end(); ++file) {
+		// Obtain the last 2 digits of the filename, since they correspond to the save slot
+		int slotNum = atoi(file->c_str() + file->size() - 2);
+		if (slotNum >= 0 && slotNum <= getMaximumSaveSlot()) {
+			Common::ScopedPtr<Common::InSaveFile> in(saveFileMan->openForLoading(*file));
+			if (in) {
+				SaveStateDescriptor desc;
+				desc.setSaveSlot(slotNum);
+				if (Petka::readSaveHeader(*in.get(), desc))
+					saveList.push_back(desc);
+			}
+		}
+	}
+
+	// Sort saves based on slot number.
+	Common::sort(saveList.begin(), saveList.end(), SaveStateDescriptorSlotComparator());
+	return saveList;
+}
+
+void PetkaMetaEngine::removeSaveState(const char *target, int slot) const {
+	g_system->getSavefileManager()->removeSavefile(Petka::generateSaveName(slot, target));
+}
+
+SaveStateDescriptor PetkaMetaEngine::querySaveMetaInfos(const char *target, int slot) const {
+	Common::ScopedPtr<Common::InSaveFile> f(g_system->getSavefileManager()->openForLoading(Petka::generateSaveName(slot, target)));
+
+	if (f) {
+		SaveStateDescriptor desc;
+		if (!Petka::readSaveHeader(*f.get(), desc, false))
+			return SaveStateDescriptor();
+
+		return desc;
+	}
+
+	return SaveStateDescriptor();
+}
 
 bool PetkaMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
 	if (desc)
