@@ -180,6 +180,19 @@ void Score::loadArchive() {
 	setSpriteCasts();
 	loadSpriteImages(false);
 
+    // Try to load compiled Lingo scripts
+    if (_vm->getVersion() == 4) {
+        Common::Array<uint16> lscr =  _movieArchive->getResourceIDList(MKTAG('L','s','c','r'));
+        if (lscr.size() > 0) {
+            debugC(2, kDebugLoading, "****** Loading %d Lscr resources", lscr.size());
+            
+            for (Common::Array<uint16>::iterator iterator = lscr.begin(); iterator != lscr.end(); ++iterator) {
+				loadLingoScript(*_movieArchive->getResource(MKTAG('L','s','c','r'), *iterator));
+			}
+        }
+
+    }
+
 	// Try to load movie script, it sits in resource A11
 	if (_vm->getVersion() <= 3) {
 		Common::Array<uint16> stxt = _movieArchive->getResourceIDList(MKTAG('S','T','X','T'));
@@ -870,6 +883,17 @@ bool Score::processImmediateFrameScript(Common::String s, int id) {
 	}
 
 	return false;
+}
+
+void Score::loadLingoScript(Common::SeekableSubReadStreamEndian &stream) {
+    if (_vm->getVersion() == 4) {
+
+        _lingo->addCodeV4(stream, kMovieScript, _movieScriptCount);
+    
+    } else {
+        error("Score::loadLingoScript: unsuported Director version (%d)", _vm->getVersion());
+    }
+    _movieScriptCount++;
 }
 
 void Score::loadScriptText(Common::SeekableSubReadStreamEndian &stream) {

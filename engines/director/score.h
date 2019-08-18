@@ -101,6 +101,7 @@ private:
 	void loadFrames(Common::SeekableSubReadStreamEndian &stream);
 	void loadLabels(Common::SeekableSubReadStreamEndian &stream);
 	void loadActions(Common::SeekableSubReadStreamEndian &stream);
+	void loadLingoScript(Common::SeekableSubReadStreamEndian &stream);
 	void loadScriptText(Common::SeekableSubReadStreamEndian &stream);
 	void loadFileInfo(Common::SeekableSubReadStreamEndian &stream);
 	void loadFontMap(Common::SeekableSubReadStreamEndian &stream);

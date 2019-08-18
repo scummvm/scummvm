@@ -85,6 +85,8 @@ static struct FuncDescr {
 	{ Lingo::c_starts,		"c_starts",		"" },
 	{ Lingo::c_intersects,	"c_intersects",	"" },
 	{ Lingo::c_within,		"c_within",		"" },
+    { Lingo::c_field,       "c_field",      "" },
+    { Lingo::c_of,		    "c_of",		    "" },	// D9
 	{ Lingo::c_charOf,		"c_charOf",		"" },	// D3
 	{ Lingo::c_charToOf,	"c_charToOf",	"" },	// D3
 	{ Lingo::c_itemOf,		"c_itemOf",		"" },	// D3
@@ -107,6 +109,8 @@ static struct FuncDescr {
 	{ Lingo::c_exitRepeat,	"c_exitRepeat",	"" },
 	{ Lingo::c_ifcode,		"c_ifcode",		"oooi" },
 	{ Lingo::c_tellcode,	"c_tellcode",	"o" },
+    { Lingo::c_tell,        "c_tell",       "" },
+    { Lingo::c_telldone,    "c_telldone",   "" },
 	{ Lingo::c_whencode,	"c_whencode",	"os" },
 	{ Lingo::c_goto,		"c_goto",		"" },
 	{ Lingo::c_gotoloop,	"c_gotoloop",	"" },
@@ -120,6 +124,7 @@ static struct FuncDescr {
 	{ Lingo::c_property,	"c_property",	"s" },
 	{ Lingo::c_instance,	"c_instance",	"s" },
 	{ Lingo::c_open,		"c_open",		"" },
+    { Lingo::c_hilite,      "c_hilite",     "" },
 	{ 0, 0, 0 }
 };
 
@@ -243,7 +248,7 @@ void Lingo::c_arraypush() {
 	Datum d;
 	inst v = (*g_lingo->_currentScript)[g_lingo->_pc++];
 	int arraySize = READ_UINT32(&v);
-`
+
 	warning("STUB: c_arraypush()");
 
 	for (int i = 0; i < arraySize; i++)
@@ -640,6 +645,34 @@ void Lingo::c_within() {
 	g_lingo->push(d1);
 }
 
+void Lingo::c_field() {
+    Datum d1 = g_lingo->pop();
+
+    warning("STUB: c_field: %d", d1.u.i);
+
+    g_lingo->push(d1);
+}
+
+void Lingo::c_of() {
+    Datum first_char = g_lingo->pop();
+    Datum last_char = g_lingo->pop();
+    Datum first_word = g_lingo->pop();
+    Datum last_word = g_lingo->pop();
+    Datum first_item = g_lingo->pop();
+    Datum last_item = g_lingo->pop();
+    Datum first_line = g_lingo->pop();
+    Datum last_line = g_lingo->pop();
+    Datum target = g_lingo->pop();
+
+    warning("STUB: c_of: %d %d %d %d %d %d %d %d %s", 
+                first_char.u.i, last_char.u.i, first_word.u.i, last_word.u.i,
+                first_item.u.i, last_item.u.i, first_line.u.i, last_line.u.i,
+                target.u.s->c_str());
+
+    g_lingo->push(target);
+
+}
+
 void Lingo::c_charOf() {
 	Datum d2 = g_lingo->pop();
 	Datum d1 = g_lingo->pop();
@@ -969,6 +1002,15 @@ void Lingo::c_tellcode() {
 	warning("STUB: c_tellcode");
 }
 
+void Lingo::c_tell() {
+    Datum d1 = g_lingo->pop();
+	warning("STUB: c_tell %d", d1.u.i);
+}
+
+void Lingo::c_telldone() {
+	warning("STUB: c_telldone");
+}
+
 
 //************************
 // Built-in functions
@@ -1185,6 +1227,23 @@ void Lingo::c_open() {
 	d2.toString();
 
 	warning("STUB: c_open(%s, %s)", d1.u.s->c_str(), d2.u.s->c_str());
+}
+
+void Lingo::c_hilite() {
+    Datum first_char = g_lingo->pop();
+    Datum last_char = g_lingo->pop();
+    Datum first_word = g_lingo->pop();
+    Datum last_word = g_lingo->pop();
+    Datum first_item = g_lingo->pop();
+    Datum last_item = g_lingo->pop();
+    Datum first_line = g_lingo->pop();
+    Datum last_line = g_lingo->pop();
+    Datum cast_id = g_lingo->pop();
+
+    warning("STUB: c_hilite: %d %d %d %d %d %d %d %d %d", 
+                first_char.u.i, last_char.u.i, first_word.u.i, last_word.u.i,
+                first_item.u.i, last_item.u.i, first_line.u.i, last_line.u.i,
+                cast_id.u.i);
 }
 
 }

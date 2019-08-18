@@ -163,6 +163,7 @@ public:
 	void restartLingo();
 
 	void addCode(const char *code, ScriptType type, uint16 id);
+	void addCodeV4(Common::SeekableSubReadStreamEndian &stream, ScriptType type, uint16 id);
 	void executeScript(ScriptType type, uint16 id);
 	void printStack(const char *s);
 	Common::String decodeInstruction(uint pc, uint *newPC = NULL);
@@ -252,6 +253,8 @@ public:
 
 	static void c_intersects();
 	static void c_within();
+    static void c_field();
+    static void c_of();
 	static void c_charOf();
 	static void c_charToOf();
 	static void c_itemOf();
@@ -283,6 +286,8 @@ public:
 	static void c_ifcode();
 	static void c_whencode();
 	static void c_tellcode();
+	static void c_tell();
+	static void c_telldone();
 	static void c_exitRepeat();
 	static void c_eq();
 	static void c_neq();
@@ -310,6 +315,7 @@ public:
 	static void c_playdone();
 
 	static void c_open();
+    static void c_hilite();
 
 	void printSTUBWithArglist(const char *funcname, int nargs, const char *prefix = "STUB:");
 	void convertVOIDtoString(int arg, int nargs);
