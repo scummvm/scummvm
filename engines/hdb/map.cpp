@@ -910,6 +910,9 @@ void Map::draw() {
 		screenY += kTileWidth;
 	}
 
+	if (g_hdb->isDemo() && g_hdb->isPPC())
+		drawEnts();
+
 	// Animate FAST Map Tiles
 	if (!(_animCycle % kAnimFastFrames)) {
 		for (Common::Array<uint32>::iterator it = _listBGAnimFast.begin(); it != _listBGAnimFast.end(); ++it) {

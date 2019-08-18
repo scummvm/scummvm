@@ -1012,7 +1012,9 @@ Common::Error HDBGame::run() {
 			if (e && e->level < 2)
 				_ai->drawWayPoints();
 
-			_map->drawEnts();
+			if (!(g_hdb->isDemo() && g_hdb->isPPC()))
+				_map->drawEnts();
+
 			_map->drawGratings();
 
 			if (e && e->level == 2)
