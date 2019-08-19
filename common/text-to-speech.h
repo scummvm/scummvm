@@ -95,17 +95,17 @@ class TTSVoice {
 
 		/**
 		 * Returns the data about the voice, this is engine specific variable,
-		 * it has close to no value for anything else then communicating with
+		 * it has close to no value for anything else then communicating
 		 * directly with the TTS engine, which should probably be done only by
 		 * the backends.
 		 */
-		void setData(void *data) { _data = data; };
+		void *getData() { return _data; };
 
 		/**
-		 * Sets the voice age, should probably be used only by the backends
+		 * Sets the voice data, should probably be used only by the backends
 		 * that are directly communicating with the TTS engine.
 		 */
-		void *getData() { return _data; };
+		void setData(void *data) { _data = data; };
 
 		/**
 		 * Returns the voice description. This description is really tts engine
@@ -114,11 +114,11 @@ class TTSVoice {
 		String getDescription() { return _description; };
 
 	protected:
-		Gender _gender;
-		Age _age;
-		void *_data;
-		String _description;
-		int *_refCount;
+		Gender _gender; ///< Gender of the voice
+		Age _age; ///< Age of the voice
+		void *_data; ///< Pointer to tts engine specific data about the voice
+		String _description; ///< Description of the voice (gets displayed in GUI)
+		int *_refCount; ///< Reference count (serves for proper feeing of _data)
 };
 
 struct TTSState {
