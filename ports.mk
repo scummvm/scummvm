@@ -313,8 +313,6 @@ osxsnap: bundle
 	mkdir ResidualVM-snapshot/doc
 	cp $(srcdir)/doc/QuickStart ./ResidualVM-snapshot/doc/QuickStart
 	$(XCODETOOLSPATH)/SetFile -t ttro -c ttxt ./ResidualVM-snapshot/doc/QuickStart
-	$(XCODETOOLSPATH)/SetFile -t ttro -c ttxt ./ResidualVM-snapshot/doc/*/*
-	xattr -w "com.apple.TextEncoding" "utf-8;134217984" ./ResidualVM-snapshot/doc/*/*
 	$(XCODETOOLSPATH)/CpMac -r $(bundle_name) ./ResidualVM-snapshot/
 # ResidualVM missing background file:
 #	cp $(srcdir)/dists/macosx/DS_Store ./ResidualVM-snapshot/.DS_Store
