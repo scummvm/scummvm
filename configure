@@ -4218,25 +4218,6 @@ define_in_config_if_yes "$_vorbis" 'USE_VORBIS'
 echo "$_vorbis"
 
 #
-# Check for iconv
-#
-echocheck "Iconv"
-if test "$_iconv" = auto ; then
-	_iconv=no
-	cat > $TMPC << EOF
-#include <iconv.h>
-int main(void) { iconv_t conv = iconv_open("UTF-8//IGNORE", "CP850"); return 0; }
-EOF
-	cc_check $ICONV_CFLAGS $ICONV_LIBS -liconv && _iconv=yes
-fi
-if test "$_iconv" = yes ; then
-	append_var LIBS "$ICONV_LIBS -liconv"
-	append_var INCLUDES "$ICONV_CFLAGS"
-fi
-define_in_config_if_yes "$_iconv" 'USE_ICONV'
-echo "$_iconv"
-
-#
 # Check for Tremor
 #
 echocheck "Tremor"
@@ -5244,6 +5225,25 @@ if test "$_pandocext" = "default"; then
 		_pandocext=".$_pandocformat"
 	fi
 fi
+#
+# Check for iconv
+#
+echocheck "Iconv"
+if test "$_iconv" = auto ; then
+	_iconv=no
+	cat > $TMPC << EOF
+#include <iconv.h>
+int main(void) { iconv_t conv = iconv_open("UTF-8//IGNORE", "CP850"); return 0; }
+EOF
+	cc_check $ICONV_CFLAGS $ICONV_LIBS -liconv && _iconv=yes
+fi
+if test "$_iconv" = yes ; then
+	append_var LIBS "$ICONV_LIBS -liconv"
+	append_var INCLUDES "$ICONV_CFLAGS"
+fi
+define_in_config_if_yes "$_iconv" 'USE_ICONV'
+echo "$_iconv"
+
 
 #
 # Enable vkeybd / keymapper / event recorder
