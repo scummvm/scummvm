@@ -30,7 +30,7 @@ namespace Testbed {
 
 namespace Encodingtests {
 
-// Helper functions for Speech tests
+// Helper functions for Encoding tests
 
 // will contain function declarations for Encoding tests
 // add more here
@@ -41,7 +41,7 @@ TestExitStatus testConversionUnicodeLittleEndian();
 TestExitStatus testCyrillicTransliteration();
 TestExitStatus testOtherConversions();
 
-} // End of namespace Speechtests
+} // End of namespace Encodingtests
 
 class EncodingTestSuite : public Testsuite {
 public:
