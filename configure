@@ -4974,7 +4974,7 @@ EOF
 		done
 	elif test "$_opengles2" = yes ; then
 		# 1) GLESv2    This is generally used by nearly all platforms for OpenGL ES 2
-		# 2) ogles2    This is used by AmigaOS4 (and proabably others)
+		# 2) ogles2    This is used by AmigaOS4 (and probably others)
 		_opengles2=no
 		for lib in "-lGLESv2" "-logles2"; do
 			if cc_check_no_clean $DEFINES $OPENGL_CFLAGS $OPENGL_LIBS $lib
