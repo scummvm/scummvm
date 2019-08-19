@@ -145,12 +145,15 @@ bool INIFile::loadFromStream(SeekableReadStream &stream) {
 
 			// Split string at '=' into 'key' and 'value'. First, find the "=" delimeter.
 			const char *p = strchr(t, '=');
-			if (!p)
-				error("Config file buggy: Junk found in line line %d: '%s'", lineno, t);
-
-			// Extract the key/value pair
-			kv.key = String(t, p);
-			kv.value = String(p + 1);
+			if (!p) {
+				warning("Config file buggy: Junk found in line line %d: '%s'", lineno, t);
+				kv.key = String(t);
+				kv.value.clear();
+			}  else {
+				// Extract the key/value pair
+				kv.key = String(t, p);
+				kv.value = String(p + 1);
+			}
 
 			// Trim of spaces
 			kv.key.trim();
