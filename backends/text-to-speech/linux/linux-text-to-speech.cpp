@@ -349,6 +349,9 @@ void SpeechDispatcherManager::setLanguage(Common::String language) {
 }
 
 void SpeechDispatcherManager::createVoice(int typeNumber, Common::TTSVoice::Gender gender, Common::TTSVoice::Age age, char *description) {
+	// This pointer will point to data needed for voice switching. It is stored
+	// in the Common::TTSVoice and it is freed by freeVoiceData() once it
+	// is not needed.
 	SPDVoiceType *type = (SPDVoiceType *) malloc(sizeof(SPDVoiceType));
 	*type = static_cast<SPDVoiceType>(typeNumber);
 	Common::TTSVoice voice(gender, age, (void *) type, description);
