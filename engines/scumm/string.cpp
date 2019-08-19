@@ -675,7 +675,7 @@ void ScummEngine::CHARSET_1() {
 
 				if (*current == -1 || *current == -2) {
 					current++;
-					if (*current == 3) {
+					if (*current == 3 || *current == 2) {
 						break;
 					}
 					if (*current == 0x0A || *current == 0x0C) {
@@ -1006,7 +1006,7 @@ void ScummEngine::drawString(int a, const byte *msg) {
 				pos = -1;
 				if (*current == -1 || *current == -2) {
 					current++;
-					if (*current == 3) {
+					if (*current == 3 || *current == 2) {
 						break;
 					}
 					if (*current == 0x0A || *current == 0x0C) {
