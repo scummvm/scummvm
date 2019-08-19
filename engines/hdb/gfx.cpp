@@ -386,6 +386,9 @@ void Gfx::updateFade() {
 	if (!_fadeInfo.active && !_fadeInfo.stayFaded)
 		return;
 
+	debug(7, "updateFade: active: %d stayFaded: %d isBlack: %d speed: %d isFadeIn: %d curStep: %d",
+		_fadeInfo.active, _fadeInfo.stayFaded, _fadeInfo.isBlack, _fadeInfo.speed, _fadeInfo.isFadeIn, _fadeInfo.curStep);
+
 	if (g_hdb->isPPC()) {
 		if (!_fadeInfo.isBlack) {
 			// Black fade
