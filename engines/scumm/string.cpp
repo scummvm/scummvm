@@ -1026,7 +1026,7 @@ void ScummEngine::drawString(int a, const byte *msg) {
 		}
 
 		if (_game.id == GID_INDY4 && ltext[0] == 127) {
-			buf[start + pos + ll] = 127;
+			buf[start + pos + ll] = 128;
 			buf[start + pos + ll + 1] = '\0';
 		}
 
