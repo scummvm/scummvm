@@ -154,7 +154,16 @@ int StringInput::execute(bool type, const Common::String &expected,
 	Common::String line;
 	if (getString(line, 30, 200, false)) {
 		if (type) {
-			if (!line.compareToIgnoreCase(scripts._message)) {
+			// WORKAROUND: Fix for incorrect answer for one of the Vowelless Knight riddles
+			line.toLowercase();
+			if (line == "iieeeoeeeouie")
+				line = "iieeeoeeaouie";
+			Common::String scriptsMsg = scripts._message;
+			scriptsMsg.toLowercase();
+			if (scriptsMsg == "iieeeoeeeouie")
+				scriptsMsg = "iieeeoeeaouie";
+
+			if (line == scriptsMsg) {
 				result = true;
 			} else if (!line.compareToIgnoreCase(expected)) {
 				result = (opcode == 55) ? -1 : 1;
