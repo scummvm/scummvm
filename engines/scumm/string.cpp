@@ -1027,7 +1027,7 @@ void ScummEngine::drawString(int a, const byte *msg) {
 
 		if (_game.id == GID_INDY4 && ltext[0] == 127) {
 			buf[start + pos + ll] = 127;
-			buf[start + pos+ll + 1] = '\0';
+			buf[start + pos + ll + 1] = '\0';
 		}
 
 	}
@@ -1093,10 +1093,12 @@ void ScummEngine::drawString(int a, const byte *msg) {
 		_charset->_left -= _charset->getStringWidth(a, buf) / 2;
 	} else if (_game.version >= 4 && _game.version < 7 && _game.id != GID_SAMNMAX && (_language == Common::HE_ISR || true)) {
 		if (_game.id != GID_INDY4 || buf[0] == 127) {
+			int ll = 0;
 			if (_game.id == GID_INDY4 && buf[0] == 127) {
 				buf[0] = 32;
+				ll++;
 			}
-			int ll = 0;
+
 			byte* ltext = buf;
 			while (ltext[ll] == 0xFF) {
 				ll += 4;
