@@ -1327,7 +1327,7 @@ bool Party::giveTake(int takeMode, uint takeVal, int giveMode, uint giveVal, int
 		intf.spellFX(&ps);
 		break;
 	case 58:
-		ps._luck._temporary = MIN(ps._luck._temporary + giveVal, (uint)255);
+		ps._fireResistence._temporary = MIN(ps._fireResistence._temporary + giveVal, (uint)255);
 		intf.spellFX(&ps);
 		break;
 	case 59:
