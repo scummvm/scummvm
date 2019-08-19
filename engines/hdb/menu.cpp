@@ -310,8 +310,6 @@ bool Menu::init() {
 }
 
 void Menu::readConfig() {
-	warning("STUB: readConfig: Music Config not implemented");
-
 	if (ConfMan.hasKey(CONFIG_MSTONE7)) {
 		g_hdb->setStarsMonkeystone7(ConfMan.getInt(CONFIG_MSTONE7));
 	} else {
@@ -374,8 +372,6 @@ void Menu::readConfig() {
 }
 
 void Menu::writeConfig() {
-	warning("STUB: writeConfig: Music Config not implemented");
-
 	int value;
 
 	value = g_hdb->getStarsMonkeystone7();
