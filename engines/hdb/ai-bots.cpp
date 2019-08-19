@@ -114,7 +114,6 @@ void aiOmniBotAction(AIEntity *e) {
 					}
 					break;
 				case DIR_NONE:
-					warning("aiOmniBotAction: DIR_NONE found");
 					break;
 				}
 
@@ -450,7 +449,7 @@ void aiRightBotFindGoal(AIEntity *e) {
 				case DIR_LEFT: e->dir = DIR_UP; break;
 				case DIR_RIGHT: e->dir = DIR_DOWN; break;
 				case DIR_NONE:
-					warning("aiRightBotFindGoal: DIR_NONE found");
+					break;
 				}
 			} else if (!bg && !e1) {
 				switch (e->dir) {
@@ -459,7 +458,7 @@ void aiRightBotFindGoal(AIEntity *e) {
 				case DIR_LEFT: e->dir = DIR_DOWN; break;
 				case DIR_RIGHT: e->dir = DIR_UP; break;
 				case DIR_NONE:
-					warning("aiRightBotFindGoal: DIR_NONE found");
+					break;
 				}
 			} else {
 				switch (e->dir) {
@@ -484,7 +483,7 @@ void aiRightBotFindGoal(AIEntity *e) {
 					xv = -1;
 					break;
 				case DIR_NONE:
-					warning("aiRightBotFindGoal: DIR_NONE found");
+					break;
 				}
 				sx += xv;
 				sy += yv;
@@ -507,7 +506,6 @@ void aiRightBotFindGoal(AIEntity *e) {
 		e->state = STATE_MOVERIGHT;
 		break;
 	case DIR_NONE:
-		warning("aiRightBotFindGoal: DIR_NONE found");
 		break;
 	}
 
@@ -692,7 +690,6 @@ void aiRailRiderAction(AIEntity *e) {
 			case DIR_LEFT:	e->xVel = -1;	e->yVel = 0;	break;
 			case DIR_RIGHT:	e->xVel = 1;	e->yVel = 0;	break;
 			case DIR_NONE:
-				warning("aiRailRiderAction: DIR_NONE found");
 				break;
 			}
 		}
@@ -824,7 +821,6 @@ void aiRailRiderOnAction(AIEntity *e) {
 							g_hdb->_ai->setEntityGoal(p, e->tileX, e->tileY + 1);
 						break;
 					case DIR_NONE:
-						warning("aiRailRiderOnAction: DIR_NOW found");
 						break;
 					}
 					g_hdb->_ai->setPlayerInvisible(false);
@@ -1135,7 +1131,6 @@ void aiFourFirerAction(AIEntity *e) {
 		}
 		break;
 	case DIR_NONE:
-		warning("aiFourFirerAction: DIR_NONE found");
 		break;
 	}
 
@@ -1246,7 +1241,6 @@ void aiDeadEyeAction(AIEntity *e) {
 					nuts = true;
 				break;
 			case DIR_NONE:
-				warning("aiDeadEyeAction: DIR_NONE found");
 				break;
 			}
 

@@ -281,7 +281,7 @@ void AI::processCines() {
 						e->state = STATE_STANDRIGHT;
 						break;
 					default:
-						warning("AI-CINEMATIC: processCines: DIR_NONE");
+						break;
 					}
 				} else
 					warning("Can't find %s to ENTITYFACE", _cine[i]->title);
