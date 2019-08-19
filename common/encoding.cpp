@@ -24,7 +24,7 @@
 #include "common/textconsole.h"
 #include "common/system.h"
 #include "common/translation.h"
-#include <cerrno>
+#include <errno.h>
 
 namespace Common {
 
@@ -246,22 +246,22 @@ char *Encoding::convertTransManMapping(const char *to, const char *from, const c
 	String currentCharset = TransMan.getCurrentCharset();
 	if (currentCharset.equalsIgnoreCase(from)) {
 		// We can use the transMan mapping directly
-		uint32 *partialResult = (uint32 *) calloc(sizeof(uint32), (strlen(string) + 1));
+		uint32 *partialResult = (uint32 *) calloc(sizeof(uint32), (length + 1));
 		if (!partialResult) {
 			warning("Couldn't allocate memory for encoding conversion");
 			return nullptr;
 		}
 		const uint32 *mapping = TransMan.getCharsetMapping();
 		if (mapping == 0) {
-			for(unsigned i = 0; i < strlen(string); i++) {
+			for(unsigned i = 0; i < length; i++) {
 				partialResult[i] = string[i];
 			}
 		} else {
-			for(unsigned i = 0; i < strlen(string); i++) {
+			for(unsigned i = 0; i < length; i++) {
 				partialResult[i] = mapping[(unsigned char) string[i]] & 0x7FFFFFFF;
 			}
 		}
-		char *finalResult = convert(to, "UTF-32", (char *) partialResult, strlen(string) * 4);
+		char *finalResult = convert(to, "UTF-32", (char *) partialResult, length * 4);
 		free(partialResult);
 		return finalResult;
 	} else if (currentCharset.equalsIgnoreCase(to) && String(from).hasPrefixIgnoreCase("utf-32")) {
