@@ -37,7 +37,7 @@ void SceneScriptNR01::InitializeScene() {
 	} else if (Game_Flag_Query(kFlagNR01DektoraFall)) {
 		Setup_Scene_Information( -416.0f, 31.93f,  -841.0f, 200);
 		Actor_Set_Invisible(kActorMcCoy, true);
-		Preload(167);
+		Preload(kModelAnimationDektoraInFlamesEndFalling);
 	} else if (Game_Flag_Query(kFlagNR03toNR01)) {
 		Setup_Scene_Information( -416.0f, 31.93f,  -841.0f, 200);
 	} else if (Game_Flag_Query(kFlagUG06toNR01)) {

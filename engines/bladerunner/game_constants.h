@@ -1822,6 +1822,16 @@ enum GameModelAnimations {
 	// 671 - 681: Howie Lee animations
 	// 682 - 687: Fish Dealer animations
 	// 688 - 697: Dino Klein animations
+	kModelAnimationKleinWalking                    = 688,
+	kModelAnimationKleinStandingIdle               = 689,
+	kModelAnimationKleinTalkScratchBackOfHead      = 690,
+	kModelAnimationKleinWorkingOnInstruments       = 691,
+	kModelAnimationKleinTalkSmallLeftHandMove      = 692,
+	kModelAnimationKleinTalkRightHandTouchFace     = 693,
+	kModelAnimationKleinTalkWideHandMotion         = 694,
+	kModelAnimationKleinTalkSuggestOrAsk           = 695,
+	kModelAnimationKleinTalkDismissive             = 696,
+	kModelAnimationKleinTalkRaisingBothHands       = 697,
 	// 698 - 704: Murray animations
 	// 705 - 715: Hawker's Barkeep animations
 	// 716 - 721: Holloway animations
@@ -1876,6 +1886,18 @@ enum GameModelAnimations {
 	// 908 - 917: Mutant 3 animations
 	// 918 - 919: Taffy Patron (Gordo's hostage) animations
 	// 920 - 930: Hasan animations
+	kModelAnimationHasanTalkWipeFaceLeftHand01    = 920, // UNUSED
+	kModelAnimationHasanIdleSlightMovement        = 921,
+	kModelAnimationHasanTalkSuggest               = 922,
+	kModelAnimationHasanTakingABiteSnakeMove      = 923,
+	kModelAnimationHasanTalkPointingRightHand     = 924, // UNUSED
+	kModelAnimationHasanTalkMovingBothHands       = 925,
+	kModelAnimationHasanTalkLeftRightLeftGesture  = 926,
+	kModelAnimationHasanTalkRaiseHandSnakeMove    = 927,
+	kModelAnimationHasanTalkMovingBothHandsAndNod = 928,
+	kModelAnimationHasanTalkWipeFaceLeftHand02    = 929, // (almost) identical to 920 (same number of frames too)
+	kModelAnimationHasanTalkUpset                 = 930,
+	// 931 - 996: Item animations
 	kModelAnimationBadge                       = 931,
 	kModelAnimationBomb                        = 932,
 	kModelAnimationCandy                       = 933,

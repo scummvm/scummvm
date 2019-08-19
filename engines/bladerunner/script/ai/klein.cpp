@@ -354,17 +354,17 @@ bool AIScriptKlein::UpdateAnimation(int *animation, int *frame) {
 		if (Actor_Query_Goal_Number(kActorKlein) == kGoalKleinMovingInLab01
 		    || Actor_Query_Goal_Number(kActorKlein) == kGoalKleinMovingInLab02
 		) {
-			*animation = 691;
+			*animation = kModelAnimationKleinWorkingOnInstruments;
 			_animationFrame++;
-			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(691)) {
+			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationKleinWorkingOnInstruments)) {
 				_animationFrame = 0;
 			}
 		} else if (!Game_Flag_Query(kFlagKleinAnimation1)
 		           && Actor_Query_Goal_Number(kActorKlein) == kGoalKleinGotoLabSpeaker
 		) {
-			*animation = 689;
+			*animation = kModelAnimationKleinStandingIdle;
 			_animationFrame++;
-			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(689)) {
+			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationKleinStandingIdle)) {
 				_animationFrame = 0;
 				if (Random_Query(1, 10) == 1) {
 					Game_Flag_Set(kFlagKleinAnimation1);
@@ -382,7 +382,7 @@ bool AIScriptKlein::UpdateAnimation(int *animation, int *frame) {
 				++_animationFrame;
 			}
 
-			*animation = 690;
+			*animation = kModelAnimationKleinTalkScratchBackOfHead;
 			if (_animationFrame <= 9) {
 				if (Game_Flag_Query(kFlagKleinAnimation3)) {
 					Game_Flag_Reset(kFlagKleinAnimation3);
@@ -399,69 +399,69 @@ bool AIScriptKlein::UpdateAnimation(int *animation, int *frame) {
 					Game_Flag_Set(kFlagKleinAnimation3);
 				}
 			}
-			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(690)) {
+			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationKleinTalkScratchBackOfHead)) {
 				_animationFrame = 0;
 				Game_Flag_Reset(kFlagKleinAnimation1);
 			}
 		}
 		break;
 	case 1:
-		*animation = 688;
+		*animation = kModelAnimationKleinWalking;
 		_animationFrame++;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(688)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationKleinWalking)) {
 			_animationFrame = 0;
 		}
 		break;
 	case 2:
-		*animation = 692;
+		*animation = kModelAnimationKleinTalkSmallLeftHandMove;
 		_animationFrame++;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(692)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationKleinTalkSmallLeftHandMove)) {
 			_animationFrame = 0;
 		}
 		break;
 	case 3:
-		*animation = 693;
+		*animation = kModelAnimationKleinTalkRightHandTouchFace;
 		_animationFrame++;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(693)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationKleinTalkRightHandTouchFace)) {
 			_animationState = 2;
 			_animationFrame = 0;
-			*animation = 692;
+			*animation = kModelAnimationKleinTalkSmallLeftHandMove;
 		}
 		break;
 	case 4:
-		*animation = 694;
+		*animation = kModelAnimationKleinTalkWideHandMotion;
 		_animationFrame++;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(694)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationKleinTalkWideHandMotion)) {
 			_animationState = 2;
 			_animationFrame = 0;
-			*animation = 692;
+			*animation = kModelAnimationKleinTalkSmallLeftHandMove;
 		}
 		break;
 	case 5:
-		*animation = 695;
+		*animation = kModelAnimationKleinTalkSuggestOrAsk;
 		_animationFrame++;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(695)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationKleinTalkSuggestOrAsk)) {
 			_animationState = 2;
 			_animationFrame = 0;
-			*animation = 692;
+			*animation = kModelAnimationKleinTalkSmallLeftHandMove;
 		}
 		break;
 	case 6:
-		*animation = 696;
+		*animation = kModelAnimationKleinTalkDismissive;
 		_animationFrame++;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(696)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationKleinTalkDismissive)) {
 			_animationState = 2;
 			_animationFrame = 0;
-			*animation = 692;
+			*animation = kModelAnimationKleinTalkSmallLeftHandMove;
 		}
 		break;
 	case 7:
-		*animation = 697;
+		*animation = kModelAnimationKleinTalkRaisingBothHands;
 		_animationFrame++;
-		if (_animationFrame>= Slice_Animation_Query_Number_Of_Frames(697)) {
+		if (_animationFrame>= Slice_Animation_Query_Number_Of_Frames(kModelAnimationKleinTalkRaisingBothHands)) {
 			_animationState = 2;
 			_animationFrame = 0;
-			*animation = 692;
+			*animation = kModelAnimationKleinTalkSmallLeftHandMove;
 		}
 		break;
 	case 8:
@@ -470,7 +470,7 @@ bool AIScriptKlein::UpdateAnimation(int *animation, int *frame) {
 		_animationState = _animationStateNext;
 		break;
 	default:
-		*animation = 399;
+		*animation = 399; // TODO: A bug? This belongs to Zuben
 		break;
 	}
 	*frame = _animationFrame;
@@ -490,7 +490,7 @@ bool AIScriptKlein::ChangeAnimationMode(int mode) {
 		} else if (_animationState == 0) {
 			_animationState = 8;
 			_animationStateNext = 1;
-			_animationNext = 688;
+			_animationNext = kModelAnimationKleinWalking;
 		}
 		break;
 	case kAnimationModeTalk:
@@ -500,7 +500,7 @@ bool AIScriptKlein::ChangeAnimationMode(int mode) {
 		} else {
 			_animationState = 8;
 			_animationStateNext = 2;
-			_animationNext = 692;
+			_animationNext = kModelAnimationKleinTalkSmallLeftHandMove;
 		}
 		break;
 	case 12:
@@ -510,7 +510,7 @@ bool AIScriptKlein::ChangeAnimationMode(int mode) {
 		} else {
 			_animationState = 8;
 			_animationStateNext = 3;
-			_animationNext = 693;
+			_animationNext = kModelAnimationKleinTalkRightHandTouchFace;
 		}
 		break;
 	case 13:
@@ -520,7 +520,7 @@ bool AIScriptKlein::ChangeAnimationMode(int mode) {
 		} else {
 			_animationState = 8;
 			_animationStateNext = 4;
-			_animationNext = 694;
+			_animationNext = kModelAnimationKleinTalkWideHandMotion;
 		}
 		break;
 	case 14:
@@ -530,7 +530,7 @@ bool AIScriptKlein::ChangeAnimationMode(int mode) {
 		} else {
 			_animationState = 8;
 			_animationStateNext = 5;
-			_animationNext = 695;
+			_animationNext = kModelAnimationKleinTalkSuggestOrAsk;
 		}
 		break;
 	case 15:
@@ -540,7 +540,7 @@ bool AIScriptKlein::ChangeAnimationMode(int mode) {
 		} else {
 			_animationState = 8;
 			_animationStateNext = 6;
-			_animationNext = 696;
+			_animationNext = kModelAnimationKleinTalkDismissive;
 		}
 		break;
 	case 16:
@@ -550,7 +550,7 @@ bool AIScriptKlein::ChangeAnimationMode(int mode) {
 		} else {
 			_animationState = 8;
 			_animationStateNext = 7;
-			_animationNext = 697;
+			_animationNext = kModelAnimationKleinTalkRaisingBothHands;
 		}
 		break;
 	}

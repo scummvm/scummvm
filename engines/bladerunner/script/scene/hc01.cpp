@@ -74,7 +74,7 @@ void SceneScriptHC01::InitializeScene() {
 void SceneScriptHC01::SceneLoaded() {
 	Obstacle_Object("PILLAR", true);
 	if (Game_Flag_Query(kFlagAR01toHC01)) {
-		Preload(19);
+		Preload(kModelAnimationMcCoyIdle);
 		Preload(426);
 		Preload(430);
 		Preload(437);

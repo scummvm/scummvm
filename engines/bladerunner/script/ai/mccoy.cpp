@@ -424,7 +424,7 @@ bool AIScriptMcCoy::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 
 	case kGoalMcCoyNR10Fall:
 		Player_Set_Combat_Mode(false);
-		Preload(18);
+		Preload(kModelAnimationMcCoyFallsOnHisBack);
 		Set_Enter(kSetNR10, kSceneNR10);
 		Player_Loses_Control();
 		Actor_Force_Stop_Walking(kActorMcCoy);

@@ -68,8 +68,8 @@ void SceneScriptCT06::SceneLoaded() {
 	Unobstacle_Object("CB BOX04", true);
 	Unclickable_Object("DOOR");
 	if (Actor_Query_Goal_Number(kActorZuben) == kGoalZubenCT06HideAtFreeSlotA) {
-		Preload(3);
-		Preload(4);
+		Preload(kModelAnimationMcCoyWithGunWalking);
+		Preload(kModelAnimationMcCoyWithGunRunning);
 		Preload(389);
 		Preload(390);
 		Preload(398);

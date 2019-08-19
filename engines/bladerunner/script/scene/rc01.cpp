@@ -198,9 +198,9 @@ void SceneScriptRC01::SceneLoaded() {
 	}
 
 	if (!Game_Flag_Query(kFlagRC01PoliceDone)) {
-		Preload(13);
-		Preload(14);
-		Preload(19);
+		Preload(kModelAnimationMcCoyWalking);
+		Preload(kModelAnimationMcCoyRunning);
+		Preload(kModelAnimationMcCoyIdle);
 		Preload(582);
 		Preload(589);
 	}

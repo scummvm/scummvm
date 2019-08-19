@@ -126,15 +126,15 @@ bool AIScriptHasan::UpdateAnimation(int *animation, int *frame) {
 	switch (_animationState) {
 	case 0:
 		if (_var6 == 1) {
-			*animation = 922;
+			*animation = kModelAnimationHasanTalkSuggest;
 			if (_var3) {
 				_var3--;
 			} else {
 				_animationFrame++;
-				if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(922)) {
+				if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationHasanTalkSuggest)) {
 					_animationFrame = 0;
 					_var6 = 0;
-					*animation = 921;
+					*animation = kModelAnimationHasanIdleSlightMovement;
 					_var1 = Random_Query(6, 14);
 					_var2 = 2 * Random_Query(0, 1) - 1;
 					_var4 = Random_Query(40, 60);
@@ -144,15 +144,15 @@ bool AIScriptHasan::UpdateAnimation(int *animation, int *frame) {
 				}
 			}
 		} else if (_var6 == 2) {
-			*animation = 923;
+			*animation = kModelAnimationHasanTakingABiteSnakeMove;
 			if (_var3) {
 				_var3--;
 			} else {
 				_animationFrame++;
-				if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(923)) {
+				if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationHasanTakingABiteSnakeMove)) {
 					_animationFrame = 0;
 					_var6 = 0;
-					*animation = 921;
+					*animation = kModelAnimationHasanIdleSlightMovement;
 					_var1 = Random_Query(6, 14);
 					_var2 = 2 * Random_Query(0, 1) - 1;
 					_var5 = Random_Query(40, 60);
@@ -165,16 +165,16 @@ bool AIScriptHasan::UpdateAnimation(int *animation, int *frame) {
 				}
 			}
 		} else if (_var6 == 0) {
-			*animation = 921;
+			*animation = kModelAnimationHasanIdleSlightMovement;
 			if (_var3) {
 				_var3--;
 			} else {
 				_animationFrame += _var2;
-				if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(921)) {
+				if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationHasanIdleSlightMovement)) {
 					_animationFrame = 0;
 				}
 				if (_animationFrame < 0) {
-					_animationFrame = Slice_Animation_Query_Number_Of_Frames(921) - 1;
+					_animationFrame = Slice_Animation_Query_Number_Of_Frames(kModelAnimationHasanIdleSlightMovement) - 1;
 				}
 				if (!--_var1) {
 					_var2 = 2 * Random_Query(0, 1) - 1;
@@ -195,60 +195,60 @@ bool AIScriptHasan::UpdateAnimation(int *animation, int *frame) {
 		break;
 
 	case 1:
-		*animation = 925;
+		*animation = kModelAnimationHasanTalkMovingBothHands;
 		_animationFrame++;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(925)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationHasanTalkMovingBothHands)) {
 			_animationFrame = 0;
 		}
 		break;
 
 	case 2:
-		*animation = 926;
+		*animation = kModelAnimationHasanTalkLeftRightLeftGesture;
 		_animationFrame++;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(926)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationHasanTalkLeftRightLeftGesture)) {
 			_animationFrame = 0;
 			_animationState = 1;
-			*animation = 925;
+			*animation = kModelAnimationHasanTalkMovingBothHands;
 		}
 		break;
 
 	case 3:
-		*animation = 927;
+		*animation = kModelAnimationHasanTalkRaiseHandSnakeMove;
 		_animationFrame++;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(927)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationHasanTalkRaiseHandSnakeMove)) {
 			_animationFrame = 0;
 			_animationState = 1;
-			*animation = 925;
+			*animation = kModelAnimationHasanTalkMovingBothHands;
 		}
 		break;
 
 	case 4:
-		*animation = 928;
+		*animation = kModelAnimationHasanTalkMovingBothHandsAndNod;
 		_animationFrame++;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(928)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationHasanTalkMovingBothHandsAndNod)) {
 			_animationFrame = 0;
 			_animationState = 1;
-			*animation = 925;
+			*animation = kModelAnimationHasanTalkMovingBothHands;
 		}
 		break;
 
 	case 5:
-		*animation = 929;
+		*animation = kModelAnimationHasanTalkWipeFaceLeftHand02;
 		_animationFrame++;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(929)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationHasanTalkWipeFaceLeftHand02)) {
 			_animationFrame = 0;
 			_animationState = 1;
-			*animation = 925;
+			*animation = kModelAnimationHasanTalkMovingBothHands;
 		}
 		break;
 
 	case 6:
-		*animation = 930;
+		*animation = kModelAnimationHasanTalkUpset;
 		_animationFrame++;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(930)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationHasanTalkUpset)) {
 			_animationFrame = 0;
 			_animationState = 1;
-			*animation = 925;
+			*animation = kModelAnimationHasanTalkMovingBothHands;
 		}
 		break;
 
