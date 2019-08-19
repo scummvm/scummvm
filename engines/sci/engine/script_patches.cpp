@@ -183,6 +183,7 @@ static const char *const selectorNameTable[] = {
 	"getCursor",    // QFG4
 	"heading",      // QFG4
 	"moveSpeed",    // QFG4
+	"register",     // QFG4
 	"sayMessage",   // QFG4
 	"setCursor",    // QFG4
 	"setLooper",    // QFG4
@@ -296,6 +297,7 @@ enum ScriptPatcherSelectors {
 	SELECTOR_getCursor,
 	SELECTOR_heading,
 	SELECTOR_moveSpeed,
+	SELECTOR_register,
 	SELECTOR_sayMessage,
 	SELECTOR_setCursor,
 	SELECTOR_setLooper,
@@ -12723,6 +12725,368 @@ static const uint16 qfg4LookDungeonPatch[] = {
 	PATCH_END
 };
 
+// When approaching the door to the great hall in staircase room 627 at night,
+//  the message "You hear voices..." continues to occur even after witnessing
+//  the argument between Katrina and Ad Avis in the floppy version. This is due
+//  to not testing flag 112, which is set by the argument scene, and was fixed
+//  in the CD version. We add the missing flag test.
+//
+// This incomplete logic to determine if Katrina and Ad Avis are in the great
+//  hall is duplicated throughout this script. Although Sierra fixed this
+//  instance in the CD version, it's the only one they fixed, while adding more
+//  that lack the flag test. We fix those bugs in subsequent patches.
+//
+// Applies to: English Floppy, German Floppy
+// Responsible method: sDisplay:changeState(0)
+// Fixes bug: #10799
+static const uint16 qfg4ArgumentMessageFloppySignature[] = {
+	SIG_MAGICDWORD,
+	0x83, 0x02,                         // lal 02   [ message already said? ]
+	0x30, SIG_UINT16(0x0013),           // bnt 0013 [ say message ]
+	0x38, SIG_SELECTOR16(handsOn),      // pushi handsOn
+	0x76,                               // push0
+	0x81, 0x01,                         // lag 01
+	0x4a, SIG_UINT16(0x0004),           // send 04 [ Glory handsOn: ]
+	0x38, SIG_SELECTOR16(dispose),      // pushi dispose
+	0x76,                               // push0
+	0x54, SIG_UINT16(0x0004),           // self 04
+	0x32, SIG_UINT16(0x0079),           // jmp 0079 [ end of method ]
+	SIG_ADDTOOFFSET(+38),
+	0x38, SIG_SELECTOR16(dispose),      // pushi dispose
+	0x76,                               // push0
+	0x54, SIG_UINT16(0x0004),           // self 04  [ self dispose: ]
+	0x32, SIG_UINT16(0x0049),           // jmp 0049 [ end of method ]
+	SIG_END,
+};
+
+static const uint16 qfg4ArgumentMessageFloppyPatch[] = {
+	PATCH_ADDTOOFFSET(+2),
+	0x2f, 0x09,                         // bt 09 [ skip message if already said ]
+	0x78,                               // push1
+	0x39, 0x70,                         // pushi 70 [ flag 112 ]
+	0x45, 0x04, PATCH_UINT16(0x0002),   // callb proc0_4 02 [ has argument occurred? ]
+	0x31, 0x0b,                         // bnt 0b [ say message ]
+	0x38, PATCH_SELECTOR16(handsOn),    // pushi handsOn
+	0x76,                               // push0
+	0x81, 0x01,                         // lag 01
+	0x4a, PATCH_UINT16(0x0004),         // send 04 [ Glory handsOn: ]
+	0x33, 0x26,                         // jmp 26 [ self dispose:, end of method ]
+	PATCH_END,
+};
+
+// The great hall door options in room 627 are incorrect at night after Katrina
+//  and Ad Avis argue. rm620Code:init is missing a flag test to prevent the
+//  argument options from reoccurring. We add the missing flag test.
+//
+// Applies to: All versions
+// Responsible methods: rm620Code:init
+// Fixes bug: #10799
+static const uint16 qfg4Room627DoorOptionsSignature[] = {
+	0x89, 0x0b,                         // lsg 0b [ room number ]
+	SIG_ADDTOOFFSET(+28),
+	0x39, 0x05,                         // pushi 05 [ argument door options ]
+	0x72, SIG_ADDTOOFFSET(+2),          // lofsa doorTopTeller
+	0x4a, SIG_UINT16(0x000e),           // send 0e [ doorTopTeller init: pUpperDoor 620 8 155 5 ]
+	SIG_MAGICDWORD,
+	0x33, 0x19,                         // jmp 19
+	0x38, SIG_SELECTOR16(init),         // pushi init
+	0x38, SIG_UINT16(0x0005),           // pushi 0005
+	0x72, SIG_ADDTOOFFSET(+2),          // lofsa pUpperDoor
+	0x36,                               // push
+	0x38, SIG_UINT16(0x026c),           // pushi 026c
+	0x39, 0x08,                         // pushi 08
+	0x38, SIG_UINT16(0x009b),           // pushi 009b
+	0x78,                               // push1 [ normal door options ]
+	0x72, SIG_ADDTOOFFSET(+2),          // lofsa doorTopTeller
+	0x4a, SIG_UINT16(0x000e),           // send 0e [ doorTopTeller init: pUpperDoor 620 8 155 1 ]
+	SIG_END
+};
+
+static const uint16 qfg4Room627DoorOptionsPatch[] = {
+	0x33, 0x0a,                         // jmp 0a
+	PATCH_ADDTOOFFSET(+28),
+	0x89, 0x0b,                         // lsg 0b [ room number ]
+	0x34, PATCH_UINT16(0x0273),         // ldi 627d
+	0x1a,                               // eq?
+	0x31, 0x14,                         // bnt 14 [ normal door options ]
+	0x81, 0x79,                         // lag 79 [ night ]
+	0x31, 0x10,                         // bnt 10 [ normal door options ]
+	0x78,                               // push1
+	0x39, 0x70,                         // pushi 70 [ flag 112 ]
+	0x45, 0x04, PATCH_UINT16(0x0002),   // callb proc0_4 02 [ has argument occurred? ]
+	0x2f, 0x07,                         // bt 07 [ normal door options ]
+	0x39, 0x05,                         // pushi 05
+	0x33, 0x04,                         // jmp 04 [ argument door options ]
+	PATCH_END
+};
+
+// The responses to the great hall door options in room 627 have problems. The
+//  floppy version is missing message handlers for Open Door and Knock on Door
+//  during the argument and so the door doesn't open. The CD version displays
+//  the wrong Knock on Door message. All versions fail to test flag 112 to see
+//  if the argument has already occurred.
+//
+// We fix all of this with a two part patch. First, sListened:register now
+//  controls which message is displayed before the door opens. This allows
+//  doorTopTeller:sayMessage to specify the correct message before running it.
+//  To add flag tests, new message handlers, and set sListened:register, we take
+//  advantage of identical message handlers in doorTopTeller:sayMessage. These
+//  provide plenty of room for new code that then jumps into another handler to
+//  continue and complete the work.
+//
+// Applies to: All versions
+// Responsible methods: sListened:changeState(0), doorTopTeller:sayMessage
+// Fixes bug: #10799
+static const uint16 qfg4Room627DoorResponsesSignature1[] = {
+	0x65, SIG_ADDTOOFFSET(+17),         // aTop state
+	0x38, SIG_SELECTOR16(say),          // pushi say
+	0x38, SIG_UINT16(0x0006),           // pushi 0006
+	0x39, 0x08,                         // pushi 08
+	0x38, SIG_UINT16(0x009b),           // pushi 009b
+	0x39, SIG_MAGICDWORD, 0x09,         // pushi 09
+	0x78,                               // push1
+	0x7c,                               // pushSelf
+	0x38, SIG_UINT16(0x026c),           // pushi 026c
+	0x81, 0x5b,                         // lag 5b
+	0x4a, SIG_UINT16(0x0010),           // send 10 [ gloryMessager say: 8 155 9 1 self 620 ]
+	0x32,                               // jmp ... [ end of method ]
+	SIG_END
+};
+
+static const uint16 qfg4Room627DoorResponsesPatch1[] = {
+	PATCH_ADDTOOFFSET(+21),
+	0x39, 0x06,                         // pushi 06
+	0x39, 0x08,                         // pushi 08
+	0x38, PATCH_UINT16(0x009b),         // pushi 009b
+	0x39, 0x09,                         // pushi 09
+	0x63, PATCH_GETORIGINALBYTEADJUST(+1, 0x10), // pToa register
+	0x02,                               // add
+	0x36,                               // push
+	0x78,                               // push1
+	0x7c,                               // pushSelf
+	0x38, PATCH_UINT16(0x026c),         // pushi 026c
+	0x81, 0x5b,                         // lag 5b
+	0x4a, PATCH_UINT16(0x0010),         // send 10 [ gloryMessager say: 8 155 (9 + register) 1 self 620 ]
+	PATCH_END
+};
+
+static const uint16 qfg4Room627DoorResponsesFloppySignature2[] = {
+	// Pick Lock (no argument) - missing flag check
+	SIG_MAGICDWORD,
+	0x30, SIG_UINT16(0x0072),           // bnt 0072 [ next message handler ]
+	0x81, 0x79,                         // lag 79 [ night ]
+	0x30, SIG_UINT16(0x0028),           // bnt 0028
+	0x89, 0x0b,                         // lsg 0b [ room number ]
+	0x34, SIG_UINT16(0x0273),           // ldi 627d
+	0x1a,                               // eq?
+	0x30, SIG_UINT16(0x001f),           // bnt 001f
+	0x38, SIG_UINT16(0x00fe),           // pushi clean [ hard-coded for floppy ]
+	0x76,                               // push0
+	0x54, SIG_UINT16(0x0004),           // self 04
+	0x78,                               // push1
+	0x39, 0x71,                         // pushi 71
+	0x45, 0x02, SIG_UINT16(0x0002),     // callb proc0_2 02
+	0x38, SIG_SELECTOR16(setScript),    // pushi setScript
+	0x78,                               // push1
+	0x72, SIG_UINT16(0x0082),           // lofsa sListened
+	0x36,                               // push
+	0x72, SIG_UINT16(0x01ae),           // lofsa pUpperDoor
+	0x4a, SIG_UINT16(0x0006),           // send 06 [ pUpperDoor setScript: sListened ]
+	0x32, SIG_UINT16(0x0131),           // jmp 0131
+	0x38, SIG_UINT16(0x0338),           // pushi trySkill [ hard-coded for floppy ]
+	0x7a,                               // push2
+	0x39, 0x09,                         // pushi 09
+	0x88, SIG_UINT16(0x01a6),           // lsg 01a6
+	0x81, 0x00,                         // lag 00
+	0x4a, SIG_UINT16(0x0008),           // send 08 [ hero trySkill: 9 global422 ]
+	SIG_ADDTOOFFSET(+0xe4),
+	// Open Door (no argument) - missing flag check
+	0x78,                               // push1
+	0x39, 0x71,                         // pushi 71
+	0x45, 0x02, SIG_UINT16(0x0002),     // callb proc0_2 02
+	0x38, SIG_UINT16(0x00fe),           // pushi clean [ hard-coded for floppy ]
+	0x76,                               // push0
+	0x54, SIG_UINT16(0x0004),           // self 04
+	SIG_END
+};
+
+static const uint16 qfg4Room627DoorResponsesFloppyPatch2[] = {
+	// Pick Lock (no argument) - missing flag check
+	0x30, PATCH_UINT16(0x001a),         // bnt 001a [ next message handler ]
+	PATCH_ADDTOOFFSET(+2),
+	0x30, PATCH_UINT16(0x00a1),         // bnt 00a1 [ normal pick lock code in duplicate handler ]
+	PATCH_ADDTOOFFSET(+6),
+	0x30, PATCH_UINT16(0x0098),         // bnt 0098 [ normal pick lock code in duplicate handler ]
+	0x78,                               // push1
+	0x39, 0x70,                         // pushi 70 [ flag 112 ]
+	0x45, 0x04, PATCH_UINT16(0x0002),   // callb proc0_4 02 [ has argument occurred? ]
+	0x2e, PATCH_UINT16(0x008e),         // bt 008e [ normal pick lock code in duplicate handler ]
+	0x33, 0x6d,                         // jmp 6d  [ continue argument code in duplicate handler ]
+	// Open Door (argument) - missing from floppy
+	0x3c,                               // dup
+	0x35, 0x0a,                         // ldi 0a
+	0x1a,                               // eq?
+	0x31, 0x07,                         // bnt 07 [ next message handler ]
+	0x38, PATCH_SELECTOR16(register),   // pushi register
+	0x78,                               // push1
+	0x78,                               // push1 [ "Ignoring the voices, you fling the door open..." ]
+	0x33, 0x0b,                         // jmp 0b
+	// Knock on Door (argument) - missing from floppy
+	0x3c,                               // dup
+	0x35, 0x0b,                         // ldi 0b
+	0x1a,                               // eq?
+	0x31, 0x45,                         // bnt 45 [ next message handler ]
+	0x38, PATCH_SELECTOR16(register),   // pushi register
+	0x78,                               // push1
+	0x7a,                               // push2 [ "Very polite of you. The door opens to your knock..." ]
+	0x72, PATCH_UINT16(0x0082),         // lofsa sListened
+	0x4a, PATCH_UINT16(0x0006),         // send 0006 [ sListened register: 1 or 2 ]
+	0x32, PATCH_UINT16(0x004c),         // jmp 004c [ continue argument code in duplicate handler ]
+	PATCH_ADDTOOFFSET(+0xe4),
+	// Open Door (no argument) - missing flag check
+	0x78,                               // push1
+	0x39, 0x70,                         // pushi 70 [ flag 112 ]
+	0x45, 0x04, PATCH_UINT16(0x0002),   // callb proc0_4 02 [ has argument occurred? ]
+	0x2f, 0x16,                         // bt 16 [ skip argument code if argument occurred ]
+	0x32, PATCH_UINT16(0xff5c),         // jmp ff5c [ continue argument code in duplicate handler ]
+	PATCH_END
+};
+
+static const uint16 qfg4Room627DoorResponsesCDSignature2[] = {
+	// Pick Lock (no argument) - missing flag check
+	0x38, SIG_UINT16(0x0101),           // pushi clean [ hard-coded for CD ]
+	0x76,                               // push0
+	SIG_MAGICDWORD,
+	0x54, SIG_UINT16(0x0004),           // self 04
+	0x78,                               // push1
+	0x39, 0x71,                         // pushi 71
+	0x45, 0x02, SIG_UINT16(0x0002),     // callb proc0_2 02
+	SIG_ADDTOOFFSET(+0x13b),
+	// Open Door (no argument) - missing flag check
+	0x78,                               // push1
+	0x39, 0x71,                         // pushi 71
+	0x45, 0x02, SIG_UINT16(0x0002),     // callb proc0_2 02
+	0x38, SIG_UINT16(0x0101),           // pushi clean [ hard-coded for CD ]
+	0x76,                               // push0
+	0x54, SIG_UINT16(0x0004),           // self 04
+	SIG_ADDTOOFFSET(+0x7c),
+	// Knock on Door (argument) - wrong message (CD regression)
+	0x78,                               // push1
+	0x39, 0x71,                         // pushi 71
+	0x45, 0x02, SIG_UINT16(0x0002),     // callb proc0_2 02
+	0x38, SIG_UINT16(0x0101),           // pushi clean [ hard-coded for CD ]
+	0x76,                               // push0
+	0x54, SIG_UINT16(0x0004),           // self 04
+	SIG_END
+};
+
+static const uint16 qfg4Room627DoorResponsesCDPatch2[] = {
+	// Pick Lock (no argument) - missing flag check
+	0x78,                               // push1
+	0x39, 0x70,                         // pushi 70 [ flag 112 ]
+	0x45, 0x04, PATCH_UINT16(0x0002),   // callb proc0_4 02 [ has argument occurred? ]
+	0x2f, 0x16,                         // bt 16 [ skip argument code if argument occurred ]
+	0x32, PATCH_UINT16(0x0089),         // jmp 0089 [ continue argument code in duplicate handler ]
+	PATCH_ADDTOOFFSET(+0x13d),
+	// Open Door (no argument) - missing flag check
+	0x78,                               // push1
+	0x39, 0x70,                         // pushi 70 [ flag 112 ]
+	0x45, 0x04, PATCH_UINT16(0x0002),   // callb proc0_4 02 [ has argument occurred? ]
+	0x2f, 0x16,                         // bt 16 [ skip argument code if argument occurred ]
+	0x32, PATCH_UINT16(0xff40),         // jmp ff40 [ continue argument code in duplicate handler ]
+	PATCH_ADDTOOFFSET(+0x7e),
+	// Knock on Door (argument) - wrong message (CD regression)
+	0x38, PATCH_SELECTOR16(register),   // pushi register
+	0x78,                               // push1
+	0x7a,                               // push2 [ "Very polite of you. The door opens to your knock..." ]
+	0x72, PATCH_UINT16(0x00b6),         // lofsa sListened
+	0x4a, PATCH_UINT16(0x0006),         // send 0006 [ sListened register: 2 ]
+	0x32, PATCH_UINT16(0xfeb4),         // jmp feb4 [ continue argument code in duplicate handler ]
+	PATCH_END
+};
+
+// When entering the great hall from room 627 while Katrina and Ad Avis argue,
+//  room 627 says that the door squeaks even if it was oiled. The flag tests are
+//  incorrect and out of sync with the logic in the great hall that plays the
+//  squeak that kills ego. This logic had other bugs in the floppy version,
+//  including setting an incorrect flag, and this patch fixes those too. The end
+//  result is that the squeak message isn't displayed if the oiled flag is set.
+//
+// Applies to: All versions
+// Responsible methods: sListened:changeState(2), sListened2:changeState(2) (CD)
+// Fixes bug: #10799
+static const uint16 qfg4Room627SqueakFloppySignature[] = {
+	0x89, 0x7d,                         // lsg 7d [ character type ]
+	0x35, SIG_MAGICDWORD, 0x02,         // ldi 02 [ thief ]
+	0x1a,                               // eq?    [ is thief? ]
+	0x31, 0x08,                         // bnt 08 [ skip oil test if thief (incorrect, removed from CD) ]
+	0x78,                               // push1
+	0x39, 0x72,                         // pushi 72 [ flag 114 ]
+	0x45, 0x04, SIG_UINT16(0x0002),     // callb proc0_4 02 [ is door oiled? ]
+	0x18,                               // not
+	0x2f, 0x07,                         // bt 07 [ squeak message ]
+	0x78,                               // push1
+	0x39, 0x71,                         // pushi 71 [ flag 113 ]
+	0x45, 0x04, SIG_UINT16(0x0002),     // callb proc0_4 02 [ selected action other than listening? (incorrect) ]
+	0x31, 0x33,                         // bnt 33 [ skip squeak message ]
+	SIG_ADDTOOFFSET(+20),
+	0x78,                               // push1
+	0x39, 0x71,                         // pushi 71 [ flag 113 ]
+	0x45, 0x02, SIG_UINT16(0x0002),     // callb proc0_2 02 [ set flag 113 (incorrect, removed from CD) ]
+	SIG_END,
+};
+
+static const uint16 qfg4Room627SqueakFloppyPatch[] = {
+	0x33, 0x05,                         // jmp 05 [ skip thief test, always test oil flag ]
+	PATCH_ADDTOOFFSET(+15),
+	0x32, PATCH_UINT16(0x0039),         // jmp 0039 [ skip squeak message if door has been oiled ]
+	PATCH_ADDTOOFFSET(+26),
+	0x32, PATCH_UINT16(0x0004),         // jmp 0004 [ don't set flag 113 ]
+	PATCH_END,
+};
+
+static const uint16 qfg4Room627SqueakCDSignature[] = {
+	0x78,                               // push1
+	0x39, 0x72,                         // pushi 72 [ flag 114 ]
+	0x45, 0x04, SIG_UINT16(0x0002),     // callb proc0_4 02 [ is door oiled? ]
+	SIG_MAGICDWORD,
+	0x18,                               // not
+	0x2f, 0x07,                         // bt 07 [ squeak message ]
+	0x78,                               // push1
+	0x39, 0x71,                         // pushi 71 [ flag 113 ]
+	0x45, 0x04, SIG_UINT16(0x0002),     // callb proc0_4 02 [ selected action other than listening? (incorrect) ]
+	0x31, 0x2c,                         // bnt 2c [ skip squeak message ]
+	SIG_END,
+};
+
+static const uint16 qfg4Room627SqueakCDPatch[] = {
+	PATCH_ADDTOOFFSET(+10),
+	0x32, PATCH_UINT16(0x0032),         // jmp 0032 [ skip squeak message if door has been oiled ]
+	PATCH_END,
+};
+
+// Looking through the keyhole in room 627 into the great hall responds with a
+//  generic message instead of the specific room description. sPeepingTom only
+//  says the great hall message at night, which isn't relevant, and didn't work
+//  since doorTeller wouldn't offer the keyhole option at night due to a missing
+//  flag check which we fix. We restore the message by removing the night test.
+//
+// Applies to: All versions
+// Responsible method: sPeepingTom:changeState(1)
+// Fixes bug: #10799
+static const uint16 qfg4GreatHallKeyholeSignature[] = {
+	SIG_MAGICDWORD,
+	0x81, 0x79,                         // lag 79 [ night ]
+	0x31, 0x1a,                         // bnt 1a [ skip keyhole message during day ]
+	0x38, SIG_SELECTOR16(say),          // pushi say
+	SIG_END
+};
+
+static const uint16 qfg4GreatHallKeyholePatch[] = {
+	0x33, 0x02,                         // jmp 02 [ say keyhole message regardless of time ]
+	PATCH_END
+};
+
 //          script, description,                                     signature                      patch
 static const SciScriptPatcherEntry qfg4Signatures[] = {
 	{  true,     0, "prevent autosave from deleting save games",   1, qfg4AutosaveSignature,         qfg4AutosavePatch },
@@ -12773,6 +13137,14 @@ static const SciScriptPatcherEntry qfg4Signatures[] = {
 	{  true,   600, "fix passable closed gate after geas",         1, qfg4DungeonGateSignature,      qfg4DungeonGatePatch },
 	{  true,   630, "fix great hall entry from barrel room",       1, qfg4GreatHallEntrySignature,   qfg4GreatHallEntryPatch },
 	{  true,   633, "fix stairway pathfinding",                    1, qfg4StairwayPathfindingSignature, qfg4StairwayPathfindingPatch },
+	{  true,   633, "Floppy: fix argument message",                1, qfg4ArgumentMessageFloppySignature,  qfg4ArgumentMessageFloppyPatch },
+	{  true,   633, "fix room 627 door options",                   1, qfg4Room627DoorOptionsSignature, qfg4Room627DoorOptionsPatch },
+	{  true,   633, "fix room 627 door responses (1/2)",           1, qfg4Room627DoorResponsesSignature1, qfg4Room627DoorResponsesPatch1 },
+	{  true,   633, "Floppy: fix room 627 door responses (2/2)",   1, qfg4Room627DoorResponsesFloppySignature2, qfg4Room627DoorResponsesFloppyPatch2 },
+	{  true,   633, "CD: fix room 627 door responses (2/2)",       1, qfg4Room627DoorResponsesCDSignature2, qfg4Room627DoorResponsesCDPatch2 },
+	{  true,   633, "Floppy: fix room 627 door squeak",            1, qfg4Room627SqueakFloppySignature,  qfg4Room627SqueakFloppyPatch },
+	{  true,   633, "CD: fix room 627 door squeak",                2, qfg4Room627SqueakCDSignature,  qfg4Room627SqueakCDPatch },
+	{  true,   633, "fix great hall keyhole message",              1, qfg4GreatHallKeyholeSignature, qfg4GreatHallKeyholePatch },
 	{  true,   643, "fix iron safe's east door sending hero west", 1, qfg4SafeDoorEastSignature,     qfg4SafeDoorEastPatch },
 	{  true,   643, "fix iron safe's door oil flags",              1, qfg4SafeDoorOilSignature,      qfg4SafeDoorOilPatch },
 	{  true,   644, "fix castle door open message for rogue",      2, qfg4StuckDoorSignature,        qfg4StuckDoorPatch },
