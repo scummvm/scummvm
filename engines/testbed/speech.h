@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef TESTBED_TEMPLATE_H
-#define TESTBED_TEMPLATE_H
+#ifndef TESTBED_SPEECH_H
+#define TESTBED_SPEECH_H
 
 #include "testbed/testsuite.h"
 #include "common/text-to-speech.h"
@@ -79,4 +79,4 @@ public:
 
 } // End of namespace Testbed
 
-#endif // TESTBED_TEMPLATE_H
+#endif // TESTBED_SPEECH_H
