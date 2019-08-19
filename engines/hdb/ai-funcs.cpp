@@ -1842,7 +1842,6 @@ void AI::animGrabbing() {
 		_player->draw = _getGfx[DIR_RIGHT];
 		break;
 	default:
-		warning("AI-FUNCS: animGrabbing: DIR_NONE found");
 		break;
 	}
 
@@ -1951,7 +1950,6 @@ bool AI::findPath(AIEntity *e) {
 		xv = 1;
 		break;
 	case DIR_NONE:
-		warning("findPath: DIR_NONE found");
 		break;
 	}
 
@@ -2294,7 +2292,7 @@ void AI::lookAtXY(int x, int y) {
 		_player->draw = _getGfx[DIR_RIGHT];
 		break;
 	default:
-		warning("AI-FUNCS: lookAtXY: DIR_NONE");
+		break;
 	}
 }
 

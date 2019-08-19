@@ -55,7 +55,6 @@ void aiPlayerInit(AIEntity *e) {
 		e->state = STATE_STANDRIGHT;
 		break;
 	case DIR_NONE:
-		warning("AI-PLAYER: aiPlayerInit: DIR_NONE found");
 		break;
 	}
 
@@ -435,7 +434,6 @@ void aiPlayerDraw(AIEntity *e, int mx, int my) {
 		g_hdb->_ai->_clubRightGfx[e->animFrame]->drawMasked(e->x + e->drawXOff - mx, e->y + e->drawYOff - my);
 		break;
 	default:
-		warning("AI-PLAYER: aiPlayerDraw: Unintended State");
 		break;
 	}
 
@@ -459,7 +457,6 @@ void aiPlayerDraw(AIEntity *e, int mx, int my) {
 			g_hdb->_ai->_stunLightningGfx[frame]->drawMasked(e->x + 64 - mx, e->y - my);
 			break;
 		case DIR_NONE:
-			warning("AI-PLAYER: aiPlayerDraw: DIR_NONE found");
 			break;
 		}
 

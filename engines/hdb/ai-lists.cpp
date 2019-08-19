@@ -748,7 +748,6 @@ bool AI::checkTeleportList(AIEntity *e, int x, int y) {
 				setEntityGoal(e, e->tileX + 1, e->tileY);
 				break;
 			case DIR_NONE:
-				warning("checkTeleporterList: DIR_NONE found");
 				break;
 			}
 
