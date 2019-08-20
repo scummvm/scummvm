@@ -406,8 +406,8 @@ char *OSystem_Win32::convertEncoding(const char* to, const char *from, const cha
 	// transliteration in Common::Encoding and Win32 cannot convert it
 	if (Common::String(from).hasPrefixIgnoreCase("utf-32")) {
 		Common::U32String UTF32Str((const uint32 *)string, length / 4);
-		Common::String UTF8Str = Common::convertUtf32ToUtf8(UTF32Str);
-		return Common::Encoding::convert(to, "utf-8", UTF8Str.c_str(), UTF8Str.size());
+		string = Common::convertUtf32ToUtf8(UTF32Str).c_str();
+		from = "utf-8";
 	}
 	if (Common::String(to).hasPrefixIgnoreCase("utf-32")) {
 		char *UTF8Str = Common::Encoding::convert("utf-8", from, string, length);
