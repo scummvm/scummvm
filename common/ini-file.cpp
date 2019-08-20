@@ -28,17 +28,11 @@
 
 namespace Common {
 
-bool INIFile::isValidName(const String &name) {
+bool INIFile::isValidName(const String &name) const {
 	const char *p = name.c_str();
 	while (*p && (isAlnum(*p) || *p == '-' || *p == '_' || *p == '.' || *p == ' '))
 		p++;
 	return *p == 0;
-}
-
-INIFile::INIFile() {
-}
-
-INIFile::~INIFile() {
 }
 
 void INIFile::clear() {
@@ -125,7 +119,10 @@ bool INIFile::loadFromStream(SeekableReadStream &stream) {
 			section.comment = comment;
 			comment.clear();
 
-			assert(isValidName(section.name));
+			if (!isValidName(section.name)) {
+				warning("Invalid section name: %s", section.name.c_str());
+				return false;
+			}
 		} else {
 			// This line should be a line with a 'key=value' pair, or an empty one.
 
@@ -163,7 +160,10 @@ bool INIFile::loadFromStream(SeekableReadStream &stream) {
 			kv.comment = comment;
 			comment.clear();
 
-			assert(isValidName(kv.key));
+			if (!isValidName(kv.key)) {
+				warning("Invalid key name: %s", kv.key.c_str());
+				return false;
+			}
 
 			section.keys.push_back(kv);
 		}
@@ -240,7 +240,11 @@ void INIFile::addSection(const String &section) {
 }
 
 void INIFile::removeSection(const String &section) {
-	assert(isValidName(section));
+	if (!isValidName(section)) {
+		warning("Invalid section name: %s", section.c_str());
+		return;
+	}
+
 	for (List<Section>::iterator i = _sections.begin(); i != _sections.end(); ++i) {
 		if (section.equalsIgnoreCase(i->name)) {
 			_sections.erase(i);
@@ -250,14 +254,25 @@ void INIFile::removeSection(const String &section) {
 }
 
 bool INIFile::hasSection(const String &section) const {
-	assert(isValidName(section));
+	if (!isValidName(section)) {
+		warning("Invalid section name: %s", section.c_str());
+		return false;
+	}
+
 	const Section *s = getSection(section);
 	return s != nullptr;
 }
 
 void INIFile::renameSection(const String &oldName, const String &newName) {
-	assert(isValidName(oldName));
-	assert(isValidName(newName));
+	if (!isValidName(oldName)) {
+		warning("Invalid section name: %s", oldName.c_str());
+		return;
+	}
+
+	if (!isValidName(newName)) {
+		warning("Invalid section name: %s", newName.c_str());
+		return;
+	}
 
 	Section *os = getSection(oldName);
 	const Section *ns = getSection(newName);
@@ -278,8 +293,15 @@ void INIFile::renameSection(const String &oldName, const String &newName) {
 
 
 bool INIFile::hasKey(const String &key, const String &section) const {
-	assert(isValidName(key));
-	assert(isValidName(section));
+	if (!isValidName(key)) {
+		warning("Invalid key name: %s", key.c_str());
+		return false;
+	}
+
+	if (!isValidName(section)) {
+		warning("Invalid section name: %s", section.c_str());
+		return false;
+	}
 
 	const Section *s = getSection(section);
 	if (!s)
@@ -288,8 +310,15 @@ bool INIFile::hasKey(const String &key, const String &section) const {
 }
 
 void INIFile::removeKey(const String &key, const String &section) {
-	assert(isValidName(key));
-	assert(isValidName(section));
+	if (!isValidName(key)) {
+		warning("Invalid key name: %s", key.c_str());
+		return;
+	}
+
+	if (!isValidName(section)) {
+		warning("Invalid section name: %s", section.c_str());
+		return;
+	}
 
 	Section *s = getSection(section);
 	if (s)
@@ -297,9 +326,15 @@ void INIFile::removeKey(const String &key, const String &section) {
 }
 
 bool INIFile::getKey(const String &key, const String &section, String &value) const {
-	assert(isValidName(key));
-	assert(isValidName(section));
+	if (!isValidName(key)) {
+		warning("Invalid key name: %s", key.c_str());
+		return false;
+	}
 
+	if (!isValidName(section)) {
+		warning("Invalid section name: %s", section.c_str());
+		return false;
+	}
 	const Section *s = getSection(section);
 	if (!s)
 		return false;
@@ -311,8 +346,16 @@ bool INIFile::getKey(const String &key, const String &section, String &value) co
 }
 
 void INIFile::setKey(const String &key, const String &section, const String &value) {
-	assert(isValidName(key));
-	assert(isValidName(section));
+	if (!isValidName(key)) {
+		warning("Invalid key name: %s", key.c_str());
+		return;
+	}
+
+	if (!isValidName(section)) {
+		warning("Invalid section name: %s", section.c_str());
+		return;
+	}
+
 	// TODO: Verify that value is valid, too. In particular, it shouldn't
 	// contain CR or LF...
 

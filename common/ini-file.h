@@ -77,8 +77,8 @@ public:
 	typedef List<Section> SectionList;
 
 public:
-	INIFile();
-	~INIFile();
+	INIFile() {}
+	~INIFile() {}
 
 	// TODO: Maybe add a copy constructor etc.?
 
@@ -88,7 +88,7 @@ public:
 	 * underscores. In particular, white space and "#", "=", "[", "]"
 	 * are not valid!
 	 */
-	static bool isValidName(const String &name);
+	bool isValidName(const String &name) const;
 
 	/** Reset everything stored in this ini file. */
 	void	clear();
