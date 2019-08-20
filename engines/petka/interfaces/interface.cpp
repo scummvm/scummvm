@@ -22,6 +22,9 @@
 
 #include "petka/objects/text.h"
 #include "petka/interfaces/interface.h"
+#include "petka/q_system.h"
+#include "petka/petka.h"
+#include "petka/objects/object_cursor.h"
 
 namespace Petka {
 
@@ -39,6 +42,16 @@ QVisibleObject *Interface::findObject(int resourceId) {
 		}
 	}
 	return nullptr;
+}
+
+void Interface::initCursor(int id, bool show, bool animate) {
+	QObjectCursor *cursor = g_vm->getQSystem()->_cursor.get();
+	_objs.push_back(cursor);
+	cursor->_resourceId = id;
+	cursor->_isShown = show;
+	cursor->_animate = animate;
+	cursor->_actionType = kActionLook;
+	cursor->setCursorPos(cursor->_x, cursor->_y, 0);
 }
 
 } // End of namespace Petka

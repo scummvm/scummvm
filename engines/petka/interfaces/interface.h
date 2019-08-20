@@ -48,6 +48,8 @@ public:
 
 	QVisibleObject *findObject(int resourceId);
 
+	void initCursor(int id, bool show, bool animate);
+
 public:
 	Common::Array<QVisibleObject *> _objs;
 	QVisibleObject *_objUnderCursor;
