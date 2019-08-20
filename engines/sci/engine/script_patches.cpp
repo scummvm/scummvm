@@ -8935,6 +8935,63 @@ static const uint16 qfg1vgaPatchMacDagnabitIconBar[] = {
 	PATCH_END
 };
 
+// Drinking water in room 87 after talking to the healer about falling water
+//  shows two messages at once. The second message overwrites the first before
+//  it is shown. We add a state for the second message as in the Mac version.
+//
+// Applies to: PC Floppy
+// Responsible method: drinkWater:changeState
+// Fixes bug: #11086
+static const uint16 qfg1vgaSignatureDrinkWaterMessage[] = {
+	0x31, SIG_MAGICDWORD, 0x29,             // bnt 29 [ state 3 handler ]
+	0x38, SIG_SELECTOR16(say),              // pushi say
+	0x39, 0x05,                             // pushi 05
+	0x39, 0x07,                             // pushi 07
+	0x76,                                   // push0
+	0x76,                                   // push0
+	0x78,                                   // push1
+	0x7c,                                   // pushSelf
+	0x81, 0x5b,                             // lag 5b
+	0x4a, 0x0e,                             // send 0e [ qg1Messager say: 7 0 0 1 self ]
+	0x78,                                   // push1
+	0x38, SIG_UINT16(0x00c9),               // pushi 00c9 [ flag 201 ]
+	0x45, 0x07, 0x02,                       // callb proc0_7 [ talked to healer about water? ]
+	0x31, 0x42,                             // bnt 42 [ skip second message ]
+	SIG_ADDTOOFFSET(+9),
+	0x7a,                                   // push2 [ message seq: 2 ]
+	SIG_ADDTOOFFSET(+8),
+	0x35, 0x03,                             // ldi 03 [ state 3 ]
+	SIG_ADDTOOFFSET(+18),
+	0x35, 0x04,                             // ldi 04 [ state 4 ]
+	SIG_END
+};
+
+static const uint16 qfg1vgaPatchDrinkWaterMessage[] = {
+	0x2f, 0x14,                             // bt 14  [ show first message in state 2 ]
+	0x3c,                                   // dup
+	0x35, 0x03,                             // ldi 03 [ state 3 ]
+	0x1a,                                   // eq?
+	0x31, 0x23,                             // bnt 23 [ state 4 handler ]
+	0x78,                                   // push1
+	0x38, PATCH_UINT16(0x00c9),             // pushi 00c9 [ flag 201 ]
+	0x45, 0x07, 0x02,                       // callb proc0_7 [ talked to healer about water? ]
+	0x2f, 0x05,                             // bt 05 [ show second message in state 3 ]
+	0x78,                                   // push1
+	0x69, 0x1a,                             // sTop cycles [ cycles = 1 ]
+	0x3a,                                   // toss
+	0x48,                                   // ret
+	0x3c,                                   // dup
+	0x35, 0x01,                             // ldi 01
+	0x04,                                   // sub
+	PATCH_ADDTOOFFSET(+9),
+	0x36,                                   // push [ message seq: state - 1 ]
+	PATCH_ADDTOOFFSET(+8),
+	0x35, 0x04,                             // ldi 04 [ state 4 ]
+	PATCH_ADDTOOFFSET(+18),
+	0x35, 0x05,                             // ldi 05 [ state 5 ]
+	PATCH_END
+};
+
 //          script, description,                                      signature                            patch
 static const SciScriptPatcherEntry qfg1vgaSignatures[] = {
 	{  true,     0, "inventory weight warning",                    1, qfg1vgaSignatureInventoryWeightWarn, qfg1vgaPatchInventoryWeightWarn },
@@ -8944,6 +9001,7 @@ static const SciScriptPatcherEntry qfg1vgaSignatures[] = {
 	{  true,    73, "brutus script freeze glitch",                 1, qfg1vgaSignatureBrutusScriptFreeze,  qfg1vgaPatchBrutusScriptFreeze },
 	{  true,    77, "white stag dagger throw animation glitch",    1, qfg1vgaSignatureWhiteStagDagger,     qfg1vgaPatchWhiteStagDagger },
 	{  true,    78, "mac: enable antwerp controls",                1, qfg1vgaSignatureMacAntwerpControls,  qfg1vgaPatchMacAntwerpControls },
+	{  true,    87, "drink water message",                         1, qfg1vgaSignatureDrinkWaterMessage,   qfg1vgaPatchDrinkWaterMessage },
 	{  true,    96, "funny room script bug fixed",                 1, qfg1vgaSignatureFunnyRoomFix,        qfg1vgaPatchFunnyRoomFix },
 	{  true,    96, "yorick door #2 lockup fixed",                 1, qfg1vgaSignatureYorickDoorTwoRect,   qfg1vgaPatchYorickDoorTwoRect },
 	{  true,   141, "mac: enter great hall",                       1, qfg1vgaSignatureMacEnterGreatHall,   qfg1vgaPatchMacEnterGreatHall },
