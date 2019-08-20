@@ -29,10 +29,16 @@
 namespace Common {
 
 bool INIFile::isValidName(const String &name) const {
+	if (_allowNonEnglishCharacters)
+		return true;
 	const char *p = name.c_str();
 	while (*p && (isAlnum(*p) || *p == '-' || *p == '_' || *p == '.' || *p == ' '))
 		p++;
 	return *p == 0;
+}
+
+INIFile::INIFile() {
+	_allowNonEnglishCharacters = false;
 }
 
 void INIFile::clear() {
@@ -102,7 +108,7 @@ bool INIFile::loadFromStream(SeekableReadStream &stream) {
 			// is, verify that it only consists of alphanumerics,
 			// periods, dashes and underscores). Mohawk Living Books games
 			// can have periods in their section names.
-			while (*p && (isAlnum(*p) || *p == '-' || *p == '_' || *p == '.' || *p == ' '))
+			while (*p && ((_allowNonEnglishCharacters && *p != ']') || isAlnum(*p) || *p == '-' || *p == '_' || *p == '.' || *p == ' '))
 				p++;
 
 			if (*p == '\0')
@@ -433,6 +439,10 @@ void INIFile::Section::removeKey(const String &key) {
 			return;
 		}
 	}
+}
+
+void INIFile::allowNonEnglishCharacters() {
+	_allowNonEnglishCharacters = true;
 }
 
 } // End of namespace Common
