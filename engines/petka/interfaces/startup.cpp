@@ -80,13 +80,7 @@ void InterfaceStartup::start() {
 		break;
 	}
 
-
-	QObjectCursor *cursor = g_vm->getQSystem()->_cursor.get();
-	cursor->_resourceId = kStartupCursorId;
-	cursor->_isShown = true;
-	cursor->_animate = false;
-	_objs.push_back(g_vm->getQSystem()->_cursor.get());
-	cursor->setCursorPos(cursor->_x, cursor->_y, 0);
+	initCursor(kStartupCursorId, 1, 0);
 }
 
 void InterfaceStartup::onLeftButtonDown(const Common::Point p) {

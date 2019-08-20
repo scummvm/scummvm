@@ -100,13 +100,7 @@ void InterfacePanel::start() {
 		break;
 	}
 
-
-	QObjectCursor *cursor = g_vm->getQSystem()->_cursor.get();
-	_objs.push_back(cursor);
-	cursor->_resourceId = 4901;
-	cursor->_isShown = 1;
-	cursor->_animate = 1;
-	cursor->setCursorPos(cursor->_x, cursor->_y, 0);
+	initCursor(4901, 1, 1);
 
 	updateSliders();
 	updateSubtitles();

@@ -66,13 +66,8 @@ void InterfaceMap::start() {
 	QObjectCursor *cursor = g_vm->getQSystem()->_cursor.get();
 	_savedCursorId = cursor->_resourceId;
 	_savedCursorActionType = cursor->_actionType;
-	cursor->_isShown = true;
-	cursor->_resourceId = 4901;
-	cursor->_animate = 0;
-	cursor->_actionType;
 
-	_objs.push_back(cursor);
-	cursor->setCursorPos(cursor->_x, cursor->_y, false);
+	initCursor(4901, 1, 0);
 
 	_savedXOffset = 0; // g_vm->getQSystem()->xOffset;
 	_savedSceneWidth = 640; // g_vm->getQSystem()->savedSceneWidth
