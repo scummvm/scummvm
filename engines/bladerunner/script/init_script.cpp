@@ -2242,6 +2242,7 @@ void InitScript::Init_World_Waypoints() {
 	World_Waypoint_Set(551, kSetKP05_KP06, -737.31f, 0.0f, -145.05f);
 	// 552 - UNUSED
 	// 553 - kSetRC03 - Izo AI script
+	// 554 - kSetAR01_AR02 - Hasan AI script (new)
 }
 
 void InitScript::Init_SDB() {

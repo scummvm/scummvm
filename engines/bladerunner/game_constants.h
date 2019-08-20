@@ -578,7 +578,7 @@ enum Flags {
 	kFlagPS05toPS06                           = 136,
 	kFlagCT04HomelessTalk                     = 137,
 	kFlagPS07KleinInsulted                    = 138,
-	// 139 is never used
+	kFlagMcCoyTalkedToBulletBobAboutHasan     = 139, // Re-purposed. Original: 139 is never used
 	// 140 is never used
 	kFlagRC51Available                        = 141,
 	kFlagNotUsed142                           = 142, // is never checked
@@ -2516,6 +2516,15 @@ enum GoalZuben {
 	kGoalZubenDiesInChapter1      =  99,
 	kGoalZubenKP07Wait            = 513, // new goal when in moonbus, Act 5
 	kGoalZubenGone                = 599
+};
+
+enum GoalHasan {
+	kGoalHasanDefault                         =   0,
+	kGoalHasanIsAway                          = 300, // original final goal for Hasan
+	kGoalHasanIsWalkingAroundIsAtCT02         = 301, // new goal for restored content
+	kGoalHasanIsWalkingAroundStayAwayFromCT02 = 302, // new goal for restored content
+	kGoalHasanIsWalkingAroundStaysAtCT02      = 303, // new goal for restored content
+	kGoalHasanIsWalkingAroundIsAway           = 304  // new goal for restored content
 };
 
 enum GoalOfficerLeary {
