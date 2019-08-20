@@ -46,6 +46,8 @@ public:
 
 	void setText(const Common::U32String &text, uint32 rgb);
 
+	QVisibleObject *findObject(int resourceId);
+
 public:
 	Common::Array<QVisibleObject *> _objs;
 	QVisibleObject *_objUnderCursor;

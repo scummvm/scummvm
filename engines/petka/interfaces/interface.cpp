@@ -32,4 +32,13 @@ void Interface::setText(const Common::U32String &text, uint32 rgb) {
 	_objs.push_back(new QText(text, rgb));
 }
 
+QVisibleObject *Interface::findObject(int resourceId) {
+	for (uint i = 0; i < _objs.size(); ++i) {
+		if (_objs[i]->_resourceId == resourceId) {
+			return _objs[i];
+		}
+	}
+	return nullptr;
+}
+
 } // End of namespace Petka
