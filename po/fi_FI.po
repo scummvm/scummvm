@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2019-08-20 21:15+0200\n"
-"PO-Revision-Date: 2019-08-20 19:14+0000\n"
+"PO-Revision-Date: 2019-08-22 19:23+0000\n"
 "Last-Translator: jepael <kermespersialainen@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fi/>\n"
@@ -2456,9 +2456,8 @@ msgid "Normal (no scaling)"
 msgstr "Normaali (ei skaalausta)"
 
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:79
-#, fuzzy
 msgid "Fit to window (4:3)"
-msgstr "Sovita ikkunaan"
+msgstr "Sovita ikkunaan (4:3)"
 
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:84
 msgctxt "lowres"
