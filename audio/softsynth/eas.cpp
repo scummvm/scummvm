@@ -84,14 +84,14 @@ public:
 
 private:
 	struct EASLibConfig {
-		uint32 version;
-		uint32 debug;
-		int32 voices;
-		int32 channels;
-		int32 rate;
-		int32 bufSize;
-		uint32 filter;
-		uint32 timeStamp;
+		unsigned long version;
+		unsigned debug;
+		long voices;
+		long channels;
+		long rate;
+		long bufSize;
+		unsigned filter;
+		unsigned long timeStamp;
 		char *GUID;
 	};
 
@@ -101,20 +101,19 @@ private:
 		long long offset;
 		long long length;
 	};
-
 	typedef void * EASDataHandle;
 	typedef void * EASHandle;
 
 	typedef EASLibConfig *(*ConfigFunc)();
-	typedef int32 (*InitFunc)(EASDataHandle *);
-	typedef int32 (*ShutdownFunc)(EASDataHandle);
-	typedef int32 (*LoadDLSFunc)(EASDataHandle, EASHandle, EASFile *);
-	typedef int32 (*SetParameterFunc)(EASDataHandle, int32, int32, int32);
-	typedef int32 (*SetVolumeFunc)(EASDataHandle, EASHandle, int32);
-	typedef int32 (*OpenStreamFunc)(EASDataHandle, EASHandle *, EASHandle);
-	typedef int32 (*WriteStreamFunc)(EASDataHandle, EASHandle, byte *, int32);
-	typedef int32 (*CloseStreamFunc)(EASDataHandle, EASHandle);
-	typedef int32 (*RenderFunc)(EASDataHandle, int16 *, int32, int32 *);
+	typedef long (*InitFunc)(EASDataHandle *);
+	typedef long (*ShutdownFunc)(EASDataHandle);
+	typedef long (*LoadDLSFunc)(EASDataHandle, EASHandle, EASFile *);
+	typedef long (*SetParameterFunc)(EASDataHandle, long, long, long);
+	typedef long (*SetVolumeFunc)(EASDataHandle, EASHandle, long);
+	typedef long (*OpenStreamFunc)(EASDataHandle, EASHandle *, EASHandle);
+	typedef long (*WriteStreamFunc)(EASDataHandle, EASHandle, unsigned char *, long);
+	typedef long (*CloseStreamFunc)(EASDataHandle, EASHandle);
+	typedef long (*RenderFunc)(EASDataHandle, short *, long, long *);
 
 	template<typename T>
 	void sym(T &t, const char *symbol) {
@@ -211,20 +210,20 @@ int MidiDriver_EAS::open() {
 
 	if (_config->version != EAS_KNOWNVERSION) {
 		close();
-		warning("unknown EAS library version: 0x%08x", _config->version);
+		warning("unknown EAS library version: 0x%08lx", _config->version);
 		return -1;
 	}
 
 	if (_config->channels > 2) {
 		close();
-		warning("unsupported number of EAS channels: %d", _config->channels);
+		warning("unsupported number of EAS channels: %ld", _config->channels);
 		return -1;
 	}
 
 	// see note at top of this file
 	if (INTERMEDIATE_BUFFER_SIZE % (_config->bufSize * _config->channels)) {
 		close();
-		warning("unsupported EAS buffer size: %d", _config->bufSize);
+		warning("unsupported EAS buffer size: %ld", _config->bufSize);
 		return -1;
 	}
 
@@ -280,7 +279,7 @@ int MidiDriver_EAS::open() {
 	// number of buffer fills per readBuffer()
 	_rounds = INTERMEDIATE_BUFFER_SIZE / (_config->bufSize * _config->channels);
 
-	debug("EAS initialized (voices:%d channels:%d rate:%d buffer:%d) "
+	debug("EAS initialized (voices:%ld channels:%ld rate:%ld buffer:%ld) "
 			"tempo:%u rounds:%u", _config->voices, _config->channels,
 			_config->rate, _config->bufSize, _baseTempo, _rounds);
 
@@ -398,7 +397,8 @@ int MidiDriver_EAS::readBuffer(int16 *buffer, const int numSamples) {
 	// see note at top of this file
 	assert(numSamples == INTERMEDIATE_BUFFER_SIZE);
 
-	int32 res, c;
+	int32 res;
+	long c;
 
 	for (uint i = 0; i < _rounds; ++i) {
 		// pull in MIDI events for exactly one buffer size
