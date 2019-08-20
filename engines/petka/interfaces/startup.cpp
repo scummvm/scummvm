@@ -37,18 +37,23 @@
 
 namespace Petka {
 
+const char *const kStartupObjName = "STARTUP";
+const char *const kCreditsVideoName = "credits.avi";
+
 enum {
 	kExit = 4981,
 	kCredits = 4982,
 	kLoad = 4983,
-	kNewGame = 4984
+	kNewGame = 4984,
+	kStartupCursorId = 4901,
+	kBackgroundId = 4980
 };
 
 void InterfaceStartup::start() {
 	g_vm->getQSystem()->update();
 	g_vm->getQSystem()->_isIniting = 0;
 
-	QObjectBG *bg = (QObjectBG *)g_vm->getQSystem()->findObject("STARTUP");
+	QObjectBG *bg = (QObjectBG *)g_vm->getQSystem()->findObject(kStartupObjName);
 	_objs.push_back(bg);
 
 	Sound *s = g_vm->soundMgr()->addSound(g_vm->resMgr()->findSoundName(bg->_musicId), Audio::Mixer::SoundType::kMusicSoundType);
@@ -77,7 +82,7 @@ void InterfaceStartup::start() {
 
 
 	QObjectCursor *cursor = g_vm->getQSystem()->_cursor.get();
-	cursor->_resourceId = 4901;
+	cursor->_resourceId = kStartupCursorId;
 	cursor->_isShown = true;
 	cursor->_animate = false;
 	_objs.push_back(g_vm->getQSystem()->_cursor.get());
@@ -92,7 +97,7 @@ void InterfaceStartup::onLeftButtonDown(const Common::Point p) {
 		g_system->quit();
 		break;
 	case kCredits:
-		g_vm->playVideo(g_vm->openFile("credits.avi", false));
+		g_vm->playVideo(g_vm->openFile(kCreditsVideoName, false));
 		break;
 	case kLoad:
 		g_vm->getQSystem()->_saveLoadInterface->startSaveLoad(0);
@@ -108,7 +113,7 @@ void InterfaceStartup::onMouseMove(const Common::Point p) {
 	bool found = false;
 	for (int i = _objs.size() - 1; i > 0; --i) {
 		QMessageObject *obj = (QMessageObject *)_objs[i];
-		if (obj->_resourceId != 4901 && obj->_resourceId != 4980) {
+		if (obj->_resourceId != kStartupCursorId && obj->_resourceId != kBackgroundId) {
 			FlicDecoder *flc = g_vm->resMgr()->loadFlic(obj->_resourceId);
 			if (flc) {
 				bool clicked = false;
