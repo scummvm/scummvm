@@ -95,12 +95,6 @@ private:
 		char *GUID;
 	};
 
-	struct EASFile {
-		const char *path;
-		int fd;
-		long long offset;
-		long long length;
-	};
 	typedef void * EASDataHandle;
 	typedef void * EASHandle;
 
@@ -137,7 +131,6 @@ private:
 	ConfigFunc _configFunc;
 	InitFunc _initFunc;
 	ShutdownFunc _shutdownFunc;
-	LoadDLSFunc _loadDLSFunc;
 	SetParameterFunc _setParameterFunc;
 	SetVolumeFunc _setVolumeFunc;
 	OpenStreamFunc _openStreamFunc;
@@ -164,7 +157,6 @@ MidiDriver_EAS::MidiDriver_EAS() :
 	_configFunc(0),
 	_initFunc(0),
 	_shutdownFunc(0),
-	_loadDLSFunc(0),
 	_setParameterFunc(0),
 	_setVolumeFunc(0),
 	_openStreamFunc(0),
@@ -229,7 +221,6 @@ int MidiDriver_EAS::open() {
 
 	sym(_initFunc, "EAS_Init");
 	sym(_shutdownFunc, "EAS_Shutdown");
-	sym(_loadDLSFunc, "EAS_LoadDLSCollection");
 	sym(_setParameterFunc, "EAS_SetParameter");
 	sym(_setVolumeFunc, "EAS_SetVolume");
 	sym(_openStreamFunc, "EAS_OpenMIDIStream");
@@ -237,7 +228,7 @@ int MidiDriver_EAS::open() {
 	sym(_closeStreamFunc, "EAS_CloseMIDIStream");
 	sym(_renderFunc, "EAS_Render");
 
-	if (!_initFunc || !_shutdownFunc || !_loadDLSFunc || !_setParameterFunc ||
+	if (!_initFunc || !_shutdownFunc || !_setParameterFunc ||
 			!_openStreamFunc || !_writeStreamFunc || !_closeStreamFunc ||
 			!_renderFunc) {
 		close();
@@ -282,23 +273,6 @@ int MidiDriver_EAS::open() {
 	debug("EAS initialized (voices:%ld channels:%ld rate:%ld buffer:%ld) "
 			"tempo:%u rounds:%u", _config->voices, _config->channels,
 			_config->rate, _config->bufSize, _baseTempo, _rounds);
-
-	// TODO doesn't seem to work with midi streams?
-	if (ConfMan.hasKey("soundfont")) {
-		const Common::String dls = ConfMan.get("soundfont");
-
-		debug("loading DLS file '%s'", dls.c_str());
-
-		EASFile f;
-		memset(&f, 0, sizeof(EASFile));
-		f.path = dls.c_str();
-
-		res = _loadDLSFunc(_EASHandle, 0, &f);
-		if (res)
-			warning("error loading DLS file '%s': %d", dls.c_str(), res);
-		else
-			debug("DLS file loaded");
-	}
 
 #ifdef EAS_DUMPSTREAM
 	if (!_dump.open("/sdcard/eas.dump"))
