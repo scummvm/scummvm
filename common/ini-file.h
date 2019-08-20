@@ -77,7 +77,7 @@ public:
 	typedef List<Section> SectionList;
 
 public:
-	INIFile() {}
+	INIFile();
 	~INIFile() {}
 
 	// TODO: Maybe add a copy constructor etc.?
@@ -115,8 +115,11 @@ public:
 
 	void listKeyValues(StringMap &kv);
 
+	void allowNonEnglishCharacters();
+
 private:
 	SectionList _sections;
+	bool _allowNonEnglishCharacters;
 
 	Section *getSection(const String &section);
 	const Section *getSection(const String &section) const;
