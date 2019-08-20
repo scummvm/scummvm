@@ -192,7 +192,14 @@ const CodePageDescription g_cpDescriptions[] = {
 	{nullptr, 0}	  //End
 };
 
-int getCodePageId(Common::String name);
+int getCodePageId(Common::String codePageName) {
+	const CodePageDescription *cp = g_cpDescriptions;
+	for (; cp->name; cp++) {
+		if (codePageName.equalsIgnoreCase(cp->name))
+			return cp->id;
+	}
+	return -1;
+}
 }
 
 #endif // WIN32_CODEPAGE_H
