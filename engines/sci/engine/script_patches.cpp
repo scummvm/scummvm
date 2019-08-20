@@ -7739,9 +7739,35 @@ static const uint16 pq3PatchGiveLocketPoints[] = {
 	PATCH_END
 };
 
+// The doctor's mouth moves too fast in room 36. doctorMouth:cyleSpeed is set to
+//  one, the maximum speed, unlike any other inset in the game. Most insets use
+//  the default speed of six and almost all the rest use an even slower speed.
+//  We set the doctor's mouth to the default speed.
+//
+// Applies to: All versions
+// Responsible method: insetDoctor:init
+// Fixes bug: #10255
+static const uint16 pq3SignatureDoctorMouthSpeed[] = {
+	0x38, SIG_MAGICDWORD,                // pushi cyleSpeed
+	      SIG_SELECTOR16(cycleSpeed),
+	0x78,                                // push1
+	0x78,                                // push1
+	SIG_ADDTOOFFSET(+13),
+	0x4a, 0x1c,                          // send 1c [ doctorMouth ... cycleSpeed: 1 ... ]
+	SIG_END,
+};
+
+static const uint16 pq3PatchDoctorMouthSpeed[] = {
+	0x32, PATCH_UINT16(0x0002),          // jmp 0002
+	PATCH_ADDTOOFFSET(+15),
+	0x4a, 0x16,                          // send 16 [ don't set cycleSpeed, use default (6) ]
+	SIG_END,
+};
+
 //          script, description,                                 signature                     patch
 static const SciScriptPatcherEntry pq3Signatures[] = {
-	{  true, 36, "give locket missing points",                1, pq3SignatureGiveLocketPoints, pq3PatchGiveLocketPoints },
+	{ true, 36, "give locket missing points",                1, pq3SignatureGiveLocketPoints, pq3PatchGiveLocketPoints },
+	{ true, 36, "doctor mouth speed",                        1, pq3SignatureDoctorMouthSpeed, pq3PatchDoctorMouthSpeed },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
