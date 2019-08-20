@@ -80,7 +80,18 @@ bool SceneScriptPS15::ClickedOnActor(int actorId) {
 		} else {
 			Actor_Face_Actor(kActorMcCoy, kActorSergeantWalls, true);
 			Actor_Says(kActorMcCoy, 8600, 15);
-			Actor_Says(kActorSergeantWalls, 190, 12);
+			if (_vm->_cutContent) {
+				switch (Random_Query(1, 2)) {
+				case 1:
+					Actor_Says(kActorSergeantWalls, 190, 12);
+					break;
+				case 2:
+					Actor_Says(kActorSergeantWalls, 200, 12);
+					break;
+				}
+			} else {
+				Actor_Says(kActorSergeantWalls, 190, 12);
+			}
 		}
 		return true;
 	}
