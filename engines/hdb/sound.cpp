@@ -1489,33 +1489,16 @@ void Sound::playSound(int index) {
 	// is sound marked as cached?
 	if (_soundCache[index].loaded == SNDMEM_NOTCACHED) {
 
-		Common::SeekableReadStream *stream = nullptr;
 		if (g_hdb->getPlatform() == Common::kPlatformLinux) {
 			Common::String updatedName(_soundCache[index].name);
 			updatedName.replace(updatedName.begin() + updatedName.size() - 4, updatedName.end(), "_OGG");
-			stream = g_hdb->_fileMan->findFirstData(updatedName.c_str(), TYPE_BINARY);
+			_soundCache[index].data = g_hdb->_fileMan->findFirstData(updatedName.c_str(), TYPE_BINARY);
 		} else
-			stream = g_hdb->_fileMan->findFirstData(_soundCache[index].name, TYPE_BINARY);
+			_soundCache[index].data = g_hdb->_fileMan->findFirstData(_soundCache[index].name, TYPE_BINARY);
 
-		if (stream == nullptr)
-			return;
-
-		if (_soundCache[index].ext == SNDTYPE_MP3) {
-#ifdef USE_MAD
-			_soundCache[index].audioStream = Audio::makeMP3Stream(stream, DisposeAfterUse::YES);
-			_soundCache[index].loaded = SNDMEM_LOADED;
-#endif // USE_MAD
-		} else if (_soundCache[index].ext == SNDTYPE_OGG) {
-#ifdef USE_VORBIS
-			_soundCache[index].audioStream = Audio::makeVorbisStream(stream, DisposeAfterUse::YES);
-			_soundCache[index].loaded = SNDMEM_LOADED;
-#endif // USE_VORBIS
-		} else {
-			_soundCache[index].audioStream = Audio::makeWAVStream(stream, DisposeAfterUse::YES);
-			_soundCache[index].loaded = SNDMEM_LOADED;
-		}
+		_soundCache[index].loaded = SNDMEM_LOADED;
 	} else {
-		_soundCache[index].audioStream->rewind();
+		_soundCache[index].data->seek(0);
 	}
 
 	int soundChannel = 0;
@@ -1534,10 +1517,27 @@ void Sound::playSound(int index) {
 
 	g_hdb->_mixer->setChannelVolume(_handles[soundChannel], _sfxVolume);
 
+	if (_soundCache[index].data == nullptr)
+		return;
+
+	Audio::SeekableAudioStream *audioStream = nullptr;
+
+	if (_soundCache[index].ext == SNDTYPE_MP3) {
+#ifdef USE_MAD
+		audioStream = Audio::makeMP3Stream(_soundCache[index].data, DisposeAfterUse::NO);
+#endif // USE_MAD
+	} else if (_soundCache[index].ext == SNDTYPE_OGG) {
+#ifdef USE_VORBIS
+		audioStream = Audio::makeVorbisStream(_soundCache[index].data, DisposeAfterUse::NO);
+#endif // USE_VORBIS
+	} else {
+		audioStream = Audio::makeWAVStream(_soundCache[index].data, DisposeAfterUse::NO);
+	}
+
 	g_hdb->_mixer->playStream(
 		Audio::Mixer::kSFXSoundType,
 		&_handles[soundChannel],
-		_soundCache[index].audioStream,
+		audioStream,
 		-1,
 		Audio::Mixer::kMaxChannelVolume,
 		0,
@@ -1561,39 +1561,40 @@ void Sound::playSoundEx(int index, int channel, bool loop) {
 	// is sound marked as cached?
 	if (_soundCache[index].loaded == SNDMEM_NOTCACHED) {
 
-		Common::SeekableReadStream *stream = nullptr;
 		if (g_hdb->getPlatform() == Common::kPlatformLinux) {
 			Common::String updatedName(_soundCache[index].name);
 			updatedName.replace(updatedName.begin() + updatedName.size() - 4, updatedName.end(), "_OGG");
-			stream = g_hdb->_fileMan->findFirstData(updatedName.c_str(), TYPE_BINARY);
+			_soundCache[index].data = g_hdb->_fileMan->findFirstData(updatedName.c_str(), TYPE_BINARY);
 		} else
-			stream = g_hdb->_fileMan->findFirstData(_soundCache[index].name, TYPE_BINARY);
+			_soundCache[index].data = g_hdb->_fileMan->findFirstData(_soundCache[index].name, TYPE_BINARY);
 
-		if (stream == nullptr)
-			return;
-
-		if (_soundCache[index].ext == SNDTYPE_MP3) {
-#ifdef USE_MAD
-			_soundCache[index].audioStream = Audio::makeMP3Stream(stream, DisposeAfterUse::YES);
-			_soundCache[index].loaded = SNDMEM_LOADED;
-#endif // USE_MAD
-		} else if (_soundCache[index].ext == SNDTYPE_OGG) {
-#ifdef USE_VORBIS
-			_soundCache[index].audioStream = Audio::makeVorbisStream(stream, DisposeAfterUse::YES);
-			_soundCache[index].loaded = SNDMEM_LOADED;
-#endif // USE_VORBIS
-		} else {
-			_soundCache[index].audioStream = Audio::makeWAVStream(stream, DisposeAfterUse::YES);
-			_soundCache[index].loaded = SNDMEM_LOADED;
-		}
+		_soundCache[index].loaded = SNDMEM_LOADED;
 	} else {
-		_soundCache[index].audioStream->rewind();
+		_soundCache[index].data->seek(0);
 	}
 
 	g_hdb->_mixer->setChannelVolume(_handles[channel], _sfxVolume);
 
+
+	if (_soundCache[index].data == nullptr)
+		return;
+
+	Audio::SeekableAudioStream *audioStream = nullptr;
+
+	if (_soundCache[index].ext == SNDTYPE_MP3) {
+#ifdef USE_MAD
+		audioStream = Audio::makeMP3Stream(_soundCache[index].data, DisposeAfterUse::NO);
+#endif // USE_MAD
+	} else if (_soundCache[index].ext == SNDTYPE_OGG) {
+#ifdef USE_VORBIS
+		audioStream = Audio::makeVorbisStream(_soundCache[index].data, DisposeAfterUse::NO);
+#endif // USE_VORBIS
+	} else {
+		audioStream = Audio::makeWAVStream(_soundCache[index].data, DisposeAfterUse::NO);
+	}
+
 	if (loop) {
-		Audio::AudioStream *loopingStream = new Audio::LoopingAudioStream(_soundCache[index].audioStream, 0, DisposeAfterUse::YES);
+		Audio::AudioStream *loopingStream = new Audio::LoopingAudioStream(audioStream, 0, DisposeAfterUse::YES);
 		g_hdb->_mixer->playStream(
 			Audio::Mixer::kSFXSoundType,
 			&_handles[channel],
@@ -1609,7 +1610,7 @@ void Sound::playSoundEx(int index, int channel, bool loop) {
 		g_hdb->_mixer->playStream(
 			Audio::Mixer::kSFXSoundType,
 			&_handles[channel],
-			_soundCache[index].audioStream,
+			audioStream,
 			-1,
 			Audio::Mixer::kMaxChannelVolume,
 			0,
