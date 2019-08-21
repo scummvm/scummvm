@@ -1469,13 +1469,13 @@ void Sound::setMusicVolume(int volume) {
 		if (_song1.fadingIn)
 			_song1.fadeInVol = volume;
 		if (!_song1.fadingOut)
-			g_hdb->_mixer->setChannelVolume(*_song1.handle, volume);
+			g_hdb->_mixer->setChannelVolume(_song1.handle, volume);
 	}
 	if (_song2.playing) {
 		if (_song2.fadingIn)
 			_song1.fadeInVol = volume;
 		if (!_song2.fadingOut)
-			g_hdb->_mixer->setChannelVolume(*_song2.handle, volume);
+			g_hdb->_mixer->setChannelVolume(_song2.handle, volume);
 	}
 }
 
@@ -1629,7 +1629,7 @@ void Sound::playVoice(int index, int actor) {
 
 	// is voice channel already active?  if so, shut 'er down (automagically called StopVoice via callback)
 	if (_voices[actor].active)
-		g_hdb->_mixer->stopHandle(*_voices[actor].handle);
+		g_hdb->_mixer->stopHandle(_voices[actor].handle);
 
 	// make sure we aren't playing a line more than once this time (only on CHANNEL 0)
 	if (!actor && _voicePlayed[index - FIRST_VOICE])
@@ -1652,11 +1652,11 @@ void Sound::playVoice(int index, int actor) {
 			return;
 		}
 
-		g_hdb->_mixer->setChannelVolume(*_voices[actor].handle, _sfxVolume);
+		g_hdb->_mixer->setChannelVolume(_voices[actor].handle, _sfxVolume);
 
 		g_hdb->_mixer->playStream(
 			Audio::Mixer::kSpeechSoundType,
-			_voices[actor].handle,
+			&_voices[actor].handle,
 			audioStream,
 			-1,
 			Audio::Mixer::kMaxChannelVolume,
@@ -1674,11 +1674,11 @@ void Sound::playVoice(int index, int actor) {
 			return;
 		}
 
-		g_hdb->_mixer->setChannelVolume(*_voices[actor].handle, _sfxVolume);
+		g_hdb->_mixer->setChannelVolume(_voices[actor].handle, _sfxVolume);
 
 		g_hdb->_mixer->playStream(
 			Audio::Mixer::kSpeechSoundType,
-			_voices[actor].handle,
+			&_voices[actor].handle,
 			audioStream,
 			-1,
 			Audio::Mixer::kMaxChannelVolume,
@@ -1744,11 +1744,11 @@ void Sound::stopChannel(int channel) {
 void Sound::stopMusic() {
 	if (_song1.playing) {
 		_song1.playing = false;
-		g_hdb->_mixer->stopHandle(*_song1.handle);
+		g_hdb->_mixer->stopHandle(_song1.handle);
 	}
 	if (_song2.playing) {
 		_song2.playing = false;
-		g_hdb->_mixer->stopHandle(*_song2.handle);
+		g_hdb->_mixer->stopHandle(_song2.handle);
 	}
 }
 
@@ -1797,19 +1797,19 @@ void Sound::beginMusic(SoundType song, bool fadeIn, int ramp) {
 			Audio::SeekableAudioStream *audioStream = Audio::makeMP3Stream(stream, DisposeAfterUse::YES);
 			Audio::AudioStream *loopingStream = new Audio::LoopingAudioStream(audioStream, 0, DisposeAfterUse::YES);
 
-			g_hdb->_mixer->setChannelVolume(*_song1.handle, _musicVolume);
+			g_hdb->_mixer->setChannelVolume(_song1.handle, _musicVolume);
 
 			// do we need to fade-in this song?
 			if (fadeIn) {
 				_song1.fadeInRamp = ramp;
 				_song1.fadingIn = true;
 				_song1.fadeInVol = 0;
-				g_hdb->_mixer->setChannelVolume(*_song1.handle, 0);
+				g_hdb->_mixer->setChannelVolume(_song1.handle, 0);
 			}
 
 			g_hdb->_mixer->playStream(
 				Audio::Mixer::kMusicSoundType,
-				_song1.handle,
+				&_song1.handle,
 				loopingStream,
 				-1,
 				Audio::Mixer::kMaxChannelVolume,
@@ -1825,19 +1825,19 @@ void Sound::beginMusic(SoundType song, bool fadeIn, int ramp) {
 			Audio::SeekableAudioStream *audioStream = Audio::makeVorbisStream(stream, DisposeAfterUse::YES);
 			Audio::AudioStream *loopingStream = new Audio::LoopingAudioStream(audioStream, 0, DisposeAfterUse::YES);
 
-			g_hdb->_mixer->setChannelVolume(*_song1.handle, _musicVolume);
+			g_hdb->_mixer->setChannelVolume(_song1.handle, _musicVolume);
 
 			// do we need to fade-in this song?
 			if (fadeIn) {
 				_song1.fadeInRamp = ramp;
 				_song1.fadingIn = true;
 				_song1.fadeInVol = 0;
-				g_hdb->_mixer->setChannelVolume(*_song1.handle, 0);
+				g_hdb->_mixer->setChannelVolume(_song1.handle, 0);
 			}
 
 			g_hdb->_mixer->playStream(
 				Audio::Mixer::kMusicSoundType,
-				_song1.handle,
+				&_song1.handle,
 				loopingStream,
 				-1,
 				Audio::Mixer::kMaxChannelVolume,
@@ -1869,19 +1869,19 @@ void Sound::beginMusic(SoundType song, bool fadeIn, int ramp) {
 			Audio::SeekableAudioStream *audioStream = Audio::makeMP3Stream(stream, DisposeAfterUse::YES);
 			Audio::AudioStream *loopingStream = new Audio::LoopingAudioStream(audioStream, 0, DisposeAfterUse::YES);
 
-			g_hdb->_mixer->setChannelVolume(*_song2.handle, _musicVolume);
+			g_hdb->_mixer->setChannelVolume(_song2.handle, _musicVolume);
 
 			// do we need to fade-in this song?
 			if (fadeIn) {
 				_song2.fadeInRamp = ramp;
 				_song2.fadingIn = true;
 				_song2.fadeInVol = 0;
-				g_hdb->_mixer->setChannelVolume(*_song2.handle, 0);
+				g_hdb->_mixer->setChannelVolume(_song2.handle, 0);
 			}
 
 			g_hdb->_mixer->playStream(
 				Audio::Mixer::kMusicSoundType,
-				_song2.handle,
+				&_song2.handle,
 				loopingStream,
 				-1,
 				Audio::Mixer::kMaxChannelVolume,
@@ -1897,19 +1897,19 @@ void Sound::beginMusic(SoundType song, bool fadeIn, int ramp) {
 			Audio::SeekableAudioStream *audioStream = Audio::makeVorbisStream(stream, DisposeAfterUse::YES);
 			Audio::AudioStream *loopingStream = new Audio::LoopingAudioStream(audioStream, 0, DisposeAfterUse::YES);
 
-			g_hdb->_mixer->setChannelVolume(*_song2.handle, _musicVolume);
+			g_hdb->_mixer->setChannelVolume(_song2.handle, _musicVolume);
 
 			// do we need to fade-in this song?
 			if (fadeIn) {
 				_song2.fadeInRamp = ramp;
 				_song2.fadingIn = true;
 				_song2.fadeInVol = 0;
-				g_hdb->_mixer->setChannelVolume(*_song2.handle, 0);
+				g_hdb->_mixer->setChannelVolume(_song2.handle, 0);
 			}
 
 			g_hdb->_mixer->playStream(
 				Audio::Mixer::kMusicSoundType,
-				_song2.handle,
+				&_song2.handle,
 				loopingStream,
 				-1,
 				Audio::Mixer::kMaxChannelVolume,
@@ -1930,7 +1930,7 @@ void Sound::updateMusic() {
 		if (_song1.fadingOut) {
 			_song1.fadeOutVol = 0;
 			_song1.playing = false;
-			g_hdb->_mixer->stopHandle(*_song1.handle);
+			g_hdb->_mixer->stopHandle(_song1.handle);
 		} else if (_song1.fadingIn) {
 			_song1.fadeInVol = _musicVolume;
 			_song1.fadingIn = false;
@@ -1941,7 +1941,7 @@ void Sound::updateMusic() {
 		if (_song2.fadingOut) {
 			_song2.fadeOutVol = 0;
 			_song2.playing = false;
-			g_hdb->_mixer->stopHandle(*_song2.handle);
+			g_hdb->_mixer->stopHandle(_song2.handle);
 		} else if (_song2.fadingIn) {
 			_song2.fadeInVol = _musicVolume;
 			_song2.fadingIn = false;
