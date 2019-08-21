@@ -1427,12 +1427,9 @@ struct SoundLookUp {
 
 struct Voice {
 	bool active;
-	Audio::SoundHandle *handle;
+	Audio::SoundHandle handle;
 
-	Voice() : active(false), handle(new Audio::SoundHandle) {}
-	~Voice() {
-		delete handle;
-	}
+	Voice() : active(false) {}
 };
 
 enum SndMem {
@@ -1462,7 +1459,7 @@ struct SoundCache {
 struct Song {
 	bool playing;
 	SoundType song;
-	Audio::SoundHandle *handle;
+	Audio::SoundHandle handle;
 
 	bool fadingOut;
 	int fadeOutVol;
@@ -1472,12 +1469,9 @@ struct Song {
 	int	fadeInVol;
 	int	fadeInRamp;
 
-	Song() : playing(false), song(SONG_NONE), handle(new Audio::SoundHandle()),
+	Song() : playing(false), song(SONG_NONE),
 		fadingOut(false), fadeOutVol(0), fadeOutRamp(0),
 		fadingIn(false), fadeInVol(0), fadeInRamp(0) {}
-	~Song() {
-		delete handle;
-	}
 };
 
 class Sound {
@@ -1515,11 +1509,11 @@ public:
 	void playVoice(int index, int actor);
 	void stopVoices() {
 		if (_voices[0].active) {
-			g_hdb->_mixer->stopHandle(*_voices[0].handle);
+			g_hdb->_mixer->stopHandle(_voices[0].handle);
 			_voices[0].active = false;
 		}
 		if (_voices[1].active) {
-			g_hdb->_mixer->stopHandle(*_voices[1].handle);
+			g_hdb->_mixer->stopHandle(_voices[1].handle);
 			_voices[1].active = false;
 		}
 	}
