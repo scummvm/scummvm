@@ -1488,14 +1488,12 @@ void Sound::playSound(int index) {
 
 	// is sound marked as cached?
 	if (_soundCache[index].loaded == SNDMEM_NOTCACHED) {
+		Common::String updatedName(_soundCache[index].name);
 
-		if (g_hdb->getPlatform() == Common::kPlatformLinux) {
-			Common::String updatedName(_soundCache[index].name);
+		if (g_hdb->getPlatform() == Common::kPlatformLinux)
 			updatedName.replace(updatedName.begin() + updatedName.size() - 4, updatedName.end(), "_OGG");
-			_soundCache[index].data = g_hdb->_fileMan->findFirstData(updatedName.c_str(), TYPE_BINARY);
-		} else
-			_soundCache[index].data = g_hdb->_fileMan->findFirstData(_soundCache[index].name, TYPE_BINARY);
 
+		_soundCache[index].data = g_hdb->_fileMan->findFirstData(updatedName.c_str(), TYPE_BINARY);
 		_soundCache[index].loaded = SNDMEM_LOADED;
 	} else {
 		_soundCache[index].data->seek(0);
