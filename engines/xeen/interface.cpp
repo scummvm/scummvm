@@ -639,12 +639,12 @@ void Interface::doStepCode() {
 	case SURFTYPE_LAVA:
 		// It burns, it burns!
 		damage = 100;
-		party._damageType = DT_FIRE;
+		combat._damageType = DT_FIRE;
 		break;
 	case SURFTYPE_SKY:
 		// We can fly, we can.. oh wait, we can't!
 		damage = 100;
-		party._damageType = DT_PHYSICAL;
+		combat._damageType = DT_PHYSICAL;
 		_falling = FALL_IN_PROGRESS;
 		break;
 	case SURFTYPE_DESERT:
@@ -654,7 +654,7 @@ void Interface::doStepCode() {
 		break;
 	case SURFTYPE_CLOUD:
 		if (!party._levitateCount) {
-			party._damageType = DT_PHYSICAL;
+			combat._damageType = DT_PHYSICAL;
 			_falling = FALL_IN_PROGRESS;
 			damage = 100;
 		}

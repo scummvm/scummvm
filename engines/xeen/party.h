@@ -233,7 +233,6 @@ public:
 	Common::Point _fallPosition;
 	int _fallMaze;
 	int _fallDamage;
-	DamageType _damageType;
 	bool _dead;
 	Treasure _treasure;
 	Treasure _savedTreasure;
