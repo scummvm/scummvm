@@ -1636,13 +1636,11 @@ void Sound::playVoice(int index, int actor) {
 		return;
 
 	Common::SeekableReadStream *stream = nullptr;
-	if (g_hdb->getPlatform() == Common::kPlatformLinux) {
-		Common::String updatedName(soundList[index].name);
+	Common::String updatedName(soundList[index].name);
+	if (g_hdb->getPlatform() == Common::kPlatformLinux)
 		updatedName.replace(updatedName.begin() + updatedName.size() - 4, updatedName.end(), "_OGG");
-		stream = g_hdb->_fileMan->findFirstData(updatedName.c_str(), TYPE_BINARY);
-	} else
-		stream = g_hdb->_fileMan->findFirstData(soundList[index].name, TYPE_BINARY);
 
+	stream = g_hdb->_fileMan->findFirstData(updatedName.c_str(), TYPE_BINARY);
 	if (stream == nullptr)
 		return;
 
