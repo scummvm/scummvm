@@ -181,7 +181,7 @@ class Encoding {
 		static char *convertTransManMapping(const char *to, const char *from, const char *string, size_t length);
 
 		/**
-		 * Transliterates cyrilic string in iso-8859-5 encoding and returns
+		 * Transliterates cyrillic string in iso-8859-5 encoding and returns
 		 * it's ASCII (latin) form.
 		 *
 		 * The result has to be freed after use.
@@ -190,10 +190,10 @@ class Encoding {
 		 *
 		 * @return Transliterated string in ASCII (must be freed) or nullptr on fail.
 		 */
-		static char *transliterateCyrilic(const char *string);
+		static char *transliterateCyrillic(const char *string);
 
 		/**
-		 * Transliterates cyrilic in UTF-32 string.
+		 * Transliterates cyrillic in UTF-32 string.
 		 *
 		 * The result has to be freed after use.
 		 *
