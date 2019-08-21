@@ -44,8 +44,8 @@
 #define SFNAME_DARKVIB		"vibracious_(Dark_Delivery_Mix).mp3"
 #define SFNAME_EXPER		"experimentatus_(extended).mp3"
 
-#define		FIRST_VOICE		V00_AIRLOCK_01
-#define		NUM_VOICES		( LAST_SOUND - FIRST_VOICE )
+#define	FIRST_VOICE		V00_AIRLOCK_01
+#define	NUM_VOICES		( LAST_SOUND - FIRST_VOICE )
 
 #include "audio/audiostream.h"
 #include "audio/mixer.h"
