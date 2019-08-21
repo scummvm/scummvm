@@ -1454,9 +1454,9 @@ struct SoundCache {
 	const char *name;				// filename / MSD name
 	const char *luaName;			// name used by Lua for i.d.
 	SndType ext;				// 0 = Uninitialized, -1 = WAV, 1 = MP3
-	Audio::SeekableAudioStream *audioStream;
+	Common::SeekableReadStream *data;
 
-	SoundCache() : loaded(SNDMEM_NOTCACHED), size(0), name(nullptr), luaName(nullptr), ext(SNDTYPE_NONE), audioStream(nullptr) {}
+	SoundCache() : loaded(SNDMEM_NOTCACHED), size(0), name(nullptr), luaName(nullptr), ext(SNDTYPE_NONE), data(nullptr) {}
 };
 
 struct Song {
