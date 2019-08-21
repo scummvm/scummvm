@@ -31,15 +31,26 @@ class QObjectPetka : public QObject {
 public:
 	QObjectPetka();
 
-private:
-
+protected:
+	int _field7C;
+	int _surfW;
+	int _surfH;
+	int _x_;
+	int _y_;
+	int _surfId;
+	int _imageId;
+	double _field98;
+	// walkObj
+	bool _isWalking;
+	bool _isPetka;
+	QReaction *_heroReaction;
+	QMessageObject *_sender;
+	int _fieldB4;
 };
 
 class QObjectChapayev : public QObjectPetka {
 public:
 	QObjectChapayev();
-
-private:
 
 };
 
