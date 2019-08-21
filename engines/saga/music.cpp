@@ -36,6 +36,7 @@
 #include "audio/decoders/mp3.h"
 #include "audio/decoders/raw.h"
 #include "audio/decoders/vorbis.h"
+#include "audio/softsynth/fmtowns_pc98/towns_pc98_driver.h"
 #include "common/config-manager.h"
 #include "common/file.h"
 #include "common/substream.h"
@@ -162,15 +163,24 @@ void MusicDriver::resume() {
 }
 
 
-Music::Music(SagaEngine *vm, Audio::Mixer *mixer) : _vm(vm), _mixer(mixer) {
+Music::Music(SagaEngine *vm, Audio::Mixer *mixer) : _vm(vm), _mixer(mixer), _player(0), _playerPC98(0), _musicContext(0) {
 	_currentVolume = 0;
 	_currentMusicBuffer = NULL;
-	_player = new MusicDriver();
+
+	if (_vm->getPlatform() == Common::kPlatformPC98) {
+		_playerPC98 = new TownsPC98_AudioDriver(mixer, PC98AudioPluginDriver::kType86);
+		_playerPC98->init();
+	} else {
+		_player = new MusicDriver();
+	}
 
 	_digitalMusicContext = _vm->_resource->getContext(GAME_DIGITALMUSICFILE);
-	if (!_player->isAdlib())
-		_musicContext = _vm->_resource->getContext(GAME_MUSICFILE_GM);
-	else
+	if (_player) {
+		if (!_player->isAdlib())
+			_musicContext = _vm->_resource->getContext(GAME_MUSICFILE_GM);
+	}
+
+	if (!_musicContext)
 		_musicContext = _vm->_resource->getContext(GAME_MUSICFILE_FM);
 
 	if (!_musicContext) {
@@ -218,6 +228,7 @@ Music::~Music() {
 	_vm->getTimerManager()->removeTimerProc(&musicVolumeGaugeCallback);
 	_mixer->stopHandle(_musicHandle);
 	delete _player;
+	delete _playerPC98;
 }
 
 void Music::musicVolumeGaugeCallback(void *refCon) {
@@ -262,7 +273,11 @@ void Music::setVolume(int volume, int time) {
 			volume = 0;
 
 		_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, volume);
-		_player->setVolume(volume);
+		if (_player)
+			_player->setVolume(volume);
+		if (_playerPC98)
+			_playerPC98->setMusicVolume(volume);
+
 		_vm->getTimerManager()->removeTimerProc(&musicVolumeGaugeCallback);
 		_currentVolume = volume;
 		return;
@@ -272,7 +287,8 @@ void Music::setVolume(int volume, int time) {
 }
 
 bool Music::isPlaying() {
-	return _mixer->isSoundHandleActive(_musicHandle) || _player->isPlaying();
+	
+	return _mixer->isSoundHandleActive(_musicHandle) || (_player ? _player->isPlaying() : false) || (_playerPC98 ? _playerPC98->musicPlaying() : false);
 }
 
 void Music::play(uint32 resourceId, MusicFlags flags) {
@@ -284,12 +300,6 @@ void Music::play(uint32 resourceId, MusicFlags flags) {
 	if (isPlaying() && _trackNumber == resourceId)
 		return;
 
-	// PC-98 version features music in a different, unidentified format.
-	if (_vm->getPlatform() == Common::kPlatformPC98) {
-		warning("TODO: Music::play %d, %d for ITE PC-98", resourceId, flags);
-		return;
-	}
-
 	if (_vm->getFeatures() & GF_ITE_DOS_DEMO) {
 		warning("TODO: Music::play %d, %d for ITE DOS demo", resourceId, flags);
 		return;
@@ -297,8 +307,11 @@ void Music::play(uint32 resourceId, MusicFlags flags) {
 
 	_trackNumber = resourceId;
 	_mixer->stopHandle(_musicHandle);
-	_player->stop();
-
+	if (_player)
+		_player->stop();
+	if (_playerPC98)
+		_playerPC98->reset();
+	
 	int realTrackNumber = 0;
 
 	if (_vm->getGameId() == GID_ITE) {
@@ -414,24 +427,38 @@ void Music::play(uint32 resourceId, MusicFlags flags) {
 		}
 
 		_vm->_resource->loadResource(_musicContext, resourceId, *_currentMusicBuffer);
-		_player->play(_vm, _currentMusicBuffer, (flags & MUSIC_LOOP));
+		if (_player)
+			_player->play(_vm, _currentMusicBuffer, (flags & MUSIC_LOOP));
+		else if (_playerPC98)
+			_playerPC98->loadMusicData(_currentMusicBuffer->data() + 4);
 	}
 
 	setVolume(_vm->_musicVolume);
 }
 
 void Music::pause() {
-	_player->pause();
-	_player->setVolume(0);
+	if (_player) {
+		_player->pause();
+		_player->setVolume(0);
+	} else if (_playerPC98) {
+		_playerPC98->pause();
+	}
 }
 
 void Music::resume() {
-	_player->resume();
-	_player->setVolume(_vm->_musicVolume);
+	if (_player) {
+		_player->resume();
+		_player->setVolume(_vm->_musicVolume);
+	} else if (_playerPC98) {
+		_playerPC98->cont();
+	}
 }
 
 void Music::stop() {
-	_player->stop();
+	if (_player)
+		_player->stop();
+	else if (_playerPC98)
+		_playerPC98->reset();
 }
 
 } // End of namespace Saga
