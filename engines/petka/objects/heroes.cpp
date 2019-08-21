@@ -24,12 +24,25 @@
 
 namespace Petka {
 
-QObjectChapayev::QObjectChapayev() {
-
+QObjectPetka::QObjectPetka() {
+	_field7C = 1;
+	_reaction = nullptr;
+	_sender = nullptr;
+	_isPetka = true;
+	_isWalking = false;
+	_x = 574;
+	_y = 44;
+	_z = 200;
+	_surfId  = -5;
+	_surfH = 0;
+	_surfW = 0;
 }
 
-QObjectPetka::QObjectPetka() {
-
+QObjectChapayev::QObjectChapayev() {
+	_x = 477;
+	_y = 350;
+	_surfId = -6;
+	_isPetka = false;
 }
 
 }
