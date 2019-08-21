@@ -508,7 +508,10 @@ void GfxCursor::kernelSetMacCursor(GuiResourceId viewNum, int loopNum, int celNu
 	Common::MemoryReadStream resStream(resource->toStream());
 	Graphics::MacCursor *macCursor = new Graphics::MacCursor();
 
-	if (!macCursor->readFromStream(resStream)) {
+	// use black for mac monochrome inverted pixels so that cursor
+	//  features in FPFP and KQ6 Mac are displayed, bug #7050
+	byte macMonochromeInvertedPixelColor = 0;
+	if (!macCursor->readFromStream(resStream, false, macMonochromeInvertedPixelColor)) {
 		warning("Failed to load Mac cursor %d", viewNum);
 		delete macCursor;
 		return;

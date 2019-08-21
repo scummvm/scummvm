@@ -43,18 +43,18 @@ void MacCursor::clear() {
 	memset(_palette, 0, 256 * 3);
 }
 
-bool MacCursor::readFromStream(Common::SeekableReadStream &stream, bool forceMonochrome) {
+bool MacCursor::readFromStream(Common::SeekableReadStream &stream, bool forceMonochrome, byte monochromeInvertedPixelColor) {
 	clear();
 
 	// Older Mac CURS monochrome cursors had a set size
 	// All crsr cursors are larger than this
 	if (stream.size() == 32 * 2 + 4)
-		return readFromCURS(stream);
+		return readFromCURS(stream, monochromeInvertedPixelColor);
 
-	return readFromCRSR(stream, forceMonochrome);
+	return readFromCRSR(stream, forceMonochrome, monochromeInvertedPixelColor);
 }
 
-bool MacCursor::readFromCURS(Common::SeekableReadStream &stream) {
+bool MacCursor::readFromCURS(Common::SeekableReadStream &stream, byte monochromeInvertedPixelColor) {
 	// Grab B/W icon data
 	_surface = new byte[16 * 16];
 	for (int i = 0; i < 32; i++) {
@@ -66,9 +66,15 @@ bool MacCursor::readFromCURS(Common::SeekableReadStream &stream) {
 	// Apply mask data
 	for (int i = 0; i < 32; i++) {
 		byte imageByte = stream.readByte();
-		for (int b = 0; b < 8; b++)
-			if ((imageByte & (0x80 >> b)) == 0)
-				_surface[i * 8 + b] = 0xff;
+		for (int b = 0; b < 8; b++) {
+			if ((imageByte & (0x80 >> b)) == 0) {
+				// if an image bit is set outside the mask then the destination pixel
+				//  would have been inverted on macintosh, otherwise it's transparent.
+				//  we don't currently implement this inversion effect so instead we
+				//  use the optional color provided by the caller for these pixels.
+				_surface[i * 8 + b] = _surface[i * 8 + b] ? 0xff : monochromeInvertedPixelColor;
+			}
+		}
 	}
 
 	_hotspotY = stream.readUint16BE();
@@ -82,7 +88,7 @@ bool MacCursor::readFromCURS(Common::SeekableReadStream &stream) {
 	return !stream.eos();
 }
 
-bool MacCursor::readFromCRSR(Common::SeekableReadStream &stream, bool forceMonochrome) {
+bool MacCursor::readFromCRSR(Common::SeekableReadStream &stream, bool forceMonochrome, byte monochromeInvertedPixelColor) {
 	stream.readUint16BE(); // type
 	stream.readUint32BE(); // offset to pixel map
 	stream.readUint32BE(); // offset to pixel data
@@ -91,7 +97,7 @@ bool MacCursor::readFromCRSR(Common::SeekableReadStream &stream, bool forceMonoc
 	stream.readUint32BE(); // reserved
 
 	// Read the B/W data first
-	if (!readFromCURS(stream))
+	if (!readFromCURS(stream, monochromeInvertedPixelColor))
 		return false;
 
 	// Use b/w cursor on backends which don't support cursor palettes
