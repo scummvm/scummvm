@@ -22,6 +22,7 @@
 
 #include "base/plugins.h"
 
+#include "common/debug.h"
 #include "common/translation.h"
 
 #include "engines/advancedDetector.h"
@@ -236,11 +237,15 @@ SaveStateList HDBMetaEngine::listSaves(const char *target) const {
 				uint32 timeSeconds = in->readUint32LE();;
 				in->read(mapName, 32);
 
-				warning("mapName: %s playtime: %d", mapName, timeSeconds);
+				debug(1, "mapName: %s playtime: %d", mapName, timeSeconds);
 
 				desc.setSaveSlot(slotNum);
 				desc.setPlayTime(timeSeconds * 1000);
-				desc.setDescription(mapName);
+
+				if (slotNum < 8)
+					desc.setDescription(Common::String::format("Auto: %s", mapName));
+				else
+					desc.setDescription(mapName);
 
 				saveList.push_back(desc);
 			}
