@@ -107,8 +107,8 @@ char *Encoding::convertWithTransliteration(iconv_t iconvHandle, const String &to
 	size_t newLength = length;
 	if (from.equalsIgnoreCase("iso-8859-5") &&
 			!to.hasPrefixIgnoreCase("utf")) {
-		// There might be some cyrilic characters, which need to be transliterated.
-		newString = transliterateCyrilic(string);
+		// There might be some cyrillic characters, which need to be transliterated.
+		newString = transliterateCyrillic(string);
 		if (!newString)
 			return nullptr;
 		newFrom = "ASCII";
@@ -116,7 +116,7 @@ char *Encoding::convertWithTransliteration(iconv_t iconvHandle, const String &to
 	if (from.hasPrefixIgnoreCase("utf") &&
 			!to.hasPrefixIgnoreCase("utf") &&
 			!to.equalsIgnoreCase("iso-8859-5")) {
-		// There might be some cyrilic characters, which need to be transliterated.
+		// There might be some cyrillic characters, which need to be transliterated.
 		char *tmpString;
 		if (from.hasPrefixIgnoreCase("utf-32"))
 			tmpString = nullptr;
@@ -198,7 +198,7 @@ char *Encoding::convertIconv(iconv_t iconvHandle, const char *string, size_t len
 
 	while (inSize > 0) {
 		if (iconv(iconvHandle, &src, &inSize, &dst, &outSize) == ((size_t)-1)) {
-			// from SDLs implementation of SDL_iconv_string (slightly altered)
+			// from SDL's implementation of SDL_iconv_string (slightly altered)
 			if (errno == E2BIG) {
 				char *oldString = buffer;
 				stringSize *= 2;
@@ -297,7 +297,7 @@ char *Encoding::convertTransManMapping(const char *to, const char *from, const c
 #endif // USE_TRANSLATION
 }
 
-static char g_cyrilicTransliterationTable[] = {
+static char g_cyrillicTransliterationTable[] = {
 	' ', 'E', 'D', 'G', 'E', 'Z', 'I', 'I', 'J', 'L', 'N', 'C', 'K', '-', 'U', 'D',
 	'A', 'B', 'V', 'G', 'D', 'E', 'Z', 'Z', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P',
 	'R', 'S', 'T', 'U', 'F', 'H', 'C', 'C', 'S', 'S', '\"', 'Y', '\'', 'E', 'U', 'A',
@@ -306,7 +306,7 @@ static char g_cyrilicTransliterationTable[] = {
 	'N', 'e', 'd', 'g', 'e', 'z', 'i', 'i', 'j', 'l', 'n', 'c', 'k', '?', 'u', 'd',
 };
 
-char *Encoding::transliterateCyrilic(const char *string) {
+char *Encoding::transliterateCyrillic(const char *string) {
 	char *result = (char *) malloc(strlen(string) + 1);
 	if (!result) {
 		warning("Could not allocate memory for encoding conversion");
@@ -314,7 +314,7 @@ char *Encoding::transliterateCyrilic(const char *string) {
 	}
 	for(unsigned i = 0; i <= strlen(string); i++) {
 		if ((unsigned char) string[i] >= 160)
-			result[i] = g_cyrilicTransliterationTable[(unsigned char) string[i] - 160];
+			result[i] = g_cyrillicTransliterationTable[(unsigned char) string[i] - 160];
 		else
 			result[i] = string[i];
 	}
@@ -329,7 +329,7 @@ uint32 *Encoding::transliterateUTF32(const uint32 *string, size_t length) {
 	}
 	for(unsigned i = 0; i <= length / 4; i++) {
 		if (string[i] >= 0x410 && string[i] <= 0x450)
-			result[i] = g_cyrilicTransliterationTable[string[i] - 160 - 864];
+			result[i] = g_cyrillicTransliterationTable[string[i] - 160 - 864];
 		else
 			result[i] = string[i];
 	}
