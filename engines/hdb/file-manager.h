@@ -72,7 +72,7 @@ public:
 	void closeMPC();
 	void seek(int32 offset, int flag);
 
-	Common::SeekableReadStream *findFirstData(const char *string, DataType type);
+	Common::SeekableReadStream *findFirstData(const char *string, DataType type, int *length = NULL);
 	int32 getLength(const char *string, DataType type);
 	int getCount(const char *subString, DataType type);
 	Common::Array<const char *> *findFiles(const char *string, DataType type);

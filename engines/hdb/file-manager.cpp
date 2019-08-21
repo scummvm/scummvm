@@ -96,7 +96,7 @@ void FileMan::seek(int32 offset, int flag) {
 	_mpcFile->seek(offset, flag);
 }
 
-Common::SeekableReadStream *FileMan::findFirstData(const char *string, DataType type) {
+Common::SeekableReadStream *FileMan::findFirstData(const char *string, DataType type, int *length) {
 	Common::String fileString;
 	MPCEntry *file = NULL;
 
@@ -134,6 +134,9 @@ Common::SeekableReadStream *FileMan::findFirstData(const char *string, DataType 
 	byte *buffer = (byte *)malloc(file->length);
 
 	_mpcFile->read(buffer, file->length);
+
+	if (length)
+		*length = file->ulength;
 
 	// Return buffer wrapped in a MemoryReadStream, automatically
 	// uncompressed if it is zlib-compressed
