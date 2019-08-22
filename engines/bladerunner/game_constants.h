@@ -685,7 +685,7 @@ enum Flags {
 	// 243 is never used
 	// 244 is never used
 	// 245 is never used
-	// 246 is never used
+	kFlagWrongInvestigation                   = 246, // Re-purposed. Original: 246 is never used
 	kFlagArrivedFromSpinner1                  = 247,
 	kFlagSpinnerAtCT01                        = 248,
 	kFlagSpinnerAtRC01                        = 249,
@@ -1186,7 +1186,9 @@ enum Variables {
 	kVariablePoliceMazePS13TargetCounter   = 13,
 	kVariableMcCoyEvidenceMissed           = 14,
 	// variable 15 has no use
-	// variables 16 - 18 are not used
+	kVariableFishDealerBanterTalk          = 16, // Re-purposed. Original: not used
+	kVariableInsectDealerBanterTalk        = 17, // Re-purposed. Original: not used
+	kVariableHasanBanterTalk               = 18, // Re-purposed. Original: not used
 	kVariableIzoShot                       = 19, // has no use
 	// variables 20 - 23 are not used
 	kVariableBobShot                       = 24, // has no use
