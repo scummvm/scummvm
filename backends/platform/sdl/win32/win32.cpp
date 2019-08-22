@@ -388,19 +388,43 @@ AudioCDManager *OSystem_Win32::createAudioCDManager() {
 }
 
 char *OSystem_Win32::convertEncoding(const char* to, const char *from, const char *string, size_t length) {
+	char *newString = nullptr;
 	char *result = OSystem_SDL::convertEncoding(to, from, string, length);
 	if (result != nullptr)
 		return result;
 
 	// We accept only the machine endianness
+	bool swapFromEndian = false;
 #ifdef SCUMM_BIG_ENDIAN
-	if (Common::String(from).hasSuffixIgnoreCase("le") ||
-			Common::String(to).hasSuffixIgnoreCase("le"))
-		return nullptr;
+	if (Common::String(from).hasSuffixIgnoreCase("le"))
+		swapFromEndian = true;
 #else
-	if (Common::String(from).hasSuffixIgnoreCase("be") ||
-			Common::String(to).hasSuffixIgnoreCase("be"))
-		return nullptr;
+	if (Common::String(from).hasSuffixIgnoreCase("be"))
+		swapFromEndian = true;
+#endif
+	if (swapFromEndian) {
+		if (Common::String(from).hasPrefixIgnoreCase("utf-16")) {
+			newString = Common::Encoding::switchEndian(string, length, 16);
+			from = "utf-16";
+		}
+		else if (Common::String(from).hasPrefixIgnoreCase("utf-32")) {
+			newString = Common::Encoding::switchEndian(string, length, 32);
+			from = "utf-32";
+		}
+		else
+			return nullptr;
+		if (newString != nullptr)
+			string = newString;
+		else
+			return nullptr;
+	}
+	bool swapToEndian = false;
+#ifdef SCUMM_BIG_ENDIAN
+		if (Common::String(to).hasSuffixIgnoreCase("le"))
+			swapToEndian = true;
+#else
+		if (Common::String(to).hasSuffixIgnoreCase("be"))
+			swapToEndian = true;
 #endif
 	// UTF-32 is really important for us, because it is used for the
 	// transliteration in Common::Encoding and Win32 cannot convert it
@@ -413,16 +437,30 @@ char *OSystem_Win32::convertEncoding(const char* to, const char *from, const cha
 		char *UTF8Str = Common::Encoding::convert("utf-8", from, string, length);
 		Common::U32String UTF32Str = Common::convertUtf8ToUtf32(UTF8Str);
 		free(UTF8Str);
-		result = (char *) malloc((UTF32Str.size() + 1) * 4);
-		memcpy(result, UTF32Str.c_str(), (UTF32Str.size() + 1) * 4);
+		if (swapToEndian) {
+			result = Common::Encoding::switchEndian((const char *) UTF32Str.c_str(),
+						(UTF32Str.size() + 1) * 4,
+						32);
+		} else {
+			result = (char *) malloc((UTF32Str.size() + 1) * 4);
+			memcpy(result, UTF32Str.c_str(), (UTF32Str.size() + 1) * 4);
+		}
+		if (newString != nullptr)
+			free(newString);
 		return result;
 	}
+
+	// Add ending zeros
+	char *wString = (char *) calloc(sizeof(char), length + 2);
+	memcpy(wString, string, length);
 
 	WCHAR *tmpStr;
 	if (Common::String(from).hasPrefixIgnoreCase("utf-16")) {
 		// Allocate space for string and 2 ending zeros
 		tmpStr = (WCHAR *) calloc(sizeof(char), length + 2);
 		if (!tmpStr) {
+			if (newString != nullptr)
+				free(newString);
 			warning("Could not allocate memory for string conversion");
 			return nullptr;
 		}
@@ -431,9 +469,19 @@ char *OSystem_Win32::convertEncoding(const char* to, const char *from, const cha
 		tmpStr = Win32::ansiToUnicode(string, Win32::getCodePageId(from));
 	}
 
-	if (Common::String(to).hasPrefixIgnoreCase("utf-16"))
+	free(wString);
+
+	if (newString != nullptr)
+		free(newString);
+
+	if (Common::String(to).hasPrefixIgnoreCase("utf-16")) {
+		if (swapToEndian) {
+			result = Common::Encoding::switchEndian((char *)tmpStr, wcslen(tmpStr) * 2 + 2, 16);
+			free(tmpStr);
+			return result;
+		}
 		return (char *) tmpStr;
-	else {
+	} else {
 		result = Win32::unicodeToAnsi(tmpStr, Win32::getCodePageId(to));
 		free(tmpStr);
 		return result;
