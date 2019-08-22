@@ -108,6 +108,7 @@ static const char *const selectorNameTable[] = {
 	"localize",     // Freddy Pharkas
 	"roomFlags",    // Iceman
 	"put",          // Police Quest 1 VGA
+	"newRoom",      // Police Quest 3, GK1
 	"changeState",  // Quest For Glory 1 VGA, QFG4
 	"hide",         // Quest For Glory 1 VGA, QFG4
 	"say",          // Quest For Glory 1 VGA, QFG4
@@ -148,7 +149,6 @@ static const char *const selectorNameTable[] = {
 	"fade",         // Shivers
 	"test",         // Torin
 	"get",          // Torin, GK1
-	"newRoom",      // GK1
 	"normalize",    // GK1
 	"set",          // Torin
 	"clear",        // Torin
@@ -221,6 +221,7 @@ enum ScriptPatcherSelectors {
 	SELECTOR_localize,
 	SELECTOR_roomFlags,
 	SELECTOR_put,
+	SELECTOR_newRoom,
 	SELECTOR_changeState,
 	SELECTOR_hide,
 	SELECTOR_say,
@@ -262,7 +263,6 @@ enum ScriptPatcherSelectors {
 	SELECTOR_fade,
 	SELECTOR_test,
 	SELECTOR_get,
-	SELECTOR_newRoom,
 	SELECTOR_normalize,
 	SELECTOR_set,
 	SELECTOR_clear,
@@ -7764,8 +7764,68 @@ static const uint16 pq3PatchDoctorMouthSpeed[] = {
 	PATCH_END,
 };
 
+// The house fire on day six reoccurs if you return to the hospital. Flag 66
+//  triggers the fire sequence and is always set when leaving the hospital on
+//  day 6. It's then cleared when arriving at the fire.
+//
+// We add a test for flag 57, which is set at the fire, so that flag 66 isn't
+//  set a second time. This is also what Sierra did in later versions.
+//
+// Applies to: English PC VGA Floppy
+// Responsible method: outHospital:changeState(6)
+// Fixes bug: #11089
+static const uint16 pq3SignatureHouseFireRepeats[] = {
+	0x30, SIG_UINT16(0x0068),            // bnt 0068 [ state 7 ]
+	SIG_ADDTOOFFSET(+82),
+	SIG_MAGICDWORD,
+	0x30, SIG_UINT16(0x0006),            // bnt 0006 [ don't set fire-started flag ]
+	0x78,                                // push1
+	0x39, 0x42,                          // pushi 42 [ flag 66 ]
+	0x45, 0x09, 0x02,                    // callb proc0_9 [ set fire-started flag ]
+	0x38, SIG_SELECTOR16(newRoom),       // pushi newRoom
+	0x78,                                // push1
+	0x39, 0x19,                          // pushi 19
+	0x81, 0x02,                          // lag 02
+	0x4a, 0x06,                          // send 06 [ rm033 newRoom: 25 ]
+	0x32, SIG_UINT16(0x004c),            // jmp 004c [ end of method ]
+	0x3c,                                // dup
+	0x35, 0x07,                          // ldi 07
+	0x1a,                                // eq?
+	0x30, SIG_UINT16(0x0007),            // bnt 0007 [ state 8 ]
+	0x35, 0x01,                          // ldi 01
+	0x65, 0x10,                          // aTop cycles
+	0x32, SIG_UINT16(0x003e),            // jmp 003e [ end of method ]
+	SIG_END,
+};
+
+static const uint16 pq3PatchHouseFireRepeats[] = {
+	0x30, PATCH_UINT16(0x006c),          // bnt 006c [ state 7 ]
+	PATCH_ADDTOOFFSET(+82),
+	0x31, 0x0e,                          // bnt 0e [ don't set fire-started flag ]
+	0x78,                                // push1
+	0x39, 0x39,                          // pushi 39 [ flag 57 ]
+	0x45, 0x0a, 0x02,                    // callb proc0_10 [ have you been to the fire? ]
+	0x2f, 0x06,                          // bt 06 [ don't set fire-started flag ]
+	0x78,                                // push1
+	0x39, 0x42,                          // pushi 42 [ flag 66 ]
+	0x45, 0x09, 0x02,                    // callb proc0_9 [ set fire-started flag ]
+	0x38, PATCH_SELECTOR16(newRoom),     // pushi newRoom
+	0x78,                                // push1
+	0x39, 0x19,                          // pushi 19
+	0x81, 0x02,                          // lag 02
+	0x4a, 0x06,                          // send 06 [ rm033 newRoom: 25 ]
+	0x3c,                                // dup
+	0x35, 0x07,                          // ldi 07
+	0x1a,                                // eq?
+	0x31, 0x04,                          // bnt 04 [ state 8 ]
+	0x35, 0x01,                          // ldi 01
+	0x65, 0x10,                          // aTop cycles
+	PATCH_END,
+};
+
 //          script, description,                                 signature                     patch
 static const SciScriptPatcherEntry pq3Signatures[] = {
+	{  true, 33, "prevent house fire repeating",              1, pq3SignatureHouseFireRepeats, pq3PatchHouseFireRepeats },
 	{  true, 36, "give locket missing points",                1, pq3SignatureGiveLocketPoints, pq3PatchGiveLocketPoints },
 	{  true, 36, "doctor mouth speed",                        1, pq3SignatureDoctorMouthSpeed, pq3PatchDoctorMouthSpeed },
 	SCI_SIGNATUREENTRY_TERMINATOR
