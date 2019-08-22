@@ -109,6 +109,8 @@ protected:
 	void opUnk19(ScriptOpCall &scriptOpCall);
 	void opUnk1A(ScriptOpCall &scriptOpCall);
 	void opUnk1B(ScriptOpCall &scriptOpCall);
+	void opUnk1DClearActorFlag0x400(ScriptOpCall &scriptOpCall);
+	void opUnk1ESetActorFlag0x400(ScriptOpCall &scriptOpCall);
 	void opSetActorFlag0x1000(ScriptOpCall &scriptOpCall);
 	void opPlayMusic(ScriptOpCall &scriptOpCall);
 	void opUnk20(ScriptOpCall &scriptOpCall);

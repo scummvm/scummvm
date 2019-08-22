@@ -662,7 +662,7 @@ TalkDialogEntry *Talk::displayTalkDialogMenu() {
 			if ((talkDialogEntry->flags & 1) == 0) {
 				local_60 = local_60 + 1;
 				talkDialogEntry->yPosMaybe = '\0';
-				strcpy((char *)&local_390,(char *)talkDialogEntry);
+				strcpy((char *)&local_390,(char *)talkDialogEntry->dialogText);
 				UTF16ToUTF16Z(local_386, (uint16 *)(&talkDialogEntry->dialogText[10]));
 				DAT_80083104 = local_386;
 				if (*local_386 == 0x20) {
@@ -752,10 +752,10 @@ TalkDialogEntry *Talk::displayTalkDialogMenu() {
 				if ((talkDialogEntry->flags & 1) == 0) {
 					sVar2 = local_50 + 1;
 					local_50 = sVar2;
-					UTF16ToUTF16Z(local_390, (uint16 *)(&talkDialogEntry->dialogText[10]));
-					DAT_80083104 = local_390;
-					if (*local_390 == 0x20) {
-						DAT_80083104 = &local_390[1];
+					UTF16ToUTF16Z(local_386, (uint16 *)(&talkDialogEntry->dialogText[10]));
+					DAT_80083104 = local_386;
+					if (local_386[0] == 0x20) {
+						DAT_80083104 = &local_386[1];
 					}
 					uVar4 = FindLastPositionOf5cChar(DAT_80083104);
 					uVar4 = FUN_80031c28(DAT_80083104,local_40,uVar4 & 0xffff,0x20);
