@@ -69,7 +69,7 @@ Graphics::Surface *Font::render(uint16 *text, uint16 length, byte *palette) {
 	for (int i = 0; i < length; i++) {
 		byte *pixels = (byte *)surface->getPixels();
 		pixels += i * 8 * 2;
-		debug("char: %d size: %d %d", (text[i] - 0x20), _numChars, (30 + i));
+//		debug("char: %d size: %d %d", (text[i] - 0x20), _numChars, (30 + i));
 		byte *data = _pixels + mapChar(text[i]) * 64;
 		for (int y = 0; y < 8; y++) {
 			for (int x = 0; x < 8; x++) {

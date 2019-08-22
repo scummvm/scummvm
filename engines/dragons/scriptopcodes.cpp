@@ -119,7 +119,8 @@ void ScriptOpcodes::initOpcodes() {
 	OPCODE(0x1A, opUnk1A);
 	OPCODE(0x1B, opUnk1B);
 	OPCODE(0x1C, opSetActorFlag0x1000);
-
+	OPCODE(0x1D, opUnk1DClearActorFlag0x400);
+	OPCODE(0x1E, opUnk1ESetActorFlag0x400);
 	OPCODE(0x1F, opPlayMusic);
 	OPCODE(0x20, opUnk20);
 
@@ -672,8 +673,8 @@ void ScriptOpcodes::opUnkF(ScriptOpCall &scriptOpCall) {
 
 		if (field4 != field6) {
 			ini->actor->field_7c = field4;
+			ini->actor->updateSequence(field6 & 0x7fff);
 		}
-		ini->actor->updateSequence(field6 & 0x7fff);
 	}
 }
 
@@ -1101,6 +1102,30 @@ void ScriptOpcodes::opUnk1B(ScriptOpCall &scriptOpCall) {
 			_vm->waitForFrames(1);
 		}
 	}
+}
+
+void ScriptOpcodes::opUnk1DClearActorFlag0x400(ScriptOpCall &scriptOpCall) {
+	ARG_SKIP(2);
+	ARG_INT16(iniId);
+
+	if (scriptOpCall._field8 != 0) {
+		return;
+	}
+
+	DragonINI *ini = _vm->getINI(iniId - 1);
+	ini->actor->setFlag(ACTOR_FLAG_400);
+}
+
+void ScriptOpcodes::opUnk1ESetActorFlag0x400(ScriptOpCall &scriptOpCall) {
+	ARG_SKIP(2);
+	ARG_INT16(iniId);
+
+	if (scriptOpCall._field8 != 0) {
+		return;
+	}
+
+	DragonINI *ini = _vm->getINI(iniId - 1);
+	ini->actor->setFlag(ACTOR_FLAG_400);
 }
 
 void ScriptOpcodes::opSetActorFlag0x1000(ScriptOpCall &scriptOpCall) {
