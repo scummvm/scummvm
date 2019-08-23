@@ -319,7 +319,7 @@ void ScriptOpcodes::opUnk6(ScriptOpCall &scriptOpCall) {
 	_vm->_cursor->data_800728b0_cursor_seqID = _vm->_cursor->_sequenceID;
 	_vm->_cursor->data_80072890 = _vm->_cursor->_iniUnderCursor;
 //	EnableVSyncEvent();
-	_vm->works_with_obd_data_1();
+	_vm->performAction();
 	if (isEngineFlag8Set) {
 		_vm->setFlags(ENGINE_FLAG_8);
 	}
@@ -980,6 +980,8 @@ uint16 ScriptOpcodes::getINIField(uint32 iniIndex, uint16 fieldOffset) {
 		case 0x16 : return ini->x;
 		case 0x18 : return ini->y;
 		case 0x1A : return ini->field_1a_flags_maybe;
+		case 0x1C : return ini->field_1c;
+		case 0x1E : return ini->field_1e;
 		case 0x20 : return ini->field_20_actor_field_14;
 		default: error("getINIField() Invalid fieldOffset 0x%X", fieldOffset);
 	}
@@ -1000,6 +1002,8 @@ void ScriptOpcodes::setINIField(uint32 iniIndex, uint16 fieldOffset, uint16 valu
 		case 0x16 : ini->x = value; break;
 		case 0x18 : ini->y = value; break;
 		case 0x1A : ini->field_1a_flags_maybe = value; break;
+		case 0x1C : ini->field_1c = value; break;
+		case 0x1E : ini->field_1e = value; break;
 		case 0x20 : ini->field_20_actor_field_14 = value; break;
 		default: error("setINIField() Invalid fieldOffset 0x%X", fieldOffset);
 	}

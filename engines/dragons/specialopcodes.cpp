@@ -71,13 +71,15 @@ void SpecialOpcodes::initOpcodes() {
 
 	OPCODE(9, spcUnk9);
 	OPCODE(0xa, spcUnkA);
-
+	OPCODE(0xb, clearSceneUpdateFunction);
 	OPCODE(0xc, spcUnkC);
 
 	OPCODE(0x12, spcHandleInventionBookTransition);
 	OPCODE(0x13, spcUnk13InventionBookCloseRelated);
 	OPCODE(0x14, spcClearEngineFlag8);
 	OPCODE(0x15, spcSetEngineFlag8);
+
+	OPCODE(0x18, clearSceneUpdateFunction);
 
 	OPCODE(0x1a, spcActivatePizzaMakerActor);
 	OPCODE(0x1b, spcDeactivatePizzaMakerActor);
@@ -92,6 +94,9 @@ void SpecialOpcodes::initOpcodes() {
 
 	OPCODE(0x3b, spcSetEngineFlag0x2000000);
 	OPCODE(0x3c, spcClearEngineFlag0x2000000);
+	OPCODE(0x3d, clearSceneUpdateFunction);
+	OPCODE(0x3e, spcZigmondFraudSceneLogic);
+	OPCODE(0x3f, clearSceneUpdateFunction);
 
 	OPCODE(0x49, spcLoadScene1);
 
@@ -226,6 +231,10 @@ void SpecialOpcodes::spcSetEngineFlag0x2000000() {
 
 void SpecialOpcodes::spcClearEngineFlag0x2000000() {
 	_vm->clearFlags(Dragons::ENGINE_FLAG_2000000);
+}
+
+void SpecialOpcodes::spcZigmondFraudSceneLogic() {
+	//TODO
 }
 
 void SpecialOpcodes::spcUnk4e() {
@@ -381,6 +390,17 @@ void SpecialOpcodes::pizzaMakerStopWorking() {
 		actorf4->waitUntilFlag8And4AreSet();
 		actorf4->updateSequence(0);
 	}
+}
+
+void SpecialOpcodes::clearSceneUpdateFunction() {
+	//TODO
+//	if (DAT_80083148 != DAT_80083154) {
+//		FUN_8001ac5c((uint)DAT_80083148,(uint)DAT_80083150,(uint)DAT_80083154,(uint)DAT_80083158);
+//	}
+//	if (DAT_8006f3a4 != 0xffff) {
+//		actor_update_sequenceID((uint)dragon_ini_pointer[(uint)DAT_80069630].actorId,DAT_8006f3a4);
+//	}
+	_vm->setSceneUpdateFunction(NULL);
 }
 
 void pizzaUpdateFunction() {
