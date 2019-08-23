@@ -680,6 +680,9 @@ void Interface::doStepCode() {
 
 			int oldTarget = combat._combatTarget;
 			combat._combatTarget = 0;
+
+			// WORKAROUND: Stepping into combat whilst on lava results in damageType being lost
+			combat._damageType = (surfaceId == SURFTYPE_LAVA) ? DT_FIRE : DT_PHYSICAL;
 			combat.giveCharDamage(damage, combat._damageType, 0);
 
 			combat._combatTarget = oldTarget;
