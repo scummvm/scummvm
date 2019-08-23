@@ -20,6 +20,10 @@
  *
  */
 
+#include "petka/petka.h"
+#include "petka/q_manager.h"
+#include "petka/q_system.h"
+#include "petka/flc.h"
 #include "petka/objects/heroes.h"
 
 namespace Petka {
@@ -36,6 +40,43 @@ QObjectPetka::QObjectPetka() {
 	_surfId  = -5;
 	_surfH = 0;
 	_surfW = 0;
+}
+
+void QObjectPetka::processMessage(const QMessage &arg) {
+	QMessage msg = arg;
+	if (msg.opcode == kImage) {
+		msg.opcode = kSet;
+		_imageId = msg.arg1;
+	}
+	if (msg.opcode == kSaid || msg.opcode == kStand) {
+		msg.opcode = kSet;
+		msg.arg1 = _imageId + 1;
+		msg.arg2 = 1;
+	}
+	if (msg.opcode == kSet || msg.opcode == kPlay) {
+		_field7C = msg.arg2 == _imageId || msg.opcode == kPlay;
+	}
+	if (msg.opcode != kWalk) {
+		if (msg.opcode == kWalked && _heroReaction) {
+			processSavedReaction(&_heroReaction, _sender);
+		}
+		QMessageObject::processMessage(msg);
+		if (msg.opcode == kSet || msg.opcode == kPlay) {
+			initSurface();
+			if (!g_vm->getQSystem()->_isIniting) {
+				setPos(_x_, _y_);
+			}
+		}
+	}
+}
+
+void QObjectPetka::initSurface() {
+	QManager *resMgr = g_vm->resMgr();
+	FlicDecoder *flc = resMgr->loadFlic(_resourceId);
+	resMgr->removeResource(_surfId);
+	resMgr->findOrCreateSurface(_surfId, flc->getWidth(), flc->getHeight());
+	_surfW = flc->getWidth() * _field98;
+	_surfH = flc->getHeight() * _field98;
 }
 
 QObjectChapayev::QObjectChapayev() {

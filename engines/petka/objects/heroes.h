@@ -30,6 +30,8 @@ namespace Petka {
 class QObjectPetka : public QObject {
 public:
 	QObjectPetka();
+	void processMessage(const QMessage &msg) override;
+	void initSurface();
 
 protected:
 	int _field7C;
