@@ -253,7 +253,10 @@ void Music::musicVolumeGauge() {
 		volume = 1;
 
 	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, volume);
-	_player->setVolume(volume);
+	if (_player)
+		_player->setVolume(volume);
+	if (_playerPC98)
+		_playerPC98->setMusicVolume(volume);
 
 	if (_currentVolumePercent == 100) {
 		_vm->getTimerManager()->removeTimerProc(&musicVolumeGaugeCallback);
