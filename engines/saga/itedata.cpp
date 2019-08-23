@@ -509,6 +509,11 @@ const char *pieceNames[][PUZZLE_PIECES] = {
 		"tournevis", "pince", "\202tau \205 vis", "pince \205 bois", "niveau",
 		"ficelle", "rabot \205 bois", "marteau", "m\212tre ruban", "hachette",
 		"ciseaux", "r\212gle", "scie", "maillet", "pinceau"
+	},
+	{
+		"ドライバー", "釘抜き", "Ｃ形クランプ", "木のクランプ", "レベル",
+		"麻ヒモ", "かんな", "金づち", "巻尺", "斧",
+		"ハサミ", "曲尺", "のこぎり", "木づち", "ペンキブラシ"
 	}
 };
 
@@ -537,6 +542,12 @@ const char *hintStr[][4] = {
 		"V\202rifie quel coin a le moins de pi\212ces qui correspondent et part de l\205.",
 		"Evalue chaque coin et bord pour voir les pi\212ces qui collent.",
 		"Je ne vois rien de mal plac\202."
+	},
+	{
+		"まず、四隅に合うピースを\n捜してごらん。",
+		"辺同士が合いそうなピースを\n捜してごらん。",
+		"新しくできた空間と形が合う\nピースを捜してごらん。",
+		"置いたピースの位置は\nどれも合ってるよ。"
 	}
 };
 
@@ -568,6 +579,13 @@ const char *solicitStr[][NUM_SOLICIT_REPLIES] = {
 		"Umm...Umm...",
 		"Psst! Un indice?",
 		"Tu sais, j'aurais fait ça autrement."
+	},
+	{
+		"ねぇ君！\nヒント欲しい？",
+		"手助けしようか？",
+		"フム・・・",
+		"ちょっと！\nヒント欲しい？",
+		"私なら違う方法で\nやってるだろうな。"
 	}
 };
 
@@ -591,6 +609,11 @@ const char *sakkaStr[][NUM_SAKKA] = {
 		"H\202, vous n'\210tes pas suppos\202s aider les concurrents!",
 		"Les gars! C'est suppos\202 être un test!",
 		"Allez les gars, c'est pas dans les r\212gles!"
+	},
+	{
+		"ねぇ、どう？",
+		"なかなかね！",
+		"どうしたの！"
 	}
 };
 
@@ -622,6 +645,13 @@ const char *whineStr[][NUM_WHINES] = {
 		"Pfff...",
 		"Je crois que ton carnet te monte \205 la t\210te, Sakka!",
 		"Bon, je ne me souviens d'aucune r\212gle concernant les indices."
+	},
+	{
+		"アゥ、\nちょっと、サッカ！",
+		"ヒントの一つ位\nいいかい？",
+		"フー・・・",
+		"サッカの頭の中では\nもう完成してるんだ！",
+		"ああ、ヒントに対抗できる\nルールが思い出せない。"
 	}
 };
 
@@ -649,6 +679,12 @@ const char *optionsStr[][4] = {
 		"\"Oui, j'aimerais un indice s'il vous plait.\"",
 		"\"Non merci, je voudrais r\202soudre cela par moi m\210me.\"",
 		"Je crois que t'as mal plac\202 l'%s."
+	},
+	{
+		"「後でやろうかな。」",
+		"「はい、ヒントをお願いします。」",
+		"「いいえ、自分で解きたいんです。」",
+		"%sの位置が違うんじゃないかな。"
 	}
 };
 
