@@ -1407,6 +1407,8 @@ void aiLaserAction(AIEntity *e) {
 
 	AIEntity *hit = e;
 	int moveOK = 0;
+	int moveCount = 0;
+
 	do {
 		int nx = hit->tileX;
 		int ny = hit->tileY;
@@ -1541,6 +1543,13 @@ void aiLaserAction(AIEntity *e) {
 					hit = NULL;
 			}
 		}
+
+		moveCount++;
+
+		// It is possible to set a configuration which leads to a closed loop.
+		// Thus, we're breaking it here
+		if (moveCount > 1000)
+			hit = NULL;
 	} while (hit && hit->type == AI_DIVERTER);
 }
 
