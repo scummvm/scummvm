@@ -393,7 +393,6 @@ char *OSystem_Win32::convertEncoding(const char* to, const char *from, const cha
 	if (result != nullptr)
 		return result;
 
-	// We accept only the machine endianness
 	bool swapFromEndian = false;
 #ifdef SCUMM_BIG_ENDIAN
 	if (Common::String(from).hasSuffixIgnoreCase("le"))
