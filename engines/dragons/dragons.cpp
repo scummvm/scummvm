@@ -326,7 +326,7 @@ void DragonsEngine::gameLoop()
 				}
 			}
 
-			works_with_obd_data_1();
+			performAction();
 			if ((getCurrentSceneId() == 0x1d) && (getINI(0x179)->field_2 != 0))
 			{
 				clearFlags(ENGINE_FLAG_8);
@@ -956,7 +956,7 @@ void DragonsEngine::call_fade_related_1f() {
 	fade_related(0x1f);
 }
 
-void DragonsEngine::works_with_obd_data_1() {
+void DragonsEngine::performAction() {
 	uint uVar1;
 	ushort uVar2;
 	uint uVar4;
@@ -987,9 +987,9 @@ void DragonsEngine::works_with_obd_data_1() {
 	uVar4 = _cursor->executeScript(local_48, 1);
 	if (_cursor->data_800728b0_cursor_seqID > 4) {
 		_scriptOpcodes->_data_80071f5c = 0;
-		_scriptOpcodes->_data_800728c0 = _cursor->data_80072890;
 
 		obd = _dragonOBD->getFromOpt(_scriptOpcodes->_data_800728c0 - 1);
+		_scriptOpcodes->_data_800728c0 = _cursor->data_80072890;
 
 		local_38._code = obd + 8;
 		local_38._codeEnd = local_38._code + READ_LE_UINT32(obd);

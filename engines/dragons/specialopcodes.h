@@ -76,6 +76,8 @@ protected:
 	void spcSetEngineFlag0x2000000(); // 0x3b
 	void spcClearEngineFlag0x2000000(); // 0x3c
 
+	void spcZigmondFraudSceneLogic(); // 0x3e
+
 	void spcLoadScene1(); // 0x49
 
 	void spcUnk4e();
@@ -101,6 +103,8 @@ protected:
 private:
 	void panCamera(int16 mode);
 	void pizzaMakerStopWorking();
+
+	void clearSceneUpdateFunction();
 
 };
 

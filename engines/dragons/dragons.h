@@ -217,7 +217,7 @@ public:
 	void fade_related(uint32 flags);
 
 	uint16 ipt_img_file_related();
-	void works_with_obd_data_1();
+	void performAction();
 
 	void reset_screen_maybe();
 
