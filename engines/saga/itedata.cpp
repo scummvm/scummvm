@@ -739,6 +739,26 @@ const IntroDialogue introDialogueCave1[][4] = {
 		"Ils savaient comment Voler, poss\202daient le "
 		"secret du Bonheur et d'autres secrets au "
 		"del\205 de notre imagination."
+	} },
+	// -----------------------------------------------------
+	{ { // Japanese PC-98 version
+		0,		// cave voice 0
+		"私達は空を眺め、地上を眺め、海を眺め、こう思います："
+		"この世に存在しているのは私達だけなのだろうか？"
+	},
+	{
+		1,		// cave voice 1
+		"私達が存在する以前のはるか昔、"
+		"人間達が地球を支配していました。"
+	},
+	{
+		2,		// cave voice 2
+		"彼らはあらゆる努力を払い、驚異的な物を創造しました。"
+	},
+	{
+		3,		// cave voice 3
+		"彼らは、飛行の秘密や、幸福の秘密、他にも、"
+		"我々の想像を越えた多くの秘密を知っていたのです。"
 	} }
 };
 
@@ -803,6 +823,21 @@ const IntroDialogue introDialogueCave2[][3] = {
 	{
 		6,		// cave voice 6
 		"Nous sommes leurs enfants."
+	} },
+	// -----------------------------------------------------
+	{ { // Japanese PC-98 version
+		4,		// cave voice 4
+		"人間達は生活の秘密も知っていました。　"
+		"彼らはそれを使って、私達に４つの偉大な贈り物・・・"
+	},
+	{
+		5,		// cave voice 5
+		"「考える心や、感じる心、言葉を言う口や、"
+		"物をつかむ手」を授けました。"
+	},
+	{
+		6,		// cave voice 6
+		"私達は彼らの子供なのです。"
 	} }
 };
 
@@ -868,7 +903,23 @@ const IntroDialogue introDialogueCave3[][3] = {
 		"Ils nous aim\212rent, et le moment venu, ils "
 		"nous auraient s\223rement livr\202 le Secret du "
 		"Bonheur."
-	} }
+	} },
+	// -----------------------------------------------------
+	{ { // Japanese PC-98 version
+		7,		// cave voice 7
+		"彼らは手の使い方や、話の仕方を教えてくれました。"
+	},
+	{
+		8,		// cave voice 8
+		"心で喜ぶことを教えてくれました。"
+	},
+	{
+		9,		// cave voice 9
+		"彼らは私達を可愛がりました。　"
+		"私達さえその気があったら、"
+		"幸福の秘密も教えてくれていたことでしょう。"
+	}
+	}
 };
 
 const IntroDialogue introDialogueCave4[][4] = {
@@ -951,7 +1002,29 @@ const IntroDialogue introDialogueCave4[][4] = {
 	{
 		13,		// cave voice 13
 		"Et aurons-nous un jour un sort identique?"
-	} }
+	} },
+	// -----------------------------------------------------
+	{ { // Japanese PC-98 version
+		10,		// cave voice 10
+		"今こうして、自分達に受け継がれた空を眺め、地上を眺め、"
+		"海を眺めながら、こう思うのです："
+		"彼らはなぜ去ってしまったのだろうか？"
+	},
+	{
+		11,		// cave voice 11
+		"まだ生きているのだろうか？　星達の中で？　"
+		"大海の底で？　風の中で？"
+	},
+	{
+		12,		// cave voice 12
+		"彼らは幸運に導かれたのだろうか？"
+	},
+	{
+		13,		// cave voice 13
+		"それとも悲運に導かれたのだろうか？　そして私達も、"
+		"ある日同じ運命に導かれるのだろうか？"
+	}
+	}
 };
 
 const IntroCredit creditsValley[] = {
@@ -959,17 +1032,20 @@ const IntroCredit creditsValley[] = {
 	{Common::DE_DEU, kITECreditsAny, kITECreditsHeader, "Produzent"},
 	{Common::IT_ITA, kITECreditsAny, kITECreditsHeader, "Produttore"},
 	{Common::FR_FRA, kITECreditsAny, kITECreditsHeader, "Producteur"},
+	{Common::JA_JPN, kITECreditsAny, kITECreditsHeader, "Producer"},
 	{Common::UNK_LANG, kITECreditsAny, kITECreditsText, "Walter Hochbrueckner"},
 	{Common::EN_ANY, kITECreditsAny, kITECreditsHeader, "Executive Producer"},
 	{Common::DE_DEU, kITECreditsAny, kITECreditsHeader, "Ausf\201hrender Produzent"},
 	{Common::IT_ITA, kITECreditsAny, kITECreditsHeader, "Produttore Esecutivo"},
 	{Common::FR_FRA, kITECreditsAny, kITECreditsHeader, "Producteur Executif"},
+	{Common::JA_JPN, kITECreditsAny, kITECreditsHeader, "Executive Producer"},
 	{Common::UNK_LANG, kITECreditsAny, kITECreditsText, "Robert McNally"},
 	{Common::UNK_LANG, kITECreditsWyrmKeep, kITECreditsHeader, "2nd Executive Producer"},
 	{Common::EN_ANY, kITECreditsNotWyrmKeep, kITECreditsHeader, "Publisher"},
 	{Common::DE_DEU, kITECreditsNotWyrmKeep, kITECreditsHeader, "Herausgeber"},
 	{Common::IT_ITA, kITECreditsNotWyrmKeep, kITECreditsHeader, "Editore"},
 	{Common::FR_FRA, kITECreditsNotWyrmKeep, kITECreditsHeader, "Editeur"},
+	{Common::JA_JPN, kITECreditsNotWyrmKeep, kITECreditsHeader, "Publisher"},
 	{Common::UNK_LANG, kITECreditsAny, kITECreditsText, "Jon Van Caneghem"}
 };
 
@@ -978,6 +1054,7 @@ const IntroCredit creditsTreeHouse1[] = {
 	{Common::DE_DEU, kITECreditsAny, kITECreditsHeader, "Spielentwurf"},
 	{Common::IT_ITA, kITECreditsAny, kITECreditsHeader, "Progetto"},
 	{Common::FR_FRA, kITECreditsAny, kITECreditsHeader, "Conception"},
+	{Common::JA_JPN, kITECreditsAny, kITECreditsHeader, "Game Design"},
 	{Common::UNK_LANG, kITECreditsAny, kITECreditsText, "Talin, Joe Pearce, Robert McNally"},
 	{Common::EN_ANY, kITECreditsAny, kITECreditsText, "and Carolly Hauksdottir"},
 	{Common::DE_DEU, kITECreditsAny, kITECreditsText, "und Carolly Hauksdottir"},
@@ -990,7 +1067,9 @@ const IntroCredit creditsTreeHouse1[] = {
 	{Common::IT_ITA, kITECreditsAny, kITECreditsHeader, "Sceneggiatura e Dialoghi"},
 	{Common::IT_ITA, kITECreditsAny, kITECreditsText, "Robert Leh, Len Wein e Bill Rotsler"},
 	{Common::FR_FRA, kITECreditsAny, kITECreditsHeader, "Sc\202nario et Dialogues"},
-	{Common::FR_FRA, kITECreditsAny, kITECreditsText, "Robert Leh, Len Wein et Bill Rotsler"}
+	{Common::FR_FRA, kITECreditsAny, kITECreditsText, "Robert Leh, Len Wein et Bill Rotsler"},
+	{Common::JA_JPN, kITECreditsAny, kITECreditsHeader, "Screenplay and Dialog"},
+	{Common::JA_JPN, kITECreditsAny, kITECreditsText, "Robert Leh, Len Wein, and Bill Rotsler"},
 };
 
 const IntroCredit creditsTreeHouse2[] = {
@@ -1000,6 +1079,7 @@ const IntroCredit creditsTreeHouse2[] = {
 	{Common::DE_DEU, kITECreditsAny, kITECreditsHeader, "Grafiken"},
 	{Common::IT_ITA, kITECreditsAny, kITECreditsHeader, "Grafica"},
 	{Common::FR_FRA, kITECreditsAny, kITECreditsHeader, "Graphismes"},
+	{Common::JA_JPN, kITECreditsAny, kITECreditsHeader, "Art"},
 	{Common::UNK_LANG, kITECreditsWyrmKeep, kITECreditsText, "Ed Lacabanne, Glenn Price, April Lee,"},
 	{Common::UNK_LANG, kITECreditsNotWyrmKeep, kITECreditsText, "Edward Lacabanne, Glenn Price, April Lee,"},
 	{Common::UNK_LANG, kITECreditsWyrmKeep, kITECreditsText, "Lisa Sample, Brian Dowrick, Reed Waller,"},
@@ -1009,6 +1089,8 @@ const IntroCredit creditsTreeHouse2[] = {
 	{Common::FR_FRA, kITECreditsWyrmKeep, kITECreditsText, "Allison Hershey et Talin"},
 	{Common::EN_ANY, kITECreditsNotWyrmKeep, kITECreditsText, "Lisa Iennaco, Brian Dowrick, Reed"},
 	{Common::EN_ANY, kITECreditsNotWyrmKeep, kITECreditsText, "Waller, Allison Hershey and Talin"},
+	{Common::JA_JPN, kITECreditsNotWyrmKeep, kITECreditsText, "Lisa Iennaco, Brian Dowrick, Reed"},
+	{Common::JA_JPN, kITECreditsNotWyrmKeep, kITECreditsText, "Waller, Allison Hershey and Talin"},
 	{Common::DE_DEU, kITECreditsAny, kITECreditsText, "Waller, Allison Hershey und Talin"},
 	{Common::IT_ITA, kITECreditsAny, kITECreditsText, "Waller, Allison Hershey e Talin"},
 	{Common::FR_FRA, kITECreditsAny, kITECreditsText, "Waller, Allison Hershey et Talin"},
@@ -1016,6 +1098,7 @@ const IntroCredit creditsTreeHouse2[] = {
 	{Common::DE_DEU, kITECreditsNotWyrmKeep, kITECreditsHeader, "Grafische Leitung"},
 	{Common::IT_ITA, kITECreditsNotWyrmKeep, kITECreditsHeader, "Direzione Grafica"},
 	{Common::FR_FRA, kITECreditsNotWyrmKeep, kITECreditsHeader, "Directeur Artistique"},
+	{Common::JA_JPN, kITECreditsNotWyrmKeep, kITECreditsHeader, "Art Direction"},
 	{Common::UNK_LANG, kITECreditsNotWyrmKeep, kITECreditsText, "Allison Hershey"}
 };
 
@@ -1024,11 +1107,13 @@ const IntroCredit creditsFairePath1[] = {
 	{Common::DE_DEU, kITECreditsAny, kITECreditsHeader, "Programmiert von"},
 	{Common::IT_ITA, kITECreditsAny, kITECreditsHeader, "Programmazione"},
 	{Common::FR_FRA, kITECreditsAny, kITECreditsHeader, "Programmeurs"},
+	{Common::JA_JPN, kITECreditsAny, kITECreditsHeader, "Programming (original)"},
 	{Common::UNK_LANG, kITECreditsAny, kITECreditsText, "Talin, Walter Hochbrueckner,"},
 	{Common::EN_ANY, kITECreditsAny, kITECreditsText, "Joe Burks and Robert Wiggins"},
 	{Common::DE_DEU, kITECreditsAny, kITECreditsText, "Joe Burks und Robert Wiggins"},
 	{Common::IT_ITA, kITECreditsAny, kITECreditsText, "Joe Burks e Robert Wiggins"},
 	{Common::FR_FRA, kITECreditsAny, kITECreditsText, "Joe Burks et Robert Wiggins"},
+	{Common::JA_JPN, kITECreditsAny, kITECreditsText, "Joe Burks and Robert Wiggins"},
 	{Common::EN_ANY, kITECreditsPCCD | kITECreditsWyrmKeep, kITECreditsHeader, "Additional Programming"},
 	{Common::FR_FRA, kITECreditsPCCD | kITECreditsWyrmKeep, kITECreditsHeader, "Programmeur Additionnel"},
 	{Common::EN_ANY, kITECreditsPCCD | kITECreditsWyrmKeep, kITECreditsText, "John Bolton"},
@@ -1039,6 +1124,7 @@ const IntroCredit creditsFairePath1[] = {
 	{Common::DE_DEU, kITECreditsAny, kITECreditsHeader, "Musik und Sound"},
 	{Common::IT_ITA, kITECreditsAny, kITECreditsHeader, "Musica e Sonoro"},
 	{Common::FR_FRA, kITECreditsAny, kITECreditsHeader, "Musique et Sons"},
+	{Common::JA_JPN, kITECreditsAny, kITECreditsHeader, "Music and Sound (original)"},
 	{Common::UNK_LANG, kITECreditsAny, kITECreditsText, "Matt Nathan"}
 };
 
@@ -1047,9 +1133,16 @@ const IntroCredit creditsFairePath2[] = {
 	{Common::DE_DEU, kITECreditsAny, kITECreditsHeader, "Regie"},
 	{Common::IT_ITA, kITECreditsAny, kITECreditsHeader, "Regia"},
 	{Common::FR_FRA, kITECreditsAny, kITECreditsHeader, "Dirig\202 par"},
+	{Common::JA_JPN, kITECreditsAny, kITECreditsHeader, "Directed by"},
 	{Common::UNK_LANG, kITECreditsAny, kITECreditsText, "Talin"},
 	{Common::FR_FRA, kITECreditsAny, kITECreditsHeader, "Traduction Francaise"},
-	{Common::FR_FRA, kITECreditsAny, kITECreditsText, "Ryfatwork, Momo le Yetty et Darknior"}
+	{Common::FR_FRA, kITECreditsAny, kITECreditsText, "Ryfatwork, Momo le Yetty et Darknior"},
+	{Common::JA_JPN, kITECreditsAny, kITECreditsHeader, "NEC PC-9821 version by"},
+	{Common::JA_JPN, kITECreditsAny, kITECreditsText, "STARCRAFT,Inc."},
+	{Common::JA_JPN, kITECreditsAny, kITECreditsHeader, "Programming"},
+	{Common::JA_JPN, kITECreditsAny, kITECreditsText, "Toshio Sato"},
+	{Common::JA_JPN, kITECreditsAny, kITECreditsHeader, "Music and Sound"},
+	{Common::JA_JPN, kITECreditsAny, kITECreditsText, "Takeshi Abo"}
 };
 
 } // End of namespace Saga
