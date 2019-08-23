@@ -748,6 +748,17 @@ bool Map::load(Common::SeekableReadStream *stream) {
 		case INFO_TELEPORTER18:
 		case INFO_TELEPORTER19:
 		case INFO_TELEPORTER20:
+
+			if (aiInfo[_iconList[i].icon].type == INFO_TELEPORTER8) {
+				if (g_hdb->isPPC() && !scumm_stricmp(g_hdb->currentMapName(), "MAP29.MSM")) {
+					if (_iconList[i].x == 45 && _iconList[i].y == 116) {
+						warning("PATCHED Teleporter8 in MAP29");
+
+						_iconList[i].level = 1;
+					}
+				}
+			}
+
 			g_hdb->_ai->addToTeleportList(
 				aiInfo[_iconList[i].icon].type - INFO_TELEPORTER1,
 				_iconList[i].x,
