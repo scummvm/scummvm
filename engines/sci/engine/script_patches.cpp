@@ -13231,6 +13231,84 @@ static const uint16 qfg4GreatHallKeyholePatch[] = {
 	PATCH_END
 };
 
+// You can talk to the Burgomeister in his office when he's not there. Clicking
+//  Talk on hero shows Burgomeister options even when alone because rm300:init
+//  initializes heroTeller no matter who is in the room.
+//
+// We fix this by only initializing heroTeller when someone is in the room. The
+//  Burgomeister appears when the time of day is 3 or less and Gypsy Davy
+//  appears during room events 4, 5, and 6.
+//
+// Applies to: All versions
+// Responsible method: rm300:init
+// Fixes bug: #10754
+static const uint16 qfg4EmptyBurgoRoomSignature[] = {
+	// start of heroTeller init: ...
+	0x38, SIG_SELECTOR16(init),         // pushi init
+	SIG_MAGICDWORD,
+	0x38, SIG_UINT16(0x0005),           // pushi 0005
+	0x89, 0x00,                         // lsg 00     [ hero ]
+	0x38, SIG_UINT16(0x012c),           // pushi 300d [ modNum ]
+	0x39, 0x19,                         // pushi 25d  [ noun ]
+	0x38, SIG_UINT16(0x0080),           // pushi 128d [ verb ]
+	0x8b, 0x00,                         // lsl 00 [ event number ]
+	0x3c,                               // dup
+	0x35, 0x01,                         // ldi 01
+	0x1a,                               // eq?
+	0x31, 0x05,                         // bnt 05
+	0x35, 0x10,                         // ldi 10 [ cond ]
+	0x32, SIG_UINT16(0x0048),           // jmp 0048
+	0x3c,                               // dup
+	0x35, 0x02,                         // ldi 02
+	0x1a,                               // eq?
+	0x31, 0x04,                         // bnt 04
+	0x35, 0x11,                         // ldi 11 [ cond ]
+	0x33, 0x3e,                         // jmp 3e
+	0x3c,                               // dup
+	0x35, 0x04,                         // ldi 04
+	0x1a,                               // eq?
+	0x31, 0x04,                         // bnt 04
+	0x35, 0x13,                         // ldi 13 [ cond ]
+	0x33, 0x34,                         // jmp 34
+	0x3c,                               // dup
+	0x35, 0x05,                         // ldi 05
+	SIG_END
+};
+
+static const uint16 qfg4EmptyBurgoRoomPatch[] = {
+	0x89, 0x7b,                         // lsg 7b
+	0x35, 0x03,                         // ldi 03
+	0x24,                               // le?   [ time of day <= 3 ]
+	0x2f, 0x0e,                         // bt 0e [ burgomeister is here, call heroTeller:init ]
+	0x8b, 0x00,                         // lsl 00
+	0x35, 0x04,                         // ldi 04
+	0x22,                               // lt?   [ event number < 4 ]
+	0x2f, 0x5f,                         // bt 5f [ no gypsy, skip heroTeller:init ]
+	0x8b, 0x00,                         // lsl 00
+	0x35, 0x06,                         // ldi 06
+	0x1e,                               // gt?   [ event number > 6 ]
+	0x2f, 0x58,                         // bt 58 [ no gypsy, skip heroTeller:init ]
+	// start of heroTeller init: ...
+	0x38, PATCH_SELECTOR16(init),       // pushi init
+	0x39, 0x05,                         // pushi 05
+	0x89, 0x00,                         // lsg 00     [ hero ]
+	0x89, 0x0b,                         // lsg 0b     [ modNum ]
+	0x39, 0x19,                         // pushi 25d  [ noun ]
+	0x38, PATCH_UINT16(0x0080),         // pushi 128d [ verb ]
+	0x83, 0x00,                         // lal 00 [ event number ]
+	0x36,                               // push
+	0x31, 0x13,                         // bnt 13 [ event number == 0, next condition ]
+	0x3c,                               // dup
+	0x35, 0x05,                         // ldi 05
+	0x1e,                               // gt?
+	0x2f, 0x0d,                         // bt 0d [ event number > 5, next condition ]
+	0x3c,                               // dup
+	0x35, 0x0f,                         // ldi 0f
+	0x02,                               // add [ cond = event number + 15d ]
+	0x33, 0x31,                         // jmp 31
+	PATCH_END
+};
+
 //          script, description,                                     signature                      patch
 static const SciScriptPatcherEntry qfg4Signatures[] = {
 	{  true,     0, "prevent autosave from deleting save games",   1, qfg4AutosaveSignature,         qfg4AutosavePatch },
@@ -13255,6 +13333,7 @@ static const SciScriptPatcherEntry qfg4Signatures[] = {
 	{  true,   260, "CD: fix inn door crash",                      1, qfg4InnDoorCDSignature,        qfg4InnDoorCDPatch },
 	{  true,   270, "fix town gate after a staff dream",           1, qfg4DreamGateSignature,        qfg4DreamGatePatch },
 	{  true,   270, "fix town gate doormat at night",              1, qfg4TownGateDoormatSignature,  qfg4TownGateDoormatPatch },
+	{  true,   300, "fix empty burgomeister room teller",          1, qfg4EmptyBurgoRoomSignature,   qfg4EmptyBurgoRoomPatch },
 	{  true,   320, "fix pathfinding at the inn",                  1, qfg4InnPathfindingSignature,   qfg4InnPathfindingPatch },
 	{  true,   320, "fix talking to absent innkeeper",             1, qfg4AbsentInnkeeperSignature,  qfg4AbsentInnkeeperPatch },
 	{  true,   320, "CD: fix domovoi never appearing",             1, qfg4DomovoiInnSignature,       qfg4DomovoiInnPatch },
