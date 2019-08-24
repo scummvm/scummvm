@@ -5240,6 +5240,20 @@ fi
 if test "$_iconv" = yes ; then
 	append_var LIBS "$ICONV_LIBS -liconv"
 	append_var INCLUDES "$ICONV_CFLAGS"
+
+# check if iconv uses const char** as it's second parameter
+	cat > $TMPC << EOF
+#include <iconv.h>
+int main(void) {
+	iconv_t conv = iconv_open("UTF-8//IGNORE", "CP850");
+	const char **inbuf = 0;
+	iconv(conv, inbuf, 0, 0, 0);
+	return 0;
+}
+EOF
+		_iconv_uses_const=no
+		cc_check $ICONV_CFLAGS $ICONV_LIBS -liconv && _iconv_uses_const=yes
+		define_in_config_if_yes "$_iconv_uses_const" 'ICONV_USES_CONST'
 fi
 define_in_config_if_yes "$_iconv" 'USE_ICONV'
 echo "$_iconv"
