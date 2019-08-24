@@ -803,14 +803,12 @@ void HDBGame::drawProgressBar() {
 }
 
 void HDBGame::checkProgress() {
-	int x, i;
-
 	if (!_progressActive)
 		return;
 
-	x = _screenWidth / 2 - _progressGfx->_width / 2;
+	int x = _screenWidth / 2 - _progressGfx->_width / 2;
 	_progressGfx->drawMasked(x, g_hdb->_progressY);
-	for (i = x; i < _progressXOffset; i += _progressMarkGfx->_width)
+	for (int i = x; i < _progressXOffset; i += _progressMarkGfx->_width)
 		_progressMarkGfx->drawMasked(i, g_hdb->_progressY);
 	_progressMarkGfx->drawMasked(_progressXOffset, g_hdb->_progressY);
 }
@@ -943,6 +941,7 @@ Common::Error HDBGame::run() {
 	lua->executeFile("test.lua");
 #endif
 
+	uint32 lastTime = g_system->getMillis();
 	while (!shouldQuit()) {
 		Common::Event event;
 		while (g_system->getEventManager()->pollEvent(event)) {
@@ -1053,7 +1052,15 @@ Common::Error HDBGame::run() {
 			while (g_hdb->_frames[0] < g_system->getMillis() - 1000)
 				g_hdb->_frames.remove_at(0);
 		}
-		g_system->delayMillis(1000 / kGameFPS);
+		uint32 curTime = g_system->getMillis();
+		uint32 frameTime = curTime - lastTime;
+
+		uint32 frameCap = 1000 / kGameFPS;
+		if (frameTime < frameCap) {
+			g_system->delayMillis(frameCap - frameTime);
+		}
+
+		lastTime = g_system->getMillis();
 	}
 
 	return Common::kNoError;
