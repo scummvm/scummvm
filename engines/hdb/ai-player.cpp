@@ -201,10 +201,22 @@ void aiPlayerAction(AIEntity *e) {
 		if (!e->animFrame--) {
 			// Done with the Grabbing Animation, switch to standing
 			switch (e->state) {
-			case STATE_GRABUP:		e->draw = e->standupGfx[0];	e->state = STATE_STANDUP; break;
-			case STATE_GRABDOWN:	e->draw = e->standdownGfx[0];	e->state = STATE_STANDDOWN; break;
-			case STATE_GRABLEFT:	e->draw = e->standleftGfx[0];	e->state = STATE_STANDLEFT; break;
-			case STATE_GRABRIGHT:	e->draw = e->standrightGfx[0];	e->state = STATE_STANDRIGHT; break;
+			case STATE_GRABUP:
+				e->draw = e->standupGfx[0];
+				e->state = STATE_STANDUP;
+				break;
+			case STATE_GRABDOWN:
+				e->draw = e->standdownGfx[0];
+				e->state = STATE_STANDDOWN;
+				break;
+			case STATE_GRABLEFT:
+				e->draw = e->standleftGfx[0];
+				e->state = STATE_STANDLEFT;
+				break;
+			case STATE_GRABRIGHT:
+				e->draw = e->standrightGfx[0];
+				e->state = STATE_STANDRIGHT;
+				break;
 			default:
 				break;
 			}
@@ -221,20 +233,36 @@ void aiPlayerAction(AIEntity *e) {
 		e->drawXOff = xOff[e->state - STATE_ATK_CLUB_UP];
 		e->drawYOff = yOff[e->state - STATE_ATK_CLUB_UP];
 		switch (e->state) {
-		case STATE_ATK_CLUB_UP:		cycleFrames(e, g_hdb->_ai->_clubUpFrames); break;
-		case STATE_ATK_CLUB_DOWN:	cycleFrames(e, g_hdb->_ai->_clubDownFrames); break;
-		case STATE_ATK_CLUB_LEFT:	cycleFrames(e, g_hdb->_ai->_clubLeftFrames); break;
-		case STATE_ATK_CLUB_RIGHT:	cycleFrames(e, g_hdb->_ai->_clubRightFrames); break;
+		case STATE_ATK_CLUB_UP:
+			cycleFrames(e, g_hdb->_ai->_clubUpFrames);
+			break;
+		case STATE_ATK_CLUB_DOWN:
+			cycleFrames(e, g_hdb->_ai->_clubDownFrames);
+			break;
+		case STATE_ATK_CLUB_LEFT:
+			cycleFrames(e, g_hdb->_ai->_clubLeftFrames);
+			break;
+		case STATE_ATK_CLUB_RIGHT:
+			cycleFrames(e, g_hdb->_ai->_clubRightFrames);
+			break;
 		default:
 			break;
 		}
 		// Whack!
 		if ((e->animFrame >= 1) && (e->animDelay == e->animCycle)) {
 			switch (e->dir) {
-			case DIR_UP:	hit = g_hdb->_ai->playerCollision(32, 0, 16, 16); break;
-			case DIR_DOWN:	hit = g_hdb->_ai->playerCollision(0, 32, 16, 16); break;
-			case DIR_LEFT:	hit = g_hdb->_ai->playerCollision(16, 16, 32, 0); break;
-			case DIR_RIGHT:	hit = g_hdb->_ai->playerCollision(16, 16, 0, 32); break;
+			case DIR_UP:
+				hit = g_hdb->_ai->playerCollision(32, 0, 16, 16);
+				break;
+			case DIR_DOWN:
+				hit = g_hdb->_ai->playerCollision(0, 32, 16, 16);
+				break;
+			case DIR_LEFT:
+				hit = g_hdb->_ai->playerCollision(16, 16, 32, 0);
+				break;
+			case DIR_RIGHT:
+				hit = g_hdb->_ai->playerCollision(16, 16, 0, 32);
+				break;
 			default:
 				break;
 			}
@@ -280,10 +308,18 @@ void aiPlayerAction(AIEntity *e) {
 			e->state = stand[e->dir];
 			e->aiDraw = NULL;
 			switch (e->state) {
-			case STATE_ATK_CLUB_UP:		e->draw = e->standupGfx[0]; break;
-			case STATE_ATK_CLUB_DOWN:	e->draw = e->standdownGfx[0]; break;
-			case STATE_ATK_CLUB_LEFT:	e->draw = e->standleftGfx[0]; break;
-			case STATE_ATK_CLUB_RIGHT:	e->draw = e->standrightGfx[0]; break;
+			case STATE_ATK_CLUB_UP:
+				e->draw = e->standupGfx[0];
+				break;
+			case STATE_ATK_CLUB_DOWN:
+				e->draw = e->standdownGfx[0];
+				break;
+			case STATE_ATK_CLUB_LEFT:
+				e->draw = e->standleftGfx[0];
+				break;
+			case STATE_ATK_CLUB_RIGHT:
+				e->draw = e->standrightGfx[0];
+				break;
 			default:
 				break;
 			}
@@ -922,9 +958,8 @@ void aiScientistInit2(AIEntity *e) {
 }
 
 void aiSlugAttackAction(AIEntity *e) {
-	int xv[5] = {9, 0, 0, -1, 1}, yv[5] = {9, -1, 1, 0, 0};
-	AIEntity *hit;
-	int	result;
+	static const int xv[5] = {9, 0, 0, -1, 1};
+	static const int yv[5] = {9, -1, 1, 0, 0};
 
 	if (e->goalX)
 		g_hdb->_ai->animateEntity(e);
@@ -932,7 +967,7 @@ void aiSlugAttackAction(AIEntity *e) {
 	g_hdb->_ai->checkActionList(e, e->tileX, e->tileY, false);
 	g_hdb->_ai->checkAutoList(e, e->tileX, e->tileY);
 
-	hit = g_hdb->_ai->findEntityIgnore(e->tileX, e->tileY, e);
+	AIEntity *hit = g_hdb->_ai->findEntityIgnore(e->tileX, e->tileY, e);
 	if (hit && hit->type == AI_GUY)
 		hit = NULL;
 
@@ -946,7 +981,7 @@ void aiSlugAttackAction(AIEntity *e) {
 
 	uint32 bg_flags = g_hdb->_map->getMapBGTileFlags(e->tileX, e->tileY);
 	uint32 fg_flags = g_hdb->_map->getMapFGTileFlags(e->tileX, e->tileY);
-	result = (e->level == 1 ? (bg_flags & (kFlagSolid)) : !(fg_flags & kFlagGrating) && (bg_flags & (kFlagSolid)));
+	int	result = (e->level == 1 ? (bg_flags & (kFlagSolid)) : !(fg_flags & kFlagGrating) && (bg_flags & (kFlagSolid)));
 	if (hit) {
 		g_hdb->_sound->playSound(SND_SLUG_HIT);
 		g_hdb->_sound->playSound(g_hdb->_ai->metalOrFleshSND(hit));
@@ -1052,10 +1087,12 @@ void aiSlugAttackDraw(AIEntity *e, int mx, int my) {
 }
 
 void aiSlugAttackInit(AIEntity *e) {
+	static const int xv[5] = {9,  0, 0, -1, 1};
+	static const int yv[5] = {9, -1, 1,  0, 0};
+
 	if (g_hdb->isDemo())
 		return;
 
-	int xv[5] = {9, 0, 0, -1, 1}, yv[5] = {9, -1, 1, 0, 0};
 	e->moveSpeed = kPlayerMoveSpeed << 1;
 	g_hdb->_ai->setEntityGoal(e, e->tileX + xv[e->dir], e->tileY + yv[e->dir]);
 	e->draw = NULL;					// use custom draw function

@@ -908,8 +908,6 @@ void AI::animateEntity(AIEntity *e) {
 	static const int xva[5] = {9, 0, 0, -1, 1};
 	static const int yva[5] = {9, -1, 1, 0, 0};
 
-	int bgTileFlags, fgTileFlags;
-
 	// Move entity if player is not dead
 	debug(9, "Before animateEntity, e->x: %d, e->y: %d", e->x, e->y);
 	debug(9, "Before animateEntity, e->tileX: %d, e->tileY: %d", e->tileX, e->tileY);
@@ -960,8 +958,8 @@ void AI::animateEntity(AIEntity *e) {
 		}
 
 		// Are we on ice?
-		bgTileFlags = g_hdb->_map->getMapBGTileFlags(e->tileX, e->tileY);
-		fgTileFlags = g_hdb->_map->getMapFGTileFlags(e->tileX, e->tileY);
+		int bgTileFlags = g_hdb->_map->getMapBGTileFlags(e->tileX, e->tileY);
+		int fgTileFlags = g_hdb->_map->getMapFGTileFlags(e->tileX, e->tileY);
 
 		if (e->level == 1 ? ((bgTileFlags & kFlagIce) == kFlagIce) : (((bgTileFlags & kFlagIce) == kFlagIce) && !(fgTileFlags & kFlagGrating))) {
 			int nx, ny, moveOK = 0;
@@ -1027,11 +1025,20 @@ void AI::animateEntity(AIEntity *e) {
 			if (!result) {
 				int xv = 0, yv = 0;
 				switch (e->dir) {
-				case DIR_UP:	yv = -1;	break;
-				case DIR_DOWN:	yv = 1;		break;
-				case DIR_LEFT:	xv = -1;	break;
-				case DIR_RIGHT: xv = 1;		break;
-				case DIR_NONE:	break;
+				case DIR_UP:
+					yv = -1;
+					break;
+				case DIR_DOWN:
+					yv = 1;
+					break;
+				case DIR_LEFT:
+					xv = -1;
+					break;
+				case DIR_RIGHT:
+					xv = 1;
+					break;
+				case DIR_NONE:
+					break;
 				}
 
 				bgTileFlags = g_hdb->_map->getMapBGTileFlags(e->tileX + xv, e->tileY + yv);
@@ -1053,8 +1060,8 @@ void AI::animateEntity(AIEntity *e) {
 		// Check for bad tiles (DEATH)
 		int cx = (e->x + 16) / kTileWidth;
 		int cy = (e->y + 16) / kTileHeight;
-		bgTileFlags = g_hdb->_map->getMapBGTileFlags(cx, cy);
-		fgTileFlags = g_hdb->_map->getMapFGTileFlags(cx, cy);
+		int bgTileFlags = g_hdb->_map->getMapBGTileFlags(cx, cy);
+		int fgTileFlags = g_hdb->_map->getMapFGTileFlags(cx, cy);
 		if ((bgTileFlags & kFlagPlayerDie) && !(checkFloating(cx, cy)) && !(fgTileFlags & kFlagGrating)) {
 			if ((bgTileFlags & kFlagEnergyFloor) == kFlagEnergyFloor)
 				killPlayer(DEATH_SHOCKED);
@@ -1105,9 +1112,9 @@ void AI::animateEntity(AIEntity *e) {
 	}
 
 	// Check for moving up/down stair levels
-	int bgTileIndex = g_hdb->_map->getMapBGTileIndex(e->tileX, e->tileY); // CHECKME: unused?
-	bgTileFlags = g_hdb->_map->getMapBGTileFlags(e->tileX, e->tileY);
-	fgTileFlags = g_hdb->_map->getMapFGTileFlags(e->tileX, e->tileY); // CHECKME: unused?
+//	int bgTileIndex = g_hdb->_map->getMapBGTileIndex(e->tileX, e->tileY); // CHECKME: unused?
+	int bgTileFlags = g_hdb->_map->getMapBGTileFlags(e->tileX, e->tileY);
+//	fgTileFlags = g_hdb->_map->getMapFGTileFlags(e->tileX, e->tileY); // CHECKME: unused?
 	if (bgTileFlags & kFlagStairTop)
 		e->level = 2;
 	else if (bgTileFlags & kFlagStairBot)
@@ -1153,11 +1160,32 @@ void AI::animateEntity(AIEntity *e) {
 					AIEntity *hit = legalMove(nx, ny, e->level, &result2);
 					if (!hit && result2) {
 						switch (e->dir) {
-						case DIR_UP:	e->goalY = ny;	e->xVel = 0; e->yVel = -kPlayerMoveSpeed; e->state = STATE_MOVEUP; break;
-						case DIR_DOWN:	e->goalY = ny;  e->xVel = 0; e->yVel =  kPlayerMoveSpeed; e->state = STATE_MOVEDOWN; break;
-						case DIR_LEFT:	e->goalX = nx;  e->yVel = 0; e->xVel = -kPlayerMoveSpeed; e->state = STATE_MOVELEFT; break;
-						case DIR_RIGHT: e->goalX = nx;  e->yVel = 0; e->xVel =  kPlayerMoveSpeed; e->state = STATE_MOVERIGHT; break;
-						case DIR_NONE:	break;
+						case DIR_UP:
+							e->goalY = ny;
+							e->xVel = 0;
+							e->yVel = -kPlayerMoveSpeed;
+							e->state = STATE_MOVEUP;
+							break;
+						case DIR_DOWN:
+							e->goalY = ny;
+							e->xVel = 0;
+							e->yVel = kPlayerMoveSpeed;
+							e->state = STATE_MOVEDOWN;
+							break;
+						case DIR_LEFT:
+							e->goalX = nx;
+							e->yVel = 0;
+							e->xVel = -kPlayerMoveSpeed;
+							e->state = STATE_MOVELEFT;
+							break;
+						case DIR_RIGHT:
+							e->goalX = nx;
+							e->yVel = 0;
+							e->xVel = kPlayerMoveSpeed;
+							e->state = STATE_MOVERIGHT;
+							break;
+						case DIR_NONE:
+							break;
 						}
 						if (_playerRunning) {
 							e->xVel = e->xVel << 1;

@@ -715,11 +715,20 @@ void HDBGame::useEntity(AIEntity *e) {
 		// Diverters are very special - don't mess with their direction & state!
 		if (e->type == AI_DIVERTER) {
 			switch (e->dir2) {
-			case DIR_DOWN: e->state = STATE_DIVERTER_BL; break;
-			case DIR_UP: e->state = STATE_DIVERTER_BR; break;
-			case DIR_LEFT: e->state = STATE_DIVERTER_TL; break;
-			case DIR_RIGHT: e->state = STATE_DIVERTER_TR; break;
-			case DIR_NONE: break;
+			case DIR_DOWN:
+				e->state = STATE_DIVERTER_BL;
+				break;
+			case DIR_UP:
+				e->state = STATE_DIVERTER_BR;
+				break;
+			case DIR_LEFT:
+				e->state = STATE_DIVERTER_TL;
+				break;
+			case DIR_RIGHT:
+				e->state = STATE_DIVERTER_TR;
+				break;
+			case DIR_NONE:
+				break;
 			}
 		}
 
@@ -737,11 +746,24 @@ void HDBGame::useEntity(AIEntity *e) {
 
 		// need to set the state AFTER the SetEntityGoal!
 		switch (p->dir) {
-		case DIR_UP:	p->state = STATE_PUSHUP;	p->drawYOff = -10; break;
-		case DIR_DOWN:	p->state = STATE_PUSHDOWN;	p->drawYOff = 9; break;
-		case DIR_LEFT:	p->state = STATE_PUSHLEFT;	p->drawXOff = -10; break;
-		case DIR_RIGHT:	p->state = STATE_PUSHRIGHT; p->drawXOff = 10; break;
-		case DIR_NONE: break;
+		case DIR_UP:
+			p->state = STATE_PUSHUP;
+			p->drawYOff = -10;
+			break;
+		case DIR_DOWN:
+			p->state = STATE_PUSHDOWN;
+			p->drawYOff = 9;
+			break;
+		case DIR_LEFT:
+			p->state = STATE_PUSHLEFT;
+			p->drawXOff = -10;
+			break;
+		case DIR_RIGHT:
+			p->state = STATE_PUSHRIGHT;
+			p->drawXOff = 10;
+			break;
+		case DIR_NONE:
+			break;
 		}
 
 		// if player is running, keep speed slow since we're pushing
@@ -752,17 +774,21 @@ void HDBGame::useEntity(AIEntity *e) {
 
 		switch (e->type) {
 		case AI_CRATE:
-			g_hdb->_sound->playSound(SND_CRATE_SLIDE); break;
+			g_hdb->_sound->playSound(SND_CRATE_SLIDE);
+			break;
 		case AI_LIGHTBARREL:
 		case AI_FROGSTATUE:
 		case AI_ICE_BLOCK:
-			g_hdb->_sound->playSound(SND_LIGHT_SLIDE); break;
+			g_hdb->_sound->playSound(SND_LIGHT_SLIDE);
+			break;
 		case AI_HEAVYBARREL:
 		case AI_MAGIC_EGG:
 		case AI_BOOMBARREL:
-			g_hdb->_sound->playSound(SND_HEAVY_SLIDE); break;
+			g_hdb->_sound->playSound(SND_HEAVY_SLIDE);
+			break;
 		case AI_DIVERTER:
-			g_hdb->_sound->playSound(SND_PUSH_DIVERTER); break;
+			g_hdb->_sound->playSound(SND_PUSH_DIVERTER);
+			break;
 		default:
 			break;
 		}
@@ -875,9 +901,8 @@ void HDBGame::setInMapName(const char *name) {
 Common::Error HDBGame::run() {
 
 	// Initialize System
-	if (!_systemInit) {
+	if (!_systemInit)
 		init();
-	}
 
 	// Initializes Graphics
 	initGraphics(_screenWidth, _screenHeight, &_format);
@@ -1056,9 +1081,8 @@ Common::Error HDBGame::run() {
 		uint32 frameTime = curTime - lastTime;
 
 		uint32 frameCap = 1000 / kGameFPS;
-		if (frameTime < frameCap) {
+		if (frameTime < frameCap)
 			g_system->delayMillis(frameCap - frameTime);
-		}
 
 		lastTime = g_system->getMillis();
 	}
