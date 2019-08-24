@@ -69,6 +69,7 @@ void SpecialOpcodes::initOpcodes() {
 	OPCODE(3, spcClearEngineFlag10);
 	OPCODE(4, spcSetEngineFlag10);
 
+	OPCODE(8, spcCastleGardenLogic);
 	OPCODE(9, spcUnk9);
 	OPCODE(0xa, spcUnkA);
 	OPCODE(0xb, clearSceneUpdateFunction);
@@ -79,6 +80,7 @@ void SpecialOpcodes::initOpcodes() {
 	OPCODE(0x14, spcClearEngineFlag8);
 	OPCODE(0x15, spcSetEngineFlag8);
 
+	OPCODE(0x17, spcKnightPoolReflectionLogic);
 	OPCODE(0x18, clearSceneUpdateFunction);
 
 	OPCODE(0x1a, spcActivatePizzaMakerActor);
@@ -97,6 +99,7 @@ void SpecialOpcodes::initOpcodes() {
 	OPCODE(0x3d, clearSceneUpdateFunction);
 	OPCODE(0x3e, spcZigmondFraudSceneLogic);
 	OPCODE(0x3f, clearSceneUpdateFunction);
+	OPCODE(0x40, spcZigmondFraudSceneLogic1);
 
 	OPCODE(0x49, spcLoadScene1);
 
@@ -113,6 +116,8 @@ void SpecialOpcodes::initOpcodes() {
 
 	OPCODE(0x5e, spcUnk5e);
 	OPCODE(0x5f, spcUnk5f);
+
+	OPCODE(0x66, spcUnk66);
 
 	OPCODE(0x6b, spcTransitionToMap);
 	OPCODE(0x6c, spcTransitionFromMap);
@@ -138,6 +143,10 @@ void SpecialOpcodes::spcClearEngineFlag10() {
 
 void SpecialOpcodes::spcSetEngineFlag10() {
 	_vm->setFlags(Dragons::ENGINE_FLAG_10);
+}
+
+void SpecialOpcodes::spcCastleGardenLogic() {
+	//TODO
 }
 
 void SpecialOpcodes::spcUnk9() {
@@ -190,6 +199,10 @@ void SpecialOpcodes::spcSetEngineFlag8() {
 	_vm->setFlags(Dragons::ENGINE_FLAG_8);
 }
 
+void SpecialOpcodes::spcKnightPoolReflectionLogic() {
+	//TODO
+}
+
 void SpecialOpcodes::spcActivatePizzaMakerActor() {
 	_vm->setSceneUpdateFunction(pizzaUpdateFunction);
 }
@@ -235,6 +248,56 @@ void SpecialOpcodes::spcClearEngineFlag0x2000000() {
 
 void SpecialOpcodes::spcZigmondFraudSceneLogic() {
 	//TODO
+	sceneUpdater.numSteps[0] = 2;
+	sceneUpdater.numSteps[1] = 2;
+	sceneUpdater.numSteps[2] = 1;
+	sceneUpdater.numSteps[3] = 1;
+	sceneUpdater.numSteps[4] = 2;
+	sceneUpdater.numSteps[5] = 2;
+	sceneUpdater.numSteps[6] = 2;
+	sceneUpdater.numSteps[7] = 2;
+
+	sceneUpdater.iniIDTbl[0][0] = 0x19E;
+	sceneUpdater.iniIDTbl[0][1] = 0x197;
+	sceneUpdater.iniIDTbl[1][0] = 0x19E;
+	sceneUpdater.iniIDTbl[1][1] = 0x197;
+	sceneUpdater.iniIDTbl[2][0] = 0x197;
+	sceneUpdater.iniIDTbl[3][0] = 0x19e;
+	sceneUpdater.iniIDTbl[4][0] = 0x197;
+	sceneUpdater.iniIDTbl[4][1] = 0x19e;
+	sceneUpdater.iniIDTbl[5][0] = 0x19e;
+	sceneUpdater.iniIDTbl[5][1] = 0x197;
+	sceneUpdater.iniIDTbl[6][0] = 0x197;
+	sceneUpdater.iniIDTbl[6][1] = 0x19e;
+	sceneUpdater.iniIDTbl[7][0] = 0x19e;
+	sceneUpdater.iniIDTbl[7][1] = 0x197;
+
+	sceneUpdater.sequenceIDTbl[0][0] = 2;
+	sceneUpdater.sequenceIDTbl[0][1] = 0xe;
+	sceneUpdater.sequenceIDTbl[1][0] = 2;
+	sceneUpdater.sequenceIDTbl[1][1] = 0xe;
+	sceneUpdater.sequenceIDTbl[2][0] = 0xe;
+	sceneUpdater.sequenceIDTbl[3][0] = 2;
+	sceneUpdater.sequenceIDTbl[4][0] = 0xe;
+	sceneUpdater.sequenceIDTbl[4][1] = 2;
+	sceneUpdater.sequenceIDTbl[5][0] = 2;
+	sceneUpdater.sequenceIDTbl[5][1] = 0xe;
+	sceneUpdater.sequenceIDTbl[6][0] = 0xe;
+	sceneUpdater.sequenceIDTbl[6][1] = 2;
+	sceneUpdater.sequenceIDTbl[7][0] = 2;
+	sceneUpdater.sequenceIDTbl[7][1] = 0xe;
+
+	//TODO field4
+	setupTableBasedSceneUpdateFunction(0x168,8,0xb4);
+}
+
+void SpecialOpcodes::spcZigmondFraudSceneLogic1() {
+	sceneUpdater.numSteps[0] = 1;
+	sceneUpdater.iniIDTbl[0][0] = 0x197;
+	sceneUpdater.sequenceIDTbl[0][0] = 0x12;
+	sceneUpdater.textTbl[0][0] = 0x2F422; //TODO this might change between game versions
+
+	setupTableBasedSceneUpdateFunction(300,1,0x708);
 }
 
 void SpecialOpcodes::spcUnk4e() {
@@ -289,6 +352,20 @@ void SpecialOpcodes::spcUnk5e() {
 void SpecialOpcodes::spcUnk5f() {
 	_vm->getINI(0x2ab)->field_12 = 0;
 	panCamera(2);
+}
+
+void SpecialOpcodes::spcUnk66() {
+	uint16 var =_vm->getVar(2);
+
+	uint16 bVar1 = (var & 1) == 0;
+	uint16 uVar9 = bVar1;
+	if ((var & 4) == 0) {
+		uVar9 = (ushort)bVar1 + 1;
+	}
+	if ((var & 2) == 0) {
+		uVar9 = uVar9 + 1;
+	}
+	_vm->getINI(1)->field_12 = uVar9;
 }
 
 // 0x80038c1c
@@ -403,6 +480,24 @@ void SpecialOpcodes::clearSceneUpdateFunction() {
 	_vm->setSceneUpdateFunction(NULL);
 }
 
+void SpecialOpcodes::setupTableBasedSceneUpdateFunction(uint16 initialCounter, uint16 numSequences,
+														uint16 sequenceDuration) {
+	sceneUpdater.sequenceID = -1;
+//TODO
+//	DAT_80083154 = 0;
+//	DAT_80083148 = 0;
+//	DAT_80072858 = 0;
+	sceneUpdater.curSequenceIndex = 0;
+	sceneUpdater.numTotalSequences = numSequences;
+	sceneUpdater.curSequence = _vm->getRand(numSequences);
+	sceneUpdater.sequenceDuration = sequenceDuration;
+	sceneUpdater.counter = initialCounter;
+
+	//TODO
+
+	_vm->setSceneUpdateFunction(tableBasedSceneUpdateFunction);
+}
+
 void pizzaUpdateFunction() {
 		static int16 DAT_800634bc = 0;
 		DragonsEngine *vm = getEngine();
@@ -447,7 +542,43 @@ void pizzaUpdateFunction() {
 		else {
 			DAT_800634bc--;
 		}
-		return;
+}
+
+void tableBasedSceneUpdateFunction() {
+	uint uVar3;
+	DragonsEngine *vm = getEngine();
+	SpecialOpcodes *spc = vm->_scriptOpcodes->_specialOpCodes;
+
+	uVar3 = (uint)spc->sceneUpdater.curSequence;
+	if (!vm->isFlagSet(ENGINE_FLAG_8000) || vm->data_800633fc == 1) {
+		if (spc->sceneUpdater.sequenceID != -1) {
+			vm->getINI(spc->sceneUpdater.iniID)->actor->updateSequence(spc->sceneUpdater.sequenceID);
+			spc->sceneUpdater.sequenceID = -1;
+		}
+		if (vm->data_800633fc == 0) {
+			spc->sceneUpdater.counter--;
+			if (spc->sceneUpdater.counter == 0) {
+				spc->sceneUpdater.sequenceID = spc->sceneUpdater.sequenceIDTbl[uVar3][spc->sceneUpdater.curSequenceIndex]; //*(int16_t *) (sceneUpdateSequenceTbl[uVar3].sequenceIdPtr + (uint) spc->sceneUpdater.curSequenceIndex);
+				spc->sceneUpdater.iniID = spc->sceneUpdater.iniIDTbl[uVar3][spc->sceneUpdater.curSequenceIndex] - 1;
+//						*(short *) (sceneUpdateSequenceTbl[uVar3].iniIdPtr + (uint) spc->sceneUpdater.curSequenceIndex) -
+//						1;
+				if (spc->sceneUpdater.sequenceID != -1) {
+					Actor *actor = vm->getINI(spc->sceneUpdater.iniID)->actor;
+					uint16 originalSequenceID = actor->_sequenceID;
+					actor->updateSequence(spc->sceneUpdater.sequenceID);
+					spc->sceneUpdater.sequenceID = originalSequenceID;
+				}
+				//TODO FUN_80036a68((&DAT_800832d8)[sceneUpdateSequenceTbl[uVar3].field_0x4[(uint) spc->sceneUpdater.curSequenceIndex]]);
+				spc->sceneUpdater.curSequenceIndex++;
+				spc->sceneUpdater.counter = 0x1e;
+				if (spc->sceneUpdater.numSteps[uVar3] <= (uint) spc->sceneUpdater.curSequenceIndex) {
+					spc->sceneUpdater.curSequenceIndex = 0;
+					spc->sceneUpdater.curSequence = vm->getRand((uint) spc->sceneUpdater.numTotalSequences);
+					spc->sceneUpdater.counter = spc->sceneUpdater.sequenceDuration;
+				}
+			}
+		}
+	}
 }
 
 } // End of namespace Dragons

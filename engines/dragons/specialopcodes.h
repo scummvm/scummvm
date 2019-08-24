@@ -40,10 +40,27 @@ public:
 	SpecialOpcodes(DragonsEngine *vm);
 	~SpecialOpcodes();
 	void run(int16 opcode);
+
+	struct {
+		void *tbl;
+		uint16 counter;
+		int16 iniID;
+		int16 sequenceID;
+		uint32 curSequence;
+		uint32 curSequenceIndex;
+		uint32 numTotalSequences;
+		uint32 sequenceDuration;
+		uint16 numSteps[8];
+		uint16 iniIDTbl[8][5];
+		uint16 sequenceIDTbl[8][5];
+		uint32 textTbl[8][5];
+	} sceneUpdater;
+
 protected:
 	DragonsEngine *_vm;
 	SpecialOpcode *_opcodes[DRAGONS_NUM_SPECIAL_OPCODES];
 	Common::String _opcodeNames[DRAGONS_NUM_SPECIAL_OPCODES];
+
 
 	void initOpcodes();
 	void freeOpcodes();
@@ -52,6 +69,7 @@ protected:
 	void spcClearEngineFlag10(); // 3
 	void spcSetEngineFlag10();   // 4
 
+	void spcCastleGardenLogic();
 	void spcUnk9();
 	void spcUnkA();
 
@@ -61,6 +79,8 @@ protected:
 	void spcUnk13InventionBookCloseRelated(); //0x13
 	void spcClearEngineFlag8(); // 0x14
 	void spcSetEngineFlag8(); // 0x15
+
+	void spcKnightPoolReflectionLogic(); //0x17
 
 	void spcActivatePizzaMakerActor(); // 0x1a
 	void spcDeactivatePizzaMakerActor(); // 0x1b
@@ -77,6 +97,8 @@ protected:
 	void spcClearEngineFlag0x2000000(); // 0x3c
 
 	void spcZigmondFraudSceneLogic(); // 0x3e
+
+	void spcZigmondFraudSceneLogic1(); // 0x40
 
 	void spcLoadScene1(); // 0x49
 
@@ -95,11 +117,15 @@ protected:
 	void spcUnk5e();
 	void spcUnk5f();
 
+	void spcUnk66();
+
 	void spcTransitionToMap(); // 0x6b
 	void spcTransitionFromMap(); // 0x6c
 
 	void spcSetCameraXToZero(); //0x7b
 	void spcDiamondIntroSequenceLogic(); //0x7c
+
+	void setupTableBasedSceneUpdateFunction(uint16 initialCounter, uint16 numSequences, uint16 sequenceDuration);
 private:
 	void panCamera(int16 mode);
 	void pizzaMakerStopWorking();
@@ -111,6 +137,7 @@ private:
 // update functions
 
 void pizzaUpdateFunction();
+void tableBasedSceneUpdateFunction();
 
 } // End of namespace Dragons
 
