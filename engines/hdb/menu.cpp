@@ -558,9 +558,15 @@ void Menu::drawMenu() {
 			_optionsXV += 3;
 			if (_optionsScrollX > g_hdb->_screenWidth + 10) {
 				switch (_nextScreen) {
-				case 0: _optionsActive = true; break;
-				case 1: _gamefilesActive = 1; break;
-				case 2: _newgameActive = true; break;
+				case 0:
+					_optionsActive = true;
+					break;
+				case 1:
+					_gamefilesActive = 1;
+					break;
+				case 2:
+					_newgameActive = true;
+					break;
 				}
 
 				_oBannerY = 0;
@@ -1662,9 +1668,15 @@ void Menu::drawRocketAndSelections() {
 
 	// top-down/up scrolling stuff
 	switch (_nextScreen) {
-	case 0: _optionsGfx->drawMasked(centerPic(_optionsGfx), _oBannerY); break;
-	case 1: _modeLoadGfx->drawMasked(centerPic(_modeLoadGfx), _oBannerY); break;
-	case 2: _newGfx->drawMasked(centerPic(_newGfx), _oBannerY); break;
+	case 0:
+		_optionsGfx->drawMasked(centerPic(_optionsGfx), _oBannerY);
+		break;
+	case 1:
+		_modeLoadGfx->drawMasked(centerPic(_modeLoadGfx), _oBannerY);
+		break;
+	case 2:
+		_newGfx->drawMasked(centerPic(_newGfx), _oBannerY);
+		break;
 	}
 
 	// menu items

@@ -444,19 +444,35 @@ void aiRightBotFindGoal(AIEntity *e) {
 			// If neither, go backwards
 			if (!bg2 && !e2) {
 				switch (e->dir) {
-				case DIR_UP: e->dir = DIR_RIGHT; break;
-				case DIR_DOWN: e->dir = DIR_LEFT; break;
-				case DIR_LEFT: e->dir = DIR_UP; break;
-				case DIR_RIGHT: e->dir = DIR_DOWN; break;
+				case DIR_UP:
+					e->dir = DIR_RIGHT;
+					break;
+				case DIR_DOWN:
+					e->dir = DIR_LEFT;
+					break;
+				case DIR_LEFT:
+					e->dir = DIR_UP;
+					break;
+				case DIR_RIGHT:
+					e->dir = DIR_DOWN;
+					break;
 				case DIR_NONE:
 					break;
 				}
 			} else if (!bg && !e1) {
 				switch (e->dir) {
-				case DIR_UP: e->dir = DIR_LEFT; break;
-				case DIR_DOWN: e->dir = DIR_RIGHT; break;
-				case DIR_LEFT: e->dir = DIR_DOWN; break;
-				case DIR_RIGHT: e->dir = DIR_UP; break;
+				case DIR_UP:
+					e->dir = DIR_LEFT;
+					break;
+				case DIR_DOWN:
+					e->dir = DIR_RIGHT;
+					break;
+				case DIR_LEFT:
+					e->dir = DIR_DOWN;
+					break;
+				case DIR_RIGHT:
+					e->dir = DIR_UP;
+					break;
 				case DIR_NONE:
 					break;
 				}
@@ -685,10 +701,22 @@ void aiRailRiderAction(AIEntity *e) {
 		if (!g_hdb->_window->dialogActive()) {
 			e->sequence = 2;
 			switch (e->dir) {
-			case DIR_UP:	e->xVel = 0;	e->yVel = -1;	break;
-			case DIR_DOWN:	e->xVel = 0;	e->yVel = 1;	break;
-			case DIR_LEFT:	e->xVel = -1;	e->yVel = 0;	break;
-			case DIR_RIGHT:	e->xVel = 1;	e->yVel = 0;	break;
+			case DIR_UP:
+				e->xVel = 0;
+				e->yVel = -1;
+				break;
+			case DIR_DOWN:
+				e->xVel = 0;
+				e->yVel = 1;
+				break;
+			case DIR_LEFT:
+				e->xVel = -1;
+				e->yVel = 0;
+				break;
+			case DIR_RIGHT:
+				e->xVel = 1;
+				e->yVel = 0;
+				break;
 			case DIR_NONE:
 				break;
 			}
@@ -841,11 +869,20 @@ void aiRailRiderOnAction(AIEntity *e) {
 		p->y = e->y;
 		g_hdb->_ai->animateEntity(e);
 		switch (e->dir) {
-		case DIR_UP:	e->draw = e->moveupGfx[0]; break;
-		case DIR_DOWN:	e->draw = e->movedownGfx[0]; break;
-		case DIR_LEFT:	e->draw = e->moveleftGfx[0]; break;
-		case DIR_RIGHT: e->draw = e->moverightGfx[0]; break;
-		default: break; // DIR_NONE
+		case DIR_UP:
+			e->draw = e->moveupGfx[0];
+			break;
+		case DIR_DOWN:
+			e->draw = e->movedownGfx[0];
+			break;
+		case DIR_LEFT:
+			e->draw = e->moveleftGfx[0];
+			break;
+		case DIR_RIGHT:
+			e->draw = e->moverightGfx[0];
+			break;
+		default:
+			break; // DIR_NONE
 		}
 		g_hdb->_map->centerMapXY(e->x + 16, e->y + 16);
 
@@ -1562,8 +1599,8 @@ void aiLaserDraw(AIEntity *e, int mx, int my) {
 	case DIR_UP:
 	{
 		for (i = e->value1 - 1; i > e->value2; i--)
-			onScreen += g_hdb->_ai->_gfxLaserbeamUD[frame]->drawMasked(e->x - mx, i*kTileWidth - my);
-		onScreen += g_hdb->_ai->_gfxLaserbeamUDBottom[frame & 3]->drawMasked(e->x - mx, i*kTileWidth - my);
+			onScreen += g_hdb->_ai->_gfxLaserbeamUD[frame]->drawMasked(e->x - mx, i * kTileWidth - my);
+		onScreen += g_hdb->_ai->_gfxLaserbeamUDBottom[frame & 3]->drawMasked(e->x - mx, i * kTileWidth - my);
 		if (onScreen) {
 			g_hdb->_sound->playSoundEx(SND_LASER_LOOP, kLaserChannel, true);
 			g_hdb->_ai->_laserOnScreen = true;
@@ -1573,8 +1610,8 @@ void aiLaserDraw(AIEntity *e, int mx, int my) {
 	case DIR_DOWN:
 	{
 		for (i = e->value1 + 1; i < e->value2; i++)
-			onScreen += g_hdb->_ai->_gfxLaserbeamUD[frame]->drawMasked(e->x - mx, i*kTileWidth - my);
-		onScreen += g_hdb->_ai->_gfxLaserbeamUDBottom[frame]->drawMasked(e->x - mx, i*kTileWidth - my);
+			onScreen += g_hdb->_ai->_gfxLaserbeamUD[frame]->drawMasked(e->x - mx, i * kTileWidth - my);
+		onScreen += g_hdb->_ai->_gfxLaserbeamUDBottom[frame]->drawMasked(e->x - mx, i * kTileWidth - my);
 		if (onScreen) {
 			g_hdb->_sound->playSoundEx(SND_LASER_LOOP, kLaserChannel, true);
 			g_hdb->_ai->_laserOnScreen = true;
@@ -1584,8 +1621,8 @@ void aiLaserDraw(AIEntity *e, int mx, int my) {
 	case DIR_LEFT:
 	{
 		for (i = e->value1 - 1; i > e->value2; i--)
-			onScreen += g_hdb->_ai->_gfxLaserbeamLR[frame]->drawMasked(i*kTileWidth - mx, e->y - my);
-		onScreen += g_hdb->_ai->_gfxLaserbeamLRRight[frame]->drawMasked(i*kTileWidth - mx, e->y - my);
+			onScreen += g_hdb->_ai->_gfxLaserbeamLR[frame]->drawMasked(i * kTileWidth - mx, e->y - my);
+		onScreen += g_hdb->_ai->_gfxLaserbeamLRRight[frame]->drawMasked(i * kTileWidth - mx, e->y - my);
 		if (onScreen) {
 			g_hdb->_sound->playSoundEx(SND_LASER_LOOP, kLaserChannel, true);
 			g_hdb->_ai->_laserOnScreen = true;
@@ -1595,8 +1632,8 @@ void aiLaserDraw(AIEntity *e, int mx, int my) {
 	case DIR_RIGHT:
 	{
 		for (i = e->value1 + 1; i < e->value2; i++)
-			onScreen += g_hdb->_ai->_gfxLaserbeamLR[frame]->drawMasked(i*kTileWidth - mx, e->y - my);
-		onScreen += g_hdb->_ai->_gfxLaserbeamLRLeft[frame]->drawMasked(i*kTileWidth - mx, e->y - my);
+			onScreen += g_hdb->_ai->_gfxLaserbeamLR[frame]->drawMasked(i * kTileWidth - mx, e->y - my);
+		onScreen += g_hdb->_ai->_gfxLaserbeamLRLeft[frame]->drawMasked(i * kTileWidth - mx, e->y - my);
 		if (onScreen) {
 			g_hdb->_sound->playSoundEx(SND_LASER_LOOP, kLaserChannel, true);
 			g_hdb->_ai->_laserOnScreen = true;
