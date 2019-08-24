@@ -868,9 +868,13 @@ void Map::draw() {
 	int maxTileX = (_mapTileXOff >= -8) ? g_hdb->_map->_screenXTiles - 1 : g_hdb->_map->_screenXTiles;
 	int maxTileY = (!_mapTileYOff) ? g_hdb->_map->_screenYTiles - 1 : g_hdb->_map->_screenYTiles;
 
-	if (matrixY + (maxTileY - 1)*_width > _height * _width) {
+	if (matrixY + (maxTileY - 1) * _width > _height * _width) {
 		return;
 	}
+
+	// Sometimes we're 1 beyond the map, so avoid it
+	if (_mapTileX + maxTileX - 1 >= _width)
+		maxTileX--;
 
 	_numForegrounds = _numGratings = 0;
 
@@ -886,7 +890,11 @@ void Map::draw() {
 
 			// Draw if not a sky tile
 			if (!g_hdb->_gfx->isSky(tileIndex)) {
-				g_hdb->_gfx->getTile(tileIndex)->draw(screenX, screenY);
+				Tile *tile = g_hdb->_gfx->getTile(tileIndex);
+				if (tile)
+					tile->draw(screenX, screenY);
+				else
+					warning("Cannot find tile with index %d at %d,%d", tileIndex, _mapTileX + i, _mapTileY + j);
 			}
 
 			// Draw Foreground Tile
