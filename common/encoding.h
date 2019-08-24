@@ -23,19 +23,15 @@
 #ifndef COMMON_ENCODING_H
 #define COMMON_ENCODING_H
 
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#endif // HAVE_CONFIG_H
+#include "common/scummsys.h"
+#include "common/str.h"
+#include "common/system.h"
 
 #ifdef USE_ICONV
 #include <iconv.h>
 #else
 typedef void* iconv_t;
 #endif // USE_ICONV
-
-#include "common/scummsys.h"
-#include "common/str.h"
-#include "common/system.h"
 
 #ifdef WIN32
 #include "backends/platform/sdl/win32/win32.h"
