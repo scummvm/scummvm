@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2019-08-24 10:37+0200\n"
-"PO-Revision-Date: 2019-08-22 19:23+0000\n"
+"PO-Revision-Date: 2019-08-29 19:14+0000\n"
 "Last-Translator: jepael <kermespersialainen@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fi/>\n"
@@ -2177,7 +2177,7 @@ msgstr "OPL2LPT"
 
 #: audio/fmopl.cpp:84
 msgid "OPL3LPT"
-msgstr ""
+msgstr "OPL3LPT"
 
 #: audio/mididrv.cpp:209
 #, c-format
