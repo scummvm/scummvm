@@ -232,6 +232,8 @@ struct gameIdList {
 struct Mouse {
 	int button;
 	Common::Point pos;
+
+	Mouse() : button(0) {}
 };
 
 // Used by AGI Mouse protocol 1.0 for v27 (i.e. button pressed -variable).
