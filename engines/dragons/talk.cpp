@@ -420,7 +420,7 @@ uint8 Talk::conversation_related_maybe(uint16 *dialogText, uint16 x, uint16 y, u
 			}
 		}
 		LAB_80032efc:
-		// TODO DAT_800633fc = 0;
+		_vm->data_800633fc = 0;
 		return (uint)returnStatus;
 }
 
