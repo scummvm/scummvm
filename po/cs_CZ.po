@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.7.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2019-08-20 21:15+0200\n"
+"POT-Creation-Date: 2019-08-24 10:37+0200\n"
 "PO-Revision-Date: 2018-04-18 10:09+0000\n"
 "Last-Translator: Adrian Frühwirth <bonki@scummvm.org>\n"
 "Language-Team: Czech <https://translations.scummvm.org/projects/scummvm/"
@@ -2177,25 +2177,29 @@ msgstr "Shodné ID hry:"
 msgid "AdLib emulator"
 msgstr "AdLib emulátor:"
 
-#: audio/fmopl.cpp:71
+#: audio/fmopl.cpp:72
 msgid "MAME OPL emulator"
 msgstr "MAME OPL Emulátor"
 
-#: audio/fmopl.cpp:73
+#: audio/fmopl.cpp:74
 msgid "DOSBox OPL emulator"
 msgstr "DOSBox OPL Emulátor"
 
-#: audio/fmopl.cpp:76
+#: audio/fmopl.cpp:77
 msgid "Nuked OPL emulator"
 msgstr "Nuked OPL Emulátor"
 
-#: audio/fmopl.cpp:79
+#: audio/fmopl.cpp:80
 msgid "ALSA Direct FM"
 msgstr "ALSA Pøímá FM"
 
-#: audio/fmopl.cpp:82
+#: audio/fmopl.cpp:83
 msgid "OPL2LPT"
 msgstr "OPL2LPT"
+
+#: audio/fmopl.cpp:84
+msgid "OPL3LPT"
+msgstr ""
 
 #: audio/mididrv.cpp:209
 #, c-format
