@@ -192,7 +192,7 @@ void QObjectPetka::updateWalk() {
 		_isWalking = false;
 		setPos(_destX, _destY);
 
-		QMessage msg {_id, kSet, (uint16)_imageId, 1, 0, nullptr, 0};
+		QMessage msg(_id, kSet, (uint16)_imageId, 1, 0, nullptr, 0);
 		if (_heroReaction) {
 			uint i;
 			for (i = 0; i < _heroReaction->messages.size(); ++i) {
@@ -204,10 +204,10 @@ void QObjectPetka::updateWalk() {
 
 					initSurface();
 
-					processMessage(QMessage {_id, kAnimate, 0, 0, 0, nullptr, 0});
+					processMessage(QMessage(_id, kAnimate, 0, 0, 0, nullptr, 0));
 
 					_heroReaction->messages.push_back(msg);
-					_heroReaction->messages.push_back(QMessage {_id, kAnimate, 1, 0, 0, nullptr, 0});
+					_heroReaction->messages.push_back(QMessage(_id, kAnimate, 1, 0, 0, nullptr, 0));
 					break;
 				}
 			}
@@ -227,7 +227,7 @@ void QObjectPetka::setReactionAfterWalk(uint index, QReaction **reaction, QMessa
 
 	stopWalk();
 
-	QMessage msg {_id, kWalked, 0, 0, 0, sender, 0};
+	QMessage msg(_id, kWalked, 0, 0, 0, sender, 0);
 	_heroReaction = new QReaction();
 	_sender = sender;
 
@@ -252,7 +252,7 @@ void QObjectPetka::stopWalk() {
 	_isWalking = false;
 	_msgProcessingPaused = false;
 
-	Common::List<QMessage> &list =   g_vm->getQSystem()->_messages;
+	Common::List<QMessage> &list = g_vm->getQSystem()->_messages;
 	for (Common::List<QMessage>::iterator it = list.begin(); it != list.end();) {
 		if (it->opcode == kWalked && it->objId == _id) {
 			it->objId = -1;
@@ -264,7 +264,7 @@ void QObjectPetka::stopWalk() {
 	_heroReaction = nullptr;
 
 	if (!_field7C) {
-		QMessage msg {_id, kSet, (uint16)_imageId, 1, 0, nullptr, 0};
+		QMessage msg(_id, kSet, (uint16)_imageId, 1, 0, nullptr, 0);
 		processMessage(msg);
 	}
 }

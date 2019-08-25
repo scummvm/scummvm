@@ -95,7 +95,7 @@ void BigDialogue::loadSpeechesInfo() {
 	char *curr = str;
 	file->read(str, file->size() - file->pos());
 	for (uint i = 0; i < _speeches.size(); ++i) {
-		_speeches[i].text = Common::convertToU32String(curr, Common::CodePage::kWindows1251);
+		_speeches[i].text = Common::convertToU32String(curr, Common::kWindows1251);
 		curr += strlen(curr) + 1;
 	}
 	delete[] str;

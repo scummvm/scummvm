@@ -86,7 +86,7 @@ static void readObject(QMessageObject &obj, Common::SeekableReadStream &stream,
 	if (castIni.getKey(obj._name, "all", rgbString)) {
 		int r, g, b;
 		sscanf(rgbString.c_str(), "%d %d %d", &r, &g, &b);
-		obj._dialogColor = Graphics::RGBToColor<Graphics::ColorMasks<888>>((byte)r, (byte)g, (byte)b);
+		obj._dialogColor = Graphics::RGBToColor<Graphics::ColorMasks<888> >((byte)r, (byte)g, (byte)b);
 	}
 }
 
@@ -181,12 +181,12 @@ void QSystem::addMessage(const QMessage &msg) {
 }
 
 void QSystem::addMessage(uint16 objId, uint16 opcode, int16 arg1, int16 arg2, int16 arg3, int32 unk, QMessageObject *sender) {
-	_messages.push_back({objId, opcode, arg1, arg2, arg3, sender, unk});
+	_messages.push_back(QMessage(objId, opcode, arg1, arg2, arg3, sender, unk));
 }
 
 void QSystem::addMessageForAllObjects(uint16 opcode, int16 arg1, int16 arg2, int16 arg3, int32 unk, QMessageObject *sender) {
 	for (uint i = 0; i < _allObjects.size(); ++i) {
-		_messages.push_back({_allObjects[i]->_id, opcode, arg1, arg2, arg3, sender, unk});
+		_messages.push_back(QMessage(_allObjects[i]->_id, opcode, arg1, arg2, arg3, sender, unk));
 	}
 }
 

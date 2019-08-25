@@ -110,7 +110,7 @@ void DialogInterface::sub_4155D0(int a) {
 		if (talkerId != talkerId2) {
 			sendMsg(kSay);
 		}
-		g_vm->getQSystem()->_mainInterface->setText(info->text, _talker->_dialogColor);
+		//g_vm->getQSystem()->_mainInterface->setText(info->text, _talker->_dialogColor);
 		_field18 = 1;
 		break;
 	}
@@ -129,15 +129,7 @@ void DialogInterface::sub_4155D0(int a) {
 
 void DialogInterface::sendMsg(uint16 opcode) {
 	if (_talker) {
-		QMessage msg;
-		msg.objId = _talker->_id;
-		msg.opcode = opcode;
-		msg.arg1 = 0;
-		msg.arg2 = 0;
-		msg.arg3 = 0;
-		msg.unk = 0;
-		msg.sender = nullptr;
-		_talker->processMessage(msg);
+		_talker->processMessage(QMessage(_talker->_id, opcode, 0, 0, 0, nullptr, 0));
 	}
 }
 

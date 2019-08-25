@@ -56,7 +56,7 @@ void InterfaceStartup::start() {
 	QObjectBG *bg = (QObjectBG *)g_vm->getQSystem()->findObject(kStartupObjName);
 	_objs.push_back(bg);
 
-	Sound *s = g_vm->soundMgr()->addSound(g_vm->resMgr()->findSoundName(bg->_musicId), Audio::Mixer::SoundType::kMusicSoundType);
+	Sound *s = g_vm->soundMgr()->addSound(g_vm->resMgr()->findSoundName(bg->_musicId), Audio::Mixer::kMusicSoundType);
 	s->play(true);
 
 	const Common::Array<BGInfo> &infos = g_vm->getQSystem()->_mainInterface->_bgs;
