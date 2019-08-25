@@ -75,6 +75,7 @@ protected:
 
 	void spcUnkC();
 
+	void spc11ShakeScreen(); //0x11
 	void spcHandleInventionBookTransition(); // 0x12
 	void spcUnk13InventionBookCloseRelated(); //0x13
 	void spcClearEngineFlag8(); // 0x14
@@ -99,6 +100,8 @@ protected:
 	void spcZigmondFraudSceneLogic(); // 0x3e
 
 	void spcZigmondFraudSceneLogic1(); // 0x40
+
+	void spcBlackDragonOnHillSceneLogic(); //0x46
 
 	void spcLoadScene1(); // 0x49
 
