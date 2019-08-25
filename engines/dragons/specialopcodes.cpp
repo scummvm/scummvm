@@ -114,6 +114,7 @@ void SpecialOpcodes::initOpcodes() {
 
 	OPCODE(0x5b, spcFlickerSetFlag0x80);
 
+	OPCODE(0x5d, spcUnk5d); //knights in castle garden
 	OPCODE(0x5e, spcUnk5e);
 	OPCODE(0x5f, spcUnk5f);
 
@@ -344,6 +345,11 @@ void SpecialOpcodes::spcFlickerSetFlag0x80() {
 	_vm->_dragonINIResource->getFlickerRecord()->actor->setFlag(ACTOR_FLAG_80);
 }
 
+//used in castle garden scene with knights
+void SpecialOpcodes::spcUnk5d() {
+	_vm->getINI(_vm->getINI(0x13b)->field_12 + 0x13c)->actor->updateSequence(_vm->getINI(0x13b)->field_14);
+}
+
 void SpecialOpcodes::spcUnk5e() {
 	panCamera(1);
 	_vm->_dragonINIResource->setFlickerRecord(_vm->getINI(0));
@@ -470,13 +476,13 @@ void SpecialOpcodes::pizzaMakerStopWorking() {
 }
 
 void SpecialOpcodes::clearSceneUpdateFunction() {
-	//TODO
+//TODO
 //	if (DAT_80083148 != DAT_80083154) {
 //		FUN_8001ac5c((uint)DAT_80083148,(uint)DAT_80083150,(uint)DAT_80083154,(uint)DAT_80083158);
 //	}
-//	if (DAT_8006f3a4 != 0xffff) {
-//		actor_update_sequenceID((uint)dragon_ini_pointer[(uint)DAT_80069630].actorId,DAT_8006f3a4);
-//	}
+	if (sceneUpdater.sequenceID != -1) {
+		_vm->getINI(sceneUpdater.iniID)->actor->updateSequence(sceneUpdater.sequenceID);
+	}
 	_vm->setSceneUpdateFunction(NULL);
 }
 
