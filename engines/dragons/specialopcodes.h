@@ -114,6 +114,7 @@ protected:
 
 	void spcFlickerSetFlag0x80();
 
+	void spcUnk5d();
 	void spcUnk5e();
 	void spcUnk5f();
 
