@@ -75,6 +75,7 @@ void SpecialOpcodes::initOpcodes() {
 	OPCODE(0xb, clearSceneUpdateFunction);
 	OPCODE(0xc, spcUnkC);
 
+	OPCODE(0x11, spc11ShakeScreen);
 	OPCODE(0x12, spcHandleInventionBookTransition);
 	OPCODE(0x13, spcUnk13InventionBookCloseRelated);
 	OPCODE(0x14, spcClearEngineFlag8);
@@ -100,6 +101,8 @@ void SpecialOpcodes::initOpcodes() {
 	OPCODE(0x3e, spcZigmondFraudSceneLogic);
 	OPCODE(0x3f, clearSceneUpdateFunction);
 	OPCODE(0x40, spcZigmondFraudSceneLogic1);
+
+	OPCODE(0x46, spcBlackDragonOnHillSceneLogic);
 
 	OPCODE(0x49, spcLoadScene1);
 
@@ -170,6 +173,25 @@ void SpecialOpcodes::spcUnkA() {
 
 void SpecialOpcodes::spcUnkC() {
 	//TODO fade_related_calls_with_1f();
+}
+
+void SpecialOpcodes::spc11ShakeScreen() {
+	//TODO
+//	iVar18 = 1;
+//	local_10a0 = DAT_8001170c;
+//	local_109c = DAT_80011710;
+//	local_1098 = DAT_80011714;
+//	local_1094 = uint32_t_80011718;
+//	local_1090 = DAT_8001171c;
+//	local_108c = DAT_80011720;
+//	local_1088 = DAT_80011724;
+//	local_1084 = DAT_80011728;
+//	screenShakeOffset = (short)local_10a0;
+//	while (screenShakeOffset != 0) {
+//		ContinueGame?();
+//		screenShakeOffset = *(short *)((int)&local_10a0 + ((iVar18 << 0x10) >> 0xf));
+//		iVar18 = iVar18 + 1;
+//	}
 }
 
 void SpecialOpcodes::spcHandleInventionBookTransition() {
@@ -299,6 +321,10 @@ void SpecialOpcodes::spcZigmondFraudSceneLogic1() {
 	sceneUpdater.textTbl[0][0] = 0x2F422; //TODO this might change between game versions
 
 	setupTableBasedSceneUpdateFunction(300,1,0x708);
+}
+
+void SpecialOpcodes::spcBlackDragonOnHillSceneLogic() {
+	//TODO
 }
 
 void SpecialOpcodes::spcUnk4e() {
