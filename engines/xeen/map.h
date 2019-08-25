@@ -319,6 +319,11 @@ public:
 
 		SpriteResourceEntry() { _spriteId = -1; }
 		SpriteResourceEntry(int spriteId): _spriteId(spriteId) { }
+
+		/**
+		 * Returns true if no sprite id is specified
+		 */
+		bool isEmpty() const { return _spriteId == -1; }
 	};
 private:
 	XeenEngine *_vm;

@@ -383,12 +383,24 @@ void MonsterObjectData::synchronize(XeenSerializer &s, MonsterData &monsterData)
 		_wallItems.clear();
 	}
 
-	for (uint i = 0; i < 16; ++i) {
-		b = (i >= _objectSprites.size()) ? 0xff : _objectSprites[i]._spriteId;
-		s.syncAsByte(b);
-		if (s.isLoading() && b != 0xff)
-			_objectSprites.push_back(SpriteResourceEntry(b));
+	byte objSprites[16];
+	int maxSprite = 0;
+	for (int i = 0; i < 16; ++i) {
+		objSprites[i] = (i >= (int)_objectSprites.size()) ? 0xff : _objectSprites[i]._spriteId;
+		s.syncAsByte(objSprites[i]);
+		if (s.isLoading() && objSprites[i] != 0xff)
+			maxSprite = i;
 	}
+
+	if (s.isLoading()) {
+		for (int i = 0; i <= maxSprite; ++i) {
+			if (objSprites[i] == 0xff)
+				_objectSprites.push_back(SpriteResourceEntry());
+			else
+				_objectSprites.push_back(SpriteResourceEntry(objSprites[i]));
+		}
+	}
+
 	for (uint i = 0; i < 16; ++i) {
 		b = (i >= _monsterSprites.size()) ? 0xff : _monsterSprites[i]._spriteId;
 		s.syncAsByte(b);
@@ -810,7 +822,8 @@ void Map::load(int mapId) {
 		}
 
 		// Read in the object sprites
-		_mobData._objectSprites[i]._sprites.load(filename);
+		if (!_mobData._objectSprites[i].isEmpty())
+			_mobData._objectSprites[i]._sprites.load(filename);
 	}
 
 	// Load sprites for the monsters
