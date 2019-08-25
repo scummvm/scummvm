@@ -353,6 +353,8 @@ enum {
 struct AgiControllerKeyMapping {
 	uint16 keycode;
 	byte   controllerSlot;
+
+	AgiControllerKeyMapping() : keycode(0), controllerSlot(0) {}
 };
 
 struct AgiObject {
@@ -372,12 +374,16 @@ struct AgiDir {
 	// 3 = in mem, cant be released
 	// 0x40 = was compressed
 	uint8 flags;
+
+	AgiDir() : volume(0), offset(0), len(0), clen(0), flags(0) {}
 };
 
 struct AgiBlock {
 	bool active;
 	int16 x1, y1;
 	int16 x2, y2;
+
+	AgiBlock() : active(false), x1(0), y1(0), x2(0), y2(0) {}
 };
 
 struct ScriptPos {
@@ -493,6 +499,99 @@ struct AgiGame {
 	int16 nonBlockingTextCyclesLeft;
 
 	bool automaticRestoreGame;
+
+	AgiGame() {
+		_vm = nullptr;
+
+		adjMouseX = 0;
+		adjMouseY = 0;
+
+		for (uint16 i = 0; i < ARRAYSIZE(name); i++) {
+			name[i] = 0;
+		}
+		for (uint16 i = 0; i < ARRAYSIZE(id); i++) {
+			id[i] = 0;
+		}
+		crc = 0;
+
+		for (uint16 i = 0; i < ARRAYSIZE(flags); i++) {
+			flags[i] = 0;
+		}
+		for (uint16 i = 0; i < ARRAYSIZE(vars); i++) {
+			vars[i] = 0;
+		}
+
+		horizon = 0;
+
+		cycleInnerLoopActive = false;
+		cycleInnerLoopType = 0;
+
+		curLogicNr = 0;
+
+		// execStack is defaulted by Common::Array constructor
+
+		playerControl = false;
+		exitAllLogics = false;
+		pictureShown = false;
+		gameFlags = 0;
+
+		// block defaulted by AgiBlock constructor
+
+		gfxMode = false;
+
+		numObjects = 0;
+
+		for (uint16 i = 0; i < ARRAYSIZE(controllerOccured); i++) {
+			controllerOccured[i] = false;
+		}
+
+		// controllerKeyMapping defaulted by AgiControllerKeyMapping constructor
+
+		for (uint16 i = 0; i < MAX_STRINGS + 1; i++) {
+			for (uint16 j = 0; j < MAX_STRINGLEN; j++) {
+				strings[i][j] = 0;
+			}
+		}
+
+		// dirLogic cleared by AgiDir constructor
+		// dirPic cleared by AgiDir constructor
+		// dirView cleared by AgiDir constructor
+		// dirSound cleared by AgiDir constructor
+
+		// pictures cleared by AgiPicture constructor
+		// logics cleared by AgiLogic constructor
+		// views cleared by AgiView constructor
+		for (uint16 i = 0; i < ARRAYSIZE(sounds); i++) {
+			sounds[i] = nullptr;
+		}
+
+		_curLogic = nullptr;
+
+		// screenObjTable cleared by ScreenObjEntry constructor
+
+		// addToPicView cleared by ScreenObjEntry constructor
+
+		automaticSave = false;
+		for (uint16 i = 0; i < ARRAYSIZE(automaticSaveDescription); i++) {
+			automaticSaveDescription[i] = 0;
+		}
+
+		// mouseFence cleared by Common::Rect constructor
+		mouseEnabled = false;
+		mouseHidden = false;
+
+		testResult = 0;
+
+		max_logics = 0;
+		for (uint16 i = 0; i < ARRAYSIZE(logic_list); i++) {
+			logic_list[i] = 0;
+		}
+
+		nonBlockingTextShown = false;
+		nonBlockingTextCyclesLeft = 0;
+
+		automaticRestoreGame = false;
+	}
 };
 
 class AgiLoader {
