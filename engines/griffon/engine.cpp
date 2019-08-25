@@ -298,7 +298,7 @@ Graphics::TransparentSurface *IMG_Load(const char *name, bool colorkey = false) 
 // copypaste from hRnd_CRT()
 float GriffonEngine::RND() {
 	/* return between 0 and 1 (but never 1) */
-	return (float)_rnd->getRandomNumber(32767) * (1.0 / 32768.0f);
+	return (float)_rnd->getRandomNumber(32767) * (1.0f / 32768.0f);
 }
 
 void GriffonEngine::game_addFloatIcon(int ico, float xloc, float yloc) {
@@ -730,11 +730,11 @@ void GriffonEngine::game_castspell(int spellnum, float homex, float homey, float
 			spellinfo[i].damagewho = dw;
 			spellinfo[i].npc = npc;
 
-			spellinfo[i].frame = 32;
+			spellinfo[i].frame = 32.0f;
 			if (damagewho == 0) {
 				spellinfo[i].strength = player.spellstrength / 100;
 				if (player.spellstrength == 100)
-					spellinfo[i].strength = 1.5;
+					spellinfo[i].strength = 1.5f;
 			}
 
 			// set earthslide vars
@@ -3136,7 +3136,7 @@ void GriffonEngine::game_endofgame() {
 
 	ticks = g_system->getMillis();
 
-	float spd = 0.2;
+	float spd = 0.2f;
 
 	if (menabled == 1 && config.music == 1) {
 		Mix_HaltChannel(-1);
@@ -3267,9 +3267,9 @@ void GriffonEngine::game_endofgame() {
 			xofs = xofs - 320;
 
 		if (event.type == Common::EVENT_KEYDOWN)
-			spd = 1;
+			spd = 1.0f;
 		if (event.type == Common::EVENT_KEYUP)
-			spd = 0.2;
+			spd = 0.2f;
 
 		if (event.kbd.keycode == Common::KEYCODE_ESCAPE)
 			break;
@@ -4065,7 +4065,7 @@ void GriffonEngine::game_loadmap(int mapnum) {
 			npcinfo[i].attackdamage = 24;
 			npcinfo[i].spelldamage = 30;
 
-			npcinfo[i].walkspd = 1.4;
+			npcinfo[i].walkspd = 1.4f;
 			npcinfo[i].castpause = ticks;
 		}
 
@@ -4077,7 +4077,7 @@ void GriffonEngine::game_loadmap(int mapnum) {
 			npcinfo[i].attackdamage = 0;
 			npcinfo[i].spelldamage = 30;
 
-			npcinfo[i].walkspd = 1.2;
+			npcinfo[i].walkspd = 1.2f;
 		}
 
 		// black knights
@@ -4099,7 +4099,7 @@ void GriffonEngine::game_loadmap(int mapnum) {
 			npcinfo[i].attackdamage = 50;
 			npcinfo[i].spelldamage = 30;
 
-			npcinfo[i].walkspd = 1.3;
+			npcinfo[i].walkspd = 1.3f;
 
 			npcinfo[i].swayangle = 0;
 		}
@@ -4667,10 +4667,10 @@ __exit_do:
 	roomlocks[73] = 1;
 	roomlocks[82] = 2;
 
-	player.walkspd = 1.1;
-	animspd = 0.5;
+	player.walkspd = 1.1f;
+	animspd = 0.5f;
 	attacking = 0;
-	player.attackspd = 1.5;
+	player.attackspd = 1.5f;
 
 	player.sword = 1;
 	player.level = 1;
@@ -4895,10 +4895,10 @@ void GriffonEngine::game_saveloadnew() {
 
 					if (lowerlock == 1 && curcol == 2 && tickpause < ticks) {
 						if (state_load(currow - 1)) {
-							player.walkspd = 1.1;
-							animspd = .5;
+							player.walkspd = 1.1f;
+							animspd = 0.5f;
 							attacking = 0;
-							player.attackspd = 1.5;
+							player.attackspd = 1.5f;
 
 							pgardens = 0;
 							ptown = 0;
@@ -7594,7 +7594,7 @@ void GriffonEngine::game_updspellsunder() {
 					int xdif = spellinfo[i].enemyx - npcinfo[f].x;
 					int ydif = spellinfo[i].enemyy - npcinfo[f].y;
 
-					float dist = sqrt(xdif * xdif + ydif * ydif);
+					float dist = sqrt((float)(xdif * xdif + ydif * ydif));
 
 					if (dist > 20)
 						dist = 20;
@@ -7901,7 +7901,7 @@ void GriffonEngine::sys_initialize() {
 	sys_LoadFont();
 	sys_LoadItemImgs();
 
-	fpsr = 1;
+	fpsr = 1.0f;
 	nextticks = ticks + 1000;
 
 	for (int i = 0; i <= 15; i++) {
