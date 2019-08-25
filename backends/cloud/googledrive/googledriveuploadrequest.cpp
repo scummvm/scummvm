@@ -152,20 +152,10 @@ void GoogleDriveUploadRequest::startUploadCallback(Networking::JsonResponse resp
 		const Networking::NetworkReadStream *stream = rq->getNetworkReadStream();
 		if (stream) {
 			long code = stream->httpResponseCode();
-			Common::String headers = stream->responseHeaders();
 			if (code == 200) {
-				const char *cstr = headers.c_str();
-				const char *position = strstr(cstr, "Location: ");
-
-				if (position) {
-					Common::String result = "";
-					char c;
-					for (const char *i = position + 10; c = *i, c != 0; ++i) {
-						if (c == '\n' || c == '\r')
-							break;
-						result += c;
-					}
-					_uploadUrl = result;
+				Common::HashMap<Common::String, Common::String> headers = stream->responseHeadersMap();
+				if (headers.contains("location")) {
+					_uploadUrl = headers["location"];
 					uploadNextPart();
 					return;
 				}
@@ -230,25 +220,19 @@ bool GoogleDriveUploadRequest::handleHttp308(const Networking::NetworkReadStream
 	if (stream->httpResponseCode() != 308)
 		return false; //seriously
 
-	Common::String headers = stream->responseHeaders();
-	const char *cstr = headers.c_str();
-	for (int rangeTry = 0; rangeTry < 2; ++rangeTry) {
-		const char *needle = (rangeTry == 0 ? "Range: 0-" : "Range: bytes=0-");
-		uint32 needleLength = (rangeTry == 0 ? 9 : 15);
+	Common::HashMap<Common::String, Common::String> headers = stream->responseHeadersMap();
+	if (headers.contains("range")) {
+		Common::String range = headers["range"];
+		for (int rangeTry = 0; rangeTry < 2; ++rangeTry) {
+			const char *needle = (rangeTry == 0 ? "0-" : "bytes=0-"); //if it lost the first part, I refuse to talk with it
+			uint32 needleLength = (rangeTry == 0 ? 2 : 8);
 
-		const char *position = strstr(cstr, needle); //if it lost the first part, I refuse to talk with it
-
-		if (position) {
-			Common::String result = "";
-			char c;
-			for (const char *i = position + needleLength; c = *i, c != 0; ++i) {
-				if (c == '\n' || c == '\r')
-					break;
-				result += c;
+			if (range.hasPrefix(needle)) {
+				range.erase(0, needleLength);
+				_serverReceivedBytes = range.asUint64() + 1;
+				uploadNextPart();
+				return true;
 			}
-			_serverReceivedBytes = result.asUint64() + 1;
-			uploadNextPart();
-			return true;
 		}
 	}
 
