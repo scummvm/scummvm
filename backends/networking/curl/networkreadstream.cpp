@@ -240,6 +240,78 @@ Common::String NetworkReadStream::responseHeaders() const {
 	return _responseHeaders;
 }
 
+Common::HashMap<Common::String, Common::String> NetworkReadStream::responseHeadersMap() const {
+	// HTTP headers are described at RFC 2616: https://tools.ietf.org/html/rfc2616#section-4.2
+	// this implementation tries to follow it, but for simplicity it does not support multi-line header values
+
+	Common::HashMap<Common::String, Common::String> headers;
+	Common::String headerName, headerValue, trailingWhitespace;
+	char c;
+	bool readingName = true;
+
+	for (uint i = 0; i < _responseHeaders.size(); ++i) {
+		c = _responseHeaders[i];
+
+		if (readingName) {
+			if (c == ' ' || c == '\r' || c == '\n' || c == '\t') {
+				// header names should not contain any whitespace, this is invalid
+				// ignore what's been before
+				headerName = "";
+				continue;
+			}
+			if (c == ':') {
+				if (!headerName.empty()) {
+					readingName = false;
+				}
+				continue;
+			}
+			headerName += c;
+			continue;
+		}
+
+		// reading value:
+		if (c == ' ' || c == '\t') {
+			if (headerValue.empty()) {
+				// skip leading whitespace
+				continue;
+			} else {
+				// accumulate trailing whitespace
+				trailingWhitespace += c;
+				continue;
+			}
+		}
+
+		if (c == '\r' || c == '\n') {
+			// not sure if RFC allows empty values, we'll ignore such
+			if (!headerName.empty() && !headerValue.empty()) {
+				// add header value
+				// RFC allows header with the same name to be sent multiple times
+				// and requires it to be equivalent of just listing all header values separated with comma
+				// so if header already was met, we'll add new value to the old one
+				headerName.toLowercase();
+				if (headers.contains(headerName)) {
+					headers[headerName] += "," + headerValue;
+				} else {
+					headers[headerName] = headerValue;
+				}
+			}
+
+			headerName = "";
+			headerValue = "";
+			trailingWhitespace = "";
+			readingName = true;
+			continue;
+		}
+
+		// if we meet non-whitespace character, turns out those "trailing" whitespace characters were not so trailing
+		headerValue += trailingWhitespace;
+		trailingWhitespace = "";
+		headerValue += c;
+	}
+
+	return headers;
+}
+
 uint32 NetworkReadStream::fillWithSendingContents(char *bufferToFill, uint32 maxSize) {
 	uint32 sendSize = _sendingContentsSize - _sendingContentsPos;
 	if (sendSize > maxSize)
