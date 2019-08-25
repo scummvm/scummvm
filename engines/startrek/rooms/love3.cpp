@@ -69,8 +69,8 @@ void Room::love3Tick1() {
 
 void Room::love3Tick80() {
 	if (!_awayMission->love.visitedRoomWithRomulans && haveItem(OBJECT_IRLG)) {
-		showText(TX_SPEAKER_MCCOY, TX_LOV3_010);
-		showText(TX_SPEAKER_SPOCK, TX_LOV3_020);
+		showText(TX_SPEAKER_MCCOY, 10, true);
+		showText(TX_SPEAKER_SPOCK, 20, true);
 	}
 }
 
@@ -89,27 +89,27 @@ void Room::love3LookAtServicePanel() {
 }
 
 void Room::love3LookAtMonitor() {
-	showDescription(TX_LOV3N000); // BUGFIX: original didn't play the audio
+	showDescription(0, true); // BUGFIX: original didn't play the audio
 }
 
 void Room::love3LookAtWrench() {
-	showDescription(TX_LOV3N002);
+	showDescription(2, true);
 }
 
 void Room::love3LookAtKirk() {
-	showDescription(TX_LOV3N003);
+	showDescription(3, true);
 }
 
 void Room::love3LookAtMccoy() {
-	showDescription(TX_LOV3N005);
+	showDescription(5, true);
 }
 
 void Room::love3LookAtSpock() {
-	showDescription(TX_LOV3N008);
+	showDescription(8, true);
 }
 
 void Room::love3LookAtRedshirt() {
-	showDescription(TX_LOV3N004);
+	showDescription(4, true);
 }
 
 void Room::love3LookAnywhere() {
@@ -121,69 +121,69 @@ void Room::love3LookAtShaft() {
 }
 
 void Room::love3LookAtGrate() {
-	showDescription(TX_LOV3N019);
+	showDescription(19, true);
 }
 
 void Room::love3LookAtPanel() {
 	if (_awayMission->love.insulationOnGround)
-		showDescription(TX_LOV3N017);
+		showDescription(17, true);
 	else
 		showDescription(TX_LOV3NA22);
 }
 
 void Room::love3LookAtGasTank() {
-	showDescription(TX_LOV3N006);
+	showDescription(6, true);
 }
 
 void Room::love3LookAtTurbines() {
-	showDescription(TX_LOV3N026);
-	showText(TX_SPEAKER_MCCOY, TX_LOV3_009);
-	showText(TX_SPEAKER_SPOCK, TX_LOV3_019);
+	showDescription(26, true);
+	showText(TX_SPEAKER_MCCOY, 9, true);
+	showText(TX_SPEAKER_SPOCK, 19, true);
 	if (!_awayMission->redshirtDead)
-		showText(TX_SPEAKER_FERRIS, TX_LOV3_026);
+		showText(TX_SPEAKER_FERRIS, 26, true);
 }
 
 void Room::love3TalkToKirk() {
-	showText(TX_SPEAKER_KIRK, TX_LOV3_001);
+	showText(TX_SPEAKER_KIRK, 1, true);
 }
 
 void Room::love3TalkToSpock() {
 	if (_awayMission->love.visitedRoomWithRomulans)
-		showText(TX_SPEAKER_SPOCK, TX_LOV3_003);
+		showText(TX_SPEAKER_SPOCK, 3, true);
 	else if (_awayMission->love.romulansUnconsciousFromLaughingGas)
-		showText(TX_SPEAKER_SPOCK, TX_LOV3_017);
+		showText(TX_SPEAKER_SPOCK, 17, true);
 	else if (haveItem(OBJECT_IRLG))
-		showText(TX_SPEAKER_SPOCK, TX_LOV3_004);
+		showText(TX_SPEAKER_SPOCK, 4, true);
 	else
-		showText(TX_SPEAKER_SPOCK, TX_LOV3_003);
+		showText(TX_SPEAKER_SPOCK, 3, true);
 }
 
 void Room::love3TalkToMccoy() {
-	showText(TX_SPEAKER_MCCOY, TX_LOV3_008);
+	showText(TX_SPEAKER_MCCOY, 8, true);
 }
 
 void Room::love3TalkToRedshirt() {
-	showText(TX_SPEAKER_FERRIS, TX_LOV3_024);
+	showText(TX_SPEAKER_FERRIS, 24, true);
 }
 
 void Room::love3UseMTricorderAnywhere() {
 	if (_awayMission->love.knowAboutVirus)
-		mccoyScan(DIR_S, TX_LOV3_005, false);
+		mccoyScan(DIR_S, 5, false, true);
 	else
-		mccoyScan(DIR_S, TX_LOV3_006, false);
+		mccoyScan(DIR_S, 6, false, true);
 }
 
 void Room::love3UseSTricorderOnTurbines() {
-	spockScan(DIR_N, TX_LOV3_014, false);
+	spockScan(DIR_N, 14, false, true);
 }
 
 void Room::love3UseSTricorderOnInsulation() {
 	if (_awayMission->love.insulationOnGround)
-		spockScan(DIR_W, TX_LOV3_002, false);
+		spockScan(DIR_W, 2, false, true);
 }
 
 void Room::love3UseSTricorderAnywhere() {
-	spockScan(DIR_S, TX_LOV3_013, false);
+	spockScan(DIR_S, 13, false, true);
 }
 
 void Room::love3UseKirkOnServicePanel() {
@@ -222,11 +222,11 @@ void Room::love3OpenedOrClosedServicePanel() {
 
 	if (_awayMission->love.servicePanelOpen) {
 		if (_awayMission->love.tookN2TankFromServicePanel)
-			showDescription(TX_LOV3N023);
+			showDescription(23, true);
 		else
-			showDescription(TX_LOV3N022);
+			showDescription(22, true);
 	} else
-		showDescription(TX_LOV3N020);
+		showDescription(20, true);
 }
 
 // Use wrench on gas tank, to screw or unscrew it in position
@@ -241,19 +241,19 @@ void Room::love3ReachedGasTankToUnscrew() {
 
 void Room::love3ScrewedOrUnscrewedGasTank() {
 	if (!_awayMission->love.gasTankUnscrewed) {
-		showDescription(TX_LOV3N012);
+		showDescription(12, true);
 		if (!_awayMission->redshirtDead)
-			showText(TX_SPEAKER_FERRIS, TX_LOV3_022);
+			showText(TX_SPEAKER_FERRIS, 22, true);
 		_awayMission->love.gasTankUnscrewed = true;
 	} else {
-		showDescription(TX_LOV3N015);
+		showDescription(15, true);
 		_awayMission->love.gasTankUnscrewed = false;
 	}
 }
 
 
 void Room::love3UseWrenchOnO2OrH2Gas() {
-	showText(TX_SPEAKER_SPOCK, TX_LOV3_016);
+	showText(TX_SPEAKER_SPOCK, 16, true);
 }
 
 
@@ -268,7 +268,7 @@ void Room::love3ReachedGasTankToPutDown() {
 }
 
 void Room::love3PutN2TankBack() {
-	showDescription(TX_LOV3N013);
+	showDescription(13, true);
 	_awayMission->love.tookN2TankFromServicePanel = false;
 	loseItem(OBJECT_IN2GAS);
 	loadActorAnim(OBJECT_GAS_TANK, "r4n2", 0, 0, 0);
@@ -291,12 +291,12 @@ void Room::love3OpenedEngineeringPanel() {
 		loadActorAnim(OBJECT_INSULATION, "s3r4p1", 0, 0, 0);
 		_awayMission->love.insulationOnGround = true;
 	}
-	showDescription(TX_LOV3N021);
+	showDescription(21, true);
 }
 
 
 void Room::love3UseWrenchOnMonitor() {
-	showText(TX_SPEAKER_SPOCK, TX_LOV3_018);
+	showText(TX_SPEAKER_SPOCK, 18, true);
 }
 
 
@@ -312,14 +312,14 @@ void Room::love3PouredWaterOnMonitor() {
 	// BUGFIX: the speaker should be Lt. Ferris. In the original, the speaker wasn't
 	// specified.
 	// However, there is no substitute text for when Lt. Ferris is dead.
-	showText(TX_SPEAKER_FERRIS, TX_LOV3_021);
+	showText(TX_SPEAKER_FERRIS, 21, true);
 
 	loseItem(OBJECT_IH2O);
 }
 
 
 void Room::love3UseCrewmanOnEngineeringPanelOrGrate() {
-	showDescription(TX_LOV3N030);
+	showDescription(30, true);
 }
 
 
@@ -344,7 +344,7 @@ void Room::love3OpenedOrClosedGrate() {
 	if (!_awayMission->love.grateRemoved) {
 		_awayMission->love.grateRemoved = true;
 		loadActorAnim(OBJECT_GRATE, "s3r4g3", 0, 0, 0);
-		showDescription(TX_LOV3N016);
+		showDescription(16, true);
 		if (!_awayMission->love.gotPointsForOpeningGrate) {
 			_awayMission->love.gotPointsForOpeningGrate = true;
 			_awayMission->love.missionScore++;
@@ -352,13 +352,13 @@ void Room::love3OpenedOrClosedGrate() {
 	} else {
 		loadActorAnim(OBJECT_GRATE, "s3r4g1", 0x116, 0x8f, 0);
 		_awayMission->love.grateRemoved = false;
-		showDescription(TX_LOV3N032);
+		showDescription(32, true);
 	}
 }
 
 
 void Room::love3UseCrewmanOnShaft() {
-	showDescription(TX_LOV3N011);
+	showDescription(11, true);
 }
 
 
@@ -368,13 +368,13 @@ void Room::love3UseWaterOnShaft() {
 
 void Room::love3ReachedShaftUsingWater() {
 	if (!_awayMission->love.grateRemoved)
-		showDescription(TX_LOV3N025);
+		showDescription(25, true);
 	else
 		loadActorAnimC(OBJECT_KIRK, "kuseme", -1, -1, &Room::love3PouredWaterDownShaft);
 }
 
 void Room::love3PouredWaterDownShaft() {
-	showDescription(TX_LOV3N009);
+	showDescription(9, true);
 	loseItem(OBJECT_IH2O);
 }
 
@@ -385,14 +385,14 @@ void Room::love3UseNitrousOxideOnShaft() {
 
 void Room::love3ReachedShaftUsingNitrousOxide() {
 	if (!_awayMission->love.grateRemoved)
-		showDescription(TX_LOV3N025);
+		showDescription(25, true);
 	else
 		loadActorAnimC(OBJECT_KIRK, "kuseme", -1, -1, &Room::love3PouredNitrousOxideDownShaft);
 }
 
 void Room::love3PouredNitrousOxideDownShaft() {
-	showDescription(TX_LOV3N018);
-	showText(TX_SPEAKER_SPOCK, TX_LOV3_012);
+	showDescription(18, true);
+	showText(TX_SPEAKER_SPOCK, 12, true);
 	loseItem(OBJECT_IN2O);
 }
 
@@ -403,16 +403,16 @@ void Room::love3UseAmmoniaOnShaft() {
 
 void Room::love3ReachedShaftUsingAmmonia() {
 	if (!_awayMission->love.grateRemoved)
-		showDescription(TX_LOV3N025);
+		showDescription(25, true);
 	else
 		loadActorAnimC(OBJECT_KIRK, "kuseme", -1, -1, &Room::love3PouredAmmoniaDownShaft);
 }
 
 void Room::love3PouredAmmoniaDownShaft() {
 	if (!_awayMission->love.romulansUnconsciousFromVirus) {
-		showDescription(TX_LOV3N001);
+		showDescription(01, true);
 		if (!_awayMission->redshirtDead)
-			showText(TX_SPEAKER_FERRIS, TX_LOV3_023);
+			showText(TX_SPEAKER_FERRIS, 23, true);
 	}
 
 	loseItem(OBJECT_INH3);
@@ -427,7 +427,7 @@ void Room::love3UseRomulanLaughingGasOnShaft() {
 		_awayMission->love.missionScore += 6;
 	}
 	if (_awayMission->love.romulansUnconsciousFromLaughingGas)
-		showText(TX_SPEAKER_SPOCK, TX_LOV3_011);
+		showText(TX_SPEAKER_SPOCK, 11, true);
 	else {
 		walkCrewmanC(OBJECT_KIRK, 0xf6, 0xa4, &Room::love3ReachedShaftUsingRomulanLaughingGas);
 	}
@@ -435,7 +435,7 @@ void Room::love3UseRomulanLaughingGasOnShaft() {
 
 void Room::love3ReachedShaftUsingRomulanLaughingGas() {
 	if (!_awayMission->love.grateRemoved)
-		showDescription(TX_LOV3N025);
+		showDescription(25, true);
 	else {
 		loadActorAnimC(OBJECT_KIRK, "kuseme", -1, -1, &Room::love3PouredRomulanLaughingGasDownShaft);
 		playVoc("EFX24");
@@ -470,7 +470,7 @@ void Room::love3PickedUpWrench() {
 	giveItem(OBJECT_IWRENCH);
 	loadActorStandAnim(OBJECT_WRENCH);
 	_awayMission->love.wrenchTaken = true;
-	showDescription(TX_LOV3N031);
+	showDescription(31, true);
 }
 
 
@@ -481,9 +481,9 @@ void Room::love3GetGasTank() {
 
 void Room::love3ReachedGasTankToGet() {
 	if (_awayMission->love.gasTankUnscrewed)
-		showDescription(TX_LOV3N007);
+		showDescription(07, true);
 	else
-		showDescription(TX_LOV3N014);
+		showDescription(14, true);
 }
 
 
@@ -497,8 +497,8 @@ void Room::love3ReachedGasTankUsingAntigrav() {
 		loadActorAnimC(OBJECT_KIRK, "kusehe", -1, -1, &Room::love3PickedUpGasTank);
 		playVoc("SE3PLBAT");
 	} else {
-		showDescription(TX_LOV3N010);
-		showText(TX_SPEAKER_SPOCK, TX_LOV3_015);
+		showDescription(10, true);
+		showText(TX_SPEAKER_SPOCK, 15, true);
 	}
 }
 
@@ -509,7 +509,7 @@ void Room::love3PickedUpGasTank() {
 
 	showDescription(TX_LOV3NJ32);
 	if (!_awayMission->redshirtDead)
-		showText(TX_SPEAKER_FERRIS, TX_LOV3_025);
+		showText(TX_SPEAKER_FERRIS, 25, true);
 }
 
 void Room::love3GetInsulation() {
@@ -524,7 +524,7 @@ void Room::love3ReachedInsulationToGet() {
 void Room::love3PickedUpInsulation() {
 	loadActorStandAnim(OBJECT_KIRK);
 	giveItem(OBJECT_IINSULAT);
-	showDescription(TX_LOV3N029);
+	showDescription(29, true);
 }
 
 }

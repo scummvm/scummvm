@@ -158,122 +158,122 @@ void Room::love1ReachedDoor2() {
 }
 
 void Room::love1LookAtLaser() {
-	showDescription(TX_LOV1N000);
+	showDescription(0, true);
 }
 
 void Room::love1LookAtKirk() {
-	showDescription(TX_LOV1N003);
+	showDescription(3, true);
 }
 
 void Room::love1LookAtSpock() {
-	showDescription(TX_LOV1N004);
+	showDescription(4, true);
 }
 
 void Room::love1LookAtMccoy() {
-	showDescription(TX_LOV1N001);
+	showDescription(1, true);
 }
 
 void Room::love1LookAtRedshirt() {
-	showDescription(TX_LOV1N002);
+	showDescription(2, true);
 }
 
 void Room::love1LookAnywhere() {
-	showDescription(TX_LOV1N019);
+	showDescription(19, true);
 }
 
 void Room::love1LookAtNozzle() {
-	showDescription(TX_LOV1N022);
+	showDescription(22, true);
 }
 
 void Room::love1LookAtLadder() {
-	showDescription(TX_LOV1N021);
+	showDescription(21, true);
 }
 
 void Room::love1LookAtDoor1Or2() {
-	showDescription(TX_LOV1N020);
+	showDescription(20, true);
 }
 
 void Room::love1LookAtDoor3() {
-	showDescription(TX_LOV1N017);
+	showDescription(17, true);
 }
 
 void Room::love1LookAtDistillator() {
-	showDescription(TX_LOV1N016);
+	showDescription(16, true);
 }
 
 void Room::love1LookAtChamber() {
 	if (_awayMission->love.chamberHasCure)
-		showDescription(TX_LOV1N013);
+		showDescription(13, true);
 	else
-		showDescription(TX_LOV1N014);
+		showDescription(14, true);
 }
 
 void Room::love1LookAtReplicator() {
-	showDescription(TX_LOV1N015);
+	showDescription(15, true);
 }
 
 void Room::love1LookAtFreezer() {
 	if (_awayMission->love.freezerOpen)
-		showDescription(TX_LOV1N023);
+		showDescription(23, true);
 	else
-		showDescription(TX_LOV1N018);
+		showDescription(18, true);
 }
 
 void Room::love1LookAtDishes() {
-	showDescription(TX_LOV1N012);
+	showDescription(12, true);
 }
 
 void Room::love1TalkToKirk() {
-	showText(TX_SPEAKER_KIRK, TX_LOV1_001);
+	showText(TX_SPEAKER_KIRK, 1, true);
 }
 
 void Room::love1TalkToSpock() {
-	showText(TX_SPEAKER_SPOCK, TX_LOV1_005);
+	showText(TX_SPEAKER_SPOCK, 5, true);
 }
 
 void Room::love1TalkToMccoy() {
-	showText(TX_SPEAKER_MCCOY, TX_LOV1_011);
+	showText(TX_SPEAKER_MCCOY, 11, true);
 }
 
 void Room::love1TalkToRedshirt() {
-	showText(TX_SPEAKER_FERRIS, TX_LOV1_027);
+	showText(TX_SPEAKER_FERRIS, 27, true);
 }
 
 void Room::love1UseMTricorderOnDishes() {
-	mccoyScan(DIR_W, TX_LOV1_017, false);
+	mccoyScan(DIR_W, 17, false, true);
 	// TODO: only works in this room, despite being inventory item?
 }
 
 void Room::love1UseMTricorderAnywhere() {
 	if (_awayMission->love.knowAboutVirus)
-		mccoyScan(DIR_S, TX_LOV1_009, false);
+		mccoyScan(DIR_S, 9, false, true);
 	else
-		mccoyScan(DIR_S, TX_LOV1_010, false);
+		mccoyScan(DIR_S, 10, false, true);
 }
 
 void Room::love1UseSTricorderOnReplicator() {
-	spockScan(DIR_N, TX_LOV1_022, false);
+	spockScan(DIR_N, 22, false, true);
 }
 
 void Room::love1UseSTricorderOnLaser() {
-	spockScan(DIR_E, TX_LOV1_006, false);
+	spockScan(DIR_E, 6, false, true);
 }
 
 void Room::love1UseSTricorderOnFreezer() {
-	spockScan(DIR_W, TX_LOV1_023, false);
+	spockScan(DIR_W, 23, false, true);
 }
 
 void Room::love1UseSTricorderAnywhere() {
-	spockScan(DIR_S, TX_LOV1_003, false);
+	spockScan(DIR_S, 3, false, true);
 }
 
 void Room::love1UseSTricorderOnDishes() {
-	spockScan(DIR_W, TX_LOV1_004, false);
+	spockScan(DIR_W, 4, false, true);
 	// TODO: only works in this room, despite being inventory item?
 }
 
 void Room::love1UseSTricorderOnDistillator() {
-	spockScan(DIR_S, TX_LOV1_007, false);
+	spockScan(DIR_S, 7, false, true);
 }
 
 void Room::love1GetFreezer() {
@@ -284,17 +284,17 @@ void Room::love1KirkReachedFreezer() {
 	if (_awayMission->love.freezerOpen)
 		loadActorAnim2(OBJECT_KIRK, "kusehw", -1, -1, 9);
 	else
-		showDescription(TX_LOV1N010);
+		showDescription(10, true);
 }
 
 void Room::love1KirkGotVirusCulture() {
 	giveItem(OBJECT_IDISHES);
-	showDescription(TX_LOV1N006);
+	showDescription(6, true);
 }
 
 void Room::love1GetFromChamber() {
 	if (!_awayMission->love.chamberHasDish)
-		showDescription(TX_LOV1N009);
+		showDescription(9, true);
 	else
 		walkCrewman(OBJECT_KIRK, 0xb5, 0x8c, 8);
 }
@@ -306,14 +306,14 @@ void Room::love1KirkReachedChamber() {
 void Room::love1KirkGotCureSample() {
 	if (_awayMission->love.chamberHasCure) {
 		giveItem(OBJECT_ISAMPLE);
-		showDescription(TX_LOV1N035);
+		showDescription(35, true);
 
 		// BUGFIX: after removing the cure, unset this variable.
 		// Otherwise, any normal dish inserted afterward automagically becomes a cure.
 		_awayMission->love.chamberHasCure = false;
 	} else {
 		giveItem(OBJECT_IDISHES);
-		showDescription(TX_LOV1N006);
+		showDescription(6, true);
 	}
 
 	loadActorStandAnim(OBJECT_DISH_IN_CHAMBER);
@@ -328,7 +328,7 @@ void Room::love1GetFromNozzle() {
 
 void Room::love1KirkReachedNozzleToGet() {
 	if (_awayMission->love.bottleInNozzle == 0)
-		showDescription(TX_LOV1N011);
+		showDescription(11, true);
 	else
 		loadActorAnim2(OBJECT_KIRK, "kusemn", -1, -1, 11);
 }
@@ -354,7 +354,7 @@ void Room::love1KirkGotBottleFromNozzle() {
 
 	_awayMission->love.bottleInNozzle = BOTTLETYPE_NONE;
 	loadActorStandAnim(OBJECT_BOTTLE);
-	showDescription(TX_LOV1N007);
+	showDescription(7, true);
 	_roomVar.love.itemInNozzle = 0;
 }
 
@@ -404,15 +404,15 @@ void Room::love1KirkPutBottleInNozzle() {
 }
 
 void Room::love1UseAnthingOnNozzle() {
-	showText(TX_SPEAKER_MCCOY, TX_LOV1_012);
+	showText(TX_SPEAKER_MCCOY, 12, true);
 }
 
 void Room::love1UseSpockOnReplicator() {
-	showText(TX_SPEAKER_SPOCK, TX_LOV1_002);
+	showText(TX_SPEAKER_SPOCK, 2, true);
 }
 
 void Room::love1UseRedshirtOnReplicator() {
-	showText(TX_SPEAKER_FERRIS, TX_LOV1_026);
+	showText(TX_SPEAKER_FERRIS, 26, true);
 }
 
 void Room::love1UseMccoyOnReplicator() {
@@ -421,10 +421,10 @@ void Room::love1UseMccoyOnReplicator() {
 
 void Room::love1MccoyReachedReplicator() {
 	if (_awayMission->love.bottleInNozzle == BOTTLETYPE_NONE) {
-		showText(TX_SPEAKER_MCCOY, TX_LOV1_021);
+		showText(TX_SPEAKER_MCCOY, 21, true);
 		walkCrewman(OBJECT_MCCOY, 0xbf, 0x98, 0);
 	} else if (!_awayMission->love.chamberHasDish) {
-		showText(TX_SPEAKER_MCCOY, TX_LOV1_015);
+		showText(TX_SPEAKER_MCCOY, 15, true);
 		walkCrewman(OBJECT_MCCOY, 0xbf, 0x98, 0);
 	} else
 		loadActorAnim2(OBJECT_MCCOY, "musehn", -1, -1, 13);
@@ -437,7 +437,7 @@ void Room::love1MccoyUsedReplicator() {
 		playSoundEffectIndex(SND_DOOR1);
 		walkCrewman(OBJECT_MCCOY, 0xbf, 0x98, 0);
 	} else {
-		showText(TX_SPEAKER_MCCOY, TX_LOV1_019);
+		showText(TX_SPEAKER_MCCOY, 19, true);
 		walkCrewman(OBJECT_MCCOY, 0xbf, 0x98, 0);
 	}
 }
@@ -449,12 +449,12 @@ void Room::love1ChamberClosed() {
 
 void Room::love1ChamberOpened() {
 	loadActorAnim(OBJECT_DISH_IN_CHAMBER, "dishes", 0xb4, 0x71, 0);
-	showText(TX_SPEAKER_MCCOY, TX_LOV1_018);
+	showText(TX_SPEAKER_MCCOY, 18, true);
 	_awayMission->love.chamberHasCure = true;
 }
 
 void Room::love1UseAnythingOnChamber() {
-	showText(TX_SPEAKER_MCCOY, TX_LOV1_013);
+	showText(TX_SPEAKER_MCCOY, 13, true);
 }
 
 void Room::love1UseDishesOnChamber() {
@@ -463,7 +463,7 @@ void Room::love1UseDishesOnChamber() {
 
 void Room::love1KirkReachedChamberToPut() {
 	if (_awayMission->love.chamberHasDish)
-		showText(TX_SPEAKER_MCCOY, TX_LOV1_014); // TODO: test
+		showText(TX_SPEAKER_MCCOY, 14, true); // TODO: test
 	else {
 		loadActorAnim(OBJECT_CHAMBER, "s3r2d5", 0xb4, 0x75, 1);
 		playSoundEffectIndex(SND_DOOR1);
@@ -491,7 +491,7 @@ void Room::love1KirkReachedDistillator() {
 
 void Room::love1KirkGotPolyberylcarbonate() {
 	// Result of using insulation on distillator
-	showDescription(TX_LOV1N034);
+	showDescription(34, true);
 	if (!_awayMission->love.gotPolyberylcarbonate) {
 		_awayMission->love.gotPolyberylcarbonate = true;
 		_awayMission->love.missionScore++;
@@ -561,7 +561,7 @@ void Room::love1ReachedFreezerWithArbitraryItem() {
 }
 
 void Room::love1FinishedUsingArbitraryItemOnFreezer() {
-	showDescription(TX_LOV1N008);
+	showDescription(8, true);
 }
 
 void Room::love1UseAnythingOnReplicator() {
@@ -573,7 +573,7 @@ void Room::love1ReachedReplicatorWithArbitraryItem() {
 }
 
 void Room::love1FinishedUsingArbitraryItemOnReplicator() {
-	showText(TX_SPEAKER_MCCOY, TX_LOV1_016);
+	showText(TX_SPEAKER_MCCOY, 16, true);
 }
 
 void Room::love1UseAnythingOnDistillator() {
@@ -585,7 +585,7 @@ void Room::love1ReachedDistillatorWithArbitraryItem() {
 }
 
 void Room::love1FinishedUsingArbitraryItemOnDistillator() {
-	showText(TX_SPEAKER_MCCOY, TX_LOV1_008);
+	showText(TX_SPEAKER_MCCOY, 8, true);
 }
 
 void Room::love1UseKirkOnLadder() {
@@ -639,10 +639,10 @@ void Room::love1CrewmanReachedLadder() {
 void Room::love1CrewmanDiedFromPhaser() {
 	if (_roomVar.love.crewmanUsingDevice == OBJECT_REDSHIRT) {
 		_awayMission->disableInput = false;
-		showText(TX_SPEAKER_FERRIS, TX_LOV1_024);
+		showText(TX_SPEAKER_FERRIS, 24, true);
 		_awayMission->redshirtDead = true;
 	} else {
-		showText(_roomVar.love.dyingSpeaker, TX_LOV1_025);
+		showText(_roomVar.love.dyingSpeaker, 25, true);
 		showGameOverMenu();
 	}
 }
@@ -654,7 +654,7 @@ void Room::love1TouchedHotspot0() {
 	loadActorAnim(OBJECT_PHASERSHOT, "s3r2s1", 0xf3, 0x89, 0);
 	playSoundEffectIndex(SND_PHASSHOT);
 	if (!_awayMission->redshirtDead)
-		showText(TX_SPEAKER_FERRIS, TX_LOV1_028);
+		showText(TX_SPEAKER_FERRIS, 28, true);
 }
 
 }

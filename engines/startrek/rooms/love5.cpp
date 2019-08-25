@@ -71,7 +71,7 @@ void Room::love5Timer4Expired() {
 }
 
 void Room::love5UseStunPhaserOnPreax() {
-	showText(TX_SPEAKER_MCCOY, TX_LOV5_011);
+	showText(TX_SPEAKER_MCCOY, 11, true);
 
 	// BUG: this function has two implementations. The second one (which is shadowed) is
 	// below.
@@ -80,23 +80,23 @@ void Room::love5UseStunPhaserOnPreax() {
 }
 
 void Room::love5LookAtKirk() {
-	showDescription(TX_LOV5N004);
+	showDescription(04, true);
 }
 
 void Room::love5LookAtSpock() {
-	showDescription(TX_LOV5N005);
+	showDescription(05, true);
 }
 
 void Room::love5LookAtMccoy() {
-	showDescription(TX_LOV5N002);
+	showDescription(02, true);
 }
 
 void Room::love5LookAtRedshirt() {
-	showDescription(TX_LOV5N003);
+	showDescription(3, true);
 }
 
 void Room::love5LookAnywhere() {
-	showDescription(TX_LOV5N008);
+	showDescription(8, true);
 
 	// There is an unused version of this function, which states "This is Dr. Marcus's
 	// quarters, and there are hostages and 4 romulans here". That description doesn't
@@ -105,104 +105,104 @@ void Room::love5LookAnywhere() {
 	// load room LOVE6. This may be a leftover from a removed room that somehow ended up
 	// here.
 
-	//showText(TX_LOV5N009);
+	//showText(09, true);
 }
 
 void Room::love5LookAtDevice() {
-	showDescription(TX_LOV5N013);
-	showText(TX_SPEAKER_MCCOY, TX_LOV5_028);
-	showText(TX_SPEAKER_MARCUS, TX_LOV5_044);
+	showDescription(13, true);
+	showText(TX_SPEAKER_MCCOY, 28, true);
+	showText(TX_SPEAKER_MARCUS, 44, true);
 }
 
 void Room::love5LookAtConsole() {
-	showDescription(TX_LOV5N016);
-	showText(TX_SPEAKER_MCCOY, TX_LOV5_031);
-	showText(TX_SPEAKER_MARCUS, TX_LOV5_050);
+	showDescription(16, true);
+	showText(TX_SPEAKER_MCCOY, 31, true);
+	showText(TX_SPEAKER_MARCUS, 50, true);
 }
 
 void Room::love5LookAtDrMarcus() {
 	if (_awayMission->love.freedMarcusAndCheever)
-		showDescription(TX_LOV5N001);
+		showDescription(01, true);
 	else {
 		// BUGFIX: originally played audio "LOV5N001", which is only the first sentence of
 		// what should be spoken.
-		showDescription(TX_LOV5N015);
+		showDescription(15, true);
 
-		showText(TX_SPEAKER_MARCUS, TX_LOV5_046);
+		showText(TX_SPEAKER_MARCUS, 46, true);
 	}
 }
 
 void Room::love5LookAtDrCheever() {
 	if (_awayMission->love.freedMarcusAndCheever)
-		showDescription(TX_LOV5N000);
+		showDescription(00, true);
 	else {
-		showDescription(TX_LOV5N014);
-		showText(TX_SPEAKER_CHEEVER, TX_LOV5_057);
+		showDescription(14, true);
+		showText(TX_SPEAKER_CHEEVER, 57, true);
 		if (!_awayMission->redshirtDead) {
-			showText(TX_SPEAKER_FERRIS, TX_LOV5_054);
-			showText(TX_SPEAKER_CHEEVER, TX_LOV5_058);
+			showText(TX_SPEAKER_FERRIS, 54, true);
+			showText(TX_SPEAKER_CHEEVER, 58, true);
 		}
 	}
 }
 
 void Room::love5LookAtPreax() {
 	if (_awayMission->love.preaxCured)
-		showDescription(TX_LOV5N011);
+		showDescription(11, true);
 	else
-		showDescription(TX_LOV5N012);
+		showDescription(12, true);
 }
 
 void Room::love5TalkToPreax() {
 	if (_awayMission->love.preaxCured) {
 		if (!_awayMission->love.freedMarcusAndCheever)
-			showDescription(TX_LOV5N006);
+			showDescription(06, true);
 		else {
 			const TextRef choices[] = {
 				TX_SPEAKER_KIRK,
-				TX_LOV5_008,
-				TX_LOV5_004,
-				TX_LOV5_006,
+				8,
+				4,
+				6,
 				TX_BLANK,
 			};
 
-			showText(TX_SPEAKER_PREAX, TX_LOV5_059);
-			int choice = showMultipleTexts(choices);
+			showText(TX_SPEAKER_PREAX, 59, true);
+			int choice = showMultipleTexts(choices, true);
 
 			switch (choice) {
 			case 1:
-				showText(TX_SPEAKER_MARCUS, TX_LOV5_043);
+				showText(TX_SPEAKER_MARCUS, 43, true);
 			// fall through
 			case 0:
-				showText(TX_SPEAKER_PREAX, TX_LOV5_061);
-				showText(TX_SPEAKER_KIRK, TX_LOV5_010);
+				showText(TX_SPEAKER_PREAX, 61, true);
+				showText(TX_SPEAKER_KIRK, 10, true);
 
 				// NOTE: This just says "(Spock raises an eyebrow)". No audio associated.
 				showText(TX_SPEAKER_SPOCK, TX_LOV5C001);
 
-				showText(TX_SPEAKER_MCCOY, TX_LOV5_032);
+				showText(TX_SPEAKER_MCCOY, 32, true);
 
 				break;
 			case 2:
-				showText(TX_SPEAKER_PREAX, TX_LOV5_060);
+				showText(TX_SPEAKER_PREAX, 60, true);
 				break;
 			default:
 				showDescription(TX_DIALOG_ERROR);
 				break;
 			}
 
-			showText(TX_SPEAKER_KIRK,   TX_LOV5_002);
-			showText(TX_SPEAKER_MARCUS, TX_LOV5_045);
+			showText(TX_SPEAKER_KIRK,   02, true);
+			showText(TX_SPEAKER_MARCUS, 45, true);
 
 			_awayMission->disableInput = true;
 
 			if (!_awayMission->love.spockCured) {
-				showText(TX_SPEAKER_MCCOY, TX_LOV5_021);
+				showText(TX_SPEAKER_MCCOY, 21, true);
 				walkCrewmanC(OBJECT_MCCOY, 0x87, 0xc3, &Room::love5MccoyReachedSpockToCure);
 			} else
 				love5EndMission();
 		}
 	} else
-		showText(TX_SPEAKER_MARCUS, TX_LOV5_018);
+		showText(TX_SPEAKER_MARCUS, 18, true);
 }
 
 void Room::love5MccoyReachedSpockToCure() {
@@ -210,16 +210,16 @@ void Room::love5MccoyReachedSpockToCure() {
 }
 
 void Room::love5MccoyCuredSpock() {
-	showText(TX_SPEAKER_MCCOY, TX_LOV5_030);
-	showText(TX_SPEAKER_SPOCK, TX_LOV5_038);
-	showText(TX_SPEAKER_MCCOY, TX_LOV5_027);
+	showText(TX_SPEAKER_MCCOY, 30, true);
+	showText(TX_SPEAKER_SPOCK, 38, true);
+	showText(TX_SPEAKER_MCCOY, 27, true);
 	// NOTE: This just says "(Spock raises an eyebrow)". No audio associated.
 	showText(TX_SPEAKER_SPOCK, TX_LOV5C001);
 	love5EndMission();
 }
 
 void Room::love5EndMission() {
-	showText(TX_SPEAKER_KIRK, TX_LOV5_001);
+	showText(TX_SPEAKER_KIRK, 01, true);
 
 	_awayMission->crewDirectionsAfterWalk[OBJECT_KIRK] = DIR_S;
 	walkCrewmanC(OBJECT_KIRK, 0x64, 0xc2, &Room::love5CrewmanReachedBeamoutPosition);
@@ -247,78 +247,78 @@ void Room::love5CrewmanReachedBeamoutPosition() {
 
 void Room::love5TalkToDrMarcus() {
 	if (!_awayMission->love.freedMarcusAndCheever)
-		showText(TX_SPEAKER_MARCUS, TX_LOV5_040);
+		showText(TX_SPEAKER_MARCUS, 40, true);
 	else {
 		if (!haveItem(OBJECT_ICURE))
-			showText(TX_SPEAKER_MARCUS, TX_LOV5_039);
+			showText(TX_SPEAKER_MARCUS, 39, true);
 		else
-			showText(TX_SPEAKER_MARCUS, TX_LOV5_042);
+			showText(TX_SPEAKER_MARCUS, 42, true);
 	}
 }
 
 void Room::love5TalkToDrCheever() {
 	if (!_awayMission->love.freedMarcusAndCheever)
-		showText(TX_SPEAKER_CHEEVER, TX_LOV5_055);
+		showText(TX_SPEAKER_CHEEVER, 55, true);
 	else
-		showText(TX_SPEAKER_CHEEVER, TX_LOV5_056);
+		showText(TX_SPEAKER_CHEEVER, 56, true);
 }
 
 void Room::love5TalkToKirk() {
-	showText(TX_SPEAKER_KIRK,   TX_LOV5_003);
-	showText(TX_SPEAKER_MARCUS, TX_LOV5_048);
-	showText(TX_SPEAKER_KIRK,   TX_LOV5_009);
-	showText(TX_SPEAKER_MARCUS, TX_LOV5_047);
+	showText(TX_SPEAKER_KIRK,    3, true);
+	showText(TX_SPEAKER_MARCUS, 48, true);
+	showText(TX_SPEAKER_KIRK,    9, true);
+	showText(TX_SPEAKER_MARCUS, 47, true);
 }
 
 void Room::love5TalkToSpock() {
-	showText(TX_SPEAKER_SPOCK,  TX_LOV5_036);
-	showText(TX_SPEAKER_MARCUS, TX_LOV5_051);
+	showText(TX_SPEAKER_SPOCK,  36, true);
+	showText(TX_SPEAKER_MARCUS, 51, true);
 	showText(TX_SPEAKER_SPOCK,  TX_G_024);
 }
 
 void Room::love5TalkToMccoy() {
 	if (!_awayMission->love.preaxCured)
-		showText(TX_SPEAKER_MCCOY, TX_LOV5_014);
+		showText(TX_SPEAKER_MCCOY, 14, true);
 }
 
 void Room::love5TalkToRedshirt() {
-	showText(TX_SPEAKER_FERRIS, TX_LOV5_052);
+	showText(TX_SPEAKER_FERRIS, 52, true);
 }
 
 void Room::love5UseSTricorderAnywhere() {
-	spockScan(DIR_S, TX_LOV5_033, false);
+	spockScan(DIR_S, 33, false, true);
 }
 
 void Room::love5UseSTricorderOnDevice() {
-	spockScan(DIR_N, TX_LOV5_034, false);
-	showText(TX_SPEAKER_MARCUS, TX_LOV5_049);
+	spockScan(DIR_N, 34, false, true);
+	showText(TX_SPEAKER_MARCUS, 49, true);
 }
 
 void Room::love5UseMTricorderOnMarcusOrCheever() {
-	mccoyScan(DIR_W, TX_LOV5_025, false);
+	mccoyScan(DIR_W, 25, false, true);
 }
 
 void Room::love5UseMTricorderOnPreax() {
 	if (!_awayMission->love.preaxCured) {
 		if (_awayMission->love.romulansUnconsciousFromLaughingGas)
-			mccoyScan(DIR_E, TX_LOV5_024, false);
+			mccoyScan(DIR_E, 24, false, true);
 		else
-			mccoyScan(DIR_E, TX_LOV5_016, false);
+			mccoyScan(DIR_E, 16, false, true);
 	}
 }
 
 void Room::love5UseMedkitOnPreax() {
 	if (_awayMission->love.preaxCured)
-		showText(TX_SPEAKER_MCCOY, TX_LOV5_015);
+		showText(TX_SPEAKER_MCCOY, 15, true);
 	else
-		showText(TX_SPEAKER_MCCOY, TX_LOV5_019);
+		showText(TX_SPEAKER_MCCOY, 19, true);
 }
 
 void Room::love5UseWaterOnPreax() {
 	if (_awayMission->love.preaxCured) {
-		showDescription(TX_LOV5N018);
-		showText(TX_SPEAKER_MCCOY, TX_LOV5_029);
-		showText(TX_SPEAKER_KIRK,  TX_LOV5_007);
+		showDescription(18, true);
+		showText(TX_SPEAKER_MCCOY, 29, true);
+		showText(TX_SPEAKER_KIRK,  07, true);
 		if (!_awayMission->love.gotPointsForHydratingPreax) {
 			_awayMission->love.gotPointsForHydratingPreax = true;
 			_awayMission->love.missionScore++;
@@ -326,16 +326,16 @@ void Room::love5UseWaterOnPreax() {
 		loseItem(OBJECT_IH2O);
 	} else {
 		if (_awayMission->love.romulansUnconsciousFromVirus) {
-			showText(TX_SPEAKER_MCCOY, TX_LOV5_013);
+			showText(TX_SPEAKER_MCCOY, 13, true);
 			// BUGFIX: original didn't have correct speaker. Also, you shouldn't lose your
 			// water since it's not actually used here, so a "loseItem" line was removed.
 		} else {
-			showDescription(TX_LOV5N017);
+			showDescription(17, true);
 			if (!_awayMission->redshirtDead) {
-				showText(TX_SPEAKER_FERRIS, TX_LOV5_053);
-				showText(TX_SPEAKER_KIRK,   TX_LOV5_005);
+				showText(TX_SPEAKER_FERRIS, 53, true);
+				showText(TX_SPEAKER_KIRK,   05, true);
 			}
-			showText(TX_SPEAKER_MCCOY,  TX_LOV5_026);
+			showText(TX_SPEAKER_MCCOY,  26, true);
 			loseItem(OBJECT_IH2O);
 
 			// BUGFIX: give a point for hydrating the Preax. It's inconsistent to only
@@ -349,7 +349,7 @@ void Room::love5UseWaterOnPreax() {
 }
 
 void Room::love5UseCureSampleOnPreax() {
-	showText(TX_SPEAKER_MCCOY, TX_LOV5_020); // BUGFIX: original didn't have correct speaker
+	showText(TX_SPEAKER_MCCOY, 20, true); // BUGFIX: original didn't have correct speaker
 }
 
 
@@ -366,13 +366,13 @@ void Room::love5CuredPreax() {
 	walkCrewman(OBJECT_MCCOY, 0xdc, 0xc3);
 	_awayMission->crewDirectionsAfterWalk[OBJECT_MCCOY] = DIR_E;
 
-	showDescription(TX_LOV5N007);
+	showDescription(07, true);
 
 	// BUG: says he's dehydrated, but doesn't check whether you've given water to him
 	// already (like it does in LOVE4).
 	// TODO: make the whole "giving water to romulans" thing consistent between LOVE4 and
 	// LOVE5?
-	showText(TX_SPEAKER_MCCOY, TX_LOV5_017);
+	showText(TX_SPEAKER_MCCOY, 17, true);
 
 	loadActorAnim2(OBJECT_PREAX, "s3r6r1", 0x116, 0xba);
 	_awayMission->love.preaxCured = true;
@@ -380,7 +380,7 @@ void Room::love5CuredPreax() {
 
 
 void Room::love5UseAnythingOnPreax() {
-	showText(TX_SPEAKER_MCCOY, TX_LOV5_023);
+	showText(TX_SPEAKER_MCCOY, 23, true);
 }
 
 
@@ -415,7 +415,7 @@ void Room::love5KirkUntiedMarcus() {
 
 void Room::love5MarcusStoodUp() {
 	_awayMission->disableInput = false;
-	showText(TX_SPEAKER_MARCUS, TX_LOV5_041);
+	showText(TX_SPEAKER_MARCUS, 41, true);
 }
 
 }
