@@ -30,9 +30,9 @@
 namespace Petka {
 
 const uint kFirstSaveLoadPageId = 4990;
-const Common::Rect kSavesRects[] = {{43, 84, 151, 166}, {43, 209, 151, 291},
-									{43, 335, 151, 417}, {358, 75, 466, 157},
-									{360, 200, 468, 282}, {359, 325, 467, 407}};
+const Common::Rect kSavesRects[] = {Common::Rect(43, 84, 151, 166), Common::Rect(43, 209, 151, 291),
+									Common::Rect(43, 335, 151, 417), Common::Rect(358, 75, 466, 157),
+									Common::Rect(360, 200, 468, 282), Common::Rect(359, 325, 467, 407)};
 const Common::Rect kNextPageRect(596, 403, 624, 431);
 const Common::Rect kPrevPageRect(10, 414, 38, 442);
 

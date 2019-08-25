@@ -34,8 +34,8 @@ namespace Petka {
 // Полоска в чемодане
 const char *const kPoloska = "\xCF\xEE\xEB\xEE\xF1\xEA\xE0\x20\xE2\x20\xF7\xE5\xEC\xEE\xE4\xE0\xED\xE5";
 
-const Common::Point itemsLocation[] = {{120, 145}, {240, 145}, {360, 145},
-									   {100, 220}, {240, 220}, {380, 220}};
+const Common::Point itemsLocation[] = {Common::Point(120, 145), Common::Point(240, 145), Common::Point(360, 145),
+									   Common::Point(100, 220), Common::Point(240, 220), Common::Point(380, 220)};
 
 QObjectCase::QObjectCase() {
 	_itemIndex = 0;

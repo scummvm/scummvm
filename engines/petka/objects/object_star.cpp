@@ -35,12 +35,12 @@ namespace Petka {
 
 const uint kFirstCursorId = 5001;
 const uint kCaseButtonIndex = 0;
-const Common::Rect kButtonsRects[] = {{70, 74, 112, 112},
-									  {68, 0, 114, 41},
-									  {151, 51, 180, 97},
-									  {138, 125, 179, 166},
-									  {55, 145, 96, 175},
-									  {11, 79, 40, 118}};
+const Common::Rect kButtonsRects[] = {Common::Rect(70, 74, 112, 112),
+									  Common::Rect(68, 0, 114, 41),
+									  Common::Rect(151, 51, 180, 97),
+									  Common::Rect(138, 125, 179, 166),
+									  Common::Rect(55, 145, 96, 175),
+									  Common::Rect(11, 79, 40, 118)};
 
 static uint findButtonIndex(int16 x, int16 y) {
 	uint i = 0;

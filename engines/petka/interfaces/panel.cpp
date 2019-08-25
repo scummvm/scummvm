@@ -40,12 +40,12 @@ namespace Petka {
 
 // ПАНЕЛЬ УПРАВЛЕНИЯ
 const char *const kPanelObjName = "\xCF\xC0\xCD\xC5\xCB\xDC\x20\xD3\xCF\xD0\xC0\xC2\xCB\xC5\xCD\xC8\xDF";
-const Common::Point kObjectsPoints[] = {{0, 2}, {5, 70}, {5, 136}, {22, 328},
-									   {87, 224}, {118, 395}, {467, 71}, {432, 144},
-									   {428, 29}, {434, 170}, {297, 214}, {470, 139},
-									   {318, 87}, {468, 172}, {262, 31}, {231, 137},
-									   {0, 0}, {0, 0}, {0, 0}, {0, 0},
-									   {0, 0}, {0, 0}, {0, 0}, {0, 0}};
+const Common::Point kObjectsPoints[] = {Common::Point(0, 2), Common::Point(5, 70), Common::Point(5, 136), Common::Point(22, 328),
+										Common::Point(87, 224), Common::Point(118, 395), Common::Point(467, 71), Common::Point(432, 144),
+										Common::Point(428, 29), Common::Point(434, 170), Common::Point(297, 214), Common::Point(470, 139),
+										Common::Point(318, 87), Common::Point(468, 172), Common::Point(262, 31), Common::Point(231, 137),
+										Common::Point(0, 0), Common::Point(0, 0), Common::Point(0, 0), Common::Point(0, 0),
+										Common::Point(0, 0), Common::Point(0, 0), Common::Point(0, 0), Common::Point(0, 0)};
 
 const uint kNewGameButtonIndex = 1;
 const uint kLoadButtonIndex = 2;

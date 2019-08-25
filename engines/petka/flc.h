@@ -53,7 +53,7 @@ protected:
 
 	private:
 		Common::Rect _bounds;
-		Common::Array<Common::Array<Common::Rect>> _msk;
+		Common::Array<Common::Array<Common::Rect> > _msk;
 	};
 };
 
