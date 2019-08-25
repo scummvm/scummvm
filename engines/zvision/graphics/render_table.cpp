@@ -141,7 +141,13 @@ void RenderTable::generateRenderTable() {
 }
 
 void RenderTable::generatePanoramaLookupTable() {
-	memset(_internalBuffer, 0, _numRows * _numColumns * sizeof(uint16));
+	for (uint y = 0; y < _numRows; y++) {
+		for (uint x = 0; x < _numColumns; x++) {
+			uint32 index = y * _numColumns + x;
+			_internalBuffer[index].x = 0;
+			_internalBuffer[index].y = 0;
+		}
+	}
 
 	float halfWidth = (float)_numColumns / 2.0f;
 	float halfHeight = (float)_numRows / 2.0f;
