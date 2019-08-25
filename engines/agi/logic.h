@@ -36,7 +36,16 @@ struct AgiLogic {
 	int numTexts;       /**< number of messages */
 	const char **texts; /**< message list */
 
-	AgiLogic() : data(nullptr), size(0), sIP(0), cIP(0), numTexts(0), texts(nullptr) {}
+	void reset() {
+		data = nullptr;
+		size = 0;
+		sIP = 0;
+		cIP = 0;
+		numTexts = 0;
+		texts = nullptr;
+	}
+
+	AgiLogic() { reset(); }
 };
 
 } // End of namespace Agi

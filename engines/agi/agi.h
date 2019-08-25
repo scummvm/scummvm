@@ -375,7 +375,15 @@ struct AgiDir {
 	// 0x40 = was compressed
 	uint8 flags;
 
-	AgiDir() : volume(0), offset(0), len(0), clen(0), flags(0) {}
+	void reset() {
+		volume = 0;
+		offset = 0;
+		len = 0;
+		clen = 0;
+		flags = 0;
+	}
+
+	AgiDir() { reset(); }
 };
 
 struct AgiBlock {
