@@ -35,6 +35,7 @@
 #include "petka/q_manager.h"
 #include "petka/interfaces/main.h"
 #include "petka/objects/object_bg.h"
+#include "petka/objects/heroes.h"
 
 namespace Petka {
 
@@ -59,10 +60,14 @@ void QObjectBG::processMessage(const QMessage &msg) {
 	case kNoMap:
 		_showMap = 0;
 		break;
-	case kGoTo:
+	case kGoTo: {
 		g_vm->getQSystem()->_mainInterface->loadRoom(_id, false);
 		g_vm->videoSystem()->makeAllDirty();
+		QMessageObject *obj = g_vm->getQSystem()->findObject(_id);
+		g_vm->getQSystem()->_petka->setPos(obj->_walkX, obj->_walkY);
+		g_vm->getQSystem()->_chapayev->setPos(obj->_walkX, obj->_walkY - 2);
 		break;
+	}
 	case kSetSeq:
 		break;
 	case kEndSeq:

@@ -133,6 +133,21 @@ bool QSystem::init() {
 	}
 	for (uint i = 0; i < bgsCount; ++i) {
 		readObject(_bgs[i], *stream, namesIni, castIni);
+
+
+		Common::String val;
+		bgsIni.getKey(_bgs[i]._name, "Settings", val);
+
+		if (!val.empty()) {
+			UnkStruct unk;
+
+			sscanf(val.c_str(), "%lf %lf %d %d %lf", &unk.f1, &unk.f2, &unk.f3, &unk.f4, &unk.f5);
+
+			_unkMap.setVal(_bgs[i]._name, unk);
+		}
+
+
+
 		_allObjects.push_back(&_bgs[i]);
 	}
 
@@ -255,7 +270,7 @@ void QSystem::load(Common::ReadStream *s) {
 	uint count = s->readUint32LE();
 	for (uint i = 0; i < count; ++i) {
 		QMessageObject *obj = findObject(readString(s));
-		obj->_field_38 = s->readUint32LE();
+		obj->_msgProcessingPaused = s->readUint32LE();
 		obj->_status = s->readUint32LE();
 		obj->_resourceId = s->readUint32LE();
 		obj->_z = s->readUint32LE();
@@ -295,7 +310,7 @@ void QSystem::save(Common::WriteStream *s) {
 	s->writeUint32LE(_allObjects.size());
 	for (uint i = 0; i < _allObjects.size(); ++i) {
 		writeString(s, _allObjects[i]->_name);
-		s->writeUint32LE(_allObjects[i]->_field_38);
+		s->writeUint32LE(_allObjects[i]->_msgProcessingPaused);
 		s->writeUint32LE(_allObjects[i]->_status);
 		s->writeUint32LE(_allObjects[i]->_resourceId);
 		s->writeUint32LE(_allObjects[i]->_z);

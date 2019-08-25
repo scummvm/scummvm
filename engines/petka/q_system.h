@@ -26,6 +26,8 @@
 #include "common/ptr.h"
 #include "common/stream.h"
 #include "common/list.h"
+#include "common/hashmap.h"
+#include "common/hash-str.h"
 
 #include "petka/objects/object_bg.h"
 
@@ -43,6 +45,14 @@ class InterfaceStartup;
 class InterfacePanel;
 class InterfaceMap;
 class Interface;
+
+struct UnkStruct {
+	double f1;
+	double f2;
+	int f3;
+	int f4;
+	double f5;
+};
 
 class QSystem {
 public:
@@ -84,6 +94,8 @@ public:
 	Common::ScopedPtr<InterfaceMap> _mapInterface;
 	Interface *_currInterface;
 	Interface *_prevInterface;
+
+	Common::HashMap<Common::String, UnkStruct> _unkMap;
 
 	int _isIniting;
 	int _fxId;
