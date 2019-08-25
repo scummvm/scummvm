@@ -20,6 +20,7 @@
  *
  */
 
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
 #include "common/encoding.h"
 #include "common/textconsole.h"
 #include "common/system.h"
@@ -27,16 +28,28 @@
 #include "common/endian.h"
 #include <errno.h>
 
+#ifdef USE_ICONV
+
+#include <iconv.h>
+
+#endif // USE_ICONV
+
 namespace Common {
+
+String addUtfEndianness(const String &str) {
+	if (str.equalsIgnoreCase("utf-16") || str.equalsIgnoreCase("utf-32")) {
+#ifdef SCUMM_BIG_ENDIAN
+		return str + "BE";
+#else
+		return str + "LE";
+#endif
+	} else
+		return String(str);
+}
 
 Encoding::Encoding(const String &to, const String &from) 
 	: _to(to)
 	, _from(from) {
-		_iconvHandle = initIconv(to, from);
-}
-
-Encoding::~Encoding() {
-	deinitIconv(_iconvHandle);
 }
 
 char *Encoding::switchEndian(const char *string, int length, int bitCount) {
@@ -62,60 +75,15 @@ char *Encoding::switchEndian(const char *string, int length, int bitCount) {
 	}
 }
 
-String Encoding::addUtfEndianness(const String &str) {
-	if (str.equalsIgnoreCase("utf-16") || str.equalsIgnoreCase("utf-32")) {
-#ifdef SCUMM_BIG_ENDIAN
-		return str + "BE";
-#else
-		return str + "LE";
-#endif
-	} else
-		return String(str);
-}
-
-iconv_t Encoding::initIconv(const String &to, const String &from) {
-#ifdef USE_ICONV
-		String toTranslit = addUtfEndianness(to) + "//TRANSLIT";
-		return iconv_open(toTranslit.c_str(),
-							addUtfEndianness(from).c_str());
-#else
-		return 0;
-#endif // USE_ICONV
-}
-
-void Encoding::deinitIconv(iconv_t iconvHandle) {
-#ifdef USE_ICONV
-	if (iconvHandle != (iconv_t) -1)
-		iconv_close(iconvHandle);
-#endif // USE_ICONV
-}
-
-void Encoding::setFrom(const String &from) {
-	deinitIconv(_iconvHandle);
-	_from = from;
-	_iconvHandle = initIconv(_to, _from);
-}
-
-void Encoding::setTo(const String &to) {
-	deinitIconv(_iconvHandle);
-	_to = to;
-	_iconvHandle = initIconv(_to, _from);
-}
-
 char *Encoding::convert(const char *string, size_t size) {
-	return convertWithTransliteration(_iconvHandle, _to, _from, string, size);
+	return convertWithTransliteration(_to, _from, string, size);
 }
 
 char *Encoding::convert(const String &to, const String &from, const char *string, size_t size) {
-	iconv_t iconvHandle = initIconv(to, from);
-
-	char *result = convertWithTransliteration(iconvHandle, to, from, string, size);
-
-	deinitIconv(iconvHandle);
-	return result;
+	return convertWithTransliteration(to, from, string, size);
 }
 
-char *Encoding::convertWithTransliteration(iconv_t iconvHandle, const String &to, const String &from, const char *string, size_t length) {
+char *Encoding::convertWithTransliteration(const String &to, const String &from, const char *string, size_t length) {
 	if (from.equalsIgnoreCase(to)) {
 		// don't convert, just copy the string and return it
 		char *result = (char *) calloc(sizeof(char), length + 4);
@@ -160,9 +128,7 @@ char *Encoding::convertWithTransliteration(iconv_t iconvHandle, const String &to
 		if (from.hasPrefixIgnoreCase("utf-32"))
 			tmpString = nullptr;
 		else {
-			iconv_t tmpHandle = initIconv("UTF-32", from);
-			tmpString = conversion(tmpHandle, "UTF-32", from, string, length);
-			deinitIconv(tmpHandle);
+			tmpString = conversion("UTF-32", from, string, length);
 			if (!tmpString)
 				return nullptr;
 			// find out the length in bytes of the tmpString
@@ -179,26 +145,19 @@ char *Encoding::convertWithTransliteration(iconv_t iconvHandle, const String &to
 		if (!newString)
 			return nullptr;
 	}
-	iconv_t newHandle = iconvHandle;
-	if (newFrom != from)
-		newHandle = initIconv(to, newFrom);
 	char *result;
 	if (newString != nullptr) {
-		result = conversion(newHandle, to, newFrom, newString, newLength);
+		result = conversion(to, newFrom, newString, newLength);
 		free(newString);
 	} else
-		result = conversion(newHandle, to, newFrom, string, newLength);
-
-	if (newFrom != from)
-		deinitIconv(newHandle);
+		result = conversion(to, newFrom, string, newLength);
 	return result;
 }
 
-char *Encoding::conversion(iconv_t iconvHandle, const String &to, const String &from, const char *string, size_t length) {
+char *Encoding::conversion(const String &to, const String &from, const char *string, size_t length) {
 	char *result = nullptr;
 #ifdef USE_ICONV
-	if (iconvHandle != (iconv_t) -1)
-		result = convertIconv(iconvHandle, string, length);
+	result = convertIconv(addUtfEndianness(to).c_str(), addUtfEndianness(from).c_str(), string, length);
 #endif // USE_ICONV
 	if (result == nullptr)
 		result = g_system->convertEncoding(addUtfEndianness(to).c_str(),
@@ -211,8 +170,13 @@ char *Encoding::conversion(iconv_t iconvHandle, const String &to, const String &
 	return result;
 }
 
-char *Encoding::convertIconv(iconv_t iconvHandle, const char *string, size_t length) {
+char *Encoding::convertIconv(const char *to, const char *from, const char *string, size_t length) {
 #ifdef USE_ICONV
+
+	String toTranslit = String(to) + "//TRANSLIT";
+	iconv_t iconvHandle = iconv_open(toTranslit.c_str(), from);
+	if (iconvHandle == (iconv_t) -1)
+		return nullptr;
 
 	size_t inSize = length;
 	size_t outSize = inSize;
@@ -266,6 +230,7 @@ char *Encoding::convertIconv(iconv_t iconvHandle, const char *string, size_t len
 	delete[] originalSrc;
 #endif // ICONV_USES_CONST
 
+	iconv_close(iconvHandle);
 	if (error) {
 		if (buffer)
 			free(buffer);

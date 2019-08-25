@@ -27,11 +27,6 @@
 #include "common/str.h"
 #include "common/system.h"
 
-#ifdef USE_ICONV
-#include <iconv.h>
-#else
-typedef void* iconv_t;
-#endif // USE_ICONV
 
 #ifdef WIN32
 #include "backends/platform/sdl/win32/win32.h"
@@ -57,7 +52,7 @@ class Encoding {
 		 * @param from Name of the encoding the strings will be converted from
 		 */
 		Encoding(const String &to, const String &from);
-		~Encoding();
+		~Encoding() {};
 
 		/**
 		 * Converts string between encodings. The resulting string is ended by 
@@ -98,7 +93,7 @@ class Encoding {
 		/**
 		 * @param from The encoding, to convert from
 		 */
-		void setFrom(const String &from);
+		void setFrom(const String &from) {_from = from;};
 
 		/**
 		 * @return The encoding, which is currently being converted to
@@ -108,7 +103,7 @@ class Encoding {
 		/**
 		 * @param to The encoding, to convert to
 		 */
-		void setTo(const String &to);
+		void setTo(const String &to) {_to = to;};
 	
 	private:
 		/** The encoding, which is currently being converted to */
@@ -118,17 +113,10 @@ class Encoding {
 		String _from;
 
 		/**
-		 * iconvHandle currently used for conversions (is void pointer to 0
-		 * if the ScummVM isn't compiled with iconv)
-		 */
-		iconv_t _iconvHandle;
-
-		/**
 		 * Takes care of transliteration and calls conversion
 		 *
 		 * The result has to be freed after use.
 		 *
-		 * @param iconvHandle Handle to use for the conversion
 		 * @param to Name of the encoding the strings will be converted to
 		 * @param from Name of the encoding the strings will be converted from
 		 * @param string String that should be converted.
@@ -136,7 +124,7 @@ class Encoding {
 		 *
 		 * @return Converted string (must be freed) or nullptr if the conversion failed
 		 */
-		static char *convertWithTransliteration(iconv_t iconvHandle, const String &to, const String &from, const char *string, size_t length);
+		static char *convertWithTransliteration(const String &to, const String &from, const char *string, size_t length);
 
 		/**
 		 * Calls as many conversion functions as possible or until the conversion
@@ -145,7 +133,6 @@ class Encoding {
 		 *
 		 * The result has to be freed after use.
 		 *
-		 * @param iconvHandle Handle to use for the conversion
 		 * @param to Name of the encoding the strings will be converted to
 		 * @param from Name of the encoding the strings will be converted from
 		 * @param string String that should be converted.
@@ -153,20 +140,21 @@ class Encoding {
 		 *
 		 * @return Converted string (must be freed) or nullptr if the conversion failed
 		 */
-		static char *conversion(iconv_t iconvHandle, const String &to, const String &from, const char *string, size_t length);
+		static char *conversion(const String &to, const String &from, const char *string, size_t length);
 
 		/**
 		 * Tries to convert the string using iconv.
 		 *
 		 * The result has to be freed after use.
 		 *
-		 * @param iconvHandle Handle to use for the conversion
+		 * @param to Name of the encoding the strings will be converted to
+		 * @param from Name of the encoding the strings will be converted from
 		 * @param string String that should be converted.
 		 * @param length Length of the string to convert in bytes.
 		 *
 		 * @return Converted string (must be freed) or nullptr if the conversion failed
 		 */
-		static char *convertIconv(iconv_t iconvHandle, const char *string, size_t length);
+		static char *convertIconv(const char *to, const char *from, const char *string, size_t length);
 
 		/**
 		 * Tries to use the TransMan to convert the string. It can convert only
@@ -207,37 +195,6 @@ class Encoding {
 		 * @return Transliterated string in UTF-32 (must be freed) or nullptr on fail.
 		 */
 		static uint32 *transliterateUTF32(const uint32 *string, size_t length);
-
-		/**
-		 * Inits the iconv handle
-		 *
-		 * The result has to be freed after use.
-		 *
-		 * @param to Name of the encoding the strings will be converted to
-		 * @param from Name of the encoding the strings will be converted from
-		 *
-		 * @return Opened iconv handle or 0 if ScummVM is compiled without iconv
-		 */
-		static iconv_t initIconv(const String &to, const String &from);
-
-		/**
-		 * Deinits the iconv handle
-		 *
-		 * @param iconvHandle Handle that should be deinited
-		 */
-		static void deinitIconv(iconv_t iconvHandle);
-
-		/**
-		 * If the string is "utf-16" or "utf-32", this adds either BE for big endian
-		 * or LE for little endian to the end of the string. Otherwise this does
-		 * nothing.
-		 *
-		 * @param str String to append the endianness to
-		 *
-		 * @return The same string with appended endianness if it is needed, or
-		 * the same string.
-		 */
-		static String addUtfEndianness(const String &str);
 
 		/**
 		 * Switches the endianity of a string.
