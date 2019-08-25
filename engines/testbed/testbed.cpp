@@ -20,6 +20,8 @@
  *
  */
 
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
+
 #include "common/debug-channels.h"
 #include "common/scummsys.h"
 #include "common/archive.h"
