@@ -41,7 +41,7 @@ void GoogleDriveTokenRefresher::tokenRefreshed(Storage::BoolResponse response) {
 	if (!response.value) {
 		//failed to refresh token, notify user with NULL in original callback
 		warning("GoogleDriveTokenRefresher: failed to refresh token");
-		finishError(Networking::ErrorResponse(this, false, true, "", -1));
+		finishError(Networking::ErrorResponse(this, false, true, "GoogleDriveTokenRefresher::tokenRefreshed: failed to refresh token", -1));
 		return;
 	}
 

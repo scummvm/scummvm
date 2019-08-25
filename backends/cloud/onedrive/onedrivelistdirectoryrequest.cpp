@@ -102,7 +102,7 @@ void OneDriveListDirectoryRequest::listedDirectoryCallback(Networking::JsonRespo
 	if (response.request)
 		_date = response.request->date();
 
-	Networking::ErrorResponse error(this);
+	Networking::ErrorResponse error(this, "OneDriveListDirectoryRequest::listedDirectoryCallback: unknown error");
 	Networking::CurlJsonRequest *rq = (Networking::CurlJsonRequest *)response.request;
 	if (rq && rq->getNetworkReadStream())
 		error.httpResponseCode = rq->getNetworkReadStream()->httpResponseCode();

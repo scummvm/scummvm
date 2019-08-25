@@ -55,7 +55,7 @@ void GoogleDriveUploadRequest::start() {
 		_workingRequest->finish();
 	if (_contentsStream == nullptr || !_contentsStream->seek(0)) {
 		warning("GoogleDriveUploadRequest: cannot restart because stream couldn't seek(0)");
-		finishError(Networking::ErrorResponse(this, false, true, "", -1));
+		finishError(Networking::ErrorResponse(this, false, true, "GoogleDriveUploadRequest::start: couldn't restart because failed to seek(0)", -1));
 		return;
 	}
 	_resolvedId = ""; //used to update file contents
@@ -146,7 +146,7 @@ void GoogleDriveUploadRequest::startUploadCallback(Networking::JsonResponse resp
 	if (_ignoreCallback)
 		return;
 
-	Networking::ErrorResponse error(this, false, true, "", -1);
+	Networking::ErrorResponse error(this, false, true, "GoogleDriveUploadRequest::startUploadCallback", -1);
 	Networking::CurlJsonRequest *rq = (Networking::CurlJsonRequest *)response.request;
 	if (rq) {
 		const Networking::NetworkReadStream *stream = rq->getNetworkReadStream();
@@ -158,11 +158,19 @@ void GoogleDriveUploadRequest::startUploadCallback(Networking::JsonResponse resp
 					_uploadUrl = headers["location"];
 					uploadNextPart();
 					return;
+				} else {
+					error.response += ": response must provide Location header, but it's not there";
 				}
+			} else {
+				error.response += ": response is not 200 OK";
 			}
 
 			error.httpResponseCode = code;
+		} else {
+			error.response += ": missing response stream [improbable]";
 		}
+	} else {
+		error.response += ": missing request object [improbable]";
 	}
 
 	Common::JSONValue *json = response.value;
@@ -192,7 +200,7 @@ void GoogleDriveUploadRequest::uploadNextPart() {
 	if (oldPos != _serverReceivedBytes) {
 		if (!_contentsStream->seek(_serverReceivedBytes)) {
 			warning("GoogleDriveUploadRequest: cannot upload because stream couldn't seek(%lu)", _serverReceivedBytes);
-			finishError(Networking::ErrorResponse(this, false, true, "", -1));
+			finishError(Networking::ErrorResponse(this, false, true, "GoogleDriveUploadRequest::uploadNextPart: seek() didn't work", -1));
 			return;
 		}
 		oldPos = _serverReceivedBytes;

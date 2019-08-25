@@ -96,7 +96,7 @@ void OneDriveCreateDirectoryRequest::responseCallback(Networking::JsonResponse r
 	if (response.request)
 		_date = response.request->date();
 
-	Networking::ErrorResponse error(this);
+	Networking::ErrorResponse error(this, "OneDriveCreateDirectoryRequest::responseCallback: unknown error");
 	Networking::CurlJsonRequest *rq = (Networking::CurlJsonRequest *)response.request;
 	if (rq && rq->getNetworkReadStream())
 		error.httpResponseCode = rq->getNetworkReadStream()->httpResponseCode();
