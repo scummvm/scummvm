@@ -39,18 +39,20 @@ TestExitStatus Encodingtests::testConversionUnicodeMachineEndian() {
 	}
 					   //  |dolar|   cent    |     euro       |
 	unsigned char utf8[] = {0x24, 0xC2, 0xA2, 0xE2, 0x82, 0xAC, 0};
+#ifdef SCUMM_BIG_ENDIAN
 							//| dolar |  cent  |    euro   |
 	unsigned char utf16be[] = {0, 0x24, 0, 0xA2, 0x20, 0xAC, 0, 0};
-							//| dolar |  cent  |    euro   |
-	unsigned char utf16le[] = {0x24, 0, 0xA2, 0, 0xAC, 0x20, 0, 0};
 							//| dolar       |  cent        |    euro  
 	unsigned char utf32be[] = {0, 0, 0, 0x24, 0, 0, 0, 0xA2, 0, 0, 0x20, 0xAC, 0, 0, 0, 0};
-							//| dolar       |  cent        |    euro
-	unsigned char utf32le[] = {0x24, 0, 0, 0, 0xA2, 0, 0, 0, 0xAC, 0x20, 0, 0, 0, 0, 0, 0};
-#ifdef SCUMM_BIG_ENDIAN
+
 	unsigned char *utf16 = utf16be;
 	unsigned char *utf32 = utf32be;
 #else
+							//| dolar |  cent  |    euro   |
+	unsigned char utf16le[] = {0x24, 0, 0xA2, 0, 0xAC, 0x20, 0, 0};
+							//| dolar       |  cent        |    euro
+	unsigned char utf32le[] = {0x24, 0, 0, 0, 0xA2, 0, 0, 0, 0xAC, 0x20, 0, 0, 0, 0, 0, 0};
+
 	unsigned char *utf16 = utf16le;
 	unsigned char *utf32 = utf32le;
 #endif
