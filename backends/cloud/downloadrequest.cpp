@@ -73,13 +73,13 @@ void DownloadRequest::streamErrorCallback(Networking::ErrorResponse error) {
 void DownloadRequest::handle() {
 	if (!_localFile) {
 		warning("DownloadRequest: no file to write");
-		finishError(Networking::ErrorResponse(this, false, true, "", -1));
+		finishError(Networking::ErrorResponse(this, false, true, "DownloadRequest::handle: no file to write into", -1));
 		return;
 	}
 
 	if (!_localFile->isOpen()) {
 		warning("DownloadRequest: failed to open file to write");
-		finishError(Networking::ErrorResponse(this, false, true, "", -1));
+		finishError(Networking::ErrorResponse(this, false, true, "DownloadRequest::handle: failed to open file to write", -1));
 		return;
 	}
 
@@ -93,7 +93,7 @@ void DownloadRequest::handle() {
 	if (readBytes != 0)
 		if (_localFile->write(_buffer, readBytes) != readBytes) {
 			warning("DownloadRequest: unable to write all received bytes into output file");
-			finishError(Networking::ErrorResponse(this, false, true, "", -1));
+			finishError(Networking::ErrorResponse(this, false, true, "DownloadRequest::handle: failed to write all bytes into a file", -1));
 			return;
 		}
 
@@ -113,7 +113,7 @@ void DownloadRequest::handle() {
 
 void DownloadRequest::restart() {
 	warning("DownloadRequest: can't restart as there are no means to reopen DumpFile");
-	finishError(Networking::ErrorResponse(this, false, true, "", -1));
+	finishError(Networking::ErrorResponse(this, false, true, "DownloadRequest::restart: can't restart as there are no means to reopen DumpFile", -1));
 	//start();
 }
 

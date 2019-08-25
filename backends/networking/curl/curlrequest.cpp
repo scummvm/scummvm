@@ -53,7 +53,7 @@ void CurlRequest::handle() {
 	if (_stream && _stream->eos()) {
 		if (_stream->httpResponseCode() != 200) {
 			warning("CurlRequest: HTTP response code is not 200 OK (it's %ld)", _stream->httpResponseCode());
-			ErrorResponse error(this, false, true, "", _stream->httpResponseCode());
+			ErrorResponse error(this, false, true, "HTTP response code is not 200 OK", _stream->httpResponseCode());
 			finishError(error);
 			return;
 		}

@@ -78,7 +78,7 @@ struct ErrorResponse {
 	Common::String response;
 	long httpResponseCode;
 
-	ErrorResponse(Request *rq);
+	ErrorResponse(Request *rq, Common::String resp);
 	ErrorResponse(Request *rq, bool interrupt, bool failure, Common::String resp, long httpCode);
 };
 
