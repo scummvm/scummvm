@@ -86,7 +86,7 @@ struct PLAYERTYPE {
 	float   py;
 	float   opx;
 	float   opy;
-	int walkdir;
+	int     walkdir;
 	float   walkframe;
 	float   walkspd;
 	float   attackframe;
@@ -94,7 +94,7 @@ struct PLAYERTYPE {
 
 	int hp;
 	int maxhp;
-	float   hpflash;
+	float hpflash;
 	int hpflashb;
 	int level;
 	int maxlevel;
@@ -102,10 +102,10 @@ struct PLAYERTYPE {
 	int shield;
 	int armour;
 	int foundspell[5];
-	float   spellcharge[5];
+	float spellcharge[5];
 	int inventory[5];
-	float   attackstrength;
-	float   spellstrength;
+	float attackstrength;
+	float spellstrength;
 	int spelldamage;
 	int sworddamage;
 
@@ -114,7 +114,7 @@ struct PLAYERTYPE {
 
 	int pause;
 
-	float   itemselshade;
+	float itemselshade;
 	int ysort;
 };
 
@@ -199,7 +199,7 @@ struct SPELLTYPE {
 	int damagewho;  // 0 = npc, 1 = player
 
 	// for earthslide
-	float   rocky[9];
+	float   rocky[9]; // CHECKME: Looks unused
 	int rockimg[9];
 	int rockdeflect[9];
 
@@ -311,7 +311,7 @@ private:
 	unsigned int clipsurround[4][4];
 	int fullscreen;
 
-	float animspd;
+	float animspd; // CHECKME: it seems to always be 0.5
 	int rampdata[40][24];
 
 	int curmap;
@@ -327,7 +327,7 @@ private:
 
 	// timer related - move to local later
 	int ticks, tickspassed, nextticks;
-	float fp, fps, fpsr;
+	float fp, fps, fpsr; // CHECKME: fp and fps seems to be integers
 	int secsingame, secstart;
 
 	Graphics::TransparentSurface *mapimg[4];
@@ -335,7 +335,7 @@ private:
 	Common::Rect rcSrc, rcDest;
 
 	// -----------special case
-	int dontdrawover;   // used in map24 so that the candles dont draw over the boss, default set to 0
+	int dontdrawover;   // used in map24 so that the candles don't draw over the boss, default set to 0
 
 	// saveload info
 	Graphics::TransparentSurface *saveloadimg;
