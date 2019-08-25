@@ -114,7 +114,7 @@ OBJECT *AllocObject() {
 	pFreeObjects = pObj->pNext;
 
 	// clear out object
-	memset(pObj, 0, sizeof(OBJECT));
+	pObj->reset();
 
 	// set default drawing mode and set changed bit
 	pObj->flags = DMA_WNZ | DMA_CHANGED;
