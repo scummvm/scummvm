@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2019-08-24 10:37+0200\n"
-"PO-Revision-Date: 2019-08-23 11:32+0000\n"
+"PO-Revision-Date: 2019-08-29 19:14+0000\n"
 "Last-Translator: George Kormendi <grubycza@hotmail.com>\n"
 "Language-Team: Hungarian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/hu/>\n"
@@ -2166,7 +2166,7 @@ msgstr "OPL2LPT"
 
 #: audio/fmopl.cpp:84
 msgid "OPL3LPT"
-msgstr ""
+msgstr "OPL3LPT"
 
 #: audio/mididrv.cpp:209
 #, c-format
@@ -4393,6 +4393,18 @@ msgid ""
 "In that case you may need to apply the original Sierra patch.\n"
 "\n"
 msgstr ""
+"\n"
+"\n"
+"Néhány audio meghajtót (legalábbis néhány játéknál) a Sierra\n"
+"csak utángyártott javításként forgalmazott, így esetleg nem\n"
+"az eredeti játék beállítás részeként kerültek telepítésre.\n"
+"\n"
+"Kérlek, másold ez(eke)t a fájl(oka)t a játék könyvtárába.\n"
+"\n"
+"Felhívjuk a figyelmét azonban, hogy a fájl(ok) nem érhetõ(k) el\n"
+"külön, csak mint (javított) erõforrás-csomag tartalomként.\n"
+"Ebben az esetben szükség lehet az eredeti Sierra folt alkalmazására.\n"
+"\n"
 
 #: engines/scumm/detection.cpp:1123
 msgid ""
