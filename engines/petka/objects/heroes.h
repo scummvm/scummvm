@@ -33,7 +33,19 @@ public:
 	void processMessage(const QMessage &msg) override;
 	void initSurface();
 
-protected:
+	void walk(int x, int y);
+	void stopWalk();
+	void updateWalk();
+	void setReactionAfterWalk(uint index, QReaction **reaction, QMessageObject *sender, bool deleteReaction);
+
+	void draw() override;
+	void update(int time) override;
+	void setPos(int x, int y) override;
+
+	double calcSmth(int y);
+
+
+public:
 	int _field7C;
 	int _surfW;
 	int _surfH;
@@ -43,6 +55,8 @@ protected:
 	int _imageId;
 	double _field98;
 	// walkObj
+	int _destX;
+	int _destY;
 	bool _isWalking;
 	bool _isPetka;
 	QReaction *_heroReaction;

@@ -69,7 +69,7 @@ public:
 	int32 _isShown;
 	int32 _animate;
 	int _updateZ;
-	int _field_38;
+	int _msgProcessingPaused;
 	int _isActive;
 	int _startSound;
 	int _hasSound;

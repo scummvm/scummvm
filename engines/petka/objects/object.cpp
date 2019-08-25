@@ -57,7 +57,7 @@ QMessageObject::QMessageObject() {
 	_isShown = true;
 	_isActive = true;
 	_updateZ = 0;
-	_field_38 = 0;
+	_msgProcessingPaused = 0;
 	_notLoopedSound = true;
 	_startSound = false;
 	_hasSound = false;
@@ -89,12 +89,13 @@ void processSavedReaction(QReaction **reaction, QMessageObject *sender) {
 			}
 			break;
 		}
-		/*
 		case kWalk:
 		case kWalkTo:
-		case kWalkVich:
+			g_vm->getQSystem()->_petka->setReactionAfterWalk(i, &r, sender, 1);
 			break;
-		 */
+		case kWalkVich:
+			g_vm->getQSystem()->_chapayev->setReactionAfterWalk(i, &r, sender, 1);
+			break;
 		default:
 			processed = false;
 			break;
@@ -113,10 +114,10 @@ void processSavedReaction(QReaction **reaction, QMessageObject *sender) {
 void QMessageObject::processMessage(const QMessage &msg) {
 	bool reacted = false;
 	for (uint i = 0; i < _reactions.size(); ++i) {
-		QReaction &r = _reactions[i];
-		if (r.opcode != msg.opcode ||
-			(r.status != -1 && r.status != _status) ||
-			(r.senderId != -1 && r.senderId != msg.sender->_id)) {
+		QReaction *r = &_reactions[i];
+		if (r->opcode != msg.opcode ||
+			(r->status != -1 && r->status != _status) ||
+			(r->senderId != -1 && r->senderId != msg.sender->_id)) {
 			continue;
 		}
 		bool res;
@@ -124,8 +125,8 @@ void QMessageObject::processMessage(const QMessage &msg) {
 			g_vm->getBigDialogue()->setDialog(_id, msg.opcode, -1);
 			g_vm->getQSystem()->_mainInterface->_dialog._sender = this;
 		}
-		for (uint j = 0; j < r.messages.size(); ++j) {
-			QMessage &rMsg = r.messages[j];
+		for (uint j = 0; j < r->messages.size(); ++j) {
+			QMessage &rMsg = r->messages[j];
 			if (rMsg.opcode == kCheck && g_vm->getQSystem()->findObject(rMsg.objId)->_status != rMsg.arg1) {
 				break;
 			}
@@ -145,8 +146,8 @@ void QMessageObject::processMessage(const QMessage &msg) {
 			case kDialog:
 				delete g_dialogReaction;
 				g_dialogReaction = new QReaction();
-				for (uint z = j + 1; z < r.messages.size(); ++z) {
-					g_dialogReaction->messages.push_back(r.messages[z]);
+				for (uint z = j + 1; z < r->messages.size(); ++z) {
+					g_dialogReaction->messages.push_back(r->messages[z]);
 				}
 				break;
 			case kPlay: {
@@ -154,17 +155,19 @@ void QMessageObject::processMessage(const QMessage &msg) {
 				delete obj->_reaction;
 				obj->_reaction = new QReaction();
 				obj->_reactionResId = rMsg.arg1;
-				for (uint z = j + 1; z < r.messages.size(); ++z) {
-					obj->_reaction->messages.push_back(r.messages[z]);
+				for (uint z = j + 1; z < r->messages.size(); ++z) {
+					obj->_reaction->messages.push_back(r->messages[z]);
 				}
 				break;
 			}
-			/*
+
 			case kWalk:
 			case kWalkTo:
-			case kWalkVich:
+				g_vm->getQSystem()->_petka->setReactionAfterWalk(j, &r, this, 0);
 				break;
-			 */
+			case kWalkVich:
+				g_vm->getQSystem()->_chapayev->setReactionAfterWalk(j, &r, this, 0);
+				break;
 			default:
 				processed = false;
 			}
@@ -291,6 +294,44 @@ void QMessageObject::processMessage(const QMessage &msg) {
 		case kJumpVich:
 			g_vm->getQSystem()->_petka->setPos((msg.arg1 == -1 ? _walkX : msg.arg1), (msg.arg2 == -1 ? _walkY : msg.arg2));
 			break;
+		case kWalk:
+			if (!reacted) {
+				if (_walkX == -1) {
+					g_vm->getQSystem()->_petka->walk(msg.arg1, msg.arg2);
+
+				} else {
+					g_vm->getQSystem()->_petka->walk(_walkX, _walkY);
+				}
+			}
+			break;
+		case kWalkTo: {
+			int destX = msg.arg1;
+			int destY = msg.arg2;
+			if (destX == -1 || destY  == -1) {
+				destX = _walkX;
+				destY = _walkY;
+			}
+			if (destX != -1) {
+				g_vm->getQSystem()->_petka->walk(destX, destY);
+				QReaction *r = g_vm->getQSystem()->_petka->_heroReaction;
+				if (r) {
+					for (uint i = 0; i < r->messages.size(); ++i) {
+						if (r->messages[i].opcode == kGoTo) {
+							g_vm->getQSystem()->_chapayev->walk(_walkX, _walkY);
+							break;
+						}
+					}
+				}
+			}
+			break;
+		}
+		case kWalkVich:
+			if (msg.arg1 == -1 || msg.arg2 == -1) {
+				g_vm->getQSystem()->_chapayev->walk(msg.arg1, msg.arg2);
+			} else if (_walkX != -1) {
+				g_vm->getQSystem()->_chapayev->walk(_walkX, _walkY);
+			}
+			break;
 		}
 	} else {
 		g_vm->getBigDialogue()->setDialog(_id, msg.opcode, -1);
@@ -335,10 +376,13 @@ bool QObject::isInPoint(int x, int y) {
 	if (!_isActive)
 		return false;
 	FlicDecoder *flc = g_vm->resMgr()->loadFlic(_resourceId);
-	Common::Rect rect(_x, _y, _x + flc->getWidth(), _y + flc->getHeight());
-	if (!rect.contains(x, y))
-		return false;
-	return *(byte *) flc->getCurrentFrame()->getBasePtr(x - _x, y - _y) != 0;
+	if (flc) {
+		Common::Rect rect(_x, _y, _x + flc->getWidth(), _y + flc->getHeight());
+		if (!rect.contains(x, y))
+			return false;
+		return *(byte *) flc->getCurrentFrame()->getBasePtr(x - _x, y - _y) != 0;
+	}
+	return false;
 }
 
 void QObject::draw() {
