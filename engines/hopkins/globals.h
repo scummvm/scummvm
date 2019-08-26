@@ -25,6 +25,7 @@
 
 #include "common/scummsys.h"
 #include "common/str.h"
+#include "common/util.h"
 #include "common/events.h"
 
 namespace Hopkins {
@@ -39,6 +40,16 @@ struct CharacterLocation {
 	int _startSpriteIndex;
 	int _location;
 	int _zoomFactor;
+
+	void reset() {
+		_pos.x = 0;
+		_pos.y = 0;
+		_startSpriteIndex = 0;
+		_location = 0;
+		_zoomFactor = 0;
+	}
+
+	CharacterLocation() { reset(); }
 };
 
 enum SauvegardeOffset {
@@ -115,6 +126,22 @@ struct Savegame {
 	int16 _inventory[35];	// Originally at offset 1300 of data array
 	int16 _mapCarPosX;
 	int16 _mapCarPosY;
+
+	void reset() {
+		for (uint16 i = 0; i < ARRAYSIZE(_data); i++) {
+			_data[i] = 0;
+		}
+		_cloneHopkins.reset();
+		_realHopkins.reset();
+		_samantha.reset();
+		for (uint16 i = 0; i < ARRAYSIZE(_inventory); i++) {
+			_inventory[i] = 0;
+		}
+		_mapCarPosX = 0;
+		_mapCarPosY = 0;
+	}
+
+	Savegame() { reset(); }
 };
 
 struct CreditItem {

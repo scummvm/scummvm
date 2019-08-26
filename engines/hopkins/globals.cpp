@@ -181,7 +181,7 @@ void Globals::clearAll() {
 	_vm->_objectsMan->clearAll();
 
 	_saveData = (Savegame *)malloc(sizeof(Savegame));
-	memset(_saveData, 0, sizeof(Savegame));
+	_saveData->reset();
 
 	_vm->_events->clearAll();
 }
