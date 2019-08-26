@@ -141,7 +141,8 @@ extern const IntroCredit creditsValley[19];
 extern const IntroCredit creditsTreeHouse1[20];
 extern const IntroCredit creditsTreeHouse2[27];
 extern const IntroCredit creditsFairePath1[23];
-extern const IntroCredit creditsFairePath2[14];
+extern const IntroCredit creditsFairePath2[8];
+extern const IntroCredit creditsTent[6];
 
 } // End of namespace Saga
 

@@ -1257,7 +1257,10 @@ const IntroCredit creditsFairePath2[] = {
 	{Common::JA_JPN, kITECreditsAny, kITECreditsHeader, "Directed by"},
 	{Common::UNK_LANG, kITECreditsAny, kITECreditsText, "Talin"},
 	{Common::FR_FRA, kITECreditsAny, kITECreditsHeader, "Traduction Francaise"},
-	{Common::FR_FRA, kITECreditsAny, kITECreditsText, "Ryfatwork, Momo le Yetty et Darknior"},
+	{Common::FR_FRA, kITECreditsAny, kITECreditsText, "Ryfatwork, Momo le Yetty et Darknior"}
+};
+
+const IntroCredit creditsTent[6] = {
 	{Common::JA_JPN, kITECreditsAny, kITECreditsHeader, "NEC PC-9821 version by"},
 	{Common::JA_JPN, kITECreditsAny, kITECreditsText, "STARCRAFT,Inc."},
 	{Common::JA_JPN, kITECreditsAny, kITECreditsHeader, "Programming"},

@@ -728,12 +728,17 @@ int Scene::ITEIntroFaireTentProc(int param) {
 		event.time = 0;
 		event.duration = DISSOLVE_DURATION;
 		eventColumns = _vm->_events->queue(event);
+		_vm->_events->chain(eventColumns, event);
+
+		// Queue PC98 extra credits
+		if (_vm->getPlatform() == Common::kPlatformPC98)
+			eventColumns = queueCredits(DISSOLVE_DURATION, CREDIT_DURATION1, ARRAYSIZE(creditsTent), creditsTent);
 
 		// End scene after momentary pause
 		event.type = kEvTOneshot;
 		event.code = kSceneEvent;
 		event.op = kEventEnd;
-		event.time = 5000;
+		event.time = (_vm->getPlatform() == Common::kPlatformPC98) ? 5000 - CREDIT_DURATION1 : 5000;
 		_vm->_events->chain(eventColumns, event);
 
 		break;
