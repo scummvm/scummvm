@@ -389,6 +389,8 @@ void Menu::writeConfig() {
 
 	if (g_hdb->getCheatingOn())
 		ConfMan.set(CONFIG_CHEAT, "1");
+
+	ConfMan.flushToDisk();
 }
 
 static const char nebulaNames[kNebulaCount][32] = {
