@@ -217,6 +217,9 @@ void HDBGame::save(Common::OutSaveFile *out) {
 
 void HDBGame::loadSaveFile(Common::InSaveFile *in) {
 	in->read(_currentMapname, 64);
+
+	debug(0, "Loading map %s", _currentMapname);
+
 	in->read(_lastMapname, 64);
 	in->read(_currentLuaName, 64);
 	_actionMode = in->readSint32LE();
