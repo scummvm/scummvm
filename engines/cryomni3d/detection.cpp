@@ -69,8 +69,6 @@ bool CryOmni3DEngine::hasFeature(EngineFeature f) const {
 	    || (f == kSupportsSubtitleOptions);
 }
 
-} // End of Namespace CryOmni3D
-
 static const PlainGameDescriptor cryomni3DGames[] = {
 	{"versailles", "Versailles 1685"},
 	{0, 0}
@@ -85,7 +83,7 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 class CryOmni3DMetaEngine : public AdvancedMetaEngine {
 public:
 	CryOmni3DMetaEngine() : AdvancedMetaEngine(CryOmni3D::gameDescriptions,
-		        sizeof(CryOmni3D::CryOmni3DGameDescription), cryomni3DGames, optionsList) {
+		        sizeof(CryOmni3DGameDescription), cryomni3DGames, optionsList) {
 		//_singleId = "cryomni3d";
 		_maxScanDepth = 2;
 	}
@@ -120,7 +118,7 @@ bool CryOmni3DMetaEngine::hasFeature(MetaEngineFeature f) const {
 
 SaveStateList CryOmni3DMetaEngine::listSaves(const char *target) const {
 	// Replicate constant here to shorten lines
-	static const uint kSaveDescriptionLen = CryOmni3D::CryOmni3DEngine::kSaveDescriptionLen;
+	static const uint kSaveDescriptionLen = CryOmni3DEngine::kSaveDescriptionLen;
 	SaveStateList saveList;
 
 	Common::SaveFileManager *saveMan = g_system->getSavefileManager();
@@ -160,13 +158,13 @@ void CryOmni3DMetaEngine::removeSaveState(const char *target, int slot) const {
 
 bool CryOmni3DMetaEngine::createInstance(OSystem *syst, Engine **engine,
         const ADGameDescription *desc) const {
-	const CryOmni3D::CryOmni3DGameDescription *gd = (const CryOmni3D::CryOmni3DGameDescription *)desc;
+	const CryOmni3DGameDescription *gd = (const CryOmni3DGameDescription *)desc;
 
 	if (gd) {
 		switch (gd->gameType) {
-		case CryOmni3D::GType_VERSAILLES:
+		case GType_VERSAILLES:
 #ifdef ENABLE_VERSAILLES
-			*engine = new CryOmni3D::Versailles::CryOmni3DEngine_Versailles(syst, gd);
+			*engine = new Versailles::CryOmni3DEngine_Versailles(syst, gd);
 			break;
 #else
 			warning("Versailles support not compiled in");
@@ -180,8 +178,10 @@ bool CryOmni3DMetaEngine::createInstance(OSystem *syst, Engine **engine,
 	return (gd != 0);
 }
 
+} // End of Namespace CryOmni3D
+
 #if PLUGIN_ENABLED_DYNAMIC(CRYOMNI3D)
-REGISTER_PLUGIN_DYNAMIC(CRYOMNI3D, PLUGIN_TYPE_ENGINE, CryOmni3DMetaEngine);
+REGISTER_PLUGIN_DYNAMIC(CRYOMNI3D, PLUGIN_TYPE_ENGINE, CryOmni3D::CryOmni3DMetaEngine);
 #else
-REGISTER_PLUGIN_STATIC(CRYOMNI3D, PLUGIN_TYPE_ENGINE, CryOmni3DMetaEngine);
+REGISTER_PLUGIN_STATIC(CRYOMNI3D, PLUGIN_TYPE_ENGINE, CryOmni3D::CryOmni3DMetaEngine);
 #endif
