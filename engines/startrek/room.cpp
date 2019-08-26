@@ -131,7 +131,7 @@ void Room::loadRoomMessages() {
 	const char roomIndexChar = '0' + _vm->_roomIndex;
 
 	do {
-		while (text[0] != '#' || text[1] != _vm->_missionName[0] && text[4] != roomIndexChar)
+		while (text[0] != '#' || (text[1] != _vm->_missionName[0] && text[4] != roomIndexChar))
 			text++;
 
 		if (text[5] == '\\')
