@@ -32,7 +32,6 @@
 #include <sapi.h>
 #include "backends/text-to-speech/windows/sphelper-scummvm.h"
 #include "backends/platform/sdl/win32/win32_wrapper.h"
-#include "backends/platform/sdl/win32/codepage.h"
 
 #include "backends/text-to-speech/windows/windows-text-to-speech.h"
 
@@ -41,6 +40,7 @@
 #include "common/system.h"
 #include "common/ustr.h"
 #include "common/config-manager.h"
+#include "common/encoding.h"
 
 ISpVoice *_voice;
 
@@ -174,7 +174,11 @@ bool WindowsTextToSpeechManager::say(Common::String str, Action action, Common::
 	// We have to set the pitch by prepending xml code at the start of the said string;
 	Common::String pitch= Common::String::format("<pitch absmiddle=\"%d\">", _ttsState->_pitch / 10);
 	str.replace((uint32)0, 0, pitch);
-	WCHAR *strW = Win32::ansiToUnicode(str.c_str(), Win32::getCodePageId(charset));
+	WCHAR *strW = (WCHAR *) Common::Encoding::convert("UTF-16", charset, str.c_str(), str.size());
+	if (strW == nullptr) {
+		warning("Cannot convert from %s encoding for text to speech", charset.c_str());
+		return true;
+	}
 
 	WaitForSingleObject(_speechMutex, INFINITE);
 	if (isSpeaking() && !_speechQueue.empty() && action == INTERRUPT_NO_REPEAT &&

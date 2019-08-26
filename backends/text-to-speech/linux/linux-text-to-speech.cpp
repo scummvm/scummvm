@@ -27,12 +27,12 @@
 
 #if defined(USE_TTS) && defined(USE_SPEECH_DISPATCHER) && defined(POSIX)
 #include <speech-dispatcher/libspeechd.h>
-#include "backends/platform/sdl/sdl-sys.h"
 
 #include "common/translation.h"
 #include "common/system.h"
 #include "common/ustr.h"
 #include "common/config-manager.h"
+#include "common/encoding.h"
 #include <pthread.h>
 
 SPDConnection *_connection;
@@ -175,26 +175,6 @@ void SpeechDispatcherManager::updateState(SpeechDispatcherManager::SpeechEvent e
 	}
 }
 
-Common::String SpeechDispatcherManager::strToUtf8(Common::String str, Common::String charset) {
-#if SDL_VERSION_ATLEAST(2, 0, 0)
-
-	char *conv_text = SDL_iconv_string("UTF-8", charset.c_str(), str.c_str(), str.size() + 1);
-	Common::String result;
-	if (conv_text) {
-		result = conv_text;
-		SDL_free(conv_text);
-	} else if (charset != "ASCII"){
-		warning("Could not convert text from %s to UTF-8, trying ASCII", charset.c_str());
-		return strToUtf8(str, "ASCII");
-	} else
-		warning("Could not convert text to UTF-8");
-
-	return result;
-#else
-	return Common::String();
-#endif
-}
-
 bool SpeechDispatcherManager::say(Common::String str, Action action, Common::String charset) {
 
 	pthread_mutex_lock(&_speechMutex);
@@ -220,18 +200,25 @@ bool SpeechDispatcherManager::say(Common::String str, Action action, Common::Str
 #endif
 	}
 
-	str = strToUtf8(str, charset);
+	char *tmpStr = Common::Encoding::convert("UTF-8", charset, str.c_str(), str.size());
+	if (tmpStr == nullptr) {
+		warning("Cannot convert from %s encoding for text to speech", charset.c_str());
+		pthread_mutex_unlock(&_speechMutex);
+		return true;
+	}
+	Common::String strUtf8 = tmpStr;
+	free(tmpStr);
 
 	if (!_speechQueue.empty() && action == INTERRUPT_NO_REPEAT &&
-			_speechQueue.front() == str && isSpeaking()) {
+			_speechQueue.front() == strUtf8 && isSpeaking()) {
 		_speechQueue.clear();
-		_speechQueue.push_back(str);
+		_speechQueue.push_back(strUtf8);
 		pthread_mutex_unlock(&_speechMutex);
 		return true;
 	}
 
 	if (!_speechQueue.empty() && action == QUEUE_NO_REPEAT &&
-			_speechQueue.back() == str && isSpeaking()) {
+			_speechQueue.back() == strUtf8 && isSpeaking()) {
 		pthread_mutex_unlock(&_speechMutex);
 		return true;
 	}
@@ -239,9 +226,9 @@ bool SpeechDispatcherManager::say(Common::String str, Action action, Common::Str
 	pthread_mutex_unlock(&_speechMutex);
 	if (isSpeaking() && (action == INTERRUPT || action == INTERRUPT_NO_REPEAT))
 		stop();
-	if (!str.empty()) {
+	if (!strUtf8.empty()) {
 		pthread_mutex_lock(&_speechMutex);
-		_speechQueue.push_back(str);
+		_speechQueue.push_back(strUtf8);
 		pthread_mutex_unlock(&_speechMutex);
 		if (isReady()) {
 			_speechState = SPEAKING;
