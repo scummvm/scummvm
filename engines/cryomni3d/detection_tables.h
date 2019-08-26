@@ -290,23 +290,20 @@ static const CryOmni3DGameDescription gameDescriptions[] = {
 static const CryOmni3DGameDescription fallbackDescs[] = {
 	{
 		{
-			"versailles",
-			"unknown",
+			"",
+			"",
 			AD_ENTRY1(0, 0),
 			Common::UNK_LANG,
-			Common::kPlatformWindows,
+			Common::kPlatformUnknown,
 			ADGF_UNSTABLE,
-			GUI_OPTIONS_VERSAILLES
+			GUIO0()
 		},
-		GType_VERSAILLES,
+		0,
 		0,
 	},
 };
 
 static const ADFileBasedFallback fileBased[] = {
-	{ &fallbackDescs[0].desc,  { "VERSAILL.EXE", 0 } },
-	{ &fallbackDescs[0].desc,  { "VERSAILL.PGM", 0 } },
-	{ &fallbackDescs[0].desc,  { "Versailles", 0 } },
 	{ 0, { 0 } }
 };
 

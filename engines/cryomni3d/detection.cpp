@@ -23,6 +23,8 @@
 #include "base/plugins.h"
 
 #include "engines/advancedDetector.h"
+#include "common/file.h"
+#include "common/md5.h"
 #include "common/savefile.h"
 #include "common/system.h"
 #include "common/textconsole.h"
@@ -41,6 +43,24 @@ struct CryOmni3DGameDescription {
 
 	uint8 gameType;
 	uint32 features;
+};
+
+/**
+ * The fallback game descriptor used by the meta engine's fallbackDetector.
+ * Contents of this struct are overwritten by the fallbackDetector.
+ */
+static CryOmni3DGameDescription s_fallbackDesc = {
+	{
+		"",
+		"",
+		AD_ENTRY1(0, 0), // This should always be AD_ENTRY1(0, 0) in the fallback descriptor
+		Common::UNK_LANG,
+		Common::kPlatformUnknown,
+		ADGF_UNSTABLE,
+		GUIO0()
+	},
+	0,
+	0
 };
 
 const char *CryOmni3DEngine::getGameId() const {
@@ -85,11 +105,27 @@ public:
 	CryOmni3DMetaEngine() : AdvancedMetaEngine(CryOmni3D::gameDescriptions,
 		        sizeof(CryOmni3DGameDescription), cryomni3DGames, optionsList) {
 		//_singleId = "cryomni3d";
-		_maxScanDepth = 2;
+		_maxScanDepth = 1;
 	}
 
 	ADDetectedGame fallbackDetect(const FileMap &allFiles,
 	                              const Common::FSList &fslist) const override {
+
+		ADDetectedGame game;
+
+		SearchMan.addDirectory("CryOmni3DMetaEngine::fallbackDetect", fslist.begin()->getParent());
+		debug("Adding to SearchMan: %s", fslist.begin()->getParent().getPath().c_str());
+
+		// Detect Versailles
+		game = fallbackDetectVersailles(fslist.begin()->getParent());
+		if (game.desc) {
+			SearchMan.remove("CryOmni3DMetaEngine::fallbackDetect");
+			return game;
+		}
+
+		SearchMan.remove("CryOmni3DMetaEngine::fallbackDetect");
+
+		// Fallback to standard fallback detection
 		return detectGameFilebased(allFiles, fslist, CryOmni3D::fileBased);
 	}
 
@@ -106,7 +142,110 @@ public:
 	virtual SaveStateList listSaves(const char *target) const;
 	virtual int getMaximumSaveSlot() const { return 999; }
 	virtual void removeSaveState(const char *target, int slot) const;
+
+	bool addUnknownFile(const Common::FSNode &node, ADDetectedGame &game) const;
+
+	ADDetectedGame fallbackDetectVersailles(const Common::FSNode &root) const;
 };
+
+bool CryOmni3DMetaEngine::addUnknownFile(const Common::FSNode &node, ADDetectedGame &game) const {
+	Common::File testFile;
+	FileProperties fileProps;
+
+	if (!testFile.open(node)) {
+		return false;
+	}
+
+	fileProps.size = (int32)testFile.size();
+	fileProps.md5 = Common::computeStreamMD5AsString(testFile, _md5Bytes);
+
+	game.hasUnknownFiles = true;
+	game.matchedFiles[node.getName()] = fileProps;
+
+	return true;
+}
+
+ADDetectedGame CryOmni3DMetaEngine::fallbackDetectVersailles(const Common::FSNode &root) const {
+	debug("Checking for OBJETS/VS1.HLZ");
+	if (!root.getChild("OBJETS").getChild("VS1.HLZ").exists()) {
+		debug("not found");
+		return ADDetectedGame();
+	}
+	debug("found !");
+
+	Common::FSNode node;
+	const ADGameDescription *gameDesc = &s_fallbackDesc.desc;
+	ADDetectedGame game(gameDesc);
+
+	s_fallbackDesc.desc.gameId = "versailles";
+	s_fallbackDesc.desc.extra = "fallback";
+	s_fallbackDesc.desc.language = Common::UNK_LANG;
+	s_fallbackDesc.desc.flags = ADGF_UNSTABLE;
+	s_fallbackDesc.desc.platform = Common::kPlatformUnknown;
+	s_fallbackDesc.desc.guiOptions = GUI_OPTIONS_VERSAILLES;
+
+	s_fallbackDesc.gameType = GType_VERSAILLES;
+
+	// Sounds good, determine platform
+	node = root.getChild("VERSAILL.PGM");
+	if (node.exists()) {
+		addUnknownFile(node, game);
+
+		s_fallbackDesc.desc.platform = Common::kPlatformDOS;
+	}
+	node = root.getChild("VERSAILL.EXE");
+	if (node.exists()) {
+		addUnknownFile(node, game);
+
+		s_fallbackDesc.desc.platform = Common::kPlatformWindows;
+	}
+	node = root.getChild("PROGRAM.Z");
+	if (node.exists()) {
+		addUnknownFile(node, game);
+
+		s_fallbackDesc.desc.platform = Common::kPlatformWindows;
+	}
+	node = root.getChild("Versailles");
+	if (node.exists()) {
+		addUnknownFile(node, game);
+
+		s_fallbackDesc.desc.platform = Common::kPlatformMacintosh;
+	}
+
+	// Determine language
+	node = root.getChild("GTO").getChild("DIALOG1.GTO");
+	if (node.getChild("DIALOG1.GTO").exists()) {
+		s_fallbackDesc.desc.language = Common::FR_FRA;
+	} else if (node.getChild("DIALOG1.ALM").exists()) {
+		s_fallbackDesc.desc.language = Common::DE_DEU;
+	} else if (node.getChild("DIALOG1.GB").exists()) {
+		s_fallbackDesc.desc.language = Common::EN_ANY;
+	} else if (node.getChild("DIALOG1.SP").exists()) {
+		s_fallbackDesc.desc.language = Common::ES_ESP;
+	} else if (node.getChild("DIALOG1.ITA").exists()) {
+		s_fallbackDesc.desc.language = Common::IT_ITA;
+	}
+
+	// Determine game flags
+	s_fallbackDesc.features = 0;
+	node = root.getChild("FONTS").getChild("FONT01.CRF");
+	if (node.exists()) {
+		// Add file to report to let developers set appropriate game flags
+		addUnknownFile(node, game);
+
+		s_fallbackDesc.features |= GF_VERSAILLES_NUMERICFONTS;
+	}
+
+	node = root.getChild("DIAL").getChild("VOIX").getChild("ALI001__.WAV");
+	if (node.exists()) {
+		// Add file to report to let developers set appropriate game flags
+		addUnknownFile(node, game);
+
+		s_fallbackDesc.features |= GF_VERSAILLES_AUDIOPADDING;
+	}
+
+	return game;
+}
 
 bool CryOmni3DMetaEngine::hasFeature(MetaEngineFeature f) const {
 	return
