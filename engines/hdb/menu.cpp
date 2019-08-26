@@ -310,22 +310,27 @@ bool Menu::init() {
 }
 
 void Menu::readConfig() {
+	bool needFlush = false;
+
 	if (ConfMan.hasKey(CONFIG_MSTONE7)) {
 		g_hdb->setStarsMonkeystone7(ConfMan.getInt(CONFIG_MSTONE7));
 	} else {
 		ConfMan.setInt(CONFIG_MSTONE7, STARS_MONKEYSTONE_7_FAKE);
+		needFlush = true;
 	}
 
 	if (ConfMan.hasKey(CONFIG_MSTONE14)) {
 		g_hdb->setStarsMonkeystone14(ConfMan.getInt(CONFIG_MSTONE14));
 	} else {
 		ConfMan.setInt(CONFIG_MSTONE14, STARS_MONKEYSTONE_14_FAKE);
+		needFlush = true;
 	}
 
 	if (ConfMan.hasKey(CONFIG_MSTONE21)) {
 		g_hdb->setStarsMonkeystone21(ConfMan.getInt(CONFIG_MSTONE21));
 	} else {
 		ConfMan.setInt(CONFIG_MSTONE21, STARS_MONKEYSTONE_21_FAKE);
+		needFlush = true;
 	}
 
 	if (ConfMan.hasKey(CONFIG_KEY_UP)) {
@@ -333,6 +338,7 @@ void Menu::readConfig() {
 		g_hdb->_input->assignKey(0, _keyAssignUp);
 	} else {
 		ConfMan.setInt(CONFIG_KEY_UP, _keyAssignUp);
+		needFlush = true;
 	}
 
 	if (ConfMan.hasKey(CONFIG_KEY_DOWN)) {
@@ -340,6 +346,7 @@ void Menu::readConfig() {
 		g_hdb->_input->assignKey(1, _keyAssignDown);
 	} else {
 		ConfMan.setInt(CONFIG_KEY_DOWN, _keyAssignDown);
+		needFlush = true;
 	}
 
 	if (ConfMan.hasKey(CONFIG_KEY_LEFT)) {
@@ -347,6 +354,7 @@ void Menu::readConfig() {
 		g_hdb->_input->assignKey(2, _keyAssignLeft);
 	} else {
 		ConfMan.setInt(CONFIG_KEY_LEFT, _keyAssignLeft);
+		needFlush = true;
 	}
 
 	if (ConfMan.hasKey(CONFIG_KEY_RIGHT)) {
@@ -354,6 +362,7 @@ void Menu::readConfig() {
 		g_hdb->_input->assignKey(3, _keyAssignRight);
 	} else {
 		ConfMan.setInt(CONFIG_KEY_RIGHT, _keyAssignRight);
+		needFlush = true;
 	}
 
 	if (ConfMan.hasKey(CONFIG_KEY_USE)) {
@@ -361,6 +370,7 @@ void Menu::readConfig() {
 		g_hdb->_input->assignKey(4, _keyAssignUse);
 	} else {
 		ConfMan.setInt(CONFIG_KEY_USE, _keyAssignUse);
+		needFlush = true;
 	}
 
 	if (ConfMan.hasKey(CONFIG_CHEAT)) {
@@ -368,7 +378,8 @@ void Menu::readConfig() {
 		debug("Cheating enabled");
 	}
 
-	ConfMan.flushToDisk();
+	if (needFlush)
+		ConfMan.flushToDisk();
 }
 
 void Menu::writeConfig() {
