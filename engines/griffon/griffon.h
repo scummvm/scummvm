@@ -81,6 +81,8 @@ class Console;
 #define sndfire     13
 #define sndbeep     14
 
+#define kEpsilon 0.001
+
 struct PLAYERTYPE {
 	float   px;
 	float   py;
@@ -410,6 +412,7 @@ private:
 
 	Mix_Chunk *sfx[21];
 
+	// TODO: Check those variables, at least canusekey is a boolean, and the case is wrong in all the names
 	// room locks
 	int roomlocks[201], saidlocked, canusekey, locktype, roomtounlock, saidjammed;
 	// set to 1 for normal key, set to 2 for master, set to 0 if unlocked

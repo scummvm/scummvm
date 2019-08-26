@@ -303,7 +303,7 @@ float GriffonEngine::RND() {
 
 void GriffonEngine::game_addFloatIcon(int ico, float xloc, float yloc) {
 	for (int i = 0; i < kMaxFloat; i++) {
-		if (floaticon[i][0] == 0) {
+		if (ABS(floaticon[i][0]) < kEpsilon) {
 			floaticon[i][0] = 32;
 			floaticon[i][1] = xloc;
 			floaticon[i][2] = yloc;
@@ -315,7 +315,7 @@ void GriffonEngine::game_addFloatIcon(int ico, float xloc, float yloc) {
 
 void GriffonEngine::game_addFloatText(const char *stri, float xloc, float yloc, int col) {
 	for (int i = 0; i < kMaxFloat; i++) {
-		if (floattext[i][0] == 0) {
+		if (ABS(floattext[i][0]) < kEpsilon) {
 			floattext[i][0] = 32;
 			floattext[i][1] = xloc;
 			floattext[i][2] = yloc;
@@ -327,10 +327,8 @@ void GriffonEngine::game_addFloatText(const char *stri, float xloc, float yloc, 
 }
 
 void GriffonEngine::game_attack() {
-	float npx, npy;
-
-	npx = player.px + 12;
-	npy = player.py + 20;
+	float npx = player.px + 12;
+	float npy = player.py + 20;
 
 	int lx = (int)npx / 16;
 	int ly = (int)npy / 16;
@@ -714,7 +712,7 @@ void GriffonEngine::game_castspell(int spellnum, float homex, float homey, float
 	// spellnum 7 = sprite 6 spitfire
 
 	for (int i = 0; i < kMaxSpell; i++) {
-		if (spellinfo[i].frame == 0) {
+		if (ABS(spellinfo[i].frame) < kEpsilon) {
 			spellinfo[i].homex = homex;
 			spellinfo[i].homey = homey;
 			spellinfo[i].enemyx = enemyx;
@@ -733,7 +731,7 @@ void GriffonEngine::game_castspell(int spellnum, float homex, float homey, float
 			spellinfo[i].frame = 32.0f;
 			if (damagewho == 0) {
 				spellinfo[i].strength = player.spellstrength / 100;
-				if (player.spellstrength == 100)
+				if (ABS(player.spellstrength - 100) < kEpsilon)
 					spellinfo[i].strength = 1.5f;
 			}
 
@@ -815,25 +813,25 @@ void GriffonEngine::game_checkhit() {
 				if (_console->_godMode)
 					damage = 1000;
 
-				if (player.attackstrength == 100)
-					damage = damage * 1.5;
+				if (ABS(player.attackstrength - 100) < kEpsilon)
+					damage *= 1.5;
 
-				int hit = 0;
+				bool hit = false;
 				if (player.walkdir == 0) {
 					if (abs(xdif) <= 8 && ydif >= 0 && ydif < 8)
-						hit = 1;
+						hit = true;
 				} else if (player.walkdir == 1) {
 					if (abs(xdif) <= 8 && ydif <= 0 && ydif > -8)
-						hit = 1;
+						hit = true;
 				} else if (player.walkdir == 2) {
 					if (abs(ydif) <= 8 && xdif >= -8 && xdif < 8)
-						hit = 1;
+						hit = true;
 				} else if (player.walkdir == 3) {
 					if (abs(ydif) <= 8 && xdif <= 8 && xdif > -8)
-						hit = 1;
+						hit = true;
 				}
 
-				if (hit == 1) {
+				if (hit) {
 					if (menabled == 1 && config.effects == 1) {
 						int snd = Mix_PlayChannel(-1, sfx[sndswordhit], 0);
 						Mix_Volume(snd, config.effectsvol);
@@ -847,9 +845,7 @@ void GriffonEngine::game_checkhit() {
 }
 
 void GriffonEngine::game_checkinputs() {
-	int ntickdelay;
-
-	ntickdelay = 175;
+	int ntickdelay = 175;
 
 	g_system->getEventManager()->pollEvent(event);
 
@@ -1012,7 +1008,7 @@ void GriffonEngine::game_checkinputs() {
 				}
 
 				if (curitem > 5 && selenemyon == 0 && itemselon == 1) {
-					if (player.spellcharge[curitem - 5] == 100) {
+					if (ABS(player.spellcharge[curitem - 5] - 100) < kEpsilon) {
 						itemticks = ticks + ntickdelay;
 
 						selenemyon = 1;
@@ -1151,13 +1147,11 @@ __exit_do:
 }
 
 void GriffonEngine::game_checktrigger() {
-	int npx, npy, lx, ly;
+	int npx = player.px + 12;
+	int npy = player.py + 20;
 
-	npx = player.px + 12;
-	npy = player.py + 20;
-
-	lx = (int)npx / 16;
-	ly = (int)npy / 16;
+	int lx = (int)npx / 16;
+	int ly = (int)npy / 16;
 
 	canusekey = 0;
 
@@ -1178,19 +1172,18 @@ void GriffonEngine::game_checktrigger() {
 void GriffonEngine::game_configmenu() {
 	Graphics::TransparentSurface *configwindow;
 	Common::Rect rc;
-	int cursel, curselt;
-	int tickwait, keypause, ticks1;
+	int curselt;
 
-	cursel = MINCURSEL;
+	int cursel = MINCURSEL;
 
 	ticks = g_system->getMillis();
-	tickwait = 100;
-	keypause = ticks + tickwait;
+	int tickwait = 100;
+	int keypause = ticks + tickwait;
 
 	configwindow = IMG_Load("art/configwindow.bmp", true);
 	configwindow->setAlpha(160, true);
 
-	ticks1 = ticks;
+	int ticks1 = ticks;
 	do {
 		_videobuffer->fillRect(Common::Rect(0, 0, _videobuffer->w, _videobuffer->h), 0);
 
@@ -2185,7 +2178,7 @@ void GriffonEngine::game_drawhud() {
 					game_fillrect(_videobuffer, rcSrc.left, sy + 16, 16, 4, RGB(0, 32, 32));
 					game_fillrect(_videobuffer, rcSrc.left + 1, sy + 17,
 					              hud_recalc(player.spellcharge[i], 14, 100), 2,
-					              player.spellcharge[i] == 100 ? RGB(255, 128, 32) : RGB(0, 224, 64));
+					              ABS(player.spellcharge[i] - 100) < kEpsilon ? RGB(255, 128, 32) : RGB(0, 224, 64));
 				}
 			}
 		}
@@ -2257,12 +2250,12 @@ void GriffonEngine::game_drawhud() {
 		game_fillrect(_videobuffer, sx + 1, sy + 16, 56, 6, RGB(0, 32, 32));
 		game_fillrect(_videobuffer, sx + 1, sy + 17,
 		              hud_recalc(player.attackstrength, 54, 100), 2,
-		              player.attackstrength == 100 ? RGB(255, 128, 32) : RGB(0, 64, 224));
+		              ABS(player.attackstrength - 100) < kEpsilon ? RGB(255, 128, 32) : RGB(0, 64, 224));
 
 		// spell strength
 		game_fillrect(_videobuffer, sx + 1, sy + 19,
 		              hud_recalc(player.spellstrength, 54, 100), 2,
-		              player.spellstrength == 100 ? RGB(224, 0, 0) : RGB(128, 0, 224));
+		              ABS(player.spellstrength - 100) < kEpsilon ? RGB(224, 0, 0) : RGB(128, 0, 224));
 
 		// time
 		int ase = secstart + secsingame;
@@ -2330,7 +2323,7 @@ void GriffonEngine::game_drawhud() {
 					game_fillrect(_videobuffer, rcSrc.left, sy + 16, 16, 4, RGB(0, 32, 32));
 					game_fillrect(_videobuffer, rcSrc.left + 1, sy + 17,
 					              hud_recalc(player.spellcharge[i], 14, 100), 2,
-					              player.spellcharge[i] == 100 ? RGB(255, 128, 32) : RGB(0, 224, 64));
+					              ABS(player.spellcharge[i] - 100) < kEpsilon ? RGB(255, 128, 32) : RGB(0, 224, 64));
 				}
 			}
 		}
@@ -2367,10 +2360,7 @@ void GriffonEngine::game_drawhud() {
 }
 
 void GriffonEngine::game_drawnpcs(int mode) {
-	unsigned int ccc;
-
-	ccc = _videobuffer->format.RGBToColor(255, 128, 32);
-
+	unsigned int ccc = _videobuffer->format.RGBToColor(255, 128, 32);
 	int fst = firsty;
 	int lst = lasty;
 
@@ -2992,8 +2982,6 @@ void GriffonEngine::game_drawover(int modx, int mody) {
 }
 
 void GriffonEngine::game_drawplayer() {
-	long ccc;
-
 	int f = 0;
 	if (player.armour == 3)
 		f = 13;
@@ -3025,7 +3013,7 @@ void GriffonEngine::game_drawplayer() {
 
 	}
 
-	ccc = _videobuffer->format.RGBToColor(224, 224, 64);
+	long ccc = _videobuffer->format.RGBToColor(224, 224, 64);
 
 	int pass = 0;
 	if (player.hp <= player.maxhp * 0.25)
@@ -3033,7 +3021,8 @@ void GriffonEngine::game_drawplayer() {
 
 	if (pass == 1) {
 		ccc = _videobuffer->format.RGBToColor(255, 255, 255);
-		if ((int)(player.hpflash) == 1) ccc = _videobuffer->format.RGBToColor(255, 0, 0);
+		if ((int)(player.hpflash) == 1)
+			ccc = _videobuffer->format.RGBToColor(255, 0, 0);
 	}
 
 	int sss = 6;
@@ -3064,7 +3053,7 @@ void GriffonEngine::game_drawplayer() {
 	_videobuffer->fillRect(rcDest, ccc);
 
 	ccc = _videobuffer->format.RGBToColor(0, 224, 64);
-	if (player.attackstrength == 100)
+	if (ABS(player.attackstrength - 100) < kEpsilon)
 		ccc = _videobuffer->format.RGBToColor(255, 128, 32);
 
 	ww = 14 * player.attackstrength / 100;
@@ -3082,7 +3071,7 @@ void GriffonEngine::game_drawplayer() {
 	_videobuffer->fillRect(rcDest, ccc);
 
 	ccc = _videobuffer->format.RGBToColor(128, 0, 224);
-	if (player.spellstrength == 100)
+	if (ABS(player.spellstrength - 100) < kEpsilon)
 		ccc = _videobuffer->format.RGBToColor(224, 0, 0);
 
 	rcDest.top = rcDest.top + 2;
@@ -3093,8 +3082,6 @@ void GriffonEngine::game_drawplayer() {
 }
 
 void GriffonEngine::game_drawview() {
-	Common::Rect rc;
-
 	_videobuffer->copyRectToSurface(mapbg->getPixels(), mapbg->pitch, 0, 0, mapbg->w, mapbg->h);
 
 	game_updspellsunder();
@@ -3117,6 +3104,7 @@ void GriffonEngine::game_drawview() {
 	game_updspells();
 
 	if (cloudson == 1) {
+		Common::Rect rc;
 		rc.left = (float)(256 + 256 * cos(3.141592 / 180 * clouddeg));
 		rc.top = (float)(192 + 192 * sin(3.141592 / 180 * clouddeg));
 		rc.setWidth(320);
@@ -3132,8 +3120,6 @@ void GriffonEngine::game_drawview() {
 
 void GriffonEngine::game_endofgame() {
 	float xofs = 0;
-	int ticks1;
-
 	ticks = g_system->getMillis();
 
 	float spd = 0.2f;
@@ -3144,7 +3130,7 @@ void GriffonEngine::game_endofgame() {
 		Mix_Volume(musicchannel, 0);
 	}
 
-	ticks1 = ticks;
+	int ticks1 = ticks;
 	int ya = 0;
 
 	_videobuffer2->fillRect(Common::Rect(0, 0, _videobuffer2->w, _videobuffer2->h), 0);
@@ -3371,16 +3357,16 @@ void GriffonEngine::game_endofgame() {
 }
 
 void GriffonEngine::game_eventtext(const char *stri) {
-	int x, fr, pauseticks, bticks;
+	int fr;
 
 	_videobuffer2->fillRect(Common::Rect(0, 0, _videobuffer2->w, _videobuffer2->h), 0);
 	_videobuffer3->fillRect(Common::Rect(0, 0, _videobuffer3->w, _videobuffer3->h), 0);
 
-	x = 160 - 4 * strlen(stri);
+	int x = 160 - 4 * strlen(stri);
 
 	ticks = g_system->getMillis();
-	pauseticks = ticks + 500;
-	bticks = ticks;
+	int pauseticks = ticks + 500;
+	int bticks = ticks;
 
 	_videobuffer->blit(*_videobuffer3);
 	_videobuffer->blit(*_videobuffer2);
@@ -6880,7 +6866,7 @@ void GriffonEngine::game_updspells() {
 				if (spellinfo[i].damagewho == 1) {
 
 					// --------- boss 1 specific
-					if (spellinfo[i].frame == 0 && npcinfo[spellinfo[i].npc].spriteset == 3) {
+					if (ABS(spellinfo[i].frame) < 0 && npcinfo[spellinfo[i].npc].spriteset == 3) {
 						npc = spellinfo[i].npc;
 						npcinfo[npc].attackframe = 0;
 						npcinfo[npc].attacking = 0;
@@ -6891,7 +6877,7 @@ void GriffonEngine::game_updspells() {
 					// ---------------
 
 					// --------- blackknight specific
-					if (spellinfo[i].frame == 0 && npcinfo[spellinfo[i].npc].spriteset == 4) {
+					if (ABS(spellinfo[i].frame) < 0 && npcinfo[spellinfo[i].npc].spriteset == 4) {
 						npc = spellinfo[i].npc;
 						npcinfo[npc].attackframe = 0;
 						npcinfo[npc].attacking = 0;
@@ -7841,7 +7827,7 @@ void GriffonEngine::game_updspellsunder() {
 				if (spellinfo[i].frame < 0)
 					spellinfo[i].frame = 0;
 
-				if (spellinfo[i].frame == 0) {
+				if (ABS(spellinfo[i].frame) < 0) {
 					npcinfo[spellinfo[i].npc].attacking = 0;
 					npcinfo[spellinfo[i].npc].attacknext = ticks + npcinfo[spellinfo[i].npc].attackdelay;
 				}
@@ -8288,7 +8274,7 @@ void GriffonEngine::sys_update() {
 		pa = (int)(player.attackframe);
 
 		for (int i = 0; i <= pa; i++) {
-			if (playerattackofs[player.walkdir][i][2] == 0) {
+			if (ABS(playerattackofs[player.walkdir][i][2]) < kEpsilon) {
 				playerattackofs[player.walkdir][i][2] = 1;
 
 				opx = player.px;
