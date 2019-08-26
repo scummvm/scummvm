@@ -217,6 +217,8 @@ bool HDBGame::restartMap() {
 	if (!_currentMapname[0])
 		return false;
 
+	debug(0, "Starting map %s", _currentMapname);
+
 	_gfx->emptyGfxCaches();
 	_lua->callFunction("level_shutdown", 0);
 
