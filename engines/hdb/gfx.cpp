@@ -381,7 +381,6 @@ void Gfx::updateFade() {
 	uint8 r, g, b;
 	uint16 value;
 	uint16 *ptr;
-	static int waitAFrame = 0;
 
 	if (!_fadeInfo.active && !_fadeInfo.stayFaded)
 		return;
@@ -444,6 +443,8 @@ void Gfx::updateFade() {
 		}
 	} else {
 		_fadeBuffer2.blitFrom(_globalSurface);
+
+		static int waitAFrame = 0;
 
 		do {
 			// Copy pristine copy of background to modification buffer

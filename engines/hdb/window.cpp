@@ -474,8 +474,8 @@ void Window::loadSaveFile(Common::InSaveFile *in) {
 		in->read(t->text, 128);
 		t->x = in->readSint32LE();
 		t->y = in->readSint32LE();
-		t->timer = in->readUint32LE();
-		t->timer = g_system->getMillis() + 1000;
+		(void)in->readUint32LE(); // Skip timer value
+		t->timer = g_system->getMillis() + 1000; // And override it to a second
 
 		_textOutList.push_back(t);
 	}
