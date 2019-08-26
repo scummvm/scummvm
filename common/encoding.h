@@ -173,6 +173,22 @@ class Encoding {
 		static char *convertTransManMapping(const char *to, const char *from, const char *string, size_t length);
 
 		/**
+		 * Uses conversion table to convert the string to unicode and from that
+		 * to the final encoding. Important encodings, that aren't supported by
+		 * all backends should go here.
+		 *
+		 * The result has to be freed after use.
+		 *
+		 * @param to Name of the encoding the strings will be converted to
+		 * @param from Name of the encoding the strings will be converted from
+		 * @param string String that should be converted.
+		 * @param length Length of the string to convert in bytes.
+		 *
+		 * @return Converted string (must be freed) or nullptr if the conversion failed
+		 */
+		static char *convertConversionTable(const char *to, const char *from, const char *string, size_t length);
+
+		/**
 		 * Transliterates cyrillic string in iso-8859-5 encoding and returns
 		 * it's ASCII (latin) form.
 		 *
