@@ -949,7 +949,7 @@ Common::Error HDBGame::run() {
 			strcpy(mapname, "CINE_OUTRO");
 
 		if (isDemo())
-			strncat(mapname, "_DEMO", 20);
+			strcat(mapname, "_DEMO");
 
 		debug("Starting level %s in %s", mapname, getActionMode() ? "Action Mode" : "Puzzle Mode");
 
