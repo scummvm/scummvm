@@ -43,12 +43,12 @@ struct CONFIG {
 	int scr_width;
 	int scr_height;
 	int scr_bpp;
-	int fullscreen;
+	bool fullscreen;
 	int hwaccel;
 	int hwsurface;
-	int music;
+	bool music;
 	int musicvol;
-	int effects;
+	bool effects;
 	int effectsvol;
 };
 

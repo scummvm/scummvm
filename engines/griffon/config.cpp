@@ -40,7 +40,7 @@
 namespace Griffon {
 
 CONFIG config = {
-	320, 240, 16, 0, 0, 0, 1, 127, 1, 127
+	320, 240, 16, false, 0, 0, true, 127, true, 127
 };
 
 char config_ini[64] = "config.ini";
@@ -63,9 +63,8 @@ void config_load(CONFIG *config) {
 #if 0
 	char line[128];
 	char arg[128];
-	FILE *fp;
 
-	fp = fopen(config_ini, "r");
+	FILE *fp = fopen(config_ini, "r");
 	if (fp) {
 		while (fgets(line, sizeof(line), fp) != NULL) {
 			sscanf(line, "%s", arg); // eliminate eol and eof by this
@@ -80,25 +79,25 @@ void config_load(CONFIG *config) {
 				fgets(line, sizeof(line), fp);
 				sscanf(line, "%i", &config->scr_bpp);
 			} else if (strcmp(arg, "HWACCEL:YES") == 0) {
-				config->hwaccel = SDL_HWACCEL;
+				config->hwaccel = true;
 			} else if (strcmp(arg, "HWACCEL:NO") == 0) {
-				config->hwaccel = 0;
+				config->hwaccel = false;
 			} else if (strcmp(arg, "HWSURFACE:YES") == 0) {
-				config->hwsurface = SDL_HWSURFACE;
+				config->hwsurface = true;
 			} else if (strcmp(arg, "HWSURFACE:NO") == 0) {
-				config->hwsurface = 0;
+				config->hwsurface = false;
 			} else if (strcmp(arg, "FULLSCREEN:YES") == 0) {
-				config->fullscreen = SDL_FULLSCREEN;
+				config->fullscreen = true;
 			} else if (strcmp(arg, "FULLSCREEN:NO") == 0) {
-				config->fullscreen = 0;
+				config->fullscreen = false;
 			} else if (strcmp(arg, "MUSIC:YES") == 0) {
-				config->music = 1;
+				config->music = true;
 			} else if (strcmp(arg, "MUSIC:NO") == 0) {
-				config->music = 0;
+				config->music = false;
 			} else if (strcmp(arg, "SNDEFFECTS:YES") == 0) {
-				config->effects = 1;
+				config->effects = true;
 			} else if (strcmp(arg, "SNDEFFECTS:NO") == 0) {
-				config->effects = 0;
+				config->effects = false;
 			} else if (strcmp(arg, "opmusicvol:") == 0) {
 				fgets(line, sizeof(line), fp);
 				sscanf(line, "%i", &config->musicvol);
