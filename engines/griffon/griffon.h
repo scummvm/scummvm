@@ -41,6 +41,8 @@
 #include "common/random.h"
 #include "engines/engine.h"
 
+#include "audio/audiostream.h"
+
 #include "graphics/transparent_surface.h"
 
 namespace Griffon {
@@ -227,8 +229,6 @@ struct ANIMSET2TYPE {
 	int h;
 };
 
-typedef int Mix_Chunk;
-
 class GriffonEngine : public Engine {
 public:
 	GriffonEngine(OSystem *syst);
@@ -405,12 +405,12 @@ private:
 	int lastnpc;
 
 	// music info
-	Mix_Chunk *mgardens, *mgardens2, *mgardens3, *mgardens4, *mboss, *mmenu, *mendofgame;
+	Audio::SeekableAudioStream *mgardens, *mgardens2, *mgardens3, *mgardens4, *mboss, *mmenu, *mendofgame;
 	int menabled, musicchannel, menuchannel;
 	int pgardens, pboss, ptown, pacademy, pcitadel;
 	int loopseta;
 
-	Mix_Chunk *sfx[21];
+	Audio::SeekableAudioStream *sfx[21];
 
 	// TODO: Check those variables, at least canusekey is a boolean, and the case is wrong in all the names
 	// room locks
