@@ -42,12 +42,15 @@
 #include "engines/engine.h"
 
 #include "audio/audiostream.h"
+#include "audio/mixer.h"
 
 #include "graphics/transparent_surface.h"
 
 namespace Griffon {
 
 class Console;
+
+#define SOUND_HANDLES 16
 
 #define kMaxNPC      32
 #define kMaxFloat    32
@@ -301,6 +304,14 @@ private:
 	int state_load_player(int slotnum);
 	int state_save(int slotnum);
 
+	void Mix_Volume(int channel, int volume);
+	int Mix_getHandle();
+	int Mix_PlayChannel(Audio::SeekableAudioStream *chunk, int par3);
+	void Mix_Pause(int channel);
+	void Mix_HaltChannel(int channel);
+	void Mix_Resume(int channel);
+	bool Mix_Playing(int channel);
+
 private:
 	Graphics::TransparentSurface *_video, *_videobuffer, *_videobuffer2, *_videobuffer3;
 
@@ -411,6 +422,8 @@ private:
 	int loopseta;
 
 	Audio::SeekableAudioStream *sfx[21];
+	Audio::SoundHandle _handles[SOUND_HANDLES];
+	Audio::Mixer *_mixer;
 
 	// TODO: Check those variables, at least canusekey is a boolean, and the case is wrong in all the names
 	// room locks
