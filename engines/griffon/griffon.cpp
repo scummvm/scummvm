@@ -26,6 +26,7 @@
 #include "common/error.h"
 #include "common/file.h"
 #include "common/fs.h"
+#include "common/system.h"
 #include "graphics/pixelformat.h"
 
 #include "engines/util.h"
@@ -42,6 +43,7 @@ GriffonEngine::GriffonEngine(OSystem *syst) : Engine(syst) {
 	_rnd = new Common::RandomSource("griffon");
 
 	_console = nullptr;
+	_mixer = nullptr;
 
 	_shouldQuit = false;
 
@@ -60,6 +62,8 @@ GriffonEngine::~GriffonEngine() {
 
 Common::Error GriffonEngine::run() {
 	initGraphics(320, 240, new Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0));
+
+	_mixer = g_system->getMixer();
 
 	_console = new Console();
 

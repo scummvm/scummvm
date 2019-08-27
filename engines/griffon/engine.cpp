@@ -97,12 +97,44 @@ namespace Griffon {
 */
 
 // stubs
-void Mix_Volume(int channel, int volume) {}
-int Mix_PlayChannel(Audio::SeekableAudioStream *chunk, int par3) { return 0; }
-void Mix_Pause(int channel) {}
-void Mix_HaltChannel(int channel) {}
-void Mix_Resume(int channel) {}
-bool Mix_Playing(int channel) { return true; }
+void GriffonEngine::Mix_Volume(int channel, int volume) {}
+
+int GriffonEngine::Mix_getHandle() {
+	for (uint i = 0; i < SOUND_HANDLES; i++) {
+		if (!_mixer->isSoundHandleActive(_handles[i])) {
+			return i;
+		}
+	}
+
+	error("Mix_getHandle(): Too many sound handles");
+
+	return -1;
+}
+
+int GriffonEngine::Mix_PlayChannel(Audio::SeekableAudioStream *chunk, int par3) {
+	int ch = Mix_getHandle();
+
+	_mixer->playStream(Audio::Mixer::kSFXSoundType, &_handles[ch], chunk, -1, Audio::Mixer::kMaxChannelVolume,
+		0, DisposeAfterUse::NO, false, false);
+
+	return ch;
+}
+
+void GriffonEngine::Mix_Pause(int channel) {
+	_mixer->pauseHandle(_handles[channel], true);
+}
+
+void GriffonEngine::Mix_HaltChannel(int channel) {
+	_mixer->stopHandle(_handles[channel]);
+}
+
+void GriffonEngine::Mix_Resume(int channel) {
+	_mixer->pauseHandle(_handles[channel], false);
+}
+
+bool GriffonEngine::Mix_Playing(int channel) {
+	return _mixer->isSoundHandleActive(_handles[channel]);
+}
 
 Audio::SeekableAudioStream *Mix_LoadWAV(const char *name) {
 	Common::File file;
@@ -5045,7 +5077,7 @@ void GriffonEngine::game_saveloadnew() {
 				rcDest.left = 108;
 			if (curcol == 2)
 				rcDest.left = 170;
-			
+
 			// CHECKME: Useless code? or temporary commented?
 			// rcDest.left = rcDest.left; // + 2 + 2 * sin(-3.14159 * 2 * itemyloc / 16)
 
