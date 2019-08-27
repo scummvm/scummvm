@@ -34,6 +34,8 @@
  *
  */
 
+#include "audio/decoders/vorbis.h"
+
 #include "griffon/griffon.h"
 #include "griffon/config.h"
 #include "griffon/console.h"
@@ -96,12 +98,27 @@ namespace Griffon {
 
 // stubs
 void Mix_Volume(int channel, int volume) {}
-int Mix_PlayChannel(int par1, Mix_Chunk *chunk, int par3) { return 0; }
+int Mix_PlayChannel(Audio::SeekableAudioStream *chunk, int par3) { return 0; }
 void Mix_Pause(int channel) {}
 void Mix_HaltChannel(int channel) {}
 void Mix_Resume(int channel) {}
-Mix_Chunk *Mix_LoadWAV(const char *name) { return NULL; }
 bool Mix_Playing(int channel) { return true; }
+
+Audio::SeekableAudioStream *Mix_LoadWAV(const char *name) {
+	Common::File file;
+	Audio::SeekableAudioStream *audioStream = NULL;
+
+	file.open(name);
+	if (!file.isOpen()) {
+		error("Cannot open file %s", name);
+	}
+
+#ifdef USE_VORBIS
+	audioStream = Audio::makeVorbisStream(&file, DisposeAfterUse::YES);
+#endif // USE_VORBIS
+
+	return audioStream;
+}
 
 
 void GriffonEngine::griffon_main() {
@@ -356,7 +373,7 @@ void GriffonEngine::game_attack() {
 					objmapf[curmap][lx][ly - 1] = 1;
 
 					if (menabled == 1 && config.effects == 1) {
-						int snd = Mix_PlayChannel(-1, sfx[sndpowerup], 0);
+						int snd = Mix_PlayChannel(sfx[sndpowerup], 0);
 						Mix_Volume(snd, config.effectsvol);
 					}
 
@@ -370,7 +387,7 @@ void GriffonEngine::game_attack() {
 
 				if (oscript == 0 && player.inventory[INV_FLASK] == 9) {
 					if (menabled == 1 && config.effects == 1) {
-						int snd = Mix_PlayChannel(-1, sfx[sndchest], 0);
+						int snd = Mix_PlayChannel(sfx[sndchest], 0);
 						Mix_Volume(snd, config.effectsvol);
 					}
 
@@ -394,7 +411,7 @@ void GriffonEngine::game_attack() {
 						scriptflag[13][0] = 2;
 
 					if (menabled == 1 && config.effects == 1) {
-						int snd = Mix_PlayChannel(-1, sfx[sndpowerup], 0);
+						int snd = Mix_PlayChannel(sfx[sndpowerup], 0);
 						Mix_Volume(snd, config.effectsvol);
 					}
 
@@ -411,7 +428,7 @@ void GriffonEngine::game_attack() {
 					game_addFloatIcon(7, lx * 16, (ly - 1) * 16);
 
 					if (menabled == 1 && config.effects == 1) {
-						int snd = Mix_PlayChannel(-1, sfx[sndpowerup], 0);
+						int snd = Mix_PlayChannel(sfx[sndpowerup], 0);
 						Mix_Volume(snd, config.effectsvol);
 					}
 
@@ -431,7 +448,7 @@ void GriffonEngine::game_attack() {
 					itemticks = ticks + 215;
 
 					if (menabled == 1 && config.effects == 1) {
-						int snd = Mix_PlayChannel(-1, sfx[sndpowerup], 0);
+						int snd = Mix_PlayChannel(sfx[sndpowerup], 0);
 						Mix_Volume(snd, config.effectsvol);
 					}
 
@@ -451,7 +468,7 @@ void GriffonEngine::game_attack() {
 					itemticks = ticks + 215;
 
 					if (menabled == 1 && config.effects == 1) {
-						int snd = Mix_PlayChannel(-1, sfx[sndpowerup], 0);
+						int snd = Mix_PlayChannel(sfx[sndpowerup], 0);
 						Mix_Volume(snd, config.effectsvol);
 					}
 
@@ -472,7 +489,7 @@ void GriffonEngine::game_attack() {
 						}
 
 						if (menabled == 1 && config.effects == 1) {
-							int snd = Mix_PlayChannel(-1, sfx[sndpowerup], 0);
+							int snd = Mix_PlayChannel(sfx[sndpowerup], 0);
 							Mix_Volume(snd, config.effectsvol);
 						}
 
@@ -485,7 +502,7 @@ void GriffonEngine::game_attack() {
 						game_addFloatIcon(16, lx * 16, (ly - 1) * 16);
 					} else {
 						if (menabled == 1 && config.effects == 1) {
-							int snd = Mix_PlayChannel(-1, sfx[sndchest], 0);
+							int snd = Mix_PlayChannel(sfx[sndchest], 0);
 							Mix_Volume(snd, config.effectsvol);
 						}
 
@@ -500,7 +517,7 @@ void GriffonEngine::game_attack() {
 					objmapf[curmap][lx][ly - 1] = 1;
 
 					if (menabled == 1 && config.effects == 1) {
-						int snd = Mix_PlayChannel(-1, sfx[sndpowerup], 0);
+						int snd = Mix_PlayChannel(sfx[sndpowerup], 0);
 						Mix_Volume(snd, config.effectsvol);
 					}
 
@@ -514,7 +531,7 @@ void GriffonEngine::game_attack() {
 
 				if (oscript == 7 && player.inventory[INV_DOUBLEFLASK] == 9) {
 					if (menabled == 1 && config.effects == 1) {
-						int snd = Mix_PlayChannel(-1, sfx[sndchest], 0);
+						int snd = Mix_PlayChannel(sfx[sndchest], 0);
 						Mix_Volume(snd, config.effectsvol);
 					}
 
@@ -530,7 +547,7 @@ void GriffonEngine::game_attack() {
 					objmapf[curmap][lx][ly - 1] = 1;
 
 					if (menabled == 1 && config.effects == 1) {
-						int snd = Mix_PlayChannel(-1, sfx[sndpowerup], 0);
+						int snd = Mix_PlayChannel(sfx[sndpowerup], 0);
 						Mix_Volume(snd, config.effectsvol);
 					}
 
@@ -544,7 +561,7 @@ void GriffonEngine::game_attack() {
 
 				if (oscript == 10 && player.inventory[INV_DOUBLEFLASK] == 9) {
 					if (menabled == 1 && config.effects == 1) {
-						int snd = Mix_PlayChannel(-1, sfx[sndchest], 0);
+						int snd = Mix_PlayChannel(sfx[sndchest], 0);
 						Mix_Volume(snd, config.effectsvol);
 					}
 
@@ -560,7 +577,7 @@ void GriffonEngine::game_attack() {
 					objmapf[curmap][lx][ly - 1] = 1;
 
 					if (menabled == 1 && config.effects == 1) {
-						int snd = Mix_PlayChannel(-1, sfx[sndpowerup], 0);
+						int snd = Mix_PlayChannel(sfx[sndpowerup], 0);
 						Mix_Volume(snd, config.effectsvol);
 					}
 
@@ -574,7 +591,7 @@ void GriffonEngine::game_attack() {
 
 				if (oscript == 11 && player.inventory[INV_SHOCK] == 9) {
 					if (menabled == 1 && config.effects == 1) {
-						int snd = Mix_PlayChannel(-1, sfx[sndchest], 0);
+						int snd = Mix_PlayChannel(sfx[sndchest], 0);
 						Mix_Volume(snd, config.effectsvol);
 					}
 
@@ -589,7 +606,7 @@ void GriffonEngine::game_attack() {
 					game_addFloatIcon(5, lx * 16, (ly - 1) * 16);
 
 					if (menabled == 1 && config.effects == 1) {
-						int snd = Mix_PlayChannel(-1, sfx[sndpowerup], 0);
+						int snd = Mix_PlayChannel(sfx[sndpowerup], 0);
 						Mix_Volume(snd, config.effectsvol);
 					}
 
@@ -606,13 +623,13 @@ void GriffonEngine::game_attack() {
 						scriptflag[60][0] = 1;
 
 						if (menabled == 1 && config.effects == 1) {
-							int snd = Mix_PlayChannel(-1, sfx[sndlever], 0);
+							int snd = Mix_PlayChannel(sfx[sndlever], 0);
 							Mix_Volume(snd, config.effectsvol);
 						}
 
 					} else if (curmap == 58 && scriptflag[60][0] > 0) {
 						if (menabled == 1 && config.effects == 1) {
-							int snd = Mix_PlayChannel(-1, sfx[snddoor], 0);
+							int snd = Mix_PlayChannel(sfx[snddoor], 0);
 							Mix_Volume(snd, config.effectsvol);
 						}
 
@@ -621,14 +638,14 @@ void GriffonEngine::game_attack() {
 
 					if (curmap == 54 && scriptflag[60][0] == 1) {
 						if (menabled == 1 && config.effects == 1) {
-							int snd = Mix_PlayChannel(-1, sfx[sndlever], 0);
+							int snd = Mix_PlayChannel(sfx[sndlever], 0);
 							Mix_Volume(snd, config.effectsvol);
 						}
 
 						scriptflag[60][0] = 2;
 					} else if (curmap == 54 && scriptflag[60][0] > 1) {
 						if (menabled == 1 && config.effects == 1) {
-							int snd = Mix_PlayChannel(-1, sfx[snddoor], 0);
+							int snd = Mix_PlayChannel(sfx[snddoor], 0);
 							Mix_Volume(snd, config.effectsvol);
 						}
 
@@ -645,7 +662,7 @@ void GriffonEngine::game_attack() {
 					itemticks = ticks + 215;
 
 					if (menabled == 1 && config.effects == 1) {
-						int snd = Mix_PlayChannel(-1, sfx[sndpowerup], 0);
+						int snd = Mix_PlayChannel(sfx[sndpowerup], 0);
 						Mix_Volume(snd, config.effectsvol);
 					}
 
@@ -662,7 +679,7 @@ void GriffonEngine::game_attack() {
 					itemticks = ticks + 215;
 
 					if (menabled == 1 && config.effects == 1) {
-						int snd = Mix_PlayChannel(-1, sfx[sndpowerup], 0);
+						int snd = Mix_PlayChannel(sfx[sndpowerup], 0);
 						Mix_Volume(snd, config.effectsvol);
 					}
 
@@ -679,7 +696,7 @@ void GriffonEngine::game_attack() {
 					itemticks = ticks + 215;
 
 					if (menabled == 1 && config.effects == 1) {
-						int snd = Mix_PlayChannel(-1, sfx[sndpowerup], 0);
+						int snd = Mix_PlayChannel(sfx[sndpowerup], 0);
 						Mix_Volume(snd, config.effectsvol);
 					}
 
@@ -776,13 +793,13 @@ void GriffonEngine::game_castspell(int spellnum, float homex, float homey, float
 
 			if (menabled == 1 && config.effects == 1) {
 				if (spellnum == 1) {
-					int snd = Mix_PlayChannel(-1, sfx[sndthrow], 0);
+					int snd = Mix_PlayChannel(sfx[sndthrow], 0);
 					Mix_Volume(snd, config.effectsvol);
 				} else if (spellnum == 5) {
-					int snd = Mix_PlayChannel(-1, sfx[sndcrystal], 0);
+					int snd = Mix_PlayChannel(sfx[sndcrystal], 0);
 					Mix_Volume(snd, config.effectsvol);
 				} else if (spellnum == 8 || spellnum == 9) {
-					int snd = Mix_PlayChannel(-1, sfx[sndlightning], 0);
+					int snd = Mix_PlayChannel(sfx[sndlightning], 0);
 					Mix_Volume(snd, config.effectsvol);
 				}
 			}
@@ -830,7 +847,7 @@ void GriffonEngine::game_checkhit() {
 
 				if (hit) {
 					if (menabled == 1 && config.effects == 1) {
-						int snd = Mix_PlayChannel(-1, sfx[sndswordhit], 0);
+						int snd = Mix_PlayChannel(sfx[sndswordhit], 0);
 						Mix_Volume(snd, config.effectsvol);
 					}
 
@@ -902,7 +919,7 @@ void GriffonEngine::game_checkinputs() {
 					player.inventory[INV_FLASK]--;
 
 					if (menabled == 1 && config.effects == 1) {
-						int snd = Mix_PlayChannel(-1, sfx[sndpowerup], 0);
+						int snd = Mix_PlayChannel(sfx[sndpowerup], 0);
 						Mix_Volume(snd, config.effectsvol);
 					}
 
@@ -928,7 +945,7 @@ void GriffonEngine::game_checkinputs() {
 					player.inventory[INV_DOUBLEFLASK]--;
 
 					if (menabled == 1 && config.effects == 1) {
-						int snd = Mix_PlayChannel(-1, sfx[sndpowerup], 0);
+						int snd = Mix_PlayChannel(sfx[sndpowerup], 0);
 						Mix_Volume(snd, config.effectsvol);
 					}
 
@@ -1364,7 +1381,7 @@ void GriffonEngine::game_configmenu() {
 						Mix_Volume(menuchannel, config.musicvol);
 
 						if (menabled == 1 && config.effects == 1) {
-							int snd = Mix_PlayChannel(-1, sfx[snddoor], 0);
+							int snd = Mix_PlayChannel(sfx[snddoor], 0);
 							Mix_Volume(snd, config.effectsvol);
 						}
 					}
@@ -1387,7 +1404,7 @@ void GriffonEngine::game_configmenu() {
 						Mix_Volume(menuchannel, config.musicvol);
 
 						if (menabled == 1 && config.effects == 1) {
-							int snd = Mix_PlayChannel(-1, sfx[snddoor], 0);
+							int snd = Mix_PlayChannel(sfx[snddoor], 0);
 							Mix_Volume(snd, config.effectsvol);
 						}
 					}
@@ -1478,7 +1495,7 @@ void GriffonEngine::game_configmenu() {
 					if (cursel == 7 && config.music == 0) {
 						config.music = 1;
 						if (menabled == 1) {
-							menuchannel = Mix_PlayChannel(-1, mmenu, -1);
+							menuchannel = Mix_PlayChannel(mmenu, -1);
 							Mix_Volume(menuchannel, config.musicvol);
 						}
 					}
@@ -1490,7 +1507,7 @@ void GriffonEngine::game_configmenu() {
 					if (cursel == 9 && config.effects == 0) {
 						config.effects = 1;
 						if (menabled == 1) {
-							int snd = Mix_PlayChannel(-1, sfx[snddoor], 0);
+							int snd = Mix_PlayChannel(sfx[snddoor], 0);
 							Mix_Volume(snd, config.effectsvol);
 						}
 					}
@@ -2770,7 +2787,7 @@ void GriffonEngine::game_drawnpcs(int mode) {
 								if (player.hp > 0) {
 									game_damageplayer(damage);
 									if (menabled == 1 && config.effects == 1) {
-										int snd = Mix_PlayChannel(-1, sfx[sndfire], 0);
+										int snd = Mix_PlayChannel(sfx[sndfire], 0);
 										Mix_Volume(snd, config.effectsvol);
 									}
 								}
@@ -2796,7 +2813,7 @@ void GriffonEngine::game_drawnpcs(int mode) {
 								if (player.hp > 0) {
 									game_damageplayer(damage);
 									if (menabled == 1 && config.effects == 1) {
-										int snd = Mix_PlayChannel(-1, sfx[sndfire], 0);
+										int snd = Mix_PlayChannel(sfx[sndfire], 0);
 										Mix_Volume(snd, config.effectsvol);
 									}
 								}
@@ -3115,7 +3132,7 @@ void GriffonEngine::game_endofgame() {
 
 	if (menabled == 1 && config.music == 1) {
 		Mix_HaltChannel(-1);
-		musicchannel = Mix_PlayChannel(-1, mendofgame, -1);
+		musicchannel = Mix_PlayChannel(mendofgame, -1);
 		Mix_Volume(musicchannel, 0);
 	}
 
@@ -3620,7 +3637,7 @@ void GriffonEngine::game_handlewalking() {
 			objmapf[curmap][lx][ly] = 1;
 
 			if (menabled == 1 && config.effects == 1) {
-				int snd = Mix_PlayChannel(-1, sfx[sndpowerup], 0);
+				int snd = Mix_PlayChannel(sfx[sndpowerup], 0);
 				Mix_Volume(snd, config.effectsvol);
 			}
 		}
@@ -3634,7 +3651,7 @@ void GriffonEngine::game_handlewalking() {
 			objmapf[curmap][lx][ly] = 1;
 
 			if (menabled == 1 && config.effects == 1) {
-				int snd = Mix_PlayChannel(-1, sfx[sndpowerup], 0);
+				int snd = Mix_PlayChannel(sfx[sndpowerup], 0);
 				Mix_Volume(snd, config.effectsvol);
 			}
 		}
@@ -3650,7 +3667,7 @@ void GriffonEngine::game_handlewalking() {
 				scriptflag[9][1] = 1;
 
 			if (menabled == 1 && config.effects == 1) {
-				int snd = Mix_PlayChannel(-1, sfx[sndpowerup], 0);
+				int snd = Mix_PlayChannel(sfx[sndpowerup], 0);
 				Mix_Volume(snd, config.effectsvol);
 			}
 
@@ -3665,7 +3682,7 @@ void GriffonEngine::game_handlewalking() {
 			objmapf[curmap][lx][ly] = 1;
 
 			if (menabled == 1 && config.effects == 1) {
-				int snd = Mix_PlayChannel(-1, sfx[sndpowerup], 0);
+				int snd = Mix_PlayChannel(sfx[sndpowerup], 0);
 				Mix_Volume(snd, config.effectsvol);
 			}
 
@@ -4502,7 +4519,7 @@ void GriffonEngine::game_newgame() {
 
 	if (menabled == 1 && config.music == 1) {
 		Mix_HaltChannel(-1);
-		musicchannel = Mix_PlayChannel(-1, mendofgame, -1);
+		musicchannel = Mix_PlayChannel(mendofgame, -1);
 		Mix_Volume(musicchannel, 0);
 	}
 
@@ -4743,7 +4760,7 @@ void GriffonEngine::game_processtrigger(int trignum) {
 
 			if (tmap > 0) {
 				if (menabled == 1 && config.effects == 1) {
-					int snd = Mix_PlayChannel(-1, sfx[snddoor], 0);
+					int snd = Mix_PlayChannel(sfx[snddoor], 0);
 					Mix_Volume(snd, config.effectsvol);
 				}
 
@@ -5276,7 +5293,7 @@ void GriffonEngine::game_title(int mode) {
 		Mix_Volume(musicchannel, 0);
 		Mix_Pause(musicchannel);
 
-		menuchannel = Mix_PlayChannel(-1, mmenu, -1);
+		menuchannel = Mix_PlayChannel(mmenu, -1);
 		Mix_Volume(menuchannel, config.musicvol);
 		pmenu = 1;
 	}
@@ -5475,7 +5492,7 @@ void GriffonEngine::game_updatey() {
 }
 
 void GriffonEngine::game_updmusic() {
-	Mix_Chunk *iplaysound = NULL;
+	Audio::SeekableAudioStream *iplaysound = NULL;
 
 	if (menabled == 1 && config.music == 1) {
 
@@ -5504,7 +5521,7 @@ void GriffonEngine::game_updmusic() {
 			if (iplaysound == mgardens)
 				pgardens = 1;
 
-			musicchannel = Mix_PlayChannel(-1, iplaysound, -1);
+			musicchannel = Mix_PlayChannel(iplaysound, -1);
 			Mix_Volume(musicchannel, config.musicvol);
 		} else {
 			if (!Mix_Playing(musicchannel)) {
@@ -5515,13 +5532,13 @@ void GriffonEngine::game_updmusic() {
 				if (pgardens == 1) {
 					Mix_HaltChannel(musicchannel);
 					if (pgardens == 1 && loopseta == 0)
-						musicchannel = Mix_PlayChannel(-1, mgardens, 0);
+						musicchannel = Mix_PlayChannel(mgardens, 0);
 					if (pgardens == 1 && loopseta == 1)
-						musicchannel = Mix_PlayChannel(-1, mgardens2, 0);
+						musicchannel = Mix_PlayChannel(mgardens2, 0);
 					if (pgardens == 1 && loopseta == 2)
-						musicchannel = Mix_PlayChannel(-1, mgardens3, 0);
+						musicchannel = Mix_PlayChannel(mgardens3, 0);
 					if (pgardens == 1 && loopseta == 3)
-						musicchannel = Mix_PlayChannel(-1, mgardens4, 0);
+						musicchannel = Mix_PlayChannel(mgardens4, 0);
 				}
 
 				Mix_Volume(musicchannel, config.musicvol);
@@ -5944,7 +5961,7 @@ void GriffonEngine::game_updnpcs() {
 							npcinfo[i].attackattempt = ticks + 100;
 							if ((int)(RND() * 2) == 0) {
 								if (menabled == 1 && config.effects == 1) {
-									int snd = Mix_PlayChannel(-1, sfx[sndenemyhit], 0);
+									int snd = Mix_PlayChannel(sfx[sndenemyhit], 0);
 									Mix_Volume(snd, config.effectsvol);
 								}
 
@@ -5971,7 +5988,7 @@ void GriffonEngine::game_updnpcs() {
 
 							if ((dist) < 24) {
 								if (menabled == 1 && config.effects == 1) {
-									int snd = Mix_PlayChannel(-1, sfx[sndbite], 0);
+									int snd = Mix_PlayChannel(sfx[sndbite], 0);
 									Mix_Volume(snd, config.effectsvol);
 								}
 
@@ -6077,7 +6094,7 @@ void GriffonEngine::game_updnpcs() {
 
 									if ((dist) < 36) {
 										if (menabled == 1 && config.effects == 1) {
-											int snd = Mix_PlayChannel(-1, sfx[sndbite], 0);
+											int snd = Mix_PlayChannel(sfx[sndbite], 0);
 											Mix_Volume(snd, config.effectsvol);
 										}
 
@@ -6257,7 +6274,7 @@ void GriffonEngine::game_updnpcs() {
 
 							if ((dist) < 24) {
 								if (menabled == 1 && config.effects == 1) {
-									int snd = Mix_PlayChannel(-1, sfx[sndbite], 0);
+									int snd = Mix_PlayChannel(sfx[sndbite], 0);
 									Mix_Volume(snd, config.effectsvol);
 								}
 
@@ -6331,7 +6348,7 @@ void GriffonEngine::game_updnpcs() {
 							npcinfo[i].attackattempt = ticks + 100;
 							if ((int)(RND() * 2) == 0) {
 								if (menabled == 1 && config.effects == 1) {
-									int snd = Mix_PlayChannel(-1, sfx[sndenemyhit], 0);
+									int snd = Mix_PlayChannel(sfx[sndenemyhit], 0);
 									Mix_Volume(snd, config.effectsvol);
 								}
 
@@ -6356,7 +6373,7 @@ void GriffonEngine::game_updnpcs() {
 							npcinfo[i].attackattempt = ticks + 100;
 							if ((int)(RND() * 2) == 0) {
 								if (menabled == 1 && config.effects == 1) {
-									int snd = Mix_PlayChannel(-1, sfx[sndice], 0);
+									int snd = Mix_PlayChannel(sfx[sndice], 0);
 									Mix_Volume(snd, config.effectsvol);
 								}
 								npcinfo[i].attacking = 1;
@@ -6737,7 +6754,7 @@ void GriffonEngine::game_updspells() {
 										if (npcinfo[e].hp > 0 && npcinfo[e].pause < ticks) {
 											game_damagenpc(e, damage, 1);
 											if (menabled == 1 && config.effects == 1) {
-												int snd = Mix_PlayChannel(-1, sfx[sndice], 0);
+												int snd = Mix_PlayChannel(sfx[sndice], 0);
 												Mix_Volume(snd, config.effectsvol);
 											}
 										}
@@ -6765,7 +6782,7 @@ void GriffonEngine::game_updspells() {
 										game_addFloatIcon(99, postinfo[e][0], postinfo[e][1]);
 
 										if (menabled == 1 && config.effects == 1) {
-											int snd = Mix_PlayChannel(-1, sfx[sndice], 0);
+											int snd = Mix_PlayChannel(sfx[sndice], 0);
 											Mix_Volume(snd, config.effectsvol);
 										}
 									}
@@ -6816,7 +6833,7 @@ void GriffonEngine::game_updspells() {
 							if (npcinfo[e].hp > 0 && npcinfo[e].pause < ticks) {
 								game_damagenpc(e, damage, 1);
 								if (menabled == 1 && config.effects == 1) {
-									int snd = Mix_PlayChannel(-1, sfx[sndmetalhit], 0);
+									int snd = Mix_PlayChannel(sfx[sndmetalhit], 0);
 									Mix_Volume(snd, config.effectsvol);
 								}
 							}
@@ -6859,7 +6876,7 @@ void GriffonEngine::game_updspells() {
 						if (player.hp > 0) {
 							game_damageplayer(damage);
 							if (menabled == 1 && config.effects == 1) {
-								int snd = Mix_PlayChannel(-1, sfx[sndmetalhit], 0);
+								int snd = Mix_PlayChannel(sfx[sndmetalhit], 0);
 								Mix_Volume(snd, config.effectsvol);
 							}
 						}
@@ -6887,7 +6904,7 @@ void GriffonEngine::game_updspells() {
 							game_addFloatIcon(99, postinfo[e][0], postinfo[e][1]);
 
 							if (menabled == 1 && config.effects == 1) {
-								int snd = Mix_PlayChannel(-1, sfx[sndmetalhit], 0);
+								int snd = Mix_PlayChannel(sfx[sndmetalhit], 0);
 								Mix_Volume(snd, config.effectsvol);
 							}
 						}
@@ -6938,7 +6955,7 @@ void GriffonEngine::game_updspells() {
 											if (npcinfo[e].hp > 0 && npcinfo[e].pause < ticks) {
 												game_damagenpc(e, damage, 1);
 												if (menabled == 1 && config.effects == 1) {
-													int snd = Mix_PlayChannel(-1, sfx[sndrocks], 0);
+													int snd = Mix_PlayChannel(sfx[sndrocks], 0);
 													Mix_Volume(snd, config.effectsvol);
 												}
 											}
@@ -6967,7 +6984,7 @@ void GriffonEngine::game_updspells() {
 											game_addFloatIcon(99, postinfo[e][0], postinfo[e][1]);
 
 											if (menabled == 1 && config.effects == 1) {
-												int snd = Mix_PlayChannel(-1, sfx[sndrocks], 0);
+												int snd = Mix_PlayChannel(sfx[sndrocks], 0);
 												Mix_Volume(snd, config.effectsvol);
 											}
 										}
@@ -7166,7 +7183,7 @@ void GriffonEngine::game_updspells() {
 									game_damageplayer(damage);
 
 								if (menabled == 1 && config.effects == 1) {
-									int snd = Mix_PlayChannel(-1, sfx[sndfire], 0);
+									int snd = Mix_PlayChannel(sfx[sndfire], 0);
 									Mix_Volume(snd, config.effectsvol);
 								}
 							}
@@ -7654,7 +7671,7 @@ void GriffonEngine::game_updspellsunder() {
 											if (npcinfo[e].hp > 0 && npcinfo[e].pause < ticks) {
 												game_damagenpc(e, damage, 1);
 												if (menabled == 1 && config.effects == 1) {
-													int snd = Mix_PlayChannel(-1, sfx[sndfire], 0);
+													int snd = Mix_PlayChannel(sfx[sndfire], 0);
 													Mix_Volume(snd, config.effectsvol);
 												}
 											}
@@ -7673,7 +7690,7 @@ void GriffonEngine::game_updspellsunder() {
 											game_damageplayer(damage);
 
 											if (menabled == 1 && config.effects == 1) {
-												int snd = Mix_PlayChannel(-1, sfx[sndfire], 0);
+												int snd = Mix_PlayChannel(sfx[sndfire], 0);
 												Mix_Volume(snd, config.effectsvol);
 											}
 										}
@@ -7698,7 +7715,7 @@ void GriffonEngine::game_updspellsunder() {
 											clipbg2->fillRect(rcSrc, 0);
 
 											if (menabled == 1 && config.effects == 1) {
-												int snd = Mix_PlayChannel(-1, sfx[sndfire], 0);
+												int snd = Mix_PlayChannel(sfx[sndfire], 0);
 												Mix_Volume(snd, config.effectsvol);
 											}
 
@@ -7769,7 +7786,7 @@ void GriffonEngine::game_updspellsunder() {
 								if (player.hp > 0) {
 									game_damageplayer(damage);
 									if (menabled == 1 && config.effects == 1) {
-										int snd = Mix_PlayChannel(-1, sfx[sndfire], 0);
+										int snd = Mix_PlayChannel(sfx[sndfire], 0);
 										Mix_Volume(snd, config.effectsvol);
 									}
 								}
@@ -8280,7 +8297,7 @@ void GriffonEngine::sys_update() {
 		player.spelldamage = player.level * 13 / 10;
 
 		if (menabled == 1 && config.effects == 1) {
-			int snd = Mix_PlayChannel(-1, sfx[sndpowerup], 0);
+			int snd = Mix_PlayChannel(sfx[sndpowerup], 0);
 			Mix_Volume(snd, config.effectsvol);
 		}
 	}
@@ -8342,7 +8359,7 @@ void GriffonEngine::sys_update() {
 		if (player.hpflashb == 2)
 			player.hpflashb = 0;
 		if (menabled == 1 && config.effects == 1 && player.hpflashb == 0 && player.hp < player.maxhp / 4) {
-			int snd = Mix_PlayChannel(-1, sfx[sndbeep], 0);
+			int snd = Mix_PlayChannel(sfx[sndbeep], 0);
 			Mix_Volume(snd, config.effectsvol);
 		}
 	}
