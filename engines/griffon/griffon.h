@@ -334,7 +334,8 @@ private:
 
 	int itemselon, curitem, itemticks;
 	float itemyloc;
-	int selenemyon, curenemy, forcepause;
+	int selenemyon, curenemy;
+	bool forcepause;
 	int roomlock; // set to disable any room jumps while in the room
 	int scriptflag[100][10], saveslot;  // script, flag
 
@@ -369,7 +370,7 @@ private:
 	// player info
 	int movingup, movingdown, movingleft, movingright;
 	PLAYERTYPE player;
-	int attacking;
+	bool attacking;
 	PLAYERTYPE playera;
 	int asecstart;
 
@@ -417,7 +418,8 @@ private:
 
 	// music info
 	Audio::SeekableAudioStream *mgardens, *mgardens2, *mgardens3, *mgardens4, *mboss, *mmenu, *mendofgame;
-	int menabled, musicchannel, menuchannel;
+	bool menabled; // CHECKME: Always true?
+	int musicchannel, menuchannel;
 	int pgardens, pboss, ptown, pacademy, pcitadel;
 	int loopseta;
 

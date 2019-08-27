@@ -47,7 +47,7 @@ GriffonEngine::GriffonEngine(OSystem *syst) : Engine(syst) {
 
 	_shouldQuit = false;
 
-	menabled = 1;
+	menabled = true;
 	musicchannel = -1;
 	menuchannel = -1;
 
