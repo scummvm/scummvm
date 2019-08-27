@@ -482,7 +482,7 @@ void PicButtonWidget::drawWidget() {
 		const int x = _x + (_w - gfx->w) / 2;
 		const int y = _y + (_h - gfx->h) / 2;
 
-		g_gui.theme()->drawSurface(Common::Rect(x, y, x + gfx->w, y + gfx->h), *gfx, _transparency);
+		g_gui.theme()->drawSurface(Common::Point(x, y), *gfx, _transparency);
 	}
 }
 
@@ -733,7 +733,7 @@ void GraphicsWidget::drawWidget() {
 		const int x = _x + (_w - _gfx.w) / 2;
 		const int y = _y + (_h - _gfx.h) / 2;
 
-		g_gui.theme()->drawSurface(Common::Rect(x, y, x + _gfx.w, y + _gfx.h), _gfx, _transparency);
+		g_gui.theme()->drawSurface(Common::Point(x, y), _gfx, _transparency);
 	}
 }
 

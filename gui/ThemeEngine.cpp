@@ -875,7 +875,7 @@ void ThemeEngine::drawDD(DrawData type, const Common::Rect &r, uint32 dynamic, b
 	if (drawData->_layer == _layerToDraw) {
 		Common::List<Graphics::DrawStep>::const_iterator step;
 		for (step = drawData->_steps.begin(); step != drawData->_steps.end(); ++step) {
-			_vectorRenderer->drawStepClip(area, _clip, *step, dynamic);
+			_vectorRenderer->drawStep(area, _clip, *step, dynamic);
 		}
 
 		addDirtyRect(extendedRect);
@@ -910,23 +910,6 @@ void ThemeEngine::drawDDText(TextData type, TextColor color, const Common::Rect 
 	_vectorRenderer->drawString(_texts[type]->_fontPtr, text, area, alignH, alignV, deltax, ellipsis, dirty);
 
 	addDirtyRect(dirty);
-}
-
-void ThemeEngine::drawBitmap(const Graphics::Surface *bitmap, const Common::Rect &r, bool alpha) {
-	if (_layerToDraw == kDrawLayerBackground)
-		return;
-
-	Common::Rect area = r;
-	area.clip(_screen.w, _screen.h);
-
-	if (alpha)
-		_vectorRenderer->blitKeyBitmapClip(bitmap, area, _clip);
-	else
-		_vectorRenderer->blitSubSurfaceClip(bitmap, area, _clip);
-
-	Common::Rect dirtyRect = area;
-	dirtyRect.clip(_clip);
-	addDirtyRect(dirtyRect);
 }
 
 /**********************************************************
@@ -1123,11 +1106,22 @@ void ThemeEngine::drawPopUpWidget(const Common::Rect &r, const Common::String &s
 	}
 }
 
-void ThemeEngine::drawSurface(const Common::Rect &r, const Graphics::Surface &surface, bool themeTrans) {
+void ThemeEngine::drawSurface(const Common::Point &p, const Graphics::Surface &surface, bool themeTrans) {
 	if (!ready())
 		return;
 
-	drawBitmap(&surface, r, themeTrans);
+	if (_layerToDraw == kDrawLayerBackground)
+		return;
+
+	_vectorRenderer->setClippingRect(_clip);
+	if (themeTrans)
+		_vectorRenderer->blitKeyBitmap(&surface, p);
+	else
+		_vectorRenderer->blitSubSurface(&surface, p);
+
+	Common::Rect dirtyRect = Common::Rect(p.x, p.y, p.x + surface.w, p.y + surface.h);
+	dirtyRect.clip(_clip);
+	addDirtyRect(dirtyRect);
 }
 
 void ThemeEngine::drawWidgetBackground(const Common::Rect &r, uint16 hints, WidgetBackground background) {
@@ -1909,6 +1903,10 @@ Common::Rect ThemeEngine::swapClipRect(const Common::Rect &newRect) {
 	Common::Rect oldRect = _clip;
 	_clip = newRect;
 	return oldRect;
+}
+
+void ThemeEngine::disableClipRect() {
+	_clip = Common::Rect(_screen.w, _screen.h);
 }
 
 } // End of namespace GUI.
