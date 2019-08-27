@@ -730,7 +730,7 @@ void Map::load(int mapId) {
 	// mazes in each of the four cardinal directions
 	int ccNum = files._ccNum;
 	MazeData *mazeDataP = &_mazeData[0];
-	bool textLoaded = false;
+	bool mapDataLoaded = false;
 
 	for (int idx = 0; idx < 9; ++idx, ++mazeDataP) {
 		mazeDataP->_mazeId = mapId;
@@ -755,14 +755,14 @@ void Map::load(int mapId) {
 
 			_isOutdoors = (mazeDataP->_mazeFlags2 & FLAG_IS_OUTDOORS) != 0;
 
-			// Handle loading text data
-			if (!textLoaded) {
-				textLoaded = true;
+			Common::String mobName = Common::String::format("maze%c%03d.mob", (mapId >= 100) ? 'x' : '0', mapId);
+
+			if (!mapDataLoaded) {
+				// Called once for the main map being loaded
+				mapDataLoaded = true;
 				_mazeName = getMazeName(mapId, ccNum);
 
 				// Load the monster/object data
-				Common::String mobName = Common::String::format("maze%c%03d.mob",
-					(mapId >= 100) ? 'x' : '0', mapId);
 				File mobFile(mobName);
 				XeenSerializer sMob(&mobFile, nullptr);
 				_mobData.synchronize(sMob, _monsterData);
@@ -780,6 +780,20 @@ void Map::load(int mapId) {
 						(_mobData._monsters[2]._position.x > 31 || _mobData._monsters[2]._position.y > 31)) {
 						party._gameFlags[0][56] = true;
 					}
+				}
+			} else if (File::exists(mobName)) {
+				// For surrounding maps, set up flags for whether objects are present
+				// Load the monster/object data
+				File mobFile(mobName);
+				XeenSerializer sMob(&mobFile, nullptr);
+				MonsterObjectData mobData(_vm);
+				mobData.synchronize(sMob, _monsterData);
+				mobFile.close();
+
+				mazeDataP->_objectsPresent.resize(mobData._objects.size());
+				for (uint objIndex = 0; objIndex < mobData._objects.size(); ++objIndex) {
+					const Common::Point &pt = mobData._objects[objIndex]._position;
+					mazeDataP->_objectsPresent[objIndex] = ABS(pt.x) != 128 && ABS(pt.y) != 128;
 				}
 			}
 		}

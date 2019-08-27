@@ -208,6 +208,7 @@ public:
 	int _tavernTips;
 	bool _seenTiles[MAP_HEIGHT][MAP_WIDTH];
 	bool _steppedOnTiles[MAP_HEIGHT][MAP_WIDTH];
+	Common::Array<bool> _objectsPresent;
 
 	// Misc fields
 	int _mazeId;
@@ -507,6 +508,11 @@ public:
 	 * Returns the data for the primary active map
 	 */
 	MazeData &mazeData() { return _mazeData[0]; }
+
+	/**
+	 * Returns the data for the primary active map
+	 */
+	const MazeData *mazeDataSurrounding() { return _mazeData; }
 
 	/**
 	 * Returns the data for the currently indexed map
