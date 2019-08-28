@@ -346,7 +346,7 @@ private:
 	// timer related - move to local later
 	int _ticks, _tickspassed, _nextticks;
 	float _fp, _fps, _fpsr; // CHECKME: _fp and _fps seems to be integers
-	int secsingame, secstart;
+	int _secsingame, _secstart;
 
 	Graphics::TransparentSurface *mapimg[4];
 
@@ -376,26 +376,26 @@ private:
 	PLAYERTYPE _player;
 	bool attacking;
 	PLAYERTYPE _playera;
-	int asecstart;
+	int _asecstart;
 
 	// tile info
-	Graphics::TransparentSurface *tiles[4];
-	int tileinfo[3][40][24][3]; // maplayer, x, y, tiledata (tile, tilelayer)
+	Graphics::TransparentSurface *_tiles[4];
+	int _tileinfo[3][40][24][3]; // maplayer, x, y, tiledata (tile, tilelayer)
 
 	// animation info
-	Graphics::TransparentSurface *anims[100];
+	Graphics::TransparentSurface *_anims[100];
 	// id number 0&1 = players
-	Graphics::TransparentSurface *animsa[100];
+	Graphics::TransparentSurface *_animsa[100];
 	// attack anims
 	float _playerattackofs[4][16][3];
 	// [dir] [frame] [x,y ofs, completed(0/1)]
 
-	float floattext[kMaxFloat][4]; // [id] [framesleft, x, y, col]
-	char *floatstri[kMaxFloat];
-	float  floaticon[kMaxFloat][4]; // [id] [framesleft, x, y, ico]
+	float _floattext[kMaxFloat][4]; // [id] [framesleft, x, y, col]
+	char *_floatstri[kMaxFloat];
+	float  _floaticon[kMaxFloat][4]; // [id] [framesleft, x, y, ico]
 
 	// special for animset2
-	ANIMSET2TYPE animset2[7], animset9[7];
+	ANIMSET2TYPE _animset2[7], _animset9[7];
 
 	// object info
 	float objectframe[256][2];

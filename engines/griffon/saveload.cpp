@@ -69,7 +69,7 @@ int GriffonEngine::state_load(int slotnum) {
 	if (_player.level > 0) {
 		char temp[256];
 
-		INPUT("%i", &secstart);
+		INPUT("%i", &_secstart);
 		INPUT("%s", temp);
 
 		INPUT("%f", &_player.px);
@@ -143,7 +143,7 @@ int GriffonEngine::state_load_player(int slotnum) {
 	if (_playera.level > 0) {
 		char temp[256];
 
-		INPUT("%i", &asecstart);
+		INPUT("%i", &_asecstart);
 		INPUT("%s", temp);
 
 		INPUT("%f", &_playera.px);
@@ -194,7 +194,7 @@ int GriffonEngine::state_save(int slotnum) {
 	PRINT("%i", _player.level);
 
 	if (_player.level > 0) {
-		PRINT("%i", (secstart + secsingame));
+		PRINT("%i", (_secstart + _secsingame));
 		PRINT("%s", "a");
 
 		PRINT("%f", _player.px);
