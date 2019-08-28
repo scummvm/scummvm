@@ -92,7 +92,7 @@ enum {
 
 #define kEpsilon 0.001
 
-struct PLAYERTYPE {
+struct Player {
 	float   px;
 	float   py;
 	float   opx;
@@ -129,7 +129,7 @@ struct PLAYERTYPE {
 	int ysort;
 };
 
-struct BODYSECTIONTYPE {
+struct BodySection {
 	float   x;
 	float   y;
 	int parentID;
@@ -138,7 +138,7 @@ struct BODYSECTIONTYPE {
 	int bonelength; // the 'bone' that connects the body sections
 };
 
-struct NPCTYPE {
+struct NPC {
 	float   x;
 	float   y;
 	int spriteset;
@@ -182,7 +182,7 @@ struct NPCTYPE {
 
 
 	// one wing and firehydra specific
-	BODYSECTIONTYPE bodysection[31];
+	BodySection bodysection[31];
 	float   swayangle;
 	float   swayspd;
 	float   headtargetx[4];
@@ -198,7 +198,7 @@ struct NPCTYPE {
 	float   floating;
 };
 
-struct SPELLTYPE {
+struct Spell {
 	int spellnum;
 	float   homex;
 	float   homey;
@@ -227,7 +227,7 @@ struct SPELLTYPE {
 	int npc;
 };
 
-struct ANIMSET2TYPE {
+struct AnimSet {
 	int x;  // xyloc on spriteimageset
 	int y;
 	int xofs;   // the actual place to paste the sprite in reference to the bodypart loc on screen
@@ -373,13 +373,13 @@ private:
 	int cloudson;
 
 	// spell info
-	SPELLTYPE spellinfo[kMaxSpell];
+	Spell spellinfo[kMaxSpell];
 
 	// player info
 	int movingup, movingdown, movingleft, movingright;
-	PLAYERTYPE _player;
+	Player _player;
 	bool attacking;
-	PLAYERTYPE _playera;
+	Player _playera;
 	int _asecstart;
 
 	// tile info
@@ -399,7 +399,7 @@ private:
 	float  _floaticon[kMaxFloat][4]; // [id] [framesleft, x, y, ico]
 
 	// special for animset2
-	ANIMSET2TYPE _animset2[7], _animset9[7];
+	AnimSet _animset2[7], _animset9[7];
 
 	// object info
 	float _objectframe[256][2];
@@ -421,7 +421,7 @@ private:
 	int _triggerloc[320][240], _ntriggers;
 
 	// npc info
-	NPCTYPE _npcinfo[kMaxNPC];
+	NPC _npcinfo[kMaxNPC];
 	int _lastnpc;
 
 	// music info
