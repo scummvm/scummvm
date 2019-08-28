@@ -336,15 +336,15 @@ private:
 	Graphics::TransparentSurface *_itemimg[21], *_windowimg;
 	Graphics::TransparentSurface *_spellimg;
 
-	int itemselon, curitem, itemticks;
-	float itemyloc;
-	int selenemyon, curenemy;
-	bool forcepause;
-	int roomlock; // set to disable any room jumps while in the room
-	int scriptflag[100][10], saveslot;  // script, flag
+	int _itemselon, _curitem, _itemticks;
+	float _itemyloc;
+	int _selenemyon, _curenemy;
+	bool _forcepause;
+	int _roomlock; // set to disable any room jumps while in the room
+	int _scriptflag[100][10], _saveslot;  // script, flag
 
 	// timer related - move to local later
-	int ticks, tickspassed, nextticks;
+	int ticks, _tickspassed, _nextticks;
 	float fp, fps, fpsr; // CHECKME: fp and fps seems to be integers
 	int secsingame, secstart;
 
@@ -433,7 +433,7 @@ private:
 
 	// TODO: Check those variables, at least canusekey is a boolean, and the case is wrong in all the names
 	// room locks
-	int roomlocks[201], saidlocked, canusekey, locktype, roomtounlock, saidjammed;
+	int _roomlocks[201], saidlocked, canusekey, locktype, roomtounlock, saidjammed;
 	// set to 1 for normal key, set to 2 for master, set to 0 if unlocked
 
 	// ysort

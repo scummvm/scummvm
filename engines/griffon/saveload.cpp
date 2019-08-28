@@ -103,7 +103,7 @@ int GriffonEngine::state_load(int slotnum) {
 		INPUT("%i", &_player.nextlevel);
 		for (int a = 0; a <= 99; a++) {
 			for (int b = 0; b <= 9; b++) {
-				INPUT("%i", &scriptflag[a][b]);
+				INPUT("%i", &_scriptflag[a][b]);
 			}
 		}
 		INPUT("%i", &_curmap);
@@ -117,7 +117,7 @@ int GriffonEngine::state_load(int slotnum) {
 		}
 
 		for (int a = 0; a <= 200; a++) {
-			INPUT("%i", &roomlocks[a]);
+			INPUT("%i", &_roomlocks[a]);
 		}
 
 		INPUT("%f", &_player.spellstrength);
@@ -228,7 +228,7 @@ int GriffonEngine::state_save(int slotnum) {
 		PRINT("%i", _player.nextlevel);
 		for (int a = 0; a <= 99; a++) {
 			for (int b = 0; b <= 9; b++) {
-				PRINT("%i", scriptflag[a][b]);
+				PRINT("%i", _scriptflag[a][b]);
 			}
 		}
 		PRINT("%i", _curmap);
@@ -242,7 +242,7 @@ int GriffonEngine::state_save(int slotnum) {
 		}
 
 		for (int a = 0; a <= 200; a++) {
-			PRINT("%i", roomlocks[a]);
+			PRINT("%i", _roomlocks[a]);
 		}
 
 		PRINT("%f", _player.spellstrength);
