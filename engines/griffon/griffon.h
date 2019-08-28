@@ -324,8 +324,8 @@ private:
 	Graphics::TransparentSurface *_logosimg, *_theendimg;
 	Common::Event event;
 
-	Graphics::TransparentSurface *mapbg, *clipbg, *clipbg2;
-	unsigned int clipsurround[4][4];
+	Graphics::TransparentSurface *_mapbg, *_clipbg, *_clipbg2;
+	unsigned int _clipsurround[4][4];
 	int fullscreen;
 
 	float animspd; // CHECKME: it seems to always be 0.5
@@ -421,7 +421,7 @@ private:
 	int lastnpc;
 
 	// music info
-	DataChunk *mgardens, *mgardens2, *mgardens3, *mgardens4, *mboss, *mmenu, *mendofgame;
+	DataChunk *_mgardens, *_mgardens2, *_mgardens3, *_mgardens4, *_mboss, *_mmenu, *_mendofgame;
 	bool menabled; // CHECKME: Always true?
 	int musicchannel, menuchannel;
 	int pgardens, pboss, ptown, pacademy, pcitadel;
