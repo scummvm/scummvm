@@ -344,7 +344,7 @@ private:
 	float _itemyloc;
 	int _selenemyon, _curenemy;
 	bool _forcepause;
-	int _roomlock; // set to disable any room jumps while in the room
+	bool _roomlock; // set to disable any room jumps while in the room
 	int _scriptflag[100][10], _saveslot;  // script, flag
 
 	// timer related - move to local later
@@ -376,7 +376,7 @@ private:
 	Spell spellinfo[kMaxSpell];
 
 	// player info
-	int movingup, movingdown, movingleft, movingright;
+	bool movingup, movingdown, movingleft, movingright;
 	Player _player;
 	bool attacking;
 	Player _playera;
@@ -402,14 +402,14 @@ private:
 	AnimSet _animset2[7], _animset9[7];
 
 	// object info
-	float _objectframe[256][2];
-	int _lastobj;
+	float _objectFrame[256][2];
+	int _lastObj;
 	// frame!, curframe
-	int _objectinfo[33][6];
+	int _objectInfo[33][6];
 	// nframes,xtiles,ytiles,speed,type,script, update?
-	int _objecttile[33][9][3][3][2];
+	int _objectTile[33][9][3][3][2];
 	// [objnum] [frame] [x] [y] [tile/layer]
-	int _objmap[21][15];
+	int _objectMap[21][15];
 
 	int _objmapf[1000][21][15];
 	// [mapnum] x, y  set to 1 to make this objmap spot stay at -1
