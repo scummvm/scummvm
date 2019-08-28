@@ -1011,8 +1011,8 @@ void GriffonEngine::game_checkinputs() {
 
 				}
 
-				if (_curitem == 3 && _player.inventory[kInvNormalKey] > 0 && _canusekey == 1 && _locktype == 1) {
-					_roomlocks[_roomtounlock] = 0;
+				if (_curitem == 3 && _player.inventory[kInvNormalKey] > 0 && _canUseKey && _lockType == 1) {
+					_roomLocks[_roomToUnlock] = 0;
 					game_eventtext("UnLocked!");
 
 					_player.inventory[kInvNormalKey]--;
@@ -1023,8 +1023,8 @@ void GriffonEngine::game_checkinputs() {
 					return;
 				}
 
-				if (_curitem == 4 && _player.inventory[kInvMasterKey] > 0 && _canusekey == 1 && _locktype == 2) {
-					_roomlocks[_roomtounlock] = 0;
+				if (_curitem == 4 && _player.inventory[kInvMasterKey] > 0 && _canUseKey && _lockType == 2) {
+					_roomLocks[_roomToUnlock] = 0;
 					game_eventtext("UnLocked!");
 
 					_player.inventory[kInvMasterKey]--;
@@ -1211,7 +1211,7 @@ void GriffonEngine::game_checktrigger() {
 	int lx = (int)npx / 16;
 	int ly = (int)npy / 16;
 
-	_canusekey = 0;
+	_canUseKey = false;
 
 	if (_triggerloc[lx][ly] > -1)
 		game_processtrigger(_triggerloc[lx][ly]);
@@ -4682,15 +4682,15 @@ __exit_do:
 
 	memset(_scriptflag, 0, sizeof(_scriptflag));
 	memset(_objmapf, 0, sizeof(_objmapf));
-	memset(_roomlocks, 0, sizeof(_roomlocks));
+	memset(_roomLocks, 0, sizeof(_roomLocks));
 
-	_roomlocks[66] = 2;
-	_roomlocks[24] = 2;
-	_roomlocks[17] = 1;
-	_roomlocks[34] = 1;
-	_roomlocks[50] = 1;
-	_roomlocks[73] = 1;
-	_roomlocks[82] = 2;
+	_roomLocks[66] = 2;
+	_roomLocks[24] = 2;
+	_roomLocks[17] = 1;
+	_roomLocks[34] = 1;
+	_roomLocks[50] = 1;
+	_roomLocks[73] = 1;
+	_roomLocks[82] = 2;
 
 	_player.walkspd = 1.1f;
 	_animspd = 0.5f;
@@ -4713,11 +4713,11 @@ __exit_do:
 	_player.py = 6 * 16 - 4;
 	_player.walkdir = 1;
 
-	_pgardens = 0;
-	_ptown = 0;
-	_pboss = 0;
-	_pacademy = 0;
-	_pcitadel = 0;
+	_pgardens = false;
+	_ptown = false;
+	_pboss = false;
+	_pacademy = false;
+	_pcitadel = false;
 
 	game_loadmap(2);
 
@@ -4727,9 +4727,9 @@ __exit_do:
 void GriffonEngine::game_playgame() {
 	game_swash();
 
-	if (_pmenu == 1 && _menabled) {
+	if (_pmenu && _menabled) {
 		Mix_HaltChannel(_menuchannel);
-		_pmenu = 0;
+		_pmenu = false;
 	}
 
 	do {
@@ -4767,25 +4767,25 @@ void GriffonEngine::game_processtrigger(int trignum) {
 		int tmap = _triggers[trignum][3];
 		int tjumpstyle = _triggers[trignum][4];
 
-		if (_roomlocks[tmap] > 0) {
-			if (_saidlocked == 0)
+		if (_roomLocks[tmap] > 0) {
+			if (!_saidLocked)
 				game_eventtext("Locked");
-			_saidlocked = 1;
-			_canusekey = 1;
-			_locktype = _roomlocks[tmap];
-			_roomtounlock = tmap;
+			_saidLocked = true;
+			_canUseKey = true;
+			_lockType = _roomLocks[tmap];
+			_roomToUnlock = tmap;
 			return;
 		}
 
 		if (tmap == 1) {
-			if (_saidjammed == 0)
+			if (!_saidJammed)
 				game_eventtext("Door Jammed!");
-			_saidjammed = 1;
+			_saidJammed = true;
 			return;
 		}
 
-		_saidlocked = 0;
-		_saidjammed = 0;
+		_saidLocked = false;
+		_saidJammed = false;
 
 		// loc-sxy+oldmaploc
 		if (tjumpstyle == 0) {
@@ -4919,11 +4919,11 @@ void GriffonEngine::game_saveloadnew() {
 							attacking = false;
 							_player.attackspd = 1.5f;
 
-							_pgardens = 0;
-							_ptown = 0;
-							_pboss = 0;
-							_pacademy = 0;
-							_pcitadel = 0;
+							_pgardens = false;
+							_ptown = false;
+							_pboss = false;
+							_pacademy = false;
+							_pcitadel = false;
 
 							Mix_HaltChannel(-1);
 
@@ -5339,10 +5339,10 @@ void GriffonEngine::game_title(int mode) {
 
 		_menuchannel = Mix_PlayChannel(_mmenu, true);
 		Mix_Volume(_menuchannel, config.musicvol);
-		_pmenu = 1;
+		_pmenu = true;
 	}
 
-	int ldstop = 0;
+	bool ldstop = false;
 
 	float ld = 0;
 	do {
@@ -5351,10 +5351,10 @@ void GriffonEngine::game_title(int mode) {
 		ld += 4.0 * _fpsr;
 		if (ld > config.musicvol)
 			ld = config.musicvol;
-		if (_menabled && ldstop == 0) {
+		if (_menabled && !ldstop) {
 			Mix_Volume(_menuchannel, (int)ld);
 			if ((int)ld == config.musicvol)
-				ldstop = 1;
+				ldstop = true;
 		}
 
 		rc.left = -xofs;
@@ -5476,7 +5476,7 @@ void GriffonEngine::game_title(int mode) {
 		Mix_HaltChannel(_menuchannel);
 		Mix_Resume(_musicchannel);
 		Mix_Volume(_musicchannel, config.musicvol);
-		_pmenu = 0;
+		_pmenu = false;
 	}
 }
 
@@ -5554,34 +5554,34 @@ void GriffonEngine::game_updmusic() {
 		if (iplaysound != NULL) {
 			Mix_HaltChannel(_musicchannel);
 
-			_pboss = 0;
-			_pgardens = 0;
-			_ptown = 0;
-			_pacademy = 0;
-			_pcitadel = 0;
+			_pboss = false;
+			_pgardens = false;
+			_ptown = false;
+			_pacademy = false;
+			_pcitadel = false;
 
 			if (iplaysound == _mboss)
-				_pboss = 1;
+				_pboss = true;
 			if (iplaysound == _mgardens)
-				_pgardens = 1;
+				_pgardens = true;
 
 			_musicchannel = Mix_PlayChannel(iplaysound, true);
 			Mix_Volume(_musicchannel, config.musicvol);
 		} else {
 			if (!Mix_Playing(_musicchannel)) {
-				_loopseta = _loopseta + 1;
+				_loopseta += 1;
 				if (_loopseta == 4)
 					_loopseta = 0;
 
-				if (_pgardens == 1) {
+				if (_pgardens) {
 					Mix_HaltChannel(_musicchannel);
-					if (_pgardens == 1 && _loopseta == 0)
+					if (_pgardens && _loopseta == 0)
 						_musicchannel = Mix_PlayChannel(_mgardens);
-					if (_pgardens == 1 && _loopseta == 1)
+					if (_pgardens && _loopseta == 1)
 						_musicchannel = Mix_PlayChannel(_mgardens2);
-					if (_pgardens == 1 && _loopseta == 2)
+					if (_pgardens && _loopseta == 2)
 						_musicchannel = Mix_PlayChannel(_mgardens3);
-					if (_pgardens == 1 && _loopseta == 3)
+					if (_pgardens && _loopseta == 3)
 						_musicchannel = Mix_PlayChannel(_mgardens4);
 				}
 

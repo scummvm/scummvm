@@ -117,7 +117,7 @@ int GriffonEngine::state_load(int slotnum) {
 		}
 
 		for (int a = 0; a <= 200; a++) {
-			INPUT("%i", &_roomlocks[a]);
+			INPUT("%i", &_roomLocks[a]);
 		}
 
 		INPUT("%f", &_player.spellstrength);
@@ -242,7 +242,7 @@ int GriffonEngine::state_save(int slotnum) {
 		}
 
 		for (int a = 0; a <= 200; a++) {
-			PRINT("%i", _roomlocks[a]);
+			PRINT("%i", _roomLocks[a]);
 		}
 
 		PRINT("%f", _player.spellstrength);

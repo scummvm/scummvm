@@ -428,22 +428,28 @@ private:
 	DataChunk *_mgardens, *_mgardens2, *_mgardens3, *_mgardens4, *_mboss, *_mmenu, *_mendofgame;
 	bool _menabled; // CHECKME: Always true?
 	int _musicchannel, _menuchannel;
-	int _pgardens, _pboss, _ptown, _pacademy, _pcitadel;
+	bool _ptown, _pacademy, _pcitadel; // CHECKME: They look unused.
+	bool _pboss;
+	bool _pgardens;
 	int _loopseta;
 
 	DataChunk *_sfx[21];
 	Audio::SoundHandle _handles[kSoundHandles];
 	Audio::Mixer *_mixer;
 
-	// TODO: Check those variables, at least _canusekey is a boolean, and the case is wrong in all the names
-	// room locks
-	int _roomlocks[201], _saidlocked, _canusekey, _locktype, _roomtounlock, _saidjammed;
 	// set to 1 for normal key, set to 2 for master, set to 0 if unlocked
+	int _roomLocks[201], _lockType;
+	int _roomToUnlock;
+
+	bool _canUseKey;
+	bool _saidLocked;
+	bool _saidJammed;
+
 
 	// ysort
 	int _ysort[2401], _lasty, _firsty;
 
-	int _pmenu;
+	bool _pmenu;
 };
 
 }
