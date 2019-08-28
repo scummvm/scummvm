@@ -398,26 +398,26 @@ private:
 	ANIMSET2TYPE _animset2[7], _animset9[7];
 
 	// object info
-	float objectframe[256][2];
-	int lastobj;
+	float _objectframe[256][2];
+	int _lastobj;
 	// frame!, curframe
-	int objectinfo[33][6];
+	int _objectinfo[33][6];
 	// nframes,xtiles,ytiles,speed,type,script, update?
-	int objecttile[33][9][3][3][2];
+	int _objecttile[33][9][3][3][2];
 	// [objnum] [frame] [x] [y] [tile/layer]
-	int objmap[21][15];
+	int _objmap[21][15];
 
-	int objmapf[1000][21][15];
+	int _objmapf[1000][21][15];
 	// [mapnum] x, y  set to 1 to make this objmap spot stay at -1
 
 	// trigger info
-	int triggers[10000][9];
+	int _triggers[10000][9];
 	// [map#][index], [var]
 	// map#,x,y
-	int triggerloc[320][240], ntriggers;
+	int _triggerloc[320][240], _ntriggers;
 
 	// npc info
-	NPCTYPE npcinfo[kMaxNPC];
+	NPCTYPE _npcinfo[kMaxNPC];
 	int lastnpc;
 
 	// music info

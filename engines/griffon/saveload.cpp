@@ -111,7 +111,7 @@ int GriffonEngine::state_load(int slotnum) {
 		for (int a = 0; a <= 999; a++) {
 			for (int b = 0; b <= 20; b++) {
 				for (int c = 0; c <= 14; c++) {
-					INPUT("%i", &objmapf[a][b][c]);
+					INPUT("%i", &_objmapf[a][b][c]);
 				}
 			}
 		}
@@ -236,7 +236,7 @@ int GriffonEngine::state_save(int slotnum) {
 		for (int a = 0; a <= 999; a++) {
 			for (int b = 0; b <= 20; b++) {
 				for (int c = 0; c <= 14; c++) {
-					PRINT("%i", objmapf[a][b][c]);
+					PRINT("%i", _objmapf[a][b][c]);
 				}
 			}
 		}
