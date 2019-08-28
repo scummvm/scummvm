@@ -254,7 +254,12 @@ void Combat::giveCharDamage(int damage, DamageType attackType, int charIndex) {
 		breakFlag = true;
 	}
 
+	// WORKAROUND: Flag a script in progress when pausing to prevent any pending combat starting prematurely
+	Mode oldMode = _vm->_mode;
+	_vm->_mode = MODE_SCRIPT_IN_PROGRESS;
 	events.ipause(5);
+	_vm->_mode = oldMode;
+
 	intf.drawParty(true);
 	party.checkPartyDead();
 }
