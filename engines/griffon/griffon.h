@@ -344,8 +344,8 @@ private:
 	int _scriptflag[100][10], _saveslot;  // script, flag
 
 	// timer related - move to local later
-	int ticks, _tickspassed, _nextticks;
-	float fp, fps, fpsr; // CHECKME: fp and fps seems to be integers
+	int _ticks, _tickspassed, _nextticks;
+	float _fp, _fps, _fpsr; // CHECKME: _fp and _fps seems to be integers
 	int secsingame, secstart;
 
 	Graphics::TransparentSurface *mapimg[4];
