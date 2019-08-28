@@ -47,11 +47,11 @@ GriffonEngine::GriffonEngine(OSystem *syst) : Engine(syst) {
 
 	_shouldQuit = false;
 
-	menabled = true;
-	musicchannel = -1;
-	menuchannel = -1;
+	_menabled = true; // TODO. Sync with config
+	_musicchannel = -1;
+	_menuchannel = -1;
 
-	loopseta = 0;
+	_loopseta = 0;
 
 	clouddeg = 0.0f;
 }
