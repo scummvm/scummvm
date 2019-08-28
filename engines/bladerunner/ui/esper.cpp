@@ -95,9 +95,9 @@ void ESPER::open(Graphics::Surface *surface) {
 		return;
 	}
 
-	_surfacePhoto.create(kPhotoWidth, kPhotoHeight, gameDataPixelFormat());
+	_surfacePhoto.create(kPhotoWidth, kPhotoHeight, _vm->gameDataPixelFormat());
 
-	_surfaceViewport.create(_screen.width(), _screen.height(), screenPixelFormat());
+	_surfaceViewport.create(_screen.width(), _screen.height(), _vm->screenPixelFormat());
 
 	_viewportNext = _viewport;
 

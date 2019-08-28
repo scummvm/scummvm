@@ -834,7 +834,7 @@ void VQADecoder::VQAVideoTrack::VPTRWriteBlock(Graphics::Surface *surface, unsig
 				src_p += 2;
 
 				uint8 a, r, g, b;
-				gameDataPixelFormat().colorToARGB(vqaColor, a, r, g, b);
+				((BladeRunnerEngine *)g_engine)->gameDataPixelFormat().colorToARGB(vqaColor, a, r, g, b);
 				// Ignore the alpha in the output as it is inversed in the input
 				uint16 outColor = (uint16)surface->format.RGBToColor(r, g, b);
 

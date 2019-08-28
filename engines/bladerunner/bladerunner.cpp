@@ -324,8 +324,22 @@ Common::Error BladeRunnerEngine::run() {
 		return Common::Error(Common::kNoGameDataFoundError, missingFileStr);
 	}
 
-	Graphics::PixelFormat format = screenPixelFormat();
-	initGraphics(640, 480, &format);
+	Common::List<Graphics::PixelFormat> tryModes = _system->getSupportedFormats();
+	for (Common::List<Graphics::PixelFormat>::iterator g = tryModes.begin(); g != tryModes.end(); ++g) {
+		if (g->bytesPerPixel != 2) {
+			g = tryModes.reverse_erase(g);
+		} else if (*g == gameDataPixelFormat()) {
+			tryModes.clear();
+			tryModes.push_back(gameDataPixelFormat());
+			break;
+		}
+	}
+
+	initGraphics(640, 480, tryModes);
+	_pixelFormat = _system->getScreenFormat();
+	debug("Using pixel format: %s", _pixelFormat.toString().c_str());
+	if (_pixelFormat.bytesPerPixel != 2)
+		return Common::kUnsupportedColorMode;
 
 	_system->showMouse(true);
 

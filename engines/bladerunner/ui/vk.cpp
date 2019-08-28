@@ -116,7 +116,7 @@ void VK::open(int actorId, int calibrationRatio) {
 		return;
 	}
 
-	_surfaceEye.create(172, 116, screenPixelFormat());
+	_surfaceEye.create(172, 116, _vm->screenPixelFormat());
 	_vqaPlayerEye = new VQAPlayer(_vm, &_surfaceEye, eyeVqa);
 	if (!_vqaPlayerEye->open()) {
 		return;

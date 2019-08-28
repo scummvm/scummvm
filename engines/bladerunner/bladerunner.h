@@ -185,6 +185,8 @@ public:
 	Graphics::Surface  _surfaceFront;
 	Graphics::Surface  _surfaceBack;
 
+	Graphics::PixelFormat _pixelFormat;
+
 	ZBuffer           *_zbuffer;
 
 	Common::RandomSource _rnd;
@@ -316,16 +318,15 @@ public:
 
 	GUI::Debugger *getDebugger();
 	Common::String getTargetName() const;
+
+	const Graphics::PixelFormat gameDataPixelFormat() const {
+		return Graphics::PixelFormat(2, 5, 5, 5, 1, 10, 5, 0, 15);
+	}
+
+	Graphics::PixelFormat screenPixelFormat() {
+		return _pixelFormat;
+	}
 };
-
-static inline const Graphics::PixelFormat gameDataPixelFormat() {
-	return Graphics::PixelFormat(2, 5, 5, 5, 1, 10, 5, 0, 15);
-}
-
-static inline const Graphics::PixelFormat screenPixelFormat() {
-	// Should be a format supported by Android port
-	return Graphics::PixelFormat(2, 5, 5, 5, 1, 11, 6, 1, 0);
-}
 
 void blit(const Graphics::Surface &src, Graphics::Surface &dst);
 
