@@ -2600,6 +2600,11 @@ void InitScript::Init_CDB() {
 	CDB_Set_Clue_Asset_Type(kClueChessTable, kClueTypeAudioRecording);
 	CDB_Set_Clue_Asset_Type(kClueStaggeredbyPunches, kClueTypeAudioRecording);
 	CDB_Set_Clue_Asset_Type(kClueMaggieBracelet, kClueTypeObject);
+	if (_vm->_cutContent) {
+		CDB_Set_Clue_Asset_Type(kClueGarterSnake, kClueTypeObject);
+		CDB_Set_Clue_Asset_Type(kClueGoldfish, kClueTypeObject);
+		CDB_Set_Clue_Asset_Type(kClueSlug, kClueTypeObject);
+	}
 	CDB_Set_Clue_Asset_Type(kClueEnvelope, kClueTypeObject);
 	CDB_Set_Clue_Asset_Type(kClueIzosFriend, kClueTypePhotograph);
 	CDB_Set_Clue_Asset_Type(kClueChinaBarSecurityPhoto, kClueTypePhotograph);
