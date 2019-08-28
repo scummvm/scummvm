@@ -89,7 +89,7 @@ private:
 	bool   _movementTrackPaused;
 	int    _movementTrackNextWaypointId;
 	int32  _movementTrackNextDelay;  // probably not used
-	int    _movementTrackNextAngle;  // probably not used
+	int    _movementTrackNextAngle;  // fixed: used for AI_Movement_Track_Append_With_Facing - original: probably not used
 	bool   _movementTrackNextRunning;
 
 	int    _movementTrackWalkingToWaypointId;
