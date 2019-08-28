@@ -426,7 +426,7 @@ void GriffonEngine::game_attack() {
 						objmap[lx][ly - 1] = 3;
 
 					game_eventtext("Found Flask!");
-					_itemticks = ticks + 215;
+					_itemticks = _ticks + 215;
 					return;
 				}
 
@@ -437,7 +437,7 @@ void GriffonEngine::game_attack() {
 					}
 
 					game_eventtext("Cannot Carry any more Flasks!");
-					_itemticks = ticks + 215;
+					_itemticks = _ticks + 215;
 					return;
 				}
 
@@ -446,7 +446,7 @@ void GriffonEngine::game_attack() {
 
 					game_addFloatIcon(14, lx * 16, (ly - 1) * 16);
 
-					_itemticks = ticks + 215;
+					_itemticks = _ticks + 215;
 
 					if (_curmap == 34)
 						_scriptflag[2][0] = 2;
@@ -481,7 +481,7 @@ void GriffonEngine::game_attack() {
 						objmap[lx][ly - 1] = 3;
 
 					game_eventtext("Found the Infinite Crystal!");
-					_itemticks = ticks + 215;
+					_itemticks = _ticks + 215;
 					return;
 				}
 
@@ -490,7 +490,7 @@ void GriffonEngine::game_attack() {
 
 					game_addFloatIcon(4, lx * 16, (ly - 1) * 16);
 
-					_itemticks = ticks + 215;
+					_itemticks = _ticks + 215;
 
 					if (menabled && config.effects) {
 						int snd = Mix_PlayChannel(sfx[sndpowerup]);
@@ -510,7 +510,7 @@ void GriffonEngine::game_attack() {
 
 					game_addFloatIcon(3, lx * 16, (ly - 1) * 16);
 
-					_itemticks = ticks + 215;
+					_itemticks = _ticks + 215;
 
 					if (menabled && config.effects) {
 						int snd = Mix_PlayChannel(sfx[sndpowerup]);
@@ -570,7 +570,7 @@ void GriffonEngine::game_attack() {
 						objmap[lx][ly - 1] = 3;
 
 					game_eventtext("Found Mega Flask!");
-					_itemticks = ticks + 215;
+					_itemticks = _ticks + 215;
 					return;
 				}
 
@@ -581,7 +581,7 @@ void GriffonEngine::game_attack() {
 					}
 
 					game_eventtext("Cannot Carry any more Mega Flasks!");
-					_itemticks = ticks + 215;
+					_itemticks = _ticks + 215;
 					return;
 				}
 
@@ -600,7 +600,7 @@ void GriffonEngine::game_attack() {
 						objmap[lx][ly - 1] = 3;
 
 					game_eventtext("Found Mega Flask!");
-					_itemticks = ticks + 215;
+					_itemticks = _ticks + 215;
 					return;
 				}
 
@@ -611,7 +611,7 @@ void GriffonEngine::game_attack() {
 					}
 
 					game_eventtext("Cannot Carry any more Mega Flasks!");
-					_itemticks = ticks + 215;
+					_itemticks = _ticks + 215;
 					return;
 				}
 
@@ -630,7 +630,7 @@ void GriffonEngine::game_attack() {
 						objmap[lx][ly - 1] = 3;
 
 					game_eventtext("Found Lightning Bomb!");
-					_itemticks = ticks + 215;
+					_itemticks = _ticks + 215;
 					return;
 				}
 
@@ -641,7 +641,7 @@ void GriffonEngine::game_attack() {
 					}
 
 					game_eventtext("Cannot Carry any more Lightning Bombs!");
-					_itemticks = ticks + 215;
+					_itemticks = _ticks + 215;
 					return;
 				}
 
@@ -659,7 +659,7 @@ void GriffonEngine::game_attack() {
 						objmap[lx][ly - 1] = 3;
 
 					game_eventtext("Found the Fidelis Mail!");
-					_itemticks = ticks + 215;
+					_itemticks = _ticks + 215;
 					return;
 				}
 
@@ -704,7 +704,7 @@ void GriffonEngine::game_attack() {
 
 					game_addFloatIcon(18, lx * 16, (ly - 1) * 16);
 
-					_itemticks = ticks + 215;
+					_itemticks = _ticks + 215;
 
 					if (menabled && config.effects) {
 						int snd = Mix_PlayChannel(sfx[sndpowerup]);
@@ -721,7 +721,7 @@ void GriffonEngine::game_attack() {
 				if (oscript == 16 && _player.shield < 3) {
 					_player.shield = 3;
 					game_addFloatIcon(19, lx * 16, (ly - 1) * 16);
-					_itemticks = ticks + 215;
+					_itemticks = _ticks + 215;
 
 					if (menabled && config.effects) {
 						int snd = Mix_PlayChannel(sfx[sndpowerup]);
@@ -738,7 +738,7 @@ void GriffonEngine::game_attack() {
 				if (oscript == 17 && _player.armour < 3) {
 					_player.armour = 3;
 					game_addFloatIcon(20, lx * 16, (ly - 1) * 16);
-					_itemticks = ticks + 215;
+					_itemticks = _ticks + 215;
 
 					if (menabled && config.effects) {
 						int snd = Mix_PlayChannel(sfx[sndpowerup]);
@@ -857,7 +857,7 @@ void GriffonEngine::game_castspell(int spellnum, float homex, float homey, float
 void GriffonEngine::game_checkhit() {
 	if (attacking) {
 		for (int i = 1; i <= lastnpc; i++) {
-			if (npcinfo[i].hp > 0 && npcinfo[i].pause < ticks && (int)(RND() * 2) == 0) {
+			if (npcinfo[i].hp > 0 && npcinfo[i].pause < _ticks && (int)(RND() * 2) == 0) {
 				float npx = npcinfo[i].x;
 				float npy = npcinfo[i].y;
 
@@ -936,18 +936,18 @@ void GriffonEngine::game_checkinputs() {
 
 	if (_event.type == Common::EVENT_KEYDOWN) {
 		if (_event.kbd.keycode == Common::KEYCODE_ESCAPE) {
-			if (_itemticks < ticks)
+			if (_itemticks < _ticks)
 				game_title(1);
 		} else if (_event.kbd.keycode == Common::KEYCODE_d && _event.kbd.hasFlags(Common::KBD_CTRL)) {
 			_console->attach();
 			_event.type = Common::EVENT_INVALID;
 		} else if (_event.kbd.hasFlags(Common::KBD_CTRL)) {
-			if (_itemselon == 0 && _itemticks < ticks)
+			if (_itemselon == 0 && _itemticks < _ticks)
 				game_attack();
 
-			if (_itemselon == 1 && _itemticks < ticks) {
+			if (_itemselon == 1 && _itemticks < _ticks) {
 				if (_curitem == 0 && _player.inventory[INV_FLASK] > 0) {
-					_itemticks = ticks + ntickdelay;
+					_itemticks = _ticks + ntickdelay;
 
 					int heal = 50;
 					int maxh = _player.maxhp - _player.hp;
@@ -973,7 +973,7 @@ void GriffonEngine::game_checkinputs() {
 				}
 
 				if (_curitem == 1 && _player.inventory[INV_DOUBLEFLASK] > 0) {
-					_itemticks = ticks + ntickdelay;
+					_itemticks = _ticks + ntickdelay;
 
 					int heal = 200;
 					int maxh = _player.maxhp - _player.hp;
@@ -1005,7 +1005,7 @@ void GriffonEngine::game_checkinputs() {
 
 					_player.inventory[INV_SHOCK]--;
 
-					_itemticks = ticks + ntickdelay;
+					_itemticks = _ticks + ntickdelay;
 					_selenemyon = 0;
 					_itemselon = 0;
 
@@ -1017,7 +1017,7 @@ void GriffonEngine::game_checkinputs() {
 
 					_player.inventory[INV_NORMALKEY]--;
 
-					_itemticks = ticks + ntickdelay;
+					_itemticks = _ticks + ntickdelay;
 					_selenemyon = 0;
 					_itemselon = 0;
 					return;
@@ -1029,7 +1029,7 @@ void GriffonEngine::game_checkinputs() {
 
 					_player.inventory[INV_MASTERKEY]--;
 
-					_itemticks = ticks + ntickdelay;
+					_itemticks = _ticks + ntickdelay;
 					_selenemyon = 0;
 					_itemselon = 0;
 					return;
@@ -1042,7 +1042,7 @@ void GriffonEngine::game_checkinputs() {
 
 					_forcepause = true;
 
-					_itemticks = ticks + ntickdelay;
+					_itemticks = _ticks + ntickdelay;
 					_selenemyon = 0;
 					_itemselon = 0;
 				}
@@ -1059,7 +1059,7 @@ void GriffonEngine::game_checkinputs() {
 
 					_player.spellstrength = 0;
 
-					_itemticks = ticks + ntickdelay;
+					_itemticks = _ticks + ntickdelay;
 					_selenemyon = 0;
 					_itemselon = 0;
 					_forcepause = false;
@@ -1067,7 +1067,7 @@ void GriffonEngine::game_checkinputs() {
 
 				if (_curitem > 5 && _selenemyon == 0 && _itemselon == 1) {
 					if (ABS(_player.spellcharge[_curitem - 5] - 100) < kEpsilon) {
-						_itemticks = ticks + ntickdelay;
+						_itemticks = _ticks + ntickdelay;
 
 						_selenemyon = 1;
 
@@ -1094,15 +1094,15 @@ __exit_do:
 				}
 			}
 		} else if (_event.kbd.hasFlags(Common::KBD_ALT)) {
-			if (_itemticks < ticks) {
+			if (_itemticks < _ticks) {
 				_selenemyon = 0;
 				if (_itemselon == 1) {
 					_itemselon = 0;
-					_itemticks = ticks + 220;
+					_itemticks = _ticks + 220;
 					_forcepause = false;
 				} else {
 					_itemselon = 1;
-					_itemticks = ticks + 220;
+					_itemticks = _ticks + 220;
 					_forcepause = true;
 					_player.itemselshade = 0;
 				}
@@ -1130,7 +1130,7 @@ __exit_do:
 		movingright = 0;
 
 		if (_selenemyon == 1) {
-			if (_itemticks < ticks) {
+			if (_itemticks < _ticks) {
 				if (_event.kbd.keycode == Common::KEYCODE_LEFT) {
 					int origin = _curenemy;
 					do {
@@ -1144,7 +1144,7 @@ __exit_do:
 						if (_curenemy > lastnpc)
 							break;
 					} while (1);
-					_itemticks = ticks + ntickdelay;
+					_itemticks = _ticks + ntickdelay;
 				}
 				if (_event.kbd.keycode == Common::KEYCODE_RIGHT) {
 					int origin = _curenemy;
@@ -1159,7 +1159,7 @@ __exit_do:
 						if (_curenemy > lastnpc)
 							break;
 					} while (1);
-					_itemticks = ticks + ntickdelay;
+					_itemticks = _ticks + ntickdelay;
 				}
 
 
@@ -1169,10 +1169,10 @@ __exit_do:
 					_curenemy = lastnpc + nposts;
 			}
 		} else {
-			if (_itemticks < ticks) {
+			if (_itemticks < _ticks) {
 				if (_event.kbd.keycode == Common::KEYCODE_UP) {
 					_curitem = _curitem - 1;
-					_itemticks = ticks + ntickdelay;
+					_itemticks = _ticks + ntickdelay;
 					if (_curitem == 4)
 						_curitem = 9;
 					if (_curitem == -1)
@@ -1180,7 +1180,7 @@ __exit_do:
 				}
 				if (_event.kbd.keycode == Common::KEYCODE_DOWN) {
 					_curitem = _curitem + 1;
-					_itemticks = ticks + ntickdelay;
+					_itemticks = _ticks + ntickdelay;
 					if (_curitem == 5)
 						_curitem = 0;
 					if (_curitem == 10)
@@ -1188,11 +1188,11 @@ __exit_do:
 				}
 				if (_event.kbd.keycode == Common::KEYCODE_LEFT) {
 					_curitem = _curitem - 5;
-					_itemticks = ticks + ntickdelay;
+					_itemticks = _ticks + ntickdelay;
 				}
 				if (_event.kbd.keycode == Common::KEYCODE_RIGHT) {
 					_curitem = _curitem + 5;
-					_itemticks = ticks + ntickdelay;
+					_itemticks = _ticks + ntickdelay;
 				}
 
 				if (_curitem > 9)
@@ -1230,14 +1230,14 @@ void GriffonEngine::game_checktrigger() {
 void GriffonEngine::game_configmenu() {
 	int cursel = MINCURSEL;
 
-	ticks = g_system->getMillis();
+	_ticks = g_system->getMillis();
 	int tickwait = 100;
-	int keypause = ticks + tickwait;
+	int keypause = _ticks + tickwait;
 
 	Graphics::TransparentSurface *configwindow = IMG_Load("art/configwindow.bmp", true);
 	configwindow->setAlpha(160, true);
 
-	int ticks1 = ticks;
+	int _ticks1 = _ticks;
 	do {
 		_videobuffer->fillRect(Common::Rect(0, 0, _videobuffer->w, _videobuffer->h), 0);
 
@@ -1364,8 +1364,8 @@ void GriffonEngine::game_configmenu() {
 		_itemimg[15]->blit(*_videobuffer, rc.left, rc.top);
 
 		float yy = 255.0;
-		if (ticks < ticks1 + 1000) {
-			yy = 255.0 * ((float)(ticks - ticks1) / 1000.0);
+		if (_ticks < _ticks1 + 1000) {
+			yy = 255.0 * ((float)(_ticks - _ticks1) / 1000.0);
 			if (yy < 0.0)
 				yy = 0.0;
 			if (yy > 255.0)
@@ -1378,31 +1378,31 @@ void GriffonEngine::game_configmenu() {
 
 		g_system->getEventManager()->pollEvent(_event);
 
-		_tickspassed = ticks;
-		ticks = g_system->getMillis();
+		_tickspassed = _ticks;
+		_ticks = g_system->getMillis();
 
-		_tickspassed = ticks - _tickspassed;
-		fpsr = (float)_tickspassed / 24;
+		_tickspassed = _ticks - _tickspassed;
+		_fpsr = (float)_tickspassed / 24;
 
-		fp++;
-		if (ticks > _nextticks) {
-			_nextticks = ticks + 1000;
-			fps = fp;
-			fp = 0;
+		_fp++;
+		if (_ticks > _nextticks) {
+			_nextticks = _ticks + 1000;
+			_fps = _fp;
+			_fp = 0;
 		}
 
-		_itemyloc += 0.75 * fpsr;
+		_itemyloc += 0.75 * _fpsr;
 		while (_itemyloc >= 16)
 			_itemyloc -= 16;
 
-		if (keypause < ticks) {
+		if (keypause < _ticks) {
 			g_system->getEventManager()->pollEvent(_event);
 
 			if (_event.type == Common::EVENT_QUIT)
 				_shouldQuit = true;
 
 			if (_event.type == Common::EVENT_KEYDOWN) {
-				keypause = ticks + tickwait;
+				keypause = _ticks + tickwait;
 
 				if (_event.kbd.keycode == Common::KEYCODE_ESCAPE)
 					break;
@@ -1574,7 +1574,7 @@ void GriffonEngine::game_configmenu() {
 			}
 		}
 
-		clouddeg += 0.01 * fpsr;
+		clouddeg += 0.01 * _fpsr;
 		while (clouddeg >= 360)
 			clouddeg = clouddeg - 360;
 
@@ -1582,7 +1582,7 @@ void GriffonEngine::game_configmenu() {
 	} while (!_shouldQuit);
 
 	configwindow->free();
-	_itemticks = ticks + 210;
+	_itemticks = _ticks + 210;
 
 	cloudimg->setAlpha(64, true);
 }
@@ -1622,7 +1622,7 @@ void GriffonEngine::game_damagenpc(int npcnum, int damage, int spell) {
 			fcol = 5;
 		}
 
-		npcinfo[npcnum].pause = ticks + 900;
+		npcinfo[npcnum].pause = _ticks + 900;
 
 		if (spell == 0)
 			_player.attackstrength = ratio;
@@ -2057,7 +2057,7 @@ void GriffonEngine::game_damageplayer(int damage) {
 
 	game_addFloatText(line, _player.px + 12 - 4 * strlen(line), _player.py + 16, 4);
 
-	_player.pause = ticks + 1000;
+	_player.pause = _ticks + 1000;
 }
 
 void GriffonEngine::game_drawanims(int Layer) {
@@ -2152,7 +2152,7 @@ int hud_recalc(int a, int b, int c) {
 #define RGB(R, G, B) (_videobuffer->format.RGBToColor((R), (G), (B)))
 
 void GriffonEngine::game_drawhud() {
-	//sprintf(line, "fps: %i, map: %i, exp: %i/%i", (int)fps, _curmap, _player.exp, _player.nextlevel);
+	//sprintf(line, "_fps: %i, map: %i, exp: %i/%i", (int)_fps, _curmap, _player.exp, _player.nextlevel);
 	//sys_print(_videobuffer, line, 0, 0, 0);
 
 	game_fillrect(_videobuffer2, 0, 0, 320, 240, 0);
@@ -2449,8 +2449,8 @@ void GriffonEngine::game_drawnpcs(int mode) {
 						rcDest.setWidth(24);
 						rcDest.setHeight(24);
 
-						if (npcinfo[i].pause > ticks && npcinfo[i].shake < ticks) {
-							npcinfo[i].shake = ticks + 50;
+						if (npcinfo[i].pause > _ticks && npcinfo[i].shake < _ticks) {
+							npcinfo[i].shake = _ticks + 50;
 							rcDest.left += (int)(RND() * 3) - 1;
 							rcDest.top += (int)(RND() * 3) - 1;
 						}
@@ -2636,8 +2636,8 @@ void GriffonEngine::game_drawnpcs(int mode) {
 					rcDest.setWidth(24);
 					rcDest.setHeight(24);
 
-					if (npcinfo[i].pause > ticks && npcinfo[i].shake < ticks) {
-						npcinfo[i].shake = ticks + 50;
+					if (npcinfo[i].pause > _ticks && npcinfo[i].shake < _ticks) {
+						npcinfo[i].shake = _ticks + 50;
 						rcDest.left = rcDest.left + (int)(RND() * 3) - 1;
 						rcDest.top = rcDest.top + (int)(RND() * 3) - 1;
 					}
@@ -2660,8 +2660,8 @@ void GriffonEngine::game_drawnpcs(int mode) {
 					rcDest.setWidth(24);
 					rcDest.setHeight(24);
 
-					if (npcinfo[i].pause > ticks && npcinfo[i].shake < ticks) {
-						npcinfo[i].shake = ticks + 50;
+					if (npcinfo[i].pause > _ticks && npcinfo[i].shake < _ticks) {
+						npcinfo[i].shake = _ticks + 50;
 						rcDest.left = rcDest.left + (int)(RND() * 3) - 1;
 						rcDest.top = rcDest.top + (int)(RND() * 3) - 1;
 					}
@@ -2697,8 +2697,8 @@ void GriffonEngine::game_drawnpcs(int mode) {
 					rcDest.setWidth(24);
 					rcDest.setHeight(24);
 
-					if (npcinfo[i].pause > ticks && npcinfo[i].shake < ticks) {
-						npcinfo[i].shake = ticks + 50;
+					if (npcinfo[i].pause > _ticks && npcinfo[i].shake < _ticks) {
+						npcinfo[i].shake = _ticks + 50;
 						rcDest.left = rcDest.left + (int)(RND() * 3) - 1;
 						rcDest.top = rcDest.top + (int)(RND() * 3) - 1;
 					}
@@ -2709,14 +2709,14 @@ void GriffonEngine::game_drawnpcs(int mode) {
 				// dragon2
 				if (npcinfo[i].spriteset == 10) {
 					if (npcinfo[i].attacking == 0) {
-						npcinfo[i].floating = npcinfo[i].floating + 0.25 * fpsr;
+						npcinfo[i].floating = npcinfo[i].floating + 0.25 * _fpsr;
 						while (npcinfo[i].floating >= 16)
 							npcinfo[i].floating = npcinfo[i].floating - 16;
 
 						float frame = npcinfo[i].frame;
 						int cframe = npcinfo[i].cframe;
 
-						frame = frame + 0.5 * fpsr;
+						frame = frame + 0.5 * _fpsr;
 						while (frame >= 16)
 							frame = frame - 16;
 
@@ -2741,15 +2741,15 @@ void GriffonEngine::game_drawnpcs(int mode) {
 						rcDest.setWidth(24);
 						rcDest.setHeight(24);
 
-						if (npcinfo[i].pause > ticks && npcinfo[i].shake < ticks) {
-							npcinfo[i].shake = ticks + 50;
+						if (npcinfo[i].pause > _ticks && npcinfo[i].shake < _ticks) {
+							npcinfo[i].shake = _ticks + 50;
 							rcDest.left = rcDest.left + (int)(RND() * 3) - 1;
 							rcDest.top = rcDest.top + (int)(RND() * 3) - 1;
 						}
 
 						anims[sprite]->blit(*_videobuffer, rcDest.left, rcDest.top, Graphics::FLIP_NONE, &rcSrc);
 					} else {
-						npcinfo[i].floating = npcinfo[i].floating + 0.25 * fpsr;
+						npcinfo[i].floating = npcinfo[i].floating + 0.25 * _fpsr;
 						while (npcinfo[i].floating >= 16)
 							npcinfo[i].floating = npcinfo[i].floating - 16;
 
@@ -2772,14 +2772,14 @@ void GriffonEngine::game_drawnpcs(int mode) {
 				// end boss
 				if (npcinfo[i].spriteset == 11) {
 
-					npcinfo[i].floating = npcinfo[i].floating + .3 * fpsr;
+					npcinfo[i].floating = npcinfo[i].floating + .3 * _fpsr;
 					while (npcinfo[i].floating >= 16)
 						npcinfo[i].floating = npcinfo[i].floating - 16;
 
 
 					float frame = npcinfo[i].frame2;
 
-					frame = frame + 0.5 * fpsr;
+					frame = frame + 0.5 * _fpsr;
 					while (frame >= 16)
 						frame = frame - 16;
 
@@ -2825,7 +2825,7 @@ void GriffonEngine::game_drawnpcs(int mode) {
 							int xdif = (xloc + 8) - (_player.px + 12);
 							int ydif = (yloc + 8) - (_player.py + 12);
 
-							if ((abs(xdif) < 8 && abs(ydif) < 8) && _player.pause < ticks) {
+							if ((abs(xdif) < 8 && abs(ydif) < 8) && _player.pause < _ticks) {
 								float damage = (float)npcinfo[i].spelldamage * (1.0 + RND() * 0.5);
 
 								if (_player.hp > 0) {
@@ -2851,7 +2851,7 @@ void GriffonEngine::game_drawnpcs(int mode) {
 							xdif = (xloc + 8) - (_player.px + 12);
 							ydif = (yloc + 8) - (_player.py + 12);
 
-							if ((abs(xdif) < 8 && abs(ydif) < 8) && _player.pause < ticks) {
+							if ((abs(xdif) < 8 && abs(ydif) < 8) && _player.pause < _ticks) {
 								float damage = (float)npcinfo[i].spelldamage * (1.0 + RND() * 0.5);
 
 								if (_player.hp > 0) {
@@ -2877,8 +2877,8 @@ void GriffonEngine::game_drawnpcs(int mode) {
 						rcDest.left = sx;
 						rcDest.top = sy;
 
-						if (npcinfo[i].pause > ticks && npcinfo[i].shake < ticks) {
-							npcinfo[i].shake = ticks + 50;
+						if (npcinfo[i].pause > _ticks && npcinfo[i].shake < _ticks) {
+							npcinfo[i].shake = _ticks + 50;
 							rcDest.left = rcDest.top + (int)(RND() * 3) - 1;
 							rcDest.left = rcDest.top + (int)(RND() * 3) - 1;
 						}
@@ -2901,14 +2901,14 @@ void GriffonEngine::game_drawnpcs(int mode) {
 
 				// bat kitty
 				if (npcinfo[i].spriteset == 12) {
-					npcinfo[i].floating = npcinfo[i].floating + 1 * fpsr;
+					npcinfo[i].floating = npcinfo[i].floating + 1 * _fpsr;
 					while (npcinfo[i].floating >= 16)
 						npcinfo[i].floating = npcinfo[i].floating - 16;
 
 					float frame = npcinfo[i].frame;
 					int cframe = npcinfo[i].cframe;
 
-					frame = frame + 0.5 * fpsr;
+					frame = frame + 0.5 * _fpsr;
 					while (frame >= 16)
 						frame = frame - 16;
 
@@ -2933,8 +2933,8 @@ void GriffonEngine::game_drawnpcs(int mode) {
 					rcDest.setWidth(99);
 					rcDest.setHeight(80);
 
-					if (npcinfo[i].pause > ticks && npcinfo[i].shake < ticks) {
-						npcinfo[i].shake = ticks + 50;
+					if (npcinfo[i].pause > _ticks && npcinfo[i].shake < _ticks) {
+						npcinfo[i].shake = _ticks + 50;
 						rcDest.left = rcDest.left + (int)(RND() * 3) - 1;
 						rcDest.top = rcDest.top + (int)(RND() * 3) - 1;
 					}
@@ -3170,7 +3170,7 @@ void GriffonEngine::game_drawview() {
 
 void GriffonEngine::game_endofgame() {
 	float xofs = 0;
-	ticks = g_system->getMillis();
+	_ticks = g_system->getMillis();
 
 	float spd = 0.2f;
 
@@ -3180,7 +3180,7 @@ void GriffonEngine::game_endofgame() {
 		Mix_Volume(musicchannel, 0);
 	}
 
-	int ticks1 = ticks;
+	int _ticks1 = _ticks;
 	int ya = 0;
 
 	_videobuffer2->fillRect(Common::Rect(0, 0, _videobuffer2->w, _videobuffer2->h), 0);
@@ -3191,7 +3191,7 @@ void GriffonEngine::game_endofgame() {
 	int ldstop = 0;
 
 	do {
-		ld = ld + 4 * fpsr;
+		ld = ld + 4 * _fpsr;
 		if (ld > config.musicvol)
 			ld = config.musicvol;
 		if (menabled && ldstop == 0) {
@@ -3201,8 +3201,8 @@ void GriffonEngine::game_endofgame() {
 		}
 
 		ya = 0;
-		if (ticks < ticks1 + 1500) {
-			ya = (255 * (ticks - ticks1)) / 1500;
+		if (_ticks < _ticks1 + 1500) {
+			ya = (255 * (_ticks - _ticks1)) / 1500;
 			if (ya < 0)
 				ya = 0;
 			if (ya > 255)
@@ -3223,21 +3223,21 @@ void GriffonEngine::game_endofgame() {
 		g_system->getEventManager()->pollEvent(_event);
 		g_system->delayMillis(10);
 
-		_tickspassed = ticks;
-		ticks = g_system->getMillis();
+		_tickspassed = _ticks;
+		_ticks = g_system->getMillis();
 
-		_tickspassed = ticks - _tickspassed;
-		fpsr = (float)_tickspassed / 24;
+		_tickspassed = _ticks - _tickspassed;
+		_fpsr = (float)_tickspassed / 24;
 
-		fp++;
-		if (ticks > _nextticks) {
-			_nextticks = ticks + 1000;
-			fps = fp;
-			fp = 0;
+		_fp++;
+		if (_ticks > _nextticks) {
+			_nextticks = _ticks + 1000;
+			_fps = _fp;
+			_fp = 0;
 		}
 	} while (1);
 
-	ticks1 = ticks;
+	_ticks1 = _ticks;
 	ya = 0;
 	float y = 140;
 
@@ -3254,7 +3254,7 @@ void GriffonEngine::game_endofgame() {
 
 		_titleimg->blit(*_videobuffer, rc.left, rc.top);
 
-		y = y - spd * fpsr;
+		y = y - spd * _fpsr;
 		for (int i = 0; i <= 26; i++) {
 			int yy = y + i * 10;
 			if (yy > -8 && yy < 240) {
@@ -3267,8 +3267,8 @@ void GriffonEngine::game_endofgame() {
 		}
 
 		ya = 255;
-		if (ticks < ticks1 + 1000) {
-			ya = 255 * (ticks - ticks1) / 1000;
+		if (_ticks < _ticks1 + 1000) {
+			ya = 255 * (_ticks - _ticks1) / 1000;
 			if (ya < 0)
 				ya = 0;
 			if (ya > 255)
@@ -3282,20 +3282,20 @@ void GriffonEngine::game_endofgame() {
 		g_system->getEventManager()->pollEvent(_event);
 		g_system->delayMillis(10);
 
-		_tickspassed = ticks;
-		ticks = g_system->getMillis();
+		_tickspassed = _ticks;
+		_ticks = g_system->getMillis();
 
-		_tickspassed = ticks - _tickspassed;
-		fpsr = (float)_tickspassed / 24;
+		_tickspassed = _ticks - _tickspassed;
+		_fpsr = (float)_tickspassed / 24;
 
-		fp++;
-		if (ticks > _nextticks) {
-			_nextticks = ticks + 1000;
-			fps = fp;
-			fp = 0;
+		_fp++;
+		if (_ticks > _nextticks) {
+			_nextticks = _ticks + 1000;
+			_fps = _fp;
+			_fp = 0;
 		}
 
-		float add = 0.5 * fpsr;
+		float add = 0.5 * _fpsr;
 		if (add > 1)
 			add = 1;
 		xofs = xofs + add;
@@ -3312,14 +3312,14 @@ void GriffonEngine::game_endofgame() {
 	} while (1);
 
 
-	ticks1 = ticks;
+	_ticks1 = _ticks;
 	int y1 = 0;
 
 	_videobuffer2->copyRectToSurface(_videobuffer->getPixels(), _videobuffer->pitch, 0, 0, _videobuffer->w, _videobuffer->h);
 
 	do {
-		if (ticks < ticks1 + 1500) {
-			y1 = 255 * (ticks - ticks1) / 1500;
+		if (_ticks < _ticks1 + 1500) {
+			y1 = 255 * (_ticks - _ticks1) / 1500;
 			if (y1 < 0)
 				y1 = 0;
 			if (y1 > 255)
@@ -3340,32 +3340,32 @@ void GriffonEngine::game_endofgame() {
 		g_system->getEventManager()->pollEvent(_event);
 		g_system->delayMillis(10);
 
-		_tickspassed = ticks;
-		ticks = g_system->getMillis();
+		_tickspassed = _ticks;
+		_ticks = g_system->getMillis();
 
-		_tickspassed = ticks - _tickspassed;
-		fpsr = (float)_tickspassed / 24;
+		_tickspassed = _ticks - _tickspassed;
+		_fpsr = (float)_tickspassed / 24;
 
-		fp++;
-		if (ticks > _nextticks) {
-			_nextticks = ticks + 1000;
-			fps = fp;
-			fp = 0;
+		_fp++;
+		if (_ticks > _nextticks) {
+			_nextticks = _ticks + 1000;
+			_fps = _fp;
+			_fp = 0;
 		}
 	} while (1);
 
 
-	int keywait = 2000 + ticks;
+	int keywait = 2000 + _ticks;
 
-	ticks1 = ticks;
+	_ticks1 = _ticks;
 	y1 = 0;
 	do {
 
 		_videobuffer->copyRectToSurface(_theendimg->getPixels(), _theendimg->pitch, 0, 0, _theendimg->w, _theendimg->h);
 
 		y1 = 255;
-		if (ticks < ticks1 + 1000) {
-			y1 = 255 * (ticks - ticks1) / 1000;
+		if (_ticks < _ticks1 + 1000) {
+			y1 = 255 * (_ticks - _ticks1) / 1000;
 			if (y1 < 0)
 				y1 = 0;
 			if (y1 > 255)
@@ -3379,22 +3379,22 @@ void GriffonEngine::game_endofgame() {
 		g_system->getEventManager()->pollEvent(_event);
 		g_system->delayMillis(10);
 
-		_tickspassed = ticks;
-		ticks = g_system->getMillis();
+		_tickspassed = _ticks;
+		_ticks = g_system->getMillis();
 
-		_tickspassed = ticks - _tickspassed;
-		fpsr = (float)_tickspassed / 24;
+		_tickspassed = _ticks - _tickspassed;
+		_fpsr = (float)_tickspassed / 24;
 
-		fp++;
-		if (ticks > _nextticks) {
-			_nextticks = ticks + 1000;
-			fps = fp;
-			fp = 0;
+		_fp++;
+		if (_ticks > _nextticks) {
+			_nextticks = _ticks + 1000;
+			_fps = _fp;
+			_fp = 0;
 		}
 
 		g_system->getEventManager()->pollEvent(_event);
 
-		if (_event.type == Common::EVENT_KEYDOWN && keywait < ticks)
+		if (_event.type == Common::EVENT_KEYDOWN && keywait < _ticks)
 			break;
 
 	} while (1);
@@ -3412,9 +3412,9 @@ void GriffonEngine::game_eventtext(const char *stri) {
 
 	int x = 160 - 4 * strlen(stri);
 
-	ticks = g_system->getMillis();
-	int pauseticks = ticks + 500;
-	int bticks = ticks;
+	_ticks = g_system->getMillis();
+	int pause_ticks = _ticks + 500;
+	int b_ticks = _ticks;
 
 	_videobuffer->blit(*_videobuffer3);
 	_videobuffer->blit(*_videobuffer2);
@@ -3422,21 +3422,21 @@ void GriffonEngine::game_eventtext(const char *stri) {
 	do {
 		g_system->getEventManager()->pollEvent(_event);
 
-		if (_event.type == Common::EVENT_KEYDOWN && pauseticks < ticks)
+		if (_event.type == Common::EVENT_KEYDOWN && pause_ticks < _ticks)
 			break;
 		_videobuffer2->blit(*_videobuffer);
 
 		int fr = 192;
 
-		if (pauseticks > ticks)
-			fr = 192 * (ticks - bticks) / 500;
+		if (pause_ticks > _ticks)
+			fr = 192 * (_ticks - b_ticks) / 500;
 		if (fr > 192)
 			fr = 192;
 
 		_windowimg->setAlpha(fr, true);
 
 		_windowimg->blit(*_videobuffer);
-		if (pauseticks < ticks)
+		if (pause_ticks < _ticks)
 			sys_print(_videobuffer, stri, x, 15, 0);
 
 		g_system->copyRectToScreen(_videobuffer->getPixels(), _videobuffer->pitch, 0, 0, _videobuffer->w, _videobuffer->h);
@@ -3445,17 +3445,17 @@ void GriffonEngine::game_eventtext(const char *stri) {
 		g_system->getEventManager()->pollEvent(_event);
 		g_system->delayMillis(10);
 
-		_tickspassed = ticks;
-		ticks = g_system->getMillis();
+		_tickspassed = _ticks;
+		_ticks = g_system->getMillis();
 
-		_tickspassed = ticks - _tickspassed;
-		fpsr = (float)_tickspassed / 24.0;
+		_tickspassed = _ticks - _tickspassed;
+		_fpsr = (float)_tickspassed / 24.0;
 
-		fp++;
-		if (ticks > _nextticks) {
-			_nextticks = ticks + 1000;
-			fps = fp;
-			fp = 0;
+		_fp++;
+		if (_ticks > _nextticks) {
+			_nextticks = _ticks + 1000;
+			_fps = _fp;
+			_fp = 0;
 		}
 
 		g_system->delayMillis(10);
@@ -3463,7 +3463,7 @@ void GriffonEngine::game_eventtext(const char *stri) {
 
 	_videobuffer3->blit(*_videobuffer);
 
-	_itemticks = ticks + 210;
+	_itemticks = _ticks + 210;
 }
 
 
@@ -3480,7 +3480,7 @@ void GriffonEngine::game_handlewalking() {
 	opx = px;
 	opy = py;
 
-	spd = _player.walkspd * fpsr;
+	spd = _player.walkspd * _fpsr;
 
 	nx = (px / 2 + 6);
 	ny = (py / 2 + 10);
@@ -3663,7 +3663,7 @@ void GriffonEngine::game_handlewalking() {
 	_player.py = py;
 
 	if (_player.px != _player.opx || _player.py != _player.opy)
-		_player.walkframe = _player.walkframe + _animspd * fpsr;
+		_player.walkframe = _player.walkframe + _animspd * _fpsr;
 	if (_player.walkframe >= 16)
 		_player.walkframe = _player.walkframe - 16;
 
@@ -4091,7 +4091,7 @@ void GriffonEngine::game_loadmap(int mapnum) {
 			npcinfo[i].spelldamage = 30;
 
 			npcinfo[i].walkspd = 1.4f;
-			npcinfo[i].castpause = ticks;
+			npcinfo[i].castpause = _ticks;
 		}
 
 		// boss1
@@ -4233,7 +4233,7 @@ void GriffonEngine::game_loadmap(int mapnum) {
 		npcinfo[i].attackframe = 0;
 		npcinfo[i].cattackframe = 0;
 		npcinfo[i].attackspd = 1.5;
-		npcinfo[i].attacknext = ticks + npcinfo[i].attackdelay * (1 + RND() * 2);
+		npcinfo[i].attacknext = _ticks + npcinfo[i].attackdelay * (1 + RND() * 2);
 
 		if (npcinfo[i].spriteset == 2 || npcinfo[i].spriteset == 9) {
 			npcinfo[i].bodysection[0].sprite = 0;
@@ -4310,7 +4310,7 @@ void GriffonEngine::game_loadmap(int mapnum) {
 			}
 		}
 
-		npcinfo[i].pause = ticks;
+		npcinfo[i].pause = _ticks;
 	}
 
 	file.close();
@@ -4553,12 +4553,12 @@ void GriffonEngine::game_newgame() {
 	_videobuffer2->fillRect(Common::Rect(0, 0, _videobuffer2->w, _videobuffer2->h), 0);
 	_videobuffer3->fillRect(Common::Rect(0, 0, _videobuffer3->w, _videobuffer3->h), 0);
 
-	ticks = g_system->getMillis();
+	_ticks = g_system->getMillis();
 
 	_videobuffer->blit(*_videobuffer3);
 	_videobuffer->blit(*_videobuffer2);
 
-	fpsr = 0.0;
+	_fpsr = 0.0;
 	int y = 140;
 
 	if (menabled && config.music) {
@@ -4575,7 +4575,7 @@ void GriffonEngine::game_newgame() {
 	do {
 		Common::Rect rc;
 
-		ld += 4 * fpsr;
+		ld += 4 * _fpsr;
 		if ((int)ld > config.musicvol)
 			ld = config.musicvol;
 		if (menabled && ldstop == 0) {
@@ -4615,20 +4615,20 @@ void GriffonEngine::game_newgame() {
 		g_system->copyRectToScreen(_videobuffer->getPixels(), _videobuffer->pitch, 0, 0, _videobuffer->w, _videobuffer->h);
 		g_system->updateScreen();
 
-		_tickspassed = ticks;
-		ticks = g_system->getMillis();
+		_tickspassed = _ticks;
+		_ticks = g_system->getMillis();
 
-		_tickspassed = ticks - _tickspassed;
-		fpsr = (float)_tickspassed / 24.0;
+		_tickspassed = _ticks - _tickspassed;
+		_fpsr = (float)_tickspassed / 24.0;
 
-		fp++;
-		if (ticks > _nextticks) {
-			_nextticks = ticks + 1000;
-			fps = fp;
-			fp = 0;
+		_fp++;
+		if (_ticks > _nextticks) {
+			_nextticks = _ticks + 1000;
+			_fps = _fp;
+			_fp = 0;
 		}
 
-		add = 0.5 * fpsr;
+		add = 0.5 * _fpsr;
 		if (add > 1)
 			add = 1;
 		xofs += add;
@@ -4832,14 +4832,14 @@ void GriffonEngine::game_saveloadnew() {
 	int curcol = 0;
 	int lowerlock = 0;
 
-	ticks = g_system->getMillis();
-	int ticks1 = ticks;
-	int tickpause = ticks + 150;
+	_ticks = g_system->getMillis();
+	int _ticks1 = _ticks;
+	int tickpause = _ticks + 150;
 
 	do {
 		_videobuffer->fillRect(Common::Rect(0, 0, _videobuffer->w, _videobuffer->h), 0);
 
-		y = y + 1 * fpsr;
+		y = y + 1 * _fpsr;
 
 		rcDest.left = 256 + 256 * cos(3.141592 / 180 * clouddeg * 40);
 		rcDest.top = 192 + 192 * sin(3.141592 / 180 * clouddeg * 40);
@@ -4868,9 +4868,9 @@ void GriffonEngine::game_saveloadnew() {
 			return;
 		}
 
-		if (tickpause < ticks) {
+		if (tickpause < _ticks) {
 			if (_event.type == Common::EVENT_KEYDOWN) {
-				_itemticks = ticks + 220;
+				_itemticks = _ticks + 220;
 
 				if (_event.kbd.keycode == Common::KEYCODE_RETURN) {
 					// QUIT - non existent :)
@@ -4892,17 +4892,17 @@ void GriffonEngine::game_saveloadnew() {
 					if (currow == 0 && curcol == 1) {
 						lowerlock = 1;
 						currow = 1 + _saveslot;
-						tickpause = ticks + 125;
+						tickpause = _ticks + 125;
 					}
 					// SAVE GAME
 					if (currow == 0 && curcol == 2) {
 						lowerlock = 1;
 						currow = 1;
-						tickpause = ticks + 125;
+						tickpause = _ticks + 125;
 					}
 
 
-					if (lowerlock == 1 && curcol == 1 && tickpause < ticks) {
+					if (lowerlock == 1 && curcol == 1 && tickpause < _ticks) {
 						if (state_save(currow - 1)) {
 							secstart = secstart + secsingame;
 							secsingame = 0;
@@ -4912,7 +4912,7 @@ void GriffonEngine::game_saveloadnew() {
 						}
 					}
 
-					if (lowerlock == 1 && curcol == 2 && tickpause < ticks) {
+					if (lowerlock == 1 && curcol == 2 && tickpause < _ticks) {
 						if (state_load(currow - 1)) {
 							_player.walkspd = 1.1f;
 							_animspd = 0.5f;
@@ -4934,7 +4934,7 @@ void GriffonEngine::game_saveloadnew() {
 						}
 					}
 
-					tickpause = ticks + 125;
+					tickpause = _ticks + 125;
 				}
 
 				switch (_event.kbd.keycode) {
@@ -4943,14 +4943,14 @@ void GriffonEngine::game_saveloadnew() {
 						return;
 					lowerlock = 0;
 					currow = 0;
-					tickpause = ticks + 125;
+					tickpause = _ticks + 125;
 					break;
 				case Common::KEYCODE_DOWN:
 					if (lowerlock == 1) {
 						currow = currow + 1;
 						if (currow == 5)
 							currow = 1;
-						tickpause = ticks + 125;
+						tickpause = _ticks + 125;
 					}
 					break;
 
@@ -4959,7 +4959,7 @@ void GriffonEngine::game_saveloadnew() {
 						currow = currow - 1;
 						if (currow == 0)
 							currow = 4;
-						tickpause = ticks + 125;
+						tickpause = _ticks + 125;
 					}
 					break;
 
@@ -4968,7 +4968,7 @@ void GriffonEngine::game_saveloadnew() {
 						curcol = curcol - 1;
 						if (curcol == -1)
 							curcol = 3;
-						tickpause = ticks + 125;
+						tickpause = _ticks + 125;
 					}
 					break;
 
@@ -4977,7 +4977,7 @@ void GriffonEngine::game_saveloadnew() {
 						curcol = curcol + 1;
 						if (curcol == 4)
 							curcol = 0;
-						tickpause = ticks + 125;
+						tickpause = _ticks + 125;
 					}
 					break;
 				default:
@@ -5097,8 +5097,8 @@ void GriffonEngine::game_saveloadnew() {
 		}
 
 		int yy = 255;
-		if (ticks < ticks1 + 1000) {
-			yy = 255 * (ticks - ticks1) / 1000;
+		if (_ticks < _ticks1 + 1000) {
+			yy = 255 * (_ticks - _ticks1) / 1000;
 			if (yy < 0)
 				yy = 0;
 			if (yy > 255)
@@ -5111,24 +5111,24 @@ void GriffonEngine::game_saveloadnew() {
 
 		g_system->getEventManager()->pollEvent(_event);
 
-		_tickspassed = ticks;
-		ticks = g_system->getMillis();
+		_tickspassed = _ticks;
+		_ticks = g_system->getMillis();
 
-		_tickspassed = ticks - _tickspassed;
-		fpsr = (float)_tickspassed / 24;
+		_tickspassed = _ticks - _tickspassed;
+		_fpsr = (float)_tickspassed / 24;
 
-		fp++;
-		if (ticks > _nextticks) {
-			_nextticks = ticks + 1000;
-			fps = fp;
-			fp = 0;
+		_fp++;
+		if (_ticks > _nextticks) {
+			_nextticks = _ticks + 1000;
+			_fps = _fp;
+			_fp = 0;
 		}
 
-		clouddeg += 0.01 * fpsr;
+		clouddeg += 0.01 * _fpsr;
 		while (clouddeg >= 360)
 			clouddeg -= 360;
 
-		_itemyloc += 0.6 * fpsr;
+		_itemyloc += 0.6 * _fpsr;
 		while (_itemyloc >= 16)
 			_itemyloc -= 16;
 
@@ -5140,25 +5140,25 @@ void GriffonEngine::game_saveloadnew() {
 
 void GriffonEngine::game_showlogos() {
 	float y;
-	int ticks1;
+	int _ticks1;
 
-	ticks = g_system->getMillis();
-	ticks1 = ticks;
+	_ticks = g_system->getMillis();
+	_ticks1 = _ticks;
 
 	y = 0.0;
 
 	do {
 		y = 255.0;
-		if (ticks < ticks1 + 1000) {
-			y = 255.0 * ((float)(ticks - ticks1) / 1000.0);
+		if (_ticks < _ticks1 + 1000) {
+			y = 255.0 * ((float)(_ticks - _ticks1) / 1000.0);
 			if (y < 0.0)
 				y = 0.0;
 			if (y > 255.0)
 				y = 255.0;
 		}
 
-		if (ticks > ticks1 + 3000) {
-			y = 255.0 - 255.0 * ((float)(ticks - ticks1 - 3000.0) / 1000.0);
+		if (_ticks > _ticks1 + 3000) {
+			y = 255.0 - 255.0 * ((float)(_ticks - _ticks1 - 3000.0) / 1000.0);
 			if (y < 0.0)
 				y = 0.0;
 			if (y > 255.0)
@@ -5176,21 +5176,21 @@ void GriffonEngine::game_showlogos() {
 		if (_event.type == Common::EVENT_QUIT)
 			_shouldQuit = true;
 
-		_tickspassed = ticks;
-		ticks = g_system->getMillis();
+		_tickspassed = _ticks;
+		_ticks = g_system->getMillis();
 
-		_tickspassed = ticks - _tickspassed;
-		fpsr = (float)_tickspassed / 24;
+		_tickspassed = _ticks - _tickspassed;
+		_fpsr = (float)_tickspassed / 24;
 
-		fp++;
-		if (ticks > _nextticks) {
-			_nextticks = ticks + 1000;
-			fps = fp;
-			fp = 0;
+		_fp++;
+		if (_ticks > _nextticks) {
+			_nextticks = _ticks + 1000;
+			_fps = _fp;
+			_fp = 0;
 		}
 
 		g_system->delayMillis(10);
-		if (ticks > ticks1 + 4000)
+		if (_ticks > _ticks1 + 4000)
 			break;
 	} while (!_shouldQuit);
 }
@@ -5202,7 +5202,7 @@ void GriffonEngine::game_swash() {
 	y = 0;
 
 	do {
-		y = y + 1 * fpsr;
+		y = y + 1 * _fpsr;
 
 		_videobuffer->setAlpha((int)y);
 		_videobuffer->fillRect(Common::Rect(0, 0, _videobuffer->w, _videobuffer->h), 0);
@@ -5213,20 +5213,20 @@ void GriffonEngine::game_swash() {
 		g_system->getEventManager()->pollEvent(_event);
 		g_system->delayMillis(10);
 
-		_tickspassed = ticks;
-		ticks = g_system->getMillis();
+		_tickspassed = _ticks;
+		_ticks = g_system->getMillis();
 
-		_tickspassed = ticks - _tickspassed;
-		fpsr = (float)_tickspassed / 24.0;
+		_tickspassed = _ticks - _tickspassed;
+		_fpsr = (float)_tickspassed / 24.0;
 
-		fp++;
-		if (ticks > _nextticks) {
-			_nextticks = ticks + 1000;
-			fps = fp;
-			fp = 0;
+		_fp++;
+		if (_ticks > _nextticks) {
+			_nextticks = _ticks + 1000;
+			_fps = _fp;
+			_fp = 0;
 		}
 
-		clouddeg += 0.01 * fpsr;
+		clouddeg += 0.01 * _fpsr;
 		while (clouddeg >= 360)
 			clouddeg = clouddeg - 360;
 
@@ -5236,7 +5236,7 @@ void GriffonEngine::game_swash() {
 
 	y = 0;
 	do {
-		y = y + 1 * fpsr;
+		y = y + 1 * _fpsr;
 
 		_videobuffer->setAlpha((int)(y * 25));
 		_mapbg->blit(*_videobuffer);
@@ -5256,20 +5256,20 @@ void GriffonEngine::game_swash() {
 		g_system->getEventManager()->pollEvent(_event);
 		g_system->delayMillis(10);
 
-		_tickspassed = ticks;
-		ticks = g_system->getMillis();
+		_tickspassed = _ticks;
+		_ticks = g_system->getMillis();
 
-		_tickspassed = ticks - _tickspassed;
-		fpsr = (float)_tickspassed / 24.0;
+		_tickspassed = _ticks - _tickspassed;
+		_fpsr = (float)_tickspassed / 24.0;
 
-		fp++;
-		if (ticks > _nextticks) {
-			_nextticks = ticks + 1000;
-			fps = fp;
-			fp = 0;
+		_fp++;
+		if (_ticks > _nextticks) {
+			_nextticks = _ticks + 1000;
+			_fps = _fp;
+			_fp = 0;
 		}
 
-		clouddeg += 0.01 * fpsr;
+		clouddeg += 0.01 * _fpsr;
 		while (clouddeg >= 360)
 			clouddeg = clouddeg - 360;
 
@@ -5287,7 +5287,7 @@ void GriffonEngine::game_theend() {
 		floaticon[i][0] = 0;
 	}
 
-	for (float y = 0; y < 100; y += fpsr) {
+	for (float y = 0; y < 100; y += _fpsr) {
 		_videobuffer->setAlpha((int)y);
 		_videobuffer->fillRect(Common::Rect(0, 0, _videobuffer->w, _videobuffer->h), 0);
 		g_system->copyRectToScreen(_videobuffer->getPixels(), _videobuffer->pitch, 0, 0, _videobuffer->w, _videobuffer->h);
@@ -5296,17 +5296,17 @@ void GriffonEngine::game_theend() {
 		g_system->getEventManager()->pollEvent(_event);
 		g_system->delayMillis(10);
 
-		_tickspassed = ticks;
-		ticks = g_system->getMillis();
+		_tickspassed = _ticks;
+		_ticks = g_system->getMillis();
 
-		_tickspassed = ticks - _tickspassed;
-		fpsr = (float)_tickspassed / 24.0;
+		_tickspassed = _ticks - _tickspassed;
+		_fpsr = (float)_tickspassed / 24.0;
 
-		fp++;
-		if (ticks > _nextticks) {
-			_nextticks = ticks + 1000;
-			fps = fp;
-			fp = 0;
+		_fp++;
+		if (_ticks > _nextticks) {
+			_nextticks = _ticks + 1000;
+			_fps = _fp;
+			_fp = 0;
 		}
 	}
 
@@ -5324,14 +5324,14 @@ void GriffonEngine::game_title(int mode) {
 	_videobuffer2->fillRect(rcSrc, 0);
 	_videobuffer3->fillRect(rcSrc, 0);
 
-	ticks = g_system->getMillis();
+	_ticks = g_system->getMillis();
 
 	_videobuffer->blit(*_videobuffer3);
 	_videobuffer->blit(*_videobuffer2);
 
 	int cursel = 0;
-	int keypause = ticks + 220;
-	int ticks1 = ticks;
+	int keypause = _ticks + 220;
+	int _ticks1 = _ticks;
 
 	if (menabled && config.music) {
 		Mix_Volume(musicchannel, 0);
@@ -5348,7 +5348,7 @@ void GriffonEngine::game_title(int mode) {
 	do {
 		Common::Rect rc;
 
-		ld += 4.0 * fpsr;
+		ld += 4.0 * _fpsr;
 		if (ld > config.musicvol)
 			ld = config.musicvol;
 		if (menabled && ldstop == 0) {
@@ -5390,8 +5390,8 @@ void GriffonEngine::game_title(int mode) {
 		_itemimg[15]->blit(*_videobuffer, rc.left, rc.top);
 
 		float yf = 255.0;
-		if (ticks < ticks1 + 1000) {
-			yf = 255.0 * ((float)(ticks - ticks1) / 1000.0);
+		if (_ticks < _ticks1 + 1000) {
+			yf = 255.0 * ((float)(_ticks - _ticks1) / 1000.0);
 			if (y < 0.0)
 				yf = 0.0;
 			if (y > 255.0)
@@ -5402,20 +5402,20 @@ void GriffonEngine::game_title(int mode) {
 		g_system->copyRectToScreen(_videobuffer->getPixels(), _videobuffer->pitch, 0, 0, _videobuffer->w, _videobuffer->h);
 		g_system->updateScreen();
 
-		_tickspassed = ticks;
-		ticks = g_system->getMillis();
+		_tickspassed = _ticks;
+		_ticks = g_system->getMillis();
 
-		_tickspassed = ticks - _tickspassed;
-		fpsr = (float)_tickspassed / 24.0;
+		_tickspassed = _ticks - _tickspassed;
+		_fpsr = (float)_tickspassed / 24.0;
 
-		fp++;
-		if (ticks > _nextticks) {
-			_nextticks = ticks + 1000;
-			fps = fp;
-			fp = 0;
+		_fp++;
+		if (_ticks > _nextticks) {
+			_nextticks = _ticks + 1000;
+			_fps = _fp;
+			_fp = 0;
 		}
 
-		float add = 0.5 * fpsr;
+		float add = 0.5 * _fpsr;
 		if (add > 1)
 			add = 1;
 
@@ -5423,7 +5423,7 @@ void GriffonEngine::game_title(int mode) {
 		if (xofs >= 320.0)
 			xofs -= 320.0;
 
-		_itemyloc += 0.75 * fpsr;
+		_itemyloc += 0.75 * _fpsr;
 
 		while (_itemyloc >= 16)
 			_itemyloc = _itemyloc - 16;
@@ -5433,9 +5433,9 @@ void GriffonEngine::game_title(int mode) {
 		if (_event.type == Common::EVENT_QUIT)
 			_shouldQuit = true;
 
-		if (keypause < ticks) {
+		if (keypause < _ticks) {
 			if (_event.type == Common::EVENT_KEYDOWN) {
-				keypause = ticks + 150;
+				keypause = _ticks + 150;
 
 				if (_event.kbd.keycode == Common::KEYCODE_ESCAPE && mode == 1)
 					break;
@@ -5450,14 +5450,14 @@ void GriffonEngine::game_title(int mode) {
 				} else if (_event.kbd.keycode == Common::KEYCODE_RETURN) {
 					if (cursel == 0) {
 						game_saveloadnew();
-						ticks = g_system->getMillis();
-						keypause = ticks + 150;
-						ticks1 = ticks;
+						_ticks = g_system->getMillis();
+						keypause = _ticks + 150;
+						_ticks1 = _ticks;
 					} else if (cursel == 1) {
 						game_configmenu();
-						ticks = g_system->getMillis();
-						keypause = ticks + 150;
-						ticks1 = ticks;
+						_ticks = g_system->getMillis();
+						keypause = _ticks + 150;
+						_ticks1 = _ticks;
 					} else if (cursel == 2) {
 						_shouldQuit = true;
 					} else if (cursel == 3) {
@@ -5470,7 +5470,7 @@ void GriffonEngine::game_title(int mode) {
 		g_system->delayMillis(10);
 	} while (!_shouldQuit);
 
-	_itemticks = ticks + 210;
+	_itemticks = _ticks + 210;
 
 	if (menabled && config.music) {
 		Mix_HaltChannel(menuchannel);
@@ -5489,7 +5489,7 @@ void GriffonEngine::game_updanims() {
 		// objectinfo[i][6] = 0; // ?? out of bounds
 
 		if (nframes > 1) {
-			frame = frame + o_animspd / 50 * fpsr;
+			frame = frame + o_animspd / 50 * _fpsr;
 			while (frame >= nframes)
 				frame = frame - nframes;
 
@@ -5628,9 +5628,9 @@ void GriffonEngine::game_updnpcs() {
 				if (npcinfo[i].hp < npcinfo[i].maxhp * 0.25)
 					mode = 3;
 
-				if (npcinfo[i].pause > ticks)
+				if (npcinfo[i].pause > _ticks)
 					mode = -1;
-				if (npcinfo[i].spriteset == 2 && npcinfo[i].castpause > ticks)
+				if (npcinfo[i].spriteset == 2 && npcinfo[i].castpause > _ticks)
 					mode = -1;
 
 				if (mode == 3) {
@@ -5679,11 +5679,11 @@ void GriffonEngine::game_updnpcs() {
 
 					int movingdir = npcinfo[i].movingdir;
 
-					if (npcinfo[i].ticks > ticks + 100000)
-						npcinfo[i].ticks = ticks;
+					if (npcinfo[i].ticks > _ticks + 100000)
+						npcinfo[i].ticks = _ticks;
 
-					if (npcinfo[i].ticks < ticks) {
-						npcinfo[i].ticks = ticks + 2000;
+					if (npcinfo[i].ticks < _ticks) {
+						npcinfo[i].ticks = _ticks + 2000;
 						movingdir = (int)(RND() * 8);
 						npcinfo[i].movingdir = movingdir;
 					}
@@ -5764,7 +5764,7 @@ void GriffonEngine::game_updnpcs() {
 				if (npcinfo[i].spriteset == 10)
 					wspd = wspd * 2;
 
-				float ii = wspd * fpsr;
+				float ii = wspd * _fpsr;
 				if (ii < 1)
 					ii = 1;
 
@@ -5910,13 +5910,13 @@ void GriffonEngine::game_updnpcs() {
 				}
 
 				if (movinup)
-					npy = npy - wspd * fpsr;
+					npy = npy - wspd * _fpsr;
 				if (movindown)
-					npy = npy + wspd * fpsr;
+					npy = npy + wspd * _fpsr;
 				if (movinleft)
-					npx = npx - wspd * fpsr;
+					npx = npx - wspd * _fpsr;
 				if (movinright)
-					npx = npx + wspd * fpsr;
+					npx = npx + wspd * _fpsr;
 
 				if (checkpass) {
 					pass = 0;
@@ -5925,7 +5925,7 @@ void GriffonEngine::game_updnpcs() {
 					if (pass == 0) {
 						npx = onpx;
 						npy = onpy;
-						npcinfo[i].ticks = ticks;
+						npcinfo[i].ticks = _ticks;
 					}
 				}
 
@@ -5978,7 +5978,7 @@ void GriffonEngine::game_updnpcs() {
 					float frame = npcinfo[i].frame;
 					int cframe = npcinfo[i].cframe;
 
-					frame = frame + aspd * fpsr;
+					frame = frame + aspd * _fpsr;
 					while (frame >= 16)
 						frame = frame - 16;
 
@@ -5993,8 +5993,8 @@ void GriffonEngine::game_updnpcs() {
 				}
 
 				// spriteset1 specific
-				if (npcinfo[i].spriteset == 1 && npcinfo[i].attackattempt < ticks) {
-					if (npcinfo[i].attacknext < ticks && npcinfo[i].pause < ticks && npcinfo[i].attacking == 0) {
+				if (npcinfo[i].spriteset == 1 && npcinfo[i].attackattempt < _ticks) {
+					if (npcinfo[i].attacknext < _ticks && npcinfo[i].pause < _ticks && npcinfo[i].attacking == 0) {
 						npx = npcinfo[i].x;
 						npy = npcinfo[i].y;
 
@@ -6002,7 +6002,7 @@ void GriffonEngine::game_updnpcs() {
 						ydif = _player.py - npy;
 
 						if (abs(xdif) < 20 && abs(ydif) < 20) {
-							npcinfo[i].attackattempt = ticks + 100;
+							npcinfo[i].attackattempt = _ticks + 100;
 							if ((int)(RND() * 2) == 0) {
 								if (menabled && config.effects) {
 									int snd = Mix_PlayChannel(sfx[sndenemyhit]);
@@ -6020,7 +6020,7 @@ void GriffonEngine::game_updnpcs() {
 
 				// onewing specific
 				if (npcinfo[i].spriteset == 2) {
-					if (npcinfo[i].attacknext < ticks && npcinfo[i].pause < ticks && npcinfo[i].attacking == 0) {
+					if (npcinfo[i].attacknext < _ticks && npcinfo[i].pause < _ticks && npcinfo[i].attacking == 0) {
 						npx = npcinfo[i].x;
 						npy = npcinfo[i].y;
 
@@ -6048,15 +6048,15 @@ void GriffonEngine::game_updnpcs() {
 
 					dospell = false;
 
-					if (npcinfo[i].attacking == 0 && npcinfo[i].castpause < ticks) {
-						npcinfo[i].swayspd = npcinfo[i].swayspd + npcinfo[i].swayspd / 200 * fpsr;
+					if (npcinfo[i].attacking == 0 && npcinfo[i].castpause < _ticks) {
+						npcinfo[i].swayspd = npcinfo[i].swayspd + npcinfo[i].swayspd / 200 * _fpsr;
 						if (npcinfo[i].swayspd > 15) {
 							dospell = true;
 							npcinfo[i].swayspd = 1;
 						}
 
 						// sway code
-						npcinfo[i].swayangle = npcinfo[i].swayangle + npcinfo[i].swayspd * fpsr;
+						npcinfo[i].swayangle = npcinfo[i].swayangle + npcinfo[i].swayspd * _fpsr;
 						if (npcinfo[i].swayangle >= 360)
 							npcinfo[i].swayangle = npcinfo[i].swayangle - 360;
 
@@ -6065,9 +6065,9 @@ void GriffonEngine::game_updnpcs() {
 					}
 
 					if (dospell) {
-						npcinfo[i].pause = ticks + 3000;
-						npcinfo[i].attacknext = ticks + 4500;
-						npcinfo[i].castpause = ticks + 4500;
+						npcinfo[i].pause = _ticks + 3000;
+						npcinfo[i].attacknext = _ticks + 4500;
+						npcinfo[i].castpause = _ticks + 4500;
 
 						game_castspell(3, npcinfo[i].x, npcinfo[i].y, npcinfo[i].x, npcinfo[i].y, i);
 
@@ -6080,8 +6080,8 @@ void GriffonEngine::game_updnpcs() {
 					ydif = npcinfo[i].bodysection[7].y - npcinfo[i].headtargety[0];
 
 
-					npcinfo[i].bodysection[7].x = npcinfo[i].bodysection[7].x  - xdif * 0.4 * fpsr;
-					npcinfo[i].bodysection[7].y = npcinfo[i].bodysection[7].y  - ydif * 0.4 * fpsr;
+					npcinfo[i].bodysection[7].x = npcinfo[i].bodysection[7].x  - xdif * 0.4 * _fpsr;
+					npcinfo[i].bodysection[7].y = npcinfo[i].bodysection[7].y  - ydif * 0.4 * _fpsr;
 
 
 					npcinfo[i].bodysection[0].x = npcinfo[i].x + 12;
@@ -6101,16 +6101,16 @@ void GriffonEngine::game_updnpcs() {
 
 				// boss1 specific and blackknight
 				if (npcinfo[i].spriteset == 3 || npcinfo[i].spriteset == 4) {
-					if (npcinfo[i].attacknext < ticks && npcinfo[i].pause < ticks && npcinfo[i].attacking == 0) {
+					if (npcinfo[i].attacknext < _ticks && npcinfo[i].pause < _ticks && npcinfo[i].attacking == 0) {
 						npcinfo[i].attacking = 1;
 						npcinfo[i].attackframe = 0;
 
 						game_castspell(1, npcinfo[i].x, npcinfo[i].y, _player.px, _player.py, i);
 					}
 
-					if (npcinfo[i].castpause < ticks) {
+					if (npcinfo[i].castpause < _ticks) {
 						game_castspell(6, npcinfo[i].x, npcinfo[i].y, _player.px, _player.py, i);
-						npcinfo[i].castpause = ticks + 12000;
+						npcinfo[i].castpause = _ticks + 12000;
 					}
 				}
 
@@ -6120,13 +6120,13 @@ void GriffonEngine::game_updnpcs() {
 					npcinfo[i].swayspd = 4;
 
 					// sway code
-					npcinfo[i].swayangle = npcinfo[i].swayangle + npcinfo[i].swayspd * fpsr;
+					npcinfo[i].swayangle = npcinfo[i].swayangle + npcinfo[i].swayspd * _fpsr;
 					if (npcinfo[i].swayangle >= 360)
 						npcinfo[i].swayangle = npcinfo[i].swayangle - 360;
 
 					for (int ff = 0; ff <= 2; ff++) {
 						if (npcinfo[i].hp > 10 * ff * 20) {
-							if (npcinfo[i].pause < ticks && npcinfo[i].attacking2[ff] == 0 && npcinfo[i].attacknext2[ff] < ticks) {
+							if (npcinfo[i].pause < _ticks && npcinfo[i].attacking2[ff] == 0 && npcinfo[i].attacknext2[ff] < _ticks) {
 								npx = npcinfo[i].x;
 								npy = npcinfo[i].y;
 
@@ -6164,8 +6164,8 @@ void GriffonEngine::game_updnpcs() {
 							xdif = npcinfo[i].bodysection[10 * ff + 9].x - npcinfo[i].headtargetx[ff];
 							ydif = npcinfo[i].bodysection[10 * ff + 9].y - npcinfo[i].headtargety[ff];
 
-							npcinfo[i].bodysection[10 * ff + 9].x = npcinfo[i].bodysection[10 * ff + 9].x  - xdif * 0.4 * fpsr;
-							npcinfo[i].bodysection[10 * ff + 9].y = npcinfo[i].bodysection[10 * ff + 9].y  - ydif * 0.4 * fpsr;
+							npcinfo[i].bodysection[10 * ff + 9].x = npcinfo[i].bodysection[10 * ff + 9].x  - xdif * 0.4 * _fpsr;
+							npcinfo[i].bodysection[10 * ff + 9].y = npcinfo[i].bodysection[10 * ff + 9].y  - ydif * 0.4 * _fpsr;
 
 							npcinfo[i].bodysection[10 * ff].x = npcinfo[i].x + 12 + 8 * cos(3.141592 * 2 * (_itemyloc / 16 + ff * 120 / 360));
 							npcinfo[i].bodysection[10 * ff].y = npcinfo[i].y + 12 + 8 * sin(3.141592 * 2 * (_itemyloc / 16 + ff * 120 / 360));
@@ -6185,8 +6185,8 @@ void GriffonEngine::game_updnpcs() {
 				}
 
 				// spriteset6 specific
-				if (npcinfo[i].spriteset == 6 && npcinfo[i].attackattempt < ticks) {
-					if (npcinfo[i].attacknext < ticks && npcinfo[i].pause < ticks && npcinfo[i].attacking == 0) {
+				if (npcinfo[i].spriteset == 6 && npcinfo[i].attackattempt < _ticks) {
+					if (npcinfo[i].attacknext < _ticks && npcinfo[i].pause < _ticks && npcinfo[i].attacking == 0) {
 						npx = npcinfo[i].x;
 						npy = npcinfo[i].y;
 
@@ -6200,7 +6200,7 @@ void GriffonEngine::game_updnpcs() {
 							pass = 2;
 
 						if (pass > 0) {
-							npcinfo[i].attackattempt = ticks + 100;
+							npcinfo[i].attackattempt = _ticks + 100;
 							if ((int)(RND() * 2) == 0) {
 								npcinfo[i].attacking = 1;
 								npcinfo[i].attackframe = 0;
@@ -6236,23 +6236,23 @@ void GriffonEngine::game_updnpcs() {
 
 				// wizard1 specific
 				if (npcinfo[i].spriteset == 7) {
-					if (npcinfo[i].attacknext < ticks && npcinfo[i].pause < ticks && npcinfo[i].attacking == 0) {
+					if (npcinfo[i].attacknext < _ticks && npcinfo[i].pause < _ticks && npcinfo[i].attacking == 0) {
 						npcinfo[i].attacking = 1;
 						npcinfo[i].attackframe = 0;
 
 						game_castspell(9, npcinfo[i].x, npcinfo[i].y, _player.px, _player.py, i);
 					}
 
-					if (npcinfo[i].castpause < ticks) {
+					if (npcinfo[i].castpause < _ticks) {
 						// game_castspell 6, npcinfo[i].x, npcinfo[i].y, _player.px, _player.py, i
-						// npcinfo[i].castpause = ticks + 12000
+						// npcinfo[i].castpause = _ticks + 12000
 					}
 
 				}
 
 				// spriteset6 specific
-				if (npcinfo[i].spriteset == 8 && npcinfo[i].attackattempt < ticks) {
-					if (npcinfo[i].attacknext < ticks && npcinfo[i].pause < ticks && npcinfo[i].attacking == 0) {
+				if (npcinfo[i].spriteset == 8 && npcinfo[i].attackattempt < _ticks) {
+					if (npcinfo[i].attacknext < _ticks && npcinfo[i].pause < _ticks && npcinfo[i].attacking == 0) {
 						npx = npcinfo[i].x;
 						npy = npcinfo[i].y;
 
@@ -6266,7 +6266,7 @@ void GriffonEngine::game_updnpcs() {
 							pass = 2;
 
 						if (pass > 0) {
-							npcinfo[i].attackattempt = ticks + 100;
+							npcinfo[i].attackattempt = _ticks + 100;
 							if ((int)(RND() * 2) == 0) {
 								npcinfo[i].attacking = 1;
 								npcinfo[i].attackframe = 0;
@@ -6306,7 +6306,7 @@ void GriffonEngine::game_updnpcs() {
 
 				// twowing specific
 				if (npcinfo[i].spriteset == 9) {
-					if (npcinfo[i].attacknext < ticks && npcinfo[i].pause < ticks && npcinfo[i].attacking == 0) {
+					if (npcinfo[i].attacknext < _ticks && npcinfo[i].pause < _ticks && npcinfo[i].attacking == 0) {
 						npx = npcinfo[i].bodysection[7].x;
 						npy = npcinfo[i].bodysection[7].y;
 
@@ -6332,11 +6332,11 @@ void GriffonEngine::game_updnpcs() {
 
 					}
 
-					if (npcinfo[i].attacking == 0 && npcinfo[i].castpause < ticks) {
+					if (npcinfo[i].attacking == 0 && npcinfo[i].castpause < _ticks) {
 						npcinfo[i].swayspd = 4;
 
 						// sway code
-						npcinfo[i].swayangle = npcinfo[i].swayangle + npcinfo[i].swayspd * fpsr;
+						npcinfo[i].swayangle = npcinfo[i].swayangle + npcinfo[i].swayspd * _fpsr;
 						if (npcinfo[i].swayangle >= 360)
 							npcinfo[i].swayangle = npcinfo[i].swayangle - 360;
 
@@ -6345,9 +6345,9 @@ void GriffonEngine::game_updnpcs() {
 					}
 
 					if (dospell) {
-						npcinfo[i].pause = ticks + 3000;
-						npcinfo[i].attacknext = ticks + 5000;
-						npcinfo[i].castpause = ticks + 3000;
+						npcinfo[i].pause = _ticks + 3000;
+						npcinfo[i].attacknext = _ticks + 5000;
+						npcinfo[i].castpause = _ticks + 3000;
 
 						game_castspell(3, npcinfo[i].x, npcinfo[i].y, npcinfo[i].x, npcinfo[i].y, i);
 
@@ -6360,8 +6360,8 @@ void GriffonEngine::game_updnpcs() {
 					ydif = npcinfo[i].bodysection[7].y - npcinfo[i].headtargety[0];
 
 
-					npcinfo[i].bodysection[7].x = npcinfo[i].bodysection[7].x  - xdif * 0.4 * fpsr;
-					npcinfo[i].bodysection[7].y = npcinfo[i].bodysection[7].y  - ydif * 0.4 * fpsr;
+					npcinfo[i].bodysection[7].x = npcinfo[i].bodysection[7].x  - xdif * 0.4 * _fpsr;
+					npcinfo[i].bodysection[7].y = npcinfo[i].bodysection[7].y  - ydif * 0.4 * _fpsr;
 
 					npcinfo[i].bodysection[0].x = npcinfo[i].x + 12;
 					npcinfo[i].bodysection[0].y = npcinfo[i].y + 12;
@@ -6380,8 +6380,8 @@ void GriffonEngine::game_updnpcs() {
 				}
 
 				// dragon2 specific
-				if (npcinfo[i].spriteset == 10 && npcinfo[i].attackattempt < ticks) {
-					if (npcinfo[i].attacknext < ticks && npcinfo[i].pause < ticks && npcinfo[i].attacking == 0) {
+				if (npcinfo[i].spriteset == 10 && npcinfo[i].attackattempt < _ticks) {
+					if (npcinfo[i].attacknext < _ticks && npcinfo[i].pause < _ticks && npcinfo[i].attacking == 0) {
 						npx = npcinfo[i].x;
 						npy = npcinfo[i].y;
 
@@ -6389,7 +6389,7 @@ void GriffonEngine::game_updnpcs() {
 						ydif = _player.py - npy;
 
 						if (abs(xdif) < 32 && abs(ydif) < 32) {
-							npcinfo[i].attackattempt = ticks + 100;
+							npcinfo[i].attackattempt = _ticks + 100;
 							if ((int)(RND() * 2) == 0) {
 								if (menabled && config.effects) {
 									int snd = Mix_PlayChannel(sfx[sndenemyhit]);
@@ -6405,8 +6405,8 @@ void GriffonEngine::game_updnpcs() {
 
 
 				// endboss specific
-				if (npcinfo[i].spriteset == 11 && npcinfo[i].attackattempt < ticks) {
-					if (npcinfo[i].attacknext < ticks && npcinfo[i].pause < ticks && npcinfo[i].attacking == 0) {
+				if (npcinfo[i].spriteset == 11 && npcinfo[i].attackattempt < _ticks) {
+					if (npcinfo[i].attacknext < _ticks && npcinfo[i].pause < _ticks && npcinfo[i].attacking == 0) {
 						npx = npcinfo[i].x;
 						npy = npcinfo[i].y;
 
@@ -6414,7 +6414,7 @@ void GriffonEngine::game_updnpcs() {
 						ydif = _player.py - npy;
 
 						if (abs(xdif) < 38 && abs(ydif) < 38) {
-							npcinfo[i].attackattempt = ticks + 100;
+							npcinfo[i].attackattempt = _ticks + 100;
 							if ((int)(RND() * 2) == 0) {
 								if (menabled && config.effects) {
 									int snd = Mix_PlayChannel(sfx[sndice]);
@@ -6440,7 +6440,7 @@ void GriffonEngine::game_updnpcs() {
 			rcSrc.setWidth(3);
 			rcSrc.setHeight(3);
 
-			if (npcinfo[i].pause < ticks)
+			if (npcinfo[i].pause < _ticks)
 				_clipbg->fillRect(rcSrc, i);
 
 
@@ -6461,11 +6461,11 @@ void GriffonEngine::game_updnpcs() {
 				float damage;
 				// spriteset1 specific
 				if (npcinfo[i].spriteset == 1) {
-					npcinfo[i].attackframe = npcinfo[i].attackframe + npcinfo[i].attackspd * fpsr;
+					npcinfo[i].attackframe = npcinfo[i].attackframe + npcinfo[i].attackspd * _fpsr;
 					if (npcinfo[i].attackframe >= 16) {
 						npcinfo[i].attackframe = 0;
 						npcinfo[i].attacking = 0;
-						npcinfo[i].attacknext = ticks + npcinfo[i].attackdelay;
+						npcinfo[i].attacknext = _ticks + npcinfo[i].attackdelay;
 					}
 
 					npcinfo[i].cattackframe = (int)(npcinfo[i].attackframe);
@@ -6478,8 +6478,8 @@ void GriffonEngine::game_updnpcs() {
 
 					dist = 10;
 
-					if (abs(xdif) < dist && abs(ydif) < dist && _player.pause < ticks) {
-						npcinfo[i].attacknext = ticks + npcinfo[i].attackdelay;
+					if (abs(xdif) < dist && abs(ydif) < dist && _player.pause < _ticks) {
+						npcinfo[i].attacknext = _ticks + npcinfo[i].attackdelay;
 						// npcinfo[i].attackframe = 0;
 						// npcinfo[i].attacking = 0;
 
@@ -6495,8 +6495,8 @@ void GriffonEngine::game_updnpcs() {
 					float xdif = npcinfo[i].bodysection[7].x - npcinfo[i].headtargetx[0];
 					float ydif = npcinfo[i].bodysection[7].y - npcinfo[i].headtargety[0];
 
-					npcinfo[i].bodysection[7].x = npcinfo[i].bodysection[7].x  - xdif * 0.4 * fpsr;
-					npcinfo[i].bodysection[7].y = npcinfo[i].bodysection[7].y  - ydif * 0.4 * fpsr;
+					npcinfo[i].bodysection[7].x = npcinfo[i].bodysection[7].x  - xdif * 0.4 * _fpsr;
+					npcinfo[i].bodysection[7].y = npcinfo[i].bodysection[7].y  - ydif * 0.4 * _fpsr;
 
 					npcinfo[i].bodysection[0].x = npcinfo[i].x + 12;
 					npcinfo[i].bodysection[0].y = npcinfo[i].y + 12;
@@ -6512,11 +6512,11 @@ void GriffonEngine::game_updnpcs() {
 						npcinfo[i].bodysection[f].y = npcinfo[i].bodysection[f].y - (npcinfo[i].bodysection[f].y - ty);
 					}
 
-					npcinfo[i].attackframe = npcinfo[i].attackframe + npcinfo[i].attackspd * fpsr;
+					npcinfo[i].attackframe = npcinfo[i].attackframe + npcinfo[i].attackspd * _fpsr;
 					if (npcinfo[i].attackframe >= 16) {
 						npcinfo[i].attackframe = 0;
 						npcinfo[i].attacking = 0;
-						npcinfo[i].attacknext = ticks + npcinfo[i].attackdelay;
+						npcinfo[i].attacknext = _ticks + npcinfo[i].attackdelay;
 					}
 
 					npcinfo[i].cattackframe = (int)(npcinfo[i].attackframe);
@@ -6529,8 +6529,8 @@ void GriffonEngine::game_updnpcs() {
 
 					dist = 8;
 
-					if (abs(xdif) < dist && abs(ydif) < dist && _player.pause < ticks) {
-						npcinfo[i].attacknext = ticks + npcinfo[i].attackdelay;
+					if (abs(xdif) < dist && abs(ydif) < dist && _player.pause < _ticks) {
+						npcinfo[i].attacknext = _ticks + npcinfo[i].attackdelay;
 						// npcinfo[i].attackframe = 0
 						// npcinfo[i].attacking = 0
 						damage = (float)npcinfo[i].attackdamage * (1.0 + (RND() * 0.5));
@@ -6547,8 +6547,8 @@ void GriffonEngine::game_updnpcs() {
 							float xdif = npcinfo[i].bodysection[10 * ff + 9].x - npcinfo[i].headtargetx[ff];
 							float ydif = npcinfo[i].bodysection[10 * ff + 9].y - npcinfo[i].headtargety[ff];
 
-							npcinfo[i].bodysection[10 * ff + 9].x = npcinfo[i].bodysection[10 * ff + 9].x  - xdif * .2 * fpsr;
-							npcinfo[i].bodysection[10 * ff + 9].y = npcinfo[i].bodysection[10 * ff + 9].y  - ydif * .2 * fpsr;
+							npcinfo[i].bodysection[10 * ff + 9].x = npcinfo[i].bodysection[10 * ff + 9].x  - xdif * .2 * _fpsr;
+							npcinfo[i].bodysection[10 * ff + 9].y = npcinfo[i].bodysection[10 * ff + 9].y  - ydif * .2 * _fpsr;
 
 							npcinfo[i].bodysection[10 * ff].x = npcinfo[i].x + 12 + 8 * cos(3.141592 * 2 * (_itemyloc / 16 + ff * 120 / 360));
 							npcinfo[i].bodysection[10 * ff].y = npcinfo[i].y + 12 + 8 * sin(3.141592 * 2 * (_itemyloc / 16 + ff * 120 / 360));
@@ -6564,11 +6564,11 @@ void GriffonEngine::game_updnpcs() {
 								npcinfo[i].bodysection[ff * 10 + f].y = npcinfo[i].bodysection[ff * 10 + f].y - (npcinfo[i].bodysection[ff * 10 + f].y - ty) / 3;
 							}
 
-							npcinfo[i].attackframe2[ff] = npcinfo[i].attackframe2[ff] + npcinfo[i].attackspd * fpsr;
+							npcinfo[i].attackframe2[ff] = npcinfo[i].attackframe2[ff] + npcinfo[i].attackspd * _fpsr;
 							if (npcinfo[i].attackframe2[ff] >= 16) {
 								npcinfo[i].attackframe2[ff] = 0;
 								npcinfo[i].attacking2[ff] = 0;
-								npcinfo[i].attacknext2[ff] = ticks + npcinfo[i].attackdelay;
+								npcinfo[i].attacknext2[ff] = _ticks + npcinfo[i].attackdelay;
 							}
 
 							npcinfo[i].cattackframe = (int)(npcinfo[i].attackframe);
@@ -6581,8 +6581,8 @@ void GriffonEngine::game_updnpcs() {
 
 							dist = 8;
 
-							if (abs(xdif) < dist && abs(ydif) < dist && _player.pause < ticks) {
-								npcinfo[i].attacknext2[ff] = ticks + npcinfo[i].attackdelay;
+							if (abs(xdif) < dist && abs(ydif) < dist && _player.pause < _ticks) {
+								npcinfo[i].attacknext2[ff] = _ticks + npcinfo[i].attackdelay;
 								// npcinfo[i].attackframe2(ff) = 0
 								// npcinfo[i].attacking2(ff) = 0
 								damage = (float)npcinfo[i].attackdamage * (1.0 + RND() * 0.5);
@@ -6600,8 +6600,8 @@ void GriffonEngine::game_updnpcs() {
 					float xdif = npcinfo[i].bodysection[7].x - npcinfo[i].headtargetx[0];
 					float ydif = npcinfo[i].bodysection[7].y - npcinfo[i].headtargety[0];
 
-					npcinfo[i].bodysection[7].x = npcinfo[i].bodysection[7].x - xdif * 0.4 * fpsr;
-					npcinfo[i].bodysection[7].y = npcinfo[i].bodysection[7].y - ydif * 0.4 * fpsr;
+					npcinfo[i].bodysection[7].x = npcinfo[i].bodysection[7].x - xdif * 0.4 * _fpsr;
+					npcinfo[i].bodysection[7].y = npcinfo[i].bodysection[7].y - ydif * 0.4 * _fpsr;
 
 					npcinfo[i].bodysection[0].x = npcinfo[i].x + 12;
 					npcinfo[i].bodysection[0].y = npcinfo[i].y + 12;
@@ -6617,11 +6617,11 @@ void GriffonEngine::game_updnpcs() {
 						npcinfo[i].bodysection[f].y = npcinfo[i].bodysection[f].y - (npcinfo[i].bodysection[f].y - ty);
 					}
 
-					npcinfo[i].attackframe = npcinfo[i].attackframe + npcinfo[i].attackspd * fpsr;
+					npcinfo[i].attackframe = npcinfo[i].attackframe + npcinfo[i].attackspd * _fpsr;
 					if (npcinfo[i].attackframe >= 16) {
 						npcinfo[i].attackframe = 0;
 						npcinfo[i].attacking = 0;
-						npcinfo[i].attacknext = ticks + npcinfo[i].attackdelay;
+						npcinfo[i].attacknext = _ticks + npcinfo[i].attackdelay;
 					}
 
 					npcinfo[i].cattackframe = (int)(npcinfo[i].attackframe);
@@ -6634,8 +6634,8 @@ void GriffonEngine::game_updnpcs() {
 
 					dist = 8;
 
-					if (abs(xdif) < dist && abs(ydif) < dist && _player.pause < ticks) {
-						npcinfo[i].attacknext = ticks + npcinfo[i].attackdelay;
+					if (abs(xdif) < dist && abs(ydif) < dist && _player.pause < _ticks) {
+						npcinfo[i].attacknext = _ticks + npcinfo[i].attackdelay;
 						// npcinfo[i].attackframe = 0
 						// npcinfo[i].attacking = 0
 						damage = (float)npcinfo[i].attackdamage * (1.0 + RND() * 0.5);
@@ -6647,11 +6647,11 @@ void GriffonEngine::game_updnpcs() {
 				// dragon 2 specific
 				if (npcinfo[i].spriteset == 10) {
 
-					npcinfo[i].attackframe = npcinfo[i].attackframe + npcinfo[i].attackspd * fpsr;
+					npcinfo[i].attackframe = npcinfo[i].attackframe + npcinfo[i].attackspd * _fpsr;
 					if (npcinfo[i].attackframe >= 16) {
 						npcinfo[i].attackframe = 0;
 						npcinfo[i].attacking = 0;
-						npcinfo[i].attacknext = ticks + npcinfo[i].attackdelay;
+						npcinfo[i].attacknext = _ticks + npcinfo[i].attackdelay;
 					}
 
 					npcinfo[i].cattackframe = (int)(npcinfo[i].attackframe);
@@ -6664,8 +6664,8 @@ void GriffonEngine::game_updnpcs() {
 
 					dist = 16 + npcinfo[i].attackframe;
 
-					if (abs(xdif) < dist && abs(ydif) < dist && _player.pause < ticks) {
-						npcinfo[i].attacknext = ticks + npcinfo[i].attackdelay;
+					if (abs(xdif) < dist && abs(ydif) < dist && _player.pause < _ticks) {
+						npcinfo[i].attacknext = _ticks + npcinfo[i].attackdelay;
 						// npcinfo[i].attackframe = 0
 						// npcinfo[i].attacking = 0
 						damage = (float)npcinfo[i].attackdamage * (0.5 + RND() * 1.0);
@@ -6676,11 +6676,11 @@ void GriffonEngine::game_updnpcs() {
 
 				// endboss specific
 				if (npcinfo[i].spriteset == 11) {
-					npcinfo[i].attackframe = npcinfo[i].attackframe + npcinfo[i].attackspd * fpsr;
+					npcinfo[i].attackframe = npcinfo[i].attackframe + npcinfo[i].attackspd * _fpsr;
 					if (npcinfo[i].attackframe >= 16) {
 						npcinfo[i].attackframe = 0;
 						npcinfo[i].attacking = 0;
-						npcinfo[i].attacknext = ticks + npcinfo[i].attackdelay;
+						npcinfo[i].attacknext = _ticks + npcinfo[i].attackdelay;
 					}
 
 					npcinfo[i].cattackframe = (int)(npcinfo[i].attackframe);
@@ -6693,8 +6693,8 @@ void GriffonEngine::game_updnpcs() {
 
 					dist = 36;
 
-					if (abs(xdif) < dist && abs(ydif) < dist && _player.pause < ticks) {
-						npcinfo[i].attacknext = ticks + npcinfo[i].attackdelay;
+					if (abs(xdif) < dist && abs(ydif) < dist && _player.pause < _ticks) {
+						npcinfo[i].attacknext = _ticks + npcinfo[i].attackdelay;
 						// npcinfo[i].attackframe = 0
 						// npcinfo[i].attacking = 0
 						damage = (float)npcinfo[i].attackdamage * (0.5 + RND() * 1.0);
@@ -6795,7 +6795,7 @@ void GriffonEngine::game_updspells() {
 									if ((abs(xdif) < 16 && abs(ydif) < 16)) {
 										float damage = (float)_player.spelldamage * (1.0 + RND() * 0.5) * (float)spellinfo[i].strength;
 
-										if (npcinfo[e].hp > 0 && npcinfo[e].pause < ticks) {
+										if (npcinfo[e].hp > 0 && npcinfo[e].pause < _ticks) {
 											game_damagenpc(e, damage, 1);
 											if (menabled && config.effects) {
 												int snd = Mix_PlayChannel(sfx[sndice]);
@@ -6862,7 +6862,7 @@ void GriffonEngine::game_updspells() {
 
 				_spellimg->blit(*_videobuffer, rcDest.left, rcDest.top, Graphics::FLIP_NONE, &rcSrc);
 
-				spellinfo[i].frame = spellinfo[i].frame - 0.2 * fpsr;
+				spellinfo[i].frame = spellinfo[i].frame - 0.2 * _fpsr;
 				if (spellinfo[i].frame < 0)
 					spellinfo[i].frame = 0;
 
@@ -6874,7 +6874,7 @@ void GriffonEngine::game_updspells() {
 						if ((abs(xdif) < 24 && abs(ydif) < 24)) {
 							float damage = (float)_player.spelldamage * (1.0 + RND() * 0.5) * (float)spellinfo[i].strength;
 
-							if (npcinfo[e].hp > 0 && npcinfo[e].pause < ticks) {
+							if (npcinfo[e].hp > 0 && npcinfo[e].pause < _ticks) {
 								game_damagenpc(e, damage, 1);
 								if (menabled && config.effects) {
 									int snd = Mix_PlayChannel(sfx[sndmetalhit]);
@@ -6892,8 +6892,8 @@ void GriffonEngine::game_updspells() {
 						npcinfo[npc].attackframe = 0;
 						npcinfo[npc].attacking = 0;
 
-						npcinfo[npc].pause = ticks + 1000;
-						npcinfo[npc].attacknext = ticks + 4000;
+						npcinfo[npc].pause = _ticks + 1000;
+						npcinfo[npc].attacknext = _ticks + 4000;
 					}
 					// ---------------
 
@@ -6903,15 +6903,15 @@ void GriffonEngine::game_updspells() {
 						npcinfo[npc].attackframe = 0;
 						npcinfo[npc].attacking = 0;
 
-						npcinfo[npc].pause = ticks + 1000;
-						npcinfo[npc].attacknext = ticks + 3500;
+						npcinfo[npc].pause = _ticks + 1000;
+						npcinfo[npc].attacknext = _ticks + 3500;
 					}
 					// ---------------
 
 					xdif = (xloc + 24) - (_player.px + 12);
 					ydif = (yloc + 24) - (_player.py + 12);
 
-					if ((abs(xdif) < 24 && abs(ydif) < 24) && _player.pause < ticks) {
+					if ((abs(xdif) < 24 && abs(ydif) < 24) && _player.pause < _ticks) {
 						npx = _player.px;
 						npy = _player.py;
 
@@ -6996,7 +6996,7 @@ void GriffonEngine::game_updspells() {
 										if ((abs(xdif) < 16 && abs(ydif) < 16)) {
 											float damage = (float)_player.spelldamage * (1.0 + RND() * 0.5) * (float)spellinfo[i].strength;
 
-											if (npcinfo[e].hp > 0 && npcinfo[e].pause < ticks) {
+											if (npcinfo[e].hp > 0 && npcinfo[e].pause < _ticks) {
 												game_damagenpc(e, damage, 1);
 												if (menabled && config.effects) {
 													int snd = Mix_PlayChannel(sfx[sndrocks]);
@@ -7039,7 +7039,7 @@ void GriffonEngine::game_updspells() {
 					}
 				}
 
-				spellinfo[i].frame = spellinfo[i].frame - 0.2 * fpsr;
+				spellinfo[i].frame = spellinfo[i].frame - 0.2 * _fpsr;
 				if (spellinfo[i].frame < 0)
 					spellinfo[i].frame = 0;
 			}
@@ -7068,7 +7068,7 @@ void GriffonEngine::game_updspells() {
 				_spellimg->blit(*_videobuffer, rcDest.left, rcDest.top, Graphics::FLIP_NONE, &rcSrc);
 				_spellimg->setAlpha(255, true);
 
-				spellinfo[i].frame = spellinfo[i].frame - 0.3 * fpsr;
+				spellinfo[i].frame = spellinfo[i].frame - 0.3 * _fpsr;
 				if (spellinfo[i].frame < 0) {
 					spellinfo[i].frame = 0;
 					_forcepause = false;
@@ -7184,12 +7184,12 @@ void GriffonEngine::game_updspells() {
 						float tx = (bx - ax) / d;
 						float ty = (by - ay) / d;
 
-						spellinfo[i].fireballs[ff][2] += tx * 1.2 * fpsr;
-						spellinfo[i].fireballs[ff][3] += ty * 1.2 * fpsr;
+						spellinfo[i].fireballs[ff][2] += tx * 1.2 * _fpsr;
+						spellinfo[i].fireballs[ff][3] += ty * 1.2 * _fpsr;
 
 						if (spellinfo[i].ballon[ff] == 1) {
-							spellinfo[i].fireballs[ff][0] = ax + spellinfo[i].fireballs[ff][2] * 0.2 * fpsr;
-							spellinfo[i].fireballs[ff][1] = ay + spellinfo[i].fireballs[ff][3] * 0.2 * fpsr;
+							spellinfo[i].fireballs[ff][0] = ax + spellinfo[i].fireballs[ff][2] * 0.2 * _fpsr;
+							spellinfo[i].fireballs[ff][1] = ay + spellinfo[i].fireballs[ff][3] * 0.2 * _fpsr;
 
 							xloc = spellinfo[i].fireballs[ff][0] + (int)(RND() * 3) - 1;
 							yloc = spellinfo[i].fireballs[ff][1] + (int)(RND() * 3) - 1;
@@ -7207,7 +7207,7 @@ void GriffonEngine::game_updspells() {
 					_spellimg->setAlpha(255, true);
 				}
 
-				spellinfo[i].frame = spellinfo[i].frame - 0.2 * fpsr;
+				spellinfo[i].frame = spellinfo[i].frame - 0.2 * _fpsr;
 				if (spellinfo[i].frame < 0)
 					spellinfo[i].frame = 0;
 
@@ -7220,7 +7220,7 @@ void GriffonEngine::game_updspells() {
 							xdif = (xloc + 8) - (_player.px + 12);
 							ydif = (yloc + 8) - (_player.py + 12);
 
-							if ((abs(xdif) < 8 && abs(ydif) < 8) && _player.pause < ticks) {
+							if ((abs(xdif) < 8 && abs(ydif) < 8) && _player.pause < _ticks) {
 								float damage = npcinfo[spellinfo[i].npc].spelldamage * (1 + RND() * 0.5) / 3;
 
 								if (_player.hp > 0)
@@ -7279,7 +7279,7 @@ void GriffonEngine::game_updspells() {
 								if ((abs(xdif) < 8 && abs(ydif) < 8)) {
 									float damage = 30 * (1 + RND() * 0.5);
 
-									if (npcinfo[e].hp > 0 && npcinfo[e].pause < ticks)
+									if (npcinfo[e].hp > 0 && npcinfo[e].pause < _ticks)
 										game_damagenpc(e, damage, 1);
 								}
 							}
@@ -7337,7 +7337,7 @@ void GriffonEngine::game_updspells() {
 								if ((abs(xdif) < 8 && abs(ydif) < 8)) {
 									float damage = 30 * (1 + RND() * 0.5);
 
-									if (npcinfo[e].hp > 0 && npcinfo[e].pause < ticks)
+									if (npcinfo[e].hp > 0 && npcinfo[e].pause < _ticks)
 										game_damagenpc(e, damage, 1);
 								}
 							}
@@ -7394,7 +7394,7 @@ void GriffonEngine::game_updspells() {
 								if ((abs(xdif) < 8 && abs(ydif) < 8)) {
 									float damage = 30 * (1 + RND() * 0.5);
 
-									if (npcinfo[e].hp > 0 && npcinfo[e].pause < ticks)
+									if (npcinfo[e].hp > 0 && npcinfo[e].pause < _ticks)
 										game_damagenpc(e, damage, 1);
 								}
 							}
@@ -7451,7 +7451,7 @@ void GriffonEngine::game_updspells() {
 								if ((abs(xdif) < 8 && abs(ydif) < 8)) {
 									float damage = 30 * (1 + RND() * 0.5);
 
-									if (npcinfo[e].hp > 0 && npcinfo[e].pause < ticks)
+									if (npcinfo[e].hp > 0 && npcinfo[e].pause < _ticks)
 										game_damagenpc(e, damage, 1);
 								}
 							}
@@ -7481,7 +7481,7 @@ void GriffonEngine::game_updspells() {
 					}
 				}
 
-				spellinfo[i].frame -= 0.5 * fpsr;
+				spellinfo[i].frame -= 0.5 * _fpsr;
 				if (spellinfo[i].frame < 0) {
 					spellinfo[i].frame = 0;
 					_forcepause = false;
@@ -7527,7 +7527,7 @@ void GriffonEngine::game_updspells() {
 							xdif = (x + 8) - (_player.px + 12);
 							ydif = (y + 8) - (_player.py + 12);
 
-							if ((abs(xdif) < 8 && abs(ydif) < 8) && _player.pause < ticks) {
+							if ((abs(xdif) < 8 && abs(ydif) < 8) && _player.pause < _ticks) {
 								float damage = ((float)_player.hp * 0.75) * (RND() * 0.5 + 0.5);
 								if (damage < 5)
 									damage = 5;
@@ -7544,12 +7544,12 @@ void GriffonEngine::game_updspells() {
 					}
 				}
 
-				spellinfo[i].frame -= 0.5 * fpsr;
+				spellinfo[i].frame -= 0.5 * _fpsr;
 				if (spellinfo[i].frame < 0) {
 					spellinfo[i].frame = 0;
 
 					npcinfo[spellinfo[i].npc].attacking = 0;
-					npcinfo[spellinfo[i].npc].attacknext = ticks + npcinfo[spellinfo[i].npc].attackdelay;
+					npcinfo[spellinfo[i].npc].attacknext = _ticks + npcinfo[spellinfo[i].npc].attackdelay;
 				}
 			}
 		}
@@ -7589,7 +7589,7 @@ void GriffonEngine::game_updspellsunder() {
 				_spellimg->blit(*_videobuffer, rcDest.left, rcDest.top, Graphics::FLIP_NONE, &rcSrc);
 				_spellimg->setAlpha(255, true);
 
-				spellinfo[i].frame = spellinfo[i].frame - 0.2 * fpsr;
+				spellinfo[i].frame = spellinfo[i].frame - 0.2 * _fpsr;
 				if (spellinfo[i].frame < 0)
 					spellinfo[i].frame = 0;
 
@@ -7606,8 +7606,8 @@ void GriffonEngine::game_updspellsunder() {
 					if (dist > 5) {
 						float ratio = (1 - dist / 25);
 
-						float newx = npcinfo[f].x + ratio * xdif / 3 * fpsr;
-						float newy = npcinfo[f].y + ratio * ydif / 3 * fpsr;
+						float newx = npcinfo[f].x + ratio * xdif / 3 * _fpsr;
+						float newy = npcinfo[f].y + ratio * ydif / 3 * _fpsr;
 
 						int sx = (newx / 2 + 6);
 						int sy = (newy / 2 + 10);
@@ -7618,7 +7618,7 @@ void GriffonEngine::game_updspellsunder() {
 						if (dq == 0) {
 							npcinfo[f].x = newx;
 							npcinfo[f].y = newy;
-							// npcinfo[f].castpause = ticks + 200;
+							// npcinfo[f].castpause = _ticks + 200;
 						} else {
 							int xpass = 0;
 							int ypass = 0;
@@ -7649,7 +7649,7 @@ void GriffonEngine::game_updspellsunder() {
 							if (xpass == 1 || ypass == 1) {
 								npcinfo[f].x = newx;
 								npcinfo[f].y = newy;
-								// npcinfo[f].castpause = ticks + 200;
+								// npcinfo[f].castpause = _ticks + 200;
 							}
 						}
 					}
@@ -7712,7 +7712,7 @@ void GriffonEngine::game_updspellsunder() {
 												damage = -damage;
 											if (npcinfo[e].spriteset == 11)
 												damage = -damage;
-											if (npcinfo[e].hp > 0 && npcinfo[e].pause < ticks) {
+											if (npcinfo[e].hp > 0 && npcinfo[e].pause < _ticks) {
 												game_damagenpc(e, damage, 1);
 												if (menabled && config.effects) {
 													int snd = Mix_PlayChannel(sfx[sndfire]);
@@ -7727,7 +7727,7 @@ void GriffonEngine::game_updspellsunder() {
 									float xdif = (xloc + 8) - (_player.px + 12);
 									float ydif = (yloc + 8) - (_player.py + 12);
 
-									if ((abs(xdif) < 8 && abs(ydif) < 8) && _player.pause < ticks) {
+									if ((abs(xdif) < 8 && abs(ydif) < 8) && _player.pause < _ticks) {
 										float damage = (float)npcinfo[spellinfo[i].npc].spelldamage * (1.0 + RND() * 0.5);
 
 										if (_player.hp > 0) {
@@ -7774,7 +7774,7 @@ void GriffonEngine::game_updspellsunder() {
 
 				_spellimg->setAlpha(255, true);
 
-				spellinfo[i].frame = spellinfo[i].frame - 0.2 * fpsr;
+				spellinfo[i].frame = spellinfo[i].frame - 0.2 * _fpsr;
 				if (spellinfo[i].frame < 0)
 					spellinfo[i].frame = 0;
 
@@ -7824,7 +7824,7 @@ void GriffonEngine::game_updspellsunder() {
 							float xdif = (xloc + 8) - (_player.px + 12);
 							float ydif = (yloc + 8) - (_player.py + 12);
 
-							if ((abs(xdif) < 8 && abs(ydif) < 8) && _player.pause < ticks && alpha > 64) {
+							if ((abs(xdif) < 8 && abs(ydif) < 8) && _player.pause < _ticks && alpha > 64) {
 								float damage = (float)npcinfo[spellinfo[i].npc].spelldamage * (1.0 + RND() * 0.5);
 
 								if (_player.hp > 0) {
@@ -7843,13 +7843,13 @@ void GriffonEngine::game_updspellsunder() {
 				}
 
 				_spellimg->setAlpha(255, true);
-				spellinfo[i].frame = spellinfo[i].frame - 0.5 * fpsr;
+				spellinfo[i].frame = spellinfo[i].frame - 0.5 * _fpsr;
 				if (spellinfo[i].frame < 0)
 					spellinfo[i].frame = 0;
 
 				if (ABS(spellinfo[i].frame) < 0) {
 					npcinfo[spellinfo[i].npc].attacking = 0;
-					npcinfo[spellinfo[i].npc].attacknext = ticks + npcinfo[spellinfo[i].npc].attackdelay;
+					npcinfo[spellinfo[i].npc].attacknext = _ticks + npcinfo[spellinfo[i].npc].attackdelay;
 				}
 			}
 		}
@@ -7907,8 +7907,8 @@ void GriffonEngine::sys_initialize() {
 	sys_LoadFont();
 	sys_LoadItemImgs();
 
-	fpsr = 1.0f;
-	_nextticks = ticks + 1000;
+	_fpsr = 1.0f;
+	_nextticks = _ticks + 1000;
 
 	for (int i = 0; i <= 15; i++) {
 		_playerattackofs[0][i][0] = 0; // -1// -(i + 1)
@@ -8255,22 +8255,22 @@ void GriffonEngine::sys_update() {
 	g_system->updateScreen();
 	g_system->getEventManager()->pollEvent(_event);
 
-	_tickspassed = ticks;
-	ticks = g_system->getMillis();
+	_tickspassed = _ticks;
+	_ticks = g_system->getMillis();
 
-	_tickspassed = ticks - _tickspassed;
-	fpsr = (float)_tickspassed / 24.0;
+	_tickspassed = _ticks - _tickspassed;
+	_fpsr = (float)_tickspassed / 24.0;
 
-	fp++;
-	if (ticks > _nextticks) {
-		_nextticks = ticks + 1000;
-		fps = fp;
-		fp = 0;
+	_fp++;
+	if (_ticks > _nextticks) {
+		_nextticks = _ticks + 1000;
+		_fps = _fp;
+		_fp = 0;
 		secsingame = secsingame + 1;
 	}
 
 	if (attacking) {
-		_player.attackframe += _player.attackspd * fpsr;
+		_player.attackframe += _player.attackspd * _fpsr;
 		if (_player.attackframe >= 16) {
 			attacking = false;
 			_player.attackframe = 0;
@@ -8308,7 +8308,7 @@ void GriffonEngine::sys_update() {
 
 	for (int i = 0; i < kMaxFloat; i++) {
 		if (floattext[i][0] > 0) {
-			float spd = 0.5 * fpsr;
+			float spd = 0.5 * _fpsr;
 			floattext[i][0] = floattext[i][0] - spd;
 			floattext[i][2] = floattext[i][2] - spd;
 			if (floattext[i][0] < 0)
@@ -8316,7 +8316,7 @@ void GriffonEngine::sys_update() {
 		}
 
 		if (floaticon[i][0] > 0) {
-			float spd = 0.5 * fpsr;
+			float spd = 0.5 * _fpsr;
 			floaticon[i][0] = floaticon[i][0] - spd;
 			floaticon[i][2] = floaticon[i][2] - spd;
 			if (floaticon[i][0] < 0)
@@ -8360,16 +8360,16 @@ void GriffonEngine::sys_update() {
 	if (!_forcepause) {
 		for (int i = 0; i < 5; i++) {
 			if (_player.foundspell[i] == 1)
-				_player.spellcharge[i] += 1 * _player.level * 0.01 * fpsr;
+				_player.spellcharge[i] += 1 * _player.level * 0.01 * _fpsr;
 			if (_player.spellcharge[i] > 100)
 				_player.spellcharge[i] = 100;
 		}
 
 		if (_player.foundspell[0]) {
-			_player.spellstrength += 3 * _player.level * .01 * fpsr;
+			_player.spellstrength += 3 * _player.level * .01 * _fpsr;
 		}
 
-		_player.attackstrength += (30 + 3 * (float)_player.level) / 50 * fpsr;
+		_player.attackstrength += (30 + 3 * (float)_player.level) / 50 * _fpsr;
 	}
 
 	if (_player.attackstrength > 100)
@@ -8378,7 +8378,7 @@ void GriffonEngine::sys_update() {
 	if (_player.spellstrength > 100)
 		_player.spellstrength = 100;
 
-	_itemyloc += 0.75 * fpsr;
+	_itemyloc += 0.75 * _fpsr;
 	while (_itemyloc >= 16)
 		_itemyloc -= 16;
 
@@ -8392,11 +8392,11 @@ void GriffonEngine::sys_update() {
 				_roomlock = 1;
 	}
 
-	clouddeg += 0.1 * fpsr;
+	clouddeg += 0.1 * _fpsr;
 	while (clouddeg >= 360)
 		clouddeg = clouddeg - 360;
 
-	_player.hpflash = _player.hpflash + 0.1 * fpsr;
+	_player.hpflash = _player.hpflash + 0.1 * _fpsr;
 	if (_player.hpflash >= 2) {
 		_player.hpflash = 0;
 		_player.hpflashb = _player.hpflashb + 1;
@@ -8411,7 +8411,7 @@ void GriffonEngine::sys_update() {
 	// cloudson = 0
 
 	if (_itemselon == 1)
-		_player.itemselshade = _player.itemselshade + 2 * fpsr;
+		_player.itemselshade = _player.itemselshade + 2 * _fpsr;
 	if (_player.itemselshade > 24)
 		_player.itemselshade = 24;
 
