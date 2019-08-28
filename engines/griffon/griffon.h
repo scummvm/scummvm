@@ -418,28 +418,28 @@ private:
 
 	// npc info
 	NPCTYPE _npcinfo[kMaxNPC];
-	int lastnpc;
+	int _lastnpc;
 
 	// music info
 	DataChunk *_mgardens, *_mgardens2, *_mgardens3, *_mgardens4, *_mboss, *_mmenu, *_mendofgame;
-	bool menabled; // CHECKME: Always true?
-	int musicchannel, menuchannel;
-	int pgardens, pboss, ptown, pacademy, pcitadel;
-	int loopseta;
+	bool _menabled; // CHECKME: Always true?
+	int _musicchannel, _menuchannel;
+	int _pgardens, _pboss, _ptown, _pacademy, _pcitadel;
+	int _loopseta;
 
-	DataChunk *sfx[21];
+	DataChunk *_sfx[21];
 	Audio::SoundHandle _handles[SOUND_HANDLES];
 	Audio::Mixer *_mixer;
 
-	// TODO: Check those variables, at least canusekey is a boolean, and the case is wrong in all the names
+	// TODO: Check those variables, at least _canusekey is a boolean, and the case is wrong in all the names
 	// room locks
-	int _roomlocks[201], saidlocked, canusekey, locktype, roomtounlock, saidjammed;
+	int _roomlocks[201], _saidlocked, _canusekey, _locktype, _roomtounlock, _saidjammed;
 	// set to 1 for normal key, set to 2 for master, set to 0 if unlocked
 
 	// ysort
-	int ysort[2401], lasty, firsty;
+	int _ysort[2401], _lasty, _firsty;
 
-	int pmenu;
+	int _pmenu;
 };
 
 }
