@@ -49,41 +49,46 @@ namespace Griffon {
 
 class Console;
 
-#define SOUND_HANDLES 16
-
+#define kSoundHandles 16
 #define kMaxNPC      32
 #define kMaxFloat    32
 #define kMaxSpell    32
 
 // spells
-#define kSpellIce     0
-#define kSpellSteel   1
-#define kSpellWood    2
-#define kSpellRock    3
-#define kSpellFire    4
+enum {
+	kSpellIce = 0,
+	kSpellSteel,
+	kSpellWood,
+	kSpellRock,
+	kSpellFire
+};
 
 // inventory items
-#define INV_FLASK   0
-#define INV_DOUBLEFLASK 1
-#define INV_SHOCK   2
-#define INV_NORMALKEY   3
-#define INV_MASTERKEY   4
+enum {
+	kInvFlask = 0,
+	kInvDoubleFlask,
+	kInvShock,
+	kInvNormalKey,
+	kInvMasterKey
+};
 
-#define sndbite     0
-#define sndcrystal  1
-#define snddoor     2
-#define sndenemyhit 3
-#define sndice      4
-#define sndlever    5
-#define sndlightning    6
-#define sndmetalhit 7
-#define sndpowerup  8
-#define sndrocks    9
-#define sndswordhit 10
-#define sndthrow    11
-#define sndchest    12
-#define sndfire     13
-#define sndbeep     14
+enum {
+	kSndBite = 0,
+	kSndCrystal,
+	kSndDoor,
+	kSndEnemyHit,
+	kSndIce,
+	kSndLever,
+	kSndLightning,
+	kSndMetalHit,
+	kSndPowerUp,
+	kSndRocks,
+	kSndSwordHit,
+	kSndThrow,
+	kSndChest,
+	kSndFire,
+	kSndBeep
+};
 
 #define kEpsilon 0.001
 
@@ -326,7 +331,6 @@ private:
 
 	Graphics::TransparentSurface *_mapbg, *_clipbg, *_clipbg2;
 	unsigned int _clipsurround[4][4];
-	int fullscreen;
 
 	float _animspd; // CHECKME: it seems to always be 0.5
 	int _rampdata[40][24];
@@ -428,7 +432,7 @@ private:
 	int _loopseta;
 
 	DataChunk *_sfx[21];
-	Audio::SoundHandle _handles[SOUND_HANDLES];
+	Audio::SoundHandle _handles[kSoundHandles];
 	Audio::Mixer *_mixer;
 
 	// TODO: Check those variables, at least _canusekey is a boolean, and the case is wrong in all the names
