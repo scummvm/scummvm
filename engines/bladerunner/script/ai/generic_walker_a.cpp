@@ -226,7 +226,14 @@ bool AIScriptGenericWalkerA::UpdateAnimation(int *animation, int *frame) {
 			*animation = 430; // Hooded person with umbrella still
 			break;
 		case 2:
-			*animation = 437; // Hatted lady with wooden umbrella still (different from 436 model!)
+#if BLADERUNNER_ORIGINAL_BUGS
+			// Hatted lady with wooden umbrella still (different from 436 model!)
+			*animation = 437;
+#else
+			// use model 436 and animation frame 4
+			*animation = 436;
+			_animationFrame = 4;
+#endif // BLADERUNNER_ORIGINAL_BUGS
 			break;
 		case 3:
 			*animation = 431; // Person with glasses and beard still
@@ -242,8 +249,8 @@ bool AIScriptGenericWalkerA::UpdateAnimation(int *animation, int *frame) {
 			_animationFrame = 11;
 			break;
 		case 7:
-			*animation = 435; // Child walking // frame 5 could be used for still
-			_animationFrame = 5;
+			*animation = 435; // Child walking // frame 5 or 0 could be used for still
+			_animationFrame = 0;
 			break;
 		case 8:
 			*animation = 422; // Hatted person walking fast // frame 1 could be used for still
@@ -255,7 +262,7 @@ bool AIScriptGenericWalkerA::UpdateAnimation(int *animation, int *frame) {
 			break;
 		}
 		if (!_vm->_cutContent
-		    || Global_Variable_Query(kVariableGenericWalkerAModel) < 6
+		    || (Global_Variable_Query(kVariableGenericWalkerAModel) < 6 && Global_Variable_Query(kVariableGenericWalkerAModel) != 2)
 		) {
 			_animationFrame = 0;
 		}
@@ -328,7 +335,11 @@ bool AIScriptGenericWalkerA::ChangeAnimationMode(int mode) {
 	switch (mode) {
 	case kAnimationModeIdle:
 		_animationState = kGenericWalkerAStatesIdle;
-		_animationFrame = 0;
+		if (!_vm->_cutContent
+		    || (Global_Variable_Query(kVariableGenericWalkerAModel) < 6 && Global_Variable_Query(kVariableGenericWalkerAModel) != 2)
+		) {
+			_animationFrame = 0;
+		}
 		break;
 	case kAnimationModeWalk:
 		_animationState = kGenericWalkerAStatesWalk;

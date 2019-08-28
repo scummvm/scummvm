@@ -384,6 +384,12 @@ void Actor::movementTrackWaypointReached() {
 			if (!_movementTrackDelayOnNextWaypoint) {
 				_movementTrackDelayOnNextWaypoint = 1;
 			}
+#if !BLADERUNNER_ORIGINAL_BUGS
+			// Honor the heading defined by the AI_Movement_Track_Append_With_Facing method
+			if (_movementTrackNextAngle >= 0) {
+				faceHeading(_movementTrackNextAngle, true);
+			}
+#endif
 			if (_vm->_aiScripts->reachedMovementTrackWaypoint(_id, _movementTrackWalkingToWaypointId)) {
 				int32 delay = _movementTrackDelayOnNextWaypoint;
 				if (delay > 1) {
@@ -657,14 +663,12 @@ bool Actor::tick(bool forceDraw, Common::Rect *screenRect) {
 			_targetFacing = -1;
 
 			bool walkInterrupted = _walkInfo->tick(_id, -positionChange.y, _mustReachWalkDestination);
-
 			Vector3 pos;
 			int facing;
 			_walkInfo->getCurrentPosition(_id, &pos, &facing);
 			setAtXYZ(pos, facing, false, _isMoving, false);
 			if (walkInterrupted) {
 				_vm->_actors[_id]->changeAnimationMode(kAnimationModeIdle);
-
 				movementTrackWaypointReached();
 				if (inCombat()) {
 					changeAnimationMode(_animationModeCombatIdle, false);
@@ -673,6 +677,7 @@ bool Actor::tick(bool forceDraw, Common::Rect *screenRect) {
 				}
 			}
 		} else {
+			// actor is not walking / is idle
 			if (angleChange != 0.0f) {
 				int facingChange = angleChange * (512.0f / M_PI);
 				if (facingChange != 0) {
@@ -684,6 +689,20 @@ bool Actor::tick(bool forceDraw, Common::Rect *screenRect) {
 					while (_facing >= 1024) {
 						_facing -= 1024;
 					}
+				}
+			}
+
+			if (_vm->_cutContent) {
+				// the following Generic Walker models don't have an animation Id that is idle
+				// so we use a frame of their walking animation to show them as stopped
+				// However, we also need to override the positionChange vector for their walking animation too
+				if ( (_id == kActorGenwalkerA || _id == kActorGenwalkerB || _id == kActorGenwalkerC)
+				     &&
+				     (_animationId == 436 || _animationId == 434 || _animationId == 435 || _animationId == 422 || _animationId == 423)
+				) {
+					positionChange.x = 0.0f;
+					positionChange.y = 0.0f;
+					positionChange.z = 0.0f;
 				}
 			}
 
