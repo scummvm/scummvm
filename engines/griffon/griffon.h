@@ -41,7 +41,6 @@
 #include "common/random.h"
 #include "engines/engine.h"
 
-#include "audio/audiostream.h"
 #include "audio/mixer.h"
 
 #include "graphics/transparent_surface.h"
@@ -232,6 +231,11 @@ struct ANIMSET2TYPE {
 	int h;
 };
 
+struct DataChunk {
+	byte *data;
+	int size;
+};
+
 class GriffonEngine : public Engine {
 public:
 	GriffonEngine(OSystem *syst);
@@ -306,7 +310,7 @@ private:
 
 	void Mix_Volume(int channel, int volume);
 	int Mix_getHandle();
-	int Mix_PlayChannel(Audio::SeekableAudioStream *chunk, int par3);
+	int Mix_PlayChannel(DataChunk *chunk, int par3);
 	void Mix_Pause(int channel);
 	void Mix_HaltChannel(int channel);
 	void Mix_Resume(int channel);
@@ -417,13 +421,13 @@ private:
 	int lastnpc;
 
 	// music info
-	Audio::SeekableAudioStream *mgardens, *mgardens2, *mgardens3, *mgardens4, *mboss, *mmenu, *mendofgame;
+	DataChunk *mgardens, *mgardens2, *mgardens3, *mgardens4, *mboss, *mmenu, *mendofgame;
 	bool menabled; // CHECKME: Always true?
 	int musicchannel, menuchannel;
 	int pgardens, pboss, ptown, pacademy, pcitadel;
 	int loopseta;
 
-	Audio::SeekableAudioStream *sfx[21];
+	DataChunk *sfx[21];
 	Audio::SoundHandle _handles[SOUND_HANDLES];
 	Audio::Mixer *_mixer;
 

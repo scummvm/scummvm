@@ -34,7 +34,9 @@
  *
  */
 
+#include "audio/audiostream.h"
 #include "audio/decoders/vorbis.h"
+#include "common/memstream.h"
 
 #include "griffon/griffon.h"
 #include "griffon/config.h"
@@ -111,11 +113,15 @@ int GriffonEngine::Mix_getHandle() {
 	return -1;
 }
 
-int GriffonEngine::Mix_PlayChannel(Audio::SeekableAudioStream *chunk, int par3) {
+int GriffonEngine::Mix_PlayChannel(DataChunk *chunk, int par3) {
 	int ch = Mix_getHandle();
 
-	_mixer->playStream(Audio::Mixer::kSFXSoundType, &_handles[ch], chunk, -1, Audio::Mixer::kMaxChannelVolume,
-		0, DisposeAfterUse::NO, false, false);
+#ifdef USE_VORBIS
+	Audio::SeekableAudioStream *audioStream = Audio::makeVorbisStream(new Common::MemoryReadStream(chunk->data, chunk->size), DisposeAfterUse::YES);
+
+	_mixer->playStream(Audio::Mixer::kSFXSoundType, &_handles[ch], audioStream, -1, Audio::Mixer::kMaxChannelVolume,
+		0, DisposeAfterUse::YES, false, false);
+#endif // USE_VORBIS
 
 	return ch;
 }
@@ -136,20 +142,21 @@ bool GriffonEngine::Mix_Playing(int channel) {
 	return _mixer->isSoundHandleActive(_handles[channel]);
 }
 
-Audio::SeekableAudioStream *Mix_LoadWAV(const char *name) {
+DataChunk *Mix_LoadWAV(const char *name) {
 	Common::File file;
-	Audio::SeekableAudioStream *audioStream = NULL;
+	DataChunk *res = new DataChunk;
 
 	file.open(name);
 	if (!file.isOpen()) {
 		error("Cannot open file %s", name);
 	}
 
-#ifdef USE_VORBIS
-	audioStream = Audio::makeVorbisStream(&file, DisposeAfterUse::YES);
-#endif // USE_VORBIS
+	res->size = file.size();
+	res->data = (byte *)malloc(res->size);
 
-	return audioStream;
+	file.read(res->data, res->size);
+
+	return res;
 }
 
 
@@ -5523,7 +5530,7 @@ void GriffonEngine::game_updatey() {
 }
 
 void GriffonEngine::game_updmusic() {
-	Audio::SeekableAudioStream *iplaysound = NULL;
+	DataChunk *iplaysound = NULL;
 
 	if (menabled && config.music) {
 
