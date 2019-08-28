@@ -1539,7 +1539,7 @@ void GriffonEngine::game_configmenu() {
 					if (cursel == 7 && config.music == 0) {
 						config.music = 1;
 						if (menabled == 1) {
-							menuchannel = Mix_PlayChannel(mmenu, true);
+							menuchannel = Mix_PlayChannel(_mmenu, true);
 							Mix_Volume(menuchannel, config.musicvol);
 						}
 					}
@@ -1706,7 +1706,7 @@ void GriffonEngine::game_damagenpc(int npcnum, int damage, int spell) {
 
 				if (lx == cx && ly == cy)
 					player.py = player.py + 16;
-				clipbg2->fillRect(rcDest, clipbg->format.RGBToColor(255, 255, 255));
+				_clipbg2->fillRect(rcDest, _clipbg->format.RGBToColor(255, 255, 255));
 				scriptflag[2][0] = 1;
 			}
 		}
@@ -1739,7 +1739,7 @@ void GriffonEngine::game_damagenpc(int npcnum, int damage, int spell) {
 				if (lx == cx && ly == cy)
 					player.py = player.py + 16;
 				scriptflag[3][0] = 1;
-				clipbg2->fillRect(rcDest, clipbg->format.RGBToColor(255, 255, 255));
+				_clipbg2->fillRect(rcDest, _clipbg->format.RGBToColor(255, 255, 255));
 			}
 		}
 
@@ -1766,7 +1766,7 @@ void GriffonEngine::game_damagenpc(int npcnum, int damage, int spell) {
 			rcDest.setWidth(16);
 			rcDest.setHeight(16);
 
-			tiles[curtilel]->blit(*mapbg, rcDest.left, rcDest.top, Graphics::FLIP_NONE, &rcSrc);
+			tiles[curtilel]->blit(*_mapbg, rcDest.left, rcDest.top, Graphics::FLIP_NONE, &rcSrc);
 		}
 
 		// firehydra sword chest
@@ -1797,7 +1797,7 @@ void GriffonEngine::game_damagenpc(int npcnum, int damage, int spell) {
 				if (lx == cx && ly == cy)
 					player.py = player.py + 16;
 				scriptflag[5][0] = 1;
-				clipbg2->fillRect(rcDest, clipbg->format.RGBToColor(255, 255, 255));
+				_clipbg2->fillRect(rcDest, _clipbg->format.RGBToColor(255, 255, 255));
 			}
 
 		}
@@ -1829,7 +1829,7 @@ void GriffonEngine::game_damagenpc(int npcnum, int damage, int spell) {
 
 				if (lx == cx && ly == cy)
 					player.py = player.py + 16;
-				clipbg2->fillRect(rcDest, clipbg->format.RGBToColor(255, 255, 255));
+				_clipbg2->fillRect(rcDest, _clipbg->format.RGBToColor(255, 255, 255));
 				scriptflag[8][0] = 1;
 			}
 		}
@@ -1863,7 +1863,7 @@ void GriffonEngine::game_damagenpc(int npcnum, int damage, int spell) {
 					if (lx == cx && ly == cy)
 						player.py = player.py + 16;
 					scriptflag[s][0] = 1;
-					clipbg2->fillRect(rcDest, clipbg->format.RGBToColor(255, 255, 255));
+					_clipbg2->fillRect(rcDest, _clipbg->format.RGBToColor(255, 255, 255));
 				}
 			}
 		}
@@ -1926,7 +1926,7 @@ void GriffonEngine::game_damagenpc(int npcnum, int damage, int spell) {
 				if (lx == cx && ly == cy)
 					player.py = player.py + 16;
 				scriptflag[12][0] = 1;
-				clipbg2->fillRect(rcDest, clipbg->format.RGBToColor(255, 255, 255));
+				_clipbg2->fillRect(rcDest, _clipbg->format.RGBToColor(255, 255, 255));
 			}
 		}
 
@@ -1957,7 +1957,7 @@ void GriffonEngine::game_damagenpc(int npcnum, int damage, int spell) {
 
 				if (lx == cx && ly == cy)
 					player.py = player.py + 16;
-				clipbg2->fillRect(rcDest, clipbg->format.RGBToColor(255, 255, 255));
+				_clipbg2->fillRect(rcDest, _clipbg->format.RGBToColor(255, 255, 255));
 				scriptflag[13][0] = 1;
 			}
 		}
@@ -1989,7 +1989,7 @@ void GriffonEngine::game_damagenpc(int npcnum, int damage, int spell) {
 
 				if (lx == cx && ly == cy)
 					player.py = player.py + 16;
-				clipbg2->fillRect(rcDest, clipbg->format.RGBToColor(255, 255, 255));
+				_clipbg2->fillRect(rcDest, _clipbg->format.RGBToColor(255, 255, 255));
 				scriptflag[15][0] = 1;
 
 				cx = 9;
@@ -2010,7 +2010,7 @@ void GriffonEngine::game_damagenpc(int npcnum, int damage, int spell) {
 
 				if (lx == cx && ly == cy)
 					player.py = player.py + 16;
-				clipbg2->fillRect(rcDest, clipbg->format.RGBToColor(255, 255, 255));
+				_clipbg2->fillRect(rcDest, _clipbg->format.RGBToColor(255, 255, 255));
 
 				scriptflag[16][0] = 1;
 
@@ -2032,7 +2032,7 @@ void GriffonEngine::game_damagenpc(int npcnum, int damage, int spell) {
 
 				if (lx == cx && ly == cy)
 					player.py = player.py + 16;
-				clipbg2->fillRect(rcDest, clipbg->format.RGBToColor(255, 255, 255));
+				_clipbg2->fillRect(rcDest, _clipbg->format.RGBToColor(255, 255, 255));
 				scriptflag[17][0] = 1;
 			}
 		}
@@ -3132,7 +3132,7 @@ void GriffonEngine::game_drawplayer() {
 }
 
 void GriffonEngine::game_drawview() {
-	_videobuffer->copyRectToSurface(mapbg->getPixels(), mapbg->pitch, 0, 0, mapbg->w, mapbg->h);
+	_videobuffer->copyRectToSurface(_mapbg->getPixels(), _mapbg->pitch, 0, 0, _mapbg->w, _mapbg->h);
 
 	game_updspellsunder();
 
@@ -3176,7 +3176,7 @@ void GriffonEngine::game_endofgame() {
 
 	if (menabled && config.music) {
 		Mix_HaltChannel(-1);
-		musicchannel = Mix_PlayChannel(mendofgame, true);
+		musicchannel = Mix_PlayChannel(_mendofgame, true);
 		Mix_Volume(musicchannel, 0);
 	}
 
@@ -3511,10 +3511,10 @@ void GriffonEngine::game_handlewalking() {
 			int sx = nx + x;
 			int sy = ny + y;
 
-			clipsurround[x + 1][y + 1] = 0;
+			_clipsurround[x + 1][y + 1] = 0;
 			if (sx > -1 && sx < 320 && sy > -1 && sy < 192) {
-				temp = (uint32 *)clipbg->getBasePtr(sx, sy);
-				clipsurround[x + 1][y + 1] = *temp;
+				temp = (uint32 *)_clipbg->getBasePtr(sx, sy);
+				_clipsurround[x + 1][y + 1] = *temp;
 			}
 		}
 	}
@@ -3528,66 +3528,66 @@ void GriffonEngine::game_handlewalking() {
 	if (movingright)
 		player.walkdir = 3;
 
-	if (movingup && clipsurround[1][0] == 0) {
+	if (movingup && _clipsurround[1][0] == 0) {
 		py = py - spd;
 		player.walkdir = 0;
-	} else if (movingup && clipsurround[1][0] > 0) {
+	} else if (movingup && _clipsurround[1][0] > 0) {
 		// move upleft
-		if (movingright == 0 && clipsurround[0][0] == 0) {
+		if (movingright == 0 && _clipsurround[0][0] == 0) {
 			py = py - spd;
 			px = px - spd;
 		}
 
 		// move upright
-		if (movingleft == 0 && clipsurround[2][0] == 0) {
+		if (movingleft == 0 && _clipsurround[2][0] == 0) {
 			py = py - spd;
 			px = px + spd;
 		}
 	}
-	if (movingdown && clipsurround[1][2] == 0) {
+	if (movingdown && _clipsurround[1][2] == 0) {
 		py = py + spd;
 		player.walkdir = 1;
-	} else if (movingdown && clipsurround[1][2] > 0) {
+	} else if (movingdown && _clipsurround[1][2] > 0) {
 		// move downleft
-		if (movingright == 0 && clipsurround[0][2] == 0) {
+		if (movingright == 0 && _clipsurround[0][2] == 0) {
 			py = py + spd;
 			px = px - spd;
 		}
 
 		// move downright
-		if (movingleft == 0 && clipsurround[2][2] == 0) {
+		if (movingleft == 0 && _clipsurround[2][2] == 0) {
 			py = py + spd;
 			px = px + spd;
 		}
 	}
-	if (movingleft && clipsurround[0][1] == 0) {
+	if (movingleft && _clipsurround[0][1] == 0) {
 		px = px - spd;
 		player.walkdir = 2;
-	} else if (movingleft && clipsurround[0][1] > 0) {
+	} else if (movingleft && _clipsurround[0][1] > 0) {
 		// move leftup
-		if (movingdown == 0 && clipsurround[0][0] == 0) {
+		if (movingdown == 0 && _clipsurround[0][0] == 0) {
 			py = py - spd;
 			px = px - spd;
 		}
 
 		// move leftdown
-		if (movingup == 0 && clipsurround[0][2] == 0) {
+		if (movingup == 0 && _clipsurround[0][2] == 0) {
 			py = py + spd;
 			px = px - spd;
 		}
 	}
-	if (movingright && clipsurround[2][1] == 0) {
+	if (movingright && _clipsurround[2][1] == 0) {
 		px = px + spd;
 		player.walkdir = 3;
-	} else if (movingright && clipsurround[2][1] > 0) {
+	} else if (movingright && _clipsurround[2][1] > 0) {
 		// move rightup
-		if (movingdown == 0 && clipsurround[2][0] == 0) {
+		if (movingdown == 0 && _clipsurround[2][0] == 0) {
 			px = px + spd;
 			py = py - spd;
 		}
 
 		// move rightdown
-		if (movingup == 0 && clipsurround[2][2] == 0) {
+		if (movingup == 0 && _clipsurround[2][2] == 0) {
 			py = py + spd;
 			px = px + spd;
 		}
@@ -3606,7 +3606,7 @@ void GriffonEngine::game_handlewalking() {
 
 	int sx = (px / 2 + 6);
 	int sy = (py / 2 + 10);
-	temp = (uint32 *)clipbg->getBasePtr(sx, sy);
+	temp = (uint32 *)_clipbg->getBasePtr(sx, sy);
 	bgc = *temp;
 	if (bgc > 0 && bgc != 1000) {
 		px = opx;
@@ -3646,7 +3646,7 @@ void GriffonEngine::game_handlewalking() {
 
 				sx = (int)(npx / 2 + 6);
 				sy = (int)(npy / 2 + 10);
-				temp = (uint32 *)clipbg->getBasePtr(sx, sy);
+				temp = (uint32 *)_clipbg->getBasePtr(sx, sy);
 				bgc = *temp;
 
 				if (bgc > 0) {
@@ -3742,13 +3742,13 @@ void GriffonEngine::game_loadmap(int mapnum) {
 
 	debug(2, "Loaded map %d", mapnum);
 
-	ccc = clipbg->format.RGBToColor(255, 255, 255);
+	ccc = _clipbg->format.RGBToColor(255, 255, 255);
 
 	curmap = mapnum;
 
-	mapbg->fillRect(trect, 0);
-	clipbg->fillRect(trect, ccc);
-	clipbg2->fillRect(trect, ccc);
+	_mapbg->fillRect(trect, 0);
+	_clipbg->fillRect(trect, ccc);
+	_clipbg2->fillRect(trect, ccc);
 
 	forcepause = false;
 	cloudson = 0;
@@ -3888,7 +3888,7 @@ void GriffonEngine::game_loadmap(int mapnum) {
 						}
 					}
 
-					tiles[curtilel]->blit(*mapbg, rcDest.left, rcDest.top, Graphics::FLIP_NONE, &rcSrc);
+					tiles[curtilel]->blit(*_mapbg, rcDest.left, rcDest.top, Graphics::FLIP_NONE, &rcSrc);
 					tiles[curtilel]->setAlpha(255, true);
 
 					rcDest.left = x * 8;
@@ -3896,7 +3896,7 @@ void GriffonEngine::game_loadmap(int mapnum) {
 					rcDest.setWidth(8);
 					rcDest.setHeight(8);
 
-					clipbg->fillRect(rcDest, 0);
+					_clipbg->fillRect(rcDest, 0);
 				}
 
 			}
@@ -3931,37 +3931,37 @@ void GriffonEngine::game_loadmap(int mapnum) {
 
 					if (d == 1) {
 						for (int i = 0; i <= 7; i++) {
-							sys_line(clipbg, x1, y1 + i, x1 + 7 - i, y1 + i, ccc);
+							sys_line(_clipbg, x1, y1 + i, x1 + 7 - i, y1 + i, ccc);
 						}
 					} else if (d == 2) {
-						sys_line(clipbg, x1, y1, x1 + 7, y1, ccc);
-						sys_line(clipbg, x1, y1 + 1, x1 + 7, y1 + 1, ccc);
+						sys_line(_clipbg, x1, y1, x1 + 7, y1, ccc);
+						sys_line(_clipbg, x1, y1 + 1, x1 + 7, y1 + 1, ccc);
 					} else if (d == 3) {
 						for (int i = 0; i <= 7; i++) {
-							sys_line(clipbg, x1 + i, y1 + i, x1 + 7, y1 + i, ccc);
+							sys_line(_clipbg, x1 + i, y1 + i, x1 + 7, y1 + i, ccc);
 						}
 					} else if (d == 4) {
-						sys_line(clipbg, x1, y1, x1, y1 + 7, ccc);
-						sys_line(clipbg, x1 + 1, y1, x1 + 1, y1 + 7, ccc);
+						sys_line(_clipbg, x1, y1, x1, y1 + 7, ccc);
+						sys_line(_clipbg, x1 + 1, y1, x1 + 1, y1 + 7, ccc);
 					} else if (d == 5) {
 						rcDest.left = x1;
 						rcDest.top = y1;
 						rcDest.setWidth(8);
 						rcDest.setHeight(8);
-						clipbg->fillRect(rcDest, ccc);
+						_clipbg->fillRect(rcDest, ccc);
 					} else if (d == 6) {
-						sys_line(clipbg, x1 + 7, y1, x1 + 7, y1 + 7, ccc);
-						sys_line(clipbg, x1 + 6, y1, x1 + 6, y1 + 7, ccc);
+						sys_line(_clipbg, x1 + 7, y1, x1 + 7, y1 + 7, ccc);
+						sys_line(_clipbg, x1 + 6, y1, x1 + 6, y1 + 7, ccc);
 					} else if (d == 7) {
 						for (int i = 0; i <= 7; i++) {
-							sys_line(clipbg, x1, y1 + i, x1 + i, y1 + i, ccc);
+							sys_line(_clipbg, x1, y1 + i, x1 + i, y1 + i, ccc);
 						}
 					} else if (d == 8) {
-						sys_line(clipbg, x1, y1 + 7, x1 + 7, y1 + 7, ccc);
-						sys_line(clipbg, x1, y1 + 7, x1 + 6, y1 + 6, ccc);
+						sys_line(_clipbg, x1, y1 + 7, x1 + 7, y1 + 7, ccc);
+						sys_line(_clipbg, x1, y1 + 7, x1 + 6, y1 + 6, ccc);
 					} else if (d == 9) {
 						for (int i = 0; i <= 7; i++) {
-							sys_line(clipbg, x1 + 7 - i, y1 + i, x1 + 7, y1 + i, ccc);
+							sys_line(_clipbg, x1 + 7 - i, y1 + i, x1 + 7, y1 + i, ccc);
 						}
 					}
 				}
@@ -4012,9 +4012,9 @@ void GriffonEngine::game_loadmap(int mapnum) {
 					rcDest.setHeight(8);
 
 					if (objectinfo[o][4] == 1)
-						clipbg->fillRect(rcDest, ccc);
+						_clipbg->fillRect(rcDest, ccc);
 					if (objectinfo[o][4] == 3)
-						clipbg->fillRect(rcDest, ccc);
+						_clipbg->fillRect(rcDest, ccc);
 				}
 			}
 			if (npc == 1) {
@@ -4339,7 +4339,7 @@ void GriffonEngine::game_loadmap(int mapnum) {
 		if (lx == cx && ly == cy)
 			player.py = player.py + 16;
 
-		clipbg->fillRect(rcDest, ccc);
+		_clipbg->fillRect(rcDest, ccc);
 	}
 
 	// academy crystal
@@ -4363,7 +4363,7 @@ void GriffonEngine::game_loadmap(int mapnum) {
 		if (lx == cx && ly == cy)
 			player.py = player.py + 16;
 
-		clipbg->fillRect(rcDest, ccc);
+		_clipbg->fillRect(rcDest, ccc);
 	}
 
 	// gardens master key
@@ -4387,7 +4387,7 @@ void GriffonEngine::game_loadmap(int mapnum) {
 		if (lx == cx && ly == cy)
 			player.py = player.py + 16;
 
-		clipbg->fillRect(rcDest, ccc);
+		_clipbg->fillRect(rcDest, ccc);
 	}
 
 	// gardens fidelis sword
@@ -4411,7 +4411,7 @@ void GriffonEngine::game_loadmap(int mapnum) {
 		if (lx == cx && ly == cy)
 			player.py = player.py + 16;
 
-		clipbg->fillRect(rcDest, ccc);
+		_clipbg->fillRect(rcDest, ccc);
 	}
 
 	// citadel armour
@@ -4435,7 +4435,7 @@ void GriffonEngine::game_loadmap(int mapnum) {
 		if (lx == cx && ly == cy)
 			player.py = player.py + 16;
 
-		clipbg->fillRect(rcDest, ccc);
+		_clipbg->fillRect(rcDest, ccc);
 	}
 
 	// citadel master key
@@ -4459,7 +4459,7 @@ void GriffonEngine::game_loadmap(int mapnum) {
 		if (lx == cx && ly == cy)
 			player.py = player.py + 16;
 
-		clipbg->fillRect(rcDest, ccc);
+		_clipbg->fillRect(rcDest, ccc);
 	}
 
 
@@ -4484,7 +4484,7 @@ void GriffonEngine::game_loadmap(int mapnum) {
 		if (lx == cx && ly == cy)
 			player.py = player.py + 16;
 
-		clipbg->fillRect(rcDest, ccc);
+		_clipbg->fillRect(rcDest, ccc);
 	}
 
 	if (curmap == 83 && scriptflag[16][0] == 1 && player.shield < 3) {
@@ -4507,7 +4507,7 @@ void GriffonEngine::game_loadmap(int mapnum) {
 		if (lx == cx && ly == cy)
 			player.py = player.py + 16;
 
-		clipbg->fillRect(rcDest, ccc);
+		_clipbg->fillRect(rcDest, ccc);
 	}
 
 	if (curmap == 83 && scriptflag[17][0] == 1 && player.armour < 3) {
@@ -4530,10 +4530,10 @@ void GriffonEngine::game_loadmap(int mapnum) {
 		if (lx == cx && ly == cy)
 			player.py = player.py + 16;
 
-		clipbg->fillRect(rcDest, ccc);
+		_clipbg->fillRect(rcDest, ccc);
 	}
 
-	clipbg2->copyRectToSurface(clipbg->getPixels(), clipbg->pitch, 0, 0, clipbg->w, clipbg->h);
+	_clipbg2->copyRectToSurface(_clipbg->getPixels(), _clipbg->pitch, 0, 0, _clipbg->w, _clipbg->h);
 }
 
 void GriffonEngine::game_main() {
@@ -4563,7 +4563,7 @@ void GriffonEngine::game_newgame() {
 
 	if (menabled && config.music) {
 		Mix_HaltChannel(-1);
-		musicchannel = Mix_PlayChannel(mendofgame, true);
+		musicchannel = Mix_PlayChannel(_mendofgame, true);
 		Mix_Volume(musicchannel, 0);
 	}
 
@@ -5239,7 +5239,7 @@ void GriffonEngine::game_swash() {
 		y = y + 1 * fpsr;
 
 		_videobuffer->setAlpha((int)(y * 25));
-		mapbg->blit(*_videobuffer);
+		_mapbg->blit(*_videobuffer);
 
 		if (cloudson == 1) {
 			rcDest.left = (float)(256 + 256 * cos(3.141592 / 180 * clouddeg));
@@ -5337,7 +5337,7 @@ void GriffonEngine::game_title(int mode) {
 		Mix_Volume(musicchannel, 0);
 		Mix_Pause(musicchannel);
 
-		menuchannel = Mix_PlayChannel(mmenu, true);
+		menuchannel = Mix_PlayChannel(_mmenu, true);
 		Mix_Volume(menuchannel, config.musicvol);
 		pmenu = 1;
 	}
@@ -5541,14 +5541,14 @@ void GriffonEngine::game_updmusic() {
 	if (menabled && config.music) {
 
 		// if(curmap > 5 && curmap < 42) iplaysound = macademy;
-		// if(curmap > 47) iplaysound = mgardens;
-		iplaysound = mgardens;
+		// if(curmap > 47) iplaysound = _mgardens;
+		iplaysound = _mgardens;
 		if (roomlock == 1)
-			iplaysound = mboss;
+			iplaysound = _mboss;
 
-		if (iplaysound == mboss && pboss)
+		if (iplaysound == _mboss && pboss)
 			iplaysound = NULL;
-		if (iplaysound == mgardens && pgardens)
+		if (iplaysound == _mgardens && pgardens)
 			iplaysound = NULL;
 
 		if (iplaysound != NULL) {
@@ -5560,9 +5560,9 @@ void GriffonEngine::game_updmusic() {
 			pacademy = 0;
 			pcitadel = 0;
 
-			if (iplaysound == mboss)
+			if (iplaysound == _mboss)
 				pboss = 1;
-			if (iplaysound == mgardens)
+			if (iplaysound == _mgardens)
 				pgardens = 1;
 
 			musicchannel = Mix_PlayChannel(iplaysound, true);
@@ -5576,13 +5576,13 @@ void GriffonEngine::game_updmusic() {
 				if (pgardens == 1) {
 					Mix_HaltChannel(musicchannel);
 					if (pgardens == 1 && loopseta == 0)
-						musicchannel = Mix_PlayChannel(mgardens);
+						musicchannel = Mix_PlayChannel(_mgardens);
 					if (pgardens == 1 && loopseta == 1)
-						musicchannel = Mix_PlayChannel(mgardens2);
+						musicchannel = Mix_PlayChannel(_mgardens2);
 					if (pgardens == 1 && loopseta == 2)
-						musicchannel = Mix_PlayChannel(mgardens3);
+						musicchannel = Mix_PlayChannel(_mgardens3);
 					if (pgardens == 1 && loopseta == 3)
-						musicchannel = Mix_PlayChannel(mgardens4);
+						musicchannel = Mix_PlayChannel(_mgardens4);
 				}
 
 				Mix_Volume(musicchannel, config.musicvol);
@@ -5771,7 +5771,7 @@ void GriffonEngine::game_updnpcs() {
 				if (moveup) {
 					int sx = xp;
 					int sy = yp - ii;
-					uint32 *temp = (uint32 *)clipbg->getBasePtr(sx, sy);
+					uint32 *temp = (uint32 *)_clipbg->getBasePtr(sx, sy);
 					uint32 dq = *temp;
 					if (npcinfo[i].spriteset == 11)
 						dq = 0;
@@ -5781,7 +5781,7 @@ void GriffonEngine::game_updnpcs() {
 					if (dq > 0) {
 						sx = xp - ii;
 						sy = yp - ii;
-						temp = (uint32 *)clipbg->getBasePtr(sx, sy);
+						temp = (uint32 *)_clipbg->getBasePtr(sx, sy);
 						dq = *temp;
 						if (npcinfo[i].spriteset == 11)
 							dq = 0;
@@ -5793,7 +5793,7 @@ void GriffonEngine::game_updnpcs() {
 					if (dq > 0) {
 						sx = xp + ii;
 						sy = yp - ii;
-						temp = (uint32 *)clipbg->getBasePtr(sx, sy);
+						temp = (uint32 *)_clipbg->getBasePtr(sx, sy);
 						dq = *temp;
 						if (npcinfo[i].spriteset == 11)
 							dq = 0;
@@ -5807,7 +5807,7 @@ void GriffonEngine::game_updnpcs() {
 				if (movedown) {
 					int sx = xp;
 					int sy = yp + ii;
-					uint32 *temp = (uint32 *)clipbg->getBasePtr(sx, sy);
+					uint32 *temp = (uint32 *)_clipbg->getBasePtr(sx, sy);
 					uint32 dq = *temp;
 					if (npcinfo[i].spriteset == 11)
 						dq = 0;
@@ -5816,7 +5816,7 @@ void GriffonEngine::game_updnpcs() {
 					if (dq > 0) {
 						sx = xp - ii;
 						sy = yp + ii;
-						temp = (uint32 *)clipbg->getBasePtr(sx, sy);
+						temp = (uint32 *)_clipbg->getBasePtr(sx, sy);
 						dq = *temp;
 						if (npcinfo[i].spriteset == 11)
 							dq = 0;
@@ -5828,7 +5828,7 @@ void GriffonEngine::game_updnpcs() {
 					if (dq > 0) {
 						sx = xp + ii;
 						sy = yp + ii;
-						temp = (uint32 *)clipbg->getBasePtr(sx, sy);
+						temp = (uint32 *)_clipbg->getBasePtr(sx, sy);
 						dq = *temp;
 						if (npcinfo[i].spriteset == 11)
 							dq = 0;
@@ -5842,7 +5842,7 @@ void GriffonEngine::game_updnpcs() {
 				if (moveleft) {
 					int sx = xp - ii;
 					int sy = yp;
-					uint32 *temp = (uint32 *)clipbg->getBasePtr(sx, sy);
+					uint32 *temp = (uint32 *)_clipbg->getBasePtr(sx, sy);
 					uint32 dq = *temp;
 					if (npcinfo[i].spriteset == 11)
 						dq = 0;
@@ -5851,7 +5851,7 @@ void GriffonEngine::game_updnpcs() {
 					if (dq > 0) {
 						sx = xp - ii;
 						sy = yp - ii;
-						temp = (uint32 *)clipbg->getBasePtr(sx, sy);
+						temp = (uint32 *)_clipbg->getBasePtr(sx, sy);
 						dq = *temp;
 						if (npcinfo[i].spriteset == 11)
 							dq = 0;
@@ -5863,7 +5863,7 @@ void GriffonEngine::game_updnpcs() {
 					if (dq > 0) {
 						sx = xp - ii;
 						sy = yp + ii;
-						temp = (uint32 *)clipbg->getBasePtr(sx, sy);
+						temp = (uint32 *)_clipbg->getBasePtr(sx, sy);
 						dq = *temp;
 						if (npcinfo[i].spriteset == 11)
 							dq = 0;
@@ -5877,7 +5877,7 @@ void GriffonEngine::game_updnpcs() {
 				if (moveright) {
 					int sx = xp + ii;
 					int sy = yp;
-					uint32 *temp = (uint32 *)clipbg->getBasePtr(sx, sy);
+					uint32 *temp = (uint32 *)_clipbg->getBasePtr(sx, sy);
 					uint32 dq = *temp;
 					if (npcinfo[i].spriteset == 11)
 						dq = 0;
@@ -5886,7 +5886,7 @@ void GriffonEngine::game_updnpcs() {
 					if (dq > 0) {
 						sx = xp + ii;
 						sy = yp - ii;
-						temp = (uint32 *)clipbg->getBasePtr(sx, sy);
+						temp = (uint32 *)_clipbg->getBasePtr(sx, sy);
 						dq = *temp;
 						if (npcinfo[i].spriteset == 11)
 							dq = 0;
@@ -5898,7 +5898,7 @@ void GriffonEngine::game_updnpcs() {
 					if (dq > 0) {
 						sx = xp + ii;
 						sy = yp + ii;
-						temp = (uint32 *)clipbg->getBasePtr(sx, sy);
+						temp = (uint32 *)_clipbg->getBasePtr(sx, sy);
 						dq = *temp;
 						if (npcinfo[i].spriteset == 11)
 							dq = 0;
@@ -5939,7 +5939,7 @@ void GriffonEngine::game_updnpcs() {
 
 				int sx = xp;
 				int sy = yp;
-				uint32 *temp = (uint32 *)clipbg->getBasePtr(sx, sy);
+				uint32 *temp = (uint32 *)_clipbg->getBasePtr(sx, sy);
 				uint32 bgc = *temp;
 
 				float anpx = npx + 12;
@@ -6441,7 +6441,7 @@ void GriffonEngine::game_updnpcs() {
 			rcSrc.setHeight(3);
 
 			if (npcinfo[i].pause < ticks)
-				clipbg->fillRect(rcSrc, i);
+				_clipbg->fillRect(rcSrc, i);
 
 
 			pass = 0;
@@ -6821,7 +6821,7 @@ void GriffonEngine::game_updspells() {
 										rcSrc.setWidth(8);
 										rcSrc.setHeight(8);
 
-										clipbg2->fillRect(rcSrc, 0);
+										_clipbg2->fillRect(rcSrc, 0);
 
 										game_addFloatIcon(99, postinfo[e][0], postinfo[e][1]);
 
@@ -6943,7 +6943,7 @@ void GriffonEngine::game_updspells() {
 							rcSrc.setWidth(8);
 							rcSrc.setHeight(8);
 
-							clipbg2->fillRect(rcSrc, 0);
+							_clipbg2->fillRect(rcSrc, 0);
 
 							game_addFloatIcon(99, postinfo[e][0], postinfo[e][1]);
 
@@ -7023,7 +7023,7 @@ void GriffonEngine::game_updspells() {
 											rcSrc.setWidth(8);
 											rcSrc.setHeight(8);
 
-											clipbg2->fillRect(rcSrc, 0);
+											_clipbg2->fillRect(rcSrc, 0);
 
 											game_addFloatIcon(99, postinfo[e][0], postinfo[e][1]);
 
@@ -7300,7 +7300,7 @@ void GriffonEngine::game_updspells() {
 									rcSrc.setWidth(8);
 									rcSrc.setHeight(8);
 
-									clipbg2->fillRect(rcSrc, 0);
+									_clipbg2->fillRect(rcSrc, 0);
 
 									game_addFloatIcon(99, postinfo[e][0], postinfo[e][1]);
 								}
@@ -7358,7 +7358,7 @@ void GriffonEngine::game_updspells() {
 									rcSrc.setWidth(8);
 									rcSrc.setHeight(8);
 
-									clipbg2->fillRect(rcSrc, 0);
+									_clipbg2->fillRect(rcSrc, 0);
 
 									game_addFloatIcon(99, postinfo[e][0], postinfo[e][1]);
 								}
@@ -7415,7 +7415,7 @@ void GriffonEngine::game_updspells() {
 									rcSrc.setWidth(8);
 									rcSrc.setHeight(8);
 
-									clipbg2->fillRect(rcSrc, 0);
+									_clipbg2->fillRect(rcSrc, 0);
 
 									game_addFloatIcon(99, postinfo[e][0], postinfo[e][1]);
 								}
@@ -7472,7 +7472,7 @@ void GriffonEngine::game_updspells() {
 									rcSrc.setWidth(8);
 									rcSrc.setHeight(8);
 
-									clipbg2->fillRect(rcSrc, 0);
+									_clipbg2->fillRect(rcSrc, 0);
 
 									game_addFloatIcon(99, postinfo[e][0], postinfo[e][1]);
 								}
@@ -7612,7 +7612,7 @@ void GriffonEngine::game_updspellsunder() {
 						int sx = (newx / 2 + 6);
 						int sy = (newy / 2 + 10);
 
-						unsigned int *temp = (uint32 *)clipbg->getBasePtr(sx, sy);
+						unsigned int *temp = (uint32 *)_clipbg->getBasePtr(sx, sy);
 						unsigned int dq = *temp;
 
 						if (dq == 0) {
@@ -7625,7 +7625,7 @@ void GriffonEngine::game_updspellsunder() {
 
 							sx = (newx / 2 + 6);
 							sy = (npcinfo[f].y / 2 + 10);
-							temp = (uint32 *)clipbg->getBasePtr(sx, sy);
+							temp = (uint32 *)_clipbg->getBasePtr(sx, sy);
 							dq = *temp;
 
 							if (dq == 0)
@@ -7634,7 +7634,7 @@ void GriffonEngine::game_updspellsunder() {
 
 							sx = (npcinfo[f].x / 2 + 6);
 							sy = (newy / 2 + 10);
-							temp = (uint32 *)clipbg->getBasePtr(sx, sy);
+							temp = (uint32 *)_clipbg->getBasePtr(sx, sy);
 							dq = *temp;
 
 							if (dq == 0)
@@ -7694,7 +7694,7 @@ void GriffonEngine::game_updspellsunder() {
 								int sx = (xloc / 2 + 4);
 								int sy = (yloc / 2 + 8);
 
-								unsigned int *temp = (uint32 *)clipbg->getBasePtr(sx, sy);
+								unsigned int *temp = (uint32 *)_clipbg->getBasePtr(sx, sy);
 								unsigned int dq = *temp;
 
 								if (dq > 1000 && x > 4)
@@ -7756,7 +7756,7 @@ void GriffonEngine::game_updspellsunder() {
 											rcSrc.setWidth(8);
 											rcSrc.setHeight(8);
 
-											clipbg2->fillRect(rcSrc, 0);
+											_clipbg2->fillRect(rcSrc, 0);
 
 											if (menabled && config.effects) {
 												int snd = Mix_PlayChannel(sfx[sndfire]);
@@ -7869,12 +7869,12 @@ void GriffonEngine::sys_initialize() {
 	_videobuffer2->create(320, 240, g_system->getScreenFormat());
 	_videobuffer3 = new Graphics::TransparentSurface;
 	_videobuffer3->create(320, 240, g_system->getScreenFormat());
-	mapbg = new Graphics::TransparentSurface;
-	mapbg->create(320, 240, g_system->getScreenFormat());
-	clipbg = new Graphics::TransparentSurface;
-	clipbg->create(320, 240, g_system->getScreenFormat());
-	clipbg2 = new Graphics::TransparentSurface;
-	clipbg2->create(320, 240, g_system->getScreenFormat());
+	_mapbg = new Graphics::TransparentSurface;
+	_mapbg->create(320, 240, g_system->getScreenFormat());
+	_clipbg = new Graphics::TransparentSurface;
+	_clipbg->create(320, 240, g_system->getScreenFormat());
+	_clipbg2 = new Graphics::TransparentSurface;
+	_clipbg2->create(320, 240, g_system->getScreenFormat());
 
 	for (int i = 0; i <= 3; i++) {
 		char name[128];
@@ -8204,19 +8204,19 @@ void GriffonEngine::sys_setupAudio() {
 	rcDest.setHeight(8);
 
 	if (menabled) {
-		mboss = Mix_LoadWAV("music/boss.ogg");
+		_mboss = Mix_LoadWAV("music/boss.ogg");
 		sys_progress(1, 21);
-		mgardens = Mix_LoadWAV("music/gardens.ogg");
+		_mgardens = Mix_LoadWAV("music/gardens.ogg");
 		sys_progress(2, 21);
-		mgardens2 = Mix_LoadWAV("music/gardens2.ogg");
+		_mgardens2 = Mix_LoadWAV("music/gardens2.ogg");
 		sys_progress(3, 21);
-		mgardens3 = Mix_LoadWAV("music/gardens3.ogg");
+		_mgardens3 = Mix_LoadWAV("music/gardens3.ogg");
 		sys_progress(4, 21);
-		mgardens4 = Mix_LoadWAV("music/gardens4.ogg");
+		_mgardens4 = Mix_LoadWAV("music/gardens4.ogg");
 		sys_progress(5, 21);
-		mendofgame = Mix_LoadWAV("music/endofgame.ogg");
+		_mendofgame = Mix_LoadWAV("music/endofgame.ogg");
 		sys_progress(6, 21);
-		mmenu = Mix_LoadWAV("music/menu.ogg");
+		_mmenu = Mix_LoadWAV("music/menu.ogg");
 		sys_progress(7, 21);
 
 		sfx[0] = Mix_LoadWAV("sfx/bite.ogg");
@@ -8291,7 +8291,7 @@ void GriffonEngine::sys_update() {
 
 				int sx = (int)(player.px / 2 + 6);
 				int sy = (int)(player.py / 2 + 10);
-				uint32 *temp = (uint32 *)clipbg->getBasePtr(sx, sy);
+				uint32 *temp = (uint32 *)_clipbg->getBasePtr(sx, sy);
 				uint32 bgc = *temp;
 				if (bgc > 0) {
 					player.px = opx;
@@ -8346,7 +8346,7 @@ void GriffonEngine::sys_update() {
 		}
 	}
 
-	clipbg->copyRectToSurface(clipbg2->getPixels(), clipbg2->pitch, 0, 0, clipbg2->w, clipbg2->h);
+	_clipbg->copyRectToSurface(_clipbg2->getPixels(), _clipbg2->pitch, 0, 0, _clipbg2->w, _clipbg2->h);
 
 	Common::Rect rc;
 
@@ -8355,7 +8355,7 @@ void GriffonEngine::sys_update() {
 	rc.setWidth(5);
 	rc.setHeight(5);
 
-	clipbg->fillRect(rc, 1000);
+	_clipbg->fillRect(rc, 1000);
 
 	if (!forcepause) {
 		for (int i = 0; i < 5; i++) {
