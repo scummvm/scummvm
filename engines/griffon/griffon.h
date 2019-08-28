@@ -56,11 +56,11 @@ class Console;
 #define kMaxSpell    32
 
 // spells
-#define ice     0
-#define steel       1
-#define wood        2
-#define rock        3
-#define fire        4
+#define kSpellIce     0
+#define kSpellSteel   1
+#define kSpellWood    2
+#define kSpellRock    3
+#define kSpellFire    4
 
 // inventory items
 #define INV_FLASK   0
@@ -322,19 +322,19 @@ private:
 	// system
 	Graphics::TransparentSurface *_titleimg, *_titleimg2, *_inventoryimg;
 	Graphics::TransparentSurface *_logosimg, *_theendimg;
-	Common::Event event;
+	Common::Event _event;
 
 	Graphics::TransparentSurface *_mapbg, *_clipbg, *_clipbg2;
 	unsigned int _clipsurround[4][4];
 	int fullscreen;
 
-	float animspd; // CHECKME: it seems to always be 0.5
-	int rampdata[40][24];
+	float _animspd; // CHECKME: it seems to always be 0.5
+	int _rampdata[40][24];
 
-	int curmap;
-	Graphics::TransparentSurface *fontchr[224][5]; // 256 - 32
-	Graphics::TransparentSurface *itemimg[21], *windowimg;
-	Graphics::TransparentSurface *spellimg;
+	int _curmap;
+	Graphics::TransparentSurface *_fontchr[224][5]; // 256 - 32
+	Graphics::TransparentSurface *_itemimg[21], *_windowimg;
+	Graphics::TransparentSurface *_spellimg;
 
 	int itemselon, curitem, itemticks;
 	float itemyloc;
@@ -373,9 +373,9 @@ private:
 
 	// player info
 	int movingup, movingdown, movingleft, movingright;
-	PLAYERTYPE player;
+	PLAYERTYPE _player;
 	bool attacking;
-	PLAYERTYPE playera;
+	PLAYERTYPE _playera;
 	int asecstart;
 
 	// tile info
@@ -387,7 +387,7 @@ private:
 	// id number 0&1 = players
 	Graphics::TransparentSurface *animsa[100];
 	// attack anims
-	float playerattackofs[4][16][3];
+	float _playerattackofs[4][16][3];
 	// [dir] [frame] [x,y ofs, completed(0/1)]
 
 	float floattext[kMaxFloat][4]; // [id] [framesleft, x, y, col]
