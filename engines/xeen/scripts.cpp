@@ -1926,6 +1926,8 @@ void Scripts::display(bool justifyFlag, int var46) {
 
 	if (!justifyFlag)
 		_displayMessage = Common::String::format("\r\x3""c%s", _message.c_str());
+	else
+		_displayMessage = _message;
 
 	if (!w._enabled)
 		w.open();
