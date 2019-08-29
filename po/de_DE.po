@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2019-08-24 10:37+0200\n"
-"PO-Revision-Date: 2019-08-29 19:12+0000\n"
+"PO-Revision-Date: 2019-08-29 23:38+0000\n"
 "Last-Translator: Lothar Serra Mari <serra@scummvm.org>\n"
 "Language-Team: German <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/de/>\n"
@@ -1002,7 +1002,8 @@ msgstr "SoundFont:"
 #: gui/options.cpp:1186 gui/options.cpp:1188 gui/options.cpp:1189
 msgid "SoundFont is supported by some audio cards, FluidSynth and Timidity"
 msgstr ""
-"SoundFont wird von einigen Soundkarten, FluidSynth und Timidity unterstützt"
+"SoundFonts werden von einigen Soundkarten, FluidSynth und Timidity "
+"unterstützt"
 
 #: gui/options.cpp:1188
 msgctxt "lowres"
