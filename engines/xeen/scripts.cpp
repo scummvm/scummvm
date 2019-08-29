@@ -1374,7 +1374,7 @@ bool Scripts::cmdDisplayBottomTwoLines(ParamsIterator &params) {
 bool Scripts::cmdDisplayLarge(ParamsIterator &params) {
 	Party &party = *g_vm->_party;
 	Common::String filename = Common::String::format("aaze2%03u.txt", party._mazeId);
-	uint offset = params.readByte();
+	uint lineNumber = params.readByte();
 
 	// Get the text data for the current maze
 	File f(filename);
@@ -1382,8 +1382,11 @@ bool Scripts::cmdDisplayLarge(ParamsIterator &params) {
 	f.read(data, f.size());
 	f.close();
 
-	// Get the message at the specified offset
-	_message = Common::String(data + offset);
+	// Get the message at the specified line
+	const char *lineP = data;
+	for (uint idx = 0; idx < lineNumber; ++idx, lineP += strlen(lineP) + 1) {}
+
+	_message = Common::String(lineP);
 	delete[] data;
 
 	// Display the message
