@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2019-08-24 10:37+0200\n"
-"PO-Revision-Date: 2019-08-24 08:37+0000\n"
+"PO-Revision-Date: 2019-08-29 19:12+0000\n"
 "Last-Translator: Lothar Serra Mari <serra@scummvm.org>\n"
 "Language-Team: German <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/de/>\n"
@@ -110,7 +110,7 @@ msgstr "Download abbrechen"
 #: gui/downloaddialog.cpp:66
 msgctxt "lowres"
 msgid "Cancel download"
-msgstr "Download abbr."
+msgstr "Abbrechen"
 
 #: gui/downloaddialog.cpp:68
 msgid "Hide"
@@ -311,7 +311,7 @@ msgstr "Lautstärke"
 #: gui/editgamedialog.cpp:219 gui/options.cpp:1582
 msgctxt "lowres"
 msgid "Volume"
-msgstr "Lautst."
+msgstr "Lautstärke"
 
 #: gui/editgamedialog.cpp:222
 msgid "Override global volume settings"
@@ -678,7 +678,7 @@ msgstr "~H~inzufügen..."
 #: gui/launcher.cpp:163
 msgctxt "lowres"
 msgid "~E~dit Game..."
-msgstr "Spielo~p~tion"
+msgstr "Spielo~p~tionen..."
 
 #: gui/launcher.cpp:165
 msgctxt "lowres"
@@ -1946,7 +1946,7 @@ msgstr "Hercules-Grün"
 #: common/rendermode.cpp:74
 msgctxt "lowres"
 msgid "Hercules Amber"
-msgstr "Hercules-Bernst."
+msgstr "Hercules-Bernstein"
 
 #: common/updates.cpp:58
 msgid "Daily"
@@ -2195,7 +2195,7 @@ msgstr "OPL2LPT"
 
 #: audio/fmopl.cpp:84
 msgid "OPL3LPT"
-msgstr ""
+msgstr "OPL3LPT"
 
 #: audio/mididrv.cpp:209
 #, c-format
