@@ -247,9 +247,9 @@ EventColumns *Scene::queueCredits(int delta_time, int duration, int n_credits, c
 	Event event;
 	EventColumns *eventColumns = NULL;
 
-	textEntry.knownColor = kKnownColorSubtitleTextColor;
-	textEntry.effectKnownColor = kKnownColorTransparent;
-	textEntry.flags = (FontEffectFlags)(kFontOutline | kFontCentered);
+	textEntry.knownColor = (_vm->getPlatform() == Common::kPlatformPC98) ? kKnownColorBrightWhite : kKnownColorSubtitleTextColor;
+	textEntry.effectKnownColor = (_vm->getPlatform() == Common::kPlatformPC98) ? kKnownColorVerbTextShadow : kKnownColorTransparent;
+	textEntry.flags = (FontEffectFlags)(((_vm->getPlatform() == Common::kPlatformPC98) ? kFontShadow : kFontOutline) | kFontCentered);
 	textEntry.point.x = 160;
 
 	for (i = 0; i < n_credits; i++) {
