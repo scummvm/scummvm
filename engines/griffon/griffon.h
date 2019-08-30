@@ -315,7 +315,7 @@ private:
 
 	void Mix_Volume(int channel, int volume);
 	int Mix_getHandle();
-	int Mix_PlayChannel(DataChunk *chunk, bool looped = false);
+	int playSound(DataChunk *chunk, bool looped = false);
 	void Mix_Pause(int channel);
 	void Mix_HaltChannel(int channel);
 	void Mix_Resume(int channel);
