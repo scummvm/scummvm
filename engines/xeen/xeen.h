@@ -205,6 +205,13 @@ public:
 	Common::Platform getPlatform() const;
 	uint16 getVersion() const;
 	uint32 getGameID() const;
+
+	/**
+	 * Returns the game Id, but with a reuslt of Clouds or Dark Side for World of Xeen,
+	 * depending on which side the player is currently on
+	 */
+	uint32 getSpecificGameId() const;
+
 	uint32 getGameFeatures() const;
 	bool getIsCD() const;
 

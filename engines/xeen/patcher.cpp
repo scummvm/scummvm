@@ -49,7 +49,7 @@ const byte DS_MAP116[] = { 9, 10, 6, 4, 2, OP_TakeOrGive, 0, 0, 103, 127 };
 const byte DS_MAP62_PIT1[] = { 9, 11, 8, DIR_ALL, 4, OP_FallToMap, 61, 11, 8, 0 };
 const byte DS_MAP62_PIT2[] = { 9, 7, 4, DIR_ALL, 4, OP_FallToMap, 61, 7, 4, 0 };
 
-#define SCRIPT_PATCHES_COUNT 6
+#define SCRIPT_PATCHES_COUNT 5
 static const ScriptEntry SCRIPT_PATCHES[] = {
 	{ GType_DarkSide, 54, DS_MAP54_LINE8 },	// Fix curtain on level 2 of Ellinger's Tower
 	{ GType_Swords, 53, SW_MAP53_LINE8 },	// Fix chest in Hart having gems, but saying "Nothing Here"
@@ -81,13 +81,10 @@ void Patcher::patch() {
 }
 
 void Patcher::patchScripts() {
-	FileManager &files = *g_vm->_files;
 	Map &map = *g_vm->_map;
 	Party &party = *g_vm->_party;
 
-	uint gameId = g_vm->getGameID();
-	if (gameId == GType_WorldOfXeen)
-		gameId = files._ccNum ? GType_DarkSide : GType_Clouds;
+	uint gameId = g_vm->getSpecificGameId();
 
 	for (int patchIdx = 0; patchIdx < SCRIPT_PATCHES_COUNT; ++patchIdx) {
 		const ScriptEntry &se = SCRIPT_PATCHES[patchIdx];
@@ -114,14 +111,11 @@ void Patcher::patchScripts() {
 }
 
 void Patcher::patchObjects() {
-	FileManager &files = *g_vm->_files;
 	Map &map = *g_vm->_map;
 	Party &party = *g_vm->_party;
 	const MazeData *mapData = map.mazeDataSurrounding();
 
-	int gameId = g_vm->getGameID();
-	if (gameId == GType_WorldOfXeen)
-		gameId = files._ccNum ? GType_DarkSide : GType_Clouds;
+	int gameId = g_vm->getSpecificGameId();
 
 	for (int roCtr = 0; roCtr < REMOVE_OBJECTS_COUNT; ++roCtr) {
 		const ObjectEntry &oe = REMOVE_OBJECTS[roCtr];

@@ -45,6 +45,14 @@ uint32 XeenEngine::getGameID() const {
 	return _gameDescription->gameID;
 }
 
+uint32 XeenEngine::getSpecificGameId() const {
+	uint gameId = g_vm->getGameID();
+	if (gameId == GType_WorldOfXeen)
+		gameId = _files->_ccNum ? GType_DarkSide : GType_Clouds;
+
+	return gameId;
+}
+
 uint32 XeenEngine::getGameFeatures() const {
 	return _gameDescription->features;
 }
