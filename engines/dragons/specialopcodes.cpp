@@ -30,8 +30,10 @@
 #include "dragons/specialopcodes.h"
 #include "dragons/scene.h"
 #include "dragons/actor.h"
+#include "dragons/minigame1.h"
 #include "talk.h"
 #include "specialopcodes.h"
+#include "minigame1.h"
 
 
 namespace Dragons {
@@ -65,7 +67,7 @@ void SpecialOpcodes::initOpcodes() {
 		_opcodes[i] = 0;
 	}
 	// Register opcodes
-	// OPCODE(1, opUnk1);
+	OPCODE(1, spcCatapultMiniGame);
 	OPCODE(3, spcClearEngineFlag10);
 	OPCODE(4, spcSetEngineFlag10);
 
@@ -140,6 +142,11 @@ void SpecialOpcodes::freeOpcodes() {
 }
 
 // Opcodes
+
+void SpecialOpcodes::spcCatapultMiniGame() {
+	Minigame1 minigame1(_vm);
+	minigame1.run();
+}
 
 void SpecialOpcodes::spcClearEngineFlag10() {
 	_vm->clearFlags(Dragons::ENGINE_FLAG_10);

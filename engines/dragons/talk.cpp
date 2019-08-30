@@ -1097,4 +1097,9 @@ void Talk::clearDialogEntries() {
 	_dialogEntries.clear();
 }
 
+void Talk::FUN_8001a7c4_clearDialogBoxMaybe() {
+	FUN_8001a7c4((uint)DAT_8008e7e8_dialogBox_x1,(uint)DAT_8008e844_dialogBox_y1,
+			(uint)DAT_8008e848_dialogBox_x2,(uint)DAT_8008e874_dialogBox_y2);
+}
+
 } // End of namespace Dragons

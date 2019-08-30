@@ -18,6 +18,7 @@ MODULE_OBJS := \
 	dragons.o \
 	font.o \
 	inventory.o \
+	minigame1.o \
 	saveload.o \
 	scene.o \
 	screen.o \
