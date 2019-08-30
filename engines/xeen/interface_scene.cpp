@@ -420,6 +420,9 @@ void InterfaceScene::drawScene() {
 	// limits as specified by the map's _animationInfo listing
 	for (uint idx = 0; idx < map._mobData._objects.size(); ++idx) {
 		MazeObject &mazeObject = map._mobData._objects[idx];
+		if (mazeObject._spriteId == -1)
+			continue;
+
 		AnimationEntry &animEntry = map._animationInfo[mazeObject._spriteId];
 		int directionIndex = Res.DIRECTION_ANIM_POSITIONS[mazeObject._direction][partyDirection];
 
