@@ -47,7 +47,6 @@ void PartyDialog::execute() {
 	EventsManager &events = *_vm->_events;
 	FileManager &files = *_vm->_files;
 	Interface &intf = *_vm->_interface;
-	Map &map = *_vm->_map;
 	Party &party = *_vm->_party;
 	Screen &screen = *_vm->_screen;
 	Sound &sound = *_vm->_sound;

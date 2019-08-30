@@ -200,10 +200,24 @@ public:
 	XeenEngine(OSystem *syst, const XeenGameDescription *gameDesc);
 	virtual ~XeenEngine();
 
+	/**
+	 * Returns the features
+	 */
 	uint32 getFeatures() const;
+
+	/**
+	 * Returns the game language
+	 */
 	Common::Language getLanguage() const;
+
+	/**
+	 * Returns the game's platform
+	 */
 	Common::Platform getPlatform() const;
-	uint16 getVersion() const;
+
+	/**
+	 * Gets the game Id
+	 */
 	uint32 getGameID() const;
 
 	/**
@@ -212,11 +226,24 @@ public:
 	 */
 	uint32 getSpecificGameId() const;
 
+	/**
+	 * Returns the game features
+	 */
 	uint32 getGameFeatures() const;
+
+	/**
+	 * Returns true if the game is the CD version
+	 */
 	bool getIsCD() const;
 
+	/**
+	 * Returns a random number
+	 */
 	int getRandomNumber(int maxNumber);
 
+	/**
+	 * Returns a random number
+	 */
 	int getRandomNumber(int minNumber, int maxNumber);
 
 	/**
