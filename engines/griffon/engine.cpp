@@ -7950,13 +7950,13 @@ void GriffonEngine::sys_line(Graphics::TransparentSurface *buffer, int x1, int y
 
 void GriffonEngine::sys_LoadAnims() {
 	_spellimg = IMG_Load("art/spells.bmp", true);
-	_anims[0] = IMG_Load("art/_anims0.bmp", true);
-	_animsa[0] = IMG_Load("art/_anims0a.bmp", true);
-	_anims[13] = IMG_Load("art/_anims0x.bmp", true);
-	_animsa[13] = IMG_Load("art/_anims0xa.bmp", true);
-	_anims[1] = IMG_Load("art/_anims1.bmp", true);
-	_animsa[1] = IMG_Load("art/_anims1a.bmp", true);
-	_anims[2] = IMG_Load("art/_anims2.bmp", true);
+	_anims[0] = IMG_Load("art/anims0.bmp", true);
+	_animsa[0] = IMG_Load("art/anims0a.bmp", true);
+	_anims[13] = IMG_Load("art/anims0x.bmp", true);
+	_animsa[13] = IMG_Load("art/anims0xa.bmp", true);
+	_anims[1] = IMG_Load("art/anims1.bmp", true);
+	_animsa[1] = IMG_Load("art/anims1a.bmp", true);
+	_anims[2] = IMG_Load("art/anims2.bmp", true);
 
 	// huge
 	_animset2[0].xofs = 8;
@@ -8001,7 +8001,7 @@ void GriffonEngine::sys_LoadAnims() {
 	_animset2[5].w = 42;
 	_animset2[5].h = 36;
 
-	_anims[9] = IMG_Load("art/_anims9.bmp", true);
+	_anims[9] = IMG_Load("art/anims9.bmp", true);
 
 	// huge
 	_animset9[0].xofs = 8;
@@ -8046,17 +8046,17 @@ void GriffonEngine::sys_LoadAnims() {
 	_animset9[5].w = 42;
 	_animset9[5].h = 36;
 
-	_anims[3] = IMG_Load("art/_anims3.bmp", true);
-	_anims[4] = IMG_Load("art/_anims4.bmp", true);
-	_anims[5] = IMG_Load("art/_anims5.bmp", true);
-	_anims[6] = IMG_Load("art/_anims6.bmp", true);
-	_anims[7] = IMG_Load("art/_anims7.bmp", true);
-	_anims[8] = IMG_Load("art/_anims8.bmp", true);
-	_anims[10] = IMG_Load("art/_anims10.bmp", true);
-	_animsa[10] = IMG_Load("art/_anims10a.bmp", true);
-	_anims[11] = IMG_Load("art/_anims11.bmp", true);
-	_animsa[11] = IMG_Load("art/_anims11a.bmp", true);
-	_anims[12] = IMG_Load("art/_anims12.bmp", true);
+	_anims[3] = IMG_Load("art/anims3.bmp", true);
+	_anims[4] = IMG_Load("art/anims4.bmp", true);
+	_anims[5] = IMG_Load("art/anims5.bmp", true);
+	_anims[6] = IMG_Load("art/anims6.bmp", true);
+	_anims[7] = IMG_Load("art/anims7.bmp", true);
+	_anims[8] = IMG_Load("art/anims8.bmp", true);
+	_anims[10] = IMG_Load("art/anims10.bmp", true);
+	_animsa[10] = IMG_Load("art/anims10a.bmp", true);
+	_anims[11] = IMG_Load("art/anims11.bmp", true);
+	_animsa[11] = IMG_Load("art/anims11a.bmp", true);
+	_anims[12] = IMG_Load("art/anims12.bmp", true);
 }
 
 void GriffonEngine::sys_LoadItemImgs() {
@@ -8115,7 +8115,7 @@ void GriffonEngine::sys_LoadTiles() {
 
 void GriffonEngine::sys_LoadTriggers() {
 	Common::File file;
-	file.open("data/_triggers.dat");
+	file.open("data/triggers.dat");
 
 	for (int i = 0; i <= 9999; i++) {
 		for (int a = 0; a <= 8; a++) {
@@ -8221,35 +8221,35 @@ void GriffonEngine::sys_setupAudio() {
 		_mmenu = Mix_LoadWAV("music/menu.ogg");
 		sys_progress(7, 21);
 
-		_sfx[0] = Mix_LoadWAV("_sfx/bite.ogg");
+		_sfx[0] = Mix_LoadWAV("sfx/bite.ogg");
 		sys_progress(8, 21);
-		_sfx[1] = Mix_LoadWAV("_sfx/crystal.ogg");
+		_sfx[1] = Mix_LoadWAV("sfx/crystal.ogg");
 		sys_progress(9, 21);
-		_sfx[2] = Mix_LoadWAV("_sfx/door.ogg");
+		_sfx[2] = Mix_LoadWAV("sfx/door.ogg");
 		sys_progress(10, 21);
-		_sfx[3] = Mix_LoadWAV("_sfx/enemyhit.ogg");
+		_sfx[3] = Mix_LoadWAV("sfx/enemyhit.ogg");
 		sys_progress(11, 21);
-		_sfx[4] = Mix_LoadWAV("_sfx/ice.ogg");
+		_sfx[4] = Mix_LoadWAV("sfx/ice.ogg");
 		sys_progress(12, 21);
-		_sfx[5] = Mix_LoadWAV("_sfx/lever.ogg");
+		_sfx[5] = Mix_LoadWAV("sfx/lever.ogg");
 		sys_progress(13, 21);
-		_sfx[6] = Mix_LoadWAV("_sfx/lightning.ogg");
+		_sfx[6] = Mix_LoadWAV("sfx/lightning.ogg");
 		sys_progress(14, 21);
-		_sfx[7] = Mix_LoadWAV("_sfx/metalhit.ogg");
+		_sfx[7] = Mix_LoadWAV("sfx/metalhit.ogg");
 		sys_progress(15, 21);
-		_sfx[8] = Mix_LoadWAV("_sfx/powerup.ogg");
+		_sfx[8] = Mix_LoadWAV("sfx/powerup.ogg");
 		sys_progress(16, 21);
-		_sfx[9] = Mix_LoadWAV("_sfx/rocks.ogg");
+		_sfx[9] = Mix_LoadWAV("sfx/rocks.ogg");
 		sys_progress(17, 21);
-		_sfx[10] = Mix_LoadWAV("_sfx/swordhit.ogg");
+		_sfx[10] = Mix_LoadWAV("sfx/swordhit.ogg");
 		sys_progress(18, 21);
-		_sfx[11] = Mix_LoadWAV("_sfx/throw.ogg");
+		_sfx[11] = Mix_LoadWAV("sfx/throw.ogg");
 		sys_progress(19, 21);
-		_sfx[12] = Mix_LoadWAV("_sfx/chest.ogg");
+		_sfx[12] = Mix_LoadWAV("sfx/chest.ogg");
 		sys_progress(20, 21);
-		_sfx[13] = Mix_LoadWAV("_sfx/fire.ogg");
+		_sfx[13] = Mix_LoadWAV("sfx/fire.ogg");
 		sys_progress(21, 21);
-		_sfx[14] = Mix_LoadWAV("_sfx/beep.ogg");
+		_sfx[14] = Mix_LoadWAV("sfx/beep.ogg");
 	}
 }
 
