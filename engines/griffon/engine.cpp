@@ -49,28 +49,30 @@
 
 namespace Griffon {
 
+//  in game scripts
+enum {
+	kScriptMasterKey = 2, 		// find master key
+	kScriptFindCtystal = 3,		// find crystal
+	kScriptFindShield = 4,		// find shield - obj 8
+	kScriptFindSword = 5,		// find sword - obj 9
+	kScriptKeyChest = 6,		// regular key chest
+	kScriptBlueFlask = 7,		// blue flask
+	kScriptGardenMasterKey = 8,	// garden's master key
+	kScriptLightningBomb = 9,	// lightning bomb
+	kScriptBlueFlaskChest = 10,	// blue flask chest
+	kScriptLightningChest = 11,	// lightning chest
+	kScriptArmourChest = 12,	// armour chest
+	kScriptCitadelMasterKey = 13,	// citadel master key
+	kScriptEndOfGame = 14,		// end of game
+	kScriptGetSword3 = 15,		// get sword3
+	kScriptShield3 = 16,		// shield3
+	kScriptArmour3 = 17,		// armour3
+	kScriptKeyChest1 = 20,		// key chest 1
+	kScriptLever = 60			// lever
+};
+
 // memo
 /*
- in game scripts
-   2 - find master key
-   3 - find crystal
-   4 - find shield - obj 8
-   5 - find sword - obj 9
-   6 - regular key chest
-   7 - blue flask
-   8 - garden's master key
-   9 - lightning bomb
-  10 - blue flask chest
-  11 - lightning chest
-  12 - armour chest
-  13 - citadel master key
-  14 - end of game
-  15 - get sword3
-  16 - shield3
-  17 - armour3
-  20 key chest 1
-  60-lever
-
  monsters
  1 - baby dragon
  2 - one wing
@@ -441,7 +443,7 @@ void GriffonEngine::game_attack() {
 					return;
 				}
 
-				if (oscript == 2) {
+				if (oscript == kScriptMasterKey) {
 					_player.inventory[kInvMasterKey]++;
 
 					game_addFloatIcon(14, lx * 16, (ly - 1) * 16);
@@ -449,11 +451,11 @@ void GriffonEngine::game_attack() {
 					_itemticks = _ticks + 215;
 
 					if (_curmap == 34)
-						_scriptflag[2][0] = 2;
+						_scriptflag[kScriptMasterKey][0] = 2;
 					if (_curmap == 62)
-						_scriptflag[8][0] = 2;
+						_scriptflag[kScriptGardenMasterKey][0] = 2;
 					if (_curmap == 81)
-						_scriptflag[13][0] = 2;
+						_scriptflag[kScriptCitadelMasterKey][0] = 2;
 
 					if (_menabled && config.effects) {
 						int snd = Mix_PlayChannel(_sfx[kSndPowerUp]);
@@ -466,7 +468,7 @@ void GriffonEngine::game_attack() {
 					return;
 				}
 
-				if (oscript == 3) {
+				if (oscript == kScriptFindCtystal) {
 					_player.foundspell[0] = 1;
 					_player.spellcharge[0] = 0;
 
@@ -485,7 +487,7 @@ void GriffonEngine::game_attack() {
 					return;
 				}
 
-				if (oscript == 4 && _player.shield == 1) {
+				if (oscript == kScriptFindShield && _player.shield == 1) {
 					_player.shield = 2;
 
 					game_addFloatIcon(4, lx * 16, (ly - 1) * 16);
@@ -505,7 +507,7 @@ void GriffonEngine::game_attack() {
 					return;
 				}
 
-				if (oscript == 5 && _player.sword == 1) {
+				if (oscript == kScriptFindSword && _player.sword == 1) {
 					_player.sword = 2;
 
 					game_addFloatIcon(3, lx * 16, (ly - 1) * 16);
@@ -523,7 +525,7 @@ void GriffonEngine::game_attack() {
 					return;
 				}
 
-				if (oscript == 6) {
+				if (oscript == kScriptKeyChest) {
 					if (_player.inventory[kInvNormalKey] < 9) {
 						_player.inventory[kInvNormalKey]++;
 
@@ -555,7 +557,7 @@ void GriffonEngine::game_attack() {
 					}
 				}
 
-				if (oscript == 7 && _player.inventory[kInvDoubleFlask] < 9) {
+				if (oscript == kScriptBlueFlask && _player.inventory[kInvDoubleFlask] < 9) {
 					_player.inventory[kInvDoubleFlask]++;
 					game_addFloatIcon(12, lx * 16, (ly - 1) * 16);
 
@@ -574,7 +576,7 @@ void GriffonEngine::game_attack() {
 					return;
 				}
 
-				if (oscript == 7 && _player.inventory[kInvDoubleFlask] == 9) {
+				if (oscript == kScriptBlueFlask && _player.inventory[kInvDoubleFlask] == 9) {
 					if (_menabled && config.effects) {
 						int snd = Mix_PlayChannel(_sfx[kSndChest]);
 						Mix_Volume(snd, config.effectsvol);
@@ -585,7 +587,7 @@ void GriffonEngine::game_attack() {
 					return;
 				}
 
-				if (oscript == 10 && _player.inventory[kInvDoubleFlask] < 9) {
+				if (oscript == kScriptBlueFlaskChest && _player.inventory[kInvDoubleFlask] < 9) {
 					_player.inventory[kInvDoubleFlask]++;
 					game_addFloatIcon(12, lx * 16, (ly - 1) * 16);
 
@@ -604,7 +606,7 @@ void GriffonEngine::game_attack() {
 					return;
 				}
 
-				if (oscript == 10 && _player.inventory[kInvDoubleFlask] == 9) {
+				if (oscript == kScriptBlueFlaskChest && _player.inventory[kInvDoubleFlask] == 9) {
 					if (_menabled && config.effects) {
 						int snd = Mix_PlayChannel(_sfx[kSndChest]);
 						Mix_Volume(snd, config.effectsvol);
@@ -615,7 +617,7 @@ void GriffonEngine::game_attack() {
 					return;
 				}
 
-				if (oscript == 11 && _player.inventory[kInvShock] < 9) {
+				if (oscript == kScriptLightningChest && _player.inventory[kInvShock] < 9) {
 					_player.inventory[kInvShock]++;
 					game_addFloatIcon(17, lx * 16, (ly - 1) * 16);
 
@@ -634,7 +636,7 @@ void GriffonEngine::game_attack() {
 					return;
 				}
 
-				if (oscript == 11 && _player.inventory[kInvShock] == 9) {
+				if (oscript == kScriptLightningChest && _player.inventory[kInvShock] == 9) {
 					if (_menabled && config.effects) {
 						int snd = Mix_PlayChannel(_sfx[kSndChest]);
 						Mix_Volume(snd, config.effectsvol);
@@ -645,7 +647,7 @@ void GriffonEngine::game_attack() {
 					return;
 				}
 
-				if (oscript == 12 && _player.armour == 1) {
+				if (oscript == kScriptArmourChest && _player.armour == 1) {
 					_player.armour = 2;
 
 					game_addFloatIcon(5, lx * 16, (ly - 1) * 16);
@@ -663,16 +665,16 @@ void GriffonEngine::game_attack() {
 					return;
 				}
 
-				if (oscript == 60) {
-					if (_curmap == 58 && _scriptflag[60][0] == 0) {
-						_scriptflag[60][0] = 1;
+				if (oscript == kScriptLever) {
+					if (_curmap == 58 && _scriptflag[kScriptLever][0] == 0) {
+						_scriptflag[kScriptLever][0] = 1;
 
 						if (_menabled && config.effects) {
 							int snd = Mix_PlayChannel(_sfx[kSndLever]);
 							Mix_Volume(snd, config.effectsvol);
 						}
 
-					} else if (_curmap == 58 && _scriptflag[60][0] > 0) {
+					} else if (_curmap == 58 && _scriptflag[kScriptLever][0] > 0) {
 						if (_menabled && config.effects) {
 							int snd = Mix_PlayChannel(_sfx[kSndDoor]);
 							Mix_Volume(snd, config.effectsvol);
@@ -681,14 +683,14 @@ void GriffonEngine::game_attack() {
 						game_eventtext("It's stuck!");
 					}
 
-					if (_curmap == 54 && _scriptflag[60][0] == 1) {
+					if (_curmap == 54 && _scriptflag[kScriptLever][0] == 1) {
 						if (_menabled && config.effects) {
 							int snd = Mix_PlayChannel(_sfx[kSndLever]);
 							Mix_Volume(snd, config.effectsvol);
 						}
 
-						_scriptflag[60][0] = 2;
-					} else if (_curmap == 54 && _scriptflag[60][0] > 1) {
+						_scriptflag[kScriptLever][0] = 2;
+					} else if (_curmap == 54 && _scriptflag[kScriptLever][0] > 1) {
 						if (_menabled && config.effects) {
 							int snd = Mix_PlayChannel(_sfx[kSndDoor]);
 							Mix_Volume(snd, config.effectsvol);
@@ -699,7 +701,7 @@ void GriffonEngine::game_attack() {
 
 				}
 
-				if (oscript == 15 && _player.sword < 3) {
+				if (oscript == kScriptGetSword3 && _player.sword < 3) {
 					_player.sword = 3;
 
 					game_addFloatIcon(18, lx * 16, (ly - 1) * 16);
@@ -718,7 +720,7 @@ void GriffonEngine::game_attack() {
 					return;
 				}
 
-				if (oscript == 16 && _player.shield < 3) {
+				if (oscript == kScriptShield3 && _player.shield < 3) {
 					_player.shield = 3;
 					game_addFloatIcon(19, lx * 16, (ly - 1) * 16);
 					_itemticks = _ticks + 215;
@@ -735,7 +737,7 @@ void GriffonEngine::game_attack() {
 					return;
 				}
 
-				if (oscript == 17 && _player.armour < 3) {
+				if (oscript == kScriptArmour3 && _player.armour < 3) {
 					_player.armour = 3;
 					game_addFloatIcon(20, lx * 16, (ly - 1) * 16);
 					_itemticks = _ticks + 215;
@@ -1680,7 +1682,7 @@ void GriffonEngine::game_damagenpc(int npcnum, int damage, int spell) {
 		}
 
 		// academy master key chest script
-		if (_npcinfo[npcnum].script == 2) {
+		if (_npcinfo[npcnum].script == kScriptMasterKey) {
 			bool alive = false;
 			for (int i = 1; i <= _lastnpc; i++) {
 				if (_npcinfo[i].hp > 0)
@@ -1707,12 +1709,12 @@ void GriffonEngine::game_damagenpc(int npcnum, int damage, int spell) {
 				if (lx == cx && ly == cy)
 					_player.py = _player.py + 16;
 				_clipbg2->fillRect(rcDest, _clipbg->format.RGBToColor(255, 255, 255));
-				_scriptflag[2][0] = 1;
+				_scriptflag[kScriptMasterKey][0] = 1;
 			}
 		}
 
 		// academy crystal chest script
-		if (_npcinfo[npcnum].script == 3) {
+		if (_npcinfo[npcnum].script == kScriptFindCtystal) {
 			bool alive = false;
 			for (int i = 1; i <= _lastnpc; i++) {
 				if (_npcinfo[i].hp > 0)
@@ -1738,13 +1740,13 @@ void GriffonEngine::game_damagenpc(int npcnum, int damage, int spell) {
 
 				if (lx == cx && ly == cy)
 					_player.py = _player.py + 16;
-				_scriptflag[3][0] = 1;
+				_scriptflag[kScriptFindCtystal][0] = 1;
 				_clipbg2->fillRect(rcDest, _clipbg->format.RGBToColor(255, 255, 255));
 			}
 		}
 
 		// tower shield chest script
-		if (_npcinfo[npcnum].script == 4 && _scriptflag[4][0] == 0) {
+		if (_npcinfo[npcnum].script == kScriptFindShield && _scriptflag[kScriptFindShield][0] == 0) {
 			_triggerloc[9][7] = 5004;
 
 			int curtile = 40;
@@ -1770,7 +1772,7 @@ void GriffonEngine::game_damagenpc(int npcnum, int damage, int spell) {
 		}
 
 		// firehydra sword chest
-		if (_npcinfo[npcnum].script == 5) {
+		if (_npcinfo[npcnum].script == kScriptFindSword) {
 			bool alive = false;
 			for (int i = 1; i <= _lastnpc; i++) {
 				if (_npcinfo[i].hp > 0)
@@ -1796,14 +1798,14 @@ void GriffonEngine::game_damagenpc(int npcnum, int damage, int spell) {
 
 				if (lx == cx && ly == cy)
 					_player.py = _player.py + 16;
-				_scriptflag[5][0] = 1;
+				_scriptflag[kScriptFindSword][0] = 1;
 				_clipbg2->fillRect(rcDest, _clipbg->format.RGBToColor(255, 255, 255));
 			}
 
 		}
 
 		// gardens master key script
-		if (_npcinfo[npcnum].script == 8 && _scriptflag[6][0] == 0) {
+		if (_npcinfo[npcnum].script == kScriptGardenMasterKey && _scriptflag[kScriptKeyChest][0] == 0) {
 			bool alive = false;
 			for (int i = 1; i <= _lastnpc; i++) {
 				if (_npcinfo[i].hp > 0)
@@ -1830,7 +1832,7 @@ void GriffonEngine::game_damagenpc(int npcnum, int damage, int spell) {
 				if (lx == cx && ly == cy)
 					_player.py = _player.py + 16;
 				_clipbg2->fillRect(rcDest, _clipbg->format.RGBToColor(255, 255, 255));
-				_scriptflag[8][0] = 1;
+				_scriptflag[kScriptGardenMasterKey][0] = 1;
 			}
 		}
 
@@ -1869,7 +1871,7 @@ void GriffonEngine::game_damagenpc(int npcnum, int damage, int spell) {
 		}
 
 		// pickup lightning bomb
-		if (_npcinfo[npcnum].script == 9 && (_curmap == 41 && _scriptflag[9][1] == 0)) {
+		if (_npcinfo[npcnum].script == kScriptLightningBomb && (_curmap == 41 && _scriptflag[kScriptLightningBomb][1] == 0)) {
 			bool alive = false;
 			for (int i = 1; i <= _lastnpc; i++) {
 				if (_npcinfo[i].hp > 0)
@@ -1899,7 +1901,7 @@ void GriffonEngine::game_damagenpc(int npcnum, int damage, int spell) {
 		}
 
 		// citadel armour chest
-		if (_npcinfo[npcnum].script == 12) {
+		if (_npcinfo[npcnum].script == kScriptArmourChest) {
 			bool alive = false;
 			for (int i = 1; i <= _lastnpc; i++) {
 				if (_npcinfo[i].hp > 0)
@@ -1925,13 +1927,13 @@ void GriffonEngine::game_damagenpc(int npcnum, int damage, int spell) {
 
 				if (lx == cx && ly == cy)
 					_player.py = _player.py + 16;
-				_scriptflag[12][0] = 1;
+				_scriptflag[kScriptArmourChest][0] = 1;
 				_clipbg2->fillRect(rcDest, _clipbg->format.RGBToColor(255, 255, 255));
 			}
 		}
 
 		// citadel master key script
-		if (_npcinfo[npcnum].script == 13 && _scriptflag[13][0] == 0) {
+		if (_npcinfo[npcnum].script == kScriptCitadelMasterKey && _scriptflag[kScriptCitadelMasterKey][0] == 0) {
 			bool alive = false;
 			for (int i = 1; i <= _lastnpc; i++) {
 				if (_npcinfo[i].hp > 0)
@@ -1958,12 +1960,12 @@ void GriffonEngine::game_damagenpc(int npcnum, int damage, int spell) {
 				if (lx == cx && ly == cy)
 					_player.py = _player.py + 16;
 				_clipbg2->fillRect(rcDest, _clipbg->format.RGBToColor(255, 255, 255));
-				_scriptflag[13][0] = 1;
+				_scriptflag[kScriptCitadelMasterKey][0] = 1;
 			}
 		}
 
 		// max ups
-		if (_npcinfo[npcnum].script == 15 && _scriptflag[15][0] == 0) {
+		if (_npcinfo[npcnum].script == kScriptGetSword3 && _scriptflag[kScriptGetSword3][0] == 0) {
 			bool alive = false;
 			for (int i = 1; i <= _lastnpc; i++) {
 				if (_npcinfo[i].hp > 0)
@@ -1990,7 +1992,7 @@ void GriffonEngine::game_damagenpc(int npcnum, int damage, int spell) {
 				if (lx == cx && ly == cy)
 					_player.py = _player.py + 16;
 				_clipbg2->fillRect(rcDest, _clipbg->format.RGBToColor(255, 255, 255));
-				_scriptflag[15][0] = 1;
+				_scriptflag[kScriptGetSword3][0] = 1;
 
 				cx = 9;
 				cy = 8;
@@ -2012,7 +2014,7 @@ void GriffonEngine::game_damagenpc(int npcnum, int damage, int spell) {
 					_player.py = _player.py + 16;
 				_clipbg2->fillRect(rcDest, _clipbg->format.RGBToColor(255, 255, 255));
 
-				_scriptflag[16][0] = 1;
+				_scriptflag[kScriptShield3][0] = 1;
 
 				cx = 12;
 				cy = 8;
@@ -2033,11 +2035,11 @@ void GriffonEngine::game_damagenpc(int npcnum, int damage, int spell) {
 				if (lx == cx && ly == cy)
 					_player.py = _player.py + 16;
 				_clipbg2->fillRect(rcDest, _clipbg->format.RGBToColor(255, 255, 255));
-				_scriptflag[17][0] = 1;
+				_scriptflag[kScriptArmour3][0] = 1;
 			}
 		}
 
-		if (_npcinfo[npcnum].script == 14)
+		if (_npcinfo[npcnum].script == kScriptEndOfGame)
 			game_endofgame();
 	}
 }
@@ -2082,9 +2084,9 @@ void GriffonEngine::game_drawanims(int Layer) {
 							int curtilex = c % 20;
 							int curtiley = (c - curtilex) / 20;
 
-							if (_curmap == 58 && _scriptflag[60][0] > 0)
+							if (_curmap == 58 && _scriptflag[kScriptLever][0] > 0)
 								curtilex = 1;
-							if (_curmap == 54 && _scriptflag[60][0] > 1)
+							if (_curmap == 54 && _scriptflag[kScriptLever][0] > 1)
 								curtilex = 1;
 							rcSrc.left = curtilex * 16;
 							rcSrc.top = curtiley * 16;
@@ -2496,7 +2498,7 @@ void GriffonEngine::game_drawnpcs(int mode) {
 					for (int f = 0; f <= 7; f++) {
 						int yp = 0;
 
-						if (f == 0 && (_curmap == 53 || _curmap == 57 || _curmap == 61 || _curmap == 65 || _curmap == 56 || _curmap > 66) && _scriptflag[60][0] > 0)
+						if (f == 0 && (_curmap == 53 || _curmap == 57 || _curmap == 61 || _curmap == 65 || _curmap == 56 || _curmap > 66) && _scriptflag[kScriptLever][0] > 0)
 							yp = 16;
 						int s = _npcinfo[i].bodysection[f].sprite;
 						rcSrc.left = _animset9[s].x;
@@ -3698,7 +3700,7 @@ void GriffonEngine::game_handlewalking() {
 			}
 		}
 
-		if (_objectInfo[o][5] == 9 && _player.inventory[kInvShock] < 9 && (_curmap == 41 && _scriptflag[9][1] == 0)) {
+		if (_objectInfo[o][5] == 9 && _player.inventory[kInvShock] < 9 && (_curmap == 41 && _scriptflag[kScriptLightningBomb][1] == 0)) {
 			_objectMap[lx][ly] = -1;
 
 			_player.inventory[kInvShock]++;
@@ -3706,7 +3708,7 @@ void GriffonEngine::game_handlewalking() {
 
 			_objmapf[_curmap][lx][ly] = 1;
 			if (_curmap == 41)
-				_scriptflag[9][1] = 1;
+				_scriptflag[kScriptLightningBomb][1] = 1;
 
 			if (_menabled && config.effects) {
 				int snd = Mix_PlayChannel(_sfx[kSndPowerUp]);
@@ -3772,9 +3774,9 @@ void GriffonEngine::game_loadmap(int mapnum) {
 	if (mapnum == 24)
 		dontdrawover = 1;
 
-	if ((mapnum == 53 || mapnum == 57 || mapnum == 61 || mapnum == 65 || mapnum == 62) && _scriptflag[60][0] > 0)
+	if ((mapnum == 53 || mapnum == 57 || mapnum == 61 || mapnum == 65 || mapnum == 62) && _scriptflag[kScriptLever][0] > 0)
 		mapnum = mapnum + 100;
-	if ((mapnum == 161 || mapnum == 162) && _scriptflag[60][0] == 2)
+	if ((mapnum == 161 || mapnum == 162) && _scriptflag[kScriptLever][0] == 2)
 		mapnum = mapnum + 100;
 
 	for (int i = 0; i < kMaxSpell; i++)
@@ -3836,7 +3838,7 @@ void GriffonEngine::game_loadmap(int mapnum) {
 		}
 	}
 
-	if (_scriptflag[4][0] == 1 && _curmap == 4) {
+	if (_scriptflag[kScriptFindShield][0] == 1 && _curmap == 4) {
 		_triggerloc[9][7] = 5004;
 		tempmap[9][7] = 41;
 		tempmap[9][7 + 40] = 0;
@@ -3907,7 +3909,7 @@ void GriffonEngine::game_loadmap(int mapnum) {
 		for (int y = 0; y <= 23; y++) {
 			int d = tempmap[3 * 40 + x][y];
 
-			if (_scriptflag[4][0] == 1 && x == 9 && y == 7)
+			if (_scriptflag[kScriptFindShield][0] == 1 && x == 9 && y == 7)
 				d = 99;
 
 			if (d > 0) {
@@ -4032,18 +4034,18 @@ void GriffonEngine::game_loadmap(int mapnum) {
 	}
 
 
-	if (_curmap == 62 && _scriptflag[8][0] > 0)
+	if (_curmap == 62 && _scriptflag[kScriptGardenMasterKey][0] > 0)
 		_lastnpc = 0;
-	if (_curmap == 73 && _scriptflag[12][0] > 0)
+	if (_curmap == 73 && _scriptflag[kScriptArmourChest][0] > 0)
 		_lastnpc = 0;
-	if (_curmap == 81 && _scriptflag[13][0] > 0)
+	if (_curmap == 81 && _scriptflag[kScriptCitadelMasterKey][0] > 0)
 		_lastnpc = 0;
 
-	if (_curmap == 73 && _scriptflag[12][0] == 0)
+	if (_curmap == 73 && _scriptflag[kScriptArmourChest][0] == 0)
 		_roomlock = true;
-	if (_curmap == 81 && _scriptflag[13][0] == 0)
+	if (_curmap == 81 && _scriptflag[kScriptCitadelMasterKey][0] == 0)
 		_roomlock = true;
-	if (_curmap == 83 && _scriptflag[15][0] == 0)
+	if (_curmap == 83 && _scriptflag[kScriptGetSword3][0] == 0)
 		_roomlock = true;
 	if (_curmap == 82)
 		_roomlock = true;
@@ -4277,33 +4279,33 @@ void GriffonEngine::game_loadmap(int mapnum) {
 			}
 		}
 
-		if (_npcinfo[i].script == 2) {
+		if (_npcinfo[i].script == kScriptMasterKey) {
 			_roomlock = true;
-			if (_scriptflag[2][0] > 0) {
+			if (_scriptflag[kScriptMasterKey][0] > 0) {
 				_roomlock = false;
 				_npcinfo[i].hp = 0;
 			}
 		}
 
-		if (_npcinfo[i].script == 3) {
+		if (_npcinfo[i].script == kScriptFindCtystal) {
 			_roomlock = true;
-			if (_scriptflag[3][0] > 0) {
+			if (_scriptflag[kScriptFindCtystal][0] > 0) {
 				_roomlock = false;
 				_npcinfo[i].hp = 0;
 			}
 		}
 
-		if (_npcinfo[i].script == 5) {
+		if (_npcinfo[i].script == kScriptFindSword) {
 			_roomlock = true;
-			if (_scriptflag[5][0] > 0) {
+			if (_scriptflag[kScriptFindSword][0] > 0) {
 				_roomlock = false;
 				_npcinfo[i].hp = 0;
 			}
 		}
 
-		if (_npcinfo[i].script == 15) {
+		if (_npcinfo[i].script == kScriptGetSword3) {
 			_roomlock = true;
-			if (_scriptflag[15][0] > 0) {
+			if (_scriptflag[kScriptGetSword3][0] > 0) {
 				_roomlock = false;
 				_npcinfo[i].hp = 0;
 			}
@@ -4318,7 +4320,7 @@ void GriffonEngine::game_loadmap(int mapnum) {
 	int cx, cy, npx, npy, lx, ly;
 
 	// academy master key
-	if (_curmap == 34 && _scriptflag[2][0] == 1) {
+	if (_curmap == 34 && _scriptflag[kScriptMasterKey][0] == 1) {
 		cx = 9;
 		cy = 7;
 
@@ -4342,7 +4344,7 @@ void GriffonEngine::game_loadmap(int mapnum) {
 	}
 
 	// academy crystal
-	if (_curmap == 24 && _player.foundspell[0] == 0 && _scriptflag[3][0] == 1) {
+	if (_curmap == 24 && _player.foundspell[0] == 0 && _scriptflag[kScriptFindCtystal][0] == 1) {
 		cx = 9;
 		cy = 7;
 
@@ -4366,7 +4368,7 @@ void GriffonEngine::game_loadmap(int mapnum) {
 	}
 
 	// gardens master key
-	if (_curmap == 62 && _scriptflag[8][0] == 1) {
+	if (_curmap == 62 && _scriptflag[kScriptGardenMasterKey][0] == 1) {
 		cx = 13;
 		cy = 7;
 
@@ -4390,7 +4392,7 @@ void GriffonEngine::game_loadmap(int mapnum) {
 	}
 
 	// gardens fidelis sword
-	if (_curmap == 66 && _scriptflag[5][0] == 1 && _player.sword == 1) {
+	if (_curmap == 66 && _scriptflag[kScriptFindSword][0] == 1 && _player.sword == 1) {
 		cx = 9;
 		cy = 6;
 
@@ -4414,7 +4416,7 @@ void GriffonEngine::game_loadmap(int mapnum) {
 	}
 
 	// citadel armour
-	if (_curmap == 73 && _scriptflag[12][0] == 1 && _player.armour == 1) {
+	if (_curmap == 73 && _scriptflag[kScriptArmourChest][0] == 1 && _player.armour == 1) {
 		cx = 8;
 		cy = 7;
 
@@ -4438,7 +4440,7 @@ void GriffonEngine::game_loadmap(int mapnum) {
 	}
 
 	// citadel master key
-	if (_curmap == 81 && _scriptflag[13][0] == 1) {
+	if (_curmap == 81 && _scriptflag[kScriptCitadelMasterKey][0] == 1) {
 		cx = 11;
 		cy = 10;
 
@@ -4463,7 +4465,7 @@ void GriffonEngine::game_loadmap(int mapnum) {
 
 
 	// max ups
-	if (_curmap == 83 && _scriptflag[15][0] == 1 && _player.sword < 3) {
+	if (_curmap == 83 && _scriptflag[kScriptGetSword3][0] == 1 && _player.sword < 3) {
 		cx = 6;
 		cy = 8;
 
@@ -4486,7 +4488,7 @@ void GriffonEngine::game_loadmap(int mapnum) {
 		_clipbg->fillRect(rcDest, ccc);
 	}
 
-	if (_curmap == 83 && _scriptflag[16][0] == 1 && _player.shield < 3) {
+	if (_curmap == 83 && _scriptflag[kScriptShield3][0] == 1 && _player.shield < 3) {
 		cx = 9;
 		cy = 8;
 
@@ -4509,7 +4511,7 @@ void GriffonEngine::game_loadmap(int mapnum) {
 		_clipbg->fillRect(rcDest, ccc);
 	}
 
-	if (_curmap == 83 && _scriptflag[17][0] == 1 && _player.armour < 3) {
+	if (_curmap == 83 && _scriptflag[kScriptArmour3][0] == 1 && _player.armour < 3) {
 		cx = 12;
 		cy = 8;
 
