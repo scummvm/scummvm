@@ -194,6 +194,7 @@ public:
 	void updateActorSequences();
 	void setFlags(uint32 flags);
 	void clearFlags(uint32 flags);
+	uint32 getMultipleFlags(uint32 flags);
 	bool isFlagSet(uint32 flag);
 	bool isUnkFlagSet(uint32 flag);
 
@@ -229,6 +230,9 @@ public:
 	void setSceneUpdateFunction(void (*newUpdateFunction)());
 	void (*getSceneUpdateFunction())();
 
+	bool isActionButtonPressed();
+	bool isLeftKeyPressed();
+	bool isRightKeyPressed();
 	bool checkForActionButtonRelease();
 	bool checkForDownKeyRelease();
 	bool checkForUpKeyRelease();

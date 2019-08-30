@@ -693,6 +693,9 @@ void DragonsEngine::clearFlags(uint32 flags) {
 	_flags &= ~flags;
 }
 
+uint32 DragonsEngine::getMultipleFlags(uint32 flags) {
+	return _flags & flags;
+}
 void DragonsEngine::setUnkFlags(uint32 flags) {
 	_unkFlags1 |= flags;
 }
@@ -1034,6 +1037,21 @@ bool DragonsEngine::checkForInventoryButtonRelease() {
 
 bool DragonsEngine::isInputEnabled() {
 	return !isFlagSet(ENGINE_FLAG_20000000) && !isFlagSet(ENGINE_FLAG_400);
+}
+
+bool DragonsEngine::isActionButtonPressed() {
+	//TODO
+	return false;
+}
+
+bool DragonsEngine::isLeftKeyPressed() {
+	//TODO
+	return false;
+}
+
+bool DragonsEngine::isRightKeyPressed() {
+	//TODO
+	return false;
 }
 
 bool DragonsEngine::checkForActionButtonRelease() {

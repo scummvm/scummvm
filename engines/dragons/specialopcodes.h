@@ -66,6 +66,7 @@ protected:
 	void freeOpcodes();
 
 	// Opcodes
+	void spcCatapultMiniGame(); // 1
 	void spcClearEngineFlag10(); // 3
 	void spcSetEngineFlag10();   // 4
 
