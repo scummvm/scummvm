@@ -59,6 +59,7 @@ Character::Character(const Character &src) : _weapons(this), _armor(this), _acce
 }
 
 void Character::clear() {
+	_name = "";
 	_sex = MALE;
 	_race = HUMAN;
 	_xeenSide = 0;
