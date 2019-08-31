@@ -114,7 +114,7 @@ private:
 #endif
 
 	/** Default value, returned by the const getVal. */
-	const Val _defaultVal;
+	Val _defaultVal;
 
 	Node **_storage;	///< hashtable of size arrsize.
 	size_type _mask;		///< Capacity of the HashMap minus one; must be a power of two of minus one
