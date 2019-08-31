@@ -419,7 +419,7 @@ void GriffonEngine::game_attack() {
 
 					_objmapf[_curmap][lx][ly - 1] = 1;
 
-					if (_menabled && config.effects) {
+					if (config.effects) {
 						int snd = playSound(_sfx[kSndPowerUp]);
 						Mix_Volume(snd, config.effectsvol);
 					}
@@ -433,7 +433,7 @@ void GriffonEngine::game_attack() {
 				}
 
 				if (oscript == 0 && _player.inventory[kInvFlask] == 9) {
-					if (_menabled && config.effects) {
+					if (config.effects) {
 						int snd = playSound(_sfx[kSndChest]);
 						Mix_Volume(snd, config.effectsvol);
 					}
@@ -457,7 +457,7 @@ void GriffonEngine::game_attack() {
 					if (_curmap == 81)
 						_scriptflag[kScriptCitadelMasterKey][0] = 2;
 
-					if (_menabled && config.effects) {
+					if (config.effects) {
 						int snd = playSound(_sfx[kSndPowerUp]);
 						Mix_Volume(snd, config.effectsvol);
 					}
@@ -474,7 +474,7 @@ void GriffonEngine::game_attack() {
 
 					game_addFloatIcon(7, lx * 16, (ly - 1) * 16);
 
-					if (_menabled && config.effects) {
+					if (config.effects) {
 						int snd = playSound(_sfx[kSndPowerUp]);
 						Mix_Volume(snd, config.effectsvol);
 					}
@@ -494,7 +494,7 @@ void GriffonEngine::game_attack() {
 
 					_itemticks = _ticks + 215;
 
-					if (_menabled && config.effects) {
+					if (config.effects) {
 						int snd = playSound(_sfx[kSndPowerUp]);
 						Mix_Volume(snd, config.effectsvol);
 					}
@@ -514,7 +514,7 @@ void GriffonEngine::game_attack() {
 
 					_itemticks = _ticks + 215;
 
-					if (_menabled && config.effects) {
+					if (config.effects) {
 						int snd = playSound(_sfx[kSndPowerUp]);
 						Mix_Volume(snd, config.effectsvol);
 					}
@@ -535,7 +535,7 @@ void GriffonEngine::game_attack() {
 							}
 						}
 
-						if (_menabled && config.effects) {
+						if (config.effects) {
 							int snd = playSound(_sfx[kSndPowerUp]);
 							Mix_Volume(snd, config.effectsvol);
 						}
@@ -548,7 +548,7 @@ void GriffonEngine::game_attack() {
 						game_eventtext("Found Key");
 						game_addFloatIcon(16, lx * 16, (ly - 1) * 16);
 					} else {
-						if (_menabled && config.effects) {
+						if (config.effects) {
 							int snd = playSound(_sfx[kSndChest]);
 							Mix_Volume(snd, config.effectsvol);
 						}
@@ -563,7 +563,7 @@ void GriffonEngine::game_attack() {
 
 					_objmapf[_curmap][lx][ly - 1] = 1;
 
-					if (_menabled && config.effects) {
+					if (config.effects) {
 						int snd = playSound(_sfx[kSndPowerUp]);
 						Mix_Volume(snd, config.effectsvol);
 					}
@@ -577,7 +577,7 @@ void GriffonEngine::game_attack() {
 				}
 
 				if (oscript == kScriptBlueFlask && _player.inventory[kInvDoubleFlask] == 9) {
-					if (_menabled && config.effects) {
+					if (config.effects) {
 						int snd = playSound(_sfx[kSndChest]);
 						Mix_Volume(snd, config.effectsvol);
 					}
@@ -593,7 +593,7 @@ void GriffonEngine::game_attack() {
 
 					_objmapf[_curmap][lx][ly - 1] = 1;
 
-					if (_menabled && config.effects) {
+					if (config.effects) {
 						int snd = playSound(_sfx[kSndPowerUp]);
 						Mix_Volume(snd, config.effectsvol);
 					}
@@ -607,7 +607,7 @@ void GriffonEngine::game_attack() {
 				}
 
 				if (oscript == kScriptBlueFlaskChest && _player.inventory[kInvDoubleFlask] == 9) {
-					if (_menabled && config.effects) {
+					if (config.effects) {
 						int snd = playSound(_sfx[kSndChest]);
 						Mix_Volume(snd, config.effectsvol);
 					}
@@ -623,7 +623,7 @@ void GriffonEngine::game_attack() {
 
 					_objmapf[_curmap][lx][ly - 1] = 1;
 
-					if (_menabled && config.effects) {
+					if (config.effects) {
 						int snd = playSound(_sfx[kSndPowerUp]);
 						Mix_Volume(snd, config.effectsvol);
 					}
@@ -637,7 +637,7 @@ void GriffonEngine::game_attack() {
 				}
 
 				if (oscript == kScriptLightningChest && _player.inventory[kInvShock] == 9) {
-					if (_menabled && config.effects) {
+					if (config.effects) {
 						int snd = playSound(_sfx[kSndChest]);
 						Mix_Volume(snd, config.effectsvol);
 					}
@@ -652,7 +652,7 @@ void GriffonEngine::game_attack() {
 
 					game_addFloatIcon(5, lx * 16, (ly - 1) * 16);
 
-					if (_menabled && config.effects) {
+					if (config.effects) {
 						int snd = playSound(_sfx[kSndPowerUp]);
 						Mix_Volume(snd, config.effectsvol);
 					}
@@ -669,13 +669,13 @@ void GriffonEngine::game_attack() {
 					if (_curmap == 58 && _scriptflag[kScriptLever][0] == 0) {
 						_scriptflag[kScriptLever][0] = 1;
 
-						if (_menabled && config.effects) {
+						if (config.effects) {
 							int snd = playSound(_sfx[kSndLever]);
 							Mix_Volume(snd, config.effectsvol);
 						}
 
 					} else if (_curmap == 58 && _scriptflag[kScriptLever][0] > 0) {
-						if (_menabled && config.effects) {
+						if (config.effects) {
 							int snd = playSound(_sfx[kSndDoor]);
 							Mix_Volume(snd, config.effectsvol);
 						}
@@ -684,14 +684,14 @@ void GriffonEngine::game_attack() {
 					}
 
 					if (_curmap == 54 && _scriptflag[kScriptLever][0] == 1) {
-						if (_menabled && config.effects) {
+						if (config.effects) {
 							int snd = playSound(_sfx[kSndLever]);
 							Mix_Volume(snd, config.effectsvol);
 						}
 
 						_scriptflag[kScriptLever][0] = 2;
 					} else if (_curmap == 54 && _scriptflag[kScriptLever][0] > 1) {
-						if (_menabled && config.effects) {
+						if (config.effects) {
 							int snd = playSound(_sfx[kSndDoor]);
 							Mix_Volume(snd, config.effectsvol);
 						}
@@ -708,7 +708,7 @@ void GriffonEngine::game_attack() {
 
 					_itemticks = _ticks + 215;
 
-					if (_menabled && config.effects) {
+					if (config.effects) {
 						int snd = playSound(_sfx[kSndPowerUp]);
 						Mix_Volume(snd, config.effectsvol);
 					}
@@ -725,7 +725,7 @@ void GriffonEngine::game_attack() {
 					game_addFloatIcon(19, lx * 16, (ly - 1) * 16);
 					_itemticks = _ticks + 215;
 
-					if (_menabled && config.effects) {
+					if (config.effects) {
 						int snd = playSound(_sfx[kSndPowerUp]);
 						Mix_Volume(snd, config.effectsvol);
 					}
@@ -742,7 +742,7 @@ void GriffonEngine::game_attack() {
 					game_addFloatIcon(20, lx * 16, (ly - 1) * 16);
 					_itemticks = _ticks + 215;
 
-					if (_menabled && config.effects) {
+					if (config.effects) {
 						int snd = playSound(_sfx[kSndPowerUp]);
 						Mix_Volume(snd, config.effectsvol);
 					}
@@ -838,7 +838,7 @@ void GriffonEngine::game_castspell(int spellnum, float homex, float homey, float
 				spellinfo[i].nfballs = nballs;
 			}
 
-			if (_menabled && config.effects) {
+			if (config.effects) {
 				if (spellnum == 1) {
 					int snd = playSound(_sfx[kSndThrow]);
 					Mix_Volume(snd, config.effectsvol);
@@ -893,7 +893,7 @@ void GriffonEngine::game_checkhit() {
 				}
 
 				if (hit) {
-					if (_menabled && config.effects) {
+					if (config.effects) {
 						int snd = playSound(_sfx[kSndSwordHit]);
 						Mix_Volume(snd, config.effectsvol);
 					}
@@ -965,7 +965,7 @@ void GriffonEngine::game_checkinputs() {
 
 					_player.inventory[kInvFlask]--;
 
-					if (_menabled && config.effects) {
+					if (config.effects) {
 						int snd = playSound(_sfx[kSndPowerUp]);
 						Mix_Volume(snd, config.effectsvol);
 					}
@@ -991,7 +991,7 @@ void GriffonEngine::game_checkinputs() {
 
 					_player.inventory[kInvDoubleFlask]--;
 
-					if (_menabled && config.effects) {
+					if (config.effects) {
 						int snd = playSound(_sfx[kSndPowerUp]);
 						Mix_Volume(snd, config.effectsvol);
 					}
@@ -1391,7 +1391,7 @@ void GriffonEngine::game_configmenu() {
 						Mix_Volume(_musicchannel, config.musicvol);
 						Mix_Volume(_menuchannel, config.musicvol);
 
-						if (_menabled && config.effects) {
+						if (config.effects) {
 							int snd = playSound(_sfx[kSndDoor]);
 							Mix_Volume(snd, config.effectsvol);
 						}
@@ -1414,7 +1414,7 @@ void GriffonEngine::game_configmenu() {
 						Mix_Volume(_musicchannel, config.musicvol);
 						Mix_Volume(_menuchannel, config.musicvol);
 
-						if (_menabled && config.effects) {
+						if (config.effects) {
 							int snd = playSound(_sfx[kSndDoor]);
 							Mix_Volume(snd, config.effectsvol);
 						}
@@ -1435,10 +1435,8 @@ void GriffonEngine::game_configmenu() {
 				if (_event.kbd.keycode == Common::KEYCODE_RETURN) {
 					if (cursel == 7 && !config.music) {
 						config.music = true;
-						if (_menabled) {
-							_menuchannel = playSound(_mmenu, true);
-							Mix_Volume(_menuchannel, config.musicvol);
-						}
+						_menuchannel = playSound(_mmenu, true);
+						Mix_Volume(_menuchannel, config.musicvol);
 					}
 					if (cursel == 8 && config.music) {
 						config.music = false;
@@ -1447,10 +1445,8 @@ void GriffonEngine::game_configmenu() {
 					}
 					if (cursel == 9 && !config.effects) {
 						config.effects = true;
-						if (_menabled) {
-							int snd = playSound(_sfx[kSndDoor]);
-							Mix_Volume(snd, config.effectsvol);
-						}
+						int snd = playSound(_sfx[kSndDoor]);
+						Mix_Volume(snd, config.effectsvol);
 					}
 
 					if (cursel == 10 && config.effects)
@@ -2726,7 +2722,7 @@ void GriffonEngine::game_drawnpcs(int mode) {
 
 								if (_player.hp > 0) {
 									game_damageplayer(damage);
-									if (_menabled && config.effects) {
+									if (config.effects) {
 										int snd = playSound(_sfx[kSndFire]);
 										Mix_Volume(snd, config.effectsvol);
 									}
@@ -2752,7 +2748,7 @@ void GriffonEngine::game_drawnpcs(int mode) {
 
 								if (_player.hp > 0) {
 									game_damageplayer(damage);
-									if (_menabled && config.effects) {
+									if (config.effects) {
 										int snd = playSound(_sfx[kSndFire]);
 										Mix_Volume(snd, config.effectsvol);
 									}
@@ -3070,7 +3066,7 @@ void GriffonEngine::game_endofgame() {
 
 	float spd = 0.2f;
 
-	if (_menabled && config.music) {
+	if (config.music) {
 		Mix_HaltChannel(-1);
 		_musicchannel = playSound(_mendofgame, true);
 		Mix_Volume(_musicchannel, 0);
@@ -3084,16 +3080,16 @@ void GriffonEngine::game_endofgame() {
 	_videobuffer2->copyRectToSurface(_videobuffer->getPixels(), _videobuffer->pitch, 0, 0, _videobuffer->w, _videobuffer->h);
 
 	float ld = 0;
-	int ldstop = 0;
+	bool ldstop = false; // CHECKME: Check if actually used
 
 	do {
 		ld = ld + 4 * _fpsr;
 		if (ld > config.musicvol)
 			ld = config.musicvol;
-		if (_menabled && ldstop == 0) {
+		if (!ldstop) {
 			Mix_Volume(_musicchannel, (int)ld);
 			if ((int)ld == config.musicvol)
-				ldstop = 1;
+				ldstop = true;
 		}
 
 		ya = 0;
@@ -3574,7 +3570,7 @@ void GriffonEngine::game_handlewalking() {
 
 			_objmapf[_curmap][lx][ly] = 1;
 
-			if (_menabled && config.effects) {
+			if (config.effects) {
 				int snd = playSound(_sfx[kSndPowerUp]);
 				Mix_Volume(snd, config.effectsvol);
 			}
@@ -3588,7 +3584,7 @@ void GriffonEngine::game_handlewalking() {
 
 			_objmapf[_curmap][lx][ly] = 1;
 
-			if (_menabled && config.effects) {
+			if (config.effects) {
 				int snd = playSound(_sfx[kSndPowerUp]);
 				Mix_Volume(snd, config.effectsvol);
 			}
@@ -3604,7 +3600,7 @@ void GriffonEngine::game_handlewalking() {
 			if (_curmap == 41)
 				_scriptflag[kScriptLightningBomb][1] = 1;
 
-			if (_menabled && config.effects) {
+			if (config.effects) {
 				int snd = playSound(_sfx[kSndPowerUp]);
 				Mix_Volume(snd, config.effectsvol);
 			}
@@ -3619,7 +3615,7 @@ void GriffonEngine::game_handlewalking() {
 
 			_objmapf[_curmap][lx][ly] = 1;
 
-			if (_menabled && config.effects) {
+			if (config.effects) {
 				int snd = playSound(_sfx[kSndPowerUp]);
 				Mix_Volume(snd, config.effectsvol);
 			}
@@ -4456,7 +4452,7 @@ void GriffonEngine::game_newgame() {
 	_fpsr = 0.0;
 	int y = 140;
 
-	if (_menabled && config.music) {
+	if (config.music) {
 		Mix_HaltChannel(-1);
 		_musicchannel = playSound(_mendofgame, true);
 		Mix_Volume(_musicchannel, 0);
@@ -4473,7 +4469,7 @@ void GriffonEngine::game_newgame() {
 		ld += 4 * _fpsr;
 		if ((int)ld > config.musicvol)
 			ld = config.musicvol;
-		if (_menabled && !ldstop) {
+		if (!ldstop) {
 			Mix_Volume(_musicchannel, (int)ld);
 			if ((int)ld == config.musicvol)
 				ldstop = true;
@@ -4622,7 +4618,7 @@ __exit_do:
 void GriffonEngine::game_playgame() {
 	game_swash();
 
-	if (_pmenu && _menabled) {
+	if (_pmenu) {
 		Mix_HaltChannel(_menuchannel);
 		_pmenu = false;
 	}
@@ -4699,7 +4695,7 @@ void GriffonEngine::game_processtrigger(int trignum) {
 				_player.py = 0;
 
 			if (tmap > 0) {
-				if (_menabled && config.effects) {
+				if (config.effects) {
 					int snd = playSound(_sfx[kSndDoor]);
 					Mix_Volume(snd, config.effectsvol);
 				}
@@ -5229,7 +5225,7 @@ void GriffonEngine::game_title(int mode) {
 	int keypause = _ticks + 220;
 	int _ticks1 = _ticks;
 
-	if (_menabled && config.music) {
+	if (config.music) {
 		Mix_Volume(_musicchannel, 0);
 		Mix_Pause(_musicchannel);
 
@@ -5247,7 +5243,7 @@ void GriffonEngine::game_title(int mode) {
 		ld += 4.0 * _fpsr;
 		if (ld > config.musicvol)
 			ld = config.musicvol;
-		if (_menabled && !ldstop) {
+		if (!ldstop) {
 			Mix_Volume(_menuchannel, (int)ld);
 			if ((int)ld == config.musicvol)
 				ldstop = true;
@@ -5368,7 +5364,7 @@ void GriffonEngine::game_title(int mode) {
 
 	_itemticks = _ticks + 210;
 
-	if (_menabled && config.music) {
+	if (config.music) {
 		Mix_HaltChannel(_menuchannel);
 		Mix_Resume(_musicchannel);
 		Mix_Volume(_musicchannel, config.musicvol);
@@ -5434,7 +5430,7 @@ void GriffonEngine::game_updatey() {
 void GriffonEngine::game_updmusic() {
 	DataChunk *iplaysound = NULL;
 
-	if (_menabled && config.music) {
+	if (config.music) {
 
 		// if(_curmap > 5 && _curmap < 42) iplaysound = macademy;
 		// if(_curmap > 47) iplaysound = _mgardens;
@@ -5900,7 +5896,7 @@ void GriffonEngine::game_updnpcs() {
 						if (abs(xdif) < 20 && abs(ydif) < 20) {
 							_npcinfo[i].attackattempt = _ticks + 100;
 							if ((int)(RND() * 2) == 0) {
-								if (_menabled && config.effects) {
+								if (config.effects) {
 									int snd = playSound(_sfx[kSndEnemyHit]);
 									Mix_Volume(snd, config.effectsvol);
 								}
@@ -5927,7 +5923,7 @@ void GriffonEngine::game_updnpcs() {
 							float dist = sqrt(xdif * xdif + ydif * ydif);
 
 							if ((dist) < 24) {
-								if (_menabled && config.effects) {
+								if (config.effects) {
 									int snd = playSound(_sfx[kSndBite]);
 									Mix_Volume(snd, config.effectsvol);
 								}
@@ -6033,7 +6029,7 @@ void GriffonEngine::game_updnpcs() {
 									float dist = sqrt(xdif * xdif + ydif * ydif);
 
 									if ((dist) < 36) {
-										if (_menabled && config.effects) {
+										if (config.effects) {
 											int snd = playSound(_sfx[kSndBite]);
 											Mix_Volume(snd, config.effectsvol);
 										}
@@ -6213,7 +6209,7 @@ void GriffonEngine::game_updnpcs() {
 							float dist = sqrt(xdif * xdif + ydif * ydif);
 
 							if ((dist) < 24) {
-								if (_menabled && config.effects) {
+								if (config.effects) {
 									int snd = playSound(_sfx[kSndBite]);
 									Mix_Volume(snd, config.effectsvol);
 								}
@@ -6287,7 +6283,7 @@ void GriffonEngine::game_updnpcs() {
 						if (abs(xdif) < 32 && abs(ydif) < 32) {
 							_npcinfo[i].attackattempt = _ticks + 100;
 							if ((int)(RND() * 2) == 0) {
-								if (_menabled && config.effects) {
+								if (config.effects) {
 									int snd = playSound(_sfx[kSndEnemyHit]);
 									Mix_Volume(snd, config.effectsvol);
 								}
@@ -6312,7 +6308,7 @@ void GriffonEngine::game_updnpcs() {
 						if (abs(xdif) < 38 && abs(ydif) < 38) {
 							_npcinfo[i].attackattempt = _ticks + 100;
 							if ((int)(RND() * 2) == 0) {
-								if (_menabled && config.effects) {
+								if (config.effects) {
 									int snd = playSound(_sfx[kSndIce]);
 									Mix_Volume(snd, config.effectsvol);
 								}
@@ -6693,7 +6689,7 @@ void GriffonEngine::game_updspells() {
 
 										if (_npcinfo[e].hp > 0 && _npcinfo[e].pause < _ticks) {
 											game_damagenpc(e, damage, 1);
-											if (_menabled && config.effects) {
+											if (config.effects) {
 												int snd = playSound(_sfx[kSndIce]);
 												Mix_Volume(snd, config.effectsvol);
 											}
@@ -6721,7 +6717,7 @@ void GriffonEngine::game_updspells() {
 
 										game_addFloatIcon(99, postinfo[e][0], postinfo[e][1]);
 
-										if (_menabled && config.effects) {
+										if (config.effects) {
 											int snd = playSound(_sfx[kSndIce]);
 											Mix_Volume(snd, config.effectsvol);
 										}
@@ -6772,7 +6768,7 @@ void GriffonEngine::game_updspells() {
 
 							if (_npcinfo[e].hp > 0 && _npcinfo[e].pause < _ticks) {
 								game_damagenpc(e, damage, 1);
-								if (_menabled && config.effects) {
+								if (config.effects) {
 									int snd = playSound(_sfx[kSndMetalHit]);
 									Mix_Volume(snd, config.effectsvol);
 								}
@@ -6815,7 +6811,7 @@ void GriffonEngine::game_updspells() {
 
 						if (_player.hp > 0) {
 							game_damageplayer(damage);
-							if (_menabled && config.effects) {
+							if (config.effects) {
 								int snd = playSound(_sfx[kSndMetalHit]);
 								Mix_Volume(snd, config.effectsvol);
 							}
@@ -6843,7 +6839,7 @@ void GriffonEngine::game_updspells() {
 
 							game_addFloatIcon(99, postinfo[e][0], postinfo[e][1]);
 
-							if (_menabled && config.effects) {
+							if (config.effects) {
 								int snd = playSound(_sfx[kSndMetalHit]);
 								Mix_Volume(snd, config.effectsvol);
 							}
@@ -6894,7 +6890,7 @@ void GriffonEngine::game_updspells() {
 
 											if (_npcinfo[e].hp > 0 && _npcinfo[e].pause < _ticks) {
 												game_damagenpc(e, damage, 1);
-												if (_menabled && config.effects) {
+												if (config.effects) {
 													int snd = playSound(_sfx[kSndRocks]);
 													Mix_Volume(snd, config.effectsvol);
 												}
@@ -6923,7 +6919,7 @@ void GriffonEngine::game_updspells() {
 
 											game_addFloatIcon(99, postinfo[e][0], postinfo[e][1]);
 
-											if (_menabled && config.effects) {
+											if (config.effects) {
 												int snd = playSound(_sfx[kSndRocks]);
 												Mix_Volume(snd, config.effectsvol);
 											}
@@ -7122,7 +7118,7 @@ void GriffonEngine::game_updspells() {
 								if (_player.hp > 0)
 									game_damageplayer(damage);
 
-								if (_menabled && config.effects) {
+								if (config.effects) {
 									int snd = playSound(_sfx[kSndFire]);
 									Mix_Volume(snd, config.effectsvol);
 								}
@@ -7610,7 +7606,7 @@ void GriffonEngine::game_updspellsunder() {
 												damage = -damage;
 											if (_npcinfo[e].hp > 0 && _npcinfo[e].pause < _ticks) {
 												game_damagenpc(e, damage, 1);
-												if (_menabled && config.effects) {
+												if (config.effects) {
 													int snd = playSound(_sfx[kSndFire]);
 													Mix_Volume(snd, config.effectsvol);
 												}
@@ -7629,7 +7625,7 @@ void GriffonEngine::game_updspellsunder() {
 										if (_player.hp > 0) {
 											game_damageplayer(damage);
 
-											if (_menabled && config.effects) {
+											if (config.effects) {
 												int snd = playSound(_sfx[kSndFire]);
 												Mix_Volume(snd, config.effectsvol);
 											}
@@ -7654,7 +7650,7 @@ void GriffonEngine::game_updspellsunder() {
 
 											_clipbg2->fillRect(rcSrc, 0);
 
-											if (_menabled && config.effects) {
+											if (config.effects) {
 												int snd = playSound(_sfx[kSndFire]);
 												Mix_Volume(snd, config.effectsvol);
 											}
@@ -7725,7 +7721,7 @@ void GriffonEngine::game_updspellsunder() {
 
 								if (_player.hp > 0) {
 									game_damageplayer(damage);
-									if (_menabled && config.effects) {
+									if (config.effects) {
 										int snd = playSound(_sfx[kSndFire]);
 										Mix_Volume(snd, config.effectsvol);
 									}
@@ -8068,8 +8064,6 @@ void GriffonEngine::sys_progress(int w, int wm) {
 }
 
 void GriffonEngine::sys_setupAudio() {
-	_menabled = true;
-
 	// FIXME
 	//Mix_OpenAudio(22050, MIX_DEFAULT_FORMAT, 2, 1024);
 
@@ -8099,52 +8093,50 @@ void GriffonEngine::sys_setupAudio() {
 	rcDest.top = 116 + 12 + 12;
 	rcDest.setHeight(8);
 
-	if (_menabled) {
-		_mboss = Mix_LoadWAV("music/boss.ogg");
-		sys_progress(1, 21);
-		_mgardens = Mix_LoadWAV("music/gardens.ogg");
-		sys_progress(2, 21);
-		_mgardens2 = Mix_LoadWAV("music/gardens2.ogg");
-		sys_progress(3, 21);
-		_mgardens3 = Mix_LoadWAV("music/gardens3.ogg");
-		sys_progress(4, 21);
-		_mgardens4 = Mix_LoadWAV("music/gardens4.ogg");
-		sys_progress(5, 21);
-		_mendofgame = Mix_LoadWAV("music/endofgame.ogg");
-		sys_progress(6, 21);
-		_mmenu = Mix_LoadWAV("music/menu.ogg");
-		sys_progress(7, 21);
+	_mboss = Mix_LoadWAV("music/boss.ogg");
+	sys_progress(1, 21);
+	_mgardens = Mix_LoadWAV("music/gardens.ogg");
+	sys_progress(2, 21);
+	_mgardens2 = Mix_LoadWAV("music/gardens2.ogg");
+	sys_progress(3, 21);
+	_mgardens3 = Mix_LoadWAV("music/gardens3.ogg");
+	sys_progress(4, 21);
+	_mgardens4 = Mix_LoadWAV("music/gardens4.ogg");
+	sys_progress(5, 21);
+	_mendofgame = Mix_LoadWAV("music/endofgame.ogg");
+	sys_progress(6, 21);
+	_mmenu = Mix_LoadWAV("music/menu.ogg");
+	sys_progress(7, 21);
 
-		_sfx[0] = Mix_LoadWAV("sfx/bite.ogg");
-		sys_progress(8, 21);
-		_sfx[1] = Mix_LoadWAV("sfx/crystal.ogg");
-		sys_progress(9, 21);
-		_sfx[2] = Mix_LoadWAV("sfx/door.ogg");
-		sys_progress(10, 21);
-		_sfx[3] = Mix_LoadWAV("sfx/enemyhit.ogg");
-		sys_progress(11, 21);
-		_sfx[4] = Mix_LoadWAV("sfx/ice.ogg");
-		sys_progress(12, 21);
-		_sfx[5] = Mix_LoadWAV("sfx/lever.ogg");
-		sys_progress(13, 21);
-		_sfx[6] = Mix_LoadWAV("sfx/lightning.ogg");
-		sys_progress(14, 21);
-		_sfx[7] = Mix_LoadWAV("sfx/metalhit.ogg");
-		sys_progress(15, 21);
-		_sfx[8] = Mix_LoadWAV("sfx/powerup.ogg");
-		sys_progress(16, 21);
-		_sfx[9] = Mix_LoadWAV("sfx/rocks.ogg");
-		sys_progress(17, 21);
-		_sfx[10] = Mix_LoadWAV("sfx/swordhit.ogg");
-		sys_progress(18, 21);
-		_sfx[11] = Mix_LoadWAV("sfx/throw.ogg");
-		sys_progress(19, 21);
-		_sfx[12] = Mix_LoadWAV("sfx/chest.ogg");
-		sys_progress(20, 21);
-		_sfx[13] = Mix_LoadWAV("sfx/fire.ogg");
-		sys_progress(21, 21);
-		_sfx[14] = Mix_LoadWAV("sfx/beep.ogg");
-	}
+	_sfx[0] = Mix_LoadWAV("sfx/bite.ogg");
+	sys_progress(8, 21);
+	_sfx[1] = Mix_LoadWAV("sfx/crystal.ogg");
+	sys_progress(9, 21);
+	_sfx[2] = Mix_LoadWAV("sfx/door.ogg");
+	sys_progress(10, 21);
+	_sfx[3] = Mix_LoadWAV("sfx/enemyhit.ogg");
+	sys_progress(11, 21);
+	_sfx[4] = Mix_LoadWAV("sfx/ice.ogg");
+	sys_progress(12, 21);
+	_sfx[5] = Mix_LoadWAV("sfx/lever.ogg");
+	sys_progress(13, 21);
+	_sfx[6] = Mix_LoadWAV("sfx/lightning.ogg");
+	sys_progress(14, 21);
+	_sfx[7] = Mix_LoadWAV("sfx/metalhit.ogg");
+	sys_progress(15, 21);
+	_sfx[8] = Mix_LoadWAV("sfx/powerup.ogg");
+	sys_progress(16, 21);
+	_sfx[9] = Mix_LoadWAV("sfx/rocks.ogg");
+	sys_progress(17, 21);
+	_sfx[10] = Mix_LoadWAV("sfx/swordhit.ogg");
+	sys_progress(18, 21);
+	_sfx[11] = Mix_LoadWAV("sfx/throw.ogg");
+	sys_progress(19, 21);
+	_sfx[12] = Mix_LoadWAV("sfx/chest.ogg");
+	sys_progress(20, 21);
+	_sfx[13] = Mix_LoadWAV("sfx/fire.ogg");
+	sys_progress(21, 21);
+	_sfx[14] = Mix_LoadWAV("sfx/beep.ogg");
 }
 
 void GriffonEngine::sys_update() {
@@ -8236,7 +8228,7 @@ void GriffonEngine::sys_update() {
 		_player.sworddamage = _player.level * 14 / 10;
 		_player.spelldamage = _player.level * 13 / 10;
 
-		if (_menabled && config.effects) {
+		if (config.effects) {
 			int snd = playSound(_sfx[kSndPowerUp]);
 			Mix_Volume(snd, config.effectsvol);
 		}
@@ -8298,7 +8290,7 @@ void GriffonEngine::sys_update() {
 		_player.hpflashb = _player.hpflashb + 1;
 		if (_player.hpflashb == 2)
 			_player.hpflashb = 0;
-		if (_menabled && config.effects && _player.hpflashb == 0 && _player.hp < _player.maxhp / 4) {
+		if (config.effects && _player.hpflashb == 0 && _player.hp < _player.maxhp / 4) {
 			int snd = playSound(_sfx[kSndBeep]);
 			Mix_Volume(snd, config.effectsvol);
 		}
