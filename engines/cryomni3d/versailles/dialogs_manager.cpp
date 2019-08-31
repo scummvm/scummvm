@@ -32,6 +32,11 @@
 namespace CryOmni3D {
 namespace Versailles {
 
+Versailles_DialogsManager::Versailles_DialogsManager(CryOmni3DEngine_Versailles *engine,
+        bool padAudioFileName) :
+	_engine(engine), _padAudioFileName(padAudioFileName) {
+}
+
 bool Versailles_DialogsManager::play(const Common::String &sequence) {
 	// Prepare with specific Versailles stuff
 	if (!_engine->preprocessDialog(sequence)) {

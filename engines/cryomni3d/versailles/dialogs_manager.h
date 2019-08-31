@@ -34,17 +34,15 @@ namespace CryOmni3D {
 namespace Versailles {
 
 class CryOmni3DEngine_Versailles;
+typedef void (CryOmni3DEngine_Versailles::*ShowCallback)();
 
 class Versailles_DialogsManager : public DialogsManager {
 public:
-	Versailles_DialogsManager(CryOmni3DEngine_Versailles *engine,
-	                          bool padAudioFileName) : _engine(engine),
-		_padAudioFileName(padAudioFileName) { }
+	Versailles_DialogsManager(CryOmni3DEngine_Versailles *engine, bool padAudioFileName);
 
 	// This overload will hide the base one and this is what we want
 	bool play(const Common::String &sequence);
 
-	typedef void (CryOmni3DEngine_Versailles::*ShowCallback)();
 	void registerShowCallback(const Common::String &showName, ShowCallback callback) { _shows[showName] = callback; }
 
 protected:
