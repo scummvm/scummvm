@@ -278,7 +278,7 @@ public:
 
 class SpriteDrawer6 : public SpriteDrawer {
 private:
-	byte _color;
+	byte _mask;
 protected:
 	/**
 	 * Output a pixel

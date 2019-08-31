@@ -517,14 +517,14 @@ void SpriteDrawer5::rcr(uint16 &val, bool &cf) {
 
 /*------------------------------------------------------------------------*/
 
-const byte DRAWER6_COLOR[16] = { 1, 2, 4, 8, 1, 3, 7, 15, 8, 12, 14, 15, 1, 2, 1, 2 };
+const byte DRAWER6_MASK[16] = { 1, 2, 4, 8, 1, 3, 7, 15, 8, 12, 14, 15, 1, 2, 1, 2 };
 
 SpriteDrawer6::SpriteDrawer6(byte *data, size_t filesize, int index) : SpriteDrawer(data, filesize) {
-	_color = DRAWER6_COLOR[index];
+	_mask = DRAWER6_MASK[index];
 }
 
 void SpriteDrawer6::drawPixel(byte *dest, byte pixel) {
-	*dest = _color;
+	*dest = pixel ^ _mask;
 }
 
 } // End of namespace Xeen
