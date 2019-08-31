@@ -218,6 +218,9 @@ public:
 	SpriteDrawer1(byte *data, size_t filesize, int index);
 };
 
+/**
+ * Draws the sprite as faint ghostly, see-through.
+ */
 class SpriteDrawer3 : public SpriteDrawer {
 private:
 	uint16 _offset, _mask;
@@ -248,9 +251,12 @@ public:
 	SpriteDrawer4(byte *data, size_t filesize, int index);
 };
 
+/**
+ * Draws a sprite with a fuzziness effect where only some pixels of the sprite are randomly drawn
+ */
 class SpriteDrawer5 : public SpriteDrawer {
 private:
-	uint16 _mask, _random1, _random2;
+	uint16 _threshold, _random1, _random2;
 private:
 	/**
 	 * Roll carry right opcode emulation

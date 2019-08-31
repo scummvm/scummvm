@@ -475,10 +475,10 @@ void SpriteDrawer4::drawPixel(byte *dest, byte pixel) {
 
 /*------------------------------------------------------------------------*/
 
-const uint16 DRAWER5_MASK[4] = { 0x3333, 0x6666, 0x999A, 0xCCCD };
+const uint16 DRAWER5_THRESHOLD[4] = { 0x3333, 0x6666, 0x999A, 0xCCCD };
 
 SpriteDrawer5::SpriteDrawer5(byte *data, size_t filesize, int index) : SpriteDrawer(data, filesize) {
-	_mask = DRAWER5_MASK[index];		
+	_threshold = DRAWER5_THRESHOLD[index];
 	_random1 = g_vm->getRandomNumber(0xffff);
 	_random2 = g_vm->getRandomNumber(0xffff);
 }
@@ -491,7 +491,7 @@ void SpriteDrawer5::drawPixel(byte *dest, byte pixel) {
 	rcr(_random2, flag);
 	_random2 ^= _random1;
 
-	if (_random2 > _mask)
+	if (_random2 > _threshold)
 		*dest = pixel;
 }
 

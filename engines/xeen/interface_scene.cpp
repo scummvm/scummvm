@@ -2668,7 +2668,7 @@ void InterfaceScene::setMonsterSprite(DrawStruct &drawStruct, MazeMonster &monst
 
 	drawStruct._flags &= ~0xFFF;
 	if (monster._effect2)
-		drawStruct._flags = Res.MONSTER_EFFECT_FLAGS[monster._effect2][monster._effect3];
+		drawStruct._flags = Res.MONSTER_EFFECT_FLAGS[monster._effect2 - 1][monster._effect3];
 }
 
 void InterfaceScene::setIndoorsObjects() {
