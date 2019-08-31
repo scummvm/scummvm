@@ -474,10 +474,9 @@ void DirSeeker::addAsVirtualFiles(Common::String title, Common::String fileMask)
 		// Sort all filenames alphabetically
 		Common::sort(foundFiles.begin(), foundFiles.end());
 
-		_files.push_back(title);
-		_virtualFiles.push_back("");
 		Common::StringArray::iterator it;
 		Common::StringArray::iterator it_end = foundFiles.end();
+		bool titleAdded = false;
 
 		for (it = foundFiles.begin(); it != it_end; it++) {
 			Common::String regularFilename = *it;
@@ -488,6 +487,13 @@ void DirSeeker::addAsVirtualFiles(Common::String title, Common::String fileMask)
 			delete testfile;
 			if (testfileSize > 1024) // check, if larger than 1k. in that case its a saved game.
 				continue; // and we dont want to have those in the list
+
+			if (!titleAdded) {
+				_files.push_back(title);
+				_virtualFiles.push_back("");
+				titleAdded = true;
+			}
+
 			// We need to remove the prefix for display purposes
 			_files.push_back(wrappedFilename);
 			// but remember the actual name as well
