@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2019-08-24 10:37+0200\n"
+"POT-Creation-Date: 2019-08-31 21:56+0200\n"
 "PO-Revision-Date: 2019-03-11 14:05+0000\n"
 "Last-Translator: Alfred Vallés Tortosa <lolocop@gmail.com>\n"
 "Language-Team: Catalan <https://translations.scummvm.org/projects/scummvm/"
@@ -931,7 +931,7 @@ msgstr "Modes de tramat especials suportats per alguns jocs"
 msgid "Stretch mode:"
 msgstr ""
 
-#: gui/options.cpp:1095
+#: gui/options.cpp:1095 backends/graphics/sdl/sdl-graphics.cpp:354
 msgid "Fullscreen mode"
 msgstr "Mode pantalla completa"
 
@@ -2492,6 +2492,10 @@ msgstr "Normal (no escalat)"
 msgid "Active graphics filter:"
 msgstr "Filtre de gràfics actiu:"
 
+#: backends/graphics/sdl/sdl-graphics.cpp:356
+msgid "Windowed mode"
+msgstr "Mode de finestra"
+
 #: backends/keymapper/remap-dialog.cpp:48
 msgid "Keymap:"
 msgstr "Assignacions de teclat:"
@@ -3248,25 +3252,25 @@ msgstr "No s'ha trobat el fitxer d'escena '%s'!"
 msgid "Failed to initialize resources"
 msgstr ""
 
-#: engines/bladerunner/bladerunner.cpp:975
+#: engines/bladerunner/bladerunner.cpp:978
 msgid "A required game resource was not found"
 msgstr ""
 
-#: engines/bladerunner/bladerunner.cpp:2118
+#: engines/bladerunner/bladerunner.cpp:2126
 msgid ""
 "WARNING: This game was saved in Restored Cut Content mode, but you are "
 "playing in Original Content mode. The mode will be adjusted to Restored Cut "
 "Content for this session until you completely Quit the game."
 msgstr ""
 
-#: engines/bladerunner/bladerunner.cpp:2120
+#: engines/bladerunner/bladerunner.cpp:2128
 msgid ""
 "WARNING: This game was saved in Original Content mode, but you are playing "
 "in Restored Cut Content mode. The mode will be adjusted to Original Content "
 "mode for this session until you completely Quit the game."
 msgstr ""
 
-#: engines/bladerunner/bladerunner.cpp:2122
+#: engines/bladerunner/bladerunner.cpp:2130
 msgid "Continue"
 msgstr ""
 
@@ -5345,21 +5349,21 @@ msgid ""
 "This game requires 3D characters support, which is out of ScummVM's scope."
 msgstr ""
 
-#: engines/xeen/detection.cpp:89
+#: engines/xeen/detection.cpp:97
 msgid "Show item costs in standard inventory mode"
 msgstr ""
 
-#: engines/xeen/detection.cpp:90
+#: engines/xeen/detection.cpp:98
 msgid ""
 "Shows item costs in standard inventory mode, allowing the value of items to "
 "be compared"
 msgstr ""
 
-#: engines/xeen/detection.cpp:99
+#: engines/xeen/detection.cpp:107
 msgid "More durable armor"
 msgstr ""
 
-#: engines/xeen/detection.cpp:100
+#: engines/xeen/detection.cpp:108
 msgid "Armor won't break until character is at -80HP, rather than merely -10HP"
 msgstr ""
 
@@ -5419,9 +5423,6 @@ msgstr ""
 #, fuzzy
 #~ msgid "Unnamed savegame"
 #~ msgstr "Partida sense nom"
-
-#~ msgid "Windowed mode"
-#~ msgstr "Mode de finestra"
 
 #~ msgctxt "lowres"
 #~ msgid "Music Device:"

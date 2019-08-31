@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2019-08-24 10:37+0200\n"
+"POT-Creation-Date: 2019-08-31 21:56+0200\n"
 "PO-Revision-Date: 2019-08-23 21:25+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
@@ -921,7 +921,7 @@ msgstr "Mode spécial de tramage supporté par certains jeux"
 msgid "Stretch mode:"
 msgstr "Mode d'étirement :"
 
-#: gui/options.cpp:1095
+#: gui/options.cpp:1095 backends/graphics/sdl/sdl-graphics.cpp:354
 msgid "Fullscreen mode"
 msgstr "Plein écran"
 
@@ -2502,6 +2502,10 @@ msgstr "Normal"
 msgid "Active graphics filter:"
 msgstr "Mode graphique actif :"
 
+#: backends/graphics/sdl/sdl-graphics.cpp:356
+msgid "Windowed mode"
+msgstr "Mode Fenêtre"
+
 #: backends/keymapper/remap-dialog.cpp:48
 msgid "Keymap:"
 msgstr "Affectation des touches :"
@@ -3263,11 +3267,11 @@ msgstr "Fichier de séquence '%s' non trouvé !"
 msgid "Failed to initialize resources"
 msgstr "Échec de l'initialisation des ressources"
 
-#: engines/bladerunner/bladerunner.cpp:975
+#: engines/bladerunner/bladerunner.cpp:978
 msgid "A required game resource was not found"
 msgstr "Une ressource de jeu nécessaire n'a pas été trouvée"
 
-#: engines/bladerunner/bladerunner.cpp:2118
+#: engines/bladerunner/bladerunner.cpp:2126
 msgid ""
 "WARNING: This game was saved in Restored Cut Content mode, but you are "
 "playing in Original Content mode. The mode will be adjusted to Restored Cut "
@@ -3277,7 +3281,7 @@ msgstr ""
 "vous jouez en mode Contenu Original. Le mode sera réglé sur Contenu Montage "
 "Restauré pour cette session jusqu'à ce que vous quittiez complètement le jeu."
 
-#: engines/bladerunner/bladerunner.cpp:2120
+#: engines/bladerunner/bladerunner.cpp:2128
 msgid ""
 "WARNING: This game was saved in Original Content mode, but you are playing "
 "in Restored Cut Content mode. The mode will be adjusted to Original Content "
@@ -3287,7 +3291,7 @@ msgstr ""
 "jouez en mode Contenu Montage Restauré. Le mode sera ajusté au mode Contenu "
 "Original pour cette session jusqu'à ce que vous quittiez complètement le jeu."
 
-#: engines/bladerunner/bladerunner.cpp:2122
+#: engines/bladerunner/bladerunner.cpp:2130
 msgid "Continue"
 msgstr "Continuer"
 
@@ -5472,11 +5476,11 @@ msgstr ""
 "Ce jeu nécessite le support des personnages en 3D, ce qui est en dehors du "
 "périmètre de ScummVM."
 
-#: engines/xeen/detection.cpp:89
+#: engines/xeen/detection.cpp:97
 msgid "Show item costs in standard inventory mode"
 msgstr "Afficher le prix des objets dans l'inventaire en mode standard"
 
-#: engines/xeen/detection.cpp:90
+#: engines/xeen/detection.cpp:98
 msgid ""
 "Shows item costs in standard inventory mode, allowing the value of items to "
 "be compared"
@@ -5484,11 +5488,11 @@ msgstr ""
 "Affiche le prix des objets dans l'inventaire en mode standard, ce qui permet "
 "de comparer la valeur des objets"
 
-#: engines/xeen/detection.cpp:99
+#: engines/xeen/detection.cpp:107
 msgid "More durable armor"
 msgstr "Armure plus durable"
 
-#: engines/xeen/detection.cpp:100
+#: engines/xeen/detection.cpp:108
 msgid "Armor won't break until character is at -80HP, rather than merely -10HP"
 msgstr ""
 "L'armure ne se brisera pas avant que le personnage ne soit à -80HP, au lieu "
@@ -5601,9 +5605,6 @@ msgstr ""
 
 #~ msgid "Unnamed savegame"
 #~ msgstr "Sauvegarde sans nom"
-
-#~ msgid "Windowed mode"
-#~ msgstr "Mode Fenêtre"
 
 #~ msgid ""
 #~ "A known buggy game script has been detected, which could prevent you from "

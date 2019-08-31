@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2019-08-24 10:37+0200\n"
+"POT-Creation-Date: 2019-08-31 21:56+0200\n"
 "PO-Revision-Date: 2019-08-29 19:14+0000\n"
 "Last-Translator: George Kormendi <grubycza@hotmail.com>\n"
 "Language-Team: Hungarian <https://translations.scummvm.org/projects/scummvm/"
@@ -911,7 +911,7 @@ msgstr "Néhány játék támogatja a speciális árnyalási módokat"
 msgid "Stretch mode:"
 msgstr "Nyújtás mód:"
 
-#: gui/options.cpp:1095
+#: gui/options.cpp:1095 backends/graphics/sdl/sdl-graphics.cpp:354
 msgid "Fullscreen mode"
 msgstr "Teljesképernyõs mód"
 
@@ -2459,6 +2459,10 @@ msgstr "Normál (nincs átméretezés)"
 msgid "Active graphics filter:"
 msgstr "Aktív grafikus szûrõk:"
 
+#: backends/graphics/sdl/sdl-graphics.cpp:356
+msgid "Windowed mode"
+msgstr "Ablakos mód"
+
 #: backends/keymapper/remap-dialog.cpp:48
 msgid "Keymap:"
 msgstr "Billentyûzet kiosztás:"
@@ -3213,11 +3217,11 @@ msgstr "'%s' átvezetõ fájl nem található!"
 msgid "Failed to initialize resources"
 msgstr "Nem sikerült inicializálni az erõforrásokat"
 
-#: engines/bladerunner/bladerunner.cpp:975
+#: engines/bladerunner/bladerunner.cpp:978
 msgid "A required game resource was not found"
 msgstr "A szükséges játékforrás nem található"
 
-#: engines/bladerunner/bladerunner.cpp:2118
+#: engines/bladerunner/bladerunner.cpp:2126
 msgid ""
 "WARNING: This game was saved in Restored Cut Content mode, but you are "
 "playing in Original Content mode. The mode will be adjusted to Restored Cut "
@@ -3227,7 +3231,7 @@ msgstr ""
 "de az eredeti tartalom módban játszol. Az üzemmódot a visszaállított vágott "
 "tartalomra állítom be, amíg teljesen ki nem lépsz a játékból."
 
-#: engines/bladerunner/bladerunner.cpp:2120
+#: engines/bladerunner/bladerunner.cpp:2128
 msgid ""
 "WARNING: This game was saved in Original Content mode, but you are playing "
 "in Restored Cut Content mode. The mode will be adjusted to Original Content "
@@ -3237,7 +3241,7 @@ msgstr ""
 "visszaállított vágott tartalom módban játszol. Az üzemmódot eredeti tartalom "
 "módra állítom be, amíg teljesen ki nem lépsz a játékból."
 
-#: engines/bladerunner/bladerunner.cpp:2122
+#: engines/bladerunner/bladerunner.cpp:2130
 msgid "Continue"
 msgstr "Folytatás"
 
@@ -5380,11 +5384,11 @@ msgstr ""
 "Ehhez a játékhoz 3D karakter támogatás szükséges, ami a ScummVM hatókörén "
 "kívül esik."
 
-#: engines/xeen/detection.cpp:89
+#: engines/xeen/detection.cpp:97
 msgid "Show item costs in standard inventory mode"
 msgstr "Elem költségek megjelenítése a szokásos leltári módban"
 
-#: engines/xeen/detection.cpp:90
+#: engines/xeen/detection.cpp:98
 msgid ""
 "Shows item costs in standard inventory mode, allowing the value of items to "
 "be compared"
@@ -5392,11 +5396,11 @@ msgstr ""
 "Az elem költségeket a szokásos leltári módban mutatja, lehetõvé téve az elem "
 "értékek összehasonlítását"
 
-#: engines/xeen/detection.cpp:99
+#: engines/xeen/detection.cpp:107
 msgid "More durable armor"
 msgstr "Tartósabb páncél"
 
-#: engines/xeen/detection.cpp:100
+#: engines/xeen/detection.cpp:108
 msgid "Armor won't break until character is at -80HP, rather than merely -10HP"
 msgstr "A páncél nem szakad el, karakter -80 HP-nál, hanem csak -10 HP-nál"
 
@@ -5504,9 +5508,6 @@ msgstr ""
 
 #~ msgid "Unnamed savegame"
 #~ msgstr "Névtelen játékmentés"
-
-#~ msgid "Windowed mode"
-#~ msgstr "Ablakos mód"
 
 #~ msgid ""
 #~ "A known buggy game script has been detected, which could prevent you from "
