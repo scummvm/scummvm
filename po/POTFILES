@@ -61,6 +61,7 @@ backends/events/webossdl/webossdl-events.cpp
 backends/graphics/opengl/opengl-graphics.cpp
 backends/graphics/openglsdl/openglsdl-graphics.cpp
 backends/graphics/surfacesdl/surfacesdl-graphics.cpp
+backends/graphics/sdl/sdl-graphics.cpp
 backends/graphics/wincesdl/wincesdl-graphics.cpp
 backends/keymapper/remap-dialog.cpp
 backends/midi/windows.cpp
