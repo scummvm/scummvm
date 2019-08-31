@@ -46,6 +46,8 @@ bool SliceAnimations::open(const Common::String &name) {
 
 	_palettes.resize(_paletteCount);
 
+	Graphics::PixelFormat screenFormat = screenPixelFormat();
+
 	for (uint32 i = 0; i != _paletteCount; ++i) {
 		for (uint32 j = 0; j != 256; ++j) {
 			uint8 color_r = file.readByte();
@@ -57,8 +59,7 @@ bool SliceAnimations::open(const Common::String &name) {
 			_palettes[i].color[j].b = color_b;
 
 			const int bladeToScummVmConstant = 256 / 32; // 5 bits to 8 bits
-			uint16 rgb555 = screenPixelFormat().RGBToColor(color_r * bladeToScummVmConstant, color_g * bladeToScummVmConstant, color_b * bladeToScummVmConstant);
-			_palettes[i].color555[j] = rgb555;
+			_palettes[i].value[j] = screenFormat.RGBToColor(color_r * bladeToScummVmConstant, color_g * bladeToScummVmConstant, color_b * bladeToScummVmConstant);;
 		}
 	}
 

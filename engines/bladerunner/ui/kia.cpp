@@ -601,6 +601,7 @@ void KIA::playPhotograph(int photographId) {
 
 void KIA::playImage(const Graphics::Surface &image) {
 	_playerImage.copyFrom(image);
+	_playerImage.convertToInPlace(screenPixelFormat());
 }
 
 void KIA::mouseDownCallback(int buttonId, void *callbackData) {

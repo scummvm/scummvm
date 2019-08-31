@@ -835,11 +835,11 @@ void VQADecoder::VQAVideoTrack::VPTRWriteBlock(Graphics::Surface *surface, unsig
 
 				uint8 a, r, g, b;
 				gameDataPixelFormat().colorToARGB(vqaColor, a, r, g, b);
-				// Ignore the alpha in the output as it is inversed in the input
-				uint16 outColor = (uint16)surface->format.RGBToColor(r, g, b);
 
 				if (!(alpha && a)) {
-					*(uint16 *)(surface->getBasePtr(CLIP(dst_x + x, (uint32)0, (uint32)(surface->w - 1)), CLIP(dst_y + y, (uint32)0, (uint32)(surface->h - 1)))) = outColor;
+					void* dstPtr = surface->getBasePtr(CLIP(dst_x + x, (uint32)0, (uint32)(surface->w - 1)), CLIP(dst_y + y, (uint32)0, (uint32)(surface->h - 1)));
+					// Ignore the alpha in the output as it is inversed in the input
+					drawPixel(*surface, dstPtr, surface->format.RGBToColor(r, g, b));
 				}
 			}
 		}

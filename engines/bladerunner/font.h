@@ -55,7 +55,6 @@ class Font : public Graphics::Font {
 	int                      _screenHeight;
 	int                      _spacing;
 	bool                     _useFontColor;
-	int                      _intersperse;
 
 public:
 	~Font();

@@ -31,7 +31,7 @@
 
 namespace BladeRunner {
 
-const Color256  KIASectionDiagnostic::kTextColors[] = {
+const Color256 KIASectionDiagnostic::kTextColors[] = {
 	{ 0, 0, 0 },
 	{ 16, 8, 8 },
 	{ 32, 24, 8 },

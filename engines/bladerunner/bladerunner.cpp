@@ -324,8 +324,9 @@ Common::Error BladeRunnerEngine::run() {
 		return Common::Error(Common::kNoGameDataFoundError, missingFileStr);
 	}
 
-	Graphics::PixelFormat format = screenPixelFormat();
-	initGraphics(640, 480, &format);
+	_screenPixelFormat = g_system->getSupportedFormats().front();
+	debug("Using pixel format: %s", _screenPixelFormat.toString().c_str());
+	initGraphics(640, 480, &_screenPixelFormat);
 
 	_system->showMouse(true);
 
@@ -2256,12 +2257,12 @@ Graphics::Surface BladeRunnerEngine::generateThumbnail() const {
 		for (int x = 0; x < thumbnail.w; ++x) {
 			uint8 r, g, b;
 
-			uint16  srcPixel = *(const uint16 *)_surfaceFront.getBasePtr(CLIP(x * 8, 0, _surfaceFront.w - 1), CLIP(y * 8, 0, _surfaceFront.h - 1) );
-			uint16 *dstPixel = (uint16 *)thumbnail.getBasePtr(CLIP(x, 0, thumbnail.w - 1), CLIP(y, 0, thumbnail.h - 1));
+			uint32  srcPixel = *(const uint32 *)_surfaceFront.getBasePtr(CLIP(x * 8, 0, _surfaceFront.w - 1), CLIP(y * 8, 0, _surfaceFront.h - 1));
+			void   *dstPixel = thumbnail.getBasePtr(CLIP(x, 0, thumbnail.w - 1), CLIP(y, 0, thumbnail.h - 1));
 
 			// Throw away alpha channel as it is not needed
 			_surfaceFront.format.colorToRGB(srcPixel, r, g, b);
-			*dstPixel = thumbnail.format.RGBToColor(r, g, b);
+			drawPixel(thumbnail, dstPixel, thumbnail.format.RGBToColor(r, g, b));
 		}
 	}
 

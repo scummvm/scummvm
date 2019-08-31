@@ -114,7 +114,7 @@ private:
 	Matrix3x2 calculateFacingRotationMatrix();
 	void loadFrame(int animation, int frame);
 
-	void drawSlice(int slice, bool advanced, uint16 *frameLinePtr, uint16 *zbufLinePtr, int y);
+	void drawSlice(int slice, bool advanced, int y, Graphics::Surface &surface, uint16 *zbufferLine);
 	void drawShadowInWorld(int transparency, Graphics::Surface &surface, uint16 *zbuffer);
 	void drawShadowPolygon(int transparency, Graphics::Surface &surface, uint16 *zbuffer);
 };

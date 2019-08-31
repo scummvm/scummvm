@@ -150,7 +150,7 @@ bool SaveFileManager::readHeader(Common::SeekableReadStream &in, SaveFileHeader 
 		s.read(thumbnailData, kThumbnailSize);
 
 		header._thumbnail->init(80, 60, 160, thumbnailData, gameDataPixelFormat());
-		header._thumbnail->convertToInPlace(screenPixelFormat());
+
 		s.seek(pos);
 	}
 

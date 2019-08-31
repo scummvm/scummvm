@@ -772,8 +772,8 @@ void VK::drawNeedle(Graphics::Surface &surface) {
 
 	float colorIntensity = MIN(78.0f, _needleValue + 39.0f) / 78.0f;
 
-	uint16 color1 = surface.format.RGBToColor(56 - 48 * colorIntensity, 144 - 64 * colorIntensity, 184 - 96 * colorIntensity);
-	uint16 color2 = surface.format.RGBToColor(56 - 24 * colorIntensity, 144 - 32 * colorIntensity, 184 - 48 * colorIntensity);
+	uint32 color1 = surface.format.RGBToColor(56 - 48 * colorIntensity, 144 - 64 * colorIntensity, 184 - 96 * colorIntensity);
+	uint32 color2 = surface.format.RGBToColor(56 - 24 * colorIntensity, 144 - 32 * colorIntensity, 184 - 48 * colorIntensity);
 
 	surface.drawLine(203, 324, x - 2, y,     color1);
 	surface.drawLine(203, 324, x + 2, y,     color1);

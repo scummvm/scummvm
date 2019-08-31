@@ -115,7 +115,7 @@ void UISlider::draw(Graphics::Surface &surface) {
 				colorIndex = 3;
 			}
 
-			uint16 color = surface.format.RGBToColor(kColors[colorIndex].r, kColors[colorIndex].g, kColors[colorIndex].b);
+			uint32 color = surface.format.RGBToColor(kColors[colorIndex].r, kColors[colorIndex].g, kColors[colorIndex].b);
 			if ((striding + x) & 1 || x == sliderX) {
 				color = surface.format.RGBToColor(0, 0, 0);
 			}

@@ -380,7 +380,7 @@ void DialogueMenu::draw(Graphics::Surface &s) {
 	for (int i = 0; i != _listSize; ++i) {
 		_shapes[1].draw(s, x1, y);
 		_shapes[4].draw(s, x2, y);
-		uint16 color = s.format.RGBToColor((_items[i].colorIntensity / 2) * (256 / 32), (_items[i].colorIntensity / 2) * (256 / 32), _items[i].colorIntensity * (256 / 32));
+		uint32 color = s.format.RGBToColor((_items[i].colorIntensity / 2) * (256 / 32), (_items[i].colorIntensity / 2) * (256 / 32), _items[i].colorIntensity * (256 / 32));
 		_vm->_mainFont->drawString(&s, _items[i].text, x, y, s.w, color);
 		y += kLineHeight;
 	}
@@ -552,13 +552,13 @@ void DialogueMenu::darkenRect(Graphics::Surface &s, int x1, int y1, int x2, int 
 	if (x1 < x2 && y1 < y2) {
 		for (int y = y1; y != y2; ++y) {
 			for (int x = x1; x != x2; ++x) {
-				uint16 *p = (uint16 *)s.getBasePtr(CLIP(x, 0, s.w - 1), CLIP(y, 0, s.h - 1));
+				void *p = s.getBasePtr(CLIP(x, 0, s.w - 1), CLIP(y, 0, s.h - 1));
 				uint8 r, g, b;
-				s.format.colorToRGB(*p, r, g, b);
+				s.format.colorToRGB(*(uint32*)p, r, g, b);
 				r /= 4;
 				g /= 4;
 				b /= 4;
-				*p = s.format.RGBToColor(r, g, b);
+				drawPixel(s, p, s.format.RGBToColor(r, g, b));
 			}
 		}
 	}

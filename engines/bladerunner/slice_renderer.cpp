@@ -468,8 +468,7 @@ void SliceRenderer::drawInWorld(int animationId, int animationFrame, Vector3 pos
 		_setEffectColor.b = setEffectColor.b * 31.0f * 65536.0f;
 
 		if (frameY >= 0 && frameY < surface.h) {
-			// No need to CLIP frameY here in getBasePtr(), since it is within [0, surface.h - 1]
-			drawSlice((int)sliceLine, true, (uint16 *)surface.getBasePtr(0, frameY), zBufferLinePtr, frameY);
+			drawSlice((int)sliceLine, true, frameY, surface, zBufferLinePtr);
 		}
 
 		sliceLineIterator.advance();
@@ -531,15 +530,14 @@ void SliceRenderer::drawOnScreen(int animationId, int animationFrame, int screen
 	while (currentSlice < _frameSliceCount) {
 		if (currentY >= 0 && currentY < surface.h) {
 			memset(lineZbuffer, 0xFF, 640 * 2);
-			// No need to CLIP currentY here in getBasePtr(), since it is within [0, surface.h - 1]
-			drawSlice(currentSlice, false, (uint16 *)surface.getBasePtr(0, currentY), lineZbuffer, currentY);
+			drawSlice(currentSlice, false, currentY, surface, lineZbuffer);
 			currentSlice += sliceStep;
 			currentY--;
 		}
 	}
 }
 
-void SliceRenderer::drawSlice(int slice, bool advanced, uint16 *frameLinePtr, uint16 *zbufLinePtr, int y) {
+void SliceRenderer::drawSlice(int slice, bool advanced, int y, Graphics::Surface &surface, uint16 *zbufferLine) {
 	if (slice < 0 || (uint32)slice >= _frameSliceCount) {
 		return;
 	}
@@ -554,6 +552,7 @@ void SliceRenderer::drawSlice(int slice, bool advanced, uint16 *frameLinePtr, ui
 
 	uint32 polyCount = READ_LE_UINT32(p);
 	p += 4;
+
 	while (polyCount--) {
 		uint32 vertexCount = READ_LE_UINT32(p);
 		p += 4;
@@ -573,7 +572,7 @@ void SliceRenderer::drawSlice(int slice, bool advanced, uint16 *frameLinePtr, ui
 				int vertexZ = (_m21lookup[p[0]] + _m22lookup[p[1]] + _m23) / 64;
 
 				if (vertexZ >= 0 && vertexZ < 65536) {
-					int color555 = palette.color555[p[2]];
+					uint32 outColor = palette.value[p[2]];
 					if (advanced) {
 						Color256 aescColor = { 0, 0, 0 };
 						_screenEffects->getColor(&aescColor, vertexX, y, vertexZ);
@@ -584,12 +583,15 @@ void SliceRenderer::drawSlice(int slice, bool advanced, uint16 *frameLinePtr, ui
 						color.b = ((int)(_setEffectColor.b + _lightsColor.b * color.b) / 65536) + aescColor.b;
 
 						int bladeToScummVmConstant = 256 / 32;
-						color555 = _pixelFormat.RGBToColor(CLIP(color.r * bladeToScummVmConstant, 0, 255), CLIP(color.g * bladeToScummVmConstant, 0, 255), CLIP(color.b * bladeToScummVmConstant, 0, 255));
+						outColor = _pixelFormat.RGBToColor(CLIP(color.r * bladeToScummVmConstant, 0, 255), CLIP(color.g * bladeToScummVmConstant, 0, 255), CLIP(color.b * bladeToScummVmConstant, 0, 255));
 					}
+
 					for (int x = previousVertexX; x != vertexX; ++x) {
-						if (vertexZ < zbufLinePtr[x]) {
-							frameLinePtr[x] = color555;
-							zbufLinePtr[x] = (uint16)vertexZ;
+						if (vertexZ < zbufferLine[x]) {
+							zbufferLine[x] = (uint16)vertexZ;
+
+							void *dstPtr = surface.getBasePtr(CLIP(x, 0, surface.w - 1), CLIP(y, 0, surface.h - 1));
+							drawPixel(surface, dstPtr, outColor);
 						}
 					}
 				}
@@ -723,17 +725,18 @@ void SliceRenderer::drawShadowPolygon(int transparency, Graphics::Surface &surfa
 
 		for (int x = MIN(xMin, xMax); x < MAX(xMin, xMax); ++x) {
 			uint16 z = zbuffer[x + y * 640];
-			uint16 *pixel = (uint16*)surface.getBasePtr(CLIP(x, 0, surface.w - 1), CLIP(y, 0, surface.h - 1));
+			void *pixel = surface.getBasePtr(CLIP(x, 0, surface.w - 1), CLIP(y, 0, surface.h - 1));
 
 			if (z >= zMin) {
 				int index = (x & 3) + ((y & 3) << 2);
 				if (transparency - ditheringFactor[index] <= 0) {
 					uint8 r, g, b;
-					surface.format.colorToRGB(*pixel, r, g, b);
+					surface.format.colorToRGB(*(uint32*)pixel, r, g, b);
 					r *= 0.75f;
 					g *= 0.75f;
 					b *= 0.75f;
-					*pixel = surface.format.RGBToColor(r, g, b);
+
+					drawPixel(surface, pixel, surface.format.RGBToColor(r, g, b));
 				}
 			}
 		}

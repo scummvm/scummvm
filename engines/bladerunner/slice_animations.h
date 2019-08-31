@@ -50,7 +50,7 @@ class SliceAnimations {
 	};
 
 	struct Palette {
-		uint16 color555[256];
+		uint32 value[256];
 		Color256 color[256];
 
 	//	uint16 &operator[](size_t i) { return color555[i]; }
