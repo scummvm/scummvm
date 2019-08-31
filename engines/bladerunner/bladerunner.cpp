@@ -954,6 +954,7 @@ bool BladeRunnerEngine::isMouseButtonDown() const {
 
 void BladeRunnerEngine::gameLoop() {
 	_gameIsRunning = true;
+	_timeOfMainGameLoopTickPrevious = _time->currentSystem();
 	do {
 		if (_playerDead) {
 			playerDied();
@@ -964,9 +965,11 @@ void BladeRunnerEngine::gameLoop() {
 }
 
 void BladeRunnerEngine::gameTick() {
+
 	handleEvents();
 
 	if (!_gameIsRunning || !_windowIsActive) {
+		_timeOfMainGameLoopTickPrevious = _time->currentSystem();
 		return;
 	}
 
@@ -975,6 +978,7 @@ void BladeRunnerEngine::gameTick() {
 			Common::Error runtimeError = Common::Error(Common::kUnknownError, _("A required game resource was not found"));
 			GUI::MessageDialog dialog(runtimeError.getDesc());
 			dialog.runModal();
+			_timeOfMainGameLoopTickPrevious = _time->currentSystem();
 			return;
 		}
 	}
@@ -1106,13 +1110,17 @@ void BladeRunnerEngine::gameTick() {
 
 	_subtitles->tick(_surfaceFront);
 
+	uint32 mainGameLoopTickNow = _time->currentSystem();
+	if (mainGameLoopTickNow - _timeOfMainGameLoopTickPrevious < kUpdateFrameTimeInMs) {
+		return;
+	}
+	_timeOfMainGameLoopTickPrevious = mainGameLoopTickNow;
 	 // Without this condition the game may flash back to the game screen
 	 // between and ending outtake and the end credits.
 	if (!_gameOver) {
 		blitToScreen(_surfaceFront);
 	}
 
-	_system->delayMillis(10);
 }
 
 void BladeRunnerEngine::actorsUpdate() {

@@ -34,6 +34,7 @@ class BladeRunnerEngine;
 class OuttakePlayer {
 	BladeRunnerEngine *_vm;
 	Graphics::Surface  _surfaceVideo;
+	uint32             _timeLast;
 
 public:
 	OuttakePlayer(BladeRunnerEngine *vm);

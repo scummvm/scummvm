@@ -43,6 +43,9 @@ class Elevator {
 	int                    _sentenceId;
 	uint32                 _timeSpeakDescriptionStart;
 
+	uint32                 _timeLast;
+	bool                   _firstTickCall;
+
 public:
 	Elevator(BladeRunnerEngine *vm);
 	~Elevator();

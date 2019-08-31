@@ -56,6 +56,9 @@ class Spinner {
 	int                    _sentenceId;
 	uint32                 _timeSpeakDescriptionStart;
 
+	uint32                 _timeLast;
+	bool                   _firstTickCall;
+
 public:
 	Spinner(BladeRunnerEngine *vm);
 	~Spinner();

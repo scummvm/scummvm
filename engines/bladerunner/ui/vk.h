@@ -124,6 +124,9 @@ class VK {
 	uint32 _timeNextEyeLineStepStart;
 	uint32 _timeNextEyeLineStart;
 
+	uint32 _timeLast;
+	bool   _firstTickCall;
+
 public:
 	VK(BladeRunnerEngine *vm);
 	~VK();

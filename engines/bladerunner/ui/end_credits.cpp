@@ -93,6 +93,7 @@ void EndCredits::show() {
 
 	double position = 0.0;
 	uint32 timeLast = _vm->_time->currentSystem();
+	bool   firstPass = true;
 
 	while (!_vm->_vqaStopIsRequested && !_vm->shouldQuit()) {
 		if (position >= textPositions[textCount - 1]) {
@@ -109,6 +110,12 @@ void EndCredits::show() {
 		}
 
 		uint32 timeNow = _vm->_time->currentSystem();
+		if (timeNow - timeLast < _vm->kUpdateFrameTimeInMs && !firstPass) {
+			continue;
+		} else if (firstPass) {
+			firstPass = false;
+		}
+
 		position += (double)(timeNow - timeLast) * 0.05f; // unsigned difference is intentional
 		timeLast = timeNow;
 
@@ -147,8 +154,6 @@ void EndCredits::show() {
 		_vm->_surfaceFront.fillRect(Common::Rect(0, 452, 640, 480), 0);
 
 		_vm->blitToScreen(_vm->_surfaceFront);
-
-		_vm->_system->delayMillis(10);
 	}
 
 	_vm->_vqaIsPlaying = false;

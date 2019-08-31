@@ -119,6 +119,8 @@ public:
 	// 2: all time code uses uint32 (since July 17 2019),
 	static const int kBladeRunnerScummVMVersion = 2;
 
+	static const uint32 kUpdateFrameTimeInMs = 16u;
+
 	bool _gameIsRunning;
 	bool _windowIsActive;
 	int  _playerLosesControlCounter;
@@ -237,6 +239,8 @@ public:
 
 	int    _actorUpdateCounter;
 	uint32 _actorUpdateTimeLast;
+
+	uint32 _timeOfMainGameLoopTickPrevious;
 
 private:
 	MIXArchive _archives[kArchiveCount];

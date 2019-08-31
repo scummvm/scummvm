@@ -57,6 +57,7 @@ ESPER::ESPER(BladeRunnerEngine *vm) {
 	_isDrawingSelection = false;
 
 	_isOpen             = false;
+	_firstTickCall      = false;
 	_shapeButton        = nullptr;
 	_shapeThumbnail     = nullptr;
 	_vqaPlayerMain      = nullptr;
@@ -115,6 +116,8 @@ void ESPER::open(Graphics::Surface *surface) {
 	_vqaPlayerMain->setLoop(2, -1, kLoopSetModeJustStart, nullptr, nullptr);
 
 	_isOpen = true;
+	_timeLast = _vm->_time->currentSystem();
+	_firstTickCall = true;
 	_flash = false;
 
 	_script = new ESPERScript(_vm);
@@ -207,33 +210,43 @@ void ESPER::handleMouseDown(int x, int y, bool mainButton) {
 
 void ESPER::tick() {
 	if (!_vm->_windowIsActive) {
+		_timeLast = _vm->_time->currentSystem();
 		return;
 	}
 
-	tickSound();
-
-	blit(_vm->_surfaceBack, _vm->_surfaceFront);
-
-	int mouseX, mouseY;
-	_vm->_mouse->getXY(&mouseX, &mouseY);
-	if (!_vm->_mouse->isDisabled()) {
-		_buttons->handleMouseAction(mouseX, mouseY, false, false, false);
-	}
-
-	if (!_isOpen) {
+	uint32 timeNow = _vm->_time->currentSystem();
+	// unsigned difference is intentional
+	if (timeNow - _timeLast < _vm->kUpdateFrameTimeInMs && !_firstTickCall) {
 		return;
+	} else {
+		if (_firstTickCall) {
+			_firstTickCall = false;
+		}
+		tickSound();
+
+		blit(_vm->_surfaceBack, _vm->_surfaceFront);
+
+		int mouseX, mouseY;
+		_vm->_mouse->getXY(&mouseX, &mouseY);
+		if (!_vm->_mouse->isDisabled()) {
+			_buttons->handleMouseAction(mouseX, mouseY, false, false, false);
+		}
+
+		if (!_isOpen) {
+			return;
+		}
+
+		draw(_vm->_surfaceFront);
+		_buttons->draw(_vm->_surfaceFront);
+		drawMouse(_vm->_surfaceFront);
+
+		tickSound();
+		_vm->_subtitles->tick(_vm->_surfaceFront);
+		_vm->blitToScreen(_vm->_surfaceFront);
+
+		// TODO: implement 60hz lock for smoother experience
+		_timeLast = timeNow;
 	}
-
-	draw(_vm->_surfaceFront);
-	_buttons->draw(_vm->_surfaceFront);
-	drawMouse(_vm->_surfaceFront);
-
-	tickSound();
-	_vm->_subtitles->tick(_vm->_surfaceFront);
-	_vm->blitToScreen(_vm->_surfaceFront);
-
-	// TODO: implement 60hz lock for smoother experience
-	_vm->_system->delayMillis(10);
 
 	if (_statePhoto == kEsperPhotoStateVideoShow) {
 		if (_regionSelectedAck)	{

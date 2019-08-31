@@ -26,6 +26,7 @@
 #include "bladerunner/chapters.h"
 #include "bladerunner/subtitles.h"
 #include "bladerunner/vqa_player.h"
+#include "bladerunner/time.h"
 
 #include "common/debug.h"
 #include "common/events.h"
@@ -69,11 +70,24 @@ void OuttakePlayer::play(const Common::String &name, bool noLocalization, int co
 	_vm->_vqaIsPlaying = true;
 	_vm->_vqaStopIsRequested = false;
 
+	uint32 timeNow = 0;
+	bool   firstFrame = true;
+	_timeLast = _vm->_time->currentSystem();
+
 	while (!_vm->_vqaStopIsRequested && !_vm->shouldQuit()) {
 		_vm->handleEvents();
 
 		if (!_vm->_windowIsActive) {
+			_timeLast = _vm->_time->currentSystem();
 			continue;
+		}
+
+		timeNow = _vm->_time->currentSystem();
+		// unsigned difference is intentional
+		if (timeNow - _timeLast < _vm->kUpdateFrameTimeInMs && !firstFrame) {
+			continue;
+		} else if (firstFrame) {
+			firstFrame = false;
 		}
 
 		int frame = vqaPlayer.update();
@@ -87,8 +101,7 @@ void OuttakePlayer::play(const Common::String &name, bool noLocalization, int co
 			_vm->_subtitles->tickOuttakes(_vm->_surfaceFront);
 			_vm->blitToScreen(_vm->_surfaceFront);
 		}
-
-		_vm->_system->delayMillis(10);
+		_timeLast = timeNow;
 	}
 
 	_vm->_vqaIsPlaying = false;

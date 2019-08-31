@@ -184,6 +184,9 @@ class ESPER {
 	int _volume3;
 	int _ambientVolume;
 
+	uint32 _timeLast;
+	bool   _firstTickCall;
+
 public:
 	ESPER(BladeRunnerEngine *vm);
 	~ESPER();

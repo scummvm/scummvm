@@ -126,6 +126,8 @@ void VK::open(int actorId, int calibrationRatio) {
 	}
 
 	_isOpen = true;
+	_timeLast = _vm->_time->currentSystem();
+	_firstTickCall = true;
 
 	_script = new VKScript(_vm);
 
@@ -190,28 +192,38 @@ void VK::close() {
 }
 
 void VK::tick() {
-	int mouseX, mouseY;
-	_vm->_mouse->getXY(&mouseX, &mouseY);
-	if (!_vm->_mouse->isDisabled()) {
-		_buttons->handleMouseAction(mouseX, mouseY, false, false, false);
+
+	uint32 timeNow = _vm->_time->currentSystem();
+	// unsigned difference is intentional
+	if (timeNow - _timeLast < _vm->kUpdateFrameTimeInMs && !_firstTickCall) {
+		return;
+	} else {
+		if (_firstTickCall) {
+			_firstTickCall = false;
+		}
+		int mouseX, mouseY;
+		_vm->_mouse->getXY(&mouseX, &mouseY);
+		if (!_vm->_mouse->isDisabled()) {
+			_buttons->handleMouseAction(mouseX, mouseY, false, false, false);
+		}
+
+		draw();
+
+		if ( _vm->_debugger->_showStatsVk
+			&& !_vm->_actors[_actorId]->isSpeeching()
+			&& !_vm->_actors[kActorMcCoy]->isSpeeching()
+			&& !_vm->_actors[kActorAnsweringMachine]->isSpeeching()
+			&& !_isClosing
+		) {
+			_vm->_subtitles->setGameSubsText(Common::String::format("Calibration: %02d Ratio: %02d Anxiety: %02d%%\nReplicant: %02d%% Human: %02d%%", _calibration, _calibrationRatio, _anxiety, _replicantProbability, _humanProbability), true);
+			_vm->_subtitles->show();
+		}
+
+		_vm->_subtitles->tick(_vm->_surfaceFront);
+
+		_vm->blitToScreen(_vm->_surfaceFront);
+		_timeLast = timeNow;
 	}
-
-	draw();
-
-	if ( _vm->_debugger->_showStatsVk
-		&& !_vm->_actors[_actorId]->isSpeeching()
-		&& !_vm->_actors[kActorMcCoy]->isSpeeching()
-		&& !_vm->_actors[kActorAnsweringMachine]->isSpeeching()
-		&& !_isClosing
-	) {
-		_vm->_subtitles->setGameSubsText(Common::String::format("Calibration: %02d Ratio: %02d Anxiety: %02d%%\nReplicant: %02d%% Human: %02d%%", _calibration, _calibrationRatio, _anxiety, _replicantProbability, _humanProbability), true);
-		_vm->_subtitles->show();
-	}
-
-	_vm->_subtitles->tick(_vm->_surfaceFront);
-
-	_vm->blitToScreen(_vm->_surfaceFront);
-	_vm->_system->delayMillis(10);
 
 	// unsigned difference is intentional
 	if (_isClosing && (_vm->_time->current() - _timeCloseStart >= 3000u) && !_script->isInsideScript()) {

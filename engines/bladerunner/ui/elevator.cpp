@@ -187,6 +187,8 @@ int Elevator::activate(int elevatorId) {
 void Elevator::open() {
 	resetDescription();
 	_isOpen = true;
+	_timeLast = _vm->_time->currentSystem();
+	_firstTickCall = true;
 }
 
 bool Elevator::isOpen() const {
@@ -205,7 +207,16 @@ int Elevator::handleMouseDown(int x, int y) {
 
 void Elevator::tick() {
 	if (!_vm->_windowIsActive) {
+		_timeLast = _vm->_time->currentSystem();
 		return;
+	}
+
+	uint32 timeNow = _vm->_time->currentSystem();
+	// unsigned difference is intentional
+	if (timeNow - _timeLast < _vm->kUpdateFrameTimeInMs && !_firstTickCall) {
+		return;
+	} else if (_firstTickCall) {
+		_firstTickCall = false;
 	}
 
 	int frame = _vqaPlayer->update();
@@ -231,7 +242,7 @@ void Elevator::tick() {
 
 	_vm->blitToScreen(_vm->_surfaceFront);
 	tickDescription();
-	_vm->_system->delayMillis(10);
+	_timeLast = timeNow;
 }
 
 void Elevator::buttonClick(int buttonId) {

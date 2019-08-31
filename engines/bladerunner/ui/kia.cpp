@@ -227,12 +227,17 @@ bool KIA::isOpen() const {
 
 void KIA::tick() {
 	if (!isOpen()) {
+		_timeLast = _vm->_time->currentSystem();
 		return;
 	}
 
 	uint32 timeNow = _vm->_time->currentSystem();
 	// unsigned difference is intentional
 	uint32 timeDiff = timeNow - _timeLast;
+
+	if (timeDiff < _vm->kUpdateFrameTimeInMs) {
+		return;
+	}
 
 	if (_playerActorDialogueQueueSize == _playerActorDialogueQueuePosition) {
 		_playerActorDialogueState = 0;
@@ -383,7 +388,6 @@ void KIA::tick() {
 	_vm->_subtitles->tick(_vm->_surfaceFront);
 
 	_vm->blitToScreen(_vm->_surfaceFront);
-	_vm->_system->delayMillis(10);
 
 	_timeLast = timeNow;
 }

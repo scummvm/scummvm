@@ -80,6 +80,8 @@ int Spinner::chooseDestination(int loopId, bool immediately) {
 
 	if (loopId < 0) {
 		_isOpen = true;
+		_timeLast = _vm->_time->currentSystem();
+		_firstTickCall = true;
 	} else {
 		_vm->playerLosesControl();
 		_vm->_scene->loopStartSpecial(kSceneLoopModeSpinner, loopId, immediately);
@@ -229,6 +231,8 @@ void Spinner::mouseUpCallback(int destinationImage, void *self) {
 
 void Spinner::open() {
 	_isOpen = true;
+	_timeLast = _vm->_time->currentSystem();
+	_firstTickCall = true;
 }
 
 bool Spinner::isOpen() const {
@@ -247,7 +251,16 @@ int Spinner::handleMouseDown(int x, int y) {
 
 void Spinner::tick() {
 	if (!_vm->_windowIsActive) {
+		_timeLast = _vm->_time->currentSystem();
 		return;
+	}
+
+	uint32 timeNow = _vm->_time->currentSystem();
+	// unsigned difference is intentional
+	if (timeNow - _timeLast < _vm->kUpdateFrameTimeInMs && !_firstTickCall) {
+		return;
+	} else if (_firstTickCall) {
+		_firstTickCall = false;
 	}
 
 	int frame = _vqaPlayer->update();
@@ -274,7 +287,7 @@ void Spinner::tick() {
 	if (_vm->_cutContent) {
 		tickDescription();
 	}
-	_vm->_system->delayMillis(10);
+	_timeLast = timeNow;
 }
 
 void Spinner::setSelectedDestination(int destination) {
@@ -287,6 +300,7 @@ void Spinner::reset() {
 	}
 
 	_isOpen = false;
+	_firstTickCall = false;
 	_destinations = nullptr;
 	_selectedDestination = -1;
 	_imagePicker = nullptr;
