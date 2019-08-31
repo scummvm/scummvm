@@ -1219,21 +1219,16 @@ void GriffonEngine::game_checktrigger() {
 		game_processtrigger(_triggerloc[lx][ly]);
 }
 
-#ifdef OPENDINGUX
 #define MINCURSEL 7
 #define MAXCURSEL 14
 #define SY 22
-#else
-#define MINCURSEL 0
-#define MAXCURSEL 14
-#define SY (38 + (240 - 38) / 2 - 88)
-#endif
 
 void GriffonEngine::game_configmenu() {
 	int cursel = MINCURSEL;
 
+	int tickwait = 1000 / 60;
+
 	_ticks = g_system->getMillis();
-	int tickwait = 100;
 	int keypause = _ticks + tickwait;
 
 	Graphics::TransparentSurface *configwindow = IMG_Load("art/configwindow.bmp", true);
@@ -1267,30 +1262,18 @@ void GriffonEngine::game_configmenu() {
 
 		for (int i = 0; i <= 21; i++) {
 			static const char *vr[22] = {
-#ifdef OPENDINGUX
 				"", "",
 				"", "", "", "",
 				"", "", "",
-#else
-				"Resolution:", "",
-				"Bit Depth:", "", "", "",
-				"Start Fullscreen:", "", "",
-#endif
 				"Music:", "", "",
 				"Sound Effects:", "", "",
 				"Music Volume:", "",
 				"Effects Volume:", "", "", "", ""
 			};
 			static const char *vl[22] = {
-#ifdef OPENDINGUX
 				"", "",
 				"", "", "", "",
 				"", "", "",
-#else
-				"320x240", "640x480",
-				"16", "24", "32", "",
-				"Yes", "No", "",
-#endif
 				"On", "Off", "",
 				"On", "Off", "",
 				"[----------]", "",
@@ -1313,41 +1296,23 @@ void GriffonEngine::game_configmenu() {
 			}
 
 			int cl = 3;
-			if (i == 0 && config.scr_width == 320)
-				cl = 0;
-			if (i == 1 && config.scr_width == 640)
-				cl = 0;
-			if (i == 2 && config.scr_bpp == 16)
-				cl = 0;
-			if (i == 3 && config.scr_bpp == 24)
-				cl = 0;
-			if (i == 4 && config.scr_bpp == 32)
-				cl = 0;
-			if (i == 6 && config.fullscreen)
-				cl = 0;
-			if (i == 7 && !config.fullscreen)
-				cl = 0;
+
 			if (i == 9 && config.music)
 				cl = 0;
-			if (i == 10 && !config.music)
+			else if (i == 10 && !config.music)
 				cl = 0;
-			if (i == 12 && config.effects)
+			else if (i == 12 && config.effects)
 				cl = 0;
-			if (i == 13 && !config.effects)
+			else if (i == 13 && !config.effects)
 				cl = 0;
-
-			if (i > 18)
+			else if (i > 18)
 				cl = 0;
 
 			sys_print(_videobuffer, vr[i], 156 - 8 * strlen(vr[i]), sy + i * 8, 0);
 			sys_print(_videobuffer, vl[i], 164, sy + i * 8, cl);
 		}
 
-		int curselt = cursel;
-		if (cursel > 4)
-			curselt += 1;
-		if (cursel > 6)
-			curselt += 1;
+		int curselt = cursel + 2;
 		if (cursel > 8)
 			curselt += 1;
 		if (cursel > 10)
@@ -1468,104 +1433,33 @@ void GriffonEngine::game_configmenu() {
 				}
 
 				if (_event.kbd.keycode == Common::KEYCODE_RETURN) {
-#if 0
-					if (cursel == 0) {
-						fullscreen = config.fullscreen | config.hwaccel | config.hwsurface;
-
-						_video = SDL_SetVideoMode(320, 240, config.scr_bpp, fullscreen);
-						if (_video == 0) {
-							_video = SDL_SetVideoMode(config.scr_width, config.scr_height, config.scr_bpp, fullscreen);
-						} else {
-							config.scr_width = 320;
-							config.scr_height = 240;
-						}
-
-						SDL_UpdateRect(_video, 0, 0, config.scr_width, config.scr_height);
-					}
-					if (cursel == 1) {
-						fullscreen = config.fullscreen | config.hwaccel | config.hwsurface;
-
-						_video = SDL_SetVideoMode(640, 480, config.scr_bpp, fullscreen);
-						if (_video == 0) {
-							_video = SDL_SetVideoMode(config.scr_width, config.scr_height, config.scr_bpp, fullscreen);
-						} else {
-							config.scr_width = 640;
-							config.scr_height = 480;
-						}
-
-						SDL_UpdateRect(_video, 0, 0, config.scr_width, config.scr_height);
-					}
-					if (cursel == 2 || cursel == 3 || cursel == 4) {
-						fullscreen = config.fullscreen | config.hwaccel | config.hwsurface;
-
-						int b = 16;
-						if (cursel == 3)
-							b = 24;
-						if (cursel == 4)
-							b = 32;
-						_video = SDL_SetVideoMode(config.scr_width, config.scr_height, b, fullscreen);
-						if (_video == 0) {
-							_video = SDL_SetVideoMode(config.scr_width, config.scr_height, config.scr_bpp, fullscreen);
-						} else {
-							config.scr_bpp = b;
-						}
-
-						SDL_UpdateRect(_video, 0, 0, config.scr_width, config.scr_height);
-					}
-					if (cursel == 5) {
-						ofullscreen = config.fullscreen | config.hwaccel | config.hwsurface;
-						fullscreen = SDL_FULLSCREEN | config.hwaccel | config.hwsurface;
-
-						_video = SDL_SetVideoMode(config.scr_width, config.scr_height, config.scr_bpp, fullscreen);
-						if (_video == 0) {
-							_video = SDL_SetVideoMode(config.scr_width, config.scr_height, config.scr_bpp, ofullscreen);
-						} else {
-							config.fullscreen = SDL_FULLSCREEN;
-						}
-
-						SDL_UpdateRect(_video, 0, 0, config.scr_width, config.scr_height);
-					}
-					if (cursel == 6) {
-						ofullscreen = config.fullscreen | config.hwaccel | config.hwsurface;
-						fullscreen = 0 | config.hwaccel | config.hwsurface;
-
-						_video = SDL_SetVideoMode(config.scr_width, config.scr_height, config.scr_bpp, fullscreen);
-						if (_video == 0) {
-							_video = SDL_SetVideoMode(config.scr_width, config.scr_height, config.scr_bpp, ofullscreen);
-						} else {
-							config.fullscreen = 0;
-						}
-
-						SDL_UpdateRect(_video, 0, 0, config.scr_width, config.scr_height);
-					}
-					if (cursel == 7 && config.music == 0) {
-						config.music = 1;
-						if (_menabled == 1) {
+					if (cursel == 7 && !config.music) {
+						config.music = true;
+						if (_menabled) {
 							_menuchannel = playSound(_mmenu, true);
 							Mix_Volume(_menuchannel, config.musicvol);
 						}
 					}
-					if (cursel == 8 && config.music == 1) {
-						config.music = 0;
+					if (cursel == 8 && config.music) {
+						config.music = false;
 						Mix_HaltChannel(_musicchannel);
 						Mix_HaltChannel(_menuchannel);
 					}
-					if (cursel == 9 && config.effects == 0) {
-						config.effects = 1;
-						if (_menabled == 1) {
+					if (cursel == 9 && !config.effects) {
+						config.effects = true;
+						if (_menabled) {
 							int snd = playSound(_sfx[kSndDoor]);
 							Mix_Volume(snd, config.effectsvol);
 						}
 					}
 
 					if (cursel == 10 && config.effects)
-						config.effects = 0;
+						config.effects = false;
 
 					if (cursel == 13) {
 						config_save(&config);
 						break;
 					}
-#endif
 
 					if (cursel == 14) {
 						// reset keys to avoid returning
@@ -1578,7 +1472,7 @@ void GriffonEngine::game_configmenu() {
 
 		clouddeg += 0.01 * _fpsr;
 		while (clouddeg >= 360)
-			clouddeg = clouddeg - 360;
+			clouddeg -= 360;
 
 		g_system->delayMillis(10);
 	} while (!_shouldQuit);
@@ -4571,7 +4465,7 @@ void GriffonEngine::game_newgame() {
 	_secsingame = 0;
 	_secstart = 0;
 
-	int ldstop = 0;
+	bool ldstop = false;
 
 	do {
 		Common::Rect rc;
@@ -4579,10 +4473,10 @@ void GriffonEngine::game_newgame() {
 		ld += 4 * _fpsr;
 		if ((int)ld > config.musicvol)
 			ld = config.musicvol;
-		if (_menabled && ldstop == 0) {
+		if (_menabled && !ldstop) {
 			Mix_Volume(_musicchannel, (int)ld);
 			if ((int)ld == config.musicvol)
-				ldstop = 1;
+				ldstop = true;
 		}
 
 		rc.left = -xofs;
