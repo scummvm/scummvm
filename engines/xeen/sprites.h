@@ -224,6 +224,8 @@ public:
 class SpriteDrawer3 : public SpriteDrawer {
 private:
 	uint16 _offset, _mask;
+	byte _palette[256 * 3];
+	bool _hasPalette;
 private:
 	/**
 	 * Output a pixel

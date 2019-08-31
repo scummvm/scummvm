@@ -446,17 +446,31 @@ const uint16 DRAWER3_OFFSET[4] = { 1, 2, 4, 8 };
 SpriteDrawer3::SpriteDrawer3(byte *data, size_t filesize, int index) : SpriteDrawer(data, filesize) {
 	_offset = DRAWER3_OFFSET[index];
 	_mask = DRAWER3_MASK[index];
+
+	g_system->getPaletteManager()->grabPalette(_palette, 0, PALETTE_COUNT);
+	_hasPalette = false;
+	for (byte *pal = _palette; pal < _palette + PALETTE_SIZE && !_hasPalette; ++pal)
+		_hasPalette = *pal != 0;
 }
 
 void SpriteDrawer3::drawPixel(byte *dest, byte pixel) {
-	byte level = (pixel & _mask) - _offset + (*dest & 0xf);
+	// WORKAROUND: This is slightly different then the original:
+	// 1) The original has bunches of black pixels appearing. This does index increments to avoid such pixels
+	// 2) It also prevents any pixels being drawn in the single initial frame until the palette is set
+	if (_hasPalette) {
+		byte level = (pixel & _mask) - _offset + (*dest & 0xf);
 
-	if (level >= 0x80) {
-		*dest &= 0xf0;
-	} else if (level <= 0xf) {
-		*dest = (*dest & 0xf0) | level;
-	} else {
-		*dest |= 0xf;
+		if (level >= 0x80) {
+			*dest &= 0xf0;
+		} else if (level <= 0xf) {
+			*dest = (*dest & 0xf0) | level;
+		} else {
+			*dest |= 0xf;
+		}
+
+		//
+		while (*dest < 0xff && !_palette[*dest * 3] && !_palette[*dest * 3 + 1] && !_palette[*dest * 3 + 2])
+			++*dest;
 	}
 }
 
