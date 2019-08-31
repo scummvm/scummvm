@@ -28,6 +28,8 @@
 #include "xeen/screen.h"
 #include "xeen/sprites.h"
 
+#include "graphics/palette.h"
+
 namespace Xeen {
 
 #define SCENE_CLIP_LEFT 8
@@ -438,7 +440,7 @@ void SpriteDrawer1::drawPixel(byte *dest, byte pixel) {
 
 /*------------------------------------------------------------------------*/
 
-const uint16 DRAWER3_MASK[4] = { 0xF01, 0xF03, 0xF07, 0xF0F };
+const uint16 DRAWER3_MASK[4] = { 1, 3, 7, 15 };
 const uint16 DRAWER3_OFFSET[4] = { 1, 2, 4, 8 };
 
 SpriteDrawer3::SpriteDrawer3(byte *data, size_t filesize, int index) : SpriteDrawer(data, filesize) {
@@ -447,10 +449,8 @@ SpriteDrawer3::SpriteDrawer3(byte *data, size_t filesize, int index) : SpriteDra
 }
 
 void SpriteDrawer3::drawPixel(byte *dest, byte pixel) {
-	uint16 val = (int)*dest << 8 | pixel;
-	val = (val & _mask) - _offset;
+	byte level = (pixel & _mask) - _offset + (*dest & 0xf);
 
-	byte level = (val & 0xff) + (val >> 8);
 	if (level >= 0x80) {
 		*dest &= 0xf0;
 	} else if (level <= 0xf) {
