@@ -137,6 +137,8 @@ void SpriteResource::draw(XSurface &dest, int frame, const Common::Point &destPo
 	case SPRFLAG_DRAWER1:
 		draw = new SpriteDrawer1(_data, _filesize, flags & 0x1F);
 		break;
+	case SPRFLAG_DRAWER2:
+		error("TODO: Sprite drawer mode 2");
 	case SPRFLAG_DRAWER3:
 		draw = new SpriteDrawer3(_data, _filesize, flags & 0x1F);
 		break;
@@ -456,6 +458,19 @@ void SpriteDrawer3::drawPixel(byte *dest, byte pixel) {
 	} else {
 		*dest |= 0xf;
 	}
+}
+
+/*------------------------------------------------------------------------*/
+
+const byte DRAWER4_THRESHOLD[4] = { 4, 7, 10, 13 };
+
+SpriteDrawer4::SpriteDrawer4(byte *data, size_t filesize, int index) : SpriteDrawer(data, filesize) {
+	_threshold = DRAWER4_THRESHOLD[index];
+}
+
+void SpriteDrawer4::drawPixel(byte *dest, byte pixel) {
+	if ((pixel & 0xf) >= _threshold)
+		*dest = pixel;
 }
 
 /*------------------------------------------------------------------------*/

@@ -40,10 +40,10 @@ enum {
 };
 
 enum SpriteFlags {
-	SPRFLAG_MODE_MASK = 0xF00, SPRFLAG_DRAWER1 = 0x100, SPRFLAG_DRAWER3 = 0X300,
-	SPRFLAG_DRAWER5 = 0x500, SPRFLAG_DRAWER6 = 0x600, SPRFLAG_800 = 0x800,
-	SPRFLAG_SCENE_CLIPPED = 0x2000, SPRFLAG_BOTTOM_CLIPPED = 0x4000,
-	SPRFLAG_HORIZ_FLIPPED = 0x8000, SPRFLAG_RESIZE = 0x10000
+	SPRFLAG_MODE_MASK = 0xF00, SPRFLAG_DRAWER1 = 0x100, SPRFLAG_DRAWER2 = 0x200,
+	SPRFLAG_DRAWER3 = 0x300, SPRFLAG_DRAWER4 = 0x400, SPRFLAG_DRAWER5 = 0x500, SPRFLAG_DRAWER6 = 0x600,
+	SPRFLAG_DRAWER7 = 0x700, SPRFLAG_800 = 0x800, SPRFLAG_SCENE_CLIPPED = 0x2000,
+	SPRFLAG_BOTTOM_CLIPPED = 0x4000, SPRFLAG_HORIZ_FLIPPED = 0x8000, SPRFLAG_RESIZE = 0x10000
 };
 
 class SpriteResource {
@@ -203,9 +203,6 @@ public:
 		const Common::Rect &clipRect, uint flags, int scale);
 };
 
-/**
- * Handles drawing a sprite as masked/offset
- */
 class SpriteDrawer1 : public SpriteDrawer {
 private:
 	byte _offset, _mask;
@@ -236,6 +233,21 @@ public:
 	SpriteDrawer3(byte *data, size_t filesize, int index);
 };
 
+class SpriteDrawer4 : public SpriteDrawer {
+private:
+	byte _threshold;
+protected:
+	/**
+	 * Output a pixel
+	 */
+	virtual void drawPixel(byte *dest, byte pixel) override;
+public:
+	/**
+	 * Constructor
+	 */
+	SpriteDrawer4(byte *data, size_t filesize, int index);
+};
+
 class SpriteDrawer5 : public SpriteDrawer {
 private:
 	uint16 _mask, _random1, _random2;
@@ -256,9 +268,6 @@ public:
 	SpriteDrawer5(byte *data, size_t filesize, int index);
 };
 
-/**
- * Handles drawing a sprite as a solid color
- */
 class SpriteDrawer6 : public SpriteDrawer {
 private:
 	byte _color;
