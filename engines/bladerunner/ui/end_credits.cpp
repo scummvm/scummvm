@@ -112,7 +112,9 @@ void EndCredits::show() {
 		uint32 timeNow = _vm->_time->currentSystem();
 		if (timeNow - timeLast < _vm->kUpdateFrameTimeInMs && !firstPass) {
 			continue;
-		} else if (firstPass) {
+		}
+
+		if (firstPass) {
 			firstPass = false;
 		}
 

@@ -259,7 +259,9 @@ void Spinner::tick() {
 	// unsigned difference is intentional
 	if (timeNow - _timeLast < _vm->kUpdateFrameTimeInMs && !_firstTickCall) {
 		return;
-	} else if (_firstTickCall) {
+	}
+
+	if (_firstTickCall) {
 		_firstTickCall = false;
 	}
 

@@ -195,9 +195,7 @@ void VK::tick() {
 
 	uint32 timeNow = _vm->_time->currentSystem();
 	// unsigned difference is intentional
-	if (timeNow - _timeLast < _vm->kUpdateFrameTimeInMs && !_firstTickCall) {
-		return;
-	} else {
+	if (timeNow - _timeLast >= _vm->kUpdateFrameTimeInMs || _firstTickCall) {
 		if (_firstTickCall) {
 			_firstTickCall = false;
 		}

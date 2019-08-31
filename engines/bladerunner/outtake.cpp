@@ -86,7 +86,9 @@ void OuttakePlayer::play(const Common::String &name, bool noLocalization, int co
 		// unsigned difference is intentional
 		if (timeNow - _timeLast < _vm->kUpdateFrameTimeInMs && !firstFrame) {
 			continue;
-		} else if (firstFrame) {
+		}
+
+		if (firstFrame) {
 			firstFrame = false;
 		}
 
