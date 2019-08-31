@@ -40,7 +40,9 @@ enum {
 };
 
 enum SpriteFlags {
-	SPRFLAG_800 = 0x800, SPRFLAG_SCENE_CLIPPED = 0x2000, SPRFLAG_BOTTOM_CLIPPED = 0x4000,
+	SPRFLAG_MODE_MASK = 0xF00, SPRFLAG_DRAWER1 = 0x100, SPRFLAG_DRAWER3 = 0X300,
+	SPRFLAG_DRAWER5 = 0x500, SPRFLAG_DRAWER6 = 0x600, SPRFLAG_800 = 0x800,
+	SPRFLAG_SCENE_CLIPPED = 0x2000, SPRFLAG_BOTTOM_CLIPPED = 0x4000,
 	SPRFLAG_HORIZ_FLIPPED = 0x8000, SPRFLAG_RESIZE = 0x10000
 };
 
@@ -50,7 +52,7 @@ private:
 		uint16 _offset1, _offset2;
 	};
 	Common::Array<IndexEntry> _index;
-	int32 _filesize;
+	size_t _filesize;
 	byte *_data;
 	int _scaledWidth, _scaledHeight;
 	Common::String _filename;
@@ -72,17 +74,6 @@ private:
 	 */
 	void draw(int windowNum, int frame, const Common::Point &destPos,
 		const Common::Rect &bounds, uint flags = 0, int scale = 0);
-
-	/**
-	 * Draw a sprite frame based on a passed offset into the data stream
-	 */
-	void drawOffset(XSurface &dest, uint16 offset, const Common::Point &pt,
-		const Common::Rect &clipRect, uint flags, int scale);
-
-	/**
-	 * Scale a co-ordinate value based on the passed scaling mask
-	 */
-	static uint getScaledVal(int xy, uint16 &scaleMask);
 public:
 	SpriteResource();
 	SpriteResource(const Common::String &filename);
@@ -180,6 +171,107 @@ public:
 	 * is applied
 	 */
 	static void setClippedBottom(int y) { _clippedBottom = y; }
+};
+
+/**
+ * Basic sprite drawer
+ */
+class SpriteDrawer {
+private:
+	byte *_data;
+	size_t _filesize;
+private:
+	/**
+	 * Scale a co-ordinate value based on the passed scaling mask
+	 */
+	static uint getScaledVal(int xy, uint16 &scaleMask);
+protected:
+	/**
+	 * Output a pixel
+	 */
+	virtual void drawPixel(byte *dest, byte pixel);
+public:
+	/**
+	 * Constructor
+	 */
+	SpriteDrawer(byte *data, size_t filesize) : _data(data), _filesize(filesize) {}
+
+	/**
+	 * Draw a sprite frame based on a passed offset into the data stream
+	 */
+	void draw(XSurface &dest, uint16 offset, const Common::Point &pt,
+		const Common::Rect &clipRect, uint flags, int scale);
+};
+
+/**
+ * Handles drawing a sprite as masked/offset
+ */
+class SpriteDrawer1 : public SpriteDrawer {
+private:
+	byte _offset, _mask;
+protected:
+	/**
+	 * Output a pixel
+	 */
+	virtual void drawPixel(byte *dest, byte pixel) override;
+public:
+	/**
+	 * Constructor
+	 */
+	SpriteDrawer1(byte *data, size_t filesize, int index);
+};
+
+class SpriteDrawer3 : public SpriteDrawer {
+private:
+	uint16 _offset, _mask;
+private:
+	/**
+	 * Output a pixel
+	 */
+	virtual void drawPixel(byte *dest, byte pixel) override;
+public:
+	/**
+	 * Constructor
+	 */
+	SpriteDrawer3(byte *data, size_t filesize, int index);
+};
+
+class SpriteDrawer5 : public SpriteDrawer {
+private:
+	uint16 _mask, _random1, _random2;
+private:
+	/**
+	 * Roll carry right opcode emulation
+	 */
+	void rcr(uint16 &val, bool &cf);
+protected:
+	/**
+	 * Output a pixel
+	 */
+	virtual void drawPixel(byte *dest, byte pixel) override;
+public:
+	/**
+	 * Constructor
+	 */
+	SpriteDrawer5(byte *data, size_t filesize, int index);
+};
+
+/**
+ * Handles drawing a sprite as a solid color
+ */
+class SpriteDrawer6 : public SpriteDrawer {
+private:
+	byte _color;
+protected:
+	/**
+	 * Output a pixel
+	 */
+	virtual void drawPixel(byte *dest, byte pixel) override;
+public:
+	/**
+	 * Constructor
+	 */
+	SpriteDrawer6(byte *data, size_t filesize, int index);
 };
 
 } // End of namespace Xeen
