@@ -28,10 +28,6 @@
 #include "common/system.h"
 
 
-#ifdef WIN32
-#include "backends/platform/sdl/win32/win32.h"
-#endif
-
 namespace Common {
 
 /**
@@ -40,9 +36,6 @@ namespace Common {
  * ScummVM is compiled with or without iconv.
  */
 class Encoding {
-#ifdef WIN32
-	friend char *OSystem_Win32::convertEncoding(const char*, const char *, const char *, size_t);
-#endif
 	public:
 		/**
 		 * Constructs everything needed for the conversion between 2 encodings
@@ -104,6 +97,17 @@ class Encoding {
 		 * @param to The encoding, to convert to
 		 */
 		void setTo(const String &to) {_to = to;};
+
+		/**
+		 * Switches the endianity of a string.
+		 *
+		 * @param string Array containing the characters of a string.
+		 * @param length Length of the string in bytes
+		 * @param bitCount Number of bits used for each character.
+		 *
+		 * @return Array of characters with the opposite endianity
+		 */
+		static char *switchEndian(const char *string, int length, int bitCount);
 	
 	private:
 		/** The encoding, which is currently being converted to */
@@ -211,17 +215,6 @@ class Encoding {
 		 * @return Transliterated string in UTF-32 (must be freed) or nullptr on fail.
 		 */
 		static uint32 *transliterateUTF32(const uint32 *string, size_t length);
-
-		/**
-		 * Switches the endianity of a string.
-		 *
-		 * @param string Array containing the characters of a string.
-		 * @param length Length of the string in bytes
-		 * @param bitCount Number of bits used for each character.
-		 *
-		 * @return Array of characters with the opposite endianity
-		 */
-		static char *switchEndian(const char *string, int length, int bitCount);
 };
 
 }

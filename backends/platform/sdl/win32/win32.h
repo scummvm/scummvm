@@ -27,7 +27,6 @@
 #include "backends/platform/sdl/win32/win32-window.h"
 
 class OSystem_Win32 : public OSystem_SDL {
-	friend class Common::Encoding;
 public:
 	virtual void init();
 	virtual void initBackend();
