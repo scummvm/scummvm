@@ -134,33 +134,33 @@ void SpriteResource::draw(XSurface &dest, int frame, const Common::Point &destPo
 		r.clip(SCREEN_WIDTH, _clippedBottom);
 
 	// Create drawer to handle the rendering
-	SpriteDrawer *draw;
+	SpriteDrawer *drawer;
 	switch (flags & SPRFLAG_MODE_MASK) {
 	case SPRFLAG_DRAWER1:
-		draw = new SpriteDrawer1(_data, _filesize, flags & 0x1F);
+		drawer = new SpriteDrawer1(_data, _filesize, flags & 0x1F);
 		break;
 	case SPRFLAG_DRAWER2:
 		error("TODO: Sprite drawer mode 2");
 	case SPRFLAG_DRAWER3:
-		draw = new SpriteDrawer3(_data, _filesize, flags & 0x1F);
+		drawer = new SpriteDrawer3(_data, _filesize, flags & 0x1F);
 		break;
 	case SPRFLAG_DRAWER5:
-		draw = new SpriteDrawer5(_data, _filesize, flags & 0x1F);
+		drawer = new SpriteDrawer5(_data, _filesize, flags & 0x1F);
 		break;
 	case SPRFLAG_DRAWER6:
-		draw = new SpriteDrawer6(_data, _filesize, flags & 0x1F);
+		drawer = new SpriteDrawer6(_data, _filesize, flags & 0x1F);
 		break;
 	default:
-		draw = new SpriteDrawer(_data, _filesize);
+		drawer = new SpriteDrawer(_data, _filesize);
 		break;
 	}
 
 	// Sprites can consist of separate background & foreground
-	draw->draw(dest, _index[frame]._offset1, destPos, r, flags, scale);
+	drawer->draw(dest, _index[frame]._offset1, destPos, r, flags, scale);
 	if (_index[frame]._offset2)
-		draw->draw(dest, _index[frame]._offset2, destPos, r, flags, scale);
+		drawer->draw(dest, _index[frame]._offset2, destPos, r, flags, scale);
 
-	delete draw;
+	delete drawer;
 }
 
 void SpriteResource::draw(XSurface &dest, int frame) {
