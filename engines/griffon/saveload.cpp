@@ -125,7 +125,7 @@ int GriffonEngine::state_load(int slotnum) {
 		return 1; // success
 	}
 
-	return 0; // faliure
+	return 0; // failure
 }
 
 /* fill PLAYERTYPE _playera; */
