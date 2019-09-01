@@ -197,6 +197,11 @@ public:
 	SpriteDrawer(byte *data, size_t filesize) : _data(data), _filesize(filesize) {}
 
 	/**
+	 * Destructor
+	 */
+	virtual ~SpriteDrawer() {}
+
+	/**
 	 * Draw a sprite frame based on a passed offset into the data stream
 	 */
 	void draw(XSurface &dest, uint16 offset, const Common::Point &pt,
