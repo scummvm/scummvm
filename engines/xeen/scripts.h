@@ -554,7 +554,6 @@ public:
 	bool _eventSkipped;
 	int _whoWill;
 	DamageType _nEdamageType;
-	int _itemType;
 	Common::Array<MirrorEntry> _mirror;
 	Common::String _message;
 public:

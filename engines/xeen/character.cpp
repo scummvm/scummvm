@@ -48,6 +48,8 @@ int CharacterArray::indexOf(const Character &c) {
 
 /*------------------------------------------------------------------------*/
 
+int Character::_itemType;
+
 Character::Character(): _weapons(this), _armor(this), _accessories(this), _misc(this), _items(this) {
 	clear();
 	_faceSprites = nullptr;
@@ -969,7 +971,6 @@ int Character::getNumAwards() const {
 
 ItemCategory Character::makeItem(int p1, int itemIndex, int p3) {
 	XeenEngine *vm = Party::_vm;
-	Scripts &scripts = *vm->_scripts;
 	int itemOffset = vm->getGameID() == GType_Swords ? 6 : 0;
 
 	if (!p1)
@@ -983,18 +984,18 @@ ItemCategory Character::makeItem(int p1, int itemIndex, int p3) {
 
 	// Randomly pick a category and item Id
 	if (p3 == 12) {
-		if (scripts._itemType < (35 + itemOffset)) {
+		if (_itemType < (35 + itemOffset)) {
 			category = CATEGORY_WEAPON;
-			itemId = scripts._itemType;
-		} else if (scripts._itemType < (49 + itemOffset)) {
+			itemId = _itemType;
+		} else if (_itemType < (49 + itemOffset)) {
 			category = CATEGORY_ARMOR;
-			itemId = scripts._itemType - (35 + itemOffset);
-		} else if (scripts._itemType < (60 + itemOffset)) {
+			itemId = _itemType - (35 + itemOffset);
+		} else if (_itemType < (60 + itemOffset)) {
 			category = CATEGORY_ACCESSORY;
-			itemId = scripts._itemType - (49 + itemOffset);
+			itemId = _itemType - (49 + itemOffset);
 		} else {
 			category = CATEGORY_MISC;
-			itemId = scripts._itemType - (60 + itemOffset);
+			itemId = _itemType - (60 + itemOffset);
 		}
 	} else {
 		switch (p3) {
@@ -1104,6 +1105,7 @@ ItemCategory Character::makeItem(int p1, int itemIndex, int p3) {
 		break;
 
 	case CATEGORY_MISC:
+		newItem._material = itemId;
 		v8 = 4;
 		break;
 

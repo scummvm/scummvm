@@ -115,7 +115,6 @@ bool MirrorEntry::synchronize(Common::SeekableReadStream &s) {
 
 Scripts::Scripts(XeenEngine *vm) : _vm(vm) {
 	_whoWill = 0;
-	_itemType = 0;
 	_treasureItems = 0;
 	_lineNum = 0;
 	_charIndex = 0;
@@ -144,7 +143,6 @@ int Scripts::checkEvents() {
 	int ccNum = files._ccNum;
 
 	_refreshIcons = false;
-	_itemType = 0;
 	_scriptExecuted = false;
 	_dirFlag = false;
 	_whoWill = 0;
@@ -1313,7 +1311,7 @@ bool Scripts::cmdGiveEnchanted(ParamsIterator &params) {
 }
 
 bool Scripts::cmdItemType(ParamsIterator &params) {
-	_itemType = params.readByte();
+	Character::_itemType = params.readByte();
 
 	return true;
 }
