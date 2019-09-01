@@ -30,11 +30,13 @@
 namespace BladeRunner {
 
 class BladeRunnerEngine;
+class Framelimiter;
 
 class OuttakePlayer {
 	BladeRunnerEngine *_vm;
+	Framelimiter      *_framelimiter;
+
 	Graphics::Surface  _surfaceVideo;
-	uint32             _timeLast;
 
 public:
 	OuttakePlayer(BladeRunnerEngine *vm);

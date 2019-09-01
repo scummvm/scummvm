@@ -34,6 +34,7 @@
 #include "bladerunner/crimes_database.h"
 #include "bladerunner/debugger.h"
 #include "bladerunner/dialogue_menu.h"
+#include "bladerunner/framelimiter.h"
 #include "bladerunner/font.h"
 #include "bladerunner/game_flags.h"
 #include "bladerunner/game_info.h"
@@ -216,6 +217,8 @@ BladeRunnerEngine::BladeRunnerEngine(OSystem *syst, const ADGameDescription *des
 		_actors[i]           = nullptr;
 	}
 	_debugger                = nullptr;
+	_mainLoopFrameLimiter    = nullptr;
+
 	walkingReset();
 
 	_actorUpdateCounter  = 0;
@@ -525,6 +528,8 @@ bool BladeRunnerEngine::startup(bool hasSavegames) {
 
 	_cosTable1024 = new Common::CosineTable(1024); // 10-bits = 1024 points for 2*PI;
 	_sinTable1024 = new Common::SineTable(1024);
+
+	_mainLoopFrameLimiter = new Framelimiter(this, Framelimiter::kDefaultFpsRate, Framelimiter::kDefaultUseDelayMillis);
 
 	_view = new View();
 
@@ -927,6 +932,11 @@ void BladeRunnerEngine::shutdown() {
 
 	delete _screenEffects;
 	_screenEffects = nullptr;
+
+	if (_mainLoopFrameLimiter) {
+		delete _mainLoopFrameLimiter;
+		_mainLoopFrameLimiter = nullptr;
+	}
 }
 
 bool BladeRunnerEngine::loadSplash() {
@@ -955,7 +965,7 @@ bool BladeRunnerEngine::isMouseButtonDown() const {
 
 void BladeRunnerEngine::gameLoop() {
 	_gameIsRunning = true;
-	_timeOfMainGameLoopTickPrevious = _time->currentSystem();
+	_mainLoopFrameLimiter->init();
 	do {
 		if (_playerDead) {
 			playerDied();
@@ -970,7 +980,7 @@ void BladeRunnerEngine::gameTick() {
 	handleEvents();
 
 	if (!_gameIsRunning || !_windowIsActive) {
-		_timeOfMainGameLoopTickPrevious = _time->currentSystem();
+		_mainLoopFrameLimiter->init();
 		return;
 	}
 
@@ -979,7 +989,7 @@ void BladeRunnerEngine::gameTick() {
 			Common::Error runtimeError = Common::Error(Common::kUnknownError, _("A required game resource was not found"));
 			GUI::MessageDialog dialog(runtimeError.getDesc());
 			dialog.runModal();
-			_timeOfMainGameLoopTickPrevious = _time->currentSystem();
+			_mainLoopFrameLimiter->init();
 			return;
 		}
 	}
@@ -1111,15 +1121,13 @@ void BladeRunnerEngine::gameTick() {
 
 	_subtitles->tick(_surfaceFront);
 
-	uint32 mainGameLoopTickNow = _time->currentSystem();
-	if (mainGameLoopTickNow - _timeOfMainGameLoopTickPrevious < kUpdateFrameTimeInMs) {
-		return;
-	}
-	_timeOfMainGameLoopTickPrevious = mainGameLoopTickNow;
 	 // Without this condition the game may flash back to the game screen
 	 // between and ending outtake and the end credits.
 	if (!_gameOver) {
-		blitToScreen(_surfaceFront);
+		if (_mainLoopFrameLimiter->shouldExecuteScreenUpdate()) {
+			blitToScreen(_surfaceFront);
+			_mainLoopFrameLimiter->postScreenUpdate();
+		}
 	}
 
 }

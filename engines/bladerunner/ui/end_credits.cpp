@@ -29,6 +29,7 @@
 #include "bladerunner/game_constants.h"
 #include "bladerunner/ambient_sounds.h"
 #include "bladerunner/audio_speech.h"
+#include "bladerunner/framelimiter.h"
 #include "bladerunner/font.h"
 #include "bladerunner/game_info.h"
 #include "bladerunner/mouse.h"
@@ -41,9 +42,14 @@ namespace BladeRunner {
 
 EndCredits::EndCredits(BladeRunnerEngine *vm) {
 	_vm = vm;
+	_framelimiter = new Framelimiter(_vm, Framelimiter::kDefaultFpsRate, Framelimiter::kDefaultUseDelayMillis);
 }
 
 EndCredits::~EndCredits() {
+	if (_framelimiter) {
+		delete _framelimiter;
+		_framelimiter = nullptr;
+	}
 }
 
 void EndCredits::show() {
@@ -92,8 +98,7 @@ void EndCredits::show() {
 	_vm->_vqaStopIsRequested = false;
 
 	double position = 0.0;
-	uint32 timeLast = _vm->_time->currentSystem();
-	bool   firstPass = true;
+	_framelimiter->init();
 
 	while (!_vm->_vqaStopIsRequested && !_vm->shouldQuit()) {
 		if (position >= textPositions[textCount - 1]) {
@@ -104,22 +109,15 @@ void EndCredits::show() {
 		_vm->handleEvents();
 
 		if (!_vm->_windowIsActive) {
-			timeLast = _vm->_time->currentSystem();
-
+			_framelimiter->init();
 			continue;
 		}
 
-		uint32 timeNow = _vm->_time->currentSystem();
-		if (timeNow - timeLast < _vm->kUpdateFrameTimeInMs && !firstPass) {
+		if (!_framelimiter->shouldExecuteScreenUpdate()) {
 			continue;
 		}
 
-		if (firstPass) {
-			firstPass = false;
-		}
-
-		position += (double)(timeNow - timeLast) * 0.05f; // unsigned difference is intentional
-		timeLast = timeNow;
+		position += (double)(_framelimiter->getTimeOfCurrentPass() - _framelimiter->getTimeOfLastPass()) * 0.05f; // unsigned difference is intentional
 
 		_vm->_surfaceFront.fillRect(Common::Rect(640, 480), 0);
 
@@ -156,6 +154,7 @@ void EndCredits::show() {
 		_vm->_surfaceFront.fillRect(Common::Rect(0, 452, 640, 480), 0);
 
 		_vm->blitToScreen(_vm->_surfaceFront);
+		_framelimiter->postScreenUpdate();
 	}
 
 	_vm->_vqaIsPlaying = false;

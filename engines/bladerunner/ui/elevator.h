@@ -28,12 +28,14 @@
 namespace BladeRunner {
 
 class BladeRunnerEngine;
+class Framelimiter;
 class Shape;
 class VQAPlayer;
 class UIImagePicker;
 
 class Elevator {
 	BladeRunnerEngine     *_vm;
+	Framelimiter          *_framelimiter;
 	bool                   _isOpen;
 	VQAPlayer             *_vqaPlayer;
 	int                    _buttonClicked;
@@ -42,9 +44,6 @@ class Elevator {
 	int                    _actorId;
 	int                    _sentenceId;
 	uint32                 _timeSpeakDescriptionStart;
-
-	uint32                 _timeLast;
-	bool                   _firstTickCall;
 
 public:
 	Elevator(BladeRunnerEngine *vm);

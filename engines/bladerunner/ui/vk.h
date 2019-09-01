@@ -31,6 +31,7 @@
 namespace BladeRunner {
 
 class BladeRunnerEngine;
+class Framelimiter;
 class VKScript;
 class Shape;
 class UIImagePicker;
@@ -47,6 +48,7 @@ class VK {
 	};
 
 	BladeRunnerEngine *_vm;
+	Framelimiter      *_framelimiter;
 
 	VKScript *_script;
 
@@ -123,9 +125,6 @@ class VK {
 	int    _eyeLineYDelta;
 	uint32 _timeNextEyeLineStepStart;
 	uint32 _timeNextEyeLineStart;
-
-	uint32 _timeLast;
-	bool   _firstTickCall;
 
 public:
 	VK(BladeRunnerEngine *vm);

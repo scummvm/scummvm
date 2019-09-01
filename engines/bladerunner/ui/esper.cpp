@@ -28,6 +28,7 @@
 #include "bladerunner/bladerunner.h"
 #include "bladerunner/debugger.h"
 #include "bladerunner/decompress_lcw.h"
+#include "bladerunner/framelimiter.h"
 #include "bladerunner/font.h"
 #include "bladerunner/game_info.h"
 #include "bladerunner/mouse.h"
@@ -57,7 +58,6 @@ ESPER::ESPER(BladeRunnerEngine *vm) {
 	_isDrawingSelection = false;
 
 	_isOpen             = false;
-	_firstTickCall      = false;
 	_shapeButton        = nullptr;
 	_shapeThumbnail     = nullptr;
 	_vqaPlayerMain      = nullptr;
@@ -67,11 +67,17 @@ ESPER::ESPER(BladeRunnerEngine *vm) {
 	reset();
 
 	_buttons = new UIImagePicker(vm, kPhotoCount + 4);
+	_framelimiter = new Framelimiter(_vm, Framelimiter::kDefaultFpsRate, Framelimiter::kDefaultUseDelayMillis);
 }
 
 ESPER::~ESPER() {
 	delete _buttons;
 	reset();
+
+	if (_framelimiter) {
+		delete _framelimiter;
+		_framelimiter = nullptr;
+	}
 }
 
 void ESPER::open(Graphics::Surface *surface) {
@@ -116,8 +122,8 @@ void ESPER::open(Graphics::Surface *surface) {
 	_vqaPlayerMain->setLoop(2, -1, kLoopSetModeJustStart, nullptr, nullptr);
 
 	_isOpen = true;
-	_timeLast = _vm->_time->currentSystem();
-	_firstTickCall = true;
+	_framelimiter->init();
+
 	_flash = false;
 
 	_script = new ESPERScript(_vm);
@@ -210,16 +216,11 @@ void ESPER::handleMouseDown(int x, int y, bool mainButton) {
 
 void ESPER::tick() {
 	if (!_vm->_windowIsActive) {
-		_timeLast = _vm->_time->currentSystem();
+		_framelimiter->init();
 		return;
 	}
 
-	uint32 timeNow = _vm->_time->currentSystem();
-	// unsigned difference is intentional
-	if (timeNow - _timeLast >= _vm->kUpdateFrameTimeInMs || _firstTickCall) {
-		if (_firstTickCall) {
-			_firstTickCall = false;
-		}
+	if (_framelimiter->shouldExecuteScreenUpdate()) {
 		tickSound();
 
 		blit(_vm->_surfaceBack, _vm->_surfaceFront);
@@ -242,8 +243,7 @@ void ESPER::tick() {
 		_vm->_subtitles->tick(_vm->_surfaceFront);
 		_vm->blitToScreen(_vm->_surfaceFront);
 
-		// TODO: implement 60hz lock for smoother experience
-		_timeLast = timeNow;
+		_framelimiter->postScreenUpdate();
 	}
 
 	if (_statePhoto == kEsperPhotoStateVideoShow) {

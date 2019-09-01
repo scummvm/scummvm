@@ -27,6 +27,7 @@
 #include "bladerunner/audio_player.h"
 #include "bladerunner/bladerunner.h"
 #include "bladerunner/combat.h"
+#include "bladerunner/framelimiter.h"
 #include "bladerunner/font.h"
 #include "bladerunner/game_constants.h"
 #include "bladerunner/game_flags.h"
@@ -53,10 +54,16 @@ VK::VK(BladeRunnerEngine *vm) {
 	_vm = vm;
 
 	reset();
+	_framelimiter = new Framelimiter(_vm, Framelimiter::kDefaultFpsRate, Framelimiter::kDefaultUseDelayMillis);
 }
 
 VK::~VK() {
 	reset();
+
+	if (_framelimiter) {
+		delete _framelimiter;
+		_framelimiter = nullptr;
+	}
 }
 
 void VK::open(int actorId, int calibrationRatio) {
@@ -126,8 +133,7 @@ void VK::open(int actorId, int calibrationRatio) {
 	}
 
 	_isOpen = true;
-	_timeLast = _vm->_time->currentSystem();
-	_firstTickCall = true;
+	_framelimiter->init();
 
 	_script = new VKScript(_vm);
 
@@ -193,12 +199,7 @@ void VK::close() {
 
 void VK::tick() {
 
-	uint32 timeNow = _vm->_time->currentSystem();
-	// unsigned difference is intentional
-	if (timeNow - _timeLast >= _vm->kUpdateFrameTimeInMs || _firstTickCall) {
-		if (_firstTickCall) {
-			_firstTickCall = false;
-		}
+	if (_framelimiter->shouldExecuteScreenUpdate()) {
 		int mouseX, mouseY;
 		_vm->_mouse->getXY(&mouseX, &mouseY);
 		if (!_vm->_mouse->isDisabled()) {
@@ -220,7 +221,7 @@ void VK::tick() {
 		_vm->_subtitles->tick(_vm->_surfaceFront);
 
 		_vm->blitToScreen(_vm->_surfaceFront);
-		_timeLast = timeNow;
+		_framelimiter->postScreenUpdate();
 	}
 
 	// unsigned difference is intentional

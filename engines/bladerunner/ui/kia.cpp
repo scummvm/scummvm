@@ -26,6 +26,7 @@
 #include "bladerunner/audio_player.h"
 #include "bladerunner/bladerunner.h"
 #include "bladerunner/combat.h"
+#include "bladerunner/framelimiter.h"
 #include "bladerunner/font.h"
 #include "bladerunner/game_constants.h"
 #include "bladerunner/game_flags.h"
@@ -80,7 +81,6 @@ KIA::KIA(BladeRunnerEngine *vm) {
 	_playerPhotograph = nullptr;
 	_playerSliceModelId = -1;
 	_playerSliceModelAngle = 0.0f;
-	_timeLast = _vm->_time->currentSystem();
 	_playerActorDialogueQueuePosition = 0;
 	_playerActorDialogueQueueSize = 0;
 	_playerActorDialogueState = 0;
@@ -93,7 +93,7 @@ KIA::KIA(BladeRunnerEngine *vm) {
 
 	// original imageCount was 22. We add +1 to have a description box for objects in cut content
 	// We don't have separated cases here, for _vm->_cutContent since that causes assertion fault if
-	// loading a "restoed content" save game in a "original game" version
+	// loading a "restored content" save game in a "original game" version
 	_buttons = new UIImagePicker(_vm, 23);
 
 	_crimesSection     = new KIASectionCrimes(_vm, _vm->_playerActor->_clues);
@@ -110,6 +110,9 @@ KIA::KIA(BladeRunnerEngine *vm) {
 		_playerActorDialogueQueue[i].actorId    = -1;
 		_playerActorDialogueQueue[i].sentenceId = -1;
 	}
+
+	_framelimiter = new Framelimiter(_vm, Framelimiter::kDefaultFpsRate, Framelimiter::kDefaultUseDelayMillis);
+	_framelimiter->init();
 }
 
 KIA::~KIA() {
@@ -133,6 +136,11 @@ KIA::~KIA() {
 	delete _shapes;
 	delete _log;
 	delete _script;
+
+	if (_framelimiter) {
+		delete _framelimiter;
+		_framelimiter = nullptr;
+	}
 }
 
 void KIA::reset() {
@@ -227,17 +235,16 @@ bool KIA::isOpen() const {
 
 void KIA::tick() {
 	if (!isOpen()) {
-		_timeLast = _vm->_time->currentSystem();
 		return;
 	}
 
-	uint32 timeNow = _vm->_time->currentSystem();
+	if (!_framelimiter->shouldExecuteScreenUpdate()) {
+		return;
+	}
+
+	uint32 timeNow = _framelimiter->getTimeOfCurrentPass();
 	// unsigned difference is intentional
-	uint32 timeDiff = timeNow - _timeLast;
-
-	if (timeDiff < _vm->kUpdateFrameTimeInMs) {
-		return;
-	}
+	uint32 timeDiff = timeNow - _framelimiter->getTimeOfLastPass();
 
 	if (_playerActorDialogueQueueSize == _playerActorDialogueQueuePosition) {
 		_playerActorDialogueState = 0;
@@ -389,7 +396,7 @@ void KIA::tick() {
 
 	_vm->blitToScreen(_vm->_surfaceFront);
 
-	_timeLast = timeNow;
+	_framelimiter->postScreenUpdate();
 }
 
 void KIA::resume() {
@@ -684,7 +691,8 @@ void KIA::init() {
 	playerReset();
 	_playerVqaFrame = 0;
 	_playerVqaTimeLast = _vm->_time->currentSystem();
-	_timeLast = _vm->_time->currentSystem();
+
+	_framelimiter->init();
 
 	if (_vm->_gameFlags->query(kFlagKIAPrivacyAddon) && !_vm->_gameFlags->query(kFlagKIAPrivacyAddonIntro)) {
 		_vm->_gameFlags->set(kFlagKIAPrivacyAddonIntro);

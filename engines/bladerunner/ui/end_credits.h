@@ -26,9 +26,11 @@
 namespace BladeRunner {
 
 class BladeRunnerEngine;
+class Framelimiter;
 
 class EndCredits {
 	BladeRunnerEngine *_vm;
+	Framelimiter      *_framelimiter;
 
 public:
 	EndCredits(BladeRunnerEngine *vm);

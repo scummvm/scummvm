@@ -29,6 +29,7 @@
 namespace BladeRunner {
 
 class BladeRunnerEngine;
+class Framelimiter;
 class SaveFileReadStream;
 class SaveFileWriteStream;
 class Shape;
@@ -44,6 +45,7 @@ class Spinner {
 	};
 
 	BladeRunnerEngine      *_vm;
+	Framelimiter           *_framelimiter;
 	bool                    _isDestinationSelectable[kSpinnerDestinations];
 	bool                    _isOpen;
 	VQAPlayer              *_vqaPlayer;
@@ -55,9 +57,6 @@ class Spinner {
 	int                    _actorId;
 	int                    _sentenceId;
 	uint32                 _timeSpeakDescriptionStart;
-
-	uint32                 _timeLast;
-	bool                   _firstTickCall;
 
 public:
 	Spinner(BladeRunnerEngine *vm);

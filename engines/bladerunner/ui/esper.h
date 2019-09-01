@@ -31,6 +31,7 @@
 namespace BladeRunner {
 
 class BladeRunnerEngine;
+class Framelimiter;
 class Font;
 class Shape;
 class VQAPlayer;
@@ -87,6 +88,7 @@ class ESPER {
 	};
 
 	BladeRunnerEngine     *_vm;
+	Framelimiter          *_framelimiter;
 	ESPERScript           *_script;
 
 	bool _isWaiting;
@@ -183,9 +185,6 @@ class ESPER {
 	int _soundId3;
 	int _volume3;
 	int _ambientVolume;
-
-	uint32 _timeLast;
-	bool   _firstTickCall;
 
 public:
 	ESPER(BladeRunnerEngine *vm);

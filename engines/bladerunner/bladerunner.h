@@ -73,6 +73,7 @@ class DialogueMenu;
 class Elevator;
 class EndCredits;
 class ESPER;
+class Framelimiter;
 class Font;
 class GameFlags;
 class GameInfo;
@@ -118,8 +119,6 @@ public:
 	// 1: alpha testing (from May 15, 2019 to July 17, 2019)
 	// 2: all time code uses uint32 (since July 17 2019),
 	static const int kBladeRunnerScummVMVersion = 2;
-
-	static const uint32 kUpdateFrameTimeInMs = 16u;
 
 	bool _gameIsRunning;
 	bool _windowIsActive;
@@ -197,6 +196,8 @@ public:
 
 	Common::CosineTable *_cosTable1024;
 	Common::SineTable   *_sinTable1024;
+
+	Framelimiter *_mainLoopFrameLimiter;
 
 	bool _isWalkingInterruptible;
 	bool _interruptWalking;

@@ -24,6 +24,7 @@
 
 #include "bladerunner/bladerunner.h"
 #include "bladerunner/chapters.h"
+#include "bladerunner/framelimiter.h"
 #include "bladerunner/subtitles.h"
 #include "bladerunner/vqa_player.h"
 #include "bladerunner/time.h"
@@ -37,10 +38,16 @@ namespace BladeRunner {
 OuttakePlayer::OuttakePlayer(BladeRunnerEngine *vm) {
 	_vm = vm;
 	_surfaceVideo.create(_vm->_surfaceBack.w, _vm->_surfaceBack.h, _vm->_surfaceBack.format);
+	_framelimiter = new Framelimiter(_vm, Framelimiter::kDefaultFpsRate, Framelimiter::kDefaultUseDelayMillis);
 }
 
 OuttakePlayer::~OuttakePlayer() {
 	_surfaceVideo.free();
+
+	if (_framelimiter) {
+		delete _framelimiter;
+		_framelimiter = nullptr;
+	}
 }
 
 void OuttakePlayer::play(const Common::String &name, bool noLocalization, int container) {
@@ -70,26 +77,18 @@ void OuttakePlayer::play(const Common::String &name, bool noLocalization, int co
 	_vm->_vqaIsPlaying = true;
 	_vm->_vqaStopIsRequested = false;
 
-	uint32 timeNow = 0;
-	bool   firstFrame = true;
-	_timeLast = _vm->_time->currentSystem();
+	_framelimiter->init();
 
 	while (!_vm->_vqaStopIsRequested && !_vm->shouldQuit()) {
 		_vm->handleEvents();
 
 		if (!_vm->_windowIsActive) {
-			_timeLast = _vm->_time->currentSystem();
+			_framelimiter->init();
 			continue;
 		}
 
-		timeNow = _vm->_time->currentSystem();
-		// unsigned difference is intentional
-		if (timeNow - _timeLast < _vm->kUpdateFrameTimeInMs && !firstFrame) {
+		if (!_framelimiter->shouldExecuteScreenUpdate()) {
 			continue;
-		}
-
-		if (firstFrame) {
-			firstFrame = false;
 		}
 
 		int frame = vqaPlayer.update();
@@ -103,7 +102,7 @@ void OuttakePlayer::play(const Common::String &name, bool noLocalization, int co
 			_vm->_subtitles->tickOuttakes(_vm->_surfaceFront);
 			_vm->blitToScreen(_vm->_surfaceFront);
 		}
-		_timeLast = timeNow;
+		_framelimiter->postScreenUpdate();
 	}
 
 	_vm->_vqaIsPlaying = false;
