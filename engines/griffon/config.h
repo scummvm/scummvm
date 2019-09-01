@@ -45,7 +45,7 @@ struct CONFIG {
 	int scr_bpp;
 	bool fullscreen;
 	int hwaccel;
-	int hwsurface;
+	int hwsurface; // Unused
 	bool music;
 	int musicvol;
 	bool effects;

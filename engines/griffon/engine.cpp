@@ -155,9 +155,8 @@ DataChunk *Mix_LoadWAV(const char *name) {
 	DataChunk *res = new DataChunk;
 
 	file.open(name);
-	if (!file.isOpen()) {
+	if (!file.isOpen())
 		error("Cannot open file %s", name);
-	}
 
 	res->size = file.size();
 	res->data = (byte *)malloc(res->size);
@@ -3681,24 +3680,29 @@ void GriffonEngine::game_loadmap(int mapnum) {
 
 	Common::File file;
 	file.open(name);
+
+	if (!file.isOpen())
+		error("Cannot open file %s", name);
+
 	int tempmap[320][200];
 	for (int x = 0; x <= 319; x++) {
-		for (int y = 0; y <= 199; y++) {
+		for (int y = 0; y <= 199; y++)
 			INPUT("%i", &tempmap[x][y]);
-		}
 	}
 	file.close();
 
 	for (int x = 0; x <= 319; x++) {
-		for (int y = 0; y <= 239; y++) {
+		for (int y = 0; y <= 239; y++)
 			_triggerloc[x][y] = -1;
-		}
 	}
 
 	// read *.trg file
 	sprintf(name, "mapdb/%04i.trg", mapnum);
 	debug(1, "Reading %s", name);
 	file.open(name);
+
+	if (!file.isOpen())
+		error("Cannot open file %s", name);
 
 	INPUT("%i", &_ntriggers);
 
@@ -3944,6 +3948,9 @@ void GriffonEngine::game_loadmap(int mapnum) {
 	sprintf(name, "mapdb/%04i.npc", mapnum);
 	debug(1, "Reading %s", name);
 	file.open(name);
+
+	if (!file.isOpen())
+		error("Cannot open file %s", name);
 
 	for (int i = 0; i < kMaxNPC; i++) {
 		INPUT("%i", &_npcinfo[i].spriteset);
@@ -8007,10 +8014,12 @@ void GriffonEngine::sys_LoadTriggers() {
 	Common::File file;
 	file.open("data/triggers.dat");
 
+	if (!file.isOpen())
+		error("Cannot open file data/Triggers.dat");
+
 	for (int i = 0; i <= 9999; i++) {
-		for (int a = 0; a <= 8; a++) {
+		for (int a = 0; a <= 8; a++)
 			INPUT("%i", &_triggers[i][a]);
-		}
 	}
 
 	file.close();
@@ -8020,6 +8029,8 @@ void GriffonEngine::sys_LoadObjectDB() {
 	Common::File file;
 
 	file.open("objectdb.dat");
+	if (!file.isOpen())
+		error("Cannot open file objectdb.dat");
 
 	for (int a = 0; a <= 32; a++) {
 		for (int b = 0; b <= 5; b++) {
