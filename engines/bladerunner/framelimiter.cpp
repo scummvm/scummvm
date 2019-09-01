@@ -70,10 +70,10 @@ Framelimiter::Framelimiter(BladeRunnerEngine *vm, FramelimiterFpsRate framerateM
 
 Framelimiter::~Framelimiter() { }
 
-void Framelimiter::init(bool forceFirstPass) {
+void Framelimiter::init(bool forceScreenUpdate) {
 	reset();
 	_timeOfLastPass = _vm->_time->currentSystem();
-	_forceFirstPass = forceFirstPass;
+	_forceScreenUpdate = forceScreenUpdate;
 }
 
 uint32 Framelimiter::getLastFrameDuration() const {
@@ -92,12 +92,23 @@ bool Framelimiter::shouldExecuteScreenUpdate() {
 	bool shouldUpdateScreen = true;
 	_timeOfCurrentPass = _vm->_time->currentSystem();
 	if (_enabled) {
-		shouldUpdateScreen = ((_timeOfCurrentPass - _timeOfLastPass) >= _speedLimitMs) || _forceFirstPass;
+		if (_useDelayMs) {
+			// _timeOfCurrentPass is used to calculate the duration that the current frame is on screen so far
+			uint32 frameDuration = _timeOfCurrentPass - _startFrameTime;
+			if (frameDuration < _speedLimitMs) {
+				_vm->_system->delayMillis(_speedLimitMs - frameDuration);
+				// cheaper than calling _vm->_time->currentSystem() again
+				_timeOfCurrentPass += (_speedLimitMs - frameDuration);
+			}
+		}
+
+		shouldUpdateScreen = ((_timeOfCurrentPass - _timeOfLastPass) >= _speedLimitMs) || _forceScreenUpdate || _useDelayMs;
 
 		if (shouldUpdateScreen) {
-			if (_forceFirstPass) {
-				_forceFirstPass = false;
+			if (_forceScreenUpdate) {
+				_forceScreenUpdate = false;
 			}
+			_lastFrameDurationMs = _timeOfCurrentPass - _startFrameTime;
 			_startFrameTime = _timeOfCurrentPass;
 		}
 	}
@@ -106,21 +117,15 @@ bool Framelimiter::shouldExecuteScreenUpdate() {
 
 void  Framelimiter::postScreenUpdate() {
 	_timeOfLastPass = _timeOfCurrentPass;
-	if (_enabled) {
-
-		if (_useDelayMs) {
-			uint32 endFrameTime = _vm->_time->currentSystem();
-			uint32 frameDuration = endFrameTime - _startFrameTime;
-
-			if (frameDuration < _speedLimitMs) {
-				_vm->_system->delayMillis(_speedLimitMs - frameDuration);
-			}
-		}
-	}
+//	if (_enabled) {
+//		// for debug purposes, this calculates the time between deciding to draw the frame, and the time after drawing the update to the screen
+//		uint32 endFrameTime = _vm->_time->currentSystem();
+//		uint32 frameDuration = endFrameTime - _startFrameTime;
+//	}
 }
 
 void Framelimiter::reset() {
-	_forceFirstPass      = false;
+	_forceScreenUpdate   = false;
 	_timeOfLastPass      = 0u;
 	_timeOfCurrentPass   = 0u;
 	_startFrameTime      = 0u;

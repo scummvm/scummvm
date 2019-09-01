@@ -43,12 +43,12 @@ class Framelimiter {
 
 public:
 	static const FramelimiterFpsRate kDefaultFpsRate = kFramelimiter60fps;
-	static const bool kDefaultUseDelayMillis = false;
+	static const bool kDefaultUseDelayMillis = true;
 
 private:
 	BladeRunnerEngine *_vm;
 
-	bool   _forceFirstPass;
+	bool   _forceScreenUpdate;
 	uint32 _speedLimitMs;
 
 	// A pass is when a tick or while loop that contains a potential screen update is repeated
@@ -68,12 +68,9 @@ public:
 	Framelimiter(BladeRunnerEngine *vm, FramelimiterFpsRate framerateMode, bool useDelayMs);
 	~Framelimiter();
 
-//	void startFrame();
-//	void delayBeforeSwap();
-
 //	void pause(bool pause);
 
-	void init(bool forceFirstPass = true);
+	void init(bool forceScreenUpdate = true);
 	uint32 getLastFrameDuration() const;
 	uint32 getTimeOfCurrentPass() const;
 	uint32 getTimeOfLastPass() const;
