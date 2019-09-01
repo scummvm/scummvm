@@ -417,8 +417,8 @@ void MonsterObjectData::synchronize(XeenSerializer &s, MonsterData &monsterData)
 	if (s.isSaving()) {
 		// Save objects
 		if (_objects.empty()) {
-			MobStruct nullStruct;
-			nullStruct.synchronize(s);
+			mobStruct.endOfList();
+			mobStruct.synchronize(s);
 		} else {
 			for (uint i = 0; i < _objects.size(); ++i) {
 				mobStruct._pos = _objects[i]._position;
@@ -432,8 +432,8 @@ void MonsterObjectData::synchronize(XeenSerializer &s, MonsterData &monsterData)
 
 		// Save monsters
 		if (_monsters.empty()) {
-			MobStruct nullStruct;
-			nullStruct.synchronize(s);
+			mobStruct.endOfList();
+			mobStruct.synchronize(s);
 		} else {
 			for (uint i = 0; i < _monsters.size(); ++i) {
 				mobStruct._pos = _monsters[i]._position;
@@ -446,17 +446,11 @@ void MonsterObjectData::synchronize(XeenSerializer &s, MonsterData &monsterData)
 		mobStruct.synchronize(s);
 
 		// Save wall items
-		if (_wallItems.empty()) {
-			MobStruct nullStruct;
-			nullStruct._pos.x = nullStruct._pos.y = 0x80;
-			nullStruct.synchronize(s);
-		} else {
-			for (uint i = 0; i < _wallItems.size(); ++i) {
-				mobStruct._pos = _wallItems[i]._position;
-				mobStruct._id = _wallItems[i]._id;
-				mobStruct._direction = _wallItems[i]._direction;
-				mobStruct.synchronize(s);
-			}
+		for (uint i = 0; i < _wallItems.size(); ++i) {
+			mobStruct._pos = _wallItems[i]._position;
+			mobStruct._id = _wallItems[i]._id;
+			mobStruct._direction = _wallItems[i]._direction;
+			mobStruct.synchronize(s);
 		}
 		mobStruct.endOfList();
 		mobStruct.synchronize(s);
@@ -465,6 +459,10 @@ void MonsterObjectData::synchronize(XeenSerializer &s, MonsterData &monsterData)
 		// Load monster/obbject data and merge together with sprite Ids
 		// Load objects
 		mobStruct.synchronize(s);
+		if (mobStruct._id == -1 && mobStruct._pos.x == -1)
+			// Empty array has a blank entry
+			mobStruct.synchronize(s);
+
 		do {
 			MazeObject obj;
 			obj._position = mobStruct._pos;
@@ -483,7 +481,11 @@ void MonsterObjectData::synchronize(XeenSerializer &s, MonsterData &monsterData)
 
 		// Load monsters
 		mobStruct.synchronize(s);
-		do {
+		if (mobStruct._id == -1 && mobStruct._pos.x == -1)
+			// Empty array has a blank entry
+			mobStruct.synchronize(s);
+
+		while (mobStruct._id != 255 || mobStruct._pos.x != -1) {
 			MazeMonster mon;
 			mon._position = mobStruct._pos;
 			mon._id = mobStruct._id;
@@ -507,11 +509,11 @@ void MonsterObjectData::synchronize(XeenSerializer &s, MonsterData &monsterData)
 			}
 
 			mobStruct.synchronize(s);
-		} while (mobStruct._id != 255 || mobStruct._pos.x != -1);
+		}
 
-		// Load wall items
+		// Load wall items. Unlike the previous two arrays, this has no dummy entry for an empty array
 		mobStruct.synchronize(s);
-		do {
+		while (mobStruct._id != 255 || mobStruct._pos.x != -1) {
 			if (mobStruct._id < (int)_wallItemSprites.size()) {
 				MazeWallItem wi;
 				wi._position = mobStruct._pos;
@@ -524,7 +526,7 @@ void MonsterObjectData::synchronize(XeenSerializer &s, MonsterData &monsterData)
 			}
 
 			mobStruct.synchronize(s);
-		} while (mobStruct._id != 255 || mobStruct._pos.x != -1);
+		}
 	}
 }
 
