@@ -128,8 +128,7 @@ Common::Error StarTrekEngine::run() {
 		assert(_macResFork->hasDataFork() && _macResFork->hasResFork());
 	}
 
-	const ::Graphics::PixelFormat format = ::Graphics::PixelFormat::createFormatCLUT8();
-	initGraphics(SCREEN_WIDTH, SCREEN_HEIGHT, &format);
+	initGraphics(SCREEN_WIDTH, SCREEN_HEIGHT);
 	initializeEventsAndMouse();
 
 	bool shouldPlayIntro = true;
