@@ -5,6 +5,7 @@ MODULE_OBJS := \
 	config.o \
 	console.o \
 	cutscenes.o \
+	dialogs.o \
 	engine.o \
 	griffon.o \
 	detection.o \
