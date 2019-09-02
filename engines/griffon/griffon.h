@@ -313,13 +313,13 @@ private:
 	int state_load_player(int slotnum);
 	int state_save(int slotnum);
 
-	void Mix_Volume(int channel, int volume);
-	int Mix_getHandle();
+	void setChannelVolume(int channel, int volume);
+	int getSoundHandle();
 	int playSound(DataChunk *chunk, bool looped = false);
-	void Mix_Pause(int channel);
-	void Mix_HaltChannel(int channel);
-	void Mix_Resume(int channel);
-	bool Mix_Playing(int channel);
+	void pauseSoundChannel(int channel);
+	void haltSoundChannel(int channel);
+	void resumeSoundChannel(int channel);
+	bool isSoundChannelPlaying(int channel);
 
 private:
 	Graphics::TransparentSurface *_video, *_videobuffer, *_videobuffer2, *_videobuffer3;
