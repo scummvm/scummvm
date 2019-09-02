@@ -1338,11 +1338,107 @@ static const uint16 ecoquest2PatchIconBarTutorial[] = {
 	PATCH_END
 };
 
+// The electronic organizer and password paper reappear in room 500 after they
+//  fall into the water when entering the canoe. rm500:init only tests if these
+//  items are in inventory. It should have also tested the canoe flag like room
+//  530 does to prevent the vacuum from reappearing.
+//
+// We fix this by only adding an item to the room if its InvI:owner is zero.
+//  This is initially zero, then set to ego when getting an item, and finally
+//  set to negative one when the item is removed from inventory.
+//
+// Applies to: All versions
+// Responsible method: rm500:init
+// Fixes bug: #11135
+static const uint16 ecoquest2SignatureRoom500Items[] = {
+	0x38, SIG_ADDTOOFFSET(+2),          // pushi test
+	0x78,                               // push1
+	SIG_MAGICDWORD,
+	0x39, 0x0b,                         // pushi 0b
+	0x81, 0x96,                         // lag 96
+	0x4a, 0x06,                         // send 06 [ cibolaFlags test: 11 ]
+	0xa5, 0x00,                         // sat 00
+	0x38, SIG_ADDTOOFFSET(+2),          // pushi test
+	0x78,                               // push1
+	0x39, 0x04,                         // pushi 04
+	0x81, 0x96,                         // lag 96
+	0x4a, 0x06,                         // send 06 [ cibolaFlags test: 4 ]
+	0xa5, 0x01,                         // sat 01
+	0x38, SIG_ADDTOOFFSET(+2),          // pushi test
+	0x78,                               // push1
+	0x39, 0x17,                         // pushi 17
+	0x81, 0x96,                         // lag 96
+	0x4a, 0x06,                         // send 06 [ cibolaFlags test: 23 ]
+	0xa5, 0x02,                         // sat 02
+	0x38, SIG_ADDTOOFFSET(+2),          // pushi test
+	SIG_ADDTOOFFSET(+636),
+	0x38, SIG_SELECTOR16(has),          // pushi has
+	0x78,                               // push1
+	0x39, 0x15,                         // pushi 15
+	0x81, 0x00,                         // lag 00
+	0x4a, 0x06,                         // send 06 [ ego has: 21 ]
+	0x18,                               // not
+	0x31, 0x13,                         // bnt 13 [ don't initialize theOrganizer ]
+	SIG_ADDTOOFFSET(+236),
+	0x38, SIG_SELECTOR16(has),          // pushi has
+	0x78,                               // push1
+	0x39, 0x0b,                         // pushi 0b
+	0x81, 0x00,                         // lag 00
+	0x4a, 0x06,                         // send 06 [ ego has: 11 ]
+	0x18,                               // not
+	0x30, SIG_UINT16(0x0058),           // bnt 0058 [ don't initialize paper ]
+	SIG_END,
+};
+
+static const uint16 ecoquest2PatchRoom500Items[] = {
+	0x39, PATCH_SELECTOR8(at),          // pushi at
+	0x3c,                               // dup [ push at, saves 1 byte ]
+	0x78,                               // push1
+	0x39, 0x15,                         // pushi 15
+	0x38, PATCH_GETORIGINALUINT16(+1),  // pushi test
+	0x3c,                               // dup [ push test, saves 2 bytes ]
+	0x3c,                               // dup [ push test, saves 2 bytes ]
+	0x3c,                               // dup [ push test, saves 2 bytes ]
+	0x78,                               // push1
+	0x39, 0x0b,                         // pushi 0b
+	0x81, 0x96,                         // lag 96
+	0x4a, 0x06,                         // send 06 [ cibolaFlags test: 11 ]
+	0xa5, 0x00,                         // sat 00
+	0x78,                               // push1
+	0x39, 0x04,                         // pushi 04
+	0x81, 0x96,                         // lag 96
+	0x4a, 0x06,                         // send 06 [ cibolaFlags test: 4 ]
+	0xa5, 0x01,                         // sat 01
+	0x78,                               // push1
+	0x39, 0x17,                         // pushi 17
+	0x81, 0x96,                         // lag 96
+	0x4a, 0x06,                         // send 06 [ cibolaFlags test: 23 ]
+	0xa5, 0x02,                         // sat 02
+	PATCH_ADDTOOFFSET(+636),
+	0x81, 0x09,                         // lag 09
+	0x4a, 0x06,                         // send 06 [ Inv at: 21 ]
+	0x38, PATCH_SELECTOR16(owner),      // pushi owner
+	0x76,                               // push0
+	0x4a, 0x04,                         // send 04 [ organizer owner? ]
+	0x78,                               // push1
+	0x2f, 0x13,                         // bt 13 [ don't initialize theOrganizer ]
+	PATCH_ADDTOOFFSET(+236),
+	0x39, 0x0b,                         // pushi 0b
+	0x81, 0x09,                         // lag 09
+	0x4a, 0x06,                         // send 06 [ Inv at: 11 ]
+	0x38, PATCH_SELECTOR16(owner),      // pushi owner
+	0x76,                               // push0
+	0x4a, 0x04,                         // send 04 [ password owner? ]
+	0x2f, 0x58,                         // bt 58 [ don't initialize paper ]
+	PATCH_END
+};
+
 //          script, description,                                        signature                          patch
 static const SciScriptPatcherEntry ecoquest2Signatures[] = {
 	{  true,     0, "icon bar tutorial",                            10, ecoquest2SignatureIconBarTutorial, ecoquest2PatchIconBarTutorial },
 	{  true,    50, "initial text not removed on ecorder",           1, ecoquest2SignatureEcorder,         ecoquest2PatchEcorder },
 	{  true,   333, "initial text not removed on ecorder tutorial",  1, ecoquest2SignatureEcorderTutorial, ecoquest2PatchEcorderTutorial },
+	{  true,   500, "room 500 items reappear",                       1, ecoquest2SignatureRoom500Items,    ecoquest2PatchRoom500Items },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
