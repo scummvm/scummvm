@@ -286,6 +286,12 @@ private:
 	void damageNPC(int npcnum, int damage, int spell);
 	void damagePlayer(int damage);
 
+	// cutscenes.cpp
+	void showLogos();
+	void intro();
+	void endOfGame();
+	void theEnd();
+
 	float RND();
 
 	void addFloatIcon(int ico, float xloc, float yloc);
@@ -299,7 +305,6 @@ private:
 	void drawOver(int modx, int mody);
 	void drawPlayer();
 	void drawView();
-	void endOfGame();
 	void eventText(const char *stri);
 	void handleWalking();
 	void loadMap(int mapnum);
@@ -307,9 +312,7 @@ private:
 	void mainLoop();
 	void processTrigger(int trignum);
 	void saveLoadNew();
-	void showLogos();
 	void swash();
-	void theEnd();
 	void title(int mode);
 	void updateAnims();
 	void updateY();
