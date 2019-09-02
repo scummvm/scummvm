@@ -385,7 +385,8 @@ void Combat::doCharDamage(Character &c, int charNum, int monsterDataIndex) {
 				XeenItem &weapon = c._weapons[idx];
 				if (weapon._id < XEEN_SLAYER_SWORD && weapon._id != 0 && weapon._frame != 0) {
 					weapon._state._broken = true;
-					weapon._frame = 0;
+					// WORKAROUND: For consistency, we don't de-equip broken items
+					//weapon._frame = 0;
 				}
 			}
 			sound.playFX(37);

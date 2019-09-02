@@ -740,14 +740,16 @@ void InventoryItemsGroup::breakAllItems() {
 	for (int idx = 0; idx < INV_ITEMS_TOTAL; ++idx) {
 		if (_owner->_weapons[idx]._id < XEEN_SLAYER_SWORD) {
 			_owner->_weapons[idx]._state._broken = true;
-			_owner->_weapons[idx]._frame = 0;
+			// WORKAROUND: For consistency, we don't de-equip broken items
+			//_owner->_weapons[idx]._frame = 0;
 		}
 
 		_owner->_armor[idx]._state._broken = true;
 		_owner->_accessories[idx]._state._broken = true;
 		_owner->_misc[idx]._state._broken = true;
-		_owner->_armor[idx]._frame = 0;
-		_owner->_accessories[idx]._frame = 0;
+		// WORKAROUND: For consistency, we don't de-equip broken items
+		//_owner->_armor[idx]._frame = 0;
+		//_owner->_accessories[idx]._frame = 0;
 	}
 }
 
