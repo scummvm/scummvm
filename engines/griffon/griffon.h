@@ -292,13 +292,17 @@ private:
 	void endOfGame();
 	void theEnd();
 
+	// dialogs.cpp
+	void title(int mode);
+	void configMenu();
+	void saveLoadNew();
+
 	float RND();
 
 	void addFloatIcon(int ico, float xloc, float yloc);
 	void addFloatText(const char *stri, float xloc, float yloc, int col);
 	void checkInputs();
 	void checkTrigger();
-	void configMenu();
 	void drawAnims(int Layer);
 	void drawHud();
 	void drawNPCs(int mode);
@@ -311,9 +315,7 @@ private:
 	void newGame();
 	void mainLoop();
 	void processTrigger(int trignum);
-	void saveLoadNew();
 	void swash();
-	void title(int mode);
 	void updateAnims();
 	void updateY();
 	void updateMusic();
