@@ -1,6 +1,7 @@
 MODULE := engines/griffon
 
 MODULE_OBJS := \
+	combat.o \
 	config.o \
 	console.o \
 	engine.o \
