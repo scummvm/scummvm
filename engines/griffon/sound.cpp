@@ -110,7 +110,7 @@ DataChunk *cacheSound(const char *name) {
 	return res;
 }
 
-void GriffonEngine::sys_progress(int w, int wm) {
+void GriffonEngine::drawProgress(int w, int wm) {
 	long ccc = _videobuffer->format.RGBToColor(0, 255, 0);
 
 	rcDest.setWidth(w * 74 / wm);
@@ -122,7 +122,7 @@ void GriffonEngine::sys_progress(int w, int wm) {
 	g_system->getEventManager()->pollEvent(_event);
 }
 
-void GriffonEngine::sys_setupAudio() {
+void GriffonEngine::setupAudio() {
 	// FIXME
 	//Mix_OpenAudio(22050, MIX_DEFAULT_FORMAT, 2, 1024);
 
@@ -153,48 +153,48 @@ void GriffonEngine::sys_setupAudio() {
 	rcDest.setHeight(8);
 
 	_mboss = cacheSound("music/boss.ogg");
-	sys_progress(1, 21);
+	drawProgress(1, 21);
 	_mgardens = cacheSound("music/gardens.ogg");
-	sys_progress(2, 21);
+	drawProgress(2, 21);
 	_mgardens2 = cacheSound("music/gardens2.ogg");
-	sys_progress(3, 21);
+	drawProgress(3, 21);
 	_mgardens3 = cacheSound("music/gardens3.ogg");
-	sys_progress(4, 21);
+	drawProgress(4, 21);
 	_mgardens4 = cacheSound("music/gardens4.ogg");
-	sys_progress(5, 21);
+	drawProgress(5, 21);
 	_mendofgame = cacheSound("music/endofgame.ogg");
-	sys_progress(6, 21);
+	drawProgress(6, 21);
 	_mmenu = cacheSound("music/menu.ogg");
-	sys_progress(7, 21);
+	drawProgress(7, 21);
 
 	_sfx[0] = cacheSound("sfx/bite.ogg");
-	sys_progress(8, 21);
+	drawProgress(8, 21);
 	_sfx[1] = cacheSound("sfx/crystal.ogg");
-	sys_progress(9, 21);
+	drawProgress(9, 21);
 	_sfx[2] = cacheSound("sfx/door.ogg");
-	sys_progress(10, 21);
+	drawProgress(10, 21);
 	_sfx[3] = cacheSound("sfx/enemyhit.ogg");
-	sys_progress(11, 21);
+	drawProgress(11, 21);
 	_sfx[4] = cacheSound("sfx/ice.ogg");
-	sys_progress(12, 21);
+	drawProgress(12, 21);
 	_sfx[5] = cacheSound("sfx/lever.ogg");
-	sys_progress(13, 21);
+	drawProgress(13, 21);
 	_sfx[6] = cacheSound("sfx/lightning.ogg");
-	sys_progress(14, 21);
+	drawProgress(14, 21);
 	_sfx[7] = cacheSound("sfx/metalhit.ogg");
-	sys_progress(15, 21);
+	drawProgress(15, 21);
 	_sfx[8] = cacheSound("sfx/powerup.ogg");
-	sys_progress(16, 21);
+	drawProgress(16, 21);
 	_sfx[9] = cacheSound("sfx/rocks.ogg");
-	sys_progress(17, 21);
+	drawProgress(17, 21);
 	_sfx[10] = cacheSound("sfx/swordhit.ogg");
-	sys_progress(18, 21);
+	drawProgress(18, 21);
 	_sfx[11] = cacheSound("sfx/throw.ogg");
-	sys_progress(19, 21);
+	drawProgress(19, 21);
 	_sfx[12] = cacheSound("sfx/chest.ogg");
-	sys_progress(20, 21);
+	drawProgress(20, 21);
 	_sfx[13] = cacheSound("sfx/fire.ogg");
-	sys_progress(21, 21);
+	drawProgress(21, 21);
 	_sfx[14] = cacheSound("sfx/beep.ogg");
 }
 
