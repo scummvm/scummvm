@@ -342,6 +342,25 @@ static const MadeGameDescription gameDescriptions[] = {
 		3,
 	},
 
+// The Manhole: Masterpiece Edition is not a MADE engine and should not be
+// added to the detection list. It is a HyperCard-like engine
+//	{
+//		// The Manhole: Masterpiece Edition (GOG/CD)
+//		{
+//			"manhole",
+//			"",
+//			AD_ENTRY1("manhole.dat", "e8cec9bf21e4c50a7ebc193a4e0b48f5"),
+//			Common::EN_ANY,
+//			Common::kPlatformDOS,
+//			ADGF_UNSTABLE,
+//			GUIO1(GUIO_NOSPEECH)
+//		},
+//		GID_MANHOLE,
+//		0,
+//		GF_CD,
+//		2,
+//	},
+
 	{
 		// The Manhole: New and Enhanced
 		{
