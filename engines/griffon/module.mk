@@ -10,6 +10,7 @@ MODULE_OBJS := \
 	draw.o \
 	engine.o \
 	griffon.o \
+	input.o \
 	resources.o \
 	saveload.o \
 	sound.o
