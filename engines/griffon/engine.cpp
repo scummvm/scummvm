@@ -43,21 +43,8 @@
 namespace Griffon {
 
 // memo
-/*
- monsters
- 1 - baby dragon
- 2 - one wing
- 3 - boss 1
- 4 - black knight
- 5 - fire hydra
- 6 - red dragon
- 7 - priest
- 8 - yellow fire dragon
- 9 - two wing
-10 - dragon2
-11 - final boss
-12 - bat kitty
 
+/*
  chests
   0 - regular flask
  11 - key chest
@@ -438,7 +425,7 @@ void GriffonEngine::updateNPCs() {
 			int pass = 0;
 			if (_npcinfo[i].attacking == 0)
 				pass = 1;
-			if (_npcinfo[i].spriteset == 5)
+			if (_npcinfo[i].spriteset == kMonsterFireHydra)
 				pass = 1;
 			if (pass == 1) {
 				int moveup = 0;
@@ -454,7 +441,7 @@ void GriffonEngine::updateNPCs() {
 
 				float wspd = _npcinfo[i].walkspd / 4;
 
-				if (_npcinfo[i].spriteset == 10)
+				if (_npcinfo[i].spriteset == kMonsterDragon2)
 					wspd = wspd * 2;
 				int wdir = _npcinfo[i].walkdir;
 
@@ -470,7 +457,7 @@ void GriffonEngine::updateNPCs() {
 
 				if (_npcinfo[i].pause > _ticks)
 					mode = -1;
-				if (_npcinfo[i].spriteset == 2 && _npcinfo[i].castpause > _ticks)
+				if (_npcinfo[i].spriteset == kMonsterOneWing && _npcinfo[i].castpause > _ticks)
 					mode = -1;
 
 				if (mode == 3) {
@@ -601,7 +588,7 @@ void GriffonEngine::updateNPCs() {
 				float xp = (npx / 2 + 6);
 				float yp = (npy / 2 + 10);
 
-				if (_npcinfo[i].spriteset == 10)
+				if (_npcinfo[i].spriteset == kMonsterDragon2)
 					wspd = wspd * 2;
 
 				float ii = wspd * _fpsr;
@@ -613,7 +600,7 @@ void GriffonEngine::updateNPCs() {
 					int sy = yp - ii;
 					uint32 *temp = (uint32 *)_clipbg->getBasePtr(sx, sy);
 					uint32 dq = *temp;
-					if (_npcinfo[i].spriteset == 11)
+					if (_npcinfo[i].spriteset == kMonsterFinalBoss)
 						dq = 0;
 
 					if (dq == 0)
@@ -623,7 +610,7 @@ void GriffonEngine::updateNPCs() {
 						sy = yp - ii;
 						temp = (uint32 *)_clipbg->getBasePtr(sx, sy);
 						dq = *temp;
-						if (_npcinfo[i].spriteset == 11)
+						if (_npcinfo[i].spriteset == kMonsterFinalBoss)
 							dq = 0;
 						if (dq == 0) {
 							movinup = 1;
@@ -635,7 +622,7 @@ void GriffonEngine::updateNPCs() {
 						sy = yp - ii;
 						temp = (uint32 *)_clipbg->getBasePtr(sx, sy);
 						dq = *temp;
-						if (_npcinfo[i].spriteset == 11)
+						if (_npcinfo[i].spriteset == kMonsterFinalBoss)
 							dq = 0;
 						if (dq == 0) {
 							movinup = 1;
@@ -649,7 +636,7 @@ void GriffonEngine::updateNPCs() {
 					int sy = yp + ii;
 					uint32 *temp = (uint32 *)_clipbg->getBasePtr(sx, sy);
 					uint32 dq = *temp;
-					if (_npcinfo[i].spriteset == 11)
+					if (_npcinfo[i].spriteset == kMonsterFinalBoss)
 						dq = 0;
 					if (dq == 0)
 						movindown = 1;
@@ -658,7 +645,7 @@ void GriffonEngine::updateNPCs() {
 						sy = yp + ii;
 						temp = (uint32 *)_clipbg->getBasePtr(sx, sy);
 						dq = *temp;
-						if (_npcinfo[i].spriteset == 11)
+						if (_npcinfo[i].spriteset == kMonsterFinalBoss)
 							dq = 0;
 						if (dq == 0) {
 							movindown = 1;
@@ -670,7 +657,7 @@ void GriffonEngine::updateNPCs() {
 						sy = yp + ii;
 						temp = (uint32 *)_clipbg->getBasePtr(sx, sy);
 						dq = *temp;
-						if (_npcinfo[i].spriteset == 11)
+						if (_npcinfo[i].spriteset == kMonsterFinalBoss)
 							dq = 0;
 						if (dq == 0) {
 							movindown = 1;
@@ -684,7 +671,7 @@ void GriffonEngine::updateNPCs() {
 					int sy = yp;
 					uint32 *temp = (uint32 *)_clipbg->getBasePtr(sx, sy);
 					uint32 dq = *temp;
-					if (_npcinfo[i].spriteset == 11)
+					if (_npcinfo[i].spriteset == kMonsterFinalBoss)
 						dq = 0;
 					if (dq == 0)
 						movinleft = 1;
@@ -693,7 +680,7 @@ void GriffonEngine::updateNPCs() {
 						sy = yp - ii;
 						temp = (uint32 *)_clipbg->getBasePtr(sx, sy);
 						dq = *temp;
-						if (_npcinfo[i].spriteset == 11)
+						if (_npcinfo[i].spriteset == kMonsterFinalBoss)
 							dq = 0;
 						if (dq == 0) {
 							movinleft = 1;
@@ -705,7 +692,7 @@ void GriffonEngine::updateNPCs() {
 						sy = yp + ii;
 						temp = (uint32 *)_clipbg->getBasePtr(sx, sy);
 						dq = *temp;
-						if (_npcinfo[i].spriteset == 11)
+						if (_npcinfo[i].spriteset == kMonsterFinalBoss)
 							dq = 0;
 						if (dq == 0) {
 							movinleft = 1;
@@ -719,7 +706,7 @@ void GriffonEngine::updateNPCs() {
 					int sy = yp;
 					uint32 *temp = (uint32 *)_clipbg->getBasePtr(sx, sy);
 					uint32 dq = *temp;
-					if (_npcinfo[i].spriteset == 11)
+					if (_npcinfo[i].spriteset == kMonsterFinalBoss)
 						dq = 0;
 					if (dq == 0)
 						movinright = 1;
@@ -728,7 +715,7 @@ void GriffonEngine::updateNPCs() {
 						sy = yp - ii;
 						temp = (uint32 *)_clipbg->getBasePtr(sx, sy);
 						dq = *temp;
-						if (_npcinfo[i].spriteset == 11)
+						if (_npcinfo[i].spriteset == kMonsterFinalBoss)
 							dq = 0;
 						if (dq == 0) {
 							movinright = 1;
@@ -740,7 +727,7 @@ void GriffonEngine::updateNPCs() {
 						sy = yp + ii;
 						temp = (uint32 *)_clipbg->getBasePtr(sx, sy);
 						dq = *temp;
-						if (_npcinfo[i].spriteset == 11)
+						if (_npcinfo[i].spriteset == kMonsterFinalBoss)
 							dq = 0;
 						if (dq == 0) {
 							movinright = 1;
@@ -771,7 +758,7 @@ void GriffonEngine::updateNPCs() {
 
 				float aspd = wspd;
 
-				if (_npcinfo[i].spriteset == 10)
+				if (_npcinfo[i].spriteset == kMonsterDragon2)
 					aspd = wspd / 2;
 
 				xp = (npx / 2 + 6);
@@ -790,12 +777,12 @@ void GriffonEngine::updateNPCs() {
 
 				if (_triggerloc[lx][ly] > -1)
 					bgc = 1;
-				if (_npcinfo[i].spriteset == 11)
+				if (_npcinfo[i].spriteset == kMonsterFinalBoss)
 					bgc = 0;
 
 				int rst = 0;
 
-				if (_npcinfo[i].spriteset == 11) {
+				if (_npcinfo[i].spriteset == kMonsterFinalBoss) {
 					if (npx < 40 || npx > 280 || npy < 36 || npy > 204)
 						rst = 1;
 				}
@@ -833,7 +820,7 @@ void GriffonEngine::updateNPCs() {
 				}
 
 				// spriteset1 specific
-				if (_npcinfo[i].spriteset == 1 && _npcinfo[i].attackattempt < _ticks) {
+				if (_npcinfo[i].spriteset == kMonsterBabyDragon && _npcinfo[i].attackattempt < _ticks) {
 					if (_npcinfo[i].attacknext < _ticks && _npcinfo[i].pause < _ticks && _npcinfo[i].attacking == 0) {
 						npx = _npcinfo[i].x;
 						npy = _npcinfo[i].y;
@@ -859,7 +846,7 @@ void GriffonEngine::updateNPCs() {
 				bool dospell = false;
 
 				// onewing specific
-				if (_npcinfo[i].spriteset == 2) {
+				if (_npcinfo[i].spriteset == kMonsterOneWing) {
 					if (_npcinfo[i].attacknext < _ticks && _npcinfo[i].pause < _ticks && _npcinfo[i].attacking == 0) {
 						npx = _npcinfo[i].x;
 						npy = _npcinfo[i].y;
@@ -940,7 +927,7 @@ void GriffonEngine::updateNPCs() {
 				}
 
 				// boss1 specific and blackknight
-				if (_npcinfo[i].spriteset == 3 || _npcinfo[i].spriteset == 4) {
+				if (_npcinfo[i].spriteset == kMonsterBoss1 || _npcinfo[i].spriteset == kMonsterBlackKnight) {
 					if (_npcinfo[i].attacknext < _ticks && _npcinfo[i].pause < _ticks && _npcinfo[i].attacking == 0) {
 						_npcinfo[i].attacking = 1;
 						_npcinfo[i].attackframe = 0;
@@ -956,7 +943,7 @@ void GriffonEngine::updateNPCs() {
 
 
 				// firehydra specific
-				if (_npcinfo[i].spriteset == 5) {
+				if (_npcinfo[i].spriteset == kMonsterFireHydra) {
 					_npcinfo[i].swayspd = 4;
 
 					// sway code
@@ -1025,7 +1012,7 @@ void GriffonEngine::updateNPCs() {
 				}
 
 				// spriteset6 specific
-				if (_npcinfo[i].spriteset == 6 && _npcinfo[i].attackattempt < _ticks) {
+				if (_npcinfo[i].spriteset == kMonsterRedDragon && _npcinfo[i].attackattempt < _ticks) {
 					if (_npcinfo[i].attacknext < _ticks && _npcinfo[i].pause < _ticks && _npcinfo[i].attacking == 0) {
 						npx = _npcinfo[i].x;
 						npy = _npcinfo[i].y;
@@ -1075,7 +1062,7 @@ void GriffonEngine::updateNPCs() {
 				}
 
 				// wizard1 specific
-				if (_npcinfo[i].spriteset == 7) {
+				if (_npcinfo[i].spriteset == kMonsterPriest) {
 					if (_npcinfo[i].attacknext < _ticks && _npcinfo[i].pause < _ticks && _npcinfo[i].attacking == 0) {
 						_npcinfo[i].attacking = 1;
 						_npcinfo[i].attackframe = 0;
@@ -1091,7 +1078,7 @@ void GriffonEngine::updateNPCs() {
 				}
 
 				// spriteset6 specific
-				if (_npcinfo[i].spriteset == 8 && _npcinfo[i].attackattempt < _ticks) {
+				if (_npcinfo[i].spriteset == kMonsterYellowDragon && _npcinfo[i].attackattempt < _ticks) {
 					if (_npcinfo[i].attacknext < _ticks && _npcinfo[i].pause < _ticks && _npcinfo[i].attacking == 0) {
 						npx = _npcinfo[i].x;
 						npy = _npcinfo[i].y;
@@ -1145,7 +1132,7 @@ void GriffonEngine::updateNPCs() {
 				}
 
 				// twowing specific
-				if (_npcinfo[i].spriteset == 9) {
+				if (_npcinfo[i].spriteset == kMonsterTwoWing) {
 					if (_npcinfo[i].attacknext < _ticks && _npcinfo[i].pause < _ticks && _npcinfo[i].attacking == 0) {
 						npx = _npcinfo[i].bodysection[7].x;
 						npy = _npcinfo[i].bodysection[7].y;
@@ -1220,7 +1207,7 @@ void GriffonEngine::updateNPCs() {
 				}
 
 				// dragon2 specific
-				if (_npcinfo[i].spriteset == 10 && _npcinfo[i].attackattempt < _ticks) {
+				if (_npcinfo[i].spriteset == kMonsterDragon2 && _npcinfo[i].attackattempt < _ticks) {
 					if (_npcinfo[i].attacknext < _ticks && _npcinfo[i].pause < _ticks && _npcinfo[i].attacking == 0) {
 						npx = _npcinfo[i].x;
 						npy = _npcinfo[i].y;
@@ -1245,7 +1232,7 @@ void GriffonEngine::updateNPCs() {
 
 
 				// endboss specific
-				if (_npcinfo[i].spriteset == 11 && _npcinfo[i].attackattempt < _ticks) {
+				if (_npcinfo[i].spriteset == kMonsterFinalBoss && _npcinfo[i].attackattempt < _ticks) {
 					if (_npcinfo[i].attacknext < _ticks && _npcinfo[i].pause < _ticks && _npcinfo[i].attacking == 0) {
 						npx = _npcinfo[i].x;
 						npy = _npcinfo[i].y;
@@ -1287,7 +1274,7 @@ void GriffonEngine::updateNPCs() {
 			pass = 0;
 			if (_npcinfo[i].attacking == 1)
 				pass = 1;
-			if (_npcinfo[i].spriteset == 5) {
+			if (_npcinfo[i].spriteset == kMonsterFireHydra) {
 				if (_npcinfo[i].attacking2[0] == 1)
 					pass = 1;
 				if (_npcinfo[i].attacking2[1] == 1)
@@ -1300,7 +1287,7 @@ void GriffonEngine::updateNPCs() {
 				int dist;
 				float damage;
 				// spriteset1 specific
-				if (_npcinfo[i].spriteset == 1) {
+				if (_npcinfo[i].spriteset == kMonsterBabyDragon) {
 					_npcinfo[i].attackframe = _npcinfo[i].attackframe + _npcinfo[i].attackspd * _fpsr;
 					if (_npcinfo[i].attackframe >= 16) {
 						_npcinfo[i].attackframe = 0;
@@ -1330,7 +1317,7 @@ void GriffonEngine::updateNPCs() {
 					}
 				}
 
-				if (_npcinfo[i].spriteset == 2) {
+				if (_npcinfo[i].spriteset == kMonsterOneWing) {
 					// targethead code
 					float xdif = _npcinfo[i].bodysection[7].x - _npcinfo[i].headtargetx[0];
 					float ydif = _npcinfo[i].bodysection[7].y - _npcinfo[i].headtargety[0];
@@ -1381,7 +1368,7 @@ void GriffonEngine::updateNPCs() {
 
 
 				// firehydra
-				if (_npcinfo[i].spriteset == 5) {
+				if (_npcinfo[i].spriteset == kMonsterFireHydra) {
 					for (int ff = 0; ff <= 2; ff++) {
 						if (_npcinfo[i].attacking2[ff] == 1) {
 							float xdif = _npcinfo[i].bodysection[10 * ff + 9].x - _npcinfo[i].headtargetx[ff];
@@ -1435,7 +1422,7 @@ void GriffonEngine::updateNPCs() {
 				}
 
 				// twowing specific
-				if (_npcinfo[i].spriteset == 9) {
+				if (_npcinfo[i].spriteset == kMonsterTwoWing) {
 					// targethead code
 					float xdif = _npcinfo[i].bodysection[7].x - _npcinfo[i].headtargetx[0];
 					float ydif = _npcinfo[i].bodysection[7].y - _npcinfo[i].headtargety[0];
@@ -1485,7 +1472,7 @@ void GriffonEngine::updateNPCs() {
 				}
 
 				// dragon 2 specific
-				if (_npcinfo[i].spriteset == 10) {
+				if (_npcinfo[i].spriteset == kMonsterDragon2) {
 
 					_npcinfo[i].attackframe = _npcinfo[i].attackframe + _npcinfo[i].attackspd * _fpsr;
 					if (_npcinfo[i].attackframe >= 16) {
@@ -1515,7 +1502,7 @@ void GriffonEngine::updateNPCs() {
 				}
 
 				// endboss specific
-				if (_npcinfo[i].spriteset == 11) {
+				if (_npcinfo[i].spriteset == kMonsterFinalBoss) {
 					_npcinfo[i].attackframe = _npcinfo[i].attackframe + _npcinfo[i].attackspd * _fpsr;
 					if (_npcinfo[i].attackframe >= 16) {
 						_npcinfo[i].attackframe = 0;
@@ -1727,7 +1714,7 @@ void GriffonEngine::updateSpells() {
 
 				if (spellinfo[i].damagewho == 1) {
 					// --------- boss 1 specific
-					if (ABS(spellinfo[i].frame) < 0 && _npcinfo[spellinfo[i].npc].spriteset == 3) {
+					if (ABS(spellinfo[i].frame) < 0 && _npcinfo[spellinfo[i].npc].spriteset == kMonsterBoss1) {
 						int npc = spellinfo[i].npc;
 						_npcinfo[npc].attackframe = 0;
 						_npcinfo[npc].attacking = 0;
@@ -1738,7 +1725,7 @@ void GriffonEngine::updateSpells() {
 					// ---------------
 
 					// --------- blackknight specific
-					if (ABS(spellinfo[i].frame) < 0 && _npcinfo[spellinfo[i].npc].spriteset == 4) {
+					if (ABS(spellinfo[i].frame) < 0 && _npcinfo[spellinfo[i].npc].spriteset == kMonsterBlackKnight) {
 						int npc = spellinfo[i].npc;
 						_npcinfo[npc].attackframe = 0;
 						_npcinfo[npc].attacking = 0;
@@ -2372,7 +2359,7 @@ void GriffonEngine::updateSpells() {
 								if (damage < 5)
 									damage = 5;
 
-								if (_npcinfo[spellinfo[i].npc].spriteset == 12) {
+								if (_npcinfo[spellinfo[i].npc].spriteset == kMonsterBatKitty) {
 									if (damage < 50)
 										damage = 40 + (int)(RND() * 40);
 								}
@@ -2548,9 +2535,9 @@ void GriffonEngine::updateSpellsUnder() {
 										if ((abs(xdif) < 8 && abs(ydif) < 8)) {
 											float damage = (float)_player.spelldamage * (1.0 + RND() * 0.5) * (float)spellinfo[i].strength;
 
-											if (_npcinfo[e].spriteset == 5)
+											if (_npcinfo[e].spriteset == kMonsterFireHydra)
 												damage = -damage;
-											if (_npcinfo[e].spriteset == 11)
+											if (_npcinfo[e].spriteset == kMonsterFinalBoss)
 												damage = -damage;
 											if (_npcinfo[e].hp > 0 && _npcinfo[e].pause < _ticks) {
 												damageNPC(e, damage, 1);

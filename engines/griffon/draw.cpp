@@ -464,7 +464,7 @@ void GriffonEngine::drawNPCs(int mode) {
 				int wdir = _npcinfo[i].walkdir;
 
 				// spriteset1 specific
-				if (_npcinfo[i].spriteset == 1) {
+				if (_npcinfo[i].spriteset == kMonsterBabyDragon) {
 
 					if (_npcinfo[i].attacking == 0) {
 
@@ -506,7 +506,7 @@ void GriffonEngine::drawNPCs(int mode) {
 				}
 
 				// onewing
-				if (_npcinfo[i].spriteset == 2) {
+				if (_npcinfo[i].spriteset == kMonsterOneWing) {
 					for (int f = 0; f <= 7; f++) {
 						int s = _npcinfo[i].bodysection[f].sprite;
 						rcSrc.left = _animset2[s].x;
@@ -523,7 +523,7 @@ void GriffonEngine::drawNPCs(int mode) {
 				}
 
 				// twowing
-				if (_npcinfo[i].spriteset == 9) {
+				if (_npcinfo[i].spriteset == kMonsterTwoWing) {
 					for (int f = 0; f <= 7; f++) {
 						int yp = 0;
 
@@ -545,7 +545,7 @@ void GriffonEngine::drawNPCs(int mode) {
 
 
 				//  boss 1
-				if (_npcinfo[i].spriteset == 3) {
+				if (_npcinfo[i].spriteset == kMonsterBoss1) {
 					if (_npcinfo[i].attacking == 0) {
 						int cframe = _npcinfo[i].cframe;
 
@@ -573,7 +573,7 @@ void GriffonEngine::drawNPCs(int mode) {
 				}
 
 				// black knight
-				if (_npcinfo[i].spriteset == 4) {
+				if (_npcinfo[i].spriteset == kMonsterBlackKnight) {
 					if (_npcinfo[i].attacking == 0) {
 						int cframe = _npcinfo[i].cframe;
 
@@ -601,7 +601,7 @@ void GriffonEngine::drawNPCs(int mode) {
 
 
 				// firehydra
-				if (_npcinfo[i].spriteset == 5) {
+				if (_npcinfo[i].spriteset == kMonsterFireHydra) {
 					for (int ff = 0; ff <= 2; ff++) {
 						if (_npcinfo[i].hp > 10 * ff * 20) {
 							rcSrc.left = 16 * (int)(RND() * 2);
@@ -654,7 +654,7 @@ void GriffonEngine::drawNPCs(int mode) {
 				}
 
 				// red dragon
-				if (_npcinfo[i].spriteset == 6) {
+				if (_npcinfo[i].spriteset == kMonsterRedDragon) {
 					int cframe = _npcinfo[i].cframe;
 
 					rcSrc.left = (int)(cframe / 4) * 24;
@@ -677,7 +677,7 @@ void GriffonEngine::drawNPCs(int mode) {
 				}
 
 				// wizard
-				if (_npcinfo[i].spriteset == 7) {
+				if (_npcinfo[i].spriteset == kMonsterPriest) {
 					// if(_npcinfo[i].attacking == 0) {
 					int cframe = _npcinfo[i].cframe;
 
@@ -715,7 +715,7 @@ void GriffonEngine::drawNPCs(int mode) {
 
 
 				// yellow dragon
-				if (_npcinfo[i].spriteset == 8) {
+				if (_npcinfo[i].spriteset == kMonsterYellowDragon) {
 					int cframe = _npcinfo[i].cframe;
 
 					rcSrc.left = (int)(cframe / 4) * 24;
@@ -738,7 +738,7 @@ void GriffonEngine::drawNPCs(int mode) {
 
 
 				// dragon2
-				if (_npcinfo[i].spriteset == 10) {
+				if (_npcinfo[i].spriteset == kMonsterDragon2) {
 					if (_npcinfo[i].attacking == 0) {
 						_npcinfo[i].floating = _npcinfo[i].floating + 0.25 * _fpsr;
 						while (_npcinfo[i].floating >= 16)
@@ -801,7 +801,7 @@ void GriffonEngine::drawNPCs(int mode) {
 				}
 
 				// end boss
-				if (_npcinfo[i].spriteset == 11) {
+				if (_npcinfo[i].spriteset == kMonsterFinalBoss) {
 
 					_npcinfo[i].floating = _npcinfo[i].floating + .3 * _fpsr;
 					while (_npcinfo[i].floating >= 16)
@@ -931,7 +931,7 @@ void GriffonEngine::drawNPCs(int mode) {
 				}
 
 				// bat kitty
-				if (_npcinfo[i].spriteset == 12) {
+				if (_npcinfo[i].spriteset == kMonsterBatKitty) {
 					_npcinfo[i].floating = _npcinfo[i].floating + 1 * _fpsr;
 					while (_npcinfo[i].floating >= 16)
 						_npcinfo[i].floating = _npcinfo[i].floating - 16;
@@ -998,7 +998,7 @@ void GriffonEngine::drawNPCs(int mode) {
 
 				int pass = 1;
 
-				if (_npcinfo[i].spriteset == 3)
+				if (_npcinfo[i].spriteset == kMonsterBoss1)
 					pass = 0;
 				if (pass == 1)
 					drawOver(npx, npy);

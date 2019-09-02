@@ -598,14 +598,15 @@ void GriffonEngine::damageNPC(int npcnum, int damage, int spell) {
 
 	addFloatText(line, _npcinfo[npcnum].x + 12 - 4 * strlen(line), _npcinfo[npcnum].y + 16, fcol);
 
-	if (_npcinfo[npcnum].spriteset == 12)
+	if (_npcinfo[npcnum].spriteset == kMonsterBatKitty)
 		castSpell(9, _npcinfo[npcnum].x, _npcinfo[npcnum].y, _player.px, _player.py, npcnum);
 
 	// if enemy is killed
 	if (_npcinfo[npcnum].hp == 0) {
 		_player.exp = _player.exp + _npcinfo[npcnum].maxhp;
 
-		if (_npcinfo[npcnum].spriteset == 1 || _npcinfo[npcnum].spriteset == 7 || _npcinfo[npcnum].spriteset == 6) {
+		if (_npcinfo[npcnum].spriteset == kMonsterBabyDragon || _npcinfo[npcnum].spriteset == kMonsterPriest ||
+				_npcinfo[npcnum].spriteset == kMonsterRedDragon) {
 			int ff = (int)(RND() * _player.level * 3);
 			if (ff == 0) {
 				float npx = _npcinfo[npcnum].x + 12;
@@ -619,7 +620,8 @@ void GriffonEngine::damageNPC(int npcnum, int damage, int spell) {
 			}
 		}
 
-		if (_npcinfo[npcnum].spriteset == 2 || _npcinfo[npcnum].spriteset == 9 || _npcinfo[npcnum].spriteset == 4 || _npcinfo[npcnum].spriteset == 5) {
+		if (_npcinfo[npcnum].spriteset == kMonsterOneWing || _npcinfo[npcnum].spriteset == kMonsterTwoWing || 
+					_npcinfo[npcnum].spriteset == kMonsterBlackKnight || _npcinfo[npcnum].spriteset == kMonsterFireHydra) {
 			int ff = (int)(RND() * _player.level);
 			if (ff == 0) {
 				float npx = _npcinfo[npcnum].x + 12;
@@ -633,7 +635,8 @@ void GriffonEngine::damageNPC(int npcnum, int damage, int spell) {
 			}
 		}
 
-		if (_npcinfo[npcnum].spriteset == 9 || _npcinfo[npcnum].spriteset == 10 || _npcinfo[npcnum].spriteset == 5) {
+		if (_npcinfo[npcnum].spriteset == kMonsterTwoWing || _npcinfo[npcnum].spriteset == kMonsterDragon2 ||
+				_npcinfo[npcnum].spriteset == kMonsterFireHydra) {
 			int ff = (int)(RND() * _player.level * 2);
 			if (ff == 0) {
 				float npx = _npcinfo[npcnum].x + 12;
