@@ -5,11 +5,12 @@ MODULE_OBJS := \
 	config.o \
 	console.o \
 	cutscenes.o \
+	detection.o \
 	dialogs.o \
 	draw.o \
 	engine.o \
 	griffon.o \
-	detection.o \
+	resources.o \
 	saveload.o \
 	sound.o
 
