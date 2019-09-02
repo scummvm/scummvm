@@ -12,6 +12,7 @@ MODULE_OBJS := \
 	gfx.o \
 	griffon.o \
 	input.o \
+	logic.o \
 	resources.o \
 	saveload.o \
 	sound.o
