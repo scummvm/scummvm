@@ -321,6 +321,8 @@ private:
 	void resumeSoundChannel(int channel);
 	bool isSoundChannelPlaying(int channel);
 
+	Graphics::TransparentSurface *IMG_Load(const char *name, bool colorkey = false);
+
 private:
 	Graphics::TransparentSurface *_video, *_videobuffer, *_videobuffer2, *_videobuffer3;
 
