@@ -4372,7 +4372,7 @@ void GriffonEngine::game_main() {
 	game_saveloadnew();
 }
 
-void GriffonEngine::game_newgame() {
+void GriffonEngine::newGame() {
 	float xofs = 0;
 	float ld = 0, add;
 	int cnt = 0;
@@ -4714,7 +4714,7 @@ void GriffonEngine::game_saveloadnew() {
 					}
 					// NEW GAME
 					if (currow == 0 && curcol == 0)
-						game_newgame();
+						newGame();
 
 					// LOAD GAME
 					if (currow == 0 && curcol == 1) {
@@ -4731,7 +4731,7 @@ void GriffonEngine::game_saveloadnew() {
 
 
 					if (lowerlock == 1 && curcol == 1 && tickpause < _ticks) {
-						if (state_save(currow - 1)) {
+						if (saveState(currow - 1)) {
 							_secstart = _secstart + _secsingame;
 							_secsingame = 0;
 							lowerlock = 0;
@@ -4741,7 +4741,7 @@ void GriffonEngine::game_saveloadnew() {
 					}
 
 					if (lowerlock == 1 && curcol == 2 && tickpause < _ticks) {
-						if (state_load(currow - 1)) {
+						if (loadState(currow - 1)) {
 							_player.walkspd = 1.1f;
 							_animspd = 0.5f;
 							attacking = false;
@@ -4819,7 +4819,7 @@ void GriffonEngine::game_saveloadnew() {
 		// read it only when needed!
 
 		for (int ff = 0; ff <= 3; ff++) {
-			state_load_player(ff);
+			loadPlayer(ff);
 
 			if (_playera.level > 0) {
 				char line[256];
@@ -7752,7 +7752,7 @@ void GriffonEngine::sys_initialize() {
 		_playerattackofs[3][i][1] = -sin(3.14159 * 2 * (i + 1) / 16) * 2;
 	}
 
-	sys_setupAudio();
+	setupAudio();
 }
 
 void GriffonEngine::sys_line(Graphics::TransparentSurface *buffer, int x1, int y1, int x2, int y2, int col) {

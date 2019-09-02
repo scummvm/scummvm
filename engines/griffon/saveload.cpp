@@ -58,7 +58,7 @@ Common::String GriffonEngine::makeSaveGameName(int slot) {
 	return (_targetName + Common::String::format(".%02d", slot));
 }
 
-int GriffonEngine::state_load(int slotnum) {
+int GriffonEngine::loadState(int slotnum) {
 	Common::String filename = makeSaveGameName(slotnum);
 	Common::InSaveFile *file;
 	if (!(file = _saveFileMan->openForLoading(filename)))
@@ -129,7 +129,7 @@ int GriffonEngine::state_load(int slotnum) {
 }
 
 /* fill PLAYERTYPE _playera; */
-int GriffonEngine::state_load_player(int slotnum) {
+int GriffonEngine::loadPlayer(int slotnum) {
 	Common::String filename = makeSaveGameName(slotnum);
 	Common::InSaveFile *file;
 
@@ -182,7 +182,7 @@ int GriffonEngine::state_load_player(int slotnum) {
 	return 0; // fail
 }
 
-int GriffonEngine::state_save(int slotnum) {
+int GriffonEngine::saveState(int slotnum) {
 	Common::String filename = makeSaveGameName(slotnum);
 	Common::OutSaveFile *file;
 

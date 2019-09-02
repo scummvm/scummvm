@@ -280,7 +280,7 @@ private:
 	void game_handlewalking();
 	void game_loadmap(int mapnum);
 	void game_main();
-	void game_newgame();
+	void newGame();
 	void game_playgame();
 	void game_processtrigger(int trignum);
 	void game_saveloadnew();
@@ -304,14 +304,14 @@ private:
 	void sys_LoadTriggers();
 	void sys_LoadObjectDB();
 	void sys_print(Graphics::TransparentSurface *buffer, const char *stri, int xloc, int yloc, int col);
-	void sys_progress(int w, int wm);
-	void sys_setupAudio();
+	void drawProgress(int w, int wm);
+	void setupAudio();
 	void sys_update();
 
 	Common::String makeSaveGameName(int slot);
-	int state_load(int slotnum);
-	int state_load_player(int slotnum);
-	int state_save(int slotnum);
+	int loadState(int slotnum);
+	int loadPlayer(int slotnum);
+	int saveState(int slotnum);
 
 	void setChannelVolume(int channel, int volume);
 	int getSoundHandle();
