@@ -306,6 +306,34 @@ private:
 	void drawView();
 	void swash();
 
+	// resources.cpp
+	void initialize();
+	Graphics::TransparentSurface *loadImage(const char *name, bool colorkey = false);
+	void loadMap(int mapnum);
+	void loadAnims();
+	void loadFont();
+	void loadItemImgs();
+	void loadTiles();
+	void loadTriggers();
+	void loadObjectDB();
+
+	// saveload.cpp
+	Common::String makeSaveGameName(int slot);
+	int loadState(int slotnum);
+	int loadPlayer(int slotnum);
+	int saveState(int slotnum);
+
+	// sound.cpp
+	void setChannelVolume(int channel, int volume);
+	int getSoundHandle();
+	int playSound(DataChunk *chunk, bool looped = false);
+	void pauseSoundChannel(int channel);
+	void haltSoundChannel(int channel);
+	void resumeSoundChannel(int channel);
+	bool isSoundChannelPlaying(int channel);
+	void setupAudio();
+	void updateMusic();
+
 	float RND();
 
 	void addFloatIcon(int ico, float xloc, float yloc);
@@ -314,44 +342,19 @@ private:
 	void checkTrigger();
 	void eventText(const char *stri);
 	void handleWalking();
-	void loadMap(int mapnum);
 	void newGame();
 	void mainLoop();
 	void processTrigger(int trignum);
 	void updateAnims();
 	void updateY();
-	void updateMusic();
 	void updateNPCs();
 	void updateSpells();
 	void updateSpellsUnder();
 
-	void initialize();
 	void drawLine(Graphics::TransparentSurface *buffer, int x1, int y1, int x2, int y2, int col);
-	void loadAnims();
-	void loadFont();
-	void loadItemImgs();
-	void loadTiles();
-	void loadTriggers();
-	void loadObjectDB();
 	void drawString(Graphics::TransparentSurface *buffer, const char *stri, int xloc, int yloc, int col);
 	void drawProgress(int w, int wm);
-	void setupAudio();
 	void updateEngine();
-
-	Common::String makeSaveGameName(int slot);
-	int loadState(int slotnum);
-	int loadPlayer(int slotnum);
-	int saveState(int slotnum);
-
-	void setChannelVolume(int channel, int volume);
-	int getSoundHandle();
-	int playSound(DataChunk *chunk, bool looped = false);
-	void pauseSoundChannel(int channel);
-	void haltSoundChannel(int channel);
-	void resumeSoundChannel(int channel);
-	bool isSoundChannelPlaying(int channel);
-
-	Graphics::TransparentSurface *loadImage(const char *name, bool colorkey = false);
 
 private:
 	Graphics::TransparentSurface *_video, *_videobuffer, *_videobuffer2, *_videobuffer3;
