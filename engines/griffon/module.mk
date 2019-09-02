@@ -9,6 +9,7 @@ MODULE_OBJS := \
 	dialogs.o \
 	draw.o \
 	engine.o \
+	gfx.o \
 	griffon.o \
 	input.o \
 	resources.o \

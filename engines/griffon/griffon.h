@@ -306,6 +306,27 @@ private:
 	void drawView();
 	void swash();
 
+	// engine.cpp
+	float RND();
+
+	void newGame();
+	void mainLoop();
+	void updateAnims();
+	void updateY();
+	void updateNPCs();
+	void updateSpells();
+	void updateSpellsUnder();
+
+	void updateEngine();
+
+	// gfx.cpp
+	void addFloatIcon(int ico, float xloc, float yloc);
+	void addFloatText(const char *stri, float xloc, float yloc, int col);
+	void eventText(const char *stri);
+	void drawLine(Graphics::TransparentSurface *buffer, int x1, int y1, int x2, int y2, int col);
+	void drawString(Graphics::TransparentSurface *buffer, const char *stri, int xloc, int yloc, int col);
+	void drawProgress(int w, int wm);
+
 	// input.cpp
 	void checkInputs();
 	void handleWalking();
@@ -339,24 +360,6 @@ private:
 	bool isSoundChannelPlaying(int channel);
 	void setupAudio();
 	void updateMusic();
-
-	float RND();
-
-	void addFloatIcon(int ico, float xloc, float yloc);
-	void addFloatText(const char *stri, float xloc, float yloc, int col);
-	void eventText(const char *stri);
-	void newGame();
-	void mainLoop();
-	void updateAnims();
-	void updateY();
-	void updateNPCs();
-	void updateSpells();
-	void updateSpellsUnder();
-
-	void drawLine(Graphics::TransparentSurface *buffer, int x1, int y1, int x2, int y2, int col);
-	void drawString(Graphics::TransparentSurface *buffer, const char *stri, int xloc, int yloc, int col);
-	void drawProgress(int w, int wm);
-	void updateEngine();
 
 private:
 	Graphics::TransparentSurface *_video, *_videobuffer, *_videobuffer2, *_videobuffer3;
