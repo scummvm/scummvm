@@ -578,6 +578,7 @@ PerformJump: /* goto label for successful jumping... ironic, no? */
 				}
 #endif /* VM_DEBUGGER */
 				fatal_error_i("user debugtrap encountered.", inst[0].value);
+				break;
 
 			case op_jumpabs:
 				pc = inst[0].value;
