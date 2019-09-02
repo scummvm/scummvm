@@ -325,15 +325,9 @@ private:
 	// engine.cpp
 	float RND();
 
-	void newGame();
 	void mainLoop();
-	void updateAnims();
-	void updateY();
-	void updateNPCs();
-	void updateSpells();
-	void updateSpellsUnder();
-
 	void updateEngine();
+	void newGame();
 
 	// gfx.cpp
 	void addFloatIcon(int ico, float xloc, float yloc);
@@ -348,6 +342,13 @@ private:
 	void handleWalking();
 	void checkTrigger();
 	void processTrigger(int trignum);
+
+	// logic.cpp
+	void updateAnims();
+	void updateY();
+	void updateNPCs();
+	void updateSpells();
+	void updateSpellsUnder();
 
 	// resources.cpp
 	void initialize();
