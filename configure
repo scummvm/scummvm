@@ -4223,7 +4223,15 @@ EOF
 			cc_check -lspeechd && _tts=yes
 			;;
 		darwin*)
-			_tts=yes
+			# Check the API is available. The most recent API we need is for the NSSpeechSynthesizerDelegate protocole
+			cat > $TMPC << EOF
+#include <AppKit/NSSpeechSynthesizer.h>
+@interface SpeechDelegate : NSObject<NSSpeechSynthesizerDelegate> {
+}
+@end
+int main(void) { return 0; }
+EOF
+			cc_check -ObjC++ -lobjc && _tts=yes
 			;;
 	esac
 fi
