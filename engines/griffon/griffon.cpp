@@ -66,18 +66,18 @@ Common::Error GriffonEngine::run() {
 
 	_console = new Console();
 
-	sys_initialize();
-	game_showlogos();
+	initialize();
+	showLogos();
 
 	if (_shouldQuit)
 		return Common::kNoError;
 
-	game_title(0);
+	title(0);
 
 	if (_shouldQuit)
 		return Common::kNoError;
 
-	game_saveloadnew();
+	saveLoadNew();
 
 	return Common::kNoError;
 }

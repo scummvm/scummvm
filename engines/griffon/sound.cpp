@@ -130,9 +130,9 @@ void GriffonEngine::setupAudio() {
 	//atexit(Mix_CloseAudio);
 
 	const char *stri = "Loading...";
-	sys_print(_videobuffer, stri, 160 - 4 * strlen(stri), 116, 0);
+	drawString(_videobuffer, stri, 160 - 4 * strlen(stri), 116, 0);
 
-	Graphics::TransparentSurface *loadimg = IMG_Load("art/load.bmp", true);
+	Graphics::TransparentSurface *loadimg = loadImage("art/load.bmp", true);
 
 	rcSrc.left = 0;
 	rcSrc.top = 0;
