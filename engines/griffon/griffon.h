@@ -297,25 +297,27 @@ private:
 	void configMenu();
 	void saveLoadNew();
 
-	float RND();
-
-	void addFloatIcon(int ico, float xloc, float yloc);
-	void addFloatText(const char *stri, float xloc, float yloc, int col);
-	void checkInputs();
-	void checkTrigger();
+	// draw.cpp
 	void drawAnims(int Layer);
 	void drawHud();
 	void drawNPCs(int mode);
 	void drawOver(int modx, int mody);
 	void drawPlayer();
 	void drawView();
+	void swash();
+
+	float RND();
+
+	void addFloatIcon(int ico, float xloc, float yloc);
+	void addFloatText(const char *stri, float xloc, float yloc, int col);
+	void checkInputs();
+	void checkTrigger();
 	void eventText(const char *stri);
 	void handleWalking();
 	void loadMap(int mapnum);
 	void newGame();
 	void mainLoop();
 	void processTrigger(int trignum);
-	void swash();
 	void updateAnims();
 	void updateY();
 	void updateMusic();
