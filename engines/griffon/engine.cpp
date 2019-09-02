@@ -5344,62 +5344,6 @@ void GriffonEngine::updateY() {
 	}
 }
 
-void GriffonEngine::updateMusic() {
-	DataChunk *iplaysound = NULL;
-
-	if (config.music) {
-
-		// if(_curmap > 5 && _curmap < 42) iplaysound = macademy;
-		// if(_curmap > 47) iplaysound = _mgardens;
-		iplaysound = _mgardens;
-		if (_roomlock)
-			iplaysound = _mboss;
-
-		if (iplaysound == _mboss && _pboss)
-			iplaysound = NULL;
-		if (iplaysound == _mgardens && _pgardens)
-			iplaysound = NULL;
-
-		if (iplaysound != NULL) {
-			haltSoundChannel(_musicchannel);
-
-			_pboss = false;
-			_pgardens = false;
-			_ptown = false;
-			_pacademy = false;
-			_pcitadel = false;
-
-			if (iplaysound == _mboss)
-				_pboss = true;
-			if (iplaysound == _mgardens)
-				_pgardens = true;
-
-			_musicchannel = playSound(iplaysound, true);
-			setChannelVolume(_musicchannel, config.musicvol);
-		} else {
-			if (!isSoundChannelPlaying(_musicchannel)) {
-				_loopseta += 1;
-				if (_loopseta == 4)
-					_loopseta = 0;
-
-				if (_pgardens) {
-					haltSoundChannel(_musicchannel);
-					if (_pgardens && _loopseta == 0)
-						_musicchannel = playSound(_mgardens);
-					if (_pgardens && _loopseta == 1)
-						_musicchannel = playSound(_mgardens2);
-					if (_pgardens && _loopseta == 2)
-						_musicchannel = playSound(_mgardens3);
-					if (_pgardens && _loopseta == 3)
-						_musicchannel = playSound(_mgardens4);
-				}
-
-				setChannelVolume(_musicchannel, config.musicvol);
-			}
-		}
-	}
-}
-
 void GriffonEngine::game_updnpcs() {
 	for (int i = 1; i <= _lastnpc; i++) {
 		if (_npcinfo[i].hp > 0) {
