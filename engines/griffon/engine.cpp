@@ -96,16 +96,6 @@ enum {
 
 */
 
-void GriffonEngine::griffon_main() {
-	sys_initialize();
-	game_showlogos();
-
-	if (_shouldQuit)
-		return;
-
-	game_main();
-}
-
 // element tile locations
 const int elementmap[15][20] = {
 	{  2, 2, 2, 2, -1, -1, -1, 2, 2, 2, 2, 2, 2, -1, -1, -1, -1, -1, -1, -1 },
@@ -4361,15 +4351,6 @@ void GriffonEngine::game_loadmap(int mapnum) {
 	}
 
 	_clipbg2->copyRectToSurface(_clipbg->getPixels(), _clipbg->pitch, 0, 0, _clipbg->w, _clipbg->h);
-}
-
-void GriffonEngine::game_main() {
-	game_title(0);
-
-	if (_shouldQuit)
-		return;
-
-	game_saveloadnew();
 }
 
 void GriffonEngine::newGame() {

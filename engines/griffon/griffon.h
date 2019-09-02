@@ -255,8 +255,6 @@ private:
 	Console *_console;
 
 private:
-	void griffon_main();
-
 	float RND();
 
 	void game_addFloatIcon(int ico, float xloc, float yloc);
@@ -279,7 +277,6 @@ private:
 	void game_eventtext(const char *stri);
 	void game_handlewalking();
 	void game_loadmap(int mapnum);
-	void game_main();
 	void newGame();
 	void game_playgame();
 	void game_processtrigger(int trignum);
