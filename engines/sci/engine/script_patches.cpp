@@ -4884,6 +4884,36 @@ static const uint16 longbowPatchGreenManForestSweepFix[] = {
 	PATCH_END
 };
 
+// After rescuing Fulk in the Amiga version, rescueOfFulk stores the boat speed
+//  in a temporary variable during one state and expects it to still be there in
+//  a later state, which only worked by accident in Sierra's interpreter. This
+//  Amiga tweak was made so that on slower machines the boat would animate after
+//  Fulk and Robin leave the screen. We fix this by using the script's register
+//  property for storage instead of a temporary variable.
+//
+// Applies to: English Amiga Floppy
+// Responsible method: rescueOfFulk:changeState
+// Fixes bug: #11137
+static const uint16 longbowSignatureAmigaFulkRescue[] = {
+	SIG_MAGICDWORD,
+	0xa5, 0x00,                     // sat 00
+	0x89, 0x57,                     // lsg 87
+	SIG_ADDTOOFFSET(+10),
+	0x8d, 0x00,                     // lst 00
+	SIG_ADDTOOFFSET(+635),
+	0x8d, 0x00,                     // lst 00
+	SIG_END
+};
+
+static const uint16 longbowPatchAmigaFulkRescue[] = {
+	0x65, 0x1a,                     // aTop register
+	PATCH_ADDTOOFFSET(+12),
+	0x67, 0x1a,                     // pTos register
+	PATCH_ADDTOOFFSET(+635),
+	0x67, 0x1a,                     // pTos register
+	PATCH_END
+};
+
 //          script, description,                                      signature                                patch
 static const SciScriptPatcherEntry longbowSignatures[] = {
 	{  true,   140, "green man riddles and forest sweep fix",      1, longbowSignatureGreenManForestSweepFix,  longbowPatchGreenManForestSweepFix },
@@ -4896,6 +4926,7 @@ static const SciScriptPatcherEntry longbowSignatures[] = {
 	{  true,   320, "day 8 archer pathfinding workaround",         1, longbowSignatureArcherPathfinding,       longbowPatchArcherPathfinding },
 	{  true,   350, "day 9 cobbler hut fix",                      10, longbowSignatureCobblerHut,              longbowPatchCobblerHut },
 	{  true,   530, "amiga pub fix",                               1, longbowSignatureAmigaPubFix,             longbowPatchAmigaPubFix },
+	{  true,   600, "amiga fulk rescue fix",                       1, longbowSignatureAmigaFulkRescue,         longbowPatchAmigaFulkRescue },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
