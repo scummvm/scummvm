@@ -4,6 +4,7 @@ MODULE_OBJS := \
 	combat.o \
 	config.o \
 	console.o \
+	cutscenes.o \
 	engine.o \
 	griffon.o \
 	detection.o \
