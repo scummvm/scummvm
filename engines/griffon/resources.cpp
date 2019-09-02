@@ -488,7 +488,7 @@ void GriffonEngine::loadMap(int mapnum) {
 		INPUT("%i", &_npcinfo[i].script);
 
 		// baby dragon
-		if (_npcinfo[i].spriteset == 1) {
+		if (_npcinfo[i].spriteset == kMonsterBabyDragon) {
 			_npcinfo[i].hp = 12;
 			_npcinfo[i].attackdelay = 2000;
 
@@ -502,7 +502,7 @@ void GriffonEngine::loadMap(int mapnum) {
 		}
 
 		// onewing
-		if (_npcinfo[i].spriteset == 2) {
+		if (_npcinfo[i].spriteset == kMonsterOneWing) {
 			_npcinfo[i].hp = 200;
 			_npcinfo[i].attackdelay = 2000;
 			_npcinfo[i].swayspd = 1;
@@ -515,7 +515,7 @@ void GriffonEngine::loadMap(int mapnum) {
 		}
 
 		// boss1
-		if (_npcinfo[i].spriteset == 3) {
+		if (_npcinfo[i].spriteset == kMonsterBoss1) {
 			_npcinfo[i].hp = 300;
 			_npcinfo[i].attackdelay = 2200;
 
@@ -526,7 +526,7 @@ void GriffonEngine::loadMap(int mapnum) {
 		}
 
 		// black knights
-		if (_npcinfo[i].spriteset == 4) {
+		if (_npcinfo[i].spriteset == kMonsterBlackKnight) {
 			_npcinfo[i].hp = 200;
 			_npcinfo[i].attackdelay = 2800;
 
@@ -537,7 +537,7 @@ void GriffonEngine::loadMap(int mapnum) {
 		}
 
 		// boss2 firehydra
-		if (_npcinfo[i].spriteset == 5) {
+		if (_npcinfo[i].spriteset == kMonsterFireHydra) {
 			_npcinfo[i].hp = 600;
 			_npcinfo[i].attackdelay = 2200;
 
@@ -550,7 +550,7 @@ void GriffonEngine::loadMap(int mapnum) {
 		}
 
 		// baby fire dragon
-		if (_npcinfo[i].spriteset == 6) {
+		if (_npcinfo[i].spriteset == kMonsterRedDragon) {
 			_npcinfo[i].hp = 20;
 			_npcinfo[i].attackdelay = 1500;
 
@@ -564,7 +564,7 @@ void GriffonEngine::loadMap(int mapnum) {
 		}
 
 		// priest1
-		if (_npcinfo[i].spriteset == 7) {
+		if (_npcinfo[i].spriteset == kMonsterPriest) {
 			_npcinfo[i].hp = 40;
 			_npcinfo[i].attackdelay = 5000;
 
@@ -578,7 +578,7 @@ void GriffonEngine::loadMap(int mapnum) {
 		}
 
 		// yellow fire dragon
-		if (_npcinfo[i].spriteset == 8) {
+		if (_npcinfo[i].spriteset == kMonsterYellowDragon) {
 			_npcinfo[i].hp = 100;
 			_npcinfo[i].attackdelay = 1500;
 
@@ -592,7 +592,7 @@ void GriffonEngine::loadMap(int mapnum) {
 		}
 
 		// twowing
-		if (_npcinfo[i].spriteset == 9) {
+		if (_npcinfo[i].spriteset == kMonsterTwoWing) {
 			_npcinfo[i].hp = 140;
 			_npcinfo[i].attackdelay = 2000;
 			_npcinfo[i].swayspd = 1;
@@ -606,7 +606,7 @@ void GriffonEngine::loadMap(int mapnum) {
 		}
 
 		// dragon2
-		if (_npcinfo[i].spriteset == 10) {
+		if (_npcinfo[i].spriteset == kMonsterDragon2) {
 			_npcinfo[i].hp = 80;
 			_npcinfo[i].attackdelay = 1500;
 
@@ -619,7 +619,7 @@ void GriffonEngine::loadMap(int mapnum) {
 		}
 
 		// end boss
-		if (_npcinfo[i].spriteset == 11) {
+		if (_npcinfo[i].spriteset == kMonsterFinalBoss) {
 			_npcinfo[i].hp = 1200;
 			_npcinfo[i].attackdelay = 2000;
 
@@ -632,7 +632,7 @@ void GriffonEngine::loadMap(int mapnum) {
 		}
 
 		// bat kitty
-		if (_npcinfo[i].spriteset == 12) {
+		if (_npcinfo[i].spriteset == kMonsterBatKitty) {
 			_npcinfo[i].hp = 800;
 			_npcinfo[i].attackdelay = 2000;
 
@@ -655,7 +655,7 @@ void GriffonEngine::loadMap(int mapnum) {
 		_npcinfo[i].attackspd = 1.5;
 		_npcinfo[i].attacknext = _ticks + _npcinfo[i].attackdelay * (1 + RND() * 2);
 
-		if (_npcinfo[i].spriteset == 2 || _npcinfo[i].spriteset == 9) {
+		if (_npcinfo[i].spriteset == kMonsterOneWing || _npcinfo[i].spriteset == kMonsterTwoWing) {
 			_npcinfo[i].bodysection[0].sprite = 0;
 			_npcinfo[i].bodysection[1].sprite = 1;
 			_npcinfo[i].bodysection[2].sprite = 2;
@@ -683,7 +683,7 @@ void GriffonEngine::loadMap(int mapnum) {
 
 		}
 
-		if (_npcinfo[i].spriteset == 5) {
+		if (_npcinfo[i].spriteset == kMonsterFireHydra) {
 			for (int f = 0; f <= 29; f++) {
 				_npcinfo[i].bodysection[f].x = _npcinfo[i].x + 12;
 				_npcinfo[i].bodysection[f].y = _npcinfo[i].y + 14;

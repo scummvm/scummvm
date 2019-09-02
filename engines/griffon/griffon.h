@@ -112,6 +112,22 @@ enum {
 	kScriptLever = 60			// lever
 };
 
+// monsters
+enum {
+	kMonsterBabyDragon = 1, 	// baby dragon
+ 	kMonsterOneWing = 2,		// one wing
+ 	kMonsterBoss1 = 3, 			// boss 1
+ 	kMonsterBlackKnight = 4,	// black knight
+ 	kMonsterFireHydra = 5,		// fire hydra
+ 	kMonsterRedDragon = 6,		// red dragon
+ 	kMonsterPriest = 7,			// priest
+ 	kMonsterYellowDragon = 8,	// yellow fire dragon
+ 	kMonsterTwoWing = 9,		// two wing
+	kMonsterDragon2 = 10,		// dragon2
+	kMonsterFinalBoss = 11,		// final boss
+	kMonsterBatKitty = 12		// bat kitty
+};
+
 
 #define kEpsilon 0.001
 
