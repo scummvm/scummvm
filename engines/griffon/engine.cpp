@@ -2944,7 +2944,7 @@ void GriffonEngine::drawPlayer() {
 void GriffonEngine::drawView() {
 	_videobuffer->copyRectToSurface(_mapbg->getPixels(), _mapbg->pitch, 0, 0, _mapbg->w, _mapbg->h);
 
-	game_updspellsunder();
+	updateSpellsUnder();
 
 	drawAnims(0);
 
@@ -2961,7 +2961,7 @@ void GriffonEngine::drawView() {
 
 	drawOver((int)_player.px, (int)_player.py);
 
-	game_updspells();
+	updateSpells();
 
 	if (cloudson == 1) {
 		Common::Rect rc;
@@ -4543,7 +4543,7 @@ void GriffonEngine::mainLoop() {
 	do {
 		if (!_forcepause) {
 			updateAnims();
-			game_updnpcs();
+			updateNPCs();
 		}
 
 		checkTrigger();
@@ -4559,7 +4559,7 @@ void GriffonEngine::mainLoop() {
 
 		 _console->onFrame();
 
-		sys_update();
+		updateEngine();
 	} while (!_shouldQuit);
 }
 
@@ -5344,7 +5344,7 @@ void GriffonEngine::updateY() {
 	}
 }
 
-void GriffonEngine::game_updnpcs() {
+void GriffonEngine::updateNPCs() {
 	for (int i = 1; i <= _lastnpc; i++) {
 		if (_npcinfo[i].hp > 0) {
 			//  is npc walking
@@ -6461,7 +6461,7 @@ void GriffonEngine::game_updnpcs() {
 	}
 }
 
-void GriffonEngine::game_updspells() {
+void GriffonEngine::updateSpells() {
 	int foundel[5];
 	float npx, npy;
 	long cl1, cl2, cl3;
@@ -7311,7 +7311,7 @@ void GriffonEngine::game_updspells() {
 
 
 
-void GriffonEngine::game_updspellsunder() {
+void GriffonEngine::updateSpellsUnder() {
 	if (_forcepause)
 		return;
 
@@ -7653,12 +7653,12 @@ void GriffonEngine::initialize() {
 	_theendimg = loadImage("art/theend.bmp");
 
 
-	sys_LoadTiles();
-	sys_LoadTriggers();
-	sys_LoadObjectDB();
-	sys_LoadAnims();
-	sys_LoadFont();
-	sys_LoadItemImgs();
+	loadTiles();
+	loadTriggers();
+	loadObjectDB();
+	loadAnims();
+	loadFont();
+	loadItemImgs();
 
 	_fpsr = 1.0f;
 	_nextticks = _ticks + 1000;
@@ -7699,7 +7699,7 @@ void GriffonEngine::drawLine(Graphics::TransparentSurface *buffer, int x1, int y
 	}
 }
 
-void GriffonEngine::sys_LoadAnims() {
+void GriffonEngine::loadAnims() {
 	_spellimg = loadImage("art/spells.bmp", true);
 	_anims[0] = loadImage("art/anims0.bmp", true);
 	_animsa[0] = loadImage("art/anims0a.bmp", true);
@@ -7810,7 +7810,7 @@ void GriffonEngine::sys_LoadAnims() {
 	_anims[12] = loadImage("art/anims12.bmp", true);
 }
 
-void GriffonEngine::sys_LoadItemImgs() {
+void GriffonEngine::loadItemImgs() {
 	Graphics::TransparentSurface *temp = loadImage("art/icons.bmp", true);
 
 	for (int i = 0; i <= 20; i++) {
@@ -7828,7 +7828,7 @@ void GriffonEngine::sys_LoadItemImgs() {
 	temp->free();
 }
 
-void GriffonEngine::sys_LoadFont() {
+void GriffonEngine::loadFont() {
 	Graphics::TransparentSurface *font = loadImage("art/font.bmp", true);
 
 	for (int i = 32; i <= 255; i++)
@@ -7855,7 +7855,7 @@ void GriffonEngine::sys_LoadFont() {
 	font->free();
 }
 
-void GriffonEngine::sys_LoadTiles() {
+void GriffonEngine::loadTiles() {
 	_tiles[0] = loadImage("art/tx.bmp", true);
 	_tiles[1] = loadImage("art/tx1.bmp", true);
 	_tiles[2] = loadImage("art/tx2.bmp", true);
@@ -7864,7 +7864,7 @@ void GriffonEngine::sys_LoadTiles() {
 	_windowimg = loadImage("art/window.bmp", true);
 }
 
-void GriffonEngine::sys_LoadTriggers() {
+void GriffonEngine::loadTriggers() {
 	Common::File file;
 	file.open("data/triggers.dat");
 
@@ -7879,7 +7879,7 @@ void GriffonEngine::sys_LoadTriggers() {
 	file.close();
 }
 
-void GriffonEngine::sys_LoadObjectDB() {
+void GriffonEngine::loadObjectDB() {
 	Common::File file;
 
 	file.open("objectdb.dat");
@@ -7916,7 +7916,7 @@ void GriffonEngine::drawString(Graphics::TransparentSurface *buffer, const char 
 	}
 }
 
-void GriffonEngine::sys_update() {
+void GriffonEngine::updateEngine() {
 	g_system->updateScreen();
 	g_system->getEventManager()->pollEvent(_event);
 

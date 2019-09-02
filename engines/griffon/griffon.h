@@ -288,22 +288,22 @@ private:
 	void updateAnims();
 	void updateY();
 	void updateMusic();
-	void game_updnpcs();
-	void game_updspells();
-	void game_updspellsunder();
+	void updateNPCs();
+	void updateSpells();
+	void updateSpellsUnder();
 
 	void initialize();
 	void drawLine(Graphics::TransparentSurface *buffer, int x1, int y1, int x2, int y2, int col);
-	void sys_LoadAnims();
-	void sys_LoadFont();
-	void sys_LoadItemImgs();
-	void sys_LoadTiles();
-	void sys_LoadTriggers();
-	void sys_LoadObjectDB();
+	void loadAnims();
+	void loadFont();
+	void loadItemImgs();
+	void loadTiles();
+	void loadTriggers();
+	void loadObjectDB();
 	void drawString(Graphics::TransparentSurface *buffer, const char *stri, int xloc, int yloc, int col);
 	void drawProgress(int w, int wm);
 	void setupAudio();
-	void sys_update();
+	void updateEngine();
 
 	Common::String makeSaveGameName(int slot);
 	int loadState(int slotnum);
