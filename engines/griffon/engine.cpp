@@ -98,91 +98,205 @@ float GriffonEngine::RND() {
 	return (float)_rnd->getRandomNumber(32767) * (1.0f / 32768.0f);
 }
 
-void GriffonEngine::addFloatIcon(int ico, float xloc, float yloc) {
-	for (int i = 0; i < kMaxFloat; i++) {
-		if (ABS(_floaticon[i][0]) < kEpsilon) {
-			_floaticon[i][0] = 32;
-			_floaticon[i][1] = xloc;
-			_floaticon[i][2] = yloc;
-			_floaticon[i][3] = ico;
-			return;
-		}
+void GriffonEngine::mainLoop() {
+	swash();
+
+	if (_pmenu) {
+		haltSoundChannel(_menuchannel);
+		_pmenu = false;
 	}
-}
-
-void GriffonEngine::addFloatText(const char *stri, float xloc, float yloc, int col) {
-	for (int i = 0; i < kMaxFloat; i++) {
-		if (ABS(_floattext[i][0]) < kEpsilon) {
-			_floattext[i][0] = 32;
-			_floattext[i][1] = xloc;
-			_floattext[i][2] = yloc;
-			_floattext[i][3] = col;
-			strcpy(_floatstri[i], stri);
-			return;
-		}
-	}
-}
-
-void GriffonEngine::eventText(const char *stri) {
-	_videobuffer2->fillRect(Common::Rect(0, 0, _videobuffer2->w, _videobuffer2->h), 0);
-	_videobuffer3->fillRect(Common::Rect(0, 0, _videobuffer3->w, _videobuffer3->h), 0);
-
-	int x = 160 - 4 * strlen(stri);
-
-	_ticks = g_system->getMillis();
-	int pause_ticks = _ticks + 500;
-	int b_ticks = _ticks;
-
-	_videobuffer->blit(*_videobuffer3);
-	_videobuffer->blit(*_videobuffer2);
 
 	do {
-		g_system->getEventManager()->pollEvent(_event);
-
-		if (_event.type == Common::EVENT_KEYDOWN && pause_ticks < _ticks)
-			break;
-		_videobuffer2->blit(*_videobuffer);
-
-		int fr = 192;
-
-		if (pause_ticks > _ticks)
-			fr = 192 * (_ticks - b_ticks) / 500;
-		if (fr > 192)
-			fr = 192;
-
-		_windowimg->setAlpha(fr, true);
-
-		_windowimg->blit(*_videobuffer);
-		if (pause_ticks < _ticks)
-			drawString(_videobuffer, stri, x, 15, 0);
-
-		g_system->copyRectToScreen(_videobuffer->getPixels(), _videobuffer->pitch, 0, 0, _videobuffer->w, _videobuffer->h);
-		g_system->updateScreen();
-
-		g_system->getEventManager()->pollEvent(_event);
-		g_system->delayMillis(10);
-
-		_tickspassed = _ticks;
-		_ticks = g_system->getMillis();
-
-		_tickspassed = _ticks - _tickspassed;
-		_fpsr = (float)_tickspassed / 24.0;
-
-		_fp++;
-		if (_ticks > _nextticks) {
-			_nextticks = _ticks + 1000;
-			_fps = _fp;
-			_fp = 0;
+		if (!_forcepause) {
+			updateAnims();
+			updateNPCs();
 		}
 
-		g_system->delayMillis(10);
-	} while (1);
+		checkTrigger();
+		checkInputs();
 
-	_videobuffer3->blit(*_videobuffer);
+		if (!_forcepause)
+			handleWalking();
 
-	_itemticks = _ticks + 210;
+		updateY();
+		drawView();
+
+		updateMusic();
+
+		 _console->onFrame();
+
+		updateEngine();
+	} while (!_shouldQuit);
 }
 
+void GriffonEngine::updateEngine() {
+	g_system->updateScreen();
+	g_system->getEventManager()->pollEvent(_event);
+
+	_tickspassed = _ticks;
+	_ticks = g_system->getMillis();
+
+	_tickspassed = _ticks - _tickspassed;
+	_fpsr = (float)_tickspassed / 24.0;
+
+	_fp++;
+	if (_ticks > _nextticks) {
+		_nextticks = _ticks + 1000;
+		_fps = _fp;
+		_fp = 0;
+		_secsingame = _secsingame + 1;
+	}
+
+	if (attacking) {
+		_player.attackframe += _player.attackspd * _fpsr;
+		if (_player.attackframe >= 16) {
+			attacking = false;
+			_player.attackframe = 0;
+			_player.walkframe = 0;
+		}
+
+		int pa = (int)(_player.attackframe);
+
+		for (int i = 0; i <= pa; i++) {
+			if (ABS(_playerattackofs[_player.walkdir][i][2]) < kEpsilon) {
+				_playerattackofs[_player.walkdir][i][2] = 1;
+
+				float opx = _player.px;
+				float opy = _player.py;
+
+				_player.px = _player.px + _playerattackofs[_player.walkdir][i][0];
+				_player.py = _player.py + _playerattackofs[_player.walkdir][i][1];
+
+				int sx = (int)(_player.px / 2 + 6);
+				int sy = (int)(_player.py / 2 + 10);
+				uint32 *temp = (uint32 *)_clipbg->getBasePtr(sx, sy);
+				uint32 bgc = *temp;
+				if (bgc > 0) {
+					_player.px = opx;
+					_player.py = opy;
+				}
+			}
+		}
+
+		_player.opx = _player.px;
+		_player.opy = _player.py;
+
+		checkHit();
+	}
+
+	for (int i = 0; i < kMaxFloat; i++) {
+		if (_floattext[i][0] > 0) {
+			float spd = 0.5 * _fpsr;
+			_floattext[i][0] = _floattext[i][0] - spd;
+			_floattext[i][2] = _floattext[i][2] - spd;
+			if (_floattext[i][0] < 0)
+				_floattext[i][0] = 0;
+		}
+
+		if (_floaticon[i][0] > 0) {
+			float spd = 0.5 * _fpsr;
+			_floaticon[i][0] = _floaticon[i][0] - spd;
+			_floaticon[i][2] = _floaticon[i][2] - spd;
+			if (_floaticon[i][0] < 0)
+				_floaticon[i][0] = 0;
+		}
+	}
+
+	if (_player.level == _player.maxlevel)
+		_player.exp = 0;
+
+	if (_player.exp >= _player.nextlevel) {
+		_player.level = _player.level + 1;
+		addFloatText("LEVEL UP!", _player.px + 16 - 36, _player.py + 16, 3);
+		_player.exp = _player.exp - _player.nextlevel;
+		_player.nextlevel = _player.nextlevel * 3 / 2; // 1.5
+		_player.maxhp = _player.maxhp + _player.level * 3;
+		if (_player.maxhp > 999)
+			_player.maxhp = 999;
+		_player.hp = _player.maxhp;
+
+		_player.sworddamage = _player.level * 14 / 10;
+		_player.spelldamage = _player.level * 13 / 10;
+
+		if (config.effects) {
+			int snd = playSound(_sfx[kSndPowerUp]);
+			setChannelVolume(snd, config.effectsvol);
+		}
+	}
+
+	_clipbg->copyRectToSurface(_clipbg2->getPixels(), _clipbg2->pitch, 0, 0, _clipbg2->w, _clipbg2->h);
+
+	Common::Rect rc;
+
+	rc.left = _player.px - 2;
+	rc.top = _player.py - 2;
+	rc.setWidth(5);
+	rc.setHeight(5);
+
+	_clipbg->fillRect(rc, 1000);
+
+	if (!_forcepause) {
+		for (int i = 0; i < 5; i++) {
+			if (_player.foundspell[i] == 1)
+				_player.spellcharge[i] += 1 * _player.level * 0.01 * _fpsr;
+			if (_player.spellcharge[i] > 100)
+				_player.spellcharge[i] = 100;
+		}
+
+		if (_player.foundspell[0]) {
+			_player.spellstrength += 3 * _player.level * .01 * _fpsr;
+		}
+
+		_player.attackstrength += (30 + 3 * (float)_player.level) / 50 * _fpsr;
+	}
+
+	if (_player.attackstrength > 100)
+		_player.attackstrength = 100;
+
+	if (_player.spellstrength > 100)
+		_player.spellstrength = 100;
+
+	_itemyloc += 0.75 * _fpsr;
+	while (_itemyloc >= 16)
+		_itemyloc -= 16;
+
+	if (_player.hp <= 0)
+		theEnd();
+
+	if (_roomlock) {
+		_roomlock = false;
+		for (int i = 1; i <= _lastnpc; i++)
+			if (_npcinfo[i].hp > 0)
+				_roomlock = true;
+	}
+
+	clouddeg += 0.1 * _fpsr;
+	while (clouddeg >= 360)
+		clouddeg = clouddeg - 360;
+
+	_player.hpflash = _player.hpflash + 0.1 * _fpsr;
+	if (_player.hpflash >= 2) {
+		_player.hpflash = 0;
+		_player.hpflashb = _player.hpflashb + 1;
+		if (_player.hpflashb == 2)
+			_player.hpflashb = 0;
+		if (config.effects && _player.hpflashb == 0 && _player.hp < _player.maxhp / 4) {
+			int snd = playSound(_sfx[kSndBeep]);
+			setChannelVolume(snd, config.effectsvol);
+		}
+	}
+
+	// cloudson = 0
+
+	if (_itemselon == 1)
+		_player.itemselshade = _player.itemselshade + 2 * _fpsr;
+	if (_player.itemselshade > 24)
+		_player.itemselshade = 24;
+
+	for (int i = 0; i <= 4; i++)
+		if (_player.inventory[i] > 9)
+			_player.inventory[i] = 9;
+}
 
 void GriffonEngine::newGame() {
 	intro();
@@ -260,37 +374,6 @@ void GriffonEngine::newGame() {
 	loadMap(2);
 
 	mainLoop();
-}
-
-void GriffonEngine::mainLoop() {
-	swash();
-
-	if (_pmenu) {
-		haltSoundChannel(_menuchannel);
-		_pmenu = false;
-	}
-
-	do {
-		if (!_forcepause) {
-			updateAnims();
-			updateNPCs();
-		}
-
-		checkTrigger();
-		checkInputs();
-
-		if (!_forcepause)
-			handleWalking();
-
-		updateY();
-		drawView();
-
-		updateMusic();
-
-		 _console->onFrame();
-
-		updateEngine();
-	} while (!_shouldQuit);
 }
 
 void GriffonEngine::updateAnims() {
@@ -2613,203 +2696,5 @@ void GriffonEngine::updateSpellsUnder() {
 	}
 }
 
-void GriffonEngine::drawLine(Graphics::TransparentSurface *buffer, int x1, int y1, int x2, int y2, int col) {
-	int xdif = x2 - x1;
-	int ydif = y2 - y1;
-
-	if (xdif == 0) {
-		for (int y = y1; y <= y2; y++) {
-			uint32 *temp = (uint32 *)buffer->getBasePtr(x1, y);
-			*temp = col;
-		}
-	}
-
-	if (ydif == 0) {
-		for (int x = x1; x <= x2; x++) {
-			uint32 *temp = (uint32 *)buffer->getBasePtr(x, y1);
-			*temp = col;
-		}
-	}
-}
-
-void GriffonEngine::drawString(Graphics::TransparentSurface *buffer, const char *stri, int xloc, int yloc, int col) {
-	int l = strlen(stri);
-
-	for (int i = 0; i < l; i++) {
-		rcDest.left = xloc + i * 8;
-		rcDest.top = yloc;
-
-		_fontchr[stri[i] - 32][col]->blit(*buffer, rcDest.left, rcDest.top);
-	}
-}
-
-void GriffonEngine::updateEngine() {
-	g_system->updateScreen();
-	g_system->getEventManager()->pollEvent(_event);
-
-	_tickspassed = _ticks;
-	_ticks = g_system->getMillis();
-
-	_tickspassed = _ticks - _tickspassed;
-	_fpsr = (float)_tickspassed / 24.0;
-
-	_fp++;
-	if (_ticks > _nextticks) {
-		_nextticks = _ticks + 1000;
-		_fps = _fp;
-		_fp = 0;
-		_secsingame = _secsingame + 1;
-	}
-
-	if (attacking) {
-		_player.attackframe += _player.attackspd * _fpsr;
-		if (_player.attackframe >= 16) {
-			attacking = false;
-			_player.attackframe = 0;
-			_player.walkframe = 0;
-		}
-
-		int pa = (int)(_player.attackframe);
-
-		for (int i = 0; i <= pa; i++) {
-			if (ABS(_playerattackofs[_player.walkdir][i][2]) < kEpsilon) {
-				_playerattackofs[_player.walkdir][i][2] = 1;
-
-				float opx = _player.px;
-				float opy = _player.py;
-
-				_player.px = _player.px + _playerattackofs[_player.walkdir][i][0];
-				_player.py = _player.py + _playerattackofs[_player.walkdir][i][1];
-
-				int sx = (int)(_player.px / 2 + 6);
-				int sy = (int)(_player.py / 2 + 10);
-				uint32 *temp = (uint32 *)_clipbg->getBasePtr(sx, sy);
-				uint32 bgc = *temp;
-				if (bgc > 0) {
-					_player.px = opx;
-					_player.py = opy;
-				}
-			}
-		}
-
-		_player.opx = _player.px;
-		_player.opy = _player.py;
-
-		checkHit();
-	}
-
-	for (int i = 0; i < kMaxFloat; i++) {
-		if (_floattext[i][0] > 0) {
-			float spd = 0.5 * _fpsr;
-			_floattext[i][0] = _floattext[i][0] - spd;
-			_floattext[i][2] = _floattext[i][2] - spd;
-			if (_floattext[i][0] < 0)
-				_floattext[i][0] = 0;
-		}
-
-		if (_floaticon[i][0] > 0) {
-			float spd = 0.5 * _fpsr;
-			_floaticon[i][0] = _floaticon[i][0] - spd;
-			_floaticon[i][2] = _floaticon[i][2] - spd;
-			if (_floaticon[i][0] < 0)
-				_floaticon[i][0] = 0;
-		}
-	}
-
-	if (_player.level == _player.maxlevel)
-		_player.exp = 0;
-
-	if (_player.exp >= _player.nextlevel) {
-		_player.level = _player.level + 1;
-		addFloatText("LEVEL UP!", _player.px + 16 - 36, _player.py + 16, 3);
-		_player.exp = _player.exp - _player.nextlevel;
-		_player.nextlevel = _player.nextlevel * 3 / 2; // 1.5
-		_player.maxhp = _player.maxhp + _player.level * 3;
-		if (_player.maxhp > 999)
-			_player.maxhp = 999;
-		_player.hp = _player.maxhp;
-
-		_player.sworddamage = _player.level * 14 / 10;
-		_player.spelldamage = _player.level * 13 / 10;
-
-		if (config.effects) {
-			int snd = playSound(_sfx[kSndPowerUp]);
-			setChannelVolume(snd, config.effectsvol);
-		}
-	}
-
-	_clipbg->copyRectToSurface(_clipbg2->getPixels(), _clipbg2->pitch, 0, 0, _clipbg2->w, _clipbg2->h);
-
-	Common::Rect rc;
-
-	rc.left = _player.px - 2;
-	rc.top = _player.py - 2;
-	rc.setWidth(5);
-	rc.setHeight(5);
-
-	_clipbg->fillRect(rc, 1000);
-
-	if (!_forcepause) {
-		for (int i = 0; i < 5; i++) {
-			if (_player.foundspell[i] == 1)
-				_player.spellcharge[i] += 1 * _player.level * 0.01 * _fpsr;
-			if (_player.spellcharge[i] > 100)
-				_player.spellcharge[i] = 100;
-		}
-
-		if (_player.foundspell[0]) {
-			_player.spellstrength += 3 * _player.level * .01 * _fpsr;
-		}
-
-		_player.attackstrength += (30 + 3 * (float)_player.level) / 50 * _fpsr;
-	}
-
-	if (_player.attackstrength > 100)
-		_player.attackstrength = 100;
-
-	if (_player.spellstrength > 100)
-		_player.spellstrength = 100;
-
-	_itemyloc += 0.75 * _fpsr;
-	while (_itemyloc >= 16)
-		_itemyloc -= 16;
-
-	if (_player.hp <= 0)
-		theEnd();
-
-	if (_roomlock) {
-		_roomlock = false;
-		for (int i = 1; i <= _lastnpc; i++)
-			if (_npcinfo[i].hp > 0)
-				_roomlock = true;
-	}
-
-	clouddeg += 0.1 * _fpsr;
-	while (clouddeg >= 360)
-		clouddeg = clouddeg - 360;
-
-	_player.hpflash = _player.hpflash + 0.1 * _fpsr;
-	if (_player.hpflash >= 2) {
-		_player.hpflash = 0;
-		_player.hpflashb = _player.hpflashb + 1;
-		if (_player.hpflashb == 2)
-			_player.hpflashb = 0;
-		if (config.effects && _player.hpflashb == 0 && _player.hp < _player.maxhp / 4) {
-			int snd = playSound(_sfx[kSndBeep]);
-			setChannelVolume(snd, config.effectsvol);
-		}
-	}
-
-	// cloudson = 0
-
-	if (_itemselon == 1)
-		_player.itemselshade = _player.itemselshade + 2 * _fpsr;
-	if (_player.itemselshade > 24)
-		_player.itemselshade = 24;
-
-	for (int i = 0; i <= 4; i++)
-		if (_player.inventory[i] > 9)
-			_player.inventory[i] = 9;
-}
 
 } // end of namespace Griffon

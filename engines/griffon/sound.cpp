@@ -111,18 +111,6 @@ DataChunk *cacheSound(const char *name) {
 	return res;
 }
 
-void GriffonEngine::drawProgress(int w, int wm) {
-	long ccc = _videobuffer->format.RGBToColor(0, 255, 0);
-
-	rcDest.setWidth(w * 74 / wm);
-	_videobuffer->fillRect(rcDest, ccc);
-
-	g_system->copyRectToScreen(_videobuffer->getPixels(), _videobuffer->pitch, 0, 0, _videobuffer->w, _videobuffer->h);
-	g_system->updateScreen();
-
-	g_system->getEventManager()->pollEvent(_event);
-}
-
 void GriffonEngine::setupAudio() {
 	// FIXME
 	//Mix_OpenAudio(22050, MIX_DEFAULT_FORMAT, 2, 1024);
