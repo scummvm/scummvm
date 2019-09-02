@@ -90,6 +90,29 @@ enum {
 	kSndBeep
 };
 
+//  in game scripts
+enum {
+	kScriptMasterKey = 2, 		// find master key
+	kScriptFindCtystal = 3,		// find crystal
+	kScriptFindShield = 4,		// find shield - obj 8
+	kScriptFindSword = 5,		// find sword - obj 9
+	kScriptKeyChest = 6,		// regular key chest
+	kScriptBlueFlask = 7,		// blue flask
+	kScriptGardenMasterKey = 8,	// garden's master key
+	kScriptLightningBomb = 9,	// lightning bomb
+	kScriptBlueFlaskChest = 10,	// blue flask chest
+	kScriptLightningChest = 11,	// lightning chest
+	kScriptArmourChest = 12,	// armour chest
+	kScriptCitadelMasterKey = 13,	// citadel master key
+	kScriptEndOfGame = 14,		// end of game
+	kScriptGetSword3 = 15,		// get sword3
+	kScriptShield3 = 16,		// shield3
+	kScriptArmour3 = 17,		// armour3
+	kScriptKeyChest1 = 20,		// key chest 1
+	kScriptLever = 60			// lever
+};
+
+
 #define kEpsilon 0.001
 
 struct Player {
@@ -255,18 +278,21 @@ private:
 	Console *_console;
 
 private:
+
+	// combat.cpp
+	void attack();
+	void castSpell(int spellnum, float homex, float homey, float enemyx, float enemyy, int damagewho);
+	void checkHit();
+	void damageNPC(int npcnum, int damage, int spell);
+	void damagePlayer(int damage);
+
 	float RND();
 
 	void addFloatIcon(int ico, float xloc, float yloc);
 	void addFloatText(const char *stri, float xloc, float yloc, int col);
-	void attack();
-	void castSpell(int spellnum, float homex, float homey, float enemyx, float enemyy, int damagewho);
-	void checkHit();
 	void checkInputs();
 	void checkTrigger();
 	void configMenu();
-	void damageNPC(int npcnum, int damage, int spell);
-	void damagePlayer(int damage);
 	void drawAnims(int Layer);
 	void drawHud();
 	void drawNPCs(int mode);
