@@ -306,6 +306,12 @@ private:
 	void drawView();
 	void swash();
 
+	// input.cpp
+	void checkInputs();
+	void handleWalking();
+	void checkTrigger();
+	void processTrigger(int trignum);
+
 	// resources.cpp
 	void initialize();
 	Graphics::TransparentSurface *loadImage(const char *name, bool colorkey = false);
@@ -338,13 +344,9 @@ private:
 
 	void addFloatIcon(int ico, float xloc, float yloc);
 	void addFloatText(const char *stri, float xloc, float yloc, int col);
-	void checkInputs();
-	void checkTrigger();
 	void eventText(const char *stri);
-	void handleWalking();
 	void newGame();
 	void mainLoop();
-	void processTrigger(int trignum);
 	void updateAnims();
 	void updateY();
 	void updateNPCs();
