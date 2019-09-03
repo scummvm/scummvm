@@ -4934,7 +4934,7 @@ static const uint16 longbowSignatureAmigaSpeedTest[] = {
 
 static const uint16 longbowPatchAmigaSpeedTest[] = {
 	0x32, PATCH_UINT16(0x00e9),     // jmp 00e9 [ skip test, use fastest machine speed ]
-	SIG_END
+	PATCH_END
 };
 
 //          script, description,                                      signature                                patch
