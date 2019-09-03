@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2019-09-03 20:29+0200\n"
-"PO-Revision-Date: 2019-08-29 23:38+0000\n"
+"PO-Revision-Date: 2019-09-06 04:54+0000\n"
 "Last-Translator: Lothar Serra Mari <serra@scummvm.org>\n"
 "Language-Team: German <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/de/>\n"
@@ -1276,21 +1276,22 @@ msgstr "LAN"
 
 #: gui/options.cpp:1791
 msgid "Accessibility"
-msgstr ""
+msgstr "Eingabehilfen"
 
 #: gui/options.cpp:1793
 msgctxt "lowres"
 msgid "Accessibility"
-msgstr ""
+msgstr "Eingabehilfen"
 
 #: gui/options.cpp:1795
-#, fuzzy
 msgid "Use Text to speech"
-msgstr "Text und Sprache:"
+msgstr "Verwende Sprachausgabe"
 
 #: gui/options.cpp:1795
 msgid "Will read text in gui on mouse over."
 msgstr ""
+"List den Text der Benutzeroberfläche vor, wenn mit der Maus darüber gefahren "
+"wird."
 
 #: gui/options.cpp:1826
 msgid "Apply"
@@ -3665,13 +3666,12 @@ msgid "Failed to save game"
 msgstr "Konnte Spielstand nicht speichern"
 
 #: engines/hdb/detection.cpp:157
-#, fuzzy
 msgid "Enable cheat mode"
-msgstr "Aktiviert Helium-Modus"
+msgstr "Cheat-Modus aktivieren"
 
 #: engines/hdb/detection.cpp:158
 msgid "Debug info and level selection becomes available"
-msgstr ""
+msgstr "Aktiviert Debug-Informationen und erlaubt die direkte Level-Auswahl"
 
 #: engines/hopkins/detection.cpp:76 engines/hopkins/detection.cpp:86
 msgid "Gore Mode"
