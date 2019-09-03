@@ -445,6 +445,11 @@ void SceneScriptAR02::dialogueWithInsectDealer1() {
 void SceneScriptAR02::dialogueWithInsectDealerBuyBracelet() {
 	Dialogue_Menu_Clear_List();
 
+	if (_vm->_cutContent) {
+		Dialogue_Menu_Clear_Never_Repeat_Was_Selected_Flag(530);
+		Dialogue_Menu_Clear_Never_Repeat_Was_Selected_Flag(540);
+	}
+
 	if (Global_Variable_Query(kVariableChinyen) >= 15
 	    || Query_Difficulty_Level() == kGameDifficultyEasy
 	) {
@@ -483,7 +488,7 @@ void SceneScriptAR02::dialogueWithInsectDealerBuySlug() {
 	Dialogue_Menu_Clear_Never_Repeat_Was_Selected_Flag(530);
 	Dialogue_Menu_Clear_Never_Repeat_Was_Selected_Flag(540);
 
-	if (Global_Variable_Query(kVariableChinyen) >= 85
+	if (Global_Variable_Query(kVariableChinyen) >= 125
 	    || Query_Difficulty_Level() == kGameDifficultyEasy
 	) {
 		DM_Add_To_List_Never_Repeat_Once_Selected(530, 7, 5, 3); // BUY
@@ -497,7 +502,7 @@ void SceneScriptAR02::dialogueWithInsectDealerBuySlug() {
 	if (answerValue == 530) { // BUY
 		Actor_Says(kActorMcCoy, 7000, 12);
 		if (Query_Difficulty_Level() != kGameDifficultyEasy) {
-			Global_Variable_Decrement(kVariableChinyen, 85);
+			Global_Variable_Decrement(kVariableChinyen, 125);
 		}
 		Actor_Clue_Acquire(kActorMcCoy, kClueSlug, true, kActorInsectDealer);
 		Actor_Modify_Friendliness_To_Other(kActorInsectDealer, kActorMcCoy, 5);
@@ -584,7 +589,7 @@ void SceneScriptAR02::dialogueWithHassanBuySnake() {
 	Dialogue_Menu_Clear_Never_Repeat_Was_Selected_Flag(530);
 	Dialogue_Menu_Clear_Never_Repeat_Was_Selected_Flag(540);
 
-	if (Global_Variable_Query(kVariableChinyen) >= 105
+	if (Global_Variable_Query(kVariableChinyen) >= 175
 	    || Query_Difficulty_Level() == kGameDifficultyEasy
 	) {
 		DM_Add_To_List_Never_Repeat_Once_Selected(530, 7, 5, 3); // BUY
@@ -598,7 +603,7 @@ void SceneScriptAR02::dialogueWithHassanBuySnake() {
 	if (answerValue == 530) { // BUY
 		Actor_Says(kActorMcCoy, 7000, 12);
 		if (Query_Difficulty_Level() != kGameDifficultyEasy) {
-			Global_Variable_Decrement(kVariableChinyen, 105);
+			Global_Variable_Decrement(kVariableChinyen, 175);
 		}
 		Actor_Clue_Acquire(kActorMcCoy, kClueGarterSnake, true, kActorHasan);
 		Actor_Modify_Friendliness_To_Other(kActorHasan, kActorMcCoy, 5);

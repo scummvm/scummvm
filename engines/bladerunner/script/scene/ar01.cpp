@@ -483,7 +483,7 @@ void SceneScriptAR01::dialogueWithFishDealerBuyGoldfish() {
 	Dialogue_Menu_Clear_Never_Repeat_Was_Selected_Flag(530);
 	Dialogue_Menu_Clear_Never_Repeat_Was_Selected_Flag(540);
 
-	if (Global_Variable_Query(kVariableChinyen) >= 75
+	if (Global_Variable_Query(kVariableChinyen) >= 105
 	    || Query_Difficulty_Level() == kGameDifficultyEasy
 	) {
 		DM_Add_To_List_Never_Repeat_Once_Selected(530, 7, 5, 3); // BUY
@@ -497,7 +497,7 @@ void SceneScriptAR01::dialogueWithFishDealerBuyGoldfish() {
 	if (answerValue == 530) { // BUY
 		Actor_Says(kActorMcCoy, 7000, 12);
 		if (Query_Difficulty_Level() != kGameDifficultyEasy) {
-			Global_Variable_Decrement(kVariableChinyen, 75);
+			Global_Variable_Decrement(kVariableChinyen, 105);
 		}
 		Actor_Clue_Acquire(kActorMcCoy, kClueGoldfish, true, kActorFishDealer);
 		Actor_Modify_Friendliness_To_Other(kActorFishDealer, kActorMcCoy, 5);
