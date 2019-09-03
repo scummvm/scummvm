@@ -52,6 +52,8 @@ struct biffildef {
     osfildef *fp;                          /* underyling system file handle */
     uint      flags;                                               /* flags */
 #define BIFFIL_F_BINARY    0x01                           /* file is binary */
+
+	biffildef() : fp(nullptr), flags(0) {}
 };
 
 /* built-in execution context */

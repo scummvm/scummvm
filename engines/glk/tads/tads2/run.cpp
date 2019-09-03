@@ -1397,8 +1397,8 @@ resume_from_error:
 					runrepush(ctx, otherbp + runrp2s(p + 4) - 1);
 					p += 6;
 				}
-				break;
 #endif
+				break;
 
 			case OPCGETLCL:
 				runrepush(ctx, ctx->runcxbp + runrp2s(p) - 1);
@@ -1659,19 +1659,19 @@ resume_from_error:
 
 			case OPCEXIT:
 				errsig(ctx->runcxerr, ERR_RUNEXIT);
-				/* NOTREACHED */
+				break;
 
 			case OPCABORT:
 				errsig(ctx->runcxerr, ERR_RUNABRT);
-				/* NOTREACHED */
+				break;
 
 			case OPCASKDO:
 				errsig(ctx->runcxerr, ERR_RUNASKD);
-				/* NOTREACHED */
+				break;
 
 			case OPCASKIO:
 				errsig1(ctx->runcxerr, ERR_RUNASKI, ERRTINT, osrp2(p));
-				/* NOTREACHED */
+				break;
 
 			case OPCJE:
 				p += (runeq(ctx) ? runrp2s(p) : 2);

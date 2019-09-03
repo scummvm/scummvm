@@ -675,7 +675,6 @@ static void trdmain1(errcxdef *ec, int argc, char *argv[],
     dbg.dbgcxlin = (lindef *)0;                      /* no line sources yet */
     
     /* set up built-in function context */
-    CLRSTRUCT(bifctx);
     bifctx.bifcxerr = ec;
     bifctx.bifcxrun = &runctx;
     bifctx.bifcxtio = (tiocxdef *)0;

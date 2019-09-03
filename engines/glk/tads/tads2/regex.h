@@ -46,10 +46,12 @@ typedef int re_state_id;
  *   Group register structure.  Each register keeps track of the starting
  *   and ending offset of the group's text.  
  */
-typedef struct
+typedef struct _re_group_register
 {
     const char *start_ofs;
     const char *end_ofs;
+
+    _re_group_register() : start_ofs(nullptr), end_ofs(nullptr) {}
 } re_group_register;
 
 /* number of group registers we keep */
@@ -98,7 +100,7 @@ typedef struct
  *   state of the compilation and stores the resources associated with the
  *   compiled expression.  
  */
-typedef struct
+typedef struct _re_context
 {
     /* error context */
     errcxdef *errctx;
@@ -135,6 +137,8 @@ typedef struct
 
     /* size of the buffer allocated to strbuf */
     size_t strbufsiz;
+
+    _re_context() : errctx(nullptr), next_state(0), tuple_arr(nullptr), tuples_alloc(0), cur_group(0), strbuf(nullptr), curlen(0), strbufsiz(0) {}
 } re_context;
 
 
