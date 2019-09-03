@@ -219,7 +219,7 @@ void tok_add_define_cvtcase(tokcxdef *ctx, const char *sym, int len,
 
 /* add a symbol to the #define symbol table */
 void tok_add_define(tokcxdef *ctx, const char *sym, int len,
-                    char *expan, int explen)
+                    const char *expan, int explen)
 {
     int       hsh;
     tokdfdef *df;

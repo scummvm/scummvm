@@ -436,11 +436,11 @@ void tok_add_define(tokcxdef *ctx, const char *sym, int len,
  *   add a symbol to the #define symbol table, folding case if we're
  *   operating in case-insensitive mode 
  */
-void tok_add_define_cvtcase(tokcxdef *ctx, char *sym, int len,
-                            char *expan, int explen);
+void tok_add_define_cvtcase(tokcxdef *ctx, const char *sym, int len,
+                            const char *expan, int explen);
 
 /* add a symbol to the #define symbol table as a number */
-void tok_add_define_num_cvtcase(tokcxdef *ctx, char *sym, int len, int num);
+void tok_add_define_num_cvtcase(tokcxdef *ctx, const char *sym, int len, int num);
 
 /* undefine a #define symbol */
 void tok_del_define(tokcxdef *ctx, char *sym, int len);
