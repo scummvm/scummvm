@@ -3319,8 +3319,8 @@ void glk_main() {
 /*---------------------------------------------------------------------*/
 /*  Glk linkage relevant only to the UNIX platform                     */
 /*---------------------------------------------------------------------*/
-#ifdef UNUSED
 
+#ifdef TODO
 /*
  * Glk arguments for UNIX versions of the Glk interpreter.
  */
@@ -3341,7 +3341,12 @@ glkunix_argumentlist_t glkunix_arguments[] = {
    (char *) "filename   game to run"},
   {nullptr, glkunix_arg_End, nullptr}
 };
+#endif
 
+struct glkunix_startup_t {
+	int argc;
+	char **argv;
+};
 
 /*
  * glkunix_startup_code()
@@ -3352,9 +3357,7 @@ glkunix_argumentlist_t glkunix_arguments[] = {
  * to build a game from the stream.  On error, set the message in
  * gsc_game_message; the core gsc_main() will report it when it's called.
  */
-int
-glkunix_startup_code (glkunix_startup_t * data)
-{
+int glkunix_startup_code(glkunix_startup_t *data) {
   int argc = data->argc;
   sc_char **argv = data->argv;
   int argv_index;
@@ -3367,8 +3370,8 @@ glkunix_startup_code (glkunix_startup_t * data)
   gsc_startup_called = TRUE;
 
 #ifdef GARGLK
-  garg_vm->glk_set_program_name("SCARE " SCARE_VERSION);
-  garg_vm->glk_set_program_info("SCARE " SCARE_VERSION
+  g_vm->garglk_set_program_name("SCARE " SCARE_VERSION);
+  g_vm->garglk_set_program_info("SCARE " SCARE_VERSION
       " by Simon Baldwin and Mark J. Tilford");
 #endif
 
@@ -3420,7 +3423,7 @@ glkunix_startup_code (glkunix_startup_t * data)
     }
 
   /* Open a stream to the TAF file, complain if this fails. */
-  game_stream = glkunix_stream_open_pathname (argv[argv_index], FALSE, 0);
+  game_stream = g_vm->glk_stream_open_file(g_vm->glk_fileref_create_by_name(filemode_Read, argv[argv_index]), filemode_Read);
   if (!game_stream)
     {
       gsc_game = nullptr;
@@ -3436,7 +3439,7 @@ glkunix_startup_code (glkunix_startup_t * data)
    */
   if (restore_from)
     {
-      restore_stream = glkunix_stream_open_pathname (restore_from, FALSE, 0);
+      restore_stream =g_vm->glk_stream_open_file(g_vm->glk_fileref_create_by_name(filemode_Read, restore_from), filemode_Read);
       if (!restore_stream)
         {
           g_vm->glk_stream_close (game_stream, nullptr);
@@ -3451,13 +3454,14 @@ glkunix_startup_code (glkunix_startup_t * data)
     restore_stream = nullptr;
 
   /* Set SCARE trace flags and other general setup from the environment. */
-  if (getenv ("SC_TRACE_FLAGS"))
-    trace_flags = strtoul (getenv ("SC_TRACE_FLAGS"), nullptr, 0);
-  else
+  if (false /*getenv ("SC_TRACE_FLAGS") */) {
+    //trace_flags = strtoul (getenv ("SC_TRACE_FLAGS"), nullptr, 0);
+  } else {
     trace_flags = 0;
-  enable_debugger = (getenv ("SC_DEBUGGER_ENABLED") != nullptr);
-  stable_random = (getenv ("SC_STABLE_RANDOM_ENABLED") != nullptr);
-  locale = getenv ("SC_LOCALE");
+  }
+  enable_debugger = false; // (getenv("SC_DEBUGGER_ENABLED") != nullptr);
+  stable_random = false; // (getenv("SC_STABLE_RANDOM_ENABLED") != nullptr);
+  locale = nullptr; // getenv("SC_LOCALE");
 
 #ifdef LINUX_GRAPHICS
   /* Note the path to the game file for graphics extraction. */
@@ -3468,7 +3472,6 @@ glkunix_startup_code (glkunix_startup_t * data)
   return gsc_startup_code (game_stream, restore_stream, trace_flags,
                            enable_debugger, stable_random, locale);
 }
-#endif /* __unix */
 
 
 /*---------------------------------------------------------------------*/
