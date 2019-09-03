@@ -1446,11 +1446,11 @@ enum SndType {
 };
 
 struct SoundCache {
-	SndMem loaded; // -1 = freeable; in memory, 0 = not cached, 1 = cached
-	int32 size;				// size of sound
-	const char *name;				// filename / MSD name
-	const char *luaName;			// name used by Lua for i.d.
-	SndType ext;				// 0 = Uninitialized, -1 = WAV, 1 = MP3
+	SndMem loaded;			// -1 = freeable; in memory, 0 = not cached, 1 = cached
+	int size;				// size of sound
+	const char *name;		// filename / MSD name
+	const char *luaName;	// name used by Lua for i.d.
+	SndType ext;			// 0 = Uninitialized, -1 = WAV, 1 = MP3
 	byte *data;
 
 	SoundCache() : loaded(SNDMEM_NOTCACHED), size(0), name(nullptr), luaName(nullptr), ext(SNDTYPE_NONE), data(nullptr) {}

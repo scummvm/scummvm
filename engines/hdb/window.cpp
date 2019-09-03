@@ -574,7 +574,9 @@ void Window::openDialog(const char *title, int tileIndex, const char *string, in
 	if (_dialogInfo.active)
 		return;
 
-	memset(&_dialogInfo, 0, sizeof(_dialogInfo));
+	_dialogInfo.gfx = NULL;
+	_dialogInfo.el = _dialogInfo.er = _dialogInfo.et = _dialogInfo.eb = 0;
+	_dialogInfo.luaMore[0] = 0;
 
 	_dialogInfo.tileIndex = tileIndex;
 	strcpy(_dialogInfo.title, title);
@@ -791,18 +793,21 @@ void Window::setDialogDelay(int delay) {
 
 void Window::openDialogChoice(const char *title, const char *text, const char *func, int numChoices, const char *choices[10]) {
 	int		width, height, titleWidth, titleHeight;
-	int		e1, e2, e3, e4, i;
+	int		e1, e2, e3, e4;
 
 	if (_dialogInfo.active)
 		return;
 
-	memset(&_dialogChoiceInfo, 0, sizeof(_dialogChoiceInfo));
+	_dialogChoiceInfo.el = _dialogChoiceInfo.er = _dialogChoiceInfo.et = _dialogChoiceInfo.eb = 0;
+	for (int i = 0; i < 10; i++)
+		_dialogChoiceInfo.choices[i][0] = 0;
+
 	strcpy(_dialogChoiceInfo.title, title);
 	strcpy(_dialogChoiceInfo.text, text);
 	strcpy(_dialogChoiceInfo.func, func);
 	_dialogChoiceInfo.numChoices = numChoices;
 
-	for (i = 0; i < numChoices; i++)
+	for (int i = 0; i < numChoices; i++)
 		strcpy(_dialogChoiceInfo.choices[i], choices[i]);
 	_dialogChoiceInfo.active = true;
 
@@ -811,7 +816,7 @@ void Window::openDialogChoice(const char *title, const char *text, const char *f
 	g_hdb->_gfx->getDimensions(text, &width, &height);
 	g_hdb->_gfx->getDimensions(title, &titleWidth, &titleHeight);
 
-	for (i = 0; i < 10; i++)
+	for (int i = 0; i < 10; i++)
 		if (choices[i]) {
 			int	w, h;
 			g_hdb->_gfx->getDimensions(choices[i], &w, &h);
@@ -948,7 +953,7 @@ void Window::openMessageBar(const char *title, int time) {
 		return;
 	}
 
-	memset(&_msgInfo, 0, sizeof(_msgInfo));
+	_msgInfo.y = 0;
 
 	_msgInfo.timer = (time * kGameFPS);
 	strcpy(_msgInfo.title, title);

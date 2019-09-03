@@ -65,7 +65,7 @@ Common::Error HDBGame::saveGameState(int slot, const Common::String &desc) {
 
 	Graphics::saveThumbnail(*out);
 
-	memset(&_saveHeader, 0, sizeof(Save));
+	_saveHeader.fileSlot = 0;
 	strcpy(_saveHeader.saveID, saveFileName.c_str());
 	_saveHeader.seconds = _timeSeconds + (_timePlayed / 1000);
 	strcpy(_saveHeader.mapName, _inMapName);

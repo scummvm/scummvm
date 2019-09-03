@@ -1285,7 +1285,9 @@ void Menu::fillSavegameSlots() {
 		Common::InSaveFile *in = g_system->getSavefileManager()->openForLoading(saveGameFile);
 
 		if (!in) {
-			memset(&_saveGames[i], 0, sizeof(Save));
+			_saveGames[i].seconds = 0;
+			_saveGames[i].saveID[0] = 0;
+			_saveGames[i].mapName[0] = 0;
 		} else {
 			Graphics::skipThumbnail(*in);
 
