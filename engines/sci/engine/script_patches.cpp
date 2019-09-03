@@ -4914,6 +4914,29 @@ static const uint16 longbowPatchAmigaFulkRescue[] = {
 	PATCH_END
 };
 
+// The Amiga version has an unusual speed test which takes 10 seconds to run in
+//  ScummVM, causing the test to assume a slow machine speed and reduce details
+//  throughout the game. We disable the speed test and its long delay before the
+//  the Sierra logo so that the fastest machine speed is used.
+//
+// Applies to: English Amiga Floppy
+// Responsible method: speedScript:changeState
+static const uint16 longbowSignatureAmigaSpeedTest[] = {
+	// state 1
+	0x32, SIG_UINT16(0x0164),       // jmp 0164 [ end of method ]
+	SIG_ADDTOOFFSET(+0xe9),
+	// state 2
+	SIG_MAGICDWORD,
+	0x35, 0x02,                     // ldi 02   [ fastest machine speed ]
+	0x32, SIG_UINT16(0x000f),       // jmp 000f [ set machine speed ]
+	SIG_END
+};
+
+static const uint16 longbowPatchAmigaSpeedTest[] = {
+	0x32, PATCH_UINT16(0x00e9),     // jmp 00e9 [ skip test, use fastest machine speed ]
+	SIG_END
+};
+
 //          script, description,                                      signature                                patch
 static const SciScriptPatcherEntry longbowSignatures[] = {
 	{  true,   140, "green man riddles and forest sweep fix",      1, longbowSignatureGreenManForestSweepFix,  longbowPatchGreenManForestSweepFix },
@@ -4927,6 +4950,7 @@ static const SciScriptPatcherEntry longbowSignatures[] = {
 	{  true,   350, "day 9 cobbler hut fix",                      10, longbowSignatureCobblerHut,              longbowPatchCobblerHut },
 	{  true,   530, "amiga pub fix",                               1, longbowSignatureAmigaPubFix,             longbowPatchAmigaPubFix },
 	{  true,   600, "amiga fulk rescue fix",                       1, longbowSignatureAmigaFulkRescue,         longbowPatchAmigaFulkRescue },
+	{  true,   803, "amiga speed test",                            1, longbowSignatureAmigaSpeedTest,          longbowPatchAmigaSpeedTest },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
