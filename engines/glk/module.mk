@@ -27,6 +27,36 @@ MODULE_OBJS := \
 	window_pair.o \
 	window_text_buffer.o \
 	window_text_grid.o \
+	adrift/adrift.o \
+	adrift/os_glk.o \
+	adrift/scdebug.o \
+	adrift/scevents.o \
+	adrift/scexpr.o \
+	adrift/scgamest.o \
+	adrift/scinterf.o \
+	adrift/sclibrar.o \
+	adrift/sclocale.o \
+	adrift/scmemos.o \
+	adrift/scnpcs.o \
+	adrift/scobjcts.o \
+	adrift/scparser.o \
+	adrift/scprintf.o \
+	adrift/scprops.o \
+	adrift/scresour.o \
+	adrift/screstrs.o \
+	adrift/scrunner.o \
+	adrift/scserial.o \
+	adrift/sctaffil.o \
+	adrift/sctafpar.o \
+	adrift/sctasks.o \
+	adrift/scutils.o \
+	adrift/scvars.o \
+	adrift/sxfile.o \
+	adrift/sxglob.o \
+	adrift/sxmain.o \
+	adrift/sxscript.o \
+	adrift/sxtester.o \
+	adrift/sxutils.o \
 	advsys/advsys.o \
 	advsys/detection.o \
 	advsys/game.o \

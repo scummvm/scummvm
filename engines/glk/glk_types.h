@@ -30,10 +30,12 @@ namespace Glk {
 
 class Window;
 
+
 /**
  * List of the different sub-engines the engine will likely eventually support
  */
 enum InterpreterType {
+	INTERPRETER_ADRIFT,
 	INTERPRETER_ADVSYS,
 	INTERPRETER_AGILITY,
 	INTERPRETER_ALAN2,
@@ -243,6 +245,8 @@ struct gidispatch_intconst_struct {
 	uint32 val;
 };
 typedef gidispatch_intconst_struct gidispatch_intconst_t;
+
+typedef uint32 glui32;
 
 } // End of namespace Glk
 
