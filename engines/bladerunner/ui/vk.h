@@ -31,7 +31,6 @@
 namespace BladeRunner {
 
 class BladeRunnerEngine;
-class Framelimiter;
 class VKScript;
 class Shape;
 class UIImagePicker;
@@ -48,7 +47,6 @@ class VK {
 	};
 
 	BladeRunnerEngine *_vm;
-	Framelimiter      *_framelimiter;
 
 	VKScript *_script;
 

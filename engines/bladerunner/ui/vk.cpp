@@ -27,7 +27,6 @@
 #include "bladerunner/audio_player.h"
 #include "bladerunner/bladerunner.h"
 #include "bladerunner/combat.h"
-#include "bladerunner/framelimiter.h"
 #include "bladerunner/font.h"
 #include "bladerunner/game_constants.h"
 #include "bladerunner/game_flags.h"
@@ -54,16 +53,10 @@ VK::VK(BladeRunnerEngine *vm) {
 	_vm = vm;
 
 	reset();
-	_framelimiter = new Framelimiter(_vm, Framelimiter::kDefaultFpsRate, Framelimiter::kDefaultUseDelayMillis);
 }
 
 VK::~VK() {
 	reset();
-
-	if (_framelimiter) {
-		delete _framelimiter;
-		_framelimiter = nullptr;
-	}
 }
 
 void VK::open(int actorId, int calibrationRatio) {
@@ -133,7 +126,6 @@ void VK::open(int actorId, int calibrationRatio) {
 	}
 
 	_isOpen = true;
-	_framelimiter->init();
 
 	_script = new VKScript(_vm);
 
@@ -198,31 +190,27 @@ void VK::close() {
 }
 
 void VK::tick() {
-
-	if (_framelimiter->shouldExecuteScreenUpdate()) {
-		int mouseX, mouseY;
-		_vm->_mouse->getXY(&mouseX, &mouseY);
-		if (!_vm->_mouse->isDisabled()) {
-			_buttons->handleMouseAction(mouseX, mouseY, false, false, false);
-		}
-
-		draw();
-
-		if ( _vm->_debugger->_showStatsVk
-			&& !_vm->_actors[_actorId]->isSpeeching()
-			&& !_vm->_actors[kActorMcCoy]->isSpeeching()
-			&& !_vm->_actors[kActorAnsweringMachine]->isSpeeching()
-			&& !_isClosing
-		) {
-			_vm->_subtitles->setGameSubsText(Common::String::format("Calibration: %02d Ratio: %02d Anxiety: %02d%%\nReplicant: %02d%% Human: %02d%%", _calibration, _calibrationRatio, _anxiety, _replicantProbability, _humanProbability), true);
-			_vm->_subtitles->show();
-		}
-
-		_vm->_subtitles->tick(_vm->_surfaceFront);
-
-		_vm->blitToScreen(_vm->_surfaceFront);
-		_framelimiter->postScreenUpdate();
+	int mouseX, mouseY;
+	_vm->_mouse->getXY(&mouseX, &mouseY);
+	if (!_vm->_mouse->isDisabled()) {
+		_buttons->handleMouseAction(mouseX, mouseY, false, false, false);
 	}
+
+	draw();
+
+	if ( _vm->_debugger->_showStatsVk
+		&& !_vm->_actors[_actorId]->isSpeeching()
+		&& !_vm->_actors[kActorMcCoy]->isSpeeching()
+		&& !_vm->_actors[kActorAnsweringMachine]->isSpeeching()
+		&& !_isClosing
+	) {
+		_vm->_subtitles->setGameSubsText(Common::String::format("Calibration: %02d Ratio: %02d Anxiety: %02d%%\nReplicant: %02d%% Human: %02d%%", _calibration, _calibrationRatio, _anxiety, _replicantProbability, _humanProbability), true);
+		_vm->_subtitles->show();
+	}
+
+	_vm->_subtitles->tick(_vm->_surfaceFront);
+
+	_vm->blitToScreen(_vm->_surfaceFront);
 
 	// unsigned difference is intentional
 	if (_isClosing && (_vm->_time->current() - _timeCloseStart >= 3000u) && !_script->isInsideScript()) {

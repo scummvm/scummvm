@@ -166,6 +166,7 @@ public:
 	SuspectsDatabase   *_suspectsDatabase;
 	Time               *_time;
 	View               *_view;
+	Framelimiter       *_framelimiter;
 	VK                 *_vk;
 	Waypoints          *_waypoints;
 	int                *_gameVars;
@@ -196,8 +197,6 @@ public:
 
 	Common::CosineTable *_cosTable1024;
 	Common::SineTable   *_sinTable1024;
-
-	Framelimiter *_mainLoopFrameLimiter;
 
 	bool _isWalkingInterruptible;
 	bool _interruptWalking;

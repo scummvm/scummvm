@@ -31,7 +31,6 @@
 namespace BladeRunner {
 
 class BladeRunnerEngine;
-class Framelimiter;
 class Font;
 class Shape;
 class VQAPlayer;
@@ -88,7 +87,6 @@ class ESPER {
 	};
 
 	BladeRunnerEngine     *_vm;
-	Framelimiter          *_framelimiter;
 	ESPERScript           *_script;
 
 	bool _isWaiting;

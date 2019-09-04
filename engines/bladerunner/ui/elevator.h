@@ -28,14 +28,12 @@
 namespace BladeRunner {
 
 class BladeRunnerEngine;
-class Framelimiter;
 class Shape;
 class VQAPlayer;
 class UIImagePicker;
 
 class Elevator {
 	BladeRunnerEngine     *_vm;
-	Framelimiter          *_framelimiter;
 	bool                   _isOpen;
 	VQAPlayer             *_vqaPlayer;
 	int                    _buttonClicked;

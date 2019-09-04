@@ -24,7 +24,6 @@
 
 #include "bladerunner/bladerunner.h"
 #include "bladerunner/chapters.h"
-#include "bladerunner/framelimiter.h"
 #include "bladerunner/subtitles.h"
 #include "bladerunner/vqa_player.h"
 #include "bladerunner/time.h"
@@ -38,16 +37,10 @@ namespace BladeRunner {
 OuttakePlayer::OuttakePlayer(BladeRunnerEngine *vm) {
 	_vm = vm;
 	_surfaceVideo.create(_vm->_surfaceBack.w, _vm->_surfaceBack.h, _vm->_surfaceBack.format);
-	_framelimiter = new Framelimiter(_vm, Framelimiter::kDefaultFpsRate, Framelimiter::kDefaultUseDelayMillis);
 }
 
 OuttakePlayer::~OuttakePlayer() {
 	_surfaceVideo.free();
-
-	if (_framelimiter) {
-		delete _framelimiter;
-		_framelimiter = nullptr;
-	}
 }
 
 void OuttakePlayer::play(const Common::String &name, bool noLocalization, int container) {
@@ -77,17 +70,10 @@ void OuttakePlayer::play(const Common::String &name, bool noLocalization, int co
 	_vm->_vqaIsPlaying = true;
 	_vm->_vqaStopIsRequested = false;
 
-	_framelimiter->init();
-
 	while (!_vm->_vqaStopIsRequested && !_vm->shouldQuit()) {
 		_vm->handleEvents();
 
 		if (!_vm->_windowIsActive) {
-			_framelimiter->init();
-			continue;
-		}
-
-		if (!_framelimiter->shouldExecuteScreenUpdate()) {
 			continue;
 		}
 
@@ -102,7 +88,6 @@ void OuttakePlayer::play(const Common::String &name, bool noLocalization, int co
 			_vm->_subtitles->tickOuttakes(_vm->_surfaceFront);
 			_vm->blitToScreen(_vm->_surfaceFront);
 		}
-		_framelimiter->postScreenUpdate();
 	}
 
 	_vm->_vqaIsPlaying = false;

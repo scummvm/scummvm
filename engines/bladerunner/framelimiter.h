@@ -27,56 +27,23 @@
 
 namespace BladeRunner {
 
-enum FramelimiterFpsRate {
-	kFramelimiterDisabled       = 0,
-	kFramelimiter15fps          = 1,
-	kFramelimiter25fps          = 2,
-	kFramelimiter30fps          = 3,
-	kFramelimiter60fps          = 4,
-	kFramelimiter120fps         = 5
-};
-
 class BladeRunnerEngine;
 
 class Framelimiter {
 	friend class Debugger;
 
-public:
-	static const FramelimiterFpsRate kDefaultFpsRate = kFramelimiter60fps;
-	static const bool kDefaultUseDelayMillis = true;
-
 private:
 	BladeRunnerEngine *_vm;
 
-	bool   _forceScreenUpdate;
+	bool   _enabled;
 	uint32 _speedLimitMs;
 
-	// A pass is when a tick or while loop that contains a potential screen update is repeated
-	// it's essentially when the check is made for a screen update
-	// Not every pass will necessarily result in a screen update (because that's the purpose of the frame limiter)
-	// So the "_startFrameTime" is not always equal to "_timeOfCurrentPass"
-	uint32 _timeOfLastPass;
-	uint32 _timeOfCurrentPass;
-
-	uint32 _startFrameTime;      // is updated and valid, only if the current pass will result in a screen update (see method: shouldExecuteScreenUpdate())
-	uint32 _lastFrameDurationMs; // can be used for average FPS calculation and display purposes when frame limiter is enabled
-
-	bool   _enabled;
-	bool   _useDelayMs;          // true: will use calls to delayMillis(), false: will use non-blocking software timer instead
+	uint32 _timeFrameStart;
 
 public:
-	Framelimiter(BladeRunnerEngine *vm, FramelimiterFpsRate framerateMode, bool useDelayMs);
-	~Framelimiter();
+	Framelimiter(BladeRunnerEngine *vm, uint fps = 60);
 
-//	void pause(bool pause);
-
-	void init(bool forceScreenUpdate = true);
-	uint32 getLastFrameDuration() const;
-	uint32 getTimeOfCurrentPass() const;
-	uint32 getTimeOfLastPass() const;
-
-	bool shouldExecuteScreenUpdate();
-	void postScreenUpdate();
+	void wait();
 
 private:
 	void reset();

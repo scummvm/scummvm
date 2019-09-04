@@ -34,7 +34,6 @@ struct KeyState;
 namespace BladeRunner {
 
 class BladeRunnerEngine;
-class Framelimiter;
 class KIALog;
 class KIAScript;
 class KIASectionBase;
@@ -76,7 +75,6 @@ class KIA {
 	};
 
 	BladeRunnerEngine *_vm;
-	Framelimiter      *_framelimiter;
 
 	int _transitionId;
 
@@ -89,7 +87,7 @@ class KIA {
 	int                _playerSliceModelId;
 	float              _playerSliceModelAngle;
 	Graphics::Surface  _playerImage;
-//	uint32             _timeLast;
+	uint32             _timeLast;
 
 	ActorDialogueQueueEntry _playerActorDialogueQueue[kPlayerActorDialogueQueueCapacity];
 	int                     _playerActorDialogueQueuePosition;

@@ -29,7 +29,6 @@
 namespace BladeRunner {
 
 class BladeRunnerEngine;
-class Framelimiter;
 class SaveFileReadStream;
 class SaveFileWriteStream;
 class Shape;
@@ -45,7 +44,6 @@ class Spinner {
 	};
 
 	BladeRunnerEngine      *_vm;
-	Framelimiter           *_framelimiter;
 	bool                    _isDestinationSelectable[kSpinnerDestinations];
 	bool                    _isOpen;
 	VQAPlayer              *_vqaPlayer;

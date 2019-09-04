@@ -28,7 +28,6 @@
 #include "bladerunner/bladerunner.h"
 #include "bladerunner/debugger.h"
 #include "bladerunner/decompress_lcw.h"
-#include "bladerunner/framelimiter.h"
 #include "bladerunner/font.h"
 #include "bladerunner/game_info.h"
 #include "bladerunner/mouse.h"
@@ -67,17 +66,11 @@ ESPER::ESPER(BladeRunnerEngine *vm) {
 	reset();
 
 	_buttons = new UIImagePicker(vm, kPhotoCount + 4);
-	_framelimiter = new Framelimiter(_vm, Framelimiter::kDefaultFpsRate, Framelimiter::kDefaultUseDelayMillis);
 }
 
 ESPER::~ESPER() {
 	delete _buttons;
 	reset();
-
-	if (_framelimiter) {
-		delete _framelimiter;
-		_framelimiter = nullptr;
-	}
 }
 
 void ESPER::open(Graphics::Surface *surface) {
@@ -122,8 +115,6 @@ void ESPER::open(Graphics::Surface *surface) {
 	_vqaPlayerMain->setLoop(2, -1, kLoopSetModeJustStart, nullptr, nullptr);
 
 	_isOpen = true;
-	_framelimiter->init();
-
 	_flash = false;
 
 	_script = new ESPERScript(_vm);
@@ -216,35 +207,30 @@ void ESPER::handleMouseDown(int x, int y, bool mainButton) {
 
 void ESPER::tick() {
 	if (!_vm->_windowIsActive) {
-		_framelimiter->init();
 		return;
 	}
 
-	if (_framelimiter->shouldExecuteScreenUpdate()) {
-		tickSound();
+	tickSound();
 
-		blit(_vm->_surfaceBack, _vm->_surfaceFront);
+	blit(_vm->_surfaceBack, _vm->_surfaceFront);
 
-		int mouseX, mouseY;
-		_vm->_mouse->getXY(&mouseX, &mouseY);
-		if (!_vm->_mouse->isDisabled()) {
-			_buttons->handleMouseAction(mouseX, mouseY, false, false, false);
-		}
-
-		if (!_isOpen) {
-			return;
-		}
-
-		draw(_vm->_surfaceFront);
-		_buttons->draw(_vm->_surfaceFront);
-		drawMouse(_vm->_surfaceFront);
-
-		tickSound();
-		_vm->_subtitles->tick(_vm->_surfaceFront);
-		_vm->blitToScreen(_vm->_surfaceFront);
-
-		_framelimiter->postScreenUpdate();
+	int mouseX, mouseY;
+	_vm->_mouse->getXY(&mouseX, &mouseY);
+	if (!_vm->_mouse->isDisabled()) {
+		_buttons->handleMouseAction(mouseX, mouseY, false, false, false);
 	}
+
+	if (!_isOpen) {
+		return;
+	}
+
+	draw(_vm->_surfaceFront);
+	_buttons->draw(_vm->_surfaceFront);
+	drawMouse(_vm->_surfaceFront);
+
+	tickSound();
+	_vm->_subtitles->tick(_vm->_surfaceFront);
+	_vm->blitToScreen(_vm->_surfaceFront);
 
 	if (_statePhoto == kEsperPhotoStateVideoShow) {
 		if (_regionSelectedAck)	{

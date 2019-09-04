@@ -169,6 +169,7 @@ BladeRunnerEngine::BladeRunnerEngine(OSystem *syst, const ADGameDescription *des
 	_obstacles               = nullptr;
 	_sceneScript             = nullptr;
 	_time                    = nullptr;
+	_framelimiter            = nullptr;
 	_gameInfo                = nullptr;
 	_waypoints               = nullptr;
 	_gameVars                = nullptr;
@@ -217,7 +218,6 @@ BladeRunnerEngine::BladeRunnerEngine(OSystem *syst, const ADGameDescription *des
 		_actors[i]           = nullptr;
 	}
 	_debugger                = nullptr;
-	_mainLoopFrameLimiter    = nullptr;
 
 	walkingReset();
 
@@ -313,7 +313,6 @@ void BladeRunnerEngine::pauseEngineIntern(bool pause) {
 }
 
 Common::Error BladeRunnerEngine::run() {
-
 	Common::Array<Common::String> missingFiles;
 	if (!checkFiles(missingFiles)) {
 		Common::String missingFileStr = "";
@@ -339,7 +338,6 @@ Common::Error BladeRunnerEngine::run() {
 		shutdown();
 		return Common::Error(Common::kUnknownError, _("Failed to initialize resources"));
 	}
-
 
 	// improvement: Use a do-while() loop to handle the normal end-game state
 	// so that the game won't exit abruptly after end credits
@@ -486,6 +484,8 @@ bool BladeRunnerEngine::startup(bool hasSavegames) {
 
 	_time = new Time(this);
 
+	_framelimiter = new Framelimiter(this);
+
 	// Try to load the SUBTITLES.MIX first, before Startup.MIX
 	// allows overriding any identically named resources (such as the original font files and as a bonus also the TRE files for the UI and dialogue menu)
 	_subtitles = new Subtitles(this);
@@ -528,8 +528,6 @@ bool BladeRunnerEngine::startup(bool hasSavegames) {
 
 	_cosTable1024 = new Common::CosineTable(1024); // 10-bits = 1024 points for 2*PI;
 	_sinTable1024 = new Common::SineTable(1024);
-
-	_mainLoopFrameLimiter = new Framelimiter(this, Framelimiter::kDefaultFpsRate, Framelimiter::kDefaultUseDelayMillis);
 
 	_view = new View();
 
@@ -898,6 +896,9 @@ void BladeRunnerEngine::shutdown() {
 		_subtitles = nullptr;
 	}
 
+	delete _framelimiter;
+	_framelimiter = nullptr;
+
 	delete _time;
 	_time = nullptr;
 
@@ -932,11 +933,6 @@ void BladeRunnerEngine::shutdown() {
 
 	delete _screenEffects;
 	_screenEffects = nullptr;
-
-	if (_mainLoopFrameLimiter) {
-		delete _mainLoopFrameLimiter;
-		_mainLoopFrameLimiter = nullptr;
-	}
 }
 
 bool BladeRunnerEngine::loadSplash() {
@@ -965,7 +961,6 @@ bool BladeRunnerEngine::isMouseButtonDown() const {
 
 void BladeRunnerEngine::gameLoop() {
 	_gameIsRunning = true;
-	_mainLoopFrameLimiter->init();
 	do {
 		if (_playerDead) {
 			playerDied();
@@ -980,7 +975,6 @@ void BladeRunnerEngine::gameTick() {
 	handleEvents();
 
 	if (!_gameIsRunning || !_windowIsActive) {
-		_mainLoopFrameLimiter->init();
 		return;
 	}
 
@@ -989,7 +983,6 @@ void BladeRunnerEngine::gameTick() {
 			Common::Error runtimeError = Common::Error(Common::kUnknownError, _("A required game resource was not found"));
 			GUI::MessageDialog dialog(runtimeError.getDesc());
 			dialog.runModal();
-			_mainLoopFrameLimiter->init();
 			return;
 		}
 	}
@@ -1124,12 +1117,8 @@ void BladeRunnerEngine::gameTick() {
 	 // Without this condition the game may flash back to the game screen
 	 // between and ending outtake and the end credits.
 	if (!_gameOver) {
-		if (_mainLoopFrameLimiter->shouldExecuteScreenUpdate()) {
-			blitToScreen(_surfaceFront);
-			_mainLoopFrameLimiter->postScreenUpdate();
-		}
+		blitToScreen(_surfaceFront);
 	}
-
 }
 
 void BladeRunnerEngine::actorsUpdate() {
@@ -2253,6 +2242,7 @@ void BladeRunnerEngine::ISez(const Common::String &str) {
 }
 
 void BladeRunnerEngine::blitToScreen(const Graphics::Surface &src) const {
+	_framelimiter->wait();
 	_system->copyRectToScreen(src.getPixels(), src.pitch, 0, 0, src.w, src.h);
 	_system->updateScreen();
 }

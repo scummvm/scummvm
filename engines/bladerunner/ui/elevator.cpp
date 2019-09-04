@@ -25,7 +25,6 @@
 #include "bladerunner/actor.h"
 #include "bladerunner/bladerunner.h"
 #include "bladerunner/audio_player.h"
-#include "bladerunner/framelimiter.h"
 #include "bladerunner/game_info.h"
 #include "bladerunner/mouse.h"
 #include "bladerunner/shape.h"
@@ -45,17 +44,11 @@ Elevator::Elevator(BladeRunnerEngine *vm) {
 	_vm = vm;
 	reset();
 	_imagePicker = new UIImagePicker(vm, 8);
-	_framelimiter = new Framelimiter(_vm, Framelimiter::kDefaultFpsRate, Framelimiter::kDefaultUseDelayMillis);
 }
 
 Elevator::~Elevator() {
 	delete _imagePicker;
 	_imagePicker = nullptr;
-
-	if (_framelimiter) {
-		delete _framelimiter;
-		_framelimiter = nullptr;
-	}
 }
 
 int Elevator::activate(int elevatorId) {
@@ -194,7 +187,6 @@ int Elevator::activate(int elevatorId) {
 void Elevator::open() {
 	resetDescription();
 	_isOpen = true;
-	_framelimiter->init();
 }
 
 bool Elevator::isOpen() const {
@@ -213,35 +205,32 @@ int Elevator::handleMouseDown(int x, int y) {
 
 void Elevator::tick() {
 	if (!_vm->_windowIsActive) {
-		_framelimiter->init();
 		return;
 	}
 
-	if (_framelimiter->shouldExecuteScreenUpdate()) {
-		int frame = _vqaPlayer->update();
-		assert(frame >= -1);
+	int frame = _vqaPlayer->update();
+	assert(frame >= -1);
 
-		// vqaPlayer renders to _surfaceBack
-		blit(_vm->_surfaceBack, _vm->_surfaceFront);
+	// vqaPlayer renders to _surfaceBack
+	blit(_vm->_surfaceBack, _vm->_surfaceFront);
 
-		Common::Point p = _vm->getMousePos();
+	Common::Point p = _vm->getMousePos();
 
-		// TODO(madmoose): BLADE.EXE has hasHoveredImage before handleMouseAction?
-		_imagePicker->handleMouseAction(p.x, p.y, false, false, false);
-		if (_imagePicker->hasHoveredImage()) {
-			_vm->_mouse->setCursor(1);
-		} else {
-			_vm->_mouse->setCursor(0);
-		}
-
-		_imagePicker->draw(_vm->_surfaceFront);
-		_vm->_mouse->draw(_vm->_surfaceFront, p.x, p.y);
-
-		_vm->_subtitles->tick(_vm->_surfaceFront);
-
-		_vm->blitToScreen(_vm->_surfaceFront);
-		_framelimiter->postScreenUpdate();
+	// TODO(madmoose): BLADE.EXE has hasHoveredImage before handleMouseAction?
+	_imagePicker->handleMouseAction(p.x, p.y, false, false, false);
+	if (_imagePicker->hasHoveredImage()) {
+		_vm->_mouse->setCursor(1);
+	} else {
+		_vm->_mouse->setCursor(0);
 	}
+
+	_imagePicker->draw(_vm->_surfaceFront);
+	_vm->_mouse->draw(_vm->_surfaceFront, p.x, p.y);
+
+	_vm->_subtitles->tick(_vm->_surfaceFront);
+
+	_vm->blitToScreen(_vm->_surfaceFront);
+
 	tickDescription();
 }
 

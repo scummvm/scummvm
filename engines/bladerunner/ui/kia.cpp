@@ -26,7 +26,6 @@
 #include "bladerunner/audio_player.h"
 #include "bladerunner/bladerunner.h"
 #include "bladerunner/combat.h"
-#include "bladerunner/framelimiter.h"
 #include "bladerunner/font.h"
 #include "bladerunner/game_constants.h"
 #include "bladerunner/game_flags.h"
@@ -81,6 +80,7 @@ KIA::KIA(BladeRunnerEngine *vm) {
 	_playerPhotograph = nullptr;
 	_playerSliceModelId = -1;
 	_playerSliceModelAngle = 0.0f;
+	_timeLast = _vm->_time->currentSystem();
 	_playerActorDialogueQueuePosition = 0;
 	_playerActorDialogueQueueSize = 0;
 	_playerActorDialogueState = 0;
@@ -110,9 +110,6 @@ KIA::KIA(BladeRunnerEngine *vm) {
 		_playerActorDialogueQueue[i].actorId    = -1;
 		_playerActorDialogueQueue[i].sentenceId = -1;
 	}
-
-	_framelimiter = new Framelimiter(_vm, Framelimiter::kDefaultFpsRate, Framelimiter::kDefaultUseDelayMillis);
-	_framelimiter->init();
 }
 
 KIA::~KIA() {
@@ -136,11 +133,6 @@ KIA::~KIA() {
 	delete _shapes;
 	delete _log;
 	delete _script;
-
-	if (_framelimiter) {
-		delete _framelimiter;
-		_framelimiter = nullptr;
-	}
 }
 
 void KIA::reset() {
@@ -238,13 +230,9 @@ void KIA::tick() {
 		return;
 	}
 
-	if (!_framelimiter->shouldExecuteScreenUpdate()) {
-		return;
-	}
-
-	uint32 timeNow = _framelimiter->getTimeOfCurrentPass();
+	uint32 timeNow = _vm->_time->currentSystem();
 	// unsigned difference is intentional
-	uint32 timeDiff = timeNow - _framelimiter->getTimeOfLastPass();
+	uint32 timeDiff = timeNow - _timeLast;
 
 	if (_playerActorDialogueQueueSize == _playerActorDialogueQueuePosition) {
 		_playerActorDialogueState = 0;
@@ -396,7 +384,7 @@ void KIA::tick() {
 
 	_vm->blitToScreen(_vm->_surfaceFront);
 
-	_framelimiter->postScreenUpdate();
+	_timeLast = timeNow;
 }
 
 void KIA::resume() {
@@ -691,8 +679,7 @@ void KIA::init() {
 	playerReset();
 	_playerVqaFrame = 0;
 	_playerVqaTimeLast = _vm->_time->currentSystem();
-
-	_framelimiter->init();
+	_timeLast = _vm->_time->currentSystem();
 
 	if (_vm->_gameFlags->query(kFlagKIAPrivacyAddon) && !_vm->_gameFlags->query(kFlagKIAPrivacyAddonIntro)) {
 		_vm->_gameFlags->set(kFlagKIAPrivacyAddonIntro);

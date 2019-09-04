@@ -24,112 +24,48 @@
 
 #include "bladerunner/bladerunner.h"
 #include "bladerunner/time.h"
+
+#include "common/debug.h"
 #include "common/system.h"
 
 namespace BladeRunner {
 
-Framelimiter::Framelimiter(BladeRunnerEngine *vm, FramelimiterFpsRate framerateMode, bool useDelayMs) {
+Framelimiter::Framelimiter(BladeRunnerEngine *vm, uint fps) {
 	_vm = vm;
 
-//	// FUTURE: The frame limiter is disabled when vsync is enabled.
-//	_enabled = !_system->getFeatureState(OSystem::kFeatureVSync);
-	_enabled         = true;
-	_useDelayMs      = useDelayMs;
+	reset();
 
-	_speedLimitMs    = 0u;
-	uint32 framerate = 1u; // dummy init
-	switch (framerateMode) {
-	case kFramelimiter15fps:
-		framerate =  15u;
-		break;
-	case kFramelimiter25fps:
-		framerate =  25u;
-		break;
-	case kFramelimiter30fps:
-		framerate =  30u;
-		break;
-	case kFramelimiter60fps:
-		framerate =  60u;
-		break;
-	case kFramelimiter120fps:
-		framerate = 120u;
-		break;
-	case kFramelimiterDisabled:
-		// fall through
-	default:
+	if (fps > 0) {
+		_enabled = true;
+		_speedLimitMs = 1000 / fps;
+	} else {
 		_enabled = false;
-		break;
 	}
 
-	if (_enabled) {
-		_speedLimitMs = 1000 / CLIP<uint32>(framerate, 1, 120);
+	_timeFrameStart = _vm->_time->currentSystem();
+}
+
+void Framelimiter::wait() {
+	// TODO: when vsync will be supported, use it
+
+	if (!_enabled) {
+		return;
 	}
 
-	reset();
-}
-
-Framelimiter::~Framelimiter() { }
-
-void Framelimiter::init(bool forceScreenUpdate) {
-	reset();
-	_timeOfLastPass = _vm->_time->currentSystem();
-	_forceScreenUpdate = forceScreenUpdate;
-}
-
-uint32 Framelimiter::getLastFrameDuration() const {
-	return _lastFrameDurationMs;
-}
-
-uint32 Framelimiter::getTimeOfCurrentPass() const {
-	return _timeOfCurrentPass;
-}
-
-uint32 Framelimiter::getTimeOfLastPass() const {
-	return _timeOfLastPass;
-}
-
-bool Framelimiter::shouldExecuteScreenUpdate() {
-	bool shouldUpdateScreen = true;
-	_timeOfCurrentPass = _vm->_time->currentSystem();
-	if (_enabled) {
-		if (_useDelayMs) {
-			// _timeOfCurrentPass is used to calculate the duration that the current frame is on screen so far
-			uint32 frameDuration = _timeOfCurrentPass - _startFrameTime;
-			if (frameDuration < _speedLimitMs) {
-				_vm->_system->delayMillis(_speedLimitMs - frameDuration);
-				// cheaper than calling _vm->_time->currentSystem() again
-				_timeOfCurrentPass += (_speedLimitMs - frameDuration);
-			}
-		}
-
-		shouldUpdateScreen = ((_timeOfCurrentPass - _timeOfLastPass) >= _speedLimitMs) || _forceScreenUpdate || _useDelayMs;
-
-		if (shouldUpdateScreen) {
-			if (_forceScreenUpdate) {
-				_forceScreenUpdate = false;
-			}
-			_lastFrameDurationMs = _timeOfCurrentPass - _startFrameTime;
-			_startFrameTime = _timeOfCurrentPass;
-		}
+	uint32 timeNow = _vm->_time->currentSystem();
+	uint32 frameDuration = timeNow - _timeFrameStart;
+	if (frameDuration < _speedLimitMs) {
+		uint32 wait = _speedLimitMs - frameDuration;
+		_vm->_system->delayMillis(wait);
+		timeNow += wait;
 	}
-	return shouldUpdateScreen;
-}
-
-void  Framelimiter::postScreenUpdate() {
-	_timeOfLastPass = _timeOfCurrentPass;
-//	if (_enabled) {
-//		// for debug purposes, this calculates the time between deciding to draw the frame, and the time after drawing the update to the screen
-//		uint32 endFrameTime = _vm->_time->currentSystem();
-//		uint32 frameDuration = endFrameTime - _startFrameTime;
-//	}
+	// debug("frametime %i ms", timeNow - _timeFrameStart);
+	// using _vm->_time->currentSystem() here is slower and causes some shutters
+	_timeFrameStart = timeNow;
 }
 
 void Framelimiter::reset() {
-	_forceScreenUpdate   = false;
-	_timeOfLastPass      = 0u;
-	_timeOfCurrentPass   = 0u;
-	_startFrameTime      = 0u;
-	_lastFrameDurationMs = _speedLimitMs;
+	_timeFrameStart = 0u;
 }
 
 } // End of namespace BladeRunner
