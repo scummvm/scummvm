@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2019-09-03 20:29+0200\n"
-"PO-Revision-Date: 2019-08-08 20:47+0000\n"
+"PO-Revision-Date: 2019-09-06 04:54+0000\n"
 "Last-Translator: scootergrisen <scootergrisen@gmail.com>\n"
 "Language-Team: Danish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/da/>\n"
@@ -621,7 +621,7 @@ msgstr "~I~ndstillinger ..."
 
 #: gui/launcher.cpp:144
 msgid "Change global ScummVM options"
-msgstr "Ændre globale ScummVM indstillinger"
+msgstr "Ændr globale ScummVM-indstillinger"
 
 #: gui/launcher.cpp:146
 msgid "~S~tart"
@@ -653,7 +653,7 @@ msgstr "~R~ediger spil ..."
 
 #: gui/launcher.cpp:156 gui/launcher.cpp:163
 msgid "Change game options"
-msgstr "Ændre spil indstillinger"
+msgstr "Ændr spilindstillinger"
 
 #: gui/launcher.cpp:158
 msgid "~R~emove Game"
@@ -1257,30 +1257,28 @@ msgstr "LAN"
 
 #: gui/options.cpp:1791
 msgid "Accessibility"
-msgstr ""
+msgstr "Tilgængelighed"
 
 #: gui/options.cpp:1793
 msgctxt "lowres"
 msgid "Accessibility"
-msgstr ""
+msgstr "Tilgængelighed"
 
 #: gui/options.cpp:1795
-#, fuzzy
 msgid "Use Text to speech"
-msgstr "Tekst og tale:"
+msgstr "Brug tekst til tale"
 
 #: gui/options.cpp:1795
 msgid "Will read text in gui on mouse over."
-msgstr ""
+msgstr "Læser teksten i brugerfladen når musemarkøren holdes over."
 
 #: gui/options.cpp:1826
 msgid "Apply"
 msgstr "Anvend"
 
 #: gui/options.cpp:1915
-#, fuzzy
 msgid "Active storage:"
-msgstr "Aktivér lagring i skyen"
+msgstr "Aktivt lager:"
 
 #: gui/options.cpp:1915
 msgid "Active cloud storage"
@@ -1291,20 +1289,23 @@ msgctxt "lowres"
 msgid ""
 "4. Storage is not yet enabled. Verify that username is correct and enable it:"
 msgstr ""
+"4. Lageret er endnu ikke aktiveret. Bekræft at brugernavnet er korrekt og "
+"aktivér det:"
 
 #: gui/options.cpp:1925
 msgid ""
 "4. Storage is not yet enabled. Verify that username is correct and enable it:"
 msgstr ""
+"4. Lageret er endnu ikke aktiveret. Bekræft at brugernavnet er korrekt og "
+"aktivér det:"
 
 #: gui/options.cpp:1926
-#, fuzzy
 msgid "Enable storage"
-msgstr "Aktivér studio publikum"
+msgstr "Aktivér lager"
 
 #: gui/options.cpp:1926
 msgid "Confirm you want to use this account for this storage"
-msgstr ""
+msgstr "Bekræft at du vil bruge kontoen til dette lager"
 
 #: gui/options.cpp:1928 backends/platform/wii/options.cpp:114
 msgid "Username:"
@@ -1327,14 +1328,12 @@ msgid "Space used by ScummVM's saved games on this storage"
 msgstr "Plads brugt af ScummVM's gemte spil på lagringen"
 
 #: gui/options.cpp:1934
-#, fuzzy
 msgid "Last sync:"
-msgstr "Sidst synkroniseret:"
+msgstr "Sidste synkronisering:"
 
 #: gui/options.cpp:1934
-#, fuzzy
 msgid "When was the last time saved games were synced with this storage"
-msgstr "Hvornår den sidste synkronisering af gemte spil på lagringen foregik"
+msgstr "Sidste gang gemte spil blev synkroniseret med dette lager"
 
 #: gui/options.cpp:1935 gui/options.cpp:2619
 msgid "<never>"
@@ -1344,32 +1343,35 @@ msgstr "<aldrig>"
 msgctxt "lowres"
 msgid "Saves sync automatically on launch, after saving and on loading."
 msgstr ""
+"Gemte spil synkroniseres automatisk ved start, efter gemning og ved "
+"indlæsning."
 
 #: gui/options.cpp:1939
 msgid "Saves sync automatically on launch, after saving and on loading."
 msgstr ""
+"Gemte spil synkroniseres automatisk ved start, efter gemning og ved "
+"indlæsning."
 
 #: gui/options.cpp:1940
 msgid "Sync now"
-msgstr ""
+msgstr "Synkroniser nu"
 
 #: gui/options.cpp:1940
 msgid "Start saves sync"
-msgstr ""
+msgstr "Start synkronisering af gemte spil"
 
 #: gui/options.cpp:1943
 msgctxt "lowres"
 msgid "You can download game files from your cloud ScummVM folder:"
-msgstr ""
+msgstr "Du kan downloade spilfiler fra din ScummVM-mappe i skyen:"
 
 #: gui/options.cpp:1945
 msgid "You can download game files from your cloud ScummVM folder:"
-msgstr ""
+msgstr "Du kan downloade spilfiler fra din ScummVM-mappe i skyen:"
 
 #: gui/options.cpp:1946
-#, fuzzy
 msgid "Download game files"
-msgstr "Download mislykkedes."
+msgstr "Download spilfiler"
 
 #: gui/options.cpp:1946
 msgid "Open downloads manager dialog"
@@ -1378,33 +1380,32 @@ msgstr "Åbn downloadmanager-dialog"
 #: gui/options.cpp:1949
 msgctxt "lowres"
 msgid "To change account for this storage, disconnect and connect again:"
-msgstr ""
+msgstr "Skift konto for dette lager ved at afbryde og oprette forbindelse igen:"
 
 #: gui/options.cpp:1951
 msgid "To change account for this storage, disconnect and connect again:"
-msgstr ""
+msgstr "Skift konto for dette lager ved at afbryde og oprette forbindelse igen:"
 
 #: gui/options.cpp:1952
-#, fuzzy
 msgid "Disconnect"
-msgstr "Tilslut"
+msgstr "Afbryd forbindelsen"
 
 #: gui/options.cpp:1952
 msgid "Stop using this storage on this device"
-msgstr ""
+msgstr "Stop med at bruge lageret på denne enhed"
 
 #: gui/options.cpp:1955
 msgctxt "lowres"
 msgid "This storage is not connected yet! To connect,"
-msgstr ""
+msgstr "Lageret er endnu ikke tilsluttet! Tilslut ved at,"
 
 #: gui/options.cpp:1957
 msgid "This storage is not connected yet! To connect,"
-msgstr ""
+msgstr "Lageret er endnu ikke tilsluttet! Tilslut ved at,"
 
 #: gui/options.cpp:1958
 msgid "1. Open this link:"
-msgstr ""
+msgstr "1. Åbn linket:"
 
 #: gui/options.cpp:1959
 msgid "Open URL"
@@ -1413,30 +1414,27 @@ msgstr "Åbn URL"
 #: gui/options.cpp:1961
 msgctxt "lowres"
 msgid "2. Get the code and enter it here:"
-msgstr ""
+msgstr "2. Hent koden og indtast den her:"
 
 #: gui/options.cpp:1963
 msgid "2. Get the code and enter it here:"
-msgstr ""
+msgstr "2. Hent koden og indtast den her:"
 
 #: gui/options.cpp:1965
 msgid "Paste"
 msgstr "Sæt ind"
 
 #: gui/options.cpp:1965
-#, fuzzy
 msgid "Paste code from clipboard"
-msgstr "Kopiér til udklipsholder"
+msgstr "Indsæt kode fra udklipsholder"
 
 #: gui/options.cpp:1966
-#, fuzzy
 msgid "3. Connect"
-msgstr "Tilslut"
+msgstr "3. Tilslut"
 
 #: gui/options.cpp:1966
-#, fuzzy
 msgid "Connect your cloud storage account"
-msgstr "Åbn hjælpe dialog for at forbinde din lagringskonto i skyen"
+msgstr "Forbind din lagringskonto i skyen"
 
 #: gui/options.cpp:1975
 msgid "Run server"
@@ -1456,9 +1454,8 @@ msgid "/root/ Path:"
 msgstr "/root/-sti:"
 
 #: gui/options.cpp:1980 gui/options.cpp:1982 gui/options.cpp:1983
-#, fuzzy
 msgid "Select which directory will be shown as /root/ in the Files Manager"
-msgstr "Angiver hvilke mappe filhåndteringen kan tilgå"
+msgstr "Vælg hvilken mappe som skal vises som /root/ i filhåndteringen"
 
 #: gui/options.cpp:1982
 msgid "/root/ Path:"
@@ -1470,25 +1467,25 @@ msgstr "Serverens port:"
 
 #: gui/options.cpp:1988
 msgid "Port for server to use"
-msgstr ""
+msgstr "Port som serveren skal bruge"
 
 #: gui/options.cpp:1993
 msgctxt "lowres"
 msgid "Run server to manage files with browser (in the same network)."
-msgstr ""
+msgstr "Kør server for at håndtere filer med browser (i det samme netværk)."
 
 #: gui/options.cpp:1994
 msgctxt "lowres"
 msgid "Closing options dialog will stop the server."
-msgstr ""
+msgstr "Serveren stopper hvis indstillingsdialogen lukkes."
 
 #: gui/options.cpp:1996
 msgid "Run server to manage files with browser (in the same network)."
-msgstr ""
+msgstr "Kør server for at håndtere filer med browser (i det samme netværk)."
 
 #: gui/options.cpp:1997
 msgid "Closing options dialog will stop the server."
-msgstr ""
+msgstr "Serveren stopper hvis indstillingsdialogen lukkes."
 
 #: gui/options.cpp:2067
 msgid "Failed to change cloud storage!"
@@ -1543,23 +1540,20 @@ msgstr ""
 "Navigér venligst til siden manuelt."
 
 #: gui/options.cpp:2381
-#, fuzzy
 msgid "Another Storage is working now. Do you want to interrupt it?"
-msgstr "En anden lagring er aktiv. Vil du afbryde den?"
+msgstr "Et andet lager er aktivt nu. Vil du afbryde det?"
 
 #: gui/options.cpp:2390 gui/options.cpp:2428
 msgid "Wait until current Storage finishes up and try again."
 msgstr "Vent indtil aktuel lagring er færdig og prøv igen."
 
 #: gui/options.cpp:2403
-#, fuzzy
 msgid "Connecting..."
-msgstr "Tilslut"
+msgstr "Tilslutter ..."
 
 #: gui/options.cpp:2419
-#, fuzzy
 msgid "This Storage is working now. Do you want to interrupt it?"
-msgstr "En anden lagring er aktiv. Vil du afbryde den?"
+msgstr "Lageret arbejder nu. Vil du afbryde det?"
 
 #: gui/options.cpp:2617
 msgid "<right now>"
@@ -1574,19 +1568,16 @@ msgid "Stop local webserver"
 msgstr "Stop lokal webserver"
 
 #: gui/options.cpp:2779
-#, fuzzy
 msgid "Storage connected."
-msgstr "%s Lagrings Forbindelses Hjælper"
+msgstr "Lageret er tilsluttet."
 
 #: gui/options.cpp:2781
-#, fuzzy
 msgid "Failed to connect storage."
-msgstr "Kunne ikke ændre lagring i sky!"
+msgstr "Kunne ikke tilslutte lageret."
 
 #: gui/options.cpp:2783
-#, fuzzy
 msgid "Failed to connect storage: "
-msgstr "Kunne ikke ændre lagring i sky!"
+msgstr "Kunne ikke tilslutte lageret: "
 
 #: gui/options.cpp:2803
 msgid ""
@@ -2195,7 +2186,7 @@ msgstr "OPL2LPT"
 
 #: audio/fmopl.cpp:84
 msgid "OPL3LPT"
-msgstr ""
+msgstr "OPL3LPT"
 
 #: audio/mididrv.cpp:209
 #, c-format
@@ -2477,9 +2468,8 @@ msgid "Normal (no scaling)"
 msgstr "Normal (ingen skalering)"
 
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:82
-#, fuzzy
 msgid "Fit to window (4:3)"
-msgstr "Tilpas til vindue"
+msgstr "Tilpas til vindue (4:3)"
 
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:87
 msgctxt "lowres"
@@ -3087,23 +3077,20 @@ msgstr ""
 "%d.%d."
 
 #: engines/adl/detection.cpp:51
-#, fuzzy
 msgid "TV emulation"
-msgstr "MT-32-emulator"
+msgstr "TV-emulering"
 
 #: engines/adl/detection.cpp:52
 msgid "Emulate composite output to an NTSC TV"
-msgstr ""
+msgstr "Emulér composite-output på et NTSC-TV"
 
 #: engines/adl/detection.cpp:61 engines/adl/detection.cpp:71
-#, fuzzy
 msgid "Color graphics"
-msgstr "Brug farve grafik"
+msgstr "Farvegrafik"
 
 #: engines/adl/detection.cpp:62 engines/adl/detection.cpp:72
-#, fuzzy
 msgid "Use color graphics instead of monochrome"
-msgstr "Brug farve grafik"
+msgstr "Brug farvegrafik i stedet for sort/hvid"
 
 #: engines/adl/detection.cpp:81
 msgid "Show scanlines"
@@ -3111,15 +3098,15 @@ msgstr "Vis skanlinjer"
 
 #: engines/adl/detection.cpp:82
 msgid "Darken every other scanline to mimic the look of a CRT"
-msgstr ""
+msgstr "Gør hver anden linje mørk for at efterligne udseendet på en CRT"
 
 #: engines/adl/detection.cpp:91
 msgid "Always use sharp monochrome text"
-msgstr ""
+msgstr "Brug altid skarp sort/hvid tekst"
 
 #: engines/adl/detection.cpp:92
 msgid "Do not emulate NTSC artifacts for text"
-msgstr ""
+msgstr "Emulér NTSC-artifacts for tekst"
 
 #: engines/agi/detection.cpp:147 engines/cine/detection.cpp:70
 #: engines/drascula/detection.cpp:331 engines/dreamweb/detection.cpp:48
@@ -3639,13 +3626,12 @@ msgid "Failed to save game"
 msgstr "Kunne ikke gemme spil"
 
 #: engines/hdb/detection.cpp:157
-#, fuzzy
 msgid "Enable cheat mode"
-msgstr "Aktivér helium-tilstand"
+msgstr "Aktivér snydetilstand"
 
 #: engines/hdb/detection.cpp:158
 msgid "Debug info and level selection becomes available"
-msgstr ""
+msgstr "Fejlretningsinformation og valg af bane bliver tilgængeligt"
 
 #: engines/hopkins/detection.cpp:76 engines/hopkins/detection.cpp:86
 msgid "Gore Mode"
@@ -4432,6 +4418,8 @@ msgid ""
 "The selected audio driver requires the following file(s):\n"
 "\n"
 msgstr ""
+"Den valgte lyddriver kræver følgende fil(er):\n"
+"\n"
 
 #: engines/sci/sound/music.cpp:164
 msgid ""
@@ -4448,6 +4436,18 @@ msgid ""
 "In that case you may need to apply the original Sierra patch.\n"
 "\n"
 msgstr ""
+"\n"
+"\n"
+"Nogle lyddrivere (i hvert fald ved nogle spil) blev gjort tilgængelige\n"
+"på et senere tidspunkt af Sierra som rettelser, og vil derfor måske\n"
+"ikke være installeret som del af den oprindelige spilopsætning.\n"
+"\n"
+"Kopiér venligst filerne ind i din mappe med spildata.\n"
+"\n"
+"Bemærk dog venligst at filerne måske ikke er tilgængelige\n"
+"separat men kun som indhold af (rettede) bundter med ressource.\n"
+"Er det tilfældet skal du måske anvende den oprindelige Sierra-rettelse.\n"
+"\n"
 
 #: engines/scumm/detection.cpp:1123
 msgid ""
@@ -5255,9 +5255,9 @@ msgid "Use the floppy version's intro (CD version only)"
 msgstr "Brug diskette versionens intro (kun CD-version)"
 
 #: engines/supernova/supernova.cpp:190
-#, fuzzy, c-format
+#, c-format
 msgid "Unable to locate the text for %s language in engine data file."
-msgstr "Kan ikke finde teksten til %s sproget i '%s'-motorens datafil."
+msgstr "Kan ikke finde teksten til %s sproget i motorens datafil."
 
 #: engines/supernova/supernova.cpp:466
 #, c-format
@@ -5269,12 +5269,12 @@ msgstr ""
 #: engines/supernova/supernova.cpp:476
 #, c-format
 msgid "Unable to find block for part %d"
-msgstr ""
+msgstr "Kan ikke finde blok for del %d"
 
 #: engines/supernova/supernova.cpp:518
-#, fuzzy, c-format
+#, c-format
 msgid "Unable to find '%s' in game folder or the engine data file."
-msgstr "Kan ikke finde '%s' i spilmappen."
+msgstr "Kan ikke finde '%s' i spilmappen eller motorens datafil."
 
 #: engines/sword1/animation.cpp:524
 #, c-format
