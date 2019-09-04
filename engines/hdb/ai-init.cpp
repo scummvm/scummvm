@@ -1190,8 +1190,7 @@ void AI::restartSystem() {
 	_numBridges = 0;
 
 	// Clear waypoints
-	memset(&_waypoints[0], 0, sizeof(_waypoints));
-	_numWaypoints = 0;
+	clearWaypoints();
 
 	// Clean up Player Graphics Storage
 	memset(_horrible1Gfx, 0, sizeof(_horrible1Gfx));

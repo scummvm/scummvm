@@ -730,8 +730,7 @@ bool AI::checkTeleportList(AIEntity *e, int x, int y) {
 
 			e->draw = e->standdownGfx[0];
 			if (e == _player) {
-				memset(&_waypoints[0], 0, sizeof(_waypoints));
-				_numWaypoints = 0;
+				clearWaypoints();
 			}
 
 			switch (e->dir) {

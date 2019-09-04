@@ -1100,7 +1100,7 @@ void AI::animateEntity(AIEntity *e) {
 			if ((e->tileX + xOff == _waypoints[_numWaypoints - 1].x &&
 				 e->tileY + yOff == _waypoints[_numWaypoints - 1].y) &&
 				 e->level == _waypoints[_numWaypoints - 1].level) {
-				memset(&_waypoints[0], 0, sizeof(_waypoints));
+				clearWaypoints();
 				_numWaypoints = 1;
 				_waypoints[0].x = e->tileX + xOff;
 				_waypoints[0].y = e->tileY + yOff;
@@ -1795,7 +1795,7 @@ void AI::drawEnts(int x, int y, int w, int h) {
 			e->onScreen = 0;
 			debugN(5, "not on screen");
 		}
-		debug(5, ""); // newline
+		debug(5, "%s", ""); // newline
 	}
 
 	if (stunTimer < g_hdb->getTimeSlice()) {
