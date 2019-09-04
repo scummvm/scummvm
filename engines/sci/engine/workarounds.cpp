@@ -1236,6 +1236,14 @@ static const SciMessageWorkaroundEntry messageWorkarounds[] = {
 	// tuple remapped to seq:2 in an audio workaround below.
 	{ GID_QFG4,          SCI_MEDIA_CD,     K_LANG_ENGLISH,  -1,  520,   2,  59,   0,  1, { MSG_WORKAROUND_FAKE,     520,   2,  59,   0,  1, 28,   0,   0, "Thank you for the beautiful flowers.  No one has been so nice to me since I can remember." } },
 	{ GID_QFG4,          SCI_MEDIA_CD,     K_LANG_ENGLISH,  -1,  520,   2,  59,   0,  2, { MSG_WORKAROUND_EXTRACT,  520,   2,  59,   0,  1, 28,   0,   0, NULL } },
+	// Wrong talker when asking gnome about himself in room 320 - bug #11030.
+	//  This incorrect value caused the narrator to accidentally voice these
+	//  messages in the CD version instead of the actor who played the gnome.
+	//  There's nothing we can do about that but we can at least set the correct
+	//  talker so that the message boxes appear in the correct screen location.
+	{ GID_QFG4,          SCI_MEDIA_ALL,    K_LANG_NONE,     -1,  322,  10, 149,   1,  1, { MSG_WORKAROUND_EXTRACT,  322,  10, 149,   1,  1, 13,   0,   0, NULL } },
+	{ GID_QFG4,          SCI_MEDIA_ALL,    K_LANG_NONE,     -1,  322,  10, 149,   1,  2, { MSG_WORKAROUND_EXTRACT,  322,  10, 149,   1,  2, 13,   0,   0, NULL } },
+	{ GID_QFG4,          SCI_MEDIA_ALL,    K_LANG_NONE,     -1,  322,  10, 149,   1,  3, { MSG_WORKAROUND_EXTRACT,  322,  10, 149,   1,  3, 13,   0,   0, NULL } },
 	// This fixes the error message shown when speech and subtitles are
 	// enabled simultaneously in SQ4 - the (very) long dialog when Roger
 	// is talking with the aliens is missing - bug #6067.
