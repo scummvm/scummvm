@@ -140,7 +140,7 @@ void Font::drawChar(Graphics::Surface *dst, uint32 chr, int x, int y, uint32 col
 		int endX = width + x - 1;
 		while (currentX <= endX && currentX < dst->w) {
 			uint8 a, r, g, b;
-			gameDataPixelFormat().colorToARGB(*srcPtr, a, r, g, b);
+			getGameDataColor(*srcPtr, a, r, g, b);
 			if (!a) { // Alpha is inversed
 				uint32 outColor = color;
 				if (_useFontColor) {

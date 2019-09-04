@@ -329,6 +329,18 @@ static inline const Graphics::PixelFormat gameDataPixelFormat() {
 	return Graphics::PixelFormat(2, 5, 5, 5, 1, 10, 5, 0, 15);
 }
 
+static inline void getGameDataColor(uint16 color, uint8 &a, uint8 &r, uint8 &g, uint8 &b) {
+	// gameDataPixelFormat().colorToARGB(vqaColor, a, r, g, b);
+	// using pixel format functions is too slow on some ports because of runtime checks
+	uint8 r5 = (color >> 10) & 0x1F;
+	uint8 g5 = (color >>  5) & 0x1F;
+	uint8 b5 = (color      ) & 0x1F;
+	a = color >> 15;
+	r = (r5 << 3) | (r5 >> 2);
+	g = (g5 << 3) | (g5 >> 2);
+	b = (b5 << 3) | (b5 >> 2);
+}
+
 static inline const Graphics::PixelFormat screenPixelFormat() {
 	return ((BladeRunnerEngine*)g_engine)->_screenPixelFormat;
 }

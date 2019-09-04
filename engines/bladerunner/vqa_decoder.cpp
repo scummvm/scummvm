@@ -834,10 +834,12 @@ void VQADecoder::VQAVideoTrack::VPTRWriteBlock(Graphics::Surface *surface, unsig
 				src_p += 2;
 
 				uint8 a, r, g, b;
-				gameDataPixelFormat().colorToARGB(vqaColor, a, r, g, b);
+				getGameDataColor(vqaColor, a, r, g, b);
 
 				if (!(alpha && a)) {
-					void* dstPtr = surface->getBasePtr(CLIP(dst_x + x, (uint32)0, (uint32)(surface->w - 1)), CLIP(dst_y + y, (uint32)0, (uint32)(surface->h - 1)));
+					// clip is too slow and it is not needed
+					// void* dstPtr = surface->getBasePtr(CLIP(dst_x + x, (uint32)0, (uint32)(surface->w - 1)), CLIP(dst_y + y, (uint32)0, (uint32)(surface->h - 1)));
+					void* dstPtr = surface->getBasePtr(dst_x + x, dst_y + y);
 					// Ignore the alpha in the output as it is inversed in the input
 					drawPixel(*surface, dstPtr, surface->format.RGBToColor(r, g, b));
 				}

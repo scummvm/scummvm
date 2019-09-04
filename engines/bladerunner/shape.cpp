@@ -111,7 +111,7 @@ void Shape::draw(Graphics::Surface &surface, int x, int y) const {
 			src_p += 2;
 
 			uint8 a, r, g, b;
-			gameDataPixelFormat().colorToARGB(shpColor, a, r, g, b);
+			getGameDataColor(shpColor, a, r, g, b);
 
 			if (!a) {
 				// Ignore the alpha in the output as it is inversed in the input
