@@ -2983,6 +2983,11 @@ void InitScript::Init_Actor_Health() {
 	Actor_Set_Health(kActorGenwalkerA, 50, 50);
 	Actor_Set_Health(kActorGenwalkerB, 50, 50);
 	Actor_Set_Health(kActorGenwalkerC, 50, 50);
+
+	// A bug? The health for some actors is set again here
+	// with different values except for Izo and kActorOfficerGrayford
+	// rendering the initial setting redundant.
+	// The health of all who can be Replicants will again be set further below (including Izo)
 	Actor_Set_Health(kActorZuben, 80, 80);
 	Actor_Set_Health(kActorGordo, 40, 40);
 	Actor_Set_Health(kActorLucy, 20, 20);
@@ -2993,6 +2998,7 @@ void InitScript::Init_Actor_Health() {
 	Actor_Set_Health(kActorClovis, 90, 90);
 	Actor_Set_Health(kActorOfficerLeary, 40, 40);
 	Actor_Set_Health(kActorOfficerGrayford, 50, 50);
+
 	Actor_Set_Health(kActorMutant1, 30, 30);
 	Actor_Set_Health(kActorMutant2, 50, 50);
 	Actor_Set_Health(kActorMutant3, 20, 20);
