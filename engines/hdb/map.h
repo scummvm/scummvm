@@ -135,7 +135,8 @@ public:
 		_mapLaserBeams[y * _width + x] = value;
 	}
 	void clearLaserBeams() {
-		memset(_mapLaserBeams, 0, _width * _height);
+		uint size = _width * _height;
+		memset(_mapLaserBeams, 0, size);
 	}
 
 	// Platform-specific Constants;

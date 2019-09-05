@@ -139,24 +139,24 @@ void Map::save(Common::OutSaveFile *out) {
 }
 
 void Map::loadSaveFile(Common::InSaveFile *in) {
-	int i;
-
 	restartSystem();
 
 	// Load Map Dimensions and Offsets
 	_mapX = in->readSint32LE();
 	_mapY = in->readSint32LE();
-	_width = in->readSint32LE();
-	_height = in->readSint32LE();
+	_width = in->readUint32LE();
+	_height = in->readUint32LE();
 	_mapTileX = in->readSint32LE();
 	_mapTileY = in->readSint32LE();
 	_mapTileXOff = in->readSint32LE();
 	_mapTileYOff = in->readSint32LE();
 
+	uint size = _width * _height;
+
 	// Load All level2 gratings and animCycle
 
 	_numGratings = in->readSint32LE();
-	for (i = 0; i < _numGratings; i++) {
+	for (int i = 0; i < _numGratings; i++) {
 		_gratings[i].x = in->readUint16LE();
 		_gratings[i].y = in->readUint16LE();
 		_gratings[i].tile = in->readUint16LE();
@@ -166,57 +166,57 @@ void Map::loadSaveFile(Common::InSaveFile *in) {
 
 	// find out how many SLOW, MEDIUM & FAST bg tile anims there are and load them all out
 	_listBGAnimSlow.resize(in->readUint32LE());
-	for (i = 0; (uint)i < _listBGAnimSlow.size(); i++) {
+	for (int i = 0; (uint)i < _listBGAnimSlow.size(); i++) {
 		_listBGAnimSlow[i] = in->readUint32LE();
 	}
 
 	_listBGAnimMedium.resize(in->readUint32LE());
-	for (i = 0; (uint)i < _listBGAnimMedium.size(); i++) {
+	for (int i = 0; (uint)i < _listBGAnimMedium.size(); i++) {
 		_listBGAnimMedium[i] = in->readUint32LE();
 	}
 
 	_listBGAnimFast.resize(in->readUint32LE());
-	for (i = 0; (uint)i < _listBGAnimFast.size(); i++) {
+	for (int i = 0; (uint)i < _listBGAnimFast.size(); i++) {
 		_listBGAnimFast[i] = in->readUint32LE();
 	}
 
 	// find out how many SLOW, MEDIUM & FAST fg tile anims there are and load them all out
 
 	_listFGAnimSlow.resize(in->readUint32LE());
-	for (i = 0; (uint)i < _listFGAnimSlow.size(); i++) {
+	for (int i = 0; (uint)i < _listFGAnimSlow.size(); i++) {
 		_listFGAnimSlow[i] = in->readUint32LE();
 	}
 
 	_listFGAnimMedium.resize(in->readUint32LE());
-	for (i = 0; (uint)i < _listFGAnimMedium.size(); i++) {
+	for (int i = 0; (uint)i < _listFGAnimMedium.size(); i++) {
 		_listFGAnimMedium[i] = in->readUint32LE();
 	}
 
 	_listFGAnimFast.resize(in->readUint32LE());
-	for (i = 0; (uint)i < _listFGAnimFast.size(); i++) {
+	for (uint i = 0; (uint)i < _listFGAnimFast.size(); i++) {
 		_listFGAnimFast[i] = in->readUint32LE();
 	}
 
 	// load map data
 
-	_background = new int16[_width * _height];
-	for (i = 0; i < _width * _height; i++)
+	_background = new int16[size];
+	for (uint i = 0; i < size; i++)
 		_background[i] = in->readSint32LE();
 
-	_foreground = new int16[_width * _height];
-	for (i = 0; i < _width * _height; i++)
+	_foreground = new int16[size];
+	for (uint i = 0; i < size; i++)
 		_foreground[i] = in->readSint32LE();
 
-	_mapExplosions = (byte *)malloc(_width * _height);
-	for (i = 0; i < _width * _height; i++)
+	_mapExplosions = (byte *)malloc(size);
+	for (uint i = 0; i < size; i++)
 		_mapExplosions[i] = in->readByte();
 
-	_mapExpBarrels = (byte *)malloc(_width * _height);
-	for (i = 0; i < _width * _height; i++)
+	_mapExpBarrels = (byte *)malloc(size);
+	for (uint i = 0; i < size; i++)
 		_mapExpBarrels[i] = in->readByte();
 
-	_mapLaserBeams = (byte *)malloc(_width * _height);
-	for (i = 0; i < _width * _height; i++)
+	_mapLaserBeams = (byte *)malloc(size);
+	for (uint i = 0; i < size; i++)
 		_mapLaserBeams[i] = in->readByte();
 
 	// load all the map's tiles (cache)
@@ -309,10 +309,11 @@ bool Map::load(Common::SeekableReadStream *stream) {
 			_width, _width, _height, _height, _backgroundOffset, _foregroundOffset, _iconNum, _iconNum,
 			_iconListOffset, _infoNum, _infoNum, _infoListOffset);
 
+	uint size = _width * _height;
 	// Reading Background
-	_background = new int16[_width * _height];
+	_background = new int16[size];
 	stream->seek(_backgroundOffset);
-	for (int i = 0; i < _width * _height; i++) {
+	for (uint i = 0; i < size; i++) {
 		_background[i] = stream->readUint16LE();
 	}
 	if (gDebugLevel >= 5) {
@@ -321,9 +322,9 @@ bool Map::load(Common::SeekableReadStream *stream) {
 	}
 
 	// Reading Foreground
-	_foreground = new int16[_width * _height];
+	_foreground = new int16[size];
 	stream->seek(_foregroundOffset);
-	for (int i = 0; i < _width * _height; i++) {
+	for (uint i = 0; i < size; i++) {
 		_foreground[i] = stream->readUint16LE();
 	}
 
@@ -351,16 +352,16 @@ bool Map::load(Common::SeekableReadStream *stream) {
 
 	g_hdb->setInMapName(_name);
 
-	_mapExplosions = (byte *)calloc(_width * _height, 1);
-	_mapExpBarrels = (byte *)calloc(_width * _height, 1);
-	_mapLaserBeams = (byte *)calloc(_width * _height, 1);
+	_mapExplosions = (byte *)calloc(size, 1);
+	_mapExpBarrels = (byte *)calloc(size, 1);
+	_mapLaserBeams = (byte *)calloc(size, 1);
 
 	int sky = loadTiles();
 	g_hdb->_gfx->setSky(sky);
 	_mapX = _mapY = 0;
 
 	// Setup animating Tile lists
-	for (int i = 0; i < _width*_height; i++) {
+	for (uint i = 0; i < size; i++) {
 		addBGTileAnimation(i % _width, i / _width);
 		addFGTileAnimation(i % _width, i / _width);
 	}
@@ -999,9 +1000,9 @@ bool Map::onScreen(int x, int y) {
 }
 
 uint32 Map::getMapBGTileFlags(int x, int y) {
-	if (x < 0 || x >= _width || y < 0 || y >= _height) {
+	if (x < 0 || x >= _width || y < 0 || y >= _height)
 		return 0;
-	}
+
 	Tile *tile = g_hdb->_gfx->getTile(_background[y * _width + x]);
 	if (tile)
 		return tile->_flags;
@@ -1009,9 +1010,9 @@ uint32 Map::getMapBGTileFlags(int x, int y) {
 }
 
 uint32 Map::getMapFGTileFlags(int x, int y) {
-	if (x < 0 || x >= _width || y < 0 || y >= _height) {
+	if (x < 0 || x >= _width || y < 0 || y >= _height)
 		return 0;
-	}
+
 	Tile *tile = g_hdb->_gfx->getTile(_foreground[y * _width + x]);
 	if (tile)
 		return tile->_flags;
@@ -1019,35 +1020,34 @@ uint32 Map::getMapFGTileFlags(int x, int y) {
 }
 
 int16 Map::getMapBGTileIndex(int x, int y) {
-	if (x < 0 || x >= _width || y < 0 || y >= _height) {
+	if (x < 0 || x >= _width || y < 0 || y >= _height)
 		return 0;
-	}
+
 	return _background[y * _width + x];
 }
 
 int16 Map::getMapFGTileIndex(int x, int y) {
-	if (x < 0 || x >= _width || y < 0 || y >= _height) {
+	if (x < 0 || x >= _width || y < 0 || y >= _height)
 		return 0;
-	}
+
 	return _foreground[y * _width + x];
 }
 
 void Map::setMapBGTileIndex(int x, int y, int index) {
-	if (x < 0 || x >= _width || y < 0 || y >= _height) {
+	if (x < 0 || x >= _width || y < 0 || y >= _height)
 		return;
-	}
+
 	_background[y * _width + x] = index;
 }
 
 void Map::setMapFGTileIndex(int x, int y, int index) {
-	if (x < 0 || x >= _width || y < 0 || y >= _height) {
+	if (x < 0 || x >= _width || y < 0 || y >= _height)
 		return;
-	}
+
 	_foreground[y * _width + x] = index;
 }
 
 void Map::addBGTileAnimation(int x, int y) {
-
 	int i = y * _width + x;
 
 	Tile *tile = g_hdb->_gfx->getTile(_background[i]);
@@ -1057,13 +1057,13 @@ void Map::addBGTileAnimation(int x, int y) {
 	uint32 flags = tile->_flags;
 
 	// BACKGROUND
-	if ((flags & kFlagAnimFast) == kFlagAnimFast) {	// check 'fast' first since it's a combo of slow & medium
+	if ((flags & kFlagAnimFast) == kFlagAnimFast)
+		// check 'fast' first since it's a combo of slow & medium
 		_listBGAnimFast.push_back(i);
-	} else if ((flags & kFlagAnimSlow) == kFlagAnimSlow) {
+	else if ((flags & kFlagAnimSlow) == kFlagAnimSlow)
 		_listBGAnimSlow.push_back(i);
-	} else if ((flags & kFlagAnimMedium) == kFlagAnimMedium) {
+	else if ((flags & kFlagAnimMedium) == kFlagAnimMedium)
 		_listBGAnimMedium.push_back(i);
-	}
 }
 
 void Map::addFGTileAnimation(int x, int y) {
@@ -1076,57 +1076,62 @@ void Map::addFGTileAnimation(int x, int y) {
 	uint32 flags = tile->_flags;
 
 	// FOREGROUND
-	if ((flags & kFlagAnimFast) == kFlagAnimFast) {
+	if ((flags & kFlagAnimFast) == kFlagAnimFast)
 		_listFGAnimFast.push_back(i);
-	} else if ((flags & kFlagAnimSlow) == kFlagAnimSlow) {
+	else if ((flags & kFlagAnimSlow) == kFlagAnimSlow)
 		_listFGAnimSlow.push_back(i);
-	} else if ((flags & kFlagAnimMedium) == kFlagAnimMedium) {
+	else if ((flags & kFlagAnimMedium) == kFlagAnimMedium)
 		_listFGAnimMedium.push_back(i);
-	}
 }
 
 void Map::removeBGTileAnimation(int x, int y) {
 	uint idx = y * _width + x;
 
-	for (uint i = 0; i < _listBGAnimFast.size(); i++)
+	for (uint i = 0; i < _listBGAnimFast.size(); i++) {
 		if (_listBGAnimFast[i] == idx) {
 			_listBGAnimFast.remove_at(i);
 			return;
 		}
+	}
 
-	for (uint i = 0; i < _listBGAnimSlow.size(); i++)
+	for (uint i = 0; i < _listBGAnimSlow.size(); i++) {
 		if (_listBGAnimSlow[i] == idx) {
 			_listBGAnimSlow.remove_at(i);
 			return;
 		}
+	}
 
-	for (uint i = 0; i < _listBGAnimMedium.size(); i++)
+	for (uint i = 0; i < _listBGAnimMedium.size(); i++) {
 		if (_listBGAnimMedium[i] == idx) {
 			_listBGAnimMedium.remove_at(i);
 			return;
 		}
+	}
 }
 
 void Map::removeFGTileAnimation(int x, int y) {
 	uint idx = y * _width + x;
 
-	for (uint i = 0; i < _listFGAnimFast.size(); i++)
+	for (uint i = 0; i < _listFGAnimFast.size(); i++) {
 		if (_listFGAnimFast[i] == idx) {
 			_listFGAnimFast.remove_at(i);
 			return;
 		}
+	}
 
-	for (uint i = 0; i < _listFGAnimSlow.size(); i++)
+	for (uint i = 0; i < _listFGAnimSlow.size(); i++) {
 		if (_listFGAnimSlow[i] == idx) {
 			_listFGAnimSlow.remove_at(i);
 			return;
 		}
+	}
 
-	for (uint i = 0; i < _listFGAnimMedium.size(); i++)
+	for (uint i = 0; i < _listFGAnimMedium.size(); i++) {
 		if (_listFGAnimMedium[i] == idx) {
 			_listFGAnimMedium.remove_at(i);
 			return;
 		}
+	}
 }
 
 void Map::getMapXY(int *x, int *y) {
@@ -1135,17 +1140,15 @@ void Map::getMapXY(int *x, int *y) {
 }
 
 void Map::setMapXY(int x, int y) {
-	if (x < 0) {
+	if (x < 0)
 		x = 0;
-	} else if (x > (_width * kTileWidth - g_hdb->_screenDrawWidth)) {
+	else if (x > (_width * kTileWidth - g_hdb->_screenDrawWidth))
 		x = _width * kTileWidth - g_hdb->_screenDrawWidth;
-	}
 
-	if (y < 0) {
+	if (y < 0)
 		y = 0;
-	} else if (y > (_height * kTileHeight - g_hdb->_screenDrawHeight)) {
+	else if (y > (_height * kTileHeight - g_hdb->_screenDrawHeight))
 		y = _height * kTileHeight - g_hdb->_screenDrawHeight;
-	}
 
 	_mapX = x;
 	_mapY = y;
@@ -1156,10 +1159,8 @@ void Map::centerMapXY(int x, int y) {
 	int checkx = x / kTileWidth;
 	int checky = y / kTileHeight;
 
-	int minx, miny, maxx, maxy;
-
 	// Scan from centerX to right edge
-	maxx = (_width - (g_hdb->_map->_screenTileWidth / 2)) * kTileWidth;
+	int maxx = (_width - (g_hdb->_map->_screenTileWidth / 2)) * kTileWidth;
 	for (int i = checkx + 1; i <= checkx + (g_hdb->_map->_screenTileWidth / 2); i++) {
 		if (!getMapBGTileIndex(i, checky)) {
 			maxx = (i - (g_hdb->_map->_screenTileWidth / 2)) * kTileWidth;
@@ -1168,7 +1169,7 @@ void Map::centerMapXY(int x, int y) {
 	}
 
 	// Scan from centerX to left edge
-	minx = 0;
+	int minx = 0;
 	for (int i = checkx - 1; i >= checkx - (g_hdb->_map->_screenTileWidth / 2); i--) {
 		if (!getMapBGTileIndex(i, checky)) {
 			// +1 because we don't want to see one whole tile
@@ -1178,7 +1179,7 @@ void Map::centerMapXY(int x, int y) {
 	}
 
 	// Scan from centerY to bottom edge
-	maxy = (_height - (g_hdb->_map->_screenTileHeight / 2)) * kTileHeight;
+	int maxy = (_height - (g_hdb->_map->_screenTileHeight / 2)) * kTileHeight;
 	for (int i = checky + 1; i <= checky + (g_hdb->_map->_screenTileHeight / 2); i++) {
 		if (!getMapBGTileIndex(checkx, i)) {
 			maxy = (i - (g_hdb->_map->_screenTileHeight / 2)) * kTileHeight;
@@ -1187,7 +1188,7 @@ void Map::centerMapXY(int x, int y) {
 	}
 
 	// Scan from centerY to top edge
-	miny = 0;
+	int miny = 0;
 	for (int i = checky - 1; i >= checky - (g_hdb->_map->_screenTileHeight / 2); i--) {
 		if (!getMapBGTileIndex(checkx, i)) {
 			// +1 because we don't want to see one whole tile
@@ -1196,17 +1197,15 @@ void Map::centerMapXY(int x, int y) {
 		}
 	}
 
-	if (x < minx) {
+	if (x < minx)
 		x = minx;
-	} else if (x > maxx) {
+	else if (x > maxx)
 		x = maxx;
-	}
 
-	if (y < miny) {
+	if (y < miny)
 		y = miny;
-	} else if (y > maxy) {
+	else if (y > maxy)
 		y = maxy;
-	}
 
 	x -= (g_hdb->_screenDrawWidth / 2);
 	y -= (g_hdb->_screenDrawHeight / 2);
