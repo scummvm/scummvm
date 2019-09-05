@@ -57,7 +57,7 @@ KIASectionClues::KIASectionClues(BladeRunnerEngine *vm, ActorClues *clues) : KIA
 
 	_buttons = new UIImagePicker(_vm, 2);
 
-	_cluesScrollBox = new UIScrollBox(_vm, scrollBoxCallback, this, _vm->_gameInfo->getClueCount(), 1, false, Common::Rect(312, 172, 500, 376), Common::Rect(506, 160, 506, 394));
+	_cluesScrollBox = new UIScrollBox(_vm, scrollBoxCallback, this, kClueCount, 1, false, Common::Rect(312, 172, 500, 376), Common::Rect(506, 160, 506, 394));
 	_uiContainer->add(_cluesScrollBox);
 
 	_filterScrollBox = new UIScrollBox(_vm, scrollBoxCallback, this, 128, 1, false, Common::Rect(142, 162, 291, 376), Common::Rect(120, 160, 120, 370));
@@ -283,9 +283,10 @@ void KIASectionClues::populateFilters() {
 	};
 
 	for (int i = 0; i < kClueCount; ++i) {
-		if (_clues->isAcquired(i)) {
-			int assetType = _vm->_crimesDatabase->getAssetType(i);
-			int crimeId = _vm->_crimesDatabase->getCrime(i);
+		int clueId = _clues->getClueIdByIndex(i);
+		if (_clues->isAcquired(clueId)) {
+			int assetType = _vm->_crimesDatabase->getAssetType(clueId);
+			int crimeId = _vm->_crimesDatabase->getCrime(clueId);
 			if (_debugIntangible || assetType != -1) {
 				availableFilters[getLineIdForAssetType(assetType)] = true;
 				availableFilters[getLineIdForCrimeId(crimeId)] = true;
@@ -382,18 +383,19 @@ void KIASectionClues::populateFilters() {
 void KIASectionClues::populateClues() {
 	_cluesScrollBox->clearLines();
 	for (int i = 0; i < kClueCount; ++i) {
-		if (_clues->isAcquired(i)) {
-			int assetType = _vm->_crimesDatabase->getAssetType(i);
-			int crimeId = _vm->_crimesDatabase->getCrime(i);
+		int clueId = _clues->getClueIdByIndex(i);
+		if (_clues->isAcquired(clueId)) {
+			int assetType = _vm->_crimesDatabase->getAssetType(clueId);
+			int crimeId = _vm->_crimesDatabase->getCrime(clueId);
 			if (assetType != -1 || _debugIntangible) {
 				if (_filters[getLineIdForAssetType(assetType)] && _filters[getLineIdForCrimeId(crimeId)]) {
 					int flags = 0x30;
-					if (_clues->isPrivate(i)) {
+					if (_clues->isPrivate(clueId)) {
 						flags = 0x08;
-					} else if (_clues->isViewed(i)) {
+					} else if (_clues->isViewed(clueId)) {
 						flags = 0x10;
 					}
-					_cluesScrollBox->addLine(_vm->_crimesDatabase->getClueText(i), i, flags);
+					_cluesScrollBox->addLine(_vm->_crimesDatabase->getClueText(clueId), clueId, flags);
 				}
 			}
 		}

@@ -369,9 +369,9 @@ enum Clues {
 	kClueKingstonKitchenBox2               = 263, // ESPER hard-copy
 	kClueCrystalsCigarette                 = 264,
 	kClueSpinnerKeys                       = 265,
-	kClueAct2Ended                         = 266,
-	kClueAct3Ended                         = 267,
-	kClueAct4Ended                         = 268,
+	kClueAct2Ended                         = 266, // is acquired but never checked. Has no type and seems like a placeholder
+	kClueAct3Ended                         = 267, // unused
+	kClueAct4Ended                         = 268, // unused
 	kClueExpertBomber                      = 269,
 	kClueAmateurBomber                     = 270,
 	kClueVKLucyReplicant                   = 271,

@@ -287,9 +287,10 @@ void KIASectionCrimes::onButtonPressed(int buttonId) {
 void KIASectionCrimes::populateAcquiredClues() {
 	_acquiredClueCount = 0;
 	for (int i = 0; i < kClueCount; ++i) {
-		if (_clues->isAcquired(i)) {
-			_acquiredClues[_acquiredClueCount].clueId = i;
-			_acquiredClues[_acquiredClueCount].actorId = _clues->getFromActorId(i);
+		int clueId = _clues->getClueIdByIndex(i);
+		if (_clues->isAcquired(clueId)) {
+			_acquiredClues[_acquiredClueCount].clueId = clueId;
+			_acquiredClues[_acquiredClueCount].actorId = _clues->getFromActorId(clueId);
 			++_acquiredClueCount;
 		}
 	}
@@ -375,18 +376,19 @@ void KIASectionCrimes::populateSuspects() {
 void KIASectionCrimes::populateVisibleClues() {
 	_cluesScrollBox->clearLines();
 	if (_crimeSelected != -1) {
-		for (uint i = 0; i < _vm->_gameInfo->getClueCount(); ++i) {
-			if (_vm->_crimesDatabase->getAssetType(i) != -1
-			 && _vm->_crimesDatabase->getCrime(i) == _crimeSelected
-			 && _clues->isAcquired(i)
+		for (uint i = 0; i < kClueCount; ++i) {
+			int clueId = _clues->getClueIdByIndex(i);
+			if (_vm->_crimesDatabase->getAssetType(clueId) != -1
+			 && _vm->_crimesDatabase->getCrime(clueId) == _crimeSelected
+			 && _clues->isAcquired(clueId)
 			) {
 				int flags = 0x30;
-				if (_clues->isPrivate(i)) {
+				if (_clues->isPrivate(clueId)) {
 					flags = 0x08;
-				} else if (_clues->isViewed(i)) {
+				} else if (_clues->isViewed(clueId)) {
 					flags = 0x10;
 				}
-				_cluesScrollBox->addLine(_vm->_crimesDatabase->getClueText(i), i, flags);
+				_cluesScrollBox->addLine(_vm->_crimesDatabase->getClueText(clueId), clueId, flags);
 			}
 		}
 		_cluesScrollBox->sortLines();

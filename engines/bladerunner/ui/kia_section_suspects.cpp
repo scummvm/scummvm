@@ -66,7 +66,7 @@ KIASectionSuspects::KIASectionSuspects(BladeRunnerEngine *vm, ActorClues *clues)
 	_replicantCheckBox    = new UICheckBox(_vm, checkBoxCallback, this, Common::Rect(142, 338, 275, 348), 1, _replicantFilter);
 	_nonReplicantCheckBox = new UICheckBox(_vm, checkBoxCallback, this, Common::Rect(142, 348, 275, 358), 1, _nonReplicantFilter);
 	_othersCheckBox       = new UICheckBox(_vm, checkBoxCallback, this, Common::Rect(142, 358, 275, 368), 1, _othersFilter);
-	_cluesScrollBox       = new UIScrollBox(_vm, scrollBoxCallback, this,_vm->_gameInfo->getClueCount(), 1, false, Common::Rect(312, 172, 500, 376), Common::Rect(506, 160, 506, 394));
+	_cluesScrollBox       = new UIScrollBox(_vm, scrollBoxCallback, this, kClueCount, 1, false, Common::Rect(312, 172, 500, 376), Common::Rect(506, 160, 506, 394));
 	_crimesScrollBox      = new UIScrollBox(_vm, scrollBoxCallback, this, 50, 1, false, Common::Rect(154, 258, 291, 298), Common::Rect(120, 249, 120, 297));
 	_uiContainer->add(_whereaboutsCheckBox);
 	_uiContainer->add(_MOCheckBox);
@@ -380,9 +380,10 @@ void KIASectionSuspects::onButtonPressed(int buttonId) {
 void KIASectionSuspects::populateAcquiredClues() {
 	_acquiredClueCount = 0;
 	for (int i = 0; i < kClueCount; ++i) {
-		if (_clues->isAcquired(i)) {
-			_acquiredClues[_acquiredClueCount].clueId = i;
-			_acquiredClues[_acquiredClueCount].actorId = _clues->getFromActorId(i);
+		int clueId = _clues->getClueIdByIndex(i);
+		if (_clues->isAcquired(clueId)) {
+			_acquiredClues[_acquiredClueCount].clueId = clueId;
+			_acquiredClues[_acquiredClueCount].actorId = _clues->getFromActorId(clueId);
 			++_acquiredClueCount;
 		}
 	}
@@ -453,7 +454,7 @@ void KIASectionSuspects::populateVisibleClues() {
 		for (int i = 0; i < _acquiredClueCount; ++i) {
 			int clueId = _acquiredClues[i].clueId;
 
-			if (_vm->_crimesDatabase->getAssetType(i) != -1) {
+			if (_vm->_crimesDatabase->getAssetType(clueId) != -1) {
 				SuspectDatabaseEntry *suspect = _vm->_suspectsDatabase->get(_suspectSelected);
 
 				bool showClue = false;

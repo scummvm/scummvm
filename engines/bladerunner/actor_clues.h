@@ -32,6 +32,7 @@ class SaveFileReadStream;
 class SaveFileWriteStream;
 
 class ActorClues {
+	// _vm->_gameInfo->getClueCount()
 	static const int kClueCount = 288;
 
 	struct Clue {
