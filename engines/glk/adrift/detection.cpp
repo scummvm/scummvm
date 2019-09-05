@@ -22,6 +22,7 @@
 
 #include "glk/adrift/detection.h"
 #include "glk/adrift/detection_tables.h"
+#include "glk/blorb.h"
 #include "common/debug.h"
 #include "common/file.h"
 #include "common/md5.h"
@@ -46,17 +47,13 @@ GameDescriptor AdriftMetaEngine::findGame(const char *gameId) {
 }
 
 bool AdriftMetaEngine::detectGames(const Common::FSList &fslist, DetectedGames &gameList) {
-	const char *const EXTENSIONS[] = { ".taf", nullptr };
-
 	// Loop through the files of the folder
 	for (Common::FSList::const_iterator file = fslist.begin(); file != fslist.end(); ++file) {
 		// Check for a recognised filename
 		if (file->isDirectory())
 			continue;
 		Common::String filename = file->getName();
-		bool hasExt = false;
-		for (const char *const *ext = &EXTENSIONS[0]; *ext && !hasExt; ++ext)
-			hasExt = filename.hasSuffixIgnoreCase(*ext);
+		bool hasExt = Blorb::hasBlorbExt(filename) || filename.hasSuffixIgnoreCase(".taf");
 		if (!hasExt)
 			continue;
 
@@ -67,7 +64,12 @@ bool AdriftMetaEngine::detectGames(const Common::FSList &fslist, DetectedGames &
 
 		Common::String md5 = Common::computeStreamMD5AsString(gameFile, 5000);
 		size_t filesize = gameFile.size();
+		gameFile.seek(0);
+		bool isBlorb = Blorb::isBlorb(gameFile, ID_ADRI);
 		gameFile.close();
+
+		if (!isBlorb && Blorb::hasBlorbExt(filename))
+			continue;
 
 		// Check for known games
 		const AdriftGameDescription *p = ADRIFT_GAMES;

@@ -57,6 +57,7 @@ enum {
 	ID_AUTH = MKTAG('A', 'U', 'T', 'H'),
 	ID_ANNO = MKTAG('A', 'N', 'N', 'O'),
 
+	ID_ADRI = MKTAG('A', 'D', 'R', 'I'),
 	ID_ZCOD = MKTAG('Z', 'C', 'O', 'D'),
 	ID_GLUL = MKTAG('G', 'L', 'U', 'L'),
 	ID_TAD2 = MKTAG('T', 'A', 'D', '2'),

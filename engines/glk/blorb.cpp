@@ -143,6 +143,7 @@ Common::ErrorCode Blorb::load() {
 
 		} else if (ce._type == ID_Exec) {
 			if (
+				(_interpType == INTERPRETER_ADRIFT && ce._id == ID_ADRI) ||
 				(_interpType == INTERPRETER_FROTZ && ce._id == ID_ZCOD) ||
 				(_interpType == INTERPRETER_GLULXE && ce._id == ID_GLUL) ||
 				(_interpType == INTERPRETER_TADS2 && ce._id == ID_TAD2) ||

@@ -41,6 +41,7 @@ struct AdriftGameDescription {
 const PlainGameDescriptor ADRIFT_GAME_LIST[] = {
 	{ "Adrift", "Adrift IF Game" },
 
+	// English Games
 	{ "3monkeys", "Three Monkeys, One Cage" },
 	{ "akron", "Akron" },
 	{ "albridgemanor", "Albridge Manor" },
@@ -151,10 +152,23 @@ const PlainGameDescriptor ADRIFT_GAME_LIST[] = {
 	{ "yadfa", "Yet Another Damn Fantasy Adventure" },
 	{ "yonastoundingcastle", "Yon Astounding Castle! of some sort" },
 
+	// English Blorb Games
+	{ "advbackyard", "An Adventurer's Backyard" },
+	{ "allthroughthenight", "All Through the Night" },
+	{ "darkhour", "The Dark Hour" },
+	{ "jacarandajim", "Jacaranda Jim" },
+	{ "jacd", "Just Another Christmas Day" },
+	{ "noblecrook1", "Noble Crook, episode 1" },
+	{ "noblecrook2", "Noble Crook, episode 2" },
+	{ "noblecrook3", "Noble Crook, episode 3" },
+	{ "noblecrook4", "Noble Crook, episode 4" },
+	{ "sonofcamelot", "Son of Camelot" },
+
 	{ nullptr, nullptr }
 };
 
 const AdriftGameDescription ADRIFT_GAMES[] = {
+	// English Games
 	DT_ENTRY0("3monkeys", "dec34c282511b1eadfe231dbbb49f625", 79286),
 	DT_ENTRY0("akron", "2461ceeef3ef1eac15a2051a549b4402", 22258),
 	DT_ENTRY0("albridgemanor", "268003e454c4ade042d593af8397a490", 31353),
@@ -265,6 +279,18 @@ const AdriftGameDescription ADRIFT_GAMES[] = {
 	DT_ENTRY0("xycanthus", "5637cb8221087c5cca094b13138655c3", 116322),
 	DT_ENTRY0("yadfa", "5ee5906fc4b889d126cdfd83bd883a43", 77880),
 	DT_ENTRY0("yonastoundingcastle", "baf2c0423903a3104f67d3a19bde43df", 2320881),
+
+	// English Blorb Games
+	DT_ENTRY0("advbackyard", "73b1171283ffa2b3cf6fb72a0ec31a35", 48990),
+	DT_ENTRY0("allthroughthenight", "89dcb84d74f70945780ed9e719401301", 36345976),
+	DT_ENTRY0("darkhour", "75bc2ac4d561ad2a2143bd90a19d1b46", 35184),
+	DT_ENTRY0("jacarandajim", "78e0de68825eea88995d7490adb6c062", 79146),
+	DT_ENTRY0("jacd", "28ae6ee45f1d2980765d3e9645f0b269", 54256),
+	DT_ENTRY0("noblecrook1", "334c706261ab79b783403ad3315980fd", 23966),
+	DT_ENTRY0("noblecrook2", "9d460ed691ad1b45d5d7c19f1ebf61d9", 22446),
+	DT_ENTRY0("noblecrook3", "c9d4a1ba7d5c1625f2d4cad0f067275a", 22088),
+	DT_ENTRY0("noblecrook4", "cb26241f8dba982bb0cd357ebd8fac45", 20606),
+	DT_ENTRY0("sonofcamelot", "7b3e9e45edc75202b3f586d0ca8dddde", 474380),
 
 	DT_END_MARKER
 };
