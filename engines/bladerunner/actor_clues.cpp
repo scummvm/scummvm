@@ -318,7 +318,9 @@ int ActorClues::getCount() const {
 }
 
 int ActorClues::getClueIdByIndex(int index) const {
-	if (index < 0) {
+	assert(index < _count);
+
+	if (index < 0 || index >= _count) {
 		return -1;
 	}
 	return _clues[index].clueId;

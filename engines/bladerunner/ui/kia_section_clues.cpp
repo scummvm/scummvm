@@ -283,7 +283,7 @@ void KIASectionClues::populateFilters() {
 	};
 
 	for (int i = 0; i < kClueCount; ++i) {
-		int clueId = _clues->getClueIdByIndex(i);
+		int clueId = i;
 		if (_clues->isAcquired(clueId)) {
 			int assetType = _vm->_crimesDatabase->getAssetType(clueId);
 			int crimeId = _vm->_crimesDatabase->getCrime(clueId);
@@ -383,7 +383,7 @@ void KIASectionClues::populateFilters() {
 void KIASectionClues::populateClues() {
 	_cluesScrollBox->clearLines();
 	for (int i = 0; i < kClueCount; ++i) {
-		int clueId = _clues->getClueIdByIndex(i);
+		int clueId = i;
 		if (_clues->isAcquired(clueId)) {
 			int assetType = _vm->_crimesDatabase->getAssetType(clueId);
 			int crimeId = _vm->_crimesDatabase->getCrime(clueId);

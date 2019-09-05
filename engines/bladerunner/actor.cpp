@@ -1254,7 +1254,7 @@ bool Actor::copyClues(int actorId) {
 	bool newCluesAcquired = false;
 	Actor *otherActor = _vm->_actors[actorId];
 	for (int i = 0; i < (int)_vm->_gameInfo->getClueCount(); i++) {
-		int clueId = _clues->getClueIdByIndex(i);
+		int clueId = i;
 		if (hasClue(clueId) && !_clues->isPrivate(clueId) && otherActor->canAcquireClue(clueId) && !otherActor->hasClue(clueId)) {
 			int fromActorId = _id;
 			if (_id == BladeRunnerEngine::kActorVoiceOver) {

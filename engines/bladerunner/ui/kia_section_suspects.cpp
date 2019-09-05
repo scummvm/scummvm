@@ -380,7 +380,7 @@ void KIASectionSuspects::onButtonPressed(int buttonId) {
 void KIASectionSuspects::populateAcquiredClues() {
 	_acquiredClueCount = 0;
 	for (int i = 0; i < kClueCount; ++i) {
-		int clueId = _clues->getClueIdByIndex(i);
+		int clueId = i;
 		if (_clues->isAcquired(clueId)) {
 			_acquiredClues[_acquiredClueCount].clueId = clueId;
 			_acquiredClues[_acquiredClueCount].actorId = _clues->getFromActorId(clueId);
