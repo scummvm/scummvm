@@ -1409,6 +1409,7 @@ Sound::Sound() {
 	_sfxVolume = 255;
 	_musicVolume = 255;
 	_numSounds = 0;
+	_voicesOn = 0;
 }
 
 void Sound::test() {
