@@ -128,6 +128,7 @@ DWORD WINAPI startSpeech(LPVOID parameters) {
 		WaitForSingleObject(*params->mutex, INFINITE);
 		// check again, when we have exclusive access to the queue
 		if (params->queue->empty() || *(params->state) == WindowsTextToSpeechManager::PAUSED) {
+			ReleaseMutex(*params->mutex);
 			break;
 		}
 		WCHAR *currentSpeech = params->queue->front();
