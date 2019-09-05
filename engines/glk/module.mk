@@ -28,6 +28,7 @@ MODULE_OBJS := \
 	window_text_buffer.o \
 	window_text_grid.o \
 	adrift/adrift.o \
+	adrift/detection.o \
 	adrift/os_glk.o \
 	adrift/scdebug.o \
 	adrift/scevents.o \
