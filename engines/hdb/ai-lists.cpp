@@ -676,15 +676,15 @@ bool AI::checkTeleportList(AIEntity *e, int x, int y) {
 			int targetY = _teleporters[i].y1;
 			int targetX2 = _teleporters[i].x2;
 			int targetY2 = _teleporters[i].y2;
-			AIDir dir1 = _teleporters[i].dir1;
+			//AIDir dir1 = _teleporters[i].dir1;
 			AIDir dir2 = _teleporters[i].dir2;
-			int level1 = _teleporters[i].level1;
+			//int level1 = _teleporters[i].level1;
 			int level2 = _teleporters[i].level2;
 			int usable1 = _teleporters[i].usable1;
-			int usable2 = _teleporters[i].usable2;
+			//int usable2 = _teleporters[i].usable2;
 			int anim1 = _teleporters[i].anim1;
 			int anim2 = _teleporters[i].anim2;
-			const char *luaFuncUse1 = _teleporters[i].luaFuncUse1;
+			//const char *luaFuncUse1 = _teleporters[i].luaFuncUse1;
 			const char *luaFuncUse2 = _teleporters[i].luaFuncUse2;
 
 			// Choose which set of co-ordinates is the target
@@ -693,15 +693,15 @@ bool AI::checkTeleportList(AIEntity *e, int x, int y) {
 				targetY = _teleporters[i].y2;
 				targetX2 = _teleporters[i].x1;
 				targetY2 = _teleporters[i].y1;
-				dir1 = _teleporters[i].dir2;
+				//dir1 = _teleporters[i].dir2;
 				dir2 = _teleporters[i].dir1;
-				level1 = _teleporters[i].level2;
+				//level1 = _teleporters[i].level2;
 				level2 = _teleporters[i].level1;
 				usable1 = _teleporters[i].usable2;
-				usable2 = _teleporters[i].usable1;
+				//usable2 = _teleporters[i].usable1;
 				anim1 = _teleporters[i].anim2;
 				anim2 = _teleporters[i].anim1;
-				luaFuncUse1 = _teleporters[i].luaFuncUse2;
+				//luaFuncUse1 = _teleporters[i].luaFuncUse2;
 				luaFuncUse2 = _teleporters[i].luaFuncUse1;
 			}
 
