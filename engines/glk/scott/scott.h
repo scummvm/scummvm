@@ -157,8 +157,6 @@ private:
 	int performLine(int ct);
 	int performActions(int vb, int no);
 
-	int xstrcasecmp(const char *, const char *);
-	int xstrncasecmp(const char *, const char *, size_t);
 	void readInts(Common::SeekableReadStream *f, size_t count, ...);
 public:
 	/**

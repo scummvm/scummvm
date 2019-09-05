@@ -214,7 +214,7 @@ const char *Scott::mapSynonym(const char *word) {
 			tp++;
 		else
 			strcpy(lastword, tp);
-		if (xstrncasecmp(word, tp, _gameHeader._wordLength) == 0)
+		if (scumm_strnicmp(word, tp, _gameHeader._wordLength) == 0)
 			return lastword;
 		n++;
 	}
@@ -230,7 +230,7 @@ int Scott::matchUpItem(const char *text, int loc) {
 
 	while (ct <= _gameHeader._numItems) {
 		if (!_items[ct]._autoGet.empty() && _items[ct]._location == loc &&
-				xstrncasecmp(_items[ct]._autoGet.c_str(), word, _gameHeader._wordLength) == 0)
+				scumm_strnicmp(_items[ct]._autoGet.c_str(), word, _gameHeader._wordLength) == 0)
 			return ct;
 		ct++;
 	}
@@ -484,7 +484,7 @@ int Scott::whichWord(const char *word, const Common::StringArray &list) {
 			tp++;
 		else
 			n = ne;
-		if (xstrncasecmp(word, tp, _gameHeader._wordLength) == 0)
+		if (scumm_strnicmp(word, tp, _gameHeader._wordLength) == 0)
 			return n;
 		ne++;
 	}
@@ -578,7 +578,7 @@ int Scott::getInput(int *vb, int *no) {
 			num = sscanf(buf, "%9s %9s", verb, noun);
 		} while (num == 0 || *buf == '\n');
 
-		if (xstrcasecmp(verb, "restore") == 0) {
+		if (scumm_stricmp(verb, "restore") == 0) {
 			loadGame();
 			return -1;
 		}
@@ -1053,7 +1053,7 @@ int Scott::performActions(int vb, int no) {
 		if (vb == 10 || vb == 18) {
 			// Yes they really _are_ hardcoded values
 			if (vb == 10) {
-				if (xstrcasecmp(_nounText, "ALL") == 0) {
+				if (scumm_stricmp(_nounText, "ALL") == 0) {
 					int i = 0;
 					int f = 0;
 
@@ -1112,7 +1112,7 @@ int Scott::performActions(int vb, int no) {
 				return 0;
 			}
 			if (vb == 18) {
-				if (xstrcasecmp(_nounText, "ALL") == 0) {
+				if (scumm_stricmp(_nounText, "ALL") == 0) {
 					int i = 0;
 					int f = 0;
 					while (i <= _gameHeader._numItems) {
@@ -1156,34 +1156,6 @@ int Scott::performActions(int vb, int no) {
 	}
 
 	return fl;
-}
-
-int Scott::xstrcasecmp(const char *s1, const char *s2) {
-	const unsigned char
-	*us1 = (const unsigned char *)s1,
-	 *us2 = (const unsigned char *)s2;
-
-	while (tolower(*us1) == tolower(*us2++))
-		if (*us1++ == '\0')
-			return (0);
-	return (tolower(*us1) - tolower(*--us2));
-}
-
-int Scott::xstrncasecmp(const char *s1, const char *s2, size_t n) {
-	if (n != 0) {
-		const unsigned char
-		*us1 = (const unsigned char *)s1,
-		 *us2 = (const unsigned char *)s2;
-
-		do {
-			if (tolower(*us1) != tolower(*us2++))
-				return (tolower(*us1) - tolower(*--us2));
-			if (*us1++ == '\0')
-				break;
-		} while (--n != 0);
-	}
-
-	return 0;
 }
 
 void Scott::readInts(Common::SeekableReadStream *f, size_t count, ...) {
