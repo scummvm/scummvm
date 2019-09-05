@@ -499,4 +499,20 @@ uint32 *Encoding::transliterateUTF32(const uint32 *string, size_t length) {
 	return result;
 }
 
+size_t Encoding::stringLength(const char *string, const String &encoding) {
+	if (encoding.hasPrefixIgnoreCase("UTF-16")) {
+		const uint16 *i = (const uint16 *) string;
+		for (;*i != 0; i++) {}
+		return (const char *) i - string;
+	} else if (encoding.hasPrefixIgnoreCase("UTF-32")) {
+		const uint32 *i = (const uint32 *) string;
+		for (;*i != 0; i++) {}
+		return (const char *) i - string;
+	} else {
+		const char *i = string;
+		for (;*i != 0; i++) {}
+		return i - string;
+	}
+}
+
 }
