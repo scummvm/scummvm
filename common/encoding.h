@@ -108,6 +108,18 @@ class Encoding {
 		 * @return Array of characters with the opposite endianity
 		 */
 		static char *switchEndian(const char *string, int length, int bitCount);
+
+		/**
+		 * Computes length (in bytes) of a string in a given encoding. 
+		 * The string must be zero ended. Similar to strlen
+		 * (could be used instead of strlen).
+		 *
+		 * @param string String, which size should be computed.
+		 * @param encoding Encoding of the string.
+		 *
+		 * @return Size of the string in bytes.
+		 */
+		static size_t stringLength(const char *string, const String &encoding);
 	
 	private:
 		/** The encoding, which is currently being converted to */
