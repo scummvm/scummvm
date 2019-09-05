@@ -55,9 +55,9 @@ void Framelimiter::wait() {
 	uint32 timeNow = _vm->_time->currentSystem();
 	uint32 frameDuration = timeNow - _timeFrameStart;
 	if (frameDuration < _speedLimitMs) {
-		uint32 wait = _speedLimitMs - frameDuration;
-		_vm->_system->delayMillis(wait);
-		timeNow += wait;
+		uint32 waittime = _speedLimitMs - frameDuration;
+		_vm->_system->delayMillis(waittime);
+		timeNow += waittime;
 	}
 	// debug("frametime %i ms", timeNow - _timeFrameStart);
 	// using _vm->_time->currentSystem() here is slower and causes some shutters
