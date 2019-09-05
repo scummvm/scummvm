@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2019-09-03 20:29+0200\n"
-"PO-Revision-Date: 2019-08-29 19:14+0000\n"
+"PO-Revision-Date: 2019-09-06 04:54+0000\n"
 "Last-Translator: jepael <kermespersialainen@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fi/>\n"
@@ -1263,21 +1263,20 @@ msgstr "LAN"
 
 #: gui/options.cpp:1791
 msgid "Accessibility"
-msgstr ""
+msgstr "Helppokäyttötoiminnot"
 
 #: gui/options.cpp:1793
 msgctxt "lowres"
 msgid "Accessibility"
-msgstr ""
+msgstr "Helppokäyttötoiminnot"
 
 #: gui/options.cpp:1795
-#, fuzzy
 msgid "Use Text to speech"
-msgstr "Tekstitys ja puhe:"
+msgstr "Käytä tekstistä puheeksi -toimintoa"
 
 #: gui/options.cpp:1795
 msgid "Will read text in gui on mouse over."
-msgstr ""
+msgstr "Lukee osoittimen alla olevan käyttölittymätekstin."
 
 #: gui/options.cpp:1826
 msgid "Apply"
@@ -3638,13 +3637,12 @@ msgid "Failed to save game"
 msgstr "Pelitilan tallentaminen epäonnistui"
 
 #: engines/hdb/detection.cpp:157
-#, fuzzy
 msgid "Enable cheat mode"
-msgstr "Käytä heliumtilaa"
+msgstr "Salli huijaustila"
 
 #: engines/hdb/detection.cpp:158
 msgid "Debug info and level selection becomes available"
-msgstr ""
+msgstr "Debuggaustiedot ja tason valinta tulevat saataville"
 
 #: engines/hopkins/detection.cpp:76 engines/hopkins/detection.cpp:86
 msgid "Gore Mode"
