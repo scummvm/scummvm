@@ -72,11 +72,16 @@ DragonsEngine::DragonsEngine(OSystem *syst) : Engine(syst) {
 	_sceneUpdateFunction = NULL;
 
 	_leftMouseButtonUp = false;
+	_leftMouseButtonDown = false;
 	_rightMouseButtonUp = false;
 	_iKeyUp = false;
 	_downKeyUp = false;
 	_upKeyUp = false;
 	_enterKeyUp = false;
+	_leftKeyDown = false;
+	_leftKeyUp = false;
+	_rightKeyDown = false;
+	_rightKeyUp = false;
 	reset();
 }
 
@@ -93,6 +98,8 @@ void DragonsEngine::updateEvents() {
 	_downKeyUp = false;
 	_upKeyUp = false;
 	_enterKeyUp = false;
+	_leftKeyUp = false;
+	_rightKeyUp = false;
 	while (_eventMan->pollEvent(event)) {
 //		_input->processEvent(event);
 		switch (event.type) {
@@ -104,6 +111,10 @@ void DragonsEngine::updateEvents() {
 				break;
 			case Common::EVENT_LBUTTONUP:
 				_leftMouseButtonUp = true;
+				_leftMouseButtonDown = false;
+				break;
+			case Common::EVENT_LBUTTONDOWN:
+				_leftMouseButtonDown = true;
 				break;
 			case Common::EVENT_RBUTTONUP:
 				_rightMouseButtonUp = true;
@@ -118,7 +129,21 @@ void DragonsEngine::updateEvents() {
 				} else if (event.kbd.keycode == Common::KeyCode::KEYCODE_RETURN ||
 							event.kbd.keycode == Common::KeyCode::KEYCODE_KP_ENTER) {
 					_enterKeyUp = true;
+				} else if (event.kbd.keycode == Common::KeyCode::KEYCODE_LEFT) {
+					_leftKeyUp = true;
+					_leftKeyDown = false;
+				} else if (event.kbd.keycode == Common::KeyCode::KEYCODE_RIGHT) {
+					_rightKeyUp = true;
+					_rightKeyDown = false;
 				}
+				break;
+			case Common::EVENT_KEYDOWN:
+				if (event.kbd.keycode == Common::KeyCode::KEYCODE_LEFT) {
+					_leftKeyDown = true;
+				} else if (event.kbd.keycode == Common::KeyCode::KEYCODE_RIGHT) {
+					_rightKeyDown = true;
+				}
+				break;
 			default:
 				break;
 		}
@@ -1040,18 +1065,15 @@ bool DragonsEngine::isInputEnabled() {
 }
 
 bool DragonsEngine::isActionButtonPressed() {
-	//TODO
-	return false;
+	return _leftMouseButtonDown;
 }
 
 bool DragonsEngine::isLeftKeyPressed() {
-	//TODO
-	return false;
+	return _leftKeyDown;
 }
 
 bool DragonsEngine::isRightKeyPressed() {
-	//TODO
-	return false;
+	return _rightKeyDown;
 }
 
 bool DragonsEngine::checkForActionButtonRelease() {
