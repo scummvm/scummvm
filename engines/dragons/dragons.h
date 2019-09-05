@@ -166,11 +166,17 @@ private:
 
 	// input
 	bool _leftMouseButtonUp;
+	bool _leftMouseButtonDown;
 	bool _rightMouseButtonUp;
 	bool _iKeyUp;
 	bool _downKeyUp;
 	bool _upKeyUp;
 	bool _enterKeyUp;
+
+	bool _leftKeyDown;
+	bool _leftKeyUp;
+	bool _rightKeyDown;
+	bool _rightKeyUp;
 
 	void (*_sceneUpdateFunction)();
 protected:

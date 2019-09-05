@@ -57,7 +57,7 @@ void Minigame1::run() {
 	uint16 local_25c;
 	uint16 local_25a;
 	uint16 catFieldE_scaleMaybe;
-	uint16 local_256;
+	uint16 hitCounter;
 	uint16 local_254;
 	short local_252;
 	short local_250;
@@ -75,10 +75,9 @@ void Minigame1::run() {
 	uint16 local_22c;
 	Actor *targetActorIdTbl [5];
 	short local_21e;
-	uint16 auStack536 [71];
-	uint16 uStack394;
-	short local_188 [7];
-	uint16 auStack378 [5];
+	uint16 auStack536 [72];
+	short local_188 [8];
+	uint16 auStack378 [4];
 	uint16 i;
 	uint16 local_16e;
 	short local_16a;
@@ -179,7 +178,7 @@ void Minigame1::run() {
 	flickerActor->priorityLayer = 4;
 	flickerActor->_sequenceID2 = -1;
 	flickerActor->updateSequence(0x15);
-	local_256 = 0;
+	hitCounter = 0;
 	local_254 = 0;
 	local_252 = 0;
 	flickerXPos = flickerActor->x_pos;
@@ -220,7 +219,7 @@ void Minigame1::run() {
 //		}
 		targetActorIdTbl[(uint)i + 1]->flags = targetActorIdTbl[(uint)i + 1]->flags | 0x380;
 		targetActorIdTbl[(uint)i + 1]->field_e = 0x100;
-		auStack378[(uint)i + 1] = 0;
+		auStack378[(uint)i] = 0;
 		//TODO FUN_80017010_update_actor_texture_maybe(1);
 		i = i + 1;
 	}
@@ -271,7 +270,7 @@ void Minigame1::run() {
 			switch(gameState) {
 				case 0:
 					break;
-				case 1:
+				case 1: //cat in the catapult ready to fire.
 					if (local_252 == 0) {
 						if (local_246 != 8) {
 							local_246 = 0;
@@ -361,7 +360,7 @@ void Minigame1::run() {
 						}
 					}
 					break;
-				case 2:
+				case 2: // initial release of cat.
 					if (flickerActor->_sequenceID == 7) {
 						if ((flickerActor->flags & 4) != 0) {
 							i = 1;
@@ -396,7 +395,7 @@ void Minigame1::run() {
 						_vm->playSound(1);
 					}
 					break;
-				case 3:
+				case 3: // cat flying through the air
 					local_240 = local_240 + local_23c;
 					if ((uint)local_25a * 2 + 0xb4 < (uint)catFieldE_scaleMaybe) {
 						local_23e = local_23e - local_23a;
@@ -432,9 +431,9 @@ void Minigame1::run() {
 								_vm->_talk->FUN_8001a7c4_clearDialogBoxMaybe();
 								local_250 = 0;
 							}
-							local_256 = local_256 + 1;
+							hitCounter = hitCounter + 1;
 							catActor->updateSequence(0xd);
-							if ((i == 0) && (9 < local_256)) {
+							if ((i == 0) && (9 < hitCounter)) {
 								local_22c = 0x16;
 								local_252 = 2;
 								catActor->updateSequence(0xd);
@@ -446,11 +445,11 @@ void Minigame1::run() {
 								gameState = 8;
 								local_234 = 0;
 							}
-							if (local_252 == 0) {
-								_vm->_talk->loadText(local_118[((uint)local_256 - 1) * 2], auStack1008, 200);
+							if (local_252 == 0) { //successful hit maybe?
+								_vm->_talk->loadText(local_118[((uint)hitCounter - 1) * 2], auStack1008, 200);
 								_vm->_talk->displayDialogAroundPoint(auStack1008, (int)(short)(flickerXPos >> 3),0xc,0,0,
-										 local_118[((uint)local_256 - 1) * 2]);
-								local_250 = *(short *)(local_118 + ((uint)local_256 - 1) * 2 + 1);
+										 local_118[((uint)hitCounter - 1) * 2]);
+								local_250 = *(short *)(local_118 + ((uint)hitCounter - 1) * 2 + 1);
 							}
 							targetActorIdTbl[(uint)(uint16)local_188[(uint)i]]->priorityLayer = 3;
 							if (i == 0) {
@@ -460,7 +459,7 @@ void Minigame1::run() {
 								targetActorIdTbl[(uint)(uint16)local_188[(uint)i]]->y_pos -= 3;
 								targetActorIdTbl[(uint)(uint16)local_188[(uint)i]]->updateSequence(6);
 							}
-							auStack378[(uint)(uint16)local_188[(uint)i]] = 0;
+							auStack378[(uint)(uint16)local_188[(uint)i] - 1] = 0;
 							local_188[(uint)i] = 0;
 							break;
 						}
@@ -501,31 +500,31 @@ void Minigame1::run() {
 						gameState = 5;
 					}
 					break;
-				case 4:
+				case 4: // cat sliding down wall.
 					if (((catActor->flags & 4) != 0) &&
 					((dustSpriteActor->flags & 4) != 0)) {
-				if (catActor->_sequenceID == 0xe) {
-					if (local_23e < 0x4300) {
-						local_23e = local_23e + local_23a;
-						local_23a = local_23a + 0x18;
-						catActor->y_pos = local_23e >> 7;
+						if (catActor->_sequenceID == 0xe) {
+							if (local_23e < 0x4300) {
+								local_23e = local_23e + local_23a;
+								local_23a = local_23a + 0x18;
+								catActor->y_pos = local_23e >> 7;
+							}
+							else {
+								catActor->updateSequence(0xf);
+								_vm->playSound(7);
+								gameState = 6;
+							}
+						}
+						else {
+							dustSpriteActor->priorityLayer = 0;
+							catActor->priorityLayer = 3;
+							catActor->updateSequence(0xe);
+							_vm->playSound(8);
+							local_23a = 0x40;
+						}
 					}
-					else {
-						catActor->updateSequence(0xf);
-						_vm->playSound(7);
-						gameState = 6;
-					}
-				}
-				else {
-					dustSpriteActor->priorityLayer = 0;
-					catActor->priorityLayer = 3;
-					catActor->updateSequence(0xe);
-					_vm->playSound(8);
-					local_23a = 0x40;
-				}
-			}
 					break;
-				case 5:
+				case 5: // cat behind portcullis
 					if (local_23e >> 7 < 0x86) {
 						local_23e = local_23e + local_23a;
 						catFieldE_scaleMaybe = catFieldE_scaleMaybe + 8;
@@ -538,7 +537,7 @@ void Minigame1::run() {
 						catActor->flags = catActor->flags | 4;
 					}
 					break;
-				case 6:
+				case 6: // cat run across field
 					catActor->priorityLayer = 3;
 					if (local_252 == 0) {
 						if (catActor->_sequenceID == 0xf) {
@@ -611,27 +610,27 @@ void Minigame1::run() {
 						}
 					}
 					break;
-				case 7:
+				case 7: // cat jumping into catapult
 					if (catActor->priorityLayer == 0) {
-				gameState = 1;
-			}
+						gameState = 1;
+					}
 					else {
-				catActor->priorityLayer = 0;
-				if (local_240 >> 7 < flickerXPos) {
-					flickerActor->updateSequence(5);
-				}
-				else {
-					flickerActor->updateSequence(6);
-				}
-			}
+						catActor->priorityLayer = 0;
+						if (local_240 >> 7 < flickerXPos) {
+							flickerActor->updateSequence(5);
+						}
+						else {
+							flickerActor->updateSequence(6);
+						}
+					}
 					break;
-				case 8:
+				case 8: // cat hit target.
 					if (local_234 == 1) {
 						if (local_23a < 1) {
 							local_234 = 2;
 						}
 						else {
-							local_23a = local_23a + -1;
+							local_23a--;
 							catActor->y_pos = catActor->y_pos + 2;
 						}
 					}
@@ -750,18 +749,18 @@ void Minigame1::run() {
 				}
 			}
 			if ((local_22c < 0x16) && (auStack536[(uint)local_22c * 3 + 2] <= local_22e)) {
-				if ((local_22c == 0x14) && (local_256 < 9)) {
+				if ((local_22c == 0x14) && (hitCounter < 9)) {
 					local_252 = 1;
 					local_22c = 0x16;
 				}
 				else {
 					if (auStack536[(uint)local_22c * 3 + 1] == 1) {
 						i = 0;
-						while ((i < 3 && (auStack378[(uint)i + 1] != 0))) {
+						while ((i < 3 && (auStack378[(uint)i] != 0))) {
 							i = i + 1;
 						}
 						if (i == 3) {
-							error("too many targets");
+							debug("too many targets");
 //							ProbablyShowASCIIMessage(s_too_many_targets!_8008e9e0,2,4,0,0xffffffff);
 						}
 						if (auStack536[(uint)local_22c * 3] == 0) {
@@ -780,7 +779,7 @@ void Minigame1::run() {
 						}
 						targetActorIdTbl[(uint)i + 1]->priorityLayer = 2;
 						local_188[(uint)auStack536[(uint)local_22c * 3]] = i + 1;
-						auStack378[(uint)i + 1] = auStack536[(uint)local_22c * 3] + 1;
+						auStack378[(uint)i] = auStack536[(uint)local_22c * 3] + 1;
 					}
 					else {
 						if ((auStack536[(uint)local_22c * 3 + 1] == 2) &&
@@ -821,7 +820,7 @@ void Minigame1::run() {
 							if (local_254 < 2) {
 								local_254 = local_254 + 1;
 							}
-							auStack378[(uint)(uint16)local_188[(uint)i]] = 0;
+							auStack378[(uint)(uint16)local_188[(uint)i] - 1] = 0;
 							local_188[(uint)i] = 0;
 							if ((1 < local_254) || (auStack536[(uint)local_22c * 3] == 0)) {
 								local_252 = 1;
@@ -836,8 +835,8 @@ void Minigame1::run() {
 			while (i < 3) {
 				if ((targetActorIdTbl[(uint)i + 1]->_sequenceID == 1) ||
 				(targetActorIdTbl[(uint)i + 1]->_sequenceID == 4)) {
-					(&uStack394)[(uint)auStack378[(uint)i + 1]] = 0;
-					auStack378[(uint)i + 1] = 0;
+					local_188[(uint)auStack378[(uint)i]] = 0;
+					auStack378[(uint)i] = 0;
 				}
 				i = i + 1;
 			}
@@ -905,7 +904,7 @@ void Minigame1::run() {
 	_vm->_dragonINIResource->setFlickerRecord(originalFlickerIniID);
 	flickerActor = originalFlickerIniID->actor;
 	flickerActor->clearFlag(ACTOR_FLAG_100);
-	flickerActor->priorityLayer = 2;
+	flickerActor->priorityLayer = 6; //TODO this is 2 in the original but that leave flicker invisible.
 	_vm->clearFlags(ENGINE_FLAG_4000000);
 	_vm->setFlags(savedEngineFlags);
 	uVar1->field_c = actorFieldC;
