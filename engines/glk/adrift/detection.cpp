@@ -81,7 +81,7 @@ bool AdriftMetaEngine::detectGames(const Common::FSList &fslist, DetectedGames &
 			gameList.push_back(GlkDetectedGame(desc.gameId, desc.description, filename, md5, filesize));
 		} else {
 			PlainGameDescriptor gameDesc = findGame(p->_gameId);
-			gameList.push_back(GlkDetectedGame(p->_gameId, gameDesc.description, filename));
+			gameList.push_back(GlkDetectedGame(p->_gameId, gameDesc.description, p->_extra, filename, p->_language));
 		}
 	}
 

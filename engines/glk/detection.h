@@ -112,6 +112,8 @@ public:
 		Common::Language lang);
 	GlkDetectedGame(const char *id, const char *desc, const Common::String &filename,
 		const Common::String &md5, size_t filesize);
+	GlkDetectedGame(const char *id, const char *desc, const char *extra, const Common::String &filename,
+		Common::Language lang);
 };
 
 /**

@@ -69,7 +69,6 @@ const PlainGameDescriptor ADRIFT_GAME_LIST[] = {
 	{ "crawlersdelight", "Crawler's Delight" },
 	{ "crimeadventure", "Crime Adventure" },
 	{ "cursed", "Cursed" },
-	{ "cursedhints", "Cursed - Hints" },
 	{ "cyber1", "Cyber Warp 1" },
 	{ "cyber2", "Cyber Warp 2" },
 	{ "darkness", "Darkness" },
@@ -164,6 +163,9 @@ const PlainGameDescriptor ADRIFT_GAME_LIST[] = {
 	{ "noblecrook4", "Noble Crook, episode 4" },
 	{ "sonofcamelot", "Son of Camelot" },
 
+	// Italian Games
+	{ "ilgolem", "Il Golem" },
+
 	{ nullptr, nullptr }
 };
 
@@ -196,7 +198,7 @@ const AdriftGameDescription ADRIFT_GAMES[] = {
 	DT_ENTRY0("crawlersdelight", "9da704541689f95b3636ad729cfda5f4", 18705),
 	DT_ENTRY0("crimeadventure", "965eafa4579caa3bb8382a07b5e1771e", 15073),
 	DT_ENTRY0("cursed", "62d2e05e62f1137b25a61bbb46154729", 487990),
-	DT_ENTRY0("cursed_hints", "4ad13bf274af97ebbfe47c4a852b3a46", 36793),
+	DT_ENTRY1("cursed", "Hints", "4ad13bf274af97ebbfe47c4a852b3a46", 36793),
 	DT_ENTRY0("cyber1", "b53f7a302edad4d9e2a3310dc1c66e72", 1786),
 	DT_ENTRY0("cyber2", "535c161818ee238e112b1d00bd082b26", 3384),
 	DT_ENTRY0("darkness", "f02a5be2f9a2fd59ef10f3d16157ee27", 25238),
@@ -291,6 +293,9 @@ const AdriftGameDescription ADRIFT_GAMES[] = {
 	DT_ENTRY0("noblecrook3", "c9d4a1ba7d5c1625f2d4cad0f067275a", 22088),
 	DT_ENTRY0("noblecrook4", "cb26241f8dba982bb0cd357ebd8fac45", 20606),
 	DT_ENTRY0("sonofcamelot", "7b3e9e45edc75202b3f586d0ca8dddde", 474380),
+
+	// Italian Games
+	DT_ENTRYL0("ilgolem", Common::IT_ITA, "7ab97545be9c30457d0c9e748ab7885f", 6372213),
 
 	DT_END_MARKER
 };
