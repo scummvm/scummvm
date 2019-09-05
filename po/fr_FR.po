@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2019-09-03 20:29+0200\n"
-"PO-Revision-Date: 2019-08-23 21:25+0000\n"
+"PO-Revision-Date: 2019-09-06 04:54+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fr/>\n"
@@ -1275,21 +1275,22 @@ msgstr "LAN"
 
 #: gui/options.cpp:1791
 msgid "Accessibility"
-msgstr ""
+msgstr "Accessibilité"
 
 #: gui/options.cpp:1793
 msgctxt "lowres"
 msgid "Accessibility"
-msgstr ""
+msgstr "Accessibilité"
 
 #: gui/options.cpp:1795
 #, fuzzy
 msgid "Use Text to speech"
-msgstr "Dialogue :"
+msgstr "Utiliser le synthétiseur vocal"
 
 #: gui/options.cpp:1795
+#, fuzzy
 msgid "Will read text in gui on mouse over."
-msgstr ""
+msgstr "Lit le texte de l'interface lors d'un survol de la souris."
 
 #: gui/options.cpp:1826
 msgid "Apply"
@@ -2225,7 +2226,7 @@ msgstr "OPL2LPT"
 
 #: audio/fmopl.cpp:84
 msgid "OPL3LPT"
-msgstr ""
+msgstr "OPL3LPT"
 
 #: audio/mididrv.cpp:209
 #, c-format
@@ -3670,13 +3671,14 @@ msgid "Failed to save game"
 msgstr "Échec de la sauvegarde"
 
 #: engines/hdb/detection.cpp:157
-#, fuzzy
 msgid "Enable cheat mode"
-msgstr "Activer le mode helium"
+msgstr "Activer le mode Triche"
 
 #: engines/hdb/detection.cpp:158
 msgid "Debug info and level selection becomes available"
 msgstr ""
+"Les informations de débogage et la sélection des niveaux deviennent "
+"disponibles"
 
 #: engines/hopkins/detection.cpp:76 engines/hopkins/detection.cpp:86
 msgid "Gore Mode"
