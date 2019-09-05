@@ -1140,18 +1140,8 @@ void Map::getMapXY(int *x, int *y) {
 }
 
 void Map::setMapXY(int x, int y) {
-	if (x < 0)
-		x = 0;
-	else if (x > (_width * kTileWidth - g_hdb->_screenDrawWidth))
-		x = _width * kTileWidth - g_hdb->_screenDrawWidth;
-
-	if (y < 0)
-		y = 0;
-	else if (y > (_height * kTileHeight - g_hdb->_screenDrawHeight))
-		y = _height * kTileHeight - g_hdb->_screenDrawHeight;
-
-	_mapX = x;
-	_mapY = y;
+	_mapX = CLIP(x, 0, _width * kTileWidth - g_hdb->_screenDrawWidth);
+	_mapY = CLIP(y, 0, _height * kTileHeight - g_hdb->_screenDrawHeight);
 }
 
 // Sets _mapX and _mapY and tries to center the map around X, Y
@@ -1196,16 +1186,9 @@ void Map::centerMapXY(int x, int y) {
 			break;
 		}
 	}
-
-	if (x < minx)
-		x = minx;
-	else if (x > maxx)
-		x = maxx;
-
-	if (y < miny)
-		y = miny;
-	else if (y > maxy)
-		y = maxy;
+	
+	x = CLIP(x, minx, maxx);
+	y = CLIP(y, miny, maxy);
 
 	x -= (g_hdb->_screenDrawWidth / 2);
 	y -= (g_hdb->_screenDrawHeight / 2);
