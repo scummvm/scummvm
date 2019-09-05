@@ -20,18 +20,18 @@
  *
  */
 
-#ifndef SWORD25_SCUMMVM_FILE_H
-#define SWORD25_SCUMMVM_FILE_H
+#ifndef LUA_SCUMMVM_FILE_H
+#define LUA_SCUMMVM_FILE_H
 
 #include "common/str.h"
 
-namespace Sword25 {
+namespace Lua {
 
 /**
  * The following class acts as a proxy interface to the I/O code, pretending that the ScummVM
  * settings are a properly formatted 'config.lua' file
  */
-class Sword25FileProxy {
+class LuaFileProxy {
 private:
 	Common::String _readData;
 	uint _readPos;
@@ -44,14 +44,14 @@ private:
 	void writeSettings();
 	void updateSetting(const Common::String &setting, const Common::String &value);
 public:
-	Sword25FileProxy(const Common::String &filename, const Common::String &mode);
-	~Sword25FileProxy();
+	LuaFileProxy(const Common::String &filename, const Common::String &mode);
+	~LuaFileProxy();
 
 	bool eof() const { return _readPos >= _readData.size(); }
 	size_t read(void *ptr, size_t size, size_t count);
 	size_t write(const char *ptr, size_t count);
 };
 
-} // End of namespace Sword25
+} // End of namespace Lua
 
 #endif

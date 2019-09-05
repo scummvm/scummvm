@@ -24,15 +24,15 @@
 #include "common/config-manager.h"
 #include "common/language.h"
 
-namespace Sword25 {
+namespace Lua {
 
-Sword25FileProxy::Sword25FileProxy(const Common::String &filename, const Common::String &mode) {
+LuaFileProxy::LuaFileProxy(const Common::String &filename, const Common::String &mode) {
 	assert(filename.contains("config.lua"));
 	if (mode == "r")
 		setupConfigFile();
 }
 
-Common::String Sword25FileProxy::formatDouble(double value) {
+Common::String LuaFileProxy::formatDouble(double value) {
 	// This is a bit hackish. The point of it is that it's important that
 	// we ignore the locale decimal mark and force it to be a point. If it
 	// would happen to be a comma instead, it seems that it's seen as two
@@ -51,7 +51,7 @@ Common::String Sword25FileProxy::formatDouble(double value) {
 	return out;
 }
 
-void Sword25FileProxy::setupConfigFile() {
+void LuaFileProxy::setupConfigFile() {
 	double sfxVolume = !ConfMan.hasKey("sfx_volume") ? 1.0 : 1.0 * ConfMan.getInt("sfx_volume") / 255.0;
 	double musicVolume = !ConfMan.hasKey("music_volume") ? 0.5 : 1.0 * ConfMan.getInt("music_volume") / 255.0;
 	double speechVolume = !ConfMan.hasKey("speech_volume") ? 1.0 : 1.0 * ConfMan.getInt("speech_volume") / 255.0;
@@ -75,19 +75,19 @@ SFX_SPEECH_VOLUME = %s\r\n",
 	_readPos = 0;
 }
 
-Sword25FileProxy::~Sword25FileProxy() {
+LuaFileProxy::~LuaFileProxy() {
 	if (!_settings.empty())
 		writeSettings();
 }
 
-size_t Sword25FileProxy::read(void *ptr, size_t size, size_t count) {
+size_t LuaFileProxy::read(void *ptr, size_t size, size_t count) {
 	size_t bytesRead = MIN<size_t>(_readData.size() - _readPos, size * count);
 	memmove(ptr, &_readData.c_str()[_readPos], bytesRead);
 	_readPos += bytesRead;
 	return bytesRead / size;
 }
 
-size_t Sword25FileProxy::write(const char *ptr, size_t count) {
+size_t LuaFileProxy::write(const char *ptr, size_t count) {
 	// Loop through the provided line(s)
 	while (*ptr) {
 		if ((*ptr == '-') && (*(ptr + 1) == '-')) {
@@ -112,7 +112,7 @@ size_t Sword25FileProxy::write(const char *ptr, size_t count) {
 	return count;
 }
 
-void Sword25FileProxy::writeSettings() {
+void LuaFileProxy::writeSettings() {
 	// Loop through the setting lines
 	const char *pSrc = _settings.c_str();
 	while (*pSrc) {
@@ -149,7 +149,7 @@ void Sword25FileProxy::writeSettings() {
 	ConfMan.flushToDisk();
 }
 
-void Sword25FileProxy::updateSetting(const Common::String &setting, const Common::String &value) {
+void LuaFileProxy::updateSetting(const Common::String &setting, const Common::String &value) {
 	if (setting == "GAME_LANGUAGE")
 		setLanguage(value);
 	else if (setting == "GAME_SUBTITLES")
@@ -171,7 +171,7 @@ void Sword25FileProxy::updateSetting(const Common::String &setting, const Common
 /**
  * Get the language code used by the game for each language it supports
  */
-Common::String Sword25FileProxy::getLanguage() {
+Common::String LuaFileProxy::getLanguage() {
 	Common::Language lang = Common::parseLanguage(ConfMan.get("language"));
 	switch (lang) {
 	case Common::EN_ANY:
@@ -201,7 +201,7 @@ Common::String Sword25FileProxy::getLanguage() {
 /**
  * Set the language code fro the game
  */
-void Sword25FileProxy::setLanguage(const Common::String &lang) {
+void LuaFileProxy::setLanguage(const Common::String &lang) {
 	if (lang == "en")
 		ConfMan.set("language", Common::getLanguageCode(Common::EN_ANY));
 	else if (lang == "de")
@@ -224,4 +224,4 @@ void Sword25FileProxy::setLanguage(const Common::String &lang) {
 		error("Unknown language encountered");
 }
 
-} // End of namespace Sword25
+} // End of namespace Lua
