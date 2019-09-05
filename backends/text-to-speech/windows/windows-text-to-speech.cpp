@@ -231,18 +231,16 @@ bool WindowsTextToSpeechManager::stop() {
 		resume();
 	_audio->SetState(SPAS_STOP, 0);
 	WaitForSingleObject(_speechMutex, INFINITE);
+	// Delete the speech queue
 	while (!_speechQueue.empty()) {
 		if (_speechQueue.front() != NULL)
 			free(_speechQueue.front());
 		_speechQueue.pop_front();
 	}
-	_speechQueue.push_back(NULL);
+	// Stop the current speech
+	_voice->Speak(NULL, SPF_PURGEBEFORESPEAK | SPF_ASYNC, 0);
+	_speechState = READY;
 	ReleaseMutex(_speechMutex);
-	if (_thread != NULL) {
-		WaitForSingleObject(_thread, INFINITE);
-		CloseHandle(_thread);
-		_thread = NULL;
-	}
 	_audio->SetState(SPAS_RUN, 0);
 	return false;
 }
