@@ -1980,12 +1980,9 @@ const char *Sound::getSNDLuaName(int index) {
 }
 
 int Sound::getSNDIndex(const char *name) {
-	int		i = 0;
-
-	while (soundList[i].idx != LAST_SOUND) {
+	for (int i = 0; soundList[i].idx != LAST_SOUND; ++i) {
 		if (!scumm_stricmp(soundList[i].luaName, name))
 			return i;
-		i++;
 	}
 
 	return 0;
@@ -2002,8 +1999,7 @@ SoundType Sound::whatSongIsPlaying() {
 }
 
 void Sound::markSoundCacheFreeable() {
-	int	i;
-	for (i = 0; i < kMaxSounds; i++) {
+	for (int i = 0; i < kMaxSounds; i++) {
 		if (_soundCache[i].loaded == SNDMEM_LOADED)
 			_soundCache[i].loaded = SNDMEM_FREEABLE;
 	}
