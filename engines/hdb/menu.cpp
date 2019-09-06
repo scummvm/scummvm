@@ -258,6 +258,29 @@ Menu::Menu() {
 
 	_versionGfx = NULL;
 	_warpGfx = NULL;
+
+	_warpBackoutX = 0;
+	_warpBackoutY = 0;
+	_titleCycle = 0;
+	_titleDelay = 0;
+	_resumeSong = SONG_NONE;
+	_rocketY = 0;
+	_rocketYVel = 0;
+	_nebulaX = 0;
+	_nebulaYVel = 0;
+	_nebulaWhich = 0;
+	_quitScreen = nullptr;
+	_quitTimer = 0;
+	_handangoGfx = nullptr;
+	_clickDelay = 0;
+	_saveSlot = 0;
+	_quitActive = 0;
+	_optionsXV = 0;
+	_oBannerY = 0;
+	_loadOrSave = 0;
+	_whichKey = 0;
+	_introSong = SONG_NONE;
+	_titleSong = SONG_NONE;
 }
 
 Menu::~Menu() {

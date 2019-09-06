@@ -960,6 +960,38 @@ AI::AI() {
 		_youGotY = 306;
 	else
 		_youGotY = g_hdb->_screenHeight - 16;
+
+	_icepSnowballGfxDown = nullptr;
+	_icepSnowballGfxLeft = nullptr;
+	_icepSnowballGfxRight = nullptr;
+	_tileFroglickMiddleUD = nullptr;
+	for (int i = 0; i < 3; ++i) {
+		_tileFroglickWiggleUD[i] = nullptr;
+		_tileFroglickWiggleLeft[i] = nullptr;
+		_tileFroglickWiggleRight[i] = nullptr;
+		_gfxDragonBreathe[i] = nullptr;
+	}
+	_tileFroglickMiddleLR = nullptr;
+	_gfxDragonAsleep = nullptr;
+	for (int i = 0; i < 2; ++i)
+		_gfxDragonFlap[i] = nullptr;
+	for (int i = 0; i < 4; ++i) {
+		_gfxLaserbeamUD[i] = nullptr;
+		_gfxLaserbeamUDTop[i] = nullptr;
+		_gfxLaserbeamUDBottom[i] = nullptr;
+		_gfxLaserbeamLR[i] = nullptr;
+		_gfxLaserbeamLRLeft[i] = nullptr;
+		_gfxLaserbeamLRRight[i] = nullptr;
+	}
+	_player = nullptr;
+	_cineAbortable = false;
+	_cineAborted = false;
+	_cineAbortFunc = nullptr;
+	_cineActive = false;
+	_playerLock = false;
+	_cameraLock = false;
+	_cameraX = 0;
+	_cameraY = 0;
 }
 
 AI::~AI() {
