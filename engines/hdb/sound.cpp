@@ -1475,7 +1475,7 @@ void Sound::setMusicVolume(int volume) {
 	}
 	if (_song2.playing) {
 		if (_song2.fadingIn)
-			_song1.fadeInVol = volume;
+			_song2.fadeInVol = volume;
 		if (!_song2.fadingOut)
 			g_hdb->_mixer->setChannelVolume(_song2.handle, volume);
 	}
