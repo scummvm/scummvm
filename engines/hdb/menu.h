@@ -207,14 +207,10 @@ public:
 	bool _menuActive, _optionsScrolling, _newgameActive, _sayHDB;
 	int	_gamefilesActive, _clickDelay, _saveSlot, _optionsActive, _quitActive, _warpActive;
 	int	_optionsScrollX, _optionsXV, _oBannerY;
-	int	_nextScreen, _loadOrSave;
+	int	_nextScreen;
 
 	Common::KeyCode _keyAssignUp, _keyAssignDown, _keyAssignLeft, _keyAssignRight, _keyAssignUse;
 	Picture	*_contArrowUp, *_contArrowDown, *_contArrowLeft, *_contArrowRight, *_contAssign, *_warpPlaque;
-//	void	ShowControl(int x, int y, short key);
-
-	bool _waitingForKey;
-	int	_whichKey;
 
 	Picture	*_sliderLeft, *_sliderMid, *_sliderRight, *_sliderKnob;
 	Picture	*_gCheckEmpty, *_gCheckOn, *_gCheckOff, *_gCheckLeft, *_gCheckRight;

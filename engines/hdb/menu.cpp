@@ -207,7 +207,6 @@ Menu::Menu() {
 	_contArrowRight = NULL;
 	_contAssign = NULL;
 
-	_waitingForKey = false;
 	_warpPlaque = NULL;
 	_hdbLogoScreen = NULL;
 
@@ -277,8 +276,6 @@ Menu::Menu() {
 	_quitActive = 0;
 	_optionsXV = 0;
 	_oBannerY = 0;
-	_loadOrSave = 0;
-	_whichKey = 0;
 	_introSong = SONG_NONE;
 	_titleSong = SONG_NONE;
 }
