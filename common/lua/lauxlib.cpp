@@ -521,7 +521,7 @@ LUALIB_API void luaL_unref (lua_State *L, int t, int ref) {
 
 typedef struct LoadF {
   int extraline;
-  Sword25::Sword25FileProxy *f;
+  Lua::LuaFileProxy *f;
   char buff[LUAL_BUFFERSIZE];
 } LoadF;
 
@@ -557,7 +557,7 @@ LUALIB_API int luaL_loadfile (lua_State *L, const char *filename) {
   lf.extraline = 0;
 
   lua_pushfstring(L, "@%s", filename);
-  lf.f = new Sword25::Sword25FileProxy(filename, "r");
+  lf.f = new Lua::LuaFileProxy(filename, "r");
 /*
   if (filename == NULL) {
     lua_pushliteral(L, "=stdin");

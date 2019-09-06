@@ -52,7 +52,7 @@ static void fileerror (lua_State *L, int arg, const char *filename) {
 */
 
 #define tofilep(L)	((FILE **)luaL_checkudata(L, 1, LUA_FILEHANDLE))
-#define tofileProxy(L)	((Sword25::Sword25FileProxy **)luaL_checkudata(L, 1, LUA_FILEHANDLE))
+#define tofileProxy(L)	((Lua::LuaFileProxy **)luaL_checkudata(L, 1, LUA_FILEHANDLE))
 
 static int io_type (lua_State *L) {
 	return luaL_error(L, "%s", "LUA I/O has been removed in ScummVM");
@@ -71,8 +71,8 @@ static int io_type (lua_State *L) {
 */
 }
 
-static Sword25::Sword25FileProxy *tofile (lua_State *L) {
-  Sword25::Sword25FileProxy **f = tofileProxy(L);
+static Lua::LuaFileProxy *tofile (lua_State *L) {
+  Lua::LuaFileProxy **f = tofileProxy(L);
   if (*f == NULL)
     luaL_error(L, "attempt to use a closed file");
   return *f;
@@ -84,8 +84,8 @@ static Sword25::Sword25FileProxy *tofile (lua_State *L) {
 ** before opening the actual file; so, if there is a memory error, the
 ** file is not left opened.
 */
-static Sword25::Sword25FileProxy **newfile (lua_State *L) {
-	Sword25::Sword25FileProxy **pf = (Sword25::Sword25FileProxy **)lua_newuserdata(L, sizeof(Sword25::Sword25FileProxy *));
+static Lua::LuaFileProxy **newfile (lua_State *L) {
+	Lua::LuaFileProxy **pf = (Lua::LuaFileProxy **)lua_newuserdata(L, sizeof(Lua::LuaFileProxy *));
   *pf = NULL;  /* file handle is currently `closed' */
   luaL_getmetatable(L, LUA_FILEHANDLE);
   lua_setmetatable(L, -2);
@@ -142,7 +142,7 @@ static int io_close (lua_State *L) {
   if (lua_isnone(L, 1))
     lua_rawgeti(L, LUA_ENVIRONINDEX, IO_OUTPUT);
 
-  Sword25::Sword25FileProxy **f = tofileProxy(L);
+  Lua::LuaFileProxy **f = tofileProxy(L);
   delete *f;
   *f = NULL;
 
@@ -151,7 +151,7 @@ static int io_close (lua_State *L) {
 
 
 static int io_gc (lua_State *L) {
-  Sword25::Sword25FileProxy **f = tofileProxy(L);
+  Lua::LuaFileProxy **f = tofileProxy(L);
   // ignore closed files
   if (*f != NULL)
     delete *f;
@@ -176,8 +176,8 @@ static int io_tostring (lua_State *L) {
 static int io_open (lua_State *L) {
   const char *filename = luaL_checkstring(L, 1);
   const char *mode = luaL_optstring(L, 2, "r");
-  Sword25::Sword25FileProxy **pf = newfile(L);
-  *pf = new Sword25::Sword25FileProxy(filename, mode);
+  Lua::LuaFileProxy **pf = newfile(L);
+  *pf = new Lua::LuaFileProxy(filename, mode);
   return (*pf == NULL) ? pushresult(L, 0, filename) : 1;
 }
 
@@ -291,7 +291,7 @@ static int io_lines (lua_State *L) {
 */
 
 /*
-static int read_number (lua_State *L, Sword25::Sword25FileProxy *f) {
+static int read_number (lua_State *L, Lua::LuaFileProxy *f) {
   lua_Number d;
   if (fscanf(f, LUA_NUMBER_SCAN, &d) == 1) {
     lua_pushnumber(L, d);
@@ -301,7 +301,7 @@ static int read_number (lua_State *L, Sword25::Sword25FileProxy *f) {
 }
 
 
-static int test_eof (lua_State *L, Sword25::Sword25FileProxy *f) {
+static int test_eof (lua_State *L, Lua::LuaFileProxy *f) {
   int c = getc(f);
   ungetc(c, f);
   lua_pushlstring(L, NULL, 0);
@@ -309,7 +309,7 @@ static int test_eof (lua_State *L, Sword25::Sword25FileProxy *f) {
 }
 
 
-static int read_line (lua_State *L, Sword25::Sword25FileProxy *f) {
+static int read_line (lua_State *L, Lua::LuaFileProxy *f) {
   luaL_Buffer b;
   luaL_buffinit(L, &b);
   for (;;) {
@@ -331,7 +331,7 @@ static int read_line (lua_State *L, Sword25::Sword25FileProxy *f) {
 }
 
 
-static int read_chars (lua_State *L, Sword25::Sword25FileProxy *f, size_t n) {
+static int read_chars (lua_State *L, Lua::LuaFileProxy *f, size_t n) {
   size_t rlen;  // how much to read
   size_t nr;  // number of chars actually read
   luaL_Buffer b;
@@ -349,7 +349,7 @@ static int read_chars (lua_State *L, Sword25::Sword25FileProxy *f, size_t n) {
 }
 
 
-static int g_read (lua_State *L, Sword25::Sword25FileProxy *f, int first) {
+static int g_read (lua_State *L, Lua::LuaFileProxy *f, int first) {
   int nargs = lua_gettop(L) - 1;
   int success;
   int n;
@@ -433,7 +433,7 @@ static int io_readline (lua_State *L) {
 /* }====================================================== */
 
 
-static int g_write (lua_State *L, Sword25::Sword25FileProxy *f, int arg) {
+static int g_write (lua_State *L, Lua::LuaFileProxy *f, int arg) {
   int nargs = lua_gettop(L) - 1;
   int status = 1;
   for (; nargs--; arg++) {

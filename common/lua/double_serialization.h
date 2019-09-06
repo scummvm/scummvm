@@ -56,6 +56,6 @@ SerializedDouble encodeDouble(double value);
  */
 double decodeDouble(SerializedDouble value);
 
-} // End of namespace Sword25
+} // End of namespace Util
 
 #endif
