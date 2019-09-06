@@ -239,7 +239,7 @@ void AIEntity::save(Common::OutSaveFile *out) {
 	if (!lookUp && aiAction)
 		error("AIEntity::save: No matching ACTION function for func-string for %s entity", AIType2Str(type));
 	if (lookUp)
-		strcpy(funcString, lookUp);
+		strncpy(funcString, lookUp, 31);
 	out->write(funcString, 32);
 
 	lookUp = g_hdb->_ai->funcLookUp(aiUse);
@@ -247,7 +247,7 @@ void AIEntity::save(Common::OutSaveFile *out) {
 	if (!lookUp && aiUse)
 		error("AIEntity::save: No matching USE function for func-string for %s entity", AIType2Str(type));
 	if (lookUp)
-		strcpy(funcString, lookUp);
+		strncpy(funcString, lookUp, 31);
 	out->write(funcString, 32);
 
 	lookUp = g_hdb->_ai->funcLookUp(aiInit);
@@ -255,7 +255,7 @@ void AIEntity::save(Common::OutSaveFile *out) {
 	if (!lookUp && aiInit)
 		error("AIEntity::save: No matching INIT function for func-string for %s entity", AIType2Str(type));
 	if (lookUp)
-		strcpy(funcString, lookUp);
+		strncpy(funcString, lookUp, 31);
 	out->write(funcString, 32);
 
 	lookUp = g_hdb->_ai->funcLookUp(aiInit2);
@@ -263,7 +263,7 @@ void AIEntity::save(Common::OutSaveFile *out) {
 	if (!lookUp && aiInit2)
 		error("AIEntity::save: No matching INIT2 function for func-string for %s entity", AIType2Str(type));
 	if (lookUp)
-		strcpy(funcString, lookUp);
+		strncpy(funcString, lookUp, 31);
 	out->write(funcString, 32);
 
 	lookUp = g_hdb->_ai->funcLookUp((FuncPtr)aiDraw);
@@ -271,7 +271,7 @@ void AIEntity::save(Common::OutSaveFile *out) {
 	if (!lookUp && aiDraw)
 		error("AIEntity::save: No matching DRAW function for func-string for %s entity", AIType2Str(type));
 	if (lookUp)
-		strcpy(funcString, lookUp);
+		strncpy(funcString, lookUp, 31);
 	out->write(funcString, 32);
 
 	// Save AIEntity
