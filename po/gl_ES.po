@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2019-09-03 20:29+0200\n"
+"POT-Creation-Date: 2019-09-06 06:55+0200\n"
 "PO-Revision-Date: 2018-10-10 04:23+0000\n"
 "Last-Translator: scootergrisen <scootergrisen@gmail.com>\n"
 "Language-Team: Galician <https://translations.scummvm.org/projects/scummvm/"
@@ -3283,29 +3283,29 @@ msgstr ""
 msgid "Cutscene file '%s' not found!"
 msgstr "Non se atopou o ficheiro de secuencia %s!"
 
-#: engines/bladerunner/bladerunner.cpp:340
+#: engines/bladerunner/bladerunner.cpp:339
 msgid "Failed to initialize resources"
 msgstr ""
 
-#: engines/bladerunner/bladerunner.cpp:989
+#: engines/bladerunner/bladerunner.cpp:983
 msgid "A required game resource was not found"
 msgstr ""
 
-#: engines/bladerunner/bladerunner.cpp:2135
+#: engines/bladerunner/bladerunner.cpp:2124
 msgid ""
 "WARNING: This game was saved in Restored Cut Content mode, but you are "
 "playing in Original Content mode. The mode will be adjusted to Restored Cut "
 "Content for this session until you completely Quit the game."
 msgstr ""
 
-#: engines/bladerunner/bladerunner.cpp:2137
+#: engines/bladerunner/bladerunner.cpp:2126
 msgid ""
 "WARNING: This game was saved in Original Content mode, but you are playing "
 "in Restored Cut Content mode. The mode will be adjusted to Original Content "
 "mode for this session until you completely Quit the game."
 msgstr ""
 
-#: engines/bladerunner/bladerunner.cpp:2139
+#: engines/bladerunner/bladerunner.cpp:2128
 msgid "Continue"
 msgstr ""
 
