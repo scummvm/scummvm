@@ -248,10 +248,10 @@ public:
 	}
 
 	void togglePause() {
-		_pauseFlag ^= 1;
+		_pauseFlag ^= true;
 	}
 
-	int getPause() {
+	bool getPause() {
 		return _pauseFlag;
 	}
 
@@ -345,7 +345,7 @@ private:
 	int _actionMode; // 0 or 1
 
 	// Misc Variables
-	int _pauseFlag;
+	bool _pauseFlag;
 	bool _cheating;
 	int _debugFlag;
 	Tile *_debugLogo;

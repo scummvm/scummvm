@@ -31,6 +31,8 @@ namespace HDB {
 
 FileMan::FileMan() {
 	_mpcFile = new Common::File;
+	_dataHeader.id = 0;
+	_dataHeader.dirSize = 0;
 }
 
 FileMan::~FileMan() {
@@ -40,23 +42,17 @@ FileMan::~FileMan() {
 }
 
 void FileMan::openMPC(const Common::String &filename) {
-	if (!_mpcFile->open(filename)) {
+	if (!_mpcFile->open(filename))
 		error("FileMan::openMPC(): Error reading the MSD/MPC file %s", filename.c_str());
-	}
 
 	_dataHeader.id = _mpcFile->readUint32BE();
 
-	if (_dataHeader.id == MKTAG('M', 'P', 'C', 'C')) {
+	if (_dataHeader.id == MKTAG('M', 'P', 'C', 'C'))
 		error("FileMan::openMPC: Compressed MPC File");
-	} else if (_dataHeader.id == MKTAG('M', 'P', 'C', 'U')) {
-		// we're fine
-	} else if (_dataHeader.id == MKTAG('M', 'S', 'D', 'C')) {
-		// we're fine
-	} else if (_dataHeader.id == MKTAG('M', 'S', 'D', 'U')) {
+	else if (_dataHeader.id == MKTAG('M', 'S', 'D', 'U'))
 		error("FileMan::openMPC: Uncompressed MSD File");
-	} else {
+	else if (_dataHeader.id != MKTAG('M', 'P', 'C', 'U') && _dataHeader.id != MKTAG('M', 'S', 'D', 'C'))
 		error("FileMan::openMPC: Invalid MPC/MSD File.");
-	}
 
 	// read the directory
 	uint32 offset = _mpcFile->readUint32LE();
@@ -72,9 +68,8 @@ void FileMan::openMPC(const Common::String &filename) {
 	for (uint32 fileIndex = 0; fileIndex < _dataHeader.dirSize; fileIndex++) {
 		MPCEntry *dirEntry = new MPCEntry();
 
-		for (int i = 0; i < 64; i++) {
+		for (int i = 0; i < 64; i++)
 			dirEntry->filename[i] = tolower(_mpcFile->readByte());
-		}
 
 		dirEntry->offset = _mpcFile->readUint32LE();
 		dirEntry->length = _mpcFile->readUint32LE();

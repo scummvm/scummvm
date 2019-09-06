@@ -55,6 +55,20 @@ Map::Map() {
 	_background = NULL;
 	_foreground = NULL;
 	_iconList = NULL;
+
+	_width = 0;
+	_height = 0;
+	_mapX = 0;
+	_mapY = 0;
+	_mapTileX = 0;
+	_mapTileY = 0;
+	_mapTileXOff = 0;
+	_mapTileYOff = 0;
+	_backgroundOffset = 0;
+	_foregroundOffset = 0;
+	_iconNum = 0;
+	_iconListOffset = 0;
+	_infoNum = 0;
 }
 
 Map::~Map() {

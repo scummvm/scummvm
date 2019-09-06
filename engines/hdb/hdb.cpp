@@ -90,6 +90,27 @@ HDBGame::HDBGame(OSystem *syst, const ADGameDescription *gameDesc) : Engine(syst
 	_monkeystone14 = STARS_MONKEYSTONE_14_FAKE;
 	_monkeystone21 = STARS_MONKEYSTONE_21_FAKE;
 
+	_gameShutdown = false;
+	_progressGfx = nullptr;
+	_progressMarkGfx = nullptr;
+	_loadingScreenGfx = nullptr;
+	_logoGfx = nullptr;
+	_progressCurrent = -1;
+	_progressXOffset = -1;
+	_progressMax = -1;
+	_gameState = GAME_TITLE;
+	_actionMode = -1;
+	_pauseFlag = false;
+	_debugFlag = -1;
+	_debugLogo = nullptr;
+	_dx = 0;
+	_dy = 0;
+	_changeLevel = false;
+	_saveInfo.active = false;
+	_saveInfo.slot = 0;
+	_loadInfo.active = false;
+	_loadInfo.slot = 0;
+
 	syncSoundSettings();
 }
 
@@ -159,7 +180,7 @@ bool HDBGame::init() {
 	_menu->startTitle();
 
 	_gameShutdown = false;
-	_pauseFlag = 0;
+	_pauseFlag = false;
 	_systemInit = true;
 	if (!g_hdb->isPPC())
 		_loadingScreenGfx = _gfx->loadPic(PIC_LOADSCREEN);
@@ -355,11 +376,10 @@ void HDBGame::paint() {
 	}
 
 	// Draw FPS on Screen in Debug Mode
-	if (_debugFlag == 1) {
+	if (_debugFlag == 1)
 		_gfx->drawDebugInfo(_debugLogo, _frames.size());
-	} else if (_debugFlag == 2) {
+	else if (_debugFlag == 2)
 		_debugLogo->drawMasked(_screenWidth - 32, 0);
-	}
 
 	_gfx->updateVideo();
 }
