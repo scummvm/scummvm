@@ -125,7 +125,7 @@ int AI::queryInventory(const char *string) {
 
 	int count = 0;
 	for (int i = _numInventory - 1; i >= 0; i--)
-		if (_inventory[i].ent.entityName && strstr(_inventory[i].ent.entityName, string))
+		if (strstr(_inventory[i].ent.entityName, string))
 			count++;
 
 	return count;
@@ -152,7 +152,7 @@ bool AI::removeInvItem(const char *string, int amount) {
 		found = false;
 
 		for (int i = _numInventory - 1; i >= 0; i--)
-			if (_inventory[i].ent.entityName && strstr(_inventory[i].ent.entityName, string)) {
+			if (strstr(_inventory[i].ent.entityName, string)) {
 				int j = i;
 				memset(&_inventory[j], 0, sizeof(InvEnt));
 				while (j < _numInventory - 1) {
@@ -187,10 +187,10 @@ int AI::queryInventoryType(AIType which) {
 		return 0;
 
 	int count = 0;
-	for (int i = 0; i < _numInventory; i++)
+	for (int i = 0; i < _numInventory; i++) {
 		if (_inventory[i].ent.type == which)
 			count++;
-
+	}
 	return count;
 }
 
@@ -198,9 +198,10 @@ int AI::queryInventoryTypeSlot(AIType which) {
 	if (!_numInventory)
 		return 0;
 
-	for (int i = 0; i < _numInventory; i++)
+	for (int i = 0; i < _numInventory; i++) {
 		if (_inventory[i].ent.type == which)
 			return i;
+	}
 	return -1;
 }
 
@@ -224,7 +225,7 @@ bool AI::removeInvItemType(AIType which, int amount) {
 	do {
 		found = false;
 
-		for (int i = 0; i < _numInventory; i++)
+		for (int i = 0; i < _numInventory; i++) {
 			if (_inventory[i].ent.type == which) {
 				int j = i;
 				memset(&_inventory[j], 0, sizeof(InvEnt));
@@ -239,6 +240,7 @@ bool AI::removeInvItemType(AIType which, int amount) {
 				if (!amount)
 					break;
 			}
+		}
 	} while (found && amount);
 
 	// if we haven't removed them all, return false

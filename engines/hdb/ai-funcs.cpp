@@ -579,7 +579,7 @@ AIEntity *AI::findEntityType(AIType type, int x, int y) {
 void AI::getEntityXY(const char *entName, int *x, int *y) {
 	for (Common::Array<AIEntity *>::iterator it = _ents->begin(); it != _ents->end(); ++it) {
 		AIEntity *e = *it;
-		if (e->entityName && !scumm_stricmp(entName, e->entityName)) {
+		if (!scumm_stricmp(entName, e->entityName)) {
 			*x = e->tileX;
 			*y = e->tileY;
 			return;
@@ -588,7 +588,7 @@ void AI::getEntityXY(const char *entName, int *x, int *y) {
 
 	for (Common::Array<AIEntity *>::iterator jt = _floats->begin(); jt != _floats->end(); ++jt) {
 		AIEntity *e = *jt;
-		if (e->entityName && !scumm_stricmp(entName, e->entityName)) {
+		if (!scumm_stricmp(entName, e->entityName)) {
 			*x = e->tileX;
 			*y = e->tileY;
 			return;
@@ -608,7 +608,7 @@ void AI::getEntityXY(const char *entName, int *x, int *y) {
 bool AI::useLuaEntity(const char *initName) {
 	for (Common::Array<AIEntity *>::iterator it = _ents->begin(); it != _ents->end(); ++it) {
 		AIEntity *e = *it;
-		if (e->entityName && !scumm_stricmp(initName, e->entityName)) {
+		if (!scumm_stricmp(initName, e->entityName)) {
 			e->aiUse(e);
 			checkActionList(e, e->tileX, e->tileY, true);
 			if (e->luaFuncUse)
@@ -631,7 +631,7 @@ bool AI::useLuaEntity(const char *initName) {
 void AI::removeLuaEntity(const char *initName) {
 	for (uint i = 0; i < _ents->size(); i++) {
 		AIEntity *e = _ents->operator[](i);
-		if (e->entityName && !scumm_stricmp(initName, e->entityName)) {
+		if (!scumm_stricmp(initName, e->entityName)) {
 			removeEntity(e);
 			i--;
 		}
@@ -641,7 +641,7 @@ void AI::removeLuaEntity(const char *initName) {
 void AI::animLuaEntity(const char *initName, AIState st) {
 	for (Common::Array<AIEntity *>::iterator it = _ents->begin(); it != _ents->end(); ++it) {
 		AIEntity *e = *it;
-		if (e->entityName && !scumm_stricmp(initName, e->entityName)) {
+		if (!scumm_stricmp(initName, e->entityName)) {
 			e->state = st;
 			e->animFrame = 0;
 			e->animDelay = e->animCycle;
@@ -652,7 +652,7 @@ void AI::animLuaEntity(const char *initName, AIState st) {
 void AI::setLuaAnimFrame(const char *initName, AIState st, int frame) {
 	for (Common::Array<AIEntity *>::iterator it = _ents->begin(); it != _ents->end(); ++it) {
 		AIEntity *e = *it;
-		if (e->entityName && !scumm_stricmp(initName, e->entityName)) {
+		if (!scumm_stricmp(initName, e->entityName)) {
 			e->state = st;
 			e->animFrame = frame;
 			e->animDelay = e->animCycle;
