@@ -76,6 +76,33 @@ Window::Window() {
 	}
 
 	_pauseY = (g_hdb->_screenHeight / 2 - 64);
+
+	_gGfxTM = nullptr;
+	_gGfxTR = nullptr;
+	_gGfxL = nullptr;
+	_gGfxM = nullptr;
+	_gGfxR = nullptr;
+	_gGfxBL = nullptr;
+	_gGfxBM = nullptr;
+	_gGfxBR = nullptr;
+	_gGfxTitleL = nullptr;
+	_gGfxTitleM = nullptr;
+	_gGfxTitleR = nullptr;
+	_gfxIndent = nullptr;
+	_gfxArrowTo = nullptr;
+	_gfxHandright = nullptr;
+	_gfxTry = nullptr;
+	_gfxAgain = nullptr;
+	_gfxInvSelect = nullptr;
+	_gfxLevelRestart = nullptr;
+	_gfxPausePlaque = nullptr;
+	_gemGfx = nullptr;
+	_mstoneGfx = nullptr;
+	_gfxResources = nullptr;
+	_gfxDeliveries = nullptr;
+	_gfxInfobar = nullptr;
+	_gfxDarken = nullptr;
+	_infobarDimmed = 0;
 }
 
 Window::~Window() {

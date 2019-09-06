@@ -115,6 +115,11 @@ LuaScript::LuaScript() {
 
 	_state = NULL;
 	_systemInit = false;
+
+
+	_pcallErrorhandlerRegistryIndex = 0;
+	_globalLuaStream = nullptr;
+	_globalLuaLength = 0;
 }
 
 LuaScript::~LuaScript() {
