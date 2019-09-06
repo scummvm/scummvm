@@ -38,7 +38,7 @@
 #include "backends/platform/psp/powerman.h"
 #include "backends/platform/psp/rtc.h"
 
-#include "backends/saves/psp/psp-saves.h"
+#include "backends/saves/default/default-saves.h"
 #include "backends/timer/default/default-timer.h"
 #include "graphics/surface.h"
 #include "audio/mixer_intern.h"
@@ -60,6 +60,8 @@ OSystem_PSP::~OSystem_PSP() {}
 
 #define PSP_SCREEN_WIDTH 480
 #define PSP_SCREEN_HEIGHT 272
+
+#define PSP_DEFAULT_SAVE_PATH "ms0:/scummvm_savegames"
 
 void OSystem_PSP::initBackend() {
 	DEBUG_ENTER_FUNC();
@@ -93,7 +95,7 @@ void OSystem_PSP::initBackend() {
 	_imageViewer.setInputHandler(&_inputHandler);
 	_imageViewer.setDisplayManager(&_displayManager);
 
-	_savefileManager = new PSPSaveFileManager;
+	_savefileManager = new DefaultSaveFileManager(PSP_DEFAULT_SAVE_PATH)
 
 	_timerManager = new DefaultTimerManager();
 

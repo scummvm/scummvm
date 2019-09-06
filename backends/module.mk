@@ -312,7 +312,6 @@ MODULE_OBJS += \
 	fs/psp/psp-fs-factory.o \
 	fs/psp/psp-stream.o \
 	plugins/psp/psp-provider.o \
-	saves/psp/psp-saves.o \
 	timer/psp/timer.o
 endif
 
