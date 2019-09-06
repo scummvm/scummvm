@@ -3562,9 +3562,9 @@ static const uint16 kq6SignatureDrinkMeFix[] = {
 };
 
 static const uint16 kq6PatchDrinkMeFix[] = {
-	PATCH_ADDTOOFFSET(+5),              // skip to bnt offset
-	PATCH_GETORIGINALBYTEADJUST(+5, +13), // [check for 11h code] (adjust bnt offset)
-	PATCH_ADDTOOFFSET(+162),
+	PATCH_ADDTOOFFSET(+4),
+	0x30, PATCH_UINT16(0x00b1),         // bnt 00b1 [ check for 11h code ]
+	PATCH_ADDTOOFFSET(+161),
 	0x39, PATCH_SELECTOR8(doit),        // pushi doit
 	0x76,                               // push0
 	0x81, 0x0a,                         // lag global[0a]
