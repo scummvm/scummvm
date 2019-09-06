@@ -387,10 +387,6 @@ void HDBGame::paint() {
 // builds a waypoint list if an entity is not next to player,
 //	or gives info on an entity, or actually uses an entity
 void HDBGame::setTargetXY(int x, int y) {
-	AIEntity *e, *p;
-	int px, py;
-	bool oneTileAway;
-
 	// if ANY button is pressed
 	if (_input->getButtons() || _ai->_playerEmerging)
 		return;
@@ -403,14 +399,14 @@ void HDBGame::setTargetXY(int x, int y) {
 	if (!x)
 		return;
 
-	e = _ai->findEntity(x, y);
-	p = _ai->getPlayer();
+	AIEntity *e = _ai->findEntity(x, y);
+	AIEntity *p = _ai->getPlayer();
 
 	if (!p)
 		return;
 
-	px = p->x / kTileWidth;
-	py = p->y / kTileHeight;
+	int px = p->x / kTileWidth;
+	int py = p->y / kTileHeight;
 
 	// Are we on a touchplate and trying to move within the waiting period?
 	if (p->touchpWait)
@@ -428,7 +424,7 @@ void HDBGame::setTargetXY(int x, int y) {
 			return;
 	}
 
-	oneTileAway = (abs(px - x) + abs(py - y) < 2);
+	bool oneTileAway = (abs(px - x) + abs(py - y) < 2);
 
 	// If any entity has been targeted
 	if (e && !_ai->waypointsLeft()) {
@@ -549,7 +545,6 @@ void HDBGame::startMoveMap(int x, int y) {
 
 void HDBGame::moveMap(int x, int y) {
 	int	ox, oy;
-
 	g_hdb->_map->getMapXY(&ox, &oy);
 
 	ox += (_dx - x) / 8;
@@ -570,19 +565,15 @@ void HDBGame::moveMap(int x, int y) {
 
 // PLAYER is trying to use this entity
 void HDBGame::useEntity(AIEntity *e) {
-
-	AIEntity *p, temp;
-	bool added;
-
-	p = _ai->getPlayer();
+	AIEntity *p = _ai->getPlayer();
 	// Check if entity is on same level or if its a stairtop
-	if ((p->level != e->level) && !(_map->getMapBGTileFlags(p->tileX, p->tileY) & kFlagStairTop)) {
+	if ((p->level != e->level) && !(_map->getMapBGTileFlags(p->tileX, p->tileY) & kFlagStairTop))
 		return;
-	}
 
-	added = false;
+	bool added = false;
 
 	if (_ai->getTableEnt(e->type)) {
+		AIEntity temp;
 		memcpy(&temp, e, sizeof(AIEntity));
 
 		_ai->getItemSound(e->type);
@@ -591,37 +582,27 @@ void HDBGame::useEntity(AIEntity *e) {
 		if (added) {
 			e = &temp;
 
-			if (temp.aiUse) {
+			if (temp.aiUse)
 				temp.aiUse(&temp);
-			}
 
-			if (temp.luaFuncUse[0]) {
+			if (temp.luaFuncUse[0])
 				_lua->callFunction(temp.luaFuncUse, 0);
-			}
 		}
-
 	} else {
 		// These should be run over or run through
-		if (_ai->walkThroughEnt(e->type) || e->type == AI_NONE) {
+		if (_ai->walkThroughEnt(e->type) || e->type == AI_NONE)
 			return;
-		}
 
-		if (e->aiUse) {
+		if (e->aiUse)
 			e->aiUse(e);
-		}
 
-		if (e->luaFuncUse[0]) {
+		if (e->luaFuncUse[0])
 			_lua->callFunction(e->luaFuncUse, 0);
-		}
 	}
 
 	// PUSHING
 	// If its a pushable object, push it. Unless it's in/on water.
 	if (e->type == AI_CRATE || e->type == AI_LIGHTBARREL || e->type == AI_BOOMBARREL || e->type == AI_MAGIC_EGG || e->type == AI_ICE_BLOCK || e->type == AI_FROGSTATUE || e->type == AI_DIVERTER) {
-		int	xDir, yDir, chX, chY;
-		uint32 flags;
-		AIEntity *e2;
-
 		// if it's floating, don't touch!
 		if (e->state >= STATE_FLOATING && e->state <= STATE_FLOATRIGHT) {
 			g_hdb->_ai->lookAtEntity(e);
@@ -630,7 +611,8 @@ void HDBGame::useEntity(AIEntity *e) {
 			return;
 		}
 
-		xDir = yDir = 0;
+		int xDir = 0;
+		int yDir = 0;
 		if (p->tileX > e->tileX)
 			xDir = -2;
 		else if (p->tileX < e->tileX)
@@ -645,9 +627,9 @@ void HDBGame::useEntity(AIEntity *e) {
 		if (xDir && yDir)
 			return;
 
-		chX = p->tileX + xDir;
-		chY = p->tileY + yDir;
-
+		int chX = p->tileX + xDir;
+		int chY = p->tileY + yDir;
+		uint32 flags;
 		// are we going to push this over a sliding surface? (ok)
 		// are we going to push this into a blocking tile? (not ok)
 		if (e->level == 2) {
@@ -700,7 +682,7 @@ void HDBGame::useEntity(AIEntity *e) {
 
 		// are we going to push this into a gem?
 		// if it's a goodfairy, make it move!
-		e2 = g_hdb->_ai->findEntityIgnore(chX, chY, &g_hdb->_ai->_dummyLaser);
+		AIEntity *e2 = g_hdb->_ai->findEntityIgnore(chX, chY, &g_hdb->_ai->_dummyLaser);
 		if (e2 && e2->type == ITEM_GEM_WHITE) {
 			g_hdb->_ai->addAnimateTarget(e2->x, e2->y, 0, 3, ANIM_NORMAL, false, false, GEM_FLASH);
 			g_hdb->_ai->removeEntity(e2);
@@ -819,19 +801,16 @@ void HDBGame::useEntity(AIEntity *e) {
 	}
 
 	// Look at Entity
-	if (e->type != AI_RAILRIDER_ON) {
+	if (e->type != AI_RAILRIDER_ON)
 		_ai->lookAtEntity(e);
-	}
 
 	// Grab animation
-	if (added) {
+	if (added)
 		_ai->animGrabbing();
-	}
 
 	// Can't push it - make a sound
-	if (e->type == AI_HEAVYBARREL) {
+	if (e->type == AI_HEAVYBARREL)
 		g_hdb->_sound->playSound(SND_GUY_UHUH);
-	}
 }
 
 void HDBGame::setupProgressBar(int maxCount) {
