@@ -3583,7 +3583,7 @@ static const uint16 kq6PatchDrinkMeFix[] = {
 // KQ6 Mac is missing pic 981 and crashes when drinking the "Drink Me" bottle.
 //  This also crashed the original. Pic 981 is a black background and it's only
 //  used in this scene. Pic 98 is also a black background and used when the game
-//  starts and everywhere else. We restore this scene in by switching to pic 98.
+//  starts and everywhere else. We restore this scene by switching to pic 98.
 //
 // This patch is only enabled on Mac as the script is the same in all versions.
 //  The pics have different palettes and applying it to PC would disable the
@@ -16579,7 +16579,7 @@ void ScriptPatcher::processScript(uint16 scriptNr, SciSpan<byte> scriptData) {
 					enablePatch(signatureTable, "CD: audio + text support");
 				}
 				if (_isMacSci11) {
-					// Enables Mac-only patch to workaround missing pic
+					// Enables Mac-only patch to work around missing pic
 					enablePatch(signatureTable, "Mac: Drink Me pic");
 				}
 				break;
