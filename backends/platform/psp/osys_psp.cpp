@@ -95,7 +95,7 @@ void OSystem_PSP::initBackend() {
 	_imageViewer.setInputHandler(&_inputHandler);
 	_imageViewer.setDisplayManager(&_displayManager);
 
-	_savefileManager = new DefaultSaveFileManager(PSP_DEFAULT_SAVE_PATH)
+	_savefileManager = new DefaultSaveFileManager(PSP_DEFAULT_SAVE_PATH);
 
 	_timerManager = new DefaultTimerManager();
 
