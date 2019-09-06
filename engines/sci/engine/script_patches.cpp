@@ -3580,6 +3580,31 @@ static const uint16 kq6PatchDrinkMeFix[] = {
 	PATCH_END
 };
 
+// KQ6 Mac is missing pic 981 and crashes when drinking the "Drink Me" bottle.
+//  This also crashed the original. Pic 981 is a black background and it's only
+//  used in this scene. Pic 98 is also a black background and used when the game
+//  starts and everywhere else. We restore this scene in by switching to pic 98.
+//
+// This patch is only enabled on Mac as the script is the same in all versions.
+//  The pics have different palettes and applying it to PC would disable the
+//  palette cycling between red and black during this scene. KQ6 Mac didn't do
+//  these palette cycling effects as it didn't include any palette resources.
+//
+// Applies to: English Mac
+// Responsible method: drinkMeScript:changeState(0)
+static const uint16 kq6SignatureMacDrinkMePic[] = {
+	SIG_MAGICDWORD,
+	0x38, SIG_UINT16(0x03d5),           // pushi 981d
+	0x39, 0x09,                         // pushi 09
+	0x43, 0x08, 0x04,                   // callk DrawPic 04
+	SIG_END
+};
+
+static const uint16 kq6PatchMacDrinkMePic[] = {
+	0x38, PATCH_UINT16(0x0062),         // pushi 98d
+	PATCH_END
+};
+
 // During the common Game Over cutscene, one of the guys says "Tickets, only",
 //  but the subtitle says "Tickets, please". Normally people wouldn't have
 //  noticed, but ScummVM supports audio + subtitles in this game at the same
@@ -4144,6 +4169,7 @@ static const uint16 kq6CDPatchAudioTextMenuSupport[] = {
 //          script, description,                                      signature                                 patch
 static const SciScriptPatcherEntry kq6Signatures[] = {
 	{  true,    87, "fix Drink Me bottle",                            1, kq6SignatureDrinkMeFix,                   kq6PatchDrinkMeFix },
+	{ false,    87, "Mac: Drink Me pic",                              1, kq6SignatureMacDrinkMePic,                kq6PatchMacDrinkMePic },
 	{  true,   480, "CD: fix wallflower dance",                       1, kq6CDSignatureWallFlowerDanceFix,         kq6CDPatchWallFlowerDanceFix },
 	{  true,   481, "fix duplicate baby cry",                         1, kq6SignatureDuplicateBabyCry,             kq6PatchDuplicateBabyCry },
 	{  true,   640, "fix 'Tickets, only' message",                    1, kq6SignatureTicketsOnly,                  kq6PatchTicketsOnly },
@@ -16551,6 +16577,10 @@ void ScriptPatcher::processScript(uint16 scriptNr, SciSpan<byte> scriptData) {
 				if (g_sci->isCD()) {
 					// Enables Dual mode patches (audio + subtitles at the same time) for King's Quest 6
 					enablePatch(signatureTable, "CD: audio + text support");
+				}
+				if (_isMacSci11) {
+					// Enables Mac-only patch to workaround missing pic
+					enablePatch(signatureTable, "Mac: Drink Me pic");
 				}
 				break;
 			case GID_LAURABOW2:
