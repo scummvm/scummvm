@@ -127,8 +127,14 @@ protected:
 	void spcTransitionToMap(); // 0x6b
 	void spcTransitionFromMap(); // 0x6c
 
+	void spcBlackDragonDialogForCamelhot(); // 0x7a
 	void spcSetCameraXToZero(); //0x7b
 	void spcDiamondIntroSequenceLogic(); //0x7c
+
+	void spc82CallResetDataMaybe(); // 0x82
+
+	void spcSetUnkFlag2(); // 0x89
+	void spcClearUnkFlag2(); //0x8a
 
 	void setupTableBasedSceneUpdateFunction(uint16 initialCounter, uint16 numSequences, uint16 sequenceDuration);
 private:
