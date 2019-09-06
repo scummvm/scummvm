@@ -2831,6 +2831,9 @@ case $_host_os in
 		append_var DEFINES "-DWIN32"
 		# append_var DEFINES "-D__USE_MINGW_ANSI_STDIO=0"  # Modern MinGW does not need it
 		append_var LDFLAGS "-static-libgcc -static-libstdc++"
+		if test "$_static_build" = yes ; then
+			append_var LDFLAGS "-static"
+		fi
 		append_var LIBS "-lmingw32 -lwinmm -lgdi32"
 		append_var OBJS "dists/scummvm.o"
 		add_line_to_config_mk 'WIN32 = 1'
