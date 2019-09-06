@@ -1504,7 +1504,7 @@ void Sound::playSound(int index) {
 		_soundCache[index].loaded = SNDMEM_LOADED;
 	}
 
-	int soundChannel = 0;
+	int soundChannel = kLaserChannel;
 
 	// Select Free Audio Handle
 	for (int i = 0; i < kLaserChannel; i++) {
