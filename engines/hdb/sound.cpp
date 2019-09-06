@@ -1443,7 +1443,7 @@ void Sound::init() {
 		}
 		debug(9, "Registering sound: sName: %s, \tsLuaName: %s, \tExtension: %s", soundList[index].name, soundList[index].luaName, _soundCache[index].ext == SNDTYPE_MP3 ? "MP3" : "WAV");
 		index++;
-		if (index > kMaxSounds)
+		if (index >= kMaxSounds)
 			error("Reached MAX_SOUNDS in Sound::Init() !");
 	}
 	_numSounds = index;
