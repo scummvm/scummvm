@@ -128,8 +128,14 @@ void SpecialOpcodes::initOpcodes() {
 	OPCODE(0x6b, spcTransitionToMap);
 	OPCODE(0x6c, spcTransitionFromMap);
 
+	OPCODE(0x7a, spcBlackDragonDialogForCamelhot);
 	OPCODE(0x7b, spcSetCameraXToZero);
 	OPCODE(0x7c, spcDiamondIntroSequenceLogic);
+
+	OPCODE(0x82, spc82CallResetDataMaybe);
+
+	OPCODE(0x89, spcSetUnkFlag2);
+	OPCODE(0x8a, spcClearUnkFlag2);
 
 }
 
@@ -332,6 +338,7 @@ void SpecialOpcodes::spcZigmondFraudSceneLogic1() {
 
 void SpecialOpcodes::spcBlackDragonOnHillSceneLogic() {
 	//TODO
+	sceneUpdater.sequenceID = -1;
 }
 
 void SpecialOpcodes::spcUnk4e() {
@@ -440,6 +447,12 @@ void SpecialOpcodes::panCamera(int16 mode) {
 	return;
 }
 
+void SpecialOpcodes::spcBlackDragonDialogForCamelhot() {
+	uint16 buffer[1024];
+	_vm->_talk->loadText(0x30DD8, buffer, 1024); //TODO might need to check dialog in other game versions
+	_vm->_talk->displayDialogAroundPoint(buffer,0x27,0xc,0xc01,0,0x30DD8);
+}
+
 void SpecialOpcodes::spcSetCameraXToZero() {
 	_vm->_scene->_camera.x = 0;
 }
@@ -448,6 +461,18 @@ void SpecialOpcodes::spcDiamondIntroSequenceLogic() {
 	CutScene *cutScene = new CutScene(_vm);
 	cutScene->diamondScene();
 	delete cutScene;
+}
+
+void SpecialOpcodes::spc82CallResetDataMaybe() {
+	//TODO callMaybeResetData();
+}
+
+void SpecialOpcodes::spcSetUnkFlag2() {
+	_vm->setUnkFlags(ENGINE_UNK1_FLAG_2);
+}
+
+void SpecialOpcodes::spcClearUnkFlag2() {
+	_vm->clearUnkFlags(ENGINE_UNK1_FLAG_2);
 }
 
 void SpecialOpcodes::spcLoadScene1() {

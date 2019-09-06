@@ -123,7 +123,7 @@ void ScriptOpcodes::initOpcodes() {
 	OPCODE(0x1E, opUnk1ESetActorFlag0x400);
 	OPCODE(0x1F, opPlayMusic);
 	OPCODE(0x20, opUnk20);
-
+	OPCODE(0x21, opUnk21);
 	OPCODE(0x22, opCodeActorTalk);
 }
 
@@ -436,6 +436,15 @@ void ScriptOpcodes::opUnk20(ScriptOpCall &scriptOpCall) {
 
 	if (field2 >= 2) {
 		//TODO do we need this? It looks like it is pre-loading the next scene's data.
+	}
+}
+
+void ScriptOpcodes::opUnk21(ScriptOpCall &scriptOpCall) {
+	ARG_INT16(field0);
+	ARG_UINT32(textIndex);
+
+	if (scriptOpCall._field8 == 0) {
+		//TODO play dialog audio without text on screen.
 	}
 }
 
