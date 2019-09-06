@@ -53,6 +53,38 @@ Gfx::Gfx() {
 	memset(&_fadeInfo, 0, sizeof(_fadeInfo));
 	memset(&_snowInfo, 0, sizeof(_snowInfo));
 	memset(&_skyTiles, 0, sizeof(_skyTiles));
+
+	_tileSkyStars = 0;
+	_tileSkyStarsLeft = 0;
+	_tileSkyClouds = 0;
+	for (int i = 0; i < 4; ++i) {
+		_starField[i] = nullptr;
+		_mousePointer[2 * i] = nullptr;
+		_mousePointer[(2 * i) + 1] = nullptr;
+	}
+
+	_snowflake = nullptr;
+	_skyClouds = nullptr;
+	_starsInfo.gfx[0] = nullptr;
+	_starsInfo.gfx[1] = nullptr;
+	_starsInfo.timer = 0;
+	_starsInfo.anim = 0;
+	_starsInfo.radius = 0;
+	_starsInfo.angleSpeed = 0;
+	_starsInfo.totalTime = 0;
+	_cursorX = 0;
+	_cursorY = 0;
+	_showCursor = false;
+	_fontHeader.type = 0;
+	_fontHeader.numChars = 0;
+	_fontHeader.height = 0;
+	_fontHeader.kerning = 0;
+	_fontHeader.leading = 0;
+	_fontGfx = 0;
+	_eLeft = 0;
+	_eRight = 0;
+	_eTop = 0;
+	_eBottom = 0;
 }
 
 Gfx::~Gfx() {
