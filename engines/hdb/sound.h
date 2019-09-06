@@ -1494,10 +1494,10 @@ public:
 	int getSFXVolume() {
 		return _sfxVolume;
 	}
-	void setVoiceStatus(int value) {
+	void setVoiceStatus(bool value) {
 		_voicesOn = value;
 	}
-	int getVoiceStatus() {
+	bool getVoiceStatus() {
 		return _voicesOn;
 	}
 	void clearPersistent() {
@@ -1547,7 +1547,7 @@ public:
 
 	Voice _voices[MAX_VOICES];
 
-	int _voicesOn;
+	bool _voicesOn;
 	byte _voicePlayed[NUM_VOICES];
 
 	// Music System Variables

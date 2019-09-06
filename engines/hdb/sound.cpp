@@ -1409,7 +1409,7 @@ Sound::Sound() {
 	_sfxVolume = 255;
 	_musicVolume = 255;
 	_numSounds = 0;
-	_voicesOn = 0;
+	_voicesOn = false;
 }
 
 void Sound::test() {
@@ -1449,7 +1449,7 @@ void Sound::init() {
 	_numSounds = index;
 
 	// voices are on by default
-	_voicesOn = 1;
+	_voicesOn = true;
 	memset(&_voicePlayed[0], 0, sizeof(_voicePlayed));
 }
 

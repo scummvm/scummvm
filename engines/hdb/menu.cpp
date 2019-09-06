@@ -1501,8 +1501,8 @@ void Menu::processInput(int x, int y) {
 			y >= _optionsY + kOptionLineSPC * 4 + 24 && y <= _optionsY + kOptionLineSPC * 4 + 40) {
 			// Voices ON/OFF
 			if (!g_hdb->isVoiceless()) {
-				int value = g_hdb->_sound->getVoiceStatus();
-				value ^= 1;
+				bool value = g_hdb->_sound->getVoiceStatus();
+				value ^= true;
 				g_hdb->_sound->setVoiceStatus(value);
 				g_hdb->_sound->playSound(SND_GUI_INPUT);
 			}
