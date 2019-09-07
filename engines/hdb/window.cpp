@@ -702,11 +702,11 @@ void Window::drawDialog() {
 	g_hdb->_gfx->getTextEdges(&e1, &e2, &e3, &e4);
 	g_hdb->_gfx->setTextEdges(_dialogInfo.x + 10, g_hdb->_screenDrawWidth, 0, g_hdb->_screenHeight);
 	g_hdb->_gfx->setCursor(0, _dialogInfo.y - 7);
-	if (_dialogInfo.title)
+	if (strlen(_dialogInfo.title) > 0)
 		g_hdb->_gfx->drawText(_dialogInfo.title);
 	g_hdb->_gfx->setTextEdges(_dialogInfo.x + 16, _dialogInfo.x + _dialogInfo.width - 16, 0, g_hdb->_screenHeight);
 	g_hdb->_gfx->setCursor(0, _dialogInfo.y + 16);
-	if (_dialogInfo.string)
+	if (strlen(_dialogInfo.string) > 0)
 		g_hdb->_gfx->drawText(_dialogInfo.string);
 	g_hdb->_gfx->setTextEdges(e1, e2, e3, e4);
 }
@@ -868,8 +868,6 @@ void Window::openDialogChoice(const char *title, const char *text, const char *f
 }
 
 void Window::drawDialogChoice() {
-	int		e1, e2, e3, e4, blocks, i, w;
-
 	if (!_dialogChoiceInfo.active)
 		return;
 
@@ -881,7 +879,7 @@ void Window::drawDialogChoice() {
 
 	bool guyTalking = !scumm_stricmp(_dialogChoiceInfo.title, "guy");
 
-	w = _dialogChoiceInfo.width;
+	int w = _dialogChoiceInfo.width;
 	if (_dialogChoiceInfo.titleWidth > w)
 		w = _dialogChoiceInfo.titleWidth;
 
@@ -889,29 +887,30 @@ void Window::drawDialogChoice() {
 
 	if (!guyTalking) {
 		_gfxTitleL->drawMasked(_dialogChoiceInfo.x, _dialogChoiceInfo.y - 10);
-		blocks = _dialogChoiceInfo.titleWidth / 16;
-		for (i = 0; i < blocks; i++)
+		int blocks = _dialogChoiceInfo.titleWidth / 16;
+		for (int i = 0; i < blocks; i++)
 			_gfxTitleM->drawMasked(_dialogChoiceInfo.x + 16 * (i + 1), _dialogChoiceInfo.y - 10);
 		_gfxTitleR->drawMasked(_dialogChoiceInfo.x + (blocks + 1) * 16, _dialogChoiceInfo.y - 10);
 	} else {
 		_gGfxTitleL->drawMasked(_dialogChoiceInfo.x, _dialogChoiceInfo.y - 10);
-		blocks = _dialogChoiceInfo.titleWidth / 16;
-		for (i = 0; i < blocks; i++)
+		int blocks = _dialogChoiceInfo.titleWidth / 16;
+		for (int i = 0; i < blocks; i++)
 			_gGfxTitleM->drawMasked(_dialogChoiceInfo.x + 16 * (i + 1), _dialogChoiceInfo.y - 10);
 		_gGfxTitleR->drawMasked(_dialogChoiceInfo.x + (blocks + 1) * 16, _dialogChoiceInfo.y - 10);
 	}
 
+	int	e1, e2, e3, e4;
 	g_hdb->_gfx->getTextEdges(&e1, &e2, &e3, &e4);
 	g_hdb->_gfx->setTextEdges(_dialogChoiceInfo.x + 10, _openDialogTextRight, 0, g_hdb->_screenDrawHeight);
 	g_hdb->_gfx->setCursor(0, _dialogChoiceInfo.y - 7);
-	if (_dialogChoiceInfo.title)
+	if (strlen(_dialogChoiceInfo.title) > 0)
 		g_hdb->_gfx->drawText(_dialogChoiceInfo.title);
 	g_hdb->_gfx->setTextEdges(_dialogChoiceInfo.x + 16, _openDialogTextRight, 0, g_hdb->_screenDrawHeight);
 	g_hdb->_gfx->setCursor(0, _dialogChoiceInfo.y + 16);
-	if (_dialogChoiceInfo.text)
+	if (strlen(_dialogChoiceInfo.text) > 0)
 		g_hdb->_gfx->drawText(_dialogChoiceInfo.text);
 
-	for (i = 0; i < _dialogChoiceInfo.numChoices; i++) {
+	for (int i = 0; i < _dialogChoiceInfo.numChoices; i++) {
 		g_hdb->_gfx->setCursor(_dialogChoiceInfo.x + 48, _dialogChoiceInfo.y + _dialogChoiceInfo.textHeight + 16 * i);
 		g_hdb->_gfx->drawText(_dialogChoiceInfo.choices[i]);
 	}
@@ -960,9 +959,6 @@ void Window::dialogChoiceMovedown() {
 }
 
 void Window::openMessageBar(const char *title, int time) {
-	int	width, height;
-	int	e1, e2, e3, e4;
-
 	// is the messagebar already up?  if so, add this msg to the queue
 	if (_msgInfo.active) {
 		if (_numMsgQueue < kMaxMsgQueue) {
@@ -981,12 +977,13 @@ void Window::openMessageBar(const char *title, int time) {
 	}
 
 	_msgInfo.y = 0;
-
 	_msgInfo.timer = (time * kGameFPS);
 	strcpy(_msgInfo.title, title);
 
+	int	e1, e2, e3, e4;
 	g_hdb->_gfx->getTextEdges(&e1, &e2, &e3, &e4);
 	g_hdb->_gfx->setTextEdges(_dialogTextLeft, _dialogTextRight, 0, g_hdb->_screenDrawHeight);
+	int	width, height;
 	g_hdb->_gfx->getDimensions(title, &width, &height);
 	g_hdb->_gfx->setTextEdges(e1, e2, e3, e4);
 
@@ -998,13 +995,11 @@ void Window::openMessageBar(const char *title, int time) {
 }
 
 void Window::drawMessageBar() {
-	int	xx, py, my;
-	int	e1, e2, e3, e4;
-
 	// if msgbar's not up OR inventory is up, exit
 	if (!_msgInfo.active || _invWinInfo.active || _dialogInfo.active)
 		return;
 
+	int	xx, py, my;
 	g_hdb->_ai->getPlayerXY(&xx, &py);	// don't care about the x
 	g_hdb->_map->getMapXY(&xx, &my);
 	_msgInfo.y = (py - my) - _msgInfo.height - 64;	// put msgbar directly above player
@@ -1013,6 +1008,7 @@ void Window::drawMessageBar() {
 
 	drawBorder(_msgInfo.x, _msgInfo.y, _msgInfo.width, _msgInfo.height, false);
 
+	int	e1, e2, e3, e4;
 	g_hdb->_gfx->getTextEdges(&e1, &e2, &e3, &e4);
 	g_hdb->_gfx->setTextEdges(_msgInfo.x + 16, _msgInfo.x + _msgInfo.width - 16, 0, 320);
 	g_hdb->_gfx->setCursor(_msgInfo.x + 16, _msgInfo.y + 16);
@@ -1037,10 +1033,6 @@ bool Window::checkMsgClose(int x, int y) {
 }
 
 void Window::nextMsgQueued() {
-	int		xx;				// frameskip COULD be 0!
-	int		width, height;
-	int		e1, e2, e3, e4;
-
 	if (!_numMsgQueue) {
 		_msgInfo.active = false;
 		return;
@@ -1049,8 +1041,10 @@ void Window::nextMsgQueued() {
 	strcpy(_msgInfo.title, _msgQueueStr[0]);
 	_msgInfo.timer = (_msgQueueWait[0] * kGameFPS);
 
+	int e1, e2, e3, e4;
 	g_hdb->_gfx->getTextEdges(&e1, &e2, &e3, &e4);
 	g_hdb->_gfx->setTextEdges(_dialogTextLeft, _dialogTextRight, 0, g_hdb->_screenDrawHeight);
+	int width, height;
 	g_hdb->_gfx->getDimensions(_msgInfo.title, &width, &height);
 	g_hdb->_gfx->setTextEdges(e1, e2, e3, e4);
 
@@ -1060,11 +1054,11 @@ void Window::nextMsgQueued() {
 	_msgInfo.x = (g_hdb->_screenDrawWidth >> 1) - (_msgInfo.width >> 1);
 	_msgInfo.y = (g_hdb->_screenHeight >> 2) - (_msgInfo.height >> 1);
 
-	for (xx = 0; xx < _numMsgQueue - 1; xx++)
-	{
+	for (int xx = 0; xx < _numMsgQueue - 1; xx++) {
 		strcpy(_msgQueueStr[xx], _msgQueueStr[xx + 1]);
 		_msgQueueWait[xx] = _msgQueueWait[xx + 1];
 	}
+
 	_numMsgQueue--;
 	_msgInfo.active = true;
 }

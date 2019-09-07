@@ -380,17 +380,17 @@ void AI::processCines() {
 
 		case C_USEENTITY:
 			for (Common::Array<AIEntity *>::iterator it = _ents->begin(); it != _ents->end(); ++it) {
-				if ((*it)->entityName && Common::matchString((*it)->entityName, _cine[i]->string, true))
+				if (Common::matchString((*it)->entityName, _cine[i]->string, true))
 					g_hdb->useEntity((*it));
 			}
 			for (int k = 0; k < kMaxActions; k++) {
-				if (_actions[k].entityName && Common::matchString(_actions[k].entityName, _cine[i]->string, true)) {
+				if (Common::matchString(_actions[k].entityName, _cine[i]->string, true)) {
 					checkActionList(&_dummyPlayer, _actions[k].x1, _actions[k].y1, false);
 					checkActionList(&_dummyPlayer, _actions[k].x2, _actions[k].y2, false);
 				}
 			}
 			for (int j = 0; j < kMaxAutoActions; j++) {
-				if (_autoActions[j].entityName && Common::matchString(_autoActions[j].entityName, _cine[i]->string, true) && !_autoActions[j].activated)
+				if (Common::matchString(_autoActions[j].entityName, _cine[i]->string, true) && !_autoActions[j].activated)
 					checkAutoList(&_dummyPlayer, _autoActions[j].x, _autoActions[j].y);
 			}
 			complete = true;
