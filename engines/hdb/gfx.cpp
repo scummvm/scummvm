@@ -798,16 +798,12 @@ void Gfx::setSky(int skyIndex) {
 	}
 
 	// Setup current sky
-	if (tileIndex == _tileSkyStars) {
+	if (tileIndex == _tileSkyStars)
 		setup3DStars();
-		return;
-	} else if (tileIndex == _tileSkyStarsLeft) {
+	else if (tileIndex == _tileSkyStarsLeft)
 		setup3DStarsLeft();
-		return;
-	} else if (tileIndex == _tileSkyClouds) {
+	else if (tileIndex == _tileSkyClouds)
 		_skyClouds = getPicture(CLOUDY_SKIES);
-		return;
-	}
 }
 
 void Gfx::setup3DStars() {
@@ -815,9 +811,9 @@ void Gfx::setup3DStars() {
 		_stars3D[i].x = g_hdb->_rnd->getRandomNumber(g_hdb->_screenWidth - 1);
 		_stars3D[i].y = g_hdb->_rnd->getRandomNumber(g_hdb->_screenHeight - 1);
 		_stars3D[i].speed = g_hdb->_rnd->getRandomNumber(255);
-		if (g_hdb->isPPC()) {
+		if (g_hdb->isPPC())
 			_stars3D[i].color = g_hdb->_format.RGBToColor(_stars3D[i].speed, _stars3D[i].speed, _stars3D[i].speed);
-		} else {
+		else {
 			_stars3D[i].speed >>= 1;
 			_stars3D[i].color = _stars3D[i].speed / 64;
 		}
@@ -846,9 +842,9 @@ void Gfx::draw3DStars() {
 			_starField[_stars3D[i].color]->drawMasked((int)_stars3D[i].x, (int)_stars3D[i].y);
 			_stars3D[i].y += (_stars3D[i].speed >> 5) + 1;
 		}
-		if (_stars3D[i].y > g_hdb->_screenHeight) {
+
+		if (_stars3D[i].y > g_hdb->_screenHeight)
 			_stars3D[i].y = 0;
-		}
 	}
 }
 
@@ -860,20 +856,19 @@ void Gfx::draw3DStarsLeft() {
 		else
 			_starField[_stars3DSlow[i].color]->drawMasked((int)_stars3DSlow[i].x, (int)_stars3DSlow[i].y);
 		_stars3DSlow[i].x -= _stars3DSlow[i].speed;
-		if (_stars3DSlow[i].x < 0) {
+		if (_stars3DSlow[i].x < 0)
 			_stars3DSlow[i].x = g_hdb->_screenWidth - 1;
-		}
 	}
 }
 
 void Gfx::drawSky() {
 	int tile = _skyTiles[_currentSky - 1];
 
-	if (tile == _tileSkyStars) {
+	if (tile == _tileSkyStars)
 		draw3DStars();
-	} else if (tile == _tileSkyStarsLeft) {
+	else if (tile == _tileSkyStarsLeft)
 		draw3DStarsLeft();
-	} else if (tile == _tileSkyClouds) {
+	else if (tile == _tileSkyClouds) {
 		static int offset = 0, wait = 0;
 		for (int j = -64; j < g_hdb->_screenHeight; j += 64) {
 			for (int i = -64; i < g_hdb->_screenWidth; i += 64) {
@@ -890,7 +885,6 @@ void Gfx::drawSky() {
 }
 
 static const int snowXVList[13] = {0, -1, -1, -2, -2, -1, 0, 0, 0, -1, -2, -1, 0};
-
 
 void Gfx::drawSnow() {
 	if (_snowInfo.active == false)
@@ -1289,12 +1283,11 @@ void Gfx::drawBonusStars() {
 }
 
 void Gfx::drawDebugInfo(Tile *_debugLogo, int fps) {
-	char buff[64];
-
 	_debugLogo->drawMasked(g_hdb->_screenWidth - 32, 0);
 
 	// Draw  FPS
 	setCursor(0, 0);
+	char buff[64];
 	sprintf(buff, "FPS: %d", fps);
 	drawText(buff);
 
