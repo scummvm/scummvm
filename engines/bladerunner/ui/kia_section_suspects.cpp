@@ -211,10 +211,10 @@ void KIASectionSuspects::draw(Graphics::Surface &surface) {
 		if (_suspectsWithIdentity[_suspectSelected]) {
 			text = suspectName;
 		} else if (_vm->_suspectsDatabase->get(_suspectSelected)->getSex()) {
-			sprintf(generatedText, "%s %s", _vm->_textKIA->getText(20), scrambleSuspectsName(suspectName));
+			sprintf(generatedText, "%s %s", _vm->_textKIA->getText(20), _vm->_kia->scrambleSuspectsName(suspectName));
 			text = generatedText;
 		} else {
-			sprintf(generatedText, "%s %s", _vm->_textKIA->getText(21), scrambleSuspectsName(suspectName));
+			sprintf(generatedText, "%s %s", _vm->_textKIA->getText(21), _vm->_kia->scrambleSuspectsName(suspectName));
 			text = generatedText;
 		}
 	}
@@ -281,34 +281,6 @@ void KIASectionSuspects::selectSuspect(int suspectId) {
 	populateCrimes();
 	populateVisibleClues();
 	updateSuspectPhoto();
-}
-
-const char *KIASectionSuspects::scrambleSuspectsName(const char *name) {
-	static char buffer[32];
-
-	char *bufferPtr = buffer;
-	const char *namePtr = name;
-
-	for (int i = 0 ; i < 6; ++i) {
-		if (Common::isAlpha(*namePtr)) {
-			char upper = toupper(*namePtr);
-			if ( upper < 'J' ) {
-				*bufferPtr++ = upper - 16;
-			} else {
-				*bufferPtr++ = upper - 9;
-			}
-		} else {
-			*bufferPtr++ = '0';
-		}
-		if (*namePtr) {
-			++namePtr;
-		}
-		if (i == 1) {
-			*bufferPtr++ = '-';
-		}
-	}
-	*bufferPtr = 0;
-	return buffer;
 }
 
 void KIASectionSuspects::scrollBoxCallback(void *callbackData, void *source, int lineData, int mouseButton) {

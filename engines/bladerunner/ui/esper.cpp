@@ -1039,15 +1039,26 @@ void ESPER::drawVideoFrame(Graphics::Surface &surface) {
 }
 
 void ESPER::drawTextCoords(Graphics::Surface &surface) {
+	const char *zm = "ZM %04.0f";
+	const char *ns = "NS %04d";
+	const char *ew = "EW %04d";
 	if (_vm->_language == Common::RU_RUS) {
-		_vm->_mainFont->drawString(&surface, Common::String::format("gh %04.0f", _zoom / _zoomMin * 2.0f  ), 155, 364, surface.w, surface.format.RGBToColor(0, 0, 255));
-		_vm->_mainFont->drawString(&surface, Common::String::format("dh %04d",   12 * _viewport.top  +  98), 260, 364, surface.w, surface.format.RGBToColor(0, 0, 255));
-		_vm->_mainFont->drawString(&surface, Common::String::format("uh %04d",   12 * _viewport.left + 167), 364, 364, surface.w, surface.format.RGBToColor(0, 0, 255));
-	} else {
-		_vm->_mainFont->drawString(&surface, Common::String::format("ZM %04.0f", _zoom / _zoomMin * 2.0f  ), 155, 364, surface.w, surface.format.RGBToColor(0, 0, 255));
-		_vm->_mainFont->drawString(&surface, Common::String::format("NS %04d",   12 * _viewport.top  +  98), 260, 364, surface.w, surface.format.RGBToColor(0, 0, 255));
-		_vm->_mainFont->drawString(&surface, Common::String::format("EW %04d",   12 * _viewport.left + 167), 364, 364, surface.w, surface.format.RGBToColor(0, 0, 255));
+		// ПР, ВР, ГР
+		if (_vm->_russianCP1251) {
+			// Patched transalation by Siberian Studio is using Windows-1251 encoding
+			zm = "\xcf\xd0 %04.0f";
+			ns = "\xc2\xd0 %04d";
+			ew = "\xc3\xd0 %04d";
+		} else {
+			// Original release uses custom encoding
+			zm = "gh %04.0f";
+			ns = "dh %04d";
+			ew = "uh %04d";
+		}
 	}
+	_vm->_mainFont->drawString(&surface, Common::String::format(zm, _zoom / _zoomMin * 2.0f  ), 155, 364, surface.w, surface.format.RGBToColor(0, 0, 255));
+	_vm->_mainFont->drawString(&surface, Common::String::format(ns, 12 * _viewport.top  +  98), 260, 364, surface.w, surface.format.RGBToColor(0, 0, 255));
+	_vm->_mainFont->drawString(&surface, Common::String::format(ew, 12 * _viewport.left + 167), 364, 364, surface.w, surface.format.RGBToColor(0, 0, 255));
 }
 
 void ESPER::drawMouse(Graphics::Surface &surface) {

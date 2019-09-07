@@ -126,6 +126,7 @@ public:
 
 	Common::String   _languageCode;
 	Common::Language _language;
+	bool             _russianCP1251;
 
 	ActorDialogueQueue *_actorDialogueQueue;
 	ScreenEffects      *_screenEffects;

@@ -199,25 +199,37 @@ void KIASectionSettings::draw(Graphics::Surface &surface) {
 
 	if (_vm->_subtitles->isSystemActive()) {
 		// Allow this to be loading as an extra text item in the resource for text options
-		const char *subtitlesTranslation = "Subtitles";
-		if (_vm->_language == Common::EN_ANY) {
-			subtitlesTranslation = "Subtitles";        // EN_ANY
-		} else if (_vm->_language == Common::DE_DEU) {
-			subtitlesTranslation = "Untertitel";       // DE_DEU
-		} else if (_vm->_language == Common::FR_FRA) {
-			subtitlesTranslation = "Sous-titres";      // FR_FRA
-		} else if (_vm->_language == Common::IT_ITA) {
-			subtitlesTranslation = "Sottotitoli";      // IT_ITA
-		} else if (_vm->_language == Common::RU_RUS) {
-			// The supported Russian version is using its own KIA6PT.FON
-			// where it has replaced the mapping of Latin characters to Russian characters
-			// So the character string here does not make sense, but it will appear correctly
-			subtitlesTranslation = "CE,NBNHS";         // RU_RUS "Subtitry"
-		} else if (_vm->_language == Common::ES_ESP) {
-			subtitlesTranslation = "Subtitulos";       // ES_ESP
+		const char *subtitlesTranslation = nullptr;
+		switch (_vm->_language) {
+			case Common::EN_ANY:
+			default:
+				subtitlesTranslation = "Subtitles";
+				break;
+			case Common::DE_DEU:
+				subtitlesTranslation = "Untertitel";
+				break;
+			case Common::FR_FRA:
+				subtitlesTranslation = "Sous-titres";
+				break;
+			case Common::IT_ITA:
+				subtitlesTranslation = "Sottotitoli";
+				break;
+			case Common::ES_ESP:
+				subtitlesTranslation = "Subtitulos";
+				break;
+			case Common::RU_RUS:
+				// субтитры
+				if (_vm->_russianCP1251) {
+					// Patched transalation by Siberian Studio is using Windows-1251 encoding
+					subtitlesTranslation = "\xf1\xf3\xe1\xf2\xe8\xf2\xf0\xfb";
+				} else {
+					// Original release uses custom encoding
+					subtitlesTranslation = "CE,NBNHS";
+				}
+				break;
 		}
 
-		const char *textSubtitles  = strcmp(_vm->_textOptions->getText(42), "") == 0? subtitlesTranslation : _vm->_textOptions->getText(42); // +1 to the max of original index of textOptions which is 41
+		const char *textSubtitles  = strcmp(_vm->_textOptions->getText(42), "") == 0 ? subtitlesTranslation : _vm->_textOptions->getText(42); // +1 to the max of original index of textOptions which is 41
 
 		if (_vm->_language == Common::RU_RUS) {
 			_vm->_mainFont->drawString(&surface, textSubtitles, 288, 376, surface.w, surface.format.RGBToColor(232, 208, 136)); // special case for Russian version, put the option in a new line to avoid overlap

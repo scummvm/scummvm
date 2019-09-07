@@ -151,6 +151,8 @@ public:
 	void playPhotograph(int photographId);
 	void playImage(const Graphics::Surface &image);
 
+	const char *scrambleSuspectsName(const char *name);
+
 private:
 	static void mouseDownCallback(int buttonId, void *callbackData);
 	static void mouseUpCallback(int buttonId, void *callbackData);
