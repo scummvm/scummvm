@@ -52,16 +52,15 @@ const PlainGameDescriptor ADRIFT_GAME_LIST[] = {
 	{ "beanstalk", "Beanstalk the and Jack" },
 	{ "beerisntenough", "WHen Beer Isn't Enough" },
 	{ "caveofwonders", "Cave of Wondors" },
-	{ "chooseyourown", "Choose Your Own..." },
 	{ "circusmenagerie", "Menagerie!" },
 	{ "cityInfear", "City In Fear" },
 	{ "coloromcadrift", "Color of Milk COffee" },
-	{ "compendiumendgame", "The WOodfish Compendium: The Game to End All Games" },
-	{ "compendiumforum", "The WOodfish Compendium: Forum" },
-	{ "compendiumforum2", "The WOodfish Compendium: Forum2" },
-	{ "compendiumimagi", "The WOodfish Compendium: ImagiDroids" },
-	{ "compendiumsaffire", "The WOodfish Compendium: Saffire " },
-	{ "compendiumtopaz", "The WOodfish Compendium: Topaz" },
+	{ "compendiumendgame", "The Woodfish Compendium: The Game to End All Games" },
+	{ "compendiumforum", "The Woodfish Compendium: Forum" },
+	{ "compendiumforum2", "The Woodfish Compendium: Forum2" },
+	{ "compendiumimagi", "The Woodfish Compendium: ImagiDroids" },
+	{ "compendiumsaffire", "The Woodfish Compendium: Saffire " },
+	{ "compendiumtopaz", "The Woodfish Compendium: Topaz" },
 	{ "cowboyblues", "Cowboy Blues" },
 	{ "crawlersdelight", "Crawler's Delight" },
 	{ "crimeadventure", "Crime Adventure" },
@@ -101,7 +100,6 @@ const PlainGameDescriptor ADRIFT_GAME_LIST[] = {
 	{ "monsters", "Monsters" },
 	{ "murdererhadleft", "What The Murderer Had Left" },
 	{ "mustescape", "Must Escape!" },
-	{ "darkhavenmystery", "The Mystery Of The Darkhaven Caves" },
 	{ "neighboursfromhell", "Neighbours From Hell" },
 	{ "onnafa", "Oh No, Not Another Fantasy Adventure" },
 	{ "overtheedge", "Over the Edge" },
@@ -122,7 +120,6 @@ const PlainGameDescriptor ADRIFT_GAME_LIST[] = {
 	{ "thepkgirl", "The PK Girl" },
 	{ "viewisbetter", "The View Is Better Here" },
 	{ "thelasthour", "The Last Hour" },
-	{ "ticket", "Ticket to No Where" },
 	{ "hellinahamper", "To Hell in a Hamper" },
 	{ "toomuchexercise", "Too Much Exercise" },
 	{ "topaz", "Topaz" },
@@ -175,7 +172,6 @@ const PlainGameDescriptor ADRIFT_GAME_LIST[] = {
 
 	// Game of the Year Competition: December 2004
 	{ "goyshardsofmemory", " Shards of Memory" },
-	{ "goyshadricksunderground", "Shadrack's Underground Adventure" },
 	{ "goypaint", "Paint!!!" },
 	{ "goydragonshrine", "The Curse of DragonShrine" },
 	{ "goydarkness", "Darkness" },
@@ -245,6 +241,20 @@ const PlainGameDescriptor ADRIFT_GAME_LIST[] = {
 	{ "1hgtopaz", "Topaz" },
 	{ "1hggoblinhunt", "Goblin Hunt" },
 
+	// InsideADRIFT Summer Competition 2004
+	{ "chooseyourown", "Choose Your Own..." },
+	{ "darkhavenmystery", "The Mystery Of The Darkhaven Caves" },
+	{ "shadricksunderground", "Shadrack's Underground Adventure" },
+	{ "tickettonowhere", "Ticket to No Where" },
+	{ "tearsofatoughman", "Tears of a tough man" },
+	{ "theadriftproject", "The ADRIFT Project" },
+
+	// InsideADRIFT Spring Competition 2005
+	{ "iadcseaside", "A Day At The Seaside" },
+	{ "iadcfrustrated", "Frustrated Interviewee" },
+	{ "iadchub", "The House Husband" },
+	{ "iadcprivateeye", "Private Eye" },
+	{ "iadcblood", "Fire in the Blood" },
 
 	{ nullptr, nullptr }
 };
@@ -261,7 +271,6 @@ const AdriftGameDescription ADRIFT_GAMES[] = {
 	DT_ENTRY0("beanstalk", "fc9c17c355894948dc2e72c66e8d9963", 9837),
 	DT_ENTRY0("beerisntenough", "98248a8e65a36f6d0fb98111255a85dc", 14070),
 	DT_ENTRY0("caveofwonders", "f55f4e63886eb09e1f89bea547574919", 85471),
-	DT_ENTRY0("chooseyourown", "774ae5ba4fea61da0898069df4ed1c81", 54869),
 	DT_ENTRY0("circusmenagerie", "3814400e3abb3e6340f055d5ec883c46", 117017),
 	DT_ENTRY0("cityInfear", "a6f625f184fa848ee6746e9aa6c94915", 248088),
 	DT_ENTRY0("coloromcadrift", "6b8d8f115a89c99f785156a9b5802bc2", 12681),
@@ -312,7 +321,6 @@ const AdriftGameDescription ADRIFT_GAMES[] = {
 	DT_ENTRY0("monsters", "fde7be359d37c9229fec77244fc38a54", 17168),
 	DT_ENTRY0("murdererhadleft", "f95c63f90f28061a15dbe3bdf0cd4048", 13425),
 	DT_ENTRY0("mustescape", "e58fd08918fa3d5a38f424f79595fb4e", 17497),
-	DT_ENTRY0("darkhavenmystery", "1027e9e3dba08e0fd2796e0e934be855", 27826),
 	DT_ENTRY0("neighboursfromhell", "686d8c0995aa085fb056c6a5bd402911", 13520),
 	DT_ENTRY0("onnafa", "da4c0cc6fe34a08047de54abc66de038", 167339),
 	DT_ENTRY0("overtheedge", "9c7bfb9252ac80597ef125c95d58a54b", 14771),
@@ -334,7 +342,7 @@ const AdriftGameDescription ADRIFT_GAMES[] = {
 	DT_ENTRY0("thepkgirl", "c9282cf8f91ebfe5a93b136f56d7a1aa", 1645515),
 	DT_ENTRY0("viewisbetter", "9334adc4ccd03ceb1684ee56fdb07ab9", 7720),
 	DT_ENTRY0("thelasthour", "786d39eb223a64fe836f87b032b60ae1", 10658),
-	DT_ENTRY0("ticket", "8c549a6bdc6a5a4895412516be8dce25", 65502),
+	DT_ENTRY0("tickettonowhere", "8c549a6bdc6a5a4895412516be8dce25", 65502),
 	DT_ENTRY0("hellinahamper", "810247344fddc9a812bf6283b4826093", 80183),
 	DT_ENTRY0("toomuchexercise", "aebb58d94f632c4232bee72b9a1b5e25", 6248),
 	DT_ENTRY0("topaz", "0777a97e473b41ae04ab825556748e8d", 5980),
@@ -364,6 +372,13 @@ const AdriftGameDescription ADRIFT_GAMES[] = {
 	DT_ENTRY0("noblecrook3", "c9d4a1ba7d5c1625f2d4cad0f067275a", 22088),
 	DT_ENTRY0("noblecrook4", "cb26241f8dba982bb0cd357ebd8fac45", 20606),
 	DT_ENTRY0("sonofcamelot", "7b3e9e45edc75202b3f586d0ca8dddde", 474380),
+	DT_ENTRY0("spacedetective1", "170517dae3a195f37d876f5645637953", 34044),
+	DT_ENTRY0("spacedetective2", "1e12b19d8777173cbf9866b3dd2fc2f0", 32632),
+	DT_ENTRY0("spacedetective3", "fc9fb75830d7f59bf932896152b1e759", 30560),
+	DT_ENTRY0("spacedetective4", "86fbcf204c6b0982ef2394a60bb8df3e", 32184),
+	DT_ENTRY0("spacedetective5", "f1bf863cce436a5ef17e64237803571a", 32676),
+	DT_ENTRY0("spacedetective6", "6035c865f7a4831e4539b7a2ff2ab711", 31922),
+	DT_ENTRY0("spacedetective7", "2044086edd9b2288ff2279b3824dfcef", 30066),
 
 	// Italian Games
 	DT_ENTRYL0("ilgolem", Common::IT_ITA, "7ab97545be9c30457d0c9e748ab7885f", 6372213),
@@ -388,7 +403,6 @@ const AdriftGameDescription ADRIFT_GAMES[] = {
 	// Game of the Year Competition: December 2004
 	DT_ENTRY0("goyshardsofmemory", "7e9cb5002fa22a25000b3478c826413d", 118610),
 	DT_ENTRY0("goyshardsofmemory", "9b75834354aed4b148d4ec2b8cdd66ae", 118604),
-	DT_ENTRY0("goyshadricksunderground", "a9e1e59b37976c6c0fcc6aee69978afe", 113385),
 	DT_ENTRY0("waxworx", "94aaf6625541238867b079bfe475f146", 38471),
 	DT_ENTRY0("goypaint", "1183921d034d3614ec277e18d9112b69", 76493),
 	DT_ENTRY0("goydragonshrine", "604250027cfd8cfd1fb0d231085e40e5", 636932),
@@ -462,6 +476,21 @@ const AdriftGameDescription ADRIFT_GAMES[] = {
 	// InsideADRIFT Spring Competition 2004
 	DT_ENTRY0("waxworx", "4fa14c7944506f4e0142cb865738d0b0", 37542),
 	DT_ENTRY0("sommeril", "9e8ee4cbd4ecab3ab51c702f4e0277e1", 400940),
+
+	// InsideADRIFT Summer Competition 2004
+	DT_ENTRY0("chooseyourown", "774ae5ba4fea61da0898069df4ed1c81", 54869),
+	DT_ENTRY0("darkhavenmystery", "1027e9e3dba08e0fd2796e0e934be855", 27826),
+	DT_ENTRY0("shadricksunderground", "a9e1e59b37976c6c0fcc6aee69978afe", 113385),
+	DT_ENTRY0("tickettonowhere", "a69b0fa1b33d8e0ab6504d37615e6a3c", 65083),
+	DT_ENTRY0("tearsofatoughman", "b440d0b4b18a93537803750f31e838b7", 9436),
+	DT_ENTRY0("theadriftproject", "18a4db8af27fd98751504ee3e45089e3", 231594),
+
+	// InsideADRIFT Spring Competition 2005
+	DT_ENTRY0("iadcseaside", "271c64455f4abb3dee35c3902e5cdfc1", 279480),
+	DT_ENTRY0("iadcfrustrated", "1c218d4fcbbfa11271fb4d0003df7a6a", 210267),
+	DT_ENTRY0("iadchub", "c3224b3d6c55997056ea195ba4ebb60a", 24610),
+	DT_ENTRY0("iadcprivateeye", "3076b9f11acf2b1e377a31cd1a11c323", 236323),
+	DT_ENTRY0("iadcblood", "775404faa0d7973c1df537bd423a45d3", 100201),
 
 	DT_END_MARKER
 };
