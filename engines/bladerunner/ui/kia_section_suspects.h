@@ -105,8 +105,6 @@ public:
 
 	void selectSuspect(int suspectId);
 
-	static const char *scrambleSuspectsName(const char *name);
-
 private:
 	static void scrollBoxCallback(void *callbackData, void *source, int lineData, int mouseButton);
 	static void checkBoxCallback(void *callbackData, void *source);

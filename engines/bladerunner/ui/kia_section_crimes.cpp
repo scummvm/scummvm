@@ -175,10 +175,10 @@ void KIASectionCrimes::draw(Graphics::Surface &surface) {
 		if (_suspectsWithIdentity[_suspectSelected]) {
 			text = suspectName;
 		} else if (_vm->_suspectsDatabase->get(_suspectSelected)->getSex()) {
-			sprintf(generatedText, "%s %s", _vm->_textKIA->getText(20), KIASectionSuspects::scrambleSuspectsName(suspectName));
+			sprintf(generatedText, "%s %s", _vm->_textKIA->getText(20), _vm->_kia->scrambleSuspectsName(suspectName));
 			text = generatedText;
 		} else {
-			sprintf(generatedText, "%s %s", _vm->_textKIA->getText(21), KIASectionSuspects::scrambleSuspectsName(suspectName));
+			sprintf(generatedText, "%s %s", _vm->_textKIA->getText(21), _vm->_kia->scrambleSuspectsName(suspectName));
 			text = generatedText;
 		}
 	}

@@ -625,6 +625,8 @@ bool BladeRunnerEngine::startup(bool hasSavegames) {
 	if (!_textOptions->open("OPTIONS"))
 		return false;
 
+	_russianCP1251 = ((uint8)_textOptions->getText(0)[0]) == 209;
+
 	_dialogueMenu = new DialogueMenu(this);
 	if (!_dialogueMenu->loadText("DLGMENU"))
 		return false;
@@ -1925,13 +1927,22 @@ void BladeRunnerEngine::setSubtitlesEnabled(bool newVal) {
 }
 
 Common::SeekableReadStream *BladeRunnerEngine::getResourceStream(const Common::String &name) {
+	// If the file is extracted from MIX files use it directly, it is used by Russian translation patched by Siberian Studio
+	if (Common::File::exists(name)) {
+		Common::File directFile;
+		if (directFile.open(name)) {
+			Common::SeekableReadStream *stream = directFile.readStream(directFile.size());
+			directFile.close();
+			return stream;
+		}
+	}
+
 	for (int i = 0; i != kArchiveCount; ++i) {
 		if (!_archives[i].isOpen()) {
 			continue;
 		}
 
 		// debug("getResource: Searching archive %s for %s.", _archives[i].getName().c_str(), name.c_str());
-
 		Common::SeekableReadStream *stream = _archives[i].createReadStreamForMember(name);
 		if (stream) {
 			return stream;

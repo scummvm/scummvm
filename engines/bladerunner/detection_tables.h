@@ -76,7 +76,18 @@ static const ADGameDescription gameDescriptions[] = {
 		GUIO2(GAMEOPTION_SITCOM, GAMEOPTION_SHORTY)
 	},
 
-	// BladeRunner (Russian)
+	// BladeRunner (Russian - Fargus Multimedia + Home Systems, Inc.)
+	{
+		"bladerunner",
+		0,
+		AD_ENTRY1s("STARTUP.MIX", "bf42af841d9f4b643665013a348c81e0", 2483111),
+		Common::RU_RUS,
+		Common::kPlatformWindows,
+		ADGF_TESTING,
+		GUIO2(GAMEOPTION_SITCOM, GAMEOPTION_SHORTY)
+	},
+
+	// BladeRunner (Russian - Fargus Multimedia + Home Systems, Inc. + Siberian Studio, R3)
 	{
 		"bladerunner",
 		0,
@@ -87,11 +98,11 @@ static const ADGameDescription gameDescriptions[] = {
 		GUIO2(GAMEOPTION_SITCOM, GAMEOPTION_SHORTY)
 	},
 
-	// BladeRunner (Russian - Fargus version)
+	// BladeRunner (Russian - Fargus Multimedia + Home Systems, Inc. + Siberian Studio, R4)
 	{
 		"bladerunner",
 		0,
-		AD_ENTRY1s("STARTUP.MIX", "bf42af841d9f4b643665013a348c81e0", 2483111),
+		AD_ENTRY1s("STARTUP.MIX", "d62498a7415682bb3ff86a894303c836", 2810053),
 		Common::RU_RUS,
 		Common::kPlatformWindows,
 		ADGF_TESTING,
@@ -155,7 +166,18 @@ static const ADGameDescription gameDescriptions[] = {
 		GUIO2(GAMEOPTION_SITCOM, GAMEOPTION_SHORTY)
 	},
 
-	// BladeRunner (Russian)
+	// BladeRunner (Russian - Fargus Multimedia + Home Systems, Inc.)
+	{
+		"bladerunner-final",
+		0,
+		AD_ENTRY1s("STARTUP.MIX", "bf42af841d9f4b643665013a348c81e0", 2483111),
+		Common::RU_RUS,
+		Common::kPlatformWindows,
+		ADGF_UNSTABLE,
+		GUIO2(GAMEOPTION_SITCOM, GAMEOPTION_SHORTY)
+	},
+
+	// BladeRunner (Russian - Fargus Multimedia + Home Systems, Inc. + Siberian Studio, R3)
 	{
 		"bladerunner-final",
 		0,
@@ -166,11 +188,11 @@ static const ADGameDescription gameDescriptions[] = {
 		GUIO2(GAMEOPTION_SITCOM, GAMEOPTION_SHORTY)
 	},
 
-	// BladeRunner (Russian - Fargus version)
+	// BladeRunner (Russian - Fargus Multimedia + Home Systems, Inc. + Siberian Studio, R4)
 	{
 		"bladerunner-final",
 		0,
-		AD_ENTRY1s("STARTUP.MIX", "bf42af841d9f4b643665013a348c81e0", 2483111),
+		AD_ENTRY1s("STARTUP.MIX", "d62498a7415682bb3ff86a894303c836", 2810053),
 		Common::RU_RUS,
 		Common::kPlatformWindows,
 		ADGF_UNSTABLE,
