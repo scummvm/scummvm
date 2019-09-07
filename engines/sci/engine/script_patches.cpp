@@ -13486,6 +13486,200 @@ static const uint16 qfg4EmptyBurgoRoomPatch[] = {
 	PATCH_END
 };
 
+// Ad Avis and his necrotaurs chase and catch hero to take him to the dungeon,
+//  but this one-time event can repeat along with the entire dungeon sequence.
+//
+// The chase code is complex and spread across many scripts with many flags.
+//  There is no code that resets all the flags upon capture and no code that
+//  correctly tests if capture has occurred. This results in many ways to leave
+//  at least one flag set and repeat the chase. What these code paths all have
+//  in common is that the player has to walk through the town gate, room 290.
+//
+// We fix this by adding code to the start of rm290:init that clears all of the
+//  relevant chase flags if capture has already occurred. Fortunately, this
+//  method starts with unused debugging code that can be overwritten.
+//
+// Applies to: All versions
+// Responsible method: rm290:init
+// Fixes bug: #11056
+static const uint16 qfg4ChaseRepeatsSignature[] = {
+	SIG_MAGICDWORD,
+	0x81, 0xc9,                         // lag c9 [ debug mode ]
+	0x31, 0x4e,                         // bnt 4e [ skip debug code ]
+	0x78,                               // push1
+	0x72, SIG_ADDTOOFFSET(+2),          // lofsa prompt
+	0x36,                               // push
+	0x46, SIG_UINT16(0xfaff),           // calle proc64255_1 02
+	      SIG_UINT16(0x0001),
+	      SIG_UINT16(0x0002),
+	0xa3, 0x02,                         // sal 02
+	0x39, 0x05,                         // pushi 05
+	0x36,                               // push
+	0x78,                               // push1
+	0x7a,                               // push2
+	0x39, 0x03,                         // pushi 03
+	0x39, 0x04,                         // pushi 04
+	0x46, SIG_UINT16(0xfde7),           // calle proc64999_5 0a
+	      SIG_UINT16(0x0005),
+	      SIG_UINT16(0x000a),
+	SIG_END,
+};
+
+static const uint16 qfg4ChaseRepeatsPatch[] = {
+	0x78,                               // push1
+	0x39, 0x6e,                         // pushi 6e [ flag 110 ]
+	0x45, 0x04, PATCH_UINT16(0x0002),   // callb proc0_4 02 [ have you been captured? ]
+	0x31, 0x49,                         // bnt 49 [ don't clear chase flags ]
+	0x78,                               // push1
+	0x39, 0x50,                         // pushi 50 [ flag 80 ]
+	0x45, 0x03, PATCH_UINT16(0x0002),   // callb proc0_3 02 [ clear chase flag 80 ]
+	0x78,                               // push1
+	0x39, 0x51,                         // pushi 51 [ flag 81 ]
+	0x45, 0x03, PATCH_UINT16(0x0002),   // callb proc0_3 02 [ clear chase flag 81 ]
+	0x78,                               // push1
+	0x38, PATCH_UINT16(0x00a4),         // pushi 00a4 [ flag 164 ]
+	0x45, 0x03, PATCH_UINT16(0x0002),   // callb proc0_3 02 [ clear chase flag 164 ]
+	0x33, 0x31,                         // jmp 31 [ continue room init ]
+	PATCH_END,
+};
+
+// When the necrotaurs catch hero in the woods to take him to the dungeon, two
+//  different script bugs randomly cause interpreter errors. This patch fixes
+//  calling kUpdateScreenItem on a necrotaur with a deleted screen item.
+//
+// When hero is caught, the screen turns black before going to the dungeon.
+//  There is an inconsistent delay and the necrotaurs will sometimes reappear
+//  briefly on the black screen. These symptoms hint at the script's problems.
+//  sBlackOut sets a 300 cycle delay but this rarely has an effect. Instead each
+//  actor is hidden while their motions continue and sBlackOut advances when an
+//  invisible necrotaur completes its JumpTo motion. JumpTo stores its client's
+//  signal on initialization and unconditionally restores it upon completion. If
+//  JumpTo completes after View:hide calls kDeleteScreenItem and sets the hidden
+//  signal bit then signal is reverted and Actor:doit calls kUpdateScreenItem.
+//
+// We fix this by disposing of each cast member before painting black instead of
+//  hiding them. This hides them and terminates their motions. This exposes the
+//  previously unused 300 cycle delay, which is much longer than normal, so we
+//  also change that to 2 seconds. This is consistent with existing behavior
+//  and it's the same delay used in room 290's working version of this script.
+//  The majority of this patch is to free up the single byte needed to change
+//  the 8-bit hide selector to 16-bit dispose.
+//
+// Applies to: All versions
+// Responsible method: sBlackOut:changeState(3)
+// Fixes bug: #11056
+static const uint16 qfg4NecrotaurBlackoutSignature[] = {
+	SIG_MAGICDWORD,
+	0x39, SIG_SELECTOR8(hide),          // pushi hide
+	0x81, 0x05,                         // lag 05
+	0x4a, SIG_UINT16(0x0006),           // send 06 [ cast eachElementDo: hide ]
+	0x78,                               // push1 [ kUpdatePlane param count ]
+	0x39, SIG_SELECTOR8(back),          // pushi back
+	0x78,                               // push1
+	0x76,                               // push0
+	0x39, SIG_ADDTOOFFSET(+1),          // pushi picture
+	0x78,                               // push1
+	0x39, 0xff,                         // pushi ff
+	0x38, SIG_ADDTOOFFSET(+2),          // pushi yourself [ returns self ]
+	0x76,                               // push0
+	0x76,                               // push0 [ plane ]
+	0x76,                               // push0
+	0x81, 0x02,                         // lag 02
+	0x4a, SIG_UINT16(0x0004),           // send 04 [ room plane? ]
+	0x4a, SIG_UINT16(0x0010),           // send 10 [ room:plane back: 0 picture: -1 yourself: ]
+	0x36,                               // push [ room:plane for kUpdatePlane ]
+	SIG_ADDTOOFFSET(+29),
+	0x34, SIG_UINT16(0x012c),           // ldi 012c
+	0x65,                               // aTop cycles [ cycles = 300 ]
+	SIG_END
+};
+
+static const uint16 qfg4NecrotaurBlackoutPatch[] = {
+	0x38, PATCH_SELECTOR16(dispose),    // pushi dispose
+	0x81, 0x05,                         // lag 05
+	0x4a, PATCH_UINT16(0x0006),         // send 06 [ cast eachElementDo: dispose ]
+	0x78,                               // push1 [ kUpdatePlane param count ]
+	0x76,                               // push0 [ plane ]
+	0x76,                               // push0
+	0x81, 0x02,                         // lag 02
+	0x4a, PATCH_UINT16(0x0004),         // send 04 [ room plane? ]
+	0x36,                               // push [ room:plane for kUpdatePlane ]
+	0x39, PATCH_SELECTOR8(back),        // pushi back
+	0x39, 0x01,                         // pushi 01
+	0x39, 0x00,                         // pushi 00
+	0x39, PATCH_GETORIGINALBYTE(+13),   // pushi picture
+	0x39, 0x01,                         // pushi 01
+	0x39, 0xff,                         // pushi ff
+	0x4a, PATCH_UINT16(0x000c),         // send 0c [ room:plane back: 0 picture: -1 ]
+	PATCH_ADDTOOFFSET(+29),
+	0x34, PATCH_UINT16(0x0002),         // ldi 0002
+	0x65, PATCH_GETORIGINALBYTEADJUST(+65, +2), // aTop seconds [ seconds = 2 ]
+	PATCH_END
+};
+
+// When the necrotaurs catch hero in the woods to take him to the dungeon an
+//  effectively random crash from the Grooper class can occur in the CD version.
+//  See the inn door's script patch for details on these CD regressions.
+//
+// The error occurs when sBlackOut sets the motion of a necrotaur while it has
+//  no cycler. In this case the cycler should still be Walk but CD regressions
+//  can cause it to be cleared at unexpected times. We prevent this by setting
+//  necrotaur cyclers to Walk when setting their final PChase motions.
+//
+// Applies to: PC CD
+// Responsible method: sBlackOut:changeState(0)
+// Fixes bug: #11056
+static const uint16 qfg4NecrotaurCaptureSignature[] = {
+	SIG_MAGICDWORD,
+	0x18,                               // not
+	0x31, 0x38,                         // bnt 38
+	0x38, SIG_ADDTOOFFSET(+2),          // pushi distanceTo
+	0x78,                               // push1
+	0x72, SIG_ADDTOOFFSET(+2),          // lofsa nec (nec1 or nec2 or nec3)
+	0x36,                               // push
+	0x81, 0x00,                         // lag 00
+	0x4a, SIG_UINT16(0x0006),           // send 06 [ hero distanceTo: nec ]
+	0x36,                               // push
+	0x35, 0x19,                         // ldi 19
+	0x1e,                               // gt?
+	0x31, 0x19,                         // bnt 19
+	0x38, SIG_SELECTOR16(setMotion),    // pushi setMotion
+	0x38, SIG_UINT16(0x0004),           // pushi 0004
+	0x51, 0x6c,                         // class PChase
+	0x36,                               // push
+	0x89, 0x00,                         // lsg 00
+	0x39, 0x19,                         // pushi 19
+	0x72, SIG_ADDTOOFFSET(+2),          // lofsa nec
+	0x36,                               // push
+	0x72,                               // lofsa nec
+	SIG_END
+};
+
+static const uint16 qfg4NecrotaurCapturePatch[] = {
+	0x2f, 0x39,                         // bt 39
+	0x38, PATCH_GETORIGINALUINT16(+4),  // pushi distanceTo
+	0x78,                               // push1
+	0x74, PATCH_GETORIGINALUINT16(+8),  // lofss nec (nec1 or nec2 or nec3)
+	0x81, 0x00,                         // lag 00
+	0x4a, PATCH_UINT16(0x0006),         // send 06 [ hero distanceTo: nec ]
+	0x39, 0x19,                         // pushi 19
+	0x24,                               // le?
+	0x31, 0x1c,                         // bnt 1c
+	0x38, PATCH_SELECTOR16(setCycle),   // pushi setCycle
+	0x78,                               // push1
+	0x51, 0x17,                         // class Walk
+	0x36,                               // push
+	0x38, PATCH_SELECTOR16(setMotion),  // pushi setMotion
+	0x39, 0x04,                         // pushi 04
+	0x51, 0x6c,                         // class PChase
+	0x36,                               // push
+	0x89, 0x00,                         // lsg 00
+	0x39, 0x19,                         // pushi 19
+	0x72, PATCH_GETORIGINALUINT16(+8),  // lofsa nec
+	0x36,                               // push
+	PATCH_END
+};
+
 //          script, description,                                     signature                      patch
 static const SciScriptPatcherEntry qfg4Signatures[] = {
 	{  true,     0, "prevent autosave from deleting save games",   1, qfg4AutosaveSignature,         qfg4AutosavePatch },
@@ -13503,6 +13697,8 @@ static const SciScriptPatcherEntry qfg4Signatures[] = {
 	{  true,    41, "fix conditional void calls",                  3, qfg4ConditionalVoidSignature,  qfg4ConditionalVoidPatch },
 	{  true,    50, "fix random revenant kopeks",                  1, qfg4SearchRevenantSignature,   qfg4SearchRevenantPatch },
 	{  true,    51, "Floppy: fix ad avis capture lockup",          1, qfg4AdAvisCaptureSignature,    qfg4AdAvisCapturePatch },
+	{  true,    51, "fix necrotaur blackout",                      1, qfg4NecrotaurBlackoutSignature,qfg4NecrotaurBlackoutPatch },
+	{  true,    51, "CD: fix necrotaur capture",                   3, qfg4NecrotaurCaptureSignature, qfg4NecrotaurCapturePatch },
 	{  true,    53, "NRS: fix wraith lockup",                      1, qfg4WraithLockupNrsSignature,  qfg4WraithLockupNrsPatch },
 	{  true,    83, "fix incorrect array type",                    1, qfg4TrapArrayTypeSignature,    qfg4TrapArrayTypePatch },
 	{  true,   140, "fix character selection",                     1, qfg4CharacterSelectSignature,  qfg4CharacterSelectPatch },
@@ -13510,6 +13706,7 @@ static const SciScriptPatcherEntry qfg4Signatures[] = {
 	{  true,   260, "CD: fix inn door crash",                      1, qfg4InnDoorCDSignature,        qfg4InnDoorCDPatch },
 	{  true,   270, "fix town gate after a staff dream",           1, qfg4DreamGateSignature,        qfg4DreamGatePatch },
 	{  true,   270, "fix town gate doormat at night",              1, qfg4TownGateDoormatSignature,  qfg4TownGateDoormatPatch },
+	{  true,   290, "fix chase repeating",                         1, qfg4ChaseRepeatsSignature,     qfg4ChaseRepeatsPatch },
 	{  true,   300, "fix empty burgomeister room teller",          1, qfg4EmptyBurgoRoomSignature,   qfg4EmptyBurgoRoomPatch },
 	{  true,   320, "fix pathfinding at the inn",                  1, qfg4InnPathfindingSignature,   qfg4InnPathfindingPatch },
 	{  true,   320, "fix talking to absent innkeeper",             1, qfg4AbsentInnkeeperSignature,  qfg4AbsentInnkeeperPatch },
