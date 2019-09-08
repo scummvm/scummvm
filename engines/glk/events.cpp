@@ -181,7 +181,8 @@ void Events::pollEvents() {
 
 	do {
 		checkForNextFrameCounter();
-		g_system->getEventManager()->pollEvent(event);
+		if (!g_system->getEventManager()->pollEvent(event))
+			return;
 
 		switch (event.type) {
 		case Common::EVENT_KEYDOWN: {
