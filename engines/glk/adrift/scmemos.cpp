@@ -34,11 +34,10 @@ enum { MEMO_ALLOCATION_BLOCK = 32 };
  * Game memo structure, saves a serialized game.  Allocation is preserved so
  * that structures can be reused without requiring reallocation.
  */
-typedef struct sc_memo_s
-{
-  sc_byte *serialized_game;
-  sc_int allocation;
-  sc_int length;
+typedef struct sc_memo_s {
+	sc_byte *serialized_game;
+	sc_int allocation;
+	sc_int length;
 } sc_memo_t;
 typedef sc_memo_t *sc_memoref_t;
 
@@ -46,14 +45,13 @@ typedef sc_memo_t *sc_memoref_t;
  * Game command history structure, similar to a memo.  Saves a player input
  * command to create a history, reusing allocation where possible.
  */
-typedef struct sc_history_s
-{
-  sc_char *command;
-  sc_int sequence;
-  sc_int timestamp;
-  sc_int turns;
-  sc_int allocation;
-  sc_int length;
+typedef struct sc_history_s {
+	sc_char *command;
+	sc_int sequence;
+	sc_int timestamp;
+	sc_int turns;
+	sc_int allocation;
+	sc_int length;
 } sc_history_t;
 typedef sc_history_t *sc_historyref_t;
 
@@ -66,16 +64,15 @@ typedef sc_history_t *sc_historyref_t;
  * also a ring with limited capacity.
  */
 enum { MEMO_UNDO_TABLE_SIZE = 16, MEMO_HISTORY_TABLE_SIZE = 64 };
-typedef struct sc_memo_set_s
-{
-  sc_uint magic;
-  sc_memo_t memo[MEMO_UNDO_TABLE_SIZE];
-  sc_int memo_cursor;
+typedef struct sc_memo_set_s {
+	sc_uint magic;
+	sc_memo_t memo[MEMO_UNDO_TABLE_SIZE];
+	sc_int memo_cursor;
 
-  sc_history_t history[MEMO_HISTORY_TABLE_SIZE];
-  sc_int history_count;
-  sc_int current_history;
-  sc_bool is_at_start;
+	sc_history_t history[MEMO_HISTORY_TABLE_SIZE];
+	sc_int history_count;
+	sc_int current_history;
+	sc_bool is_at_start;
 } sc_memo_set_t;
 
 
@@ -85,9 +82,8 @@ typedef struct sc_memo_set_s
  * Return TRUE if pointer is a valid memo set, FALSE otherwise.
  */
 static sc_bool
-memo_is_valid (sc_memo_setref_t memento)
-{
-  return memento && memento->magic == MEMENTO_MAGIC;
+memo_is_valid(sc_memo_setref_t memento) {
+	return memento && memento->magic == MEMENTO_MAGIC;
 }
 
 
@@ -97,12 +93,11 @@ memo_is_valid (sc_memo_setref_t memento)
  * Round up an allocation in bytes to the next allocation block.
  */
 static sc_int
-memo_round_up (sc_int allocation)
-{
-  sc_int extended;
+memo_round_up(sc_int allocation) {
+	sc_int extended;
 
-  extended = allocation + MEMO_ALLOCATION_BLOCK - 1;
-  return (extended / MEMO_ALLOCATION_BLOCK) * MEMO_ALLOCATION_BLOCK;
+	extended = allocation + MEMO_ALLOCATION_BLOCK - 1;
+	return (extended / MEMO_ALLOCATION_BLOCK) * MEMO_ALLOCATION_BLOCK;
 }
 
 
@@ -112,23 +107,22 @@ memo_round_up (sc_int allocation)
  * Create and return a new set of memos.
  */
 sc_memo_setref_t
-memo_create (void)
-{
-  sc_memo_setref_t memento;
+memo_create(void) {
+	sc_memo_setref_t memento;
 
-  /* Create and initialize a clean set of memos. */
-  memento = (sc_memo_setref_t)sc_malloc (sizeof (*memento));
-  memento->magic = MEMENTO_MAGIC;
+	/* Create and initialize a clean set of memos. */
+	memento = (sc_memo_setref_t)sc_malloc(sizeof(*memento));
+	memento->magic = MEMENTO_MAGIC;
 
-  memset (memento->memo, 0, sizeof (memento->memo));
-  memento->memo_cursor = 0;
+	memset(memento->memo, 0, sizeof(memento->memo));
+	memento->memo_cursor = 0;
 
-  memset (memento->history, 0, sizeof (memento->history));
-  memento->history_count = 0;
-  memento->current_history = 0;
-  memento->is_at_start = FALSE;
+	memset(memento->history, 0, sizeof(memento->history));
+	memento->history_count = 0;
+	memento->current_history = 0;
+	memento->is_at_start = FALSE;
 
-  return memento;
+	return memento;
 }
 
 
@@ -138,30 +132,27 @@ memo_create (void)
  * Destroy a memo set, and free its heap memory.
  */
 void
-memo_destroy (sc_memo_setref_t memento)
-{
-  sc_int index_;
-  assert (memo_is_valid (memento));
+memo_destroy(sc_memo_setref_t memento) {
+	sc_int index_;
+	assert(memo_is_valid(memento));
 
-  /* Free the content of any used memo and any used history. */
-  for (index_ = 0; index_ < MEMO_UNDO_TABLE_SIZE; index_++)
-    {
-      sc_memoref_t memo;
+	/* Free the content of any used memo and any used history. */
+	for (index_ = 0; index_ < MEMO_UNDO_TABLE_SIZE; index_++) {
+		sc_memoref_t memo;
 
-      memo = memento->memo + index_;
-      sc_free (memo->serialized_game);
-    }
-  for (index_ = 0; index_ < MEMO_HISTORY_TABLE_SIZE; index_++)
-    {
-      sc_historyref_t history;
+		memo = memento->memo + index_;
+		sc_free(memo->serialized_game);
+	}
+	for (index_ = 0; index_ < MEMO_HISTORY_TABLE_SIZE; index_++) {
+		sc_historyref_t history;
 
-      history = memento->history + index_;
-      sc_free (history->command);
-    }
+		history = memento->history + index_;
+		sc_free(history->command);
+	}
 
-  /* Poison and free the memo set itself. */
-  memset (memento, 0xaa, sizeof (*memento));
-  sc_free (memento);
+	/* Poison and free the memo set itself. */
+	memset(memento, 0xaa, sizeof(*memento));
+	sc_free(memento);
 }
 
 
@@ -172,28 +163,26 @@ memo_destroy (sc_memo_setref_t memento)
  * that already stored in the memo.
  */
 static void
-memo_save_game_callback (void *opaque, const sc_byte *buffer, sc_int length)
-{
-  sc_memoref_t memo = (sc_memoref_t)opaque;
-  sc_int required;
-  assert (opaque && buffer && length > 0);
+memo_save_game_callback(void *opaque, const sc_byte *buffer, sc_int length) {
+	sc_memoref_t memo = (sc_memoref_t)opaque;
+	sc_int required;
+	assert(opaque && buffer && length > 0);
 
-  /*
-   * If necessary, increase the allocation for this memo.  Serialized games
-   * tend to grow slightly as the game progresses, so we add a bit of extra
-   * to the actual allocation.
-   */
-  required = memo->length + length;
-  if (required > memo->allocation)
-    {
-      required = memo_round_up (required + 2 * MEMO_ALLOCATION_BLOCK);
-      memo->serialized_game = (sc_byte *)sc_realloc (memo->serialized_game, required);
-      memo->allocation = required;
-    }
+	/*
+	 * If necessary, increase the allocation for this memo.  Serialized games
+	 * tend to grow slightly as the game progresses, so we add a bit of extra
+	 * to the actual allocation.
+	 */
+	required = memo->length + length;
+	if (required > memo->allocation) {
+		required = memo_round_up(required + 2 * MEMO_ALLOCATION_BLOCK);
+		memo->serialized_game = (sc_byte *)sc_realloc(memo->serialized_game, required);
+		memo->allocation = required;
+	}
 
-  /* Add this block of data to the buffer. */
-  memcpy (memo->serialized_game + memo->length, buffer, length);
-  memo->length += length;
+	/* Add this block of data to the buffer. */
+	memcpy(memo->serialized_game + memo->length, buffer, length);
+	memo->length += length;
 }
 
 
@@ -203,32 +192,29 @@ memo_save_game_callback (void *opaque, const sc_byte *buffer, sc_int length)
  * Store a game in the next memo slot.
  */
 void
-memo_save_game (sc_memo_setref_t memento, sc_gameref_t game)
-{
-  sc_memoref_t memo;
-  assert (memo_is_valid (memento));
+memo_save_game(sc_memo_setref_t memento, sc_gameref_t game) {
+	sc_memoref_t memo;
+	assert(memo_is_valid(memento));
 
-  /*
-   * If the current slot is in use, we can re-use its allocation.  Saved
-   * games will tend to be of roughly equal sizes, so it's worth doing.
-   */
-  memo = memento->memo + memento->memo_cursor;
-  memo->length = 0;
+	/*
+	 * If the current slot is in use, we can re-use its allocation.  Saved
+	 * games will tend to be of roughly equal sizes, so it's worth doing.
+	 */
+	memo = memento->memo + memento->memo_cursor;
+	memo->length = 0;
 
-  /* Serialize the given game into this memo. */
-  ser_save_game (game, memo_save_game_callback, memo);
+	/* Serialize the given game into this memo. */
+	ser_save_game(game, memo_save_game_callback, memo);
 
-  /*
-   * If serialization worked (failure would be a surprise), advance the
-   * current memo cursor.
-   */
-  if (memo->length > 0)
-    {
-      memento->memo_cursor++;
-      memento->memo_cursor %= MEMO_UNDO_TABLE_SIZE;
-    }
-  else
-    sc_error ("memo_save_game: warning: game save failed\n");
+	/*
+	 * If serialization worked (failure would be a surprise), advance the
+	 * current memo cursor.
+	 */
+	if (memo->length > 0) {
+		memento->memo_cursor++;
+		memento->memo_cursor %= MEMO_UNDO_TABLE_SIZE;
+	} else
+		sc_error("memo_save_game: warning: game save failed\n");
 }
 
 
@@ -239,23 +225,22 @@ memo_save_game (sc_memo_setref_t memento, sc_gameref_t game)
  * until it's drained.
  */
 static sc_int
-memo_load_game_callback (void *opaque, sc_byte *buffer, sc_int length)
-{
-  sc_memoref_t memo = (sc_memoref_t)opaque;
-  sc_int bytes;
-  assert (opaque && buffer && length > 0);
+memo_load_game_callback(void *opaque, sc_byte *buffer, sc_int length) {
+	sc_memoref_t memo = (sc_memoref_t)opaque;
+	sc_int bytes;
+	assert(opaque && buffer && length > 0);
 
-  /* Send back either all the bytes, or as many as the buffer allows. */
-  bytes = (memo->length < length) ? memo->length : length;
+	/* Send back either all the bytes, or as many as the buffer allows. */
+	bytes = (memo->length < length) ? memo->length : length;
 
-  /* Read and remove the first block of data (or all if less than length). */
-  memcpy (buffer, memo->serialized_game, bytes);
-  memmove (memo->serialized_game,
-           memo->serialized_game + bytes, memo->length - bytes);
-  memo->length -= bytes;
+	/* Read and remove the first block of data (or all if less than length). */
+	memcpy(buffer, memo->serialized_game, bytes);
+	memmove(memo->serialized_game,
+	        memo->serialized_game + bytes, memo->length - bytes);
+	memo->length -= bytes;
 
-  /* Return the count of bytes placed in the buffer. */
-  return bytes;
+	/* Return the count of bytes placed in the buffer. */
+	return bytes;
 }
 
 
@@ -265,48 +250,45 @@ memo_load_game_callback (void *opaque, sc_byte *buffer, sc_int length)
  * Restore a game from the last memo slot used, if possible.
  */
 sc_bool
-memo_load_game (sc_memo_setref_t memento, sc_gameref_t game)
-{
-  sc_int cursor;
-  sc_memoref_t memo;
-  assert (memo_is_valid (memento));
+memo_load_game(sc_memo_setref_t memento, sc_gameref_t game) {
+	sc_int cursor;
+	sc_memoref_t memo;
+	assert(memo_is_valid(memento));
 
-  /* Look back one from the current memo cursor. */
-  cursor = (memento->memo_cursor == 0)
-           ? MEMO_UNDO_TABLE_SIZE - 1 : memento->memo_cursor - 1;
-  memo = memento->memo + cursor;
+	/* Look back one from the current memo cursor. */
+	cursor = (memento->memo_cursor == 0)
+	         ? MEMO_UNDO_TABLE_SIZE - 1 : memento->memo_cursor - 1;
+	memo = memento->memo + cursor;
 
-  /* If this slot is not empty, restore the serialized game held in it. */
-  if (memo->length > 0)
-    {
-      sc_bool status;
+	/* If this slot is not empty, restore the serialized game held in it. */
+	if (memo->length > 0) {
+		sc_bool status;
 
-      /*
-       * Deserialize the given game from this memo; failure would be somewhat
-       * of a surprise here.
-       */
-      status = ser_load_game (game, memo_load_game_callback, memo);
-      if (!status)
-        sc_error ("memo_load_game: warning: game load failed\n");
+		/*
+		 * Deserialize the given game from this memo; failure would be somewhat
+		 * of a surprise here.
+		 */
+		status = ser_load_game(game, memo_load_game_callback, memo);
+		if (!status)
+			sc_error("memo_load_game: warning: game load failed\n");
 
-      /*
-       * This should have drained the memo of all data, but to be sure that
-       * there's no chance of trying to restore from this slot again, we'll
-       * force it anyway.
-       */
-      if (memo->length > 0)
-        {
-          sc_error ("memo_load_game: warning: data remains after loading\n");
-          memo->length = 0;
-        }
+		/*
+		 * This should have drained the memo of all data, but to be sure that
+		 * there's no chance of trying to restore from this slot again, we'll
+		 * force it anyway.
+		 */
+		if (memo->length > 0) {
+			sc_error("memo_load_game: warning: data remains after loading\n");
+			memo->length = 0;
+		}
 
-      /* Regress current memo, and return TRUE if we restored a memo. */
-      memento->memo_cursor = cursor;
-      return status;
-    }
+		/* Regress current memo, and return TRUE if we restored a memo. */
+		memento->memo_cursor = cursor;
+		return status;
+	}
 
-  /* There are no more memos to restore. */
-  return FALSE;
+	/* There are no more memos to restore. */
+	return FALSE;
 }
 
 
@@ -317,20 +299,19 @@ memo_load_game (sc_memo_setref_t memento, sc_gameref_t game)
  * otherwise.
  */
 sc_bool
-memo_is_load_available (sc_memo_setref_t memento)
-{
-  sc_int cursor;
-  sc_memoref_t memo;
-  assert (memo_is_valid (memento));
+memo_is_load_available(sc_memo_setref_t memento) {
+	sc_int cursor;
+	sc_memoref_t memo;
+	assert(memo_is_valid(memento));
 
-  /*
-   * Look back one from the current memo cursor.  Return TRUE if this slot
-   * contains a serialized game.
-   */
-  cursor = (memento->memo_cursor == 0)
-           ? MEMO_UNDO_TABLE_SIZE - 1 : memento->memo_cursor - 1;
-  memo = memento->memo + cursor;
-  return memo->length > 0;
+	/*
+	 * Look back one from the current memo cursor.  Return TRUE if this slot
+	 * contains a serialized game.
+	 */
+	cursor = (memento->memo_cursor == 0)
+	         ? MEMO_UNDO_TABLE_SIZE - 1 : memento->memo_cursor - 1;
+	memo = memento->memo + cursor;
+	return memo->length > 0;
 }
 
 
@@ -340,23 +321,21 @@ memo_is_load_available (sc_memo_setref_t memento)
  * Forget the memos of saved games.
  */
 void
-memo_clear_games (sc_memo_setref_t memento)
-{
-  sc_int index_;
-  assert (memo_is_valid (memento));
+memo_clear_games(sc_memo_setref_t memento) {
+	sc_int index_;
+	assert(memo_is_valid(memento));
 
-  /* Deallocate every entry. */
-  for (index_ = 0; index_ < MEMO_UNDO_TABLE_SIZE; index_++)
-    {
-      sc_memoref_t memo;
+	/* Deallocate every entry. */
+	for (index_ = 0; index_ < MEMO_UNDO_TABLE_SIZE; index_++) {
+		sc_memoref_t memo;
 
-      memo = memento->memo + index_;
-      sc_free (memo->serialized_game);
-    }
+		memo = memento->memo + index_;
+		sc_free(memo->serialized_game);
+	}
 
-  /* Reset all entries and the cursor. */
-  memset (memento->memo, 0, sizeof (memento->memo));
-  memento->memo_cursor = 0;
+	/* Reset all entries and the cursor. */
+	memset(memento->memo, 0, sizeof(memento->memo));
+	memento->memo_cursor = 0;
 }
 
 
@@ -367,41 +346,39 @@ memo_clear_games (sc_memo_setref_t memento)
  * used item if necessary.
  */
 void
-memo_save_command (sc_memo_setref_t memento,
-                   const sc_char *command, sc_int timestamp, sc_int turns)
-{
-  sc_historyref_t history;
-  sc_int length;
-  assert (memo_is_valid (memento));
+memo_save_command(sc_memo_setref_t memento,
+                  const sc_char *command, sc_int timestamp, sc_int turns) {
+	sc_historyref_t history;
+	sc_int length;
+	assert(memo_is_valid(memento));
 
-  /* As with memos, reuse the allocation of the next slot if it has one. */
-  history = memento->history
-            + memento->history_count % MEMO_HISTORY_TABLE_SIZE;
+	/* As with memos, reuse the allocation of the next slot if it has one. */
+	history = memento->history
+	          + memento->history_count % MEMO_HISTORY_TABLE_SIZE;
 
-  /*
-   * Resize the allocation for this slot if required.  Strings tend to be
-   * short, so round up to a block to avoid too many reallocs.
-   */
-  length = strlen (command) + 1;
-  if (history->allocation < length)
-    {
-      sc_int required;
+	/*
+	 * Resize the allocation for this slot if required.  Strings tend to be
+	 * short, so round up to a block to avoid too many reallocs.
+	 */
+	length = strlen(command) + 1;
+	if (history->allocation < length) {
+		sc_int required;
 
-      required = memo_round_up (length);
-      history->command = (sc_char *)sc_realloc (history->command, required);
-      history->allocation = required;
-    }
+		required = memo_round_up(length);
+		history->command = (sc_char *)sc_realloc(history->command, required);
+		history->allocation = required;
+	}
 
-  /* Save the string into this slot, and normalize it for neatness. */
-  strcpy (history->command, command);
-  sc_normalize_string (history->command);
-  history->sequence = memento->history_count + 1;
-  history->timestamp = timestamp;
-  history->turns = turns;
-  history->length = length;
+	/* Save the string into this slot, and normalize it for neatness. */
+	strcpy(history->command, command);
+	sc_normalize_string(history->command);
+	history->sequence = memento->history_count + 1;
+	history->timestamp = timestamp;
+	history->turns = turns;
+	history->length = length;
 
-  /* Increment the count of histories handled. */
-  memento->history_count++;
+	/* Increment the count of histories handled. */
+	memento->history_count++;
 }
 
 
@@ -414,24 +391,22 @@ memo_save_command (sc_memo_setref_t memento,
  * remove it again as the main runner loop will add the real thing.
  */
 void
-memo_unsave_command (sc_memo_setref_t memento)
-{
-  assert (memo_is_valid (memento));
+memo_unsave_command(sc_memo_setref_t memento) {
+	assert(memo_is_valid(memento));
 
-  /* Do nothing if for some reason there's no history to unsave. */
-  if (memento->history_count > 0)
-    {
-      sc_historyref_t history;
+	/* Do nothing if for some reason there's no history to unsave. */
+	if (memento->history_count > 0) {
+		sc_historyref_t history;
 
-      /* Decrement the count of histories handled, erase the prior entry. */
-      memento->history_count--;
-      history = memento->history
-                + memento->history_count % MEMO_HISTORY_TABLE_SIZE;
-      history->sequence = 0;
-      history->timestamp = 0;
-      history->turns = 0;
-      history->length = 0;
-    }
+		/* Decrement the count of histories handled, erase the prior entry. */
+		memento->history_count--;
+		history = memento->history
+		          + memento->history_count % MEMO_HISTORY_TABLE_SIZE;
+		history->sequence = 0;
+		history->timestamp = 0;
+		history->turns = 0;
+		history->length = 0;
+	}
 }
 
 
@@ -441,15 +416,14 @@ memo_unsave_command (sc_memo_setref_t memento)
  * Return a count of available saved commands.
  */
 sc_int
-memo_get_command_count (sc_memo_setref_t memento)
-{
-  assert (memo_is_valid (memento));
+memo_get_command_count(sc_memo_setref_t memento) {
+	assert(memo_is_valid(memento));
 
-  /* Return the lesser of the history count and the history table size. */
-  if (memento->history_count < MEMO_HISTORY_TABLE_SIZE)
-    return memento->history_count;
-  else
-    return MEMO_HISTORY_TABLE_SIZE;
+	/* Return the lesser of the history count and the history table size. */
+	if (memento->history_count < MEMO_HISTORY_TABLE_SIZE)
+		return memento->history_count;
+	else
+		return MEMO_HISTORY_TABLE_SIZE;
 }
 
 
@@ -459,23 +433,22 @@ memo_get_command_count (sc_memo_setref_t memento)
  * Iterator rewind function, reset current location to the first command.
  */
 void
-memo_first_command (sc_memo_setref_t memento)
-{
-  sc_int cursor;
-  sc_historyref_t history;
-  assert (memo_is_valid (memento));
+memo_first_command(sc_memo_setref_t memento) {
+	sc_int cursor;
+	sc_historyref_t history;
+	assert(memo_is_valid(memento));
 
-  /*
-   * If the buffer has cycled, we have the full complement of saved commands,
-   * so start iterating at the current cursor.  Otherwise, start from index 0.
-   * Detect cycling by looking at the current slot; if it's filled, we've
-   * been here before.  Set at_start flag to indicate the special case for
-   * circular buffers.
-   */
-  cursor = memento->history_count % MEMO_HISTORY_TABLE_SIZE;
-  history = memento->history + cursor;
-  memento->current_history = (history->length > 0) ? cursor : 0;
-  memento->is_at_start = TRUE;
+	/*
+	 * If the buffer has cycled, we have the full complement of saved commands,
+	 * so start iterating at the current cursor.  Otherwise, start from index 0.
+	 * Detect cycling by looking at the current slot; if it's filled, we've
+	 * been here before.  Set at_start flag to indicate the special case for
+	 * circular buffers.
+	 */
+	cursor = memento->history_count % MEMO_HISTORY_TABLE_SIZE;
+	history = memento->history + cursor;
+	memento->current_history = (history->length > 0) ? cursor : 0;
+	memento->is_at_start = TRUE;
 }
 
 
@@ -486,37 +459,33 @@ memo_first_command (sc_memo_setref_t memento)
  * starting at 1, and the timestamp and turns when the command was saved.
  */
 void
-memo_next_command (sc_memo_setref_t memento,
-                   const sc_char **command, sc_int *sequence,
-                   sc_int *timestamp, sc_int *turns)
-{
-  assert (memo_is_valid (memento));
+memo_next_command(sc_memo_setref_t memento,
+                  const sc_char **command, sc_int *sequence,
+                  sc_int *timestamp, sc_int *turns) {
+	assert(memo_is_valid(memento));
 
-  /* If valid, return the current command and advance. */
-  if (memo_more_commands (memento))
-    {
-      sc_historyref_t history;
+	/* If valid, return the current command and advance. */
+	if (memo_more_commands(memento)) {
+		sc_historyref_t history;
 
-      /* Note the current history, and advance its index. */
-      history = memento->history + memento->current_history;
-      memento->current_history++;
-      memento->current_history %= MEMO_HISTORY_TABLE_SIZE;
-      memento->is_at_start = FALSE;
+		/* Note the current history, and advance its index. */
+		history = memento->history + memento->current_history;
+		memento->current_history++;
+		memento->current_history %= MEMO_HISTORY_TABLE_SIZE;
+		memento->is_at_start = FALSE;
 
-      /* Return details from the history noted above. */
-      *command = history->command;
-      *sequence = history->sequence;
-      *timestamp = history->timestamp;
-      *turns = history->turns;
-    }
-  else
-    {
-      /* Return NULL and zeroes if no more commands available. */
-      *command = NULL;
-      *sequence = 0;
-      *timestamp = 0;
-      *turns = 0;
-    }
+		/* Return details from the history noted above. */
+		*command = history->command;
+		*sequence = history->sequence;
+		*timestamp = history->timestamp;
+		*turns = history->turns;
+	} else {
+		/* Return NULL and zeroes if no more commands available. */
+		*command = NULL;
+		*sequence = 0;
+		*timestamp = 0;
+		*turns = 0;
+	}
 }
 
 
@@ -526,25 +495,24 @@ memo_next_command (sc_memo_setref_t memento,
  * Iterator end function, returns TRUE if more commands are readable.
  */
 sc_bool
-memo_more_commands (sc_memo_setref_t memento)
-{
-  sc_int cursor;
-  sc_historyref_t history;
-  assert (memo_is_valid (memento));
+memo_more_commands(sc_memo_setref_t memento) {
+	sc_int cursor;
+	sc_historyref_t history;
+	assert(memo_is_valid(memento));
 
-  /* Get the current effective write position, and the current history. */
-  cursor = memento->history_count % MEMO_HISTORY_TABLE_SIZE;
-  history = memento->history + memento->current_history;
+	/* Get the current effective write position, and the current history. */
+	cursor = memento->history_count % MEMO_HISTORY_TABLE_SIZE;
+	history = memento->history + memento->current_history;
 
-  /*
-   * More data if the current history is behind the write position and is
-   * occupied, or if it matches and is occupied and we're at the start of
-   * iteration (circular buffer special case).
-   */
-  if (memento->current_history == cursor)
-    return (memento->is_at_start) ? history->length > 0 : FALSE;
-  else
-    return history->length > 0;
+	/*
+	 * More data if the current history is behind the write position and is
+	 * occupied, or if it matches and is occupied and we're at the start of
+	 * iteration (circular buffer special case).
+	 */
+	if (memento->current_history == cursor)
+		return (memento->is_at_start) ? history->length > 0 : FALSE;
+	else
+		return history->length > 0;
 }
 
 
@@ -555,39 +523,36 @@ memo_more_commands (sc_memo_setref_t memento)
  * indicates an offset from the last defined), or NULL if not found.
  */
 const sc_char *
-memo_find_command (sc_memo_setref_t memento, sc_int sequence)
-{
-  sc_int target, index_;
-  sc_historyref_t matched;
-  assert (memo_is_valid (memento));
+memo_find_command(sc_memo_setref_t memento, sc_int sequence) {
+	sc_int target, index_;
+	sc_historyref_t matched;
+	assert(memo_is_valid(memento));
 
-  /* Decide on a search target, depending on the sign of sequence. */
-  target = (sequence < 0) ? memento->history_count + sequence + 1: sequence;
+	/* Decide on a search target, depending on the sign of sequence. */
+	target = (sequence < 0) ? memento->history_count + sequence + 1 : sequence;
 
-  /*
-   * A backwards search starting at the write position would probably be more
-   * efficient here, but this is a rarely called function so we'll do it the
-   * simpler way.
-   */
-  matched = NULL;
-  for (index_ = 0; index_ < MEMO_HISTORY_TABLE_SIZE; index_++)
-    {
-      sc_historyref_t history;
+	/*
+	 * A backwards search starting at the write position would probably be more
+	 * efficient here, but this is a rarely called function so we'll do it the
+	 * simpler way.
+	 */
+	matched = NULL;
+	for (index_ = 0; index_ < MEMO_HISTORY_TABLE_SIZE; index_++) {
+		sc_historyref_t history;
 
-      history = memento->history + index_;
-      if (history->sequence == target)
-        {
-          matched = history;
-          break;
-        }
-    }
+		history = memento->history + index_;
+		if (history->sequence == target) {
+			matched = history;
+			break;
+		}
+	}
 
-  /*
-   * Return the command or NULL.  If sequence passed in was zero, and the
-   * history was not full, this will still return NULL as it should, since
-   * this unused history's command found by the search above will be NULL.
-   */
-  return matched ? matched->command : NULL;
+	/*
+	 * Return the command or NULL.  If sequence passed in was zero, and the
+	 * history was not full, this will still return NULL as it should, since
+	 * this unused history's command found by the search above will be NULL.
+	 */
+	return matched ? matched->command : NULL;
 }
 
 
@@ -597,25 +562,23 @@ memo_find_command (sc_memo_setref_t memento, sc_int sequence)
  * Forget all saved commands.
  */
 void
-memo_clear_commands (sc_memo_setref_t memento)
-{
-  sc_int index_;
-  assert (memo_is_valid (memento));
+memo_clear_commands(sc_memo_setref_t memento) {
+	sc_int index_;
+	assert(memo_is_valid(memento));
 
-  /* Deallocate every entry. */
-  for (index_ = 0; index_ < MEMO_HISTORY_TABLE_SIZE; index_++)
-    {
-      sc_historyref_t history;
+	/* Deallocate every entry. */
+	for (index_ = 0; index_ < MEMO_HISTORY_TABLE_SIZE; index_++) {
+		sc_historyref_t history;
 
-      history = memento->history + index_;
-      sc_free (history->command);
-    }
+		history = memento->history + index_;
+		sc_free(history->command);
+	}
 
-  /* Reset all entries, the count, and the iteration variables. */
-  memset (memento->history, 0, sizeof (memento->history));
-  memento->history_count = 0;
-  memento->current_history = 0;
-  memento->is_at_start = FALSE;
+	/* Reset all entries, the count, and the iteration variables. */
+	memset(memento->history, 0, sizeof(memento->history));
+	memento->history_count = 0;
+	memento->current_history = 0;
+	memento->is_at_start = FALSE;
 }
 
 } // End of namespace Adrift

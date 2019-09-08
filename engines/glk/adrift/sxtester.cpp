@@ -33,18 +33,18 @@ namespace Adrift {
  * the script's monitoring.
  */
 static sc_int test_run_game_script(sc_game game, sx_script script) {
-  sc_int errors;
+	sc_int errors;
 
-  /* Ensure completely repeatable random number sequences. */
-  sc_reseed_random_sequence (1);
+	/* Ensure completely repeatable random number sequences. */
+	sc_reseed_random_sequence(1);
 
-  /* Start interpreting the script stream. */
-  scr_start_script (game, script);
-  sc_interpret_game (game);
+	/* Start interpreting the script stream. */
+	scr_start_script(game, script);
+	sc_interpret_game(game);
 
-  /* Wrap up the script interpreter and capture error count. */
-  errors = scr_finalize_script ();
-  return errors;
+	/* Wrap up the script interpreter and capture error count. */
+	errors = scr_finalize_script();
+	return errors;
 }
 
 
@@ -54,47 +54,43 @@ static sc_int test_run_game_script(sc_game game, sx_script script) {
  * Run each test in the given descriptor array, reporting the results and
  * accumulating an error count overall.  Return the total error count.
  */
-sc_int test_run_game_tests (const sx_test_descriptor_t tests[],
-                     sc_int count, sc_bool is_verbose) {
-  const sx_test_descriptor_t *test;
-  sc_int errors;
-  assert(tests);
+sc_int test_run_game_tests(const sx_test_descriptor_t tests[],
+                           sc_int count, sc_bool is_verbose) {
+	const sx_test_descriptor_t *test;
+	sc_int errors;
+	assert(tests);
 
-  errors = 0;
+	errors = 0;
 
-  /* Execute each game in turn. */
-  for (test = tests; test < tests + count; test++)
-    {
-      sc_int test_errors;
+	/* Execute each game in turn. */
+	for (test = tests; test < tests + count; test++) {
+		sc_int test_errors;
 
-      if (is_verbose)
-        {
-          sx_trace ("--- Running Test \"%s\" [\"%s\", by %s]...\n",
-                    test->name,
-                    sc_get_game_name (test->game),
-                    sc_get_game_author (test->game));
-        }
+		if (is_verbose) {
+			sx_trace("--- Running Test \"%s\" [\"%s\", by %s]...\n",
+			         test->name,
+			         sc_get_game_name(test->game),
+			         sc_get_game_author(test->game));
+		}
 
-      test_errors = test_run_game_script (test->game, test->script);
-      errors += test_errors;
+		test_errors = test_run_game_script(test->game, test->script);
+		errors += test_errors;
 
-      if (is_verbose)
-        {
-          sx_trace ("--- Test \"%s\": ", test->name);
-          if (test_errors > 0)
-            sx_trace ("%s [%ld error%s]\n",
-                     "FAIL", test_errors, test_errors == 1 ? "" : "s");
-          else
-            sx_trace ("%s\n", "PASS");
-        }
-      else
-        sx_trace ("%s", test_errors > 0 ? "F" : ".");
-      //fflush (stdout);
-	  //fflush (stderr);
-    }
-  sx_trace ("%s", is_verbose ? "" : "\n");
+		if (is_verbose) {
+			sx_trace("--- Test \"%s\": ", test->name);
+			if (test_errors > 0)
+				sx_trace("%s [%ld error%s]\n",
+				         "FAIL", test_errors, test_errors == 1 ? "" : "s");
+			else
+				sx_trace("%s\n", "PASS");
+		} else
+			sx_trace("%s", test_errors > 0 ? "F" : ".");
+		//fflush (stdout);
+		//fflush (stderr);
+	}
+	sx_trace("%s", is_verbose ? "" : "\n");
 
-  return errors;
+	return errors;
 }
 
 } // End of namespace Adrift

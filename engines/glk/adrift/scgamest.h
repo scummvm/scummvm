@@ -67,9 +67,9 @@ struct sc_taskstate_s {
 typedef sc_taskstate_s sc_taskstate_t;
 
 /* Event state structure, holds event state, and timing information. */
-enum
-{ ES_WAITING = 1,
-  ES_RUNNING = 2, ES_AWAITING = 3, ES_FINISHED = 4, ES_PAUSED = 5
+enum {
+	ES_WAITING = 1,
+	ES_RUNNING = 2, ES_AWAITING = 3, ES_FINISHED = 4, ES_PAUSED = 5
 };
 struct sc_eventstate_s {
 	sc_int state;

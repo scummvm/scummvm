@@ -50,67 +50,67 @@ typedef unsigned long sc_uint;
 typedef int sc_bool;
 
 /* Enumerated confirmation types, passed to os_confirm(). */
-enum
-{ SC_CONF_QUIT = 0,
-  SC_CONF_RESTART, SC_CONF_SAVE, SC_CONF_RESTORE, SC_CONF_VIEW_HINTS
+enum {
+	SC_CONF_QUIT = 0,
+	SC_CONF_RESTART, SC_CONF_SAVE, SC_CONF_RESTORE, SC_CONF_VIEW_HINTS
 };
 
 /* HTML-like tag enumerated values, passed to os_print_tag(). */
-enum
-{ SC_TAG_UNKNOWN = 0, SC_TAG_ITALICS, SC_TAG_ENDITALICS, SC_TAG_BOLD,
-  SC_TAG_ENDBOLD, SC_TAG_UNDERLINE, SC_TAG_ENDUNDERLINE, SC_TAG_COLOR,
-  SC_TAG_ENDCOLOR, SC_TAG_FONT, SC_TAG_ENDFONT, SC_TAG_BGCOLOR, SC_TAG_CENTER,
-  SC_TAG_ENDCENTER, SC_TAG_RIGHT, SC_TAG_ENDRIGHT, SC_TAG_WAIT, SC_TAG_WAITKEY,
-  SC_TAG_CLS,
+enum {
+	SC_TAG_UNKNOWN = 0, SC_TAG_ITALICS, SC_TAG_ENDITALICS, SC_TAG_BOLD,
+	SC_TAG_ENDBOLD, SC_TAG_UNDERLINE, SC_TAG_ENDUNDERLINE, SC_TAG_COLOR,
+	SC_TAG_ENDCOLOR, SC_TAG_FONT, SC_TAG_ENDFONT, SC_TAG_BGCOLOR, SC_TAG_CENTER,
+	SC_TAG_ENDCENTER, SC_TAG_RIGHT, SC_TAG_ENDRIGHT, SC_TAG_WAIT, SC_TAG_WAITKEY,
+	SC_TAG_CLS,
 
-  /* British spelling equivalents. */
-  SC_TAG_COLOUR = SC_TAG_COLOR,
-  SC_TAG_ENDCOLOUR = SC_TAG_ENDCOLOR,
-  SC_TAG_BGCOLOUR = SC_TAG_BGCOLOR,
-  SC_TAG_CENTRE = SC_TAG_CENTER,
-  SC_TAG_ENDCENTRE = SC_TAG_ENDCENTER
+	/* British spelling equivalents. */
+	SC_TAG_COLOUR = SC_TAG_COLOR,
+	SC_TAG_ENDCOLOUR = SC_TAG_ENDCOLOR,
+	SC_TAG_BGCOLOUR = SC_TAG_BGCOLOR,
+	SC_TAG_CENTRE = SC_TAG_CENTER,
+	SC_TAG_ENDCENTRE = SC_TAG_ENDCENTER
 };
 
 /* OS interface function prototypes; interpreters must define these. */
 typedef void *sc_game;
-extern void os_print_string (const sc_char *string);
+extern void os_print_string(const sc_char *string);
 extern void os_print_tag(sc_int tag, const sc_char *argument);
-extern void os_play_sound (const sc_char *filepath,
-                           sc_int offset, sc_int length, sc_bool is_looping);
+extern void os_play_sound(const sc_char *filepath,
+                          sc_int offset, sc_int length, sc_bool is_looping);
 extern void os_stop_sound();
-extern void os_show_graphic (const sc_char *filepath,
-                             sc_int offset, sc_int length);
+extern void os_show_graphic(const sc_char *filepath,
+                            sc_int offset, sc_int length);
 extern sc_bool os_read_line(sc_char *buffer, sc_int length);
 extern sc_bool os_confirm(sc_int type);
 extern void *os_open_file(sc_bool is_save);
-extern void os_write_file (void *opaque, const sc_byte *buffer, sc_int length);
-extern sc_int os_read_file (void *opaque, sc_byte *buffer, sc_int length);
-extern void os_close_file (void *opaque);
+extern void os_write_file(void *opaque, const sc_byte *buffer, sc_int length);
+extern sc_int os_read_file(void *opaque, sc_byte *buffer, sc_int length);
+extern void os_close_file(void *opaque);
 extern void os_display_hints(sc_game game);
 
-extern void os_print_string_debug (const sc_char *string);
+extern void os_print_string_debug(const sc_char *string);
 extern sc_bool os_read_line_debug(sc_char *buffer, sc_int length);
 
 /* Interpreter trace flag bits, passed to sc_set_trace_flags(). */
-enum
-{ SC_TRACE_PARSE = 1, SC_TRACE_PROPERTIES = 2, SC_TRACE_VARIABLES = 4,
-  SC_TRACE_PARSER = 8, SC_TRACE_LIBRARY = 16, SC_TRACE_EVENTS = 32,
-  SC_TRACE_NPCS = 64, SC_TRACE_OBJECTS = 128, SC_TRACE_TASKS = 256,
-  SC_TRACE_PRINTFILTER = 512,
+enum {
+	SC_TRACE_PARSE = 1, SC_TRACE_PROPERTIES = 2, SC_TRACE_VARIABLES = 4,
+	SC_TRACE_PARSER = 8, SC_TRACE_LIBRARY = 16, SC_TRACE_EVENTS = 32,
+	SC_TRACE_NPCS = 64, SC_TRACE_OBJECTS = 128, SC_TRACE_TASKS = 256,
+	SC_TRACE_PRINTFILTER = 512,
 
-  SC_DUMP_TAF = 1024, SC_DUMP_PROPERTIES = 2048, SC_DUMP_VARIABLES = 4096,
-  SC_DUMP_PARSER_TREES = 8192, SC_DUMP_LOCALE_TABLES = 16384
+	SC_DUMP_TAF = 1024, SC_DUMP_PROPERTIES = 2048, SC_DUMP_VARIABLES = 4096,
+	SC_DUMP_PARSER_TREES = 8192, SC_DUMP_LOCALE_TABLES = 16384
 };
 
 /* Module-wide trace control function prototype. */
 extern void sc_set_trace_flags(sc_uint trace_flags);
 
 /* Interpreter interface function prototypes. */
-extern sc_game sc_game_from_filename (const sc_char *filename);
-extern sc_game sc_game_from_stream (Common::SeekableReadStream *stream);
-extern sc_game sc_game_from_callback(sc_int (*callback)
-                                      (void *, sc_byte *, sc_int),
-                                      void *opaque);
+extern sc_game sc_game_from_filename(const sc_char *filename);
+extern sc_game sc_game_from_stream(Common::SeekableReadStream *stream);
+extern sc_game sc_game_from_callback(sc_int(*callback)
+                                     (void *, sc_byte *, sc_int),
+                                     void *opaque);
 extern void sc_interpret_game(sc_game game);
 extern void sc_restart_game(sc_game game);
 extern sc_bool sc_save_game(sc_game game);
@@ -120,16 +120,16 @@ extern void sc_quit_game(sc_game game);
 extern sc_bool sc_save_game_to_filename(sc_game game, const sc_char *filename);
 extern void sc_save_game_to_stream(sc_game game, Common::SeekableReadStream *stream);
 extern void sc_save_game_to_callback(sc_game game,
-                                      void (*callback)
-                                      (void *, const sc_byte *, sc_int),
-                                      void *opaque);
+                                     void (*callback)
+                                     (void *, const sc_byte *, sc_int),
+                                     void *opaque);
 extern sc_bool sc_load_game_from_filename(sc_game game,
-                                           const sc_char *filename);
+        const sc_char *filename);
 extern sc_bool sc_load_game_from_stream(sc_game game, Common::SeekableReadStream *stream);
 extern sc_bool sc_load_game_from_callback(sc_game game,
-                                           sc_int (*callback)
-                                           (void *, sc_byte *, sc_int),
-                                           void *opaque);
+        sc_int(*callback)
+        (void *, sc_byte *, sc_int),
+        void *opaque);
 extern void sc_free_game(sc_game game);
 extern sc_bool sc_is_game_running(sc_game game);
 extern const sc_char *sc_get_game_name(sc_game game);
@@ -157,26 +157,26 @@ typedef void *sc_game_hint;
 extern sc_game_hint sc_get_first_game_hint(sc_game game);
 extern sc_game_hint sc_get_next_game_hint(sc_game game, sc_game_hint hint);
 extern const sc_char *sc_get_game_hint_question(sc_game game,
-                                                 sc_game_hint hint);
+        sc_game_hint hint);
 extern const sc_char *sc_get_game_subtle_hint(sc_game game,
-                                               sc_game_hint hint);
+        sc_game_hint hint);
 extern const sc_char *sc_get_game_unsubtle_hint(sc_game game,
-                                                 sc_game_hint hint);
+        sc_game_hint hint);
 
 extern void sc_set_game_debugger_enabled(sc_game game, sc_bool flag);
 extern sc_bool sc_get_game_debugger_enabled(sc_game game);
 extern sc_bool sc_run_game_debugger_command(sc_game game,
-                                             const sc_char *debug_command);
+        const sc_char *debug_command);
 extern void sc_set_portable_random(sc_bool flag);
 extern void sc_reseed_random_sequence(sc_uint new_seed);
 
 /* Locale control and query functions. */
-extern sc_bool sc_set_locale (const sc_char *name);
+extern sc_bool sc_set_locale(const sc_char *name);
 extern const sc_char *sc_get_locale();
 
 /* A few possibly useful utilities. */
-extern sc_int sc_strncasecmp (const sc_char *s1, const sc_char *s2, sc_int n);
-extern sc_int sc_strcasecmp (const sc_char *s1, const sc_char *s2);
+extern sc_int sc_strncasecmp(const sc_char *s1, const sc_char *s2, sc_int n);
+extern sc_int sc_strcasecmp(const sc_char *s1, const sc_char *s2);
 extern const sc_char *sc_scare_version();
 extern sc_int sc_scare_emulation();
 

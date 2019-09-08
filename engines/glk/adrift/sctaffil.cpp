@@ -27,15 +27,15 @@
 #include "common/memstream.h"
 
 #if defined(USE_ZLIB)
-  #ifdef __SYMBIAN32__
-    #include <zlib\zlib.h>
-  #else
-    #include <zlib.h>
-  #endif
+#ifdef __SYMBIAN32__
+#include <zlib\zlib.h>
+#else
+#include <zlib.h>
+#endif
 
-  #if ZLIB_VERNUM < 0x1204
-  #error Version 1.2.0.4 or newer of zlib is required for this code
-  #endif
+#if ZLIB_VERNUM < 0x1204
+#error Version 1.2.0.4 or newer of zlib is required for this code
+#endif
 #endif
 
 namespace Glk {
@@ -49,14 +49,14 @@ namespace Adrift {
 
 /* Assorted definitions and constants. */
 static const sc_uint TAF_MAGIC = 0x5bdcfa41;
-enum
-{ VERSION_HEADER_SIZE = 14,
-  V400_HEADER_EXTRA = 8
+enum {
+	VERSION_HEADER_SIZE = 14,
+	V400_HEADER_EXTRA = 8
 };
-enum
-{ OUT_BUFFER_SIZE = 31744,
-  IN_BUFFER_SIZE = 16384,
-  GROW_INCREMENT = 8
+enum {
+	OUT_BUFFER_SIZE = 31744,
+	IN_BUFFER_SIZE = 16384,
+	GROW_INCREMENT = 8
 };
 static const sc_char NEWLINE = '\n';
 static const sc_char CARRIAGE_RETURN = '\r';
@@ -64,17 +64,20 @@ static const sc_char NUL = '\0';
 
 /* Version 4.0, version 3.9, and version 3.8 TAF file signatures. */
 static const sc_byte
-  V400_SIGNATURE[VERSION_HEADER_SIZE] = {0x3c, 0x42, 0x3f, 0xc9, 0x6a, 0x87,
-                                         0xc2, 0xcf, 0x93, 0x45, 0x3e, 0x61,
-                                         0x39, 0xfa};
+V400_SIGNATURE[VERSION_HEADER_SIZE] = {0x3c, 0x42, 0x3f, 0xc9, 0x6a, 0x87,
+                                       0xc2, 0xcf, 0x93, 0x45, 0x3e, 0x61,
+                                       0x39, 0xfa
+                                      };
 static const sc_byte
-  V390_SIGNATURE[VERSION_HEADER_SIZE] = {0x3c, 0x42, 0x3f, 0xc9, 0x6a, 0x87,
-                                         0xc2, 0xcf, 0x94, 0x45, 0x37, 0x61,
-                                         0x39, 0xfa};
+V390_SIGNATURE[VERSION_HEADER_SIZE] = {0x3c, 0x42, 0x3f, 0xc9, 0x6a, 0x87,
+                                       0xc2, 0xcf, 0x94, 0x45, 0x37, 0x61,
+                                       0x39, 0xfa
+                                      };
 static const sc_byte
-  V380_SIGNATURE[VERSION_HEADER_SIZE] = {0x3c, 0x42, 0x3f, 0xc9, 0x6a, 0x87,
-                                         0xc2, 0xcf, 0x94, 0x45, 0x36, 0x61,
-                                         0x39, 0xfa};
+V380_SIGNATURE[VERSION_HEADER_SIZE] = {0x3c, 0x42, 0x3f, 0xc9, 0x6a, 0x87,
+                                       0xc2, 0xcf, 0x94, 0x45, 0x36, 0x61,
+                                       0x39, 0xfa
+                                      };
 
 /*
  * Game TAF data structure.  The game structure contains the original TAF
@@ -87,22 +90,21 @@ static const sc_byte
  * header.  So for files of this type, the header is all zeroes.
  */
 struct sc_slabdesc_t {
-  sc_byte *data;
-  sc_int size;
+	sc_byte *data;
+	sc_int size;
 };
 typedef sc_slabdesc_t *sc_slabdescref_t;
-typedef struct sc_taf_s
-{
-  sc_uint magic;
-  sc_byte header[VERSION_HEADER_SIZE + V400_HEADER_EXTRA];
-  sc_int version;
-  sc_int total_in_bytes;
-  sc_slabdescref_t slabs;
-  sc_int slab_count;
-  sc_int slabs_allocated;
-  sc_bool is_unterminated;
-  sc_int current_slab;
-  sc_int current_offset;
+typedef struct sc_taf_s {
+	sc_uint magic;
+	sc_byte header[VERSION_HEADER_SIZE + V400_HEADER_EXTRA];
+	sc_int version;
+	sc_int total_in_bytes;
+	sc_slabdescref_t slabs;
+	sc_int slab_count;
+	sc_int slabs_allocated;
+	sc_bool is_unterminated;
+	sc_int current_slab;
+	sc_int current_offset;
 } sc_taf_t;
 
 
@@ -124,18 +126,16 @@ static sc_int taf_random_state = 0x00a09e86;
  * range 0..254.  Thanks to Rik Snel for uncovering this obfuscation.
  */
 static sc_byte
-taf_random (void)
-{
-  /* Generate and return the next pseudo-random number. */
-  taf_random_state = (taf_random_state * PRNG_CST1 + PRNG_CST2) & PRNG_CST3;
-  return (UCHAR_MAX * (sc_uint) taf_random_state) / (sc_uint) (PRNG_CST3 + 1);
+taf_random(void) {
+	/* Generate and return the next pseudo-random number. */
+	taf_random_state = (taf_random_state * PRNG_CST1 + PRNG_CST2) & PRNG_CST3;
+	return (UCHAR_MAX * (sc_uint) taf_random_state) / (sc_uint)(PRNG_CST3 + 1);
 }
 
 static void
-taf_random_reset (void)
-{
-  /* Reset PRNG to initial conditions. */
-  taf_random_state = PRNG_INITIAL_STATE;
+taf_random_reset(void) {
+	/* Reset PRNG to initial conditions. */
+	taf_random_state = PRNG_INITIAL_STATE;
 }
 
 
@@ -145,9 +145,8 @@ taf_random_reset (void)
  * Return TRUE if pointer is a valid TAF structure, FALSE otherwise.
  */
 static sc_bool
-taf_is_valid (sc_tafref_t taf)
-{
-  return taf && taf->magic == TAF_MAGIC;
+taf_is_valid(sc_tafref_t taf) {
+	return taf && taf->magic == TAF_MAGIC;
 }
 
 
@@ -157,25 +156,24 @@ taf_is_valid (sc_tafref_t taf)
  * Allocate and return a new, empty TAF structure.
  */
 static sc_tafref_t
-taf_create_empty (void)
-{
-  sc_tafref_t taf;
+taf_create_empty(void) {
+	sc_tafref_t taf;
 
-  /* Create an empty TAF structure. */
-  taf = (sc_tafref_t)sc_malloc(sizeof (*taf));
-  taf->magic = TAF_MAGIC;
-  memset (taf->header, 0, sizeof (taf->header));
-  taf->version = TAF_VERSION_NONE;
-  taf->total_in_bytes = 0;
-  taf->slabs = NULL;
-  taf->slab_count = 0;
-  taf->slabs_allocated = 0;
-  taf->is_unterminated = FALSE;
-  taf->current_slab = 0;
-  taf->current_offset = 0;
+	/* Create an empty TAF structure. */
+	taf = (sc_tafref_t)sc_malloc(sizeof(*taf));
+	taf->magic = TAF_MAGIC;
+	memset(taf->header, 0, sizeof(taf->header));
+	taf->version = TAF_VERSION_NONE;
+	taf->total_in_bytes = 0;
+	taf->slabs = NULL;
+	taf->slab_count = 0;
+	taf->slabs_allocated = 0;
+	taf->is_unterminated = FALSE;
+	taf->current_slab = 0;
+	taf->current_offset = 0;
 
-  /* Return the new TAF structure. */
-  return taf;
+	/* Return the new TAF structure. */
+	return taf;
 }
 
 
@@ -185,22 +183,21 @@ taf_create_empty (void)
  * Free TAF memory, and destroy a TAF structure.
  */
 void
-taf_destroy (sc_tafref_t taf)
-{
-  sc_int index_;
-  assert (taf_is_valid (taf));
+taf_destroy(sc_tafref_t taf) {
+	sc_int index_;
+	assert(taf_is_valid(taf));
 
-  /* First free each slab in the slabs array,... */
-  for (index_ = 0; index_ < taf->slab_count; index_++)
-    sc_free (taf->slabs[index_].data);
+	/* First free each slab in the slabs array,... */
+	for (index_ = 0; index_ < taf->slab_count; index_++)
+		sc_free(taf->slabs[index_].data);
 
-  /*
-   * ...then free slabs growable array, and poison and free the TAF structure
-   * itself.
-   */
-  sc_free (taf->slabs);
-  memset (taf, 0xaa, sizeof (*taf));
-  sc_free (taf);
+	/*
+	 * ...then free slabs growable array, and poison and free the TAF structure
+	 * itself.
+	 */
+	sc_free(taf->slabs);
+	memset(taf, 0xaa, sizeof(*taf));
+	sc_free(taf);
 }
 
 
@@ -211,37 +208,32 @@ taf_destroy (sc_tafref_t taf)
  * strings.  Nul's are used to replace carriage return and newline pairs.
  */
 static void
-taf_finalize_last_slab (sc_tafref_t taf)
-{
-  sc_slabdescref_t slab;
-  sc_int index_;
+taf_finalize_last_slab(sc_tafref_t taf) {
+	sc_slabdescref_t slab;
+	sc_int index_;
 
-  /* Locate the final slab in the slab descriptors array. */
-  assert (taf->slab_count > 0);
-  slab = taf->slabs + taf->slab_count - 1;
+	/* Locate the final slab in the slab descriptors array. */
+	assert(taf->slab_count > 0);
+	slab = taf->slabs + taf->slab_count - 1;
 
-  /*
-   * Replace carriage return and newline pairs with nuls, and individual
-   * carriage returns with a single newline.
-   */
-  for (index_ = 0; index_ < slab->size; index_++)
-    {
-      if (slab->data[index_] == CARRIAGE_RETURN)
-        {
-          if (index_ < slab->size - 1 && slab->data[index_ + 1] == NEWLINE)
-            {
-              slab->data[index_] = NUL;
-              slab->data[index_ + 1] = NUL;
-              index_++;
-            }
-          else
-            slab->data[index_] = NEWLINE;
-        }
+	/*
+	 * Replace carriage return and newline pairs with nuls, and individual
+	 * carriage returns with a single newline.
+	 */
+	for (index_ = 0; index_ < slab->size; index_++) {
+		if (slab->data[index_] == CARRIAGE_RETURN) {
+			if (index_ < slab->size - 1 && slab->data[index_ + 1] == NEWLINE) {
+				slab->data[index_] = NUL;
+				slab->data[index_ + 1] = NUL;
+				index_++;
+			} else
+				slab->data[index_] = NEWLINE;
+		}
 
-      /* Also protect against unlikely incoming nul characters. */
-      else if (slab->data[index_] == NUL)
-        slab->data[index_] = NEWLINE;
-    }
+		/* Also protect against unlikely incoming nul characters. */
+		else if (slab->data[index_] == NUL)
+			slab->data[index_] = NEWLINE;
+	}
 }
 
 
@@ -253,26 +245,23 @@ taf_finalize_last_slab (sc_tafref_t taf)
  * Otherwise, return the count of usable bytes found in the buffer.
  */
 static sc_int
-taf_find_buffer_extent (const sc_byte *buffer,
-                        sc_int length, sc_bool *is_unterminated)
-{
-  sc_int bytes;
+taf_find_buffer_extent(const sc_byte *buffer,
+                       sc_int length, sc_bool *is_unterminated) {
+	sc_int bytes;
 
-  /* Search backwards from the buffer end for the final line feed. */
-  for (bytes = length; bytes > 1; bytes--)
-    {
-      if (buffer[bytes - 2] == CARRIAGE_RETURN && buffer[bytes - 1] == NEWLINE)
-        break;
-    }
-  if (bytes < 2)
-    {
-      /* No carriage return and newline termination found. */
-      *is_unterminated = TRUE;
-      return length;
-    }
+	/* Search backwards from the buffer end for the final line feed. */
+	for (bytes = length; bytes > 1; bytes--) {
+		if (buffer[bytes - 2] == CARRIAGE_RETURN && buffer[bytes - 1] == NEWLINE)
+			break;
+	}
+	if (bytes < 2) {
+		/* No carriage return and newline termination found. */
+		*is_unterminated = TRUE;
+		return length;
+	}
 
-  *is_unterminated = FALSE;
-  return bytes;
+	*is_unterminated = FALSE;
+	return bytes;
 }
 
 
@@ -283,75 +272,70 @@ taf_find_buffer_extent (const sc_byte *buffer,
  * number of characters consumed from the buffer.
  */
 static sc_int
-taf_append_buffer (sc_tafref_t taf, const sc_byte *buffer, sc_int length)
-{
-  sc_int bytes;
-  sc_bool is_unterminated;
+taf_append_buffer(sc_tafref_t taf, const sc_byte *buffer, sc_int length) {
+	sc_int bytes;
+	sc_bool is_unterminated;
 
-  /* Locate the extent of appendable data in the buffer. */
-  bytes = taf_find_buffer_extent (buffer, length, &is_unterminated);
+	/* Locate the extent of appendable data in the buffer. */
+	bytes = taf_find_buffer_extent(buffer, length, &is_unterminated);
 
-  /* See if the last buffer handled contained at least one data line. */
-  if (!taf->is_unterminated)
-    {
-      sc_slabdescref_t slab;
+	/* See if the last buffer handled contained at least one data line. */
+	if (!taf->is_unterminated) {
+		sc_slabdescref_t slab;
 
-      /* Extend the slabs array if we've reached the current allocation. */
-      if (taf->slab_count == taf->slabs_allocated)
-        {
-          taf->slabs_allocated += GROW_INCREMENT;
-          taf->slabs = (sc_slabdescref_t)sc_realloc (taf->slabs,
-                                   taf->slabs_allocated * sizeof (*taf->slabs));
-        }
+		/* Extend the slabs array if we've reached the current allocation. */
+		if (taf->slab_count == taf->slabs_allocated) {
+			taf->slabs_allocated += GROW_INCREMENT;
+			taf->slabs = (sc_slabdescref_t)sc_realloc(taf->slabs,
+			             taf->slabs_allocated * sizeof(*taf->slabs));
+		}
 
-      /* Advance to the next unused slab in the slab descriptors array. */
-      slab = taf->slabs + taf->slab_count;
-      taf->slab_count++;
+		/* Advance to the next unused slab in the slab descriptors array. */
+		slab = taf->slabs + taf->slab_count;
+		taf->slab_count++;
 
-      /* Copy the input buffer into the new slab. */
-      slab->data = (sc_byte *)sc_malloc (bytes);
-      memcpy (slab->data, buffer, bytes);
-      slab->size = bytes;
-    }
-  else
-    {
-      sc_slabdescref_t slab;
+		/* Copy the input buffer into the new slab. */
+		slab->data = (sc_byte *)sc_malloc(bytes);
+		memcpy(slab->data, buffer, bytes);
+		slab->size = bytes;
+	} else {
+		sc_slabdescref_t slab;
 
-      /* Locate the final slab in the slab descriptors array. */
-      assert (taf->slab_count > 0);
-      slab = taf->slabs + taf->slab_count - 1;
+		/* Locate the final slab in the slab descriptors array. */
+		assert(taf->slab_count > 0);
+		slab = taf->slabs + taf->slab_count - 1;
 
-      /*
-       * The last buffer we saw had no line endings in it.  In this case,
-       * append the input buffer to the end of the last slab's data, rather
-       * than creating a new slab.  This may cause allocation to overflow
-       * the system limits on single allocated areas on some platforms.
-       */
-      slab->data = (sc_byte *)sc_realloc(slab->data, slab->size + bytes);
-      memcpy (slab->data + slab->size, buffer, bytes);
-      slab->size += bytes;
+		/*
+		 * The last buffer we saw had no line endings in it.  In this case,
+		 * append the input buffer to the end of the last slab's data, rather
+		 * than creating a new slab.  This may cause allocation to overflow
+		 * the system limits on single allocated areas on some platforms.
+		 */
+		slab->data = (sc_byte *)sc_realloc(slab->data, slab->size + bytes);
+		memcpy(slab->data + slab->size, buffer, bytes);
+		slab->size += bytes;
 
-      /*
-       * Use a special case for the final carriage return and newline pairing
-       * that are split over two buffers; force correct termination of this
-       * slab.
-       */
-      if (slab->size > 1
-          && slab->data[slab->size - 2] == CARRIAGE_RETURN
-          && slab->data[slab->size - 1] == NEWLINE)
-        is_unterminated = FALSE;
-    }
+		/*
+		 * Use a special case for the final carriage return and newline pairing
+		 * that are split over two buffers; force correct termination of this
+		 * slab.
+		 */
+		if (slab->size > 1
+		        && slab->data[slab->size - 2] == CARRIAGE_RETURN
+		        && slab->data[slab->size - 1] == NEWLINE)
+			is_unterminated = FALSE;
+	}
 
-  /*
-   * Note if this buffer requires that the next be coalesced with it.  If it
-   * doesn't, finalize the last slab by breaking it into separate lines.
-   */
-  taf->is_unterminated = is_unterminated;
-  if (!is_unterminated)
-    taf_finalize_last_slab (taf);
+	/*
+	 * Note if this buffer requires that the next be coalesced with it.  If it
+	 * doesn't, finalize the last slab by breaking it into separate lines.
+	 */
+	taf->is_unterminated = is_unterminated;
+	if (!is_unterminated)
+		taf_finalize_last_slab(taf);
 
-  /* Return count of buffer bytes consumed. */
-  return bytes;
+	/* Return count of buffer bytes consumed. */
+	return bytes;
 }
 
 
@@ -364,80 +348,75 @@ taf_append_buffer (sc_tafref_t taf, const sc_byte *buffer, sc_int length)
  * Assumes that the file has been read past the header.
  */
 static sc_bool
-taf_unobfuscate (sc_tafref_t taf, sc_read_callbackref_t callback,
-                 void *opaque, sc_bool is_gamefile)
-{
-  sc_byte *buffer;
-  sc_int bytes, used_bytes, total_bytes, index_;
+taf_unobfuscate(sc_tafref_t taf, sc_read_callbackref_t callback,
+                void *opaque, sc_bool is_gamefile) {
+	sc_byte *buffer;
+	sc_int bytes, used_bytes, total_bytes, index_;
 
-  /* Reset the PRNG, and synchronize with the header already read. */
-  taf_random_reset ();
-  for (index_ = 0; index_ < VERSION_HEADER_SIZE; index_++)
-    taf_random ();
+	/* Reset the PRNG, and synchronize with the header already read. */
+	taf_random_reset();
+	for (index_ = 0; index_ < VERSION_HEADER_SIZE; index_++)
+		taf_random();
 
-  /*
-   * Malloc buffer, done to help systems with limited stacks, and initialize
-   * count of bytes read and used in the buffer to zero.
-   */
-  buffer = (sc_byte *)sc_malloc (IN_BUFFER_SIZE);
-  used_bytes = 0;
-  total_bytes = 0;
+	/*
+	 * Malloc buffer, done to help systems with limited stacks, and initialize
+	 * count of bytes read and used in the buffer to zero.
+	 */
+	buffer = (sc_byte *)sc_malloc(IN_BUFFER_SIZE);
+	used_bytes = 0;
+	total_bytes = 0;
 
-  /* Unobfuscate in buffer sized chunks. */
-  do
-    {
-      /* Try to obtain more data. */
-      bytes = callback (opaque,
-                        buffer + used_bytes, IN_BUFFER_SIZE - used_bytes);
+	/* Unobfuscate in buffer sized chunks. */
+	do {
+		/* Try to obtain more data. */
+		bytes = callback(opaque,
+		                 buffer + used_bytes, IN_BUFFER_SIZE - used_bytes);
 
-      /* Unobfuscate data read in. */
-      for (index_ = 0; index_ < bytes; index_++)
-        buffer[used_bytes + index_] ^= taf_random ();
+		/* Unobfuscate data read in. */
+		for (index_ = 0; index_ < bytes; index_++)
+			buffer[used_bytes + index_] ^= taf_random();
 
-      /*
-       * Add data read in and unobfuscated to buffer used data, and if
-       * unobfuscated data is available, add it to the TAF.
-       */
-      used_bytes += bytes;
-      if (used_bytes > 0)
-        {
-          sc_int consumed;
+		/*
+		 * Add data read in and unobfuscated to buffer used data, and if
+		 * unobfuscated data is available, add it to the TAF.
+		 */
+		used_bytes += bytes;
+		if (used_bytes > 0) {
+			sc_int consumed;
 
-          /* Add lines from this buffer to the TAF. */
-          consumed = taf_append_buffer (taf, buffer, used_bytes);
+			/* Add lines from this buffer to the TAF. */
+			consumed = taf_append_buffer(taf, buffer, used_bytes);
 
-          /* Move unused buffer data to buffer start. */
-          memmove (buffer, buffer + consumed, IN_BUFFER_SIZE - consumed);
+			/* Move unused buffer data to buffer start. */
+			memmove(buffer, buffer + consumed, IN_BUFFER_SIZE - consumed);
 
-          /* Note counts of bytes consumed and remaining in the buffer. */
-          used_bytes -= consumed;
-          total_bytes += consumed;
-        }
-    }
-  while (bytes > 0);
+			/* Note counts of bytes consumed and remaining in the buffer. */
+			used_bytes -= consumed;
+			total_bytes += consumed;
+		}
+	} while (bytes > 0);
 
-  /*
-   * Unobfuscation completed, note the total bytes read.  This value is
-   * actually not used for version 3.9 and version 3.8 games, but we maintain
-   * it just in case.
-   */
-  taf->total_in_bytes = total_bytes;
-  if (is_gamefile)
-    taf->total_in_bytes += VERSION_HEADER_SIZE;
+	/*
+	 * Unobfuscation completed, note the total bytes read.  This value is
+	 * actually not used for version 3.9 and version 3.8 games, but we maintain
+	 * it just in case.
+	 */
+	taf->total_in_bytes = total_bytes;
+	if (is_gamefile)
+		taf->total_in_bytes += VERSION_HEADER_SIZE;
 
-  /* Check that we found the end of the input file as expected. */
-  if (used_bytes > 0)
-    {
-      sc_error ("taf_unobfuscate:"
-                " warning: %ld unhandled bytes in the buffer\n", used_bytes);
-    }
+	/* Check that we found the end of the input file as expected. */
+	if (used_bytes > 0) {
+		sc_error("taf_unobfuscate:"
+		         " warning: %ld unhandled bytes in the buffer\n", used_bytes);
+	}
 
-  if (taf->is_unterminated)
-    sc_fatal ("taf_unobfuscate: unterminated final data slab\n");
+	if (taf->is_unterminated)
+		sc_fatal("taf_unobfuscate: unterminated final data slab\n");
 
-  /* Return successfully. */
-  sc_free (buffer);
-  return TRUE;
+	/* Return successfully. */
+	sc_free(buffer);
+	return TRUE;
 }
 
 #define BUFFER_SIZE 16384
@@ -448,7 +427,7 @@ taf_unobfuscate (sc_tafref_t taf, sc_read_callbackref_t callback,
  * Decompress a version 4.0 TAF
  */
 static sc_bool taf_decompress(sc_tafref_t taf, sc_read_callbackref_t callback,
-		void *opaque, sc_bool is_gamefile) {
+                              void *opaque, sc_bool is_gamefile) {
 #if USE_ZLIB
 	Common::SeekableReadStream *src = (Common::SeekableReadStream *)opaque;
 	assert(src);
@@ -484,99 +463,88 @@ static sc_bool taf_decompress(sc_tafref_t taf, sc_read_callbackref_t callback,
  * in the buffer, or 0 if no more (end of file).
  */
 static sc_tafref_t
-taf_create_from_callback (sc_read_callbackref_t callback,
-                          void *opaque, sc_bool is_gamefile)
-{
-  sc_tafref_t taf;
-  sc_bool status = FALSE;
-  assert (callback);
+taf_create_from_callback(sc_read_callbackref_t callback,
+                         void *opaque, sc_bool is_gamefile) {
+	sc_tafref_t taf;
+	sc_bool status = FALSE;
+	assert(callback);
 
-  /* Create an empty TAF structure. */
-  taf = taf_create_empty ();
+	/* Create an empty TAF structure. */
+	taf = taf_create_empty();
 
-  /*
-   * Determine the TAF file version in use.  For saved games, we always use
-   * version 4.0 format.  For others, it's determined from the header.
-   */
-  if (is_gamefile)
-    {
-      sc_int in_bytes;
+	/*
+	 * Determine the TAF file version in use.  For saved games, we always use
+	 * version 4.0 format.  For others, it's determined from the header.
+	 */
+	if (is_gamefile) {
+		sc_int in_bytes;
 
-      /*
-       * Read in the ADRIFT header for game files.  Start by reading in the
-       * shorter header common to all.
-       */
-      in_bytes = callback (opaque, taf->header, VERSION_HEADER_SIZE);
-      if (in_bytes != VERSION_HEADER_SIZE)
-        {
-          sc_error ("taf_create: not enough data for standard TAF header\n");
-          taf_destroy (taf);
-          return NULL;
-        }
+		/*
+		 * Read in the ADRIFT header for game files.  Start by reading in the
+		 * shorter header common to all.
+		 */
+		in_bytes = callback(opaque, taf->header, VERSION_HEADER_SIZE);
+		if (in_bytes != VERSION_HEADER_SIZE) {
+			sc_error("taf_create: not enough data for standard TAF header\n");
+			taf_destroy(taf);
+			return NULL;
+		}
 
-      /*
-       * Compare the header with the known TAF signatures, and set TAF version
-       * appropriately.
-       */
-      if (memcmp (taf->header, V400_SIGNATURE, VERSION_HEADER_SIZE) == 0)
-        {
-          /* Read in the version 4.0 header extension. */
-          in_bytes = callback (opaque,
-                               taf->header + VERSION_HEADER_SIZE,
-                               V400_HEADER_EXTRA);
-          if (in_bytes != V400_HEADER_EXTRA)
-            {
-              sc_error ("taf_create:"
-                        " not enough data for extended TAF header\n");
-              taf_destroy (taf);
-              return NULL;
-            }
+		/*
+		 * Compare the header with the known TAF signatures, and set TAF version
+		 * appropriately.
+		 */
+		if (memcmp(taf->header, V400_SIGNATURE, VERSION_HEADER_SIZE) == 0) {
+			/* Read in the version 4.0 header extension. */
+			in_bytes = callback(opaque,
+			                    taf->header + VERSION_HEADER_SIZE,
+			                    V400_HEADER_EXTRA);
+			if (in_bytes != V400_HEADER_EXTRA) {
+				sc_error("taf_create:"
+				         " not enough data for extended TAF header\n");
+				taf_destroy(taf);
+				return NULL;
+			}
 
-          taf->version = TAF_VERSION_400;
-        }
-      else if (memcmp (taf->header, V390_SIGNATURE, VERSION_HEADER_SIZE) == 0)
-        taf->version = TAF_VERSION_390;
-      else if (memcmp (taf->header, V380_SIGNATURE, VERSION_HEADER_SIZE) == 0)
-        taf->version = TAF_VERSION_380;
-      else
-        {
-          taf_destroy (taf);
-          return NULL;
-        }
-    }
-  else
-    {
-      /* Saved games are always considered to be version 4.0. */
-      taf->version = TAF_VERSION_400;
-    }
+			taf->version = TAF_VERSION_400;
+		} else if (memcmp(taf->header, V390_SIGNATURE, VERSION_HEADER_SIZE) == 0)
+			taf->version = TAF_VERSION_390;
+		else if (memcmp(taf->header, V380_SIGNATURE, VERSION_HEADER_SIZE) == 0)
+			taf->version = TAF_VERSION_380;
+		else {
+			taf_destroy(taf);
+			return NULL;
+		}
+	} else {
+		/* Saved games are always considered to be version 4.0. */
+		taf->version = TAF_VERSION_400;
+	}
 
-  /*
-   * Call the appropriate game file reader function.  For version 4.0 games,
-   * data is compressed with Zlib.  For version 3.9 and version 3.8 games,
-   * it's obfuscated with the Visual Basic PRNG.
-   */
-  switch (taf->version)
-    {
-    case TAF_VERSION_400:
-      status = taf_decompress (taf, callback, opaque, is_gamefile);
-      break;
+	/*
+	 * Call the appropriate game file reader function.  For version 4.0 games,
+	 * data is compressed with Zlib.  For version 3.9 and version 3.8 games,
+	 * it's obfuscated with the Visual Basic PRNG.
+	 */
+	switch (taf->version) {
+	case TAF_VERSION_400:
+		status = taf_decompress(taf, callback, opaque, is_gamefile);
+		break;
 
-    case TAF_VERSION_390:
-    case TAF_VERSION_380:
-      status = taf_unobfuscate (taf, callback, opaque, is_gamefile);
-      break;
+	case TAF_VERSION_390:
+	case TAF_VERSION_380:
+		status = taf_unobfuscate(taf, callback, opaque, is_gamefile);
+		break;
 
-    default:
-      sc_fatal ("taf_create: invalid version\n");
-    }
-  if (!status)
-    {
-      taf_destroy (taf);
-      return NULL;
-    }
+	default:
+		sc_fatal("taf_create: invalid version\n");
+	}
+	if (!status) {
+		taf_destroy(taf);
+		return NULL;
+	}
 
-  /* Return successfully. */
-  return taf;
+	/* Return successfully. */
+	return taf;
 }
 
 
@@ -588,31 +556,28 @@ taf_create_from_callback (sc_read_callbackref_t callback,
  * constructed from either *.TAF (game) or *.TAS (saved game state) file data.
  */
 sc_tafref_t
-taf_create (sc_read_callbackref_t callback, void *opaque)
-{
-  return taf_create_from_callback (callback, opaque, TRUE);
+taf_create(sc_read_callbackref_t callback, void *opaque) {
+	return taf_create_from_callback(callback, opaque, TRUE);
 }
 
 sc_tafref_t
-taf_create_tas (sc_read_callbackref_t callback, void *opaque)
-{
-  return taf_create_from_callback (callback, opaque, FALSE);
+taf_create_tas(sc_read_callbackref_t callback, void *opaque) {
+	return taf_create_from_callback(callback, opaque, FALSE);
 }
 
- 
+
 /*
  * taf_first_line()
  *
  * Iterator rewind function, reset current slab location to TAF data start.
  */
 void
-taf_first_line (sc_tafref_t taf)
-{
-  assert (taf_is_valid (taf));
+taf_first_line(sc_tafref_t taf) {
+	assert(taf_is_valid(taf));
 
-  /* Set current locations to TAF start. */
-  taf->current_slab = 0;
-  taf->current_offset = 0;
+	/* Set current locations to TAF start. */
+	taf->current_slab = 0;
+	taf->current_offset = 0;
 }
 
 
@@ -623,35 +588,32 @@ taf_first_line (sc_tafref_t taf)
  * if no more lines.
  */
 const sc_char *
-taf_next_line (sc_tafref_t taf)
-{
-  assert (taf_is_valid (taf));
+taf_next_line(sc_tafref_t taf) {
+	assert(taf_is_valid(taf));
 
-  /* If there is a next line, return it and advance current. */
-  if (taf->current_slab < taf->slab_count)
-    {
-      sc_char *line;
+	/* If there is a next line, return it and advance current. */
+	if (taf->current_slab < taf->slab_count) {
+		sc_char *line;
 
-      /* Get the effective address of the current line. */
-      line = (sc_char *) taf->slabs[taf->current_slab].data;
-      line += taf->current_offset;
+		/* Get the effective address of the current line. */
+		line = (sc_char *) taf->slabs[taf->current_slab].data;
+		line += taf->current_offset;
 
-      /*
-       * Advance to the next line.  The + 2 skips the NULs used to replace the
-       * carriage return and line feed.
-       */
-      taf->current_offset += strlen (line) + 2;
-      if (taf->current_offset >= taf->slabs[taf->current_slab].size)
-        {
-          taf->current_slab++;
-          taf->current_offset = 0;
-        }
+		/*
+		 * Advance to the next line.  The + 2 skips the NULs used to replace the
+		 * carriage return and line feed.
+		 */
+		taf->current_offset += strlen(line) + 2;
+		if (taf->current_offset >= taf->slabs[taf->current_slab].size) {
+			taf->current_slab++;
+			taf->current_offset = 0;
+		}
 
-      return line;
-    }
+		return line;
+	}
 
-  /* No more lines, so return NULL. */
-  return NULL;
+	/* No more lines, so return NULL. */
+	return NULL;
 }
 
 
@@ -661,12 +623,11 @@ taf_next_line (sc_tafref_t taf)
  * Iterator end function, returns TRUE if more TAF lines are readable.
  */
 sc_bool
-taf_more_lines (sc_tafref_t taf)
-{
-  assert (taf_is_valid (taf));
+taf_more_lines(sc_tafref_t taf) {
+	assert(taf_is_valid(taf));
 
-  /* Return TRUE if not at TAF data end. */
-  return taf->current_slab < taf->slab_count;
+	/* Return TRUE if not at TAF data end. */
+	return taf->current_slab < taf->slab_count;
 }
 
 
@@ -678,16 +639,15 @@ taf_more_lines (sc_tafref_t taf)
  * be located.
  */
 sc_int
-taf_get_game_data_length (sc_tafref_t taf)
-{
-  assert (taf_is_valid (taf));
+taf_get_game_data_length(sc_tafref_t taf) {
+	assert(taf_is_valid(taf));
 
-  /*
-   * Return the count of bytes inflated; this includes the TAF header length
-   * for TAF, rather than TAS, files.  For TAS files, the count of file bytes
-   * read is irrelevant, and is never used.
-   */
-  return taf->total_in_bytes;
+	/*
+	 * Return the count of bytes inflated; this includes the TAF header length
+	 * for TAF, rather than TAS, files.  For TAS files, the count of file bytes
+	 * read is irrelevant, and is never used.
+	 */
+	return taf->total_in_bytes;
 }
 
 
@@ -697,12 +657,11 @@ taf_get_game_data_length (sc_tafref_t taf)
  * Return the version number of the TAF file, 400, 390, or 380.
  */
 sc_int
-taf_get_version (sc_tafref_t taf)
-{
-  assert (taf_is_valid (taf));
+taf_get_version(sc_tafref_t taf) {
+	assert(taf_is_valid(taf));
 
-  assert (taf->version != TAF_VERSION_NONE);
-  return taf->version;
+	assert(taf->version != TAF_VERSION_NONE);
+	return taf->version;
 }
 
 
@@ -715,67 +674,64 @@ taf_get_version (sc_tafref_t taf)
  * slab, and therefore safe to print.
  */
 sc_bool
-taf_debug_is_taf_string (sc_tafref_t taf, const void *addr) {
-  const sc_byte *const addr_ = (const sc_byte *const)addr;
-  sc_int index_;
+taf_debug_is_taf_string(sc_tafref_t taf, const void *addr) {
+	const sc_byte *const addr_ = (const sc_byte * const)addr;
+	sc_int index_;
 
-  /*
-   * Compare pointer, by address directly, against all memory contained in
-   * the TAF slabs.  Return TRUE if in range.
-   */
-  for (index_ = 0; index_ < taf->slab_count; index_++)
-    {
-      if (addr_ >= taf->slabs[index_].data
-          && addr_ < taf->slabs[index_].data + taf->slabs[index_].size)
-        return TRUE;
-    }
+	/*
+	 * Compare pointer, by address directly, against all memory contained in
+	 * the TAF slabs.  Return TRUE if in range.
+	 */
+	for (index_ = 0; index_ < taf->slab_count; index_++) {
+		if (addr_ >= taf->slabs[index_].data
+		        && addr_ < taf->slabs[index_].data + taf->slabs[index_].size)
+			return TRUE;
+	}
 
-  return FALSE;
+	return FALSE;
 }
 
 void
-taf_debug_dump (sc_tafref_t taf)
-{
-  sc_int index_, current_slab, current_offset;
-  assert (taf_is_valid (taf));
+taf_debug_dump(sc_tafref_t taf) {
+	sc_int index_, current_slab, current_offset;
+	assert(taf_is_valid(taf));
 
-  /* Dump complete structure. */
-  sc_trace ("TAFfile: debug dump follows...\n");
-  sc_trace ("taf->header =");
-  for (index_ = 0; index_ < (sc_int) sizeof (taf->header); index_++)
-    sc_trace (" %02x", taf->header[index_]);
-  sc_trace ("\n");
+	/* Dump complete structure. */
+	sc_trace("TAFfile: debug dump follows...\n");
+	sc_trace("taf->header =");
+	for (index_ = 0; index_ < (sc_int) sizeof(taf->header); index_++)
+		sc_trace(" %02x", taf->header[index_]);
+	sc_trace("\n");
 
-  sc_trace ("taf->version = %s\n",
-            taf->version == TAF_VERSION_400 ? "4.00" :
-            taf->version == TAF_VERSION_390 ? "3.90" :
-            taf->version == TAF_VERSION_380 ? "3.80" : "[Unknown]");
+	sc_trace("taf->version = %s\n",
+	         taf->version == TAF_VERSION_400 ? "4.00" :
+	         taf->version == TAF_VERSION_390 ? "3.90" :
+	         taf->version == TAF_VERSION_380 ? "3.80" : "[Unknown]");
 
-  sc_trace ("taf->slabs = \n");
-  for (index_ = 0; index_ < taf->slab_count; index_++)
-    {
-      sc_trace ("%3ld : %p, %ld bytes\n", index_,
-                taf->slabs[index_].data, taf->slabs[index_].size);
-    }
+	sc_trace("taf->slabs = \n");
+	for (index_ = 0; index_ < taf->slab_count; index_++) {
+		sc_trace("%3ld : %p, %ld bytes\n", index_,
+		         taf->slabs[index_].data, taf->slabs[index_].size);
+	}
 
-  sc_trace ("taf->slab_count = %ld\n", taf->slab_count);
-  sc_trace ("taf->slabs_allocated = %ld\n", taf->slabs_allocated);
-  sc_trace ("taf->current_slab = %ld\n", taf->current_slab);
-  sc_trace ("taf->current_offset = %ld\n", taf->current_offset);
+	sc_trace("taf->slab_count = %ld\n", taf->slab_count);
+	sc_trace("taf->slabs_allocated = %ld\n", taf->slabs_allocated);
+	sc_trace("taf->current_slab = %ld\n", taf->current_slab);
+	sc_trace("taf->current_offset = %ld\n", taf->current_offset);
 
-  /* Save current location. */
-  current_slab = taf->current_slab;
-  current_offset = taf->current_offset;
+	/* Save current location. */
+	current_slab = taf->current_slab;
+	current_offset = taf->current_offset;
 
-  /* Print out taf lines using taf iterators. */
-  sc_trace ("\ntaf iterators:\n");
-  taf_first_line (taf);
-  for (index_ = 0; taf_more_lines (taf); index_++)
-    sc_trace ("%5ld %s\n", index_, taf_next_line (taf));
+	/* Print out taf lines using taf iterators. */
+	sc_trace("\ntaf iterators:\n");
+	taf_first_line(taf);
+	for (index_ = 0; taf_more_lines(taf); index_++)
+		sc_trace("%5ld %s\n", index_, taf_next_line(taf));
 
-  /* Restore current location. */
-  taf->current_slab = current_slab;
-  taf->current_offset = current_offset;
+	/* Restore current location. */
+	taf->current_slab = current_slab;
+	taf->current_offset = current_offset;
 }
 
 } // End of namespace Adrift

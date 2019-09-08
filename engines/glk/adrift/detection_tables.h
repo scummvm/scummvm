@@ -190,7 +190,7 @@ const PlainGameDescriptor ADRIFT_GAME_LIST[] = {
 	{ "amcthorn", "Thorn" },
 	{ "amcneighbours", "Neighbours From Hell" },
 	{ "amcmonsters", "Monsters" },
-	{ "amcdiarystrip", "Diary of a Stripper" }, 
+	{ "amcdiarystrip", "Diary of a Stripper" },
 
 	// ADRIFT One-Hour Game Competition 1
 	{ "1hgamonkeytoomany", "" },

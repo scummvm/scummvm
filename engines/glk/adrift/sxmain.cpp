@@ -51,124 +51,113 @@ namespace Adrift {
  * Validate the command line, and each argument as a game to be run.
  * Execute scripts for each, and return with an error code if any test fails.
  */
-int glk_main (int argc, const char *argv[])
-{
-  const sc_char *const program = argv[0];
-  sc_bool is_verbose = FALSE, is_tracing = FALSE;
-  const sc_char *trace_flags;
-  sx_test_descriptor_t *tests;
-  sc_int count, index_, errors;
-  assert (argc > 0 && argv);
+int glk_main(int argc, const char *argv[]) {
+	const sc_char *const program = argv[0];
+	sc_bool is_verbose = FALSE, is_tracing = FALSE;
+	const sc_char *trace_flags;
+	sx_test_descriptor_t *tests;
+	sc_int count, index_, errors;
+	assert(argc > 0 && argv);
 
-  /* Get options and validate the command line. */
-  if (argc > 1
-      && (strcmp (argv[1], "-v") == 0 || strcmp (argv[1], "-vv") == 0))
-    {
-      is_verbose = TRUE;
-      is_tracing = (strcmp (argv[1], "-vv") == 0);
-      argc--;
-      argv++;
-    }
+	/* Get options and validate the command line. */
+	if (argc > 1
+	        && (strcmp(argv[1], "-v") == 0 || strcmp(argv[1], "-vv") == 0)) {
+		is_verbose = TRUE;
+		is_tracing = (strcmp(argv[1], "-vv") == 0);
+		argc--;
+		argv++;
+	}
 
-  if (is_verbose)
-    {
-      sx_trace ("--- %s Test Suite [Adrift %ld compatible]\n",
-                sc_scare_version (), sc_scare_emulation ());
-      if (argc < 2)
-        return EXIT_SUCCESS;
-    }
-  else if (argc < 2)
-    {
-      error("Usage: %s [-v | -vv] test [test...]\n", program);
-      return EXIT_FAILURE;
-    }
+	if (is_verbose) {
+		sx_trace("--- %s Test Suite [Adrift %ld compatible]\n",
+		         sc_scare_version(), sc_scare_emulation());
+		if (argc < 2)
+			return EXIT_SUCCESS;
+	} else if (argc < 2) {
+		error("Usage: %s [-v | -vv] test [test...]\n", program);
+		return EXIT_FAILURE;
+	}
 
-  /* Ensure that the interpreter is in the Latin1 locale, and stays there. */
-  if (!sc_set_locale ("Latin1"))
-    {
-	  error("%s: failed to set locale\n", program);
-      return EXIT_FAILURE;
-    }
+	/* Ensure that the interpreter is in the Latin1 locale, and stays there. */
+	if (!sc_set_locale("Latin1")) {
+		error("%s: failed to set locale\n", program);
+		return EXIT_FAILURE;
+	}
 
-  /*
-   * Force test reproducibility.  Because game construction may use random
-   * numbers, we also need to remember to reseed this before constructing
-   * each game, and then again before running each.
-   */
-  sc_set_portable_random (TRUE);
+	/*
+	 * Force test reproducibility.  Because game construction may use random
+	 * numbers, we also need to remember to reseed this before constructing
+	 * each game, and then again before running each.
+	 */
+	sc_set_portable_random(TRUE);
 
-  /* Set verbosity and tracing for other modules. */
-  scr_set_verbose (is_verbose);
-  stub_debug_trace (is_tracing);
-  trace_flags = 0; // getenv("SC_TRACE_FLAGS");
-  if (trace_flags)
-    sc_set_trace_flags (strtoul (trace_flags, NULL, 0));
+	/* Set verbosity and tracing for other modules. */
+	scr_set_verbose(is_verbose);
+	stub_debug_trace(is_tracing);
+	trace_flags = 0; // getenv("SC_TRACE_FLAGS");
+	if (trace_flags)
+		sc_set_trace_flags(strtoul(trace_flags, NULL, 0));
 
-  /* Create an array of test descriptors large enough for all tests. */
-  tests = (sx_test_descriptor_t *)sx_malloc ((argc - 1) * sizeof (*tests));
+	/* Create an array of test descriptors large enough for all tests. */
+	tests = (sx_test_descriptor_t *)sx_malloc((argc - 1) * sizeof(*tests));
 
-  /* Validate each test argument by opening a game and script for it. */
-  count = 0;
-  for (index_ = 1; index_ < argc; index_++)
-    {
-      const sc_char *name;
-      Common::SeekableReadStream *stream;
-      sx_script script;
-      sc_game game;
+	/* Validate each test argument by opening a game and script for it. */
+	count = 0;
+	for (index_ = 1; index_ < argc; index_++) {
+		const sc_char *name;
+		Common::SeekableReadStream *stream;
+		sx_script script;
+		sc_game game;
 
-      name = argv[index_];
+		name = argv[index_];
 
-      script = sx_fopen(name, "scr", "r");
-      if (!script)
-        {
-          error("%s: %s.scr: %s\n", program, name, strerror (errno));
-          continue;
-        }
+		script = sx_fopen(name, "scr", "r");
+		if (!script) {
+			error("%s: %s.scr: %s\n", program, name, strerror(errno));
+			continue;
+		}
 
-      stream = sx_fopen (name, "taf", "rb");
-      if (!stream)
-        {
-          error("%s: %s.taf: %s\n", program, name, strerror (errno));
-          delete script;
-          continue;
-        }
+		stream = sx_fopen(name, "taf", "rb");
+		if (!stream) {
+			error("%s: %s.taf: %s\n", program, name, strerror(errno));
+			delete script;
+			continue;
+		}
 
-      sc_reseed_random_sequence (1);
-      game = sc_game_from_stream(stream);
-      delete stream;
-      if (!game)
-        {
-          error("%s: %s.taf: Unable to decode Adrift game\n", program, name);
-          delete script;
-          continue;
-        }
+		sc_reseed_random_sequence(1);
+		game = sc_game_from_stream(stream);
+		delete stream;
+		if (!game) {
+			error("%s: %s.taf: Unable to decode Adrift game\n", program, name);
+			delete script;
+			continue;
+		}
 
-      tests[count].name = name;
-      tests[count].script = script;
-      tests[count].game = game;
-      count++;
-    }
+		tests[count].name = name;
+		tests[count].script = script;
+		tests[count].game = game;
+		count++;
+	}
 
-  /* Run the available tests and report results. */
-  if (count > 0)
-    errors = test_run_game_tests (tests, count, is_verbose);
-  else
-    errors = 1;
+	/* Run the available tests and report results. */
+	if (count > 0)
+		errors = test_run_game_tests(tests, count, is_verbose);
+	else
+		errors = 1;
 
-  /* Clean up allocations and opened files. */
-  for (index_ = 0; index_ < count; index_++)
-    {
-      delete tests[index_].script;
-      sc_free_game (tests[index_].game);
-    }
-  sx_free (tests);
+	/* Clean up allocations and opened files. */
+	for (index_ = 0; index_ < count; index_++) {
+		delete tests[index_].script;
+		sc_free_game(tests[index_].game);
+	}
+	sx_free(tests);
 
-  /* Report results overall. */
-  warning("%s [%ld test%s, %ld error%s]\n",
-          errors > 0 ? "FAIL" : "PASS",
-          count, count == 1 ? "" : "s", errors, errors == 1 ? "" : "s");
+	/* Report results overall. */
+	warning("%s [%ld test%s, %ld error%s]\n",
+	        errors > 0 ? "FAIL" : "PASS",
+	        count, count == 1 ? "" : "s", errors, errors == 1 ? "" : "s");
 
-  return errors > 0 ? EXIT_FAILURE : EXIT_SUCCESS;
+	return errors > 0 ? EXIT_FAILURE : EXIT_SUCCESS;
 }
 
 } // End of namespace Adrift
