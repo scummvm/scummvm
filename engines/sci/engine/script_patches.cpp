@@ -13680,6 +13680,64 @@ static const uint16 qfg4NecrotaurCapturePatch[] = {
 	PATCH_END
 };
 
+// When entering room 600 from the south at night, paladins receive a message
+//  about the two necrotaurs guarding the gate even when they're not there. The
+//  necrotaurs' appearance depends on flags, events, and if they've been killed,
+//  but the message code only tests if it's night.
+//
+// We fix this by only showing the message if there are at least 4 cast members
+//  in the room at night, which only occurs when the necrotaurs are present.
+//
+// Applies to: All versions
+// Responsible method: sFromSouth:changeState(1)
+// Fixes bug: #11057
+static const uint16 qfg4NecrotaurMessageSignature[] = {
+	0x30, SIG_UINT16(0x0052),           // bnt 0052 [ state 1 ]
+	SIG_ADDTOOFFSET(+0x4f),
+	SIG_MAGICDWORD,
+	0x32, SIG_UINT16(0x004b),           // jmp 004b [ end of method ]
+	0x3c,                               // dup
+	0x35, 0x01,                         // ldi 01
+	0x1a,                               // eq?
+	0x30, SIG_UINT16(0x0044),           // bnt 0044 [ end of method ]
+	0x81, 0x79,                         // lag 79 [ night ]
+	0x30, SIG_UINT16(0x0022),           // bnt 0022
+	0x89, 0x7d,                         // lsg 7d [ character type ]
+	0x35, 0x03,                         // ldi 03 [ paladin ]
+	0x1a,                               // eq?
+	0x30, SIG_UINT16(0x0011),           // bnt 0011 [ skip message ]
+	0x38, SIG_SELECTOR16(say),          // pushi say
+	0x38, SIG_UINT16(0x0003),           // pushi 0003
+	SIG_ADDTOOFFSET(+0x31),
+	0x3a,                               // toss
+	SIG_END
+};
+
+static const uint16 qfg4NecrotaurMessagePatch[] = {
+	0x3a,                               // toss
+	0x31, 0x50,                         // bnt 50 [ state 1 ]
+	PATCH_ADDTOOFFSET(+0x4f),
+	0x48,                               // ret
+	0x81, 0x79,                         // lag 79 [ night ]
+	0x31, 0x2c,                         // bnt 2c
+	0x7a,                               // push2
+	0x81, 0x7d,                         // lag 7d [ character type ]
+	0x22,                               // lt?
+	0x31, 0x1d,                         // bnt 1d [ skip message ]
+	0x39, 0x04,                         // pushi 04
+	0x39, PATCH_SELECTOR8(size),        // pushi size
+	0x76,                               // push0
+	0x81, 0x05,                         // lag 05
+	0x4a, PATCH_UINT16(0x0004),         // send 04 [ cast size? ]
+	0x24,                               // le?     [ at least 4 cast members? ]
+	0x31, 0x10,                         // bnt 10  [ skip message ]
+	0x38, PATCH_SELECTOR16(say),        // pushi say
+	0x39, 0x03,                         // pushi 03
+	PATCH_ADDTOOFFSET(+0x31),
+	0x48,                               // ret
+	PATCH_END
+};
+
 //          script, description,                                     signature                      patch
 static const SciScriptPatcherEntry qfg4Signatures[] = {
 	{  true,     0, "prevent autosave from deleting save games",   1, qfg4AutosaveSignature,         qfg4AutosavePatch },
@@ -13732,6 +13790,7 @@ static const SciScriptPatcherEntry qfg4Signatures[] = {
 	{  true,   545, "fix setLooper calls (1/2)",                   5, qfg4SetLooperSignature1,       qfg4SetLooperPatch1 },
 	{  true,   557, "fix forest 557 entry from east",              1, qfg4Forest557PathfindingSignature, qfg4Forest557PathfindingPatch },
 	{  true,   600, "fix passable closed gate after geas",         1, qfg4DungeonGateSignature,      qfg4DungeonGatePatch },
+	{  true,   600, "fix paladin's necrotaur message",             1, qfg4NecrotaurMessageSignature, qfg4NecrotaurMessagePatch },
 	{  true,   630, "fix great hall entry from barrel room",       1, qfg4GreatHallEntrySignature,   qfg4GreatHallEntryPatch },
 	{  true,   633, "fix stairway pathfinding",                    1, qfg4StairwayPathfindingSignature, qfg4StairwayPathfindingPatch },
 	{  true,   633, "Floppy: fix argument message",                1, qfg4ArgumentMessageFloppySignature,  qfg4ArgumentMessageFloppyPatch },
