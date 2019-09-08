@@ -115,6 +115,10 @@ bool SceneScriptBB02::ClickedOnExit(int exitId) {
 			}
 			Game_Flag_Set(kFlagBB02toBB04);
 			Game_Flag_Reset(kFlagBB02ElevatorDown);
+#if BLADERUNNER_ORIGINAL_BUGS
+#else
+			Actor_Set_Invisible(kActorMcCoy, true);
+#endif // BLADERUNNER_ORIGINAL_BUGS
 			Set_Enter(kSetBB02_BB04_BB06_BB51, kSceneBB04);
 			Scene_Loop_Start_Special(kSceneLoopModeChangeSet, kBB02LoopElevatorGoingUp, false);
 		}
@@ -162,6 +166,10 @@ void SceneScriptBB02::PlayerWalkedIn() {
 }
 
 void SceneScriptBB02::PlayerWalkedOut() {
+#if BLADERUNNER_ORIGINAL_BUGS
+#else
+	Actor_Set_Invisible(kActorMcCoy, false);
+#endif // BLADERUNNER_ORIGINAL_BUGS
 	Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 	Ambient_Sounds_Remove_All_Looping_Sounds(1);
 }
