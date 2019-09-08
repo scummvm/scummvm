@@ -2961,13 +2961,11 @@ static char *gsc_game_message = nullptr;
  * buffer with TAF or TAS file data from a Glk stream, and returns the byte
  * count.
  */
-static sc_int
-gsc_callback (void *opaque, sc_byte *buffer, sc_int length)
-{
-  strid_t stream = (strid_t) opaque;
-  assert (stream);
+static sc_int gsc_callback(void *opaque, sc_byte *buffer, sc_int length) {
+	Common::SeekableReadStream *stream = (Common::SeekableReadStream *)opaque;
+	assert(stream);
 
-  return g_vm->glk_get_buffer_stream (stream, (char *) buffer, length);
+	return stream->read(buffer, length);
 }
 
 
@@ -3053,117 +3051,117 @@ gsc_get_ending_option()
  * does the real work of running the game.
  */
 static int
-gsc_startup_code (strid_t game_stream, strid_t restore_stream,
-                  sc_uint trace_flags, sc_bool enable_debugger,
-                  sc_bool stable_random, const sc_char *locale)
+gsc_startup_code(Common::SeekableReadStream *game_stream, strid_t restore_stream,
+	sc_uint trace_flags, sc_bool enable_debugger,
+	sc_bool stable_random, const sc_char *locale)
 {
-  winid_t window;
-  assert (game_stream);
+	winid_t window;
+	assert(game_stream);
 
-  /* Open a temporary Glk main window. */
-  window = g_vm->glk_window_open (0, 0, 0, wintype_TextBuffer, 0);
-  if (window)
-    {
-      /* Clear and initialize the temporary window. */
-      g_vm->glk_window_clear (window);
-      g_vm->glk_set_window (window);
-      g_vm->glk_set_style (style_Normal);
+	/* Open a temporary Glk main window. */
+	window = g_vm->glk_window_open(0, 0, 0, wintype_TextBuffer, 0);
+	if (window)
+	{
+		/* Clear and initialize the temporary window. */
+		g_vm->glk_window_clear(window);
+		g_vm->glk_set_window(window);
+		g_vm->glk_set_style(style_Normal);
 
-      /*
-       * Display a brief loading game message; here we have to use a timeout
-       * to ensure that the text is flushed to Glk.
-       */
-      g_vm->glk_put_string ("Loading game...\n");
-      if (g_vm->glk_gestalt (gestalt_Timer, 0))
-        {
-          event_t event;
+		/*
+		 * Display a brief loading game message; here we have to use a timeout
+		 * to ensure that the text is flushed to Glk.
+		 */
+		g_vm->glk_put_string("Loading game...\n");
+		if (g_vm->glk_gestalt(gestalt_Timer, 0)) {
+			event_t event;
 
-          g_vm->glk_request_timer_events (GSC_LOADING_TIMEOUT);
-          do
-            {
-              g_vm->glk_select (&event);
-            }
-          while (event.type != evtype_Timer);
-          g_vm->glk_request_timer_events (0);
-        }
-    }
+			g_vm->glk_request_timer_events(GSC_LOADING_TIMEOUT);
+			do {
+				g_vm->glk_select(&event);
+			} while (!g_vm->shouldQuit() && event.type != evtype_Timer);
+			g_vm->glk_request_timer_events(0);
+		}
 
-  /* If the Glk libarary does not support unicode, disable it. */
-  if (!gsc_has_unicode || !g_vm->glk_gestalt (gestalt_Unicode, 0))
-    gsc_unicode_enabled = FALSE;
+		if (g_vm->shouldQuit())
+			return false;
+	}
 
-  /*
-   * If a locale was requested, set it in the core interpreter now.  This
-   * locale will preempt any auto-detected one found from inspecting the
-   * game on creation.  After game creation, the Glk locale is synchronized
-   * to the core interpreter's locale.
-   */
-  if (locale)
-    sc_set_locale (locale);
+	/* If the Glk libarary does not support unicode, disable it. */
+	if (!gsc_has_unicode || !g_vm->glk_gestalt(gestalt_Unicode, 0))
+		gsc_unicode_enabled = FALSE;
 
-  /*
-   * Set tracing flags, then try to create a SCARE game reference from the
-   * TAF file.  Since we need this in our call from g_vm->glk_main, we have to keep
-   * it in a module static variable.  If we can't open the TAF file, then
-   * we'll set the pointer to nullptr, and complain about it later in main.
-   * Passing the message string around like this is a nuisance...
-   */
-  sc_set_trace_flags (trace_flags);
-  gsc_game = sc_game_from_callback (gsc_callback, game_stream);
-  if (!gsc_game)
-    {
-      gsc_game = nullptr;
-      gsc_game_message = "Unable to load an Adrift game from the"
-                         " requested file.";
-    }
-  else
-    gsc_game_message = nullptr;
-  g_vm->glk_stream_close (game_stream, nullptr);
+	/*
+	 * If a locale was requested, set it in the core interpreter now.  This
+	 * locale will preempt any auto-detected one found from inspecting the
+	 * game on creation.  After game creation, the Glk locale is synchronized
+	 * to the core interpreter's locale.
+	 */
+	if (locale)
+		sc_set_locale(locale);
 
-  /*
-   * If the game was created successfully and there is a restore stream, try
-   * to immediately restore the game from that stream.
-   */
-  if (gsc_game && restore_stream)
-    {
-      if (!sc_load_game_from_callback (gsc_game, gsc_callback, restore_stream))
-        {
-          sc_free_game (gsc_game);
-          gsc_game = nullptr;
-          gsc_game_message = "Unable to restore this Adrift game from the"
-                             " requested file.";
-        }
-      else
-        gsc_game_message = nullptr;
-    }
-  if (restore_stream)
-    g_vm->glk_stream_close (restore_stream, nullptr);
+	/*
+	 * Set tracing flags, then try to create a SCARE game reference from the
+	 * TAF file.  Since we need this in our call from g_vm->glk_main, we have to keep
+	 * it in a module static variable.  If we can't open the TAF file, then
+	 * we'll set the pointer to nullptr, and complain about it later in main.
+	 * Passing the message string around like this is a nuisance...
+	 */
+	sc_set_trace_flags(trace_flags);
+	gsc_game = sc_game_from_callback(gsc_callback, game_stream);
+	if (!gsc_game)
+	{
+		gsc_game = nullptr;
+		gsc_game_message = "Unable to load an Adrift game from the"
+			" requested file.";
+	}
+	else
+		gsc_game_message = nullptr;
+	delete game_stream;
 
-  /* If successful, set game debugging and synchronize to the core's locale. */
-  if (gsc_game)
-    {
-      sc_set_game_debugger_enabled (gsc_game, enable_debugger);
-      gsc_set_locale (sc_get_locale ());
-    }
+	/*
+	 * If the game was created successfully and there is a restore stream, try
+	 * to immediately restore the game from that stream.
+	 */
+	if (gsc_game && restore_stream)
+	{
+		if (!sc_load_game_from_callback(gsc_game, gsc_callback, restore_stream))
+		{
+			sc_free_game(gsc_game);
+			gsc_game = nullptr;
+			gsc_game_message = "Unable to restore this Adrift game from the"
+				" requested file.";
+		}
+		else
+			gsc_game_message = nullptr;
+	}
+	if (restore_stream)
+		g_vm->glk_stream_close(restore_stream, nullptr);
 
-  /* Set portable and predictable random number generation if requested. */
-  if (stable_random)
-    {
-      sc_set_portable_random (TRUE);
-      sc_reseed_random_sequence (1);
-    }
+	/* If successful, set game debugging and synchronize to the core's locale. */
+	if (gsc_game)
+	{
+		sc_set_game_debugger_enabled(gsc_game, enable_debugger);
+		gsc_set_locale(sc_get_locale());
+	}
 
-  /* Close the temporary window. */
-  if (window)
-    g_vm->glk_window_close (window, nullptr);
+	/* Set portable and predictable random number generation if requested. */
+	if (stable_random)
+	{
+		sc_set_portable_random(TRUE);
+		sc_reseed_random_sequence(1);
+	}
 
-  /* Set title of game */
+	/* Close the temporary window. */
+	if (window)
+		g_vm->glk_window_close(window, nullptr);
+
+	/* Set title of game */
 #ifdef GARGLK
-    g_vm->garglk_set_story_name(sc_get_game_name(gsc_game));
+	g_vm->garglk_set_story_name(sc_get_game_name(gsc_game));
 #endif
 
-  /* Game set up, perhaps successfully. */
-  return TRUE;
+	/* Game set up, perhaps successfully. */
+	return TRUE;
 }
 
 static void
@@ -3302,17 +3300,17 @@ static int gsc_startup_called = FALSE,
            gsc_main_called = FALSE;
 
 /*
- * g_vm->glk_main()
+ * glk_main()
  *
  * Main entry point for Glk.  Here, all startup is done, and we call our
  * function to run the game, or to report errors if gsc_game_message is set.
  */
 void glk_main() {
-  assert (gsc_startup_called && !gsc_main_called);
-  gsc_main_called = TRUE;
+	assert(gsc_startup_called && !gsc_main_called);
+	gsc_main_called = TRUE;
 
-  /* Call the generic interpreter main function. */
-  gsc_main ();
+	/* Call the generic interpreter main function. */
+	gsc_main();
 }
 
 
@@ -3343,226 +3341,27 @@ glkunix_argumentlist_t glkunix_arguments[] = {
 };
 #endif
 
-struct glkunix_startup_t {
-	int argc;
-	char **argv;
-};
-
 /*
- * glkunix_startup_code()
- *
- * Startup entry point for UNIX versions of Glk interpreter.  Glk will call
- * glkunix_startup_code() to pass in arguments.  On startup, parse arguments
- * and open a Glk stream to the game, then call the generic gsc_startup_code()
- * to build a game from the stream.  On error, set the message in
- * gsc_game_message; the core gsc_main() will report it when it's called.
- */
-int glkunix_startup_code(glkunix_startup_t *data) {
-  int argc = data->argc;
-  sc_char **argv = data->argv;
-  int argv_index;
-  sc_char *restore_from;
-  const sc_char *locale;
-  strid_t game_stream, restore_stream;
-  sc_uint trace_flags;
-  sc_bool enable_debugger, stable_random;
-  assert (!gsc_startup_called);
-  gsc_startup_called = TRUE;
-
-#ifdef GARGLK
-  g_vm->garglk_set_program_name("SCARE " SCARE_VERSION);
-  g_vm->garglk_set_program_info("SCARE " SCARE_VERSION
-      " by Simon Baldwin and Mark J. Tilford");
-#endif
-
-  /* Handle command line arguments. */
-  restore_from = nullptr;
-  for (argv_index = 1;
-       argv_index < argc && argv[argv_index][0] == '-'; argv_index++)
-    {
-      if (strcmp (argv[argv_index], "-nc") == 0)
-        {
-          gsc_commands_enabled = FALSE;
-          continue;
-        }
-      if (strcmp (argv[argv_index], "-na") == 0)
-        {
-          gsc_abbreviations_enabled = FALSE;
-          continue;
-        }
-      if (strcmp (argv[argv_index], "-nu") == 0)
-        {
-          gsc_unicode_enabled = FALSE;
-          continue;
-        }
-#ifdef LINUX_GRAPHICS
-      if (strcmp (argv[argv_index], "-ng") == 0)
-        {
-          gsclinux_graphics_enabled = FALSE;
-          continue;
-        }
-#endif
-      if (strcmp (argv[argv_index], "-r") == 0)
-        {
-          restore_from = argv[++argv_index];
-          continue;
-        }
-      return FALSE;
-    }
-
-  /* On invalid usage, set a complaint message and return. */
-  if (argv_index != argc - 1)
-    {
-      gsc_game = nullptr;
-      if (argv_index < argc - 1)
-        gsc_game_message = "More than one game file"
-                           " was given on the command line.";
-      else
-        gsc_game_message = "No game file was given on the command line.";
-      return TRUE;
-    }
-
-  /* Open a stream to the TAF file, complain if this fails. */
-  game_stream = g_vm->glk_stream_open_file(g_vm->glk_fileref_create_by_name(filemode_Read, argv[argv_index]), filemode_Read);
-  if (!game_stream)
-    {
-      gsc_game = nullptr;
-      gsc_game_message = "Unable to open the requested game file.";
-      return TRUE;
-    }
-  else
-    gsc_game_message = nullptr;
-
-  /*
-   * If a restore requested, open a stream to the TAF (TAS) file, and
-   * again, complain if this fails.
-   */
-  if (restore_from)
-    {
-      restore_stream =g_vm->glk_stream_open_file(g_vm->glk_fileref_create_by_name(filemode_Read, restore_from), filemode_Read);
-      if (!restore_stream)
-        {
-          g_vm->glk_stream_close (game_stream, nullptr);
-          gsc_game = nullptr;
-          gsc_game_message = "Unable to open the requested restore file.";
-          return TRUE;
-        }
-      else
-        gsc_game_message = nullptr;
-    }
-  else
-    restore_stream = nullptr;
-
-  /* Set SCARE trace flags and other general setup from the environment. */
-  if (false /*getenv ("SC_TRACE_FLAGS") */) {
-    //trace_flags = strtoul (getenv ("SC_TRACE_FLAGS"), nullptr, 0);
-  } else {
-    trace_flags = 0;
-  }
-  enable_debugger = false; // (getenv("SC_DEBUGGER_ENABLED") != nullptr);
-  stable_random = false; // (getenv("SC_STABLE_RANDOM_ENABLED") != nullptr);
-  locale = nullptr; // getenv("SC_LOCALE");
-
-#ifdef LINUX_GRAPHICS
-  /* Note the path to the game file for graphics extraction. */
-  gsclinux_game_file = argv[argv_index];
-#endif
-
-  /* Use the generic startup code to complete startup. */
-  return gsc_startup_code (game_stream, restore_stream, trace_flags,
-                           enable_debugger, stable_random, locale);
-}
-
-
-/*---------------------------------------------------------------------*/
-/*  Glk linkage relevant only to the Windows platform                  */
-/*---------------------------------------------------------------------*/
-#ifdef _WIN32
-
-#include <windows.h>
-
-#include "WinGlk.h"
-#include "resource.h"
-
-/* Windows constants and external definitions. */
-static const unsigned int GSCWIN_glk_INIT_VERSION = 0x601;
-extern int InitGlk (unsigned int iVersion);
-
-/*
- * WinMain()
- *
- * Entry point for all Glk applications.
- */
-int WINAPI
-WinMain (HINSTANCE hInstance, HINSTANCE hPrevInstance,
-         LPSTR lpCmdLine, int nCmdShow)
-{
-  /* Attempt to initialize both the Glk library and SCARE. */
-  if (!(InitGlk (GSCWIN_glk_INIT_VERSION) && wing_vm->glk_startup_code (lpCmdLine)))
-    return 0;
-
-  /* Run the application; no return from this routine. */
-  g_vm->glk_main ();
-  g_vm->glk_exit ();
-  return 0;
-}
-
-
-/*
- * wing_vm->glk_startup_code()
+ * winglk_startup_code()
  *
  * Startup entry point for Windows versions of Glk interpreter.
  */
-int
-wing_vm->glk_startup_code (const char *cmdline)
-{
-  const char *filename, *locale;
-  frefid_t fileref;
-  strid_t game_stream;
-  sc_uint trace_flags;
-  sc_bool enable_debugger, stable_random;
-  assert (!gsc_startup_called);
-  gsc_startup_called = TRUE;
+bool winglk_startup_code(Common::SeekableReadStream *gameFile) {
+	const char *locale;
+	sc_uint trace_flags;
+	sc_bool enable_debugger, stable_random;
+	assert(!gsc_startup_called);
+	gsc_startup_called = TRUE;
 
-  /* Set up application and window. */
-  wing_vm->glk_app_set_name ("Scare");
-  wing_vm->glk_set_menu_name ("&Scare");
-  wing_vm->glk_window_set_title ("Scare Adrift Interpreter");
-  wing_vm->glk_set_about_text ("Windows Scare 1.3.10");
-  wing_vm->glk_set_gui (IDI_SCARE);
+	assert(gameFile);
+	trace_flags = 0;
+	enable_debugger = gDebugLevel > 0;
+	stable_random = gDebugLevel > 0;
+	locale = nullptr;
 
-  /* Open a stream to the game. */
-  filename = wing_vm->glk_get_initial_filename (cmdline,
-                             "Select an Adrift game to run",
-                             "Adrift Files (.taf)|*.taf;All Files (*.*)|*.*||");
-  if (!filename)
-    return 0;
-
-  fileref = wing_vm->glk_fileref_create_by_name (fileusage_BinaryMode
-                                           | fileusage_Data,
-                                           (char *) filename, 0, 0);
-  if (!fileref)
-    return 0;
-
-  game_stream = g_vm->glk_stream_open_file (fileref, filemode_Read, 0);
-  g_vm->glk_fileref_destroy (fileref);
-  if (!game_stream)
-    return 0;
-
-  /* Set trace, debugger, and portable random flags. */
-  if (getenv ("SC_TRACE_FLAGS"))
-    trace_flags = strtoul (getenv ("SC_TRACE_FLAGS"), nullptr, 0);
-  else
-    trace_flags = 0;
-  enable_debugger = (getenv ("SC_DEBUGGER_ENABLED") != nullptr);
-  stable_random = (getenv ("SC_STABLE_RANDOM_ENABLED") != nullptr);
-  locale = getenv ("SC_LOCALE");
-
-  /* Use the generic startup code to complete startup. */
-  return gsc_startup_code (game_stream, nullptr, trace_flags,
-                           enable_debugger, stable_random, locale);
+	// Use the generic startup code to complete startup
+	return gsc_startup_code(gameFile, nullptr, trace_flags, enable_debugger, stable_random, locale);
 }
-#endif /* _WIN32 */
 
 } // End of namespace Adrift
 } // End of namespace Glk

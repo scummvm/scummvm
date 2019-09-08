@@ -20,30 +20,19 @@
  *
  */
 
-#include "glk/adrift/adrift.h"
-#include "glk/adrift/os_glk.h"
+#ifndef ADRIFT_OS_GLK_H
+#define ADRIFT_OS_GLK_H
+
+#include "common/scummsys.h"
+#include "glk/adrift/scare.h"
 
 namespace Glk {
 namespace Adrift {
 
-Adrift *g_vm = nullptr;
-
-Adrift::Adrift(OSystem *syst, const GlkGameDescription &gameDesc) : GlkAPI(syst, gameDesc) {
-	g_vm = this;
-}
-
-void Adrift::runGame() {
-	if (winglk_startup_code(&_gameFile))
-		glk_main();
-}
-
-Common::Error Adrift::readSaveData(Common::SeekableReadStream *rs) {
-	return Common::kNoError;
-}
-
-Common::Error Adrift::writeGameData(Common::WriteStream *ws) {
-	return Common::kNoError;
-}
+extern bool winglk_startup_code(Common::SeekableReadStream *gameFile);
+extern void glk_main();
 
 } // End of namespace Adrift
 } // End of namespace Glk
+
+#endif
