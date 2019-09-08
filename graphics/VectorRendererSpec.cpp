@@ -474,6 +474,7 @@ void colorFillClip(PixelType *first, PixelType *last, PixelType color, int realX
 	if (realX < clippingArea.left) {
 		int diff = (clippingArea.left - realX);
 		realX += diff;
+		first += diff;
 		count -= diff;
 	}
 
