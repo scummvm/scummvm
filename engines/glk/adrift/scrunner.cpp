@@ -20,7 +20,7 @@
  *
  */
 
-#include "glk/adrift/scare.h"
+#include "glk/adrift/adrift.h"
 #include "glk/adrift/scprotos.h"
 #include "glk/adrift/scgamest.h"
 
@@ -1377,6 +1377,7 @@ run_main_loop (sc_gameref_t game)
    * Game loop, exits either when a command parser handler sets the game
    * running flag to FALSE, or by call to run_quit().
    */
+  game->is_running &= !g_vm->shouldQuit();
   while (game->is_running)
     {
       sc_bool status;
@@ -1449,7 +1450,9 @@ run_main_loop (sc_gameref_t game)
               debug_turn_update (game);
             }
         }
-    }
+  
+	  game->is_running &= !g_vm->shouldQuit();
+  }
 
   /*
    * Final status update, for games that vary it on completion, then notify

@@ -2841,6 +2841,10 @@ gsc_event_wait_2 (glui32 wait_type_1, glui32 wait_type_2, event_t * event)
   do
     {
       g_vm->glk_select (event);
+	  if (g_vm->shouldQuit()) {
+		  g_vm->glk_cancel_line_event(gsc_main_window, event);
+		  return;
+	  }
 
       switch (event->type)
         {

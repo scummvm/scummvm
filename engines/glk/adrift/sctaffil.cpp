@@ -453,6 +453,7 @@ static sc_bool taf_decompress(sc_tafref_t taf, sc_read_callbackref_t callback,
 	Common::SeekableReadStream *src = (Common::SeekableReadStream *)opaque;
 	assert(src);
 	Common::MemoryWriteStreamDynamic dest(DisposeAfterUse::YES);
+	size_t startingPos = src->pos();
 
 	if (!Common::inflateZlibHeaderless(&dest, src))
 		return false;
@@ -465,6 +466,8 @@ static sc_bool taf_decompress(sc_tafref_t taf, sc_read_callbackref_t callback,
 		int consumed = taf_append_buffer(taf, pTemp, bytesRemaining);
 		bytesRemaining -= consumed;
 	}
+
+	taf->total_in_bytes = src->pos() - startingPos;
 
 	return true;
 #else

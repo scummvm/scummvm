@@ -20,7 +20,7 @@
  *
  */
 
-#include "glk/adrift/scare.h"
+#include "glk/adrift/adrift.h"
 #include "glk/adrift/scprotos.h"
 #include "glk/adrift/scgamest.h"
 
@@ -2429,6 +2429,9 @@ debug_dialog (sc_gameref_t game)
       do
         {
           if_read_debug (buffer, sizeof (buffer));
+
+		  if (g_vm->shouldQuit())
+			  return;
         }
       while (sc_strempty (buffer));
 

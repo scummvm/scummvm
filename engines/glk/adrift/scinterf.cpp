@@ -20,7 +20,7 @@
  *
  */
 
-#include "glk/adrift/scare.h"
+#include "glk/adrift/adrift.h"
 #include "glk/adrift/scprotos.h"
 #include "glk/adrift/scgamest.h"
 #include "common/file.h"
@@ -215,6 +215,8 @@ if_read_line_common (sc_char *buffer, sc_int length,
       memset (buffer, NUL, length);
 
       is_line_available = read_line_function (buffer, length);
+	  if (g_vm->shouldQuit())
+		  return;
     }
   while (!is_line_available);
 
