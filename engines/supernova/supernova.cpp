@@ -357,6 +357,11 @@ void SupernovaEngine::setTextSpeed() {
 	int boxWidth = stringWidth > 110 ? stringWidth : 110;
 	int boxHeight = 27;
 
+	// Disable improved mode temporarilly so that Key 1-5 are received below
+	// instead of being mapped to action selection.
+	bool hasImprovedMode = _improved;
+	_improved = false;
+
 	_gm->animationOff();
 	_gm->saveTime();
 	saveScreen(boxX, boxY, boxWidth, boxHeight);
@@ -398,6 +403,8 @@ void SupernovaEngine::setTextSpeed() {
 	restoreScreen();
 	_gm->loadTime();
 	_gm->animationOn();
+
+	_improved = hasImprovedMode;
 }
 
 void SupernovaEngine::showHelpScreen1() {
