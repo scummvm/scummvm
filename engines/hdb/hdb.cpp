@@ -849,7 +849,7 @@ void HDBGame::drawLoadingScreen() {
 
 struct MapName {
 	const char *fName, *printName;
-} mapNames[] = {
+} static mapNames[] = {
 	{	"MAP00",			"HDS Colby Jack" },
 	{	"MAP01",			"Servandrones, Inc." },
 	{	"MAP02",			"Pushbot Storage" },
@@ -884,15 +884,12 @@ struct MapName {
 };
 
 void HDBGame::setInMapName(const char *name) {
-	int i = 0;
-
-	while (mapNames[i].fName) {
+	for (uint i = 0; i < ARRAYSIZE(mapNames); i++) {
 		if (!scumm_stricmp(name, mapNames[i].fName)) {
 			memset(&_inMapName, 0, 32);
 			strcpy(_inMapName, mapNames[i].printName);
 			return;
 		}
-		i++;
 	}
 
 	memset(&_inMapName, 0, 32);
