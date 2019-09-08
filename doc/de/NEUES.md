@@ -17,6 +17,7 @@ Programmcodes finden Sie auf Englisch unter:
    - Unterstützung für Might and Magic - Swords of Xeen hinzugefügt.
    - Unterstützung für Quest for Glory: Shadows of Darkness hinzugefügt.
    - Unterstützung für Versailles 1685 hinzugefügt.
+   - Unterstützung für Hyperspace Delivery Boy! hinzugefügt.
 
  Neue Portierungen:
    - Portierung auf Nintendo Switch hinzugefügt.
