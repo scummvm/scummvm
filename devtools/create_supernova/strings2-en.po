@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: Mission Supernova Part 2 1.0\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2019-06-13 00:06+0100\n"
-"PO-Revision-Date: 2019-06-12 23:15+0000\n"
+"PO-Revision-Date: 2019-09-08 21:23+0000\n"
 "Last-Translator: Thierry Crozat <criezy@scummvm.org>\n"
 "Language-Team: none\n"
 "Language: en\n"
@@ -16,7 +16,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 3.3\n"
+"X-Generator: Weblate 3.7.1\n"
 
 #: ../../ms2/ms2.c:1641
 msgid "Gehe"
@@ -316,7 +316,7 @@ msgstr "You are hearing footsteps."
 
 #: ../../ms2/ms2_mus.c:232
 msgid "Um das Schloss zu îffnen,|brauchst du einige Zeit."
-msgstr "You will take some time,|to pick that lock."
+msgstr "You will take some time|to pick that lock."
 
 #: ../../ms2/ms2_mus.c:238
 msgid "Du gerÑtst in Panik|und ziehst die Keycard|aus der TÅr."
@@ -746,7 +746,7 @@ msgstr "Note"
 
 #: ../../ms2/ms2_pyra.c:1211
 msgid "Darauf steht:|\"Wenn du fast am Ziel|bist, tu folgendes:|Sauf!\""
-msgstr "It reads:|\"When you're almost there,|do the following:|Drink!\""
+msgstr "It reads:|\"When you are almost there,|do the following:|Toast!\""
 
 #: ../../ms2/ms2_pyra.c:1255
 msgid "Es ist ca. 10 Meter tief."
@@ -853,11 +853,11 @@ msgstr "You find a small device,|an ID card and a Xa."
 
 #: ../../ms2/ms2_r1.c:109
 msgid "Du heftest den|Magnet an die Stange."
-msgstr "You attach the|magnet to the pole."
+msgstr "You attach the|magnet to the rod."
 
 #: ../../ms2/ms2_r1.c:110
 msgid "Stange mit Magnet"
-msgstr "Pole with magnet"
+msgstr "Rod with magnet"
 
 #: ../../ms2/ms2_r1.c:111
 msgid "Raffiniert!"
@@ -979,7 +979,7 @@ msgstr "Five minutes later ..."
 
 #: ../../ms2/ms2_r1.c:433
 msgid "Du hast doch schon eine Stange"
-msgstr "You already have a pole"
+msgstr "You already have a rod"
 
 #: ../../ms2/ms2_r1.c:436
 msgid "Du sÑgst eine der Stangen ab."
@@ -1473,7 +1473,7 @@ msgstr "Seller"
 
 #: ../../ms2/ms2_r2.c:36
 msgid "Was? DafÅr wollen Sie die Karte haben?"
-msgstr "What? Do you want the card for that?"
+msgstr "What? Do you want the ticket for that?"
 
 #: ../../ms2/ms2_r2.c:37
 msgid "Sie sind wohl nicht ganz Åber|die aktuellen Preise informiert!"
@@ -1519,7 +1519,7 @@ msgstr "Thank you for your purchase!"
 
 #: ../../ms2/ms2_r2.c:77
 msgid "Was bieten Sie mir|denn nun fÅr die Karte?"
-msgstr "What will you offer me|for the card?"
+msgstr "What will you offer me|for the ticket?"
 
 #: ../../ms2/ms2_r2.c:81
 msgid "Hallo, Sie!"
@@ -1579,7 +1579,7 @@ msgstr "As you say."
 
 #: ../../ms2/ms2_r2.c:110
 msgid "Sie kînnen die Karte von MIR bekommen!"
-msgstr "You can get the card from ME!"
+msgstr "You can get the ticket from ME!"
 
 #: ../../ms2/ms2_r2.c:111
 msgid "Aber nur eine Teilnahmekarte,|keine Eintrittskarte."
@@ -1599,7 +1599,7 @@ msgstr "That's a good offer!"
 
 #: ../../ms2/ms2_r2.c:135
 msgid "DafÅr gebe ich Ihnen meine|letzte Teilnahmekarte!"
-msgstr "For that I give you my|last participation card!"
+msgstr "For that I give you my|last participation ticket!"
 
 #: ../../ms2/ms2_r2.c:140
 msgid "(Dieser Trottel!)"
@@ -2489,7 +2489,7 @@ msgstr "Axacussan"
 
 #: ../../ms2/ms2_r2.c:1207
 msgid "Teilnahmekarte"
-msgstr "Participation card"
+msgstr "Participation ticket"
 
 #: ../../ms2/ms2_r2.c:1216
 msgid "Axacussanerin"
