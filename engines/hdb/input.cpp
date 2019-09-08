@@ -52,14 +52,12 @@ void Input::init() {
 }
 
 void Input::setButtons(uint16 b) {
-	static int changeState = 0;
-
 	_buttons = b;
 	if (!b)
 		return;
 
 	// Change Game State
-	if ((_buttons & kButtonA) && !changeState && (g_hdb->getGameState() != GAME_MENU)) {
+	if ((_buttons & kButtonA) && (g_hdb->getGameState() != GAME_MENU)) {
 		if (g_hdb->_ai->cinematicsActive() && g_hdb->_ai->cineAbortable()) {
 			g_hdb->_ai->cineAbort();
 			g_hdb->_sound->playSound(SND_POP);
