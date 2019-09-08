@@ -439,6 +439,7 @@ void GameManager1::telomat(int nr) {
 
 	static byte rows2[4] = {1, 1, 1, 1};
 
+	_guiEnabled = false;
 	_vm->renderBox(0, 0, 320, 200, kColorBlack);
 	_vm->renderText(kStringTelomat7, 100, 70, kColorGreen);
 	_vm->renderText(kStringTelomat8, 100, 81, kColorGreen);
