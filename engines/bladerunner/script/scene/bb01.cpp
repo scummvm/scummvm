@@ -25,11 +25,11 @@
 namespace BladeRunner {
 
 enum kBB01Loops {
-	kBB01LoopInshot            = 0,
-	kBB01LoopMainLoop          = 1,
-	kBB01LoopDoorAnim          = 3,
-	kBB01LoopOutshot           = 4,
-	kBB01LoopMainLoopNoSpinner = 5
+	kBB01LoopInshot            = 0, //   0 - 300
+	kBB01LoopMainLoop          = 1, // 301 - 361
+	kBB01LoopDoorAnim          = 3, // 362 - 421
+	kBB01LoopOutshot           = 4, // 422 - 480
+	kBB01LoopMainLoopNoSpinner = 5  // 481 - 540
 };
 
 void SceneScriptBB01::InitializeScene() {
@@ -251,9 +251,37 @@ void SceneScriptBB01::SceneFrameAdvanced(int frame) {
 		Sound_Play(kSfxCARUP3,    40, -50, 80, 50);
 	}
 
+#if BLADERUNNER_ORIGINAL_BUGS
+#else
+	// This is treated as a bug rather than restored content
+	// This InShot loop otherwise seems silent for the first ~120 frames
+	if (frame == 19) {
+		if (Random_Query(0, 1)) {
+			Sound_Play(kSfxSPIN3A,     90, -50, 100, 50);
+		} else {
+			Sound_Play(kSfxSPIN2A,     90, -50, 100, 50);
+		}
+	}
+
+	if (frame == 60 && Random_Query(0, 1)) {
+		Sound_Play(kSfxSIREN2, 50, 20, 80, 50);
+	}
+
+	if (frame == 90 && Random_Query(0, 1)) {
+		Sound_Play(kSfxRCCARBY3, 40, 80, 100, 50);
+	}
+#endif // BLADERUNNER_ORIGINAL_BUGS
+
+#if BLADERUNNER_ORIGINAL_BUGS
 	if (frame == 120) {
 		Sound_Play(kSfxTRUCKBY1, Random_Query(33, 33), 100, -100, 50);
 	}
+#else
+	// delay truck passing by sfx to better match the animation in the loop
+	if (frame == 124) {
+		Sound_Play(kSfxTRUCKBY1, Random_Query(40, 73), 100, -100, 50);
+	}
+#endif // BLADERUNNER_ORIGINAL_BUGS
 }
 
 void SceneScriptBB01::ActorChangedGoal(int actorId, int newGoal, int oldGoal, bool currentSet) {
