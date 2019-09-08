@@ -45,7 +45,6 @@ public abstract class ScummVM implements SurfaceHolder.Callback, Runnable {
 
 	// pause the engine and all native threads
 	final public native void setPause(boolean pause);
-	final public native void enableZoning(boolean enable);
 	// Feed an event to ScummVM.  Safe to call from other threads.
 	final public native void pushEvent(int type, int arg1, int arg2, int arg3,
 										int arg4, int arg5, int arg6);

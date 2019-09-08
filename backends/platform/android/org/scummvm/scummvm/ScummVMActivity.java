@@ -53,30 +53,8 @@ public class ScummVMActivity extends Activity {
 	};
 
 	private class MyScummVM extends ScummVM {
-		private boolean usingSmallScreen() {
-			// Multiple screen sizes came in with Android 1.6.  Have
-			// to use reflection in order to continue supporting 1.5
-			// devices :(
-			DisplayMetrics metrics = new DisplayMetrics();
-			getWindowManager().getDefaultDisplay().getMetrics(metrics);
-
-			try {
-				// This 'density' term is very confusing.
-				int DENSITY_LOW = metrics.getClass().getField("DENSITY_LOW").getInt(null);
-				int densityDpi = metrics.getClass().getField("densityDpi").getInt(metrics);
-				return densityDpi <= DENSITY_LOW;
-			} catch (Exception e) {
-				return false;
-			}
-		}
-
 		public MyScummVM(SurfaceHolder holder) {
 			super(ScummVMActivity.this.getAssets(), holder);
-
-			// Enable ScummVM zoning on 'small' screens.
-			// FIXME make this optional for the user
-			// disabled for now since it crops too much
-			//enableZoning(usingSmallScreen());
 		}
 
 		@Override
