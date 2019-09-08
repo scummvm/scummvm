@@ -410,10 +410,6 @@ void Gfx::setFade(bool fadeIn, bool black, int steps) {
 }
 
 void Gfx::updateFade() {
-	uint8 r, g, b;
-	uint16 value;
-	uint16 *ptr;
-
 	if (!_fadeInfo.active && !_fadeInfo.stayFaded)
 		return;
 
@@ -424,10 +420,11 @@ void Gfx::updateFade() {
 		if (!_fadeInfo.isBlack) {
 			// Black fade
 			for (int y = 0; y < g_hdb->_screenHeight; y++) {
-				 ptr = (uint16 *)_fadeBuffer1.getBasePtr(0, y);
+				uint16 *ptr = (uint16 *)_fadeBuffer1.getBasePtr(0, y);
 				for (int x = 0; x < g_hdb->_screenWidth; x++) {
-					 value = *ptr;
+					uint16 value = *ptr;
 					if (value) {
+						uint8 r, g, b;
 						g_hdb->_format.colorToRGB(value, r, g, b);
 						r = (r * _fadeInfo.curStep) >> 8;
 						g = (g * _fadeInfo.curStep) >> 8;
@@ -441,9 +438,11 @@ void Gfx::updateFade() {
 		} else {
 			// White fade
 			for (int y = 0; y < g_hdb->_screenHeight; y++) {
-				ptr = (uint16 *)_fadeBuffer1.getBasePtr(0, y);
+				uint16 *ptr = (uint16 *)_fadeBuffer1.getBasePtr(0, y);
 				for (int x = 0; x < g_hdb->_screenWidth; x++) {
-					value = *ptr;
+					uint16 value = *ptr;
+
+					uint8 r, g, b;
 					g_hdb->_format.colorToRGB(value, r, g, b);
 					r += (255 - r) * (256 - _fadeInfo.curStep) / 256;
 					g += (255 - g) * (256 - _fadeInfo.curStep) / 256;
@@ -488,10 +487,11 @@ void Gfx::updateFade() {
 				// Black Fade
 
 				for (int y = 0; y < g_hdb->_screenHeight; y++) {
-					ptr = (uint16 *)_fadeBuffer1.getBasePtr(0, y);
+					uint16 *ptr = (uint16 *)_fadeBuffer1.getBasePtr(0, y);
 					for (int x = 0; x < g_hdb->_screenWidth; x++) {
-						value = *ptr;
+						uint16 value = *ptr;
 						if (value) {
+							uint8 r, g, b;
 							g_hdb->_format.colorToRGB(value, r, g, b);
 							r = (r * _fadeInfo.curStep) >> 8;
 							g = (g * _fadeInfo.curStep) >> 8;
@@ -505,9 +505,10 @@ void Gfx::updateFade() {
 				// White Fade
 
 				for (int y = 0; y < g_hdb->_screenHeight; y++) {
-					ptr = (uint16 *)_fadeBuffer1.getBasePtr(0, y);
+					uint16 *ptr = (uint16 *)_fadeBuffer1.getBasePtr(0, y);
 					for (int x = 0; x < g_hdb->_screenWidth; x++) {
-						value = *ptr;
+						uint16 value = *ptr;
+						uint8 r, g, b;
 						g_hdb->_format.colorToRGB(value, r, g, b);
 						r += (255 - r) * (256 - _fadeInfo.curStep) / 256;
 						g += (255 - g) * (256 - _fadeInfo.curStep) / 256;
