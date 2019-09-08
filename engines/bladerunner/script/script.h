@@ -127,6 +127,7 @@ protected:
 	void Item_Flag_As_Target(int itemId);
 	void Item_Flag_As_Non_Target(int itemId);
 	void Item_Pickup_Spin_Effect(int animationId, int x, int y);
+	void Item_Pickup_Spin_Effect_From_Actor(int animationId, int actorId, int xOffset = 0, int yOffset = 0); // new for restored content mostly
 	bool Item_Query_Visible(int itemId);
 	void Set_Subtitle_Text_On_Screen(Common::String displayText);
 #if BLADERUNNER_ORIGINAL_BUGS

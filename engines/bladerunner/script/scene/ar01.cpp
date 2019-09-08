@@ -204,7 +204,8 @@ bool SceneScriptAR01::ClickedOnActor(int actorId) {
 						case 0:
 							Global_Variable_Increment(kVariableFishDealerBanterTalk, 1);
 							Actor_Says(kActorFishDealer, 230, 14);
-							Item_Pickup_Spin_Effect(kModelAnimationGoldfish, 88, 400); // TODO check co-ordinates
+
+							Item_Pickup_Spin_Effect_From_Actor(kModelAnimationGoldfish, kActorFishDealer, 0, -40);
 							dialogueWithFishDealerBuyGoldfish();
 							break;
 						case 1:

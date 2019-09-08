@@ -202,7 +202,7 @@ bool SceneScriptAR02::ClickedOnActor(int actorId) {
 							if (Actor_Query_Friendliness_To_Other(kActorInsectDealer, kActorMcCoy) > 40) {
 								Actor_Says(kActorInsectDealer, 460, 14);
 								Actor_Says(kActorInsectDealer, 470, 13); // This slug, perhaps.
-								Item_Pickup_Spin_Effect(kModelAnimationSlug, 288, 257);
+								Item_Pickup_Spin_Effect_From_Actor(kModelAnimationSlug, kActorInsectDealer, 0, -40);
 								dialogueWithInsectDealerBuySlug();
 							}
 							break;
@@ -252,49 +252,54 @@ bool SceneScriptAR02::ClickedOnActor(int actorId) {
 		if (actorId == kActorHasan
 		    && Global_Variable_Query(kVariableChapter) > 2) {
 
-			if (Actor_Clue_Query(kActorMcCoy, kClueStrangeScale1)
-			    && !Game_Flag_Query(kFlagWrongInvestigation)
-			) {
-				dialogueWithHassan();
-			} else {
-				switch (Global_Variable_Query(kVariableHasanBanterTalk)) {
-				case 0:
-					Global_Variable_Increment(kVariableHasanBanterTalk, 1);
-					Actor_Says(kActorMcCoy, 155, 13); // How's business?
-					Actor_Says(kActorHasan, 10, 13);
-					Actor_Says(kActorHasan, 20, 14);
-					break;
-				case 1:
-					Global_Variable_Increment(kVariableHasanBanterTalk, 1);
-					Actor_Says(kActorMcCoy, 6980, 13); // What's the word
-					Actor_Says(kActorHasan, 290, 13);
-					if (Actor_Query_Friendliness_To_Other(kActorHasan, kActorMcCoy) > 49) {
-						Actor_Says(kActorHasan, 300, 14);
-						Actor_Says(kActorHasan, 310, 13);
-						Item_Pickup_Spin_Effect(kModelAnimationGarterSnake, 328, 237); // TODO check co-ordinates
-						dialogueWithHassanBuySnake();
+			if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -240.79f, 0.0f, -1328.89f, 12, true, false, false)) {
+				Actor_Face_Actor(kActorMcCoy, kActorHasan, true);
+				Actor_Face_Actor(kActorHasan, kActorMcCoy, true);
+
+				if (Actor_Clue_Query(kActorMcCoy, kClueStrangeScale1)
+					&& !Game_Flag_Query(kFlagWrongInvestigation)
+				) {
+					dialogueWithHassan();
+				} else {
+					switch (Global_Variable_Query(kVariableHasanBanterTalk)) {
+					case 0:
+						Global_Variable_Increment(kVariableHasanBanterTalk, 1);
+						Actor_Says(kActorMcCoy, 155, 13); // How's business?
+						Actor_Says(kActorHasan, 10, 13);
+						Actor_Says(kActorHasan, 20, 14);
+						break;
+					case 1:
+						Global_Variable_Increment(kVariableHasanBanterTalk, 1);
+						Actor_Says(kActorMcCoy, 6980, 13); // What's the word
+						Actor_Says(kActorHasan, 290, 13);
+						if (Actor_Query_Friendliness_To_Other(kActorHasan, kActorMcCoy) > 49) {
+							Actor_Says(kActorHasan, 300, 14);
+							Actor_Says(kActorHasan, 310, 13);
+							Item_Pickup_Spin_Effect_From_Actor(kModelAnimationGarterSnake, kActorHasan, 0, -40);
+							dialogueWithHassanBuySnake();
+						}
+						break;
+					case 2:
+						// offer to buy snake
+						Global_Variable_Increment(kVariableHasanBanterTalk, 1);
+						if (Player_Query_Agenda() == kPlayerAgendaSurly
+						   || Actor_Query_Friendliness_To_Other(kActorHasan, kActorMcCoy) <= 49 ) {
+							Actor_Says(kActorMcCoy, 8915, 14); // You got a minute, pal?
+							Actor_Says(kActorHasan, 260, 14); // My time is quite valuable, noble one
+							Actor_Modify_Friendliness_To_Other(kActorHasan, kActorMcCoy, -5);
+						} else {
+							Actor_Says(kActorMcCoy, 8615, 13); // Heard anything on the street?
+							Actor_Says(kActorHasan, 250, 13); // I'm afraid not, noble one. But you shall surely be the first to know, if I do hear something.
+						}
+						break;
+					default:
+						if (Actor_Query_Friendliness_To_Other(kActorHasan, kActorMcCoy) <= 45 ) {
+							Actor_Says(kActorMcCoy, 8940, 13);
+						} else {
+							Actor_Says(kActorMcCoy, 1315, 13);
+						}
+						break;
 					}
-					break;
-				case 2:
-					// offer to buy snake
-					Global_Variable_Increment(kVariableHasanBanterTalk, 1);
-					if (Player_Query_Agenda() == kPlayerAgendaSurly
-					   || Actor_Query_Friendliness_To_Other(kActorHasan, kActorMcCoy) <= 49 ) {
-						Actor_Says(kActorMcCoy, 8915, 14); // You got a minute, pal?
-						Actor_Says(kActorHasan, 260, 14); // My time is quite valuable, noble one
-						Actor_Modify_Friendliness_To_Other(kActorHasan, kActorMcCoy, -5);
-					} else {
-						Actor_Says(kActorMcCoy, 8615, 13); // Heard anything on the street?
-						Actor_Says(kActorHasan, 250, 13); // I'm afraid not, noble one. But you shall surely be the first to know, if I do hear something.
-					}
-					break;
-				default:
-					if (Actor_Query_Friendliness_To_Other(kActorHasan, kActorMcCoy) <= 45 ) {
-						Actor_Says(kActorMcCoy, 8940, 13);
-					} else {
-						Actor_Says(kActorMcCoy, 1315, 13);
-					}
-					break;
 				}
 			}
 		}

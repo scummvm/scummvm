@@ -870,6 +870,13 @@ void ScriptBase::Item_Pickup_Spin_Effect(int animationId, int x, int y) {
 	_vm->_itemPickup->setup(animationId, x, y);
 }
 
+void ScriptBase::Item_Pickup_Spin_Effect_From_Actor(int animationId, int actorId, int xOffset, int yOffset) {
+	debugC(kDebugScript, "Item_Pickup_Spin_Effect_From_Actor(%d, %d, %d, %d)", animationId, actorId, xOffset, yOffset);
+
+	const Common::Rect &rect = _vm->_actors[actorId]->getScreenRectangle();
+	_vm->_itemPickup->setup(animationId, CLIP((rect.right + rect.left) / 2 + xOffset, 0, 639), CLIP((rect.bottom + rect.top) / 2 + yOffset, 0, 479));
+}
+
 bool ScriptBase::Item_Query_Visible(int itemId) {
 	debugC(kDebugScript, "Item_Query_Visible(%d)", itemId);
 	return _vm->_items->isVisible(itemId);

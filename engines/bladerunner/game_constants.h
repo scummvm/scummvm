@@ -2523,9 +2523,9 @@ enum GoalZuben {
 enum GoalHasan {
 	kGoalHasanDefault                         =   0,
 	kGoalHasanIsAway                          = 300, // original final goal for Hasan
-	kGoalHasanIsWalkingAroundIsAtCT02         = 301, // new goal for restored content
-	kGoalHasanIsWalkingAroundStayAwayFromCT02 = 302, // new goal for restored content
-	kGoalHasanIsWalkingAroundStaysAtCT02      = 303, // new goal for restored content
+	kGoalHasanIsWalkingAroundIsAtAR02         = 301, // new goal for restored content
+	kGoalHasanIsWalkingAroundStayAwayFromAR02 = 302, // new goal for restored content
+	kGoalHasanIsWalkingAroundStaysAtAR02      = 303, // new goal for restored content
 	kGoalHasanIsWalkingAroundIsAway           = 304  // new goal for restored content
 };
 

@@ -65,8 +65,8 @@ bool AIScriptHasan::Update() {
 			Actor_Set_Goal_Number(kActorHasan, kGoalHasanDefault);
 			return true;
 		} else if (Global_Variable_Query(kVariableChapter) > 2
-		           && Actor_Query_Goal_Number(kActorHasan) < kGoalHasanIsWalkingAroundIsAtCT02) {
-			Actor_Set_Goal_Number(kActorHasan, kGoalHasanIsWalkingAroundIsAtCT02);
+		           && Actor_Query_Goal_Number(kActorHasan) < kGoalHasanIsWalkingAroundIsAtAR02) {
+			Actor_Set_Goal_Number(kActorHasan, kGoalHasanIsWalkingAroundIsAtAR02);
 			return true;
 		}
 		return false;
@@ -99,7 +99,7 @@ void AIScriptHasan::CompletedMovementTrack() {
 				maxHasanLeaveProb = 10;
 			}
 
-			if (Actor_Query_Goal_Number(kActorHasan) == kGoalHasanIsWalkingAroundIsAtCT02) {
+			if (Actor_Query_Goal_Number(kActorHasan) == kGoalHasanIsWalkingAroundIsAtAR02) {
 				if (Random_Query(1, maxHasanLeaveProb) == 1
 				    && Player_Query_Current_Scene() != kSceneAR01
 					&& Player_Query_Current_Scene() != kSceneAR02
@@ -109,7 +109,7 @@ void AIScriptHasan::CompletedMovementTrack() {
 					return; // true;
 				} else {
 					// stay (change goal to a temp one to trigger GoalChanged() (so that we can reset the "track")
-					Actor_Set_Goal_Number(kActorHasan, kGoalHasanIsWalkingAroundStaysAtCT02);
+					Actor_Set_Goal_Number(kActorHasan, kGoalHasanIsWalkingAroundStaysAtAR02);
 					return; // true;
 				}
 			}
@@ -120,11 +120,11 @@ void AIScriptHasan::CompletedMovementTrack() {
 					&& Player_Query_Current_Scene() != kSceneAR02
 				) {
 					// Hasan returns tp Animoid Row
-					Actor_Set_Goal_Number(kActorHasan, kGoalHasanIsWalkingAroundIsAtCT02);
+					Actor_Set_Goal_Number(kActorHasan, kGoalHasanIsWalkingAroundIsAtAR02);
 					return; // true;
 				} else {
 					// stay away (change goal to a temp one to trigger GoalChanged() (so that we can reset the "track")
-					Actor_Set_Goal_Number(kActorHasan, kGoalHasanIsWalkingAroundStayAwayFromCT02);
+					Actor_Set_Goal_Number(kActorHasan, kGoalHasanIsWalkingAroundStayAwayFromAR02);
 					return; // true;
 				}
 			}
@@ -184,8 +184,9 @@ bool AIScriptHasan::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 			Actor_Put_In_Set(kActorHasan, kSetFreeSlotH);
 			Actor_Set_At_Waypoint(kActorHasan, 40, 0); // kSetFreeSlotH
 			break;
-		case kGoalHasanIsWalkingAroundIsAtCT02:
+		case kGoalHasanIsWalkingAroundIsAtAR02:
 			AI_Movement_Track_Flush(kActorHasan);
+			World_Waypoint_Set(554, kSetAR01_AR02, -214.0f, 0.0f, -1379.0f);
 			AI_Movement_Track_Append(kActorHasan, 554, Random_Query(60, 180)); // kSetAR01_AR02
 			Actor_Face_Heading(kActorHasan, 371, false);
 			AI_Movement_Track_Repeat(kActorHasan);
@@ -195,11 +196,11 @@ bool AIScriptHasan::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 			AI_Movement_Track_Append(kActorHasan, 40, Random_Query(10, 40)); // kSetFreeSlotH
 			AI_Movement_Track_Repeat(kActorHasan);
 			break;
-		case kGoalHasanIsWalkingAroundStayAwayFromCT02:
+		case kGoalHasanIsWalkingAroundStayAwayFromAR02:
 			Actor_Set_Goal_Number(kActorHasan, kGoalHasanIsWalkingAroundIsAway);
 			break;
-		case kGoalHasanIsWalkingAroundStaysAtCT02:
-			Actor_Set_Goal_Number(kActorHasan, kGoalHasanIsWalkingAroundIsAtCT02);
+		case kGoalHasanIsWalkingAroundStaysAtAR02:
+			Actor_Set_Goal_Number(kActorHasan, kGoalHasanIsWalkingAroundIsAtAR02);
 			break;
 		}
 	} else {
