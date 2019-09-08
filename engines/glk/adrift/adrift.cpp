@@ -33,8 +33,8 @@ Adrift::Adrift(OSystem *syst, const GlkGameDescription &gameDesc) : GlkAPI(syst,
 }
 
 void Adrift::runGame() {
-	if (winglk_startup_code(&_gameFile))
-		glk_main();
+	if (adrift_startup_code(&_gameFile))
+		adrift_main();
 }
 
 Common::Error Adrift::readSaveData(Common::SeekableReadStream *rs) {

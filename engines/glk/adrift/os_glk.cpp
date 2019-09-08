@@ -3302,12 +3302,12 @@ static int gsc_startup_called = FALSE,
            gsc_main_called = FALSE;
 
 /*
- * glk_main()
+ * adrift_main()
  *
  * Main entry point for Glk.  Here, all startup is done, and we call our
  * function to run the game, or to report errors if gsc_game_message is set.
  */
-void glk_main() {
+void adrift_main() {
 	assert(gsc_startup_called && !gsc_main_called);
 	gsc_main_called = TRUE;
 
@@ -3320,7 +3320,7 @@ void glk_main() {
 /*  Glk linkage relevant only to the UNIX platform                     */
 /*---------------------------------------------------------------------*/
 
-#ifdef TODO
+#ifdef UNUSED
 /*
  * Glk arguments for UNIX versions of the Glk interpreter.
  */
@@ -3348,7 +3348,7 @@ glkunix_argumentlist_t glkunix_arguments[] = {
  *
  * Startup entry point for Windows versions of Glk interpreter.
  */
-bool winglk_startup_code(Common::SeekableReadStream *gameFile) {
+bool adrift_startup_code(Common::SeekableReadStream *gameFile) {
 	const char *locale;
 	sc_uint trace_flags;
 	sc_bool enable_debugger, stable_random;

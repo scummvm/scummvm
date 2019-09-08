@@ -29,8 +29,8 @@
 namespace Glk {
 namespace Adrift {
 
-extern bool winglk_startup_code(Common::SeekableReadStream *gameFile);
-extern void glk_main();
+extern bool adrift_startup_code(Common::SeekableReadStream *gameFile);
+extern void adrift_main();
 
 } // End of namespace Adrift
 } // End of namespace Glk
