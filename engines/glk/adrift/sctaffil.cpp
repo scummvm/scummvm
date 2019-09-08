@@ -23,6 +23,20 @@
 #include "glk/adrift/scare.h"
 #include "glk/adrift/scprotos.h"
 #include "common/textconsole.h"
+#include "common/zlib.h"
+#include "common/memstream.h"
+
+#if defined(USE_ZLIB)
+  #ifdef __SYMBIAN32__
+    #include <zlib\zlib.h>
+  #else
+    #include <zlib.h>
+  #endif
+
+  #if ZLIB_VERNUM < 0x1204
+  #error Version 1.2.0.4 or newer of zlib is required for this code
+  #endif
+#endif
 
 namespace Glk {
 namespace Adrift {
@@ -426,130 +440,35 @@ taf_unobfuscate (sc_tafref_t taf, sc_read_callbackref_t callback,
   return TRUE;
 }
 
+#define BUFFER_SIZE 16384
 
 /*
  * taf_decompress()
  *
- * Decompress a version 4.0 TAF file from data read by repeated calls to the
- * callback() function.  Callback() should return the count of bytes placed
- * in the buffer, 0 if no more (end of file).  Assumes that the file has been
- * read past the header.
+ * Decompress a version 4.0 TAF
  */
 static sc_bool taf_decompress(sc_tafref_t taf, sc_read_callbackref_t callback,
-                void *opaque, sc_bool is_gamefile)
-{
-	error("TODO: decompress");
-#ifdef TODO
-  sc_byte *in_buffer, *out_buffer;
-//  z_stream stream;
-  sc_int status;
-  sc_bool is_first_block;
+		void *opaque, sc_bool is_gamefile) {
+#if USE_ZLIB
+	Common::SeekableReadStream *src = (Common::SeekableReadStream *)opaque;
+	assert(src);
+	Common::MemoryWriteStreamDynamic dest(DisposeAfterUse::YES);
 
-  /*
-   * Malloc buffers, done this way rather than as stack variables for systems
-   * such as PalmOS that may have limited stacks.
-   */
-  in_buffer = sc_malloc (IN_BUFFER_SIZE);
-  out_buffer = sc_malloc (OUT_BUFFER_SIZE);
+	if (!Common::inflateZlibHeaderless(&dest, src))
+		return false;
 
-  /* Initialize Zlib inflation functions. */
-  stream.next_out = out_buffer;
-  stream.avail_out = OUT_BUFFER_SIZE;
-  stream.next_in = in_buffer;
-  stream.avail_in = 0;
+	// Iterate through pushing data out to the taf file
+	const byte *pTemp = dest.getData();
+	int bytesRemaining = dest.size();
 
-  stream.zalloc = Z_NULL;
-  stream.zfree = Z_NULL;
-  stream.opaque = Z_NULL;
+	while (bytesRemaining > 0) {
+		int consumed = taf_append_buffer(taf, pTemp, bytesRemaining);
+		bytesRemaining -= consumed;
+	}
 
-  status = inflateInit (&stream);
-  if (status != Z_OK)
-    {
-      sc_error ("taf_decompress: inflateInit: error %ld\n", status);
-      sc_free (in_buffer);
-      sc_free (out_buffer);
-      return FALSE;
-    }
-
-  /*
-   * Attempts to restore non-savefiles can arrive here, because there's no
-   * up-front header check, like the one for TAF files, applied to them.  The
-   * first we see of the problem is when the first inflate() fails, so it's
-   * handy to use a flag here to block the error report for such cases.
-   */
-  is_first_block = TRUE;
-
-  /* Inflate the input buffers. */
-  while (TRUE)
-    {
-      sc_int in_bytes, out_bytes;
-
-      /* If the input buffer is empty, try to obtain more data. */
-      if (stream.avail_in == 0)
-        {
-          in_bytes = callback (opaque, in_buffer, IN_BUFFER_SIZE);
-          stream.next_in = in_buffer;
-          stream.avail_in = in_bytes;
-        }
-
-      /* Decompress as much stream data as we can. */
-      status = inflate (&stream, Z_SYNC_FLUSH);
-      if (status != Z_STREAM_END && status != Z_OK)
-        {
-          if (is_gamefile || !is_first_block)
-            sc_error ("taf_decompress: inflate: error %ld\n", status);
-          sc_free (in_buffer);
-          sc_free (out_buffer);
-          return FALSE;
-        }
-      out_bytes = OUT_BUFFER_SIZE - stream.avail_out;
-
-      /* See if decompressed data is available. */
-      if (out_bytes > 0)
-        {
-          sc_int consumed;
-
-          /* Add lines from this buffer to the TAF. */
-          consumed = taf_append_buffer (taf, out_buffer, out_bytes);
-
-          /* Move unused buffer data to buffer start. */
-          memmove (out_buffer,
-                   out_buffer + consumed, OUT_BUFFER_SIZE - consumed);
-
-          /* Reset inflation stream for available space. */
-          stream.next_out = out_buffer + out_bytes - consumed;
-          stream.avail_out += consumed;
-        }
-
-      /* Enable full error reporting for non-gamefiles. */
-      is_first_block = FALSE;
-
-      /* If at inflation stream end and output is empty, leave loop. */
-      if (status == Z_STREAM_END && stream.avail_out == OUT_BUFFER_SIZE)
-        break;
-    }
-
-  /*
-   * Decompression completed, note the total bytes read for use when locating
-   * resources later on in the file.  For what it's worth, this value is only
-   * used in version 4.0 games.
-   */
-  taf->total_in_bytes = stream.total_in;
-  if (is_gamefile)
-    taf->total_in_bytes += VERSION_HEADER_SIZE + V400_HEADER_EXTRA;
-
-  /* End inflation. */
-  status = inflateEnd (&stream);
-  if (status != Z_OK)
-    sc_error ("taf_decompress: warning: inflateEnd: error %ld\n", status);
-
-  if (taf->is_unterminated)
-    sc_fatal ("taf_decompress: unterminated final data slab\n");
-
-  /* Return successfully. */
-  sc_free (in_buffer);
-  sc_free (out_buffer);
-  return TRUE;
+	return true;
+#else
+	return true;
 #endif
 }
 

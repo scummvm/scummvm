@@ -3112,12 +3112,10 @@ gsc_startup_code(Common::SeekableReadStream *game_stream, strid_t restore_stream
 	if (!gsc_game)
 	{
 		gsc_game = nullptr;
-		gsc_game_message = "Unable to load an Adrift game from the"
-			" requested file.";
+		gsc_game_message = "Unable to load an Adrift game from the requested file.";
 	}
 	else
 		gsc_game_message = nullptr;
-	delete game_stream;
 
 	/*
 	 * If the game was created successfully and there is a restore stream, try
@@ -3129,8 +3127,7 @@ gsc_startup_code(Common::SeekableReadStream *game_stream, strid_t restore_stream
 		{
 			sc_free_game(gsc_game);
 			gsc_game = nullptr;
-			gsc_game_message = "Unable to restore this Adrift game from the"
-				" requested file.";
+			gsc_game_message = "Unable to restore this Adrift game from the requested file.";
 		}
 		else
 			gsc_game_message = nullptr;
