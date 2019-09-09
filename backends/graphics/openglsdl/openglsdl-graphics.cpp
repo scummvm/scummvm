@@ -196,7 +196,8 @@ void OpenGLSdlGraphicsManager::createOrUpdateScreen() {
 	}
 
 	if (!createOrUpdateGLContext(_engineRequestedWidth, _engineRequestedHeight,
-	                             effectiveWidth, effectiveHeight, renderToFrameBuffer)) {
+	                             effectiveWidth, effectiveHeight,
+	                             renderToFrameBuffer, engineSupportsArbitraryResolutions)) {
 		warning("SDL Error: %s", SDL_GetError());
 		g_system->quit();
 	}
@@ -327,7 +328,8 @@ OpenGLSdlGraphicsManager::OpenGLPixelFormat::OpenGLPixelFormat(uint screenBytesP
 
 bool OpenGLSdlGraphicsManager::createOrUpdateGLContext(uint gameWidth, uint gameHeight,
                                                        uint effectiveWidth, uint effectiveHeight,
-                                                       bool renderToFramebuffer) {
+                                                       bool renderToFramebuffer,
+                                                       bool engineSupportsArbitraryResolutions) {
 	// Build a list of OpenGL pixel formats usable by ResidualVM
 	Common::Array<OpenGLPixelFormat> pixelFormats;
 	if (_antialiasing > 0 && !renderToFramebuffer) {
@@ -379,7 +381,12 @@ bool OpenGLSdlGraphicsManager::createOrUpdateGLContext(uint gameWidth, uint game
 #endif
 
 #if SDL_VERSION_ATLEAST(2, 0, 0)
-		uint32 sdlflags = SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE;
+		uint32 sdlflags = SDL_WINDOW_OPENGL;
+
+		if (renderToFramebuffer || engineSupportsArbitraryResolutions) {
+			sdlflags |= SDL_WINDOW_RESIZABLE;
+		}
+
 		if (_fullscreen) {
 			// On Linux/X11, when toggling to fullscreen, the window manager saves
 			// the window size to be able to restore it when going back to windowed mode.

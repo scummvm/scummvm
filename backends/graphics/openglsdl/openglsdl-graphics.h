@@ -104,7 +104,8 @@ protected:
 	 * When unable to create a context with anti-aliasing this tries without.
 	 * When unable to create a context with the desired pixel depth this tries lower values.
 	 */
-	bool createOrUpdateGLContext(uint gameWidth, uint gameHeight, uint effectiveWidth, uint effectiveHeight, bool renderToFramebuffer);
+	bool createOrUpdateGLContext(uint gameWidth, uint gameHeight, uint effectiveWidth, uint effectiveHeight,
+	                             bool renderToFramebuffer, bool engineSupportsArbitraryResolutions);
 
 	void createOrUpdateScreen();
 
