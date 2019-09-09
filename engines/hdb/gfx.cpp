@@ -85,6 +85,17 @@ Gfx::Gfx() {
 	_eRight = 0;
 	_eTop = 0;
 	_eBottom = 0;
+	_currentSky = 0;
+	for (int i = 0; i < kNum3DStars; ++i) {
+		_stars3D[i].x = 0;
+		_stars3D[i].y = 0;
+		_stars3D[i].speed = 0;
+		_stars3D[i].color = 0;
+		_stars3DSlow[i].x = 0;
+		_stars3DSlow[i].y = 0;
+		_stars3DSlow[i].speed = 0;
+		_stars3DSlow[i].color = 0;
+	}
 }
 
 Gfx::~Gfx() {

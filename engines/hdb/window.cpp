@@ -103,6 +103,22 @@ Window::Window() {
 	_gfxInfobar = nullptr;
 	_gfxDarken = nullptr;
 	_infobarDimmed = 0;
+	_invItemSpace = 0;
+	_dialogDelay = 0;
+	_numMsgQueue = 0;
+	_gfxTL = nullptr;
+	_gfxTM = nullptr;
+	_gfxTR = nullptr;
+	_gfxL = nullptr;
+	_gfxM = nullptr;
+	_gfxR = nullptr;
+	_gfxBL = nullptr;
+	_gfxBM = nullptr;
+	_gfxBR = nullptr;
+	_gfxTitleL = nullptr;
+	_gfxTitleM = nullptr;
+	_gfxTitleR = nullptr;
+	_gGfxTL = nullptr;
 }
 
 Window::~Window() {
