@@ -21,7 +21,6 @@
  */
 
 #include "bladerunner/script/ai_script.h"
-
 namespace BladeRunner {
 
 AIScriptGordo::AIScriptGordo(BladeRunnerEngine *vm) : AIScriptBase(vm) {
@@ -1575,12 +1574,23 @@ void AIScriptGordo::FledCombat() {
 void AIScriptGordo::talkToMcCoyInCity() {
 	Player_Loses_Control();
 	Actor_Face_Actor(kActorMcCoy, kActorGordo, true);
-	if (!Game_Flag_Query(kFlagGordoTalk1)) {
+	if (!Game_Flag_Query(kFlagGordoTalk1)
+	    && (!_vm->_cutContent
+	        || Actor_Query_Inch_Distance_From_Actor(kActorMcCoy, kActorGordo) <= 330)
+	) {
+#if BLADERUNNER_ORIGINAL_BUGS
 		Actor_Says(kActorMcCoy, 6460, 12);
 		AI_Movement_Track_Pause(kActorGordo);
 		Loop_Actor_Walk_To_Actor(kActorGordo, kActorMcCoy, 36, false, false);
 		Actor_Face_Actor(kActorGordo, kActorMcCoy, true);
 		Actor_Face_Actor(kActorMcCoy, kActorGordo, true);
+#else
+		Actor_Face_Actor(kActorMcCoy, kActorGordo, true);
+		AI_Movement_Track_Pause(kActorGordo);
+		Actor_Face_Actor(kActorGordo, kActorMcCoy, true);
+		Actor_Says(kActorMcCoy, 6460, 12);
+		Loop_Actor_Walk_To_Actor(kActorGordo, kActorMcCoy, 36, false, false);
+#endif // BLADERUNNER_ORIGINAL_BUGS
 		Actor_Says(kActorGordo, 890, 14);
 		Actor_Says(kActorMcCoy, 6465, 15);
 		Actor_Says(kActorGordo, 900, 13);
@@ -1596,15 +1606,26 @@ void AIScriptGordo::talkToMcCoyInCity() {
 		Actor_Says(kActorGordo, 970, 12);
 		AI_Movement_Track_Unpause(kActorGordo);
 		Game_Flag_Set(kFlagGordoTalk1);
-	} else if ( Game_Flag_Query(kFlagDR05BombExploded)
-	       && !Actor_Clue_Query(kActorMcCoy, kClueGordoInterview1)
-	       && !Actor_Clue_Query(kActorMcCoy, kClueGordoInterview2)
+	} else if (Game_Flag_Query(kFlagDR05BombExploded)
+	           && !Actor_Clue_Query(kActorMcCoy, kClueGordoInterview1)
+	           && !Actor_Clue_Query(kActorMcCoy, kClueGordoInterview2)
+	           && (!_vm->_cutContent
+	               || Actor_Query_Inch_Distance_From_Actor(kActorMcCoy, kActorGordo) <= 330)
 	) {
+#if BLADERUNNER_ORIGINAL_BUGS
 		Actor_Says(kActorMcCoy, 6485, 12);
 		AI_Movement_Track_Pause(kActorGordo);
 		Loop_Actor_Walk_To_Actor(kActorGordo, kActorMcCoy, 48, false, false);
 		Actor_Face_Actor(kActorGordo, kActorMcCoy, true);
 		Actor_Face_Actor(kActorMcCoy, kActorGordo, true);
+#else
+		Actor_Face_Actor(kActorMcCoy, kActorGordo, true);
+		AI_Movement_Track_Pause(kActorGordo);
+		Actor_Says(kActorMcCoy, 6485, 12);
+		// better for Gordo to turn delayed (after McCoy asks about the bombing) in this question
+		Actor_Face_Actor(kActorGordo, kActorMcCoy, true);
+		Loop_Actor_Walk_To_Actor(kActorGordo, kActorMcCoy, 48, false, false);
+#endif // BLADERUNNER_ORIGINAL_BUGS
 		if (Game_Flag_Query(kFlagGordoIsReplicant)) {
 			Actor_Says(kActorGordo, 1010, 12);
 			Actor_Says(kActorMcCoy, 6495, 14);
@@ -1623,12 +1644,23 @@ void AIScriptGordo::talkToMcCoyInCity() {
 			Actor_Clue_Acquire(kActorMcCoy, kClueGordoInterview2, false, kActorGordo);
 		}
 		AI_Movement_Track_Unpause(kActorGordo);
-	} else if (!Game_Flag_Query(kFlagGordoTalk2)) {
-		Actor_Says(kActorMcCoy, 6490, 14);
+	} else if (!Game_Flag_Query(kFlagGordoTalk2)
+	           && (!_vm->_cutContent
+	               || Actor_Query_Inch_Distance_From_Actor(kActorMcCoy, kActorGordo) <= 330)
+	) {
+#if BLADERUNNER_ORIGINAL_BUGS
+		Actor_Says(kActorMcCoy, 6490, 12);
 		AI_Movement_Track_Pause(kActorGordo);
 		Loop_Actor_Walk_To_Actor(kActorGordo, kActorMcCoy, 60, false, false);
 		Actor_Face_Actor(kActorGordo, kActorMcCoy, true);
 		Actor_Face_Actor(kActorMcCoy, kActorGordo, true);
+#else
+		Actor_Face_Actor(kActorMcCoy, kActorGordo, true);
+		AI_Movement_Track_Pause(kActorGordo);
+		Actor_Face_Actor(kActorGordo, kActorMcCoy, true);
+		Actor_Says(kActorMcCoy, 6490, 12);
+		Loop_Actor_Walk_To_Actor(kActorGordo, kActorMcCoy, 60, false, false);
+#endif // BLADERUNNER_ORIGINAL_BUGS
 		Actor_Says(kActorGordo, 990, 13);
 		Actor_Says(kActorGordo, 1000, 15);
 		Game_Flag_Set(kFlagGordoTalk2);
