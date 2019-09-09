@@ -992,6 +992,34 @@ AI::AI() {
 	_cameraLock = false;
 	_cameraX = 0;
 	_cameraY = 0;
+	_blockpole = 0;
+	_kcHolderWhiteOff = 0;
+	_kcHolderWhiteOn = 0;
+	_kcHolderBlueOff = 0;
+	_kcHolderBlueOn = 0;
+	_kcHolderRedOff = 0;
+	_kcHolderRedOn = 0;
+	_kcHolderGreenOff = 0;
+	_kcHolderGreenOn = 0;
+	_kcHolderPurpleOff = 0;
+	_kcHolderPurpleOn = 0;
+	_kcHolderBlackOff = 0;
+	_kcHolderBlackOn = 0;
+	_numLevel2Ents = 0;
+	_numInventory = 0;
+	_numDeliveries = 0;
+	_numWaypoints = 0;
+	_numLuaList = 0;
+	_numTeleporters = 0;
+	_laserRescan = false;
+	_laserOnScreen = false;
+	_numBridges = 0;
+	_numCineBlitList = 0;
+	_numCineFreeList = 0;
+	for (int i = 0; i < 10; ++i) {
+		_cineBlitList[i] = nullptr;
+		_cineFreeList[i] = nullptr;
+	}
 }
 
 AI::~AI() {
