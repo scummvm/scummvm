@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2019-09-06 06:55+0200\n"
+"POT-Creation-Date: 2019-09-09 19:41+0200\n"
 "PO-Revision-Date: 2019-09-06 04:54+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
@@ -3092,7 +3092,7 @@ msgstr "Recherche des mises à jour..."
 #: engines/access/resources.cpp:44 engines/drascula/drascula.cpp:971
 #: engines/hugo/hugo.cpp:437 engines/lure/lure.cpp:64
 #: engines/mortevielle/mortevielle.cpp:306 engines/sky/compact.cpp:131
-#: engines/supernova/supernova.cpp:454 engines/teenagent/resources.cpp:97
+#: engines/supernova/supernova.cpp:461 engines/teenagent/resources.cpp:97
 #: engines/tony/tony.cpp:198 engines/toon/toon.cpp:4926
 #, c-format
 msgid "Unable to locate the '%s' engine data file."
@@ -3100,7 +3100,7 @@ msgstr "Le fichier de données '%s' n'a pu être trouvé."
 
 #: engines/access/resources.cpp:52 engines/drascula/drascula.cpp:985
 #: engines/hugo/hugo.cpp:448 engines/lure/lure.cpp:73
-#: engines/mortevielle/mortevielle.cpp:314 engines/supernova/supernova.cpp:459
+#: engines/mortevielle/mortevielle.cpp:314 engines/supernova/supernova.cpp:466
 #: engines/tony/tony.cpp:210 engines/toon/toon.cpp:4938
 #, c-format
 msgid "The '%s' engine data file is corrupt."
@@ -3286,11 +3286,11 @@ msgstr "Fichier de séquence '%s' non trouvé !"
 msgid "Failed to initialize resources"
 msgstr "Échec de l'initialisation des ressources"
 
-#: engines/bladerunner/bladerunner.cpp:983
+#: engines/bladerunner/bladerunner.cpp:985
 msgid "A required game resource was not found"
 msgstr "Une ressource de jeu nécessaire n'a pas été trouvée"
 
-#: engines/bladerunner/bladerunner.cpp:2124
+#: engines/bladerunner/bladerunner.cpp:2135
 msgid ""
 "WARNING: This game was saved in Restored Cut Content mode, but you are "
 "playing in Original Content mode. The mode will be adjusted to Restored Cut "
@@ -3300,7 +3300,7 @@ msgstr ""
 "vous jouez en mode Contenu Original. Le mode sera réglé sur Contenu Montage "
 "Restauré pour cette session jusqu'à ce que vous quittiez complètement le jeu."
 
-#: engines/bladerunner/bladerunner.cpp:2126
+#: engines/bladerunner/bladerunner.cpp:2137
 msgid ""
 "WARNING: This game was saved in Original Content mode, but you are playing "
 "in Restored Cut Content mode. The mode will be adjusted to Original Content "
@@ -3310,7 +3310,7 @@ msgstr ""
 "jouez en mode Contenu Montage Restauré. Le mode sera ajusté au mode Contenu "
 "Original pour cette session jusqu'à ce que vous quittiez complètement le jeu."
 
-#: engines/bladerunner/bladerunner.cpp:2128
+#: engines/bladerunner/bladerunner.cpp:2139
 msgid "Continue"
 msgstr "Continuer"
 
@@ -5334,7 +5334,7 @@ msgstr ""
 "Impossible de trouver les données pour la langue %s dans le fichier de "
 "donnée."
 
-#: engines/supernova/supernova.cpp:466
+#: engines/supernova/supernova.cpp:473
 #, c-format
 msgid ""
 "Incorrect version of the '%s' engine data file found. Expected %d but got %d."
@@ -5342,12 +5342,12 @@ msgstr ""
 "La bonne version du fichier de données '%s' n'a pu être trouvée. Version "
 "attendue : %d ; version trouvée : %d."
 
-#: engines/supernova/supernova.cpp:476
+#: engines/supernova/supernova.cpp:483
 #, c-format
 msgid "Unable to find block for part %d"
 msgstr "Impossible de trouver le bloc de données pour l'épisode %d"
 
-#: engines/supernova/supernova.cpp:518
+#: engines/supernova/supernova.cpp:525
 #, c-format
 msgid "Unable to find '%s' in game folder or the engine data file."
 msgstr ""
