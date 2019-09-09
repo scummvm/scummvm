@@ -32,7 +32,7 @@ static const sc_uint DEBUG_MAGIC = 0xc4584d2e;
 enum { DEBUG_BUFFER_SIZE = 256 };
 
 /* Debugging command and command argument type. */
-typedef enum {
+enum sc_command_t {
 	DEBUG_NONE = 0, DEBUG_CONTINUE, DEBUG_STEP, DEBUG_BUFFER, DEBUG_RESOURCES,
 	DEBUG_HELP, DEBUG_GAME,
 	DEBUG_PLAYER, DEBUG_ROOMS, DEBUG_OBJECTS, DEBUG_NPCS, DEBUG_EVENTS,
@@ -45,18 +45,15 @@ typedef enum {
 	DEBUG_CLEARTASKS, DEBUG_CLEARVARIABLES,
 	DEBUG_WATCHALL, DEBUG_CLEARALL, DEBUG_RANDOM,
 	DEBUG_QUIT
-}
-sc_command_t;
+};
 
-typedef enum
-{ COMMAND_QUERY = 0, COMMAND_RANGE, COMMAND_ONE, COMMAND_ALL }
-sc_command_type_t;
+enum sc_command_type_t { COMMAND_QUERY = 0, COMMAND_RANGE, COMMAND_ONE, COMMAND_ALL };
 
 /* Table connecting debugging command strings to commands. */
-typedef struct {
+struct sc_strings_t {
 	const sc_char *const command_string;
 	const sc_command_t command;
-} sc_strings_t;
+};
 static const sc_strings_t DEBUG_COMMANDS[] = {
 	{"continue", DEBUG_CONTINUE}, {"step", DEBUG_STEP}, {"buffer", DEBUG_BUFFER},
 	{"resources", DEBUG_RESOURCES}, {"help", DEBUG_HELP}, {"game", DEBUG_GAME},
@@ -83,7 +80,7 @@ static const sc_strings_t DEBUG_COMMANDS[] = {
  * added to the game on enabling debug, and removed and destroyed on
  * disabling debugging.
  */
-typedef struct sc_debugger_s {
+struct sc_debugger_s {
 	sc_uint magic;
 	sc_bool *watch_objects;
 	sc_bool *watch_npcs;
@@ -94,7 +91,8 @@ typedef struct sc_debugger_s {
 	sc_bool single_step;
 	sc_bool quit_pending;
 	sc_uint elapsed_seconds;
-} sc_debugger_t;
+};
+typedef sc_debugger_s sc_debugger_t;
 
 
 /*
@@ -102,8 +100,7 @@ typedef struct sc_debugger_s {
  *
  * Return TRUE if pointer is a valid debugger, FALSE otherwise.
  */
-static sc_bool
-debug_is_valid(sc_debuggerref_t debug) {
+static sc_bool debug_is_valid(sc_debuggerref_t debug) {
 	return debug && debug->magic == DEBUG_MAGIC;
 }
 
@@ -113,8 +110,7 @@ debug_is_valid(sc_debuggerref_t debug) {
  *
  * Return the debugger reference from a game, or NULL if none.
  */
-static sc_debuggerref_t
-debug_get_debugger(sc_gameref_t game) {
+static sc_debuggerref_t debug_get_debugger(sc_gameref_t game) {
 	assert(gs_is_game_valid(game));
 
 	return game->debugger;
@@ -126,8 +122,7 @@ debug_get_debugger(sc_gameref_t game) {
  *
  * Common helper to return the count of variables defined in a game.
  */
-static sc_int
-debug_variable_count(sc_gameref_t game) {
+static sc_int debug_variable_count(sc_gameref_t game) {
 	const sc_prop_setref_t bundle = gs_get_bundle(game);
 	sc_vartype_t vt_key;
 	sc_int variable_count;
@@ -146,8 +141,7 @@ debug_variable_count(sc_gameref_t game) {
  * Create a new set of debug control information, and append it to the
  * game passed in.
  */
-static void
-debug_initialize(sc_gameref_t game) {
+static void debug_initialize(sc_gameref_t game) {
 	sc_debuggerref_t debug;
 
 	/* Create the easy bits of the new debugging set. */
@@ -194,8 +188,7 @@ debug_initialize(sc_gameref_t game) {
  * Destroy a debug data set, free its heap memory, and remove its reference
  * from the game.
  */
-static void
-debug_finalize(sc_gameref_t game) {
+static void debug_finalize(sc_gameref_t game) {
 	sc_debuggerref_t debug = debug_get_debugger(game);
 	assert(debug_is_valid(debug));
 
@@ -220,8 +213,7 @@ debug_finalize(sc_gameref_t game) {
  *
  * Print debugging help.
  */
-static void
-debug_help(sc_command_t topic) {
+static void debug_help(sc_command_t topic) {
 	/* Is help general, or specific? */
 	if (topic == DEBUG_NONE) {
 		if_print_debug(
@@ -539,15 +531,13 @@ debug_help(sc_command_t topic) {
  *
  * Low level output helpers.
  */
-static void
-debug_print_quoted(const sc_char *string) {
+static void debug_print_quoted(const sc_char *string) {
 	if_print_debug_character('"');
 	if_print_debug(string);
 	if_print_debug_character('"');
 }
 
-static void
-debug_print_player(sc_gameref_t game) {
+static void debug_print_player(sc_gameref_t game) {
 	const sc_prop_setref_t bundle = gs_get_bundle(game);
 	sc_vartype_t vt_key[2];
 	const sc_char *playername;
@@ -559,8 +549,7 @@ debug_print_player(sc_gameref_t game) {
 	debug_print_quoted(playername);
 }
 
-static void
-debug_print_room(sc_gameref_t game, sc_int room) {
+static void debug_print_room(sc_gameref_t game, sc_int room) {
 	const sc_prop_setref_t bundle = gs_get_bundle(game);
 	sc_vartype_t vt_key[3];
 	sc_char buffer[32];
@@ -583,8 +572,7 @@ debug_print_room(sc_gameref_t game, sc_int room) {
 	debug_print_quoted(name);
 }
 
-static void
-debug_print_object(sc_gameref_t game, sc_int object) {
+static void debug_print_object(sc_gameref_t game, sc_int object) {
 	const sc_prop_setref_t bundle = gs_get_bundle(game);
 	sc_vartype_t vt_key[3];
 	sc_bool bstatic;
@@ -618,8 +606,7 @@ debug_print_object(sc_gameref_t game, sc_int object) {
 	debug_print_quoted(name);
 }
 
-static void
-debug_print_npc(sc_gameref_t game, sc_int npc) {
+static void debug_print_npc(sc_gameref_t game, sc_int npc) {
 	const sc_prop_setref_t bundle = gs_get_bundle(game);
 	sc_vartype_t vt_key[3];
 	sc_char buffer[32];
@@ -646,8 +633,7 @@ debug_print_npc(sc_gameref_t game, sc_int npc) {
 	debug_print_quoted(name);
 }
 
-static void
-debug_print_event(sc_gameref_t game, sc_int event) {
+static void debug_print_event(sc_gameref_t game, sc_int event) {
 	const sc_prop_setref_t bundle = gs_get_bundle(game);
 	sc_vartype_t vt_key[3];
 	sc_char buffer[32];
@@ -670,8 +656,7 @@ debug_print_event(sc_gameref_t game, sc_int event) {
 	debug_print_quoted(name);
 }
 
-static void
-debug_print_task(sc_gameref_t game, sc_int task) {
+static void debug_print_task(sc_gameref_t game, sc_int task) {
 	const sc_prop_setref_t bundle = gs_get_bundle(game);
 	sc_vartype_t vt_key[4];
 	sc_char buffer[32];
@@ -695,8 +680,7 @@ debug_print_task(sc_gameref_t game, sc_int task) {
 	debug_print_quoted(command);
 }
 
-static void
-debug_print_variable(sc_gameref_t game, sc_int variable) {
+static void debug_print_variable(sc_gameref_t game, sc_int variable) {
 	const sc_prop_setref_t bundle = gs_get_bundle(game);
 	const sc_var_setref_t vars = gs_get_vars(game);
 	sc_vartype_t vt_key[3], vt_rvalue;
@@ -742,8 +726,7 @@ debug_print_variable(sc_gameref_t game, sc_int variable) {
  *
  * Display overall game details.
  */
-static void
-debug_game(sc_gameref_t game, sc_command_type_t type) {
+static void debug_game(sc_gameref_t game, sc_command_type_t type) {
 	const sc_prop_setref_t bundle = gs_get_bundle(game);
 	const sc_debuggerref_t debug = debug_get_debugger(game);
 	sc_vartype_t vt_key[2];
@@ -890,9 +873,7 @@ debug_game(sc_gameref_t game, sc_command_type_t type) {
  *
  * Print a few brief details about the player status.
  */
-static void
-debug_player(sc_gameref_t game,
-             sc_command_t command, sc_command_type_t type) {
+static void debug_player(sc_gameref_t game, sc_command_t command, sc_command_type_t type) {
 	if (type != COMMAND_QUERY) {
 		if_print_debug("The Player command takes no arguments.\n");
 		return;
@@ -948,9 +929,7 @@ debug_player(sc_gameref_t game,
  * Normalize a set of arguments parsed from a debugger command line, for
  * debug commands that take ranges.
  */
-static sc_bool
-debug_normalize_arguments(sc_command_type_t type,
-                          sc_int *arg1, sc_int *arg2, sc_int limit) {
+static sc_bool debug_normalize_arguments(sc_command_type_t type, sc_int *arg1, sc_int *arg2, sc_int limit) {
 	sc_int low = 0, high = 0;
 
 	/* Set range low and high depending on the command type. */
@@ -990,13 +969,11 @@ debug_normalize_arguments(sc_command_type_t type,
  *
  * Print details of rooms and their direct contents.
  */
-static sc_bool
-debug_filter_room(sc_gameref_t game, sc_int room) {
+static sc_bool debug_filter_room(sc_gameref_t game, sc_int room) {
 	return room == gs_playerroom(game);
 }
 
-static void
-debug_dump_room(sc_gameref_t game, sc_int room) {
+static void debug_dump_room(sc_gameref_t game, sc_int room) {
 	sc_int object, npc;
 
 	debug_print_room(game, room);
@@ -1037,13 +1014,11 @@ debug_dump_room(sc_gameref_t game, sc_int room) {
  *
  * Print the changeable details of game objects.
  */
-static sc_bool
-debug_filter_object(sc_gameref_t game, sc_int object) {
+static sc_bool debug_filter_object(sc_gameref_t game, sc_int object) {
 	return obj_indirectly_in_room(game, object, gs_playerroom(game));
 }
 
-static void
-debug_dump_object(sc_gameref_t game, sc_int object) {
+static void debug_dump_object(sc_gameref_t game, sc_int object) {
 	const sc_prop_setref_t bundle = gs_get_bundle(game);
 	sc_int openness;
 	sc_vartype_t vt_key[3];
@@ -1171,13 +1146,11 @@ debug_dump_object(sc_gameref_t game, sc_int object) {
  *
  * Print stuff about NPCs.
  */
-static sc_bool
-debug_filter_npc(sc_gameref_t game, sc_int npc) {
+static sc_bool debug_filter_npc(sc_gameref_t game, sc_int npc) {
 	return npc_in_room(game, npc, gs_playerroom(game));
 }
 
-static void
-debug_dump_npc(sc_gameref_t game, sc_int npc) {
+static void debug_dump_npc(sc_gameref_t game, sc_int npc) {
 	debug_print_npc(game, npc);
 	if_print_debug_character('\n');
 
@@ -1239,13 +1212,11 @@ debug_dump_npc(sc_gameref_t game, sc_int npc) {
  *
  * Print stuff about events.
  */
-static sc_bool
-debug_filter_event(sc_gameref_t game, sc_int event) {
+static sc_bool debug_filter_event(sc_gameref_t game, sc_int event) {
 	return gs_event_state(game, event) == ES_RUNNING;
 }
 
-static void
-debug_dump_event(sc_gameref_t game, sc_int event) {
+static void debug_dump_event(sc_gameref_t game, sc_int event) {
 	sc_char buffer[32];
 
 	debug_print_event(game, event);
@@ -1284,13 +1255,11 @@ debug_dump_event(sc_gameref_t game, sc_int event) {
  *
  * Print stuff about tasks.
  */
-static sc_bool
-debug_filter_task(sc_gameref_t game, sc_int task) {
+static sc_bool debug_filter_task(sc_gameref_t game, sc_int task) {
 	return task_can_run_task(game, task);
 }
 
-static void
-debug_dump_task(sc_gameref_t game, sc_int task) {
+static void debug_dump_task(sc_gameref_t game, sc_int task) {
 	debug_print_task(game, task);
 	if_print_debug_character('\n');
 
@@ -1314,8 +1283,7 @@ debug_dump_task(sc_gameref_t game, sc_int task) {
  *
  * Print stuff about variables.
  */
-static void
-debug_dump_variable(sc_gameref_t game, sc_int variable) {
+static void debug_dump_variable(sc_gameref_t game, sc_int variable) {
 	const sc_prop_setref_t bundle = gs_get_bundle(game);
 	const sc_var_setref_t vars = gs_get_vars(game);
 	sc_vartype_t vt_key[3], vt_rvalue;
@@ -1358,9 +1326,8 @@ debug_dump_variable(sc_gameref_t game, sc_int variable) {
  *
  * Common handler for iterating dumps of classes.
  */
-static void
-debug_dump_common(sc_gameref_t game, sc_command_t command,
-                  sc_command_type_t type, sc_int arg1, sc_int arg2) {
+static void debug_dump_common(sc_gameref_t game, sc_command_t command,
+		sc_command_type_t type, sc_int arg1, sc_int arg2) {
 	sc_int low = arg1, high = arg2;
 	sc_int limit, index_;
 	const sc_char *class_;
@@ -1492,8 +1459,7 @@ debug_dump_common(sc_gameref_t game, sc_command_t command,
  *
  * Print the current raw printfilter contents.
  */
-static void
-debug_buffer(sc_gameref_t game, sc_command_type_t type) {
+static void debug_buffer(sc_gameref_t game, sc_command_type_t type) {
 	const sc_filterref_t filter = gs_get_filter(game);
 	const sc_char *buffer;
 
@@ -1515,8 +1481,7 @@ debug_buffer(sc_gameref_t game, sc_command_type_t type) {
  *
  * Helper for debug_resources().
  */
-static void
-debug_print_resource(const sc_resource_t *resource) {
+static void debug_print_resource(const sc_resource_t *resource) {
 	sc_char buffer[32];
 
 	debug_print_quoted(resource->name);
@@ -1534,8 +1499,7 @@ debug_print_resource(const sc_resource_t *resource) {
  *
  * Print any active and requested resources.
  */
-static void
-debug_resources(sc_gameref_t game, sc_command_type_t type) {
+static void debug_resources(sc_gameref_t game, sc_command_type_t type) {
 	sc_bool printed = FALSE;
 
 	if (type != COMMAND_QUERY) {
@@ -1592,8 +1556,7 @@ debug_resources(sc_gameref_t game, sc_command_type_t type) {
  * Report the PRNG in use, and seed the random number generator to the
  * given value.
  */
-static void
-debug_random(sc_command_type_t type, sc_int new_seed) {
+static void debug_random(sc_command_type_t type, sc_int new_seed) {
 	const sc_char *random_type;
 	sc_char buffer[32];
 
@@ -1633,9 +1596,8 @@ debug_random(sc_command_type_t type, sc_int new_seed) {
  *
  * Common handler for setting and clearing watchpoints.
  */
-static void
-debug_watchpoint_common(sc_gameref_t game, sc_command_t command,
-                        sc_command_type_t type, sc_int arg1, sc_int arg2) {
+static void debug_watchpoint_common(sc_gameref_t game, sc_command_t command,
+		sc_command_type_t type, sc_int arg1, sc_int arg2) {
 	const sc_debuggerref_t debug = debug_get_debugger(game);
 	sc_int low = arg1, high = arg2;
 	sc_int limit, index_;
@@ -1801,9 +1763,7 @@ debug_watchpoint_common(sc_gameref_t game, sc_command_t command,
  *
  * Common handler to list out and clear all set watchpoints at a stroke.
  */
-static void
-debug_watchall_common(sc_gameref_t game,
-                      sc_command_t command, sc_command_type_t type) {
+static void debug_watchall_common(sc_gameref_t game, sc_command_t command, sc_command_type_t type) {
 	const sc_debuggerref_t debug = debug_get_debugger(game);
 	assert(debug_is_valid(debug));
 
@@ -1854,8 +1814,7 @@ debug_watchall_common(sc_gameref_t game,
  *
  * Compare two objects, and return TRUE if the same.
  */
-static sc_bool
-debug_compare_object(sc_gameref_t from, sc_gameref_t with, sc_int object) {
+static sc_bool debug_compare_object(sc_gameref_t from, sc_gameref_t with, sc_int object) {
 	const sc_objectstate_t *from_object = from->objects + object;
 	const sc_objectstate_t *with_object = with->objects + object;
 
@@ -1874,8 +1833,7 @@ debug_compare_object(sc_gameref_t from, sc_gameref_t with, sc_int object) {
  *
  * Compare two NPCs, and return TRUE if the same.
  */
-static sc_bool
-debug_compare_npc(sc_gameref_t from, sc_gameref_t with, sc_int npc) {
+static sc_bool debug_compare_npc(sc_gameref_t from, sc_gameref_t with, sc_int npc) {
 	const sc_npcstate_t *from_npc = from->npcs + npc;
 	const sc_npcstate_t *with_npc = with->npcs + npc;
 
@@ -1897,8 +1855,7 @@ debug_compare_npc(sc_gameref_t from, sc_gameref_t with, sc_int npc) {
  *
  * Compare two events, and return TRUE if the same.
  */
-static sc_bool
-debug_compare_event(sc_gameref_t from, sc_gameref_t with, sc_int event) {
+static sc_bool debug_compare_event(sc_gameref_t from, sc_gameref_t with, sc_int event) {
 	const sc_eventstate_t *from_event = from->events + event;
 	const sc_eventstate_t *with_event = with->events + event;
 
@@ -1912,8 +1869,7 @@ debug_compare_event(sc_gameref_t from, sc_gameref_t with, sc_int event) {
  *
  * Compare two tasks, and return TRUE if the same.
  */
-static sc_bool
-debug_compare_task(sc_gameref_t from, sc_gameref_t with, sc_int task) {
+static sc_bool debug_compare_task(sc_gameref_t from, sc_gameref_t with, sc_int task) {
 	const sc_taskstate_t *from_task = from->tasks + task;
 	const sc_taskstate_t *with_task = with->tasks + task;
 
@@ -1927,8 +1883,7 @@ debug_compare_task(sc_gameref_t from, sc_gameref_t with, sc_int task) {
  *
  * Compare two variables, and return TRUE if the same.
  */
-static sc_bool
-debug_compare_variable(sc_gameref_t from, sc_gameref_t with, sc_int variable) {
+static sc_bool debug_compare_variable(sc_gameref_t from, sc_gameref_t with, sc_int variable) {
 	const sc_prop_setref_t bundle = from->bundle;
 	const sc_var_setref_t from_var = from->vars;
 	const sc_var_setref_t with_var = with->vars;
@@ -1975,12 +1930,9 @@ debug_compare_variable(sc_gameref_t from, sc_gameref_t with, sc_int variable) {
  * watchpoints flags array.  Prints entries that differ, and returns TRUE
  * if any differed.
  */
-static sc_bool
-debug_check_class(sc_gameref_t from, sc_gameref_t with,
-                  const sc_char *class_, sc_int class_count,
-                  const sc_bool *watchpoints,
-                  sc_bool(*const compare_function)
-                  (sc_gameref_t, sc_gameref_t, sc_int)) {
+static sc_bool debug_check_class(sc_gameref_t from, sc_gameref_t with, const sc_char *class_,
+		sc_int class_count, const sc_bool *watchpoints,
+		sc_bool(*const compare_function) (sc_gameref_t, sc_gameref_t, sc_int)) {
 	sc_int index_;
 	sc_bool triggered = FALSE;
 
@@ -2020,8 +1972,7 @@ debug_check_class(sc_gameref_t from, sc_gameref_t with,
  * TRUE if any triggered, FALSE if none (or if the undo game isn't available,
  * in which case no check is possible).
  */
-static sc_bool
-debug_check_watchpoints(sc_gameref_t game) {
+static sc_bool debug_check_watchpoints(sc_gameref_t game) {
 	const sc_debuggerref_t debug = debug_get_debugger(game);
 	const sc_gameref_t undo = game->undo;
 	sc_bool triggered;
@@ -2071,10 +2022,8 @@ debug_check_watchpoints(sc_gameref_t game) {
  * appropriate command and its arguments.  Returns DEBUG_NONE if the parse
  * fails.
  */
-static sc_command_t
-debug_parse_command(const sc_char *command_string,
-                    sc_command_type_t *type,
-                    sc_int *arg1, sc_int *arg2, sc_command_t *help_topic) {
+static sc_command_t debug_parse_command(const sc_char *command_string,
+		sc_command_type_t *type, sc_int *arg1, sc_int *arg2, sc_command_t *help_topic) {
 	sc_command_t return_command;
 	sc_command_type_t return_type;
 	sc_int val1, val2, converted, matches;
@@ -2186,10 +2135,8 @@ debug_parse_command(const sc_char *command_string,
  *
  * Dispatch a debugging command to the appropriate handler.
  */
-static void
-debug_dispatch(sc_gameref_t game,
-               sc_command_t command, sc_command_type_t type,
-               sc_int arg1, sc_int arg2, sc_command_t help_topic) {
+static void debug_dispatch(sc_gameref_t game, sc_command_t command, sc_command_type_t type,
+		sc_int arg1, sc_int arg2, sc_command_t help_topic) {
 	/* Demultiplex debugging command, and call handlers. */
 	switch (command) {
 	case DEBUG_HELP:
@@ -2256,8 +2203,7 @@ debug_dispatch(sc_gameref_t game,
  *
  * Create a small debugging dialog with the user.
  */
-static void
-debug_dialog(sc_gameref_t game) {
+static void debug_dialog(sc_gameref_t game) {
 	const sc_filterref_t filter = gs_get_filter(game);
 	const sc_debuggerref_t debug = debug_get_debugger(game);
 	const sc_var_setref_t vars = gs_get_vars(game);
@@ -2342,8 +2288,7 @@ debug_dialog(sc_gameref_t game) {
  * Handle a single debugging command line from the outside world.  Returns
  * TRUE if valid, FALSE if invalid (parse failed, not understood).
  */
-sc_bool
-debug_run_command(sc_gameref_t game, const sc_char *debug_command) {
+sc_bool debug_run_command(sc_gameref_t game, const sc_char *debug_command) {
 	const sc_debuggerref_t debug = debug_get_debugger(game);
 	sc_command_t command, help_topic;
 	sc_command_type_t type;
@@ -2379,8 +2324,7 @@ debug_run_command(sc_gameref_t game, const sc_char *debug_command) {
  * a polite refusal if debugging is not enabled, otherwise runs a debugging
  * dialog.  Uses if_print_string() as this isn't debug output.
  */
-sc_bool
-debug_cmd_debugger(sc_gameref_t game) {
+sc_bool debug_cmd_debugger(sc_gameref_t game) {
 	const sc_debuggerref_t debug = debug_get_debugger(game);
 
 	/* If debugging disallowed (not initialized), ignore the call. */
@@ -2410,8 +2354,7 @@ debug_cmd_debugger(sc_gameref_t game) {
  * The second is called on exit from the game, and may make a final sweep for
  * watchpoints and offer the debug dialog one last time.
  */
-void
-debug_game_started(sc_gameref_t game) {
+void debug_game_started(sc_gameref_t game) {
 	const sc_debuggerref_t debug = debug_get_debugger(game);
 
 	/* If debugging disallowed (not initialized), ignore the call. */
@@ -2438,8 +2381,7 @@ debug_game_started(sc_gameref_t game) {
 	}
 }
 
-void
-debug_game_ended(sc_gameref_t game) {
+void debug_game_ended(sc_gameref_t game) {
 	const sc_debuggerref_t debug = debug_get_debugger(game);
 
 	/* If debugging disallowed (not initialized), ignore the call. */
@@ -2481,8 +2423,7 @@ debug_game_ended(sc_gameref_t game) {
  * Called after each turn by the main game loop.  Checks for any set
  * watchpoints, and triggers a debug dialog when any fire.
  */
-void
-debug_turn_update(sc_gameref_t game) {
+void debug_turn_update(sc_gameref_t game) {
 	const sc_debuggerref_t debug = debug_get_debugger(game);
 
 	/* If debugging disallowed (not initialized), ignore the call. */
@@ -2517,8 +2458,7 @@ debug_turn_update(sc_gameref_t game) {
  * and free'd on disabling; as a result, any set watchpoints are lost on
  * disabling.
  */
-void
-debug_set_enabled(sc_gameref_t game, sc_bool enable) {
+void debug_set_enabled(sc_gameref_t game, sc_bool enable) {
 	const sc_debuggerref_t debug = debug_get_debugger(game);
 
 	/*
@@ -2534,8 +2474,7 @@ debug_set_enabled(sc_gameref_t game, sc_bool enable) {
 	}
 }
 
-sc_bool
-debug_get_enabled(sc_gameref_t game) {
+sc_bool debug_get_enabled(sc_gameref_t game) {
 	const sc_debuggerref_t debug = debug_get_debugger(game);
 
 	return debug != NULL;

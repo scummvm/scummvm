@@ -80,8 +80,7 @@ typedef sc_prop_set_s sc_prop_set_t;
  *
  * Return TRUE if pointer is a valid properties set, FALSE otherwise.
  */
-static sc_bool
-prop_is_valid(sc_prop_setref_t bundle) {
+static sc_bool prop_is_valid(sc_prop_setref_t bundle) {
 	return bundle && bundle->magic == PROP_MAGIC;
 }
 
@@ -91,8 +90,7 @@ prop_is_valid(sc_prop_setref_t bundle) {
  *
  * Round up a count of elements to the next block of grow increments.
  */
-static sc_int
-prop_round_up(sc_int elements) {
+static sc_int prop_round_up(sc_int elements) {
 	sc_int extended;
 
 	extended = elements + PROP_GROW_INCREMENT - 1;
@@ -111,9 +109,7 @@ prop_round_up(sc_int elements) {
  * realloc() in blocks of elements, and thus need to realloc() much less
  * frequently.
  */
-static void *
-prop_ensure_capacity(void *array,
-                     sc_int old_size, sc_int new_size, sc_int element_size) {
+static void *prop_ensure_capacity(void *array, sc_int old_size, sc_int new_size, sc_int element_size) {
 	sc_int current, required;
 
 	/*
@@ -145,8 +141,7 @@ prop_ensure_capacity(void *array,
  * "unblock" the allocations of prop_ensure_capacity().  Once trimmed,
  * the array cannot ever be grown safely again.
  */
-static void *
-prop_trim_capacity(void *array, sc_int size, sc_int element_size) {
+static void *prop_trim_capacity(void *array, sc_int size, sc_int element_size) {
 	if (prop_round_up(size) > size)
 		return sc_realloc(array, size * element_size);
 	else
@@ -161,8 +156,7 @@ prop_trim_capacity(void *array, sc_int size, sc_int element_size) {
  * The function has return type "int" to match the libc implementations of
  * bsearch() and qsort().
  */
-static int
-prop_compare(const void *string1, const void *string2) {
+static int prop_compare(const void *string1, const void *string2) {
 	return strcmp(*(sc_char * const *) string1, *(sc_char * const *) string2);
 }
 
@@ -175,8 +169,7 @@ prop_compare(const void *string1, const void *string2) {
  * either added or already present.  Any new dictionary entry will
  * contain a malloced copy of the string passed in.
  */
-static const sc_char *
-prop_dictionary_lookup(sc_prop_setref_t bundle, const sc_char *string) {
+static const sc_char *prop_dictionary_lookup(sc_prop_setref_t bundle, const sc_char *string) {
 	sc_char *dict_string;
 
 	/*
@@ -223,8 +216,7 @@ prop_dictionary_lookup(sc_prop_setref_t bundle, const sc_char *string) {
  * for even a small game is large, and preallocating pools avoids excessive
  * malloc's of small individual nodes.
  */
-static sc_prop_noderef_t
-prop_new_node(sc_prop_setref_t bundle) {
+static sc_prop_noderef_t prop_new_node(sc_prop_setref_t bundle) {
 	sc_int node_index;
 	sc_prop_noderef_t node;
 
@@ -260,8 +252,7 @@ prop_new_node(sc_prop_setref_t bundle) {
  *
  * Find a child node of the given parent whose name matches that passed in.
  */
-static sc_prop_noderef_t
-prop_find_child(sc_prop_noderef_t parent, sc_int type, sc_vartype_t name) {
+static sc_prop_noderef_t prop_find_child(sc_prop_noderef_t parent, sc_int type, sc_vartype_t name) {
 	/* See if this node has any children. */
 	if (parent->child_list) {
 		sc_int index_;
@@ -330,9 +321,8 @@ prop_find_child(sc_prop_noderef_t parent, sc_int type, sc_vartype_t name) {
  * Add a new child node to the given parent.  Return its reference.  Set
  * needs to be passed so that string names can be added to the dictionary.
  */
-static sc_prop_noderef_t
-prop_add_child(sc_prop_noderef_t parent,
-               sc_int type, sc_vartype_t name, sc_prop_setref_t bundle) {
+static sc_prop_noderef_t prop_add_child(sc_prop_noderef_t parent, sc_int type,
+		sc_vartype_t name, sc_prop_setref_t bundle) {
 	sc_prop_noderef_t child;
 
 	/* Not possible if growable allocations have been trimmed. */
@@ -422,9 +412,8 @@ prop_add_child(sc_prop_noderef_t parent,
  * "I->sssis", stores an integer, with a key composed of three strings, an
  * integer, and another string.
  */
-void
-prop_put(sc_prop_setref_t bundle, const sc_char *format,
-         sc_vartype_t vt_value, const sc_vartype_t vt_key[]) {
+void prop_put(sc_prop_setref_t bundle, const sc_char *format,
+		sc_vartype_t vt_value, const sc_vartype_t vt_key[]) {
 	sc_prop_noderef_t node;
 	sc_int index_;
 	assert(prop_is_valid(bundle));
@@ -523,9 +512,8 @@ prop_put(sc_prop_setref_t bundle, const sc_char *format,
  * Retrieve a property from a properties set.  Format stuff as above, except
  * with "->" replaced with "<-".  Returns FALSE if no such property exists.
  */
-sc_bool
-prop_get(sc_prop_setref_t bundle, const sc_char *format,
-         sc_vartype_t *vt_rvalue, const sc_vartype_t vt_key[]) {
+sc_bool prop_get(sc_prop_setref_t bundle, const sc_char *format, sc_vartype_t *vt_rvalue,
+		const sc_vartype_t vt_key[]) {
 	sc_prop_noderef_t node;
 	sc_int index_;
 	assert(prop_is_valid(bundle));
@@ -633,8 +621,7 @@ prop_get(sc_prop_setref_t bundle, const sc_char *format,
  * Trim excess allocation from growable arrays, and fix the properties set
  * so that no further property insertions are allowed.
  */
-static void
-prop_trim_node(sc_prop_noderef_t node) {
+static void prop_trim_node(sc_prop_noderef_t node) {
 	/* End recursion on null or childless node. */
 	if (node && node->child_list) {
 		sc_int index_;
@@ -650,8 +637,7 @@ prop_trim_node(sc_prop_noderef_t node) {
 	}
 }
 
-void
-prop_solidify(sc_prop_setref_t bundle) {
+void prop_solidify(sc_prop_setref_t bundle) {
 	assert(prop_is_valid(bundle));
 
 	/*
@@ -685,9 +671,7 @@ prop_solidify(sc_prop_setref_t bundle) {
  * Convenience functions to retrieve a property of a known type directly.
  * It is an error for the property not to exist on retrieval.
  */
-sc_int
-prop_get_integer(sc_prop_setref_t bundle,
-                 const sc_char *format, const sc_vartype_t vt_key[]) {
+sc_int prop_get_integer(sc_prop_setref_t bundle, const sc_char *format, const sc_vartype_t vt_key[]) {
 	sc_vartype_t vt_rvalue;
 	assert(format[0] == PROP_INTEGER);
 
@@ -697,9 +681,7 @@ prop_get_integer(sc_prop_setref_t bundle,
 	return vt_rvalue.integer;
 }
 
-sc_bool
-prop_get_boolean(sc_prop_setref_t bundle,
-                 const sc_char *format, const sc_vartype_t vt_key[]) {
+sc_bool prop_get_boolean(sc_prop_setref_t bundle, const sc_char *format, const sc_vartype_t vt_key[]) {
 	sc_vartype_t vt_rvalue;
 	assert(format[0] == PROP_BOOLEAN);
 
@@ -709,9 +691,7 @@ prop_get_boolean(sc_prop_setref_t bundle,
 	return vt_rvalue.boolean;
 }
 
-const sc_char *
-prop_get_string(sc_prop_setref_t bundle,
-                const sc_char *format, const sc_vartype_t vt_key[]) {
+const sc_char *prop_get_string(sc_prop_setref_t bundle, const sc_char *format, const sc_vartype_t vt_key[]) {
 	sc_vartype_t vt_rvalue;
 	assert(format[0] == PROP_STRING);
 
@@ -728,9 +708,7 @@ prop_get_string(sc_prop_setref_t bundle,
  * Convenience function to retrieve a count of child properties available
  * for a given property.  Returns zero if the property does not exist.
  */
-sc_int
-prop_get_child_count(sc_prop_setref_t bundle,
-                     const sc_char *format, const sc_vartype_t vt_key[]) {
+sc_int prop_get_child_count(sc_prop_setref_t bundle, const sc_char *format, const sc_vartype_t vt_key[]) {
 	sc_vartype_t vt_rvalue;
 	assert(format[0] == PROP_INTEGER);
 
@@ -747,8 +725,7 @@ prop_get_child_count(sc_prop_setref_t bundle,
  *
  * Create a new, empty properties set, and return it.
  */
-static sc_prop_setref_t
-prop_create_empty() {
+static sc_prop_setref_t prop_create_empty() {
 	sc_prop_setref_t bundle;
 
 	/* Create a new, empty set. */
@@ -793,8 +770,7 @@ prop_create_empty() {
  *
  * Free set memory, and destroy a properties set structure.
  */
-static void
-prop_destroy_child_list(sc_prop_noderef_t node) {
+static void prop_destroy_child_list(sc_prop_noderef_t node) {
 	/* End recursion on null or childless node. */
 	if (node && node->child_list) {
 		sc_int index_;
@@ -808,8 +784,7 @@ prop_destroy_child_list(sc_prop_noderef_t node) {
 	}
 }
 
-void
-prop_destroy(sc_prop_setref_t bundle) {
+void prop_destroy(sc_prop_setref_t bundle) {
 	sc_int index_;
 	assert(prop_is_valid(bundle));
 
@@ -853,8 +828,7 @@ prop_destroy(sc_prop_setref_t bundle) {
  *
  * Create a new properties set based on a taf, and return it.
  */
-sc_prop_setref_t
-prop_create(const sc_tafref_t taf) {
+sc_prop_setref_t prop_create(const sc_tafref_t taf) {
 	sc_prop_setref_t bundle;
 
 	/* Create a new, empty set. */
@@ -877,8 +851,7 @@ prop_create(const sc_tafref_t taf) {
  *
  * Adopt a memory address for free'ing on destroy.
  */
-void
-prop_adopt(sc_prop_setref_t bundle, void *addr) {
+void prop_adopt(sc_prop_setref_t bundle, void *addr) {
 	assert(prop_is_valid(bundle));
 
 	/* Extend the orphans array if necessary. */
@@ -899,8 +872,7 @@ prop_adopt(sc_prop_setref_t bundle, void *addr) {
  *
  * Print out a complete properties set.
  */
-static sc_bool
-prop_debug_is_dictionary_string(sc_prop_setref_t bundle, const void *pointer) {
+static sc_bool prop_debug_is_dictionary_string(sc_prop_setref_t bundle, const void *pointer) {
 	const sc_char *const pointer_ = (const sc_char * const)pointer;
 	sc_int index_;
 
@@ -913,9 +885,8 @@ prop_debug_is_dictionary_string(sc_prop_setref_t bundle, const void *pointer) {
 	return FALSE;
 }
 
-static void
-prop_debug_dump_node(sc_prop_setref_t bundle,
-                     sc_int depth, sc_int child_index, sc_prop_noderef_t node) {
+static void prop_debug_dump_node(sc_prop_setref_t bundle, sc_int depth,
+		sc_int child_index, sc_prop_noderef_t node) {
 	sc_int index_;
 
 	/* Write node preamble, indented two spaces for each depth count. */
@@ -953,8 +924,7 @@ prop_debug_dump_node(sc_prop_setref_t bundle,
 		sc_trace("\n");
 }
 
-void
-prop_debug_dump(sc_prop_setref_t bundle) {
+void prop_debug_dump(sc_prop_setref_t bundle) {
 	sc_int index_;
 	assert(prop_is_valid(bundle));
 
@@ -988,8 +958,7 @@ prop_debug_dump(sc_prop_setref_t bundle) {
  *
  * Set property tracing on/off.
  */
-void
-prop_debug_trace(sc_bool flag) {
+void prop_debug_trace(sc_bool flag) {
 	prop_trace = flag;
 }
 

@@ -93,8 +93,7 @@ static void *sc_zero_allocation = &sc_zero_allocation;
  * cleared to zero.  In ANSI/ISO C, zero byte allocations are implementation-
  * defined, so we have to take special care to get predictable behavior.
  */
-void *
-sc_malloc(size_t size) {
+void *sc_malloc(size_t size) {
 	void *allocated;
 
 	if (size == 0)
@@ -110,8 +109,7 @@ sc_malloc(size_t size) {
 	return allocated;
 }
 
-void *
-sc_realloc(void *pointer, size_t size) {
+void *sc_realloc(void *pointer, size_t size) {
 	void *allocated;
 
 	if (size == 0) {
@@ -133,8 +131,7 @@ sc_realloc(void *pointer, size_t size) {
 	return allocated;
 }
 
-void
-sc_free(void *pointer) {
+void sc_free(void *pointer) {
 	if (sc_zero_allocation != &sc_zero_allocation)
 		sc_fatal("sc_free: write to zero-byte allocation address detected\n");
 
@@ -150,8 +147,7 @@ sc_free(void *pointer) {
  * Strncasecmp and strcasecmp are not ANSI functions, so here are local
  * definitions to do the same jobs.
  */
-sc_int
-sc_strncasecmp(const sc_char *s1, const sc_char *s2, sc_int n) {
+sc_int sc_strncasecmp(const sc_char *s1, const sc_char *s2, sc_int n) {
 	sc_int index_;
 	assert(s1 && s2);
 
@@ -166,8 +162,7 @@ sc_strncasecmp(const sc_char *s1, const sc_char *s2, sc_int n) {
 	return 0;
 }
 
-sc_int
-sc_strcasecmp(const sc_char *s1, const sc_char *s2) {
+sc_int sc_strcasecmp(const sc_char *s1, const sc_char *s2) {
 	sc_int s1len, s2len, result;
 	assert(s1 && s2);
 
@@ -194,8 +189,7 @@ sc_strcasecmp(const sc_char *s1, const sc_char *s2) {
  * to return the same sequence for all platforms.  The default is the first,
  * with the latter intended for predictability of game actions.
  */
-static sc_int
-sc_platform_rand(sc_uint new_seed) {
+static sc_int sc_platform_rand(sc_uint new_seed) {
 	static sc_bool is_seeded = FALSE;
 
 	/* If reseeding, seed with the value supplied, note seeded, and return 0. */
@@ -215,8 +209,7 @@ sc_platform_rand(sc_uint new_seed) {
 	}
 }
 
-static sc_int
-sc_congruential_rand(sc_uint new_seed) {
+static sc_int sc_congruential_rand(sc_uint new_seed) {
 	static sc_bool is_seeded = FALSE;
 	static sc_uint rand_state = 1;
 
@@ -263,29 +256,24 @@ static sc_int(*sc_rand_function)(sc_uint) = sc_platform_rand;
  * handler in use, generate a random number, and a convenience function to
  * generate a random value within a given range.
  */
-void
-sc_set_congruential_random(void) {
+void sc_set_congruential_random(void) {
 	sc_rand_function = sc_congruential_rand;
 }
 
-void
-sc_set_platform_random(void) {
+void sc_set_platform_random(void) {
 	sc_rand_function = sc_platform_rand;
 }
 
-sc_bool
-sc_is_congruential_random(void) {
+sc_bool sc_is_congruential_random(void) {
 	return sc_rand_function == sc_congruential_rand;
 }
 
-void
-sc_seed_random(sc_uint new_seed) {
+void sc_seed_random(sc_uint new_seed) {
 	/* Ignore zero values of new_seed by simply using 1 instead. */
 	sc_rand_function(new_seed > 0 ? new_seed : 1);
 }
 
-sc_int
-sc_rand(void) {
+sc_int sc_rand(void) {
 	sc_int retval;
 
 	/* Passing zero indicates this is not a seed operation. */
@@ -293,8 +281,7 @@ sc_rand(void) {
 	return retval;
 }
 
-sc_int
-sc_randomint(sc_int low, sc_int high) {
+sc_int sc_randomint(sc_int low, sc_int high) {
 	/*
 	 * If the range is invalid, just return the low value given.  This mimics
 	 * Adrift under the same conditions, and also guards against division by
@@ -313,8 +300,7 @@ static const sc_char SPACE = ' ';
  *
  * Return TRUE if a string is either zero-length or contains only whitespace.
  */
-sc_bool
-sc_strempty(const sc_char *string) {
+sc_bool sc_strempty(const sc_char *string) {
 	sc_int index_;
 	assert(string);
 
@@ -335,8 +321,7 @@ sc_strempty(const sc_char *string) {
  * Trim leading and trailing whitespace from a string.  Modifies the string
  * in place, and returns the string address for convenience.
  */
-sc_char *
-sc_trim_string(sc_char *string) {
+sc_char *sc_trim_string(sc_char *string) {
 	sc_int index_;
 	assert(string);
 
@@ -359,8 +344,7 @@ sc_trim_string(sc_char *string) {
  * Modifies the string in place, and returns the string address for
  * convenience.
  */
-sc_char *
-sc_normalize_string(sc_char *string) {
+sc_char *sc_normalize_string(sc_char *string) {
 	sc_int index_;
 	assert(string);
 
@@ -389,8 +373,7 @@ sc_normalize_string(sc_char *string) {
  *
  * Return TRUE if the first word in the string is word, case insensitive.
  */
-sc_bool
-sc_compare_word(const sc_char *string, const sc_char *word, sc_int length) {
+sc_bool sc_compare_word(const sc_char *string, const sc_char *word, sc_int length) {
 	assert(string && word);
 
 	/* Return TRUE if string starts with word, then space or string end. */
@@ -405,8 +388,7 @@ sc_compare_word(const sc_char *string, const sc_char *word, sc_int length) {
  * Hash a string, hashpjw algorithm, from 'Compilers, principles, techniques,
  * and tools', page 436, unmodulo'ed and somewhat restyled.
  */
-sc_uint
-sc_hash(const sc_char *string) {
+sc_uint sc_hash(const sc_char *string) {
 	sc_int index_;
 	sc_uint hash;
 	assert(string);

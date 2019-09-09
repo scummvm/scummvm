@@ -40,8 +40,7 @@ static sc_bool restr_trace = FALSE;
  *
  * Return the index of the n'th integer found.
  */
-static sc_int
-restr_integer_variable(sc_gameref_t game, sc_int n) {
+static sc_int restr_integer_variable(sc_gameref_t game, sc_int n) {
 	const sc_prop_setref_t bundle = gs_get_bundle(game);
 	sc_vartype_t vt_key[3];
 	sc_int var_count, var, count;
@@ -70,9 +69,7 @@ restr_integer_variable(sc_gameref_t game, sc_int n) {
  *
  * Is object in a certain place, state, or condition.
  */
-static sc_bool
-restr_object_in_place(sc_gameref_t game,
-                      sc_int object, sc_int var2, sc_int var3) {
+static sc_bool restr_object_in_place(sc_gameref_t game, sc_int object, sc_int var2, sc_int var3) {
 	const sc_var_setref_t vars = gs_get_vars(game);
 	sc_int npc;
 
@@ -157,9 +154,8 @@ restr_object_in_place(sc_gameref_t game,
  *
  * Evaluate restrictions relating to object location.
  */
-static sc_bool
-restr_pass_task_object_location(sc_gameref_t game,
-                                sc_int var1, sc_int var2, sc_int var3) {
+static sc_bool restr_pass_task_object_location(sc_gameref_t game,
+		sc_int var1, sc_int var2, sc_int var3) {
 	const sc_var_setref_t vars = gs_get_vars(game);
 	sc_bool should_be;
 	sc_int object;
@@ -231,8 +227,7 @@ restr_pass_task_object_location(sc_gameref_t game,
  * Evaluate restrictions relating to object states.  This function is called
  * from the library by lib_pass_alt_room(), so cannot be static.
  */
-sc_bool
-restr_pass_task_object_state(sc_gameref_t game, sc_int var1, sc_int var2) {
+sc_bool restr_pass_task_object_state(sc_gameref_t game, sc_int var1, sc_int var2) {
 	const sc_prop_setref_t bundle = gs_get_bundle(game);
 	const sc_var_setref_t vars = gs_get_vars(game);
 	sc_vartype_t vt_key[3];
@@ -279,8 +274,7 @@ restr_pass_task_object_state(sc_gameref_t game, sc_int var1, sc_int var2) {
  *
  * Evaluate restrictions relating to task states.
  */
-static sc_bool
-restr_pass_task_task_state(sc_gameref_t game, sc_int var1, sc_int var2) {
+static sc_bool restr_pass_task_task_state(sc_gameref_t game, sc_int var1, sc_int var2) {
 	sc_bool should_be;
 
 	if (restr_trace)
@@ -318,8 +312,7 @@ restr_pass_task_task_state(sc_gameref_t game, sc_int var1, sc_int var2) {
  *
  * Evaluate restrictions relating to player and NPCs.
  */
-static sc_bool
-restr_pass_task_char(sc_gameref_t game, sc_int var1, sc_int var2, sc_int var3) {
+static sc_bool restr_pass_task_char(sc_gameref_t game, sc_int var1, sc_int var2, sc_int var3) {
 	const sc_prop_setref_t bundle = gs_get_bundle(game);
 	const sc_var_setref_t vars = gs_get_vars(game);
 	sc_int npc1, npc2;
@@ -437,9 +430,7 @@ restr_pass_task_char(sc_gameref_t game, sc_int var1, sc_int var2, sc_int var3) {
  *
  * Helper for restr_pass_task_var(), handles integer variable restrictions.
  */
-static sc_bool
-restr_pass_task_int_var(sc_gameref_t game,
-                        sc_int var2, sc_int var3, sc_int value) {
+static sc_bool restr_pass_task_int_var(sc_gameref_t game, sc_int var2, sc_int var3, sc_int value) {
 	const sc_prop_setref_t bundle = gs_get_bundle(game);
 	const sc_var_setref_t vars = gs_get_vars(game);
 	sc_vartype_t vt_key[3];
@@ -522,9 +513,7 @@ restr_pass_task_int_var(sc_gameref_t game,
  *
  * Helper for restr_pass_task_var(), handles string variable restrictions.
  */
-static sc_bool
-restr_pass_task_string_var(sc_int var2,
-                           const sc_char *var4, const sc_char *value) {
+static sc_bool restr_pass_task_string_var(sc_int var2, const sc_char *var4, const sc_char *value) {
 	if (restr_trace) {
 		sc_trace("Restr: running string"
 		         " var restriction, %ld, \"%s\", \"%s\"\n", var2, var4, value);
@@ -550,10 +539,8 @@ restr_pass_task_string_var(sc_int var2,
  *
  * Evaluate restrictions relating to variables.
  */
-static sc_bool
-restr_pass_task_var(sc_gameref_t game,
-                    sc_int var1, sc_int var2, sc_int var3,
-                    const sc_char *var4) {
+static sc_bool restr_pass_task_var(sc_gameref_t game, sc_int var1, sc_int var2, sc_int var3,
+		const sc_char *var4) {
 	const sc_prop_setref_t bundle = gs_get_bundle(game);
 	const sc_var_setref_t vars = gs_get_vars(game);
 	sc_vartype_t vt_key[3];
@@ -607,8 +594,7 @@ restr_pass_task_var(sc_gameref_t game,
  *
  * Demultiplexer for task restrictions.
  */
-static sc_bool
-restr_pass_task_restriction(sc_gameref_t game, sc_int task, sc_int restriction) {
+static sc_bool restr_pass_task_restriction(sc_gameref_t game, sc_int task, sc_int restriction) {
 	const sc_prop_setref_t bundle = gs_get_bundle(game);
 	sc_vartype_t vt_key[5];
 	sc_int type, var1, var2, var3;
@@ -712,15 +698,13 @@ static sc_int restr_index = 0;
  *
  * Start and wrap up restrictions combinations string tokenization.
  */
-static void
-restr_tokenize_start(const sc_char *expression) {
+static void restr_tokenize_start(const sc_char *expression) {
 	/* Save expression, and restart index. */
 	restr_expression = expression;
 	restr_index = 0;
 }
 
-static void
-restr_tokenize_end(void) {
+static void restr_tokenize_end(void) {
 	restr_expression = NULL;
 	restr_index = 0;
 }
@@ -731,8 +715,7 @@ restr_tokenize_end(void) {
  *
  * Simple tokenizer for restrictions combination expressions.
  */
-static sc_char
-restr_next_token(void) {
+static sc_char restr_next_token(void) {
 	assert(restr_expression);
 
 	/* Find the next non-space, and return it. */
@@ -775,8 +758,7 @@ static sc_int restr_lowest_fail = -1;
  * Reset the evaluation stack to an empty state, and note the things we have
  * to note for when we need to evaluate a restriction.
  */
-static void
-restr_eval_start(sc_gameref_t game, sc_int task) {
+static void restr_eval_start(sc_gameref_t game, sc_int task) {
 	/* Clear stack. */
 	restr_eval_stack = 0;
 	restr_eval_restriction = 0;
@@ -795,8 +777,7 @@ restr_eval_start(sc_gameref_t game, sc_int task) {
  *
  * Push a value onto the values stack.
  */
-static void
-restr_eval_push(sc_bool value) {
+static void restr_eval_push(sc_bool value) {
 	if (restr_eval_stack >= MAX_NESTING_DEPTH)
 		sc_fatal("restr_eval_push: stack overflow\n");
 
@@ -809,8 +790,7 @@ restr_eval_push(sc_bool value) {
  *
  * Evaluate the effect of an and/or into the values stack.
  */
-static void
-restr_eval_action(sc_char token) {
+static void restr_eval_action(sc_char token) {
 	/* Select action based on parsed token. */
 	switch (token) {
 	/* Handle evaluating and pushing a restriction result. */
@@ -875,8 +855,7 @@ restr_eval_action(sc_char token) {
  *
  * Return the top of the values stack as the evaluation result.
  */
-static sc_int
-restr_eval_result(sc_int *lowest_fail) {
+static sc_int restr_eval_result(sc_int *lowest_fail) {
 	if (restr_eval_stack != 1)
 		sc_fatal("restr_eval_result: values stack not completed\n");
 
@@ -896,8 +875,7 @@ static sc_char restr_lookahead = '\0';
  *
  * Match a token with an expectation.
  */
-static void
-restr_match(sc_char c) {
+static void restr_match(sc_char c) {
 	if (restr_lookahead == c)
 		restr_lookahead = restr_next_token();
 	else {
@@ -918,8 +896,7 @@ static void restr_bexpr(void);
  *
  * Expression parsers.  Here we go again...
  */
-static void
-restr_andexpr(void) {
+static void restr_andexpr(void) {
 	restr_bexpr();
 	while (restr_lookahead == TOK_AND) {
 		restr_match(TOK_AND);
@@ -928,8 +905,7 @@ restr_andexpr(void) {
 	}
 }
 
-static void
-restr_orexpr(void) {
+static void restr_orexpr(void) {
 	restr_andexpr();
 	while (restr_lookahead == TOK_OR) {
 		restr_match(TOK_OR);
@@ -938,8 +914,7 @@ restr_orexpr(void) {
 	}
 }
 
-static void
-restr_bexpr(void) {
+static void restr_bexpr(void) {
 	switch (restr_lookahead) {
 	case TOK_RESTRICTION:
 		restr_match(TOK_RESTRICTION);
@@ -964,8 +939,7 @@ restr_bexpr(void) {
  *
  * Get the FailMessage for the given task restriction; NULL if none.
  */
-static const sc_char *
-restr_get_fail_message(sc_gameref_t game, sc_int task, sc_int restriction) {
+static const sc_char *restr_get_fail_message(sc_gameref_t game, sc_int task, sc_int restriction) {
 	const sc_prop_setref_t bundle = gs_get_bundle(game);
 	sc_vartype_t vt_key[5];
 	const sc_char *message;
@@ -988,8 +962,7 @@ restr_get_fail_message(sc_gameref_t game, sc_int task, sc_int restriction) {
  *
  * Set restrictions tracing on/off.
  */
-void
-restr_debug_trace(sc_bool flag) {
+void restr_debug_trace(sc_bool flag) {
 	restr_trace = flag;
 }
 
@@ -1004,10 +977,8 @@ restr_debug_trace(sc_bool flag) {
  * if no failing restriction has a FailMessage.  The function's main return
  * value is TRUE if restrictions parsed successfully, FALSE otherwise.
  */
-sc_bool
-restr_eval_task_restrictions(sc_gameref_t game,
-                             sc_int task, sc_bool *pass,
-                             const sc_char **fail_message) {
+sc_bool restr_eval_task_restrictions(sc_gameref_t game, sc_int task, sc_bool *pass,
+		const sc_char **fail_message) {
 	const sc_prop_setref_t bundle = gs_get_bundle(game);
 	sc_vartype_t vt_key[3];
 	sc_int restr_count, lowest_fail;

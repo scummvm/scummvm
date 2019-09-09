@@ -71,10 +71,10 @@ static const sc_byte V380_SEPARATOR[SEPARATOR_SIZE] = {0x2a, 0x2a, 0x00};
  * |...|     - fixup specials for versions < 4
  * {special} - because some things just defy description
  */
-typedef struct {
+struct sc_parse_schema_t {
 	const sc_char *const class_name;
 	const sc_char *const descriptor;
-} sc_parse_schema_t;
+};
 
 /* Version 4.0 TAF file properties descriptor table. */
 static const sc_parse_schema_t V400_PARSE_SCHEMA[] = {
@@ -455,8 +455,7 @@ static const sc_parse_schema_t V380_PARSE_SCHEMA[] = {
  *
  * Select one of the parse schemata based on a TAF file.
  */
-static const sc_parse_schema_t *
-parse_select_schema(sc_tafref_t taf) {
+static const sc_parse_schema_t *parse_select_schema(sc_tafref_t taf) {
 	/* Switch based on the TAF file version. */
 	switch (taf_get_version(taf)) {
 	case TAF_VERSION_400:
@@ -499,8 +498,7 @@ static sc_int parse_depth = 0;
  * Push a key of the given type onto the property key stack, and pop a key
  * off on unwind.
  */
-static void
-parse_push_key(sc_vartype_t vt_key, sc_char type) {
+static void parse_push_key(sc_vartype_t vt_key, sc_char type) {
 	if (parse_depth == PARSE_MAX_DEPTH)
 		sc_fatal("parse_push_key: stack overrun\n");
 
@@ -510,8 +508,7 @@ parse_push_key(sc_vartype_t vt_key, sc_char type) {
 	parse_depth++;
 }
 
-static void
-parse_pop_key(void) {
+static void parse_pop_key(void) {
 	/* Check the stack has something to pop, then pop it. */
 	if (parse_depth == 0)
 		sc_fatal("parse_pop_key: stack underrun\n");
@@ -526,8 +523,7 @@ parse_pop_key(void) {
  * index.  An expedient fix is to switch i-s keys before storing a property
  * value
  */
-static void
-parse_retrieve_stack(sc_char format[], sc_vartype_t vt_key[], sc_int *depth) {
+static void parse_retrieve_stack(sc_char format[], sc_vartype_t vt_key[], sc_int *depth) {
 	sc_int index_;
 
 	/* Switch index-string key pairs. */
@@ -560,8 +556,7 @@ parse_retrieve_stack(sc_char format[], sc_vartype_t vt_key[], sc_int *depth) {
  * Dump the parse stack.  Used for diagnostics on finding what we think may
  * be a bad game.
  */
-static void
-parse_stack_backtrace(void) {
+static void parse_stack_backtrace(void) {
 	sc_vartype_t vt_key[PARSE_MAX_DEPTH];
 	sc_char format[PARSE_MAX_DEPTH];
 	sc_int depth, index_;
@@ -595,8 +590,7 @@ parse_stack_backtrace(void) {
  *
  * Write or read a property based on the keys amassed so far.
  */
-static void
-parse_put_property(sc_vartype_t vt_value, sc_char type) {
+static void parse_put_property(sc_vartype_t vt_value, sc_char type) {
 	sc_vartype_t vt_key[PARSE_MAX_DEPTH];
 	sc_char format[PARSE_MAX_DEPTH + 4];
 	sc_int depth;
@@ -615,8 +609,7 @@ parse_put_property(sc_vartype_t vt_value, sc_char type) {
 	prop_put(parse_bundle, format, vt_value, vt_key);
 }
 
-static sc_bool
-parse_get_property(sc_vartype_t *vt_rvalue, sc_char type) {
+static sc_bool parse_get_property(sc_vartype_t *vt_rvalue, sc_char type) {
 	sc_vartype_t vt_key[PARSE_MAX_DEPTH];
 	sc_char format[PARSE_MAX_DEPTH + 4];
 	sc_int depth;
@@ -646,8 +639,7 @@ parse_get_property(sc_vartype_t *vt_rvalue, sc_char type) {
  * indicating the child count of the effectively stacked node, or zero if
  * no such node exists.
  */
-static sc_int
-parse_get_child_count(void) {
+static sc_int parse_get_child_count(void) {
 	sc_vartype_t vt_rvalue;
 
 	if (!parse_get_property(&vt_rvalue, PROP_INTEGER))
@@ -665,8 +657,7 @@ parse_get_child_count(void) {
  * Convenience forms of parse_get_property(), retrieve directly, and report
  * a fatal error if the property does not exist.
  */
-static sc_int
-parse_get_integer_property(void) {
+static sc_int parse_get_integer_property(void) {
 	sc_vartype_t vt_rvalue;
 
 	if (!parse_get_property(&vt_rvalue, PROP_INTEGER))
@@ -675,8 +666,7 @@ parse_get_integer_property(void) {
 	return vt_rvalue.integer;
 }
 
-static sc_bool
-parse_get_boolean_property(void) {
+static sc_bool parse_get_boolean_property(void) {
 	sc_vartype_t vt_rvalue;
 
 	if (!parse_get_property(&vt_rvalue, PROP_BOOLEAN))
@@ -685,8 +675,7 @@ parse_get_boolean_property(void) {
 	return vt_rvalue.boolean;
 }
 
-static const sc_char *
-parse_get_string_property(void) {
+static const sc_char *parse_get_string_property(void) {
 	sc_vartype_t vt_rvalue;
 
 	if (!parse_get_property(&vt_rvalue, PROP_STRING))
@@ -713,8 +702,7 @@ static sc_bool parse_use_pushback = FALSE;
  * the line content into an integer or boolean, and a function for effective
  * TAF line pushback.
  */
-static const sc_char *
-parse_get_taf_string(void) {
+static const sc_char *parse_get_taf_string(void) {
 	const sc_char *line;
 
 	/* If pushback requested, use that instead of reading. */
@@ -745,8 +733,7 @@ parse_get_taf_string(void) {
 	return line;
 }
 
-static sc_int
-parse_get_taf_integer(void) {
+static sc_int parse_get_taf_integer(void) {
 	const sc_char *line;
 	sc_int integer;
 
@@ -762,8 +749,7 @@ parse_get_taf_integer(void) {
 	return integer;
 }
 
-static sc_bool
-parse_get_taf_boolean(void) {
+static sc_bool parse_get_taf_boolean(void) {
 	const sc_char *line;
 	sc_uint boolean;
 
@@ -786,8 +772,7 @@ parse_get_taf_boolean(void) {
 	return boolean != 0;
 }
 
-static void
-parse_taf_pushback(void) {
+static void parse_taf_pushback(void) {
 	if (parse_use_pushback || !parse_pushback_line)
 		sc_fatal("parse_taf_pushback: too much pushback requested\n");
 
@@ -835,8 +820,7 @@ static void parse_descriptor(const sc_char *descriptor);
  *
  * Parse a descriptor [] array.
  */
-static void
-parse_array(const sc_char *array) {
+static void parse_array(const sc_char *array) {
 	sc_int count, index_;
 	sc_char element[PARSE_TEMP_LENGTH];
 
@@ -871,8 +855,7 @@ parse_array(const sc_char *array) {
  *
  * Parse a variable-length vector of properties.
  */
-static void
-parse_vector_common(const sc_char *vector, sc_int count) {
+static void parse_vector_common(const sc_char *vector, sc_int count) {
 	sc_int index_;
 
 	/* Parse the vector property count times, pushing a key on each. */
@@ -888,8 +871,7 @@ parse_vector_common(const sc_char *vector, sc_int count) {
 	}
 }
 
-static void
-parse_vector(const sc_char *vector) {
+static void parse_vector(const sc_char *vector) {
 	sc_int count;
 
 	if (parse_trace)
@@ -903,8 +885,7 @@ parse_vector(const sc_char *vector) {
 		sc_trace("Parse: leaving vector %s\n", vector);
 }
 
-static void
-parse_vector_alternate(const sc_char *vector) {
+static void parse_vector_alternate(const sc_char *vector) {
 	sc_int count;
 
 	if (parse_trace)
@@ -925,8 +906,7 @@ parse_vector_alternate(const sc_char *vector) {
  *
  * Parse a conditional field definition, with runtime test.
  */
-static sc_bool
-parse_test_expression(const sc_char *test_expression) {
+static sc_bool parse_test_expression(const sc_char *test_expression) {
 	sc_vartype_t vt_key;
 	sc_char plhs[PARSE_TEMP_LENGTH];
 	sc_int rhs;
@@ -985,8 +965,7 @@ parse_test_expression(const sc_char *test_expression) {
 	return retval;
 }
 
-static void
-parse_expression(const sc_char *expression) {
+static void parse_expression(const sc_char *expression) {
 	sc_char test_expression[PARSE_TEMP_LENGTH];
 	sc_bool is_present;
 
@@ -1034,8 +1013,7 @@ parse_expression(const sc_char *expression) {
  * Helper for parse_terminal(), reads in a multiline string.  The return
  * string is malloc'ed, and the caller needs to handle that.
  */
-static sc_char *
-parse_read_multiline(void) {
+static sc_char *parse_read_multiline(void) {
 	const sc_byte *separator = NULL;
 	const sc_char *line;
 	sc_char *multiline;
@@ -1080,8 +1058,7 @@ parse_read_multiline(void) {
  *
  * Common handler for string, integer, boolean, and multiline parse terminals.
  */
-static void
-parse_terminal(const sc_char *terminal) {
+static void parse_terminal(const sc_char *terminal) {
 	sc_vartype_t vt_key, vt_value;
 
 	if (parse_trace)
@@ -1157,12 +1134,12 @@ parse_terminal(const sc_char *terminal) {
  * for the various sound and graphic resources encountered on parsing
  * version 4.0 games.  It's unused if the version is not 4.0.
  */
-typedef struct {
+struct sc_parse_resource_t {
 	sc_char *name;
 	sc_uint hash;
 	sc_int length;
 	sc_int offset;
-} sc_parse_resource_t;
+};
 
 enum { RESOURCE_GROW_INCREMENT = 32 };
 static sc_int parse_resources_length = 0;
@@ -1175,8 +1152,7 @@ static sc_parse_resource_t *parse_resources = NULL;
  *
  * Free and clear down the version 4.0 resources table.
  */
-static void
-parse_clear_v400_resources_table(void) {
+static void parse_clear_v400_resources_table(void) {
 	/* Free allocated memory and return to initial values. */
 	if (parse_resources) {
 		sc_int index_;
@@ -1205,9 +1181,8 @@ parse_clear_v400_resources_table(void) {
  * lengths; this function needs to handle that.  The caller needs to compare
  * length with real_length to see if that happened.
  */
-static sc_int
-parse_get_v400_resource_offset(const sc_char *name,
-                               sc_int length, sc_int *real_length) {
+static sc_int parse_get_v400_resource_offset(const sc_char *name,
+		sc_int length, sc_int *real_length) {
 	sc_char *clean_name;
 	sc_uint hash;
 	sc_int index_, offset;
@@ -1290,8 +1265,7 @@ parse_get_v400_resource_offset(const sc_char *name,
  * 'resource number'; -(length+2) is tantalizingly close to the index into
  * our parse_resources table, but not always...
  */
-static void
-parse_handle_v400_resources(sc_bool has_sound, sc_bool has_graphics) {
+static void parse_handle_v400_resources(sc_bool has_sound, sc_bool has_graphics) {
 	sc_vartype_t vt_key, vt_value;
 	const sc_char *file;
 	sc_int length, offset;
@@ -1391,8 +1365,7 @@ parse_handle_v400_resources(sc_bool has_sound, sc_bool has_graphics) {
  * Handler for special items that can't be described accurately, and
  * therefore need careful treatment.
  */
-static void
-parse_special(const sc_char *special) {
+static void parse_special(const sc_char *special) {
 	if (parse_trace)
 		sc_trace("Parse: entering special %s\n", special);
 
@@ -1617,14 +1590,9 @@ parse_special(const sc_char *special) {
  * Helper for parse_fixup_v390_v380_room_alts().  Handles creation of
  * version 4.0 room alts for version 3.9 and version 3.8 games.
  */
-static void
-parse_fixup_v390_v380_room_alt(const sc_char *m1, sc_int type,
-                               const sc_char *resource1,
-                               const sc_char *m2, sc_int var2,
-                               const sc_char *resource2,
-                               sc_int hide_objects,
-                               const sc_char *changed,
-                               sc_int var3, sc_int display_room) {
+static void parse_fixup_v390_v380_room_alt(const sc_char *m1, sc_int type,
+		const sc_char *resource1, const sc_char *m2, sc_int var2, const sc_char *resource2,
+		sc_int hide_objects, const sc_char *changed, sc_int var3, sc_int display_room) {
 	sc_vartype_t vt_key, vt_value, vt_gkey[2];
 	sc_bool has_sound, has_graphics;
 	sc_int alt_count;
@@ -1830,8 +1798,7 @@ enum { V390_V380_ALT_TYPEHIDE_MULT = 10 };
  * converts version 3.9 and version 3.8 fixed room description alts into
  * an equivalent array of version 4.0 style room alts.
  */
-static void
-parse_fixup_v390_v380_room_alts(void) {
+static void parse_fixup_v390_v380_room_alts(void) {
 	sc_vartype_t vt_key;
 	const sc_char *m1, *m2, *changed;
 	sc_int type, var2, hide_objects, var3, display_room;
@@ -1956,8 +1923,7 @@ parse_fixup_v390_v380_room_alts(void) {
  * Handler for fixup special items to help with conversions from TAF version
  * 3.9 format into version 4.0.
  */
-static void
-parse_fixup_v390(const sc_char *fixup) {
+static void parse_fixup_v390(const sc_char *fixup) {
 	if (parse_trace)
 		sc_trace("Parse: entering version 3.9 fixup %s\n", fixup);
 
@@ -2106,9 +2072,8 @@ enum { V380_TASK_MOVEMENTS = 6 };
  *
  * Helper for parse_fixup_v380(), adds a task action.
  */
-static void
-parse_fixup_v380_action(sc_int type, sc_int var_count,
-                        sc_int var1, sc_int var2, sc_int var3) {
+static void parse_fixup_v380_action(sc_int type, sc_int var_count,
+		sc_int var1, sc_int var2, sc_int var3) {
 	sc_vartype_t vt_key, vt_value;
 	sc_int action_count;
 
@@ -2163,8 +2128,7 @@ parse_fixup_v380_action(sc_int type, sc_int var_count,
  *
  * Helper for parse_fixup_v380(), converts a task movement into an action.
  */
-static void
-parse_fixup_v380_movement(sc_int mvar1, sc_int mvar2, sc_int mvar3) {
+static void parse_fixup_v380_movement(sc_int mvar1, sc_int mvar2, sc_int mvar3) {
 	sc_int var1;
 
 	/* If nothing was selected to move, ignore the call. */
@@ -2245,10 +2209,8 @@ parse_fixup_v380_movement(sc_int mvar1, sc_int mvar2, sc_int mvar3) {
  *
  * Helper for parse_fixup_v380(), adds a task restriction.
  */
-static void
-parse_fixup_v380_restr(sc_int type, sc_int var_count,
-                       sc_int var1, sc_int var2, sc_int var3,
-                       const sc_char *failmessage) {
+static void parse_fixup_v380_restr(sc_int type, sc_int var_count,
+		sc_int var1, sc_int var2, sc_int var3, const sc_char *failmessage) {
 	sc_vartype_t vt_key, vt_value;
 	sc_int restriction_count;
 
@@ -2314,9 +2276,7 @@ parse_fixup_v380_restr(sc_int type, sc_int var_count,
  *
  * Helper handlers for parse_fixup_v380(); create task restrictions.
  */
-static void
-parse_fixup_v380_obj_restr(sc_bool holding,
-                           sc_int holdobj, const sc_char *failmessage) {
+static void parse_fixup_v380_obj_restr(sc_bool holding, sc_int holdobj, const sc_char *failmessage) {
 	/* Ignore if no object selected. */
 	if (holdobj > 0) {
 		sc_int var1, var2;
@@ -2332,9 +2292,7 @@ parse_fixup_v380_obj_restr(sc_bool holding,
 	}
 }
 
-static void
-parse_fixup_v380_task_restr(sc_bool tasknotdone, sc_int task,
-                            const sc_char *failmessage) {
+static void parse_fixup_v380_task_restr(sc_bool tasknotdone, sc_int task, const sc_char *failmessage) {
 	/* Ignore if no task selected. */
 	if (task > 0) {
 		sc_int var2;
@@ -2345,8 +2303,7 @@ parse_fixup_v380_task_restr(sc_bool tasknotdone, sc_int task,
 	}
 }
 
-static void
-parse_fixup_v380_wear_restr(sc_int wearobj, const sc_char *failmessage) {
+static void parse_fixup_v380_wear_restr(sc_int wearobj, const sc_char *failmessage) {
 	/* Ignore if no object selected. */
 	if (wearobj > 0) {
 		sc_vartype_t vt_key[3];
@@ -2403,9 +2360,8 @@ parse_fixup_v380_wear_restr(sc_int wearobj, const sc_char *failmessage) {
 	}
 }
 
-static void
-parse_fixup_v380_npc_restr(sc_bool notinsameroom, sc_int npc,
-                           const sc_char *failmessage) {
+static void parse_fixup_v380_npc_restr(sc_bool notinsameroom, sc_int npc,
+		const sc_char *failmessage) {
 	/* Ignore if no NPC selected. */
 	if (npc > 0) {
 		sc_int var2;
@@ -2423,9 +2379,7 @@ parse_fixup_v380_npc_restr(sc_bool notinsameroom, sc_int npc,
 	}
 }
 
-static void
-parse_fixup_v380_objroom_restr(sc_int obj, sc_int objroom,
-                               const sc_char *failmessage) {
+static void parse_fixup_v380_objroom_restr(sc_int obj, sc_int objroom, const sc_char *failmessage) {
 	/* Ignore if no object selected. */
 	if (obj > 0) {
 		/* Create version 4.0 restriction to check object in room. */
@@ -2433,9 +2387,8 @@ parse_fixup_v380_objroom_restr(sc_int obj, sc_int objroom,
 	}
 }
 
-static void
-parse_fixup_v380_objstate_restr(sc_int obj, sc_int ivar1, sc_int ivar2,
-                                const sc_char *failmessage) {
+static void parse_fixup_v380_objstate_restr(sc_int obj, sc_int ivar1, sc_int ivar2,
+		const sc_char *failmessage) {
 	sc_vartype_t vt_key[3];
 	sc_int object, dynamic, var2, var3;
 
@@ -2519,8 +2472,7 @@ parse_fixup_v380_objstate_restr(sc_int obj, sc_int ivar1, sc_int ivar2,
  * Handler for fixup special items to help with conversions from TAF version
  * 3.8 format into version 4.0.
  */
-static void
-parse_fixup_v380(const sc_char *fixup) {
+static void parse_fixup_v380(const sc_char *fixup) {
 	if (parse_trace)
 		sc_trace("Parse: entering version 3.8 fixup %s\n", fixup);
 
@@ -3012,8 +2964,7 @@ parse_fixup_v380(const sc_char *fixup) {
  * Handler for fixup special items to help with conversions from TAF version
  * 3.9 and version 3.8 formats into version 4.0.
  */
-static void
-parse_fixup(const sc_char *fixup) {
+static void parse_fixup(const sc_char *fixup) {
 	/*
 	 * Pick a fixup handler specific to the TAF version.  This helps keep
 	 * fixup code separate, rather than glommed into one large function.
@@ -3040,8 +2991,7 @@ parse_fixup(const sc_char *fixup) {
  *
  * Parse a class descriptor element.
  */
-static void
-parse_element(const sc_char *element) {
+static void parse_element(const sc_char *element) {
 	if (parse_trace)
 		sc_trace("Parse: entering element %s\n", element);
 
@@ -3096,8 +3046,7 @@ parse_element(const sc_char *element) {
  *
  * Parse a class's properties descriptor list.
  */
-static void
-parse_descriptor(const sc_char *descriptor) {
+static void parse_descriptor(const sc_char *descriptor) {
 	sc_int next;
 
 	/* Find and parse each element in the descriptor. */
@@ -3123,8 +3072,7 @@ parse_descriptor(const sc_char *descriptor) {
  *
  * Parse a class of properties.
  */
-static void
-parse_class(const sc_char *class_) {
+static void parse_class(const sc_char *class_) {
 	sc_char class_name[PARSE_TEMP_LENGTH];
 	sc_int index_;
 	sc_vartype_t vt_key;
@@ -3171,8 +3119,7 @@ parse_class(const sc_char *class_) {
  * Add a list of all NPC walks started by each task.  This is post-processing
  * that occurs after the TAF file has been successfully parsed.
  */
-static void
-parse_add_walkalerts(sc_prop_setref_t bundle) {
+static void parse_add_walkalerts(sc_prop_setref_t bundle) {
 	sc_vartype_t vt_key[5];
 	sc_int npcs_count, npc;
 
@@ -3225,8 +3172,7 @@ parse_add_walkalerts(sc_prop_setref_t bundle) {
  * Add a list of move times to all NPC walks.  This is post-processing that
  * occurs after the TAF file has been successfully parsed.
  */
-static void
-parse_add_movetimes(sc_prop_setref_t bundle) {
+static void parse_add_movetimes(sc_prop_setref_t bundle) {
 	sc_vartype_t vt_key[6];
 	sc_int npcs_count, npc;
 
@@ -3280,8 +3226,7 @@ parse_add_movetimes(sc_prop_setref_t bundle) {
  * Sort ALRs by original string length and store an indexer property, so
  * that ALR replacements look at longer strings before shorter ones.
  */
-static void
-parse_add_alrs_index(sc_prop_setref_t bundle) {
+static void parse_add_alrs_index(sc_prop_setref_t bundle) {
 	sc_vartype_t vt_key[3];
 	sc_int alr_count, index_, alr;
 	sc_int *alr_lengths, longest, shortest, length;
@@ -3345,8 +3290,7 @@ parse_add_alrs_index(sc_prop_setref_t bundle) {
  * for version 4.0 games.  For version 3.9 and version 3.8 games, write
  * zero; only version 4.0 games can embed their resources into the TAF file.
  */
-static void
-parse_add_resources_offset(sc_prop_setref_t bundle, sc_tafref_t taf) {
+static void parse_add_resources_offset(sc_prop_setref_t bundle, sc_tafref_t taf) {
 	sc_vartype_t vt_key[2], vt_value;
 	sc_bool embedded;
 	sc_int offset;
@@ -3373,8 +3317,7 @@ parse_add_resources_offset(sc_prop_setref_t bundle, sc_tafref_t taf) {
  * Add the TAF version to the properties, both integer and character forms
  * for convenience.
  */
-static void
-parse_add_version(sc_prop_setref_t bundle, sc_tafref_t taf) {
+static void parse_add_version(sc_prop_setref_t bundle, sc_tafref_t taf) {
 	sc_vartype_t vt_key, vt_value;
 
 	/* Add the version integer to the properties. */
@@ -3469,8 +3412,7 @@ sc_bool parse_game(sc_tafref_t taf, sc_prop_setref_t bundle) {
  *
  * Set parse tracing on/off.
  */
-void
-parse_debug_trace(sc_bool flag) {
+void parse_debug_trace(sc_bool flag) {
 	parse_trace = flag;
 }
 

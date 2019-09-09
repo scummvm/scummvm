@@ -779,18 +779,13 @@ extern void if_read_line(sc_char *buffer, sc_int length);
 extern void if_read_debug(sc_char *buffer, sc_int length);
 extern sc_bool if_confirm(sc_int type);
 extern void *if_open_saved_game(sc_bool is_save);
-extern void if_write_saved_game(void *opaque,
-                                const sc_byte *buffer, sc_int length);
-extern sc_int if_read_saved_game(void *opaque,
-                                 sc_byte *buffer, sc_int length);
+extern void if_write_saved_game(void *opaque, const sc_byte *buffer, sc_int length);
+extern sc_int if_read_saved_game(void *opaque, sc_byte *buffer, sc_int length);
 extern void if_close_saved_game(void *opaque);
 extern void if_display_hints(sc_gameref_t game);
-extern void if_update_sound(const sc_char *filepath,
-                            sc_int sound_offset,
-                            sc_int sound_length, sc_bool is_looping);
-extern void if_update_graphic(const sc_char *filepath,
-                              sc_int graphic_offset,
-                              sc_int graphic_length);
+extern void if_update_sound(const sc_char *filepath, sc_int sound_offset,
+		sc_int sound_length, sc_bool is_looping);
+extern void if_update_graphic(const sc_char *filepath, sc_int graphic_offset, sc_int graphic_length);
 
 #endif
 

@@ -80,8 +80,7 @@ void *file_open_file_callback(sc_bool is_save) {
 	return stream;
 }
 
-sc_int
-file_read_file_callback(void *opaque, sc_byte *buffer, sc_int length) {
+sc_int file_read_file_callback(void *opaque, sc_byte *buffer, sc_int length) {
 	sx_scr_stream_t *const stream = (sx_scr_stream_t *)opaque;
 	sc_int bytes;
 	assert(opaque && buffer && length > 0);
@@ -106,8 +105,7 @@ file_read_file_callback(void *opaque, sc_byte *buffer, sc_int length) {
 	return bytes;
 }
 
-void
-file_write_file_callback(void *opaque, const sc_byte *buffer, sc_int length) {
+void file_write_file_callback(void *opaque, const sc_byte *buffer, sc_int length) {
 	sx_scr_stream_t *const stream = (sx_scr_stream_t *)opaque;
 	assert(opaque && buffer && length > 0);
 
@@ -129,8 +127,7 @@ file_write_file_callback(void *opaque, const sc_byte *buffer, sc_int length) {
 	stream->length += length;
 }
 
-void
-file_close_file_callback(void *opaque) {
+void file_close_file_callback(void *opaque) {
 	sx_scr_stream_t *const stream = (sx_scr_stream_t *)opaque;
 	assert(opaque);
 
@@ -162,8 +159,7 @@ file_close_file_callback(void *opaque) {
  *
  * Free any pending allocations and clean up on completion of a script.
  */
-void
-file_cleanup(void) {
+void file_cleanup(void) {
 	sx_scr_stream_t *const stream = &scr_serialization_stream;
 
 	sx_free(stream->data);

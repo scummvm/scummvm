@@ -65,11 +65,11 @@ static sc_bool pf_trace = FALSE;
  * come before shorter ones.  The <br> tag is missing because this is
  * handled separately, as a simple put of '\n'.
  */
-typedef struct {
+struct sc_html_tags_t {
 	const sc_char *const name;
 	const sc_int length;
 	const sc_int tag;
-} sc_html_tags_t;
+};
 
 static const sc_html_tags_t HTML_TAGS_TABLE[] = {
 	{"bgcolour", 8, SC_TAG_BGCOLOR}, {"bgcolor", 7, SC_TAG_BGCOLOR},
@@ -91,7 +91,7 @@ static const sc_html_tags_t HTML_TAGS_TABLE[] = {
  * associated size and length, a note of any conversion to apply to the next
  * buffered character, and a flag to let the filter ignore incoming text.
  */
-typedef struct sc_filter_s {
+struct sc_filter_s {
 	sc_uint magic;
 	sc_int buffer_length;
 	sc_int buffer_allocation;
@@ -99,7 +99,8 @@ typedef struct sc_filter_s {
 	sc_bool new_sentence;
 	sc_bool is_muted;
 	sc_bool needs_filtering;
-} sc_filter_t;
+};
+typedef sc_filter_s sc_filter_t;
 
 
 /*
@@ -107,8 +108,7 @@ typedef struct sc_filter_s {
  *
  * Return TRUE if pointer is a valid printfilter, FALSE otherwise.
  */
-static sc_bool
-pf_is_valid(sc_filterref_t filter) {
+static sc_bool pf_is_valid(sc_filterref_t filter) {
 	return filter && filter->magic == PRINTFILTER_MAGIC;
 }
 
@@ -118,8 +118,7 @@ pf_is_valid(sc_filterref_t filter) {
  *
  * Create and return a new printfilter.
  */
-sc_filterref_t
-pf_create(void) {
+sc_filterref_t pf_create(void) {
 	static sc_bool initialized = FALSE;
 
 	sc_filterref_t filter;
@@ -159,8 +158,7 @@ pf_create(void) {
  *
  * Destroy a printfilter and free its allocated memory.
  */
-void
-pf_destroy(sc_filterref_t filter) {
+void pf_destroy(sc_filterref_t filter) {
 	assert(pf_is_valid(filter));
 
 	/* Free buffer space, and poison and free the printfilter. */
@@ -183,8 +181,7 @@ pf_destroy(sc_filterref_t filter) {
  * characters, and since some games have strings with this character in them,
  * this is probably all that can be done.
  */
-static sc_char *
-pf_interpolate_vars(const sc_char *string, sc_var_setref_t vars) {
+static sc_char *pf_interpolate_vars(const sc_char *string, sc_var_setref_t vars) {
 	sc_char *buffer, *name;
 	const sc_char *cursor;
 	const sc_char *marker;
@@ -291,9 +288,7 @@ pf_interpolate_vars(const sc_char *string, sc_var_setref_t vars) {
  * its equivalent, updating the buffer at the address passed in, including
  * reallocating if necessary.  Return TRUE if the buffer was changed.
  */
-static sc_bool
-pf_replace_alr(const sc_char *string,
-               sc_char **buffer, sc_int alr, sc_prop_setref_t bundle) {
+static sc_bool pf_replace_alr(const sc_char *string, sc_char **buffer, sc_int alr, sc_prop_setref_t bundle) {
 	sc_vartype_t vt_key[3];
 	const sc_char *marker, *cursor, *original, *replacement;
 	sc_char *buffer_ = *buffer;
@@ -358,9 +353,8 @@ pf_replace_alr(const sc_char *string,
  * ALRs were replaced, returns an allocated string with replacements done,
  * otherwise returns NULL.
  */
-static sc_char *
-pf_replace_alrs(const sc_char *string, sc_prop_setref_t bundle,
-                sc_bool alr_applied[], sc_int alr_count) {
+static sc_char *pf_replace_alrs(const sc_char *string, sc_prop_setref_t bundle,
+		sc_bool alr_applied[], sc_int alr_count) {
 	sc_int index_;
 	sc_char *buffer1, *buffer2, **buffer;
 	const sc_char *marker;
@@ -437,8 +431,7 @@ pf_replace_alrs(const sc_char *string, sc_prop_setref_t bundle,
  * Edit the tag-stripped text element passed in, substituting &lt; &gt;
  * +percent+ with < > %, then send to the OS-specific output functions.
  */
-static void
-pf_output_text(const sc_char *string) {
+static void pf_output_text(const sc_char *string) {
 	sc_int index_, b_index;
 	sc_char *buffer;
 
@@ -487,8 +480,7 @@ pf_output_text(const sc_char *string) {
  *
  * Output an HTML-like tag element to the OS-specific tag handling function.
  */
-static void
-pf_output_tag(const sc_char *contents) {
+static void pf_output_tag(const sc_char *contents) {
 	const sc_html_tags_t *entry;
 	const sc_char *argument;
 
@@ -539,8 +531,7 @@ pf_output_tag(const sc_char *contents) {
  * Break apart HTML-like string into normal text elements, and HTML-like
  * tags.
  */
-static void
-pf_output_untagged(const sc_char *string) {
+static void pf_output_untagged(const sc_char *string) {
 	sc_char *temporary, *untagged, *contents;
 	const sc_char *cursor;
 	const sc_char *marker;
@@ -636,9 +627,7 @@ pf_output_untagged(const sc_char *string) {
  *    until no more changes in the current string
  *
  */
-static sc_char *
-pf_filter_internal(const sc_char *string,
-                   sc_var_setref_t vars, sc_prop_setref_t bundle) {
+static sc_char *pf_filter_internal(const sc_char *string, sc_var_setref_t vars, sc_prop_setref_t bundle) {
 	sc_int alr_count, iteration;
 	sc_char *current;
 	sc_bool *alr_applied;
@@ -743,9 +732,7 @@ pf_filter_internal(const sc_char *string,
  * variables and replacing ALR's.  Returns an allocated string that the caller
  * needs to free.
  */
-sc_char *
-pf_filter(const sc_char *string,
-          sc_var_setref_t vars, sc_prop_setref_t bundle) {
+sc_char *pf_filter(const sc_char *string, sc_var_setref_t vars, sc_prop_setref_t bundle) {
 	sc_char *current;
 
 	/* Filter this string, including ALRs replacements. */
@@ -769,8 +756,7 @@ pf_filter(const sc_char *string,
  * Used on informational strings such as the game title and author.  Returns
  * an allocated string that the caller needs to free.
  */
-sc_char *
-pf_filter_for_info(const sc_char *string, sc_var_setref_t vars) {
+sc_char *pf_filter_for_info(const sc_char *string, sc_var_setref_t vars) {
 	sc_char *current;
 
 	/* Filter this string, excluding ALRs replacements. */
@@ -792,9 +778,7 @@ pf_filter_for_info(const sc_char *string, sc_var_setref_t vars) {
  * Filter buffered data, interpolating variables and replacing ALR's, and
  * send the resulting string to the output channel.
  */
-void
-pf_flush(sc_filterref_t filter,
-         sc_var_setref_t vars, sc_prop_setref_t bundle) {
+void pf_flush(sc_filterref_t filter, sc_var_setref_t vars, sc_prop_setref_t bundle) {
 	assert(pf_is_valid(filter));
 	assert(vars && bundle);
 
@@ -834,8 +818,7 @@ pf_flush(sc_filterref_t filter,
  *
  * Append a string to the filter buffer.
  */
-static void
-pf_append_string(sc_filterref_t filter, const sc_char *string) {
+static void pf_append_string(sc_filterref_t filter, const sc_char *string) {
 	sc_int length, required;
 
 	/*
@@ -876,9 +859,7 @@ pf_append_string(sc_filterref_t filter, const sc_char *string) {
  * polated in between main flushes; used to update buffered text with variable
  * values before those values are updated by task actions.
  */
-void
-pf_checkpoint(sc_filterref_t filter,
-              sc_var_setref_t vars, sc_prop_setref_t bundle) {
+void pf_checkpoint(sc_filterref_t filter, sc_var_setref_t vars, sc_prop_setref_t bundle) {
 	assert(pf_is_valid(filter));
 	assert(vars && bundle);
 
@@ -918,8 +899,7 @@ pf_checkpoint(sc_filterref_t filter,
  * The second function is an optimization to avoid allocations and copying
  * in client code.
  */
-const sc_char *
-pf_get_buffer(sc_filterref_t filter) {
+const sc_char *pf_get_buffer(sc_filterref_t filter) {
 	assert(pf_is_valid(filter));
 
 	/*
@@ -933,8 +913,7 @@ pf_get_buffer(sc_filterref_t filter) {
 		return NULL;
 }
 
-sc_char *
-pf_transfer_buffer(sc_filterref_t filter) {
+sc_char *pf_transfer_buffer(sc_filterref_t filter) {
 	assert(pf_is_valid(filter));
 
 	/*
@@ -969,8 +948,7 @@ pf_transfer_buffer(sc_filterref_t filter) {
  *
  * Empty any text currently buffered in the filter.
  */
-void
-pf_empty(sc_filterref_t filter) {
+void pf_empty(sc_filterref_t filter) {
 	assert(pf_is_valid(filter));
 
 	/* Free any allocation, and return the filter to initialization state. */
@@ -991,8 +969,7 @@ pf_empty(sc_filterref_t filter) {
  * Add a string, and a single character, to the printfilter buffer.  If muted,
  * these functions do nothing.
  */
-void
-pf_buffer_string(sc_filterref_t filter, const sc_char *string) {
+void pf_buffer_string(sc_filterref_t filter, const sc_char *string) {
 	assert(pf_is_valid(filter));
 	assert(string);
 
@@ -1014,8 +991,7 @@ pf_buffer_string(sc_filterref_t filter, const sc_char *string) {
 	}
 }
 
-void
-pf_buffer_character(sc_filterref_t filter, sc_char character) {
+void pf_buffer_character(sc_filterref_t filter, sc_char character) {
 	sc_char buffer[2];
 	assert(pf_is_valid(filter));
 
@@ -1033,8 +1009,7 @@ pf_buffer_character(sc_filterref_t filter, sc_char character) {
  * running code, which needs to run task actions and then prepend the task's
  * completion text.  If muted, this function does nothing.
  */
-void
-pf_prepend_string(sc_filterref_t filter, const sc_char *string) {
+void pf_prepend_string(sc_filterref_t filter, const sc_char *string) {
 	assert(pf_is_valid(filter));
 	assert(string);
 
@@ -1080,8 +1055,7 @@ pf_prepend_string(sc_filterref_t filter, const sc_char *string) {
  * Tells the printfilter to force the next non-space character to uppercase.
  * Ignored if the printfilter is muted.
  */
-void
-pf_new_sentence(sc_filterref_t filter) {
+void pf_new_sentence(sc_filterref_t filter) {
 	assert(pf_is_valid(filter));
 
 	if (!filter->is_muted)
@@ -1095,15 +1069,13 @@ pf_new_sentence(sc_filterref_t filter) {
  *
  * A muted printfilter ignores all new text additions.
  */
-void
-pf_mute(sc_filterref_t filter) {
+void pf_mute(sc_filterref_t filter) {
 	assert(pf_is_valid(filter));
 
 	filter->is_muted = TRUE;
 }
 
-void
-pf_clear_mute(sc_filterref_t filter) {
+void pf_clear_mute(sc_filterref_t filter) {
 	assert(pf_is_valid(filter));
 
 	filter->is_muted = FALSE;
@@ -1116,8 +1088,7 @@ pf_clear_mute(sc_filterref_t filter) {
  * Insert an HTML-like tag into the buffered output data.  The call is ignored
  * if the printfilter is muted.
  */
-void
-pf_buffer_tag(sc_filterref_t filter, sc_int tag) {
+void pf_buffer_tag(sc_filterref_t filter, sc_int tag) {
 	const sc_html_tags_t *entry;
 	assert(pf_is_valid(filter));
 
@@ -1145,8 +1116,7 @@ pf_buffer_tag(sc_filterref_t filter, sc_int tag) {
  * status lines.  It ignores all tags except <br>, which it replaces with
  * a newline if requested by allow_newlines.
  */
-static void
-pf_strip_tags_common(sc_char *string, sc_bool allow_newlines) {
+static void pf_strip_tags_common(sc_char *string, sc_bool allow_newlines) {
 	sc_char *marker, *cursor;
 
 	/* Run through the string looking for <...> tags. */
@@ -1181,13 +1151,11 @@ pf_strip_tags_common(sc_char *string, sc_bool allow_newlines) {
  * Public interfaces to pf_strip_tags_common().  The hints version will
  * allow <br> tags to map into newlines in hints strings.
  */
-void
-pf_strip_tags(sc_char *string) {
+void pf_strip_tags(sc_char *string) {
 	pf_strip_tags_common(string, FALSE);
 }
 
-void
-pf_strip_tags_for_hints(sc_char *string) {
+void pf_strip_tags_for_hints(sc_char *string) {
 	pf_strip_tags_common(string, TRUE);
 }
 
@@ -1202,8 +1170,7 @@ pf_strip_tags_for_hints(sc_char *string) {
  * the character itself followed by a space.  The return string is malloc'ed,
  * so the caller needs to remember to free it.
  */
-sc_char *
-pf_escape(const sc_char *string) {
+sc_char *pf_escape(const sc_char *string) {
 	const sc_char *marker, *cursor;
 	sc_char *buffer;
 
@@ -1277,8 +1244,7 @@ pf_escape(const sc_char *string) {
  * Matches multiple words from words in string.  Returns the extent of
  * the match if the string matched, 0 otherwise.
  */
-static sc_int
-pf_compare_words(const sc_char *string, const sc_char *words) {
+static sc_int pf_compare_words(const sc_char *string, const sc_char *words) {
 	sc_int word_posn, posn;
 
 	/* None expected, but skip leading space. */
@@ -1332,8 +1298,7 @@ pf_compare_words(const sc_char *string, const sc_char *words) {
  * string to the caller, or NULL if no synonym changes were needed.  The
  * return string is malloc'ed, so the caller needs to remember to free it.
  */
-sc_char *
-pf_filter_input(const sc_char *string, sc_prop_setref_t bundle) {
+sc_char *pf_filter_input(const sc_char *string, sc_prop_setref_t bundle) {
 	sc_vartype_t vt_key[3];
 	sc_int synonym_count, buffer_allocation;
 	sc_char *buffer;
@@ -1448,8 +1413,7 @@ pf_filter_input(const sc_char *string, sc_prop_setref_t bundle) {
  *
  * Set filter tracing on/off.
  */
-void
-pf_debug_trace(sc_bool flag) {
+void pf_debug_trace(sc_bool flag) {
 	pf_trace = flag;
 }
 

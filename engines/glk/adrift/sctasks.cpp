@@ -56,8 +56,7 @@ static sc_bool task_trace = FALSE;
  * Return the assorted hint text strings, and TRUE if the given task offers
  * hints.
  */
-static const sc_char *
-task_get_hint_common(sc_gameref_t game, sc_int task, const sc_char *hint) {
+static const sc_char *task_get_hint_common(sc_gameref_t game, sc_int task, const sc_char *hint) {
 	const sc_prop_setref_t bundle = gs_get_bundle(game);
 	sc_vartype_t vt_key[3];
 	const sc_char *retval;
@@ -70,23 +69,19 @@ task_get_hint_common(sc_gameref_t game, sc_int task, const sc_char *hint) {
 	return retval;
 }
 
-const sc_char *
-task_get_hint_question(sc_gameref_t game, sc_int task) {
+const sc_char *task_get_hint_question(sc_gameref_t game, sc_int task) {
 	return task_get_hint_common(game, task, "Question");
 }
 
-const sc_char *
-task_get_hint_subtle(sc_gameref_t game, sc_int task) {
+const sc_char *task_get_hint_subtle(sc_gameref_t game, sc_int task) {
 	return task_get_hint_common(game, task, "Hint1");
 }
 
-const sc_char *
-task_get_hint_unsubtle(sc_gameref_t game, sc_int task) {
+const sc_char *task_get_hint_unsubtle(sc_gameref_t game, sc_int task) {
 	return task_get_hint_common(game, task, "Hint2");
 }
 
-sc_bool
-task_has_hints(sc_gameref_t game, sc_int task) {
+sc_bool task_has_hints(sc_gameref_t game, sc_int task) {
 	/* A non-empty question implies hints available. */
 	return !sc_strempty(task_get_hint_question(game, task));
 }
@@ -98,9 +93,7 @@ task_has_hints(sc_gameref_t game, sc_int task) {
  * Return TRUE if player is in a room where the task can be run and the task
  * is runnable in the given direction.
  */
-sc_bool
-task_can_run_task_directional(sc_gameref_t game,
-                              sc_int task, sc_bool forwards) {
+sc_bool task_can_run_task_directional(sc_gameref_t game, sc_int task, sc_bool forwards) {
 	const sc_prop_setref_t bundle = gs_get_bundle(game);
 	sc_vartype_t vt_key[5];
 	sc_int type;
@@ -169,8 +162,7 @@ task_can_run_task_directional(sc_gameref_t game,
  *
  * Returns TRUE if the task can be run in either direction.
  */
-sc_bool
-task_can_run_task(sc_gameref_t game, sc_int task) {
+sc_bool task_can_run_task(sc_gameref_t game, sc_int task) {
 	/*
 	 * Testing reversible tasks first may be a little more efficient if they
 	 * aren't common in games.  There is, though, probably a little bit of
@@ -186,8 +178,7 @@ task_can_run_task(sc_gameref_t game, sc_int task) {
  *
  * Move an object to a place.
  */
-static void
-task_move_object(sc_gameref_t game, sc_int object, sc_int var2, sc_int var3) {
+static void task_move_object(sc_gameref_t game, sc_int object, sc_int var2, sc_int var3) {
 	const sc_var_setref_t vars = gs_get_vars(game);
 
 	/* Select action depending on var2. */
@@ -291,9 +282,7 @@ task_move_object(sc_gameref_t game, sc_int object, sc_int var2, sc_int var3) {
  *
  * Demultiplex an object move action and execute it.
  */
-static void
-task_run_move_object_action(sc_gameref_t game,
-                            sc_int var1, sc_int var2, sc_int var3) {
+static void task_run_move_object_action(sc_gameref_t game, sc_int var1, sc_int var2, sc_int var3) {
 	const sc_var_setref_t vars = gs_get_vars(game);
 	sc_int object;
 
@@ -331,8 +320,7 @@ task_run_move_object_action(sc_gameref_t game,
  *
  * Move an NPC to a given room.
  */
-static void
-task_move_npc_to_room(sc_gameref_t game, sc_int npc, sc_int room) {
+static void task_move_npc_to_room(sc_gameref_t game, sc_int npc, sc_int room) {
 	if (task_trace)
 		sc_trace("Task: moving NPC %ld to room %ld\n", npc, room);
 
@@ -354,9 +342,7 @@ task_move_npc_to_room(sc_gameref_t game, sc_int npc, sc_int room) {
  *
  * Move player or NPC.
  */
-static void
-task_run_move_npc_action(sc_gameref_t game,
-                         sc_int var1, sc_int var2, sc_int var3) {
+static void task_run_move_npc_action(sc_gameref_t game, sc_int var1, sc_int var2, sc_int var3) {
 	const sc_var_setref_t vars = gs_get_vars(game);
 	sc_int npc, room, ref_npc = -1;
 
@@ -506,8 +492,7 @@ task_run_move_npc_action(sc_gameref_t game,
  *
  * Change the status of an object.
  */
-static void
-task_run_change_object_status(sc_gameref_t game, sc_int var1, sc_int var2) {
+static void task_run_change_object_status(sc_gameref_t game, sc_int var1, sc_int var2) {
 	const sc_prop_setref_t bundle = gs_get_bundle(game);
 	sc_vartype_t vt_key[3];
 	sc_int object, openable, lockable;
@@ -560,10 +545,8 @@ task_run_change_object_status(sc_gameref_t game, sc_int var1, sc_int var2) {
  *
  * Change a variable's value in inscrutable ways.
  */
-static void
-task_run_change_variable_action(sc_gameref_t game,
-                                sc_int var1, sc_int var2, sc_int var3,
-                                const sc_char *expr, sc_int var5) {
+static void task_run_change_variable_action(sc_gameref_t game,
+		sc_int var1, sc_int var2, sc_int var3, const sc_char *expr, sc_int var5) {
 	const sc_filterref_t filter = gs_get_filter(game);
 	const sc_prop_setref_t bundle = gs_get_bundle(game);
 	const sc_var_setref_t vars = gs_get_vars(game);
@@ -714,8 +697,7 @@ task_run_change_variable_action(sc_gameref_t game,
  *
  * Change game score.
  */
-static void
-task_run_change_score_action(sc_gameref_t game, sc_int task, sc_int var1) {
+static void task_run_change_score_action(sc_gameref_t game, sc_int task, sc_int var1) {
 	const sc_prop_setref_t bundle = gs_get_bundle(game);
 
 	/* Increasing or decreasing the score? */
@@ -773,8 +755,7 @@ task_run_change_score_action(sc_gameref_t game, sc_int task, sc_int var1) {
  *
  * Redirect to another task.
  */
-static sc_bool
-task_run_set_task_action(sc_gameref_t game, sc_int var1, sc_int var2) {
+static sc_bool task_run_set_task_action(sc_gameref_t game, sc_int var1, sc_int var2) {
 	sc_bool status = FALSE;
 
 	/* Select based on var1. */
@@ -805,8 +786,7 @@ task_run_set_task_action(sc_gameref_t game, sc_int var1, sc_int var2) {
  *
  * End of game task action.
  */
-static sc_bool
-task_run_end_game_action(sc_gameref_t game, sc_int var1) {
+static sc_bool task_run_end_game_action(sc_gameref_t game, sc_int var1) {
 	const sc_filterref_t filter = gs_get_filter(game);
 	const sc_prop_setref_t bundle = gs_get_bundle(game);
 	sc_bool status = FALSE;
@@ -868,8 +848,7 @@ task_run_end_game_action(sc_gameref_t game, sc_int var1) {
  *
  * Demultiplexer for task actions.
  */
-static sc_bool
-task_run_task_action(sc_gameref_t game, sc_int task, sc_int action) {
+static sc_bool task_run_task_action(sc_gameref_t game, sc_int task, sc_int action) {
 	const sc_prop_setref_t bundle = gs_get_bundle(game);
 	sc_vartype_t vt_key[5];
 	sc_int type, var1, var2, var3, var5;
@@ -966,8 +945,7 @@ task_run_task_action(sc_gameref_t game, sc_int task, sc_int action) {
  * game, return immediately.  Returns TRUE if any action ran and itself
  * returned TRUE.
  */
-static sc_bool
-task_run_task_actions(sc_gameref_t game, sc_int task) {
+static sc_bool task_run_task_actions(sc_gameref_t game, sc_int task) {
 	const sc_filterref_t filter = gs_get_filter(game);
 	const sc_prop_setref_t bundle = gs_get_bundle(game);
 	sc_vartype_t vt_key[3];
@@ -1031,8 +1009,7 @@ task_run_task_actions(sc_gameref_t game, sc_int task) {
  *
  * Start NPC walks based on alerts.
  */
-static void
-task_start_npc_walks(sc_gameref_t game, sc_int task) {
+static void task_start_npc_walks(sc_gameref_t game, sc_int task) {
 	const sc_prop_setref_t bundle = gs_get_bundle(game);
 	sc_vartype_t vt_key[4];
 	sc_int alert_count, alert;
@@ -1064,8 +1041,7 @@ task_start_npc_walks(sc_gameref_t game, sc_int task) {
  * outputting a message describing what prevented it, or why it couldn't be
  * done.
  */
-static sc_bool
-task_run_task_unrestricted(sc_gameref_t game, sc_int task, sc_bool forwards) {
+static sc_bool task_run_task_unrestricted(sc_gameref_t game, sc_int task, sc_bool forwards) {
 	const sc_filterref_t filter = gs_get_filter(game);
 	const sc_prop_setref_t bundle = gs_get_bundle(game);
 	sc_vartype_t vt_key[3];
@@ -1221,8 +1197,7 @@ task_run_task_unrestricted(sc_gameref_t game, sc_int task, sc_bool forwards) {
  * task with an error message if we seem to be in one.  Checked by counting
  * the call depth.
  */
-sc_bool
-task_run_task(sc_gameref_t game, sc_int task, sc_bool forwards) {
+sc_bool task_run_task(sc_gameref_t game, sc_int task, sc_bool forwards) {
 	static sc_int recursion_depth = 0;
 
 	const sc_filterref_t filter = gs_get_filter(game);
@@ -1288,8 +1263,7 @@ task_run_task(sc_gameref_t game, sc_int task, sc_bool forwards) {
  *
  * Set task tracing on/off.
  */
-void
-task_debug_trace(sc_bool flag) {
+void task_debug_trace(sc_bool flag) {
 	task_trace = flag;
 }
 

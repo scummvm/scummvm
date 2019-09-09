@@ -41,8 +41,7 @@ static sc_bool obj_trace = FALSE;
  *
  * Convenience functions to return TRUE for given object attributes.
  */
-sc_bool
-obj_is_static(sc_gameref_t game, sc_int object) {
+sc_bool obj_is_static(sc_gameref_t game, sc_int object) {
 	const sc_prop_setref_t bundle = gs_get_bundle(game);
 	sc_vartype_t vt_key[3];
 	sc_bool bstatic;
@@ -54,8 +53,7 @@ obj_is_static(sc_gameref_t game, sc_int object) {
 	return bstatic;
 }
 
-sc_bool
-obj_is_container(sc_gameref_t game, sc_int object) {
+sc_bool obj_is_container(sc_gameref_t game, sc_int object) {
 	const sc_prop_setref_t bundle = gs_get_bundle(game);
 	sc_vartype_t vt_key[3];
 	sc_bool is_container;
@@ -67,8 +65,7 @@ obj_is_container(sc_gameref_t game, sc_int object) {
 	return is_container;
 }
 
-sc_bool
-obj_is_surface(sc_gameref_t game, sc_int object) {
+sc_bool obj_is_surface(sc_gameref_t game, sc_int object) {
 	const sc_prop_setref_t bundle = gs_get_bundle(game);
 	sc_vartype_t vt_key[3];
 	sc_bool is_surface;
@@ -86,8 +83,7 @@ obj_is_surface(sc_gameref_t game, sc_int object) {
  *
  * Return the index of the n'th container object found.
  */
-sc_int
-obj_container_object(sc_gameref_t game, sc_int n) {
+sc_int obj_container_object(sc_gameref_t game, sc_int n) {
 	sc_int object, count;
 
 	/* Progress through objects until n containers found. */
@@ -105,8 +101,7 @@ obj_container_object(sc_gameref_t game, sc_int n) {
  *
  * Return index such that obj_container_object(index) == objnum.
  */
-sc_int
-obj_container_index(sc_gameref_t game, sc_int objnum) {
+sc_int obj_container_index(sc_gameref_t game, sc_int objnum) {
 	sc_int object, count;
 
 	/* Progress through objects up to objnum. */
@@ -124,8 +119,7 @@ obj_container_index(sc_gameref_t game, sc_int objnum) {
  *
  * Return the index of the n'th surface object found.
  */
-sc_int
-obj_surface_object(sc_gameref_t game, sc_int n) {
+sc_int obj_surface_object(sc_gameref_t game, sc_int n) {
 	sc_int object, count;
 
 	/* Progress through objects until n surfaces found. */
@@ -143,8 +137,7 @@ obj_surface_object(sc_gameref_t game, sc_int n) {
  *
  * Return index such that obj_surface_object(index) == objnum.
  */
-sc_int
-obj_surface_index(sc_gameref_t game, sc_int objnum) {
+sc_int obj_surface_index(sc_gameref_t game, sc_int objnum) {
 	sc_int object, count;
 
 	/* Progress through objects up to objnum. */
@@ -162,8 +155,7 @@ obj_surface_index(sc_gameref_t game, sc_int objnum) {
  *
  * Return the index of the n'th openable or statussed object found.
  */
-sc_int
-obj_stateful_object(sc_gameref_t game, sc_int n) {
+sc_int obj_stateful_object(sc_gameref_t game, sc_int n) {
 	const sc_prop_setref_t bundle = gs_get_bundle(game);
 	sc_int object, count;
 
@@ -191,8 +183,7 @@ obj_stateful_object(sc_gameref_t game, sc_int n) {
  *
  * Return index such that obj_stateful_object(index) == objnum.
  */
-sc_int
-obj_stateful_index(sc_gameref_t game, sc_int objnum) {
+sc_int obj_stateful_index(sc_gameref_t game, sc_int objnum) {
 	const sc_prop_setref_t bundle = gs_get_bundle(game);
 	sc_int object, count;
 
@@ -222,8 +213,7 @@ obj_stateful_index(sc_gameref_t game, sc_int objnum) {
  * string is malloc'ed, and needs to be freed by the caller.  Returns NULL
  * if no valid state string found.
  */
-sc_char *
-obj_state_name(sc_gameref_t game, sc_int objnum) {
+sc_char *obj_state_name(sc_gameref_t game, sc_int objnum) {
 	const sc_prop_setref_t bundle = gs_get_bundle(game);
 	sc_vartype_t vt_key[3];
 	const sc_char *states;
@@ -266,8 +256,7 @@ obj_state_name(sc_gameref_t game, sc_int objnum) {
  *
  * Return the index of the n'th non-static object found.
  */
-sc_int
-obj_dynamic_object(sc_gameref_t game, sc_int n) {
+sc_int obj_dynamic_object(sc_gameref_t game, sc_int n) {
 	sc_int object, count;
 
 	/* Progress through objects until n matches found. */
@@ -285,8 +274,7 @@ obj_dynamic_object(sc_gameref_t game, sc_int n) {
  *
  * Return the index of the n'th wearable object found.
  */
-sc_int
-obj_wearable_object(sc_gameref_t game, sc_int n) {
+sc_int obj_wearable_object(sc_gameref_t game, sc_int n) {
 	const sc_prop_setref_t bundle = gs_get_bundle(game);
 	sc_int object, count;
 
@@ -329,8 +317,7 @@ enum {
  * TODO It's possible to have static objects in the player inventory, moved
  * by events -- how should these be handled, as they have no SizeWeight?
  */
-sc_int
-obj_get_size(sc_gameref_t game, sc_int object) {
+sc_int obj_get_size(sc_gameref_t game, sc_int object) {
 	const sc_prop_setref_t bundle = gs_get_bundle(game);
 	sc_vartype_t vt_key[3];
 	sc_int size, count;
@@ -362,8 +349,7 @@ obj_get_size(sc_gameref_t game, sc_int object) {
 	return size;
 }
 
-sc_int
-obj_get_weight(sc_gameref_t game, sc_int object) {
+sc_int obj_get_weight(sc_gameref_t game, sc_int object) {
 	const sc_prop_setref_t bundle = gs_get_bundle(game);
 	sc_vartype_t vt_key[3];
 	sc_int weight, count;
@@ -413,8 +399,7 @@ obj_get_weight(sc_gameref_t game, sc_int object) {
  * Return the limits set on the sizes and weights a player can handle.  Not
  * really object-related except that they deal with sizing multiples.
  */
-static sc_int
-obj_convert_player_limit(sc_int value) {
+static sc_int obj_convert_player_limit(sc_int value) {
 	sc_int retval, index_;
 
 	/* 'Tens' of value multiplied by 3 to the power 'units' of value. */
@@ -425,8 +410,7 @@ obj_convert_player_limit(sc_int value) {
 	return retval;
 }
 
-sc_int
-obj_get_player_size_limit(sc_gameref_t game) {
+sc_int obj_get_player_size_limit(sc_gameref_t game) {
 	const sc_prop_setref_t bundle = gs_get_bundle(game);
 	sc_vartype_t vt_key[2];
 	sc_int max_size;
@@ -438,8 +422,7 @@ obj_get_player_size_limit(sc_gameref_t game) {
 	return obj_convert_player_limit(max_size);
 }
 
-sc_int
-obj_get_player_weight_limit(sc_gameref_t game) {
+sc_int obj_get_player_weight_limit(sc_gameref_t game) {
 	const sc_prop_setref_t bundle = gs_get_bundle(game);
 	sc_vartype_t vt_key[2];
 	sc_int max_weight;
@@ -459,8 +442,7 @@ obj_get_player_weight_limit(sc_gameref_t game) {
  * Return the maximum size of an object that can be placed in a container,
  * and the number that will fit.
  */
-sc_int
-obj_get_container_maxsize(sc_gameref_t game, sc_int object) {
+sc_int obj_get_container_maxsize(sc_gameref_t game, sc_int object) {
 	const sc_prop_setref_t bundle = gs_get_bundle(game);
 	sc_vartype_t vt_key[3];
 	sc_int maxsize, count;
@@ -482,8 +464,7 @@ obj_get_container_maxsize(sc_gameref_t game, sc_int object) {
 	return maxsize;
 }
 
-sc_int
-obj_get_container_capacity(sc_gameref_t game, sc_int object) {
+sc_int obj_get_container_capacity(sc_gameref_t game, sc_int object) {
 	const sc_prop_setref_t bundle = gs_get_bundle(game);
 	sc_vartype_t vt_key[3];
 	sc_int capacity;
@@ -513,8 +494,7 @@ enum {
  *
  * Return the index of the n'th standable object found.
  */
-sc_int
-obj_standable_object(sc_gameref_t game, sc_int n) {
+sc_int obj_standable_object(sc_gameref_t game, sc_int n) {
 	const sc_prop_setref_t bundle = gs_get_bundle(game);
 	sc_int object, count;
 
@@ -540,8 +520,7 @@ obj_standable_object(sc_gameref_t game, sc_int n) {
  *
  * Return the index of the n'th lieable object found.
  */
-sc_int
-obj_lieable_object(sc_gameref_t game, sc_int n) {
+sc_int obj_lieable_object(sc_gameref_t game, sc_int n) {
 	const sc_prop_setref_t bundle = gs_get_bundle(game);
 	sc_int object, count;
 
@@ -571,8 +550,7 @@ obj_lieable_object(sc_gameref_t game, sc_int n) {
  * or ""; plural if prefix is "the" or "some" and short name ends with 's'
  * that is not preceded by 'u'.
  */
-sc_bool
-obj_appears_plural(sc_gameref_t game, sc_int object) {
+sc_bool obj_appears_plural(sc_gameref_t game, sc_int object) {
 	const sc_prop_setref_t bundle = gs_get_bundle(game);
 	sc_vartype_t vt_key[3];
 	const sc_char *prefix, *name;
@@ -610,8 +588,7 @@ obj_appears_plural(sc_gameref_t game, sc_int object) {
  *
  * Return TRUE if a given object is currently on the floor of a given room.
  */
-static sc_bool
-obj_directly_in_room_internal(sc_gameref_t game, sc_int object, sc_int room) {
+static sc_bool obj_directly_in_room_internal(sc_gameref_t game, sc_int object, sc_int room) {
 	const sc_prop_setref_t bundle = gs_get_bundle(game);
 
 	/* See if the object is static or dynamic. */
@@ -658,8 +635,7 @@ obj_directly_in_room_internal(sc_gameref_t game, sc_int object, sc_int room) {
 		return gs_object_position(game, object) == room + 1;
 }
 
-sc_bool
-obj_directly_in_room(sc_gameref_t game, sc_int object, sc_int room) {
+sc_bool obj_directly_in_room(sc_gameref_t game, sc_int object, sc_int room) {
 	sc_bool result;
 
 	/* Check, trace result, and return. */
@@ -682,8 +658,7 @@ obj_directly_in_room(sc_gameref_t game, sc_int object, sc_int room) {
  * directly, on an object indirectly, in an open object indirectly, or
  * carried by an NPC in the room.
  */
-static sc_bool
-obj_indirectly_in_room_internal(sc_gameref_t game, sc_int object, sc_int room) {
+static sc_bool obj_indirectly_in_room_internal(sc_gameref_t game, sc_int object, sc_int room) {
 	const sc_prop_setref_t bundle = gs_get_bundle(game);
 
 	/* See if the object is static or dynamic. */
@@ -782,9 +757,7 @@ obj_indirectly_in_room_internal(sc_gameref_t game, sc_int object, sc_int room) {
 	}
 }
 
-sc_bool
-obj_indirectly_in_room(sc_gameref_t game,
-                       sc_int object, sc_int room) {
+sc_bool obj_indirectly_in_room(sc_gameref_t game, sc_int object, sc_int room) {
 	sc_bool result;
 
 	/* Check, trace result, and return. */
@@ -806,9 +779,7 @@ obj_indirectly_in_room(sc_gameref_t game,
  * Return TRUE if a given object is currently held by the player, either
  * directly, on an object indirectly, or in an open object indirectly.
  */
-static sc_bool
-obj_indirectly_held_by_player_internal(sc_gameref_t game,
-                                       sc_int object) {
+static sc_bool obj_indirectly_held_by_player_internal(sc_gameref_t game, sc_int object) {
 	/* See if the object is static or dynamic. */
 	if (obj_is_static(game, object)) {
 		/* Static object moved to player or room by event? */
@@ -863,8 +834,7 @@ obj_indirectly_held_by_player_internal(sc_gameref_t game,
 	}
 }
 
-sc_bool
-obj_indirectly_held_by_player(sc_gameref_t game, sc_int object) {
+sc_bool obj_indirectly_held_by_player(sc_gameref_t game, sc_int object) {
 	sc_bool result;
 
 	/* Check, trace result, and return. */
@@ -884,8 +854,7 @@ obj_indirectly_held_by_player(sc_gameref_t game, sc_int object) {
  *
  * Return TRUE if this object should be listed as room content.
  */
-sc_bool
-obj_shows_initial_description(sc_gameref_t game, sc_int object) {
+sc_bool obj_shows_initial_description(sc_gameref_t game, sc_int object) {
 	const sc_prop_setref_t bundle = gs_get_bundle(game);
 	sc_vartype_t vt_key[3];
 	sc_int onlywhennotmoved;
@@ -927,8 +896,7 @@ obj_shows_initial_description(sc_gameref_t game, sc_int object) {
  *
  * Set initial values for object states, and update after a turn.
  */
-void
-obj_turn_update(sc_gameref_t game) {
+void obj_turn_update(sc_gameref_t game) {
 	sc_int index_;
 
 	/* Update object seen flag to current state. */
@@ -939,8 +907,7 @@ obj_turn_update(sc_gameref_t game) {
 	}
 }
 
-void
-obj_setup_initial(sc_gameref_t game) {
+void obj_setup_initial(sc_gameref_t game) {
 	/* Set initial seen states for objects. */
 	obj_turn_update(game);
 }
@@ -951,8 +918,7 @@ obj_setup_initial(sc_gameref_t game) {
  *
  * Set object tracing on/off.
  */
-void
-obj_debug_trace(sc_bool flag) {
+void obj_debug_trace(sc_bool flag) {
 	obj_trace = flag;
 }
 

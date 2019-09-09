@@ -57,13 +57,14 @@ static const sc_char *const VAR_NUMBERS[VAR_NUMBERS_SIZE] = {
 };
 
 /* Variable entry, held on a list hashed by variable name. */
-typedef struct sc_var_s {
+struct sc_var_s {
 	struct sc_var_s *next;
 
 	const sc_char *name;
 	sc_int type;
 	sc_vartype_t value;
-} sc_var_t;
+};
+typedef sc_var_s sc_var_t;
 typedef sc_var_t *sc_varref_t;
 
 /*
@@ -73,7 +74,7 @@ typedef sc_var_t *sc_varref_t;
  * exceed a fill factor of two (~422 variables).
  */
 enum { VAR_HASH_TABLE_SIZE = 211 };
-typedef struct sc_var_set_s {
+struct sc_var_set_s {
 	sc_uint magic;
 	sc_prop_setref_t bundle;
 	sc_int referenced_character;
@@ -86,7 +87,8 @@ typedef struct sc_var_set_s {
 	sc_uint time_offset;
 	sc_gameref_t game;
 	sc_varref_t variable[VAR_HASH_TABLE_SIZE];
-} sc_var_set_t;
+};
+typedef sc_var_set_s sc_var_set_t;
 
 
 /*
@@ -94,8 +96,7 @@ typedef struct sc_var_set_s {
  *
  * Return TRUE if pointer is a valid variables set, FALSE otherwise.
  */
-static sc_bool
-var_is_valid(sc_var_setref_t vars) {
+static sc_bool var_is_valid(sc_var_setref_t vars) {
 	return vars && vars->magic == VARS_MAGIC;
 }
 
@@ -105,8 +106,7 @@ var_is_valid(sc_var_setref_t vars) {
  *
  * Hash a variable name, modulo'ed to the number of buckets.
  */
-static sc_uint
-var_hash_name(const sc_char *name) {
+static sc_uint var_hash_name(const sc_char *name) {
 	return sc_hash(name) % VAR_HASH_TABLE_SIZE;
 }
 
@@ -116,8 +116,7 @@ var_hash_name(const sc_char *name) {
  *
  * Create and return a new empty set of variables.
  */
-static sc_var_setref_t
-var_create_empty(void) {
+static sc_var_setref_t var_create_empty(void) {
 	sc_var_setref_t vars;
 	sc_int index_;
 
@@ -148,8 +147,7 @@ var_create_empty(void) {
  *
  * Destroy a variable set, and free its heap memory.
  */
-void
-var_destroy(sc_var_setref_t vars) {
+void var_destroy(sc_var_setref_t vars) {
 	sc_int index_;
 	assert(var_is_valid(vars));
 
@@ -185,8 +183,7 @@ var_destroy(sc_var_setref_t vars) {
  * Find and return a pointer to a named variable structure, or nullptr if no such
  * variable exists, and add a new variable structure to the lists.
  */
-static sc_varref_t
-var_find(sc_var_setref_t vars, const sc_char *name) {
+static sc_varref_t var_find(sc_var_setref_t vars, const sc_char *name) {
 	sc_uint hash;
 	sc_varref_t var;
 
@@ -201,8 +198,7 @@ var_find(sc_var_setref_t vars, const sc_char *name) {
 	return var;
 }
 
-static sc_varref_t
-var_add(sc_var_setref_t vars, const sc_char *name, sc_int type) {
+static sc_varref_t var_add(sc_var_setref_t vars, const sc_char *name, sc_int type) {
 	sc_varref_t var;
 	sc_uint hash;
 
@@ -227,8 +223,7 @@ var_add(sc_var_setref_t vars, const sc_char *name, sc_int type) {
  * Return the value of %scare_version%.  Used to generate the system version
  * of this variable, and to re-initialize user versions initialized to zero.
  */
-static sc_int
-var_get_scare_version(void) {
+static sc_int var_get_scare_version(void) {
 	sc_int major, minor, point, version;
 
 	if (sscanf(SCARE_VERSION, "%ld.%ld.%ld", &major, &minor, &point) != 3) {
@@ -247,9 +242,7 @@ var_get_scare_version(void) {
  * Store a variable type in a named variable.  If not present, the variable
  * is created.  Type is one of 'I' or 'S' for integer or string.
  */
-void
-var_put(sc_var_setref_t vars,
-        const sc_char *name, sc_int type, sc_vartype_t vt_value) {
+void var_put(sc_var_setref_t vars, const sc_char *name, sc_int type, sc_vartype_t vt_value) {
 	sc_varref_t var;
 	sc_bool is_modification;
 	assert(var_is_valid(vars));
@@ -350,8 +343,7 @@ var_put(sc_var_setref_t vars,
  * Helper for object listers.  Extends temporary, and appends the given text
  * to the string.
  */
-static void
-var_append_temp(sc_var_setref_t vars, const sc_char *string) {
+static void var_append_temp(sc_var_setref_t vars, const sc_char *string) {
 	sc_bool new_sentence;
 	sc_int noted;
 
@@ -383,8 +375,7 @@ var_append_temp(sc_var_setref_t vars, const sc_char *string) {
  * Convenience functions to append an object's name, with and without any
  * prefix, to variables temporary.
  */
-static void
-var_print_object_np(sc_gameref_t game, sc_int object) {
+static void var_print_object_np(sc_gameref_t game, sc_int object) {
 	const sc_var_setref_t vars = gs_get_vars(game);
 	const sc_prop_setref_t bundle = gs_get_bundle(game);
 	sc_vartype_t vt_key[3];
@@ -440,8 +431,7 @@ var_print_object_np(sc_gameref_t game, sc_int object) {
 	var_append_temp(vars, name);
 }
 
-static void
-var_print_object(sc_gameref_t game, sc_int object) {
+static void var_print_object(sc_gameref_t game, sc_int object) {
 	const sc_var_setref_t vars = gs_get_vars(game);
 	const sc_prop_setref_t bundle = gs_get_bundle(game);
 	sc_vartype_t vt_key[3];
@@ -474,9 +464,8 @@ var_print_object(sc_gameref_t game, sc_int object) {
  * Convenience function for listers.  Selects one of two responses depending
  * on whether an object appears singular or plural.
  */
-static const sc_char *
-var_select_plurality(sc_gameref_t game, sc_int object,
-                     const sc_char *singular, const sc_char *plural) {
+static const sc_char *var_select_plurality(sc_gameref_t game, sc_int object,
+		const sc_char *singular, const sc_char *plural) {
 	return obj_appears_plural(game, object) ? plural : singular;
 }
 
@@ -486,8 +475,7 @@ var_select_plurality(sc_gameref_t game, sc_int object,
  *
  * List the objects in a given container object.
  */
-static void
-var_list_in_object(sc_gameref_t game, sc_int container) {
+static void var_list_in_object(sc_gameref_t game, sc_int container) {
 	const sc_var_setref_t vars = gs_get_vars(game);
 	sc_int object, count, trail;
 
@@ -535,8 +523,7 @@ var_list_in_object(sc_gameref_t game, sc_int container) {
  *
  * List the objects on a given surface object.
  */
-static void
-var_list_on_object(sc_gameref_t game, sc_int supporter) {
+static void var_list_on_object(sc_gameref_t game, sc_int supporter) {
 	const sc_var_setref_t vars = gs_get_vars(game);
 	sc_int object, count, trail;
 
@@ -583,8 +570,7 @@ var_list_on_object(sc_gameref_t game, sc_int supporter) {
  *
  * List the objects on and in a given associate object.
  */
-static void
-var_list_onin_object(sc_gameref_t game, sc_int associate) {
+static void var_list_onin_object(sc_gameref_t game, sc_int associate) {
 	const sc_var_setref_t vars = gs_get_vars(game);
 	sc_int object, count, trail;
 	sc_bool supporting;
@@ -685,15 +671,13 @@ var_list_onin_object(sc_gameref_t game, sc_int associate) {
  * a bit easier.  Set appropriate values for return type and the relevant
  * return value field, and always return TRUE.  A macro was tempting here...
  */
-static sc_bool
-var_return_integer(sc_int value, sc_int *type, sc_vartype_t *vt_rvalue) {
+static sc_bool var_return_integer(sc_int value, sc_int *type, sc_vartype_t *vt_rvalue) {
 	*type = VAR_INTEGER;
 	vt_rvalue->integer = value;
 	return TRUE;
 }
 
-static sc_bool
-var_return_string(const sc_char *value, sc_int *type, sc_vartype_t *vt_rvalue) {
+static sc_bool var_return_string(const sc_char *value, sc_int *type, sc_vartype_t *vt_rvalue) {
 	*type = VAR_STRING;
 	vt_rvalue->string = value;
 	return TRUE;
@@ -706,9 +690,8 @@ var_return_string(const sc_char *value, sc_int *type, sc_vartype_t *vt_rvalue) {
  * Construct a system variable, and return its type and value, or FALSE
  * if invalid name passed in.  Uses var_return_*() to reduce code untidiness.
  */
-static sc_bool
-var_get_system(sc_var_setref_t vars,
-               const sc_char *name, sc_int *type, sc_vartype_t *vt_rvalue) {
+static sc_bool var_get_system(sc_var_setref_t vars, const sc_char *name,
+		sc_int *type, sc_vartype_t *vt_rvalue) {
 	const sc_prop_setref_t bundle = vars->bundle;
 	const sc_gameref_t game = vars->game;
 
@@ -1324,9 +1307,8 @@ var_get_system(sc_var_setref_t vars,
  * Retrieve a user variable, and return its type and value, or FALSE if the
  * name passed in is not a defined user variable.
  */
-static sc_bool
-var_get_user(sc_var_setref_t vars,
-             const sc_char *name, sc_int *type, sc_vartype_t *vt_rvalue) {
+static sc_bool var_get_user(sc_var_setref_t vars, const sc_char *name,
+		sc_int *type, sc_vartype_t *vt_rvalue) {
 	sc_varref_t var;
 
 	/* Check user variables for a reference to the named variable. */
@@ -1360,9 +1342,7 @@ var_get_user(sc_var_setref_t vars,
  * Retrieve a variable, and return its value and type.  Returns FALSE if the
  * named variable does not exist.
  */
-sc_bool
-var_get(sc_var_setref_t vars,
-        const sc_char *name, sc_int *type, sc_vartype_t *vt_rvalue) {
+sc_bool var_get(sc_var_setref_t vars, const sc_char *name, sc_int *type, sc_vartype_t *vt_rvalue) {
 	sc_bool status;
 	assert(var_is_valid(vars));
 	assert(name && type && vt_rvalue);
@@ -1407,8 +1387,7 @@ var_get(sc_var_setref_t vars,
  * Convenience functions to store and retrieve an integer variable.  It is
  * an error for the variable not to exist or to have the wrong type.
  */
-void
-var_put_integer(sc_var_setref_t vars, const sc_char *name, sc_int value) {
+void var_put_integer(sc_var_setref_t vars, const sc_char *name, sc_int value) {
 	sc_vartype_t vt_value;
 	assert(var_is_valid(vars));
 
@@ -1416,8 +1395,7 @@ var_put_integer(sc_var_setref_t vars, const sc_char *name, sc_int value) {
 	var_put(vars, name, VAR_INTEGER, vt_value);
 }
 
-sc_int
-var_get_integer(sc_var_setref_t vars, const sc_char *name) {
+sc_int var_get_integer(sc_var_setref_t vars, const sc_char *name) {
 	sc_vartype_t vt_rvalue;
 	sc_int type;
 	assert(var_is_valid(vars));
@@ -1438,9 +1416,7 @@ var_get_integer(sc_var_setref_t vars, const sc_char *name) {
  * Convenience functions to store and retrieve a string variable.  It is
  * an error for the variable not to exist or to have the wrong type.
  */
-void
-var_put_string(sc_var_setref_t vars,
-               const sc_char *name, const sc_char *string) {
+void var_put_string(sc_var_setref_t vars, const sc_char *name, const sc_char *string) {
 	sc_vartype_t vt_value;
 	assert(var_is_valid(vars));
 
@@ -1448,8 +1424,7 @@ var_put_string(sc_var_setref_t vars,
 	var_put(vars, name, VAR_STRING, vt_value);
 }
 
-const sc_char *
-var_get_string(sc_var_setref_t vars, const sc_char *name) {
+const sc_char *var_get_string(sc_var_setref_t vars, const sc_char *name) {
 	sc_vartype_t vt_rvalue;
 	sc_int type;
 	assert(var_is_valid(vars));
@@ -1469,8 +1444,7 @@ var_get_string(sc_var_setref_t vars, const sc_char *name) {
  * Create and return a new set of variables.  Variables are created from the
  * properties bundle passed in.
  */
-sc_var_setref_t
-var_create(sc_prop_setref_t bundle) {
+sc_var_setref_t var_create(sc_prop_setref_t bundle) {
 	sc_var_setref_t vars;
 	sc_int var_count, index_;
 	sc_vartype_t vt_key[3];
@@ -1534,8 +1508,7 @@ var_create(sc_prop_setref_t bundle) {
  * system variables.  To ensure integrity, the game being registered must
  * reference this variable set.
  */
-void
-var_register_game(sc_var_setref_t vars, sc_gameref_t game) {
+void var_register_game(sc_var_setref_t vars, sc_gameref_t game) {
 	assert(var_is_valid(vars));
 	assert(gs_is_game_valid(game));
 
@@ -1554,27 +1527,23 @@ var_register_game(sc_var_setref_t vars, sc_gameref_t game) {
  *
  * Set the "referenced" character, object, number, and text.
  */
-void
-var_set_ref_character(sc_var_setref_t vars, sc_int character) {
+void var_set_ref_character(sc_var_setref_t vars, sc_int character) {
 	assert(var_is_valid(vars));
 	vars->referenced_character = character;
 }
 
-void
-var_set_ref_object(sc_var_setref_t vars, sc_int object) {
+void var_set_ref_object(sc_var_setref_t vars, sc_int object) {
 	assert(var_is_valid(vars));
 	vars->referenced_object = object;
 }
 
-void
-var_set_ref_number(sc_var_setref_t vars, sc_int number) {
+void var_set_ref_number(sc_var_setref_t vars, sc_int number) {
 	assert(var_is_valid(vars));
 	vars->referenced_number = number;
 	vars->is_number_referenced = TRUE;
 }
 
-void
-var_set_ref_text(sc_var_setref_t vars, const sc_char *text) {
+void var_set_ref_text(sc_var_setref_t vars, const sc_char *text) {
 	assert(var_is_valid(vars));
 
 	/* Take a copy of the string, and retain it. */
@@ -1591,26 +1560,22 @@ var_set_ref_text(sc_var_setref_t vars, const sc_char *text) {
  *
  * Get the "referenced" character, object, number, and text.
  */
-sc_int
-var_get_ref_character(sc_var_setref_t vars) {
+sc_int var_get_ref_character(sc_var_setref_t vars) {
 	assert(var_is_valid(vars));
 	return vars->referenced_character;
 }
 
-sc_int
-var_get_ref_object(sc_var_setref_t vars) {
+sc_int var_get_ref_object(sc_var_setref_t vars) {
 	assert(var_is_valid(vars));
 	return vars->referenced_object;
 }
 
-sc_int
-var_get_ref_number(sc_var_setref_t vars) {
+sc_int var_get_ref_number(sc_var_setref_t vars) {
 	assert(var_is_valid(vars));
 	return vars->referenced_number;
 }
 
-const sc_char *
-var_get_ref_text(sc_var_setref_t vars) {
+const sc_char *var_get_ref_text(sc_var_setref_t vars) {
 	assert(var_is_valid(vars));
 
 	/*
@@ -1629,8 +1594,7 @@ var_get_ref_text(sc_var_setref_t vars) {
  * Get a count of seconds elapsed since the variables were created (start
  * of game), and set the count to a given value (game restore).
  */
-sc_uint
-var_get_elapsed_seconds(sc_var_setref_t vars) {
+sc_uint var_get_elapsed_seconds(sc_var_setref_t vars) {
 	double delta;
 	assert(var_is_valid(vars));
 
@@ -1638,8 +1602,7 @@ var_get_elapsed_seconds(sc_var_setref_t vars) {
 	return (sc_uint) delta + vars->time_offset;
 }
 
-void
-var_set_elapsed_seconds(sc_var_setref_t vars, sc_uint seconds) {
+void var_set_elapsed_seconds(sc_var_setref_t vars, sc_uint seconds) {
 	assert(var_is_valid(vars));
 
 	/*
@@ -1657,8 +1620,7 @@ var_set_elapsed_seconds(sc_var_setref_t vars, sc_uint seconds) {
  *
  * Set variable tracing on/off.
  */
-void
-var_debug_trace(sc_bool flag) {
+void var_debug_trace(sc_bool flag) {
 	var_trace = flag;
 }
 
@@ -1668,8 +1630,7 @@ var_debug_trace(sc_bool flag) {
  *
  * Print out a complete variables set.
  */
-void
-var_debug_dump(sc_var_setref_t vars) {
+void var_debug_dump(sc_var_setref_t vars) {
 	sc_int index_;
 	sc_varref_t var;
 	assert(var_is_valid(vars));

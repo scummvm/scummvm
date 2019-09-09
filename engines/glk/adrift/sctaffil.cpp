@@ -94,7 +94,7 @@ struct sc_slabdesc_t {
 	sc_int size;
 };
 typedef sc_slabdesc_t *sc_slabdescref_t;
-typedef struct sc_taf_s {
+struct sc_taf_s {
 	sc_uint magic;
 	sc_byte header[VERSION_HEADER_SIZE + V400_HEADER_EXTRA];
 	sc_int version;
@@ -105,7 +105,8 @@ typedef struct sc_taf_s {
 	sc_bool is_unterminated;
 	sc_int current_slab;
 	sc_int current_offset;
-} sc_taf_t;
+};
+typedef sc_taf_s sc_taf_t;
 
 
 /* Microsoft Visual Basic PRNG magic numbers, initial and current state. */
@@ -125,15 +126,13 @@ static sc_int taf_random_state = 0x00a09e86;
  * we multiply by 255 and then divide by prng_cst3 + 1 to get output in the
  * range 0..254.  Thanks to Rik Snel for uncovering this obfuscation.
  */
-static sc_byte
-taf_random(void) {
+static sc_byte taf_random(void) {
 	/* Generate and return the next pseudo-random number. */
 	taf_random_state = (taf_random_state * PRNG_CST1 + PRNG_CST2) & PRNG_CST3;
 	return (UCHAR_MAX * (sc_uint) taf_random_state) / (sc_uint)(PRNG_CST3 + 1);
 }
 
-static void
-taf_random_reset(void) {
+static void taf_random_reset(void) {
 	/* Reset PRNG to initial conditions. */
 	taf_random_state = PRNG_INITIAL_STATE;
 }
@@ -144,8 +143,7 @@ taf_random_reset(void) {
  *
  * Return TRUE if pointer is a valid TAF structure, FALSE otherwise.
  */
-static sc_bool
-taf_is_valid(sc_tafref_t taf) {
+static sc_bool taf_is_valid(sc_tafref_t taf) {
 	return taf && taf->magic == TAF_MAGIC;
 }
 
@@ -155,8 +153,7 @@ taf_is_valid(sc_tafref_t taf) {
  *
  * Allocate and return a new, empty TAF structure.
  */
-static sc_tafref_t
-taf_create_empty(void) {
+static sc_tafref_t taf_create_empty(void) {
 	sc_tafref_t taf;
 
 	/* Create an empty TAF structure. */
@@ -182,8 +179,7 @@ taf_create_empty(void) {
  *
  * Free TAF memory, and destroy a TAF structure.
  */
-void
-taf_destroy(sc_tafref_t taf) {
+void taf_destroy(sc_tafref_t taf) {
 	sc_int index_;
 	assert(taf_is_valid(taf));
 
@@ -207,8 +203,7 @@ taf_destroy(sc_tafref_t taf) {
  * Insert nul's into slab data so that it turns into a series of nul-terminated
  * strings.  Nul's are used to replace carriage return and newline pairs.
  */
-static void
-taf_finalize_last_slab(sc_tafref_t taf) {
+static void taf_finalize_last_slab(sc_tafref_t taf) {
 	sc_slabdescref_t slab;
 	sc_int index_;
 
@@ -244,9 +239,7 @@ taf_finalize_last_slab(sc_tafref_t taf) {
  * line feed.  If none, found, return length and set is_unterminated to TRUE.
  * Otherwise, return the count of usable bytes found in the buffer.
  */
-static sc_int
-taf_find_buffer_extent(const sc_byte *buffer,
-                       sc_int length, sc_bool *is_unterminated) {
+static sc_int taf_find_buffer_extent(const sc_byte *buffer, sc_int length, sc_bool *is_unterminated) {
 	sc_int bytes;
 
 	/* Search backwards from the buffer end for the final line feed. */
@@ -271,8 +264,7 @@ taf_find_buffer_extent(const sc_byte *buffer,
  * Append a buffer of TAF lines to an existing TAF structure.  Returns the
  * number of characters consumed from the buffer.
  */
-static sc_int
-taf_append_buffer(sc_tafref_t taf, const sc_byte *buffer, sc_int length) {
+static sc_int taf_append_buffer(sc_tafref_t taf, const sc_byte *buffer, sc_int length) {
 	sc_int bytes;
 	sc_bool is_unterminated;
 
@@ -347,9 +339,8 @@ taf_append_buffer(sc_tafref_t taf, const sc_byte *buffer, sc_int length) {
  * count of bytes placed in the buffer, or 0 if no more (end of file).
  * Assumes that the file has been read past the header.
  */
-static sc_bool
-taf_unobfuscate(sc_tafref_t taf, sc_read_callbackref_t callback,
-                void *opaque, sc_bool is_gamefile) {
+static sc_bool taf_unobfuscate(sc_tafref_t taf, sc_read_callbackref_t callback,
+		void *opaque, sc_bool is_gamefile) {
 	sc_byte *buffer;
 	sc_int bytes, used_bytes, total_bytes, index_;
 
@@ -427,7 +418,7 @@ taf_unobfuscate(sc_tafref_t taf, sc_read_callbackref_t callback,
  * Decompress a version 4.0 TAF
  */
 static sc_bool taf_decompress(sc_tafref_t taf, sc_read_callbackref_t callback,
-                              void *opaque, sc_bool is_gamefile) {
+		void *opaque, sc_bool is_gamefile) {
 #if USE_ZLIB
 	Common::SeekableReadStream *src = (Common::SeekableReadStream *)opaque;
 	assert(src);
@@ -462,9 +453,8 @@ static sc_bool taf_decompress(sc_tafref_t taf, sc_read_callbackref_t callback,
  * callback() function.  Callback() should return the count of bytes placed
  * in the buffer, or 0 if no more (end of file).
  */
-static sc_tafref_t
-taf_create_from_callback(sc_read_callbackref_t callback,
-                         void *opaque, sc_bool is_gamefile) {
+static sc_tafref_t taf_create_from_callback(sc_read_callbackref_t callback,
+		void *opaque, sc_bool is_gamefile) {
 	sc_tafref_t taf;
 	sc_bool status = FALSE;
 	assert(callback);
@@ -555,13 +545,11 @@ taf_create_from_callback(sc_read_callbackref_t callback,
  * Public entry points for taf_create_from_callback().  Return a taf object
  * constructed from either *.TAF (game) or *.TAS (saved game state) file data.
  */
-sc_tafref_t
-taf_create(sc_read_callbackref_t callback, void *opaque) {
+sc_tafref_t taf_create(sc_read_callbackref_t callback, void *opaque) {
 	return taf_create_from_callback(callback, opaque, TRUE);
 }
 
-sc_tafref_t
-taf_create_tas(sc_read_callbackref_t callback, void *opaque) {
+sc_tafref_t taf_create_tas(sc_read_callbackref_t callback, void *opaque) {
 	return taf_create_from_callback(callback, opaque, FALSE);
 }
 
@@ -571,8 +559,7 @@ taf_create_tas(sc_read_callbackref_t callback, void *opaque) {
  *
  * Iterator rewind function, reset current slab location to TAF data start.
  */
-void
-taf_first_line(sc_tafref_t taf) {
+void taf_first_line(sc_tafref_t taf) {
 	assert(taf_is_valid(taf));
 
 	/* Set current locations to TAF start. */
@@ -587,8 +574,7 @@ taf_first_line(sc_tafref_t taf) {
  * Iterator function, return the next line of data from a TAF, or NULL
  * if no more lines.
  */
-const sc_char *
-taf_next_line(sc_tafref_t taf) {
+const sc_char *taf_next_line(sc_tafref_t taf) {
 	assert(taf_is_valid(taf));
 
 	/* If there is a next line, return it and advance current. */
@@ -622,8 +608,7 @@ taf_next_line(sc_tafref_t taf) {
  *
  * Iterator end function, returns TRUE if more TAF lines are readable.
  */
-sc_bool
-taf_more_lines(sc_tafref_t taf) {
+sc_bool taf_more_lines(sc_tafref_t taf) {
 	assert(taf_is_valid(taf));
 
 	/* Return TRUE if not at TAF data end. */
@@ -638,8 +623,7 @@ taf_more_lines(sc_tafref_t taf) {
  * appended to the TAF file after the game, so this value allows them to
  * be located.
  */
-sc_int
-taf_get_game_data_length(sc_tafref_t taf) {
+sc_int taf_get_game_data_length(sc_tafref_t taf) {
 	assert(taf_is_valid(taf));
 
 	/*
@@ -656,8 +640,7 @@ taf_get_game_data_length(sc_tafref_t taf) {
  *
  * Return the version number of the TAF file, 400, 390, or 380.
  */
-sc_int
-taf_get_version(sc_tafref_t taf) {
+sc_int taf_get_version(sc_tafref_t taf) {
 	assert(taf_is_valid(taf));
 
 	assert(taf->version != TAF_VERSION_NONE);
@@ -673,8 +656,7 @@ taf_get_version(sc_tafref_t taf) {
  * properties debugging, indicating if a given address is a string in a TAF
  * slab, and therefore safe to print.
  */
-sc_bool
-taf_debug_is_taf_string(sc_tafref_t taf, const void *addr) {
+sc_bool taf_debug_is_taf_string(sc_tafref_t taf, const void *addr) {
 	const sc_byte *const addr_ = (const sc_byte * const)addr;
 	sc_int index_;
 
@@ -691,8 +673,7 @@ taf_debug_is_taf_string(sc_tafref_t taf, const void *addr) {
 	return FALSE;
 }
 
-void
-taf_debug_dump(sc_tafref_t taf) {
+void taf_debug_dump(sc_tafref_t taf) {
 	sc_int index_, current_slab, current_offset;
 	assert(taf_is_valid(taf));
 

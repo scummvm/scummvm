@@ -71,11 +71,11 @@ enum {
  * Small tables tying multicharacter tokens strings to tokens.  At present,
  * the string lengths for names are not used.
  */
-typedef struct {
+struct sc_expr_multichar_t {
 	const sc_char *const name;
 	const sc_int length;
 	const sc_int token;
-} sc_expr_multichar_t;
+};
 
 static const sc_expr_multichar_t FUNCTION_TOKENS[] = {
 	{"either", 6, TOK_EITHER},
@@ -103,8 +103,7 @@ static const sc_expr_multichar_t OPERATOR_TOKENS[] = {
  * Multicharacter token table search, returns the matching token, or
  * TOK_NONE if no match.
  */
-static sc_int
-expr_multichar_search(const sc_char *name, const sc_expr_multichar_t *table) {
+static sc_int expr_multichar_search(const sc_char *name, const sc_expr_multichar_t *table) {
 	const sc_expr_multichar_t *entry;
 
 	/* Scan the table for a case-independent full string match. */
@@ -131,8 +130,7 @@ static sc_int expr_current_token = TOK_NONE;
  *
  * Start and wrap up expression string tokenization.
  */
-static void
-expr_tokenize_start(const sc_char *expression) {
+static void expr_tokenize_start(const sc_char *expression) {
 	static sc_bool initialized = FALSE;
 
 	/* On first call only, verify the string lengths in the tables. */
@@ -171,8 +169,7 @@ expr_tokenize_start(const sc_char *expression) {
 	expr_current_token = TOK_NONE;
 }
 
-static void
-expr_tokenize_end(void) {
+static void expr_tokenize_end(void) {
 	/* Deallocate temporary strings, clear expression. */
 	sc_free(expr_temporary);
 	expr_temporary = NULL;
@@ -189,8 +186,7 @@ expr_tokenize_end(void) {
  * Return the next token from the current expression.  The initial token may
  * be adjusted into a unary +/- depending on the value of the previous token.
  */
-static sc_int
-expr_next_token_unadjusted(sc_vartype_t *token_value) {
+static sc_int expr_next_token_unadjusted(sc_vartype_t *token_value) {
 	sc_int c;
 	assert(expr_expression);
 
@@ -334,8 +330,7 @@ expr_next_token_unadjusted(sc_vartype_t *token_value) {
 	}
 }
 
-static sc_int
-expr_next_token(void) {
+static sc_int expr_next_token(void) {
 	sc_int token;
 	sc_vartype_t token_value;
 
@@ -391,8 +386,7 @@ expr_next_token(void) {
  * Return the token value of the current token.  Undefined if the current
  * token is not numeric, an id, or a variable.
  */
-static void
-expr_current_token_value(sc_vartype_t *value) {
+static void expr_current_token_value(sc_vartype_t *value) {
 	/* Quick check that the value is a valid one. */
 	switch (expr_current_token) {
 	case TOK_INTEGER:
@@ -416,10 +410,10 @@ expr_current_token_value(sc_vartype_t *value) {
  * integers and strings, and flags strings for possible garbage collection
  * on parse errors.
  */
-typedef struct {
+struct sc_stack_t {
 	sc_bool is_collectible;
 	sc_vartype_t value;
-} sc_stack_t;
+};
 static sc_stack_t expr_eval_stack[MAX_NESTING_DEPTH];
 static sc_int expr_eval_stack_index = 0;
 
@@ -432,8 +426,7 @@ static sc_var_setref_t expr_varset = NULL;
  * Reset the evaluation stack to an empty state, and register the variables
  * set to use when referencing %...% variables.
  */
-static void
-expr_eval_start(sc_var_setref_t vars) {
+static void expr_eval_start(sc_var_setref_t vars) {
 	expr_eval_stack_index = 0;
 	expr_varset = vars;
 }
@@ -445,8 +438,7 @@ expr_eval_start(sc_var_setref_t vars) {
  * In case of parse error, empty out and free all collectible malloced
  * strings left in the evaluation array.
  */
-static void
-expr_eval_garbage_collect(void) {
+static void expr_eval_garbage_collect(void) {
 	sc_int index_;
 
 	/*
@@ -473,8 +465,7 @@ expr_eval_garbage_collect(void) {
  * for this case, the input string is assumed to be already malloc'ed, and
  * the caller should not subsequently free the string.
  */
-static void
-expr_eval_push_integer(sc_int value) {
+static void expr_eval_push_integer(sc_int value) {
 	if (expr_eval_stack_index >= MAX_NESTING_DEPTH)
 		sc_fatal("expr_eval_push_integer: stack overflow\n");
 
@@ -482,8 +473,7 @@ expr_eval_push_integer(sc_int value) {
 	expr_eval_stack[expr_eval_stack_index++].value.integer = value;
 }
 
-static void
-expr_eval_push_string(const sc_char *value) {
+static void expr_eval_push_string(const sc_char *value) {
 	sc_char *value_copy;
 
 	if (expr_eval_stack_index >= MAX_NESTING_DEPTH)
@@ -496,8 +486,7 @@ expr_eval_push_string(const sc_char *value) {
 	expr_eval_stack[expr_eval_stack_index++].value.mutable_string = value_copy;
 }
 
-static void
-expr_eval_push_alloced_string(sc_char *value) {
+static void expr_eval_push_alloced_string(sc_char *value) {
 	if (expr_eval_stack_index >= MAX_NESTING_DEPTH)
 		sc_fatal("expr_eval_push_alloced_string: stack overflow\n");
 
@@ -513,8 +502,7 @@ expr_eval_push_alloced_string(sc_char *value) {
  * Pop values off the values stack.  Returned strings are malloc'ed copies,
  * and the caller is responsible for freeing them.
  */
-static sc_int
-expr_eval_pop_integer(void) {
+static sc_int expr_eval_pop_integer(void) {
 	if (expr_eval_stack_index == 0)
 		sc_fatal("expr_eval_pop_integer: stack underflow\n");
 
@@ -522,8 +510,7 @@ expr_eval_pop_integer(void) {
 	return expr_eval_stack[--expr_eval_stack_index].value.integer;
 }
 
-static sc_char *
-expr_eval_pop_string(void) {
+static sc_char *expr_eval_pop_string(void) {
 	if (expr_eval_stack_index == 0)
 		sc_fatal("expr_eval_pop_string: stack underflow\n");
 
@@ -538,8 +525,7 @@ expr_eval_pop_string(void) {
  *
  * Return the top of the values stack as the expression result.
  */
-static void
-expr_eval_result(sc_vartype_t *vt_rvalue) {
+static void expr_eval_result(sc_vartype_t *vt_rvalue) {
 	if (expr_eval_stack_index != 1)
 		sc_fatal("expr_eval_result: values stack not completed\n");
 
@@ -555,8 +541,7 @@ expr_eval_result(sc_vartype_t *vt_rvalue) {
  * Return the absolute value of the given sc_int.  Replacement for labs(),
  * avoids tying sc_int to long types too closely.
  */
-static sc_int
-expr_eval_abs(sc_int value) {
+static sc_int expr_eval_abs(sc_int value) {
 	return value < 0 ? -value : value;
 }
 
@@ -569,8 +554,7 @@ static jmp_buf expr_parse_error;
  *
  * Evaluate the effect of a token into the values stack.
  */
-static void
-expr_eval_action(sc_int token) {
+static void expr_eval_action(sc_int token) {
 	sc_vartype_t token_value;
 
 	switch (token) {
@@ -1069,8 +1053,7 @@ static void expr_parse_string_expr(void);
  *
  * Match a token to the lookahead, then advance lookahead.
  */
-static void
-expr_parse_match(sc_int token) {
+static void expr_parse_match(sc_int token) {
 	if (expr_parse_lookahead == token)
 		expr_parse_lookahead = expr_next_token();
 	else {
@@ -1089,10 +1072,10 @@ expr_parse_match(sc_int token) {
  * a list with no operators (although in practice we need to put a TOK_NONE
  * in here since some C compilers won't accept { } as an empty initializer).
  */
-typedef struct {
+struct sc_precedence_entry_t {
 	const sc_int token_count;
 	const sc_int tokens[6];
-} sc_precedence_entry_t;
+};
 #if 0
 /*
  * Conventional (BASIC, C) precedence table for the parser.  Exponentiation
@@ -1136,8 +1119,7 @@ static const sc_precedence_entry_t PRECEDENCE_TABLE[] = {
  * Helper for expr_parse_numeric_element().  Search the token list for the
  * entry passed in, and return TRUE if it contains the given token.
  */
-static int
-expr_parse_contains_token(const sc_precedence_entry_t *entry, sc_int token) {
+static int expr_parse_contains_token(const sc_precedence_entry_t *entry, sc_int token) {
 	sc_bool is_matched;
 	sc_int index_;
 
@@ -1161,8 +1143,7 @@ expr_parse_contains_token(const sc_precedence_entry_t *entry, sc_int token) {
  * to match tokens, then decide whether, and how, to recurse into itself, or
  * whether to parse a highest-precedence factor.
  */
-static void
-expr_parse_numeric_element(sc_int precedence) {
+static void expr_parse_numeric_element(sc_int precedence) {
 	const sc_precedence_entry_t *entry;
 
 	/* See if the level passed in has listed tokens. */
@@ -1195,8 +1176,7 @@ expr_parse_numeric_element(sc_int precedence) {
  *
  * Parse a complete numeric (sub-)expression.
  */
-static void
-expr_parse_numeric_expr(void) {
+static void expr_parse_numeric_expr(void) {
 	/* Call the parser of the lowest precedence operators. */
 	expr_parse_numeric_element(0);
 }
@@ -1207,8 +1187,7 @@ expr_parse_numeric_expr(void) {
  *
  * Parse a numeric expression factor.
  */
-static void
-expr_parse_numeric_factor(void) {
+static void expr_parse_numeric_factor(void) {
 	/* Handle factors based on lookahead token. */
 	switch (expr_parse_lookahead) {
 	/* Handle straightforward factors first. */
@@ -1365,8 +1344,7 @@ expr_parse_numeric_factor(void) {
  *
  * Parse a complete string (sub-)expression.
  */
-static void
-expr_parse_string_expr(void) {
+static void expr_parse_string_expr(void) {
 	/*
 	 * Parse a string factor, then all repeated concatenations.  Because the '+'
 	 * and '&' are context sensitive, we have to invent/translate them into the
@@ -1386,8 +1364,7 @@ expr_parse_string_expr(void) {
  *
  * Parse a string expression factor.
  */
-static void
-expr_parse_string_factor(void) {
+static void expr_parse_string_factor(void) {
 	/* Handle factors based on lookahead token. */
 	switch (expr_parse_lookahead) {
 	/* Handle straightforward factors first. */
@@ -1499,9 +1476,8 @@ expr_parse_string_factor(void) {
  * Parse a string expression into a runtime values stack.  Return the
  * value of the expression.
  */
-static sc_bool
-expr_evaluate_expression(const sc_char *expression, sc_var_setref_t vars,
-                         sc_int assign_type, sc_vartype_t *vt_rvalue) {
+static sc_bool expr_evaluate_expression(const sc_char *expression, sc_var_setref_t vars,
+		sc_int assign_type, sc_vartype_t *vt_rvalue) {
 	assert(assign_type == VAR_INTEGER || assign_type == VAR_STRING);
 
 	/* Reset values stack and start tokenizer. */
@@ -1540,9 +1516,7 @@ expr_evaluate_expression(const sc_char *expression, sc_var_setref_t vars,
  * the return value is malloc'ed, and the caller is responsible for freeing
  * it.
  */
-sc_bool
-expr_eval_numeric_expression(const sc_char *expression,
-                             sc_var_setref_t vars, sc_int *rvalue) {
+sc_bool expr_eval_numeric_expression(const sc_char *expression, sc_var_setref_t vars, sc_int *rvalue) {
 	sc_vartype_t vt_rvalue;
 	sc_bool status;
 	assert(expression && vars && rvalue);
@@ -1554,9 +1528,7 @@ expr_eval_numeric_expression(const sc_char *expression,
 	return status;
 }
 
-sc_bool
-expr_eval_string_expression(const sc_char *expression,
-                            sc_var_setref_t vars, sc_char **rvalue) {
+sc_bool expr_eval_string_expression(const sc_char *expression, sc_var_setref_t vars, sc_char **rvalue) {
 	sc_vartype_t vt_rvalue;
 	sc_bool status;
 	assert(expression && vars && rvalue);

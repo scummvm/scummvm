@@ -37,8 +37,7 @@ static const sc_char NUL = '\0';
  *
  * Return TRUE if the game uses sound or graphics.
  */
-sc_bool
-res_has_sound(sc_gameref_t game) {
+sc_bool res_has_sound(sc_gameref_t game) {
 	const sc_prop_setref_t bundle = gs_get_bundle(game);
 	sc_vartype_t vt_key[2];
 	sc_bool has_sound;
@@ -50,8 +49,7 @@ res_has_sound(sc_gameref_t game) {
 	return has_sound;
 }
 
-sc_bool
-res_has_graphics(sc_gameref_t game) {
+sc_bool res_has_graphics(sc_gameref_t game) {
 	const sc_prop_setref_t bundle = gs_get_bundle(game);
 	sc_vartype_t vt_key[2];
 	sc_bool has_graphics;
@@ -71,21 +69,18 @@ res_has_graphics(sc_gameref_t game) {
  *
  * Convenience functions to set, clear, and compare resource fields.
  */
-static void
-res_set_resource(sc_resourceref_t resource, const sc_char *name,
+static void res_set_resource(sc_resourceref_t resource, const sc_char *name,
                  sc_int offset, sc_int length) {
 	resource->name = name;
 	resource->offset = offset;
 	resource->length = length;
 }
 
-void
-res_clear_resource(sc_resourceref_t resource) {
+void res_clear_resource(sc_resourceref_t resource) {
 	res_set_resource(resource, "", 0, 0);
 }
 
-sc_bool
-res_compare_resource(sc_resourceref_t from, sc_resourceref_t with) {
+sc_bool res_compare_resource(sc_resourceref_t from, sc_resourceref_t with) {
 	return strcmp(from->name, with->name) == 0
 	       && from->offset == with->offset && from->length == with->length;
 }
@@ -103,10 +98,8 @@ res_compare_resource(sc_resourceref_t from, sc_resourceref_t with) {
  * in prop_get), and the partial key is guaranteed to contain at least
  * strlen(partial_format) elements.
  */
-void
-res_handle_resource(sc_gameref_t game,
-                    const sc_char *partial_format,
-                    const sc_vartype_t vt_partial[]) {
+void res_handle_resource(sc_gameref_t game, const sc_char *partial_format,
+		const sc_vartype_t vt_partial[]) {
 	const sc_prop_setref_t bundle = gs_get_bundle(game);
 	sc_vartype_t vt_key[2], *vt_full;
 	sc_int partial_length, resource_start_offset;
@@ -250,8 +243,7 @@ res_handle_resource(sc_gameref_t game,
  * Bring resources into line with the game; called on undo, restart,
  * restore, and so on.
  */
-void
-res_sync_resources(sc_gameref_t game) {
+void res_sync_resources(sc_gameref_t game) {
 	assert(gs_is_game_valid(game));
 
 	/* Deal with any latched sound stop first. */
@@ -307,8 +299,7 @@ res_sync_resources(sc_gameref_t game) {
  * Turn off sound and graphics, and reset the game's tracking of resources in
  * use to match.  Called on game restart or restore.
  */
-void
-res_cancel_resources(sc_gameref_t game) {
+void res_cancel_resources(sc_gameref_t game) {
 	assert(gs_is_game_valid(game));
 
 	/* Request that everything stops and clears. */

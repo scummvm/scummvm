@@ -42,8 +42,7 @@ static sc_bool evt_trace = FALSE;
  *
  * Return TRUE if any task at all matches the given completion state.
  */
-static sc_bool
-evt_any_task_in_state(sc_gameref_t game, sc_bool state) {
+static sc_bool evt_any_task_in_state(sc_gameref_t game, sc_bool state) {
 	sc_int task;
 
 	/* Scan tasks for any whose completion matches input. */
@@ -62,8 +61,7 @@ evt_any_task_in_state(sc_gameref_t game, sc_bool state) {
  *
  * Return TRUE if player is in the right room for event text.
  */
-sc_bool
-evt_can_see_event(sc_gameref_t game, sc_int event) {
+sc_bool evt_can_see_event(sc_gameref_t game, sc_int event) {
 	const sc_prop_setref_t bundle = gs_get_bundle(game);
 	sc_vartype_t vt_key[5];
 	sc_int type;
@@ -102,8 +100,7 @@ evt_can_see_event(sc_gameref_t game, sc_int event) {
  *
  * Move an object from within an event.
  */
-static void
-evt_move_object(sc_gameref_t game, sc_int object, sc_int destination) {
+static void evt_move_object(sc_gameref_t game, sc_int object, sc_int destination) {
 	/* Ignore negative values of object. */
 	if (object >= 0) {
 		if (evt_trace) {
@@ -158,8 +155,7 @@ evt_move_object(sc_gameref_t game, sc_int object, sc_int destination) {
  * comment.  It's arguable if this is a feature or a bug; nevertheless, we
  * can do the same thing here, though it's ugly.
  */
-static sc_bool
-evt_fixup_v390_v380_immediate_restart(sc_gameref_t game, sc_int event) {
+static sc_bool evt_fixup_v390_v380_immediate_restart(sc_gameref_t game, sc_int event) {
 	const sc_prop_setref_t bundle = gs_get_bundle(game);
 	sc_vartype_t vt_key[3];
 	sc_int version;
@@ -195,8 +191,7 @@ evt_fixup_v390_v380_immediate_restart(sc_gameref_t game, sc_int event) {
  *
  * Change an event from WAITING to RUNNING.
  */
-static void
-evt_start_event(sc_gameref_t game, sc_int event) {
+static void evt_start_event(sc_gameref_t game, sc_int event) {
 	const sc_filterref_t filter = gs_get_filter(game);
 	const sc_prop_setref_t bundle = gs_get_bundle(game);
 	sc_vartype_t vt_key[4];
@@ -253,8 +248,7 @@ evt_start_event(sc_gameref_t game, sc_int event) {
  *
  * Return the starter type for an event.
  */
-static sc_int
-evt_get_starter_type(sc_gameref_t game, sc_int event) {
+static sc_int evt_get_starter_type(sc_gameref_t game, sc_int event) {
 	const sc_prop_setref_t bundle = gs_get_bundle(game);
 	sc_vartype_t vt_key[3];
 	sc_int startertype;
@@ -273,8 +267,7 @@ evt_get_starter_type(sc_gameref_t game, sc_int event) {
  *
  * Move an event to FINISHED, or restart it.
  */
-static void
-evt_finish_event(sc_gameref_t game, sc_int event) {
+static void evt_finish_event(sc_gameref_t game, sc_int event) {
 	const sc_filterref_t filter = gs_get_filter(game);
 	const sc_prop_setref_t bundle = gs_get_bundle(game);
 	sc_vartype_t vt_key[4];
@@ -415,16 +408,14 @@ evt_finish_event(sc_gameref_t game, sc_int event) {
  *
  * Return the status of start, pause and resume states of an event.
  */
-static sc_bool
-evt_has_starter_task(sc_gameref_t game, sc_int event) {
+static sc_bool evt_has_starter_task(sc_gameref_t game, sc_int event) {
 	sc_int startertype;
 
 	startertype = evt_get_starter_type(game, event);
 	return startertype == 3;
 }
 
-static sc_bool
-evt_starter_task_is_complete(sc_gameref_t game, sc_int event) {
+static sc_bool evt_starter_task_is_complete(sc_gameref_t game, sc_int event) {
 	const sc_prop_setref_t bundle = gs_get_bundle(game);
 	sc_vartype_t vt_key[3];
 	sc_int task;
@@ -447,8 +438,7 @@ evt_starter_task_is_complete(sc_gameref_t game, sc_int event) {
 	return start;
 }
 
-static sc_bool
-evt_pauser_task_is_complete(sc_gameref_t game, sc_int event) {
+static sc_bool evt_pauser_task_is_complete(sc_gameref_t game, sc_int event) {
 	const sc_prop_setref_t bundle = gs_get_bundle(game);
 	sc_vartype_t vt_key[3];
 	sc_int pausetask;
@@ -474,8 +464,7 @@ evt_pauser_task_is_complete(sc_gameref_t game, sc_int event) {
 	return pause;
 }
 
-static sc_bool
-evt_resumer_task_is_complete(sc_gameref_t game, sc_int event) {
+static sc_bool evt_resumer_task_is_complete(sc_gameref_t game, sc_int event) {
 	const sc_prop_setref_t bundle = gs_get_bundle(game);
 	sc_vartype_t vt_key[3];
 	sc_int resumetask;
@@ -508,8 +497,7 @@ evt_resumer_task_is_complete(sc_gameref_t game, sc_int event) {
  * Print messages and handle resources for the event where we're in mid-event
  * and getting close to some number of turns from its end.
  */
-static void
-evt_handle_preftime_notifications(sc_gameref_t game, sc_int event) {
+static void evt_handle_preftime_notifications(sc_gameref_t game, sc_int event) {
 	const sc_filterref_t filter = gs_get_filter(game);
 	const sc_prop_setref_t bundle = gs_get_bundle(game);
 	sc_vartype_t vt_key[4];
@@ -556,8 +544,7 @@ evt_handle_preftime_notifications(sc_gameref_t game, sc_int event) {
  *
  * Attempt to advance an event by one turn.
  */
-static void
-evt_tick_event(sc_gameref_t game, sc_int event) {
+static void evt_tick_event(sc_gameref_t game, sc_int event) {
 	if (evt_trace) {
 		sc_trace("Event: ticking event %ld: state %ld, time %ld\n", event,
 		         gs_event_state(game, event), gs_event_time(game, event));
@@ -742,8 +729,7 @@ evt_tick_event(sc_gameref_t game, sc_int event) {
  *
  * Attempt to advance each event by one turn.
  */
-void
-evt_tick_events(sc_gameref_t game) {
+void evt_tick_events(sc_gameref_t game) {
 	sc_int event;
 
 	/*
@@ -778,8 +764,7 @@ evt_tick_events(sc_gameref_t game) {
  *
  * Set event tracing on/off.
  */
-void
-evt_debug_trace(sc_bool flag) {
+void evt_debug_trace(sc_bool flag) {
 	evt_trace = flag;
 }
 

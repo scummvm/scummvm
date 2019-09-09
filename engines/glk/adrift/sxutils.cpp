@@ -89,8 +89,7 @@ static void *sx_zero_allocation = &sx_zero_allocation;
  * cleared to zero.  In ANSI/ISO C, zero byte allocations are implementation-
  * defined, so we have to take special care to get predictable behavior.
  */
-void *
-sx_malloc(size_t size) {
+void *sx_malloc(size_t size) {
 	void *allocated;
 
 	if (size == 0)
@@ -106,8 +105,7 @@ sx_malloc(size_t size) {
 	return allocated;
 }
 
-void *
-sx_realloc(void *pointer, size_t size) {
+void *sx_realloc(void *pointer, size_t size) {
 	void *allocated;
 
 	if (size == 0) {
@@ -167,15 +165,13 @@ static const sc_char NUL = '\0';
  *
  * Built in replacements for locale-sensitive libc ctype.h functions.
  */
-static sc_bool
-sx_isspace(sc_char character) {
+static sc_bool sx_isspace(sc_char character) {
 	static const sc_char *const WHITESPACE = "\t\n\v\f\r ";
 
 	return character != NUL && strchr(WHITESPACE, character) != NULL;
 }
 
-static sc_bool
-sx_isprint(sc_char character) {
+static sc_bool sx_isprint(sc_char character) {
 	static const sc_int MIN_PRINTABLE = ' ', MAX_PRINTABLE = '~';
 
 	return character >= MIN_PRINTABLE && character <= MAX_PRINTABLE;
@@ -188,8 +184,7 @@ sx_isprint(sc_char character) {
  * Trim leading and trailing whitespace from a string.  Modifies the string
  * in place, and returns the string address for convenience.
  */
-sc_char *
-sx_trim_string(sc_char *string) {
+sc_char *sx_trim_string(sc_char *string) {
 	sc_int index_;
 	assert(string);
 
@@ -212,8 +207,7 @@ sx_trim_string(sc_char *string) {
  * and convert all non-printing characters to '?'.  Modifies the string in
  * place, and returns the string address for convenience.
  */
-sc_char *
-sx_normalize_string(sc_char *string) {
+sc_char *sx_normalize_string(sc_char *string) {
 	sc_int index_;
 	assert(string);
 

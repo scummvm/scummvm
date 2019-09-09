@@ -44,8 +44,7 @@ static const sc_char *const SEPARATORS = ".,";
  * present, only getdynfromroom() exists.  Returns TRUE if function found
  * and handled.
  */
-static sc_bool
-run_is_task_function(const sc_char *pattern, sc_gameref_t game) {
+static sc_bool run_is_task_function(const sc_char *pattern, sc_gameref_t game) {
 	const sc_prop_setref_t bundle = gs_get_bundle(game);
 	const sc_var_setref_t vars = gs_get_vars(game);
 	sc_vartype_t vt_key[3];
@@ -107,10 +106,11 @@ run_is_task_function(const sc_char *pattern, sc_gameref_t game) {
 
 
 /* Structure used to associate a pattern with a handler function. */
-typedef struct sc_commands_s {
+struct sc_commands_s {
 	const sc_char *const command;
 	sc_bool(*const handler)(sc_gameref_t game);
-} sc_commands_t;
+};
+typedef sc_commands_s sc_commands_t;
 typedef sc_commands_t *sc_commandsref_t;
 
 /* Movement commands for the four point compass. */
@@ -487,8 +487,7 @@ static sc_commands_t STANDARD_COMMANDS[] = {
  * For now, I can't find any better way to try to handle it than to make
  * object acquisition take precedence over game commands.
  */
-static sc_bool
-run_priority_commands(sc_gameref_t game, const sc_char *string) {
+static sc_bool run_priority_commands(sc_gameref_t game, const sc_char *string) {
 	sc_commandsref_t command;
 
 	for (command = PRIORITY_COMMANDS; command->command; command++) {
@@ -502,8 +501,7 @@ run_priority_commands(sc_gameref_t game, const sc_char *string) {
 	return FALSE;
 }
 
-static sc_bool
-run_standard_commands(sc_gameref_t game, const sc_char *string) {
+static sc_bool run_standard_commands(sc_gameref_t game, const sc_char *string) {
 	const sc_prop_setref_t bundle = gs_get_bundle(game);
 	sc_vartype_t vt_key[2];
 	sc_bool eightpointcompass;
@@ -543,8 +541,7 @@ run_standard_commands(sc_gameref_t game, const sc_char *string) {
  *
  * Update the game's current room and status line strings.
  */
-static void
-run_update_status(sc_gameref_t game) {
+static void run_update_status(sc_gameref_t game) {
 	const sc_prop_setref_t bundle = gs_get_bundle(game);
 	const sc_var_setref_t vars = gs_get_vars(game);
 	sc_vartype_t vt_key[2];
@@ -589,8 +586,7 @@ run_update_status(sc_gameref_t game) {
  * directly for printing, rather than the filter, so that it can place its
  * output ahead of buffered printfilter text.
  */
-static void
-run_notify_score_change(sc_gameref_t game) {
+static void run_notify_score_change(sc_gameref_t game) {
 	const sc_gameref_t undo = game->undo;
 	sc_char buffer[32];
 	assert(gs_is_game_valid(undo));
@@ -630,10 +626,8 @@ run_notify_score_change(sc_gameref_t game) {
  * if a task command matches, FALSE otherwise.  Ordinary or reverse commands
  * are selected by 'forwards'.
  */
-static sc_bool
-run_match_task_common(sc_gameref_t game,
-                      sc_int task, const sc_char *string, sc_bool forwards,
-                      sc_bool is_library, sc_bool is_normal) {
+static sc_bool run_match_task_common(sc_gameref_t game, sc_int task, const sc_char *string,
+		sc_bool forwards, sc_bool is_library, sc_bool is_normal) {
 	const sc_prop_setref_t bundle = gs_get_bundle(game);
 	sc_vartype_t vt_key[4];
 	sc_int command_count, command;
@@ -682,10 +676,8 @@ run_match_task_common(sc_gameref_t game,
 	return is_matched;
 }
 
-static sc_bool
-run_match_task_commands(sc_gameref_t game,
-                        sc_int task, const sc_char *string,
-                        sc_bool forwards, sc_bool is_library) {
+static sc_bool run_match_task_commands(sc_gameref_t game, sc_int task,
+		const sc_char *string, sc_bool forwards, sc_bool is_library) {
 	/*
 	 * Match tasks using the normal pattern matcher, with or without any note
 	 * about whether the call is from the library.
@@ -693,9 +685,8 @@ run_match_task_commands(sc_gameref_t game,
 	return run_match_task_common(game, task, string, forwards, is_library, TRUE);
 }
 
-static sc_bool
-run_match_task_functions(sc_gameref_t game,
-                         sc_int task, const sc_char *string, sc_bool forwards) {
+static sc_bool run_match_task_functions(sc_gameref_t game, sc_int task,
+		const sc_char *string, sc_bool forwards) {
 	/* Match tasks against "task command functions". */
 	return run_match_task_common(game, task, string, forwards, FALSE, FALSE);
 }
@@ -713,8 +704,7 @@ run_match_task_functions(sc_gameref_t game,
  * indicates why it fails; such tasks, if run, produce their failure message
  * and don't change state.
  */
-static sc_bool
-run_task_is_unrestricted(sc_gameref_t game, sc_int task) {
+static sc_bool run_task_is_unrestricted(sc_gameref_t game, sc_int task) {
 	sc_bool restrictions_passed;
 	const sc_char *fail_message;
 
@@ -732,8 +722,7 @@ run_task_is_unrestricted(sc_gameref_t game, sc_int task) {
 	return restrictions_passed;
 }
 
-static sc_bool
-run_task_is_loudly_restricted(sc_gameref_t game, sc_int task) {
+static sc_bool run_task_is_loudly_restricted(sc_gameref_t game, sc_int task) {
 	sc_bool restrictions_passed;
 	const sc_char *fail_message;
 
@@ -788,9 +777,8 @@ run_task_is_loudly_restricted(sc_gameref_t game, sc_int task) {
  * library to try to run "get " and "drop " game commands for standard get/drop
  * handlers and get_all/drop_all handlers.  No pressure, then.
  */
-static sc_bool
-run_game_commands_common(sc_gameref_t game, const sc_char *string,
-                         sc_bool include_restrictions, sc_bool is_library) {
+static sc_bool run_game_commands_common(sc_gameref_t game, const sc_char *string,
+		sc_bool include_restrictions, sc_bool is_library) {
 	sc_bool is_matched = FALSE, is_handled = FALSE;
 	sc_bool *is_matching;
 	sc_int task_count, task, direction;
@@ -883,9 +871,8 @@ run_game_commands_common(sc_gameref_t game, const sc_char *string,
 	return is_handled;
 }
 
-static sc_bool
-run_game_commands_in_parser_context(sc_gameref_t game, const sc_char *string,
-                                    sc_bool include_restrictions) {
+static sc_bool run_game_commands_in_parser_context(sc_gameref_t game,
+		const sc_char *string, sc_bool include_restrictions) {
 	/*
 	 * Try game commands, either with or without restrictions, and all full and
 	 * complete parse matching (no special case for game commands that begin
@@ -894,8 +881,7 @@ run_game_commands_in_parser_context(sc_gameref_t game, const sc_char *string,
 	return run_game_commands_common(game, string, include_restrictions, FALSE);
 }
 
-static sc_bool
-run_game_commands_in_library_context(sc_gameref_t game, const sc_char *string) {
+static sc_bool run_game_commands_in_library_context(sc_gameref_t game, const sc_char *string) {
 	/*
 	 * Try game commands, including restrictions, and noting that this is a
 	 * library call so that the parse matcher can exclude game commands that
@@ -912,8 +898,7 @@ run_game_commands_in_library_context(sc_gameref_t game, const sc_char *string) {
  * "task command functions".  These seem to happen in addition to any regular
  * command matches, so we try them as a separate action.
  */
-static void
-run_game_functions(sc_gameref_t game, const sc_char *string) {
+static void run_game_functions(sc_gameref_t game, const sc_char *string) {
 	sc_int task_count, task, direction;
 
 	/* Iterate over every task, ignoring those not runnable. */
@@ -947,8 +932,7 @@ run_game_functions(sc_gameref_t game, const sc_char *string) {
  * main user input handling loop; the latter by the library when looking for
  * game commands that override standard actions.
  */
-static sc_bool
-run_all_commands(sc_gameref_t game, const sc_char *string) {
+static sc_bool run_all_commands(sc_gameref_t game, const sc_char *string) {
 	const sc_prop_setref_t bundle = gs_get_bundle(game);
 	sc_bool status;
 
@@ -1009,8 +993,7 @@ run_all_commands(sc_gameref_t game, const sc_char *string) {
 	return status;
 }
 
-sc_bool
-run_game_task_commands(sc_gameref_t game, const sc_char *string) {
+sc_bool run_game_task_commands(sc_gameref_t game, const sc_char *string) {
 	return run_game_commands_in_library_context(game, string);
 }
 
@@ -1032,8 +1015,7 @@ run_game_task_commands(sc_gameref_t game, const sc_char *string) {
  * this is a signal to reset all noted line input to initial conditions, and
  * just return.  Sorry about the ugliness.
  */
-static sc_bool
-run_player_input(sc_gameref_t game) {
+static sc_bool run_player_input(sc_gameref_t game) {
 	static sc_char line_buffer[LINE_BUFFER_SIZE];
 	static sc_char prior_element[LINE_BUFFER_SIZE];
 	static sc_char line_element[LINE_BUFFER_SIZE];
@@ -1254,8 +1236,7 @@ run_player_input(sc_gameref_t game) {
  *
  * Main interpreter loop.
  */
-static void
-run_main_loop(sc_gameref_t game) {
+static void run_main_loop(sc_gameref_t game) {
 	const sc_filterref_t filter = gs_get_filter(game);
 	const sc_var_setref_t vars = gs_get_vars(game);
 	const sc_prop_setref_t bundle = gs_get_bundle(game);
@@ -1436,8 +1417,7 @@ run_main_loop(sc_gameref_t game) {
  *
  * Create a game context from a callback.
  */
-sc_gameref_t
-run_create(sc_read_callbackref_t callback, void *opaque) {
+sc_gameref_t run_create(sc_read_callbackref_t callback, void *opaque) {
 	sc_tafref_t taf;
 	sc_prop_setref_t bundle;
 	sc_var_setref_t vars, temporary_vars, undo_vars;
@@ -1502,8 +1482,7 @@ run_create(sc_read_callbackref_t callback, void *opaque) {
  *
  * Return a game context to initial states to restart a game.
  */
-static void
-run_restart_handler(sc_gameref_t game) {
+static void run_restart_handler(sc_gameref_t game) {
 	const sc_filterref_t filter = gs_get_filter(game);
 	const sc_prop_setref_t bundle = gs_get_bundle(game);
 	sc_gameref_t new_game;
@@ -1548,8 +1527,7 @@ run_restart_handler(sc_gameref_t game) {
  *
  * Adjust a game context for continuation after restoring a game.
  */
-static void
-run_restore_handler(sc_gameref_t game) {
+static void run_restore_handler(sc_gameref_t game) {
 	/* Invalidate the undo buffer. */
 	game->undo_available = FALSE;
 
@@ -1570,8 +1548,7 @@ run_restore_handler(sc_gameref_t game) {
  *
  * Tidy up printfilter and input statics on game quit.
  */
-static void
-run_quit_handler(sc_gameref_t game) {
+static void run_quit_handler(sc_gameref_t game) {
 	const sc_filterref_t filter = gs_get_filter(game);
 	const sc_var_setref_t vars = gs_get_vars(game);
 	const sc_prop_setref_t bundle = gs_get_bundle(game);
@@ -1597,8 +1574,7 @@ run_quit_handler(sc_gameref_t game) {
  *
  * Intepret the game in a game context.
  */
-void
-run_interpret(sc_gameref_t game) {
+void run_interpret(sc_gameref_t game) {
 	assert(gs_is_game_valid(game));
 
 	/* Verify the game is not already running, and is runnable. */
@@ -1652,8 +1628,7 @@ run_interpret(sc_gameref_t game) {
  *
  * Destroy a game context, and free all resources.
  */
-void
-run_destroy(sc_gameref_t game) {
+void run_destroy(sc_gameref_t game) {
 	assert(gs_is_game_valid(game));
 
 	/* Can't destroy the context of a running game. */
@@ -1706,8 +1681,7 @@ run_destroy(sc_gameref_t game) {
  * Quits a running game.  This function calls a longjump to act as if
  * run_main_loop() returned, and so never returns to its caller.
  */
-void
-run_quit(sc_gameref_t game) {
+void run_quit(sc_gameref_t game) {
 	assert(gs_is_game_valid(game));
 
 	/* Disallow quitting a non-running game. */
@@ -1730,8 +1704,7 @@ run_quit(sc_gameref_t game) {
  * function calls a longjump to act as if run_main_loop() returned, and so
  * never returns to its caller.  For stopped games, it returns.
  */
-void
-run_restart(sc_gameref_t game) {
+void run_restart(sc_gameref_t game) {
 	assert(gs_is_game_valid(game));
 
 	/*
@@ -1757,16 +1730,14 @@ run_restart(sc_gameref_t game) {
  *
  * Saves either a running or a stopped game.
  */
-void
-run_save(sc_gameref_t game, sc_write_callbackref_t callback, void *opaque) {
+void run_save(sc_gameref_t game, sc_write_callbackref_t callback, void *opaque) {
 	assert(gs_is_game_valid(game));
 	assert(callback);
 
 	ser_save_game(game, callback, opaque);
 }
 
-sc_bool
-run_save_prompted(sc_gameref_t game) {
+sc_bool run_save_prompted(sc_gameref_t game) {
 	assert(gs_is_game_valid(game));
 
 	return ser_save_game_prompted(game);
@@ -1784,9 +1755,7 @@ run_save_prompted(sc_gameref_t game) {
  * restore, and for stopped games, they will return, with TRUE if successful,
  * FALSE if restore failed.
  */
-static sc_bool
-run_restore_common(sc_gameref_t game,
-                   sc_read_callbackref_t callback, void *opaque) {
+static sc_bool run_restore_common(sc_gameref_t game, sc_read_callbackref_t callback, void *opaque) {
 	sc_bool is_running, status;
 
 	/*
@@ -1817,16 +1786,14 @@ run_restore_common(sc_gameref_t game,
 	return status;
 }
 
-sc_bool
-run_restore(sc_gameref_t game, sc_read_callbackref_t callback, void *opaque) {
+sc_bool run_restore(sc_gameref_t game, sc_read_callbackref_t callback, void *opaque) {
 	assert(gs_is_game_valid(game));
 	assert(callback);
 
 	return run_restore_common(game, callback, opaque);
 }
 
-sc_bool
-run_restore_prompted(sc_gameref_t game) {
+sc_bool run_restore_prompted(sc_gameref_t game) {
 	assert(gs_is_game_valid(game));
 
 	return run_restore_common(game, NULL, NULL);
@@ -1839,8 +1806,7 @@ run_restore_prompted(sc_gameref_t game) {
  * Undo a turn in either a running or a stopped game.  Returns TRUE on
  * successful undo, FALSE if no undo buffer is available.
  */
-sc_bool
-run_undo(sc_gameref_t game) {
+sc_bool run_undo(sc_gameref_t game) {
 	const sc_memo_setref_t memento = gs_get_memento(game);
 	sc_bool is_running;
 	assert(gs_is_game_valid(game));
@@ -1896,8 +1862,7 @@ run_undo(sc_gameref_t game) {
  *
  * Query the game running state.
  */
-sc_bool
-run_is_running(sc_gameref_t game) {
+sc_bool run_is_running(sc_gameref_t game) {
 	assert(gs_is_game_valid(game));
 
 	return game->is_running;
@@ -1910,8 +1875,7 @@ run_is_running(sc_gameref_t game) {
  * Query the game completion state.  Completed games cannot be resumed,
  * since they've run the exit task and thus have nowhere to go.
  */
-sc_bool
-run_has_completed(sc_gameref_t game) {
+sc_bool run_has_completed(sc_gameref_t game) {
 	assert(gs_is_game_valid(game));
 
 	return game->has_completed;
@@ -1923,8 +1887,7 @@ run_has_completed(sc_gameref_t game) {
  *
  * Query the game turn undo buffer and memo availability.
  */
-sc_bool
-run_is_undo_available(sc_gameref_t game) {
+sc_bool run_is_undo_available(sc_gameref_t game) {
 	const sc_memo_setref_t memento = gs_get_memento(game);
 	assert(gs_is_game_valid(game));
 
@@ -1938,15 +1901,10 @@ run_is_undo_available(sc_gameref_t game) {
  *
  * Get and set selected game attributes.
  */
-void
-run_get_attributes(sc_gameref_t game,
-                   const sc_char **game_name, const sc_char **game_author,
-                   const sc_char **game_compile_date,
-                   sc_int *turns, sc_int *score, sc_int *max_score,
-                   const sc_char **current_room_name,
-                   const sc_char **status_line, const sc_char **preferred_font,
-                   sc_bool *bold_room_names, sc_bool *verbose,
-                   sc_bool *notify_score_change) {
+void run_get_attributes(sc_gameref_t game, const sc_char **game_name, const sc_char **game_author,
+		const sc_char **game_compile_date, sc_int *turns, sc_int *score, sc_int *max_score,
+		const sc_char **current_room_name, const sc_char **status_line, const sc_char **preferred_font,
+		sc_bool *bold_room_names, sc_bool *verbose, sc_bool *notify_score_change) {
 	const sc_prop_setref_t bundle = gs_get_bundle(game);
 	const sc_var_setref_t vars = gs_get_vars(game);
 	sc_vartype_t vt_key[2];
@@ -2022,10 +1980,8 @@ run_get_attributes(sc_gameref_t game,
 		*notify_score_change = game->notify_score_change;
 }
 
-void
-run_set_attributes(sc_gameref_t game,
-                   sc_bool bold_room_names, sc_bool verbose,
-                   sc_bool notify_score_change) {
+void run_set_attributes(sc_gameref_t game, sc_bool bold_room_names, sc_bool verbose,
+		sc_bool notify_score_change) {
 	assert(gs_is_game_valid(game));
 
 	/* Set game options. */
@@ -2044,8 +2000,7 @@ run_set_attributes(sc_gameref_t game,
  * the token passed in and out is a pointer, and readily made opaque to
  * the client as a void*.
  */
-sc_hintref_t
-run_hint_iterate(sc_gameref_t game, sc_hintref_t hint) {
+sc_hintref_t run_hint_iterate(sc_gameref_t game, sc_hintref_t hint) {
 	sc_int task;
 	assert(gs_is_game_valid(game));
 
@@ -2091,9 +2046,8 @@ run_hint_iterate(sc_gameref_t game, sc_hintref_t hint) {
  *
  * Hint strings are NULL if empty (not defined by the game).
  */
-static const sc_char *
-run_get_hint_common(sc_gameref_t game, sc_hintref_t hint,
-                    const sc_char * (*handler)(sc_gameref_t, sc_int)) {
+static const sc_char *run_get_hint_common(sc_gameref_t game, sc_hintref_t hint,
+		const sc_char * (*handler)(sc_gameref_t, sc_int)) {
 	const sc_prop_setref_t bundle = gs_get_bundle(game);
 	const sc_var_setref_t vars = gs_get_vars(game);
 	sc_int task;
@@ -2129,18 +2083,15 @@ run_get_hint_common(sc_gameref_t game, sc_hintref_t hint,
 	return game->hint_text;
 }
 
-const sc_char *
-run_get_hint_question(sc_gameref_t game, sc_hintref_t hint) {
+const sc_char *run_get_hint_question(sc_gameref_t game, sc_hintref_t hint) {
 	return run_get_hint_common(game, hint, task_get_hint_question);
 }
 
-const sc_char *
-run_get_subtle_hint(sc_gameref_t game, sc_hintref_t hint) {
+const sc_char *run_get_subtle_hint(sc_gameref_t game, sc_hintref_t hint) {
 	return run_get_hint_common(game, hint, task_get_hint_subtle);
 }
 
-const sc_char *
-run_get_unsubtle_hint(sc_gameref_t game, sc_hintref_t hint) {
+const sc_char *run_get_unsubtle_hint(sc_gameref_t game, sc_hintref_t hint) {
 	return run_get_hint_common(game, hint, task_get_hint_unsubtle);
 }
 

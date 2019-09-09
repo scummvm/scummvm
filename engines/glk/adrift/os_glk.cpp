@@ -62,23 +62,20 @@ namespace Adrift {
 static const glui32 GSC_PORT_VERSION = 0x00010310;
 
 /* Two windows, one for the main text, and one for a status line. */
-static winid_t gsc_main_window = nullptr,
-               gsc_status_window = nullptr;
+static winid_t gsc_main_window = nullptr, gsc_status_window = nullptr;
 
 /*
  * Transcript stream and input log.  These are nullptr if there is no current
  * collection of these strings.
  */
-static strid_t gsc_transcript_stream = nullptr,
-               gsc_inputlog_stream = nullptr;
+static strid_t gsc_transcript_stream = nullptr, gsc_inputlog_stream = nullptr;
 
 /* Input read log stream, for reading back an input log. */
 static strid_t gsc_readlog_stream = nullptr;
 
 /* Options that may be turned off or set by command line flags. */
-static int gsc_commands_enabled = TRUE,
-           gsc_abbreviations_enabled = TRUE,
-           gsc_unicode_enabled = TRUE;
+static int gsc_commands_enabled = TRUE, gsc_abbreviations_enabled = TRUE,
+	gsc_unicode_enabled = TRUE;
 
 /* Adrift game to interpret. */
 static sc_game gsc_game = nullptr;
@@ -86,7 +83,7 @@ static sc_game gsc_game = nullptr;
 /* Special out-of-band os_confirm() options used locally with os_glk. */
 static const sc_int GSC_CONF_SUBTLE_HINT = INT_MAX,
                     GSC_CONF_UNSUBTLE_HINT = INT_MAX - 1,
-                    GSC_CONF_CONTINUE_HINTS = INT_MAX - 2;
+                   GSC_CONF_CONTINUE_HINTS = INT_MAX - 2;
 
 /* Forward declaration of event wait functions, and a short delay. */
 static void gsc_event_wait_2(glui32 wait_type_1,
@@ -105,8 +102,7 @@ static void gsc_short_delay();
  * Fatal error handler.  The function returns, expecting the caller to
  * abort() or otherwise handle the error.
  */
-static void
-gsc_fatal(const char *string) {
+static void gsc_fatal(const char *string) {
 	/*
 	 * If the failure happens too early for us to have a window, print
 	 * the message to stderr.
@@ -136,8 +132,7 @@ gsc_fatal(const char *string) {
  *
  * Non-failing malloc; call gsc_fatal and exit if memory allocation fails.
  */
-static void *
-gsc_malloc(size_t size) {
+static void *gsc_malloc(size_t size) {
 	void *pointer;
 
 	pointer = malloc(size > 0 ? size : 1);
@@ -166,20 +161,20 @@ static const glui32 GSC_ISO_8859_EQUIVALENCE = 256;
  * codepages where they're not (dingbats, for example).
  */
 enum { GSC_TABLE_SIZE = 256 };
-typedef struct {
+struct gsc_codepages_t {
 	const glui32 unicode[GSC_TABLE_SIZE];
 	const sc_char *const ascii[GSC_TABLE_SIZE];
-} gsc_codepages_t;
+};
 
 /*
  * Locale contains a name and a pair of codepage structures, a main one and
  * an alternate.  The latter is intended for monospaced output.
  */
-typedef struct {
+struct gsc_locale_t {
 	const sc_char *const name;
 	const gsc_codepages_t main;
 	const gsc_codepages_t alternate;
-} gsc_locale_t;
+};
 
 
 /*
@@ -513,8 +508,7 @@ static const gsc_locale_t *const gsc_fallback_locale = &GSC_LATIN1_LOCALE;
  *
  * Set a locale explicitly from the name passed in.
  */
-static void
-gsc_set_locale(const sc_char *name) {
+static void gsc_set_locale(const sc_char *name) {
 	const gsc_locale_t *matched = nullptr;
 	const gsc_locale_t *const *iterator;
 	assert(name);
@@ -544,8 +538,7 @@ gsc_set_locale(const sc_char *name) {
  * Wrapper around g_vm->glk_put_char_uni().  Handles, inelegantly, the problem of
  * having to write transcripts as ascii.
  */
-static void
-gsc_put_char_uni(glui32 unicode, const char *ascii) {
+static void gsc_put_char_uni(glui32 unicode, const char *ascii) {
 	/* If there is an transcript stream, temporarily disconnect it. */
 	if (gsc_transcript_stream)
 		g_vm->glk_window_set_echo_stream(gsc_main_window, nullptr);
@@ -570,9 +563,7 @@ gsc_put_char_uni(glui32 unicode, const char *ascii) {
  * Write a single character using the supplied locale.  Select either the
  * main or the alternate codepage depending on the flag passed in.
  */
-static void
-gsc_put_char_locale(sc_char ch,
-                    const gsc_locale_t *locale, sc_bool is_alternate) {
+static void gsc_put_char_locale(sc_char ch, const gsc_locale_t *locale, sc_bool is_alternate) {
 	const gsc_codepages_t *codepage;
 	unsigned char character;
 	glui32 unicode;
@@ -657,47 +648,40 @@ gsc_put_char_locale(sc_char ch,
  *
  * Public functions for writing using the current or fallback locale.
  */
-static void
-gsc_put_char(const sc_char character) {
+static void gsc_put_char(const sc_char character) {
 	const gsc_locale_t *locale;
 
 	locale = gsc_locale ? gsc_locale : gsc_fallback_locale;
 	gsc_put_char_locale(character, locale, FALSE);
 }
 
-static void
-gsc_put_char_alternate(const sc_char character) {
+static void gsc_put_char_alternate(const sc_char character) {
 	const gsc_locale_t *locale;
 
 	locale = gsc_locale ? gsc_locale : gsc_fallback_locale;
 	gsc_put_char_locale(character, locale, TRUE);
 }
 
-static void
-gsc_put_buffer_using(const sc_char *buffer,
-                     sc_int length, void (*putchar_function)(sc_char)) {
+static void gsc_put_buffer_using(const sc_char *buffer, sc_int length, void (*putchar_function)(sc_char)) {
 	sc_int index_;
 
 	for (index_ = 0; index_ < length; index_++)
 		putchar_function(buffer[index_]);
 }
 
-static void
-gsc_put_buffer(const sc_char *buffer, sc_int length) {
+static void gsc_put_buffer(const sc_char *buffer, sc_int length) {
 	assert(buffer);
 
 	gsc_put_buffer_using(buffer, length, gsc_put_char);
 }
 
-static void
-gsc_put_string(const sc_char *string) {
+static void gsc_put_string(const sc_char *string) {
 	assert(string);
 
 	gsc_put_buffer_using(string, strlen(string), gsc_put_char);
 }
 
-static void
-gsc_put_string_alternate(const sc_char *string) {
+static void gsc_put_string_alternate(const sc_char *string) {
 	assert(string);
 
 	gsc_put_buffer_using(string, strlen(string), gsc_put_char_alternate);
@@ -712,8 +696,7 @@ gsc_put_string_alternate(const sc_char *string) {
  * reverse translations in line input.  Returns '?' if there is no translation
  * available.
  */
-static sc_char
-gsc_unicode_to_locale(glui32 unicode, const gsc_locale_t *locale) {
+static sc_char gsc_unicode_to_locale(glui32 unicode, const gsc_locale_t *locale) {
 	const gsc_codepages_t *codepage;
 	sc_int character;
 
@@ -733,9 +716,8 @@ gsc_unicode_to_locale(glui32 unicode, const gsc_locale_t *locale) {
 	return character < GSC_TABLE_SIZE ? (sc_char) character : '?';
 }
 
-static void
-gsc_unicode_buffer_to_locale(const glui32 *unicode, sc_int length,
-                             sc_char *buffer, const gsc_locale_t *locale) {
+static void gsc_unicode_buffer_to_locale(const glui32 *unicode, sc_int length,
+		sc_char *buffer, const gsc_locale_t *locale) {
 	sc_int index_;
 
 	for (index_ = 0; index_ < length; index_++)
@@ -749,9 +731,7 @@ gsc_unicode_buffer_to_locale(const glui32 *unicode, sc_int length,
  * Read in a line and translate out of the given locale.  Returns the count
  * of characters placed in the buffer.
  */
-static sc_int
-gsc_read_line_locale(sc_char *buffer,
-                     sc_int length, const gsc_locale_t *locale) {
+static sc_int gsc_read_line_locale(sc_char *buffer, sc_int length, const gsc_locale_t *locale) {
 	event_t event;
 
 	/*
@@ -791,8 +771,7 @@ gsc_read_line_locale(sc_char *buffer,
  *
  * Public function for reading using the current or fallback locale.
  */
-static sc_int
-gsc_read_line(sc_char *buffer, sc_int length) {
+static sc_int gsc_read_line(sc_char *buffer, sc_int length) {
 	const gsc_locale_t *locale;
 
 	locale = gsc_locale ? gsc_locale : gsc_fallback_locale;
@@ -824,8 +803,7 @@ static const sc_char *const GSC_WHITESPACE = "\t\n\v\f\r ";
  * Return TRUE if string is non-null, not zero-length or contains characters
  * other than whitespace.
  */
-static sc_bool
-gsc_is_string_usable(const sc_char *string) {
+static sc_bool gsc_is_string_usable(const sc_char *string) {
 	/* If non-null, scan for any non-space character. */
 	if (string) {
 		sc_int index_;
@@ -847,8 +825,7 @@ gsc_is_string_usable(const sc_char *string) {
  * Update the status line from the current game state.  This is for windowing
  * Glk libraries.
  */
-static void
-gsc_status_update() {
+static void gsc_status_update() {
 	glui32 width, height;
 	uint index;
 	assert(gsc_status_window);
@@ -913,8 +890,7 @@ gsc_status_update() {
  * Helper for gsc_status_print(), concatenates strings only up to the
  * available length.
  */
-static void
-gsc_status_safe_strcat(char *dest, size_t length, const char *src) {
+static void gsc_status_safe_strcat(char *dest, size_t length, const char *src) {
 	size_t available, src_length;
 
 	/* Append only as many characters as will fit. */
@@ -932,8 +908,7 @@ gsc_status_safe_strcat(char *dest, size_t length, const char *src) {
  * main window, if it has changed since the last call.  This is for non-
  * windowing Glk libraries.
  */
-static void
-gsc_status_print() {
+static void gsc_status_print() {
 	static char current_status[GSC_STATUS_BUFFER_LENGTH + 1];
 
 	const sc_char *room;
@@ -980,8 +955,7 @@ gsc_status_print() {
  * Front end function for updating status.  Either updates the status window
  * or prints the status line to the main window.
  */
-static void
-gsc_status_notify() {
+static void gsc_status_notify() {
 	if (gsc_status_window)
 		gsc_status_update();
 	else
@@ -996,8 +970,7 @@ gsc_status_notify() {
  * This function should be called on the appropriate Glk window resize and
  * arrange events.
  */
-static void
-gsc_status_redraw() {
+static void gsc_status_redraw() {
 	if (gsc_status_window) {
 		winid_t parent;
 
@@ -1031,10 +1004,10 @@ static int gsc_help_requested = FALSE,
            gsc_help_hints_silenced = FALSE;
 
 /* Font descriptor type, encapsulating size and monospaced boolean. */
-typedef struct {
+struct gsc_font_size_t {
 	sc_bool is_monospaced;
 	sc_int size;
-} gsc_font_size_t;
+};
 
 /* Font stack and attributes for nesting tags. */
 enum { GSC_MAX_STYLE_NESTING = 32 };
@@ -1070,18 +1043,15 @@ static const glui32 GSC_CANCEL_WAIT_1 = ' ',
  * Register a request for help, and print a note of how to get Glk command
  * help from the interpreter unless silenced.
  */
-static void
-gsc_output_register_help_request() {
+static void gsc_output_register_help_request() {
 	gsc_help_requested = TRUE;
 }
 
-static void
-gsc_output_silence_help_hints() {
+static void gsc_output_silence_help_hints() {
 	gsc_help_hints_silenced = TRUE;
 }
 
-static void
-gsc_output_provide_help_hint() {
+static void gsc_output_provide_help_hint() {
 	if (gsc_help_requested && !gsc_help_hints_silenced) {
 		g_vm->glk_set_style(style_Emphasized);
 		g_vm->glk_put_string("[Try 'glk help' for help on special interpreter"
@@ -1160,8 +1130,7 @@ static void gsc_set_glk_style() {
  * Push the settings of a font tag onto the font stack, and pop on end of
  * font tag.  Set the appropriate Glk style.
  */
-static void
-gsc_handle_font_tag(const sc_char *argument) {
+static void gsc_handle_font_tag(const sc_char *argument) {
 	/* Ignore the call on stack overrun. */
 	if (gsc_font_index < GSC_MAX_STYLE_NESTING) {
 		sc_char *lower, *face, *size;
@@ -1222,8 +1191,7 @@ gsc_handle_font_tag(const sc_char *argument) {
 	}
 }
 
-static void
-gsc_handle_endfont_tag() {
+static void gsc_handle_endfont_tag() {
 	/* Unless underrun, pop the font stack and set Glk style. */
 	if (gsc_font_index > 0) {
 		gsc_font_index--;
@@ -1238,8 +1206,7 @@ gsc_handle_endfont_tag() {
  * Increment the required attribute nesting counter, or decrement on end
  * tag.  Set the appropriate Glk style.
  */
-static void
-gsc_handle_attribute_tag(sc_int tag) {
+static void gsc_handle_attribute_tag(sc_int tag) {
 	/*
 	 * Increment the required attribute nesting counter, and set Glk style.
 	 */
@@ -1262,8 +1229,7 @@ gsc_handle_attribute_tag(sc_int tag) {
 	gsc_set_glk_style();
 }
 
-static void
-gsc_handle_endattribute_tag(sc_int tag) {
+static void gsc_handle_endattribute_tag(sc_int tag) {
 	/*
 	 * Decrement the required attribute nesting counter, unless underrun, and
 	 * set Glk style.
@@ -1356,8 +1322,7 @@ static void gsc_handle_wait_tag(const sc_char *argument) {
  * Drop all stacked fonts and nested attributes, and return to normal Glk
  * style.
  */
-static void
-gsc_reset_glk_style() {
+static void gsc_reset_glk_style() {
 	/* Reset the font stack and attributes, and set a normal style. */
 	gsc_font_index = 0;
 	gsc_attribute_bold = 0;
@@ -1374,8 +1339,7 @@ gsc_reset_glk_style() {
  * Interpret selected Adrift output control tags.  Not all are implemented
  * here; several are ignored.
  */
-void
-os_print_tag(sc_int tag, const sc_char *argument) {
+void os_print_tag(sc_int tag, const sc_char *argument) {
 	event_t event;
 	assert(argument);
 
@@ -1495,8 +1459,7 @@ void os_print_string(const sc_char *string) {
  * Debugging output goes to the main Glk window -- no special effects or
  * dedicated debugging window attempted.
  */
-void
-os_print_string_debug(const sc_char *string) {
+void os_print_string_debug(const sc_char *string) {
 	assert(string);
 	assert(g_vm->glk_stream_get_current());
 
@@ -1516,8 +1479,7 @@ os_print_string_debug(const sc_char *string) {
  * Convenience functions to print strings in assorted styles.  A standout
  * string is one that hints that it's from the interpreter, not the game.
  */
-static void
-gsc_styled_string(glui32 style, const char *message) {
+static void gsc_styled_string(glui32 style, const char *message) {
 	assert(message);
 
 	g_vm->glk_set_style(style);
@@ -1525,8 +1487,7 @@ gsc_styled_string(glui32 style, const char *message) {
 	g_vm->glk_set_style(style_Normal);
 }
 
-static void
-gsc_styled_char(glui32 style, char c) {
+static void gsc_styled_char(glui32 style, char c) {
 	char buffer[2];
 
 	buffer[0] = c;
@@ -1534,28 +1495,23 @@ gsc_styled_char(glui32 style, char c) {
 	gsc_styled_string(style, buffer);
 }
 
-static void
-gsc_standout_string(const char *message) {
+static void gsc_standout_string(const char *message) {
 	gsc_styled_string(style_Emphasized, message);
 }
 
-static void
-gsc_standout_char(char c) {
+static void gsc_standout_char(char c) {
 	gsc_styled_char(style_Emphasized, c);
 }
 
-static void
-gsc_normal_string(const char *message) {
+static void gsc_normal_string(const char *message) {
 	gsc_styled_string(style_Normal, message);
 }
 
-static void
-gsc_normal_char(char c) {
+static void gsc_normal_char(char c) {
 	gsc_styled_char(style_Normal, c);
 }
 
-static void
-gsc_header_string(const char *message) {
+static void gsc_header_string(const char *message) {
 	gsc_styled_string(style_Header, message);
 }
 
@@ -1567,8 +1523,7 @@ gsc_header_string(const char *message) {
  * hints at all, and those that do are usually sparse in what they hint at, so
  * it's sort of good enough for the moment.
  */
-void
-os_display_hints(sc_game game) {
+void os_display_hints(sc_game game) {
 	sc_game_hint hint;
 	sc_int refused;
 
@@ -1628,9 +1583,7 @@ os_display_hints(sc_game game) {
  *
  * Stub functions.  The unused variables defeat gcc warnings.
  */
-void
-os_play_sound(const sc_char *filepath,
-              sc_int offset, sc_int length, sc_bool is_looping) {
+void os_play_sound(const sc_char *filepath, sc_int offset, sc_int length, sc_bool is_looping) {
 	const sc_char *unused1;
 	sc_int unused2, unused3;
 	sc_bool unused4;
@@ -1640,8 +1593,7 @@ os_play_sound(const sc_char *filepath,
 	unused4 = is_looping;
 }
 
-void
-os_stop_sound() {
+void os_stop_sound() {
 }
 
 
@@ -1659,8 +1611,7 @@ os_stop_sound() {
 #ifdef LINUX_GRAPHICS
 static int gsclinux_graphics_enabled = TRUE;
 static char *gsclinux_game_file = nullptr;
-void
-os_show_graphic(const sc_char *filepath, sc_int offset, sc_int length) {
+void os_show_graphic(const sc_char *filepath, sc_int offset, sc_int length) {
 	const sc_char *unused1;
 	unused1 = filepath;
 
@@ -1687,8 +1638,7 @@ os_show_graphic(const sc_char *filepath, sc_int offset, sc_int length) {
 	}
 }
 #else
-void
-os_show_graphic(const sc_char *filepath, sc_int offset, sc_int length) {
+void os_show_graphic(const sc_char *filepath, sc_int offset, sc_int length) {
 	const sc_char *unused1;
 	sc_int unused2, unused3;
 	unused1 = filepath;
@@ -1707,8 +1657,7 @@ os_show_graphic(const sc_char *filepath, sc_int offset, sc_int length) {
  *
  * Turn game output scripting (logging) on and off.
  */
-static void
-gsc_command_script(const char *argument) {
+static void gsc_command_script(const char *argument) {
 	assert(argument);
 
 	if (sc_strcasecmp(argument, "on") == 0) {
@@ -1775,8 +1724,7 @@ gsc_command_script(const char *argument) {
  *
  * Turn game input logging on and off.
  */
-static void
-gsc_command_inputlog(const char *argument) {
+static void gsc_command_inputlog(const char *argument) {
 	assert(argument);
 
 	if (sc_strcasecmp(argument, "on") == 0) {
@@ -1839,8 +1787,7 @@ gsc_command_inputlog(const char *argument) {
  *
  * Set the game input log, to read input from a file.
  */
-static void
-gsc_command_readlog(const char *argument) {
+static void gsc_command_readlog(const char *argument) {
 	assert(argument);
 
 	if (sc_strcasecmp(argument, "on") == 0) {
@@ -1908,8 +1855,7 @@ gsc_command_readlog(const char *argument) {
  *
  * Turn abbreviation expansions on and off.
  */
-static void
-gsc_command_abbreviations(const char *argument) {
+static void gsc_command_abbreviations(const char *argument) {
 	assert(argument);
 
 	if (sc_strcasecmp(argument, "on") == 0) {
@@ -1954,8 +1900,7 @@ gsc_command_abbreviations(const char *argument) {
  *
  * Print out the Glk library version number.
  */
-static void
-gsc_command_print_version_number(glui32 version) {
+static void gsc_command_print_version_number(glui32 version) {
 	char buffer[64];
 
 	sprintf(buffer, "%lu.%lu.%lu",
@@ -1965,8 +1910,7 @@ gsc_command_print_version_number(glui32 version) {
 	gsc_normal_string(buffer);
 }
 
-static void
-gsc_command_version(const char *argument) {
+static void gsc_command_version(const char *argument) {
 	glui32 version;
 	assert(argument);
 
@@ -1987,8 +1931,7 @@ gsc_command_version(const char *argument) {
  * Turn command escapes off.  Once off, there's no way to turn them back on.
  * Commands must be on already to enter this function.
  */
-static void
-gsc_command_commands(const char *argument) {
+static void gsc_command_commands(const char *argument) {
 	assert(argument);
 
 	if (sc_strcasecmp(argument, "on") == 0) {
@@ -2021,8 +1964,7 @@ gsc_command_commands(const char *argument) {
  *
  * Print licensing terms.
  */
-static void
-gsc_command_license(const char *argument) {
+static void gsc_command_license(const char *argument) {
 	assert(argument);
 
 	gsc_normal_string("This program is free software; you can redistribute it"
@@ -2052,11 +1994,11 @@ gsc_command_license(const char *argument) {
 
 
 /* Glk subcommands and handler functions. */
-typedef const struct {
+struct gsc_command_t {
 	const char *const command;                      /* Glk subcommand. */
 	void (* const handler)(const char *argument);   /* Subcommand handler. */
 	const int takes_argument;                       /* Argument flag. */
-} gsc_command_t;
+};
 typedef gsc_command_t *gsc_commandref_t;
 
 static void gsc_command_summary(const char *argument);
@@ -2081,8 +2023,7 @@ static gsc_command_t GSC_COMMAND_TABLE[] = {
  *
  * Report all current Glk settings.
  */
-static void
-gsc_command_summary(const char *argument) {
+static void gsc_command_summary(const char *argument) {
 	gsc_commandref_t entry;
 	assert(argument);
 
@@ -2106,8 +2047,7 @@ gsc_command_summary(const char *argument) {
  *
  * Document the available Glk commands.
  */
-static void
-gsc_command_help(const char *command) {
+static void gsc_command_help(const char *command) {
 	gsc_commandref_t entry, matched;
 	assert(command);
 
@@ -2234,8 +2174,7 @@ gsc_command_help(const char *command) {
  * This function is handed each input line.  If the line contains a specific
  * Glk port command, handle it and return TRUE, otherwise return FALSE.
  */
-static int
-gsc_command_escape(const char *string) {
+static int gsc_command_escape(const char *string) {
 	int posn;
 	char *string_copy, *command, *argument;
 	assert(string);
@@ -2356,8 +2295,7 @@ static gsc_abbreviation_t GSC_ABBREVIATIONS[] = {
  * Expand a few common one-character abbreviations commonly found in other
  * game systems.
  */
-static void
-gsc_expand_abbreviations(char *buffer, int size) {
+static void gsc_expand_abbreviations(char *buffer, int size) {
 	char *command, abbreviation;
 	const char *expansion;
 	gsc_abbreviationref_t entry;
@@ -2404,8 +2342,7 @@ gsc_expand_abbreviations(char *buffer, int size) {
  *
  * Read and return a line of player input.
  */
-sc_bool
-os_read_line(sc_char *buffer, sc_int length) {
+sc_bool os_read_line(sc_char *buffer, sc_int length) {
 	sc_int characters;
 	assert(buffer && length > 0);
 
@@ -2520,8 +2457,7 @@ os_read_line(sc_char *buffer, sc_int length) {
  * window, so this is just a call to the normal readline, with an additional
  * prompt.
  */
-sc_bool
-os_read_line_debug(sc_char *buffer, sc_int length) {
+sc_bool os_read_line_debug(sc_char *buffer, sc_int length) {
 	gsc_output_silence_help_hints();
 	gsc_reset_glk_style();
 	g_vm->glk_put_string("[SCARE debug]");
@@ -2534,8 +2470,7 @@ os_read_line_debug(sc_char *buffer, sc_int length) {
  *
  * Confirm a game action with a yes/no prompt.
  */
-sc_bool
-os_confirm(sc_int type) {
+sc_bool os_confirm(sc_int type) {
 	sc_char response;
 
 	/*
@@ -2625,8 +2560,7 @@ static const glui32 GSC_DELAY_TIMEOUTS_COUNT = 10;
  * improve the display where 'r', or confirming restart, triggers an otherwise
  * immediate, and abrupt, restart.
  */
-static void
-gsc_short_delay() {
+static void gsc_short_delay() {
 	/* Ignore the call if the Glk doesn't have timers. */
 	if (g_vm->glk_gestalt(gestalt_Timer, 0)) {
 		glui32 timeout;
@@ -2650,8 +2584,7 @@ gsc_short_delay() {
  * Process Glk events until one of the expected type, or types, arrives.
  * Return the event of that type.
  */
-static void
-gsc_event_wait_2(glui32 wait_type_1, glui32 wait_type_2, event_t *event) {
+static void gsc_event_wait_2(glui32 wait_type_1, glui32 wait_type_2, event_t *event) {
 	assert(event);
 
 	do {
@@ -2671,8 +2604,7 @@ gsc_event_wait_2(glui32 wait_type_1, glui32 wait_type_2, event_t *event) {
 	} while (!(event->type == (EvType)wait_type_1 || event->type == (EvType)wait_type_2));
 }
 
-static void
-gsc_event_wait(glui32 wait_type, event_t *event) {
+static void gsc_event_wait(glui32 wait_type, event_t *event) {
 	assert(event);
 
 	gsc_event_wait_2(wait_type, evtype_None, event);
@@ -2719,16 +2651,14 @@ void *os_open_file(sc_bool is_save) {
  *
  * Write/read the given buffered data to/from the open Glk stream.
  */
-void
-os_write_file(void *opaque, const sc_byte *buffer, sc_int length) {
+void os_write_file(void *opaque, const sc_byte *buffer, sc_int length) {
 	strid_t stream = (strid_t) opaque;
 	assert(opaque && buffer);
 
 	g_vm->glk_put_buffer_stream(stream, (char *) buffer, length);
 }
 
-sc_int
-os_read_file(void *opaque, sc_byte *buffer, sc_int length) {
+sc_int os_read_file(void *opaque, sc_byte *buffer, sc_int length) {
 	strid_t stream = (strid_t) opaque;
 	assert(opaque && buffer);
 
@@ -2741,8 +2671,7 @@ os_read_file(void *opaque, sc_byte *buffer, sc_int length) {
  *
  * Close the opened Glk stream.
  */
-void
-os_close_file(void *opaque) {
+void os_close_file(void *opaque) {
 	strid_t stream = (strid_t) opaque;
 	assert(opaque);
 
@@ -2788,8 +2717,7 @@ static sc_int gsc_callback(void *opaque, sc_byte *buffer, sc_int length) {
  * Offer the option to restart, undo, or quit.  Returns the selected game
  * end option.  Called on game completion.
  */
-static enum gsc_end_option
-gsc_get_ending_option() {
+static enum gsc_end_option gsc_get_ending_option() {
 	sc_char response;
 
 	/* Ensure back to normal style, and update status. */
@@ -2858,10 +2786,8 @@ gsc_get_ending_option() {
  * and generally handle options.  The second is called from g_vm->glk_main, and
  * does the real work of running the game.
  */
-static int
-gsc_startup_code(Common::SeekableReadStream *game_stream, strid_t restore_stream,
-                 sc_uint trace_flags, sc_bool enable_debugger,
-                 sc_bool stable_random, const sc_char *locale) {
+static int gsc_startup_code(Common::SeekableReadStream *game_stream, strid_t restore_stream,
+		sc_uint trace_flags, sc_bool enable_debugger, sc_bool stable_random, const sc_char *locale) {
 	winid_t window;
 	assert(game_stream);
 
@@ -2960,8 +2886,7 @@ gsc_startup_code(Common::SeekableReadStream *game_stream, strid_t restore_stream
 	return TRUE;
 }
 
-static void
-gsc_main() {
+static void gsc_main() {
 	sc_bool is_running;
 
 	/* Ensure SCARE internal types have the right sizes. */
@@ -3100,7 +3025,7 @@ void adrift_main() {
 /*  Glk linkage relevant only to the UNIX platform                     */
 /*---------------------------------------------------------------------*/
 
-#ifdef UNUSED
+#if 0
 /*
  * Glk arguments for UNIX versions of the Glk interpreter.
  */

@@ -177,8 +177,7 @@ static void ser_flush(sc_bool is_final) {
 #endif
 }
 
-static void
-ser_buffer_character(sc_char character) {
+static void ser_buffer_character(sc_char character) {
 	/* Allocate the buffer if not yet done. */
 	if (!ser_buffer) {
 		assert(ser_buffer_length == 0);
@@ -202,8 +201,7 @@ ser_buffer_character(sc_char character) {
  *
  * Buffer a buffer, a string, an unsigned and signed integer, and a boolean.
  */
-static void
-ser_buffer_buffer(const sc_char *buffer, sc_int length) {
+static void ser_buffer_buffer(const sc_char *buffer, sc_int length) {
 	sc_int index_;
 
 	/* Add each character to the buffer. */
@@ -211,16 +209,14 @@ ser_buffer_buffer(const sc_char *buffer, sc_int length) {
 		ser_buffer_character(buffer[index_]);
 }
 
-static void
-ser_buffer_string(const sc_char *string) {
+static void ser_buffer_string(const sc_char *string) {
 	/* Buffer string, followed by DOS style end-of-line. */
 	ser_buffer_buffer(string, strlen(string));
 	ser_buffer_character(CARRIAGE_RETURN);
 	ser_buffer_character(NEWLINE);
 }
 
-static void
-ser_buffer_int(sc_int value) {
+static void ser_buffer_int(sc_int value) {
 	sc_char buffer[32];
 
 	/* Convert to a string and buffer that. */
@@ -228,8 +224,7 @@ ser_buffer_int(sc_int value) {
 	ser_buffer_string(buffer);
 }
 
-static void
-ser_buffer_int_special(sc_int value) {
+static void ser_buffer_int_special(sc_int value) {
 	sc_char buffer[32];
 
 	/* Weirdo formatting for compatibility. */
@@ -237,8 +232,7 @@ ser_buffer_int_special(sc_int value) {
 	ser_buffer_string(buffer);
 }
 
-static void
-ser_buffer_uint(sc_uint value) {
+static void ser_buffer_uint(sc_uint value) {
 	sc_char buffer[32];
 
 	/* Convert to a string and buffer that. */
@@ -246,8 +240,7 @@ ser_buffer_uint(sc_uint value) {
 	ser_buffer_string(buffer);
 }
 
-static void
-ser_buffer_boolean(sc_bool boolean) {
+static void ser_buffer_boolean(sc_bool boolean) {
 	/* Write a 1 for TRUE, 0 for FALSE. */
 	ser_buffer_string(boolean ? "1" : "0");
 }
@@ -258,9 +251,7 @@ ser_buffer_boolean(sc_bool boolean) {
  *
  * Serialize a game and save its state using the given callback and opaque.
  */
-void
-ser_save_game(sc_gameref_t game,
-              sc_write_callbackref_t callback, void *opaque) {
+void ser_save_game(sc_gameref_t game, sc_write_callbackref_t callback, void *opaque) {
 	const sc_var_setref_t vars = gs_get_vars(game);
 	const sc_prop_setref_t bundle = gs_get_bundle(game);
 	sc_vartype_t vt_key[3];
@@ -418,8 +409,7 @@ ser_save_game(sc_gameref_t game,
  * Serialize a game and save its state, requesting a save stream from
  * the user.
  */
-sc_bool
-ser_save_game_prompted(sc_gameref_t game) {
+sc_bool ser_save_game_prompted(sc_gameref_t game) {
 	void *opaque;
 
 	/*
@@ -453,8 +443,7 @@ static jmp_buf ser_tas_error;
  * Wrapper round obtaining the next TAS file line, with variants to convert
  * the line content into an appropriate type.
  */
-static const sc_char *
-ser_get_string(void) {
+static const sc_char *ser_get_string(void) {
 	const sc_char *string;
 
 	/* Get the next line, and complain if absent. */
@@ -468,8 +457,7 @@ ser_get_string(void) {
 	return string;
 }
 
-static sc_int
-ser_get_int(void) {
+static sc_int ser_get_int(void) {
 	const sc_char *string;
 	sc_int value;
 
@@ -484,8 +472,7 @@ ser_get_int(void) {
 	return value;
 }
 
-static sc_uint
-ser_get_uint(void) {
+static sc_uint ser_get_uint(void) {
 	const sc_char *string;
 	sc_uint value;
 
@@ -500,8 +487,7 @@ ser_get_uint(void) {
 	return value;
 }
 
-static sc_bool
-ser_get_boolean(void) {
+static sc_bool ser_get_boolean(void) {
 	const sc_char *string;
 	sc_uint value;
 
@@ -530,9 +516,7 @@ ser_get_boolean(void) {
  * Load a serialized game into the given game by repeated calls to the
  * callback() function.
  */
-sc_bool
-ser_load_game(sc_gameref_t game,
-              sc_read_callbackref_t callback, void *opaque) {
+sc_bool ser_load_game(sc_gameref_t game, sc_read_callbackref_t callback, void *opaque) {
 	static sc_var_setref_t new_vars;  /* For setjmp safety */
 	static sc_gameref_t new_game;     /* For setjmp safety */
 
@@ -753,8 +737,7 @@ ser_load_game(sc_gameref_t game,
  * Load a serialized game into the given game, requesting a restore
  * stream from the user.
  */
-sc_bool
-ser_load_game_prompted(sc_gameref_t game) {
+sc_bool ser_load_game_prompted(sc_gameref_t game) {
 	void *opaque;
 
 	/*

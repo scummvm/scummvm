@@ -66,9 +66,7 @@ namespace Adrift {
  * Match a "[...]" character range, and match general glob wildcards.  See
  * above for notes on where these functions came from originally.
  */
-static int
-glob_inrange_unsigned(const unsigned char **const pattern,
-                      unsigned char ch) {
+static int glob_inrange_unsigned(const unsigned char **const pattern, unsigned char ch) {
 	const unsigned char *const pattern_ = *pattern;
 	int in_range = FALSE;
 	unsigned int l = 256, r = 0, index_;
@@ -116,9 +114,7 @@ glob_inrange_unsigned(const unsigned char **const pattern,
 	return in_range;
 }
 
-static int
-glob_match_unsigned(const unsigned char *pattern,
-                    const unsigned char *string) {
+static int glob_match_unsigned(const unsigned char *pattern, const unsigned char *string) {
 	int is_match = FALSE;
 
 	if (!*string) {
@@ -161,10 +157,10 @@ glob_match_unsigned(const unsigned char *pattern,
 
 
 /* Structures and data for the self test function. */
-typedef struct {
+struct sx_test_data_t {
 	const sc_char *const pattern;
 	const sc_char *const string;
-} sx_test_data_t;
+};
 
 static const sx_test_data_t SHOULD_MATCH[] = {
 	{"a", "a"}, {"abc", "abc"}, {"", ""},
@@ -226,8 +222,7 @@ static const sx_test_data_t SHOULD_NOT_MATCH[] = {
  *
  * Sed quis custodiet ipsos custodes?
  */
-static void
-glob_self_test(void) {
+static void glob_self_test(void) {
 	const sx_test_data_t *test;
 	sc_int errors;
 
@@ -271,8 +266,7 @@ glob_self_test(void) {
  * Adapter for the above globbing functions, presenting a more standard char-
  * based interface.  Here is where all the evil casting lives.
  */
-sc_bool
-glob_match(const sc_char *pattern, const sc_char *string) {
+sc_bool glob_match(const sc_char *pattern, const sc_char *string) {
 	static sc_bool initialized = FALSE;
 
 	const unsigned char *pattern_ = (const unsigned char *) pattern;

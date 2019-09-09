@@ -48,24 +48,24 @@ static const sc_char *const WHITESPACE = "\t\n\v\f\r ";
 static sc_bool uip_trace = FALSE;
 
 /* Enumeration of tokens.  TOK_NONE represents a non-occurring token. */
-typedef enum {
+enum sc_uip_tok_t {
 	TOK_NONE = 0,
 	TOK_CHOICE, TOK_CHOICE_END, TOK_OPTIONAL, TOK_OPTIONAL_END,
 	TOK_ALTERNATES_SEPARATOR,
 	TOK_WILDCARD, TOK_WHITESPACE, TOK_WORD, TOK_VARIABLE,
 	TOK_CHARACTER_REFERENCE, TOK_OBJECT_REFERENCE, TOK_NUMBER_REFERENCE,
 	TOK_TEXT_REFERENCE, TOK_EOS
-} sc_uip_tok_t;
+};
 
 /*
  * Small table tying token strings to tokens.  Anything not whitespace and
  * not caught by the table is a plain TOK_WORD.
  */
-typedef struct {
+struct sc_uip_token_entry_t {
 	const sc_char *const name;
 	const sc_int length;
 	const sc_uip_tok_t token;
-} sc_uip_token_entry_t;
+};
 
 static const sc_uip_token_entry_t UIP_TOKENS[] = {
 	{"[", 1, TOK_CHOICE}, {"]", 1, TOK_CHOICE_END},
@@ -98,8 +98,7 @@ static sc_char *uip_temporary = NULL;
  *
  * Start and wrap up pattern string tokenization.
  */
-static void
-uip_tokenize_start(const sc_char *pattern) {
+static void uip_tokenize_start(const sc_char *pattern) {
 	static sc_bool initialized = FALSE;
 	sc_int required;
 
@@ -129,8 +128,7 @@ uip_tokenize_start(const sc_char *pattern) {
 	                ? (sc_char *)sc_malloc(required) : uip_static_temporary;
 }
 
-static void
-uip_tokenize_end(void) {
+static void uip_tokenize_end(void) {
 	/* Deallocate temporary if required, and clear pattern and index. */
 	if (uip_temporary != uip_static_temporary)
 		sc_free(uip_temporary);
@@ -145,8 +143,7 @@ uip_tokenize_end(void) {
  *
  * Return the next token from the current pattern.
  */
-static sc_uip_tok_t
-uip_next_token(void) {
+static sc_uip_tok_t uip_next_token(void) {
 	const sc_uip_token_entry_t *entry;
 	sc_char close;
 	assert(uip_pattern);
@@ -211,8 +208,7 @@ uip_next_token(void) {
  * Return the token value of the current token.  It is an error to call
  * here if the current token is not a TOK_WORD or TOK_VARIABLE.
  */
-static const sc_char *
-uip_current_token_value(void) {
+static const sc_char *uip_current_token_value(void) {
 	/* If the token value is NULL, the current token isn't a word. */
 	if (!uip_token_value) {
 		sc_fatal("uip_current_token_value:"
@@ -230,20 +226,21 @@ uip_current_token_value(void) {
  * NODE_UNUSED must be zero to ensure that the statically allocated array that
  * forms the node pool appears initially as containing only unused nodes.
  */
-typedef enum {
+enum sc_pttype_t {
 	NODE_UNUSED = 0,
 	NODE_CHOICE, NODE_OPTIONAL, NODE_WILDCARD, NODE_WHITESPACE,
 	NODE_CHARACTER_REFERENCE, NODE_OBJECT_REFERENCE, NODE_TEXT_REFERENCE,
 	NODE_NUMBER_REFERENCE, NODE_WORD, NODE_VARIABLE, NODE_LIST, NODE_EOS
-} sc_pttype_t;
-typedef struct sc_ptnode_s {
+};
+struct sc_ptnode_s {
 	struct sc_ptnode_s *left_child;
 	struct sc_ptnode_s *right_sibling;
 
 	sc_pttype_t type;
 	sc_char *word;
 	sc_bool is_allocated;
-} sc_ptnode_t;
+};
+typedef sc_ptnode_s sc_ptnode_t;
 typedef sc_ptnode_t *sc_ptnoderef_t;
 
 /* Predictive parser lookahead token. */
@@ -273,10 +270,10 @@ static sc_int uip_node_pool_available = UIP_NODE_POOL_SIZE;
  * first, then by straight malloc() should the pool empty.
  */
 enum { UIP_WORD_POOL_SIZE = 64, UIP_SHORT_WORD_SIZE = 16 };
-typedef struct {
+struct sc_ptshortword_t {
 	sc_bool is_in_use;
 	sc_char word[UIP_SHORT_WORD_SIZE];
-} sc_ptshortword_t;
+};
 typedef sc_ptshortword_t *sc_ptshortwordref_t;
 static sc_ptshortword_t uip_word_pool[UIP_WORD_POOL_SIZE];
 static sc_int uip_word_pool_cursor = 0;
@@ -287,8 +284,7 @@ static sc_int uip_word_pool_available = UIP_WORD_POOL_SIZE;
  *
  * Match a token to the lookahead, then advance lookahead.
  */
-static void
-uip_parse_match(sc_uip_tok_t token) {
+static void uip_parse_match(sc_uip_tok_t token) {
 	if (uip_parse_lookahead == token)
 		uip_parse_lookahead = uip_next_token();
 	else {
@@ -307,8 +303,7 @@ uip_parse_match(sc_uip_tok_t token) {
  * allocate initially from static storage, for performance.  If this is
  * exhausted, backs off to standard allocation.
  */
-static sc_char *
-uip_new_word(const sc_char *word) {
+static sc_char *uip_new_word(const sc_char *word) {
 	sc_int required;
 
 	/*
@@ -357,8 +352,7 @@ uip_new_word(const sc_char *word) {
  * If the word was allocated, free its memory; if not, find its short word
  * pool entry and return it to the pool.
  */
-static void
-uip_free_word(sc_char *word) {
+static void uip_free_word(sc_char *word) {
 	const sc_char *first_in_pool, *last_in_pool;
 
 	/* Obtain the range of valid addresses for words from the word pool. */
@@ -392,8 +386,7 @@ uip_free_word(sc_char *word) {
  * to allocate initially from static storage, for performance.  If this is
  * exhausted, backs off to standard allocation.
  */
-static sc_ptnoderef_t
-uip_new_node(sc_pttype_t type) {
+static sc_ptnoderef_t uip_new_node(sc_pttype_t type) {
 	sc_ptnoderef_t node;
 
 	/*
@@ -441,8 +434,7 @@ uip_new_node(sc_pttype_t type) {
  * Destroy a node, and any allocated word memory.  If the node was allocated,
  * free its memory; if not, return it to the pool.
  */
-static void
-uip_destroy_node(sc_ptnoderef_t node) {
+static void uip_destroy_node(sc_ptnoderef_t node) {
 	/* Free any word contained at this node. */
 	if (node->word)
 		uip_free_word(node->word);
@@ -469,8 +461,7 @@ uip_destroy_node(sc_ptnoderef_t node) {
  * Parse a set of .../.../... alternatives for choices and optionals.  The
  * first function is a helper, returning a newly constructed parsed list.
  */
-static sc_ptnoderef_t
-uip_parse_new_list(void) {
+static sc_ptnoderef_t uip_parse_new_list(void) {
 	sc_ptnoderef_t list;
 
 	/* Create a new list node, parse into it, and return it. */
@@ -479,8 +470,7 @@ uip_parse_new_list(void) {
 	return list;
 }
 
-static void
-uip_parse_alternatives(sc_ptnoderef_t node) {
+static void uip_parse_alternatives(sc_ptnoderef_t node) {
 	sc_ptnoderef_t child;
 
 	/* Parse initial alternative, then add other listed alternatives. */
@@ -499,8 +489,7 @@ uip_parse_alternatives(sc_ptnoderef_t node) {
  *
  * Parse a single pattern element.
  */
-static sc_ptnoderef_t
-uip_parse_element(void) {
+static sc_ptnoderef_t uip_parse_element(void) {
 	sc_ptnoderef_t node = NULL;
 	sc_uip_tok_t token;
 
@@ -604,8 +593,7 @@ uip_parse_element(void) {
  *
  * Parse a list of pattern elements.
  */
-static void
-uip_parse_list(sc_ptnoderef_t list) {
+static void uip_parse_list(sc_ptnoderef_t list) {
 	sc_ptnoderef_t child, node;
 
 	/* Add elements until a list terminator token is encountered. */
@@ -663,8 +651,7 @@ uip_parse_list(sc_ptnoderef_t list) {
  *
  * Free and destroy a parsed pattern tree.
  */
-static void
-uip_destroy_tree(sc_ptnoderef_t node) {
+static void uip_destroy_tree(sc_ptnoderef_t node) {
 	if (node) {
 		/* Recursively destroy siblings, then left child. */
 		uip_destroy_tree(node->right_sibling);
@@ -682,8 +669,7 @@ uip_destroy_tree(sc_ptnoderef_t node) {
  *
  * Print out a pattern match tree.
  */
-static void
-uip_debug_dump_node(sc_ptnoderef_t node, sc_int depth) {
+static void uip_debug_dump_node(sc_ptnoderef_t node, sc_int depth) {
 	/* End recursion on null node. */
 	if (node) {
 		sc_int index_;
@@ -746,8 +732,7 @@ uip_debug_dump_node(sc_ptnoderef_t node, sc_int depth) {
 	}
 }
 
-static void
-uip_debug_dump(void) {
+static void uip_debug_dump(void) {
 	sc_trace("UIParser: debug dump follows...\n");
 	if (uip_parse_tree) {
 		sc_trace("uip_parse_tree = {\n");
@@ -769,8 +754,7 @@ static sc_gameref_t uip_game = NULL;
  *
  * Set up a string for matching to a pattern tree, and wrap up matching.
  */
-static void
-uip_match_start(const sc_char *string, sc_gameref_t game) {
+static void uip_match_start(const sc_char *string, sc_gameref_t game) {
 	/* Save string, and restart index. */
 	uip_string = string;
 	uip_posn = 0;
@@ -779,8 +763,7 @@ uip_match_start(const sc_char *string, sc_gameref_t game) {
 	uip_game = game;
 }
 
-static void
-uip_match_end(void) {
+static void uip_match_end(void) {
 	/* Clear match target string, and variable set. */
 	uip_string = NULL;
 	uip_posn = 0;
@@ -794,8 +777,7 @@ uip_match_end(void) {
  * Safety wrapper to ensure module code sees a valid game when it requires
  * one.
  */
-static sc_gameref_t
-uip_get_game(void) {
+static sc_gameref_t uip_get_game(void) {
 	assert(gs_is_game_valid(uip_game));
 	return uip_game;
 }
@@ -819,14 +801,12 @@ static sc_bool uip_match_node(sc_ptnoderef_t node);
  * advance position if necessary, on match, FALSE on no match, with position
  * unchanged.
  */
-static sc_bool
-uip_match_eos(void) {
+static sc_bool uip_match_eos(void) {
 	/* Check that we hit the string's end. */
 	return uip_string[uip_posn] == NUL;
 }
 
-static sc_bool
-uip_match_word(sc_ptnoderef_t node) {
+static sc_bool uip_match_word(sc_ptnoderef_t node) {
 	sc_int length;
 	const sc_char *word;
 
@@ -846,8 +826,7 @@ uip_match_word(sc_ptnoderef_t node) {
 	return FALSE;
 }
 
-static sc_bool
-uip_match_variable(sc_ptnoderef_t node) {
+static sc_bool uip_match_variable(sc_ptnoderef_t node) {
 	const sc_gameref_t game = uip_get_game();
 	const sc_var_setref_t vars = gs_get_vars(game);
 	sc_int type;
@@ -898,8 +877,7 @@ uip_match_variable(sc_ptnoderef_t node) {
 	return FALSE;
 }
 
-static sc_bool
-uip_match_whitespace(void) {
+static sc_bool uip_match_whitespace(void) {
 	/* If next character is space, read whitespace and return. */
 	if (sc_isspace(uip_string[uip_posn])) {
 		/* Space match, advance position and return. */
@@ -934,8 +912,7 @@ uip_match_whitespace(void) {
 	return FALSE;
 }
 
-static sc_bool
-uip_match_list(sc_ptnoderef_t node) {
+static sc_bool uip_match_list(sc_ptnoderef_t node) {
 	sc_ptnoderef_t child;
 
 	/*
@@ -958,8 +935,7 @@ uip_match_list(sc_ptnoderef_t node) {
 	return TRUE;
 }
 
-static sc_bool
-uip_match_alternatives(sc_ptnoderef_t node) {
+static sc_bool uip_match_alternatives(sc_ptnoderef_t node) {
 	sc_ptnoderef_t child;
 	sc_int start_posn, extent;
 	sc_bool matched;
@@ -990,8 +966,7 @@ uip_match_alternatives(sc_ptnoderef_t node) {
 	return matched;
 }
 
-static sc_bool
-uip_match_choice(sc_ptnoderef_t node) {
+static sc_bool uip_match_choice(sc_ptnoderef_t node) {
 	/*
 	 * Return the result of matching alternatives.  The choice will therefore
 	 * fail if none of the alternatives match.
@@ -999,8 +974,7 @@ uip_match_choice(sc_ptnoderef_t node) {
 	return uip_match_alternatives(node);
 }
 
-static sc_bool
-uip_match_optional(sc_ptnoderef_t node) {
+static sc_bool uip_match_optional(sc_ptnoderef_t node) {
 	sc_int start_posn;
 	sc_ptnoderef_t list;
 	sc_bool matched;
@@ -1036,8 +1010,7 @@ uip_match_optional(sc_ptnoderef_t node) {
 	return TRUE;
 }
 
-static sc_bool
-uip_match_wildcard(sc_ptnoderef_t node) {
+static sc_bool uip_match_wildcard(sc_ptnoderef_t node) {
 	sc_int start_posn, limit, index_;
 	sc_bool matched;
 	sc_ptnoderef_t list;
@@ -1099,8 +1072,7 @@ uip_match_wildcard(sc_ptnoderef_t node) {
  *
  * Attempt to match a number, or a word, from the string.
  */
-static sc_bool
-uip_match_number(void) {
+static sc_bool uip_match_number(void) {
 	const sc_gameref_t game = uip_get_game();
 	const sc_var_setref_t vars = gs_get_vars(game);
 	sc_int number;
@@ -1122,8 +1094,7 @@ uip_match_number(void) {
 	return FALSE;
 }
 
-static sc_bool
-uip_match_text(sc_ptnoderef_t node) {
+static sc_bool uip_match_text(sc_ptnoderef_t node) {
 	const sc_gameref_t game = uip_get_game();
 	const sc_var_setref_t vars = gs_get_vars(game);
 	sc_int start_posn, limit, index_;
@@ -1195,8 +1166,7 @@ uip_match_text(sc_ptnoderef_t node) {
  * Skip over any "a"/"an"/"the"/"some" at the head of a string.  Helper for
  * %character% and %object% matchers.  Returns the revised string position.
  */
-static sc_int
-uip_skip_article(const sc_char *string, sc_int start) {
+static sc_int uip_skip_article(const sc_char *string, sc_int start) {
 	sc_int posn;
 
 	/* Skip over articles. */
@@ -1225,8 +1195,7 @@ uip_skip_article(const sc_char *string, sc_int start) {
  * didn't match, otherwise the length of the current position that matched
  * the words passed in (the new value of uip_posn on match).
  */
-static sc_int
-uip_compare_reference(const sc_char *words) {
+static sc_int uip_compare_reference(const sc_char *words) {
 	sc_int wpos, posn;
 
 	/* Skip articles and lead in space on words and string. */
@@ -1279,8 +1248,7 @@ uip_compare_reference(const sc_char *words) {
  * match against both the prefixed name, and if that fails, the plain name.
  * Returns the extent of the match, or zero if no match.
  */
-static sc_int
-uip_compare_prefixed_name(const sc_char *prefix, const sc_char *name) {
+static sc_int uip_compare_prefixed_name(const sc_char *prefix, const sc_char *name) {
 	sc_char buffer[UIP_SHORT_WORD_SIZE + UIP_SHORT_WORD_SIZE + 1];
 	sc_char *string;
 	sc_int required, extent;
@@ -1311,8 +1279,7 @@ uip_compare_prefixed_name(const sc_char *prefix, const sc_char *name) {
  * of a pattern, to resolve the difference between, say, "table leg" and
  * "table".
  */
-static sc_bool
-uip_match_remainder(sc_ptnoderef_t node, sc_int extent) {
+static sc_bool uip_match_remainder(sc_ptnoderef_t node, sc_int extent) {
 	sc_ptnoderef_t list;
 	sc_int start_posn;
 	sc_bool matched;
@@ -1347,8 +1314,7 @@ uip_match_remainder(sc_ptnoderef_t node, sc_int extent) {
  * aliases for possible matches, and sets the game npc_references flag
  * for any that match.  The final one to match is also stored in variables.
  */
-static sc_bool
-uip_match_character(sc_ptnoderef_t node) {
+static sc_bool uip_match_character(sc_ptnoderef_t node) {
 	const sc_gameref_t game = uip_get_game();
 	const sc_prop_setref_t bundle = gs_get_bundle(game);
 	const sc_var_setref_t vars = gs_get_vars(game);
@@ -1446,8 +1412,7 @@ uip_match_character(sc_ptnoderef_t node) {
  * aliases for possible matches, and sets the game object_references flag
  * for any that match.  The final one to match is also stored in variables.
  */
-static sc_bool
-uip_match_object(sc_ptnoderef_t node) {
+static sc_bool uip_match_object(sc_ptnoderef_t node) {
 	const sc_gameref_t game = uip_get_game();
 	const sc_prop_setref_t bundle = gs_get_bundle(game);
 	const sc_var_setref_t vars = gs_get_vars(game);
@@ -1545,8 +1510,7 @@ uip_match_object(sc_ptnoderef_t node) {
  * Return TRUE, with position advanced, on match, FALSE on fail with the
  * position unchanged.
  */
-static sc_bool
-uip_match_node(sc_ptnoderef_t node) {
+static sc_bool uip_match_node(sc_ptnoderef_t node) {
 	sc_bool match = FALSE;
 
 	/* Match depending on node type. */
@@ -1605,8 +1569,7 @@ uip_match_node(sc_ptnoderef_t node) {
  * allocation if it happens (detectable by comparing the return value to the
  * buffer passed in), or call uip_free_cleansed_string.
  */
-static sc_char *
-uip_cleanse_string(const sc_char *original, sc_char *buffer, sc_int length) {
+static sc_char *uip_cleanse_string(const sc_char *original, sc_char *buffer, sc_int length) {
 	sc_int required;
 	sc_char *string;
 
@@ -1623,8 +1586,7 @@ uip_cleanse_string(const sc_char *original, sc_char *buffer, sc_int length) {
 	return string;
 }
 
-static sc_char *
-uip_free_cleansed_string(sc_char *string, const sc_char *buffer) {
+static sc_char *uip_free_cleansed_string(sc_char *string, const sc_char *buffer) {
 	/* Free if the string was allocated by the function above. */
 	if (string != buffer)
 		sc_free(string);
@@ -1639,8 +1601,7 @@ uip_free_cleansed_string(sc_char *string, const sc_char *buffer) {
  *
  * Set pattern match tracing on/off.
  */
-void
-uip_debug_trace(sc_bool flag) {
+void uip_debug_trace(sc_bool flag) {
 	uip_trace = flag;
 }
 
@@ -1652,8 +1613,7 @@ uip_debug_trace(sc_bool flag) {
  * For performance, this function uses a local buffer to try to avoid the
  * need to copy each of the pattern and match strings passed in.
  */
-sc_bool
-uip_match(const sc_char *pattern, const sc_char *string, sc_gameref_t game) {
+sc_bool uip_match(const sc_char *pattern, const sc_char *string, sc_gameref_t game) {
 	static sc_char *cleansed;  /* For setjmp safety. */
 	sc_char buffer[UIP_ALLOCATION_AVOIDANCE_SIZE];
 	sc_bool match;
@@ -1713,8 +1673,7 @@ uip_match(const sc_char *pattern, const sc_char *string, sc_gameref_t game) {
  * resulting string to the caller, or NULL if no pronouns were replaced.  The
  * return string is malloc'ed, so the caller needs to remember to free it.
  */
-sc_char *
-uip_replace_pronouns(sc_gameref_t game, const sc_char *string) {
+sc_char *uip_replace_pronouns(sc_gameref_t game, const sc_char *string) {
 	const sc_prop_setref_t bundle = gs_get_bundle(game);
 	sc_int buffer_allocation;
 	sc_char *buffer;
@@ -1856,8 +1815,7 @@ uip_replace_pronouns(sc_gameref_t game, const sc_char *string) {
  * pronouns for objects or NPC names as found.  Later ones will overwrite
  * earlier ones if there is more than one in the string.
  */
-void
-uip_assign_pronouns(sc_gameref_t game, const sc_char *string) {
+void uip_assign_pronouns(sc_gameref_t game, const sc_char *string) {
 	const sc_prop_setref_t bundle = gs_get_bundle(game);
 	const sc_var_setref_t vars = gs_get_vars(game);
 	const sc_char *current;

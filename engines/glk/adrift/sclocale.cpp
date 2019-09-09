@@ -50,8 +50,7 @@ enum { TABLE_SIZE = 256 };
  * Helpers for building ctype tables.  Sets all elements from start to end
  * inclusive to TRUE, and iterate this on a ranges array.
  */
-static void
-loc_setrange_bool(sc_int start, sc_int end, sc_bool table[]) {
+static void loc_setrange_bool(sc_int start, sc_int end, sc_bool table[]) {
 	sc_int index_;
 
 	for (index_ = start; index_ <= end; index_++) {
@@ -60,8 +59,7 @@ loc_setrange_bool(sc_int start, sc_int end, sc_bool table[]) {
 	}
 }
 
-static void
-loc_setranges_bool(const sc_int ranges[], sc_bool table[]) {
+static void loc_setranges_bool(const sc_int ranges[], sc_bool table[]) {
 	sc_int index_;
 
 	for (index_ = 0; ranges[index_] > -1; index_ += 2) {
@@ -79,8 +77,7 @@ loc_setranges_bool(const sc_int ranges[], sc_bool table[]) {
  * to end inclusive to their index value plus the given offset, and iterate
  * this on a ranges array.
  */
-static void
-loc_setrange_char(sc_int start, sc_int end, sc_int offset, sc_char table[]) {
+static void loc_setrange_char(sc_int start, sc_int end, sc_int offset, sc_char table[]) {
 	sc_int index_;
 
 	for (index_ = start; index_ <= end; index_++) {
@@ -90,8 +87,7 @@ loc_setrange_char(sc_int start, sc_int end, sc_int offset, sc_char table[]) {
 	}
 }
 
-static void
-loc_setranges_char(const sc_int ranges[], sc_char table[]) {
+static void loc_setranges_char(const sc_int ranges[], sc_char table[]) {
 	sc_int index_;
 
 	for (index_ = 0; ranges[index_] > -1; index_ += 3) {
@@ -109,7 +105,7 @@ loc_setranges_char(const sc_int ranges[], sc_char table[]) {
  */
 enum { RANGES_LENGTH = 32 };
 enum { SIGNATURE_COUNT = 24, SIGNATURE_LENGTH = 3 };
-typedef struct {
+struct sc_locale_t {
 	const sc_char *const name;
 	const sc_int isspace_ranges[RANGES_LENGTH];
 	const sc_int isdigit_ranges[RANGES_LENGTH];
@@ -117,7 +113,7 @@ typedef struct {
 	const sc_int toupper_ranges[RANGES_LENGTH];
 	const sc_int tolower_ranges[RANGES_LENGTH];
 	const sc_byte signature[SIGNATURE_COUNT][SIGNATURE_LENGTH];
-} sc_locale_t;
+};
 
 
 /*
@@ -126,14 +122,14 @@ typedef struct {
  * table, for synchronization with changed locales.  This is the dynamic data
  * portion of a locale.
  */
-typedef struct {
+struct sc_locale_table_t {
 	const sc_locale_t *locale;
 	sc_bool isspace[TABLE_SIZE];
 	sc_bool isdigit[TABLE_SIZE];
 	sc_bool isalpha[TABLE_SIZE];
 	sc_char toupper[TABLE_SIZE];
 	sc_char tolower[TABLE_SIZE];
-} sc_locale_table_t;
+};
 
 /*
  * Define a single static locale table set.  This set re-initializes if it
@@ -149,8 +145,7 @@ static sc_locale_table_t loc_locale_tables = {NULL, {0}, {0}, {0}, {0}, {0}};
  * Initialize tables for a locale.  And compare the locale tables to a locale
  * and if not for the same locale, (re-)initialize.
  */
-static void
-loc_synchronize_tables(const sc_locale_t *locale) {
+static void loc_synchronize_tables(const sc_locale_t *locale) {
 	/* Clear all tables and the locale pointer. */
 	memset(&loc_locale_tables, 0, sizeof(loc_locale_tables));
 
@@ -164,8 +159,7 @@ loc_synchronize_tables(const sc_locale_t *locale) {
 	loc_locale_tables.locale = locale;
 }
 
-static void
-loc_check_tables_synchronized(const sc_locale_t *locale) {
+static void loc_check_tables_synchronized(const sc_locale_t *locale) {
 	if (locale != loc_locale_tables.locale)
 		loc_synchronize_tables(locale);
 }
@@ -250,8 +244,7 @@ static sc_bool loc_is_autodetect_enabled = TRUE;
  * "dd [Mm]mm yyyy".  Returns the address of the month part of the string, or
  * NULL if it doesn't match the expected format.
  */
-static const sc_char *
-loc_locate_signature_in_date(const sc_char *date) {
+static const sc_char *loc_locate_signature_in_date(const sc_char *date) {
 	sc_int day, year, converted;
 	sc_char signature[SIGNATURE_LENGTH + 1];
 
@@ -275,8 +268,7 @@ loc_locate_signature_in_date(const sc_char *date) {
  * any strcasecmp() variant because the signatures are in the locale's
  * codepage, but the locale is not yet (by definition) set.
  */
-static sc_bool
-loc_compare_locale_signatures(const char *signature, const sc_locale_t *locale) {
+static sc_bool loc_compare_locale_signatures(const char *signature, const sc_locale_t *locale) {
 	sc_int index_;
 	sc_bool is_matched;
 
@@ -302,9 +294,8 @@ loc_compare_locale_signatures(const char *signature, const sc_locale_t *locale) 
  * Generator was run.  Match this with locale signatures, and return the
  * first locale that matches, or NULL if none match.
  */
-static const sc_locale_t *
-loc_find_matching_locale(const sc_char *date,
-                         const sc_locale_t *const *locales) {
+static const sc_locale_t *loc_find_matching_locale(const sc_char *date,
+		const sc_locale_t *const *locales) {
 	const sc_char *signature;
 	const sc_locale_t *matched = NULL;
 
@@ -333,8 +324,7 @@ loc_find_matching_locale(const sc_char *date,
  * Set an autodetected value for the locale based on looking at a game's
  * compilation date.
  */
-void
-loc_detect_game_locale(sc_prop_setref_t bundle) {
+void loc_detect_game_locale(sc_prop_setref_t bundle) {
 	assert(bundle);
 
 	/* If an explicit locale has already been set, ignore the call. */
@@ -367,13 +357,11 @@ loc_detect_game_locale(sc_prop_setref_t bundle) {
  * be in ascii anyway, it's slightly safer to just use an ascii-only version
  * of this function.
  */
-static sc_char
-loc_ascii_tolower(sc_char ch) {
+static sc_char loc_ascii_tolower(sc_char ch) {
 	return (ch >= 'A' && ch <= 'Z') ? ch - 'A' + 'a' : ch;
 }
 
-static sc_int
-loc_ascii_strncasecmp(const sc_char *s1, const sc_char *s2, sc_int n) {
+static sc_int loc_ascii_strncasecmp(const sc_char *s1, const sc_char *s2, sc_int n) {
 	sc_int index_;
 
 	for (index_ = 0; index_ < n; index_++) {
@@ -396,8 +384,7 @@ loc_ascii_strncasecmp(const sc_char *s1, const sc_char *s2, sc_int n) {
  * matched the name.  Get the current locale, which may be the default locale
  * if none yet set.
  */
-sc_bool
-loc_set_locale(const sc_char *name) {
+sc_bool loc_set_locale(const sc_char *name) {
 	const sc_locale_t *matched = NULL;
 	const sc_locale_t *const *iterator;
 	assert(name);
@@ -424,8 +411,7 @@ loc_set_locale(const sc_char *name) {
 	return matched ? TRUE : FALSE;
 }
 
-const sc_char *
-loc_get_locale(void) {
+const sc_char *loc_get_locale(void) {
 	return loc_locale->name;
 }
 
@@ -438,14 +424,11 @@ loc_get_locale(void) {
  *
  * Print out locale tables.
  */
-static int
-loc_debug_dump_new_line(sc_int index_, sc_int count) {
+static int loc_debug_dump_new_line(sc_int index_, sc_int count) {
 	return index_ < TABLE_SIZE - 1 && index_ % count == count - 1;
 }
 
-static void
-loc_debug_dump_bool_table(const sc_char *label,
-                          sc_int count, const sc_bool table[]) {
+static void loc_debug_dump_bool_table(const sc_char *label, sc_int count, const sc_bool table[]) {
 	sc_int index_;
 
 	sc_trace("loc_locale_tables.%s = {\n  ", label);
@@ -456,9 +439,7 @@ loc_debug_dump_bool_table(const sc_char *label,
 	sc_trace("\n}\n");
 }
 
-static void
-loc_debug_dump_char_table(const sc_char *label,
-                          sc_int count, const sc_char table[]) {
+static void loc_debug_dump_char_table(const sc_char *label, sc_int count, const sc_char table[]) {
 	sc_int index_;
 
 	sc_trace("loc_locale_tables.%s = {\n  ", label);
@@ -469,8 +450,7 @@ loc_debug_dump_char_table(const sc_char *label,
 	sc_trace("\n}\n");
 }
 
-void
-loc_debug_dump(void) {
+void loc_debug_dump(void) {
 	sc_trace("Locale: debug dump follows...\n");
 
 	loc_check_tables_synchronized(loc_locale);
@@ -492,14 +472,12 @@ loc_debug_dump(void) {
  * "Template" functions for locale variant ctype functions.  Synchronize
  * tables to the currently set locale, and return the value from the table.
  */
-static sc_bool
-loc_bool_template(sc_char character, const sc_bool table[]) {
+static sc_bool loc_bool_template(sc_char character, const sc_bool table[]) {
 	loc_check_tables_synchronized(loc_locale);
 	return table[(sc_byte) character];
 }
 
-static sc_char
-loc_char_template(sc_char character, const sc_char table[]) {
+static sc_char loc_char_template(sc_char character, const sc_char table[]) {
 	loc_check_tables_synchronized(loc_locale);
 	return table[(sc_byte) character];
 }
@@ -514,28 +492,23 @@ loc_char_template(sc_char character, const sc_char table[]) {
  *
  * Public entry points into locale variant ctype functions.
  */
-sc_bool
-sc_isspace(sc_char character) {
+sc_bool sc_isspace(sc_char character) {
 	return loc_bool_template(character, loc_locale_tables.isspace);
 }
 
-sc_bool
-sc_isalpha(sc_char character) {
+sc_bool sc_isalpha(sc_char character) {
 	return loc_bool_template(character, loc_locale_tables.isalpha);
 }
 
-sc_bool
-sc_isdigit(sc_char character) {
+sc_bool sc_isdigit(sc_char character) {
 	return loc_bool_template(character, loc_locale_tables.isdigit);
 }
 
-sc_char
-sc_toupper(sc_char character) {
+sc_char sc_toupper(sc_char character) {
 	return loc_char_template(character, loc_locale_tables.toupper);
 }
 
-sc_char
-sc_tolower(sc_char character) {
+sc_char sc_tolower(sc_char character) {
 	return loc_char_template(character, loc_locale_tables.tolower);
 }
 

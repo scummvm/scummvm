@@ -58,8 +58,7 @@ static sc_bool lib_trace = FALSE;
  * directly rather than using the printfilter to avoid possible clashes
  * with ALRs.
  */
-void
-lib_warn_battle_system(void) {
+void lib_warn_battle_system(void) {
 	if_print_tag(SC_TAG_FONT, "size=16");
 	if_print_string("SCARE WARNING");
 	if_print_tag(SC_TAG_ENDFONT, "");
@@ -85,8 +84,7 @@ lib_warn_battle_system(void) {
  *
  * Return a random member of a roomgroup.
  */
-sc_int
-lib_random_roomgroup_member(sc_gameref_t game, sc_int roomgroup) {
+sc_int lib_random_roomgroup_member(sc_gameref_t game, sc_int roomgroup) {
 	const sc_prop_setref_t bundle = gs_get_bundle(game);
 	sc_vartype_t vt_key[4];
 	sc_int count, room;
@@ -119,8 +117,7 @@ lib_random_roomgroup_member(sc_gameref_t game, sc_int roomgroup) {
  *
  * Return TRUE if a particular alternate room description should be used.
  */
-static sc_bool
-lib_use_room_alt(sc_gameref_t game, sc_int room, sc_int alt) {
+static sc_bool lib_use_room_alt(sc_gameref_t game, sc_int room, sc_int alt) {
 	const sc_prop_setref_t bundle = gs_get_bundle(game);
 	sc_vartype_t vt_key[5];
 	sc_int type;
@@ -247,8 +244,7 @@ lib_use_room_alt(sc_gameref_t game, sc_int room, sc_int alt) {
  * the alts list when generating room names or descriptions.  Returns -1 if
  * no alt overrides the default room long description.
  */
-static sc_int
-lib_find_starting_alt(sc_gameref_t game, sc_int room) {
+static sc_int lib_find_starting_alt(sc_gameref_t game, sc_int room) {
 	const sc_prop_setref_t bundle = gs_get_bundle(game);
 	sc_vartype_t vt_key[5];
 	sc_int alt_count, alt, retval;
@@ -305,8 +301,7 @@ lib_find_starting_alt(sc_gameref_t game, sc_int room) {
  *
  * Get/print out the name for a given room.
  */
-const sc_char *
-lib_get_room_name(sc_gameref_t game, sc_int room) {
+const sc_char *lib_get_room_name(sc_gameref_t game, sc_int room) {
 	const sc_prop_setref_t bundle = gs_get_bundle(game);
 	sc_vartype_t vt_key[5];
 	sc_int alt_count, alt, start;
@@ -357,8 +352,7 @@ lib_get_room_name(sc_gameref_t game, sc_int room) {
 	return name;
 }
 
-void
-lib_print_room_name(sc_gameref_t game, sc_int room) {
+void lib_print_room_name(sc_gameref_t game, sc_int room) {
 	const sc_filterref_t filter = gs_get_filter(game);
 	const sc_char *name;
 
@@ -382,8 +376,7 @@ lib_print_room_name(sc_gameref_t game, sc_int room) {
  * prefix -- any "a"/"an"/"some" is replaced by "the" -- and with the full
  * prefix.
  */
-static void
-lib_print_object_np(sc_gameref_t game, sc_int object) {
+static void lib_print_object_np(sc_gameref_t game, sc_int object) {
 	const sc_filterref_t filter = gs_get_filter(game);
 	const sc_prop_setref_t bundle = gs_get_bundle(game);
 	sc_vartype_t vt_key[3];
@@ -448,8 +441,7 @@ lib_print_object_np(sc_gameref_t game, sc_int object) {
 	pf_buffer_string(filter, name);
 }
 
-static void
-lib_print_object(sc_gameref_t game, sc_int object) {
+static void lib_print_object(sc_gameref_t game, sc_int object) {
 	const sc_filterref_t filter = gs_get_filter(game);
 	const sc_prop_setref_t bundle = gs_get_bundle(game);
 	sc_vartype_t vt_key[3];
@@ -483,8 +475,7 @@ lib_print_object(sc_gameref_t game, sc_int object) {
  * Convenience functions to print out an NPC's name, with and without
  * any prefix.
  */
-static void
-lib_print_npc_np(sc_gameref_t game, sc_int npc) {
+static void lib_print_npc_np(sc_gameref_t game, sc_int npc) {
 	const sc_filterref_t filter = gs_get_filter(game);
 	const sc_prop_setref_t bundle = gs_get_bundle(game);
 	sc_vartype_t vt_key[3];
@@ -500,8 +491,7 @@ lib_print_npc_np(sc_gameref_t game, sc_int npc) {
 }
 
 #if 0
-static void
-lib_print_npc(sc_gameref_t game, sc_int npc) {
+static void lib_print_npc(sc_gameref_t game, sc_int npc) {
 	const sc_filterref_t filter = gs_get_filter(game);
 	const sc_prop_setref_t bundle = gs_get_bundle(game);
 	sc_vartype_t vt_key[3];
@@ -530,11 +520,8 @@ lib_print_npc(sc_gameref_t game, sc_int npc) {
  * Convenience functions for multiple handlers.  Returns the appropriate
  * response string for a game, based on perspective or object plurality.
  */
-static const sc_char *
-lib_select_response(sc_gameref_t game,
-                    const sc_char *second_person,
-                    const sc_char *first_person,
-                    const sc_char *third_person) {
+static const sc_char *lib_select_response(sc_gameref_t game,
+		const sc_char *second_person, const sc_char *first_person, const sc_char *third_person) {
 	const sc_prop_setref_t bundle = gs_get_bundle(game);
 	sc_vartype_t vt_key[2];
 	sc_int perspective;
@@ -564,9 +551,8 @@ lib_select_response(sc_gameref_t game,
 	return response;
 }
 
-static const sc_char *
-lib_select_plurality(sc_gameref_t game, sc_int object,
-                     const sc_char *singular, const sc_char *plural) {
+static const sc_char *lib_select_plurality(sc_gameref_t game, sc_int object,
+		const sc_char *singular, const sc_char *plural) {
 	return obj_appears_plural(game, object) ? plural : singular;
 }
 
@@ -578,8 +564,7 @@ lib_select_plurality(sc_gameref_t game, sc_int object,
  * gone walkabout and offers a changed description, return that; otherwise
  * return the standard inroom text.
  */
-static const sc_char *
-lib_get_npc_inroom_text(sc_gameref_t game, sc_int npc) {
+static const sc_char *lib_get_npc_inroom_text(sc_gameref_t game, sc_int npc) {
 	const sc_prop_setref_t bundle = gs_get_bundle(game);
 	sc_vartype_t vt_key[5];
 	sc_int walk_count, walk;
@@ -617,8 +602,7 @@ lib_get_npc_inroom_text(sc_gameref_t game, sc_int npc) {
  *
  * Print a list of the contents of a room.
  */
-static void
-lib_print_room_contents(sc_gameref_t game, sc_int room) {
+static void lib_print_room_contents(sc_gameref_t game, sc_int room) {
 	const sc_filterref_t filter = gs_get_filter(game);
 	const sc_prop_setref_t bundle = gs_get_bundle(game);
 	sc_vartype_t vt_key[4];
@@ -775,8 +759,7 @@ lib_print_room_contents(sc_gameref_t game, sc_int room) {
  *
  * Print out the long description for a given room.
  */
-void
-lib_print_room_description(sc_gameref_t game, sc_int room) {
+void lib_print_room_description(sc_gameref_t game, sc_int room) {
 	const sc_filterref_t filter = gs_get_filter(game);
 	const sc_prop_setref_t bundle = gs_get_bundle(game);
 	sc_vartype_t vt_key[5];
@@ -917,8 +900,7 @@ lib_print_room_description(sc_gameref_t game, sc_int room) {
  *
  * Return TRUE if the player can move in the given direction.
  */
-static sc_bool
-lib_can_go(sc_gameref_t game, sc_int room, sc_int direction) {
+static sc_bool lib_can_go(sc_gameref_t game, sc_int room, sc_int direction) {
 	const sc_prop_setref_t bundle = gs_get_bundle(game);
 	sc_vartype_t vt_key[5];
 	sc_int restriction;
@@ -1036,8 +1018,7 @@ static const sc_char *const DIRNAMES_8[] = {
  *
  * Print a list of exits from the player room.
  */
-sc_bool
-lib_cmd_print_room_exits(sc_gameref_t game) {
+sc_bool lib_cmd_print_room_exits(sc_gameref_t game) {
 	const sc_filterref_t filter = gs_get_filter(game);
 	const sc_prop_setref_t bundle = gs_get_bundle(game);
 	sc_vartype_t vt_key[4];
@@ -1115,8 +1096,7 @@ lib_cmd_print_room_exits(sc_gameref_t game) {
  * Print out details of the player room, in brief if verbose not set and the
  * room has already been visited.
  */
-static void
-lib_describe_player_room(sc_gameref_t game, sc_bool force_verbose) {
+static void lib_describe_player_room(sc_gameref_t game, sc_bool force_verbose) {
 	const sc_filterref_t filter = gs_get_filter(game);
 	const sc_prop_setref_t bundle = gs_get_bundle(game);
 	sc_vartype_t vt_key[2];
@@ -1149,8 +1129,7 @@ lib_describe_player_room(sc_gameref_t game, sc_bool force_verbose) {
  *
  * Command handler for "look" command.
  */
-sc_bool
-lib_cmd_look(sc_gameref_t game) {
+sc_bool lib_cmd_look(sc_gameref_t game) {
 	const sc_filterref_t filter = gs_get_filter(game);
 
 	pf_buffer_character(filter, '\n');
@@ -1164,8 +1143,7 @@ lib_cmd_look(sc_gameref_t game) {
  *
  * Called on "quit".  Exits from the game main loop.
  */
-sc_bool
-lib_cmd_quit(sc_gameref_t game) {
+sc_bool lib_cmd_quit(sc_gameref_t game) {
 	if (if_confirm(SC_CONF_QUIT))
 		game->is_running = FALSE;
 
@@ -1180,8 +1158,7 @@ lib_cmd_quit(sc_gameref_t game) {
  * Called on "restart".  Exits from the game main loop with restart
  * request set.
  */
-sc_bool
-lib_cmd_restart(sc_gameref_t game) {
+sc_bool lib_cmd_restart(sc_gameref_t game) {
 	if (if_confirm(SC_CONF_RESTART)) {
 		game->is_running = FALSE;
 		game->do_restart = TRUE;
@@ -1197,8 +1174,7 @@ lib_cmd_restart(sc_gameref_t game) {
  *
  * Called on "undo".  Restores any undo game or memo to the main game.
  */
-sc_bool
-lib_cmd_undo(sc_gameref_t game) {
+sc_bool lib_cmd_undo(sc_gameref_t game) {
 	const sc_filterref_t filter = gs_get_filter(game);
 	const sc_memo_setref_t memento = gs_get_memento(game);
 
@@ -1246,8 +1222,7 @@ lib_cmd_undo(sc_gameref_t game) {
  * Prints a history of saved commands for the game.  Print directly rather
  * than using the printfilter to avoid possible clashes with ALRs.
  */
-static sc_bool
-lib_cmd_history_common(sc_gameref_t game, sc_int limit) {
+static sc_bool lib_cmd_history_common(sc_gameref_t game, sc_int limit) {
 	const sc_var_setref_t vars = gs_get_vars(game);
 	const sc_memo_setref_t memento = gs_get_memento(game);
 	sc_int first, count, timestamp;
@@ -1319,8 +1294,7 @@ lib_cmd_history_common(sc_gameref_t game, sc_int limit) {
 	return TRUE;
 }
 
-sc_bool
-lib_cmd_history_number(sc_gameref_t game) {
+sc_bool lib_cmd_history_number(sc_gameref_t game) {
 	const sc_var_setref_t vars = gs_get_vars(game);
 	sc_int limit;
 
@@ -1336,8 +1310,7 @@ lib_cmd_history_number(sc_gameref_t game) {
 	return lib_cmd_history_common(game, limit);
 }
 
-sc_bool
-lib_cmd_history(sc_gameref_t game) {
+sc_bool lib_cmd_history(sc_gameref_t game) {
 	return lib_cmd_history_common(game, 0);
 }
 
@@ -1353,8 +1326,7 @@ lib_cmd_history(sc_gameref_t game) {
  * flag.  The others allow the user to select a command from the history list
  * to re-run.
  */
-sc_bool
-lib_cmd_again(sc_gameref_t game) {
+sc_bool lib_cmd_again(sc_gameref_t game) {
 	game->do_again = TRUE;
 	game->redo_sequence = 0;
 
@@ -1362,8 +1334,7 @@ lib_cmd_again(sc_gameref_t game) {
 	return TRUE;
 }
 
-sc_bool
-lib_cmd_redo_number(sc_gameref_t game) {
+sc_bool lib_cmd_redo_number(sc_gameref_t game) {
 	const sc_var_setref_t vars = gs_get_vars(game);
 	const sc_memo_setref_t memento = gs_get_memento(game);
 	sc_int sequence;
@@ -1398,8 +1369,7 @@ lib_cmd_redo_number(sc_gameref_t game) {
 	return TRUE;
 }
 
-static sc_bool
-lib_cmd_redo_text_last_common(sc_gameref_t game, const sc_char *target) {
+static sc_bool lib_cmd_redo_text_last_common(sc_gameref_t game, const sc_char *target) {
 	const sc_memo_setref_t memento = gs_get_memento(game);
 	sc_bool is_do_last, is_contains;
 	sc_int length, matched_sequence;
@@ -1486,16 +1456,14 @@ lib_cmd_redo_text_last_common(sc_gameref_t game, const sc_char *target) {
 	return TRUE;
 }
 
-sc_bool
-lib_cmd_redo_text(sc_gameref_t game) {
+sc_bool lib_cmd_redo_text(sc_gameref_t game) {
 	const sc_var_setref_t vars = gs_get_vars(game);
 
 	/* Call the common redo with the referenced text from %text%. */
 	return lib_cmd_redo_text_last_common(game, var_get_ref_text(vars));
 }
 
-sc_bool
-lib_cmd_redo_last(sc_gameref_t game) {
+sc_bool lib_cmd_redo_last(sc_gameref_t game) {
 	/* Call the common redo with, literally, "!", forming "!!" . */
 	return lib_cmd_redo_text_last_common(game, "!");
 }
@@ -1506,8 +1474,7 @@ lib_cmd_redo_last(sc_gameref_t game) {
  *
  * Called on "hints".  Requests the interface to display any available hints.
  */
-sc_bool
-lib_cmd_hints(sc_gameref_t game) {
+sc_bool lib_cmd_hints(sc_gameref_t game) {
 	const sc_filterref_t filter = gs_get_filter(game);
 	sc_int task;
 	sc_bool game_has_hints;
@@ -1550,15 +1517,13 @@ lib_cmd_hints(sc_gameref_t game) {
  *
  * Convenience helpers for printing licensing and game information.
  */
-static void
-lib_print_string_bold(const sc_char *string) {
+static void lib_print_string_bold(const sc_char *string) {
 	if_print_tag(SC_TAG_BOLD, "");
 	if_print_string(string);
 	if_print_tag(SC_TAG_ENDBOLD, "");
 }
 
-static void
-lib_print_string_italics(const sc_char *string) {
+static void lib_print_string_italics(const sc_char *string) {
 	if_print_tag(SC_TAG_ITALICS, "");
 	if_print_string(string);
 	if_print_tag(SC_TAG_ENDITALICS, "");
@@ -1573,8 +1538,7 @@ lib_print_string_italics(const sc_char *string) {
  * and the GPL licensing.  Print directly rather than using the printfilter
  * to avoid possible clashes with ALRs.
  */
-sc_bool
-lib_cmd_help(sc_gameref_t game) {
+sc_bool lib_cmd_help(sc_gameref_t game) {
 	if_print_string(
 	    "These are some of the typical commands used in this adventure:\n\n");
 
@@ -1626,8 +1590,7 @@ lib_cmd_help(sc_gameref_t game) {
 	return TRUE;
 }
 
-sc_bool
-lib_cmd_license(sc_gameref_t game) {
+sc_bool lib_cmd_license(sc_gameref_t game) {
 	lib_print_string_bold("SCARE");
 	if_print_string(" is ");
 	lib_print_string_italics(
@@ -1671,8 +1634,7 @@ lib_cmd_license(sc_gameref_t game) {
  * in real Adrift.  Prints directly rather than using the printfilter to
  * avoid possible clashes with ALRs.
  */
-sc_bool
-lib_cmd_information(sc_gameref_t game) {
+sc_bool lib_cmd_information(sc_gameref_t game) {
 	const sc_prop_setref_t bundle = gs_get_bundle(game);
 	const sc_var_setref_t vars = gs_get_vars(game);
 	sc_vartype_t vt_key[2];
@@ -1718,8 +1680,7 @@ lib_cmd_information(sc_gameref_t game) {
  *
  * Clear the main game window (almost).
  */
-sc_bool
-lib_cmd_clear(sc_gameref_t game) {
+sc_bool lib_cmd_clear(sc_gameref_t game) {
 	const sc_filterref_t filter = gs_get_filter(game);
 
 	pf_buffer_tag(filter, SC_TAG_CLS);
@@ -1736,8 +1697,7 @@ lib_cmd_clear(sc_gameref_t game) {
  * interpreter builds that can't offer a true status line.  Prints directly
  * rather than using the printfilter to avoid possible clashes with ALRs.
  */
-sc_bool
-lib_cmd_statusline(sc_gameref_t game) {
+sc_bool lib_cmd_statusline(sc_gameref_t game) {
 	const sc_char *name, *author, *room, *status;
 	sc_int score;
 
@@ -1782,8 +1742,7 @@ lib_cmd_statusline(sc_gameref_t game) {
  * Display the "Runner version".  Prints directly rather than using the
  * printfilter to avoid possible clashes with ALRs.
  */
-sc_bool
-lib_cmd_version(sc_gameref_t game) {
+sc_bool lib_cmd_version(sc_gameref_t game) {
 	const sc_prop_setref_t bundle = gs_get_bundle(game);
 	sc_vartype_t vt_key;
 	sc_char buffer[64];
@@ -1822,8 +1781,7 @@ lib_cmd_version(sc_gameref_t game) {
  * the game's setting.  The latter prints directly rather than using the
  * printfilter to avoid possible clashes with ALRs.
  */
-sc_bool
-lib_cmd_wait(sc_gameref_t game) {
+sc_bool lib_cmd_wait(sc_gameref_t game) {
 	const sc_filterref_t filter = gs_get_filter(game);
 	const sc_prop_setref_t bundle = gs_get_bundle(game);
 	sc_vartype_t vt_key[2];
@@ -1850,8 +1808,7 @@ lib_cmd_wait(sc_gameref_t game) {
 	return TRUE;
 }
 
-sc_bool
-lib_cmd_wait_number(sc_gameref_t game) {
+sc_bool lib_cmd_wait_number(sc_gameref_t game) {
 	const sc_var_setref_t vars = gs_get_vars(game);
 	sc_int waitturns;
 	sc_char buffer[32];
@@ -1885,8 +1842,7 @@ lib_cmd_wait_number(sc_gameref_t game) {
  * Set/clear game verbose flag.  Print directly rather than using the
  * printfilter to avoid possible clashes with ALRs.
  */
-sc_bool
-lib_cmd_verbose(sc_gameref_t game) {
+sc_bool lib_cmd_verbose(sc_gameref_t game) {
 	/* Set game verbose flag and return. */
 	game->verbose = TRUE;
 	if_print_string("The game is now in its ");
@@ -1900,8 +1856,7 @@ lib_cmd_verbose(sc_gameref_t game) {
 	return TRUE;
 }
 
-sc_bool
-lib_cmd_brief(sc_gameref_t game) {
+sc_bool lib_cmd_brief(sc_gameref_t game) {
 	/* Clear game verbose flag and return. */
 	game->verbose = FALSE;
 	if_print_string("The game is now in its ");
@@ -1923,8 +1878,7 @@ lib_cmd_brief(sc_gameref_t game) {
  * Set/clear/query game score change notification flag.  Print directly
  * rather than using the printfilter to avoid possible clashes with ALRs.
  */
-sc_bool
-lib_cmd_notify_on_off(sc_gameref_t game) {
+sc_bool lib_cmd_notify_on_off(sc_gameref_t game) {
 	const sc_var_setref_t vars = gs_get_vars(game);
 	const sc_char *control;
 
@@ -1957,8 +1911,7 @@ lib_cmd_notify_on_off(sc_gameref_t game) {
 	return TRUE;
 }
 
-sc_bool
-lib_cmd_notify(sc_gameref_t game) {
+sc_bool lib_cmd_notify(sc_gameref_t game) {
 	/* Report the current state of notification. */
 	if_print_string("Game score change notification is ");
 	if_print_tag(SC_TAG_ITALICS, "");
@@ -1986,8 +1939,7 @@ lib_cmd_notify(sc_gameref_t game) {
  * Runner responds here with the system time and date, but we'll do something
  * different.
  */
-sc_bool
-lib_cmd_time(sc_gameref_t game) {
+sc_bool lib_cmd_time(sc_gameref_t game) {
 	const sc_var_setref_t vars = gs_get_vars(game);
 	sc_uint timestamp;
 	sc_int hr, min, sec;
@@ -2012,8 +1964,7 @@ lib_cmd_time(sc_gameref_t game) {
 	return TRUE;
 }
 
-sc_bool
-lib_cmd_date(sc_gameref_t game) {
+sc_bool lib_cmd_date(sc_gameref_t game) {
 	const sc_filterref_t filter = gs_get_filter(game);
 
 	pf_buffer_string(filter, "Maybe we should just be good friends.\n");
@@ -2038,8 +1989,7 @@ enum {
  *
  * Central movement command, called by all movement handlers.
  */
-static sc_bool
-lib_go(sc_gameref_t game, sc_int direction) {
+static sc_bool lib_go(sc_gameref_t game, sc_int direction) {
 	const sc_filterref_t filter = gs_get_filter(game);
 	const sc_prop_setref_t bundle = gs_get_bundle(game);
 	sc_vartype_t vt_key[5], vt_rvalue;
@@ -2164,63 +2114,51 @@ lib_go(sc_gameref_t game, sc_int direction) {
  *
  * Direction-specific movement commands.
  */
-sc_bool
-lib_cmd_go_north(sc_gameref_t game) {
+sc_bool lib_cmd_go_north(sc_gameref_t game) {
 	return lib_go(game, DIR_NORTH);
 }
 
-sc_bool
-lib_cmd_go_east(sc_gameref_t game) {
+sc_bool lib_cmd_go_east(sc_gameref_t game) {
 	return lib_go(game, DIR_EAST);
 }
 
-sc_bool
-lib_cmd_go_south(sc_gameref_t game) {
+sc_bool lib_cmd_go_south(sc_gameref_t game) {
 	return lib_go(game, DIR_SOUTH);
 }
 
-sc_bool
-lib_cmd_go_west(sc_gameref_t game) {
+sc_bool lib_cmd_go_west(sc_gameref_t game) {
 	return lib_go(game, DIR_WEST);
 }
 
-sc_bool
-lib_cmd_go_up(sc_gameref_t game) {
+sc_bool lib_cmd_go_up(sc_gameref_t game) {
 	return lib_go(game, DIR_UP);
 }
 
-sc_bool
-lib_cmd_go_down(sc_gameref_t game) {
+sc_bool lib_cmd_go_down(sc_gameref_t game) {
 	return lib_go(game, DIR_DOWN);
 }
 
-sc_bool
-lib_cmd_go_in(sc_gameref_t game) {
+sc_bool lib_cmd_go_in(sc_gameref_t game) {
 	return lib_go(game, DIR_IN);
 }
 
-sc_bool
-lib_cmd_go_out(sc_gameref_t game) {
+sc_bool lib_cmd_go_out(sc_gameref_t game) {
 	return lib_go(game, DIR_OUT);
 }
 
-sc_bool
-lib_cmd_go_northeast(sc_gameref_t game) {
+sc_bool lib_cmd_go_northeast(sc_gameref_t game) {
 	return lib_go(game, DIR_NORTHEAST);
 }
 
-sc_bool
-lib_cmd_go_southeast(sc_gameref_t game) {
+sc_bool lib_cmd_go_southeast(sc_gameref_t game) {
 	return lib_go(game, DIR_SOUTHEAST);
 }
 
-sc_bool
-lib_cmd_go_northwest(sc_gameref_t game) {
+sc_bool lib_cmd_go_northwest(sc_gameref_t game) {
 	return lib_go(game, DIR_NORTHWEST);
 }
 
-sc_bool
-lib_cmd_go_southwest(sc_gameref_t game) {
+sc_bool lib_cmd_go_southwest(sc_gameref_t game) {
 	return lib_go(game, DIR_SOUTHWEST);
 }
 
@@ -2232,8 +2170,7 @@ lib_cmd_go_southwest(sc_gameref_t game) {
  * with the string passed in, and return TRUE if they match.  The routine
  * requires that string is filtered, stripped, trimmed and normalized.
  */
-static sc_bool
-lib_compare_rooms(sc_gameref_t game, sc_int room, const sc_char *string) {
+static sc_bool lib_compare_rooms(sc_gameref_t game, sc_int room, const sc_char *string) {
 	const sc_var_setref_t vars = gs_get_vars(game);
 	const sc_prop_setref_t bundle = gs_get_bundle(game);
 	sc_char *name, *compare_name;
@@ -2275,8 +2212,7 @@ lib_compare_rooms(sc_gameref_t game, sc_int room, const sc_char *string) {
  * text comparisons, for example, two "Manor Grounds" at the start of Humbug,
  * differentiated within the game with trailing "<some_tag>" components.
  */
-sc_bool
-lib_cmd_go_room(sc_gameref_t game) {
+sc_bool lib_cmd_go_room(sc_gameref_t game) {
 	const sc_filterref_t filter = gs_get_filter(game);
 	const sc_var_setref_t vars = gs_get_vars(game);
 	const sc_prop_setref_t bundle = gs_get_bundle(game);
@@ -2386,8 +2322,7 @@ lib_cmd_go_room(sc_gameref_t game) {
  *
  * Show the long description of a player.
  */
-sc_bool
-lib_cmd_examine_self(sc_gameref_t game) {
+sc_bool lib_cmd_examine_self(sc_gameref_t game) {
 	const sc_filterref_t filter = gs_get_filter(game);
 	const sc_prop_setref_t bundle = gs_get_bundle(game);
 	sc_vartype_t vt_key[2];
@@ -2501,9 +2436,7 @@ lib_cmd_examine_self(sc_gameref_t game) {
  * -1 with *is_ambiguous FALSE if requested, otherwise print a message then
  * return -1.
  */
-static sc_int
-lib_disambiguate_npc(sc_gameref_t game,
-                     const sc_char *verb, sc_bool *is_ambiguous) {
+static sc_int lib_disambiguate_npc(sc_gameref_t game, const sc_char *verb, sc_bool *is_ambiguous) {
 	const sc_filterref_t filter = gs_get_filter(game);
 	const sc_var_setref_t vars = gs_get_vars(game);
 	sc_int count, index_, npc, listed;
@@ -2590,12 +2523,9 @@ lib_disambiguate_npc(sc_gameref_t game,
  * just one object.  The resolver function can normally be the same as the
  * function used to filter objects for multiple references.
  */
-static sc_int
-lib_disambiguate_object_common(sc_gameref_t game, const sc_char *verb,
-                               sc_bool(*resolver)
-                               (sc_gameref_t, sc_int, sc_int),
-                               sc_int resolver_arg,
-                               sc_bool *is_ambiguous) {
+static sc_int lib_disambiguate_object_common(sc_gameref_t game, const sc_char *verb,
+		sc_bool(*resolver)(sc_gameref_t, sc_int, sc_int),
+		sc_int resolver_arg, sc_bool *is_ambiguous) {
 	const sc_filterref_t filter = gs_get_filter(game);
 	const sc_var_setref_t vars = gs_get_vars(game);
 	sc_int count, index_, object, listed;
@@ -2712,18 +2642,12 @@ lib_disambiguate_object_common(sc_gameref_t game, const sc_char *verb,
 	return -1;
 }
 
-static sc_int
-lib_disambiguate_object(sc_gameref_t game,
-                        const sc_char *verb, sc_bool *is_ambiguous) {
+static sc_int lib_disambiguate_object(sc_gameref_t game, const sc_char *verb, sc_bool *is_ambiguous) {
 	return lib_disambiguate_object_common(game, verb, NULL, -1, is_ambiguous);
 }
 
-static sc_int
-lib_disambiguate_object_extended(sc_gameref_t game, const sc_char *verb,
-                                 sc_bool(*resolver)
-                                 (sc_gameref_t, sc_int, sc_int),
-                                 sc_int resolver_arg,
-                                 sc_bool *is_ambiguous) {
+static sc_int lib_disambiguate_object_extended(sc_gameref_t game, const sc_char *verb,
+		sc_bool(*resolver)(sc_gameref_t, sc_int, sc_int), sc_int resolver_arg, sc_bool *is_ambiguous) {
 	return lib_disambiguate_object_common(game, verb,
 	                                      resolver, resolver_arg, is_ambiguous);
 }
@@ -2734,8 +2658,7 @@ lib_disambiguate_object_extended(sc_gameref_t game, const sc_char *verb,
  *
  * List objects carried and worn by an NPC.
  */
-static sc_bool
-lib_list_npc_inventory(sc_gameref_t game, sc_int npc, sc_bool is_described) {
+static sc_bool lib_list_npc_inventory(sc_gameref_t game, sc_int npc, sc_bool is_described) {
 	const sc_filterref_t filter = gs_get_filter(game);
 	sc_int object, count, trail;
 	sc_bool wearing;
@@ -2831,8 +2754,7 @@ lib_list_npc_inventory(sc_gameref_t game, sc_int npc, sc_bool is_described) {
  * Show the long description of the most recently referenced NPC, and a
  * list of what they're wearing and carrying.
  */
-sc_bool
-lib_cmd_examine_npc(sc_gameref_t game) {
+sc_bool lib_cmd_examine_npc(sc_gameref_t game) {
 	const sc_filterref_t filter = gs_get_filter(game);
 	const sc_prop_setref_t bundle = gs_get_bundle(game);
 	sc_vartype_t vt_key[4];
@@ -2888,9 +2810,7 @@ lib_cmd_examine_npc(sc_gameref_t game) {
  *
  * List the objects in a given container object, normal format listing.
  */
-static sc_bool
-lib_list_in_object_normal(sc_gameref_t game,
-                          sc_int container, sc_bool is_described) {
+static sc_bool lib_list_in_object_normal(sc_gameref_t game, sc_int container, sc_bool is_described) {
 	const sc_filterref_t filter = gs_get_filter(game);
 	sc_int object, count, trail;
 
@@ -2948,9 +2868,7 @@ lib_list_in_object_normal(sc_gameref_t game,
  *
  * List the objects in a given container object, alternate format listing.
  */
-static sc_bool
-lib_list_in_object_alternate(sc_gameref_t game,
-                             sc_int container, sc_bool is_described) {
+static sc_bool lib_list_in_object_alternate(sc_gameref_t game,sc_int container, sc_bool is_described) {
 	const sc_filterref_t filter = gs_get_filter(game);
 	sc_int object, count, trail;
 
@@ -3014,8 +2932,7 @@ lib_list_in_object_alternate(sc_gameref_t game,
  * this, and in particular works with the ALR magic in "To Hell in a Hamper",
  * but it's almost certainly wrong.  Or, at minimum, incomplete.
  */
-static sc_bool
-lib_list_in_object(sc_gameref_t game, sc_int container, sc_bool is_described) {
+static sc_bool lib_list_in_object(sc_gameref_t game, sc_int container, sc_bool is_described) {
 	sc_bool use_alternate_format = FALSE;
 
 	/*
@@ -3057,8 +2974,7 @@ lib_list_in_object(sc_gameref_t game, sc_int container, sc_bool is_described) {
  *
  * List the objects on a given surface object.
  */
-static sc_bool
-lib_list_on_object(sc_gameref_t game, sc_int supporter, sc_bool is_described) {
+static sc_bool lib_list_on_object(sc_gameref_t game, sc_int supporter, sc_bool is_described) {
 	const sc_filterref_t filter = gs_get_filter(game);
 	sc_int object, count, trail;
 
@@ -3116,8 +3032,7 @@ lib_list_on_object(sc_gameref_t game, sc_int supporter, sc_bool is_described) {
  *
  * Describe the state of a stateful object.
  */
-static sc_bool
-lib_list_object_state(sc_gameref_t game, sc_int object, sc_bool is_described) {
+static sc_bool lib_list_object_state(sc_gameref_t game, sc_int object, sc_bool is_described) {
 	const sc_filterref_t filter = gs_get_filter(game);
 	const sc_prop_setref_t bundle = gs_get_bundle(game);
 	sc_vartype_t vt_key[3];
@@ -3161,8 +3076,7 @@ lib_list_object_state(sc_gameref_t game, sc_int object, sc_bool is_described) {
  *
  * Show the long description of the most recently referenced object.
  */
-sc_bool
-lib_cmd_examine_object(sc_gameref_t game) {
+sc_bool lib_cmd_examine_object(sc_gameref_t game) {
 	const sc_filterref_t filter = gs_get_filter(game);
 	const sc_prop_setref_t bundle = gs_get_bundle(game);
 	sc_vartype_t vt_key[3];
@@ -3294,8 +3208,7 @@ lib_cmd_examine_object(sc_gameref_t game) {
  * references uses the buffer passed in if possible, otherwise allocates
  * its own buffer; testing the return value shows which happened.
  */
-static sc_bool *
-lib_save_object_references(sc_gameref_t game, sc_bool buffer[], sc_int length) {
+static sc_bool *lib_save_object_references(sc_gameref_t game, sc_bool buffer[], sc_int length) {
 	sc_int required, available;
 	sc_bool *references;
 
@@ -3312,8 +3225,7 @@ lib_save_object_references(sc_gameref_t game, sc_bool buffer[], sc_int length) {
 	return references;
 }
 
-static void
-lib_restore_object_references(sc_gameref_t game, const sc_bool references[]) {
+static void lib_restore_object_references(sc_gameref_t game, const sc_bool references[]) {
 	sc_int bytes;
 
 	/* Calculate the bytes in the references array, and copy back to the game. */
@@ -3332,13 +3244,9 @@ lib_restore_object_references(sc_gameref_t game, const sc_bool references[]) {
  * to retry game commands using standard "get " and "drop " commands.  This
  * makes "take/pick up/put down" work with a game's overridden get/drop.
  */
-static sc_bool
-lib_try_game_command_common(sc_gameref_t game,
-                            const sc_char *verb, sc_int object,
-                            const sc_char *preposition,
-                            sc_int associate,
-                            sc_bool is_associate_object,
-                            sc_bool is_associate_npc) {
+static sc_bool lib_try_game_command_common(sc_gameref_t game, const sc_char *verb, sc_int object,
+		const sc_char *preposition, sc_int associate, sc_bool is_associate_object,
+		sc_bool is_associate_npc) {
 	const sc_prop_setref_t bundle = gs_get_bundle(game);
 	sc_vartype_t vt_key[3];
 	sc_char buffer[LIB_ALLOCATION_AVOIDANCE_SIZE];
@@ -3439,26 +3347,18 @@ lib_try_game_command_common(sc_gameref_t game,
 	return status;
 }
 
-static sc_bool
-lib_try_game_command_short(sc_gameref_t game,
-                           const sc_char *verb, sc_int object) {
-	return lib_try_game_command_common(game, verb, object,
-	                                   NULL, -1, FALSE, FALSE);
+static sc_bool lib_try_game_command_short(sc_gameref_t game, const sc_char *verb, sc_int object) {
+	return lib_try_game_command_common(game, verb, object, NULL, -1, FALSE, FALSE);
 }
 
-static sc_bool
-lib_try_game_command_with_object(sc_gameref_t game,
-                                 const sc_char *verb, sc_int object,
-                                 const sc_char *preposition,
-                                 sc_int other_object) {
+static sc_bool lib_try_game_command_with_object(sc_gameref_t game, const sc_char *verb,
+		sc_int object, const sc_char *preposition, sc_int other_object) {
 	return lib_try_game_command_common(game, verb, object,
 	                                   preposition, other_object, TRUE, FALSE);
 }
 
-static sc_bool
-lib_try_game_command_with_npc(sc_gameref_t game,
-                              const sc_char *verb, sc_int object,
-                              const sc_char *preposition, sc_int npc) {
+static sc_bool lib_try_game_command_with_npc(sc_gameref_t game, const sc_char *verb,
+		sc_int object, const sc_char *preposition, sc_int npc) {
 	return lib_try_game_command_common(game, verb, object,
 	                                   preposition, npc, FALSE, TRUE);
 }
@@ -3472,12 +3372,9 @@ lib_try_game_command_with_npc(sc_gameref_t game,
  * using the verb supplied, and sets are_more_objects if we found an object
  * but there appear to be more following it.
  */
-static sc_bool
-lib_parse_next_object(sc_gameref_t game, const sc_char *verb,
-                      sc_bool(*resolver)(sc_gameref_t, sc_int, sc_int),
-                      sc_int resolver_arg,
-                      sc_int *object,
-                      sc_bool *are_more_objects, sc_bool *is_ambiguous) {
+static sc_bool lib_parse_next_object(sc_gameref_t game, const sc_char *verb,
+		sc_bool(*resolver)(sc_gameref_t, sc_int, sc_int), sc_int resolver_arg,
+		sc_int *object, sc_bool *are_more_objects, sc_bool *is_ambiguous) {
 	const sc_var_setref_t vars = gs_get_vars(game);
 	const sc_char *list;
 	sc_bool is_matched;
@@ -3513,11 +3410,9 @@ lib_parse_next_object(sc_gameref_t game, const sc_char *verb,
  * Parses object lists such as "object" and "object and object" and returns
  * the multiple objects in the game's multiple_references.
  */
-static sc_bool
-lib_parse_multiple_objects(sc_gameref_t game, const sc_char *verb,
-                           sc_bool(*resolver)(sc_gameref_t, sc_int, sc_int),
-                           sc_int resolver_arg,
-                           sc_int *count) {
+static sc_bool lib_parse_multiple_objects(sc_gameref_t game, const sc_char *verb,
+		sc_bool(*resolver)(sc_gameref_t, sc_int, sc_int),
+		sc_int resolver_arg, sc_int *count) {
 	const sc_filterref_t filter = gs_get_filter(game);
 	sc_int count_, object;
 	sc_bool are_more_objects, is_ambiguous;
@@ -3612,10 +3507,9 @@ lib_parse_multiple_objects(sc_gameref_t game, const sc_char *verb,
  * references into standard object references, using the supplied filter.
  * The first is inclusive, the second exclusive.
  */
-static sc_int
-lib_apply_multiple_filter(sc_gameref_t game,
-                          sc_bool(*filter)(sc_gameref_t, sc_int, sc_int),
-                          sc_int filter_arg, sc_int *references) {
+static sc_int lib_apply_multiple_filter(sc_gameref_t game,
+		sc_bool(*filter)(sc_gameref_t, sc_int, sc_int),
+		sc_int filter_arg, sc_int *references) {
 	sc_int count, object, references_;
 
 	/* Clear all object references initially. */
@@ -3645,10 +3539,9 @@ lib_apply_multiple_filter(sc_gameref_t game,
 	return count;
 }
 
-static sc_int
-lib_apply_except_filter(sc_gameref_t game,
-                        sc_bool(*filter)(sc_gameref_t, sc_int, sc_int),
-                        sc_int filter_arg, sc_int *references) {
+static sc_int lib_apply_except_filter(sc_gameref_t game,
+		sc_bool(*filter)(sc_gameref_t, sc_int, sc_int),
+		sc_int filter_arg, sc_int *references) {
 	sc_int count, object, references_;
 
 	/* Clear all object references initially. */
@@ -3685,8 +3578,7 @@ lib_apply_except_filter(sc_gameref_t game,
  *
  * Display player weight and size limits and amounts currently carried.
  */
-sc_bool
-lib_cmd_count(sc_gameref_t game) {
+sc_bool lib_cmd_count(sc_gameref_t game) {
 	const sc_filterref_t filter = gs_get_filter(game);
 	sc_int index_, size, weight;
 	sc_char buffer[32];
@@ -3734,8 +3626,7 @@ lib_cmd_count(sc_gameref_t game) {
  *
  * Return TRUE if the given object is too heavy for the player to carry.
  */
-static sc_bool
-lib_object_too_heavy(sc_gameref_t game, sc_int object, sc_bool *is_portable) {
+static sc_bool lib_object_too_heavy(sc_gameref_t game, sc_int object, sc_bool *is_portable) {
 	sc_int player_limit, index_, weight, object_weight;
 
 	/* Get the player limit and the given object weight. */
@@ -3764,8 +3655,7 @@ lib_object_too_heavy(sc_gameref_t game, sc_int object, sc_bool *is_portable) {
  *
  * Return TRUE if the given object is too large for the player to carry.
  */
-static sc_bool
-lib_object_too_large(sc_gameref_t game, sc_int object, sc_bool *is_portable) {
+static sc_bool lib_object_too_large(sc_gameref_t game, sc_int object, sc_bool *is_portable) {
 	sc_int player_limit, index_, size, object_size;
 
 	/* Get the player limit and the given object size. */
@@ -3794,8 +3684,7 @@ lib_object_too_large(sc_gameref_t game, sc_int object, sc_bool *is_portable) {
  *
  * Reject attempts to take an npc.
  */
-sc_bool
-lib_cmd_take_npc(sc_gameref_t game) {
+sc_bool lib_cmd_take_npc(sc_gameref_t game) {
 	const sc_filterref_t filter = gs_get_filter(game);
 	sc_int npc;
 	sc_bool is_ambiguous;
@@ -3823,9 +3712,8 @@ lib_cmd_take_npc(sc_gameref_t game) {
  * Objects to action are flagged in object_references; objects requested but
  * deemed not actionable are flagged in multiple_references.
  */
-static void
-lib_take_backend_common(sc_gameref_t game, sc_int associate,
-                        sc_bool is_associate_object, sc_bool is_associate_npc) {
+static void lib_take_backend_common(sc_gameref_t game, sc_int associate,
+		sc_bool is_associate_object, sc_bool is_associate_npc) {
 	const sc_filterref_t filter = gs_get_filter(game);
 	sc_int object_count, object, count, trail, total, npc;
 	sc_int too_heavy, too_large;
@@ -4374,18 +4262,15 @@ lib_take_backend_common(sc_gameref_t game, sc_int associate,
  * Facets of lib_take_backend_common().  Provide backend handling for either
  * the plain "take" handlers, or the "take from <something>" handlers.
  */
-static void
-lib_take_backend(sc_gameref_t game) {
+static void lib_take_backend(sc_gameref_t game) {
 	lib_take_backend_common(game, -1, FALSE, FALSE);
 }
 
-static void
-lib_take_from_object_backend(sc_gameref_t game, sc_int associate) {
+static void lib_take_from_object_backend(sc_gameref_t game, sc_int associate) {
 	lib_take_backend_common(game, associate, TRUE, FALSE);
 }
 
-static void
-lib_take_from_npc_backend(sc_gameref_t game, sc_int associate) {
+static void lib_take_from_npc_backend(sc_gameref_t game, sc_int associate) {
 	lib_take_backend_common(game, associate, FALSE, TRUE);
 }
 
@@ -4397,8 +4282,7 @@ lib_take_from_npc_backend(sc_gameref_t game, sc_int associate) {
  * Helper functions for deciding if an object may be acquired in this context.
  * Returns TRUE if an object may be acquired, FALSE otherwise.
  */
-static sc_bool
-lib_take_filter(sc_gameref_t game, sc_int object, sc_int unused) {
+static sc_bool lib_take_filter(sc_gameref_t game, sc_int object, sc_int unused) {
 	assert(unused == -1);
 
 	/*
@@ -4413,9 +4297,7 @@ lib_take_filter(sc_gameref_t game, sc_int object, sc_int unused) {
 	            || gs_object_position(game, object) == OBJ_WORN_NPC);
 }
 
-static sc_bool
-lib_take_not_associated_filter(sc_gameref_t game,
-                               sc_int object, sc_int unused) {
+static sc_bool lib_take_not_associated_filter(sc_gameref_t game, sc_int object, sc_int unused) {
 	assert(unused == -1);
 
 	/* In addition to other checks, the object may not be in or on an object. */
@@ -4430,8 +4312,7 @@ lib_take_not_associated_filter(sc_gameref_t game,
  *
  * Attempt to take all objects currently visible to the player.
  */
-sc_bool
-lib_cmd_take_all(sc_gameref_t game) {
+sc_bool lib_cmd_take_all(sc_gameref_t game) {
 	const sc_filterref_t filter = gs_get_filter(game);
 	sc_int objects;
 
@@ -4457,8 +4338,7 @@ lib_cmd_take_all(sc_gameref_t game) {
  * Take all objects currently available to the player, excepting those listed
  * in %text%.
  */
-sc_bool
-lib_cmd_take_except_multiple(sc_gameref_t game) {
+sc_bool lib_cmd_take_except_multiple(sc_gameref_t game) {
 	const sc_filterref_t filter = gs_get_filter(game);
 	sc_int objects, references;
 
@@ -4493,8 +4373,7 @@ lib_cmd_take_except_multiple(sc_gameref_t game) {
  *
  * Take all objects currently available to the player and listed in %text%.
  */
-sc_bool
-lib_cmd_take_multiple(sc_gameref_t game) {
+sc_bool lib_cmd_take_multiple(sc_gameref_t game) {
 	const sc_filterref_t filter = gs_get_filter(game);
 	sc_int objects, references;
 
@@ -4526,8 +4405,7 @@ lib_cmd_take_multiple(sc_gameref_t game) {
  * Helper function for deciding if an object may be acquired in this context.
  * Returns TRUE if an object may be acquired, FALSE otherwise.
  */
-static sc_bool
-lib_take_from_filter(sc_gameref_t game, sc_int object, sc_int associate) {
+static sc_bool lib_take_from_filter(sc_gameref_t game, sc_int object, sc_int associate) {
 	/*
 	 * To be take-able, an object must be either inside or on the specified
 	 * object.
@@ -4545,8 +4423,7 @@ lib_take_from_filter(sc_gameref_t game, sc_int object, sc_int associate) {
  * Common error handling for when nothing is taken from a container or
  * supporter object.
  */
-static void
-lib_take_from_empty(sc_gameref_t game, sc_int associate, sc_bool is_except) {
+static void lib_take_from_empty(sc_gameref_t game, sc_int associate, sc_bool is_except) {
 	const sc_filterref_t filter = gs_get_filter(game);
 
 	if (obj_is_container(game, associate) && obj_is_surface(game, associate)) {
@@ -4605,8 +4482,7 @@ lib_take_from_empty(sc_gameref_t game, sc_int associate, sc_bool is_except) {
  *
  * Validate the supporter requested in "take from" commands.
  */
-static sc_bool
-lib_take_from_is_valid(sc_gameref_t game, sc_int associate) {
+static sc_bool lib_take_from_is_valid(sc_gameref_t game, sc_int associate) {
 	const sc_filterref_t filter = gs_get_filter(game);
 
 	/* Disallow emptying non-container/non-surface objects. */
@@ -4644,8 +4520,7 @@ lib_take_from_is_valid(sc_gameref_t game, sc_int associate) {
  *
  * Attempt to take all objects contained in or supported by a given object.
  */
-sc_bool
-lib_cmd_take_all_from(sc_gameref_t game) {
+sc_bool lib_cmd_take_all_from(sc_gameref_t game) {
 	const sc_filterref_t filter = gs_get_filter(game);
 	sc_int associate, objects;
 	sc_bool is_ambiguous;
@@ -4681,8 +4556,7 @@ lib_cmd_take_all_from(sc_gameref_t game) {
  * Take all objects contained in or supported by a given object, excepting
  * those listed in %text%.
  */
-sc_bool
-lib_cmd_take_from_except_multiple(sc_gameref_t game) {
+sc_bool lib_cmd_take_from_except_multiple(sc_gameref_t game) {
 	const sc_filterref_t filter = gs_get_filter(game);
 	sc_int associate, objects, references;
 	sc_bool is_ambiguous;
@@ -4734,8 +4608,7 @@ lib_cmd_take_from_except_multiple(sc_gameref_t game) {
  * function isn't mandatory -- plain "take <object>" works fine with contain-
  * ers and surfaces, but it's a standard in Adrift so here it is.
  */
-sc_bool
-lib_cmd_take_from_multiple(sc_gameref_t game) {
+sc_bool lib_cmd_take_from_multiple(sc_gameref_t game) {
 	const sc_filterref_t filter = gs_get_filter(game);
 	sc_int associate, objects, references;
 	sc_bool is_ambiguous;
@@ -4777,8 +4650,7 @@ lib_cmd_take_from_multiple(sc_gameref_t game) {
  * Helper function for deciding if an object may be acquired in this context.
  * Returns TRUE if an object may be acquired, FALSE otherwise.
  */
-static sc_bool
-lib_take_from_npc_filter(sc_gameref_t game, sc_int object, sc_int associate) {
+static sc_bool lib_take_from_npc_filter(sc_gameref_t game, sc_int object, sc_int associate) {
 	/*
 	 * To be take-able, an object must be either held or worn by the specified
 	 * NPC.
@@ -4795,8 +4667,7 @@ lib_take_from_npc_filter(sc_gameref_t game, sc_int object, sc_int associate) {
  *
  * Attempt to take all objects held or worn by a given NPC.
  */
-sc_bool
-lib_cmd_take_all_from_npc(sc_gameref_t game) {
+sc_bool lib_cmd_take_all_from_npc(sc_gameref_t game) {
 	const sc_filterref_t filter = gs_get_filter(game);
 	sc_int associate, objects;
 	sc_bool is_ambiguous;
@@ -4831,8 +4702,7 @@ lib_cmd_take_all_from_npc(sc_gameref_t game) {
  * Attempt to take all objects held or worn by a given NPC, excepting those
  * listed in %text%.
  */
-sc_bool
-lib_cmd_take_from_npc_except_multiple(sc_gameref_t game) {
+sc_bool lib_cmd_take_from_npc_except_multiple(sc_gameref_t game) {
 	const sc_filterref_t filter = gs_get_filter(game);
 	sc_int associate, objects, references;
 	sc_bool is_ambiguous;
@@ -4873,8 +4743,7 @@ lib_cmd_take_from_npc_except_multiple(sc_gameref_t game) {
  * Attempt to take the objects currently held or worn by an NPC and listed
  * in %text%.
  */
-sc_bool
-lib_cmd_take_from_npc_multiple(sc_gameref_t game) {
+sc_bool lib_cmd_take_from_npc_multiple(sc_gameref_t game) {
 	const sc_filterref_t filter = gs_get_filter(game);
 	sc_int associate, objects, references;
 	sc_bool is_ambiguous;
@@ -4919,8 +4788,7 @@ lib_cmd_take_from_npc_multiple(sc_gameref_t game) {
  * Objects to action are flagged in object_references; objects requested but
  * deemed not actionable are flagged in multiple_references.
  */
-static void
-lib_drop_backend(sc_gameref_t game) {
+static void lib_drop_backend(sc_gameref_t game) {
 	const sc_filterref_t filter = gs_get_filter(game);
 	sc_int object_count, object, count, trail;
 	sc_bool has_printed;
@@ -5032,8 +4900,7 @@ lib_drop_backend(sc_gameref_t game) {
  * Helper function for deciding if an object may be dropped in this context.
  * Returns TRUE if an object may be dropped, FALSE otherwise.
  */
-static sc_bool
-lib_drop_filter(sc_gameref_t game, sc_int object, sc_int unused) {
+static sc_bool lib_drop_filter(sc_gameref_t game, sc_int object, sc_int unused) {
 	assert(unused == -1);
 
 	return !obj_is_static(game, object)
@@ -5046,8 +4913,7 @@ lib_drop_filter(sc_gameref_t game, sc_int object, sc_int unused) {
  *
  * Drop all objects currently held by the player.
  */
-sc_bool
-lib_cmd_drop_all(sc_gameref_t game) {
+sc_bool lib_cmd_drop_all(sc_gameref_t game) {
 	const sc_filterref_t filter = gs_get_filter(game);
 	sc_int objects;
 
@@ -5078,8 +4944,7 @@ lib_cmd_drop_all(sc_gameref_t game) {
  * Drop all objects currently held by the player, excepting those listed in
  * %text%.
  */
-sc_bool
-lib_cmd_drop_except_multiple(sc_gameref_t game) {
+sc_bool lib_cmd_drop_except_multiple(sc_gameref_t game) {
 	const sc_filterref_t filter = gs_get_filter(game);
 	sc_int objects, references;
 
@@ -5118,8 +4983,7 @@ lib_cmd_drop_except_multiple(sc_gameref_t game) {
  *
  * Drop all objects currently held by the player and listed in %text%.
  */
-sc_bool
-lib_cmd_drop_multiple(sc_gameref_t game) {
+sc_bool lib_cmd_drop_multiple(sc_gameref_t game) {
 	const sc_filterref_t filter = gs_get_filter(game);
 	sc_int objects, references;
 
@@ -5156,8 +5020,7 @@ lib_cmd_drop_multiple(sc_gameref_t game) {
  *
  * Attempt to give an object to an NPC.
  */
-sc_bool
-lib_cmd_give_object_npc(sc_gameref_t game) {
+sc_bool lib_cmd_give_object_npc(sc_gameref_t game) {
 	const sc_filterref_t filter = gs_get_filter(game);
 	sc_int object, npc;
 	sc_bool is_ambiguous;
@@ -5193,8 +5056,7 @@ lib_cmd_give_object_npc(sc_gameref_t game) {
 	return TRUE;
 }
 
-sc_bool
-lib_cmd_give_object(sc_gameref_t game) {
+sc_bool lib_cmd_give_object(sc_gameref_t game) {
 	const sc_filterref_t filter = gs_get_filter(game);
 	sc_int object;
 	sc_bool is_ambiguous;
@@ -5233,8 +5095,7 @@ lib_cmd_give_object(sc_gameref_t game) {
  * Objects to action are flagged in object_references; objects requested but
  * deemed not actionable are flagged in multiple_references.
  */
-static void
-lib_wear_backend(sc_gameref_t game) {
+static void lib_wear_backend(sc_gameref_t game) {
 	const sc_filterref_t filter = gs_get_filter(game);
 	sc_int object_count, object, count, trail;
 	sc_bool has_printed;
@@ -5434,8 +5295,7 @@ lib_wear_backend(sc_gameref_t game) {
  * Helper function for deciding if an object may be worn in this context.
  * Returns TRUE if an object may be worn, FALSE otherwise.
  */
-static sc_bool
-lib_wear_filter(sc_gameref_t game, sc_int object, sc_int unused) {
+static sc_bool lib_wear_filter(sc_gameref_t game, sc_int object, sc_int unused) {
 	const sc_prop_setref_t bundle = gs_get_bundle(game);
 	assert(unused == -1);
 
@@ -5464,8 +5324,7 @@ lib_wear_filter(sc_gameref_t game, sc_int object, sc_int unused) {
  *
  * Wear all wearable objects currently held by the player.
  */
-sc_bool
-lib_cmd_wear_all(sc_gameref_t game) {
+sc_bool lib_cmd_wear_all(sc_gameref_t game) {
 	const sc_filterref_t filter = gs_get_filter(game);
 	sc_int objects;
 
@@ -5497,8 +5356,7 @@ lib_cmd_wear_all(sc_gameref_t game) {
  * Wear all wearable objects currently held by the player, excepting those
  * listed in %text%.
  */
-sc_bool
-lib_cmd_wear_except_multiple(sc_gameref_t game) {
+sc_bool lib_cmd_wear_except_multiple(sc_gameref_t game) {
 	const sc_filterref_t filter = gs_get_filter(game);
 	sc_int objects, references;
 
@@ -5538,8 +5396,7 @@ lib_cmd_wear_except_multiple(sc_gameref_t game) {
  * Wear all objects currently held by the player, wearable, and listed
  * in %text%.
  */
-sc_bool
-lib_cmd_wear_multiple(sc_gameref_t game) {
+sc_bool lib_cmd_wear_multiple(sc_gameref_t game) {
 	const sc_filterref_t filter = gs_get_filter(game);
 	sc_int objects, references;
 
@@ -5580,8 +5437,7 @@ lib_cmd_wear_multiple(sc_gameref_t game) {
  * Objects to action are flagged in object_references; objects requested but
  * deemed not actionable are flagged in multiple_references.
  */
-static void
-lib_remove_backend(sc_gameref_t game) {
+static void lib_remove_backend(sc_gameref_t game) {
 	const sc_filterref_t filter = gs_get_filter(game);
 	sc_int object_count, object, count, trail;
 	sc_bool has_printed;
@@ -5693,8 +5549,7 @@ lib_remove_backend(sc_gameref_t game) {
  * Helper function for deciding if an object may be removed in this context.
  * Returns TRUE if an object is currently being worn, FALSE otherwise.
  */
-static sc_bool
-lib_remove_filter(sc_gameref_t game, sc_int object, sc_int unused) {
+static sc_bool lib_remove_filter(sc_gameref_t game, sc_int object, sc_int unused) {
 	assert(unused == -1);
 
 	return !obj_is_static(game, object)
@@ -5707,8 +5562,7 @@ lib_remove_filter(sc_gameref_t game, sc_int object, sc_int unused) {
  *
  * Remove all objects currently held by the player.
  */
-sc_bool
-lib_cmd_remove_all(sc_gameref_t game) {
+sc_bool lib_cmd_remove_all(sc_gameref_t game) {
 	const sc_filterref_t filter = gs_get_filter(game);
 	sc_int objects;
 
@@ -5740,8 +5594,7 @@ lib_cmd_remove_all(sc_gameref_t game) {
  * Remove all objects currently worn by the player, excepting those listed
  * in %text%.
  */
-sc_bool
-lib_cmd_remove_except_multiple(sc_gameref_t game) {
+sc_bool lib_cmd_remove_except_multiple(sc_gameref_t game) {
 	const sc_filterref_t filter = gs_get_filter(game);
 	sc_int objects, references;
 
@@ -5780,8 +5633,7 @@ lib_cmd_remove_except_multiple(sc_gameref_t game) {
  *
  * Remove all objects currently worn by the player, and listed in %text%.
  */
-sc_bool
-lib_cmd_remove_multiple(sc_gameref_t game) {
+sc_bool lib_cmd_remove_multiple(sc_gameref_t game) {
 	const sc_filterref_t filter = gs_get_filter(game);
 	sc_int objects, references;
 
@@ -5818,8 +5670,7 @@ lib_cmd_remove_multiple(sc_gameref_t game) {
  *
  * List objects carried and worn by the player.
  */
-sc_bool
-lib_cmd_inventory(sc_gameref_t game) {
+sc_bool lib_cmd_inventory(sc_gameref_t game) {
 	const sc_filterref_t filter = gs_get_filter(game);
 	sc_int object, count, trail;
 	sc_bool wearing;
@@ -5946,8 +5797,7 @@ lib_cmd_inventory(sc_gameref_t game) {
  *
  * Attempt to open the referenced object.
  */
-sc_bool
-lib_cmd_open_object(sc_gameref_t game) {
+sc_bool lib_cmd_open_object(sc_gameref_t game) {
 	const sc_filterref_t filter = gs_get_filter(game);
 	sc_int object, openness;
 	sc_bool is_ambiguous;
@@ -6017,8 +5867,7 @@ lib_cmd_open_object(sc_gameref_t game) {
  *
  * Attempt to close the referenced object.
  */
-sc_bool
-lib_cmd_close_object(sc_gameref_t game) {
+sc_bool lib_cmd_close_object(sc_gameref_t game) {
 	const sc_filterref_t filter = gs_get_filter(game);
 	sc_int object, openness;
 	sc_bool is_ambiguous;
@@ -6077,8 +5926,7 @@ lib_cmd_close_object(sc_gameref_t game) {
  *
  * Automatically get an object being used as a key, if possible.
  */
-static void
-lib_attempt_key_acquisition(sc_gameref_t game, sc_int object) {
+static void lib_attempt_key_acquisition(sc_gameref_t game, sc_int object) {
 	const sc_filterref_t filter = gs_get_filter(game);
 
 	/* Disallow getting static objects. */
@@ -6139,8 +5987,7 @@ lib_attempt_key_acquisition(sc_gameref_t game, sc_int object) {
  *
  * Attempt to unlock the referenced object.
  */
-sc_bool
-lib_cmd_unlock_object_with(sc_gameref_t game) {
+sc_bool lib_cmd_unlock_object_with(sc_gameref_t game) {
 	const sc_filterref_t filter = gs_get_filter(game);
 	const sc_var_setref_t vars = gs_get_vars(game);
 	const sc_prop_setref_t bundle = gs_get_bundle(game);
@@ -6246,8 +6093,7 @@ lib_cmd_unlock_object_with(sc_gameref_t game) {
  *
  * Attempt to unlock the referenced object, automatically selecting key.
  */
-sc_bool
-lib_cmd_unlock_object(sc_gameref_t game) {
+sc_bool lib_cmd_unlock_object(sc_gameref_t game) {
 	const sc_filterref_t filter = gs_get_filter(game);
 	const sc_prop_setref_t bundle = gs_get_bundle(game);
 	sc_int object, openness;
@@ -6330,8 +6176,7 @@ lib_cmd_unlock_object(sc_gameref_t game) {
  *
  * Attempt to lock the referenced object.
  */
-sc_bool
-lib_cmd_lock_object_with(sc_gameref_t game) {
+sc_bool lib_cmd_lock_object_with(sc_gameref_t game) {
 	const sc_filterref_t filter = gs_get_filter(game);
 	const sc_var_setref_t vars = gs_get_vars(game);
 	const sc_prop_setref_t bundle = gs_get_bundle(game);
@@ -6445,8 +6290,7 @@ lib_cmd_lock_object_with(sc_gameref_t game) {
  *
  * Attempt to lock the referenced object, automatically selecting key.
  */
-sc_bool
-lib_cmd_lock_object(sc_gameref_t game) {
+sc_bool lib_cmd_lock_object(sc_gameref_t game) {
 	const sc_filterref_t filter = gs_get_filter(game);
 	const sc_prop_setref_t bundle = gs_get_bundle(game);
 	sc_int object, openness;
@@ -6538,9 +6382,7 @@ lib_cmd_lock_object(sc_gameref_t game) {
  *
  * Compare a subject, comma or NUL terminated.  Helper for ask.
  */
-static sc_bool
-lib_compare_subject(const sc_char *subject, sc_int posn,
-                    const sc_char *string) {
+static sc_bool lib_compare_subject(const sc_char *subject, sc_int posn, const sc_char *string) {
 	sc_int word_posn, string_posn;
 
 	/* Skip any leading subject spaces. */
@@ -6596,8 +6438,7 @@ lib_compare_subject(const sc_char *subject, sc_int posn,
  *
  * Reply for an NPC on a given topic.  Helper for ask.
  */
-static sc_bool
-lib_npc_reply_to(sc_gameref_t game, sc_int npc, sc_int topic) {
+static sc_bool lib_npc_reply_to(sc_gameref_t game, sc_int npc, sc_int topic) {
 	const sc_filterref_t filter = gs_get_filter(game);
 	const sc_prop_setref_t bundle = gs_get_bundle(game);
 	sc_vartype_t vt_key[5];
@@ -6634,8 +6475,7 @@ lib_npc_reply_to(sc_gameref_t game, sc_int npc, sc_int topic) {
  *
  * Converse with NPC.
  */
-sc_bool
-lib_cmd_ask_npc_about(sc_gameref_t game) {
+sc_bool lib_cmd_ask_npc_about(sc_gameref_t game) {
 	const sc_filterref_t filter = gs_get_filter(game);
 	const sc_var_setref_t vars = gs_get_vars(game);
 	const sc_prop_setref_t bundle = gs_get_bundle(game);
@@ -6724,9 +6564,8 @@ lib_cmd_ask_npc_about(sc_gameref_t game) {
  * Checks for infinite recursion when placing an object in an object.  Returns
  * TRUE if no recursion detected.
  */
-static sc_bool
-lib_check_put_in_recursion(sc_gameref_t game,
-                           sc_int object, sc_int container, sc_bool report) {
+static sc_bool lib_check_put_in_recursion(sc_gameref_t game, sc_int object,
+		sc_int container, sc_bool report) {
 	const sc_filterref_t filter = gs_get_filter(game);
 	sc_int check;
 
@@ -6775,8 +6614,7 @@ lib_check_put_in_recursion(sc_gameref_t game,
  * Objects to action are flagged in object_references; objects requested but
  * deemed not actionable are flagged in multiple_references.
  */
-static void
-lib_put_in_backend(sc_gameref_t game, sc_int container) {
+static void lib_put_in_backend(sc_gameref_t game, sc_int container) {
 	const sc_filterref_t filter = gs_get_filter(game);
 	sc_int object_count, object, count, trail, capacity, maxsize;
 	sc_bool has_printed;
@@ -7013,17 +6851,14 @@ lib_put_in_backend(sc_gameref_t game, sc_int container) {
  * Helper functions for deciding if an object may be put in another this
  * context.  Returns TRUE if an object may be manipulated, FALSE otherwise.
  */
-static sc_bool
-lib_put_in_filter(sc_gameref_t game, sc_int object, sc_int unused) {
+static sc_bool lib_put_in_filter(sc_gameref_t game, sc_int object, sc_int unused) {
 	assert(unused == -1);
 
 	return !obj_is_static(game, object)
 	       && gs_object_position(game, object) == OBJ_HELD_PLAYER;
 }
 
-static sc_bool
-lib_put_in_not_container_filter(sc_gameref_t game,
-                                sc_int object, sc_int container) {
+static sc_bool lib_put_in_not_container_filter(sc_gameref_t game, sc_int object, sc_int container) {
 	return lib_put_in_filter(game, object, -1) && object != container;
 }
 
@@ -7033,8 +6868,7 @@ lib_put_in_not_container_filter(sc_gameref_t game,
  *
  * Validate the container requested in "put in" commands.
  */
-static sc_bool
-lib_put_in_is_valid(sc_gameref_t game, sc_int container) {
+static sc_bool lib_put_in_is_valid(sc_gameref_t game, sc_int container) {
 	const sc_filterref_t filter = gs_get_filter(game);
 
 	/* Verify that the container object is a container. */
@@ -7072,8 +6906,7 @@ lib_put_in_is_valid(sc_gameref_t game, sc_int container) {
  *
  * Put all objects currently held by the player into a container.
  */
-sc_bool
-lib_cmd_put_all_in(sc_gameref_t game) {
+sc_bool lib_cmd_put_all_in(sc_gameref_t game) {
 	const sc_filterref_t filter = gs_get_filter(game);
 	sc_int container, objects;
 	sc_bool is_ambiguous;
@@ -7117,8 +6950,7 @@ lib_cmd_put_all_in(sc_gameref_t game) {
  * Put all objects currently held by the player into an object, excepting
  * those listed in %text%.
  */
-sc_bool
-lib_cmd_put_in_except_multiple(sc_gameref_t game) {
+sc_bool lib_cmd_put_in_except_multiple(sc_gameref_t game) {
 	const sc_filterref_t filter = gs_get_filter(game);
 	sc_int container, objects, references;
 	sc_bool is_ambiguous;
@@ -7177,8 +7009,7 @@ lib_cmd_put_in_except_multiple(sc_gameref_t game) {
  * Put all objects currently held by the player and listed in %text% into an
  * object.
  */
-sc_bool
-lib_cmd_put_in_multiple(sc_gameref_t game) {
+sc_bool lib_cmd_put_in_multiple(sc_gameref_t game) {
 	const sc_filterref_t filter = gs_get_filter(game);
 	sc_int container, objects, references;
 	sc_bool is_ambiguous;
@@ -7225,9 +7056,8 @@ lib_cmd_put_in_multiple(sc_gameref_t game) {
  * Checks for infinite recursion when placing an object on an object.  Returns
  * TRUE if no recursion detected.
  */
-static sc_bool
-lib_check_put_on_recursion(sc_gameref_t game,
-                           sc_int object, sc_int supporter, sc_bool report) {
+static sc_bool lib_check_put_on_recursion(sc_gameref_t game, sc_int object,
+		sc_int supporter, sc_bool report) {
 	const sc_filterref_t filter = gs_get_filter(game);
 	sc_int check;
 
@@ -7276,8 +7106,7 @@ lib_check_put_on_recursion(sc_gameref_t game,
  * Objects to action are flagged in object_references; objects requested but
  * deemed not actionable are flagged in multiple_references.
  */
-static void
-lib_put_on_backend(sc_gameref_t game, sc_int supporter) {
+static void lib_put_on_backend(sc_gameref_t game, sc_int supporter) {
 	const sc_filterref_t filter = gs_get_filter(game);
 	sc_int object_count, object, count, trail;
 	sc_bool has_printed;
@@ -7401,8 +7230,7 @@ lib_put_on_backend(sc_gameref_t game, sc_int supporter) {
  * Helper functions for deciding if an object may be put on another this
  * context.  Returns TRUE if an object may be manipulated, FALSE otherwise.
  */
-static sc_bool
-lib_put_on_filter(sc_gameref_t game, sc_int object, sc_int unused) {
+static sc_bool lib_put_on_filter(sc_gameref_t game, sc_int object, sc_int unused) {
 	assert(unused == -1);
 
 	return !obj_is_static(game, object)
@@ -7421,8 +7249,7 @@ lib_put_on_not_supporter_filter(sc_gameref_t game,
  *
  * Validate the supporter requested in "put on" commands.
  */
-static sc_bool
-lib_put_on_is_valid(sc_gameref_t game, sc_int supporter) {
+static sc_bool lib_put_on_is_valid(sc_gameref_t game, sc_int supporter) {
 	const sc_filterref_t filter = gs_get_filter(game);
 
 	/* Verify that the supporter object is a supporter. */
@@ -7447,8 +7274,7 @@ lib_put_on_is_valid(sc_gameref_t game, sc_int supporter) {
  *
  * Put all objects currently held by the player onto a supporter.
  */
-sc_bool
-lib_cmd_put_all_on(sc_gameref_t game) {
+sc_bool lib_cmd_put_all_on(sc_gameref_t game) {
 	const sc_filterref_t filter = gs_get_filter(game);
 	sc_int supporter, objects;
 	sc_bool is_ambiguous;
@@ -7492,8 +7318,7 @@ lib_cmd_put_all_on(sc_gameref_t game) {
  * Put all objects currently held by the player onto an object, excepting
  * those listed in %text%.
  */
-sc_bool
-lib_cmd_put_on_except_multiple(sc_gameref_t game) {
+sc_bool lib_cmd_put_on_except_multiple(sc_gameref_t game) {
 	const sc_filterref_t filter = gs_get_filter(game);
 	sc_int supporter, objects, references;
 	sc_bool is_ambiguous;
@@ -7552,8 +7377,7 @@ lib_cmd_put_on_except_multiple(sc_gameref_t game) {
  * Put all objects currently held by the player and listed in %text% onto an
  * object.
  */
-sc_bool
-lib_cmd_put_on_multiple(sc_gameref_t game) {
+sc_bool lib_cmd_put_on_multiple(sc_gameref_t game) {
 	const sc_filterref_t filter = gs_get_filter(game);
 	sc_int supporter, objects, references;
 	sc_bool is_ambiguous;
@@ -7600,8 +7424,7 @@ lib_cmd_put_on_multiple(sc_gameref_t game) {
  *
  * Attempt to read the referenced object, or something else.
  */
-sc_bool
-lib_cmd_read_object(sc_gameref_t game) {
+sc_bool lib_cmd_read_object(sc_gameref_t game) {
 	const sc_filterref_t filter = gs_get_filter(game);
 	const sc_prop_setref_t bundle = gs_get_bundle(game);
 	sc_vartype_t vt_key[3];
@@ -7663,8 +7486,7 @@ lib_cmd_read_object(sc_gameref_t game) {
 	return TRUE;
 }
 
-sc_bool
-lib_cmd_read_other(sc_gameref_t game) {
+sc_bool lib_cmd_read_other(sc_gameref_t game) {
 	const sc_filterref_t filter = gs_get_filter(game);
 
 	/* Reject the attempt. */
@@ -7683,8 +7505,7 @@ lib_cmd_read_other(sc_gameref_t game) {
  *
  * Attempt to attack an NPC, with and without weaponry.
  */
-sc_bool
-lib_cmd_attack_npc(sc_gameref_t game) {
+sc_bool lib_cmd_attack_npc(sc_gameref_t game) {
 	const sc_filterref_t filter = gs_get_filter(game);
 	sc_int npc;
 	sc_bool is_ambiguous;
@@ -7705,8 +7526,7 @@ lib_cmd_attack_npc(sc_gameref_t game) {
 	return TRUE;
 }
 
-sc_bool
-lib_cmd_attack_npc_with(sc_gameref_t game) {
+sc_bool lib_cmd_attack_npc_with(sc_gameref_t game) {
 	const sc_filterref_t filter = gs_get_filter(game);
 	const sc_prop_setref_t bundle = gs_get_bundle(game);
 	sc_int object, npc;
@@ -7784,8 +7604,7 @@ lib_cmd_attack_npc_with(sc_gameref_t game) {
  *
  * Reject romantic advances in all cases.
  */
-sc_bool
-lib_cmd_kiss_npc(sc_gameref_t game) {
+sc_bool lib_cmd_kiss_npc(sc_gameref_t game) {
 	const sc_filterref_t filter = gs_get_filter(game);
 	const sc_prop_setref_t bundle = gs_get_bundle(game);
 	sc_vartype_t vt_key[3];
@@ -7822,8 +7641,7 @@ lib_cmd_kiss_npc(sc_gameref_t game) {
 	return TRUE;
 }
 
-sc_bool
-lib_cmd_kiss_object(sc_gameref_t game) {
+sc_bool lib_cmd_kiss_object(sc_gameref_t game) {
 	const sc_filterref_t filter = gs_get_filter(game);
 	sc_int object;
 	sc_bool is_ambiguous;
@@ -7840,8 +7658,7 @@ lib_cmd_kiss_object(sc_gameref_t game) {
 	return TRUE;
 }
 
-sc_bool
-lib_cmd_kiss_other(sc_gameref_t game) {
+sc_bool lib_cmd_kiss_other(sc_gameref_t game) {
 	const sc_filterref_t filter = gs_get_filter(game);
 
 	/* Reject this attempt. */
@@ -7856,8 +7673,7 @@ lib_cmd_kiss_other(sc_gameref_t game) {
  *
  * Standard responses to attempts to buy something.
  */
-sc_bool
-lib_cmd_buy_object(sc_gameref_t game) {
+sc_bool lib_cmd_buy_object(sc_gameref_t game) {
 	const sc_filterref_t filter = gs_get_filter(game);
 	sc_int object;
 	sc_bool is_ambiguous;
@@ -7876,8 +7692,7 @@ lib_cmd_buy_object(sc_gameref_t game) {
 	return TRUE;
 }
 
-sc_bool
-lib_cmd_buy_other(sc_gameref_t game) {
+sc_bool lib_cmd_buy_other(sc_gameref_t game) {
 	const sc_filterref_t filter = gs_get_filter(game);
 
 	/* Reject this attempt. */
@@ -7892,8 +7707,7 @@ lib_cmd_buy_other(sc_gameref_t game) {
  *
  * Standard responses to attempts to break something.
  */
-sc_bool
-lib_cmd_break_object(sc_gameref_t game) {
+sc_bool lib_cmd_break_object(sc_gameref_t game) {
 	const sc_filterref_t filter = gs_get_filter(game);
 	sc_int object;
 	sc_bool is_ambiguous;
@@ -7914,8 +7728,7 @@ lib_cmd_break_object(sc_gameref_t game) {
 	return TRUE;
 }
 
-sc_bool
-lib_cmd_break_other(sc_gameref_t game) {
+sc_bool lib_cmd_break_other(sc_gameref_t game) {
 	const sc_filterref_t filter = gs_get_filter(game);
 
 	/* Reject this attempt. */
@@ -7934,8 +7747,7 @@ lib_cmd_break_other(sc_gameref_t game) {
  *
  * Standard responses to attempts to smell something.
  */
-sc_bool
-lib_cmd_smell_object(sc_gameref_t game) {
+sc_bool lib_cmd_smell_object(sc_gameref_t game) {
 	const sc_filterref_t filter = gs_get_filter(game);
 	sc_int object;
 	sc_bool is_ambiguous;
@@ -7952,8 +7764,7 @@ lib_cmd_smell_object(sc_gameref_t game) {
 	return TRUE;
 }
 
-sc_bool
-lib_cmd_smell_other(sc_gameref_t game) {
+sc_bool lib_cmd_smell_other(sc_gameref_t game) {
 	const sc_filterref_t filter = gs_get_filter(game);
 
 	/* Reject this attempt. */
@@ -7968,8 +7779,7 @@ lib_cmd_smell_other(sc_gameref_t game) {
  *
  * Standard responses to attempts to sell something.
  */
-sc_bool
-lib_cmd_sell_object(sc_gameref_t game) {
+sc_bool lib_cmd_sell_object(sc_gameref_t game) {
 	const sc_filterref_t filter = gs_get_filter(game);
 	sc_int object;
 	sc_bool is_ambiguous;
@@ -7986,8 +7796,7 @@ lib_cmd_sell_object(sc_gameref_t game) {
 	return TRUE;
 }
 
-sc_bool
-lib_cmd_sell_other(sc_gameref_t game) {
+sc_bool lib_cmd_sell_other(sc_gameref_t game) {
 	const sc_filterref_t filter = gs_get_filter(game);
 
 	pf_buffer_string(filter, "No-one is interested in buying that.\n");
@@ -8000,8 +7809,7 @@ lib_cmd_sell_other(sc_gameref_t game) {
  *
  * Consume edible objects.
  */
-sc_bool
-lib_cmd_eat_object(sc_gameref_t game) {
+sc_bool lib_cmd_eat_object(sc_gameref_t game) {
 	const sc_filterref_t filter = gs_get_filter(game);
 	const sc_prop_setref_t bundle = gs_get_bundle(game);
 	sc_vartype_t vt_key[3];
@@ -8081,8 +7889,7 @@ enum {
  *
  * Central handler for stand, sit, and lie commands.
  */
-static sc_bool
-lib_stand_sit_lie(sc_gameref_t game, sc_int movement) {
+static sc_bool lib_stand_sit_lie(sc_gameref_t game, sc_int movement) {
 	const sc_filterref_t filter = gs_get_filter(game);
 	const sc_prop_setref_t bundle = gs_get_bundle(game);
 	sc_int object, position;
@@ -8295,33 +8102,27 @@ lib_stand_sit_lie(sc_gameref_t game, sc_int movement) {
  *
  * Stand, sit, or lie on an object, or on the floor.
  */
-sc_bool
-lib_cmd_stand_on_object(sc_gameref_t game) {
+sc_bool lib_cmd_stand_on_object(sc_gameref_t game) {
 	return lib_stand_sit_lie(game, MOVE_STAND);
 }
 
-sc_bool
-lib_cmd_stand_on_floor(sc_gameref_t game) {
+sc_bool lib_cmd_stand_on_floor(sc_gameref_t game) {
 	return lib_stand_sit_lie(game, MOVE_STAND_FLOOR);
 }
 
-sc_bool
-lib_cmd_sit_on_object(sc_gameref_t game) {
+sc_bool lib_cmd_sit_on_object(sc_gameref_t game) {
 	return lib_stand_sit_lie(game, MOVE_SIT);
 }
 
-sc_bool
-lib_cmd_sit_on_floor(sc_gameref_t game) {
+sc_bool lib_cmd_sit_on_floor(sc_gameref_t game) {
 	return lib_stand_sit_lie(game, MOVE_SIT_FLOOR);
 }
 
-sc_bool
-lib_cmd_lie_on_object(sc_gameref_t game) {
+sc_bool lib_cmd_lie_on_object(sc_gameref_t game) {
 	return lib_stand_sit_lie(game, MOVE_LIE);
 }
 
-sc_bool
-lib_cmd_lie_on_floor(sc_gameref_t game) {
+sc_bool lib_cmd_lie_on_floor(sc_gameref_t game) {
 	return lib_stand_sit_lie(game, MOVE_LIE_FLOOR);
 }
 
@@ -8332,8 +8133,7 @@ lib_cmd_lie_on_floor(sc_gameref_t game) {
  *
  * Get off whatever supporter the player rests on.
  */
-sc_bool
-lib_cmd_get_off_object(sc_gameref_t game) {
+sc_bool lib_cmd_get_off_object(sc_gameref_t game) {
 	const sc_filterref_t filter = gs_get_filter(game);
 	sc_int object;
 	sc_bool is_ambiguous;
@@ -8369,8 +8169,7 @@ lib_cmd_get_off_object(sc_gameref_t game) {
 	return TRUE;
 }
 
-sc_bool
-lib_cmd_get_off(sc_gameref_t game) {
+sc_bool lib_cmd_get_off(sc_gameref_t game) {
 	const sc_filterref_t filter = gs_get_filter(game);
 
 	/* Reject the attempt if the player is not on anything. */
@@ -8404,8 +8203,7 @@ lib_cmd_get_off(sc_gameref_t game) {
  *
  * Save/restore a game.
  */
-sc_bool
-lib_cmd_save(sc_gameref_t game) {
+sc_bool lib_cmd_save(sc_gameref_t game) {
 	if (if_confirm(SC_CONF_SAVE)) {
 		if (ser_save_game_prompted(game))
 			if_print_string("Ok.\n");
@@ -8417,8 +8215,7 @@ lib_cmd_save(sc_gameref_t game) {
 	return TRUE;
 }
 
-sc_bool
-lib_cmd_restore(sc_gameref_t game) {
+sc_bool lib_cmd_restore(sc_gameref_t game) {
 	if (if_confirm(SC_CONF_RESTORE)) {
 		if (ser_load_game_prompted(game)) {
 			if_print_string("Ok.\n");
@@ -8439,8 +8236,7 @@ lib_cmd_restore(sc_gameref_t game) {
  *
  * Display the location of a selected object, and selected NPC.
  */
-sc_bool
-lib_cmd_locate_object(sc_gameref_t game) {
+sc_bool lib_cmd_locate_object(sc_gameref_t game) {
 	const sc_filterref_t filter = gs_get_filter(game);
 	const sc_var_setref_t vars = gs_get_vars(game);
 	sc_int index_, count, object, room, position, parent;
@@ -8612,8 +8408,7 @@ lib_cmd_locate_object(sc_gameref_t game) {
 	return TRUE;
 }
 
-sc_bool
-lib_cmd_locate_npc(sc_gameref_t game) {
+sc_bool lib_cmd_locate_npc(sc_gameref_t game) {
 	const sc_filterref_t filter = gs_get_filter(game);
 	const sc_var_setref_t vars = gs_get_vars(game);
 	sc_int index_, count, npc, room;
@@ -8711,8 +8506,7 @@ lib_cmd_locate_npc(sc_gameref_t game) {
  *
  * Display turns taken and score so far.
  */
-sc_bool
-lib_cmd_turns(sc_gameref_t game) {
+sc_bool lib_cmd_turns(sc_gameref_t game) {
 	const sc_filterref_t filter = gs_get_filter(game);
 	sc_char buffer[32];
 
@@ -8728,8 +8522,7 @@ lib_cmd_turns(sc_gameref_t game) {
 	return TRUE;
 }
 
-sc_bool
-lib_cmd_score(sc_gameref_t game) {
+sc_bool lib_cmd_score(sc_gameref_t game) {
 	const sc_filterref_t filter = gs_get_filter(game);
 	const sc_prop_setref_t bundle = gs_get_bundle(game);
 	sc_vartype_t vt_key[2];
@@ -8772,8 +8565,7 @@ lib_cmd_score(sc_gameref_t game) {
  * Standard response commands.  These are uninteresting catch-all cases,
  * but it's good to make then right as game ALRs may look for them.
  */
-sc_bool
-lib_cmd_profanity(sc_gameref_t game) {
+sc_bool lib_cmd_profanity(sc_gameref_t game) {
 	const sc_filterref_t filter = gs_get_filter(game);
 
 	pf_buffer_string(filter,
@@ -8782,16 +8574,14 @@ lib_cmd_profanity(sc_gameref_t game) {
 	return TRUE;
 }
 
-sc_bool
-lib_cmd_examine_all(sc_gameref_t game) {
+sc_bool lib_cmd_examine_all(sc_gameref_t game) {
 	const sc_filterref_t filter = gs_get_filter(game);
 
 	pf_buffer_string(filter, "Please examine one object at a time.\n");
 	return TRUE;
 }
 
-sc_bool
-lib_cmd_examine_other(sc_gameref_t game) {
+sc_bool lib_cmd_examine_other(sc_gameref_t game) {
 	const sc_filterref_t filter = gs_get_filter(game);
 
 	pf_buffer_string(filter,
@@ -8802,8 +8592,7 @@ lib_cmd_examine_other(sc_gameref_t game) {
 	return TRUE;
 }
 
-sc_bool
-lib_cmd_locate_other(sc_gameref_t game) {
+sc_bool lib_cmd_locate_other(sc_gameref_t game) {
 	const sc_filterref_t filter = gs_get_filter(game);
 
 	pf_buffer_string(filter, "I don't know where that is!\n");
@@ -8811,32 +8600,28 @@ lib_cmd_locate_other(sc_gameref_t game) {
 	return TRUE;
 }
 
-sc_bool
-lib_cmd_unix_like(sc_gameref_t game) {
+sc_bool lib_cmd_unix_like(sc_gameref_t game) {
 	const sc_filterref_t filter = gs_get_filter(game);
 
 	pf_buffer_string(filter, "This isn't Unix you know!\n");
 	return TRUE;
 }
 
-sc_bool
-lib_cmd_dos_like(sc_gameref_t game) {
+sc_bool lib_cmd_dos_like(sc_gameref_t game) {
 	const sc_filterref_t filter = gs_get_filter(game);
 
 	pf_buffer_string(filter, "This isn't Dos you know!\n");
 	return TRUE;
 }
 
-sc_bool
-lib_cmd_cry(sc_gameref_t game) {
+sc_bool lib_cmd_cry(sc_gameref_t game) {
 	const sc_filterref_t filter = gs_get_filter(game);
 
 	pf_buffer_string(filter, "There's no need for that!\n");
 	return TRUE;
 }
 
-sc_bool
-lib_cmd_dance(sc_gameref_t game) {
+sc_bool lib_cmd_dance(sc_gameref_t game) {
 	const sc_filterref_t filter = gs_get_filter(game);
 
 	pf_buffer_string(filter,
@@ -8847,32 +8632,28 @@ lib_cmd_dance(sc_gameref_t game) {
 	return TRUE;
 }
 
-sc_bool
-lib_cmd_eat_other(sc_gameref_t game) {
+sc_bool lib_cmd_eat_other(sc_gameref_t game) {
 	const sc_filterref_t filter = gs_get_filter(game);
 
 	pf_buffer_string(filter, "I don't understand what you are trying to eat.\n");
 	return TRUE;
 }
 
-sc_bool
-lib_cmd_fight(sc_gameref_t game) {
+sc_bool lib_cmd_fight(sc_gameref_t game) {
 	const sc_filterref_t filter = gs_get_filter(game);
 
 	pf_buffer_string(filter, "There is nothing worth fighting here.\n");
 	return TRUE;
 }
 
-sc_bool
-lib_cmd_feed(sc_gameref_t game) {
+sc_bool lib_cmd_feed(sc_gameref_t game) {
 	const sc_filterref_t filter = gs_get_filter(game);
 
 	pf_buffer_string(filter, "There is nothing worth feeding here.\n");
 	return TRUE;
 }
 
-sc_bool
-lib_cmd_feel(sc_gameref_t game) {
+sc_bool lib_cmd_feel(sc_gameref_t game) {
 	const sc_filterref_t filter = gs_get_filter(game);
 
 	pf_buffer_string(filter,
@@ -8883,8 +8664,7 @@ lib_cmd_feel(sc_gameref_t game) {
 	return TRUE;
 }
 
-sc_bool
-lib_cmd_fly(sc_gameref_t game) {
+sc_bool lib_cmd_fly(sc_gameref_t game) {
 	const sc_filterref_t filter = gs_get_filter(game);
 
 	pf_buffer_string(filter,
@@ -8895,8 +8675,7 @@ lib_cmd_fly(sc_gameref_t game) {
 	return TRUE;
 }
 
-sc_bool
-lib_cmd_hint(sc_gameref_t game) {
+sc_bool lib_cmd_hint(sc_gameref_t game) {
 	const sc_filterref_t filter = gs_get_filter(game);
 
 	pf_buffer_string(filter,
@@ -8905,8 +8684,7 @@ lib_cmd_hint(sc_gameref_t game) {
 	return TRUE;
 }
 
-sc_bool
-lib_cmd_hum(sc_gameref_t game) {
+sc_bool lib_cmd_hum(sc_gameref_t game) {
 	const sc_filterref_t filter = gs_get_filter(game);
 
 	pf_buffer_string(filter,
@@ -8917,16 +8695,14 @@ lib_cmd_hum(sc_gameref_t game) {
 	return TRUE;
 }
 
-sc_bool
-lib_cmd_jump(sc_gameref_t game) {
+sc_bool lib_cmd_jump(sc_gameref_t game) {
 	const sc_filterref_t filter = gs_get_filter(game);
 
 	pf_buffer_string(filter, "Wheee-boinng.\n");
 	return TRUE;
 }
 
-sc_bool
-lib_cmd_listen(sc_gameref_t game) {
+sc_bool lib_cmd_listen(sc_gameref_t game) {
 	const sc_filterref_t filter = gs_get_filter(game);
 
 	pf_buffer_string(filter,
@@ -8937,8 +8713,7 @@ lib_cmd_listen(sc_gameref_t game) {
 	return TRUE;
 }
 
-sc_bool
-lib_cmd_please(sc_gameref_t game) {
+sc_bool lib_cmd_please(sc_gameref_t game) {
 	const sc_filterref_t filter = gs_get_filter(game);
 
 	pf_buffer_string(filter,
@@ -8949,16 +8724,14 @@ lib_cmd_please(sc_gameref_t game) {
 	return TRUE;
 }
 
-sc_bool
-lib_cmd_punch(sc_gameref_t game) {
+sc_bool lib_cmd_punch(sc_gameref_t game) {
 	const sc_filterref_t filter = gs_get_filter(game);
 
 	pf_buffer_string(filter, "Who do you think you are, Mike Tyson?\n");
 	return TRUE;
 }
 
-sc_bool
-lib_cmd_run(sc_gameref_t game) {
+sc_bool lib_cmd_run(sc_gameref_t game) {
 	const sc_filterref_t filter = gs_get_filter(game);
 
 	pf_buffer_string(filter,
@@ -8969,16 +8742,14 @@ lib_cmd_run(sc_gameref_t game) {
 	return TRUE;
 }
 
-sc_bool
-lib_cmd_shout(sc_gameref_t game) {
+sc_bool lib_cmd_shout(sc_gameref_t game) {
 	const sc_filterref_t filter = gs_get_filter(game);
 
 	pf_buffer_string(filter, "Aaarrrrgggghhhhhh!\n");
 	return TRUE;
 }
 
-sc_bool
-lib_cmd_say(sc_gameref_t game) {
+sc_bool lib_cmd_say(sc_gameref_t game) {
 	const sc_filterref_t filter = gs_get_filter(game);
 	const sc_char *string = NULL;
 
@@ -9010,8 +8781,7 @@ lib_cmd_say(sc_gameref_t game) {
 	return TRUE;
 }
 
-sc_bool
-lib_cmd_sing(sc_gameref_t game) {
+sc_bool lib_cmd_sing(sc_gameref_t game) {
 	const sc_filterref_t filter = gs_get_filter(game);
 
 	pf_buffer_string(filter,
@@ -9022,16 +8792,14 @@ lib_cmd_sing(sc_gameref_t game) {
 	return TRUE;
 }
 
-sc_bool
-lib_cmd_sleep(sc_gameref_t game) {
+sc_bool lib_cmd_sleep(sc_gameref_t game) {
 	const sc_filterref_t filter = gs_get_filter(game);
 
 	pf_buffer_string(filter, "Zzzzz.  Bored are you?\n");
 	return TRUE;
 }
 
-sc_bool
-lib_cmd_talk(sc_gameref_t game) {
+sc_bool lib_cmd_talk(sc_gameref_t game) {
 	const sc_filterref_t filter = gs_get_filter(game);
 
 	pf_buffer_string(filter,
@@ -9042,16 +8810,14 @@ lib_cmd_talk(sc_gameref_t game) {
 	return TRUE;
 }
 
-sc_bool
-lib_cmd_thank(sc_gameref_t game) {
+sc_bool lib_cmd_thank(sc_gameref_t game) {
 	const sc_filterref_t filter = gs_get_filter(game);
 
 	pf_buffer_string(filter, "You're welcome.\n");
 	return TRUE;
 }
 
-sc_bool
-lib_cmd_whistle(sc_gameref_t game) {
+sc_bool lib_cmd_whistle(sc_gameref_t game) {
 	const sc_filterref_t filter = gs_get_filter(game);
 
 	pf_buffer_string(filter,
@@ -9062,8 +8828,7 @@ lib_cmd_whistle(sc_gameref_t game) {
 	return TRUE;
 }
 
-sc_bool
-lib_cmd_interrogation(sc_gameref_t game) {
+sc_bool lib_cmd_interrogation(sc_gameref_t game) {
 	const sc_filterref_t filter = gs_get_filter(game);
 	const sc_char *string = NULL;
 
@@ -9125,8 +8890,7 @@ lib_cmd_interrogation(sc_gameref_t game) {
 	return TRUE;
 }
 
-sc_bool
-lib_cmd_xyzzy(sc_gameref_t game) {
+sc_bool lib_cmd_xyzzy(sc_gameref_t game) {
 	const sc_filterref_t filter = gs_get_filter(game);
 
 	pf_buffer_string(filter,
@@ -9135,8 +8899,7 @@ lib_cmd_xyzzy(sc_gameref_t game) {
 	return TRUE;
 }
 
-sc_bool
-lib_cmd_egotistic(sc_gameref_t game) {
+sc_bool lib_cmd_egotistic(sc_gameref_t game) {
 	const sc_filterref_t filter = gs_get_filter(game);
 
 #if 0
@@ -9150,8 +8913,7 @@ lib_cmd_egotistic(sc_gameref_t game) {
 	return TRUE;
 }
 
-sc_bool
-lib_cmd_yes_or_no(sc_gameref_t game) {
+sc_bool lib_cmd_yes_or_no(sc_gameref_t game) {
 	const sc_filterref_t filter = gs_get_filter(game);
 
 	pf_buffer_string(filter,
@@ -9167,8 +8929,7 @@ lib_cmd_yes_or_no(sc_gameref_t game) {
  *
  * Malformed and rhetorical question responses.
  */
-sc_bool
-lib_cmd_ask_npc(sc_gameref_t game) {
+sc_bool lib_cmd_ask_npc(sc_gameref_t game) {
 	const sc_filterref_t filter = gs_get_filter(game);
 	sc_int npc;
 	sc_bool is_ambiguous;
@@ -9185,8 +8946,7 @@ lib_cmd_ask_npc(sc_gameref_t game) {
 	return TRUE;
 }
 
-sc_bool
-lib_cmd_ask_object(sc_gameref_t game) {
+sc_bool lib_cmd_ask_object(sc_gameref_t game) {
 	const sc_filterref_t filter = gs_get_filter(game);
 	sc_int object;
 	sc_bool is_ambiguous;
@@ -9207,8 +8967,7 @@ lib_cmd_ask_object(sc_gameref_t game) {
 	return TRUE;
 }
 
-sc_bool
-lib_cmd_ask_other(sc_gameref_t game) {
+sc_bool lib_cmd_ask_other(sc_gameref_t game) {
 	const sc_filterref_t filter = gs_get_filter(game);
 
 	/* Incomplete ask command, so offer help and return. */
@@ -9223,8 +8982,7 @@ lib_cmd_ask_other(sc_gameref_t game) {
  *
  * Uninteresting kill message when no weaponry is involved.
  */
-sc_bool
-lib_cmd_kill_other(sc_gameref_t game) {
+sc_bool lib_cmd_kill_other(sc_gameref_t game) {
 	const sc_filterref_t filter = gs_get_filter(game);
 
 	pf_buffer_string(filter, "Now that isn't very nice.\n");
@@ -9240,11 +8998,8 @@ lib_cmd_kill_other(sc_gameref_t game) {
  * Central handler for a range of nothing-happens messages.  More
  * uninteresting responses.
  */
-static sc_bool
-lib_nothing_happens_common(sc_gameref_t game,
-                           const sc_char *verb_general,
-                           const sc_char *verb_third_person,
-                           sc_bool is_object) {
+static sc_bool lib_nothing_happens_common(sc_gameref_t game, const sc_char *verb_general,
+		const sc_char *verb_third_person, sc_bool is_object) {
 	const sc_filterref_t filter = gs_get_filter(game);
 	const sc_prop_setref_t bundle = gs_get_bundle(game);
 	sc_vartype_t vt_key[2];
@@ -9298,18 +9053,14 @@ lib_nothing_happens_common(sc_gameref_t game,
 	return TRUE;
 }
 
-static sc_bool
-lib_nothing_happens_object(sc_gameref_t game,
-                           const sc_char *verb_general,
-                           const sc_char *verb_third_person) {
+static sc_bool lib_nothing_happens_object(sc_gameref_t game,
+		const sc_char *verb_general, const sc_char *verb_third_person) {
 	return lib_nothing_happens_common(game,
 	                                  verb_general, verb_third_person, TRUE);
 }
 
-static sc_bool
-lib_nothing_happens_other(sc_gameref_t game,
-                          const sc_char *verb_general,
-                          const sc_char *verb_third_person) {
+static sc_bool lib_nothing_happens_other(sc_gameref_t game,
+		const sc_char *verb_general, const sc_char *verb_third_person) {
 	return lib_nothing_happens_common(game,
 	                                  verb_general, verb_third_person, FALSE);
 }
@@ -9320,63 +9071,51 @@ lib_nothing_happens_other(sc_gameref_t game,
  *
  * Shake, rattle and roll, and assorted nothing-happens handlers.
  */
-sc_bool
-lib_cmd_hit_object(sc_gameref_t game) {
+sc_bool lib_cmd_hit_object(sc_gameref_t game) {
 	return lib_nothing_happens_object(game, "hit", "hits");
 }
 
-sc_bool
-lib_cmd_kick_object(sc_gameref_t game) {
+sc_bool lib_cmd_kick_object(sc_gameref_t game) {
 	return lib_nothing_happens_object(game, "kick", "kicks");
 }
 
-sc_bool
-lib_cmd_press_object(sc_gameref_t game) {
+sc_bool lib_cmd_press_object(sc_gameref_t game) {
 	return lib_nothing_happens_object(game, "press", "presses");
 }
 
-sc_bool
-lib_cmd_push_object(sc_gameref_t game) {
+sc_bool lib_cmd_push_object(sc_gameref_t game) {
 	return lib_nothing_happens_object(game, "push", "pushes");
 }
 
-sc_bool
-lib_cmd_pull_object(sc_gameref_t game) {
+sc_bool lib_cmd_pull_object(sc_gameref_t game) {
 	return lib_nothing_happens_object(game, "pull", "pulls");
 }
 
-sc_bool
-lib_cmd_shake_object(sc_gameref_t game) {
+sc_bool lib_cmd_shake_object(sc_gameref_t game) {
 	return lib_nothing_happens_object(game, "shake", "shakes");
 }
 
-sc_bool
-lib_cmd_hit_other(sc_gameref_t game) {
+sc_bool lib_cmd_hit_other(sc_gameref_t game) {
 	return lib_nothing_happens_other(game, "hit", "hits");
 }
 
-sc_bool
-lib_cmd_kick_other(sc_gameref_t game) {
+sc_bool lib_cmd_kick_other(sc_gameref_t game) {
 	return lib_nothing_happens_other(game, "kick", "kicks");
 }
 
-sc_bool
-lib_cmd_press_other(sc_gameref_t game) {
+sc_bool lib_cmd_press_other(sc_gameref_t game) {
 	return lib_nothing_happens_other(game, "press", "presses");
 }
 
-sc_bool
-lib_cmd_push_other(sc_gameref_t game) {
+sc_bool lib_cmd_push_other(sc_gameref_t game) {
 	return lib_nothing_happens_other(game, "push", "pushes");
 }
 
-sc_bool
-lib_cmd_pull_other(sc_gameref_t game) {
+sc_bool lib_cmd_pull_other(sc_gameref_t game) {
 	return lib_nothing_happens_other(game, "pull", "pulls");
 }
 
-sc_bool
-lib_cmd_shake_other(sc_gameref_t game) {
+sc_bool lib_cmd_shake_other(sc_gameref_t game) {
 	return lib_nothing_happens_other(game, "shake", "shakes");
 }
 
@@ -9389,9 +9128,7 @@ lib_cmd_shake_other(sc_gameref_t game) {
  * Central handler for a range of can't-do messages.  Yet more uninterest-
  * ing responses.
  */
-static sc_bool
-lib_cant_do_common(sc_gameref_t game,
-                   const sc_char *verb, sc_bool is_object) {
+static sc_bool lib_cant_do_common(sc_gameref_t game, const sc_char *verb, sc_bool is_object) {
 	const sc_filterref_t filter = gs_get_filter(game);
 	sc_int object;
 	sc_bool is_ambiguous;
@@ -9424,13 +9161,11 @@ lib_cant_do_common(sc_gameref_t game,
 	return TRUE;
 }
 
-static sc_bool
-lib_cant_do_object(sc_gameref_t game, const sc_char *verb) {
+static sc_bool lib_cant_do_object(sc_gameref_t game, const sc_char *verb) {
 	return lib_cant_do_common(game, verb, TRUE);
 }
 
-static sc_bool
-lib_cant_do_other(sc_gameref_t game, const sc_char *verb) {
+static sc_bool lib_cant_do_other(sc_gameref_t game, const sc_char *verb) {
 	return lib_cant_do_common(game, verb, FALSE);
 }
 
@@ -9440,183 +9175,147 @@ lib_cant_do_other(sc_gameref_t game, const sc_char *verb) {
  *
  * Assorted can't-do messages.
  */
-sc_bool
-lib_cmd_block_object(sc_gameref_t game) {
+sc_bool lib_cmd_block_object(sc_gameref_t game) {
 	return lib_cant_do_object(game, "block");
 }
 
-sc_bool
-lib_cmd_climb_object(sc_gameref_t game) {
+sc_bool lib_cmd_climb_object(sc_gameref_t game) {
 	return lib_cant_do_object(game, "climb");
 }
 
-sc_bool
-lib_cmd_clean_object(sc_gameref_t game) {
+sc_bool lib_cmd_clean_object(sc_gameref_t game) {
 	return lib_cant_do_object(game, "clean");
 }
 
-sc_bool
-lib_cmd_cut_object(sc_gameref_t game) {
+sc_bool lib_cmd_cut_object(sc_gameref_t game) {
 	return lib_cant_do_object(game, "cut");
 }
 
-sc_bool
-lib_cmd_drink_object(sc_gameref_t game) {
+sc_bool lib_cmd_drink_object(sc_gameref_t game) {
 	return lib_cant_do_object(game, "drink");
 }
 
-sc_bool
-lib_cmd_light_object(sc_gameref_t game) {
+sc_bool lib_cmd_light_object(sc_gameref_t game) {
 	return lib_cant_do_object(game, "light");
 }
 
-sc_bool
-lib_cmd_lift_object(sc_gameref_t game) {
+sc_bool lib_cmd_lift_object(sc_gameref_t game) {
 	return lib_cant_do_object(game, "lift");
 }
 
-sc_bool
-lib_cmd_move_object(sc_gameref_t game) {
+sc_bool lib_cmd_move_object(sc_gameref_t game) {
 	return lib_cant_do_object(game, "move");
 }
 
-sc_bool
-lib_cmd_rub_object(sc_gameref_t game) {
+sc_bool lib_cmd_rub_object(sc_gameref_t game) {
 	return lib_cant_do_object(game, "rub");
 }
 
-sc_bool
-lib_cmd_stop_object(sc_gameref_t game) {
+sc_bool lib_cmd_stop_object(sc_gameref_t game) {
 	return lib_cant_do_object(game, "stop");
 }
 
-sc_bool
-lib_cmd_suck_object(sc_gameref_t game) {
+sc_bool lib_cmd_suck_object(sc_gameref_t game) {
 	return lib_cant_do_object(game, "suck");
 }
 
-sc_bool
-lib_cmd_touch_object(sc_gameref_t game) {
+sc_bool lib_cmd_touch_object(sc_gameref_t game) {
 	return lib_cant_do_object(game, "touch");
 }
 
-sc_bool
-lib_cmd_turn_object(sc_gameref_t game) {
+sc_bool lib_cmd_turn_object(sc_gameref_t game) {
 	return lib_cant_do_object(game, "turn");
 }
 
-sc_bool
-lib_cmd_unblock_object(sc_gameref_t game) {
+sc_bool lib_cmd_unblock_object(sc_gameref_t game) {
 	return lib_cant_do_object(game, "unblock");
 }
 
-sc_bool
-lib_cmd_wash_object(sc_gameref_t game) {
+sc_bool lib_cmd_wash_object(sc_gameref_t game) {
 	return lib_cant_do_object(game, "wash");
 }
 
-sc_bool
-lib_cmd_block_other(sc_gameref_t game) {
+sc_bool lib_cmd_block_other(sc_gameref_t game) {
 	return lib_cant_do_other(game, "block");
 }
 
-sc_bool
-lib_cmd_climb_other(sc_gameref_t game) {
+sc_bool lib_cmd_climb_other(sc_gameref_t game) {
 	return lib_cant_do_other(game, "climb");
 }
 
-sc_bool
-lib_cmd_clean_other(sc_gameref_t game) {
+sc_bool lib_cmd_clean_other(sc_gameref_t game) {
 	return lib_cant_do_other(game, "clean");
 }
 
-sc_bool
-lib_cmd_close_other(sc_gameref_t game) {
+sc_bool lib_cmd_close_other(sc_gameref_t game) {
 	return lib_cant_do_other(game, "close");
 }
 
-sc_bool
-lib_cmd_lock_other(sc_gameref_t game) {
+sc_bool lib_cmd_lock_other(sc_gameref_t game) {
 	return lib_cant_do_other(game, "lock");
 }
 
-sc_bool
-lib_cmd_unlock_other(sc_gameref_t game) {
+sc_bool lib_cmd_unlock_other(sc_gameref_t game) {
 	return lib_cant_do_other(game, "unlock");
 }
 
-sc_bool
-lib_cmd_stand_other(sc_gameref_t game) {
+sc_bool lib_cmd_stand_other(sc_gameref_t game) {
 	return lib_cant_do_other(game, "stand on");
 }
 
-sc_bool
-lib_cmd_sit_other(sc_gameref_t game) {
+sc_bool lib_cmd_sit_other(sc_gameref_t game) {
 	return lib_cant_do_other(game, "sit on");
 }
 
-sc_bool
-lib_cmd_lie_other(sc_gameref_t game) {
+sc_bool lib_cmd_lie_other(sc_gameref_t game) {
 	return lib_cant_do_other(game, "lie on");
 }
 
-sc_bool
-lib_cmd_cut_other(sc_gameref_t game) {
+sc_bool lib_cmd_cut_other(sc_gameref_t game) {
 	return lib_cant_do_other(game, "cut");
 }
 
-sc_bool
-lib_cmd_drink_other(sc_gameref_t game) {
+sc_bool lib_cmd_drink_other(sc_gameref_t game) {
 	return lib_cant_do_other(game, "drink");
 }
 
-sc_bool
-lib_cmd_lift_other(sc_gameref_t game) {
+sc_bool lib_cmd_lift_other(sc_gameref_t game) {
 	return lib_cant_do_other(game, "lift");
 }
 
-sc_bool
-lib_cmd_light_other(sc_gameref_t game) {
+sc_bool lib_cmd_light_other(sc_gameref_t game) {
 	return lib_cant_do_other(game, "light");
 }
 
-sc_bool
-lib_cmd_move_other(sc_gameref_t game) {
+sc_bool lib_cmd_move_other(sc_gameref_t game) {
 	return lib_cant_do_other(game, "move");
 }
 
-sc_bool
-lib_cmd_stop_other(sc_gameref_t game) {
+sc_bool lib_cmd_stop_other(sc_gameref_t game) {
 	return lib_cant_do_other(game, "stop");
 }
 
-sc_bool
-lib_cmd_rub_other(sc_gameref_t game) {
+sc_bool lib_cmd_rub_other(sc_gameref_t game) {
 	return lib_cant_do_other(game, "rub");
 }
 
-sc_bool
-lib_cmd_suck_other(sc_gameref_t game) {
+sc_bool lib_cmd_suck_other(sc_gameref_t game) {
 	return lib_cant_do_other(game, "suck");
 }
 
-sc_bool
-lib_cmd_turn_other(sc_gameref_t game) {
+sc_bool lib_cmd_turn_other(sc_gameref_t game) {
 	return lib_cant_do_other(game, "turn");
 }
 
-sc_bool
-lib_cmd_touch_other(sc_gameref_t game) {
+sc_bool lib_cmd_touch_other(sc_gameref_t game) {
 	return lib_cant_do_other(game, "touch");
 }
 
-sc_bool
-lib_cmd_unblock_other(sc_gameref_t game) {
+sc_bool lib_cmd_unblock_other(sc_gameref_t game) {
 	return lib_cant_do_other(game, "unblock");
 }
 
-sc_bool
-lib_cmd_wash_other(sc_gameref_t game) {
+sc_bool lib_cmd_wash_other(sc_gameref_t game) {
 	return lib_cant_do_other(game, "wash");
 }
 
@@ -9629,8 +9328,7 @@ lib_cmd_wash_other(sc_gameref_t game) {
  * Central handler for a range of don't_think messages.  Still more
  * uninteresting responses.
  */
-static sc_bool
-lib_dont_think_common(sc_gameref_t game,
+static sc_bool lib_dont_think_common(sc_gameref_t game,
                       const sc_char *verb, sc_bool is_object) {
 	const sc_filterref_t filter = gs_get_filter(game);
 	sc_int object;
@@ -9662,13 +9360,11 @@ lib_dont_think_common(sc_gameref_t game,
 	return TRUE;
 }
 
-static sc_bool
-lib_dont_think_object(sc_gameref_t game, const sc_char *verb) {
+static sc_bool lib_dont_think_object(sc_gameref_t game, const sc_char *verb) {
 	return lib_dont_think_common(game, verb, TRUE);
 }
 
-static sc_bool
-lib_dont_think_other(sc_gameref_t game, const sc_char *verb) {
+static sc_bool lib_dont_think_other(sc_gameref_t game, const sc_char *verb) {
 	return lib_dont_think_common(game, verb, FALSE);
 }
 
@@ -9678,33 +9374,27 @@ lib_dont_think_other(sc_gameref_t game, const sc_char *verb) {
  *
  * Assorted don't-think messages.
  */
-sc_bool
-lib_cmd_fix_object(sc_gameref_t game) {
+sc_bool lib_cmd_fix_object(sc_gameref_t game) {
 	return lib_dont_think_object(game, "fix");
 }
 
-sc_bool
-lib_cmd_mend_object(sc_gameref_t game) {
+sc_bool lib_cmd_mend_object(sc_gameref_t game) {
 	return lib_dont_think_object(game, "mend");
 }
 
-sc_bool
-lib_cmd_repair_object(sc_gameref_t game) {
+sc_bool lib_cmd_repair_object(sc_gameref_t game) {
 	return lib_dont_think_object(game, "repair");
 }
 
-sc_bool
-lib_cmd_fix_other(sc_gameref_t game) {
+sc_bool lib_cmd_fix_other(sc_gameref_t game) {
 	return lib_dont_think_other(game, "fix");
 }
 
-sc_bool
-lib_cmd_mend_other(sc_gameref_t game) {
+sc_bool lib_cmd_mend_other(sc_gameref_t game) {
 	return lib_dont_think_other(game, "mend");
 }
 
-sc_bool
-lib_cmd_repair_other(sc_gameref_t game) {
+sc_bool lib_cmd_repair_other(sc_gameref_t game) {
 	return lib_dont_think_other(game, "repair");
 }
 
@@ -9714,8 +9404,7 @@ lib_cmd_repair_other(sc_gameref_t game) {
  *
  * Central handler for doing something, but unsure to what.
  */
-static sc_bool
-lib_what(sc_gameref_t game, const sc_char *verb) {
+static sc_bool lib_what(sc_gameref_t game, const sc_char *verb) {
 	const sc_filterref_t filter = gs_get_filter(game);
 
 	pf_buffer_string(filter, verb);
@@ -9729,188 +9418,151 @@ lib_what(sc_gameref_t game, const sc_char *verb) {
  *
  * Assorted "what?" messages.
  */
-sc_bool
-lib_cmd_block_what(sc_gameref_t game) {
+sc_bool lib_cmd_block_what(sc_gameref_t game) {
 	return lib_what(game, "Block");
 }
 
-sc_bool
-lib_cmd_break_what(sc_gameref_t game) {
+sc_bool lib_cmd_break_what(sc_gameref_t game) {
 	return lib_what(game, "Break");
 }
 
-sc_bool
-lib_cmd_destroy_what(sc_gameref_t game) {
+sc_bool lib_cmd_destroy_what(sc_gameref_t game) {
 	return lib_what(game, "Destroy");
 }
 
-sc_bool
-lib_cmd_smash_what(sc_gameref_t game) {
+sc_bool lib_cmd_smash_what(sc_gameref_t game) {
 	return lib_what(game, "Smash");
 }
 
-sc_bool
-lib_cmd_buy_what(sc_gameref_t game) {
+sc_bool lib_cmd_buy_what(sc_gameref_t game) {
 	return lib_what(game, "Buy");
 }
 
-sc_bool
-lib_cmd_clean_what(sc_gameref_t game) {
+sc_bool lib_cmd_clean_what(sc_gameref_t game) {
 	return lib_what(game, "Clean");
 }
 
-sc_bool
-lib_cmd_climb_what(sc_gameref_t game) {
+sc_bool lib_cmd_climb_what(sc_gameref_t game) {
 	return lib_what(game, "Climb");
 }
 
-sc_bool
-lib_cmd_cut_what(sc_gameref_t game) {
+sc_bool lib_cmd_cut_what(sc_gameref_t game) {
 	return lib_what(game, "Cut");
 }
 
-sc_bool
-lib_cmd_drink_what(sc_gameref_t game) {
+sc_bool lib_cmd_drink_what(sc_gameref_t game) {
 	return lib_what(game, "Drink");
 }
 
-sc_bool
-lib_cmd_fix_what(sc_gameref_t game) {
+sc_bool lib_cmd_fix_what(sc_gameref_t game) {
 	return lib_what(game, "Fix");
 }
 
-sc_bool
-lib_cmd_hit_what(sc_gameref_t game) {
+sc_bool lib_cmd_hit_what(sc_gameref_t game) {
 	return lib_what(game, "Hit");
 }
 
-sc_bool
-lib_cmd_kick_what(sc_gameref_t game) {
+sc_bool lib_cmd_kick_what(sc_gameref_t game) {
 	return lib_what(game, "Kick");
 }
 
-sc_bool
-lib_cmd_light_what(sc_gameref_t game) {
+sc_bool lib_cmd_light_what(sc_gameref_t game) {
 	return lib_what(game, "Light");
 }
 
-sc_bool
-lib_cmd_lift_what(sc_gameref_t game) {
+sc_bool lib_cmd_lift_what(sc_gameref_t game) {
 	return lib_what(game, "Lift");
 }
 
-sc_bool
-lib_cmd_mend_what(sc_gameref_t game) {
+sc_bool lib_cmd_mend_what(sc_gameref_t game) {
 	return lib_what(game, "Mend");
 }
 
-sc_bool
-lib_cmd_move_what(sc_gameref_t game) {
+sc_bool lib_cmd_move_what(sc_gameref_t game) {
 	return lib_what(game, "Move");
 }
 
-sc_bool
-lib_cmd_press_what(sc_gameref_t game) {
+sc_bool lib_cmd_press_what(sc_gameref_t game) {
 	return lib_what(game, "Press");
 }
 
-sc_bool
-lib_cmd_pull_what(sc_gameref_t game) {
+sc_bool lib_cmd_pull_what(sc_gameref_t game) {
 	return lib_what(game, "Pull");
 }
 
-sc_bool
-lib_cmd_push_what(sc_gameref_t game) {
+sc_bool lib_cmd_push_what(sc_gameref_t game) {
 	return lib_what(game, "Push");
 }
 
-sc_bool
-lib_cmd_repair_what(sc_gameref_t game) {
+sc_bool lib_cmd_repair_what(sc_gameref_t game) {
 	return lib_what(game, "Repair");
 }
 
-sc_bool
-lib_cmd_sell_what(sc_gameref_t game) {
+sc_bool lib_cmd_sell_what(sc_gameref_t game) {
 	return lib_what(game, "Sell");
 }
 
-sc_bool
-lib_cmd_shake_what(sc_gameref_t game) {
+sc_bool lib_cmd_shake_what(sc_gameref_t game) {
 	return lib_what(game, "Shake");
 }
 
-sc_bool
-lib_cmd_rub_what(sc_gameref_t game) {
+sc_bool lib_cmd_rub_what(sc_gameref_t game) {
 	return lib_what(game, "Rub");
 }
 
-sc_bool
-lib_cmd_stop_what(sc_gameref_t game) {
+sc_bool lib_cmd_stop_what(sc_gameref_t game) {
 	return lib_what(game, "Stop");
 }
 
-sc_bool
-lib_cmd_suck_what(sc_gameref_t game) {
+sc_bool lib_cmd_suck_what(sc_gameref_t game) {
 	return lib_what(game, "Suck");
 }
 
-sc_bool
-lib_cmd_touch_what(sc_gameref_t game) {
+sc_bool lib_cmd_touch_what(sc_gameref_t game) {
 	return lib_what(game, "Touch");
 }
 
-sc_bool
-lib_cmd_turn_what(sc_gameref_t game) {
+sc_bool lib_cmd_turn_what(sc_gameref_t game) {
 	return lib_what(game, "Turn");
 }
 
-sc_bool
-lib_cmd_unblock_what(sc_gameref_t game) {
+sc_bool lib_cmd_unblock_what(sc_gameref_t game) {
 	return lib_what(game, "Unblock");
 }
 
-sc_bool
-lib_cmd_wash_what(sc_gameref_t game) {
+sc_bool lib_cmd_wash_what(sc_gameref_t game) {
 	return lib_what(game, "Wash");
 }
 
-sc_bool
-lib_cmd_drop_what(sc_gameref_t game) {
+sc_bool lib_cmd_drop_what(sc_gameref_t game) {
 	return lib_what(game, "Drop");
 }
 
-sc_bool
-lib_cmd_get_what(sc_gameref_t game) {
+sc_bool lib_cmd_get_what(sc_gameref_t game) {
 	return lib_what(game, "Take");
 }
 
-sc_bool
-lib_cmd_give_what(sc_gameref_t game) {
+sc_bool lib_cmd_give_what(sc_gameref_t game) {
 	return lib_what(game, "Give");
 }
 
-sc_bool
-lib_cmd_open_what(sc_gameref_t game) {
+sc_bool lib_cmd_open_what(sc_gameref_t game) {
 	return lib_what(game, "Open");
 }
 
-sc_bool
-lib_cmd_remove_what(sc_gameref_t game) {
+sc_bool lib_cmd_remove_what(sc_gameref_t game) {
 	return lib_what(game, "Remove");
 }
 
-sc_bool
-lib_cmd_wear_what(sc_gameref_t game) {
+sc_bool lib_cmd_wear_what(sc_gameref_t game) {
 	return lib_what(game, "Wear");
 }
 
-sc_bool
-lib_cmd_lock_what(sc_gameref_t game) {
+sc_bool lib_cmd_lock_what(sc_gameref_t game) {
 	return lib_what(game, "Lock");
 }
 
-sc_bool
-lib_cmd_unlock_what(sc_gameref_t game) {
+sc_bool lib_cmd_unlock_what(sc_gameref_t game) {
 	return lib_what(game, "Unlock");
 }
 
@@ -9921,8 +9573,7 @@ lib_cmd_unlock_what(sc_gameref_t game) {
  *
  * Handlers for unrecognized verbs with known object/NPC.
  */
-sc_bool
-lib_cmd_verb_object(sc_gameref_t game) {
+sc_bool lib_cmd_verb_object(sc_gameref_t game) {
 	const sc_filterref_t filter = gs_get_filter(game);
 	const sc_var_setref_t vars = gs_get_vars(game);
 	sc_int count, object, index_;
@@ -9951,8 +9602,7 @@ lib_cmd_verb_object(sc_gameref_t game) {
 	return TRUE;
 }
 
-sc_bool
-lib_cmd_verb_npc(sc_gameref_t game) {
+sc_bool lib_cmd_verb_npc(sc_gameref_t game) {
 	const sc_filterref_t filter = gs_get_filter(game);
 	const sc_var_setref_t vars = gs_get_vars(game);
 	sc_int count, npc, index_;
@@ -9987,8 +9637,7 @@ lib_cmd_verb_npc(sc_gameref_t game) {
  *
  * Set library tracing on/off.
  */
-void
-lib_debug_trace(sc_bool flag) {
+void lib_debug_trace(sc_bool flag) {
 	lib_trace = flag;
 }
 

@@ -75,8 +75,7 @@ static sc_char *scr_game_output = NULL;
  *
  * Set error reporting for expectation errors detected in the script.
  */
-void
-scr_set_verbose(sc_bool flag) {
+void scr_set_verbose(sc_bool flag) {
 	scr_is_verbose = flag;
 }
 
@@ -88,8 +87,7 @@ scr_set_verbose(sc_bool flag) {
  * Simple common message and test case failure handling functions.  The second
  * is used by the serialization helper, so is not static.
  */
-static void
-scr_test_message(const sc_char *format, const sc_char *string) {
+static void scr_test_message(const sc_char *format, const sc_char *string) {
 	if (scr_is_verbose) {
 		sx_trace("--- ");
 		sx_trace(format, string);
@@ -97,8 +95,7 @@ scr_test_message(const sc_char *format, const sc_char *string) {
 	}
 }
 
-void
-scr_test_failed(const sc_char *format, const sc_char *string) {
+void scr_test_failed(const sc_char *format, const sc_char *string) {
 	assert(format && string);
 
 	if (scr_is_verbose) {
@@ -123,34 +120,28 @@ scr_test_failed(const sc_char *format, const sc_char *string) {
  *
  * Line classifiers, return TRUE if line has the given type.
  */
-static sc_bool
-scr_is_line_type(const sc_char *line, sc_char type) {
+static sc_bool scr_is_line_type(const sc_char *line, sc_char type) {
 	return line[0] == type;
 }
 
-static sc_bool
-scr_is_line_comment_or_empty(const sc_char *line) {
+static sc_bool scr_is_line_comment_or_empty(const sc_char *line) {
 	return scr_is_line_type(line, SCRIPT_COMMENT)
 	       || strspn(line, "\t\n\v\f\r ") == strlen(line);
 }
 
-static sc_bool
-scr_is_line_game_command(const sc_char *line) {
+static sc_bool scr_is_line_game_command(const sc_char *line) {
 	return scr_is_line_type(line, GAME_COMMAND);
 }
 
-static sc_bool
-scr_is_line_debug_command(const sc_char *line) {
+static sc_bool scr_is_line_debug_command(const sc_char *line) {
 	return scr_is_line_type(line, DEBUG_COMMAND);
 }
 
-static sc_bool
-scr_is_line_command(const sc_char *line) {
+static sc_bool scr_is_line_command(const sc_char *line) {
 	return scr_is_line_game_command(line) || scr_is_line_debug_command(line);
 }
 
-static sc_bool
-scr_is_line_empty_debug_command(const sc_char *line) {
+static sc_bool scr_is_line_empty_debug_command(const sc_char *line) {
 	return scr_is_line_type(line, DEBUG_COMMAND) && line[1] == NUL;
 }
 
@@ -168,8 +159,7 @@ typedef sx_scr_location_t *sx_scr_locationref_t;
  *
  * Save and restore the script location in the given structure.
  */
-static void
-scr_save_location(sx_script script, sx_scr_locationref_t location) {
+static void scr_save_location(sx_script script, sx_scr_locationref_t location) {
 	location->position = script->pos();
 	location->line_number = scr_line_number;
 }
@@ -217,8 +207,7 @@ static sc_char *scr_get_next_line(sx_script script) {
  * the second argument to the first.  If the first is NULL, acts as strdup()
  * instead.
  */
-static sc_char *
-scr_concatenate(sc_char *string, const sc_char *buffer) {
+static sc_char *scr_concatenate(sc_char *string, const sc_char *buffer) {
 	/* If string is not null, concatenate buffer, otherwise duplicate. */
 	if (string) {
 		string = (sc_char *)sx_realloc(string,
@@ -243,9 +232,7 @@ scr_concatenate(sc_char *string, const sc_char *buffer) {
  * returned).  Command and expectation are allocated, and the caller needs to
  * free them.
  */
-static sc_bool
-scr_get_next_section(sx_script script,
-                     sc_char **command, sc_char **expectation) {
+static sc_bool scr_get_next_section(sx_script script, sc_char **command, sc_char **expectation) {
 	sc_char *line, *first_line, *other_lines;
 	sx_scr_location_t location;
 
@@ -308,8 +295,7 @@ scr_get_next_section(sx_script script,
  * error if required.  It then frees both the expectation and accumulated
  * input.
  */
-static void
-scr_expect(sc_char *expectation) {
+static void scr_expect(sc_char *expectation) {
 	/*
 	 * Save the expectation, and set up collection of game output if needed.
 	 * And if not needed, ensure expectation and game output are cleared.
@@ -327,8 +313,7 @@ scr_expect(sc_char *expectation) {
 	}
 }
 
-static void
-scr_verify_expectation(void) {
+static void scr_verify_expectation(void) {
 	/* Compare expected with actual, and handle any error detected. */
 	if (scr_expectation && scr_game_output) {
 		scr_game_output = sx_normalize_string(scr_game_output);
@@ -357,8 +342,7 @@ scr_verify_expectation(void) {
  * Also, it turns on the game debugger, and it's the caller's responsibility
  * to turn it off when it's no longer needed.
  */
-static void
-scr_execute_debugger_command(const sc_char *command, sc_char *expectation) {
+static void scr_execute_debugger_command(const sc_char *command, sc_char *expectation) {
 	sc_bool status;
 
 	/* Set up the expectation. */
@@ -390,8 +374,7 @@ scr_execute_debugger_command(const sc_char *command, sc_char *expectation) {
  * to "" so that accumulation begins.  Then pass the next line of data back
  * to the game.
  */
-static sc_bool
-scr_read_line_callback(sc_char *buffer, sc_int length) {
+static sc_bool scr_read_line_callback(sc_char *buffer, sc_int length) {
 	sc_char *command, *expectation;
 	assert(buffer && length > 0);
 
@@ -455,8 +438,7 @@ scr_read_line_callback(sc_char *buffer, sc_int length) {
  * game into scr_game_output, unless no expectation is set, in which case
  * the current game output will be NULL, and we can simply save the effort.
  */
-static void
-scr_print_string_callback(const sc_char *string) {
+static void scr_print_string_callback(const sc_char *string) {
 	assert(string);
 
 	if (scr_game_output) {
@@ -476,8 +458,7 @@ scr_print_string_callback(const sc_char *string) {
  * "expect" pair from the script, satisfy the request with the send data,
  * and match against the expectations on next request or on finalization.
  */
-void
-scr_start_script(sc_game game, sx_script script) {
+void scr_start_script(sc_game game, sx_script script) {
 	sc_char *command, *expectation;
 	sx_scr_location_t location;
 	assert(game && script);
@@ -541,8 +522,7 @@ scr_start_script(sc_game game, sx_script script) {
  * clear local records of the game, stream, and error count.  Returns the
  * count of errors detected during the script.
  */
-sc_int
-scr_finalize_script(void) {
+sc_int scr_finalize_script(void) {
 	sc_char *command, *expectation;
 	sc_int errors;
 

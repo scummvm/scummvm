@@ -36,8 +36,7 @@ static const sc_uint GAME_MAGIC = 0x35aed26e;
  *
  * Move the player to a given room, and check presence in a given room.
  */
-void
-gs_move_player_to_room(sc_gameref_t game, sc_int room) {
+void gs_move_player_to_room(sc_gameref_t game, sc_int room) {
 	assert(gs_is_game_valid(game));
 
 	if (room < 0) {
@@ -53,8 +52,7 @@ gs_move_player_to_room(sc_gameref_t game, sc_int room) {
 	game->playerposition = 0;
 }
 
-sc_bool
-gs_player_in_room(sc_gameref_t game, sc_int room) {
+sc_bool gs_player_in_room(sc_gameref_t game, sc_int room) {
 	assert(gs_is_game_valid(game));
 	return game->playerroom == room;
 }
@@ -65,8 +63,7 @@ gs_player_in_room(sc_gameref_t game, sc_int room) {
  *
  * Helper for event, room, object, and npc range assertions.
  */
-static sc_bool
-gs_in_range(sc_int value, sc_int limit) {
+static sc_bool gs_in_range(sc_int value, sc_int limit) {
 	return value >= 0 && value < limit;
 }
 
@@ -76,26 +73,22 @@ gs_in_range(sc_int value, sc_int limit) {
  *
  * Game accessors and mutators.
  */
-sc_var_setref_t
-gs_get_vars(sc_gameref_t gs) {
+sc_var_setref_t gs_get_vars(sc_gameref_t gs) {
 	assert(gs_is_game_valid(gs));
 	return gs->vars;
 }
 
-sc_prop_setref_t
-gs_get_bundle(sc_gameref_t gs) {
+sc_prop_setref_t gs_get_bundle(sc_gameref_t gs) {
 	assert(gs_is_game_valid(gs));
 	return gs->bundle;
 }
 
-sc_filterref_t
-gs_get_filter(sc_gameref_t gs) {
+sc_filterref_t gs_get_filter(sc_gameref_t gs) {
 	assert(gs_is_game_valid(gs));
 	return gs->filter;
 }
 
-sc_memo_setref_t
-gs_get_memento(sc_gameref_t gs) {
+sc_memo_setref_t gs_get_memento(sc_gameref_t gs) {
 	assert(gs_is_game_valid(gs));
 	return gs->memento;
 }
@@ -104,38 +97,32 @@ gs_get_memento(sc_gameref_t gs) {
 /*
  * Game accessors and mutators for the player.
  */
-void
-gs_set_playerroom(sc_gameref_t gs, sc_int room) {
+void gs_set_playerroom(sc_gameref_t gs, sc_int room) {
 	assert(gs_is_game_valid(gs));
 	gs->playerroom = room;
 }
 
-void
-gs_set_playerposition(sc_gameref_t gs, sc_int position) {
+void gs_set_playerposition(sc_gameref_t gs, sc_int position) {
 	assert(gs_is_game_valid(gs));
 	gs->playerposition = position;
 }
 
-void
-gs_set_playerparent(sc_gameref_t gs, sc_int parent) {
+void gs_set_playerparent(sc_gameref_t gs, sc_int parent) {
 	assert(gs_is_game_valid(gs));
 	gs->playerparent = parent;
 }
 
-sc_int
-gs_playerroom(sc_gameref_t gs) {
+sc_int gs_playerroom(sc_gameref_t gs) {
 	assert(gs_is_game_valid(gs));
 	return gs->playerroom;
 }
 
-sc_int
-gs_playerposition(sc_gameref_t gs) {
+sc_int gs_playerposition(sc_gameref_t gs) {
 	assert(gs_is_game_valid(gs));
 	return gs->playerposition;
 }
 
-sc_int
-gs_playerparent(sc_gameref_t gs) {
+sc_int gs_playerparent(sc_gameref_t gs) {
 	assert(gs_is_game_valid(gs));
 	return gs->playerparent;
 }
@@ -144,38 +131,32 @@ gs_playerparent(sc_gameref_t gs) {
 /*
  * Game accessors and mutators for events.
  */
-sc_int
-gs_event_count(sc_gameref_t gs) {
+sc_int gs_event_count(sc_gameref_t gs) {
 	assert(gs_is_game_valid(gs));
 	return gs->event_count;
 }
 
-void
-gs_set_event_state(sc_gameref_t gs, sc_int event, sc_int state) {
+void gs_set_event_state(sc_gameref_t gs, sc_int event, sc_int state) {
 	assert(gs_is_game_valid(gs) && gs_in_range(event, gs->event_count));
 	gs->events[event].state = state;
 }
 
-void
-gs_set_event_time(sc_gameref_t gs, sc_int event, sc_int etime) {
+void gs_set_event_time(sc_gameref_t gs, sc_int event, sc_int etime) {
 	assert(gs_is_game_valid(gs) && gs_in_range(event, gs->event_count));
 	gs->events[event].time = etime;
 }
 
-sc_int
-gs_event_state(sc_gameref_t gs, sc_int event) {
+sc_int gs_event_state(sc_gameref_t gs, sc_int event) {
 	assert(gs_is_game_valid(gs) && gs_in_range(event, gs->event_count));
 	return gs->events[event].state;
 }
 
-sc_int
-gs_event_time(sc_gameref_t gs, sc_int event) {
+sc_int gs_event_time(sc_gameref_t gs, sc_int event) {
 	assert(gs_is_game_valid(gs) && gs_in_range(event, gs->event_count));
 	return gs->events[event].time;
 }
 
-void
-gs_decrement_event_time(sc_gameref_t gs, sc_int event) {
+void gs_decrement_event_time(sc_gameref_t gs, sc_int event) {
 	assert(gs_is_game_valid(gs) && gs_in_range(event, gs->event_count));
 	gs->events[event].time--;
 }
@@ -184,20 +165,17 @@ gs_decrement_event_time(sc_gameref_t gs, sc_int event) {
 /*
  * Game accessors and mutators for rooms.
  */
-sc_int
-gs_room_count(sc_gameref_t gs) {
+sc_int gs_room_count(sc_gameref_t gs) {
 	assert(gs_is_game_valid(gs));
 	return gs->room_count;
 }
 
-void
-gs_set_room_seen(sc_gameref_t gs, sc_int room, sc_bool seen) {
+void gs_set_room_seen(sc_gameref_t gs, sc_int room, sc_bool seen) {
 	assert(gs_is_game_valid(gs) && gs_in_range(room, gs->room_count));
 	gs->rooms[room].visited = seen;
 }
 
-sc_bool
-gs_room_seen(sc_gameref_t gs, sc_int room) {
+sc_bool gs_room_seen(sc_gameref_t gs, sc_int room) {
 	assert(gs_is_game_valid(gs) && gs_in_range(room, gs->room_count));
 	return gs->rooms[room].visited;
 }
@@ -206,32 +184,27 @@ gs_room_seen(sc_gameref_t gs, sc_int room) {
 /*
  * Game accessors and mutators for tasks.
  */
-sc_int
-gs_task_count(sc_gameref_t gs) {
+sc_int gs_task_count(sc_gameref_t gs) {
 	assert(gs_is_game_valid(gs));
 	return gs->task_count;
 }
 
-void
-gs_set_task_done(sc_gameref_t gs, sc_int task, sc_bool done) {
+void gs_set_task_done(sc_gameref_t gs, sc_int task, sc_bool done) {
 	assert(gs_is_game_valid(gs) && gs_in_range(task, gs->task_count));
 	gs->tasks[task].done = done;
 }
 
-void
-gs_set_task_scored(sc_gameref_t gs, sc_int task, sc_bool scored) {
+void gs_set_task_scored(sc_gameref_t gs, sc_int task, sc_bool scored) {
 	assert(gs_is_game_valid(gs) && gs_in_range(task, gs->task_count));
 	gs->tasks[task].scored = scored;
 }
 
-sc_bool
-gs_task_done(sc_gameref_t gs, sc_int task) {
+sc_bool gs_task_done(sc_gameref_t gs, sc_int task) {
 	assert(gs_is_game_valid(gs) && gs_in_range(task, gs->task_count));
 	return gs->tasks[task].done;
 }
 
-sc_bool
-gs_task_scored(sc_gameref_t gs, sc_int task) {
+sc_bool gs_task_scored(sc_gameref_t gs, sc_int task) {
 	assert(gs_is_game_valid(gs) && gs_in_range(task, gs->task_count));
 	return gs->tasks[task].scored;
 }
@@ -240,142 +213,120 @@ gs_task_scored(sc_gameref_t gs, sc_int task) {
 /*
  * Game accessors and mutators for objects.
  */
-sc_int
-gs_object_count(sc_gameref_t gs) {
+sc_int gs_object_count(sc_gameref_t gs) {
 	assert(gs_is_game_valid(gs));
 	return gs->object_count;
 }
 
-void
-gs_set_object_openness(sc_gameref_t gs, sc_int object, sc_int openness) {
+void gs_set_object_openness(sc_gameref_t gs, sc_int object, sc_int openness) {
 	assert(gs_is_game_valid(gs) && gs_in_range(object, gs->object_count));
 	gs->objects[object].openness = openness;
 }
 
-void
-gs_set_object_state(sc_gameref_t gs, sc_int object, sc_int state) {
+void gs_set_object_state(sc_gameref_t gs, sc_int object, sc_int state) {
 	assert(gs_is_game_valid(gs) && gs_in_range(object, gs->object_count));
 	gs->objects[object].state = state;
 }
 
-void
-gs_set_object_seen(sc_gameref_t gs, sc_int object, sc_bool seen) {
+void gs_set_object_seen(sc_gameref_t gs, sc_int object, sc_bool seen) {
 	assert(gs_is_game_valid(gs) && gs_in_range(object, gs->object_count));
 	gs->objects[object].seen = seen;
 }
 
-void
-gs_set_object_unmoved(sc_gameref_t gs, sc_int object, sc_bool unmoved) {
+void gs_set_object_unmoved(sc_gameref_t gs, sc_int object, sc_bool unmoved) {
 	assert(gs_is_game_valid(gs) && gs_in_range(object, gs->object_count));
 	gs->objects[object].unmoved = unmoved;
 }
 
-void
-gs_set_object_static_unmoved(sc_gameref_t gs, sc_int object, sc_bool unmoved) {
+void gs_set_object_static_unmoved(sc_gameref_t gs, sc_int object, sc_bool unmoved) {
 	assert(gs_is_game_valid(gs) && gs_in_range(object, gs->object_count));
 	gs->objects[object].static_unmoved = unmoved;
 }
 
-sc_int
-gs_object_openness(sc_gameref_t gs, sc_int object) {
+sc_int gs_object_openness(sc_gameref_t gs, sc_int object) {
 	assert(gs_is_game_valid(gs) && gs_in_range(object, gs->object_count));
 	return gs->objects[object].openness;
 }
 
-sc_int
-gs_object_state(sc_gameref_t gs, sc_int object) {
+sc_int gs_object_state(sc_gameref_t gs, sc_int object) {
 	assert(gs_is_game_valid(gs) && gs_in_range(object, gs->object_count));
 	return gs->objects[object].state;
 }
 
-sc_bool
-gs_object_seen(sc_gameref_t gs, sc_int object) {
+sc_bool gs_object_seen(sc_gameref_t gs, sc_int object) {
 	assert(gs_is_game_valid(gs) && gs_in_range(object, gs->object_count));
 	return gs->objects[object].seen;
 }
 
-sc_bool
-gs_object_unmoved(sc_gameref_t gs, sc_int object) {
+sc_bool gs_object_unmoved(sc_gameref_t gs, sc_int object) {
 	assert(gs_is_game_valid(gs) && gs_in_range(object, gs->object_count));
 	return gs->objects[object].unmoved;
 }
 
-sc_bool
-gs_object_static_unmoved(sc_gameref_t gs, sc_int object) {
+sc_bool gs_object_static_unmoved(sc_gameref_t gs, sc_int object) {
 	assert(gs_is_game_valid(gs) && gs_in_range(object, gs->object_count));
 	return gs->objects[object].static_unmoved;
 }
 
-sc_int
-gs_object_position(sc_gameref_t gs, sc_int object) {
+sc_int gs_object_position(sc_gameref_t gs, sc_int object) {
 	assert(gs_is_game_valid(gs) && gs_in_range(object, gs->object_count));
 	return gs->objects[object].position;
 }
 
-sc_int
-gs_object_parent(sc_gameref_t gs, sc_int object) {
+sc_int gs_object_parent(sc_gameref_t gs, sc_int object) {
 	assert(gs_is_game_valid(gs) && gs_in_range(object, gs->object_count));
 	return gs->objects[object].parent;
 }
 
-static void
-gs_object_move_onto_unchecked(sc_gameref_t gs, sc_int object, sc_int onto) {
+static void gs_object_move_onto_unchecked(sc_gameref_t gs, sc_int object, sc_int onto) {
 	assert(gs_is_game_valid(gs) && gs_in_range(object, gs->object_count));
 	gs->objects[object].position = OBJ_ON_OBJECT;
 	gs->objects[object].parent = onto;
 }
 
-static void
-gs_object_move_into_unchecked(sc_gameref_t gs, sc_int object, sc_int into) {
+static void gs_object_move_into_unchecked(sc_gameref_t gs, sc_int object, sc_int into) {
 	assert(gs_is_game_valid(gs) && gs_in_range(object, gs->object_count));
 	gs->objects[object].position = OBJ_IN_OBJECT;
 	gs->objects[object].parent = into;
 }
 
-static void
-gs_object_make_hidden_unchecked(sc_gameref_t gs, sc_int object) {
+static void gs_object_make_hidden_unchecked(sc_gameref_t gs, sc_int object) {
 	assert(gs_is_game_valid(gs) && gs_in_range(object, gs->object_count));
 	gs->objects[object].position = OBJ_HIDDEN;
 	gs->objects[object].parent = -1;
 }
 
-static void
-gs_object_player_get_unchecked(sc_gameref_t gs, sc_int object) {
+static void gs_object_player_get_unchecked(sc_gameref_t gs, sc_int object) {
 	assert(gs_is_game_valid(gs) && gs_in_range(object, gs->object_count));
 	gs->objects[object].position = OBJ_HELD_PLAYER;
 	gs->objects[object].parent = -1;
 }
 
-static void
-gs_object_npc_get_unchecked(sc_gameref_t gs, sc_int object, sc_int npc) {
+static void gs_object_npc_get_unchecked(sc_gameref_t gs, sc_int object, sc_int npc) {
 	assert(gs_is_game_valid(gs) && gs_in_range(object, gs->object_count));
 	gs->objects[object].position = OBJ_HELD_NPC;
 	gs->objects[object].parent = npc;
 }
 
-static void
-gs_object_player_wear_unchecked(sc_gameref_t gs, sc_int object) {
+static void gs_object_player_wear_unchecked(sc_gameref_t gs, sc_int object) {
 	assert(gs_is_game_valid(gs) && gs_in_range(object, gs->object_count));
 	gs->objects[object].position = OBJ_WORN_PLAYER;
 	gs->objects[object].parent = 0;
 }
 
-static void
-gs_object_npc_wear_unchecked(sc_gameref_t gs, sc_int object, sc_int npc) {
+static void gs_object_npc_wear_unchecked(sc_gameref_t gs, sc_int object, sc_int npc) {
 	assert(gs_is_game_valid(gs) && gs_in_range(object, gs->object_count));
 	gs->objects[object].position = OBJ_WORN_NPC;
 	gs->objects[object].parent = npc;
 }
 
-static void
-gs_object_to_room_unchecked(sc_gameref_t gs, sc_int object, sc_int room) {
+static void gs_object_to_room_unchecked(sc_gameref_t gs, sc_int object, sc_int room) {
 	assert(gs_is_game_valid(gs) && gs_in_range(object, gs->object_count));
 	gs->objects[object].position = room + 1;
 	gs->objects[object].parent = -1;
 }
 
-void
-gs_object_move_onto(sc_gameref_t gs, sc_int object, sc_int onto) {
+void gs_object_move_onto(sc_gameref_t gs, sc_int object, sc_int onto) {
 	assert(gs_is_game_valid(gs) && gs_in_range(object, gs->object_count));
 	if (gs->objects[object].position != OBJ_ON_OBJECT
 	        || gs->objects[object].parent != onto) {
@@ -384,8 +335,7 @@ gs_object_move_onto(sc_gameref_t gs, sc_int object, sc_int onto) {
 	}
 }
 
-void
-gs_object_move_into(sc_gameref_t gs, sc_int object, sc_int into) {
+void gs_object_move_into(sc_gameref_t gs, sc_int object, sc_int into) {
 	assert(gs_is_game_valid(gs) && gs_in_range(object, gs->object_count));
 	if (gs->objects[object].position != OBJ_IN_OBJECT
 	        || gs->objects[object].parent != into) {
@@ -394,8 +344,7 @@ gs_object_move_into(sc_gameref_t gs, sc_int object, sc_int into) {
 	}
 }
 
-void
-gs_object_make_hidden(sc_gameref_t gs, sc_int object) {
+void gs_object_make_hidden(sc_gameref_t gs, sc_int object) {
 	assert(gs_is_game_valid(gs) && gs_in_range(object, gs->object_count));
 	if (gs->objects[object].position != OBJ_HIDDEN) {
 		gs_object_make_hidden_unchecked(gs, object);
@@ -403,8 +352,7 @@ gs_object_make_hidden(sc_gameref_t gs, sc_int object) {
 	}
 }
 
-void
-gs_object_player_get(sc_gameref_t gs, sc_int object) {
+void gs_object_player_get(sc_gameref_t gs, sc_int object) {
 	assert(gs_is_game_valid(gs) && gs_in_range(object, gs->object_count));
 	if (gs->objects[object].position != OBJ_HELD_PLAYER) {
 		gs_object_player_get_unchecked(gs, object);
@@ -412,8 +360,7 @@ gs_object_player_get(sc_gameref_t gs, sc_int object) {
 	}
 }
 
-void
-gs_object_npc_get(sc_gameref_t gs, sc_int object, sc_int npc) {
+void gs_object_npc_get(sc_gameref_t gs, sc_int object, sc_int npc) {
 	assert(gs_is_game_valid(gs) && gs_in_range(object, gs->object_count));
 	if (gs->objects[object].position != OBJ_HELD_NPC
 	        || gs->objects[object].parent != npc) {
@@ -422,8 +369,7 @@ gs_object_npc_get(sc_gameref_t gs, sc_int object, sc_int npc) {
 	}
 }
 
-void
-gs_object_player_wear(sc_gameref_t gs, sc_int object) {
+void gs_object_player_wear(sc_gameref_t gs, sc_int object) {
 	assert(gs_is_game_valid(gs) && gs_in_range(object, gs->object_count));
 	if (gs->objects[object].position != OBJ_WORN_PLAYER) {
 		gs_object_player_wear_unchecked(gs, object);
@@ -431,8 +377,7 @@ gs_object_player_wear(sc_gameref_t gs, sc_int object) {
 	}
 }
 
-void
-gs_object_npc_wear(sc_gameref_t gs, sc_int object, sc_int npc) {
+void gs_object_npc_wear(sc_gameref_t gs, sc_int object, sc_int npc) {
 	assert(gs_is_game_valid(gs) && gs_in_range(object, gs->object_count));
 	if (gs->objects[object].position != OBJ_WORN_NPC
 	        || gs->objects[object].parent != npc) {
@@ -441,8 +386,7 @@ gs_object_npc_wear(sc_gameref_t gs, sc_int object, sc_int npc) {
 	}
 }
 
-void
-gs_object_to_room(sc_gameref_t gs, sc_int object, sc_int room) {
+void gs_object_to_room(sc_gameref_t gs, sc_int object, sc_int room) {
 	assert(gs_is_game_valid(gs) && gs_in_range(object, gs->object_count));
 	if (gs->objects[object].position != room + 1) {
 		gs_object_to_room_unchecked(gs, object, room);
@@ -454,83 +398,70 @@ gs_object_to_room(sc_gameref_t gs, sc_int object, sc_int room) {
 /*
  * Game accessors and mutators for NPCs.
  */
-sc_int
-gs_npc_count(sc_gameref_t gs) {
+sc_int gs_npc_count(sc_gameref_t gs) {
 	assert(gs_is_game_valid(gs));
 	return gs->npc_count;
 }
 
-void
-gs_set_npc_location(sc_gameref_t gs, sc_int npc, sc_int location) {
+void gs_set_npc_location(sc_gameref_t gs, sc_int npc, sc_int location) {
 	assert(gs_is_game_valid(gs) && gs_in_range(npc, gs->npc_count));
 	gs->npcs[npc].location = location;
 }
 
-sc_int
-gs_npc_location(sc_gameref_t gs, sc_int npc) {
+sc_int gs_npc_location(sc_gameref_t gs, sc_int npc) {
 	assert(gs_is_game_valid(gs) && gs_in_range(npc, gs->npc_count));
 	return gs->npcs[npc].location;
 }
 
-void
-gs_set_npc_position(sc_gameref_t gs, sc_int npc, sc_int position) {
+void gs_set_npc_position(sc_gameref_t gs, sc_int npc, sc_int position) {
 	assert(gs_is_game_valid(gs) && gs_in_range(npc, gs->npc_count));
 	gs->npcs[npc].position = position;
 }
 
-sc_int
-gs_npc_position(sc_gameref_t gs, sc_int npc) {
+sc_int gs_npc_position(sc_gameref_t gs, sc_int npc) {
 	assert(gs_is_game_valid(gs) && gs_in_range(npc, gs->npc_count));
 	return gs->npcs[npc].position;
 }
 
-void
-gs_set_npc_parent(sc_gameref_t gs, sc_int npc, sc_int parent) {
+void gs_set_npc_parent(sc_gameref_t gs, sc_int npc, sc_int parent) {
 	assert(gs_is_game_valid(gs) && gs_in_range(npc, gs->npc_count));
 	gs->npcs[npc].parent = parent;
 }
 
-sc_int
-gs_npc_parent(sc_gameref_t gs, sc_int npc) {
+sc_int gs_npc_parent(sc_gameref_t gs, sc_int npc) {
 	assert(gs_is_game_valid(gs) && gs_in_range(npc, gs->npc_count));
 	return gs->npcs[npc].parent;
 }
 
-void
-gs_set_npc_seen(sc_gameref_t gs, sc_int npc, sc_bool seen) {
+void gs_set_npc_seen(sc_gameref_t gs, sc_int npc, sc_bool seen) {
 	assert(gs_is_game_valid(gs) && gs_in_range(npc, gs->npc_count));
 	gs->npcs[npc].seen = seen;
 }
 
-sc_bool
-gs_npc_seen(sc_gameref_t gs, sc_int npc) {
+sc_bool gs_npc_seen(sc_gameref_t gs, sc_int npc) {
 	assert(gs_is_game_valid(gs) && gs_in_range(npc, gs->npc_count));
 	return gs->npcs[npc].seen;
 }
 
-sc_int
-gs_npc_walkstep_count(sc_gameref_t gs, sc_int npc) {
+sc_int gs_npc_walkstep_count(sc_gameref_t gs, sc_int npc) {
 	assert(gs_is_game_valid(gs) && gs_in_range(npc, gs->npc_count));
 	return gs->npcs[npc].walkstep_count;
 }
 
-void
-gs_set_npc_walkstep(sc_gameref_t gs,
+void gs_set_npc_walkstep(sc_gameref_t gs,
                     sc_int npc, sc_int walk, sc_int walkstep) {
 	assert(gs_is_game_valid(gs) && gs_in_range(npc, gs->npc_count)
 	       && gs_in_range(walk, gs->npcs[npc].walkstep_count));
 	gs->npcs[npc].walksteps[walk] = walkstep;
 }
 
-sc_int
-gs_npc_walkstep(sc_gameref_t gs, sc_int npc, sc_int walk) {
+sc_int gs_npc_walkstep(sc_gameref_t gs, sc_int npc, sc_int walk) {
 	assert(gs_is_game_valid(gs) && gs_in_range(npc, gs->npc_count)
 	       && gs_in_range(walk, gs->npcs[npc].walkstep_count));
 	return gs->npcs[npc].walksteps[walk];
 }
 
-void
-gs_decrement_npc_walkstep(sc_gameref_t gs, sc_int npc, sc_int walk) {
+void gs_decrement_npc_walkstep(sc_gameref_t gs, sc_int npc, sc_int walk) {
 	assert(gs_is_game_valid(gs) && gs_in_range(npc, gs->npc_count)
 	       && gs_in_range(walk, gs->npcs[npc].walkstep_count));
 	gs->npcs[npc].walksteps[walk]--;
@@ -540,29 +471,25 @@ gs_decrement_npc_walkstep(sc_gameref_t gs, sc_int npc, sc_int walk) {
 /*
  * Convenience functions for bulk clearance of references.
  */
-void
-gs_clear_npc_references(sc_gameref_t gs) {
+void gs_clear_npc_references(sc_gameref_t gs) {
 	assert(gs_is_game_valid(gs));
 	memset(gs->npc_references,
 	       FALSE, gs->npc_count * sizeof(*gs->npc_references));
 }
 
-void
-gs_clear_object_references(sc_gameref_t gs) {
+void gs_clear_object_references(sc_gameref_t gs) {
 	assert(gs_is_game_valid(gs));
 	memset(gs->object_references,
 	       FALSE, gs->object_count * sizeof(*gs->object_references));
 }
 
-void
-gs_set_multiple_references(sc_gameref_t gs) {
+void gs_set_multiple_references(sc_gameref_t gs) {
 	assert(gs_is_game_valid(gs));
 	memset(gs->multiple_references,
 	       TRUE, gs->object_count * sizeof(*gs->multiple_references));
 }
 
-void
-gs_clear_multiple_references(sc_gameref_t gs) {
+void gs_clear_multiple_references(sc_gameref_t gs) {
 	assert(gs_is_game_valid(gs));
 	memset(gs->multiple_references,
 	       FALSE, gs->object_count * sizeof(*gs->multiple_references));
@@ -574,9 +501,7 @@ gs_clear_multiple_references(sc_gameref_t gs) {
  *
  * Create and initialize a game state.
  */
-sc_gameref_t
-gs_create(sc_var_setref_t vars,
-          sc_prop_setref_t bundle, sc_filterref_t filter) {
+sc_gameref_t gs_create(sc_var_setref_t vars, sc_prop_setref_t bundle, sc_filterref_t filter) {
 	sc_gameref_t game;
 	sc_vartype_t vt_key[4];
 	sc_int index_, bytes;
@@ -871,8 +796,7 @@ gs_create(sc_var_setref_t vars,
  *
  * Return TRUE if pointer is a valid game, FALSE otherwise.
  */
-sc_bool
-gs_is_game_valid(sc_gameref_t game) {
+sc_bool gs_is_game_valid(sc_gameref_t game) {
 	return game && game->magic == GAME_MAGIC;
 }
 
@@ -883,8 +807,7 @@ gs_is_game_valid(sc_gameref_t game) {
  * Helper for gs_copy(), copies one malloc'ed string to another, or NULL
  * if from is NULL, taking care not to leak memory.
  */
-static void
-gs_string_copy(sc_char **to_string, const sc_char *from_string) {
+static void gs_string_copy(sc_char **to_string, const sc_char *from_string) {
 	/* Free any current contents of to_string. */
 	sc_free(*to_string);
 
@@ -903,8 +826,7 @@ gs_string_copy(sc_char **to_string, const sc_char *from_string) {
  * Deep-copy the dynamic parts of a game onto another existing
  * game structure.
  */
-void
-gs_copy(sc_gameref_t to, sc_gameref_t from) {
+void gs_copy(sc_gameref_t to, sc_gameref_t from) {
 	const sc_prop_setref_t bundle = from->bundle;
 	sc_vartype_t vt_key[3];
 	sc_int var_count, var, npc;
@@ -1048,8 +970,7 @@ gs_copy(sc_gameref_t to, sc_gameref_t from) {
  *
  * Free all the memory associated with a game state.
  */
-void
-gs_destroy(sc_gameref_t game) {
+void gs_destroy(sc_gameref_t game) {
 	sc_int npc;
 	assert(gs_is_game_valid(game));
 

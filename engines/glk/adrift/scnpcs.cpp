@@ -36,8 +36,7 @@ static sc_bool npc_trace = FALSE;
  *
  * Return TRUE if a given NPC is currently in a given room.
  */
-sc_bool
-npc_in_room(sc_gameref_t game, sc_int npc, sc_int room) {
+sc_bool npc_in_room(sc_gameref_t game, sc_int npc, sc_int room) {
 	if (npc_trace) {
 		sc_trace("NPC: checking NPC %ld in room %ld (NPC is in %ld)\n",
 		         npc, room, gs_npc_location(game, npc));
@@ -52,8 +51,7 @@ npc_in_room(sc_gameref_t game, sc_int npc, sc_int room) {
  *
  * Return the count of characters in the room, including the player.
  */
-sc_int
-npc_count_in_room(sc_gameref_t game, sc_int room) {
+sc_int npc_count_in_room(sc_gameref_t game, sc_int room) {
 	sc_int count, npc;
 
 	/* Start with the player. */
@@ -73,8 +71,7 @@ npc_count_in_room(sc_gameref_t game, sc_int room) {
  *
  * Start the given walk for the given NPC.
  */
-void
-npc_start_npc_walk(sc_gameref_t game, sc_int npc, sc_int walk) {
+void npc_start_npc_walk(sc_gameref_t game, sc_int npc, sc_int walk) {
 	const sc_prop_setref_t bundle = gs_get_bundle(game);
 	sc_vartype_t vt_key[6];
 	sc_int movetime;
@@ -99,8 +96,7 @@ npc_start_npc_walk(sc_gameref_t game, sc_int npc, sc_int walk) {
  *
  * Set initial values for NPC states, and update on turns.
  */
-void
-npc_turn_update(sc_gameref_t game) {
+void npc_turn_update(sc_gameref_t game) {
 	sc_int index_;
 
 	/* Set current values for NPC seen states. */
@@ -111,8 +107,7 @@ npc_turn_update(sc_gameref_t game) {
 	}
 }
 
-void
-npc_setup_initial(sc_gameref_t game) {
+void npc_setup_initial(sc_gameref_t game) {
 	const sc_prop_setref_t bundle = gs_get_bundle(game);
 	sc_vartype_t vt_key[5];
 	sc_int index_;
@@ -149,8 +144,7 @@ npc_setup_initial(sc_gameref_t game) {
  *
  * Return TRUE if a given room is in a given group.
  */
-static sc_bool
-npc_room_in_roomgroup(sc_gameref_t game, sc_int room, sc_int group) {
+static sc_bool npc_room_in_roomgroup(sc_gameref_t game, sc_int room, sc_int group) {
 	const sc_prop_setref_t bundle = gs_get_bundle(game);
 	sc_vartype_t vt_key[4];
 	sc_int member;
@@ -183,9 +177,7 @@ static const sc_char *const DIRNAMES_8[] = {
  *
  * Return a random member of group adjacent to given room.
  */
-static sc_int
-npc_random_adjacent_roomgroup_member(sc_gameref_t game,
-                                     sc_int room, sc_int group) {
+static sc_int npc_random_adjacent_roomgroup_member(sc_gameref_t game, sc_int room, sc_int group) {
 	const sc_prop_setref_t bundle = gs_get_bundle(game);
 	sc_vartype_t vt_key[5];
 	sc_bool eightpointcompass;
@@ -232,9 +224,7 @@ npc_random_adjacent_roomgroup_member(sc_gameref_t game,
  *
  * Helper for npc_tick_npc().
  */
-static void
-npc_announce(sc_gameref_t game, sc_int npc,
-             sc_int room, sc_bool is_exit, sc_int npc_room) {
+static void npc_announce(sc_gameref_t game, sc_int npc, sc_int room, sc_bool is_exit, sc_int npc_room) {
 	const sc_filterref_t filter = gs_get_filter(game);
 	const sc_prop_setref_t bundle = gs_get_bundle(game);
 	sc_vartype_t vt_key[5], vt_rvalue;
@@ -312,8 +302,7 @@ npc_announce(sc_gameref_t game, sc_int npc,
  *
  * Helper for npc_tick_npc().
  */
-static void
-npc_tick_npc_walk(sc_gameref_t game, sc_int npc, sc_int walk) {
+static void npc_tick_npc_walk(sc_gameref_t game, sc_int npc, sc_int walk) {
 	const sc_prop_setref_t bundle = gs_get_bundle(game);
 	sc_vartype_t vt_key[6];
 	sc_int roomgroups, movetimes, walkstep, start, dest, destnum;
@@ -428,8 +417,7 @@ npc_tick_npc_walk(sc_gameref_t game, sc_int npc, sc_int walk) {
  *
  * Move an NPC one step along current walk.
  */
-static void
-npc_tick_npc(sc_gameref_t game, sc_int npc) {
+static void npc_tick_npc(sc_gameref_t game, sc_int npc) {
 	const sc_prop_setref_t bundle = gs_get_bundle(game);
 	sc_vartype_t vt_key[6];
 	sc_int walk;
@@ -522,8 +510,7 @@ npc_tick_npc(sc_gameref_t game, sc_int npc) {
  *
  * Move each NPC one step along current walk.
  */
-void
-npc_tick_npcs(sc_gameref_t game) {
+void npc_tick_npcs(sc_gameref_t game) {
 	const sc_prop_setref_t bundle = gs_get_bundle(game);
 	const sc_gameref_t undo = game->undo;
 	sc_int npc;
@@ -587,8 +574,7 @@ npc_tick_npcs(sc_gameref_t game) {
  *
  * Set NPC tracing on/off.
  */
-void
-npc_debug_trace(sc_bool flag) {
+void npc_debug_trace(sc_bool flag) {
 	npc_trace = flag;
 }
 

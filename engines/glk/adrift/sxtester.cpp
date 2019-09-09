@@ -54,8 +54,7 @@ static sc_int test_run_game_script(sc_game game, sx_script script) {
  * Run each test in the given descriptor array, reporting the results and
  * accumulating an error count overall.  Return the total error count.
  */
-sc_int test_run_game_tests(const sx_test_descriptor_t tests[],
-                           sc_int count, sc_bool is_verbose) {
+sc_int test_run_game_tests(const sx_test_descriptor_t tests[], sc_int count, sc_bool is_verbose) {
 	const sx_test_descriptor_t *test;
 	sc_int errors;
 	assert(tests);

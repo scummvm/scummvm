@@ -34,25 +34,27 @@ enum { MEMO_ALLOCATION_BLOCK = 32 };
  * Game memo structure, saves a serialized game.  Allocation is preserved so
  * that structures can be reused without requiring reallocation.
  */
-typedef struct sc_memo_s {
+struct sc_memo_s {
 	sc_byte *serialized_game;
 	sc_int allocation;
 	sc_int length;
-} sc_memo_t;
+};
+typedef sc_memo_s sc_memo_t;
 typedef sc_memo_t *sc_memoref_t;
 
 /*
  * Game command history structure, similar to a memo.  Saves a player input
  * command to create a history, reusing allocation where possible.
  */
-typedef struct sc_history_s {
+struct sc_history_s {
 	sc_char *command;
 	sc_int sequence;
 	sc_int timestamp;
 	sc_int turns;
 	sc_int allocation;
 	sc_int length;
-} sc_history_t;
+};
+typedef sc_history_s sc_history_t;
 typedef sc_history_t *sc_historyref_t;
 
 /*
@@ -64,7 +66,7 @@ typedef sc_history_t *sc_historyref_t;
  * also a ring with limited capacity.
  */
 enum { MEMO_UNDO_TABLE_SIZE = 16, MEMO_HISTORY_TABLE_SIZE = 64 };
-typedef struct sc_memo_set_s {
+struct sc_memo_set_s {
 	sc_uint magic;
 	sc_memo_t memo[MEMO_UNDO_TABLE_SIZE];
 	sc_int memo_cursor;
@@ -73,7 +75,8 @@ typedef struct sc_memo_set_s {
 	sc_int history_count;
 	sc_int current_history;
 	sc_bool is_at_start;
-} sc_memo_set_t;
+};
+typedef sc_memo_set_s sc_memo_set_t;
 
 
 /*
@@ -81,8 +84,7 @@ typedef struct sc_memo_set_s {
  *
  * Return TRUE if pointer is a valid memo set, FALSE otherwise.
  */
-static sc_bool
-memo_is_valid(sc_memo_setref_t memento) {
+static sc_bool memo_is_valid(sc_memo_setref_t memento) {
 	return memento && memento->magic == MEMENTO_MAGIC;
 }
 
@@ -92,8 +94,7 @@ memo_is_valid(sc_memo_setref_t memento) {
  *
  * Round up an allocation in bytes to the next allocation block.
  */
-static sc_int
-memo_round_up(sc_int allocation) {
+static sc_int memo_round_up(sc_int allocation) {
 	sc_int extended;
 
 	extended = allocation + MEMO_ALLOCATION_BLOCK - 1;
@@ -106,8 +107,7 @@ memo_round_up(sc_int allocation) {
  *
  * Create and return a new set of memos.
  */
-sc_memo_setref_t
-memo_create(void) {
+sc_memo_setref_t memo_create(void) {
 	sc_memo_setref_t memento;
 
 	/* Create and initialize a clean set of memos. */
@@ -131,8 +131,7 @@ memo_create(void) {
  *
  * Destroy a memo set, and free its heap memory.
  */
-void
-memo_destroy(sc_memo_setref_t memento) {
+void memo_destroy(sc_memo_setref_t memento) {
 	sc_int index_;
 	assert(memo_is_valid(memento));
 
@@ -162,8 +161,7 @@ memo_destroy(sc_memo_setref_t memento) {
  * Callback function for game serialization.  Appends the data passed in to
  * that already stored in the memo.
  */
-static void
-memo_save_game_callback(void *opaque, const sc_byte *buffer, sc_int length) {
+static void memo_save_game_callback(void *opaque, const sc_byte *buffer, sc_int length) {
 	sc_memoref_t memo = (sc_memoref_t)opaque;
 	sc_int required;
 	assert(opaque && buffer && length > 0);
@@ -191,8 +189,7 @@ memo_save_game_callback(void *opaque, const sc_byte *buffer, sc_int length) {
  *
  * Store a game in the next memo slot.
  */
-void
-memo_save_game(sc_memo_setref_t memento, sc_gameref_t game) {
+void memo_save_game(sc_memo_setref_t memento, sc_gameref_t game) {
 	sc_memoref_t memo;
 	assert(memo_is_valid(memento));
 
@@ -224,8 +221,7 @@ memo_save_game(sc_memo_setref_t memento, sc_gameref_t game) {
  * Callback function for game deserialization.  Returns data from the memo
  * until it's drained.
  */
-static sc_int
-memo_load_game_callback(void *opaque, sc_byte *buffer, sc_int length) {
+static sc_int memo_load_game_callback(void *opaque, sc_byte *buffer, sc_int length) {
 	sc_memoref_t memo = (sc_memoref_t)opaque;
 	sc_int bytes;
 	assert(opaque && buffer && length > 0);
@@ -249,8 +245,7 @@ memo_load_game_callback(void *opaque, sc_byte *buffer, sc_int length) {
  *
  * Restore a game from the last memo slot used, if possible.
  */
-sc_bool
-memo_load_game(sc_memo_setref_t memento, sc_gameref_t game) {
+sc_bool memo_load_game(sc_memo_setref_t memento, sc_gameref_t game) {
 	sc_int cursor;
 	sc_memoref_t memo;
 	assert(memo_is_valid(memento));
@@ -298,8 +293,7 @@ memo_load_game(sc_memo_setref_t memento, sc_gameref_t game) {
  * Returns TRUE if a memo restore is likely to succeed if called, FALSE
  * otherwise.
  */
-sc_bool
-memo_is_load_available(sc_memo_setref_t memento) {
+sc_bool memo_is_load_available(sc_memo_setref_t memento) {
 	sc_int cursor;
 	sc_memoref_t memo;
 	assert(memo_is_valid(memento));
@@ -320,8 +314,7 @@ memo_is_load_available(sc_memo_setref_t memento) {
  *
  * Forget the memos of saved games.
  */
-void
-memo_clear_games(sc_memo_setref_t memento) {
+void memo_clear_games(sc_memo_setref_t memento) {
 	sc_int index_;
 	assert(memo_is_valid(memento));
 
@@ -345,9 +338,7 @@ memo_clear_games(sc_memo_setref_t memento) {
  * Store a player command in the command history, evicting any least recently
  * used item if necessary.
  */
-void
-memo_save_command(sc_memo_setref_t memento,
-                  const sc_char *command, sc_int timestamp, sc_int turns) {
+void memo_save_command(sc_memo_setref_t memento, const sc_char *command, sc_int timestamp, sc_int turns) {
 	sc_historyref_t history;
 	sc_int length;
 	assert(memo_is_valid(memento));
@@ -390,8 +381,7 @@ memo_save_command(sc_memo_setref_t memento,
  * to "invent" a history item at the end of the list before listing, then
  * remove it again as the main runner loop will add the real thing.
  */
-void
-memo_unsave_command(sc_memo_setref_t memento) {
+void memo_unsave_command(sc_memo_setref_t memento) {
 	assert(memo_is_valid(memento));
 
 	/* Do nothing if for some reason there's no history to unsave. */
@@ -415,8 +405,7 @@ memo_unsave_command(sc_memo_setref_t memento) {
  *
  * Return a count of available saved commands.
  */
-sc_int
-memo_get_command_count(sc_memo_setref_t memento) {
+sc_int memo_get_command_count(sc_memo_setref_t memento) {
 	assert(memo_is_valid(memento));
 
 	/* Return the lesser of the history count and the history table size. */
@@ -432,8 +421,7 @@ memo_get_command_count(sc_memo_setref_t memento) {
  *
  * Iterator rewind function, reset current location to the first command.
  */
-void
-memo_first_command(sc_memo_setref_t memento) {
+void memo_first_command(sc_memo_setref_t memento) {
 	sc_int cursor;
 	sc_historyref_t history;
 	assert(memo_is_valid(memento));
@@ -458,10 +446,8 @@ memo_first_command(sc_memo_setref_t memento) {
  * Iterator function, return the next saved command and its sequence id
  * starting at 1, and the timestamp and turns when the command was saved.
  */
-void
-memo_next_command(sc_memo_setref_t memento,
-                  const sc_char **command, sc_int *sequence,
-                  sc_int *timestamp, sc_int *turns) {
+void memo_next_command(sc_memo_setref_t memento, const sc_char **command,
+			sc_int *sequence, sc_int *timestamp, sc_int *turns) {
 	assert(memo_is_valid(memento));
 
 	/* If valid, return the current command and advance. */
@@ -494,8 +480,7 @@ memo_next_command(sc_memo_setref_t memento,
  *
  * Iterator end function, returns TRUE if more commands are readable.
  */
-sc_bool
-memo_more_commands(sc_memo_setref_t memento) {
+sc_bool memo_more_commands(sc_memo_setref_t memento) {
 	sc_int cursor;
 	sc_historyref_t history;
 	assert(memo_is_valid(memento));
@@ -522,8 +507,7 @@ memo_more_commands(sc_memo_setref_t memento) {
  * Find and return the command string for the given sequence number (-ve
  * indicates an offset from the last defined), or NULL if not found.
  */
-const sc_char *
-memo_find_command(sc_memo_setref_t memento, sc_int sequence) {
+const sc_char *memo_find_command(sc_memo_setref_t memento, sc_int sequence) {
 	sc_int target, index_;
 	sc_historyref_t matched;
 	assert(memo_is_valid(memento));
@@ -561,8 +545,7 @@ memo_find_command(sc_memo_setref_t memento, sc_int sequence) {
  *
  * Forget all saved commands.
  */
-void
-memo_clear_commands(sc_memo_setref_t memento) {
+void memo_clear_commands(sc_memo_setref_t memento) {
 	sc_int index_;
 	assert(memo_is_valid(memento));
 
