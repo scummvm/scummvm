@@ -619,7 +619,7 @@ bool AI::useLuaEntity(const char *initName) {
 
 	// Check _actions list for activation as well
 	for (int i = 0; i < kMaxActions; i++) {
-		if (_actions[i].entityName && !scumm_stricmp(initName, _actions[i].entityName)) {
+		if (!scumm_stricmp(initName, _actions[i].entityName)) {
 			checkActionList(&_dummyPlayer, _actions[i].x1, _actions[i].y1, false);
 			checkActionList(&_dummyPlayer, _actions[i].x2, _actions[i].y2, false);
 		}
