@@ -40,9 +40,15 @@ void SceneScriptCT02::InitializeScene() {
 		Game_Flag_Reset(kFlagCT03toCT02);
 		Setup_Scene_Information(-154.83f, -145.11f, 9.39f, 516);
 	} else if (Game_Flag_Query(kFlagCT02McCoyCombatReady)) {
+		// after soup dumping
 		Setup_Scene_Information(-213.82f, -145.11f, 214.43f, 82);
 	} else {
+#if BLADERUNNER_ORIGINAL_BUGS
 		Setup_Scene_Information(-119.02f, -145.11f, 240.99f, 768);
+#else
+		// puts McCoy within the obstacle map - prevents clipping through objects
+		Setup_Scene_Information(-117.43f, -145.11f, 262.36f, 768);
+#endif // BLADERUNNER_ORIGINAL_BUGS
 	}
 	if (_vm->_cutContent
 	    && Global_Variable_Query(kVariableChapter) == 1
@@ -78,7 +84,23 @@ void SceneScriptCT02::InitializeScene() {
 
 void SceneScriptCT02::SceneLoaded() {
 	Obstacle_Object("STOVE-1", true);
+#if BLADERUNNER_ORIGINAL_BUGS
 	Unobstacle_Object("BACK-DOOR", true);
+#else
+	Obstacle_Object("STOVE-2", true);
+	Obstacle_Object("STOVE-4", true);
+	Obstacle_Object("BACKWALL", true);
+	// Back wall is split to two parts since there is a back door in the middle
+	Obstacle_Object("BACKWALL2", true);
+	Obstacle_Object("LFTSTOVE-1", true);
+	Obstacle_Object("FRIDGE-1", true);
+	if (Actor_Clue_Query(kActorMcCoy, kClueZubenRunsAway)) {
+		Unobstacle_Object("BACK-DOOR", true);
+	} else {
+		Obstacle_Object("BACK-DOOR", true);
+	}
+	Unclickable_Object("BACKWALL2");
+#endif // BLADERUNNER_ORIGINAL_BUGS
 	Unclickable_Object("STOVE-1");
 	Unclickable_Object("STOVE-2");
 	Unclickable_Object("STOVE-3");
@@ -106,7 +128,7 @@ void SceneScriptCT02::SceneLoaded() {
 	}
 	if (Game_Flag_Query(kFlagCT02McCoyCombatReady)) {
 		Game_Flag_Reset(kFlagCT02McCoyCombatReady);
-		Actor_Change_Animation_Mode(kActorMcCoy, 0);
+		Actor_Change_Animation_Mode(kActorMcCoy, kAnimationModeIdle);
 		Player_Set_Combat_Mode(true);
 		Player_Gains_Control();
 	}
@@ -225,6 +247,10 @@ void SceneScriptCT02::dialogueWithZuben() {
 	if (Actor_Query_Friendliness_To_Other(kActorZuben, kActorMcCoy) < 44) {
 		Scene_Exits_Disable();
 		Actor_Clue_Acquire(kActorMcCoy, kClueZubenRunsAway, true, -1);
+#if BLADERUNNER_ORIGINAL_BUGS
+#else
+		Unobstacle_Object("BACK-DOOR", true);
+#endif // BLADERUNNER_ORIGINAL_BUGS
 		Actor_Set_Goal_Number(kActorZuben, kGoalZubenCT02PushPot);
 		Game_Flag_Set(kFlagCT02PotTipped);
 		if (_vm->_cutContent) {

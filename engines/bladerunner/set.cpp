@@ -452,6 +452,16 @@ void Set::overrideSceneObjectInfo(int objectId) const {
 			_objects[objectId].bbox.setXYZ(-75.17f, -1239.29f, 108340.13f, -56.32f, -1221.16f, 108365.65f);
 		}
 		break;
+	case kSceneCT02:
+		// prevent McCoy from moving "around and behind" the map
+		if (objectId == 18 && _objects[objectId].name == "BACK-DOOR") {
+			_objects[objectId].bbox.setXYZ(-177.95f, -145.11f, -86.25f, -130.13f, -49.00f, -4.74f);
+		} else if (objectId == 19 && _objects[objectId].name == "BACKWALL") {
+			_objects[objectId].bbox.setXYZ(-323.10f, -162.41f, -16.25f, -177.95f, 160.29f, -4.74f);
+		} else if (objectId == 7 && _objects[objectId].name == "LFTSTOVE-1") {
+			_objects[objectId].bbox.setXYZ(-315.17f, -145.11f, 171.93f, -282.86f, -103.98f, 225.29f);
+		}
+		break;
 	case kSceneCT04:
 		// prevent McCoy or transient from blending/glitching with the right wall
 		if (objectId == 6 && _objects[objectId].name == "BOX04") {
@@ -566,6 +576,11 @@ void Set::patchInAdditionalObjectsInSet() {
 	Common::String custObjName;
 	BoundingBox bbox;
 	switch (_vm->_scene->getSceneId()) {
+	case kSceneCT02:
+		bbox = BoundingBox(-130.13f, -162.41f, -16.25f, -81.74f, 160.29f, -4.74f);
+		custObjName = "BACKWALL2";
+		setupNewObjectInSet(custObjName, bbox);
+		break;
 	case kSceneHF06:
 		// block clicking / path access to northern part of the scene
 		// which causes McCoy and Police officers/ rats to go behind the map
