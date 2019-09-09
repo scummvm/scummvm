@@ -584,7 +584,7 @@ bool AIScriptLucy::UpdateAnimation(int *animation, int *frame) {
 			*animation = 260;
 			_animationFrame = 0;
 			_animationState = 0;
-			Actor_Change_Animation_Mode(kActorLucy, 0);
+			Actor_Change_Animation_Mode(kActorLucy, kAnimationModeIdle);
 		}
 		break;
 

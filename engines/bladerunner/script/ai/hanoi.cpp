@@ -525,7 +525,7 @@ bool AIScriptHanoi::UpdateAnimation(int *animation, int *frame) {
 		}
 
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
-			Actor_Change_Animation_Mode(kActorHanoi, 4);
+			Actor_Change_Animation_Mode(kActorHanoi, kAnimationModeCombatIdle);
 			_animationFrame = 0;
 			_animationState = 8;
 			*animation = 642;

@@ -640,7 +640,7 @@ bool AIScriptIzo::UpdateAnimation(int *animation, int *frame) {
 			_animationFrame = 0;
 			_animationState = 8;
 			*animation = 277;
-			Actor_Change_Animation_Mode(kActorIzo, 4);
+			Actor_Change_Animation_Mode(kActorIzo, kAnimationModeCombatIdle);
 		}
 		break;
 
@@ -665,7 +665,7 @@ bool AIScriptIzo::UpdateAnimation(int *animation, int *frame) {
 			_animationFrame = 0;
 			_animationState = 8;
 			*animation = 277;
-			Actor_Change_Animation_Mode(kActorIzo, 4);
+			Actor_Change_Animation_Mode(kActorIzo, kAnimationModeCombatIdle);
 		}
 		break;
 
@@ -690,7 +690,7 @@ bool AIScriptIzo::UpdateAnimation(int *animation, int *frame) {
 				_animationFrame = 0;
 				_animationState = 0;
 				_var4 = 0;
-				Actor_Change_Animation_Mode(kActorIzo, 0);
+				Actor_Change_Animation_Mode(kActorIzo, kAnimationModeIdle);
 			}
 		}
 		break;

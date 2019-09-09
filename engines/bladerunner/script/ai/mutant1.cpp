@@ -466,7 +466,7 @@ bool AIScriptMutant1::UpdateAnimation(int *animation, int *frame) {
 			Actor_Combat_AI_Hit_Attempt(kActorMutant1);
 		}
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(898)) {
-			Actor_Change_Animation_Mode(kActorMutant1, 0);
+			Actor_Change_Animation_Mode(kActorMutant1, kAnimationModeIdle);
 		}
 		break;
 
@@ -477,7 +477,7 @@ bool AIScriptMutant1::UpdateAnimation(int *animation, int *frame) {
 			Ambient_Sounds_Play_Sound(kSfxHURT1M1, 99, 0, 0, 25);
 		}
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(899)) {
-			Actor_Change_Animation_Mode(kActorMutant1, 0);
+			Actor_Change_Animation_Mode(kActorMutant1, kAnimationModeIdle);
 		}
 		break;
 
@@ -504,7 +504,7 @@ bool AIScriptMutant1::UpdateAnimation(int *animation, int *frame) {
 			Sound_Play(kSfxHURT1M1, 100, 0, 0, 50);
 		}
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(899)) {
-			Actor_Change_Animation_Mode(kActorMutant1, 0);
+			Actor_Change_Animation_Mode(kActorMutant1, kAnimationModeIdle);
 		}
 		break;
 

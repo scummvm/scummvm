@@ -165,7 +165,7 @@ bool AIScriptSebastian::UpdateAnimation(int *animation, int *frame) {
 		*animation = 810;
 		_animationFrame++;
 		if (_animationFrame > Slice_Animation_Query_Number_Of_Frames(810) - 1) {
-			Actor_Change_Animation_Mode(kActorSebastian, 0);
+			Actor_Change_Animation_Mode(kActorSebastian, kAnimationModeIdle);
 			*animation = 811;
 			_animationFrame = 0;
 			_animationState = 0;
@@ -181,7 +181,7 @@ bool AIScriptSebastian::UpdateAnimation(int *animation, int *frame) {
 
 	case 4:
 		if (!_animationFrame && _flag) {
-			Actor_Change_Animation_Mode(kActorSebastian, 0);
+			Actor_Change_Animation_Mode(kActorSebastian, kAnimationModeIdle);
 			*animation = 811;
 			_animationState = 0;
 			_animationFrame = 0;

@@ -921,7 +921,7 @@ bool AIScriptSteele::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		switch (Actor_Query_Goal_Number(kActorDektora)) {
 		case kGoalDektoraNR11Hiding:
 			Actor_Face_Heading(kActorMcCoy, 954, false);
-			Actor_Change_Animation_Mode(kActorSteele, 4);
+			Actor_Change_Animation_Mode(kActorSteele, kAnimationModeCombatIdle);
 			Delay(2000);
 			Actor_Says(kActorSteele, 1700, 58);
 			Actor_Says(kActorMcCoy, 3800, 3);

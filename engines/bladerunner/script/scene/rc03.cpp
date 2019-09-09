@@ -334,7 +334,7 @@ void SceneScriptRC03::PlayerWalkedIn() {
 			}
 			Actor_Change_Animation_Mode(kActorMcCoy, kAnimationModeDodge);
 			Loop_Actor_Walk_To_XYZ(kActorIzo, 180.0f, -4.0f, 184.0f, 0, false, false, false);
-			Actor_Change_Animation_Mode(kActorIzo, 6);
+			Actor_Change_Animation_Mode(kActorIzo, kAnimationModeCombatAttack);
 			if (!Game_Flag_Query(kFlagIzoIsReplicant)) {
 #if BLADERUNNER_ORIGINAL_BUGS
 				Actor_Set_Goal_Number(kActorSteele, kGoalSteeleApprehendIzo);

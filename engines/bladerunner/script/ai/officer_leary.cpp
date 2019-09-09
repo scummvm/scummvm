@@ -248,7 +248,7 @@ void AIScriptOfficerLeary::CompletedMovementTrack() {
 	}
 	if (goal == 308) {
 		// goal 308 (and 309) are never triggered in the original code
-		Actor_Change_Animation_Mode(kActorOfficerLeary, 4);
+		Actor_Change_Animation_Mode(kActorOfficerLeary, kAnimationModeCombatIdle);
 		Actor_Face_Actor(kActorOfficerLeary, kActorMcCoy, true);
 		Actor_Set_Goal_Number(kActorOfficerLeary, 309);
 	}
@@ -634,7 +634,7 @@ bool AIScriptOfficerLeary::GoalChanged(int currentGoalNumber, int newGoalNumber)
 		// kSetUG07
 		AI_Movement_Track_Flush(kActorOfficerLeary);
 		AI_Movement_Track_Append_With_Facing(kActorOfficerLeary, 416, 0, 556);
-		Actor_Change_Animation_Mode(kActorOfficerLeary, 4);
+		Actor_Change_Animation_Mode(kActorOfficerLeary, kAnimationModeCombatIdle);
 		AI_Movement_Track_Repeat(kActorOfficerLeary);
 		return true;
 	case 308:
@@ -701,7 +701,7 @@ bool AIScriptOfficerLeary::UpdateAnimation(int *animation, int *frame) {
 			*animation = 589;
 			_animationState = 0;
 			_animationFrame = 0;
-			Actor_Change_Animation_Mode(kActorOfficerLeary, 0);
+			Actor_Change_Animation_Mode(kActorOfficerLeary, kAnimationModeIdle);
 		}
 		*frame = _animationFrame;
 		return true;
@@ -712,7 +712,7 @@ bool AIScriptOfficerLeary::UpdateAnimation(int *animation, int *frame) {
 			*animation = 589;
 			_animationState = 0;
 			_animationFrame = 0;
-			Actor_Change_Animation_Mode(kActorOfficerLeary, 0);
+			Actor_Change_Animation_Mode(kActorOfficerLeary, kAnimationModeIdle);
 		}
 		*frame = _animationFrame;
 		return true;
@@ -737,7 +737,7 @@ bool AIScriptOfficerLeary::UpdateAnimation(int *animation, int *frame) {
 			_animationState = 21;
 			_animationFrame = 0;
 			*animation = 571;
-			Actor_Change_Animation_Mode(kActorOfficerLeary, 4);
+			Actor_Change_Animation_Mode(kActorOfficerLeary, kAnimationModeCombatIdle);
 		}
 		*frame = _animationFrame;
 		return true;
@@ -748,7 +748,7 @@ bool AIScriptOfficerLeary::UpdateAnimation(int *animation, int *frame) {
 			_animationState = 21;
 			_animationFrame = 0;
 			*animation = 571;
-			Actor_Change_Animation_Mode(kActorOfficerLeary, 4);
+			Actor_Change_Animation_Mode(kActorOfficerLeary, kAnimationModeCombatIdle);
 		}
 		*frame = _animationFrame;
 		return true;
@@ -769,7 +769,7 @@ bool AIScriptOfficerLeary::UpdateAnimation(int *animation, int *frame) {
 			_animationState = 21;
 			_animationFrame = 0;
 			*animation = 571;
-			Actor_Change_Animation_Mode(kActorOfficerLeary, 4);
+			Actor_Change_Animation_Mode(kActorOfficerLeary, kAnimationModeCombatIdle);
 		}
 		*frame = _animationFrame;
 		return true;

@@ -452,7 +452,7 @@ bool AIScriptChew::ChangeAnimationMode(int mode) {
 
 	case 43:
 		if (_animationState || (!_animationState && _var2 != 1 && _var2 != 2)) {
-			Actor_Change_Animation_Mode(kActorChew, 0);
+			Actor_Change_Animation_Mode(kActorChew, kAnimationModeIdle);
 			_var2 = Random_Query(1, 2);
 		}
 		break;

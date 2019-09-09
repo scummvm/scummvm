@@ -708,7 +708,7 @@ bool AIScriptClovis::UpdateAnimation(int *animation, int *frame) {
 		if (flag) {
 			*animation = 227;
 			_animationState = 0;
-			Actor_Change_Animation_Mode(kActorClovis, 0);
+			Actor_Change_Animation_Mode(kActorClovis, kAnimationModeIdle);
 		}
 		break;
 
@@ -880,7 +880,7 @@ bool AIScriptClovis::UpdateAnimation(int *animation, int *frame) {
 		if (flag) {
 			_animationState = 13;
 			*animation = 208;
-			Actor_Change_Animation_Mode(kActorClovis, 4);
+			Actor_Change_Animation_Mode(kActorClovis, kAnimationModeCombatIdle);
 		}
 		break;
 
@@ -901,7 +901,7 @@ bool AIScriptClovis::UpdateAnimation(int *animation, int *frame) {
 		if (flag) {
 			_animationState = 13;
 			*animation = 208;
-			Actor_Change_Animation_Mode(kActorClovis, 4);
+			Actor_Change_Animation_Mode(kActorClovis, kAnimationModeCombatIdle);
 		}
 		break;
 
@@ -922,7 +922,7 @@ bool AIScriptClovis::UpdateAnimation(int *animation, int *frame) {
 		if (flag) {
 			_animationState = 13;
 			*animation = 208;
-			Actor_Change_Animation_Mode(kActorClovis, 4);
+			Actor_Change_Animation_Mode(kActorClovis, kAnimationModeCombatIdle);
 		}
 		break;
 
@@ -943,7 +943,7 @@ bool AIScriptClovis::UpdateAnimation(int *animation, int *frame) {
 		if (flag) {
 			*animation = 227;
 			_animationState = 0;
-			Actor_Change_Animation_Mode(kActorClovis, 0);
+			Actor_Change_Animation_Mode(kActorClovis, kAnimationModeIdle);
 		}
 		break;
 
@@ -964,7 +964,7 @@ bool AIScriptClovis::UpdateAnimation(int *animation, int *frame) {
 		if (flag) {
 			*animation = 227;
 			_animationState = 0;
-			Actor_Change_Animation_Mode(kActorClovis, 0);
+			Actor_Change_Animation_Mode(kActorClovis, kAnimationModeIdle);
 		}
 		break;
 
@@ -1081,7 +1081,7 @@ bool AIScriptClovis::UpdateAnimation(int *animation, int *frame) {
 		if (flag) {
 			_animationState = 13;
 			*animation = 208;
-			Actor_Change_Animation_Mode(kActorClovis, 4);
+			Actor_Change_Animation_Mode(kActorClovis, kAnimationModeCombatIdle);
 		}
 		break;
 
@@ -1102,7 +1102,7 @@ bool AIScriptClovis::UpdateAnimation(int *animation, int *frame) {
 		if (flag) {
 			_animationState = 13;
 			*animation = 208;
-			Actor_Change_Animation_Mode(kActorClovis, 4);
+			Actor_Change_Animation_Mode(kActorClovis, kAnimationModeCombatIdle);
 		}
 		break;
 
@@ -1123,7 +1123,7 @@ bool AIScriptClovis::UpdateAnimation(int *animation, int *frame) {
 		if (flag) {
 			*animation = 227;
 			_animationState = 0;
-			Actor_Change_Animation_Mode(kActorClovis, 0);
+			Actor_Change_Animation_Mode(kActorClovis, kAnimationModeIdle);
 		}
 		break;
 

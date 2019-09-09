@@ -260,7 +260,7 @@ bool AIScriptLuther::UpdateAnimation(int *animation, int *frame) {
 			*animation = 346;
 			_animationFrame = 0;
 			_animationState = 0;
-			Actor_Change_Animation_Mode(kActorLuther, 0);
+			Actor_Change_Animation_Mode(kActorLuther, kAnimationModeIdle);
 		}
 		break;
 
@@ -346,7 +346,7 @@ bool AIScriptLuther::UpdateAnimation(int *animation, int *frame) {
 			*animation = 346;
 			_animationFrame = 0;
 			_animationState = 0;
-			Actor_Change_Animation_Mode(kActorLuther, 0);
+			Actor_Change_Animation_Mode(kActorLuther, kAnimationModeIdle);
 		}
 		break;
 

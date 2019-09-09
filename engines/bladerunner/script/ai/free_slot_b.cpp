@@ -348,7 +348,7 @@ bool AIScriptFreeSlotB::UpdateAnimation(int *animation, int *frame) {
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(860)) {
 			_animationFrame = 0;
 			_animationState = 0;
-			Actor_Change_Animation_Mode(kActorFreeSlotB, 0);
+			Actor_Change_Animation_Mode(kActorFreeSlotB, kAnimationModeIdle);
 		}
 		break;
 

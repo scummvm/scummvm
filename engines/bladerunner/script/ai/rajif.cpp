@@ -97,7 +97,7 @@ bool AIScriptRajif::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 	if (newGoalNumber == 300) {
 		Actor_Put_In_Set(kActorRajif, kSetMA02_MA04);
 		Actor_Set_At_XYZ(kActorRajif, -73.34f, -140.40f, 342.0f, 300);
-		Actor_Change_Animation_Mode(kActorRajif, 0);
+		Actor_Change_Animation_Mode(kActorRajif, kAnimationModeIdle);
 		return true;
 	}
 

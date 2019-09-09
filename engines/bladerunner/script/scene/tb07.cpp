@@ -230,7 +230,7 @@ void SceneScriptTB07::McCoyTalkWithRachaelAndTyrell() {
 	Delay(3000);
 	Actor_Put_In_Set(kActorRachael, kSetTB07);
 	Actor_Set_At_XYZ(kActorRachael, -260.15f, 12.0f, -19.16f, 256);
-	Actor_Change_Animation_Mode(kActorRachael, 0);
+	Actor_Change_Animation_Mode(kActorRachael, kAnimationModeIdle);
 	Outtake_Play(kOuttakeRachel, true, -1);
 	Loop_Actor_Walk_To_XYZ(kActorRachael, -146.15f, 12.0f, -5.84f, 0, false, false, false);
 	Actor_Face_Actor(kActorRachael, kActorMcCoy, true);
@@ -285,7 +285,7 @@ void SceneScriptTB07::McCoyTalkWithRachaelAndTyrell() {
 	Actor_Says(kActorRachael, 660, 15);
 	Actor_Put_In_Set(kActorTyrell, kSetTB07);
 	Actor_Set_At_XYZ(kActorTyrell, 68.0f, 12.0f, 288.0f, 0);
-	Actor_Change_Animation_Mode(kActorTyrell, 0);
+	Actor_Change_Animation_Mode(kActorTyrell, kAnimationModeIdle);
 	Scene_Loop_Set_Default(kTB07LoopMainShadeDown);
 	Scene_Loop_Start_Special(kSceneLoopModeOnce, kTB07LoopShadeDrop, false);
 	Actor_Start_Speech_Sample(kActorTyrell, 0);

@@ -442,7 +442,7 @@ bool AIScriptMutant3::UpdateAnimation(int *animation, int *frame) {
 			Actor_Combat_AI_Hit_Attempt(kActorMutant3);
 		}
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
-			Actor_Change_Animation_Mode(kActorMutant3, 0);
+			Actor_Change_Animation_Mode(kActorMutant3, kAnimationModeIdle);
 		}
 		break;
 
@@ -495,7 +495,7 @@ bool AIScriptMutant3::UpdateAnimation(int *animation, int *frame) {
 			_var1 = -1;
 		} else {
 			if (!_animationFrame) {
-				Actor_Change_Animation_Mode(kActorMutant3, 0);
+				Actor_Change_Animation_Mode(kActorMutant3, kAnimationModeIdle);
 			}
 		}
 		break;

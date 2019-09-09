@@ -564,7 +564,7 @@ bool AIScriptEarlyQ::UpdateAnimation(int *animation, int *frame) {
 			*animation = 369;
 			_animationFrame = 0;
 			_animationState = 0;
-			Actor_Change_Animation_Mode(kActorEarlyQ, 0);
+			Actor_Change_Animation_Mode(kActorEarlyQ, kAnimationModeIdle);
 		}
 		break;
 
@@ -692,7 +692,7 @@ bool AIScriptEarlyQ::UpdateAnimation(int *animation, int *frame) {
 			_animationFrame = 0;
 			_animationState = 12;
 			*animation = 360;
-			Actor_Change_Animation_Mode(kActorEarlyQ, 4);
+			Actor_Change_Animation_Mode(kActorEarlyQ, kAnimationModeCombatIdle); // TODO: kAnimationModeCombatIdle?
 		}
 		break;
 
@@ -703,7 +703,7 @@ bool AIScriptEarlyQ::UpdateAnimation(int *animation, int *frame) {
 			*animation = 369;
 			_animationFrame = 0;
 			_animationState = 0;
-			Actor_Change_Animation_Mode(kActorEarlyQ, 0);
+			Actor_Change_Animation_Mode(kActorEarlyQ, kAnimationModeIdle);
 		}
 		break;
 
@@ -714,7 +714,7 @@ bool AIScriptEarlyQ::UpdateAnimation(int *animation, int *frame) {
 			*animation = 369;
 			_animationFrame = 0;
 			_animationState = 0;
-			Actor_Change_Animation_Mode(kActorEarlyQ, 0);
+			Actor_Change_Animation_Mode(kActorEarlyQ, kAnimationModeIdle);
 		}
 		break;
 
@@ -725,7 +725,7 @@ bool AIScriptEarlyQ::UpdateAnimation(int *animation, int *frame) {
 			*animation = 369;
 			_animationFrame = 0;
 			_animationState = 0;
-			Actor_Change_Animation_Mode(kActorEarlyQ, 0);
+			Actor_Change_Animation_Mode(kActorEarlyQ, kAnimationModeIdle);
 		}
 		break;
 
@@ -736,7 +736,7 @@ bool AIScriptEarlyQ::UpdateAnimation(int *animation, int *frame) {
 			*animation = 369;
 			_animationFrame = 0;
 			_animationState = 0;
-			Actor_Change_Animation_Mode(kActorEarlyQ, 0);
+			Actor_Change_Animation_Mode(kActorEarlyQ, kAnimationModeIdle);
 		}
 		break;
 

@@ -1119,7 +1119,7 @@ bool AIScriptOfficerGrayford::UpdateAnimation(int *animation, int *frame) {
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(617)) {
 			_animationState = 19;
 			_animationFrame = 0;
-			Actor_Change_Animation_Mode(kActorOfficerGrayford, 4);
+			Actor_Change_Animation_Mode(kActorOfficerGrayford, kAnimationModeCombatIdle);
 		}
 		break;
 
@@ -1147,7 +1147,7 @@ bool AIScriptOfficerGrayford::UpdateAnimation(int *animation, int *frame) {
 			_animationFrame = 0;
 			_animationState = 19;
 			*animation = 625;
-			Actor_Change_Animation_Mode(kActorOfficerGrayford, 4);
+			Actor_Change_Animation_Mode(kActorOfficerGrayford, kAnimationModeCombatIdle);
 		}
 		break;
 
@@ -1158,7 +1158,7 @@ bool AIScriptOfficerGrayford::UpdateAnimation(int *animation, int *frame) {
 			_animationFrame = 0;
 			_animationState = 19;
 			*animation = 625;
-			Actor_Change_Animation_Mode(kActorOfficerGrayford, 4);
+			Actor_Change_Animation_Mode(kActorOfficerGrayford, kAnimationModeCombatIdle);
 		}
 		break;
 
@@ -1304,7 +1304,7 @@ bool AIScriptOfficerGrayford::ChangeAnimationMode(int mode) {
 		case 18:
 			{
 				int tmp = _animationFrame;
-				Actor_Change_Animation_Mode(kActorOfficerGrayford, 4);
+				Actor_Change_Animation_Mode(kActorOfficerGrayford, kAnimationModeCombatIdle);
 				_animationFrame = tmp;
 				_animationState = 19;
 				break;
