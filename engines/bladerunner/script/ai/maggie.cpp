@@ -271,6 +271,17 @@ bool AIScriptMaggie::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 	case kGoalMaggieMA02GetFed:
 		Player_Loses_Control();
 		AI_Movement_Track_Flush(kActorMaggie);
+#if BLADERUNNER_ORIGINAL_BUGS
+#else
+		// Allows McCoy to perform both animated turns (first towards the BAR-MAIN and then towards Maggie)
+		// when Maggie is already too close
+		// original bug: When Maggie is close McCoy would alternate between
+		// - turning to Maggie and throw food at her
+		// - only performing the turn toward the BAR-MAIN and "throw" food to wrong direction
+		if (Actor_Query_Inch_Distance_From_Actor(kActorMaggie, kActorMcCoy) <= 85) {
+			Delay(500);
+		}
+#endif // BLADERUNNER_ORIGINAL_BUGS
 		Loop_Actor_Walk_To_Actor(kActorMaggie, kActorMcCoy, 48, false, false);
 		Actor_Face_Actor(kActorMcCoy, kActorMaggie, true);
 		Actor_Face_Actor(kActorMaggie, kActorMcCoy, false);
