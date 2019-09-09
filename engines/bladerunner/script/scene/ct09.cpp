@@ -171,6 +171,11 @@ void SceneScriptCT09::PlayerWalkedIn() {
 		Game_Flag_Set(kFlagCT09Entered);
 		Actor_Set_Goal_Number(kActorLeon, kGoalLeonHoldingDeskClerk);
 		leonScene = true;
+		if (_vm->_cutContent) {
+			// don't allow McCoy to leave until the situation is resolved
+			// (the vanilla game allows him to leave)
+			Scene_Exits_Disable();
+		}
 	}
 
 	if (Game_Flag_Query(kFlagCT10toCT09)) {

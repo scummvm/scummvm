@@ -118,11 +118,13 @@ int AIScriptDeskClerk::GetFriendlinessModifierIfGetsClue(int otherActorId, int c
 bool AIScriptDeskClerk::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 	switch (newGoalNumber) {
 	case kGoalDeskClerkDefault:
+		// fall through
 	case kGoalDeskClerkRecovered:
 		Actor_Put_In_Set(kActorDeskClerk, kSetCT09);
 		Actor_Set_At_XYZ(kActorDeskClerk, 282.0f, 360.52f, 743.0f, 513);
 		break;
 	case kGoalDeskClerkKnockedOut:
+		// fall through
 	case kGoalDeskClerkGone:
 		Actor_Put_In_Set(kActorDeskClerk, kSetFreeSlotH);
 		Actor_Set_At_Waypoint(kActorDeskClerk, 40, 0);
