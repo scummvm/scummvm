@@ -572,8 +572,8 @@ void HDBGame::useEntity(AIEntity *e) {
 
 	bool added = false;
 
+	AIEntity temp;
 	if (_ai->getTableEnt(e->type)) {
-		AIEntity temp;
 		memcpy(&temp, e, sizeof(AIEntity));
 
 		_ai->getItemSound(e->type);
