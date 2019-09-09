@@ -253,9 +253,8 @@ private:
 	uint8 _outputMute[16];
 	bool _updateOutputVol;
 
-	const float _baserate;
-	uint32 _timerBase;
-	uint32 _tickLength;
+	const uint32 _tickLength;
+	const uint32 _envDuration;
 	uint32 _timer;
 
 	uint16 _musicVolume;
@@ -276,11 +275,9 @@ private:
 };
 
 TownsAudioInterfaceInternal::TownsAudioInterfaceInternal(Audio::Mixer *mixer, TownsAudioInterface *owner, TownsAudioInterfacePluginDriver *driver) :
-	TownsPC98_FmSynth(mixer, kTypeTowns),
-	_fmInstruments(0), _pcmInstruments(0), _pcmChan(0), _waveTables(0), _waveTablesTotalDataSize(0),
-	_baserate(55125.0f / (float)mixer->getOutputRate()), _tickLength(0), _timer(0), _drv(driver), _drvOwner(owner),
-	_pcmSfxChanMask(0),	_musicVolume(Audio::Mixer::kMaxMixerVolume), _sfxVolume(Audio::Mixer::kMaxMixerVolume),
-	_outputVolumeFlags(0), _fmChanPlaying(0),
+	TownsPC98_FmSynth(mixer, kTypeTowns), _fmInstruments(0), _pcmInstruments(0), _pcmChan(0), _waveTables(0), _waveTablesTotalDataSize(0),
+	_tickLength(0x08), _envDuration(0x30), _timer(0), _drv(driver), _drvOwner(owner), _pcmSfxChanMask(0), _outputVolumeFlags(0),
+	_fmChanPlaying(0), _musicVolume(Audio::Mixer::kMaxMixerVolume), _sfxVolume(Audio::Mixer::kMaxMixerVolume),
 	_numReservedChannels(0), _numWaveTables(0), _updateOutputVol(false), _ready(false) {
 
 #define INTCB(x) &TownsAudioInterfaceInternal::intf_##x
@@ -398,9 +395,6 @@ TownsAudioInterfaceInternal::TownsAudioInterfaceInternal(Audio::Mixer *mixer, To
 	memset(_fmChanPitch, 0, sizeof(_fmChanPitch));
 	memset(_outputLevel, 0, sizeof(_outputLevel));
 	memset(_outputMute, 0, sizeof(_outputMute));
-
-	_timerBase = (uint32)(_baserate * 1000000.0f);
-	_tickLength = 2 * _timerBase;
 }
 
 TownsAudioInterfaceInternal::~TownsAudioInterfaceInternal() {
@@ -546,8 +540,8 @@ void TownsAudioInterfaceInternal::nextTickEx(int32 *buffer, uint32 bufferSize) {
 
 	for (uint32 i = 0; i < bufferSize; i++) {
 		_timer += _tickLength;
-		while (_timer > 0x514767) {
-			_timer -= 0x514767;
+		while (_timer >= _envDuration) {
+			_timer -= _envDuration;
 
 			for (int ii = 0; ii < 8; ii++)
 				_pcmChan[ii].updateOutput();
