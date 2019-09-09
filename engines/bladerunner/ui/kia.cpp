@@ -663,7 +663,13 @@ void KIA::mouseDownCallback(int buttonId, void *callbackData) {
 	case 14:
 		self->_vm->_audioPlayer->playAud(self->_vm->_gameInfo->getSfxTrack(kSfxBUTN5P), 70, 0, 0, 50, 0);
 		if (buttonId == 12) {
-			self->_vm->_audioPlayer->playAud(self->_vm->_gameInfo->getSfxTrack(kSfxSHUTDOWN), 70, 0, 0, 50, 0);
+			int endTrackId = self->_vm->_audioPlayer->playAud(self->_vm->_gameInfo->getSfxTrack(kSfxSHUTDOWN), 70, 0, 0, 50, 0);
+			if (endTrackId != -1) {
+				// wait until the full clip has played (similar to the original)
+				while (self->_vm->_audioPlayer->isActive(endTrackId)) {
+					self->_vm->_system->delayMillis(16);
+				}
+			}
 		}
 		break;
 	case 15:
