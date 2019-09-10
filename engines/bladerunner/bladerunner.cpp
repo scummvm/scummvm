@@ -226,6 +226,7 @@ BladeRunnerEngine::BladeRunnerEngine(OSystem *syst, const ADGameDescription *des
 }
 
 BladeRunnerEngine::~BladeRunnerEngine() {
+	shutdown();
 }
 
 bool BladeRunnerEngine::hasFeature(EngineFeature f) const {
@@ -322,7 +323,7 @@ Common::Error BladeRunnerEngine::run() {
 			}
 			missingFileStr += missingFiles[i];
 		}
-
+		// shutting down
 		return Common::Error(Common::kNoGameDataFoundError, missingFileStr);
 	}
 
@@ -335,7 +336,7 @@ Common::Error BladeRunnerEngine::run() {
 	bool hasSavegames = !SaveFileManager::list(_targetName).empty();
 
 	if (!startup(hasSavegames)) {
-		shutdown();
+		// shutting down
 		return Common::Error(Common::kUnknownError, _("Failed to initialize resources"));
 	}
 
@@ -402,8 +403,7 @@ Common::Error BladeRunnerEngine::run() {
 		}
 	} while (_gameOver); // if main game loop ended and _gameOver == false, then shutdown
 
-	shutdown();
-
+	// shutting down
 	return Common::kNoError;
 }
 
@@ -798,7 +798,11 @@ void BladeRunnerEngine::shutdown() {
 	_playerActor = nullptr;
 	delete _actors[kActorVoiceOver];
 	_actors[kActorVoiceOver] = nullptr;
-	int actorCount = (int)_gameInfo->getActorCount();
+	int actorCount = kActorCount;
+	if (_gameInfo) {
+		actorCount = (int)_gameInfo->getActorCount();
+	}
+
 	for (int i = 0; i < actorCount; ++i) {
 		delete _actors[i];
 		_actors[i] = nullptr;
