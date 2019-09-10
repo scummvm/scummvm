@@ -376,7 +376,7 @@ void KIASectionCrimes::populateSuspects() {
 void KIASectionCrimes::populateVisibleClues() {
 	_cluesScrollBox->clearLines();
 	if (_crimeSelected != -1) {
-		for (uint i = 0; i < kClueCount; ++i) {
+		for (int i = 0; i < kClueCount; ++i) {
 			int clueId = i;
 			if (_vm->_crimesDatabase->getAssetType(clueId) != -1
 			 && _vm->_crimesDatabase->getCrime(clueId) == _crimeSelected
