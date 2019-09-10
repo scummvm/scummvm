@@ -611,7 +611,7 @@ bool AI::useLuaEntity(const char *initName) {
 		if (!scumm_stricmp(initName, e->entityName)) {
 			e->aiUse(e);
 			checkActionList(e, e->tileX, e->tileY, true);
-			if (e->luaFuncUse)
+			if (e->luaFuncUse[0])
 				g_hdb->_lua->callFunction(e->luaFuncUse, 0);
 			return true;
 		}
