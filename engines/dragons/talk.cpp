@@ -826,9 +826,6 @@ void Talk::exitTalkMenu(bool isFlag8Set, bool isFlag100Set) {
 
 uint Talk::somethingTextAndSpeechAndAnimRelated(Actor *actor, int16 sequenceId1, int16 sequenceId2, uint32 textIndex,
 												uint16 param_5) {
-	short sVar1;
-	uint uVar2;
-
 	uint16 dialog[2048];
 	dialog[0] = 0;
 	_vm->_talk->loadText(textIndex, dialog, 2048);
