@@ -151,14 +151,14 @@ void AIScriptMutant3::OtherAgentEnteredCombatMode(int otherActorId, int combatMo
 void AIScriptMutant3::ShotAtAndMissed() {
 	if (Actor_Query_Goal_Number(kActorMutant3) != 410) {
 		Actor_Modify_Combat_Aggressiveness(kActorMutant3, 15);
-		Actor_Modify_Friendliness_To_Other(kActorMutant3, 0, -15);
+		Actor_Modify_Friendliness_To_Other(kActorMutant3, kActorMcCoy, -15);
 	}
 }
 
 bool AIScriptMutant3::ShotAtAndHit() {
 	if (Actor_Query_Goal_Number(kActorMutant3) != 410) {
 		Actor_Modify_Combat_Aggressiveness(kActorMutant3, 20);
-		Actor_Modify_Friendliness_To_Other(kActorMutant3, 0, -20);
+		Actor_Modify_Friendliness_To_Other(kActorMutant3, kActorMcCoy, -20);
 	}
 	return false;
 }

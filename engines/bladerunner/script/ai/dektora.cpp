@@ -320,7 +320,7 @@ bool AIScriptDektora::ShotAtAndHit() {
 
 void AIScriptDektora::Retired(int byActorId) {
 	if (byActorId == kActorMcCoy) {
-		Actor_Modify_Friendliness_To_Other(kActorClovis, 0, -5);
+		Actor_Modify_Friendliness_To_Other(kActorClovis, kActorMcCoy, -5);
 	}
 
 	if (byActorId == kActorSteele
