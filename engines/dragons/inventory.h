@@ -64,6 +64,9 @@ public:
 		return _sequenceId;
 	}
 	void setActorSequenceId(int32 sequenceId);
+	void updateActorSequenceId(int32 sequenceId);
+	void resetSequenceId();
+
 	int16 getType() { return _type; }
 	void setType(int16 newType) { _type = newType; }
 

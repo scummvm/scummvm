@@ -138,6 +138,16 @@ void Inventory::setActorSequenceId(int32 sequenceId) {
 	}
 }
 
+void Inventory::updateActorSequenceId(int32 sequenceId) {
+	if (isActorSet()) {
+		_actor->updateSequence(sequenceId);
+	}
+}
+
+void Inventory::resetSequenceId() {
+	_actor->updateSequence(_sequenceId);
+}
+
 void Inventory::openInventory() {
 	//TODO 0x80030e8c
 	_sequenceId = 4;

@@ -59,10 +59,11 @@ public:
 
 	void scene1();
 	void diamondScene();
+	void knightsSavedBackAtCastle();
 
 private:
 	//Scene 1 related functions
-	void clearActor(Actor *actor);
+	void fadeScreenAndResetActor(Actor *actor);
 	void closeUpShotOnActor(uint16 resourceId, uint16 sequenceId, int16 x, uint32 param_4);
 	void FUN_8003d8e8(uint16 resourceId,uint16 sequenceId,int16 x,uint32 param_4);
 	void wideAngleEveryoneAtTable();
