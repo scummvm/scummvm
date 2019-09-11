@@ -13738,6 +13738,40 @@ static const uint16 qfg4NecrotaurMessagePatch[] = {
 	PATCH_END
 };
 
+// When returning to the castle gate (room 600) from the dungeon (room 670) the
+//  gate options and messages can be out of sync with the gatekeeper's presence.
+//  Returning from the dungeon is room event 11, which causes rm600:init to
+//  advance the time to night and hide the gatekeeper, but this happens after
+//  rm600:init has initialized gateTeller based on whether it was day or night.
+//
+// We fix this by setting the night global before gateTeller is initialized
+//  during room event 11. Fortunately, the gateTeller code is preceded by a
+//  redundant condition which is always false and can be overwritten.
+//
+// Applies to: All versions
+// Responsible method: rm600:init
+// Fixes bug: #11044
+static const uint16 qfg4GateOptionsSignature[] = {
+	0x35, 0x0a,                         // ldi 0a [ event 10 ]
+	0x1a,                               // eq?    [ always false, tested earlier ]
+	0x31, SIG_ADDTOOFFSET(+1),          // bnt    [ gateTeller init ]
+	0x38, SIG_SELECTOR16(posn),         // pushi posn
+	0x7a,                               // push2
+	0x39, SIG_MAGICDWORD, 0xe2,         // pushi e2
+	0x39, 0x69,                         // pushi 69
+	0x72,                               // lofsa aGate
+	SIG_END,
+};
+
+static const uint16 qfg4GateOptionsPatch[] = {
+	0x35, 0x0b,                         // ldi 0b [ event 11, came from dungeon ]
+	PATCH_ADDTOOFFSET(+3),
+	0x35, 0x01,                         // ldi 01
+	0xa1, 0x79,                         // sag 79 [ night = 1 ]
+	0x33, PATCH_GETORIGINALBYTEADJUST(+4, -6), // jmp [ gateTeller init ]
+	PATCH_END
+};
+
 //          script, description,                                     signature                      patch
 static const SciScriptPatcherEntry qfg4Signatures[] = {
 	{  true,     0, "prevent autosave from deleting save games",   1, qfg4AutosaveSignature,         qfg4AutosavePatch },
@@ -13790,6 +13824,7 @@ static const SciScriptPatcherEntry qfg4Signatures[] = {
 	{  true,   545, "fix setLooper calls (1/2)",                   5, qfg4SetLooperSignature1,       qfg4SetLooperPatch1 },
 	{  true,   557, "fix forest 557 entry from east",              1, qfg4Forest557PathfindingSignature, qfg4Forest557PathfindingPatch },
 	{  true,   600, "fix passable closed gate after geas",         1, qfg4DungeonGateSignature,      qfg4DungeonGatePatch },
+	{  true,   600, "fix gate options after geas",                 1, qfg4GateOptionsSignature,      qfg4GateOptionsPatch },
 	{  true,   600, "fix paladin's necrotaur message",             1, qfg4NecrotaurMessageSignature, qfg4NecrotaurMessagePatch },
 	{  true,   630, "fix great hall entry from barrel room",       1, qfg4GreatHallEntrySignature,   qfg4GreatHallEntryPatch },
 	{  true,   633, "fix stairway pathfinding",                    1, qfg4StairwayPathfindingSignature, qfg4StairwayPathfindingPatch },
