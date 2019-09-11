@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: Mission Supernova Part 2 1.0\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2019-06-13 00:06+0100\n"
-"PO-Revision-Date: 2019-09-08 21:23+0000\n"
+"PO-Revision-Date: 2019-09-11 00:22+0000\n"
 "Last-Translator: Thierry Crozat <criezy@scummvm.org>\n"
 "Language-Team: none\n"
 "Language: en\n"
@@ -849,7 +849,7 @@ msgstr "It is empty."
 
 #: ../../ms2/ms2_r1.c:97
 msgid "Du findest ein kleines Ger„t,|einen Ausweis und einen Xa."
-msgstr "You find a small device,|an ID card and a Xa."
+msgstr "You find a small device,|an ID card and one Xa."
 
 #: ../../ms2/ms2_r1.c:109
 msgid "Du heftest den|Magnet an die Stange."
@@ -983,7 +983,7 @@ msgstr "You already have a rod"
 
 #: ../../ms2/ms2_r1.c:436
 msgid "Du s„gst eine der Stangen ab."
-msgstr "You saw off one of the poles."
+msgstr "You saw off one of the rods."
 
 #: ../../ms2/ms2_r1.c:444
 msgid "Du betrittst das einzige|offene Gesch„ft, das|du finden kannst."
@@ -1571,7 +1571,7 @@ msgstr "From whom?"
 
 #: ../../ms2/ms2_r2.c:99
 msgid "Diese Information kostet einen Xa."
-msgstr "This information costs a Xa."
+msgstr "This information costs one Xa."
 
 #: ../../ms2/ms2_r2.c:104
 msgid "Wie Sie meinen."
@@ -2715,7 +2715,7 @@ msgstr ""
 
 #: ../../ms2/ms2_s.c:138
 msgid "Auáerdem sind die Leute von der|Artus GmbH hervorragende Freunde."
-msgstr "In addition, the people of|Artus GmbH are excellent friends."
+msgstr "In addition, the people at|Artus GmbH are excellent friends."
 
 #: ../../ms2/ms2_s.c:139
 msgid ""
@@ -2762,8 +2762,7 @@ msgstr "Suddenly, a speaker's voice|distracts you from the television."
 msgid ""
 "\"Sehr geehrte Damen und Herren,|wir sind soeben auf dem Flughafen|von "
 "Axacuss City gelandet.\""
-msgstr ""
-"\"Ladies and Gentlemen,|We just landed at the airport|at Axacuss City.\""
+msgstr "\"Ladies and Gentlemen,|We just landed at Axacuss City Airport.\""
 
 #: ../../ms2/ms2_s.c:166
 msgid ""
@@ -2784,7 +2783,7 @@ msgid ""
 "\"Ich muá beweisen, daá dieser|Roboter der falsche Horst|Hummel ist!\", "
 "denkst du."
 msgstr ""
-"\"I have to prove that this robot|is the wrong Horst|Hummel!\", you think to "
+"\"I must prove that this robot|is not the real Horst|Hummel!\", you think to "
 "yourself."
 
 #: ../../ms2/ms2_s.c:192
