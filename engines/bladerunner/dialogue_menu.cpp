@@ -554,7 +554,7 @@ void DialogueMenu::darkenRect(Graphics::Surface &s, int x1, int y1, int x2, int 
 			for (int x = x1; x != x2; ++x) {
 				void *p = s.getBasePtr(CLIP(x, 0, s.w - 1), CLIP(y, 0, s.h - 1));
 				uint8 r, g, b;
-				s.format.colorToRGB(*(uint32*)p, r, g, b);
+				s.format.colorToRGB(READ_UINT32(p), r, g, b);
 				r /= 4;
 				g /= 4;
 				b /= 4;
