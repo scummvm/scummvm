@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2019-09-12 03:54+0200\n"
-"PO-Revision-Date: 2019-08-20 19:14+0000\n"
+"PO-Revision-Date: 2019-09-12 20:59+0000\n"
 "Last-Translator: Ben Castricum <github@bencastricum.nl>\n"
 "Language-Team: Dutch <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/nl/>\n"
@@ -1266,21 +1266,20 @@ msgstr "LAN"
 
 #: gui/options.cpp:1791
 msgid "Accessibility"
-msgstr ""
+msgstr "Toegankelijkheid"
 
 #: gui/options.cpp:1793
 msgctxt "lowres"
 msgid "Accessibility"
-msgstr ""
+msgstr "Toegankelijkheid"
 
 #: gui/options.cpp:1795
-#, fuzzy
 msgid "Use Text to speech"
-msgstr "Tekst en spraak:"
+msgstr "Gebruik Tekst naar spraak"
 
 #: gui/options.cpp:1795
 msgid "Will read text in gui on mouse over."
-msgstr ""
+msgstr "Leest tekst in GUI als de muis erover gaat."
 
 #: gui/options.cpp:1826
 msgid "Apply"
@@ -2203,7 +2202,7 @@ msgstr "OPL2LPT"
 
 #: audio/fmopl.cpp:84
 msgid "OPL3LPT"
-msgstr ""
+msgstr "OPL3LPT"
 
 #: audio/mididrv.cpp:209
 #, c-format
@@ -2486,9 +2485,8 @@ msgid "Normal (no scaling)"
 msgstr "Normaal (niet schalen)"
 
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:82
-#, fuzzy
 msgid "Fit to window (4:3)"
-msgstr "Maak passend aan window"
+msgstr "Maak passend aan venster (4:3)"
 
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:87
 msgctxt "lowres"
@@ -3102,7 +3100,7 @@ msgstr "TV emulatie"
 
 #: engines/adl/detection.cpp:52
 msgid "Emulate composite output to an NTSC TV"
-msgstr ""
+msgstr "Emuleer composite uitgang naar een NTSC TV"
 
 #: engines/adl/detection.cpp:61 engines/adl/detection.cpp:71
 msgid "Color graphics"
@@ -3122,11 +3120,11 @@ msgstr ""
 
 #: engines/adl/detection.cpp:91
 msgid "Always use sharp monochrome text"
-msgstr ""
+msgstr "Gebruik altijd scherpe monochome tekst"
 
 #: engines/adl/detection.cpp:92
 msgid "Do not emulate NTSC artifacts for text"
-msgstr ""
+msgstr "Emuleer geen NTSC artefacten voor tekst"
 
 #: engines/agi/detection.cpp:147 engines/cine/detection.cpp:70
 #: engines/drascula/detection.cpp:331 engines/dreamweb/detection.cpp:48
@@ -3262,11 +3260,11 @@ msgstr "Cutscene bestand '%s' niet gevonden!"
 
 #: engines/bladerunner/bladerunner.cpp:340
 msgid "Failed to initialize resources"
-msgstr ""
+msgstr "Initialisatie van bronnen mislukt"
 
 #: engines/bladerunner/bladerunner.cpp:991
 msgid "A required game resource was not found"
-msgstr ""
+msgstr "Een vereist spel bron was niet gevonden"
 
 #: engines/bladerunner/bladerunner.cpp:2141
 msgid ""
@@ -3284,7 +3282,7 @@ msgstr ""
 
 #: engines/bladerunner/bladerunner.cpp:2145
 msgid "Continue"
-msgstr ""
+msgstr "Doorgaan"
 
 #: engines/bladerunner/detection.cpp:48
 msgid "Sitcom mode"
@@ -3338,7 +3336,7 @@ msgstr "Gebruik het heldere palet van het spel voor grafische zaken"
 
 #: engines/glk/glk_api.cpp:63
 msgid "[ press any key to exit ]"
-msgstr ""
+msgstr "[ druk op een toets om te stoppen ]"
 
 #: engines/glk/quetzal.cpp:115 engines/glk/quetzal.cpp:124
 msgid "Untitled Savegame"
@@ -3351,7 +3349,7 @@ msgstr "Starten van AdvSys spel mislukt"
 
 #: engines/glk/advsys/advsys.cpp:48 engines/glk/advsys/vm.cpp:319
 msgid "Sorry, the savegame couldn't be restored"
-msgstr ""
+msgstr "Helaas, het opgeslagen spel kon niet hersteld worden"
 
 #: engines/glk/advsys/vm.cpp:314
 msgid "Sorry, the savegame couldn't be created"
@@ -3368,11 +3366,11 @@ msgstr ""
 
 #: engines/glk/advsys/vm.cpp:682
 msgid "I don't understand.\n"
-msgstr ""
+msgstr "Ik begrijp het niet.\n"
 
 #: engines/glk/alan2/alan2.cpp:76
 msgid "This is too short to be a valid Alan2 file."
-msgstr ""
+msgstr "Dit is te kort voor een geldig Alan2 bestand."
 
 #: engines/glk/alan2/alan2.cpp:81
 msgid "This is not a valid Alan2 file."
@@ -3638,9 +3636,8 @@ msgid "Failed to save game"
 msgstr "Opslaan van spel mislukt"
 
 #: engines/hdb/detection.cpp:157
-#, fuzzy
 msgid "Enable cheat mode"
-msgstr "Helium-modus aangezet"
+msgstr "Valsspeel modus aangezet"
 
 #: engines/hdb/detection.cpp:158
 msgid "Debug info and level selection becomes available"
