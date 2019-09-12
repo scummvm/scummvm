@@ -1149,7 +1149,7 @@ void ESPER::flashViewport() {
 		for (int x = 0; x < _surfaceViewport.w; ++x) {
 			uint8 r, g, b;
 			void *ptr = _surfaceViewport.getBasePtr(x, y);
-			_surfaceViewport.format.colorToRGB(*(uint32*)ptr, r, g, b);
+			_surfaceViewport.format.colorToRGB(READ_UINT32(ptr), r, g, b);
 			b *= 2;
 			drawPixel(_surfaceViewport, ptr, _surfaceViewport.format.RGBToColor(r, g, b));
 		}
@@ -1181,7 +1181,7 @@ void ESPER::copyImageScale(Graphics::Surface &src, Common::Rect srcRect, Graphic
 				dstY = CLIP(dstY, 0, dst.h - 1);
 
 				uint8 r, g, b;
-				src.format.colorToRGB(*(uint32*)src.getBasePtr(srcX, srcY), r, g, b);
+				src.format.colorToRGB(READ_UINT32(src.getBasePtr(srcX, srcY)), r, g, b);
 				if (_flash) {
 					// add blue-ish tint
 					b *= 2;
@@ -1224,7 +1224,7 @@ void ESPER::copyImageScale(Graphics::Surface &src, Common::Rect srcRect, Graphic
 				dstY = CLIP(dstY, 0, dst.h - 1);
 
 				uint8 r, g, b;
-				src.format.colorToRGB(*(uint32*)src.getBasePtr(srcX, srcY), r, g, b);
+				src.format.colorToRGB(READ_UINT32(src.getBasePtr(srcX, srcY)), r, g, b);
 				if (_flash) {
 					// add blue-ish tint
 					b *= 2;
@@ -1289,7 +1289,7 @@ void ESPER::copyImageBlur(Graphics::Surface &src, Common::Rect srcRect, Graphics
 						dstY = CLIP(dstY, 0, dst.h - 1);
 
 						uint8 r, g, b;
-						src.format.colorToRGB(*(uint32*)src.getBasePtr(srcX, srcY), r, g, b);
+						src.format.colorToRGB(READ_UINT32(src.getBasePtr(srcX, srcY)), r, g, b);
 						if (_flash) {
 							// add blue-ish tint
 							b *= 2;
@@ -1359,7 +1359,7 @@ void ESPER::copyImageBlur(Graphics::Surface &src, Common::Rect srcRect, Graphics
 						dstY = CLIP(dstY, 0, dst.h - 1);
 
 						uint8 r, g, b;
-						src.format.colorToRGB(*(uint32*)src.getBasePtr(srcX, srcY), r, g, b);
+						src.format.colorToRGB(READ_UINT32(src.getBasePtr(srcX, srcY)), r, g, b);
 						if (_flash) {
 							// add blue-ish tint
 							b *= 2;
@@ -1389,7 +1389,7 @@ void ESPER::copyImageBlit(Graphics::Surface &src, Common::Rect srcRect, Graphics
 	for (int y = 0; y < dstRect.height(); ++y) {
 		for (int x = 0; x < dstRect.width(); ++x) {
 			uint8 r, g, b;
-			src.format.colorToRGB(*(uint32*)src.getBasePtr(CLIP(srcRect.left + x, 0, src.w - 1), CLIP(srcRect.top + y, 0, src.h - 1)), r, g, b);
+			src.format.colorToRGB(READ_UINT32(src.getBasePtr(CLIP(srcRect.left + x, 0, src.w - 1), CLIP(srcRect.top + y, 0, src.h - 1))), r, g, b);
 			drawPixel(dst, dst.getBasePtr(CLIP(dstRect.left + x, 0, dst.w - 1), CLIP(dstRect.top + y, 0, dst.h - 1)), dst.format.RGBToColor(r, g, b));
 		}
 	}
