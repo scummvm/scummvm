@@ -697,6 +697,9 @@ bool SupernovaEngine::loadGame(int slot) {
 	if (slot < 0)
 		return false;
 
+	// Stop any sound currently playing.
+	_sound->stop();
+
 	// Make sure no message is displayed as this would otherwise delay the
 	// switch to the new location until a mouse click.
 	removeMessage();
