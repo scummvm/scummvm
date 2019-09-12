@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2019-09-12 03:54+0200\n"
-"PO-Revision-Date: 2019-09-12 20:59+0000\n"
+"PO-Revision-Date: 2019-09-12 21:01+0000\n"
 "Last-Translator: Thierry Crozat <criezy@scummvm.org>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fr/>\n"
@@ -1283,12 +1283,10 @@ msgid "Accessibility"
 msgstr "Accessibilité"
 
 #: gui/options.cpp:1795
-#, fuzzy
 msgid "Use Text to speech"
 msgstr "Utiliser le synthétiseur vocal"
 
 #: gui/options.cpp:1795
-#, fuzzy
 msgid "Will read text in gui on mouse over."
 msgstr "Lit le texte de l'interface lors d'un survol de la souris."
 
@@ -1434,7 +1432,7 @@ msgstr "Ce stockage n'est pas encore connecté ! Pour se connecter,"
 
 #: gui/options.cpp:1958
 msgid "1. Open this link:"
-msgstr "1. Ouvrir ce lien:"
+msgstr "1. Ouvrir ce lien :"
 
 #: gui/options.cpp:1959
 msgid "Open URL"
