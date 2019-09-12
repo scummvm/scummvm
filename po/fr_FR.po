@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2019-09-12 03:54+0200\n"
-"PO-Revision-Date: 2019-09-06 04:54+0000\n"
-"Last-Translator: Purple T <ZEONK@hotmail.com>\n"
+"PO-Revision-Date: 2019-09-12 20:59+0000\n"
+"Last-Translator: Thierry Crozat <criezy@scummvm.org>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fr/>\n"
 "Language: fr_FR\n"
@@ -1434,7 +1434,7 @@ msgstr "Ce stockage n'est pas encore connecté ! Pour se connecter,"
 
 #: gui/options.cpp:1958
 msgid "1. Open this link:"
-msgstr "1. Ouvrez le lien suivant :"
+msgstr "1. Ouvrir ce lien:"
 
 #: gui/options.cpp:1959
 msgid "Open URL"
@@ -4483,7 +4483,7 @@ msgid ""
 "The selected audio driver requires the following file(s):\n"
 "\n"
 msgstr ""
-"Le pilote audio sélectionné nécessite le(s) fichier(s) suivant :\n"
+"Le pilote audio sélectionné nécessite le/les fichier(s) suivant(s):\n"
 "\n"
 
 #: engines/sci/sound/music.cpp:164
