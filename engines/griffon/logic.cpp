@@ -2336,11 +2336,7 @@ void GriffonEngine::updateSpellsUnder() {
 						alpha = 255 * (1 - (xx - 8) / 8);
 					float yy = 16 * sin(3.141592 / 2 * xx / 16) - 8;
 
-					if (alpha < 0)
-						alpha = 0;
-					if (alpha > 255)
-						alpha = 255;
-
+					alpha = CLIP(alpha, 0, 255);
 					_spellimg->setAlpha(alpha, true);
 
 					rcSrc.left = 16 * (int)(RND() * 2);
