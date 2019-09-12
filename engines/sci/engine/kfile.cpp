@@ -1333,6 +1333,8 @@ reg_t kSaveGame32(EngineState *s, int argc, reg_t *argv) {
 			// Autosave slot 1 is a "new game" save
 			saveNo = kNewGameId;
 		}
+	} else if (saveNo == kMaxShiftedSaveId) {
+		saveNo = 0;
 	} else {
 		saveNo += kSaveIdShift;
 	}
@@ -1394,6 +1396,8 @@ reg_t kRestoreGame32(EngineState *s, int argc, reg_t *argv) {
 			// Autosave slot 1 is a "new game" save
 			saveNo = kNewGameId;
 		}
+	} else if (saveNo == kMaxShiftedSaveId) {
+		saveNo = 0;
 	} else {
 		saveNo += kSaveIdShift;
 	}
@@ -1419,13 +1423,12 @@ reg_t kCheckSaveGame32(EngineState *s, int argc, reg_t *argv) {
 	int16 saveNo = argv[1].toSint16();
 	const Common::String gameVersion = argv[2].isNull() ? "" : s->_segMan->getString(argv[2]);
 
-	Common::Array<SavegameDesc> saves;
-	listSavegames(saves);
-
 	if (gameName == "Autosave" || gameName == "Autosv") {
 		if (saveNo == 1) {
 			saveNo = kNewGameId;
 		}
+	} else if (saveNo == kMaxShiftedSaveId) {
+		saveNo = 0;
 	} else {
 		saveNo += kSaveIdShift;
 	}
@@ -1488,7 +1491,8 @@ reg_t kGetSaveFiles32(EngineState *s, int argc, reg_t *argv) {
 		// At least Phant2 requires use of strncpy, since it creates save game
 		// names of exactly kMaxSaveNameLength
 		strncpy(target, save.name, kMaxSaveNameLength);
-		saveIds.setFromInt16(i, save.id - kSaveIdShift);
+		int16 sciSaveId = (save.id == 0) ? kMaxShiftedSaveId : (save.id - kSaveIdShift);
+		saveIds.setFromInt16(i, sciSaveId);
 	}
 
 	descriptions.charAt(kMaxSaveNameLength * saves.size()) = '\0';

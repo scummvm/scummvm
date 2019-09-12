@@ -349,9 +349,13 @@ void listSavegames(Common::Array<SavegameDesc> &saves) {
 		const Common::String &filename = *iter;
 
 #ifdef ENABLE_SCI32
-		const int id = strtol(filename.end() - 3, NULL, 10);
-		if (id == kNewGameId || id == kAutoSaveId) {
-			continue;
+		// exclude new game and autosave slots, except for QFG4,
+		//  whose autosave should appear as a normal saved game
+		if (g_sci->getGameId() != GID_QFG4) {
+			const int id = strtol(filename.end() - 3, NULL, 10);
+			if (id == kNewGameId || id == kAutoSaveId) {
+				continue;
+			}
 		}
 #endif
 

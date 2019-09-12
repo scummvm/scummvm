@@ -47,8 +47,11 @@ enum {
 
 	// SCI engine expects game IDs to start at 0, but slot 0 in ScummVM is
 	// reserved for autosave, so non-autosave games get their IDs shifted up
-	// when saving or restoring, and shifted down when enumerating save games
-	kSaveIdShift = 1
+	// when saving or restoring, and shifted down when enumerating save games.
+	// ScummVM slot 0 can't be shifted down as -1 is an illegal SCI save ID
+	// so it is instead wrapped around to 99 and then back to 0 when shifting up.
+	kSaveIdShift = 1,
+	kMaxShiftedSaveId = 99
 };
 #endif
 

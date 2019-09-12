@@ -698,13 +698,15 @@ int GuestAdditions::runSaveRestore(const bool isSave, reg_t outDescription, cons
 		description.fromString(descriptionString);
 	}
 
+	// The autosave slot in ScummVM takes up slot 0, but in SCI the first
+	// non-autosave save game number needs to be 0, so reduce the save
+	// number here to match what would come from the normal SCI save/restore
+	// dialog. Wrap slot 0 around to kMaxShiftedSaveId so that it remains
+	// a legal SCI value.
 	if (saveNo > 0) {
-		// The autosave slot in ScummVM takes up slot 0, but in SCI the first
-		// non-autosave save game number needs to be 0, so reduce the save
-		// number here to match what would come from the normal SCI save/restore
-		// dialog. There is additional special code for handling the autosave
-		// game inside of kRestoreGame32.
 		saveNo -= kSaveIdShift;
+	} else if (saveNo == 0) {
+		saveNo = kMaxShiftedSaveId;
 	}
 
 	return saveNo;
