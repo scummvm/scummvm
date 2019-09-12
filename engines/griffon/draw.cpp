@@ -996,11 +996,11 @@ void GriffonEngine::drawNPCs(int mode) {
 
 				_videobuffer->fillRect(rcDest, ccc);
 
-				int pass = 1;
+				bool pass = true;
 
 				if (_npcinfo[i].spriteset == kMonsterBoss1)
-					pass = 0;
-				if (pass == 1)
+					pass = false;
+				if (pass)
 					drawOver(npx, npy);
 
 			}
@@ -1044,17 +1044,17 @@ void GriffonEngine::drawOver(int modx, int mody) {
 					rcDest.setWidth(16);
 					rcDest.setHeight(16);
 
-					int pass = 1;
+					bool pass = true;
 					if (curtilel == 1) {
 						for (int ff = 0; ff <= 5; ff++) {
 							int ffa = 20 * 5 - 1 + ff * 20;
 							int ffb = 20 * 5 + 4 + ff * 20;
 							if (curtile > ffa && curtile < ffb)
-								pass = 0;
+								pass = false;
 						}
 					}
 
-					if (pass == 1)
+					if (pass)
 						_tiles[curtilel]->blit(*_videobuffer, rcDest.left, rcDest.top, Graphics::FLIP_NONE, &rcSrc);
 				}
 			}
@@ -1096,11 +1096,11 @@ void GriffonEngine::drawPlayer() {
 
 	long ccc = _videobuffer->format.RGBToColor(224, 224, 64);
 
-	int pass = 0;
+	bool pass = false;
 	if (_player.hp <= _player.maxhp * 0.25)
-		pass = 1;
+		pass = true;
 
-	if (pass == 1) {
+	if (pass) {
 		ccc = _videobuffer->format.RGBToColor(255, 255, 255);
 		if ((int)(_player.hpflash) == 1)
 			ccc = _videobuffer->format.RGBToColor(255, 0, 0);
@@ -1200,10 +1200,7 @@ void GriffonEngine::drawView() {
 }
 
 void GriffonEngine::swash() {
-	float y;
-
-	y = 0;
-
+	float y = 0.0;
 	do {
 		y = y + 1 * _fpsr;
 

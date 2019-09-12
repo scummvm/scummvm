@@ -123,30 +123,19 @@ const char *story2[27] = {
 };
 
 void GriffonEngine::showLogos() {
-	float y;
-	int _ticks1;
-
 	_ticks = g_system->getMillis();
-	_ticks1 = _ticks;
-
-	y = 0.0;
+	int ticks1 = _ticks;
 
 	do {
-		y = 255.0;
-		if (_ticks < _ticks1 + 1000) {
-			y = 255.0 * ((float)(_ticks - _ticks1) / 1000.0);
-			if (y < 0.0)
-				y = 0.0;
-			if (y > 255.0)
-				y = 255.0;
+		float y = 255.0;
+		if (_ticks < ticks1 + 1000) {
+			y = 255.0 * ((float)(_ticks - ticks1) / 1000.0);
+			y = CLIP<float>(y, 0.0, 255.0);
 		}
 
-		if (_ticks > _ticks1 + 3000) {
-			y = 255.0 - 255.0 * ((float)(_ticks - _ticks1 - 3000.0) / 1000.0);
-			if (y < 0.0)
-				y = 0.0;
-			if (y > 255.0)
-				y = 255.0;
+		if (_ticks > ticks1 + 3000) {
+			y = 255.0 - 255.0 * ((float)(_ticks - ticks1 - 3000.0) / 1000.0);
+			y = CLIP<float>(y, 0.0, 255.0);
 		}
 
 		_videobuffer->fillRect(Common::Rect(0, 0, 320, 240), 0);
@@ -174,7 +163,7 @@ void GriffonEngine::showLogos() {
 		}
 
 		g_system->delayMillis(10);
-		if (_ticks > _ticks1 + 4000)
+		if (_ticks > ticks1 + 4000)
 			break;
 	} while (!_shouldQuit);
 }
@@ -295,7 +284,7 @@ void GriffonEngine::endOfGame() {
 		setChannelVolume(_musicchannel, 0);
 	}
 
-	int _ticks1 = _ticks;
+	int ticks1 = _ticks;
 	int ya = 0;
 
 	_videobuffer2->fillRect(Common::Rect(0, 0, _videobuffer2->w, _videobuffer2->h), 0);
@@ -316,15 +305,11 @@ void GriffonEngine::endOfGame() {
 		}
 
 		ya = 0;
-		if (_ticks < _ticks1 + 1500) {
-			ya = (255 * (_ticks - _ticks1)) / 1500;
-			if (ya < 0)
-				ya = 0;
-			if (ya > 255)
-				ya = 255;
-		} else {
+		if (_ticks < ticks1 + 1500) {
+			ya = (255 * (_ticks - ticks1)) / 1500;
+			ya = CLIP(ya, 0, 255);
+		} else
 			break;
-		}
 
 		_videobuffer->fillRect(Common::Rect(0, 0, _videobuffer->w, _videobuffer->h), 0);
 
@@ -352,7 +337,7 @@ void GriffonEngine::endOfGame() {
 		}
 	} while (1);
 
-	_ticks1 = _ticks;
+	ticks1 = _ticks;
 	ya = 0;
 	float y = 140;
 
@@ -382,12 +367,9 @@ void GriffonEngine::endOfGame() {
 		}
 
 		ya = 255;
-		if (_ticks < _ticks1 + 1000) {
-			ya = 255 * (_ticks - _ticks1) / 1000;
-			if (ya < 0)
-				ya = 0;
-			if (ya > 255)
-				ya = 255;
+		if (_ticks < ticks1 + 1000) {
+			ya = 255 * (_ticks - ticks1) / 1000;
+			ya = CLIP(ya, 0, 255);
 		}
 
 		_videobuffer->setAlpha(ya);
@@ -427,14 +409,15 @@ void GriffonEngine::endOfGame() {
 	} while (1);
 
 
-	_ticks1 = _ticks;
+	ticks1 = _ticks;
 	int y1 = 0;
 
 	_videobuffer2->copyRectToSurface(_videobuffer->getPixels(), _videobuffer->pitch, 0, 0, _videobuffer->w, _videobuffer->h);
 
 	do {
-		if (_ticks < _ticks1 + 1500) {
-			y1 = 255 * (_ticks - _ticks1) / 1500;
+		if (_ticks < ticks1 + 1500) {
+			y1 = 255 * (_ticks - ticks1) / 1500;
+
 			if (y1 < 0)
 				y1 = 0;
 			if (y1 > 255)
@@ -472,19 +455,16 @@ void GriffonEngine::endOfGame() {
 
 	int keywait = 2000 + _ticks;
 
-	_ticks1 = _ticks;
+	ticks1 = _ticks;
 	y1 = 0;
 	do {
 
 		_videobuffer->copyRectToSurface(_theendimg->getPixels(), _theendimg->pitch, 0, 0, _theendimg->w, _theendimg->h);
 
 		y1 = 255;
-		if (_ticks < _ticks1 + 1000) {
-			y1 = 255 * (_ticks - _ticks1) / 1000;
-			if (y1 < 0)
-				y1 = 0;
-			if (y1 > 255)
-				y1 = 255;
+		if (_ticks < ticks1 + 1000) {
+			y1 = 255 * (_ticks - ticks1) / 1000;
+			y1 = CLIP(y1, 0, 255);
 		}
 
 		_videobuffer->setAlpha(y1);

@@ -124,10 +124,7 @@ void GriffonEngine::title(int mode) {
 		float yf = 255.0;
 		if (_ticks < _ticks1 + 1000) {
 			yf = 255.0 * ((float)(_ticks - _ticks1) / 1000.0);
-			if (y < 0.0)
-				yf = 0.0;
-			if (y > 255.0)
-				yf = 255.0;
+			yf = CLIP<float>(yf, 0.0, 255.0);
 		}
 
 		_videobuffer->setAlpha((int)yf);
@@ -274,10 +271,7 @@ void GriffonEngine::configMenu() {
 
 			if (i == 15 || i == 17) {
 				int vol = (i == 15 ? config.musicvol : config.effectsvol) * 9 / 255;
-				if (vol < 0)
-					vol = 0;
-				if (vol > 9)
-					vol = 9;
+				vol = CLIP(vol, 0, 9);
 
 				strcpy(line, "[----------]");
 				line[vol + 1] = 'X';
@@ -322,10 +316,7 @@ void GriffonEngine::configMenu() {
 		float yy = 255.0;
 		if (_ticks < _ticks1 + 1000) {
 			yy = 255.0 * ((float)(_ticks - _ticks1) / 1000.0);
-			if (yy < 0.0)
-				yy = 0.0;
-			if (yy > 255.0)
-				yy = 255.0;
+			yy = CLIP<float>(yy, 0.0, 255.0);
 		}
 
 		_videobuffer->setAlpha((int)yy);
@@ -747,10 +738,7 @@ void GriffonEngine::saveLoadNew() {
 		int yy = 255;
 		if (_ticks < _ticks1 + 1000) {
 			yy = 255 * (_ticks - _ticks1) / 1000;
-			if (yy < 0)
-				yy = 0;
-			if (yy > 255)
-				yy = 255;
+			yy = CLIP(yy, 0, 255);
 		}
 
 		_videobuffer->setAlpha((int)yy);
