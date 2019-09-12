@@ -185,7 +185,7 @@ static const byte sci32SystemFont[] = {
 };
 #endif
 
-	GfxFontFromResource::GfxFontFromResource(ResourceManager *resMan, GfxScreen *screen, GuiResourceId resourceId)
+GfxFontFromResource::GfxFontFromResource(ResourceManager *resMan, GfxScreen *screen, GuiResourceId resourceId)
 	: _resourceId(resourceId), _screen(screen), _resMan(resMan) {
 	if (getSciVersion() < SCI_VERSION_2) {
 		assert(resourceId != -1);
@@ -211,12 +211,22 @@ static const byte sci32SystemFont[] = {
 	}
 #endif
 
-	_numChars = _resourceData.getUint16SE32At(2);
-	_fontHeight = _resourceData.getUint16SE32At(4);
+	if (_resource) {
+		_numChars = _resourceData.getUint16SE32At(2);
+		_fontHeight = _resourceData.getUint16SE32At(4);
+	} else {
+		_numChars = _resourceData.getUint16LEAt(2);
+		_fontHeight = _resourceData.getUint16LEAt(4);
+	}
 	_chars = new Charinfo[_numChars];
 	// filling info for every char
 	for (int16 i = 0; i < _numChars; i++) {
-		_chars[i].offset = _resourceData.getUint16SE32At(6 + i * 2);
+		uint32 charOffsetIndex = 6 + i * 2;
+		if (_resource) {
+			_chars[i].offset = _resourceData.getUint16SE32At(charOffsetIndex);
+		} else {
+			_chars[i].offset = _resourceData.getUint16LEAt(charOffsetIndex);
+		}
 		_chars[i].width = _resourceData.getUint8At(_chars[i].offset);
 		_chars[i].height = _resourceData.getUint8At(_chars[i].offset + 1);
 	}
