@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: Mission Supernova Part 2 1.0\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2019-06-13 00:06+0100\n"
-"PO-Revision-Date: 2019-09-11 00:22+0000\n"
+"PO-Revision-Date: 2019-09-12 22:52+0000\n"
 "Last-Translator: Thierry Crozat <criezy@scummvm.org>\n"
 "Language-Team: none\n"
 "Language: en\n"
@@ -1185,11 +1185,11 @@ msgstr "I AM Horst Hummel!"
 
 #: ../../ms2/ms2_r1.c:761
 msgid "Geben Sie's auf!"
-msgstr "Give it up!"
+msgstr "In your dreams!"
 
 #: ../../ms2/ms2_r1.c:762
 msgid "An Ihrer Gestik merkt man, da· Sie|ein verkleideter Axacussaner sind."
-msgstr "You can tell from your gestures that you are|a disguised Axacussan."
+msgstr "I can tell from the way you move that you are|a disguised Axacussan."
 
 #: ../../ms2/ms2_r1.c:763
 msgid "Der echte Hummel bewegt sich|anders, irgendwie ruckartig."
@@ -2048,7 +2048,7 @@ msgstr "I am the plumber. I'm supposed to fix a pipe here."
 
 #: ../../ms2/ms2_r2.c:688
 msgid "Ja, hîrt sich gut an."
-msgstr "Yes, it sounds good."
+msgstr "Yes, that sounds good."
 
 #: ../../ms2/ms2_r2.c:689
 msgid "Krumme GeschÑfte? FÅr wen halten Sie mich? Auf Wiedersehen!"
@@ -2250,8 +2250,8 @@ msgid ""
 "Wenn du es bis zur Alarmanlage|geschafft hast, hÑngst du dich|mit dem Sauger "
 "an die Wand,|damit du keinen Druck-Alarm auslîst."
 msgstr ""
-"If you make it to the alarm system,|you'll use the sucker to hang on the "
-"wall|to avoid triggering the pressure alarm."
+"If you make it to the alarm system,|you'll use the suction cup to hang on "
+"the wall|to avoid triggering the pressure alarm."
 
 #: ../../ms2/ms2_r2.c:789
 msgid "Die Alarmanlage schaltest du|mit einem speziellen GerÑt aus."
@@ -2299,7 +2299,7 @@ msgid ""
 "GebÑuderteil eingedrungen sind."
 msgstr ""
 "You stand in front of the Orzeng Museum,|while the gangsters have already "
-"penetrated|into another part of the building."
+"entered|into another part of the building."
 
 #: ../../ms2/ms2_r2.c:837
 msgid ""
