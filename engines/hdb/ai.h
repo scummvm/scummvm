@@ -634,6 +634,7 @@ struct DlvEnt {
 		destTextName[0] = 0;
 		destGfxName[0] = 0;
 	}
+
 	~DlvEnt() {
 		itemGfx = NULL;
 		destGfx = NULL;
@@ -765,7 +766,17 @@ struct Bridge {
 	uint16 delay;
 	uint16 anim;
 
-	Bridge() : x(0), y(0), dir(DIR_NONE), delay(0), anim(0) {}
+	void reset() {
+		x = 0;
+		y = 0;
+		dir = DIR_NONE;
+		delay = 0;
+		anim = 0;
+	}
+
+	Bridge() {
+		reset();
+	}
 };
 
 struct CineCommand {

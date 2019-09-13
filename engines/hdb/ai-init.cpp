@@ -1246,7 +1246,9 @@ void AI::restartSystem() {
 	_hereList->clear();
 
 	// Clear Bridges
-	memset(&_bridges[0], 0, sizeof(_bridges));
+	for (uint8 i = 0; i < ARRAYSIZE(_bridges); i++) {
+		_bridges[i].reset();
+	}
 	_numBridges = 0;
 
 	// Clear waypoints
