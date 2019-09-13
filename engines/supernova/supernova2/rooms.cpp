@@ -3553,8 +3553,8 @@ BstDoor::BstDoor(SupernovaEngine *vm, GameManager2 *gm) {
 	_objectState[17] = Object(_id, kStringLetter, kStringDefaultDescription, BST16, PRESS, 15, 0, 0);
 	_objectState[18] = Object(_id, kStringDoor, kStringMassive, DOOR, EXIT | OPENABLE | CLOSED, 16, 16, 0, HALL2, 2);
 
-	char germanPassword[16] =  {0, 1, 0, 0, 1, 0, 1, 1, 1, 0, 1, 0, 0, 0, 0, 0};
-	char englishPassword[16] = {0, 1, 0, 1, 0, 0, 1, 0, 0, 1, 1, 1, 0, 0, 0, 0};
+	bool germanPassword[16] =  {false, true, false, false, true, false, true, true, true, false, true, false, false, false, false, false};
+	bool englishPassword[16] = {false, true, false, true, false, false, true, false, false, true, true, true, false, false, false, false};
 	if (ConfMan.get("language") == "en")
 		for (int i = 0; i < 16; i++)
 			_password[i] = englishPassword[i];
@@ -3582,7 +3582,7 @@ bool BstDoor::interact(Action verb, Object &obj1, Object &obj2) {
 			_vm->renderImage(number);
 		_vm->playSound(kAudioTaxiOpen);
 		for (number = 1; number <= 16; number++) {
-			if (isSectionVisible(number) != (bool)_password[number - 1])
+			if (isSectionVisible(number) != _password[number - 1])
 				return true;
 		}
 		_gm->wait(2);
