@@ -1473,6 +1473,12 @@ begin_credits("Credits");
 	add_paragraph(
     "The mindFactory team for writing Broken Sword 2.5, a splendid fan-made sequel, and for sharing ".
     "the source code with us.");
+    
+    add_paragraph(
+    "John Romero for sharing the source code of Hyperspace Delivery Boy! with us.");
+    
+    add_paragraph(
+    "Steffen Dingel for sharing the source code of the Mission Supernova game with us.");
 
 	end_section();
 

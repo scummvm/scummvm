@@ -1009,5 +1009,9 @@ static const char *credits[] = {
 "C0""",
 "C0""The mindFactory team for writing Broken Sword 2.5, a splendid fan-made sequel, and for sharing the source code with us.",
 "C0""",
+"C0""John Romero for sharing the source code of Hyperspace Delivery Boy! with us.",
+"C0""",
+"C0""Steffen Dingel for sharing the source code of the Mission Supernova game with us.",
+"C0""",
 "",
 };
