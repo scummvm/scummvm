@@ -2380,7 +2380,7 @@ void GriffonEngine::updateSpellsUnder() {
 				if (spellinfo[i].frame < 0)
 					spellinfo[i].frame = 0;
 
-				if (ABS(spellinfo[i].frame) < 0) {
+				if (ABS(spellinfo[i].frame) < kEpsilon) {
 					_npcinfo[spellinfo[i].npc].attacking = 0;
 					_npcinfo[spellinfo[i].npc].attacknext = _ticks + _npcinfo[spellinfo[i].npc].attackdelay;
 				}
