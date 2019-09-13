@@ -80,7 +80,6 @@ void GriffonEngine::updateAnims() {
 		int nframes = _objectInfo[i][0];
 		int o_animspd = _objectInfo[i][3];
 		float frame = _objectFrame[i][0];
-		int cframe = _objectFrame[i][1];
 		// _objectinfo[i][6] = 0; // ?? out of bounds
 
 		if (nframes > 1) {
@@ -88,9 +87,7 @@ void GriffonEngine::updateAnims() {
 			while (frame >= nframes)
 				frame -= nframes;
 
-			cframe = (int)frame; // truncate fractional part
-			if (cframe > nframes)
-				cframe = nframes - 1;
+			int cframe = (int)frame; // truncate fractional part
 			if (cframe < 0)
 				cframe = 0;
 
@@ -521,8 +518,6 @@ void GriffonEngine::updateNPCs() {
 						frame -= 16;
 
 					int cframe = (int)(frame);
-					if (cframe > 16)
-						cframe = 16 - 1;
 					if (cframe < 0)
 						cframe = 0;
 
@@ -1248,7 +1243,6 @@ void GriffonEngine::updateNPCs() {
 
 void GriffonEngine::updateSpells() {
 	int foundel[5];
-	float npx, npy;
 	long cl1, cl2, cl3;
 	int ll[4][2];
 
@@ -1450,9 +1444,6 @@ void GriffonEngine::updateSpells() {
 					ydif = (yloc + 24) - (_player.py + 12);
 
 					if ((abs(xdif) < 24 && abs(ydif) < 24) && _player.pause < _ticks) {
-						npx = _player.px;
-						npy = _player.py;
-
 						float damage = (float)_npcinfo[spellinfo[i].npc].spelldamage * (1.0 + RND() * 0.5);
 
 						if (_player.hp > 0) {
@@ -1611,8 +1602,8 @@ void GriffonEngine::updateSpells() {
 					spellinfo[i].frame = 0;
 					_forcepause = false;
 
-					npx = _player.px + 12;
-					npy = _player.py + 20;
+					float npx = _player.px + 12;
+					float npy = _player.py + 20;
 
 					int lx = (int)npx / 16;
 					int ly = (int)npy / 16;
