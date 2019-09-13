@@ -8,15 +8,16 @@ msgstr ""
 "Project-Id-Version: Prince\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2018-04-17 19:53+0100\n"
-"PO-Revision-Date: 2018-04-17 18:01+0000\n"
-"Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
-"Language-Team: none\n"
+"PO-Revision-Date: 2019-09-14 20:54+0000\n"
+"Last-Translator: Jennifer McMurray <mcmurray.jennifer@gmail.com>\n"
+"Language-Team: English <https://translations.scummvm.org/projects/prince/"
+"prince/en/>\n"
 "Language: en\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: gen-po.pl v1.8.0-150-g1bb23d7\n"
+"X-Generator: Weblate 3.7.1\n"
 
 #: dialog0001.txt:1
 msgid "HERO: Przeppp... raszam..."
@@ -1221,14 +1222,18 @@ msgstr "OTHER: Why?"
 #: dialog0020.txt:100402
 msgid "OTHER: Jestem bolesnym przykładem niesprawiedliwości|systemu prawnego naszego państwa oraz|bezwzględności władz!"
 msgstr ""
+"OTHER: I am a painful example of|the injustice of our country's legal system "
+"and the|ruthlessness of the state authorities! And..."
 
 #: dialog0020.txt:100403
 msgid "OTHER: W skrócie, dałem się złapa..."
-msgstr ""
+msgstr "OTHER: ...in short, they caught me..."
 
 #: dialog0020.txt:100404
 msgid "OTHER: Eee... Nastąpiła pomyłka i zamiast|prawdziwego sprawcy złapano mnie.#E7#E8#B0"
 msgstr ""
+"OTHER: Um... There was a mix-up|and, instead of the actual culprit,|they "
+"grabbed me.#E7#E8#B0"
 
 #: dialog0020.txt:100501
 msgid "OTHER: Absolutnie."
@@ -1237,10 +1242,14 @@ msgstr "OTHER: Absolutely."
 #: dialog0020.txt:100502
 msgid "OTHER: Nigdy te ręce - a łatwo je sobie obejrzeć|w takiej pozycji - nie skalały się|kradzieżą.#E7#E8#B0"
 msgstr ""
+"OTHER: These hands would never - just look at them||these hands could never "
+"have committed|theft.#E7#E8#B0"
 
 #: dialog0020.txt:100601
 msgid "OTHER: No cóż, miałem nadzieje, że mój dobry|książę ujmie się za biednym pasterzem,|ale się myliłem..."
 msgstr ""
+"OTHER: Well, I had hope that|my good prince would stand up for a poor "
+"sinner,|but I was wrong..."
 
 #: dialog0020.txt:100602
 msgid "OTHER: <chlipanie>#E7#E8#B0"
@@ -1304,7 +1313,7 @@ msgstr "OTHER: Head is an important thing."
 
 #: dialog0020.txt:101004
 msgid "OTHER: Wolałbym postawić coś, co nie jest|mi aż tak potrzebne."
-msgstr ""
+msgstr "OTHER: I'd rather put in something|that's not important to me."
 
 #: dialog0020.txt:101005
 msgid "HERO: Na przykład?..."
@@ -1312,7 +1321,7 @@ msgstr "HERO: For example?..."
 
 #: dialog0020.txt:101006
 msgid "OTHER: Patrząc na wszystkie okoliczności..."
-msgstr ""
+msgstr "OTHER: When you consider the circumstances..."
 
 #: dialog0020.txt:101007
 msgid "OTHER: Mogą być moje buty?"
@@ -1376,47 +1385,53 @@ msgstr "OTHER: I'm telling you, I didn't|do anything!#B2"
 
 #: dialog0020.txt:101501
 msgid "P#OTHER: Poważnie?"
-msgstr ""
+msgstr "P#OTHER: Seriously?"
 
 #: dialog0020.txt:101502
 msgid "HERO: Szczerze mówiąc, mój biedny człowieku,|wyglądasz na takiego, który by nawet|muchy nie skrzywdził."
 msgstr ""
+"HERO: To be honest, my poor man,|you look to me as if you|couldn't hurt a "
+"fly."
 
 #: dialog0020.txt:101503
 msgid "HERO: Bez obrazy, ale prędzej ciebie by|okradziono niż ty mógłbyś kogoś|okraść."
 msgstr ""
+"HERO: No offense,|but it's more likely that someone would rob you,|rather "
+"than that you would rob someone."
 
 #: dialog0020.txt:101504
 msgid "OTHER: No, nie przesadzajmy, aż taką ofermą|nie jestem.#E15#B4"
-msgstr ""
+msgstr "OTHER: Well, let's not exaggerate.|I won't be fooled again.#E15#B4"
 
 #: dialog0020.txt:101601
 msgid "OTHER: O, to bardzo dobre określenie!"
-msgstr ""
+msgstr "OTHER: Oh, that's a very good description!"
 
 #: dialog0020.txt:101602
 msgid "OTHER: Szkoda, że sam tego nie wymyśliłem."
-msgstr ""
+msgstr "OTHER: I wish I had come up with it myself."
 
 #: dialog0020.txt:101603
 msgid "OTHER: Zostałem bezczelnie wrobiony!#B2"
-msgstr ""
+msgstr "OTHER: I've been shamelessly framed!#B2"
 
 #: dialog0020.txt:101701
 msgid "OTHER: Dziękuję, książę."
-msgstr ""
+msgstr "OTHER: Thank you, Prince."
 
 #: dialog0020.txt:101702
 msgid "OTHER: Od razu widać, że znasz się na ludziach."
 msgstr ""
+"OTHER: You can tell right away that you have a good understanding of human "
+"nature."
 
 #: dialog0020.txt:101703
 msgid "OTHER: Proszę, uwolnij mnie!"
-msgstr ""
+msgstr "OTHER: Please, release me!"
 
 #: dialog0020.txt:101704
 msgid "HERO: Zastanowię się nad tym...#X1"
-msgstr ""
+msgstr "HERO: I'll think about it...#X1"
 
 #: dialog0020.txt:101801
 msgid "OTHER: Ja?!"
@@ -1429,26 +1444,32 @@ msgstr "OTHER: Thick fingers?!"
 #: dialog0020.txt:101803
 msgid "OTHER: Obrobiłem nimi samego królewskiego doradcę|Keidana, kiedy zagapił się na dziewczyny|z objazdowego cyrku!"
 msgstr ""
+"OTHER: With these hands, I had|robbed Royal Adviser Kaidan himself, while he|"
+"stared at girls from the traveling circus!"
 
 #: dialog0020.txt:101804
 msgid "OTHER: Tylko może nie mów o tym w zamku."
-msgstr ""
+msgstr "OTHER: Just don't talk about it in Castle Garrahan."
 
 #: dialog0020.txt:101805
 msgid "OTHER: Nie oparł się nim nawet ten zdzierca|podatkowy Gandar! Zabrałem mu dwakroć|tyle, co on mi!"
 msgstr ""
+"OTHER: Even tax collector Gandar had not noticed my thievery. I took from "
+"him |double what he took from me!"
 
 #: dialog0020.txt:101806
 msgid "OTHER: Ale nie powtarzaj tego, dobrze?"
-msgstr ""
+msgstr "OTHER: But keep that to yourself, OK?"
 
 #: dialog0020.txt:101807
 msgid "OTHER: To są palce mistrza, a nie jakieś|tam, tfu, chropowate..."
-msgstr ""
+msgstr "OTHER: These are the fingers of a master|not some, ugh, rough..."
 
 #: dialog0020.txt:101808
 msgid "HERO: Nie wierzę, mówisz tak tylko, bo wstyd|ci odcisków od pracy na polu."
 msgstr ""
+"HERO: I don't believe you, you're just|ashamed of the marks left on your "
+"fingers|from working in the field."
 
 #: dialog0020.txt:101809
 msgid "OTHER: Tak?"
@@ -1460,15 +1481,17 @@ msgstr "OTHER: YES?!?"
 
 #: dialog0020.txt:101811
 msgid "OTHER: No to niech książę sprawdzi moje kieszenie."
-msgstr ""
+msgstr "OTHER: Well, then check my pockets, Prince."
 
 #: dialog0020.txt:101812
 msgid "P#HERO: Twoje kieszenie?"
-msgstr ""
+msgstr "P#HERO: Your pockets?"
 
 #: dialog0020.txt:101813
 msgid "OTHER: Bardzo proszę. Moje kieszenie. Zaraz się|okaże, kto tu ma rację."
 msgstr ""
+"OTHER: Yes, please. My pockets.|Then we'll soon be able to see|who is right "
+"here."
 
 #: dialog0020.txt:101814
 msgid "P#HERO: Hmm... No dobra.#D1#X2"
@@ -1476,23 +1499,23 @@ msgstr "P#HERO: Hmm... Okay then.#D1#X2"
 
 #: dialog0020.txt:101901
 msgid "P#OTHER: Książę to ma gadane lepsze niż ci kupcy."
-msgstr ""
+msgstr "P#OTHER: Prince, you've talked a bigger game|than these merchants."
 
 #: dialog0020.txt:101902
 msgid "OTHER: Co racja to racja."
-msgstr ""
+msgstr "OTHER: That had to be said."
 
 #: dialog0020.txt:101903
 msgid "OTHER: Więc zostanę uwolniony?"
-msgstr ""
+msgstr "OTHER: So, I'm going to be released?"
 
 #: dialog0020.txt:101904
 msgid "HERO: Zobaczymy, muszę się zastanowić...#X1"
-msgstr ""
+msgstr "HERO: We'll see, I have to think about it...#X1"
 
 #: dialog0021.txt:1
 msgid "HERO: Wytrychy i fałszywe kości."
-msgstr ""
+msgstr "HERO: A Lockpick and loaded Dice."
 
 #: dialog0021.txt:2
 msgid "P#HERO: A więc jednak jesteś właściwym człowiekiem|na właściwym miejscu."
@@ -11601,6 +11624,5 @@ msgstr ""
 #: variatxt.txt:5802
 msgid "Naciskaj szybko na przemian lewy i prawy przycisk myszki|lub klawisze 'Z' i 'X'."
 msgstr ""
-
 
 # Missing: 317  Extra: 0
