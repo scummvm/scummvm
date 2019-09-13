@@ -163,7 +163,7 @@ bool MSNImage::loadStream(Common::SeekableReadStream &stream) {
 	}
 
 	_numSections = stream.readByte();
-	for (uint i = 0; i < kMaxSections; ++i) {
+	for (int i = 0; i < kMaxSections; ++i) {
 		_section[i].addressHigh = 0xff;
 		_section[i].addressLow = 0xffff;
 		_section[i].x2 = 0;
