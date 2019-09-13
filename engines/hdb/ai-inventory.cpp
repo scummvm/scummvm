@@ -303,7 +303,7 @@ bool AI::completeDelivery(const char *id) {
 	for (int i = 0; i < _numDeliveries; i++) {
 		if (!scumm_stricmp(_deliveries[i].id, id)) {
 			for (; i < _numDeliveries; i++)
-				memcpy(&_deliveries[i], &_deliveries[i + 1], sizeof(_deliveries[0]));
+				_deliveries[i] = _deliveries[i + 1];
 			_numDeliveries--;
 			if (g_hdb->isPPC())
 				g_hdb->_sound->playSound(SND_QUEST_COMPLETE);

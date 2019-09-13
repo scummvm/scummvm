@@ -644,7 +644,15 @@ struct DlvEnt {
 struct Waypoint {
 	int x, y, level;
 
-	Waypoint() : x(0), y(0), level(0) {}
+	void reset() {
+		x = 0;
+		y = 0;
+		level = 0;
+	}
+
+	Waypoint() {
+		reset();
+	}
 };
 
 struct LuaT {

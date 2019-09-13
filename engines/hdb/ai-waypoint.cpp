@@ -246,7 +246,9 @@ void AI::removeFirstWaypoint() {
 }
 
 void AI::clearWaypoints() {
-	memset(&_waypoints[0], 0, sizeof(_waypoints));
+	for (uint8 i = 0; i < ARRAYSIZE(_waypoints); i++) {
+		_waypoints[i].reset();
+	}
 	_numWaypoints = 0;
 }
 
