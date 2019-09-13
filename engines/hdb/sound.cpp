@@ -1545,7 +1545,7 @@ void Sound::playSound(int index) {
 		-1,
 		Audio::Mixer::kMaxChannelVolume,
 		0,
-		DisposeAfterUse::NO,
+		DisposeAfterUse::YES,
 		false,
 		false
 	);
@@ -1606,7 +1606,7 @@ void Sound::playSoundEx(int index, int channel, bool loop) {
 			-1,
 			Audio::Mixer::kMaxChannelVolume,
 			0,
-			DisposeAfterUse::NO,
+			DisposeAfterUse::YES,
 			false,
 			false
 		);
@@ -1618,7 +1618,7 @@ void Sound::playSoundEx(int index, int channel, bool loop) {
 			-1,
 			Audio::Mixer::kMaxChannelVolume,
 			0,
-			DisposeAfterUse::NO,
+			DisposeAfterUse::YES,
 			false,
 			false
 		);
