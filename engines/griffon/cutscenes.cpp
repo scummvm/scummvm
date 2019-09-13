@@ -417,14 +417,10 @@ void GriffonEngine::endOfGame() {
 	do {
 		if (_ticks < ticks1 + 1500) {
 			y1 = 255 * (_ticks - ticks1) / 1500;
-
-			if (y1 < 0)
-				y1 = 0;
-			if (y1 > 255)
-				y1 = 255;
-			else
-				break;
+			y1 = CLIP(y1, 0, 255);
 		}
+		else
+			break;
 
 		_videobuffer->fillRect(Common::Rect(0, 0, _videobuffer->w, _videobuffer->h), 0);
 
