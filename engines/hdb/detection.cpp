@@ -102,7 +102,7 @@ static const ADGameDescription gameDescriptions[] = {
 	// Demos
 	{
 		"hdb",
-		"",
+		"Demo",
 		AD_ENTRY1s("hyperdemo.mpc", "d8743b3b8be56486bcfb1398b2f2aad4", 13816461),
 		Common::EN_ANY,
 		Common::kPlatformLinux,
@@ -111,7 +111,7 @@ static const ADGameDescription gameDescriptions[] = {
 	},
 	{
 		"hdb",
-		"",
+		"Demo",
 		AD_ENTRY1s("hyperdemo.mpc", "f3bc878e179f00b8666a9846f3d9f9f5", 5236568),
 		Common::EN_ANY,
 		Common::kPlatformWindows,
@@ -121,7 +121,7 @@ static const ADGameDescription gameDescriptions[] = {
 	// provided by sev
 	{
 		"hdb",
-		"",
+		"Demo",
 		AD_ENTRY1s("hyperdemo.mpc", "7bc533e8f1866931c884f1bc09353744", 13906865),
 		Common::EN_ANY,
 		Common::kPlatformWindows,
@@ -130,7 +130,7 @@ static const ADGameDescription gameDescriptions[] = {
 	},
 	{
 		"hdb",
-		"",
+		"Demo",
 		AD_ENTRY1s("hyperdemo.msd", "312525298ca9f5ac904883d1ce19dc0f", 3088651),
 		Common::EN_ANY,
 		Common::kPlatformPocketPC,
@@ -139,7 +139,7 @@ static const ADGameDescription gameDescriptions[] = {
 	},
 	{
 		"hdb",
-		"Handango",
+		"Handango Demo",
 		AD_ENTRY1s("hyperdemo.msd", "2d4457b284a940b7058b36e5706b9951", 3094241),
 		Common::EN_ANY,
 		Common::kPlatformPocketPC,
