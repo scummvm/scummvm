@@ -86,6 +86,9 @@ ScummVM Team
        Arnaud Boutonne
        Paul Gilbert
 
+    Chewy:
+       Filippos Karapetis
+
     Cine:
        Vincent Hamm                 - (retired)
        Pawel Kolodziejski
@@ -103,6 +106,16 @@ ScummVM Team
     Cryomni3D:
        Philippe Valembois
 
+    Director:
+       Eugene Sandulenko
+       Dmitry Iskrich
+       Steven Hoefel
+       Tobia Tesan
+
+    DM:
+       Arnaud Boutonne
+       Bendeguz Nagy
+
     Draci:
        Denis Kasak
        Robert Spalek
@@ -111,10 +124,6 @@ ScummVM Team
        Filippos Karapetis
        Pawel Kolodziejski
        Thierry Crozat
-
-    DM:
-       Arnaud Boutonne
-       Bendeguz Nagy
 
     DreamWeb:
        Torbjorn Andersson
@@ -149,6 +158,10 @@ ScummVM Team
        Scott Thomas
        Jordi Vilalta Prat
 
+    HDB:
+       Eugene Sandulenko
+       Nipun Garg                   - GSoC student
+
     Hopkins:
        Arnaud Boutonne
        Paul Gilbert
@@ -180,8 +193,14 @@ ScummVM Team
        Jordi Vilalta Prat
        Julien Templier
 
+    Lilliput:
+       Arnaud Boutonne
+
     Lure:
        Paul Gilbert
+
+    MacVenture:
+       Borja Lorente                - GSoC student
 
     MADE:
        Benjamin Haisch
@@ -218,6 +237,13 @@ ScummVM Team
 
     Pegasus:
        Matthew Hoops                - (retired)
+
+    Pink:
+       Andrei Prykhodko
+       Eugene Sandulenko
+
+    Plumbers:
+       Retro-Junk;
 
     Prince:
        Eugene Sandulenko
@@ -274,7 +300,7 @@ ScummVM Team
        Fabio Battaglia              - PSX version support
        Jonathan Gray                - (retired)
 
-    Sword25:
+    Sword2.5:
        Torbjorn Andersson
        Paul Gilbert
        Max Horn                     - (retired)
@@ -324,6 +350,9 @@ ScummVM Team
     Voyeur:
        Arnaud Boutonne
        Paul Gilbert
+
+    WAGE:
+       Eugene Sandulenko
 
     Wintermute:
        Einar Johan T. Somaaen
