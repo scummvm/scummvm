@@ -40,7 +40,7 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 			_s("Improved mode"),
 			_s("Removes some repetitive actions, adds possibility to change verbs by keyboard"),
 			"improved",
-			false
+			true
 		}
 	},
 
