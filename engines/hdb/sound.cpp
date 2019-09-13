@@ -1755,14 +1755,11 @@ void Sound::stopMusic() {
 }
 
 void Sound::beginMusic(SoundType song, bool fadeIn, int ramp) {
-	const char *songName = nullptr;
+	Common::String songName(soundList[song].name);
 
 	if (g_hdb->getPlatform() == Common::kPlatformLinux) {
-		Common::String updatedName(soundList[song].name);
-		updatedName.replace(updatedName.begin() + updatedName.size() - 4, updatedName.end(), ".ogg");
-		songName = updatedName.c_str();
-	} else
-		songName = soundList[song].name;
+		songName.replace(songName.begin() + songName.size() - 4, songName.end(), ".ogg");
+	}
 
 	if (g_hdb->isPPC()) {
 		switch (song) {
