@@ -9963,6 +9963,27 @@ static const uint16 qfg4BenchmarkPatch[] = {
 	PATCH_END
 };
 
+// Disable the Change Directory button on the character import screen as we
+//  don't allow the game engine to change the directory where character files
+//  are placed. Character files are only read from our save game directory.
+//
+// Applies to: All versions
+// Responsible method: Heap in script 54
+static const uint16 qfg4ChangeDirectorySignature[] = {
+	// changeButton
+	SIG_UINT16(0x0003),                 // state = 3 [ enabled ]
+	SIG_ADDTOOFFSET(+38),
+	SIG_MAGICDWORD,
+	SIG_UINT16(0xfdde),                 // view = 64990
+	SIG_UINT16(0x0001),                 // loop = 1
+	SIG_END,
+};
+
+static const uint16 qfg4ChangeDirectoryPatch[] = {
+	PATCH_UINT16(0x0000),               // state = 0 [ disabled ]
+	PATCH_END
+};
+
 // In room 800, at the start of the game, when automatically sliding down a
 // slope an error may happen inside Grooper::doit caused by a timing issue.
 //
@@ -13792,6 +13813,7 @@ static const SciScriptPatcherEntry qfg4Signatures[] = {
 	{  true,    51, "fix necrotaur blackout",                      1, qfg4NecrotaurBlackoutSignature,qfg4NecrotaurBlackoutPatch },
 	{  true,    51, "CD: fix necrotaur capture",                   3, qfg4NecrotaurCaptureSignature, qfg4NecrotaurCapturePatch },
 	{  true,    53, "NRS: fix wraith lockup",                      1, qfg4WraithLockupNrsSignature,  qfg4WraithLockupNrsPatch },
+	{  true,    54, "disable import change directory button",      1, qfg4ChangeDirectorySignature,  qfg4ChangeDirectoryPatch },
 	{  true,    83, "fix incorrect array type",                    1, qfg4TrapArrayTypeSignature,    qfg4TrapArrayTypePatch },
 	{  true,   140, "fix character selection",                     1, qfg4CharacterSelectSignature,  qfg4CharacterSelectPatch },
 	{  true,   250, "fix hectapus death lockup",                   1, qfg4HectapusDeathSignature,    qfg4HectapusDeathPatch },
