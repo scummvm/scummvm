@@ -747,9 +747,9 @@ void GriffonEngine::drawNPCs(int mode) {
 						float frame = _npcinfo[i].frame;
 						int cframe = _npcinfo[i].cframe;
 
-						frame = frame + 0.5 * _fpsr;
+						frame += 0.5 * _fpsr;
 						while (frame >= 16)
-							frame = frame - 16;
+							frame -= 16;
 
 						cframe = (int)(frame);
 						if (cframe > 16)
@@ -810,9 +810,9 @@ void GriffonEngine::drawNPCs(int mode) {
 
 					float frame = _npcinfo[i].frame2;
 
-					frame = frame + 0.5 * _fpsr;
+					frame += 0.5 * _fpsr;
 					while (frame >= 16)
-						frame = frame - 16;
+						frame -= 16;
 
 					_npcinfo[i].frame2 = frame;
 
@@ -842,7 +842,7 @@ void GriffonEngine::drawNPCs(int mode) {
 
 							float fr3 = frame - 3 + i2;
 							if (fr3 < 0)
-								fr3 = fr3 + 16;
+								fr3 += 16;
 
 							rcDest.left = (float)(sx + 36 + ii * 8 - ii * cos(3.14159 * 2 * (fr3 - ii) / 16) * 2);
 							rcDest.top = (float)(sy + 16 + ii * sin(3.14159 * 2 * (fr3 - ii) / 16) * 3 - ii); //  * 4
@@ -939,9 +939,9 @@ void GriffonEngine::drawNPCs(int mode) {
 					float frame = _npcinfo[i].frame;
 					int cframe = _npcinfo[i].cframe;
 
-					frame = frame + 0.5 * _fpsr;
+					frame += 0.5 * _fpsr;
 					while (frame >= 16)
-						frame = frame - 16;
+						frame -= 16;
 
 					cframe = (int)(frame);
 					if (cframe > 16)

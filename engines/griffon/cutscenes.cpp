@@ -169,10 +169,6 @@ void GriffonEngine::showLogos() {
 }
 
 void GriffonEngine::intro() {
-	float xofs = 0;
-	float ld = 0, add;
-	int cnt = 0;
-
 	_videobuffer2->fillRect(Common::Rect(0, 0, _videobuffer2->w, _videobuffer2->h), 0);
 	_videobuffer3->fillRect(Common::Rect(0, 0, _videobuffer3->w, _videobuffer3->h), 0);
 
@@ -194,7 +190,9 @@ void GriffonEngine::intro() {
 	_secstart = 0;
 
 	bool ldstop = false;
-
+	int cnt = 0;
+	float xofs = 0.0;
+	float ld = 0.0;
 	do {
 		Common::Rect rc;
 
@@ -223,11 +221,9 @@ void GriffonEngine::intro() {
 		}
 
 		for (int i = 0; i <= 37; i++) {
-			int yy, x;
-
-			yy = y + i * 10;
+			int yy = y + i * 10;
 			if (yy > -8 && yy < 240) {
-				x = 160 - strlen(story[i]) * 4;
+				int x = 160 - strlen(story[i]) * 4;
 				drawString(_videobuffer, story[i], x, yy, 4);
 			}
 
@@ -251,7 +247,7 @@ void GriffonEngine::intro() {
 			_fp = 0;
 		}
 
-		add = 0.5 * _fpsr;
+		float add = 0.5 * _fpsr;
 		if (add > 1)
 			add = 1;
 		xofs += add;

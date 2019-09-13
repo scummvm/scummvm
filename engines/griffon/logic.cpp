@@ -84,9 +84,9 @@ void GriffonEngine::updateAnims() {
 		// _objectinfo[i][6] = 0; // ?? out of bounds
 
 		if (nframes > 1) {
-			frame = frame + o_animspd / 50 * _fpsr;
+			frame += o_animspd / 50 * _fpsr;
 			while (frame >= nframes)
-				frame = frame - nframes;
+				frame -= nframes;
 
 			cframe = (int)frame; // truncate fractional part
 			if (cframe > nframes)
@@ -515,13 +515,12 @@ void GriffonEngine::updateNPCs() {
 
 				if (_npcinfo[i].moving == 1) {
 					float frame = _npcinfo[i].frame;
-					int cframe = _npcinfo[i].cframe;
 
-					frame = frame + aspd * _fpsr;
+					frame += aspd * _fpsr;
 					while (frame >= 16)
-						frame = frame - 16;
+						frame -= 16;
 
-					cframe = (int)(frame);
+					int cframe = (int)(frame);
 					if (cframe > 16)
 						cframe = 16 - 1;
 					if (cframe < 0)
