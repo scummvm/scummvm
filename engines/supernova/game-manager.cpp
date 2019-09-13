@@ -834,7 +834,7 @@ void GameManager::edit(Common::String &input, int x, int y, uint length) {
 	bool isEditing = true;
 	uint cursorIndex = input.size();
 	// NOTE: Pixels for char needed = kFontWidth + 2px left and right side bearing
-	int overdrawWidth;
+	int overdrawWidth = 0;
 	Color background = kColorBlack;
 
 	if (_vm->_MSPart == 1) {

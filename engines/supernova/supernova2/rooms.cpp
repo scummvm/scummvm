@@ -3582,7 +3582,7 @@ bool BstDoor::interact(Action verb, Object &obj1, Object &obj2) {
 			_vm->renderImage(number);
 		_vm->playSound(kAudioTaxiOpen);
 		for (number = 1; number <= 16; number++) {
-			if (isSectionVisible(number) != _password[number - 1])
+			if (isSectionVisible(number) != (bool)_password[number - 1])
 				return true;
 		}
 		_gm->wait(2);

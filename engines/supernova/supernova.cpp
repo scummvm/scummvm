@@ -475,7 +475,7 @@ Common::SeekableReadStream *SupernovaEngine::getBlockFromDatFile(Common::String 
 		return nullptr;
 	}
 
-	uint32 gameBlockSize;
+	uint32 gameBlockSize = 0;
 	while (!f.eos()) {
 		int part = f.readByte();
 		gameBlockSize = f.readUint32LE();
