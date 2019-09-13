@@ -9,7 +9,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2018-04-17 19:53+0100\n"
 "PO-Revision-Date: 2019-09-14 20:54+0000\n"
-"Last-Translator: Jennifer McMurray <mcmurray.jennifer@gmail.com>\n"
+"Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: English <https://translations.scummvm.org/projects/prince/"
 "prince/en/>\n"
 "Language: en\n"
@@ -1519,7 +1519,7 @@ msgstr "HERO: A Lockpick and loaded Dice."
 
 #: dialog0021.txt:2
 msgid "P#HERO: A więc jednak jesteś właściwym człowiekiem|na właściwym miejscu."
-msgstr ""
+msgstr "P#HERO: So you are the right man in the right place."
 
 #: dialog0021.txt:3
 msgid "HERO: Zwracam honor do kieszeni. Nie masz|chropowatych paluchów."
@@ -1531,15 +1531,15 @@ msgstr ""
 
 #: dialog0021.txt:5
 msgid "HERO: Co to to nie. Nie mogę przecież|popierać przestępczości!"
-msgstr ""
+msgstr "HERO: No, no, no. I can't encourage criminality!"
 
 #: dialog0021.txt:6
 msgid "OTHER: Ależ książę!..."
-msgstr ""
+msgstr "OTHER: But prince...."
 
 #: dialog0021.txt:7
 msgid "HERO: Co za ironia losu, okraść złodzieja."
-msgstr ""
+msgstr "HERO: What an irony it is - steal from the thief."
 
 #: dialog0021.txt:8
 msgid "HERO: Mam nadzieję, że to cię czegoś nauczy|i porzucisz ten niecny proceder."
