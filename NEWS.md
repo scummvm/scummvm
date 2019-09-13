@@ -18,6 +18,7 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added support for Quest for Glory: Shadows of Darkness.
    - Added support for Versailles 1685.
    - Added support for Hyperspace Delivery Boy!
+   - Added support for The Prince and the Coward.
 
  New ports:
    - Added Nintendo Switch port.
