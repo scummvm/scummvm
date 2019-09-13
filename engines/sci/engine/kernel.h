@@ -153,6 +153,8 @@ public:
 	Kernel(ResourceManager *resMan, SegManager *segMan);
 	~Kernel();
 
+	void init();
+
 	uint getSelectorNamesSize() const;
 	const Common::String &getSelectorName(uint selector);
 	int findKernelFuncPos(Common::String kernelFuncName);
