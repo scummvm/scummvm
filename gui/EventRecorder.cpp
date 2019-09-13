@@ -455,8 +455,7 @@ Common::List<Common::Event> EventRecorder::mapEvent(const Common::Event &ev, Com
 		if (((evt.type == Common::EVENT_LBUTTONDOWN) || (evt.type == Common::EVENT_LBUTTONUP) || (evt.type == Common::EVENT_MOUSEMOVE)) && _controlPanel->isMouseOver()) {
 			return Common::List<Common::Event>();
 		} else {
-			Common::RecorderEvent e;
-			memcpy(&e, &ev, sizeof(ev));
+			Common::RecorderEvent e(ev);
 			e.recordedtype = Common::kRecorderEventTypeNormal;
 			e.time = _fakeTimer;
 			_playbackFile->writeEvent(e);

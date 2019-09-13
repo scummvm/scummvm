@@ -44,6 +44,16 @@ enum RecorderEventType {
 struct RecorderEvent : Event {
 	RecorderEventType recordedtype;
 	uint32 time;
+
+	RecorderEvent() {
+		recordedtype = kRecorderEventTypeNormal;
+		time = 0;
+	}
+
+	RecorderEvent(const Event &e) : Event(e) {
+		recordedtype = kRecorderEventTypeNormal;
+		time = 0;
+	}
 };
 
 
