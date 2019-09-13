@@ -456,7 +456,7 @@ struct AIEntity {
 	int16		moverightFrames;
 	Tile		*moverightGfx[kMaxAnimFrames];
 
-	AIEntity() {
+	void reset() {
 		luaFuncInit[0] = 0;
 		luaFuncAction[0] = 0;
 		luaFuncUse[0] = 0;
@@ -543,6 +543,11 @@ struct AIEntity {
 			moverightGfx[i] = NULL;
 		}
 	}
+
+	AIEntity() {
+		reset();
+	}
+
 	~AIEntity() {
 	}
 
@@ -602,7 +607,14 @@ struct InvEnt {
 	uint16 keep;
 	AIEntity ent;
 
-	InvEnt() : keep(0) {}
+	void reset() {
+		keep = 0;
+		ent.reset();
+	}
+
+	InvEnt() {
+		reset();
+	}
 };
 
 struct DlvEnt {

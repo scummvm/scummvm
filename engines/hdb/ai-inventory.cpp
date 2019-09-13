@@ -92,13 +92,11 @@ void AI::clearInventory() {
 	int keepslot = 0;
 	for (int i = 0; i < _numInventory; i++) {
 		if (!_inventory[i].keep) {
-			memset(&_inventory[i], 0, sizeof(InvEnt));
+			_inventory[i].reset();
 		} else {
 			if (i != keepslot) {
 				_inventory[keepslot] = _inventory[i];
-				_inventory[keepslot].ent = _inventory[i].ent;
-				_inventory[keepslot].keep = _inventory[i].keep;
-				memset(&_inventory[i], 0, sizeof(InvEnt));
+				_inventory[i].reset();
 			}
 			keepslot++;
 		}
@@ -154,10 +152,10 @@ bool AI::removeInvItem(const char *string, int amount) {
 		for (int i = _numInventory - 1; i >= 0; i--)
 			if (strstr(_inventory[i].ent.entityName, string)) {
 				int j = i;
-				memset(&_inventory[j], 0, sizeof(InvEnt));
+				_inventory[j].reset();
 				while (j < _numInventory - 1) {
-					memcpy(&_inventory[j], &_inventory[j + 1], sizeof(InvEnt));
-					memset(&_inventory[j + 1], 0, sizeof(InvEnt));
+					_inventory[j] = _inventory[j + 1];
+					_inventory[j + 1].reset();
 					j++;
 				}
 				_numInventory--;
@@ -228,10 +226,10 @@ bool AI::removeInvItemType(AIType which, int amount) {
 		for (int i = 0; i < _numInventory; i++) {
 			if (_inventory[i].ent.type == which) {
 				int j = i;
-				memset(&_inventory[j], 0, sizeof(InvEnt));
+				_inventory[j].reset();
 				while (j < _numInventory - 1) {
-					memcpy(&_inventory[j], &_inventory[j + 1], sizeof(InvEnt));
-					memset(&_inventory[j + 1], 0, sizeof(InvEnt));
+					_inventory[j] = _inventory[j + 1];
+					_inventory[j + 1].reset();
 					j++;
 				}
 				_numInventory--;
