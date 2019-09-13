@@ -1298,7 +1298,7 @@ void GameManager2::drawClock() {
 		s[0] = time % 10 + 48;
 		time /= 10;
 		_vm->renderText(s, 293, 180, kColorWhite99);
-		strcpy(s, " 0:00");
+		Common::strlcpy(s, " 0:00", sizeof(s));
 		s[4] = time % 10 + 48;
 		time /= 10;
 		s[3] = time % 10 + 48;
