@@ -9,6 +9,7 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added support for Hoyle Children's Collection.
    - Added support for Hoyle Classic Games.
    - Added support for Hoyle Solitaire.
+   - Added support for Hyperspace Delivery Boy!
    - Added support for Might and Magic IV - Clouds of Xeen.
    - Added support for Might and Magic V - Darkside of Xeen.
    - Added support for Might and Magic - World of Xeen.
@@ -16,9 +17,8 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added support for Might and Magic - Swords of Xeen.
    - Added support for Mission Supernova.
    - Added support for Quest for Glory: Shadows of Darkness.
-   - Added support for Versailles 1685.
-   - Added support for Hyperspace Delivery Boy!
    - Added support for The Prince and the Coward.
+   - Added support for Versailles 1685.
 
  New ports:
    - Added Nintendo Switch port.
