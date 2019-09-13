@@ -135,7 +135,7 @@ Common::SeekableReadStream *FileMan::findFirstData(const char *string, DataType 
 
 	// Return buffer wrapped in a MemoryReadStream, automatically
 	// uncompressed if it is zlib-compressed
-	return Common::wrapCompressedReadStream(new Common::MemoryReadStream(buffer, file->length, DisposeAfterUse::NO), file->length);
+	return Common::wrapCompressedReadStream(new Common::MemoryReadStream(buffer, file->length, DisposeAfterUse::YES), file->length);
 }
 
 int32 FileMan::getLength(const char *string, DataType type) {
