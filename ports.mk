@@ -316,6 +316,10 @@ ifdef USE_FREETYPE2
 OSX_STATIC_LIBS += $(STATICLIBPATH)/lib/libfreetype.a $(STATICLIBPATH)/lib/libbz2.a
 endif
 
+ifdef USE_ICONV
+OSX_STATIC_LIBS += -liconv
+endif
+
 ifdef USE_VORBIS
 OSX_STATIC_LIBS += \
 		$(STATICLIBPATH)/lib/libvorbisfile.a \
@@ -335,8 +339,12 @@ OSX_STATIC_LIBS += $(STATICLIBPATH)/lib/libogg.a
 endif
 
 ifdef USE_FLUIDSYNTH
+# If iconv was not yet added, add it now as we need it for libfluidsynth
+ifndef USE_ICONV
+OSX_STATIC_LIBS += -liconv
+endif
 OSX_STATIC_LIBS += \
-                -liconv -framework CoreMIDI -framework CoreAudio\
+                -framework CoreMIDI -framework CoreAudio\
                 $(STATICLIBPATH)/lib/libfluidsynth.a \
                 $(STATICLIBPATH)/lib/libglib-2.0.a \
                 $(STATICLIBPATH)/lib/libintl.a
