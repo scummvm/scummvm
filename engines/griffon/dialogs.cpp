@@ -633,11 +633,8 @@ void GriffonEngine::saveLoadNew() {
 			loadPlayer(ff);
 
 			if (_playera.level > 0) {
-				char line[256];
-				int sx, sy, cc, ss, nx;
-
-				sx = 8;
-				sy = 57 + ff * 48;
+				int sx = 8;
+				int sy = 57 + ff * 48;
 
 				// time
 				int ase = _asecstart;
@@ -646,12 +643,13 @@ void GriffonEngine::saveLoadNew() {
 				int m = ((ase - (ase % 60)) / 60);
 				int s = (ase - m * 60);
 
+				char line[256];
 				sprintf(line, "Game Time: %02i:%02i:%02i", h, m, s);
 				drawString(_videobuffer, line, 160 - strlen(line) * 4, sy, 0);
 
 				sx  = 12;
 				sy = sy + 11;
-				cc = 0;
+				int cc = 0;
 
 				sprintf(line, "Health: %i/%i", _playera.hp, _playera.maxhp);
 				drawString(_videobuffer, line, sx, sy, cc);
@@ -666,7 +664,7 @@ void GriffonEngine::saveLoadNew() {
 				rcSrc.left = sx + 15 * 8 + 24;
 				rcSrc.top = sy + 1;
 
-				ss = (_playera.sword - 1) * 3;
+				int ss = (_playera.sword - 1) * 3;
 				if (_playera.sword == 3)
 					ss = 18;
 				_itemimg[ss]->blit(*_videobuffer, rcSrc.left, rcSrc.top);
@@ -683,7 +681,7 @@ void GriffonEngine::saveLoadNew() {
 					ss = 20;
 				_itemimg[ss]->blit(*_videobuffer, rcSrc.left, rcSrc.top);
 
-				nx = rcSrc.left + 13 + 3 * 8;
+				int nx = rcSrc.left + 13 + 3 * 8;
 				rcSrc.left = nx - 17;
 
 				if (_playera.foundspell[0] == 1) {
