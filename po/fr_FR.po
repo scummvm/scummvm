@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2019-09-14 02:42+0200\n"
-"PO-Revision-Date: 2019-09-12 21:01+0000\n"
+"PO-Revision-Date: 2019-09-14 00:48+0000\n"
 "Last-Translator: Thierry Crozat <criezy@scummvm.org>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fr/>\n"
@@ -1359,7 +1359,6 @@ msgid "<never>"
 msgstr "<jamais>"
 
 #: gui/options.cpp:1937
-#, fuzzy
 msgctxt "lowres"
 msgid "Saved games sync automatically on launch, after saving and on loading."
 msgstr ""
@@ -1367,7 +1366,6 @@ msgstr ""
 "sauvegarde et au chargement."
 
 #: gui/options.cpp:1939
-#, fuzzy
 msgid "Saved games sync automatically on launch, after saving and on loading."
 msgstr ""
 "Les sauvegardes sont synchronisées automatiquement au lancement, après "
@@ -1378,7 +1376,6 @@ msgid "Sync now"
 msgstr "Synchroniser"
 
 #: gui/options.cpp:1940
-#, fuzzy
 msgid "Start saved games sync"
 msgstr "Commence la synchronisation des sauvegardes"
 
@@ -2108,23 +2105,23 @@ msgid "~K~eys"
 msgstr "~T~ouches"
 
 #: engines/engine.cpp:312
-#, fuzzy, c-format
+#, c-format
 msgid "Could not switch to resolution '%dx%d'."
-msgstr "Impossible de changer le mode d'étirement à : '"
+msgstr "Impossible de passer à la résolution : '%dx%d'."
 
 #: engines/engine.cpp:321
 msgid "Could not initialize color format."
 msgstr "Impossible d'initialiser le format des couleurs."
 
 #: engines/engine.cpp:330
-#, fuzzy, c-format
+#, c-format
 msgid "Could not switch to video mode '%s'."
-msgstr "Impossible de changer le mode vidéo à: '"
+msgstr "Impossible de changer le mode vidéo à : '%s'."
 
 #: engines/engine.cpp:338
-#, fuzzy, c-format
+#, c-format
 msgid "Could not switch to stretch mode '%s'."
-msgstr "Impossible de changer le mode d'étirement à : '"
+msgstr "Impossible de changer le mode d'étirement à : '%s'."
 
 #: engines/engine.cpp:345
 msgid "Could not apply aspect ratio setting."
