@@ -10,14 +10,16 @@ Programmcodes finden Sie auf Englisch unter:
    - Unterstützung für Hoyle Children's Collection hinzugefügt.
    - Unterstützung für Hoyle Classic Games hinzugefügt.
    - Unterstützung für Hoyle Solitaire hinzugefügt.
+   - Unterstützung für Hyperspace Delivery Boy! hinzugefügt.
    - Unterstützung für Might and Magic IV - Clouds of Xeen hinzugefügt.
    - Unterstützung für Might and Magic V - Darkside of Xeen hinzugefügt.
    - Unterstützung für Might and Magic - World of Xeen hinzugefügt.
    - Unterstützung für Might and Magic - World of Xeen 2 CD Talkie (mit Sprachausgabe) hinzugefügt.
    - Unterstützung für Might and Magic - Swords of Xeen hinzugefügt.
+   - Unterstützung für Mission Supernova hinzugefügt.
    - Unterstützung für Quest for Glory: Shadows of Darkness hinzugefügt.
+   - Unterstützung für The Prince and the Coward hinzugefügt.
    - Unterstützung für Versailles 1685 hinzugefügt.
-   - Unterstützung für Hyperspace Delivery Boy! hinzugefügt.
 
  Neue Portierungen:
    - Portierung auf Nintendo Switch hinzugefügt.
@@ -30,6 +32,11 @@ Programmcodes finden Sie auf Englisch unter:
      gesteuert wird.
    - Code der Roland MT-32-Emulation auf Munt 2.3.0 aktualisiert.
    - Unbekannte Spiele-Versionen können nun einfacher gemeldet werden.
+
+ ADL:
+   - Verbesserung der Farbtreue.
+   - TV-Emulationsmodus hinzugefügt.
+   - Unterstützung für das WOZ-Dateiformat hinzugefügt.
 
  Drascula:
    - Fehler beim Laden eines in Kapitel 1 gespeicherten Spielstands korrigiert.
