@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2019-09-14 02:42+0200\n"
-"PO-Revision-Date: 2019-09-14 12:06+0000\n"
+"PO-Revision-Date: 2019-09-14 12:07+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/es/>\n"
@@ -1225,19 +1225,21 @@ msgid ""
 "if a game uses the ScummVM save and load dialogs, they are in the same "
 "language as the game."
 msgstr ""
-"Cuando inicies un juego, cambia el idioma de la interfaz al idioma del "
-"juego. De esa manera, si el juego utiliza el guardado y cargado de diálogos "
-"del ScummVM, estará en el mismo idioma que el juego."
+"Al iniciar un juego, cambie el idioma de la GUI al idioma del juego. De esa "
+"manera, si un juego utiliza los cuadros de diálogo de guardar y cargar de "
+"ScummVM, estarán en el mismo idioma que el juego."
 
 #: gui/options.cpp:1736
 msgid "Use native system file browser"
-msgstr ""
+msgstr "Usa el buscador de archivos del sistema ScummVM"
 
 #: gui/options.cpp:1737
 msgid ""
 "Use the native system file browser instead of the ScummVM one to select a "
 "file or directory."
 msgstr ""
+"Use el explorador de archivos del sistema nativo en lugar del ScummVM para "
+"seleccionar un archivo o directorio."
 
 #: gui/options.cpp:1744 gui/updates-dialog.cpp:86
 msgid "Update check:"
@@ -1766,9 +1768,8 @@ msgid "Disabled GFX"
 msgstr "Gráf. desactivados"
 
 #: gui/ThemeEngine.cpp:253
-#, fuzzy
 msgid "Standard renderer"
-msgstr "Estándar"
+msgstr "Renderizado estándar"
 
 #: gui/ThemeEngine.cpp:253 engines/scumm/dialogs.cpp:660
 msgid "Standard"
@@ -1800,19 +1801,25 @@ msgid ""
 "Use the button below to copy the required game information into your "
 "clipboard."
 msgstr ""
+"Usa el botón de abajo para copiar la información del juego requerida en tu "
+"portapapeles."
 
 #: gui/unknown-game-dialog.cpp:113
 msgid "You can also directly report your game to the Bug Tracker."
 msgstr ""
+"También puedes informar directamente sobre tu juego al departamento Bug "
+"Tracker."
 
 #: gui/unknown-game-dialog.cpp:213
 msgid ""
 "All necessary information about your game has been copied into the clipboard"
 msgstr ""
+"Toda la información necesaria sobre tu juego ha sido copiada en el "
+"portapapeles."
 
 #: gui/unknown-game-dialog.cpp:215
 msgid "Copying the game information to the clipboard has failed!"
-msgstr ""
+msgstr "¡Copiar la información del juego en el portapapeles ha fallado!"
 
 #: gui/updates-dialog.cpp:49
 msgid ""
@@ -1890,7 +1897,7 @@ msgstr "Modo de color no compatible"
 
 #: common/error.cpp:46
 msgid "Audio device initialization failed"
-msgstr ""
+msgstr "Fallo al iniciar el dispositivo de Audio"
 
 #: common/error.cpp:49
 msgid "Read permission denied"
@@ -2461,17 +2468,17 @@ msgstr "Enter"
 #: backends/graphics/opengl/opengl-graphics.cpp:236
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:79
 msgid "Pixel-perfect scaling"
-msgstr ""
+msgstr "Escala Pixel-perfecto"
 
 #: backends/graphics/opengl/opengl-graphics.cpp:237
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:80
 msgid "Fit to window"
-msgstr ""
+msgstr "Ajustar a la ventana"
 
 #: backends/graphics/opengl/opengl-graphics.cpp:238
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:81
 msgid "Stretch to window"
-msgstr ""
+msgstr "Estirar a la ventana"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:603
 #, c-format
