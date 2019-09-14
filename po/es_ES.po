@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2019-09-14 02:42+0200\n"
-"PO-Revision-Date: 2019-08-29 19:14+0000\n"
-"Last-Translator: Rodrigo Vegas Sánchez-Ferrero <rodrigo.vegas@gmail.com>\n"
+"PO-Revision-Date: 2019-09-14 12:05+0000\n"
+"Last-Translator: Manuel <manolo_mtnez@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/es/>\n"
 "Language: es_ES\n"
@@ -943,9 +943,8 @@ msgid "Preferred device:"
 msgstr "Dispositivo preferido:"
 
 #: gui/options.cpp:1110
-#, fuzzy
 msgid "Music device:"
-msgstr "Disp. de música:"
+msgstr "Dispositivo de música:"
 
 #: gui/options.cpp:1110 gui/options.cpp:1112
 msgid "Specifies preferred sound device or sound card emulator"
@@ -959,16 +958,14 @@ msgstr ""
 "Especifica el dispositivo de sonido o emulador de tarjeta de sonido de salida"
 
 #: gui/options.cpp:1112
-#, fuzzy
 msgctxt "lowres"
 msgid "Preferred dev.:"
-msgstr "Disp. preferido:"
+msgstr "Disp. principal:"
 
 #: gui/options.cpp:1112
-#, fuzzy
 msgctxt "lowres"
 msgid "Music device:"
-msgstr "Disp. de música:"
+msgstr "Dispositivo de música:"
 
 #: gui/options.cpp:1139
 msgid "AdLib emulator:"
@@ -1125,9 +1122,8 @@ msgid "Music volume:"
 msgstr "Música:"
 
 #: gui/options.cpp:1297
-#, fuzzy
 msgid "Mute all"
-msgstr "Silenciar"
+msgstr "Silenciar todo"
 
 #: gui/options.cpp:1300
 msgid "SFX volume:"
@@ -1195,9 +1191,8 @@ msgid "Theme:"
 msgstr "Tema:"
 
 #: gui/options.cpp:1667
-#, fuzzy
 msgid "GUI renderer:"
-msgstr "Interfaz:"
+msgstr "Interfaz GPU:"
 
 #: gui/options.cpp:1679
 msgid "Autosave:"
@@ -1213,9 +1208,8 @@ msgid "Keys"
 msgstr "Teclas"
 
 #: gui/options.cpp:1696
-#, fuzzy
 msgid "GUI language:"
-msgstr "Idioma:"
+msgstr "Idioma GPU:"
 
 #: gui/options.cpp:1696
 msgid "Language of ScummVM GUI"
@@ -1223,7 +1217,7 @@ msgstr "Idioma de la interfaz de ScummVM"
 
 #: gui/options.cpp:1722
 msgid "Switch the GUI language to the game language"
-msgstr ""
+msgstr "Cambiar el idioma de la GPU al idioma del juego"
 
 #: gui/options.cpp:1723
 msgid ""
