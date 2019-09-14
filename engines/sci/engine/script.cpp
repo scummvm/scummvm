@@ -1068,7 +1068,7 @@ void Script::initializeClasses(SegManager *segMan) {
 	}
 }
 
-void Script::initializeObjectsSci0(SegManager *segMan, SegmentId segmentId) {
+void Script::initializeObjectsSci0(SegManager *segMan, SegmentId segmentId, bool applyScriptPatches) {
 	bool oldScriptHeader = (getSciVersion() == SCI_VERSION_0_EARLY);
 
 	// We need to make two passes, as the objects in the script might be in the
@@ -1089,10 +1089,10 @@ void Script::initializeObjectsSci0(SegManager *segMan, SegmentId segmentId) {
 					Object *obj;
 					if (pass == 1) {
 						obj = scriptObjInit(addr);
-						obj->initSpecies(segMan, addr);
+						obj->initSpecies(segMan, addr, applyScriptPatches);
 					} else {
 						obj = getObject(addr.getOffset());
-						if (!obj->initBaseObject(segMan, addr)) {
+						if (!obj->initBaseObject(segMan, addr, true, applyScriptPatches)) {
 							if ((_nr == 202 || _nr == 764) && g_sci->getGameId() == GID_KQ5) {
 								// WORKAROUND: Script 202 of KQ5 French and German
 								// (perhaps Spanish too?) has an invalid object.
@@ -1203,7 +1203,7 @@ void Script::initializeObjectsSci3(SegManager *segMan, SegmentId segmentId, bool
 
 void Script::initializeObjects(SegManager *segMan, SegmentId segmentId, bool applyScriptPatches) {
 	if (getSciVersion() <= SCI_VERSION_1_LATE)
-		initializeObjectsSci0(segMan, segmentId);
+		initializeObjectsSci0(segMan, segmentId, applyScriptPatches);
 	else if (getSciVersion() >= SCI_VERSION_1_1 && getSciVersion() <= SCI_VERSION_2_1_LATE)
 		initializeObjectsSci11(segMan, segmentId, applyScriptPatches);
 #ifdef ENABLE_SCI32

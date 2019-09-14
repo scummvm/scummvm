@@ -332,8 +332,9 @@ private:
 	 * Initializes the script's objects (SCI0)
 	 * @param segMan	A reference to the segment manager
 	 * @param segmentId	The script's segment id
+	 * @applyScriptPatches  Apply patches for the script, if available
 	 */
-	void initializeObjectsSci0(SegManager *segMan, SegmentId segmentId);
+	void initializeObjectsSci0(SegManager *segMan, SegmentId segmentId, bool applyScriptPatches);
 
 	/**
 	 * Initializes the script's objects (SCI1.1 - SCI2.1)

@@ -300,9 +300,9 @@ public:
 
 	int propertyOffsetToId(SegManager *segMan, int propertyOffset) const;
 
-	void initSpecies(SegManager *segMan, reg_t addr);
-	void initSuperClass(SegManager *segMan, reg_t addr);
-	bool initBaseObject(SegManager *segMan, reg_t addr, bool doInitSuperClass = true);
+	void initSpecies(SegManager *segMan, reg_t addr, bool applyScriptPatches);
+	void initSuperClass(SegManager *segMan, reg_t addr, bool applyScriptPatches);
+	bool initBaseObject(SegManager *segMan, reg_t addr, bool doInitSuperClass = true, bool applyScriptPatches = true);
 
 #ifdef ENABLE_SCI32
 	bool mustSetViewVisible(const int index, const bool fromPropertyOp) const;
