@@ -284,15 +284,15 @@ void AI::newDelivery(const char *itemTextName, const char *itemGfxName, const ch
 	}
 
 	if (itemTextName)
-		strcpy(_deliveries[i].itemTextName, itemTextName);
+		Common::strlcpy(_deliveries[i].itemTextName, itemTextName, sizeof(_deliveries[0].itemTextName));
 	if (itemGfxName)
-		strcpy(_deliveries[i].itemGfxName, itemGfxName);
+		Common::strlcpy(_deliveries[i].itemGfxName, itemGfxName, sizeof(_deliveries[0].itemGfxName));
 	if (destTextName)
-		strcpy(_deliveries[i].destTextName, destTextName);
+		Common::strlcpy(_deliveries[i].destTextName, destTextName, sizeof(_deliveries[0].destTextName));
 	if (destGfxName)
-		strcpy(_deliveries[i].destGfxName, destGfxName);
+		Common::strlcpy(_deliveries[i].destGfxName, destGfxName, sizeof(_deliveries[0].destGfxName));
 
-	strcpy(_deliveries[i].id, id);
+	Common::strlcpy(_deliveries[i].id, id, sizeof(_deliveries[0].id));
 
 	_numDeliveries++;
 
