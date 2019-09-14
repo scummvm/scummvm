@@ -841,9 +841,8 @@ void Menu::drawMenu() {
 					g_hdb->_gfx->drawText(_saveGames[i].mapName);
 
 					g_hdb->_gfx->setCursor(_saveSlotX + 180, i * 32 + _saveSlotY);
-					char buff[16];
-					sprintf(buff, "%02d:%02d", seconds / 3600, (seconds / 60) % 60);
-					g_hdb->_gfx->drawText(buff);
+					Common::String buff = Common::String::format("%02d:%02d", seconds / 3600, (seconds / 60) % 60);
+					g_hdb->_gfx->drawText(buff.c_str());
 				}
 			}
 		}
@@ -1605,11 +1604,11 @@ void Menu::processInput(int x, int y) {
 				g_hdb->_gfx->updateVideo();
 			_warpActive = 0;
 
-			char string[16];
-			sprintf(string, "MAP%02d", map);
+			Common::String mapString = Common::String::format("MAP%02d", map);
 
-			if (g_hdb->isDemo())
-				strcat(string, "_DEMO");
+			if (g_hdb->isDemo()) {
+				mapString += "_DEMO";
+			}
 
 			freeMenu();
 			g_hdb->setGameState(GAME_PLAY);
@@ -1617,7 +1616,7 @@ void Menu::processInput(int x, int y) {
 			g_hdb->_ai->clearPersistent();
 			g_hdb->resetTimer();
 			g_hdb->_sound->playSound(SND_POP);
-			g_hdb->startMap(string);
+			g_hdb->startMap(mapString.c_str());
 		}
 	} else if (_quitActive) {
 		//-------------------------------------------------------------------
