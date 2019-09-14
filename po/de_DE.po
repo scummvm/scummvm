@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2019-09-14 02:42+0200\n"
-"PO-Revision-Date: 2019-09-06 04:54+0000\n"
+"PO-Revision-Date: 2019-09-14 06:25+0000\n"
 "Last-Translator: Lothar Serra Mari <serra@scummvm.org>\n"
 "Language-Team: German <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/de/>\n"
@@ -1362,13 +1362,11 @@ msgid "<never>"
 msgstr "<nie>"
 
 #: gui/options.cpp:1937
-#, fuzzy
 msgctxt "lowres"
 msgid "Saved games sync automatically on launch, after saving and on loading."
 msgstr "Spielstände werden automatisch synchronisiert."
 
 #: gui/options.cpp:1939
-#, fuzzy
 msgid "Saved games sync automatically on launch, after saving and on loading."
 msgstr "Spielstände werden automatisch synchronisiert."
 
@@ -1377,7 +1375,6 @@ msgid "Sync now"
 msgstr "Synchronisieren"
 
 #: gui/options.cpp:1940
-#, fuzzy
 msgid "Start saved games sync"
 msgstr "Starte Spielstand-Synchronisation"
 
@@ -2095,23 +2092,23 @@ msgid "~K~eys"
 msgstr "~T~asten"
 
 #: engines/engine.cpp:312
-#, fuzzy, c-format
+#, c-format
 msgid "Could not switch to resolution '%dx%d'."
-msgstr "Fehler beim Wechsel in Skaliermodus: '"
+msgstr "Auflösung '%dx%d' konnte nicht ausgewählt werden."
 
 #: engines/engine.cpp:321
 msgid "Could not initialize color format."
 msgstr "Konnte Farbenformat nicht initialisieren."
 
 #: engines/engine.cpp:330
-#, fuzzy, c-format
+#, c-format
 msgid "Could not switch to video mode '%s'."
-msgstr "Konnte nicht zu Grafikmodus wechseln: \""
+msgstr "Video-Modus '%s' konnte nicht ausgewählt werden."
 
 #: engines/engine.cpp:338
-#, fuzzy, c-format
+#, c-format
 msgid "Could not switch to stretch mode '%s'."
-msgstr "Fehler beim Wechsel in Skaliermodus: '"
+msgstr "Skalier-Modus '%s' konnte nicht ausgewählt werden."
 
 #: engines/engine.cpp:345
 msgid "Could not apply aspect ratio setting."
