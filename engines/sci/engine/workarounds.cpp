@@ -1214,6 +1214,9 @@ static const SciMessageWorkaroundEntry messageWorkarounds[] = {
 	{ GID_PQ1,           SCI_MEDIA_ALL,    K_LANG_NONE,     -1,   38,  10,   1,   0,  1, { MSG_WORKAROUND_EXTRACT,   38,  10,   1,  13,  1, 99,   0,   0, NULL } },
 	// Talking to Kaspar the shopkeeper - bug #6250
 	{ GID_QFG1VGA,       SCI_MEDIA_ALL,    K_LANG_NONE,     -1,  322,  14,   1,  19,  1, { MSG_WORKAROUND_REMAP,    322,  14,   2,  19,  1,  0,   0,   0, NULL } },
+	// Remove the "a:" floppy drive prefix from the default character export
+	//  filename "a:shadows.sav". We do this for SCI16 games in kDrawControl.
+	{ GID_QFG4,          SCI_MEDIA_ALL,    K_LANG_NONE,     -1,   52,   2,   0,  10,  1, { MSG_WORKAROUND_EXTRACT,   52,   2,   0,  10,  1, 99,   2,  11, NULL } },
 	// Talking with the Leshy and telling him about "bush in goo" - bug #10137
 	{ GID_QFG4,          SCI_MEDIA_ALL,    K_LANG_NONE,     -1,  579,   0,   0,   0,  1, { MSG_WORKAROUND_REMAP,    579,   0,   1,   0,  1,  0,   0,   0, NULL } },
 	// Examining the statue inventory item from the monastery - bug #10770
