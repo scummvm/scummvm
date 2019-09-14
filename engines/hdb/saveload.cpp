@@ -66,9 +66,9 @@ Common::Error HDBGame::saveGameState(int slot, const Common::String &desc) {
 	Graphics::saveThumbnail(*out);
 
 	_saveHeader.fileSlot = 0;
-	strcpy(_saveHeader.saveID, saveFileName.c_str());
+	Common::strlcpy(_saveHeader.saveID, saveFileName.c_str(), sizeof(_saveHeader.saveID));
 	_saveHeader.seconds = _timeSeconds + (_timePlayed / 1000);
-	strcpy(_saveHeader.mapName, _inMapName);
+	Common::strlcpy(_saveHeader.mapName, _inMapName, sizeof(_saveHeader.mapName));
 
 	// Actual Save Data
 	saveGame(out);
@@ -174,7 +174,7 @@ void HDBGame::loadGame(Common::InSaveFile *in) {
 
 	g_hdb->_sound->stopMusic();
 	_saveHeader.seconds = _timeSeconds;
-	strcpy(_saveHeader.mapName, _inMapName);
+	Common::strlcpy(_saveHeader.mapName, _inMapName, sizeof(_saveHeader.mapName));
 
 	// Load Map Object Data
 	debug(1, "HDBGame::loadGame: map at %u", in->pos());
