@@ -9,7 +9,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2019-09-14 02:42+0200\n"
 "PO-Revision-Date: 2019-09-14 12:06+0000\n"
-"Last-Translator: Rafa³ Bêd¼kowski <ravcik@gmail.com>\n"
+"Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Polish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/pl/>\n"
 "Language: pl_PL\n"
@@ -851,7 +851,7 @@ msgstr "nie uda³o siê zmieniæ trybu filtrowania"
 
 #: gui/options.cpp:996
 msgid "Show On-screen control"
-msgstr ""
+msgstr "Poka¿ kontrole na ekranie"
 
 #: gui/options.cpp:1000
 #, fuzzy
@@ -860,35 +860,33 @@ msgstr "Tryb touchpada wy³±czony."
 
 #: gui/options.cpp:1004
 msgid "Swap Menu and Back buttons"
-msgstr ""
+msgstr "Zamieñ przyciski menu i wstecz"
 
 #: gui/options.cpp:1009
-#, fuzzy
 msgid "Pointer Speed:"
-msgstr "Szybko¶æ:"
+msgstr "Szybko¶æ wska¼nika:"
 
 #: gui/options.cpp:1009 gui/options.cpp:1011 gui/options.cpp:1012
 msgid "Speed for keyboard/joystick mouse pointer control"
-msgstr ""
+msgstr "Szybko¶æ kursora dla klawiatury/joysticka, myszy"
 
 #: gui/options.cpp:1011
-#, fuzzy
 msgctxt "lowres"
 msgid "Pointer Speed:"
-msgstr "Szybko¶æ:"
+msgstr "Szybko¶æ wska¼nika:"
 
 #: gui/options.cpp:1022
 msgid "Joy Deadzone:"
-msgstr ""
+msgstr "Martwa strefa joysticka:"
 
 #: gui/options.cpp:1022 gui/options.cpp:1024 gui/options.cpp:1025
 msgid "Analog joystick Deadzone"
-msgstr ""
+msgstr "Martwa strefa analogowego joysticka"
 
 #: gui/options.cpp:1024
 msgctxt "lowres"
 msgid "Joy Deadzone:"
-msgstr ""
+msgstr "Martwa strefa joysticka:"
 
 #: gui/options.cpp:1038
 msgid "HW Shader:"
@@ -896,16 +894,16 @@ msgstr ""
 
 #: gui/options.cpp:1038 gui/options.cpp:1040
 msgid "Different hardware shaders give different visual effects"
-msgstr ""
+msgstr "Ró¿ne shadery sprzêtowe zapewniaj± ró¿ne efekty wizualne"
 
 #: gui/options.cpp:1040
 msgctxt "lowres"
 msgid "HW Shader:"
-msgstr ""
+msgstr "Shader sprzêtowy:"
 
 #: gui/options.cpp:1041
 msgid "Different shaders give different visual effects"
-msgstr ""
+msgstr "Ró¿ne shadery zapewniaj± ró¿ne efekty wizualne"
 
 #: gui/options.cpp:1058
 msgid "Graphics mode:"
@@ -921,7 +919,7 @@ msgstr "Specjalne tryby ditheringu wspierane przez niektóre gry"
 
 #: gui/options.cpp:1085
 msgid "Stretch mode:"
-msgstr ""
+msgstr "Tryb rozci±gania:"
 
 #: gui/options.cpp:1096 backends/graphics/sdl/sdl-graphics.cpp:354
 msgid "Fullscreen mode"
@@ -1127,9 +1125,8 @@ msgid "Music volume:"
 msgstr "G³o¶no¶æ muzyki:"
 
 #: gui/options.cpp:1297
-#, fuzzy
 msgid "Mute all"
-msgstr "Wycisz"
+msgstr "Wycisz wszystko"
 
 #: gui/options.cpp:1300
 msgid "SFX volume:"
@@ -1155,12 +1152,11 @@ msgstr "G³o¶no¶æ mowy:"
 
 #: gui/options.cpp:1562
 msgid "Shader"
-msgstr ""
+msgstr "Shader"
 
 #: gui/options.cpp:1574
-#, fuzzy
 msgid "Control"
-msgstr "Steruj myszk±"
+msgstr "Kontrola"
 
 #: gui/options.cpp:1600
 msgid "FluidSynth Settings"
@@ -1226,7 +1222,7 @@ msgstr "Jêzyk interfejsu ScummVM"
 
 #: gui/options.cpp:1722
 msgid "Switch the GUI language to the game language"
-msgstr ""
+msgstr "Zmieñ jêzyk interfejsu do jêzyka gry"
 
 #: gui/options.cpp:1723
 msgid ""
@@ -1237,7 +1233,7 @@ msgstr ""
 
 #: gui/options.cpp:1736
 msgid "Use native system file browser"
-msgstr ""
+msgstr "U¿yj natywnego eksploratora"
 
 #: gui/options.cpp:1737
 msgid ""
@@ -1519,20 +1515,20 @@ msgid "Another cloud storage is already active."
 msgstr "Inna us³uga przechowywania jest ju¿ aktywna."
 
 #: gui/options.cpp:2145
-#, fuzzy
 msgid "Theme does not support selected language!"
-msgstr "Silnik nie wspiera zapisu stanu gry"
+msgstr "Motyw nie wespiera wybranego jêzyka!"
 
 #: gui/options.cpp:2148
-#, fuzzy
 msgid "Theme cannot be loaded!"
-msgstr "NIE wczytano gry"
+msgstr "Motyw nie mo¿e byæ wczytany!"
 
 #: gui/options.cpp:2151
 msgid ""
 "\n"
 "Misc settings will be restored."
 msgstr ""
+"\n"
+"Ró¿ne ustawienia zostan± przywrócone."
 
 #: gui/options.cpp:2208
 msgid "The chosen directory cannot be written to. Please select another one."
@@ -1794,18 +1790,17 @@ msgstr "W³±cz mimo tego"
 
 #: gui/unknown-game-dialog.cpp:59
 msgid "Copy to clipboard"
-msgstr ""
+msgstr "Kopiuj do schowka"
 
 #: gui/unknown-game-dialog.cpp:65
-#, fuzzy
 msgid "Report game"
-msgstr "Wznów grê:"
+msgstr "Reportuj grê"
 
 #: gui/unknown-game-dialog.cpp:108
 msgid ""
 "Use the button below to copy the required game information into your "
 "clipboard."
-msgstr ""
+msgstr "U¿yj przycisku poni¿ej ¿eby skopiowaæ wymagan± informacje o grze."
 
 #: gui/unknown-game-dialog.cpp:113
 msgid "You can also directly report your game to the Bug Tracker."
@@ -1814,11 +1809,11 @@ msgstr ""
 #: gui/unknown-game-dialog.cpp:213
 msgid ""
 "All necessary information about your game has been copied into the clipboard"
-msgstr ""
+msgstr "Wszystkie potrzebne informacje o twojej grze zosta³y skopiowane"
 
 #: gui/unknown-game-dialog.cpp:215
 msgid "Copying the game information to the clipboard has failed!"
-msgstr ""
+msgstr "Kopiowanie informacji gry nie powiod³o siê!"
 
 #: gui/updates-dialog.cpp:49
 #, fuzzy
@@ -1837,6 +1832,8 @@ msgid ""
 "You can change this setting later in the Misc tab\n"
 "in the Options dialog."
 msgstr ""
+"Pó¼niej mo¿esz zmieniæ tê opcjê w zak³adce Ró¿ne\n"
+"w oknie Opcje."
 
 #: gui/updates-dialog.cpp:116
 msgid "Proceed"
@@ -1896,7 +1893,7 @@ msgstr "Niewspierany tryb kolorów"
 
 #: common/error.cpp:46
 msgid "Audio device initialization failed"
-msgstr ""
+msgstr "Urz±dzenie audio zawiod³o"
 
 #: common/error.cpp:49
 msgid "Read permission denied"
@@ -2191,7 +2188,7 @@ msgstr ""
 #: engines/game.cpp:170
 #, c-format
 msgid "Matched game IDs for the %s engine:"
-msgstr ""
+msgstr "Pasuj±ce identyfikatory gry dla silnika %s:"
 
 #: audio/adlib.cpp:2290
 #, fuzzy
@@ -2336,6 +2333,8 @@ msgid ""
 "Download complete.\n"
 "Failed to download %u files."
 msgstr ""
+"Pobieranie ukoñczone.\n"
+"Nie uda³o siê pobraæ %u plik(u/ów)."
 
 #: backends/cloud/storage.cpp:351
 #, fuzzy
@@ -2462,7 +2461,7 @@ msgstr "Enter"
 #: backends/graphics/opengl/opengl-graphics.cpp:236
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:79
 msgid "Pixel-perfect scaling"
-msgstr ""
+msgstr "Rozmiar rzeczywisty"
 
 #: backends/graphics/opengl/opengl-graphics.cpp:237
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:80
@@ -2703,7 +2702,7 @@ msgstr "Miniaturka"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:214
 msgid "Help"
-msgstr ""
+msgstr "Pomoc"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:215
 #, fuzzy
@@ -3199,17 +3198,19 @@ msgstr "Zielony Hercules"
 
 #: engines/agi/detection.cpp:178
 msgid "Uses Hercules hires font, when font file is available."
-msgstr ""
+msgstr "U¿yj czcionki Hercules w wysokiej rozdzielczo¶ci, je¶li jest dostêpna."
 
 #: engines/agi/detection.cpp:187
 msgid "Pause when entering commands"
-msgstr ""
+msgstr "Pauzuj w trakcie wprowadzania poleceñ"
 
 #: engines/agi/detection.cpp:188
 msgid ""
 "Shows a command prompt window and pauses the game (like in SCI) instead of a "
 "real-time prompt."
 msgstr ""
+"Pokazuje okno wiersza poleceñ i wstrzymuje grê (jak w trybie SCI), zamiast "
+"u¿ywaæ wiersza poleceñ w czasie rzeczywistym."
 
 #: engines/agi/saveload.cpp:774 engines/avalanche/parser.cpp:1888
 #: engines/cge/events.cpp:83 engines/cge2/events.cpp:75
@@ -3791,11 +3792,11 @@ msgstr "Ekwipunek"
 
 #: engines/kyra/engine/eobcommon.cpp:359
 msgid "Switch Inventory/Character screen"
-msgstr ""
+msgstr "Prze³±cz ekran Ekwipunek/Postaæ"
 
 #: engines/kyra/engine/eobcommon.cpp:360
 msgid "Camp"
-msgstr ""
+msgstr "Obozuj"
 
 #: engines/kyra/engine/eobcommon.cpp:361
 #, fuzzy
@@ -3804,27 +3805,27 @@ msgstr "Wybierz zaklêcie"
 
 #: engines/kyra/engine/eobcommon.cpp:364
 msgid "Spell Level 1"
-msgstr ""
+msgstr "Zaklêcie poziomu 1"
 
 #: engines/kyra/engine/eobcommon.cpp:365
 msgid "Spell Level 2"
-msgstr ""
+msgstr "Zaklêcie poziomu 2"
 
 #: engines/kyra/engine/eobcommon.cpp:366
 msgid "Spell Level 3"
-msgstr ""
+msgstr "Zaklêcie poziomu 3"
 
 #: engines/kyra/engine/eobcommon.cpp:367
 msgid "Spell Level 4"
-msgstr ""
+msgstr "Zaklêcie poziomu 4"
 
 #: engines/kyra/engine/eobcommon.cpp:368
 msgid "Spell Level 5"
-msgstr ""
+msgstr "Zaklêcie poziomu 5"
 
 #: engines/kyra/engine/eobcommon.cpp:377
 msgid "Spell Level 6"
-msgstr ""
+msgstr "Zaklêcie poziomu 6"
 
 #: engines/kyra/engine/lol.cpp:478
 msgid "Attack 1"
@@ -3949,7 +3950,7 @@ msgstr ""
 
 #: engines/mads/detection.cpp:91
 msgid "Easy mouse interface"
-msgstr ""
+msgstr "Prosty interfejs dla myszy"
 
 #: engines/mads/detection.cpp:92
 #, fuzzy
@@ -3958,11 +3959,11 @@ msgstr "Poka¿ etykiety obiektów przy najechaniu myszk±"
 
 #: engines/mads/detection.cpp:101 engines/mads/detection.cpp:102
 msgid "Animated inventory items"
-msgstr ""
+msgstr "Animowane przedmioty w ekwipunku"
 
 #: engines/mads/detection.cpp:111 engines/mads/detection.cpp:112
 msgid "Animated game interface"
-msgstr ""
+msgstr "Animowany interfejs gry"
 
 #: engines/mads/detection.cpp:121 engines/mads/detection.cpp:122
 msgid "Naughty game mode"
@@ -4026,7 +4027,7 @@ msgstr "OpenGL (normalny)"
 
 #: engines/mohawk/dialogs.cpp:293
 msgid "Best"
-msgstr ""
+msgstr "Najlepsza"
 
 #: engines/mohawk/mohawk.cpp:55
 #, fuzzy
@@ -4039,6 +4040,8 @@ msgid ""
 "Are you sure you want to load a saved game? All unsaved progress will be "
 "lost."
 msgstr ""
+"Czy na pewno chcesz wczytaæ zapisan± grê? Niezapisane postêpy zostan± "
+"utracone."
 
 #: engines/mohawk/myst_stacks/menu.cpp:284
 #: engines/mohawk/riven_stacks/aspit.cpp:350
@@ -4051,6 +4054,8 @@ msgstr "Wczytaj grê:"
 msgid ""
 "Are you sure you want to start a new game? All unsaved progress will be lost."
 msgstr ""
+"Czy na pewno chcesz zacz±æ now± grê? Wszystkie niezapisane postêpy zostan± "
+"utracone."
 
 #: engines/mohawk/myst_stacks/menu.cpp:301
 #: engines/mohawk/riven_stacks/aspit.cpp:372
@@ -4069,28 +4074,36 @@ msgid ""
 "You're missing a Riven executable. The Windows executable is 'riven.exe' or "
 "'rivendmo.exe'. "
 msgstr ""
+"Brakuje ci pliku wykonywalnego gry Riven. W systemie Windows jest to \"riven."
+"exe\" lub \"rivendmo.exe\". "
 
 #: engines/mohawk/riven.cpp:159
 msgid ""
 "Using the 'arcriven.z' installer file also works. In addition, you can use "
 "the Mac 'Riven' executable."
 msgstr ""
+"Zadzia³a równie¿ u¿ycie pliku instalatora \"arcriven.z\". Dodatkowo mo¿esz "
+"u¿yæ pliku wykonywalnego \"Riven\" dla systemu Mac."
 
 #: engines/mohawk/riven.cpp:170
 msgid ""
 "You're missing 'extras.mhk'. Using the 'arcriven.z' installer file also "
 "works."
 msgstr ""
+"Brakuje ci pliku \"extras.mhk\". Mo¿na równie¿ u¿yæ pliku instalatora \""
+"arcriven.z."
 
 #: engines/mohawk/riven.cpp:515
 msgid "You are missing the following required Riven data files:\n"
-msgstr ""
+msgstr "Brakuje ci nastêpuj±cych, wymaganych plików gry Riven:\n"
 
 #: engines/mohawk/riven_stack.cpp:204
 msgid ""
 "Exploration beyond this point available only within the full version of\n"
 "the game."
 msgstr ""
+"Dalsza eksploracja jest dostêpna tylko w pe³nej wersji\n"
+"tej gry."
 
 #: engines/mohawk/riven_stacks/aspit.cpp:429
 msgid ""
@@ -4100,6 +4113,11 @@ msgid ""
 "the game. ScummVM cannot do that and\n"
 "the site no longer exists."
 msgstr ""
+"W tym miejscu wersja demo gry Riven\n"
+"zapyta³aby czy chcesz otworzyæ przegl±darkê\n"
+"i przej¶æ do sklepu Red Orb, by kupiæ grê.\n"
+"ScummVM nie mo¿e tego zrobiæ, a strona\n"
+"ju¿ nie istnieje."
 
 #: engines/neverhood/detection.cpp:184
 msgid "Skip the Hall of Records storyboard scenes"
@@ -4245,11 +4263,11 @@ msgstr "W³±cz tryb Roland GS"
 
 #: engines/sci/detection.cpp:416
 msgid "Draw black lines over videos to increase their apparent sharpness"
-msgstr ""
+msgstr "Rysuj czarne linie na filmikach, ¿eby zwiêkszyæ ich pozorn± ostro¶æ"
 
 #: engines/sci/detection.cpp:426
 msgid "Use high-quality video scaling"
-msgstr ""
+msgstr "U¿yj skalowania filmów w wysokiej jako¶ci"
 
 #: engines/sci/detection.cpp:427
 #, fuzzy
@@ -4263,6 +4281,7 @@ msgstr ""
 #: engines/sci/detection.cpp:438
 msgid "Use special cartoon scaler for drawing character sprites"
 msgstr ""
+"U¿ywaj specjalnego, kreskówkowego skalowania do rysowania sprite'ów postaci"
 
 #: engines/sci/detection.cpp:447
 msgid "Prefer digital sound effects"
@@ -4320,15 +4339,15 @@ msgstr "W³±cz p³ywaj±ce kursory"
 
 #: engines/sci/detection.cpp:512
 msgid "Enable the game's built-in optional content censoring"
-msgstr ""
+msgstr "W³±cz opcjonaln±, wbudowan± w grê cenzurê zawarto¶ci"
 
 #: engines/sci/detection.cpp:522
 msgid "Upscale videos"
-msgstr ""
+msgstr "Powiêkszaj filmy"
 
 #: engines/sci/detection.cpp:523
 msgid "Upscale videos to double their size"
-msgstr ""
+msgstr "Powiêkszaj filmy dwókrotnie"
 
 #: engines/sci/detection.cpp:853 engines/sci/engine/kfile.cpp:481
 #, fuzzy
@@ -4343,26 +4362,32 @@ msgid ""
 "was saved in: 'qfg1-' for Quest for Glory 1, 'qfg2-' for Quest for Glory 2. "
 "Example: 'qfg2-thief.sav'."
 msgstr ""
+"Postacie zapisane przez ScummVM s± pokazywane automatycznie. Pliki postaci, "
+"zapisane oryginalnym programem, musz± byæ umieszczone f folderze zapisanych "
+"gier ScummVM i nale¿y dodaæ do nich przedrostek, zale¿ny od gry, w której "
+"zosta³y utworzone:  \"qfg1-\" dla Quest for Glory 1, \"qfg2-\" dla Quest for "
+"Glory 2. Przyk³ad: 'qfg2-thief.sav'."
 
 #: engines/sci/engine/kgraphics32.cpp:358
 #, c-format
 msgid "Please use an external viewer to open the game's help file: %s"
-msgstr ""
+msgstr "U¿yj zewnêtrznego programu by otworzyæ plik pomocy gry: %s"
 
 #: engines/sci/engine/savegame.cpp:1300
 msgid "The format of this saved game is obsolete, unable to load it"
-msgstr ""
+msgstr "Format tego zapisu gry jest przestarza³y. Nie mo¿na go wczytaæ."
 
 #: engines/sci/engine/savegame.cpp:1302
 #, c-format
 msgid "Savegame version is %d, maximum supported is %0d"
-msgstr ""
+msgstr "Wersja zapisu gry to %d. Maksymalna, wspierana wersja to %0d"
 
 #: engines/sci/engine/savegame.cpp:1313
 msgid ""
 "This saved game was created with a different version of the game, unable to "
 "load it"
 msgstr ""
+"Ten zapis gry zosta³ utworzony w innej wersji gry. Nie mo¿na go wczytaæ."
 
 #: engines/sci/resource.cpp:827
 msgid ""
@@ -4370,6 +4395,9 @@ msgid ""
 "not work properly. Please check the console for more information, and verify "
 "that your game files are valid."
 msgstr ""
+"Wykryto brakuj±ce lub uszkodzone zasoby gry. Niektóre funkcje mog± nie "
+"dzia³aæ w³a¶ciwie. Wiêcej informacji znajdziesz w konsoli. Upewnij siê, ¿e "
+"pliki twojej gry s± prawid³owe."
 
 #: engines/sci/sci.cpp:385
 msgid ""
@@ -4379,6 +4407,11 @@ msgid ""
 "not always render properly or reflect the actual game speech. This is not a "
 "ScummVM bug -- it is a problem with the game's assets."
 msgstr ""
+"Napisy s± w³±czone, ale w grze King's Quest 7 ta opcja nie zosta³a ukoñczona "
+"i wy³±czono j± w finalnej wersji gry. ScummVM pozwala na ponowne w³±czenie "
+"napisów, ale poniewa¿ zosta³y one usuniête z oryginalnej gry, nie zawsze "
+"wy¶wietlaj± siê w³a¶ciwie lub odpowiadaj± wypowiadanym kwestiom. To nie jest "
+"b³±d w programie ScummVM -- to problem z zasobami gry."
 
 #: engines/sci/sci.cpp:409
 msgid ""
@@ -4392,6 +4425,14 @@ msgid ""
 "place it in the game folder. Without this patch, General MIDI music for this "
 "game will sound badly distorted."
 msgstr ""
+"Wybra³e¶ General MIDI, jako ¼ród³o d¼wiêku. Sierra dostarczy³a wsparcie dla "
+"General MIDI dla tej gry w \"General MIDI Utility\". Zastosuj ten patch, by "
+"cieszyæ siê muzyk± MIDI W tej grze. Po uzyskaniu, mo¿esz rozpakowaæ "
+"wszystkie pliki *.PAT w folderze dodatków ScummVM, a program automatycznie "
+"doda odpowiedni patch. Mo¿esz te¿ skorzystaæ z instrukcji w pliku READ.ME "
+"do³±czonym do patcha i zmieniæ nazwê odpowiedniego pliku *.PAT na 4.PAT i "
+"umie¶ciæ go w folderze z gr±. Bez tego patcha, muzyka General MIDI w tej "
+"grze bêdzie mocno zniekszta³cona."
 
 #: engines/sci/sci.cpp:428
 msgid ""
@@ -4401,6 +4442,10 @@ msgid ""
 "remove this patch from your game folder in order to avoid having unexpected "
 "errors and/or issues later on."
 msgstr ""
+"Twoja gra zosta³a spatchowana fanowsk± modyfikacj± skryptu. Takie patche "
+"mog± powodowaæ problemy, gdy¿ mocno modyfikuj± skrypty gry. Problemy, "
+"naprawiane przez te patche, nie wystêpuj± w ScummVM, wiêc radzimy usun±æ tê "
+"³atkê z folderu gry, by unikn±æ nieoczekiwanych b³êdów i/lub problemów."
 
 #: engines/sci/sound/music.cpp:161
 msgid ""
@@ -4432,6 +4477,10 @@ msgid ""
 "tried\n"
 "to add and its version, language, etc.:\n"
 msgstr ""
+"Twoja gra wygl±da na nieznan±. Je¶li to *NIE* fanowska modyfikacja\n"
+"(w szczególno¶ci fanowskie t³umaczenie), podaj zespo³owi ScummVM\n"
+"nastêpuj±ce dane, wraz z nazw± gry, któr± próbowa³e¶ dodaæ, jej\n"
+"wersj±, jêzykiem itp.:\n"
 
 #: engines/scumm/detection.cpp:1141
 msgid ""
@@ -4439,6 +4488,9 @@ msgid ""
 "piracy.\n"
 "The full version is available for purchase from the iTunes Store."
 msgstr ""
+"Wersja Lite gry Putt-Putt Saves the Zoo iOS nie jest obs³ugiwana, by unikn±æ "
+"piractwa.\n"
+"Pe³n± wersjê mo¿na nabyæ w sklepie iTunes."
 
 #: engines/scumm/detection.cpp:1352
 #, fuzzy
@@ -4447,7 +4499,7 @@ msgstr "Poka¿ etykiety obiektów"
 
 #: engines/scumm/detection.cpp:1353
 msgid "Show the names of objects at the bottom of the screen"
-msgstr ""
+msgstr "Pokazuj nazwy obiektów na dole ekranu"
 
 #: engines/scumm/dialogs.cpp:172
 #, c-format
@@ -5210,7 +5262,7 @@ msgstr "Wy¶wietlaj okna z pó³przezroczystym t³em"
 
 #: engines/sky/compact.cpp:141
 msgid "The \"sky.cpt\" engine data file has an incorrect size."
-msgstr ""
+msgstr "Plik silnika \"sky.cpt\" ma niew³a¶ciwy rozmiar."
 
 #: engines/sky/detection.cpp:44
 msgid "Floppy intro"
@@ -5230,6 +5282,8 @@ msgstr ""
 msgid ""
 "Incorrect version of the '%s' engine data file found. Expected %d but got %d."
 msgstr ""
+"Znaleziono niew³a¶ciw± wersjê silnika \"%s1\". Oczekiwano %d2 ale otrzymano "
+"%d3."
 
 #: engines/supernova/supernova.cpp:483
 #, c-format
@@ -5323,12 +5377,14 @@ msgstr "Poka¿ etykiety obiektów przy najechaniu myszk±"
 
 #: engines/sword25/detection.cpp:46
 msgid "Use English speech"
-msgstr ""
+msgstr "U¿yj angielskich g³osów"
 
 #: engines/sword25/detection.cpp:47
 msgid ""
 "Use English speech instead of German for every language other than German"
 msgstr ""
+"U¿yj angielskich g³osów zamiast niemieckich, dla ka¿dego jêzyka, poza "
+"niemieckim."
 
 #: engines/teenagent/resources.cpp:118
 msgid ""
@@ -5341,7 +5397,7 @@ msgstr ""
 #: engines/tony/tony.cpp:258
 #, c-format
 msgid "Font variant not present in '%s' engine data file."
-msgstr ""
+msgstr "Wariant fontu nieobecny w pliku silnika \"%s\"."
 
 #: engines/toon/toon.cpp:222
 #, fuzzy, c-format
@@ -5353,7 +5409,7 @@ msgstr ""
 #: engines/toon/toon.cpp:226
 #, c-format
 msgid "Could not quick save into slot #%d"
-msgstr ""
+msgstr "Szybki zapis w slocie #%d nie powiód³ siê"
 
 #: engines/toon/toon.cpp:239
 #, fuzzy, c-format
@@ -5377,11 +5433,11 @@ msgstr "Wy¶wietl aktualn± liczbê klatek na sekundê w lewym, górnym logu"
 
 #: engines/wintermute/detection.cpp:69
 msgid "Sprite bilinear filtering (SLOW)"
-msgstr ""
+msgstr "Dwuliniowe filtrowanie sprite'ów (WOLNE)"
 
 #: engines/wintermute/detection.cpp:70
 msgid "Apply bilinear filtering to individual sprites"
-msgstr ""
+msgstr "Stosuj filtrowanie dwuliniowe do poszczególnych sprite'ów"
 
 #: engines/wintermute/wintermute.cpp:153
 msgid "This game requires PNG, JPEG and Vorbis support."
@@ -5394,21 +5450,25 @@ msgstr ""
 
 #: engines/xeen/detection.cpp:97
 msgid "Show item costs in standard inventory mode"
-msgstr ""
+msgstr "Pokazuj koszt przedmiotów w standardowym trybie ekwipunku"
 
 #: engines/xeen/detection.cpp:98
 msgid ""
 "Shows item costs in standard inventory mode, allowing the value of items to "
 "be compared"
 msgstr ""
+"Pokazuje koszt przedmiotów w standardowym trybie ekwipunku, co pozwala na "
+"porównywanie ich warto¶ci."
 
 #: engines/xeen/detection.cpp:107
 msgid "More durable armor"
-msgstr ""
+msgstr "Wytrzymalszy pancerz"
 
 #: engines/xeen/detection.cpp:108
 msgid "Armor won't break until character is at -80HP, rather than merely -10HP"
 msgstr ""
+"Pancerz nie pêknie, dopóki postaæ nie bêdzie mieæ -80P¯, zamiast zaledwie "
+"-10P¯"
 
 #: engines/zvision/detection_tables.h:61
 msgid "Double FPS"
@@ -5449,6 +5509,8 @@ msgid ""
 "This saved game uses version %u, but this engine only supports up to version "
 "%d. You will need an updated version of the engine to use this saved game."
 msgstr ""
+"Ten zapis gry korzysta z wersji %u, ale ten silnik wspiera tylko wersje do %"
+"d. Bêdziesz potrzebowaæ uaktualnionej wersji silnika, ¿eby u¿yæ tego zapisu."
 
 #, fuzzy
 #~ msgid "Color mode"
