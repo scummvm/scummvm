@@ -436,6 +436,12 @@ bool MessageState::stringStage(Common::String &outstr, const Common::String &inS
 			return true;
 		}
 
+		// For Russian we allow all upper characters
+		if (g_sci->getLanguage() == Common::RU_RUS) {
+			if ((inStr[i] >= 'a') || ((inStr[i] >= '0') && (inStr[i] <= '9') && (getSciVersion() < SCI_VERSION_2)))
+				return false;
+		}
+
 		// If we find a lowercase character or a digit, it's not a stage direction
 		// SCI32 seems to support having digits in stage directions
 		if (((inStr[i] >= 'a') && (inStr[i] <= 'z')) || ((inStr[i] >= '0') && (inStr[i] <= '9') && (getSciVersion() < SCI_VERSION_2)))
