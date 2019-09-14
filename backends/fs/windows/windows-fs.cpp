@@ -220,8 +220,6 @@ bool WindowsFilesystemNode::getChildren(AbstractFSList &myList, ListMode mode, b
 }
 
 AbstractFSNode *WindowsFilesystemNode::getParent() const {
-	assert(_isValid || _isPseudoRoot);
-
 	if (_isPseudoRoot)
 		return 0;
 
