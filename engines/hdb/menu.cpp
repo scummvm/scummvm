@@ -857,27 +857,27 @@ void Menu::drawMenu() {
 		_titleLogo->drawMasked(centerPic(_titleLogo), _rocketY + _mTitleY);
 		_menuBackoutGfx->drawMasked(_warpBackoutX, g_hdb->_menu->_warpBackoutY);
 
-		char string[32];
+		Common::String textString;
 		for (int i = 0; i < 10; i++) {
-			sprintf(string, "Map %2d", i);
+			textString = Common::String::format("Map %2d", i);
 			g_hdb->_gfx->setCursor(_warpX + 4, i * 16 + _warpY);
-			g_hdb->_gfx->drawText(string);
+			g_hdb->_gfx->drawText(textString.c_str());
 		}
 		for (int i = 0; i < 10; i++) {
-			sprintf(string, "Map %d", i + 10);
+			textString = Common::String::format("Map %d", i + 10);
 			g_hdb->_gfx->setCursor(_warpX + 80, i * 16 + _warpY);
-			g_hdb->_gfx->drawText(string);
+			g_hdb->_gfx->drawText(textString.c_str());
 		}
 		for (int i = 0; i < 10; i++) {
-			sprintf(string, "Map %d", i + 20);
+			textString = Common::String::format("Map %d", i + 20);
 			g_hdb->_gfx->setCursor(_warpX + 160, i * 16 + _warpY);
-			g_hdb->_gfx->drawText(string);
+			g_hdb->_gfx->drawText(textString.c_str());
 		}
 
 		if (_warpActive > 1) {
 			g_hdb->_gfx->setCursor(_warpX + 60, _warpY + 164);
-			sprintf(string, "Warping to MAP%d", _warpActive - 2);
-			g_hdb->_gfx->centerPrint(string);
+			textString = Common::String::format("Warping to MAP%d", _warpActive - 2);
+			g_hdb->_gfx->centerPrint(textString.c_str());
 		}
 	} else if (_quitActive) {
 		//-------------------------------------------------------------------
@@ -1310,7 +1310,7 @@ void Menu::fillSavegameSlots() {
 		} else {
 			Graphics::skipThumbnail(*in);
 
-			strcpy(_saveGames[i].saveID, saveGameFile.c_str());
+			Common::strlcpy(_saveGames[i].saveID, saveGameFile.c_str(), sizeof(_saveGames[0].saveID));
 			_saveGames[i].seconds = in->readUint32LE();
 			in->read(_saveGames[i].mapName, 32);
 			delete in;
