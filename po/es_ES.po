@@ -1227,7 +1227,7 @@ msgid ""
 msgstr ""
 "Cuando inicies un juego, cambia el idioma de la interfaz al idioma del "
 "juego. De esa manera, si el juego utiliza el guardado y cargado de diálogos "
-"del ScummVM, estará en el mismo idioma que el juego"
+"del ScummVM, estará en el mismo idioma que el juego."
 
 #: gui/options.cpp:1736
 msgid "Use native system file browser"
