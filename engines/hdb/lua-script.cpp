@@ -811,9 +811,8 @@ static int setEntDir(lua_State *L) {
 		int	dd = (int)d;
 		e->dir = (AIDir)dd;
 	} else {
-		char buff[64];
-		sprintf(buff, "Could not SetEntDir on '%s'", entName);
-		g_hdb->_window->openMessageBar(buff, 10);
+		Common::String entMessageString = Common::String::format("Could not SetEntDir on '%s'", entName);
+		g_hdb->_window->openMessageBar(entMessageString.c_str(), 10);
 	}
 
 	return 0;
