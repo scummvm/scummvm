@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2019-09-14 02:42+0200\n"
-"PO-Revision-Date: 2018-08-06 21:33+0000\n"
-"Last-Translator: Alexandre Folle de Menezes <afmenez@terra.com.br>\n"
+"PO-Revision-Date: 2019-09-14 12:06+0000\n"
+"Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Portuguese (Brazil) <https://translations.scummvm.org/"
 "projects/scummvm/scummvm/pt_BR/>\n"
 "Language: pt_BR\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=iso-8859-1\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n > 1;\n"
-"X-Generator: Weblate 2.9\n"
+"X-Generator: Weblate 3.7.1\n"
 "X-Poedit-Language: Portuguese\n"
 "X-Poedit-Country: BRAZIL\n"
 "X-Poedit-SourceCharset: iso-8859-1\n"
@@ -426,6 +426,8 @@ msgid ""
 "Saved games sync feature doesn't work with non-default directories. If you "
 "want your saved games to sync, use default directory."
 msgstr ""
+"O recurso de sincronização de jogos salvos não funciona com diretórios não "
+"padrão. Se você deseja sincronizar seus jogos salvos, use o diretório padrão."
 
 #: gui/editgamedialog.cpp:546
 msgid "This game ID is already taken. Please choose another one."
@@ -433,54 +435,51 @@ msgstr "Este código já esta sendo utilizado. Por favor, escolha outro."
 
 #: gui/editrecorddialog.cpp:58
 msgid "Author:"
-msgstr ""
+msgstr "Autor:"
 
 #: gui/editrecorddialog.cpp:60
 msgid "Notes:"
-msgstr ""
+msgstr "Notas:"
 
 #: gui/editrecorddialog.cpp:68 gui/predictivedialog.cpp:74
 msgid "Ok"
-msgstr ""
+msgstr "Ok"
 
 #: gui/filebrowser-dialog.cpp:50
 msgid "Choose file for loading"
-msgstr ""
+msgstr "Escolha o arquivo para carregar"
 
 #: gui/filebrowser-dialog.cpp:50
 msgid "Enter filename for saving"
-msgstr ""
+msgstr "Digite o nome do arquivo para salvar"
 
 #: gui/filebrowser-dialog.cpp:133
-#, fuzzy
 msgid "Do you really want to overwrite the file?"
-msgstr "Você realmente quer excluir este jogo salvo?"
+msgstr "Você realmente quer sobrescrever o arquivo?"
 
 #: gui/fluidsynth-dialog.cpp:69
-#, fuzzy
 msgid "Reverb"
-msgstr "Nunca"
+msgstr "Ressonância"
 
 #: gui/fluidsynth-dialog.cpp:71 gui/fluidsynth-dialog.cpp:103
-#, fuzzy
 msgid "Active"
-msgstr "(Ativo)"
+msgstr "Ativo"
 
 #: gui/fluidsynth-dialog.cpp:73
 msgid "Room:"
-msgstr ""
+msgstr "Sala:"
 
 #: gui/fluidsynth-dialog.cpp:80
 msgid "Damp:"
-msgstr ""
+msgstr "Abatimento:"
 
 #: gui/fluidsynth-dialog.cpp:87
 msgid "Width:"
-msgstr ""
+msgstr "Largura:"
 
 #: gui/fluidsynth-dialog.cpp:94 gui/fluidsynth-dialog.cpp:112
 msgid "Level:"
-msgstr ""
+msgstr "Nível:"
 
 #: gui/fluidsynth-dialog.cpp:101
 msgid "Chorus"
@@ -488,28 +487,27 @@ msgstr "Chorus"
 
 #: gui/fluidsynth-dialog.cpp:105
 msgid "N:"
-msgstr ""
+msgstr "N:"
 
 #: gui/fluidsynth-dialog.cpp:119
-#, fuzzy
 msgid "Speed:"
-msgstr "Voz"
+msgstr "Velocidade:"
 
 #: gui/fluidsynth-dialog.cpp:126
 msgid "Depth:"
-msgstr ""
+msgstr "Profundidade:"
 
 #: gui/fluidsynth-dialog.cpp:133
 msgid "Type:"
-msgstr ""
+msgstr "Tipo:"
 
 #: gui/fluidsynth-dialog.cpp:136
 msgid "Sine"
-msgstr ""
+msgstr "Seno"
 
 #: gui/fluidsynth-dialog.cpp:137
 msgid "Triangle"
-msgstr ""
+msgstr "Triangulo"
 
 #: gui/fluidsynth-dialog.cpp:139 gui/options.cpp:1659
 msgid "Misc"
@@ -521,33 +519,34 @@ msgstr "Interpolação:"
 
 #: gui/fluidsynth-dialog.cpp:144
 msgid "None (fastest)"
-msgstr ""
+msgstr "Nenhum (mais rápido)"
 
 #: gui/fluidsynth-dialog.cpp:145
 msgid "Linear"
-msgstr ""
+msgstr "Linear"
 
 #: gui/fluidsynth-dialog.cpp:146
 msgid "Fourth-order"
-msgstr ""
+msgstr "Quarta ordem"
 
 #: gui/fluidsynth-dialog.cpp:147
 msgid "Seventh-order"
-msgstr ""
+msgstr "Sétima ordem"
 
 #: gui/fluidsynth-dialog.cpp:151
 msgid "Reset"
-msgstr ""
+msgstr "Reset"
 
 #: gui/fluidsynth-dialog.cpp:151
 msgid "Reset all FluidSynth settings to their default values."
-msgstr ""
+msgstr "Redefina todas as configurações do FluidSynth para seus valores padrão."
 
 #: gui/fluidsynth-dialog.cpp:218
-#, fuzzy
 msgid ""
 "Do you really want to reset all FluidSynth settings to their default values?"
-msgstr "Você realmente deseja voltar para o menu principal?"
+msgstr ""
+"Deseja realmente redefinir todas as configurações do FluidSynth para seus "
+"valores padrão?"
 
 #: gui/gui-manager.cpp:123 gui/unknown-game-dialog.cpp:49
 #: backends/keymapper/remap-dialog.cpp:53 engines/scumm/help.cpp:126
@@ -569,9 +568,8 @@ msgid "Remap keys"
 msgstr "Remapear teclas"
 
 #: gui/gui-manager.cpp:137 base/main.cpp:380 engines/scumm/help.cpp:87
-#, fuzzy
 msgid "Toggle fullscreen"
-msgstr "Habilita Tela Cheia"
+msgstr "Modo Tela Cheia"
 
 #: gui/KeysDialog.cpp:41
 msgid "Map"
@@ -718,16 +716,15 @@ msgstr ""
 
 #: gui/launcher.cpp:384
 msgid "This directory cannot be used yet, it is being downloaded into!"
-msgstr ""
+msgstr "Este diretório ainda não pode ser usado, está sendo baixado!"
 
 #: gui/launcher.cpp:395
 msgid "Do you really want to remove this game configuration?"
 msgstr "Você deseja realmente remover a configuração deste jogo?"
 
 #: gui/launcher.cpp:454
-#, fuzzy
 msgid "Do you want to load saved game?"
-msgstr "Você deseja carregar ou salvar o jogo?"
+msgstr "Deseja carregar o jogo salvo?"
 
 #: gui/launcher.cpp:504
 msgid "This game does not support loading games from the launcher."
@@ -744,9 +741,8 @@ msgid "ScummVM could not find any game in the specified directory!"
 msgstr "ScummVM não encontrou nenhum jogo na pasta especificada!"
 
 #: gui/launcher.cpp:588
-#, fuzzy
 msgid "Unknown variant"
-msgstr "Erro desconhecido"
+msgstr "Variante desconhecida"
 
 #: gui/launcher.cpp:594
 msgid "Pick the game:"
@@ -758,7 +754,7 @@ msgstr "Multi-Adição..."
 
 #: gui/launcher.cpp:724
 msgid "Record..."
-msgstr ""
+msgstr "Registro..."
 
 #: gui/massadd.cpp:76 gui/massadd.cpp:79
 msgid "... progress ..."
@@ -789,45 +785,39 @@ msgstr ""
 
 #: gui/onscreendialog.cpp:101 gui/onscreendialog.cpp:103
 msgid "Stop"
-msgstr ""
+msgstr "Pare"
 
 #: gui/onscreendialog.cpp:106
 msgid "Edit record description"
-msgstr ""
+msgstr "Editar descrição do registro"
 
 #: gui/onscreendialog.cpp:108
-#, fuzzy
 msgid "Switch to Game"
-msgstr "Trocar"
+msgstr "Mudar para o jogo"
 
 #: gui/onscreendialog.cpp:110
-#, fuzzy
 msgid "Fast replay"
-msgstr "Modo rápido"
+msgstr "Repetição rápida"
 
 #: gui/options.cpp:127 common/updates.cpp:56
 msgid "Never"
 msgstr "Nunca"
 
 #: gui/options.cpp:127
-#, fuzzy
 msgid "Every 5 mins"
-msgstr "a cada 5 mins"
+msgstr "A cada 5 mins"
 
 #: gui/options.cpp:127
-#, fuzzy
 msgid "Every 10 mins"
-msgstr "a cada 10 mins"
+msgstr "A cada 10 mins"
 
 #: gui/options.cpp:127
-#, fuzzy
 msgid "Every 15 mins"
-msgstr "a cada 15 mins"
+msgstr "A cada 15 mins"
 
 #: gui/options.cpp:127
-#, fuzzy
 msgid "Every 30 mins"
-msgstr "a cada 30 mins"
+msgstr "A cada 30 mins"
 
 #: gui/options.cpp:366 gui/options.cpp:696 gui/options.cpp:834
 #: gui/options.cpp:917 gui/options.cpp:1190
@@ -845,9 +835,8 @@ msgid "the video mode could not be changed"
 msgstr "o modo de vídeo não pôde ser alterado."
 
 #: gui/options.cpp:582
-#, fuzzy
 msgid "the stretch mode could not be changed"
-msgstr "o modo de vídeo não pôde ser alterado."
+msgstr "o modo alongado não pôde ser alterado"
 
 #: gui/options.cpp:588
 msgid "the aspect ratio setting could not be changed"
@@ -863,61 +852,59 @@ msgstr "a configuração de filtragem não pôde ser mudada"
 
 #: gui/options.cpp:996
 msgid "Show On-screen control"
-msgstr ""
+msgstr "Mostrar controle na tela"
 
 #: gui/options.cpp:1000
-#, fuzzy
 msgid "Touchpad mouse mode"
-msgstr "Modo Touchpad desligado."
+msgstr "Modo Touchpad"
 
 #: gui/options.cpp:1004
 msgid "Swap Menu and Back buttons"
-msgstr ""
+msgstr "Trocar Menu e Voltar botões"
 
 #: gui/options.cpp:1009
-#, fuzzy
 msgid "Pointer Speed:"
-msgstr "Voz"
+msgstr "Velocidade do ponteiro:"
 
 #: gui/options.cpp:1009 gui/options.cpp:1011 gui/options.cpp:1012
 msgid "Speed for keyboard/joystick mouse pointer control"
-msgstr ""
+msgstr "Velocidade para controle de ponteiro de mouse de teclado / joystick"
 
 #: gui/options.cpp:1011
-#, fuzzy
 msgctxt "lowres"
 msgid "Pointer Speed:"
-msgstr "Voz"
+msgstr "Velocidade do ponteiro:"
 
 #: gui/options.cpp:1022
 msgid "Joy Deadzone:"
-msgstr ""
+msgstr "Zona Morta:"
 
 #: gui/options.cpp:1022 gui/options.cpp:1024 gui/options.cpp:1025
 msgid "Analog joystick Deadzone"
-msgstr ""
+msgstr "Joystick analógico Zona Morta"
 
 #: gui/options.cpp:1024
 msgctxt "lowres"
 msgid "Joy Deadzone:"
-msgstr ""
+msgstr "Zona Morta:"
 
 #: gui/options.cpp:1038
 msgid "HW Shader:"
-msgstr ""
+msgstr "HW Sombreamento:"
 
 #: gui/options.cpp:1038 gui/options.cpp:1040
 msgid "Different hardware shaders give different visual effects"
 msgstr ""
+"Diferentes hardware  de sombreamento oferecem efeitos visuais diferentes"
 
 #: gui/options.cpp:1040
 msgctxt "lowres"
 msgid "HW Shader:"
-msgstr ""
+msgstr "HW Sombreamento:"
 
 #: gui/options.cpp:1041
 msgid "Different shaders give different visual effects"
-msgstr ""
+msgstr "Diferentes sombreamentos resultam em diferentes efeitos visuais"
 
 #: gui/options.cpp:1058
 msgid "Graphics mode:"
@@ -933,16 +920,15 @@ msgstr "Modos especiais de dithering suportados por alguns jogos"
 
 #: gui/options.cpp:1085
 msgid "Stretch mode:"
-msgstr ""
+msgstr "Modo esticado:"
 
 #: gui/options.cpp:1096 backends/graphics/sdl/sdl-graphics.cpp:354
 msgid "Fullscreen mode"
 msgstr "Modo Tela Cheia"
 
 #: gui/options.cpp:1099
-#, fuzzy
 msgid "Filter graphics"
-msgstr "Gráficos"
+msgstr "Filtros gráficos"
 
 #: gui/options.cpp:1099
 msgid "Use linear filtering when scaling graphics"
@@ -954,17 +940,15 @@ msgstr "Correção de proporção"
 
 #: gui/options.cpp:1102
 msgid "Correct aspect ratio for 320x200 games"
-msgstr "Correção de proporção para jogos 320x200"
+msgstr "Proporção correta para jogos de 320 x 200"
 
 #: gui/options.cpp:1110
-#, fuzzy
 msgid "Preferred device:"
-msgstr "Dispositivo pref.:"
+msgstr "Dispositivo preferido:"
 
 #: gui/options.cpp:1110
-#, fuzzy
 msgid "Music device:"
-msgstr "Disp. de música:"
+msgstr "Dispositivo de música:"
 
 #: gui/options.cpp:1110 gui/options.cpp:1112
 msgid "Specifies preferred sound device or sound card emulator"
@@ -1073,6 +1057,8 @@ msgid ""
 "Check if you want to enable patch mappings to emulate an MT-32 on a Roland "
 "GS device"
 msgstr ""
+"Verifique se deseja ativar o mapeamento de patches para emular um MT-32 em "
+"um dispositivo Roland GS"
 
 #: gui/options.cpp:1227
 msgid "Don't use Roland MT-32 music"
@@ -1165,16 +1151,15 @@ msgstr "Volume da Voz:"
 
 #: gui/options.cpp:1562
 msgid "Shader"
-msgstr ""
+msgstr "Sombreamento"
 
 #: gui/options.cpp:1574
-#, fuzzy
 msgid "Control"
-msgstr "Controle do Mouse"
+msgstr "Controle"
 
 #: gui/options.cpp:1600
 msgid "FluidSynth Settings"
-msgstr ""
+msgstr "Configurações FluidSynth"
 
 #: gui/options.cpp:1631
 msgid "Theme Path:"
@@ -1238,7 +1223,7 @@ msgstr "Linguagem do ScummVM GUI"
 
 #: gui/options.cpp:1722
 msgid "Switch the GUI language to the game language"
-msgstr ""
+msgstr "Mudar o idioma da GUI para o idioma do jogo"
 
 #: gui/options.cpp:1723
 msgid ""
@@ -1246,46 +1231,51 @@ msgid ""
 "if a game uses the ScummVM save and load dialogs, they are in the same "
 "language as the game."
 msgstr ""
+"Ao iniciar um jogo, altere o idioma da GUI para o idioma do jogo. Dessa "
+"forma, se um jogo usar as caixas de diálogo de salvar e carregar o ScummVM, "
+"elas estarão no mesmo idioma do jogo."
 
 #: gui/options.cpp:1736
 msgid "Use native system file browser"
-msgstr ""
+msgstr "Use o navegador de arquivos do sistema nativo"
 
 #: gui/options.cpp:1737
 msgid ""
 "Use the native system file browser instead of the ScummVM one to select a "
 "file or directory."
 msgstr ""
+"Use o navegador de arquivos do sistema nativo em vez do ScummVM para "
+"selecionar um arquivo ou diretório."
 
 #: gui/options.cpp:1744 gui/updates-dialog.cpp:86
 msgid "Update check:"
-msgstr ""
+msgstr "Verifica atualizações:"
 
 #: gui/options.cpp:1744
 msgid "How often to check ScummVM updates"
-msgstr ""
+msgstr "Com que frequência verificar as atualizações do ScummVM"
 
 #: gui/options.cpp:1756
 msgid "Check now"
-msgstr ""
+msgstr "Verificar agora"
 
 #: gui/options.cpp:1765
 msgid "Cloud"
-msgstr ""
+msgstr "Nuvem"
 
 #: gui/options.cpp:1767
 msgctxt "lowres"
 msgid "Cloud"
-msgstr ""
+msgstr "Nuvem"
 
 #: gui/options.cpp:1781
 msgid "LAN"
-msgstr ""
+msgstr "LAN"
 
 #: gui/options.cpp:1783
 msgctxt "lowres"
 msgid "LAN"
-msgstr ""
+msgstr "LAN"
 
 #: gui/options.cpp:1791
 msgid "Accessibility"
@@ -1307,35 +1297,38 @@ msgstr ""
 
 #: gui/options.cpp:1826
 msgid "Apply"
-msgstr ""
+msgstr "Aplicar"
 
 #: gui/options.cpp:1915
 msgid "Active storage:"
-msgstr ""
+msgstr "Armazenamento ativo:"
 
 #: gui/options.cpp:1915
 msgid "Active cloud storage"
-msgstr ""
+msgstr "Armazenamento ativo na nuvem"
 
 #: gui/options.cpp:1923
 msgctxt "lowres"
 msgid ""
 "4. Storage is not yet enabled. Verify that username is correct and enable it:"
 msgstr ""
+"4. O armazenamento ainda não está ativado. Verifique se o nome de usuário "
+"está correto e ative-o:"
 
 #: gui/options.cpp:1925
 msgid ""
 "4. Storage is not yet enabled. Verify that username is correct and enable it:"
 msgstr ""
+"4. O armazenamento ainda não está ativado. Verifique se o nome de usuário "
+"está correto e ative-o:"
 
 #: gui/options.cpp:1926
-#, fuzzy
 msgid "Enable storage"
-msgstr "Ligar modo Roland GS"
+msgstr "Ativar armazenamento"
 
 #: gui/options.cpp:1926
 msgid "Confirm you want to use this account for this storage"
-msgstr ""
+msgstr "Confirme que deseja usar esta conta para este armazenamento"
 
 #: gui/options.cpp:1928 backends/platform/wii/options.cpp:114
 msgid "Username:"
@@ -1343,32 +1336,33 @@ msgstr "Nome de usuário:"
 
 #: gui/options.cpp:1928
 msgid "Username used by this storage"
-msgstr ""
+msgstr "Nome de usuário usado por este armazenamento"
 
 #: gui/options.cpp:1929
 msgid "<none>"
-msgstr ""
+msgstr "<nenhum>"
 
 #: gui/options.cpp:1931
 msgid "Used space:"
-msgstr ""
+msgstr "Espaço usado:"
 
 #: gui/options.cpp:1931
 msgid "Space used by ScummVM's saved games on this storage"
-msgstr ""
+msgstr "Espaço usado pelos jogos salvos do ScummVM neste armazenamento"
 
 #: gui/options.cpp:1934
 msgid "Last sync:"
-msgstr ""
+msgstr "Última sincronização:"
 
 #: gui/options.cpp:1934
 msgid "When was the last time saved games were synced with this storage"
 msgstr ""
+"Quando foi a última vez que os jogos salvos foram sincronizados com este "
+"armazenamento"
 
 #: gui/options.cpp:1935 gui/options.cpp:2619
-#, fuzzy
 msgid "<never>"
-msgstr "Nunca"
+msgstr "<nunca>"
 
 #: gui/options.cpp:1937
 msgctxt "lowres"
@@ -1381,7 +1375,7 @@ msgstr ""
 
 #: gui/options.cpp:1940
 msgid "Sync now"
-msgstr ""
+msgstr "Sincronizar agora"
 
 #: gui/options.cpp:1940
 #, fuzzy
@@ -1391,29 +1385,30 @@ msgstr "Iniciar jogo selecionado"
 #: gui/options.cpp:1943
 msgctxt "lowres"
 msgid "You can download game files from your cloud ScummVM folder:"
-msgstr ""
+msgstr "Você pode baixar arquivos de jogos da sua pasta ScummVM na nuvem:"
 
 #: gui/options.cpp:1945
 msgid "You can download game files from your cloud ScummVM folder:"
-msgstr ""
+msgstr "Você pode baixar arquivos de jogos da pasta ScummVM na nuvem:"
 
 #: gui/options.cpp:1946
-#, fuzzy
 msgid "Download game files"
-msgstr "Carregar jogo:"
+msgstr "Baixar arquivos de jogo:"
 
 #: gui/options.cpp:1946
 msgid "Open downloads manager dialog"
-msgstr ""
+msgstr "Abrir gerenciador de downloads"
 
 #: gui/options.cpp:1949
 msgctxt "lowres"
 msgid "To change account for this storage, disconnect and connect again:"
 msgstr ""
+"Para alterar a conta desse armazenamento, desconecte e conecte novamente:"
 
 #: gui/options.cpp:1951
 msgid "To change account for this storage, disconnect and connect again:"
 msgstr ""
+"Para alterar a conta desse armazenamento, desconecte e conecte novamente:"
 
 #: gui/options.cpp:1952
 msgid "Disconnect"
@@ -1421,50 +1416,49 @@ msgstr ""
 
 #: gui/options.cpp:1952
 msgid "Stop using this storage on this device"
-msgstr ""
+msgstr "Pare de usar este armazenamento neste dispositivo"
 
 #: gui/options.cpp:1955
 msgctxt "lowres"
 msgid "This storage is not connected yet! To connect,"
-msgstr ""
+msgstr "Este armazenamento ainda não está conectado! Conectar,"
 
 #: gui/options.cpp:1957
 msgid "This storage is not connected yet! To connect,"
-msgstr ""
+msgstr "Este armazenamento ainda não está conectado! Conectar,"
 
 #: gui/options.cpp:1958
 msgid "1. Open this link:"
-msgstr ""
+msgstr "1. Abra este link:"
 
 #: gui/options.cpp:1959
-#, fuzzy
 msgid "Open URL"
-msgstr "Abrir"
+msgstr "Abrir URL"
 
 #: gui/options.cpp:1961
 msgctxt "lowres"
 msgid "2. Get the code and enter it here:"
-msgstr ""
+msgstr "2. Obtenha o código e digite-o aqui:"
 
 #: gui/options.cpp:1963
 msgid "2. Get the code and enter it here:"
-msgstr ""
+msgstr "2. Obtenha o código e digite-o aqui:"
 
 #: gui/options.cpp:1965
 msgid "Paste"
-msgstr ""
+msgstr "Colar"
 
 #: gui/options.cpp:1965
 msgid "Paste code from clipboard"
-msgstr ""
+msgstr "Colar código"
 
 #: gui/options.cpp:1966
 msgid "3. Connect"
-msgstr ""
+msgstr "3. Conecte"
 
 #: gui/options.cpp:1966
 msgid "Connect your cloud storage account"
-msgstr ""
+msgstr "Conecte sua conta de armazenamento em nuvem"
 
 #: gui/options.cpp:1975
 msgid "Run server"
@@ -5437,7 +5431,7 @@ msgstr ""
 
 #: engines/zvision/detection_tables.h:61
 msgid "Double FPS"
-msgstr ""
+msgstr "Dobrar FPS"
 
 #: engines/zvision/detection_tables.h:62
 msgid "Increase framerate from 30 to 60 FPS"
