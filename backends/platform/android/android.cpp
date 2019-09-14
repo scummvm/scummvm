@@ -295,6 +295,9 @@ void OSystem_Android::initBackend() {
 	ConfMan.setBool("FM_high_quality", false);
 	ConfMan.setBool("FM_medium_quality", true);
 
+	if (!ConfMan.hasKey("browser_lastpath") || (ConfMan.hasKey("browser_lastpath") && (ConfMan.get("browser_lastpath") == "/storage")))
+		ConfMan.set("browser_lastpath", getenv("SDCARD"));
+
 	if (ConfMan.hasKey("touchpad_mouse_mode"))
 		_touchpad_mode = ConfMan.getBool("touchpad_mouse_mode");
 	else
