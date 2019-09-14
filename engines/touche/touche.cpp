@@ -2194,16 +2194,15 @@ void ToucheEngine::drawInventory(int index, int flag) {
 
 void ToucheEngine::drawAmountOfMoneyInInventory() {
 	if (_flagsTable[606] == 0 && !_hideInventoryTexts) {
-		char text[10];
-		sprintf(text, "%d", _keyCharsTable[0].money);
+		Common::String textStr = Common::String::format("%d", _keyCharsTable[0].money);
 		Graphics::fillRect(_offscreenBuffer, kScreenWidth, 74, 354, 40, 16, 0xD2);
-		drawGameString(217, 94, 355, text);
+		drawGameString(217, 94, 355, textStr.c_str());
 		updateScreenArea(74, 354, 40, 16);
 		Graphics::fillRect(_offscreenBuffer, kScreenWidth, 150, 353, 40, 41, 0xD2);
 		if (_currentAmountOfMoney != 0) {
 			drawIcon(141, 348, 1);
-			sprintf(text, "%d", _currentAmountOfMoney);
-			drawGameString(217, 170, 378, text);
+			textStr = Common::String::format("%d", _currentAmountOfMoney);
+			drawGameString(217, 170, 378, textStr.c_str());
 		}
 		updateScreenArea(150, 353, 40, 41);
 	}
