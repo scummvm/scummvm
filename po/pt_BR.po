@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2019-09-12 03:54+0200\n"
+"POT-Creation-Date: 2019-09-14 02:42+0200\n"
 "PO-Revision-Date: 2018-08-06 21:33+0000\n"
 "Last-Translator: Alexandre Folle de Menezes <afmenez@terra.com.br>\n"
 "Language-Team: Portuguese (Brazil) <https://translations.scummvm.org/"
@@ -66,7 +66,7 @@ msgstr "Acima"
 #: gui/saveload-dialog.cpp:389 gui/saveload-dialog.cpp:451
 #: gui/saveload-dialog.cpp:746 gui/saveload-dialog.cpp:1140
 #: gui/themebrowser.cpp:55 gui/unknown-game-dialog.cpp:49
-#: engines/engine.cpp:558 backends/events/default/default-events.cpp:190
+#: engines/engine.cpp:556 backends/events/default/default-events.cpp:190
 #: backends/events/default/default-events.cpp:212
 #: backends/platform/wii/options.cpp:48 engines/drascula/saveload.cpp:49
 #: engines/mohawk/myst_stacks/menu.cpp:284
@@ -164,7 +164,7 @@ msgstr ""
 #: gui/downloaddialog.cpp:147 gui/editgamedialog.cpp:300
 #: gui/fluidsynth-dialog.cpp:154 gui/KeysDialog.cpp:42 gui/launcher.cpp:504
 #: gui/launcher.cpp:508 gui/massadd.cpp:89 gui/options.cpp:1827
-#: gui/saveload-dialog.cpp:1141 engines/engine.cpp:469 engines/engine.cpp:480
+#: gui/saveload-dialog.cpp:1141 engines/engine.cpp:467 engines/engine.cpp:478
 #: backends/platform/wii/options.cpp:47
 #: backends/platform/wince/CELauncherDialog.cpp:54
 #: engines/agos/animation.cpp:559 engines/drascula/saveload.cpp:49
@@ -1372,11 +1372,11 @@ msgstr "Nunca"
 
 #: gui/options.cpp:1937
 msgctxt "lowres"
-msgid "Saves sync automatically on launch, after saving and on loading."
+msgid "Saved games sync automatically on launch, after saving and on loading."
 msgstr ""
 
 #: gui/options.cpp:1939
-msgid "Saves sync automatically on launch, after saving and on loading."
+msgid "Saved games sync automatically on launch, after saving and on loading."
 msgstr ""
 
 #: gui/options.cpp:1940
@@ -1384,8 +1384,9 @@ msgid "Sync now"
 msgstr ""
 
 #: gui/options.cpp:1940
-msgid "Start saves sync"
-msgstr ""
+#, fuzzy
+msgid "Start saved games sync"
+msgstr "Iniciar jogo selecionado"
 
 #: gui/options.cpp:1943
 msgctxt "lowres"
@@ -2114,33 +2115,39 @@ msgstr "~C~ancelar"
 msgid "~K~eys"
 msgstr "~T~eclas"
 
+#: engines/engine.cpp:312
+#, fuzzy, c-format
+msgid "Could not switch to resolution '%dx%d'."
+msgstr "Não foi possível alternar o modo de vídeo atual: '"
+
 #: engines/engine.cpp:321
 msgid "Could not initialize color format."
 msgstr "Não foi possível inicializar o formato de cor."
 
-#: engines/engine.cpp:329
-msgid "Could not switch to video mode: '"
+#: engines/engine.cpp:330
+#, fuzzy, c-format
+msgid "Could not switch to video mode '%s'."
 msgstr "Não foi possível alternar o modo de vídeo atual: '"
 
 #: engines/engine.cpp:338
-#, fuzzy
-msgid "Could not switch to stretch mode: '"
+#, fuzzy, c-format
+msgid "Could not switch to stretch mode '%s'."
 msgstr "Não foi possível alternar o modo de vídeo atual: '"
 
-#: engines/engine.cpp:347
+#: engines/engine.cpp:345
 msgid "Could not apply aspect ratio setting."
 msgstr "Não foi possível aplicar a correção de proporção."
 
-#: engines/engine.cpp:352
+#: engines/engine.cpp:350
 msgid "Could not apply fullscreen setting."
 msgstr "Não foi possível aplicar a configuração de tela cheia."
 
-#: engines/engine.cpp:357
+#: engines/engine.cpp:355
 #, fuzzy
 msgid "Could not apply filtering setting."
 msgstr "Não foi possível aplicar a configuração de tela cheia."
 
-#: engines/engine.cpp:465
+#: engines/engine.cpp:463
 msgid ""
 "You appear to be playing this game directly\n"
 "from the CD. This is known to cause problems,\n"
@@ -2154,7 +2161,7 @@ msgstr ""
 "os arquivos de dados para o disco rígido.\n"
 "Consulte o arquivo README para mais detalhes."
 
-#: engines/engine.cpp:476
+#: engines/engine.cpp:474
 msgid ""
 "This game has audio tracks in its disk. These\n"
 "tracks need to be ripped from the disk using\n"
@@ -2168,7 +2175,7 @@ msgstr ""
 "para ouvir a música do jogo.\n"
 "Consulte o arquivo README para mais detalhes."
 
-#: engines/engine.cpp:539
+#: engines/engine.cpp:537
 #, fuzzy, c-format
 msgid ""
 "Failed to load saved game (%s)! Please consult the README for basic "
@@ -2178,7 +2185,7 @@ msgstr ""
 "Por favor, consulte o README para obter informações básicas, e para obter "
 "instruções sobre como obter assistência adicional."
 
-#: engines/engine.cpp:555
+#: engines/engine.cpp:553
 msgid ""
 "WARNING: The game you are about to start is not yet fully supported by "
 "ScummVM. As such, it is likely to be unstable, and any saved game you make "
@@ -2188,7 +2195,7 @@ msgstr ""
 "suportado pelo ScummVM. Como tal, é provável que seja instável, e qualquer "
 "jogo salvo que você fizer pode não funcionar em futuras versões do ScummVM."
 
-#: engines/engine.cpp:558 engines/wintermute/wintermute.cpp:165
+#: engines/engine.cpp:556 engines/wintermute/wintermute.cpp:165
 msgid "Start anyway"
 msgstr "Iniciar de qualquer maneira"
 
