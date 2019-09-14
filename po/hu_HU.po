@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2019-09-14 02:42+0200\n"
-"PO-Revision-Date: 2019-09-12 01:53+0000\n"
+"PO-Revision-Date: 2019-09-14 06:25+0000\n"
 "Last-Translator: George Kormendi <grubycza@hotmail.com>\n"
 "Language-Team: Hungarian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/hu/>\n"
@@ -1339,24 +1339,25 @@ msgid "<never>"
 msgstr "<soha>"
 
 #: gui/options.cpp:1937
-#, fuzzy
 msgctxt "lowres"
 msgid "Saved games sync automatically on launch, after saving and on loading."
-msgstr "Szink automatikus mentése indításkor, mentés után betöltéskor."
+msgstr ""
+"A mentett játékok automatikusan szinkronizálódnak indításkor, mentés és "
+"betöltésekor."
 
 #: gui/options.cpp:1939
-#, fuzzy
 msgid "Saved games sync automatically on launch, after saving and on loading."
-msgstr "Szink automatikus mentése indításkor, mentés után betöltéskor."
+msgstr ""
+"A mentett játékok automatikusan szinkronizálódnak indításkor, mentés és "
+"betöltésekor."
 
 #: gui/options.cpp:1940
 msgid "Sync now"
 msgstr "Szink most"
 
 #: gui/options.cpp:1940
-#, fuzzy
 msgid "Start saved games sync"
-msgstr "Szink mentés indítás"
+msgstr "Indítsd el a mentett játékok szinkronizálását"
 
 #: gui/options.cpp:1943
 msgctxt "lowres"
@@ -2067,23 +2068,23 @@ msgid "~K~eys"
 msgstr "Billentyük"
 
 #: engines/engine.cpp:312
-#, fuzzy, c-format
+#, c-format
 msgid "Could not switch to resolution '%dx%d'."
-msgstr "Nem tudtam váltani nyújtás módba: '"
+msgstr "Nem válthattam a '%dx%d' felbontásra."
 
 #: engines/engine.cpp:321
 msgid "Could not initialize color format."
 msgstr "Szín formátum nincs alkalmazva."
 
 #: engines/engine.cpp:330
-#, fuzzy, c-format
+#, c-format
 msgid "Could not switch to video mode '%s'."
-msgstr "Videómód nincs átállítva: '"
+msgstr "Nem válthattam '%s' videó módra."
 
 #: engines/engine.cpp:338
-#, fuzzy, c-format
+#, c-format
 msgid "Could not switch to stretch mode '%s'."
-msgstr "Nem tudtam váltani nyújtás módba: '"
+msgstr "Nem válthattam '%s' nyújtási módra."
 
 #: engines/engine.cpp:345
 msgid "Could not apply aspect ratio setting."
