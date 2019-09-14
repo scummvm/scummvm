@@ -1315,8 +1315,6 @@ public:
 	Common::Array<HereT *> *_hereList;
 	Common::Array<Trigger *> *_triggerList;
 
-	char _youGotBuffer[32];	// For printing the text of entities that are removed
-
 	// Cinematic Variables
 	Common::Array<CineCommand *> _cine;
 
