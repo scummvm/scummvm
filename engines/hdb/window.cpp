@@ -567,10 +567,9 @@ void Window::drawWeapon() {
 
 	int xoff = 40 * _pzInfo.active;
 	if (ITEM_CLUB != g_hdb->_ai->getPlayerWeapon()) {
-		char word[3];
-		sprintf(word, "%d", g_hdb->_ai->getGemAmount());
+		Common::String wordString = Common::String::format("%d", g_hdb->_ai->getGemAmount());
 		g_hdb->_gfx->setCursor(_weaponX + 4 - xoff, _weaponY + kTileHeight + 2);
-		g_hdb->_gfx->drawText(word);
+		g_hdb->_gfx->drawText(wordString.c_str());
 	}
 }
 
@@ -1138,10 +1137,9 @@ void Window::drawInventory() {
 		drawX = baseX + _invItemSpace * 4 + 8;
 		_gemGfx->drawMasked(drawX, drawY);
 		int gems = g_hdb->_ai->getGemAmount();
-		char string[8];
-		sprintf(string, "%d", gems);
+		Common::String gemString = Common::String::format("%d", gems);
 		g_hdb->_gfx->setCursor(drawX + 22, drawY + 8);
-		g_hdb->_gfx->drawText(string);
+		g_hdb->_gfx->drawText(gemString.c_str());
 
 		// if you have an inventory, draw the selection cursor
 		if (g_hdb->_ai->getInvAmount()) {
@@ -1206,10 +1204,9 @@ void Window::drawInventory() {
 
 		// Draw the Gem Amount
 		int gems = g_hdb->_ai->getGemAmount();
-		char string[8];
-		sprintf(string, "%d", gems);
+		Common::String gemString = Common::String::format("%d", gems);
 		g_hdb->_gfx->setCursor(drawX + 32, drawY + 8);
-		g_hdb->_gfx->drawText(string);
+		g_hdb->_gfx->drawText(gemString.c_str());
 
 		// Draw the mini monkeystone
 		int mstones = g_hdb->_ai->getMonkeystoneAmount();
@@ -1218,9 +1215,9 @@ void Window::drawInventory() {
 			_mstoneGfx->drawMasked(drawX, drawY + 8);
 
 			// Draw the monkeystone amount
-			sprintf(string, "%d", mstones);
+			Common::String stoneString = Common::String::format("%d", mstones);
 			g_hdb->_gfx->setCursor(drawX + 28, drawY + 8);
-			g_hdb->_gfx->drawText(string);
+			g_hdb->_gfx->drawText(stoneString.c_str());
 		}
 
 		// If you have an inventory, draw the selection cursor
