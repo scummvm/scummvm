@@ -323,15 +323,15 @@ bool HDBGame::restartMap() {
 
 bool HDBGame::startMap(const char *name) {
 	// save last mapname
-	strcpy(_lastMapname, _currentMapname);
+	Common::strlcpy(_lastMapname, _currentMapname, sizeof(_lastMapname));
 
 	// set current mapname
-	strcpy(_currentMapname, name);
-	strcat(_currentMapname, ".MSM");
+	Common::strlcpy(_currentMapname, name, sizeof(_currentMapname));
+	Common::strlcat(_currentMapname, ".MSM", sizeof(_currentMapname));
 
 	// set current luaname
-	strcpy(_currentLuaName, name );
-	strcat(_currentLuaName, ".LUA");
+	Common::strlcpy(_currentLuaName, name, sizeof(_currentLuaName));
+	Common::strlcat(_currentLuaName, ".LUA", sizeof(_currentLuaName));
 
 	restartMap();
 
@@ -932,25 +932,26 @@ Common::Error HDBGame::run() {
 #endif
 
 	if (ConfMan.hasKey("boot_param")) {
-		char mapname[20];
 		int arg = ConfMan.getInt("boot_param");
 		int actionMode = MIN(arg / 100, 1);
 		int level = MIN(arg % 100, 31);
 
 		setActionMode(actionMode);
 
-		if (level <= 30)
-			snprintf(mapname, 10, "MAP%02d", level);
-		else
-			strcpy(mapname, "CINE_OUTRO");
+		Common::String mapNameString = Common::String::format("MAP%02d", level);
 
-		if (isDemo())
-			strcat(mapname, "_DEMO");
+		if (level > 30) {
+			mapNameString = "CINE_OUTRO";
+		}
 
-		debug("Starting level %s in %s", mapname, getActionMode() ? "Action Mode" : "Puzzle Mode");
+		if (isDemo()) {
+			mapNameString += "_DEMO";
+		}
+
+		debug("Starting level %s in %s Mode", mapNameString.c_str(), getActionMode() ? "Action" : "Puzzle");
 
 		_ai->clearPersistent();
-		startMap(mapname);
+		startMap(mapNameString.c_str());
 
 		_gameState = GAME_PLAY;
 	} else {
