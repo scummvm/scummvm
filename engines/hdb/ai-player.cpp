@@ -1581,8 +1581,6 @@ void aiTransceiverUse(AIEntity *e) {
 }
 #endif
 
-char monkBuff[32];
-
 void aiMonkeystoneInit(AIEntity *e) {
 	e->aiUse = aiMonkeystoneUse;
 	e->aiAction = aiMonkeystoneAction;
@@ -1608,12 +1606,9 @@ void aiMonkeystoneInit2(AIEntity *e) {
 
 void aiMonkeystoneUse(AIEntity *e) {
 	int	val = g_hdb->_ai->getMonkeystoneAmount();
-	sprintf(monkBuff, "You have %d Monkeystone", val);
-	if (val > 1)
-		strcat(monkBuff, "s");
-	strcat(monkBuff, "!");
+	Common::String monkString = Common::String::format("You have %d Monkeystone%s!", val, (val > 1) ? "s" : "");
 	g_hdb->_sound->playSound(SND_GET_MONKEYSTONE);
-	g_hdb->_window->openMessageBar(monkBuff, kMsgDelay);
+	g_hdb->_window->openMessageBar(monkString.c_str(), kMsgDelay);
 
 	// have we unlocked a secret star(tm)???
 	if (val == 7) {
