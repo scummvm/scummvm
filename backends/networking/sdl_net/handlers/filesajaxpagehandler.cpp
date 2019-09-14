@@ -56,7 +56,7 @@ void FilesAjaxPageHandler::handle(Client &client) {
 	// load stylish response page from the archive
 	Common::SeekableReadStream *const stream = HandlerUtils::getArchiveFile(FILES_PAGE_NAME);
 	if (stream == nullptr) {
-		HandlerUtils::setFilesManagerErrorMessageHandler(client, _("The page is not available without the resources."));
+		HandlerUtils::setFilesManagerErrorMessageHandler(client, _("The page is not available without the resources. Make sure file wwwroot.zip from ScummVM distribution is available in extrapath."));
 		return;
 	}
 
