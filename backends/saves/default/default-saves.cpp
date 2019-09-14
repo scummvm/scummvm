@@ -63,7 +63,7 @@ DefaultSaveFileManager::DefaultSaveFileManager(const Common::String &defaultSave
 void DefaultSaveFileManager::checkPath(const Common::FSNode &dir) {
 	clearError();
 	if (!dir.exists()) {
-		if (!dir.createDirectoryRecursive()) {
+		if (!dir.createDirectory()) {
 			setError(Common::kPathDoesNotExist, "Failed to create directory '"+dir.getPath()+"'");
 		}
 	} else if (!dir.isDirectory()) {

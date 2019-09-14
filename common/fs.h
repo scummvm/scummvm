@@ -239,14 +239,6 @@ public:
 	 * @return true if the directory was created, false otherwise.
 	 */
 	bool createDirectory() const;
-
-	/**
-	 * Creates a directory referred by this node. The parent directory
-	 * will also be created if it doesn't exist.
-	 *
-	 * @return true if the directory was created, false otherwise.
-	 */
-	bool createDirectoryRecursive() const;
 };
 
 /**
