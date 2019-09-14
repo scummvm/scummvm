@@ -927,15 +927,15 @@ void Control::showSavegameNames() {
 		_buttons[cnt]->draw();
 		uint8 textMode = TEXT_LEFT_ALIGN;
 		uint16 ycoord = _saveButtons[cnt].y + 2;
-		uint8 str[40];
-		sprintf((char *)str, "%d. %s", cnt + _saveScrollPos + 1, _saveNames[cnt + _saveScrollPos].c_str());
+		Common::String savegameNameStr = Common::String::format("%d. %s", cnt + _saveScrollPos + 1, _saveNames[cnt + _saveScrollPos].c_str());
 		if (cnt + _saveScrollPos == _selectedSavegame) {
 			textMode |= TEXT_RED_FONT;
 			ycoord += 2;
-			if (_cursorVisible)
-				strcat((char *)str, "_");
+			if (_cursorVisible) {
+				savegameNameStr += "_";
+			}
 		}
-		renderText(str, _saveButtons[cnt].x + 6, ycoord, textMode);
+		renderText((const uint8*)savegameNameStr.c_str(), _saveButtons[cnt].x + 6, ycoord, textMode);
 	}
 }
 
