@@ -37,11 +37,11 @@ bool Animation::loadAnimation(const Common::String &file) {
 	if (!fileData)
 		return false;
 
-	strcpy(_name, "not_loaded");
-	if (strncmp((char *)fileData, "KevinAguilar", 12))
+	Common::strlcpy(_name, "not_loaded", sizeof(_name));
+	if (!Common::String((char *)fileData, 12).equals("KevinAguilar"))
 		return false;
 
-	Common::strlcpy(_name, file.c_str(), 32);
+	Common::strlcpy(_name, file.c_str(), sizeof(_name));
 
 	uint32 headerSize = READ_LE_UINT32(fileData + 16);
 	uint32 uncompressedBytes = READ_LE_UINT32(fileData + 20);
@@ -245,9 +245,7 @@ void Animation::drawFrameWithMaskAndScale(Graphics::Surface &surface, int32 fram
 	uint8 *curRow = (uint8 *)surface.getPixels();
 	uint8 *curRowMask = mask->getDataPtr();
 
-	bool shadowFlag = false;
-	if (strstr(_name, "SHADOW"))
-		shadowFlag = true;
+	bool shadowFlag = Common::String(_name).contains("SHADOW");
 
 	for (int16 y = yy1; y < yy2; y++) {
 		for (int16 x = xx1; x < xx2; x++) {

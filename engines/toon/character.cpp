@@ -1020,8 +1020,7 @@ void Character::playAnim(int32 animId, int32 unused, int32 flags) {
 	// get the anim to load
 	const SpecialCharacterAnimation *anim = getSpecialAnimation(_id, animId);
 
-	char animName[20];
-	strcpy(animName, anim->_filename);
+	Common::String animNameStr = anim->_filename;
 
 	int32 facing = _facing;
 	if (_id == 1) {
@@ -1029,9 +1028,8 @@ void Character::playAnim(int32 animId, int32 unused, int32 flags) {
 		facing = CharacterFlux::fixFacingForAnimation(facing, animId);
 	}
 
-	if (strchr(animName, '?'))
-		*strchr(animName, '?') = '0' + facing;
-	strcat(animName, ".CAF");
+	Common::replace(animNameStr, Common::String('?'), Common::String('0' + facing));
+	animNameStr += ".CAF";
 
 	if (_animScriptId != -1 && (flags & 8) == 0)
 		_vm->getSceneAnimationScript(_animScriptId)->_frozenForConversation = true;
@@ -1046,7 +1044,7 @@ void Character::playAnim(int32 animId, int32 unused, int32 flags) {
 		_flags |= 1;
 
 		// old special anim was talking anim ? in this case we don't wait for the character to be ready
-		bool wasTalkAnim = _specialAnim && strstr(_specialAnim->_name, "TLK");
+		bool wasTalkAnim = _specialAnim && Common::String(_specialAnim->_name).contains("TLK");
 
 		// wait for the character to be ready
 		while (_animScriptId != -1 && _animationInstance && _animationInstance->getFrame() > 0 && !wasTalkAnim && (_specialAnim && _animationInstance->getAnimation() != _specialAnim)) {
@@ -1061,7 +1059,7 @@ void Character::playAnim(int32 animId, int32 unused, int32 flags) {
 
 	delete _specialAnim;
 	_specialAnim = new Animation(_vm);
-	_specialAnim->loadAnimation(animName);
+	_specialAnim->loadAnimation(animNameStr.c_str());
 
 	_animSpecialId = animId;
 
