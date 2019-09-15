@@ -162,28 +162,19 @@ void TrollEngine::drawPic(int iPic, bool f3IsCont, bool clr, bool troll) {
 // Game Logic
 
 void TrollEngine::inventory() {
-	char tmp[40];
-	int n;
-
 	clearScreen(0x07);
 	drawStr(1, 12, kColorDefault, IDS_TRO_TREASURE_0);
 	drawStr(2, 12, kColorDefault, IDS_TRO_TREASURE_1);
 
-
 	for (int i = 0; i < IDI_TRO_MAX_TREASURE - _treasuresLeft; i++) {
-		n = _inventory[i] - 1;
-
-		sprintf(tmp, " %2d ", i + 1);
-
-		drawStr(2 + i, 10, _items[n].bg << 4 | 0x0f,  tmp);
-		drawStr(2 + i, 14, _items[n].bg << 4 | _items[n].fg,  _items[n].name);
+		int n = _inventory[i] - 1;
+		drawStr(2 + i, 10, _items[n].bg << 4 | 0x0f, Common::String::format(" %2d ", i + 1).c_str());
+		drawStr(2 + i, 14, _items[n].bg << 4 | _items[n].fg, _items[n].name);
 	}
-
 
 	switch (_treasuresLeft) {
 	case 1:
-		sprintf(tmp, IDS_TRO_TREASURE_5, _treasuresLeft);
-		drawStr(20, 10, kColorDefault, tmp);
+		drawStr(20, 10, kColorDefault, Common::String::format(IDS_TRO_TREASURE_5, _treasuresLeft).c_str());
 		break;
 	case 0:
 		drawStr(20, 1, kColorDefault, IDS_TRO_TREASURE_6);
@@ -192,8 +183,7 @@ void TrollEngine::inventory() {
 		drawStr(3, 17, kColorDefault, IDS_TRO_TREASURE_2);
 		break;
 	default:
-		sprintf(tmp, IDS_TRO_TREASURE_4, _treasuresLeft);
-		drawStr(20, 10, kColorDefault, tmp);
+		drawStr(20, 10, kColorDefault, Common::String::format(IDS_TRO_TREASURE_4, _treasuresLeft).c_str());
 		break;
 	}
 
@@ -427,7 +417,6 @@ void TrollEngine::drawTroll() {
 }
 
 int TrollEngine::drawRoom(char *menu) {
-	int n = 0;
 	bool contFlag = false;
 
 	if (_currentRoom == 1) {
@@ -456,13 +445,12 @@ int TrollEngine::drawRoom(char *menu) {
 
 	g_system->updateScreen();
 
-	char tmp[10];
+	int n = 0;
 	strncat(menu, (char *)_gameData + _locMessagesIdx[_currentRoom], 39);
 
 	for (int i = 0; i < 3; i++) {
 		if (_roomDescs[_roomPicture - 1].options[i]) {
-			sprintf(tmp, "\n  %d.", i);
-			strcat(menu, tmp);
+			strncat(menu, Common::String::format("\n  %d.", i).c_str(), 5);
 
 			strncat(menu, (char *)_gameData + _options[_roomDescs[_roomPicture - 1].options[i] - 1], 35);
 
@@ -491,8 +479,6 @@ void TrollEngine::playTune(int tune, int len) {
 }
 
 void TrollEngine::pickupTreasure(int treasureId) {
-	char tmp[40];
-
 	_inventory[IDI_TRO_MAX_TREASURE - _treasuresLeft] = treasureId;
 
 	if (_currentRoom != 24) {
@@ -520,8 +506,7 @@ void TrollEngine::pickupTreasure(int treasureId) {
 		_locMessagesIdx[6] = IDO_TRO_ALLTREASURES;
 		break;
 	default:
-		sprintf(tmp, IDS_TRO_TREASURE_3, _treasuresLeft);
-		drawStr(22, 1, kColorDefault, tmp);
+		drawStr(22, 1, kColorDefault, Common::String::format(IDS_TRO_TREASURE_3, _treasuresLeft).c_str());
 		break;
 	}
 
