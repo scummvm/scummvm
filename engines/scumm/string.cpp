@@ -1481,16 +1481,15 @@ void ScummEngine_v7::playSpeech(const byte *ptr) {
 		return;
 
 	if ((_game.id == GID_DIG || _game.id == GID_CMI) && ptr[0]) {
-		char pointer[20];
-		strcpy(pointer, (const char *)ptr);
+		Common::String pointerStr((const char *)ptr);
 
 		// Play speech
 		if (!(_game.features & GF_DEMO) && (_game.id == GID_CMI)) // CMI demo does not have .IMX for voice
-			strcat(pointer, ".IMX");
+			pointerStr += ".IMX";
 
 		_sound->stopTalkSound();
 		_imuseDigital->stopSound(kTalkSoundID);
-		_imuseDigital->startVoice(kTalkSoundID, pointer);
+		_imuseDigital->startVoice(kTalkSoundID, pointerStr.c_str());
 		_sound->talkSound(0, 0, 2);
 	}
 }

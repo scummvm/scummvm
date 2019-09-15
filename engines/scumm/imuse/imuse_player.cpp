@@ -408,12 +408,12 @@ void Player::sysEx(const byte *p, uint16 len) {
 
 	if (!_scanning) {
 		for (a = 0; a < len + 1 && a < 19; ++a) {
-			sprintf((char *)&buf[a * 3], " %02X", p[a]);
-		} // next for
+			snprintf((char *)&buf[a * 3], 3 * sizeof(char), " %02X", p[a]);
+		}
 		if (a < len + 1) {
 			buf[a * 3] = buf[a * 3 + 1] = buf[a * 3 + 2] = '.';
 			++a;
-		} // end if
+		}
 		buf[a * 3] = '\0';
 		debugC(DEBUG_IMUSE, "[%02d] SysEx:%s", _id, buf);
 	}
