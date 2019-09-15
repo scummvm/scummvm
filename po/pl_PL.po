@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2019-09-15 11:36+0200\n"
-"PO-Revision-Date: 2019-09-14 12:06+0000\n"
-"Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
+"PO-Revision-Date: 2019-09-15 20:54+0000\n"
+"Last-Translator: Rafa³ Bêd¼kowski <ravcik@gmail.com>\n"
 "Language-Team: Polish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/pl/>\n"
 "Language: pl_PL\n"
@@ -798,24 +798,20 @@ msgid "Never"
 msgstr "Nigdy"
 
 #: gui/options.cpp:127
-#, fuzzy
 msgid "Every 5 mins"
-msgstr "co 5 min"
+msgstr "Co 5 min"
 
 #: gui/options.cpp:127
-#, fuzzy
 msgid "Every 10 mins"
-msgstr "co 10 min"
+msgstr "Co 10 min"
 
 #: gui/options.cpp:127
-#, fuzzy
 msgid "Every 15 mins"
-msgstr "co 15 min"
+msgstr "Co 15 min"
 
 #: gui/options.cpp:127
-#, fuzzy
 msgid "Every 30 mins"
-msgstr "co 30 min"
+msgstr "Co 30 min"
 
 #: gui/options.cpp:366 gui/options.cpp:696 gui/options.cpp:834
 #: gui/options.cpp:917 gui/options.cpp:1190
@@ -828,14 +824,12 @@ msgid "Failed to apply some of the graphic options changes:"
 msgstr "Nie uda³o siê zastosowaæ czê¶ci zmian opcji grafiki:"
 
 #: gui/options.cpp:569
-#, fuzzy
 msgid "the video mode could not be changed"
-msgstr "nie uda³o siê zmieniæ trybu wideo."
+msgstr "nie uda³o siê zmieniæ trybu wideo"
 
 #: gui/options.cpp:582
-#, fuzzy
 msgid "the stretch mode could not be changed"
-msgstr "nie uda³o siê zmieniæ trybu wideo."
+msgstr "nie uda³o siê zmieniæ trybu skalowania wideo"
 
 #: gui/options.cpp:588
 msgid "the aspect ratio setting could not be changed"
@@ -854,9 +848,8 @@ msgid "Show On-screen control"
 msgstr "Poka¿ kontrole na ekranie"
 
 #: gui/options.cpp:1000
-#, fuzzy
 msgid "Touchpad mouse mode"
-msgstr "Tryb touchpada wy³±czony."
+msgstr "Tryb touchpada"
 
 #: gui/options.cpp:1004
 msgid "Swap Menu and Back buttons"
@@ -890,7 +883,7 @@ msgstr "Martwa strefa joysticka:"
 
 #: gui/options.cpp:1038
 msgid "HW Shader:"
-msgstr ""
+msgstr "Shader sprzêtowy:"
 
 #: gui/options.cpp:1038 gui/options.cpp:1040
 msgid "Different hardware shaders give different visual effects"
@@ -942,7 +935,6 @@ msgid "Correct aspect ratio for 320x200 games"
 msgstr "Korekcja formatu obrazu dla gier 320x200"
 
 #: gui/options.cpp:1110
-#, fuzzy
 msgid "Preferred device:"
 msgstr "Pref. urz±dzenie:"
 
@@ -960,13 +952,11 @@ msgid "Specifies output sound device or sound card emulator"
 msgstr "Okre¶la wyj¶ciowe urz±dzenie d¼wiêkowe lub emulator karty d¼wiêkowej"
 
 #: gui/options.cpp:1112
-#, fuzzy
 msgctxt "lowres"
 msgid "Preferred dev.:"
 msgstr "Pref. urz±dzenie:"
 
 #: gui/options.cpp:1112
-#, fuzzy
 msgctxt "lowres"
 msgid "Music device:"
 msgstr "Urz. muzyczne:"
