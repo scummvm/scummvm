@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2019-09-15 11:36+0200\n"
-"PO-Revision-Date: 2019-09-14 12:06+0000\n"
-"Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
+"PO-Revision-Date: 2019-09-15 20:54+0000\n"
+"Last-Translator: jepael <kermespersialainen@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fi/>\n"
 "Language: fi_FI\n"
@@ -2289,9 +2289,8 @@ msgid "C64 Audio emulator"
 msgstr "C64 Audio emulaattori"
 
 #: backends/cloud/cloudmanager.cpp:153
-#, fuzzy
 msgid "<syncing...>"
-msgstr "Yhdistetään..."
+msgstr "<synkronoidaan...>"
 
 #: backends/cloud/storage.cpp:232
 msgid "Saved games sync complete."
@@ -2534,9 +2533,8 @@ msgid "Windows MIDI"
 msgstr "Windows MIDI"
 
 #: backends/networking/sdl_net/handlers/createdirectoryhandler.cpp:60
-#, fuzzy
 msgid "Can't create directory here!"
-msgstr "Polku ei ole hakemisto"
+msgstr "Hakemistoa ei voi luoda tähän!"
 
 #: backends/networking/sdl_net/handlers/createdirectoryhandler.cpp:66
 #: backends/networking/sdl_net/handlers/createdirectoryhandler.cpp:73
@@ -2550,178 +2548,163 @@ msgstr "Polku ei ole hakemisto"
 #: backends/networking/sdl_net/handlers/uploadfilehandler.cpp:56
 #: backends/networking/sdl_net/handlers/uploadfilehandler.cpp:63
 #: backends/networking/sdl_net/uploadfileclienthandler.cpp:137
-#, fuzzy
 msgid "Invalid path!"
-msgstr "Viallinen koodi"
+msgstr "Polku ei kelpaa!"
 
 #: backends/networking/sdl_net/handlers/createdirectoryhandler.cpp:84
-#, fuzzy
 msgid "Parent directory doesn't exists!"
-msgstr "Polkua ei ole olemassa"
+msgstr "Päähakemistoa ei löydy!"
 
 #: backends/networking/sdl_net/handlers/createdirectoryhandler.cpp:88
 msgid "Can't create a directory within a file!"
-msgstr ""
+msgstr "Hakemistoa ei voi luoda tiedoston sisään!"
 
 #: backends/networking/sdl_net/handlers/createdirectoryhandler.cpp:98
 #: backends/networking/sdl_net/uploadfileclienthandler.cpp:141
 msgid "There is a file with that name in the parent directory!"
-msgstr ""
+msgstr "Päähakemistossa on jo samanniminen tiedosto!"
 
 #: backends/networking/sdl_net/handlers/createdirectoryhandler.cpp:104
-#, fuzzy
 msgid "Failed to create the directory!"
-msgstr "Tiedoston poistaminen ei onnistunut."
+msgstr "Hakemiston luonti epäonnistui!"
 
 #: backends/networking/sdl_net/handlers/createdirectoryhandler.cpp:111
 #: backends/networking/sdl_net/handlers/createdirectoryhandler.cpp:120
-#, fuzzy
 msgid "Directory created successfully!"
-msgstr "DVD liitetty onnistuneesti"
+msgstr "Hakemiston luonti onnistui!"
 
 #: backends/networking/sdl_net/handlers/createdirectoryhandler.cpp:122
 #: backends/networking/sdl_net/uploadfileclienthandler.cpp:204
-#, fuzzy
 msgid "Back to parent directory"
-msgstr "Polku ei ole hakemisto"
+msgstr "Takaisin päähakemistoon"
 
 #: backends/networking/sdl_net/handlers/downloadfilehandler.cpp:67
-#, fuzzy
 msgid "The file doesn't exist!"
-msgstr "Polkua ei ole olemassa"
+msgstr "Tiedostoa ei ole olemassa!"
 
 #: backends/networking/sdl_net/handlers/downloadfilehandler.cpp:71
-#, fuzzy
 msgid "Can't download a directory!"
-msgstr "Polku ei ole hakemisto"
+msgstr "Hakemistoa ei voi ladata!"
 
 #: backends/networking/sdl_net/handlers/downloadfilehandler.cpp:76
-#, fuzzy
 msgid "Failed to read the file!"
-msgstr "Tiedoston poistaminen ei onnistunut."
+msgstr "Tiedoston lukeminen ei onnistunut!"
 
 #: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:59
 msgid ""
 "The page is not available without the resources. Make sure file wwwroot.zip "
 "from ScummVM distribution is available in 'themepath'."
 msgstr ""
+"Sivu ei ole saatavilla ilman resursseja. Varmista että tiedosto wwwroot.zip "
+"ScummVM -jakelusta on saatavilla 'themepath'-hakemistopolussa."
 
 #: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:67
 #: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:68
 #: backends/networking/sdl_net/handlers/filespagehandler.cpp:223
 #: backends/networking/sdl_net/handlers/filespagehandler.cpp:224
-#, fuzzy
 msgid "Create directory"
-msgstr "Polku ei ole hakemisto"
+msgstr "Luo hakemisto"
 
 #: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:69
 #: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:70
 #: backends/networking/sdl_net/handlers/filespagehandler.cpp:227
 #: backends/networking/sdl_net/handlers/filespagehandler.cpp:228
-#, fuzzy
 msgid "Upload files"
-msgstr "Lataa tiedosto"
+msgstr "Lähetä tiedostoja"
 
 #: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:71
 #: backends/networking/sdl_net/handlers/filespagehandler.cpp:229
 msgid "Type new directory name:"
-msgstr ""
+msgstr "Anna uusi hakemiston nimi:"
 
 #: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:72
 #: backends/networking/sdl_net/handlers/filespagehandler.cpp:230
-#, fuzzy
 msgid "Select a file to upload:"
-msgstr "Valitse ladattava peli"
+msgstr "Valitse lähetettävä tiedosto:"
 
 #: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:73
 #: backends/networking/sdl_net/handlers/filespagehandler.cpp:231
-#, fuzzy
 msgid "Or select a directory (works in Chrome only):"
-msgstr "Valitse hakemisto käyttöliittymän teemoille"
+msgstr "Tai valitse hakemisto (toimii vain Chromessa):"
 
 #: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:74
 msgid "Index of "
-msgstr ""
+msgstr "Hakemistolista "
 
 #: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:75
-#, fuzzy
 msgid "Loading..."
-msgstr "Ladataan peliä..."
+msgstr "Ladataan..."
 
 #: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:76
 msgid "Error occurred"
-msgstr ""
+msgstr "Virhe havaittu"
 
 #: backends/networking/sdl_net/handlers/filespagehandler.cpp:81
 msgid "File system root"
-msgstr ""
+msgstr "Tiedostojärjestelmän juurihakemisto"
 
 #: backends/networking/sdl_net/handlers/filespagehandler.cpp:82
-#, fuzzy
 msgid "Saved games"
-msgstr "Tallenna peli:"
+msgstr "Tallennetut pelit"
 
 #: backends/networking/sdl_net/handlers/filespagehandler.cpp:119
-#, fuzzy
 msgid "Parent directory"
-msgstr "Polku ei ole hakemisto"
+msgstr "Päähakemisto"
 
 #: backends/networking/sdl_net/handlers/filespagehandler.cpp:218
-#, fuzzy
 msgid "ScummVM couldn't list the directory you specified."
-msgstr "ScummVM ei voi avata kyseistä hakemistoa!"
+msgstr "ScummVM ei voi avata kyseistä hakemistoa."
 
 #: backends/networking/sdl_net/handlers/filespagehandler.cpp:232
 #, c-format
 msgid "Index of %s"
-msgstr ""
+msgstr "Hakemiston %s sisältö"
 
 #: backends/networking/sdl_net/handlers/indexpagehandler.cpp:42
 msgid "This is a local webserver index page."
-msgstr ""
+msgstr "Tämä on paikallisen WWW-palvelimen aloitussivu."
 
 #: backends/networking/sdl_net/handlers/indexpagehandler.cpp:43
-#, fuzzy
 msgid "Open Files manager"
 msgstr "Avaa lataustenhallintadialogi"
 
 #: backends/networking/sdl_net/handlers/uploadfilehandler.cpp:67
 msgid "The parent directory doesn't exist!"
-msgstr ""
+msgstr "Päähakemistoa ei löydy!"
 
 #: backends/networking/sdl_net/handlers/uploadfilehandler.cpp:71
-#, fuzzy
 msgid "Can't upload into a file!"
-msgstr "Polku ei ole tiedosto"
+msgstr "Tiedostoon ei voi lähettää!"
 
 #: backends/networking/sdl_net/handlerutils.cpp:197
 msgid "Back to the files manager"
-msgstr ""
+msgstr "Takaisin lataustenhallintadialogiin"
 
 #: backends/networking/sdl_net/localwebserver.cpp:123
 msgid ""
 "Failed to start local webserver.\n"
 "Check whether selected port is not used by another application and try again."
 msgstr ""
+"Paikallisen WWW-palvelimen käynnistys epäonnistui.\n"
+"Tarkista ettei valittu portti ole toisen sovelluksen käytössä ja yritä "
+"uudelleen."
 
 #: backends/networking/sdl_net/uploadfileclienthandler.cpp:69
 #: backends/networking/sdl_net/uploadfileclienthandler.cpp:111
 msgid "Invalid request: headers are too long!"
-msgstr ""
+msgstr "Epäkelpo pyyntö: otsikko liian pitkä!"
 
 #: backends/networking/sdl_net/uploadfileclienthandler.cpp:155
-#, fuzzy
 msgid "Failed to upload the file!"
-msgstr "Tiedoston poistaminen ei onnistunut."
+msgstr "Tiedoston lähettäminen ei onnistunut!"
 
 #: backends/networking/sdl_net/uploadfileclienthandler.cpp:184
 msgid "No file was passed!"
-msgstr ""
+msgstr "Yhtään tiedostoa ei siirretty!"
 
 #: backends/networking/sdl_net/uploadfileclienthandler.cpp:202
-#, fuzzy
 msgid "Uploaded successfully!"
-msgstr "DVD liitetty onnistuneesti"
+msgstr "Lähetetty onnistuneesti!"
 
 #: backends/platform/ds/arm9/source/dsoptions.cpp:56
 #: engines/scumm/dialogs.cpp:287
