@@ -634,7 +634,7 @@ int LogicHEsoccer::op_1014(int32 srcX, int32 srcY, int32 srcZ, int32 velX, int32
 	// work out which collision objects we might collide with (if any)
 	if (generateCollisionObjectList(startX, startY, startZ, adjustedVelX, adjustedVelY, adjustedVelZ)) {
 		int collisionId = 0;
-		float v46; // always 1.0 after a collision due to op_1005
+		float v46 = 0.0; // always 1.0 after a collision due to op_1005
 
 		float collisionInfo[42 * 8];
 		memset(collisionInfo, 0, 42 * 8 * sizeof(float));
