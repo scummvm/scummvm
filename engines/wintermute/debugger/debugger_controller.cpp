@@ -188,7 +188,7 @@ Error DebuggerController::stepFinish() {
 
 void DebuggerController::clear() {
 	_lastScript = nullptr;
-	_lastLine = -1;
+	_lastLine = 0xFFFFFFFF; // Invalid
 }
 
 Common::String DebuggerController::readValue(const Common::String &name, Error *error) {
