@@ -49,6 +49,7 @@ audio/softsynth/mt32.cpp
 audio/softsynth/pcspk.cpp
 audio/softsynth/sid.cpp
 
+backends/cloud/cloudmanager.cpp
 backends/cloud/storage.cpp
 backends/dialogs/macosx/macosx-dialogs.mm
 backends/dialogs/win32/win32-dialogs.cpp
@@ -65,6 +66,15 @@ backends/graphics/sdl/sdl-graphics.cpp
 backends/graphics/wincesdl/wincesdl-graphics.cpp
 backends/keymapper/remap-dialog.cpp
 backends/midi/windows.cpp
+backends/networking/sdl_net/handlers/createdirectoryhandler.cpp
+backends/networking/sdl_net/handlers/downloadfilehandler.cpp
+backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp
+backends/networking/sdl_net/handlers/filespagehandler.cpp
+backends/networking/sdl_net/handlers/indexpagehandler.cpp
+backends/networking/sdl_net/handlers/uploadfilehandler.cpp
+backends/networking/sdl_net/handlerutils.cpp
+backends/networking/sdl_net/localwebserver.cpp
+backends/networking/sdl_net/uploadfileclienthandler.cpp
 backends/platform/ds/arm9/source/dsoptions.cpp
 backends/platform/ios7/ios7_osys_events.cpp
 backends/platform/iphone/osys_events.cpp
