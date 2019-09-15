@@ -134,8 +134,6 @@ BladeRunnerEngine::BladeRunnerEngine(OSystem *syst, const ADGameDescription *des
 	_walkSoundVolume  = 0;
 	_walkSoundPan     = 0;
 
-	_crimesDatabase = nullptr;
-
 	_language = desc->language;
 	switch (desc->language) {
 	case Common::EN_ANY:

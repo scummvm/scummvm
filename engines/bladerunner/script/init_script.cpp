@@ -2124,7 +2124,7 @@ void InitScript::Init_World_Waypoints() {
 	World_Waypoint_Set(433, kSetUG09, 115.0f, 156.0f, -310.0f);
 	World_Waypoint_Set(434, kSetUG09, -57.0f, 156.0f, -306.0f);
 	World_Waypoint_Set(435, kSetUG09, -121.0f, 156.0f, -426.0f);
-	World_Waypoint_Set(436, kSetUG18, -274.74f, 0.0f, 464.75f); // A bug? redundant? 436 is also set as a kSetUG18 waypoin in Sadik's AI script. Different co-ordinates
+	World_Waypoint_Set(436, kSetUG18, -274.74f, 0.0f, 464.75f); // A bug? redundant? 436 is also set as a kSetUG18 waypoint in Sadik's AI script. Different co-ordinates
 	World_Waypoint_Set(437, kSetHF05, 271.97f, 40.63f, 18.4f);
 	World_Waypoint_Set(438, kSetHF05, 203.97f, 40.63f, 18.4f);
 	World_Waypoint_Set(439, kSetNR05_NR08, -1273.27f, 0.32f, 126.92f);
@@ -2920,14 +2920,7 @@ void InitScript::Init_Actor_Stability() {
 
 void InitScript::Init_Actor_Health() {
 	Actor_Set_Health(kActorMcCoy, 50, 50);
-	Actor_Set_Health(kActorSteele, 50, 50);
-	Actor_Set_Health(kActorGordo, 50, 50);
-	Actor_Set_Health(kActorDektora, 50, 50);
 	Actor_Set_Health(kActorGuzza, 50, 50);
-	Actor_Set_Health(kActorClovis, 50, 50);
-	Actor_Set_Health(kActorLucy, 50, 50);
-	Actor_Set_Health(kActorIzo, 50, 50);
-	Actor_Set_Health(kActorSadik, 50, 50);
 	Actor_Set_Health(kActorCrazylegs, 50, 50);
 	Actor_Set_Health(kActorLuther, 50, 50);
 	Actor_Set_Health(kActorGrigorian, 50, 50);
@@ -2938,12 +2931,9 @@ void InitScript::Init_Actor_Health() {
 	Actor_Set_Health(kActorInsectDealer, 50, 50);
 	Actor_Set_Health(kActorTyrellGuard, 50, 50);
 	Actor_Set_Health(kActorEarlyQ, 50, 50);
-	Actor_Set_Health(kActorZuben, 50, 50);
 	Actor_Set_Health(kActorHasan, 50, 50);
 	Actor_Set_Health(kActorMarcus, 50, 50);
 	Actor_Set_Health(kActorMia, 50, 50);
-	Actor_Set_Health(kActorOfficerLeary, 50, 50);
-	Actor_Set_Health(kActorOfficerGrayford, 50, 50);
 	Actor_Set_Health(kActorHanoi, 50, 50);
 	Actor_Set_Health(kActorBaker, 50, 50);
 	Actor_Set_Health(kActorDeskClerk, 50, 50);
@@ -2984,18 +2974,16 @@ void InitScript::Init_Actor_Health() {
 	Actor_Set_Health(kActorGenwalkerB, 50, 50);
 	Actor_Set_Health(kActorGenwalkerC, 50, 50);
 
-	// A bug? The health for some actors is set again here
-	// with different values except for Izo and kActorOfficerGrayford
-	// rendering the initial setting redundant.
-	// The health of all who can be Replicants will again be set further below (including Izo)
-	Actor_Set_Health(kActorZuben, 80, 80);
+	// The health of all who can be Replicants will again be set further below
+	// (excluding LutherLance)
+	Actor_Set_Health(kActorSteele, 60, 60);
 	Actor_Set_Health(kActorGordo, 40, 40);
+	Actor_Set_Health(kActorDektora, 60, 60);
+	Actor_Set_Health(kActorClovis, 90, 90);
 	Actor_Set_Health(kActorLucy, 20, 20);
 	Actor_Set_Health(kActorIzo, 50, 50);
-	Actor_Set_Health(kActorDektora, 60, 60);
-	Actor_Set_Health(kActorSteele, 60, 60);
 	Actor_Set_Health(kActorSadik, 60, 60);
-	Actor_Set_Health(kActorClovis, 90, 90);
+	Actor_Set_Health(kActorZuben, 80, 80);
 	Actor_Set_Health(kActorOfficerLeary, 40, 40);
 	Actor_Set_Health(kActorOfficerGrayford, 50, 50);
 
