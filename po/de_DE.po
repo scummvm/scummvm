@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2019-09-15 11:36+0200\n"
-"PO-Revision-Date: 2019-09-14 06:25+0000\n"
+"PO-Revision-Date: 2019-09-15 20:54+0000\n"
 "Last-Translator: Lothar Serra Mari <serra@scummvm.org>\n"
 "Language-Team: German <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/de/>\n"
@@ -2310,9 +2310,8 @@ msgid "C64 Audio emulator"
 msgstr "C64-Audio-Emulator"
 
 #: backends/cloud/cloudmanager.cpp:153
-#, fuzzy
 msgid "<syncing...>"
-msgstr "Verbinden..."
+msgstr "<synchronisiere...>"
 
 #: backends/cloud/storage.cpp:232
 msgid "Saved games sync complete."
