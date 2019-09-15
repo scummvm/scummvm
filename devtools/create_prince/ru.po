@@ -8,15 +8,16 @@ msgstr ""
 "Project-Id-Version: Prince\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2018-04-17 19:53+0100\n"
-"PO-Revision-Date: 2018-04-17 18:01+0000\n"
+"PO-Revision-Date: 2019-09-19 13:56+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
-"Language-Team: none\n"
+"Language-Team: Russian <https://translations.scummvm.org/projects/prince/"
+"prince/ru/>\n"
 "Language: ru\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: gen-po.pl v1.8.0-150-g1bb23d7\n"
+"X-Generator: Weblate 3.7.1\n"
 
 #: dialog0001.txt:1
 msgid "HERO: Przeppp... raszam..."
@@ -32,7 +33,7 @@ msgstr "HERO: Но я не..."
 
 #: dialog0001.txt:4
 msgid "OTHER: Wiedziałem."
-msgstr "OTHER: То, что тебе нечего сказать, мне и так ясно!"
+msgstr "OTHER: Знаю."
 
 #: dialog0001.txt:105
 msgid "$0: Co to za miejsce?"
@@ -1588,7 +1589,7 @@ msgstr "OTHER: Такой же день, как и прочие."
 
 #: dialog0023.txt:100104
 msgid "HERO: Ale łańcuch waszmość masz fachowy."
-msgstr "HERO: Но ваша кошка выглядит довольной."
+msgstr "HERO: Но ваша цепь выглядит дорогой."
 
 #: dialog0023.txt:100105
 msgid "OTHER: Cóż, głodem jeszcze nie przymieram,|ale jak tak dalej pójdzie, to będę musiał|przestać karmić konie kawiorem."
@@ -1788,7 +1789,10 @@ msgstr "OTHER: Потом, он помогают при простуде и|на
 
 #: dialog0024.txt:100108
 msgid "OTHER: Poza tym polecany jest kochankom, którzy chcą|zerwać z partnerem. Działa niezawodnie już po|kilku tygodniach intensywnego zażywania."
-msgstr "OTHER: И вообще очень полезен для здоровья."
+msgstr ""
+"OTHER: Кроме того, он рекомендуется влюбленным, которые хотят расстаться со "
+"своим партнером. Надежно работает после нескольких недель интенсивного "
+"использования."
 
 #: dialog0024.txt:100109
 msgid "OTHER: I najważniejsze: nic nie dodaje tak aromatu|zupie czy mięsu jak szczypta czosnku."
@@ -1964,7 +1968,7 @@ msgstr "P#OTHER: Вот. Мы можем продолжить игру?#F1#B0"
 
 #: dialog0025.txt:100301
 msgid "OTHER: Twoja łaska nie zna granic, książę.#E3"
-msgstr "OTHER: Ваше любопытство безгранично, принц.#E3"
+msgstr "OTHER: Ваше милосердие не знает границ, принц.#E3"
 
 #: dialog0025.txt:100401
 msgid "OTHER: Ależ!..."
@@ -1984,7 +1988,7 @@ msgstr "HERO: Ну да..."
 
 #: dialog0025.txt:100405
 msgid "P#HERO: Racja."
-msgstr "HERO: Вот именно."
+msgstr "P#HERO: Вот именно."
 
 #: dialog0025.txt:100406
 msgid "P#HERO: Faktycznie."
@@ -4632,51 +4636,51 @@ msgstr "OTHER: Пойдем пройдемся."
 
 #: dialog0142.txt:1
 msgid "HERO: Kici, kici, skocz na tę szlafmycę..."
-msgstr "HERO: Ля ля ля!"
+msgstr "HERO: Киса, киса, прыгни на эту ночнушку..."
 
 #: dialog0143.txt:1
 msgid "HERO: Szlafmyca, kici, kici, szlafmyca..."
-msgstr "HERO: Ля ля ля !"
+msgstr "HERO: Ночнушка, киса, ночнушка..."
 
 #: dialog0144.txt:1
 msgid "HERO: Skocz na szlafmycę, sierściuchu!"
-msgstr "HERO: Ля ля ля ля ля ля ...."
+msgstr "HERO: Прыгни на ночнушку, пушистик!"
 
 #: dialog0145.txt:1
 msgid "HERO: Szlafmyca, ty tłuściochu!"
-msgstr "HERO: Кис кис кис, прыгай, кошечка..."
+msgstr "HERO: Ночнушку, ты, жиробас!"
 
 #: dialog0146.txt:101
 msgid "$0: Kici kici..."
-msgstr "$0: Кис кис"
+msgstr "$0: Киса, киса..."
 
 #: dialog0146.txt:102
 msgid "$1: Widzisz tu ptaszka, przyjacielu?"
-msgstr "$1: Ты видишь птичек, киска?"
+msgstr "$1: Видишь ту птичку, дружок?"
 
 #: dialog0146.txt:103
 msgid "$2: Fiu-fiu-fiu!"
-msgstr "$2: Мяу..."
+msgstr "$2: Кис-кис-кис!"
 
 #: dialog0146.txt:104
 msgid "$3: Głupie kocisko."
-msgstr "$3: Проклятые кошки!"
+msgstr "$3: Тупая кошка!"
 
 #: dialog0146.txt:205
 msgid "$5: Fiu-fiu-fiuuu!"
-msgstr "$5: Мяу... Мяяяу..."
+msgstr "$5: Кис-кис-кииииис!"
 
 #: dialog0146.txt:206
 msgid "$6: Fiuuu-fiu-fiu!"
-msgstr "$6: Мяууууу!"
+msgstr "$6: Киииис-кис-кис!"
 
 #: dialog0146.txt:207
 msgid "$7: Fiu-fiuuu-fiu!"
-msgstr "$7: Мяяяууууууу!!"
+msgstr "$7: Кис-кииис-кис!"
 
 #: dialog0146.txt:208
 msgid "$8: FIU-FIU!"
-msgstr "$8: Цип-цип-цип..."
+msgstr "$8: КИС-КИС!"
 
 #: dialog0146.txt:100001
 msgid "#B0"
@@ -11601,6 +11605,5 @@ msgstr "Нажмите вовремя правую или левую кнопк�
 #: variatxt.txt:5802
 msgid "Naciskaj szybko na przemian lewy i prawy przycisk myszki|lub klawisze 'Z' i 'X'."
 msgstr "Быстро нажимайте правую и левую кнопки попеременно,|или кнопки М и Н."
-
 
 # Missing: 9  Extra: 0
