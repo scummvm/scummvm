@@ -28,7 +28,11 @@ void SceneScriptBB09::InitializeScene() {
 	Setup_Scene_Information(111.2f, -8.96f, 134.65f, 0);
 	if (Game_Flag_Query(kFlagBB10toBB09)) {
 		Game_Flag_Reset(kFlagBB10toBB09);
+#if BLADERUNNER_ORIGINAL_BUGS
 		Setup_Scene_Information(115.45f, -8.96f, 134.0f, 628);
+#else
+		Setup_Scene_Information(455.74f, -8.99f, 217.48f, 996);
+#endif // BLADERUNNER_ORIGINAL_BUGS
 	} else if (Game_Flag_Query(kFlagBB08toBB09)) {
 		Game_Flag_Reset(kFlagBB08toBB09);
 		Setup_Scene_Information(107.45f, -9.14f, 166.0f, 244);
@@ -77,6 +81,11 @@ void SceneScriptBB09::InitializeScene() {
 }
 
 void SceneScriptBB09::SceneLoaded() {
+#if BLADERUNNER_ORIGINAL_BUGS
+#else
+	Obstacle_Object("BACKWALL1", true);
+	Obstacle_Object("BACKWALL2", true);
+#endif // BLADERUNNER_ORIGINAL_BUGS
 	Obstacle_Object("WICKER CHAIR ", true);
 	Unobstacle_Object("ROOM03 RIGHT WALL", true);
 	Unclickable_Object("WICKER CHAIR ");

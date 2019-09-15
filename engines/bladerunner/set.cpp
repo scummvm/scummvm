@@ -576,6 +576,14 @@ void Set::patchInAdditionalObjectsInSet() {
 	Common::String custObjName;
 	BoundingBox bbox;
 	switch (_vm->_scene->getSceneId()) {
+	case kSceneBB09:
+		bbox = BoundingBox(406.12f, -9.18f, 140.87f, 440.04f, 172.49f, 165.33f);
+		custObjName = "BACKWALL1";
+		setupNewObjectInSet(custObjName, bbox);
+		bbox = BoundingBox(400.12f, -9.18f, 208.87f, 440.04f, 182.49f, 231.33f);
+		custObjName = "BACKWALL2";
+		setupNewObjectInSet(custObjName, bbox);
+		break;
 	case kSceneCT02:
 		bbox = BoundingBox(-130.13f, -162.41f, -16.25f, -81.74f, 160.29f, -4.74f);
 		custObjName = "BACKWALL2";
