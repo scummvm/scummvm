@@ -77,7 +77,7 @@ void GoogleDriveTokenRefresher::finishJson(Common::JSONValue *json) {
 			Common::JSONObject error = result.getVal("error")->asObject();
 			bool irrecoverable = true;
 
-			uint32 code = -1;
+			uint32 code = 0xFFFFFFFF; // Invalid
 			Common::String message;
 			if (jsonContainsIntegerNumber(error, "code", "GoogleDriveTokenRefresher")) {
 				code = error.getVal("code")->asIntegerNumber();
