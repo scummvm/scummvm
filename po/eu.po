@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.5.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2019-09-15 10:40+0200\n"
+"POT-Creation-Date: 2019-09-15 11:36+0200\n"
 "PO-Revision-Date: 2018-08-06 21:35+0000\n"
 "Last-Translator: Erik Zubiria <zubiriaerik@hotmail.com>\n"
 "Language-Team: Basque <https://translations.scummvm.org/projects/scummvm/"
@@ -1575,7 +1575,7 @@ msgstr ""
 msgid "This Storage is working now. Do you want to interrupt it?"
 msgstr ""
 
-#: gui/options.cpp:2617
+#: gui/options.cpp:2617 backends/cloud/cloudmanager.cpp:154
 msgid "<right now>"
 msgstr ""
 
@@ -2305,6 +2305,10 @@ msgstr "IBM PCjr emuladorea"
 msgid "C64 Audio emulator"
 msgstr "C64 Audio emuladorea"
 
+#: backends/cloud/cloudmanager.cpp:153
+msgid "<syncing...>"
+msgstr ""
+
 #: backends/cloud/storage.cpp:232
 #, fuzzy
 msgid "Saved games sync complete."
@@ -2546,6 +2550,194 @@ msgstr " (Jokoa)"
 #: backends/midi/windows.cpp:163
 msgid "Windows MIDI"
 msgstr "Windows MIDI"
+
+#: backends/networking/sdl_net/handlers/createdirectoryhandler.cpp:60
+#, fuzzy
+msgid "Can't create directory here!"
+msgstr "Bide-izena ez da direktorioa"
+
+#: backends/networking/sdl_net/handlers/createdirectoryhandler.cpp:66
+#: backends/networking/sdl_net/handlers/createdirectoryhandler.cpp:73
+#: backends/networking/sdl_net/handlers/createdirectoryhandler.cpp:80
+#: backends/networking/sdl_net/handlers/downloadfilehandler.cpp:43
+#: backends/networking/sdl_net/handlers/downloadfilehandler.cpp:49
+#: backends/networking/sdl_net/handlers/downloadfilehandler.cpp:56
+#: backends/networking/sdl_net/handlers/downloadfilehandler.cpp:63
+#: backends/networking/sdl_net/handlers/uploadfilehandler.cpp:43
+#: backends/networking/sdl_net/handlers/uploadfilehandler.cpp:49
+#: backends/networking/sdl_net/handlers/uploadfilehandler.cpp:56
+#: backends/networking/sdl_net/handlers/uploadfilehandler.cpp:63
+#: backends/networking/sdl_net/uploadfileclienthandler.cpp:137
+msgid "Invalid path!"
+msgstr ""
+
+#: backends/networking/sdl_net/handlers/createdirectoryhandler.cpp:84
+#, fuzzy
+msgid "Parent directory doesn't exists!"
+msgstr "Bide-izena ez da existitzen"
+
+#: backends/networking/sdl_net/handlers/createdirectoryhandler.cpp:88
+msgid "Can't create a directory within a file!"
+msgstr ""
+
+#: backends/networking/sdl_net/handlers/createdirectoryhandler.cpp:98
+#: backends/networking/sdl_net/uploadfileclienthandler.cpp:141
+msgid "There is a file with that name in the parent directory!"
+msgstr ""
+
+#: backends/networking/sdl_net/handlers/createdirectoryhandler.cpp:104
+#, fuzzy
+msgid "Failed to create the directory!"
+msgstr "Ezin izan da fitxategia ezabatu."
+
+#: backends/networking/sdl_net/handlers/createdirectoryhandler.cpp:111
+#: backends/networking/sdl_net/handlers/createdirectoryhandler.cpp:120
+#, fuzzy
+msgid "Directory created successfully!"
+msgstr "DVD-a ondo muntatu da"
+
+#: backends/networking/sdl_net/handlers/createdirectoryhandler.cpp:122
+#: backends/networking/sdl_net/uploadfileclienthandler.cpp:204
+#, fuzzy
+msgid "Back to parent directory"
+msgstr "Bide-izena ez da direktorioa"
+
+#: backends/networking/sdl_net/handlers/downloadfilehandler.cpp:67
+#, fuzzy
+msgid "The file doesn't exist!"
+msgstr "Bide-izena ez da existitzen"
+
+#: backends/networking/sdl_net/handlers/downloadfilehandler.cpp:71
+#, fuzzy
+msgid "Can't download a directory!"
+msgstr "Bide-izena ez da direktorioa"
+
+#: backends/networking/sdl_net/handlers/downloadfilehandler.cpp:76
+#, fuzzy
+msgid "Failed to read the file!"
+msgstr "Ezin izan da fitxategia ezabatu."
+
+#: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:59
+msgid ""
+"The page is not available without the resources. Make sure file wwwroot.zip "
+"from ScummVM distribution is available in 'themepath'."
+msgstr ""
+
+#: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:67
+#: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:68
+#: backends/networking/sdl_net/handlers/filespagehandler.cpp:223
+#: backends/networking/sdl_net/handlers/filespagehandler.cpp:224
+#, fuzzy
+msgid "Create directory"
+msgstr "Bide-izena ez da direktorioa"
+
+#: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:69
+#: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:70
+#: backends/networking/sdl_net/handlers/filespagehandler.cpp:227
+#: backends/networking/sdl_net/handlers/filespagehandler.cpp:228
+#, fuzzy
+msgid "Upload files"
+msgstr "Kargatu fitxategia"
+
+#: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:71
+#: backends/networking/sdl_net/handlers/filespagehandler.cpp:229
+msgid "Type new directory name:"
+msgstr ""
+
+#: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:72
+#: backends/networking/sdl_net/handlers/filespagehandler.cpp:230
+#, fuzzy
+msgid "Select a file to upload:"
+msgstr "Aukeratu kargatzeko partida"
+
+#: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:73
+#: backends/networking/sdl_net/handlers/filespagehandler.cpp:231
+#, fuzzy
+msgid "Or select a directory (works in Chrome only):"
+msgstr "Gaien direktorioa aukeratu"
+
+#: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:74
+msgid "Index of "
+msgstr ""
+
+#: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:75
+#, fuzzy
+msgid "Loading..."
+msgstr "Jokoa kargatzen..."
+
+#: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:76
+msgid "Error occurred"
+msgstr ""
+
+#: backends/networking/sdl_net/handlers/filespagehandler.cpp:81
+msgid "File system root"
+msgstr ""
+
+#: backends/networking/sdl_net/handlers/filespagehandler.cpp:82
+#, fuzzy
+msgid "Saved games"
+msgstr "Gorde jokoa:"
+
+#: backends/networking/sdl_net/handlers/filespagehandler.cpp:119
+#, fuzzy
+msgid "Parent directory"
+msgstr "Bide-izena ez da direktorioa"
+
+#: backends/networking/sdl_net/handlers/filespagehandler.cpp:218
+#, fuzzy
+msgid "ScummVM couldn't list the directory you specified."
+msgstr "ScummVM-k ezin izan du zehazturiko direktorioa ireki!"
+
+#: backends/networking/sdl_net/handlers/filespagehandler.cpp:232
+#, c-format
+msgid "Index of %s"
+msgstr ""
+
+#: backends/networking/sdl_net/handlers/indexpagehandler.cpp:42
+msgid "This is a local webserver index page."
+msgstr ""
+
+#: backends/networking/sdl_net/handlers/indexpagehandler.cpp:43
+msgid "Open Files manager"
+msgstr ""
+
+#: backends/networking/sdl_net/handlers/uploadfilehandler.cpp:67
+msgid "The parent directory doesn't exist!"
+msgstr ""
+
+#: backends/networking/sdl_net/handlers/uploadfilehandler.cpp:71
+#, fuzzy
+msgid "Can't upload into a file!"
+msgstr "Bide-izena ez da fitxategia"
+
+#: backends/networking/sdl_net/handlerutils.cpp:197
+msgid "Back to the files manager"
+msgstr ""
+
+#: backends/networking/sdl_net/localwebserver.cpp:123
+msgid ""
+"Failed to start local webserver.\n"
+"Check whether selected port is not used by another application and try again."
+msgstr ""
+
+#: backends/networking/sdl_net/uploadfileclienthandler.cpp:69
+#: backends/networking/sdl_net/uploadfileclienthandler.cpp:111
+msgid "Invalid request: headers are too long!"
+msgstr ""
+
+#: backends/networking/sdl_net/uploadfileclienthandler.cpp:155
+#, fuzzy
+msgid "Failed to upload the file!"
+msgstr "Ezin izan da fitxategia ezabatu."
+
+#: backends/networking/sdl_net/uploadfileclienthandler.cpp:184
+msgid "No file was passed!"
+msgstr ""
+
+#: backends/networking/sdl_net/uploadfileclienthandler.cpp:202
+#, fuzzy
+msgid "Uploaded successfully!"
+msgstr "DVD-a ondo muntatu da"
 
 #: backends/platform/ds/arm9/source/dsoptions.cpp:56
 #: engines/scumm/dialogs.cpp:287
