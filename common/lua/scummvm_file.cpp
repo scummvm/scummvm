@@ -26,7 +26,7 @@
 
 namespace Lua {
 
-LuaFileProxy::LuaFileProxy(const Common::String &filename, const Common::String &mode) {
+LuaFileProxy::LuaFileProxy(const Common::String &filename, const Common::String &mode) : _readPos(0) {
 	assert(filename.contains("config.lua"));
 	if (mode == "r")
 		setupConfigFile();
@@ -44,11 +44,7 @@ Common::String LuaFileProxy::formatDouble(double value) {
 	double integerPart = floor(value);
 	double fractionalPart = (value - integerPart) * 1000000.0;
 
-	Common::String out = Common::String::format("%.0f.%.0f", integerPart, fractionalPart);
-	if (negative)
-		out = "-" + out;
-
-	return out;
+	return Common::String::format("%s%.0f.%.0f", negative ? "-" : "", integerPart, fractionalPart);
 }
 
 void LuaFileProxy::setupConfigFile() {
