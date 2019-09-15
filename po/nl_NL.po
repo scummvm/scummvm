@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2019-09-15 11:36+0200\n"
-"PO-Revision-Date: 2019-09-12 20:59+0000\n"
-"Last-Translator: Ben Castricum <github@bencastricum.nl>\n"
+"PO-Revision-Date: 2019-09-15 21:21+0000\n"
+"Last-Translator: Thierry Crozat <criezy@scummvm.org>\n"
 "Language-Team: Dutch <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/nl/>\n"
 "Language: nl_NL\n"
@@ -3496,7 +3496,7 @@ msgstr "Sitcom modus"
 
 #: engines/bladerunner/detection.cpp:49
 msgid "Game will add laughter after actor's line or narration"
-msgstr ""
+msgstr "Spel voegt gelach toe na regels van personage of verhaal"
 
 #: engines/bladerunner/detection.cpp:57
 msgid "Shorty mode"
@@ -3505,6 +3505,7 @@ msgstr "Shorty modus"
 #: engines/bladerunner/detection.cpp:58
 msgid "Game will shrink the actors and make their voices high pitched"
 msgstr ""
+"Spel verkleint de hoofden van de personages en laat de stemmen hoger klinken"
 
 #: engines/cge/detection.cpp:105 engines/cge2/detection.cpp:111
 msgid "Color Blind Mode"
@@ -3563,12 +3564,12 @@ msgstr "Helaas, creëren van een opgeslagen spel is niet gelukt"
 
 #: engines/glk/advsys/vm.cpp:560
 msgid "Speak up! I can't hear you!\n"
-msgstr ""
+msgstr "Spreek luider! I kan je niet horen.\n"
 
 #: engines/glk/advsys/vm.cpp:596
 #, c-format
 msgid "I don't know the word \"%s\".\n"
-msgstr ""
+msgstr "Ik ken het woord \"%s\" niet.\n"
 
 #: engines/glk/advsys/vm.cpp:682
 msgid "I don't understand.\n"
@@ -3580,7 +3581,7 @@ msgstr "Dit is te kort voor een geldig Alan2 bestand."
 
 #: engines/glk/alan2/alan2.cpp:81
 msgid "This is not a valid Alan2 file."
-msgstr ""
+msgstr "Dit is geen geldig Alan2 bestand."
 
 #: engines/glk/frotz/frotz.cpp:126
 msgid "Error reading save file"
@@ -3592,39 +3593,41 @@ msgstr "Fout tijdens het opslaan van het spel\n"
 
 #: engines/glk/glulxe/glulxe.cpp:79 engines/glk/magnetic/magnetic.cpp:73
 msgid "This is too short to be a valid Glulx file."
-msgstr ""
+msgstr "Dit is te klein voor een valide Glulx bestand."
 
 #: engines/glk/glulxe/glulxe.cpp:84 engines/glk/magnetic/magnetic.cpp:78
 msgid "This is not a valid Glulx file."
-msgstr ""
+msgstr "Dit is geen geldig Glulx bestand."
 
 #: engines/glk/glulxe/glulxe.cpp:91 engines/glk/magnetic/magnetic.cpp:85
 msgid "This Glulx file is too old a version to execute."
 msgstr ""
+"Dit Glulx bestand is van een te oude versie om uitgevoerd te kunnen worden."
 
 #: engines/glk/glulxe/glulxe.cpp:95 engines/glk/magnetic/magnetic.cpp:89
 msgid "This Glulx file is too new a version to execute."
 msgstr ""
+"Dit Glulx bestand is van een te nieuwe versie om uitgevoerd te kunnen worden."
 
 #: engines/glk/scott/scott.cpp:99
 msgid "I don't understand your command. "
-msgstr ""
+msgstr "Ik begrijp je opdracht niet. "
 
 #: engines/glk/scott/scott.cpp:102
 msgid "I can't do that yet. "
-msgstr ""
+msgstr "Dat kan ik nog niet doen. "
 
 #: engines/glk/scott/scott.cpp:118
 msgid "Light has run out! "
-msgstr ""
+msgstr "Lamp is op! "
 
 #: engines/glk/scott/scott.cpp:120
 msgid "Your light has run out. "
-msgstr ""
+msgstr "Uw lamp is opgeraakt. "
 
 #: engines/glk/scott/scott.cpp:129
 msgid "Light runs out in "
-msgstr ""
+msgstr "Lamp raakt op in "
 
 #: engines/glk/scott/scott.cpp:131
 msgid " turns. "
@@ -3632,31 +3635,31 @@ msgstr " beurten. "
 
 #: engines/glk/scott/scott.cpp:134
 msgid "Your light is growing dim. "
-msgstr ""
+msgstr "Uw lamp wordt zwakker. "
 
 #: engines/glk/scott/scott.cpp:394
 msgid "North"
-msgstr ""
+msgstr "Noord"
 
 #: engines/glk/scott/scott.cpp:394
 msgid "South"
-msgstr ""
+msgstr "Zuid"
 
 #: engines/glk/scott/scott.cpp:394
 msgid "East"
-msgstr ""
+msgstr "Oost"
 
 #: engines/glk/scott/scott.cpp:394
 msgid "West"
-msgstr ""
+msgstr "West"
 
 #: engines/glk/scott/scott.cpp:406
 msgid "You can't see. It is too dark!\n"
-msgstr ""
+msgstr "U ziet niets. Het is te donker!\n"
 
 #: engines/glk/scott/scott.cpp:408
 msgid "I can't see. It is too dark!\n"
-msgstr ""
+msgstr "ik zie niets. Het is te donker!\n"
 
 #: engines/glk/scott/scott.cpp:418
 #, c-format
