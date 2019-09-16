@@ -98,24 +98,24 @@ void GriffonEngine::updateEngine() {
 	}
 
 	if (attacking) {
-		_player.attackframe += _player.attackspd * _fpsr;
-		if (_player.attackframe >= 16) {
+		_player.attackFrame += _player.attackSpeed * _fpsr;
+		if (_player.attackFrame >= 16) {
 			attacking = false;
-			_player.attackframe = 0;
-			_player.walkframe = 0;
+			_player.attackFrame = 0;
+			_player.walkFrame = 0;
 		}
 
-		int pa = (int)(_player.attackframe);
+		int pa = (int)(_player.attackFrame);
 
 		for (int i = 0; i <= pa; i++) {
-			if (ABS(_playerattackofs[_player.walkdir][i][2]) < kEpsilon) {
-				_playerattackofs[_player.walkdir][i][2] = 1;
+			if (ABS(_playerattackofs[_player.walkDir][i][2]) < kEpsilon) {
+				_playerattackofs[_player.walkDir][i][2] = 1;
 
 				float opx = _player.px;
 				float opy = _player.py;
 
-				_player.px = _player.px + _playerattackofs[_player.walkdir][i][0];
-				_player.py = _player.py + _playerattackofs[_player.walkdir][i][1];
+				_player.px = _player.px + _playerattackofs[_player.walkDir][i][0];
+				_player.py = _player.py + _playerattackofs[_player.walkDir][i][1];
 
 				int sx = (int)(_player.px / 2 + 6);
 				int sy = (int)(_player.py / 2 + 10);
@@ -152,21 +152,21 @@ void GriffonEngine::updateEngine() {
 		}
 	}
 
-	if (_player.level == _player.maxlevel)
+	if (_player.level == _player.maxLevel)
 		_player.exp = 0;
 
-	if (_player.exp >= _player.nextlevel) {
+	if (_player.exp >= _player.nextLevel) {
 		_player.level = _player.level + 1;
 		addFloatText("LEVEL UP!", _player.px + 16 - 36, _player.py + 16, 3);
-		_player.exp = _player.exp - _player.nextlevel;
-		_player.nextlevel = _player.nextlevel * 3 / 2; // 1.5
-		_player.maxhp = _player.maxhp + _player.level * 3;
-		if (_player.maxhp > 999)
-			_player.maxhp = 999;
-		_player.hp = _player.maxhp;
+		_player.exp = _player.exp - _player.nextLevel;
+		_player.nextLevel = _player.nextLevel * 3 / 2; // 1.5
+		_player.maxHp = _player.maxHp + _player.level * 3;
+		if (_player.maxHp > 999)
+			_player.maxHp = 999;
+		_player.hp = _player.maxHp;
 
-		_player.sworddamage = _player.level * 14 / 10;
-		_player.spelldamage = _player.level * 13 / 10;
+		_player.swordDamage = _player.level * 14 / 10;
+		_player.spellDamage = _player.level * 13 / 10;
 
 		if (config.effects) {
 			int snd = playSound(_sfx[kSndPowerUp]);
@@ -187,24 +187,24 @@ void GriffonEngine::updateEngine() {
 
 	if (!_forcepause) {
 		for (int i = 0; i < 5; i++) {
-			if (_player.foundspell[i] == 1)
-				_player.spellcharge[i] += 1 * _player.level * 0.01 * _fpsr;
-			if (_player.spellcharge[i] > 100)
-				_player.spellcharge[i] = 100;
+			if (_player.foundSpell[i] == 1)
+				_player.spellCharge[i] += 1 * _player.level * 0.01 * _fpsr;
+			if (_player.spellCharge[i] > 100)
+				_player.spellCharge[i] = 100;
 		}
 
-		if (_player.foundspell[0]) {
-			_player.spellstrength += 3 * _player.level * .01 * _fpsr;
+		if (_player.foundSpell[0]) {
+			_player.spellStrength += 3 * _player.level * .01 * _fpsr;
 		}
 
-		_player.attackstrength += (30 + 3 * (float)_player.level) / 50 * _fpsr;
+		_player.attackStrength += (30 + 3 * (float)_player.level) / 50 * _fpsr;
 	}
 
-	if (_player.attackstrength > 100)
-		_player.attackstrength = 100;
+	if (_player.attackStrength > 100)
+		_player.attackStrength = 100;
 
-	if (_player.spellstrength > 100)
-		_player.spellstrength = 100;
+	if (_player.spellStrength > 100)
+		_player.spellStrength = 100;
 
 	_itemyloc += 0.75 * _fpsr;
 	while (_itemyloc >= 16)
@@ -230,7 +230,7 @@ void GriffonEngine::updateEngine() {
 		_player.hpflashb = _player.hpflashb + 1;
 		if (_player.hpflashb == 2)
 			_player.hpflashb = 0;
-		if (config.effects && _player.hpflashb == 0 && _player.hp < _player.maxhp / 4) {
+		if (config.effects && _player.hpflashb == 0 && _player.hp < _player.maxHp / 4) {
 			int snd = playSound(_sfx[kSndBeep]);
 			setChannelVolume(snd, config.effectsvol);
 		}
@@ -258,29 +258,29 @@ void GriffonEngine::newGame() {
 	_player.py = 0;
 	_player.opx = 0;
 	_player.opy = 0;
-	_player.walkdir = 0;
-	_player.walkframe = 0;
-	_player.walkspd = 0;
-	_player.attackframe = 0;
-	_player.attackspd = 0;
+	_player.walkDir = 0;
+	_player.walkFrame = 0;
+	_player.walkSpeed = 0;
+	_player.attackFrame = 0;
+	_player.attackSpeed = 0;
 	_player.hp = 0;
-	_player.maxhp = 0;
+	_player.maxHp = 0;
 	_player.hpflash = 0;
 	_player.level = 0;
-	_player.maxlevel = 0;
+	_player.maxLevel = 0;
 	_player.sword = 0;
 	_player.shield = 0;
 	_player.armour = 0;
 	for (int i = 0; i < 5; i++) {
-		_player.foundspell[i] = 0;
-		_player.spellcharge[i] = 0;
+		_player.foundSpell[i] = 0;
+		_player.spellCharge[i] = 0;
 		_player.inventory[i] = 0;
 	}
-	_player.attackstrength = 0;
-	_player.spelldamage = 0;
-	_player.sworddamage = 0;
+	_player.attackStrength = 0;
+	_player.spellDamage = 0;
+	_player.swordDamage = 0;
 	_player.exp = 0;
-	_player.nextlevel = 0;
+	_player.nextLevel = 0;
 
 	memset(_scriptflag, 0, sizeof(_scriptflag));
 	memset(_objmapf, 0, sizeof(_objmapf));
@@ -294,26 +294,26 @@ void GriffonEngine::newGame() {
 	_roomLocks[73] = 1;
 	_roomLocks[82] = 2;
 
-	_player.walkspd = 1.1f;
+	_player.walkSpeed = 1.1f;
 	_animspd = 0.5f;
 	attacking = false;
-	_player.attackspd = 1.5f;
+	_player.attackSpeed = 1.5f;
 
 	_player.sword = 1;
 	_player.level = 1;
-	_player.maxlevel = 22;
-	_player.nextlevel = 50;
+	_player.maxLevel = 22;
+	_player.nextLevel = 50;
 	_player.shield = 1;
 	_player.armour = 1;
 	_player.hp = 14;
-	_player.maxhp = _player.hp;
+	_player.maxHp = _player.hp;
 
-	_player.sworddamage = _player.level * 2;
-	_player.spelldamage = _player.level * 3 / 2;
+	_player.swordDamage = _player.level * 2;
+	_player.spellDamage = _player.level * 3 / 2;
 
 	_player.px = 15 * 16 - 4;
 	_player.py = 6 * 16 - 4;
-	_player.walkdir = 1;
+	_player.walkDir = 1;
 
 	_pgardens = false;
 	_ptown = false;

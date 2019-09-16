@@ -136,31 +136,31 @@ struct Player {
 	float   py;
 	float   opx;
 	float   opy;
-	int     walkdir;
-	float   walkframe;
-	float   walkspd;
-	float   attackframe;
-	float   attackspd;
+	int     walkDir;
+	float   walkFrame;
+	float   walkSpeed;
+	float   attackFrame;
+	float   attackSpeed;
 
 	int hp;
-	int maxhp;
+	int maxHp;
 	float hpflash;
 	int hpflashb;
 	int level;
-	int maxlevel;
+	int maxLevel;
 	int sword;
 	int shield;
 	int armour;
-	int foundspell[5];
-	float spellcharge[5];
+	int foundSpell[5];
+	float spellCharge[5];
 	int inventory[5];
-	float attackstrength;
-	float spellstrength;
-	int spelldamage;
-	int sworddamage;
+	float attackStrength;
+	float spellStrength;
+	int spellDamage;
+	int swordDamage;
 
 	int exp;
-	int nextlevel;
+	int nextLevel;
 
 	int pause;
 
