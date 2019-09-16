@@ -76,31 +76,31 @@ int GriffonEngine::loadState(int slotnum) {
 		INPUT("%f", &_player.py);
 		INPUT("%f", &_player.opx);
 		INPUT("%f", &_player.opy);
-		INPUT("%i", &_player.walkdir);
-		INPUT("%f", &_player.walkframe);
-		INPUT("%f", &_player.walkspd);
-		INPUT("%f", &_player.attackframe);
-		INPUT("%f", &_player.attackspd);
+		INPUT("%i", &_player.walkDir);
+		INPUT("%f", &_player.walkFrame);
+		INPUT("%f", &_player.walkSpeed);
+		INPUT("%f", &_player.attackFrame);
+		INPUT("%f", &_player.attackSpeed);
 		INPUT("%i", &_player.hp);
-		INPUT("%i", &_player.maxhp);
+		INPUT("%i", &_player.maxHp);
 		INPUT("%f", &_player.hpflash);
 		INPUT("%i", &_player.level);
-		INPUT("%i", &_player.maxlevel);
+		INPUT("%i", &_player.maxLevel);
 		INPUT("%i", &_player.sword);
 		INPUT("%i", &_player.shield);
 		INPUT("%i", &_player.armour);
 		for (int i = 0; i < 5; i++) {
-			INPUT("%i", &_player.foundspell[i]);
-			INPUT("%f", &_player.spellcharge[i]);
+			INPUT("%i", &_player.foundSpell[i]);
+			INPUT("%f", &_player.spellCharge[i]);
 		}
 		for (int a = 0; a < 5; a++) {
 			INPUT("%i", &_player.inventory[a]);
 		}
-		INPUT("%f", &_player.attackstrength);
-		INPUT("%i", &_player.spelldamage);
-		INPUT("%i", &_player.sworddamage);
+		INPUT("%f", &_player.attackStrength);
+		INPUT("%i", &_player.spellDamage);
+		INPUT("%i", &_player.swordDamage);
 		INPUT("%i", &_player.exp);
-		INPUT("%i", &_player.nextlevel);
+		INPUT("%i", &_player.nextLevel);
 		for (int a = 0; a <= 99; a++) {
 			for (int b = 0; b <= 9; b++) {
 				INPUT("%i", &_scriptflag[a][b]);
@@ -120,7 +120,7 @@ int GriffonEngine::loadState(int slotnum) {
 			INPUT("%i", &_roomLocks[a]);
 		}
 
-		INPUT("%f", &_player.spellstrength);
+		INPUT("%f", &_player.spellStrength);
 
 		return 1; // success
 	}
@@ -150,31 +150,31 @@ int GriffonEngine::loadPlayer(int slotnum) {
 		INPUT("%f", &_playera.py);
 		INPUT("%f", &_playera.opx);
 		INPUT("%f", &_playera.opy);
-		INPUT("%i", &_playera.walkdir);
-		INPUT("%f", &_playera.walkframe);
-		INPUT("%f", &_playera.walkspd);
-		INPUT("%f", &_playera.attackframe);
-		INPUT("%f", &_playera.attackspd);
+		INPUT("%i", &_playera.walkDir);
+		INPUT("%f", &_playera.walkFrame);
+		INPUT("%f", &_playera.walkSpeed);
+		INPUT("%f", &_playera.attackFrame);
+		INPUT("%f", &_playera.attackSpeed);
 		INPUT("%i", &_playera.hp);
-		INPUT("%i", &_playera.maxhp);
+		INPUT("%i", &_playera.maxHp);
 		INPUT("%f", &_playera.hpflash);
 		INPUT("%i", &_playera.level);
-		INPUT("%i", &_playera.maxlevel);
+		INPUT("%i", &_playera.maxLevel);
 		INPUT("%i", &_playera.sword);
 		INPUT("%i", &_playera.shield);
 		INPUT("%i", &_playera.armour);
 		for (int i = 0; i < 5; i++) {
-			INPUT("%i", &_playera.foundspell[i]);
-			INPUT("%f", &_playera.spellcharge[i]);
+			INPUT("%i", &_playera.foundSpell[i]);
+			INPUT("%f", &_playera.spellCharge[i]);
 		}
 		for (int a = 0; a < 5; a++) {
 			INPUT("%i", &_playera.inventory[a]);
 		}
-		INPUT("%f", &_playera.attackstrength);
-		INPUT("%i", &_playera.spelldamage);
-		INPUT("%i", &_playera.sworddamage);
+		INPUT("%f", &_playera.attackStrength);
+		INPUT("%i", &_playera.spellDamage);
+		INPUT("%i", &_playera.swordDamage);
 		INPUT("%i", &_playera.exp);
-		INPUT("%i", &_playera.nextlevel);
+		INPUT("%i", &_playera.nextLevel);
 
 		return 1; // success
 	}
@@ -201,31 +201,31 @@ int GriffonEngine::saveState(int slotnum) {
 		PRINT("%f", _player.py);
 		PRINT("%f", _player.opx);
 		PRINT("%f", _player.opy);
-		PRINT("%i", _player.walkdir);
-		PRINT("%f", _player.walkframe);
-		PRINT("%f", _player.walkspd);
-		PRINT("%f", _player.attackframe);
-		PRINT("%f", _player.attackspd);
+		PRINT("%i", _player.walkDir);
+		PRINT("%f", _player.walkFrame);
+		PRINT("%f", _player.walkSpeed);
+		PRINT("%f", _player.attackFrame);
+		PRINT("%f", _player.attackSpeed);
 		PRINT("%i", _player.hp);
-		PRINT("%i", _player.maxhp);
+		PRINT("%i", _player.maxHp);
 		PRINT("%f", _player.hpflash);
 		PRINT("%i", _player.level);
-		PRINT("%i", _player.maxlevel);
+		PRINT("%i", _player.maxLevel);
 		PRINT("%i", _player.sword);
 		PRINT("%i", _player.shield);
 		PRINT("%i", _player.armour);
 		for (int i = 0; i < 5; i++) {
-			PRINT("%i", _player.foundspell[i]);
-			PRINT("%f", _player.spellcharge[i]);
+			PRINT("%i", _player.foundSpell[i]);
+			PRINT("%f", _player.spellCharge[i]);
 		}
 		for (int a = 0; a < 5; a++) {
 			PRINT("%i", _player.inventory[a]);
 		}
-		PRINT("%f", _player.attackstrength);
-		PRINT("%i", _player.spelldamage);
-		PRINT("%i", _player.sworddamage);
+		PRINT("%f", _player.attackStrength);
+		PRINT("%i", _player.spellDamage);
+		PRINT("%i", _player.swordDamage);
 		PRINT("%i", _player.exp);
-		PRINT("%i", _player.nextlevel);
+		PRINT("%i", _player.nextLevel);
 		for (int a = 0; a <= 99; a++) {
 			for (int b = 0; b <= 9; b++) {
 				PRINT("%i", _scriptflag[a][b]);
@@ -245,7 +245,7 @@ int GriffonEngine::saveState(int slotnum) {
 			PRINT("%i", _roomLocks[a]);
 		}
 
-		PRINT("%f", _player.spellstrength);
+		PRINT("%f", _player.spellStrength);
 	}
 
 	file->finalize();

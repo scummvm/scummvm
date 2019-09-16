@@ -763,7 +763,7 @@ void GriffonEngine::loadMap(int mapnum) {
 	}
 
 	// academy crystal
-	if (_curmap == 24 && _player.foundspell[0] == 0 && _scriptflag[kScriptFindCtystal][0] == 1) {
+	if (_curmap == 24 && _player.foundSpell[0] == 0 && _scriptflag[kScriptFindCtystal][0] == 1) {
 		cx = 9;
 		cy = 7;
 

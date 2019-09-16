@@ -89,7 +89,7 @@ void GriffonEngine::checkInputs() {
 					_itemticks = _ticks + ntickdelay;
 
 					int heal = 50;
-					int maxh = _player.maxhp - _player.hp;
+					int maxh = _player.maxHp - _player.hp;
 
 					if (heal > maxh)
 						heal = maxh;
@@ -115,7 +115,7 @@ void GriffonEngine::checkInputs() {
 					_itemticks = _ticks + ntickdelay;
 
 					int heal = 200;
-					int maxh = _player.maxhp - _player.hp;
+					int maxh = _player.maxHp - _player.hp;
 
 					if (heal > maxh)
 						heal = maxh;
@@ -174,10 +174,10 @@ void GriffonEngine::checkInputs() {
 					return;
 				}
 
-				if (_curitem == 5 && _player.spellcharge[0] == 100) {
+				if (_curitem == 5 && _player.spellCharge[0] == 100) {
 					castSpell(5, _player.px, _player.py, _npcinfo[_curenemy].x, _npcinfo[_curenemy].y, 0);
 
-					_player.spellcharge[0] = 0;
+					_player.spellCharge[0] = 0;
 
 					_forcepause = true;
 
@@ -194,9 +194,9 @@ void GriffonEngine::checkInputs() {
 						castSpell(_curitem - 6, _player.px, _player.py, postinfo[pst][0], postinfo[pst][1], 0);
 					}
 
-					_player.spellcharge[_curitem - 5] = 0;
+					_player.spellCharge[_curitem - 5] = 0;
 
-					_player.spellstrength = 0;
+					_player.spellStrength = 0;
 
 					_itemticks = _ticks + ntickdelay;
 					_selenemyon = 0;
@@ -205,7 +205,7 @@ void GriffonEngine::checkInputs() {
 				}
 
 				if (_curitem > 5 && _selenemyon == 0 && _itemselon == 1) {
-					if (ABS(_player.spellcharge[_curitem - 5] - 100) < kEpsilon) {
+					if (ABS(_player.spellCharge[_curitem - 5] - 100) < kEpsilon) {
 						_itemticks = _ticks + ntickdelay;
 
 						_selenemyon = 1;
@@ -352,7 +352,7 @@ void GriffonEngine::handleWalking() {
 	float opx = px;
 	float opy = py;
 
-	float spd = _player.walkspd * _fpsr;
+	float spd = _player.walkSpeed * _fpsr;
 
 	float nx = (px / 2 + 6);
 	float ny = (py / 2 + 10);
@@ -394,17 +394,17 @@ void GriffonEngine::handleWalking() {
 	}
 
 	if (movingup)
-		_player.walkdir = 0;
+		_player.walkDir = 0;
 	if (movingdown)
-		_player.walkdir = 1;
+		_player.walkDir = 1;
 	if (movingleft)
-		_player.walkdir = 2;
+		_player.walkDir = 2;
 	if (movingright)
-		_player.walkdir = 3;
+		_player.walkDir = 3;
 
 	if (movingup && _clipsurround[1][0] == 0) {
 		py -= spd;
-		_player.walkdir = 0;
+		_player.walkDir = 0;
 	} else if (movingup && _clipsurround[1][0] > 0) {
 		// move upleft
 		if (!movingright && _clipsurround[0][0] == 0) {
@@ -420,7 +420,7 @@ void GriffonEngine::handleWalking() {
 	}
 	if (movingdown && _clipsurround[1][2] == 0) {
 		py += spd;
-		_player.walkdir = 1;
+		_player.walkDir = 1;
 	} else if (movingdown && _clipsurround[1][2] > 0) {
 		// move downleft
 		if (movingright == 0 && _clipsurround[0][2] == 0) {
@@ -436,7 +436,7 @@ void GriffonEngine::handleWalking() {
 	}
 	if (movingleft && _clipsurround[0][1] == 0) {
 		px -= spd;
-		_player.walkdir = 2;
+		_player.walkDir = 2;
 	} else if (movingleft && _clipsurround[0][1] > 0) {
 		// move leftup
 		if (!movingdown && _clipsurround[0][0] == 0) {
@@ -452,7 +452,7 @@ void GriffonEngine::handleWalking() {
 	}
 	if (movingright && _clipsurround[2][1] == 0) {
 		px += spd;
-		_player.walkdir = 3;
+		_player.walkDir = 3;
 	} else if (movingright && _clipsurround[2][1] > 0) {
 		// move rightup
 		if (!movingdown && _clipsurround[2][0] == 0) {
@@ -501,16 +501,16 @@ void GriffonEngine::handleWalking() {
 				int xdif = _player.px - npx;
 				int ydif = _player.py - npy;
 
-				if (_player.walkdir == 0) {
+				if (_player.walkDir == 0) {
 					if (abs(xdif) <= 8 && ydif > 0 && ydif < 8)
 						_npcinfo[i].y -= spd;
-				} else if (_player.walkdir == 1) {
+				} else if (_player.walkDir == 1) {
 					if (abs(xdif) <= 8 && ydif < 0 && ydif > -8)
 						_npcinfo[i].y += spd;
-				} else if (_player.walkdir == 2) {
+				} else if (_player.walkDir == 2) {
 					if (abs(ydif) <= 8 && xdif > 0 && xdif < 8)
 						_npcinfo[i].x -= spd;
-				} else if (_player.walkdir == 3) {
+				} else if (_player.walkDir == 3) {
 					if (abs(ydif) <= 8 && xdif < 0 && xdif > -8)
 						_npcinfo[i].x += spd;
 				}
@@ -537,9 +537,9 @@ void GriffonEngine::handleWalking() {
 	_player.py = py;
 
 	if (_player.px != _player.opx || _player.py != _player.opy)
-		_player.walkframe += _animspd * _fpsr;
-	if (_player.walkframe >= 16)
-		_player.walkframe -= 16;
+		_player.walkFrame += _animspd * _fpsr;
+	if (_player.walkFrame >= 16)
+		_player.walkFrame -= 16;
 
 	// walking over items to pickup :::
 	int o = _objectMap[lx][ly];

@@ -116,7 +116,7 @@ void GriffonEngine::updateY() {
 		do {
 			if (_ysort[yy] == -1 || yy == 2400)
 				break;
-			yy = yy + 1;
+			++yy;
 		} while (1);
 
 		_ysort[yy] = i;
@@ -1242,11 +1242,7 @@ void GriffonEngine::updateNPCs() {
 }
 
 void GriffonEngine::updateSpells() {
-	int foundel[5];
-	long cl1, cl2, cl3;
-	int ll[4][2];
-
-	float xloc = 0, yloc = 0, xst, yst, xdif, ydif;
+	float xloc = 0, yloc = 0;
 
 	for (int i = 0; i < kMaxSpell; i++) {
 		if (spellinfo[i].frame > 0) {
@@ -1255,6 +1251,7 @@ void GriffonEngine::updateSpells() {
 			// water
 			if (spellnum == 0 && !_forcepause) {
 				float fr = (32 - spellinfo[i].frame);
+				int ll[4][2];
 
 				ll[0][0] = -2;
 				ll[0][1] = -3;
@@ -1297,8 +1294,8 @@ void GriffonEngine::updateSpells() {
 							rcSrc.setWidth(16);
 							rcSrc.setHeight(16);
 
-							xst = spellinfo[i].enemyx + 12 + ll[f][0] * 16;
-							yst = spellinfo[i].enemyy + 16 + ll[f][1] * 16;
+							float xst = spellinfo[i].enemyx + 12 + ll[f][0] * 16;
+							float yst = spellinfo[i].enemyy + 16 + ll[f][1] * 16;
 
 							float xi = (spellinfo[i].enemyx - xst) * 2 / 8;
 							float yi = (spellinfo[i].enemyy - yst) * 2 / 8;
@@ -1320,12 +1317,11 @@ void GriffonEngine::updateSpells() {
 
 							if (spellinfo[i].damagewho == 0) {
 								for (int e = 1; e <= _lastnpc; e++) {
-
-									xdif = (xloc + 16) - (_npcinfo[e].x + 12);
-									ydif = (yloc + 16) - (_npcinfo[e].y + 12);
+									float xdif = (xloc + 16) - (_npcinfo[e].x + 12);
+									float ydif = (yloc + 16) - (_npcinfo[e].y + 12);
 
 									if ((abs(xdif) < 16 && abs(ydif) < 16)) {
-										float damage = (float)_player.spelldamage * (1.0 + RND() * 0.5) * (float)spellinfo[i].strength;
+										float damage = (float)_player.spellDamage * (1.0 + RND() * 0.5) * (float)spellinfo[i].strength;
 
 										if (_npcinfo[e].hp > 0 && _npcinfo[e].pause < _ticks) {
 											damageNPC(e, damage, 1);
@@ -1341,8 +1337,8 @@ void GriffonEngine::updateSpells() {
 							// check for post damage
 							if (nposts > 0) {
 								for (int e = 0; e <= nposts - 1; e++) {
-									xdif = (xloc + 16) - (postinfo[e][0] + 8);
-									ydif = (yloc + 16) - (postinfo[e][1] + 8);
+									float xdif = (xloc + 16) - (postinfo[e][0] + 8);
+									float ydif = (yloc + 16) - (postinfo[e][1] + 8);
 
 									if ((abs(xdif) < 16 && abs(ydif) < 16)) {
 										_objmapf[_curmap][(int)postinfo[e][0] / 16][(int)postinfo[e][1] / 16] = 1;
@@ -1400,11 +1396,11 @@ void GriffonEngine::updateSpells() {
 
 				if (spellinfo[i].damagewho == 0) {
 					for (int e = 1; e <= _lastnpc; e++) {
-						xdif = (xloc + 24) - (_npcinfo[e].x + 12);
-						ydif = (yloc + 24) - (_npcinfo[e].y + 12);
+						float xdif = (xloc + 24) - (_npcinfo[e].x + 12);
+						float ydif = (yloc + 24) - (_npcinfo[e].y + 12);
 
 						if ((abs(xdif) < 24 && abs(ydif) < 24)) {
-							float damage = (float)_player.spelldamage * (1.0 + RND() * 0.5) * (float)spellinfo[i].strength;
+							float damage = (float)_player.spellDamage * (1.0 + RND() * 0.5) * (float)spellinfo[i].strength;
 
 							if (_npcinfo[e].hp > 0 && _npcinfo[e].pause < _ticks) {
 								damageNPC(e, damage, 1);
@@ -1440,8 +1436,8 @@ void GriffonEngine::updateSpells() {
 					}
 					// ---------------
 
-					xdif = (xloc + 24) - (_player.px + 12);
-					ydif = (yloc + 24) - (_player.py + 12);
+					float xdif = (xloc + 24) - (_player.px + 12);
+					float ydif = (yloc + 24) - (_player.py + 12);
 
 					if ((abs(xdif) < 24 && abs(ydif) < 24) && _player.pause < _ticks) {
 						float damage = (float)_npcinfo[spellinfo[i].npc].spelldamage * (1.0 + RND() * 0.5);
@@ -1460,8 +1456,8 @@ void GriffonEngine::updateSpells() {
 				// check for(int post damage
 				if (nposts > 0) {
 					for (int e = 0; e <= nposts - 1; e++) {
-						xdif = (xloc + 24) - (postinfo[e][0] + 8);
-						ydif = (yloc + 24) - (postinfo[e][1] + 8);
+						float xdif = (xloc + 24) - (postinfo[e][0] + 8);
+						float ydif = (yloc + 24) - (postinfo[e][1] + 8);
 
 						if ((abs(xdif) < 24 && abs(ydif) < 24)) {
 							_objmapf[_curmap][(int)postinfo[e][0] / 16][(int)postinfo[e][1] / 16] = 1;
@@ -1519,11 +1515,11 @@ void GriffonEngine::updateSpells() {
 							if (scatter == 1) {
 								if (spellinfo[i].damagewho == 0) {
 									for (int e = 1; e <= _lastnpc; e++) {
-										xdif = (xloc + 16) - (_npcinfo[e].x + 12);
-										ydif = (yloc + 16) - (_npcinfo[e].y + 12);
+										float xdif = (xloc + 16) - (_npcinfo[e].x + 12);
+										float ydif = (yloc + 16) - (_npcinfo[e].y + 12);
 
 										if ((abs(xdif) < 16 && abs(ydif) < 16)) {
-											float damage = (float)_player.spelldamage * (1.0 + RND() * 0.5) * (float)spellinfo[i].strength;
+											float damage = (float)_player.spellDamage * (1.0 + RND() * 0.5) * (float)spellinfo[i].strength;
 
 											if (_npcinfo[e].hp > 0 && _npcinfo[e].pause < _ticks) {
 												damageNPC(e, damage, 1);
@@ -1540,8 +1536,8 @@ void GriffonEngine::updateSpells() {
 								// check for(int post damage
 								if (nposts > 0) {
 									for (int e = 0; e <= nposts - 1; e++) {
-										xdif = (xloc + 16) - (postinfo[e][0] + 8);
-										ydif = (yloc + 16) - (postinfo[e][1] + 8);
+										float xdif = (xloc + 16) - (postinfo[e][0] + 8);
+										float ydif = (yloc + 16) - (postinfo[e][1] + 8);
 
 										if ((abs(xdif) < 16 && abs(ydif) < 16)) {
 											_objmapf[_curmap][(int)postinfo[e][0] / 16][(int)postinfo[e][1] / 16] = 1;
@@ -1608,6 +1604,7 @@ void GriffonEngine::updateSpells() {
 					int lx = (int)npx / 16;
 					int ly = (int)npy / 16;
 
+					int foundel[5];
 					for (int f1 = 0; f1 < 5; f1++) { // !! f < 5
 						foundel[f1] = 0;
 					}
@@ -1651,9 +1648,9 @@ void GriffonEngine::updateSpells() {
 					strcpy(line, "Found... nothing...");
 
 					for (int f1 = 0; f1 < 5; f1++) {
-						if (foundel[f1] == 1 && _player.foundspell[f1] == 0) {
-							_player.foundspell[f1] = 1;
-							_player.spellcharge[f1] = 0;
+						if (foundel[f1] == 1 && _player.foundSpell[f1] == 0) {
+							_player.foundSpell[f1] = 1;
+							_player.spellCharge[f1] = 0;
 							if (f1 == 1)
 								strcpy(line, "Found... Water Essence");
 							if (f1 == 2)
@@ -1746,8 +1743,8 @@ void GriffonEngine::updateSpells() {
 							xloc = spellinfo[i].fireballs[ff][0] + (int)(RND() * 3) - 1;
 							yloc = spellinfo[i].fireballs[ff][1] + (int)(RND() * 3) - 1;
 
-							xdif = (xloc + 8) - (_player.px + 12);
-							ydif = (yloc + 8) - (_player.py + 12);
+							float xdif = (xloc + 8) - (_player.px + 12);
+							float ydif = (yloc + 8) - (_player.py + 12);
 
 							if ((abs(xdif) < 8 && abs(ydif) < 8) && _player.pause < _ticks) {
 								float damage = _npcinfo[spellinfo[i].npc].spelldamage * (1 + RND() * 0.5) / 3;
@@ -1767,10 +1764,9 @@ void GriffonEngine::updateSpells() {
 
 			// lightning bomb
 			if (spellnum == 8) {
-
-				cl1 = _videobuffer->format.RGBToColor(0, 32, 204);
-				cl2 = _videobuffer->format.RGBToColor(142, 173, 191);
-				cl3 = _videobuffer->format.RGBToColor(240, 240, 240);
+				long cl1 = _videobuffer->format.RGBToColor(0, 32, 204);
+				long cl2 = _videobuffer->format.RGBToColor(142, 173, 191);
+				long cl3 = _videobuffer->format.RGBToColor(240, 240, 240);
 
 				float px = _player.px + 12;
 				float py = _player.py + 12;
@@ -1785,9 +1781,9 @@ void GriffonEngine::updateSpells() {
 						int rn = (int)(RND() * 3);
 
 						if (orn == 0)
-							y = y - 1;
-						if (orn == 2)
-							y = y + 1;
+							--y;
+						else if (orn == 2)
+							++y;
 
 						drawLine(_videobuffer, x, y - 1, x, y + 2, cl1);
 						drawLine(_videobuffer, x, y, x, y + 1, cl3);
@@ -1801,9 +1797,8 @@ void GriffonEngine::updateSpells() {
 
 						if (spellinfo[i].damagewho == 0) {
 							for (int e = 1; e <= _lastnpc; e++) {
-
-								xdif = (x + 16) - (_npcinfo[e].x + 12);
-								ydif = (y + 16) - (_npcinfo[e].y + 12);
+								float xdif = (x + 16) - (_npcinfo[e].x + 12);
+								float ydif = (y + 16) - (_npcinfo[e].y + 12);
 
 								if ((abs(xdif) < 8 && abs(ydif) < 8)) {
 									float damage = 30 * (1 + RND() * 0.5);
@@ -1817,8 +1812,8 @@ void GriffonEngine::updateSpells() {
 						// check for post damage
 						if (nposts > 0) {
 							for (int e = 0; e <= nposts - 1; e++) {
-								xdif = (xloc + 16) - (postinfo[e][0] + 8);
-								ydif = (yloc + 16) - (postinfo[e][1] + 8);
+								float xdif = (xloc + 16) - (postinfo[e][0] + 8);
+								float ydif = (yloc + 16) - (postinfo[e][1] + 8);
 
 								if ((abs(xdif) < 16 && abs(ydif) < 16)) {
 									_objmapf[_curmap][(int)postinfo[e][0] / 16][(int)postinfo[e][1] / 16] = 1;
@@ -1843,9 +1838,9 @@ void GriffonEngine::updateSpells() {
 						int rn = (int)(RND() * 3);
 
 						if (orn == 0)
-							y = y - 1;
-						if (orn == 2)
-							y = y + 1;
+							--y;
+						else if (orn == 2)
+							++y;
 
 						drawLine(_videobuffer, x, y - 1, x, y + 2, cl1);
 						drawLine(_videobuffer, x, y, x, y + 1, cl3);
@@ -1859,9 +1854,8 @@ void GriffonEngine::updateSpells() {
 
 						if (spellinfo[i].damagewho == 0) {
 							for (int e = 1; e <= _lastnpc; e++) {
-
-								xdif = (x + 16) - (_npcinfo[e].x + 12);
-								ydif = (y + 16) - (_npcinfo[e].y + 12);
+								float xdif = (x + 16) - (_npcinfo[e].x + 12);
+								float ydif = (y + 16) - (_npcinfo[e].y + 12);
 
 								if ((abs(xdif) < 8 && abs(ydif) < 8)) {
 									float damage = 30 * (1 + RND() * 0.5);
@@ -1875,8 +1869,8 @@ void GriffonEngine::updateSpells() {
 						// check for post damage
 						if (nposts > 0) {
 							for (int e = 0; e <= nposts - 1; e++) {
-								xdif = (xloc + 16) - (postinfo[e][0] + 8);
-								ydif = (yloc + 16) - (postinfo[e][1] + 8);
+								float xdif = (xloc + 16) - (postinfo[e][0] + 8);
+								float ydif = (yloc + 16) - (postinfo[e][1] + 8);
 
 								if ((abs(xdif) < 16 && abs(ydif) < 16)) {
 									_objmapf[_curmap][(int)postinfo[e][0] / 16][(int)postinfo[e][1] / 16] = 1;
@@ -1917,8 +1911,8 @@ void GriffonEngine::updateSpells() {
 
 						if (spellinfo[i].damagewho == 0) {
 							for (int e = 1; e <= _lastnpc; e++) {
-								xdif = (x + 16) - (_npcinfo[e].x + 12);
-								ydif = (y + 16) - (_npcinfo[e].y + 12);
+								float xdif = (x + 16) - (_npcinfo[e].x + 12);
+								float ydif = (y + 16) - (_npcinfo[e].y + 12);
 
 								if ((abs(xdif) < 8 && abs(ydif) < 8)) {
 									float damage = 30 * (1 + RND() * 0.5);
@@ -1932,8 +1926,8 @@ void GriffonEngine::updateSpells() {
 						// check for post damage
 						if (nposts > 0) {
 							for (int e = 0; e <= nposts - 1; e++) {
-								xdif = (xloc + 16) - (postinfo[e][0] + 8);
-								ydif = (yloc + 16) - (postinfo[e][1] + 8);
+								float xdif = (xloc + 16) - (postinfo[e][0] + 8);
+								float ydif = (yloc + 16) - (postinfo[e][1] + 8);
 
 								if ((abs(xdif) < 16 && abs(ydif) < 16)) {
 									_objmapf[_curmap][(int)postinfo[e][0] / 16][(int)postinfo[e][1] / 16] = 1;
@@ -1974,8 +1968,8 @@ void GriffonEngine::updateSpells() {
 
 						if (spellinfo[i].damagewho == 0) {
 							for (int e = 1; e <= _lastnpc; e++) {
-								xdif = (x + 16) - (_npcinfo[e].x + 12);
-								ydif = (y + 16) - (_npcinfo[e].y + 12);
+								float xdif = (x + 16) - (_npcinfo[e].x + 12);
+								float ydif = (y + 16) - (_npcinfo[e].y + 12);
 
 								if ((abs(xdif) < 8 && abs(ydif) < 8)) {
 									float damage = 30 * (1 + RND() * 0.5);
@@ -1989,8 +1983,8 @@ void GriffonEngine::updateSpells() {
 						// check for post damage
 						if (nposts > 0) {
 							for (int e = 0; e <= nposts - 1; e++) {
-								xdif = (xloc + 16) - (postinfo[e][0] + 8);
-								ydif = (yloc + 16) - (postinfo[e][1] + 8);
+								float xdif = (xloc + 16) - (postinfo[e][0] + 8);
+								float ydif = (yloc + 16) - (postinfo[e][1] + 8);
 
 								if ((abs(xdif) < 16 && abs(ydif) < 16)) {
 									_objmapf[_curmap][(int)postinfo[e][0] / 16][(int)postinfo[e][1] / 16] = 1;
@@ -2019,10 +2013,9 @@ void GriffonEngine::updateSpells() {
 
 			// wizard 1 lightning
 			if (spellnum == 9) {
-
-				cl1 = _videobuffer->format.RGBToColor(0, 32, 204);
-				cl2 = _videobuffer->format.RGBToColor(142, 173, 191);
-				cl3 = _videobuffer->format.RGBToColor(240, 240, 240);
+				long cl1 = _videobuffer->format.RGBToColor(0, 32, 204);
+				long cl2 = _videobuffer->format.RGBToColor(142, 173, 191);
+				long cl3 = _videobuffer->format.RGBToColor(240, 240, 240);
 
 				int px = spellinfo[i].enemyx + 12;
 				int py = spellinfo[i].enemyy + 24;
@@ -2052,19 +2045,16 @@ void GriffonEngine::updateSpells() {
 						orn = rn;
 
 						if (spellinfo[i].damagewho == 1) {
-
-							xdif = (x + 8) - (_player.px + 12);
-							ydif = (y + 8) - (_player.py + 12);
+							float xdif = (x + 8) - (_player.px + 12);
+							float ydif = (y + 8) - (_player.py + 12);
 
 							if ((abs(xdif) < 8 && abs(ydif) < 8) && _player.pause < _ticks) {
 								float damage = ((float)_player.hp * 0.75) * (RND() * 0.5 + 0.5);
 								if (damage < 5)
 									damage = 5;
 
-								if (_npcinfo[spellinfo[i].npc].spriteset == kMonsterBatKitty) {
-									if (damage < 50)
-										damage = 40 + (int)(RND() * 40);
-								}
+								if ((_npcinfo[spellinfo[i].npc].spriteset == kMonsterBatKitty) && (damage < 50))
+									damage = 40 + (int)(RND() * 40);
 
 								if (_player.hp > 0)
 									damagePlayer(damage);
@@ -2233,7 +2223,7 @@ void GriffonEngine::updateSpellsUnder() {
 										float ydif = (yloc + 8) - (_npcinfo[e].y + 12);
 
 										if ((abs(xdif) < 8 && abs(ydif) < 8)) {
-											float damage = (float)_player.spelldamage * (1.0 + RND() * 0.5) * (float)spellinfo[i].strength;
+											float damage = (float)_player.spellDamage * (1.0 + RND() * 0.5) * (float)spellinfo[i].strength;
 
 											if (_npcinfo[e].spriteset == kMonsterFireHydra)
 												damage = -damage;

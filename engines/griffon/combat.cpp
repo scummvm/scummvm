@@ -48,7 +48,7 @@ void GriffonEngine::attack() {
 	int ly = (int)npy / 16;
 
 	// if facing up
-	if (_player.walkdir == 0) {
+	if (_player.walkDir == 0) {
 		if (ly > 0) {
 			int o2 = 0; // ??
 			int o = _objectMap[lx][ly - 1];
@@ -119,8 +119,8 @@ void GriffonEngine::attack() {
 				}
 
 				if (oscript == kScriptFindCtystal) {
-					_player.foundspell[0] = 1;
-					_player.spellcharge[0] = 0;
+					_player.foundSpell[0] = 1;
+					_player.spellCharge[0] = 0;
 
 					addFloatIcon(7, lx * 16, (ly - 1) * 16);
 
@@ -409,7 +409,7 @@ void GriffonEngine::attack() {
 	}
 
 	attacking = true;
-	_player.attackframe = 0;
+	_player.attackFrame = 0;
 	movingup = false;
 	movingdown = false;
 	movingleft = false;
@@ -444,8 +444,8 @@ void GriffonEngine::castSpell(int spellnum, float homex, float homey, float enem
 
 			spellinfo[i].frame = 32.0f;
 			if (damagewho == 0) {
-				spellinfo[i].strength = _player.spellstrength / 100;
-				if (ABS(_player.spellstrength - 100) < kEpsilon)
+				spellinfo[i].strength = _player.spellStrength / 100;
+				if (ABS(_player.spellStrength - 100) < kEpsilon)
 					spellinfo[i].strength = 1.5f;
 			}
 
@@ -518,26 +518,26 @@ void GriffonEngine::checkHit() {
 
 				float ps = _player.sword;
 				if (ps > 1)
-					ps = ps * 0.75;
-				float damage = (float)_player.sworddamage * (1.0 + RND() * 1.0) * _player.attackstrength / 100.0 * ps;
+					ps *= 0.75;
+				float damage = (float)_player.swordDamage * (1.0 + RND() * 1.0) * _player.attackStrength / 100.0 * ps;
 
 				if (_console->_godMode)
 					damage = 1000;
 
-				if (ABS(_player.attackstrength - 100) < kEpsilon)
+				if (ABS(_player.attackStrength - 100) < kEpsilon)
 					damage *= 1.5;
 
 				bool hit = false;
-				if (_player.walkdir == 0) {
+				if (_player.walkDir == 0) {
 					if (abs(xdif) <= 8 && ydif >= 0 && ydif < 8)
 						hit = true;
-				} else if (_player.walkdir == 1) {
+				} else if (_player.walkDir == 1) {
 					if (abs(xdif) <= 8 && ydif <= 0 && ydif > -8)
 						hit = true;
-				} else if (_player.walkdir == 2) {
+				} else if (_player.walkDir == 2) {
 					if (abs(ydif) <= 8 && xdif >= -8 && xdif < 8)
 						hit = true;
-				} else if (_player.walkdir == 3) {
+				} else if (_player.walkDir == 3) {
 					if (abs(ydif) <= 8 && xdif <= 8 && xdif > -8)
 						hit = true;
 				}
@@ -593,7 +593,7 @@ void GriffonEngine::damageNPC(int npcnum, int damage, int spell) {
 		_npcinfo[npcnum].pause = _ticks + 900;
 
 		if (spell == 0)
-			_player.attackstrength = ratio;
+			_player.attackStrength = ratio;
 	}
 
 	addFloatText(line, _npcinfo[npcnum].x + 12 - 4 * strlen(line), _npcinfo[npcnum].y + 16, fcol);
@@ -603,7 +603,7 @@ void GriffonEngine::damageNPC(int npcnum, int damage, int spell) {
 
 	// if enemy is killed
 	if (_npcinfo[npcnum].hp == 0) {
-		_player.exp = _player.exp + _npcinfo[npcnum].maxhp;
+		_player.exp += _npcinfo[npcnum].maxhp;
 
 		if (_npcinfo[npcnum].spriteset == kMonsterBabyDragon || _npcinfo[npcnum].spriteset == kMonsterPriest ||
 				_npcinfo[npcnum].spriteset == kMonsterRedDragon) {
@@ -676,7 +676,7 @@ void GriffonEngine::damageNPC(int npcnum, int damage, int spell) {
 				int ly = (int)npy / 16;
 
 				if (lx == cx && ly == cy)
-					_player.py = _player.py + 16;
+					_player.py += 16;
 				_clipbg2->fillRect(rcDest, _clipbg->format.RGBToColor(255, 255, 255));
 				_scriptflag[kScriptMasterKey][0] = 1;
 			}
@@ -708,7 +708,7 @@ void GriffonEngine::damageNPC(int npcnum, int damage, int spell) {
 				int ly = (int)npy / 16;
 
 				if (lx == cx && ly == cy)
-					_player.py = _player.py + 16;
+					_player.py += 16;
 				_scriptflag[kScriptFindCtystal][0] = 1;
 				_clipbg2->fillRect(rcDest, _clipbg->format.RGBToColor(255, 255, 255));
 			}
@@ -718,17 +718,17 @@ void GriffonEngine::damageNPC(int npcnum, int damage, int spell) {
 		if (_npcinfo[npcnum].script == kScriptFindShield && _scriptflag[kScriptFindShield][0] == 0) {
 			_triggerloc[9][7] = 5004;
 
-			int curtile = 40;
-			int curtilel = 0;
-			int curtilex = curtile % 20;
-			int curtiley = (curtile - curtilex) / 20;
+			int curTile = 40;
+			int curTileL = 0;
+			int curTileX = curTile % 20;
+			int curTileY = (curTile - curTileX) / 20;
 
 			int l = 0; // ?? not defined in original code
-			_tileinfo[l][9][7][0] = curtile + 1;
+			_tileinfo[l][9][7][0] = curTile + 1;
 			_tileinfo[l][9][7][1] = 0;
 
-			rcSrc.left = curtilex * 16;
-			rcSrc.top = curtiley * 16;
+			rcSrc.left = curTileX * 16;
+			rcSrc.top = curTileY * 16;
 			rcSrc.setWidth(16);
 			rcSrc.setHeight(16);
 
@@ -737,7 +737,7 @@ void GriffonEngine::damageNPC(int npcnum, int damage, int spell) {
 			rcDest.setWidth(16);
 			rcDest.setHeight(16);
 
-			_tiles[curtilel]->blit(*_mapbg, rcDest.left, rcDest.top, Graphics::FLIP_NONE, &rcSrc);
+			_tiles[curTileL]->blit(*_mapbg, rcDest.left, rcDest.top, Graphics::FLIP_NONE, &rcSrc);
 		}
 
 		// firehydra sword chest
@@ -766,7 +766,7 @@ void GriffonEngine::damageNPC(int npcnum, int damage, int spell) {
 				int ly = (int)npy / 16;
 
 				if (lx == cx && ly == cy)
-					_player.py = _player.py + 16;
+					_player.py += 16;
 				_scriptflag[kScriptFindSword][0] = 1;
 				_clipbg2->fillRect(rcDest, _clipbg->format.RGBToColor(255, 255, 255));
 			}
@@ -799,7 +799,7 @@ void GriffonEngine::damageNPC(int npcnum, int damage, int spell) {
 				int ly = (int)npy / 16;
 
 				if (lx == cx && ly == cy)
-					_player.py = _player.py + 16;
+					_player.py += 16;
 				_clipbg2->fillRect(rcDest, _clipbg->format.RGBToColor(255, 255, 255));
 				_scriptflag[kScriptGardenMasterKey][0] = 1;
 			}
@@ -832,7 +832,7 @@ void GriffonEngine::damageNPC(int npcnum, int damage, int spell) {
 					int ly = (int)npy / 16;
 
 					if (lx == cx && ly == cy)
-						_player.py = _player.py + 16;
+						_player.py += 16;
 					_scriptflag[s][0] = 1;
 					_clipbg2->fillRect(rcDest, _clipbg->format.RGBToColor(255, 255, 255));
 				}
@@ -865,7 +865,7 @@ void GriffonEngine::damageNPC(int npcnum, int damage, int spell) {
 				int ly = (int)npy / 16;
 
 				if (lx == cx && ly == cy)
-					_player.py = _player.py + 16;
+					_player.py += 16;
 			}
 		}
 
@@ -895,7 +895,7 @@ void GriffonEngine::damageNPC(int npcnum, int damage, int spell) {
 				int ly = (int)npy / 16;
 
 				if (lx == cx && ly == cy)
-					_player.py = _player.py + 16;
+					_player.py += 16;
 				_scriptflag[kScriptArmourChest][0] = 1;
 				_clipbg2->fillRect(rcDest, _clipbg->format.RGBToColor(255, 255, 255));
 			}
@@ -927,7 +927,7 @@ void GriffonEngine::damageNPC(int npcnum, int damage, int spell) {
 				int ly = (int)npy / 16;
 
 				if (lx == cx && ly == cy)
-					_player.py = _player.py + 16;
+					_player.py += 16;
 				_clipbg2->fillRect(rcDest, _clipbg->format.RGBToColor(255, 255, 255));
 				_scriptflag[kScriptCitadelMasterKey][0] = 1;
 			}
@@ -959,7 +959,7 @@ void GriffonEngine::damageNPC(int npcnum, int damage, int spell) {
 				int ly = (int)npy / 16;
 
 				if (lx == cx && ly == cy)
-					_player.py = _player.py + 16;
+					_player.py += 16;
 				_clipbg2->fillRect(rcDest, _clipbg->format.RGBToColor(255, 255, 255));
 				_scriptflag[kScriptGetSword3][0] = 1;
 
@@ -980,7 +980,7 @@ void GriffonEngine::damageNPC(int npcnum, int damage, int spell) {
 				ly = (int)npy / 16;
 
 				if (lx == cx && ly == cy)
-					_player.py = _player.py + 16;
+					_player.py += 16;
 				_clipbg2->fillRect(rcDest, _clipbg->format.RGBToColor(255, 255, 255));
 
 				_scriptflag[kScriptShield3][0] = 1;
@@ -1002,7 +1002,7 @@ void GriffonEngine::damageNPC(int npcnum, int damage, int spell) {
 				ly = (int)npy / 16;
 
 				if (lx == cx && ly == cy)
-					_player.py = _player.py + 16;
+					_player.py += 16;
 				_clipbg2->fillRect(rcDest, _clipbg->format.RGBToColor(255, 255, 255));
 				_scriptflag[kScriptArmour3][0] = 1;
 			}

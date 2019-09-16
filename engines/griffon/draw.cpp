@@ -248,17 +248,17 @@ void GriffonEngine::drawHud() {
 		rcSrc.top = sy;
 
 		// spells in game
-		if (_player.foundspell[0] == 1) {
+		if (_player.foundSpell[0] == 1) {
 			for (int i = 0; i < 5; i++) {
 				rcSrc.left = rcSrc.left + 17;
 
-				if (_player.foundspell[i] == 1) {
+				if (_player.foundSpell[i] == 1) {
 					_itemimg[7 + i]->blit(*_videobuffer, rcSrc.left, rcSrc.top);
 
 					game_fillrect(_videobuffer, rcSrc.left, sy + 16, 16, 4, RGB(0, 32, 32));
 					game_fillrect(_videobuffer, rcSrc.left + 1, sy + 17,
-					              hud_recalc(_player.spellcharge[i], 14, 100), 2,
-					              ABS(_player.spellcharge[i] - 100) < kEpsilon ? RGB(255, 128, 32) : RGB(0, 224, 64));
+					              hud_recalc(_player.spellCharge[i], 14, 100), 2,
+					              ABS(_player.spellCharge[i] - 100) < kEpsilon ? RGB(255, 128, 32) : RGB(0, 224, 64));
 				}
 			}
 		}
@@ -314,29 +314,29 @@ void GriffonEngine::drawHud() {
 		}
 
 		char line[128];
-		sprintf(line, "Health: %i/%i", _player.hp, _player.maxhp);
-		drawString(_videobuffer, line, sx, sy, _player.hp <= _player.maxhp * 0.25 ? (int)_player.hpflash : 0);
+		sprintf(line, "Health: %i/%i", _player.hp, _player.maxHp);
+		drawString(_videobuffer, line, sx, sy, _player.hp <= _player.maxHp * 0.25 ? (int)_player.hpflash : 0);
 
 		sprintf(line, "Level : %i", _player.level);
-		if (_player.level == _player.maxlevel)
+		if (_player.level == _player.maxLevel)
 			strcpy(line, "Level : MAX");
 		drawString(_videobuffer, line, sx, sy + 8, 0);
 
 		// experience
 		game_fillrect(_videobuffer, sx + 64, sy + 16, 16, 4, RGB(0, 32, 32));
 		game_fillrect(_videobuffer, sx + 65, sy + 17,
-		              hud_recalc(_player.exp, 14, _player.nextlevel), 2, RGB(0, 224, 64));
+		              hud_recalc(_player.exp, 14, _player.nextLevel), 2, RGB(0, 224, 64));
 
 		// attack strength
 		game_fillrect(_videobuffer, sx + 1, sy + 16, 56, 6, RGB(0, 32, 32));
 		game_fillrect(_videobuffer, sx + 1, sy + 17,
-		              hud_recalc(_player.attackstrength, 54, 100), 2,
-		              ABS(_player.attackstrength - 100) < kEpsilon ? RGB(255, 128, 32) : RGB(0, 64, 224));
+		              hud_recalc(_player.attackStrength, 54, 100), 2,
+		              ABS(_player.attackStrength - 100) < kEpsilon ? RGB(255, 128, 32) : RGB(0, 64, 224));
 
 		// spell strength
 		game_fillrect(_videobuffer, sx + 1, sy + 19,
-		              hud_recalc(_player.spellstrength, 54, 100), 2,
-		              ABS(_player.spellstrength - 100) < kEpsilon ? RGB(224, 0, 0) : RGB(128, 0, 224));
+		              hud_recalc(_player.spellStrength, 54, 100), 2,
+		              ABS(_player.spellStrength - 100) < kEpsilon ? RGB(224, 0, 0) : RGB(128, 0, 224));
 
 		// time
 		int ase = _secstart + _secsingame;
@@ -392,19 +392,19 @@ void GriffonEngine::drawHud() {
 		}
 
 		// spells in menu
-		if (_player.foundspell[0] == 1) {
+		if (_player.foundSpell[0] == 1) {
 			for (int i = 0; i < 5; i++) {
 				rcSrc.left = 243;
 				rcSrc.top = 67 + i * 24;
 				sy = rcSrc.top;
 
-				if (_player.foundspell[i] == 1) {
+				if (_player.foundSpell[i] == 1) {
 					_itemimg[7 + i]->blit(*_videobuffer, rcSrc.left, rcSrc.top);
 
 					game_fillrect(_videobuffer, rcSrc.left, sy + 16, 16, 4, RGB(0, 32, 32));
 					game_fillrect(_videobuffer, rcSrc.left + 1, sy + 17,
-					              hud_recalc(_player.spellcharge[i], 14, 100), 2,
-					              ABS(_player.spellcharge[i] - 100) < kEpsilon ? RGB(255, 128, 32) : RGB(0, 224, 64));
+					              hud_recalc(_player.spellCharge[i], 14, 100), 2,
+					              ABS(_player.spellCharge[i] - 100) < kEpsilon ? RGB(255, 128, 32) : RGB(0, 224, 64));
 				}
 			}
 		}
@@ -1058,8 +1058,8 @@ void GriffonEngine::drawPlayer() {
 		f = 13;
 
 	if (!attacking) {
-		rcSrc.left = (int)(_player.walkframe / 4) * 24;
-		rcSrc.top = _player.walkdir * 24;
+		rcSrc.left = (int)(_player.walkFrame / 4) * 24;
+		rcSrc.top = _player.walkDir * 24;
 		rcSrc.setWidth(24);
 		rcSrc.setHeight(24);
 
@@ -1070,8 +1070,8 @@ void GriffonEngine::drawPlayer() {
 
 		_anims[f]->blit(*_videobuffer, rcDest.left, rcDest.top, Graphics::FLIP_NONE, &rcSrc);
 	} else {
-		rcSrc.left = (int)(_player.attackframe / 4) * 24;
-		rcSrc.top = _player.walkdir * 24;
+		rcSrc.left = (int)(_player.attackFrame / 4) * 24;
+		rcSrc.top = _player.walkDir * 24;
 		rcSrc.setWidth(24);
 		rcSrc.setHeight(24);
 
@@ -1087,7 +1087,7 @@ void GriffonEngine::drawPlayer() {
 	long ccc = _videobuffer->format.RGBToColor(224, 224, 64);
 
 	bool pass = false;
-	if (_player.hp <= _player.maxhp * 0.25)
+	if (_player.hp <= _player.maxHp * 0.25)
 		pass = true;
 
 	if (pass) {
@@ -1097,7 +1097,7 @@ void GriffonEngine::drawPlayer() {
 	}
 
 	int sss = 6;
-	if (_player.foundspell[0])
+	if (_player.foundSpell[0])
 		sss = 8;
 	int npx = _player.px;
 	int npy = _player.py;
@@ -1112,7 +1112,7 @@ void GriffonEngine::drawPlayer() {
 	rcDest.top = npy + 23;
 
 
-	int ww = 14 * _player.hp / _player.maxhp;
+	int ww = 14 * _player.hp / _player.maxHp;
 	if (ww > 14)
 		ww = 14;
 	if (ww < 1)
@@ -1124,14 +1124,14 @@ void GriffonEngine::drawPlayer() {
 	_videobuffer->fillRect(rcDest, ccc);
 
 	ccc = _videobuffer->format.RGBToColor(0, 224, 64);
-	if (ABS(_player.attackstrength - 100) < kEpsilon)
+	if (ABS(_player.attackStrength - 100) < kEpsilon)
 		ccc = _videobuffer->format.RGBToColor(255, 128, 32);
 
-	ww = 14 * _player.attackstrength / 100;
+	ww = 14 * _player.attackStrength / 100;
 	if (ww > 14)
 		ww = 14;
 
-	int ww2 = 14 * _player.spellstrength / 100;
+	int ww2 = 14 * _player.spellStrength / 100;
 	if (ww2 > 14)
 		ww2 = 14;
 
@@ -1142,7 +1142,7 @@ void GriffonEngine::drawPlayer() {
 	_videobuffer->fillRect(rcDest, ccc);
 
 	ccc = _videobuffer->format.RGBToColor(128, 0, 224);
-	if (ABS(_player.spellstrength - 100) < kEpsilon)
+	if (ABS(_player.spellStrength - 100) < kEpsilon)
 		ccc = _videobuffer->format.RGBToColor(224, 0, 0);
 
 	rcDest.top = rcDest.top + 2;

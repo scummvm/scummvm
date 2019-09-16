@@ -148,7 +148,7 @@ void GriffonEngine::title(int mode) {
 		if (add > 1)
 			add = 1;
 
-		xofs = xofs + add;
+		xofs += add;
 		if (xofs >= 320.0)
 			xofs -= 320.0;
 
@@ -407,7 +407,7 @@ void GriffonEngine::configMenu() {
 						cursel = 14;
 				}
 				if (_event.kbd.keycode == Common::KEYCODE_DOWN) {
-					cursel++;
+					++cursel;
 					if (cursel > 14)
 						cursel = MINCURSEL;
 				}
@@ -469,7 +469,7 @@ void GriffonEngine::saveLoadNew() {
 
 	int currow = 0;
 	int curcol = 0;
-	int lowerlock = 0;
+	bool lowerLock = false;
 
 	_ticks = g_system->getMillis();
 	int _ticks1 = _ticks;
@@ -478,7 +478,7 @@ void GriffonEngine::saveLoadNew() {
 	do {
 		_videobuffer->fillRect(Common::Rect(0, 0, _videobuffer->w, _videobuffer->h), 0);
 
-		y = y + 1 * _fpsr;
+		y += 1 * _fpsr;
 
 		rcDest.left = 256 + 256 * cos(3.141592 / 180 * clouddeg * 40);
 		rcDest.top = 192 + 192 * sin(3.141592 / 180 * clouddeg * 40);
@@ -529,34 +529,34 @@ void GriffonEngine::saveLoadNew() {
 
 					// LOAD GAME
 					if (currow == 0 && curcol == 1) {
-						lowerlock = 1;
+						lowerLock = true;
 						currow = 1 + _saveslot;
 						tickpause = _ticks + 125;
 					}
 					// SAVE GAME
 					if (currow == 0 && curcol == 2) {
-						lowerlock = 1;
+						lowerLock = true;
 						currow = 1;
 						tickpause = _ticks + 125;
 					}
 
 
-					if (lowerlock == 1 && curcol == 1 && tickpause < _ticks) {
+					if (lowerLock && curcol == 1 && tickpause < _ticks) {
 						if (saveState(currow - 1)) {
 							_secstart = _secstart + _secsingame;
 							_secsingame = 0;
-							lowerlock = 0;
+							lowerLock = false;
 							_saveslot = currow - 1;
 							currow = 0;
 						}
 					}
 
-					if (lowerlock == 1 && curcol == 2 && tickpause < _ticks) {
+					if (lowerLock && curcol == 2 && tickpause < _ticks) {
 						if (loadState(currow - 1)) {
-							_player.walkspd = 1.1f;
+							_player.walkSpeed = 1.1f;
 							_animspd = 0.5f;
 							attacking = false;
-							_player.attackspd = 1.5f;
+							_player.attackSpeed = 1.5f;
 
 							_pgardens = false;
 							_ptown = false;
@@ -578,15 +578,15 @@ void GriffonEngine::saveLoadNew() {
 
 				switch (_event.kbd.keycode) {
 				case Common::KEYCODE_ESCAPE:
-					if (lowerlock == 0)
+					if (!lowerLock)
 						return;
-					lowerlock = 0;
+					lowerLock = false;
 					currow = 0;
 					tickpause = _ticks + 125;
 					break;
 				case Common::KEYCODE_DOWN:
-					if (lowerlock == 1) {
-						currow = currow + 1;
+					if (lowerLock) {
+						++currow;
 						if (currow == 5)
 							currow = 1;
 						tickpause = _ticks + 125;
@@ -594,8 +594,8 @@ void GriffonEngine::saveLoadNew() {
 					break;
 
 				case Common::KEYCODE_UP:
-					if (lowerlock == 1) {
-						currow = currow - 1;
+					if (lowerLock) {
+						--currow;
 						if (currow == 0)
 							currow = 4;
 						tickpause = _ticks + 125;
@@ -603,8 +603,8 @@ void GriffonEngine::saveLoadNew() {
 					break;
 
 				case Common::KEYCODE_LEFT:
-					if (lowerlock == 0) {
-						curcol = curcol - 1;
+					if (!lowerLock) {
+						--curcol;
 						if (curcol == -1)
 							curcol = 3;
 						tickpause = _ticks + 125;
@@ -612,8 +612,8 @@ void GriffonEngine::saveLoadNew() {
 					break;
 
 				case Common::KEYCODE_RIGHT:
-					if (lowerlock == 0) {
-						curcol = curcol + 1;
+					if (!lowerLock) {
+						++curcol;
 						if (curcol == 4)
 							curcol = 0;
 						tickpause = _ticks + 125;
@@ -648,10 +648,10 @@ void GriffonEngine::saveLoadNew() {
 				drawString(_videobuffer, line, 160 - strlen(line) * 4, sy, 0);
 
 				sx  = 12;
-				sy = sy + 11;
+				sy += 11;
 				int cc = 0;
 
-				sprintf(line, "Health: %i/%i", _playera.hp, _playera.maxhp);
+				sprintf(line, "Health: %i/%i", _playera.hp, _playera.maxHp);
 				drawString(_videobuffer, line, sx, sy, cc);
 
 				if (_playera.level == 22)
@@ -684,10 +684,10 @@ void GriffonEngine::saveLoadNew() {
 				int nx = rcSrc.left + 13 + 3 * 8;
 				rcSrc.left = nx - 17;
 
-				if (_playera.foundspell[0] == 1) {
+				if (_playera.foundSpell[0] == 1) {
 					for (int i = 0; i < 5; i++) {
-						rcSrc.left = rcSrc.left + 17;
-						if (_playera.foundspell[i] == 1)
+						rcSrc.left += 17;
+						if (_playera.foundSpell[i] == 1)
 							_itemimg[7 + i]->blit(*_videobuffer, rcSrc.left, rcSrc.top);
 					}
 				}
@@ -720,7 +720,7 @@ void GriffonEngine::saveLoadNew() {
 		_itemimg[15]->blit(*_videobuffer, rcDest.left, rcDest.top);
 
 
-		if (lowerlock == 1) {
+		if (lowerLock) {
 			rcDest.top = 18;
 			if (curcol == 1)
 				rcDest.left = 108;
