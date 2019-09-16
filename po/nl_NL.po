@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2019-09-16 11:03+0200\n"
-"PO-Revision-Date: 2019-09-16 07:17+0000\n"
+"PO-Revision-Date: 2019-09-16 10:51+0000\n"
 "Last-Translator: Ben Castricum <github@bencastricum.nl>\n"
 "Language-Team: Dutch <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/nl/>\n"
@@ -2604,6 +2604,8 @@ msgid ""
 "The page is not available without the resources. Make sure file wwwroot.zip "
 "from ScummVM distribution is available in 'themepath'."
 msgstr ""
+"Deze pagina is niet beschikbaar zonder de bronnen. Zorg ervoor dat bestand "
+"wwwroot.zip uit de  ScummVM disctributie beschikbaar is in 'themapad'."
 
 #: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:67
 #: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:68
@@ -2622,7 +2624,7 @@ msgstr "Upload bestand"
 #: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:71
 #: backends/networking/sdl_net/handlers/filespagehandler.cpp:229
 msgid "Type new directory name:"
-msgstr ""
+msgstr "Geef de nieuwe mapnaam:"
 
 #: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:72
 #: backends/networking/sdl_net/handlers/filespagehandler.cpp:230
@@ -2692,6 +2694,9 @@ msgid ""
 "Failed to start local webserver.\n"
 "Check whether selected port is not used by another application and try again."
 msgstr ""
+"Starten van de lokale webserver mislukt.\n"
+"Controleer of de geselecteerde port niet in gebruik is door een andere "
+"applicatie en probeer het opnieuw."
 
 #: backends/networking/sdl_net/uploadfileclienthandler.cpp:69
 #: backends/networking/sdl_net/uploadfileclienthandler.cpp:111
@@ -3298,6 +3303,7 @@ msgstr "Toon scanlines"
 #: engines/adl/detection.cpp:82
 msgid "Darken every other scanline to mimic the look of a CRT"
 msgstr ""
+"Maak om en om een scanline donker om zo het beeld van een CRT  na te bootsen"
 
 #: engines/adl/detection.cpp:91
 msgid "Always use sharp monochrome text"
@@ -3453,6 +3459,9 @@ msgid ""
 "playing in Original Content mode. The mode will be adjusted to Restored Cut "
 "Content for this session until you completely Quit the game."
 msgstr ""
+"WAARSCHUWING: Dit spel was opgeslagen in Restored Cut Content modus, maar u "
+"speelt in Original Content modus. De modus zal aangepast worden naar "
+"Restored Cut Content voor deze sessie totdat u het spel volledig verlaat."
 
 #: engines/bladerunner/bladerunner.cpp:2147
 msgid ""
@@ -3460,6 +3469,9 @@ msgid ""
 "in Restored Cut Content mode. The mode will be adjusted to Original Content "
 "mode for this session until you completely Quit the game."
 msgstr ""
+"WAARSCHUWING: Dit spel was opgeslagen in Original Content modus, maar u "
+"speelt in Restored Cut Content modus. De modus zal aangepast worden naar "
+"Original Content voor deze sessie totdat u het spel volledig verlaat."
 
 #: engines/bladerunner/bladerunner.cpp:2149
 msgid "Continue"
@@ -3484,13 +3496,15 @@ msgstr ""
 
 #: engines/bladerunner/detection.cpp:66
 msgid "Frame limiter high performance mode"
-msgstr ""
+msgstr "Framebeperker hoge performance modus"
 
 #: engines/bladerunner/detection.cpp:67
 msgid ""
 "This mode may result in high CPU usage! It avoids use of delayMillis() "
 "function."
 msgstr ""
+"Deze modus kan resulteren in hoog CPU gebruik! Het omzeilt gebruik van "
+"delayMillis() functie."
 
 #: engines/cge/detection.cpp:105 engines/cge2/detection.cpp:111
 msgid "Color Blind Mode"
@@ -3787,11 +3801,11 @@ msgstr "Wat ? "
 
 #: engines/glk/scott/scott.cpp:1105
 msgid "It is beyond your power to do that. "
-msgstr ""
+msgstr "Dat valt buiten uw mogelijkheden. "
 
 #: engines/glk/scott/scott.cpp:1107
 msgid "It's beyond my power to do that. "
-msgstr ""
+msgstr "Dat valt buiten mijn mogelijkheden. "
 
 #: engines/glk/scott/scott.cpp:1111
 msgid "O.K. "
@@ -3803,11 +3817,11 @@ msgstr "Niets laten vallen.\n"
 
 #: engines/glk/scott/scott.cpp:1146
 msgid "It's beyond your power to do that.\n"
-msgstr ""
+msgstr "Dat valt buiten uw mogelijkheden.\n"
 
 #: engines/glk/scott/scott.cpp:1148
 msgid "It's beyond my power to do that.\n"
-msgstr ""
+msgstr "Dat valt buiten mijn mogelijkheden.\n"
 
 #: engines/gob/inter_playtoons.cpp:255 engines/gob/inter_v2.cpp:1467
 #: engines/gob/inter_geisha.cpp:232 engines/tinsel/saveload.cpp:538
@@ -3841,7 +3855,7 @@ msgstr "Valsspeel modus aangezet"
 
 #: engines/hdb/detection.cpp:158
 msgid "Debug info and level selection becomes available"
-msgstr ""
+msgstr "Debug info en level selectie komen beschikbaar"
 
 #: engines/hopkins/detection.cpp:76 engines/hopkins/detection.cpp:86
 msgid "Gore Mode"
@@ -3912,11 +3926,11 @@ msgstr "Hitpoints balkgrafieken inschakelen"
 #. I18N: L/R stands for Left/Right
 #: engines/kyra/detection.cpp:138
 msgid "Fight Button L/R Swap"
-msgstr ""
+msgstr "Vechtknop L/R Omwisselen"
 
 #: engines/kyra/detection.cpp:139
 msgid "Left button to attack, right button to pick up items"
-msgstr ""
+msgstr "Linkerknop om aan te vallen, rechterknop om voorwerpen op te pakken"
 
 #: engines/kyra/engine/eobcommon.cpp:352 engines/kyra/engine/lol.cpp:481
 msgid "Move Forward"
@@ -4071,6 +4085,16 @@ msgid ""
 "should be located in the AmigaDOS system 'Fonts/' folder.\n"
 "Please copy them into the EOB game data directory.\n"
 msgstr ""
+"Deze AMIGA versie vereist de volgende lettertype bestanden:\n"
+"\n"
+"EOBF6.FONT\n"
+"EOBF6/6\n"
+"EOBF8.FONT\n"
+"EOBF8/8\n"
+"\n"
+"Als u de originele installer gebruikt heeft voor de installatie\n"
+"dan zouden deze moeten staan in het AmigaDOS systeem 'Fonts/'\n"
+"map. Kopieer ze a.u.b. naar de EOB spel data map.\n"
 
 #: engines/kyra/graphics/screen_eob.cpp:2262
 msgid ""
@@ -4093,6 +4117,24 @@ msgid ""
 "Please copy the correct font files into your EOB II game data directory.\n"
 "\n"
 msgstr ""
+"Deze AMIGA versie vereist de volgende lettertype bestanden:\n"
+"\n"
+"EOBF6.FONT\n"
+"EOBF6/6\n"
+"EOBF8.FONT\n"
+"EOBF8/8\n"
+"\n"
+"Dit is een gelokaliseerde (niet engelse) versie van EOB II welke "
+"taalspecifieke karakters gebuikt\n"
+"die alleen in de lettertype bestanden zitten die bij uw spel zit. U kunt "
+"niet de lettertype bestanden\n"
+"van de engelse versie of van een EOB I spel gebruiken wat u nu lijkt te doen."
+"\n"
+"\n"
+"Het spel zal doorgaan, maar de taalspecifieke karakters zullen niet worden "
+"getoond.\n"
+"Kopieer a.u.b. de juiste lettertype bestanden naar uw EOB II spel data map.\n"
+"\n"
 
 #: engines/kyra/sound/sound_midi.cpp:72
 msgid ""
@@ -4609,6 +4651,8 @@ msgid ""
 "The selected audio driver requires the following file(s):\n"
 "\n"
 msgstr ""
+"De geselecteerde audio driver vereist de volgende bestand(en):\n"
+"\n"
 
 #: engines/sci/sound/music.cpp:164
 msgid ""
@@ -4625,6 +4669,18 @@ msgid ""
 "In that case you may need to apply the original Sierra patch.\n"
 "\n"
 msgstr ""
+"\n"
+"\n"
+"Sommige audio drivers (voor sommige spellen tenminste) waren\n"
+"gemaakt door Sierra als aftermarktet patches en zijn mogelijkerwijs\n"
+"niet geïnstalleerd als onderdeel van de originele spel installatie.\n"
+"\n"
+"Kopieer a.u.b. deze bestand(en) naar uw spel data map.\n"
+"\n"
+"Echter, de bestand(en) zouden niet los beschikbaar kunnen zijn\n"
+"maar alleen als onderdeel van (gepatchte) bron bundels.\n"
+"In dat geval zou u de originele Sierra patch moeten toepassen.\n"
+"\n"
 
 #: engines/scumm/detection.cpp:1123
 msgid ""
@@ -5362,6 +5418,8 @@ msgid ""
 "This AMIGA version is missing (at least) the following file(s):\n"
 "\n"
 msgstr ""
+"Deze AMIGA versie mist (op zijn minst) de volgende bestand(en):\n"
+"\n"
 
 #: engines/scumm/imuse/drivers/amiga.cpp:659
 msgid ""
@@ -5369,6 +5427,9 @@ msgid ""
 "Please copy these file(s) into the game data directory.\n"
 "\n"
 msgstr ""
+"\n"
+"Kopieer deze bestand(en) a.u.b. in de spel data map.\n"
+"\n"
 
 #: engines/sherlock/detection.cpp:81
 msgid "Pixellated scene transitions"
@@ -5443,7 +5504,7 @@ msgstr ""
 #: engines/supernova/supernova.cpp:483
 #, c-format
 msgid "Unable to find block for part %d"
-msgstr ""
+msgstr "Kon blok voor deel %d niet vinden"
 
 #: engines/supernova/supernova.cpp:525
 #, c-format
