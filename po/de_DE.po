@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2019-09-16 11:03+0200\n"
-"PO-Revision-Date: 2019-09-16 20:44+0000\n"
+"PO-Revision-Date: 2019-09-16 21:22+0000\n"
 "Last-Translator: Lothar Serra Mari <serra@scummvm.org>\n"
 "Language-Team: German <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/de/>\n"
@@ -1432,11 +1432,11 @@ msgstr "URL öffnen"
 #: gui/options.cpp:1961
 msgctxt "lowres"
 msgid "2. Get the code and enter it here:"
-msgstr "2. Fordern Sie den Code an und geben ihn hier ein:"
+msgstr "2. Verifizierungscode anfordern und eingeben:"
 
 #: gui/options.cpp:1963
 msgid "2. Get the code and enter it here:"
-msgstr "2. Fordern Sie den Code an und geben ihn hier ein:"
+msgstr "2. Verifizierungscode anfordern und eingeben:"
 
 #: gui/options.cpp:1965
 msgid "Paste"
