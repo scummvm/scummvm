@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2019-09-15 11:36+0200\n"
+"POT-Creation-Date: 2019-09-16 11:03+0200\n"
 "PO-Revision-Date: 2019-09-15 20:54+0000\n"
 "Last-Translator: jepael <kermespersialainen@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
@@ -3433,15 +3433,15 @@ msgstr ""
 msgid "Cutscene file '%s' not found!"
 msgstr "Videotiedostoa '%s' ei löytynyt!"
 
-#: engines/bladerunner/bladerunner.cpp:338
+#: engines/bladerunner/bladerunner.cpp:339
 msgid "Failed to initialize resources"
 msgstr "Resurssien alustus epäonnistui"
 
-#: engines/bladerunner/bladerunner.cpp:989
+#: engines/bladerunner/bladerunner.cpp:995
 msgid "A required game resource was not found"
 msgstr "Pakollista pelin resurssia ei löydetty"
 
-#: engines/bladerunner/bladerunner.cpp:2139
+#: engines/bladerunner/bladerunner.cpp:2145
 msgid ""
 "WARNING: This game was saved in Restored Cut Content mode, but you are "
 "playing in Original Content mode. The mode will be adjusted to Restored Cut "
@@ -3452,7 +3452,7 @@ msgstr ""
 "Pelisessio muutetaan 'Leikatut kohtaukset palautettu'-tilaan ja se on "
 "voimassa kunnes poistut kokonaan pelistä."
 
-#: engines/bladerunner/bladerunner.cpp:2141
+#: engines/bladerunner/bladerunner.cpp:2147
 msgid ""
 "WARNING: This game was saved in Original Content mode, but you are playing "
 "in Restored Cut Content mode. The mode will be adjusted to Original Content "
@@ -3463,7 +3463,7 @@ msgstr ""
 "muutetaan 'Alkuperäinen sisältö'-tilaan ja se on voimassa kunnes poistut "
 "kokonaan pelistä."
 
-#: engines/bladerunner/bladerunner.cpp:2143
+#: engines/bladerunner/bladerunner.cpp:2149
 msgid "Continue"
 msgstr "Jatka"
 
@@ -3482,6 +3482,16 @@ msgstr "Pätkätila"
 #: engines/bladerunner/detection.cpp:58
 msgid "Game will shrink the actors and make their voices high pitched"
 msgstr "Hahmoja kutistetaan ja niiden ääntä nopeutetaan"
+
+#: engines/bladerunner/detection.cpp:66
+msgid "Frame limiter high performance mode"
+msgstr ""
+
+#: engines/bladerunner/detection.cpp:67
+msgid ""
+"This mode may result in high CPU usage! It avoids use of delayMillis() "
+"function."
+msgstr ""
 
 #: engines/cge/detection.cpp:105 engines/cge2/detection.cpp:111
 msgid "Color Blind Mode"
