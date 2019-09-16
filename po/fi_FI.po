@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2019-09-16 11:03+0200\n"
-"PO-Revision-Date: 2019-09-15 20:54+0000\n"
-"Last-Translator: jepael <kermespersialainen@gmail.com>\n"
+"PO-Revision-Date: 2019-09-16 20:44+0000\n"
+"Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fi/>\n"
 "Language: fi_FI\n"
@@ -3485,13 +3485,15 @@ msgstr "Hahmoja kutistetaan ja niiden ‰‰nt‰ nopeutetaan"
 
 #: engines/bladerunner/detection.cpp:66
 msgid "Frame limiter high performance mode"
-msgstr ""
+msgstr "Kuvanp‰ivitysnopeuden rajoittimen korkea suorituskyky tila"
 
 #: engines/bladerunner/detection.cpp:67
 msgid ""
 "This mode may result in high CPU usage! It avoids use of delayMillis() "
 "function."
 msgstr ""
+"T‰m‰ tila saattaa k‰ytt‰‰ paljon laskentatehoa! Se v‰ltt‰‰ delayMillis()-"
+"funktion k‰ytt‰mist‰."
 
 #: engines/cge/detection.cpp:105 engines/cge2/detection.cpp:111
 msgid "Color Blind Mode"
