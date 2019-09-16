@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2019-09-15 11:36+0200\n"
-"PO-Revision-Date: 2019-09-16 06:44+0000\n"
+"PO-Revision-Date: 2019-09-16 07:17+0000\n"
 "Last-Translator: Ben Castricum <github@bencastricum.nl>\n"
 "Language-Team: Dutch <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/nl/>\n"
@@ -2562,16 +2562,16 @@ msgstr "Ongeldige pad!"
 
 #: backends/networking/sdl_net/handlers/createdirectoryhandler.cpp:84
 msgid "Parent directory doesn't exists!"
-msgstr "Bovenliggend pad bestaat niet!"
+msgstr "Bovenliggende map bestaat niet!"
 
 #: backends/networking/sdl_net/handlers/createdirectoryhandler.cpp:88
 msgid "Can't create a directory within a file!"
-msgstr ""
+msgstr "Kan geen map creëren in een file!"
 
 #: backends/networking/sdl_net/handlers/createdirectoryhandler.cpp:98
 #: backends/networking/sdl_net/uploadfileclienthandler.cpp:141
 msgid "There is a file with that name in the parent directory!"
-msgstr ""
+msgstr "Er is een bestand met die naam in de bovenliggende map!"
 
 #: backends/networking/sdl_net/handlers/createdirectoryhandler.cpp:104
 msgid "Failed to create the directory!"
@@ -2636,7 +2636,7 @@ msgstr "Of selecteer een map (werkt alleen in Chrome):"
 
 #: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:74
 msgid "Index of "
-msgstr ""
+msgstr "Index van "
 
 #: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:75
 msgid "Loading..."
@@ -2644,11 +2644,11 @@ msgstr "Laden..."
 
 #: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:76
 msgid "Error occurred"
-msgstr ""
+msgstr "Fout opgetreden"
 
 #: backends/networking/sdl_net/handlers/filespagehandler.cpp:81
 msgid "File system root"
-msgstr ""
+msgstr "Bestand systeem root"
 
 #: backends/networking/sdl_net/handlers/filespagehandler.cpp:82
 msgid "Saved games"
@@ -2665,11 +2665,11 @@ msgstr "ScummVM kon de opgegeven map niet indexeren."
 #: backends/networking/sdl_net/handlers/filespagehandler.cpp:232
 #, c-format
 msgid "Index of %s"
-msgstr ""
+msgstr "Index van %s"
 
 #: backends/networking/sdl_net/handlers/indexpagehandler.cpp:42
 msgid "This is a local webserver index page."
-msgstr ""
+msgstr "Dit is een lokale webserver index pagina."
 
 #: backends/networking/sdl_net/handlers/indexpagehandler.cpp:43
 msgid "Open Files manager"
@@ -2677,7 +2677,7 @@ msgstr "Open Bestanden manager"
 
 #: backends/networking/sdl_net/handlers/uploadfilehandler.cpp:67
 msgid "The parent directory doesn't exist!"
-msgstr ""
+msgstr "Bovenliggend pad bestaat niet!"
 
 #: backends/networking/sdl_net/handlers/uploadfilehandler.cpp:71
 msgid "Can't upload into a file!"
@@ -2685,7 +2685,7 @@ msgstr "Kan niet uploaden naar een file!"
 
 #: backends/networking/sdl_net/handlerutils.cpp:197
 msgid "Back to the files manager"
-msgstr ""
+msgstr "Terug naar de bestanden manager"
 
 #: backends/networking/sdl_net/localwebserver.cpp:123
 msgid ""
@@ -2696,7 +2696,7 @@ msgstr ""
 #: backends/networking/sdl_net/uploadfileclienthandler.cpp:69
 #: backends/networking/sdl_net/uploadfileclienthandler.cpp:111
 msgid "Invalid request: headers are too long!"
-msgstr ""
+msgstr "Ongeldig verzoek: headers zijn te lang!"
 
 #: backends/networking/sdl_net/uploadfileclienthandler.cpp:155
 msgid "Failed to upload the file!"
@@ -2704,7 +2704,7 @@ msgstr "Bestand uploaden niet gelukt!"
 
 #: backends/networking/sdl_net/uploadfileclienthandler.cpp:184
 msgid "No file was passed!"
-msgstr ""
+msgstr "Geen file doorgegeven!"
 
 #: backends/networking/sdl_net/uploadfileclienthandler.cpp:202
 msgid "Uploaded successfully!"
@@ -3639,18 +3639,20 @@ msgstr "ik zie niets. Het is te donker!\n"
 #: engines/glk/scott/scott.cpp:418
 #, c-format
 msgid "You are in a %s\n"
-msgstr ""
+msgstr "U bent in een %s\n"
 
 #: engines/glk/scott/scott.cpp:420
 #, c-format
 msgid "I'm in a %s\n"
-msgstr ""
+msgstr "Ik ben in een %s\n"
 
 #: engines/glk/scott/scott.cpp:425
 msgid ""
 "\n"
 "Obvious exits: "
 msgstr ""
+"\n"
+"Duidelijke uitgangen: "
 
 #: engines/glk/scott/scott.cpp:438
 msgid "none"
@@ -3661,12 +3663,16 @@ msgid ""
 "\n"
 "You can also see: "
 msgstr ""
+"\n"
+"U kunt ook zien: "
 
 #: engines/glk/scott/scott.cpp:450
 msgid ""
 "\n"
 "I can also see: "
 msgstr ""
+"\n"
+"Ik kan ook zien: "
 
 #: engines/glk/scott/scott.cpp:533
 msgid "Saved.\n"
@@ -3674,24 +3680,24 @@ msgstr "Opgeslagen.\n"
 
 #: engines/glk/scott/scott.cpp:624
 msgid "You use word(s) I don't know! "
-msgstr ""
+msgstr "U gebruikt woord(en) die ik niet ken! "
 
 #: engines/glk/scott/scott.cpp:752 engines/glk/scott/scott.cpp:1075
 #: engines/glk/scott/scott.cpp:1097
 msgid "You are carrying too much. "
-msgstr ""
+msgstr "U draagt te veel. "
 
 #: engines/glk/scott/scott.cpp:754
 msgid "I've too much to carry! "
-msgstr ""
+msgstr "Ik draag te veel! "
 
 #: engines/glk/scott/scott.cpp:785
 msgid "You are dead.\n"
-msgstr ""
+msgstr "U bent dood.\n"
 
 #: engines/glk/scott/scott.cpp:787
 msgid "I am dead.\n"
-msgstr ""
+msgstr "Ik ben dood.\n"
 
 #: engines/glk/scott/scott.cpp:799
 msgid "The game is now over.\n"
@@ -3699,7 +3705,7 @@ msgstr "Het spel is nu over.\n"
 
 #: engines/glk/scott/scott.cpp:814
 msgid "You have stored "
-msgstr ""
+msgstr "U heeft opgeslagen "
 
 #: engines/glk/scott/scott.cpp:816
 msgid "I've stored "
@@ -3707,63 +3713,63 @@ msgstr "Ik heb opgeslagen "
 
 #: engines/glk/scott/scott.cpp:818
 msgid " treasures.  On a scale of 0 to 100, that rates "
-msgstr ""
+msgstr " schatten.  Op een schaal van 0 tot 100, komt dat op "
 
 #: engines/glk/scott/scott.cpp:822
 msgid "Well done.\n"
-msgstr ""
+msgstr "Goed gedaan.\n"
 
 #: engines/glk/scott/scott.cpp:831
 msgid "You are carrying:\n"
-msgstr ""
+msgstr "U draagt:\n"
 
 #: engines/glk/scott/scott.cpp:833
 msgid "I'm carrying:\n"
-msgstr ""
+msgstr "Ik draag:\n"
 
 #: engines/glk/scott/scott.cpp:848
 msgid "Nothing"
-msgstr ""
+msgstr "Niets"
 
 #: engines/glk/scott/scott.cpp:977
 msgid "Give me a direction too."
-msgstr ""
+msgstr "Geef me ook een richting."
 
 #: engines/glk/scott/scott.cpp:986
 msgid "Dangerous to move in the dark! "
-msgstr ""
+msgstr "Gevaarlijk om in het donker te bewegen! "
 
 #: engines/glk/scott/scott.cpp:994
 msgid "You fell down and broke your neck. "
-msgstr ""
+msgstr "U viel naar beneden en brak uw nek. "
 
 #: engines/glk/scott/scott.cpp:996
 msgid "I fell down and broke my neck. "
-msgstr ""
+msgstr "Ik viel naar beneden en brak mijn nek. "
 
 #: engines/glk/scott/scott.cpp:1001
 msgid "You can't go in that direction. "
-msgstr ""
+msgstr "U kunt die richting niet opgaan. "
 
 #: engines/glk/scott/scott.cpp:1003
 msgid "I can't go in that direction. "
-msgstr ""
+msgstr "Ik kan die richting niet opgaan. "
 
 #: engines/glk/scott/scott.cpp:1061
 msgid "It is dark.\n"
-msgstr ""
+msgstr "Het is donker.\n"
 
 #: engines/glk/scott/scott.cpp:1077 engines/glk/scott/scott.cpp:1099
 msgid "I've too much to carry. "
-msgstr ""
+msgstr "Ik heb te veel om te dragen. "
 
 #: engines/glk/scott/scott.cpp:1082 engines/glk/scott/scott.cpp:1130
 msgid ": O.K.\n"
-msgstr ""
+msgstr ": O.K.\n"
 
 #: engines/glk/scott/scott.cpp:1088
 msgid "Nothing taken."
-msgstr ""
+msgstr "Niets gepakt."
 
 #: engines/glk/scott/scott.cpp:1092 engines/glk/scott/scott.cpp:1140
 msgid "What ? "
@@ -3779,11 +3785,11 @@ msgstr ""
 
 #: engines/glk/scott/scott.cpp:1111
 msgid "O.K. "
-msgstr ""
+msgstr "O.K. "
 
 #: engines/glk/scott/scott.cpp:1136
 msgid "Nothing dropped.\n"
-msgstr ""
+msgstr "Niets laten vallen.\n"
 
 #: engines/glk/scott/scott.cpp:1146
 msgid "It's beyond your power to do that.\n"
@@ -5568,7 +5574,7 @@ msgstr "Pas bilineair filteren toe op individuele sprites"
 
 #: engines/wintermute/wintermute.cpp:153
 msgid "This game requires PNG, JPEG and Vorbis support."
-msgstr ""
+msgstr "Dit spel vereist PNG, JPEG en Vorbis ondersteuning."
 
 #: engines/wintermute/wintermute.cpp:164
 msgid ""
