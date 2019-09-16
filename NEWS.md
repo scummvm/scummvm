@@ -15,8 +15,8 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added support for Might and Magic - World of Xeen.
    - Added support for Might and Magic - World of Xeen 2 CD Talkie.
    - Added support for Might and Magic - Swords of Xeen.
-   - Added support for Mission Supernova.
-   - Added support for Mission Supernova 2.
+   - Added support for Mission Supernova Part 1.
+   - Added support for Mission Supernova Part 2.
    - Added support for Quest for Glory: Shadows of Darkness.
    - Added support for The Prince and the Coward.
    - Added support for Versailles 1685.
