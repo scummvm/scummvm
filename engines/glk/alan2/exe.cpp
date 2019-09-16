@@ -266,9 +266,9 @@ static Aptr getatr(
 
  */
 static void setatr(
-    Aaddr atradr,              /* IN - ACODE address to attribute table */
-    Aword atr,                 /* IN - attribute code */
-    Aword val                  /* IN - new value */
+	Aaddr atradr,              /* IN - ACODE address to attribute table */
+	Aword atr,                 /* IN - attribute code */
+	Aword val                  /* IN - new value */
 ) {
 	AtrElem *at;
 
