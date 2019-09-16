@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2019-09-15 11:36+0200\n"
-"PO-Revision-Date: 2019-09-15 21:21+0000\n"
-"Last-Translator: Thierry Crozat <criezy@scummvm.org>\n"
+"PO-Revision-Date: 2019-09-16 06:44+0000\n"
+"Last-Translator: Ben Castricum <github@bencastricum.nl>\n"
 "Language-Team: Dutch <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/nl/>\n"
 "Language: nl_NL\n"
@@ -731,8 +731,8 @@ msgstr "Dit spel ondersteunt het laden van spelen vanaf het startmenu niet."
 #: gui/launcher.cpp:508
 msgid "ScummVM could not find any engine capable of running the selected game!"
 msgstr ""
-"ScummVM heeft geen engine gevonden die in staat was het geselecteerde spel "
-"te spelen!"
+"ScummVM kon geen engine vinden die in staat is het geselecteerde spel te "
+"spelen!"
 
 #: gui/launcher.cpp:573
 msgid "ScummVM could not find any game in the specified directory!"
@@ -916,7 +916,7 @@ msgstr "Speciale ditheringmodi die door sommige games ondersteund worden"
 
 #: gui/options.cpp:1085
 msgid "Stretch mode:"
-msgstr "uitrekmodus:"
+msgstr "Uitrekmodus:"
 
 #: gui/options.cpp:1096 backends/graphics/sdl/sdl-graphics.cpp:354
 msgid "Fullscreen mode"
@@ -1349,7 +1349,6 @@ msgid "<never>"
 msgstr "<nooit>"
 
 #: gui/options.cpp:1937
-#, fuzzy
 msgctxt "lowres"
 msgid "Saved games sync automatically on launch, after saving and on loading."
 msgstr ""
@@ -1357,7 +1356,6 @@ msgstr ""
 "opslaan en bij laden."
 
 #: gui/options.cpp:1939
-#, fuzzy
 msgid "Saved games sync automatically on launch, after saving and on loading."
 msgstr ""
 "Opgeslagen spellen synchroniseren automatisch bij het starten, na het "
@@ -1368,7 +1366,6 @@ msgid "Sync now"
 msgstr "Synchroniseer nu"
 
 #: gui/options.cpp:1940
-#, fuzzy
 msgid "Start saved games sync"
 msgstr "Start de synchronisatie van opgeslagen spellen"
 
@@ -2085,9 +2082,9 @@ msgstr "~T~oetsen"
 
 # can this be changed into "Could not switch to video mode '%s'"?
 #: engines/engine.cpp:312
-#, fuzzy, c-format
+#, c-format
 msgid "Could not switch to resolution '%dx%d'."
-msgstr "Kon niet schakelen naar videomodus: '"
+msgstr "Kon niet omschakelen naar resolutie '%dx%d'."
 
 #: engines/engine.cpp:321
 msgid "Could not initialize color format."
@@ -2095,19 +2092,19 @@ msgstr "Kon kleurformaat niet initialiseren."
 
 # can this be changed into "Could not switch to video mode '%s'"?
 #: engines/engine.cpp:330
-#, fuzzy, c-format
+#, c-format
 msgid "Could not switch to video mode '%s'."
-msgstr "Kon niet schakelen naar videomodus: '"
+msgstr "Kon niet omschakelen naar videomodus '%s'."
 
 # can this be changed into "Could not switch to video mode '%s'"?
 #: engines/engine.cpp:338
-#, fuzzy, c-format
+#, c-format
 msgid "Could not switch to stretch mode '%s'."
-msgstr "Kon niet schakelen naar videomodus: '"
+msgstr "Kon niet omschakelen naar uitrekmodus '%s'."
 
 #: engines/engine.cpp:345
 msgid "Could not apply aspect ratio setting."
-msgstr "Pixelverhoudinginstelling kon niet toegepast worden."
+msgstr "Kon pixelverhoudinginstelling niet toepassen."
 
 #: engines/engine.cpp:350
 msgid "Could not apply fullscreen setting."
@@ -2115,7 +2112,7 @@ msgstr "Kon volledig-scherminstelling niet toepassen."
 
 #: engines/engine.cpp:355
 msgid "Could not apply filtering setting."
-msgstr "Filterinstelling kon niet toegepast worden."
+msgstr "Kon filterinstelling niet toepassen."
 
 #: engines/engine.cpp:463
 msgid ""
@@ -2301,9 +2298,8 @@ msgid "C64 Audio emulator"
 msgstr "C64 Geluid emulator"
 
 #: backends/cloud/cloudmanager.cpp:153
-#, fuzzy
 msgid "<syncing...>"
-msgstr "Bezig met verbinden..."
+msgstr "<aan het synchroniseren...>"
 
 #: backends/cloud/storage.cpp:232
 msgid "Saved games sync complete."
@@ -2546,9 +2542,8 @@ msgid "Windows MIDI"
 msgstr "Windows MIDI"
 
 #: backends/networking/sdl_net/handlers/createdirectoryhandler.cpp:60
-#, fuzzy
 msgid "Can't create directory here!"
-msgstr "Pad is geen map"
+msgstr "Kan hier geen map creëren!"
 
 #: backends/networking/sdl_net/handlers/createdirectoryhandler.cpp:66
 #: backends/networking/sdl_net/handlers/createdirectoryhandler.cpp:73
@@ -2562,14 +2557,12 @@ msgstr "Pad is geen map"
 #: backends/networking/sdl_net/handlers/uploadfilehandler.cpp:56
 #: backends/networking/sdl_net/handlers/uploadfilehandler.cpp:63
 #: backends/networking/sdl_net/uploadfileclienthandler.cpp:137
-#, fuzzy
 msgid "Invalid path!"
-msgstr "Ongeldige code"
+msgstr "Ongeldige pad!"
 
 #: backends/networking/sdl_net/handlers/createdirectoryhandler.cpp:84
-#, fuzzy
 msgid "Parent directory doesn't exists!"
-msgstr "Pad bestaat niet"
+msgstr "Bovenliggend pad bestaat niet!"
 
 #: backends/networking/sdl_net/handlers/createdirectoryhandler.cpp:88
 msgid "Can't create a directory within a file!"
@@ -2581,36 +2574,30 @@ msgid "There is a file with that name in the parent directory!"
 msgstr ""
 
 #: backends/networking/sdl_net/handlers/createdirectoryhandler.cpp:104
-#, fuzzy
 msgid "Failed to create the directory!"
-msgstr "Bestand verwijderen niet gelukt."
+msgstr "Het creëren van de map is niet gelukt!"
 
 #: backends/networking/sdl_net/handlers/createdirectoryhandler.cpp:111
 #: backends/networking/sdl_net/handlers/createdirectoryhandler.cpp:120
-#, fuzzy
 msgid "Directory created successfully!"
-msgstr "DVD succesvol gemount"
+msgstr "Map succesvol gecreëerd!"
 
 #: backends/networking/sdl_net/handlers/createdirectoryhandler.cpp:122
 #: backends/networking/sdl_net/uploadfileclienthandler.cpp:204
-#, fuzzy
 msgid "Back to parent directory"
-msgstr "Pad is geen map"
+msgstr "Terug naar bovenloggende map"
 
 #: backends/networking/sdl_net/handlers/downloadfilehandler.cpp:67
-#, fuzzy
 msgid "The file doesn't exist!"
-msgstr "Pad bestaat niet"
+msgstr "Het bestand bestaat niet!"
 
 #: backends/networking/sdl_net/handlers/downloadfilehandler.cpp:71
-#, fuzzy
 msgid "Can't download a directory!"
-msgstr "Pad is geen map"
+msgstr "Kan geen map downloaden!"
 
 #: backends/networking/sdl_net/handlers/downloadfilehandler.cpp:76
-#, fuzzy
 msgid "Failed to read the file!"
-msgstr "Bestand verwijderen niet gelukt."
+msgstr "Bestand lezen niet gelukt!"
 
 #: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:59
 msgid ""
@@ -2622,17 +2609,15 @@ msgstr ""
 #: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:68
 #: backends/networking/sdl_net/handlers/filespagehandler.cpp:223
 #: backends/networking/sdl_net/handlers/filespagehandler.cpp:224
-#, fuzzy
 msgid "Create directory"
-msgstr "Pad is geen map"
+msgstr "Creëer map"
 
 #: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:69
 #: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:70
 #: backends/networking/sdl_net/handlers/filespagehandler.cpp:227
 #: backends/networking/sdl_net/handlers/filespagehandler.cpp:228
-#, fuzzy
 msgid "Upload files"
-msgstr "Laad bestand"
+msgstr "Upload bestand"
 
 #: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:71
 #: backends/networking/sdl_net/handlers/filespagehandler.cpp:229
@@ -2641,24 +2626,21 @@ msgstr ""
 
 #: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:72
 #: backends/networking/sdl_net/handlers/filespagehandler.cpp:230
-#, fuzzy
 msgid "Select a file to upload:"
-msgstr "Selecteer welk opgeslagen spel u wilt laden"
+msgstr "Selecteer een bestand om te uploaden:"
 
 #: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:73
 #: backends/networking/sdl_net/handlers/filespagehandler.cpp:231
-#, fuzzy
 msgid "Or select a directory (works in Chrome only):"
-msgstr "Selecteer map voor GUI themas"
+msgstr "Of selecteer een map (werkt alleen in Chrome):"
 
 #: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:74
 msgid "Index of "
 msgstr ""
 
 #: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:75
-#, fuzzy
 msgid "Loading..."
-msgstr "Spel laden..."
+msgstr "Laden..."
 
 #: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:76
 msgid "Error occurred"
@@ -2669,19 +2651,16 @@ msgid "File system root"
 msgstr ""
 
 #: backends/networking/sdl_net/handlers/filespagehandler.cpp:82
-#, fuzzy
 msgid "Saved games"
-msgstr "Spel opslaan:"
+msgstr "Opgeslagen spellen"
 
 #: backends/networking/sdl_net/handlers/filespagehandler.cpp:119
-#, fuzzy
 msgid "Parent directory"
-msgstr "Pad is geen map"
+msgstr "Bovenliggende map"
 
 #: backends/networking/sdl_net/handlers/filespagehandler.cpp:218
-#, fuzzy
 msgid "ScummVM couldn't list the directory you specified."
-msgstr "ScummVM kon de opgegeven map niet openen!"
+msgstr "ScummVM kon de opgegeven map niet indexeren."
 
 #: backends/networking/sdl_net/handlers/filespagehandler.cpp:232
 #, c-format
@@ -2693,18 +2672,16 @@ msgid "This is a local webserver index page."
 msgstr ""
 
 #: backends/networking/sdl_net/handlers/indexpagehandler.cpp:43
-#, fuzzy
 msgid "Open Files manager"
-msgstr "Open downloads manager dialoogvenster"
+msgstr "Open Bestanden manager"
 
 #: backends/networking/sdl_net/handlers/uploadfilehandler.cpp:67
 msgid "The parent directory doesn't exist!"
 msgstr ""
 
 #: backends/networking/sdl_net/handlers/uploadfilehandler.cpp:71
-#, fuzzy
 msgid "Can't upload into a file!"
-msgstr "Pad is geen bestand"
+msgstr "Kan niet uploaden naar een file!"
 
 #: backends/networking/sdl_net/handlerutils.cpp:197
 msgid "Back to the files manager"
@@ -2722,18 +2699,16 @@ msgid "Invalid request: headers are too long!"
 msgstr ""
 
 #: backends/networking/sdl_net/uploadfileclienthandler.cpp:155
-#, fuzzy
 msgid "Failed to upload the file!"
-msgstr "Bestand verwijderen niet gelukt."
+msgstr "Bestand uploaden niet gelukt!"
 
 #: backends/networking/sdl_net/uploadfileclienthandler.cpp:184
 msgid "No file was passed!"
 msgstr ""
 
 #: backends/networking/sdl_net/uploadfileclienthandler.cpp:202
-#, fuzzy
 msgid "Uploaded successfully!"
-msgstr "DVD succesvol gemount"
+msgstr "Upload succesvol!"
 
 #: backends/platform/ds/arm9/source/dsoptions.cpp:56
 #: engines/scumm/dialogs.cpp:287
@@ -3552,7 +3527,7 @@ msgstr "Naamloos opgeslagen spel"
 # can this be changed into "Could not switch to video mode '%s'"?
 #: engines/glk/advsys/advsys.cpp:35
 msgid "Could not start AdvSys game"
-msgstr "Starten van AdvSys spel mislukt"
+msgstr "Kon AdvSys spel niet starten"
 
 #: engines/glk/advsys/advsys.cpp:48 engines/glk/advsys/vm.cpp:319
 msgid "Sorry, the savegame couldn't be restored"
@@ -3564,7 +3539,7 @@ msgstr "Helaas, creëren van een opgeslagen spel is niet gelukt"
 
 #: engines/glk/advsys/vm.cpp:560
 msgid "Speak up! I can't hear you!\n"
-msgstr "Spreek luider! I kan je niet horen.\n"
+msgstr "Spreek luider! Ik kan je niet horen!\n"
 
 #: engines/glk/advsys/vm.cpp:596
 #, c-format
@@ -5573,7 +5548,7 @@ msgstr "Opgeslagen spel #%d snel geladen"
 #: engines/toon/toon.cpp:243
 #, c-format
 msgid "Could not quick load the saved game #%d"
-msgstr "Snel laden van opgeslagen spel #%d mislukt"
+msgstr "Kon opgeslagen spel #%d niet snelladen"
 
 #: engines/wintermute/detection.cpp:59
 msgid "Show FPS-counter"
