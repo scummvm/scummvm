@@ -1020,6 +1020,32 @@ AI::AI() {
 		_cineBlitList[i] = nullptr;
 		_cineFreeList[i] = nullptr;
 	}
+	_targetDoor2S = 0;
+	_targetDoor2Nv = 0;
+	_targetDoor2Pv = 0;
+	_targetDoor2Sv = 0;
+	_target2DoorN = 0;
+	_target2DoorP = 0;
+	_target2DoorS = 0;
+	_target2DoorNv = 0;
+	_target2DoorPv = 0;
+	_target2DoorSv = 0;
+	_target3DoorN = 0;
+	_target3DoorP = 0;
+	_target3DoorS = 0;
+	_target3DoorNv = 0;
+	_target3DoorPv = 0;
+	_target3DoorSv = 0;
+	_targetBridgeU = 0;
+	_targetBridgeD = 0;
+	_targetBridgeL = 0;
+	_targetBridgeR = 0;
+	_targetBridgeMidLR = 0;
+	_targetBridgeMidUD = 0;
+	_touchplateOn = 0;
+	_touchplateOff = 0;
+	_templeTouchpOn = 0;
+	_templeTouchpOff = 0;
 }
 
 AI::~AI() {

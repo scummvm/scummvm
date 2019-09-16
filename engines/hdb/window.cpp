@@ -119,6 +119,8 @@ Window::Window() {
 	_gfxTitleM = nullptr;
 	_gfxTitleR = nullptr;
 	_gGfxTL = nullptr;
+	_invItemSpaceX = 0;
+	_invItemSpaceY = 0;
 }
 
 Window::~Window() {
