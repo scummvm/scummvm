@@ -33,6 +33,7 @@ Programmcodes finden Sie auf Englisch unter:
      gesteuert wird.
    - Code der Roland MT-32-Emulation auf Munt 2.3.0 aktualisiert.
    - Unbekannte Spiele-Versionen können nun einfacher gemeldet werden.
+   - Spielstände können nun in einer Cloud synchronisiert werden.
 
  ADL:
    - Verbesserung der Farbtreue.
