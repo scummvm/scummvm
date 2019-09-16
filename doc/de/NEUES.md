@@ -16,8 +16,8 @@ Programmcodes finden Sie auf Englisch unter:
    - Unterstützung für Might and Magic - World of Xeen hinzugefügt.
    - Unterstützung für Might and Magic - World of Xeen 2 CD Talkie (mit Sprachausgabe) hinzugefügt.
    - Unterstützung für Might and Magic - Swords of Xeen hinzugefügt.
-   - Unterstützung für Mission Supernova - Teil 1 hinzugefügt.
-   - Unterstützung für Mission Supernova - Teil 2 hinzugefügt.
+   - Unterstützung für Mission Supernova Teil 1: Das Schicksal des Horst Hummel hinzugefügt.
+   - Unterstützung für Mission Supernova Teil 2: Der Doppelgänger hinzugefügt.
    - Unterstützung für Quest for Glory: Shadows of Darkness hinzugefügt.
    - Unterstützung für The Prince and the Coward hinzugefügt.
    - Unterstützung für Versailles 1685 hinzugefügt.
