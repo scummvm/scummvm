@@ -2,7 +2,7 @@ Umfangreichere Informationen über die Änderungen des aktuellen experimentellen
 Programmcodes finden Sie auf Englisch unter:
         https://github.com/scummvm/scummvm/commits/
 
-#### 2.1.0 (??.??.2019)
+#### 2.1.0 (13.10.2019)
 
  Neue Spiele:
    - Unterstützung für Blade Runner hinzugefügt.
