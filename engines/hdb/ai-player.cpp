@@ -501,7 +501,9 @@ void aiPlayerDraw(AIEntity *e, int mx, int my) {
 }
 
 void aiGemAttackInit(AIEntity *e) {
-	int xv[5] = {9, 0, 0, -1, 1}, yv[5] = {9, -1, 1, 0, 0};
+	static const int xv[5] = {9, 0, 0, -1, 1};
+	static const int yv[5] = {9, -1, 1, 0, 0};
+
 	e->moveSpeed = kPlayerMoveSpeed << 1;
 	g_hdb->_ai->setEntityGoal(e, e->tileX + xv[e->dir], e->tileY + yv[e->dir]);
 	e->state = STATE_MOVEDOWN;		// so it will draw & animate
