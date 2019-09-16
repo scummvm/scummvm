@@ -60,6 +60,15 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 			false
 		}
 	},
+	{
+		GAMEOPTION_FRAMELIMITER_NODELAYMILLIS,
+		{
+			_s("Frame limiter high performance mode"),
+			_s("This mode may result in high CPU usage! It avoids use of delayMillis() function."),
+			"nodelaymillisfl",
+			false
+		}
+	},
 	AD_EXTRA_GUI_OPTIONS_TERMINATOR
 };
 

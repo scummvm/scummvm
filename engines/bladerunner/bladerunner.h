@@ -215,6 +215,7 @@ public:
 	bool _subtitlesEnabled;  // tracks the state of whether subtitles are enabled or disabled from ScummVM GUI option or KIA checkbox (the states are synched)
 	bool _sitcomMode;
 	bool _shortyMode;
+	bool _noDelayMillisFramelimiter;
 	bool _cutContent;
 
 	int _walkSoundId;
