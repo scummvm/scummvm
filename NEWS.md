@@ -1,7 +1,7 @@
 For a more comprehensive changelog of the latest experimental code, see:
         https://github.com/scummvm/scummvm/commits/
 
-#### 2.1.0 (2019-??-??)
+#### 2.1.0 (2019-10-13)
 
  New games:
    - Added support for Blade Runner.
