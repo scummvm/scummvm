@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2019-09-16 11:03+0200\n"
+"POT-Creation-Date: 2019-09-17 01:14+0200\n"
 "PO-Revision-Date: 2019-09-14 12:05+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
@@ -5401,6 +5401,16 @@ msgstr ""
 #, c-format
 msgid "Unable to find '%s' in game folder or the engine data file."
 msgstr "Не вдалося знайти '%s' у папці гри або файлі даних движка."
+
+#: engines/supernova/detection.cpp:40
+#, fuzzy
+msgid "Improved mode"
+msgstr "Віконний режим"
+
+#: engines/supernova/detection.cpp:41
+msgid ""
+"Removes some repetitive actions, adds possibility to change verbs by keyboard"
+msgstr ""
 
 #: engines/sword1/animation.cpp:524
 #, c-format

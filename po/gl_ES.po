@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2019-09-16 11:03+0200\n"
+"POT-Creation-Date: 2019-09-17 01:14+0200\n"
 "PO-Revision-Date: 2018-10-10 04:23+0000\n"
 "Last-Translator: scootergrisen <scootergrisen@gmail.com>\n"
 "Language-Team: Galician <https://translations.scummvm.org/projects/scummvm/"
@@ -5489,6 +5489,16 @@ msgstr ""
 #, fuzzy, c-format
 msgid "Unable to find '%s' in game folder or the engine data file."
 msgstr "Non se puido localizar o ficheiro de datos do motor %s."
+
+#: engines/supernova/detection.cpp:40
+#, fuzzy
+msgid "Improved mode"
+msgstr "Modo en ventá"
+
+#: engines/supernova/detection.cpp:41
+msgid ""
+"Removes some repetitive actions, adds possibility to change verbs by keyboard"
+msgstr ""
 
 #: engines/sword1/animation.cpp:524
 #, c-format

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2019-09-16 11:03+0200\n"
+"POT-Creation-Date: 2019-09-17 01:14+0200\n"
 "PO-Revision-Date: 2019-09-16 10:51+0000\n"
 "Last-Translator: Ben Castricum <github@bencastricum.nl>\n"
 "Language-Team: Dutch <https://translations.scummvm.org/projects/scummvm/"
@@ -4128,8 +4128,8 @@ msgstr ""
 "taalspecifieke karakters gebuikt\n"
 "die alleen in de lettertype bestanden zitten die bij uw spel zit. U kunt "
 "niet de lettertype bestanden\n"
-"van de engelse versie of van een EOB I spel gebruiken wat u nu lijkt te doen."
-"\n"
+"van de engelse versie of van een EOB I spel gebruiken wat u nu lijkt te "
+"doen.\n"
 "\n"
 "Het spel zal doorgaan, maar de taalspecifieke karakters zullen niet worden "
 "getoond.\n"
@@ -5510,6 +5510,16 @@ msgstr "Kon blok voor deel %d niet vinden"
 #, c-format
 msgid "Unable to find '%s' in game folder or the engine data file."
 msgstr "Kon '%s' niet in de spelmap of engine databestand vinden."
+
+#: engines/supernova/detection.cpp:40
+#, fuzzy
+msgid "Improved mode"
+msgstr "Venstermodus"
+
+#: engines/supernova/detection.cpp:41
+msgid ""
+"Removes some repetitive actions, adds possibility to change verbs by keyboard"
+msgstr ""
 
 #: engines/sword1/animation.cpp:524
 #, c-format
