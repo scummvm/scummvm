@@ -31,6 +31,7 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Fixed incorrect cursor movement when it's controlled using the keyboard.
    - Updated the Roland MT-32 emulation code to Munt 2.3.0.
    - Improved unknown game variants reporting.
+   - Enabled cloud support.
 
  ADL:
    - Improved color accuracy.
