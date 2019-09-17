@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2019-09-17 01:14+0200\n"
-"PO-Revision-Date: 2019-09-17 11:04+0000\n"
+"PO-Revision-Date: 2019-09-18 00:55+0000\n"
 "Last-Translator: TomasM <truido@gmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/es/>\n"
@@ -861,7 +861,7 @@ msgstr "Intercambiar botones Menu y Volver"
 
 #: gui/options.cpp:1009
 msgid "Pointer Speed:"
-msgstr "Velocidad del puntero:"
+msgstr "Vel. del puntero:"
 
 #: gui/options.cpp:1009 gui/options.cpp:1011 gui/options.cpp:1012
 msgid "Speed for keyboard/joystick mouse pointer control"
@@ -870,7 +870,7 @@ msgstr "Velocidad del puntero para el control por teclado o joystick"
 #: gui/options.cpp:1011
 msgctxt "lowres"
 msgid "Pointer Speed:"
-msgstr "Velocidad del puntero:"
+msgstr "Vel. del puntero:"
 
 #: gui/options.cpp:1022
 msgid "Joy Deadzone:"
@@ -1241,7 +1241,7 @@ msgstr ""
 
 #: gui/options.cpp:1744 gui/updates-dialog.cpp:86
 msgid "Update check:"
-msgstr "Buscar actualizaciones:"
+msgstr "Actualizar:"
 
 #: gui/options.cpp:1744
 msgid "How often to check ScummVM updates"
@@ -1376,7 +1376,7 @@ msgstr "Sincronizar ahora"
 
 #: gui/options.cpp:1940
 msgid "Start saved games sync"
-msgstr ""
+msgstr "Sincronizar las partidas guardadas"
 
 #: gui/options.cpp:1943
 msgctxt "lowres"
@@ -1457,10 +1457,8 @@ msgid "3. Connect"
 msgstr "3. Conectar"
 
 #: gui/options.cpp:1966
-#, fuzzy
 msgid "Connect your cloud storage account"
-msgstr ""
-"Abrir el asistente de configuración para habilitar el almacenamiento en línea"
+msgstr "Conectar tu cuenta de almacenamiento en la nube"
 
 #: gui/options.cpp:1975
 msgid "Run server"
@@ -1480,9 +1478,9 @@ msgid "/root/ Path:"
 msgstr "/raíz/:"
 
 #: gui/options.cpp:1980 gui/options.cpp:1982 gui/options.cpp:1983
-#, fuzzy
 msgid "Select which directory will be shown as /root/ in the Files Manager"
-msgstr "Especifica los directorios accesibles para el gestor de archivos"
+msgstr ""
+"Selecciona el directorio que se mostrará como /raíz/ en el gestor de archivos"
 
 #: gui/options.cpp:1982
 msgid "/root/ Path:"
