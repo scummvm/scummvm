@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2019-09-17 01:14+0200\n"
-"PO-Revision-Date: 2019-09-14 12:07+0000\n"
-"Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
+"PO-Revision-Date: 2019-09-17 11:04+0000\n"
+"Last-Translator: Víctor Martínez Pajares <vmpajares@gmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/es/>\n"
 "Language: es_ES\n"
@@ -1264,63 +1264,64 @@ msgstr "Nube"
 
 #: gui/options.cpp:1781
 msgid "LAN"
-msgstr ""
+msgstr "Red de Área Local"
 
 #: gui/options.cpp:1783
 msgctxt "lowres"
 msgid "LAN"
-msgstr ""
+msgstr "Red de Área Local"
 
 #: gui/options.cpp:1791
 msgid "Accessibility"
-msgstr ""
+msgstr "Accesibilidad"
 
 #: gui/options.cpp:1793
 msgctxt "lowres"
 msgid "Accessibility"
-msgstr ""
+msgstr "Accesibilidad"
 
 #: gui/options.cpp:1795
-#, fuzzy
 msgid "Use Text to speech"
-msgstr "Texto y voces:"
+msgstr "Usar Texto a voz"
 
 #: gui/options.cpp:1795
 msgid "Will read text in gui on mouse over."
-msgstr ""
+msgstr "Leerá el texto en la interfaz de usuario al pasar el ratón."
 
 #: gui/options.cpp:1826
 msgid "Apply"
 msgstr "Aplicar"
 
 #: gui/options.cpp:1915
-#, fuzzy
 msgid "Active storage:"
-msgstr "Almacenamiento activo"
+msgstr "Almacenamiento activo:"
 
 #: gui/options.cpp:1915
 msgid "Active cloud storage"
-msgstr "Almacenamiento activo"
+msgstr "Almacenamiento en la nube activo"
 
 #: gui/options.cpp:1923
 msgctxt "lowres"
 msgid ""
 "4. Storage is not yet enabled. Verify that username is correct and enable it:"
 msgstr ""
+"4. El almacenamiento no está activado todavía. Verifique que el nombre de "
+"usuario es correcto y actívelo:"
 
 #: gui/options.cpp:1925
 msgid ""
 "4. Storage is not yet enabled. Verify that username is correct and enable it:"
 msgstr ""
+"4. El almacenamiento no está activado todavía. Verifique que el nombre de "
+"usuario es correcto y actívelo:"
 
 #: gui/options.cpp:1926
-#, fuzzy
 msgid "Enable storage"
-msgstr "Activar las risas del público"
+msgstr "Activar almacenamiento"
 
 #: gui/options.cpp:1926
 msgid "Confirm you want to use this account for this storage"
-msgstr ""
+msgstr "Confirme que desea usar esta cuenta para este almacenamiento"
 
 #: gui/options.cpp:1928 backends/platform/wii/options.cpp:114
 msgid "Username:"
@@ -1340,17 +1341,19 @@ msgstr "Espacio utilizado:"
 
 #: gui/options.cpp:1931
 msgid "Space used by ScummVM's saved games on this storage"
-msgstr "Espacio utilizado para las partidas guardadas en este almacenamiento"
+msgstr ""
+"Espacio utilizado  para las partidas guardadas de ScummVM en este "
+"almacenamiento"
 
 #: gui/options.cpp:1934
-#, fuzzy
 msgid "Last sync:"
 msgstr "Última sincronización:"
 
 #: gui/options.cpp:1934
-#, fuzzy
 msgid "When was the last time saved games were synced with this storage"
-msgstr "Cuándo se ha producido la última sincronización de partidas guardadas"
+msgstr ""
+"Cuándo se ha producido la última sincronización de partidas guardadas con "
+"este almacenamiento"
 
 #: gui/options.cpp:1935 gui/options.cpp:2619
 msgid "<never>"
@@ -1367,26 +1370,26 @@ msgstr ""
 
 #: gui/options.cpp:1940
 msgid "Sync now"
-msgstr ""
+msgstr "Sincronizar ahora"
 
 #: gui/options.cpp:1940
-#, fuzzy
 msgid "Start saved games sync"
-msgstr "Jugar al juego seleccionado"
+msgstr ""
 
 #: gui/options.cpp:1943
 msgctxt "lowres"
 msgid "You can download game files from your cloud ScummVM folder:"
 msgstr ""
+"Puede descargar ficheros del juego desde tu carpeta en la nube de ScummVM:"
 
 #: gui/options.cpp:1945
 msgid "You can download game files from your cloud ScummVM folder:"
 msgstr ""
+"Puede descargar ficheros del juego desde tu carpeta en la nube de ScummVM:"
 
 #: gui/options.cpp:1946
-#, fuzzy
 msgid "Download game files"
-msgstr "La descarga ha fallado."
+msgstr "Descargar ficheros del juego"
 
 #: gui/options.cpp:1946
 msgid "Open downloads manager dialog"
@@ -1396,32 +1399,35 @@ msgstr "Abrir el gestor de descargas"
 msgctxt "lowres"
 msgid "To change account for this storage, disconnect and connect again:"
 msgstr ""
+"Para cambiar la cuenta para este almacenamiento, desconecta y conecta de "
+"nuevo:"
 
 #: gui/options.cpp:1951
 msgid "To change account for this storage, disconnect and connect again:"
 msgstr ""
+"Para cambiar la cuenta para este almacenamiento, desconecta y conecta de "
+"nuevo:"
 
 #: gui/options.cpp:1952
-#, fuzzy
 msgid "Disconnect"
-msgstr "Conectar"
+msgstr "Desconectar"
 
 #: gui/options.cpp:1952
 msgid "Stop using this storage on this device"
-msgstr ""
+msgstr "Dejar de usar este almacenamiento en este dispositivo"
 
 #: gui/options.cpp:1955
 msgctxt "lowres"
 msgid "This storage is not connected yet! To connect,"
-msgstr ""
+msgstr "¡Este almacenamiento no está conectado todavía! Para conectar,"
 
 #: gui/options.cpp:1957
 msgid "This storage is not connected yet! To connect,"
-msgstr ""
+msgstr "¡Este almacenamiento no está conectado todavía! Para conectar,"
 
 #: gui/options.cpp:1958
 msgid "1. Open this link:"
-msgstr ""
+msgstr "1. Abrir este enlace:"
 
 #: gui/options.cpp:1959
 msgid "Open URL"
@@ -1430,25 +1436,23 @@ msgstr "Abrir URL"
 #: gui/options.cpp:1961
 msgctxt "lowres"
 msgid "2. Get the code and enter it here:"
-msgstr ""
+msgstr "2.- Obtén el código e introdúcelo aquí:"
 
 #: gui/options.cpp:1963
 msgid "2. Get the code and enter it here:"
-msgstr ""
+msgstr "2.- Obtén el código e introdúcelo aquí:"
 
 #: gui/options.cpp:1965
 msgid "Paste"
 msgstr "Pegar"
 
 #: gui/options.cpp:1965
-#, fuzzy
 msgid "Paste code from clipboard"
-msgstr "Copiar al portapapeles"
+msgstr "Pegar código desde el portapapeles"
 
 #: gui/options.cpp:1966
-#, fuzzy
 msgid "3. Connect"
-msgstr "Conectar"
+msgstr "3. Conectar"
 
 #: gui/options.cpp:1966
 #, fuzzy
@@ -1488,7 +1492,7 @@ msgstr "Puerto del servidor:"
 
 #: gui/options.cpp:1988
 msgid "Port for server to use"
-msgstr ""
+msgstr "Puerto que usará el servidor"
 
 #: gui/options.cpp:1993
 msgctxt "lowres"
