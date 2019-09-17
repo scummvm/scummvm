@@ -9,7 +9,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2018-04-17 19:53+0100\n"
 "PO-Revision-Date: 2019-09-17 19:48+0000\n"
-"Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
+"Last-Translator: Lafazar Gendibal <schaffluk@bluewin.ch>\n"
 "Language-Team: English <https://translations.scummvm.org/projects/prince/"
 "prince/en/>\n"
 "Language: en\n"
@@ -2176,82 +2176,95 @@ msgstr ""
 #: dialog0027.txt:100104
 msgid "OTHER: Przyznam jednak, że gdy w czasie podróży|mijaliśmy zatopiony w ciemności zamek,|to było dość interesujące."
 msgstr ""
+"OTHER: But I have to admit... once we passed this|castle ... you know, it's "
+"completely shrouded in darkness ... well that was pretty interesting,|I have "
+"to say."
 
 #: dialog0027.txt:100105
 msgid "HERO: Zatopiony w ciemności?"
-msgstr ""
+msgstr "HERO: Shrouded in darkness?"
 
 #: dialog0027.txt:100106
 msgid "OTHER: Podobno nigdy nad nim nie świeci słońce."
-msgstr ""
+msgstr "OTHER: Apparently the sun never shines over there."
 
 #: dialog0027.txt:100107
 msgid "OTHER: A co do bródki..."
-msgstr ""
+msgstr "OTHER: And regarding the beard..."
 
 #: dialog0027.txt:100108
 msgid "HERO: Diabeł często ukazywany jest jako|arystokrata z kozią bródką."
-msgstr ""
+msgstr "HERO: The devil is often depicted as an aristocrat|with a goatee."
 
 #: dialog0027.txt:100109
 msgid "P#OTHER: Poważnie?..."
-msgstr ""
+msgstr "P#OTHER: Seriously?..."
 
 #: dialog0027.txt:100110
 msgid "OTHER2: Na rany, nie gadaj tyle, tylko graj."
-msgstr ""
+msgstr "OTHER2: My goodness, don't talk so much,|play!"
 
 #: dialog0027.txt:100111
 msgid "OTHER2: Starasz się wymigać?"
-msgstr ""
+msgstr "OTHER2: Are you chickening out?"
 
 #: dialog0027.txt:100112
 msgid "OTHER: Nie, ale nudzą mnie gry ze słabym|przeciwnikiem."
-msgstr ""
+msgstr "OTHER: No, but playing against a|weak opponent is boring."
 
 #: dialog0027.txt:100113
 msgid "OTHER2: Słaba jest twoja wymówka,|starzejesz się."
-msgstr ""
+msgstr "OTHER2: Oh, you're just getting old. That's it."
 
 #: dialog0027.txt:100114
 msgid "P#OTHER: Książę, przepraszam za mojego|przyjaciela. Cóż to chciałeś|zapytać?...#F1#B0"
 msgstr ""
+"P#OTHER: Dear prince, I apologize for|my friend. What was it you|wanted to "
+"ask?#F1#B0"
 
 #: dialog0027.txt:100201
 msgid "OTHER: Duży, gładki i gruby przedmiot z obsydianu.|Ale to tylko dla dam, książę."
 msgstr ""
+"OTHER: A large, thick object made from obsidian.|But this one is only for "
+"women, my prince."
 
 #: dialog0027.txt:100202
 msgid "OTHER: A tak poza tym...  Trochę tego, trochę|tamtego. Rupiecie."
-msgstr ""
+msgstr "OTHER: And some of this,|and some of that. Just junk."
 
 #: dialog0027.txt:100203
 msgid "OTHER: Pamiątki z podróży, różne dziwne|książki, z których nic nie rozumiem."
-msgstr ""
+msgstr "OTHER: Souvenirs, various strange|Books I don't understand."
 
 #: dialog0027.txt:100204
 msgid "OTHER: Mam taką jedną, ponoć bezcenną, ale|w środku są głównie rysunki i jakieś|tajemnicze znaczki."
 msgstr ""
+"OTHER: There is one book among them, said to be|incredibly valuable, but "
+"inside are mostly|drawings and some mysterious symbols."
 
 #: dialog0027.txt:100205
 msgid "OTHER: No, ale to robi wrażenie na klientach."
-msgstr ""
+msgstr "OTHER: Well, the customers are always very impressed."
 
 #: dialog0027.txt:100206
 msgid "OTHER: Mam też parę cudownych leczniczych proszków,|starty róg feniksa, złote ozdoby|prymitywnych plemion."
 msgstr ""
+"OTHER: I also have some wonderful healing powders,|the ground horn of a "
+"phoenix,|golden adornments of primitive tribes."
 
 #: dialog0027.txt:100207
 msgid "OTHER: Jednym słowem, wszystko co może zainteresować|nowobogackich lub pretensjonalnych szlachetków|czy królewiczów."
 msgstr ""
+"OTHER: In a word, everything that could be|of interest to nouveau riches,|"
+"discriminating noblemen and princes."
 
 #: dialog0027.txt:100208
 msgid "P#OTHER: Oczywiście, ty książę jesteś|wyjątkiem."
-msgstr ""
+msgstr "P#OTHER: You, my prince,|excepted of course."
 
 #: dialog0027.txt:100209
 msgid "P#OTHER: Kahem, to na czym stanęliśmy?#B0"
-msgstr ""
+msgstr "P#OTHER: Uh, what were we talking about?#B0"
 
 #: dialog0027.txt:100301
 msgid "OTHER: Zawsze do usług, książę.#E3"
@@ -2259,7 +2272,7 @@ msgstr "OTHER: Always at your service, prince.#E3"
 
 #: dialog0028.txt:1
 msgid "OTHER: Fru!"
-msgstr ""
+msgstr "OTHER: Now!"
 
 #: dialog0029.txt:1
 msgid "OTHER: Hopsa!"
@@ -2267,11 +2280,11 @@ msgstr "OTHER: Go!"
 
 #: dialog0030.txt:1
 msgid "OTHER: No!"
-msgstr "OTHER: Hop!"
+msgstr "OTHER: And now!"
 
 #: dialog0031.txt:1
 msgid "OTHER: Kto chce jeść, ten ma sześć!"
-msgstr "OTHER: He who thinks of Sex, can't roll a Six!"
+msgstr "OTHER: He who thinks of sex, gets a six!"
 
 #: dialog0032.txt:1
 msgid "OTHER: Będzie wziątko, mam szóściątko!"
@@ -2311,15 +2324,15 @@ msgstr "OTHER: Damn cheater!"
 
 #: dialog0041.txt:1
 msgid "OTHER: To czysty przypadek!"
-msgstr "OTHER: Dammit!"
+msgstr "OTHER: Pure chance!"
 
 #: dialog0042.txt:1
 msgid "OTHER: A niech to licho!"
-msgstr "OTHER: Curse you!"
+msgstr "OTHER: Curses!"
 
 #: dialog0043.txt:1
 msgid "OTHER: No, to jest oszustwo!"
-msgstr "OTHER: That's cheating!"
+msgstr "OTHER: Well, that's cheating!"
 
 #: dialog0044.txt:1
 msgid "OTHER: Przeklęty szczęściarz!"
@@ -2335,15 +2348,15 @@ msgstr "OTHER: I'll give you one more chance!"
 
 #: dialog0047.txt:1
 msgid "OTHER: Ale zaraz sobie odbiję."
-msgstr "OTHER: Next time I'll get my revenge!"
+msgstr "OTHER: I'll get my revenge soon!"
 
 #: dialog0048.txt:1
 msgid "OTHER: Ale i tak wygram."
-msgstr "OTHER: That's my win!"
+msgstr "OTHER: I'll win anyhow!"
 
 #: dialog0049.txt:1
 msgid "HERO: Witaj, czarodzieju."
-msgstr ""
+msgstr "HERO: Greetings, wizard."
 
 #: dialog0049.txt:2
 msgid "OTHER: Witaj, książę."
@@ -2351,39 +2364,39 @@ msgstr ""
 
 #: dialog0049.txt:3
 msgid "OTHER: O, bogowie, jaki ja jestem zapracowany,|jaki jestem zapracowany..."
-msgstr ""
+msgstr "OTHER: Oh ye gods, I have so much work to do, so much work..."
 
 #: dialog0049.txt:104
 msgid "$0: Cóż to za niezwykły sklep..."
-msgstr ""
+msgstr "$0: What an amazing store..."
 
 #: dialog0049.txt:105
 msgid "$4: A propos miłosnych wywarów..."
-msgstr ""
+msgstr "$4: Speaking of love potions..."
 
 #: dialog0049.txt:106
 msgid "$1: Dlaczego nie przewracasz stron palcami?"
-msgstr ""
+msgstr "$1: Why don't you turn the page with your fingers?"
 
 #: dialog0049.txt:107
 msgid "$2: Co to za śmieszny człowieczek w tym słoju?"
-msgstr ""
+msgstr "$2: What is that strange little man in the jar?"
 
 #: dialog0049.txt:108
 msgid "$5: Ale po co dokładnie uwięziłeś homunkulusa?"
-msgstr ""
+msgstr "$5: Why did you imprison a homunculus?"
 
 #: dialog0049.txt:109
 msgid "$3: Rozejrzę się jeszcze, nie przeszkadzaj sobie."
-msgstr ""
+msgstr "$3: Don't concern yourself, I'm just looking around."
 
 #: dialog0049.txt:210
 msgid "$6: O czym ty mówisz?!"
-msgstr ""
+msgstr "$6: What are you talking about?!"
 
 #: dialog0049.txt:211
 msgid "$7: Ten wywar to dla mnie, nie lubię brzydkich kobiet."
-msgstr ""
+msgstr "$7: Yes, a love potion for me, I don't like ugly women."
 
 #: dialog0049.txt:212
 msgid "$8: Może jeszcze tylko jeden flakonik?..."
