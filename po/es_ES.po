@@ -9,7 +9,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2019-09-17 01:14+0200\n"
 "PO-Revision-Date: 2019-09-17 11:04+0000\n"
-"Last-Translator: Víctor Martínez Pajares <vmpajares@gmail.com>\n"
+"Last-Translator: TomasM <truido@gmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/es/>\n"
 "Language: es_ES\n"
@@ -976,7 +976,6 @@ msgid "AdLib is used for music in many games"
 msgstr "AdLib se utiliza para reproducir la música en muchos juegos"
 
 #: gui/options.cpp:1153
-#, fuzzy
 msgid "GM device:"
 msgstr "Dispositivo GM:"
 
@@ -1049,9 +1048,8 @@ msgid "True Roland MT-32 (no GM emulation)"
 msgstr "Roland MT-32 real (sin emulación GM)"
 
 #: gui/options.cpp:1218
-#, fuzzy
 msgid "Roland GS device (enable MT-32 mappings)"
-msgstr "Dispositivo Roland GS (activar conversión MT-32)"
+msgstr "Roland GS (activar conversión MT-32)"
 
 #: gui/options.cpp:1218
 msgid ""
@@ -1363,10 +1361,14 @@ msgstr "<nunca>"
 msgctxt "lowres"
 msgid "Saved games sync automatically on launch, after saving and on loading."
 msgstr ""
+"Las partidas guardadas se sincronizan automáticamente al iniciar, guardar y "
+"cargar."
 
 #: gui/options.cpp:1939
 msgid "Saved games sync automatically on launch, after saving and on loading."
 msgstr ""
+"Las partidas guardadas se sincronizan automáticamente al iniciar, guardar y "
+"cargar."
 
 #: gui/options.cpp:1940
 msgid "Sync now"
