@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2019-09-17 01:14+0200\n"
-"PO-Revision-Date: 2019-09-16 20:44+0000\n"
-"Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
+"PO-Revision-Date: 2019-09-18 00:55+0000\n"
+"Last-Translator: jepael <kermespersialainen@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fi/>\n"
 "Language: fi_FI\n"
@@ -3485,7 +3485,7 @@ msgstr "Hahmoja kutistetaan ja niiden ääntä nopeutetaan"
 
 #: engines/bladerunner/detection.cpp:66
 msgid "Frame limiter high performance mode"
-msgstr "Kuvanpäivitysnopeuden rajoittimen korkea suorituskyky tila"
+msgstr "Kuvanpäivitysnopeuden rajoittimen korkean suorituskyvyn tila"
 
 #: engines/bladerunner/detection.cpp:67
 msgid ""
@@ -5481,14 +5481,15 @@ msgstr ""
 "datatiedostosta."
 
 #: engines/supernova/detection.cpp:40
-#, fuzzy
 msgid "Improved mode"
-msgstr "Ikkunoitu tila"
+msgstr "Parannettu tila"
 
 #: engines/supernova/detection.cpp:41
 msgid ""
 "Removes some repetitive actions, adds possibility to change verbs by keyboard"
 msgstr ""
+"Poistaa jotakin toistuvia toimintoja, lisää mahdollisuuden vaihtaa verbiä "
+"näppäimistöltä"
 
 #: engines/sword1/animation.cpp:524
 #, c-format
