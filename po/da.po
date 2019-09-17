@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2019-09-17 01:14+0200\n"
-"PO-Revision-Date: 2019-09-06 04:54+0000\n"
+"PO-Revision-Date: 2019-09-18 00:55+0000\n"
 "Last-Translator: scootergrisen <scootergrisen@gmail.com>\n"
 "Language-Team: Danish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/da/>\n"
@@ -2557,12 +2557,12 @@ msgstr "Stien findes ikke"
 
 #: backends/networking/sdl_net/handlers/createdirectoryhandler.cpp:88
 msgid "Can't create a directory within a file!"
-msgstr ""
+msgstr "Kan ikke oprette en mappe i en fil!"
 
 #: backends/networking/sdl_net/handlers/createdirectoryhandler.cpp:98
 #: backends/networking/sdl_net/uploadfileclienthandler.cpp:141
 msgid "There is a file with that name in the parent directory!"
-msgstr ""
+msgstr "Der findes en fil med det navn i mappen!"
 
 #: backends/networking/sdl_net/handlers/createdirectoryhandler.cpp:104
 #, fuzzy
@@ -2621,7 +2621,7 @@ msgstr "Indlæs fil"
 #: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:71
 #: backends/networking/sdl_net/handlers/filespagehandler.cpp:229
 msgid "Type new directory name:"
-msgstr ""
+msgstr "Skriv det nye navn til mappen:"
 
 #: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:72
 #: backends/networking/sdl_net/handlers/filespagehandler.cpp:230
@@ -2637,7 +2637,7 @@ msgstr "Vælg mappe for GUI-temaer"
 
 #: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:74
 msgid "Index of "
-msgstr ""
+msgstr "Indeks af "
 
 #: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:75
 #, fuzzy
@@ -2646,11 +2646,11 @@ msgstr "Indlæser spil ..."
 
 #: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:76
 msgid "Error occurred"
-msgstr ""
+msgstr "Der opstod en fejl"
 
 #: backends/networking/sdl_net/handlers/filespagehandler.cpp:81
 msgid "File system root"
-msgstr ""
+msgstr "Filsystemets rod"
 
 #: backends/networking/sdl_net/handlers/filespagehandler.cpp:82
 #, fuzzy
@@ -2670,11 +2670,11 @@ msgstr "ScummVM kunne ikke tilgå mappen!"
 #: backends/networking/sdl_net/handlers/filespagehandler.cpp:232
 #, c-format
 msgid "Index of %s"
-msgstr ""
+msgstr "Indeks af %s"
 
 #: backends/networking/sdl_net/handlers/indexpagehandler.cpp:42
 msgid "This is a local webserver index page."
-msgstr ""
+msgstr "Indekssiden til en lokal webtjeneste."
 
 #: backends/networking/sdl_net/handlers/indexpagehandler.cpp:43
 #, fuzzy
@@ -2683,7 +2683,7 @@ msgstr "Åbn downloadmanager-dialog"
 
 #: backends/networking/sdl_net/handlers/uploadfilehandler.cpp:67
 msgid "The parent directory doesn't exist!"
-msgstr ""
+msgstr "Forældermappen findes ikke!"
 
 #: backends/networking/sdl_net/handlers/uploadfilehandler.cpp:71
 #, fuzzy
@@ -2692,7 +2692,7 @@ msgstr "Sti ikke en fil"
 
 #: backends/networking/sdl_net/handlerutils.cpp:197
 msgid "Back to the files manager"
-msgstr ""
+msgstr "Tilbage til filhåndteringen"
 
 #: backends/networking/sdl_net/localwebserver.cpp:123
 msgid ""
