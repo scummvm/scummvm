@@ -51,130 +51,13 @@ static void *ser_opaque = NULL;
  * Flush pending buffer contents; add a character to the buffer.
  */
 static void ser_flush(sc_bool is_final) {
-	error("TODO");
-#ifdef TODO
-	static sc_bool initialized = FALSE;
-	static sc_byte *out_buffer = NULL;
-	static sc_int out_buffer_size = 0;
-	static z_stream stream;
-
-	sc_int status;
-
-	/* If this is an initial call, initialize deflation. */
-	if (!initialized) {
-		/* Allocate an initial output buffer. */
-		out_buffer_size = BUFFER_SIZE;
-		out_buffer = sc_malloc(out_buffer_size);
-
-		/* Initialize Zlib deflation functions. */
-		stream.next_out = out_buffer;
-		stream.avail_out = out_buffer_size;
-		stream.next_in = ser_buffer;
-		stream.avail_in = 0;
-
-		stream.zalloc = Z_NULL;
-		stream.zfree = Z_NULL;
-		stream.opaque = Z_NULL;
-
-		status = deflateInit(&stream, Z_DEFAULT_COMPRESSION);
-		if (status != Z_OK) {
-			sc_error("ser_flush: deflateInit: error %ld\n", status);
-			ser_buffer_length = 0;
-
-			sc_free(out_buffer);
-			out_buffer = NULL;
-			out_buffer_size = 0;
-			return;
-		}
-
-		initialized = TRUE;
-	}
-
-	/* Deflate data from the current output buffer. */
-	stream.next_in = ser_buffer;
-	stream.avail_in = ser_buffer_length;
-
-	/* Loop while deflate output is pending and buffer not emptied. */
-	while (TRUE) {
-		sc_int in_bytes, out_bytes;
-
-		/* Compress stream data, with finish if this is the final flush. */
-		if (is_final)
-			status = deflate(&stream, Z_FINISH);
-		else
-			status = deflate(&stream, Z_NO_FLUSH);
-		if (status != Z_STREAM_END && status != Z_OK) {
-			sc_error("ser_flush: deflate: error %ld\n", status);
-			ser_buffer_length = 0;
-
-			sc_free(out_buffer);
-			out_buffer = NULL;
-			out_buffer_size = 0;
-			initialized = FALSE;
-			return;
-		}
-
-		/* Calculate bytes used, and output. */
-		in_bytes = ser_buffer_length - stream.avail_in;
-		out_bytes = out_buffer_size - stream.avail_out;
-
-		/* See if compressed data is available. */
-		if (out_bytes > 0) {
-			/* Write it to save file output through the callback. */
-			ser_callback(ser_opaque, out_buffer, out_bytes);
-
-			/* Reset deflation stream for available space. */
-			stream.next_out = out_buffer;
-			stream.avail_out = out_buffer_size;
-		}
-
-		/* Remove consumed data from the input buffer. */
-		if (in_bytes > 0) {
-			/* Move any unused data, and reduce length. */
-			memmove(ser_buffer,
-			        ser_buffer + in_bytes, ser_buffer_length - in_bytes);
-			ser_buffer_length -= in_bytes;
-
-			/* Reset deflation stream for consumed data. */
-			stream.next_in = ser_buffer;
-			stream.avail_in = ser_buffer_length;
-		}
-
-		/* If final flush, wait until deflate indicates finished. */
-		if (is_final && status == Z_OK)
-			continue;
-
-		/* If data was consumed or produced, break. */
-		if (out_bytes > 0 || in_bytes > 0)
-			break;
-	}
-
-	/* If this was a final call, clean up. */
 	if (is_final) {
-		/* Compression completed. */
-		status = deflateEnd(&stream);
-		if (status != Z_OK)
-			sc_error("ser_flush: warning: deflateEnd: error %ld\n", status);
+		ser_callback(ser_opaque, ser_buffer, ser_buffer_length);
 
-		if (ser_buffer_length != 0) {
-			sc_error("ser_flush: warning: deflate missed data\n");
-			ser_buffer_length = 0;
-		}
-
-		/* Free the allocated compression buffer. */
 		sc_free(ser_buffer);
-		ser_buffer = NULL;
-
-		/*
-		 * Free output buffer, and reset flag for reinitialization on the next
-		 * call.
-		 */
-		sc_free(out_buffer);
-		out_buffer = NULL;
-		out_buffer_size = 0;
-		initialized = FALSE;
+		ser_buffer = nullptr;
+		ser_buffer_length = 0;
 	}
-#endif
 }
 
 static void ser_buffer_character(sc_char character) {
@@ -187,7 +70,7 @@ static void ser_buffer_character(sc_char character) {
 	/* Add to the buffer, with intermediate flush if filled. */
 	ser_buffer[ser_buffer_length++] = character;
 	if (ser_buffer_length == BUFFER_SIZE)
-		ser_flush(FALSE);
+		error("Ran out of serialization buffer");
 }
 
 
