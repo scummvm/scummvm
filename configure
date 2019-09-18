@@ -5160,6 +5160,86 @@ esac
 define_in_config_if_yes "$_opengl" "USE_OPENGL"
 
 #
+# Check for iconv
+#
+echo_n "Checking whether iconv.h is present... "
+if test "$_iconv" = auto ; then
+	_iconv=no
+	cat > $TMPC << EOF
+#include <iconv.h>
+int main(int, char **) {
+	return 0;
+}
+EOF
+	cc_check $ICONV_CFLAGS $ICONV_LIBS && _iconv=yes
+fi
+
+create_iconv_test() {
+	cat > $TMPC << EOF
+#include <iconv.h>
+int main(int, char **) {
+	iconv_t iconv = iconv_open("UTF-32", "SJIS");
+	iconv_close(iconv);
+	return 0;
+}
+EOF
+}
+echo "$_iconv"
+
+if test "$_iconv" = yes ; then
+	echo_n "Checking whether iconv needs linking against libiconv... "
+
+	needs_iconvlib='auto'
+	create_iconv_test
+	cc_check $ICONV_CFLAGS $ICONV_LIBS -liconv && needs_iconvlib='yes'
+	# We do check linking without -liconv here too, just in case
+	# it would fail otherwise too
+	create_iconv_test
+	cc_check $ICONV_CFLAGS $ICONV_LIBS && needs_iconvlib='no'
+
+	if test "$needs_iconvlib" = auto ; then
+		_iconv=no
+		echo "does not link at all"
+	else
+		if test "$needs_iconvlib" = yes ; then
+			append_var ICONV_LIBS "-liconv"
+		fi
+		echo "$needs_iconvlib"
+
+		echo_n "Checking signature of iconv... "
+		uses_const=no
+
+		cat > $TMPC << EOF
+#include <iconv.h>
+int main(int argc, char **argv) {
+	iconv_t iconvP;
+	const char **inbuf = 0;
+	iconv(iconvP, inbuf, 0, 0, 0);
+	return 0;
+}
+EOF
+		cc_check $ICONV_CFLAGS $ICONV_LIBS && uses_const=yes
+
+		if test "$uses_const" = yes ; then
+			echo "iconv_t, const char **, size_t *, char **, size_t *"
+		else
+			echo "iconv_t, char **, size_t *, char **, size_t *"
+		fi
+
+		define_in_config_if_yes "$uses_const" 'ICONV_USES_CONST'
+	fi
+fi
+
+if test "$_iconv" = yes ; then
+	append_var LIBS "$ICONV_LIBS"
+	append_var INCLUDES "$ICONV_CFLAGS"
+fi
+
+echocheck "iconv"
+define_in_config_if_yes "$_iconv" 'USE_ICONV'
+echo "$_iconv"
+
+#
 # Check for Linux CD-ROM support
 #
 case $_host_os in
@@ -5278,38 +5358,6 @@ if test "$_pandocext" = "default"; then
 		_pandocext=".$_pandocformat"
 	fi
 fi
-#
-# Check for iconv
-#
-echocheck "Iconv"
-if test "$_iconv" = auto ; then
-	_iconv=no
-	cat > $TMPC << EOF
-#include <iconv.h>
-int main(void) { iconv_t conv = iconv_open("UTF-8//IGNORE", "CP850"); return 0; }
-EOF
-	cc_check $ICONV_CFLAGS $ICONV_LIBS -liconv && _iconv=yes
-fi
-if test "$_iconv" = yes ; then
-	append_var LIBS "$ICONV_LIBS -liconv"
-	append_var INCLUDES "$ICONV_CFLAGS"
-
-	# check if iconv uses const char** as it's second parameter
-	_iconv_uses_const=no
-	cat > $TMPC << EOF
-#include <iconv.h>
-int main(void) {
-	iconv_t conv = iconv_open("UTF-8//IGNORE", "CP850");
-	const char **inbuf = 0;
-	iconv(conv, inbuf, 0, 0, 0);
-	return 0;
-}
-EOF
-	cc_check $ICONV_CFLAGS $ICONV_LIBS -liconv && _iconv_uses_const=yes
-	define_in_config_if_yes "$_iconv_uses_const" 'ICONV_USES_CONST'
-fi
-define_in_config_if_yes "$_iconv" 'USE_ICONV'
-echo "$_iconv"
 
 #
 # Enable vkeybd / keymapper / event recorder
