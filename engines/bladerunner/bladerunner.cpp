@@ -326,7 +326,17 @@ Common::Error BladeRunnerEngine::run() {
 		return Common::Error(Common::kNoGameDataFoundError, missingFileStr);
 	}
 
-	_screenPixelFormat = g_system->getSupportedFormats().front();
+	Common::List<Graphics::PixelFormat> tmpSupportedFormatsList = g_system->getSupportedFormats();
+	if (!tmpSupportedFormatsList.empty()) {
+		_screenPixelFormat = tmpSupportedFormatsList.front();
+	} else {
+		// Workaround for reported issue whereby in the AndroidSDL port
+		// some devices would crash with a segmentation fault due to an empty supported formats list.
+		// TODO: A better fix for getSupportedFormats() - maybe figure why in only some device it might return an empty list
+		//
+		// Use this as a fallback format - Should be a format supported by Android port
+		_screenPixelFormat = Graphics::PixelFormat(2, 5, 5, 5, 1, 11, 6, 1, 0);
+	}
 	debug("Using pixel format: %s", _screenPixelFormat.toString().c_str());
 	initGraphics(640, 480, &_screenPixelFormat);
 
