@@ -27,6 +27,7 @@
 #include "common/serializer.h"
 #include "common/stack.h"
 #include "glk/glk_api.h"
+#include "glk/adrift/scare.h"
 
 namespace Glk {
 namespace Adrift {
@@ -45,6 +46,9 @@ private:
 	 * Deinitialization
 	 */
 	void deinitialize();
+
+	static void if_write_saved_game(void *opaque, const sc_byte *buffer, sc_int length);
+	static sc_int if_read_saved_game(void *opaque, sc_byte *buffer, sc_int length);
 public:
 	/**
 	 * Constructor

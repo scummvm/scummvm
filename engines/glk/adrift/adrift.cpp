@@ -22,6 +22,7 @@
 
 #include "glk/adrift/adrift.h"
 #include "glk/adrift/os_glk.h"
+#include "glk/adrift/scprotos.h"
 
 namespace Glk {
 namespace Adrift {
@@ -38,11 +39,22 @@ void Adrift::runGame() {
 }
 
 Common::Error Adrift::readSaveData(Common::SeekableReadStream *rs) {
-	return Common::kNoError;
+	return ser_load_game((sc_gameref_t)gsc_game, if_read_saved_game, rs) ? Common::kNoError : Common::kReadingFailed;
 }
 
 Common::Error Adrift::writeGameData(Common::WriteStream *ws) {
+	ser_save_game((sc_gameref_t)gsc_game, if_write_saved_game, ws);
 	return Common::kNoError;
+}
+
+sc_int Adrift::if_read_saved_game(void *opaque, sc_byte *buffer, sc_int length) {
+	Common::SeekableReadStream *rs = (Common::SeekableReadStream *)opaque;
+	return rs->read(buffer, length);
+}
+
+void Adrift::if_write_saved_game(void *opaque, const sc_byte *buffer, sc_int length) {
+	Common::WriteStream *ws = (Common::WriteStream *)opaque;
+	ws->write(buffer, length);
 }
 
 } // End of namespace Adrift

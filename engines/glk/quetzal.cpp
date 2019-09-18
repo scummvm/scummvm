@@ -31,10 +31,12 @@
 namespace Glk {
 
 const uint32 INTERPRETER_IDS[INTERPRETER_TADS3 + 1] = {
+	MKTAG('A', 'D', 'R', 'I'),
 	MKTAG('A', 'S', 'Y', 'S'),
 	MKTAG('A', 'G', 'I', 'L'),
 	MKTAG('A', 'L', 'N', '2'),
 	MKTAG('A', 'L', 'N', '3'),
+	MKTAG('B', 'O', 'C', 'F'),
 	MKTAG('Z', 'C', 'O', 'D'),
 	MKTAG('G', 'E', 'A', 'S'),
 	MKTAG('G', 'L', 'U', 'L'),

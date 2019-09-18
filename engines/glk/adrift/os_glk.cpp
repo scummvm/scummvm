@@ -78,7 +78,7 @@ static int gsc_commands_enabled = TRUE, gsc_abbreviations_enabled = TRUE,
 	gsc_unicode_enabled = TRUE;
 
 /* Adrift game to interpret. */
-static sc_game gsc_game = nullptr;
+sc_game gsc_game = nullptr;
 
 /* Special out-of-band os_confirm() options used locally with os_glk. */
 static const sc_int GSC_CONF_SUBTLE_HINT = INT_MAX,

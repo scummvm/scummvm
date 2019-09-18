@@ -29,6 +29,8 @@
 namespace Glk {
 namespace Adrift {
 
+extern sc_game gsc_game;
+
 extern bool adrift_startup_code(Common::SeekableReadStream *gameFile);
 extern void adrift_main();
 

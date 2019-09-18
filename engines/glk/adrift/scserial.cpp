@@ -20,7 +20,7 @@
  *
  */
 
-#include "glk/adrift/scare.h"
+#include "glk/adrift/adrift.h"
 #include "glk/adrift/scprotos.h"
 #include "glk/adrift/scgamest.h"
 #include "common/textconsole.h"
@@ -293,20 +293,7 @@ void ser_save_game(sc_gameref_t game, sc_write_callbackref_t callback, void *opa
  * the user.
  */
 sc_bool ser_save_game_prompted(sc_gameref_t game) {
-	void *opaque;
-
-	/*
-	 * Open an output stream, and if successful, save a game using the opaque
-	 * value returned.
-	 */
-	opaque = if_open_saved_game(TRUE);
-	if (opaque) {
-		ser_save_game(game, if_write_saved_game, opaque);
-		if_close_saved_game(opaque);
-		return TRUE;
-	}
-
-	return FALSE;
+	return g_vm->saveGame().getCode() == Common::kNoError;
 }
 
 
@@ -621,22 +608,7 @@ sc_bool ser_load_game(sc_gameref_t game, sc_read_callbackref_t callback, void *o
  * stream from the user.
  */
 sc_bool ser_load_game_prompted(sc_gameref_t game) {
-	void *opaque;
-
-	/*
-	 * Open an input stream, and if successful, try to load a game using
-	 * the opaque value returned and the saved game callback.
-	 */
-	opaque = if_open_saved_game(FALSE);
-	if (opaque) {
-		sc_bool status;
-
-		status = ser_load_game(game, if_read_saved_game, opaque);
-		if_close_saved_game(opaque);
-		return status;
-	}
-
-	return FALSE;
+	return g_vm->loadGame().getCode() == Common::kNoError;
 }
 
 } // End of namespace Adrift
