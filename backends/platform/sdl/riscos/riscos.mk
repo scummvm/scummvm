@@ -33,7 +33,7 @@ endif
 	mkdir -p $(APP_NAME)/docs
 	cp ${srcdir}/dists/riscos/!Help,feb $(APP_NAME)/!Help,feb
 ifdef TOKENIZE
-	$(TOKENIZE) dists/riscos/FindHelp,fd1 -out $(APP_NAME)/FindHelp,ffb
+	$(TOKENIZE) ${srcdir}/dists/riscos/FindHelp,fd1 -out $(APP_NAME)/FindHelp,ffb
 endif
 	@$(foreach file, $(DIST_FILES_DOCS) $(srcdir)/doc/QuickStart, echo '   ' ICONV '  ' $(APP_NAME)/docs/$(notdir $(file)),fff;iconv --to-code=$(ENCODING) $(file) > $(APP_NAME)/docs/$(notdir $(file)),fff;)
 	@$(foreach lang, $(DIST_FILES_DOCS_languages), mkdir -p $(APP_NAME)/docs/$(lang); $(foreach file, $(DIST_FILES_DOCS_$(lang)), echo '   ' ICONV '  ' $(APP_NAME)/docs/$(lang)/$(notdir $(file)),fff;iconv --from-code=UTF-8 --to-code=$(ENCODING) $(file) > $(APP_NAME)/docs/$(lang)/$(notdir $(file)),fff;))
