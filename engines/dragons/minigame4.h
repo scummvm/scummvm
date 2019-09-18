@@ -28,13 +28,33 @@ namespace Dragons {
 
 class DragonsEngine;
 
+class Actor;
+
 class Minigame4 {
 private:
 	DragonsEngine *_vm;
+
+	Actor *DAT_80090434;
+	Actor *DAT_80090440;
+	Actor *DAT_80090430;
+	Actor *DAT_80090438;
+	Actor *DAT_8009043c;
+
+
 public:
+	uint16 DAT_80090428_videoUpdateRelated;
+
 	Minigame4(DragonsEngine *vm);
 
 	void run();
+private:
+	void actorTalk(Actor *actorId,ushort param_2,uint32 textIndex);
+	void actorDialog(Actor *actorId,ushort param_2,uint32 textIndex);
+	uint16 runDanceBattle();
+	uint16 singleDanceRound(uint16 desiredPosition, uint16 duration);
+	void resetActors();
+	void updateFlickerFromInput(uint16 desiredPosition);
+	uint16 FUN_8009009c(uint16 unk);
 };
 
 } // End of namespace Dragons

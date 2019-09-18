@@ -721,6 +721,15 @@ void DragonsEngine::clearFlags(uint32 flags) {
 uint32 DragonsEngine::getMultipleFlags(uint32 flags) {
 	return _flags & flags;
 }
+
+uint32 DragonsEngine::getAllFlags() {
+	return _flags;
+}
+
+void DragonsEngine::setAllFlags(uint32 flags) {
+	_flags = flags;
+}
+
 void DragonsEngine::setUnkFlags(uint32 flags) {
 	_unkFlags1 |= flags;
 }

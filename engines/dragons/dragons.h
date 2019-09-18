@@ -201,6 +201,8 @@ public:
 	void setFlags(uint32 flags);
 	void clearFlags(uint32 flags);
 	uint32 getMultipleFlags(uint32 flags);
+	uint32 getAllFlags();
+	void setAllFlags(uint32 flags);
 	bool isFlagSet(uint32 flag);
 	bool isUnkFlagSet(uint32 flag);
 

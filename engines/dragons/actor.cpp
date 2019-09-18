@@ -590,6 +590,12 @@ void Actor::pathfindingCleanup() {
 	}
 }
 
+void Actor::waitUntilFlag4IsSet() {
+	while(!isFlagSet(ACTOR_FLAG_4)) {
+		getEngine()->waitForFrames(1);
+	}
+}
+
 void Actor::waitUntilFlag8IsSet() {
 	if (flags & Dragons::ACTOR_FLAG_8) {
 		return;
@@ -602,24 +608,17 @@ void Actor::waitUntilFlag8IsSet() {
 
 void Actor::waitUntilFlag8And4AreSet() {
 	waitUntilFlag8IsSet();
+	waitUntilFlag4IsSet();
+}
 
-	if (flags & Dragons::ACTOR_FLAG_4) {
-		return;
-	}
-
-	while(!(flags & Dragons::ACTOR_FLAG_4)) {
-		getEngine()->waitForFrames(1);
-	}
+void Actor::waitUntilFlag8SetThenSet1000() {
+	waitUntilFlag8IsSet();
+	setFlag(ACTOR_FLAG_1000);
 }
 
 void Actor::waitUntilFlag8SetThenSet1000AndWaitFor4() {
-	waitUntilFlag8IsSet();
-
-	setFlag(ACTOR_FLAG_1000);
-
-	while(!isFlagSet(ACTOR_FLAG_4)) {
-		getEngine()->waitForFrames(1);
-	}
+	waitUntilFlag8SetThenSet1000();
+	waitUntilFlag4IsSet();
 }
 
 void Actor::clearFlag(uint32 flag) {
