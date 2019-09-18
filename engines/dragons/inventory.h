@@ -101,6 +101,7 @@ public:
 	bool clearItem(uint16 iniId);
 
 	Actor *getInventoryItemActor(uint16 iniId);
+	void inventoryMissing();
 
 private:
 	void setPositionFromSceneId(uint32 sceneId);

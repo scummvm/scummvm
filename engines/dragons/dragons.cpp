@@ -375,7 +375,7 @@ void DragonsEngine::gameLoop()
 						if (sequenceId == 1) {
 							LAB_800279f4:
 							_inventory->_old_showing_value = uVar7;
-							FUN_8003130c();
+							_inventory->inventoryMissing();
 							actorId = uVar3;
 						}
 						else {
@@ -1087,10 +1087,6 @@ bool DragonsEngine::isRightKeyPressed() {
 
 bool DragonsEngine::checkForActionButtonRelease() {
 	return _leftMouseButtonUp || _enterKeyUp;
-}
-
-void DragonsEngine::FUN_8003130c() {
-	error("FUN_8003130c"); //TODO
 }
 
 void DragonsEngine::FUN_80038890() {
