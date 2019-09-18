@@ -107,7 +107,7 @@ const char *GetClientHandler::responseMessage(long responseCode) {
 
 void GetClientHandler::prepareHeaders() {
 	if (!_specialHeaders.contains("Content-Type"))
-		setHeader("Content-Type", "text/html");
+		setHeader("Content-Type", "text/html; charset=UTF-8");
 
 	if (!_specialHeaders.contains("Content-Length") && _stream)
 		setHeader("Content-Length", Common::String::format("%u", _stream->size()));
