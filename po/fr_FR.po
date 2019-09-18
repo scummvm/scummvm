@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2019-09-17 01:14+0200\n"
+"POT-Creation-Date: 2019-09-18 16:15+0200\n"
 "PO-Revision-Date: 2019-09-15 21:18+0000\n"
 "Last-Translator: Thierry Crozat <criezy@scummvm.org>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
@@ -5542,7 +5542,7 @@ msgstr ""
 msgid "Unable to find block for part %d"
 msgstr "Impossible de trouver le bloc de données pour l'épisode %d"
 
-#: engines/supernova/supernova.cpp:525
+#: engines/supernova/supernova.cpp:526
 #, c-format
 msgid "Unable to find '%s' in game folder or the engine data file."
 msgstr ""
