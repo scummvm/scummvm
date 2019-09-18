@@ -501,7 +501,8 @@ Common::SeekableReadStream *SupernovaEngine::getBlockFromDatFile(Common::String 
 			return f.readStream(size);
 		} else {
 			f.skip(size);
-			readSize += size;
+			// size + 4 bytes for id + 4 bytes for lang + 4 bytes for size
+			readSize += size + 12;
 		}
 	}
 
