@@ -82,6 +82,12 @@ DragonsEngine::DragonsEngine(OSystem *syst) : Engine(syst) {
 	_leftKeyUp = false;
 	_rightKeyDown = false;
 	_rightKeyUp = false;
+	_wKeyDown = false;
+	_aKeyDown = false;
+	_sKeyDown = false;
+	_dKeyDown = false;
+	_oKeyDown = false;
+	_pKeyDown = false;
 	reset();
 }
 
@@ -135,6 +141,18 @@ void DragonsEngine::updateEvents() {
 				} else if (event.kbd.keycode == Common::KeyCode::KEYCODE_RIGHT) {
 					_rightKeyUp = true;
 					_rightKeyDown = false;
+				} else if (event.kbd.keycode == Common::KeyCode::KEYCODE_w) {
+					_wKeyDown = false;
+				} else if (event.kbd.keycode == Common::KeyCode::KEYCODE_a) {
+					_aKeyDown = false;
+				} else if (event.kbd.keycode == Common::KeyCode::KEYCODE_s) {
+					_sKeyDown = false;
+				} else if (event.kbd.keycode == Common::KeyCode::KEYCODE_d) {
+					_dKeyDown = false;
+				} else if (event.kbd.keycode == Common::KeyCode::KEYCODE_o) {
+					_oKeyDown = false;
+				} else if (event.kbd.keycode == Common::KeyCode::KEYCODE_p) {
+					_pKeyDown = false;
 				}
 				break;
 			case Common::EVENT_KEYDOWN:
@@ -142,6 +160,18 @@ void DragonsEngine::updateEvents() {
 					_leftKeyDown = true;
 				} else if (event.kbd.keycode == Common::KeyCode::KEYCODE_RIGHT) {
 					_rightKeyDown = true;
+				} else if (event.kbd.keycode == Common::KeyCode::KEYCODE_w) {
+					_wKeyDown = true;
+				} else if (event.kbd.keycode == Common::KeyCode::KEYCODE_a) {
+					_aKeyDown = true;
+				} else if (event.kbd.keycode == Common::KeyCode::KEYCODE_s) {
+					_sKeyDown = true;
+				} else if (event.kbd.keycode == Common::KeyCode::KEYCODE_d) {
+					_dKeyDown = true;
+				} else if (event.kbd.keycode == Common::KeyCode::KEYCODE_o) {
+					_oKeyDown = true;
+				} else if (event.kbd.keycode == Common::KeyCode::KEYCODE_p) {
+					_pKeyDown = true;
 				}
 				break;
 			default:
@@ -572,7 +602,7 @@ void DragonsEngine::gameLoop()
 
 
 void DragonsEngine::updateHandler() {
-	data_8006a3a0_flag |= 0x40;
+	videoFlags |= 0x40;
 	//TODO logic here
 
 	updateActorSequences();
@@ -647,7 +677,7 @@ void DragonsEngine::updateHandler() {
 
 	// TODO data_8006a3a0 logic. @ 0x8001c2f4
 
-	data_8006a3a0_flag &= ~0x40;
+	videoFlags &= ~0x40;
 }
 
 uint32 DragonsEngine::calulateTimeLeft() {
@@ -1170,7 +1200,7 @@ void DragonsEngine::FUN_80038994() {
 }
 
 void DragonsEngine::reset_screen_maybe() {
-	data_8006a3a0_flag &= ~0x10;
+	videoFlags &= ~0x10;
 	//TODO
 }
 
@@ -1234,7 +1264,7 @@ void DragonsEngine::reset() {
 	_flags = 0;
 	_unkFlags1 = 0;
 	run_func_ptr_unk_countdown_timer = 0;
-	data_8006a3a0_flag = 0;
+	videoFlags = 0;
 	data_800633fa = 0;
 
 	for(int i = 0; i < 8; i++) {
@@ -1289,6 +1319,30 @@ bool DragonsEngine::checkForDownKeyRelease() {
 
 bool DragonsEngine::checkForUpKeyRelease() {
 	return _upKeyUp;
+}
+
+bool DragonsEngine::isSquareButtonPressed() {
+	return _aKeyDown;
+}
+
+bool DragonsEngine::isTriangleButtonPressed() {
+	return _wKeyDown;
+}
+
+bool DragonsEngine::isCircleButtonPressed() {
+	return _dKeyDown;
+}
+
+bool DragonsEngine::isCrossButtonPressed() {
+	return _sKeyDown;
+}
+
+bool DragonsEngine::isL1ButtonPressed() {
+	return _oKeyDown;
+}
+
+bool DragonsEngine::isR1ButtonPressed() {
+	return _pKeyDown;
 }
 
 void (*DragonsEngine::getSceneUpdateFunction())() {

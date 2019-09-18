@@ -104,6 +104,10 @@ void SpecialOpcodes::initOpcodes() {
 	OPCODE(0x2b, spcFlameBedroomEscapeSceneLogic);
 	OPCODE(0x2c, spcStopFlameBedroomEscapeSceneLogic);
 
+	OPCODE(0x2e, spcCastleMoatFull);
+
+	OPCODE(0x30, spcCastleMoatUpdateActorSceneScalePoints);
+
 	OPCODE(0x34, spcUnk34);
 
 	OPCODE(0x36, spcFlickerClearFlag0x80);
@@ -351,6 +355,14 @@ void SpecialOpcodes::spcStopFlameBedroomEscapeSceneLogic() {
 //	if (func_ptr_unk == FUN_80038164) {
 //		func_ptr_unk = 0;
 //	}
+}
+
+void SpecialOpcodes::spcCastleMoatFull() {
+	//TODO
+}
+
+void SpecialOpcodes::spcCastleMoatUpdateActorSceneScalePoints() {
+	//TODO
 }
 
 void SpecialOpcodes::spcUnk34() {

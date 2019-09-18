@@ -34,9 +34,9 @@ class Minigame4 {
 private:
 	DragonsEngine *_vm;
 
-	Actor *DAT_80090434;
-	Actor *DAT_80090440;
-	Actor *DAT_80090430;
+	Actor *flickerActor;
+	Actor *bruteActor;
+	Actor *ps1ControllerActor;
 	Actor *DAT_80090438;
 	Actor *DAT_8009043c;
 
@@ -53,7 +53,7 @@ private:
 	uint16 runDanceBattle();
 	uint16 singleDanceRound(uint16 desiredPosition, uint16 duration);
 	void resetActors();
-	void updateFlickerFromInput(uint16 desiredPosition);
+	void updateFlickerFromInput();
 	uint16 FUN_8009009c(uint16 unk);
 };
 
