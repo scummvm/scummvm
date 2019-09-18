@@ -438,7 +438,7 @@ bool MessageState::stringStage(Common::String &outstr, const Common::String &inS
 
 		// For Russian we allow all upper characters
 		if (g_sci->getLanguage() == Common::RU_RUS) {
-			if ((inStr[i] >= 'a') || ((inStr[i] >= '0') && (inStr[i] <= '9') && (getSciVersion() < SCI_VERSION_2)))
+			if (((byte)inStr[i] >= 'a') || ((inStr[i] >= '0') && (inStr[i] <= '9') && (getSciVersion() < SCI_VERSION_2)))
 				return false;
 		}
 
