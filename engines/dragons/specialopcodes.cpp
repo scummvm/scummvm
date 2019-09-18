@@ -34,6 +34,7 @@
 #include "talk.h"
 #include "specialopcodes.h"
 #include "minigame1.h"
+#include "minigame4.h"
 
 
 namespace Dragons {
@@ -71,6 +72,7 @@ void SpecialOpcodes::initOpcodes() {
 	OPCODE(3, spcClearEngineFlag10);
 	OPCODE(4, spcSetEngineFlag10);
 
+	OPCODE(7, spcDancingMiniGame);
 	OPCODE(8, spcCastleGardenLogic);
 	OPCODE(9, spcUnk9);
 	OPCODE(0xa, spcUnkA);
@@ -144,6 +146,7 @@ void SpecialOpcodes::initOpcodes() {
 	OPCODE(0x65, spcUnk65ScenePaletteRelated);
 	OPCODE(0x66, spcUnk66);
 
+	OPCODE(0x6a, spcCastleGateSceneLogic);
 	OPCODE(0x6b, spcTransitionToMap);
 	OPCODE(0x6c, spcTransitionFromMap);
 
@@ -181,6 +184,11 @@ void SpecialOpcodes::spcClearEngineFlag10() {
 
 void SpecialOpcodes::spcSetEngineFlag10() {
 	_vm->setFlags(Dragons::ENGINE_FLAG_10);
+}
+
+void SpecialOpcodes::spcDancingMiniGame() {
+	Minigame4 minigame4(_vm);
+	minigame4.run();
 }
 
 void SpecialOpcodes::spcCastleGardenLogic() {
@@ -534,6 +542,10 @@ void SpecialOpcodes::spcUnk66() {
 		uVar9 = uVar9 + 1;
 	}
 	_vm->getINI(1)->field_12 = uVar9;
+}
+
+void SpecialOpcodes::spcCastleGateSceneLogic() {
+//TODO spcCastleGateSceneLogic
 }
 
 // 0x80038c1c

@@ -63,6 +63,7 @@ public:
 	Scene(DragonsEngine *vm, Screen *screen, ScriptOpcodes *scriptOpcodes, BigfileArchive *bigfileArchive, ActorManager *actorManager, DragonRMS *_dragonRMS, DragonINIResource *_dragonINIResource, BackgroundResourceLoader *backgroundResourceLoader);
 
 	void loadScene(uint32 sceneId, uint32 cameraPointId);
+	void loadSceneData(uint32 sceneId, uint32 cameraPointId);
 	int16 getPriorityAtPosition(Common::Point pos);
 	void draw();
 	bool contains(DragonINI *ini);
@@ -81,7 +82,6 @@ public:
 	void setFgLayerPriority(uint8 newPriority);
 
 private:
-	void loadSceneData(uint32 sceneId, uint32 cameraPointId);
 	void resetActorFrameFlags();
 };
 

@@ -131,8 +131,10 @@ public:
 	void reset_maybe();
 	bool pathfinding_maybe(int16 target_x, int16 target_y, uint16 isNotFlicker);
 	void walkPath();
+	void waitUntilFlag4IsSet();
 	void waitUntilFlag8IsSet();
 	void waitUntilFlag8And4AreSet();
+	void waitUntilFlag8SetThenSet1000();
 	void waitUntilFlag8SetThenSet1000AndWaitFor4();
 
 	bool waitUntilFlag4IsSetAllowSkip();

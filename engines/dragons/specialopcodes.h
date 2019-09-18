@@ -70,6 +70,7 @@ protected:
 	void spcClearEngineFlag10(); // 3
 	void spcSetEngineFlag10();   // 4
 
+	void spcDancingMiniGame(); // 7
 	void spcCastleGardenLogic(); // 8
 	void spcUnk9();
 	void spcUnkA();
@@ -142,6 +143,7 @@ protected:
 	void spcUnk65ScenePaletteRelated(); // 0x65;
 	void spcUnk66();
 
+	void spcCastleGateSceneLogic(); // 0x6a
 	void spcTransitionToMap(); // 0x6b
 	void spcTransitionFromMap(); // 0x6c
 
