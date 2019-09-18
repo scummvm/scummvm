@@ -142,6 +142,7 @@ public:
 	opCode1AStruct opCode1A_tbl[8];
 
 	uint16 data_800633fc;
+	uint16 videoFlags; // TODO move to screen?
 
 private:
 	Screen *_screen;
@@ -157,7 +158,6 @@ private:
 	uint16 _sceneId1;
 	uint32 _counter;
 	uint32 bit_flags_8006fbd8;
-	uint16 data_8006a3a0_flag; // screen related flags?
 	//unk
 
 	uint16 run_func_ptr_unk_countdown_timer;
@@ -177,6 +177,12 @@ private:
 	bool _leftKeyUp;
 	bool _rightKeyDown;
 	bool _rightKeyUp;
+	bool _wKeyDown;
+	bool _aKeyDown;
+	bool _sKeyDown;
+	bool _dKeyDown;
+	bool _oKeyDown;
+	bool _pKeyDown;
 
 	void (*_sceneUpdateFunction)();
 protected:
@@ -241,6 +247,12 @@ public:
 	bool isActionButtonPressed();
 	bool isLeftKeyPressed();
 	bool isRightKeyPressed();
+	bool isSquareButtonPressed();
+	bool isTriangleButtonPressed();
+	bool isCircleButtonPressed();
+	bool isCrossButtonPressed();
+	bool isL1ButtonPressed();
+	bool isR1ButtonPressed();
 	bool checkForActionButtonRelease();
 	bool checkForDownKeyRelease();
 	bool checkForUpKeyRelease();

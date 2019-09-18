@@ -101,6 +101,10 @@ protected:
 	void spcFlameBedroomEscapeSceneLogic(); // 0x2b
 	void spcStopFlameBedroomEscapeSceneLogic(); // 0x2b
 
+	void spcCastleMoatFull(); //0x2e
+
+	void spcCastleMoatUpdateActorSceneScalePoints(); //0x30
+
 	void spcUnk34(); //0x34 pitchfork mole.
 
 	void spcFlickerClearFlag0x80(); //0x36
