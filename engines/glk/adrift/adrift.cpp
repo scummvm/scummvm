@@ -23,6 +23,7 @@
 #include "glk/adrift/adrift.h"
 #include "glk/adrift/os_glk.h"
 #include "glk/adrift/scprotos.h"
+#include "glk/adrift/serialization.h"
 
 namespace Glk {
 namespace Adrift {
@@ -39,11 +40,12 @@ void Adrift::runGame() {
 }
 
 Common::Error Adrift::readSaveData(Common::SeekableReadStream *rs) {
-	return ser_load_game((sc_gameref_t)gsc_game, if_read_saved_game, rs) ? Common::kNoError : Common::kReadingFailed;
+	LoadSerializer ser((sc_gameref_t)gsc_game, if_read_saved_game, rs);
+	return ser.load() ? Common::kNoError : Common::kReadingFailed;
 }
 
 Common::Error Adrift::writeGameData(Common::WriteStream *ws) {
-	ser_save_game((sc_gameref_t)gsc_game, if_write_saved_game, ws);
+	SaveSerializer ser((sc_gameref_t)gsc_game, if_write_saved_game, ws);
 	return Common::kNoError;
 }
 

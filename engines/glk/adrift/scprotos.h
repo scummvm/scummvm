@@ -738,14 +738,6 @@ extern sc_bool obj_shows_initial_description(sc_gameref_t game, sc_int object);
 extern void obj_turn_update(sc_gameref_t game);
 extern void obj_debug_trace(sc_bool flag);
 
-/* Game serialization functions. */
-extern void ser_save_game(sc_gameref_t game,
-                          sc_write_callbackref_t callback, void *opaque);
-extern sc_bool ser_save_game_prompted(sc_gameref_t game);
-extern sc_bool ser_load_game(sc_gameref_t game,
-                             sc_read_callbackref_t callback, void *opaque);
-extern sc_bool ser_load_game_prompted(sc_gameref_t game);
-
 /* Locale support, and locale-sensitive functions. */
 extern void loc_detect_game_locale(sc_prop_setref_t bundle);
 extern sc_bool loc_set_locale(const sc_char *name);

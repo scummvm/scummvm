@@ -22,6 +22,7 @@
 
 #include "glk/adrift/scare.h"
 #include "glk/adrift/scprotos.h"
+#include "glk/adrift/serialization.h"
 
 namespace Glk {
 namespace Adrift {
@@ -201,7 +202,8 @@ void memo_save_game(sc_memo_setref_t memento, sc_gameref_t game) {
 	memo->length = 0;
 
 	/* Serialize the given game into this memo. */
-	ser_save_game(game, memo_save_game_callback, memo);
+	SaveSerializer ser(game, memo_save_game_callback, memo);
+	ser.save();
 
 	/*
 	 * If serialization worked (failure would be a surprise), advance the
@@ -263,7 +265,8 @@ sc_bool memo_load_game(sc_memo_setref_t memento, sc_gameref_t game) {
 		 * Deserialize the given game from this memo; failure would be somewhat
 		 * of a surprise here.
 		 */
-		status = ser_load_game(game, memo_load_game_callback, memo);
+		LoadSerializer ser(game, memo_load_game_callback, memo);
+		status = ser.load();
 		if (!status)
 			sc_error("memo_load_game: warning: game load failed\n");
 

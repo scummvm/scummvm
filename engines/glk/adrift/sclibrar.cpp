@@ -20,9 +20,10 @@
  *
  */
 
-#include "glk/adrift/scare.h"
+#include "glk/adrift/adrift.h"
 #include "glk/adrift/scprotos.h"
 #include "glk/adrift/scgamest.h"
+#include "glk/adrift/serialization.h"
 
 namespace Glk {
 namespace Adrift {
@@ -8205,7 +8206,7 @@ sc_bool lib_cmd_get_off(sc_gameref_t game) {
  */
 sc_bool lib_cmd_save(sc_gameref_t game) {
 	if (if_confirm(SC_CONF_SAVE)) {
-		if (ser_save_game_prompted(game))
+		if (g_vm->saveGame().getCode() == Common::kNoError)
 			if_print_string("Ok.\n");
 		else
 			if_print_string("Save failed.\n");
@@ -8217,12 +8218,13 @@ sc_bool lib_cmd_save(sc_gameref_t game) {
 
 sc_bool lib_cmd_restore(sc_gameref_t game) {
 	if (if_confirm(SC_CONF_RESTORE)) {
-		if (ser_load_game_prompted(game)) {
+		if (g_vm->loadGame().getCode() == Common::kNoError) {
 			if_print_string("Ok.\n");
 			game->is_running = FALSE;
 			game->do_restore = TRUE;
-		} else
+		} else {
 			if_print_string("Restore failed.\n");
+		}
 	}
 
 	game->is_admin = TRUE;

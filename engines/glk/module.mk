@@ -46,12 +46,12 @@ MODULE_OBJS := \
 	adrift/scresour.o \
 	adrift/screstrs.o \
 	adrift/scrunner.o \
-	adrift/scserial.o \
 	adrift/sctaffil.o \
 	adrift/sctafpar.o \
 	adrift/sctasks.o \
 	adrift/scutils.o \
 	adrift/scvars.o \
+	adrift/serialization.o \
 	adrift/sxfile.o \
 	adrift/sxglob.o \
 	adrift/sxmain.o \

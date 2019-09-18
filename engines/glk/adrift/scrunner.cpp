@@ -23,6 +23,7 @@
 #include "glk/adrift/adrift.h"
 #include "glk/adrift/scprotos.h"
 #include "glk/adrift/scgamest.h"
+#include "glk/adrift/serialization.h"
 
 namespace Glk {
 namespace Adrift {
@@ -1734,15 +1735,15 @@ void run_save(sc_gameref_t game, sc_write_callbackref_t callback, void *opaque) 
 	assert(gs_is_game_valid(game));
 	assert(callback);
 
-	ser_save_game(game, callback, opaque);
+	SaveSerializer ser(game, callback, opaque);
+	ser.save();
 }
 
 sc_bool run_save_prompted(sc_gameref_t game) {
 	assert(gs_is_game_valid(game));
 
-	return ser_save_game_prompted(game);
+	return g_vm->saveGame().getCode() == Common::kNoError;
 }
-
 
 /*
  * run_restore_common()
@@ -1764,8 +1765,8 @@ static sc_bool run_restore_common(sc_gameref_t game, sc_read_callbackref_t callb
 	 * callback of NULL; callback cannot be NULL for run_restore() calls.
 	 */
 	is_running = game->is_running;
-	status = callback ? ser_load_game(game, callback, opaque)
-	         : ser_load_game_prompted(game);
+	LoadSerializer ser(game, callback, opaque);
+	status = ser.load();
 	if (status) {
 		/* Loading a game clears is_running -- restore it here. */
 		game->is_running = is_running;
