@@ -53,6 +53,9 @@ Window::Window() {
 		_tryRestartY = 240;	// (ok)
 		_panicXStop = g_hdb->_screenDrawWidth / 4;
 		_panicZoneFaceX = g_hdb->_screenDrawWidth - 32;
+		// TODO: Check those values!
+		_invItemSpaceX = 0;
+		_invItemSpaceY = 0;
 	} else {
 		_weaponX = (480 - 34);
 		_weaponY = 2;
@@ -119,8 +122,6 @@ Window::Window() {
 	_gfxTitleM = nullptr;
 	_gfxTitleR = nullptr;
 	_gGfxTL = nullptr;
-	_invItemSpaceX = 0;
-	_invItemSpaceY = 0;
 }
 
 Window::~Window() {
