@@ -39,8 +39,8 @@ void IndexPageHandler::handle(Client &client) {
 		client,
 		Common::String::format(
 			"%s<br/><a href=\"files\">%s</a>",
-			_("This is a local webserver index page."),
-			_("Open Files manager")
+			HandlerUtils::toUtf8(_("This is a local webserver index page.")).c_str(),
+			HandlerUtils::toUtf8(_("Open Files manager")).c_str()
 		),
 		"/filesAJAX"
 	);
