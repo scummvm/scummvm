@@ -106,6 +106,9 @@
           cd ~/scummvm/dists/androidsdl
           ./build.sh
 
+7b) The above build command will create a release build. In order to make a debug build, you will need to add the "debug" argument when running the build command like so:
+          ./build.sh debug
+
 8) If the process completes successfully, a "scummvm-debug.apk" file will be stored in that folder (~/scummvm/dists/androidsdl).
     Since this apk is self-signed you will need to enable installation by third-party sources on your Android device in order to install it.
 
@@ -120,12 +123,11 @@ NOTE: You can significantly reduce the build time if you target a specific Andro
          The above line is only an example; you might have to specify another architecture for your specific use case.
 
       B) In order to build the scummvm androidsdl port for specific engines only:
-         - Open the "~/scummvm/dists/androidsdl/scummvm/AndroidBuild.sh" file
-         - Find the following line which contains the configure command:
-           $ANDROIDSDL/project/jni/application/setEnvironment-$1.sh sh -c "cd scummvm/bin-$1 && env LIBS='-lflac -lvorbis -logg -lmad -lz -lgcc -ltheora -lpng -lfreetype -lfaad -lgnustl_static' ../configure --host=androidsdl-$1 --enable-zlib --enable-vorbis --enable-mad --enable-flac --enable-png --enable-theoradec --disable-sdlnet --disable-libcurl --disable-cloud --enable-vkeybd --enable-release --enable-mt32emu --disable-readline --disable-nasm --disable-timidity --disable-fluidsynth --datadir=. "
+         - Depending on whether you are building a release or a debug build, open one of the "AndroidBuildRelease.sh" or "AndroidBuildDebug.sh" files in the "~/scummvm/dists/androidsdl/scummvm/" folder
+         - Find the following line which contains the configure command.
          - Edit the line and after "../configure"  add "--disable-all-engines --enable-engine=YYYY", where in place of "YYYY" you should specify game engine for which you want to build scummvm.
            For example (building only for the bladerunner engine):
-           $ANDROIDSDL/project/jni/application/setEnvironment-$1.sh sh -c "cd scummvm/bin-$1 && env LIBS='-lflac -lvorbis -logg -lmad -lz -lgcc -ltheora -lpng -lfreetype -lfaad -lgnustl_static' ../configure --host=androidsdl-$1 --disable-all-engines --enable-engine=bladerunner --enable-zlib --enable-vorbis --enable-mad --enable-flac --enable-png --enable-theoradec --disable-sdlnet --disable-libcurl --disable-cloud --enable-vkeybd --enable-release --enable-mt32emu --disable-readline --disable-nasm --disable-timidity --disable-fluidsynth --datadir=. "
+           $ANDROIDSDL/project/jni/application/setEnvironment-$1.sh sh -c "cd scummvm/bin-$1 && env LIBS='-lflac -lvorbis -logg -lmad -lz -lgcc -ltheora -lpng -lfreetype -lfaad -lgnustl_static' ../configure --host=androidsdl-$1 --disable-all-engines --enable-engine=bladerunner --enable-zlib --enable-vorbis --enable-mad --enable-flac --enable-png --enable-theoradec --disable-sdlnet --disable-libcurl --disable-cloud --enable-vkeybd --enable-mt32emu --disable-readline --disable-nasm --disable-timidity --disable-fluidsynth --datadir=. "
 
 
 References:
