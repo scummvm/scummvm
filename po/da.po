@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2019-09-17 01:14+0200\n"
-"PO-Revision-Date: 2019-09-18 00:55+0000\n"
+"PO-Revision-Date: 2019-09-18 10:54+0000\n"
 "Last-Translator: scootergrisen <scootergrisen@gmail.com>\n"
 "Language-Team: Danish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/da/>\n"
@@ -1340,7 +1340,6 @@ msgid "<never>"
 msgstr "<aldrig>"
 
 #: gui/options.cpp:1937
-#, fuzzy
 msgctxt "lowres"
 msgid "Saved games sync automatically on launch, after saving and on loading."
 msgstr ""
@@ -1348,7 +1347,6 @@ msgstr ""
 "indlæsning."
 
 #: gui/options.cpp:1939
-#, fuzzy
 msgid "Saved games sync automatically on launch, after saving and on loading."
 msgstr ""
 "Gemte spil synkroniseres automatisk ved start, efter gemning og ved "
@@ -1359,7 +1357,6 @@ msgid "Sync now"
 msgstr "Synkroniser nu"
 
 #: gui/options.cpp:1940
-#, fuzzy
 msgid "Start saved games sync"
 msgstr "Start synkronisering af gemte spil"
 
@@ -2073,23 +2070,23 @@ msgid "~K~eys"
 msgstr "~T~aster"
 
 #: engines/engine.cpp:312
-#, fuzzy, c-format
+#, c-format
 msgid "Could not switch to resolution '%dx%d'."
-msgstr "Kunne ikke skifte til stræktilstand: '"
+msgstr "Kunne ikke skifte til opløsningen '%dx%d'."
 
 #: engines/engine.cpp:321
 msgid "Could not initialize color format."
 msgstr "Kunne ikke initialisere farveformat."
 
 #: engines/engine.cpp:330
-#, fuzzy, c-format
+#, c-format
 msgid "Could not switch to video mode '%s'."
-msgstr "Kunne ikke skifte til videotilstand: '"
+msgstr "Kunne ikke skifte til videotilstanden '%s'."
 
 #: engines/engine.cpp:338
-#, fuzzy, c-format
+#, c-format
 msgid "Could not switch to stretch mode '%s'."
-msgstr "Kunne ikke skifte til stræktilstand: '"
+msgstr "Kunne ikke skifte til stræktilstanden '%s'."
 
 #: engines/engine.cpp:345
 msgid "Could not apply aspect ratio setting."
@@ -2285,9 +2282,8 @@ msgid "C64 Audio emulator"
 msgstr "C64 lyd-emulator"
 
 #: backends/cloud/cloudmanager.cpp:153
-#, fuzzy
 msgid "<syncing...>"
-msgstr "Tilslutter ..."
+msgstr "<synkroniserer ...>"
 
 #: backends/cloud/storage.cpp:232
 msgid "Saved games sync complete."
@@ -2530,9 +2526,8 @@ msgid "Windows MIDI"
 msgstr "Windows MIDI"
 
 #: backends/networking/sdl_net/handlers/createdirectoryhandler.cpp:60
-#, fuzzy
 msgid "Can't create directory here!"
-msgstr "Sti ikke et mappe"
+msgstr "Kan ikke oprette mappe her!"
 
 #: backends/networking/sdl_net/handlers/createdirectoryhandler.cpp:66
 #: backends/networking/sdl_net/handlers/createdirectoryhandler.cpp:73
@@ -2546,14 +2541,12 @@ msgstr "Sti ikke et mappe"
 #: backends/networking/sdl_net/handlers/uploadfilehandler.cpp:56
 #: backends/networking/sdl_net/handlers/uploadfilehandler.cpp:63
 #: backends/networking/sdl_net/uploadfileclienthandler.cpp:137
-#, fuzzy
 msgid "Invalid path!"
-msgstr "Ugyldig kode"
+msgstr "Ugyldig sti!"
 
 #: backends/networking/sdl_net/handlers/createdirectoryhandler.cpp:84
-#, fuzzy
 msgid "Parent directory doesn't exists!"
-msgstr "Stien findes ikke"
+msgstr "Forældermappen findes ikke!"
 
 #: backends/networking/sdl_net/handlers/createdirectoryhandler.cpp:88
 msgid "Can't create a directory within a file!"
@@ -2565,58 +2558,52 @@ msgid "There is a file with that name in the parent directory!"
 msgstr "Der findes en fil med det navn i mappen!"
 
 #: backends/networking/sdl_net/handlers/createdirectoryhandler.cpp:104
-#, fuzzy
 msgid "Failed to create the directory!"
-msgstr "Kunne ikke slette fil."
+msgstr "Kunne ikke oprette mappen!"
 
 #: backends/networking/sdl_net/handlers/createdirectoryhandler.cpp:111
 #: backends/networking/sdl_net/handlers/createdirectoryhandler.cpp:120
-#, fuzzy
 msgid "Directory created successfully!"
-msgstr "DVD montering lykkedes"
+msgstr "Det lykkedes at oprette mappen!"
 
 #: backends/networking/sdl_net/handlers/createdirectoryhandler.cpp:122
 #: backends/networking/sdl_net/uploadfileclienthandler.cpp:204
-#, fuzzy
 msgid "Back to parent directory"
-msgstr "Sti ikke et mappe"
+msgstr "Tilbage til forældermappe"
 
 #: backends/networking/sdl_net/handlers/downloadfilehandler.cpp:67
-#, fuzzy
 msgid "The file doesn't exist!"
-msgstr "Stien findes ikke"
+msgstr "Filen findes ikke!"
 
 #: backends/networking/sdl_net/handlers/downloadfilehandler.cpp:71
-#, fuzzy
 msgid "Can't download a directory!"
-msgstr "Sti ikke et mappe"
+msgstr "Kan ikke downloade en mappe!"
 
 #: backends/networking/sdl_net/handlers/downloadfilehandler.cpp:76
-#, fuzzy
 msgid "Failed to read the file!"
-msgstr "Kunne ikke slette fil."
+msgstr "Kunne ikke læse filen!"
 
 #: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:59
 msgid ""
 "The page is not available without the resources. Make sure file wwwroot.zip "
 "from ScummVM distribution is available in 'themepath'."
 msgstr ""
+"Siden er ikke tilgængelig uden ressourcerne. Sørg for at filen wwwroot.zip "
+"fra ScummVM-distributionen er tilgængelig i 'themepath'."
 
 #: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:67
 #: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:68
 #: backends/networking/sdl_net/handlers/filespagehandler.cpp:223
 #: backends/networking/sdl_net/handlers/filespagehandler.cpp:224
-#, fuzzy
 msgid "Create directory"
-msgstr "Sti ikke et mappe"
+msgstr "Opret mappe"
 
 #: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:69
 #: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:70
 #: backends/networking/sdl_net/handlers/filespagehandler.cpp:227
 #: backends/networking/sdl_net/handlers/filespagehandler.cpp:228
-#, fuzzy
 msgid "Upload files"
-msgstr "Indlæs fil"
+msgstr "Upload filer"
 
 #: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:71
 #: backends/networking/sdl_net/handlers/filespagehandler.cpp:229
@@ -2625,24 +2612,21 @@ msgstr "Skriv det nye navn til mappen:"
 
 #: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:72
 #: backends/networking/sdl_net/handlers/filespagehandler.cpp:230
-#, fuzzy
 msgid "Select a file to upload:"
-msgstr "Vælg et spil at INDLÆSE"
+msgstr "Vælg en fil som skal uploades:"
 
 #: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:73
 #: backends/networking/sdl_net/handlers/filespagehandler.cpp:231
-#, fuzzy
 msgid "Or select a directory (works in Chrome only):"
-msgstr "Vælg mappe for GUI-temaer"
+msgstr "Eller vælg en mappe (virker kun i Chrome):"
 
 #: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:74
 msgid "Index of "
 msgstr "Indeks af "
 
 #: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:75
-#, fuzzy
 msgid "Loading..."
-msgstr "Indlæser spil ..."
+msgstr "Indlæser ..."
 
 #: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:76
 msgid "Error occurred"
@@ -2653,19 +2637,16 @@ msgid "File system root"
 msgstr "Filsystemets rod"
 
 #: backends/networking/sdl_net/handlers/filespagehandler.cpp:82
-#, fuzzy
 msgid "Saved games"
-msgstr "Gemt spil:"
+msgstr "Gemte spil"
 
 #: backends/networking/sdl_net/handlers/filespagehandler.cpp:119
-#, fuzzy
 msgid "Parent directory"
-msgstr "Sti ikke et mappe"
+msgstr "Forældermappe"
 
 #: backends/networking/sdl_net/handlers/filespagehandler.cpp:218
-#, fuzzy
 msgid "ScummVM couldn't list the directory you specified."
-msgstr "ScummVM kunne ikke tilgå mappen!"
+msgstr "ScummVM ikke vise den mappe du angav."
 
 #: backends/networking/sdl_net/handlers/filespagehandler.cpp:232
 #, c-format
@@ -2677,18 +2658,16 @@ msgid "This is a local webserver index page."
 msgstr "Indekssiden til en lokal webtjeneste."
 
 #: backends/networking/sdl_net/handlers/indexpagehandler.cpp:43
-#, fuzzy
 msgid "Open Files manager"
-msgstr "Åbn downloadmanager-dialog"
+msgstr "Åbn filhåndtering"
 
 #: backends/networking/sdl_net/handlers/uploadfilehandler.cpp:67
 msgid "The parent directory doesn't exist!"
 msgstr "Forældermappen findes ikke!"
 
 #: backends/networking/sdl_net/handlers/uploadfilehandler.cpp:71
-#, fuzzy
 msgid "Can't upload into a file!"
-msgstr "Sti ikke en fil"
+msgstr "Kan ikke uploade en fil!"
 
 #: backends/networking/sdl_net/handlerutils.cpp:197
 msgid "Back to the files manager"
@@ -2699,25 +2678,25 @@ msgid ""
 "Failed to start local webserver.\n"
 "Check whether selected port is not used by another application and try again."
 msgstr ""
+"Kunne ikke starte lokal webserver.\n"
+"Tjek at den valgte port ikke bruges af et andet program og prøv igen."
 
 #: backends/networking/sdl_net/uploadfileclienthandler.cpp:69
 #: backends/networking/sdl_net/uploadfileclienthandler.cpp:111
 msgid "Invalid request: headers are too long!"
-msgstr ""
+msgstr "Ugyldig anmodning: headerne er for lange!"
 
 #: backends/networking/sdl_net/uploadfileclienthandler.cpp:155
-#, fuzzy
 msgid "Failed to upload the file!"
-msgstr "Kunne ikke slette fil."
+msgstr "Kunne ikke uploade filen!"
 
 #: backends/networking/sdl_net/uploadfileclienthandler.cpp:184
 msgid "No file was passed!"
-msgstr ""
+msgstr "Ingen fil blev videregivet!"
 
 #: backends/networking/sdl_net/uploadfileclienthandler.cpp:202
-#, fuzzy
 msgid "Uploaded successfully!"
-msgstr "DVD montering lykkedes"
+msgstr "Det lykkedes at uploade!"
 
 #: backends/platform/ds/arm9/source/dsoptions.cpp:56
 #: engines/scumm/dialogs.cpp:287
@@ -3494,13 +3473,15 @@ msgstr "Spillet gør skuespillerne lavere og gør deres stemmer lysere"
 
 #: engines/bladerunner/detection.cpp:66
 msgid "Frame limiter high performance mode"
-msgstr ""
+msgstr "Billedbegrænser høj ydelse tilstand"
 
 #: engines/bladerunner/detection.cpp:67
 msgid ""
 "This mode may result in high CPU usage! It avoids use of delayMillis() "
 "function."
 msgstr ""
+"Tilstanden kan føre til højt CPU-forbrug! Det forhindre brug af "
+"delayMillis()-funktionen."
 
 #: engines/cge/detection.cpp:105 engines/cge2/detection.cpp:111
 msgid "Color Blind Mode"
@@ -5494,14 +5475,15 @@ msgid "Unable to find '%s' in game folder or the engine data file."
 msgstr "Kan ikke finde '%s' i spilmappen eller motorens datafil."
 
 #: engines/supernova/detection.cpp:40
-#, fuzzy
 msgid "Improved mode"
-msgstr "Vinduestilstand"
+msgstr "Forbedret tilstand"
 
 #: engines/supernova/detection.cpp:41
 msgid ""
 "Removes some repetitive actions, adds possibility to change verbs by keyboard"
 msgstr ""
+"Fjerner nogen respektive handlinger, tilføjer muligheder for at ændre verbur "
+"med tastaturet"
 
 #: engines/sword1/animation.cpp:524
 #, c-format
