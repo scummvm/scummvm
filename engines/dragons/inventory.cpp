@@ -28,6 +28,7 @@
 #include "inventory.h"
 #include "bag.h"
 #include "scene.h"
+#include "talk.h"
 
 namespace Dragons {
 
@@ -395,6 +396,33 @@ bool Inventory::clearItem(uint16 iniId) {
 		}
 	}
 	return false;
+}
+
+void Inventory::inventoryMissing() {
+	bool flag8Set;
+	uint32 textIndex;
+	static uint16 counter = 0;
+
+	DragonINI *flicker = _vm->_dragonINIResource->getFlickerRecord();
+	if (flicker->actor != NULL) {
+		flicker->actor->clearFlag(ACTOR_FLAG_10);
+		if ((_vm->getCurrentSceneId() != 0x2e) || (flicker->actor->resourceID != 0x91)) {
+			flicker->actor->setFlag(ACTOR_FLAG_4);
+		}
+	}
+	flag8Set = _vm->isFlagSet(ENGINE_FLAG_8);
+	_vm->clearFlags(ENGINE_FLAG_8);
+	if (counter == 0) {
+		textIndex = 0x114FA; //Hey!  My bag is missing!
+	}
+	else {
+		textIndex = 0x11538; //The Chancellor snaked my bag!
+	}
+	counter = counter + 1;
+	_vm->_talk->talkFromIni(0, textIndex);
+	if (flag8Set) {
+		_vm->setFlags(ENGINE_FLAG_8);
+	}
 }
 
 } // End of namespace Dragons

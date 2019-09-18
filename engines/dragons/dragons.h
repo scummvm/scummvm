@@ -262,7 +262,6 @@ private:
 	bool isInputEnabled();
 	bool checkForInventoryButtonRelease();
 
-	void FUN_8003130c();
 	void FUN_80038890();
 	void walkFlickerToObject();
 	void FUN_80038994();
