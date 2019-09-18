@@ -1,7 +1,7 @@
-ifeq ($(shell echo a | iconv --to-code=RISCOS-LATIN1//TRANSLIT >/dev/null 2>&1; echo $$?),0)
-ENCODING=RISCOS-LATIN1//TRANSLIT
+ifeq ($(shell echo a | iconv --to-code=RISCOS-LATIN1//IGNORE//TRANSLIT >/dev/null 2>&1; echo $$?),0)
+ENCODING=RISCOS-LATIN1//IGNORE//TRANSLIT
 else
-ENCODING=ISO-8859-1//TRANSLIT
+ENCODING=ISO-8859-1//IGNORE//TRANSLIT
 endif
 
 APP_NAME=!ScummVM
