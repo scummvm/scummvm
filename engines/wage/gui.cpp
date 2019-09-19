@@ -242,6 +242,10 @@ void Gui::regenWeaponsMenu() {
 }
 
 bool Gui::processEvent(Common::Event &event) {
+	if (event.type == Common::EVENT_CLIPBOARD_UPDATE) {
+		_menu->enableCommand(kMenuEdit, kMenuActionPaste, true);
+	}
+
 	return _wm.processEvent(event);
 }
 
