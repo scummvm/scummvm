@@ -102,8 +102,9 @@ protected:
 	void spcStopFlameBedroomEscapeSceneLogic(); // 0x2b
 
 	void spcCastleMoatFull(); //0x2e
-
+	void spcCastleRestoreScalePoints(); //0x2f
 	void spcCastleMoatUpdateActorSceneScalePoints(); //0x30
+	void spcCastleGateMoatDrainedSceneLogic(); //0x31
 
 	void spcUnk34(); //0x34 pitchfork mole.
 
@@ -156,6 +157,8 @@ protected:
 	void spcBlackDragonDialogForCamelhot(); // 0x7a
 	void spcSetCameraXToZero(); //0x7b
 	void spcDiamondIntroSequenceLogic(); //0x7c
+
+	void spcFlickerPutOnStGeorgeArmor(); //0x7f
 
 	void spc82CallResetDataMaybe(); // 0x82
 

@@ -105,8 +105,9 @@ void SpecialOpcodes::initOpcodes() {
 	OPCODE(0x2c, spcStopFlameBedroomEscapeSceneLogic);
 
 	OPCODE(0x2e, spcCastleMoatFull);
-
+	OPCODE(0x2f, spcCastleRestoreScalePoints);
 	OPCODE(0x30, spcCastleMoatUpdateActorSceneScalePoints);
+	OPCODE(0x31, spcCastleGateMoatDrainedSceneLogic);
 
 	OPCODE(0x34, spcUnk34);
 
@@ -159,6 +160,8 @@ void SpecialOpcodes::initOpcodes() {
 	OPCODE(0x7a, spcBlackDragonDialogForCamelhot);
 	OPCODE(0x7b, spcSetCameraXToZero);
 	OPCODE(0x7c, spcDiamondIntroSequenceLogic);
+
+	OPCODE(0x7f, spcFlickerPutOnStGeorgeArmor);
 
 	OPCODE(0x82, spc82CallResetDataMaybe);
 
@@ -361,10 +364,17 @@ void SpecialOpcodes::spcCastleMoatFull() {
 	//TODO
 }
 
+void SpecialOpcodes::spcCastleRestoreScalePoints() {
+	//TODO spcCastleRestoreScalePoints
+}
+
 void SpecialOpcodes::spcCastleMoatUpdateActorSceneScalePoints() {
 	//TODO
 }
 
+void SpecialOpcodes::spcCastleGateMoatDrainedSceneLogic() {
+	// TODO spcCastleGateMoatDrainedSceneLogic
+}
 void SpecialOpcodes::spcUnk34() {
 	Actor *flicker = _vm->_dragonINIResource->getFlickerRecord()->actor;
 	flicker->setFlag(ACTOR_FLAG_80);
@@ -607,6 +617,10 @@ void SpecialOpcodes::spcDiamondIntroSequenceLogic() {
 	CutScene *cutScene = new CutScene(_vm);
 	cutScene->diamondScene();
 	delete cutScene;
+}
+
+void SpecialOpcodes::spcFlickerPutOnStGeorgeArmor() {
+	//TODO here.....
 }
 
 void SpecialOpcodes::spc82CallResetDataMaybe() {
