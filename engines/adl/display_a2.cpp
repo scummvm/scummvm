@@ -651,8 +651,8 @@ static Display_A2 *Display_A2_create_helper() {
 }
 
 Display_A2 *Display_A2_create() {
-	initGraphics(Display_A2::kGfxWidth * 2, Display_A2::kGfxHeight * 2, new Graphics::PixelFormat(2, 5, 5, 5, 0, 10, 5, 0, 0));
-	debugN(1, "Initialized graphics with format: %s\n", g_system->getScreenFormat().toString().c_str());
+	initGraphics(Display_A2::kGfxWidth * 2, Display_A2::kGfxHeight * 2, nullptr);
+	debugN(1, "Initialized graphics with format: %s", g_system->getScreenFormat().toString().c_str());
 
 	const uint bpp = g_system->getScreenFormat().bytesPerPixel;
 
@@ -661,7 +661,7 @@ Display_A2 *Display_A2_create() {
 	else if (bpp == 2)
 		return Display_A2_create_helper<uint16>();
 	else
-		error("Graphics format uses %d bytes per pixel", bpp);		
+		return nullptr;
 }
 
 } // End of namespace Adl

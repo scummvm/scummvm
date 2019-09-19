@@ -731,6 +731,9 @@ void AdlEngine::gameLoop() {
 
 Common::Error AdlEngine::run() {
 	_display = Display_A2_create();
+	if (!_display)
+		return Common::kUnsupportedColorMode;
+
 	_console = new Console(this);
 	_display->init();
 
