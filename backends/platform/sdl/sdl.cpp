@@ -457,18 +457,14 @@ Common::String OSystem_SDL::getSystemLanguage() const {
 #endif // USE_DETECTLANG
 }
 
-bool OSystem_SDL::hasTextInClipboard() {
 #if SDL_VERSION_ATLEAST(2, 0, 0)
+bool OSystem_SDL::hasTextInClipboard() {
 	return SDL_HasClipboardText() == SDL_TRUE;
-#else
-	return false;
-#endif
 }
 
 Common::String OSystem_SDL::getTextFromClipboard() {
 	if (!hasTextInClipboard()) return "";
 
-#if SDL_VERSION_ATLEAST(2, 0, 0)
 	char *text = SDL_GetClipboardText();
 	// The string returned by SDL is in UTF-8. Convert to the
 	// current TranslationManager encoding or ISO-8859-1.
@@ -485,13 +481,9 @@ Common::String OSystem_SDL::getTextFromClipboard() {
 	SDL_free(text);
 
 	return strText;
-#else
-	return "";
-#endif
 }
 
 bool OSystem_SDL::setTextInClipboard(const Common::String &text) {
-#if SDL_VERSION_ATLEAST(2, 0, 0)
 	// The encoding we need to use is UTF-8. Assume we currently have the
 	// current TranslationManager encoding or ISO-8859-1.
 #ifdef USE_TRANSLATION
@@ -505,10 +497,8 @@ bool OSystem_SDL::setTextInClipboard(const Common::String &text) {
 		return status == 0;
 	}
 	return SDL_SetClipboardText(text.c_str()) == 0;
-#else
-	return false;
-#endif
 }
+#endif
 
 uint32 OSystem_SDL::getMillis(bool skipRecord) {
 	uint32 millis = SDL_GetTicks();

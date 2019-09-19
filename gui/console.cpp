@@ -523,7 +523,7 @@ void ConsoleDialog::specialKeys(Common::KeyCode keycode) {
 		g_gui.scheduleTopDialogRedraw();
 		break;
 	case Common::KEYCODE_v:
-		if (g_system->hasFeature(OSystem::kFeatureClipboardSupport) && g_system->hasTextInClipboard()) {
+		if (g_system->hasTextInClipboard()) {
 			Common::String text = g_system->getTextFromClipboard();
 			insertIntoPrompt(text.c_str());
 			scrollToCurrent();
@@ -531,7 +531,7 @@ void ConsoleDialog::specialKeys(Common::KeyCode keycode) {
 		}
 		break;
 	case Common::KEYCODE_c:
-		if (g_system->hasFeature(OSystem::kFeatureClipboardSupport)) {
+		{
 			Common::String userInput = getUserInput();
 			if (!userInput.empty())
 				g_system->setTextInClipboard(userInput);

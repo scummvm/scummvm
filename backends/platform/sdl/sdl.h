@@ -69,10 +69,12 @@ public:
 
 	virtual Common::String getSystemLanguage() const;
 
+#if SDL_VERSION_ATLEAST(2, 0, 0)
 	// Clipboard
 	virtual bool hasTextInClipboard();
 	virtual Common::String getTextFromClipboard();
 	virtual bool setTextInClipboard(const Common::String &text);
+#endif
 
 	virtual void setWindowCaption(const char *caption);
 	virtual void addSysArchivesToSearchSet(Common::SearchSet &s, int priority = 0);
