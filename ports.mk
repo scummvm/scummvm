@@ -91,15 +91,19 @@ scummvm.docktileplugin: ScummVMDockTilePlugin
 	cp ScummVMDockTilePlugin scummvm.docktileplugin/Contents/MacOS/
 	chmod 644 scummvm.docktileplugin/Contents/MacOS/ScummVMDockTilePlugin
 
+scummvm.docktileplugin64: ScummVMDockTilePlugin64
+	mkdir -p scummvm.docktileplugin/Contents
+	cp $(srcdir)/dists/macosx/dockplugin/Info.plist scummvm.docktileplugin/Contents
+	mkdir -p scummvm.docktileplugin/Contents/MacOS
+	mv ScummVMDockTilePlugin64 ScummVMDockTilePlugin
+	cp ScummVMDockTilePlugin scummvm.docktileplugin/Contents/MacOS/
+	chmod 644 scummvm.docktileplugin/Contents/MacOS/ScummVMDockTilePlugin
+
 endif
 
 bundle_name = ScummVM.app
 
-ifdef USE_DOCKTILEPLUGIN
-bundle: scummvm-static scummvm.docktileplugin
-else
-bundle: scummvm-static
-endif
+bundle-pack:
 	mkdir -p $(bundle_name)/Contents/MacOS
 	mkdir -p $(bundle_name)/Contents/Resources
 	echo "APPL????" > $(bundle_name)/Contents/PkgInfo
@@ -135,6 +139,16 @@ endif
 ifdef USE_DOCKTILEPLUGIN
 	mkdir -p $(bundle_name)/Contents/PlugIns
 	cp -r scummvm.docktileplugin $(bundle_name)/Contents/PlugIns/
+endif
+
+ifdef USE_DOCKTILEPLUGIN
+bundle: scummvm-static scummvm.docktileplugin bundle-pack
+
+bundle64: scummvm-static scummvm.docktileplugin64 bundle-pack
+else
+bundle: scummvm-static bundle-pack
+
+bundle64: scummvm-static bundle-pack
 endif
 
 iphonebundle: iphone
