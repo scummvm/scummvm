@@ -53,9 +53,10 @@ Window::Window() {
 		_tryRestartY = 240;	// (ok)
 		_panicXStop = g_hdb->_screenDrawWidth / 4;
 		_panicZoneFaceX = g_hdb->_screenDrawWidth - 32;
-		// TODO: Check those values!
-		_invItemSpaceX = 0;
-		_invItemSpaceY = 0;
+
+		// Fields not used in the PPC version
+		_invItemSpaceX = 1;
+		_invItemSpaceY = 1;
 	} else {
 		_weaponX = (480 - 34);
 		_weaponY = 2;
@@ -76,6 +77,8 @@ Window::Window() {
 		_tryRestartY = ((g_hdb->_screenHeight >> 2) * 3);	// (ok)
 		_panicXStop = g_hdb->_screenDrawWidth / 3;
 		_panicZoneFaceX = g_hdb->_screenDrawWidth - 32;
+		// Fields only used in the PPC version
+		_invItemSpace = 0;
 	}
 
 	_pauseY = (g_hdb->_screenHeight / 2 - 64);
@@ -106,7 +109,6 @@ Window::Window() {
 	_gfxInfobar = nullptr;
 	_gfxDarken = nullptr;
 	_infobarDimmed = 0;
-	_invItemSpace = 0;
 	_dialogDelay = 0;
 	_numMsgQueue = 0;
 	_gfxTL = nullptr;
@@ -1327,13 +1329,12 @@ bool Window::checkInvClose(int x, int y) {
 		g_hdb->_sound->playSound(SND_MENU_SLIDER);
 
 		static AIType lastWeaponSelected = AI_NONE;
-		Tile *gfx;
 
 		if (!g_hdb->getActionMode())
 			return false;
 
 		AIType t = g_hdb->_ai->getInvItemType(_invWinInfo.selection);
-		gfx = g_hdb->_ai->getInvItemGfx(_invWinInfo.selection);
+		Tile *gfx = g_hdb->_ai->getInvItemGfx(_invWinInfo.selection);
 
 		switch (t) {
 		case ITEM_CLUB:
