@@ -168,7 +168,6 @@ private:
 	Graphics::MacMenu *_menu;
 	bool _sceneDirty;
 
-	Common::String _clipboard;
 	Common::String _undobuffer;
 
 	int _commandsMenuId;
