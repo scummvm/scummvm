@@ -115,6 +115,10 @@ Gui::Gui(WageEngine *engine) {
 
 	_menu->calcDimensions();
 
+	if (g_system->hasTextInClipboard()) {
+		_menu->enableCommand(kMenuEdit, kMenuActionPaste, true);
+	}
+
 	_sceneWindow = _wm.addWindow(false, false, false);
 	_sceneWindow->setCallback(sceneWindowCallback, this);
 
@@ -347,22 +351,24 @@ void Gui::clearOutput() {
 }
 
 void Gui::actionCopy() {
-	_clipboard = _consoleWindow->getSelection();
+	g_system->setTextInClipboard(_consoleWindow->getSelection());
 
 	_menu->enableCommand(kMenuEdit, kMenuActionPaste, true);
 }
 
 void Gui::actionPaste() {
-	_undobuffer = _engine->_inputText;
+	if (g_system->hasTextInClipboard()) {
+		_undobuffer = _engine->_inputText;
 
-	_consoleWindow->appendInput(_clipboard);
+		_consoleWindow->appendInput(g_system->getTextFromClipboard());
 
-	_menu->enableCommand(kMenuEdit, kMenuActionUndo, true);
+		_menu->enableCommand(kMenuEdit, kMenuActionUndo, true);
+	}
 }
 
 void Gui::actionUndo() {
 	_consoleWindow->clearInput();
-	_consoleWindow->appendInput(_clipboard);
+	_consoleWindow->appendInput(_undobuffer);
 
 	_menu->enableCommand(kMenuEdit, kMenuActionUndo, false);
 }
@@ -386,7 +392,7 @@ void Gui::actionCut() {
 
 	Common::String input = _consoleWindow->getInput();
 
-	_clipboard = _consoleWindow->cutSelection();
+	g_system->setTextInClipboard(_consoleWindow->cutSelection());
 
 	_undobuffer = input;
 
