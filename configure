@@ -2918,10 +2918,9 @@ case $_host_os in
 		add_line_to_config_mk 'PSP = 1'
 		;;
 	riscos)
-		append_var DEFINES "-DRISCOS"
-		add_line_to_config_mk 'RISCOS = 1'
+		define_in_config_if_yes yes 'RISCOS'
 		append_var LDFLAGS "-L$GCCSDK_INSTALL_ENV/lib"
-		append_var CXXFLAGS "-I$GCCSDK_INSTALL_ENV/include"
+		append_var CXXFLAGS "-isystem $GCCSDK_INSTALL_ENV/include"
 		_pkgconfig=$GCCSDK_INSTALL_ENV/ro-pkg-config
 		_sdlpath=$GCCSDK_INSTALL_ENV/bin
 		_freetypepath=$GCCSDK_INSTALL_ENV/bin
@@ -3061,7 +3060,7 @@ if test -n "$_host"; then
 			;;
 		arm-*riscos)
 			_opengl_mode=none
-			_build_hq_scalers=no
+			_vorbis=no
 			;;
 		bfin*)
 			;;

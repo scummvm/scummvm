@@ -20,11 +20,13 @@
  *
  */
 
-#if defined(RISCOS)
-
 // Re-enable some forbidden symbols to avoid clashes with stat.h and unistd.h.
 #define FORBIDDEN_SYMBOL_EXCEPTION_unistd_h
 #define FORBIDDEN_SYMBOL_EXCEPTION_mkdir
+
+#include "common/scummsys.h"
+
+#if defined(RISCOS)
 
 #include "backends/platform/sdl/riscos/riscos-utils.h"
 #include "backends/fs/riscos/riscos-fs.h"
