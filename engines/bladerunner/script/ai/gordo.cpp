@@ -542,7 +542,7 @@ bool AIScriptGordo::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		break;
 
 	case kGoalGordoNR02TalkAboutMcCoy:
-		Actor_Force_Stop_Walking(0);
+		Actor_Force_Stop_Walking(kActorMcCoy);
 		Actor_Face_Actor(kActorGordo, kActorMcCoy, true);
 		Actor_Says(kActorGordo, 720, 16);
 		Actor_Says(kActorGordo, 730, 18);
