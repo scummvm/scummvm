@@ -439,28 +439,16 @@ void Input::stylusMove(int x, int y) {
 }
 
 void Input::updateMouse(int newX, int newY) {
-	_mouseX = newX;
-	_mouseY = newY;
-
-	if (_mouseX < 0)
-		_mouseX = 0;
-	else if (_mouseX >= g_hdb->_screenWidth)
-		_mouseX = g_hdb->_screenWidth - 1;
-
-	if (_mouseY < 0)
-		_mouseY = 0;
-	else if (_mouseY >= g_hdb->_screenHeight)
-		_mouseY = g_hdb->_screenHeight - 1;
+	_mouseX = CLIP(newX, 0, g_hdb->_screenWidth - 1);
+	_mouseY = CLIP(newY, 0, g_hdb->_screenHeight - 1);
 
 	// Turn Cursor back on?
-	if (!g_hdb->_gfx->getPointer()) {
+	if (!g_hdb->_gfx->getPointer())
 		g_hdb->_gfx->showPointer(true);
-	}
 
 	// Check if LButton is being dragged
-	if (_mouseLButton) {
+	if (_mouseLButton)
 		stylusMove(_mouseX, _mouseY);
-	}
 }
 
 void Input::updateMouseButtons(int l, int m, int r) {
@@ -510,7 +498,7 @@ void Input::updateMouseButtons(int l, int m, int r) {
 }
 
 void Input::updateKeys(Common::Event event, bool keyDown) {
-	static int current = 0, last = 0;
+	static bool current = false, last = false;
 
 	if (keyDown && event.kbd.keycode == _keyQuit) {
 		g_hdb->quitGame();
@@ -522,13 +510,13 @@ void Input::updateKeys(Common::Event event, bool keyDown) {
 	// PAUSE key pressed?
 	last = current;
 	if (keyDown && event.kbd.keycode == Common::KEYCODE_p && g_hdb->getGameState() == GAME_PLAY) {
-		current = 1;
+		current = true;
 		if (!last) {
 			g_hdb->togglePause();
 			g_hdb->_sound->playSound(SND_POP);
 		}
 	} else
-		current = 0;
+		current = false;
 
 	if (!g_hdb->getPause()) {
 		if (event.kbd.keycode == _keyUp) {
