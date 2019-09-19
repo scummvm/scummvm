@@ -551,7 +551,7 @@ void HDBGame::moveMap(int x, int y) {
 	oy += (_dy - y) / 8;
 
 	ox = CLIP(ox, 0, g_hdb->_map->mapPixelWidth() - 240);
-	oy = CLIP(oy, 0, g_hdb->_map->mapPixelHeight() - 320)
+	oy = CLIP(oy, 0, g_hdb->_map->mapPixelHeight() - 320);
 
 	g_hdb->_map->setMapXY(ox, oy);
 }
