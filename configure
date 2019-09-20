@@ -4429,6 +4429,12 @@ echo "$_jpeg"
 # Check for PNG
 #
 echocheck "PNG >= 1.2.8"
+if test "$_pkg_config" = "yes" && $_pkgconfig --exists libpng; then
+	append_var PNG_LIBS "`$_pkgconfig --libs libpng`"
+	append_var PNG_CFLAGS "`$_pkgconfig --cflags libpng`"
+else
+	append_var PNG_LIBS "-lpng -lz"
+fi
 if test "$_png" = auto ; then
 	_png=no
 	cat > $TMPC << EOF
@@ -4441,10 +4447,10 @@ int main(void) {
   return 0;
 }
 EOF
-	cc_check $PNG_CFLAGS $PNG_LIBS -lpng -lz && _png=yes
+	cc_check $PNG_CFLAGS $PNG_LIBS && _png=yes
 fi
 if test "$_png" = yes ; then
-	append_var LIBS "$PNG_LIBS -lpng -lz"
+	append_var LIBS "$PNG_LIBS"
 	append_var INCLUDES "$PNG_CFLAGS"
 fi
 define_in_config_if_yes "$_png" 'USE_PNG'
