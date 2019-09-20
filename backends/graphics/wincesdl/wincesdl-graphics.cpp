@@ -884,7 +884,7 @@ bool WINCESdlGraphicsManager::loadGFXMode() {
 
 	// Create the surface used for the graphics in 16 bit before scaling, and also the overlay
 	// Distinguish 555 and 565 mode
-	if (_hwScreen->format->Rmask == 0x7C00)
+	if (_hwScreen->format->Gmask == 0x3E0)
 		InitScalers(555);
 	else
 		InitScalers(565);
