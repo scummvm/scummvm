@@ -1538,6 +1538,11 @@ void Sound::playSound(int index) {
 		audioStream = Audio::makeWAVStream(stream, DisposeAfterUse::YES);
 	}
 
+	if (audioStream == 0) {
+		warning("playSound: sound %d is corrupt", index);
+		return;
+	}
+
 	g_hdb->_mixer->playStream(
 		Audio::Mixer::kSFXSoundType,
 		&_handles[soundChannel],
@@ -1595,6 +1600,11 @@ void Sound::playSoundEx(int index, int channel, bool loop) {
 #endif // USE_VORBIS
 	} else {
 		audioStream = Audio::makeWAVStream(stream, DisposeAfterUse::YES);
+	}
+
+	if (audioStream == 0) {
+		warning("playSoundEx: sound %d is corrupt", index);
+		return;
 	}
 
 	if (loop) {
