@@ -98,6 +98,8 @@ void SpecialOpcodes::initOpcodes() {
 	OPCODE(0x23, spcSetEngineFlag0x200000);
 	OPCODE(0x24, spcClearEngineFlag0x200000);
 
+	OPCODE(0x26, spcMenInMinesSceneLogic);
+	OPCODE(0x27, spcStopMenInMinesSceneLogic);
 	OPCODE(0x28, spcMonksAtBarSceneLogic);
 	OPCODE(0x29, spcStopMonksAtBarSceneLogic);
 
@@ -314,6 +316,14 @@ void SpecialOpcodes::spcSetEngineFlag0x200000() {
 
 void SpecialOpcodes::spcClearEngineFlag0x200000() {
 	_vm->clearFlags(ENGINE_FLAG_200000);
+}
+
+void SpecialOpcodes::spcMenInMinesSceneLogic() {
+	//TODO
+}
+
+void SpecialOpcodes::spcStopMenInMinesSceneLogic() {
+	//TODO
 }
 
 void SpecialOpcodes::spcMonksAtBarSceneLogic() {
