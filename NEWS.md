@@ -118,6 +118,12 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Fixed graphical glitch in Zork: Grand Inquisitor.
    - Packaged the required fonts with ScummVM.
 
+ Android port:
+   - Rewrote to make use of the OpenGL Graphics Manager
+   - Added a button to show the virtual keyboard.
+   - Implemented clipboard support.
+   - Use the dedicated GUI option for enabling the touchpad mode
+
  iOS port:
    - Added three-fingers swipe gestures to simulate arrow keys.
    - Added pinch in and out gestures to show and hide the keyboard.
