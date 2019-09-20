@@ -95,6 +95,8 @@ protected:
 	void spcSetEngineFlag0x200000(); // 0x23
 	void spcClearEngineFlag0x200000(); // 0x24
 
+	void spcMenInMinesSceneLogic(); //0x26
+	void spcStopMenInMinesSceneLogic(); //0x27
 	void spcMonksAtBarSceneLogic(); //0x28
 	void spcStopMonksAtBarSceneLogic(); //0x29
 
