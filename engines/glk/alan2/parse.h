@@ -25,7 +25,7 @@
 
 /* Parse data for ALAN interpreter module. */
 
-#include "engines/glk/alan2/jumps.h"
+#include "engines/glk/jumps.h"
 
 namespace Glk {
 namespace Alan2 {

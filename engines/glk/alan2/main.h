@@ -27,7 +27,7 @@
 
 #include "common/file.h"
 #include "glk/alan2/types.h"
-#include "glk/alan2/jumps.h"
+#include "glk/jumps.h"
 
 namespace Glk {
 namespace Alan2 {

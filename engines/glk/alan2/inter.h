@@ -23,7 +23,7 @@
 #ifndef GLK_ALAN2_INTER
 #define GLK_ALAN2_INTER
 
-#include "glk/alan2/jumps.h"
+#include "glk/jumps.h"
 
 namespace Glk {
 namespace Alan2 {

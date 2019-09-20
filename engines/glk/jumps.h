@@ -20,15 +20,14 @@
  *
  */
 
-#ifndef GLK_ALAN2_JUMPS
-#define GLK_ALAN2_JUMPS
+#ifndef GLK_JUMPS
+#define GLK_JUMPS
 
 /* This provides a simplified version of the ScummVM coroutines to allow for automated
  * breakouts to the main game loop from subroutinese rather than using unportable setjmps
  */
 
 namespace Glk {
-namespace Alan2 {
 
 /**
  * Context used for flagging when a break to the outer game loop
@@ -64,7 +63,6 @@ struct Context {
 #define LONG_JUMP { context._break = true; return; }
 #define LONG_JUMP0 { context._break = true; return 0; }
 
-} // End of namespace Alan2
 } // End of namespace Glk
 
 #endif
