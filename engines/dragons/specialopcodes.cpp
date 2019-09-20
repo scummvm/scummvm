@@ -115,21 +115,23 @@ void SpecialOpcodes::initOpcodes() {
 
 	OPCODE(0x38, spcNoop1);
 	OPCODE(0x39, spcTownAngryVillagersSceneLogic);
-
+	OPCODE(0x3a, spcBlackDragonCrashThroughGate);
 	OPCODE(0x3b, spcSetEngineFlag0x2000000);
 	OPCODE(0x3c, spcClearEngineFlag0x2000000);
 	OPCODE(0x3d, clearSceneUpdateFunction);
 	OPCODE(0x3e, spcZigmondFraudSceneLogic);
 	OPCODE(0x3f, clearSceneUpdateFunction);
 	OPCODE(0x40, spcZigmondFraudSceneLogic1);
-
+	OPCODE(0x41, spcBrokenBlackDragonSceneLogic);
 	OPCODE(0x42, spcDodoUnderAttackSceneLogic);
+	OPCODE(0x43, spcForestWithoutDodoSceneLogic);
 
 	OPCODE(0x46, spcBlackDragonOnHillSceneLogic);
 
 	OPCODE(0x49, spcLoadScene1);
 
 	OPCODE(0x4b, spcKnightsSavedCastleCutScene);
+	OPCODE(0x4c, spcFlickerReturnsCutScene);
 
 	OPCODE(0x4e, spcUnk4e);
 	OPCODE(0x4f, spcUnk4f);
@@ -146,6 +148,8 @@ void SpecialOpcodes::initOpcodes() {
 	OPCODE(0x5e, spcUnk5e);
 	OPCODE(0x5f, spcUnk5f);
 
+	OPCODE(0x61, spcCastleBuildBlackDragonSceneLogic);
+	OPCODE(0x62, spcStopSceneUpdateFunction)
 	OPCODE(0x63, spcSetInventorySequenceTo5);
 	OPCODE(0x64, spcResetInventorySequence);
 	OPCODE(0x65, spcUnk65ScenePaletteRelated);
@@ -162,12 +166,14 @@ void SpecialOpcodes::initOpcodes() {
 	OPCODE(0x7c, spcDiamondIntroSequenceLogic);
 
 	OPCODE(0x7f, spcFlickerPutOnStGeorgeArmor);
-
+	OPCODE(0x80, spcUnk80FlickerArmorOn);
+	OPCODE(0x81, spcShakeScreenSceneLogic);
 	OPCODE(0x82, spc82CallResetDataMaybe);
+	OPCODE(0x83, spcStopScreenShakeUpdater);
 
 	OPCODE(0x89, spcSetUnkFlag2);
 	OPCODE(0x8a, spcClearUnkFlag2);
-
+	OPCODE(0x8b, spcUnk8b);
 }
 
 #undef OPCODE
@@ -392,6 +398,28 @@ void SpecialOpcodes::spcNoop1() {
 void SpecialOpcodes::spcTownAngryVillagersSceneLogic() {
 	//TODO
 }
+
+void SpecialOpcodes::spcBlackDragonCrashThroughGate() {
+	//TODO spcBlackDragonCrashThroughGate
+	//shake screen.
+//	iVar18 = 1;
+//	local_fd8 = DAT_8001170c;
+//	local_fd4 = DAT_80011710;
+//	local_fd0 = DAT_80011714;
+//	local_fcc = uint32_t_80011718;
+//	local_fc8 = DAT_8001171c;
+//	local_fc4 = DAT_80011720;
+//	local_fc0 = DAT_80011724;
+//	local_fbc = DAT_80011728;
+//	DAT_8006339a = (short)local_10a0;
+//	while (screenShakeOffset = DAT_8006339a, DAT_8006339a != 0) {
+//		screenShakeOffset = DAT_8006339a;
+//		ContinueGame?();
+//		DAT_8006339a = *(short *)((int)&local_fd8 + ((iVar18 << 0x10) >> 0xf));
+//		iVar18 = iVar18 + 1;
+//	}
+}
+
 void SpecialOpcodes::spcSetEngineFlag0x2000000() {
 	_vm->setFlags(Dragons::ENGINE_FLAG_2000000);
 }
@@ -454,7 +482,16 @@ void SpecialOpcodes::spcZigmondFraudSceneLogic1() {
 	setupTableBasedSceneUpdateFunction(300,1,0x708);
 }
 
+void SpecialOpcodes::spcBrokenBlackDragonSceneLogic() {
+	//TODO spcBrokenBlackDragonSceneLogic
+}
+
 void SpecialOpcodes::spcDodoUnderAttackSceneLogic() {
+	//TODO
+	sceneUpdater.sequenceID = -1;
+}
+
+void SpecialOpcodes::spcForestWithoutDodoSceneLogic() {
 	//TODO
 	sceneUpdater.sequenceID = -1;
 }
@@ -521,6 +558,14 @@ void SpecialOpcodes::spcUnk5e() {
 void SpecialOpcodes::spcUnk5f() {
 	_vm->getINI(0x2ab)->field_12 = 0;
 	panCamera(2);
+}
+
+void SpecialOpcodes::spcCastleBuildBlackDragonSceneLogic() {
+	_vm->setSceneUpdateFunction(castleBuildingBlackDragon2UpdateFunction);
+}
+
+void SpecialOpcodes::spcStopSceneUpdateFunction() {
+	_vm->setSceneUpdateFunction(NULL);
 }
 
 void SpecialOpcodes::spcSetInventorySequenceTo5() {
@@ -627,12 +672,23 @@ void SpecialOpcodes::spc82CallResetDataMaybe() {
 	//TODO callMaybeResetData();
 }
 
+void SpecialOpcodes::spcStopScreenShakeUpdater() {
+	_vm->setSceneUpdateFunction(NULL);
+	//TODO spcStopScreenShakeUpdater
+//	DAT_8006339a = 0;
+//	screenShakeOffset = 0;
+}
+
 void SpecialOpcodes::spcSetUnkFlag2() {
 	_vm->setUnkFlags(ENGINE_UNK1_FLAG_2);
 }
 
 void SpecialOpcodes::spcClearUnkFlag2() {
 	_vm->clearUnkFlags(ENGINE_UNK1_FLAG_2);
+}
+
+void SpecialOpcodes::spcUnk8b() {
+	//TODO sceneId_1 = DAT_80063e20; //0xA
 }
 
 void SpecialOpcodes::spcLoadScene1() {
@@ -646,6 +702,13 @@ void SpecialOpcodes::spcKnightsSavedCastleCutScene() {
 	cutScene->knightsSavedBackAtCastle();
 	delete cutScene;
 }
+
+void SpecialOpcodes::spcFlickerReturnsCutScene() {
+	CutScene *cutScene = new CutScene(_vm);
+	cutScene->flickerReturnsCutScene();
+	delete cutScene;
+}
+
 void SpecialOpcodes::spcTransitionToMap() {
 	//TODO map transition
 //	DAT_8006a422 = 0;
@@ -731,6 +794,16 @@ void SpecialOpcodes::setupTableBasedSceneUpdateFunction(uint16 initialCounter, u
 	_vm->setSceneUpdateFunction(tableBasedSceneUpdateFunction);
 }
 
+void SpecialOpcodes::spcUnk80FlickerArmorOn() {
+	Actor *actor = _vm->_dragonINIResource->getRecord(0x21f)->actor;
+	actor->priorityLayer = 2;
+	actor->clearFlag(ACTOR_FLAG_100);
+}
+
+void SpecialOpcodes::spcShakeScreenSceneLogic() {
+	_vm->setSceneUpdateFunction(shakeScreenUpdateFunction);
+}
+
 void pizzaUpdateFunction() {
 		static int16 DAT_800634bc = 0;
 		DragonsEngine *vm = getEngine();
@@ -814,4 +887,41 @@ void tableBasedSceneUpdateFunction() {
 	}
 }
 
+void castleBuildingBlackDragon2UpdateFunction() {
+	DragonINI *ini;
+	DragonsEngine *vm = getEngine();
+
+	ini = vm->_dragonINIResource->getRecord(0x231);
+	if (ini->field_10 <= 0) {
+		if (ini->field_12 == 0) {
+			ini->actor->updateSequence(0xb);
+			ini->field_10 = 0x68;
+			ini->field_12 = 1;
+		}
+		else if (ini->field_12 == 1) {
+			ini->actor->updateSequence(4);
+			ini->field_10 = vm->getRand(0xb4);
+			ini->field_12 = 0;
+		}
+	}
+}
+
+void shakeScreenUpdateFunction() {
+	//TODO shakeScreenUpdateFunction
+//	uint uVar1;
+//
+//	if (int16_t_80072898 == 0) {
+//		DAT_80083148 = DAT_80083148 ^ 1;
+//		uVar1 = 1;
+//		if (DAT_80083148 == 0) {
+//			uVar1 = 0xffffffff;
+//		}
+//		DAT_8006339a = (undefined2)uVar1;
+//		screenShakeOffset = DAT_8006339a;
+//	}
+//	else {
+//		int16_t_80072898 = int16_t_80072898 - 1;
+//		uVar1 = (uint)(ushort)int16_t_80072898;
+//	}
+}
 } // End of namespace Dragons

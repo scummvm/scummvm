@@ -672,5 +672,9 @@ void CutScene::loadPalettes() {
 	fd.read(_palettes, 256 * 2 * 4);
 }
 
+void CutScene::flickerReturnsCutScene() {
+	//TODO
+}
+
 
 } // End of namespace Dragons

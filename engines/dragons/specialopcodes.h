@@ -112,21 +112,23 @@ protected:
 
 	void spcNoop1(); // 0x38
 	void spcTownAngryVillagersSceneLogic(); //0x39
-
+	void spcBlackDragonCrashThroughGate(); //0x3a
 	void spcSetEngineFlag0x2000000(); // 0x3b
 	void spcClearEngineFlag0x2000000(); // 0x3c
 
 	void spcZigmondFraudSceneLogic(); // 0x3e
 
 	void spcZigmondFraudSceneLogic1(); // 0x40
-
+	void spcBrokenBlackDragonSceneLogic(); // 0x41
 	void spcDodoUnderAttackSceneLogic(); //0x42
+	void spcForestWithoutDodoSceneLogic();
 
 	void spcBlackDragonOnHillSceneLogic(); //0x46
 
 	void spcLoadScene1(); // 0x49
 
 	void spcKnightsSavedCastleCutScene(); //0x4b
+	void spcFlickerReturnsCutScene(); // 0x4c
 
 	void spcUnk4e();
 	void spcUnk4f();
@@ -143,6 +145,8 @@ protected:
 	void spcUnk5e();
 	void spcUnk5f();
 
+	void spcCastleBuildBlackDragonSceneLogic(); //0x61
+	void spcStopSceneUpdateFunction(); //0x62
 	void spcSetInventorySequenceTo5(); // 0x63
 	void spcResetInventorySequence(); // 0x64
 	void spcUnk65ScenePaletteRelated(); // 0x65;
@@ -159,11 +163,14 @@ protected:
 	void spcDiamondIntroSequenceLogic(); //0x7c
 
 	void spcFlickerPutOnStGeorgeArmor(); //0x7f
-
+	void spcUnk80FlickerArmorOn(); //0x80
+	void spcShakeScreenSceneLogic(); //0x81
 	void spc82CallResetDataMaybe(); // 0x82
+	void spcStopScreenShakeUpdater(); // 0x83
 
 	void spcSetUnkFlag2(); // 0x89
 	void spcClearUnkFlag2(); //0x8a
+	void spcUnk8b(); //0x8b
 
 	void setupTableBasedSceneUpdateFunction(uint16 initialCounter, uint16 numSequences, uint16 sequenceDuration);
 private:
@@ -178,6 +185,8 @@ private:
 
 void pizzaUpdateFunction();
 void tableBasedSceneUpdateFunction();
+void castleBuildingBlackDragon2UpdateFunction();
+void shakeScreenUpdateFunction();
 
 } // End of namespace Dragons
 
