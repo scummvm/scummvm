@@ -166,8 +166,8 @@ void AI::processCines() {
 			_cameraX += _cine[i]->xv;
 			_cameraY += _cine[i]->yv;
 			debug(3, "C_MOVECAMERA: _cine[%d]->xv: %f, _cine[%d]->yv: %f", i, _cine[i]->xv, i, _cine[i]->yv);
-			debug(3, "C_MOVECAMERA: abs(_cameraX - _cine[i]->x): %f, abs(_cameraY - _cine[i]->y): %f", abs(_cameraX - _cine[i]->x), abs(_cameraY - _cine[i]->y));
-			if (abs(_cameraX - _cine[i]->x) <= 1 && abs(_cameraY - _cine[i]->y) <= 1) {
+			debug(3, "C_MOVECAMERA: abs(_cameraX - _cine[i]->x): %f, abs(_cameraY - _cine[i]->y): %f", fabs(_cameraX - _cine[i]->x), fabs(_cameraY - _cine[i]->y));
+			if (fabs(_cameraX - _cine[i]->x) <= 1 && fabs(_cameraY - _cine[i]->y) <= 1) {
 				_cameraX = _cine[i]->x;
 				_cameraY = _cine[i]->y;
 				complete = true;
