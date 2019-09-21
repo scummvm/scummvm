@@ -70,8 +70,15 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Add speech synthesis on some platforms.
 
  SCI:
-   - Fixed crash in Police Quest IV: Open Season.
-   - Improved visual effects in Quest for Glory I (VGA).
+   - Added LarryScale, a high quality cartoon scaler for Leisure Suit Larry 7.
+   - Fixed over 100 original game script bugs in CAMELOT, ECO1, ECO2,
+     FREDDYPHARKAS, GK1, HOYLE5, ICEMAN, KQ6, LB1, LB2, LONGBOW, LSL6,
+     MOTHERGOOSE256, PQ3, PQ4, QFG1VGA, QFG4, and SQ4.
+   - Fixed a bug in version 2.0.0 that prevented the Macintosh versions of
+     Freddy Pharkas, King's Quest 6, and Quest for Glory 1 (VGA) from loading.
+   - Fixed a crash in the Macintosh version of Freddy Pharkas when picking up
+     the shovel which makes the game completable.
+   - Fixed loading autosave games.
 
  SCUMM:
    - Implemented lipsync for v6 and v7+ games.
