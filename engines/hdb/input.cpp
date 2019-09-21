@@ -494,6 +494,9 @@ void Input::updateMouseButtons(int l, int m, int r) {
 
 		uint16 buttons = getButtons() | kButtonB;
 		setButtons(buttons);
+	} else if (!_mouseRButton) {
+		uint16 buttons = getButtons() & ~kButtonB;
+		setButtons(buttons);
 	}
 }
 
