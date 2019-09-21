@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2019-09-18 22:04+0200\n"
-"PO-Revision-Date: 2019-09-18 00:55+0000\n"
-"Last-Translator: TomasM <truido@gmail.com>\n"
+"PO-Revision-Date: 2019-09-21 10:55+0000\n"
+"Last-Translator: Andrea G <andreagswaterloo@gmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/es/>\n"
 "Language: es_ES\n"
@@ -887,7 +887,7 @@ msgstr "Zona inactiva del joystick:"
 
 #: gui/options.cpp:1038
 msgid "HW Shader:"
-msgstr "Shader:"
+msgstr "Sombreador HW:"
 
 #: gui/options.cpp:1038 gui/options.cpp:1040
 msgid "Different hardware shaders give different visual effects"
@@ -928,7 +928,7 @@ msgstr "Filtros de gráficos"
 
 #: gui/options.cpp:1099
 msgid "Use linear filtering when scaling graphics"
-msgstr "Usar filtrado lineal para reescalar gráficos"
+msgstr "Usar filtrado lineal al reescalar gráficos"
 
 #: gui/options.cpp:1102
 msgid "Aspect ratio correction"
@@ -1574,9 +1574,8 @@ msgid "Wait until current Storage finishes up and try again."
 msgstr "Espera a que el almacenamiento actual finalice y prueba otra vez."
 
 #: gui/options.cpp:2403
-#, fuzzy
 msgid "Connecting..."
-msgstr "Conectar"
+msgstr "Conectando..."
 
 #: gui/options.cpp:2419
 #, fuzzy
@@ -1596,19 +1595,16 @@ msgid "Stop local webserver"
 msgstr "Detener el servidor local"
 
 #: gui/options.cpp:2779
-#, fuzzy
 msgid "Storage connected."
-msgstr "Asistente de conexión para %s"
+msgstr "Almacenaje conectado."
 
 #: gui/options.cpp:2781
-#, fuzzy
 msgid "Failed to connect storage."
-msgstr "¡Fallo al cambiar el almacenamiento en línea!"
+msgstr "Fallo al conectar con el almacenamiento."
 
 #: gui/options.cpp:2783
-#, fuzzy
 msgid "Failed to connect storage: "
-msgstr "¡Fallo al cambiar el almacenamiento en línea!"
+msgstr "Fallo al conectar con el almacenamiento: "
 
 #: gui/options.cpp:2803
 msgid ""
@@ -1819,7 +1815,7 @@ msgid ""
 "All necessary information about your game has been copied into the clipboard"
 msgstr ""
 "Toda la información necesaria sobre tu juego ha sido copiada en el "
-"portapapeles."
+"portapapeles"
 
 #: gui/unknown-game-dialog.cpp:215
 msgid "Copying the game information to the clipboard has failed!"
@@ -2103,18 +2099,18 @@ msgid "~K~eys"
 msgstr "~T~eclas"
 
 #: engines/engine.cpp:312
-#, fuzzy, c-format
+#, c-format
 msgid "Could not switch to resolution '%dx%d'."
-msgstr "No se ha podido cambiar al modo de video: '"
+msgstr "No se ha podido cambiar a la resolución '%dx%d'."
 
 #: engines/engine.cpp:321
 msgid "Could not initialize color format."
 msgstr "No se ha podido iniciar el formato de color."
 
 #: engines/engine.cpp:330
-#, fuzzy, c-format
+#, c-format
 msgid "Could not switch to video mode '%s'."
-msgstr "No se ha podido cambiar al modo de video: '"
+msgstr "No se ha podido cambiar al modo de vídeo '%s'."
 
 #: engines/engine.cpp:338
 #, fuzzy, c-format
@@ -2906,7 +2902,7 @@ msgstr "Minimizar"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:214
 msgid "Help"
-msgstr ""
+msgstr "Ayuda"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:215
 #, fuzzy
@@ -2915,27 +2911,27 @@ msgstr "Cancel·lat per l'usuari"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:217
 msgid "General Information"
-msgstr ""
+msgstr "Información general"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:218
 msgid "What's New in ScummVM"
-msgstr ""
+msgstr "Novedades en ScummVM"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:220
 msgid "Credits"
-msgstr ""
+msgstr "Créditos"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:221
 msgid "GPL License"
-msgstr ""
+msgstr "Licencia GPL"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:222
 msgid "LGPL License"
-msgstr ""
+msgstr "Licencia LGPL"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:223
 msgid "Freefont License"
-msgstr ""
+msgstr "Licencia Freefont"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:224
 msgid "OFL License"
@@ -2943,7 +2939,7 @@ msgstr ""
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:225
 msgid "BSD License"
-msgstr ""
+msgstr "Licencia BSD"
 
 #: backends/platform/symbian/src/SymbianActions.cpp:38
 #: backends/platform/wince/CEActionsSmartphone.cpp:39
@@ -3648,23 +3644,23 @@ msgstr ""
 
 #: engines/glk/scott/scott.cpp:99
 msgid "I don't understand your command. "
-msgstr ""
+msgstr "No entiendo tu orden. "
 
 #: engines/glk/scott/scott.cpp:102
 msgid "I can't do that yet. "
-msgstr ""
+msgstr "Todavía no puedo hacer eso. "
 
 #: engines/glk/scott/scott.cpp:118
 msgid "Light has run out! "
-msgstr ""
+msgstr "La luz se ha apagado! "
 
 #: engines/glk/scott/scott.cpp:120
 msgid "Your light has run out. "
-msgstr ""
+msgstr "Tu luz se ha apagado. "
 
 #: engines/glk/scott/scott.cpp:129
 msgid "Light runs out in "
-msgstr ""
+msgstr "La luz se apagará en "
 
 #: engines/glk/scott/scott.cpp:131
 #, fuzzy
@@ -3673,31 +3669,31 @@ msgstr "Encender"
 
 #: engines/glk/scott/scott.cpp:134
 msgid "Your light is growing dim. "
-msgstr ""
+msgstr "Tu luz se está atenuando. "
 
 #: engines/glk/scott/scott.cpp:394
 msgid "North"
-msgstr ""
+msgstr "Norte"
 
 #: engines/glk/scott/scott.cpp:394
 msgid "South"
-msgstr ""
+msgstr "Sur"
 
 #: engines/glk/scott/scott.cpp:394
 msgid "East"
-msgstr ""
+msgstr "Este"
 
 #: engines/glk/scott/scott.cpp:394
 msgid "West"
-msgstr ""
+msgstr "Oeste"
 
 #: engines/glk/scott/scott.cpp:406
 msgid "You can't see. It is too dark!\n"
-msgstr ""
+msgstr "No puedes ver. Está demasiado oscuro!\n"
 
 #: engines/glk/scott/scott.cpp:408
 msgid "I can't see. It is too dark!\n"
-msgstr ""
+msgstr "No puedo ver. Está demadiado oscuro!\n"
 
 #: engines/glk/scott/scott.cpp:418
 #, c-format
@@ -3714,6 +3710,8 @@ msgid ""
 "\n"
 "Obvious exits: "
 msgstr ""
+"\n"
+"Salidas obvias: "
 
 #: engines/glk/scott/scott.cpp:438
 #, fuzzy
@@ -3725,12 +3723,16 @@ msgid ""
 "\n"
 "You can also see: "
 msgstr ""
+"\n"
+"También puedes ver: "
 
 #: engines/glk/scott/scott.cpp:450
 msgid ""
 "\n"
 "I can also see: "
 msgstr ""
+"\n"
+"También puedo ver: "
 
 #: engines/glk/scott/scott.cpp:533
 #, fuzzy
@@ -3739,7 +3741,7 @@ msgstr "Guardar"
 
 #: engines/glk/scott/scott.cpp:624
 msgid "You use word(s) I don't know! "
-msgstr ""
+msgstr "Usaste palabra(s) que no conozco! "
 
 #: engines/glk/scott/scott.cpp:752 engines/glk/scott/scott.cpp:1075
 #: engines/glk/scott/scott.cpp:1097
