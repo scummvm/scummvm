@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2019-09-18 22:04+0200\n"
+"POT-Creation-Date: 2019-09-21 21:15+0200\n"
 "PO-Revision-Date: 2019-09-17 06:31+0000\n"
 "Last-Translator: Ben Castricum <github@bencastricum.nl>\n"
 "Language-Team: Dutch <https://translations.scummvm.org/projects/scummvm/"
@@ -2640,10 +2640,6 @@ msgstr "Of selecteer een map (werkt alleen in Chrome):"
 msgid "Index of "
 msgstr "Index van "
 
-#: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:75
-msgid "Loading..."
-msgstr "Laden..."
-
 #: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:76
 msgid "Error occurred"
 msgstr "Fout opgetreden"
@@ -2665,9 +2661,9 @@ msgid "ScummVM couldn't list the directory you specified."
 msgstr "ScummVM kon de opgegeven map niet indexeren."
 
 #: backends/networking/sdl_net/handlers/filespagehandler.cpp:232
-#, c-format
-msgid "Index of %s"
-msgstr "Index van %s"
+#, fuzzy
+msgid "Index of"
+msgstr "Index van "
 
 #: backends/networking/sdl_net/handlers/indexpagehandler.cpp:42
 msgid "This is a local webserver index page."
@@ -2685,7 +2681,7 @@ msgstr "Bovenliggend pad bestaat niet!"
 msgid "Can't upload into a file!"
 msgstr "Kan niet uploaden naar een file!"
 
-#: backends/networking/sdl_net/handlerutils.cpp:197
+#: backends/networking/sdl_net/handlerutils.cpp:213
 msgid "Back to the files manager"
 msgstr "Terug naar de bestanden manager"
 
@@ -5729,6 +5725,12 @@ msgstr ""
 "Dit opgeslagen spel gebruikt versie %u, maar deze engine ondersteund alleen "
 "tot versie %d. U heeft een nieuwere versie van deze engine nodig om dit "
 "opgeslagen te gebruiken."
+
+#~ msgid "Loading..."
+#~ msgstr "Laden..."
+
+#~ msgid "Index of %s"
+#~ msgstr "Index van %s"
 
 #~ msgid "Color mode"
 #~ msgstr "Kleurenmodus"

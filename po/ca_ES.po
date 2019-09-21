@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2019-09-18 22:04+0200\n"
+"POT-Creation-Date: 2019-09-21 21:15+0200\n"
 "PO-Revision-Date: 2019-09-21 10:54+0000\n"
 "Last-Translator: Andrea G <andreagswaterloo@gmail.com>\n"
 "Language-Team: Catalan <https://translations.scummvm.org/projects/scummvm/"
@@ -2644,11 +2644,6 @@ msgstr "Seleccioneu el directori dels temes"
 msgid "Index of "
 msgstr ""
 
-#: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:75
-#, fuzzy
-msgid "Loading..."
-msgstr "Carregant la partida..."
-
 #: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:76
 msgid "Error occurred"
 msgstr ""
@@ -2673,8 +2668,7 @@ msgid "ScummVM couldn't list the directory you specified."
 msgstr "ScummVM no ha pogut accedir al directori especificat!"
 
 #: backends/networking/sdl_net/handlers/filespagehandler.cpp:232
-#, c-format
-msgid "Index of %s"
+msgid "Index of"
 msgstr ""
 
 #: backends/networking/sdl_net/handlers/indexpagehandler.cpp:42
@@ -2694,7 +2688,7 @@ msgstr ""
 msgid "Can't upload into a file!"
 msgstr "El camí no és un fitxer"
 
-#: backends/networking/sdl_net/handlerutils.cpp:197
+#: backends/networking/sdl_net/handlerutils.cpp:213
 msgid "Back to the files manager"
 msgstr ""
 
@@ -5638,6 +5632,10 @@ msgid ""
 "This saved game uses version %u, but this engine only supports up to version "
 "%d. You will need an updated version of the engine to use this saved game."
 msgstr ""
+
+#, fuzzy
+#~ msgid "Loading..."
+#~ msgstr "Carregant la partida..."
 
 #~ msgid "Color mode"
 #~ msgstr "Mode de color"

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2019-09-18 22:04+0200\n"
+"POT-Creation-Date: 2019-09-21 21:15+0200\n"
 "PO-Revision-Date: 2019-09-15 20:54+0000\n"
 "Last-Translator: Rafa³ Bêd¼kowski <ravcik@gmail.com>\n"
 "Language-Team: Polish <https://translations.scummvm.org/projects/scummvm/"
@@ -2661,11 +2661,6 @@ msgstr "Wybierz katalog dla stylów GUI"
 msgid "Index of "
 msgstr ""
 
-#: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:75
-#, fuzzy
-msgid "Loading..."
-msgstr "Wczytywanie stanu gry..."
-
 #: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:76
 msgid "Error occurred"
 msgstr ""
@@ -2690,8 +2685,7 @@ msgid "ScummVM couldn't list the directory you specified."
 msgstr "ScummVM nie mo¿e otworzyæ katalogu!"
 
 #: backends/networking/sdl_net/handlers/filespagehandler.cpp:232
-#, c-format
-msgid "Index of %s"
+msgid "Index of"
 msgstr ""
 
 #: backends/networking/sdl_net/handlers/indexpagehandler.cpp:42
@@ -2712,7 +2706,7 @@ msgstr ""
 msgid "Can't upload into a file!"
 msgstr "¦cie¿ka nie jest plikiem"
 
-#: backends/networking/sdl_net/handlerutils.cpp:197
+#: backends/networking/sdl_net/handlerutils.cpp:213
 msgid "Back to the files manager"
 msgstr ""
 
@@ -5716,6 +5710,10 @@ msgid ""
 msgstr ""
 "Ten zapis gry korzysta z wersji %u, ale ten silnik wspiera tylko wersje do "
 "%d. Bêdziesz potrzebowaæ uaktualnionej wersji silnika, ¿eby u¿yæ tego zapisu."
+
+#, fuzzy
+#~ msgid "Loading..."
+#~ msgstr "Wczytywanie stanu gry..."
 
 #, fuzzy
 #~ msgid "Color mode"

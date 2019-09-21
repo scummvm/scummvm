@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2019-09-18 22:04+0200\n"
+"POT-Creation-Date: 2019-09-21 21:15+0200\n"
 "PO-Revision-Date: 2019-09-14 12:05+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
@@ -2634,11 +2634,6 @@ msgstr "Виберіть папку для тем GUI"
 msgid "Index of "
 msgstr ""
 
-#: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:75
-#, fuzzy
-msgid "Loading..."
-msgstr "Завантажую гру..."
-
 #: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:76
 msgid "Error occurred"
 msgstr ""
@@ -2663,8 +2658,7 @@ msgid "ScummVM couldn't list the directory you specified."
 msgstr "ScummVM не має доступу до вказаної папки!"
 
 #: backends/networking/sdl_net/handlers/filespagehandler.cpp:232
-#, c-format
-msgid "Index of %s"
+msgid "Index of"
 msgstr ""
 
 #: backends/networking/sdl_net/handlers/indexpagehandler.cpp:42
@@ -2685,7 +2679,7 @@ msgstr ""
 msgid "Can't upload into a file!"
 msgstr "Шлях не є файлом"
 
-#: backends/networking/sdl_net/handlerutils.cpp:197
+#: backends/networking/sdl_net/handlerutils.cpp:213
 msgid "Back to the files manager"
 msgstr ""
 
@@ -5614,6 +5608,10 @@ msgstr ""
 "Цей файл зі збереженою грою використовує версію %u, але движок підтримує "
 "версію до %d. Вам потрібна поновлена версія ScummVM для завантаження цього "
 "файлу."
+
+#, fuzzy
+#~ msgid "Loading..."
+#~ msgstr "Завантажую гру..."
 
 #~ msgid "Color mode"
 #~ msgstr "Кольоровий режим"

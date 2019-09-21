@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2019-09-18 22:04+0200\n"
+"POT-Creation-Date: 2019-09-21 21:15+0200\n"
 "PO-Revision-Date: 2018-10-10 04:23+0000\n"
 "Last-Translator: scootergrisen <scootergrisen@gmail.com>\n"
 "Language-Team: Galician <https://translations.scummvm.org/projects/scummvm/"
@@ -2676,11 +2676,6 @@ msgstr "Seleccionar directorio para temas de interfaz"
 msgid "Index of "
 msgstr ""
 
-#: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:75
-#, fuzzy
-msgid "Loading..."
-msgstr "Cargando..."
-
 #: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:76
 msgid "Error occurred"
 msgstr ""
@@ -2705,8 +2700,7 @@ msgid "ScummVM couldn't list the directory you specified."
 msgstr "ScummVM non foi quen de acceder ao directorio!"
 
 #: backends/networking/sdl_net/handlers/filespagehandler.cpp:232
-#, c-format
-msgid "Index of %s"
+msgid "Index of"
 msgstr ""
 
 #: backends/networking/sdl_net/handlers/indexpagehandler.cpp:42
@@ -2727,7 +2721,7 @@ msgstr ""
 msgid "Can't upload into a file!"
 msgstr "O camiño non é un ficheiro"
 
-#: backends/networking/sdl_net/handlerutils.cpp:197
+#: backends/networking/sdl_net/handlerutils.cpp:213
 msgid "Back to the files manager"
 msgstr ""
 
@@ -5705,6 +5699,10 @@ msgstr ""
 "Esta partida gardada emprega a versión %u. No entanto, o motor só é "
 "compatíbel até a versión %d. Cómpre descargar unha versión actualizada do "
 "motor para empregar esta partida gardada."
+
+#, fuzzy
+#~ msgid "Loading..."
+#~ msgstr "Cargando..."
 
 #~ msgid "Color mode"
 #~ msgstr "Modo de cor"

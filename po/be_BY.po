@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2019-09-18 22:04+0200\n"
+"POT-Creation-Date: 2019-09-21 21:15+0200\n"
 "PO-Revision-Date: 2018-08-06 21:35+0000\n"
 "Last-Translator: Fiodar <fedor_qd@mail.ru>\n"
 "Language-Team: Belarusian <https://translations.scummvm.org/projects/scummvm/"
@@ -2672,11 +2672,6 @@ msgstr "Абярыце дырэкторыю для тэм GUI"
 msgid "Index of "
 msgstr ""
 
-#: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:75
-#, fuzzy
-msgid "Loading..."
-msgstr "Загружаю гульню..."
-
 #: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:76
 msgid "Error occurred"
 msgstr ""
@@ -2701,8 +2696,7 @@ msgid "ScummVM couldn't list the directory you specified."
 msgstr "ScummVM не мае доступу да азначанай дырэкторыі!"
 
 #: backends/networking/sdl_net/handlers/filespagehandler.cpp:232
-#, c-format
-msgid "Index of %s"
+msgid "Index of"
 msgstr ""
 
 #: backends/networking/sdl_net/handlers/indexpagehandler.cpp:42
@@ -2723,7 +2717,7 @@ msgstr ""
 msgid "Can't upload into a file!"
 msgstr "Шлях не ёсць файлам"
 
-#: backends/networking/sdl_net/handlerutils.cpp:197
+#: backends/networking/sdl_net/handlerutils.cpp:213
 msgid "Back to the files manager"
 msgstr ""
 
@@ -5699,6 +5693,10 @@ msgid ""
 msgstr ""
 "Гэты файл захаванай гульні мае версію %u, але рухавічок падтрымвае версіі да "
 "%d. Вам патрэбна новая версія ScummVM для карыстання гэтым файлам."
+
+#, fuzzy
+#~ msgid "Loading..."
+#~ msgstr "Загружаю гульню..."
 
 #~ msgid "Color mode"
 #~ msgstr "Рэжым колеру"

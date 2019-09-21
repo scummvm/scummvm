@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2019-09-18 22:04+0200\n"
+"POT-Creation-Date: 2019-09-21 21:15+0200\n"
 "PO-Revision-Date: 2019-09-15 21:18+0000\n"
 "Last-Translator: Thierry Crozat <criezy@scummvm.org>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
@@ -2662,10 +2662,6 @@ msgstr "Ou sélectionnez un répertoire (fonctionne uniquement avec Chrome) :"
 msgid "Index of "
 msgstr "Index de "
 
-#: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:75
-msgid "Loading..."
-msgstr "Chargement..."
-
 #: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:76
 msgid "Error occurred"
 msgstr "Une erreur s'est produite"
@@ -2688,9 +2684,9 @@ msgstr ""
 "ScummVM n'a pas pu lister le contenu du répertoire que vous avez spécifié."
 
 #: backends/networking/sdl_net/handlers/filespagehandler.cpp:232
-#, c-format
-msgid "Index of %s"
-msgstr "Index de %s"
+#, fuzzy
+msgid "Index of"
+msgstr "Index de "
 
 #: backends/networking/sdl_net/handlers/indexpagehandler.cpp:42
 msgid "This is a local webserver index page."
@@ -2708,7 +2704,7 @@ msgstr "Le répertoire parent n'existe pas !"
 msgid "Can't upload into a file!"
 msgstr "Impossible d'envoyer vers un fichier !"
 
-#: backends/networking/sdl_net/handlerutils.cpp:197
+#: backends/networking/sdl_net/handlerutils.cpp:213
 msgid "Back to the files manager"
 msgstr "Retour au gestionnaire de fichiers"
 
@@ -5775,6 +5771,12 @@ msgstr ""
 "Ce fichier de sauvegarde est en version %u, mais ce moteur ne supporte que "
 "les versions %d ou inférieures. Vous devez utiliser une version plus récente "
 "de ScummVM pour pouvoir charger cette sauvegarde."
+
+#~ msgid "Loading..."
+#~ msgstr "Chargement..."
+
+#~ msgid "Index of %s"
+#~ msgstr "Index de %s"
 
 #~ msgid "Color mode"
 #~ msgstr "Mode Couleurs"

@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2019-09-18 22:04+0200\n"
+"POT-Creation-Date: 2019-09-21 21:15+0200\n"
 "PO-Revision-Date: 2019-09-18 00:55+0000\n"
 "Last-Translator: George Kormendi <grubycza@hotmail.com>\n"
 "Language-Team: Hungarian <https://translations.scummvm.org/projects/scummvm/"
@@ -2622,10 +2622,6 @@ msgstr "Vagy válassz egy mappát (csak Chrome-ban mûködik):"
 msgid "Index of "
 msgstr "Indexe "
 
-#: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:75
-msgid "Loading..."
-msgstr "Betöltés..."
-
 #: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:76
 msgid "Error occurred"
 msgstr "Hiba történt"
@@ -2647,9 +2643,9 @@ msgid "ScummVM couldn't list the directory you specified."
 msgstr "A ScummVM nem tudta listázni a megadott könyvtárat."
 
 #: backends/networking/sdl_net/handlers/filespagehandler.cpp:232
-#, c-format
-msgid "Index of %s"
-msgstr "%s indexe"
+#, fuzzy
+msgid "Index of"
+msgstr "Indexe "
 
 #: backends/networking/sdl_net/handlers/indexpagehandler.cpp:42
 msgid "This is a local webserver index page."
@@ -2667,7 +2663,7 @@ msgstr "A szülõ könyvtár nem létezik!"
 msgid "Can't upload into a file!"
 msgstr "Nem lehet fájlba feltölteni!"
 
-#: backends/networking/sdl_net/handlerutils.cpp:197
+#: backends/networking/sdl_net/handlerutils.cpp:213
 msgid "Back to the files manager"
 msgstr "Vissza a Fájlkezelõhöz"
 
@@ -5683,6 +5679,12 @@ msgstr ""
 "Ez a mentett állás %u verziót használ, de ez a motor csak %d verzió felettit "
 "támogat. Szükséged van a motor frissített verziójára, hogy használd a "
 "mentett játékállást."
+
+#~ msgid "Loading..."
+#~ msgstr "Betöltés..."
+
+#~ msgid "Index of %s"
+#~ msgstr "%s indexe"
 
 #~ msgid "Color mode"
 #~ msgstr "Szines mód"

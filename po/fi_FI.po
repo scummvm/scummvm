@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2019-09-18 22:04+0200\n"
+"POT-Creation-Date: 2019-09-21 21:15+0200\n"
 "PO-Revision-Date: 2019-09-18 00:55+0000\n"
 "Last-Translator: jepael <kermespersialainen@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
@@ -2631,10 +2631,6 @@ msgstr "Tai valitse hakemisto (toimii vain Chromessa):"
 msgid "Index of "
 msgstr "Hakemistolista "
 
-#: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:75
-msgid "Loading..."
-msgstr "Ladataan..."
-
 #: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:76
 msgid "Error occurred"
 msgstr "Virhe havaittu"
@@ -2656,9 +2652,9 @@ msgid "ScummVM couldn't list the directory you specified."
 msgstr "ScummVM ei voi avata kyseistä hakemistoa."
 
 #: backends/networking/sdl_net/handlers/filespagehandler.cpp:232
-#, c-format
-msgid "Index of %s"
-msgstr "Hakemiston %s sisältö"
+#, fuzzy
+msgid "Index of"
+msgstr "Hakemistolista "
 
 #: backends/networking/sdl_net/handlers/indexpagehandler.cpp:42
 msgid "This is a local webserver index page."
@@ -2676,7 +2672,7 @@ msgstr "Päähakemistoa ei löydy!"
 msgid "Can't upload into a file!"
 msgstr "Tiedostoon ei voi lähettää!"
 
-#: backends/networking/sdl_net/handlerutils.cpp:197
+#: backends/networking/sdl_net/handlerutils.cpp:213
 msgid "Back to the files manager"
 msgstr "Takaisin lataustenhallintadialogiin"
 
@@ -5699,6 +5695,12 @@ msgstr ""
 "Tämä pelitallennus käyttää versiota %u, mutta tämä pelimoottorin tuki on "
 "vain versioon %d asti. Tarvitset päivitetyn version tästä pelimoottorista "
 "käyttääksesi tätä pelitallennusta."
+
+#~ msgid "Loading..."
+#~ msgstr "Ladataan..."
+
+#~ msgid "Index of %s"
+#~ msgstr "Hakemiston %s sisältö"
 
 #~ msgid "Color mode"
 #~ msgstr "Väritila"

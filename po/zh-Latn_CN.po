@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2019-09-18 22:04+0200\n"
+"POT-Creation-Date: 2019-09-21 21:15+0200\n"
 "PO-Revision-Date: 2018-08-06 21:28+0000\n"
 "Last-Translator: monkeymadness <ihave13redsox@hotmail.com>\n"
 "Language-Team: Chinese <https://translations.scummvm.org/projects/scummvm/"
@@ -2651,11 +2651,6 @@ msgstr "Xuanze Jiemian Zhuti de Mulu"
 msgid "Index of "
 msgstr ""
 
-#: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:75
-#, fuzzy
-msgid "Loading..."
-msgstr "Zairu youxi..."
-
 #: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:76
 msgid "Error occurred"
 msgstr ""
@@ -2680,8 +2675,7 @@ msgid "ScummVM couldn't list the directory you specified."
 msgstr "ScummVM Wufa Dakai Zhiding Mulu!"
 
 #: backends/networking/sdl_net/handlers/filespagehandler.cpp:232
-#, c-format
-msgid "Index of %s"
+msgid "Index of"
 msgstr ""
 
 #: backends/networking/sdl_net/handlers/indexpagehandler.cpp:42
@@ -2701,7 +2695,7 @@ msgstr ""
 msgid "Can't upload into a file!"
 msgstr "Lujing Bushi Wenjian"
 
-#: backends/networking/sdl_net/handlerutils.cpp:197
+#: backends/networking/sdl_net/handlerutils.cpp:213
 msgid "Back to the files manager"
 msgstr ""
 
@@ -5624,6 +5618,10 @@ msgid ""
 "This saved game uses version %u, but this engine only supports up to version "
 "%d. You will need an updated version of the engine to use this saved game."
 msgstr ""
+
+#, fuzzy
+#~ msgid "Loading..."
+#~ msgstr "Zairu youxi..."
 
 #, fuzzy
 #~ msgid "Color mode"

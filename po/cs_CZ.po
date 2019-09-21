@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.7.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2019-09-18 22:04+0200\n"
+"POT-Creation-Date: 2019-09-21 21:15+0200\n"
 "PO-Revision-Date: 2018-04-18 10:09+0000\n"
 "Last-Translator: Adrian Frühwirth <bonki@scummvm.org>\n"
 "Language-Team: Czech <https://translations.scummvm.org/projects/scummvm/"
@@ -2674,11 +2674,6 @@ msgstr "Vyberte adresáø pro vhledy GUI"
 msgid "Index of "
 msgstr ""
 
-#: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:75
-#, fuzzy
-msgid "Loading..."
-msgstr "Nahrávání hry..."
-
 #: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:76
 msgid "Error occurred"
 msgstr ""
@@ -2703,8 +2698,7 @@ msgid "ScummVM couldn't list the directory you specified."
 msgstr "ScummVM nemá k tomuto adresáøi pøístup!"
 
 #: backends/networking/sdl_net/handlers/filespagehandler.cpp:232
-#, c-format
-msgid "Index of %s"
+msgid "Index of"
 msgstr ""
 
 #: backends/networking/sdl_net/handlers/indexpagehandler.cpp:42
@@ -2725,7 +2719,7 @@ msgstr ""
 msgid "Can't upload into a file!"
 msgstr "Cesta není soubor"
 
-#: backends/networking/sdl_net/handlerutils.cpp:197
+#: backends/networking/sdl_net/handlerutils.cpp:213
 msgid "Back to the files manager"
 msgstr ""
 
@@ -5685,6 +5679,10 @@ msgid ""
 msgstr ""
 "Tato ulo¾ená hra je z verze %u, ale nejvy¹¹í verze, které toto jádro "
 "podporuje, je %d. Abyste tuto hru naèetli, musíte získat novìj¹í verzi jádra."
+
+#, fuzzy
+#~ msgid "Loading..."
+#~ msgstr "Nahrávání hry..."
 
 #~ msgid "Color mode"
 #~ msgstr "Barevný re¾im"
