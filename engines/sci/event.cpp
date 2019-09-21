@@ -323,6 +323,16 @@ SciEvent EventManager::getScummVMEvent() {
 				break;
 			}
 		}
+
+		if (g_sci->getLanguage() == Common::RU_RUS) {
+			// Convert UTF16 to CP866
+			if (input.character >= 0x400 && input.character <= 0x4ff) {
+				if (input.character >= 0x440)
+					input.character = input.character - 0x410 + 0xb0;
+				else
+					input.character = input.character - 0x410 + 0x80;
+			}
+		}
 	}
 
 	// TODO: Leaky abstractions from SDL should not be handled in game engines!
