@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2019-09-21 21:15+0200\n"
-"PO-Revision-Date: 2019-09-18 00:55+0000\n"
+"PO-Revision-Date: 2019-09-22 07:54+0000\n"
 "Last-Translator: jepael <kermespersialainen@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fi/>\n"
@@ -2652,9 +2652,8 @@ msgid "ScummVM couldn't list the directory you specified."
 msgstr "ScummVM ei voi avata kyseistä hakemistoa."
 
 #: backends/networking/sdl_net/handlers/filespagehandler.cpp:232
-#, fuzzy
 msgid "Index of"
-msgstr "Hakemistolista "
+msgstr "Hakemistolista"
 
 #: backends/networking/sdl_net/handlers/indexpagehandler.cpp:42
 msgid "This is a local webserver index page."
