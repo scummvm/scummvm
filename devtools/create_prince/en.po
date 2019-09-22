@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: Prince\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2018-04-17 19:53+0100\n"
-"PO-Revision-Date: 2019-09-22 13:46+0000\n"
+"PO-Revision-Date: 2019-09-28 17:54+0000\n"
 "Last-Translator: Lafazar Gendibal <schaffluk@bluewin.ch>\n"
 "Language-Team: English <https://translations.scummvm.org/projects/prince/"
 "prince/en/>\n"
@@ -2579,7 +2579,7 @@ msgstr "OTHER: How so?..."
 #: dialog0049.txt:100702
 msgid "HERO: Er, znaczy się, wypijam wywar i już|mi się każda podoba."
 msgstr ""
-"HERO: So... that means that when I drink this I will|every woman will become "
+"HERO: So... that means that when I drink this|every woman will become "
 "attractive to me."
 
 #: dialog0049.txt:100703
@@ -2592,48 +2592,54 @@ msgstr "P#HERO: Good question."
 
 #: dialog0049.txt:100705
 msgid "P#HERO: Coś mi tak chyba w duszy gra."
-msgstr "P#HERO: I think theres something going on|in my soul."
+msgstr "P#HERO: I think there's something going on|in my soul."
 
 #: dialog0049.txt:100706
 msgid "HERO: A może mam miękkie serce i nie|potrafię odmówić nawet brzydulom?"
 msgstr ""
-"HERO: Maybe I have a soft heart|and can't refuse myself|to ugly wenches."
+"HERO: Maybe I have a soft heart|and can't refuse myself|to ugly wenches?"
 
 #: dialog0049.txt:100707
 msgid "OTHER: Ech, ta dzisiejsza szlachetna|młodzież...#B0"
-msgstr ""
+msgstr "OTHER: Ugh, the noble youth of today...#B0"
 
 #: dialog0049.txt:100801
 msgid "OTHER: Nawet gdybym chciał, a nie chcę, to|niestety i tak bym nie mógł."
 msgstr ""
+"OTHER: Even if I wanted, which I don't,|I unfortunately could not in any "
+"case."
 
 #: dialog0049.txt:100802
 msgid "OTHER: Ale wiń tylko siebie, bo od kiedy|wypaplałeś swojemu giermkowi, że|główny składnik to lubczyk..."
 msgstr ""
+"OTHER: But it is your own fault,|since you yourself told your fool|that the "
+"most important ingredient is lovage..."
 
 #: dialog0049.txt:100803
 msgid "OTHER: ...to okoliczni chłopi zdewastowali|w jego poszukiwaniu pół lasu."
 msgstr ""
+"OTHER: ...the local farmers have uprooted|half the forest while searching "
+"for this plant."
 
 #: dialog0049.txt:100804
 msgid "OTHER: W skrócie: nie mam półfabrykatów."
-msgstr "OTHER: In short: I have no semi-finished products."
+msgstr "OTHER: In short: I have no half-finished products anymore."
 
 #: dialog0049.txt:100805
 msgid "OTHER: I nie chcę mieć."
-msgstr "OTHER: And do not want to have."
+msgstr "OTHER: And I don' want any."
 
 #: dialog0049.txt:100806
 msgid "OTHER: Czas już dorośleć, mój książę.#B0"
-msgstr ""
+msgstr "OTHER: It's high time, my prince, to grow up.#B0"
 
 #: dialog0050.txt:1
 msgid "HERO: Czy mogę ci jakoś pomóc?..."
-msgstr ""
+msgstr "HERO: Can I help you in any way?..."
 
 #: dialog0051.txt:1
 msgid "HERO: Wygląda na to, że mam nowego przyjaciela!"
-msgstr ""
+msgstr "HERO: Looks like I have a new friend!"
 
 #: dialog0052.txt:101
 msgid "$0: Dużo jesz..."
@@ -2641,15 +2647,15 @@ msgstr "$0: You eat a lot..."
 
 #: dialog0052.txt:102
 msgid "$4: Skromny mnich i posiłek w drogiej tawernie?"
-msgstr ""
+msgstr "$4: A modest monk eats in your expensive tavern?"
 
 #: dialog0052.txt:103
 msgid "$1: Co to za bojowy krasnolud obok?"
-msgstr ""
+msgstr "$1: Who is this combative dwarf over there?"
 
 #: dialog0052.txt:104
 msgid "$2: Nie widziałem w miasteczku świątyni."
-msgstr ""
+msgstr "$2: I did not see a temple in the town."
 
 #: dialog0052.txt:105
 msgid "$3: Smacznego."
@@ -2658,22 +2664,26 @@ msgstr "$3: Enjoy your meal."
 #: dialog0052.txt:100001
 msgid "OTHER: Za trzy dni wyruszam do jednej z południowych|krain, jako misjonarz."
 msgstr ""
+"OTHER: In three days I journey as a missionary|to one of the southern "
+"countries."
 
 #: dialog0052.txt:100002
 msgid "OTHER: Słyszałem, że ludzie tam jedzą tak dużo,|że każdy chudzielec wydaje im się|podejrzany."
 msgstr ""
+"OTHER: I heard people eat so much there,|that every skinny person|seems "
+"suspicious."
 
 #: dialog0052.txt:100003
 msgid "OTHER: I nie chcą z nim rozmawiać."
-msgstr ""
+msgstr "OTHER: And then they don't want to talk to him."
 
 #: dialog0052.txt:100004
 msgid "OTHER: Więc wybrałem najprostszy sposób zdobycia|ich zaufania."
-msgstr ""
+msgstr "OTHER: So I chose the easiest way|to gain their trust."
 
 #: dialog0052.txt:100005
 msgid "OTHER: Jem."
-msgstr "OTHER: I do eat."
+msgstr "OTHER: I eat."
 
 #: dialog0052.txt:100006
 msgid "HERO: Ach... Rozumiem..."
@@ -2682,58 +2692,62 @@ msgstr "HERO: Ah... I understand..."
 #: dialog0052.txt:100007
 msgid "P#HERO: Ale co by się stało, gdybyś podróżował|do krainy, gdzie ludzie są dwa razy|niżsi?"
 msgstr ""
+"P#HERO: But what would happen,|if you traveled to a country,|where people "
+"are only half as big?"
 
 #: dialog0052.txt:100008
 msgid "OTHER: Zamocowałbym kółka w kolanach."
-msgstr ""
+msgstr "OTHER: Then I would attach little wheels to my knees."
 
 #: dialog0052.txt:100009
 msgid "P#HERO: A dwa razy wyżsi?"
-msgstr ""
+msgstr "P#HERO: And what if they are double as big?"
 
 #: dialog0052.txt:100010
 msgid "OTHER: Chodziłbym na szczudłach."
-msgstr ""
+msgstr "OTHER: Then I would walk on stilts."
 
 #: dialog0052.txt:100011
 msgid "P#HERO: A dwa razy głupsi?"
-msgstr ""
+msgstr "P#HERO: And what if they are twice as stupid?"
 
 #: dialog0052.txt:100012
 msgid "OTHER: Posłano by ciebie zamiast mnie."
-msgstr ""
+msgstr "OTHER: Then I'd send|you instead of me."
 
 #: dialog0052.txt:100013
 msgid "P#HERO: Tak tylko pytałem."
-msgstr ""
+msgstr "P#HERO: I was just asking."
 
 #: dialog0052.txt:100014
 msgid "OTHER: Nie ma problemu.#E4#B0"
-msgstr ""
+msgstr "OTHER: No problem.#E4#B0"
 
 #: dialog0052.txt:100101
 msgid "OTHER: Ech, w sumie niegroźny."
-msgstr ""
+msgstr "OTHER: Eh, he's harmless."
 
 #: dialog0052.txt:100102
 msgid "OTHER: Biedne stworzenie, jest niezłym|wojownikiem, ale nie ma gdzie|sprawdzać swoich sił."
 msgstr ""
+"OTHER: A poor creature. He is an|excellent warrior, but he has no|one to "
+"test his strength against."
 
 #: dialog0052.txt:100103
 msgid "OTHER: Więc uznał prowokację za sposób|na życie."
-msgstr ""
+msgstr "OTHER: So he made provocation|his life's philosophy."
 
 #: dialog0052.txt:100104
 msgid "OTHER: Ale w głębi duszy jest tylko|dużym dzieckiem."
-msgstr ""
+msgstr "OTHER: But deep down he|is just a big child."
 
 #: dialog0052.txt:100105
 msgid "OTHER: Cieszy go byle błyskotka, jak to|krasnoluda.#B0"
-msgstr ""
+msgstr "OTHER: He loves shiny trinkets,|as all dwarves do.#B0"
 
 #: dialog0052.txt:100201
 msgid "OTHER: Jestem już w drodze, zatrzymałem się tu|tylko na kilka miesięcy."
-msgstr ""
+msgstr "OTHER: I'm just passing through,|stopping here for only a few months."
 
 #: dialog0052.txt:100202
 msgid "OTHER: Niedaleko jest świątynia. Ponoć dawno temu|oddawano tam hołdy jakiemuś tajemniczemu|i dziś zapomnianemu bóstwu."
