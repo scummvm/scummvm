@@ -87,6 +87,8 @@ public:
 
 	uint somethingTextAndSpeechAndAnimRelated(Actor *actor,int16 sequenceId1,int16 sequenceId2,uint32 textIndex, uint16 param_5);
 	void FUN_8001a7c4_clearDialogBoxMaybe(); //clear box maybe?
+
+	void playDialogAudioDontWait(uint32 textIndex);
 private:
 	void FUN_8001a7c4(uint32 x1, uint32 y1, uint32 x2, uint32 y2); //clear box maybe?
 	void copyTextToBuffer(uint16 *destBuffer, byte *src, uint32 destBufferLength);

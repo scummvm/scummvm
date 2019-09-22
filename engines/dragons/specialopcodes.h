@@ -77,7 +77,8 @@ protected:
 
 	void spcUnkC();
 	void spcFadeScreen(); // 0xd
-
+	void spcLadyOfTheLakeCapturedSceneLogic(); // 0xe, 0xf
+	void spcStopLadyOfTheLakeCapturedSceneLogic(); // 0x10
 	void spc11ShakeScreen(); //0x11
 	void spcHandleInventionBookTransition(); // 0x12
 	void spcUnk13InventionBookCloseRelated(); //0x13
@@ -86,6 +87,7 @@ protected:
 
 	void spcKnightPoolReflectionLogic(); //0x17
 
+	void spcWalkOnStilts(); //0x19
 	void spcActivatePizzaMakerActor(); // 0x1a
 	void spcDeactivatePizzaMakerActor(); // 0x1b
 	void spcPizzaMakerActorStopWorking(); // 0x1c
@@ -94,7 +96,7 @@ protected:
 	void spcClearEngineFlag0x20000(); // 0x22
 	void spcSetEngineFlag0x200000(); // 0x23
 	void spcClearEngineFlag0x200000(); // 0x24
-
+	void spcFlickerSetPriority2(); // 0x25
 	void spcMenInMinesSceneLogic(); //0x26
 	void spcStopMenInMinesSceneLogic(); //0x27
 	void spcMonksAtBarSceneLogic(); //0x28
@@ -131,7 +133,7 @@ protected:
 
 	void spcKnightsSavedCastleCutScene(); //0x4b
 	void spcFlickerReturnsCutScene(); // 0x4c
-
+	void spcKnightsSavedAgainCutScene(); //0c4d
 	void spcUnk4e();
 	void spcUnk4f();
 	void spcCloseInventory(); // 0x50
@@ -157,13 +159,17 @@ protected:
 	void spcCastleGateSceneLogic(); // 0x6a
 	void spcTransitionToMap(); // 0x6b
 	void spcTransitionFromMap(); // 0x6c
+	void spcCaveOfDilemmaSceneLogic(); // 0x6d
+
+	void spcLoadLadyOfTheLakeActor(); //0x70
 
 	void spcJesterInLibrarySceneLogic(); // 0x77
 
 	void spcBlackDragonDialogForCamelhot(); // 0x7a
 	void spcSetCameraXToZero(); //0x7b
 	void spcDiamondIntroSequenceLogic(); //0x7c
-
+	void spcLoadFileS10a6act(); //0x7d
+	void spcLoadFileS10a7act(); //0x7e
 	void spcFlickerPutOnStGeorgeArmor(); //0x7f
 	void spcUnk80FlickerArmorOn(); //0x80
 	void spcShakeScreenSceneLogic(); //0x81
@@ -189,6 +195,8 @@ void pizzaUpdateFunction();
 void tableBasedSceneUpdateFunction();
 void castleBuildingBlackDragon2UpdateFunction();
 void shakeScreenUpdateFunction();
+void ladyOfTheLakeCapturedUpdateFunction();
+void caveOfDilemmaUpdateFunction();
 
 } // End of namespace Dragons
 

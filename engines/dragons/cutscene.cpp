@@ -676,5 +676,9 @@ void CutScene::flickerReturnsCutScene() {
 	//TODO
 }
 
+void CutScene::knightsSavedAgain() {
+	//TODO
+}
+
 
 } // End of namespace Dragons

@@ -1099,4 +1099,8 @@ void Talk::FUN_8001a7c4_clearDialogBoxMaybe() {
 			(uint)DAT_8008e848_dialogBox_x2,(uint)DAT_8008e874_dialogBox_y2);
 }
 
+void Talk::playDialogAudioDontWait(uint32 textIndex) {
+	_vm->_sound->playSpeech(textIndex);
+}
+
 } // End of namespace Dragons
