@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2019-09-21 21:15+0200\n"
+"POT-Creation-Date: 2019-09-22 23:17+0200\n"
 "PO-Revision-Date: 2019-09-14 12:05+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
@@ -65,7 +65,7 @@ msgstr "Вгору"
 #: gui/saveload-dialog.cpp:389 gui/saveload-dialog.cpp:451
 #: gui/saveload-dialog.cpp:746 gui/saveload-dialog.cpp:1140
 #: gui/themebrowser.cpp:55 gui/unknown-game-dialog.cpp:49
-#: engines/engine.cpp:556 backends/events/default/default-events.cpp:190
+#: engines/engine.cpp:555 backends/events/default/default-events.cpp:190
 #: backends/events/default/default-events.cpp:212
 #: backends/platform/wii/options.cpp:48 engines/drascula/saveload.cpp:49
 #: engines/mohawk/myst_stacks/menu.cpp:284
@@ -164,7 +164,7 @@ msgstr ""
 #: gui/downloaddialog.cpp:147 gui/editgamedialog.cpp:300
 #: gui/fluidsynth-dialog.cpp:154 gui/KeysDialog.cpp:42 gui/launcher.cpp:504
 #: gui/launcher.cpp:508 gui/massadd.cpp:89 gui/options.cpp:1827
-#: gui/saveload-dialog.cpp:1141 engines/engine.cpp:467 engines/engine.cpp:478
+#: gui/saveload-dialog.cpp:1141 engines/engine.cpp:466 engines/engine.cpp:477
 #: backends/platform/wii/options.cpp:47
 #: backends/platform/wince/CELauncherDialog.cpp:54
 #: engines/agos/animation.cpp:559 engines/drascula/saveload.cpp:49
@@ -2066,38 +2066,38 @@ msgstr "Ві~д~міна"
 msgid "~K~eys"
 msgstr "~К~лавіші"
 
-#: engines/engine.cpp:312
+#: engines/engine.cpp:311
 #, c-format
 msgid "Could not switch to resolution '%dx%d'."
 msgstr "Не вдалося переключитися до відеорежиму  '%dx%d'."
 
-#: engines/engine.cpp:321
+#: engines/engine.cpp:320
 msgid "Could not initialize color format."
 msgstr "Не можу налаштувати формат кольору."
 
-#: engines/engine.cpp:330
+#: engines/engine.cpp:329
 #, c-format
 msgid "Could not switch to video mode '%s'."
 msgstr "Не вдалося переключитися до відеорежиму '%s'."
 
-#: engines/engine.cpp:338
+#: engines/engine.cpp:337
 #, c-format
 msgid "Could not switch to stretch mode '%s'."
 msgstr "Не вдалося переключитися до відеорежиму з розтягуванням  '%s'."
 
-#: engines/engine.cpp:345
+#: engines/engine.cpp:344
 msgid "Could not apply aspect ratio setting."
 msgstr "Не вдалося застосувати корекцію співвідношення сторін."
 
-#: engines/engine.cpp:350
+#: engines/engine.cpp:349
 msgid "Could not apply fullscreen setting."
 msgstr "Не вдалося застосувати повноекранний режим."
 
-#: engines/engine.cpp:355
+#: engines/engine.cpp:354
 msgid "Could not apply filtering setting."
 msgstr "Не вдалося застосувати режим фільтрування."
 
-#: engines/engine.cpp:463
+#: engines/engine.cpp:462
 msgid ""
 "You appear to be playing this game directly\n"
 "from the CD. This is known to cause problems,\n"
@@ -2111,7 +2111,7 @@ msgstr ""
 "гри на жорсткий диск.\n"
 "Дивіться файл README для подальших інструкцій."
 
-#: engines/engine.cpp:474
+#: engines/engine.cpp:473
 msgid ""
 "This game has audio tracks in its disk. These\n"
 "tracks need to be ripped from the disk using\n"
@@ -2125,7 +2125,7 @@ msgstr ""
 "того, щоб можна було слухати музику у грі.\n"
 "Дивіться файл README для подальших інструкцій."
 
-#: engines/engine.cpp:537
+#: engines/engine.cpp:536
 #, c-format
 msgid ""
 "Failed to load saved game (%s)! Please consult the README for basic "
@@ -2134,7 +2134,7 @@ msgstr ""
 "Не вдалося завантажити гру (%s)! . Будь-ласка, дивіться файл README для "
 "основної інформації, а також інструкцій, як отримати подальшу допомогу."
 
-#: engines/engine.cpp:553
+#: engines/engine.cpp:552
 msgid ""
 "WARNING: The game you are about to start is not yet fully supported by "
 "ScummVM. As such, it is likely to be unstable, and any saved game you make "
@@ -2144,7 +2144,7 @@ msgstr ""
 "ScummVM. Скорше за все вона не буде працювати стабільно, і збережені ігри, "
 "які ви зробите, можуть не працювати у подальших версіях ScummVM."
 
-#: engines/engine.cpp:556 engines/wintermute/wintermute.cpp:165
+#: engines/engine.cpp:555 engines/wintermute/wintermute.cpp:165
 msgid "Start anyway"
 msgstr "Все одно запустити"
 
