@@ -50,7 +50,7 @@
 namespace Queen {
 
 QueenEngine::QueenEngine(OSystem *syst)
-	: Engine(syst), _debugger(0), randomizer("queen") {
+	: Engine(syst), _gameStarted(false), _debugger(0), randomizer("queen") {
 }
 
 QueenEngine::~QueenEngine() {
@@ -173,7 +173,7 @@ void QueenEngine::update(bool checkPlayerInput) {
 }
 
 bool QueenEngine::canLoadOrSave() const {
-	return !_input->cutawayRunning() && !(_resource->isDemo() || _resource->isInterview());
+	return !_input->cutawayRunning() && !(_resource->isDemo() || _resource->isInterview()) && _gameStarted;
 }
 
 bool QueenEngine::canLoadGameStateCurrently() {
@@ -368,6 +368,9 @@ Common::Error QueenEngine::run() {
 			_logic->currentRoom(_logic->newRoom());
 			_logic->changeRoom();
 			_display->fullscreen(false);
+			// From this point onwards it is safe to use the load/save
+			// menu, so consider game to be 'started'
+			_gameStarted = true;
 			if (_logic->currentRoom() == _logic->newRoom()) {
 				_logic->newRoom(0);
 			}
