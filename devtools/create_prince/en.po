@@ -9,7 +9,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2018-04-17 19:53+0100\n"
 "PO-Revision-Date: 2019-09-22 13:46+0000\n"
-"Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
+"Last-Translator: Lafazar Gendibal <schaffluk@bluewin.ch>\n"
 "Language-Team: English <https://translations.scummvm.org/projects/prince/"
 "prince/en/>\n"
 "Language: en\n"
@@ -2597,6 +2597,7 @@ msgstr "P#HERO: I think theres something going on|in my soul."
 #: dialog0049.txt:100706
 msgid "HERO: A może mam miękkie serce i nie|potrafię odmówić nawet brzydulom?"
 msgstr ""
+"HERO: Maybe I have a soft heart|and can't refuse myself|to ugly wenches."
 
 #: dialog0049.txt:100707
 msgid "OTHER: Ech, ta dzisiejsza szlachetna|młodzież...#B0"
