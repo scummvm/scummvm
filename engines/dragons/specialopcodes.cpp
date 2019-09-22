@@ -20,6 +20,7 @@
  *
  */
 
+#include "dragons/actorresource.h"
 #include "dragons/cursor.h"
 #include "dragons/cutscene.h"
 #include "dragons/dragons.h"
@@ -79,7 +80,9 @@ void SpecialOpcodes::initOpcodes() {
 	OPCODE(0xb, clearSceneUpdateFunction);
 	OPCODE(0xc, spcUnkC);
 	OPCODE(0xd, spcFadeScreen);
-
+	OPCODE(0xe, spcLadyOfTheLakeCapturedSceneLogic);
+	OPCODE(0xf, spcLadyOfTheLakeCapturedSceneLogic);
+	OPCODE(0x10, spcStopLadyOfTheLakeCapturedSceneLogic);
 	OPCODE(0x11, spc11ShakeScreen);
 	OPCODE(0x12, spcHandleInventionBookTransition);
 	OPCODE(0x13, spcUnk13InventionBookCloseRelated);
@@ -88,7 +91,7 @@ void SpecialOpcodes::initOpcodes() {
 
 	OPCODE(0x17, spcKnightPoolReflectionLogic);
 	OPCODE(0x18, clearSceneUpdateFunction);
-
+	OPCODE(0x19, spcWalkOnStilts);
 	OPCODE(0x1a, spcActivatePizzaMakerActor);
 	OPCODE(0x1b, spcDeactivatePizzaMakerActor);
 	OPCODE(0x1c, spcPizzaMakerActorStopWorking);
@@ -97,7 +100,7 @@ void SpecialOpcodes::initOpcodes() {
 	OPCODE(0x22, spcClearEngineFlag0x20000);
 	OPCODE(0x23, spcSetEngineFlag0x200000);
 	OPCODE(0x24, spcClearEngineFlag0x200000);
-
+	OPCODE(0x25, spcFlickerSetPriority2);
 	OPCODE(0x26, spcMenInMinesSceneLogic);
 	OPCODE(0x27, spcStopMenInMinesSceneLogic);
 	OPCODE(0x28, spcMonksAtBarSceneLogic);
@@ -134,7 +137,7 @@ void SpecialOpcodes::initOpcodes() {
 
 	OPCODE(0x4b, spcKnightsSavedCastleCutScene);
 	OPCODE(0x4c, spcFlickerReturnsCutScene);
-
+	OPCODE(0x4d, spcKnightsSavedAgainCutScene);
 	OPCODE(0x4e, spcUnk4e);
 	OPCODE(0x4f, spcUnk4f);
 	OPCODE(0x50, spcCloseInventory);
@@ -160,13 +163,18 @@ void SpecialOpcodes::initOpcodes() {
 	OPCODE(0x6a, spcCastleGateSceneLogic);
 	OPCODE(0x6b, spcTransitionToMap);
 	OPCODE(0x6c, spcTransitionFromMap);
+	OPCODE(0x6d, spcCaveOfDilemmaSceneLogic);
+
+	OPCODE(0x70, spcLoadLadyOfTheLakeActor);
 
 	OPCODE(0x77, spcJesterInLibrarySceneLogic);
 
+	OPCODE(0x79, spcSetUnkFlag2);
 	OPCODE(0x7a, spcBlackDragonDialogForCamelhot);
 	OPCODE(0x7b, spcSetCameraXToZero);
 	OPCODE(0x7c, spcDiamondIntroSequenceLogic);
-
+	OPCODE(0x7d, spcLoadFileS10a6act);
+	OPCODE(0x7e, spcLoadFileS10a7act);
 	OPCODE(0x7f, spcFlickerPutOnStGeorgeArmor);
 	OPCODE(0x80, spcUnk80FlickerArmorOn);
 	OPCODE(0x81, spcShakeScreenSceneLogic);
@@ -236,6 +244,24 @@ void SpecialOpcodes::spcFadeScreen() {
 	//TODO call_fade_related_1f();
 }
 
+void SpecialOpcodes::spcLadyOfTheLakeCapturedSceneLogic() {
+	//TODO
+	//DAT_80083148 = 0;
+	//DAT_80083154 = 0;
+	_vm->setSceneUpdateFunction(ladyOfTheLakeCapturedUpdateFunction);
+}
+
+void SpecialOpcodes::spcStopLadyOfTheLakeCapturedSceneLogic() {
+	_vm->setSceneUpdateFunction(NULL);
+// TODO
+//	PauseCDMusic();
+//	if ((DAT_80083148 != 0) || (DAT_80083154 != 0)) {
+//		FUN_8001ac5c((uint)DAT_80083148,(uint)DAT_80083150,(uint)DAT_80083154,(uint)DAT_80083158);
+//	}
+//	DAT_80083148 = 0;
+//	DAT_80083154 = 0;
+}
+
 void SpecialOpcodes::spc11ShakeScreen() {
 	//TODO
 //	iVar18 = 1;
@@ -287,6 +313,37 @@ void SpecialOpcodes::spcKnightPoolReflectionLogic() {
 	//TODO
 }
 
+void SpecialOpcodes::spcWalkOnStilts() {
+	//TODO
+	ushort uVar1;
+	bool bVar2;
+	void *pvVar3;
+	uint actorId;
+	uint uVar4;
+
+	Actor *actor = _vm->_dragonINIResource->getRecord(0x2a0)->actor;
+	Actor *actor1 = _vm->_dragonINIResource->getRecord(0x2a9)->actor;
+
+	actor->field_2c = actor->field_2c / 3;
+	actor->field_30 = actor->field_30 / 3;
+	bVar2 = false;
+	while (actor->isFlagSet(ACTOR_FLAG_10)) {
+		//pvVar3 = actor->frame_pointer_maybe;
+		if (actor->frame->field_c == 0) { //*(short *)((int)pvVar3 + 0xc) == 0) {
+			bVar2 = false;
+		}
+		else {
+			if (((!bVar2) && (0x6a < actor->y_pos)) && (actor->y_pos < 0x96)) {
+				bVar2 = true;
+				actor1->x_pos = actor->x_pos - READ_LE_INT16(actor->frame->frameDataOffset); //*(short *)((int)pvVar3 + 0xe);
+				actor1->y_pos = actor->y_pos - READ_LE_INT16(actor->frame->frameDataOffset + 2); //*(short *)((int)pvVar3 + 0x10);
+				actor1->updateSequence(9);
+			}
+		}
+		_vm->waitForFrames(1);
+	}
+}
+
 void SpecialOpcodes::spcActivatePizzaMakerActor() {
 	_vm->setSceneUpdateFunction(pizzaUpdateFunction);
 }
@@ -316,6 +373,10 @@ void SpecialOpcodes::spcSetEngineFlag0x200000() {
 
 void SpecialOpcodes::spcClearEngineFlag0x200000() {
 	_vm->clearFlags(ENGINE_FLAG_200000);
+}
+
+void SpecialOpcodes::spcFlickerSetPriority2() {
+	_vm->_dragonINIResource->getFlickerRecord()->actor->priorityLayer = 2;
 }
 
 void SpecialOpcodes::spcMenInMinesSceneLogic() {
@@ -674,6 +735,14 @@ void SpecialOpcodes::spcDiamondIntroSequenceLogic() {
 	delete cutScene;
 }
 
+void SpecialOpcodes::spcLoadFileS10a6act() {
+	//TODO is this needed?
+}
+
+void SpecialOpcodes::spcLoadFileS10a7act() {
+	//TODO is this needed?
+}
+
 void SpecialOpcodes::spcFlickerPutOnStGeorgeArmor() {
 	//TODO here.....
 }
@@ -719,6 +788,12 @@ void SpecialOpcodes::spcFlickerReturnsCutScene() {
 	delete cutScene;
 }
 
+void SpecialOpcodes::spcKnightsSavedAgainCutScene() {
+	CutScene *cutScene = new CutScene(_vm);
+	cutScene->knightsSavedAgain();
+	delete cutScene;
+}
+
 void SpecialOpcodes::spcTransitionToMap() {
 	//TODO map transition
 //	DAT_8006a422 = 0;
@@ -731,6 +806,29 @@ void SpecialOpcodes::spcTransitionToMap() {
 
 void SpecialOpcodes::spcTransitionFromMap() {
 	//TODO map transition
+}
+
+void SpecialOpcodes::spcCaveOfDilemmaSceneLogic() {
+	_vm->setSceneUpdateFunction(caveOfDilemmaUpdateFunction);
+}
+
+void SpecialOpcodes::spcLoadLadyOfTheLakeActor() {
+	//TODO
+	DragonINI *ini = _vm->_dragonINIResource->getRecord(0x2a7);
+	_vm->_actorManager->loadActor(0xcd, ini->actor->_actorID);
+	ini->actor->setFlag(ACTOR_FLAG_4);
+	ini->actorResourceId = 0xcd;
+	//DisableVSyncEvent();
+//	uVar17 = (uint)(ushort)dragon_ini_pointer[DAT_8006398c + -1].field_0x1c;
+//	uVar7 = load_actor_file(0xcc);
+//	file_read_to_buffer(s_s12a6.act_80011740,(&actor_dictionary)[(uVar7 & 0xffff) * 2]);
+//	actors[uVar17].﻿actorFileDictionaryIndex = (uint16_t)uVar7;
+//	actors[uVar17].﻿resourceID = 0xcd;
+//	iVar18 = DAT_8006398c;
+//	actors[uVar17].flags = actors[uVar17].flags | 4;
+//	dragon_ini_pointer[iVar18 + -1].x = 0xcd;
+//	LAB_8002ad94:
+	//EnableVSyncEvent();
 }
 
 void SpecialOpcodes::spcJesterInLibrarySceneLogic() {
@@ -933,5 +1031,58 @@ void shakeScreenUpdateFunction() {
 //		int16_t_80072898 = int16_t_80072898 - 1;
 //		uVar1 = (uint)(ushort)int16_t_80072898;
 //	}
+}
+
+void ladyOfTheLakeCapturedUpdateFunction() {
+	const uint32 dialogTbl[] = {
+			0x490C8, 0x490FC, 0x4913A
+	};
+	static int ladyofLakeCountdownTimer = 0x12c;
+	static uint8 ladyOfLakeDialogIndex = 0;
+	DragonsEngine *vm = getEngine();
+
+	if (!vm->isFlagSet(ENGINE_FLAG_8000)) {
+		ladyofLakeCountdownTimer--;
+		if (ladyofLakeCountdownTimer == 0) {
+			vm->_talk->playDialogAudioDontWait(dialogTbl[ladyOfLakeDialogIndex]);
+			if (ladyOfLakeDialogIndex == 2) {
+				ladyOfLakeDialogIndex = 0;
+			} else {
+				ladyOfLakeDialogIndex++;
+			}
+			ladyofLakeCountdownTimer = 0x708;
+		}
+	}
+}
+
+void caveOfDilemmaUpdateFunction() {
+	static int32 counter = 0;
+	static int16 direction = 1;
+	int16 yOffset;
+	Actor *oldManActor;
+	Actor *cloudChairActor;
+	DragonsEngine *vm = getEngine();
+
+	if (counter == 0) {
+		oldManActor = vm->_dragonINIResource->getRecord(0x161)->actor;
+		cloudChairActor = vm->_dragonINIResource->getRecord(0x160)->actor;
+		if (oldManActor->y_pos < 0x53) {
+			oldManActor->y_pos = 0x52;
+			cloudChairActor->y_pos = 0x52;
+			direction = 1;
+		}
+		if (0x5b < oldManActor->y_pos) {
+			oldManActor->y_pos = 0x5c;
+			cloudChairActor->y_pos = 0x5c;
+			direction = -1;
+		}
+		yOffset = direction * 2;
+		oldManActor->y_pos = oldManActor->y_pos + yOffset;
+		cloudChairActor->y_pos = cloudChairActor->y_pos + yOffset;
+		counter = 10;
+	}
+	else {
+		counter--;
+	}
 }
 } // End of namespace Dragons

@@ -343,7 +343,7 @@ void Scene::draw() {
 				actor->frame->height != 0
 				) {
 				Graphics::Surface *s = actor->surface;
-				int x = actor->x_pos - actor->frame->xOffset - _camera.x;
+				int x = actor->x_pos - actor->frame->xOffset - (actor->_actorID < ACTOR_INVENTORY_OFFSET ? _camera.x : 0);
 				int y = actor->y_pos - actor->frame->yOffset - _camera.y;
 				//int x = ini->x;// - actor->frame_vram_x;
 				//int y = ini->y;// - actor->frame_vram_y;

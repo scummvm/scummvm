@@ -61,6 +61,7 @@ public:
 	void diamondScene();
 	void knightsSavedBackAtCastle();
 	void flickerReturnsCutScene();
+	void knightsSavedAgain();
 
 private:
 	//Scene 1 related functions

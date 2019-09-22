@@ -32,7 +32,6 @@
 
 namespace Dragons {
 
-#define ACTOR_INVENTORY_OFFSET 0x17
 
 static const Common::Point positionTable[4] = {
 		{2,0},

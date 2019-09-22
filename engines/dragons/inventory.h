@@ -36,6 +36,8 @@ class DragonINIResource;
 
 #define DRAGONS_MAX_INVENTORY_ITEMS 0x29
 
+#define ACTOR_INVENTORY_OFFSET 0x17
+
 class Inventory {
 public:
 	int16 _old_showing_value;
