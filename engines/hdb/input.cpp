@@ -352,7 +352,7 @@ void Input::stylusDown(int x, int y) {
 			int mx, my;
 			g_hdb->_map->getMapXY(&mx, &my);
 
-			mx = ((mx + _stylusDownY) / kTileWidth) * kTileWidth;
+			mx = ((mx + _stylusDownX) / kTileWidth) * kTileWidth;
 			my = ((my + _stylusDownY) / kTileHeight) * kTileHeight;
 			g_hdb->_ai->setPlayerXY(mx, my);
 
