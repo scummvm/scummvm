@@ -129,6 +129,7 @@ protected:
 	bool _subtitles;
 	uint32 _lastSaveTime;
 	uint32 _lastUpdateTime;
+	bool _gameStarted;
 
 	BamScene *_bam;
 	BankManager *_bankMan;
