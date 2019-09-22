@@ -775,12 +775,12 @@ void InterfaceScene::animate3d() {
 						monster._effect3 = 2;
 					}
 				}
-			}
-		} else {
-			monster._effect3 = (monster._effect3 + 1) % 8;
-			if (monster._effect3 == 0) {
-				MonsterStruct &monsterData = *monster._monsterData;
-				monster._effect1 = monster._effect2 = monsterData._animationEffect;
+			} else {
+				monster._effect3 = (monster._effect3 + 1) % 8;
+				if (monster._effect3 == 0) {
+					MonsterStruct &monsterData = *monster._monsterData;
+					monster._effect1 = monster._effect2 = monsterData._animationEffect;
+				}
 			}
 		}
 	}
