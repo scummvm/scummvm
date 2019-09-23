@@ -2811,10 +2811,12 @@ case $_host_os in
 		append_var CXXFLAGS "-fmodulo-sched"
 		append_var CXXFLAGS "-fuse-cxa-atexit"
 		append_var CXXFLAGS "-I$DEVKITPRO/libogc/include"
+		append_var CXXFLAGS "-I$DEVKITPRO/portlibs/ppc/include"
 		# libogc is required to link the cc tests (includes _start())
 		append_var LDFLAGS "-mogc"
 		append_var LDFLAGS "-mcpu=750"
 		append_var LDFLAGS "-L$DEVKITPRO/libogc/lib/cube"
+		append_var LDFLAGS "-L$DEVKITPRO/portlibs/ppc/lib"
 		append_var LDFLAGS "-logc"
 		if test "$_dynamic_modules" = "yes" ; then
 			# retarded toolchain patch forces --gc-sections, overwrite it
@@ -3007,10 +3009,12 @@ case $_host_os in
 		append_var CXXFLAGS "-fmodulo-sched"
 		append_var CXXFLAGS "-fuse-cxa-atexit"
 		append_var CXXFLAGS "-I$DEVKITPRO/libogc/include"
+		append_var CXXFLAGS "-I$DEVKITPRO/portlibs/ppc/include"
 		# libogc is required to link the cc tests (includes _start())
 		append_var LDFLAGS "-mrvl"
 		append_var LDFLAGS "-mcpu=750"
 		append_var LDFLAGS "-L$DEVKITPRO/libogc/lib/wii"
+		append_var LDFLAGS "-L$DEVKITPRO/portlibs/ppc/lib"
 		append_var LDFLAGS "-logc"
 		if test "$_dynamic_modules" = "yes" ; then
 			# retarded toolchain patch forces --gc-sections, overwrite it
