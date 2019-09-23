@@ -22,6 +22,7 @@
 
 #include "glk/adrift/scare.h"
 #include "glk/adrift/scprotos.h"
+#include "glk/jumps.h"
 
 namespace Glk {
 namespace Adrift {
@@ -545,16 +546,12 @@ static sc_int expr_eval_abs(sc_int value) {
 	return value < 0 ? -value : value;
 }
 
-
-/* Parse error jump buffer. */
-static jmp_buf expr_parse_error;
-
 /*
- * expr_eval_action()
+ * expr_eval_action
  *
  * Evaluate the effect of a token into the values stack.
  */
-static void expr_eval_action(sc_int token) {
+static void expr_eval_action(CONTEXT, sc_int token) {
 	sc_vartype_t token_value;
 
 	switch (token) {
@@ -577,7 +574,7 @@ static void expr_eval_action(sc_int token) {
 		if (!var_get(expr_varset, token_value.string, &type, &vt_rvalue)) {
 			sc_error("expr_eval_action:"
 			         " undefined variable, %s\n", token_value.string);
-			longjmp(expr_parse_error, 1);
+			LONG_JUMP;
 		}
 		switch (type) {
 		case VAR_INTEGER:
@@ -1044,23 +1041,23 @@ static void expr_eval_action(sc_int token) {
 static sc_int expr_parse_lookahead = TOK_NONE;
 
 /* Forward declaration of factor parsers and string expression parser. */
-static void expr_parse_numeric_factor(void);
-static void expr_parse_string_factor(void);
-static void expr_parse_string_expr(void);
+static void expr_parse_numeric_factor(CONTEXT);
+static void expr_parse_string_factor(CONTEXT);
+static void expr_parse_string_expr(CONTEXT);
 
 /*
- * expr_parse_match()
+ * expr_parse_match
  *
  * Match a token to the lookahead, then advance lookahead.
  */
-static void expr_parse_match(sc_int token) {
+static void expr_parse_match(CONTEXT, sc_int token) {
 	if (expr_parse_lookahead == token)
 		expr_parse_lookahead = expr_next_token();
 	else {
 		/* Syntax error. */
 		sc_error("expr_parse_match: syntax error,"
 		         " expected %ld, got %ld\n", expr_parse_lookahead, token);
-		longjmp(expr_parse_error, 1);
+		LONG_JUMP;
 	}
 }
 
@@ -1143,14 +1140,14 @@ static int expr_parse_contains_token(const sc_precedence_entry_t *entry, sc_int 
  * to match tokens, then decide whether, and how, to recurse into itself, or
  * whether to parse a highest-precedence factor.
  */
-static void expr_parse_numeric_element(sc_int precedence) {
+static void expr_parse_numeric_element(CONTEXT, sc_int precedence) {
 	const sc_precedence_entry_t *entry;
 
 	/* See if the level passed in has listed tokens. */
 	entry = PRECEDENCE_TABLE + precedence;
 	if (entry->token_count == 0) {
 		/* Precedence levels that hit the table end are factors. */
-		expr_parse_numeric_factor();
+		CALL0(expr_parse_numeric_factor);
 		return;
 	}
 
@@ -1158,27 +1155,27 @@ static void expr_parse_numeric_element(sc_int precedence) {
 	 * Parse initial higher-precedence factor, then others that associate
 	 * with the given level.
 	 */
-	expr_parse_numeric_element(precedence + 1);
+	CALL1(expr_parse_numeric_element, precedence + 1);
 	while (expr_parse_contains_token(entry, expr_parse_lookahead)) {
 		sc_int token;
 
 		/* Note token and match, parse next level, then action this token. */
 		token = expr_parse_lookahead;
-		expr_parse_match(token);
-		expr_parse_numeric_element(precedence + 1);
-		expr_eval_action(token);
+		CALL1(expr_parse_match, token);
+		CALL1(expr_parse_numeric_element, precedence + 1);
+		CALL1(expr_eval_action, token);
 	}
 }
 
 
 /*
- * expr_parse_numeric_expr()
+ * expr_parse_numeric_expr
  *
  * Parse a complete numeric (sub-)expression.
  */
-static void expr_parse_numeric_expr(void) {
+static void expr_parse_numeric_expr(CONTEXT) {
 	/* Call the parser of the lowest precedence operators. */
-	expr_parse_numeric_element(0);
+	CALL1(expr_parse_numeric_element, 0);
 }
 
 
@@ -1187,30 +1184,30 @@ static void expr_parse_numeric_expr(void) {
  *
  * Parse a numeric expression factor.
  */
-static void expr_parse_numeric_factor(void) {
+static void expr_parse_numeric_factor(CONTEXT) {
 	/* Handle factors based on lookahead token. */
 	switch (expr_parse_lookahead) {
 	/* Handle straightforward factors first. */
 	case TOK_LPAREN:
-		expr_parse_match(TOK_LPAREN);
-		expr_parse_numeric_expr();
-		expr_parse_match(TOK_RPAREN);
+		CALL1(expr_parse_match, TOK_LPAREN);
+		CALL0(expr_parse_numeric_expr);
+		CALL1(expr_parse_match, TOK_RPAREN);
 		break;
 
 	case TOK_UMINUS:
-		expr_parse_match(TOK_UMINUS);
-		expr_parse_numeric_factor();
-		expr_eval_action(TOK_UMINUS);
+		CALL1(expr_parse_match, TOK_UMINUS);
+		CALL0(expr_parse_numeric_factor);
+		CALL1(expr_eval_action, TOK_UMINUS);
 		break;
 
 	case TOK_UPLUS:
-		expr_parse_match(TOK_UPLUS);
-		expr_parse_numeric_factor();
+		CALL1(expr_parse_match, TOK_UPLUS);
+		CALL0(expr_parse_numeric_factor);
 		break;
 
 	case TOK_INTEGER:
-		expr_eval_action(TOK_INTEGER);
-		expr_parse_match(TOK_INTEGER);
+		CALL1(expr_eval_action, TOK_INTEGER);
+		CALL1(expr_parse_match, TOK_INTEGER);
 		break;
 
 	case TOK_VARIABLE: {
@@ -1221,51 +1218,51 @@ static void expr_parse_numeric_factor(void) {
 		if (!var_get(expr_varset, token_value.string, &type, &vt_rvalue)) {
 			sc_error("expr_parse_numeric_factor:"
 			         " undefined variable, %s\n", token_value.string);
-			longjmp(expr_parse_error, 1);
+			LONG_JUMP;
 		}
 		if (type != VAR_INTEGER) {
 			sc_error("expr_parse_numeric_factor:"
 			         " string variable in numeric context, %s\n",
 			         token_value.string);
-			longjmp(expr_parse_error, 1);
+			LONG_JUMP;
 		}
-		expr_eval_action(TOK_VARIABLE);
-		expr_parse_match(TOK_VARIABLE);
+		CALL1(expr_eval_action, TOK_VARIABLE);
+		CALL1(expr_parse_match, TOK_VARIABLE);
 		break;
 	}
 
 	/* Handle functions as factors. */
 	case TOK_ABS:
 		/* Parse as "abs (val)". */
-		expr_parse_match(TOK_ABS);
-		expr_parse_match(TOK_LPAREN);
-		expr_parse_numeric_expr();
-		expr_parse_match(TOK_RPAREN);
-		expr_eval_action(TOK_ABS);
+		CALL1(expr_parse_match, TOK_ABS);
+		CALL1(expr_parse_match, TOK_LPAREN);
+		CALL0(expr_parse_numeric_expr);
+		CALL1(expr_parse_match, TOK_RPAREN);
+		CALL1(expr_eval_action, TOK_ABS);
 		break;
 
 	case TOK_IF:
 		/* Parse as "if (boolean, val1, val2)". */
-		expr_parse_match(TOK_IF);
-		expr_parse_match(TOK_LPAREN);
-		expr_parse_numeric_expr();
-		expr_parse_match(TOK_COMMA);
-		expr_parse_numeric_expr();
-		expr_parse_match(TOK_COMMA);
-		expr_parse_numeric_expr();
-		expr_parse_match(TOK_RPAREN);
-		expr_eval_action(TOK_IF);
+		CALL1(expr_parse_match, TOK_IF);
+		CALL1(expr_parse_match, TOK_LPAREN);
+		CALL0(expr_parse_numeric_expr);
+		CALL1(expr_parse_match, TOK_COMMA);
+		CALL0(expr_parse_numeric_expr);
+		CALL1(expr_parse_match, TOK_COMMA);
+		CALL0(expr_parse_numeric_expr);
+		CALL1(expr_parse_match, TOK_RPAREN);
+		CALL1(expr_eval_action, TOK_IF);
 		break;
 
 	case TOK_RANDOM:
 		/* Parse as "random (low, high)". */
-		expr_parse_match(TOK_RANDOM);
-		expr_parse_match(TOK_LPAREN);
-		expr_parse_numeric_expr();
-		expr_parse_match(TOK_COMMA);
-		expr_parse_numeric_expr();
-		expr_parse_match(TOK_RPAREN);
-		expr_eval_action(TOK_RANDOM);
+		CALL1(expr_parse_match, TOK_RANDOM);
+		CALL1(expr_parse_match, TOK_LPAREN);
+		CALL0(expr_parse_numeric_expr);
+		CALL1(expr_parse_match, TOK_COMMA);
+		CALL0(expr_parse_numeric_expr);
+		CALL1(expr_parse_match, TOK_RPAREN);
+		CALL1(expr_eval_action, TOK_RANDOM);
 		break;
 
 	case TOK_MAX:
@@ -1277,64 +1274,64 @@ static void expr_parse_numeric_factor(void) {
 
 		/* Match up the function name and opening parenthesis. */
 		token = expr_parse_lookahead;
-		expr_parse_match(token);
-		expr_parse_match(TOK_LPAREN);
+		CALL1(expr_parse_match, token);
+		CALL1(expr_parse_match, TOK_LPAREN);
 
 		/* Count variable number of arguments as they are stacked. */
-		expr_parse_numeric_expr();
+		CALL0(expr_parse_numeric_expr);
 		argument_count = 1;
 		while (expr_parse_lookahead == TOK_COMMA) {
-			expr_parse_match(TOK_COMMA);
-			expr_parse_numeric_expr();
+			CALL1(expr_parse_match, TOK_COMMA);
+			CALL0(expr_parse_numeric_expr);
 			argument_count++;
 		}
-		expr_parse_match(TOK_RPAREN);
+		CALL1(expr_parse_match, TOK_RPAREN);
 
 		/* Push additional value -- the count of arguments. */
 		expr_eval_push_integer(argument_count);
-		expr_eval_action(token);
+		CALL1(expr_eval_action, token);
 		break;
 	}
 
 	case TOK_INSTR:
 		/* Parse as "instr (val1, val2)". */
-		expr_parse_match(TOK_INSTR);
-		expr_parse_match(TOK_LPAREN);
-		expr_parse_string_expr();
-		expr_parse_match(TOK_COMMA);
-		expr_parse_string_expr();
-		expr_parse_match(TOK_RPAREN);
-		expr_eval_action(TOK_INSTR);
+		CALL1(expr_parse_match, TOK_INSTR);
+		CALL1(expr_parse_match, TOK_LPAREN);
+		CALL0(expr_parse_string_expr);
+		CALL1(expr_parse_match, TOK_COMMA);
+		CALL0(expr_parse_string_expr);
+		CALL1(expr_parse_match, TOK_RPAREN);
+		CALL1(expr_eval_action, TOK_INSTR);
 		break;
 
 	case TOK_LEN:
 		/* Parse as "len (val)". */
-		expr_parse_match(TOK_LEN);
-		expr_parse_match(TOK_LPAREN);
-		expr_parse_string_expr();
-		expr_parse_match(TOK_RPAREN);
-		expr_eval_action(TOK_LEN);
+		CALL1(expr_parse_match, TOK_LEN);
+		CALL1(expr_parse_match, TOK_LPAREN);
+		CALL0(expr_parse_string_expr);
+		CALL1(expr_parse_match, TOK_RPAREN);
+		CALL1(expr_eval_action, TOK_LEN);
 		break;
 
 	case TOK_VAL:
 		/* Parse as "val (val)". */
-		expr_parse_match(TOK_VAL);
-		expr_parse_match(TOK_LPAREN);
-		expr_parse_string_expr();
-		expr_parse_match(TOK_RPAREN);
-		expr_eval_action(TOK_VAL);
+		CALL1(expr_parse_match, TOK_VAL);
+		CALL1(expr_parse_match, TOK_LPAREN);
+		CALL0(expr_parse_string_expr);
+		CALL1(expr_parse_match, TOK_RPAREN);
+		CALL1(expr_eval_action, TOK_VAL);
 		break;
 
 	case TOK_IDENT:
 		/* Unrecognized function-type token. */
 		sc_error("expr_parse_numeric_factor: syntax error, unknown ident\n");
-		longjmp(expr_parse_error, 1);
+		LONG_JUMP;
 
 	default:
 		/* Syntax error. */
 		sc_error("expr_parse_numeric_factor:"
 		         " syntax error, unexpected token, %ld\n", expr_parse_lookahead);
-		longjmp(expr_parse_error, 1);
+		LONG_JUMP;
 	}
 }
 
@@ -1344,17 +1341,17 @@ static void expr_parse_numeric_factor(void) {
  *
  * Parse a complete string (sub-)expression.
  */
-static void expr_parse_string_expr(void) {
+static void expr_parse_string_expr(CONTEXT) {
 	/*
 	 * Parse a string factor, then all repeated concatenations.  Because the '+'
 	 * and '&' are context sensitive, we have to invent/translate them into the
 	 * otherwise unused TOK_CONCATENATE for evaluation.
 	 */
-	expr_parse_string_factor();
+	CALL0(expr_parse_string_factor);
 	while (expr_parse_lookahead == TOK_AND || expr_parse_lookahead == TOK_ADD) {
-		expr_parse_match(expr_parse_lookahead);
-		expr_parse_string_factor();
-		expr_eval_action(TOK_CONCATENATE);
+		CALL1(expr_parse_match, expr_parse_lookahead);
+		CALL0(expr_parse_string_factor);
+		CALL1(expr_eval_action, TOK_CONCATENATE);
 	}
 }
 
@@ -1364,19 +1361,19 @@ static void expr_parse_string_expr(void) {
  *
  * Parse a string expression factor.
  */
-static void expr_parse_string_factor(void) {
+static void expr_parse_string_factor(CONTEXT) {
 	/* Handle factors based on lookahead token. */
 	switch (expr_parse_lookahead) {
 	/* Handle straightforward factors first. */
 	case TOK_LPAREN:
-		expr_parse_match(TOK_LPAREN);
-		expr_parse_string_expr();
-		expr_parse_match(TOK_RPAREN);
+		CALL1(expr_parse_match, TOK_LPAREN);
+		CALL0(expr_parse_string_expr);
+		CALL1(expr_parse_match, TOK_RPAREN);
 		break;
 
 	case TOK_STRING:
-		expr_eval_action(TOK_STRING);
-		expr_parse_match(TOK_STRING);
+		CALL1(expr_eval_action, TOK_STRING);
+		CALL1(expr_parse_match, TOK_STRING);
 		break;
 
 	case TOK_VARIABLE: {
@@ -1387,16 +1384,16 @@ static void expr_parse_string_factor(void) {
 		if (!var_get(expr_varset, token_value.string, &type, &vt_rvalue)) {
 			sc_error("expr_parse_string_factor:"
 			         " undefined variable, %s\n", token_value.string);
-			longjmp(expr_parse_error, 1);
+			LONG_JUMP;
 		}
 		if (type != VAR_STRING) {
 			sc_error("expr_parse_string_factor:"
 			         " numeric variable in string context, %s\n",
 			         token_value.string);
-			longjmp(expr_parse_error, 1);
+			LONG_JUMP;
 		}
-		expr_eval_action(TOK_VARIABLE);
-		expr_parse_match(TOK_VARIABLE);
+		CALL1(expr_eval_action, TOK_VARIABLE);
+		CALL1(expr_parse_match, TOK_VARIABLE);
 		break;
 	}
 
@@ -1409,11 +1406,11 @@ static void expr_parse_string_factor(void) {
 		sc_int token;
 
 		token = expr_parse_lookahead;
-		expr_parse_match(token);
-		expr_parse_match(TOK_LPAREN);
-		expr_parse_string_expr();
-		expr_parse_match(TOK_RPAREN);
-		expr_eval_action(token);
+		CALL1(expr_parse_match, token);
+		CALL1(expr_parse_match, TOK_LPAREN);
+		CALL0(expr_parse_string_expr);
+		CALL1(expr_parse_match, TOK_RPAREN);
+		CALL1(expr_eval_action, token);
 		break;
 	}
 
@@ -1424,48 +1421,48 @@ static void expr_parse_string_factor(void) {
 		sc_int token;
 
 		token = expr_parse_lookahead;
-		expr_parse_match(token);
-		expr_parse_match(TOK_LPAREN);
-		expr_parse_string_expr();
-		expr_parse_match(TOK_COMMA);
-		expr_parse_numeric_expr();
-		expr_parse_match(TOK_RPAREN);
-		expr_eval_action(token);
+		CALL1(expr_parse_match, token);
+		CALL1(expr_parse_match, TOK_LPAREN);
+		CALL0(expr_parse_string_expr);
+		CALL1(expr_parse_match, TOK_COMMA);
+		CALL0(expr_parse_numeric_expr);
+		CALL1(expr_parse_match, TOK_RPAREN);
+		CALL1(expr_eval_action, token);
 		break;
 	}
 
 	case TOK_MID:
 		/* Parse as "mid (text,start,length)". */
-		expr_parse_match(TOK_MID);
-		expr_parse_match(TOK_LPAREN);
-		expr_parse_string_expr();
-		expr_parse_match(TOK_COMMA);
-		expr_parse_numeric_expr();
-		expr_parse_match(TOK_COMMA);
-		expr_parse_numeric_expr();
-		expr_parse_match(TOK_RPAREN);
-		expr_eval_action(TOK_MID);
+		CALL1(expr_parse_match, TOK_MID);
+		CALL1(expr_parse_match, TOK_LPAREN);
+		CALL0(expr_parse_string_expr);
+		CALL1(expr_parse_match, TOK_COMMA);
+		CALL0(expr_parse_numeric_expr);
+		CALL1(expr_parse_match, TOK_COMMA);
+		CALL0(expr_parse_numeric_expr);
+		CALL1(expr_parse_match, TOK_RPAREN);
+		CALL1(expr_eval_action, TOK_MID);
 		break;
 
 	case TOK_STR:
 		/* Parse as "str (val)". */
-		expr_parse_match(TOK_STR);
-		expr_parse_match(TOK_LPAREN);
-		expr_parse_numeric_expr();
-		expr_parse_match(TOK_RPAREN);
-		expr_eval_action(TOK_STR);
+		CALL1(expr_parse_match, TOK_STR);
+		CALL1(expr_parse_match, TOK_LPAREN);
+		CALL0(expr_parse_numeric_expr);
+		CALL1(expr_parse_match, TOK_RPAREN);
+		CALL1(expr_eval_action, TOK_STR);
 		break;
 
 	case TOK_IDENT:
 		/* Unrecognized function-type token. */
 		sc_error("expr_parse_string_factor: syntax error, unknown ident\n");
-		longjmp(expr_parse_error, 1);
+		LONG_JUMP;
 
 	default:
 		/* Syntax error. */
 		sc_error("expr_parse_string_factor:"
 		         " syntax error, unexpected token, %ld\n", expr_parse_lookahead);
-		longjmp(expr_parse_error, 1);
+		LONG_JUMP;
 	}
 }
 
@@ -1479,21 +1476,22 @@ static void expr_parse_string_factor(void) {
 static sc_bool expr_evaluate_expression(const sc_char *expression, sc_var_setref_t vars,
 		sc_int assign_type, sc_vartype_t *vt_rvalue) {
 	assert(assign_type == VAR_INTEGER || assign_type == VAR_STRING);
+	Context context;
 
 	/* Reset values stack and start tokenizer. */
 	expr_eval_start(vars);
 	expr_tokenize_start(expression);
 
-	/* Try parsing an expression, and catch errors. */
-	if (setjmp(expr_parse_error) == 0) {
-		/* Parse an expression, and ensure it ends at string end. */
-		expr_parse_lookahead = expr_next_token();
-		if (assign_type == VAR_STRING)
-			expr_parse_string_expr();
-		else
-			expr_parse_numeric_expr();
-		expr_parse_match(TOK_EOS);
-	} else {
+	// Try parsing an expression, and ensure it ends at string end. */
+	expr_parse_lookahead = expr_next_token();
+	if (assign_type == VAR_STRING)
+		expr_parse_string_expr(context);
+	else
+		expr_parse_numeric_expr(context);
+	if (!context._break)
+		expr_parse_match(context, TOK_EOS);
+
+	if (context._break) {
 		/* Parse error -- clean up tokenizer, collect garbage, and fail. */
 		expr_tokenize_end();
 		expr_eval_garbage_collect();
