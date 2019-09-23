@@ -83,7 +83,6 @@ struct errdef {
     char           errfac[ERRFACMAX+1];        /* facility of current error */
     erradef        erraav[10];                      /* parameters for error */
     int            erraac;                   /* count of parameters in argc */
-    //jmp_buf        errbuf;        ScummVM doesn't support using jump buffers
 };
 
 #define ERRBUFSIZ 512
@@ -190,7 +189,7 @@ char *errstr(errcxdef *ctx, const char *str, int len);
 void errsign(errcxdef *ctx, int e, const char *facility);
 #else /* ERR_NO_MACRO */
 # ifdef DEBUG
-void errjmp(jmp_buf buf, int e);
+void errjmp(jump_buf buf, int e);
 #  define errsign(ctx, e, fac) \
    (strncpy((ctx)->errcxptr->errfac, fac, ERRFACMAX),\
     (ctx)->errcxptr->errfac[ERRFACMAX]='\0',\

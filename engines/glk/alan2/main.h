@@ -87,9 +87,6 @@ extern const char *advnam;
 extern int col, lin;
 extern int paglen, pagwidth;
 
-/* Long jump buffer for restart */
-//extern jmp_buf restart_label;
-
 extern Boolean verbose, errflg, trcflg, dbgflg, stpflg, logflg, statusflg;
 extern Boolean fail;
 extern Boolean anyOutput;
