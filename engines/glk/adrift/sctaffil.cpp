@@ -22,7 +22,7 @@
 
 #include "glk/adrift/scare.h"
 #include "glk/adrift/scprotos.h"
-#include "common/textconsole.h"
+#include "common/algorithm.h"
 #include "common/zlib.h"
 #include "common/memstream.h"
 
@@ -441,10 +441,37 @@ static sc_bool taf_decompress(sc_tafref_t taf, sc_read_callbackref_t callback,
 
 	return true;
 #else
-	return true;
+	return false;
 #endif
 }
 
+/*
+ * taf_read_raw()
+ *
+ * Read an uncompressed version 4.0 TAF save chunk used by ScummVM
+ */
+static sc_bool taf_read_raw(sc_tafref_t taf, sc_read_callbackref_t callback,
+	void *opaque, sc_bool is_gamefile) {
+	byte *buffer = new byte[BUFFER_SIZE];
+	size_t bytesRead, bytesLeft = 0;
+	size_t totalBytes, bytesWritten;
+
+	for (;;) {
+		bytesRead = callback(opaque, buffer + bytesLeft, BUFFER_SIZE - bytesLeft);
+		if ((bytesLeft + bytesRead) == 0)
+			break;
+
+		totalBytes = bytesLeft + bytesRead;
+		bytesWritten = taf_append_buffer(taf, buffer, totalBytes);
+		
+		bytesLeft = totalBytes - bytesWritten;
+		if (bytesLeft)
+			Common::copy(buffer + bytesWritten, buffer + totalBytes, buffer);
+	}
+
+	delete[] buffer;
+	return true;
+}
 
 /*
  * taf_create_from_callback()
@@ -506,8 +533,8 @@ static sc_tafref_t taf_create_from_callback(sc_read_callbackref_t callback,
 			return NULL;
 		}
 	} else {
-		/* Saved games are always considered to be version 4.0. */
-		taf->version = TAF_VERSION_400;
+		/* Saved games are always considered to be for ScummVM, version 5.0. */
+		taf->version = TAF_VERSION_500;
 	}
 
 	/*
@@ -516,6 +543,10 @@ static sc_tafref_t taf_create_from_callback(sc_read_callbackref_t callback,
 	 * it's obfuscated with the Visual Basic PRNG.
 	 */
 	switch (taf->version) {
+	case TAF_VERSION_500:
+		status = taf_read_raw(taf, callback, opaque, is_gamefile);
+		break;
+	
 	case TAF_VERSION_400:
 		status = taf_decompress(taf, callback, opaque, is_gamefile);
 		break;

@@ -242,6 +242,7 @@ bool LoadSerializer::load() {
 	sc_var_setref_t new_vars = nullptr;
 	sc_gameref_t new_game = nullptr;
 	Context context;
+	sc_int count = 0;
 
 	// Create a TAF (TAS) reference from callbacks, for reader functions
 	ser_tas = taf_create_tas(_callback, _opaque);
@@ -291,13 +292,15 @@ bool LoadSerializer::load() {
 	(void)readInt(context); CHECK;
 	(void)readInt(context); CHECK;
 
-	// Restore rooms information.
-	for (index_ = 0; index_ < gs_room_count(new_game); index_++) {
+	// Restore rooms information
+	count = gs_room_count(new_game);
+	for (index_ = 0; index_ < count; ++index_) {
 		gs_set_room_seen(new_game, index_, readBool(context)); CHECK;
 	}
 
-	// Restore objects information.
-	for (index_ = 0; index_ < gs_object_count(new_game); index_++) {
+	// Restore objects information
+	count = gs_object_count(new_game);
+	for (index_ = 0; index_ < count; ++index_) {
 		sc_int openable, currentstate;
 
 		// Bypass mutators for position and parent.  Fix later?
@@ -325,8 +328,9 @@ bool LoadSerializer::load() {
 		gs_set_task_scored(new_game, index_, readBool(context)); CHECK;
 	}
 
-	// Restore events information.
-	for (index_ = 0; index_ < gs_event_count(new_game); index_++) {
+	// Restore events information
+	count = gs_event_count(new_game);
+	for (index_ = 0; index_ < count; index_++) {
 		sc_int startertype, task;
 
 		// Restore first event details.
@@ -350,8 +354,9 @@ bool LoadSerializer::load() {
 		}
 	}
 
-	// Restore NPCs information.
-	for (index_ = 0; index_ < gs_npc_count(new_game); index_++) {
+	// Restore NPCs information
+	count = gs_npc_count(new_game);
+	for (index_ = 0; index_ < count; index_++) {
 		sc_int walk;
 
 		gs_set_npc_location(new_game, index_, readInt(context)); CHECK;
@@ -483,7 +488,6 @@ sc_bool LoadSerializer::readBool(CONTEXT) {
 
 	// Get line, and scan for a single integer; check it's a valid-looking flag, and return it.
 	R0FUNC0(readString, string)
-	string = readString(context);
 	if (sscanf(string, "%lu", &value) != 1) {
 		sc_error("readBool: invalid boolean at line %ld\n", ser_tasline - 1);
 		LONG_JUMP0
