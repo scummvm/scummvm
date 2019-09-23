@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2019-09-23 01:33+0200\n"
-"PO-Revision-Date: 2019-09-18 10:54+0000\n"
+"PO-Revision-Date: 2019-09-23 22:54+0000\n"
 "Last-Translator: scootergrisen <scootergrisen@gmail.com>\n"
 "Language-Team: Danish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/da/>\n"
@@ -2645,9 +2645,8 @@ msgid "ScummVM couldn't list the directory you specified."
 msgstr "ScummVM ikke vise den mappe du angav."
 
 #: backends/networking/sdl_net/handlers/filespagehandler.cpp:232
-#, fuzzy
 msgid "Index of"
-msgstr "Indeks af "
+msgstr "Indeks af"
 
 #: backends/networking/sdl_net/handlers/indexpagehandler.cpp:42
 msgid "This is a local webserver index page."
