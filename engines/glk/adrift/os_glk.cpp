@@ -26,6 +26,7 @@
 #include "glk/glk.h"
 #include "glk/streams.h"
 #include "glk/windows.h"
+#include "common/config-manager.h"
 #include "common/textconsole.h"
 #include "common/translation.h"
 
@@ -2786,7 +2787,7 @@ static enum gsc_end_option gsc_get_ending_option() {
  * and generally handle options.  The second is called from g_vm->glk_main, and
  * does the real work of running the game.
  */
-static int gsc_startup_code(Common::SeekableReadStream *game_stream, strid_t restore_stream,
+static int gsc_startup_code(Common::SeekableReadStream *game_stream, int restore_slot,
 		sc_uint trace_flags, sc_bool enable_debugger, sc_bool stable_random, const sc_char *locale) {
 	winid_t window;
 	assert(game_stream);
@@ -2850,16 +2851,15 @@ static int gsc_startup_code(Common::SeekableReadStream *game_stream, strid_t res
 	 * If the game was created successfully and there is a restore stream, try
 	 * to immediately restore the game from that stream.
 	 */
-	if (gsc_game && restore_stream) {
-		if (!sc_load_game_from_callback(gsc_game, gsc_callback, restore_stream)) {
+	if (gsc_game && restore_slot != -1) {
+		if (g_vm->loadGameState(restore_slot).getCode() != Common::kNoError) {
 			sc_free_game(gsc_game);
 			gsc_game = nullptr;
 			gsc_game_message = "Unable to restore this Adrift game from the requested file.";
-		} else
+		} else {
 			gsc_game_message = nullptr;
+		}
 	}
-	if (restore_stream)
-		g_vm->glk_stream_close(restore_stream, nullptr);
 
 	/* If successful, set game debugging and synchronize to the core's locale. */
 	if (gsc_game) {
@@ -3078,8 +3078,11 @@ bool adrift_startup_code(Common::SeekableReadStream *gameFile) {
 	stable_random = gDebugLevel > 0;
 	locale = nullptr;
 
+	// Check for savegame to load immediate
+	int saveSlot = ConfMan.hasKey("save_slot") ? ConfMan.getInt("save_slot") : -1;
+
 	// Use the generic startup code to complete startup
-	return gsc_startup_code(gameFile, nullptr, trace_flags, enable_debugger, stable_random, locale);
+	return gsc_startup_code(gameFile, saveSlot, trace_flags, enable_debugger, stable_random, locale);
 }
 
 } // End of namespace Adrift
