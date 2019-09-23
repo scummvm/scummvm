@@ -562,7 +562,6 @@ void JNI::destroy(JNIEnv *env, jobject self) {
 	delete _asset_archive;
 	_asset_archive = 0;
 
-	_system->quit();
 	delete _system;
 	g_system = 0;
 	_system = 0;
