@@ -141,11 +141,10 @@ public abstract class ScummVM implements SurfaceHolder.Callback, Runnable {
 
 		int res = main(_args);
 
-		destroy();
-
 		deinitEGL();
 		deinitAudio();
 
+		destroy();
 		// On exit, tear everything down for a fresh restart next time.
 		System.exit(res);
 	}

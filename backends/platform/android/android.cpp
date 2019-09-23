@@ -126,6 +126,11 @@ OSystem_Android::~OSystem_Android() {
 	_timerManager = 0;
 
 	deleteMutex(_event_queue_lock);
+
+	delete _savefileManager;
+	_savefileManager = 0;
+
+	ModularBackend::quit();
 }
 
 void *OSystem_Android::timerThreadFunc(void *arg) {
