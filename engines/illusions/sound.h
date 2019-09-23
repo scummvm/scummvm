@@ -103,6 +103,7 @@ public:
 	void play(int16 volume, int16 pan);
 	void stop();
 	bool isPlaying();
+	bool isLooping();
 public:
 	uint32 _soundEffectId;
 	uint32 _soundGroupId;
@@ -159,6 +160,7 @@ public:
 	void loadSound(uint32 soundEffectId, uint32 soundGroupId, bool looping);
 	void playSound(uint32 soundEffectId, int16 volume, int16 pan);
 	void stopSound(uint32 soundEffectId);
+	void stopLoopingSounds();
 	void unloadSounds(uint32 soundGroupId);
 
 protected:

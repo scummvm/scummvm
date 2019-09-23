@@ -931,6 +931,7 @@ bool IllusionsEngine_Duckman::changeScene(uint32 sceneId, uint32 threadId, uint3
 	uint32 currSceneId = getCurrentScene();
 	if (currSceneId != 0x10003)
 		dumpCurrSceneFiles(currSceneId, callerThreadId);
+	_soundMan->stopLoopingSounds(); //Fix for global looping sound not stopping in falling scene.
 	_threads->terminateThreads(callerThreadId);
 	_controls->destroyControls();
 	_resSys->unloadSceneResources(0x10003, 0x10001);
