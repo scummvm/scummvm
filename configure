@@ -184,6 +184,7 @@ _no_undefined_var_template=no
 _no_pragma_pack=no
 _bink=yes
 _cloud=auto
+_encoding=yes
 _pandoc=no
 # Default vkeybd/keymapper/eventrec options
 _vkeybd=no
@@ -1051,6 +1052,7 @@ Optional Features:
   --enable-tts			   build support for text to speech
   --disable-tts			   don't build support for text to speech
   --disable-bink           don't build with Bink video support
+  --disable-encoding       don't build support for encoding conversion
   --opengl-mode=MODE       OpenGL (ES) mode to use for OpenGL output [auto]
                            available modes: auto for autodetection
                                             none for disabling any OpenGL usage
@@ -1257,6 +1259,8 @@ for ac_option in $@; do
 	--disable-tts)                _tts=no                ;;
 	--enable-bink)                _bink=yes              ;;
 	--disable-bink)               _bink=no               ;;
+	--enable-encoding)            _encoding=yes          ;;
+	--disable-encoding)           _encoding=no           ;;
 	--opengl-mode=*)
 		_opengl_mode=`echo $ac_option | cut -d '=' -f 2`
 		;;
@@ -5511,6 +5515,13 @@ define_in_config_if_yes $_tts 'USE_TTS'
 echo_n "Building Bink video support... "
 define_in_config_if_yes $_bink 'USE_BINK'
 echo "$_bink"
+
+#
+# Check whether to build encoding conversion support
+#
+echo_n "Building encoding conversion support... "
+define_in_config_if_yes $_encoding 'USE_ENCODING'
+echo "$_encoding"
 
 #
 # Check whether to build updates support
