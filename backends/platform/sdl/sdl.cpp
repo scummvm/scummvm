@@ -760,6 +760,7 @@ int SDL_SetColorKey_replacement(SDL_Surface *surface, Uint32 flag, Uint32 key) {
 #endif
 
 char *OSystem_SDL::convertEncoding(const char *to, const char *from, const char *string, size_t length) {
+#ifdef USE_ENCODING
 	int zeroBytes = 1;
 	if (Common::String(from).hasPrefixIgnoreCase("utf-16"))
 		zeroBytes = 2;
@@ -800,5 +801,8 @@ char *OSystem_SDL::convertEncoding(const char *to, const char *from, const char 
 	memcpy(finalResult, result, newLength + zeroBytes);
 	SDL_free(result);
 	return finalResult;
+#else
+	return nullptr;
+#endif
 }
 
