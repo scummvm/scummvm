@@ -760,6 +760,7 @@ int SDL_SetColorKey_replacement(SDL_Surface *surface, Uint32 flag, Uint32 key) {
 #endif
 
 char *OSystem_SDL::convertEncoding(const char *to, const char *from, const char *string, size_t length) {
+#if SDL_VERSION_ATLEAST(1, 2, 10)
 	int zeroBytes = 1;
 	if (Common::String(from).hasPrefixIgnoreCase("utf-16"))
 		zeroBytes = 2;
@@ -776,7 +777,7 @@ char *OSystem_SDL::convertEncoding(const char *to, const char *from, const char 
 	memcpy(stringCopy, string, length);
 	result = SDL_iconv_string(to, from, stringCopy, length + zeroBytes);
 	free(stringCopy);
-#endif
+#endif // SDL_VERSION_ATLEAST(2, 0, 0)
 	if (result == nullptr)
 		return nullptr;
 
@@ -800,5 +801,8 @@ char *OSystem_SDL::convertEncoding(const char *to, const char *from, const char 
 	memcpy(finalResult, result, newLength + zeroBytes);
 	SDL_free(result);
 	return finalResult;
+#else
+	return ModularBackend::convertEncoding(to, from, string, length);
+#endif // SDL_VERSION_ATLEAST(1, 2, 10)
 }
 
