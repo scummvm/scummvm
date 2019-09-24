@@ -22,6 +22,7 @@
 
 #include "glk/adrift/scare.h"
 #include "glk/adrift/scprotos.h"
+#include "glk/jumps.h"
 
 namespace Glk {
 namespace Adrift {
@@ -685,9 +686,6 @@ static const sc_char *parse_get_string_property(void) {
 }
 
 
-/* Parse error jump buffer. */
-static jmp_buf parse_taf_error;
-
 /* Pushback line, and pushback requested flag. */
 static const sc_char *parse_pushback_line = NULL;
 static sc_bool parse_use_pushback = FALSE;
@@ -702,7 +700,7 @@ static sc_bool parse_use_pushback = FALSE;
  * the line content into an integer or boolean, and a function for effective
  * TAF line pushback.
  */
-static const sc_char *parse_get_taf_string(void) {
+static const sc_char *parse_get_taf_string(CONTEXT) {
 	const sc_char *line;
 
 	/* If pushback requested, use that instead of reading. */
@@ -718,7 +716,7 @@ static const sc_char *parse_get_taf_string(void) {
 			sc_error("parse_get_taf_string:"
 			         " out of TAF data at line %ld\n", parse_tafline);
 			parse_stack_backtrace();
-			longjmp(parse_taf_error, 1);
+			LONG_JUMP0;
 		}
 
 		/* Note this line for possible pushback. */
@@ -733,23 +731,23 @@ static const sc_char *parse_get_taf_string(void) {
 	return line;
 }
 
-static sc_int parse_get_taf_integer(void) {
+static sc_int parse_get_taf_integer(CONTEXT) {
 	const sc_char *line;
 	sc_int integer;
 
 	/* Get line, and scan for a single integer; return it. */
-	line = parse_get_taf_string();
+	R0FUNC0(parse_get_taf_string, line);
 	if (sscanf(line, "%ld", &integer) != 1) {
 		sc_error("parse_get_taf_integer:"
 		         " invalid integer at line %ld\n", parse_tafline - 1);
 		parse_stack_backtrace();
-		longjmp(parse_taf_error, 1);
+		LONG_JUMP0;
 	}
 
 	return integer;
 }
 
-static sc_bool parse_get_taf_boolean(void) {
+static sc_bool parse_get_taf_boolean(CONTEXT) {
 	const sc_char *line;
 	sc_uint boolean;
 
@@ -757,12 +755,12 @@ static sc_bool parse_get_taf_boolean(void) {
 	 * Get line, and scan for a single integer; check it's a valid-looking flag,
 	 * and return it.
 	 */
-	line = parse_get_taf_string();
+	R0FUNC0(parse_get_taf_string, line);
 	if (sscanf(line, "%lu", &boolean) != 1) {
 		sc_error("parse_get_taf_boolean:"
 		         " invalid boolean at line %ld\n", parse_tafline - 1);
 		parse_stack_backtrace();
-		longjmp(parse_taf_error, 1);
+		LONG_JUMP0;
 	}
 	if (boolean != 0 && boolean != 1) {
 		sc_error("parse_get_taf_boolean:"
@@ -811,16 +809,16 @@ enum {
 };
 
 /* Forward declarations of parse functions for recursion. */
-static void parse_element(const sc_char *element);
-static void parse_class(const sc_char *class_);
-static void parse_descriptor(const sc_char *descriptor);
+static void parse_element(CONTEXT, const sc_char *element);
+static void parse_class(CONTEXT, const sc_char *class_);
+static void parse_descriptor(CONTEXT, const sc_char *descriptor);
 
 /*
  * parse_array()
  *
  * Parse a descriptor [] array.
  */
-static void parse_array(const sc_char *array) {
+static void parse_array(CONTEXT, const sc_char *array) {
 	sc_int count, index_;
 	sc_char element[PARSE_TEMP_LENGTH];
 
@@ -838,7 +836,7 @@ static void parse_array(const sc_char *array) {
 		vt_key.integer = index_;
 		parse_push_key(vt_key, PROP_KEY_INTEGER);
 
-		parse_element(element);
+		CALL1(parse_element, element);
 
 		parse_pop_key();
 	}
@@ -855,7 +853,7 @@ static void parse_array(const sc_char *array) {
  *
  * Parse a variable-length vector of properties.
  */
-static void parse_vector_common(const sc_char *vector, sc_int count) {
+static void parse_vector_common(CONTEXT, const sc_char *vector, sc_int count) {
 	sc_int index_;
 
 	/* Parse the vector property count times, pushing a key on each. */
@@ -865,35 +863,35 @@ static void parse_vector_common(const sc_char *vector, sc_int count) {
 		vt_key.integer = index_;
 		parse_push_key(vt_key, PROP_KEY_INTEGER);
 
-		parse_element(vector + 1);
+		CALL1(parse_element, vector + 1);
 
 		parse_pop_key();
 	}
 }
 
-static void parse_vector(const sc_char *vector) {
+static void parse_vector(CONTEXT, const sc_char *vector) {
 	sc_int count;
 
 	if (parse_trace)
 		sc_trace("Parse: entering vector %s\n", vector);
 
 	/* Find the count of elements in the vector, and parse. */
-	count = parse_get_taf_integer();
-	parse_vector_common(vector, count);
+	FUNC0(parse_get_taf_integer, count);
+	CALL2(parse_vector_common, vector, count);
 
 	if (parse_trace)
 		sc_trace("Parse: leaving vector %s\n", vector);
 }
 
-static void parse_vector_alternate(const sc_char *vector) {
+static void parse_vector_alternate(CONTEXT, const sc_char *vector) {
 	sc_int count;
 
 	if (parse_trace)
 		sc_trace("Parse: entering alternate vector %s\n", vector);
 
 	/* Element count, this is a vector described by size - 1. */
-	count = parse_get_taf_integer() + 1;
-	parse_vector_common(vector, count);
+	FUNC0(parse_get_taf_integer, count) + 1;
+	CALL2(parse_vector_common, vector, count);
 
 	if (parse_trace)
 		sc_trace("Parse: leaving alternate vector %s\n", vector);
@@ -965,7 +963,7 @@ static sc_bool parse_test_expression(const sc_char *test_expression) {
 	return retval;
 }
 
-static void parse_expression(const sc_char *expression) {
+static void parse_expression(CONTEXT, const sc_char *expression) {
 	sc_char test_expression[PARSE_TEMP_LENGTH];
 	sc_bool is_present;
 
@@ -994,7 +992,7 @@ static void parse_expression(const sc_char *expression) {
 				sc_fatal("parse_expression: bad list, %s\n", expression + next);
 
 			/* Parse this isolated element. */
-			parse_element(element);
+			CALL1(parse_element, element);
 
 			/* Advance to the start of the next element. */
 			next += strlen(element);
@@ -1013,7 +1011,7 @@ static void parse_expression(const sc_char *expression) {
  * Helper for parse_terminal(), reads in a multiline string.  The return
  * string is malloc'ed, and the caller needs to handle that.
  */
-static sc_char *parse_read_multiline(void) {
+static sc_char *parse_read_multiline(CONTEXT) {
 	const sc_byte *separator = NULL;
 	const sc_char *line;
 	sc_char *multiline;
@@ -1035,18 +1033,18 @@ static sc_char *parse_read_multiline(void) {
 	}
 
 	/* Take a simple copy of the first line. */
-	line = parse_get_taf_string();
+	R0FUNC0(parse_get_taf_string, line);
 	multiline = (sc_char *)sc_malloc(strlen(line) + 1);
 	strcpy(multiline, line);
 
 	/* Now concatenate until separator found. */
-	line = parse_get_taf_string();
+	R0FUNC0(parse_get_taf_string, line);
 	while (memcmp(line, separator, SEPARATOR_SIZE) != 0) {
 		multiline = (sc_char *)sc_realloc(multiline,
 		                                  strlen(multiline) + strlen(line) + 2);
 		strcat(multiline, "\n");
 		strcat(multiline, line);
-		line = parse_get_taf_string();
+		R0FUNC0(parse_get_taf_string, line);
 	}
 
 	return multiline;
@@ -1058,7 +1056,7 @@ static sc_char *parse_read_multiline(void) {
  *
  * Common handler for string, integer, boolean, and multiline parse terminals.
  */
-static void parse_terminal(const sc_char *terminal) {
+static void parse_terminal(CONTEXT, const sc_char *terminal) {
 	sc_vartype_t vt_key, vt_value;
 
 	if (parse_trace)
@@ -1071,7 +1069,7 @@ static void parse_terminal(const sc_char *terminal) {
 	/* Retrieve, or invent, then store the value. */
 	switch (terminal[0]) {
 	case PARSE_INTEGER:
-		vt_value.integer = parse_get_taf_integer();
+		FUNC0(parse_get_taf_integer, vt_value.integer);
 		parse_put_property(vt_value, PROP_INTEGER);
 		break;
 	case PARSE_DEFAULT_ZERO:
@@ -1080,7 +1078,7 @@ static void parse_terminal(const sc_char *terminal) {
 		break;
 
 	case PARSE_BOOLEAN:
-		vt_value.boolean = parse_get_taf_boolean();
+		FUNC0(parse_get_taf_boolean, vt_value.boolean);
 		parse_put_property(vt_value, PROP_BOOLEAN);
 		break;
 	case PARSE_DEFAULT_FALSE:
@@ -1090,7 +1088,7 @@ static void parse_terminal(const sc_char *terminal) {
 		break;
 
 	case PARSE_STRING:
-		vt_value.string = parse_get_taf_string();
+		FUNC0(parse_get_taf_string, vt_value.string);
 		parse_put_property(vt_value, PROP_STRING);
 		break;
 	case PARSE_DEFAULT_EMPTY:
@@ -1100,7 +1098,7 @@ static void parse_terminal(const sc_char *terminal) {
 
 	case PARSE_MULTILINE:
 		/* Assign to and adopt mutable string rather than const string. */
-		vt_value.mutable_string = parse_read_multiline();
+		FUNC0(parse_read_multiline, vt_value.mutable_string);
 		parse_put_property(vt_value, PROP_STRING);
 
 		assert(parse_bundle);
@@ -1108,13 +1106,13 @@ static void parse_terminal(const sc_char *terminal) {
 		break;
 
 	case PARSE_IGNORE_INTEGER:
-		(void) parse_get_taf_integer();
+		CALL0(parse_get_taf_integer);
 		break;
 	case PARSE_IGNORE_BOOLEAN:
-		(void) parse_get_taf_boolean();
+		CALL0(parse_get_taf_boolean);
 		break;
 	case PARSE_IGNORE_STRING:
-		(void) parse_get_taf_string();
+		CALL0(parse_get_taf_string);
 		break;
 
 	default:
@@ -1365,7 +1363,7 @@ static void parse_handle_v400_resources(sc_bool has_sound, sc_bool has_graphics)
  * Handler for special items that can't be described accurately, and
  * therefore need careful treatment.
  */
-static void parse_special(const sc_char *special) {
+static void parse_special(CONTEXT, const sc_char *special) {
 	if (parse_trace)
 		sc_trace("Parse: entering special %s\n", special);
 
@@ -1391,10 +1389,10 @@ static void parse_special(const sc_char *special) {
 		sc_int flag;
 
 		/* Get next flag, and if true, pushback and parse. */
-		flag = parse_get_taf_integer();
+		FUNC0(parse_get_taf_integer, flag);
 		if (flag != 0) {
 			parse_taf_pushback();
-			parse_descriptor("#Dest #Var1 #Var2 #Var3");
+			CALL1(parse_descriptor, "#Dest #Var1 #Var2 #Var3");
 		}
 	}
 
@@ -1404,10 +1402,10 @@ static void parse_special(const sc_char *special) {
 		sc_int flag;
 
 		/* Get next flag, and if true, pushback and parse. */
-		flag = parse_get_taf_integer();
+		FUNC0(parse_get_taf_integer, flag);
 		if (flag != 0) {
 			parse_taf_pushback();
-			parse_descriptor("#Dest #Var1 #Var2 ZVar3");
+			CALL1(parse_descriptor, "#Dest #Var1 #Var2 ZVar3");
 		}
 	}
 
@@ -1432,7 +1430,7 @@ static void parse_special(const sc_char *special) {
 
 		case ROOMLIST_ONE_ROOM:
 			/* Store this room as the single list entry. */
-			parse_element("#Room");
+			CALL1(parse_element, "#Room");
 			break;
 
 		case ROOMLIST_SOME_ROOMS:
@@ -1452,7 +1450,7 @@ static void parse_special(const sc_char *special) {
 				sc_bool this_room;
 
 				/* Get flag for this room. */
-				this_room = parse_get_taf_boolean();
+				FUNC0(parse_get_taf_boolean, this_room);
 
 				/* Store flag directly. */
 				vt_key.integer = index_;
@@ -1484,8 +1482,9 @@ static void parse_special(const sc_char *special) {
 		parse_pop_key();
 
 		/* Get Parent if the object is part of an NPC. */
-		if (type == ROOMLIST_NPC_PART)
-			parse_element("#Parent");
+		if (type == ROOMLIST_NPC_PART) {
+			CALL1(parse_element, "#Parent");
+		}
 	}
 
 	/* Parse a list of rooms and times for a walk. */
@@ -1509,7 +1508,7 @@ static void parse_special(const sc_char *special) {
 			vt_key.integer = index_;
 			parse_push_key(vt_key, PROP_KEY_INTEGER);
 
-			room = parse_get_taf_integer();
+			FUNC0(parse_get_taf_integer, room);
 
 			vt_value.integer = room;
 			parse_put_property(vt_value, PROP_INTEGER);
@@ -1522,7 +1521,7 @@ static void parse_special(const sc_char *special) {
 			vt_key.integer = index_;
 			parse_push_key(vt_key, PROP_KEY_INTEGER);
 
-			time = parse_get_taf_integer();
+			FUNC0(parse_get_taf_integer, time);
 
 			vt_value.integer = time;
 			parse_put_property(vt_value, PROP_INTEGER);
@@ -1544,7 +1543,7 @@ static void parse_special(const sc_char *special) {
 		/* Read a boolean for each room. */
 		l2index_ = 0;
 		for (index_ = 0; index_ < num_rooms; index_++) {
-			in_group = parse_get_taf_boolean();
+			FUNC0(parse_get_taf_boolean, in_group);
 
 			/* Store raw flag as List[index_]. */
 			vt_key.string = "List";
@@ -1923,7 +1922,7 @@ static void parse_fixup_v390_v380_room_alts(void) {
  * Handler for fixup special items to help with conversions from TAF version
  * 3.9 format into version 4.0.
  */
-static void parse_fixup_v390(const sc_char *fixup) {
+static void parse_fixup_v390(CONTEXT, const sc_char *fixup) {
 	if (parse_trace)
 		sc_trace("Parse: entering version 3.9 fixup %s\n", fixup);
 
@@ -1956,10 +1955,11 @@ static void parse_fixup_v390(const sc_char *fixup) {
 		var2 = parse_get_integer_property();
 		parse_pop_key();
 
-		if (var2 == 5)
-			parse_descriptor("$Expr ZVar5");
-		else
-			parse_descriptor("EExpr #Var5");
+		if (var2 == 5) {
+			CALL1(parse_descriptor, "$Expr ZVar5");
+		} else {
+			CALL1(parse_descriptor, "EExpr #Var5");
+		}
 	}
 
 	/*
@@ -2964,7 +2964,7 @@ static void parse_fixup_v380(const sc_char *fixup) {
  * Handler for fixup special items to help with conversions from TAF version
  * 3.9 and version 3.8 formats into version 4.0.
  */
-static void parse_fixup(const sc_char *fixup) {
+static void parse_fixup(CONTEXT, const sc_char *fixup) {
 	/*
 	 * Pick a fixup handler specific to the TAF version.  This helps keep
 	 * fixup code separate, rather than glommed into one large function.
@@ -2974,7 +2974,7 @@ static void parse_fixup(const sc_char *fixup) {
 		sc_fatal("parse_fixup: unexpected call\n");
 		break;
 	case TAF_VERSION_390:
-		parse_fixup_v390(fixup);
+		CALL1(parse_fixup_v390, fixup);
 		break;
 	case TAF_VERSION_380:
 		parse_fixup_v380(fixup);
@@ -2991,32 +2991,32 @@ static void parse_fixup(const sc_char *fixup) {
  *
  * Parse a class descriptor element.
  */
-static void parse_element(const sc_char *element) {
+static void parse_element(CONTEXT, const sc_char *element) {
 	if (parse_trace)
 		sc_trace("Parse: entering element %s\n", element);
 
 	/* Determine the element type from the first character. */
 	switch (element[0]) {
 	case PARSE_ARRAY:
-		parse_array(element);
+		CALL1(parse_array, element);
 		break;
 	case PARSE_VECTOR:
-		parse_vector(element);
+		CALL1(parse_vector, element);
 		break;
 	case PARSE_VECTOR_ALTERNATE:
-		parse_vector_alternate(element);
+		CALL1(parse_vector_alternate, element);
 		break;
 	case PARSE_CLASS:
-		parse_class(element);
+		CALL1(parse_class, element);
 		break;
 	case PARSE_EXPRESSION:
-		parse_expression(element);
+		CALL1(parse_expression, element);
 		break;
 	case PARSE_SPECIAL:
-		parse_special(element);
+		CALL1(parse_special, element);
 		break;
 	case PARSE_FIXUP:
-		parse_fixup(element);
+		CALL1(parse_fixup, element);
 		break;
 
 	case PARSE_INTEGER:
@@ -3030,7 +3030,7 @@ static void parse_element(const sc_char *element) {
 	case PARSE_IGNORE_BOOLEAN:
 	case PARSE_IGNORE_STRING:
 	case PARSE_MULTILINE:
-		parse_terminal(element);
+		CALL1(parse_terminal, element);
 		break;
 	default:
 		sc_fatal("parse_element: bad type, %c\n", element[0]);
@@ -3046,7 +3046,7 @@ static void parse_element(const sc_char *element) {
  *
  * Parse a class's properties descriptor list.
  */
-static void parse_descriptor(const sc_char *descriptor) {
+static void parse_descriptor(CONTEXT, const sc_char *descriptor) {
 	sc_int next;
 
 	/* Find and parse each element in the descriptor. */
@@ -3058,7 +3058,7 @@ static void parse_descriptor(const sc_char *descriptor) {
 			sc_fatal("parse_element: no element, %s\n", descriptor + next);
 
 		/* Parse this isolated element. */
-		parse_element(element);
+		CALL1(parse_element, element);
 
 		/* Advance over the element and any trailing whitespace. */
 		next += strlen(element);
@@ -3072,7 +3072,7 @@ static void parse_descriptor(const sc_char *descriptor) {
  *
  * Parse a class of properties.
  */
-static void parse_class(const sc_char *class_) {
+static void parse_class(CONTEXT, const sc_char *class_) {
 	sc_char class_name[PARSE_TEMP_LENGTH];
 	sc_int index_;
 	sc_vartype_t vt_key;
@@ -3102,7 +3102,7 @@ static void parse_class(const sc_char *class_) {
 	}
 
 	/* Parse each element in the descriptor. */
-	parse_descriptor(parse_schema[index_].descriptor);
+	CALL1(parse_descriptor, parse_schema[index_].descriptor);
 
 	/* Pop a key if the class tag was pushed above. */
 	if (index_ > 0)
@@ -3354,6 +3354,7 @@ static void parse_add_version(sc_prop_setref_t bundle, sc_tafref_t taf) {
  */
 sc_bool parse_game(sc_tafref_t taf, sc_prop_setref_t bundle) {
 	assert(taf && bundle);
+	Context context;
 
 	/* Store the TAF to read from, and the bundle to store into. */
 	parse_taf = taf;
@@ -3361,14 +3362,13 @@ sc_bool parse_game(sc_tafref_t taf, sc_prop_setref_t bundle) {
 	parse_schema = parse_select_schema(parse_taf);
 	parse_depth = 0;
 
-	/* Try parsing, and catch errors from longjmp. */
-	if (setjmp(parse_taf_error) == 0) {
-		/* Parse a complete game. */
-		taf_first_line(parse_taf);
-		parse_tafline = 0;
-		parse_class("<_GAME_>");
-	} else {
-		/* Error with one of the TAF file lines. */
+	// Try parsing a complete game
+	taf_first_line(parse_taf);
+	parse_tafline = 0;
+	parse_class(context, "<_GAME_>");
+
+	if (context._break) {
+		// Error with one of the TAF file lines
 		parse_clear_v400_resources_table();
 		parse_taf = NULL;
 		parse_bundle = NULL;
