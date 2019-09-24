@@ -562,9 +562,13 @@ void JNI::destroy(JNIEnv *env, jobject self) {
 	delete _asset_archive;
 	_asset_archive = 0;
 
-	delete _system;
+	// _system is a pointer of OSystem_Android <--- ModularBackend <--- BaseBacked <--- Common::OSystem
+	// It's better to call destroy() rather than just delete here
+	// to avoid mutex issues if a Common::String is used after this point
+	_system->destroy();
+
 	g_system = 0;
-	_system = 0;
+	_system  = 0;
 
 	sem_destroy(&pause_sem);
 

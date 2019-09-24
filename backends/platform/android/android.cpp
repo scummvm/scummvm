@@ -129,8 +129,6 @@ OSystem_Android::~OSystem_Android() {
 
 	delete _savefileManager;
 	_savefileManager = 0;
-
-	ModularBackend::quit();
 }
 
 void *OSystem_Android::timerThreadFunc(void *arg) {
