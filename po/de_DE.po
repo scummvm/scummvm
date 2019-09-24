@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2019-09-23 01:33+0200\n"
-"PO-Revision-Date: 2019-09-21 19:20+0000\n"
+"PO-Revision-Date: 2019-09-24 10:41+0000\n"
 "Last-Translator: Lothar Serra Mari <serra@scummvm.org>\n"
 "Language-Team: German <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/de/>\n"
@@ -1250,7 +1250,7 @@ msgstr "Updates suchen:"
 
 #: gui/options.cpp:1744
 msgid "How often to check ScummVM updates"
-msgstr "Wie oft nach Aktualisierungen von ScummVM suchen?"
+msgstr "Wie oft sollen Aktualisierungen von ScummVM gesucht werden?"
 
 #: gui/options.cpp:1756
 msgid "Check now"
