@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2019-09-23 01:33+0200\n"
-"PO-Revision-Date: 2019-09-21 10:55+0000\n"
-"Last-Translator: Andrea G <andreagswaterloo@gmail.com>\n"
+"PO-Revision-Date: 2019-09-25 04:54+0000\n"
+"Last-Translator: Rodrigo Vegas Sánchez-Ferrero <rodrigo.vegas@gmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/es/>\n"
 "Language: es_ES\n"
@@ -186,7 +186,7 @@ msgid ""
 "The \"%s\" already exists in the specified directory.\n"
 "Do you really want to download files into that directory?"
 msgstr ""
-"Ya existe un directorio \"%s\" en la ruta especificada .\n"
+"El directorio \"%s\" ya existe en la ruta especificada.\n"
 "¿Seguro que quieres descargar los archivos en ese directorio?"
 
 #: gui/downloaddialog.cpp:215
@@ -1498,6 +1498,7 @@ msgstr "Puerto que usará el servidor"
 msgctxt "lowres"
 msgid "Run server to manage files with browser (in the same network)."
 msgstr ""
+"Arrancar servidor para gestionar archivos con el navegador (en la misma red)."
 
 #: gui/options.cpp:1994
 msgctxt "lowres"
@@ -1507,6 +1508,7 @@ msgstr ""
 #: gui/options.cpp:1996
 msgid "Run server to manage files with browser (in the same network)."
 msgstr ""
+"Arrancar servidor para gestionar archivos con el navegador (en la misma red)."
 
 #: gui/options.cpp:1997
 msgid "Closing options dialog will stop the server."
@@ -1522,7 +1524,7 @@ msgstr "Ya se ha habilitado otro almacenamiento en línea."
 
 #: gui/options.cpp:2145
 msgid "Theme does not support selected language!"
-msgstr "¡El Tema no soporta el lenguaje seleccionado!"
+msgstr "¡El tema no soporta el idioma seleccionado!"
 
 #: gui/options.cpp:2148
 msgid "Theme cannot be loaded!"
