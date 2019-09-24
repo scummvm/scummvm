@@ -23,6 +23,7 @@
 #include "glk/adrift/scare.h"
 #include "glk/adrift/scprotos.h"
 #include "glk/adrift/scgamest.h"
+#include "glk/jumps.h"
 
 namespace Glk {
 namespace Adrift {
@@ -91,6 +92,7 @@ static const sc_char *uip_token_value;
 enum { UIP_ALLOCATION_AVOIDANCE_SIZE = 128 };
 static sc_char uip_static_temporary[UIP_ALLOCATION_AVOIDANCE_SIZE];
 static sc_char *uip_temporary = NULL;
+
 
 /*
  * uip_tokenize_start()
@@ -246,12 +248,8 @@ typedef sc_ptnode_t *sc_ptnoderef_t;
 /* Predictive parser lookahead token. */
 static sc_uip_tok_t uip_parse_lookahead = TOK_NONE;
 
-/* Parse error jump buffer. */
-static jmp_buf uip_parse_error;
-
 /* Parse tree for cleanup, and forward declaration of pattern list parser. */
 static sc_ptnoderef_t uip_parse_tree = NULL;
-static void uip_parse_list(sc_ptnoderef_t list);
 
 /*
  * Pool of statically allocated nodes, for faster allocations.  Nodes are
@@ -279,19 +277,23 @@ static sc_ptshortword_t uip_word_pool[UIP_WORD_POOL_SIZE];
 static sc_int uip_word_pool_cursor = 0;
 static sc_int uip_word_pool_available = UIP_WORD_POOL_SIZE;
 
+// Forward declarations
+static void uip_parse_list(CONTEXT, sc_ptnoderef_t list);
+
+
 /*
- * uip_parse_match()
+ * uip_parse_matc
  *
  * Match a token to the lookahead, then advance lookahead.
  */
-static void uip_parse_match(sc_uip_tok_t token) {
+static void uip_parse_match(CONTEXT, sc_uip_tok_t token) {
 	if (uip_parse_lookahead == token)
 		uip_parse_lookahead = uip_next_token();
 	else {
 		/* Syntax error. */
 		sc_error("uip_parse_match: syntax error, expected %ld, got %ld\n",
 		         (sc_int) uip_parse_lookahead, (sc_int) token);
-		longjmp(uip_parse_error, 1);
+		LONG_JUMP;
 	}
 }
 
@@ -461,24 +463,24 @@ static void uip_destroy_node(sc_ptnoderef_t node) {
  * Parse a set of .../.../... alternatives for choices and optionals.  The
  * first function is a helper, returning a newly constructed parsed list.
  */
-static sc_ptnoderef_t uip_parse_new_list(void) {
+static sc_ptnoderef_t uip_parse_new_list(CONTEXT) {
 	sc_ptnoderef_t list;
 
 	/* Create a new list node, parse into it, and return it. */
 	list = uip_new_node(NODE_LIST);
-	uip_parse_list(list);
+	R0CALL1(uip_parse_list, list);
 	return list;
 }
 
-static void uip_parse_alternatives(sc_ptnoderef_t node) {
+static void uip_parse_alternatives(CONTEXT, sc_ptnoderef_t node) {
 	sc_ptnoderef_t child;
 
 	/* Parse initial alternative, then add other listed alternatives. */
-	node->left_child = uip_parse_new_list();
+	FUNC0(uip_parse_new_list, node->left_child);
 	child = node->left_child;
 	while (uip_parse_lookahead == TOK_ALTERNATES_SEPARATOR) {
-		uip_parse_match(TOK_ALTERNATES_SEPARATOR);
-		child->right_sibling = uip_parse_new_list();
+		CALL1(uip_parse_match, TOK_ALTERNATES_SEPARATOR);
+		FUNC0(uip_parse_new_list, child->right_sibling);
 		child = child->right_sibling;
 	}
 }
@@ -489,31 +491,31 @@ static void uip_parse_alternatives(sc_ptnoderef_t node) {
  *
  * Parse a single pattern element.
  */
-static sc_ptnoderef_t uip_parse_element(void) {
+static sc_ptnoderef_t uip_parse_element(CONTEXT) {
 	sc_ptnoderef_t node = NULL;
 	sc_uip_tok_t token;
 
 	/* Handle pattern element based on lookahead token. */
 	switch (uip_parse_lookahead) {
 	case TOK_WHITESPACE:
-		uip_parse_match(TOK_WHITESPACE);
+		R0CALL1(uip_parse_match, TOK_WHITESPACE);
 		node = uip_new_node(NODE_WHITESPACE);
 		break;
 
 	case TOK_CHOICE:
 		/* Parse a [...[/.../...]] choice. */
-		uip_parse_match(TOK_CHOICE);
+		R0CALL1(uip_parse_match, TOK_CHOICE);
 		node = uip_new_node(NODE_CHOICE);
-		uip_parse_alternatives(node);
-		uip_parse_match(TOK_CHOICE_END);
+		R0CALL1(uip_parse_alternatives, node);
+		R0CALL1(uip_parse_match, TOK_CHOICE_END);
 		break;
 
 	case TOK_OPTIONAL:
 		/* Parse a {...[/.../...]} optional element. */
-		uip_parse_match(TOK_OPTIONAL);
+		R0CALL1(uip_parse_match, TOK_OPTIONAL);
 		node = uip_new_node(NODE_OPTIONAL);
-		uip_parse_alternatives(node);
-		uip_parse_match(TOK_OPTIONAL_END);
+		R0CALL1(uip_parse_alternatives, node);
+		R0CALL1(uip_parse_match, TOK_OPTIONAL_END);
 		break;
 
 	case TOK_WILDCARD:
@@ -523,7 +525,7 @@ static sc_ptnoderef_t uip_parse_element(void) {
 	case TOK_TEXT_REFERENCE:
 		/* Parse %mumble% references and * wildcards. */
 		token = uip_parse_lookahead;
-		uip_parse_match(token);
+		R0CALL1(uip_parse_match, token);
 		switch (token) {
 		case TOK_WILDCARD:
 			node = uip_new_node(NODE_WILDCARD);
@@ -554,7 +556,7 @@ static sc_ptnoderef_t uip_parse_element(void) {
 		word = uip_new_word(token_value);
 
 		/* Store details in a word node. */
-		uip_parse_match(TOK_WORD);
+		R0CALL1(uip_parse_match, TOK_WORD);
 		node = uip_new_node(NODE_WORD);
 		node->word = word;
 		break;
@@ -569,7 +571,7 @@ static sc_ptnoderef_t uip_parse_element(void) {
 		name = uip_new_word(token_value);
 
 		/* Store details in a variable node, overloading word. */
-		uip_parse_match(TOK_VARIABLE);
+		R0CALL1(uip_parse_match, TOK_VARIABLE);
 		node = uip_new_node(NODE_VARIABLE);
 		node->word = name;
 		break;
@@ -579,7 +581,7 @@ static sc_ptnoderef_t uip_parse_element(void) {
 		/* Syntax error. */
 		sc_error("uip_parse_element: syntax error,"
 		         " unexpected token, %ld\n", (sc_int) uip_parse_lookahead);
-		longjmp(uip_parse_error, 1);
+		LONG_JUMP0;
 	}
 
 	/* Return the newly created node. */
@@ -593,7 +595,7 @@ static sc_ptnoderef_t uip_parse_element(void) {
  *
  * Parse a list of pattern elements.
  */
-static void uip_parse_list(sc_ptnoderef_t list) {
+static void uip_parse_list(CONTEXT, sc_ptnoderef_t list) {
 	sc_ptnoderef_t child, node;
 
 	/* Add elements until a list terminator token is encountered. */
@@ -617,7 +619,7 @@ static void uip_parse_list(sc_ptnoderef_t list) {
 
 		default:
 			/* Add the next node at the appropriate link. */
-			node = uip_parse_element();
+			FUNC0(uip_parse_element, node);
 			if (child == list) {
 				child->left_child = node;
 				child = child->left_child;
@@ -1614,9 +1616,10 @@ void uip_debug_trace(sc_bool flag) {
  * need to copy each of the pattern and match strings passed in.
  */
 sc_bool uip_match(const sc_char *pattern, const sc_char *string, sc_gameref_t game) {
-	static sc_char *cleansed;  /* For setjmp safety. */
+	static sc_char *cleansed = nullptr;
 	sc_char buffer[UIP_ALLOCATION_AVOIDANCE_SIZE];
 	sc_bool match;
+	Context context;
 	assert(pattern && string && game);
 
 	/* Start tokenizer. */
@@ -1625,21 +1628,21 @@ sc_bool uip_match(const sc_char *pattern, const sc_char *string, sc_gameref_t ga
 		sc_trace("UIParser: pattern \"%s\"\n", cleansed);
 	uip_tokenize_start(cleansed);
 
-	/* Try parsing the pattern, and catch errors. */
-	if (setjmp(uip_parse_error) == 0) {
-		/* Parse the pattern into a match tree. */
-		uip_parse_lookahead = uip_next_token();
-		uip_parse_tree = uip_new_node(NODE_LIST);
-		uip_parse_list(uip_parse_tree);
-		uip_tokenize_end();
-		cleansed = uip_free_cleansed_string(cleansed, buffer);
-	} else {
-		/* Parse error -- clean up and fail. */
+	// Try parsing the pattern into a match tree
+	uip_parse_lookahead = uip_next_token();
+	uip_parse_tree = uip_new_node(NODE_LIST);
+	uip_parse_list(context, uip_parse_tree);
+
+	if (context._break) {
+		// Parse error -- clean up and fail
 		uip_tokenize_end();
 		uip_destroy_tree(uip_parse_tree);
 		uip_parse_tree = NULL;
 		cleansed = uip_free_cleansed_string(cleansed, buffer);
 		return FALSE;
+	} else {
+		uip_tokenize_end();
+		cleansed = uip_free_cleansed_string(cleansed, buffer);
 	}
 
 	/* Dump out the pattern tree if requested. */
