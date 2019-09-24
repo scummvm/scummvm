@@ -13793,6 +13793,234 @@ static const uint16 qfg4GateOptionsPatch[] = {
 	PATCH_END
 };
 
+// Six castle rooms contain a bug where oiling one door in the room effectively
+//  oils the rest when picking locks. sPickLock doesn't test which door is being
+//  opened, only their oil flags, and if any are set then it doesn't squeak.
+//
+// We fix this by adding code to test hero's position to determine which door is
+//  being opened and then test the correct flag. Ideally we should only need two
+//  versions of this patch: a two-door version and a three-door. Unfortunately,
+//  each two-door sPickLock is different. Script 634 adds an unnecessary room
+//  test, 643 and 644 transpose the left and right door flags, and script 661
+//  tests a flag lower than 128 which changes a key instruction size. Room 631's
+//  sPickLock is in script 634 and it is the only room that uses it.
+//
+// Applies to: All versions
+// Responsible method: sPickLock:changeState(1) in scripts 634, 640, 642, 643, 644, 661
+// Fixes bug: #10832
+static const uint16 qfg4Room631LockSqueakSignature[] = {
+	0x89, 0x0b,                         // lsg 0b
+	0x34, SIG_UINT16(0x0277),           // ldi 0277
+	0x1a,                               // eq? [ is room 631? (always true) ]
+	0x31, SIG_MAGICDWORD, 0x14,         // bnt 14 [ right flag test ]
+	0x78,                               // push1
+	0x38, SIG_UINT16(0x00d1),           // pushi 00d1 [ flag 209 ]
+	0x45, 0x04, SIG_UINT16(0x0002),     // callb proc0_4 02 [ is left door oiled? ]
+	0x31, 0x0a,                         // bnt 0a [ right flag test ]
+	0x38, SIG_SELECTOR16(cue),          // pushi cue
+	0x76,                               // push0
+	0x54, SIG_UINT16(0x0004),           // self 04 [ self cue: ]
+	SIG_ADDTOOFFSET(+21),
+	0x38, SIG_SELECTOR16(cue),          // pushi cue [ no squeak ]
+	SIG_ADDTOOFFSET(+7),
+	0x39, SIG_SELECTOR8(play),          // pushi play [ squeak ]
+	SIG_END,
+};
+
+static const uint16 qfg4Room631LockSqueakPatch[] = {
+	0x38, PATCH_UINT16(0x00a0),         // pushi 00a0
+	0x78,                               // push1 [ x ]
+	0x76,                               // push0
+	0x81, 0x00,                         // lag 00
+	0x4a, PATCH_UINT16(0x0004),         // send 04 [ hero x? ]
+	0x1e,                               // gt? [ 160 > hero:x ]
+	0x31, 0x0f,                         // bnt 0f [ right flag test ]
+	0x78,                               // push1
+	0x38, PATCH_UINT16(0x00d1),         // pushi 00d1 [ flag 209 ]
+	0x45, 0x04, PATCH_UINT16(0x0002),   // callb proc0_4 02 [ is left door oiled? ]
+	0x31, 0x21,                         // bnt 21 [ squeak ]
+	0x33, 0x15,                         // jmp 15 [ no squeak ]
+	PATCH_END
+};
+
+// rooms 640 and 642 have three doors
+static const uint16 qfg4Room640LockSqueakSignature[] = {
+	0x78,                               // push1
+	0x38, SIG_ADDTOOFFSET(+2),          // pushi middle flag
+	0x45, 0x04, SIG_UINT16(0x0002),     // callb proc0_4 02 [ is middle door oiled? ]
+	SIG_MAGICDWORD,
+	0x31, 0x0a,                         // bnt 0a [ left door flag test ]
+	0x38, SIG_SELECTOR16(cue),          // pushi cue
+	0x76,                               // push0
+	0x54, SIG_UINT16(0x0004),           // self 04 [ self cue: ]
+	0x32, SIG_ADDTOOFFSET(+2),          // jmp [ end of method ]
+	0x78,                               // push1
+	0x38, SIG_ADDTOOFFSET(+2),          // pushi left flag
+	0x45, 0x04, SIG_UINT16(0x0002),     // callb proc0_4 02 [ is left door oiled? ]
+	0x31, 0x0a,                         // bnt 0a [ right door flag test ]
+	0x38, SIG_SELECTOR16(cue),          // pushi cue
+	0x76,                               // push0
+	0x54, SIG_UINT16(0x0004),           // self 04 [ self cue: ]
+	0x32, SIG_ADDTOOFFSET(+2),          // jmp [ end of method ]
+	0x78,                               // push1
+	0x38, SIG_ADDTOOFFSET(+2),          // pushi right flag
+	0x45, 0x04, SIG_UINT16(0x0002),     // callb proc0_4 02 [ is right door oiled? ]
+	0x31, 0x0a,                         // bnt 0a [ squeak ]
+	0x38, SIG_SELECTOR16(cue),          // pushi cue
+	0x76,                               // push0
+	0x54, SIG_UINT16(0x0004),           // self 04 [ self cue: ]
+	SIG_ADDTOOFFSET(+3),
+	0x39, SIG_SELECTOR8(play),          // pushi play [ squeak ]
+	SIG_ADDTOOFFSET(+28),
+	0x38, SIG_SELECTOR16(cue),          // pushi cue [ no squeak ]
+	SIG_END,
+};
+
+static const uint16 qfg4Room640LockSqueakPatch[] = {
+	0x39, 0x2e,                         // pushi 2e
+	0x78,                               // push1 [ x ]
+	0x76,                               // push0
+	0x81, 0x00,                         // lag 00
+	0x4a, PATCH_UINT16(0x0004),         // send 04 [ hero x? ]
+	0x1e,                               // gt? [ 46 > hero:x ]
+	0x31, 0x0c,                         // bnt 0c [ middle door test ]
+	0x78,                               // push1
+	0x38, PATCH_GETORIGINALUINT16(+22), // pushi left flag
+	0x45, 0x04, PATCH_UINT16(0x0002),   // callb proc0_4 02 [ is left door oiled? ]
+	0x31, 0x26,                         // bnt 26 [ squeak ]
+	0x33, 0x42,                         // jmp 42 [ no squeak ]
+	0x60,                               // pprev [ hero:x ]
+	0x34, PATCH_UINT16(0x00e6),         // ldi 00e6
+	0x22,                               // lt? [ hero:x < 230 ]
+	0x31, 0x0c,                         // bnt 0c [ right flag test ]
+	0x78,                               // push1
+	0x38, PATCH_GETORIGINALUINT16(+2),  // pushi middle flag
+	0x45, 0x04, PATCH_UINT16(0x0002),   // callb proc0_4 02 [ is middle door oiled? ]
+	0x31, 0x13,                         // bnt 13 [ squeak ]
+	0x33, 0x2f,                         // jmp 2f [ no squeak ]
+	0x78,                               // push1
+	0x38, PATCH_GETORIGINALUINT16(+42), // pushi right flag
+	0x45, 0x04, PATCH_UINT16(0x0002),   // callb proc0_4 02 [ is right door oiled? ]
+	0x31, 0x07,                         // bnt 07 [ squeak ]
+	0x33, 0x23,                         // jmp 23 [ no squeak ]
+	PATCH_END
+};
+
+// room 643 has two doors but no room test as in script 634
+static const uint16 qfg4Room643LockSqueakSignature[] = {
+	0x78,                               // push1
+	0x38, SIG_ADDTOOFFSET(+2),          // pushi flag
+	0x45, 0x04, SIG_UINT16(0x0002),     // callb proc0_4 02 [ is door oiled? ]
+	SIG_MAGICDWORD,
+	0x31, 0x0a,                         // bnt 0a [ other door flag test ]
+	0x38, SIG_SELECTOR16(cue),          // pushi cue
+	0x76,                               // push0
+	0x54, SIG_UINT16(0x0004),           // self 04 [ self cue: ]
+	0x32, SIG_ADDTOOFFSET(+2),          // jmp [ end of method ]
+	0x78,                               // push1
+	0x38, SIG_ADDTOOFFSET(+2),          // pushi flag
+	0x45, 0x04, SIG_UINT16(0x0002),     // callb proc0_4 02 [ is other door oiled? ]
+	0x31, 0x0a,                         // bnt 0a [ squeak ]
+	0x38, SIG_SELECTOR16(cue),          // pushi cue
+	0x76,                               // push0
+	0x54, SIG_UINT16(0x0004),           // self 04 [ self cue: ]
+	SIG_ADDTOOFFSET(+3),
+	0x39, SIG_SELECTOR8(play),          // pushi play [ squeak ]
+	SIG_ADDTOOFFSET(+28),
+	0x38, SIG_SELECTOR16(cue),          // pushi cue [ no squeak ]
+	SIG_END,
+};
+
+static const uint16 qfg4Room643LockSqueakPatch[] = {
+	0x38, PATCH_UINT16(0x00a0),         // pushi 00a0
+	0x78,                               // push1 [ x ]
+	0x76,                               // push0
+	0x81, 0x00,                         // lag 00
+	0x4a, PATCH_UINT16(0x0004),         // send 04 [ hero x? ]
+	0x1e,                               // gt? [ 160 > hero:x ]
+	0x31, 0x0c,                         // bnt 0c [ right flag test ]
+	0x78,                               // push1
+	0x38, PATCH_GETORIGINALUINT16(+22), // pushi left flag
+	0x45, 0x04, PATCH_UINT16(0x0002),   // callb proc0_4 02 [ is left door oiled? ]
+	0x31, 0x11,                         // bnt 11 [ squeak ]
+	0x33, 0x2d,                         // jmp 2d [ no squeak ]
+	0x78,                               // push1
+	0x38, PATCH_GETORIGINALUINT16(+2),  // pushi right flag
+	0x45, 0x04, PATCH_UINT16(0x0002),   // callb proc0_4 02 [ is right door oiled? ]
+	0x31, 0x05,                         // bnt 05 [ squeak ]
+	0x33, 0x21,                         // jmp 21 [ no squeak ]
+	PATCH_END
+};
+
+// room 644 is the same as 643 except the left and right door flags
+//  were transposed, so at least the 643 signature can be reused
+static const uint16 qfg4Room644LockSqueakPatch[] = {
+	0x38, PATCH_UINT16(0x00a0),         // pushi 00a0
+	0x78,                               // push1 [ x ]
+	0x76,                               // push0
+	0x81, 0x00,                         // lag 00
+	0x4a, PATCH_UINT16(0x0004),         // send 04 [ hero x? ]
+	0x1e,                               // gt? [ 160 > hero:x ]
+	0x31, 0x0c,                         // bnt 0c [ right flag test ]
+	0x78,                               // push1
+	0x38, PATCH_GETORIGINALUINT16(+2),  // pushi left flag
+	0x45, 0x04, PATCH_UINT16(0x0002),   // callb proc0_4 02 [ is left door oiled? ]
+	0x31, 0x11,                         // bnt 11 [ squeak ]
+	0x33, 0x2d,                         // jmp 2d [ no squeak ]
+	0x78,                               // push1
+	0x38, PATCH_GETORIGINALUINT16(+22), // pushi right flag
+	0x45, 0x04, PATCH_UINT16(0x0002),   // callb proc0_4 02 [ is right door oiled? ]
+	0x31, 0x05,                         // bnt 05 [ squeak ]
+	0x33, 0x21,                         // jmp 21 [ no squeak ]
+	PATCH_END
+};
+
+// room 661 is the same as 644 but has a different instruction size in the middle
+static const uint16 qfg4Room661LockSqueakSignature[] = {
+	0x78,                               // push1
+	0x38, SIG_UINT16(0x00e0),           // pushi 00e0 [ left flag ]
+	0x45, 0x04, SIG_UINT16(0x0002),     // callb proc0_4 02 [ is left door oiled? ]
+	SIG_MAGICDWORD,
+	0x31, 0x0a,                         // bnt 0a [ other door flag test ]
+	0x38, SIG_SELECTOR16(cue),          // pushi cue
+	0x76,                               // push0
+	0x54, SIG_UINT16(0x0004),           // self 04 [ self cue: ]
+	0x32, SIG_ADDTOOFFSET(+2),          // jmp [ end of method ]
+	0x78,                               // push1
+	0x39, 0x76,                         // pushi 76 [ right flag ]
+	0x45, 0x04, SIG_UINT16(0x0002),     // callb proc0_4 02 [ is right door oiled? ]
+	0x31, 0x0a,                         // bnt 0a [ squeak ]
+	0x38, SIG_SELECTOR16(cue),          // pushi cue
+	0x76,                               // push0
+	0x54, SIG_UINT16(0x0004),           // self 04 [ self cue: ]
+	SIG_ADDTOOFFSET(+3),
+	0x39, SIG_SELECTOR8(play),          // pushi play [ squeak ]
+	SIG_ADDTOOFFSET(+28),
+	0x38, SIG_SELECTOR16(cue),          // pushi cue [ no squeak ]
+	SIG_END,
+};
+
+static const uint16 qfg4Room661LockSqueakPatch[] = {
+	0x38, PATCH_UINT16(0x00a0),         // pushi 00a0
+	0x78,                               // push1 [ x ]
+	0x76,                               // push0
+	0x81, 0x00,                         // lag 00
+	0x4a, PATCH_UINT16(0x0004),         // send 04 [ hero x? ]
+	0x1e,                               // gt? [ 160 > hero:x ]
+	0x31, 0x0c,                         // bnt 0c [ right flag test ]
+	0x78,                               // push1
+	0x38, PATCH_UINT16(0x00e0),         // pushi 00e0 [ left flag ]
+	0x45, 0x04, PATCH_UINT16(0x0002),   // callb proc0_4 02 [ is left door oiled? ]
+	0x31, 0x10,                         // bnt 10 [ squeak ]
+	0x33, 0x2c,                         // jmp 2c [ no squeak ]
+	0x78,                               // push1
+	0x39, 0x76,                         // pushi 76 [ right flag ]
+	0x45, 0x04, PATCH_UINT16(0x0002),   // callb proc0_4 02 [ is right door oiled? ]
+	0x31, 0x05,                         // bnt 05 [ squeak ]
+	0x33, 0x21,                         // jmp 21 [ no squeak ]
+	PATCH_END
+};
+
 //          script, description,                                     signature                      patch
 static const SciScriptPatcherEntry qfg4Signatures[] = {
 	{  true,     0, "prevent autosave from deleting save games",   1, qfg4AutosaveSignature,         qfg4AutosavePatch },
@@ -13858,11 +14086,17 @@ static const SciScriptPatcherEntry qfg4Signatures[] = {
 	{  true,   633, "Floppy: fix room 627 door squeak",            1, qfg4Room627SqueakFloppySignature,  qfg4Room627SqueakFloppyPatch },
 	{  true,   633, "CD: fix room 627 door squeak",                2, qfg4Room627SqueakCDSignature,  qfg4Room627SqueakCDPatch },
 	{  true,   633, "fix great hall keyhole message",              1, qfg4GreatHallKeyholeSignature, qfg4GreatHallKeyholePatch },
+	{  true,   634, "fix room 631 pick lock squeak",               1, qfg4Room631LockSqueakSignature,qfg4Room631LockSqueakPatch },
+	{  true,   640, "fix room 640 pick lock squeak",               1, qfg4Room640LockSqueakSignature,qfg4Room640LockSqueakPatch },
+	{  true,   642, "fix room 642 pick lock squeak",               1, qfg4Room640LockSqueakSignature,qfg4Room640LockSqueakPatch },
+	{  true,   643, "fix room 643 pick lock squeak",               1, qfg4Room643LockSqueakSignature,qfg4Room643LockSqueakPatch },
 	{  true,   643, "fix iron safe's east door sending hero west", 1, qfg4SafeDoorEastSignature,     qfg4SafeDoorEastPatch },
 	{  true,   643, "fix iron safe's door oil flags",              1, qfg4SafeDoorOilSignature,      qfg4SafeDoorOilPatch },
 	{  true,   644, "fix castle door open message for rogue",      2, qfg4StuckDoorSignature,        qfg4StuckDoorPatch },
 	{  true,   644, "fix peer bats, lower door",                   1, qfg4LowerPeerBatsSignature,    qfg4LowerPeerBatsPatch },
+	{  true,   644, "fix room 644 pick lock squeak",               1, qfg4Room643LockSqueakSignature,qfg4Room644LockSqueakPatch },
 	{  true,   645, "fix extraneous door sound in the castle",     1, qfg4DoubleDoorSoundSignature,  qfg4DoubleDoorSoundPatch },
+	{  true,   661, "fix room 661 pick lock squeak",               1, qfg4Room661LockSqueakSignature,qfg4Room661LockSqueakPatch },
 	{  false,  663, "CD: fix crest bookshelf",                     1, qfg4CrestBookshelfCDSignature,     qfg4CrestBookshelfCDPatch },
 	{  false,  663, "Floppy: fix crest bookshelf",                 1, qfg4CrestBookshelfFloppySignature, qfg4CrestBookshelfFloppyPatch },
 	{  true,   663, "CD/Floppy: fix crest bookshelf motion",       1, qfg4CrestBookshelfMotionSignature, qfg4CrestBookshelfMotionPatch },
