@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2019-09-23 01:33+0200\n"
-"PO-Revision-Date: 2019-09-17 06:31+0000\n"
+"PO-Revision-Date: 2019-09-24 11:44+0000\n"
 "Last-Translator: Ben Castricum <github@bencastricum.nl>\n"
 "Language-Team: Dutch <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/nl/>\n"
@@ -2661,9 +2661,8 @@ msgid "ScummVM couldn't list the directory you specified."
 msgstr "ScummVM kon de opgegeven map niet indexeren."
 
 #: backends/networking/sdl_net/handlers/filespagehandler.cpp:232
-#, fuzzy
 msgid "Index of"
-msgstr "Index van "
+msgstr "Index van"
 
 #: backends/networking/sdl_net/handlers/indexpagehandler.cpp:42
 msgid "This is a local webserver index page."
