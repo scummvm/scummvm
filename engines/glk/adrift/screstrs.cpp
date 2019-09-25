@@ -24,6 +24,10 @@
 #include "glk/adrift/scprotos.h"
 #include "glk/adrift/scgamest.h"
 
+#undef longjmp
+#undef setjmp
+#include <setjmp.h>
+
 namespace Glk {
 namespace Adrift {
 

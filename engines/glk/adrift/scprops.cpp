@@ -256,7 +256,7 @@ static sc_prop_noderef_t prop_find_child(sc_prop_noderef_t parent, sc_int type, 
 	/* See if this node has any children. */
 	if (parent->child_list) {
 		sc_int index_;
-		sc_prop_noderef_t child;
+		sc_prop_noderef_t child = nullptr;
 
 		/* Do the lookup based on name type. */
 		switch (type) {

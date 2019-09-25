@@ -1237,7 +1237,7 @@ static sc_bool run_player_input(sc_gameref_t game) {
  *
  * Main interpreter loop.
  */
-static void run_main_loop(sc_gameref_t game) {
+static void run_main_loop(CONTEXT, sc_gameref_t game) {
 	const sc_filterref_t filter = gs_get_filter(game);
 	const sc_var_setref_t vars = gs_get_vars(game);
 	const sc_prop_setref_t bundle = gs_get_bundle(game);
@@ -1304,13 +1304,13 @@ static void run_main_loop(sc_gameref_t game) {
 		 * the initial room visited as this is how the debugger differentiates
 		 * restarts from restore or undo back to game start.
 		 */
-		debug_game_started(game);
+		CALL1(debug_game_started, game);
 
 		/* Note the initial room as visited. */
 		gs_set_room_seen(game, gs_playerroom(game), TRUE);
 	} else {
 		/* Notify the debugger that the game has restarted. */
-		debug_game_started(game);
+		CALL1(debug_game_started, game);
 	}
 
 	/*
@@ -1381,7 +1381,7 @@ static void run_main_loop(sc_gameref_t game) {
 				gs_set_room_seen(game, gs_playerroom(game), TRUE);
 
 				/* Give the debugger a chance to catch watchpoints. */
-				debug_turn_update(game);
+				CALL1(debug_turn_update, game);
 			}
 		}
 
@@ -1394,7 +1394,7 @@ static void run_main_loop(sc_gameref_t game) {
 	 * scan and offer the dialog if appropriate.
 	 */
 	run_update_status(game);
-	debug_game_ended(game);
+	CALL1(debug_game_ended, game);
 
 	/*
 	 * Final resource sync, score change notification and printfilter flush
@@ -1575,7 +1575,7 @@ static void run_quit_handler(sc_gameref_t game) {
  *
  * Intepret the game in a game context.
  */
-void run_interpret(sc_gameref_t game) {
+void run_interpret(CONTEXT, sc_gameref_t game) {
 	assert(gs_is_game_valid(game));
 
 	/* Verify the game is not already running, and is runnable. */
@@ -1597,9 +1597,8 @@ void run_interpret(sc_gameref_t game) {
 	/* Run the main interpreter loop until no more restarts. */
 	game->is_running = TRUE;
 	do {
-		/* Run the game until some form of halt is requested. */
-		if (setjmp(game->quitter) == 0)
-			run_main_loop(game);
+		// Run the game until some form of halt is requested
+		CALL1(run_main_loop, game);
 
 		/*
 		 * If the halt was a restart or restore, cancel the request, handle
@@ -1682,19 +1681,18 @@ void run_destroy(sc_gameref_t game) {
  * Quits a running game.  This function calls a longjump to act as if
  * run_main_loop() returned, and so never returns to its caller.
  */
-void run_quit(sc_gameref_t game) {
+void run_quit(CONTEXT, sc_gameref_t game) {
 	assert(gs_is_game_valid(game));
 
-	/* Disallow quitting a non-running game. */
+	// Disallow quitting a non-running game
 	if (!game->is_running) {
 		sc_error("run_quit: game is not running\n");
 		return;
 	}
 
-	/* Exit the main loop with a longjump. */
+	// Exit the main loop
 	game->is_running = FALSE;
-	longjmp(game->quitter, 1);
-	sc_fatal("run_quit: unable to quit cleanly\n");
+	LONG_JUMP;
 }
 
 
@@ -1705,7 +1703,7 @@ void run_quit(sc_gameref_t game) {
  * function calls a longjump to act as if run_main_loop() returned, and so
  * never returns to its caller.  For stopped games, it returns.
  */
-void run_restart(sc_gameref_t game) {
+void run_restart(CONTEXT, sc_gameref_t game) {
 	assert(gs_is_game_valid(game));
 
 	/*
@@ -1715,11 +1713,10 @@ void run_restart(sc_gameref_t game) {
 	if (game->is_running) {
 		game->is_running = FALSE;
 		game->do_restart = TRUE;
-		longjmp(game->quitter, 1);
-		sc_fatal("run_restart: unable to restart cleanly\n");
+		LONG_JUMP;
 	}
 
-	/* Restart locally, and ensure that the game remains stopped. */
+	// Restart locally, and ensure that the game remains stopped
 	run_restart_handler(game);
 	game->is_running = FALSE;
 }
@@ -1756,7 +1753,7 @@ sc_bool run_save_prompted(sc_gameref_t game) {
  * restore, and for stopped games, they will return, with TRUE if successful,
  * FALSE if restore failed.
  */
-static sc_bool run_restore_common(sc_gameref_t game, sc_read_callbackref_t callback, void *opaque) {
+static sc_bool run_restore_common(CONTEXT, sc_gameref_t game, sc_read_callbackref_t callback, void *opaque) {
 	sc_bool is_running, status;
 
 	/*
@@ -1778,8 +1775,7 @@ static sc_bool run_restore_common(sc_gameref_t game, sc_read_callbackref_t callb
 		if (game->is_running) {
 			game->is_running = FALSE;
 			game->do_restore = TRUE;
-			longjmp(game->quitter, 1);
-			sc_fatal("run_restore_common: unable to restart cleanly\n");
+			LONG_JUMP0;
 		}
 	}
 
@@ -1787,17 +1783,17 @@ static sc_bool run_restore_common(sc_gameref_t game, sc_read_callbackref_t callb
 	return status;
 }
 
-sc_bool run_restore(sc_gameref_t game, sc_read_callbackref_t callback, void *opaque) {
+sc_bool run_restore(CONTEXT, sc_gameref_t game, sc_read_callbackref_t callback, void *opaque) {
 	assert(gs_is_game_valid(game));
 	assert(callback);
 
-	return run_restore_common(game, callback, opaque);
+	return run_restore_common(context, game, callback, opaque);
 }
 
-sc_bool run_restore_prompted(sc_gameref_t game) {
+sc_bool run_restore_prompted(CONTEXT, sc_gameref_t game) {
 	assert(gs_is_game_valid(game));
 
-	return run_restore_common(game, NULL, NULL);
+	return run_restore_common(context, game, NULL, NULL);
 }
 
 
@@ -1807,7 +1803,7 @@ sc_bool run_restore_prompted(sc_gameref_t game) {
  * Undo a turn in either a running or a stopped game.  Returns TRUE on
  * successful undo, FALSE if no undo buffer is available.
  */
-sc_bool run_undo(sc_gameref_t game) {
+sc_bool run_undo(CONTEXT, sc_gameref_t game) {
 	const sc_memo_setref_t memento = gs_get_memento(game);
 	sc_bool is_running;
 	assert(gs_is_game_valid(game));
@@ -1845,8 +1841,7 @@ sc_bool run_undo(sc_gameref_t game) {
 		if (game->is_running) {
 			game->is_running = FALSE;
 			game->do_restore = TRUE;
-			longjmp(game->quitter, 1);
-			sc_fatal("run_undo: unable to restart cleanly\n");
+			LONG_JUMP0;
 		}
 
 		/* Game undo on non-running game accomplished with memos. */

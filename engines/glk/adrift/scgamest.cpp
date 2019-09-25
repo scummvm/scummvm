@@ -783,10 +783,7 @@ sc_gameref_t gs_create(sc_var_setref_t vars, sc_prop_setref_t bundle, sc_filterr
 	game->her_npc = -1;
 	game->it_npc = -1;
 
-	/* Clear the quit jump buffer for tidiness. */
-	memset(&game->quitter, 0, sizeof(game->quitter));
-
-	/* Return the constructed game state. */
+	// Return the constructed game state
 	return game;
 }
 
@@ -959,9 +956,6 @@ void gs_copy(sc_gameref_t to, sc_gameref_t from) {
 	to->him_npc = from->him_npc;
 	to->her_npc = from->her_npc;
 	to->it_npc = from->it_npc;
-
-	/* Copy over the quit jump buffer. */
-	memcpy(&to->quitter, &from->quitter, sizeof(from->quitter));
 }
 
 

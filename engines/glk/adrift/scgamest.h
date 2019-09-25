@@ -180,9 +180,6 @@ struct sc_game_s {
 	sc_int him_npc;
 	sc_int her_npc;
 	sc_int it_npc;
-
-	/* Longjump buffer for external requests to quit. */
-	jmp_buf quitter;
 };
 typedef sc_game_s sc_game_t;
 

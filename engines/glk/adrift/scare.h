@@ -25,9 +25,7 @@
 
 #include "common/scummsys.h"
 #include "common/stream.h"
-#undef longjmp
-#undef setjmp
-#include <setjmp.h>
+#include "glk/jumps.h"
 
 namespace Glk {
 namespace Adrift {
@@ -111,11 +109,11 @@ extern sc_game sc_game_from_stream(Common::SeekableReadStream *stream);
 extern sc_game sc_game_from_callback(sc_int(*callback)
                                      (void *, sc_byte *, sc_int),
                                      void *opaque);
-extern void sc_interpret_game(sc_game game);
-extern void sc_restart_game(sc_game game);
+extern void sc_interpret_game(CONTEXT, sc_game game);
+extern void sc_restart_game(CONTEXT, sc_game game);
 extern sc_bool sc_save_game(sc_game game);
 extern sc_bool sc_load_game(sc_game game);
-extern sc_bool sc_undo_game_turn(sc_game game);
+extern sc_bool sc_undo_game_turn(CONTEXT, sc_game game);
 extern void sc_quit_game(sc_game game);
 extern sc_bool sc_save_game_to_filename(sc_game game, const sc_char *filename);
 extern void sc_save_game_to_stream(sc_game game, Common::SeekableReadStream *stream);

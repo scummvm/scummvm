@@ -2888,6 +2888,7 @@ static int gsc_startup_code(Common::SeekableReadStream *game_stream, int restore
 
 static void gsc_main() {
 	sc_bool is_running;
+	Context context;
 
 	/* Ensure SCARE internal types have the right sizes. */
 	if (!(sizeof(sc_byte) == 1 && sizeof(sc_char) == 1
@@ -2927,7 +2928,12 @@ static void gsc_main() {
 	while (is_running) {
 		/* Run the game until it ends, or the user quits. */
 		gsc_status_notify();
-		sc_interpret_game(gsc_game);
+
+		if (!context._break)
+			sc_interpret_game(context, gsc_game);
+
+		// End point for any context long jump
+		context.clear();
 
 		/*
 		 * If the game did not complete, the user quit explicitly, so leave the
@@ -2956,17 +2962,17 @@ static void gsc_main() {
 		switch (gsc_get_ending_option()) {
 		case GAME_RESTART:
 			gsc_short_delay();
-			sc_restart_game(gsc_game);
+			sc_restart_game(context, gsc_game);
 			break;
 
 		case GAME_UNDO:
 			if (sc_is_game_undo_available(gsc_game)) {
-				sc_undo_game_turn(gsc_game);
+				sc_undo_game_turn(context, gsc_game);
 				gsc_normal_string("The previous turn has been undone.\n");
 			} else {
 				gsc_normal_string("Sorry, no undo is available.\n");
 				gsc_short_delay();
-				sc_restart_game(gsc_game);
+				sc_restart_game(context, gsc_game);
 			}
 			break;
 

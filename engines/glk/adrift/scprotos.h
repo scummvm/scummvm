@@ -21,6 +21,7 @@
  */
 
 #include "glk/adrift/scare.h"
+#include "glk/jumps.h"
 
 namespace Glk {
 namespace Adrift {
@@ -621,20 +622,17 @@ extern void res_sync_resources(sc_gameref_t game);
 extern void res_cancel_resources(sc_gameref_t game);
 
 /* Game runner functions. */
-extern sc_bool run_game_task_commands(sc_gameref_t game,
-                                      const sc_char *string);
+extern sc_bool run_game_task_commands(sc_gameref_t game, const sc_char *string);
 extern sc_gameref_t run_create(sc_read_callbackref_t callback, void *opaque);
-extern void run_interpret(sc_gameref_t game);
+extern void run_interpret(CONTEXT, sc_gameref_t game);
 extern void run_destroy(sc_gameref_t game);
-extern void run_restart(sc_gameref_t game);
-extern void run_save(sc_gameref_t game,
-                     sc_write_callbackref_t callback, void *opaque);
+extern void run_restart(CONTEXT, sc_gameref_t game);
+extern void run_save(sc_gameref_t game, sc_write_callbackref_t callback, void *opaque);
 extern sc_bool run_save_prompted(sc_gameref_t game);
-extern sc_bool run_restore(sc_gameref_t game,
-                           sc_read_callbackref_t callback, void *opaque);
-extern sc_bool run_restore_prompted(sc_gameref_t game);
-extern sc_bool run_undo(sc_gameref_t game);
-extern void run_quit(sc_gameref_t game);
+extern sc_bool run_restore(CONTEXT, sc_gameref_t game, sc_read_callbackref_t callback, void *opaque);
+extern sc_bool run_restore_prompted(CONTEXT, sc_gameref_t game);
+extern sc_bool run_undo(CONTEXT, sc_gameref_t game);
+extern void run_quit(CONTEXT, sc_gameref_t game);
 extern sc_bool run_is_running(sc_gameref_t game);
 extern sc_bool run_has_completed(sc_gameref_t game);
 extern sc_bool run_is_undo_available(sc_gameref_t game);
@@ -757,9 +755,9 @@ extern sc_bool debug_run_command(sc_gameref_t game,
 extern sc_bool debug_cmd_debugger(sc_gameref_t game);
 extern void debug_set_enabled(sc_gameref_t game, sc_bool enable);
 extern sc_bool debug_get_enabled(sc_gameref_t game);
-extern void debug_game_started(sc_gameref_t game);
-extern void debug_game_ended(sc_gameref_t game);
-extern void debug_turn_update(sc_gameref_t game);
+extern void debug_game_started(CONTEXT, sc_gameref_t game);
+extern void debug_game_ended(CONTEXT, sc_gameref_t game);
+extern void debug_turn_update(CONTEXT, sc_gameref_t game);
 
 /* OS interface functions. */
 extern sc_bool if_get_trace_flag(sc_uint bitmask);

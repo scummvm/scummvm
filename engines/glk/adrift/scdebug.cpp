@@ -1891,6 +1891,7 @@ static sc_bool debug_compare_variable(sc_gameref_t from, sc_gameref_t with, sc_i
 	const sc_char *name;
 	sc_int var_type, var_type2;
 	sc_bool equal = FALSE;
+	vt_rvalue.voidp = vt_rvalue2.voidp = nullptr;
 
 	if (from->bundle != with->bundle)
 		sc_fatal("debug_compare_variable: property sharing malfunction\n");
@@ -2203,7 +2204,7 @@ static void debug_dispatch(sc_gameref_t game, sc_command_t command, sc_command_t
  *
  * Create a small debugging dialog with the user.
  */
-static void debug_dialog(sc_gameref_t game) {
+static void debug_dialog(CONTEXT, sc_gameref_t game) {
 	const sc_filterref_t filter = gs_get_filter(game);
 	const sc_debuggerref_t debug = debug_get_debugger(game);
 	const sc_var_setref_t vars = gs_get_vars(game);
@@ -2264,7 +2265,7 @@ static void debug_dialog(sc_gameref_t game) {
 
 			/* Drop printfilter contents and quit the game. */
 			pf_empty(filter);
-			run_quit(game);
+			CALL1(run_quit, game);
 
 			/* Just in case... */
 			if_print_debug("Unable to quit from the game.  Sorry.\n");
@@ -2326,13 +2327,14 @@ sc_bool debug_run_command(sc_gameref_t game, const sc_char *debug_command) {
  */
 sc_bool debug_cmd_debugger(sc_gameref_t game) {
 	const sc_debuggerref_t debug = debug_get_debugger(game);
+	Context context;
 
 	/* If debugging disallowed (not initialized), ignore the call. */
-	if (debug)
-		debug_dialog(game);
-	else
+	if (debug) {
+		debug_dialog(context, game);
+	} else {
 		if_print_string("SCARE's game debugger is not enabled.  Sorry.\n");
-
+	}
 	/*
 	 * Set as administrative command, so as not to consume a game turn, and
 	 * return successfully.
@@ -2354,7 +2356,7 @@ sc_bool debug_cmd_debugger(sc_gameref_t game) {
  * The second is called on exit from the game, and may make a final sweep for
  * watchpoints and offer the debug dialog one last time.
  */
-void debug_game_started(sc_gameref_t game) {
+void debug_game_started(CONTEXT, sc_gameref_t game) {
 	const sc_debuggerref_t debug = debug_get_debugger(game);
 
 	/* If debugging disallowed (not initialized), ignore the call. */
@@ -2368,20 +2370,21 @@ void debug_game_started(sc_gameref_t game) {
 			if_print_debug("\n--- SCARE " SCARE_VERSION SCARE_PATCH_LEVEL
 			               " Game Debugger\n"
 			               "--- Type 'help' for a list of commands.\n");
-			debug_dialog(game);
+			CALL1(debug_dialog, game);
 		} else {
 			/*
 			 * It's a restore or undo through memos, so run the dialog only if
 			 * single-stepping; no need to check watchpoints for this case as
 			 * none can be set -- no undo.
 			 */
-			if (debug->single_step)
-				debug_dialog(game);
+			if (debug->single_step) {
+				CALL1(debug_dialog, game);
+			}
 		}
 	}
 }
 
-void debug_game_ended(sc_gameref_t game) {
+void debug_game_ended(CONTEXT, sc_gameref_t game) {
 	const sc_debuggerref_t debug = debug_get_debugger(game);
 
 	/* If debugging disallowed (not initialized), ignore the call. */
@@ -2412,7 +2415,7 @@ void debug_game_ended(sc_gameref_t game) {
 		}
 
 		/* Run a final dialog. */
-		debug_dialog(game);
+		CALL1(debug_dialog, game);
 	}
 }
 
@@ -2423,7 +2426,7 @@ void debug_game_ended(sc_gameref_t game) {
  * Called after each turn by the main game loop.  Checks for any set
  * watchpoints, and triggers a debug dialog when any fire.
  */
-void debug_turn_update(sc_gameref_t game) {
+void debug_turn_update(CONTEXT, sc_gameref_t game) {
 	const sc_debuggerref_t debug = debug_get_debugger(game);
 
 	/* If debugging disallowed (not initialized), ignore the call. */
@@ -2441,8 +2444,9 @@ void debug_turn_update(sc_gameref_t game) {
 		 * Run debugger dialog if any watchpoints triggered, or if single
 		 * stepping (even if none triggered).
 		 */
-		if (debug_check_watchpoints(game) || debug->single_step)
-			debug_dialog(game);
+		if (debug_check_watchpoints(game) || debug->single_step) {
+			CALL1(debug_dialog, game);
+		}
 	}
 }
 

@@ -407,12 +407,6 @@ bool LoadSerializer::load() {
 	new_game->requested_sound = _game->requested_sound;
 	new_game->requested_graphic = _game->requested_graphic;
 
-	/* Quitter tweak -- set the quit jump buffer in the new _game to be the
-	 * same as the current one, so that it remains unchanged by gs_copy().  The
-	 * one in the new _game is still the unset one from gs_create().
-	 */
-	memcpy(&new_game->quitter, &_game->quitter, sizeof(_game->quitter));
-
 	/* If we got this far, we successfully restored the _game from the file.
 	 * As our final act, copy the new _game onto the old one.
 	 */

@@ -403,22 +403,22 @@ static sc_bool if_game_error(sc_gameref_t game, const sc_char *function_name) {
  * behaving like sc_restart_game()), but will return if the game could not
  * be restored.  sc_undo_game_turn() behaves like sc_load_game().
  */
-void sc_interpret_game(sc_game game) {
+void sc_interpret_game(CONTEXT, sc_game game) {
 	const sc_gameref_t game_ = (const sc_gameref_t)game;
 
 	if (if_game_error(game_, "sc_interpret_game"))
 		return;
 
-	run_interpret(game_);
+	run_interpret(context, game_);
 }
 
-void sc_restart_game(sc_game game) {
+void sc_restart_game(CONTEXT, sc_game game) {
 	const sc_gameref_t game_ = (const sc_gameref_t)game;
 
 	if (if_game_error(game_, "sc_restart_game"))
 		return;
 
-	run_restart(game_);
+	CALL1(run_restart, game_);
 }
 
 sc_bool sc_save_game(sc_game game) {
@@ -430,31 +430,31 @@ sc_bool sc_save_game(sc_game game) {
 	return run_save_prompted(game_);
 }
 
-sc_bool sc_load_game(sc_game game) {
+sc_bool sc_load_game(CONTEXT, sc_game game) {
 	const sc_gameref_t game_ = (const sc_gameref_t)game;
 
 	if (if_game_error(game_, "sc_load_game"))
 		return FALSE;
 
-	return run_restore_prompted(game_);
+	return run_restore_prompted(context, game_);
 }
 
-sc_bool sc_undo_game_turn(sc_game game) {
+sc_bool sc_undo_game_turn(CONTEXT, sc_game game) {
 	const sc_gameref_t game_ = (const sc_gameref_t)game;
 
 	if (if_game_error(game_, "sc_undo_game_turn"))
 		return FALSE;
 
-	return run_undo(game_);
+	return run_undo(context, game_);
 }
 
-void sc_quit_game(sc_game game) {
+void sc_quit_game(CONTEXT, sc_game game) {
 	const sc_gameref_t game_ = (const sc_gameref_t)game;
 
 	if (if_game_error(game_, "sc_quit_game"))
 		return;
 
-	run_quit(game_);
+	run_quit(context, game_);
 }
 
 
@@ -526,7 +526,7 @@ void sc_save_game_to_callback(sc_game game,
 	run_save(game_, callback, opaque);
 }
 
-sc_bool sc_load_game_from_filename(sc_game game, const sc_char *filename) {
+sc_bool sc_load_game_from_filename(CONTEXT, sc_game game, const sc_char *filename) {
 	const sc_gameref_t game_ = (const sc_gameref_t)game;
 	Common::InSaveFile *sf;
 	sc_bool status;
@@ -545,13 +545,13 @@ sc_bool sc_load_game_from_filename(sc_game game, const sc_char *filename) {
 		return FALSE;
 	}
 
-	status = run_restore(game_, if_file_read_callback, sf);
+	status = run_restore(context, game_, if_file_read_callback, sf);
 	delete sf;
 
 	return status;
 }
 
-sc_bool sc_load_game_from_stream(sc_game game, Common::SeekableReadStream *stream) {
+sc_bool sc_load_game_from_stream(CONTEXT, sc_game game, Common::SeekableReadStream *stream) {
 	const sc_gameref_t game_ = (const sc_gameref_t)game;
 
 	if (if_game_error(game_, "sc_load_game_from_stream"))
@@ -562,10 +562,10 @@ sc_bool sc_load_game_from_stream(sc_game game, Common::SeekableReadStream *strea
 		return FALSE;
 	}
 
-	return run_restore(game_, if_file_read_callback, stream);
+	return run_restore(context, game_, if_file_read_callback, stream);
 }
 
-sc_bool sc_load_game_from_callback(sc_game game,
+sc_bool sc_load_game_from_callback(CONTEXT, sc_game game,
 		sc_int(*callback)(void *, sc_byte *, sc_int), void *opaque) {
 	const sc_gameref_t game_ = (const sc_gameref_t)game;
 
@@ -577,7 +577,7 @@ sc_bool sc_load_game_from_callback(sc_game game,
 		return FALSE;
 	}
 
-	return run_restore(game_, callback, opaque);
+	return run_restore(context, game_, callback, opaque);
 }
 
 

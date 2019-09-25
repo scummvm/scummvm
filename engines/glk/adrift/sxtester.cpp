@@ -32,7 +32,7 @@ namespace Adrift {
  * Run the game using the given script.  Returns the count of errors from
  * the script's monitoring.
  */
-static sc_int test_run_game_script(sc_game game, sx_script script) {
+static sc_int test_run_game_script(CONTEXT, sc_game game, sx_script script) {
 	sc_int errors;
 
 	/* Ensure completely repeatable random number sequences. */
@@ -40,7 +40,7 @@ static sc_int test_run_game_script(sc_game game, sx_script script) {
 
 	/* Start interpreting the script stream. */
 	scr_start_script(game, script);
-	sc_interpret_game(game);
+	R0CALL1(sc_interpret_game, game);
 
 	/* Wrap up the script interpreter and capture error count. */
 	errors = scr_finalize_script();
@@ -57,6 +57,7 @@ static sc_int test_run_game_script(sc_game game, sx_script script) {
 sc_int test_run_game_tests(const sx_test_descriptor_t tests[], sc_int count, sc_bool is_verbose) {
 	const sx_test_descriptor_t *test;
 	sc_int errors;
+	Context context;
 	assert(tests);
 
 	errors = 0;
@@ -72,7 +73,7 @@ sc_int test_run_game_tests(const sx_test_descriptor_t tests[], sc_int count, sc_
 			         sc_get_game_author(test->game));
 		}
 
-		test_errors = test_run_game_script(test->game, test->script);
+		test_errors = test_run_game_script(context, test->game, test->script);
 		errors += test_errors;
 
 		if (is_verbose) {
