@@ -150,8 +150,8 @@ EditGameDialog::EditGameDialog(const String &domain)
 	_descriptionWidget = new EditTextWidget(tab, "GameOptions_Game.Desc", description, _("Full title of the game"));
 
 	// Language popup
-	_langPopUpDesc = new StaticTextWidget(tab, "GameOptions_Game.LangPopupDesc", _("Language:"), _("Language of the game. This will not turn your Spanish game version into English"));
-	_langPopUp = new PopUpWidget(tab, "GameOptions_Game.LangPopup", _("Language of the game. This will not turn your Spanish game version into English"));
+	_langPopUpDesc = new StaticTextWidget(tab, "GameOptions_Game.LangPopupDesc", _("Language:"), _("Language of the game."));
+	_langPopUp = new PopUpWidget(tab, "GameOptions_Game.LangPopup", _("Language of the game."));
 	_langPopUp->appendEntry(_("<default>"), (uint32)Common::UNK_LANG);
 	_langPopUp->appendEntry("", (uint32)Common::UNK_LANG);
 	const Common::LanguageDescription *l = Common::g_languages;
