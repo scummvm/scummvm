@@ -77,7 +77,7 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::EN_ANY,
 		Common::kPlatformWindows,
 		ADGF_TESTING,
-		GAMEOPTION_CHEATMODE
+		GUIO2(GUIO_NOMIDI,GAMEOPTION_CHEATMODE)
 	},
 	{
 		"hdb",
@@ -86,7 +86,7 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::EN_ANY,
 		Common::kPlatformLinux,
 		ADGF_TESTING,
-		GAMEOPTION_CHEATMODE
+		GUIO2(GUIO_NOMIDI,GAMEOPTION_CHEATMODE)
 	},
 	// PocketPC Arm
 	{
@@ -96,7 +96,7 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::EN_ANY,
 		Common::kPlatformPocketPC,
 		ADGF_TESTING,
-		GAMEOPTION_CHEATMODE
+		GUIO2(GUIO_NOMIDI,GAMEOPTION_CHEATMODE)
 	},
 
 	// Demos
@@ -107,7 +107,7 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::EN_ANY,
 		Common::kPlatformLinux,
 		(ADGF_DEMO | ADGF_TESTING),
-		GAMEOPTION_CHEATMODE
+		GUIO2(GUIO_NOMIDI,GAMEOPTION_CHEATMODE)
 	},
 	{
 		"hdb",
@@ -116,7 +116,7 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::EN_ANY,
 		Common::kPlatformWindows,
 		(ADGF_DEMO | ADGF_TESTING),
-		GAMEOPTION_CHEATMODE
+		GUIO2(GUIO_NOMIDI,GAMEOPTION_CHEATMODE)
 	},
 	// provided by sev
 	{
@@ -126,7 +126,7 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::EN_ANY,
 		Common::kPlatformWindows,
 		(ADGF_DEMO | ADGF_TESTING),
-		GAMEOPTION_CHEATMODE
+		GUIO2(GUIO_NOMIDI,GAMEOPTION_CHEATMODE)
 	},
 	{
 		"hdb",
@@ -135,7 +135,7 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::EN_ANY,
 		Common::kPlatformPocketPC,
 		(ADGF_DEMO | ADGF_TESTING),
-		GAMEOPTION_CHEATMODE
+		GUIO2(GUIO_NOMIDI,GAMEOPTION_CHEATMODE)
 	},
 	{
 		"hdb",
@@ -144,7 +144,7 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::EN_ANY,
 		Common::kPlatformPocketPC,
 		(ADGF_DEMO | ADGF_TESTING | GF_HANDANGO),
-		GAMEOPTION_CHEATMODE
+		GUIO2(GUIO_NOMIDI,GAMEOPTION_CHEATMODE)
 	},
 	AD_TABLE_END_MARKER
 };
