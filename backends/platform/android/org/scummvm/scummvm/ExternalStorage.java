@@ -115,7 +115,7 @@ public class ExternalStorage {
 					}
 				}
 				hash += "]";
-				if (!mountHash.contains(hash)){
+				if (!mountHash.contains(hash)) {
 					String key = SD_CARD + "_" + (map.size() / 2);
 					if (map.size() == 0) {
 						key = SD_CARD;
@@ -134,10 +134,38 @@ public class ExternalStorage {
 		map.add(DATA_DIRECTORY);
 		map.add(Environment.getDataDirectory().getAbsolutePath());
 
-		if (map.isEmpty()) {
-			map.add(SD_CARD);
-			map.add(Environment.getExternalStorageDirectory().getAbsolutePath());
+		// Now go through the external storage
+		String state = Environment.getExternalStorageState();
+
+		if (Environment.MEDIA_MOUNTED.equals(state) || Environment.MEDIA_MOUNTED_READ_ONLY.equals(state) ) {  // we can read the External Storage...
+			// Retrieve the primary External Storage:
+			File primaryExternalStorage = Environment.getExternalStorageDirectory();
+
+			//Retrieve the External Storages root directory:
+			String externalStorageRootDir;
+			int count = 0;
+			if ((externalStorageRootDir = primaryExternalStorage.getParent()) == null) {  // no parent...
+				String key = primaryExternalStorage.getAbsolutePath();
+				if (!map.contains(key)) {
+					map.add(key); // Make name as directory
+					map.add(key);
+				}
+			} else {
+				File externalStorageRoot = new File(externalStorageRootDir);
+				File[] files = externalStorageRoot.listFiles();
+
+				for (final File file : files) {
+					if (file.isDirectory() && file.canRead() && (file.listFiles().length > 0)) {  // it is a real directory (not a USB drive)...
+						String key = file.getAbsolutePath();
+						if (!map.contains(key)) {
+							map.add(key); // Make name as directory
+							map.add(key);
+						}
+					}
+				}
+			}
 		}
+
 		return map;
 	}
 }
