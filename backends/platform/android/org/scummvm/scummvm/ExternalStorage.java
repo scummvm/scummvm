@@ -3,9 +3,7 @@ package org.scummvm.scummvm;
 import android.os.Environment;
 import java.io.File;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Scanner;
 
 /**
@@ -44,10 +42,10 @@ public class ExternalStorage {
 	}
 
 	/**
-	 * @return A map of all storage locations available
+	 * @return list of locations available. Odd elements are names, even are paths
 	 */
-	public static Map<String, String> getAllStorageLocations() {
-		Map<String, String> map = new HashMap<String, String>(10);
+	public static List<String> getAllStorageLocations() {
+		List<String> map = new ArrayList<String>(20);
 
 		List<String> mMounts = new ArrayList<String>(10);
 		List<String> mVold = new ArrayList<String>(10);
@@ -118,24 +116,27 @@ public class ExternalStorage {
 				}
 				hash += "]";
 				if (!mountHash.contains(hash)){
-					String key = SD_CARD + "_" + map.size();
+					String key = SD_CARD + "_" + (map.size() / 2);
 					if (map.size() == 0) {
 						key = SD_CARD;
-					} else if (map.size() == 1) {
+					} else if (map.size() == 2) {
 						key = EXTERNAL_SD_CARD;
 					}
 					mountHash.add(hash);
-					map.put(key, root.getAbsolutePath());
+					map.add(key);
+					map.add(root.getAbsolutePath());
 				}
 			}
 		}
 
 		mMounts.clear();
 
-		map.put(SD_CARD, Environment.getDataDirectory().getAbsolutePath());
+		map.add(DATA_DIRECTORY);
+		map.add(Environment.getDataDirectory().getAbsolutePath());
 
 		if (map.isEmpty()) {
-			map.put(DATA_DIRECTORY, Environment.getExternalStorageDirectory().getAbsolutePath());
+			map.add(SD_CARD);
+			map.add(Environment.getExternalStorageDirectory().getAbsolutePath());
 		}
 		return map;
 	}
