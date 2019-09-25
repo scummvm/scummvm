@@ -104,7 +104,7 @@ public class ExternalStorage {
 
 		List<String> mountHash = new ArrayList<String>(10);
 
-		for (String mount : mMounts){
+		for (String mount : mMounts) {
 			File root = new File(mount);
 			if (root.exists() && root.isDirectory() && root.canRead()) {
 				File[] list = root.listFiles();

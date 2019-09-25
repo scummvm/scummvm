@@ -63,7 +63,7 @@ public abstract class ScummVM implements SurfaceHolder.Callback, Runnable {
 	abstract protected void showVirtualKeyboard(boolean enable);
 	abstract protected void showKeyboardControl(boolean enable);
 	abstract protected String[] getSysArchives();
-	abstract protected List<String> getAllStorageLocations();
+	abstract protected String[] getAllStorageLocations();
 
 	public ScummVM(AssetManager asset_manager, SurfaceHolder holder) {
 		_asset_manager = asset_manager;

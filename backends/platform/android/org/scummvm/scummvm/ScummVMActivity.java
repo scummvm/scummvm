@@ -157,8 +157,8 @@ public class ScummVMActivity extends Activity {
 		}
 
 		@Override
-		protected List<String> getAllStorageLocations() {
-			return _externalStorage.getAllStorageLocations();
+		protected String[] getAllStorageLocations() {
+			return _externalStorage.getAllStorageLocations().toArray(new String[0]);
 		}
 
 	}
