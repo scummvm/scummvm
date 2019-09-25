@@ -62,16 +62,7 @@ static const ADGameDescription gameDescriptions[] = {
 		AD_ENTRY1s("msn_data.000", "f64f16782a86211efa919fbae41e7568", 24163),
 		Common::DE_DEU,
 		Common::kPlatformDOS,
-		ADGF_TESTING,
-		GUIO1(GAMEOPTION_IMPROVED)
-	},
-	{
-		"msn1",
-		nullptr,
-		AD_ENTRY1s("msn_data.000", "f64f16782a86211efa919fbae41e7568", 24163),
-		Common::EN_ANY,
-		Common::kPlatformDOS,
-		ADGF_TESTING,
+		ADGF_TESTING | ADGF_ADDENGLISH | ADGF_DROPLANGUAGE,
 		GUIO1(GAMEOPTION_IMPROVED)
 	},
 	// Mission Supernova 2
@@ -81,16 +72,7 @@ static const ADGameDescription gameDescriptions[] = {
 		AD_ENTRY1s("ms2_data.000", "e595610cba4a6d24a763e428d05cc83f", 24805),
 		Common::DE_DEU,
 		Common::kPlatformDOS,
-		ADGF_TESTING,
-		GUIO1(GAMEOPTION_IMPROVED)
-	},
-	{
-		"msn2",
-		nullptr,
-		AD_ENTRY1s("ms2_data.000", "e595610cba4a6d24a763e428d05cc83f", 24805),
-		Common::EN_ANY,
-		Common::kPlatformDOS,
-		ADGF_TESTING,
+		ADGF_TESTING | ADGF_ADDENGLISH | ADGF_DROPLANGUAGE,
 		GUIO1(GAMEOPTION_IMPROVED)
 	},
 	AD_TABLE_END_MARKER
