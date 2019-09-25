@@ -57,6 +57,9 @@
 #include <os2.h>
 #endif
 
+#if defined(__ANDROID__) && !defined(ANDROIDSDL)
+#include "backends/platform/android/jni.h"
+#endif
 
 bool POSIXFilesystemNode::exists() const {
 	return access(_path.c_str(), F_OK) == 0;
@@ -186,6 +189,23 @@ bool POSIXFilesystemNode::getChildren(AbstractFSList &myList, ListMode mode, boo
 		myList.push_back(entry1);
 		POSIXFilesystemNode *entry2 = new POSIXFilesystemNode("uma0:");
 		myList.push_back(entry2);
+		return true;
+	}
+#endif
+
+#if defined(__ANDROID__) && !defined(ANDROIDSDL)
+	if (_path == "/") {
+		Common::Array<Common::String> list = JNI::getAllStorageLocations();
+		for (Common::Array<Common::String>::const_iterator it = list.begin(), end = list.end(); it != end; ++it) {
+			POSIXFilesystemNode *entry = new POSIXFilesystemNode();
+
+			entry->_isDirectory = true;
+			entry->_isValid = true;
+			entry->_displayName = *it;
+			++it;
+			entry->_path = *it;
+			myList.push_back(entry);
+		}
 		return true;
 	}
 #endif
