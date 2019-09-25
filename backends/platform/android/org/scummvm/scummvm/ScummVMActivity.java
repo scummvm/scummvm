@@ -24,6 +24,7 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import java.io.File;
+import java.util.List;
 
 public class ScummVMActivity extends Activity {
 
@@ -155,12 +156,18 @@ public class ScummVMActivity extends Activity {
 			return new String[0];
 		}
 
+		@Override
+		protected List<String> getAllStorageLocations() {
+			return _externalStorage.getAllStorageLocations();
+		}
+
 	}
 
 	private MyScummVM _scummvm;
 	private ScummVMEvents _events;
 	private MouseHelper _mouseHelper;
 	private Thread _scummvm_thread;
+	private ExternalStorage _externalStorage;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
