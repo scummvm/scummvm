@@ -86,6 +86,7 @@ jmethodID JNI::_MID_setWindowCaption = 0;
 jmethodID JNI::_MID_showVirtualKeyboard = 0;
 jmethodID JNI::_MID_showKeyboardControl = 0;
 jmethodID JNI::_MID_getSysArchives = 0;
+jmethodID JNI::_MID_getAllStorageLocations = 0;
 jmethodID JNI::_MID_initSurface = 0;
 jmethodID JNI::_MID_deinitSurface = 0;
 
@@ -531,6 +532,7 @@ void JNI::create(JNIEnv *env, jobject self, jobject asset_manager,
 	FIND_METHOD(, showVirtualKeyboard, "(Z)V");
 	FIND_METHOD(, showKeyboardControl, "(Z)V");
 	FIND_METHOD(, getSysArchives, "()[Ljava/lang/String;");
+	FIND_METHOD(, getAllStorageLocations, "()[Ljava/lang/String;");
 	FIND_METHOD(, initSurface, "()Ljavax/microedition/khronos/egl/EGLSurface;");
 	FIND_METHOD(, deinitSurface, "()V");
 
@@ -696,5 +698,39 @@ jstring JNI::getCurrentCharset(JNIEnv *env, jobject self) {
 #endif
 	return env->NewStringUTF("ISO-8859-1");
 }
+
+Common::Array<Common::String> JNI::getAllStorageLocations() {
+	Common::Array<Common::String> *res = new Common::Array<Common::String>();
+
+	JNIEnv *env = JNI::getEnv();
+
+	jobjectArray array =
+		(jobjectArray)env->CallObjectMethod(_jobj, _MID_getAllStorageLocations);
+
+	if (env->ExceptionCheck()) {
+		LOGE("Error finding system archive path");
+
+		env->ExceptionDescribe();
+		env->ExceptionClear();
+
+		return *res;
+	}
+
+	jsize size = env->GetArrayLength(array);
+	for (jsize i = 0; i < size; ++i) {
+		jstring path_obj = (jstring)env->GetObjectArrayElement(array, i);
+		const char *path = env->GetStringUTFChars(path_obj, 0);
+
+		if (path != 0) {
+			res->push_back(path);
+			env->ReleaseStringUTFChars(path_obj, path);
+		}
+
+		env->DeleteLocalRef(path_obj);
+	}
+
+	return *res;
+}
+
 
 #endif
