@@ -23,6 +23,8 @@
 #ifndef GLK_JUMPS
 #define GLK_JUMPS
 
+#include "common/str.h"
+
 /* This provides a simplified version of the ScummVM coroutines to allow for automated
  * breakouts to the main game loop from subroutinese rather than using unportable setjmps
  */
@@ -34,7 +36,17 @@ namespace Glk {
  */
 struct Context {
 	bool _break;
+	Common::String _label;
+
 	Context() : _break(false) {}
+
+	/**
+	 * Clear the context
+	 */
+	void clear() {
+		_break = false;
+		_label = "";
+	}
 };
 
 #define CALL0(METHOD) { METHOD(context); if (context._break) return; }
@@ -62,6 +74,8 @@ struct Context {
 #define CONTEXT Context &context
 #define LONG_JUMP { context._break = true; return; }
 #define LONG_JUMP0 { context._break = true; return 0; }
+#define LONG_JUMP_LABEL(LBL) { context._break = true; context._label = LBL; return; }
+#define LONG_JUMP_LABEL0(LBL) { context._break = true; context._label = LBL; return 0; }
 
 } // End of namespace Glk
 

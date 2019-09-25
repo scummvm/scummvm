@@ -24,7 +24,7 @@
 #define GLK_ALAN3_SYNTAX
 
 #include "glk/alan3/types.h"
-#include "glk/alan3/jumps.h"
+#include "glk/jumps.h"
 #include "glk/alan3/memory.h"
 
 namespace Glk {

@@ -25,7 +25,7 @@
 
 /* Header file for syserr unit of ARUN Alan System interpreter */
 
-#include "glk/alan3/jumps.h"
+#include "glk/jumps.h"
 
 namespace Glk {
 namespace Alan3 {

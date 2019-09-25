@@ -25,7 +25,7 @@
 
 /* Header file for rules handler in Alan interpreter */
 
-#include "glk/alan3/jumps.h"
+#include "glk/jumps.h"
 #include "glk/alan3/acode.h"
 
 namespace Glk {

@@ -25,7 +25,7 @@
 
 #include "glk/glk_api.h"
 #include "glk/windows.h"
-#include "glk/alan3/jumps.h"
+#include "glk/jumps.h"
 
 namespace Glk {
 namespace Alan3 {

@@ -26,7 +26,7 @@
 /* Header file for debug handler in Alan interpreter */
 
 #include "glk/alan3/types.h"
-#include "glk/alan3/jumps.h"
+#include "glk/jumps.h"
 
 namespace Glk {
 namespace Alan3 {

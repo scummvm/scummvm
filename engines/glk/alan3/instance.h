@@ -25,7 +25,7 @@
 
 #include "common/serializer.h"
 #include "glk/alan3/acode.h"
-#include "glk/alan3/jumps.h"
+#include "glk/jumps.h"
 #include "glk/alan3/types.h"
 #include "glk/alan3/set.h"
 

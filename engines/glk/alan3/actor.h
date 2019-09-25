@@ -24,7 +24,7 @@
 #define GLK_ALAN3_ACTOR
 
 #include "glk/alan3/acode.h"
-#include "glk/alan3/jumps.h"
+#include "glk/jumps.h"
 
 namespace Glk {
 namespace Alan3 {

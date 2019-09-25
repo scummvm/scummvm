@@ -31,7 +31,7 @@
 #include "glk/alan3/glkio.h"
 #include "glk/alan3/instance.h"
 #include "glk/alan3/inter.h"
-#include "glk/alan3/jumps.h"
+#include "glk/jumps.h"
 #include "glk/alan3/lists.h"
 #include "glk/alan3/literal.h"
 #include "glk/alan3/location.h"

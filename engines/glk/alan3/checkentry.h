@@ -25,7 +25,7 @@
 
 #include "glk/alan3/types.h"
 #include "glk/alan3/acode.h"
-#include "glk/alan3/jumps.h"
+#include "glk/jumps.h"
 
 namespace Glk {
 namespace Alan3 {
