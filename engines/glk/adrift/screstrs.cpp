@@ -868,9 +868,6 @@ static sc_int restr_eval_result(sc_int *lowest_fail) {
 }
 
 
-/* Parse error jump buffer. */
-static jmp_buf restr_parse_error;
-
 /* Single lookahead token for parser. */
 static sc_char restr_lookahead = '\0';
 
@@ -879,19 +876,18 @@ static sc_char restr_lookahead = '\0';
  *
  * Match a token with an expectation.
  */
-static void restr_match(sc_char c) {
+static void restr_match(CONTEXT, sc_char c) {
 	if (restr_lookahead == c)
 		restr_lookahead = restr_next_token();
 	else {
-		sc_error("restr_match:"
-		         " syntax error, expected %d, got %d\n", c, restr_lookahead);
-		longjmp(restr_parse_error, 1);
+		sc_error("restr_match: syntax error, expected %d, got %d\n", c, restr_lookahead);
+		LONG_JUMP;
 	}
 }
 
 
 /* Forward declaration for recursion. */
-static void restr_bexpr(void);
+static void restr_bexpr(CONTEXT);
 
 /*
  * restr_andexpr()
@@ -900,40 +896,40 @@ static void restr_bexpr(void);
  *
  * Expression parsers.  Here we go again...
  */
-static void restr_andexpr(void) {
-	restr_bexpr();
+static void restr_andexpr(CONTEXT) {
+	CALL0(restr_bexpr);
 	while (restr_lookahead == TOK_AND) {
-		restr_match(TOK_AND);
-		restr_bexpr();
+		CALL1(restr_match, TOK_AND);
+		CALL0(restr_bexpr);
 		restr_eval_action(TOK_AND);
 	}
 }
 
-static void restr_orexpr(void) {
-	restr_andexpr();
+static void restr_orexpr(CONTEXT) {
+	CALL0(restr_andexpr);
 	while (restr_lookahead == TOK_OR) {
-		restr_match(TOK_OR);
-		restr_andexpr();
+		CALL1(restr_match, TOK_OR);
+		CALL0(restr_andexpr);
 		restr_eval_action(TOK_OR);
 	}
 }
 
-static void restr_bexpr(void) {
+static void restr_bexpr(CONTEXT) {
 	switch (restr_lookahead) {
 	case TOK_RESTRICTION:
-		restr_match(TOK_RESTRICTION);
+		CALL1(restr_match, TOK_RESTRICTION);
 		restr_eval_action(TOK_RESTRICTION);
 		break;
 
 	case TOK_LPAREN:
-		restr_match(TOK_LPAREN);
-		restr_orexpr();
-		restr_match(TOK_RPAREN);
+		CALL1(restr_match, TOK_LPAREN);
+		CALL0(restr_orexpr);
+		CALL1(restr_match, TOK_RPAREN);
 		break;
 
 	default:
 		sc_error("restr_bexpr: syntax error, unexpected %d\n", restr_lookahead);
-		longjmp(restr_parse_error, 1);
+		LONG_JUMP;
 	}
 }
 
@@ -988,6 +984,7 @@ sc_bool restr_eval_task_restrictions(sc_gameref_t game, sc_int task, sc_bool *pa
 	sc_int restr_count, lowest_fail;
 	const sc_char *pattern;
 	sc_bool result;
+	Context context;
 	assert(pass && fail_message);
 
 	/* Get the count of restrictions on the task. */
@@ -1011,22 +1008,21 @@ sc_bool restr_eval_task_restrictions(sc_gameref_t game, sc_int task, sc_bool *pa
 	pattern = prop_get_string(bundle, "S<-sis", vt_key);
 
 	if (restr_trace) {
-		sc_trace("Restr: task %ld"
-		         " has %ld restrictions, %s\n", task, restr_count, pattern);
+		sc_trace("Restr: task %ld has %ld restrictions, %s\n", task, restr_count, pattern);
 	}
 
 	/* Set up the evaluation stack and tokenizer. */
 	restr_eval_start(game, task);
 	restr_tokenize_start(pattern);
 
-	/* Try parsing the pattern, and catch errors. */
-	if (setjmp(restr_parse_error) == 0) {
-		/* Parse the pattern, and ensure it ends at string end. */
-		restr_lookahead = restr_next_token();
-		restr_orexpr();
-		restr_match(TOK_EOS);
-	} else {
-		/* Parse error -- clean up tokenizer and return fail. */
+	// Parse the pattern, and ensure it ends at string end
+	restr_lookahead = restr_next_token();
+	restr_orexpr(context);
+	if (!context._break)
+		restr_match(context, TOK_EOS);
+
+	if (context._break) {
+		// Parse error -- clean up tokenizer and return fail
 		restr_tokenize_end();
 		return FALSE;
 	}
@@ -1036,8 +1032,7 @@ sc_bool restr_eval_task_restrictions(sc_gameref_t game, sc_int task, sc_bool *pa
 	result = restr_eval_result(&lowest_fail);
 
 	if (restr_trace) {
-		sc_trace("Restr: task %ld"
-		         " restrictions %s\n", task, result ? "PASS" : "FAIL");
+		sc_trace("Restr: task %ld restrictions %s\n", task, result ? "PASS" : "FAIL");
 	}
 
 	/*
