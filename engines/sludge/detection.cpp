@@ -69,7 +69,7 @@ static Sludge::SludgeGameDescription s_fallbackDesc =
 		Common::UNK_LANG,
 		Common::kPlatformWindows,
 		ADGF_NO_FLAGS,
-		GUIO0()
+		GUIO1(GUIO_NOMIDI)
 	},
 	0
 };
@@ -110,7 +110,7 @@ ADDetectedGame SludgeMetaEngine::fallbackDetect(const FileMap &allFiles, const C
 	s_fallbackDesc.desc.language = Common::EN_ANY;
 	s_fallbackDesc.desc.flags = ADGF_UNSTABLE;
 	s_fallbackDesc.desc.platform = Common::kPlatformUnknown;
-	s_fallbackDesc.desc.guiOptions = GUIO0();
+	s_fallbackDesc.desc.guiOptions = GUIO1(GUIO_NOMIDI);
 	s_fallbackDesc.languageID = 0;
 
 	for (Common::FSList::const_iterator file = fslist.begin(); file != fslist.end(); ++file) {
