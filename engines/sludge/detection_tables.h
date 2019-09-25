@@ -31,7 +31,7 @@ static const SludgeGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformUnknown,
 			ADGF_NO_FLAGS,
-			GUIO0()
+			GUIO1(GUIO_NOMIDI)
 		},
 		0
 	},
@@ -44,7 +44,7 @@ static const SludgeGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformUnknown,
 			ADGF_NO_FLAGS,
-			GUIO0()
+			GUIO1(GUIO_NOMIDI)
 		},
 		0
 	},
@@ -57,7 +57,7 @@ static const SludgeGameDescription gameDescriptions[] = {
 			Common::DE_DEU,
 			Common::kPlatformUnknown,
 			ADGF_NO_FLAGS,
-			GUIO0()
+			GUIO1(GUIO_NOMIDI)
 		},
 		1
 	},
@@ -70,7 +70,7 @@ static const SludgeGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformUnknown,
 			ADGF_NO_FLAGS,
-			GUIO0()
+			GUIO1(GUIO_NOMIDI)
 		},
 		0
 	},
@@ -83,7 +83,7 @@ static const SludgeGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformUnknown,
 			ADGF_NO_FLAGS,
-			GUIO0()
+			GUIO1(GUIO_NOMIDI)
 		},
 		0
 	},
@@ -96,7 +96,7 @@ static const SludgeGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformUnknown,
 			ADGF_NO_FLAGS,
-			GUIO0()
+			GUIO1(GUIO_NOMIDI)
 		},
 		0
 	},
@@ -109,7 +109,7 @@ static const SludgeGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformUnknown,
 			ADGF_NO_FLAGS,
-			GUIO0()
+			GUIO1(GUIO_NOMIDI)
 		},
 		0
 	},
@@ -122,7 +122,7 @@ static const SludgeGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformUnknown,
 			ADGF_NO_FLAGS,
-			GUIO0()
+			GUIO1(GUIO_NOMIDI)
 		},
 		0
 	},
@@ -135,7 +135,7 @@ static const SludgeGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformWindows,
 			ADGF_NO_FLAGS,
-			GUIO0()
+			GUIO1(GUIO_NOMIDI)
 		},
 		0
 	},
@@ -148,7 +148,7 @@ static const SludgeGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformLinux,
 			ADGF_NO_FLAGS,
-			GUIO0()
+			GUIO1(GUIO_NOMIDI)
 		},
 		0
 	},
@@ -161,7 +161,7 @@ static const SludgeGameDescription gameDescriptions[] = {
 			Common::CZ_CZE,
 			Common::kPlatformLinux,
 			ADGF_NO_FLAGS,
-			GUIO0()
+			GUIO1(GUIO_NOMIDI)
 		},
 		0
 	},
@@ -174,7 +174,7 @@ static const SludgeGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformLinux,
 			ADGF_NO_FLAGS,
-			GUIO0()
+			GUIO1(GUIO_NOMIDI)
 		},
 		1
 	},
@@ -187,7 +187,7 @@ static const SludgeGameDescription gameDescriptions[] = {
 			Common::IT_ITA,
 			Common::kPlatformLinux,
 			ADGF_NO_FLAGS,
-			GUIO0()
+			GUIO1(GUIO_NOMIDI)
 		},
 		2
 	},
@@ -200,7 +200,7 @@ static const SludgeGameDescription gameDescriptions[] = {
 			Common::PL_POL,
 			Common::kPlatformLinux,
 			ADGF_NO_FLAGS,
-			GUIO0()
+			GUIO1(GUIO_NOMIDI)
 		},
 		3
 	},
@@ -213,7 +213,7 @@ static const SludgeGameDescription gameDescriptions[] = {
 			Common::UNK_LANG,
 			Common::kPlatformWindows,
 			ADGF_NO_FLAGS,
-			GUIO0()
+			GUIO1(GUIO_NOMIDI)
 		},
 		0
 	},
@@ -226,7 +226,7 @@ static const SludgeGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformLinux,
 			ADGF_NO_FLAGS,
-			GUIO0()
+			GUIO1(GUIO_NOMIDI)
 		},
 		0
 	},
@@ -239,7 +239,7 @@ static const SludgeGameDescription gameDescriptions[] = {
 			Common::IT_ITA,
 			Common::kPlatformLinux,
 			ADGF_NO_FLAGS,
-			GUIO0()
+			GUIO1(GUIO_NOMIDI)
 		},
 		1
 	},
@@ -252,7 +252,7 @@ static const SludgeGameDescription gameDescriptions[] = {
 			Common::SE_SWE,
 			Common::kPlatformLinux,
 			ADGF_NO_FLAGS,
-			GUIO0()
+			GUIO1(GUIO_NOMIDI)
 		},
 		2
 	},
@@ -265,7 +265,7 @@ static const SludgeGameDescription gameDescriptions[] = {
 			Common::DE_DEU,
 			Common::kPlatformLinux,
 			ADGF_NO_FLAGS,
-			GUIO0()
+			GUIO1(GUIO_NOMIDI)
 		},
 		3
 	},
