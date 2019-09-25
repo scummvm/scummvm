@@ -44,7 +44,7 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::EN_ANY,
 		Common::kPlatformWindows,
 		ADGF_NO_FLAGS,
-		GUIO0()
+		GUIO1(GUIO_NOMIDI)
 	},
 	{
 		"bbvs",
@@ -53,7 +53,7 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::RU_RUS,
 		Common::kPlatformWindows,
 		GF_GUILANGSWITCH | ADGF_NO_FLAGS,
-		GUIO0()
+		GUIO1(GUIO_NOMIDI)
 	},
 
 	AD_TABLE_END_MARKER
