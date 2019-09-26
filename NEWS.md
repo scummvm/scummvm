@@ -134,6 +134,7 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added a button to show the virtual keyboard.
    - Implemented clipboard support.
    - Use the dedicated GUI option for enabling the touchpad mode
+   - Added code for searching accessible external media.
 
  iOS port:
    - Added support for Smart Keyboard.
