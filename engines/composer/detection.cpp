@@ -79,7 +79,7 @@ static const ComposerGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformWindows,
 			ADGF_NO_FLAGS,
-			GUIO1(GUIO_NOASPECT)
+			GUIO2(GUIO_NOASPECT, GUIO_NOMIDI)
 		},
 		GType_ComposerV1
 	},
@@ -93,7 +93,7 @@ static const ComposerGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformMacintosh,
 			ADGF_NO_FLAGS,
-			GUIO1(GUIO_NOASPECT)
+			GUIO2(GUIO_NOASPECT, GUIO_NOMIDI)
 		},
 		GType_ComposerV1
 	},
@@ -107,7 +107,7 @@ static const ComposerGameDescription gameDescriptions[] = {
 			Common::DE_DEU,
 			Common::kPlatformWindows,
 			ADGF_NO_FLAGS,
-			GUIO1(GUIO_NOASPECT)
+			GUIO2(GUIO_NOASPECT, GUIO_NOMIDI)
 		},
 		GType_ComposerV1
 	},
@@ -121,7 +121,7 @@ static const ComposerGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformWindows,
 			ADGF_NO_FLAGS,
-			GUIO1(GUIO_NOASPECT)
+			GUIO2(GUIO_NOASPECT, GUIO_NOMIDI)
 		},
 		GType_ComposerV1
 	},
@@ -135,7 +135,7 @@ static const ComposerGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformMacintosh,
 			ADGF_NO_FLAGS,
-			GUIO1(GUIO_NOASPECT)
+			GUIO2(GUIO_NOASPECT, GUIO_NOMIDI)
 		},
 		GType_ComposerV1
 	},
@@ -149,7 +149,7 @@ static const ComposerGameDescription gameDescriptions[] = {
 			Common::DE_DEU,
 			Common::kPlatformWindows,
 			ADGF_NO_FLAGS,
-			GUIO1(GUIO_NOASPECT)
+			GUIO2(GUIO_NOASPECT, GUIO_NOMIDI)
 		},
 		GType_ComposerV1
 	},
@@ -163,7 +163,7 @@ static const ComposerGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformWindows,
 			ADGF_NO_FLAGS,
-			GUIO1(GUIO_NOASPECT)
+			GUIO2(GUIO_NOASPECT, GUIO_NOMIDI)
 		},
 		GType_ComposerV1
 	},
@@ -177,7 +177,7 @@ static const ComposerGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformMacintosh,
 			ADGF_NO_FLAGS,
-			GUIO1(GUIO_NOASPECT)
+			GUIO2(GUIO_NOASPECT, GUIO_NOMIDI)
 		},
 		GType_ComposerV1
 	},
@@ -191,7 +191,7 @@ static const ComposerGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformWindows,
 			ADGF_USEEXTRAASTITLE | ADGF_DEMO,
-			GUIO1(GUIO_NOASPECT)
+			GUIO2(GUIO_NOASPECT, GUIO_NOMIDI)
 		},
 		GType_ComposerV1
 	},
@@ -204,7 +204,7 @@ static const ComposerGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformWindows,
 			ADGF_NO_FLAGS,
-			GUIO1(GUIO_NOASPECT)
+			GUIO2(GUIO_NOASPECT, GUIO_NOMIDI)
 		},
 		GType_ComposerV2
 	},
@@ -222,7 +222,7 @@ static const ComposerGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformMacintosh,
 			ADGF_NO_FLAGS,
-			GUIO1(GUIO_NOASPECT)
+			GUIO2(GUIO_NOASPECT, GUIO_NOMIDI)
 		},
 		GType_ComposerV2
 	},
@@ -236,7 +236,7 @@ static const ComposerGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformWindows,
 			ADGF_USEEXTRAASTITLE | ADGF_DEMO,
-			GUIO1(GUIO_NOASPECT)
+			GUIO2(GUIO_NOASPECT, GUIO_NOMIDI)
 		},
 		GType_ComposerV2
 	},
@@ -253,7 +253,7 @@ static const ComposerGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformWindows,
 			ADGF_NO_FLAGS,
-			GUIO1(GUIO_NOASPECT)
+			GUIO2(GUIO_NOASPECT, GUIO_NOMIDI)
 		},
 		GType_ComposerV2
 	},
@@ -266,7 +266,7 @@ static const ComposerGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformMacintosh,
 			ADGF_NO_FLAGS,
-			GUIO1(GUIO_NOASPECT)
+			GUIO2(GUIO_NOASPECT, GUIO_NOMIDI)
 		},
 		GType_ComposerV2
 	},
@@ -282,7 +282,7 @@ static const ComposerGameDescription gameDescriptions[] = {
 			Common::FR_FRA,
 			Common::kPlatformMacintosh,
 			ADGF_NO_FLAGS,
-			GUIO1(GUIO_NOASPECT)
+			GUIO2(GUIO_NOASPECT, GUIO_NOMIDI)
 		},
 		GType_ComposerV2
 	},
@@ -295,7 +295,7 @@ static const ComposerGameDescription gameDescriptions[] = {
 			Common::FR_FRA,
 			Common::kPlatformWindows,
 			ADGF_NO_FLAGS,
-			GUIO1(GUIO_NOASPECT)
+			GUIO2(GUIO_NOASPECT, GUIO_NOMIDI)
 		},
 		GType_ComposerV2
 	},
@@ -312,7 +312,7 @@ static const ComposerGameDescription gameDescriptions[] = {
 			Common::DE_DEU,
 			Common::kPlatformWindows,
 			ADGF_NO_FLAGS,
-			GUIO1(GUIO_NOASPECT)
+			GUIO2(GUIO_NOASPECT, GUIO_NOMIDI)
 		},
 		GType_ComposerV2
 	},
@@ -325,7 +325,7 @@ static const ComposerGameDescription gameDescriptions[] = {
 			Common::HE_ISR,
 			Common::kPlatformWindows,
 			ADGF_NO_FLAGS,
-			GUIO1(GUIO_NOASPECT)
+			GUIO2(GUIO_NOASPECT, GUIO_NOMIDI)
 		},
 		GType_ComposerV2
 	},
@@ -342,7 +342,7 @@ static const ComposerGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformWindows,
 			ADGF_NO_FLAGS,
-			GUIO1(GUIO_NOASPECT)
+			GUIO2(GUIO_NOASPECT, GUIO_NOMIDI)
 		},
 		GType_ComposerV2
 	},
@@ -355,7 +355,7 @@ static const ComposerGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformMacintosh,
 			ADGF_NO_FLAGS,
-			GUIO1(GUIO_NOASPECT)
+			GUIO2(GUIO_NOASPECT, GUIO_NOMIDI)
 		},
 		GType_ComposerV2
 	},
@@ -368,7 +368,7 @@ static const ComposerGameDescription gameDescriptions[] = {
 			Common::FR_FRA,
 			Common::kPlatformWindows,
 			ADGF_NO_FLAGS,
-			GUIO1(GUIO_NOASPECT)
+			GUIO2(GUIO_NOASPECT, GUIO_NOMIDI)
 		},
 		GType_ComposerV2
 	},
@@ -385,7 +385,7 @@ static const ComposerGameDescription gameDescriptions[] = {
 			Common::DE_DEU,
 			Common::kPlatformWindows,
 			ADGF_NO_FLAGS,
-			GUIO1(GUIO_NOASPECT)
+			GUIO2(GUIO_NOASPECT, GUIO_NOMIDI)
 		},
 		GType_ComposerV2
 	},
@@ -402,7 +402,7 @@ static const ComposerGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformWindows,
 			ADGF_NO_FLAGS,
-			GUIO1(GUIO_NOASPECT)
+			GUIO2(GUIO_NOASPECT, GUIO_NOMIDI)
 		},
 		GType_ComposerV2
 	},
@@ -420,7 +420,7 @@ static const ComposerGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformMacintosh,
 			ADGF_NO_FLAGS,
-			GUIO1(GUIO_NOASPECT)
+			GUIO2(GUIO_NOASPECT, GUIO_NOMIDI)
 		},
 		GType_ComposerV2
 	},
@@ -437,7 +437,7 @@ static const ComposerGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformWindows,
 			ADGF_NO_FLAGS,
-			GUIO1(GUIO_NOASPECT)
+			GUIO2(GUIO_NOASPECT, GUIO_NOMIDI)
 		},
 		GType_ComposerV2
 	},
@@ -455,7 +455,7 @@ static const ComposerGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformMacintosh,
 			ADGF_NO_FLAGS,
-			GUIO1(GUIO_NOASPECT)
+			GUIO2(GUIO_NOASPECT, GUIO_NOMIDI)
 		},
 		GType_ComposerV2
 	},
