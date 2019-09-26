@@ -54,7 +54,7 @@ public class ExternalStorage {
 
 		try {
 			File mountFile = new File("/proc/mounts");
-			if (mountFile.exists()){
+			if (mountFile.exists()) {
 				Scanner scanner = new Scanner(mountFile);
 				while (scanner.hasNext()) {
 					String line = scanner.nextLine();
@@ -154,12 +154,14 @@ public class ExternalStorage {
 				File externalStorageRoot = new File(externalStorageRootDir);
 				File[] files = externalStorageRoot.listFiles();
 
-				for (final File file : files) {
-					if (file.isDirectory() && file.canRead() && (file.listFiles().length > 0)) {  // it is a real directory (not a USB drive)...
-						String key = file.getAbsolutePath();
-						if (!map.contains(key)) {
-							map.add(key); // Make name as directory
-							map.add(key);
+				if (files.length > 0) {
+					for (final File file : files) {
+						if (file.isDirectory() && file.canRead() && (file.listFiles().length > 0)) {  // it is a real directory (not a USB drive)...
+							String key = file.getAbsolutePath();
+							if (!map.contains(key)) {
+								map.add(key); // Make name as directory
+								map.add(key);
+							}
 						}
 					}
 				}
