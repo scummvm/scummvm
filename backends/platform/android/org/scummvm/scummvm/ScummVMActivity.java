@@ -1,5 +1,7 @@
 package org.scummvm.scummvm;
 
+import android.Manifest;
+import android.content.pm.PackageManager;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -33,6 +35,11 @@ public class ScummVMActivity extends Activity {
 
 	private ClipboardManager _clipboard;
 
+	/**
+	* Id to identify an external storage read request.
+	*/
+	private static final int MY_PERMISSIONS_REQUEST_READ_EXT_STORAGE = 100; // is an app-defined int constant. The callback method gets the result of the request.
+
 	static {
 		try {
 			MouseHelper.checkHoverAvailable(); // this throws exception if we're on too old version
@@ -52,6 +59,7 @@ public class ScummVMActivity extends Activity {
 				});
 		}
 	};
+
 
 	private class MyScummVM extends ScummVM {
 		public MyScummVM(SurfaceHolder holder) {
@@ -158,7 +166,14 @@ public class ScummVMActivity extends Activity {
 
 		@Override
 		protected String[] getAllStorageLocations() {
-			return _externalStorage.getAllStorageLocations().toArray(new String[0]);
+			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
+			    && checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED
+			) {
+				requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, MY_PERMISSIONS_REQUEST_READ_EXT_STORAGE);
+			} else {
+				return _externalStorage.getAllStorageLocations().toArray(new String[0]);
+			}
+			return new String[0]; // an array of zero length
 		}
 
 	}
@@ -305,6 +320,28 @@ public class ScummVMActivity extends Activity {
 			_scummvm = null;
 		}
 	}
+
+
+	@Override
+	public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+		switch (requestCode) {
+		case MY_PERMISSIONS_REQUEST_READ_EXT_STORAGE:
+			// If request is cancelled, the result arrays are empty.
+			if (grantResults.length > 0
+			   && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+				// permission was granted
+				Log.i(ScummVM.LOG_TAG, "Read External Storage permission was granted at Runtime");
+			} else {
+				// permission denied! We won't be able to make use of functionality depending on this permission.
+				Toast.makeText(this, "Until permission is granted, some folders might not be listed!", Toast.LENGTH_SHORT)
+				              .show();
+			}
+			break;
+		default:
+			break;
+		}
+	}
+
 
 	@Override
 	public boolean onTrackballEvent(MotionEvent e) {
