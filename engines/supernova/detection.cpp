@@ -63,7 +63,7 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::DE_DEU,
 		Common::kPlatformDOS,
 		ADGF_TESTING,
-		GUIO1(GAMEOPTION_IMPROVED)
+		GUIO2(GAMEOPTION_IMPROVED, GUIO_NOMIDI)
 	},
 	{
 		"msn1",
@@ -72,7 +72,7 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::EN_ANY,
 		Common::kPlatformDOS,
 		ADGF_TESTING,
-		GUIO1(GAMEOPTION_IMPROVED)
+		GUIO2(GAMEOPTION_IMPROVED, GUIO_NOMIDI)
 	},
 	// Mission Supernova 2
 	{
@@ -82,7 +82,7 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::DE_DEU,
 		Common::kPlatformDOS,
 		ADGF_TESTING,
-		GUIO1(GAMEOPTION_IMPROVED)
+		GUIO2(GAMEOPTION_IMPROVED, GUIO_NOMIDI)
 	},
 	{
 		"msn2",
@@ -91,7 +91,7 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::EN_ANY,
 		Common::kPlatformDOS,
 		ADGF_TESTING,
-		GUIO1(GAMEOPTION_IMPROVED)
+		GUIO2(GAMEOPTION_IMPROVED, GUIO_NOMIDI)
 	},
 	AD_TABLE_END_MARKER
 };
