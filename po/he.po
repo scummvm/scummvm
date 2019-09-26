@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.1.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2019-09-26 05:17+0200\n"
+"POT-Creation-Date: 2019-09-26 06:01+0200\n"
 "PO-Revision-Date: 2018-12-18 21:54+0000\n"
 "Last-Translator: Matan Bareket <mataniko@gmail.com>\n"
 "Language-Team: Hebrew <https://translations.scummvm.org/projects/scummvm/"
@@ -4335,15 +4335,6 @@ msgstr ""
 msgid "(Autosave)"
 msgstr ""
 
-#: engines/sci/engine/kgraphics.cpp:1000
-msgid ""
-"Characters saved inside ScummVM are shown automatically. Character files "
-"saved in the original interpreter need to be put inside ScummVM's saved "
-"games directory and a prefix needs to be added depending on which game it "
-"was saved in: 'qfg1-' for Quest for Glory 1, 'qfg2-' for Quest for Glory 2. "
-"Example: 'qfg2-thief.sav'."
-msgstr ""
-
 #: engines/sci/engine/kgraphics32.cpp:358
 #, c-format
 msgid "Please use an external viewer to open the game's help file: %s"
@@ -4400,6 +4391,15 @@ msgid ""
 "issues that these patches fix do not occur in ScummVM, so you are advised to "
 "remove this patch from your game folder in order to avoid having unexpected "
 "errors and/or issues later on."
+msgstr ""
+
+#: engines/sci/sci.cpp:833
+msgid ""
+"Characters saved inside ScummVM are shown automatically. Character files "
+"saved in the original interpreter need to be put inside ScummVM's saved "
+"games directory and a prefix needs to be added depending on which game it "
+"was saved in: 'qfg1-' for Quest for Glory 1, 'qfg2-' for Quest for Glory 2. "
+"Example: 'qfg2-thief.sav'."
 msgstr ""
 
 #: engines/sci/sound/music.cpp:161

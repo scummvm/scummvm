@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2019-09-26 05:17+0200\n"
+"POT-Creation-Date: 2019-09-26 06:01+0200\n"
 "PO-Revision-Date: 2019-09-23 22:54+0000\n"
 "Last-Translator: scootergrisen <scootergrisen@gmail.com>\n"
 "Language-Team: Danish <https://translations.scummvm.org/projects/scummvm/"
@@ -4510,19 +4510,6 @@ msgstr "Opskalér videoer til dobbelt størrelse"
 msgid "(Autosave)"
 msgstr "(Autogem)"
 
-#: engines/sci/engine/kgraphics.cpp:1000
-msgid ""
-"Characters saved inside ScummVM are shown automatically. Character files "
-"saved in the original interpreter need to be put inside ScummVM's saved "
-"games directory and a prefix needs to be added depending on which game it "
-"was saved in: 'qfg1-' for Quest for Glory 1, 'qfg2-' for Quest for Glory 2. "
-"Example: 'qfg2-thief.sav'."
-msgstr ""
-"Karakterer gemt inde i ScummVM vises automatisk. Karakter filer gemt i den "
-"oprindelige fortolker skal indsættes i ScummVMs gemte spil katalog, og et "
-"præfiks skal tilføjes afhængigt af hvilket spil det blev gemt i: 'qfg1-' for "
-"Quest for Glory 1, 'qfg2-' for Quest for Glory 2. Eksempel: 'qfg2-thief.sav'."
-
 #: engines/sci/engine/kgraphics32.cpp:358
 #, c-format
 msgid "Please use an external viewer to open the game's help file: %s"
@@ -4605,6 +4592,19 @@ msgstr ""
 "udstrækning. De problemer, som rettelserne reparerer, forekommer ikke i "
 "ScummVM, så det anbefales at fjerne rettelsen fra din spilmappe for at undgå "
 "uventede fejl og/eller problemer senere."
+
+#: engines/sci/sci.cpp:833
+msgid ""
+"Characters saved inside ScummVM are shown automatically. Character files "
+"saved in the original interpreter need to be put inside ScummVM's saved "
+"games directory and a prefix needs to be added depending on which game it "
+"was saved in: 'qfg1-' for Quest for Glory 1, 'qfg2-' for Quest for Glory 2. "
+"Example: 'qfg2-thief.sav'."
+msgstr ""
+"Karakterer gemt inde i ScummVM vises automatisk. Karakter filer gemt i den "
+"oprindelige fortolker skal indsættes i ScummVMs gemte spil katalog, og et "
+"præfiks skal tilføjes afhængigt af hvilket spil det blev gemt i: 'qfg1-' for "
+"Quest for Glory 1, 'qfg2-' for Quest for Glory 2. Eksempel: 'qfg2-thief.sav'."
 
 #: engines/sci/sound/music.cpp:161
 msgid ""
