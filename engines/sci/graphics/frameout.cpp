@@ -269,7 +269,6 @@ void GfxFrameout::kernelDeleteScreenItem(const reg_t object) {
 #pragma mark Planes
 
 void GfxFrameout::kernelAddPlane(const reg_t object) {
-
 	Plane *plane = _planes.findByObject(object);
 	if (plane != nullptr) {
 		plane->update(object);
@@ -286,7 +285,7 @@ void GfxFrameout::kernelAddPlane(const reg_t object) {
 		// kAddPlane is called several times, this detects the second call
 		//  which is for the import character dialog. If changeButton:value
 		//  is non-zero then the dialog is initializing. If the button isn't
-		//  disabled then we havne't displayed the message box yet. There
+		//  disabled then we havent't displayed the message box yet. There
 		//  are multiple changeButtons because the script clones the object.
 		SegManager *segMan = g_sci->getEngineState()->_segMan;
 		Common::Array<reg_t> changeDirButtons = _segMan->findObjectsByName("changeButton");
