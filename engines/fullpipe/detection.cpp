@@ -64,7 +64,7 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::RU_RUS,
 		Common::kPlatformWindows,
 		ADGF_DROPPLATFORM,
-		GUIO1(GUIO_NONE)
+		GUIO1(GUIO_NOMIDI)
 	},
 
 	// Full Pipe German version
@@ -75,7 +75,7 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::DE_DEU,
 		Common::kPlatformWindows,
 		ADGF_DROPPLATFORM,
-		GUIO1(GUIO_NONE)
+		GUIO1(GUIO_NOMIDI)
 	},
 
 	// Full Pipe Estonian version
@@ -86,7 +86,7 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::ET_EST,
 		Common::kPlatformWindows,
 		ADGF_DROPPLATFORM,
-		GUIO1(GUIO_NONE)
+		GUIO1(GUIO_NOMIDI)
 	},
 
 	// Full Pipe English version
@@ -97,7 +97,7 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::EN_ANY,
 		Common::kPlatformWindows,
 		ADGF_DROPPLATFORM,
-		GUIO1(GUIO_NONE)
+		GUIO1(GUIO_NOMIDI)
 	},
 
 	// Full Pipe Russian Demo version
@@ -108,7 +108,7 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::RU_RUS,
 		Common::kPlatformWindows,
 		ADGF_DROPPLATFORM | ADGF_DEMO,
-		GUIO1(GUIO_NONE)
+		GUIO1(GUIO_NOMIDI)
 	},
 
 	// Full Pipe German Demo version
@@ -119,7 +119,7 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::DE_DEU,
 		Common::kPlatformWindows,
 		ADGF_DROPPLATFORM | ADGF_DEMO,
-		GUIO1(GUIO_NONE)
+		GUIO1(GUIO_NOMIDI)
 	},
 
 	AD_TABLE_END_MARKER
