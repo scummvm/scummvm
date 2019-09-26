@@ -162,7 +162,7 @@ int errfmt(char *outbuf, int outbufl, const char *fmt, int argc, const erradef *
 }
 
 #ifdef DEBUG
-#error lonjump isn't supported in ScummVM
+#error longjump unsupported in ScummVM
 #endif /* DEBUG */
 
 

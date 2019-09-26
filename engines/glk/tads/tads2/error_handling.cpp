@@ -137,7 +137,7 @@ int errfmt(char *outbuf, int outbufl, char *fmt, int argc, erradef *argv)
 }
 
 #if defined(DEBUG) && !defined(ERR_NO_MACRO)
-#error longjmp isn't supported in ScummVM
+#error longjmp unsupported in ScummVM
 #endif /* DEBUG */
 
 
