@@ -89,10 +89,11 @@ For a more comprehensive changelog of the latest experimental code, see:
      for this to take effect when using compressed audio.
    - Fixed an issue in the wig maker room in the German version of SPY Fox 3: Operation Ozone
      which makes the game completable.
-   - Added sound driver for the Amiga versions of Monkey Island 2 and Indiana Jones and the Fate of Atlantis
+   - Added sound driver for the Amiga versions of Monkey Island 2 and Indiana Jones
+     and the Fate of Atlantis.
 
  Sherlock:
-   - Fixed crash in Spanish version talking to lady in Tailor shop
+   - Fixed crash in Spanish version talking to lady in Tailor shop.
 
  SKY:
    - Added workaround for original game bug to improve intro and not cut off images which exist
@@ -109,7 +110,7 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Fixed parser not getting properly reset across sentences in a conversation.
    - Fixed endless busy cursor on Titania closeup when brain slots are incorrectly inserted.
    - Fixed loading saves in front of Barbot could cause him to go into an infinite animation loop.
-   - Fixed crash asking Parrot who sabotaged the ship
+   - Fixed crash asking Parrot who sabotaged the ship.
 
  Tucker:
    - Fixed multiple graphic issues in Bud Tucker in Double Trouble.
@@ -130,10 +131,10 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Packaged the required fonts with ScummVM.
 
  Android port:
-   - Rewrote to make use of the OpenGL Graphics Manager
+   - Rewrote to make use of the OpenGL Graphics Manager.
    - Added a button to show the virtual keyboard.
    - Implemented clipboard support.
-   - Use the dedicated GUI option for enabling the touchpad mode
+   - Use the dedicated GUI option for enabling the touchpad mode.
    - Added code for searching accessible external media.
 
  iOS port:
