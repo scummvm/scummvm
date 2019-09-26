@@ -88,7 +88,7 @@ AIEntity *AI::spawn(AIType type, AIDir dir, int x, int y, const char *funcInit, 
 	return e;
 }
 
-bool AI::cacheEntGfx(AIEntity *e, bool init) {
+bool AI::cacheEntGfx(AIEntity *e, bool initFlag) {
 	int i = 0;
 	while (true) {
 		if (aiEntList[i].type == END_AI_TYPES)
@@ -425,7 +425,7 @@ bool AI::cacheEntGfx(AIEntity *e, bool init) {
 
 			e->aiInit = aiEntList[i].initFunc;
 			e->aiInit2 = aiEntList[i].initFunc2;
-			if (init) {
+			if (initFlag) {
 				e->aiInit(e);
 				if (e->aiInit2)
 					e->aiInit2(e);

@@ -845,7 +845,7 @@ public:
 
 	// Entity Functions
 	AIEntity *spawn(AIType type, AIDir dir, int x, int y, const char *funcInit, const char *funcAction, const char *funcUse, AIDir dir2, int level, int value1, int value2, int callInit);
-	bool cacheEntGfx(AIEntity *e, bool init);
+	bool cacheEntGfx(AIEntity *e, bool initFlag);
 	void stopEntity(AIEntity *e);
 	AIEntity *locateEntity(const char *luaName);
 	AIEntity *findEntity(int x, int y);
