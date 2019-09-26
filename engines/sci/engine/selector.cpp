@@ -236,6 +236,7 @@ void Kernel::mapSelectors() {
 	FIND_SELECTOR(dispose);
 	FIND_SELECTOR(masterVolume);
 	FIND_SELECTOR(setCel);
+	FIND_SELECTOR(value);
 #endif
 }
 
