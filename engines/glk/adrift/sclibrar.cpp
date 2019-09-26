@@ -1363,7 +1363,7 @@ sc_bool lib_cmd_redo_number(sc_gameref_t game) {
 		 * for the ugliness.
 		 */
 		game->do_again = FALSE;
-		game->redo_sequence = INT_MAX;
+		game->redo_sequence = INTEGER_MAX;
 	}
 
 	game->is_admin = TRUE;
@@ -1393,7 +1393,7 @@ static sc_bool lib_cmd_redo_text_last_common(sc_gameref_t game, const sc_char *t
 
 		/* As with failed numeric redo above, special-case this return. */
 		game->do_again = FALSE;
-		game->redo_sequence = INT_MAX;
+		game->redo_sequence = INTEGER_MAX;
 
 		game->is_admin = TRUE;
 		return TRUE;
@@ -1450,7 +1450,7 @@ static sc_bool lib_cmd_redo_text_last_common(sc_gameref_t game, const sc_char *t
 
 		/* As with failed numeric redo above, special-case this return. */
 		game->do_again = FALSE;
-		game->redo_sequence = INT_MAX;
+		game->redo_sequence = INTEGER_MAX;
 	}
 
 	game->is_admin = TRUE;

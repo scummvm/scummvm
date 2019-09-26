@@ -113,13 +113,13 @@ int glk_main(int argc, const char *argv[]) {
 
 		script = sx_fopen(name, "scr", "r");
 		if (!script) {
-			error("%s: %s.scr: %s\n", program, name, strerror(errno));
+			error("%s: %s.scr: %s\n", program, name, "open");
 			continue;
 		}
 
 		stream = sx_fopen(name, "taf", "rb");
 		if (!stream) {
-			error("%s: %s.taf: %s\n", program, name, strerror(errno));
+			error("%s: %s.taf: %s\n", program, name, "open");
 			delete script;
 			continue;
 		}

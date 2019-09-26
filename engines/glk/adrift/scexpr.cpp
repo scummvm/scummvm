@@ -114,7 +114,7 @@ static sc_int expr_multichar_search(const sc_char *name, const sc_expr_multichar
 	}
 
 	/* Return the token matched, or TOK_NONE. */
-	return entry->name ? entry->token : TOK_NONE;
+	return entry->name ? entry->token : (sc_int)TOK_NONE;
 }
 
 

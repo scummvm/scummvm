@@ -884,14 +884,14 @@ static void parse_vector(CONTEXT, const sc_char *vector) {
 }
 
 static void parse_vector_alternate(CONTEXT, const sc_char *vector) {
-	sc_int count;
+	sc_int count1;
 
 	if (parse_trace)
 		sc_trace("Parse: entering alternate vector %s\n", vector);
 
 	/* Element count, this is a vector described by size - 1. */
-	FUNC0(parse_get_taf_integer, count) + 1;
-	CALL2(parse_vector_common, vector, count);
+	FUNC0(parse_get_taf_integer, count1);
+	CALL2(parse_vector_common, vector, count1 + 1);
 
 	if (parse_trace)
 		sc_trace("Parse: leaving alternate vector %s\n", vector);
@@ -3240,7 +3240,7 @@ static void parse_add_alrs_index(sc_prop_setref_t bundle) {
 	 * get the shortest and longest defined.
 	 */
 	alr_lengths = (sc_int *)sc_malloc(alr_count * sizeof(*alr_lengths));
-	shortest = INT_MAX;
+	shortest = INTEGER_MAX;
 	longest = 0;
 	for (index_ = 0; index_ < alr_count; index_++) {
 		const sc_char *original;

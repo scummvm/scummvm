@@ -70,9 +70,9 @@ GlkDetectedGame::GlkDetectedGame(const char *id, const char *desc, const Common:
 	addExtraEntry("filename", filename);
 }
 
-GlkDetectedGame::GlkDetectedGame(const char *id, const char *desc, const char *extra,
+GlkDetectedGame::GlkDetectedGame(const char *id, const char *desc, const char *xtra,
 		const Common::String &filename, Common::Language lang) :
-		DetectedGame(id, desc, lang, Common::kPlatformUnknown, extra) {
+		DetectedGame(id, desc, lang, Common::kPlatformUnknown, xtra) {
 	setGUIOptions(GUIO3(GUIO_NOSPEECH, GUIO_NOMUSIC, GUIO_NOSUBTITLES));
 	addExtraEntry("filename", filename);
 }

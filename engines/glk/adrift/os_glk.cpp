@@ -82,9 +82,9 @@ static int gsc_commands_enabled = TRUE, gsc_abbreviations_enabled = TRUE,
 sc_game gsc_game = nullptr;
 
 /* Special out-of-band os_confirm() options used locally with os_glk. */
-static const sc_int GSC_CONF_SUBTLE_HINT = INT_MAX,
-                    GSC_CONF_UNSUBTLE_HINT = INT_MAX - 1,
-                   GSC_CONF_CONTINUE_HINTS = INT_MAX - 2;
+static const sc_int GSC_CONF_SUBTLE_HINT = INTEGER_MAX,
+                    GSC_CONF_UNSUBTLE_HINT = INTEGER_MAX - 1,
+                   GSC_CONF_CONTINUE_HINTS = INTEGER_MAX - 2;
 
 /* Forward declaration of event wait functions, and a short delay. */
 static void gsc_event_wait_2(glui32 wait_type_1,
@@ -120,7 +120,7 @@ static void gsc_fatal(const char *string) {
 	g_vm->glk_set_window(gsc_main_window);
 	g_vm->glk_set_style(style_Normal);
 	g_vm->glk_put_string("\n\nINTERNAL ERROR: ");
-	g_vm->glk_put_string((char *) string);
+	g_vm->glk_put_string((const char *)string);
 
 	g_vm->glk_put_string("\n\nPlease record the details of this error, try to"
 	                     " note down everything you did to cause it, and email"
@@ -549,7 +549,7 @@ static void gsc_put_char_uni(glui32 unicode, const char *ascii) {
 	/* Print ascii to the transcript, then reattach it. */
 	if (gsc_transcript_stream) {
 		if (ascii)
-			g_vm->glk_put_string_stream(gsc_transcript_stream, (char *) ascii);
+			g_vm->glk_put_string_stream(gsc_transcript_stream, (const char *)ascii);
 		else
 			g_vm->glk_put_char_stream(gsc_transcript_stream, '?');
 
@@ -630,7 +630,7 @@ static void gsc_put_char_locale(sc_char ch, const gsc_locale_t *locale, sc_bool 
 	 * directly with Glk.
 	 */
 	if (ascii) {
-		g_vm->glk_put_string((char *) ascii);
+		g_vm->glk_put_string((const char *)ascii);
 		return;
 	}
 
@@ -1484,7 +1484,7 @@ static void gsc_styled_string(glui32 style, const char *message) {
 	assert(message);
 
 	g_vm->glk_set_style(style);
-	g_vm->glk_put_string((char *) message);
+	g_vm->glk_put_string((const char *)message);
 	g_vm->glk_set_style(style_Normal);
 }
 
@@ -1585,6 +1585,7 @@ void os_display_hints(sc_game game) {
  * Stub functions.  The unused variables defeat gcc warnings.
  */
 void os_play_sound(const sc_char *filepath, sc_int offset, sc_int length, sc_bool is_looping) {
+/*
 	const sc_char *unused1;
 	sc_int unused2, unused3;
 	sc_bool unused4;
@@ -1592,6 +1593,7 @@ void os_play_sound(const sc_char *filepath, sc_int offset, sc_int length, sc_boo
 	unused2 = offset;
 	unused3 = length;
 	unused4 = is_looping;
+*/
 }
 
 void os_stop_sound() {
@@ -1640,11 +1642,13 @@ void os_show_graphic(const sc_char *filepath, sc_int offset, sc_int length) {
 }
 #else
 void os_show_graphic(const sc_char *filepath, sc_int offset, sc_int length) {
+/*
 	const sc_char *unused1;
 	sc_int unused2, unused3;
 	unused1 = filepath;
 	unused2 = offset;
 	unused3 = length;
+*/
 }
 #endif
 
@@ -2527,7 +2531,7 @@ sc_bool os_confirm(sc_int type) {
 		do {
 			g_vm->glk_request_char_event(gsc_main_window);
 			gsc_event_wait(evtype_CharInput, &event);
-		} while (event.val1 > UCHAR_MAX);
+		} while (event.val1 > BYTE_MAX);
 		response = g_vm->glk_char_to_upper(event.val1);
 	} while (response != 'Y' && response != 'N');
 
@@ -2601,6 +2605,9 @@ static void gsc_event_wait_2(glui32 wait_type_1, glui32 wait_type_2, event_t *ev
 			/* Refresh any sensitive windows on size events. */
 			gsc_status_redraw();
 			break;
+
+		default:
+			break;
 		}
 	} while (!(event->type == (EvType)wait_type_1 || event->type == (EvType)wait_type_2));
 }
@@ -2656,14 +2663,14 @@ void os_write_file(void *opaque, const sc_byte *buffer, sc_int length) {
 	strid_t stream = (strid_t) opaque;
 	assert(opaque && buffer);
 
-	g_vm->glk_put_buffer_stream(stream, (char *) buffer, length);
+	g_vm->glk_put_buffer_stream(stream, (const char *)buffer, length);
 }
 
 sc_int os_read_file(void *opaque, sc_byte *buffer, sc_int length) {
 	strid_t stream = (strid_t) opaque;
 	assert(opaque && buffer);
 
-	return g_vm->glk_get_buffer_stream(stream, (char *) buffer, length);
+	return g_vm->glk_get_buffer_stream(stream, (char *)buffer, length);
 }
 
 
@@ -2694,7 +2701,7 @@ enum gsc_end_option { GAME_RESTART, GAME_UNDO, GAME_QUIT };
  * The following value needs to be passed between the startup_code and main
  * functions.
  */
-static char *gsc_game_message = nullptr;
+static const char *gsc_game_message;
 
 
 /*
@@ -2737,7 +2744,7 @@ static enum gsc_end_option gsc_get_ending_option() {
 		{
 			g_vm->glk_request_char_event(gsc_main_window);
 			gsc_event_wait(evtype_CharInput, &event);
-		} while (event.val1 > UCHAR_MAX);
+		} while (event.val1 > BYTE_MAX);
 		response = g_vm->glk_char_to_upper(event.val1);
 	} while (response != 'R' && response != 'U' && response != 'Q');
 
@@ -2844,8 +2851,9 @@ static int gsc_startup_code(Common::SeekableReadStream *game_stream, int restore
 	if (!gsc_game) {
 		gsc_game = nullptr;
 		gsc_game_message = "Unable to load an Adrift game from the requested file.";
-	} else
+	} else {
 		gsc_game_message = nullptr;
+	}
 
 	/*
 	 * If the game was created successfully and there is a restore stream, try
@@ -3037,30 +3045,30 @@ void adrift_main() {
  */
 glkunix_argumentlist_t glkunix_arguments[] = {
 	{
-		(char *) "-nc", glkunix_arg_NoValue,
-		(char *) "-nc        No local handling for Glk special commands"
+		(const char *)"-nc", glkunix_arg_NoValue,
+		(const char *)"-nc        No local handling for Glk special commands"
 	},
 	{
-		(char *) "-na", glkunix_arg_NoValue,
-		(char *) "-na        Turn off abbreviation expansions"
+		(const char *)"-na", glkunix_arg_NoValue,
+		(const char *)"-na        Turn off abbreviation expansions"
 	},
 	{
-		(char *) "-nu", glkunix_arg_NoValue,
-		(char *) "-nu        Turn off any use of Unicode output"
+		(const char *)"-nu", glkunix_arg_NoValue,
+		(const char *)"-nu        Turn off any use of Unicode output"
 	},
 #ifdef LINUX_GRAPHICS
 	{
-		(char *) "-ng", glkunix_arg_NoValue,
-		(char *) "-ng        Turn off attempts at game graphics"
+		(const char *)"-ng", glkunix_arg_NoValue,
+		(const char *)"-ng        Turn off attempts at game graphics"
 	},
 #endif
 	{
-		(char *) "-r", glkunix_arg_ValueFollows,
-		(char *) "-r FILE    Restore from FILE on starting the game"
+		(const char *)"-r", glkunix_arg_ValueFollows,
+		(const char *)"-r FILE    Restore from FILE on starting the game"
 	},
 	{
-		(char *) "", glkunix_arg_ValueCanFollow,
-		(char *) "filename   game to run"
+		(const char *)"", glkunix_arg_ValueCanFollow,
+		(const char *)"filename   game to run"
 	},
 	{nullptr, glkunix_arg_End, nullptr}
 };

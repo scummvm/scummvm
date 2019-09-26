@@ -26,18 +26,6 @@
 #include "common/zlib.h"
 #include "common/memstream.h"
 
-#if defined(USE_ZLIB)
-#ifdef __SYMBIAN32__
-#include <zlib\zlib.h>
-#else
-#include <zlib.h>
-#endif
-
-#if ZLIB_VERNUM < 0x1204
-#error Version 1.2.0.4 or newer of zlib is required for this code
-#endif
-#endif
-
 namespace Glk {
 namespace Adrift {
 
@@ -129,7 +117,7 @@ static sc_int taf_random_state = 0x00a09e86;
 static sc_byte taf_random(void) {
 	/* Generate and return the next pseudo-random number. */
 	taf_random_state = (taf_random_state * PRNG_CST1 + PRNG_CST2) & PRNG_CST3;
-	return (UCHAR_MAX * (sc_uint) taf_random_state) / (sc_uint)(PRNG_CST3 + 1);
+	return (BYTE_MAX * (sc_uint) taf_random_state) / (sc_uint)(PRNG_CST3 + 1);
 }
 
 static void taf_random_reset(void) {
@@ -419,7 +407,7 @@ static sc_bool taf_unobfuscate(sc_tafref_t taf, sc_read_callbackref_t callback,
  */
 static sc_bool taf_decompress(sc_tafref_t taf, sc_read_callbackref_t callback,
 		void *opaque, sc_bool is_gamefile) {
-#if USE_ZLIB
+#if defined(USE_ZLIB)
 	Common::SeekableReadStream *src = (Common::SeekableReadStream *)opaque;
 	assert(src);
 	Common::MemoryWriteStreamDynamic dest(DisposeAfterUse::YES);

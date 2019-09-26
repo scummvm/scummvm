@@ -47,6 +47,9 @@ typedef long sc_int;
 typedef unsigned long sc_uint;
 typedef int sc_bool;
 
+#define BYTE_MAX 0xff
+#define INTEGER_MAX 0x7fff
+
 /* Enumerated confirmation types, passed to os_confirm(). */
 enum {
 	SC_CONF_QUIT = 0,
