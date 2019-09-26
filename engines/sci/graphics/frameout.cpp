@@ -269,6 +269,7 @@ void GfxFrameout::kernelDeleteScreenItem(const reg_t object) {
 #pragma mark Planes
 
 void GfxFrameout::kernelAddPlane(const reg_t object) {
+
 	Plane *plane = _planes.findByObject(object);
 	if (plane != nullptr) {
 		plane->update(object);
@@ -276,6 +277,29 @@ void GfxFrameout::kernelAddPlane(const reg_t object) {
 	} else {
 		plane = new Plane(object);
 		addPlane(plane);
+	}
+
+	// Detect the QFG4 import character dialog, disable the Change Directory
+	//  button, and display a message box explaining how to import saved
+	//  character files in ScummVM. SCI16 games are handled by kDrawControl.
+	if (g_sci->inQfGImportRoom()) {
+		// kAddPlane is called several times, this detects the second call
+		//  which is for the import character dialog. If changeButton:value
+		//  is non-zero then the dialog is initializing. If the button isn't
+		//  disabled then we havne't displayed the message box yet. There
+		//  are multiple changeButtons because the script clones the object.
+		SegManager *segMan = g_sci->getEngineState()->_segMan;
+		Common::Array<reg_t> changeDirButtons = _segMan->findObjectsByName("changeButton");
+		for (uint i = 0; i < changeDirButtons.size(); ++i) {
+			if (readSelectorValue(segMan, changeDirButtons[i], SELECTOR(value))) {
+				// disable Change Directory button by setting state to zero
+				if (readSelectorValue(segMan, changeDirButtons[i], SELECTOR(state))) {
+					writeSelectorValue(segMan, changeDirButtons[i], SELECTOR(state), 0);
+					g_sci->showQfgImportMessageBox();
+					break;
+				}
+			}
+		}
 	}
 }
 

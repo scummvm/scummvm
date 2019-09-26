@@ -312,6 +312,9 @@ public:
 	 */
 	int inQfGImportRoom() const;
 
+	/* Shows a ScummVM message box explaining how to import Qfg saved character files */
+	void showQfgImportMessageBox() const;
+
 	void sleep(uint32 msecs);
 
 	void scriptDebug();
