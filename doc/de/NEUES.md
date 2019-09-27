@@ -34,6 +34,7 @@ Programmcodes finden Sie auf Englisch unter:
    - Code der Roland MT-32-Emulation auf Munt 2.3.0 aktualisiert.
    - Unbekannte Spiele-Versionen können nun einfacher gemeldet werden.
    - Spielstände können nun in einer Cloud synchronisiert werden.
+   - Unterstützung für Text-to-Speech als Bedienungshilfe auf einigen Plattformen hinzugefügt.
 
  ADL:
    - Verbesserung der Farbtreue.
@@ -63,7 +64,18 @@ Programmcodes finden Sie auf Englisch unter:
    - Benutzerfreundlichkeit für einige Puzzles in Myst und Riven verbessert.
    - Korrektur mehrerer Abstürze, Grafik- und Sound-Fehler in Myst und Riven.
 
+ Mortevielle:
+   - Unterstützung für Sprach-Synthese auf einigen Plattformen hinzugefügt.
+
  SCI:
+   - Unterstützung für LarryScale, eine qualitativ hochwertige Skalierung für Leisure Suit Larry 7, hinzugefügt.
+   - Korrektur von über 100 Fehlern in den Original-Skripten von CAMELOT, ECO1, ECO2,
+     FREDDYPHARKAS, GK1, HOYLES, ICEMAN, KQ6, LB1, LB2, LONGBOW, LSL6,
+     MOTHERGOOSE256, PQ3, PQ4, QFG1VGA, QFG4 und SQ4.
+   - Ein Fehler in ScummVM 2.0.0, der zu Lade-Problemen bei den Macintosh-Versionen von
+     Freddy Pharkas, King's Quest 6 und Quest for Glory 1 (VGA) führte, wurde behoben.
+   - Absturz in der Macintosh-Version von Freddy Pharkas behoben. Das Spiel kann nun abgeschlossen werden.
+   - Fehler beim Laden automatisch gespeicherter Spielstände behoben.
    - Absturz in Police Quest IV: Open Season behoben.
    - Grafikeffekte in Quest for Glory I (VGA) verbessert.
 
@@ -118,13 +130,22 @@ Programmcodes finden Sie auf Englisch unter:
    - Grafikfehler in Zork: Grand Inquisitor behoben.
    - Benötigte Schriftarten werden nun zusammen mit ScummVM ausgeliefert.
 
+ Android-Portierung:
+   - Die Android-Portierung verwendet nun den OpenGL Grafik-Manager.
+   - Button zum Einblenden der virtuellen Tastatur hinzugefügt.
+   - Unterstützung für die Zwischenablage hinzugefügt.
+   - Der Touchpad-Modus kann nun über eine eigene GUI-Option aktiviert werden.
+   - Externe Speichermedien können nun genutzt werden.
+
  iOS-Portierung:
+   - Unterstützung für Smart Keyboard hinzugefügt.
    - Drei-Finger-Wischgeste hinzugefügt, um Pfeiltasten zu simulieren.
    - Zoom-Gesten hinzugefügt, um die virtuelle Tastatur ein- und auszublenden.
    - Zusätzliche Tastensymbole, die nicht auf der Tastatur vorhanden sind, werden oberhalb der Tastatur eingeblendet.
 
  macOS-Portierung:
    - Anstelle des ScummVM-Dateibrowsers kommt nun der Betriebssystem-Dateibrowser zum Einsatz.
+   - Die Dokumentation kann nun über das Hilfe-Menü aufgerufen werden.
 
  PS Vita-Portierung:
    - Unterstützung für Touch-Steuerung hinzugefügt.
