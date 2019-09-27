@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2019-09-26 06:01+0200\n"
-"PO-Revision-Date: 2019-09-25 04:54+0000\n"
+"PO-Revision-Date: 2019-09-28 05:54+0000\n"
 "Last-Translator: Rodrigo Vegas Sánchez-Ferrero <rodrigo.vegas@gmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/es/>\n"
@@ -932,7 +932,7 @@ msgstr "Usar filtrado lineal al reescalar gráficos"
 
 #: gui/options.cpp:1102
 msgid "Aspect ratio correction"
-msgstr "Corrección de la relación de aspecto"
+msgstr "Corregir relación de aspecto"
 
 #: gui/options.cpp:1102
 msgid "Correct aspect ratio for 320x200 games"
@@ -969,7 +969,7 @@ msgstr "Dispositivo de música:"
 
 #: gui/options.cpp:1139
 msgid "AdLib emulator:"
-msgstr "Emul. AdLib:"
+msgstr "Emulación AdLib:"
 
 #: gui/options.cpp:1139 gui/options.cpp:1140
 msgid "AdLib is used for music in many games"
@@ -1458,7 +1458,7 @@ msgstr "3. Conectar"
 
 #: gui/options.cpp:1966
 msgid "Connect your cloud storage account"
-msgstr "Conectar tu cuenta de almacenamiento en la nube"
+msgstr "Conectar cuenta de almacenamiento en la nube"
 
 #: gui/options.cpp:1975
 msgid "Run server"
@@ -1498,12 +1498,13 @@ msgstr "Puerto que usará el servidor"
 msgctxt "lowres"
 msgid "Run server to manage files with browser (in the same network)."
 msgstr ""
-"Arrancar servidor para gestionar archivos con el navegador (en la misma red)."
+"Arrancar servidor para administrar archivos desde el navegador (en la misma "
+"red)."
 
 #: gui/options.cpp:1994
 msgctxt "lowres"
 msgid "Closing options dialog will stop the server."
-msgstr ""
+msgstr "Cerrar el panel de opciones parará el servidor."
 
 #: gui/options.cpp:1996
 msgid "Run server to manage files with browser (in the same network)."
@@ -1512,7 +1513,7 @@ msgstr ""
 
 #: gui/options.cpp:1997
 msgid "Closing options dialog will stop the server."
-msgstr ""
+msgstr "Cerrar el panel de opciones parará el servidor."
 
 #: gui/options.cpp:2067
 msgid "Failed to change cloud storage!"
@@ -1567,7 +1568,6 @@ msgstr ""
 "Accede a la página manualmente."
 
 #: gui/options.cpp:2381
-#, fuzzy
 msgid "Another Storage is working now. Do you want to interrupt it?"
 msgstr "Ya hay otro almacenamiento activo. ¿Quieres interrumpirlo?"
 
@@ -1580,9 +1580,8 @@ msgid "Connecting..."
 msgstr "Conectando..."
 
 #: gui/options.cpp:2419
-#, fuzzy
 msgid "This Storage is working now. Do you want to interrupt it?"
-msgstr "Ya hay otro almacenamiento activo. ¿Quieres interrumpirlo?"
+msgstr "Este almacenamiento está en uso. ¿Quieres interrumpirlo?"
 
 #: gui/options.cpp:2617 backends/cloud/cloudmanager.cpp:154
 msgid "<right now>"
@@ -1786,9 +1785,8 @@ msgid "Antialiased"
 msgstr "Suavizado"
 
 #: gui/unknown-game-dialog.cpp:52
-#, fuzzy
 msgid "Add anyway"
-msgstr "Jugar aun así"
+msgstr "Añadir de todas maneras"
 
 #: gui/unknown-game-dialog.cpp:59
 msgid "Copy to clipboard"
@@ -1952,7 +1950,7 @@ msgstr "Error desconocido"
 #. I18N: Hercules is graphics card name
 #: common/rendermode.cpp:35
 msgid "Hercules Green"
-msgstr "Hercules verde"
+msgstr "Verde (Hercules)"
 
 #: common/rendermode.cpp:36
 msgid "Hercules Amber"
@@ -2115,9 +2113,9 @@ msgid "Could not switch to video mode '%s'."
 msgstr "No se ha podido cambiar al modo de vídeo '%s'."
 
 #: engines/engine.cpp:337
-#, fuzzy, c-format
+#, c-format
 msgid "Could not switch to stretch mode '%s'."
-msgstr "No se ha podido cambiar al modo de video: '"
+msgstr "No se ha podido cambiar el modo de ajuste: '%s'."
 
 #: engines/engine.cpp:344
 msgid "Could not apply aspect ratio setting."
@@ -2183,28 +2181,26 @@ msgid "Start anyway"
 msgstr "Jugar aun así"
 
 #: engines/game.cpp:166
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "The game in '%s' seems to be an unknown game variant.\n"
 "\n"
 "Please report the following data to the ScummVM team at %s along with the "
 "name of the game you tried to add and its version, language, etc.:"
 msgstr ""
-"Parece que el juego que se encuentra en '%s' utiliza una versión desconocida "
-"del motor %s.\n"
+"Parece que el juego en '%s'  se trate de una versión desconocida.\n"
 "\n"
-"Por favor, envía la siguiente información al equipo de ScummVM en %s, junto "
-"al nombre del juego, su versión, el idioma, etcétera:"
+"Por favor, envía los siguientes datos al equipo de ScummVM en %s, junto al "
+"nombre del juego que intentabas añadir junto a su versión, idioma, etc.:"
 
 #: engines/game.cpp:170
-#, fuzzy, c-format
+#, c-format
 msgid "Matched game IDs for the %s engine:"
-msgstr "Juegos disponibles:"
+msgstr "IDs de juegos disponibles para el motor %s:"
 
 #: audio/adlib.cpp:2290
-#, fuzzy
 msgid "AdLib emulator"
-msgstr "Emul. AdLib:"
+msgstr "Emulación AdLib"
 
 #: audio/fmopl.cpp:72
 msgid "MAME OPL emulator"
@@ -2228,7 +2224,7 @@ msgstr "OPL2LPT"
 
 #: audio/fmopl.cpp:84
 msgid "OPL3LPT"
-msgstr ""
+msgstr "OPL3LPT"
 
 #: audio/mididrv.cpp:209
 #, c-format
@@ -2272,23 +2268,20 @@ msgstr ""
 "registro para más información."
 
 #: audio/mods/paula.cpp:303
-#, fuzzy
 msgid "Amiga Audio emulator"
-msgstr "Emulador de Amiga Audio"
+msgstr "Emulación de Amiga Audio"
 
 #: audio/null.h:44
 msgid "No music"
 msgstr "Sin música"
 
 #: audio/softsynth/appleiigs.cpp:33
-#, fuzzy
 msgid "Apple II GS emulator (NOT IMPLEMENTED)"
-msgstr "Emulador de Apple II GS (NO IMPLEMENTADO)"
+msgstr "Emulación de Apple II GS (NO IMPLEMENTADO)"
 
 #: audio/softsynth/cms.cpp:350
-#, fuzzy
 msgid "Creative Music System emulator"
-msgstr "Emulador de Creative Music System"
+msgstr "Emulación de Creative Music System"
 
 #: audio/softsynth/fmtowns_pc98/towns_pc98_plugins.cpp:32
 msgid "FM-Towns Audio"
@@ -2303,29 +2296,24 @@ msgid "Initializing MT-32 Emulator"
 msgstr "Iniciando el emulador de MT-32"
 
 #: audio/softsynth/mt32.cpp:437
-#, fuzzy
 msgid "MT-32 emulator"
-msgstr "Emulador de MT-32"
+msgstr "Emulación de MT-32"
 
 #: audio/softsynth/pcspk.cpp:139
-#, fuzzy
 msgid "PC Speaker emulator"
-msgstr "Emulador del altavoz de PC"
+msgstr "Emulación del altavoz de PC"
 
 #: audio/softsynth/pcspk.cpp:158
-#, fuzzy
 msgid "IBM PCjr emulator"
-msgstr "Emulador de IBM PCjr"
+msgstr "Emulación de IBM PCjr"
 
 #: audio/softsynth/sid.cpp:1430
-#, fuzzy
 msgid "C64 Audio emulator"
-msgstr "Emulador de C64 Audio"
+msgstr "Emulación de C64 Audio"
 
 #: backends/cloud/cloudmanager.cpp:153
-#, fuzzy
 msgid "<syncing...>"
-msgstr "Conectar"
+msgstr "<sincronizando...>"
 
 #: backends/cloud/storage.cpp:232
 msgid "Saved games sync complete."
@@ -2468,9 +2456,8 @@ msgstr "OpenGL"
 
 #: backends/graphics/opengl/opengl-graphics.cpp:235
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:78
-#, fuzzy
 msgid "Center"
-msgstr "Enter"
+msgstr "Centrar"
 
 #: backends/graphics/opengl/opengl-graphics.cpp:236
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:79
@@ -2515,7 +2502,7 @@ msgstr "Filtrado desactivado"
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:676
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2579
 msgid "Stretch mode"
-msgstr ""
+msgstr "Modo de ajuste"
 
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:57
 #: backends/graphics/wincesdl/wincesdl-graphics.cpp:88
@@ -2525,7 +2512,7 @@ msgstr "Normal (sin reescalado)"
 
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:82
 msgid "Fit to window (4:3)"
-msgstr ""
+msgstr "Ajuste de ventana (4:3)"
 
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:87
 msgctxt "lowres"
@@ -2569,9 +2556,8 @@ msgid "Windows MIDI"
 msgstr "Windows MIDI"
 
 #: backends/networking/sdl_net/handlers/createdirectoryhandler.cpp:60
-#, fuzzy
 msgid "Can't create directory here!"
-msgstr "La ruta no es un directorio"
+msgstr "¡No se puede crear un directorio aquí!"
 
 #: backends/networking/sdl_net/handlers/createdirectoryhandler.cpp:66
 #: backends/networking/sdl_net/handlers/createdirectoryhandler.cpp:73
@@ -2585,172 +2571,158 @@ msgstr "La ruta no es un directorio"
 #: backends/networking/sdl_net/handlers/uploadfilehandler.cpp:56
 #: backends/networking/sdl_net/handlers/uploadfilehandler.cpp:63
 #: backends/networking/sdl_net/uploadfileclienthandler.cpp:137
-#, fuzzy
 msgid "Invalid path!"
-msgstr "Código inválido"
+msgstr "¡Ruta inválida!"
 
 #: backends/networking/sdl_net/handlers/createdirectoryhandler.cpp:84
-#, fuzzy
 msgid "Parent directory doesn't exists!"
-msgstr "La ruta no existe"
+msgstr "¡La ruta no existe!"
 
 #: backends/networking/sdl_net/handlers/createdirectoryhandler.cpp:88
 msgid "Can't create a directory within a file!"
-msgstr ""
+msgstr "¡No se puede crear un directorio dentro de un archivo!"
 
 #: backends/networking/sdl_net/handlers/createdirectoryhandler.cpp:98
 #: backends/networking/sdl_net/uploadfileclienthandler.cpp:141
 msgid "There is a file with that name in the parent directory!"
-msgstr ""
+msgstr "¡Ya existe un archivo con ese nombre en la ruta principal!"
 
 #: backends/networking/sdl_net/handlers/createdirectoryhandler.cpp:104
-#, fuzzy
 msgid "Failed to create the directory!"
-msgstr "Fallo al borrar el archivo."
+msgstr "¡No se ha podido crear el directorio!"
 
 #: backends/networking/sdl_net/handlers/createdirectoryhandler.cpp:111
 #: backends/networking/sdl_net/handlers/createdirectoryhandler.cpp:120
-#, fuzzy
 msgid "Directory created successfully!"
-msgstr "DVD montado con éxito"
+msgstr "¡Directorio creado con éxito!"
 
 #: backends/networking/sdl_net/handlers/createdirectoryhandler.cpp:122
 #: backends/networking/sdl_net/uploadfileclienthandler.cpp:204
-#, fuzzy
 msgid "Back to parent directory"
-msgstr "La ruta no es un directorio"
+msgstr "Volver a la ruta principal"
 
 #: backends/networking/sdl_net/handlers/downloadfilehandler.cpp:67
-#, fuzzy
 msgid "The file doesn't exist!"
-msgstr "La ruta no existe"
+msgstr "¡El archivo no existe!"
 
 #: backends/networking/sdl_net/handlers/downloadfilehandler.cpp:71
-#, fuzzy
 msgid "Can't download a directory!"
-msgstr "La ruta no es un directorio"
+msgstr "¡No se puede descargar un directorio!"
 
 #: backends/networking/sdl_net/handlers/downloadfilehandler.cpp:76
-#, fuzzy
 msgid "Failed to read the file!"
-msgstr "Fallo al borrar el archivo."
+msgstr "¡No se puede leer el archivo!"
 
 #: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:59
 msgid ""
 "The page is not available without the resources. Make sure file wwwroot.zip "
 "from ScummVM distribution is available in 'themepath'."
 msgstr ""
+"La página no está disponible sin los recursos. Asegurate de que el archivo "
+"de distribución de ScummVM, wwwroot.zip, está disponible en 'themepath'."
 
 #: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:67
 #: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:68
 #: backends/networking/sdl_net/handlers/filespagehandler.cpp:223
 #: backends/networking/sdl_net/handlers/filespagehandler.cpp:224
-#, fuzzy
 msgid "Create directory"
-msgstr "La ruta no es un directorio"
+msgstr "Crear directorio"
 
 #: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:69
 #: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:70
 #: backends/networking/sdl_net/handlers/filespagehandler.cpp:227
 #: backends/networking/sdl_net/handlers/filespagehandler.cpp:228
-#, fuzzy
 msgid "Upload files"
-msgstr "Cargar partida"
+msgstr "Subir archivos"
 
 #: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:71
 #: backends/networking/sdl_net/handlers/filespagehandler.cpp:229
 msgid "Type new directory name:"
-msgstr ""
+msgstr "Nombre del nuevo directorio:"
 
 #: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:72
 #: backends/networking/sdl_net/handlers/filespagehandler.cpp:230
-#, fuzzy
 msgid "Select a file to upload:"
-msgstr "Selecciona un juego para cargar"
+msgstr "Selecciona un archivo a subir:"
 
 #: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:73
 #: backends/networking/sdl_net/handlers/filespagehandler.cpp:231
-#, fuzzy
 msgid "Or select a directory (works in Chrome only):"
-msgstr "Selecciona el directorio de temas"
+msgstr "O selecciona un directorio (solo en Chrome):"
 
 #: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:74
 msgid "Index of "
-msgstr ""
+msgstr "Índice de "
 
 #: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:76
 msgid "Error occurred"
-msgstr ""
+msgstr "Ha ocurrido un error"
 
 #: backends/networking/sdl_net/handlers/filespagehandler.cpp:81
 msgid "File system root"
-msgstr ""
+msgstr "Raiz del sistema de archivos"
 
 #: backends/networking/sdl_net/handlers/filespagehandler.cpp:82
-#, fuzzy
 msgid "Saved games"
-msgstr "Guardar partida:"
+msgstr "Juegos guardados"
 
 #: backends/networking/sdl_net/handlers/filespagehandler.cpp:119
-#, fuzzy
 msgid "Parent directory"
-msgstr "La ruta no es un directorio"
+msgstr "Ruta principal"
 
 #: backends/networking/sdl_net/handlers/filespagehandler.cpp:218
-#, fuzzy
 msgid "ScummVM couldn't list the directory you specified."
-msgstr "¡ScummVM no ha podido acceder al directorio!"
+msgstr "ScummVM no puede listar el contenido del directorio especificado."
 
 #: backends/networking/sdl_net/handlers/filespagehandler.cpp:232
 msgid "Index of"
-msgstr ""
+msgstr "Índice de"
 
 #: backends/networking/sdl_net/handlers/indexpagehandler.cpp:42
 msgid "This is a local webserver index page."
-msgstr ""
+msgstr "Esta es una página de inicio del servidor local."
 
 #: backends/networking/sdl_net/handlers/indexpagehandler.cpp:43
-#, fuzzy
 msgid "Open Files manager"
-msgstr "Abrir el gestor de descargas"
+msgstr "Abrir administrador de archivos"
 
 #: backends/networking/sdl_net/handlers/uploadfilehandler.cpp:67
 msgid "The parent directory doesn't exist!"
-msgstr ""
+msgstr "¡El directorio principal no existe!"
 
 #: backends/networking/sdl_net/handlers/uploadfilehandler.cpp:71
-#, fuzzy
 msgid "Can't upload into a file!"
-msgstr "La ruta no es un archivo"
+msgstr "¡No se puede subir a un archivo!"
 
 #: backends/networking/sdl_net/handlerutils.cpp:213
 msgid "Back to the files manager"
-msgstr ""
+msgstr "Volver al administrador de archivos"
 
 #: backends/networking/sdl_net/localwebserver.cpp:123
 msgid ""
 "Failed to start local webserver.\n"
 "Check whether selected port is not used by another application and try again."
 msgstr ""
+"No se ha podido arrancar el servidor web.\n"
+"Comprueba que el puerto seleccionado no lo esté usando otra aplicación y "
+"vuelve a intentarlo."
 
 #: backends/networking/sdl_net/uploadfileclienthandler.cpp:69
 #: backends/networking/sdl_net/uploadfileclienthandler.cpp:111
 msgid "Invalid request: headers are too long!"
-msgstr ""
+msgstr "Solicitud inválida: ¡Cabeceras demasiado largas!"
 
 #: backends/networking/sdl_net/uploadfileclienthandler.cpp:155
-#, fuzzy
 msgid "Failed to upload the file!"
-msgstr "Fallo al borrar el archivo."
+msgstr "¡No se ha podido subir el archivo!"
 
 #: backends/networking/sdl_net/uploadfileclienthandler.cpp:184
 msgid "No file was passed!"
-msgstr ""
+msgstr "¡No se ha pasado ningún archivo!"
 
 #: backends/networking/sdl_net/uploadfileclienthandler.cpp:202
-#, fuzzy
 msgid "Uploaded successfully!"
-msgstr "DVD montado con éxito"
+msgstr "¡Subida completada!"
 
 #: backends/platform/ds/arm9/source/dsoptions.cpp:56
 #: engines/scumm/dialogs.cpp:287
@@ -2901,9 +2873,8 @@ msgid "Help"
 msgstr "Ayuda"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:215
-#, fuzzy
 msgid "User Manual"
-msgstr "Cancel·lat per l'usuari"
+msgstr "Manual de usuario"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:217
 msgid "General Information"
@@ -2931,7 +2902,7 @@ msgstr "Licencia Freefont"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:224
 msgid "OFL License"
-msgstr ""
+msgstr "Licencia OFL"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:225
 msgid "BSD License"
@@ -3318,23 +3289,20 @@ msgstr ""
 "Se esperaba %d.%d pero se encontró %d.%d."
 
 #: engines/adl/detection.cpp:51
-#, fuzzy
 msgid "TV emulation"
-msgstr "Emulador de MT-32"
+msgstr "Emulación de TV"
 
 #: engines/adl/detection.cpp:52
 msgid "Emulate composite output to an NTSC TV"
-msgstr ""
+msgstr "Emulación de salida de componentes a TV NTSC"
 
 #: engines/adl/detection.cpp:61 engines/adl/detection.cpp:71
-#, fuzzy
 msgid "Color graphics"
-msgstr "Usar gráficos en color"
+msgstr "Gráficos en color"
 
 #: engines/adl/detection.cpp:62 engines/adl/detection.cpp:72
-#, fuzzy
 msgid "Use color graphics instead of monochrome"
-msgstr "Usar gráficos en color"
+msgstr "Usar gráficos en color en vez de monocromo"
 
 #: engines/adl/detection.cpp:81
 msgid "Show scanlines"
@@ -3342,15 +3310,15 @@ msgstr "Mostrar líneas horizontales"
 
 #: engines/adl/detection.cpp:82
 msgid "Darken every other scanline to mimic the look of a CRT"
-msgstr ""
+msgstr "Oscurecer entrelazado para simular el aspecto de un CRT"
 
 #: engines/adl/detection.cpp:91
 msgid "Always use sharp monochrome text"
-msgstr ""
+msgstr "Usar siempre texto monocromo nítido"
 
 #: engines/adl/detection.cpp:92
 msgid "Do not emulate NTSC artifacts for text"
-msgstr ""
+msgstr "No emular artefactos de NTSC para el texto"
 
 #: engines/agi/detection.cpp:147 engines/cine/detection.cpp:70
 #: engines/drascula/detection.cpp:331 engines/dreamweb/detection.cpp:48
@@ -3482,11 +3450,11 @@ msgstr "No se ha encontrado el vídeo '%s'!"
 
 #: engines/bladerunner/bladerunner.cpp:349
 msgid "Failed to initialize resources"
-msgstr ""
+msgstr "No se han podido iniciar los recursos"
 
 #: engines/bladerunner/bladerunner.cpp:1005
 msgid "A required game resource was not found"
-msgstr ""
+msgstr "No se ha encontrado un recurso del juego necesario"
 
 #: engines/bladerunner/bladerunner.cpp:2155
 msgid ""
@@ -3494,6 +3462,9 @@ msgid ""
 "playing in Original Content mode. The mode will be adjusted to Restored Cut "
 "Content for this session until you completely Quit the game."
 msgstr ""
+"ATENCIÓN: Este juego se guardo en modo Contenido Cortado Restaurado, pero "
+"estás jugando en modo Contenido Original. El modo se ajustará a Contenido "
+"Cortado Restaurado para esta sesión hasta que salgas completamente del juego."
 
 #: engines/bladerunner/bladerunner.cpp:2157
 msgid ""
@@ -3501,38 +3472,41 @@ msgid ""
 "in Restored Cut Content mode. The mode will be adjusted to Original Content "
 "mode for this session until you completely Quit the game."
 msgstr ""
+"ATENCIÓN: Este juego se guardo en modo Contenido Original, pero estás "
+"jugando en modo Contenido Cortado Restaurado. El modo se ajustará a "
+"Contenido Original para esta sesión hasta que salgas completamente del juego."
 
 #: engines/bladerunner/bladerunner.cpp:2159
 msgid "Continue"
-msgstr ""
+msgstr "Continuar"
 
 #: engines/bladerunner/detection.cpp:48
-#, fuzzy
 msgid "Sitcom mode"
-msgstr "Modo estirar:"
+msgstr "Modo Sitcom"
 
 #: engines/bladerunner/detection.cpp:49
 msgid "Game will add laughter after actor's line or narration"
-msgstr ""
+msgstr "El juego añadirá risas tras cada entrada o narración del actor"
 
 #: engines/bladerunner/detection.cpp:57
-#, fuzzy
 msgid "Shorty mode"
-msgstr "Modo estirar:"
+msgstr "Modo enano"
 
 #: engines/bladerunner/detection.cpp:58
 msgid "Game will shrink the actors and make their voices high pitched"
-msgstr ""
+msgstr "El juego encojerá a los actores y les pondrá voces agudas"
 
 #: engines/bladerunner/detection.cpp:66
 msgid "Frame limiter high performance mode"
-msgstr ""
+msgstr "Modo de limitación de fotogramas de alto rendimiento"
 
 #: engines/bladerunner/detection.cpp:67
 msgid ""
 "This mode may result in high CPU usage! It avoids use of delayMillis() "
 "function."
 msgstr ""
+"¡Esto puede producir un alto consumo de CPU! Se evita el uso de la función "
+"delayMilis()."
 
 #: engines/cge/detection.cpp:105 engines/cge2/detection.cpp:111
 msgid "Color Blind Mode"
@@ -3540,7 +3514,7 @@ msgstr "Modo para daltónicos"
 
 #: engines/cge/detection.cpp:106 engines/cge2/detection.cpp:112
 msgid "Enable Color Blind Mode by default"
-msgstr "Activar por defecto el modo para daltónicos"
+msgstr "Activar el modo para daltónicos por defecto"
 
 #: engines/drascula/saveload.cpp:47
 msgid ""
@@ -3570,73 +3544,70 @@ msgstr "Usar los niveles de brillo originales del juego"
 
 #: engines/glk/glk_api.cpp:63
 msgid "[ press any key to exit ]"
-msgstr ""
+msgstr "[ pulsar una tecla para salir ]"
 
 #: engines/glk/quetzal.cpp:117 engines/glk/quetzal.cpp:126
-#, fuzzy
 msgid "Untitled Savegame"
-msgstr "Partida sin nombre"
+msgstr "Juego sin nombre"
 
 #: engines/glk/advsys/advsys.cpp:35
-#, fuzzy
 msgid "Could not start AdvSys game"
-msgstr "No se ha podido cambiar al modo de video: '"
+msgstr "No se puede arrancar el juego AdvSys"
 
 #: engines/glk/advsys/advsys.cpp:48 engines/glk/advsys/vm.cpp:319
 msgid "Sorry, the savegame couldn't be restored"
-msgstr ""
+msgstr "Lo siento, el juego no se ha podido restaurar"
 
 #: engines/glk/advsys/vm.cpp:314
-#, fuzzy
 msgid "Sorry, the savegame couldn't be created"
-msgstr "no se ha podido cambiar el modo de vídeo"
+msgstr "Lo siento, no se ha podido guardar el juego"
 
 #: engines/glk/advsys/vm.cpp:560
 msgid "Speak up! I can't hear you!\n"
-msgstr ""
+msgstr "¡Habla! Puedo escucharte.\n"
 
 #: engines/glk/advsys/vm.cpp:596
 #, c-format
 msgid "I don't know the word \"%s\".\n"
-msgstr ""
+msgstr "No conozco la palabra \"%s\".\n"
 
 #: engines/glk/advsys/vm.cpp:682
 msgid "I don't understand.\n"
-msgstr ""
+msgstr "No te entiendo.\n"
 
 #: engines/glk/alan2/alan2.cpp:76
 msgid "This is too short to be a valid Alan2 file."
-msgstr ""
+msgstr "Demasiado corto para ser un archivo Alan2 válido."
 
 #: engines/glk/alan2/alan2.cpp:81
 msgid "This is not a valid Alan2 file."
-msgstr ""
+msgstr "No es un archivo Alan2 válido."
 
 #: engines/glk/frotz/frotz.cpp:126
-#, fuzzy
 msgid "Error reading save file"
-msgstr "Error al ejecutar el juego:"
+msgstr "Error al leer el juego guardado"
 
 #: engines/glk/frotz/frotz.cpp:144
-#, fuzzy
 msgid "Error writing save file\n"
-msgstr "Error al ejecutar el juego:"
+msgstr "Error de escritura en el juego guardado\n"
 
 #: engines/glk/glulxe/glulxe.cpp:79 engines/glk/magnetic/magnetic.cpp:73
 msgid "This is too short to be a valid Glulx file."
-msgstr ""
+msgstr "Demasiado corto para ser un archivo Glulx válido."
 
 #: engines/glk/glulxe/glulxe.cpp:84 engines/glk/magnetic/magnetic.cpp:78
 msgid "This is not a valid Glulx file."
-msgstr ""
+msgstr "No es un archivo Glulx válido."
 
 #: engines/glk/glulxe/glulxe.cpp:91 engines/glk/magnetic/magnetic.cpp:85
 msgid "This Glulx file is too old a version to execute."
 msgstr ""
+"Este archivo Glulx es de una versión demasiado antigua para ser ejecutado."
 
 #: engines/glk/glulxe/glulxe.cpp:95 engines/glk/magnetic/magnetic.cpp:89
 msgid "This Glulx file is too new a version to execute."
 msgstr ""
+"Este archivo Glulx es de una versión demasiado moderna para ser ejecutado."
 
 #: engines/glk/scott/scott.cpp:99
 msgid "I don't understand your command. "
@@ -3659,9 +3630,8 @@ msgid "Light runs out in "
 msgstr "La luz se apagará en "
 
 #: engines/glk/scott/scott.cpp:131
-#, fuzzy
 msgid " turns. "
-msgstr "Encender"
+msgstr " encender. "
 
 #: engines/glk/scott/scott.cpp:134
 msgid "Your light is growing dim. "
@@ -3694,12 +3664,12 @@ msgstr "No puedo ver. Está demadiado oscuro!\n"
 #: engines/glk/scott/scott.cpp:418
 #, c-format
 msgid "You are in a %s\n"
-msgstr ""
+msgstr "Estás en un %s\n"
 
 #: engines/glk/scott/scott.cpp:420
 #, c-format
 msgid "I'm in a %s\n"
-msgstr ""
+msgstr "Estoy en un %s\n"
 
 #: engines/glk/scott/scott.cpp:425
 msgid ""
@@ -3710,9 +3680,8 @@ msgstr ""
 "Salidas obvias: "
 
 #: engines/glk/scott/scott.cpp:438
-#, fuzzy
 msgid "none"
-msgstr "<ninguno>"
+msgstr "ninguno"
 
 #: engines/glk/scott/scott.cpp:447
 msgid ""
@@ -3731,9 +3700,8 @@ msgstr ""
 "También puedo ver: "
 
 #: engines/glk/scott/scott.cpp:533
-#, fuzzy
 msgid "Saved.\n"
-msgstr "Guardar"
+msgstr "Guardado.\n"
 
 #: engines/glk/scott/scott.cpp:624
 msgid "You use word(s) I don't know! "
@@ -3742,122 +3710,119 @@ msgstr "Usaste palabra(s) que no conozco! "
 #: engines/glk/scott/scott.cpp:752 engines/glk/scott/scott.cpp:1075
 #: engines/glk/scott/scott.cpp:1097
 msgid "You are carrying too much. "
-msgstr ""
+msgstr "Llevas demasiadas cosas. "
 
 #: engines/glk/scott/scott.cpp:754
 msgid "I've too much to carry! "
-msgstr ""
+msgstr "¡Llevo demasiadas cosas! "
 
 #: engines/glk/scott/scott.cpp:785
 msgid "You are dead.\n"
-msgstr ""
+msgstr "Estás muerto.\n"
 
 #: engines/glk/scott/scott.cpp:787
 msgid "I am dead.\n"
-msgstr ""
+msgstr "Estoy muerto.\n"
 
 #: engines/glk/scott/scott.cpp:799
-#, fuzzy
 msgid "The game is now over.\n"
-msgstr "La partida no se ha cargado"
+msgstr "El juego ha terminado.\n"
 
 #: engines/glk/scott/scott.cpp:814
 msgid "You have stored "
-msgstr ""
+msgstr "Tienes "
 
 #: engines/glk/scott/scott.cpp:816
-#, fuzzy
 msgid "I've stored "
-msgstr "Cargar"
+msgstr "Tengo "
 
 #: engines/glk/scott/scott.cpp:818
 msgid " treasures.  On a scale of 0 to 100, that rates "
-msgstr ""
+msgstr " tesoros. En una escala de 0 a 100, marca "
 
 #: engines/glk/scott/scott.cpp:822
 msgid "Well done.\n"
-msgstr ""
+msgstr "Bien hecho.\n"
 
 #: engines/glk/scott/scott.cpp:831
 msgid "You are carrying:\n"
-msgstr ""
+msgstr "Llevas:\n"
 
 #: engines/glk/scott/scott.cpp:833
 msgid "I'm carrying:\n"
-msgstr ""
+msgstr "Llevo:\n"
 
 #: engines/glk/scott/scott.cpp:848
 msgid "Nothing"
-msgstr ""
+msgstr "Nada"
 
 #: engines/glk/scott/scott.cpp:977
 msgid "Give me a direction too."
-msgstr ""
+msgstr "Dame una dirección también."
 
 #: engines/glk/scott/scott.cpp:986
 msgid "Dangerous to move in the dark! "
-msgstr ""
+msgstr "¡Peligroso moverse a la oscuridad! "
 
 #: engines/glk/scott/scott.cpp:994
 msgid "You fell down and broke your neck. "
-msgstr ""
+msgstr "Caes y te rompes el cuello. "
 
 #: engines/glk/scott/scott.cpp:996
 msgid "I fell down and broke my neck. "
-msgstr ""
+msgstr "Caigo y me rompo el cuello. "
 
 #: engines/glk/scott/scott.cpp:1001
 msgid "You can't go in that direction. "
-msgstr ""
+msgstr "No puedes ir en esa dirección. "
 
 #: engines/glk/scott/scott.cpp:1003
 msgid "I can't go in that direction. "
-msgstr ""
+msgstr "No puedo ir en esa dirección. "
 
 #: engines/glk/scott/scott.cpp:1061
 msgid "It is dark.\n"
-msgstr ""
+msgstr "Está oscuro.\n"
 
 #: engines/glk/scott/scott.cpp:1077 engines/glk/scott/scott.cpp:1099
 msgid "I've too much to carry. "
-msgstr ""
+msgstr "Llevo demasiadas cosas. "
 
 #: engines/glk/scott/scott.cpp:1082 engines/glk/scott/scott.cpp:1130
 msgid ": O.K.\n"
-msgstr ""
+msgstr ": O.K.\n"
 
 #: engines/glk/scott/scott.cpp:1088
 msgid "Nothing taken."
-msgstr ""
+msgstr "No coges nada."
 
 #: engines/glk/scott/scott.cpp:1092 engines/glk/scott/scott.cpp:1140
-#, fuzzy
 msgid "What ? "
-msgstr "Qué es"
+msgstr "Qué ? "
 
 #: engines/glk/scott/scott.cpp:1105
 msgid "It is beyond your power to do that. "
-msgstr ""
+msgstr "Está fuera de tus posibilidades hacer eso. "
 
 #: engines/glk/scott/scott.cpp:1107
 msgid "It's beyond my power to do that. "
-msgstr ""
+msgstr "Está fuera de mis posibilidades hacer eso. "
 
 #: engines/glk/scott/scott.cpp:1111
 msgid "O.K. "
-msgstr ""
+msgstr "O.K. "
 
 #: engines/glk/scott/scott.cpp:1136
 msgid "Nothing dropped.\n"
-msgstr ""
+msgstr "No dejas nada.\n"
 
 #: engines/glk/scott/scott.cpp:1146
 msgid "It's beyond your power to do that.\n"
-msgstr ""
+msgstr "Está fuera de tus posibilidades hacer eso.\n"
 
 #: engines/glk/scott/scott.cpp:1148
 msgid "It's beyond my power to do that.\n"
-msgstr ""
+msgstr "Está fuera de mis posibilidades hacer eso.\n"
 
 #: engines/gob/inter_playtoons.cpp:255 engines/gob/inter_v2.cpp:1467
 #: engines/gob/inter_geisha.cpp:232 engines/tinsel/saveload.cpp:538
@@ -3886,13 +3851,12 @@ msgid "Failed to save game"
 msgstr "Fallo al guardar la partida"
 
 #: engines/hdb/detection.cpp:157
-#, fuzzy
 msgid "Enable cheat mode"
-msgstr "Activar el modo helio"
+msgstr "Activar trucos"
 
 #: engines/hdb/detection.cpp:158
 msgid "Debug info and level selection becomes available"
-msgstr ""
+msgstr "Información de depuración y habilita selección de nivel"
 
 #: engines/hopkins/detection.cpp:76 engines/hopkins/detection.cpp:86
 msgid "Gore Mode"
@@ -3963,11 +3927,11 @@ msgstr "Activar las barras de energía"
 #. I18N: L/R stands for Left/Right
 #: engines/kyra/detection.cpp:138
 msgid "Fight Button L/R Swap"
-msgstr ""
+msgstr "I/D significa Izquierda/Derecha"
 
 #: engines/kyra/detection.cpp:139
 msgid "Left button to attack, right button to pick up items"
-msgstr ""
+msgstr "Botón izquierdo para atacar, botón derecho para coger objetos"
 
 #: engines/kyra/engine/eobcommon.cpp:352 engines/kyra/engine/lol.cpp:481
 msgid "Move Forward"
@@ -4120,6 +4084,16 @@ msgid ""
 "should be located in the AmigaDOS system 'Fonts/' folder.\n"
 "Please copy them into the EOB game data directory.\n"
 msgstr ""
+"Esta versión de amiga requiere los siguientes archivos:\n"
+"\n"
+"EOBF6.FONT\n"
+"EOBF6/6\n"
+"EOBF8.FONT\n"
+"EOBF8/8\n"
+"\n"
+"Si utilizaste el instalador original en la instalación, los\n"
+"archivos deben encontrarse dentro de la carpeta 'Fonts/'\n"
+"Por favor, copialos dentro del directorio del juego EOB.\n"
 
 #: engines/kyra/graphics/screen_eob.cpp:2262
 msgid ""
@@ -4142,6 +4116,25 @@ msgid ""
 "Please copy the correct font files into your EOB II game data directory.\n"
 "\n"
 msgstr ""
+"Esta versión de amiga requiere los siguientes archivos:\n"
+"\n"
+"EOBF6.FONT\n"
+"EOBF6/6\n"
+"EOBF8.FONT\n"
+"EOBF8/8\n"
+"\n"
+"Esta es una versión traducida del EOB II que utiliza caracteres idiomáticos "
+"específicos\n"
+"contenidos solamente en los archivos de fuentes que vienen con tu juego. No "
+"puedes\n"
+"utilizar archivos de la versión inglesa o del juego EOB I como parece que "
+"estás haciendo\n"
+"\n"
+"El juego continuará, pero los caracteres idiomáticos específicos no se "
+"mostrarán.\n"
+"Por favor, copia los archivos de fuentes correctos en tu directorio de datos "
+"de juego de EOB II.\n"
+"\n"
 
 #: engines/kyra/sound/sound_midi.cpp:72
 msgid ""
@@ -4242,30 +4235,31 @@ msgid ""
 "Are you sure you want to load a saved game? All unsaved progress will be "
 "lost."
 msgstr ""
+"¿Estás seguro de que quieres cargar una partida guardada? Todo el progreso "
+"sin salvar se perderá."
 
 #: engines/mohawk/myst_stacks/menu.cpp:284
 #: engines/mohawk/riven_stacks/aspit.cpp:350
-#, fuzzy
 msgid "Load game"
-msgstr "Cargar juego:"
+msgstr "Cargar juego"
 
 #: engines/mohawk/myst_stacks/menu.cpp:300
 #: engines/mohawk/riven_stacks/aspit.cpp:371
 msgid ""
 "Are you sure you want to start a new game? All unsaved progress will be lost."
 msgstr ""
+"¿Estás seguro de que quieres comenzar una nueva partida? Todo el progreso "
+"sin salvar se perderá."
 
 #: engines/mohawk/myst_stacks/menu.cpp:301
 #: engines/mohawk/riven_stacks/aspit.cpp:372
-#, fuzzy
 msgid "New game"
-msgstr "Guardar"
+msgstr "Nueva partida"
 
 #: engines/mohawk/myst_stacks/menu.cpp:318
 #: engines/mohawk/riven_stacks/aspit.cpp:455
-#, fuzzy
 msgid "Are you sure you want to quit? All unsaved progress will be lost."
-msgstr "   ¿Seguro que quieres salir?   "
+msgstr "¿Seguro que quieres salir? Se perderá todo el progreso sin salvar."
 
 #: engines/mohawk/riven.cpp:158
 msgid ""
@@ -4471,13 +4465,13 @@ msgid "Use linear interpolation when upscaling videos, where possible"
 msgstr "Usar interpolación lineal al reescalar vídeos, siempre que sea posible"
 
 #: engines/sci/detection.cpp:437
-#, fuzzy
 msgid "Use high-quality \"LarryScale\" cel scaling"
-msgstr "Usar reescalado de vídeo de alta calidad"
+msgstr "Usar escalado de celda de alta calidad \"LarryScale\""
 
 #: engines/sci/detection.cpp:438
 msgid "Use special cartoon scaler for drawing character sprites"
 msgstr ""
+"Usar escalado especial de dibujos animados para los sprites de los personajes"
 
 #: engines/sci/detection.cpp:447
 msgid "Prefer digital sound effects"
@@ -4651,6 +4645,8 @@ msgid ""
 "The selected audio driver requires the following file(s):\n"
 "\n"
 msgstr ""
+"El controlador de audio seleccionado requiere los siguientes archivos:\n"
+"\n"
 
 #: engines/sci/sound/music.cpp:164
 msgid ""
@@ -5474,17 +5470,19 @@ msgstr ""
 "Usa la introducción de la versión en disquete (solo para la versión CD)"
 
 #: engines/supernova/supernova.cpp:190
-#, fuzzy, c-format
+#, c-format
 msgid "Unable to locate the text for %s language in engine data file."
-msgstr "No se puede localizar el archivo de datos del motor '%s'."
+msgstr ""
+"No se puede localizar el texto para el idioma %s en el archivo de datos del "
+"motor del juego."
 
 #: engines/supernova/supernova.cpp:473
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Incorrect version of the '%s' engine data file found. Expected %d but got %d."
 msgstr ""
 "Se ha encontrado una versión incorrecta del archivo de datos del motor '%s'. "
-"Se esperaba %d.%d pero se encontró %d.%d."
+"Se esperaba %d pero se encontró %d."
 
 #: engines/supernova/supernova.cpp:483
 #, c-format
@@ -5492,14 +5490,13 @@ msgid "Unable to find block for part %d"
 msgstr ""
 
 #: engines/supernova/supernova.cpp:526
-#, fuzzy, c-format
+#, c-format
 msgid "Unable to find '%s' in game folder or the engine data file."
-msgstr "No se puede localizar el archivo de datos del motor '%s'."
+msgstr "No se puede localizar '%s' en el archivo de datos del motor del juego."
 
 #: engines/supernova/detection.cpp:40
-#, fuzzy
 msgid "Improved mode"
-msgstr "Modo ventana"
+msgstr "Modo mejorado"
 
 #: engines/supernova/detection.cpp:41
 msgid ""
