@@ -50,22 +50,22 @@ static const sc_char NEWLINE = '\n';
 static const sc_char CARRIAGE_RETURN = '\r';
 static const sc_char NUL = '\0';
 
-/* Version 4.0, version 3.9, and version 3.8 TAF file signatures. */
-static const sc_byte
-V400_SIGNATURE[VERSION_HEADER_SIZE] = {0x3c, 0x42, 0x3f, 0xc9, 0x6a, 0x87,
-                                       0xc2, 0xcf, 0x93, 0x45, 0x3e, 0x61,
-                                       0x39, 0xfa
-                                      };
-static const sc_byte
-V390_SIGNATURE[VERSION_HEADER_SIZE] = {0x3c, 0x42, 0x3f, 0xc9, 0x6a, 0x87,
-                                       0xc2, 0xcf, 0x94, 0x45, 0x37, 0x61,
-                                       0x39, 0xfa
-                                      };
-static const sc_byte
-V380_SIGNATURE[VERSION_HEADER_SIZE] = {0x3c, 0x42, 0x3f, 0xc9, 0x6a, 0x87,
-                                       0xc2, 0xcf, 0x94, 0x45, 0x36, 0x61,
-                                       0x39, 0xfa
-                                      };
+/* Various version TAF file signatures. */
+static const sc_byte V500_SIGNATURE[VERSION_HEADER_SIZE] = {
+	0x3c, 0x42, 0x3f, 0xc9, 0x6a, 0x87, 0xc2, 0xcf, 0x92, 0x45, 0x3e, 0x61, 0x30, 0x30
+};
+
+static const sc_byte V400_SIGNATURE[VERSION_HEADER_SIZE] = {
+	0x3c, 0x42, 0x3f, 0xc9, 0x6a, 0x87, 0xc2, 0xcf, 0x93, 0x45, 0x3e, 0x61, 0x39, 0xfa
+};
+
+static const sc_byte V390_SIGNATURE[VERSION_HEADER_SIZE] = {
+	0x3c, 0x42, 0x3f, 0xc9, 0x6a, 0x87, 0xc2, 0xcf, 0x94, 0x45, 0x37, 0x61, 0x39, 0xfa
+};
+
+static const sc_byte V380_SIGNATURE[VERSION_HEADER_SIZE] = {
+	0x3c, 0x42, 0x3f, 0xc9, 0x6a, 0x87, 0xc2, 0xcf, 0x94, 0x45, 0x36, 0x61, 0x39, 0xfa
+};
 
 /*
  * Game TAF data structure.  The game structure contains the original TAF
@@ -499,7 +499,10 @@ static sc_tafref_t taf_create_from_callback(sc_read_callbackref_t callback,
 		 * Compare the header with the known TAF signatures, and set TAF version
 		 * appropriately.
 		 */
-		if (memcmp(taf->header, V400_SIGNATURE, VERSION_HEADER_SIZE) == 0) {
+		if (memcmp(taf->header, V500_SIGNATURE, VERSION_HEADER_SIZE) == 0) {
+			taf->version = TAF_VERSION_500;
+
+		} else if (memcmp(taf->header, V400_SIGNATURE, VERSION_HEADER_SIZE) == 0) {
 			/* Read in the version 4.0 header extension. */
 			in_bytes = callback(opaque,
 			                    taf->header + VERSION_HEADER_SIZE,
@@ -522,7 +525,7 @@ static sc_tafref_t taf_create_from_callback(sc_read_callbackref_t callback,
 		}
 	} else {
 		/* Saved games are always considered to be for ScummVM, version 5.0. */
-		taf->version = TAF_VERSION_500;
+		taf->version = TAF_VERSION_SAVE;
 	}
 
 	/*
@@ -531,10 +534,14 @@ static sc_tafref_t taf_create_from_callback(sc_read_callbackref_t callback,
 	 * it's obfuscated with the Visual Basic PRNG.
 	 */
 	switch (taf->version) {
-	case TAF_VERSION_500:
+	case TAF_VERSION_SAVE:
 		status = taf_read_raw(taf, callback, opaque, is_gamefile);
 		break;
-	
+
+	case TAF_VERSION_500:
+		sc_error("taf_create: ADRIFT 5 games are not yet supported");
+		break;
+
 	case TAF_VERSION_400:
 		status = taf_decompress(taf, callback, opaque, is_gamefile);
 		break;

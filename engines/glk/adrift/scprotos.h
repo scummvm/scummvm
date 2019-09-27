@@ -97,10 +97,11 @@ extern sc_uint sc_hash(const sc_char *string);
 /* TAF file reader/decompressor enumerations, opaque typedef and functions. */
 enum {
 	TAF_VERSION_NONE = 0,
+	TAF_VERSION_SAVE = 999,
 	TAF_VERSION_500 = 500,
 	TAF_VERSION_400 = 400,
 	TAF_VERSION_390 = 390,
-	TAF_VERSION_380 = 380
+	TAF_VERSION_380 = 380,
 };
 
 typedef struct sc_taf_s *sc_tafref_t;

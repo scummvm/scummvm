@@ -65,7 +65,7 @@ void sc_error(const sc_char *format, ...) {
 	assert(format);
 
 	va_start(ap, format);
-	Common::String s = Common::String::format(format, ap);
+	Common::String s = Common::String::vformat(format, ap);
 	va_end(ap);
 	warning("%s", s.c_str());
 }
