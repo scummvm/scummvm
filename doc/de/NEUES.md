@@ -76,8 +76,6 @@ Programmcodes finden Sie auf Englisch unter:
      Freddy Pharkas, King's Quest 6 und Quest for Glory 1 (VGA) führte, wurde behoben.
    - Absturz in der Macintosh-Version von Freddy Pharkas behoben. Das Spiel kann nun abgeschlossen werden.
    - Fehler beim Laden automatisch gespeicherter Spielstände behoben.
-   - Absturz in Police Quest IV: Open Season behoben.
-   - Grafikeffekte in Quest for Glory I (VGA) verbessert.
 
  SCUMM:
    - Lippensynchronisation für v6- und v7+-Spiele hinzugefügt.
