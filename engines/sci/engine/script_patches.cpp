@@ -14000,6 +14000,49 @@ static const uint16 qfg4Room661LockSqueakPatch[] = {
 	PATCH_END
 };
 
+// When exiting the Thieves' Guild secret passage (room 340) to the town bridge
+//  (room 290), hero appears in an out of bounds area on the far right of the
+//  screen for 120 ticks and then abruptly teleports to the bridge secret exit.
+//  This is due to not initializing hero until after the 120 tick delay, causing
+//  him to be initially visible in his position from the previous room.
+//
+// We fix this by hiding hero initially so that he appears when emerging from
+//  the secret exit under the bridge after the delay.
+//
+// Applies to: All versions
+// Responsible method: sThiefEnter:changeState
+// Fixes bug: #10774
+static const uint16 qfg4BridgeSecretExitSignature[] = {
+	0x3c,                               // dup
+	0x35, 0x00,                         // ldi 00
+	0x1a,                               // eq?
+	SIG_MAGICDWORD,
+	0x31, 0x07,                         // bnt 07 [ state 1 ]
+	0x35, 0x78,                         // ldi 78
+	0x65, SIG_ADDTOOFFSET(+1),          // aTop ticks [ ticks = 120 ]
+	0x32, SIG_UINT16(0x00dd),           // jmp 00dd [ end of method ]
+	0x3c,                               // dup
+	0x35, 0x01,                         // ldi 01
+	0x1a,                               // eq?
+	0x30, SIG_UINT16(0x0020),           // bnt 0020 [ state 2 ]
+	SIG_END
+};
+
+static const uint16 qfg4BridgeSecretExitPatch[] = {
+	0x2f, 0x0c,                         // bt 0c [ state 1 ]
+	0x39, PATCH_SELECTOR8(hide),        // pushi hide
+	0x76,                               // push0
+	0x81, 0x00,                         // lag 00
+	0x4a, PATCH_UINT16(0x0004),         // send 04 [ hero hide: ]
+	0x35, 0x78,                         // ldi 78
+	0x65, PATCH_GETORIGINALBYTE(+9),    // aTop ticks [ ticks = 120 ]
+	0x3c,                               // dup
+	0x35, 0x01,                         // ldi 01
+	0x1a,                               // eq?
+	0x31, 0x20,                         // bnt 20 [ state 2 ]
+	PATCH_END
+};
+
 //          script, description,                                     signature                      patch
 static const SciScriptPatcherEntry qfg4Signatures[] = {
 	{  true,     0, "prevent autosave from deleting save games",   1, qfg4AutosaveSignature,         qfg4AutosavePatch },
@@ -14027,6 +14070,7 @@ static const SciScriptPatcherEntry qfg4Signatures[] = {
 	{  true,   270, "fix town gate after a staff dream",           1, qfg4DreamGateSignature,        qfg4DreamGatePatch },
 	{  true,   270, "fix town gate doormat at night",              1, qfg4TownGateDoormatSignature,  qfg4TownGateDoormatPatch },
 	{  true,   290, "fix chase repeating",                         1, qfg4ChaseRepeatsSignature,     qfg4ChaseRepeatsPatch },
+	{  true,   290, "fix bridge secret exit",                      1, qfg4BridgeSecretExitSignature, qfg4BridgeSecretExitPatch },
 	{  true,   300, "fix empty burgomeister room teller",          1, qfg4EmptyBurgoRoomSignature,   qfg4EmptyBurgoRoomPatch },
 	{  true,   320, "fix pathfinding at the inn",                  1, qfg4InnPathfindingSignature,   qfg4InnPathfindingPatch },
 	{  true,   320, "fix talking to absent innkeeper",             1, qfg4AbsentInnkeeperSignature,  qfg4AbsentInnkeeperPatch },
