@@ -172,6 +172,9 @@ static void drawPixelInverted(int x, int y, int color, void *data) {
 }
 
 void MacWindow::updateInnerDims() {
+	if (_dims.isEmpty())
+		return;
+
 	if (_macBorder.hasBorder(_active) && _macBorder.hasOffsets()) {
 		_innerDims = Common::Rect(
 			_dims.left + _macBorder.getOffset(kBorderOffsetLeft),
