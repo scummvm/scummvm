@@ -68,7 +68,7 @@ public:
 	Common::Array<NinePatchMark *> _m;
 	int _fix;
 
-	NinePatchSide() : _fix(0) {}
+	NinePatchSide() : _fix(0) { _m.clear(); }
 	~NinePatchSide();
 
 	bool init(Graphics::TransparentSurface *bmp, bool vertical);
