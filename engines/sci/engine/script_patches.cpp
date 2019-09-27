@@ -1329,7 +1329,7 @@ static const uint16 ecoquest2SignatureIconBarTutorial[] = {
 	SIG_MAGICDWORD,
 	0x8d, 0x01,                         // lst 01  [ uninitialized ]
 	0x4a, 0x08,                         // send 08 [ EventHandler firstTrue: handleEvent temp1 ]
-	SIG_END,
+	SIG_END
 };
 
 static const uint16 ecoquest2PatchIconBarTutorial[] = {
@@ -1387,7 +1387,7 @@ static const uint16 ecoquest2SignatureRoom500Items[] = {
 	0x4a, 0x06,                         // send 06 [ ego has: 11 ]
 	0x18,                               // not
 	0x30, SIG_UINT16(0x0058),           // bnt 0058 [ don't initialize paper ]
-	SIG_END,
+	SIG_END
 };
 
 static const uint16 ecoquest2PatchRoom500Items[] = {
@@ -3200,7 +3200,7 @@ static const uint16 icemanDestroyerTimer2Signature[] = {
 	0x38, SIG_UINT16(0x0187),           // pushi 0187
 	0x39, 0x05,                         // pushi 05
 	0x47, 0xff, 0x00, 0x04,             // calle proc255_0 [ print 391 5 ]
-	SIG_END,
+	SIG_END
 };
 
 static const uint16 icemanDestroyerTimer2Patch[] = {
@@ -3255,7 +3255,7 @@ static const uint16 icemanClimbDownHatchSignature[] = {
 	0x39, SIG_SELECTOR8(setScript),     // pushi setScript
 	0x78,                               // push1
 	0x72, SIG_UINT16(0xfc24),           // lofsa downTheHatchScript
-	SIG_END,
+	SIG_END
 };
 
 static const uint16 icemanClimbDownHatchPatch[] = {
@@ -7931,14 +7931,14 @@ static const uint16 pq3SignatureDoctorMouthSpeed[] = {
 	0x78,                                // push1
 	SIG_ADDTOOFFSET(+13),
 	0x4a, 0x1c,                          // send 1c [ doctorMouth ... cycleSpeed: 1 ... ]
-	SIG_END,
+	SIG_END
 };
 
 static const uint16 pq3PatchDoctorMouthSpeed[] = {
 	0x32, PATCH_UINT16(0x0002),          // jmp 0002
 	PATCH_ADDTOOFFSET(+15),
 	0x4a, 0x16,                          // send 16 [ don't set cycleSpeed, use default (6) ]
-	PATCH_END,
+	PATCH_END
 };
 
 // The house fire on day six reoccurs if you return to the hospital. Flag 66
@@ -7972,7 +7972,7 @@ static const uint16 pq3SignatureHouseFireRepeats[] = {
 	0x35, 0x01,                          // ldi 01
 	0x65, 0x10,                          // aTop cycles
 	0x32, SIG_UINT16(0x003e),            // jmp 003e [ end of method ]
-	SIG_END,
+	SIG_END
 };
 
 static const uint16 pq3PatchHouseFireRepeats[] = {
@@ -7997,7 +7997,7 @@ static const uint16 pq3PatchHouseFireRepeats[] = {
 	0x31, 0x04,                          // bnt 04 [ state 8 ]
 	0x35, 0x01,                          // ldi 01
 	0x65, 0x10,                          // aTop cycles
-	PATCH_END,
+	PATCH_END
 };
 
 //          script, description,                                 signature                     patch
@@ -12710,7 +12710,7 @@ static const uint16 qfg4InnDoorCDSignature[] = {
 	0x81, 0x00,                         // lag 00
 	0x4a, SIG_UINT16(0x0008),           // send 08  [ hero setHeading: 0 self ]
 	0x32, SIG_UINT16(0x00c3),           // jmp 00c3 [ end of method ]
-	SIG_END,
+	SIG_END
 };
 
 static const uint16 qfg4InnDoorCDPatch[] = {
@@ -12747,7 +12747,7 @@ static const uint16 qfg4WalkUpSlopeCDSignature[] = {
 	0x76,                               // push0
 	SIG_ADDTOOFFSET(+8),
 	0x4a, SIG_UINT16(0x000e),           // send 0e [ hero setMotion: 0 ... ]
-	SIG_END,
+	SIG_END
 };
 
 static const uint16 qfg4WalkUpSlopeCDPatch[] = {
@@ -12766,7 +12766,7 @@ static const uint16 qfg4WalkDownSlopeCDSignature[] = {
 	0x38, SIG_UINT16(0x0218),           // pushi handsOff [ hard-coded for CD ]
 	SIG_ADDTOOFFSET(+15),
 	0x4a, SIG_UINT16(0x0008),           // send 08 [ hero setStep: ... ]
-	SIG_END,
+	SIG_END
 };
 
 static const uint16 qfg4WalkDownSlopeCDPatch[] = {
@@ -12786,7 +12786,7 @@ static const uint16 qfg4WalkDownSlopeNrsSignature[] = {
 	0x38, SIG_UINT16(0x0218),           // pushi handsOff [ hard-coded for CD ]
 	SIG_ADDTOOFFSET(+15),
 	0x4a, SIG_UINT16(0x0008),           // send 08 [ hero setStep: ... ]
-	SIG_END,
+	SIG_END
 };
 
 static const uint16 qfg4WalkDownSlopeNrsPatch[] = {
@@ -13077,7 +13077,7 @@ static const uint16 qfg4ArgumentMessageFloppySignature[] = {
 	0x76,                               // push0
 	0x54, SIG_UINT16(0x0004),           // self 04  [ self dispose: ]
 	0x32, SIG_UINT16(0x0049),           // jmp 0049 [ end of method ]
-	SIG_END,
+	SIG_END
 };
 
 static const uint16 qfg4ArgumentMessageFloppyPatch[] = {
@@ -13092,7 +13092,7 @@ static const uint16 qfg4ArgumentMessageFloppyPatch[] = {
 	0x81, 0x01,                         // lag 01
 	0x4a, PATCH_UINT16(0x0004),         // send 04 [ Glory handsOn: ]
 	0x33, 0x26,                         // jmp 26 [ self dispose:, end of method ]
-	PATCH_END,
+	PATCH_END
 };
 
 // The great hall door options in room 627 are incorrect at night after Katrina
@@ -13354,7 +13354,7 @@ static const uint16 qfg4Room627SqueakFloppySignature[] = {
 	0x78,                               // push1
 	0x39, 0x71,                         // pushi 71 [ flag 113 ]
 	0x45, 0x02, SIG_UINT16(0x0002),     // callb proc0_2 02 [ set flag 113 (incorrect, removed from CD) ]
-	SIG_END,
+	SIG_END
 };
 
 static const uint16 qfg4Room627SqueakFloppyPatch[] = {
@@ -13363,7 +13363,7 @@ static const uint16 qfg4Room627SqueakFloppyPatch[] = {
 	0x32, PATCH_UINT16(0x0039),         // jmp 0039 [ skip squeak message if door has been oiled ]
 	PATCH_ADDTOOFFSET(+26),
 	0x32, PATCH_UINT16(0x0004),         // jmp 0004 [ don't set flag 113 ]
-	PATCH_END,
+	PATCH_END
 };
 
 static const uint16 qfg4Room627SqueakCDSignature[] = {
@@ -13377,13 +13377,13 @@ static const uint16 qfg4Room627SqueakCDSignature[] = {
 	0x39, 0x71,                         // pushi 71 [ flag 113 ]
 	0x45, 0x04, SIG_UINT16(0x0002),     // callb proc0_4 02 [ selected action other than listening? (incorrect) ]
 	0x31, 0x2c,                         // bnt 2c [ skip squeak message ]
-	SIG_END,
+	SIG_END
 };
 
 static const uint16 qfg4Room627SqueakCDPatch[] = {
 	PATCH_ADDTOOFFSET(+10),
 	0x32, PATCH_UINT16(0x0032),         // jmp 0032 [ skip squeak message if door has been oiled ]
-	PATCH_END,
+	PATCH_END
 };
 
 // Looking through the keyhole in room 627 into the great hall responds with a
@@ -13522,7 +13522,7 @@ static const uint16 qfg4ChaseRepeatsSignature[] = {
 	0x46, SIG_UINT16(0xfde7),           // calle proc64999_5 0a
 	      SIG_UINT16(0x0005),
 	      SIG_UINT16(0x000a),
-	SIG_END,
+	SIG_END
 };
 
 static const uint16 qfg4ChaseRepeatsPatch[] = {
@@ -13540,7 +13540,7 @@ static const uint16 qfg4ChaseRepeatsPatch[] = {
 	0x38, PATCH_UINT16(0x00a4),         // pushi 00a4 [ flag 164 ]
 	0x45, 0x03, PATCH_UINT16(0x0002),   // callb proc0_3 02 [ clear chase flag 164 ]
 	0x33, 0x31,                         // jmp 31 [ continue room init ]
-	PATCH_END,
+	PATCH_END
 };
 
 // When the necrotaurs catch hero in the woods to take him to the dungeon, two
@@ -13760,7 +13760,7 @@ static const uint16 qfg4GateOptionsSignature[] = {
 	0x39, SIG_MAGICDWORD, 0xe2,         // pushi e2
 	0x39, 0x69,                         // pushi 69
 	0x72,                               // lofsa aGate
-	SIG_END,
+	SIG_END
 };
 
 static const uint16 qfg4GateOptionsPatch[] = {
@@ -13803,7 +13803,7 @@ static const uint16 qfg4Room631LockSqueakSignature[] = {
 	0x38, SIG_SELECTOR16(cue),          // pushi cue [ no squeak ]
 	SIG_ADDTOOFFSET(+7),
 	0x39, SIG_SELECTOR8(play),          // pushi play [ squeak ]
-	SIG_END,
+	SIG_END
 };
 
 static const uint16 qfg4Room631LockSqueakPatch[] = {
@@ -13852,7 +13852,7 @@ static const uint16 qfg4Room640LockSqueakSignature[] = {
 	0x39, SIG_SELECTOR8(play),          // pushi play [ squeak ]
 	SIG_ADDTOOFFSET(+28),
 	0x38, SIG_SELECTOR16(cue),          // pushi cue [ no squeak ]
-	SIG_END,
+	SIG_END
 };
 
 static const uint16 qfg4Room640LockSqueakPatch[] = {
@@ -13907,7 +13907,7 @@ static const uint16 qfg4Room643LockSqueakSignature[] = {
 	0x39, SIG_SELECTOR8(play),          // pushi play [ squeak ]
 	SIG_ADDTOOFFSET(+28),
 	0x38, SIG_SELECTOR16(cue),          // pushi cue [ no squeak ]
-	SIG_END,
+	SIG_END
 };
 
 static const uint16 qfg4Room643LockSqueakPatch[] = {
@@ -13976,7 +13976,7 @@ static const uint16 qfg4Room661LockSqueakSignature[] = {
 	0x39, SIG_SELECTOR8(play),          // pushi play [ squeak ]
 	SIG_ADDTOOFFSET(+28),
 	0x38, SIG_SELECTOR16(cue),          // pushi cue [ no squeak ]
-	SIG_END,
+	SIG_END
 };
 
 static const uint16 qfg4Room661LockSqueakPatch[] = {
