@@ -43,7 +43,7 @@ static const ADGameDescription tuckerGameDescriptions[] = {
 		Common::FR_FRA,
 		Common::kPlatformDOS,
 		Tucker::kGameFlagNoSubtitles,
-		GUIO0()
+		GUIO1(GUIO_NOMIDI)
 	},
 	{
 		"tucker",
@@ -52,7 +52,7 @@ static const ADGameDescription tuckerGameDescriptions[] = {
 		Common::EN_ANY,
 		Common::kPlatformDOS,
 		Tucker::kGameFlagEncodedData,
-		GUIO0()
+		GUIO1(GUIO_NOMIDI)
 	},
 	{
 		"tucker",
@@ -61,7 +61,7 @@ static const ADGameDescription tuckerGameDescriptions[] = {
 		Common::ES_ESP,
 		Common::kPlatformDOS,
 		Tucker::kGameFlagEncodedData,
-		GUIO0()
+		GUIO1(GUIO_NOMIDI)
 	},
 	{
 		"tucker",
@@ -70,7 +70,7 @@ static const ADGameDescription tuckerGameDescriptions[] = {
 		Common::DE_DEU,
 		Common::kPlatformDOS,
 		Tucker::kGameFlagEncodedData,
-		GUIO0()
+		GUIO1(GUIO_NOMIDI)
 	},
 	{
 		"tucker",
@@ -79,7 +79,7 @@ static const ADGameDescription tuckerGameDescriptions[] = {
 		Common::PL_POL,
 		Common::kPlatformDOS,
 		0,
-		GUIO0()
+		GUIO1(GUIO_NOMIDI)
 	},
 	{
 		"tucker",
@@ -88,7 +88,7 @@ static const ADGameDescription tuckerGameDescriptions[] = {
 		Common::CZ_CZE,
 		Common::kPlatformDOS,
 		Tucker::kGameFlagEncodedData,
-		GUIO0()
+		GUIO1(GUIO_NOMIDI)
 	},
 	{ // Russian fan translation
 		"tucker",
@@ -97,7 +97,7 @@ static const ADGameDescription tuckerGameDescriptions[] = {
 		Common::RU_RUS,
 		Common::kPlatformDOS,
 		Tucker::kGameFlagEncodedData,
-		GUIO0()
+		GUIO1(GUIO_NOMIDI)
 	},
 	{
 		"tucker",
@@ -106,7 +106,7 @@ static const ADGameDescription tuckerGameDescriptions[] = {
 		Common::EN_ANY,
 		Common::kPlatformDOS,
 		ADGF_DEMO | Tucker::kGameFlagDemo,
-		GUIO0()
+		GUIO1(GUIO_NOMIDI)
 	},
 	AD_TABLE_END_MARKER
 };
@@ -118,7 +118,7 @@ static const ADGameDescription tuckerDemoGameDescription = {
 	Common::EN_ANY,
 	Common::kPlatformDOS,
 	ADGF_DEMO | Tucker::kGameFlagDemo | Tucker::kGameFlagIntroOnly,
-	GUIO0()
+	GUIO1(GUIO_NOMIDI)
 };
 
 class TuckerMetaEngine : public AdvancedMetaEngine {
