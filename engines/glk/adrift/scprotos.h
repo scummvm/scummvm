@@ -101,7 +101,7 @@ enum {
 	TAF_VERSION_500 = 500,
 	TAF_VERSION_400 = 400,
 	TAF_VERSION_390 = 390,
-	TAF_VERSION_380 = 380,
+	TAF_VERSION_380 = 380
 };
 
 typedef struct sc_taf_s *sc_tafref_t;
