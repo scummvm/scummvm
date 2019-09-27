@@ -827,7 +827,7 @@ static sc_bool gsc_is_string_usable(const sc_char *string) {
  * Glk libraries.
  */
 static void gsc_status_update() {
-	glui32 width, height;
+	uint width, height;
 	uint index;
 	assert(gsc_status_window);
 
