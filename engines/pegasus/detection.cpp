@@ -86,7 +86,7 @@ static const PegasusGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformMacintosh,
 			ADGF_MACRESFORK,
-			GUIO0()
+			GUIO1(GUIO_NOMIDI)
 		},
 	},
 
@@ -98,7 +98,7 @@ static const PegasusGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformMacintosh,
 			ADGF_MACRESFORK | ADGF_DEMO,
-			GUIO1(GUIO_NOLAUNCHLOAD)
+			GUIO2(GUIO_NOLAUNCHLOAD, GUIO_NOMIDI)
 		},
 	},
 
@@ -110,7 +110,7 @@ static const PegasusGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformMacintosh,
 			ADGF_MACRESFORK | ADGF_DEMO | GF_DVD,
-			GUIO1(GUIO_NOLAUNCHLOAD)
+			GUIO2(GUIO_NOLAUNCHLOAD, GUIO_NOMIDI)
 		},
 	},
 
@@ -122,7 +122,7 @@ static const PegasusGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformWindows,
 			ADGF_MACRESFORK | ADGF_DEMO | GF_DVD,
-			GUIO1(GUIO_NOLAUNCHLOAD)
+			GUIO2(GUIO_NOLAUNCHLOAD, GUIO_NOMIDI)
 		},
 	},
 
