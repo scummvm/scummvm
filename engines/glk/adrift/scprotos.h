@@ -637,7 +637,6 @@ extern void run_quit(CONTEXT, sc_gameref_t game);
 extern sc_bool run_is_running(sc_gameref_t game);
 extern sc_bool run_has_completed(sc_gameref_t game);
 extern sc_bool run_is_undo_available(sc_gameref_t game);
-extern void run_debug_trace(sc_bool flag);
 extern void run_get_attributes(sc_gameref_t game,
                                const sc_char **game_name,
                                const sc_char **game_author,

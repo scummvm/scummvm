@@ -54,9 +54,6 @@ MODULE_OBJS := \
 	adrift/serialization.o \
 	adrift/sxfile.o \
 	adrift/sxglob.o \
-	adrift/sxmain.o \
-	adrift/sxscript.o \
-	adrift/sxtester.o \
 	adrift/sxutils.o \
 	advsys/advsys.o \
 	advsys/detection.o \

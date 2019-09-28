@@ -22,6 +22,7 @@
 
 #include "glk/adrift/scare.h"
 #include "glk/adrift/sxprotos.h"
+#include "common/textconsole.h"
 
 namespace Glk {
 namespace Adrift {
@@ -56,11 +57,11 @@ void *file_open_file_callback(sc_bool is_save) {
 
 	/* Detect any problems due to scripting limitations. */
 	if (stream->is_open) {
-		scr_test_failed("File open error: %s",
+		error("File open error: %s",
 		                "stream is in use (script limitation)");
 		return NULL;
 	} else if (is_save && stream->data) {
-		scr_test_failed("File open error: %s",
+		error("File open error: %s",
 		                "stream has not been read (script limitation)");
 		return NULL;
 	}
@@ -87,13 +88,13 @@ sc_int file_read_file_callback(void *opaque, sc_byte *buffer, sc_int length) {
 
 	/* Detect any problems with the callback parameters. */
 	if (stream != &scr_serialization_stream) {
-		scr_test_failed("File read error: %s", "stream is invalid");
+		error("File read error: %s", "stream is invalid");
 		return 0;
 	} else if (!stream->is_open) {
-		scr_test_failed("File read error: %s", "stream is not open");
+		error("File read error: %s", "stream is not open");
 		return 0;
 	} else if (stream->is_writable) {
-		scr_test_failed("File read error: %s", "stream is not open for read");
+		error("File read error: %s", "stream is not open for read");
 		return 0;
 	}
 
@@ -111,13 +112,13 @@ void file_write_file_callback(void *opaque, const sc_byte *buffer, sc_int length
 
 	/* Detect any problems with the callback parameters. */
 	if (stream != &scr_serialization_stream) {
-		scr_test_failed("File write error: %s", "stream is invalid");
+		error("File write error: %s", "stream is invalid");
 		return;
 	} else if (!stream->is_open) {
-		scr_test_failed("File write error: %s", "stream is not open");
+		error("File write error: %s", "stream is not open");
 		return;
 	} else if (!stream->is_writable) {
-		scr_test_failed("File write error: %s", "stream is not open for write");
+		error("File write error: %s", "stream is not open for write");
 		return;
 	}
 
@@ -133,10 +134,10 @@ void file_close_file_callback(void *opaque) {
 
 	/* Detect any problems with the callback parameters. */
 	if (stream != &scr_serialization_stream) {
-		scr_test_failed("File close error: %s", "stream is invalid");
+		error("File close error: %s", "stream is invalid");
 		return;
 	} else if (!stream->is_open) {
-		scr_test_failed("File close error: %s", "stream is not open");
+		error("File close error: %s", "stream is not open");
 		return;
 	}
 

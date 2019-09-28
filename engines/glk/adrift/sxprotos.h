@@ -72,18 +72,6 @@ extern Common::SeekableReadStream *sx_fopen(const sc_char *name,
 extern sc_char *sx_trim_string(sc_char *string);
 extern sc_char *sx_normalize_string(sc_char *string);
 
-/* OS stub hooks controller functions. */
-extern void stub_attach_handlers(sc_bool(*read_line)(sc_char *, sc_int),
-                                 void (*print_string)(const sc_char *),
-                                 void *(*open_file)(sc_bool),
-                                 sc_int(*read_file)
-                                 (void *, sc_byte *, sc_int),
-                                 void (*write_file)
-                                 (void *, const sc_byte *, sc_int),
-                                 void (*close_file)(void *));
-extern void stub_detach_handlers(void);
-extern void stub_debug_trace(sc_bool flag);
-
 /* Test controller function. */
 extern sc_int test_run_game_tests(const sx_test_descriptor_t tests[],
                                   sc_int count, sc_bool is_verbose);
@@ -92,10 +80,8 @@ extern sc_int test_run_game_tests(const sx_test_descriptor_t tests[],
 extern sc_bool glob_match(const sc_char *pattern, const sc_char *string);
 
 /* Script running and checking functions. */
-extern void scr_test_failed(const sc_char *format, const sc_char *string);
-extern void scr_set_verbose(sc_bool flag);
-extern void scr_start_script(sc_game game, Common::SeekableReadStream *script);
-extern sc_int scr_finalize_script(void);
+//extern void scr_test_failed(const sc_char *format, const sc_char *string);
+//extern void scr_set_verbose(sc_bool flag);
 
 /* Serialization helper for script running and checking. */
 extern void *file_open_file_callback(sc_bool is_save);
