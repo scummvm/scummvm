@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2019-09-26 06:01+0200\n"
-"PO-Revision-Date: 2019-09-28 05:54+0000\n"
+"PO-Revision-Date: 2019-09-28 22:57+0000\n"
 "Last-Translator: Rodrigo Vegas Sánchez-Ferrero <rodrigo.vegas@gmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/es/>\n"
@@ -213,8 +213,8 @@ msgid ""
 "Short game identifier used for referring to saved games and running the game "
 "from the command line"
 msgstr ""
-"Identificador usado para las partidas guardadas y para ejecutar el juego "
-"desde la línea de comando"
+"Identificador usado para agrupar las partidas guardadas y para ejecutar el "
+"juego desde línea de comandos"
 
 #: gui/editgamedialog.cpp:142
 msgctxt "lowres"
@@ -244,8 +244,8 @@ msgid ""
 "Language of the game. This will not turn your Spanish game version into "
 "English"
 msgstr ""
-"Idioma del juego. No sirve para pasar al inglés la versión española de un "
-"juego"
+"Idioma del juego. No sirve para convertir al inglés la versión española de "
+"un juego"
 
 #: gui/editgamedialog.cpp:155 gui/editgamedialog.cpp:169 gui/options.cpp:1061
 #: gui/options.cpp:1074 gui/options.cpp:1088 gui/options.cpp:1699
@@ -265,7 +265,7 @@ msgstr "Plataforma para la que se diseñó el juego"
 #: gui/editgamedialog.cpp:167
 msgctxt "lowres"
 msgid "Platform:"
-msgstr "Plat.:"
+msgstr "Plataforma:"
 
 #: gui/editgamedialog.cpp:180
 msgid "Engine"
@@ -431,7 +431,7 @@ msgstr ""
 
 #: gui/editgamedialog.cpp:546
 msgid "This game ID is already taken. Please choose another one."
-msgstr "Esta ID ya está en uso. Elige otra."
+msgstr "Este ID de juego ya está en uso. Elegir otro distinto."
 
 #: gui/editrecorddialog.cpp:58
 msgid "Author:"
@@ -455,7 +455,7 @@ msgstr "Escribir el nombre del archivo"
 
 #: gui/filebrowser-dialog.cpp:133
 msgid "Do you really want to overwrite the file?"
-msgstr "¿Seguro que quieres sobrescribir esta partida?"
+msgstr "¿Seguro que quieres sobrescribir el archivo?"
 
 #: gui/fluidsynth-dialog.cpp:69
 msgid "Reverb"
@@ -561,7 +561,7 @@ msgstr "Clic de ratón"
 
 #: gui/gui-manager.cpp:130 base/main.cpp:373
 msgid "Display keyboard"
-msgstr "Mostrar el teclado"
+msgstr "Mostrar teclado"
 
 #: gui/gui-manager.cpp:134 base/main.cpp:377
 msgid "Remap keys"
@@ -896,7 +896,7 @@ msgstr "Hardware Shaders diferentes, otorgan efectos visuales diferentes"
 #: gui/options.cpp:1040
 msgctxt "lowres"
 msgid "HW Shader:"
-msgstr "HW Shader:"
+msgstr "Sombreador HW:"
 
 #: gui/options.cpp:1041
 msgid "Different shaders give different visual effects"
@@ -916,7 +916,7 @@ msgstr "Modos especiales de difuminado compatibles con algunos juegos"
 
 #: gui/options.cpp:1085
 msgid "Stretch mode:"
-msgstr "Modo estirar:"
+msgstr "Modo de ajuste:"
 
 #: gui/options.cpp:1096 backends/graphics/sdl/sdl-graphics.cpp:354
 msgid "Fullscreen mode"
@@ -944,7 +944,7 @@ msgstr "Dispositivo preferido:"
 
 #: gui/options.cpp:1110
 msgid "Music device:"
-msgstr "Equipo de música:"
+msgstr "Dispositivo de música:"
 
 #: gui/options.cpp:1110 gui/options.cpp:1112
 msgid "Specifies preferred sound device or sound card emulator"
@@ -982,7 +982,7 @@ msgstr "Dispositivo GM:"
 #: gui/options.cpp:1153
 msgid "Specifies default sound device for General MIDI output"
 msgstr ""
-"Especifique el dispositivo de salidapor defecto para la salida de General "
+"Especifica el dispositivo de salida por defecto para la salida de General "
 "MIDI"
 
 #: gui/options.cpp:1164
@@ -1190,7 +1190,7 @@ msgstr "Tema:"
 
 #: gui/options.cpp:1667
 msgid "GUI renderer:"
-msgstr "Interfaz GPU:"
+msgstr "Renderizador del interfaz:"
 
 #: gui/options.cpp:1679
 msgid "Autosave:"
@@ -1207,15 +1207,15 @@ msgstr "Teclas"
 
 #: gui/options.cpp:1696
 msgid "GUI language:"
-msgstr "Lenguaje de la interfaz:"
+msgstr "Idioma de interfaz:"
 
 #: gui/options.cpp:1696
 msgid "Language of ScummVM GUI"
-msgstr "Idioma de la interfaz de ScummVM"
+msgstr "Idioma del interfaz de ScummVM"
 
 #: gui/options.cpp:1722
 msgid "Switch the GUI language to the game language"
-msgstr "Cambia el idioma de la GUI al idioma del juego"
+msgstr "Cambia el idioma del interfaz gráfico al idioma del juego"
 
 #: gui/options.cpp:1723
 msgid ""
@@ -1223,21 +1223,21 @@ msgid ""
 "if a game uses the ScummVM save and load dialogs, they are in the same "
 "language as the game."
 msgstr ""
-"Al iniciar un juego, cambie el idioma de la GUI al idioma del juego. De esa "
-"manera, si un juego utiliza los cuadros de diálogo de guardar y cargar de "
-"ScummVM, estarán en el mismo idioma que el juego."
+"Al iniciar un juego, cambia el idioma del interfaz gráfico al idioma del "
+"juego. De esa manera, si un juego utiliza los cuadros de diálogo de guardar "
+"y cargar de ScummVM, estarán en el mismo idioma que el juego."
 
 #: gui/options.cpp:1736
 msgid "Use native system file browser"
-msgstr "Usa el buscador de archivos del sistema ScummVM"
+msgstr "Usa el explorador de archivos nativo"
 
 #: gui/options.cpp:1737
 msgid ""
 "Use the native system file browser instead of the ScummVM one to select a "
 "file or directory."
 msgstr ""
-"Use el explorador de archivos del sistema nativo en lugar del ScummVM para "
-"seleccionar un archivo o directorio."
+"Usa el explorador de archivos del sistema nativo en lugar del de ScummVM "
+"para seleccionar un archivo o directorio."
 
 #: gui/options.cpp:1744 gui/updates-dialog.cpp:86
 msgid "Update check:"
@@ -1292,7 +1292,7 @@ msgstr "Aplicar"
 
 #: gui/options.cpp:1915
 msgid "Active storage:"
-msgstr "Almacenamiento activo:"
+msgstr "Alm. activo:"
 
 #: gui/options.cpp:1915
 msgid "Active cloud storage"
@@ -1319,7 +1319,7 @@ msgstr "Activar almacenamiento"
 
 #: gui/options.cpp:1926
 msgid "Confirm you want to use this account for this storage"
-msgstr "Confirme que desea usar esta cuenta para este almacenamiento"
+msgstr "Confirma que deseas usar esta cuenta como almacenamiento"
 
 #: gui/options.cpp:1928 backends/platform/wii/options.cpp:114
 msgid "Username:"
@@ -1340,7 +1340,7 @@ msgstr "Espacio utilizado:"
 #: gui/options.cpp:1931
 msgid "Space used by ScummVM's saved games on this storage"
 msgstr ""
-"Espacio utilizado  para las partidas guardadas de ScummVM en este "
+"Espacio utilizado por las partidas guardadas de ScummVM en este "
 "almacenamiento"
 
 #: gui/options.cpp:1934
@@ -1382,16 +1382,16 @@ msgstr "Sincronizar las partidas guardadas"
 msgctxt "lowres"
 msgid "You can download game files from your cloud ScummVM folder:"
 msgstr ""
-"Puede descargar ficheros del juego desde tu carpeta en la nube de ScummVM:"
+"Puede descargar archivos de juego desde tu carpeta en la nube de ScummVM:"
 
 #: gui/options.cpp:1945
 msgid "You can download game files from your cloud ScummVM folder:"
 msgstr ""
-"Puede descargar ficheros del juego desde tu carpeta en la nube de ScummVM:"
+"Puede descargar archivos de juego desde tu carpeta en la nube de ScummVM:"
 
 #: gui/options.cpp:1946
 msgid "Download game files"
-msgstr "Descargar ficheros del juego"
+msgstr "Descargar archivos del juego"
 
 #: gui/options.cpp:1946
 msgid "Open downloads manager dialog"
@@ -1458,7 +1458,7 @@ msgstr "3. Conectar"
 
 #: gui/options.cpp:1966
 msgid "Connect your cloud storage account"
-msgstr "Conectar cuenta de almacenamiento en la nube"
+msgstr "Conectar almacenamiento en la nube"
 
 #: gui/options.cpp:1975
 msgid "Run server"
@@ -1950,7 +1950,7 @@ msgstr "Error desconocido"
 #. I18N: Hercules is graphics card name
 #: common/rendermode.cpp:35
 msgid "Hercules Green"
-msgstr "Verde (Hercules)"
+msgstr "Hercules verde"
 
 #: common/rendermode.cpp:36
 msgid "Hercules Amber"
@@ -4663,6 +4663,18 @@ msgid ""
 "In that case you may need to apply the original Sierra patch.\n"
 "\n"
 msgstr ""
+"\n"
+"\n"
+"Algunos controladores de audio (al menos para algunos juegos)\n"
+"fueron distribuidos por Sierra como parches posteriores y debido\n"
+"a esto no han sido instalados como parte del juego original.\n"
+"\n"
+"Por favor, copia estos archivos dentro del directorio de datos del juego.\n"
+"\n"
+"En cualquier caso hay tener en cuenta que  los archivos podrían no\n"
+"estar disponibles por separado y solo estar disponibles empaquetados\n"
+"en parches. En ese caso se deberá aplicar el parche original de Sierra.\n"
+"\n"
 
 #: engines/scumm/detection.cpp:1123
 msgid ""
@@ -5402,6 +5414,8 @@ msgid ""
 "This AMIGA version is missing (at least) the following file(s):\n"
 "\n"
 msgstr ""
+"En esta versión de AMIGA faltan, al menos, los siguientes archivos:\n"
+"\n"
 
 #: engines/scumm/imuse/drivers/amiga.cpp:659
 msgid ""
@@ -5409,6 +5423,9 @@ msgid ""
 "Please copy these file(s) into the game data directory.\n"
 "\n"
 msgstr ""
+"\n"
+"Por favor, copia estos archivos dentro del directorio de datos del juego.\n"
+"\n"
 
 #: engines/sherlock/detection.cpp:81
 msgid "Pixellated scene transitions"
@@ -5487,7 +5504,7 @@ msgstr ""
 #: engines/supernova/supernova.cpp:483
 #, c-format
 msgid "Unable to find block for part %d"
-msgstr ""
+msgstr "No se encuentra el bloque de la parte %d"
 
 #: engines/supernova/supernova.cpp:526
 #, c-format
@@ -5502,6 +5519,8 @@ msgstr "Modo mejorado"
 msgid ""
 "Removes some repetitive actions, adds possibility to change verbs by keyboard"
 msgstr ""
+"Elimina ciertas acciones repetitivas, añade la posibilidad de cambiar "
+"acciones con el teclado"
 
 #: engines/sword1/animation.cpp:524
 #, c-format
@@ -5643,30 +5662,36 @@ msgstr "Aplicar filtrado bilineal a sprites individuales"
 
 #: engines/wintermute/wintermute.cpp:153
 msgid "This game requires PNG, JPEG and Vorbis support."
-msgstr ""
+msgstr "Este juego requiere el soporte para PNG, JPEG y Vorbis."
 
 #: engines/wintermute/wintermute.cpp:164
 msgid ""
 "This game requires 3D characters support, which is out of ScummVM's scope."
 msgstr ""
+"Este juego requiere soporte para personajes en 3D, los cuales están fuera "
+"del alcance de ScummVM."
 
 #: engines/xeen/detection.cpp:97
 msgid "Show item costs in standard inventory mode"
-msgstr ""
+msgstr "Mostrar coste de los objetos en modo de inventario estándar"
 
 #: engines/xeen/detection.cpp:98
 msgid ""
 "Shows item costs in standard inventory mode, allowing the value of items to "
 "be compared"
 msgstr ""
+"Mostar coste de los objetos en modo de inventario estándar, permitiendo "
+"comparar el valor"
 
 #: engines/xeen/detection.cpp:107
 msgid "More durable armor"
-msgstr ""
+msgstr "Armadura más duradera"
 
 #: engines/xeen/detection.cpp:108
 msgid "Armor won't break until character is at -80HP, rather than merely -10HP"
 msgstr ""
+"La armadura no se romperá hasta que el personaje pierda 80PV, en vez de "
+"solamente 10PV"
 
 #: engines/zvision/detection_tables.h:61
 msgid "Double FPS"
