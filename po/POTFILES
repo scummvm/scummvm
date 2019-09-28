@@ -37,12 +37,7 @@ engines/dialogs.cpp
 engines/engine.cpp
 engines/game.cpp
 
-audio/adlib.cpp
-audio/fmopl.cpp
 audio/mididrv.cpp
-audio/null.cpp
-audio/null.h
-audio/softsynth/cms.cpp
 
 backends/cloud/storage.cpp
 backends/dialogs/macosx/macosx-dialogs.mm
@@ -50,6 +45,5 @@ backends/dialogs/win32/win32-dialogs.cpp
 backends/events/default/default-events.cpp
 backends/graphics/surfacesdl/surfacesdl-graphics.cpp
 backends/keymapper/remap-dialog.cpp
-backends/midi/windows.cpp
 backends/platform/sdl/macosx/appmenu_osx.mm
 backends/updates/macosx/macosx-updates.mm
