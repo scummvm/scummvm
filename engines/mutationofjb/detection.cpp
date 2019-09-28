@@ -54,7 +54,7 @@ static const ADGameDescription mutationofjbDescriptions[] = {
 		Common::SK_SVK,
 		Common::kPlatformDOS,
 		ADGF_CD,
-		GUIO0()
+		GUIO1(GUIO_NOMIDI)
 	},
 	{
 		"mutationofjb",
@@ -75,7 +75,7 @@ static const ADGameDescription mutationofjbDescriptions[] = {
 		Common::DE_DEU,
 		Common::kPlatformDOS,
 		ADGF_CD,
-		GUIO0()
+		GUIO1(GUIO_NOMIDI)
 	},
 	AD_TABLE_END_MARKER
 };
