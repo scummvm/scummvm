@@ -213,6 +213,8 @@ ADDetectedGame CryOmni3DMetaEngine::fallbackDetectVersailles(const Common::FSNod
 	}
 
 	// Determine language
+	// Use fonts set C as helvet12 contains more characters than fruitL
+	uint8 fontsSet = GF_VERSAILLES_FONTS_SET_B;
 	node = root.getChild("GTO").getChild("DIALOG1.GTO");
 	if (node.getChild("DIALOG1.GTO").exists()) {
 		s_fallbackDesc.desc.language = Common::FR_FRA;
@@ -224,6 +226,7 @@ ADDetectedGame CryOmni3DMetaEngine::fallbackDetectVersailles(const Common::FSNod
 		s_fallbackDesc.desc.language = Common::ES_ESP;
 	} else if (node.getChild("DIALOG1.ITA").exists()) {
 		s_fallbackDesc.desc.language = Common::IT_ITA;
+		fontsSet = GF_VERSAILLES_FONTS_SET_C;
 	}
 
 	// Determine game flags
@@ -233,7 +236,9 @@ ADDetectedGame CryOmni3DMetaEngine::fallbackDetectVersailles(const Common::FSNod
 		// Add file to report to let developers set appropriate game flags
 		addUnknownFile(node, game);
 
-		s_fallbackDesc.features |= GF_VERSAILLES_NUMERICFONTS;
+		s_fallbackDesc.features |= GF_VERSAILLES_FONTS_NUMERIC;
+	} else {
+		s_fallbackDesc.features |= fontsSet;
 	}
 
 	node = root.getChild("DIAL").getChild("VOIX").getChild("ALI001__.WAV");
@@ -241,7 +246,9 @@ ADDetectedGame CryOmni3DMetaEngine::fallbackDetectVersailles(const Common::FSNod
 		// Add file to report to let developers set appropriate game flags
 		addUnknownFile(node, game);
 
-		s_fallbackDesc.features |= GF_VERSAILLES_AUDIOPADDING;
+		s_fallbackDesc.features |= GF_VERSAILLES_AUDIOPADDING_YES;
+	} else {
+		s_fallbackDesc.features |= GF_VERSAILLES_AUDIOPADDING_NO;
 	}
 
 	return game;
