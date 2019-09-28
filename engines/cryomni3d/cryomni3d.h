@@ -68,8 +68,14 @@ enum CryOmni3DGameType {
 };
 
 enum CryOmni3DGameFeatures {
-	GF_VERSAILLES_NUMERICFONTS             = (1 << 0), // Fonts are font01.crf, ...
-	GF_VERSAILLES_AUDIOPADDING             = (1 << 1)  // Audio files have underscore padding before extension
+	GF_VERSAILLES_FONTS_MASK               = (3 << 0), // Fonts flag mask
+	GF_VERSAILLES_FONTS_NUMERIC            = (0 << 0), // Fonts are font01.crf, ...
+	GF_VERSAILLES_FONTS_SET_A              = (1 << 0), // Fonts are for French Macintosh (development version)
+	GF_VERSAILLES_FONTS_SET_B              = (2 << 0), // Standard set (Helvet12 is used for debugging docs)
+	GF_VERSAILLES_FONTS_SET_C              = (3 << 0), // Fonts for Italian version (Helvet12 is used for docs texts)
+
+	GF_VERSAILLES_AUDIOPADDING_NO          = (0 << 2), // Audio files have underscore padding before extension
+	GF_VERSAILLES_AUDIOPADDING_YES         = (1 << 2)  // Audio files have underscore padding before extension
 };
 
 struct CryOmni3DGameDescription;
