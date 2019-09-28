@@ -40,20 +40,6 @@
 
 namespace Made {
 
-struct GameSettings {
-	const char *gameid;
-	const char *description;
-	byte id;
-	uint32 features;
-	const char *detectname;
-};
-
-static const GameSettings madeSettings[] = {
-	{"made", "Made game", 0, 0, 0},
-
-	{NULL, NULL, 0, 0, NULL}
-};
-
 MadeEngine::MadeEngine(OSystem *syst, const MadeGameDescription *gameDesc) : Engine(syst), _gameDescription(gameDesc) {
 
 	_eventNum = 0;
