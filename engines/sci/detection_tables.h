@@ -5199,6 +5199,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 	FANMADE("The Farm Nightmare", "fb6cbfddaa7c055e2c3d8cf4c683a7db", 906, "50655e8b8925f717e698e08f006f40be", 338303),
 	FANMADE("The Gem Scenario", "ef5f61f4d2c6d31122d3e2baf89ad976", 642, "2f16be390dd90c3d7ca1c8a594ac0bfa", 244794),
 	FANMADE("The Legend of the Lost Jewel", "ba1bca315e3818c5626eda51bcfbcccf", 636, "9b0736d69924af0cff32a0f78db96855", 300398),
+	FANMADE("The Sect of Achturan", "130ee6a9137005cdd4a26c38fa21576a", 1626, "1faf42afbfdb782f61ceaa1ee6243b76", 961705),
 	FANMADE("Winter Wonderland", "c1ffaf8327462effd4ad21eeed9eea59", 504, "5d48666dc62f90d852a1d0de6e69195f", 305076),
 
 	// FIXME: The vga demo does not have a resource.000/001 file.
