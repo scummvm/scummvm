@@ -1845,6 +1845,66 @@ static const SciScriptPatcherEntry freddypharkasSignatures[] = {
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
+// ===========================================================================
+
+// During Bridge, Declarer_Second_NT:think performs a bitwise or against an
+//  object due to a script typo. This operation is supposed to be against
+//  (bridgeHand:highCard):rank but instead it's against bridgeHand:highCard.
+//  ThirdSeat_Trump:think has a correct version of this. Declarer_Second_NT must
+//  have just been missing the word "rank" in the original script.
+//
+// We fix this by inserting the missing rank code. To make room we remove the
+//  call to self:checkFinCard. It's called immediately before this patch and its
+//  result is stored in local1 so we just use that. Hoyle5 also has this bug.
+//
+// Applies to at least: English PC
+// Responsible method: Declarer_Second_NT:think
+// Fixes bug #11163
+static const uint16 hoyle4SignatureBridgeArithmetic[] = {
+	0x36,                               // push [ bridgeHand:highCard ]
+	0x34, SIG_UINT16(0x0f00),           // ldi 0f00
+	0x14,                               // or [ error: bridgeHand:highCard is an object ]
+	0x36,                               // push
+	0x63, 0x42,                         // pToa pard
+	0x4a, 0x08,                         // send 08 [ pard hasCard: theSuitLead (bridgeHand:highCard | 0f00) ]
+	SIG_MAGICDWORD,
+	0x2f, 0x1d,                         // bt 1d
+	0x83, 0x03,                         // lal 03
+	0x2f, 0x19,                         // bt 19
+	0x38, SIG_ADDTOOFFSET(+2),          // pushi rank
+	0x76,                               // push0
+	0x38, SIG_ADDTOOFFSET(+2),          // pushi checkFinCard
+	0x78,                               // push1
+	0x67, 0x48,                         // pTos theSuitLead
+	0x54, 0x06,                         // self 06 [ self checkFinCard: theSuitLead ]
+	SIG_END
+};
+
+static const uint16 hoyle4PatchBridgeArithmetic[] = {
+	0x38, PATCH_GETORIGINALUINT16(+17), // pushi rank
+	0x76,                               // push0
+	0x4a, 0x04,                         // send 04 [ bridgeHand:highCard rank? ]
+	0x36,                               // push
+	0x34, PATCH_UINT16(0x0f00),         // ldi 0f00
+	0x14,                               // or
+	0x36,                               // push
+	0x63, 0x42,                         // pToa pard
+	0x4a, 0x08,                         // send 08 [ pard hasCard: theSuitLead ((bridgeHand:highCard):rank | 0f00) ]
+	0x2f, 0x17,                         // bt 17
+	0x83, 0x03,                         // lal 03
+	0x2f, 0x13,                         // bt 13
+	0x38, PATCH_GETORIGINALUINT16(+17), // pushi rank
+	0x76,                               // push0
+	0x83, 0x01,                         // lal 01 [ set to "self checkFinCard: theSuitLead" earlier ]
+	PATCH_END
+};
+
+//          script, description,                                      signature                         patch
+static const SciScriptPatcherEntry hoyle4Signatures[] = {
+	{  true,   733, "bridge arithmetic against object ",           1, hoyle4SignatureBridgeArithmetic,  hoyle4PatchBridgeArithmetic },
+	SCI_SIGNATUREENTRY_TERMINATOR
+};
+
 #ifdef ENABLE_SCI32
 #pragma mark -
 #pragma mark Hoyle 5
@@ -2037,6 +2097,45 @@ static const uint16 hoyle5PatchDisableGame[] = {
 	PATCH_END
 };
 
+// During Bridge, Declarer_Second_NT:think performs a bitwise or against an
+//  object due to a script typo. This script bug is also in Hoyle4, see its
+//  patch notes above for more detail.
+//
+// Applies to at least: English PC
+// Responsible method: Declarer_Second_NT:think
+// Fixes bug #11173
+static const uint16 hoyle5SignatureBridgeArithmetic[] = {
+	0x36,                               // push [ bridgeHand:highCard ]
+	0x34, SIG_UINT16(0x0f00),           // ldi 0f00
+	0x14,                               // or [ error: bridgeHand:highCard is an object ]
+	0x36,                               // push
+	0x63, 0x44,                         // pToa pard
+	0x4a, SIG_UINT16(0x0008),           // send 08 [ pard hasCard: theSuitLead (bridgeHand:highCard | 0f00) ]
+	0x2f, 0x26,                         // bt 26
+	0x7e, SIG_ADDTOOFFSET(+2),          // line
+	SIG_MAGICDWORD,
+	0x83, 0x03,                         // lal 03
+	0x2f, 0x1f,                         // bt 1f
+	0x7e, SIG_ADDTOOFFSET(+2),          // line
+	0x38,                               // pushi rank
+	SIG_END
+};
+
+static const uint16 hoyle5PatchBridgeArithmetic[] = {
+	0x38, PATCH_GETORIGINALUINT16(+24), // pushi rank
+	0x76,                               // push0
+	0x4a, PATCH_UINT16(0x0004),         // send 04 [ bridgeHand:highCard rank? ]
+	0x38, PATCH_UINT16(0x0f00),         // pushi 0f00
+	0x14,                               // or
+	0x36,                               // push
+	0x63, 0x44,                         // pToa pard
+	0x4a, PATCH_UINT16(0x0008),         // send 08 [ pard hasCard: theSuitLead ((bridgeHand:highCard):rank | 0f00) ]
+	0x2f, 0x20,                         // bt 20
+	0x83, 0x03,                         // lal 03
+	0x2f, 0x1c,                         // bt 1c
+	PATCH_END
+};
+
 //          script, description,                                      signature                         patch
 static const SciScriptPatcherEntry hoyle5Signatures[] = {
 	{  true,     3, "remove kGetTime spin",                        1, hoyle5SignatureSpinLoop,          hoyle5PatchSpinLoop },
@@ -2045,6 +2144,7 @@ static const SciScriptPatcherEntry hoyle5Signatures[] = {
 	{  true,   500, "remove kGetTime spin",                        1, hoyle5SignatureSpinLoop,          hoyle5PatchSpinLoop },
 	{  true, 64937, "remove kGetTime spin",                        1, hoyle5SignatureSpinLoop,          hoyle5PatchSpinLoop },
 	{  true, 64908, "disable video benchmarking",                  1, sci2BenchmarkSignature,           sci2BenchmarkPatch },
+	{  true,   733, "bridge arithmetic against object ",           1, hoyle5SignatureBridgeArithmetic,  hoyle5PatchBridgeArithmetic },
 	// This entry has been placed so that the broken Poker game is disabled. This game uses an external DLL, PENGIN16.DLL,
 	// which is invoked via kWinDLL. We need to reverse the logic in PENGIN16.DLL and call it directly, in order to get this
 	// game to work properly. Until then, this game entry will be disabled.
@@ -2077,6 +2177,7 @@ static const SciScriptPatcherEntry hoyle5BridgeSignatures[] = {
 	{  true,   500, "remove kGetTime spin",                        1, hoyle5SignatureSpinLoop,          hoyle5PatchSpinLoop },
 	{  true, 64937, "remove kGetTime spin",                        1, hoyle5SignatureSpinLoop,          hoyle5PatchSpinLoop },
 	{  true, 64908, "disable video benchmarking",                  1, sci2BenchmarkSignature,           sci2BenchmarkPatch },
+	{  true,   733, "bridge arithmetic against object ",           1, hoyle5SignatureBridgeArithmetic,  hoyle5PatchBridgeArithmetic },
 	{  true,   975, "disable Gin Rummy",                           1, hoyle5SignatureGinRummy,          hoyle5PatchDisableGame },
 	{  true,   975, "disable Cribbage",                            1, hoyle5SignatureCribbage,          hoyle5PatchDisableGame },
 	{  true,   975, "disable Klondike",                            1, hoyle5SignatureKlondike,          hoyle5PatchDisableGame },
@@ -16980,6 +17081,9 @@ void ScriptPatcher::processScript(uint16 scriptNr, SciSpan<byte> scriptData) {
 		break;
 	case GID_FREDDYPHARKAS:
 		signatureTable = freddypharkasSignatures;
+		break;
+	case GID_HOYLE4:
+		signatureTable = hoyle4Signatures;
 		break;
 #ifdef ENABLE_SCI32
 	case GID_HOYLE5:
