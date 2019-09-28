@@ -403,7 +403,7 @@ const SciWorkaroundEntry uninitializedReadWorkarounds[] = {
 	{ GID_HOYLE5,        400,   400,  1,            "GinHand", "calcRuns",                        NULL,     4,     4, { WORKAROUND_FAKE,   0 } }, // when starting Gin
 	{ GID_HOYLE5,        700,   700,  1,         "BridgeHand", "calcQTS",                         NULL,     3,     3, { WORKAROUND_FAKE,   0 } }, // when an opponent is playing in Bridge
 	{ GID_HOYLE5,        700,   747,  0,   "LeadReturn_Trump", "think",                           NULL,    17,    17, { WORKAROUND_FAKE,   0 } }, // when an opponent is playing in Bridge
-	{ GID_HOYLE5,        700,  1115,  0,    "attitudeSliderF", "select",                          NULL,     1,     1, { WORKAROUND_FAKE,   0 } }, // when adjusting the attitude slider in Bridge - bug #11166
+	{ GID_HOYLE5,        700,  1115,  0,                 NULL, "select",                          NULL,     1,     1, { WORKAROUND_FAKE,   0 } }, // when adjusting the attitude slider in Bridge - bug #11166
 	{ GID_HOYLE5,        700,   710,  1, "BridgeStrategyPlay", "checkSplitTops",                  NULL,    10,    10, { WORKAROUND_FAKE,   0 } }, // when playing Bridge - bug #11167
 	{ GID_HOYLE5,        700,   713,  0,            "n2_tree", "doit",                            NULL,     1,     1, { WORKAROUND_FAKE,   0 } }, // when playing Bridge - bug #11169
 	{ GID_HOYLE5,        700,   715,  0,            "c2_tree", "doit",                            NULL,    21,    21, { WORKAROUND_FAKE,   0 } }, // when playing Bridge - bug #11170
