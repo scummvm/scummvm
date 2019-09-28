@@ -128,7 +128,7 @@ void NinePatchSide::calcOffsets(int len) {
 		dest_offset += _m[i]->dest_length;
 	}
 
-	if (remaining_stretch) {
+	if (remaining_stretch && _m.size()) {
 		_m[j]->dest_length += remaining_stretch;
 		if (j + 1 < _m.size())
 			_m[j + 1]->dest_offset += remaining_stretch;
