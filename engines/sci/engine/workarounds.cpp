@@ -80,6 +80,7 @@ const SciWorkaroundEntry arithmeticWorkarounds[] = {
 	{ GID_FANMADE,        516,  983,  0,             "Wander", "setTarget",                       NULL,     0,     0, { WORKAROUND_FAKE,   0 } }, // op_mul: The Legend of the Lost Jewel Demo (fan made): called with object as second parameter when attacked by insects - bug #5124
 	{ GID_GK1,            800,64992,  0,                "Fwd", "doit",                            NULL,     0,     0, { WORKAROUND_FAKE,   1 } }, // op_gt: when Mosely finds Gabriel and Grace near the end of the game, compares the Grooper object with 7
 	{ GID_HOYLE4,         700,   -1,  1,               "Code", "doit",                            NULL,     0,     0, { WORKAROUND_FAKE,   1 } }, // op_add: while bidding in Bridge, an object ("Bid") is added to an object in another segment ("hand3")
+	{ GID_HOYLE5,         700,  733,  0, "Declarer_Second_NT", "think",                           NULL,     0,     0, { WORKAROUND_FAKE,   1 } }, // op_or: while playing Bridge - bug #11173
 	{ GID_ICEMAN,         199,  977,  0,            "Grooper", "doit",                            NULL,     0,     0, { WORKAROUND_FAKE,   0 } }, // op_add: While dancing with the girl
 	{ GID_MOTHERGOOSE256,  -1,  999,  0,              "Event", "new",                             NULL,     0,     0, { WORKAROUND_FAKE,   0 } }, // op_and: constantly during the game (SCI1 version)
 	{ GID_MOTHERGOOSE256,  -1,    4,  0,              "rm004", "doit",                            NULL,     0,     0, { WORKAROUND_FAKE,   0 } }, // op_or: when going north and reaching the castle (rooms 4 and 37) - bug #5101
@@ -187,6 +188,17 @@ static const uint16 sig_uninitread_hoyle5_4[] = {
 	0x8d, 0x00,                      // lst temp[0]
 	0x35, 0x00,                      // ldi 00
 	0x1a,                            // eq?
+	SIG_END
+};
+
+//                Game: Hoyle 5
+//      Calling method: LeadSeat_NoTrump::think
+//   Subroutine offset: 0x22e (script 753)
+// Applies to at least: English PC
+static const uint16 sig_uninitread_hoyle5_5[] = {
+	0x7e, SIG_ADDTOOFFSET(2),        // line N
+	0x7d, 0x73, 0x74, 0x67, 0x62, 0x64, 0x6c, 0x6e, 0x74,
+		  0x2e, 0x73, 0x63, 0x00,               // file "stgbdlnt.sc"
 	SIG_END
 };
 
@@ -391,6 +403,15 @@ const SciWorkaroundEntry uninitializedReadWorkarounds[] = {
 	{ GID_HOYLE5,        400,   400,  1,            "GinHand", "calcRuns",                        NULL,     4,     4, { WORKAROUND_FAKE,   0 } }, // when starting Gin
 	{ GID_HOYLE5,        700,   700,  1,         "BridgeHand", "calcQTS",                         NULL,     3,     3, { WORKAROUND_FAKE,   0 } }, // when an opponent is playing in Bridge
 	{ GID_HOYLE5,        700,   747,  0,   "LeadReturn_Trump", "think",                           NULL,    17,    17, { WORKAROUND_FAKE,   0 } }, // when an opponent is playing in Bridge
+	{ GID_HOYLE5,        700,  1115,  0,    "attitudeSliderF", "select",                          NULL,     1,     1, { WORKAROUND_FAKE,   0 } }, // when adjusting the attitude slider in Bridge - bug #11166
+	{ GID_HOYLE5,        700,   710,  1, "BridgeStrategyPlay", "checkSplitTops",                  NULL,    10,    10, { WORKAROUND_FAKE,   0 } }, // when playing Bridge - bug #11167
+	{ GID_HOYLE5,        700,   713,  0,            "n2_tree", "doit",                            NULL,     1,     1, { WORKAROUND_FAKE,   0 } }, // when playing Bridge - bug #11169
+	{ GID_HOYLE5,        700,   715,  0,            "c2_tree", "doit",                            NULL,    21,    21, { WORKAROUND_FAKE,   0 } }, // when playing Bridge - bug #11170
+	{ GID_HOYLE5,        700,   716,  0,        "other1_tree", "doit",                            NULL,    10,    10, { WORKAROUND_FAKE,   0 } }, // when playing Bridge - bug #11168
+	{ GID_HOYLE5,        700,   716,  0,        "other1_tree", "doit",                            NULL,    69,    69, { WORKAROUND_FAKE,   0 } }, // when playing Bridge - bug #11168
+	{ GID_HOYLE5,        700,   730,  1,      "BridgeDefense", "beatTheirBest",                   NULL,     3,     3, { WORKAROUND_FAKE,   0 } }, // when playing Bridge - bug #11171
+	{ GID_HOYLE5,        700,   752,  0, "LeadReturn_NoTrump", "makeContractMinusAce",            NULL,     2,     2, { WORKAROUND_FAKE,   0 } }, // when playing Bridge - bug #11172
+	{ GID_HOYLE5,        700,   753,  0,   "LeadSeat_NoTrump", "think",        sig_uninitread_hoyle5_5,     4,     4, { WORKAROUND_FAKE,   0 } }, // when playing Bridge
 	{ GID_HOYLE5,       1100,    18,  0,               "Tray", "init",                            NULL,     0,     0, { WORKAROUND_FAKE,   0 } }, // when playing Poker
 	{ GID_HOYLE5,       1100,  1100,  0,         "anteButton", "handleEvent",                     NULL,     1,     1, { WORKAROUND_FAKE,   0 } }, // when exiting Poker
 	{ GID_HOYLE5,       6029,  6029,  1,        "ControlIcon", "select",                          NULL,     1,     1, { WORKAROUND_FAKE,   0 } }, // Solitaire: when changing any slider in the Card Flip mini-game's options window
