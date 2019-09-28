@@ -56,7 +56,7 @@ static const ADGameDescription teenAgentGameDescriptions[] = {
 		Common::EN_ANY,
 		Common::kPlatformDOS,
 		ADGF_NO_FLAGS,
-		GUIO1(GUIO_NOSPEECH)
+		GUIO2(GUIO_NOSPEECH, GUIO_NOMIDI)
 	},
 	{
 		"teenagent",
@@ -76,7 +76,7 @@ static const ADGameDescription teenAgentGameDescriptions[] = {
 		Common::CZ_CZE,
 		Common::kPlatformDOS,
 		ADGF_CD,
-		GUIO0()
+		GUIO1(GUIO_NOMIDI)
 	},
 	AD_TABLE_END_MARKER,
 };
