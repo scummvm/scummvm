@@ -108,7 +108,7 @@ matrix:
         - echo -e "\n24333f8a63b6825ea9c5514f83c2829b004d1fee" > $ANDROID_HOME/licenses/android-sdk-license
       install: &android-install
         - echo y | $ANDROID_HOME/tools/bin/sdkmanager ndk-bundle >/dev/null 2>&1
-        - ./.travis/build-android-deps.sh
+        - ./.travis/android-build-deps
       before_cache: &android-before-cache
         - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
         - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
@@ -119,7 +119,7 @@ matrix:
           - $TRAVIS_BUILD_DIR/dependencies
       script: &android-script .travis/android-build
       before_deploy: &android-before-deploy
-        - mkdir artifacts && cp android/build/outputs/apk/release/ResidualVM-release-unsigned.apk artifacts
+        - mkdir artifacts && cp build-*/android/build/outputs/apk/release/ResidualVM-release-unsigned.apk artifacts
     - os: linux
       name: "Android ARM"
       language: android

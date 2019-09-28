@@ -2,7 +2,8 @@
 
 set -e
 
-if [ -e dependencies/.done ] ; then
+prefix=$(pwd)/dependencies/$CROSS_HOST
+if [ -e $prefix/.done ] ; then
 	echo ">>> Reusing cached dependencies"
 	exit 0;
 fi
@@ -10,19 +11,21 @@ fi
 dot_travis=$(dirname "$0")
 . "$dot_travis"/android-set-environment
 
-prefix=$(pwd)/dependencies/
+prefix=$(pwd)/dependencies/$CROSS_HOST
 mkdir -p $prefix
 
 echo ">>> Building libjpeg-turbo for $CROSS_HOST"
-git clone --depth 1 -b pie-release https://android.googlesource.com/platform/external/libjpeg-turbo
+[ -d libjpeg-turbo ] || git clone --depth 1 -b pie-release https://android.googlesource.com/platform/external/libjpeg-turbo
 pushd libjpeg-turbo
+git clean -fdx
 autoreconf -fiv
 ./configure --host=$CROSS_HOST --prefix=$prefix --without-turbojpeg --disable-shared && make -j4 install || false
 popd
 
 echo ">>> Building freetype for $CROSS_HOST"
-git clone --depth 1 -b pie-release https://android.googlesource.com/platform/external/freetype
+[ -d freetype ] || git clone --depth 1 -b pie-release https://android.googlesource.com/platform/external/freetype
 pushd freetype
+git clean -fdx
 sh autogen.sh
 ./configure --host=$CROSS_HOST --with-harfbuzz=no --with-bzip2=no --with-png=no --prefix=$prefix --disable-shared && make -j4 install || false
 popd

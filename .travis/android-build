@@ -2,7 +2,10 @@
 set -e
 here=$(dirname "$0")
 . "$here"/android-set-environment
-./configure --enable-all-engines --enable-static --enable-opengl-shaders --with-jpeg-prefix=dependencies --with-freetype2-prefix=dependencies --host=${ANDROID_TARGET}
+DEPENDENCIES=$(pwd)/dependencies/$CROSS_HOST
+mkdir -p build-${ANDROID_ABI}
+cd build-${ANDROID_ABI}
+../configure --enable-all-engines --enable-static --enable-opengl-shaders --with-jpeg-prefix=$DEPENDENCIES --with-freetype2-prefix=$DEPENDENCIES --host=${ANDROID_TARGET}
 export ANDROID_TARGET_VERSION=${ANDROID_LEVEL}
 make -j4 libresidualvm.so
 TERM=dumb make androidrelease ABI=${ANDROID_ABI}
