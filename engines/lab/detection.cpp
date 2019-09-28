@@ -49,7 +49,7 @@ static const ADGameDescription labDescriptions[] = {
 		Common::EN_ANY,
 		Common::kPlatformDOS,
 		ADGF_NO_FLAGS,
-		GUIO0()
+		GUIO1(GUIO_NOMIDI)
 	},
 	{
 		"lab",
@@ -62,7 +62,7 @@ static const ADGameDescription labDescriptions[] = {
 		Common::EN_ANY,
 		Common::kPlatformDOS,
 		Lab::GF_LOWRES | ADGF_NO_FLAGS,
-		GUIO0()
+		GUIO1(GUIO_NOMIDI)
 	},
 	{
 		"lab",
@@ -76,7 +76,7 @@ static const ADGameDescription labDescriptions[] = {
 		Common::EN_ANY,
 		Common::kPlatformWindows,
 		ADGF_NO_FLAGS,
-		GUIO0()
+		GUIO1(GUIO_NOMIDI)
 	},
 	{
 		"lab",
@@ -85,7 +85,7 @@ static const ADGameDescription labDescriptions[] = {
 		Common::EN_ANY,
 		Common::kPlatformAmiga,
 		Lab::GF_LOWRES | ADGF_UNSTABLE,
-		GUIO0()
+		GUIO1(GUIO_NOMIDI)
 	},
 	AD_TABLE_END_MARKER
 };
