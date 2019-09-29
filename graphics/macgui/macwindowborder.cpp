@@ -79,8 +79,17 @@ void MacWindowBorder::blitBorderInto(ManagedSurface &destination, bool active) {
 	TransparentSurface srf;
 	NinePatchBitmap *src = active ? _activeBorder : _inactiveBorder;
 
+	if ((active && !_activeInitialized) || (!active && !_inactiveInitialized)) {
+		warning("Attempt to blit unitialised border");
+	}
+
+	if (destination.w == 0 || destination.h == 0) {
+		warning("Attempt to draw %d x %d window", destination.w, destination.h);
+		return;
+	}
+
 	srf.create(destination.w, destination.h, destination.format);
-	srf.fillRect(Common::Rect(0, 0, srf.w, srf.h), kColorGreen2);
+	srf.fillRect(Common::Rect(srf.w, srf.h), kColorGreen2);
 
 	byte palette[kColorCount];
 	g_system->getPaletteManager()->grabPalette(palette, 0, kColorCount);
