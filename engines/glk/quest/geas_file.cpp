@@ -89,8 +89,6 @@ bool GeasFile::obj_has_property(String objname, String propname) const {
 	return get_obj_property(objname, propname, tmp);
 }
 
-Common::WriteStream &operator<< (Common::WriteStream &, const Set<String> &);
-
 /**
  * Currently only works for actual objects, not rooms or the game
  */
@@ -130,7 +128,7 @@ void GeasFile::get_obj_keys(String obj, Set<String> &rv) const {
 				vstring params = split_param(param_contents(tok));
 				for (uint j = 0; j < params.size(); j ++) {
 					cerr << "   handling parameter <" << params[j] << ">\n";
-					uint k = params[j].find('=');
+					int k = params[j].find('=');
 					// SENSITIVE?
 					if (starts_with(params[j], "not ")) {
 						rv.insert(trim(params[j].substr(4)));
@@ -189,7 +187,7 @@ void GeasFile::get_type_keys(String typen, Set<String> &rv) const {
 		else if (tok == "action") {
 			cerr << "       action, skipping\n";
 		} else {
-			uint ch = line.find('=');
+			int ch = line.find('=');
 			if (ch != -1) {
 				rv.insert(trim(line.substr(0, ch)));
 				cerr << "      adding <" << trim(line.substr(0, ch)) << ">\n";
@@ -262,7 +260,7 @@ bool GeasFile::get_obj_property(String objname, String propname, String &string_
 			Common::Array<String> props = split_param(param_contents(tok));
 			for (uint j = 0; j < props.size(); j ++) {
 				//cerr << "    g_o_p: Comparing against <" << props[j] << ">\n";
-				uint index;
+				int index;
 				if (props[j] == propname) {
 					//cerr << "      g_o_p: Present but empty, blanking\n";
 					string_rv = "";
@@ -296,6 +294,7 @@ void GeasFile::get_type_property(String typenamex, String propname, bool &bool_r
 		String line = block->data[i];
 		//cerr << "    Comparing vs. line <" << line << ">\n";
 		uint c1, c2;
+		int p;
 		String tok = first_token(line, c1, c2);
 
 		// SENSITIVE?
@@ -307,11 +306,11 @@ void GeasFile::get_type_property(String typenamex, String propname, bool &bool_r
 			bool_rv = true;
 			string_rv = "";
 		} else {
-			c1 = line.find('=');
-			if (c1 != -1) {
-				tok = trim(line.substr(0, c1));
+			p = line.find('=');
+			if (p != -1) {
+				tok = trim(line.substr(0, p));
 				if (tok == propname) {
-					string_rv = trim(line.substr(c1 + 1));
+					string_rv = trim(line.substr(p + 1));
 					bool_rv = true;
 				}
 			}
@@ -517,8 +516,7 @@ void GeasFile::register_block(String blockname, String blocktype) {
 		String errdesc = "Trying to register block of named <" + blockname +
 		                 "> of type <" + blocktype + "> when there is already one, of type <" +
 		                 obj_types[blockname] + ">";
-		debug_print(errdesc);
-		throw errdesc;
+		error("%s", errdesc.c_str());
 	}
 	obj_types[blockname] = blocktype;
 }
@@ -526,14 +524,14 @@ void GeasFile::register_block(String blockname, String blocktype) {
 String GeasFile::static_svar_lookup(String varname) const {
 	cerr << "static_svar_lookup(" << varname << ")" << endl;
 	//varname = lcase (varname);
-	for (uint i = 0; i < size("variable"); i ++)
+	for (uint i = 0; i < size("variable"); i++) {
 		//if (blocks[i].lname == varname)
 		if (ci_equal(blocks[i].name, varname)) {
 			String rv;
 			String tok;
 			uint c1, c2;
 			bool found_typeline = false;
-			for (uint j = 0; j < blocks[i].data.size(); j ++) {
+			for (uint j = 0; j < blocks[i].data.size(); j++) {
 				String line = blocks[i].data[j];
 				tok = first_token(line, c1, c2);
 				// SENSITIVE?
@@ -541,26 +539,27 @@ String GeasFile::static_svar_lookup(String varname) const {
 					tok = next_token(line, c1, c2);
 					// SENSITIVE?
 					if (tok == "numeric")
-						throw String("Trying to evaluate int var '" + varname +
-						             "' as String");
+						error("Trying to evaluate int var '%s' as String", varname.c_str());
 					// SENSITIVE?
 					if (tok != "String")
-						throw String("Bad variable type " + tok);
+						error("Bad variable type %s", tok.c_str());
 					found_typeline = true;
 				}
 				// SENSITIVE?
 				else if (tok == "value") {
 					tok = next_token(line, c1, c2);
 					if (!is_param(tok))
-						throw String("Expected param after value in " + line);
+						error("Expected param after value in %s", line.c_str());
 					rv = param_contents(tok);
 				}
 			}
 			if (!found_typeline)
-				throw String(varname + " is a numeric variable");
+				error("%s is a numeric variable", varname.c_str());
 			cerr << "static_svar_lookup(" << varname << ") -> \"" << rv << "\"" << endl;
 			return rv;
 		}
+	}
+
 	debug_print("Variable <" + varname + "> not found.");
 	return "";
 }
@@ -581,17 +580,16 @@ String GeasFile::static_ivar_lookup(String varname) const {
 					tok = next_token(line, c1, c2);
 					// SENSITIVE?
 					if (tok == "String")
-						throw String("Trying to evaluate String var '" + varname +
-						             "' as numeric");
+						error("Trying to evaluate String var '%s' as numeric", varname.c_str());
 					// SENSITIVE?
 					if (tok != "numeric")
-						throw String("Bad variable type " + tok);
+						error("Bad variable type %s", tok.c_str());
 				}
 				// SENSITIVE?
 				else if (tok == "value") {
 					tok = next_token(line, c1, c2);
 					if (!is_param(tok))
-						throw String("Expected param after value in " + line);
+						error("Expected param after value in %s", line.c_str());
 					rv = param_contents(tok);
 				}
 			}
@@ -610,7 +608,7 @@ String GeasFile::static_eval(String input) const {
 			for (j = i + 1; j < input.length() && input[j] != '#'; j ++)
 				;
 			if (j == input.length())
-				throw String("Error processing '" + input + "', odd hashes");
+				error("Error processing '%s', odd hashes", input.c_str());
 			uint k;
 			for (k = i + 1; k < j && input[k] != ':'; k ++)
 				;
@@ -643,7 +641,7 @@ String GeasFile::static_eval(String input) const {
 			for (j = i; j < input.length() && input[j] != '%'; j ++)
 				;
 			if (j == input.length())
-				throw String("Error processing '" + input + "', unmatched %");
+				error("Error processing '%s', unmatched %%", input.c_str());
 			rv += static_ivar_lookup(input.substr(i + 1, j - i - 2));
 			i = j;
 		} else

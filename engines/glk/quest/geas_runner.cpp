@@ -28,7 +28,7 @@
 #include "glk/quest/geas_impl.h"
 #include "glk/quest/quest.h"
 #include "glk/quest/streams.h"
-#include "glk/quest/String.h"
+#include "glk/quest/string.h"
 
 namespace Glk {
 namespace Quest {
@@ -744,7 +744,7 @@ void geas_implementation::set_game(const String &fname) {
 				continue;
 			// SENSITIVE?
 			if (tok == "multiplayer")
-				throw String("Error: geas is single player only.");
+				error("Error: geas is single player only.");
 			gi->debug_print("Unexpected game type " + s);
 		}
 		// SENSITIVE?
@@ -1239,7 +1239,7 @@ match_rv geas_implementation::match_command(String input, uint ichar, String act
 				achar ++;
 			}
 			if (achar == action.length())
-				throw String("Unpaired hashes in command String " + action);
+				error("Unpaired hashes in command String %s", action.c_str());
 			//rv.bindings.push_back (varname);
 			int index = rv.bindings.size();
 			rv.bindings.push_back(match_binding(varname, ichar));
@@ -2491,7 +2491,7 @@ void geas_implementation::run_script(String s, String &rv) {
 			return;
 		}
 		bool is_while = (tok == "while");
-		uint start_cond = c2, end_cond = (uint) -1;
+		int start_cond = c2, end_cond = -1;
 		while ((tok = next_token(s, c1, c2)) != "") {
 			// SENSITIVE?
 			if (tok == "do") {
@@ -3444,7 +3444,7 @@ String geas_implementation::eval_string(String s) {
 			  }
 			*/
 			//if (j == rv.size())
-			if (j == -1) {
+			if (j == (uint)-1) {
 				gi->debug_print("Unmatched $s in " + s);
 				return rv + s.substr(i);
 			}

@@ -66,7 +66,7 @@ int eval_int(String s) {
 	//cerr << "symbol == " << symbol << "; find --> "
 	//     << String("+-*/").find (symbol) << endl;
 
-	if (String("+-*/").find(symbol) == String::npos)
+	if (String("+-*/").find(symbol) == (int)String::npos)
 		return arg1;
 
 	++ index;
@@ -171,7 +171,7 @@ String lcase(String s) {
 
 Common::Array<String> split_param(String s) {
 	Common::Array<String> rv;
-	uint c1 = 0, c2;
+	int c1 = 0, c2;
 
 	for (;;) {
 		c2 = s.find(';', c1);

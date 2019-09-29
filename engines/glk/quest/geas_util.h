@@ -24,7 +24,7 @@
 #define GLK_QUEST_GEAS_UTIL
 
 #include "glk/quest/read_file.h"
-#include "common/stream.h"
+#include "glk/quest/streams.h"
 
 namespace Glk {
 namespace Quest {
@@ -73,7 +73,7 @@ template<class T> Common::WriteStream &operator<<(Common::WriteStream &o, Common
 template <class KEYTYPE, class VALTYPE>
 bool has(Common::HashMap<KEYTYPE, VALTYPE, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> m, KEYTYPE key) {
 	return m.contains(key);
-};
+}
 
 class Logger {
 public:

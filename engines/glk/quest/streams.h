@@ -75,9 +75,11 @@ extern const char endl;
 #define cerr (*g_cerr)
 
 Common::WriteStream &operator<<(Common::WriteStream &, const String &);
+Common::WriteStream &operator<<(Common::WriteStream &, const char *);
 Common::WriteStream &operator<<(Common::WriteStream &, char);
 Common::WriteStream &operator<<(Common::WriteStream &, int);
 Common::WriteStream &operator<<(Common::WriteStream &, uint);
+Common::WriteStream &operator<<(Common::WriteStream &, size_t);
 
 } // End of namespace Quest
 } // End of namespace Glk

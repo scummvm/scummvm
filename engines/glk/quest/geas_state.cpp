@@ -72,7 +72,7 @@ public:
 		ofstream ofs;
 		ofs.open(savename.c_str());
 		if (!ofs.is_open())
-			throw String("Unable to open \"" + savename + "\"");
+			error("Unable to open \"%s\"", savename.c_str());
 		ofs << "QUEST300" << char(0) << gamename << char(0);
 		String tmp = o.str();
 		for (uint i = 0; i < tmp.size(); i ++)

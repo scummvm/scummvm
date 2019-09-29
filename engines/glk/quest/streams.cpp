@@ -60,6 +60,11 @@ Common::WriteStream &operator<<(Common::WriteStream &ws, const String &s) {
 	return ws;
 }
 
+Common::WriteStream &operator<<(Common::WriteStream &ws, const char *s) {
+	ws.write(s, strlen(s));
+	return ws;
+}
+
 Common::WriteStream &operator<<(Common::WriteStream &ws, char c) {
 	ws.writeByte(c);
 	return ws;

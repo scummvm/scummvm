@@ -56,17 +56,14 @@ void draw_banner() {
 		g_vm->glk_window_move_cursor(bannerwin, 1, 0);
 
 		if (g_vm->banner.empty())
-			g_vm->glk_put_string_stream(stream, (char *)"Geas 0.4");
+			g_vm->glk_put_string_stream(stream, "Geas 0.4");
 		else
-			g_vm->glk_put_string_stream(stream, (char *)g_vm->banner.c_str());
+			g_vm->glk_put_string_stream(stream, g_vm->banner.c_str());
 	}
 }
 
 void glk_put_cstring(const char *s) {
-	/* The cast to remove const is necessary because g_vm->glk_put_string
-	 * receives a "char *" despite the fact that it could equally well use
-	 * "const char *". */
-	g_vm->glk_put_string((char *)s);
+	g_vm->glk_put_string(s);
 }
 
 GeasResult GeasGlkInterface::print_normal(const String &s) {
@@ -152,14 +149,14 @@ String GeasGlkInterface::get_string() {
 }
 
 uint GeasGlkInterface::make_choice(String label, Common::Array<String> v) {
-	size_t n;
+	uint n;
 
 	g_vm->glk_window_clear(inputwin);
 
 	glk_put_cstring(label.c_str());
 	g_vm->glk_put_char(0x0a);
 	n = v.size();
-	for (size_t i = 0; i < n; ++i) {
+	for (uint i = 0; i < n; ++i) {
 		StringStream t;
 		String s;
 		t << i + 1;
@@ -176,13 +173,13 @@ uint GeasGlkInterface::make_choice(String label, Common::Array<String> v) {
 	t << n;
 	t >> s;
 	s1 = "Choose [1-" + s + "]> ";
-	g_vm->glk_put_string_stream(inputwinstream, (char *)(s1.c_str()));
+	g_vm->glk_put_string_stream(inputwinstream, s1.c_str());
 
 	int choice = atoi(get_string().c_str());
 	if (choice < 1) {
 		choice = 1;
 	}
-	if ((size_t)choice > n) {
+	if ((uint)choice > n) {
 		choice = n;
 	}
 
