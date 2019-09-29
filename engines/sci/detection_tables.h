@@ -5201,6 +5201,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 	FANMADE("The Legend of the Lost Jewel", "ba1bca315e3818c5626eda51bcfbcccf", 636, "9b0736d69924af0cff32a0f78db96855", 300398),
 	FANMADE("The Sect of Achturan", "130ee6a9137005cdd4a26c38fa21576a", 1626, "1faf42afbfdb782f61ceaa1ee6243b76", 961705),
 	FANMADE("Winter Wonderland", "c1ffaf8327462effd4ad21eeed9eea59", 504, "5d48666dc62f90d852a1d0de6e69195f", 305076),
+	FANMADE11("Zork: The Great Underground Empire", "65f0731485faca4ee568b74e2f59d850", 3518, "e5d4790b6e8fa1b9a9691b22d541012b", 2460903),
 
 	// FIXME: The vga demo does not have a resource.000/001 file.
 	//FANMADE_V("SCI VGA Demo", "00b1abd87bad356b90fcdfcb6132c26f", 8, "", 0, 0),
