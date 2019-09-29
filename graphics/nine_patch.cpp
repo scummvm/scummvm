@@ -73,14 +73,16 @@ bool NinePatchSide::init(Graphics::TransparentSurface *bmp, bool vertical) {
 		uint32 *color = vertical ? (uint32 *)bmp->getBasePtr(0, i) : (uint32 *)bmp->getBasePtr(i, 0);
 		bmp->format.colorToARGB(*color, a, r, g, b);
 
-		if (i == len - 1)
+		if (i == len - 1) {
 			zz = -1;
-		else if (r == 0 && g == 0 && b == 0 && a == 255)
+		} else if (r == 0 && g == 0 && b == 0 && a == 255) {
 			zz = 0;
-		else if (a == 0 || r + g + b + a == 255 * 4)
+		} else if (a == 0 || r + g + b + a == 255 * 4) {
 			zz = 1;
-		else
+		} else {
+			warning("NinePatchSide::init(): Bad pixel at %d,%d", (vertical ? 0 : i), (vertical ? i : 0));
 			return false;
+		}
 
 		if (z != zz) {
 			if (s != -1) {
@@ -198,6 +200,8 @@ NinePatchBitmap::NinePatchBitmap(Graphics::TransparentSurface *bmp, bool owns_bi
 
 	if (!_h.init(bmp, false) || !_v.init(bmp, true)) {
 bad_bitmap:
+		warning("NinePatchBitmap::NinePatchBitmap(): Bad bitmap");
+
 		_h._m.clear();
 		_v._m.clear();
 	}
