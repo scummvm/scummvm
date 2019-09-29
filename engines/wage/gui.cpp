@@ -308,9 +308,10 @@ void Gui::executeMenuCommand(int action, Common::String &text) {
 }
 
 void Gui::loadBorders() {
-	// Do not load borders for now
 	loadBorder(_sceneWindow, "wage_border_inact.bmp", false);
 	loadBorder(_sceneWindow, "wage_border_act.bmp", true);
+	loadBorder(_consoleWindow, "wage_border_inact.bmp", false);
+	loadBorder(_consoleWindow, "wage_border_act.bmp", true);
 }
 
 void Gui::loadBorder(Graphics::MacWindow *target, Common::String filename, bool active) {
