@@ -168,7 +168,7 @@ void GuestAdditions::writeVarHook(const int type, const int index, const reg_t v
 				syncGK1StartupVolumeFromScummVM(index, value);
 			} else if (g_sci->getGameId() == GID_HOYLE5 && index == kGlobalVarHoyle5MusicVolume) {
 				syncHoyle5VolumeFromScummVM((ConfMan.getInt("music_volume") + 1) * kHoyle5VolumeMax / Audio::Mixer::kMaxMixerVolume);
-			} else if (g_sci->getGameId() == GID_HOYLE5 && index == kkGlobalVarHoyle5ResponseTime && value.getOffset() == 0) {
+			} else if (g_sci->getGameId() == GID_HOYLE5 && index == kGlobalVarHoyle5ResponseTime && value.getOffset() == 0) {
 				// WORKAROUND: Global 899 contains the response time value,
 				// which may have values between 1 and 15. There is a script
 				// bug when loading values from game.opt, where this variable
