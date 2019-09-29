@@ -145,13 +145,5 @@ void Quest::deinitialize() {
 	Streams::deinitialize();
 }
 
-Common::Error Quest::readSaveData(Common::SeekableReadStream *rs) {
-	return Common::kNoError;
-}
-
-Common::Error Quest::writeGameData(Common::WriteStream *ws) {
-	return Common::kNoError;
-}
-
 } // End of namespace Quest
 } // End of namespace Glk

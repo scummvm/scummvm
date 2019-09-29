@@ -71,15 +71,24 @@ public:
 	}
 
 	/**
-	 * Load a savegame from the passed Quetzal file chunk stream
+	 * Savegames aren't supported for Quest games
 	 */
-	virtual Common::Error readSaveData(Common::SeekableReadStream *rs) override;
+	virtual bool canLoadGameStateCurrently() override { return false; }
 
 	/**
-	 * Save the game. The passed write stream represents access to the UMem chunk
-	 * in the Quetzal save file that will be created
+	 * Savegames aren't supported for Quest games
 	 */
-	virtual Common::Error writeGameData(Common::WriteStream *ws) override;
+	virtual bool canSaveGameStateCurrently() override { return false; }
+
+	/**
+	 * Savegames aren't supported for Quest games
+	 */
+	virtual Common::Error readSaveData(Common::SeekableReadStream *rs) override { return Common::kUnknownError; }
+
+	/**
+	 * Savegames aren't supported for Quest games
+	 */
+	virtual Common::Error writeGameData(Common::WriteStream *ws) override { return Common::kUnknownError; }
 };
 
 extern Quest *g_vm;
