@@ -39,8 +39,11 @@ void Streams::deinitialize() {
 }
 
 uint32 ConsoleStream::write(const void *dataPtr, uint32 dataSize) {
-	Common::String s((const char *)dataPtr, (const char *)dataPtr + dataSize);
-	debug("%s", s.c_str());
+	if (gDebugLevel > 0) {
+		Common::String s((const char *)dataPtr, (const char *)dataPtr + dataSize);
+		debug("%s", s.c_str());
+	}
+
 	return dataSize;
 }
 

@@ -56,9 +56,7 @@ public:
 	/**
 	 * Constructor
 	 */
-	Quest(OSystem *syst, const GlkGameDescription &gameDesc) : GlkAPI(syst, gameDesc), _saveSlot(-1) {
-		g_vm = this;
-	}
+	Quest(OSystem *syst, const GlkGameDescription &gameDesc);
 
 	/**
 	 * Run the game

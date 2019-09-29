@@ -3531,7 +3531,7 @@ void geas_implementation::tick_timers() {
 GeasResult GeasInterface::print_formatted(String s, bool with_newline) {
 	unsigned int i, j;
 
-	//cerr << "print_formatted (" << s << ", " << with_newline << ")" << endl;
+	cerr << "print_formatted (" << s << ", " << with_newline << ")" << endl;
 
 	for (i = 0; i < s.length(); i ++) {
 		//std::cerr << "i == " << i << std::endl;

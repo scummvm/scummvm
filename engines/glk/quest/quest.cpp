@@ -32,6 +32,10 @@ namespace Quest {
 
 Quest *g_vm;
 
+Quest::Quest(OSystem *syst, const GlkGameDescription &gameDesc) : GlkAPI(syst, gameDesc), _saveSlot(-1) {
+	g_vm = this;
+}
+
 void Quest::runGame() {
 	// Check for savegame
 	_saveSlot = ConfMan.hasKey("save_slot") ? ConfMan.getInt("save_slot") : -1;
