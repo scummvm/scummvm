@@ -114,6 +114,9 @@ bool GuestAdditions::shouldSyncAudioToScummVM() const {
 			return true;
 		} else if (gameId == GID_GK2 && objName == "soundSlider") {
 			return true;
+		} else if (gameId == GID_HOYLE5 && objName == "volumeSliderF") {
+			// Hoyle5 has a second control panel with a different slider name
+			return true;
 		} else if (gameId == GID_KQ7 && (objName == "volumeUp" ||
 										 objName == "volumeDown")) {
 			return true;
@@ -1406,17 +1409,22 @@ void GuestAdditions::syncGK2UI() const {
 }
 
 void GuestAdditions::syncHoyle5UI(const int16 musicVolume) const {
-	const reg_t sliderId = _segMan->findObjectByName("volumeSlider");
-	if (!sliderId.isNull()) {
-		const int16 yPosition = 167 - musicVolume * 145 / 10;
-		writeSelectorValue(_segMan, sliderId, SELECTOR(y), yPosition);
+	// Hoyle5 has two control panels with different slider names
+	const reg_t sliders[] = { _segMan->findObjectByName("volumeSlider"),
+							  _segMan->findObjectByName("volumeSliderF") };
+	for (int i = 0; i < ARRAYSIZE(sliders); ++i) {
+		const reg_t sliderId = sliders[i];
+		if (!sliderId.isNull()) {
+			const int16 yPosition = 167 - musicVolume * 145 / 10;
+			writeSelectorValue(_segMan, sliderId, SELECTOR(y), yPosition);
 
-		// There does not seem to be any good way to learn whether the
-		// volume slider is visible (and thus eligible for
-		// kUpdateScreenItem)
-		const reg_t planeId = readSelector(_segMan, sliderId, SELECTOR(plane));
-		if (g_sci->_gfxFrameout->getPlanes().findByObject(planeId) != nullptr) {
-			g_sci->_gfxFrameout->kernelUpdateScreenItem(sliderId);
+			// There does not seem to be any good way to learn whether the
+			// volume slider is visible (and thus eligible for
+			// kUpdateScreenItem)
+			const reg_t planeId = readSelector(_segMan, sliderId, SELECTOR(plane));
+			if (g_sci->_gfxFrameout->getPlanes().findByObject(planeId) != nullptr) {
+				g_sci->_gfxFrameout->kernelUpdateScreenItem(sliderId);
+			}
 		}
 	}
 }
