@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: Prince\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2018-04-17 19:53+0100\n"
-"PO-Revision-Date: 2019-09-28 17:54+0000\n"
+"PO-Revision-Date: 2019-09-30 10:54+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: English <https://translations.scummvm.org/projects/prince/"
 "prince/en/>\n"
@@ -5636,51 +5636,51 @@ msgstr ""
 
 #: dialog0173.txt:7
 msgid "OTHER: Fascynująca lektura."
-msgstr ""
+msgstr "OTHER: Fascinating lecture."
 
 #: dialog0173.txt:8
 msgid "OTHER: Prawie że encyklopedia."
-msgstr ""
+msgstr "OTHER: Almost an encyclopedia."
 
 #: dialog0173.txt:9
 msgid "HERO: Hmmm..."
-msgstr ""
+msgstr "HERO: Hmmm..."
 
 #: dialog0173.txt:10
 msgid "P#HERO: Mógłbyś powiedzieć mi o niej coś więcej?"
-msgstr ""
+msgstr "P#HERO: Could you tell me more about it?"
 
 #: dialog0173.txt:11
 msgid "HERO: Na początek choćby opis zwierząt?"
-msgstr ""
+msgstr "HERO: For instance, describe the animals?"
 
 #: dialog0173.txt:12
 msgid "OTHER: A po cóż to?!"
-msgstr ""
+msgstr "OTHER: Why do you need it?!"
 
 #: dialog0173.txt:13
 msgid "OTHER: Czyżbyś chciał rozpocząć..."
-msgstr ""
+msgstr "OTHER: Maybe you could start..."
 
 #: dialog0173.txt:14
 msgid "OTHER: ...EDUKACJĘ?!?..."
-msgstr ""
+msgstr "OTHER: ...EDUCATION?!?..."
 
 #: dialog0173.txt:15
 msgid "HERO: Oczywiście!"
-msgstr ""
+msgstr "HERO: Of course!"
 
 #: dialog0173.txt:16
 msgid "HERO: Właśnie to chcę zrobić."
-msgstr ""
+msgstr "HERO: I want exactly that."
 
 #: dialog0173.txt:17
 msgid "HERO: Spoważnieć."
-msgstr ""
+msgstr "HERO: Become serious."
 
 #: dialog0173.txt:18
 msgid "HERO: Uczyć się."
-msgstr ""
+msgstr "HERO: Learn."
 
 #: dialog0173.txt:19
 msgid "HERO: Nie uganiać już więcej za dziewczętami, tylko|poświęcić sprawom poważnym i wzniosłym."
@@ -5696,15 +5696,15 @@ msgstr ""
 
 #: dialog0174.txt:2
 msgid "OTHER: Poczekaj tu chwilkę."
-msgstr ""
+msgstr "OTHER: Wait a moment."
 
 #: dialog0175.txt:1
 msgid "HERO: Pamiętasz łuskę, którą ci pokazałem?"
-msgstr ""
+msgstr "HERO: Do you remember the scale I showed you?"
 
 #: dialog0175.txt:2
 msgid "HERO: Wiem już, że to smocza łuska."
-msgstr ""
+msgstr "HERO: Now I know that it's dragon scale."
 
 #: dialog0176.txt:1
 msgid "HERO: Mam do ciebie prośbę, jako do wizjonera."
