@@ -385,11 +385,11 @@ const SciWorkaroundEntry uninitializedReadWorkarounds[] = {
 	{ GID_HOYLE4,        910,   910,  0,                 NULL, "setup",                           NULL,     3,     3, { WORKAROUND_FAKE,   0 } }, // when selecting "Tutorial" from the main menu - bug #5132
 	{ GID_HOYLE4,        700,   700,  1,         "BridgeHand", "calcQTS",                         NULL,     3,     3, { WORKAROUND_FAKE,   0 } }, // when placing a bid in bridge (always)
 	{ GID_HOYLE4,        700,   710,  1, "BridgeStrategyPlay", "checkSplitTops",                  NULL,    10,    10, { WORKAROUND_FAKE,   0 } }, // while playing bridge, objects LeadReturn_Trump, SecondSeat_Trump, ThirdSeat_Trump and others - bug #5794
-	{ GID_HOYLE4,        700,    -1,  1,      "BridgeDefense", "think",                           NULL,    -1,    -1, { WORKAROUND_FAKE,   0 } }, // sometimes while playing bridge, temp var 3, 17 and others, objects LeadReturn_Trump, ThirdSeat_Trump and others
 	{ GID_HOYLE4,        700,   730,  1,      "BridgeDefense", "beatTheirBest",                   NULL,     3,     3, { WORKAROUND_FAKE,   0 } }, // rarely while playing bridge
+	{ GID_HOYLE4,        700,    -1,  1,      "BridgeDefense", "makeContractMinusAce",            NULL,    -1,    -1, { WORKAROUND_FAKE,   0 } }, // when playing Bridge - bug #11162
+	{ GID_HOYLE4,        700,    -1,  1,      "BridgeDefense", "think",                           NULL,    -1,    -1, { WORKAROUND_FAKE,   0 } }, // sometimes while playing bridge, temp var 3, 17 and others, objects LeadReturn_Trump, ThirdSeat_Trump and others
 	{ GID_HOYLE4,        700,    -1,  1,               "Code", "doit",                            NULL,    -1,    -1, { WORKAROUND_FAKE,   0 } }, // when placing a bid in bridge (always), temp var 11, 24, 27, 46, 75, objects compete_tree, compwe_tree, other1_tree, b1 - bugs #5663 and #5794
-	{ GID_HOYLE4,        700,   921,  0,              "Print", "addEdit",                         NULL,     0,     0, { WORKAROUND_FAKE, 118 } }, // when saving the game (may also occur in other situations) - bug #6601, bug #6614
-	{ GID_HOYLE4,        700,   921,  0,              "Print", "addEdit",                         NULL,     1,     1, { WORKAROUND_FAKE,   1 } }, // see above, Text-control saves its coordinates to temp[0] and temp[1], Edit-control adjusts to those uninitialized temps, who by accident were left over from the Text-control
+	{ GID_HOYLE4,        700,   921,  0,              "Print", "addEdit",                         NULL,    -1,    -1, { WORKAROUND_FAKE, 118 } }, // when saving the game (may also occur in other situations) - bug #6601, bug #6614
 	{ GID_HOYLE4,        300,   300,  0,                   "", "export 2",     sig_uninitread_hoyle4_1,     0,     0, { WORKAROUND_FAKE,   0 } }, // after passing around cards in hearts
 	{ GID_HOYLE4,        400,   400,  1,            "GinHand", "calcRuns",                        NULL,     4,     4, { WORKAROUND_FAKE,   0 } }, // sometimes while playing Gin Rummy (e.g. when knocking and placing a card) - bug #5665
 	{ GID_HOYLE4,        500,    17,  1,          "Character", "say",                             NULL,   504,   504, { WORKAROUND_FAKE,   0 } }, // sometimes while playing Cribbage (e.g. when the opponent says "Last Card") - bug #5662
@@ -401,16 +401,13 @@ const SciWorkaroundEntry uninitializedReadWorkarounds[] = {
 	{ GID_HOYLE5,        300,   300,  0,                   "", "export 2",     sig_uninitread_hoyle5_1,     0,     0, { WORKAROUND_FAKE,   0 } }, // after passing around cards in hearts
 	{ GID_HOYLE5,        400,   400,  1,            "GinHand", "calcRuns",                        NULL,     4,     4, { WORKAROUND_FAKE,   0 } }, // when starting Gin
 	{ GID_HOYLE5,        700,   700,  1,         "BridgeHand", "calcQTS",                         NULL,     3,     3, { WORKAROUND_FAKE,   0 } }, // when an opponent is playing in Bridge
-	{ GID_HOYLE5,        700,   747,  0,   "LeadReturn_Trump", "think",                           NULL,    17,    17, { WORKAROUND_FAKE,   0 } }, // when an opponent is playing in Bridge
-	{ GID_HOYLE5,        700,  1115,  0,                 NULL, "select",                          NULL,     1,     1, { WORKAROUND_FAKE,   0 } }, // when adjusting the attitude slider in Bridge - bug #11166
 	{ GID_HOYLE5,        700,   710,  1, "BridgeStrategyPlay", "checkSplitTops",                  NULL,    10,    10, { WORKAROUND_FAKE,   0 } }, // when playing Bridge - bug #11167
-	{ GID_HOYLE5,        700,   713,  0,            "n2_tree", "doit",                            NULL,     1,     1, { WORKAROUND_FAKE,   0 } }, // when playing Bridge - bug #11169
-	{ GID_HOYLE5,        700,   715,  0,            "c2_tree", "doit",                            NULL,    21,    21, { WORKAROUND_FAKE,   0 } }, // when playing Bridge - bug #11170
-	{ GID_HOYLE5,        700,   716,  0,        "other1_tree", "doit",                            NULL,    10,    10, { WORKAROUND_FAKE,   0 } }, // when playing Bridge - bug #11168
-	{ GID_HOYLE5,        700,   716,  0,        "other1_tree", "doit",                            NULL,    69,    69, { WORKAROUND_FAKE,   0 } }, // when playing Bridge - bug #11168
 	{ GID_HOYLE5,        700,   730,  1,      "BridgeDefense", "beatTheirBest",                   NULL,     3,     3, { WORKAROUND_FAKE,   0 } }, // when playing Bridge - bug #11171
-	{ GID_HOYLE5,        700,   752,  0, "LeadReturn_NoTrump", "makeContractMinusAce",            NULL,     2,     2, { WORKAROUND_FAKE,   0 } }, // when playing Bridge - bug #11172
+	{ GID_HOYLE5,        700,    -1,  1,      "BridgeDefense", "makeContractMinusAce",            NULL,    -1,    -1, { WORKAROUND_FAKE,   0 } }, // when playing Bridge
+	{ GID_HOYLE5,        700,    -1,  1,      "BridgeDefense", "think",                           NULL,    -1,    -1, { WORKAROUND_FAKE,   0 } }, // when an opponent is playing in Bridge, objects LeadSeat_NoTrump and others
+	{ GID_HOYLE5,        700,    -1,  1,               "Code", "doit",                            NULL,    -1,    -1, { WORKAROUND_FAKE,   0 } }, // when placing a bid in Bridge, objects c2_tree, other1_tree, compwe_tree - bugs #11168, #11169, #11170, #11183
 	{ GID_HOYLE5,        700,   753,  0,   "LeadSeat_NoTrump", "think",        sig_uninitread_hoyle5_5,     4,     4, { WORKAROUND_FAKE,   0 } }, // when playing Bridge
+	{ GID_HOYLE5,        700,  1115,  0,                 NULL, "select",                          NULL,     1,     1, { WORKAROUND_FAKE,   0 } }, // when adjusting the attitude slider in Bridge - bug #11166
 	{ GID_HOYLE5,       1100,    18,  0,               "Tray", "init",                            NULL,     0,     0, { WORKAROUND_FAKE,   0 } }, // when playing Poker
 	{ GID_HOYLE5,       1100,  1100,  0,         "anteButton", "handleEvent",                     NULL,     1,     1, { WORKAROUND_FAKE,   0 } }, // when exiting Poker
 	{ GID_HOYLE5,       6029,  6029,  1,        "ControlIcon", "select",                          NULL,     1,     1, { WORKAROUND_FAKE,   0 } }, // Solitaire: when changing any slider in the Card Flip mini-game's options window
