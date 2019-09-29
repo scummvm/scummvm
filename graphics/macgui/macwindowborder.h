@@ -32,13 +32,6 @@
 
 namespace Graphics {
 
-enum MacBorderOffset {
-	kBorderOffsetLeft = 0,
-	kBorderOffsetRight = 1,
-	kBorderOffsetTop = 2,
-	kBorderOffsetBottom	= 3
-};
-
 /**
  * A representation of a custom border, which allows for arbitrary border offsets
  * and nine-patch resizable displays for both active and inactive states.
@@ -89,6 +82,7 @@ public:
 	 * @param bottom Thickness (in pixels) of the bottom side of the border.
 	 */
 	void setOffsets(int left, int right, int top, int bottom);
+	void setOffsets(Common::Rect &rect);
 
 	/**
 	 * Accessor method to retrieve a given border.
@@ -97,7 +91,7 @@ public:
 	 * @param offset The identifier of the offset wanted.
 	 * @return The desired offset in pixels.
 	 */
-	int getOffset(MacBorderOffset offset);
+	Common::Rect &getOffset();
 
 	/**
 	 * Blit the desired border (active or inactive) into a destination surface.
@@ -115,8 +109,7 @@ private:
 	bool _activeInitialized;
 	bool _inactiveInitialized;
 
-	bool _hasOffsets;
-	int _borderOffsets[4];
+	Common::Rect _borderOffsets;
 
 };
 
