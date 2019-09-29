@@ -75,6 +75,8 @@ void Quest::playGame() {
 
 		while (ev.type != evtype_LineInput) {
 			glk_select(&ev);
+			if (shouldQuit())
+				return;
 
 			switch (ev.type) {
 			case evtype_LineInput:
