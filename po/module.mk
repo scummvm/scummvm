@@ -1,4 +1,4 @@
-POTFILE := $(srcdir)/po/residualvm.pot
+POTFILE := $(srcdir)/po/residualvm/residualvm.pot
 POFILES := $(wildcard $(srcdir)/po/*.po)
 CPFILES := $(wildcard $(srcdir)/po/*.cp)
 
@@ -33,9 +33,9 @@ updatepot:
 
 %.po: $(POTFILE)
 	# ResidualVM specific start ->
-	# msgmerge $@ $(POTFILE) -o $@.new
-	if [ -f $(dir $@)/residualvm/$(notdir $@) ]; then \
-		msgcat --use-first $(dir $@)/residualvm/$(notdir $@) $@ > $@.new; \
+	$(eval RESIDUALVM_PO = $(dir $@)/residualvm/$(notdir $@))
+	if [ -f "$(RESIDUALVM_PO)" ]; then \
+		msgmerge $(RESIDUALVM_PO) $(POTFILE) | msgcat --use-first - $@ > $@.new; \
 	else \
 		cp $@ $@.new; \
 	fi
@@ -46,7 +46,7 @@ updatepot:
 	fi;
 	# ResidualVM specific end <-
 
-translations-dat: devtools/create_translations
+translations-dat: devtools/create_translations $(POFILES) $(CPFILES)
 	devtools/create_translations/create_translations $(POFILES) $(CPFILES)
 	mv translations.dat $(srcdir)/gui/themes/
 
