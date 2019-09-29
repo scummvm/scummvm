@@ -325,7 +325,7 @@ void Gui::loadBorder(Graphics::MacWindow *target, Common::String filename, bool 
 	Common::SeekableReadStream *stream = borderfile.readStream(borderfile.size());
 	if (stream) {
 
-		target->loadBorder(*stream, active, 18, 18, 18, 18);
+		target->loadBorder(*stream, active);
 
 		borderfile.close();
 
