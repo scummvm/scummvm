@@ -203,7 +203,7 @@ bad_bitmap:
 	}
 }
 
-void NinePatchBitmap::blit(Graphics::Surface &target, int dx, int dy, int dw, int dh, byte *palette, byte numColors) {
+void NinePatchBitmap::blit(Graphics::Surface &target, int dx, int dy, int dw, int dh, byte *palette, int numColors) {
 	/* don't draw bitmaps that are smaller than the fixed area */
 	if (dw < _h._fix || dh < _v._fix)
 		return;
@@ -347,7 +347,7 @@ static inline uint32 dist(uint32 a, uint32 b) {
 	return b - a;
 }
 
-byte NinePatchBitmap::closestGrayscale(uint32 color, byte* palette, byte paletteLength) {
+byte NinePatchBitmap::closestGrayscale(uint32 color, byte* palette, int paletteLength) {
 	if (!_cached_colors.contains(color)) {
 		byte target = grayscale(color);
 		byte bestNdx = 0;
