@@ -1544,10 +1544,20 @@ android-mips)
 	_host_cpu=mipsel
 	_host_alias=mipsel-linux-android
 	;;
+android-mips64)
+	_host_os=android
+	_host_cpu=mips64el
+	_host_alias=mips64el-linux-android
+	;;
 android-x86)
 	_host_os=android
 	_host_cpu=i686
 	_host_alias=i686-linux-android
+	;;
+android-x86_64)
+	_host_os=android
+	_host_cpu=x86_64
+	_host_alias=x86_64-linux-android
 	;;
 androidsdl-armeabi | androidsdl-armeabi-v7a)
 	_host_os=androidsdl
@@ -2578,11 +2588,17 @@ case $_host_os in
 				ABI="mips"
 				# Platform version 9 is needed as earlier versions of platform do not support this arch.
 				;;
+			android-mips64)
+				ABI="mips64"
+				;;
 			android-x86)
 				append_var CXXFLAGS "-march=i686"
 				append_var CXXFLAGS "-mtune=i686"
 				ABI="x86"
 				# Platform version 9 is needed as earlier versions of platform do not support this arch.
+				;;
+			android-x86_64)
+				ABI="x86_64"
 				;;
 			ouya)
 				append_var CXXFLAGS "-march=armv7-a"
@@ -3036,7 +3052,7 @@ if test -n "$_host"; then
 			_vorbis=no
 			_port_mk="backends/platform/3ds/3ds.mk"
 			;;
-		android | android-arm | android-v7a | android-arm-v7a | android-arm64-v8a | android-mips | android-x86 | ouya)
+		android | android-arm | android-v7a | android-arm-v7a | android-arm64-v8a | android-mips | android-mips64 | android-x86 | android-x86_64 | ouya)
 			# we link a .so as default
 			append_var LDFLAGS "-shared"
 			append_var LDFLAGS "-Wl,-Bsymbolic,--no-undefined"
