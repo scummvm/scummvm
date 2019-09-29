@@ -156,7 +156,7 @@ enum WinMethod {
 	winmethod_Right        = 0x01,
 	winmethod_Above        = 0x02,
 	winmethod_Below        = 0x03,
-	winmethod_Arbitrary    = 0x04,		///< Newly introduced for ScummGlk
+	winmethod_Arbitrary    = 0x04,		///< Newly introduced for ScummVM Glk
 	winmethod_DirMask      = 0x0f,
 
 	winmethod_Fixed        = 0x10,

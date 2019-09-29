@@ -973,11 +973,11 @@ int os_get_str_rsc(int id, char *buf, size_t buflen) {
 }
 
 void os_dbg_printf(const char *fmt, ...) {
-	// No implementation, since ScummGlk doesn't yet implement a debugger
+	// No implementation, since we haven't set up a ScummVM debugger
 }
 
 void os_dbg_vprintf(const char *fmt, va_list args) {
-	// No implementation, since ScummGlk doesn't yet implement a debugger
+	// No implementation, since we haven't set up a ScummVM debugger
 }
 
 int os_vasprintf(char **bufptr, const char *fmt, va_list ap) {

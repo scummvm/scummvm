@@ -35,7 +35,7 @@ namespace Glk {
 namespace TADS {
 
 #define TADS_RUNTIME_VERSION "2.5.17"
-#define OS_SYSTEM_NAME "ScummGlk"
+#define OS_SYSTEM_NAME "ScummVM Glk"
 
 #define OSPATHCHAR '/'
 #define OSPATHALT ""

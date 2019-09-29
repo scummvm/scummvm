@@ -38,7 +38,7 @@ public:
 	GlkMetaEngine() : MetaEngine() {}
 
 	virtual const char *getName() const {
-		return "ScummGlk";
+		return "Glk";
 	}
 
 	virtual const char *getOriginalCopyright() const {
