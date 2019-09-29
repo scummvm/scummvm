@@ -5,6 +5,7 @@ For a more comprehensive changelog of the latest experimental code, see:
 
  New games:
    - Added support for Blade Runner.
+   - Added support for Duckman: The Graphic Adventures of a Private Dick.
    - Added support for Hoyle Bridge.
    - Added support for Hoyle Children's Collection.
    - Added support for Hoyle Classic Games.
