@@ -6,6 +6,7 @@ Programmcodes finden Sie auf Englisch unter:
 
  Neue Spiele:
    - Unterstützung für Blade Runner hinzugefügt.
+   - Unterstützung für Duckman: The Graphic Adventure of a Private Dick hinzugefügt.
    - Unterstützung für Hoyle Bridge hinzugefügt.
    - Unterstützung für Hoyle Children's Collection hinzugefügt.
    - Unterstützung für Hoyle Classic Games hinzugefügt.
