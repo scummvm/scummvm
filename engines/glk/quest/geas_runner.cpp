@@ -3647,7 +3647,7 @@ GeasResult GeasInterface::print_formatted(String s, bool with_newline) {
 			for (j = i; i != s.length() && s[i] != '|'; i ++)
 				;
 			print_normal(s.substr(j, i - j));
-			if (s[i] == '|')
+			if (i != s.length() && s[i] == '|')
 				-- i;
 		}
 	}
