@@ -356,7 +356,7 @@ byte NinePatchBitmap::closestGrayscale(uint32 color, byte* palette, int paletteL
 		byte target = grayscale(color);
 		byte bestNdx = 0;
 		byte bestColor = grayscale(palette[0], palette[1], palette[2]);
-		for (byte i = 1; i < paletteLength; ++i) {
+		for (int i = 1; i < paletteLength; ++i) {
 			byte current = grayscale(palette[i * 3], palette[(i * 3) + 1], palette[(i * 3) + 2]);
 			if (dist(target, bestColor) >= dist(target, current)) {
 				bestColor = current;
