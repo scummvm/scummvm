@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2019-09-29 02:43+0200\n"
+"POT-Creation-Date: 2019-09-30 00:09+0200\n"
 "PO-Revision-Date: 2018-10-10 04:23+0000\n"
 "Last-Translator: scootergrisen <scootergrisen@gmail.com>\n"
 "Language-Team: Galician <https://translations.scummvm.org/projects/scummvm/"
@@ -3571,7 +3571,7 @@ msgstr "Mostrar os gráficos coa paletta intensa do xogo"
 msgid "[ press any key to exit ]"
 msgstr ""
 
-#: engines/glk/quetzal.cpp:117 engines/glk/quetzal.cpp:126
+#: engines/glk/quetzal.cpp:118 engines/glk/quetzal.cpp:127
 #, fuzzy
 msgid "Untitled Savegame"
 msgstr "Partida gardada sen título"

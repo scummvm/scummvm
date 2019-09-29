@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2019-09-29 02:43+0200\n"
+"POT-Creation-Date: 2019-09-30 00:09+0200\n"
 "PO-Revision-Date: 2019-09-14 12:05+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
@@ -3523,7 +3523,7 @@ msgstr "Відображення графіки з використанням яскравої палітри ігр"
 msgid "[ press any key to exit ]"
 msgstr ""
 
-#: engines/glk/quetzal.cpp:117 engines/glk/quetzal.cpp:126
+#: engines/glk/quetzal.cpp:118 engines/glk/quetzal.cpp:127
 msgid "Untitled Savegame"
 msgstr "Збережена гра без назви"
 
