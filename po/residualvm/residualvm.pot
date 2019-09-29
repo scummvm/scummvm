@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ResidualVM 0.4.0git\n"
 "Report-Msgid-Bugs-To: https://github.com/residualvm/residualvm/issues\n"
-"POT-Creation-Date: 2017-11-05 14:10+0100\n"
+"POT-Creation-Date: 2019-04-27 21:32+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,76 +17,93 @@ msgstr ""
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: gui/launcher.cpp:141 backends/platform/sdl/macosx/appmenu_osx.mm:106
+#: gui/launcher.cpp:142 backends/platform/sdl/macosx/appmenu_osx.mm:193
 msgid "Quit ResidualVM"
 msgstr ""
 
-#: gui/launcher.cpp:142 backends/platform/sdl/macosx/appmenu_osx.mm:80
+#: gui/launcher.cpp:143 backends/platform/sdl/macosx/appmenu_osx.mm:187
 msgid "About ResidualVM"
 msgstr ""
 
-#: gui/launcher.cpp:143
+#: gui/launcher.cpp:144
 msgid "Change global ResidualVM options"
 msgstr ""
 
-#: gui/launcher.cpp:529
+#: gui/launcher.cpp:508
 msgid ""
 "ResidualVM could not find any engine capable of running the selected game!"
 msgstr ""
 
-#: gui/options.cpp:1091
+#: gui/options.cpp:1130
 msgid "Preserve aspect ratio"
 msgstr ""
 
-#: gui/options.cpp:1091
+#: gui/options.cpp:1130
 msgid "Preserve the aspect ratio in fullscreen mode"
 msgstr ""
 
-#: gui/options.cpp:1094
+#: gui/options.cpp:1133
 msgid "V-Sync"
 msgstr ""
 
-#: gui/options.cpp:1094
+#: gui/options.cpp:1133
 msgid "Wait for the vertical sync to refresh the screen"
 msgstr ""
 
-#: gui/options.cpp:1096
+#: gui/options.cpp:1135
 msgid "Game Renderer:"
 msgstr ""
 
-#: gui/options.cpp:1666
+#: gui/options.cpp:1729
 msgid "Language of ResidualVM GUI"
 msgstr ""
 
-#: gui/options.cpp:1694
+#: gui/options.cpp:1756
+msgid ""
+"When starting a game, change the GUI language to the game language.That way, "
+"if a game uses the ResidualVM save and load dialogs, they are in the same "
+"language as the game."
+msgstr ""
+
+#: gui/options.cpp:1770
+msgid ""
+"Use the native system file browser instead of the ResidualVM one to select a "
+"file or directory."
+msgstr ""
+
+#: gui/options.cpp:1777
 msgid "How often to check ResidualVM updates"
 msgstr ""
 
-#: gui/updates-dialog.cpp:51
+#: gui/updates-dialog.cpp:49
 msgid ""
 "ResidualVM now supports automatic check for updates\n"
-"which requires access to the Internet.\n"
-"\n"
-"Would you like to enable this feature?"
+"which requires access to the Internet. Would you\n"
+"like to enable this feature?"
 msgstr ""
 
-#: engines/advancedDetector.cpp:335
-#, c-format
-msgid ""
-"The game in '%s' seems to be unknown.\n"
-"Please, report the following data to the ResidualVM team along with name\n"
-"of the game you tried to add and its version, language, etc.:"
-msgstr ""
-
-#: engines/engine.cpp:556
+#: engines/engine.cpp:544
 msgid ""
 "WARNING: The game you are about to start is not yet fully supported by "
 "ResidualVM. As such, it is likely to be unstable, and any saved game you "
 "make might not work in future versions of ResidualVM."
 msgstr ""
 
-#: backends/platform/sdl/macosx/appmenu_osx.mm:88
+#: engines/game.cpp:158
+#, c-format
+msgid ""
+"The game in '%s' seems to be an unknown game variant.\n"
+"\n"
+"Please report the following data to the ResidualVM team at %s along with the "
+"name of the game you tried to add and its version, language, etc.:"
+msgstr ""
+
+#: backends/platform/sdl/macosx/appmenu_osx.mm:189
 msgid "Hide ResidualVM"
+msgstr ""
+
+#: backends/platform/sdl/macosx/appmenu_osx.mm:202
+msgid "What's New in ResidualVM"
 msgstr ""
 
 #: engines/grim/detection.cpp:57
@@ -202,19 +219,62 @@ msgstr ""
 msgid "Cannot find game data - check configuration file"
 msgstr ""
 
-#: engines/myst3/detection.cpp:175
+#: engines/myst3/detection.cpp:193
 msgid "Widescreen mod"
 msgstr ""
 
-#: engines/myst3/detection.cpp:176
+#: engines/myst3/detection.cpp:194
 msgid "Enable enable widescreen rendering in fullscreen mode."
 msgstr ""
 
-#: engines/myst3/myst3.cpp:348
+#: engines/myst3/myst3.cpp:360
 msgid ""
 "This version of Myst III has not been updated with the latest official "
 "patch.\n"
 "Please install the official update corresponding to your game's language.\n"
 "The updates can be downloaded from:\n"
 "http://www.residualvm.org/downloads/"
+msgstr ""
+
+#: engines/stark/detection.cpp:317
+msgid "Load modded assets"
+msgstr ""
+
+#: engines/stark/detection.cpp:318
+msgid "Enable loading of external replacement assets."
+msgstr ""
+
+#: engines/stark/detection.cpp:326
+msgid "Enable linear filtering of the backgrounds images"
+msgstr ""
+
+#: engines/stark/detection.cpp:327
+msgid ""
+"When linear filtering is enabled the background graphics are smoother in "
+"full screen mode, at the cost of some details."
+msgstr ""
+
+#: engines/stark/stark.cpp:302
+msgid "You are missing recommended data files:"
+msgstr ""
+
+#: engines/stark/stark.cpp:316
+msgid ""
+"The 'fonts' folder is required to experience the text style as it was "
+"designed. The Steam release is known to be missing it. You can get the fonts "
+"from the demo version of the game."
+msgstr ""
+
+#: engines/stark/stark.cpp:323
+msgid ""
+"'gui.ini' is recommended to get proper font settings for the game "
+"localization."
+msgstr ""
+
+#: engines/stark/stark.cpp:329
+msgid "'language.ini' is recommended to get localized confirmation dialogs."
+msgstr ""
+
+#: engines/stark/stark.cpp:335
+msgid "'game.exe' is recommended to get styled confirmation dialogs."
 msgstr ""
