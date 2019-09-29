@@ -170,12 +170,12 @@ NinePatchBitmap::NinePatchBitmap(Graphics::TransparentSurface *bmp, bool owns_bi
 	while (i < bmp->w) {
 		bmp->format.colorToARGB(*(uint32 *)bmp->getBasePtr(i, bmp->h - 1), a, r, g, b);
 
-		if (r + g + b == 0 && a == 1) {
+		if (r + g + b == 0 && a == 255) {
 			if (_padding.left == -1)
 				_padding.left = i - 1;
 			else if (_padding.right != -1)
 				goto bad_bitmap;
-		} else if (a == 0 || r + g + b + a == 4) {
+		} else if (a == 0 || r + g + b == 0) {
 			if (_padding.left != -1 && _padding.right == -1)
 				_padding.right = bmp->w - i - 1;
 		}
@@ -186,12 +186,12 @@ NinePatchBitmap::NinePatchBitmap(Graphics::TransparentSurface *bmp, bool owns_bi
 	while (i < bmp->h) {
 		bmp->format.colorToARGB(*(uint32 *)bmp->getBasePtr(bmp->w - 1, i), a, r, g, b);
 
-		if (r + g + b == 0 && a == 1) {
+		if (r + g + b == 0 && a == 255) {
 			if (_padding.top == -1)
 				_padding.top = i - 1;
 			else if (_padding.bottom != -1)
 				goto bad_bitmap;
-		} else if (a == 0 || r + g + b + a == 4) {
+		} else if (a == 0 || r + g + b == 0) {
 			if (_padding.top != -1 && _padding.bottom == -1)
 				_padding.bottom = bmp->h - i - 1;
 		}
