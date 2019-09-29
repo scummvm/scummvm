@@ -2064,10 +2064,8 @@ bool Debugger::cmdList(int argc, const char **argv) {
 				if (waypoint->setId != _vm->_scene->getSetId()) {
 					continue;
 				}
-				char waypointText[40];
 				Vector3 a = waypoint->position;
-				sprintf(waypointText, "Waypoint %i, Pos(%02.2f,%02.2f,%02.2f)", i, a.x, a.y, a.z);
-				debugPrintf("%s\n", waypointText);
+				debugPrintf("Waypoint %i, Pos(%02.2f,%02.2f,%02.2f)\n", i, a.x, a.y, a.z);
 				++count;
 			}
 
@@ -2077,10 +2075,8 @@ bool Debugger::cmdList(int argc, const char **argv) {
 				if (cover->setId != _vm->_scene->getSetId()) {
 					continue;
 				}
-				char coverText[40];
 				Vector3 a = cover->position;
-				sprintf(coverText, "Cover %i, Pos(%02.2f,%02.2f,%02.2f)", i, a.x, a.y, a.z);
-				debugPrintf("%s\n", coverText);
+				debugPrintf("Cover %i, Pos(%02.2f,%02.2f,%02.2f)\n", i, a.x, a.y, a.z);
 				++count;
 			}
 
@@ -2090,10 +2086,8 @@ bool Debugger::cmdList(int argc, const char **argv) {
 				if (flee->setId != _vm->_scene->getSetId()) {
 					continue;
 				}
-				char fleeText[40];
 				Vector3 a = flee->position;
-				sprintf(fleeText, "Flee %i, Pos(%02.2f,%02.2f,%02.2f)", i, a.x, a.y, a.z);
-				debugPrintf("%s\n", fleeText);
+				debugPrintf("Flee %i, Pos(%02.2f,%02.2f,%02.2f)\n", i, a.x, a.y, a.z);
 				++count;
 			}
 			debugPrintf("%d waypoints were found in scene.\n", count);
@@ -2229,9 +2223,8 @@ void Debugger::drawSceneObjects() {
 				    || (_specificItemsDrawn && findInDbgDrawList(debuggerObjTypeItem, sceneObject->id - kSceneObjectOffsetItems, -1, -1) != -1)
 				) {
 					color = _vm->_surfaceFront.format.RGBToColor(0, 255, 0);
-					char itemText[40];
 					drawBBox(a, b, _vm->_view, &_vm->_surfaceFront, color);
-					sprintf(itemText, "item %i", sceneObject->id - kSceneObjectOffsetItems);
+					Common::String itemText = Common::String::format("item %i", sceneObject->id - kSceneObjectOffsetItems);
 					_vm->_surfaceFront.frameRect(sceneObject->screenRectangle, color);
 					_vm->_mainFont->drawString(&_vm->_surfaceFront, itemText, pos.x, pos.y, _vm->_surfaceFront.w, color);
 				}
@@ -2369,8 +2362,7 @@ void Debugger::drawWaypoints() {
 				int color = _vm->_surfaceFront.format.RGBToColor(255, 255, 255);
 				drawBBox(pos - size, pos + size, _vm->_view, &_vm->_surfaceFront, color);
 				Vector3 spos = _vm->_view->calculateScreenPosition(pos);
-				char waypointText[40];
-				sprintf(waypointText, "waypoint %i", i);
+				Common::String waypointText = Common::String::format("waypoint %i", i);
 				_vm->_mainFont->drawString(&_vm->_surfaceFront, waypointText, spos.x, spos.y, _vm->_surfaceFront.w, color);
 			}
 		}
@@ -2391,8 +2383,7 @@ void Debugger::drawWaypoints() {
 				int color = _vm->_surfaceFront.format.RGBToColor(255, 0, 255);
 				drawBBox(pos - size, pos + size, _vm->_view, &_vm->_surfaceFront, color);
 				Vector3 spos = _vm->_view->calculateScreenPosition(pos);
-				char coverText[40];
-				sprintf(coverText, "cover %i", i);
+				Common::String coverText = Common::String::format("cover %i", i);
 				_vm->_mainFont->drawString(&_vm->_surfaceFront, coverText, spos.x, spos.y, _vm->_surfaceFront.w, color);
 			}
 		}
@@ -2413,8 +2404,7 @@ void Debugger::drawWaypoints() {
 				int color = _vm->_surfaceFront.format.RGBToColor(0, 255, 255);
 				drawBBox(pos - size, pos + size, _vm->_view, &_vm->_surfaceFront, color);
 				Vector3 spos = _vm->_view->calculateScreenPosition(pos);
-				char fleeText[40];
-				sprintf(fleeText, "flee %i", i);
+				Common::String fleeText = Common::String::format("flee %i", i);
 				_vm->_mainFont->drawString(&_vm->_surfaceFront, fleeText, spos.x, spos.y, _vm->_surfaceFront.w, color);
 			}
 		}

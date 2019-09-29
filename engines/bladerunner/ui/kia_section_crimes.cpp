@@ -167,7 +167,7 @@ void KIASectionCrimes::draw(Graphics::Surface &surface) {
 	surface.vLine(267, 304, 315, surface.format.RGBToColor(88, 80, 96));
 	surface.hLine(267, 316, 267, surface.format.RGBToColor(72, 64, 72));
 
-	char generatedText[64];
+	Common::String generatedText;
 	if (_suspectSelected == -1) {
 		text = _vm->_textKIA->getText(22);
 	} else {
@@ -175,11 +175,11 @@ void KIASectionCrimes::draw(Graphics::Surface &surface) {
 		if (_suspectsWithIdentity[_suspectSelected]) {
 			text = suspectName;
 		} else if (_vm->_suspectsDatabase->get(_suspectSelected)->getSex()) {
-			sprintf(generatedText, "%s %s", _vm->_textKIA->getText(20), _vm->_kia->scrambleSuspectsName(suspectName));
-			text = generatedText;
+			generatedText = Common::String::format("%s %s", _vm->_textKIA->getText(20), _vm->_kia->scrambleSuspectsName(suspectName));
+			text = generatedText.c_str();
 		} else {
-			sprintf(generatedText, "%s %s", _vm->_textKIA->getText(21), _vm->_kia->scrambleSuspectsName(suspectName));
-			text = generatedText;
+			generatedText = Common::String::format("%s %s", _vm->_textKIA->getText(21), _vm->_kia->scrambleSuspectsName(suspectName));
+			text = generatedText.c_str();
 		}
 	}
 	_vm->_mainFont->drawString(&surface, text, 201 - _vm->_mainFont->getStringWidth(text) / 2, 306, surface.w, surface.format.RGBToColor(136, 168, 255));
