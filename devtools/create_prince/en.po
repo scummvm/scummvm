@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: Prince\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2018-04-17 19:53+0100\n"
-"PO-Revision-Date: 2019-09-30 10:54+0000\n"
+"PO-Revision-Date: 2019-10-01 20:55+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: English <https://translations.scummvm.org/projects/prince/"
 "prince/en/>\n"
@@ -3352,19 +3352,19 @@ msgstr "P#P#OTHER: You... You... You..."
 
 #: dialog0065.txt:100313
 msgid "OTHER: Ty żałosny, słaby człowieczku!"
-msgstr ""
+msgstr "OTHER: You, pathetic, weak little human!"
 
 #: dialog0065.txt:100314
 msgid "OTHER: Ośmielasz się ze mną ...TARGOWAĆ?!"
-msgstr ""
+msgstr "OTHER: Do you dare with me ... BARGAIN?!"
 
 #: dialog0065.txt:100315
 msgid "OTHER: A może twój nędzny rozum podpowiedział ci,|iż boga można SZANTAŻOWAĆ?"
-msgstr ""
+msgstr "OTHER: Or maybe your weak brain tells you that|you could BLACKMAIL god?"
 
 #: dialog0065.txt:100316
 msgid "OTHER: Zaraz przekonasz się, na czym polega|gniew boski!"
-msgstr ""
+msgstr "OTHER: NowyYou will see what the divine|wrath is about!"
 
 #: dialog0065.txt:100317
 msgid "OTHER: PRZYGOTUJ SIĘ!!!"
@@ -3372,7 +3372,7 @@ msgstr "OTHER: GET READY!!!"
 
 #: dialog0065.txt:100318
 msgid "P#P#P#P#P#OTHER: Kurka, coś słaby dzisiaj jestem."
-msgstr ""
+msgstr "P#P#P#P#P#OTHER: Argh, I'm somewhat weak today."
 
 #: dialog0065.txt:100319
 msgid "OTHER: W porządku, umowa stoi.#X1"
@@ -3441,6 +3441,8 @@ msgstr "P#OTHER: Have it on the tip of my tongue, but..."
 #: dialog0074.txt:5
 msgid "OTHER: Nie, chłopcze, w końcu nie byłem tu już|tysiąc lat. Mam prawo zapomnieć jeden|czy drugi drobny szczegół."
 msgstr ""
+"OTHER: No, boy, I haven't been here|a thousand years after all. I have the "
+"right to forget|one or the other little detail."
 
 #: dialog0075.txt:1
 msgid "OTHER: Hm..."
@@ -3524,7 +3526,7 @@ msgstr "OTHER: Speaking of payment..."
 
 #: dialog0077.txt:11
 msgid "P#P#OTHER: <westchnienie>"
-msgstr "P#P#OTHER: <sigh>""
+msgstr "P#P#OTHER: <sigh>"
 
 #: dialog0077.txt:12
 msgid "OTHER: Eliksirów miłosnych już nie mam, ale ten|zabawny czar na pewno rozrusza twoich|przyjaciół na jakiejś biesiadzie."
@@ -3620,27 +3622,27 @@ msgstr ""
 
 #: dialog0079.txt:2
 msgid "OTHER: Mistrz Arivald? Dostojny czarodziej?"
-msgstr ""
+msgstr "OTHER: Master Arivald? A dignified wizard?"
 
 #: dialog0079.txt:3
 msgid "OTHER: Mistrz Arivald? Mój nowy, wspaniały klient?"
-msgstr ""
+msgstr "OTHER: Master Arivald? My important new customer?"
 
 #: dialog0079.txt:4
 msgid "OTHER: Niestety, bardzo bym chciał ci pomóc,|książę, ale nie mogę."
-msgstr ""
+msgstr "OTHER: Unfortunately, I would love to help you,|prince, but I can't."
 
 #: dialog0079.txt:5
 msgid "OTHER: Siedem lat temu stały się dwie|rzeczy."
-msgstr ""
+msgstr "OTHER: Seven years ago two things have happened."
 
 #: dialog0079.txt:6
 msgid "OTHER: Ożeniłem się, i rozbiłem jedyne|lustro."
-msgstr ""
+msgstr "OTHER: I got married and broke our only|mirror."
 
 #: dialog0079.txt:7
 msgid "OTHER: Już nigdy nie kupię nowego."
-msgstr ""
+msgstr "OTHER: And I cannot buy a new one from anywhere."
 
 #: dialog0079.txt:8
 msgid "HERO: Może znalazłbyś jakiś dobrze wypolerowany|kawałek metalu?"
@@ -3980,15 +3982,15 @@ msgstr ""
 
 #: dialog0094.txt:8
 msgid "OTHER2: I ja o tym myślę."
-msgstr ""
+msgstr "OTHER2: I also think about it."
 
 #: dialog0094.txt:9
 msgid "OTHER2: Dlatego chyba zrobię wyjątek."
-msgstr ""
+msgstr "OTHER2: That's why I will make an exception."
 
 #: dialog0094.txt:10
 msgid "OTHER2: Tylko nie bądźcie zbyt nachalni."
-msgstr ""
+msgstr "OTHER2: Just don't be too pushy."
 
 #: dialog0095.txt:1
 msgid "OTHER: Przyprowadziłem dar dla króla."
@@ -5696,7 +5698,7 @@ msgstr ""
 
 #: dialog0174.txt:2
 msgid "OTHER: Poczekaj tu chwilkę."
-msgstr "OTHER: Wait a moment."
+msgstr "OTHER: Wait here for a moment."
 
 #: dialog0175.txt:1
 msgid "HERO: Pamiętasz łuskę, którą ci pokazałem?"
@@ -5788,7 +5790,7 @@ msgstr ""
 
 #: dialog0179.txt:6
 msgid "HERO: Bardzo śmieszne."
-msgstr ""
+msgstr "HERO: Very funny."
 
 #: dialog0179.txt:7
 msgid "HERO: Nie wiedziałem, że krasnoludy mają tak|wysublimowane poczucie humoru."
@@ -5796,11 +5798,11 @@ msgstr ""
 
 #: dialog0179.txt:8
 msgid "OTHER: To nie żart."
-msgstr ""
+msgstr "OTHER: That's not a joke."
 
 #: dialog0179.txt:9
 msgid "OTHER: Człowiek kontra smok. Śmiechu warte."
-msgstr ""
+msgstr "OTHER: Human versus the dragon. Laughable."
 
 #: dialog0179.txt:10
 msgid "OTHER: No chyba, żebyś był paladynem z Zakonu|Smokobójców. Wtedy was stu dałoby sobie|radę. Ale nie jesteś paladynem, prawda?"
