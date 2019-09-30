@@ -26,6 +26,7 @@
 #include "glk/quest/geas_runner.h"
 #include "glk/quest/streams.h"
 #include "common/util.h"
+#include "common/textconsole.h"
 
 namespace Glk {
 namespace Quest {
@@ -547,9 +548,7 @@ String string_int(int i) {
 }
 
 void report_error(String s) {
-	//cerr << s << endl;
-	cerr << s << endl;
-	throw s;
+	error("%s", s.c_str());
 }
 
 Common::Array<String> split_lines(String data) {
