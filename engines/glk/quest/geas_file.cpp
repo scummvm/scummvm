@@ -285,13 +285,13 @@ bool GeasFile::get_obj_property(String objname, String propname, String &string_
 
 void GeasFile::get_type_property(String typenamex, String propname, bool &bool_rv, String &string_rv) const {
 	//cerr << "  Checking type <" << typenamex << "> for prop <" << propname << ">\n";
-	const GeasBlock *block = find_by_name("type", typenamex);
-	if (block == NULL) {
+	const GeasBlock *geasBlock = find_by_name("type", typenamex);
+	if (geasBlock == NULL) {
 		debug_print("Object of nonexistent type " + typenamex);
 		return;
 	}
-	for (uint i = 0; i < block->data.size(); i ++) {
-		String line = block->data[i];
+	for (uint i = 0; i < geasBlock->data.size(); i ++) {
+		String line = geasBlock->data[i];
 		//cerr << "    Comparing vs. line <" << line << ">\n";
 		uint c1, c2;
 		int p;
@@ -358,12 +358,12 @@ bool GeasFile::obj_of_type(String objname, String typenamex) const {
 	}
 	String objtype = (*obj_types.find(objname))._value;
 
-	const GeasBlock *block = find_by_name(objtype, objname);
+	const GeasBlock *geasBlock = find_by_name(objtype, objname);
 
 	uint c1, c2;
-	assert(block != NULL);
-	for (uint i = 0; i < block->data.size(); i ++) {
-		String line = block->data[i];
+	assert(geasBlock != NULL);
+	for (uint i = 0; i < geasBlock->data.size(); i ++) {
+		String line = geasBlock->data[i];
 		String tok = first_token(line, c1, c2);
 		// SENSITIVE?
 		if (tok == "type") {
@@ -384,13 +384,13 @@ bool GeasFile::type_of_type(String subtype, String supertype) const {
 	if (ci_equal(subtype, supertype))
 		return true;
 	//cerr << "  Checking type <" << subtype << "> for type <" << supertype << ">\n";
-	const GeasBlock *block = find_by_name("type", subtype);
-	if (block == NULL) {
+	const GeasBlock *geasBlock = find_by_name("type", subtype);
+	if (geasBlock == NULL) {
 		debug_print("t_o_t: Nonexistent type " + subtype);
 		return false;
 	}
-	for (uint i = 0; i < block->data.size(); i ++) {
-		String line = block->data[i];
+	for (uint i = 0; i < geasBlock->data.size(); i ++) {
+		String line = geasBlock->data[i];
 		//cerr << "    Comparing vs. line <" << line << ">\n";
 		uint c1, c2;
 		String tok = first_token(line, c1, c2);
@@ -427,11 +427,11 @@ bool GeasFile::get_obj_action(String objname, String propname, String &string_rv
 
 	//reserved_words *rw;
 
-	const GeasBlock *block = find_by_name(objtype, objname);
+	const GeasBlock *geasBlock = find_by_name(objtype, objname);
 	String not_prop = "not " + propname;
 	uint c1, c2;
-	for (uint i = 0; i < block->data.size(); i ++) {
-		String line = block->data[i];
+	for (uint i = 0; i < geasBlock->data.size(); i ++) {
+		String line = geasBlock->data[i];
 		//cerr << "  g_o_a: Handling line <" << line << ">\n";
 		String tok = first_token(line, c1, c2);
 		// SENSITIVE?

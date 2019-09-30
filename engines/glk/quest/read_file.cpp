@@ -645,7 +645,7 @@ bool is_balanced(String str) {
 	if (index == -1)
 		return true;
 	int depth;
-	for (depth = 1, index ++;  depth > 0 && index < str.size();  index ++)
+	for (depth = 1, index ++;  depth > 0 && index < (int)str.size();  index ++)
 		if (str[index] == '{')
 			++ depth;
 		else if (str[index] == '}')
@@ -658,7 +658,7 @@ int count_depth(String str, int count) {
 	int index = 0;
 	if (count == 0)
 		index = str.find('{');
-	while (index < str.size()) {
+	while (index < (int)str.size()) {
 		if (str[index] == '{')
 			++ count;
 		else if (str[index] == '}')
