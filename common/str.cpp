@@ -518,7 +518,7 @@ void String::wordWrap(const uint32 maxLength) {
 
 	makeUnique();
 
-	enum { kNoSpace = 0xFFFFFFFF };
+	const uint32 kNoSpace = 0xFFFFFFFF;
 
 	uint32 i = 0;
 	while (i < _size) {
