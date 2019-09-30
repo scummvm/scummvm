@@ -42,8 +42,8 @@ const bool use_inputwindow = false;
 int ignore_lines;			// count of lines to ignore in game output
 
 void draw_banner() {
-	uint32 width;
-	uint32 index;
+	uint width;
+	uint index;
 	if (bannerwin) {
 		g_vm->glk_window_clear(bannerwin);
 		g_vm->glk_window_move_cursor(bannerwin, 0, 0);
