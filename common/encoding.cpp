@@ -197,6 +197,10 @@ char *Encoding::convertIconv(const char *to, const char *from, const char *strin
 
 	char *buffer = (char *) calloc(sizeof(char), stringSize);
 	if (!buffer) {
+#ifndef ICONV_USES_CONST
+		delete[] originalSrc;
+#endif // ICONV_USES_CONST
+		iconv_close(iconvHandle);
 		warning ("Cannot allocate memory for converting string");
 		return nullptr;
 	}
