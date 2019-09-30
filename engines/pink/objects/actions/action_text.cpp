@@ -90,6 +90,20 @@ void ActionText::start() {
 		_txtWnd->move(_xLeft, _yTop);
 		_txtWnd->resize(_xRight - _xLeft, _yBottom - _yTop);
 
+		Common::File f;
+
+		f.open("ScrollbarOnlyWin95active.bmp");
+		if (f.isOpen()) {
+			_txtWnd->loadBorder(f, true);
+			f.close();
+		}
+
+		f.open("ScrollbarOnlyWin95inactive.bmp");
+		if (f.isOpen()) {
+			_txtWnd->loadBorder(f, false);
+			f.close();
+		}
+
 		if (_actor->getPage()->getGame()->getLanguage() == Common::EN_ANY)
 			_txtWnd->appendText(str, font);
 	} else {
