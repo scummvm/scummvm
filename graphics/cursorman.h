@@ -195,6 +195,9 @@ private:
 
 		uint _size;
 
+		// _format set to default by Graphics::PixelFormat default constructor
+		Cursor() : _data(0), _visible(false), _width(0), _height(0), _hotspotX(0), _hotspotY(0), _keycolor(0), _dontScale(false), _size(0) {}
+
 		Cursor(const void *data, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, bool dontScale = false, const Graphics::PixelFormat *format = NULL);
 		~Cursor();
 	};
