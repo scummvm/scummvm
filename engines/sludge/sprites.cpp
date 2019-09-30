@@ -339,7 +339,7 @@ void GraphicsManager::blendColor(Graphics::Surface *blitted, uint32 color, Graph
 	Graphics::TransparentSurface tmp;
 	tmp.create(blitted->w, blitted->h, blitted->format);
 	tmp.fillRect(Common::Rect(0, 0, tmp.w, tmp.h), color);
-	tmp.blit(*blitted, 0, 0, Graphics::FLIP_NONE, nullptr, TS_ARGB(255, 255, 255, 255), blitted->w, blitted->h, mode);
+	tmp.blit(*blitted, 0, 0, Graphics::FLIP_NONE, nullptr, TS_ARGB(255, 255, 255, 255), (int)blitted->w, (int)blitted->h, mode);
 	tmp.free();
 }
 
@@ -376,7 +376,7 @@ Graphics::Surface *GraphicsManager::applyLightmapToSprite(Graphics::Surface *&bl
 					(mirror ? Graphics::FLIP_H : Graphics::FLIP_NONE),
 					(mirror ? &rect_h : &rect_none),
 					TS_ARGB(255, 255, 255, 255),
-					blitted->w, blitted->h, Graphics::BLEND_MULTIPLY);
+					(int)blitted->w, (int)blitted->h, Graphics::BLEND_MULTIPLY);
 		}
 	} else {
 		curLight[0] = curLight[1] = curLight[2] = 255;

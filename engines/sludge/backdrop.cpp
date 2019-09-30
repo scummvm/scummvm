@@ -388,7 +388,7 @@ bool GraphicsManager::loadLightMap(int v) {
 		if (_lightMapMode == LIGHTMAPMODE_HOTSPOT) {
 			return fatal("Light map width and height don't match scene width and height. That is required for lightmaps in HOTSPOT mode.");
 		} else if (_lightMapMode == LIGHTMAPMODE_PIXEL) {
-			tmp.blit(_lightMap, 0, 0, Graphics::FLIP_NONE, nullptr, TS_ARGB(255, 255, 255, 255), _sceneWidth, _sceneHeight);
+			tmp.blit(_lightMap, 0, 0, Graphics::FLIP_NONE, nullptr, TS_ARGB(255, 255, 255, 255), (int)_sceneWidth, (int)_sceneHeight);
 		} else {
 			_lightMap.copyFrom(tmp);
 		}
