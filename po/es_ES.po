@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2019-09-30 06:46+0200\n"
-"PO-Revision-Date: 2019-09-28 22:57+0000\n"
+"PO-Revision-Date: 2019-10-01 04:55+0000\n"
 "Last-Translator: Rodrigo Vegas Sánchez-Ferrero <rodrigo.vegas@gmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/es/>\n"
@@ -23,7 +23,7 @@ msgstr ""
 #: gui/about.cpp:94
 #, c-format
 msgid "(built on %s)"
-msgstr "(compilado el %s)"
+msgstr "(compilación de %s)"
 
 #: gui/about.cpp:101
 msgid "Features compiled in:"
@@ -928,7 +928,7 @@ msgstr "Filtros de gráficos"
 
 #: gui/options.cpp:1099
 msgid "Use linear filtering when scaling graphics"
-msgstr "Usar filtrado lineal al reescalar gráficos"
+msgstr "Usar filtrado lineal al escalar gráficos"
 
 #: gui/options.cpp:1102
 msgid "Aspect ratio correction"
@@ -1049,7 +1049,7 @@ msgstr "Roland MT-32 real (sin emulación GM)"
 
 #: gui/options.cpp:1218
 msgid "Roland GS device (enable MT-32 mappings)"
-msgstr "Roland GS (activar conversión MT-32)"
+msgstr "Roland GS (activar mapeos MT-32)"
 
 #: gui/options.cpp:1218
 msgid ""
@@ -1190,7 +1190,7 @@ msgstr "Tema:"
 
 #: gui/options.cpp:1667
 msgid "GUI renderer:"
-msgstr "Renderizador del interfaz:"
+msgstr "Renderizador de interfaz:"
 
 #: gui/options.cpp:1679
 msgid "Autosave:"
@@ -1284,7 +1284,7 @@ msgstr "Usar Texto a voz"
 
 #: gui/options.cpp:1795
 msgid "Will read text in gui on mouse over."
-msgstr "Leerá el texto en la interfaz de usuario al pasar el ratón."
+msgstr "Leerá el texto en la interfaz al pasar el ratón."
 
 #: gui/options.cpp:1826
 msgid "Apply"
@@ -1303,15 +1303,15 @@ msgctxt "lowres"
 msgid ""
 "4. Storage is not yet enabled. Verify that username is correct and enable it:"
 msgstr ""
-"4. El almacenamiento no está activado todavía. Verifique que el nombre de "
-"usuario es correcto y actívelo:"
+"4. El almacenamiento no está activado todavía. Verifica que el nombre de "
+"usuario es correcto y actívalo:"
 
 #: gui/options.cpp:1925
 msgid ""
 "4. Storage is not yet enabled. Verify that username is correct and enable it:"
 msgstr ""
-"4. El almacenamiento no está activado todavía. Verifique que el nombre de "
-"usuario es correcto y actívelo:"
+"4. El almacenamiento no está activado todavía. Verifica que el nombre de "
+"usuario es correcto y actívalo:"
 
 #: gui/options.cpp:1926
 msgid "Enable storage"
@@ -1319,7 +1319,7 @@ msgstr "Activar almacenamiento"
 
 #: gui/options.cpp:1926
 msgid "Confirm you want to use this account for this storage"
-msgstr "Confirma que deseas usar esta cuenta como almacenamiento"
+msgstr "Confirma que quieres usar esta cuenta como almacenamiento"
 
 #: gui/options.cpp:1928 backends/platform/wii/options.cpp:114
 msgid "Username:"
@@ -1382,16 +1382,16 @@ msgstr "Sincronizar las partidas guardadas"
 msgctxt "lowres"
 msgid "You can download game files from your cloud ScummVM folder:"
 msgstr ""
-"Puede descargar archivos de juego desde tu carpeta en la nube de ScummVM:"
+"Puedes descargar archivos de juego desde tu carpeta en la nube de ScummVM:"
 
 #: gui/options.cpp:1945
 msgid "You can download game files from your cloud ScummVM folder:"
 msgstr ""
-"Puede descargar archivos de juego desde tu carpeta en la nube de ScummVM:"
+"Puedes descargar archivos de juego desde tu carpeta en la nube de ScummVM:"
 
 #: gui/options.cpp:1946
 msgid "Download game files"
-msgstr "Descargar archivos del juego"
+msgstr "Descargar archivos de juego"
 
 #: gui/options.cpp:1946
 msgid "Open downloads manager dialog"
@@ -1525,7 +1525,7 @@ msgstr "Ya se ha habilitado otro almacenamiento en línea."
 
 #: gui/options.cpp:2145
 msgid "Theme does not support selected language!"
-msgstr "¡El tema no soporta el idioma seleccionado!"
+msgstr "¡El estilo no está soportado en el idioma seleccionado!"
 
 #: gui/options.cpp:2148
 msgid "Theme cannot be loaded!"
@@ -1545,7 +1545,7 @@ msgstr "No se puede escribir en el directorio elegido. Selecciona otro."
 
 #: gui/options.cpp:2217
 msgid "Select directory for GUI themes"
-msgstr "Selecciona el directorio de temas"
+msgstr "Selecciona el directorio de estilos"
 
 #: gui/options.cpp:2227
 msgid "Select directory for extra files"
@@ -1845,7 +1845,7 @@ msgstr "Aplicar"
 
 #: gui/widget.cpp:368 gui/widget.cpp:370 gui/widget.cpp:376 gui/widget.cpp:378
 msgid "Clear value"
-msgstr "Eliminar valor"
+msgstr "Limpiar contenido"
 
 #: base/main.cpp:255
 #, c-format
