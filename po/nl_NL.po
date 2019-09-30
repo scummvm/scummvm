@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2019-09-30 00:09+0200\n"
+"POT-Creation-Date: 2019-09-30 06:46+0200\n"
 "PO-Revision-Date: 2019-09-24 11:44+0000\n"
 "Last-Translator: Ben Castricum <github@bencastricum.nl>\n"
 "Language-Team: Dutch <https://translations.scummvm.org/projects/scummvm/"
@@ -4677,7 +4677,7 @@ msgstr ""
 "In dat geval zou u de originele Sierra patch moeten toepassen.\n"
 "\n"
 
-#: engines/scumm/detection.cpp:1123
+#: engines/scumm/detection.cpp:1132
 msgid ""
 "Your game version appears to be unknown. If this is *NOT* a fan-modified\n"
 "version (in particular, not a fan-made translation), please, report the\n"
@@ -4690,7 +4690,7 @@ msgstr ""
 "rapporteer a.u.b. de volgende data aan het ScummVM team, samen met naam van "
 "het spel die u probeerde toe te voegen, zijn versie, de taal, etc.:\n"
 
-#: engines/scumm/detection.cpp:1141
+#: engines/scumm/detection.cpp:1150
 msgid ""
 "The Lite version of Putt-Putt Saves the Zoo iOS is not supported to avoid "
 "piracy.\n"
@@ -4700,11 +4700,11 @@ msgstr ""
 "piraterij te voorkomen.\n"
 "De volledige versie is te koop in de iTunes Store."
 
-#: engines/scumm/detection.cpp:1352
+#: engines/scumm/detection.cpp:1361
 msgid "Show Object Line"
 msgstr "Toon Object Regel"
 
-#: engines/scumm/detection.cpp:1353
+#: engines/scumm/detection.cpp:1362
 msgid "Show the names of objects at the bottom of the screen"
 msgstr "Toon de namen van de objecten onderaan het scherm"
 

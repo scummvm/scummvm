@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2019-09-30 00:09+0200\n"
+"POT-Creation-Date: 2019-09-30 06:46+0200\n"
 "PO-Revision-Date: 2019-09-22 07:54+0000\n"
 "Last-Translator: jepael <kermespersialainen@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
@@ -4644,7 +4644,7 @@ msgstr ""
 "Sierran päivityspaketin.\n"
 "\n"
 
-#: engines/scumm/detection.cpp:1123
+#: engines/scumm/detection.cpp:1132
 msgid ""
 "Your game version appears to be unknown. If this is *NOT* a fan-modified\n"
 "version (in particular, not a fan-made translation), please, report the\n"
@@ -4657,7 +4657,7 @@ msgstr ""
 "kehittäjille pelin nimen,\n"
 "version, kielen, yms. kera.\n"
 
-#: engines/scumm/detection.cpp:1141
+#: engines/scumm/detection.cpp:1150
 msgid ""
 "The Lite version of Putt-Putt Saves the Zoo iOS is not supported to avoid "
 "piracy.\n"
@@ -4667,11 +4667,11 @@ msgstr ""
 "ehkäisemiseksi.\n"
 "Kokoversion voi ostaa iTunes-kaupasta."
 
-#: engines/scumm/detection.cpp:1352
+#: engines/scumm/detection.cpp:1361
 msgid "Show Object Line"
 msgstr "Näytä esineiden tiedot"
 
-#: engines/scumm/detection.cpp:1353
+#: engines/scumm/detection.cpp:1362
 msgid "Show the names of objects at the bottom of the screen"
 msgstr "Näytä esineiden nimet näytön alalaidassa"
 
