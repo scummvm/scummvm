@@ -230,6 +230,9 @@ int main(int argc, char *argv[]) {
 	res = scummvm_main(argc, argv);
 	g_system->quit();
 
+	g_system->destroy();
+	g_system = nullptr;
+
 	printf("shutdown\n");
 
 	SYS_UnregisterResetFunc(&resetinfo);
