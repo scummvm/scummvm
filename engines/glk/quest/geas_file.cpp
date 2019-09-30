@@ -231,14 +231,14 @@ bool GeasFile::get_obj_property(String objname, String propname, String &string_
 	}
 	String objtype = (*obj_types.find(objname))._value;
 
-	const GeasBlock *block = find_by_name(objtype, objname);
+	const GeasBlock *geasBlock = find_by_name(objtype, objname);
 
 	String not_prop = "not " + propname;
 	uint c1, c2;
-	assert(block != NULL);
-	//assert (block->data != NULL);
-	for (uint i = 0; i < block->data.size(); i ++) {
-		String line = block->data[i];
+	assert(geasBlock != NULL);
+	//assert (geasBlock->data != NULL);
+	for (uint i = 0; i < geasBlock->data.size(); i ++) {
+		String line = geasBlock->data[i];
 		//cerr << "  g_o_p: Handling line <" << line << ">\n";
 		String tok = first_token(line, c1, c2);
 		// SENSITIVE?
@@ -481,13 +481,13 @@ bool GeasFile::get_obj_action(String objname, String propname, String &string_rv
 
 void GeasFile::get_type_action(String typenamex, String actname, bool &bool_rv, String &string_rv) const {
 	//cerr << "  Checking type <" << typenamex << "> for action <" << actname << ">\n";
-	const GeasBlock *block = find_by_name("type", typenamex);
-	if (block == NULL) {
+	const GeasBlock *geasBlock = find_by_name("type", typenamex);
+	if (geasBlock == NULL) {
 		debug_print("Object of nonexistent type " + typenamex);
 		return;
 	}
-	for (uint i = 0; i < block->data.size(); i ++) {
-		String line = block->data[i];
+	for (uint i = 0; i < geasBlock->data.size(); i ++) {
+		String line = geasBlock->data[i];
 		//cerr << "    g_t_a: Comparing vs. line <" << line << ">\n";
 		uint c1, c2;
 		String tok = first_token(line, c1, c2);

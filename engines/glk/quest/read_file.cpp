@@ -641,7 +641,7 @@ String trim(String s, trim_modes trim_mode) {
  * - Otherwise, it's unbalanced
  */
 bool is_balanced(String str) {
-	uint index = str.find('{');
+	int index = str.find('{');
 	if (index == -1)
 		return true;
 	int depth;
@@ -655,7 +655,7 @@ bool is_balanced(String str) {
 
 int count_depth(String str, int count) {
 	//cerr << "count_depth (" << str << ", " << count << ")" << endl;
-	uint index = 0;
+	int index = 0;
 	if (count == 0)
 		index = str.find('{');
 	while (index < str.size()) {

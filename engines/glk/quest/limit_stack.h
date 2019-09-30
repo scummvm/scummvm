@@ -54,7 +54,7 @@ template <class T> class LimitStack {
 	*/
 
 public:
-	LimitStack(uint size) : stack_size(size), cur_ptr(0), end_ptr(size - 1), data(Common::Array<T> (size)) { }
+	LimitStack(uint maxSize) : stack_size(maxSize), cur_ptr(0), end_ptr(maxSize - 1), data(Common::Array<T> (maxSize)) { }
 
 	void push(T &item) {
 		if (cur_ptr == end_ptr)

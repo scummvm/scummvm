@@ -138,7 +138,7 @@ public:
 
 	//void register_block (String blockname, String blocktype);
 
-	GeasState() {}
+	GeasState() : running(false) {}
 	//GeasState (GeasRunner &, const GeasFile &);
 	GeasState(GeasInterface &, const GeasFile &);
 	/*
