@@ -138,7 +138,7 @@ int RMFont::stringLen(char bChar, char bNext) {
 *       RMFontColor Methods
 \****************************************************************************/
 
-RMFontColor::RMFontColor() : RMFont() {
+RMFontColor::RMFontColor() {
 	_fontR = _fontG = _fontB = 255;
 }
 
