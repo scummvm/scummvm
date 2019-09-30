@@ -2319,10 +2319,10 @@ echo_n "Checking endianness... "
 cat > tmp_endianness_check.cpp << EOF
 unsigned short ascii_mm[] = { 0x4249, 0x4765, 0x6E44, 0x6961, 0x6E53, 0x7953, 0 };
 unsigned short ascii_ii[] = { 0x694C, 0x5454, 0x656C, 0x6E45, 0x6944, 0x6E61, 0 };
-void _ascii() { char* s = (char*) ascii_mm; s = (char*) ascii_ii; }
+const char * _ascii() { char* s = (char*) ascii_mm; s = (char*) ascii_ii; return s; }
 unsigned short ebcdic_ii[] = { 0x89D3, 0xE3E3, 0x8593, 0x95C5, 0x89C4, 0x9581, 0 };
 unsigned short ebcdic_mm[] = { 0xC2C9, 0xC785, 0x95C4, 0x8981, 0x95E2, 0xA8E2, 0 };
-void _ebcdic() { char* s = (char*) ebcdic_mm; s = (char*) ebcdic_ii; }
+const char * _ebcdic() { char* s = (char*) ebcdic_mm; s = (char*) ebcdic_ii; return s; }
 int main() { _ascii (); _ebcdic (); return 0; }
 EOF
 $CXX $LDFLAGS $CXXFLAGS -o $TMPO$HOSTEXEEXT tmp_endianness_check.cpp
