@@ -35,6 +35,17 @@
 struct BdfBoundingBox {
 	int width, height;
 	int xOffset, yOffset;
+
+	void reset() {
+		width = 0;
+		height = 0;
+		xOffset = 0;
+		yOffset = 0;
+	}
+
+	BdfBoundingBox() {
+		reset();
+	}
 };
 
 struct BdfFont {
@@ -54,7 +65,26 @@ struct BdfFont {
 	unsigned char *advances;
 	BdfBoundingBox *boxes;
 
-	BdfFont() : bitmaps(0), advances(0), boxes(0), familyName(0), slant(0) {
+	void reset() {
+		familyName = 0;
+		slant = 0;
+		maxAdvance = 0;
+		size = 0;
+		height = 0;
+		defaultBox.reset();
+		ascent = 0;
+
+		firstCharacter = 0;
+		defaultCharacter = 0;
+		numCharacters = 0;
+
+		bitmaps = 0;
+		advances = 0;
+		boxes = 0;
+	}
+
+	BdfFont() {
+		reset();
 	}
 
 	~BdfFont() {
@@ -131,7 +161,6 @@ int main(int argc, char *argv[]) {
 	std::string fontName;
 	std::string copyright;
 	BdfFont font;
-	memset(&font, 0, sizeof(font));
 	font.ascent = -1;
 	font.defaultCharacter = -1;
 
