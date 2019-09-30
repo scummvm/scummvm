@@ -145,7 +145,16 @@ void OSystem_Wii::initBackend() {
 }
 
 void OSystem_Wii::quit() {
+	/* Delete _timerManager before deinitializing events as it's tied */
+	delete _timerManager;
+	_timerManager = nullptr;
+
 	deinitEvents();
+
+	/* Delete _eventManager before destroying FS to avoid problems when releasing virtual keyboard data */
+	delete _eventManager;
+	_eventManager = nullptr;
+
 	deinitSfx();
 	deinitGfx();
 
