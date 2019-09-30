@@ -207,6 +207,8 @@ private:
 
 		bool _disabled;
 
+		Palette() : _data(0), _start(0), _num(0), _size(0), _disabled(false) {}
+
 		Palette(const byte *colors, uint start, uint num);
 		~Palette();
 	};
