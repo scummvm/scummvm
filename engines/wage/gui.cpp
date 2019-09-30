@@ -309,7 +309,7 @@ void Gui::executeMenuCommand(int action, Common::String &text) {
 
 void Gui::loadBorders() {
 	loadBorder(_sceneWindow, "wage_border_inact.bmp", false);
-	loadBorder(_sceneWindow, "wage_border_act.bmp", true);
+	loadBorder(_sceneWindow, "wage_border_act-noscrollbar.bmp", true);
 	loadBorder(_consoleWindow, "wage_border_inact.bmp", false);
 	loadBorder(_consoleWindow, "wage_border_act.bmp", true);
 }
