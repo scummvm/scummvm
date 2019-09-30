@@ -872,8 +872,8 @@ void prop_adopt(sc_prop_setref_t bundle, void *addr) {
  *
  * Print out a complete properties set.
  */
-static sc_bool prop_debug_is_dictionary_string(sc_prop_setref_t bundle, const void *pointer) {
-	const sc_char *const pointer_ = (const sc_char * const)pointer;
+static sc_bool prop_debug_is_dictionary_string(sc_prop_setref_t bundle, const sc_char *pointer) {
+	const sc_char *const pointer_ = pointer;
 	sc_int index_;
 
 	/* Compare by pointer directly, not by string value comparisons. */

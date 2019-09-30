@@ -273,6 +273,7 @@ static void task_move_object(sc_gameref_t game, sc_int object, sc_int var2, sc_i
 
 	default:
 		sc_fatal("task_move_object: unknown move type, %ld\n", var2);
+		break;
 	}
 }
 
@@ -639,6 +640,7 @@ static void task_run_change_variable_action(sc_gameref_t game,
 		default:
 			sc_fatal("task_run_change_variable_action:"
 			         " unknown integer change type, %ld\n", var2);
+			break;
 		}
 
 	case TAFVAR_STRING:        /* String */
@@ -683,11 +685,13 @@ static void task_run_change_variable_action(sc_gameref_t game,
 		default:
 			sc_fatal("task_run_change_variable_action:"
 			         " unknown string change type, %ld\n", var2);
+			break;
 		}
 
 	default:
 		sc_fatal("task_run_change_variable_action:"
 		         " invalid variable type, %ld\n", type);
+		break;
 	}
 }
 
@@ -833,6 +837,7 @@ static sc_bool task_run_end_game_action(sc_gameref_t game, sc_int var1) {
 
 	default:
 		sc_fatal("task_run_end_game_action: invalid type, %ld\n", var1);
+		break;
 	}
 
 	/* Stop the game, and note that it's not resumeable. */
@@ -932,6 +937,7 @@ static sc_bool task_run_task_action(sc_gameref_t game, sc_int task, sc_int actio
 
 	default:
 		sc_fatal("task_run_task_action: unknown action type %ld\n", type);
+		break;
 	}
 
 	return status;
