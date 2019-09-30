@@ -820,7 +820,7 @@ SoundResource::SoundResource(uint32 resourceNr, ResourceManager *resMan, SciVers
 
 					uint16 size = data.getUint16LEAt(4);
 
-					if (dataOffset + size > resource->size()) {
+					if ((uint32)dataOffset + size > resource->size()) {
 						warning("Invalid size inside sound resource %d: track %d, channel %d", resourceNr, trackNr, channelNr);
 						size = resource->size() - dataOffset;
 					}
