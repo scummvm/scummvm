@@ -683,7 +683,7 @@ sc_int taf_get_version(sc_tafref_t taf) {
  * slab, and therefore safe to print.
  */
 sc_bool taf_debug_is_taf_string(sc_tafref_t taf, const void *addr) {
-	const sc_byte *const addr_ = (const sc_byte * const)addr;
+	const sc_byte *const addr_ = (const sc_byte *)addr;
 	sc_int index_;
 
 	/*

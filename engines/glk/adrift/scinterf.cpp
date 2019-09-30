@@ -404,7 +404,7 @@ static sc_bool if_game_error(const sc_gameref_t game, const sc_char *function_na
  * be restored.  sc_undo_game_turn() behaves like sc_load_game().
  */
 void sc_interpret_game(CONTEXT, sc_game game) {
-	const sc_gameref_t game_ = (const sc_gameref_t)game;
+	const sc_gameref_t game_ = (sc_gameref_t)game;
 
 	if (if_game_error(game_, "sc_interpret_game"))
 		return;
@@ -413,7 +413,7 @@ void sc_interpret_game(CONTEXT, sc_game game) {
 }
 
 void sc_restart_game(CONTEXT, sc_game game) {
-	const sc_gameref_t game_ = (const sc_gameref_t)game;
+	const sc_gameref_t game_ = (sc_gameref_t)game;
 
 	if (if_game_error(game_, "sc_restart_game"))
 		return;
@@ -422,7 +422,7 @@ void sc_restart_game(CONTEXT, sc_game game) {
 }
 
 sc_bool sc_save_game(sc_game game) {
-	const sc_gameref_t game_ = (const sc_gameref_t)game;
+	const sc_gameref_t game_ = (sc_gameref_t)game;
 
 	if (if_game_error(game_, "sc_save_game"))
 		return FALSE;
@@ -431,7 +431,7 @@ sc_bool sc_save_game(sc_game game) {
 }
 
 sc_bool sc_load_game(CONTEXT, sc_game game) {
-	const sc_gameref_t game_ = (const sc_gameref_t)game;
+	const sc_gameref_t game_ = (sc_gameref_t)game;
 
 	if (if_game_error(game_, "sc_load_game"))
 		return FALSE;
@@ -440,7 +440,7 @@ sc_bool sc_load_game(CONTEXT, sc_game game) {
 }
 
 sc_bool sc_undo_game_turn(CONTEXT, sc_game game) {
-	const sc_gameref_t game_ = (const sc_gameref_t)game;
+	const sc_gameref_t game_ = (sc_gameref_t)game;
 
 	if (if_game_error(game_, "sc_undo_game_turn"))
 		return FALSE;
@@ -449,7 +449,7 @@ sc_bool sc_undo_game_turn(CONTEXT, sc_game game) {
 }
 
 void sc_quit_game(CONTEXT, sc_game game) {
-	const sc_gameref_t game_ = (const sc_gameref_t)game;
+	const sc_gameref_t game_ = (sc_gameref_t)game;
 
 	if (if_game_error(game_, "sc_quit_game"))
 		return;
@@ -473,7 +473,7 @@ void sc_quit_game(CONTEXT, sc_game game) {
  * streams.
  */
 sc_bool sc_save_game_to_filename(sc_game game, const sc_char *filename) {
-	const sc_gameref_t game_ = (const sc_gameref_t)game;
+	const sc_gameref_t game_ = (sc_gameref_t)game;
 	Common::OutSaveFile *sf;
 
 	if (if_game_error(game_, "sc_save_game_to_filename"))
@@ -498,7 +498,7 @@ sc_bool sc_save_game_to_filename(sc_game game, const sc_char *filename) {
 }
 
 void sc_save_game_to_stream(sc_game game, Common::SeekableReadStream *stream) {
-	const sc_gameref_t game_ = (const sc_gameref_t)game;
+	const sc_gameref_t game_ = (sc_gameref_t)game;
 
 	if (if_game_error(game_, "sc_save_game_to_stream"))
 		return;
@@ -513,7 +513,7 @@ void sc_save_game_to_stream(sc_game game, Common::SeekableReadStream *stream) {
 
 void sc_save_game_to_callback(sc_game game,
 		void (*callback)(void *, const sc_byte *, sc_int), void *opaque) {
-	const sc_gameref_t game_ = (const sc_gameref_t)game;
+	const sc_gameref_t game_ = (sc_gameref_t)game;
 
 	if (if_game_error(game_, "sc_save_game_to_callback"))
 		return;
@@ -527,7 +527,7 @@ void sc_save_game_to_callback(sc_game game,
 }
 
 sc_bool sc_load_game_from_filename(CONTEXT, sc_game game, const sc_char *filename) {
-	const sc_gameref_t game_ = (const sc_gameref_t)game;
+	const sc_gameref_t game_ = (sc_gameref_t)game;
 	Common::InSaveFile *sf;
 	sc_bool status;
 
@@ -552,7 +552,7 @@ sc_bool sc_load_game_from_filename(CONTEXT, sc_game game, const sc_char *filenam
 }
 
 sc_bool sc_load_game_from_stream(CONTEXT, sc_game game, Common::SeekableReadStream *stream) {
-	const sc_gameref_t game_ = (const sc_gameref_t)game;
+	const sc_gameref_t game_ = (sc_gameref_t)game;
 
 	if (if_game_error(game_, "sc_load_game_from_stream"))
 		return FALSE;
@@ -567,7 +567,7 @@ sc_bool sc_load_game_from_stream(CONTEXT, sc_game game, Common::SeekableReadStre
 
 sc_bool sc_load_game_from_callback(CONTEXT, sc_game game,
 		sc_int(*callback)(void *, sc_byte *, sc_int), void *opaque) {
-	const sc_gameref_t game_ = (const sc_gameref_t)game;
+	const sc_gameref_t game_ = (sc_gameref_t)game;
 
 	if (if_game_error(game_, "sc_load_game_from_callback"))
 		return FALSE;
@@ -587,7 +587,7 @@ sc_bool sc_load_game_from_callback(CONTEXT, sc_game game,
  * Called by the OS-specific layer to free run context memory.
  */
 void sc_free_game(sc_game game) {
-	const sc_gameref_t game_ = (const sc_gameref_t)game;
+	const sc_gameref_t game_ = (sc_gameref_t)game;
 
 	if (if_game_error(game_, "sc_free_game"))
 		return;
@@ -616,7 +616,7 @@ void sc_free_game(sc_game game) {
  * Return a few attributes of a game.
  */
 sc_bool sc_is_game_running(sc_game game) {
-	const sc_gameref_t game_ = (const sc_gameref_t)game;
+	const sc_gameref_t game_ = (sc_gameref_t)game;
 
 	if (if_game_error(game_, "sc_is_game_running"))
 		return FALSE;
@@ -625,7 +625,7 @@ sc_bool sc_is_game_running(sc_game game) {
 }
 
 const sc_char *sc_get_game_name(sc_game game) {
-	const sc_gameref_t game_ = (const sc_gameref_t)game;
+	const sc_gameref_t game_ = (sc_gameref_t)game;
 	const sc_char *retval;
 
 	if (if_game_error(game_, "sc_get_game_name"))
@@ -639,7 +639,7 @@ const sc_char *sc_get_game_name(sc_game game) {
 
 const sc_char *
 sc_get_game_author(sc_game game) {
-	const sc_gameref_t game_ = (const sc_gameref_t)game;
+	const sc_gameref_t game_ = (sc_gameref_t)game;
 	const sc_char *retval;
 
 	if (if_game_error(game_, "sc_get_game_author"))
@@ -652,7 +652,7 @@ sc_get_game_author(sc_game game) {
 }
 
 const sc_char *sc_get_game_compile_date(sc_game game) {
-	const sc_gameref_t game_ = (const sc_gameref_t)game;
+	const sc_gameref_t game_ = (sc_gameref_t)game;
 	const sc_char *retval;
 
 	if (if_game_error(game_, "sc_get_game_compile_date"))
@@ -664,7 +664,7 @@ const sc_char *sc_get_game_compile_date(sc_game game) {
 }
 
 sc_int sc_get_game_turns(sc_game game) {
-	const sc_gameref_t game_ = (const sc_gameref_t)game;
+	const sc_gameref_t game_ = (sc_gameref_t)game;
 	sc_int retval;
 
 	if (if_game_error(game_, "sc_get_game_turns"))
@@ -676,7 +676,7 @@ sc_int sc_get_game_turns(sc_game game) {
 }
 
 sc_int sc_get_game_score(sc_game game) {
-	const sc_gameref_t game_ = (const sc_gameref_t)game;
+	const sc_gameref_t game_ = (sc_gameref_t)game;
 	sc_int retval;
 
 	if (if_game_error(game_, "sc_get_game_score"))
@@ -688,7 +688,7 @@ sc_int sc_get_game_score(sc_game game) {
 }
 
 sc_int sc_get_game_max_score(sc_game game) {
-	const sc_gameref_t game_ = (const sc_gameref_t)game;
+	const sc_gameref_t game_ = (sc_gameref_t)game;
 	sc_int retval;
 
 	if (if_game_error(game_, "sc_get_game_max_score"))
@@ -700,7 +700,7 @@ sc_int sc_get_game_max_score(sc_game game) {
 }
 
 const sc_char *sc_get_game_room(sc_game game) {
-	const sc_gameref_t game_ = (const sc_gameref_t)game;
+	const sc_gameref_t game_ = (sc_gameref_t)game;
 	const sc_char *retval;
 
 	if (if_game_error(game_, "sc_get_game_room"))
@@ -712,7 +712,7 @@ const sc_char *sc_get_game_room(sc_game game) {
 }
 
 const sc_char *sc_get_game_status_line(sc_game game) {
-	const sc_gameref_t game_ = (const sc_gameref_t)game;
+	const sc_gameref_t game_ = (sc_gameref_t)game;
 	const sc_char *retval;
 
 	if (if_game_error(game_, "sc_get_game_status_line"))
@@ -724,7 +724,7 @@ const sc_char *sc_get_game_status_line(sc_game game) {
 }
 
 const sc_char *sc_get_game_preferred_font(sc_game game) {
-	const sc_gameref_t game_ = (const sc_gameref_t)game;
+	const sc_gameref_t game_ = (sc_gameref_t)game;
 	const sc_char *retval;
 
 	if (if_game_error(game_, "sc_get_game_preferred_font"))
@@ -736,7 +736,7 @@ const sc_char *sc_get_game_preferred_font(sc_game game) {
 }
 
 sc_bool sc_get_game_bold_room_names(sc_game game) {
-	const sc_gameref_t game_ = (const sc_gameref_t)game;
+	const sc_gameref_t game_ = (sc_gameref_t)game;
 	sc_bool retval;
 
 	if (if_game_error(game_, "sc_get_game_bold_room_names"))
@@ -748,7 +748,7 @@ sc_bool sc_get_game_bold_room_names(sc_game game) {
 }
 
 sc_bool sc_get_game_verbose(sc_game game) {
-	const sc_gameref_t game_ = (const sc_gameref_t)game;
+	const sc_gameref_t game_ = (sc_gameref_t)game;
 	sc_bool retval;
 
 	if (if_game_error(game_, "sc_get_game_verbose"))
@@ -760,7 +760,7 @@ sc_bool sc_get_game_verbose(sc_game game) {
 }
 
 sc_bool sc_get_game_notify_score_change(sc_game game) {
-	const sc_gameref_t game_ = (const sc_gameref_t)game;
+	const sc_gameref_t game_ = (sc_gameref_t)game;
 	sc_bool retval;
 
 	if (if_game_error(game_, "sc_get_game_notify_score_change"))
@@ -772,7 +772,7 @@ sc_bool sc_get_game_notify_score_change(sc_game game) {
 }
 
 sc_bool sc_has_game_completed(sc_game game) {
-	const sc_gameref_t game_ = (const sc_gameref_t)game;
+	const sc_gameref_t game_ = (sc_gameref_t)game;
 
 	if (if_game_error(game_, "sc_has_game_completed"))
 		return FALSE;
@@ -781,7 +781,7 @@ sc_bool sc_has_game_completed(sc_game game) {
 }
 
 sc_bool sc_is_game_undo_available(sc_game game) {
-	const sc_gameref_t game_ = (const sc_gameref_t)game;
+	const sc_gameref_t game_ = (sc_gameref_t)game;
 
 	if (if_game_error(game_, "sc_is_game_undo_available"))
 		return FALSE;
@@ -798,7 +798,7 @@ sc_bool sc_is_game_undo_available(sc_game game) {
  * Set a few attributes of a game.
  */
 void sc_set_game_bold_room_names(sc_game game, sc_bool flag) {
-	const sc_gameref_t game_ = (const sc_gameref_t)game;
+	const sc_gameref_t game_ = (sc_gameref_t)game;
 	sc_bool bold, verbose, notify;
 
 	if (if_game_error(game_, "sc_set_game_bold_room_names"))
@@ -810,7 +810,7 @@ void sc_set_game_bold_room_names(sc_game game, sc_bool flag) {
 }
 
 void sc_set_game_verbose(sc_game game, sc_bool flag) {
-	const sc_gameref_t game_ = (const sc_gameref_t)game;
+	const sc_gameref_t game_ = (sc_gameref_t)game;
 	sc_bool bold, verbose, notify;
 
 	if (if_game_error(game_, "sc_set_game_verbose"))
@@ -822,7 +822,7 @@ void sc_set_game_verbose(sc_game game, sc_bool flag) {
 }
 
 void sc_set_game_notify_score_change(sc_game game, sc_bool flag) {
-	const sc_gameref_t game_ = (const sc_gameref_t)game;
+	const sc_gameref_t game_ = (sc_gameref_t)game;
 	sc_bool bold, verbose, notify;
 
 	if (if_game_error(game_, "sc_set_game_notify_score_change"))
@@ -841,7 +841,7 @@ void sc_set_game_notify_score_change(sc_game game, sc_bool flag) {
  * Indicate the game's use of resources.
  */
 sc_bool sc_does_game_use_sounds(sc_game game) {
-	const sc_gameref_t game_ = (const sc_gameref_t)game;
+	const sc_gameref_t game_ = (sc_gameref_t)game;
 
 	if (if_game_error(game_, "sc_does_game_use_sounds"))
 		return FALSE;
@@ -850,7 +850,7 @@ sc_bool sc_does_game_use_sounds(sc_game game) {
 }
 
 sc_bool sc_does_game_use_graphics(sc_game game) {
-	const sc_gameref_t game_ = (const sc_gameref_t)game;
+	const sc_gameref_t game_ = (sc_gameref_t)game;
 
 	if (if_game_error(game_, "sc_does_game_use_graphics"))
 		return FALSE;
@@ -869,7 +869,7 @@ sc_bool sc_does_game_use_graphics(sc_game game) {
  * Iterate currently available hints, and return strings for a hint.
  */
 sc_game_hint sc_get_first_game_hint(sc_game game) {
-	const sc_gameref_t game_ = (const sc_gameref_t)game;
+	const sc_gameref_t game_ = (sc_gameref_t)game;
 
 	if (if_game_error(game_, "sc_get_first_game_hint"))
 		return nullptr;
@@ -878,8 +878,8 @@ sc_game_hint sc_get_first_game_hint(sc_game game) {
 }
 
 sc_game_hint sc_get_next_game_hint(sc_game game, sc_game_hint hint) {
-	const sc_gameref_t game_ = (const sc_gameref_t)game;
-	const sc_hintref_t hint_ = (const sc_hintref_t)hint;
+	const sc_gameref_t game_ = (sc_gameref_t)game;
+	const sc_hintref_t hint_ = (sc_hintref_t)hint;
 
 	if (if_game_error(game_, "sc_get_next_game_hint"))
 		return nullptr;
@@ -892,8 +892,8 @@ sc_game_hint sc_get_next_game_hint(sc_game game, sc_game_hint hint) {
 }
 
 const sc_char *sc_get_game_hint_question(sc_game game, sc_game_hint hint) {
-	const sc_gameref_t game_ = (const sc_gameref_t)game;
-	const sc_hintref_t hint_ = (const sc_hintref_t)hint;
+	const sc_gameref_t game_ = (sc_gameref_t)game;
+	const sc_hintref_t hint_ = (sc_hintref_t)hint;
 
 	if (if_game_error(game_, "sc_get_game_hint_question"))
 		return nullptr;
@@ -906,8 +906,8 @@ const sc_char *sc_get_game_hint_question(sc_game game, sc_game_hint hint) {
 }
 
 const sc_char *sc_get_game_subtle_hint(sc_game game, sc_game_hint hint) {
-	const sc_gameref_t game_ = (const sc_gameref_t)game;
-	const sc_hintref_t hint_ = (const sc_hintref_t)hint;
+	const sc_gameref_t game_ = (sc_gameref_t)game;
+	const sc_hintref_t hint_ = (sc_hintref_t)hint;
 
 	if (if_game_error(game_, "sc_get_game_subtle_hint"))
 		return nullptr;
@@ -920,8 +920,8 @@ const sc_char *sc_get_game_subtle_hint(sc_game game, sc_game_hint hint) {
 }
 
 const sc_char *sc_get_game_unsubtle_hint(sc_game game, sc_game_hint hint) {
-	const sc_gameref_t game_ = (const sc_gameref_t)game;
-	const sc_hintref_t hint_ = (const sc_hintref_t)hint;
+	const sc_gameref_t game_ = (sc_gameref_t)game;
+	const sc_hintref_t hint_ = (sc_hintref_t)hint;
 
 	if (if_game_error(game_, "sc_get_game_unsubtle_hint"))
 		return nullptr;
@@ -942,7 +942,7 @@ const sc_char *sc_get_game_unsubtle_hint(sc_game game, sc_game_hint hint) {
  * Enable, disable, and query game debugging, and run a single debug command.
  */
 void sc_set_game_debugger_enabled(sc_game game, sc_bool flag) {
-	const sc_gameref_t game_ = (const sc_gameref_t)game;
+	const sc_gameref_t game_ = (sc_gameref_t)game;
 
 	if (if_game_error(game_, "sc_set_game_debugger_enabled"))
 		return;
@@ -951,7 +951,7 @@ void sc_set_game_debugger_enabled(sc_game game, sc_bool flag) {
 }
 
 sc_bool sc_get_game_debugger_enabled(sc_game game) {
-	const sc_gameref_t game_ = (const sc_gameref_t)game;
+	const sc_gameref_t game_ = (sc_gameref_t)game;
 
 	if (if_game_error(game_, "sc_get_game_debugger_enabled"))
 		return FALSE;
@@ -960,7 +960,7 @@ sc_bool sc_get_game_debugger_enabled(sc_game game) {
 }
 
 sc_bool sc_run_game_debugger_command(sc_game game, const sc_char *debug_command) {
-	const sc_gameref_t game_ = (const sc_gameref_t)game;
+	const sc_gameref_t game_ = (sc_gameref_t)game;
 
 	if (if_game_error(game_, "sc_run_game_debugger_command"))
 		return FALSE;
