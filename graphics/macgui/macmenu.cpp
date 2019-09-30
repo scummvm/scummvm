@@ -66,6 +66,10 @@ enum {
 	kEndMenu = 128
 };
 
+struct MacMenuSubItem;
+
+typedef Common::Array<MacMenuSubItem *> SubItemArray;
+
 struct MacMenuSubItem {
 	Common::String text;
 	Common::U32String unicodeText;
@@ -76,11 +80,11 @@ struct MacMenuSubItem {
 	bool enabled;
 	Common::Rect bbox;
 
+	SubItemArray subitems;
+
 	MacMenuSubItem(const Common::String &t, int a, int s = 0, char sh = 0, bool e = true) : text(t), unicode(false), action(a), style(s), shortcut(sh), enabled(e) {}
 	MacMenuSubItem(const Common::U32String &t, int a, int s = 0, char sh = 0, bool e = true) : unicodeText(t), unicode(true), action(a), style(s), shortcut(sh), enabled(e) {}
 };
-
-typedef Common::Array<MacMenuSubItem *> SubItemArray;
 
 struct MacMenuItem {
 	Common::String name;
@@ -575,6 +579,7 @@ void MacMenu::renderSubmenu(MacMenuItem *menu) {
 		// add unicode accelerator
 
 		int accelX = r->right - 25;
+		int arrowX = r->right - 14;
 
 		int color = _wm->_colorBlack;
 		if (i == (uint)_activeSubItem && (!text.empty() || !unicodeText.empty()) && menu->subitems[i]->enabled) {
@@ -605,6 +610,9 @@ void MacMenu::renderSubmenu(MacMenuItem *menu) {
 			if (!acceleratorText.empty())
 				_font->drawString(s, acceleratorText, accelX, ty, r->width(), color);
 
+			if (menu->subitems[i]->subitems.size())
+				drawSubMenuArrow(s, arrowX, ty, color);
+
 			if (!menu->subitems[i]->enabled) {
 				// I am lazy to extend drawString() with plotProc as a parameter, so
 				// fake it here
@@ -634,6 +642,14 @@ void MacMenu::renderSubmenu(MacMenuItem *menu) {
 
 	_contentIsDirty = true;
 	//g_system->copyRectToScreen(_screen.getBasePtr(r->left, r->top), _screen.pitch, r->left, r->top, r->width() + 2, r->height() + 2);
+}
+
+void MacMenu::drawSubMenuArrow(ManagedSurface *dst, int x, int y, int color) {
+	int height = 11;
+	for (int col = 0; col < 6; col++) {
+		dst->vLine(x + col, y + col + 1, y + col + height + 1, color);
+		height -= 2;
+	}
 }
 
 bool MacMenu::processEvent(Common::Event &event) {

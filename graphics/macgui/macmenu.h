@@ -101,6 +101,8 @@ private:
 
 	bool processMenuShortCut(byte flags, uint16 ascii);
 
+	void drawSubMenuArrow(ManagedSurface *dst, int x, int y, int color);
+
 	Common::Array<MacMenuItem *> _items;
 
 	const Font *_font;
