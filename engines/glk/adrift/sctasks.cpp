@@ -642,6 +642,7 @@ static void task_run_change_variable_action(sc_gameref_t game,
 			         " unknown integer change type, %ld\n", var2);
 			break;
 		}
+		break;
 
 	case TAFVAR_STRING:        /* String */
 
@@ -687,6 +688,7 @@ static void task_run_change_variable_action(sc_gameref_t game,
 			         " unknown string change type, %ld\n", var2);
 			break;
 		}
+		break;
 
 	default:
 		sc_fatal("task_run_change_variable_action:"
