@@ -793,7 +793,7 @@ sc_gameref_t gs_create(sc_var_setref_t vars, sc_prop_setref_t bundle, sc_filterr
  *
  * Return TRUE if pointer is a valid game, FALSE otherwise.
  */
-sc_bool gs_is_game_valid(sc_gameref_t game) {
+sc_bool gs_is_game_valid(const sc_gameref_t game) {
 	return game && game->magic == GAME_MAGIC;
 }
 

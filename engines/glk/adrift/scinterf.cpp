@@ -372,7 +372,7 @@ sc_game sc_game_from_callback(sc_int(*callback)(void *, sc_byte *, sc_int), void
  * Common function to verify that the game passed in to functions below
  * is a valid game.  Returns TRUE on game error, FALSE if okay.
  */
-static sc_bool if_game_error(sc_gameref_t game, const sc_char *function_name) {
+static sc_bool if_game_error(const sc_gameref_t game, const sc_char *function_name) {
 	/* Check for invalid game -- null pointer or bad magic. */
 	if (!gs_is_game_valid(game)) {
 		if (game)
