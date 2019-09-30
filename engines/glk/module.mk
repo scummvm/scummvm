@@ -189,7 +189,6 @@ MODULE_OBJS := \
 	quest/geas_state.o \
 	quest/geas_util.o \
 	quest/quest.o \
-	quest/tstring.o \
 	quest/read_file.o \
 	quest/string.o \
 	quest/streams.o \
