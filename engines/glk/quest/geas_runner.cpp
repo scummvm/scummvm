@@ -1070,9 +1070,8 @@ void geas_implementation::run_command(String s) {
 		oss << state;
 		print_normal(oss.str());
 		return;
-	}
-
-	if (s == "undo") {
+	
+	} else if (s == "undo") {
 		if (undo_buffer.size() < 2) {
 			print_formatted("(No more undo information available!)");
 			return;
@@ -1080,6 +1079,16 @@ void geas_implementation::run_command(String s) {
 		undo_buffer.pop();
 		state = undo_buffer.peek();
 		print_formatted("Undone.");
+		return;
+	
+	} else if (s == "save") {
+		if (g_vm->saveGame().getCode() == Common::kNoError)
+			print_formatted("Saved.");
+		return;
+	
+	} else if (s == "restore") {
+		if (g_vm->loadGame().getCode() == Common::kNoError)
+			run_command("look");
 		return;
 	}
 
@@ -1786,7 +1795,7 @@ bool geas_implementation::try_match(String cmd, bool is_internal, bool is_normal
 	}
 
 	if (ci_equal(cmd, "help")) {
-		print_formatted("|b|cl|s14Quest Quick Help|xb|cb|s00|n|n|cl|bMoving|xb|cb Press the direction buttons in the 'Compass' pane, or type |bGO NORTH|xb, |bSOUTH|xb, |bE|xb, etc. |xnTo go into a place, type |bGO TO ...|xb . To leave a place, type |bOUT, EXIT|xb or |bLEAVE|xb, or press the '|crOUT|cb' button.|n|cl|bObjects and Characters|xb|cb Use |bTAKE ...|xb, |bGIVE ... TO ...|xb, |bTALK|xb/|bSPEAK TO ...|xb, |bUSE ... ON|xb/|bWITH ...|xb, |bLOOK AT ...|xb, etc.|n|cl|bExit Quest|xb|cb Type |bQUIT|xb to leave Quest.|n|cl|bMisc|xb|cb Type |bABOUT|xb to get information on the current game.");
+		print_formatted("|b|cl|s14Quest Quick Help|xb|cb|s00|n|n|cl|bMoving|xb|cb Type |bGO NORTH|xb, |bSOUTH|xb, |bE|xb, etc. |xnTo go into a place, type |bGO TO ...|xb . To leave a place, type |bOUT, EXIT|xb or |bLEAVE|xb, or press the '|crOUT|cb' button.|n|cl|bObjects and Characters|xb|cb Use |bTAKE ...|xb, |bGIVE ... TO ...|xb, |bTALK|xb/|bSPEAK TO ...|xb, |bUSE ... ON|xb/|bWITH ...|xb, |bLOOK AT ...|xb, etc.|n|cl|bExit Quest|xb|cb Type |bQUIT|xb to leave Quest.|n|cl|bMisc|xb|cb Type |bABOUT|xb to get information on the current game.");
 		return true;
 	}
 
