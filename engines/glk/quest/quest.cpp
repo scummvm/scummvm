@@ -55,7 +55,20 @@ void Quest::playGame() {
 	char cur_buf[1024];
 	char buf[200];
 
+	// Check for savegame to load immediate
+	_saveSlot = ConfMan.hasKey("save_slot") ? ConfMan.getInt("save_slot") : -1;
+
+	// Set initial game state
 	_runner->set_game(String(getFilename().c_str()));
+
+	if (_saveSlot != -1) {
+		int saveSlot = _saveSlot;
+		_saveSlot = -1;
+
+		if (loadGameState(saveSlot).getCode() == Common::kNoError)
+			_runner->run_command("look");
+	}
+
 	banner = _runner->get_banner();
 	draw_banner();
 

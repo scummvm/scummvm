@@ -95,6 +95,11 @@ public:
 	 * Savegames aren't supported for Quest games
 	 */
 	virtual Common::Error writeGameData(Common::WriteStream *ws) override;
+
+	/**
+	 * Returns true if a savegame is being loaded directly from the ScummVM launcher
+	 */
+	bool loadingSavegame() const { return _saveSlot != -1; }
 };
 
 extern Quest *g_vm;

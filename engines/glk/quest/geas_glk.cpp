@@ -63,7 +63,8 @@ void draw_banner() {
 }
 
 void glk_put_cstring(const char *s) {
-	g_vm->glk_put_string(s);
+	if (!g_vm->loadingSavegame())
+		g_vm->glk_put_string(s);
 }
 
 GeasResult GeasGlkInterface::print_normal(const String &s) {
