@@ -498,6 +498,9 @@ int MacMenu::calcSubMenuWidth(MacMenuSubMenu *submenu) {
 				text += acceleratorText;
 			}
 
+			if (item->submenu != nullptr) // If we're drawing triangle
+				text += "  ";
+
 			int width = _font->getStringWidth(text);
 			if (width > maxWidth) {
 				maxWidth = width;
