@@ -35,6 +35,7 @@ namespace Graphics {
 
 struct MacMenuItem;
 struct MacMenuSubItem;
+struct MacMenuSubMenu;
 
 struct MacMenuData {
 	int menunum;
@@ -91,8 +92,8 @@ private:
 	const Font *getMenuFont();
 	const Common::String getAcceleratorString(MacMenuSubItem *item, const char *prefix);
 	int calculateMenuWidth(MacMenuItem *menu);
-	void calcMenuBounds(MacMenuItem *menu);
-	void renderSubmenu(MacMenuItem *menu);
+	void calcSubMenuBounds(MacMenuItem *menu);
+	void renderSubmenu(MacMenuSubMenu *menu);
 
 	bool keyEvent(Common::Event &event);
 	bool mouseClick(int x, int y);
