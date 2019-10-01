@@ -27,7 +27,7 @@ For a more comprehensive changelog of the latest experimental code, see:
 
  General:
    - Improved GUI rendering and overall GUI performance.
-   - Add stretch mode option to control how the display is stretch to the
+   - Added stretch mode option to control how the display is stretched to the
      window or screen area.
    - Fixed incorrect cursor movement when it's controlled using the keyboard.
    - Updated the Roland MT-32 emulation code to Munt 2.3.0.
@@ -68,7 +68,7 @@ For a more comprehensive changelog of the latest experimental code, see:
      and Riven.
 
  Mortevielle:
-   - Add speech synthesis on some platforms.
+   - Added speech synthesis on some platforms.
 
  SCI:
    - Added LarryScale, a high quality cartoon scaler for Leisure Suit Larry 7.
@@ -125,7 +125,7 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Bud is also no longer able to walk through closed doors.
    - Added mouse wheel support for inventory scrolling.
    - Allow skipping of speech.
-   - Improved savegame handling and add support for autosaves.
+   - Improved savegame handling and added support for autosaves.
 
  ZVISION:
    - Fixed graphical glitch in Zork: Grand Inquisitor.
