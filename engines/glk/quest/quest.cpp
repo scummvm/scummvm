@@ -32,7 +32,8 @@ namespace Quest {
 
 Quest *g_vm;
 
-Quest::Quest(OSystem *syst, const GlkGameDescription &gameDesc) : GlkAPI(syst, gameDesc), _saveSlot(-1) {
+Quest::Quest(OSystem *syst, const GlkGameDescription &gameDesc) : GlkAPI(syst, gameDesc),
+		_saveSlot(-1), _runner(nullptr) {
 	g_vm = this;
 }
 
@@ -54,12 +55,11 @@ void Quest::playGame() {
 	char cur_buf[1024];
 	char buf[200];
 
-	GeasRunner *gr = GeasRunner::get_runner(new GeasGlkInterface());
-	gr->set_game(String(getFilename().c_str()));
-	banner = gr->get_banner();
+	_runner->set_game(String(getFilename().c_str()));
+	banner = _runner->get_banner();
 	draw_banner();
 
-	while (gr->is_running()) {
+	while (_runner->is_running()) {
 		if (inputwin != mainglkwin)
 			glk_window_clear(inputwin);
 		else
@@ -84,12 +84,12 @@ void Quest::playGame() {
 					String cmd = String(buf, ev.val1);
 					if (inputwin == mainglkwin)
 						ignore_lines = 2;
-					gr->run_command(cmd);
+					_runner->run_command(cmd);
 				}
 				break;
 
 			case evtype_Timer:
-				gr->tick_timers();
+				_runner->tick_timers();
 				break;
 
 			case evtype_Arrange:
@@ -141,11 +141,28 @@ bool Quest::initialize() {
 	glk_request_timer_events(1000);
 	ignore_lines = 0;
 
+	_runner = GeasRunner::get_runner(new GeasGlkInterface());
+
 	return true;
 }
 
 void Quest::deinitialize() {
 	Streams::deinitialize();
+
+	delete _runner;
+}
+
+Common::Error Quest::readSaveData(Common::SeekableReadStream *rs) {
+	GeasState *gs = _runner->getState();
+	gs->load(rs);
+	return Common::kNoError;
+}
+
+Common::Error Quest::writeGameData(Common::WriteStream *ws) {
+	GeasState *gs = _runner->getState();
+	gs->save(ws);
+
+	return Common::kNoError;
 }
 
 } // End of namespace Quest

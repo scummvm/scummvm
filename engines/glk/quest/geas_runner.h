@@ -24,6 +24,7 @@
 #define GLK_QUEST_GEAS_RUNNER
 
 #include "glk/quest/string.h"
+#include "glk/quest/geas_state.h"
 #include "common/array.h"
 #include "common/stream.h"
 
@@ -199,6 +200,7 @@ public:
 	GeasRunner(GeasInterface *_gi) : gi(_gi) {}
 
 	virtual bool is_running() const = 0;
+	virtual GeasState *getState() = 0;
 	virtual String get_banner() = 0;
 	virtual void run_command(String) = 0;
 

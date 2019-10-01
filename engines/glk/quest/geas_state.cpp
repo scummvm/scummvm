@@ -29,115 +29,91 @@
 namespace Glk {
 namespace Quest {
 
-Common::WriteStream &operator<< (Common::WriteStream &o, const StringMap &m) {
-	for (StringMap::iterator i = m.begin(); i != m.end(); ++i)
-		o << (*i)._key << " -> " << (*i)._value << "\n";
-
-	return o;
+void Serializer::sync(bool &b) {
+	byte v = b ? 1 : 0;
+	syncAsByte(v);
+	if (isLoading())
+		b = v != 0;
 }
 
-class GeasOutputStream {
-	Common::WriteStream *_ws;
-public:
-	GeasOutputStream &put(const String &s) {
-		_ws->writeString(s);
-		_ws->writeByte(0);
-		return *this;
-	}
-	GeasOutputStream &put(char ch) {
-		_ws->writeByte(ch);
-		return *this;
-	}
-	GeasOutputStream &put(int i) {
-		Common::String s = Common::String::format("%d", i);
-		_ws->writeString(s);
-		_ws->writeByte(0);
-		return *this;
-	}
-	GeasOutputStream &put(uint i) {
-		Common::String s = Common::String::format("%u", i);
-		_ws->writeString(s);
-		_ws->writeByte(0);
-		return *this;
-	}
-	GeasOutputStream &put(unsigned long i) {
-		Common::String s = Common::String::format("%lu", i);
-		_ws->writeString(s);
-		_ws->writeByte(0);
-		return *this;
-	}
-
-	void write_out(const String &gameName, const String &saveName) {
-#ifdef TODO
-		ofstream ofs;
-		ofs.open(savename.c_str());
-		if (!ofs.is_open())
-			error("Unable to open \"%s\"", savename.c_str());
-		ofs << "QUEST300" << char(0) << gamename << char(0);
-		String tmp = o.str();
-		for (uint i = 0; i < tmp.size(); i ++)
-			ofs << char (255 - tmp[i]);
-		cerr << "Done writing save game\n";
-#else
-		error("TODO");
-#endif
-	}
-};
-
-template <class T> void write_to(GeasOutputStream &gos, const Common::Array<T> &v) {
-	gos.put(v.size());
-	for (uint i = 0; i < v.size(); i ++)
-		write_to(gos, v[i]);
+void Serializer::sync(String &s) {
+	Common::String str = s;
+	Common::Serializer::syncString(str);
+	if (isLoading())
+		s = String(str.c_str());
+}
+	
+void Serializer::sync(PropertyRecord &pr) {
+	sync(pr.name);
+	sync(pr.data);
 }
 
-void write_to(GeasOutputStream &gos, const PropertyRecord &pr) {
-	gos.put(pr.name).put(pr.data);
+void Serializer::sync(ObjectRecord &pr) {
+	sync(pr.name);
+	sync(pr.hidden);
+	sync(pr.invisible);
+	sync(pr.parent);
 }
 
-void write_to(GeasOutputStream &gos, const ObjectRecord &pr) {
-	gos.put(pr.name).put(char(pr.hidden ? 0 : 1))
-	.put(char(pr.invisible ? 0 : 1)).put(pr.parent);
+void Serializer::sync(ExitRecord &er) {
+	sync(er.src);
+	sync(er.dest);
 }
 
-void write_to(GeasOutputStream &gos, const ExitRecord &er) {
-	gos.put(er.src).put(er.dest);
+void Serializer::sync(TimerRecord &tr) {
+	sync(tr.name);
+	sync(tr.is_running);
+	syncAsUint32LE(tr.interval);
+	syncAsUint32LE(tr.timeleft);
 }
 
-void write_to(GeasOutputStream &gos, const TimerRecord &tr) {
-	gos.put(tr.name).put(tr.is_running ? 0 : 1).put(tr.interval)
-	.put(tr.timeleft);
+void Serializer::sync(SVarRecord &svr) {
+	svr.sync(*this);
 }
 
-
-void write_to(GeasOutputStream &gos, const SVarRecord &svr) {
-	gos.put(svr.name);
-	gos.put(svr.max());
-	for (uint i = 0; i < svr.size(); i ++)
-		gos.put(svr.get(i));
+void Serializer::sync(IVarRecord &ivr) {
+	ivr.sync(*this);
 }
 
-void write_to(GeasOutputStream &gos, const IVarRecord &ivr) {
-	gos.put(ivr.name);
-	gos.put(ivr.max());
-	for (uint i = 0; i < ivr.size(); i ++)
-		gos.put(ivr.get(i));
+void Serializer::sync(GeasState &gs) {
+	sync(gs.location);
+	sync(gs.props);
+	sync(gs.objs);
+	sync(gs.exits);
+	sync(gs.timers);
+	sync(gs.svars);
+	sync(gs.ivars);
 }
 
-void write_to(GeasOutputStream &gos, const GeasState &gs) {
-	gos.put(gs.location);
-	write_to(gos, gs.props);
-	write_to(gos, gs.objs);
-	write_to(gos, gs.exits);
-	write_to(gos, gs.timers);
-	write_to(gos, gs.svars);
-	write_to(gos, gs.ivars);
+/*----------------------------------------------------------------------*/
+
+void SVarRecord::sync(Serializer &s) {
+	s.sync(name);
+	
+	uint count = data.size();
+	s.syncAsUint32LE(count);
+	if (s.isLoading())
+		data.resize(count);
+
+	for (uint i = 0; i < size(); ++i)
+		s.sync(data[i]);
 }
 
-void save_game_to(String gamename, String savename, const GeasState &gs) {
-	GeasOutputStream gos;
-	write_to(gos, gs);
-	gos.write_out(gamename, savename);
+/*----------------------------------------------------------------------*/
+
+void IVarRecord::sync(Serializer &s) {
+	s.sync(name);
+
+	uint count = data.size();
+	s.syncAsUint32LE(count);
+	if (s.isLoading())
+		data.resize(count);
+
+	for (uint i = 0; i < size(); ++i)
+		s.syncAsSint32LE(data[i]);
 }
+
+/*----------------------------------------------------------------------*/
 
 GeasState::GeasState(GeasInterface &gi, const GeasFile &gf) {
 	running = false;
@@ -270,12 +246,24 @@ GeasState::GeasState(GeasInterface &gi, const GeasFile &gf) {
 	cerr << "GeasState::GeasState() done with variables" << endl;
 }
 
-Common::WriteStream &operator<< (Common::WriteStream &o, const PropertyRecord &pr) {
+void GeasState::load(Common::SeekableReadStream *rs) {
+	Serializer s(rs, nullptr);
+	s.sync(*this);
+}
+
+void GeasState::save(Common::WriteStream *ws) {
+	Serializer s(nullptr, ws);
+	s.sync(*this);
+}
+
+/*----------------------------------------------------------------------*/
+
+Common::WriteStream &operator<<(Common::WriteStream &o, const PropertyRecord &pr) {
 	o << pr.name << ", data == " << pr.data;
 	return o;
 }
 
-Common::WriteStream &operator<< (Common::WriteStream &o, const ObjectRecord &objr) {
+Common::WriteStream &operator<<(Common::WriteStream &o, const ObjectRecord &objr) {
 	o << objr.name << ", parent == " << objr.parent;
 	if (objr.hidden)
 		o << ", hidden";
@@ -284,23 +272,23 @@ Common::WriteStream &operator<< (Common::WriteStream &o, const ObjectRecord &obj
 	return o;
 }
 
-Common::WriteStream &operator<< (Common::WriteStream &o, const ExitRecord er) {
+Common::WriteStream &operator<<(Common::WriteStream &o, const ExitRecord er) {
 	return o << er.src << ": " << er.dest;
 }
 
-Common::WriteStream &operator<< (Common::WriteStream &o, const TimerRecord &tr) {
+Common::WriteStream &operator<<(Common::WriteStream &o, const TimerRecord &tr) {
 	return o << tr.name << ": " << (tr.is_running ? "" : "not ") << "running ("
-	       << tr.timeleft << " // " << tr.interval << ")";
+		<< tr.timeleft << " // " << tr.interval << ")";
 }
 
-Common::WriteStream &operator<< (Common::WriteStream &o, const SVarRecord &sr) {
+Common::WriteStream &operator<<(Common::WriteStream &o, const SVarRecord &sr) {
 	o << sr.name << ": ";
 	if (sr.size() == 0)
 		o << "(empty)";
 	else if (sr.size() <= 1)
 		o << "<" << sr.get(0) << ">";
 	else
-		for (uint i = 0; i < sr.size(); i ++) {
+		for (uint i = 0; i < sr.size(); i++) {
 			o << i << ": <" << sr.get(i) << ">";
 			if (i + 1 < sr.size())
 				o << ", ";
@@ -308,14 +296,14 @@ Common::WriteStream &operator<< (Common::WriteStream &o, const SVarRecord &sr) {
 	return o;
 }
 
-Common::WriteStream &operator<< (Common::WriteStream &o, const IVarRecord &ir) {
+Common::WriteStream &operator<<(Common::WriteStream &o, const IVarRecord &ir) {
 	o << ir.name << ": ";
 	if (ir.size() == 0)
 		o << "(empty)";
 	else if (ir.size() <= 1)
 		o << ir.get(0);
 	else
-		for (uint i = 0; i < ir.size(); i ++) {
+		for (uint i = 0; i < ir.size(); i++) {
 			o << i << ": " << ir.get(i);
 			if (i + 1 < ir.size())
 				o << ", ";
@@ -323,30 +311,30 @@ Common::WriteStream &operator<< (Common::WriteStream &o, const IVarRecord &ir) {
 	return o;
 }
 
-Common::WriteStream &operator<< (Common::WriteStream &o, const GeasState &gs) {
+Common::WriteStream &operator<<(Common::WriteStream &o, const GeasState &gs) {
 	o << "location == " << gs.location << "\nprops: \n";
 
-	for (uint i = 0; i < gs.props.size(); i ++)
+	for (uint i = 0; i < gs.props.size(); i++)
 		o << "    " << i << ": " << gs.props[i] << "\n";
 
 	o << "objs:\n";
-	for (uint i = 0; i < gs.objs.size(); i ++)
+	for (uint i = 0; i < gs.objs.size(); i++)
 		o << "    " << i << ": " << gs.objs[i] << "\n";
 
 	o << "exits:\n";
-	for (uint i = 0; i < gs.exits.size(); i ++)
+	for (uint i = 0; i < gs.exits.size(); i++)
 		o << "    " << i << ": " << gs.exits[i] << "\n";
 
 	o << "timers:\n";
-	for (uint i = 0; i < gs.timers.size(); i ++)
+	for (uint i = 0; i < gs.timers.size(); i++)
 		o << "    " << i << ": " << gs.timers[i] << "\n";
 
 	o << "String variables:\n";
-	for (uint i = 0; i < gs.svars.size(); i ++)
+	for (uint i = 0; i < gs.svars.size(); i++)
 		o << "    " << i << ": " << gs.svars[i] << "\n";
 
 	o << "integer variables:\n";
-	for (uint i = 0; i < gs.svars.size(); i ++)
+	for (uint i = 0; i < gs.svars.size(); i++)
 		o << "    " << i << ": " << gs.svars[i] << "\n";
 
 	return o;

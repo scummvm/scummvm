@@ -25,6 +25,7 @@
 
 #include "glk/glk_api.h"
 #include "glk/quest/string.h"
+#include "glk/quest/geas_runner.h"
 
 namespace Glk {
 namespace Quest {
@@ -35,6 +36,7 @@ namespace Quest {
 class Quest : public GlkAPI {
 private:
 	int _saveSlot;
+	GeasRunner *_runner;
 public:
 	String banner;
 private:
@@ -71,24 +73,28 @@ public:
 	}
 
 	/**
-	 * Savegames aren't supported for Quest games
+	 * Returns true if a savegame can be loaded
 	 */
-	virtual bool canLoadGameStateCurrently() override { return false; }
+	virtual bool canLoadGameStateCurrently() override {
+		return _runner != nullptr;
+	}
+
+	/**
+	 * Returns true if the game can be saved
+	 */
+	virtual bool canSaveGameStateCurrently() override {
+		return _runner != nullptr;
+	}
 
 	/**
 	 * Savegames aren't supported for Quest games
 	 */
-	virtual bool canSaveGameStateCurrently() override { return false; }
+	virtual Common::Error readSaveData(Common::SeekableReadStream *rs) override;
 
 	/**
 	 * Savegames aren't supported for Quest games
 	 */
-	virtual Common::Error readSaveData(Common::SeekableReadStream *rs) override { return Common::kUnknownError; }
-
-	/**
-	 * Savegames aren't supported for Quest games
-	 */
-	virtual Common::Error writeGameData(Common::WriteStream *ws) override { return Common::kUnknownError; }
+	virtual Common::Error writeGameData(Common::WriteStream *ws) override;
 };
 
 extern Quest *g_vm;

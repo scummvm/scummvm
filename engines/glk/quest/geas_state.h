@@ -26,13 +26,21 @@
 #include "glk/quest/string.h"
 #include "common/array.h"
 #include "common/stream.h"
+#include "common/serializer.h"
 
 namespace Glk {
 namespace Quest {
 
+struct GeasFile;
+struct GeasState;
+class Serializer;
+class GeasInterface;
+
 struct PropertyRecord {
 	String name, data;
-	PropertyRecord(String in_name, String in_data) : name(in_name), data(in_data) {}
+
+	PropertyRecord() {}
+	PropertyRecord(const String &in_name, const String &in_data) : name(in_name), data(in_data) {}
 };
 
 struct ObjectRecord {
@@ -45,7 +53,9 @@ struct ObjectRecord {
 
 struct ExitRecord {
 	String src, dest;
-	ExitRecord(String in_src, String in_dest) : src(in_src), dest(in_dest) {}
+
+	ExitRecord() {}
+	ExitRecord(const String &in_src, const String &in_dest) : src(in_src), dest(in_dest) {}
 };
 
 struct TimerRecord {
@@ -84,6 +94,8 @@ public:
 	String get() const {
 		return data[0];
 	}
+
+	void sync(Serializer &s);
 };
 
 struct IVarRecord {
@@ -116,10 +128,34 @@ public:
 	int get() const {
 		return data[0];
 	}
+
+	void sync(Serializer &s);
 };
 
-struct GeasFile;
-class GeasInterface;
+class Serializer : public Common::Serializer {
+public:
+	Serializer(Common::SeekableReadStream *in, Common::WriteStream *out) : Common::Serializer(in, out) {}
+
+	void sync(bool &b);
+	void sync(String &s);
+	void sync(PropertyRecord &pr);
+	void sync(ObjectRecord &pr);
+	void sync(ExitRecord &er);
+	void sync(TimerRecord &tr);
+	void sync(SVarRecord &svr);
+	void sync(IVarRecord &ivr);
+	void sync(GeasState &gs);
+
+	template <class T> void sync(Common::Array<T> &v) {
+		uint count = v.size();
+		syncAsUint32LE(count);
+		if (isLoading())
+			v.resize(count);
+
+		for (uint idx = 0; idx < count; ++idx)
+			sync(v[idx]);
+	}
+};
 
 struct GeasState {
 	//private:
@@ -139,31 +175,27 @@ public:
 	//void register_block (String blockname, String blocktype);
 
 	GeasState() : running(false) {}
-	//GeasState (GeasRunner &, const GeasFile &);
 	GeasState(GeasInterface &, const GeasFile &);
-	/*
-	bool has_svar (string s) { for (uint i = 0; i < svars.size(); i ++) if (svars[i].name == s) return true; }
-	uint find_svar (string s) { for (uint i = 0; i < svars.size(); i ++) if (svars[i].name == s) return i; svars.push_back (SVarRecord (s)); return svars.size() - 1;}
-	string get_svar (string s, uint index) { if (!has_svar(s)) return "!"; return svars[find_svar(s)].get(index); }
-	string get_svar (string s) { return get_svar (s, 0); }
 
-	bool has_ivar (string s) { for (uint i = 0; i < ivars.size(); i ++) if (ivars[i].name == s) return true; }
-	uint find_ivar (string s) { for (uint i = 0; i < ivars.size(); i ++) if (ivars[i].name == s) return i; ivars.push_back (IVarRecord (s)); return ivars.size() - 1;}
-	int get_ivar (string s, uint index) { if (!has_ivar(s)) return -32767; return ivars[find_ivar(s)].get(index); }
-	int get_ivar (string s) { return get_ivar (s, 0); }
-	*/
+	/**
+	 * Save the state
+	 */
+	void load(Common::SeekableReadStream *rs);
+
+	/**
+	 * Save the state
+	 */
+	void save(Common::WriteStream *ws);
 };
 
-void save_game_to(String gamename, String savename, const GeasState &gs);
-
-Common::WriteStream &operator<< (Common::WriteStream &o, const StringMap &m);
-Common::WriteStream &operator<< (Common::WriteStream &o, const PropertyRecord &pr);
-Common::WriteStream &operator<< (Common::WriteStream &o, const ObjectRecord &objr);
-Common::WriteStream &operator<< (Common::WriteStream &o, const ExitRecord er);
-Common::WriteStream &operator<< (Common::WriteStream &o, const TimerRecord &tr);
-Common::WriteStream &operator<< (Common::WriteStream &o, const SVarRecord &sr);
-Common::WriteStream &operator<< (Common::WriteStream &o, const IVarRecord &ir);
-Common::WriteStream &operator<< (Common::WriteStream &o, const GeasState &gs);
+Common::WriteStream &operator<<(Common::WriteStream &o, const StringMap &m);
+Common::WriteStream &operator<<(Common::WriteStream &o, const PropertyRecord &pr);
+Common::WriteStream &operator<<(Common::WriteStream &o, const ObjectRecord &objr);
+Common::WriteStream &operator<<(Common::WriteStream &o, const ExitRecord er);
+Common::WriteStream &operator<<(Common::WriteStream &o, const TimerRecord &tr);
+Common::WriteStream &operator<<(Common::WriteStream &o, const SVarRecord &sr);
+Common::WriteStream &operator<<(Common::WriteStream &o, const IVarRecord &ir);
+Common::WriteStream &operator<<(Common::WriteStream &o, const GeasState &gs);
 
 } // End of namespace Quest
 } // End of namespace Glk

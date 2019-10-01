@@ -90,6 +90,7 @@ public:
 	void set_game(const String &fname);
 
 	bool is_running() const;
+	GeasState *getState() { return &state; }
 	String get_banner();
 	void run_command(String);
 	bool try_match(String s, bool, bool);
