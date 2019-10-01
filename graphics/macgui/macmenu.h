@@ -91,8 +91,8 @@ private:
 private:
 	const Font *getMenuFont();
 	const Common::String getAcceleratorString(MacMenuSubItem *item, const char *prefix);
-	int calculateMenuWidth(MacMenuItem *menu);
-	void calcSubMenuBounds(MacMenuItem *menu);
+	int calcSubMenuWidth(MacMenuSubMenu *menu);
+	void calcSubMenuBounds(MacMenuSubMenu *menu, int x, int y);
 	void renderSubmenu(MacMenuSubMenu *menu);
 
 	bool keyEvent(Common::Event &event);

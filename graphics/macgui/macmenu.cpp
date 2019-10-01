@@ -309,7 +309,7 @@ void MacMenu::addMenuSubItem(int id, const Common::String &text, int action, int
 
 	_items[id]->submenu->subitems.push_back(new MacMenuSubItem(text, action, style, shortcut, enabled));
 
-	calcSubMenuBounds(_items[id]);
+	calcSubMenuBounds(_items[id]->submenu, _items[id]->bbox.left - 1, _items[id]->bbox.bottom + 1);
 }
 
 void MacMenu::addMenuSubItem(int id, const Common::U32String &text, int action, int style, char shortcut, bool enabled) {
@@ -318,7 +318,7 @@ void MacMenu::addMenuSubItem(int id, const Common::U32String &text, int action, 
 
 	_items[id]->submenu->subitems.push_back(new MacMenuSubItem(text, action, style, shortcut, enabled));
 
-	calcSubMenuBounds(_items[id]);
+	calcSubMenuBounds(_items[id]->submenu, _items[id]->bbox.left - 1, _items[id]->bbox.bottom + 1);
 }
 
 void MacMenu::calcDimensions() {
@@ -336,7 +336,7 @@ void MacMenu::calcDimensions() {
 			_items[i]->bbox.bottom = y + _font->getFontHeight() + (_wm->_fontMan->hasBuiltInFonts() ? 3 : 2);
 		}
 
-		calcSubMenuBounds(_items[i]);
+		calcSubMenuBounds(_items[i]->submenu, _items[i]->bbox.left - 1, _items[i]->bbox.bottom + 1);
 
 		x += w + kMenuSpacing;
 	}
@@ -470,7 +470,7 @@ void MacMenu::createSubMenuFromString(int id, const char *str, int commandId) {
 		item.clear();
 	}
 
-	calcSubMenuBounds(menu);
+	calcSubMenuBounds(menu->submenu, menu->bbox.left - 1, menu->bbox.bottom + 1);
 }
 
 const Font *MacMenu::getMenuFont() {
@@ -484,13 +484,13 @@ const Common::String MacMenu::getAcceleratorString(MacMenuSubItem *item, const c
 	return Common::String::format("%s%c%c", prefix, (_wm->_fontMan->hasBuiltInFonts() ? '^' : '\x11'), item->shortcut);
 }
 
-int MacMenu::calculateMenuWidth(MacMenuItem *menu) {
+int MacMenu::calcSubMenuWidth(MacMenuSubMenu *submenu) {
 	int maxWidth = 0;
-	if (menu->submenu == nullptr)
+	if (submenu == nullptr)
 		return maxWidth;
 
-	for (uint i = 0; i < menu->submenu->subitems.size(); i++) {
-		MacMenuSubItem *item = menu->submenu->subitems[i];
+	for (uint i = 0; i < submenu->subitems.size(); i++) {
+		MacMenuSubItem *item = submenu->subitems[i];
 		if (!item->text.empty()) {
 			Common::String text(item->text);
 			Common::String acceleratorText(getAcceleratorString(item, "  "));
@@ -513,21 +513,21 @@ int MacMenu::calculateMenuWidth(MacMenuItem *menu) {
 	return maxWidth;
 }
 
-void MacMenu::calcSubMenuBounds(MacMenuItem *menu) {
-	if (menu->submenu == nullptr)
+void MacMenu::calcSubMenuBounds(MacMenuSubMenu *submenu, int x, int y) {
+	if (submenu == nullptr)
 		return;
 
 	// TODO: cache maxWidth
-	int maxWidth = calculateMenuWidth(menu);
-	int x1 = menu->bbox.left - 1;
-	int y1 = menu->bbox.bottom + 1;
+	int maxWidth = calcSubMenuWidth(submenu);
+	int x1 = x;
+	int y1 = y;
 	int x2 = x1 + maxWidth + kMenuDropdownPadding * 2 - 4;
-	int y2 = y1 + menu->submenu->subitems.size() * kMenuDropdownItemHeight + 2;
+	int y2 = y1 + submenu->subitems.size() * kMenuDropdownItemHeight + 2;
 
-	menu->submenu->bbox.left = x1;
-	menu->submenu->bbox.top = y1;
-	menu->submenu->bbox.right = x2;
-	menu->submenu->bbox.bottom = y2;
+	submenu->bbox.left = x1;
+	submenu->bbox.top = y1;
+	submenu->bbox.right = x2;
+	submenu->bbox.bottom = y2;
 }
 
 static void drawPixelPlain(int x, int y, int color, void *data) {
