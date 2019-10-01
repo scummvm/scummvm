@@ -684,6 +684,9 @@ void MacMenu::renderSubmenu(MacMenuSubMenu *menu) {
 		y += kMenuDropdownItemHeight;
 	}
 
+	if (menu->subitems[_activeSubItem]->submenu != nullptr)
+		renderSubmenu(menu->subitems[_activeSubItem]->submenu);
+
 	_contentIsDirty = true;
 	//g_system->copyRectToScreen(_screen.getBasePtr(r->left, r->top), _screen.pitch, r->left, r->top, r->width() + 2, r->height() + 2);
 }
