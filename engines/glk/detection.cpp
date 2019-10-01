@@ -37,6 +37,8 @@
 #include "glk/glulxe/glulxe.h"
 #include "glk/hugo/detection.h"
 #include "glk/hugo/hugo.h"
+#include "glk/jacl/detection.h"
+#include "glk/jacl/jacl.h"
 #include "glk/magnetic/detection.h"
 #include "glk/magnetic/magnetic.h"
 #include "glk/quest/detection.h"
@@ -168,6 +170,7 @@ Common::Error GlkMetaEngine::createInstance(OSystem *syst, Engine **engine) cons
 	else if ((*engine = create<Glk::Quest::QuestMetaEngine, Glk::Quest::Quest>(syst, gameDesc)) != nullptr) {}
 	else if ((*engine = create<Glk::Scott::ScottMetaEngine, Glk::Scott::Scott>(syst, gameDesc)) != nullptr) {}
 #ifndef RELEASE_BUILD
+	else if ((*engine = create<Glk::JACL::JACLMetaEngine, Glk::JACL::JACL>(syst, gameDesc)) != nullptr) {}
 	else if ((*engine = create<Glk::Magnetic::MagneticMetaEngine, Glk::Magnetic::Magnetic>(syst, gameDesc)) != nullptr) {}
 	else if ((td = Glk::TADS::TADSMetaEngine::findGame(gameDesc._gameId.c_str()))._description) {
 		if (td._options & Glk::TADS::OPTION_TADS3)
@@ -217,6 +220,7 @@ PlainGameList GlkMetaEngine::getSupportedGames() const {
 	Glk::Quest::QuestMetaEngine::getSupportedGames(list);
 	Glk::Scott::ScottMetaEngine::getSupportedGames(list);
 #ifndef RELEASE_BUILD
+	Glk::JACL::JACLMetaEngine::getSupportedGames(list);
 	Glk::Magnetic::MagneticMetaEngine::getSupportedGames(list);
 	Glk::TADS::TADSMetaEngine::getSupportedGames(list);
 #endif
@@ -253,6 +257,9 @@ PlainGameDescriptor GlkMetaEngine::findGame(const char *gameId) const {
 	if (gd._description) return gd;
 
 #ifndef RELEASE_BUILD
+	gd = Glk::JACL::JACLMetaEngine::findGame(gameId);
+	if (gd._description) return gd;
+
 	gd = Glk::Magnetic::MagneticMetaEngine::findGame(gameId);
 	if (gd._description) return gd;
 
@@ -278,6 +285,7 @@ DetectedGames GlkMetaEngine::detectGames(const Common::FSList &fslist) const {
 	Glk::Scott::ScottMetaEngine::detectGames(fslist, detectedGames);
 
 #ifndef RELEASE_BUILD
+	Glk::JACL::JACLMetaEngine::detectGames(fslist, detectedGames);
 	Glk::Magnetic::MagneticMetaEngine::detectGames(fslist, detectedGames);
 	Glk::TADS::TADSMetaEngine::detectGames(fslist, detectedGames);
 #endif
@@ -298,6 +306,7 @@ void GlkMetaEngine::detectClashes() const {
 	Glk::Scott::ScottMetaEngine::detectClashes(map);
 
 #ifndef RELEASE_BUILD
+	Glk::JACL::JACLMetaEngine::detectClashes(map);
 	Glk::Magnetic::MagneticMetaEngine::detectClashes(map);
 	Glk::TADS::TADSMetaEngine::detectClashes(map);
 #endif

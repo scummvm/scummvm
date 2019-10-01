@@ -177,6 +177,8 @@ MODULE_OBJS := \
 	hugo/htokens.o \
 	hugo/hugo.o \
 	hugo/stringfn.o \
+	jacl/detection.o \
+	jacl/jacl.o \
 	magnetic/detection.o \
 	magnetic/emu.o \
 	magnetic/graphics.o \
