@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: Prince\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2018-04-17 19:53+0100\n"
-"PO-Revision-Date: 2019-10-01 20:55+0000\n"
+"PO-Revision-Date: 2019-10-02 21:56+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: English <https://translations.scummvm.org/projects/prince/"
 "prince/en/>\n"
@@ -6418,51 +6418,55 @@ msgstr ""
 
 #: dialog0182.txt:100007
 msgid "HERO: Spędziłaś w zamku dwa lata?!"
-msgstr ""
+msgstr "HERO: Did you spend two years in the castle?!"
 
 #: dialog0182.txt:100008
 msgid "OTHER: Prawie."
-msgstr ""
+msgstr "OTHER: Almost."
 
 #: dialog0182.txt:100009
 msgid "P#HERO: No to by wyjaśniało twój|nienajlepszy humor..."
-msgstr ""
+msgstr "P#HERO: Well, that would explain your bad mood..."
 
 #: dialog0182.txt:100010
 msgid "OTHER: Kiedy tylko dorwę w swoje ręce tego|demona, tortury Lucyfera wydadzą mu|się siódmym niebem."
 msgstr ""
+"OTHER: As soon as I get this demon in my hands,|tortures of Lucifer will "
+"seem to him as seventh heaven."
 
 #: dialog0182.txt:100011
 msgid "HERO: Chcesz dostać się do Piekła?"
-msgstr ""
+msgstr "HERO: Do you want to get to Hell?"
 
 #: dialog0182.txt:100012
 msgid "OTHER: Och wiem, wiem, to niemożliwe..."
-msgstr ""
+msgstr "OTHER: Oh, I know, I know, that is impossible..."
 
 #: dialog0182.txt:100013
 msgid "OTHER: Ale ja..."
-msgstr ""
+msgstr "OTHER: But I..."
 
 #: dialog0182.txt:100014
 msgid "HERO: Nie, nie, źle mnie zrozumiałaś! Ja|też chcę się tam dostać!"
-msgstr ""
+msgstr "HERO: No, no, you misunderstood me! I also|would like to get there!"
 
 #: dialog0182.txt:100015
 msgid "HERO: Moja dusza..."
-msgstr ""
+msgstr "HERO: My soul..."
 
 #: dialog0182.txt:100016
 msgid "OTHER: Nie obchodzi mnie to, uwolnij mnie,|w ramach rewanżu pomogę ci, i na tym|koniec."
 msgstr ""
+"OTHER: I don't care, set me free,|as a revenge, I will help you, and that's "
+"it."
 
 #: dialog0182.txt:100017
 msgid "OTHER: Choć oczywiście i tak dałabym sobie|sama radę."
-msgstr ""
+msgstr "OTHER: Although, of course, I could do it alone."
 
 #: dialog0182.txt:100018
 msgid "HERO: Oczywiście.#B0"
-msgstr ""
+msgstr "HERO: Of course.#B0"
 
 #: dialog0182.txt:100101
 msgid "OTHER: Nietrudno zachować dziewictwo, kiedy wokoło|spotyka się tylko mięczaków, tchórzy|i pantoflarzy."
