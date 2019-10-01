@@ -849,7 +849,7 @@ void Gui::updateExit(ObjID obj) {
 	int i = 0;
 	Common::Array<CommandButton>::const_iterator it = _exitsData->begin();
 	for (;it != _exitsData->end(); it++) {
-		if (it->getData().refcon == obj)
+		if ((ObjID)it->getData().refcon == obj)
 			ctl = i;
 		else
 			i++;
