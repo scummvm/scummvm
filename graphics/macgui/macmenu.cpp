@@ -231,18 +231,14 @@ MacMenu *MacMenu::createMenuFromPEexe(Common::PEResources &exe, MacWindowManager
 		if (flags & kPopUp) {
 			if (depth == 0) {
 				menu->addMenuItem(readUnicodeString(menuData));
-
-				MacMenuSubMenu *submenu = menu->addSubMenu(nullptr);
-				menus.push(submenu);
 			} else {
-				MacMenuSubMenu *submenu = menu->addSubMenu(menus.size() ? menus.top() : nullptr);
-
-				menus.push(submenu);
-
 				Common::U32String name = readUnicodeString(menuData);
-				menu->addSubMenuItem(submenu, name, action);
+				menu->addSubMenuItem(menus.top(), name, action);
 				action++;
 			}
+
+			MacMenuSubMenu *submenu = menu->addSubMenu(menus.size() ? menus.top() : nullptr);
+			menus.push(submenu);
 
 			if (lastPopUp) {
 				lastPopUpCopy = lastPopUp;
