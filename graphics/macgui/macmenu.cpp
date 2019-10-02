@@ -94,6 +94,9 @@ struct MacMenuSubItem {
 struct MacMenuSubMenu {
 	SubItemArray subitems;
 	Common::Rect bbox;
+	int highlight;
+
+	MacMenuSubMenu() : highlight(-1) {}
 
 	~MacMenuSubMenu() {
 		for (uint i = 0; i < subitems.size(); i++)
@@ -695,7 +698,7 @@ void MacMenu::renderSubmenu(MacMenuSubMenu *menu, bool recursive) {
 		int arrowX = r->right - 14;
 
 		int color = _wm->_colorBlack;
-		if (i == (uint)_activeSubItem && (!text.empty() || !unicodeText.empty()) && menu->subitems[i]->enabled) {
+		if (i == (uint)menu->highlight && (!text.empty() || !unicodeText.empty()) && menu->subitems[i]->enabled) {
 			color = _wm->_colorWhite;
 			Common::Rect trect(r->left, y - (_wm->_fontMan->hasBuiltInFonts() ? 1 : 0), r->right, y + _font->getFontHeight());
 
@@ -753,8 +756,8 @@ void MacMenu::renderSubmenu(MacMenuSubMenu *menu, bool recursive) {
 		y += kMenuDropdownItemHeight;
 	}
 
-	if (recursive && _activeSubItem != -1 && menu->subitems[_activeSubItem]->submenu != nullptr)
-		renderSubmenu(menu->subitems[_activeSubItem]->submenu, false);
+	if (recursive && menu->highlight != -1 && menu->subitems[menu->highlight]->submenu != nullptr)
+		renderSubmenu(menu->subitems[menu->highlight]->submenu, false);
 
 	_contentIsDirty = true;
 	//g_system->copyRectToScreen(_screen.getBasePtr(r->left, r->top), _screen.pitch, r->left, r->top, r->width() + 2, r->height() + 2);
@@ -838,6 +841,8 @@ bool MacMenu::mouseClick(int x, int y) {
 		if (numSubItem != _activeSubItem) {
 			_activeSubItem = numSubItem;
 
+			it->highlight = _activeSubItem;
+
 			renderSubmenu(it);
 			_contentIsDirty = true;
 		}
@@ -853,15 +858,19 @@ bool MacMenu::mouseClick(int x, int y) {
 				_activeSubItem = 0;
 				_contentIsDirty = true;
 
+				_menustack.back()->highlight = 0;
+
 				return true;
 			}
 		}
 
 		if (_menustack.size() > 1) {
 			if (_menustack[_menustack.size() - 2]->bbox.contains(x, y)) {
+				_menustack.back()->highlight = -1; // Erase it for the closed popup
+
 				_menustack.pop_back();
 
-				_activeSubItem = (y - _menustack.back()->bbox.top) / kMenuDropdownItemHeight;
+				_activeSubItem = _menustack.back()->highlight;
 
 				_contentIsDirty = true;
 
