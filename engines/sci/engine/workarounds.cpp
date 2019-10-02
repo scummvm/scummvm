@@ -746,8 +746,29 @@ const SciWorkaroundEntry kGetAngle_workarounds[] = {
 
 //    gameID,           room,script,lvl,          object-name, method-name, local-call-signature, index-range,   workaround
 const SciWorkaroundEntry kFileIOOpen_workarounds[] = {
+	{ GID_HOYLE5,         -1, 64990,  0,            "Restore", "doit",                      NULL,     0,     0, { WORKAROUND_STILLCALL, 0 } }, // Missing second argument when checking for bridgesg.cat or poker.cat when showing restore dialog
 	{ GID_TORIN,       61000, 61000,  0,       "roSierraLogo", "init",                      NULL,     0,     0, { WORKAROUND_STILLCALL, 0 } }, // Missing second argument when the game checks for autosave.cat after the Sierra logo
 	{ GID_TORIN,       61100, 61100,  0,     "roPickAChapter", "init",                      NULL,     0,     0, { WORKAROUND_STILLCALL, 0 } }, // Missing second argument when the game checks for autosave.cat after the Sierra logo in the demo
+	SCI_WORKAROUNDENTRY_TERMINATOR
+};
+
+//                Game: Hoyle 5
+//      Calling method: subroutine at offset 0x1074
+//   Subroutine offset: 0x1432 (script 64990)
+// Applies to at least: English PC
+static const uint16 sig_kFileIOCheckFreeSpace_hoyle5_1[] = {
+	0x7e, SIG_ADDTOOFFSET(2),        // line N
+	0x7d, 0x73, 0x61, 0x76, 0x65,    // file "save.sc"
+	0x2e, 0x73, 0x63, 0x00,
+	0x3f, 0x02,                      // link 02
+	0x7e, SIG_ADDTOOFFSET(2),        // line N
+	0x38, SIG_UINT16(0x008d),        // pushi new
+	SIG_END
+};
+
+//    gameID,           room,script,lvl,          object-name, method-name,              local-call-signature, index-range,   workaround
+const SciWorkaroundEntry kFileIOCheckFreeSpace_workarounds[] = {
+	{ GID_HOYLE5,         -1, 64990,  0,              "Save", "update",   sig_kFileIOCheckFreeSpace_hoyle5_1,     0,     0, { WORKAROUND_STILLCALL, 0 } }, // Extra argument when checking for free space when showing save dialog
 	SCI_WORKAROUNDENTRY_TERMINATOR
 };
 

@@ -1194,6 +1194,14 @@ static const struct ADGameDescription SciGameDescriptions[] = {
                           GUIO_LINKSPEECHTOSFX, \
                           GUIO_NOASPECT)
 
+// versions with bridge or poker have save/load screens
+#define GUIO_HOYLE5_SAVELOAD GUIO6(GUIO_NOMIDI, \
+                                   GUIO_NOLAUNCHLOAD, \
+                                   GUIO_LINKMUSICTOSFX, \
+                                   GUIO_LINKSPEECHTOSFX, \
+                                   GUIO_NOASPECT, \
+                                   GAMEOPTION_ORIGINAL_SAVELOAD )
+
 	// Hoyle 5 (Hoyle Classic Games) - Windows demo
 	{"hoyle5", "Demo", {
 		{"ressci.000", 0, "98a39ae535dd01714ac313f8ba925045", 7260363},
@@ -1207,7 +1215,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"ressci.000", 0, "55ae04012a73abc15b93debf60a7df71", 16909704},
 		{"resmap.000", 0, "daf64a91344a7934fe4374765267c2af", 5767},
 		AD_LISTEND},
-		Common::EN_ANY, Common::kPlatformWindows, ADGF_DROPPLATFORM, GUIO_HOYLE5 },
+		Common::EN_ANY, Common::kPlatformWindows, ADGF_DROPPLATFORM, GUIO_HOYLE5_SAVELOAD },
 
 	// Hoyle 5 (Hoyle Classic Games for Laptops) - Windows
 	// SCI 2.100.002
@@ -1216,7 +1224,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"ressci.000", 0, "ca50cf09f80a5f982a965afea852cc42", 3278849},
 		{"resmap.000", 0, "d5eef6f2529313e950c4d78251a95b1e", 4213},
 		AD_LISTEND},
-		Common::EN_ANY, Common::kPlatformWindows, ADGF_DROPPLATFORM, GUIO_HOYLE5 },
+		Common::EN_ANY, Common::kPlatformWindows, ADGF_DROPPLATFORM, GUIO_HOYLE5_SAVELOAD },
 
 	// Hoyle Bridge - Windows
 	{"hoyle5bridge", "", {
@@ -1224,7 +1232,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"ressci.000", 0, "b83cba09229d3003df9e0c864843f962", 16842499},
 		{"resmap.000", 0, "7b3e3030b0ad5f341053c18afce7d176", 5647},
 		AD_LISTEND},
-		Common::EN_ANY, Common::kPlatformWindows, ADGF_DROPPLATFORM, GUIO_HOYLE5 },
+		Common::EN_ANY, Common::kPlatformWindows, ADGF_DROPPLATFORM, GUIO_HOYLE5_SAVELOAD },
 
 	// Hoyle Children's Collection - Windows
 	{"hoyle5children", "", {
@@ -1251,6 +1259,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		Common::EN_ANY, Common::kPlatformWindows, ADGF_DROPPLATFORM, GUIO_HOYLE5 },
 
 #undef GUIO_HOYLE5
+#undef GUIO_HOYLE5_SAVELOAD
 
 #endif // ENABLE_SCI32
 
