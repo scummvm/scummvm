@@ -137,6 +137,8 @@ public:
 			offset = size() + offset;
 			// Fall through
 		case SEEK_SET:
+			// Fall through
+		default:
 			_ptr = _ptrOrig + offset;
 			_pos = offset;
 			break;
@@ -219,6 +221,8 @@ public:
 			offs = _size + offs;
 			// Fall through
 		case SEEK_SET:
+			// Fall through
+		default:
 			_ptr = _data + offs;
 			_pos = offs;
 			break;
