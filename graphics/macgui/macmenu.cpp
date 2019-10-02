@@ -21,6 +21,7 @@
  */
 
 #include "common/system.h"
+#include "common/stack.h"
 #include "common/keyboard.h"
 #include "common/macresman.h"
 
@@ -218,6 +219,8 @@ MacMenu *MacMenu::createMenuFromPEexe(Common::PEResources &exe, MacWindowManager
 
 	MacMenu *menu = wm->addMenu();
 
+	Common::Stack<MacMenuSubMenu *> menus;
+
 	int depth = 0;
 	int curMenuItemId = 0;
 	int action = 0;
@@ -228,11 +231,19 @@ MacMenu *MacMenu::createMenuFromPEexe(Common::PEResources &exe, MacWindowManager
 		if (flags & kPopUp) {
 			if (depth == 0) {
 				menu->addMenuItem(readUnicodeString(menuData));
+
+				MacMenuSubMenu *submenu = menu->addSubMenu(nullptr);
+				menus.push(submenu);
 			} else {
-				// TODO
-				// for now skip
-				readUnicodeString(menuData);
+				MacMenuSubMenu *submenu = menu->addSubMenu(menus.size() ? menus.top() : nullptr);
+
+				menus.push(submenu);
+
+				Common::U32String name = readUnicodeString(menuData);
+				menu->addSubMenuItem(submenu, name, action);
+				action++;
 			}
+
 			if (lastPopUp) {
 				lastPopUpCopy = lastPopUp;
 			}
@@ -242,13 +253,15 @@ MacMenu *MacMenu::createMenuFromPEexe(Common::PEResources &exe, MacWindowManager
 		} else {
 			menuData->readUint16LE(); // menu id
 			Common::U32String name = readUnicodeString(menuData);
-			if (depth == 1) {
-				menu->addMenuSubItem(curMenuItemId, name, action);
+			if (depth > 0) {
+				menu->addSubMenuItem(menus.top(), name, action);
 			}
 			if (!name.empty()) {
 				action++;
 			}
 			if (flags & kEndMenu) {
+				menus.pop();
+
 				if (lastPopUp)
 					depth -= 2;
 				else
@@ -303,6 +316,14 @@ int MacMenu::addMenuItem(const Common::U32String &name) {
 	return _items.size() - 1;
 }
 
+MacMenuSubMenu *MacMenu::addSubMenu(MacMenuSubMenu *submenu) {
+	if (submenu == nullptr) {
+		return (_items.back()->submenu = new MacMenuSubMenu());
+	} else {
+		return (submenu->subitems.back()->submenu = new MacMenuSubMenu());
+	}
+}
+
 void MacMenu::addMenuSubItem(int id, const Common::String &text, int action, int style, char shortcut, bool enabled) {
 	if (_items[id]->submenu == nullptr)
 		_items[id]->submenu = new MacMenuSubMenu();
@@ -319,6 +340,22 @@ void MacMenu::addMenuSubItem(int id, const Common::U32String &text, int action, 
 	_items[id]->submenu->subitems.push_back(new MacMenuSubItem(text, action, style, shortcut, enabled));
 
 	calcSubMenuBounds(_items[id]->submenu, _items[id]->bbox.left - 1, _items[id]->bbox.bottom + 1);
+}
+
+void MacMenu::addSubMenuItem(MacMenuSubMenu *submenu, const Common::String &text, int action, int style, char shortcut, bool enabled) {
+	assert(submenu != nullptr);
+
+	submenu->subitems.push_back(new MacMenuSubItem(text, action, style, shortcut, enabled));
+
+	calcSubMenuBounds(submenu, 0, 0); // FIXME
+}
+
+void MacMenu::addSubMenuItem(MacMenuSubMenu *submenu, const Common::U32String &text, int action, int style, char shortcut, bool enabled) {
+	assert(submenu != nullptr);
+
+	submenu->subitems.push_back(new MacMenuSubItem(text, action, style, shortcut, enabled));
+
+	calcSubMenuBounds(submenu, 0, 0); // FIXME
 }
 
 void MacMenu::calcDimensions() {

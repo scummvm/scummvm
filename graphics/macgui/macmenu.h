@@ -59,10 +59,13 @@ public:
 	void addStaticMenus(const MacMenuData *data);
 	void calcDimensions();
 
+	MacMenuSubMenu *addSubMenu(MacMenuSubMenu *submenu);
 	int addMenuItem(const Common::String &name);
 	int addMenuItem(const Common::U32String &name);
 	void addMenuSubItem(int id, const Common::String &text, int action, int style = 0, char shortcut = 0, bool enabled = true);
 	void addMenuSubItem(int id, const Common::U32String &text, int action, int style = 0, char shortcut = 0, bool enabled = true);
+	void addSubMenuItem(MacMenuSubMenu *submenu, const Common::String &text, int action, int style = 0, char shortcut = 0, bool enabled = true);
+	void addSubMenuItem(MacMenuSubMenu *submenu, const Common::U32String &text, int action, int style = 0, char shortcut = 0, bool enabled = true);
 	void loadMenuResource(Common::MacResManager *resFork, uint16 id);
 	void loadMenuBarResource(Common::MacResManager *resFork, uint16 id);
 	void createSubMenuFromString(int id, const char *string, int commandId);
