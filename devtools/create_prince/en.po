@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: Prince\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2018-04-17 19:53+0100\n"
-"PO-Revision-Date: 2019-10-02 21:56+0000\n"
+"PO-Revision-Date: 2019-10-03 07:06+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: English <https://translations.scummvm.org/projects/prince/"
 "prince/en/>\n"
@@ -5822,7 +5822,7 @@ msgstr ""
 
 #: dialog0179.txt:14
 msgid "OTHER: Nawet i miecz tu nie pomoże."
-msgstr ""
+msgstr "OTHER: Even the sword will not help here."
 
 #: dialog0179.txt:15
 msgid "HERO: Czyli najlepiej dać sobie spokój, tak?"
@@ -5854,39 +5854,39 @@ msgstr ""
 
 #: dialog0180.txt:106
 msgid "$0: Potrzebny drugi kapeć?..."
-msgstr ""
+msgstr "$0: Need a second slipper?..."
 
 #: dialog0180.txt:107
 msgid "$1: Gildii?"
-msgstr ""
+msgstr "$1: Guild?"
 
 #: dialog0180.txt:108
 msgid "$2: Kradniecie biednym i rozdajecie bogatym?!"
-msgstr ""
+msgstr "$2: Do you steal from the poor and give to the rich?!"
 
 #: dialog0180.txt:109
 msgid "$3: Chyba należy dawać biednym, a zabierać bogatym?"
-msgstr ""
+msgstr "$3: I guess you should give to the poor and take away from the rich?"
 
 #: dialog0180.txt:210
 msgid "$4: Coś naprawdę cennego? Czyli co?"
-msgstr ""
+msgstr "$4: Something really valuable? Or what?"
 
 #: dialog0180.txt:211
 msgid "$5: Nie mam nic naprawdę wartościowego."
-msgstr ""
+msgstr "$5: I have nothing really valuable."
 
 #: dialog0180.txt:212
 msgid "$6: Kapeć nie wystarcza?"
-msgstr ""
+msgstr "$6: Is the slipper not enough?"
 
 #: dialog0180.txt:213
 msgid "$7: Macie zniżki dla arystokratów?"
-msgstr ""
+msgstr "$7: Do you have discounts for aristocrats?"
 
 #: dialog0180.txt:100001
 msgid "OTHER: Żarcik, żarcik, żarcik..."
-msgstr ""
+msgstr "OTHER: Jokes, jokes, jokes..."
 
 #: dialog0180.txt:100002
 msgid "OTHER: Jesteś niewyczerpany, książę."
