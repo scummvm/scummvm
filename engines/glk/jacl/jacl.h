@@ -28,6 +28,8 @@
 namespace Glk {
 namespace JACL {
 
+#define GLK
+
 /**
  * JACL game interpreter
  */

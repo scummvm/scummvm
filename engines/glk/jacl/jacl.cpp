@@ -21,7 +21,7 @@
  */
 
 #include "glk/jacl/jacl.h"
-#include "common/config-manager.h"
+#include "glk/jacl/common/config-manager.h"
 
 namespace Glk {
 namespace JACL {

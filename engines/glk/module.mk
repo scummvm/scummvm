@@ -178,7 +178,20 @@ MODULE_OBJS := \
 	hugo/hugo.o \
 	hugo/stringfn.o \
 	jacl/detection.o \
-	jacl/jacl.o \
+	jacl/display.o \
+	jacl/encapsulate.o \
+	jacl/errors.o \
+	jacl/findroute.o \
+	jacl/glk_saver.o \
+	jacl/glk_startup.o \
+	jacl/interpreter.o \
+	jacl/jpp.o \
+	jacl/libcsv.o \
+	jacl/loader.o \
+	jacl/logging.o \
+	jacl/parser.o \
+	jacl/resolvers.o \
+	jacl/utils.o \
 	magnetic/detection.o \
 	magnetic/emu.o \
 	magnetic/graphics.o \

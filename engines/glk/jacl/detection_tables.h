@@ -20,9 +20,9 @@
  *
  */
 
-#include "engines/game.h"
-#include "common/gui_options.h"
-#include "common/language.h"
+#include "glk/jacl/engines/game.h"
+#include "glk/jacl/common/gui_options.h"
+#include "glk/jacl/common/language.h"
 
 namespace Glk {
 namespace JACL {
