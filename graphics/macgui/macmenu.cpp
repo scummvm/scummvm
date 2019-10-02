@@ -742,7 +742,7 @@ void MacMenu::renderSubmenu(MacMenuSubMenu *menu) {
 		y += kMenuDropdownItemHeight;
 	}
 
-	if (menu->subitems[_activeSubItem]->submenu != nullptr)
+	if (_activeSubItem != -1 && menu->subitems[_activeSubItem]->submenu != nullptr)
 		renderSubmenu(menu->subitems[_activeSubItem]->submenu);
 
 	_contentIsDirty = true;
