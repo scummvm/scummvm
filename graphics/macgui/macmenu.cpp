@@ -591,10 +591,10 @@ void MacMenu::calcSubMenuBounds(MacMenuSubMenu *submenu, int x, int y) {
 	submenu->bbox.bottom = y2;
 
 	for (uint i = 0; i < submenu->subitems.size(); i++) {
-		MacMenuSubMenu *submenu = submenu->subitems[i]->submenu;
+		MacMenuSubMenu *menu = submenu->subitems[i]->submenu;
 
-		if (submenu != nullptr)
-			calcSubMenuBounds(submenu, x2 - 4, y1 + i * kMenuDropdownItemHeight + 1);
+		if (menu != nullptr)
+			calcSubMenuBounds(menu, x2 - 4, y1 + i * kMenuDropdownItemHeight + 1);
 	}
 }
 
@@ -647,9 +647,6 @@ bool MacMenu::draw(ManagedSurface *g, bool forceRedraw) {
 
 			_screen.fillRect(hbox, _wm->_colorBlack);
 			color = _wm->_colorWhite;
-
-			if (it->submenu != nullptr)
-				renderSubmenu(it->submenu);
 		}
 
 		if (it->unicode) {
@@ -661,6 +658,10 @@ bool MacMenu::draw(ManagedSurface *g, bool forceRedraw) {
 		}
 	}
 
+	for (uint i = 0; i < _menustack.size(); i++) {
+		renderSubmenu(_menustack[i], (i == _menustack.size() - 1));
+	}
+
 	g->transBlitFrom(_screen, kColorGreen);
 
 	g_system->copyRectToScreen(g->getPixels(), g->pitch, 0, 0, g->w, g->h);
@@ -668,7 +669,7 @@ bool MacMenu::draw(ManagedSurface *g, bool forceRedraw) {
 	return true;
 }
 
-void MacMenu::renderSubmenu(MacMenuSubMenu *menu) {
+void MacMenu::renderSubmenu(MacMenuSubMenu *menu, bool recursive) {
 	Common::Rect *r = &menu->bbox;
 
 	if (r->width() == 0 || r->height() == 0)
@@ -752,8 +753,8 @@ void MacMenu::renderSubmenu(MacMenuSubMenu *menu) {
 		y += kMenuDropdownItemHeight;
 	}
 
-	if (_activeSubItem != -1 && menu->subitems[_activeSubItem]->submenu != nullptr)
-		renderSubmenu(menu->subitems[_activeSubItem]->submenu);
+	if (recursive && _activeSubItem != -1 && menu->subitems[_activeSubItem]->submenu != nullptr)
+		renderSubmenu(menu->subitems[_activeSubItem]->submenu, false);
 
 	_contentIsDirty = true;
 	//g_system->copyRectToScreen(_screen.getBasePtr(r->left, r->top), _screen.pitch, r->left, r->top, r->width() + 2, r->height() + 2);

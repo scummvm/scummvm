@@ -96,7 +96,7 @@ private:
 	const Common::String getAcceleratorString(MacMenuSubItem *item, const char *prefix);
 	int calcSubMenuWidth(MacMenuSubMenu *menu);
 	void calcSubMenuBounds(MacMenuSubMenu *menu, int x, int y);
-	void renderSubmenu(MacMenuSubMenu *menu);
+	void renderSubmenu(MacMenuSubMenu *menu, bool recursive = true);
 
 	bool keyEvent(Common::Event &event);
 	bool mouseClick(int x, int y);
