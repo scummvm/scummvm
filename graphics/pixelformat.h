@@ -274,6 +274,8 @@ struct PixelFormat {
 			return ColorComponent<7>::expand(color);
 		case 8:
 			return ColorComponent<8>::expand(color);
+		default:
+			break;
 		}
 
 		// Unsupported
