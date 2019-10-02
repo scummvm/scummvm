@@ -107,6 +107,8 @@ private:
 
 	void drawSubMenuArrow(ManagedSurface *dst, int x, int y, int color);
 
+	void printMenu(int level = 0, MacMenuSubMenu *submenu = nullptr);
+
 	Common::Array<MacMenuItem *> _items;
 
 	const Font *_font;

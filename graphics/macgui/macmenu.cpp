@@ -276,7 +276,31 @@ MacMenu *MacMenu::createMenuFromPEexe(Common::PEResources &exe, MacWindowManager
 		}
 	}
 	delete menuData;
+
+	menu->printMenu();
+
 	return menu;
+}
+
+void MacMenu::printMenu(int level, MacMenuSubMenu *submenu) {
+	if (!level) {
+		for (int i = 0; i < _items.size(); i++) {
+			debug("%s", _items[i]->unicode ? convertFromU32String(_items[i]->unicodeName).c_str() : _items[i]->name.c_str());
+
+			if (_items[i]->submenu != nullptr)
+				printMenu(level + 1, _items[i]->submenu);
+		}
+	} else {
+		for (int j = 0; j < level; j++)
+			debugN("  ");
+
+		for (int i = 0; i < submenu->subitems.size(); i++) {
+			debug("%s", submenu->subitems[i]->unicode ? convertFromU32String(submenu->subitems[i]->unicodeText).c_str() : submenu->subitems[i]->text.c_str());
+
+			if (submenu->subitems[i]->submenu != nullptr)
+				printMenu(level + 1, submenu->subitems[i]->submenu);
+		}
+	}
 }
 
 void MacMenu::addStaticMenus(const MacMenuData *data) {
