@@ -836,13 +836,25 @@ bool MacMenu::mouseClick(int x, int y) {
 			renderSubmenu(it);
 			_contentIsDirty = true;
 		}
-	} else if (_menuActivated && _activeItem != -1 && _activeSubItem != -1) {
+	} else if (_menuActivated && _activeSubItem != -1) {
+		if (_menustack.back()->subitems[_activeSubItem]->submenu != nullptr) {
+			if (_menustack.back()->subitems[_activeSubItem]->submenu->bbox.contains(x, y)) {
+				_menustack.push_back(_menustack.back()->subitems[_activeSubItem]->submenu);
+
+				_activeSubItem = 0;
+
+				return true;
+			}
+		}
+	} else if (_menuActivated && _activeItem != -1) {
 		_activeSubItem = -1;
 
 		if (_menustack.size()) {
 			renderSubmenu(_menustack.back());
 			_contentIsDirty = true;
 		}
+
+		return true;
 	}
 
 	return false;
