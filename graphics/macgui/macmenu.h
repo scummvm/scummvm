@@ -117,7 +117,7 @@ private:
 	bool _isVisible;
 
 	int _activeItem;
-	Common::Array<int> _menustack;
+	Common::Array<MacMenuSubMenu *> _menustack;
 	int _activeSubItem;
 
 	void (*_ccallback)(int action, Common::String &text, void *data);

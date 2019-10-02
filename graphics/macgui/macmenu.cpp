@@ -792,43 +792,46 @@ bool MacMenu::mouseClick(int x, int y) {
 	if (_bbox.contains(x, y)) {
 		for (uint i = 0; i < _items.size(); i++)
 			if (_items[i]->bbox.contains(x, y)) {
-			  if ((uint)_activeItem == i)
+				if ((uint)_activeItem == i)
 					return false;
 
 				if (_activeItem != -1) { // Restore background
 					if (_items[_activeItem]->submenu != nullptr) {
-						Common::Rect r(_items[_activeItem]->submenu->bbox);
-						r.right += 3;
-						r.bottom += 3;
-
 						_wm->setFullRefresh(true);
+
+						_menustack.pop_back(); // Drop previous submenu
 					}
 				}
 
 				_activeItem = i;
 				_activeSubItem = -1;
+				if (_items[_activeItem]->submenu != nullptr) {
+					_menustack.push_back(_items[_activeItem]->submenu);
+				}
+
 				_menuActivated = true;
 
 				_contentIsDirty = true;
 
 				return true;
 			}
-	} else if (_menuActivated && _items[_activeItem]->submenu != nullptr &&
-			_items[_activeItem]->submenu->bbox.contains(x, y)) {
-		MacMenuSubMenu *it = _items[_activeItem]->submenu;
+	} else if (_menuActivated && _menustack.size() > 0 && _menustack.back()->bbox.contains(x, y)) {
+		MacMenuSubMenu *it = _menustack.back();
 		int numSubItem = (y - it->bbox.top) / kMenuDropdownItemHeight;
 
 		if (numSubItem != _activeSubItem) {
 			_activeSubItem = numSubItem;
 
-			renderSubmenu(_items[_activeItem]->submenu);
+			renderSubmenu(it);
 			_contentIsDirty = true;
 		}
-	} else if (_menuActivated && _activeItem != -1) {
+	} else if (_menuActivated && _activeItem != -1 && _activeSubItem != -1) {
 		_activeSubItem = -1;
 
-		renderSubmenu(_items[_activeItem]->submenu);
-		_contentIsDirty = true;
+		if (_menustack.size()) {
+			renderSubmenu(_menustack.back());
+			_contentIsDirty = true;
+		}
 	}
 
 	return false;
