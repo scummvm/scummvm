@@ -285,14 +285,14 @@ MacMenu *MacMenu::createMenuFromPEexe(Common::PEResources &exe, MacWindowManager
 
 void MacMenu::printMenu(int level, MacMenuSubMenu *submenu) {
 	if (!level) {
-		for (int i = 0; i < _items.size(); i++) {
+		for (uint i = 0; i < _items.size(); i++) {
 			debug("0. %s", _items[i]->unicode ? convertFromU32String(_items[i]->unicodeName).c_str() : _items[i]->name.c_str());
 
 			if (_items[i]->submenu != nullptr)
 				printMenu(level + 1, _items[i]->submenu);
 		}
 	} else {
-		for (int i = 0; i < submenu->subitems.size(); i++) {
+		for (uint i = 0; i < submenu->subitems.size(); i++) {
 			debugN("%d. ", level);
 			for (int j = 0; j < level; j++)
 				debugN("  ");
