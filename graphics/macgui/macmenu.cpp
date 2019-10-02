@@ -136,6 +136,8 @@ MacMenu::MacMenu(int id, const Common::Rect &bounds, MacWindowManager *wm)
 
 	_menuActivated = false;
 
+	_dimensionsDirty = true;
+
 	if (_wm->_mode & kWMModeAutohideMenu)
 		_isVisible = false;
 	else
@@ -308,16 +310,12 @@ void MacMenu::addStaticMenus(const MacMenuData *data) {
 		const MacMenuData *m = &data[i];
 
 		if (m->menunum == kMenuHighLevel) {
-			MacMenuItem *item = new MacMenuItem(m->title);
-			_items.push_back(item);
+			addMenuItem(m->title);
 
 			continue;
 		}
 
-		if (_items[m->menunum]->submenu == nullptr)
-			_items[m->menunum]->submenu = new MacMenuSubMenu();
-
-		_items[m->menunum]->submenu->subitems.push_back(new MacMenuSubItem(m->title, m->action, 0, m->shortcut, m->enabled));
+		addMenuSubItem(m->menunum, m->title, m->action, 0, m->shortcut, m->enabled);
 	}
 
 	calcDimensions();
@@ -327,6 +325,8 @@ int MacMenu::addMenuItem(const Common::String &name) {
 	MacMenuItem *i = new MacMenuItem(name);
 	_items.push_back(i);
 
+	_dimensionsDirty = true;
+
 	return _items.size() - 1;
 }
 
@@ -334,10 +334,14 @@ int MacMenu::addMenuItem(const Common::U32String &name) {
 	MacMenuItem *i = new MacMenuItem(name);
 	_items.push_back(i);
 
+	_dimensionsDirty = true;
+
 	return _items.size() - 1;
 }
 
 MacMenuSubMenu *MacMenu::addSubMenu(MacMenuSubMenu *submenu) {
+	_dimensionsDirty = true;
+
 	if (submenu == nullptr) {
 		return (_items.back()->submenu = new MacMenuSubMenu());
 	} else {
@@ -346,37 +350,37 @@ MacMenuSubMenu *MacMenu::addSubMenu(MacMenuSubMenu *submenu) {
 }
 
 void MacMenu::addMenuSubItem(int id, const Common::String &text, int action, int style, char shortcut, bool enabled) {
+	_dimensionsDirty = true;
+
 	if (_items[id]->submenu == nullptr)
 		_items[id]->submenu = new MacMenuSubMenu();
 
 	_items[id]->submenu->subitems.push_back(new MacMenuSubItem(text, action, style, shortcut, enabled));
-
-	calcSubMenuBounds(_items[id]->submenu, _items[id]->bbox.left - 1, _items[id]->bbox.bottom + 1);
 }
 
 void MacMenu::addMenuSubItem(int id, const Common::U32String &text, int action, int style, char shortcut, bool enabled) {
+	_dimensionsDirty = true;
+
 	if (_items[id]->submenu == nullptr)
 		_items[id]->submenu = new MacMenuSubMenu();
 
 	_items[id]->submenu->subitems.push_back(new MacMenuSubItem(text, action, style, shortcut, enabled));
-
-	calcSubMenuBounds(_items[id]->submenu, _items[id]->bbox.left - 1, _items[id]->bbox.bottom + 1);
 }
 
 void MacMenu::addSubMenuItem(MacMenuSubMenu *submenu, const Common::String &text, int action, int style, char shortcut, bool enabled) {
 	assert(submenu != nullptr);
 
-	submenu->subitems.push_back(new MacMenuSubItem(text, action, style, shortcut, enabled));
+	_dimensionsDirty = true;
 
-	calcSubMenuBounds(submenu, 0, 0); // FIXME
+	submenu->subitems.push_back(new MacMenuSubItem(text, action, style, shortcut, enabled));
 }
 
 void MacMenu::addSubMenuItem(MacMenuSubMenu *submenu, const Common::U32String &text, int action, int style, char shortcut, bool enabled) {
 	assert(submenu != nullptr);
 
-	submenu->subitems.push_back(new MacMenuSubItem(text, action, style, shortcut, enabled));
+	_dimensionsDirty = true;
 
-	calcSubMenuBounds(submenu, 0, 0); // FIXME
+	submenu->subitems.push_back(new MacMenuSubItem(text, action, style, shortcut, enabled));
 }
 
 void MacMenu::calcDimensions() {
@@ -398,6 +402,8 @@ void MacMenu::calcDimensions() {
 
 		x += w + kMenuSpacing;
 	}
+
+	_dimensionsDirty = false;
 }
 
 void MacMenu::loadMenuResource(Common::MacResManager *resFork, uint16 id) {
@@ -461,19 +467,15 @@ void MacMenu::clearSubMenu(int id) {
 void MacMenu::createSubMenuFromString(int id, const char *str, int commandId) {
 	clearSubMenu(id);
 
-	MacMenuItem *menu = _items[id];
 	Common::String string(str);
-
 	Common::String item;
-
-	menu->submenu = new MacMenuSubMenu();
 
 	for (uint i = 0; i < string.size(); i++) {
 		while(i < string.size() && string[i] != ';') // Read token
 			item += string[i++];
 
 		if (item == "(-") {
-			menu->submenu->subitems.push_back(new MacMenuSubItem(NULL, 0));
+			addMenuSubItem(id, NULL, 0);
 		} else {
 			bool enabled = true;
 			int style = 0;
@@ -522,13 +524,11 @@ void MacMenu::createSubMenuFromString(int id, const char *str, int commandId) {
 					}
 			}
 
-			menu->submenu->subitems.push_back(new MacMenuSubItem(item, commandId, style, shortcut, enabled));
+			addMenuSubItem(id, item, commandId, style, shortcut, enabled);
 		}
 
 		item.clear();
 	}
-
-	calcSubMenuBounds(menu->submenu, menu->bbox.left - 1, menu->bbox.bottom + 1);
 }
 
 const Font *MacMenu::getMenuFont() {
@@ -589,6 +589,13 @@ void MacMenu::calcSubMenuBounds(MacMenuSubMenu *submenu, int x, int y) {
 	submenu->bbox.top = y1;
 	submenu->bbox.right = x2;
 	submenu->bbox.bottom = y2;
+
+	for (uint i = 0; i < submenu->subitems.size(); i++) {
+		MacMenuSubMenu *submenu = submenu->subitems[i]->submenu;
+
+		if (submenu != nullptr)
+			calcSubMenuBounds(submenu, x2 - 4, y1 + i * kMenuDropdownItemHeight + 1);
+	}
 }
 
 static void drawPixelPlain(int x, int y, int color, void *data) {
@@ -607,6 +614,9 @@ bool MacMenu::draw(ManagedSurface *g, bool forceRedraw) {
 
 	if (!_isVisible)
 		return false;
+
+	if (_dimensionsDirty)
+		calcDimensions();
 
 	if (!_contentIsDirty && !forceRedraw)
 		return false;

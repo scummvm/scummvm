@@ -116,6 +116,8 @@ private:
 	bool _menuActivated;
 	bool _isVisible;
 
+	bool _dimensionsDirty;
+
 	int _activeItem;
 	Common::Array<MacMenuSubMenu *> _menustack;
 	int _activeSubItem;
