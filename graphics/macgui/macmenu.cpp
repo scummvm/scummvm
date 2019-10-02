@@ -826,7 +826,12 @@ bool MacMenu::mouseClick(int x, int y) {
 
 				return true;
 			}
-	} else if (_menuActivated && _menustack.size() > 0 && _menustack.back()->bbox.contains(x, y)) {
+	}
+
+	if (!_menuActivated)
+		return false;
+
+	if (_menustack.size() > 0 && _menustack.back()->bbox.contains(x, y)) {
 		MacMenuSubMenu *it = _menustack.back();
 		int numSubItem = (y - it->bbox.top) / kMenuDropdownItemHeight;
 
@@ -836,17 +841,36 @@ bool MacMenu::mouseClick(int x, int y) {
 			renderSubmenu(it);
 			_contentIsDirty = true;
 		}
-	} else if (_menuActivated && _activeSubItem != -1) {
+
+		return true;
+	}
+
+	if (_activeSubItem != -1) {
 		if (_menustack.back()->subitems[_activeSubItem]->submenu != nullptr) {
 			if (_menustack.back()->subitems[_activeSubItem]->submenu->bbox.contains(x, y)) {
 				_menustack.push_back(_menustack.back()->subitems[_activeSubItem]->submenu);
 
 				_activeSubItem = 0;
+				_contentIsDirty = true;
 
 				return true;
 			}
 		}
-	} else if (_menuActivated && _activeItem != -1) {
+
+		if (_menustack.size() > 1) {
+			if (_menustack[_menustack.size() - 2]->bbox.contains(x, y)) {
+				_menustack.pop_back();
+
+				_activeSubItem = (y - _menustack.back()->bbox.top) / kMenuDropdownItemHeight;
+
+				_contentIsDirty = true;
+
+				return true;
+			}
+		}
+	}
+
+	if (_activeItem != -1) {
 		_activeSubItem = -1;
 
 		if (_menustack.size()) {
