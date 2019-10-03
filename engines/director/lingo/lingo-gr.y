@@ -236,7 +236,7 @@ stmt: stmtoneliner
 		WRITE_UINT32(&finish, $7 - $1);
 		WRITE_UINT32(&body, $9 - $1);
 		WRITE_UINT32(&end, $10 - $1);
-		WRITE_UINT32(&inc, -1);
+		WRITE_UINT32(&inc, (uint32)-1);
 		(*g_lingo->_currentScript)[$1 + 1] = init;	/* initial count value */
 		(*g_lingo->_currentScript)[$1 + 2] = finish;/* final count value */
 		(*g_lingo->_currentScript)[$1 + 3] = body;	/* body of loop */
