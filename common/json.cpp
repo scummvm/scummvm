@@ -702,6 +702,8 @@ JSONValue::JSONValue(const JSONValue &source) {
 		break;
 	}
 
+	default:
+		// fallthrough intended
 	case JSONType_Null:
 		// Nothing to do.
 		break;
@@ -1021,6 +1023,8 @@ String JSONValue::stringifyImpl(size_t const indentDepth) const {
 	String const indentStr1 = indent(indentDepth1);
 
 	switch (_type) {
+	default:
+		// fallthrough intended
 	case JSONType_Null:
 		ret_string = "null";
 		break;
