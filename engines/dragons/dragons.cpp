@@ -382,7 +382,7 @@ void DragonsEngine::gameLoop()
 			}
 
 			performAction();
-			if ((getCurrentSceneId() == 0x1d) && (getINI(0x179)->field_2 != 0))
+			if ((getCurrentSceneId() == 0x1d) && (getINI(0x178)->field_12 != 0)) //cave of dilemma
 			{
 				clearFlags(ENGINE_FLAG_8);
 			} else {
@@ -559,7 +559,7 @@ void DragonsEngine::gameLoop()
 				if (tmpId != 0) {
 					actor->flags = 0;
 					actor->priorityLayer = 0;
-					actor->field_e = 0x100;
+					actor->scale = 0x100;
 					actor->updateSequence(getINI(tmpId - 1)->field_8 * 2 + 10);
 					actor->setFlag(ACTOR_FLAG_40);
 					actor->setFlag(ACTOR_FLAG_80);
@@ -576,7 +576,7 @@ void DragonsEngine::gameLoop()
 				Actor *invActor = _inventory->getInventoryItemActor(_cursor->iniItemInHand);
 				invActor->flags = 0;
 				invActor->priorityLayer = 0;
-				invActor->field_e = 0x100;
+				invActor->scale = 0x100;
 				invActor->updateSequence(
 						 getINI(_cursor->iniItemInHand - 1)->field_8 * 2 + 10);
 				_cursor->iniItemInHand = 0;
@@ -1113,6 +1113,14 @@ bool DragonsEngine::isLeftKeyPressed() {
 
 bool DragonsEngine::isRightKeyPressed() {
 	return _rightKeyDown;
+}
+
+bool DragonsEngine::isUpKeyPressed() {
+	return false; // TODO
+}
+
+bool DragonsEngine::isDownKeyPressed() {
+	return false; // TODO
 }
 
 bool DragonsEngine::checkForActionButtonRelease() {

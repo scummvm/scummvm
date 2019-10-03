@@ -70,6 +70,7 @@ protected:
 	void spcClearEngineFlag10(); // 3
 	void spcSetEngineFlag10();   // 4
 
+	void spcRabbitsMiniGame(); //6
 	void spcDancingMiniGame(); // 7
 	void spcCastleGardenLogic(); // 8
 	void spcUnk9();
@@ -129,6 +130,7 @@ protected:
 
 	void spcBlackDragonOnHillSceneLogic(); //0x46
 
+	void spcHedgehogTest(); // 0x48
 	void spcLoadScene1(); // 0x49
 
 	void spcKnightsSavedCastleCutScene(); //0x4b

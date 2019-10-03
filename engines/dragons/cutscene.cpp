@@ -672,12 +672,162 @@ void CutScene::loadPalettes() {
 	fd.read(_palettes, 256 * 2 * 4);
 }
 
-void CutScene::flickerReturnsCutScene() {
-	//TODO
+void CutScene::flameReturnsCutScene() {
+	DragonINI *uVar1;
+	uint engineFlag10Set;
+
+	uVar1 = _vm->_dragonINIResource->getFlickerRecord();
+	DAT_80063514 = 0x3f;
+	_vm->_dragonINIResource->setFlickerRecord(NULL);
+	_vm->setUnkFlags(ENGINE_UNK1_FLAG_2);
+	engineFlag10Set = _vm->isFlagSet(ENGINE_FLAG_10);
+	//fade_related_calls_with_1f();
+	_vm->clearFlags(ENGINE_FLAG_10);
+	_vm->_cursor->setActorFlag400();
+	_vm->_inventory->setActorFlag400();
+//	scr_tilemap1_w = 0x28;
+//	DAT_8006a3f0 = DAT_8006a3ec;
+//	load_actor_file(0x81);
+//	load_actor_file(0x7d);
+//	load_actor_file(0x7e);
+//	load_actor_file(0x8f);
+//	load_actor_file(0xaa);
+	DAT_80063514 = DAT_80063514 & 0xfffe | 0x600;
+	FUN_8003d388();
+	DAT_80072de8->updateSequence(0x1f);
+	DAT_80072e04->x_pos = 0x10b;
+	DAT_80072e04->y_pos = 99;
+	DAT_80072de8->x_pos = 0x10a;
+	DAT_80072de8->y_pos = 0x5a;
+	DAT_80072de8->field_7c = 0x10000;
+	DAT_80072e04->field_7c = 0x10000;
+	DAT_80072de8->setFlag(ACTOR_FLAG_800);
+	DAT_80072e04->setFlag(ACTOR_FLAG_800);
+	//	call_fade_related_1f();
+	_vm->setFlags(ENGINE_FLAG_20000);
+	if (_vm->_talk->somethingTextAndSpeechAndAnimRelated(DAT_80072dec,4,0,0x8ab2,0x2e01) != 2) {
+		DAT_80072de8->updateSequence(0x1e);
+		DAT_80072de8->pathfinding_maybe(0xb0,0x6b,2);
+		do {
+		} while (DAT_80072de8->isFlagSet(ACTOR_FLAG_10));
+		DAT_80072de8->updateSequence(0x1f);
+		if (_vm->_talk->somethingTextAndSpeechAndAnimRelated(DAT_80072dec,4,0,0x8b40,0x2e01) != 2) {
+			DAT_80072e04->updateSequence(0x1b);
+			DAT_80072e04->pathfinding_maybe(0xd5,0x6b,2);
+			do {
+			} while (DAT_80072e04->isFlagSet(ACTOR_FLAG_10));
+			if (_vm->_talk->somethingTextAndSpeechAndAnimRelated(DAT_80072e04,0x1a,0x19,0x8bb6,0x3e01) != 2) {
+				if (_vm->_talk->somethingTextAndSpeechAndAnimRelated(DAT_80072dec,4,0,0x8bd8,0x2e01) != 2) {
+					closeUpShotOnActor(0xd8,0,0xfd,0x60);
+//					playSoundFromTxtIndex(0x8c70);
+					if (_vm->_talk->somethingTextAndSpeechAndAnimRelated(DAT_80072de8,7,0,0x8c70,0x701) != 2) {
+						fadeScreenAndResetActor(DAT_80072de8);
+						closeUpShotOnActor(0xd3,0,0x233,0x17a);
+//						playSoundFromTxtIndex(0x8cd2);
+						if (_vm->_talk->somethingTextAndSpeechAndAnimRelated(DAT_80072de8,0xc,0,0x8cd2,0x2e01) != 2) {
+							fadeScreenAndResetActor(DAT_80072de8);
+							closeUpShotOnActor(0xd7,0,0x312,0x260);
+//							playSoundFromTxtIndex(0x8e1e);
+							if (_vm->_talk->somethingTextAndSpeechAndAnimRelated(DAT_80072de8,5,0,0x8e1e,0x3e01) != 2) {
+								fadeScreenAndResetActor(DAT_80072de8);
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+//	fade_related_calls_with_1f();
+//	DisableVSyncEvent();
+//	file_read_to_buffer(s_cursor.act_80011c44,actor_dictionary);
+//	EnableVSyncEvent();
+	_vm->clearFlags(ENGINE_FLAG_20000);
+	if(engineFlag10Set) {
+		_vm->setFlags(ENGINE_FLAG_10);
+	}
+	_vm->_dragonINIResource->setFlickerRecord(uVar1);
+	cursorInventoryClearFlag400();
+	_vm->clearUnkFlags(ENGINE_UNK1_FLAG_2);
 }
 
 void CutScene::knightsSavedAgain() {
-	//TODO
+	DragonINI *flicker;
+	bool engineFlag10Set;
+
+	flicker = _vm->_dragonINIResource->getFlickerRecord();
+	DAT_80063514 = 0;
+	_vm->_dragonINIResource->setFlickerRecord(NULL);
+	_vm->setUnkFlags(ENGINE_UNK1_FLAG_2);
+	engineFlag10Set = _vm->isFlagSet(ENGINE_FLAG_10);
+	//fade_related_calls_with_1f();
+
+	_vm->clearFlags(ENGINE_FLAG_10);
+	_vm->_cursor->setActorFlag400();
+	_vm->_inventory->setActorFlag400();
+
+//	scr_tilemap1_w = 0x28;
+//TODO what is this?	DAT_8006a3f0 = DAT_8006a3ec;
+
+//	load_actor_file(0x81);
+//	load_actor_file(0x7d);
+//	load_actor_file(0x7e);
+//	load_actor_file(0x8f);
+//	load_actor_file(0xaa);
+	wideAngleEveryoneAtTable();
+	_vm->setFlags(ENGINE_FLAG_20000);
+	_vm->waitForFramesAllowSkip(0x3b);
+	closeUpShotOnActor(0xd3,0,0x233,0x17a);
+	//playSoundFromTxtIndex(0x9000);
+	if (_vm->_talk->somethingTextAndSpeechAndAnimRelated(DAT_80072de8,0xd,0,0x9000,0x2e01) != 2) {
+		fadeScreenAndResetActor(DAT_80072de8);
+		closeUpKnightsAtTable();
+//		playSoundFromTxtIndex(0x90de);
+		if (_vm->_talk->somethingTextAndSpeechAndAnimRelated(DAT_80072de8,4,0,0x90de,0x2e01) != 2) {
+			closeUpShotOnActor(0xd8,0,0xfd,0x60);
+//			playSoundFromTxtIndex(0x921c);
+			if (_vm->_talk->somethingTextAndSpeechAndAnimRelated(DAT_80072de8,8,0,0x921c,0x701) != 2) {
+				fadeScreenAndResetActor(DAT_80072de8);
+				closeUpKnightsAtTable();
+//				playSoundFromTxtIndex(0x92aa);
+				if (_vm->_talk->somethingTextAndSpeechAndAnimRelated(DAT_80072dec,9,4,0x92aa,0xc01) != 2) {
+					closeUpShotOnActor(0xd7,0,0x312,0x260);
+//					playSoundFromTxtIndex(0x932c);
+					if (_vm->_talk->somethingTextAndSpeechAndAnimRelated(DAT_80072de8,6,0,0x932c,0x3e01) != 2) {
+						fadeScreenAndResetActor(DAT_80072de8);
+						closeUpShotOnActor(0xd3,2,0x87,0);
+//						playSoundFromTxtIndex(0x93d6);
+						if (_vm->_talk->somethingTextAndSpeechAndAnimRelated(DAT_80072de8,0xe,2,0x93d6,0x2e01) != 2) {
+							fadeScreenAndResetActor(DAT_80072de8);
+							closeUpKnightsAtTable();
+//							playSoundFromTxtIndex(0x7dcc);
+							DAT_80072df0->updateSequence(0x13);
+							DAT_80072df4->updateSequence(0x10);
+							DAT_80072df8->updateSequence(0x11);
+							if (_vm->_talk->somethingTextAndSpeechAndAnimRelated(DAT_80072dec,0x12,6,0x7dcc,0xc01) != 2) {
+								closeUpShotOnActor(0xd8,0,0xfd,0x60);
+//								playSoundFromTxtIndex(0x948c);
+								if (_vm->_talk->somethingTextAndSpeechAndAnimRelated(DAT_80072de8,9,0,0x948c,0x701) != 2) {
+									fadeScreenAndResetActor(DAT_80072de8);
+									_vm->waitForFramesAllowSkip(0x3b);
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+	//fade_related_calls_with_1f();
+//	DisableVSyncEvent();
+//	file_read_to_buffer(s_cursor.act_80011c44,actor_dictionary);
+//	EnableVSyncEvent();
+	_vm->clearFlags(ENGINE_FLAG_20000);
+	if(engineFlag10Set) {
+		_vm->setFlags(ENGINE_FLAG_10);
+	}
+	_vm->_dragonINIResource->setFlickerRecord(flicker);
+	cursorInventoryClearFlag400();
+	_vm->clearUnkFlags(ENGINE_UNK1_FLAG_2);
 }
 
 

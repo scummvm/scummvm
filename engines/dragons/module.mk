@@ -19,6 +19,7 @@ MODULE_OBJS := \
 	font.o \
 	inventory.o \
 	minigame1.o \
+	minigame3.o \
 	minigame4.o \
 	saveload.o \
 	scene.o \

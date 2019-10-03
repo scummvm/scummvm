@@ -72,6 +72,7 @@ public:
 	void talkFromIni(uint32 iniId, uint32 textIndex);
 	void flickerRandomDefaultResponse();
 
+	void loadAndDisplayDialogAroundPoint(uint32 textId, uint16 x, uint16 y, uint16 param_4, int16 param_5);
 	uint32 displayDialogAroundINI(uint32 iniId, uint16 *dialogText, uint32 textIndex);
 	void displayDialogAroundPoint(uint16 *dialogText, uint16 x, uint16 y, uint16 param_4, int16 param_5, uint32 textId);
 	void displayDialogAroundActor(Actor *actor, uint16 param_2, uint16 *dialogText, uint32 textIndex);
