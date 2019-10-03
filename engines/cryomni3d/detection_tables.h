@@ -94,6 +94,23 @@ static const CryOmni3DGameDescription gameDescriptions[] = {
 	},
 
 	// Versailles 1685
+	// French Windows compressed from DVD
+	// From Uka in forum
+	{
+		{
+			"versailles",
+			"",
+			AD_ENTRY1s("PROGRAM.Z", 0, "167ac4d6e60856ee84d7369107d858d4", 230056),
+			Common::FR_FRA,
+			Common::kPlatformWindows,
+			ADGF_TESTING,
+			GUI_OPTIONS_VERSAILLES
+		},
+		GType_VERSAILLES,
+		GF_VERSAILLES_FONTS_SET_B | GF_VERSAILLES_AUDIOPADDING_NO,
+	},
+
+	// Versailles 1685
 	// French Macintosh
 	// From criezy
 	{
@@ -196,6 +213,23 @@ static const CryOmni3DGameDescription gameDescriptions[] = {
 	},
 
 	// Versailles 1685
+	// English Windows compressed from DVD
+	// From Uka in forum
+	{
+		{
+			"versailles",
+			"",
+			AD_ENTRY1s("PROGRAM.Z", 0, "daeeb8bce80fe74fe28ecc22b6a97f83", 237679),
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_TESTING,
+			GUI_OPTIONS_VERSAILLES
+		},
+		GType_VERSAILLES,
+		GF_VERSAILLES_FONTS_NUMERIC | GF_VERSAILLES_AUDIOPADDING_YES,
+	},
+
+	// Versailles 1685
 	// Italian DOS
 	// From lePhilousophe
 	{
@@ -205,6 +239,23 @@ static const CryOmni3DGameDescription gameDescriptions[] = {
 			AD_ENTRY1s("VERSAILL.PGM", "1c992f034f43418a5da2e8ebd0b92620", 603023),
 			Common::IT_ITA,
 			Common::kPlatformDOS,
+			ADGF_TESTING,
+			GUI_OPTIONS_VERSAILLES
+		},
+		GType_VERSAILLES,
+		GF_VERSAILLES_FONTS_SET_C | GF_VERSAILLES_AUDIOPADDING_YES,
+	},
+
+	// Versailles 1685
+	// Italian Windows compressed from DVD
+	// From Uka in forum
+	{
+		{
+			"versailles",
+			"",
+			AD_ENTRY1s("PROGRAM.Z", 0, "8b0dcf71a7eb21b8378add8b16857bae", 237878),
+			Common::IT_ITA,
+			Common::kPlatformWindows,
 			ADGF_TESTING,
 			GUI_OPTIONS_VERSAILLES
 		},
@@ -227,6 +278,23 @@ static const CryOmni3DGameDescription gameDescriptions[] = {
 		},
 		GType_VERSAILLES,
 		GF_VERSAILLES_FONTS_SET_B | GF_VERSAILLES_AUDIOPADDING_YES,
+	},
+
+	// Versailles 1685
+	// German Windows compressed from DVD
+	// From Uka in forum
+	{
+		{
+			"versailles",
+			"",
+			AD_ENTRY1s("PROGRAM.Z", 0, "2e1a40237f8b28cb6ef29cff137fa561", 238041),
+			Common::DE_DEU,
+			Common::kPlatformWindows,
+			ADGF_TESTING,
+			GUI_OPTIONS_VERSAILLES
+		},
+		GType_VERSAILLES,
+		GF_VERSAILLES_FONTS_NUMERIC | GF_VERSAILLES_AUDIOPADDING_YES,
 	},
 
 	// Versailles 1685
