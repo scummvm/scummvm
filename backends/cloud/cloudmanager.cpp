@@ -58,6 +58,8 @@ Common::String CloudManager::getStorageConfigName(uint32 index) const {
 	case kStorageOneDriveId: return "OneDrive";
 	case kStorageGoogleDriveId: return "GoogleDrive";
 	case kStorageBoxId: return "Box";
+	default:
+		break;
 	}
 	assert(false); // Unhandled StorageID value
 	return "";
@@ -79,6 +81,7 @@ void CloudManager::loadStorage() {
 		break;
 	default:
 		_activeStorage = nullptr;
+		break;
 	}
 
 	if (!_activeStorage) {
@@ -271,6 +274,8 @@ void CloudManager::connectStorage(uint32 index, Common::String code, Networking:
 	case kStorageBoxId:
 		new Box::BoxStorage(code, cb);
 		break;
+	default:
+		break;
 	}
 	// in these constructors Storages request token using the passed code
 	// when the token is received, they call replaceStorage()
@@ -295,6 +300,8 @@ void CloudManager::disconnectStorage(uint32 index) {
 		break;
 	case kStorageBoxId:
 		Box::BoxStorage::removeFromConfig(kStoragePrefix + name + "_");
+		break;
+	default:
 		break;
 	}
 
