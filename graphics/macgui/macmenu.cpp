@@ -337,7 +337,18 @@ int MacMenu::addMenuItem(const Common::String &name) {
 }
 
 int MacMenu::addMenuItem(const Common::U32String &name) {
-	MacMenuItem *i = new MacMenuItem(name);
+	Common::U32String amp("&");
+	Common::U32String res;
+
+	for (uint i = 0; i < name.size(); i++)
+		if (name[i] == amp[0]) {
+			//shortcut = amp[0] & 0xff;
+		} else {
+			res += name[i];
+		}
+
+
+	MacMenuItem *i = new MacMenuItem(res);
 	_items.push_back(i);
 
 	_dimensionsDirty = true;
@@ -370,7 +381,17 @@ void MacMenu::addMenuSubItem(int id, const Common::U32String &text, int action, 
 	if (_items[id]->submenu == nullptr)
 		_items[id]->submenu = new MacMenuSubMenu();
 
-	_items[id]->submenu->subitems.push_back(new MacMenuSubItem(text, action, style, shortcut, enabled));
+	Common::U32String amp("&");
+	Common::U32String res;
+
+	for (uint i = 0; i < text.size(); i++)
+		if (text[i] == amp[0]) {
+			shortcut = amp[0] & 0xff;
+		} else {
+			res += text[i];
+		}
+
+	_items[id]->submenu->subitems.push_back(new MacMenuSubItem(res, action, style, shortcut, enabled));
 }
 
 void MacMenu::addSubMenuItem(MacMenuSubMenu *submenu, const Common::String &text, int action, int style, char shortcut, bool enabled) {
@@ -386,7 +407,17 @@ void MacMenu::addSubMenuItem(MacMenuSubMenu *submenu, const Common::U32String &t
 
 	_dimensionsDirty = true;
 
-	submenu->subitems.push_back(new MacMenuSubItem(text, action, style, shortcut, enabled));
+	Common::U32String amp("&");
+	Common::U32String res;
+
+	for (uint i = 0; i < text.size(); i++)
+		if (text[i] == amp[0]) {
+			shortcut = amp[0] & 0xff;
+		} else {
+			res += text[i];
+		}
+
+	submenu->subitems.push_back(new MacMenuSubItem(res, action, style, shortcut, enabled));
 }
 
 void MacMenu::calcDimensions() {
