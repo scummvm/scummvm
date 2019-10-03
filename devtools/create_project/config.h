@@ -30,7 +30,7 @@
 #define FIRST_ENGINE "scumm"             // Name of the engine which should be sorted as first element
 
 #define ENABLE_LANGUAGE_EXTENSIONS "Backend,Common"    // Comma separated list of projects that need language extensions
-#define DISABLE_EDIT_AND_CONTINUE "tinsel,tony,scummvm"     // Comma separated list of projects that need Edit&Continue to be disabled for co-routine support (the main project is automatically added)
+#define DISABLE_EDIT_AND_CONTINUE "tinsel,tony,scummvm,Common"     // Comma separated list of projects that need Edit&Continue to be disabled for co-routine support (the main project is automatically added)
 
 //#define ADDITIONAL_LIBRARY ""            // Add a single library to the list of externally linked libraries
 #define NEEDS_RTTI 1                     // Enable RTTI globally
