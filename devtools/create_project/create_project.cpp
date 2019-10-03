@@ -1546,20 +1546,38 @@ void ProjectProvider::createProject(BuildSetup &setup) {
 
 		createProjectFile(setup.projectName, svmUUID, setup, setup.srcDir, in, ex);
 	} else if (!setup.devTools) {
+		in.clear(); ex.clear();
+		createModuleList(setup.srcDir + "/video", setup.defines, setup.testDirs, in, ex);
+		createProjectFile("Video", createUUID("Video"), setup, setup.srcDir + "/video", in, ex);
+
+		in.clear(); ex.clear();
+		createModuleList(setup.srcDir + "/backends", setup.defines, setup.testDirs, in, ex);
+		createModuleList(setup.srcDir + "/backends/platform/sdl", setup.defines, setup.testDirs, in, ex);
+		createProjectFile("backend", createUUID("Backend"), setup, setup.srcDir + "/backends", in, ex);
+
+		in.clear(); ex.clear();
+		createModuleList(setup.srcDir + "/common", setup.defines, setup.testDirs, in, ex);
+		createModuleList(setup.srcDir + "/engines", setup.defines, setup.testDirs, in, ex);
+		createProjectFile("common", createUUID("Common"), setup, setup.srcDir + "/common", in, ex);
+
+		in.clear(); ex.clear();
+		createModuleList(setup.srcDir + "/graphics", setup.defines, setup.testDirs, in, ex);
+		createModuleList(setup.srcDir + "/image", setup.defines, setup.testDirs, in, ex);
+		createProjectFile("graphics", createUUID("Graphics"), setup, setup.srcDir + "/graphics", in, ex);
+
+		in.clear(); ex.clear();
+		createModuleList(setup.srcDir + "/audio", setup.defines, setup.testDirs, in, ex);
+		createModuleList(setup.srcDir + "/audio/softsynth/mt32", setup.defines, setup.testDirs, in, ex);
+		createProjectFile("audio", createUUID("Audio"), setup, setup.srcDir + "/audio", in, ex);
+
+		in.clear(); ex.clear();
+		createModuleList(setup.srcDir + "/gui", setup.defines, setup.testDirs, in, ex);
+		createProjectFile("gui", createUUID("Gui"), setup, setup.srcDir + "/gui", in, ex);
+
 		// Last but not least create the main project file.
 		in.clear(); ex.clear();
 		// File list for the Project file
-		createModuleList(setup.srcDir + "/backends", setup.defines, setup.testDirs, in, ex);
-		createModuleList(setup.srcDir + "/backends/platform/sdl", setup.defines, setup.testDirs, in, ex);
 		createModuleList(setup.srcDir + "/base", setup.defines, setup.testDirs, in, ex);
-		createModuleList(setup.srcDir + "/common", setup.defines, setup.testDirs, in, ex);
-		createModuleList(setup.srcDir + "/engines", setup.defines, setup.testDirs, in, ex);
-		createModuleList(setup.srcDir + "/graphics", setup.defines, setup.testDirs, in, ex);
-		createModuleList(setup.srcDir + "/gui", setup.defines, setup.testDirs, in, ex);
-		createModuleList(setup.srcDir + "/audio", setup.defines, setup.testDirs, in, ex);
-		createModuleList(setup.srcDir + "/audio/softsynth/mt32", setup.defines, setup.testDirs, in, ex);
-		createModuleList(setup.srcDir + "/video", setup.defines, setup.testDirs, in, ex);
-		createModuleList(setup.srcDir + "/image", setup.defines, setup.testDirs, in, ex);
 
 		// Resource files
 		addResourceFiles(setup, in, ex);
