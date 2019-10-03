@@ -120,7 +120,8 @@ void GraphicsManager::showThumbnail(const Common::String &filename, int atX, int
 		if (fileHeight + atY > (int)_sceneHeight)
 			fileHeight = _sceneHeight - atY;
 
-		thumbnail.blit(_backdropSurface, atX, atY, Graphics::FLIP_NONE, nullptr, TS_ARGB(255, 255, 255, 255), fileWidth, fileHeight);
+		uint tmpColor = TS_ARGB(255, 255, 255, 255);
+		thumbnail.blit(_backdropSurface, atX, atY, Graphics::FLIP_NONE, nullptr, tmpColor, fileWidth, fileHeight);
 		thumbnail.free();
 	}
 }
