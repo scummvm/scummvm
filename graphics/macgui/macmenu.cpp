@@ -102,6 +102,8 @@ struct MacMenuSubMenu {
 		for (uint i = 0; i < subitems.size(); i++)
 			delete subitems[i];
 	}
+
+	int ytoItem(int y) { return MIN<int>((y - bbox.top) / kMenuDropdownItemHeight, subitems.size() - 1); }
 };
 
 MacMenuSubItem::~MacMenuSubItem() {
@@ -837,7 +839,7 @@ bool MacMenu::mouseClick(int x, int y) {
 
 	if (_menustack.size() > 0 && _menustack.back()->bbox.contains(x, y)) {
 		MacMenuSubMenu *menu = _menustack.back();
-		int numSubItem = MIN<int>((y - menu->bbox.top) / kMenuDropdownItemHeight, menu->subitems.size() - 1);
+		int numSubItem = menu->ytoItem(y);
 
 		if (numSubItem != _activeSubItem) {
 			_activeSubItem = numSubItem;
@@ -870,8 +872,7 @@ bool MacMenu::mouseClick(int x, int y) {
 
 			MacMenuSubMenu *menu = _menustack.back();
 
-			_activeSubItem = MIN<int>((y - menu->bbox.top) / kMenuDropdownItemHeight, menu->subitems.size() - 1);
-			menu->highlight = _activeSubItem;
+			_activeSubItem = menu->highlight = menu->ytoItem(y);
 
 			_contentIsDirty = true;
 
