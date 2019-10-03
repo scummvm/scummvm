@@ -339,8 +339,7 @@ void GraphicsManager::blendColor(Graphics::Surface *blitted, uint32 color, Graph
 	Graphics::TransparentSurface tmp;
 	tmp.create(blitted->w, blitted->h, blitted->format);
 	tmp.fillRect(Common::Rect(0, 0, tmp.w, tmp.h), color);
-	uint tmpColor = TS_ARGB(255, 255, 255, 255);
-	tmp.blit(*blitted, 0, 0, Graphics::FLIP_NONE, nullptr, tmpColor, (int)blitted->w, (int)blitted->h, mode);
+	tmp.blit(*blitted, 0, 0, Graphics::FLIP_NONE, nullptr, TS_ARGB((uint)255, (uint)255, (uint)255, (uint)255), (int)blitted->w, (int)blitted->h, mode);
 	tmp.free();
 }
 
@@ -373,11 +372,10 @@ Graphics::Surface *GraphicsManager::applyLightmapToSprite(Graphics::Surface *&bl
 			Graphics::TransparentSurface tmp(_lightMap, false);
 			Common::Rect rect_none(x1, y1, x1 + diffX, y1 + diffY);
 			Common::Rect rect_h(_sceneWidth - x1 - diffX, y1, _sceneWidth - x1, y1 + diffY);
-			uint tmpColor = TS_ARGB(255, 255, 255, 255);
 			tmp.blit(*blitted, 0, 0,
 					(mirror ? Graphics::FLIP_H : Graphics::FLIP_NONE),
 					(mirror ? &rect_h : &rect_none),
-					tmpColor,
+					TS_ARGB((uint)255, (uint)255, (uint)255, (uint)255),
 					(int)blitted->w, (int)blitted->h, Graphics::BLEND_MULTIPLY);
 		}
 	} else {
@@ -461,8 +459,7 @@ bool GraphicsManager::scaleSprite(Sprite &single, const SpritePalette &fontPal, 
 	// Use Transparent surface to scale and blit
 	if (!_zBuffer->numPanels) {
 		Graphics::TransparentSurface tmp(*blitted, false);
-		uint tmpColor = TS_ARGB(255, 255, 255, 255);
-		tmp.blit(_renderSurface, x1, y1, (mirror ? Graphics::FLIP_H : Graphics::FLIP_NONE), nullptr, tmpColor, diffX, diffY);
+		tmp.blit(_renderSurface, x1, y1, (mirror ? Graphics::FLIP_H : Graphics::FLIP_NONE), nullptr, TS_ARGB((uint)255, (uint)255, (uint)255, (uint)255), diffX, diffY);
 		if (ptr) {
 			ptr->free();
 			delete ptr;
@@ -523,8 +520,7 @@ void GraphicsManager::displaySpriteLayers() {
 		SpriteLayer::iterator it;
 		for (it = _spriteLayers->layer[i].begin(); it != _spriteLayers->layer[i].end(); ++it) {
 			Graphics::TransparentSurface tmp(*(*it)->surface, false);
-			uint tmpColor = TS_ARGB(255, 255, 255, 255);
-			tmp.blit(_renderSurface, (*it)->x, (*it)->y, (*it)->flip, nullptr, tmpColor, (*it)->width, (*it)->height);
+			tmp.blit(_renderSurface, (*it)->x, (*it)->y, (*it)->flip, nullptr, TS_ARGB((uint)255, (uint)255, (uint)255, (uint)255), (*it)->width, (*it)->height);
 		}
 	}
 	killSpriteLayers();
@@ -579,8 +575,7 @@ void GraphicsManager::fixScaleSprite(int x, int y, Sprite &single, const SpriteP
 	// draw sprite
 	if (!_zBuffer->numPanels) {
 		Graphics::TransparentSurface tmp(single.surface, false);
-		uint tmpColor = TS_ARGB(255, 255, 255, 255);
-		tmp.blit(_renderSurface, x1, y1, (mirror ? Graphics::FLIP_H : Graphics::FLIP_NONE), nullptr, tmpColor, diffX, diffY);
+		tmp.blit(_renderSurface, x1, y1, (mirror ? Graphics::FLIP_H : Graphics::FLIP_NONE), nullptr, TS_ARGB((uint)255, (uint)255, (uint)255, (uint)255), diffX, diffY);
 		if (ptr) {
 			ptr->free();
 			delete ptr;
