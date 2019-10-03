@@ -40,8 +40,8 @@ MSVCProvider::MSVCProvider(StringList &global_warnings, std::map<std::string, St
 }
 
 void MSVCProvider::createWorkspace(const BuildSetup &setup) {
-	UUIDMap::const_iterator svmUUID = _uuidMap.find(setup.projectName);
-	if (svmUUID == _uuidMap.end())
+	UUIDMap::const_iterator svmUUID = _engineProjects.find(setup.projectName);
+	if (svmUUID == _engineProjects.end())
 		error("No UUID for \"" + setup.projectName + "\" project created");
 
 	const std::string svmProjectUUID = svmUUID->second;
@@ -58,7 +58,7 @@ void MSVCProvider::createWorkspace(const BuildSetup &setup) {
 
 	// Write main project
 	if (!setup.devTools) {
-		solution << "Project(\"{" << solutionUUID << "}\") = \"" << setup.projectName << "\", \"" << setup.projectName << getProjectExtension() << "\", \"{" << svmProjectUUID << "}\"\n";
+		writeProjectEntry(solution, solutionUUID, setup.projectName, svmProjectUUID);
 
 		// Project dependencies are moved to vcxproj files in Visual Studio 2010
 		if (_version < 10)
@@ -68,12 +68,18 @@ void MSVCProvider::createWorkspace(const BuildSetup &setup) {
 	}
 
 	// Note we assume that the UUID map only includes UUIDs for enabled engines!
-	for (UUIDMap::const_iterator i = _uuidMap.begin(); i != _uuidMap.end(); ++i) {
+	for (UUIDMap::const_iterator i = _engineProjects.begin(); i != _engineProjects.end(); ++i) {
 		if (i->first == setup.projectName)
 			continue;
 
-		solution << "Project(\"{" << solutionUUID << "}\") = \"" << i->first << "\", \"" << i->first << getProjectExtension() << "\", \"{" << i->second << "}\"\n"
-		         << "EndProject\n";
+		writeProjectEntry(solution, solutionUUID, i->first, i->second);
+	}
+
+	for (UUIDMap::const_iterator i = _commonProjects.begin(); i != _commonProjects.end(); ++i) {
+		if (i->first == setup.projectName)
+			continue;
+
+		writeProjectEntry(solution, solutionUUID, i->first, i->second);
 	}
 
 	solution << "Global\n"
@@ -89,23 +95,11 @@ void MSVCProvider::createWorkspace(const BuildSetup &setup) {
 	            "\tEndGlobalSection\n"
 	            "\tGlobalSection(ProjectConfigurationPlatforms) = postSolution\n";
 
-	for (UUIDMap::const_iterator i = _uuidMap.begin(); i != _uuidMap.end(); ++i) {
-		solution << "\t\t{" << i->second << "}.Debug|Win32.ActiveCfg = Debug|Win32\n"
-		            "\t\t{" << i->second << "}.Debug|Win32.Build.0 = Debug|Win32\n"
-		            "\t\t{" << i->second << "}.Analysis|Win32.ActiveCfg = Analysis|Win32\n"
-		            "\t\t{" << i->second << "}.Analysis|Win32.Build.0 = Analysis|Win32\n"
-		            "\t\t{" << i->second << "}.LLVM|Win32.ActiveCfg = LLVM|Win32\n"
-		            "\t\t{" << i->second << "}.LLVM|Win32.Build.0 = LLVM|Win32\n"
-		            "\t\t{" << i->second << "}.Release|Win32.ActiveCfg = Release|Win32\n"
-		            "\t\t{" << i->second << "}.Release|Win32.Build.0 = Release|Win32\n"
-		            "\t\t{" << i->second << "}.Debug|x64.ActiveCfg = Debug|x64\n"
-		            "\t\t{" << i->second << "}.Debug|x64.Build.0 = Debug|x64\n"
-		            "\t\t{" << i->second << "}.Analysis|x64.ActiveCfg = Analysis|x64\n"
-		            "\t\t{" << i->second << "}.Analysis|x64.Build.0 = Analysis|x64\n"
-		            "\t\t{" << i->second << "}.LLVM|x64.ActiveCfg = LLVM|x64\n"
-		            "\t\t{" << i->second << "}.LLVM|x64.Build.0 = LLVM|x64\n"
-		            "\t\t{" << i->second << "}.Release|x64.ActiveCfg = Release|x64\n"
-		            "\t\t{" << i->second << "}.Release|x64.Build.0 = Release|x64\n";
+	for (UUIDMap::const_iterator i = _engineProjects.begin(); i != _engineProjects.end(); ++i) {
+		writeSolutionConfigurationEntry(solution, i->second);
+	}
+	for (UUIDMap::const_iterator i = _commonProjects.begin(); i != _commonProjects.end(); ++i) {
+		writeSolutionConfigurationEntry(solution, i->second);
 	}
 
 	solution << "\tEndGlobalSection\n"
@@ -113,6 +107,32 @@ void MSVCProvider::createWorkspace(const BuildSetup &setup) {
 	            "\t\tHideSolutionNode = FALSE\n"
 	            "\tEndGlobalSection\n"
 	            "EndGlobal\n";
+}
+
+void MSVCProvider::writeSolutionConfigurationEntry(std::ofstream& solution, const std::string& projectUUID)
+{
+	solution << "\t\t{" << projectUUID << "}.Debug|Win32.ActiveCfg = Debug|Win32\n"
+		"\t\t{" << projectUUID << "}.Debug|Win32.Build.0 = Debug|Win32\n"
+		"\t\t{" << projectUUID << "}.Analysis|Win32.ActiveCfg = Analysis|Win32\n"
+		"\t\t{" << projectUUID << "}.Analysis|Win32.Build.0 = Analysis|Win32\n"
+		"\t\t{" << projectUUID << "}.LLVM|Win32.ActiveCfg = LLVM|Win32\n"
+		"\t\t{" << projectUUID << "}.LLVM|Win32.Build.0 = LLVM|Win32\n"
+		"\t\t{" << projectUUID << "}.Release|Win32.ActiveCfg = Release|Win32\n"
+		"\t\t{" << projectUUID << "}.Release|Win32.Build.0 = Release|Win32\n"
+		"\t\t{" << projectUUID << "}.Debug|x64.ActiveCfg = Debug|x64\n"
+		"\t\t{" << projectUUID << "}.Debug|x64.Build.0 = Debug|x64\n"
+		"\t\t{" << projectUUID << "}.Analysis|x64.ActiveCfg = Analysis|x64\n"
+		"\t\t{" << projectUUID << "}.Analysis|x64.Build.0 = Analysis|x64\n"
+		"\t\t{" << projectUUID << "}.LLVM|x64.ActiveCfg = LLVM|x64\n"
+		"\t\t{" << projectUUID << "}.LLVM|x64.Build.0 = LLVM|x64\n"
+		"\t\t{" << projectUUID << "}.Release|x64.ActiveCfg = Release|x64\n"
+		"\t\t{" << projectUUID << "}.Release|x64.Build.0 = Release|x64\n";
+}
+
+void MSVCProvider::writeProjectEntry(std::ofstream& solution, const std::string& solutionUUID, const std::string& projectName, const std::string& projectUUID)
+{
+	solution << "Project(\"{" << solutionUUID << "}\") = \"" << projectName << "\", \"" << projectName << getProjectExtension() << "\", \"{" << projectUUID << "}\"\n"
+		<< "EndProject\n";
 }
 
 void MSVCProvider::createOtherBuildFiles(const BuildSetup &setup) {

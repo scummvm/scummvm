@@ -149,9 +149,14 @@ void MSBuildProvider::createProjectFile(const std::string &name, const std::stri
 	else
 		addFilesToProject(moduleDir, project, includeList, excludeList, setup.filePrefix);
 
+	if (_commonProjects.find(name) == _commonProjects.end()) {
+		writeReferences(setup, project, _commonProjects);
+	}
+
 	// Output references for the main project
-	if (name == setup.projectName)
-		writeReferences(setup, project);
+	if (name == setup.projectName) {
+		writeReferences(setup, project, _engineProjects);
+	}
 
 	// Output auto-generated test runner
 	if (setup.tests) {
@@ -241,19 +246,25 @@ void MSBuildProvider::outputFilter(std::ostream &filters, const FileEntries &fil
 	}
 }
 
-void MSBuildProvider::writeReferences(const BuildSetup &setup, std::ofstream &output) {
+void MSBuildProvider::writeReferences(const BuildSetup& setup, std::ofstream& output, UUIDMap& projects)
+{
 	output << "\t<ItemGroup>\n";
 
-	for (UUIDMap::const_iterator i = _uuidMap.begin(); i != _uuidMap.end(); ++i) {
+	for (UUIDMap::const_iterator i = projects.begin(); i != projects.end(); ++i) {
 		if (i->first == setup.projectName)
 			continue;
 
-		output << "\t<ProjectReference Include=\"" << i->first << ".vcxproj\">\n"
-		          "\t\t<Project>{" << i->second << "}</Project>\n"
-		          "\t</ProjectReference>\n";
+		writeReference(output, i->first, i->second);
 	}
 
 	output << "\t</ItemGroup>\n";
+}
+
+void MSBuildProvider::writeReference(std::ofstream& output, std::string name, std::string uuid)
+{
+	output << "\t<ProjectReference Include=\"" << name << ".vcxproj\">\n"
+		"\t\t<Project>{" << uuid << "}</Project>\n"
+		"\t</ProjectReference>\n";
 }
 
 void MSBuildProvider::outputProjectSettings(std::ofstream &project, const std::string &name, const BuildSetup &setup, bool isRelease, bool isWin32, std::string configuration) {

@@ -40,7 +40,9 @@ protected:
 	void writeFileListToProject(const FileNode &dir, std::ofstream &projectFile, const int indentation,
 	                            const StringList &duplicate, const std::string &objPrefix, const std::string &filePrefix);
 
-	void writeReferences(const BuildSetup &setup, std::ofstream &output);
+	void writeReferences(const BuildSetup& setup, std::ofstream& output, UUIDMap& projects);
+
+	void writeReference(std::ofstream& output, std::string name, std::string uuid);
 
 	void outputGlobalPropFile(const BuildSetup &setup, std::ofstream &properties, int bits, const StringList &defines, const std::string &prefix, bool runBuildEvents);
 

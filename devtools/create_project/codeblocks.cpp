@@ -44,7 +44,7 @@ void CodeBlocksProvider::createWorkspace(const BuildSetup &setup) {
 	writeReferences(setup, workspace);
 
 	// Note we assume that the UUID map only includes UUIDs for enabled engines!
-	for (UUIDMap::const_iterator i = _uuidMap.begin(); i != _uuidMap.end(); ++i) {
+	for (UUIDMap::const_iterator i = _engineProjects.begin(); i != _engineProjects.end(); ++i) {
 		if (i->first == setup.projectName)
 			continue;
 
@@ -130,7 +130,7 @@ void CodeBlocksProvider::createProjectFile(const std::string &name, const std::s
 		for (StringList::const_iterator i = setup.libraries.begin(); i != setup.libraries.end(); ++i)
 			project << "\t\t\t\t\t<Add library=\"" << processLibraryName(*i) << "\" />\n";
 
-		for (UUIDMap::const_iterator i = _uuidMap.begin(); i != _uuidMap.end(); ++i) {
+		for (UUIDMap::const_iterator i = _engineProjects.begin(); i != _engineProjects.end(); ++i) {
 			if (i->first == setup.projectName)
 				continue;
 
@@ -254,7 +254,7 @@ void CodeBlocksProvider::writeFileListToProject(const FileNode &dir, std::ofstre
 void CodeBlocksProvider::writeReferences(const BuildSetup &setup, std::ofstream &output) {
 	output << "\t\t<Project filename=\"" << setup.projectName << ".cbp\" active=\"1\">\n";
 
-	for (UUIDMap::const_iterator i = _uuidMap.begin(); i != _uuidMap.end(); ++i) {
+	for (UUIDMap::const_iterator i = _engineProjects.begin(); i != _engineProjects.end(); ++i) {
 		if (i->first == " << PROJECT_NAME << ")
 			continue;
 

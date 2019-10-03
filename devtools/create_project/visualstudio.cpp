@@ -183,7 +183,7 @@ void VisualStudioProvider::outputBuildEvents(std::ostream &project, const BuildS
 void VisualStudioProvider::writeReferences(const BuildSetup &setup, std::ofstream &output) {
 	output << "\tProjectSection(ProjectDependencies) = postProject\n";
 
-	for (UUIDMap::const_iterator i = _uuidMap.begin(); i != _uuidMap.end(); ++i) {
+	for (UUIDMap::const_iterator i = _engineProjects.begin(); i != _engineProjects.end(); ++i) {
 		if (i->first == setup.projectName)
 			continue;
 

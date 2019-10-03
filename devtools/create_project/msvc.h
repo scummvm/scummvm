@@ -39,6 +39,10 @@ protected:
 
 	void createWorkspace(const BuildSetup &setup);
 
+	void writeSolutionConfigurationEntry(std::ofstream& solution, const std::string& projectUUID);
+
+	void writeProjectEntry(std::ofstream& solution, const std::string& solutionUUID, const std::string& projectName, const std::string& projectUUID);
+
 	void createOtherBuildFiles(const BuildSetup &setup);
 
 	void addResourceFiles(const BuildSetup &setup, StringList &includeList, StringList &excludeList);

@@ -1504,33 +1504,20 @@ void ProjectProvider::createProject(BuildSetup &setup) {
 	std::string targetFolder;
 
 	if (setup.devTools) {
-		_uuidMap = createToolsUUIDMap();
+		_engineProjects = createToolsUUIDMap();
 		targetFolder = "/devtools/";
 	} else if (!setup.tests) {
-		_uuidMap = createUUIDMap(setup);
+		_engineProjects = createUUIDMap(setup);
 		targetFolder = "/engines/";
 	}
 
 	// We also need to add the UUID of the main project file.
-	const std::string svmUUID = _uuidMap[setup.projectName] = createUUID(setup.projectName);
+	const std::string svmUUID = _engineProjects[setup.projectName] = createUUID(setup.projectName);
 
 
 	StringList in, ex;
 
-	// Create project files
-	for (UUIDMap::const_iterator i = _uuidMap.begin(); i != _uuidMap.end(); ++i) {
-		if (i->first == setup.projectName)
-			continue;
-		// Retain the files between engines if we're creating a single project
-		in.clear(); ex.clear();
-
-		const std::string moduleDir = setup.srcDir + targetFolder + i->first;
-
-		createModuleList(moduleDir, setup.defines, setup.testDirs, in, ex);
-		createProjectFile(i->first, i->second, setup, moduleDir, in, ex);
-	}
-
-#define addUUID(x) _uuidMap[x] = createUUID(createUUID(x)) 
+#define addCommonProjectUUID(x) _commonProjects[x] = createUUID(createUUID(x)) 
 
 	if (setup.tests) {
 		// Create the main project file.
@@ -1549,31 +1536,31 @@ void ProjectProvider::createProject(BuildSetup &setup) {
 	} else if (!setup.devTools) {
 		in.clear(); ex.clear();
 		createModuleList(setup.srcDir + "/video", setup.defines, setup.testDirs, in, ex);
-		createProjectFile("Video", addUUID("Video"), setup, setup.srcDir + "/video", in, ex);
+		createProjectFile("Video", addCommonProjectUUID("Video"), setup, setup.srcDir + "/video", in, ex);
 
 		in.clear(); ex.clear();
 		createModuleList(setup.srcDir + "/backends", setup.defines, setup.testDirs, in, ex);
 		createModuleList(setup.srcDir + "/backends/platform/sdl", setup.defines, setup.testDirs, in, ex);
-		createProjectFile("Backend", addUUID("Backend"), setup, setup.srcDir + "/backends", in, ex);
+		createProjectFile("Backend", addCommonProjectUUID("Backend"), setup, setup.srcDir + "/backends", in, ex);
 
 		in.clear(); ex.clear();
 		createModuleList(setup.srcDir + "/common", setup.defines, setup.testDirs, in, ex);
 		createModuleList(setup.srcDir + "/engines", setup.defines, setup.testDirs, in, ex);
-		createProjectFile("Common", addUUID("Common"), setup, setup.srcDir + "/common", in, ex);
+		createProjectFile("Common", addCommonProjectUUID("Common"), setup, setup.srcDir, in, ex);
 
 		in.clear(); ex.clear();
 		createModuleList(setup.srcDir + "/graphics", setup.defines, setup.testDirs, in, ex);
 		createModuleList(setup.srcDir + "/image", setup.defines, setup.testDirs, in, ex);
-		createProjectFile("Graphics", addUUID("Graphics"), setup, setup.srcDir + "/graphics", in, ex);
+		createProjectFile("Graphics", addCommonProjectUUID("Graphics"), setup, setup.srcDir, in, ex);
 
 		in.clear(); ex.clear();
 		createModuleList(setup.srcDir + "/audio", setup.defines, setup.testDirs, in, ex);
 		createModuleList(setup.srcDir + "/audio/softsynth/mt32", setup.defines, setup.testDirs, in, ex);
-		createProjectFile("Audio", addUUID("Audio"), setup, setup.srcDir + "/audio", in, ex);
+		createProjectFile("Audio", addCommonProjectUUID("Audio"), setup, setup.srcDir + "/audio", in, ex);
 
 		in.clear(); ex.clear();
 		createModuleList(setup.srcDir + "/gui", setup.defines, setup.testDirs, in, ex);
-		createProjectFile("Gui", addUUID("Gui"), setup, setup.srcDir + "/gui", in, ex);
+		createProjectFile("Gui", addCommonProjectUUID("Gui"), setup, setup.srcDir + "/gui", in, ex);
 
 		// Last but not least create the main project file.
 		in.clear(); ex.clear();
@@ -1597,6 +1584,19 @@ void ProjectProvider::createProject(BuildSetup &setup) {
 
 		// Create the main project file.
 		createProjectFile(setup.projectName, svmUUID, setup, setup.srcDir, in, ex);
+	}
+
+	// Create engine project files
+	for (UUIDMap::const_iterator i = _engineProjects.begin(); i != _engineProjects.end(); ++i) {
+		if (i->first == setup.projectName)
+			continue;
+		// Retain the files between engines if we're creating a single project
+		in.clear(); ex.clear();
+
+		const std::string moduleDir = setup.srcDir + targetFolder + i->first;
+
+		createModuleList(moduleDir, setup.defines, setup.testDirs, in, ex);
+		createProjectFile(i->first, i->second, setup, moduleDir, in, ex);
 	}
 
 	createWorkspace(setup);
