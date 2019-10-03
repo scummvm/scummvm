@@ -821,6 +821,7 @@ bool MacMenu::mouseClick(int x, int y) {
 				_activeSubItem = -1;
 				if (_items[_activeItem]->submenu != nullptr) {
 					_menustack.push_back(_items[_activeItem]->submenu);
+					_items[_activeItem]->submenu->highlight = -1;
 				}
 
 				_menuActivated = true;
@@ -933,6 +934,7 @@ bool MacMenu::mouseRelease(int x, int y) {
 
 		_activeItem = -1;
 		_activeSubItem = -1;
+		_menustack.clear();
 
 		_wm->setFullRefresh(true);
 
