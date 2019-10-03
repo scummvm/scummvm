@@ -51,6 +51,8 @@ void SaveLoadChooser::selectChooser(const MetaEngine &engine) {
 			_impl = new SaveLoadChooserGrid(_title, _saveMode);
 			break;
 
+		default:
+			// fallthrough intended
 		case kSaveLoadDialogList:
 #endif // !DISABLE_SAVELOADCHOOSER_GRID
 			_impl = new SaveLoadChooserSimple(_title, _buttonLabel, _saveMode);

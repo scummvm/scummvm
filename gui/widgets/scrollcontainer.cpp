@@ -111,6 +111,8 @@ void ScrollContainerWidget::handleCommand(CommandSender *sender, uint32 cmd, uin
 		reflowLayout();
 		g_gui.scheduleTopDialogRedraw();
 		break;
+	default:
+		break;
 	}
 }
 

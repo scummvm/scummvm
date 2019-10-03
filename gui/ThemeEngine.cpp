@@ -1082,6 +1082,9 @@ void ThemeEngine::drawDialogBackground(const Common::Rect &r, DialogBackground b
 	case kDialogBackgroundDefault:
 		drawDD(kDDDefaultBackground, r);
 		break;
+
+	default:
+		// fallthrough intended
 	case kDialogBackgroundNone:
 		// no op
 		break;
@@ -1209,6 +1212,8 @@ void ThemeEngine::drawText(const Common::Rect &r, const Common::String &str, Wid
 				colorId = kTextColorNormalHover;
 				break;
 
+			default:
+				// fallthrough intended
 			case kStateEnabled:
 			case kStatePressed:
 				colorId = kTextColorNormal;
@@ -1230,6 +1235,8 @@ void ThemeEngine::drawText(const Common::Rect &r, const Common::String &str, Wid
 				colorId = kTextColorAlternativeHover;
 				break;
 
+			default:
+				// fallthrough intended
 			case kStateEnabled:
 			case kStatePressed:
 				colorId = kTextColorAlternative;

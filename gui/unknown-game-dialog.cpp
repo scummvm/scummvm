@@ -232,6 +232,8 @@ void UnknownGameDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 
 		for (uint i = 0; i < _textWidgets.size() ; i++)
 			_textWidgets[i]->setVisible(true);
 		break;
+	default:
+		break;
 	}
 }
 

@@ -84,6 +84,9 @@ void SaveLoadCloudSyncProgressDialog::handleCommand(CommandSender *sender, uint3
 	case kBackgroundSyncCmd:
 		_close = true;
 		break;
+
+	default:
+		break;
 	}
 
 	Dialog::handleCommand(sender, cmd, data);

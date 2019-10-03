@@ -489,11 +489,15 @@ void ConsoleDialog::insertIntoPrompt(const char* str) {
 void ConsoleDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
 	switch (cmd) {
 	case kSetPositionCmd:
-		int newPos = (int)data + _linesPerPage - 1 + _firstLineInBuffer;
-		if (newPos != _scrollLine) {
-			_scrollLine = newPos;
-			g_gui.scheduleTopDialogRedraw();
+		{
+			int newPos = (int)data + _linesPerPage - 1 + _firstLineInBuffer;
+			if (newPos != _scrollLine) {
+				_scrollLine = newPos;
+				g_gui.scheduleTopDialogRedraw();
+			}
 		}
+		break;
+	default:
 		break;
 	}
 }

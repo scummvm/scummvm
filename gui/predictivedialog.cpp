@@ -532,6 +532,8 @@ void PredictiveDialog::processButton(ButtonId button) {
 						_temp[x] = buttons[_currentCode[x] - '1'][_repeatcount[x]];
 				_temp[_currentCode.size()] = 0;
 				_currentWord = _temp;
+			default:
+				break;
 			}
 		} else if (button == kNextAct) { // next
 			if (_mode == kModePre) {

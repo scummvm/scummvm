@@ -195,6 +195,9 @@ void TabWidget::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
 			setFirstVisible(_firstVisibleTab + 1, false);
 		}
 		break;
+
+	default:
+		break;
 	}
 }
 

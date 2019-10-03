@@ -2350,6 +2350,8 @@ void GlobalOptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 		case Cloud::kStorageBoxId:
 			url += "box";
 			break;
+		default:
+			break;
 		}
 
 		if (!g_system->openUrl(url)) {

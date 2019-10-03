@@ -153,6 +153,8 @@ void OnScreenDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 	case kFastModeCmd:
 		g_eventRec.switchFastMode();
 		break;
+	default:
+		break;
 	}
 }
 

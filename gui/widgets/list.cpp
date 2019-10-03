@@ -516,6 +516,8 @@ void ListWidget::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
 			((GUI::Dialog *)_boss)->setFocusWidget(this);
 		}
 		break;
+	default:
+		break;
 	}
 }
 

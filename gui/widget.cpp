@@ -237,6 +237,8 @@ uint8 Widget::parseHotkey(const Common::String &label) {
 			else
 				state = 0;
 			break;
+		default:
+			break;
 		}
 	}
 

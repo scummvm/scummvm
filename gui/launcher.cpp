@@ -454,6 +454,8 @@ void LauncherDialog::recordGame(int item) {
 	MessageDialog alert(_("Do you want to load saved game?"),
 		_("Yes"), _("No"));
 	switch(recorderDialog.runModal(_domains[item])) {
+	default:
+		// fallthrough intended
 	case RecorderDialog::kRecordDialogClose:
 		break;
 	case RecorderDialog::kRecordDialogPlayback:
