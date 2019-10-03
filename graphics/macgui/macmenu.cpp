@@ -836,15 +836,13 @@ bool MacMenu::mouseClick(int x, int y) {
 		return false;
 
 	if (_menustack.size() > 0 && _menustack.back()->bbox.contains(x, y)) {
-		MacMenuSubMenu *it = _menustack.back();
-		int numSubItem = MIN<int>((y - it->bbox.top) / kMenuDropdownItemHeight, it->subitems.size() - 1);
+		MacMenuSubMenu *menu = _menustack.back();
+		int numSubItem = MIN<int>((y - menu->bbox.top) / kMenuDropdownItemHeight, menu->subitems.size() - 1);
 
 		if (numSubItem != _activeSubItem) {
 			_activeSubItem = numSubItem;
+			menu->highlight = _activeSubItem;
 
-			it->highlight = _activeSubItem;
-
-			renderSubmenu(it);
 			_contentIsDirty = true;
 		}
 
@@ -873,10 +871,7 @@ bool MacMenu::mouseClick(int x, int y) {
 			MacMenuSubMenu *menu = _menustack.back();
 
 			_activeSubItem = MIN<int>((y - menu->bbox.top) / kMenuDropdownItemHeight, menu->subitems.size() - 1);
-
 			menu->highlight = _activeSubItem;
-
-			renderSubmenu(menu);
 
 			_contentIsDirty = true;
 
@@ -888,7 +883,6 @@ bool MacMenu::mouseClick(int x, int y) {
 		_activeSubItem = -1;
 
 		if (_menustack.size()) {
-			renderSubmenu(_menustack.back());
 			_contentIsDirty = true;
 		}
 
