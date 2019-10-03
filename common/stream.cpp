@@ -85,6 +85,8 @@ bool MemoryReadStream::seek(int32 offs, int whence) {
 		offs = _size + offs;
 		// Fall through
 	case SEEK_SET:
+		// Fall through
+	default:
 		_ptr = _ptrOrig + offs;
 		_pos = offs;
 		break;
@@ -188,8 +190,6 @@ String SeekableReadStream::readLine() {
 	return line;
 }
 
-
-
 uint32 SubReadStream::read(void *dataPtr, uint32 dataSize) {
 	if (dataSize > _end - _pos) {
 		dataSize = _end - _pos;
@@ -221,6 +221,8 @@ bool SeekableSubReadStream::seek(int32 offset, int whence) {
 		offset = size() + offset;
 		// fallthrough
 	case SEEK_SET:
+		// Fall through
+	default:
 		_pos = _begin + offset;
 		break;
 	case SEEK_CUR:
