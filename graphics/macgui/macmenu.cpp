@@ -240,7 +240,7 @@ MacMenu *MacMenu::createMenuFromPEexe(Common::PEResources &exe, MacWindowManager
 				menu->addMenuItem(readUnicodeString(menuData));
 			} else {
 				Common::U32String name = readUnicodeString(menuData);
-				menu->addSubMenuItem(menus.top(), name, action);
+				menu->addSubMenuItem(menus.top(), name, action, 0, 0, !(flags & kGrayed));
 				action++;
 			}
 
@@ -255,7 +255,7 @@ MacMenu *MacMenu::createMenuFromPEexe(Common::PEResources &exe, MacWindowManager
 			menuData->readUint16LE(); // menu id
 			Common::U32String name = readUnicodeString(menuData);
 			if (depth > 0) {
-				menu->addSubMenuItem(menus.top(), name, action);
+				menu->addSubMenuItem(menus.top(), name, action, 0, 0, !(flags & kGrayed));
 			}
 			if (!name.empty()) {
 				action++;
@@ -280,7 +280,8 @@ MacMenu *MacMenu::createMenuFromPEexe(Common::PEResources &exe, MacWindowManager
 	}
 	delete menuData;
 
-	menu->printMenu();
+	if (gDebugLevel > 5)
+		menu->printMenu();
 
 	return menu;
 }
