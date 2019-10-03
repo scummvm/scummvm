@@ -1554,26 +1554,26 @@ void ProjectProvider::createProject(BuildSetup &setup) {
 		in.clear(); ex.clear();
 		createModuleList(setup.srcDir + "/backends", setup.defines, setup.testDirs, in, ex);
 		createModuleList(setup.srcDir + "/backends/platform/sdl", setup.defines, setup.testDirs, in, ex);
-		createProjectFile("backend", addUUID("Backend"), setup, setup.srcDir + "/backends", in, ex);
+		createProjectFile("Backend", addUUID("Backend"), setup, setup.srcDir + "/backends", in, ex);
 
 		in.clear(); ex.clear();
 		createModuleList(setup.srcDir + "/common", setup.defines, setup.testDirs, in, ex);
 		createModuleList(setup.srcDir + "/engines", setup.defines, setup.testDirs, in, ex);
-		createProjectFile("common", addUUID("Common"), setup, setup.srcDir + "/common", in, ex);
+		createProjectFile("Common", addUUID("Common"), setup, setup.srcDir + "/common", in, ex);
 
 		in.clear(); ex.clear();
 		createModuleList(setup.srcDir + "/graphics", setup.defines, setup.testDirs, in, ex);
 		createModuleList(setup.srcDir + "/image", setup.defines, setup.testDirs, in, ex);
-		createProjectFile("graphics", addUUID("Graphics"), setup, setup.srcDir + "/graphics", in, ex);
+		createProjectFile("Graphics", addUUID("Graphics"), setup, setup.srcDir + "/graphics", in, ex);
 
 		in.clear(); ex.clear();
 		createModuleList(setup.srcDir + "/audio", setup.defines, setup.testDirs, in, ex);
 		createModuleList(setup.srcDir + "/audio/softsynth/mt32", setup.defines, setup.testDirs, in, ex);
-		createProjectFile("audio", addUUID("Audio"), setup, setup.srcDir + "/audio", in, ex);
+		createProjectFile("Audio", addUUID("Audio"), setup, setup.srcDir + "/audio", in, ex);
 
 		in.clear(); ex.clear();
 		createModuleList(setup.srcDir + "/gui", setup.defines, setup.testDirs, in, ex);
-		createProjectFile("gui", addUUID("Gui"), setup, setup.srcDir + "/gui", in, ex);
+		createProjectFile("Gui", addUUID("Gui"), setup, setup.srcDir + "/gui", in, ex);
 
 		// Last but not least create the main project file.
 		in.clear(); ex.clear();
