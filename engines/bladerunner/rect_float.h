@@ -24,6 +24,7 @@
 #define BLADERUNNER_RECT_FLOAT_H
 
 #include "common/debug.h"
+#include "common/math.h"
 #include "common/types.h"
 #include "common/util.h"
 
@@ -50,10 +51,10 @@ struct RectFloat {
 	}
 
 	void trunc_2_decimals() {
-		x0 = truncf(x0 * 100.0f) / 100.0f;
-		y0 = truncf(y0 * 100.0f) / 100.0f;
-		x1 = truncf(x1 * 100.0f) / 100.0f;
-		y1 = truncf(y1 * 100.0f) / 100.0f;
+		x0 = Common::trunc(x0 * 100.0f) / 100.0f;
+		y0 = Common::trunc(y0 * 100.0f) / 100.0f;
+		x1 = Common::trunc(x1 * 100.0f) / 100.0f;
+		y1 = Common::trunc(y1 * 100.0f) / 100.0f;
 	}
 };
 
