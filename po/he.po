@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.1.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2019-10-03 07:07+0200\n"
+"POT-Creation-Date: 2019-10-04 01:11+0200\n"
 "PO-Revision-Date: 2018-12-18 21:54+0000\n"
 "Last-Translator: Matan Bareket <mataniko@gmail.com>\n"
 "Language-Team: Hebrew <https://translations.scummvm.org/projects/scummvm/"
@@ -1548,7 +1548,7 @@ msgstr ""
 msgid "This Storage is working now. Do you want to interrupt it?"
 msgstr ""
 
-#: gui/options.cpp:2619 backends/cloud/cloudmanager.cpp:154
+#: gui/options.cpp:2619 backends/cloud/cloudmanager.cpp:157
 msgid "<right now>"
 msgstr ""
 
@@ -2231,7 +2231,7 @@ msgstr ""
 msgid "C64 Audio emulator"
 msgstr ""
 
-#: backends/cloud/cloudmanager.cpp:153
+#: backends/cloud/cloudmanager.cpp:156
 msgid "<syncing...>"
 msgstr ""
 

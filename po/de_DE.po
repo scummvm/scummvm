@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2019-10-03 07:07+0200\n"
+"POT-Creation-Date: 2019-10-04 01:11+0200\n"
 "PO-Revision-Date: 2019-09-24 10:41+0000\n"
 "Last-Translator: Lothar Serra Mari <serra@scummvm.org>\n"
 "Language-Team: German <https://translations.scummvm.org/projects/scummvm/"
@@ -1581,7 +1581,7 @@ msgstr "Verbinden..."
 msgid "This Storage is working now. Do you want to interrupt it?"
 msgstr "Dieser Cloud-Speicher arbeitet gerade. Möchten Sie ihn unterbrechen?"
 
-#: gui/options.cpp:2619 backends/cloud/cloudmanager.cpp:154
+#: gui/options.cpp:2619 backends/cloud/cloudmanager.cpp:157
 msgid "<right now>"
 msgstr "<gerade eben>"
 
@@ -2309,7 +2309,7 @@ msgstr "IBM PCjr-Emulator"
 msgid "C64 Audio emulator"
 msgstr "C64-Audio-Emulator"
 
-#: backends/cloud/cloudmanager.cpp:153
+#: backends/cloud/cloudmanager.cpp:156
 msgid "<syncing...>"
 msgstr "<synchronisiere...>"
 

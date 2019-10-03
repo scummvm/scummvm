@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2019-10-03 07:07+0200\n"
+"POT-Creation-Date: 2019-10-04 01:11+0200\n"
 "PO-Revision-Date: 2018-12-18 21:54+0000\n"
 "Last-Translator: Alex ASP <hshunt@questzone.ru>\n"
 "Language-Team: Russian <https://translations.scummvm.org/projects/scummvm/"
@@ -1571,7 +1571,7 @@ msgstr "Подключить"
 msgid "This Storage is working now. Do you want to interrupt it?"
 msgstr "Другое облако уже активно. Вы хотите прервать процесс?"
 
-#: gui/options.cpp:2619 backends/cloud/cloudmanager.cpp:154
+#: gui/options.cpp:2619 backends/cloud/cloudmanager.cpp:157
 msgid "<right now>"
 msgstr "<сейчас>"
 
@@ -2300,7 +2300,7 @@ msgstr "Эмулятор IBM PCjr"
 msgid "C64 Audio emulator"
 msgstr "Эмулятор звука C64"
 
-#: backends/cloud/cloudmanager.cpp:153
+#: backends/cloud/cloudmanager.cpp:156
 #, fuzzy
 msgid "<syncing...>"
 msgstr "Подключить"

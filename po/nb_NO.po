@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2019-10-03 07:07+0200\n"
+"POT-Creation-Date: 2019-10-04 01:11+0200\n"
 "PO-Revision-Date: 2018-04-18 10:01+0000\n"
 "Last-Translator: Adrian Frühwirth <bonki@scummvm.org>\n"
 "Language-Team: Norwegian Bokmål <https://translations.scummvm.org/projects/"
@@ -1581,7 +1581,7 @@ msgstr "Koble til"
 msgid "This Storage is working now. Do you want to interrupt it?"
 msgstr "En annen lagringsmåte er aktiv. Vil du avbryte den?"
 
-#: gui/options.cpp:2619 backends/cloud/cloudmanager.cpp:154
+#: gui/options.cpp:2619 backends/cloud/cloudmanager.cpp:157
 msgid "<right now>"
 msgstr "<med en gang>"
 
@@ -2315,7 +2315,7 @@ msgstr "IBM PCjr Emulator"
 msgid "C64 Audio emulator"
 msgstr "C64 Lydemulator"
 
-#: backends/cloud/cloudmanager.cpp:153
+#: backends/cloud/cloudmanager.cpp:156
 #, fuzzy
 msgid "<syncing...>"
 msgstr "Koble til"

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2019-10-03 07:07+0200\n"
+"POT-Creation-Date: 2019-10-04 01:11+0200\n"
 "PO-Revision-Date: 2019-09-15 20:54+0000\n"
 "Last-Translator: Rafa³ Bêd¼kowski <ravcik@gmail.com>\n"
 "Language-Team: Polish <https://translations.scummvm.org/projects/scummvm/"
@@ -1567,7 +1567,7 @@ msgstr "Po³±cz"
 msgid "This Storage is working now. Do you want to interrupt it?"
 msgstr "Inna us³uga jest aktywna. Czy chcesz j± przerwaæ?"
 
-#: gui/options.cpp:2619 backends/cloud/cloudmanager.cpp:154
+#: gui/options.cpp:2619 backends/cloud/cloudmanager.cpp:157
 msgid "<right now>"
 msgstr "<teraz>"
 
@@ -2301,7 +2301,7 @@ msgstr "Emulator IBM PCjr"
 msgid "C64 Audio emulator"
 msgstr "Emulator d¼wiêku C64"
 
-#: backends/cloud/cloudmanager.cpp:153
+#: backends/cloud/cloudmanager.cpp:156
 #, fuzzy
 msgid "<syncing...>"
 msgstr "Po³±cz"

@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2019-10-03 07:07+0200\n"
+"POT-Creation-Date: 2019-10-04 01:11+0200\n"
 "PO-Revision-Date: 2018-08-06 21:35+0000\n"
 "Last-Translator: Fiodar <fedor_qd@mail.ru>\n"
 "Language-Team: Belarusian <https://translations.scummvm.org/projects/scummvm/"
@@ -1578,7 +1578,7 @@ msgstr "Далучыць"
 msgid "This Storage is working now. Do you want to interrupt it?"
 msgstr "Іншае воблака ўжо актыўна. Вы жадаеце перапыніць працэс?"
 
-#: gui/options.cpp:2619 backends/cloud/cloudmanager.cpp:154
+#: gui/options.cpp:2619 backends/cloud/cloudmanager.cpp:157
 msgid "<right now>"
 msgstr "<зараз>"
 
@@ -2316,7 +2316,7 @@ msgstr "Эмулятар IBM PCjr"
 msgid "C64 Audio emulator"
 msgstr "Эмулятар гуку C64"
 
-#: backends/cloud/cloudmanager.cpp:153
+#: backends/cloud/cloudmanager.cpp:156
 #, fuzzy
 msgid "<syncing...>"
 msgstr "Далучыць"
