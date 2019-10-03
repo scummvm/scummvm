@@ -260,7 +260,7 @@ void MSBuildProvider::writeReferences(const BuildSetup& setup, std::ofstream& ou
 	output << "\t</ItemGroup>\n";
 }
 
-void MSBuildProvider::writeReference(std::ofstream& output, std::string name, std::string uuid)
+void MSBuildProvider::writeReference(std::ofstream& output, const std::string& name, const std::string& uuid)
 {
 	output << "\t<ProjectReference Include=\"" << name << ".vcxproj\">\n"
 		"\t\t<Project>{" << uuid << "}</Project>\n"

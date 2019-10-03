@@ -42,7 +42,7 @@ protected:
 
 	void writeReferences(const BuildSetup& setup, std::ofstream& output, UUIDMap& projects);
 
-	void writeReference(std::ofstream& output, std::string name, std::string uuid);
+	void writeReference(std::ofstream& output, const std::string& name, const std::string& uuid);
 
 	void outputGlobalPropFile(const BuildSetup &setup, std::ofstream &properties, int bits, const StringList &defines, const std::string &prefix, bool runBuildEvents);
 
