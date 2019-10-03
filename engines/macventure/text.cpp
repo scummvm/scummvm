@@ -195,6 +195,8 @@ Common::String TextAsset::getNoun(ObjID subval) {
 		case 3:
 			name = _engine->getPrefixString(2, obj) + name;
 			break;
+		default:
+			break;
 		}
 	}
 	if (name.size() && (subval & 4)) {

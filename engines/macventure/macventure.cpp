@@ -313,8 +313,10 @@ void MacVentureEngine::refreshReady() {
 		_cmdReady = _currentSelection.size() != 0;
 		break;
 	case 2:
-		if (_destObject > 0) // We have a destination seleted
+		if (_destObject > 0) // We have a destination selected
 			_cmdReady = true;
+		break;
+	default:
 		break;
 	}
 }
