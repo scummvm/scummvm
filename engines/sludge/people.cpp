@@ -566,7 +566,7 @@ bool PeopleManager::walkMe(OnScreenPerson *thisPerson, bool move) {
 		yDiff = (thisPerson->thisStepY - thisPerson->y) * 2;
 		s = thisPerson->scale * thisPerson->walkSpeed;
 		if (s < 0.2)
-			s = 0.2;
+			s = (float)0.2;
 
 		maxDiff = (ABS(xDiff) >= ABS(yDiff)) ? ABS(xDiff) : ABS(yDiff);
 
