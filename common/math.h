@@ -107,6 +107,20 @@ inline int intLog2(uint32 v) {
 }
 #endif
 
+// Round a number towards zero
+// Input and Output type can be different
+template<class InputT, class OutputT>
+inline OutputT trunc(InputT x) {
+    return (x > 0) ? floor(x) : ceil(x);
+}
+
+// Round a number towards zero
+// Input and Output type are the same
+template<class T>
+inline T trunc(T x) {
+	return trunc<T,T>(x);
+}
+
 // Convert radians to degrees
 // Input and Output type can be different
 // Upconvert everything to floats
