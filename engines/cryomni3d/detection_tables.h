@@ -100,7 +100,7 @@ static const CryOmni3DGameDescription gameDescriptions[] = {
 		{
 			"versailles",
 			"",
-			AD_ENTRY1s("PROGRAM.Z", 0, "167ac4d6e60856ee84d7369107d858d4", 230056),
+			AD_ENTRY1s("PROGRAM.Z", "167ac4d6e60856ee84d7369107d858d4", 230056),
 			Common::FR_FRA,
 			Common::kPlatformWindows,
 			ADGF_TESTING,
@@ -219,7 +219,7 @@ static const CryOmni3DGameDescription gameDescriptions[] = {
 		{
 			"versailles",
 			"",
-			AD_ENTRY1s("PROGRAM.Z", 0, "daeeb8bce80fe74fe28ecc22b6a97f83", 237679),
+			AD_ENTRY1s("PROGRAM.Z", "daeeb8bce80fe74fe28ecc22b6a97f83", 237679),
 			Common::EN_ANY,
 			Common::kPlatformWindows,
 			ADGF_TESTING,
@@ -253,7 +253,7 @@ static const CryOmni3DGameDescription gameDescriptions[] = {
 		{
 			"versailles",
 			"",
-			AD_ENTRY1s("PROGRAM.Z", 0, "8b0dcf71a7eb21b8378add8b16857bae", 237878),
+			AD_ENTRY1s("PROGRAM.Z", "8b0dcf71a7eb21b8378add8b16857bae", 237878),
 			Common::IT_ITA,
 			Common::kPlatformWindows,
 			ADGF_TESTING,
@@ -287,7 +287,7 @@ static const CryOmni3DGameDescription gameDescriptions[] = {
 		{
 			"versailles",
 			"",
-			AD_ENTRY1s("PROGRAM.Z", 0, "2e1a40237f8b28cb6ef29cff137fa561", 238041),
+			AD_ENTRY1s("PROGRAM.Z", "2e1a40237f8b28cb6ef29cff137fa561", 238041),
 			Common::DE_DEU,
 			Common::kPlatformWindows,
 			ADGF_TESTING,
