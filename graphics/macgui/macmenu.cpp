@@ -225,12 +225,12 @@ MacMenu *MacMenu::createMenuFromPEexe(Common::PEResources &exe, MacWindowManager
 	MacMenu *menu = wm->addMenu();
 
 	Common::Stack<MacMenuSubMenu *> menus;
+	Common::Stack<bool> popups;
 
 	int depth = 0;
 	int curMenuItemId = 0;
 	int action = 0;
 	bool lastPopUp = false;
-	bool lastPopUpCopy = false; // no more than 2 level menu for now
 	while (depth >= 0) {
 		uint16 flags = menuData->readUint16LE();
 		if (flags & kPopUp) {
@@ -244,12 +244,10 @@ MacMenu *MacMenu::createMenuFromPEexe(Common::PEResources &exe, MacWindowManager
 
 			MacMenuSubMenu *submenu = menu->addSubMenu(menus.size() ? menus.top() : nullptr);
 			menus.push(submenu);
-
-			if (lastPopUp) {
-				lastPopUpCopy = lastPopUp;
-			}
+			popups.push(lastPopUp);
 
 			lastPopUp = (flags & kEndMenu) != 0;
+
 			depth++;
 		} else {
 			menuData->readUint16LE(); // menu id
@@ -262,17 +260,19 @@ MacMenu *MacMenu::createMenuFromPEexe(Common::PEResources &exe, MacWindowManager
 			}
 			if (flags & kEndMenu) {
 				menus.pop();
+				depth--;
 
-				if (lastPopUp)
-					depth -= 2;
-				else
+				if (lastPopUp) {
 					depth--;
+
+					if (menus.size())
+						menus.pop();
+				}
 
 				if (depth == 0)
 					curMenuItemId++;
 
-				lastPopUp = lastPopUpCopy;
-				lastPopUpCopy = false;
+				lastPopUp = popups.pop();
 			}
 		}
 	}
