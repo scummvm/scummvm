@@ -132,4 +132,8 @@ Common::Rect Screen::clipRectToScreen(int destX, int destY, const Common::Rect r
 	return Common::Rect(x, y, x + w, y + h);
 }
 
+void Screen::updatePaletteTransparency(uint16 paletteNum, uint16 startOffset, uint16 endOffset, bool isTransparent) {
+	//TODO
+}
+
 } // End of namespace Dragons

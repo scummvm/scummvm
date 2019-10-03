@@ -924,7 +924,7 @@ void ScriptOpcodes::opCode_UnkA_setsProperty(ScriptOpCall &scriptOpCall) {
 		if (field2 == 0x1a && ini->field_1a_flags_maybe & 1 && ini->sceneId == _vm->getCurrentSceneId()) {
 			if (s1 & 2) {
 				ini->actor->flags |= Dragons::ACTOR_FLAG_80;
-				ini->actor->field_e = 0x100;
+				ini->actor->scale = 0x100;
 			} else {
 				ini->actor->flags &= ~Dragons::ACTOR_FLAG_80;
 			}
@@ -1225,7 +1225,7 @@ void ScriptOpcodes::opCode_Unk7(ScriptOpCall &scriptOpCall) {
 					Actor *actor = _vm->_inventory->getInventoryItemActor(_vm->_cursor->iniItemInHand);
 					actor->flags = 0;
 					actor->priorityLayer = 0;
-					actor->field_e = 0x100;
+					actor->scale = 0x100;
 					actor->updateSequence((_vm->getINI(_vm->_cursor->iniItemInHand - 1)->field_8 * 2 + 10) & 0xfffe);
 					actor->setFlag(ACTOR_FLAG_40);
 					actor->setFlag(ACTOR_FLAG_80);

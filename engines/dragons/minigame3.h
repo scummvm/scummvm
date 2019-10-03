@@ -19,33 +19,26 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
  */
-#ifndef SCUMMVM_SCREEN_H
-#define SCUMMVM_SCREEN_H
-
-#include "graphics/surface.h"
-#include "graphics/pixelformat.h"
+#ifndef DRAGONS_MINIGAME3_H
+#define DRAGONS_MINIGAME3_H
 
 namespace Dragons {
 
-class Screen {
+class DragonsEngine;
+
+class Minigame3 {
 private:
-	Graphics::PixelFormat _pixelFormat;
-	Graphics::Surface *_backSurface;
+	DragonsEngine *_vm;
 public:
-	virtual ~Screen();
+	Minigame3(DragonsEngine *vm);
 
-	Screen();
-
-	Graphics::PixelFormat getPixelFormat() { return _pixelFormat; }
-	void copyRectToSurface(const Graphics::Surface &srcSurface, int destX, int destY);
-	void copyRectToSurface(const Graphics::Surface &srcSurface, int destX, int destY, Common::Rect srcRect, bool flipX = false);
-	void updateScreen();
-	void updatePaletteTransparency(uint16 paletteNum, uint16 startOffset, uint16 endOffset, bool isTransparent);
+	void run();
 private:
-	void copyRectToSurface(const void *buffer, int srcPitch, int srcWidth, int srcXOffset, int destX, int destY, int width, int height, bool flipX);
-	Common::Rect clipRectToScreen(int destX, int destY, const Common::Rect rect);
+	void FUN_80017e64(uint32 param_1, int16 param_2, int16 param_3);
+	void FUN_80017f70_paletteRelated(uint16 unk);
+
 };
 
 } // End of namespace Dragons
 
-#endif //SCUMMVM_SCREEN_H
+#endif //DRAGONS_MINIGAME3_H

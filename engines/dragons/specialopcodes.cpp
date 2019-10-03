@@ -32,10 +32,11 @@
 #include "dragons/scene.h"
 #include "dragons/actor.h"
 #include "dragons/minigame1.h"
-#include "talk.h"
-#include "specialopcodes.h"
-#include "minigame1.h"
-#include "minigame4.h"
+#include "dragons/talk.h"
+#include "dragons/specialopcodes.h"
+#include "dragons/minigame1.h"
+#include "dragons/minigame3.h"
+#include "dragons/minigame4.h"
 
 
 namespace Dragons {
@@ -73,6 +74,7 @@ void SpecialOpcodes::initOpcodes() {
 	OPCODE(3, spcClearEngineFlag10);
 	OPCODE(4, spcSetEngineFlag10);
 
+	OPCODE(6, spcRabbitsMiniGame);
 	OPCODE(7, spcDancingMiniGame);
 	OPCODE(8, spcCastleGardenLogic);
 	OPCODE(9, spcUnk9);
@@ -133,6 +135,7 @@ void SpecialOpcodes::initOpcodes() {
 
 	OPCODE(0x46, spcBlackDragonOnHillSceneLogic);
 
+	OPCODE(0x48, spcHedgehogTest);
 	OPCODE(0x49, spcLoadScene1);
 
 	OPCODE(0x4b, spcKnightsSavedCastleCutScene);
@@ -207,6 +210,11 @@ void SpecialOpcodes::spcClearEngineFlag10() {
 
 void SpecialOpcodes::spcSetEngineFlag10() {
 	_vm->setFlags(Dragons::ENGINE_FLAG_10);
+}
+
+void SpecialOpcodes::spcRabbitsMiniGame() {
+	Minigame3 minigame3(_vm);
+	minigame3.run();
 }
 
 void SpecialOpcodes::spcDancingMiniGame() {
@@ -455,7 +463,7 @@ void SpecialOpcodes::spcCastleGateMoatDrainedSceneLogic() {
 void SpecialOpcodes::spcUnk34() {
 	Actor *flicker = _vm->_dragonINIResource->getFlickerRecord()->actor;
 	flicker->setFlag(ACTOR_FLAG_80);
-	flicker->field_e = 0x100;
+	flicker->scale = 0x100;
 }
 
 void SpecialOpcodes::spcFlickerClearFlag0x80() {
@@ -770,6 +778,16 @@ void SpecialOpcodes::spcUnk8b() {
 	//TODO sceneId_1 = DAT_80063e20; //0xA
 }
 
+void SpecialOpcodes::spcHedgehogTest() {
+	if (_vm->_dragonINIResource->getRecord(0x168)->actor->_sequenceID == 4 &&
+		_vm->_dragonINIResource->getRecord(0x169)->actor->_sequenceID == 4 &&
+		_vm->_dragonINIResource->getRecord(0x16a)->actor->_sequenceID == 4) {
+		_vm->_dragonINIResource->getRecord(0x169)->field_12 = 1;
+	} else {
+		_vm->_dragonINIResource->getRecord(0x169)->field_12 = 0;
+	}
+}
+
 void SpecialOpcodes::spcLoadScene1() {
 	CutScene *cutScene = new CutScene(_vm);
 	cutScene->scene1();
@@ -784,7 +802,7 @@ void SpecialOpcodes::spcKnightsSavedCastleCutScene() {
 
 void SpecialOpcodes::spcFlickerReturnsCutScene() {
 	CutScene *cutScene = new CutScene(_vm);
-	cutScene->flickerReturnsCutScene();
+	cutScene->flameReturnsCutScene();
 	delete cutScene;
 }
 

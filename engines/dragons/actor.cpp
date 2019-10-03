@@ -156,7 +156,7 @@ void Actor::init(ActorResource *resource, int16 x, int16 y, uint32 sequenceID) {
 	sequenceTimer = 0;
 	target_x_pos = x;
 	target_y_pos = y;
-	field_e = 0x100;
+	scale = 0x100;
 	_sequenceID2 = 0;
 	flags = (Dragons::ACTOR_FLAG_40 | Dragons::ACTOR_FLAG_4);
 	frame_width = 0;
@@ -795,8 +795,8 @@ uint16 Actor::pathfindingUnk(int16 actor_x, int16 actor_y, int16 target_x, int16
 
 	void Actor::walkPath() {
 		if (isFlagClear(Dragons::ACTOR_FLAG_400) && isFlagSet(Dragons::ACTOR_FLAG_40) && isFlagSet(Dragons::ACTOR_FLAG_10)) {
-			field_24_x += (((field_e * field_2c) / 256) * 5) / 4;
-			field_28_y += (((field_e * field_30) / 256) * 5) / 4;
+			field_24_x += (((scale * field_2c) / 256) * 5) / 4;
+			field_28_y += (((scale * field_30) / 256) * 5) / 4;
 
 			if ( (field_2c >= 0 && target_x_pos < (field_24_x >> 0x10))
 			|| (field_2c < 0 && (field_24_x >> 0x10) < target_x_pos)) {

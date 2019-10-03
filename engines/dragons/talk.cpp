@@ -456,6 +456,12 @@ uint32 Talk::displayDialogAroundINI(uint32 iniId, uint16 *dialogText, uint32 tex
 	return 1;
 }
 
+void Talk::loadAndDisplayDialogAroundPoint(uint32 textId, uint16 x, uint16 y, uint16 param_4, int16 param_5) {
+	uint16 buffer[1000];
+	loadText(textId, buffer, 1000);
+	displayDialogAroundPoint(buffer, x, y, param_4, param_5, textId);
+}
+
 void
 Talk::displayDialogAroundPoint(uint16 *dialogText, uint16 x, uint16 y, uint16 param_4, int16 param_5, uint32 textId) {
 // TODO

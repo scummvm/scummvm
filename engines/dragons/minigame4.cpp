@@ -26,6 +26,7 @@
 #include "dragons/talk.h"
 #include "dragons/inventory.h"
 #include "dragons/scene.h"
+#include "dragons/screen.h"
 
 namespace Dragons {
 
@@ -58,7 +59,7 @@ void Minigame4::run() {
 	DAT_80090428_videoUpdateRelated = 0;
 	//TODO vsync_updater_function = videoUpdateFunction;
 	//load_palette_into_frame_buffer(4,DAT_8006a3f8);
-	//load_palette_into_frame_buffer_2(4,1,0xff,1);
+	_vm->_screen->updatePaletteTransparency(4,1,0xff,true);
 	_vm->videoFlags |= 4;
 	_vm->_scene->setBgLayerPriority(2);
 	_vm->_scene->setMgLayerPriority(1);
@@ -106,7 +107,7 @@ void Minigame4::run() {
 //			(4,(uint)*(ushort *)
 //					(*(int *)(&DAT_80071c30 + (uint)actors[0].actorFileDictionaryIndex * 8) + 10)
 //			   + *(int *)(&DAT_80071c30 + (uint)actors[0].actorFileDictionaryIndex * 8));
-//	load_palette_into_frame_buffer_2(4,1,0xff,1);
+	_vm->_screen->updatePaletteTransparency(4,1,0xff,true);
 	_vm->_scene->setSceneId(uVar1);
 	_vm->setAllFlags(uVar4);
 	uVar2->sceneId = uVar1;

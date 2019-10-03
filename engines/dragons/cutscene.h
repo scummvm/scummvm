@@ -60,7 +60,7 @@ public:
 	void scene1();
 	void diamondScene();
 	void knightsSavedBackAtCastle();
-	void flickerReturnsCutScene();
+	void flameReturnsCutScene();
 	void knightsSavedAgain();
 
 private:

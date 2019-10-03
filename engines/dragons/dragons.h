@@ -144,8 +144,8 @@ public:
 	uint16 data_800633fc;
 	uint16 videoFlags; // TODO move to screen?
 
-private:
 	Screen *_screen;
+private:
 	BigfileArchive *_bigfileArchive;
 	DragonFLG *_dragonFLG;
 	DragonVAR *_dragonVAR;
@@ -247,6 +247,8 @@ public:
 	bool isActionButtonPressed();
 	bool isLeftKeyPressed();
 	bool isRightKeyPressed();
+	bool isUpKeyPressed();
+	bool isDownKeyPressed();
 	bool isSquareButtonPressed();
 	bool isTriangleButtonPressed();
 	bool isCircleButtonPressed();
