@@ -271,8 +271,6 @@ NinePatchBitmap::~NinePatchBitmap() {
 }
 
 void NinePatchBitmap::drawRegions(Graphics::Surface &target, int dx, int dy, int dw, int dh) {
-	uint color = TS_ARGB(255, 255, 255, 255);
-
 	/* draw each region */
 	for (uint i = 0; i < _v._m.size(); ++i) {
 		for (uint j = 0; j < _h._m.size(); ++j) {
@@ -280,7 +278,7 @@ void NinePatchBitmap::drawRegions(Graphics::Surface &target, int dx, int dy, int
 						_h._m[j]->offset + _h._m[j]->length, _v._m[i]->offset + _v._m[i]->length);
 
 			_bmp->blit(target, dx + _h._m[j]->dest_offset, dy + _v._m[i]->dest_offset,
-					Graphics::FLIP_NONE, &r, color,
+					Graphics::FLIP_NONE, &r, TS_ARGB((uint)255, (uint)255, (uint)255, (uint)255),
 					_h._m[j]->dest_length, _v._m[i]->dest_length);
 		}
 	}
@@ -308,8 +306,6 @@ void NinePatchBitmap::blitClip(Graphics::Surface &target, Common::Rect clip, int
 		_cached_dh = dh;
 	}
 
-	uint color = TS_ARGB(255, 255, 255, 255);
-
 	/* draw each region */
 	for (uint i = 0; i < _v._m.size(); ++i) {
 		for (uint j = 0; j < _h._m.size(); ++j) {
@@ -317,7 +313,7 @@ void NinePatchBitmap::blitClip(Graphics::Surface &target, Common::Rect clip, int
 				_h._m[j]->offset + _h._m[j]->length, _v._m[i]->offset + _v._m[i]->length);
 
 			_bmp->blitClip(target, clip, dx + _h._m[j]->dest_offset, dy + _v._m[i]->dest_offset,
-				Graphics::FLIP_NONE, &r, color,
+				Graphics::FLIP_NONE, &r, TS_ARGB((uint)255, (uint)255, (uint)255, (uint)255),
 				_h._m[j]->dest_length, _v._m[i]->dest_length);
 		}
 	}
