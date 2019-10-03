@@ -922,13 +922,13 @@ bool MacMenu::mouseRelease(int x, int y) {
 			g_system->copyRectToScreen(_wm->_screenCopy->getBasePtr(0, 0), _wm->_screenCopy->pitch, 0, 0, _wm->_screenCopy->w, _wm->_screenCopy->h);
 		}
 
-		if (_activeItem != -1 && _activeSubItem != -1 && _items[_activeItem]->submenu->subitems[_activeSubItem]->enabled) {
-			if (_items[_activeItem]->submenu->subitems[_activeSubItem]->unicode) {
-				(*_unicodeccallback)(_items[_activeItem]->submenu->subitems[_activeSubItem]->action,
-							  _items[_activeItem]->submenu->subitems[_activeSubItem]->unicodeText, _cdata);
+		if (_activeItem != -1 && _activeSubItem != -1 && _menustack.back()->subitems[_activeSubItem]->enabled) {
+			if (_menustack.back()->subitems[_activeSubItem]->unicode) {
+				(*_unicodeccallback)(_menustack.back()->subitems[_activeSubItem]->action,
+							  _menustack.back()->subitems[_activeSubItem]->unicodeText, _cdata);
 			} else {
-				(*_ccallback)(_items[_activeItem]->submenu->subitems[_activeSubItem]->action,
-							  _items[_activeItem]->submenu->subitems[_activeSubItem]->text, _cdata);
+				(*_ccallback)(_menustack.back()->subitems[_activeSubItem]->action,
+							  _menustack.back()->subitems[_activeSubItem]->text, _cdata);
 			}
 		}
 
