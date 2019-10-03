@@ -837,7 +837,7 @@ bool MacMenu::mouseClick(int x, int y) {
 
 	if (_menustack.size() > 0 && _menustack.back()->bbox.contains(x, y)) {
 		MacMenuSubMenu *it = _menustack.back();
-		int numSubItem = (y - it->bbox.top) / kMenuDropdownItemHeight;
+		int numSubItem = MIN<int>((y - it->bbox.top) / kMenuDropdownItemHeight, it->subitems.size() - 1);
 
 		if (numSubItem != _activeSubItem) {
 			_activeSubItem = numSubItem;
@@ -851,32 +851,36 @@ bool MacMenu::mouseClick(int x, int y) {
 		return true;
 	}
 
-	if (_activeSubItem != -1) {
-		if (_menustack.back()->subitems[_activeSubItem]->submenu != nullptr) {
-			if (_menustack.back()->subitems[_activeSubItem]->submenu->bbox.contains(x, y)) {
-				_menustack.push_back(_menustack.back()->subitems[_activeSubItem]->submenu);
+	if (_activeSubItem != -1 && _menustack.back()->subitems[_activeSubItem]->submenu != nullptr) {
+		if (_menustack.back()->subitems[_activeSubItem]->submenu->bbox.contains(x, y)) {
+			_menustack.push_back(_menustack.back()->subitems[_activeSubItem]->submenu);
 
-				_activeSubItem = 0;
-				_contentIsDirty = true;
+			_activeSubItem = 0;
+			_contentIsDirty = true;
 
-				_menustack.back()->highlight = 0;
+			_menustack.back()->highlight = 0;
 
-				return true;
-			}
+			return true;
 		}
+	}
 
-		if (_menustack.size() > 1) {
-			if (_menustack[_menustack.size() - 2]->bbox.contains(x, y)) {
-				_menustack.back()->highlight = -1; // Erase it for the closed popup
+	if (_menustack.size() > 1) {
+		if (_menustack[_menustack.size() - 2]->bbox.contains(x, y)) {
+			_menustack.back()->highlight = -1; // Erase it for the closed popup
 
-				_menustack.pop_back();
+			_menustack.pop_back();
 
-				_activeSubItem = _menustack.back()->highlight;
+			MacMenuSubMenu *menu = _menustack.back();
 
-				_contentIsDirty = true;
+			_activeSubItem = MIN<int>((y - menu->bbox.top) / kMenuDropdownItemHeight, menu->subitems.size() - 1);
 
-				return true;
-			}
+			menu->highlight = _activeSubItem;
+
+			renderSubmenu(menu);
+
+			_contentIsDirty = true;
+
+			return true;
 		}
 	}
 
