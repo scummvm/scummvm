@@ -312,8 +312,6 @@ void MacMenu::addStaticMenus(const MacMenuData *data) {
 		addMenuItem(submenu, m->title, m->action, 0, m->shortcut, m->enabled);
 	}
 
-	printMenu();
-
 	calcDimensions();
 }
 
