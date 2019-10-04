@@ -968,9 +968,12 @@ Fine tuning of the installation directories:
 Special configuration feature:
   --host=HOST             cross-compile to target HOST (arm-linux, ...)
                           special targets: 3ds for Nintendo 3DS
-                                           android-arm for Android ARM
-                                           android-mips for Android MIPS
+                                           android or android-arm for Android ARMv5TE (armeabi)
+                                           android-v7a or android-arm-v7a for Android ARMv7-A (armeabi-v7a)
+                                           android-arm64-v8a for Android ARMv8-A (arm64-v8a)
                                            android-x86 for Android x86
+                                           android-x86_64 for Android x86_64
+                                           android-mips for Android MIPS
                                            androidsdl for Android with SDL backend
                                            caanoo for Caanoo
                                            dingux for Dingux
