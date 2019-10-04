@@ -30,102 +30,102 @@
 namespace Pink {
 
 enum {
-	kNewGameAction = 0,
-	kLoadSave,
-	kSaveAction,
-	kSaveAsAction,
-	kSongsAction,
-	kSoundSettingsAction,
-	kLastSavesAction,
-	kPauseAction,
-	kExitAction
+	kNewGameAction			= 57600,
+	kLoadSave				= 57601,
+	kSaveAction				= 57603,
+	kSaveAsAction			= 57604,
+	kSongsAction			= 32865,
+	kSoundSettingsAction	= 32772,
+	kLastSavesAction		= 57616,
+	kPauseAction			= 32854,
+	kExitAction				= 57665
 };
 
 enum {
-	kShowContent = 9,
-	kShowGreece,
-	kShowIndonesia,
-	kShowIsrael,
-	kShowKenya,
-	kShowRussia
+	kShowContent	= 32771,
+	kShowGreece		= 32866,
+	kShowIndonesia  = 32867,
+	kShowIsrael		= 32868,
+	kShowKenya		= 32869,
+	kShowRussia		= 32870
 };
 
 enum {
-	kShowPDAAction = 15,
+	kShowPDAAction			= 32793,
 
-	kShowAustraliaArt = 16,
-	kShowAustraliaCloth,
-	kShowAustraliaFood,
-	kShowAustraliaHistory,
-	kShowAustraliaNature,
-	kShowAustraliaPeople,
-	kShowAustraliaPlaces,
-	kShowAustraliaReligion,
+	kShowAustraliaArt		= 32796,
+	kShowAustraliaCloth		= 32797,
+	kShowAustraliaFood		= 32798,
+	kShowAustraliaHistory	= 32799,
+	kShowAustraliaNature	= 32800,
+	kShowAustraliaPeople	= 32801,
+	kShowAustraliaPlaces	= 32802,
+	kShowAustraliaReligion	= 32803,
 
-	kShowBhutanArt = 24,
-	kShowBhutanCloth,
-	kShowBhutanFood,
-	kShowBhutanHistory,
-	kShowBhutanNature,
-	kShowBhutanPeople,
-	kShowBhutanPlaces,
-	kShowBhutanReligion,
+	kShowBhutanArt			= 32804,
+	kShowBhutanCloth		= 32805,
+	kShowBhutanFood			= 32806,
+	kShowBhutanHistory		= 32807,
+	kShowBhutanNature		= 32808,
+	kShowBhutanPeople		= 32809,
+	kShowBhutanPlaces		= 32810,
+	kShowBhutanReligion		= 32811,
 
-	kShowChinaArt = 32,
-	kShowChinaCloth,
-	kShowChinaFood,
-	kShowChinaHistory,
-	kShowChinaNature,
-	kShowChinaPeople,
-	kShowChinaPlaces,
-	kShowChinaReligion,
+	kShowChinaArt 			= 32812,
+	kShowChinaCloth			= 32813,
+	kShowChinaFood			= 32814,
+	kShowChinaHistory		= 32815,
+	kShowChinaNature		= 32816,
+	kShowChinaPeople		= 32817,
+	kShowChinaPlaces		= 32818,
+	kShowChinaReligion		= 32819,
 
-	kShowEnglandArt = 40,
-	kShowEnglandCloth,
-	kShowEnglandFood,
-	kShowEnglandHistory,
-	kShowEnglandNature,
-	kShowEnglandPeople,
-	kShowEnglandPlaces,
-	kShowEnglandReligion,
+	kShowEnglandArt			= 32820,
+	kShowEnglandCloth		= 32821,
+	kShowEnglandFood		= 32822,
+	kShowEnglandHistory		= 32823,
+	kShowEnglandNature		= 32824,
+	kShowEnglandPeople		= 32825,
+	kShowEnglandPlaces		= 32826,
+	kShowEnglandReligion	= 32827,
 
-	kShowEgyptArt = 48,
-	kShowEgyptCloth,
-	kShowEgyptFood,
-	kShowEgyptHistory,
-	kShowEgyptNature,
-	kShowEgyptPeople,
-	kShowEgyptPlaces,
-	kShowEgyptReligion,
+	kShowEgyptArt			= 32828,
+	kShowEgyptCloth			= 32829,
+	kShowEgyptFood			= 32830,
+	kShowEgyptHistory		= 32831,
+	kShowEgyptNature		= 32832,
+	kShowEgyptPeople		= 32833,
+	kShowEgyptPlaces		= 32834,
+	kShowEgyptReligion		= 32835,
 
-	kShowIndiaArt = 56,
-	kShowIndiaCloth,
-	kShowIndiaFood,
-	kShowIndiaHistory,
-	kShowIndiaNature,
-	kShowIndiaPeople,
-	kShowIndiaPlaces,
-	kShowIndiaReligion
+	kShowIndiaArt			= 32836,
+	kShowIndiaCloth			= 32837,
+	kShowIndiaFood			= 32838,
+	kShowIndiaHistory		= 32839,
+	kShowIndiaNature		= 32840,
+	kShowIndiaPeople		= 32841,
+	kShowIndiaPlaces		= 32842,
+	kShowIndiaReligion		= 32843
 };
 
 enum {
-	kShowGameWebPage = 64,
-	kShowTechSupport,
-	kShowWinnnerPage,
-	kShowWanderlustInteractive,
-	kShowMGM,
-	kShowDiagnostics,
-	kShowAbout
+	kShowGameWebPage			= 32844,
+	kShowTechSupport			= 32778,
+	kShowOnlineHints			= 32777,
+	kShowWanderLustWebPage		= 32775,
+	kShowHelp					= 32846,
+	kShowHints					= 32847,
+
+	kShowWinnnerPage			= 32779,
+	kShowWanderlustInteractive	= 32849,
+	kShowMGM					= 32848,
+	kShowDiagnostics			= 32850,
+	kShowAbout					= 57664
 };
 
 static void menuCommandsCallback(int action, Common::U32String &, void *data) {
 	PinkEngine *engine = (PinkEngine *)data;
-	bool isPeril = engine->isPeril();
-	if (!isPeril && action > 14) {
-		action += 49;
-	} else if (isPeril && action >= 9) {
-		action += 6;
-	}
+
 	engine->executeMenuCommand(action);
 }
 
@@ -331,6 +331,7 @@ void PinkEngine::executeMenuCommand(uint id) {
 		break;
 
 	default:
+		warning("Unprocessed command id %d", id);
 		break;
 	}
 }
