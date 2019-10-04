@@ -271,7 +271,7 @@ MacMenu *MacMenu::createMenuFromPEexe(Common::PEResources &exe, MacWindowManager
 void MacMenu::printMenu(int level, MacMenuSubMenu *submenu) {
 	if (!level) {
 		for (uint i = 0; i < _items.size(); i++) {
-			debug("0. %s", _items[i]->unicode ? convertFromU32String(_items[i]->unicodeText).c_str() : _items[i]->text.c_str());
+			debug("0. %s --> %d", _items[i]->unicode ? convertFromU32String(_items[i]->unicodeText).c_str() : _items[i]->text.c_str(), _items[i]->action);
 
 			if (_items[i]->submenu != nullptr)
 				printMenu(level + 1, _items[i]->submenu);
@@ -282,7 +282,7 @@ void MacMenu::printMenu(int level, MacMenuSubMenu *submenu) {
 			for (int j = 0; j < level; j++)
 				debugN("  ");
 
-			debug("%s", submenu->items[i]->unicode ? convertFromU32String(submenu->items[i]->unicodeText).c_str() : submenu->items[i]->text.c_str());
+			debug("%s --> %d", submenu->items[i]->unicode ? convertFromU32String(submenu->items[i]->unicodeText).c_str() : submenu->items[i]->text.c_str(), submenu->items[i]->action);
 
 			if (submenu->items[i]->submenu != nullptr)
 				printMenu(level + 1, submenu->items[i]->submenu);
