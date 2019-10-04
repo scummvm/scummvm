@@ -160,8 +160,10 @@ MacWindowManager::MacWindowManager() {
 	_menuDelay = 0;
 	_menuTimerActive = false;
 
-	_engine = nullptr;
+	_engineP = nullptr;
+	_engineR = nullptr;
 	_pauseEngineCallback = nullptr;
+	_redrawEngineCallback = nullptr;
 
 	_colorBlack = 0;
 	_colorWhite = 2;
@@ -319,8 +321,13 @@ void MacWindowManager::draw() {
 
 	removeMarked();
 
-	if (_fullRefresh && !(_mode & kWMModeNoDesktop))
-		drawDesktop();
+	if (_fullRefresh) {
+		if (!(_mode & kWMModeNoDesktop))
+			drawDesktop();
+
+		if (_redrawEngineCallback != nullptr)
+			_redrawEngineCallback(_engineR);
+	}
 
 	for (Common::List<BaseMacWindow *>::const_iterator it = _windowStack.begin(); it != _windowStack.end(); it++) {
 		BaseMacWindow *w = *it;
@@ -525,14 +532,19 @@ void MacWindowManager::passPalette(const byte *pal, uint size) {
 }
 
 void MacWindowManager::pauseEngine(bool pause) {
-	if (_engine && _pauseEngineCallback) {
-		_pauseEngineCallback(_engine, pause);
+	if (_engineP && _pauseEngineCallback) {
+		_pauseEngineCallback(_engineP, pause);
 	}
 }
 
 void MacWindowManager::setEnginePauseCallback(void *engine, void (*pauseCallback)(void *, bool)) {
-	_engine = engine;
+	_engineP = engine;
 	_pauseEngineCallback = pauseCallback;
+}
+
+void MacWindowManager::setEngineRedrawCallback(void *engine, void (*redrawCallback)(void *)) {
+	_engineR = engine;
+	_redrawEngineCallback = redrawCallback;
 }
 
 } // End of namespace Graphics

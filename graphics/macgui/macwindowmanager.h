@@ -215,6 +215,7 @@ public:
 	void setMode(uint32 mode);
 
 	void setEnginePauseCallback(void *engine, void (*pauseCallback)(void *engine, bool pause));
+	void setEngineRedrawCallback(void *engine, void (*redrawCallback)(void *engine));
 
 	void passPalette(const byte *palette, uint size);
 
@@ -257,8 +258,10 @@ private:
 	MacMenu *_menu;
 	uint32 _menuDelay;
 
-	void *_engine;
+	void *_engineP;
+	void *_engineR;
 	void (*_pauseEngineCallback)(void *engine, bool pause);
+	void (*_redrawEngineCallback)(void *engine);
 
 	bool _cursorIsArrow;
 };

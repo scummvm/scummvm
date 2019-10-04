@@ -854,6 +854,7 @@ bool MacMenu::mouseClick(int x, int y) {
 				_menuActivated = true;
 
 				_contentIsDirty = true;
+				_wm->setFullRefresh(true);
 
 				return true;
 			}
@@ -871,6 +872,7 @@ bool MacMenu::mouseClick(int x, int y) {
 			menu->highlight = _activeSubItem;
 
 			_contentIsDirty = true;
+			_wm->setFullRefresh(true);
 		}
 
 		return true;
@@ -882,6 +884,7 @@ bool MacMenu::mouseClick(int x, int y) {
 
 			_activeSubItem = 0;
 			_contentIsDirty = true;
+			_wm->setFullRefresh(true);
 
 			_menustack.back()->highlight = 0;
 
@@ -900,6 +903,7 @@ bool MacMenu::mouseClick(int x, int y) {
 			_activeSubItem = menu->highlight = menu->ytoItem(y);
 
 			_contentIsDirty = true;
+			_wm->setFullRefresh(true);
 
 			return true;
 		}
@@ -910,6 +914,7 @@ bool MacMenu::mouseClick(int x, int y) {
 
 		if (_menustack.size()) {
 			_contentIsDirty = true;
+			_wm->setFullRefresh(true);
 		}
 
 		return true;
