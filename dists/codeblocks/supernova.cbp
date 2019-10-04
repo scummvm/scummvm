@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="supernova" />
+		<Option pch_mode="2" />
+		<Option compiler="gcc" />
+		<Build>
+			<Target title="default">
+				<Option output="scummvm\engines\supernova\libsupernova" prefix_auto="1" extension_auto="1" />
+				<Option working_dir="" />
+				<Option object_output="scummvm" />
+				<Option type="2" />
+				<Option compiler="gcc" />
+				<Option createDefFile="1" />
+				<Compiler>
+					<Add option="-Wall" />
+					<Add option="-Wno-long-long" />
+					<Add option="-Wno-multichar" />
+					<Add option="-Wno-unknown-pragmas" />
+					<Add option="-Wno-reorder" />
+					<Add option="-Wpointer-arith" />
+					<Add option="-Wcast-qual" />
+					<Add option="-Wcast-align" />
+					<Add option="-Wshadow" />
+					<Add option="-Wnon-virtual-dtor" />
+					<Add option="-Wwrite-strings" />
+					<Add option="-fno-exceptions" />
+					<Add option="-fcheck-new" />
+					<Add option="-DUSE_ZLIB" />
+					<Add option="-DUSE_MAD" />
+					<Add option="-DUSE_OGG" />
+					<Add option="-DUSE_VORBIS" />
+					<Add option="-DUSE_FLAC" />
+					<Add option="-DUSE_PNG" />
+					<Add option="-DUSE_THEORADEC" />
+					<Add option="-DUSE_FREETYPE2" />
+					<Add option="-DUSE_JPEG" />
+					<Add option="-DUSE_FLUIDSYNTH" />
+					<Add option="-DUSE_LIBCURL" />
+					<Add option="-DUSE_SDL_NET" />
+					<Add option="-DUSE_BINK" />
+					<Add option="-DUSE_SCALERS" />
+					<Add option="-DUSE_HQ_SCALERS" />
+					<Add option="-DUSE_RGB_COLOR" />
+					<Add option="-DUSE_HIGHRES" />
+					<Add option="-DUSE_MT32EMU" />
+					<Add option="-DUSE_LUA" />
+					<Add option="-DUSE_NASM" />
+					<Add option="-DUSE_OPENGL" />
+					<Add option="-DUSE_GLES" />
+					<Add option="-DUSE_TASKBAR" />
+					<Add option="-DUSE_CLOUD" />
+					<Add option="-DUSE_TRANSLATION" />
+					<Add option="-DUSE_SYSDIALOGS" />
+					<Add option="-DUSE_DETECTLANG" />
+					<Add option="-DENABLE_SCUMM" />
+					<Add option="-DENABLE_SCUMM_7_8" />
+					<Add option="-DENABLE_HE" />
+					<Add option="-DENABLE_ACCESS" />
+					<Add option="-DENABLE_ADL" />
+					<Add option="-DENABLE_AGI" />
+					<Add option="-DENABLE_AGOS" />
+					<Add option="-DENABLE_AGOS2" />
+					<Add option="-DENABLE_BBVS" />
+					<Add option="-DENABLE_BLADERUNNER" />
+					<Add option="-DENABLE_CGE" />
+					<Add option="-DENABLE_CGE2" />
+					<Add option="-DENABLE_CINE" />
+					<Add option="-DENABLE_COMPOSER" />
+					<Add option="-DENABLE_CRUISE" />
+					<Add option="-DENABLE_CRYOMNI3D" />
+					<Add option="-DENABLE_VERSAILLES" />
+					<Add option="-DENABLE_DRACI" />
+					<Add option="-DENABLE_DRASCULA" />
+					<Add option="-DENABLE_DREAMWEB" />
+					<Add option="-DENABLE_FULLPIPE" />
+					<Add option="-DENABLE_GNAP" />
+					<Add option="-DENABLE_GOB" />
+					<Add option="-DENABLE_GROOVIE" />
+					<Add option="-DENABLE_HDB" />
+					<Add option="-DENABLE_HOPKINS" />
+					<Add option="-DENABLE_HUGO" />
+					<Add option="-DENABLE_ILLUSIONS" />
+					<Add option="-DENABLE_KYRA" />
+					<Add option="-DENABLE_LOL" />
+					<Add option="-DENABLE_EOB" />
+					<Add option="-DENABLE_LAB" />
+					<Add option="-DENABLE_LURE" />
+					<Add option="-DENABLE_MADE" />
+					<Add option="-DENABLE_MADS" />
+					<Add option="-DENABLE_MOHAWK" />
+					<Add option="-DENABLE_RIVEN" />
+					<Add option="-DENABLE_MYST" />
+					<Add option="-DENABLE_MORTEVIELLE" />
+					<Add option="-DENABLE_NEVERHOOD" />
+					<Add option="-DENABLE_PARALLACTION" />
+					<Add option="-DENABLE_PEGASUS" />
+					<Add option="-DENABLE_PLUMBERS" />
+					<Add option="-DENABLE_PRINCE" />
+					<Add option="-DENABLE_QUEEN" />
+					<Add option="-DENABLE_SAGA" />
+					<Add option="-DENABLE_IHNM" />
+					<Add option="-DENABLE_SCI" />
+					<Add option="-DENABLE_SCI32" />
+					<Add option="-DENABLE_SHERLOCK" />
+					<Add option="-DENABLE_SKY" />
+					<Add option="-DENABLE_SUPERNOVA" />
+					<Add option="-DENABLE_SWORD1" />
+					<Add option="-DENABLE_SWORD2" />
+					<Add option="-DENABLE_SWORD25" />
+					<Add option="-DENABLE_TEENAGENT" />
+					<Add option="-DENABLE_TINSEL" />
+					<Add option="-DENABLE_TITANIC" />
+					<Add option="-DENABLE_TOLTECS" />
+					<Add option="-DENABLE_TONY" />
+					<Add option="-DENABLE_TOON" />
+					<Add option="-DENABLE_TOUCHE" />
+					<Add option="-DENABLE_TSAGE" />
+					<Add option="-DENABLE_TUCKER" />
+					<Add option="-DENABLE_VOYEUR" />
+					<Add option="-DENABLE_WINTERMUTE" />
+					<Add option="-DENABLE_XEEN" />
+					<Add option="-DENABLE_ZVISION" />
+					<Add option="-DWIN32" />
+					<Add option="-DCURL_STATICLIB" />
+					<Add option="-DSDL_BACKEND" />
+					<Add option="-DUSE_SDL2" />
+					<Add option="-g" />
+					<Add directory="..\..\engines" />
+					<Add directory="..\..\..\scummvm" />
+				</Compiler>
+			</Target>
+		</Build>
+		<Unit filename="..\..\engines\supernova\supernova1\rooms.cpp" />
+		<Unit filename="..\..\engines\supernova\supernova1\rooms.h" />
+		<Unit filename="..\..\engines\supernova\supernova1\state.cpp" />
+		<Unit filename="..\..\engines\supernova\supernova1\state.h" />
+		<Unit filename="..\..\engines\supernova\supernova1\stringid.h" />
+		<Unit filename="..\..\engines\supernova\supernova2\rooms.cpp" />
+		<Unit filename="..\..\engines\supernova\supernova2\rooms.h" />
+		<Unit filename="..\..\engines\supernova\supernova2\state.cpp" />
+		<Unit filename="..\..\engines\supernova\supernova2\state.h" />
+		<Unit filename="..\..\engines\supernova\supernova2\stringid.h" />
+		<Unit filename="..\..\engines\supernova\console.cpp" />
+		<Unit filename="..\..\engines\supernova\console.h" />
+		<Unit filename="..\..\engines\supernova\detection.cpp" />
+		<Unit filename="..\..\engines\supernova\game-manager.cpp" />
+		<Unit filename="..\..\engines\supernova\game-manager.h" />
+		<Unit filename="..\..\engines\supernova\graphics.cpp" />
+		<Unit filename="..\..\engines\supernova\graphics.h" />
+		<Unit filename="..\..\engines\supernova\imageid.h" />
+		<Unit filename="..\..\engines\supernova\module.mk" />
+		<Unit filename="..\..\engines\supernova\msn_def.h" />
+		<Unit filename="..\..\engines\supernova\resman.cpp" />
+		<Unit filename="..\..\engines\supernova\resman.h" />
+		<Unit filename="..\..\engines\supernova\room.cpp" />
+		<Unit filename="..\..\engines\supernova\room.h" />
+		<Unit filename="..\..\engines\supernova\screen.cpp" />
+		<Unit filename="..\..\engines\supernova\screen.h" />
+		<Unit filename="..\..\engines\supernova\sound.cpp" />
+		<Unit filename="..\..\engines\supernova\sound.h" />
+		<Unit filename="..\..\engines\supernova\supernova.cpp" />
+		<Unit filename="..\..\engines\supernova\supernova.h" />
+		<Extensions>
+			<code_completion />
+			<debugger />
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>

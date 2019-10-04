@@ -1,0 +1,240 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+	<ItemGroup Label="ProjectConfigurations">
+		<ProjectConfiguration Include="Debug|Win32">
+			<Configuration>Debug</Configuration>
+			<Platform>Win32</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Debug|x64">
+			<Configuration>Debug</Configuration>
+			<Platform>x64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Analysis|Win32">
+			<Configuration>Analysis</Configuration>
+			<Platform>Win32</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Analysis|x64">
+			<Configuration>Analysis</Configuration>
+			<Platform>x64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="LLVM|Win32">
+			<Configuration>LLVM</Configuration>
+			<Platform>Win32</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="LLVM|x64">
+			<Configuration>LLVM</Configuration>
+			<Platform>x64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Release|Win32">
+			<Configuration>Release</Configuration>
+			<Platform>Win32</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Release|x64">
+			<Configuration>Release</Configuration>
+			<Platform>x64</Platform>
+		</ProjectConfiguration>
+	</ItemGroup>
+	<PropertyGroup Label="Globals">
+		<ProjectGuid>{EC6DA244-84D7-4B58-B32C-AE70BCCEC00D}</ProjectGuid>
+		<RootNamespace>xeen</RootNamespace>
+		<Keyword>Win32Proj</Keyword>
+		<VCTargetsPath Condition="'$(VCTargetsPath12)' != '' and '$(VSVersion)' == '' and $(VisualStudioVersion) == ''">$(VCTargetsPath12)</VCTargetsPath>
+	</PropertyGroup>
+	<Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Analysis|Win32'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='LLVM|Win32'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>LLVM-vs2013</PlatformToolset>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='LLVM|x64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>LLVM-vs2013</PlatformToolset>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Analysis|x64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+	</PropertyGroup>
+	<Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+	<ImportGroup Label="ExtensionSettings">
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Release.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Analysis|Win32'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Analysis.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='LLVM|Win32'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_LLVM.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Debug.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Release64.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Analysis|x64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Analysis64.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='LLVM|x64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_LLVM64.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Debug64.props" />
+	</ImportGroup>
+	<PropertyGroup Label="UserMacros" />
+	<ItemGroup>
+		<ClCompile Include="..\..\engines\xeen\dialogs\credits_screen.cpp" />
+		<ClCompile Include="..\..\engines\xeen\dialogs\dialogs.cpp" />
+		<ClCompile Include="..\..\engines\xeen\dialogs\dialogs_awards.cpp" />
+		<ClCompile Include="..\..\engines\xeen\dialogs\dialogs_char_info.cpp" />
+		<ClCompile Include="..\..\engines\xeen\dialogs\dialogs_control_panel.cpp" />
+		<ClCompile Include="..\..\engines\xeen\dialogs\dialogs_copy_protection.cpp" />
+		<ClCompile Include="..\..\engines\xeen\dialogs\dialogs_create_char.cpp" />
+		<ClCompile Include="..\..\engines\xeen\dialogs\dialogs_difficulty.cpp" />
+		<ClCompile Include="..\..\engines\xeen\dialogs\dialogs_dismiss.cpp" />
+		<ClCompile Include="..\..\engines\xeen\dialogs\dialogs_exchange.cpp" />
+		<ClCompile Include="..\..\engines\xeen\dialogs\dialogs_info.cpp" />
+		<ClCompile Include="..\..\engines\xeen\dialogs\dialogs_input.cpp" />
+		<ClCompile Include="..\..\engines\xeen\dialogs\dialogs_items.cpp" />
+		<ClCompile Include="..\..\engines\xeen\dialogs\dialogs_map.cpp" />
+		<ClCompile Include="..\..\engines\xeen\dialogs\dialogs_message.cpp" />
+		<ClCompile Include="..\..\engines\xeen\dialogs\dialogs_party.cpp" />
+		<ClCompile Include="..\..\engines\xeen\dialogs\dialogs_query.cpp" />
+		<ClCompile Include="..\..\engines\xeen\dialogs\dialogs_quests.cpp" />
+		<ClCompile Include="..\..\engines\xeen\dialogs\dialogs_quick_fight.cpp" />
+		<ClCompile Include="..\..\engines\xeen\dialogs\dialogs_quick_ref.cpp" />
+		<ClCompile Include="..\..\engines\xeen\dialogs\dialogs_spells.cpp" />
+		<ClCompile Include="..\..\engines\xeen\dialogs\dialogs_whowill.cpp" />
+		<ClCompile Include="..\..\engines\xeen\dialogs\please_wait.cpp" />
+		<ClCompile Include="..\..\engines\xeen\swordsofxeen\swordsofxeen.cpp" />
+		<ClCompile Include="..\..\engines\xeen\swordsofxeen\swordsofxeen_menu.cpp" />
+		<ClCompile Include="..\..\engines\xeen\worldofxeen\clouds_cutscenes.cpp" />
+		<ClCompile Include="..\..\engines\xeen\worldofxeen\darkside_cutscenes.cpp" />
+		<ClCompile Include="..\..\engines\xeen\worldofxeen\worldofxeen.cpp" />
+		<ClCompile Include="..\..\engines\xeen\worldofxeen\worldofxeen_cutscenes.cpp" />
+		<ClCompile Include="..\..\engines\xeen\worldofxeen\worldofxeen_menu.cpp" />
+		<ClCompile Include="..\..\engines\xeen\character.cpp" />
+		<ClCompile Include="..\..\engines\xeen\combat.cpp" />
+		<ClCompile Include="..\..\engines\xeen\cutscenes.cpp" />
+		<ClCompile Include="..\..\engines\xeen\debugger.cpp" />
+		<ClCompile Include="..\..\engines\xeen\detection.cpp" />
+		<ClCompile Include="..\..\engines\xeen\events.cpp" />
+		<ClCompile Include="..\..\engines\xeen\files.cpp" />
+		<ClCompile Include="..\..\engines\xeen\font.cpp" />
+		<ClCompile Include="..\..\engines\xeen\interface.cpp" />
+		<ClCompile Include="..\..\engines\xeen\interface_minimap.cpp" />
+		<ClCompile Include="..\..\engines\xeen\interface_scene.cpp" />
+		<ClCompile Include="..\..\engines\xeen\item.cpp" />
+		<ClCompile Include="..\..\engines\xeen\locations.cpp" />
+		<ClCompile Include="..\..\engines\xeen\map.cpp" />
+		<ClCompile Include="..\..\engines\xeen\party.cpp" />
+		<ClCompile Include="..\..\engines\xeen\patcher.cpp" />
+		<ClCompile Include="..\..\engines\xeen\resources.cpp" />
+		<ClCompile Include="..\..\engines\xeen\saves.cpp" />
+		<ClCompile Include="..\..\engines\xeen\screen.cpp" />
+		<ClCompile Include="..\..\engines\xeen\scripts.cpp" />
+		<ClCompile Include="..\..\engines\xeen\sound.cpp" />
+		<ClCompile Include="..\..\engines\xeen\sound_driver.cpp" />
+		<ClCompile Include="..\..\engines\xeen\sound_driver_adlib.cpp" />
+		<ClCompile Include="..\..\engines\xeen\spells.cpp" />
+		<ClCompile Include="..\..\engines\xeen\sprites.cpp" />
+		<ClCompile Include="..\..\engines\xeen\subtitles.cpp" />
+		<ClCompile Include="..\..\engines\xeen\window.cpp" />
+		<ClCompile Include="..\..\engines\xeen\xeen.cpp" />
+		<ClCompile Include="..\..\engines\xeen\xsurface.cpp" />
+	</ItemGroup>
+	<ItemGroup>
+		<ClInclude Include="..\..\engines\xeen\dialogs\credits_screen.h" />
+		<ClInclude Include="..\..\engines\xeen\dialogs\dialogs.h" />
+		<ClInclude Include="..\..\engines\xeen\dialogs\dialogs_awards.h" />
+		<ClInclude Include="..\..\engines\xeen\dialogs\dialogs_char_info.h" />
+		<ClInclude Include="..\..\engines\xeen\dialogs\dialogs_control_panel.h" />
+		<ClInclude Include="..\..\engines\xeen\dialogs\dialogs_copy_protection.h" />
+		<ClInclude Include="..\..\engines\xeen\dialogs\dialogs_create_char.h" />
+		<ClInclude Include="..\..\engines\xeen\dialogs\dialogs_difficulty.h" />
+		<ClInclude Include="..\..\engines\xeen\dialogs\dialogs_dismiss.h" />
+		<ClInclude Include="..\..\engines\xeen\dialogs\dialogs_exchange.h" />
+		<ClInclude Include="..\..\engines\xeen\dialogs\dialogs_info.h" />
+		<ClInclude Include="..\..\engines\xeen\dialogs\dialogs_input.h" />
+		<ClInclude Include="..\..\engines\xeen\dialogs\dialogs_items.h" />
+		<ClInclude Include="..\..\engines\xeen\dialogs\dialogs_map.h" />
+		<ClInclude Include="..\..\engines\xeen\dialogs\dialogs_message.h" />
+		<ClInclude Include="..\..\engines\xeen\dialogs\dialogs_party.h" />
+		<ClInclude Include="..\..\engines\xeen\dialogs\dialogs_query.h" />
+		<ClInclude Include="..\..\engines\xeen\dialogs\dialogs_quests.h" />
+		<ClInclude Include="..\..\engines\xeen\dialogs\dialogs_quick_fight.h" />
+		<ClInclude Include="..\..\engines\xeen\dialogs\dialogs_quick_ref.h" />
+		<ClInclude Include="..\..\engines\xeen\dialogs\dialogs_spells.h" />
+		<ClInclude Include="..\..\engines\xeen\dialogs\dialogs_whowill.h" />
+		<ClInclude Include="..\..\engines\xeen\dialogs\please_wait.h" />
+		<ClInclude Include="..\..\engines\xeen\swordsofxeen\swordsofxeen.h" />
+		<ClInclude Include="..\..\engines\xeen\swordsofxeen\swordsofxeen_menu.h" />
+		<ClInclude Include="..\..\engines\xeen\worldofxeen\clouds_cutscenes.h" />
+		<ClInclude Include="..\..\engines\xeen\worldofxeen\darkside_cutscenes.h" />
+		<ClInclude Include="..\..\engines\xeen\worldofxeen\worldofxeen.h" />
+		<ClInclude Include="..\..\engines\xeen\worldofxeen\worldofxeen_cutscenes.h" />
+		<ClInclude Include="..\..\engines\xeen\worldofxeen\worldofxeen_menu.h" />
+		<ClInclude Include="..\..\engines\xeen\character.h" />
+		<ClInclude Include="..\..\engines\xeen\combat.h" />
+		<ClInclude Include="..\..\engines\xeen\cutscenes.h" />
+		<ClInclude Include="..\..\engines\xeen\debugger.h" />
+		<ClInclude Include="..\..\engines\xeen\detection_tables.h" />
+		<ClInclude Include="..\..\engines\xeen\events.h" />
+		<ClInclude Include="..\..\engines\xeen\files.h" />
+		<ClInclude Include="..\..\engines\xeen\font.h" />
+		<ClInclude Include="..\..\engines\xeen\interface.h" />
+		<ClInclude Include="..\..\engines\xeen\interface_minimap.h" />
+		<ClInclude Include="..\..\engines\xeen\interface_scene.h" />
+		<ClInclude Include="..\..\engines\xeen\item.h" />
+		<ClInclude Include="..\..\engines\xeen\locations.h" />
+		<ClInclude Include="..\..\engines\xeen\map.h" />
+		<ClInclude Include="..\..\engines\xeen\party.h" />
+		<ClInclude Include="..\..\engines\xeen\patcher.h" />
+		<ClInclude Include="..\..\engines\xeen\resources.h" />
+		<ClInclude Include="..\..\engines\xeen\saves.h" />
+		<ClInclude Include="..\..\engines\xeen\screen.h" />
+		<ClInclude Include="..\..\engines\xeen\scripts.h" />
+		<ClInclude Include="..\..\engines\xeen\sound.h" />
+		<ClInclude Include="..\..\engines\xeen\sound_driver.h" />
+		<ClInclude Include="..\..\engines\xeen\sound_driver_adlib.h" />
+		<ClInclude Include="..\..\engines\xeen\spells.h" />
+		<ClInclude Include="..\..\engines\xeen\sprites.h" />
+		<ClInclude Include="..\..\engines\xeen\subtitles.h" />
+		<ClInclude Include="..\..\engines\xeen\window.h" />
+		<ClInclude Include="..\..\engines\xeen\xeen.h" />
+		<ClInclude Include="..\..\engines\xeen\xsurface.h" />
+	</ItemGroup>
+	<ItemGroup>
+		<None Include="..\..\engines\xeen\module.mk" />
+	</ItemGroup>
+	<Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+	<ImportGroup Label="ExtensionTargets">
+	</ImportGroup>
+</Project>

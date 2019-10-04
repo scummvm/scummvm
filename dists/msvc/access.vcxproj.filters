@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+	<ItemGroup>
+		<Filter Include="amazon">
+			<UniqueIdentifier>34A04315-1DBF-4EEA-A2D0-A9EFE493DE6C</UniqueIdentifier>
+		</Filter>
+		<Filter Include="martian">
+			<UniqueIdentifier>8AEA55D7-E808-4ACA-BECA-60C6025FDFB8</UniqueIdentifier>
+		</Filter>
+		<Filter Include="video">
+			<UniqueIdentifier>64D9E5A8-41BD-4B71-A00D-61E0CA4FDD05</UniqueIdentifier>
+		</Filter>
+	</ItemGroup>
+	<ItemGroup>
+		<ClCompile Include="..\..\engines\access\amazon\amazon_game.cpp">
+			<Filter>amazon</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\access\amazon\amazon_logic.cpp">
+			<Filter>amazon</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\access\amazon\amazon_player.cpp">
+			<Filter>amazon</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\access\amazon\amazon_resources.cpp">
+			<Filter>amazon</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\access\amazon\amazon_room.cpp">
+			<Filter>amazon</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\access\amazon\amazon_scripts.cpp">
+			<Filter>amazon</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\access\martian\martian_game.cpp">
+			<Filter>martian</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\access\martian\martian_player.cpp">
+			<Filter>martian</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\access\martian\martian_resources.cpp">
+			<Filter>martian</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\access\martian\martian_room.cpp">
+			<Filter>martian</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\access\martian\martian_scripts.cpp">
+			<Filter>martian</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\access\video\movie_decoder.cpp">
+			<Filter>video</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\access\access.cpp" />
+		<ClCompile Include="..\..\engines\access\animation.cpp" />
+		<ClCompile Include="..\..\engines\access\asurface.cpp" />
+		<ClCompile Include="..\..\engines\access\bubble_box.cpp" />
+		<ClCompile Include="..\..\engines\access\char.cpp" />
+		<ClCompile Include="..\..\engines\access\data.cpp" />
+		<ClCompile Include="..\..\engines\access\debugger.cpp" />
+		<ClCompile Include="..\..\engines\access\decompress.cpp" />
+		<ClCompile Include="..\..\engines\access\detection.cpp" />
+		<ClCompile Include="..\..\engines\access\events.cpp" />
+		<ClCompile Include="..\..\engines\access\files.cpp" />
+		<ClCompile Include="..\..\engines\access\font.cpp" />
+		<ClCompile Include="..\..\engines\access\inventory.cpp" />
+		<ClCompile Include="..\..\engines\access\player.cpp" />
+		<ClCompile Include="..\..\engines\access\resources.cpp" />
+		<ClCompile Include="..\..\engines\access\room.cpp" />
+		<ClCompile Include="..\..\engines\access\screen.cpp" />
+		<ClCompile Include="..\..\engines\access\scripts.cpp" />
+		<ClCompile Include="..\..\engines\access\sound.cpp" />
+		<ClCompile Include="..\..\engines\access\video.cpp" />
+	</ItemGroup>
+	<ItemGroup>
+		<ClInclude Include="..\..\engines\access\amazon\amazon_game.h">
+			<Filter>amazon</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\access\amazon\amazon_logic.h">
+			<Filter>amazon</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\access\amazon\amazon_player.h">
+			<Filter>amazon</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\access\amazon\amazon_resources.h">
+			<Filter>amazon</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\access\amazon\amazon_room.h">
+			<Filter>amazon</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\access\amazon\amazon_scripts.h">
+			<Filter>amazon</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\access\martian\martian_game.h">
+			<Filter>martian</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\access\martian\martian_player.h">
+			<Filter>martian</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\access\martian\martian_resources.h">
+			<Filter>martian</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\access\martian\martian_room.h">
+			<Filter>martian</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\access\martian\martian_scripts.h">
+			<Filter>martian</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\access\video\movie_decoder.h">
+			<Filter>video</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\access\access.h" />
+		<ClInclude Include="..\..\engines\access\animation.h" />
+		<ClInclude Include="..\..\engines\access\asurface.h" />
+		<ClInclude Include="..\..\engines\access\bubble_box.h" />
+		<ClInclude Include="..\..\engines\access\char.h" />
+		<ClInclude Include="..\..\engines\access\data.h" />
+		<ClInclude Include="..\..\engines\access\debugger.h" />
+		<ClInclude Include="..\..\engines\access\decompress.h" />
+		<ClInclude Include="..\..\engines\access\detection_tables.h" />
+		<ClInclude Include="..\..\engines\access\events.h" />
+		<ClInclude Include="..\..\engines\access\files.h" />
+		<ClInclude Include="..\..\engines\access\font.h" />
+		<ClInclude Include="..\..\engines\access\inventory.h" />
+		<ClInclude Include="..\..\engines\access\player.h" />
+		<ClInclude Include="..\..\engines\access\resources.h" />
+		<ClInclude Include="..\..\engines\access\room.h" />
+		<ClInclude Include="..\..\engines\access\screen.h" />
+		<ClInclude Include="..\..\engines\access\scripts.h" />
+		<ClInclude Include="..\..\engines\access\sound.h" />
+		<ClInclude Include="..\..\engines\access\video.h" />
+	</ItemGroup>
+	<ItemGroup>
+		<None Include="..\..\engines\access\module.mk" />
+	</ItemGroup>
+</Project>

@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+	<ItemGroup>
+		<Filter Include="drivers">
+			<UniqueIdentifier>EAE1C02A-3560-41F0-9EF1-4AF45C00F343</UniqueIdentifier>
+		</Filter>
+		<Filter Include="drivers\accolade">
+			<UniqueIdentifier>F59FD6BF-5E6F-457B-BB25-5C9ACC607619</UniqueIdentifier>
+		</Filter>
+		<Filter Include="drivers\simon1">
+			<UniqueIdentifier>72E87656-8B31-459B-BF71-26D97A8A32A4</UniqueIdentifier>
+		</Filter>
+	</ItemGroup>
+	<ItemGroup>
+		<ClCompile Include="..\..\engines\agos\charset.cpp" />
+		<ClCompile Include="..\..\engines\agos\contain.cpp" />
+		<ClCompile Include="..\..\engines\agos\cursor.cpp" />
+		<ClCompile Include="..\..\engines\agos\drivers\accolade\adlib.cpp">
+			<Filter>drivers\accolade</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\agos\drivers\accolade\driverfile.cpp">
+			<Filter>drivers\accolade</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\agos\drivers\accolade\mt32.cpp">
+			<Filter>drivers\accolade</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\agos\drivers\simon1\adlib.cpp">
+			<Filter>drivers\simon1</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\agos\agos.cpp" />
+		<ClCompile Include="..\..\engines\agos\animation.cpp" />
+		<ClCompile Include="..\..\engines\agos\charset-fontdata.cpp" />
+		<ClCompile Include="..\..\engines\agos\debug.cpp" />
+		<ClCompile Include="..\..\engines\agos\debugger.cpp" />
+		<ClCompile Include="..\..\engines\agos\detection.cpp" />
+		<ClCompile Include="..\..\engines\agos\draw.cpp" />
+		<ClCompile Include="..\..\engines\agos\event.cpp" />
+		<ClCompile Include="..\..\engines\agos\feeble.cpp" />
+		<ClCompile Include="..\..\engines\agos\gfx.cpp" />
+		<ClCompile Include="..\..\engines\agos\icons.cpp" />
+		<ClCompile Include="..\..\engines\agos\input.cpp" />
+		<ClCompile Include="..\..\engines\agos\input_pn.cpp" />
+		<ClCompile Include="..\..\engines\agos\items.cpp" />
+		<ClCompile Include="..\..\engines\agos\menus.cpp" />
+		<ClCompile Include="..\..\engines\agos\midi.cpp" />
+		<ClCompile Include="..\..\engines\agos\midiparser_s1d.cpp" />
+		<ClCompile Include="..\..\engines\agos\oracle.cpp" />
+		<ClCompile Include="..\..\engines\agos\pn.cpp" />
+		<ClCompile Include="..\..\engines\agos\res.cpp" />
+		<ClCompile Include="..\..\engines\agos\res_ami.cpp" />
+		<ClCompile Include="..\..\engines\agos\res_snd.cpp" />
+		<ClCompile Include="..\..\engines\agos\rooms.cpp" />
+		<ClCompile Include="..\..\engines\agos\saveload.cpp" />
+		<ClCompile Include="..\..\engines\agos\script.cpp" />
+		<ClCompile Include="..\..\engines\agos\script_dp.cpp" />
+		<ClCompile Include="..\..\engines\agos\script_e1.cpp" />
+		<ClCompile Include="..\..\engines\agos\script_e2.cpp" />
+		<ClCompile Include="..\..\engines\agos\script_ff.cpp" />
+		<ClCompile Include="..\..\engines\agos\script_pn.cpp" />
+		<ClCompile Include="..\..\engines\agos\script_pp.cpp" />
+		<ClCompile Include="..\..\engines\agos\script_s1.cpp" />
+		<ClCompile Include="..\..\engines\agos\script_s2.cpp" />
+		<ClCompile Include="..\..\engines\agos\script_ww.cpp" />
+		<ClCompile Include="..\..\engines\agos\sound.cpp" />
+		<ClCompile Include="..\..\engines\agos\string.cpp" />
+		<ClCompile Include="..\..\engines\agos\string_pn.cpp" />
+		<ClCompile Include="..\..\engines\agos\subroutine.cpp" />
+		<ClCompile Include="..\..\engines\agos\verb.cpp" />
+		<ClCompile Include="..\..\engines\agos\verb_pn.cpp" />
+		<ClCompile Include="..\..\engines\agos\vga.cpp" />
+		<ClCompile Include="..\..\engines\agos\vga_e2.cpp" />
+		<ClCompile Include="..\..\engines\agos\vga_ff.cpp" />
+		<ClCompile Include="..\..\engines\agos\vga_pn.cpp" />
+		<ClCompile Include="..\..\engines\agos\vga_s1.cpp" />
+		<ClCompile Include="..\..\engines\agos\vga_s2.cpp" />
+		<ClCompile Include="..\..\engines\agos\vga_ww.cpp" />
+		<ClCompile Include="..\..\engines\agos\window.cpp" />
+		<ClCompile Include="..\..\engines\agos\zones.cpp" />
+	</ItemGroup>
+	<ItemGroup>
+		<ClInclude Include="..\..\engines\agos\drivers\accolade\adlib.h">
+			<Filter>drivers\accolade</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\agos\drivers\accolade\mididriver.h">
+			<Filter>drivers\accolade</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\agos\drivers\accolade\mt32.h">
+			<Filter>drivers\accolade</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\agos\drivers\simon1\adlib.h">
+			<Filter>drivers\simon1</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\agos\agos.h" />
+		<ClInclude Include="..\..\engines\agos\animation.h" />
+		<ClInclude Include="..\..\engines\agos\debug.h" />
+		<ClInclude Include="..\..\engines\agos\debugger.h" />
+		<ClInclude Include="..\..\engines\agos\detection_tables.h" />
+		<ClInclude Include="..\..\engines\agos\intern.h" />
+		<ClInclude Include="..\..\engines\agos\midi.h" />
+		<ClInclude Include="..\..\engines\agos\sound.h" />
+		<ClInclude Include="..\..\engines\agos\vga.h" />
+	</ItemGroup>
+	<ItemGroup>
+		<None Include="..\..\engines\agos\module.mk" />
+	</ItemGroup>
+</Project>

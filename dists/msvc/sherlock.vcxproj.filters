@@ -1,0 +1,344 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+	<ItemGroup>
+		<Filter Include="scalpel">
+			<UniqueIdentifier>842044D1-A357-411D-8F28-D25EC7F500BD</UniqueIdentifier>
+		</Filter>
+		<Filter Include="scalpel\3do">
+			<UniqueIdentifier>669DE9E3-5991-4800-9376-E94A3EA37A6F</UniqueIdentifier>
+		</Filter>
+		<Filter Include="scalpel\drivers">
+			<UniqueIdentifier>DD289E29-A7B7-42C0-8253-E790562E62CF</UniqueIdentifier>
+		</Filter>
+		<Filter Include="scalpel\tsage">
+			<UniqueIdentifier>5736EEB2-0CB7-4959-B367-669A76767CBB</UniqueIdentifier>
+		</Filter>
+		<Filter Include="tattoo">
+			<UniqueIdentifier>C5724EA8-8B23-4CA3-8DEF-B05D75E7B763</UniqueIdentifier>
+		</Filter>
+	</ItemGroup>
+	<ItemGroup>
+		<ClCompile Include="..\..\engines\sherlock\scalpel\3do\movie_decoder.cpp">
+			<Filter>scalpel\3do</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\sherlock\scalpel\3do\scalpel_3do_screen.cpp">
+			<Filter>scalpel\3do</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\sherlock\scalpel\drivers\adlib.cpp">
+			<Filter>scalpel\drivers</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\sherlock\scalpel\drivers\mt32.cpp">
+			<Filter>scalpel\drivers</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\sherlock\scalpel\scalpel.cpp">
+			<Filter>scalpel</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\sherlock\scalpel\scalpel_darts.cpp">
+			<Filter>scalpel</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\sherlock\scalpel\scalpel_debugger.cpp">
+			<Filter>scalpel</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\sherlock\scalpel\scalpel_fixed_text.cpp">
+			<Filter>scalpel</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\sherlock\scalpel\scalpel_inventory.cpp">
+			<Filter>scalpel</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\sherlock\scalpel\scalpel_journal.cpp">
+			<Filter>scalpel</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\sherlock\scalpel\scalpel_map.cpp">
+			<Filter>scalpel</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\sherlock\scalpel\scalpel_people.cpp">
+			<Filter>scalpel</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\sherlock\scalpel\scalpel_saveload.cpp">
+			<Filter>scalpel</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\sherlock\scalpel\scalpel_scene.cpp">
+			<Filter>scalpel</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\sherlock\scalpel\scalpel_screen.cpp">
+			<Filter>scalpel</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\sherlock\scalpel\scalpel_talk.cpp">
+			<Filter>scalpel</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\sherlock\scalpel\scalpel_user_interface.cpp">
+			<Filter>scalpel</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\sherlock\scalpel\settings.cpp">
+			<Filter>scalpel</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\sherlock\scalpel\tsage\logo.cpp">
+			<Filter>scalpel\tsage</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\sherlock\scalpel\tsage\resources.cpp">
+			<Filter>scalpel\tsage</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\sherlock\tattoo\tattoo.cpp">
+			<Filter>tattoo</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\sherlock\tattoo\tattoo_darts.cpp">
+			<Filter>tattoo</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\sherlock\tattoo\tattoo_debugger.cpp">
+			<Filter>tattoo</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\sherlock\tattoo\tattoo_fixed_text.cpp">
+			<Filter>tattoo</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\sherlock\tattoo\tattoo_inventory.cpp">
+			<Filter>tattoo</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\sherlock\tattoo\tattoo_journal.cpp">
+			<Filter>tattoo</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\sherlock\tattoo\tattoo_map.cpp">
+			<Filter>tattoo</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\sherlock\tattoo\tattoo_people.cpp">
+			<Filter>tattoo</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\sherlock\tattoo\tattoo_resources.cpp">
+			<Filter>tattoo</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\sherlock\tattoo\tattoo_scene.cpp">
+			<Filter>tattoo</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\sherlock\tattoo\tattoo_screen.cpp">
+			<Filter>tattoo</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\sherlock\tattoo\tattoo_talk.cpp">
+			<Filter>tattoo</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\sherlock\tattoo\tattoo_user_interface.cpp">
+			<Filter>tattoo</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\sherlock\tattoo\widget_base.cpp">
+			<Filter>tattoo</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\sherlock\tattoo\widget_credits.cpp">
+			<Filter>tattoo</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\sherlock\tattoo\widget_files.cpp">
+			<Filter>tattoo</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\sherlock\tattoo\widget_foolscap.cpp">
+			<Filter>tattoo</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\sherlock\tattoo\widget_inventory.cpp">
+			<Filter>tattoo</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\sherlock\tattoo\widget_lab.cpp">
+			<Filter>tattoo</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\sherlock\tattoo\widget_options.cpp">
+			<Filter>tattoo</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\sherlock\tattoo\widget_password.cpp">
+			<Filter>tattoo</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\sherlock\tattoo\widget_quit.cpp">
+			<Filter>tattoo</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\sherlock\tattoo\widget_talk.cpp">
+			<Filter>tattoo</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\sherlock\tattoo\widget_text.cpp">
+			<Filter>tattoo</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\sherlock\tattoo\widget_tooltip.cpp">
+			<Filter>tattoo</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\sherlock\tattoo\widget_verbs.cpp">
+			<Filter>tattoo</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\sherlock\animation.cpp" />
+		<ClCompile Include="..\..\engines\sherlock\debugger.cpp" />
+		<ClCompile Include="..\..\engines\sherlock\detection.cpp" />
+		<ClCompile Include="..\..\engines\sherlock\events.cpp" />
+		<ClCompile Include="..\..\engines\sherlock\fixed_text.cpp" />
+		<ClCompile Include="..\..\engines\sherlock\fonts.cpp" />
+		<ClCompile Include="..\..\engines\sherlock\image_file.cpp" />
+		<ClCompile Include="..\..\engines\sherlock\inventory.cpp" />
+		<ClCompile Include="..\..\engines\sherlock\journal.cpp" />
+		<ClCompile Include="..\..\engines\sherlock\map.cpp" />
+		<ClCompile Include="..\..\engines\sherlock\music.cpp" />
+		<ClCompile Include="..\..\engines\sherlock\objects.cpp" />
+		<ClCompile Include="..\..\engines\sherlock\people.cpp" />
+		<ClCompile Include="..\..\engines\sherlock\resources.cpp" />
+		<ClCompile Include="..\..\engines\sherlock\saveload.cpp" />
+		<ClCompile Include="..\..\engines\sherlock\scene.cpp" />
+		<ClCompile Include="..\..\engines\sherlock\screen.cpp" />
+		<ClCompile Include="..\..\engines\sherlock\sherlock.cpp" />
+		<ClCompile Include="..\..\engines\sherlock\sound.cpp" />
+		<ClCompile Include="..\..\engines\sherlock\surface.cpp" />
+		<ClCompile Include="..\..\engines\sherlock\talk.cpp" />
+		<ClCompile Include="..\..\engines\sherlock\user_interface.cpp" />
+	</ItemGroup>
+	<ItemGroup>
+		<ClInclude Include="..\..\engines\sherlock\scalpel\3do\movie_decoder.h">
+			<Filter>scalpel\3do</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\sherlock\scalpel\3do\scalpel_3do_screen.h">
+			<Filter>scalpel\3do</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\sherlock\scalpel\drivers\mididriver.h">
+			<Filter>scalpel\drivers</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\sherlock\scalpel\scalpel.h">
+			<Filter>scalpel</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\sherlock\scalpel\scalpel_darts.h">
+			<Filter>scalpel</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\sherlock\scalpel\scalpel_debugger.h">
+			<Filter>scalpel</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\sherlock\scalpel\scalpel_fixed_text.h">
+			<Filter>scalpel</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\sherlock\scalpel\scalpel_inventory.h">
+			<Filter>scalpel</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\sherlock\scalpel\scalpel_journal.h">
+			<Filter>scalpel</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\sherlock\scalpel\scalpel_map.h">
+			<Filter>scalpel</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\sherlock\scalpel\scalpel_people.h">
+			<Filter>scalpel</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\sherlock\scalpel\scalpel_saveload.h">
+			<Filter>scalpel</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\sherlock\scalpel\scalpel_scene.h">
+			<Filter>scalpel</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\sherlock\scalpel\scalpel_screen.h">
+			<Filter>scalpel</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\sherlock\scalpel\scalpel_talk.h">
+			<Filter>scalpel</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\sherlock\scalpel\scalpel_user_interface.h">
+			<Filter>scalpel</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\sherlock\scalpel\settings.h">
+			<Filter>scalpel</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\sherlock\scalpel\tsage\logo.h">
+			<Filter>scalpel\tsage</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\sherlock\scalpel\tsage\resources.h">
+			<Filter>scalpel\tsage</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\sherlock\tattoo\tattoo.h">
+			<Filter>tattoo</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\sherlock\tattoo\tattoo_darts.h">
+			<Filter>tattoo</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\sherlock\tattoo\tattoo_debugger.h">
+			<Filter>tattoo</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\sherlock\tattoo\tattoo_fixed_text.h">
+			<Filter>tattoo</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\sherlock\tattoo\tattoo_inventory.h">
+			<Filter>tattoo</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\sherlock\tattoo\tattoo_journal.h">
+			<Filter>tattoo</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\sherlock\tattoo\tattoo_map.h">
+			<Filter>tattoo</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\sherlock\tattoo\tattoo_people.h">
+			<Filter>tattoo</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\sherlock\tattoo\tattoo_resources.h">
+			<Filter>tattoo</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\sherlock\tattoo\tattoo_scene.h">
+			<Filter>tattoo</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\sherlock\tattoo\tattoo_screen.h">
+			<Filter>tattoo</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\sherlock\tattoo\tattoo_talk.h">
+			<Filter>tattoo</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\sherlock\tattoo\tattoo_user_interface.h">
+			<Filter>tattoo</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\sherlock\tattoo\widget_base.h">
+			<Filter>tattoo</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\sherlock\tattoo\widget_credits.h">
+			<Filter>tattoo</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\sherlock\tattoo\widget_files.h">
+			<Filter>tattoo</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\sherlock\tattoo\widget_foolscap.h">
+			<Filter>tattoo</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\sherlock\tattoo\widget_inventory.h">
+			<Filter>tattoo</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\sherlock\tattoo\widget_lab.h">
+			<Filter>tattoo</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\sherlock\tattoo\widget_options.h">
+			<Filter>tattoo</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\sherlock\tattoo\widget_password.h">
+			<Filter>tattoo</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\sherlock\tattoo\widget_quit.h">
+			<Filter>tattoo</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\sherlock\tattoo\widget_talk.h">
+			<Filter>tattoo</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\sherlock\tattoo\widget_text.h">
+			<Filter>tattoo</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\sherlock\tattoo\widget_tooltip.h">
+			<Filter>tattoo</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\sherlock\tattoo\widget_verbs.h">
+			<Filter>tattoo</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\sherlock\animation.h" />
+		<ClInclude Include="..\..\engines\sherlock\debugger.h" />
+		<ClInclude Include="..\..\engines\sherlock\detection_tables.h" />
+		<ClInclude Include="..\..\engines\sherlock\events.h" />
+		<ClInclude Include="..\..\engines\sherlock\fixed_text.h" />
+		<ClInclude Include="..\..\engines\sherlock\fonts.h" />
+		<ClInclude Include="..\..\engines\sherlock\image_file.h" />
+		<ClInclude Include="..\..\engines\sherlock\inventory.h" />
+		<ClInclude Include="..\..\engines\sherlock\journal.h" />
+		<ClInclude Include="..\..\engines\sherlock\map.h" />
+		<ClInclude Include="..\..\engines\sherlock\music.h" />
+		<ClInclude Include="..\..\engines\sherlock\objects.h" />
+		<ClInclude Include="..\..\engines\sherlock\people.h" />
+		<ClInclude Include="..\..\engines\sherlock\resources.h" />
+		<ClInclude Include="..\..\engines\sherlock\saveload.h" />
+		<ClInclude Include="..\..\engines\sherlock\scene.h" />
+		<ClInclude Include="..\..\engines\sherlock\screen.h" />
+		<ClInclude Include="..\..\engines\sherlock\sherlock.h" />
+		<ClInclude Include="..\..\engines\sherlock\sound.h" />
+		<ClInclude Include="..\..\engines\sherlock\surface.h" />
+		<ClInclude Include="..\..\engines\sherlock\talk.h" />
+		<ClInclude Include="..\..\engines\sherlock\user_interface.h" />
+	</ItemGroup>
+	<ItemGroup>
+		<None Include="..\..\engines\sherlock\module.mk" />
+	</ItemGroup>
+</Project>

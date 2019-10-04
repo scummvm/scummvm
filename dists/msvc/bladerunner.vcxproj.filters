@@ -1,0 +1,906 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+	<ItemGroup>
+		<Filter Include="script">
+			<UniqueIdentifier>D76C4D04-BE93-4388-A518-882E820F2BAF</UniqueIdentifier>
+		</Filter>
+		<Filter Include="script\ai">
+			<UniqueIdentifier>4F982F20-613D-443B-9043-2FC60E7CE868</UniqueIdentifier>
+		</Filter>
+		<Filter Include="script\scene">
+			<UniqueIdentifier>0C6E4E90-31ED-4A79-ACBA-85BB9EB5A75C</UniqueIdentifier>
+		</Filter>
+		<Filter Include="ui">
+			<UniqueIdentifier>12DB149D-F97F-4517-A1DC-051C41D9C983</UniqueIdentifier>
+		</Filter>
+	</ItemGroup>
+	<ItemGroup>
+		<ClCompile Include="..\..\engines\bladerunner\script\ai\answering_machine.cpp">
+			<Filter>script\ai</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bladerunner\script\ai\baker.cpp">
+			<Filter>script\ai</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bladerunner\script\ai\blimp_guy.cpp">
+			<Filter>script\ai</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bladerunner\script\ai\bryant.cpp">
+			<Filter>script\ai</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bladerunner\script\ai\bullet_bob.cpp">
+			<Filter>script\ai</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bladerunner\script\ai\chew.cpp">
+			<Filter>script\ai</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bladerunner\script\ai\clovis.cpp">
+			<Filter>script\ai</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bladerunner\script\ai\crazylegs.cpp">
+			<Filter>script\ai</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bladerunner\script\ai\dektora.cpp">
+			<Filter>script\ai</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bladerunner\script\ai\desk_clerk.cpp">
+			<Filter>script\ai</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bladerunner\script\ai\dispatcher.cpp">
+			<Filter>script\ai</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bladerunner\script\ai\early_q.cpp">
+			<Filter>script\ai</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bladerunner\script\ai\early_q_bartender.cpp">
+			<Filter>script\ai</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bladerunner\script\ai\fish_dealer.cpp">
+			<Filter>script\ai</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bladerunner\script\ai\free_slot_a.cpp">
+			<Filter>script\ai</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bladerunner\script\ai\free_slot_b.cpp">
+			<Filter>script\ai</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bladerunner\script\ai\gaff.cpp">
+			<Filter>script\ai</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bladerunner\script\ai\general_doll.cpp">
+			<Filter>script\ai</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bladerunner\script\ai\generic_walker_a.cpp">
+			<Filter>script\ai</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bladerunner\script\ai\generic_walker_b.cpp">
+			<Filter>script\ai</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bladerunner\script\ai\generic_walker_c.cpp">
+			<Filter>script\ai</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bladerunner\script\ai\gordo.cpp">
+			<Filter>script\ai</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bladerunner\script\ai\governor_kolvig.cpp">
+			<Filter>script\ai</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bladerunner\script\ai\grigorian.cpp">
+			<Filter>script\ai</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bladerunner\script\ai\guzza.cpp">
+			<Filter>script\ai</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bladerunner\script\ai\hanoi.cpp">
+			<Filter>script\ai</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bladerunner\script\ai\hasan.cpp">
+			<Filter>script\ai</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bladerunner\script\ai\hawkers_barkeep.cpp">
+			<Filter>script\ai</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bladerunner\script\ai\hawkers_parrot.cpp">
+			<Filter>script\ai</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bladerunner\script\ai\holloway.cpp">
+			<Filter>script\ai</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bladerunner\script\ai\howie_lee.cpp">
+			<Filter>script\ai</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bladerunner\script\ai\hysteria_patron1.cpp">
+			<Filter>script\ai</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bladerunner\script\ai\hysteria_patron2.cpp">
+			<Filter>script\ai</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bladerunner\script\ai\hysteria_patron3.cpp">
+			<Filter>script\ai</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bladerunner\script\ai\insect_dealer.cpp">
+			<Filter>script\ai</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bladerunner\script\ai\isabella.cpp">
+			<Filter>script\ai</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bladerunner\script\ai\izo.cpp">
+			<Filter>script\ai</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bladerunner\script\ai\klein.cpp">
+			<Filter>script\ai</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bladerunner\script\ai\lance.cpp">
+			<Filter>script\ai</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bladerunner\script\ai\leon.cpp">
+			<Filter>script\ai</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bladerunner\script\ai\lockup_guard.cpp">
+			<Filter>script\ai</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bladerunner\script\ai\lucy.cpp">
+			<Filter>script\ai</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bladerunner\script\ai\luther.cpp">
+			<Filter>script\ai</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bladerunner\script\ai\maggie.cpp">
+			<Filter>script\ai</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bladerunner\script\ai\male_announcer.cpp">
+			<Filter>script\ai</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bladerunner\script\ai\marcus.cpp">
+			<Filter>script\ai</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bladerunner\script\ai\mccoy.cpp">
+			<Filter>script\ai</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bladerunner\script\ai\mia.cpp">
+			<Filter>script\ai</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bladerunner\script\ai\moraji.cpp">
+			<Filter>script\ai</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bladerunner\script\ai\murray.cpp">
+			<Filter>script\ai</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bladerunner\script\ai\mutant1.cpp">
+			<Filter>script\ai</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bladerunner\script\ai\mutant2.cpp">
+			<Filter>script\ai</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bladerunner\script\ai\mutant3.cpp">
+			<Filter>script\ai</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bladerunner\script\ai\newscaster.cpp">
+			<Filter>script\ai</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bladerunner\script\ai\officer_grayford.cpp">
+			<Filter>script\ai</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bladerunner\script\ai\officer_leary.cpp">
+			<Filter>script\ai</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bladerunner\script\ai\photographer.cpp">
+			<Filter>script\ai</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bladerunner\script\ai\rachael.cpp">
+			<Filter>script\ai</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bladerunner\script\ai\rajif.cpp">
+			<Filter>script\ai</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bladerunner\script\ai\runciter.cpp">
+			<Filter>script\ai</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bladerunner\script\ai\sadik.cpp">
+			<Filter>script\ai</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bladerunner\script\ai\sebastian.cpp">
+			<Filter>script\ai</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bladerunner\script\ai\sergeant_walls.cpp">
+			<Filter>script\ai</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bladerunner\script\ai\shoeshine_man.cpp">
+			<Filter>script\ai</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bladerunner\script\ai\steele.cpp">
+			<Filter>script\ai</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bladerunner\script\ai\taffy.cpp">
+			<Filter>script\ai</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bladerunner\script\ai\taffy_patron.cpp">
+			<Filter>script\ai</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bladerunner\script\ai\teenager.cpp">
+			<Filter>script\ai</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bladerunner\script\ai\the_bard.cpp">
+			<Filter>script\ai</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bladerunner\script\ai\transient.cpp">
+			<Filter>script\ai</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bladerunner\script\ai\tyrell.cpp">
+			<Filter>script\ai</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bladerunner\script\ai\tyrell_guard.cpp">
+			<Filter>script\ai</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bladerunner\script\ai\zuben.cpp">
+			<Filter>script\ai</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bladerunner\script\scene\ar01.cpp">
+			<Filter>script\scene</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bladerunner\script\scene\ar02.cpp">
+			<Filter>script\scene</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bladerunner\script\scene\bb01.cpp">
+			<Filter>script\scene</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bladerunner\script\scene\bb02.cpp">
+			<Filter>script\scene</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bladerunner\script\scene\bb03.cpp">
+			<Filter>script\scene</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bladerunner\script\scene\bb04.cpp">
+			<Filter>script\scene</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bladerunner\script\scene\bb05.cpp">
+			<Filter>script\scene</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bladerunner\script\scene\bb06.cpp">
+			<Filter>script\scene</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bladerunner\script\scene\bb07.cpp">
+			<Filter>script\scene</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bladerunner\script\scene\bb08.cpp">
+			<Filter>script\scene</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bladerunner\script\scene\bb09.cpp">
+			<Filter>script\scene</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bladerunner\script\scene\bb10.cpp">
+			<Filter>script\scene</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bladerunner\script\scene\bb11.cpp">
+			<Filter>script\scene</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bladerunner\script\scene\bb12.cpp">
+			<Filter>script\scene</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bladerunner\script\scene\bb51.cpp">
+			<Filter>script\scene</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bladerunner\script\scene\ct01.cpp">
+			<Filter>script\scene</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bladerunner\script\scene\ct02.cpp">
+			<Filter>script\scene</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bladerunner\script\scene\ct03.cpp">
+			<Filter>script\scene</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bladerunner\script\scene\ct04.cpp">
+			<Filter>script\scene</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bladerunner\script\scene\ct05.cpp">
+			<Filter>script\scene</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bladerunner\script\scene\ct06.cpp">
+			<Filter>script\scene</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bladerunner\script\scene\ct07.cpp">
+			<Filter>script\scene</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bladerunner\script\scene\ct08.cpp">
+			<Filter>script\scene</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bladerunner\script\scene\ct09.cpp">
+			<Filter>script\scene</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bladerunner\script\scene\ct10.cpp">
+			<Filter>script\scene</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bladerunner\script\scene\ct11.cpp">
+			<Filter>script\scene</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bladerunner\script\scene\ct12.cpp">
+			<Filter>script\scene</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bladerunner\script\scene\ct51.cpp">
+			<Filter>script\scene</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bladerunner\script\scene\dr01.cpp">
+			<Filter>script\scene</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bladerunner\script\scene\dr02.cpp">
+			<Filter>script\scene</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bladerunner\script\scene\dr03.cpp">
+			<Filter>script\scene</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bladerunner\script\scene\dr04.cpp">
+			<Filter>script\scene</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bladerunner\script\scene\dr05.cpp">
+			<Filter>script\scene</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bladerunner\script\scene\dr06.cpp">
+			<Filter>script\scene</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bladerunner\script\scene\hc01.cpp">
+			<Filter>script\scene</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bladerunner\script\scene\hc02.cpp">
+			<Filter>script\scene</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bladerunner\script\scene\hc03.cpp">
+			<Filter>script\scene</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bladerunner\script\scene\hc04.cpp">
+			<Filter>script\scene</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bladerunner\script\scene\hf01.cpp">
+			<Filter>script\scene</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bladerunner\script\scene\hf02.cpp">
+			<Filter>script\scene</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bladerunner\script\scene\hf03.cpp">
+			<Filter>script\scene</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bladerunner\script\scene\hf04.cpp">
+			<Filter>script\scene</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bladerunner\script\scene\hf05.cpp">
+			<Filter>script\scene</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bladerunner\script\scene\hf06.cpp">
+			<Filter>script\scene</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bladerunner\script\scene\hf07.cpp">
+			<Filter>script\scene</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bladerunner\script\scene\kp01.cpp">
+			<Filter>script\scene</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bladerunner\script\scene\kp02.cpp">
+			<Filter>script\scene</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bladerunner\script\scene\kp03.cpp">
+			<Filter>script\scene</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bladerunner\script\scene\kp04.cpp">
+			<Filter>script\scene</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bladerunner\script\scene\kp05.cpp">
+			<Filter>script\scene</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bladerunner\script\scene\kp06.cpp">
+			<Filter>script\scene</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bladerunner\script\scene\kp07.cpp">
+			<Filter>script\scene</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bladerunner\script\scene\ma01.cpp">
+			<Filter>script\scene</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bladerunner\script\scene\ma02.cpp">
+			<Filter>script\scene</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bladerunner\script\scene\ma04.cpp">
+			<Filter>script\scene</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bladerunner\script\scene\ma05.cpp">
+			<Filter>script\scene</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bladerunner\script\scene\ma06.cpp">
+			<Filter>script\scene</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bladerunner\script\scene\ma07.cpp">
+			<Filter>script\scene</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bladerunner\script\scene\ma08.cpp">
+			<Filter>script\scene</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bladerunner\script\scene\nr01.cpp">
+			<Filter>script\scene</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bladerunner\script\scene\nr02.cpp">
+			<Filter>script\scene</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bladerunner\script\scene\nr03.cpp">
+			<Filter>script\scene</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bladerunner\script\scene\nr04.cpp">
+			<Filter>script\scene</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bladerunner\script\scene\nr05.cpp">
+			<Filter>script\scene</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bladerunner\script\scene\nr06.cpp">
+			<Filter>script\scene</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bladerunner\script\scene\nr07.cpp">
+			<Filter>script\scene</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bladerunner\script\scene\nr08.cpp">
+			<Filter>script\scene</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bladerunner\script\scene\nr09.cpp">
+			<Filter>script\scene</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bladerunner\script\scene\nr10.cpp">
+			<Filter>script\scene</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bladerunner\script\scene\nr11.cpp">
+			<Filter>script\scene</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bladerunner\script\scene\ps01.cpp">
+			<Filter>script\scene</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bladerunner\script\scene\ps02.cpp">
+			<Filter>script\scene</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bladerunner\script\scene\ps03.cpp">
+			<Filter>script\scene</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bladerunner\script\scene\ps04.cpp">
+			<Filter>script\scene</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bladerunner\script\scene\ps05.cpp">
+			<Filter>script\scene</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bladerunner\script\scene\ps06.cpp">
+			<Filter>script\scene</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bladerunner\script\scene\ps07.cpp">
+			<Filter>script\scene</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bladerunner\script\scene\ps09.cpp">
+			<Filter>script\scene</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bladerunner\script\scene\ps10.cpp">
+			<Filter>script\scene</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bladerunner\script\scene\ps11.cpp">
+			<Filter>script\scene</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bladerunner\script\scene\ps12.cpp">
+			<Filter>script\scene</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bladerunner\script\scene\ps13.cpp">
+			<Filter>script\scene</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bladerunner\script\scene\ps14.cpp">
+			<Filter>script\scene</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bladerunner\script\scene\ps15.cpp">
+			<Filter>script\scene</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bladerunner\script\scene\rc01.cpp">
+			<Filter>script\scene</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bladerunner\script\scene\rc02.cpp">
+			<Filter>script\scene</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bladerunner\script\scene\rc03.cpp">
+			<Filter>script\scene</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bladerunner\script\scene\rc04.cpp">
+			<Filter>script\scene</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bladerunner\script\scene\rc51.cpp">
+			<Filter>script\scene</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bladerunner\script\scene\tb02.cpp">
+			<Filter>script\scene</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bladerunner\script\scene\tb03.cpp">
+			<Filter>script\scene</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bladerunner\script\scene\tb05.cpp">
+			<Filter>script\scene</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bladerunner\script\scene\tb06.cpp">
+			<Filter>script\scene</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bladerunner\script\scene\tb07.cpp">
+			<Filter>script\scene</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bladerunner\script\scene\ug01.cpp">
+			<Filter>script\scene</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bladerunner\script\scene\ug02.cpp">
+			<Filter>script\scene</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bladerunner\script\scene\ug03.cpp">
+			<Filter>script\scene</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bladerunner\script\scene\ug04.cpp">
+			<Filter>script\scene</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bladerunner\script\scene\ug05.cpp">
+			<Filter>script\scene</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bladerunner\script\scene\ug06.cpp">
+			<Filter>script\scene</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bladerunner\script\scene\ug07.cpp">
+			<Filter>script\scene</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bladerunner\script\scene\ug08.cpp">
+			<Filter>script\scene</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bladerunner\script\scene\ug09.cpp">
+			<Filter>script\scene</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bladerunner\script\scene\ug10.cpp">
+			<Filter>script\scene</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bladerunner\script\scene\ug12.cpp">
+			<Filter>script\scene</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bladerunner\script\scene\ug13.cpp">
+			<Filter>script\scene</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bladerunner\script\scene\ug14.cpp">
+			<Filter>script\scene</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bladerunner\script\scene\ug15.cpp">
+			<Filter>script\scene</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bladerunner\script\scene\ug16.cpp">
+			<Filter>script\scene</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bladerunner\script\scene\ug17.cpp">
+			<Filter>script\scene</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bladerunner\script\scene\ug18.cpp">
+			<Filter>script\scene</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bladerunner\script\scene\ug19.cpp">
+			<Filter>script\scene</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bladerunner\script\ai_script.cpp">
+			<Filter>script</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bladerunner\script\esper_script.cpp">
+			<Filter>script</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bladerunner\script\init_script.cpp">
+			<Filter>script</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bladerunner\script\kia_script.cpp">
+			<Filter>script</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bladerunner\script\police_maze.cpp">
+			<Filter>script</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bladerunner\script\scene_script.cpp">
+			<Filter>script</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bladerunner\script\script.cpp">
+			<Filter>script</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bladerunner\script\vk_script.cpp">
+			<Filter>script</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bladerunner\ui\elevator.cpp">
+			<Filter>ui</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bladerunner\ui\end_credits.cpp">
+			<Filter>ui</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bladerunner\ui\esper.cpp">
+			<Filter>ui</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bladerunner\ui\kia.cpp">
+			<Filter>ui</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bladerunner\ui\kia_log.cpp">
+			<Filter>ui</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bladerunner\ui\kia_section_base.cpp">
+			<Filter>ui</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bladerunner\ui\kia_section_clues.cpp">
+			<Filter>ui</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bladerunner\ui\kia_section_crimes.cpp">
+			<Filter>ui</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bladerunner\ui\kia_section_diagnostic.cpp">
+			<Filter>ui</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bladerunner\ui\kia_section_help.cpp">
+			<Filter>ui</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bladerunner\ui\kia_section_load.cpp">
+			<Filter>ui</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bladerunner\ui\kia_section_pogo.cpp">
+			<Filter>ui</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bladerunner\ui\kia_section_save.cpp">
+			<Filter>ui</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bladerunner\ui\kia_section_settings.cpp">
+			<Filter>ui</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bladerunner\ui\kia_section_suspects.cpp">
+			<Filter>ui</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bladerunner\ui\kia_shapes.cpp">
+			<Filter>ui</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bladerunner\ui\scores.cpp">
+			<Filter>ui</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bladerunner\ui\spinner.cpp">
+			<Filter>ui</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bladerunner\ui\ui_check_box.cpp">
+			<Filter>ui</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bladerunner\ui\ui_container.cpp">
+			<Filter>ui</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bladerunner\ui\ui_image_picker.cpp">
+			<Filter>ui</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bladerunner\ui\ui_input_box.cpp">
+			<Filter>ui</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bladerunner\ui\ui_scroll_box.cpp">
+			<Filter>ui</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bladerunner\ui\ui_slider.cpp">
+			<Filter>ui</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bladerunner\ui\vk.cpp">
+			<Filter>ui</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bladerunner\actor.cpp" />
+		<ClCompile Include="..\..\engines\bladerunner\actor_clues.cpp" />
+		<ClCompile Include="..\..\engines\bladerunner\actor_combat.cpp" />
+		<ClCompile Include="..\..\engines\bladerunner\actor_dialogue_queue.cpp" />
+		<ClCompile Include="..\..\engines\bladerunner\actor_walk.cpp" />
+		<ClCompile Include="..\..\engines\bladerunner\adpcm_decoder.cpp" />
+		<ClCompile Include="..\..\engines\bladerunner\ambient_sounds.cpp" />
+		<ClCompile Include="..\..\engines\bladerunner\archive.cpp" />
+		<ClCompile Include="..\..\engines\bladerunner\aud_stream.cpp" />
+		<ClCompile Include="..\..\engines\bladerunner\audio_cache.cpp" />
+		<ClCompile Include="..\..\engines\bladerunner\audio_mixer.cpp" />
+		<ClCompile Include="..\..\engines\bladerunner\audio_player.cpp" />
+		<ClCompile Include="..\..\engines\bladerunner\audio_speech.cpp" />
+		<ClCompile Include="..\..\engines\bladerunner\bladerunner.cpp" />
+		<ClCompile Include="..\..\engines\bladerunner\boundingbox.cpp" />
+		<ClCompile Include="..\..\engines\bladerunner\chapters.cpp" />
+		<ClCompile Include="..\..\engines\bladerunner\combat.cpp" />
+		<ClCompile Include="..\..\engines\bladerunner\crimes_database.cpp" />
+		<ClCompile Include="..\..\engines\bladerunner\debugger.cpp" />
+		<ClCompile Include="..\..\engines\bladerunner\decompress_lcw.cpp" />
+		<ClCompile Include="..\..\engines\bladerunner\decompress_lzo.cpp" />
+		<ClCompile Include="..\..\engines\bladerunner\detection.cpp" />
+		<ClCompile Include="..\..\engines\bladerunner\dialogue_menu.cpp" />
+		<ClCompile Include="..\..\engines\bladerunner\fog.cpp" />
+		<ClCompile Include="..\..\engines\bladerunner\font.cpp" />
+		<ClCompile Include="..\..\engines\bladerunner\framelimiter.cpp" />
+		<ClCompile Include="..\..\engines\bladerunner\game_flags.cpp" />
+		<ClCompile Include="..\..\engines\bladerunner\game_info.cpp" />
+		<ClCompile Include="..\..\engines\bladerunner\image.cpp" />
+		<ClCompile Include="..\..\engines\bladerunner\item.cpp" />
+		<ClCompile Include="..\..\engines\bladerunner\item_pickup.cpp" />
+		<ClCompile Include="..\..\engines\bladerunner\items.cpp" />
+		<ClCompile Include="..\..\engines\bladerunner\light.cpp" />
+		<ClCompile Include="..\..\engines\bladerunner\lights.cpp" />
+		<ClCompile Include="..\..\engines\bladerunner\matrix.cpp" />
+		<ClCompile Include="..\..\engines\bladerunner\mouse.cpp" />
+		<ClCompile Include="..\..\engines\bladerunner\movement_track.cpp" />
+		<ClCompile Include="..\..\engines\bladerunner\music.cpp" />
+		<ClCompile Include="..\..\engines\bladerunner\obstacles.cpp" />
+		<ClCompile Include="..\..\engines\bladerunner\outtake.cpp" />
+		<ClCompile Include="..\..\engines\bladerunner\overlays.cpp" />
+		<ClCompile Include="..\..\engines\bladerunner\regions.cpp" />
+		<ClCompile Include="..\..\engines\bladerunner\savefile.cpp" />
+		<ClCompile Include="..\..\engines\bladerunner\scene.cpp" />
+		<ClCompile Include="..\..\engines\bladerunner\scene_objects.cpp" />
+		<ClCompile Include="..\..\engines\bladerunner\screen_effects.cpp" />
+		<ClCompile Include="..\..\engines\bladerunner\set.cpp" />
+		<ClCompile Include="..\..\engines\bladerunner\set_effects.cpp" />
+		<ClCompile Include="..\..\engines\bladerunner\settings.cpp" />
+		<ClCompile Include="..\..\engines\bladerunner\shape.cpp" />
+		<ClCompile Include="..\..\engines\bladerunner\slice_animations.cpp" />
+		<ClCompile Include="..\..\engines\bladerunner\slice_renderer.cpp" />
+		<ClCompile Include="..\..\engines\bladerunner\subtitles.cpp" />
+		<ClCompile Include="..\..\engines\bladerunner\suspects_database.cpp" />
+		<ClCompile Include="..\..\engines\bladerunner\text_resource.cpp" />
+		<ClCompile Include="..\..\engines\bladerunner\time.cpp" />
+		<ClCompile Include="..\..\engines\bladerunner\view.cpp" />
+		<ClCompile Include="..\..\engines\bladerunner\vqa_decoder.cpp" />
+		<ClCompile Include="..\..\engines\bladerunner\vqa_player.cpp" />
+		<ClCompile Include="..\..\engines\bladerunner\waypoints.cpp" />
+		<ClCompile Include="..\..\engines\bladerunner\zbuffer.cpp" />
+	</ItemGroup>
+	<ItemGroup>
+		<ClInclude Include="..\..\engines\bladerunner\script\ai_script.h">
+			<Filter>script</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bladerunner\script\esper_script.h">
+			<Filter>script</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bladerunner\script\init_script.h">
+			<Filter>script</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bladerunner\script\kia_script.h">
+			<Filter>script</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bladerunner\script\police_maze.h">
+			<Filter>script</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bladerunner\script\scene_script.h">
+			<Filter>script</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bladerunner\script\script.h">
+			<Filter>script</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bladerunner\script\vk_script.h">
+			<Filter>script</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bladerunner\ui\elevator.h">
+			<Filter>ui</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bladerunner\ui\end_credits.h">
+			<Filter>ui</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bladerunner\ui\esper.h">
+			<Filter>ui</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bladerunner\ui\kia.h">
+			<Filter>ui</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bladerunner\ui\kia_log.h">
+			<Filter>ui</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bladerunner\ui\kia_section_base.h">
+			<Filter>ui</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bladerunner\ui\kia_section_clues.h">
+			<Filter>ui</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bladerunner\ui\kia_section_crimes.h">
+			<Filter>ui</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bladerunner\ui\kia_section_diagnostic.h">
+			<Filter>ui</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bladerunner\ui\kia_section_help.h">
+			<Filter>ui</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bladerunner\ui\kia_section_load.h">
+			<Filter>ui</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bladerunner\ui\kia_section_pogo.h">
+			<Filter>ui</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bladerunner\ui\kia_section_save.h">
+			<Filter>ui</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bladerunner\ui\kia_section_settings.h">
+			<Filter>ui</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bladerunner\ui\kia_section_suspects.h">
+			<Filter>ui</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bladerunner\ui\kia_shapes.h">
+			<Filter>ui</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bladerunner\ui\scores.h">
+			<Filter>ui</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bladerunner\ui\spinner.h">
+			<Filter>ui</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bladerunner\ui\ui_check_box.h">
+			<Filter>ui</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bladerunner\ui\ui_component.h">
+			<Filter>ui</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bladerunner\ui\ui_container.h">
+			<Filter>ui</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bladerunner\ui\ui_image_picker.h">
+			<Filter>ui</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bladerunner\ui\ui_input_box.h">
+			<Filter>ui</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bladerunner\ui\ui_scroll_box.h">
+			<Filter>ui</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bladerunner\ui\ui_slider.h">
+			<Filter>ui</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bladerunner\ui\vk.h">
+			<Filter>ui</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bladerunner\actor.h" />
+		<ClInclude Include="..\..\engines\bladerunner\actor_clues.h" />
+		<ClInclude Include="..\..\engines\bladerunner\actor_combat.h" />
+		<ClInclude Include="..\..\engines\bladerunner\actor_dialogue_queue.h" />
+		<ClInclude Include="..\..\engines\bladerunner\actor_walk.h" />
+		<ClInclude Include="..\..\engines\bladerunner\adpcm_decoder.h" />
+		<ClInclude Include="..\..\engines\bladerunner\ambient_sounds.h" />
+		<ClInclude Include="..\..\engines\bladerunner\archive.h" />
+		<ClInclude Include="..\..\engines\bladerunner\aud_stream.h" />
+		<ClInclude Include="..\..\engines\bladerunner\audio_cache.h" />
+		<ClInclude Include="..\..\engines\bladerunner\audio_mixer.h" />
+		<ClInclude Include="..\..\engines\bladerunner\audio_player.h" />
+		<ClInclude Include="..\..\engines\bladerunner\audio_speech.h" />
+		<ClInclude Include="..\..\engines\bladerunner\bladerunner.h" />
+		<ClInclude Include="..\..\engines\bladerunner\boundingbox.h" />
+		<ClInclude Include="..\..\engines\bladerunner\chapters.h" />
+		<ClInclude Include="..\..\engines\bladerunner\color.h" />
+		<ClInclude Include="..\..\engines\bladerunner\combat.h" />
+		<ClInclude Include="..\..\engines\bladerunner\crimes_database.h" />
+		<ClInclude Include="..\..\engines\bladerunner\debugger.h" />
+		<ClInclude Include="..\..\engines\bladerunner\decompress_lcw.h" />
+		<ClInclude Include="..\..\engines\bladerunner\decompress_lzo.h" />
+		<ClInclude Include="..\..\engines\bladerunner\detection_tables.h" />
+		<ClInclude Include="..\..\engines\bladerunner\dialogue_menu.h" />
+		<ClInclude Include="..\..\engines\bladerunner\fog.h" />
+		<ClInclude Include="..\..\engines\bladerunner\font.h" />
+		<ClInclude Include="..\..\engines\bladerunner\framelimiter.h" />
+		<ClInclude Include="..\..\engines\bladerunner\game_constants.h" />
+		<ClInclude Include="..\..\engines\bladerunner\game_flags.h" />
+		<ClInclude Include="..\..\engines\bladerunner\game_info.h" />
+		<ClInclude Include="..\..\engines\bladerunner\image.h" />
+		<ClInclude Include="..\..\engines\bladerunner\item.h" />
+		<ClInclude Include="..\..\engines\bladerunner\item_pickup.h" />
+		<ClInclude Include="..\..\engines\bladerunner\items.h" />
+		<ClInclude Include="..\..\engines\bladerunner\light.h" />
+		<ClInclude Include="..\..\engines\bladerunner\lights.h" />
+		<ClInclude Include="..\..\engines\bladerunner\matrix.h" />
+		<ClInclude Include="..\..\engines\bladerunner\mouse.h" />
+		<ClInclude Include="..\..\engines\bladerunner\movement_track.h" />
+		<ClInclude Include="..\..\engines\bladerunner\music.h" />
+		<ClInclude Include="..\..\engines\bladerunner\obstacles.h" />
+		<ClInclude Include="..\..\engines\bladerunner\outtake.h" />
+		<ClInclude Include="..\..\engines\bladerunner\overlays.h" />
+		<ClInclude Include="..\..\engines\bladerunner\rect_float.h" />
+		<ClInclude Include="..\..\engines\bladerunner\regions.h" />
+		<ClInclude Include="..\..\engines\bladerunner\savefile.h" />
+		<ClInclude Include="..\..\engines\bladerunner\scene.h" />
+		<ClInclude Include="..\..\engines\bladerunner\scene_objects.h" />
+		<ClInclude Include="..\..\engines\bladerunner\screen_effects.h" />
+		<ClInclude Include="..\..\engines\bladerunner\set.h" />
+		<ClInclude Include="..\..\engines\bladerunner\set_effects.h" />
+		<ClInclude Include="..\..\engines\bladerunner\settings.h" />
+		<ClInclude Include="..\..\engines\bladerunner\shape.h" />
+		<ClInclude Include="..\..\engines\bladerunner\slice_animations.h" />
+		<ClInclude Include="..\..\engines\bladerunner\slice_renderer.h" />
+		<ClInclude Include="..\..\engines\bladerunner\subtitles.h" />
+		<ClInclude Include="..\..\engines\bladerunner\suspects_database.h" />
+		<ClInclude Include="..\..\engines\bladerunner\text_resource.h" />
+		<ClInclude Include="..\..\engines\bladerunner\time.h" />
+		<ClInclude Include="..\..\engines\bladerunner\vector.h" />
+		<ClInclude Include="..\..\engines\bladerunner\view.h" />
+		<ClInclude Include="..\..\engines\bladerunner\vqa_decoder.h" />
+		<ClInclude Include="..\..\engines\bladerunner\vqa_player.h" />
+		<ClInclude Include="..\..\engines\bladerunner\waypoints.h" />
+		<ClInclude Include="..\..\engines\bladerunner\zbuffer.h" />
+	</ItemGroup>
+	<ItemGroup>
+		<None Include="..\..\engines\bladerunner\module.mk" />
+	</ItemGroup>
+</Project>

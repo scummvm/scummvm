@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+	<ItemGroup Label="ProjectConfigurations">
+		<ProjectConfiguration Include="Debug|Win32">
+			<Configuration>Debug</Configuration>
+			<Platform>Win32</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Debug|x64">
+			<Configuration>Debug</Configuration>
+			<Platform>x64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Analysis|Win32">
+			<Configuration>Analysis</Configuration>
+			<Platform>Win32</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Analysis|x64">
+			<Configuration>Analysis</Configuration>
+			<Platform>x64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="LLVM|Win32">
+			<Configuration>LLVM</Configuration>
+			<Platform>Win32</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="LLVM|x64">
+			<Configuration>LLVM</Configuration>
+			<Platform>x64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Release|Win32">
+			<Configuration>Release</Configuration>
+			<Platform>Win32</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Release|x64">
+			<Configuration>Release</Configuration>
+			<Platform>x64</Platform>
+		</ProjectConfiguration>
+	</ItemGroup>
+	<PropertyGroup Label="Globals">
+		<ProjectGuid>{0E453D1C-B877-4373-AE4D-0B3C7DCAD7EC}</ProjectGuid>
+		<RootNamespace>fullpipe</RootNamespace>
+		<Keyword>Win32Proj</Keyword>
+		<VCTargetsPath Condition="'$(VCTargetsPath12)' != '' and '$(VSVersion)' == '' and $(VisualStudioVersion) == ''">$(VCTargetsPath12)</VCTargetsPath>
+	</PropertyGroup>
+	<Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Analysis|Win32'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='LLVM|Win32'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>LLVM-vs2013</PlatformToolset>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='LLVM|x64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>LLVM-vs2013</PlatformToolset>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Analysis|x64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+	</PropertyGroup>
+	<Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+	<ImportGroup Label="ExtensionSettings">
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Release.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Analysis|Win32'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Analysis.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='LLVM|Win32'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_LLVM.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Debug.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Release64.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Analysis|x64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Analysis64.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='LLVM|x64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_LLVM64.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Debug64.props" />
+	</ImportGroup>
+	<PropertyGroup Label="UserMacros" />
+	<ItemGroup>
+		<ClCompile Include="..\..\engines\fullpipe\scenes\scene01.cpp" />
+		<ClCompile Include="..\..\engines\fullpipe\scenes\scene02.cpp" />
+		<ClCompile Include="..\..\engines\fullpipe\scenes\scene03.cpp" />
+		<ClCompile Include="..\..\engines\fullpipe\scenes\scene04.cpp" />
+		<ClCompile Include="..\..\engines\fullpipe\scenes\scene05.cpp" />
+		<ClCompile Include="..\..\engines\fullpipe\scenes\scene06.cpp" />
+		<ClCompile Include="..\..\engines\fullpipe\scenes\scene07.cpp" />
+		<ClCompile Include="..\..\engines\fullpipe\scenes\scene08.cpp" />
+		<ClCompile Include="..\..\engines\fullpipe\scenes\scene09.cpp" />
+		<ClCompile Include="..\..\engines\fullpipe\scenes\scene10.cpp" />
+		<ClCompile Include="..\..\engines\fullpipe\scenes\scene11.cpp" />
+		<ClCompile Include="..\..\engines\fullpipe\scenes\scene12.cpp" />
+		<ClCompile Include="..\..\engines\fullpipe\scenes\scene13.cpp" />
+		<ClCompile Include="..\..\engines\fullpipe\scenes\scene14.cpp" />
+		<ClCompile Include="..\..\engines\fullpipe\scenes\scene15.cpp" />
+		<ClCompile Include="..\..\engines\fullpipe\scenes\scene16.cpp" />
+		<ClCompile Include="..\..\engines\fullpipe\scenes\scene17.cpp" />
+		<ClCompile Include="..\..\engines\fullpipe\scenes\scene18and19.cpp" />
+		<ClCompile Include="..\..\engines\fullpipe\scenes\scene20.cpp" />
+		<ClCompile Include="..\..\engines\fullpipe\scenes\scene21.cpp" />
+		<ClCompile Include="..\..\engines\fullpipe\scenes\scene22.cpp" />
+		<ClCompile Include="..\..\engines\fullpipe\scenes\scene23.cpp" />
+		<ClCompile Include="..\..\engines\fullpipe\scenes\scene24.cpp" />
+		<ClCompile Include="..\..\engines\fullpipe\scenes\scene25.cpp" />
+		<ClCompile Include="..\..\engines\fullpipe\scenes\scene26.cpp" />
+		<ClCompile Include="..\..\engines\fullpipe\scenes\scene27.cpp" />
+		<ClCompile Include="..\..\engines\fullpipe\scenes\scene28.cpp" />
+		<ClCompile Include="..\..\engines\fullpipe\scenes\scene29.cpp" />
+		<ClCompile Include="..\..\engines\fullpipe\scenes\scene30.cpp" />
+		<ClCompile Include="..\..\engines\fullpipe\scenes\scene31.cpp" />
+		<ClCompile Include="..\..\engines\fullpipe\scenes\scene32.cpp" />
+		<ClCompile Include="..\..\engines\fullpipe\scenes\scene33.cpp" />
+		<ClCompile Include="..\..\engines\fullpipe\scenes\scene34.cpp" />
+		<ClCompile Include="..\..\engines\fullpipe\scenes\scene35.cpp" />
+		<ClCompile Include="..\..\engines\fullpipe\scenes\scene36.cpp" />
+		<ClCompile Include="..\..\engines\fullpipe\scenes\scene37.cpp" />
+		<ClCompile Include="..\..\engines\fullpipe\scenes\scene38.cpp" />
+		<ClCompile Include="..\..\engines\fullpipe\scenes\sceneDbg.cpp" />
+		<ClCompile Include="..\..\engines\fullpipe\scenes\sceneFinal.cpp" />
+		<ClCompile Include="..\..\engines\fullpipe\scenes\sceneIntro.cpp" />
+		<ClCompile Include="..\..\engines\fullpipe\scenes\sceneIntroDemo.cpp" />
+		<ClCompile Include="..\..\engines\fullpipe\anihandler.cpp" />
+		<ClCompile Include="..\..\engines\fullpipe\behavior.cpp" />
+		<ClCompile Include="..\..\engines\fullpipe\console.cpp" />
+		<ClCompile Include="..\..\engines\fullpipe\detection.cpp" />
+		<ClCompile Include="..\..\engines\fullpipe\floaters.cpp" />
+		<ClCompile Include="..\..\engines\fullpipe\fullpipe.cpp" />
+		<ClCompile Include="..\..\engines\fullpipe\gameloader.cpp" />
+		<ClCompile Include="..\..\engines\fullpipe\gfx.cpp" />
+		<ClCompile Include="..\..\engines\fullpipe\init.cpp" />
+		<ClCompile Include="..\..\engines\fullpipe\input.cpp" />
+		<ClCompile Include="..\..\engines\fullpipe\interaction.cpp" />
+		<ClCompile Include="..\..\engines\fullpipe\inventory.cpp" />
+		<ClCompile Include="..\..\engines\fullpipe\lift.cpp" />
+		<ClCompile Include="..\..\engines\fullpipe\messagehandlers.cpp" />
+		<ClCompile Include="..\..\engines\fullpipe\messages.cpp" />
+		<ClCompile Include="..\..\engines\fullpipe\modal.cpp" />
+		<ClCompile Include="..\..\engines\fullpipe\motion.cpp" />
+		<ClCompile Include="..\..\engines\fullpipe\ngiarchive.cpp" />
+		<ClCompile Include="..\..\engines\fullpipe\scene.cpp" />
+		<ClCompile Include="..\..\engines\fullpipe\scenes.cpp" />
+		<ClCompile Include="..\..\engines\fullpipe\sound.cpp" />
+		<ClCompile Include="..\..\engines\fullpipe\stateloader.cpp" />
+		<ClCompile Include="..\..\engines\fullpipe\statesaver.cpp" />
+		<ClCompile Include="..\..\engines\fullpipe\statics.cpp" />
+		<ClCompile Include="..\..\engines\fullpipe\utils.cpp" />
+	</ItemGroup>
+	<ItemGroup>
+		<ClInclude Include="..\..\engines\fullpipe\anihandler.h" />
+		<ClInclude Include="..\..\engines\fullpipe\behavior.h" />
+		<ClInclude Include="..\..\engines\fullpipe\console.h" />
+		<ClInclude Include="..\..\engines\fullpipe\constants.h" />
+		<ClInclude Include="..\..\engines\fullpipe\floaters.h" />
+		<ClInclude Include="..\..\engines\fullpipe\fullpipe.h" />
+		<ClInclude Include="..\..\engines\fullpipe\gameloader.h" />
+		<ClInclude Include="..\..\engines\fullpipe\gfx.h" />
+		<ClInclude Include="..\..\engines\fullpipe\input.h" />
+		<ClInclude Include="..\..\engines\fullpipe\interaction.h" />
+		<ClInclude Include="..\..\engines\fullpipe\inventory.h" />
+		<ClInclude Include="..\..\engines\fullpipe\messages.h" />
+		<ClInclude Include="..\..\engines\fullpipe\modal.h" />
+		<ClInclude Include="..\..\engines\fullpipe\motion.h" />
+		<ClInclude Include="..\..\engines\fullpipe\ngiarchive.h" />
+		<ClInclude Include="..\..\engines\fullpipe\objectnames.h" />
+		<ClInclude Include="..\..\engines\fullpipe\objects.h" />
+		<ClInclude Include="..\..\engines\fullpipe\scene.h" />
+		<ClInclude Include="..\..\engines\fullpipe\scenes.h" />
+		<ClInclude Include="..\..\engines\fullpipe\sound.h" />
+		<ClInclude Include="..\..\engines\fullpipe\statics.h" />
+		<ClInclude Include="..\..\engines\fullpipe\utils.h" />
+	</ItemGroup>
+	<ItemGroup>
+		<None Include="..\..\engines\fullpipe\module.mk" />
+	</ItemGroup>
+	<Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+	<ImportGroup Label="ExtensionTargets">
+	</ImportGroup>
+</Project>

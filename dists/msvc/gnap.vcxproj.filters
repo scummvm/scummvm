@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+	<ItemGroup>
+		<Filter Include="scenes">
+			<UniqueIdentifier>29C3716B-D03F-46E9-9D5B-F96AA336776C</UniqueIdentifier>
+		</Filter>
+	</ItemGroup>
+	<ItemGroup>
+		<ClCompile Include="..\..\engines\gnap\scenes\arcade.cpp">
+			<Filter>scenes</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\gnap\scenes\group0.cpp">
+			<Filter>scenes</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\gnap\scenes\group1.cpp">
+			<Filter>scenes</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\gnap\scenes\group2.cpp">
+			<Filter>scenes</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\gnap\scenes\group3.cpp">
+			<Filter>scenes</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\gnap\scenes\group4.cpp">
+			<Filter>scenes</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\gnap\scenes\group5.cpp">
+			<Filter>scenes</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\gnap\scenes\groupcs.cpp">
+			<Filter>scenes</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\gnap\scenes\intro.cpp">
+			<Filter>scenes</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\gnap\scenes\scenecore.cpp">
+			<Filter>scenes</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\gnap\character.cpp" />
+		<ClCompile Include="..\..\engines\gnap\datarchive.cpp" />
+		<ClCompile Include="..\..\engines\gnap\debugger.cpp" />
+		<ClCompile Include="..\..\engines\gnap\detection.cpp" />
+		<ClCompile Include="..\..\engines\gnap\gamesys.cpp" />
+		<ClCompile Include="..\..\engines\gnap\gnap.cpp" />
+		<ClCompile Include="..\..\engines\gnap\grid.cpp" />
+		<ClCompile Include="..\..\engines\gnap\menu.cpp" />
+		<ClCompile Include="..\..\engines\gnap\music.cpp" />
+		<ClCompile Include="..\..\engines\gnap\resource.cpp" />
+		<ClCompile Include="..\..\engines\gnap\sound.cpp" />
+	</ItemGroup>
+	<ItemGroup>
+		<ClInclude Include="..\..\engines\gnap\scenes\arcade.h">
+			<Filter>scenes</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\gnap\scenes\group0.h">
+			<Filter>scenes</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\gnap\scenes\group1.h">
+			<Filter>scenes</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\gnap\scenes\group2.h">
+			<Filter>scenes</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\gnap\scenes\group3.h">
+			<Filter>scenes</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\gnap\scenes\group4.h">
+			<Filter>scenes</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\gnap\scenes\group5.h">
+			<Filter>scenes</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\gnap\scenes\groupcs.h">
+			<Filter>scenes</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\gnap\scenes\intro.h">
+			<Filter>scenes</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\gnap\scenes\scenecore.h">
+			<Filter>scenes</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\gnap\character.h" />
+		<ClInclude Include="..\..\engines\gnap\datarchive.h" />
+		<ClInclude Include="..\..\engines\gnap\debugger.h" />
+		<ClInclude Include="..\..\engines\gnap\fontdata.h" />
+		<ClInclude Include="..\..\engines\gnap\gamesys.h" />
+		<ClInclude Include="..\..\engines\gnap\gnap.h" />
+		<ClInclude Include="..\..\engines\gnap\music.h" />
+		<ClInclude Include="..\..\engines\gnap\resource.h" />
+		<ClInclude Include="..\..\engines\gnap\sound.h" />
+	</ItemGroup>
+	<ItemGroup>
+		<None Include="..\..\engines\gnap\module.mk" />
+	</ItemGroup>
+</Project>

@@ -1,0 +1,304 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+	<ItemGroup Label="ProjectConfigurations">
+		<ProjectConfiguration Include="Debug|Win32">
+			<Configuration>Debug</Configuration>
+			<Platform>Win32</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Debug|x64">
+			<Configuration>Debug</Configuration>
+			<Platform>x64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Analysis|Win32">
+			<Configuration>Analysis</Configuration>
+			<Platform>Win32</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Analysis|x64">
+			<Configuration>Analysis</Configuration>
+			<Platform>x64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="LLVM|Win32">
+			<Configuration>LLVM</Configuration>
+			<Platform>Win32</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="LLVM|x64">
+			<Configuration>LLVM</Configuration>
+			<Platform>x64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Release|Win32">
+			<Configuration>Release</Configuration>
+			<Platform>Win32</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Release|x64">
+			<Configuration>Release</Configuration>
+			<Platform>x64</Platform>
+		</ProjectConfiguration>
+	</ItemGroup>
+	<PropertyGroup Label="Globals">
+		<ProjectGuid>{83563F12-67D6-45DA-B869-B30CE0E736F2}</ProjectGuid>
+		<RootNamespace>pegasus</RootNamespace>
+		<Keyword>Win32Proj</Keyword>
+		<VCTargetsPath Condition="'$(VCTargetsPath12)' != '' and '$(VSVersion)' == '' and $(VisualStudioVersion) == ''">$(VCTargetsPath12)</VCTargetsPath>
+	</PropertyGroup>
+	<Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Analysis|Win32'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='LLVM|Win32'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>LLVM-vs2013</PlatformToolset>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='LLVM|x64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>LLVM-vs2013</PlatformToolset>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Analysis|x64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+	</PropertyGroup>
+	<Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+	<ImportGroup Label="ExtensionSettings">
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Release.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Analysis|Win32'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Analysis.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='LLVM|Win32'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_LLVM.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Debug.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Release64.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Analysis|x64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Analysis64.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='LLVM|x64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_LLVM64.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Debug64.props" />
+	</ImportGroup>
+	<PropertyGroup Label="UserMacros" />
+	<ItemGroup>
+		<ClCompile Include="..\..\engines\pegasus\ai\ai_action.cpp" />
+		<ClCompile Include="..\..\engines\pegasus\ai\ai_area.cpp" />
+		<ClCompile Include="..\..\engines\pegasus\ai\ai_condition.cpp" />
+		<ClCompile Include="..\..\engines\pegasus\ai\ai_rule.cpp" />
+		<ClCompile Include="..\..\engines\pegasus\items\biochips\aichip.cpp" />
+		<ClCompile Include="..\..\engines\pegasus\items\biochips\biochipitem.cpp" />
+		<ClCompile Include="..\..\engines\pegasus\items\biochips\mapchip.cpp" />
+		<ClCompile Include="..\..\engines\pegasus\items\biochips\mapimage.cpp" />
+		<ClCompile Include="..\..\engines\pegasus\items\biochips\opticalchip.cpp" />
+		<ClCompile Include="..\..\engines\pegasus\items\biochips\pegasuschip.cpp" />
+		<ClCompile Include="..\..\engines\pegasus\items\biochips\retscanchip.cpp" />
+		<ClCompile Include="..\..\engines\pegasus\items\biochips\shieldchip.cpp" />
+		<ClCompile Include="..\..\engines\pegasus\items\inventory\airmask.cpp" />
+		<ClCompile Include="..\..\engines\pegasus\items\inventory\gascanister.cpp" />
+		<ClCompile Include="..\..\engines\pegasus\items\inventory\inventoryitem.cpp" />
+		<ClCompile Include="..\..\engines\pegasus\items\inventory\keycard.cpp" />
+		<ClCompile Include="..\..\engines\pegasus\items\autodragger.cpp" />
+		<ClCompile Include="..\..\engines\pegasus\items\inventory.cpp" />
+		<ClCompile Include="..\..\engines\pegasus\items\inventorypicture.cpp" />
+		<ClCompile Include="..\..\engines\pegasus\items\item.cpp" />
+		<ClCompile Include="..\..\engines\pegasus\items\itemdragger.cpp" />
+		<ClCompile Include="..\..\engines\pegasus\items\itemlist.cpp" />
+		<ClCompile Include="..\..\engines\pegasus\neighborhood\caldoria\caldoria.cpp" />
+		<ClCompile Include="..\..\engines\pegasus\neighborhood\caldoria\caldoria4dsystem.cpp" />
+		<ClCompile Include="..\..\engines\pegasus\neighborhood\caldoria\caldoriabomb.cpp" />
+		<ClCompile Include="..\..\engines\pegasus\neighborhood\caldoria\caldoriamessages.cpp" />
+		<ClCompile Include="..\..\engines\pegasus\neighborhood\caldoria\caldoriamirror.cpp" />
+		<ClCompile Include="..\..\engines\pegasus\neighborhood\mars\energybeam.cpp" />
+		<ClCompile Include="..\..\engines\pegasus\neighborhood\mars\gravitoncannon.cpp" />
+		<ClCompile Include="..\..\engines\pegasus\neighborhood\mars\hermite.cpp" />
+		<ClCompile Include="..\..\engines\pegasus\neighborhood\mars\mars.cpp" />
+		<ClCompile Include="..\..\engines\pegasus\neighborhood\mars\planetmover.cpp" />
+		<ClCompile Include="..\..\engines\pegasus\neighborhood\mars\reactor.cpp" />
+		<ClCompile Include="..\..\engines\pegasus\neighborhood\mars\robotship.cpp" />
+		<ClCompile Include="..\..\engines\pegasus\neighborhood\mars\shuttleenergymeter.cpp" />
+		<ClCompile Include="..\..\engines\pegasus\neighborhood\mars\shuttlehud.cpp" />
+		<ClCompile Include="..\..\engines\pegasus\neighborhood\mars\shuttleweapon.cpp" />
+		<ClCompile Include="..\..\engines\pegasus\neighborhood\mars\spacechase3d.cpp" />
+		<ClCompile Include="..\..\engines\pegasus\neighborhood\mars\spacejunk.cpp" />
+		<ClCompile Include="..\..\engines\pegasus\neighborhood\mars\tractorbeam.cpp" />
+		<ClCompile Include="..\..\engines\pegasus\neighborhood\norad\alpha\ecrmonitor.cpp" />
+		<ClCompile Include="..\..\engines\pegasus\neighborhood\norad\alpha\fillingstation.cpp" />
+		<ClCompile Include="..\..\engines\pegasus\neighborhood\norad\alpha\noradalpha.cpp" />
+		<ClCompile Include="..\..\engines\pegasus\neighborhood\norad\alpha\panorama.cpp" />
+		<ClCompile Include="..\..\engines\pegasus\neighborhood\norad\alpha\panoramascroll.cpp" />
+		<ClCompile Include="..\..\engines\pegasus\neighborhood\norad\delta\globegame.cpp" />
+		<ClCompile Include="..\..\engines\pegasus\neighborhood\norad\delta\noraddelta.cpp" />
+		<ClCompile Include="..\..\engines\pegasus\neighborhood\norad\norad.cpp" />
+		<ClCompile Include="..\..\engines\pegasus\neighborhood\norad\noradelevator.cpp" />
+		<ClCompile Include="..\..\engines\pegasus\neighborhood\norad\pressuredoor.cpp" />
+		<ClCompile Include="..\..\engines\pegasus\neighborhood\norad\pressuretracker.cpp" />
+		<ClCompile Include="..\..\engines\pegasus\neighborhood\norad\subcontrolroom.cpp" />
+		<ClCompile Include="..\..\engines\pegasus\neighborhood\norad\subplatform.cpp" />
+		<ClCompile Include="..\..\engines\pegasus\neighborhood\prehistoric\prehistoric.cpp" />
+		<ClCompile Include="..\..\engines\pegasus\neighborhood\tsa\fulltsa.cpp" />
+		<ClCompile Include="..\..\engines\pegasus\neighborhood\tsa\tinytsa.cpp" />
+		<ClCompile Include="..\..\engines\pegasus\neighborhood\wsc\moleculebin.cpp" />
+		<ClCompile Include="..\..\engines\pegasus\neighborhood\wsc\wsc.cpp" />
+		<ClCompile Include="..\..\engines\pegasus\neighborhood\door.cpp" />
+		<ClCompile Include="..\..\engines\pegasus\neighborhood\exit.cpp" />
+		<ClCompile Include="..\..\engines\pegasus\neighborhood\extra.cpp" />
+		<ClCompile Include="..\..\engines\pegasus\neighborhood\hotspotinfo.cpp" />
+		<ClCompile Include="..\..\engines\pegasus\neighborhood\neighborhood.cpp" />
+		<ClCompile Include="..\..\engines\pegasus\neighborhood\spot.cpp" />
+		<ClCompile Include="..\..\engines\pegasus\neighborhood\turn.cpp" />
+		<ClCompile Include="..\..\engines\pegasus\neighborhood\view.cpp" />
+		<ClCompile Include="..\..\engines\pegasus\neighborhood\zoom.cpp" />
+		<ClCompile Include="..\..\engines\pegasus\compass.cpp" />
+		<ClCompile Include="..\..\engines\pegasus\console.cpp" />
+		<ClCompile Include="..\..\engines\pegasus\cursor.cpp" />
+		<ClCompile Include="..\..\engines\pegasus\detection.cpp" />
+		<ClCompile Include="..\..\engines\pegasus\elements.cpp" />
+		<ClCompile Include="..\..\engines\pegasus\energymonitor.cpp" />
+		<ClCompile Include="..\..\engines\pegasus\fader.cpp" />
+		<ClCompile Include="..\..\engines\pegasus\gamestate.cpp" />
+		<ClCompile Include="..\..\engines\pegasus\graphics.cpp" />
+		<ClCompile Include="..\..\engines\pegasus\hotspot.cpp" />
+		<ClCompile Include="..\..\engines\pegasus\input.cpp" />
+		<ClCompile Include="..\..\engines\pegasus\interaction.cpp" />
+		<ClCompile Include="..\..\engines\pegasus\interface.cpp" />
+		<ClCompile Include="..\..\engines\pegasus\menu.cpp" />
+		<ClCompile Include="..\..\engines\pegasus\movie.cpp" />
+		<ClCompile Include="..\..\engines\pegasus\notification.cpp" />
+		<ClCompile Include="..\..\engines\pegasus\pegasus.cpp" />
+		<ClCompile Include="..\..\engines\pegasus\sound.cpp" />
+		<ClCompile Include="..\..\engines\pegasus\surface.cpp" />
+		<ClCompile Include="..\..\engines\pegasus\timers.cpp" />
+		<ClCompile Include="..\..\engines\pegasus\transition.cpp" />
+		<ClCompile Include="..\..\engines\pegasus\util.cpp" />
+	</ItemGroup>
+	<ItemGroup>
+		<ClInclude Include="..\..\engines\pegasus\ai\ai_action.h" />
+		<ClInclude Include="..\..\engines\pegasus\ai\ai_area.h" />
+		<ClInclude Include="..\..\engines\pegasus\ai\ai_condition.h" />
+		<ClInclude Include="..\..\engines\pegasus\ai\ai_rule.h" />
+		<ClInclude Include="..\..\engines\pegasus\items\biochips\aichip.h" />
+		<ClInclude Include="..\..\engines\pegasus\items\biochips\biochipitem.h" />
+		<ClInclude Include="..\..\engines\pegasus\items\biochips\mapchip.h" />
+		<ClInclude Include="..\..\engines\pegasus\items\biochips\mapimage.h" />
+		<ClInclude Include="..\..\engines\pegasus\items\biochips\opticalchip.h" />
+		<ClInclude Include="..\..\engines\pegasus\items\biochips\pegasuschip.h" />
+		<ClInclude Include="..\..\engines\pegasus\items\biochips\retscanchip.h" />
+		<ClInclude Include="..\..\engines\pegasus\items\biochips\shieldchip.h" />
+		<ClInclude Include="..\..\engines\pegasus\items\inventory\airmask.h" />
+		<ClInclude Include="..\..\engines\pegasus\items\inventory\gascanister.h" />
+		<ClInclude Include="..\..\engines\pegasus\items\inventory\inventoryitem.h" />
+		<ClInclude Include="..\..\engines\pegasus\items\inventory\keycard.h" />
+		<ClInclude Include="..\..\engines\pegasus\items\autodragger.h" />
+		<ClInclude Include="..\..\engines\pegasus\items\inventory.h" />
+		<ClInclude Include="..\..\engines\pegasus\items\inventorypicture.h" />
+		<ClInclude Include="..\..\engines\pegasus\items\item.h" />
+		<ClInclude Include="..\..\engines\pegasus\items\itemdragger.h" />
+		<ClInclude Include="..\..\engines\pegasus\items\itemlist.h" />
+		<ClInclude Include="..\..\engines\pegasus\neighborhood\caldoria\caldoria.h" />
+		<ClInclude Include="..\..\engines\pegasus\neighborhood\caldoria\caldoria4dsystem.h" />
+		<ClInclude Include="..\..\engines\pegasus\neighborhood\caldoria\caldoriabomb.h" />
+		<ClInclude Include="..\..\engines\pegasus\neighborhood\caldoria\caldoriamessages.h" />
+		<ClInclude Include="..\..\engines\pegasus\neighborhood\caldoria\caldoriamirror.h" />
+		<ClInclude Include="..\..\engines\pegasus\neighborhood\mars\constants.h" />
+		<ClInclude Include="..\..\engines\pegasus\neighborhood\mars\energybeam.h" />
+		<ClInclude Include="..\..\engines\pegasus\neighborhood\mars\gravitoncannon.h" />
+		<ClInclude Include="..\..\engines\pegasus\neighborhood\mars\hermite.h" />
+		<ClInclude Include="..\..\engines\pegasus\neighborhood\mars\mars.h" />
+		<ClInclude Include="..\..\engines\pegasus\neighborhood\mars\planetmover.h" />
+		<ClInclude Include="..\..\engines\pegasus\neighborhood\mars\reactor.h" />
+		<ClInclude Include="..\..\engines\pegasus\neighborhood\mars\robotship.h" />
+		<ClInclude Include="..\..\engines\pegasus\neighborhood\mars\shuttleenergymeter.h" />
+		<ClInclude Include="..\..\engines\pegasus\neighborhood\mars\shuttlehud.h" />
+		<ClInclude Include="..\..\engines\pegasus\neighborhood\mars\shuttleweapon.h" />
+		<ClInclude Include="..\..\engines\pegasus\neighborhood\mars\spacechase3d.h" />
+		<ClInclude Include="..\..\engines\pegasus\neighborhood\mars\spacejunk.h" />
+		<ClInclude Include="..\..\engines\pegasus\neighborhood\mars\tractorbeam.h" />
+		<ClInclude Include="..\..\engines\pegasus\neighborhood\norad\alpha\ecrmonitor.h" />
+		<ClInclude Include="..\..\engines\pegasus\neighborhood\norad\alpha\fillingstation.h" />
+		<ClInclude Include="..\..\engines\pegasus\neighborhood\norad\alpha\noradalpha.h" />
+		<ClInclude Include="..\..\engines\pegasus\neighborhood\norad\alpha\panorama.h" />
+		<ClInclude Include="..\..\engines\pegasus\neighborhood\norad\alpha\panoramascroll.h" />
+		<ClInclude Include="..\..\engines\pegasus\neighborhood\norad\delta\globegame.h" />
+		<ClInclude Include="..\..\engines\pegasus\neighborhood\norad\delta\noraddelta.h" />
+		<ClInclude Include="..\..\engines\pegasus\neighborhood\norad\constants.h" />
+		<ClInclude Include="..\..\engines\pegasus\neighborhood\norad\norad.h" />
+		<ClInclude Include="..\..\engines\pegasus\neighborhood\norad\noradelevator.h" />
+		<ClInclude Include="..\..\engines\pegasus\neighborhood\norad\pressuredoor.h" />
+		<ClInclude Include="..\..\engines\pegasus\neighborhood\norad\pressuretracker.h" />
+		<ClInclude Include="..\..\engines\pegasus\neighborhood\norad\subcontrolroom.h" />
+		<ClInclude Include="..\..\engines\pegasus\neighborhood\norad\subplatform.h" />
+		<ClInclude Include="..\..\engines\pegasus\neighborhood\prehistoric\prehistoric.h" />
+		<ClInclude Include="..\..\engines\pegasus\neighborhood\tsa\fulltsa.h" />
+		<ClInclude Include="..\..\engines\pegasus\neighborhood\tsa\tinytsa.h" />
+		<ClInclude Include="..\..\engines\pegasus\neighborhood\wsc\moleculebin.h" />
+		<ClInclude Include="..\..\engines\pegasus\neighborhood\wsc\wsc.h" />
+		<ClInclude Include="..\..\engines\pegasus\neighborhood\door.h" />
+		<ClInclude Include="..\..\engines\pegasus\neighborhood\exit.h" />
+		<ClInclude Include="..\..\engines\pegasus\neighborhood\extra.h" />
+		<ClInclude Include="..\..\engines\pegasus\neighborhood\hotspotinfo.h" />
+		<ClInclude Include="..\..\engines\pegasus\neighborhood\neighborhood.h" />
+		<ClInclude Include="..\..\engines\pegasus\neighborhood\spot.h" />
+		<ClInclude Include="..\..\engines\pegasus\neighborhood\turn.h" />
+		<ClInclude Include="..\..\engines\pegasus\neighborhood\view.h" />
+		<ClInclude Include="..\..\engines\pegasus\neighborhood\zoom.h" />
+		<ClInclude Include="..\..\engines\pegasus\compass.h" />
+		<ClInclude Include="..\..\engines\pegasus\console.h" />
+		<ClInclude Include="..\..\engines\pegasus\constants.h" />
+		<ClInclude Include="..\..\engines\pegasus\cursor.h" />
+		<ClInclude Include="..\..\engines\pegasus\elements.h" />
+		<ClInclude Include="..\..\engines\pegasus\energymonitor.h" />
+		<ClInclude Include="..\..\engines\pegasus\fader.h" />
+		<ClInclude Include="..\..\engines\pegasus\gamestate.h" />
+		<ClInclude Include="..\..\engines\pegasus\graphics.h" />
+		<ClInclude Include="..\..\engines\pegasus\hotspot.h" />
+		<ClInclude Include="..\..\engines\pegasus\input.h" />
+		<ClInclude Include="..\..\engines\pegasus\interaction.h" />
+		<ClInclude Include="..\..\engines\pegasus\interface.h" />
+		<ClInclude Include="..\..\engines\pegasus\menu.h" />
+		<ClInclude Include="..\..\engines\pegasus\movie.h" />
+		<ClInclude Include="..\..\engines\pegasus\notification.h" />
+		<ClInclude Include="..\..\engines\pegasus\pegasus.h" />
+		<ClInclude Include="..\..\engines\pegasus\scoring.h" />
+		<ClInclude Include="..\..\engines\pegasus\sound.h" />
+		<ClInclude Include="..\..\engines\pegasus\surface.h" />
+		<ClInclude Include="..\..\engines\pegasus\timers.h" />
+		<ClInclude Include="..\..\engines\pegasus\transition.h" />
+		<ClInclude Include="..\..\engines\pegasus\types.h" />
+		<ClInclude Include="..\..\engines\pegasus\util.h" />
+	</ItemGroup>
+	<ItemGroup>
+		<None Include="..\..\engines\pegasus\module.mk" />
+	</ItemGroup>
+	<Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+	<ImportGroup Label="ExtensionTargets">
+	</ImportGroup>
+</Project>

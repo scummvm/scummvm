@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+	<ItemGroup Label="ProjectConfigurations">
+		<ProjectConfiguration Include="Debug|Win32">
+			<Configuration>Debug</Configuration>
+			<Platform>Win32</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Debug|x64">
+			<Configuration>Debug</Configuration>
+			<Platform>x64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Analysis|Win32">
+			<Configuration>Analysis</Configuration>
+			<Platform>Win32</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Analysis|x64">
+			<Configuration>Analysis</Configuration>
+			<Platform>x64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="LLVM|Win32">
+			<Configuration>LLVM</Configuration>
+			<Platform>Win32</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="LLVM|x64">
+			<Configuration>LLVM</Configuration>
+			<Platform>x64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Release|Win32">
+			<Configuration>Release</Configuration>
+			<Platform>Win32</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Release|x64">
+			<Configuration>Release</Configuration>
+			<Platform>x64</Platform>
+		</ProjectConfiguration>
+	</ItemGroup>
+	<PropertyGroup Label="Globals">
+		<ProjectGuid>{F8EB3102-77F4-4181-985E-E4CA3373090F}</ProjectGuid>
+		<RootNamespace>zvision</RootNamespace>
+		<Keyword>Win32Proj</Keyword>
+		<VCTargetsPath Condition="'$(VCTargetsPath12)' != '' and '$(VSVersion)' == '' and $(VisualStudioVersion) == ''">$(VCTargetsPath12)</VCTargetsPath>
+	</PropertyGroup>
+	<Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Analysis|Win32'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='LLVM|Win32'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>LLVM-vs2013</PlatformToolset>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='LLVM|x64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>LLVM-vs2013</PlatformToolset>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Analysis|x64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+	</PropertyGroup>
+	<Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+	<ImportGroup Label="ExtensionSettings">
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Release.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Analysis|Win32'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Analysis.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='LLVM|Win32'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_LLVM.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Debug.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Release64.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Analysis|x64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Analysis64.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='LLVM|x64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_LLVM64.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Debug64.props" />
+	</ImportGroup>
+	<PropertyGroup Label="UserMacros" />
+	<ItemGroup>
+		<ClCompile Include="..\..\engines\zvision\core\clock.cpp" />
+		<ClCompile Include="..\..\engines\zvision\core\console.cpp" />
+		<ClCompile Include="..\..\engines\zvision\core\events.cpp" />
+		<ClCompile Include="..\..\engines\zvision\file\lzss_read_stream.cpp" />
+		<ClCompile Include="..\..\engines\zvision\file\save_manager.cpp" />
+		<ClCompile Include="..\..\engines\zvision\file\search_manager.cpp" />
+		<ClCompile Include="..\..\engines\zvision\file\zfs_archive.cpp" />
+		<ClCompile Include="..\..\engines\zvision\graphics\cursors\cursor.cpp" />
+		<ClCompile Include="..\..\engines\zvision\graphics\cursors\cursor_manager.cpp" />
+		<ClCompile Include="..\..\engines\zvision\graphics\effects\fog.cpp" />
+		<ClCompile Include="..\..\engines\zvision\graphics\effects\light.cpp" />
+		<ClCompile Include="..\..\engines\zvision\graphics\effects\wave.cpp" />
+		<ClCompile Include="..\..\engines\zvision\graphics\render_manager.cpp" />
+		<ClCompile Include="..\..\engines\zvision\graphics\render_table.cpp" />
+		<ClCompile Include="..\..\engines\zvision\scripting\controls\fist_control.cpp" />
+		<ClCompile Include="..\..\engines\zvision\scripting\controls\hotmov_control.cpp" />
+		<ClCompile Include="..\..\engines\zvision\scripting\controls\input_control.cpp" />
+		<ClCompile Include="..\..\engines\zvision\scripting\controls\lever_control.cpp" />
+		<ClCompile Include="..\..\engines\zvision\scripting\controls\paint_control.cpp" />
+		<ClCompile Include="..\..\engines\zvision\scripting\controls\push_toggle_control.cpp" />
+		<ClCompile Include="..\..\engines\zvision\scripting\controls\safe_control.cpp" />
+		<ClCompile Include="..\..\engines\zvision\scripting\controls\save_control.cpp" />
+		<ClCompile Include="..\..\engines\zvision\scripting\controls\slot_control.cpp" />
+		<ClCompile Include="..\..\engines\zvision\scripting\controls\titler_control.cpp" />
+		<ClCompile Include="..\..\engines\zvision\scripting\effects\animation_effect.cpp" />
+		<ClCompile Include="..\..\engines\zvision\scripting\effects\distort_effect.cpp" />
+		<ClCompile Include="..\..\engines\zvision\scripting\effects\music_effect.cpp" />
+		<ClCompile Include="..\..\engines\zvision\scripting\effects\region_effect.cpp" />
+		<ClCompile Include="..\..\engines\zvision\scripting\effects\syncsound_effect.cpp" />
+		<ClCompile Include="..\..\engines\zvision\scripting\effects\timer_effect.cpp" />
+		<ClCompile Include="..\..\engines\zvision\scripting\effects\ttytext_effect.cpp" />
+		<ClCompile Include="..\..\engines\zvision\scripting\actions.cpp" />
+		<ClCompile Include="..\..\engines\zvision\scripting\control.cpp" />
+		<ClCompile Include="..\..\engines\zvision\scripting\inventory.cpp" />
+		<ClCompile Include="..\..\engines\zvision\scripting\menu.cpp" />
+		<ClCompile Include="..\..\engines\zvision\scripting\scr_file_handling.cpp" />
+		<ClCompile Include="..\..\engines\zvision\scripting\script_manager.cpp" />
+		<ClCompile Include="..\..\engines\zvision\sound\midi.cpp" />
+		<ClCompile Include="..\..\engines\zvision\sound\zork_raw.cpp" />
+		<ClCompile Include="..\..\engines\zvision\text\string_manager.cpp" />
+		<ClCompile Include="..\..\engines\zvision\text\subtitles.cpp" />
+		<ClCompile Include="..\..\engines\zvision\text\text.cpp" />
+		<ClCompile Include="..\..\engines\zvision\text\truetype_font.cpp" />
+		<ClCompile Include="..\..\engines\zvision\video\rlf_decoder.cpp" />
+		<ClCompile Include="..\..\engines\zvision\video\video.cpp" />
+		<ClCompile Include="..\..\engines\zvision\video\zork_avi_decoder.cpp" />
+		<ClCompile Include="..\..\engines\zvision\detection.cpp" />
+		<ClCompile Include="..\..\engines\zvision\zvision.cpp" />
+	</ItemGroup>
+	<ItemGroup>
+		<ClInclude Include="..\..\engines\zvision\core\clock.h" />
+		<ClInclude Include="..\..\engines\zvision\core\console.h" />
+		<ClInclude Include="..\..\engines\zvision\file\lzss_read_stream.h" />
+		<ClInclude Include="..\..\engines\zvision\file\save_manager.h" />
+		<ClInclude Include="..\..\engines\zvision\file\search_manager.h" />
+		<ClInclude Include="..\..\engines\zvision\file\zfs_archive.h" />
+		<ClInclude Include="..\..\engines\zvision\graphics\cursors\cursor.h" />
+		<ClInclude Include="..\..\engines\zvision\graphics\cursors\cursor_manager.h" />
+		<ClInclude Include="..\..\engines\zvision\graphics\effects\fog.h" />
+		<ClInclude Include="..\..\engines\zvision\graphics\effects\light.h" />
+		<ClInclude Include="..\..\engines\zvision\graphics\effects\wave.h" />
+		<ClInclude Include="..\..\engines\zvision\graphics\graphics_effect.h" />
+		<ClInclude Include="..\..\engines\zvision\graphics\render_manager.h" />
+		<ClInclude Include="..\..\engines\zvision\graphics\render_table.h" />
+		<ClInclude Include="..\..\engines\zvision\scripting\controls\fist_control.h" />
+		<ClInclude Include="..\..\engines\zvision\scripting\controls\hotmov_control.h" />
+		<ClInclude Include="..\..\engines\zvision\scripting\controls\input_control.h" />
+		<ClInclude Include="..\..\engines\zvision\scripting\controls\lever_control.h" />
+		<ClInclude Include="..\..\engines\zvision\scripting\controls\paint_control.h" />
+		<ClInclude Include="..\..\engines\zvision\scripting\controls\push_toggle_control.h" />
+		<ClInclude Include="..\..\engines\zvision\scripting\controls\safe_control.h" />
+		<ClInclude Include="..\..\engines\zvision\scripting\controls\save_control.h" />
+		<ClInclude Include="..\..\engines\zvision\scripting\controls\slot_control.h" />
+		<ClInclude Include="..\..\engines\zvision\scripting\controls\titler_control.h" />
+		<ClInclude Include="..\..\engines\zvision\scripting\effects\animation_effect.h" />
+		<ClInclude Include="..\..\engines\zvision\scripting\effects\distort_effect.h" />
+		<ClInclude Include="..\..\engines\zvision\scripting\effects\music_effect.h" />
+		<ClInclude Include="..\..\engines\zvision\scripting\effects\region_effect.h" />
+		<ClInclude Include="..\..\engines\zvision\scripting\effects\syncsound_effect.h" />
+		<ClInclude Include="..\..\engines\zvision\scripting\effects\timer_effect.h" />
+		<ClInclude Include="..\..\engines\zvision\scripting\effects\ttytext_effect.h" />
+		<ClInclude Include="..\..\engines\zvision\scripting\actions.h" />
+		<ClInclude Include="..\..\engines\zvision\scripting\control.h" />
+		<ClInclude Include="..\..\engines\zvision\scripting\menu.h" />
+		<ClInclude Include="..\..\engines\zvision\scripting\puzzle.h" />
+		<ClInclude Include="..\..\engines\zvision\scripting\script_manager.h" />
+		<ClInclude Include="..\..\engines\zvision\scripting\scripting_effect.h" />
+		<ClInclude Include="..\..\engines\zvision\sound\midi.h" />
+		<ClInclude Include="..\..\engines\zvision\sound\zork_raw.h" />
+		<ClInclude Include="..\..\engines\zvision\text\string_manager.h" />
+		<ClInclude Include="..\..\engines\zvision\text\subtitles.h" />
+		<ClInclude Include="..\..\engines\zvision\text\text.h" />
+		<ClInclude Include="..\..\engines\zvision\text\truetype_font.h" />
+		<ClInclude Include="..\..\engines\zvision\video\rlf_decoder.h" />
+		<ClInclude Include="..\..\engines\zvision\video\zork_avi_decoder.h" />
+		<ClInclude Include="..\..\engines\zvision\detection_tables.h" />
+		<ClInclude Include="..\..\engines\zvision\zvision.h" />
+	</ItemGroup>
+	<ItemGroup>
+		<None Include="..\..\engines\zvision\module.mk" />
+	</ItemGroup>
+	<Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+	<ImportGroup Label="ExtensionTargets">
+	</ImportGroup>
+</Project>

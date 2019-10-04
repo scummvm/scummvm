@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+	<ItemGroup>
+		<Filter Include="mpal">
+			<UniqueIdentifier>16AB5F18-AC23-4B51-AB54-EF9B70E4BA29</UniqueIdentifier>
+		</Filter>
+	</ItemGroup>
+	<ItemGroup>
+		<ClCompile Include="..\..\engines\tony\mpal\expr.cpp">
+			<Filter>mpal</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\tony\mpal\loadmpc.cpp">
+			<Filter>mpal</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\tony\mpal\lzo.cpp">
+			<Filter>mpal</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\tony\mpal\memory.cpp">
+			<Filter>mpal</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\tony\mpal\mpal.cpp">
+			<Filter>mpal</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\tony\mpal\mpalutils.cpp">
+			<Filter>mpal</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\tony\custom.cpp" />
+		<ClCompile Include="..\..\engines\tony\debugger.cpp" />
+		<ClCompile Include="..\..\engines\tony\detection.cpp" />
+		<ClCompile Include="..\..\engines\tony\font.cpp" />
+		<ClCompile Include="..\..\engines\tony\game.cpp" />
+		<ClCompile Include="..\..\engines\tony\gfxcore.cpp" />
+		<ClCompile Include="..\..\engines\tony\gfxengine.cpp" />
+		<ClCompile Include="..\..\engines\tony\globals.cpp" />
+		<ClCompile Include="..\..\engines\tony\input.cpp" />
+		<ClCompile Include="..\..\engines\tony\inventory.cpp" />
+		<ClCompile Include="..\..\engines\tony\loc.cpp" />
+		<ClCompile Include="..\..\engines\tony\sound.cpp" />
+		<ClCompile Include="..\..\engines\tony\tony.cpp" />
+		<ClCompile Include="..\..\engines\tony\tonychar.cpp" />
+		<ClCompile Include="..\..\engines\tony\utils.cpp" />
+		<ClCompile Include="..\..\engines\tony\window.cpp" />
+	</ItemGroup>
+	<ItemGroup>
+		<ClInclude Include="..\..\engines\tony\mpal\expr.h">
+			<Filter>mpal</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\tony\mpal\loadmpc.h">
+			<Filter>mpal</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\tony\mpal\lzo.h">
+			<Filter>mpal</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\tony\mpal\memory.h">
+			<Filter>mpal</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\tony\mpal\mpal.h">
+			<Filter>mpal</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\tony\mpal\mpaldll.h">
+			<Filter>mpal</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\tony\mpal\mpalutils.h">
+			<Filter>mpal</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\tony\custom.h" />
+		<ClInclude Include="..\..\engines\tony\debugger.h" />
+		<ClInclude Include="..\..\engines\tony\detection_tables.h" />
+		<ClInclude Include="..\..\engines\tony\font.h" />
+		<ClInclude Include="..\..\engines\tony\game.h" />
+		<ClInclude Include="..\..\engines\tony\gfxcore.h" />
+		<ClInclude Include="..\..\engines\tony\gfxengine.h" />
+		<ClInclude Include="..\..\engines\tony\globals.h" />
+		<ClInclude Include="..\..\engines\tony\input.h" />
+		<ClInclude Include="..\..\engines\tony\inventory.h" />
+		<ClInclude Include="..\..\engines\tony\loc.h" />
+		<ClInclude Include="..\..\engines\tony\resid.h" />
+		<ClInclude Include="..\..\engines\tony\sound.h" />
+		<ClInclude Include="..\..\engines\tony\tony.h" />
+		<ClInclude Include="..\..\engines\tony\tonychar.h" />
+		<ClInclude Include="..\..\engines\tony\utils.h" />
+		<ClInclude Include="..\..\engines\tony\window.h" />
+	</ItemGroup>
+	<ItemGroup>
+		<None Include="..\..\engines\tony\module.mk" />
+	</ItemGroup>
+</Project>

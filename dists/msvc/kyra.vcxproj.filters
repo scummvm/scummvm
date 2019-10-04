@@ -1,0 +1,540 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+	<ItemGroup>
+		<Filter Include="engine">
+			<UniqueIdentifier>4E3C9A1A-38AD-4C5D-AD82-EBB01142B785</UniqueIdentifier>
+		</Filter>
+		<Filter Include="graphics">
+			<UniqueIdentifier>C1D64EB7-99AD-4AD0-A561-239853F5915E</UniqueIdentifier>
+		</Filter>
+		<Filter Include="gui">
+			<UniqueIdentifier>C80F642F-82ED-4EC1-B51C-E243D4736A37</UniqueIdentifier>
+		</Filter>
+		<Filter Include="resource">
+			<UniqueIdentifier>9BE80104-5940-424A-AF12-0B2B3E7A77FD</UniqueIdentifier>
+		</Filter>
+		<Filter Include="script">
+			<UniqueIdentifier>6A5EBAED-3BB5-4071-9188-9ED30944D933</UniqueIdentifier>
+		</Filter>
+		<Filter Include="sequence">
+			<UniqueIdentifier>FB6F44AD-1E17-4BD4-BE63-CB15C92FE5D2</UniqueIdentifier>
+		</Filter>
+		<Filter Include="sound">
+			<UniqueIdentifier>E2880427-46C2-4FBE-A955-229FBD34EB1B</UniqueIdentifier>
+		</Filter>
+		<Filter Include="sound\drivers">
+			<UniqueIdentifier>716A6FAE-E647-4929-A87B-01389D675DFB</UniqueIdentifier>
+		</Filter>
+		<Filter Include="text">
+			<UniqueIdentifier>0D1F0035-B411-4131-A408-A778C346CA9A</UniqueIdentifier>
+		</Filter>
+	</ItemGroup>
+	<ItemGroup>
+		<ClCompile Include="..\..\engines\kyra\engine\chargen.cpp">
+			<Filter>engine</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\kyra\engine\darkmoon.cpp">
+			<Filter>engine</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\kyra\engine\eob.cpp">
+			<Filter>engine</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\kyra\engine\eobcommon.cpp">
+			<Filter>engine</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\kyra\engine\items_eob.cpp">
+			<Filter>engine</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\kyra\engine\items_hof.cpp">
+			<Filter>engine</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\kyra\engine\items_lok.cpp">
+			<Filter>engine</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\kyra\engine\items_lol.cpp">
+			<Filter>engine</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\kyra\engine\items_mr.cpp">
+			<Filter>engine</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\kyra\engine\items_v2.cpp">
+			<Filter>engine</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\kyra\engine\kyra_hof.cpp">
+			<Filter>engine</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\kyra\engine\kyra_lok.cpp">
+			<Filter>engine</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\kyra\engine\kyra_mr.cpp">
+			<Filter>engine</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\kyra\engine\kyra_rpg.cpp">
+			<Filter>engine</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\kyra\engine\kyra_v1.cpp">
+			<Filter>engine</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\kyra\engine\kyra_v2.cpp">
+			<Filter>engine</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\kyra\engine\lol.cpp">
+			<Filter>engine</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\kyra\engine\magic_eob.cpp">
+			<Filter>engine</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\kyra\engine\scene_eob.cpp">
+			<Filter>engine</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\kyra\engine\scene_hof.cpp">
+			<Filter>engine</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\kyra\engine\scene_lok.cpp">
+			<Filter>engine</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\kyra\engine\scene_lol.cpp">
+			<Filter>engine</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\kyra\engine\scene_mr.cpp">
+			<Filter>engine</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\kyra\engine\scene_rpg.cpp">
+			<Filter>engine</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\kyra\engine\scene_v1.cpp">
+			<Filter>engine</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\kyra\engine\scene_v2.cpp">
+			<Filter>engine</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\kyra\engine\sprites.cpp">
+			<Filter>engine</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\kyra\engine\sprites_eob.cpp">
+			<Filter>engine</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\kyra\engine\sprites_lol.cpp">
+			<Filter>engine</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\kyra\engine\sprites_rpg.cpp">
+			<Filter>engine</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\kyra\engine\timer.cpp">
+			<Filter>engine</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\kyra\engine\timer_eob.cpp">
+			<Filter>engine</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\kyra\engine\timer_hof.cpp">
+			<Filter>engine</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\kyra\engine\timer_lok.cpp">
+			<Filter>engine</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\kyra\engine\timer_lol.cpp">
+			<Filter>engine</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\kyra\engine\timer_mr.cpp">
+			<Filter>engine</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\kyra\engine\timer_rpg.cpp">
+			<Filter>engine</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\kyra\engine\util.cpp">
+			<Filter>engine</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\kyra\graphics\animator_hof.cpp">
+			<Filter>graphics</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\kyra\graphics\animator_lok.cpp">
+			<Filter>graphics</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\kyra\graphics\animator_mr.cpp">
+			<Filter>graphics</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\kyra\graphics\animator_tim.cpp">
+			<Filter>graphics</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\kyra\graphics\animator_v2.cpp">
+			<Filter>graphics</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\kyra\graphics\screen.cpp">
+			<Filter>graphics</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\kyra\graphics\screen_eob.cpp">
+			<Filter>graphics</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\kyra\graphics\screen_hof.cpp">
+			<Filter>graphics</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\kyra\graphics\screen_lok.cpp">
+			<Filter>graphics</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\kyra\graphics\screen_lol.cpp">
+			<Filter>graphics</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\kyra\graphics\screen_mr.cpp">
+			<Filter>graphics</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\kyra\graphics\screen_v2.cpp">
+			<Filter>graphics</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\kyra\graphics\vqa.cpp">
+			<Filter>graphics</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\kyra\graphics\wsamovie.cpp">
+			<Filter>graphics</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\kyra\gui\debugger.cpp">
+			<Filter>gui</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\kyra\gui\gui.cpp">
+			<Filter>gui</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\kyra\gui\gui_eob.cpp">
+			<Filter>gui</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\kyra\gui\gui_hof.cpp">
+			<Filter>gui</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\kyra\gui\gui_lok.cpp">
+			<Filter>gui</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\kyra\gui\gui_lol.cpp">
+			<Filter>gui</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\kyra\gui\gui_mr.cpp">
+			<Filter>gui</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\kyra\gui\gui_rpg.cpp">
+			<Filter>gui</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\kyra\gui\gui_v1.cpp">
+			<Filter>gui</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\kyra\gui\gui_v2.cpp">
+			<Filter>gui</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\kyra\gui\saveload.cpp">
+			<Filter>gui</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\kyra\gui\saveload_eob.cpp">
+			<Filter>gui</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\kyra\gui\saveload_hof.cpp">
+			<Filter>gui</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\kyra\gui\saveload_lok.cpp">
+			<Filter>gui</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\kyra\gui\saveload_lol.cpp">
+			<Filter>gui</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\kyra\gui\saveload_mr.cpp">
+			<Filter>gui</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\kyra\gui\saveload_rpg.cpp">
+			<Filter>gui</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\kyra\resource\resource.cpp">
+			<Filter>resource</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\kyra\resource\resource_intern.cpp">
+			<Filter>resource</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\kyra\resource\staticres.cpp">
+			<Filter>resource</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\kyra\resource\staticres_eob.cpp">
+			<Filter>resource</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\kyra\resource\staticres_lol.cpp">
+			<Filter>resource</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\kyra\resource\staticres_rpg.cpp">
+			<Filter>resource</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\kyra\script\script.cpp">
+			<Filter>script</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\kyra\script\script_eob.cpp">
+			<Filter>script</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\kyra\script\script_hof.cpp">
+			<Filter>script</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\kyra\script\script_lok.cpp">
+			<Filter>script</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\kyra\script\script_lol.cpp">
+			<Filter>script</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\kyra\script\script_mr.cpp">
+			<Filter>script</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\kyra\script\script_tim.cpp">
+			<Filter>script</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\kyra\script\script_v1.cpp">
+			<Filter>script</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\kyra\script\script_v2.cpp">
+			<Filter>script</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\kyra\sequence\seqplayer.cpp">
+			<Filter>sequence</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\kyra\sequence\sequences_darkmoon.cpp">
+			<Filter>sequence</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\kyra\sequence\sequences_eob.cpp">
+			<Filter>sequence</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\kyra\sequence\sequences_hof.cpp">
+			<Filter>sequence</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\kyra\sequence\sequences_lok.cpp">
+			<Filter>sequence</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\kyra\sequence\sequences_lol.cpp">
+			<Filter>sequence</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\kyra\sequence\sequences_mr.cpp">
+			<Filter>sequence</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\kyra\sequence\sequences_v2.cpp">
+			<Filter>sequence</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\kyra\sound\drivers\adlib.cpp">
+			<Filter>sound\drivers</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\kyra\sound\drivers\audiomaster2.cpp">
+			<Filter>sound\drivers</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\kyra\sound\drivers\audstream.cpp">
+			<Filter>sound\drivers</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\kyra\sound\drivers\midi.cpp">
+			<Filter>sound\drivers</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\kyra\sound\drivers\pcspeaker.cpp">
+			<Filter>sound\drivers</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\kyra\sound\sound.cpp">
+			<Filter>sound</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\kyra\sound\sound_adlib.cpp">
+			<Filter>sound</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\kyra\sound\sound_amiga_eob.cpp">
+			<Filter>sound</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\kyra\sound\sound_amiga_lok.cpp">
+			<Filter>sound</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\kyra\sound\sound_digital_mr.cpp">
+			<Filter>sound</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\kyra\sound\sound_lok.cpp">
+			<Filter>sound</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\kyra\sound\sound_lol.cpp">
+			<Filter>sound</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\kyra\sound\sound_midi.cpp">
+			<Filter>sound</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\kyra\sound\sound_pc98_lok.cpp">
+			<Filter>sound</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\kyra\sound\sound_pc98_v2.cpp">
+			<Filter>sound</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\kyra\sound\sound_towns_darkmoon.cpp">
+			<Filter>sound</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\kyra\sound\sound_towns_lok.cpp">
+			<Filter>sound</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\kyra\text\text.cpp">
+			<Filter>text</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\kyra\text\text_hof.cpp">
+			<Filter>text</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\kyra\text\text_lok.cpp">
+			<Filter>text</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\kyra\text\text_lol.cpp">
+			<Filter>text</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\kyra\text\text_mr.cpp">
+			<Filter>text</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\kyra\text\text_rpg.cpp">
+			<Filter>text</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\kyra\detection.cpp" />
+	</ItemGroup>
+	<ItemGroup>
+		<ClInclude Include="..\..\engines\kyra\engine\darkmoon.h">
+			<Filter>engine</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\kyra\engine\eob.h">
+			<Filter>engine</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\kyra\engine\eobcommon.h">
+			<Filter>engine</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\kyra\engine\item.h">
+			<Filter>engine</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\kyra\engine\kyra_hof.h">
+			<Filter>engine</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\kyra\engine\kyra_lok.h">
+			<Filter>engine</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\kyra\engine\kyra_mr.h">
+			<Filter>engine</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\kyra\engine\kyra_rpg.h">
+			<Filter>engine</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\kyra\engine\kyra_v2.h">
+			<Filter>engine</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\kyra\engine\lol.h">
+			<Filter>engine</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\kyra\engine\sprites.h">
+			<Filter>engine</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\kyra\engine\timer.h">
+			<Filter>engine</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\kyra\engine\util.h">
+			<Filter>engine</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\kyra\graphics\animator_lok.h">
+			<Filter>graphics</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\kyra\graphics\screen.h">
+			<Filter>graphics</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\kyra\graphics\screen_eob.h">
+			<Filter>graphics</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\kyra\graphics\screen_hof.h">
+			<Filter>graphics</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\kyra\graphics\screen_lok.h">
+			<Filter>graphics</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\kyra\graphics\screen_lol.h">
+			<Filter>graphics</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\kyra\graphics\screen_mr.h">
+			<Filter>graphics</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\kyra\graphics\screen_v2.h">
+			<Filter>graphics</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\kyra\graphics\vqa.h">
+			<Filter>graphics</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\kyra\graphics\wsamovie.h">
+			<Filter>graphics</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\kyra\gui\debugger.h">
+			<Filter>gui</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\kyra\gui\gui.h">
+			<Filter>gui</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\kyra\gui\gui_eob.h">
+			<Filter>gui</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\kyra\gui\gui_hof.h">
+			<Filter>gui</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\kyra\gui\gui_lok.h">
+			<Filter>gui</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\kyra\gui\gui_lol.h">
+			<Filter>gui</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\kyra\gui\gui_mr.h">
+			<Filter>gui</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\kyra\gui\gui_v1.h">
+			<Filter>gui</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\kyra\gui\gui_v2.h">
+			<Filter>gui</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\kyra\resource\resource.h">
+			<Filter>resource</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\kyra\resource\resource_intern.h">
+			<Filter>resource</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\kyra\script\script.h">
+			<Filter>script</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\kyra\script\script_eob.h">
+			<Filter>script</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\kyra\script\script_tim.h">
+			<Filter>script</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\kyra\sequence\seqplayer.h">
+			<Filter>sequence</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\kyra\sequence\sequences_hof.h">
+			<Filter>sequence</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\kyra\sound\drivers\adlib.h">
+			<Filter>sound\drivers</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\kyra\sound\drivers\audiomaster2.h">
+			<Filter>sound\drivers</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\kyra\sound\drivers\midi.h">
+			<Filter>sound\drivers</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\kyra\sound\sound.h">
+			<Filter>sound</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\kyra\sound\sound_adlib.h">
+			<Filter>sound</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\kyra\sound\sound_digital_mr.h">
+			<Filter>sound</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\kyra\sound\sound_intern.h">
+			<Filter>sound</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\kyra\text\text.h">
+			<Filter>text</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\kyra\text\text_hof.h">
+			<Filter>text</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\kyra\text\text_lol.h">
+			<Filter>text</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\kyra\text\text_mr.h">
+			<Filter>text</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\kyra\text\text_rpg.h">
+			<Filter>text</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\kyra\detection_tables.h" />
+		<ClInclude Include="..\..\engines\kyra\kyra_v1.h" />
+	</ItemGroup>
+	<ItemGroup>
+		<None Include="..\..\engines\kyra\module.mk" />
+	</ItemGroup>
+</Project>

@@ -1,0 +1,237 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+	<ItemGroup Label="ProjectConfigurations">
+		<ProjectConfiguration Include="Debug|Win32">
+			<Configuration>Debug</Configuration>
+			<Platform>Win32</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Debug|x64">
+			<Configuration>Debug</Configuration>
+			<Platform>x64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Analysis|Win32">
+			<Configuration>Analysis</Configuration>
+			<Platform>Win32</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Analysis|x64">
+			<Configuration>Analysis</Configuration>
+			<Platform>x64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="LLVM|Win32">
+			<Configuration>LLVM</Configuration>
+			<Platform>Win32</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="LLVM|x64">
+			<Configuration>LLVM</Configuration>
+			<Platform>x64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Release|Win32">
+			<Configuration>Release</Configuration>
+			<Platform>Win32</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Release|x64">
+			<Configuration>Release</Configuration>
+			<Platform>x64</Platform>
+		</ProjectConfiguration>
+	</ItemGroup>
+	<PropertyGroup Label="Globals">
+		<ProjectGuid>{6345608A-ECE1-4AA5-9C8C-B51F6CCB2B86}</ProjectGuid>
+		<RootNamespace>mohawk</RootNamespace>
+		<Keyword>Win32Proj</Keyword>
+		<VCTargetsPath Condition="'$(VCTargetsPath12)' != '' and '$(VSVersion)' == '' and $(VisualStudioVersion) == ''">$(VCTargetsPath12)</VCTargetsPath>
+	</PropertyGroup>
+	<Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Analysis|Win32'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='LLVM|Win32'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>LLVM-vs2013</PlatformToolset>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='LLVM|x64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>LLVM-vs2013</PlatformToolset>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Analysis|x64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+	</PropertyGroup>
+	<Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+	<ImportGroup Label="ExtensionSettings">
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Release.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Analysis|Win32'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Analysis.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='LLVM|Win32'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_LLVM.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Debug.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Release64.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Analysis|x64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Analysis64.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='LLVM|x64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_LLVM64.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Debug64.props" />
+	</ImportGroup>
+	<PropertyGroup Label="UserMacros" />
+	<ItemGroup>
+		<ClCompile Include="..\..\engines\mohawk\myst_stacks\channelwood.cpp" />
+		<ClCompile Include="..\..\engines\mohawk\myst_stacks\credits.cpp" />
+		<ClCompile Include="..\..\engines\mohawk\myst_stacks\demo.cpp" />
+		<ClCompile Include="..\..\engines\mohawk\myst_stacks\dni.cpp" />
+		<ClCompile Include="..\..\engines\mohawk\myst_stacks\intro.cpp" />
+		<ClCompile Include="..\..\engines\mohawk\myst_stacks\makingof.cpp" />
+		<ClCompile Include="..\..\engines\mohawk\myst_stacks\mechanical.cpp" />
+		<ClCompile Include="..\..\engines\mohawk\myst_stacks\menu.cpp" />
+		<ClCompile Include="..\..\engines\mohawk\myst_stacks\myst.cpp">
+			<ObjectFileName>$(IntDir)myst_stacks_%(Filename).obj</ObjectFileName>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\mohawk\myst_stacks\preview.cpp" />
+		<ClCompile Include="..\..\engines\mohawk\myst_stacks\selenitic.cpp" />
+		<ClCompile Include="..\..\engines\mohawk\myst_stacks\slides.cpp" />
+		<ClCompile Include="..\..\engines\mohawk\myst_stacks\stoneship.cpp" />
+		<ClCompile Include="..\..\engines\mohawk\riven_stacks\aspit.cpp" />
+		<ClCompile Include="..\..\engines\mohawk\riven_stacks\bspit.cpp" />
+		<ClCompile Include="..\..\engines\mohawk\riven_stacks\domespit.cpp" />
+		<ClCompile Include="..\..\engines\mohawk\riven_stacks\gspit.cpp" />
+		<ClCompile Include="..\..\engines\mohawk\riven_stacks\jspit.cpp" />
+		<ClCompile Include="..\..\engines\mohawk\riven_stacks\ospit.cpp" />
+		<ClCompile Include="..\..\engines\mohawk\riven_stacks\pspit.cpp" />
+		<ClCompile Include="..\..\engines\mohawk\riven_stacks\rspit.cpp" />
+		<ClCompile Include="..\..\engines\mohawk\riven_stacks\tspit.cpp" />
+		<ClCompile Include="..\..\engines\mohawk\bitmap.cpp" />
+		<ClCompile Include="..\..\engines\mohawk\console.cpp" />
+		<ClCompile Include="..\..\engines\mohawk\cursors.cpp" />
+		<ClCompile Include="..\..\engines\mohawk\detection.cpp" />
+		<ClCompile Include="..\..\engines\mohawk\dialogs.cpp" />
+		<ClCompile Include="..\..\engines\mohawk\graphics.cpp" />
+		<ClCompile Include="..\..\engines\mohawk\installer_archive.cpp" />
+		<ClCompile Include="..\..\engines\mohawk\livingbooks.cpp" />
+		<ClCompile Include="..\..\engines\mohawk\livingbooks_code.cpp" />
+		<ClCompile Include="..\..\engines\mohawk\livingbooks_graphics.cpp" />
+		<ClCompile Include="..\..\engines\mohawk\livingbooks_lbx.cpp" />
+		<ClCompile Include="..\..\engines\mohawk\mohawk.cpp" />
+		<ClCompile Include="..\..\engines\mohawk\myst.cpp">
+			<ObjectFileName>$(IntDir)%(Filename).obj</ObjectFileName>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\mohawk\myst_areas.cpp" />
+		<ClCompile Include="..\..\engines\mohawk\myst_card.cpp" />
+		<ClCompile Include="..\..\engines\mohawk\myst_graphics.cpp" />
+		<ClCompile Include="..\..\engines\mohawk\myst_scripts.cpp" />
+		<ClCompile Include="..\..\engines\mohawk\myst_sound.cpp" />
+		<ClCompile Include="..\..\engines\mohawk\myst_state.cpp" />
+		<ClCompile Include="..\..\engines\mohawk\resource.cpp" />
+		<ClCompile Include="..\..\engines\mohawk\resource_cache.cpp" />
+		<ClCompile Include="..\..\engines\mohawk\riven.cpp" />
+		<ClCompile Include="..\..\engines\mohawk\riven_card.cpp" />
+		<ClCompile Include="..\..\engines\mohawk\riven_graphics.cpp" />
+		<ClCompile Include="..\..\engines\mohawk\riven_inventory.cpp" />
+		<ClCompile Include="..\..\engines\mohawk\riven_saveload.cpp" />
+		<ClCompile Include="..\..\engines\mohawk\riven_scripts.cpp" />
+		<ClCompile Include="..\..\engines\mohawk\riven_sound.cpp" />
+		<ClCompile Include="..\..\engines\mohawk\riven_stack.cpp" />
+		<ClCompile Include="..\..\engines\mohawk\riven_vars.cpp" />
+		<ClCompile Include="..\..\engines\mohawk\riven_video.cpp" />
+		<ClCompile Include="..\..\engines\mohawk\sound.cpp" />
+		<ClCompile Include="..\..\engines\mohawk\video.cpp" />
+		<ClCompile Include="..\..\engines\mohawk\view.cpp" />
+	</ItemGroup>
+	<ItemGroup>
+		<ClInclude Include="..\..\engines\mohawk\myst_stacks\channelwood.h" />
+		<ClInclude Include="..\..\engines\mohawk\myst_stacks\credits.h" />
+		<ClInclude Include="..\..\engines\mohawk\myst_stacks\demo.h" />
+		<ClInclude Include="..\..\engines\mohawk\myst_stacks\dni.h" />
+		<ClInclude Include="..\..\engines\mohawk\myst_stacks\intro.h" />
+		<ClInclude Include="..\..\engines\mohawk\myst_stacks\makingof.h" />
+		<ClInclude Include="..\..\engines\mohawk\myst_stacks\mechanical.h" />
+		<ClInclude Include="..\..\engines\mohawk\myst_stacks\menu.h" />
+		<ClInclude Include="..\..\engines\mohawk\myst_stacks\myst.h" />
+		<ClInclude Include="..\..\engines\mohawk\myst_stacks\preview.h" />
+		<ClInclude Include="..\..\engines\mohawk\myst_stacks\selenitic.h" />
+		<ClInclude Include="..\..\engines\mohawk\myst_stacks\slides.h" />
+		<ClInclude Include="..\..\engines\mohawk\myst_stacks\stoneship.h" />
+		<ClInclude Include="..\..\engines\mohawk\riven_stacks\aspit.h" />
+		<ClInclude Include="..\..\engines\mohawk\riven_stacks\bspit.h" />
+		<ClInclude Include="..\..\engines\mohawk\riven_stacks\domespit.h" />
+		<ClInclude Include="..\..\engines\mohawk\riven_stacks\gspit.h" />
+		<ClInclude Include="..\..\engines\mohawk\riven_stacks\jspit.h" />
+		<ClInclude Include="..\..\engines\mohawk\riven_stacks\ospit.h" />
+		<ClInclude Include="..\..\engines\mohawk\riven_stacks\pspit.h" />
+		<ClInclude Include="..\..\engines\mohawk\riven_stacks\rspit.h" />
+		<ClInclude Include="..\..\engines\mohawk\riven_stacks\tspit.h" />
+		<ClInclude Include="..\..\engines\mohawk\bitmap.h" />
+		<ClInclude Include="..\..\engines\mohawk\console.h" />
+		<ClInclude Include="..\..\engines\mohawk\cursors.h" />
+		<ClInclude Include="..\..\engines\mohawk\detection_tables.h" />
+		<ClInclude Include="..\..\engines\mohawk\dialogs.h" />
+		<ClInclude Include="..\..\engines\mohawk\graphics.h" />
+		<ClInclude Include="..\..\engines\mohawk\installer_archive.h" />
+		<ClInclude Include="..\..\engines\mohawk\livingbooks.h" />
+		<ClInclude Include="..\..\engines\mohawk\livingbooks_code.h" />
+		<ClInclude Include="..\..\engines\mohawk\livingbooks_graphics.h" />
+		<ClInclude Include="..\..\engines\mohawk\livingbooks_lbx.h" />
+		<ClInclude Include="..\..\engines\mohawk\mohawk.h" />
+		<ClInclude Include="..\..\engines\mohawk\myst.h" />
+		<ClInclude Include="..\..\engines\mohawk\myst_areas.h" />
+		<ClInclude Include="..\..\engines\mohawk\myst_card.h" />
+		<ClInclude Include="..\..\engines\mohawk\myst_graphics.h" />
+		<ClInclude Include="..\..\engines\mohawk\myst_scripts.h" />
+		<ClInclude Include="..\..\engines\mohawk\myst_sound.h" />
+		<ClInclude Include="..\..\engines\mohawk\myst_state.h" />
+		<ClInclude Include="..\..\engines\mohawk\resource.h" />
+		<ClInclude Include="..\..\engines\mohawk\resource_cache.h" />
+		<ClInclude Include="..\..\engines\mohawk\riven.h" />
+		<ClInclude Include="..\..\engines\mohawk\riven_card.h" />
+		<ClInclude Include="..\..\engines\mohawk\riven_graphics.h" />
+		<ClInclude Include="..\..\engines\mohawk\riven_inventory.h" />
+		<ClInclude Include="..\..\engines\mohawk\riven_saveload.h" />
+		<ClInclude Include="..\..\engines\mohawk\riven_scripts.h" />
+		<ClInclude Include="..\..\engines\mohawk\riven_sound.h" />
+		<ClInclude Include="..\..\engines\mohawk\riven_stack.h" />
+		<ClInclude Include="..\..\engines\mohawk\riven_video.h" />
+		<ClInclude Include="..\..\engines\mohawk\sound.h" />
+		<ClInclude Include="..\..\engines\mohawk\video.h" />
+		<ClInclude Include="..\..\engines\mohawk\view.h" />
+	</ItemGroup>
+	<ItemGroup>
+		<None Include="..\..\engines\mohawk\module.mk" />
+	</ItemGroup>
+	<Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+	<ImportGroup Label="ExtensionTargets">
+	</ImportGroup>
+</Project>

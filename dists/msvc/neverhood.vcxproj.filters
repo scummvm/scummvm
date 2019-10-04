@@ -1,0 +1,302 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+	<ItemGroup>
+		<Filter Include="modules">
+			<UniqueIdentifier>4C3597DE-C10B-4FC7-8295-A8117B922D3B</UniqueIdentifier>
+		</Filter>
+	</ItemGroup>
+	<ItemGroup>
+		<ClCompile Include="..\..\engines\neverhood\modules\module1000.cpp">
+			<Filter>modules</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\neverhood\modules\module1000_sprites.cpp">
+			<Filter>modules</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\neverhood\modules\module1100.cpp">
+			<Filter>modules</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\neverhood\modules\module1100_sprites.cpp">
+			<Filter>modules</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\neverhood\modules\module1200.cpp">
+			<Filter>modules</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\neverhood\modules\module1200_sprites.cpp">
+			<Filter>modules</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\neverhood\modules\module1300.cpp">
+			<Filter>modules</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\neverhood\modules\module1300_sprites.cpp">
+			<Filter>modules</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\neverhood\modules\module1400.cpp">
+			<Filter>modules</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\neverhood\modules\module1400_sprites.cpp">
+			<Filter>modules</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\neverhood\modules\module1500.cpp">
+			<Filter>modules</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\neverhood\modules\module1600.cpp">
+			<Filter>modules</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\neverhood\modules\module1600_sprites.cpp">
+			<Filter>modules</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\neverhood\modules\module1700.cpp">
+			<Filter>modules</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\neverhood\modules\module1700_sprites.cpp">
+			<Filter>modules</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\neverhood\modules\module1800.cpp">
+			<Filter>modules</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\neverhood\modules\module1900.cpp">
+			<Filter>modules</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\neverhood\modules\module1900_sprites.cpp">
+			<Filter>modules</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\neverhood\modules\module2000.cpp">
+			<Filter>modules</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\neverhood\modules\module2000_sprites.cpp">
+			<Filter>modules</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\neverhood\modules\module2100.cpp">
+			<Filter>modules</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\neverhood\modules\module2100_sprites.cpp">
+			<Filter>modules</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\neverhood\modules\module2200.cpp">
+			<Filter>modules</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\neverhood\modules\module2200_sprites.cpp">
+			<Filter>modules</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\neverhood\modules\module2300.cpp">
+			<Filter>modules</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\neverhood\modules\module2400.cpp">
+			<Filter>modules</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\neverhood\modules\module2400_sprites.cpp">
+			<Filter>modules</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\neverhood\modules\module2500.cpp">
+			<Filter>modules</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\neverhood\modules\module2500_sprites.cpp">
+			<Filter>modules</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\neverhood\modules\module2600.cpp">
+			<Filter>modules</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\neverhood\modules\module2600_sprites.cpp">
+			<Filter>modules</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\neverhood\modules\module2700.cpp">
+			<Filter>modules</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\neverhood\modules\module2700_sprites.cpp">
+			<Filter>modules</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\neverhood\modules\module2800.cpp">
+			<Filter>modules</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\neverhood\modules\module2800_sprites.cpp">
+			<Filter>modules</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\neverhood\modules\module2900.cpp">
+			<Filter>modules</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\neverhood\modules\module2900_sprites.cpp">
+			<Filter>modules</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\neverhood\modules\module3000.cpp">
+			<Filter>modules</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\neverhood\modules\module3000_sprites.cpp">
+			<Filter>modules</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\neverhood\background.cpp" />
+		<ClCompile Include="..\..\engines\neverhood\blbarchive.cpp" />
+		<ClCompile Include="..\..\engines\neverhood\console.cpp" />
+		<ClCompile Include="..\..\engines\neverhood\detection.cpp" />
+		<ClCompile Include="..\..\engines\neverhood\diskplayerscene.cpp" />
+		<ClCompile Include="..\..\engines\neverhood\entity.cpp" />
+		<ClCompile Include="..\..\engines\neverhood\gamemodule.cpp" />
+		<ClCompile Include="..\..\engines\neverhood\gamevars.cpp" />
+		<ClCompile Include="..\..\engines\neverhood\graphics.cpp" />
+		<ClCompile Include="..\..\engines\neverhood\klaymen.cpp" />
+		<ClCompile Include="..\..\engines\neverhood\menumodule.cpp" />
+		<ClCompile Include="..\..\engines\neverhood\microtiles.cpp" />
+		<ClCompile Include="..\..\engines\neverhood\module.cpp" />
+		<ClCompile Include="..\..\engines\neverhood\mouse.cpp" />
+		<ClCompile Include="..\..\engines\neverhood\navigationscene.cpp" />
+		<ClCompile Include="..\..\engines\neverhood\neverhood.cpp" />
+		<ClCompile Include="..\..\engines\neverhood\palette.cpp" />
+		<ClCompile Include="..\..\engines\neverhood\resource.cpp" />
+		<ClCompile Include="..\..\engines\neverhood\resourceman.cpp" />
+		<ClCompile Include="..\..\engines\neverhood\saveload.cpp" />
+		<ClCompile Include="..\..\engines\neverhood\scene.cpp" />
+		<ClCompile Include="..\..\engines\neverhood\screen.cpp" />
+		<ClCompile Include="..\..\engines\neverhood\smackerplayer.cpp" />
+		<ClCompile Include="..\..\engines\neverhood\smackerscene.cpp" />
+		<ClCompile Include="..\..\engines\neverhood\sound.cpp" />
+		<ClCompile Include="..\..\engines\neverhood\sprite.cpp" />
+		<ClCompile Include="..\..\engines\neverhood\staticdata.cpp" />
+	</ItemGroup>
+	<ItemGroup>
+		<ClInclude Include="..\..\engines\neverhood\modules\module1000.h">
+			<Filter>modules</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\neverhood\modules\module1000_sprites.h">
+			<Filter>modules</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\neverhood\modules\module1100.h">
+			<Filter>modules</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\neverhood\modules\module1100_sprites.h">
+			<Filter>modules</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\neverhood\modules\module1200.h">
+			<Filter>modules</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\neverhood\modules\module1200_sprites.h">
+			<Filter>modules</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\neverhood\modules\module1300.h">
+			<Filter>modules</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\neverhood\modules\module1300_sprites.h">
+			<Filter>modules</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\neverhood\modules\module1400.h">
+			<Filter>modules</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\neverhood\modules\module1400_sprites.h">
+			<Filter>modules</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\neverhood\modules\module1500.h">
+			<Filter>modules</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\neverhood\modules\module1600.h">
+			<Filter>modules</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\neverhood\modules\module1600_sprites.h">
+			<Filter>modules</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\neverhood\modules\module1700.h">
+			<Filter>modules</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\neverhood\modules\module1700_sprites.h">
+			<Filter>modules</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\neverhood\modules\module1800.h">
+			<Filter>modules</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\neverhood\modules\module1900.h">
+			<Filter>modules</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\neverhood\modules\module1900_sprites.h">
+			<Filter>modules</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\neverhood\modules\module2000.h">
+			<Filter>modules</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\neverhood\modules\module2000_sprites.h">
+			<Filter>modules</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\neverhood\modules\module2100.h">
+			<Filter>modules</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\neverhood\modules\module2100_sprites.h">
+			<Filter>modules</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\neverhood\modules\module2200.h">
+			<Filter>modules</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\neverhood\modules\module2200_sprites.h">
+			<Filter>modules</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\neverhood\modules\module2300.h">
+			<Filter>modules</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\neverhood\modules\module2400.h">
+			<Filter>modules</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\neverhood\modules\module2400_sprites.h">
+			<Filter>modules</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\neverhood\modules\module2500.h">
+			<Filter>modules</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\neverhood\modules\module2500_sprites.h">
+			<Filter>modules</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\neverhood\modules\module2600.h">
+			<Filter>modules</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\neverhood\modules\module2600_sprites.h">
+			<Filter>modules</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\neverhood\modules\module2700.h">
+			<Filter>modules</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\neverhood\modules\module2700_sprites.h">
+			<Filter>modules</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\neverhood\modules\module2800.h">
+			<Filter>modules</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\neverhood\modules\module2800_sprites.h">
+			<Filter>modules</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\neverhood\modules\module2900.h">
+			<Filter>modules</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\neverhood\modules\module2900_sprites.h">
+			<Filter>modules</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\neverhood\modules\module3000.h">
+			<Filter>modules</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\neverhood\modules\module3000_sprites.h">
+			<Filter>modules</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\neverhood\background.h" />
+		<ClInclude Include="..\..\engines\neverhood\blbarchive.h" />
+		<ClInclude Include="..\..\engines\neverhood\console.h" />
+		<ClInclude Include="..\..\engines\neverhood\diskplayerscene.h" />
+		<ClInclude Include="..\..\engines\neverhood\entity.h" />
+		<ClInclude Include="..\..\engines\neverhood\gamemodule.h" />
+		<ClInclude Include="..\..\engines\neverhood\gamevars.h" />
+		<ClInclude Include="..\..\engines\neverhood\graphics.h" />
+		<ClInclude Include="..\..\engines\neverhood\klaymen.h" />
+		<ClInclude Include="..\..\engines\neverhood\menumodule.h" />
+		<ClInclude Include="..\..\engines\neverhood\messages.h" />
+		<ClInclude Include="..\..\engines\neverhood\microtiles.h" />
+		<ClInclude Include="..\..\engines\neverhood\module.h" />
+		<ClInclude Include="..\..\engines\neverhood\mouse.h" />
+		<ClInclude Include="..\..\engines\neverhood\navigationscene.h" />
+		<ClInclude Include="..\..\engines\neverhood\neverhood.h" />
+		<ClInclude Include="..\..\engines\neverhood\palette.h" />
+		<ClInclude Include="..\..\engines\neverhood\resource.h" />
+		<ClInclude Include="..\..\engines\neverhood\resourceman.h" />
+		<ClInclude Include="..\..\engines\neverhood\scene.h" />
+		<ClInclude Include="..\..\engines\neverhood\screen.h" />
+		<ClInclude Include="..\..\engines\neverhood\smackerplayer.h" />
+		<ClInclude Include="..\..\engines\neverhood\smackerscene.h" />
+		<ClInclude Include="..\..\engines\neverhood\sound.h" />
+		<ClInclude Include="..\..\engines\neverhood\sprite.h" />
+		<ClInclude Include="..\..\engines\neverhood\staticdata.h" />
+	</ItemGroup>
+	<ItemGroup>
+		<None Include="..\..\engines\neverhood\module.mk" />
+	</ItemGroup>
+</Project>

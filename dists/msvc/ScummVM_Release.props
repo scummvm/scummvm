@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+	<ImportGroup Label="PropertySheets">
+		<Import Project="ScummVM_Global.props" />
+	</ImportGroup>
+	<PropertyGroup>
+		<_PropertySheetDisplayName>ScummVM_Release32</_PropertySheetDisplayName>
+		<LinkIncremental>false</LinkIncremental>
+		<GenerateManifest>false</GenerateManifest>
+	</PropertyGroup>
+	<ItemDefinitionGroup>
+		<ClCompile>
+			<IntrinsicFunctions>true</IntrinsicFunctions>
+			<WholeProgramOptimization>true</WholeProgramOptimization>
+			<PreprocessorDefinitions>WIN32;RELEASE_BUILD;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+			<StringPooling>true</StringPooling>
+			<BufferSecurityCheck>false</BufferSecurityCheck>
+			<DebugInformationFormat></DebugInformationFormat>
+			<RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+			<EnablePREfast>false</EnablePREfast>
+		</ClCompile>
+		<Lib>
+			<LinkTimeCodeGeneration>true</LinkTimeCodeGeneration>
+		</Lib>
+		<Link>
+			<LinkTimeCodeGeneration>UseLinkTimeCodeGeneration</LinkTimeCodeGeneration>
+			<IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
+			<SetChecksum>true</SetChecksum>
+		</Link>
+	</ItemDefinitionGroup>
+</Project>

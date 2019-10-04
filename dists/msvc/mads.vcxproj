@@ -1,0 +1,240 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+	<ItemGroup Label="ProjectConfigurations">
+		<ProjectConfiguration Include="Debug|Win32">
+			<Configuration>Debug</Configuration>
+			<Platform>Win32</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Debug|x64">
+			<Configuration>Debug</Configuration>
+			<Platform>x64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Analysis|Win32">
+			<Configuration>Analysis</Configuration>
+			<Platform>Win32</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Analysis|x64">
+			<Configuration>Analysis</Configuration>
+			<Platform>x64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="LLVM|Win32">
+			<Configuration>LLVM</Configuration>
+			<Platform>Win32</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="LLVM|x64">
+			<Configuration>LLVM</Configuration>
+			<Platform>x64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Release|Win32">
+			<Configuration>Release</Configuration>
+			<Platform>Win32</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Release|x64">
+			<Configuration>Release</Configuration>
+			<Platform>x64</Platform>
+		</ProjectConfiguration>
+	</ItemGroup>
+	<PropertyGroup Label="Globals">
+		<ProjectGuid>{4DA95EEF-291A-44F6-B159-DD40C4387AAF}</ProjectGuid>
+		<RootNamespace>mads</RootNamespace>
+		<Keyword>Win32Proj</Keyword>
+		<VCTargetsPath Condition="'$(VCTargetsPath12)' != '' and '$(VSVersion)' == '' and $(VisualStudioVersion) == ''">$(VCTargetsPath12)</VCTargetsPath>
+	</PropertyGroup>
+	<Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Analysis|Win32'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='LLVM|Win32'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>LLVM-vs2013</PlatformToolset>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='LLVM|x64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>LLVM-vs2013</PlatformToolset>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Analysis|x64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+	</PropertyGroup>
+	<Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+	<ImportGroup Label="ExtensionSettings">
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Release.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Analysis|Win32'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Analysis.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='LLVM|Win32'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_LLVM.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Debug.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Release64.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Analysis|x64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Analysis64.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='LLVM|x64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_LLVM64.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Debug64.props" />
+	</ImportGroup>
+	<PropertyGroup Label="UserMacros" />
+	<ItemGroup>
+		<ClCompile Include="..\..\engines\mads\dragonsphere\dragonsphere_scenes.cpp" />
+		<ClCompile Include="..\..\engines\mads\dragonsphere\dragonsphere_scenes1.cpp" />
+		<ClCompile Include="..\..\engines\mads\dragonsphere\game_dragonsphere.cpp" />
+		<ClCompile Include="..\..\engines\mads\dragonsphere\globals_dragonsphere.cpp" />
+		<ClCompile Include="..\..\engines\mads\nebular\dialogs_nebular.cpp" />
+		<ClCompile Include="..\..\engines\mads\nebular\game_nebular.cpp" />
+		<ClCompile Include="..\..\engines\mads\nebular\globals_nebular.cpp" />
+		<ClCompile Include="..\..\engines\mads\nebular\menu_nebular.cpp" />
+		<ClCompile Include="..\..\engines\mads\nebular\nebular_scenes.cpp" />
+		<ClCompile Include="..\..\engines\mads\nebular\nebular_scenes1.cpp" />
+		<ClCompile Include="..\..\engines\mads\nebular\nebular_scenes2.cpp" />
+		<ClCompile Include="..\..\engines\mads\nebular\nebular_scenes3.cpp" />
+		<ClCompile Include="..\..\engines\mads\nebular\nebular_scenes4.cpp" />
+		<ClCompile Include="..\..\engines\mads\nebular\nebular_scenes5.cpp" />
+		<ClCompile Include="..\..\engines\mads\nebular\nebular_scenes6.cpp" />
+		<ClCompile Include="..\..\engines\mads\nebular\nebular_scenes7.cpp" />
+		<ClCompile Include="..\..\engines\mads\nebular\nebular_scenes8.cpp" />
+		<ClCompile Include="..\..\engines\mads\nebular\sound_nebular.cpp" />
+		<ClCompile Include="..\..\engines\mads\phantom\game_phantom.cpp" />
+		<ClCompile Include="..\..\engines\mads\phantom\globals_phantom.cpp" />
+		<ClCompile Include="..\..\engines\mads\phantom\phantom_scenes.cpp" />
+		<ClCompile Include="..\..\engines\mads\phantom\phantom_scenes1.cpp" />
+		<ClCompile Include="..\..\engines\mads\phantom\phantom_scenes2.cpp" />
+		<ClCompile Include="..\..\engines\mads\phantom\phantom_scenes3.cpp" />
+		<ClCompile Include="..\..\engines\mads\phantom\phantom_scenes4.cpp" />
+		<ClCompile Include="..\..\engines\mads\phantom\phantom_scenes5.cpp" />
+		<ClCompile Include="..\..\engines\mads\action.cpp" />
+		<ClCompile Include="..\..\engines\mads\animation.cpp" />
+		<ClCompile Include="..\..\engines\mads\assets.cpp" />
+		<ClCompile Include="..\..\engines\mads\audio.cpp" />
+		<ClCompile Include="..\..\engines\mads\camera.cpp" />
+		<ClCompile Include="..\..\engines\mads\compression.cpp" />
+		<ClCompile Include="..\..\engines\mads\conversations.cpp" />
+		<ClCompile Include="..\..\engines\mads\debugger.cpp" />
+		<ClCompile Include="..\..\engines\mads\detection.cpp" />
+		<ClCompile Include="..\..\engines\mads\dialogs.cpp" />
+		<ClCompile Include="..\..\engines\mads\events.cpp" />
+		<ClCompile Include="..\..\engines\mads\font.cpp" />
+		<ClCompile Include="..\..\engines\mads\game.cpp" />
+		<ClCompile Include="..\..\engines\mads\game_data.cpp" />
+		<ClCompile Include="..\..\engines\mads\globals.cpp" />
+		<ClCompile Include="..\..\engines\mads\hotspots.cpp" />
+		<ClCompile Include="..\..\engines\mads\inventory.cpp" />
+		<ClCompile Include="..\..\engines\mads\mads.cpp" />
+		<ClCompile Include="..\..\engines\mads\menu_views.cpp" />
+		<ClCompile Include="..\..\engines\mads\messages.cpp" />
+		<ClCompile Include="..\..\engines\mads\msurface.cpp" />
+		<ClCompile Include="..\..\engines\mads\palette.cpp" />
+		<ClCompile Include="..\..\engines\mads\player.cpp" />
+		<ClCompile Include="..\..\engines\mads\rails.cpp" />
+		<ClCompile Include="..\..\engines\mads\resources.cpp" />
+		<ClCompile Include="..\..\engines\mads\scene.cpp" />
+		<ClCompile Include="..\..\engines\mads\scene_data.cpp" />
+		<ClCompile Include="..\..\engines\mads\screen.cpp" />
+		<ClCompile Include="..\..\engines\mads\sequence.cpp" />
+		<ClCompile Include="..\..\engines\mads\sound.cpp" />
+		<ClCompile Include="..\..\engines\mads\sprites.cpp" />
+		<ClCompile Include="..\..\engines\mads\staticres.cpp" />
+		<ClCompile Include="..\..\engines\mads\user_interface.cpp" />
+	</ItemGroup>
+	<ItemGroup>
+		<ClInclude Include="..\..\engines\mads\dragonsphere\dragonsphere_scenes.h" />
+		<ClInclude Include="..\..\engines\mads\dragonsphere\dragonsphere_scenes1.h" />
+		<ClInclude Include="..\..\engines\mads\dragonsphere\game_dragonsphere.h" />
+		<ClInclude Include="..\..\engines\mads\dragonsphere\globals_dragonsphere.h" />
+		<ClInclude Include="..\..\engines\mads\nebular\dialogs_nebular.h" />
+		<ClInclude Include="..\..\engines\mads\nebular\game_nebular.h" />
+		<ClInclude Include="..\..\engines\mads\nebular\globals_nebular.h" />
+		<ClInclude Include="..\..\engines\mads\nebular\menu_nebular.h" />
+		<ClInclude Include="..\..\engines\mads\nebular\nebular_scenes.h" />
+		<ClInclude Include="..\..\engines\mads\nebular\nebular_scenes1.h" />
+		<ClInclude Include="..\..\engines\mads\nebular\nebular_scenes2.h" />
+		<ClInclude Include="..\..\engines\mads\nebular\nebular_scenes3.h" />
+		<ClInclude Include="..\..\engines\mads\nebular\nebular_scenes4.h" />
+		<ClInclude Include="..\..\engines\mads\nebular\nebular_scenes5.h" />
+		<ClInclude Include="..\..\engines\mads\nebular\nebular_scenes6.h" />
+		<ClInclude Include="..\..\engines\mads\nebular\nebular_scenes7.h" />
+		<ClInclude Include="..\..\engines\mads\nebular\nebular_scenes8.h" />
+		<ClInclude Include="..\..\engines\mads\nebular\sound_nebular.h" />
+		<ClInclude Include="..\..\engines\mads\phantom\game_phantom.h" />
+		<ClInclude Include="..\..\engines\mads\phantom\globals_phantom.h" />
+		<ClInclude Include="..\..\engines\mads\phantom\phantom_scenes.h" />
+		<ClInclude Include="..\..\engines\mads\phantom\phantom_scenes1.h" />
+		<ClInclude Include="..\..\engines\mads\phantom\phantom_scenes2.h" />
+		<ClInclude Include="..\..\engines\mads\phantom\phantom_scenes3.h" />
+		<ClInclude Include="..\..\engines\mads\phantom\phantom_scenes4.h" />
+		<ClInclude Include="..\..\engines\mads\phantom\phantom_scenes5.h" />
+		<ClInclude Include="..\..\engines\mads\action.h" />
+		<ClInclude Include="..\..\engines\mads\animation.h" />
+		<ClInclude Include="..\..\engines\mads\assets.h" />
+		<ClInclude Include="..\..\engines\mads\audio.h" />
+		<ClInclude Include="..\..\engines\mads\camera.h" />
+		<ClInclude Include="..\..\engines\mads\compression.h" />
+		<ClInclude Include="..\..\engines\mads\conversations.h" />
+		<ClInclude Include="..\..\engines\mads\debugger.h" />
+		<ClInclude Include="..\..\engines\mads\detection_tables.h" />
+		<ClInclude Include="..\..\engines\mads\dialogs.h" />
+		<ClInclude Include="..\..\engines\mads\events.h" />
+		<ClInclude Include="..\..\engines\mads\font.h" />
+		<ClInclude Include="..\..\engines\mads\game.h" />
+		<ClInclude Include="..\..\engines\mads\game_data.h" />
+		<ClInclude Include="..\..\engines\mads\globals.h" />
+		<ClInclude Include="..\..\engines\mads\hotspots.h" />
+		<ClInclude Include="..\..\engines\mads\inventory.h" />
+		<ClInclude Include="..\..\engines\mads\mads.h" />
+		<ClInclude Include="..\..\engines\mads\menu_views.h" />
+		<ClInclude Include="..\..\engines\mads\messages.h" />
+		<ClInclude Include="..\..\engines\mads\msurface.h" />
+		<ClInclude Include="..\..\engines\mads\palette.h" />
+		<ClInclude Include="..\..\engines\mads\player.h" />
+		<ClInclude Include="..\..\engines\mads\rails.h" />
+		<ClInclude Include="..\..\engines\mads\resources.h" />
+		<ClInclude Include="..\..\engines\mads\scene.h" />
+		<ClInclude Include="..\..\engines\mads\scene_data.h" />
+		<ClInclude Include="..\..\engines\mads\screen.h" />
+		<ClInclude Include="..\..\engines\mads\sequence.h" />
+		<ClInclude Include="..\..\engines\mads\sound.h" />
+		<ClInclude Include="..\..\engines\mads\sprites.h" />
+		<ClInclude Include="..\..\engines\mads\staticres.h" />
+		<ClInclude Include="..\..\engines\mads\user_interface.h" />
+	</ItemGroup>
+	<ItemGroup>
+		<None Include="..\..\engines\mads\module.mk" />
+	</ItemGroup>
+	<Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+	<ImportGroup Label="ExtensionTargets">
+	</ImportGroup>
+</Project>

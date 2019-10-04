@@ -1,0 +1,235 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+	<ItemGroup Label="ProjectConfigurations">
+		<ProjectConfiguration Include="Debug|Win32">
+			<Configuration>Debug</Configuration>
+			<Platform>Win32</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Debug|x64">
+			<Configuration>Debug</Configuration>
+			<Platform>x64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Analysis|Win32">
+			<Configuration>Analysis</Configuration>
+			<Platform>Win32</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Analysis|x64">
+			<Configuration>Analysis</Configuration>
+			<Platform>x64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="LLVM|Win32">
+			<Configuration>LLVM</Configuration>
+			<Platform>Win32</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="LLVM|x64">
+			<Configuration>LLVM</Configuration>
+			<Platform>x64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Release|Win32">
+			<Configuration>Release</Configuration>
+			<Platform>Win32</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Release|x64">
+			<Configuration>Release</Configuration>
+			<Platform>x64</Platform>
+		</ProjectConfiguration>
+	</ItemGroup>
+	<PropertyGroup Label="Globals">
+		<ProjectGuid>{CB89583B-8978-4506-BEEC-A952ED6069A6}</ProjectGuid>
+		<RootNamespace>agos</RootNamespace>
+		<Keyword>Win32Proj</Keyword>
+		<VCTargetsPath Condition="'$(VCTargetsPath12)' != '' and '$(VSVersion)' == '' and $(VisualStudioVersion) == ''">$(VCTargetsPath12)</VCTargetsPath>
+	</PropertyGroup>
+	<Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Analysis|Win32'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='LLVM|Win32'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>LLVM-vs2013</PlatformToolset>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='LLVM|x64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>LLVM-vs2013</PlatformToolset>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Analysis|x64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+	</PropertyGroup>
+	<Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+	<ImportGroup Label="ExtensionSettings">
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Release.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Analysis|Win32'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Analysis.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='LLVM|Win32'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_LLVM.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Debug.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Release64.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Analysis|x64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Analysis64.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='LLVM|x64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_LLVM64.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Debug64.props" />
+	</ImportGroup>
+	<PropertyGroup Label="UserMacros" />
+	<ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+		<ClCompile>
+			<DisableSpecificWarnings>4511;;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+		</ClCompile>
+	</ItemDefinitionGroup>
+	<ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Analysis|Win32'">
+		<ClCompile>
+			<DisableSpecificWarnings>4511;;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+		</ClCompile>
+	</ItemDefinitionGroup>
+	<ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='LLVM|Win32'">
+		<ClCompile>
+			<DisableSpecificWarnings>4511;;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+		</ClCompile>
+	</ItemDefinitionGroup>
+	<ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+		<ClCompile>
+			<DisableSpecificWarnings>4511;;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+		</ClCompile>
+	</ItemDefinitionGroup>
+	<ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+		<ClCompile>
+			<DisableSpecificWarnings>4511;;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+		</ClCompile>
+	</ItemDefinitionGroup>
+	<ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Analysis|x64'">
+		<ClCompile>
+			<DisableSpecificWarnings>4511;;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+		</ClCompile>
+	</ItemDefinitionGroup>
+	<ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='LLVM|x64'">
+		<ClCompile>
+			<DisableSpecificWarnings>4511;;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+		</ClCompile>
+	</ItemDefinitionGroup>
+	<ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+		<ClCompile>
+			<DisableSpecificWarnings>4511;;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+		</ClCompile>
+	</ItemDefinitionGroup>
+	<ItemGroup>
+		<ClCompile Include="..\..\engines\agos\drivers\accolade\adlib.cpp">
+			<ObjectFileName>$(IntDir)drivers_accolade_%(Filename).obj</ObjectFileName>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\agos\drivers\accolade\driverfile.cpp" />
+		<ClCompile Include="..\..\engines\agos\drivers\accolade\mt32.cpp" />
+		<ClCompile Include="..\..\engines\agos\drivers\simon1\adlib.cpp">
+			<ObjectFileName>$(IntDir)drivers_simon1_%(Filename).obj</ObjectFileName>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\agos\agos.cpp" />
+		<ClCompile Include="..\..\engines\agos\animation.cpp" />
+		<ClCompile Include="..\..\engines\agos\charset-fontdata.cpp" />
+		<ClCompile Include="..\..\engines\agos\charset.cpp" />
+		<ClCompile Include="..\..\engines\agos\contain.cpp" />
+		<ClCompile Include="..\..\engines\agos\cursor.cpp" />
+		<ClCompile Include="..\..\engines\agos\debug.cpp" />
+		<ClCompile Include="..\..\engines\agos\debugger.cpp" />
+		<ClCompile Include="..\..\engines\agos\detection.cpp" />
+		<ClCompile Include="..\..\engines\agos\draw.cpp" />
+		<ClCompile Include="..\..\engines\agos\event.cpp" />
+		<ClCompile Include="..\..\engines\agos\feeble.cpp" />
+		<ClCompile Include="..\..\engines\agos\gfx.cpp" />
+		<ClCompile Include="..\..\engines\agos\icons.cpp" />
+		<ClCompile Include="..\..\engines\agos\input.cpp" />
+		<ClCompile Include="..\..\engines\agos\input_pn.cpp" />
+		<ClCompile Include="..\..\engines\agos\items.cpp" />
+		<ClCompile Include="..\..\engines\agos\menus.cpp" />
+		<ClCompile Include="..\..\engines\agos\midi.cpp" />
+		<ClCompile Include="..\..\engines\agos\midiparser_s1d.cpp" />
+		<ClCompile Include="..\..\engines\agos\oracle.cpp" />
+		<ClCompile Include="..\..\engines\agos\pn.cpp" />
+		<ClCompile Include="..\..\engines\agos\res.cpp" />
+		<ClCompile Include="..\..\engines\agos\res_ami.cpp" />
+		<ClCompile Include="..\..\engines\agos\res_snd.cpp" />
+		<ClCompile Include="..\..\engines\agos\rooms.cpp" />
+		<ClCompile Include="..\..\engines\agos\saveload.cpp" />
+		<ClCompile Include="..\..\engines\agos\script.cpp" />
+		<ClCompile Include="..\..\engines\agos\script_dp.cpp" />
+		<ClCompile Include="..\..\engines\agos\script_e1.cpp" />
+		<ClCompile Include="..\..\engines\agos\script_e2.cpp" />
+		<ClCompile Include="..\..\engines\agos\script_ff.cpp" />
+		<ClCompile Include="..\..\engines\agos\script_pn.cpp" />
+		<ClCompile Include="..\..\engines\agos\script_pp.cpp" />
+		<ClCompile Include="..\..\engines\agos\script_s1.cpp" />
+		<ClCompile Include="..\..\engines\agos\script_s2.cpp" />
+		<ClCompile Include="..\..\engines\agos\script_ww.cpp" />
+		<ClCompile Include="..\..\engines\agos\sound.cpp" />
+		<ClCompile Include="..\..\engines\agos\string.cpp" />
+		<ClCompile Include="..\..\engines\agos\string_pn.cpp" />
+		<ClCompile Include="..\..\engines\agos\subroutine.cpp" />
+		<ClCompile Include="..\..\engines\agos\verb.cpp" />
+		<ClCompile Include="..\..\engines\agos\verb_pn.cpp" />
+		<ClCompile Include="..\..\engines\agos\vga.cpp" />
+		<ClCompile Include="..\..\engines\agos\vga_e2.cpp" />
+		<ClCompile Include="..\..\engines\agos\vga_ff.cpp" />
+		<ClCompile Include="..\..\engines\agos\vga_pn.cpp" />
+		<ClCompile Include="..\..\engines\agos\vga_s1.cpp" />
+		<ClCompile Include="..\..\engines\agos\vga_s2.cpp" />
+		<ClCompile Include="..\..\engines\agos\vga_ww.cpp" />
+		<ClCompile Include="..\..\engines\agos\window.cpp" />
+		<ClCompile Include="..\..\engines\agos\zones.cpp" />
+	</ItemGroup>
+	<ItemGroup>
+		<ClInclude Include="..\..\engines\agos\drivers\accolade\adlib.h" />
+		<ClInclude Include="..\..\engines\agos\drivers\accolade\mididriver.h" />
+		<ClInclude Include="..\..\engines\agos\drivers\accolade\mt32.h" />
+		<ClInclude Include="..\..\engines\agos\drivers\simon1\adlib.h" />
+		<ClInclude Include="..\..\engines\agos\agos.h" />
+		<ClInclude Include="..\..\engines\agos\animation.h" />
+		<ClInclude Include="..\..\engines\agos\debug.h" />
+		<ClInclude Include="..\..\engines\agos\debugger.h" />
+		<ClInclude Include="..\..\engines\agos\detection_tables.h" />
+		<ClInclude Include="..\..\engines\agos\intern.h" />
+		<ClInclude Include="..\..\engines\agos\midi.h" />
+		<ClInclude Include="..\..\engines\agos\sound.h" />
+		<ClInclude Include="..\..\engines\agos\vga.h" />
+	</ItemGroup>
+	<ItemGroup>
+		<None Include="..\..\engines\agos\module.mk" />
+	</ItemGroup>
+	<Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+	<ImportGroup Label="ExtensionTargets">
+	</ImportGroup>
+</Project>

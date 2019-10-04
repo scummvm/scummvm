@@ -1,0 +1,333 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+	<ItemGroup Label="ProjectConfigurations">
+		<ProjectConfiguration Include="Debug|Win32">
+			<Configuration>Debug</Configuration>
+			<Platform>Win32</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Debug|x64">
+			<Configuration>Debug</Configuration>
+			<Platform>x64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Analysis|Win32">
+			<Configuration>Analysis</Configuration>
+			<Platform>Win32</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Analysis|x64">
+			<Configuration>Analysis</Configuration>
+			<Platform>x64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="LLVM|Win32">
+			<Configuration>LLVM</Configuration>
+			<Platform>Win32</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="LLVM|x64">
+			<Configuration>LLVM</Configuration>
+			<Platform>x64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Release|Win32">
+			<Configuration>Release</Configuration>
+			<Platform>Win32</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Release|x64">
+			<Configuration>Release</Configuration>
+			<Platform>x64</Platform>
+		</ProjectConfiguration>
+	</ItemGroup>
+	<PropertyGroup Label="Globals">
+		<ProjectGuid>{8EF7A0A5-9326-4DE5-A625-70A449B953A8}</ProjectGuid>
+		<RootNamespace>sci</RootNamespace>
+		<Keyword>Win32Proj</Keyword>
+		<VCTargetsPath Condition="'$(VCTargetsPath12)' != '' and '$(VSVersion)' == '' and $(VisualStudioVersion) == ''">$(VCTargetsPath12)</VCTargetsPath>
+	</PropertyGroup>
+	<Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Analysis|Win32'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='LLVM|Win32'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>LLVM-vs2013</PlatformToolset>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='LLVM|x64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>LLVM-vs2013</PlatformToolset>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Analysis|x64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+	</PropertyGroup>
+	<Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+	<ImportGroup Label="ExtensionSettings">
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Release.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Analysis|Win32'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Analysis.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='LLVM|Win32'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_LLVM.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Debug.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Release64.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Analysis|x64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Analysis64.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='LLVM|x64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_LLVM64.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Debug64.props" />
+	</ImportGroup>
+	<PropertyGroup Label="UserMacros" />
+	<ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+		<ClCompile>
+			<DisableSpecificWarnings>4373;;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+		</ClCompile>
+	</ItemDefinitionGroup>
+	<ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Analysis|Win32'">
+		<ClCompile>
+			<DisableSpecificWarnings>4373;;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+		</ClCompile>
+	</ItemDefinitionGroup>
+	<ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='LLVM|Win32'">
+		<ClCompile>
+			<DisableSpecificWarnings>4373;;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+		</ClCompile>
+	</ItemDefinitionGroup>
+	<ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+		<ClCompile>
+			<DisableSpecificWarnings>4373;;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+		</ClCompile>
+	</ItemDefinitionGroup>
+	<ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+		<ClCompile>
+			<DisableSpecificWarnings>4373;;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+		</ClCompile>
+	</ItemDefinitionGroup>
+	<ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Analysis|x64'">
+		<ClCompile>
+			<DisableSpecificWarnings>4373;;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+		</ClCompile>
+	</ItemDefinitionGroup>
+	<ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='LLVM|x64'">
+		<ClCompile>
+			<DisableSpecificWarnings>4373;;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+		</ClCompile>
+	</ItemDefinitionGroup>
+	<ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+		<ClCompile>
+			<DisableSpecificWarnings>4373;;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+		</ClCompile>
+	</ItemDefinitionGroup>
+	<ItemGroup>
+		<ClCompile Include="..\..\engines\sci\engine\features.cpp" />
+		<ClCompile Include="..\..\engines\sci\engine\file.cpp" />
+		<ClCompile Include="..\..\engines\sci\engine\gc.cpp" />
+		<ClCompile Include="..\..\engines\sci\engine\guest_additions.cpp" />
+		<ClCompile Include="..\..\engines\sci\engine\hoyle5poker.cpp" />
+		<ClCompile Include="..\..\engines\sci\engine\kernel.cpp" />
+		<ClCompile Include="..\..\engines\sci\engine\kevent.cpp" />
+		<ClCompile Include="..\..\engines\sci\engine\kfile.cpp" />
+		<ClCompile Include="..\..\engines\sci\engine\kgraphics.cpp" />
+		<ClCompile Include="..\..\engines\sci\engine\kgraphics32.cpp" />
+		<ClCompile Include="..\..\engines\sci\engine\klists.cpp" />
+		<ClCompile Include="..\..\engines\sci\engine\kmath.cpp" />
+		<ClCompile Include="..\..\engines\sci\engine\kmenu.cpp" />
+		<ClCompile Include="..\..\engines\sci\engine\kmisc.cpp" />
+		<ClCompile Include="..\..\engines\sci\engine\kmovement.cpp" />
+		<ClCompile Include="..\..\engines\sci\engine\kparse.cpp" />
+		<ClCompile Include="..\..\engines\sci\engine\kpathing.cpp" />
+		<ClCompile Include="..\..\engines\sci\engine\kscripts.cpp" />
+		<ClCompile Include="..\..\engines\sci\engine\ksound.cpp" />
+		<ClCompile Include="..\..\engines\sci\engine\kstring.cpp" />
+		<ClCompile Include="..\..\engines\sci\engine\kvideo.cpp" />
+		<ClCompile Include="..\..\engines\sci\engine\message.cpp" />
+		<ClCompile Include="..\..\engines\sci\engine\object.cpp" />
+		<ClCompile Include="..\..\engines\sci\engine\savegame.cpp" />
+		<ClCompile Include="..\..\engines\sci\engine\script.cpp" />
+		<ClCompile Include="..\..\engines\sci\engine\script_patches.cpp" />
+		<ClCompile Include="..\..\engines\sci\engine\scriptdebug.cpp" />
+		<ClCompile Include="..\..\engines\sci\engine\seg_manager.cpp" />
+		<ClCompile Include="..\..\engines\sci\engine\segment.cpp" />
+		<ClCompile Include="..\..\engines\sci\engine\selector.cpp" />
+		<ClCompile Include="..\..\engines\sci\engine\state.cpp" />
+		<ClCompile Include="..\..\engines\sci\engine\static_selectors.cpp" />
+		<ClCompile Include="..\..\engines\sci\engine\vm.cpp" />
+		<ClCompile Include="..\..\engines\sci\engine\vm_types.cpp" />
+		<ClCompile Include="..\..\engines\sci\engine\workarounds.cpp" />
+		<ClCompile Include="..\..\engines\sci\graphics\animate.cpp" />
+		<ClCompile Include="..\..\engines\sci\graphics\cache.cpp" />
+		<ClCompile Include="..\..\engines\sci\graphics\celobj32.cpp" />
+		<ClCompile Include="..\..\engines\sci\graphics\compare.cpp" />
+		<ClCompile Include="..\..\engines\sci\graphics\controls16.cpp" />
+		<ClCompile Include="..\..\engines\sci\graphics\controls32.cpp" />
+		<ClCompile Include="..\..\engines\sci\graphics\coordadjuster.cpp" />
+		<ClCompile Include="..\..\engines\sci\graphics\cursor.cpp" />
+		<ClCompile Include="..\..\engines\sci\graphics\cursor32.cpp" />
+		<ClCompile Include="..\..\engines\sci\graphics\font.cpp" />
+		<ClCompile Include="..\..\engines\sci\graphics\fontsjis.cpp" />
+		<ClCompile Include="..\..\engines\sci\graphics\frameout.cpp" />
+		<ClCompile Include="..\..\engines\sci\graphics\maciconbar.cpp" />
+		<ClCompile Include="..\..\engines\sci\graphics\menu.cpp" />
+		<ClCompile Include="..\..\engines\sci\graphics\paint16.cpp" />
+		<ClCompile Include="..\..\engines\sci\graphics\paint32.cpp" />
+		<ClCompile Include="..\..\engines\sci\graphics\palette.cpp" />
+		<ClCompile Include="..\..\engines\sci\graphics\palette32.cpp" />
+		<ClCompile Include="..\..\engines\sci\graphics\picture.cpp" />
+		<ClCompile Include="..\..\engines\sci\graphics\plane32.cpp" />
+		<ClCompile Include="..\..\engines\sci\graphics\portrait.cpp" />
+		<ClCompile Include="..\..\engines\sci\graphics\ports.cpp" />
+		<ClCompile Include="..\..\engines\sci\graphics\remap.cpp" />
+		<ClCompile Include="..\..\engines\sci\graphics\remap32.cpp" />
+		<ClCompile Include="..\..\engines\sci\graphics\screen.cpp" />
+		<ClCompile Include="..\..\engines\sci\graphics\screen_item32.cpp" />
+		<ClCompile Include="..\..\engines\sci\graphics\text16.cpp" />
+		<ClCompile Include="..\..\engines\sci\graphics\text32.cpp" />
+		<ClCompile Include="..\..\engines\sci\graphics\transitions.cpp" />
+		<ClCompile Include="..\..\engines\sci\graphics\transitions32.cpp" />
+		<ClCompile Include="..\..\engines\sci\graphics\video32.cpp" />
+		<ClCompile Include="..\..\engines\sci\graphics\view.cpp" />
+		<ClCompile Include="..\..\engines\sci\parser\grammar.cpp" />
+		<ClCompile Include="..\..\engines\sci\parser\said.cpp" />
+		<ClCompile Include="..\..\engines\sci\parser\vocabulary.cpp" />
+		<ClCompile Include="..\..\engines\sci\sound\decoders\sol.cpp" />
+		<ClCompile Include="..\..\engines\sci\sound\drivers\adlib.cpp" />
+		<ClCompile Include="..\..\engines\sci\sound\drivers\amigamac.cpp" />
+		<ClCompile Include="..\..\engines\sci\sound\drivers\cms.cpp" />
+		<ClCompile Include="..\..\engines\sci\sound\drivers\fb01.cpp" />
+		<ClCompile Include="..\..\engines\sci\sound\drivers\fmtowns.cpp" />
+		<ClCompile Include="..\..\engines\sci\sound\drivers\midi.cpp" />
+		<ClCompile Include="..\..\engines\sci\sound\drivers\pc9801.cpp" />
+		<ClCompile Include="..\..\engines\sci\sound\drivers\pcjr.cpp" />
+		<ClCompile Include="..\..\engines\sci\sound\audio.cpp" />
+		<ClCompile Include="..\..\engines\sci\sound\audio32.cpp" />
+		<ClCompile Include="..\..\engines\sci\sound\midiparser_sci.cpp" />
+		<ClCompile Include="..\..\engines\sci\sound\music.cpp" />
+		<ClCompile Include="..\..\engines\sci\sound\soundcmd.cpp" />
+		<ClCompile Include="..\..\engines\sci\sound\sync.cpp" />
+		<ClCompile Include="..\..\engines\sci\video\robot_decoder.cpp" />
+		<ClCompile Include="..\..\engines\sci\video\seq_decoder.cpp" />
+		<ClCompile Include="..\..\engines\sci\console.cpp" />
+		<ClCompile Include="..\..\engines\sci\decompressor.cpp" />
+		<ClCompile Include="..\..\engines\sci\detection.cpp" />
+		<ClCompile Include="..\..\engines\sci\event.cpp" />
+		<ClCompile Include="..\..\engines\sci\resource.cpp" />
+		<ClCompile Include="..\..\engines\sci\resource_audio.cpp" />
+		<ClCompile Include="..\..\engines\sci\sci.cpp" />
+		<ClCompile Include="..\..\engines\sci\util.cpp" />
+	</ItemGroup>
+	<ItemGroup>
+		<ClInclude Include="..\..\engines\sci\engine\features.h" />
+		<ClInclude Include="..\..\engines\sci\engine\file.h" />
+		<ClInclude Include="..\..\engines\sci\engine\gc.h" />
+		<ClInclude Include="..\..\engines\sci\engine\guest_additions.h" />
+		<ClInclude Include="..\..\engines\sci\engine\hoyle5poker.h" />
+		<ClInclude Include="..\..\engines\sci\engine\kernel.h" />
+		<ClInclude Include="..\..\engines\sci\engine\kernel_tables.h" />
+		<ClInclude Include="..\..\engines\sci\engine\message.h" />
+		<ClInclude Include="..\..\engines\sci\engine\object.h" />
+		<ClInclude Include="..\..\engines\sci\engine\savegame.h" />
+		<ClInclude Include="..\..\engines\sci\engine\script.h" />
+		<ClInclude Include="..\..\engines\sci\engine\script_patches.h" />
+		<ClInclude Include="..\..\engines\sci\engine\scriptdebug.h" />
+		<ClInclude Include="..\..\engines\sci\engine\seg_manager.h" />
+		<ClInclude Include="..\..\engines\sci\engine\segment.h" />
+		<ClInclude Include="..\..\engines\sci\engine\selector.h" />
+		<ClInclude Include="..\..\engines\sci\engine\state.h" />
+		<ClInclude Include="..\..\engines\sci\engine\vm.h" />
+		<ClInclude Include="..\..\engines\sci\engine\vm_types.h" />
+		<ClInclude Include="..\..\engines\sci\engine\workarounds.h" />
+		<ClInclude Include="..\..\engines\sci\graphics\animate.h" />
+		<ClInclude Include="..\..\engines\sci\graphics\cache.h" />
+		<ClInclude Include="..\..\engines\sci\graphics\celobj32.h" />
+		<ClInclude Include="..\..\engines\sci\graphics\compare.h" />
+		<ClInclude Include="..\..\engines\sci\graphics\controls16.h" />
+		<ClInclude Include="..\..\engines\sci\graphics\controls32.h" />
+		<ClInclude Include="..\..\engines\sci\graphics\coordadjuster.h" />
+		<ClInclude Include="..\..\engines\sci\graphics\cursor.h" />
+		<ClInclude Include="..\..\engines\sci\graphics\cursor32.h" />
+		<ClInclude Include="..\..\engines\sci\graphics\font.h" />
+		<ClInclude Include="..\..\engines\sci\graphics\fontsjis.h" />
+		<ClInclude Include="..\..\engines\sci\graphics\frameout.h" />
+		<ClInclude Include="..\..\engines\sci\graphics\helpers.h" />
+		<ClInclude Include="..\..\engines\sci\graphics\lists32.h" />
+		<ClInclude Include="..\..\engines\sci\graphics\maciconbar.h" />
+		<ClInclude Include="..\..\engines\sci\graphics\menu.h" />
+		<ClInclude Include="..\..\engines\sci\graphics\paint16.h" />
+		<ClInclude Include="..\..\engines\sci\graphics\paint32.h" />
+		<ClInclude Include="..\..\engines\sci\graphics\palette.h" />
+		<ClInclude Include="..\..\engines\sci\graphics\palette32.h" />
+		<ClInclude Include="..\..\engines\sci\graphics\picture.h" />
+		<ClInclude Include="..\..\engines\sci\graphics\plane32.h" />
+		<ClInclude Include="..\..\engines\sci\graphics\portrait.h" />
+		<ClInclude Include="..\..\engines\sci\graphics\ports.h" />
+		<ClInclude Include="..\..\engines\sci\graphics\remap.h" />
+		<ClInclude Include="..\..\engines\sci\graphics\remap32.h" />
+		<ClInclude Include="..\..\engines\sci\graphics\screen.h" />
+		<ClInclude Include="..\..\engines\sci\graphics\screen_item32.h" />
+		<ClInclude Include="..\..\engines\sci\graphics\text16.h" />
+		<ClInclude Include="..\..\engines\sci\graphics\text32.h" />
+		<ClInclude Include="..\..\engines\sci\graphics\transitions.h" />
+		<ClInclude Include="..\..\engines\sci\graphics\transitions32.h" />
+		<ClInclude Include="..\..\engines\sci\graphics\video32.h" />
+		<ClInclude Include="..\..\engines\sci\graphics\view.h" />
+		<ClInclude Include="..\..\engines\sci\parser\vocabulary.h" />
+		<ClInclude Include="..\..\engines\sci\sound\decoders\sol.h" />
+		<ClInclude Include="..\..\engines\sci\sound\drivers\gm_names.h" />
+		<ClInclude Include="..\..\engines\sci\sound\drivers\map-mt32-to-gm.h" />
+		<ClInclude Include="..\..\engines\sci\sound\drivers\mididriver.h" />
+		<ClInclude Include="..\..\engines\sci\sound\audio.h" />
+		<ClInclude Include="..\..\engines\sci\sound\audio32.h" />
+		<ClInclude Include="..\..\engines\sci\sound\midiparser_sci.h" />
+		<ClInclude Include="..\..\engines\sci\sound\music.h" />
+		<ClInclude Include="..\..\engines\sci\sound\soundcmd.h" />
+		<ClInclude Include="..\..\engines\sci\sound\sync.h" />
+		<ClInclude Include="..\..\engines\sci\video\robot_decoder.h" />
+		<ClInclude Include="..\..\engines\sci\video\seq_decoder.h" />
+		<ClInclude Include="..\..\engines\sci\console.h" />
+		<ClInclude Include="..\..\engines\sci\debug.h" />
+		<ClInclude Include="..\..\engines\sci\decompressor.h" />
+		<ClInclude Include="..\..\engines\sci\detection_tables.h" />
+		<ClInclude Include="..\..\engines\sci\event.h" />
+		<ClInclude Include="..\..\engines\sci\resource.h" />
+		<ClInclude Include="..\..\engines\sci\resource_intern.h" />
+		<ClInclude Include="..\..\engines\sci\sci.h" />
+		<ClInclude Include="..\..\engines\sci\util.h" />
+	</ItemGroup>
+	<ItemGroup>
+		<None Include="..\..\engines\sci\module.mk" />
+	</ItemGroup>
+	<Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+	<ImportGroup Label="ExtensionTargets">
+	</ImportGroup>
+</Project>
