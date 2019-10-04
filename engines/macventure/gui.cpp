@@ -410,7 +410,7 @@ bool Gui::loadMenus() {
 	if ((resArray = _resourceManager->getResIDArray(MKTAG('M', 'E', 'N', 'U'))).size() == 0)
 		return false;
 
-	_menu->addMenuSubItem(0, "Abb", kMenuActionAbout, 0, 'A', true);
+	_menu->addMenuItem(nullptr, "Abb", kMenuActionAbout, 0, 'A', true);
 
 	int i = 1;
 	for (iter = resArray.begin(); iter != resArray.end(); ++iter) {
@@ -430,7 +430,8 @@ bool Gui::loadMenus() {
 		title[titleLength] = '\0';
 
 		if (titleLength > 1) {
-			_menu->addMenuItem(title);
+			_menu->addMenuItem(nullptr, title);
+			Graphics::MacMenuSubMenu *submenu = _menu->addSubMenu(nullptr);
 
 			// Read submenu items
 			while ((titleLength = res->readByte())) {
@@ -445,7 +446,7 @@ bool Gui::loadMenus() {
 				res->readUint16BE();
 				// Read style
 				style = res->readUint16BE();
-				_menu->addMenuSubItem(i, title, 0, style, key, false);
+				_menu->addMenuItem(submenu, title, 0, style, key, false);
 			}
 		}
 

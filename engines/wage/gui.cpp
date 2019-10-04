@@ -100,13 +100,14 @@ Gui::Gui(WageEngine *engine) {
 	_menu->setCommandsCallback(menuCommandsCallback, this);
 
 	_menu->addStaticMenus(menuSubItems);
-	_menu->addMenuSubItem(kMenuAbout, _engine->_world->getAboutMenuItemName(), kMenuActionAbout);
+	_menu->addSubMenu(nullptr, kMenuAbout);
+	_menu->addMenuItem(_menu->getSubmenu(nullptr, kMenuAbout), _engine->_world->getAboutMenuItemName(), kMenuActionAbout);
 
-	_commandsMenuId = _menu->addMenuItem(_engine->_world->_commandsMenuName);
+	_commandsMenuId = _menu->addMenuItem(nullptr, _engine->_world->_commandsMenuName);
 	regenCommandsMenu();
 
 	if (!_engine->_world->_weaponMenuDisabled) {
-		_weaponsMenuId = _menu->addMenuItem(_engine->_world->_weaponsMenuName);
+		_weaponsMenuId = _menu->addMenuItem(nullptr, _engine->_world->_weaponsMenuName);
 
 		regenWeaponsMenu();
 	} else {
@@ -221,6 +222,10 @@ void Gui::regenWeaponsMenu() {
 
 	bool empty = true;
 
+	Graphics::MacMenuSubMenu *submenu = _menu->getSubmenu(nullptr, _weaponsMenuId);
+	if (submenu == nullptr)
+		submenu = _menu->addSubMenu(nullptr, _weaponsMenuId);
+
 	for (uint i = 0; i < weapons->size(); i++) {
 		Obj *obj = (*weapons)[i];
 		if (obj->_type == Obj::REGULAR_WEAPON ||
@@ -230,7 +235,7 @@ void Gui::regenWeaponsMenu() {
 			command += " ";
 			command += obj->_name;
 
-			_menu->addMenuSubItem(_weaponsMenuId, command, kMenuActionCommand, 0, 0, true);
+			_menu->addMenuItem(submenu, command, kMenuActionCommand, 0, 0, true);
 
 			empty = false;
 		}
@@ -238,7 +243,7 @@ void Gui::regenWeaponsMenu() {
 	delete weapons;
 
 	if (empty)
-		_menu->addMenuSubItem(_weaponsMenuId, "You have no weapons", 0, 0, 0, false);
+		_menu->addMenuItem(submenu, "You have no weapons", 0, 0, 0, false);
 }
 
 bool Gui::processEvent(Common::Event &event) {
