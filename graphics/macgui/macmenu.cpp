@@ -332,11 +332,11 @@ MacMenuSubMenu *MacMenu::addSubMenu(MacMenuSubMenu *submenu, int index) {
 
 MacMenuSubMenu *MacMenu::getSubmenu(MacMenuSubMenu *submenu, int index) {
 	if (submenu == nullptr) {
-		if (index >= _items.size())
+		if (index < 0 || (uint)index >= _items.size())
 			return nullptr;
 		return _items[index]->submenu;
 	} else {
-		if (index >= submenu->items.size())
+		if (index < 0 || (uint)index >= submenu->items.size())
 			return nullptr;
 		return submenu->items[index]->submenu;
 	}
