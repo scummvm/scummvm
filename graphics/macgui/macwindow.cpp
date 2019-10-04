@@ -336,6 +336,14 @@ void MacWindow::loadBorder(Common::SeekableReadStream &file, bool active, int lo
 
 	surface->create(source->w, source->h, surface->getSupportedPixelFormat());
 	surface->copyFrom(*source);
+
+	source->free();
+	delete source;
+
+	setBorder(surface, active, lo, ro, to, bo);
+}
+
+void MacWindow::setBorder(Graphics::TransparentSurface *surface, bool active, int lo, int ro, int to, int bo) {
 	surface->applyColorKey(255, 0, 255, false);
 
 	if (active)
@@ -350,8 +358,6 @@ void MacWindow::loadBorder(Common::SeekableReadStream &file, bool active, int lo
 	}
 
 	updateInnerDims();
-	source->free();
-	delete source;
 }
 
 void MacWindow::setCloseable(bool closeable) {

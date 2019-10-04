@@ -277,7 +277,7 @@ public:
 	 * @param bo Width of the bottom side of the border, in pixels.
 	 */
 	void loadBorder(Common::SeekableReadStream &file, bool active, int lo = -1, int ro = -1, int to = -1, int bo = -1);
-	//void setBorder(TransparentSurface &border, bool active);
+	void setBorder(TransparentSurface *border, bool active, int lo = -1, int ro = -1, int to = -1, int bo = -1);
 
 	/**
 	 * Indicate whether the window can be closed (false by default).
