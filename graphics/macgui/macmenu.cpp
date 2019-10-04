@@ -239,9 +239,6 @@ MacMenu *MacMenu::createMenuFromPEexe(Common::PEResources &exe, MacWindowManager
 			if (depth > 0) {
 				menu->addMenuItem(menus.top(), name, action, 0, 0, !(flags & kGrayed));
 			}
-			if (!name.empty()) {
-				action++;
-			}
 			if (flags & kEndMenu) {
 				menus.pop();
 				depth--;
