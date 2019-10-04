@@ -986,6 +986,8 @@ void KIAScript::SCRIPT_KIA_DLL_Play_Clue_Asset_Script(int notUsed, int clueId) {
 		KIA_Play_Actor_Dialogue(kActorRunciter, 640);
 		KIA_Play_Actor_Dialogue(kActorRunciter, 650);
 		break;
+	default:
+		break;
 	}
 }
 

@@ -479,6 +479,8 @@ void VKScript::SCRIPT_VK_DLL_McCoy_Asks_Question(int actorId, int questionId) {
 			VK_Play_Speech_Line(kActorMcCoy, 7780, 0.5f);
 		}
 		break;
+	default:
+		break;
 	}
 
 	if ( _vm->_debugger->_playFullVk ) {
@@ -541,6 +543,8 @@ void VKScript::SCRIPT_VK_DLL_Question_Asked(int actorId, int questionId) {
 	case kActorDektora:
 		askDektora(questionId);
 		break;
+	default:
+		break;
 	}
 }
 
@@ -566,6 +570,8 @@ void VKScript::SCRIPT_VK_DLL_Shutdown(int actorId, int humanPercentage, int repl
 		case kActorDektora:
 			Actor_Clue_Acquire(kActorMcCoy, kClueVKDektoraReplicant, true, -1);
 			break;
+		default:
+			break;
 		}
 	} else if (humanPercentage > 79) {
 		VK_Play_Speech_Line(kActorAnsweringMachine, 420, 0.5f);
@@ -585,6 +591,8 @@ void VKScript::SCRIPT_VK_DLL_Shutdown(int actorId, int humanPercentage, int repl
 			break;
 		case kActorDektora:
 			Actor_Clue_Acquire(kActorMcCoy, kClueVKDektoraHuman, true, -1);
+			break;
+		default:
 			break;
 		}
 	}
@@ -1085,6 +1093,8 @@ void VKScript::askLucy(int questionId) {
 			VK_Play_Speech_Line(kActorMcCoy, 8538, 0.5f);
 		}
 		break;
+	default:
+		break;
 	}
 }
 
@@ -1359,6 +1369,8 @@ void VKScript::askGrigorian(int questionId) {
 	case 7770:                          // High 10
 		VK_Play_Speech_Line(kActorGrigorian, 1160, 0.5f);
 		VK_Subject_Reacts(5, -8, 7, 10);
+		break;
+	default:
 		break;
 	}
 }
@@ -1734,6 +1746,8 @@ void VKScript::askDektora(int questionId) {
 			VK_Subject_Reacts(99, 15, -4, 30);
 		}
 		break;
+	default:
+		break;
 	}
 }
 
@@ -2015,6 +2029,8 @@ void VKScript::askRunciter(int questionId) {
 			VK_Play_Speech_Line(kActorMcCoy, 8435, 0.5f);    // M: You're ready for the next one?
 			VK_Play_Speech_Line(kActorRunciter, 1590, 0.5f); // R: Let's get this over with
 			break;
+		default:
+			break;
 		}
 	} else {
 		switch (questionId) {
@@ -2191,6 +2207,8 @@ void VKScript::askRunciter(int questionId) {
 		case 7770:                          // High 10
 			VK_Subject_Reacts(20, 10, 20, 0);
 			VK_Play_Speech_Line(kActorRunciter, 1240, 0.5f);
+			break;
+		default:
 			break;
 		}
 	}
@@ -2541,6 +2559,8 @@ void VKScript::askBulletBob(int questionId) {
 		}
 		VK_Subject_Reacts(30, 7, 7, 10);
 		break;
+	default:
+		break;
 	}
 }
 
@@ -2560,6 +2580,8 @@ void VKScript::askCalibrationQuestion1(int actorId, int notUsed) {
 		break;
 	case kActorDektora:
 		askDektora(7385);
+		break;
+	default:
 		break;
 	}
 }
@@ -2581,6 +2603,8 @@ void VKScript::askCalibrationQuestion2(int actorId, int notUsed) {
 	case kActorDektora:
 		askDektora(7390);
 		break;
+	default:
+		break;
 	}
 }
 
@@ -2600,6 +2624,8 @@ void VKScript::askCalibrationQuestion3(int actorId, int notUsed) {
 		break;
 	case kActorDektora:
 		askDektora(7395);
+		break;
+	default:
 		break;
 	}
 }

@@ -2206,6 +2206,8 @@ void Debugger::drawSceneObjects() {
 			int color;
 
 			switch (sceneObject->type) {
+			default:
+				// fallthrough intended
 			case kSceneObjectTypeUnknown:
 				break;
 			case kSceneObjectTypeActor:

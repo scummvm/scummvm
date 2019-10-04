@@ -220,6 +220,8 @@ void ActorCombat::tick() {
 	case kActorCombatStateApproachRangedAttack:
 		approachToRangedAttack();
 		break;
+	default:
+		break;
 	}
 	--processingCounter;
 }

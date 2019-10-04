@@ -302,6 +302,8 @@ void Actor::timerUpdate(int timerId) {
 			}
 			_timersLeft[kActorTimerRunningStaminaFPS] = 200u;
 			break;
+		default:
+			break;
 		}
 	}
 }

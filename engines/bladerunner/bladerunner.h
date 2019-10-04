@@ -357,6 +357,8 @@ static inline void drawPixel(Graphics::Surface &surface, void* dst, uint32 value
 		case 4:
 			*(uint32*)dst = (uint32)value;
 			break;
+		default:
+			break;
 	}
 }
 
