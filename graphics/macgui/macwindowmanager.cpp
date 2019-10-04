@@ -191,6 +191,14 @@ MacWindowManager::~MacWindowManager() {
 	g_system->getTimerManager()->removeTimerProc(&menuTimerHandler);
 }
 
+void MacWindowManager::setMode(uint32 mode) {
+	_mode = mode;
+
+	if (mode & kWMModeForceBuiltinFonts)
+		_fontMan->forceBuiltinFonts();
+}
+
+
 MacWindow *MacWindowManager::addWindow(bool scrollable, bool resizable, bool editable) {
 	MacWindow *w = new MacWindow(_lastId, scrollable, resizable, editable, this);
 

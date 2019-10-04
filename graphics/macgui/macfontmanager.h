@@ -134,6 +134,8 @@ public:
 	void registerFontMapping(uint16 id, Common::String name);
 	void clearFontMapping();
 
+	void forceBuiltinFonts() { _builtInFonts = true; }
+
 private:
 	void loadFontsBDF();
 	void loadFonts();

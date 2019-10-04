@@ -57,10 +57,11 @@ enum {
 };
 
 enum {
-	kWMModeNone         = 0,
-	kWMModeNoDesktop    = (1 << 0),
-	kWMModeAutohideMenu = (1 << 1),
-	kWMModalMenuMode = (1 << 2)
+	kWMModeNone         	= 0,
+	kWMModeNoDesktop    	= (1 << 0),
+	kWMModeAutohideMenu 	= (1 << 1),
+	kWMModalMenuMode 		= (1 << 2),
+	kWMModeForceBuiltinFonts= (1 << 3)
 };
 
 }
@@ -211,7 +212,7 @@ public:
 
 	void pauseEngine(bool pause);
 
-	void setMode(uint32 mode) { _mode = mode; }
+	void setMode(uint32 mode);
 
 	void setEnginePauseCallback(void *engine, void (*pauseCallback)(void *engine, bool pause));
 
