@@ -79,6 +79,15 @@ static const Graphics::MacMenuData menuSubItems[] = {
 };
 */
 
+static void redrawCallback(void *ref) {
+	Director *dir = (Director *)ref;
+
+	if (dir->getWndManager().isMenuActive()) {
+		dir->addDirtyRect(Common::Rect(0, 0, 640, 480));
+		dir->draw(false);
+	}
+}
+
 Director::Director()
 	: _surface(640, 480), _textRendered(false) {
 	_wm.setScreen(&_surface);
@@ -86,6 +95,7 @@ Director::Director()
 				Graphics::kWMModeForceBuiltinFonts);
 	_wm.setMenuHotzone(Common::Rect(0, 0, 640, 23));
 	_wm.setMenuDelay(250000);
+	_wm.setEngineRedrawCallback(this, redrawCallback);
 }
 
 void Director::update() {
@@ -203,7 +213,7 @@ Actor *Director::getActorByPoint(const Common::Point point) {
 	return nullptr;
 }
 
-void Director::draw() {
+void Director::draw(bool blit) {
 	if (!_dirtyRects.empty() || !_textRendered) {
 		mergeDirtyRects();
 
@@ -219,7 +229,9 @@ void Director::draw() {
 		}
 
 		_dirtyRects.resize(0);
-		_surface.update();
+
+		if (blit)
+			_surface.update();
 	} else
 		g_system->updateScreen();
 }

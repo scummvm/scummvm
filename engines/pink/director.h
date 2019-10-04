@@ -77,8 +77,9 @@ public:
 
 	Graphics::MacWindowManager &getWndManager() { return _wm; };
 
+	void draw(bool blit = true);
+
 private:
-	void draw();
 	void mergeDirtyRects();
 	void drawRect(const Common::Rect &rect);
 
