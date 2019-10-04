@@ -215,7 +215,6 @@ MacMenu *MacMenu::createMenuFromPEexe(Common::PEResources &exe, MacWindowManager
 
 	int depth = 0;
 	int curMenuItemId = 0;
-	int action = 0;
 	bool lastPopUp = false;
 	while (depth >= 0) {
 		uint16 flags = menuData->readUint16LE();
@@ -224,8 +223,7 @@ MacMenu *MacMenu::createMenuFromPEexe(Common::PEResources &exe, MacWindowManager
 				menu->addMenuItem(nullptr, readUnicodeString(menuData));
 			} else {
 				Common::U32String name = readUnicodeString(menuData);
-				menu->addMenuItem(menus.top(), name, action, 0, 0, !(flags & kGrayed));
-				action++;
+				menu->addMenuItem(menus.top(), name, -1, 0, 0, !(flags & kGrayed));
 			}
 
 			MacMenuSubMenu *submenu = menu->addSubMenu(menus.size() ? menus.top() : nullptr);
@@ -236,7 +234,7 @@ MacMenu *MacMenu::createMenuFromPEexe(Common::PEResources &exe, MacWindowManager
 
 			depth++;
 		} else {
-			menuData->readUint16LE(); // menu id
+			int action = menuData->readUint16LE();
 			Common::U32String name = readUnicodeString(menuData);
 			if (depth > 0) {
 				menu->addMenuItem(menus.top(), name, action, 0, 0, !(flags & kGrayed));
