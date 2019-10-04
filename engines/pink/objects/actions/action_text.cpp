@@ -23,6 +23,8 @@
 #include "common/debug.h"
 #include "common/substream.h"
 
+#include "graphics/transparent_surface.h"
+
 #include "pink/archive.h"
 #include "pink/director.h"
 #include "pink/pink.h"
@@ -73,6 +75,12 @@ void ActionText::toConsole() {
 		  _name.c_str(), _fileName.c_str(), _xLeft, _yTop, _xRight, _yBottom, _centered, _scrollBar, _textRGB, _backgroundRGB);
 }
 
+static const byte noborderData[3][3] = {
+	{ 0, 1, 0 },
+	{ 1, 0, 1 },
+	{ 0, 1, 0 },
+};
+
 void ActionText::start() {
 	findColorsInPalette();
 	Director *director = _actor->getPage()->getGame()->getDirector();
@@ -90,19 +98,16 @@ void ActionText::start() {
 		_txtWnd->move(_xLeft, _yTop);
 		_txtWnd->resize(_xRight - _xLeft, _yBottom - _yTop);
 
-		Common::File f;
+		Graphics::TransparentSurface *noborder = new Graphics::TransparentSurface();
+		noborder->create(3, 3, noborder->getSupportedPixelFormat());
+		uint32 colorBlack = noborder->getSupportedPixelFormat().RGBToColor(0, 0, 0);
+		uint32 colorPink = noborder->getSupportedPixelFormat().RGBToColor(255, 0, 255);
 
-		f.open("ScrollbarOnlyWin95active.bmp");
-		if (f.isOpen()) {
-			_txtWnd->loadBorder(f, true);
-			f.close();
-		}
+		for (int y = 0; y < 4; y++)
+			for (int x = 0; x < 4; x++)
+				*((uint32 *)noborder->getBasePtr(x, y)) = noborderData[y][x] ? colorBlack : colorPink;
 
-		f.open("ScrollbarOnlyWin95inactive.bmp");
-		if (f.isOpen()) {
-			_txtWnd->loadBorder(f, false);
-			f.close();
-		}
+		_txtWnd->setBorder(noborder, true);
 
 		if (_actor->getPage()->getGame()->getLanguage() == Common::EN_ANY)
 			_txtWnd->appendText(str, font);
