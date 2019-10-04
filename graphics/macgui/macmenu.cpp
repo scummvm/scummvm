@@ -371,8 +371,12 @@ int MacMenu::addMenuItem(MacMenuSubMenu *submenu, const Common::U32String &text,
 
 	for (uint i = 0; i < text.size(); i++)
 		if (text[i] == amp[0]) {
-			shortcut = text[i + 1] & 0xff;
-			shortcutPos = i;
+			if ((text[i + 1] & 0xff) != '&') {
+				shortcut = text[i + 1] & 0xff;
+				shortcutPos = i;
+			} else {
+				res += text[i];
+			}
 		} else {
 			res += text[i];
 		}
