@@ -62,6 +62,8 @@ void DCT::calc(float *data) {
 	case DST_I:
 		calcDSTI(data);
 		break;
+	default:
+		break;
 	}
 }
 
