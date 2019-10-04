@@ -974,6 +974,7 @@ Special configuration feature:
                                            android-x86 for Android x86
                                            android-x86_64 for Android x86_64
                                            android-mips for Android MIPS
+                                           android-mips64 for Android MIPS64
                                            androidsdl for Android with SDL backend
                                            caanoo for Caanoo
                                            dingux for Dingux
