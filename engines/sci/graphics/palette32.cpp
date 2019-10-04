@@ -108,11 +108,19 @@ const HunkPalette::EntryHeader HunkPalette::getEntryHeader() const {
 const Palette HunkPalette::toPalette() const {
 	Palette outPalette;
 
+	// Set outPalette structures to 0
+	for (int16 i = 0; i < ARRAYSIZE(outPalette.mapping); ++i) {
+		outPalette.mapping[i] = 0;
+	}
+	outPalette.timestamp = 0;
 	for (int16 i = 0; i < ARRAYSIZE(outPalette.colors); ++i) {
 		outPalette.colors[i].used = false;
 		outPalette.colors[i].r = 0;
 		outPalette.colors[i].g = 0;
 		outPalette.colors[i].b = 0;
+	}
+	for (int16 i = 0; i < ARRAYSIZE(outPalette.intensity); ++i) {
+		outPalette.intensity[i] = 0;
 	}
 
 	if (_numPalettes) {
