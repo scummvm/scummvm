@@ -62,7 +62,7 @@ static const PrinceGameDescription gameDescriptions[] = {
 			AD_ENTRY1s("databank.ptc", "5fa03833177331214ec1354761b1d2ee", 3565031),
 			Common::DE_DEU,
 			Common::kPlatformWindows,
-			ADGF_USEEXTRAASTITLE | ADGF_TESTING,
+			ADGF_USEEXTRAASTITLE,
 			GUIO1(GUIO_NONE)
 		},
 		kPrinceDataDE
@@ -74,7 +74,7 @@ static const PrinceGameDescription gameDescriptions[] = {
 			AD_ENTRY1s("databank.ptc", "48ec9806bda9d152acbea8ce31c93c49", 3435298),
 			Common::PL_POL,
 			Common::kPlatformWindows,
-			ADGF_USEEXTRAASTITLE | ADGF_TESTING,
+			ADGF_USEEXTRAASTITLE,
 			GUIO1(GUIO_NONE)
 		},
 		kPrinceDataPL
@@ -86,7 +86,7 @@ static const PrinceGameDescription gameDescriptions[] = {
 			AD_ENTRY1s("talktxt.dat", "02bb2372f19aca3c65896ed81b2cefb3", 125702),
 			Common::RU_RUS,
 			Common::kPlatformWindows,
-			ADGF_TESTING | GF_EXTRACTED,
+			GF_EXTRACTED,
 			GUIO1(GUIO_NONE)
 		},
 		kPrinceDataDE
@@ -98,7 +98,7 @@ static const PrinceGameDescription gameDescriptions[] = {
 			AD_ENTRY1s("databank.ptc", "a67b55730f3d7064921bd2a59e1063a3", 3892982),
 			Common::RU_RUS,
 			Common::kPlatformWindows,
-			ADGF_TESTING | GF_NOVOICES,
+			GF_NOVOICES,
 			GUIO1(GUIO_NONE)
 		},
 		kPrinceDataDE
@@ -114,7 +114,7 @@ static const PrinceGameDescription gameDescriptions[] = {
 			},
 			Common::EN_ANY,
 			Common::kPlatformWindows,
-			ADGF_TESTING | GF_TRANSLATED,
+			GF_TRANSLATED,
 			GUIO1(GUIO_NONE)
 		},
 		kPrinceDataDE
@@ -130,7 +130,7 @@ static const PrinceGameDescription gameDescriptions[] = {
 			},
 			Common::EN_ANY,
 			Common::kPlatformWindows,
-			ADGF_TESTING | GF_TRANSLATED,
+			GF_TRANSLATED,
 			GUIO1(GUIO_NONE)
 		},
 		kPrinceDataPL
