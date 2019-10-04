@@ -176,11 +176,13 @@ void ESPERScript::SCRIPT_ESPER_DLL_Photo_Selected(int photo) {
 		break;
 
 	default:
-		return;
+		break;
 	}
 }
 
 bool ESPERScript::SCRIPT_ESPER_DLL_Special_Region_Selected(int photo, int region) {
+	bool retValue = false;
+
 	switch (photo) {
 	case 0:
 		if (region == 0) {
@@ -205,7 +207,8 @@ bool ESPERScript::SCRIPT_ESPER_DLL_Special_Region_Selected(int photo, int region
 				Actor_Clue_Acquire(kActorMcCoy, kClueSushiMenu, true, -1);
 			}
 		}
-		return true;
+		retValue = true;
+		break;
 
 	case 1:
 		if (region == 3) {
@@ -237,7 +240,8 @@ bool ESPERScript::SCRIPT_ESPER_DLL_Special_Region_Selected(int photo, int region
 				Actor_Clue_Acquire(kActorMcCoy, kClueCarColorAndMake, true, -1);
 			}
 		}
-		return true;
+		retValue = true;
+		break;
 
 	case 2:
 		if (region == 8) {
@@ -255,7 +259,8 @@ bool ESPERScript::SCRIPT_ESPER_DLL_Special_Region_Selected(int photo, int region
 				Actor_Clue_Acquire(kActorMcCoy, kClueScorpionbox, true, -1);
 			}
 		}
-		return true;
+		retValue = true;
+		break;
 
 	case 3:
 		if (region == 9) {
@@ -265,17 +270,17 @@ bool ESPERScript::SCRIPT_ESPER_DLL_Special_Region_Selected(int photo, int region
 				Sound_Play(kSfxBR034_1A, 50, 0, 0, 50);
 				Actor_Clue_Acquire(kActorMcCoy, kClueClovisflowers, true, -1);
 			}
-			return true;
-		} if (region == 10) {
+			retValue = true;
+		} else if (region == 10) {
 			Actor_Voice_Over(4040, kActorVoiceOver);
 			if (!Actor_Clue_Query(kActorMcCoy, kClueLucyWithDektora)) {
 				Actor_Says(kActorMcCoy, 6945, 3);
 				Sound_Play(kSfxBR034_1A, 50, 0, 0, 50);
 				Actor_Clue_Acquire(kActorMcCoy, kClueLucyWithDektora, true, -1);
 			}
-			return true;
+			retValue = true;
 		}
-		return false;
+		break;
 
 	case 4:
 		if (region == 11) {
@@ -293,7 +298,7 @@ bool ESPERScript::SCRIPT_ESPER_DLL_Special_Region_Selected(int photo, int region
 				Actor_Clue_Acquire(kActorMcCoy, kClueScorpions, true, -1);
 			}
 		}
-		return false;
+		break;
 
 	case 5:
 		if (region == 13) {
@@ -304,7 +309,7 @@ bool ESPERScript::SCRIPT_ESPER_DLL_Special_Region_Selected(int photo, int region
 				Actor_Clue_Acquire(kActorMcCoy, kClueStrangeScale2, true, -1);
 			}
 		}
-		return false;
+		break;
 
 	case 6:
 		if (region == 14) {
@@ -322,7 +327,7 @@ bool ESPERScript::SCRIPT_ESPER_DLL_Special_Region_Selected(int photo, int region
 				Actor_Clue_Acquire(kActorMcCoy, kClueIzosFriend, true, -1);
 			}
 		}
-		return false;
+		break;
 
 	case 7:
 		if (region == 16) {
@@ -340,7 +345,7 @@ bool ESPERScript::SCRIPT_ESPER_DLL_Special_Region_Selected(int photo, int region
 				Actor_Clue_Acquire(kActorMcCoy, kClueGuzza, true, -1);
 			}
 		}
-		return false;
+		break;
 
 	case 8:
 		switch (region) {
@@ -381,8 +386,11 @@ bool ESPERScript::SCRIPT_ESPER_DLL_Special_Region_Selected(int photo, int region
 				Actor_Clue_Acquire(kActorMcCoy, kCluePlasticExplosive, true, -1);
 			}
 			break;
+
+		default:
+			break;
 		}
-		return false;
+		break;
 
 	case 9:
 		switch (region) {
@@ -420,10 +428,17 @@ bool ESPERScript::SCRIPT_ESPER_DLL_Special_Region_Selected(int photo, int region
 				Actor_Clue_Acquire(kActorMcCoy, kClueSadikAtMoonbus, true, -1);
 			}
 			break;
+
+		default:
+			break;
 		}
-		return false;
+		break;
+
+	default:
+		break;
 	}
-	return false;
+
+	return retValue;
 }
 
 } // End of namespace BladeRunner
