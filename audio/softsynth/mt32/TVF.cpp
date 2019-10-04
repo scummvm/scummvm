@@ -206,6 +206,8 @@ void TVF::nextPhase() {
 		}
 		startRamp((levelMult * partialParam->tvf.envLevel[3]) >> 8, 0, newPhase);
 		return;
+	default:
+		break;
 	}
 
 	int envPointIndex = phase;
