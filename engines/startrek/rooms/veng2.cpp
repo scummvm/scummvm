@@ -638,8 +638,11 @@ void Room::veng2UseSTricorderOnTorpedoControl() {
 			showText(TX_SPEAKER_SPOCK, TX_VEN2_064);
 	} else if (_awayMission->veng.tricordersPluggedIntoComputer != 3)
 		showText(TX_SPEAKER_SPOCK, TX_VEN2_055);
-	else if (_awayMission->veng.poweredSystem != 1) // Unused, since the same condition was above
+#if 0
+	// FIXME: Unused, since the same condition is above. Fix needed?
+	else if (_awayMission->veng.poweredSystem != 1)
 		showText(TX_SPEAKER_SPOCK, TX_VEN2_065);
+#endif
 	else if (!_awayMission->veng.torpedoLoaded) {
 		showText(TX_SPEAKER_SPOCK, TX_VEN2_068);
 		if (!_awayMission->veng.elasiShipDecloaked)
