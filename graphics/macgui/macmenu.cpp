@@ -78,15 +78,18 @@ struct MacMenuSubItem {
 	int action;
 	int style;
 	char shortcut;
+	int shortcutPos;
 	bool enabled;
 	Common::Rect bbox;
 
 	MacMenuSubMenu *submenu;
 
-	MacMenuSubItem(const Common::String &t, int a, int s = 0, char sh = 0, bool e = true) :
-			text(t), unicode(false), action(a), style(s), shortcut(sh), enabled(e), submenu(nullptr) {}
-	MacMenuSubItem(const Common::U32String &t, int a, int s = 0, char sh = 0, bool e = true) :
-			unicodeText(t), unicode(true), action(a), style(s), shortcut(sh), enabled(e), submenu(nullptr) {}
+	MacMenuSubItem(const Common::String &t, int a, int s = 0, char sh = 0, int sp = -1, bool e = true) :
+			text(t), unicode(false), action(a), style(s), shortcut(sh),
+			shortcutPos(sp), enabled(e), submenu(nullptr) {}
+	MacMenuSubItem(const Common::U32String &t, int a, int s = 0, char sh = 0, int sp = -1, bool e = true) :
+			unicodeText(t), unicode(true), action(a), style(s), shortcut(sh),
+			shortcutPos(sp), enabled(e), submenu(nullptr) {}
 
 	~MacMenuSubItem();
 };
@@ -118,9 +121,10 @@ struct MacMenuItem {
 	bool unicode;
 	MacMenuSubMenu *submenu;
 	Common::Rect bbox;
+	int shortcutPos;
 
-	MacMenuItem(const Common::String &n) : name(n), unicode(false), submenu(nullptr) {}
-	MacMenuItem(const Common::U32String &n) : unicodeName(n), unicode(true), submenu(nullptr) {}
+	MacMenuItem(const Common::String &n, int sp = -1) : name(n), shortcutPos(sp), unicode(false), submenu(nullptr) {}
+	MacMenuItem(const Common::U32String &n, int sp = -1) : unicodeName(n), shortcutPos(sp), unicode(true), submenu(nullptr) {}
 
 	~MacMenuItem() {
 		if (submenu)
@@ -339,16 +343,18 @@ int MacMenu::addMenuItem(const Common::String &name) {
 int MacMenu::addMenuItem(const Common::U32String &name) {
 	Common::U32String amp("&");
 	Common::U32String res;
+	int shortcutPos = -1;
 
 	for (uint i = 0; i < name.size(); i++)
 		if (name[i] == amp[0]) {
 			//shortcut = amp[0] & 0xff;
+			shortcutPos = i;
 		} else {
 			res += name[i];
 		}
 
 
-	MacMenuItem *i = new MacMenuItem(res);
+	MacMenuItem *i = new MacMenuItem(res, shortcutPos);
 	_items.push_back(i);
 
 	_dimensionsDirty = true;
@@ -372,7 +378,7 @@ void MacMenu::addMenuSubItem(int id, const Common::String &text, int action, int
 	if (_items[id]->submenu == nullptr)
 		_items[id]->submenu = new MacMenuSubMenu();
 
-	_items[id]->submenu->subitems.push_back(new MacMenuSubItem(text, action, style, shortcut, enabled));
+	_items[id]->submenu->subitems.push_back(new MacMenuSubItem(text, action, style, shortcut, -1, enabled));
 }
 
 void MacMenu::addMenuSubItem(int id, const Common::U32String &text, int action, int style, char shortcut, bool enabled) {
@@ -383,15 +389,17 @@ void MacMenu::addMenuSubItem(int id, const Common::U32String &text, int action, 
 
 	Common::U32String amp("&");
 	Common::U32String res;
+	int shortcutPos = -1;
 
 	for (uint i = 0; i < text.size(); i++)
 		if (text[i] == amp[0]) {
-			shortcut = amp[0] & 0xff;
+			shortcut = text[i + 1] & 0xff;
+			shortcutPos = i;
 		} else {
 			res += text[i];
 		}
 
-	_items[id]->submenu->subitems.push_back(new MacMenuSubItem(res, action, style, shortcut, enabled));
+	_items[id]->submenu->subitems.push_back(new MacMenuSubItem(res, action, style, shortcut, shortcutPos, enabled));
 }
 
 void MacMenu::addSubMenuItem(MacMenuSubMenu *submenu, const Common::String &text, int action, int style, char shortcut, bool enabled) {
@@ -399,7 +407,7 @@ void MacMenu::addSubMenuItem(MacMenuSubMenu *submenu, const Common::String &text
 
 	_dimensionsDirty = true;
 
-	submenu->subitems.push_back(new MacMenuSubItem(text, action, style, shortcut, enabled));
+	submenu->subitems.push_back(new MacMenuSubItem(text, action, style, shortcut, -1, enabled));
 }
 
 void MacMenu::addSubMenuItem(MacMenuSubMenu *submenu, const Common::U32String &text, int action, int style, char shortcut, bool enabled) {
@@ -409,15 +417,17 @@ void MacMenu::addSubMenuItem(MacMenuSubMenu *submenu, const Common::U32String &t
 
 	Common::U32String amp("&");
 	Common::U32String res;
+	int shortcutPos = -1;
 
 	for (uint i = 0; i < text.size(); i++)
 		if (text[i] == amp[0]) {
-			shortcut = amp[0] & 0xff;
+			shortcut = text[i + 1] & 0xff;
+			shortcutPos = i;
 		} else {
 			res += text[i];
 		}
 
-	submenu->subitems.push_back(new MacMenuSubItem(res, action, style, shortcut, enabled));
+	submenu->subitems.push_back(new MacMenuSubItem(res, action, style, shortcut, shortcutPos, enabled));
 }
 
 void MacMenu::calcDimensions() {
@@ -646,6 +656,20 @@ static void drawFilledRoundRect(ManagedSurface *surface, Common::Rect &rect, int
 	drawRoundRect(rect, arc, color, true, drawPixelPlain, surface);
 }
 
+static void underlineAccelerator(ManagedSurface *dst, const Font *font, const Common::U32String &str, int x, int y, int shortcutPos, uint32 color) {
+	if (shortcutPos == -1)
+		return;
+
+	Common::U32String s(str);
+
+	s.erase(shortcutPos + 1);
+	int pos2 = font->getStringWidth(s);
+	s.deleteLastChar();
+	int pos1 = font->getStringWidth(s);
+
+	dst->hLine(x + pos1, y + font->getFontHeight(), x + pos2 - 1, color);
+}
+
 bool MacMenu::draw(ManagedSurface *g, bool forceRedraw) {
 	Common::Rect r(_bbox);
 
@@ -686,12 +710,14 @@ bool MacMenu::draw(ManagedSurface *g, bool forceRedraw) {
 			color = _wm->_colorWhite;
 		}
 
+		int x = it->bbox.left + kMenuLeftMargin;
+		int y = it->bbox.top + (_wm->_fontMan->hasBuiltInFonts() ? 2 : 1);
+
 		if (it->unicode) {
-			_font->drawString(&_screen, it->unicodeName, it->bbox.left + kMenuLeftMargin,
-							  it->bbox.top + (_wm->_fontMan->hasBuiltInFonts() ? 2 : 1), it->bbox.width(), color);
+			_font->drawString(&_screen, it->unicodeName, x, y, it->bbox.width(), color);
+			underlineAccelerator(&_screen, _font, it->unicodeName, x, y, it->shortcutPos, color);
 		} else {
-			_font->drawString(&_screen, it->name, it->bbox.left + kMenuLeftMargin,
-							  it->bbox.top + (_wm->_fontMan->hasBuiltInFonts() ? 2 : 1), it->bbox.width(), color);
+			_font->drawString(&_screen, it->name, x, y, it->bbox.width(), color);
 		}
 	}
 
@@ -726,7 +752,7 @@ void MacMenu::renderSubmenu(MacMenuSubMenu *menu, bool recursive) {
 		Common::String acceleratorText(getAcceleratorString(menu->subitems[i], ""));
 
 		Common::U32String unicodeText(menu->subitems[i]->unicodeText);
-		// add unicode accelerator
+		int shortcutPos = menu->subitems[i]->shortcutPos;
 
 		int accelX = r->right - 25;
 		int arrowX = r->right - 14;
@@ -752,12 +778,14 @@ void MacMenu::renderSubmenu(MacMenuSubMenu *menu, bool recursive) {
 				_tempSurface.clear(kColorGreen);
 			}
 
-			if (menu->subitems[i]->unicode)
+			if (menu->subitems[i]->unicode) {
 				_font->drawString(s, unicodeText, tx, ty, r->width(), color);
-			else
+				underlineAccelerator(s, _font, unicodeText, tx, ty, shortcutPos, color);
+			} else {
 				_font->drawString(s, text, tx, ty, r->width(), color);
+			}
 
-			if (!acceleratorText.empty())
+			if (!acceleratorText.empty() && shortcutPos == -1)
 				_font->drawString(s, acceleratorText, accelX, ty, r->width(), color);
 
 			if (menu->subitems[i]->submenu != nullptr)
