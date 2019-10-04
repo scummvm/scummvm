@@ -77,7 +77,9 @@ public:
 	/**
 	 * Returns true if a savegame is being loaded directly from the ScummVM launcher
 	 */
-	bool loadingSavegame() const { return _saveSlot != -1; }
+	bool loadingSavegame() const {
+		return _saveSlot != -1;
+	}
 };
 
 extern JACL *g_vm;

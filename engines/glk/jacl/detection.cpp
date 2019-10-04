@@ -22,10 +22,10 @@
 
 #include "glk/jacl/detection.h"
 #include "glk/jacl/detection_tables.h"
-#include "glk/jacl/common/debug.h"
-#include "glk/jacl/common/file.h"
-#include "glk/jacl/common/md5.h"
-#include "glk/jacl/engines/game.h"
+#include "common/debug.h"
+#include "common/file.h"
+#include "common/md5.h"
+#include "engines/game.h"
 
 namespace Glk {
 namespace JACL {

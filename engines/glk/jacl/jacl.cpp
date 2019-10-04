@@ -21,7 +21,7 @@
  */
 
 #include "glk/jacl/jacl.h"
-#include "glk/jacl/common/config-manager.h"
+#include "common/config-manager.h"
 
 namespace Glk {
 namespace JACL {
@@ -29,7 +29,7 @@ namespace JACL {
 JACL *g_vm;
 
 JACL::JACL(OSystem *syst, const GlkGameDescription &gameDesc) : GlkAPI(syst, gameDesc),
-		_saveSlot(-1) {
+	_saveSlot(-1) {
 	g_vm = this;
 }
 

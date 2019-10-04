@@ -23,10 +23,10 @@
 #ifndef JACL_DETECTION
 #define JACL_DETECTION
 
-#include "glk/jacl/common/fs.h"
-#include "glk/jacl/common/hash-str.h"
-#include "glk/jacl/engines/game.h"
-#include "glk/jacl/glk/detection.h"
+#include "common/fs.h"
+#include "common/hash-str.h"
+#include "engines/game.h"
+#include "glk/detection.h"
 
 namespace Glk {
 namespace JACL {

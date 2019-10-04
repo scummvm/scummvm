@@ -185,6 +185,8 @@ MODULE_OBJS := \
 	jacl/glk_saver.o \
 	jacl/glk_startup.o \
 	jacl/interpreter.o \
+	jacl/jacl.o \
+	jacl/jacl_main.o \
 	jacl/jpp.o \
 	jacl/libcsv.o \
 	jacl/loader.o \

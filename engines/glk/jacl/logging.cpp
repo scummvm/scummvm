@@ -20,26 +20,33 @@
  *
  */
 
-#include "engines/game.h"
-#include "common/gui_options.h"
-#include "common/language.h"
+#include "glk/jacl/jacl.h"
+#include "glk/jacl/types.h"
+#include "glk/jacl/prototypes.h"
+#include "glk/jacl/language.h"
 
 namespace Glk {
 namespace JACL {
 
-const PlainGameDescriptor JACL_GAME_LIST[] = {
-	{ "prisonbreak", "Prisoner Break" },
-	{ "unholygrail", "The Unholy Grail" },
+extern char                     user_id[];
+extern char                     prefix[];
 
-	{ nullptr, nullptr }
-};
+void log_error(char *message, int console) {
+	/* LOG A MESSAGE TO THE CONSOLE */
 
-const GlkDetectionEntry JACL_GAMES[] = {
-	DT_ENTRY0("prisonbreak", "e2e85c5e60a63575bf0cd0481f0f3958", 199403),
-	DT_ENTRY0("unholygrail", "7d40e485c8cf8c9d5c4958a79337d6c7", 447833),
+	char            consoleMessage[256];
+	event_t         event;
 
-	DT_END_MARKER
-};
+	// BUILD A STRING SUITABLE FOR DISPLAY ON THE CONSOLE.
+	sprintf(consoleMessage, "ERROR: %s^", message);
+
+	g_vm->glk_set_style(style_Alert);
+	write_text(consoleMessage);
+	g_vm->glk_set_style(style_Normal);
+
+	// FLUSH THE GLK WINDOW SO THE ERROR GETS DISPLAYED IMMEDIATELY.
+	g_vm->glk_select_poll(&event);
+}
 
 } // End of namespace JACL
 } // End of namespace Glk
