@@ -361,6 +361,8 @@ void PlaybackFile::readEvent(RecorderEvent& event) {
 	case kRecorderEventTypeTimer:
 		event.time = _tmpPlaybackFile.readUint32LE();
 		break;
+	default:
+		// fallthrough intended
 	case kRecorderEventTypeNormal:
 		event.type = (EventType)_tmpPlaybackFile.readUint32LE();
 		switch (event.type) {
@@ -514,6 +516,8 @@ void PlaybackFile::writeEvent(const RecorderEvent &event) {
 	case kRecorderEventTypeTimer:
 		_tmpRecordFile.writeUint32LE(event.time);
 		break;
+	default:
+		// fallthrough intended
 	case kRecorderEventTypeNormal:
 		_tmpRecordFile.writeUint32LE((uint32)event.type);
 		switch(event.type) {
