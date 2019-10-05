@@ -39,6 +39,12 @@
 #include "mohawk/myst_state.h"
 #endif
 
+#ifdef ENABLE_MYSTME
+#ifndef ENABLE_MYST
+#error "Myst must be enabled for building Myst ME. Specify --enable-engine=myst,mystme"
+#endif
+#endif
+
 #ifdef ENABLE_RIVEN
 #include "mohawk/riven.h"
 #include "mohawk/riven_saveload.h"
@@ -322,6 +328,12 @@ bool MohawkMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGa
 		case Mohawk::GType_MYST:
 		case Mohawk::GType_MAKINGOF:
 #ifdef ENABLE_MYST
+#ifndef ENABLE_MYSTME
+			if (gd->features & Mohawk::GF_ME) {
+				warning("Myst ME support not compiled in");
+				return false;
+			}
+#endif
 			*engine = new Mohawk::MohawkEngine_Myst(syst, gd);
 			break;
 #else
