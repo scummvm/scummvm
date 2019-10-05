@@ -68,6 +68,8 @@
 	<string>NSApplication</string>
 	<key>SUFeedURL</key>
 	<string>https://www.scummvm.org/appcasts/macosx/release.xml</string>
+	<key>SUPublicEDKey</key>
+	<string>faYfM+DGPgJCrRzpxSHoFD0rzHa6ZnnEXuzz2E7ZRUk=</string>
 	<key>NSDockTilePlugIn</key>
 	<string>scummvm.docktileplugin</string>
 	<key>SUPublicDSAKeyFile</key>
