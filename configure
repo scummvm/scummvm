@@ -1052,8 +1052,8 @@ Optional Features:
   --enable-text-console    use text console instead of graphical console
   --enable-verbose-build   enable regular echoing of commands during build
                            process
-  --enable-tts			   build support for text to speech
-  --disable-tts			   don't build support for text to speech
+  --enable-tts             build support for text to speech
+  --disable-tts            don't build support for text to speech
   --disable-bink           don't build with Bink video support
   --opengl-mode=MODE       OpenGL (ES) mode to use for OpenGL output [auto]
                            available modes: auto for autodetection
