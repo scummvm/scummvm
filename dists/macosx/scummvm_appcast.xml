@@ -11,6 +11,10 @@
 				https://scummvm.org/frs/scummvm/2.1.0/ReleaseNotes.html
 			</sparkle:releaseNotesLink>
 			<pubDate>Sun, 13 Oct 2019 22:00:00 +0000</pubDate>
+			<enclosure url="https://www.scummvm.org/frs/scummvm/2.1.0/scummvm-2.1.0-macosx.dmg"
+						sparkle:version="2.1.0" length="24505986" type="application/octet-stream"
+						sparkle:dsaSignature="MCwCFDoB9wb8PbqkTRKnQyGt7RsNJRrzAhQXOeuQU+AtAj190rN+rI/ONvZn/A=="
+						sparkle:edSignature="rjvKAwQsOCFIcs12c/lBDIeISLs9Q1mH5Oc9/dRJZg8sQ/+kG6EHe+3SnG8jVTPw3aJZfjL+VSAjDUaVlIN8CQ==" />
 			<enclosure sparkle:os="windows-x86"
 						url="https://www.scummvm.org/frs/scummvm/2.1.0/scummvm-2.1.0-win32.exe"
 						sparkle:version="2.1.0" length="19382458" type="application/octet-stream"
