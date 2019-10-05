@@ -23,6 +23,33 @@
 						url="https://www.scummvm.org/frs/scummvm/2.1.0/scummvm-2.1.0-win32-x86_64.exe"
 						sparkle:version="2.1.0" length="20395189" type="application/octet-stream"
 						sparkle:dsaSignature="MC0CFHd2FN9gCNMaZgU5B3W5CrK1YOtfAhUAo+262MibKsD78grGoillK8wiMlE=" />
+
+			<sparkle:deltas>
+				<enclosure url="https://www.scummvm.org/frs/scummvm/2.1.0/ScummVM2.1.0-2.0.0.1.delta"
+					sparkle:version="2.1.0" sparkle:shortVersionString="2.1.0" sparkle:deltaFrom="2.0.0.1"
+					length="8847392" type="application/octet-stream"
+					sparkle:dsaSignature="MC0CFF669MkXSR6GJBbMukquFUR4IX63AhUAnwW7/yD74MfMbtI4px8qMYjqRLo="/>
+				<enclosure url="https://www.scummvm.org/frs/scummvm/2.1.0/ScummVM2.1.0-2.0.0.delta"
+					sparkle:version="2.1.0" sparkle:shortVersionString="2.1.0" sparkle:deltaFrom="2.0.0"
+					length="8869665" type="application/octet-stream"
+					sparkle:dsaSignature="MC4CFQCPsdUFX4U0lz6ZNB9i3KSPttSYowIVAJxM+WLeXlP0mo9534izYa9Y7Ab0"/>
+				<enclosure url="https://www.scummvm.org/frs/scummvm/2.1.0/ScummVM2.1.0-1.9.0.2.delta"
+					sparkle:version="2.1.0" sparkle:shortVersionString="2.1.0" sparkle:deltaFrom="1.9.0.2"
+					length="12699683" type="application/octet-stream"
+					sparkle:dsaSignature="MC0CFE9a8ol1ThNbRkf4mWPPzqMvlEGxAhUAgw62fG2emcNUbeOec8nVN4E7Fo4="/>
+				<enclosure url="https://www.scummvm.org/frs/scummvm/2.1.0/ScummVM2.1.0-1.9.0.delta"
+					sparkle:version="2.1.0" sparkle:shortVersionString="2.1.0" sparkle:deltaFrom="1.9.0"
+					length="12699651" type="application/octet-stream"
+					sparkle:dsaSignature="MCwCFFPYVwYfYvc6/sKbfwTvzpzEdE4AAhRQDNx111T039X02I9n/FUlWW7yRA=="/>
+				<enclosure url="https://www.scummvm.org/frs/scummvm/2.1.0/ScummVM2.1.0-1.8.0.delta"
+					sparkle:version="2.1.0" sparkle:shortVersionString="2.1.0" sparkle:deltaFrom="1.8.0"
+					length="21352194" type="application/octet-stream"
+					sparkle:dsaSignature="MC0CFQDagBLUuzdNl5eUMVzUx2jBxcFtmwIUQFunl0LyvIZWUgAuOIrgu6zMSfs="/>
+				<enclosure url="https://www.scummvm.org/frs/scummvm/2.1.0/ScummVM2.1.0-1.7.0.delta"
+					sparkle:version="2.1.0" sparkle:shortVersionString="2.1.0" sparkle:deltaFrom="1.7.0"
+					length="21422396" type="application/octet-stream"
+					sparkle:dsaSignature="MCwCFE8x+m9/KaRrMGLG1XUjEHX7bi/hAhRKG9R0VqyGZhx0PyVnDg+nui8i0w=="/>
+			</sparkle:deltas>
 		</item>
 		<item>
 			<title>Version 2.0.0</title>
