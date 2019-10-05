@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.1.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2019-10-04 01:11+0200\n"
+"POT-Creation-Date: 2019-10-05 14:50+0200\n"
 "PO-Revision-Date: 2018-12-18 21:54+0000\n"
 "Last-Translator: Matan Bareket <mataniko@gmail.com>\n"
 "Language-Team: Hebrew <https://translations.scummvm.org/projects/scummvm/"
@@ -1984,7 +1984,7 @@ msgstr ""
 #: engines/hugo/file.cpp:298 engines/mads/nebular/dialogs_nebular.cpp:350
 #: engines/mohawk/dialogs.cpp:163 engines/mohawk/myst.cpp:954
 #: engines/mohawk/riven.cpp:685 engines/neverhood/menumodule.cpp:880
-#: engines/pegasus/pegasus.cpp:379 engines/sci/engine/guest_additions.cpp:678
+#: engines/pegasus/pegasus.cpp:379 engines/sci/engine/guest_additions.cpp:682
 #: engines/sci/engine/kfile.cpp:1054 engines/sherlock/scalpel/scalpel.cpp:1250
 #: engines/sherlock/tattoo/widget_files.cpp:75 engines/startrek/saveload.cpp:42
 #: engines/toltecs/menu.cpp:291 engines/toon/toon.cpp:3340
@@ -2007,7 +2007,7 @@ msgstr ""
 #: engines/mads/nebular/dialogs_nebular.cpp:350 engines/mohawk/dialogs.cpp:163
 #: engines/mohawk/myst.cpp:954 engines/mohawk/riven.cpp:685
 #: engines/neverhood/menumodule.cpp:880 engines/parallaction/saveload.cpp:209
-#: engines/pegasus/pegasus.cpp:379 engines/sci/engine/guest_additions.cpp:679
+#: engines/pegasus/pegasus.cpp:379 engines/sci/engine/guest_additions.cpp:683
 #: engines/sci/engine/kfile.cpp:1054 engines/scumm/dialogs.cpp:184
 #: engines/sherlock/scalpel/scalpel.cpp:1250
 #: engines/sherlock/tattoo/widget_files.cpp:75 engines/startrek/saveload.cpp:42
@@ -3293,7 +3293,7 @@ msgstr ""
 #: engines/gnap/menu.cpp:473 engines/hugo/file.cpp:400
 #: engines/mads/nebular/dialogs_nebular.cpp:377
 #: engines/neverhood/menumodule.cpp:893
-#: engines/sci/engine/guest_additions.cpp:681 engines/sci/engine/kfile.cpp:1173
+#: engines/sci/engine/guest_additions.cpp:685 engines/sci/engine/kfile.cpp:1173
 #: engines/sherlock/scalpel/scalpel.cpp:1263
 #: engines/sherlock/tattoo/widget_files.cpp:94 engines/startrek/saveload.cpp:67
 #: engines/toltecs/menu.cpp:266 engines/toon/toon.cpp:3434
@@ -3309,7 +3309,7 @@ msgstr ""
 #: engines/gnap/menu.cpp:473 engines/hugo/file.cpp:400
 #: engines/mads/nebular/dialogs_nebular.cpp:377
 #: engines/neverhood/menumodule.cpp:893
-#: engines/sci/engine/guest_additions.cpp:682 engines/sci/engine/kfile.cpp:1173
+#: engines/sci/engine/guest_additions.cpp:686 engines/sci/engine/kfile.cpp:1173
 #: engines/sherlock/scalpel/scalpel.cpp:1263
 #: engines/sherlock/tattoo/widget_files.cpp:94 engines/startrek/saveload.cpp:67
 #: engines/toltecs/menu.cpp:266 engines/toon/toon.cpp:3434
