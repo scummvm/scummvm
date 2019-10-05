@@ -219,7 +219,7 @@ Name: {group}\Copying.LGPL; Filename: {app}\COPYING.LGPL.txt; WorkingDir: {app};
 Name: {group}\Copyright; Filename: {app}\COPYRIGHT.txt; WorkingDir: {app}; Comment: COPYRIGHT; Flags: createonlyiffileexists
 
 ; NEWS
-Name: {group}\News; Filename: {app}\NEWS.html; WorkingDir: {app}; Comment: NEWS; Flags: createonlyiffileexists; Languages: not german
+Name: {group}\News; Filename: {app}\NEWS.txt; WorkingDir: {app}; Comment: NEWS; Flags: createonlyiffileexists; Languages: not german
 Name: {group}\Neues; Filename: {app}\NEUES.txt; WorkingDir: {app}; Comment: NEUES; Flags: createonlyiffileexists; Languages: german
 
 ; QUICKSTART
@@ -231,7 +231,7 @@ Name: {group}\HurtigStart; Filename: {app}\HurtigStart.txt; WorkingDir: {app}; C
 Name: {group}\Snabbstart; Filename: {app}\Snabbstart.txt; WorkingDir: {app}; Comment: Snabbstart; Flags: createonlyiffileexists; Languages: swedish
 
 ; README
-Name: {group}\Readme; Filename: {app}\README.html; WorkingDir: {app}; Comment: README; Flags: createonlyiffileexists; Languages: not (czech or german or swedish)
+Name: {group}\Readme; Filename: {app}\README.txt; WorkingDir: {app}; Comment: README; Flags: createonlyiffileexists; Languages: not (czech or german or swedish)
 Name: {group}\PrectiMe; Filename: {app}\PrectiMe.txt; WorkingDir: {app}; Comment: PrectiMe; Flags: createonlyiffileexists; Languages: czech
 Name: {group}\Liesmich; Filename: {app}\LIESMICH.txt; WorkingDir: {app}; Comment: LIESMICH; Flags: createonlyiffileexists; Languages: german
 Name: {group}\LasMig; Filename: {app}\LasMig.txt; WorkingDir: {app}; Comment: LasMig; Flags: createonlyiffileexists; Languages: swedish
@@ -262,7 +262,7 @@ Source: COPYING.LGPL.txt; DestDir: {app}; Flags: ignoreversion
 Source: COPYRIGHT.txt; DestDir: {app}; Flags: ignoreversion
 
 ; NEWS
-Source: NEWS.html; DestDir: {app}; Flags: ignoreversion; Languages: not german
+Source: NEWS.txt; DestDir: {app}; Flags: ignoreversion; Languages: not german
 Source: doc/de/NEUES.txt; DestDir: {app}; Flags: ignoreversion; Languages: german
 
 ; QUICKSTART
@@ -274,7 +274,7 @@ Source: doc/no-nb/HurtigStart.txt; DestDir: {app}; Flags: ignoreversion isreadme
 Source: doc/se/Snabbstart.txt; DestDir: {app}; Flags: ignoreversion isreadme; Languages: swedish
 
 ; README
-Source: README.html; DestDir: {app}; Flags: ignoreversion isreadme; Languages: not (czech or german or swedish)
+Source: README.txt; DestDir: {app}; Flags: ignoreversion isreadme; Languages: not (czech or german or swedish)
 Source: doc/cz/PrectiMe.txt; DestDir: {app}; Flags: ignoreversion isreadme; Languages: czech
 Source: doc/de/LIESMICH.txt; DestDir: {app}; Flags: ignoreversion isreadme; Languages: german
 Source: doc/se/LasMig.txt; DestDir: {app}; Flags: ignoreversion isreadme; Languages: swedish
@@ -283,8 +283,8 @@ Source: scummvm.exe; DestDir: {app}; Flags: ignoreversion
 
 ; ScummVM executable and libraries
 Source: SDL2.dll; DestDir: {app}; Flags: replacesameversion
-Source: SDL2_net.dll; DestDir: {app}; Flags: replacesameversion
-Source: WinSparkle.dll; DestDir: {app}; Flags: replacesameversion
+; Source: SDL2_net.dll; DestDir: {app}; Flags: replacesameversion
+; Source: WinSparkle.dll; DestDir: {app}; Flags: replacesameversion
 
 ; Migration script for saved games in Windows NT4 onwards
 Source: migration.bat; DestDir: {app}; Flags: ignoreversion; MinVersion: 0, 1
