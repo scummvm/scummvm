@@ -3747,6 +3747,20 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformDOS, ADGF_UNSTABLE, GUIO_PQSWAT },
 
+	// Police Quest: SWAT - French 1.100 DOS/Windows
+	// Reported by e-Scarlatti in bug #11100
+	{"pqswat", "", {
+		{"resmap.001", 0, "10abf5d5571f23685604e6d833250ddf", 10066},
+		{"ressci.001", 0, "b2bd962abeb3c1239773fdf7a530231c", 29529649},
+		{"resmap.002", 0, "89c20793199107e78354c6ce7a284b07", 9490},
+		{"ressci.002", 0, "b2bd962abeb3c1239773fdf7a530231c", 31853152},
+		{"resmap.003", 0, "4f4ba573934b1d27d3e4f31116d1d6d9", 9880},
+		{"ressci.003", 0, "b2bd962abeb3c1239773fdf7a530231c", 46769998},
+		{"resmap.004", 0, "93c7638e131b28a251985c5114b14838", 10162},
+		{"ressci.004", 0, "b2bd962abeb3c1239773fdf7a530231c", 50998883},
+		AD_LISTEND},
+		Common::FR_FRA, Common::kPlatformDOS, ADGF_UNSTABLE, GUIO_PQSWAT },
+
 #undef GUIO_PQSWAT_DEMO
 #undef GUIO_PQSWAT
 
