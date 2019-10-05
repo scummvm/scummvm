@@ -28,27 +28,33 @@
 				<enclosure url="https://www.scummvm.org/frs/scummvm/2.1.0/ScummVM2.1.0-2.0.0.1.delta"
 					sparkle:version="2.1.0" sparkle:shortVersionString="2.1.0" sparkle:deltaFrom="2.0.0.1"
 					length="8847392" type="application/octet-stream"
-					sparkle:dsaSignature="MC0CFF669MkXSR6GJBbMukquFUR4IX63AhUAnwW7/yD74MfMbtI4px8qMYjqRLo="/>
+					sparkle:dsaSignature="MC0CFF669MkXSR6GJBbMukquFUR4IX63AhUAnwW7/yD74MfMbtI4px8qMYjqRLo="
+					sparkle:edSignature="1aRrKLsfGvqY3avlM5dpuafwzyXt6NxJ2xQW3jaEKOhzwUJd6DzngMko16awL53nVrkU+/l8bHoVp13WdpwFBg=="/>
 				<enclosure url="https://www.scummvm.org/frs/scummvm/2.1.0/ScummVM2.1.0-2.0.0.delta"
 					sparkle:version="2.1.0" sparkle:shortVersionString="2.1.0" sparkle:deltaFrom="2.0.0"
 					length="8869665" type="application/octet-stream"
-					sparkle:dsaSignature="MC4CFQCPsdUFX4U0lz6ZNB9i3KSPttSYowIVAJxM+WLeXlP0mo9534izYa9Y7Ab0"/>
+					sparkle:dsaSignature="MC4CFQCPsdUFX4U0lz6ZNB9i3KSPttSYowIVAJxM+WLeXlP0mo9534izYa9Y7Ab0"
+					sparkle:edSignature="LbeSG1Y9ieIY9xmbOcEwqfs+SnxgDhuh/at5JJOJLkIpvCQ1U8oouhKmlXBRj3ujkXHpE2G36z8/jlGTbprWAg=="/>
 				<enclosure url="https://www.scummvm.org/frs/scummvm/2.1.0/ScummVM2.1.0-1.9.0.2.delta"
 					sparkle:version="2.1.0" sparkle:shortVersionString="2.1.0" sparkle:deltaFrom="1.9.0.2"
 					length="12699683" type="application/octet-stream"
-					sparkle:dsaSignature="MC0CFE9a8ol1ThNbRkf4mWPPzqMvlEGxAhUAgw62fG2emcNUbeOec8nVN4E7Fo4="/>
+					sparkle:dsaSignature="MC0CFE9a8ol1ThNbRkf4mWPPzqMvlEGxAhUAgw62fG2emcNUbeOec8nVN4E7Fo4="
+					sparkle:edSignature="9+o2LbFDTjA/WnMeok1oOGkaXofMfmATvv5KKNyE96EETp27+Q+Dj6DrW2UkU4RwYYrzE0tHyyjowqzwgNIUDA=="/>
 				<enclosure url="https://www.scummvm.org/frs/scummvm/2.1.0/ScummVM2.1.0-1.9.0.delta"
 					sparkle:version="2.1.0" sparkle:shortVersionString="2.1.0" sparkle:deltaFrom="1.9.0"
 					length="12699651" type="application/octet-stream"
-					sparkle:dsaSignature="MCwCFFPYVwYfYvc6/sKbfwTvzpzEdE4AAhRQDNx111T039X02I9n/FUlWW7yRA=="/>
+					sparkle:dsaSignature="MCwCFFPYVwYfYvc6/sKbfwTvzpzEdE4AAhRQDNx111T039X02I9n/FUlWW7yRA=="
+					sparkle:edSignature="MYJz7EvHiPWgec1ImcfO0P+YKenkIfTy7iz19IYNUFIyh4TTL9Ambsdg6WDTe2ZARGkTe+pZwBUJ4Un0y9PGDQ=="/>
 				<enclosure url="https://www.scummvm.org/frs/scummvm/2.1.0/ScummVM2.1.0-1.8.0.delta"
 					sparkle:version="2.1.0" sparkle:shortVersionString="2.1.0" sparkle:deltaFrom="1.8.0"
 					length="21352194" type="application/octet-stream"
-					sparkle:dsaSignature="MC0CFQDagBLUuzdNl5eUMVzUx2jBxcFtmwIUQFunl0LyvIZWUgAuOIrgu6zMSfs="/>
+					sparkle:dsaSignature="MC0CFQDagBLUuzdNl5eUMVzUx2jBxcFtmwIUQFunl0LyvIZWUgAuOIrgu6zMSfs="
+					sparkle:edSignature="20/qSTSpswOXffGrcEDWB/WKeTN8AMg/DfEA2U/6uCbd95mMWtYXc9Anv1rwftzVhk39/k5xyiHV+w3EpfqsDw=="/>
 				<enclosure url="https://www.scummvm.org/frs/scummvm/2.1.0/ScummVM2.1.0-1.7.0.delta"
 					sparkle:version="2.1.0" sparkle:shortVersionString="2.1.0" sparkle:deltaFrom="1.7.0"
 					length="21422396" type="application/octet-stream"
-					sparkle:dsaSignature="MCwCFE8x+m9/KaRrMGLG1XUjEHX7bi/hAhRKG9R0VqyGZhx0PyVnDg+nui8i0w=="/>
+					sparkle:dsaSignature="MCwCFE8x+m9/KaRrMGLG1XUjEHX7bi/hAhRKG9R0VqyGZhx0PyVnDg+nui8i0w=="
+					sparkle:edSignature="DR+L7KXOt5yALnxV2U0+ktDV1YZ2F0XLQkALR/1lhfG8k5SlziuOMSdtyJ+nwTEDw4G+lm2Gk/ra8kPAR3FyAw=="/>
 			</sparkle:deltas>
 		</item>
 		<item>
