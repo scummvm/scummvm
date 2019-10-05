@@ -11,6 +11,9 @@ ANDROID_VERSIONCODE = 35
 
 ANDROID_TARGET_VERSION = 26
 
+# ndk-build will build the scummvm library in release mode by default unless:
+# - an Application.mk is provided in the jni folder with APP_OPTIM := debug
+# - or AndroidManifest.xml declares android:debuggable within its <application> tag
 NDK_BUILD = $(ANDROID_NDK)/ndk-build APP_ABI=$(ABI)
 SDK_ANDROID = $(ANDROID_SDK)/tools/android
 
@@ -93,7 +96,7 @@ all: $(APK_MAIN)
 clean: androidclean
 
 androidclean:
-	@$(RM) -rf $(PATH_BUILD) *.apk release
+	@$(RM) -rf $(PATH_BUILD) *.apk release debug
 
 androidrelease: $(APK_MAIN_RELEASE)
 
@@ -113,6 +116,13 @@ androiddistdebug: all
 	$(CP) $(APK_MAIN) debug/
 	for i in $(DIST_FILES_DOCS) $(PORT_DISTFILES); do \
 		sed 's/$$/\r/' < $$i > debug/`basename $$i`.txt; \
+	done
+
+androiddistrelease: androidrelease
+	$(MKDIR) release
+	$(CP) $(APK_MAIN_RELEASE) release/
+	for i in $(DIST_FILES_DOCS) $(PORT_DISTFILES); do \
+		sed 's/$$/\r/' < $$i > release/`basename $$i`.txt; \
 	done
 
 .PHONY: androidrelease androidtest $(PATH_BUILD_SRC)
