@@ -571,6 +571,33 @@ static const SAGAGameDescription gameDescriptions[] = {
 		NULL,
 	},
 
+#if 0
+	// Inherit the earth - Windows Trial
+	// Not supported and will not be supported, as fixing it
+	// enables whole game. Currently, it crashes.
+	{
+		{
+			"ite",
+			"Trial/Not supported",
+			{
+	{"ite.rsc",		GAME_RESOURCEFILE,	"a6433e34b97b15e64fe8214651012db9", 8927169},
+	{"scripts.rsc",	GAME_SCRIPTFILE,	"bbf929f1e6d6f2af30c41d078798f5c1", 335927},
+	{ NULL, 0, NULL, 0}
+			},
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_CD,
+			GUIO0()
+		},
+		GID_ITE,
+		0,
+		ITE_DEFAULT_SCENE,
+		&ITE_Resources,
+		ARRAYSIZE(ITE_GameFonts),
+		ITE_GameFonts,
+		NULL,
+	},
+#endif
 
 	// ITE floppy versions ////////////////////////////////////////////////////////////////////////////////////
 
