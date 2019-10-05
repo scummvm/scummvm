@@ -349,12 +349,6 @@ void SwitchEventSource::convertTouchXYToGameXY(float touchX, float touchY, int *
 	int screenH = _km.y_max;
 	int screenW = _km.x_max;
 
-	int windowH = g_system->getHeight();
-	int windowW = g_system->getWidth();
-
-	bool fullscreen = ConfMan.getBool("fullscreen");
-	bool aspectRatioCorrection = ConfMan.getBool("aspect_ratio");
-
 	const int dispW = TOUCHSCREEN_WIDTH;
 	const int dispH = TOUCHSCREEN_HEIGHT;
 
