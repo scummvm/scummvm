@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2019-10-05 14:50+0200\n"
+"POT-Creation-Date: 2019-10-05 19:08+0200\n"
 "PO-Revision-Date: 2019-09-24 10:41+0000\n"
 "Last-Translator: Lothar Serra Mari <serra@scummvm.org>\n"
 "Language-Team: German <https://translations.scummvm.org/projects/scummvm/"
@@ -4184,11 +4184,11 @@ msgstr "Animierte Spieloberfläche"
 msgid "Naughty game mode"
 msgstr "Unanständiger Spielmodus"
 
-#: engines/mohawk/detection.cpp:180
+#: engines/mohawk/detection.cpp:186
 msgid "Play the Myst fly by movie"
 msgstr "Video vom Anflug auf Myst abspielen"
 
-#: engines/mohawk/detection.cpp:181
+#: engines/mohawk/detection.cpp:187
 msgid "The Myst fly by movie was not played by the original engine."
 msgstr ""
 "Das Video, welches den Anflug auf Myst zeigt, wurde in der ursprünglichen "
