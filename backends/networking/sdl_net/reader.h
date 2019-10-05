@@ -111,7 +111,7 @@ class Reader {
 	uint32 bytesLeft() const;
 
 public:
-	static const uint32 SUSPICIOUS_HEADERS_SIZE = 1024 * 1024; // 1 MB is really a lot
+	static const int32 SUSPICIOUS_HEADERS_SIZE = 1024 * 1024; // 1 MB is really a lot
 
 	Reader();
 	~Reader();
