@@ -167,6 +167,7 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added a StrongHelp manual.
    - Added error reporting using !Reporter.
 
+
 #### 2.0.0 (2017-12-17)
 
  New Games:
@@ -350,6 +351,7 @@ For a more comprehensive changelog of the latest experimental code, see:
      using the first one.
    - Improved behaviour of the file browser.
 
+
 #### 1.9.0 "Myst-ery U.F.O.s release" (2016-10-17)
 
  New Games:
@@ -504,6 +506,7 @@ For a more comprehensive changelog of the latest experimental code, see:
  GCW0 port:
    - Improved support for built-in ScummVM documentation.
 
+
 #### 1.8.0 "Lost with Sherlock" (2016-03-04)
 
  New Games:
@@ -596,6 +599,7 @@ For a more comprehensive changelog of the latest experimental code, see:
 
  Tinsel:
    - Improved AdLib music support in Discworld 1.
+
 
 #### 1.7.0 "The Neverrelease" (2014-07-21)
 
@@ -692,6 +696,7 @@ For a more comprehensive changelog of the latest experimental code, see:
 
  Tizen port:
    - The BADA port has been merged/updated into Tizen.
+
 
 #### 1.6.0 "+4 to engines" (2013-05-31)
 
@@ -846,6 +851,7 @@ For a more comprehensive changelog of the latest experimental code, see:
      (The migration batch file can be used to copy savegames from the old
       default location, to the new default location).
 
+
 #### 1.4.1 "Subwoofer Release" (2012-01-27)
 
  AGOS:
@@ -873,6 +879,7 @@ For a more comprehensive changelog of the latest experimental code, see:
      Digital sound effects are always preferred for now.
    - Fixed a case where starting a new song didn't fully reset its channels,
      thus some notes sounded wrong.
+
 
 #### 1.4.0 "10th Anniversary" (2011-11-11)
 
@@ -934,6 +941,7 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Fixed plugins on Android 3.x.
    - Moved the default saved game location to the SD card.
 
+
 #### 1.3.1 "All Your Pitches" (2011-07-12)
 
  General:
@@ -961,6 +969,7 @@ For a more comprehensive changelog of the latest experimental code, see:
  SCUMM:
    - Fixed graphics bug in FM-TOWNS versions of games on ARM devices
      (Android, iPhone, etc.).
+
 
 #### 1.3.0 "Runner" (2011-05-28)
 
@@ -1107,6 +1116,7 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added support for loadable modules.
    - Fixed 16bit mouse cursors on HE games.
 
+
 #### 1.2.1 "Bork Bork Bork" (2010-12-19)
 
  General:
@@ -1121,6 +1131,7 @@ For a more comprehensive changelog of the latest experimental code, see:
 
  Lure:
    - Fixed several NPC movement bugs.
+
 
 #### 1.2.0 "FaSCInating release" (2010-10-15)
 
@@ -1247,6 +1258,7 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Renamed backend from GP2XWIZ to GPH to better reflect
      the supported devices.
 
+
 #### 1.1.1 "Better version" (2010-05-02)
 
  New Ports:
@@ -1291,6 +1303,7 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added plugin support which allows the PSP Phat to run every game.
    - Added a new virtual keyboard optimized for rapid D-Pad input.
 
+
 #### 1.1.0 "Beta quadrant" (2010-04-04)
 
  New Games:
@@ -1324,6 +1337,7 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added support for original save/load dialog in MM NES.
    - Added support for savepoint passcodes for Sega CD MI1 via debugger command 'passcode'.
    - Added support for Kanji rendering in Japanese version of Monkey Island Sega CD.
+
 
 #### 1.0.0 "Shiny Logo" (2009-11-15)
 
@@ -1406,6 +1420,7 @@ For a more comprehensive changelog of the latest experimental code, see:
  WinCE port:
    - Improved compatibility with VGA devices.
 
+
 #### 1.0.0rc1 "Grog XD" (2009-08-31)
 
  New Games:
@@ -1465,6 +1480,7 @@ For a more comprehensive changelog of the latest experimental code, see:
    - New aspect correction scaler for VGA (or higher) devices.
    - Dropped support for MPEG-2 and FLAC.
 
+
 #### 0.13.1 "SAGA returns" (2009-04-27)
 
  AGOS:
@@ -1517,6 +1533,7 @@ For a more comprehensive changelog of the latest experimental code, see:
  WinCE port:
    - Fixed an issue which could cause random crashes with VGA devices.
 
+
 #### 0.13.0 "More Guests" (2009-02-28)
 
  General:
@@ -1551,6 +1568,7 @@ For a more comprehensive changelog of the latest experimental code, see:
 
  SCUMM:
    - Implemented radio-chatter effect in The DIG.
+
 
 #### 0.12.0 "&nbsp;" (2008-08-31)
 
@@ -1588,6 +1606,7 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Improved support for sound effects in Amiga version of Zak McKracken.
    - Added support for mixed AdLib/MIDI mode in Monkey Island 1 (Floppy).
 
+
 #### 0.11.1 "Fixed exist()nce" (2008-02-29)
 
  SCUMM:
@@ -1619,6 +1638,7 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Fixed graphics glitch in Inherit the Earth with simultaneous speech.
    - Fixed palette glitch in Inherit the Earth when looking at the map while at
      the docks.
+
 
 #### 0.11.0 "Your Palindrome" (2008-01-15)
 
@@ -1702,6 +1722,7 @@ For a more comprehensive changelog of the latest experimental code, see:
  GP2X Port:
    - Support F200 Touchscreen.
    - Various fixes to input code.
+
 
 #### 0.X.0 "Tic-tac-toe edition" (2007-06-20)
 
@@ -1790,6 +1811,7 @@ For a more comprehensive changelog of the latest experimental code, see:
  PalmOS Port:
    - Now using PalmOS Porting SDK which enables use of the C standard library.
 
+
 #### 0.9.1 "PalmOS revived" (2006-10-29)
 
  New Ports:
@@ -1847,6 +1869,7 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Several bugfixes.
    - Re-add support for 2002 based devices.
 
+
 #### 0.9.0 "The OmniBrain loves you" (2006-06-25)
 
  New Games:
@@ -1903,6 +1926,7 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added: All: Inverse landscape mode.
    - Fixed: PocketPC: Dialogs cut-off/not redrawn.
 
+
 #### 0.8.2 "Broken Broken Sword 2" (2006-02-08)
 
  General:
@@ -1920,7 +1944,9 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Fixed QVGA Smartphone detection (mean it this time :p).
    - Fixed Smartphone double right click issue.
 
+
 #### 0.8.1 "Codename: missing" (2006-01-31)
+
  General:
    - Fixed compiling with GCC 2.95.
    - Fixed LaTeX documentation.
@@ -1994,6 +2020,7 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Knakos patches (QVGA smartphones fix, easier key binding and panel
      switching).
 
+
 #### 0.8.0 (2005-10-30)
 
  New Games:
@@ -2050,6 +2077,7 @@ For a more comprehensive changelog of the latest experimental code, see:
      of compress_sword2 will, of course, still have the same error. You
      may want to regenerate them.
 
+
 #### 0.7.1 (2005-03-27)
 
  General:
@@ -2083,6 +2111,7 @@ For a more comprehensive changelog of the latest experimental code, see:
  BASS:
    - Fixed crash when talking to the gardener using spanish text with the
      floppy version.
+
 
 #### 0.7.0 (2004-12-24)
 
@@ -2179,6 +2208,7 @@ For a more comprehensive changelog of the latest experimental code, see:
  Simon:
    - Fixed crashes in some international versions.
 
+
 #### 0.6.0 (2004-03-14)
 
  New Games:
@@ -2228,7 +2258,9 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Keyboard support for cannon battle in Curse of Monkey Island.
    - Keyboard support for derby scene in Full Throttle.
 
+
 #### 0.5.1 (2003-08-06)
+
 - Rewrote Beneath a Steel Sky savegame code (see note in READMEs 'Known Bugs').
 - Fixed dialog skipping, music volume and several crashes/freezes in Steel Sky.
 - Fixed dialog skipping in V7 games.
@@ -2240,7 +2272,9 @@ For a more comprehensive changelog of the latest experimental code, see:
 - Fixed a fullscreen problem on Mac OS X were you couldn't use the mouse in
   the top part of the screen by linking to a bugfixed version of SDL.
 
+
 #### 0.5.0 (2003-08-02)
+
 - Enhanced versions of Maniac Mansion and Zak McKracken are now supported and
   completable.
 - Beneath A Steel Sky is now supported and completable.
@@ -2259,14 +2293,18 @@ For a more comprehensive changelog of the latest experimental code, see:
 - Added Aspect Ratio option.
 - Many other bug fixes, improvements and optimizations.
 
+
 #### 0.4.1 (2003-05-25)
+
 - Added AdvMame3x filter.
 - Fixed crash in Curse of Monkey Island (and possibly other games as well).
 - Fixed airport doors in Zak256.
 - Fixed crash in SDL backend.
 - Fixed various iMUSE bugs.
 
+
 #### 0.4.0 (2003-05-11)
+
 - Curse of Monkey Island (comi) support (experimental).
 - Added support for the EGA versions of Loom, Monkey Island and Indy3.
 - Improved music support in Indy3 and the floppy versions of Monkey Island.
@@ -2284,7 +2322,9 @@ For a more comprehensive changelog of the latest experimental code, see:
 - SMUSH code optimised, frame dropping added for slower machines.
 - Code cleanups.
 
+
 #### 0.3.0b (2002-12-08)
+
 - Massive cleanup work for iMUSE. Sam and Max music now plays correctly.
 - Many bugfixes for Zak256, + sound and music support.
 - Music support for Simon the Sorcerer on any platform with real MIDI.
@@ -2301,7 +2341,9 @@ For a more comprehensive changelog of the latest experimental code, see:
 - New in-game GUI.
 - Launcher dialog.
 
+
 #### 0.2.0 (2002-04-14)
+
 - Core engine rewrite.
 - Enhanced ingame GUI, including options/volume settings.
 - Auto-save feature.
@@ -2315,12 +2357,18 @@ For a more comprehensive changelog of the latest experimental code, see:
 - Experimental support for V7 games (Full Throttle/The Dig).
 - Experimental support for V3 games (Zak256/Indy3).
 
+
 #### 0.1.0 (2002-01-13)
+
 - Loads of changes.
 
+
 #### 0.0.2 (2001-10-12)
+
 - Bug fixes.
 - Save & load support.
 
+
 #### 0.0.1 (2001-10-08)
+
 - Initial version.
