@@ -45,6 +45,8 @@ Common::String getGLErrStr(GLenum error) {
 		return "GL_STACK_UNDERFLOW";
 	case GL_OUT_OF_MEMORY:
 		return "GL_OUT_OF_MEMORY";
+	default:
+		break;
 	}
 
 	return Common::String::format("(Unknown GL error code 0x%X)", error);

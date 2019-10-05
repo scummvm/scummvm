@@ -170,6 +170,10 @@ void OpenGLGraphicsManager::initializeGLContext() {
 	case kContextGLES2:
 		debug(5, "OpenGL: GLES2 context initialized");
 		break;
+
+	default:
+		warning("OpenGL: Unknown context initialized");
+		break;
 	}
 
 	// Log features supported by GL context.
