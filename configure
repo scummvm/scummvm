@@ -2580,6 +2580,7 @@ case $_host_os in
 				append_var CXXFLAGS "-march=armv7-a"
 				append_var CXXFLAGS "-mfloat-abi=softfp"
 				append_var CXXFLAGS "-mfpu=vfp"
+				append_var LDFLAGS "-march=armv7-a"
 				append_var LDFLAGS "-Wl,--fix-cortex-a8"
 				ABI="armeabi-v7a"
 				;;
