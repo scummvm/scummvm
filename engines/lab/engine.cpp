@@ -825,7 +825,7 @@ void LabEngine::processMainButton(uint16 &curInv, uint16 &lastInv, uint16 &oldDi
 				if (!intersect) {
 					if (_numCrumbs == MAX_CRUMBS) {
 						_numCrumbs = MAX_CRUMBS - 1;
-						memcpy(&_breadCrumbs[0], &_breadCrumbs[1], _numCrumbs * sizeof _breadCrumbs[0]);
+						memmove(&_breadCrumbs[0], &_breadCrumbs[1], _numCrumbs * sizeof _breadCrumbs[0]);
 					}
 
 					_breadCrumbs[_numCrumbs]._crumbRoomNum = _roomNum;
