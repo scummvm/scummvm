@@ -114,17 +114,6 @@ extern const char *const g_gameStrings[] = {
 	"#TUG0\\TUG0_S11#Captain, you're alive!",
 
 	//"#TUG1\\TUG1_007#The force field is interfering too much to get an accurate reading, Jim.", // TYPO
-	"#TUG1\\TUG1_011#I strongly recommend that we keep our silence, Captain. The Elasi are quite capable of tracing any communication from within this vessel.",
-
-	"#TUG2\\TUG2_004#A medium strength phaser bomb. The brig force field would contain the explosion but it would kill the crew members within the cell. I recommend that we find a way of disarming it, Captain.",
-	"#TUG2\\TUG2_007#Captain, the switch has been booby-trapped to detonate a bomb, presumably inside the brig somewhere.",
-	"#TUG2\\TUG2_010#I don't like the looks of this, Jim.",
-	"#TUG2\\TUG2_011#I don't operate on bombs, Jim, unless you like big explosions.",
-	"#TUG2\\TUG2_015#The crew is tired and has elevated signs from extreme stress, but they will survive.",
-	"#TUG2\\TUG2_016#The pirates won't wake for a while, but they are going to be quite unhappy when they do. I recommend that we not be here when they awake.",
-	"#TUG2\\TUG2_019#They're all dead, Jim. What in God's name were you thinking?",
-	"#TUG2\\TUG2J001#Don't you know any better?",
-	"#TUG2\\TUG2J002#What kind of idiot are you?",
 	"#TUG2\\TUG2J003#I recommend extreme caution, Captain. We must be ready to expect anything.",
 	"Snip...snip...snip.",
 
@@ -132,53 +121,6 @@ extern const char *const g_gameStrings[] = {
 	"#TUG3\\TUG3_S07#Aye, Captain.",
 	"#TUG3\\TUG3_S08#Aye, Captain.",
 
-	"#LOV0\\LOV0_005#Doctor, you may be interested in the medical data file appended to the log.",
-	"#LOV0\\LOV0_011#Hee hee hee hee...",
-	"#LOV0\\LOV0_012#I think we're all feeling just woooonderful!",
-	"#LOV0\\LOV0_013#I'm a little teapot short and stout...",
-	"#LOV0\\LOV0_014#I'm floating up and up and up...",
-	"#LOV0\\LOV0_015#I'm so happy, I want to hug the world!",
-	"#LOV0\\LOV0_016#Ooka! Ooka! Ooka!",
-	"#LOV0\\LOV0_017#Row, row, row, your boat. Aww, come on Spock.",
-	"#LOV0\\LOV0_019#Spock, ol' buddy, ol' friend, you look soo funny standing there!",
-	"#LOV0\\LOV0_020#The hills are alive... With the sounds of...",
-	"#LOV0\\LOV0_021#The moon in June's a boon to tunes... er, something like that.",
-	"#LOV0\\LOV0_022#This is how I want to feel all the time!",
-	"#LOV0\\LOV0_025#How many Admirals does it take to wire in a logic transmogrifier?",
-	"#LOV0\\LOV0_026#I don't believe you'd behave like this if you could avoid it.",
-	"#LOV0\\LOV0_029#Please, gentlemen, try to control yourselves",
-	"#LOV0\\LOV0_030#That is not logical, Captain.",
-	"#LOV0\\LOV0_033#Try taking deep breaths to clear your heads.",
-	"#LOV0\\LOV0_039#Hee hee hee hee...",
-	"#LOV0\\LOV0_040#I think we're all feeling just woooonderful!",
-	"#LOV0\\LOV0_041#I'm a little teapot short and stout...",
-	"#LOV0\\LOV0_042#I'm floating up and up and up...",
-	"#LOV0\\LOV0_043#I'm so happy, I want to hug the world!",
-	"#LOV0\\LOV0_045#Ooka! Ooka! Ooka!",
-	"#LOV0\\LOV0_046#Row, row, row, your boat. Aww, come on Spock.",
-	"#LOV0\\LOV0_047#Spock, ol' buddy, ol' friend, you look soo funny standing there!",
-	"#LOV0\\LOV0_048#The hills are alive... With the sounds of...",
-	"#LOV0\\LOV0_050#This is how I want to feel all the time!",
-	"#LOV0\\LOV0_101#Fascinating. I am experiencing an urge to laugh.",
-	"#LOV0\\LOV0_102#I am a Vulcan. I must resist these unchecked emotions.",
-	"#LOV0\\LOV0_103#Logic... What happened to my logic?", // TYPO
-	"#LOV0\\LOV0_104#Jim, is this how you feel on shore leave?",
-	"#LOV0\\LOV0_105#I remember my mother trying to tell me jokes when I was a child. Now, I finally understand them.",
-	"#LOV0\\LOV0_106#Romulan laughing gas. My father would never approve.",
-	"#LOV0\\LOV0_107#Why do they call you \"Bones\", doctor?",
-	"#LOV0\\LOV0_124#I'm trying to be patient, Captain.",
-	"#LOV1\\LOV1_010#I'm picking up some strange, airborne virus. I can't identify it without more information.",
-	"#LOV1\\LOV1N007#Done.",
-
-	//"#LOV0\\LOV0_103#Logic... What happened to my logic?", // TYPO
-	//"#LOV2\\LOV2_034#I don't think that's useful in your experiment, Doctor.", // TYPO (in audio filename)
-	//"#LOV2\\LOV2_039#This does not appear to provide us with anything useful.", // TYPO (in audio filename)
-	//"#LOV2\\LOV2N010#Lt. Ferris is carefully watching the hallway.", // TYPO
-	//"#LOV2\\LOV2N036#You retrieve the Oroborus virus culture.", // TYPO
-	//"#LOV2\\LOV2N037#You retrieve the Oroborus virus cure sample.", // TYPO
-	//"#LOV3\\LOV3N000#All readings are normal.", // TYPO: audio filename was wrong
-	"#LOV2\\LOV2N005#A loud hissing fills the room.",
-	"#LOV2\\LOV2N007#Gas feed is off.",
 	"#LOV3\\LOV3NA08#With a hiss, the Romulan Laughing Gas billows down the vent. Things are strangely quiet below.",
 	"#LOV3\\LOV3NA09#With a hiss, the Romulan Laughing Gas billows down the vent. You hear the muffled sounds through the vent of hearty Romulan laughter, followed by the dull thud of bodies hitting the deck.",
 	"#LOV3\\LOV3NA20#This is a service access panel, permitting used-up or worn materials to be replaced.",
@@ -186,15 +128,8 @@ extern const char *const g_gameStrings[] = {
 	"#LOV3\\LOV3NA22#This is an engineering access panel, allowing repairs to be made to the interior wiring in the equipment.",
 	"#LOV3\\LOV3NA23#This is the engineering center for the ARK7 space station.",
 	"#LOV3\\LOV3NJ32#You attach the antigrav unit to the gas tank. It can be moved freely.",
-	"#LOV5\\LOV5_015#He's already cured, Jim.",
-	"#LOV5\\LOV5_019#I don't have the proper medicine to cure him, Jim.",
-	"#LOV5\\LOV5_027#Finally, a human response!",
-	"#LOV5\\LOV5_030#There. You're now cured.",
-	"#LOV5\\LOV5_038#Thank you, Doctor.",
 	"(Raises an eyebrow)", // NOTE: no corresponding audio
 
-
-	"#LOVA\\LOVA_100#He's dead, Jim.",
 	"#LOVA\\LOVA_F01#He's been cured of the Oroborus virus.",
 	"#LOVA\\LOVA_F02#I'm picking up some kind of virus. I can't identify it without more information.",
 	"#LOVA\\LOVA_F03#He's infected with the virus, Jim.",
@@ -204,7 +139,6 @@ extern const char *const g_gameStrings[] = {
 	"#LOVA\\LOVA_F10#He has weak vital signs.",
 	"#LOVA\\LOVA_F54#The virus has spread to me, Captain. I suggest you concentrate your efforts on the problem.",
 	"#LOVA\\LOVA_F55#Jim, we need to synthesize more to make the serum before we can use it.", // TYPO
-
 
 	"#MUD0\\MUD0_001#Kirk to Enterprise...",
 	"#MUD0\\MUD0_002#Well! Now I think we know why the Elasi pirates were so interested in finding out where Mudd was getting these!",

@@ -334,12 +334,8 @@ void Room::feather3UseMedkitOnTlaoxac() {
 }
 
 void Room::feather3UseMedkitOnRedshirt() {
-	if (_awayMission->redshirtDead) {
-		// BUGFIX: Original voice clip (TX_FEA3_030) is someone who's clearly not Kelley
-		// saying "he's dead, Jim". He recorded the line a few other times, so use one of
-		// those instead.
-		mccoyScan(DIR_N, TX_LOVA_100);
-	}
+	if (_awayMission->redshirtDead)
+		mccoyScan(DIR_N, 30, true);
 }
 
 void Room::feather3UseMedkitAnywhere() {

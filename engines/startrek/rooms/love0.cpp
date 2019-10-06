@@ -174,12 +174,7 @@ void Room::love0UseRedshirtOnConsole() {
 }
 
 void Room::love0UseSpockOnConsole() {
-	_roomVar.love.consoleCrewman = OBJECT_SPOCK;
-	_roomVar.love.consoleSpeaker = TX_SPEAKER_SPOCK;
-	_roomVar.love.consoleText = TX_LOV0_005;
-	strcpy(_roomVar.love.consoleAnimation, "susemn");
-
-	walkCrewman(_roomVar.love.consoleCrewman, 0x9a, 0x9a, 2);
+	walkCrewman(OBJECT_SPOCK, 0x9a, 0x9a, 2);
 	if (!_awayMission->love.spockAccessedConsole) {
 		_awayMission->love.spockAccessedConsole = true;
 		_awayMission->love.missionScore += 4;
@@ -187,7 +182,7 @@ void Room::love0UseSpockOnConsole() {
 }
 
 void Room::love0SpockReachedConsole() {
-	loadActorAnim2(_roomVar.love.consoleCrewman, _roomVar.love.consoleAnimation, -1, -1, 5);
+	loadActorAnim2(OBJECT_SPOCK, "susemn", -1, -1, 5);
 }
 
 void Room::love0SpockAccessedConsole() {
@@ -196,7 +191,7 @@ void Room::love0SpockAccessedConsole() {
 		love0InteractWithConsole();
 	else {
 		showText(TX_SPEAKER_COMPUTER, TX_COMPU188);
-		showText(_roomVar.love.consoleSpeaker, _roomVar.love.consoleText);
+		showText(TX_SPEAKER_SPOCK, 5, true);
 		_roomVar.love.heardSummaryOfVirus = true;
 	}
 }

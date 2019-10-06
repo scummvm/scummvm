@@ -61,6 +61,8 @@ const int RDF_ROOM_ENTRY_POSITIONS = 0x2a;
 const int RDF_BEAM_IN_POSITIONS = 0xaa;
 const int RDF_SPAWN_POSITIONS = 0xba;
 
+#define COMMON_MESSAGE_OFFSET 1000
+
 class Room {
 public:
 	Room(StarTrekEngine *vm, const Common::String &name);
@@ -162,6 +164,7 @@ private:
 	void loadRoomMessages();
 	void loadOtherRoomMessages();
 	void loadRoomMessage(const char *text);
+	Common::String patchRoomMessage(const char *text);
 
 	int findFunctionPointer(int action, void (Room::*funcPtr)());
 
@@ -2996,10 +2999,6 @@ public:
 		struct {
 			// love0
 			bool heardSummaryOfVirus; // 0xda
-			int16 consoleCrewman; // 0xe3
-			char consoleAnimation[10]; // 0xe5
-			TextRef consoleSpeaker; // 0xe7
-			TextRef consoleText; // 0xe9
 
 			// love1
 			TextRef dyingSpeaker; // 0xcf
@@ -3037,10 +3036,13 @@ public:
 			void saveLoadWithSerializer(Common::Serializer &ser) {
 				// love0
 				ser.syncAsByte(heardSummaryOfVirus);
-				ser.syncAsSint16LE(consoleCrewman);
-				ser.syncBytes((byte *)consoleAnimation, 10);
-				ser.syncAsSint32LE(consoleSpeaker);
-				ser.syncAsSint32LE(consoleText);
+				uint16 tmp = 0;
+				uint32 tmp2 = 0;
+				byte tmp3[10];
+				ser.syncAsSint16LE(tmp);	// consoleCrewman
+				ser.syncBytes((byte *)tmp3, 10);	// consoleAnimation
+				ser.syncAsSint32LE(tmp2);	// consoleSpeaker
+				ser.syncAsSint32LE(tmp2);	// consoleText
 
 				// love1
 				ser.syncAsSint32LE(dyingSpeaker);

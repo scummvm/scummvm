@@ -203,7 +203,7 @@ void Room::mudd0PickedUpLense() {
 
 void Room::mudd0PickedUpItem() {
 	_awayMission->disableInput = false; // NOTE: this was never set to true
-	showDescription(TX_LOV1N007);
+	showDescription(COMMON_MESSAGE_OFFSET + 7, true);	// TX_LOV1N007
 }
 
 

@@ -151,43 +151,85 @@ void Room::loadRoomMessages() {
 void Room::loadRoomMessage(const char *text) {
 	int messageNum;
 	bool isTalkMessage;
+	bool isLookMessage;
 	bool isLookWithTalkerMessage;
+
+	Common::String patchedText = patchRoomMessage(text);
+	text = patchedText.c_str();
+
 	char textType = text[10];	// _ and U: talk message, N: look message, L: look with talker message
 
 	if (text[5] != '\\')
 		error("loadRoomMessage: Invalid message");
 
 	isTalkMessage = (textType == '_' || textType == 'U');	// U = Uhura
+	isLookMessage = (textType == 'N');
 	isLookWithTalkerMessage = (textType == 'L');
 
 	sscanf((const char *)(text + 11), "%3d", &messageNum);
 	if (text[14] != '#')
 		error("loadRoomMessage: Invalid message");
 
-	if (isTalkMessage)
-		_talkMessages[messageNum] = Common::String((const char *)text);
-	else if (isLookWithTalkerMessage)
-		_lookWithTalkerMessages[messageNum] = Common::String((const char *)text);
-	else
-		_lookMessages[messageNum] = Common::String((const char *)text);
+	if (memcmp(text + 1, _vm->_missionName.c_str(), 3) || text[4] != _vm->_roomIndex + '0') {
+		// String with a prefix of another mission, separate it
+		messageNum += COMMON_MESSAGE_OFFSET;
+	}
 
+	if (isTalkMessage)
+		_talkMessages[messageNum] = text;
+	else if (isLookMessage)
+		_lookMessages[messageNum] = text;
+	else if (isLookWithTalkerMessage)
+		_lookWithTalkerMessages[messageNum] = text;
+}
+
+Common::String Room::patchRoomMessage(const char *text) {
+	Common::String txt = text;
+
+	// Fix typos where some messages contain a hyphen instead of an underscore
+	// (e.g in LOV2)
+	if (txt[10] == '-')
+		txt.replace(10, 1, "_");
+
+	// Message index missing
+	if (txt.hasPrefix("#LOV3\\LOV3_#"))
+		txt = Common::String("#LOV3\\LOV3_000#") + (text + 12);
+
+	// Should be TX_LOV2_012, but the audio file is missing
+	if (txt.hasPrefix("#LOV2\\LOV2_012#"))
+		txt = Common::String("#LOV1\\LOV1_010#") + (text + 14);
+
+	// Original voice clip is someone who's clearly not Kelley saying "he's dead, Jim"
+	if (txt.hasPrefix("#FEA3\\FEA3_030#"))
+		txt = Common::String("#LOVA\\LOVA_100#") + (text + 14);
+
+	return txt;
 }
 
 void Room::loadOtherRoomMessages() {
 	uint16 startOffset = readRdfWord(14);
 	uint16 endOffset = readRdfWord(16);
 	uint16 offset = startOffset;
+	const char *validPrefixes[] = {
+		"BRI", "COM", "DEM", "FEA", "GEN", "LOV", "MUD", "SIN", "TRI", "TUG", "VEN"
+	};
 
 	while (offset < endOffset) {
 		uint16 nextOffset = readRdfWord(offset + 4);
 		if (nextOffset >= endOffset)
 			break;
-
+		
 		while (offset < nextOffset) {
 			const char *text = (const char *)_rdfData + offset;
 
-			if (text[0] == '#' && text[1] == _vm->_missionName[0] && text[5] == '\\')
-				loadRoomMessage(text);
+			if (text[0] == '#' && text[5] == '\\') {
+				for (uint i = 0; i < ARRAYSIZE(validPrefixes); i++) {
+					if (!memcmp(text + 1, validPrefixes[i], 3)) {
+						loadRoomMessage(text);
+						break;
+					}
+				}
+			}
 
 			offset++;
 		}
@@ -383,11 +425,11 @@ int Room::showMultipleTexts(const TextRef *textIDs, bool fromRDF, bool lookWithT
 		// TODO: This isn't nice, but it's temporary till we migrate to reading text from RDF files
 		if (i > 0 && fromRDF) {
 			if (textIDs[0] == TX_NULL)
-				text[i] = _lookMessages[textIDs[i]].c_str();
+				text[i] = _lookMessages.contains(textIDs[i]) ? _lookMessages[textIDs[i]].c_str() : _lookMessages[textIDs[i] - COMMON_MESSAGE_OFFSET].c_str();
 			else if (lookWithTalker)
-				text[i] = _lookWithTalkerMessages[textIDs[i]].c_str();
+				text[i] = _lookWithTalkerMessages.contains(textIDs[i]) ? _lookWithTalkerMessages[textIDs[i]].c_str() : _lookWithTalkerMessages[textIDs[i] - COMMON_MESSAGE_OFFSET].c_str();
 			else
-				text[i] = _talkMessages[textIDs[i]].c_str();
+				text[i] = _talkMessages.contains(textIDs[i]) ? _talkMessages[textIDs[i]].c_str() : _talkMessages[textIDs[i] - COMMON_MESSAGE_OFFSET].c_str();
 		} else
 			text[i] = g_gameStrings[textIDs[i]];
 	}

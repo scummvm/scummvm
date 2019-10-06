@@ -293,9 +293,7 @@ void Room::love2UseMTricorderAnywhere() {
 	if (_awayMission->love.knowAboutVirus)
 		mccoyScan(DIR_S, 8, false, true);
 	else
-		// BUGFIX: should be TX_LOV2_012, but the audio file is missing. Using equivalent
-		// audio from another room.
-		mccoyScan(DIR_S, TX_LOV1_010, false);
+		mccoyScan(DIR_S, 12, false);
 }
 
 void Room::love2UseSTricorderAnywhere() {
