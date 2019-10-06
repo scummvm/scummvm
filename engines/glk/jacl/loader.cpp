@@ -42,15 +42,7 @@ extern int          quoted[];
 extern int          punctuated[];
 extern int          wp;
 
-#ifdef GLK
 extern schanid_t                sound_channel[];
-#else
-#ifndef __NDS__
-extern struct parameter_type    *parameter_table;
-struct parameter_type *current_parameter = NULL;
-struct parameter_type *new_parameter;
-#endif
-#endif
 
 extern struct object_type       *object[];
 extern struct integer_type      *integer_table;
@@ -74,11 +66,7 @@ struct integer_type *last_system_integer = NULL;
 extern struct string_type *current_cstring;
 extern struct cinteger_type *current_cinteger;
 
-#ifdef GLK
 extern strid_t                  game_stream;
-#else
-extern FILE                     *file;
-#endif
 
 extern int                      objects;
 extern int                      integers;
@@ -100,9 +88,7 @@ void read_gamefile() {
 	int             index,
 	                counter,
 	                errors;
-#ifdef GLK
 	int             result;
-#endif
 	int             location_count = 0;
 	int             object_count = 0;
 	int             line = 0;
@@ -187,33 +173,17 @@ void read_gamefile() {
 	create_cinteger("GLK", 0);
 	create_cinteger("CGI", 1);
 	create_cinteger("NDS", 2);
-#ifdef GLK
+
 	create_cinteger("interpreter", 0);
-#else
-#ifdef __NDS__
-	create_cinteger("interpreter", 2);
-#else
-	create_cinteger("interpreter", 1);
-#endif
-#endif
 
 	/* TEST FOR AVAILABLE FUNCTIONALITY BEFORE EXECUTING ANY JACL CODE */
 
-#ifdef GLK
 	GRAPHICS_SUPPORTED->value = (int)g_vm->glk_gestalt(gestalt_Graphics, 0);
 	GRAPHICS_ENABLED->value = (int)g_vm->glk_gestalt(gestalt_Graphics, 0);
 	SOUND_SUPPORTED->value = (int)g_vm->glk_gestalt(gestalt_Sound, 0);
 	SOUND_ENABLED->value = (int)g_vm->glk_gestalt(gestalt_Sound, 0);
 	TIMER_SUPPORTED->value = (int)g_vm->glk_gestalt(gestalt_Timer, 0);
 	TIMER_ENABLED->value = (int)g_vm->glk_gestalt(gestalt_Timer, 0);
-#else
-	GRAPHICS_SUPPORTED->value = TRUE;
-	GRAPHICS_ENABLED->value = TRUE;
-	SOUND_SUPPORTED->value = TRUE;
-	SOUND_ENABLED->value = TRUE;
-	TIMER_SUPPORTED->value = FALSE;
-	TIMER_ENABLED->value = FALSE;
-#endif
 
 	create_cinteger("true", 1);
 	create_cinteger("false", 0);
@@ -285,59 +255,38 @@ void read_gamefile() {
 	functions = 0;
 	strings = 0;
 
-#ifdef GLK
 	g_vm->glk_stream_set_position(game_stream, start_of_file, seekmode_Start);
 	result = glk_get_bin_line_stream(game_stream, text_buffer, (glui32) 1024);
-#else
-	fseek(file, start_of_file, SEEK_SET);
-	fgets(text_buffer, 1024, file);
-#endif
 
 	line++;
 
 	if (!encrypted && strstr(text_buffer, "#encrypted")) {
 		encrypted = TRUE;
-#ifdef GLK
+
 		result = glk_get_bin_line_stream(game_stream, text_buffer, (glui32) 1024);
-#else
-		fgets(text_buffer, 1024, file);
-#endif
 		line++;
 	}
 
 	if (encrypted) jacl_decrypt(text_buffer);
 
-#ifdef GLK
 	while (result) {
-#else
-	while (!feof(file)) {
-#endif
 		encapsulate();
 		if (word[0] == NULL);
 		else if (text_buffer[0] == '{') {
-#ifdef GLK
 			while (result) {
 				result = glk_get_bin_line_stream(game_stream, text_buffer, (glui32) 1024);
-#else
-			while (!feof(file)) {
-				fgets(text_buffer, 1024, file);
-#endif
 				line++;
+
 				if (!encrypted && strstr(text_buffer, "#encrypted")) {
 					encrypted = TRUE;
-#ifdef GLK
 					result = glk_get_bin_line_stream(game_stream, text_buffer, (glui32) 1024);
-#else
-					fgets(text_buffer, 1024, file);
-#endif
 					line++;
 				}
 				if (encrypted) jacl_decrypt(text_buffer);
 				if (text_buffer[0] == '}')
 					break;
 			}
-		}
-		else {
+		} else {
 			if (!strcmp(word[0], "grammar")) {
 				if (word[++wp] == NULL) {
 					noproperr(line);
@@ -420,8 +369,7 @@ void read_gamefile() {
 					current_synonym->next_synonym = NULL;
 				}
 			} else if (!strcmp(word[0], "parameter")) {
-#ifndef GLK
-#ifndef __NDS__
+#ifdef UNUSED
 				if (word[2] == NULL) {
 					noproperr(line);
 					errors++;
@@ -460,7 +408,8 @@ void read_gamefile() {
 					}
 
 				}
-#endif
+#else
+				warning("parameter");
 #endif
 			} else if (!strcmp(word[0], "constant")) {
 				if (word[2] == NULL) {
@@ -650,20 +599,13 @@ void read_gamefile() {
 				}
 			}
 		}
-#ifdef GLK
+
 		result = glk_get_bin_line_stream(game_stream, text_buffer, (glui32) 1024);
-#else
-		fgets(text_buffer, 1024, file);
-#endif
 		line++;
 
 		if (!encrypted && strstr(text_buffer, "#encrypted")) {
 			encrypted = TRUE;
-#ifdef GLK
 			result = glk_get_bin_line_stream(game_stream, text_buffer, (glui32) 1024);
-#else
-			fgets(text_buffer, 1024, file);
-#endif
 			line++;
 		}
 		if (encrypted) jacl_decrypt(text_buffer);
@@ -703,32 +645,19 @@ void read_gamefile() {
 	current_integer = last_system_integer;
 
 	line = 0;
-#ifdef GLK
 	g_vm->glk_stream_set_position(game_stream, start_of_file, seekmode_Start);
 	result = glk_get_bin_line_stream(game_stream, text_buffer, (glui32) 1024);
-#else
-	fseek(file, start_of_file, SEEK_SET);
-	fgets(text_buffer, 1024, file);
-#endif
 
 	line++;
 
 	if (!encrypted && strstr(text_buffer, "#encrypted")) {
 		encrypted = TRUE;
-#ifdef GLK
 		result = glk_get_bin_line_stream(game_stream, text_buffer, (glui32) 1024);
-#else
-		fgets(text_buffer, 1024, file);
-#endif
 		line++;
 	}
 	if (encrypted) jacl_decrypt(text_buffer);
 
-#ifdef GLK
 	while (result) {
-#else
-	while (!feof(file)) {
-#endif
 		encapsulate();
 		if (word[0] == NULL);
 		else if (text_buffer[0] == '{') {
@@ -779,11 +708,8 @@ void read_gamefile() {
 
 							current_function = function_table;
 							strcpy(current_function->name, function_name);
-#ifdef GLK
+
 							current_function->position = g_vm->glk_stream_get_position(game_stream);
-#else
-							current_function->position = ftell(file);
-#endif
 							current_function->call_count = 0;
 							current_function->call_count_backup = 0;
 							current_function->self = self_parent;
@@ -801,11 +727,8 @@ void read_gamefile() {
 
 							current_function = current_function->next_function;
 							strcpy(current_function->name, function_name);
-#ifdef GLK
+
 							current_function->position = g_vm->glk_stream_get_position(game_stream);
-#else
-							current_function->position = ftell(file);
-#endif
 							current_function->call_count = 0;
 							current_function->call_count_backup = 0;
 							current_function->self = self_parent;
@@ -816,22 +739,13 @@ void read_gamefile() {
 				}
 			}
 
-#ifdef GLK
 			while (result) {
 				result = glk_get_bin_line_stream(game_stream, text_buffer, (glui32) 1024);
-#else
-			while (!feof(file)) {
-				fgets(text_buffer, 1024, file);
-#endif
 				line++;
 
 				if (!encrypted && strstr(text_buffer, "#encrypted")) {
 					encrypted = TRUE;
-#ifdef GLK
 					result = glk_get_bin_line_stream(game_stream, text_buffer, (glui32) 1024);
-#else
-					fgets(text_buffer, 1024, file);
-#endif
 					line++;
 				}
 				if (encrypted) jacl_decrypt(text_buffer);
@@ -1056,20 +970,12 @@ void read_gamefile() {
 			errors++;
 		}
 
-#ifdef GLK
 		result = glk_get_bin_line_stream(game_stream, text_buffer, (glui32) 1024);
-#else
-		fgets(text_buffer, 1024, file);
-#endif
 		line++;
 
 		if (!encrypted && strstr(text_buffer, "#encrypted")) {
 			encrypted = TRUE;
-#ifdef GLK
 			result = glk_get_bin_line_stream(game_stream, text_buffer, (glui32) 1024);
-#else
-			fgets(text_buffer, 1024, file);
-#endif
 			line++;
 		}
 		if (encrypted) jacl_decrypt(text_buffer);
@@ -1237,23 +1143,22 @@ int legal_label_check(const char *label_word, int line, int type) {
 void restart_game() {
 	int             index;
 
-	struct integer_type *curr_integer;
-	struct integer_type *previous_integer;
-	struct synonym_type *current_synonym;
-	struct synonym_type *previous_synonym;
-	struct name_type *current_name;
-	struct name_type *next_name;
-	struct function_type *current_function;
-	struct function_type *previous_function;
-	struct string_type *curr_string;
-	struct string_type *previous_string;
-	struct attribute_type *current_attribute;
-	struct attribute_type *previous_attribute;
-	struct cinteger_type *previous_cinteger;
-	struct filter_type *current_filter;
-	struct filter_type *previous_filter;
+	integer_type *curr_integer;
+	integer_type *previous_integer;
+	synonym_type *current_synonym;
+	synonym_type *previous_synonym;
+	name_type *current_name;
+	name_type *next_name;
+	function_type *current_function;
+	function_type *previous_function;
+	string_type *curr_string;
+	string_type *previous_string;
+	attribute_type *current_attribute;
+	attribute_type *previous_attribute;
+	cinteger_type *previous_cinteger;
+	filter_type *current_filter;
+	filter_type *previous_filter;
 
-#ifdef GLK
 	if (SOUND_SUPPORTED->value) {
 		/* STOP ALL SOUNDS AND SET VOLUMES BACK TO 100% */
 		for (index = 0; index < 4; index++) {
@@ -1266,7 +1171,6 @@ void restart_game() {
 			cinteger_resolve(temp_buffer)->value = 100;
 		}
 	}
-#endif
 
 	/* FREE ALL OBJECTS */
 	for (index = 1; index <= objects; index++) {
