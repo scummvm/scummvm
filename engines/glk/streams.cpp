@@ -989,7 +989,7 @@ int IOStream::getChar() {
 	ensureOp(filemode_Read);
 	int res;
 	if (!_unicode) {
-		res = (_inStream->pos() >= _inStream->size()) ? -1 : _inStream->readByte();
+		res = _inStream->eos() ? -1 : _inStream->readByte();
 	} else if (_textFile) {
 		res = getCharUtf8();
 	} else {
