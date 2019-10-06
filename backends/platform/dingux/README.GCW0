@@ -14,7 +14,7 @@ Controls
 
 Installation from binaries
 ==========================
-Copy over scummvm.opk file
+Copy over scummvm.opk file to /media/data/apps directory on the device.
 
 Building from binaries
 ======================
