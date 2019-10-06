@@ -304,6 +304,8 @@ static int checkArgMode (const Proto *pt, int r, enum OpArgMask mode) {
     case OpArgK:
       check(ISK(r) ? INDEXK(r) < pt->sizek : r < pt->maxstacksize);
       break;
+    default:
+      break;
   }
   return 1;
 }
@@ -348,6 +350,8 @@ static Instruction symbexec (const Proto *pt, int lastpc, int reg) {
         }
         break;
       }
+      default:
+        break;
     }
     if (testAMode(op)) {
       if (a == reg) last = pc;  /* change register `a' */

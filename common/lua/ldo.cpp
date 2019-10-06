@@ -61,6 +61,8 @@ void luaD_seterrorobj (lua_State *L, int errcode, StkId oldtop) {
       setsvalue2s(L, oldtop, luaS_newliteral(L, MEMERRMSG));
       break;
     }
+    default:
+      // fallthrough intended
     case LUA_ERRERR: {
       setsvalue2s(L, oldtop, luaS_newliteral(L, "error in error handling"));
       break;

@@ -624,6 +624,8 @@ static void add_value (MatchState *ms, luaL_Buffer *b, const char *s,
       lua_gettable(L, 3);
       break;
     }
+    default:
+      break;
   }
   if (!lua_toboolean(L, -1)) {  /* nil or false? */
     lua_pop(L, 1);
