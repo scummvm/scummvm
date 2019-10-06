@@ -112,11 +112,14 @@ void DINGUXSdlGraphicsManager::initSize(uint w, uint h, const Graphics::PixelFor
 
 	_videoMode.screenWidth = w;
 	_videoMode.screenHeight = h;
+
+#ifndef GCW0
 	if (w > 320 || h > 240) {
 		setGraphicsMode(GFX_HALF);
 		setGraphicsModeIntern();
 		_window->toggleMouseGrab();
 	}
+#endif
 
 	_transactionDetails.sizeChanged = true;
 }
@@ -130,7 +133,7 @@ void DINGUXSdlGraphicsManager::drawMouse() {
 	SDL_Rect dst;
 	int scale;
 	int hotX, hotY;
-	
+
 	const Common::Point virtualCursor = convertWindowToVirtual(_cursorX, _cursorY);
 
 	if (_videoMode.mode == GFX_HALF && !_overlayVisible) {
@@ -413,11 +416,14 @@ bool DINGUXSdlGraphicsManager::loadGFXMode() {
 		_videoMode.aspectRatioCorrection = false;
 	}
 
+#ifndef GCW0
 	if (_videoMode.screenWidth > 320 || _videoMode.screenHeight > 240) {
 		_videoMode.aspectRatioCorrection = false;
 		setGraphicsMode(GFX_HALF);
 		debug("GraphicsMode set to HALF");
-	} else {
+	} else
+#endif
+	{
 		setGraphicsMode(GFX_NORMAL);
 		debug("GraphicsMode set to NORMAL");
 	}
