@@ -28,12 +28,14 @@ namespace JACL {
 
 #define VERSION "3.0.0"
 
-//#define SIZE_MAX ((size_t)-1)
+//#define MAX_INT ((size_t)-1)
 
 #define ROW_NOT_BEGUN           0
 #define FIELD_NOT_BEGUN         1
 #define FIELD_BEGUN             2
 #define FIELD_MIGHT_HAVE_ENDED  3
+
+#define MAX_INT 0x7fff
 
 /*
   Explanation of states
@@ -69,7 +71,7 @@ namespace JACL {
 
 #define SUBMIT_CHAR(p, c) ((p)->entry_buf[entry_pos++] = (c))
 
-static char *csv_errors[] = {"success",
+static const char *csv_errors[] = {"success",
                              "error parsing data while strict checking enabled",
                              "memory exhausted while increasing buffer size",
                              "data size too large",
@@ -81,7 +83,7 @@ int csv_error(struct csv_parser *p) {
 	return p->status;
 }
 
-char *csv_strerror(int status) {
+const char *csv_strerror(int status) {
 	/* Return a textual description of status */
 	if (status >= CSV_EINVALID || status < 0)
 		return csv_errors[CSV_EINVALID];
@@ -179,6 +181,7 @@ int csv_fini(struct csv_parser *p, void (*cb1)(void *, size_t, void *), void (*c
 	/* Reset parser */
 	p->spaces = p->quoted = p->entry_pos = p->status = 0;
 	p->pstate = ROW_NOT_BEGUN;
+	(void)pstate;
 
 	return 0;
 }
@@ -237,16 +240,16 @@ size_t csv_get_buffer_size(struct csv_parser *p) {
 
 static int csv_increase_buffer(struct csv_parser *p) {
 	/* Increase the size of the entry buffer.  Attempt to increase size by
-	 * p->blk_size, if this is larger than SIZE_MAX try to increase current
-	 * buffer size to SIZE_MAX.  If allocation fails, try to allocate halve
+	 * p->blk_size, if this is larger than MAX_INT try to increase current
+	 * buffer size to MAX_INT.  If allocation fails, try to allocate halve
 	 * the size and try again until successful or increment size is zero.
 	 */
 
 	size_t to_add = p->blk_size;
 	void *vp;
 
-	if (p->entry_size >= SIZE_MAX - to_add)
-		to_add = SIZE_MAX - p->entry_size;
+	if (p->entry_size >= MAX_INT - to_add)
+		to_add = MAX_INT - p->entry_size;
 
 	if (!to_add) {
 		p->status = CSV_ETOOBIG;
@@ -432,18 +435,18 @@ size_t csv_write(void *dest, size_t dest_size, const void *src, size_t src_size)
 		if (*csrc == '"') {
 			if (dest_size > chars)
 				*cdest++ = '"';
-			if (chars < SIZE_MAX) chars++;
+			if (chars < MAX_INT) chars++;
 		}
 		if (dest_size > chars)
 			*cdest++ = *csrc;
-		if (chars < SIZE_MAX) chars++;
+		if (chars < MAX_INT) chars++;
 		src_size--;
 		csrc++;
 	}
 
 	if (dest_size > chars)
 		*cdest = '"';
-	if (chars < SIZE_MAX) chars++;
+	if (chars < MAX_INT) chars++;
 
 	return chars;
 }
@@ -488,18 +491,18 @@ size_t csv_write2(void *dest, size_t dest_size, const void *src, size_t src_size
 		if (*csrc == quote) {
 			if (dest_size > chars)
 				*cdest++ = quote;
-			if (chars < SIZE_MAX) chars++;
+			if (chars < MAX_INT) chars++;
 		}
 		if (dest_size > chars)
 			*cdest++ = *csrc;
-		if (chars < SIZE_MAX) chars++;
+		if (chars < MAX_INT) chars++;
 		src_size--;
 		csrc++;
 	}
 
 	if (dest_size > chars)
 		*cdest = quote;
-	if (chars < SIZE_MAX) chars++;
+	if (chars < MAX_INT) chars++;
 
 	return chars;
 }

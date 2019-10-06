@@ -34,7 +34,7 @@ extern char                     function_name[];
 extern struct object_type       *object[];
 extern struct variable_type     *variable[];
 
-extern char                     *word[];
+extern const char               *word[];
 
 extern int                      player;
 extern int                      wp;

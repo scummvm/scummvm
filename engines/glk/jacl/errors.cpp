@@ -29,7 +29,7 @@ namespace Glk {
 namespace JACL {
 
 extern struct function_type     *executing_function;
-extern char                     *word[];
+extern const char               *word[];
 
 extern char                     error_buffer[];
 
@@ -44,7 +44,7 @@ void notintrun() {
 	log_error(error_buffer, PLUS_STDERR);
 }
 
-void unkfunrun(char *name) {
+void unkfunrun(const char *name) {
 	sprintf(error_buffer, UNKNOWN_FUNCTION_RUN, name);
 	log_error(error_buffer, PLUS_STDOUT);
 }
@@ -130,22 +130,22 @@ void badplrrun(int value) {
 	log_error(error_buffer, PLUS_STDOUT);
 }
 
-void badptrrun(char *name, int value) {
+void badptrrun(const char *name, int value) {
 	sprintf(error_buffer, BAD_POINTER, executing_function->name, name, value);
 	log_error(error_buffer, PLUS_STDOUT);
 }
 
-void unkvarrun(char *variable) {
+void unkvarrun(const char *variable) {
 	sprintf(error_buffer, UNDEFINED_CONTAINER_RUN, executing_function->name, arg_text_of(variable));
 	log_error(error_buffer, PLUS_STDOUT);
 }
 
-void unkstrrun(char *variable) {
+void unkstrrun(const char *variable) {
 	sprintf(error_buffer, UNDEFINED_STRING_RUN, executing_function->name, variable);
 	log_error(error_buffer, PLUS_STDOUT);
 }
 
-void unkscorun(char *scope) {
+void unkscorun(const char *scope) {
 	sprintf(error_buffer, UNKNOWN_SCOPE_RUN, executing_function->name, scope);
 	log_error(error_buffer, PLUS_STDOUT);
 }

@@ -31,7 +31,7 @@ namespace JACL {
 extern char                     user_id[];
 extern char                     prefix[];
 
-void log_error(char *message, int console) {
+void log_error(const char *message, int console) {
 	/* LOG A MESSAGE TO THE CONSOLE */
 
 	char            consoleMessage[256];

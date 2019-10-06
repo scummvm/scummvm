@@ -28,7 +28,7 @@ namespace JACL {
 
 extern char         text_buffer[];
 extern char         temp_buffer[];
-extern char         *word[];
+extern const char   *word[];
 extern short int    quoted[];
 extern short int    punctuated[];
 extern int          wp;
@@ -126,7 +126,7 @@ int jpp() {
 		}
 	}
 
-	if (process_file(game_file, (char *) NULL) == FALSE) {
+	if (process_file(game_file, (const char *) NULL) == FALSE) {
 		return (FALSE);
 	}
 
@@ -139,7 +139,7 @@ int jpp() {
 	return (TRUE);
 }
 
-int process_file(char *sourceFile1, char *sourceFile2) {
+int process_file(const char *sourceFile1, char *sourceFile2) {
 	char            temp_buffer1[1025];
 	char            temp_buffer2[1025];
 	Common::File *srcFile = NULL;

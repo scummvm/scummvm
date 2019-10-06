@@ -43,7 +43,7 @@ event_t             *cancelled_event;
 extern struct csv_parser parser_csv;
 
 extern char         text_buffer[];
-extern char         *word[];
+extern const char   *word[];
 extern short int    quoted[];
 extern short int    punctuated[];
 extern int          wp;
@@ -75,7 +75,7 @@ char            walkthru[81] = "\0";
 char            function_name[81];
 
 extern char default_function[84];
-char            override[81];
+char            override_[81];
 
 char            temp_buffer[1024];
 char            error_buffer[1024];
@@ -88,8 +88,8 @@ char            proxy_buffer[1024];
 char            oops_buffer[1024];
 char            oopsed_current[1024];
 char            last_command[1024];
-char            *blank_command = "blankjacl\0";
-char            *current_command = (char *) NULL;
+const char      *blank_command = "blankjacl\0";
+const char      *current_command = (const char *)NULL;
 char            command_buffer[1024];
 #ifndef NOUNICODE
 glui32          command_buffer_uni[1024];
@@ -174,9 +174,8 @@ static void version_info();
 
 void glk_main() {
 	int             index;
-	frefid_t        blorb_file;
 
-	override[0] = 0;
+	override_[0] = 0;
 
 	/* ALLOC AN EVENT TO STORE A CANCELLED EVENT IN */
 	if ((cancelled_event = (event_t *) malloc(sizeof(event_t))) == NULL)
@@ -217,26 +216,6 @@ void glk_main() {
 		terminate(200);
 	}
 
-	/* OPEN THE BLORB FILE IF ONE EXISTS */
-#ifndef WINGLK
-	blorb_file = g_vm->glk_fileref_create_by_name(fileusage_BinaryMode, blorb, 0);
-#else
-	strcpy(temp_buffer, game_path);
-	strcat(temp_buffer, blorb);
-	strcpy(blorb, temp_buffer);
-	blorb_file = wing_vm->glk_fileref_create_by_name(fileusage_BinaryMode, blorb, 0, 0);
-#endif
-
-#ifdef UNUSED
-	if (blorb_file != NULL && g_vm->glk_fileref_does_file_exist(blorb_file)) {
-		blorb_stream = g_vm->glk_stream_open_file(blorb_file, filemode_Read, 0);
-
-		if (blorb_stream != NULL) {
-			/* IF THE FILE EXISTS, SET THE RESOURCE MAP */
-			giblorb_set_resource_map(blorb_stream);
-		}
-	}
-#endif
 	// INTIALISE THE CSV PARSER
 	csv_init(&parser_csv, CSV_APPEND_NULL);
 
@@ -362,6 +341,9 @@ void glk_main() {
 				/* WINDOWS HAVE CHANGED SIZE, SO WE HAVE TO REDRAW THE
 				 * STATUS WINDOW. */
 				status_line();
+				break;
+
+			default:
 				break;
 			}
 		}
@@ -534,7 +516,7 @@ void word_check() {
 				command_encapsulate();
 				//printf("--- trying to replace %s with %s\n", word[oops_word], oops_buffer);
 				jacl_truncate();
-				word[oops_word] = (char *) &oops_buffer;
+				word[oops_word] = (char *)&oops_buffer;
 
 				/* BUILD A PLAIN STRING REPRESENTING THE NEW COMMAND */
 				oopsed_current[0] = 0;
@@ -667,7 +649,7 @@ void save_game_state() {
 	noun3_backup = noun[3];
 }
 
-int save_interaction(char *filename) {
+int save_interaction(const char *filename) {
 	frefid_t saveref;
 
 	jacl_set_window(inputwin);
@@ -742,7 +724,7 @@ void restore_game_state() {
 	TIME->value = FALSE;
 }
 
-void write_text(char *string_buffer) {
+void write_text(const char *string_buffer) {
 	int             index,
 	                length;
 
@@ -840,9 +822,7 @@ void newline() {
 	write_text("\n");
 }
 
-void more(char *message) {
-	int character;
-
+void more(const char *message) {
 	jacl_set_window(inputwin);
 
 	if (inputwin == promptwin) {
@@ -854,7 +834,7 @@ void more(char *message) {
 	write_text(message);
 	g_vm->glk_set_style(style_Normal);
 
-	character = get_key();
+	(void)get_key();
 
 	if (inputwin == mainwin) newline();
 }
@@ -864,8 +844,7 @@ int get_key() {
 
 	g_vm->glk_request_char_event(inputwin);
 
-	while (1) {
-
+	while (!g_vm->shouldQuit()) {
 		g_vm->glk_select(&ev);
 
 		switch (ev.type) {
@@ -874,9 +853,13 @@ int get_key() {
 				return (ev.val1);
 			}
 			break;
+
+		default:
+			break;
 		}
 	}
 
+	return 0;
 }
 
 int get_number(int insist, int low, int high) {
@@ -904,8 +887,7 @@ int get_number(int insist, int low, int high) {
 		g_vm->glk_request_line_event(inputwin, commandbuf, 255, 0);
 
 		gotline = FALSE;
-		while (!gotline) {
-
+		while (!gotline && g_vm->shouldQuit()) {
 			g_vm->glk_select(&ev);
 
 			switch (ev.type) {
@@ -917,6 +899,9 @@ int get_number(int insist, int low, int high) {
 
 			case evtype_Arrange:
 				status_line();
+				break;
+
+			default:
 				break;
 			}
 		}
@@ -959,8 +944,7 @@ void get_string(char *string_buffer) {
 	g_vm->glk_request_line_event(inputwin, commandbuf, 255, 0);
 
 	gotline = FALSE;
-	while (!gotline) {
-
+	while (!gotline && !g_vm->shouldQuit()) {
 		g_vm->glk_select(&ev);
 
 		switch (ev.type) {
@@ -972,6 +956,9 @@ void get_string(char *string_buffer) {
 
 		case evtype_Arrange:
 			status_line();
+			break;
+
+		default:
 			break;
 		}
 	}
@@ -1005,7 +992,7 @@ int get_yes_or_no() {
 		g_vm->glk_request_line_event(inputwin, commandbuf, 255, 0);
 
 		gotline = FALSE;
-		while (!gotline) {
+		while (!gotline && !g_vm->shouldQuit()) {
 
 			g_vm->glk_select(&ev);
 
@@ -1018,6 +1005,9 @@ int get_yes_or_no() {
 
 			case evtype_Arrange:
 				status_line();
+				break;
+
+			default:
 				break;
 			}
 		}
@@ -1038,7 +1028,7 @@ int get_yes_or_no() {
 	}
 }
 
-char get_character(char *message) {
+char get_character(const char *message) {
 	char *cx;
 	char commandbuf[256];
 	int gotline;
@@ -1048,7 +1038,7 @@ char get_character(char *message) {
 
 	/* THIS LOOP IS IDENTICAL TO THE MAIN COMMAND LOOP IN g_vm->glk_main(). */
 
-	while (1) {
+	while (!g_vm->shouldQuit()) {
 		if (inputwin == promptwin) {
 			g_vm->glk_window_clear(promptwin);
 			jacl_set_window(inputwin);
@@ -1059,7 +1049,7 @@ char get_character(char *message) {
 		jacl_set_window(mainwin);
 
 		gotline = FALSE;
-		while (!gotline) {
+		while (!gotline && !g_vm->shouldQuit()) {
 
 			g_vm->glk_select(&ev);
 
@@ -1073,6 +1063,9 @@ char get_character(char *message) {
 			case evtype_Arrange:
 				status_line();
 				break;
+
+			default:
+				break;
 			}
 		}
 
@@ -1081,6 +1074,9 @@ char get_character(char *message) {
 
 		return (*cx);
 	}
+
+
+	return '\0';
 }
 
 strid_t open_glk_file(uint usage, uint mode, char *filename) {
@@ -1239,7 +1235,7 @@ void walking_thru() {
 	walkthru_running = FALSE;
 }
 
-int restore_interaction(char *filename) {
+int restore_interaction(const char *filename) {
 	frefid_t saveref;
 
 	jacl_set_window(inputwin);
@@ -1297,11 +1293,11 @@ void jacl_set_window(winid_t new_window) {
 }
 
 #ifdef READLINE
-char **command_completion(char *text, int start, int end) {
+char **command_completion(const char *text, int start, int end) {
 	/* READLINE TAB COMPLETION CODE */
 	char **options;
 
-	options = (char **) NULL;
+	options = (const char **) NULL;
 
 	if (start == 0)
 		options = completion_matches(text, verb_generator);
@@ -1312,7 +1308,7 @@ char **command_completion(char *text, int start, int end) {
 }
 #endif
 
-char *object_generator(char *text, int state) {
+const char *object_generator(const char *text, int state) {
 	static int len;
 	static struct command_type *now;
 	struct command_type *to_send;
@@ -1348,15 +1344,15 @@ char *object_generator(char *text, int state) {
 		if (!strncmp(text, now->word, len)) {
 			to_send = now;
 			now = now->next;
-			return ((char *) to_send->word);
+			return ((const char *)to_send->word);
 		}
 		now = now->next;
 	}
 
-	return (char *) NULL;
+	return (const char *)NULL;
 }
 
-char *verb_generator(char *text, int state) {
+const char *verb_generator(const char *text, int state) {
 	static int len;
 	static struct command_type *now;
 	struct command_type *to_send;
@@ -1388,17 +1384,17 @@ char *verb_generator(char *text, int state) {
 			now = now->next;
 
 			/* MALLOC A COPY AND RETURN A POINTER TO THE COPY */
-			return ((char *) to_send->word);
+			return ((const char *)to_send->word);
 		}
 		now = now->next;
 	}
 
-	return (char *) NULL;
+	return (const char *)NULL;
 }
 
 /* ADD A COPY OF STRING TO A LIST OF STRINGS IF IT IS NOT
    ALREADY IN THE LIST. THIS IS FOR THE USE OF READLINE */
-void add_word(char *newWord) {
+void add_word(const char *newWord) {
 	static struct command_type *current_word = NULL;
 	struct command_type *previous_word = NULL;
 

@@ -37,7 +37,7 @@ extern char         text_buffer[];
 extern char         temp_buffer[];
 extern char         prefix[];
 extern char         error_buffer[];
-extern char         *word[];
+extern const char   *word[];
 extern int          quoted[];
 extern int          punctuated[];
 extern int          wp;
@@ -109,23 +109,17 @@ void read_gamefile() {
 	int             self_parent = 0;
 
 	long            start_of_file = 0;
-#ifdef GLK
-	glui32          current_file_position;
-#else
-	long            current_file_position;
-#endif
-
 	long            bit_mask;
 
-	struct filter_type *current_filter = NULL;
-	struct filter_type *new_filter = NULL;
-	struct attribute_type *current_attribute = NULL;
-	struct attribute_type *new_attribute = NULL;
-	struct cinteger_type *resolved_cinteger = NULL;
-	struct synonym_type *current_synonym = NULL;
-	struct synonym_type *new_synonym = NULL;
-	struct function_type *current_function = NULL;
-	struct name_type *current_name = NULL;
+	filter_type *current_filter = NULL;
+	filter_type *new_filter = NULL;
+	attribute_type *current_attribute = NULL;
+	attribute_type *new_attribute = NULL;
+	cinteger_type *resolved_cinteger = NULL;
+	synonym_type *current_synonym = NULL;
+	synonym_type *new_synonym = NULL;
+	function_type *current_function = NULL;
+	name_type *current_name = NULL;
 
 	char            function_name[81];
 
@@ -750,7 +744,7 @@ void read_gamefile() {
 						function_name[80] = 0;
 						self_parent = 0;
 					} else if (word[wp][0] == '*') {
-						char *last_underscore = (char *) NULL;
+						const char *last_underscore = (char *)NULL;
 
 						/* ALLOW MANUAL NAMING OF ASSOCIATED FUNCTIONS */
 						/* TO GIVE CLASS-LIKE BEHAVIOR */
@@ -1063,10 +1057,8 @@ void read_gamefile() {
 		}
 
 #ifdef GLK
-		current_file_position = g_vm->glk_stream_get_position(game_stream);
 		result = glk_get_bin_line_stream(game_stream, text_buffer, (glui32) 1024);
 #else
-		current_file_position = ftell(file);
 		fgets(text_buffer, 1024, file);
 #endif
 		line++;
@@ -1138,7 +1130,7 @@ void build_grammar_table(struct word_type *pointer) {
 	} while (word[wp] != NULL && wp < MAX_WORDS);
 }
 
-int legal_label_check(char *word, int line, int type) {
+int legal_label_check(const char *label_word, int line, int type) {
 	struct integer_type *integer_pointer = integer_table;
 	struct cinteger_type *cinteger_pointer = cinteger_table;
 	struct string_type *string_pointer = string_table;
@@ -1147,30 +1139,30 @@ int legal_label_check(char *word, int line, int type) {
 
 	int index;
 
-	if (!strcmp(word, "here") ||
-	        !strcmp(word, "player") ||
-	        !strcmp(word, "integer") ||
-	        !strcmp(word, "arg") ||
-	        !strcmp(word, "string_arg") ||
-	        !strcmp(word, "arg") ||
-	        !strcmp(word, "$word") ||
-	        !strcmp(word, "self") ||
-	        !strcmp(word, "this") ||
-	        !strcmp(word, "noun1") ||
-	        !strcmp(word, "noun2") ||
-	        !strcmp(word, "noun3") ||
-	        !strcmp(word, "noun4") ||
-	        !strcmp(word, "objects") ||
-	        validate(word)) {
-		sprintf(error_buffer, ILLEGAL_LABEL, line, word);
+	if (!strcmp(label_word, "here") ||
+	        !strcmp(label_word, "player") ||
+	        !strcmp(label_word, "integer") ||
+	        !strcmp(label_word, "arg") ||
+	        !strcmp(label_word, "string_arg") ||
+	        !strcmp(label_word, "arg") ||
+	        !strcmp(label_word, "$label_word") ||
+	        !strcmp(label_word, "self") ||
+	        !strcmp(label_word, "this") ||
+	        !strcmp(label_word, "noun1") ||
+	        !strcmp(label_word, "noun2") ||
+	        !strcmp(label_word, "noun3") ||
+	        !strcmp(label_word, "noun4") ||
+	        !strcmp(label_word, "objects") ||
+	        validate(label_word)) {
+		sprintf(error_buffer, ILLEGAL_LABEL, line, label_word);
 		log_error(error_buffer, PLUS_STDERR);
 
 		return (TRUE);
 	}
 
 	if (type == CSTR_TYPE) {
-		if (!strcmp(word, "command_prompt")) {
-			sprintf(error_buffer, USED_LABEL_STR, line, word);
+		if (!strcmp(label_word, "command_prompt")) {
+			sprintf(error_buffer, USED_LABEL_STR, line, label_word);
 			log_error(error_buffer, PLUS_STDERR);
 
 			return (TRUE);
@@ -1178,8 +1170,8 @@ int legal_label_check(char *word, int line, int type) {
 	}
 
 	while (integer_pointer != NULL && type != INT_TYPE) {
-		if (!strcmp(word, integer_pointer->name)) {
-			sprintf(error_buffer, USED_LABEL_INT, line, word);
+		if (!strcmp(label_word, integer_pointer->name)) {
+			sprintf(error_buffer, USED_LABEL_INT, line, label_word);
 			log_error(error_buffer, PLUS_STDERR);
 
 			return (TRUE);
@@ -1189,8 +1181,8 @@ int legal_label_check(char *word, int line, int type) {
 
 
 	while (cinteger_pointer != NULL && type != CINT_TYPE) {
-		if (!strcmp(word, cinteger_pointer->name)) {
-			sprintf(error_buffer, USED_LABEL_CINT, line, word);
+		if (!strcmp(label_word, cinteger_pointer->name)) {
+			sprintf(error_buffer, USED_LABEL_CINT, line, label_word);
 			log_error(error_buffer, PLUS_STDERR);
 
 			return (TRUE);
@@ -1199,8 +1191,8 @@ int legal_label_check(char *word, int line, int type) {
 	}
 
 	while (string_pointer != NULL && type != STR_TYPE) {
-		if (!strcmp(word, string_pointer->name)) {
-			sprintf(error_buffer, USED_LABEL_STR, line, word);
+		if (!strcmp(label_word, string_pointer->name)) {
+			sprintf(error_buffer, USED_LABEL_STR, line, label_word);
 			log_error(error_buffer, PLUS_STDERR);
 
 			return (TRUE);
@@ -1209,8 +1201,8 @@ int legal_label_check(char *word, int line, int type) {
 	}
 
 	while (cstring_pointer != NULL && type != CSTR_TYPE) {
-		if (!strcmp(word, cstring_pointer->name)) {
-			sprintf(error_buffer, USED_LABEL_CSTR, line, word);
+		if (!strcmp(label_word, cstring_pointer->name)) {
+			sprintf(error_buffer, USED_LABEL_CSTR, line, label_word);
 			log_error(error_buffer, PLUS_STDERR);
 
 			return (TRUE);
@@ -1220,8 +1212,8 @@ int legal_label_check(char *word, int line, int type) {
 
 	/* DON'T CHECK FOR ATT_TYPE AS YOU CAN'T HAVE ATTRIBUTE ARRAYS. */
 	while (attribute_pointer != NULL) {
-		if (!strcmp(word, attribute_pointer->name)) {
-			sprintf(error_buffer, USED_LABEL_ATT, line, word);
+		if (!strcmp(label_word, attribute_pointer->name)) {
+			sprintf(error_buffer, USED_LABEL_ATT, line, label_word);
 			write_text(error_buffer);
 
 			return (TRUE);
@@ -1230,9 +1222,9 @@ int legal_label_check(char *word, int line, int type) {
 	}
 
 	for (index = 1; index <= objects; index++) {
-		if (!strcmp(word, object[index]->label)) {
+		if (!strcmp(label_word, object[index]->label)) {
 			sprintf(error_buffer, USED_LABEL_OBJ,
-			        line, word);
+			        line, label_word);
 			log_error(error_buffer, PLUS_STDERR);
 
 			return (TRUE);
@@ -1245,7 +1237,7 @@ int legal_label_check(char *word, int line, int type) {
 void restart_game() {
 	int             index;
 
-	struct integer_type *current_integer;
+	struct integer_type *curr_integer;
 	struct integer_type *previous_integer;
 	struct synonym_type *current_synonym;
 	struct synonym_type *previous_synonym;
@@ -1253,7 +1245,7 @@ void restart_game() {
 	struct name_type *next_name;
 	struct function_type *current_function;
 	struct function_type *previous_function;
-	struct string_type *current_string;
+	struct string_type *curr_string;
 	struct string_type *previous_string;
 	struct attribute_type *current_attribute;
 	struct attribute_type *previous_attribute;
@@ -1293,13 +1285,13 @@ void restart_game() {
 	if (integer_table != NULL) {
 		if (integer_table->next_integer != NULL) {
 			do {
-				current_integer = integer_table;
+				curr_integer = integer_table;
 				previous_integer = integer_table;
-				while (current_integer->next_integer != NULL) {
-					previous_integer = current_integer;
-					current_integer = current_integer->next_integer;
+				while (curr_integer->next_integer != NULL) {
+					previous_integer = curr_integer;
+					curr_integer = curr_integer->next_integer;
 				}
-				free(current_integer);
+				free(curr_integer);
 				previous_integer->next_integer = NULL;
 			} while (previous_integer != integer_table);
 		}
@@ -1350,13 +1342,13 @@ void restart_game() {
 	if (string_table != NULL) {
 		if (string_table->next_string != NULL) {
 			do {
-				current_string = string_table;
+				curr_string = string_table;
 				previous_string = string_table;
-				while (current_string->next_string != NULL) {
-					previous_string = current_string;
-					current_string = current_string->next_string;
+				while (curr_string->next_string != NULL) {
+					previous_string = curr_string;
+					curr_string = curr_string->next_string;
 				}
-				free(current_string);
+				free(curr_string);
 				previous_string->next_string = NULL;
 			} while (previous_string != string_table);
 		}
@@ -1406,13 +1398,13 @@ void restart_game() {
 	if (cstring_table != NULL) {
 		if (cstring_table->next_string != NULL) {
 			do {
-				current_string = cstring_table;
+				curr_string = cstring_table;
 				previous_string = cstring_table;
-				while (current_string->next_string != NULL) {
-					previous_string = current_string;
-					current_string = current_string->next_string;
+				while (curr_string->next_string != NULL) {
+					previous_string = curr_string;
+					curr_string = curr_string->next_string;
 				}
-				free(current_string);
+				free(curr_string);
 				previous_string->next_string = NULL;
 			} while (previous_string != cstring_table);
 		}
@@ -1461,7 +1453,7 @@ void set_defaults() {
 	him = 0;
 }
 
-void create_cinteger(char *name, int value) {
+void create_cinteger(const char *name, int value) {
 	struct cinteger_type *new_cinteger = NULL;
 
 	if ((new_cinteger = (struct cinteger_type *)
@@ -1482,7 +1474,7 @@ void create_cinteger(char *name, int value) {
 	}
 }
 
-void create_integer(char *name, int value) {
+void create_integer(const char *name, int value) {
 	struct integer_type *new_integer = NULL;
 
 	if ((new_integer = (struct integer_type *)
@@ -1506,7 +1498,7 @@ void create_integer(char *name, int value) {
 	}
 }
 
-void create_string(char *name, char *value) {
+void create_string(const char *name, const char *value) {
 	struct string_type *new_string = NULL;
 
 	if ((new_string = (struct string_type *)
@@ -1539,7 +1531,7 @@ void create_string(char *name, char *value) {
 	}
 }
 
-void create_cstring(char *name, char *value) {
+void create_cstring(const char *name, const char *value) {
 	struct string_type *new_string = NULL;
 
 	if ((new_string = (struct string_type *)

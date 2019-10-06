@@ -30,7 +30,6 @@
 namespace Glk {
 namespace JACL {
 
-#ifdef WIN32
 struct flock {
 	short l_type;
 	short l_whence;
@@ -55,10 +54,9 @@ struct flock {
 int fcntl(int __fd, int __cmd, ...) {
 	return 0;
 }
-#endif /* WIN32 */
 
 #ifndef strcasestr
-char *strcasestr(const char *s, const char *find) {
+const char *strcasestr(const char *s, const char *find) {
 	char c, sc;
 	size_t len;
 
@@ -73,28 +71,28 @@ char *strcasestr(const char *s, const char *find) {
 		} while (scumm_strnicmp(s, find, len) != 0);
 		s--;
 	}
-	return ((char *)s);
+	return s;
 }
 #endif
 
 #define MAX_TRY 10
 
-struct flock    read_lck;
+flock           read_lck;
 int             read_fd;
-struct flock    write_lck;
+flock           write_lck;
 int             write_fd;
 
 char *url_encode(char *str);
 char to_hex(char code);
 
-char *location_attributes[] = {
+const char *location_attributes[] = {
 	"VISITED ", "DARK ", "ON_WATER ", "UNDER_WATER ", "WITHOUT_AIR ", "OUTDOORS ",
 	"MID_AIR ", "TIGHT_ROPE ", "POLLUTED ", "SOLVED ", "MID_WATER ", "DARKNESS ",
 	"MAPPED ", "KNOWN ",
 	NULL
 };
 
-char *object_attributes[] = {
+const char *object_attributes[] = {
 	"CLOSED ", "LOCKED ", "DEAD ", "IGNITABLE ", "WORN ", "CONCEALING ",
 	"LUMINOUS ", "WEARABLE ", "CLOSABLE ", "LOCKABLE ", "ANIMATE ", "LIQUID ",
 	"CONTAINER ", "SURFACE ", "PLURAL ", "FLAMMABLE ", "BURNING ", "LOCATION ",
@@ -103,13 +101,13 @@ char *object_attributes[] = {
 	"NOT_IMPORTANT ", NULL
 };
 
-char *object_elements[] = {
+const char *object_elements[] = {
 	"parent", "capacity", "mass", "bearing", "velocity", "next", "previous",
 	"child", "index", "status", "state", "counter", "points", "class", "x", "y",
 	NULL
 };
 
-char *location_elements[] = {
+const char *location_elements[] = {
 	"north", "south", "east", "west", "northeast", "northwest", "southeast",
 	"southwest", "up", "down", "in", "out", "points", "class", "x", "y",
 	NULL
@@ -211,13 +209,13 @@ extern char                     user_id[];
 extern char                     prefix[];
 extern char                     text_buffer[];
 extern char                     chunk_buffer[];
-extern char                     *word[];
+extern const char               *word[];
 
 extern char                     bookmark[];
 extern char                     file_prompt[];
 
 /* CONTAINED IN PARSER.C */
-extern int                      object_list[4][MAX_WORDS];
+extern int                      object_list[4][MAX_OBJECTS];
 extern int                      list_size[];
 extern int                      max_size[];
 
@@ -244,7 +242,7 @@ extern char                     error_buffer[];
 extern char                     proxy_buffer[];
 
 extern char                     default_function[];
-extern char                     override[];
+extern char                     override_[];
 
 extern int                      noun[];
 extern int                      wp;
@@ -268,7 +266,7 @@ extern char                     margin_string[];
 char                            integer_buffer[16];
 char                            called_name[1024];
 char                            scope_criterion[24];
-char                            *output;
+const char                      *output;
 
 void terminate(int code) {
 	// FREE ANY EXTRA RAM ALLOCATED BY THE CSV PARSER
@@ -325,7 +323,7 @@ void build_proxy() {
 void cb1(void *s, size_t i, void *not_used) {
 	struct string_type *resolved_cstring;
 
-	//sprintf (temp_buffer, "Trying to set field %d to equal %s^", field_no, (char *) s);
+	//sprintf (temp_buffer, "Trying to set field %d to equal %s^", field_no, (const char *) s);
 	//write_text(temp_buffer);
 
 	sprintf(temp_buffer, "field[%d]", field_no);
@@ -336,7 +334,7 @@ void cb1(void *s, size_t i, void *not_used) {
 		//write_text("^");
 		strncpy(resolved_cstring->value, (const char *)s, i);
 		resolved_cstring->value[i] = 0;
-		//sprintf(temp_buffer, "Setting field %d to ~%s~^", field_no, (char *) s);
+		//sprintf(temp_buffer, "Setting field %d to ~%s~^", field_no, (const char *) s);
 		//write_text(temp_buffer);
 		// INCREMENT THE FIELD NUMBER SO THE NEXT ONE GETS STORED IN THE RIGHT CONSTANT
 		field_no++;
@@ -357,7 +355,7 @@ void cb2(int c, void *not_used) {
 	}
 }
 
-int execute(char *funcname) {
+int execute(const char *funcname) {
 	int             index;
 	int             counter;
 	int            *container;
@@ -373,7 +371,6 @@ int execute(char *funcname) {
 	/* THESE ARE USED AS FILE POINTER OFFSETS TO RETURN TO FIXED
 	 * POINTS IN THE GAME FILE */
 #ifdef GLK
-	int             result;
 	int         before_command = 0;
 #else
 	long            before_command = 0;
@@ -421,7 +418,7 @@ int execute(char *funcname) {
 #ifdef GLK
 	g_vm->glk_stream_set_position(game_stream, executing_function->position, seekmode_Start);
 	before_command = executing_function->position;
-	result = glk_get_bin_line_stream(game_stream, text_buffer, (glui32) 1024);
+	//result = glk_get_bin_line_stream(game_stream, text_buffer, (glui32) 1024);
 #else
 	fseek(file, executing_function->position, SEEK_SET);
 	before_command = executing_function->position;
@@ -602,7 +599,7 @@ int execute(char *funcname) {
 				}
 
 				if (infile == NULL) {
-					sprintf(error_buffer, "Failed to open file %s: %s\n", temp_buffer, strerror(errno));
+					sprintf(error_buffer, "Failed to open file %s\n", temp_buffer);
 					log_error(error_buffer, LOG_ONLY);
 					infile = NULL;
 				} else {
@@ -684,7 +681,7 @@ int execute(char *funcname) {
 				}
 
 				if (infile == NULL) {
-					sprintf(error_buffer, "Failed to open input CSV file ~%s~: %s\n", in_name, strerror(errno));
+					sprintf(error_buffer, "Failed to open input CSV file ~%s\n", in_name);
 					log_error(error_buffer, LOG_ONLY);
 					if (outfile != NULL) {
 						delete outfile;
@@ -693,7 +690,7 @@ int execute(char *funcname) {
 					return (exit_function(TRUE));
 				} else {
 					if (outfile == NULL) {
-						sprintf(error_buffer, "Failed to open output CSV file ~%s~: %s\n", out_name, strerror(errno));
+						sprintf(error_buffer, "Failed to open output CSV file ~%s~\n", out_name);
 						log_error(error_buffer, LOG_ONLY);
 						if (infile != NULL) {
 							delete infile;
@@ -1608,7 +1605,7 @@ int execute(char *funcname) {
 				 * TO EXECUTE IN PLACE OF ANY CODE THAT FOLLOWS THIS LINE.
 				 * THIS COMMAND IS USED EXCLUSIVELY IN GLOBAL FUNCTIONS
 				 * ASSOCIATED WITH GRAMMAR LINES */
-				if (execute(override) == TRUE) {
+				if (execute(override_) == TRUE) {
 					return (exit_function(TRUE));
 				} else {
 					if (execute(default_function) == TRUE) {
@@ -2198,7 +2195,7 @@ int execute(char *funcname) {
 					outfile = File::openForWriting(temp_buffer);
 
 					if (outfile == NULL) {
-						sprintf(error_buffer, "Failed to open file %s: %s\n", temp_buffer, strerror(errno));
+						sprintf(error_buffer, "Failed to open file %s\n", temp_buffer);
 						log_error(error_buffer, PLUS_STDOUT);
 					} else {
 						for (counter = 2; word[counter] != NULL && counter < MAX_WORDS; counter++) {
@@ -2546,7 +2543,7 @@ int bearing(double x1, double y1, double x2, double y2) {
 	return ((int) bearing);
 }
 
-void set_arguments(char *function_call) {
+void set_arguments(const char *function_call) {
 	/* THIS FUNCTION CREATES AN ARRAY OF JACL INTEGER CONSTANTS TO
 	   REPRESENT THE ARGUMENTS PASSED TO A JACL FUNCTION */
 	int             index,
@@ -2670,7 +2667,7 @@ void pop_stack() {
 
 	/* RESTORE THE STORED FUNCTION NAMES THAT ARE USED WHEN AN
 	 * 'override' COMMAND IS ENCOUNTERED IN THE CURRENT FUNCTION */
-	strncpy(override, backup[stack].override, 80);
+	strncpy(override_, backup[stack]._override, 80);
 	strncpy(default_function, backup[stack].default_function, 80);
 
 	/* RESTORE ALL THE WORD POINTERS */
@@ -2753,7 +2750,7 @@ void push_stack(int32 file_pointer) {
 
 		/* COPY THE STORED FUNCTION NAMES THAT ARE USED WHEN AN
 		 * 'override' COMMAND IS ENCOUNTERED IN THE CURRENT FUNCTION */
-		strncpy(backup[stack].override, override, 80);
+		strncpy(backup[stack]._override, override_, 80);
 		strncpy(backup[stack].default_function, default_function, 80);
 
 		/* PUSH ALL THE WORD POINTERS ONTO THE STACK */
@@ -3091,8 +3088,8 @@ int and_strcondition() {
 }
 
 int str_test(int first) {
-	char  *index;
-	char  *compare;
+	const char  *index;
+	const char  *compare;
 
 	// GET THE TWO STRING VALUES TO COMPARE
 
@@ -3150,7 +3147,7 @@ int str_test(int first) {
 	}
 }
 
-void add_cinteger(char *name, int value) {
+void add_cinteger(const char *name, int value) {
 	/* THIS FUNCTION ADDS A NEW JACL CONSTANT TO THE LIST */
 
 	if ((new_cinteger = (struct cinteger_type *)
@@ -3174,7 +3171,7 @@ void add_cinteger(char *name, int value) {
 	}
 }
 
-void clear_cinteger(char *name) {
+void clear_cinteger(const char *name) {
 	/* FREE CONSTANTS THAT HAVE SUPPLIED NAME*/
 
 	//printf("--- clear integer %s\n", name);
@@ -3208,7 +3205,7 @@ void clear_cinteger(char *name) {
 	//printf("--- leaving clear integer\n");
 }
 
-void add_cstring(char *name, char *value) {
+void add_cstring(const char *name, const char *value) {
 	/* ADD A STRING CONSTANT WITH THE SUPPLIED NAME AND VALUE */
 
 	if ((new_string = (struct string_type *)
@@ -3233,7 +3230,7 @@ void add_cstring(char *name, char *value) {
 	}
 }
 
-void clear_cstring(char *name) {
+void clear_cstring(const char *name) {
 	/* FREE CONSTANTS THAT HAVE SUPPLIED NAME*/
 	if (cstring_table != NULL) {
 		current_cstring = cstring_table;

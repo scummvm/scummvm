@@ -27,6 +27,8 @@ namespace Glk {
 namespace JACL {
 
 JACL *g_vm;
+extern strid_t game_stream;
+extern void glk_main();
 
 JACL::JACL(OSystem *syst, const GlkGameDescription &gameDesc) : GlkAPI(syst, gameDesc),
 	_saveSlot(-1) {
@@ -37,6 +39,10 @@ void JACL::runGame() {
 	// Check for savegame
 	_saveSlot = ConfMan.hasKey("save_slot") ? ConfMan.getInt("save_slot") : -1;
 
+	// Open up the game file as a stream, and play the game
+	game_stream = _streams->openStream(&_gameFile);
+	glk_main();
+	glk_stream_close(game_stream);
 }
 
 bool JACL::initialize() {

@@ -57,10 +57,10 @@ struct stack_type {
 	char            str_arguments[MAX_WORDS][256];
 	char            text_buffer[1024];
 	char            called_name[1024];
-	char            override[84];
+	char            _override[84];
 	char            scope_criterion[24];
 	char            default_function[84];
-	char            *word[MAX_WORDS];
+	const char      *word[MAX_WORDS];
 	int             quoted[MAX_WORDS];
 	int             wp;
 	int             argcount;

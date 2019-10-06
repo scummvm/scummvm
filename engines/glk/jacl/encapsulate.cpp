@@ -34,9 +34,9 @@ char            text_buffer[1024];
 
 /* THIS IS A STRING CONSTANT TO POINT TO WHENEVER A COMMA IS
  * USED IN THE PLAYER'S INPUT */
-char           *comma = "comma\0";
-char           *then = "then\0";
-char           *word[MAX_WORDS];
+const char     *comma = "comma\0";
+const char     *then = "then\0";
+const char     *word[MAX_WORDS];
 int             quoted[MAX_WORDS];
 int             percented[MAX_WORDS];
 int             wp;

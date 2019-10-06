@@ -77,7 +77,7 @@ char                            *expected_scope[3];
 int                             from_objects[MAX_OBJECTS];
 
 int                             after_from;
-char                            *from_word;
+const char                      *from_word;
 
 int                             object_expected = FALSE;
 
@@ -93,8 +93,8 @@ extern char                     text_buffer[];
 extern char                     function_name[];
 extern char                     temp_buffer[];
 extern char                     error_buffer[];
-extern char                     override[];
-extern char                     *word[];
+extern char                     override_[];
+extern const char               *word[];
 
 extern int                      quoted[];
 
@@ -194,7 +194,7 @@ void parser() {
 			}
 
 			// STORE THE EXPECTED SCOPE FOR LATER CHECKING
-			expected_scope[current_noun] = (char *) &matched_word->word;
+			expected_scope[current_noun] = (char *)&matched_word->word;
 			//printf("--- expected scope for noun%d is %s\n", current_noun, expected_scope[current_noun]);
 
 			// THE NEXT MATCH OR GROUP OF MATCHES SHOULD BE IN THE SECOND
@@ -377,7 +377,7 @@ int first_available(int list_number) {
 	return (0);
 }
 
-void call_functions(char *base_name) {
+void call_functions(const char *base_name) {
 	/* THIS FUNCTION CALLS ALL THE APPROPRIATE JACL FUNCTIONS TO RESPOND
 	 * TO A PLAYER'S COMMAND GIVEN A BASE FUNCTION NAME AND THE CURRENT
 	 * VALUE OF noun1 AND noun2 */
@@ -389,7 +389,7 @@ void call_functions(char *base_name) {
 	strncpy(base_function, base_name + 1, 80);
 	strcat(base_function, "_");
 
-	strncpy(override, base_function, 80);
+	strncpy(override_, base_function, 80);
 
 	strcpy(before_function, "+before_");
 	strcat(before_function, base_name + 1);
@@ -439,8 +439,8 @@ void call_functions(char *base_name) {
 
 			/* PREPARE THE OVERRIDE FUNCTION NAME IN CASE IT
 			 * IS NEEDED */
-			strcat(override, "override_");
-			strcat(override, object[HERE]->label);
+			strcat(override_, "override_");
+			strcat(override_, object[HERE]->label);
 
 			/* CREATE THE FUNCTION NAME '+func' */
 			strcpy(base_function, "+");
@@ -465,8 +465,8 @@ void call_functions(char *base_name) {
 
 			/* PREPARE THE OVERRIDE FUNCTION NAME IN CASE IT
 			 * IS NEEDED */
-			strcat(override, "override_");
-			strcat(override, object[noun[0]]->label);
+			strcat(override_, "override_");
+			strcat(override_, object[noun[0]]->label);
 
 			/* CREATE THE FUNCTION NAME '+func' */
 			strcpy(base_function, "+");
@@ -495,9 +495,9 @@ void call_functions(char *base_name) {
 
 			/* PREPARE THE OVERRIDE FUNCTION NAME IN CASE IT
 			 * IS NEEDED */
-			strcat(override, object[noun[1]]->label);
-			strcat(override, "_override_");
-			strcat(override, object[noun[0]]->label);
+			strcat(override_, object[noun[1]]->label);
+			strcat(override_, "_override_");
+			strcat(override_, object[noun[0]]->label);
 
 			/* CREATE THE FUNCTION NAME '+func' */
 			strcpy(base_function, "+");
@@ -638,7 +638,7 @@ int build_object_list(struct word_type *scope_word, int noun_number) {
 
 	int             index, counter;
 	int             resolved_object;
-	char            *except_word;
+	const char      *except_word;
 
 	//printf("--- entering build object list starting at %s with a scope_word of %s\n", word[wp], scope_word->word);
 	/* LOOK AHEAD FOR A FROM CLAUSE AND STORE from_object IF SO */
@@ -835,10 +835,9 @@ void set_them(int noun_number) {
 }
 
 void add_all(struct word_type *scope_word, int noun_number) {
-	int index, counter;
+	int index;
 
 	//printf("--- trying to add all\n");
-	counter = 0;
 
 	for (index = 1; index <= objects; index++) {
 		if ((object[index]->MASS < HEAVY) &&
@@ -1744,7 +1743,7 @@ void diagnose() {
 	TIME->value = FALSE;
 }
 
-int scope(int index, char *expected, int restricted) {
+int scope(int index, const char *expected, int restricted) {
 	/* THIS FUNCTION DETERMINES IF THE SPECIFIED OBJECT IS IN THE SPECIFIED
 	 * SCOPE - IT RETURNS TRUE IF SO, FALSE IF NOT. */
 
@@ -1860,7 +1859,7 @@ int find_parent(int index) {
 	}
 }
 
-int parent_of(int parent, int child, int restricted) {
+int parent_of(int parent_, int child, int restricted) {
 	/* THIS FUNCTION WILL CLIMB THE OBJECT TREE STARTING AT 'CHILD' UNTIL
 	 * 'PARENT' IS REACHED (RETURN TRUE), OR THE TOP OF THE TREE OR A CLOSED
 	 * OR CONCEALING OBJECT IS REACHED (RETURN FALSE). */
@@ -1871,33 +1870,33 @@ int parent_of(int parent, int child, int restricted) {
 
 	int             index;
 
-	//printf("--- parent is %s, child is %s\n", object[parent]->label, object[child]->label);
-	if (child == parent) {
+	//printf("--- parent_ is %s, child is %s\n", object[parent_]->label, object[child]->label);
+	if (child == parent_) {
 		return (TRUE);
 	} else if (!(object[child]->attributes & LOCATION) &&
 	           object[child]->PARENT != NOWHERE) {
 		/* STORE THE CHILDS PARENT OBJECT */
 		index = object[child]->PARENT;
-		//printf("--- %s is the parent of %s\n", object[index]->label, object[child]->label);
+		//printf("--- %s is the parent_ of %s\n", object[index]->label, object[child]->label);
 
 		if (index == child) {
 			/* THIS CHILD HAS IT'S PARENT SET TO ITSELF */
 			sprintf(error_buffer, SELF_REFERENCE, executing_function->name, object[index]->label);
 			log_error(error_buffer, PLUS_STDOUT);
-			//printf("--- self parent.\n");
+			//printf("--- self parent_.\n");
 			return (FALSE);
 		} else  if (!(object[index]->attributes & LOCATION)
 		            && ((object[index]->attributes & CLOSED && object[index]->attributes & CONTAINER)
 		                || object[index]->attributes & CONCEALING)) {
 			/* THE CHILDS PARENT IS CLOSED OR CONCEALING - CANT BE SEEN */
-			//printf("--- parent %s is closed\n", object[index]->label);
+			//printf("--- parent_ %s is closed\n", object[index]->label);
 			return (FALSE);
-		} else if (restricted && object[index]->MASS < HEAVY && index != parent) {
+		} else if (restricted && object[index]->MASS < HEAVY && index != parent_) {
 			//printf("--- scenery object.\n");
 			return (FALSE);
 		} else {
-			//printf("--- comparing %s with %s\n", object[index]->label, object[parent]->label);
-			if (index == parent) {
+			//printf("--- comparing %s with %s\n", object[index]->label, object[parent_]->label);
+			if (index == parent_) {
 				/* YES, IS PARENT OF CHILD */
 				return (TRUE);
 			} else if (object[index]->attributes & LOCATION) {
@@ -1905,7 +1904,7 @@ int parent_of(int parent, int child, int restricted) {
 			} else {
 				/* KEEP LOOKING UP THE TREE TILL THE CHILD HAS NO MORE
 				 * PARENTS */
-				return (parent_of(parent, index, restricted));
+				return (parent_of(parent_, index, restricted));
 			}
 		}
 	} else {
