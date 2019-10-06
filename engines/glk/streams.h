@@ -610,6 +610,16 @@ public:
 	FileStream *openFileStream(frefid_t fref, uint fmode, uint rock = 0, bool unicode = false);
 
 	/**
+	 * Open a ScummVM read stream
+	 */
+	IOStream *openStream(Common::SeekableReadStream *rs, uint rock = 0);
+
+	/**
+	 * Open a ScummVM write stream
+	 */
+	IOStream *openStream(Common::WriteStream *ws, uint rock = 0);
+
+	/**
 	 * Open a window stream
 	 */
 	WindowStream *openWindowStream(Window *window);

@@ -1361,6 +1361,18 @@ FileStream *Streams::openFileStream(frefid_t fref, uint fmode, uint rock, bool u
 	return stream;
 }
 
+IOStream *Streams::openStream(Common::SeekableReadStream *rs, uint rock) {
+	IOStream *stream = new IOStream(this, rs, rock);
+	addStream(stream);
+	return stream;
+}
+
+IOStream *Streams::openStream(Common::WriteStream *ws, uint rock) {
+	IOStream *stream = new IOStream(this, ws, rock);
+	addStream(stream);
+	return stream;
+}
+
 WindowStream *Streams::openWindowStream(Window *window) {
 	WindowStream *stream = new WindowStream(this, window);
 	addStream(stream);
