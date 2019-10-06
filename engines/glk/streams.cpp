@@ -775,60 +775,28 @@ uint MemoryStream::getLineUni(uint32 *ubuf, uint len) {
 
 /*--------------------------------------------------------------------------*/
 
-FileStream::FileStream(Streams *streams, frefid_t fref, uint fmode, uint rock, bool unicode) :
-	Stream(streams, fmode == filemode_Read, fmode != filemode_Read, rock, unicode),  _lastOp(0),
-	_textFile(fref->_textMode), _inFile(nullptr), _outFile(nullptr), _inStream(nullptr) {
-	Common::String fname = fref->_slotNumber == -1 ? fref->_filename : fref->getSaveName();
-
-	if (fmode == filemode_Write || fmode == filemode_ReadWrite || fmode == filemode_WriteAppend) {
-		_outFile = g_system->getSavefileManager()->openForSaving(fname, false);
-		if (!_outFile)
-			error("Could open file for writing - %s", fname.c_str());
-
-	} else if (fmode == filemode_Read) {
-		if (_file.open(fname)) {
-			_inStream = &_file;
-		} else {
-			_inFile = g_system->getSavefileManager()->openForLoading(fname);
-			_inStream = _inFile;
-		}
-
-		if (!_inStream)
-			error("Could not open for reading - %s", fname.c_str());
-	}
-}
-
-FileStream::~FileStream() {
-	_file.close();
-	delete _inFile;
-	if (_outFile) {
-		_outFile->finalize();
-		delete _outFile;
-	}
-}
-
-void FileStream::ensureOp(FileMode mode) {
+void IOStream::ensureOp(FileMode mode) {
 	// No implementation
 }
 
-void FileStream::putChar(unsigned char ch) {
+void IOStream::putChar(unsigned char ch) {
 	if (!_writable)
 		return;
 	++_writeCount;
 
 	ensureOp(filemode_Write);
 	if (!_unicode) {
-		_outFile->writeByte(ch);
+		_outStream->writeByte(ch);
 	} else if (_textFile) {
 		putCharUtf8((uint)ch);
 	} else {
-		_outFile->writeUint32BE(ch);
+		_outStream->writeUint32BE(ch);
 	}
 
-	_outFile->flush();
+	_outStream->flush();
 }
 
-void FileStream::putCharUni(uint32 ch) {
+void IOStream::putCharUni(uint32 ch) {
 	if (!_writable)
 		return;
 	++_writeCount;
@@ -837,17 +805,17 @@ void FileStream::putCharUni(uint32 ch) {
 	if (!_unicode) {
 		if (ch >= 0x100)
 			ch = '?';
-		_outFile->writeByte(ch);
+		_outStream->writeByte(ch);
 	} else if (_textFile) {
 		putCharUtf8(ch);
 	} else {
-		_outFile->writeUint32BE(ch);
+		_outStream->writeUint32BE(ch);
 	}
 
-	_outFile->flush();
+	_outStream->flush();
 }
 
-void FileStream::putBuffer(const char *buf, size_t len) {
+void IOStream::putBuffer(const char *buf, size_t len) {
 	if (!_writable)
 		return;
 	_writeCount += len;
@@ -856,18 +824,18 @@ void FileStream::putBuffer(const char *buf, size_t len) {
 	for (size_t lx = 0; lx < len; lx++) {
 		unsigned char ch = ((const unsigned char *)buf)[lx];
 		if (!_unicode) {
-			_outFile->writeByte(ch);
+			_outStream->writeByte(ch);
 		} else if (_textFile) {
 			putCharUtf8((uint)ch);
 		} else {
-			_outFile->writeUint32BE(ch);
+			_outStream->writeUint32BE(ch);
 		}
 	}
 
-	_outFile->flush();
+	_outStream->flush();
 }
 
-void FileStream::putBufferUni(const uint32 *buf, size_t len) {
+void IOStream::putBufferUni(const uint32 *buf, size_t len) {
 	if (!_writable)
 		return;
 	_writeCount += len;
@@ -879,38 +847,38 @@ void FileStream::putBufferUni(const uint32 *buf, size_t len) {
 		if (!_unicode) {
 			if (ch >= 0x100)
 				ch = '?';
-			_outFile->writeByte(ch);
+			_outStream->writeByte(ch);
 		} else if (_textFile) {
 			putCharUtf8(ch);
 		} else {
-			_outFile->writeUint32BE(ch);
+			_outStream->writeUint32BE(ch);
 		}
 	}
 
-	_outFile->flush();
+	_outStream->flush();
 }
 
-void FileStream::putCharUtf8(uint val) {
+void IOStream::putCharUtf8(uint val) {
 	if (val < 0x80) {
-		_outFile->writeByte(val);
+		_outStream->writeByte(val);
 	} else if (val < 0x800) {
-		_outFile->writeByte((0xC0 | ((val & 0x7C0) >> 6)));
-		_outFile->writeByte((0x80 | (val & 0x03F)));
+		_outStream->writeByte((0xC0 | ((val & 0x7C0) >> 6)));
+		_outStream->writeByte((0x80 | (val & 0x03F)));
 	} else if (val < 0x10000) {
-		_outFile->writeByte((0xE0 | ((val & 0xF000) >> 12)));
-		_outFile->writeByte((0x80 | ((val & 0x0FC0) >> 6)));
-		_outFile->writeByte((0x80 | (val & 0x003F)));
+		_outStream->writeByte((0xE0 | ((val & 0xF000) >> 12)));
+		_outStream->writeByte((0x80 | ((val & 0x0FC0) >> 6)));
+		_outStream->writeByte((0x80 | (val & 0x003F)));
 	} else if (val < 0x200000) {
-		_outFile->writeByte((0xF0 | ((val & 0x1C0000) >> 18)));
-		_outFile->writeByte((0x80 | ((val & 0x03F000) >> 12)));
-		_outFile->writeByte((0x80 | ((val & 0x000FC0) >> 6)));
-		_outFile->writeByte((0x80 | (val & 0x00003F)));
+		_outStream->writeByte((0xF0 | ((val & 0x1C0000) >> 18)));
+		_outStream->writeByte((0x80 | ((val & 0x03F000) >> 12)));
+		_outStream->writeByte((0x80 | ((val & 0x000FC0) >> 6)));
+		_outStream->writeByte((0x80 | (val & 0x00003F)));
 	} else {
-		_outFile->writeByte('?');
+		_outStream->writeByte('?');
 	}
 }
 
-int FileStream::getCharUtf8() {
+int IOStream::getCharUtf8() {
 	uint res;
 	uint val0, val1, val2, val3;
 
@@ -998,11 +966,11 @@ int FileStream::getCharUtf8() {
 	return '?';
 }
 
-uint FileStream::getPosition() const {
-	return _outFile ? _outFile->pos() : _inStream->pos();
+uint IOStream::getPosition() const {
+	return _outStream ? _outStream->pos() : _inStream->pos();
 }
 
-void FileStream::setPosition(int pos, uint seekMode) {
+void IOStream::setPosition(int pos, uint seekMode) {
 	_lastOp = 0;
 	if (_unicode)
 		pos *= 4;
@@ -1014,7 +982,7 @@ void FileStream::setPosition(int pos, uint seekMode) {
 	}
 }
 
-int FileStream::getChar() {
+int IOStream::getChar() {
 	if (!_readable)
 		return -1;
 
@@ -1054,7 +1022,7 @@ int FileStream::getChar() {
 	}
 }
 
-int FileStream::getCharUni() {
+int IOStream::getCharUni() {
 	if (!_readable)
 		return -1;
 
@@ -1092,7 +1060,7 @@ int FileStream::getCharUni() {
 	}
 }
 
-uint FileStream::getBuffer(char *buf, uint len) {
+uint IOStream::getBuffer(char *buf, uint len) {
 	ensureOp(filemode_Read);
 	if (!_unicode) {
 		uint res;
@@ -1142,7 +1110,7 @@ uint FileStream::getBuffer(char *buf, uint len) {
 	}
 }
 
-uint FileStream::getBufferUni(uint32 *buf, uint len) {
+uint IOStream::getBufferUni(uint32 *buf, uint len) {
 	if (!_readable)
 		return 0;
 
@@ -1199,7 +1167,7 @@ uint FileStream::getBufferUni(uint32 *buf, uint len) {
 	}
 }
 
-uint FileStream::getLine(char *buf, uint len) {
+uint IOStream::getLine(char *buf, uint len) {
 	uint lx;
 	bool gotNewline;
 
@@ -1269,7 +1237,7 @@ uint FileStream::getLine(char *buf, uint len) {
 	}
 }
 
-uint FileStream::getLineUni(uint32 *ubuf, uint len) {
+uint IOStream::getLineUni(uint32 *ubuf, uint len) {
 	bool gotNewline;
 	int lx;
 
@@ -1335,6 +1303,43 @@ uint FileStream::getLineUni(uint32 *ubuf, uint len) {
 		}
 		ubuf[lx] = '\0';
 		return lx;
+	}
+}
+
+/*--------------------------------------------------------------------------*/
+
+FileStream::FileStream(Streams *streams, frefid_t fref, uint fmode, uint rock, bool unicode) :
+		IOStream(streams, fmode == filemode_Read, fmode != filemode_Read, rock, unicode),
+		_inSave(nullptr), _outSave(nullptr) {
+	
+	_textFile = fref->_textMode;
+	Common::String fname = fref->_slotNumber == -1 ? fref->_filename : fref->getSaveName();
+
+	if (fmode == filemode_Write || fmode == filemode_ReadWrite || fmode == filemode_WriteAppend) {
+		_outSave = g_system->getSavefileManager()->openForSaving(fname, false);
+		if (!_outSave)
+			error("Could open file for writing - %s", fname.c_str());
+		setStream(_outSave);
+
+	} else if (fmode == filemode_Read) {
+		if (_file.open(fname)) {
+			setStream(&_file);
+		} else {
+			_inSave = g_system->getSavefileManager()->openForLoading(fname);
+			setStream(_inSave);
+
+			if (!_inSave)
+				error("Could not open for reading - %s", fname.c_str());
+		}
+	}
+}
+
+FileStream::~FileStream() {
+	_file.close();
+	delete _inSave;
+	if (_outSave) {
+		_outSave->finalize();
+		delete _outSave;
 	}
 }
 

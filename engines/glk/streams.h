@@ -432,16 +432,13 @@ public:
 };
 
 /**
- * Implements a file stream
+ * Base class for I/O streams
  */
-class FileStream : public Stream {
+class IOStream : public Stream {
 private:
-	Common::File _file;
-	Common::OutSaveFile *_outFile;
-	Common::InSaveFile *_inFile;
 	Common::SeekableReadStream *_inStream;
+	Common::WriteStream *_outStream;
 	uint _lastOp;                 ///< 0, filemode_Write, or filemode_Read
-	bool _textFile;
 private:
 	/**
 	 * Ensure the stream is ready for the given operation
@@ -457,16 +454,40 @@ private:
 	 * Get a UTF8 character
 	 */
 	int getCharUtf8();
+protected:
+	bool _textFile;
 public:
 	/**
 	 * Constructor
 	 */
-	FileStream(Streams *streams, frefid_t fref, uint fmode, uint rock, bool unicode);
+	IOStream(Streams *streams, bool readable, bool writable, uint rock, bool unicode) :
+		Stream(streams, readable, writable, rock, unicode) {}
+	IOStream(Streams *streams, uint rock = 0) : Stream(streams, false, false, rock, false),
+		_inStream(nullptr), _outStream(nullptr), _lastOp(0), _textFile(false) {}
+	IOStream(Streams *streams, Common::SeekableReadStream *inStream, uint rock = 0) :
+		Stream(streams, true, false, rock, false), _inStream(inStream), _outStream(nullptr), _lastOp(0), _textFile(false) {}
+	IOStream(Streams *streams, Common::WriteStream *outStream, uint rock = 0) :
+		Stream(streams, false, true, rock, false), _inStream(nullptr), _outStream(outStream), _lastOp(0), _textFile(false) {}
+	 
+	/**
+	 * Sets the stream to use
+	 */
+	void setStream(Common::SeekableReadStream *rs) {
+		_inStream = rs;
+		_outStream = nullptr;
+		_readable = true;
+		_writable = false;
+	}
 
 	/**
-	 * Destructor
+	 * Sets the stream to use
 	 */
-	virtual ~FileStream();
+	void setStream(Common::WriteStream *ws) {
+		_inStream = nullptr;
+		_outStream = ws;
+		_readable = false;
+		_writable = true;
+	}
 
 	/**
 	 * Write a character
@@ -525,12 +546,32 @@ public:
 	/**
 	 * Cast a stream to a ScummVM write stream
 	 */
-	virtual operator Common::WriteStream *() const override { return _outFile; }
+	virtual operator Common::WriteStream *() const override { return _outStream; }
 
 	/**
 	 * Cast a stream to a ScummVM read stream
 	 */
 	virtual operator Common::SeekableReadStream *() const override { return _inStream; }
+};
+
+/**
+ * Implements a file stream
+ */
+class FileStream : public IOStream {
+private:
+	Common::File _file;
+	Common::InSaveFile *_inSave;
+	Common::OutSaveFile *_outSave;
+public:
+	/**
+	 * Constructor
+	 */
+	FileStream(Streams *streams, frefid_t fref, uint fmode, uint rock, bool unicode);
+
+	/**
+	 * Destructor
+	 */
+	virtual ~FileStream();
 };
 
 /**
