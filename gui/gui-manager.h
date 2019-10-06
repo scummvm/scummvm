@@ -111,6 +111,8 @@ public:
 
 	bool _launched;
 
+	void redrawFull();
+
 protected:
 	enum RedrawStatus {
 		kRedrawDisabled = 0,

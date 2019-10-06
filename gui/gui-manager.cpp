@@ -209,6 +209,12 @@ bool GuiManager::loadNewTheme(Common::String id, ThemeEngine::GraphicsMode gfx, 
 	return true;
 }
 
+void GuiManager::redrawFull() {
+	_redrawStatus = kRedrawFull;
+	redraw();
+	_system->updateScreen();
+}
+
 void GuiManager::redraw() {
 	ThemeEngine::ShadingStyle shading;
 
