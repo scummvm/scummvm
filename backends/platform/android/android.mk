@@ -1,17 +1,18 @@
 # Android specific build targets
 
 # These must be incremented for each market upload
-ANDROID_VERSIONCODE = 35
+ANDROID_VERSIONCODE = 40
 
 # Historical version codes:
-# Scummvm 2.0.0: 30-34
+# ScummVM 2.1.0: 35-39 (armeabi, arm-v7a, arm64-v8a, x86, x86_64 respectively)
+# ScummVM 2.0.0: 30-34
 # ScummVM 1.9.0.1: 25-28
 # ScummVM 1.9.0: 19
 # ScummVM 1.8.1: 15
 
 ANDROID_TARGET_VERSION = 26
 
-# ndk-build will build the scummvm library in release mode by default unless:
+# ndk-build will build the ScummVM library in release mode by default unless:
 # - an Application.mk is provided in the jni folder with APP_OPTIM := debug
 # - or AndroidManifest.xml declares android:debuggable within its <application> tag
 NDK_BUILD = $(ANDROID_NDK)/ndk-build APP_ABI=$(ABI)
