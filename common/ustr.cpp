@@ -542,6 +542,9 @@ String convertUtf32ToUtf8(const U32String &u32str) {
 			// fallthrough
 		case 1:
 			buffer = (char)(ch | firstByteMark[bytesToWrite]) + buffer;
+			break;
+		default:
+			break;
 		}
 
 		str += buffer;
