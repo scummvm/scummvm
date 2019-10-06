@@ -120,6 +120,9 @@ void writeResource(PAKFile &out, const char *filename, ResTypes type, const void
 	case kEoBNpcData:
 		writeEoBNpcData(out, filename, (const EoBCharacterProvider *)provider);
 		break;
+
+	default:
+		break;
 	}
 }
 

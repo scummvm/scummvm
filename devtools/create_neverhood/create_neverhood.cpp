@@ -452,6 +452,8 @@ public:
 			add(MessageItem(0x100D, 0x42845B19));
 			add(MessageItem(0x4805, 4));
 			return true;
+		default:
+			break;
 		}
 		return false;
 	}
