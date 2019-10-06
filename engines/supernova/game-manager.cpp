@@ -278,7 +278,7 @@ void GameManager::processInput(Common::KeyState &state) {
 		_vm->setTextSpeed();
 		break;
 	case Common::KEYCODE_F5:
-		// load/save
+		_vm->openMainMenuDialog();
 		break;
 	case Common::KEYCODE_x:
 		if (state.flags & Common::KBD_ALT) {
