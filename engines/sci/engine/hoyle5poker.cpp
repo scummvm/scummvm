@@ -56,12 +56,30 @@ enum Hoyle5PokerData {
 	kStatusPlayer4 = 11,
 	// 12 - 16 seem to be unused?
 	kCurrentPlayer = 17,
-	kCurrentStage = 18	// Stage 1: Card changes, 2: Betting
+	kCurrentStage = 18,	// Stage 1: Card changes, 2: Betting
+	kCard0 = 19,
+	kSuit0 = 20,
+	kCard1 = 21,
+	kSuit1 = 22,
+	kCard2 = 23,
+	kSuit2 = 24,
+	kCard3 = 25,
+	kSuit3 = 26,
+	kCard4 = 27,
+	kSuit4 = 28,
 	// 19 - 28: current player's cards (number + suit)
 	// 29 - 38: next clockwise player's cards (number + suit)
 	// 39 - 48: next clockwise player's cards (number + suit)
 	// 49 - 58: next clockwise player's cards (number + suit)
-	// 59 - 67 seem to be unused?
+	// 59 - 60 seem to be unused?
+	// ---- Return values -----------------------------------
+	kWhatAmIResult = 61, // bitmask, 0 - 128, checked by PokerHand::whatAmI. Determines what kind of card each player has
+	kResult = 62,		 // 1 - 15, checked by localproc_3020
+	kDiscardCard0 = 63,	 // flag, checked by PokerHand::think
+	kDiscardCard1 = 64,	 // flag, checked by PokerHand::think
+	kDiscardCard2 = 65,	 // flag, checked by PokerHand::think
+	kDiscardCard3 = 66,	 // flag, checked by PokerHand::think
+	kDiscardCard4 = 67,	 // flag, checked by PokerHand::think
 	// 77 seems to be a bit array?
 };
 
@@ -105,6 +123,69 @@ void printPlayerCards(int player, SciArray *data) {
 }
 #endif
 
+// Checks the current player's hand, and returns its type using a bitmask
+int checkHand(SciArray *data) {
+	int cards[5] = {
+		data->getAsInt16(kCard0),
+		data->getAsInt16(kCard1),
+		data->getAsInt16(kCard2),
+		data->getAsInt16(kCard3),
+		data->getAsInt16(kCard4),
+	};
+
+	int suits[5] = {
+		data->getAsInt16(kSuit0),
+		data->getAsInt16(kSuit1),
+		data->getAsInt16(kSuit2),
+		data->getAsInt16(kSuit3),
+		data->getAsInt16(kSuit4),
+	};
+
+	Common::sort(cards, cards + 5, Common::Less<int>());
+
+	int lastCard = -1;
+	//int lastSuit = -1;
+	int pairs = 0;
+	int sameRank = 0;
+	int sameSuit = 0;
+	int orderedCards = 0;
+
+	for (int i = 0; i < 4; i++) {
+		if (cards[i] == cards[i + 1] && cards[i] != lastCard)
+			pairs++;
+		if (cards[i] == cards[i + 1])
+			sameRank++;
+		if (suits[i] == suits[i + 1])
+			sameSuit++;
+		if (cards[i] == cards[i + 1] - 1)
+			orderedCards++;
+
+		lastCard = cards[i];
+		//lastSuit = suits[i];
+	}
+
+	if (pairs == 1)
+		return 1;	// one pair
+	else if (pairs == 2)
+		return 2;	// two pairs
+	else if (sameRank == 3)
+		return 4;	// three of a kind
+	else if (orderedCards == 5 && sameSuit < 5)
+		return 128;	// straight
+	else if (sameSuit == 5)
+		return 16;	// flush
+	else if (cards[0] == cards[1] && cards[1] == cards[2] && cards[3] == cards[4])
+		return 32;	// full house
+	else if (sameRank == 4)
+		return 64;	// four of a kind
+	else if (orderedCards == 5 && sameSuit == 5)
+		return 0;	// straight flush	// TODO
+	else if (sameRank == 5)
+		return 256;	// five of a kind
+
+	return 0;	// high card
+}
+
 reg_t hoyle5PokerEngine(SciArray *data) {
 #if 0
 	debug("Player %d's turn", data->getAsInt16(kCurrentPlayer));
@@ -142,8 +223,19 @@ reg_t hoyle5PokerEngine(SciArray *data) {
 	}
 #endif
 
+	data->setFromInt16(kWhatAmIResult, checkHand(data));
+
+	// Dummy logic
+	Common::RandomSource &rng = g_sci->getRNG();
+	data->setFromInt16(kResult,        1 + (int)rng.getRandomNumber(14));
+	data->setFromInt16(kDiscardCard0,  (int)rng.getRandomBit());
+	data->setFromInt16(kDiscardCard1,  (int)rng.getRandomBit());
+	data->setFromInt16(kDiscardCard2,  (int)rng.getRandomBit());
+	data->setFromInt16(kDiscardCard3,  (int)rng.getRandomBit());
+	data->setFromInt16(kDiscardCard4,  (int)rng.getRandomBit());
+
 	warning("The Poker game logic has not been implemented yet");
-	return NULL_REG;	// Returning 0 is a DLL invocation error for the game scripts
+	return TRUE_REG;
 }
 #endif
 

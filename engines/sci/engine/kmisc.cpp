@@ -704,6 +704,9 @@ reg_t kWinDLL(EngineState *s, int argc, reg_t *argv) {
 
 	switch (operation) {
 	case 0:	// load DLL
+		if (dllName == "PENGIN16.DLL")
+			showScummVMDialog("The Poker logic is hardcoded in an external DLL, and is not implemented yet. There exists some dummy logic for now, where opponent actions are chosen randomly");
+
 		// This is originally a call to LoadLibrary() and to the Watcom function GetIndirectFunctionHandle
 		return make_reg(0, 1000);	// fake ID for loaded DLL, normally returned from Windows LoadLibrary()
 	case 1: // free DLL
