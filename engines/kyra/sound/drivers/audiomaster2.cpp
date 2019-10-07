@@ -662,7 +662,7 @@ void SoundResourceINST::loadSamples(Common::ReadStream *stream, uint32 size) {
 		instr->open();
 		_samplesResource = instr;
 	} else {
-		// This will come up quite often in EOB II. But never with intruments that are actually used. No need to bother the user with a warning here.
+		// This will come up quite often in EOB II. But never with instruments that are actually used. No need to bother the user with a warning here.
 		debugC(9, kDebugLevelSound, "SoundResourceINST::loadInstrument(): Samples resource '%s' not found for '%s'.", data, _name.c_str());
 		_samplesResource = 0;
 	}
