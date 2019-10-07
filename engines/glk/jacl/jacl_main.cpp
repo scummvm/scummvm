@@ -214,6 +214,7 @@ void glk_main() {
 		 * OPEN GLK WINDOW, OUTPUT THE ERROR MESSAGE AND EXIT */
 		log_error(error_buffer, FALSE);
 		terminate(200);
+		return;
 	}
 
 	// INTIALISE THE CSV PARSER
@@ -257,6 +258,7 @@ void glk_main() {
 	if (object[2] == NULL) {
 		log_error(CANT_RUN, PLUS_STDERR);
 		terminate(43);
+		return;
 	}
 
 	/* DUMMY RETRIEVE OF 'HERE' FOR TESTING OF GAME STATE */
@@ -265,7 +267,7 @@ void glk_main() {
 	eachturn();
 
 	/* TOP OF COMMAND LOOP */
-	do {
+	while (!g_vm->shouldQuit()) {
 		int gotline;
 		event_t ev;
 
@@ -423,8 +425,7 @@ void glk_main() {
 			command_encapsulate();
 			preparse();
 		}
-
-	} while (TRUE);
+	}
 }
 
 void preparse() {
@@ -477,6 +478,7 @@ void word_check() {
 				newline();
 				execute("+score");
 				terminate(0);
+				return;
 			} else {
 				write_text(cstring_resolve("RETURN_GAME")->value);
 			}

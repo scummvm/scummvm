@@ -74,15 +74,14 @@ int get_here() {
 	if (player < 1 || player > objects) {
 		badplrrun(player);
 		terminate(44);
+		return 0;
 	} else if (object[player]->PARENT < 1 || object[player]->PARENT > objects || object[player]->PARENT == player) {
 		badparrun();
 		terminate(44);
+		return 0;
 	} else {
 		return (object[player]->PARENT);
 	}
-
-	/* SHOULDN'T GET HERE, JUST TRYING TO KEEP VisualC++ HAPPY */
-	return 1;
 }
 
 char *strip_return(char *string) {

@@ -319,6 +319,7 @@ void read_gamefile() {
 					if (objects == MAX_OBJECTS) {
 						log_error(MAXIMUM_EXCEEDED, PLUS_STDERR);
 						terminate(47);
+						return;
 					} else {
 						if ((object[objects] = (struct object_type *)
 						                       malloc(sizeof(struct object_type))) == NULL)
@@ -614,6 +615,7 @@ void read_gamefile() {
 	if (errors) {
 		totalerrs(errors);
 		terminate(48);
+		return;
 	}
 
 	/*************************************************************************
@@ -995,6 +997,7 @@ void read_gamefile() {
 	if (errors) {
 		totalerrs(errors);
 		terminate(48);
+		return;
 	}
 }
 

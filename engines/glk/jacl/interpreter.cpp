@@ -363,6 +363,9 @@ int execute(const char *funcname) {
 	int             object_1,
 	                object_2;
 
+	if (g_vm->shouldQuit())
+		return 0;
+
 	/* THESE VARIABLE KEEP TRACK OF if AND endif COMMANDS TO DECIDE WHETHER
 	 *THE CURRENT LINE OF CODE SHOULD BE EXECUTED OR NOT */
 	int             currentLevel = 0;
@@ -389,6 +392,8 @@ int execute(const char *funcname) {
 
 #ifdef GLK
 	push_stack(g_vm->glk_stream_get_position(game_stream));
+	if (g_vm->shouldQuit())
+		return FALSE;
 #else
 	push_stack(ftell(file));
 #endif
@@ -1163,6 +1168,7 @@ int execute(const char *funcname) {
 				}
 			} else if (!strcmp(word[0], "terminate")) {
 				terminate(0);
+				return 0;
 			} else if (!strcmp(word[0], "more")) {
 				if (word[1] == NULL) {
 					more("[MORE]");
@@ -1295,6 +1301,7 @@ int execute(const char *funcname) {
 				clrscrn();
 			} else if (!strcmp(word[0], "terminate")) {
 				terminate(0);
+				return;
 			} else if (!strcmp(word[0], "more")) {
 				if (word[1] == NULL) {
 					more("[MORE]");
@@ -2355,6 +2362,9 @@ int execute(const char *funcname) {
 		}
 
 #ifdef GLK
+		if (g_vm->shouldQuit())
+			return 0;
+
 		before_command = g_vm->glk_stream_get_position(game_stream);
 		glk_get_bin_line_stream(game_stream, text_buffer, (glui32) 1024);
 #else
@@ -2716,6 +2726,7 @@ void push_stack(int32 file_pointer) {
 	if (stack == STACK_SIZE) {
 		log_error("Stack overflow.", PLUS_STDERR);
 		terminate(45);
+		return;
 	} else {
 		backup[stack].infile = infile;
 		infile = NULL;
@@ -2851,6 +2862,7 @@ void push_proxy() {
 	if (proxy_stack == STACK_SIZE) {
 		log_error("Stack overflow.", PLUS_STDERR);
 		terminate(45);
+		return;
 	} else {
 		proxy_backup[proxy_stack].start_of_this_command = start_of_this_command;
 		proxy_backup[proxy_stack].start_of_last_command = start_of_last_command;

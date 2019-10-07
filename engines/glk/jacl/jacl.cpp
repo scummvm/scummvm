@@ -42,7 +42,6 @@ void JACL::runGame() {
 	// Open up the game file as a stream, and play the game
 	game_stream = _streams->openStream(&_gameFile);
 	glk_main();
-	glk_stream_close(game_stream);
 }
 
 bool JACL::initialize() {
