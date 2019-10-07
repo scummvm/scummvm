@@ -423,7 +423,7 @@ int execute(const char *funcname) {
 #ifdef GLK
 	g_vm->glk_stream_set_position(game_stream, executing_function->position, seekmode_Start);
 	before_command = executing_function->position;
-	//result = glk_get_bin_line_stream(game_stream, text_buffer, (glui32) 1024);
+	(void)glk_get_bin_line_stream(game_stream, text_buffer, (glui32) 1024);
 #else
 	fseek(file, executing_function->position, SEEK_SET);
 	before_command = executing_function->position;
