@@ -165,23 +165,23 @@ int checkHand(SciArray *data) {
 	}
 
 	if (pairs == 1)
-		return 1;	// one pair
+		return 1 << 0;	// 1, one pair
 	else if (pairs == 2)
-		return 2;	// two pairs
+		return 1 << 1;	// 2, two pairs
 	else if (sameRank == 3)
-		return 4;	// three of a kind
+		return 1 << 2;	// 4, three of a kind
 	else if (orderedCards == 5 && sameSuit < 5)
-		return 128;	// straight
+		return 1 << 7;	// 128, straight
 	else if (sameSuit == 5)
-		return 16;	// flush
+		return 1 << 4;	// 16, flush
 	else if (cards[0] == cards[1] && cards[1] == cards[2] && cards[3] == cards[4])
-		return 32;	// full house
+		return 1 << 5;	// 32, full house
 	else if (sameRank == 4)
-		return 64;	// four of a kind
+		return 1 << 6;	// 64, four of a kind
 	else if (orderedCards == 5 && sameSuit == 5)
 		return 0;	// straight flush	// TODO
 	else if (sameRank == 5)
-		return 256;	// five of a kind
+		return 1 << 8;	// 256, five of a kind
 
 	return 0;	// high card
 }
