@@ -52,38 +52,25 @@ extern int                      parent;
 
 extern int                      noun[];
 
-int save_game(frefid_t saveref) {
-	struct integer_type *current_integer = integer_table;
-	struct function_type *current_function = function_table;
-	struct string_type *current_string = string_table;
+bool save_game(strid_t save) {
+	integer_type *current_integer = integer_table;
+	function_type *current_function = function_table;
+	string_type *current_string = string_table;
+	int index, counter;
 
-	int             index, counter;
-	strid_t         bookmark = NULL;
-
-	bookmark = g_vm->glk_stream_open_file(saveref, filemode_Write, 0);
-
-	if (bookmark == NULL) {
-		return (FALSE);
-	}
-
-	/* WE'RE DONE WITH THE FILE REFERENCE NOW THAT THE STREAM
-	 * HAS BEEN SUCCESSFULLY OPENED */
-	g_vm->glk_fileref_destroy(saveref);
-
-	/* THIS IS WRITTEN TO HELP VALIDATE THE SAVED GAME
-	 * BEFORE CONTINUING TO LOAD IT */
-	write_integer(bookmark, objects);
-	write_integer(bookmark, integers);
-	write_integer(bookmark, functions);
-	write_integer(bookmark, strings);
+	// This is written to help validate the saved game when it's loaded
+	write_integer(save, objects);
+	write_integer(save, integers);
+	write_integer(save, functions);
+	write_integer(save, strings);
 
 	while (current_integer != NULL) {
-		write_integer(bookmark, current_integer->value);
+		write_integer(save, current_integer->value);
 		current_integer = current_integer->next_integer;
 	}
 
 	while (current_function != NULL) {
-		write_integer(bookmark, current_function->call_count);
+		write_integer(save, current_function->call_count);
 		current_function = current_function->next_function;
 	}
 
@@ -92,68 +79,50 @@ int save_game(frefid_t saveref) {
 			continue;
 
 		for (counter = 0; counter < 16; counter++) {
-			write_integer(bookmark, object[index]->integer[counter]);
+			write_integer(save, object[index]->integer[counter]);
 		}
 
-		write_long(bookmark, object[index]->attributes);
-		write_long(bookmark, object[index]->user_attributes);
+		write_long(save, object[index]->attributes);
+		write_long(save, object[index]->user_attributes);
 	}
 
-	/* WRITE OUT ALL THE CURRENT VALUES OF THE STRING VARIABLES */
+	// Write out all the current values of the string variables
 	while (current_string != NULL) {
 		for (index = 0; index < 255; index++) {
-			g_vm->glk_put_char_stream(bookmark, current_string->value[index]);
+			g_vm->glk_put_char_stream(save, current_string->value[index]);
 		}
 		current_string = current_string->next_string;
 	}
 
-	write_integer(bookmark, player);
-	write_integer(bookmark, noun[3]);
+	write_integer(save, player);
+	write_integer(save, noun[3]);
 
-	/* SAVE THE CURRENT VOLUME OF EACH OF THE SOUND CHANNELS */
+	// Save the current volume of each of the sound channels
 	for (index = 0; index < 8; index++) {
 		sprintf(temp_buffer, "volume[%d]", index);
-		write_integer(bookmark, cinteger_resolve(temp_buffer)->value);
+		write_integer(save, cinteger_resolve(temp_buffer)->value);
 	}
 
-	/* SAVE THE CURRENT VALUE OF THE GLK TIMER */
-	write_integer(bookmark, cinteger_resolve("timer")->value);
-
-	/* CLOSE THE STREAM */
-	g_vm->glk_stream_close(bookmark, NULL);
+	// Save the current value of the GLK timer
+	write_integer(save, cinteger_resolve("timer")->value);
 
 	TIME->value = FALSE;
-	return (TRUE);
+	return true;
 }
 
-int restore_game(frefid_t saveref, int warn) {
-	struct integer_type *current_integer = integer_table;
-	struct function_type *current_function = function_table;
-	struct string_type *current_string = string_table;
+bool restore_game(strid_t save, bool warn) {
+	integer_type *current_integer = integer_table;
+	function_type *current_function = function_table;
+	string_type *current_string = string_table;
 
-	int             index, counter;
-	int             file_objects,
-	                file_integers,
-	                file_functions,
-	                file_strings;
-	strid_t         bookmark;
+	int index, counter;
+	int file_objects, file_integers, file_functions, file_strings;
 
-	bookmark = g_vm->glk_stream_open_file(saveref, filemode_Read, 0);
-
-	if (!bookmark) {
-		return (FALSE);
-	}
-
-	/* WE'RE DONE WITH THE FILE REFERENCE NOW THAT THE STREAM
-	 * HAS BEEN SUCCESSFULLY OPENED */
-	g_vm->glk_fileref_destroy(saveref);
-
-	/* THIS IS WRITTEN TO HELP VALIDATE THE SAVED GAME
-	 * BEFORE CONTINUING TO LOAD IT */
-	file_objects = read_integer(bookmark);
-	file_integers = read_integer(bookmark);
-	file_functions = read_integer(bookmark);
-	file_strings = read_integer(bookmark);
+	// Read properties to validate the savegame is for this game
+	file_objects = read_integer(save);
+	file_integers = read_integer(save);
+	file_functions = read_integer(save);
+	file_strings = read_integer(save);
 
 	if (file_objects != objects
 	        || file_integers != integers
@@ -162,17 +131,17 @@ int restore_game(frefid_t saveref, int warn) {
 		if (warn == FALSE) {
 			log_error(cstring_resolve("BAD_SAVED_GAME")->value, PLUS_STDOUT);
 		}
-		g_vm->glk_stream_close(bookmark, NULL);
+		g_vm->glk_stream_close(save, NULL);
 		return (FALSE);
 	}
 
 	while (current_integer != NULL) {
-		current_integer->value = read_integer(bookmark);
+		current_integer->value = read_integer(save);
 		current_integer = current_integer->next_integer;
 	}
 
 	while (current_function != NULL) {
-		current_function->call_count = read_integer(bookmark);
+		current_function->call_count = read_integer(save);
 		current_function = current_function->next_function;
 	}
 
@@ -181,47 +150,44 @@ int restore_game(frefid_t saveref, int warn) {
 			continue;
 
 		for (counter = 0; counter < 16; counter++) {
-			object[index]->integer[counter] = read_integer(bookmark);
+			object[index]->integer[counter] = read_integer(save);
 		}
 
-		object[index]->attributes = read_integer(bookmark);
-		object[index]->user_attributes = read_integer(bookmark);
+		object[index]->attributes = read_integer(save);
+		object[index]->user_attributes = read_integer(save);
 	}
 
 	while (current_string != NULL) {
 		for (index = 0; index < 255; index++) {
-			current_string->value[index] = g_vm->glk_get_char_stream(bookmark);
+			current_string->value[index] = g_vm->glk_get_char_stream(save);
 		}
 		current_string = current_string->next_string;
 	}
 
-	player = read_integer(bookmark);
-	noun[3] = read_integer(bookmark);
+	player = read_integer(save);
+	noun[3] = read_integer(save);
 
-	/* RESTORE THE CURRENT VOLUME OF EACH OF THE SOUND CHANNELS */
+	// Restore the current volume of each of the sound channels
 	for (index = 0; index < 8; index++) {
 		sprintf(temp_buffer, "volume[%d]", index);
-		counter = read_integer(bookmark);
+		counter = read_integer(save);
 		cinteger_resolve(temp_buffer)->value = counter;
 
 		if (SOUND_SUPPORTED->value) {
-			/* SET THE GLK VOLUME */
+			// Set the GLK volume
 			g_vm->glk_schannel_set_volume(sound_channel[index], (glui32) counter);
 		}
 	}
 
-	/* RESTORE THE CURRENT VALUE OF THE GLK TIMER */
-	counter = read_integer(bookmark);
+	// Restore the current value of the GLK timer
+	counter = read_integer(save);
 	cinteger_resolve("timer")->value = counter;
 
-	/* SET THE GLK TIMER */
+	// Set the GLK timer
 	g_vm->glk_request_timer_events((glui32) counter);
 
-	/* CLOSE THE STREAM */
-	g_vm->glk_stream_close(bookmark, NULL);
-
 	TIME->value = FALSE;
-	return (TRUE);
+	return true;
 }
 
 void write_integer(strid_t stream, int x) {

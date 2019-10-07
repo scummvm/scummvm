@@ -21,6 +21,7 @@
  */
 
 #include "glk/jacl/jacl.h"
+#include "glk/jacl/prototypes.h"
 #include "common/config-manager.h"
 
 namespace Glk {
@@ -56,7 +57,11 @@ Common::Error JACL::readSaveData(Common::SeekableReadStream *rs) {
 }
 
 Common::Error JACL::writeGameData(Common::WriteStream *ws) {
-	return Common::kNoError;
+	strid_t data_stream = _streams->openStream(ws);
+	bool success = save_game(data_stream);
+	_streams->deleteStream(data_stream);
+
+	return success ? Common::kNoError : Common::kWritingFailed;
 }
 
 } // End of namespace JACL

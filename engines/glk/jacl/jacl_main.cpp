@@ -651,35 +651,12 @@ void save_game_state() {
 	noun3_backup = noun[3];
 }
 
-int save_interaction(const char *filename) {
-	frefid_t saveref;
-
-	jacl_set_window(inputwin);
-
-	if (inputwin == promptwin) {
-		g_vm->glk_window_clear(promptwin);
-		newline();
-	}
-
-	if (filename == NULL) {
-		saveref = g_vm->glk_fileref_create_by_prompt(fileusage_SavedGame | fileusage_BinaryMode, filemode_Write, 0);
+int save_interaction() {
+	if (g_vm->saveGame().getCode() == Common::kNoError) {
+		return (TRUE);
 	} else {
-		saveref = g_vm->glk_fileref_create_by_name(fileusage_SavedGame | fileusage_BinaryMode, filename, 0);
-
-	}
-
-	jacl_set_window(mainwin);
-
-	if (!saveref) {
 		write_text(cstring_resolve("CANT_SAVE")->value);
 		return (FALSE);
-	} else {
-		if (save_game(saveref)) {
-			return (TRUE);
-		} else {
-			write_text(cstring_resolve("CANT_SAVE")->value);
-			return (FALSE);
-		}
 	}
 }
 
@@ -1237,30 +1214,8 @@ void walking_thru() {
 	walkthru_running = FALSE;
 }
 
-int restore_interaction(const char *filename) {
-	frefid_t saveref;
-
-	jacl_set_window(inputwin);
-
-	if (inputwin == promptwin) {
-		g_vm->glk_window_clear(promptwin);
-		newline();
-	}
-
-	if (filename == NULL) {
-		saveref = g_vm->glk_fileref_create_by_prompt(fileusage_SavedGame | fileusage_BinaryMode, filemode_Read, 0);
-	} else {
-		saveref = g_vm->glk_fileref_create_by_name(fileusage_SavedGame | fileusage_BinaryMode, filename, 0);
-	}
-
-	jacl_set_window(mainwin);
-
-	if (!saveref) {
-		write_text(cstring_resolve("CANT_RESTORE")->value);
-		return (FALSE);
-	}
-
-	if (restore_game(saveref, TRUE) == FALSE) {
+int restore_interaction() {
+	if (g_vm->loadGame().getCode() != Common::kNoError) {
 		write_text(cstring_resolve("CANT_RESTORE")->value);
 		return (FALSE);
 	} else {

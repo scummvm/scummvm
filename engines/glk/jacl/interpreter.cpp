@@ -1798,11 +1798,7 @@ int execute(const char *funcname) {
 						unkvarrun(word[1]);
 						return (exit_function(TRUE));
 					} else {
-						if (word[2] == NULL) {
-							*container = save_interaction(NULL);
-						} else {
-							*container = save_interaction(arg_text_of_word(2));
-						}
+						*container = save_interaction();
 					}
 				}
 			} else if (!strcmp(word[0], "restoregame")) {
@@ -1815,11 +1811,7 @@ int execute(const char *funcname) {
 						unkvarrun(word[1]);
 						return (exit_function(TRUE));
 					} else {
-						if (word[2] == NULL) {
-							*container = restore_interaction(NULL);
-						} else {
-							*container = restore_interaction(arg_text_of_word(2));
-						}
+						*container = restore_interaction();
 					}
 				}
 			} else if (!strcmp(word[0], "restartgame")) {
