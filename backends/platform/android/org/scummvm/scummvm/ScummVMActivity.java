@@ -193,6 +193,12 @@ public class ScummVMActivity extends Activity {
 		setContentView(R.layout.main);
 		takeKeyEvents(true);
 
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
+			&& checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED
+		) {
+			requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, MY_PERMISSIONS_REQUEST_READ_EXT_STORAGE);
+		}
+
 		// This is a common enough error that we should warn about it
 		// explicitly.
 		if (!Environment.getExternalStorageDirectory().canRead()) {
@@ -333,7 +339,7 @@ public class ScummVMActivity extends Activity {
 				Log.i(ScummVM.LOG_TAG, "Read External Storage permission was granted at Runtime");
 			} else {
 				// permission denied! We won't be able to make use of functionality depending on this permission.
-				Toast.makeText(this, "Until permission is granted, some folders might not be listed!", Toast.LENGTH_SHORT)
+				Toast.makeText(this, "Until permission is granted, some storage locations may be inaccessible!", Toast.LENGTH_SHORT)
 				              .show();
 			}
 			break;
