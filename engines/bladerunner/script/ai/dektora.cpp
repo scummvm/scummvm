@@ -109,6 +109,9 @@ bool AIScriptDektora::Update() {
 			case 275:
 				Actor_Set_Goal_Number(kActorDektora, 276);
 				break;
+
+			default:
+				break;
 			}
 		}
 		return true;
@@ -1010,6 +1013,9 @@ bool AIScriptDektora::UpdateAnimation(int *animation, int *frame) {
 			case 2:
 				Sound_Play(kSfxWHISTLE3, (100 / Random_Query(5, 9)), 0, 0, 50);
 				break;
+
+			default:
+				break;
 			}
 		}
 
@@ -1037,6 +1043,9 @@ bool AIScriptDektora::UpdateAnimation(int *animation, int *frame) {
 			case 2:
 				Sound_Play(kSfxWHISTLE3, (100 / Random_Query(5, 9)), 0, 0, 50);
 				break;
+
+			default:
+				break;
 			}
 		}
 
@@ -1063,6 +1072,9 @@ bool AIScriptDektora::UpdateAnimation(int *animation, int *frame) {
 			case 2:
 				Sound_Play(kSfxWHISTLE3, (100 / Random_Query(5, 9)), 0, 0, 50);
 				break;
+
+			default:
+				break;
 			}
 		}
 
@@ -1087,6 +1099,9 @@ bool AIScriptDektora::UpdateAnimation(int *animation, int *frame) {
 
 			case 2:
 				Sound_Play(kSfxWHISTLE3, (100 / Random_Query(5, 9)), 0, 0, 50);
+				break;
+
+			default:
 				break;
 			}
 		}
@@ -1341,6 +1356,8 @@ bool AIScriptDektora::ChangeAnimationMode(int mode) {
 				_animationState = 19;
 			}
 			break;
+		default:
+			break;
 		}
 		_animationFrame = 0;
 		break;
@@ -1422,6 +1439,9 @@ bool AIScriptDektora::ChangeAnimationMode(int mode) {
 	case 79:
 		_animationState = 37;
 		_animationFrame = 0;
+		break;
+
+	default:
 		break;
 	}
 	return true;

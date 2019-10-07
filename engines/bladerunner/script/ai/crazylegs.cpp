@@ -375,6 +375,8 @@ bool AIScriptCrazylegs::ChangeAnimationMode(int mode) {
 		case 15:
 			_flag = true;
 			break;
+		default:
+			break;
 		}
 		break;
 	case 1:
@@ -439,6 +441,8 @@ bool AIScriptCrazylegs::ChangeAnimationMode(int mode) {
 			_animationState = 18;
 			_animationFrame = Slice_Animation_Query_Number_Of_Frames(469) - 1;
 		}
+		break;
+	default:
 		break;
 	}
 

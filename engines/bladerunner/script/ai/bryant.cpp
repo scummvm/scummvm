@@ -202,11 +202,16 @@ bool AIScriptBryant::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 			AI_Movement_Track_Append(kActorBryant, 331, 0);
 			AI_Movement_Track_Repeat(kActorBryant);
 			break;
+		default:
+			break;
 		}
 		// fallthrough
 	case 102:
 		AI_Movement_Track_Append(kActorBryant, 39, 0);
 		AI_Movement_Track_Repeat(kActorBryant);
+		break;
+
+	default:
 		break;
 	}
 
@@ -243,6 +248,8 @@ bool AIScriptBryant::UpdateAnimation(int *animation, int *frame) {
 		*animation = 808;
 		_animationFrame = Slice_Animation_Query_Number_Of_Frames(808) - 1;
 		break;
+	default:
+		break;
 	}
 
 	*frame = _animationFrame;
@@ -263,6 +270,8 @@ bool AIScriptBryant::ChangeAnimationMode(int mode) {
 		_animationState = 2;
 		_animationFrame = 0;
 		Actor_Set_Goal_Number(kActorBryant, 0);
+		break;
+	default:
 		break;
 	}
 	return true;

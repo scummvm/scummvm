@@ -241,6 +241,8 @@ int AIScriptClovis::GetFriendlinessModifierIfGetsClue(int otherActorId, int clue
 	case kClueMcCoyRetiredLutherLance:
 	case kClueMcCoyIsInsane:
 		return -5;
+	default:
+		break;
 	}
 	return 0;
 }
@@ -1499,6 +1501,9 @@ bool AIScriptClovis::ChangeAnimationMode(int mode) {
 	case 54:
 		_animationFrame = 0;
 		_animationState = 32;
+		break;
+
+	default:
 		break;
 	}
 

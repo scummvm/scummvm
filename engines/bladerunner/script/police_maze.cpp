@@ -525,6 +525,9 @@ bool PoliceMazeTargetTrack::tick() {
 				case 3:
 					_vm->_policeMaze->_tracks[trackId3]->resetPaused();
 					break;
+
+				default:
+					break;
 				}
 
 				break;
