@@ -285,10 +285,10 @@ void Screen_EoB::loadEoBBitmap(const char *file, const uint8 *cgaMapping, int te
 
 		// This check is due to EOB II Amiga German. That version simply checks
 		// for certain file names which aren't actual CPS files. These files use
-		// a diffenrent format and compression type. I check the header size
+		// a different format and compression type. I check the header size
 		// info to identify these.
 		} else if (_vm->gameFlags().platform == Common::kPlatformAmiga) {
-			// Tolerance for diffenrences up to 2 bytes is needed in some cases
+			// Tolerance for size mismatches up to 2 bytes is needed in some cases
 			if ((((s->readUint16LE()) + 5) & ~3) != (((s->size()) + 3) & ~3))
 				loadAlternative = true;
 		} 
