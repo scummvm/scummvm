@@ -70,7 +70,7 @@ AmigaOSFilesystemNode::AmigaOSFilesystemNode(const Common::String &p) {
 	ENTER();
 
 	// We need to explicitely open dos.library and it's IDOS interface.
-	// Otherwise we'll hit an IDOS NULL pointer after compiling a shared
+	// Otherwise we will hit an IDOS NULL pointer after compiling a shared
 	// binary with (shared) plugins.
 	// The hit will happen on loading a game from any engine, if more
 	// than one engine/plugin is available.
