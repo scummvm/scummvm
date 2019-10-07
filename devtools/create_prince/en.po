@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: Prince\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2018-04-17 19:53+0100\n"
-"PO-Revision-Date: 2019-10-05 18:54+0000\n"
+"PO-Revision-Date: 2019-10-08 15:54+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: English <https://translations.scummvm.org/projects/prince/"
 "prince/en/>\n"
@@ -3493,12 +3493,11 @@ msgstr "HERO: I found a book..."
 #: dialog0076.txt:2
 msgid "HERO: Wydaje mi się, iż jest magiczna, więc od razu|pomyślałem o tobie, drogi przyjacielu."
 msgstr ""
-"HERO: It seems magical to me, that I thought|about you right away, dear "
-"friend."
+"HERO: It seems magical to me, so I thought|about you right away, dear friend."
 
 #: dialog0077.txt:1
 msgid "OTHER: Cóż...hm...tak...zajmujące. Powiem|więcej: interesujące."
-msgstr "OTHER: Well... hm... yes... fascinating.|Or better say: interesting."
+msgstr "OTHER: Well... hm... yes... fascinating.|Dare I say: interesting."
 
 #: dialog0077.txt:2
 msgid "OTHER: Gdzie znalazłeś tego białego kruka?"
@@ -3512,32 +3511,32 @@ msgstr ""
 #: dialog0077.txt:4
 msgid "HERO: Eeee... Nie wiem, ja tam znalazłem|to przy drodze, może któryś z kupców|kiedyś ją zgubił..."
 msgstr ""
-"HERO: Errr... I don't know,|I found it on the street,|maybe a trader lost "
+"HERO: Errr... I don't know,|I found it on the street,|maybe a merchant lost "
 "it..."
 
 #: dialog0077.txt:5
 msgid "OTHER: Kupców! Ha! Ci dusigrosze znają się|na magii tyle, co kura na pieprzu!"
-msgstr ""
+msgstr "OTHER: Merchants! Hah! Those scrooges|don't know jack about magic!"
 
 #: dialog0077.txt:6
 msgid "OTHER: Nawet jeśli była ich, to tym lepiej,|że ją stracili!"
-msgstr ""
+msgstr "OTHER:Even if it was theirs, they deserve|to have lost it!"
 
 #: dialog0077.txt:7
 msgid "HERO: Rysunki w tej księdze wyglądają interesująco."
-msgstr ""
+msgstr "HERO: The drawings in this book look interesting."
 
 #: dialog0077.txt:8
 msgid "OTHER: Nie musisz dodawać ni słowa, książę!"
-msgstr "OTHER: You don't have to add a word, prince!"
+msgstr "OTHER: Say no more, prince!"
 
 #: dialog0077.txt:9
 msgid "OTHER: Zaraz biorę się za wnikliwe studia!"
-msgstr "OTHER: I will start a thorough study!"
+msgstr "OTHER: I will begin a thorough study!"
 
 #: dialog0077.txt:10
 msgid "OTHER: Co do zapłaty..."
-msgstr "OTHER: Speaking of payment..."
+msgstr "OTHER: About payment..."
 
 #: dialog0077.txt:11
 msgid "P#P#OTHER: <westchnienie>"
