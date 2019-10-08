@@ -304,6 +304,8 @@ void glk_main() {
 		while (!gotline) {
 			/* GRAB AN EVENT. */
 			g_vm->glk_select(&ev);
+			if (g_vm->shouldQuit())
+				return;
 
 			switch (ev.type) {
 
