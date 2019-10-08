@@ -175,7 +175,7 @@ public:
 	}
 
 	virtual const char *getOriginalCopyright() const {
-		return "Hyperspace Delivery Boy! (c) 2001 Monkeystone Games";
+		return "Hyperspace Delivery Boy! (C) 2001 Monkeystone Games";
 	}
 
 	virtual bool hasFeature(MetaEngineFeature f) const;
