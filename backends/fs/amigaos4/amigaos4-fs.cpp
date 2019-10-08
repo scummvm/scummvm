@@ -69,6 +69,10 @@ AmigaOSFilesystemNode::AmigaOSFilesystemNode() {
 AmigaOSFilesystemNode::AmigaOSFilesystemNode(const Common::String &p) {
 	ENTER();
 
+	// WORKAROUND:
+	// This is a bug in AmigaOS4 newlib.library 53.30 and lower.
+	// It will be removed once a fixed version is available to public.
+	// DESCRIPTION:
 	// We need to explicitly open dos.library and its IDOS interface.
 	// Otherwise we will hit an IDOS NULL pointer after compiling a
 	// shared binary with (shared) plugins.
@@ -113,6 +117,7 @@ AmigaOSFilesystemNode::AmigaOSFilesystemNode(const Common::String &p) {
 		IDOS->FreeDosObject(DOS_EXAMINEDATA, pExd);
 	}
 
+	// WORKAROUND:
 	// Close dos.library and its IDOS interface again.
 	IExec->DropInterface((struct Interface *)IDOS);
 	IExec->CloseLibrary(DOSBase);
