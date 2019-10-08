@@ -2695,9 +2695,6 @@ drawBorderRoundedSquareAlg(int x1, int y1, int r, int w, int h, PixelType color,
 		while (x++ < (y - 2)) {
 			BE_ALGORITHM();
 
-			if (x < _clippingArea.left || x > _clippingArea.right) continue;
-			if (y < _clippingArea.top || y > _clippingArea.bottom) continue;
-
 			BE_DRAWCIRCLE_BCOLOR_TR_CW(ptr_tr, x, y, px, py, (uint8)(alpha_r + (alphaStep_tr * x)));
 			BE_DRAWCIRCLE_BCOLOR_BR_CW(ptr_br, x, y, px, py, (uint8)(alpha_b + (alphaStep_br * x)));
 			BE_DRAWCIRCLE_BCOLOR_BL_CW(ptr_bl, x, y, px, py, (uint8)(alpha_l + (alphaStep_bl * x)));
