@@ -69,12 +69,12 @@ AmigaOSFilesystemNode::AmigaOSFilesystemNode() {
 AmigaOSFilesystemNode::AmigaOSFilesystemNode(const Common::String &p) {
 	ENTER();
 
-	// We need to explicitely open dos.library and it's IDOS interface.
-	// Otherwise we will hit an IDOS NULL pointer after compiling a shared
-	// binary with (shared) plugins.
+	// We need to explicitly open dos.library and its IDOS interface.
+	// Otherwise we will hit an IDOS NULL pointer after compiling a
+	// shared binary with (shared) plugins.
 	// The hit will happen on loading a game from any engine, if more
-	// than one engine/plugin is available.
-	DOSBase=IExec->OpenLibrary("dos.library",0);
+	// than one engine/(shared) plugin is available.
+	DOSBase = IExec->OpenLibrary("dos.library", 0);
 	IDOS = (struct DOSIFace *)IExec->GetInterface(DOSBase, "main", 1, NULL);
 	
 	int offset = p.size();
@@ -113,7 +113,7 @@ AmigaOSFilesystemNode::AmigaOSFilesystemNode(const Common::String &p) {
 		IDOS->FreeDosObject(DOS_EXAMINEDATA, pExd);
 	}
 
-	// Close dos.library and it's IDOS interface again.
+	// Close dos.library and its IDOS interface again.
 	IExec->DropInterface((struct Interface *)IDOS);
 	IExec->CloseLibrary(DOSBase);
 
