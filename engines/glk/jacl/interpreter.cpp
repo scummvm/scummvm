@@ -490,7 +490,7 @@ int execute(const char *funcname) {
 			// SKIP THIS BLOCK OF PLAIN TEXT UNTIL IT FINDS A
 			// LINE THAT STARTS WITH A '.' OR A '}'
 #ifdef GLK
-			glk_get_bin_line_stream(game_stream, text_buffer, (glui32) 1024);
+			(void)glk_get_bin_line_stream(game_stream, text_buffer, (glui32) 1024);
 #else
 			fgets(text_buffer, 1024, file);
 #endif
@@ -505,7 +505,7 @@ int execute(const char *funcname) {
 
 				// GET THE NEXT LINE
 #ifdef GLK
-				glk_get_bin_line_stream(game_stream, text_buffer, (glui32) 1024);
+				(void)glk_get_bin_line_stream(game_stream, text_buffer, (glui32) 1024);
 #else
 				fgets(text_buffer, 1024, file);
 #endif
@@ -916,7 +916,7 @@ int execute(const char *funcname) {
 				if (*select_integer == 0) {
 					// THERE ARE NO MATCHING OBJECTS SO JUMP TO THE endselect
 #ifdef GLK
-					glk_get_bin_line_stream(game_stream, text_buffer, (glui32) 1024);
+					(void)glk_get_bin_line_stream(game_stream, text_buffer, (glui32) 1024);
 #else
 					fgets(text_buffer, 1024, file);
 #endif
@@ -929,7 +929,7 @@ int execute(const char *funcname) {
 							break;
 						}
 #ifdef GLK
-						glk_get_bin_line_stream(game_stream, text_buffer, (glui32) 1024);
+						(void)glk_get_bin_line_stream(game_stream, text_buffer, (glui32) 1024);
 #else
 						fgets(text_buffer, 1024, file);
 #endif
@@ -1693,7 +1693,7 @@ int execute(const char *funcname) {
 				// DISPLAYS A BLOCK OF PLAIN TEXT UNTIL IT FINDS A
 				// LINE THAT STARTS WITH A '.' OR A '}'
 #ifdef GLK
-				glk_get_bin_line_stream(game_stream, text_buffer, (glui32) 1024);
+				(void)glk_get_bin_line_stream(game_stream, text_buffer, (glui32) 1024);
 #else
 				fgets(text_buffer, 1024, file);
 #endif
@@ -1744,7 +1744,7 @@ int execute(const char *funcname) {
 
 					// GET THE NEXT LINE
 #ifdef GLK
-					glk_get_bin_line_stream(game_stream, text_buffer, (glui32) 1024);
+					(void)glk_get_bin_line_stream(game_stream, text_buffer, (glui32) 1024);
 #else
 					fgets(text_buffer, 1024, file);
 #endif
@@ -2358,7 +2358,7 @@ int execute(const char *funcname) {
 			return 0;
 
 		before_command = g_vm->glk_stream_get_position(game_stream);
-		glk_get_bin_line_stream(game_stream, text_buffer, (glui32) 1024);
+		(void)glk_get_bin_line_stream(game_stream, text_buffer, (glui32) 1024);
 #else
 		before_command = ftell(file);
 		fgets(text_buffer, 1024, file);
