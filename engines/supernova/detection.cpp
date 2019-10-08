@@ -108,7 +108,7 @@ public:
 	}
 
 	virtual const char *getOriginalCopyright() const {
-		return "Mission Supernova (c) 1994 Thomas and Steffen Dingel";
+		return "Mission Supernova (C) 1994 Thomas and Steffen Dingel";
 	}
 
 	virtual bool hasFeature(MetaEngineFeature f) const;
