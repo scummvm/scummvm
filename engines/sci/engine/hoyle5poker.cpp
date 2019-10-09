@@ -79,7 +79,7 @@ enum Hoyle5PokerData {
 	kDiscardCard1 = 64,	  // flag, checked by PokerHand::think
 	kDiscardCard2 = 65,	  // flag, checked by PokerHand::think
 	kDiscardCard3 = 66,	  // flag, checked by PokerHand::think
-	kDiscardCard4 = 67,	  // flag, checked by PokerHand::think
+	kDiscardCard4 = 67	  // flag, checked by PokerHand::think
 	// 77 seems to be a bit array?
 };
 
