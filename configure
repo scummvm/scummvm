@@ -4239,6 +4239,15 @@ echocheck "TTS libraries"
 if test "$_tts" = auto ; then
 	_tts=no
 	case $_host_os in
+		mingw*)
+			cat > $TMPC << EOF
+#include <windows.h>
+#include <Servprov.h>
+#include <sapi.h>
+int main(void) { return 0; }
+EOF
+			cc_check -lsapi -lole32 && _tts=yes
+			;;
 		linux*)
 			cat > $TMPC << EOF
 #include <speech-dispatcher/libspeechd.h>
