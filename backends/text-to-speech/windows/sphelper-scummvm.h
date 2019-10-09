@@ -15,6 +15,7 @@
 //       crtdbg.h
 //       SPDebug.h
 //       atlbase.h
+//       sapiddk.h
 //
 // 3. Include got added
 //       cwtype
@@ -43,10 +44,6 @@
 
 #ifndef __sapi_h__
 #include <sapi.h>
-#endif
-
-#ifndef __sapiddk_h__
-#include <sapiddk.h>
 #endif
 
 #ifndef SPError_h

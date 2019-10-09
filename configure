@@ -4243,9 +4243,6 @@ if test "$_tts" = auto ; then
 int main(void) { return 0; }
 EOF
 			cc_check -lsapi -lole32 && _tts=yes
-			if test "$_host_os" = "mingw32" ; then
-				_tts=no
-			fi
 			;;
 		linux*)
 			cat > $TMPC << EOF
