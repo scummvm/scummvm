@@ -19,9 +19,12 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
  */
+#include <common/endian.h>
 #include "common/system.h"
 #include "common/rect.h"
 #include "engines/util.h"
+#include "dragons/dragons.h"
+#include "dragons/scene.h"
 #include "screen.h"
 
 namespace Dragons {
@@ -133,7 +136,46 @@ Common::Rect Screen::clipRectToScreen(int destX, int destY, const Common::Rect r
 }
 
 void Screen::updatePaletteTransparency(uint16 paletteNum, uint16 startOffset, uint16 endOffset, bool isTransparent) {
-	//TODO
+	assert(paletteNum < DRAGONS_NUM_PALETTES);
+	assert(startOffset < 256);
+	assert(endOffset < 256);
+
+	// TODO
+	// this is needed for palette 0 for some reason.
+//	DAT_80069638 = DAT_80069638 | 0x50000000;
+//	DAT_8006965c = DAT_8006965c | 0x50000000;
+//	DAT_80069680 = DAT_80069680 | 0x50000000;
+
+	for (int i = startOffset; i <= endOffset; i++) {
+		if (isTransparent) {
+			_palettes[paletteNum][i * 2 + 1] |= 0x80;
+		} else {
+			_palettes[paletteNum][i * 2 + 1] &= ~0x80;
+		}
+	}
+}
+
+void Screen::loadPalette(uint16 paletteNum, byte *palette) {
+	assert(paletteNum < DRAGONS_NUM_PALETTES);
+	if (paletteNum == 0) {
+		Dragons::getEngine()->_scene->setStagePalette(palette);
+	} else {
+		memcpy(&_palettes[paletteNum][0], palette, 512);
+	}
+}
+
+void Screen::setPaletteRecord(uint16 paletteNum, uint16 offset, uint16 newValue) {
+	assert(paletteNum < DRAGONS_NUM_PALETTES);
+	assert(offset < 256);
+	WRITE_LE_UINT16(&_palettes[paletteNum][offset * 2], newValue);
+	if (paletteNum == 0) {
+		Dragons::getEngine()->_scene->setStagePalette(&_palettes[0][0]);
+	}
+}
+
+byte *Screen::getPalette(uint16 paletteNum) {
+	assert(paletteNum < DRAGONS_NUM_PALETTES);
+	return _palettes[paletteNum];
 }
 
 } // End of namespace Dragons
