@@ -29,6 +29,17 @@
 #include <basetyps.h>
 #include <windows.h>
 #include <Servprov.h>
+
+// Mingw-w64 is missing symbols for two guids declared in sapi.h which are used
+//  by sphelper-scummvm.h. Mingw32 doesn't include any sapi headers or libraries
+//  so the only way to currently build there is to manually use Microsoft's, in
+//  which case the guids will be defined by their library.
+#if defined(__MINGW32__) && defined(__MINGW64_VERSION_MAJOR)
+#include <initguid.h>
+DEFINE_GUID(SPDFID_Text, 0x7ceef9f9, 0x3d13, 0x11d2, 0x9e, 0xe7, 0x00, 0xc0, 0x4f, 0x79, 0x73, 0x96);
+DEFINE_GUID(SPDFID_WaveFormatEx, 0xc31adbae, 0x527f, 0x4ff5, 0xa2, 0x30, 0xf6, 0x2b, 0xb6, 0x1f, 0xf7, 0x0c);
+#endif
+
 #include <sapi.h>
 #include "backends/text-to-speech/windows/sphelper-scummvm.h"
 #include "backends/platform/sdl/win32/win32_wrapper.h"
