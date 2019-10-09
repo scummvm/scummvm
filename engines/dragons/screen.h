@@ -26,11 +26,12 @@
 #include "graphics/pixelformat.h"
 
 namespace Dragons {
-
+#define DRAGONS_NUM_PALETTES 5
 class Screen {
 private:
 	Graphics::PixelFormat _pixelFormat;
 	Graphics::Surface *_backSurface;
+	byte _palettes[DRAGONS_NUM_PALETTES][512];
 public:
 	virtual ~Screen();
 
@@ -40,6 +41,9 @@ public:
 	void copyRectToSurface(const Graphics::Surface &srcSurface, int destX, int destY);
 	void copyRectToSurface(const Graphics::Surface &srcSurface, int destX, int destY, Common::Rect srcRect, bool flipX = false);
 	void updateScreen();
+	void loadPalette(uint16 paletteNum, byte *palette);
+	byte *getPalette(uint16 paletteNum);
+	void setPaletteRecord(uint16 paletteNum, uint16 offset, uint16 newValue);
 	void updatePaletteTransparency(uint16 paletteNum, uint16 startOffset, uint16 endOffset, bool isTransparent);
 private:
 	void copyRectToSurface(const void *buffer, int srcPitch, int srcWidth, int srcXOffset, int destX, int destY, int width, int height, bool flipX);

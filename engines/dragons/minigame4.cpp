@@ -58,7 +58,7 @@ void Minigame4::run() {
 	_vm->clearFlags(ENGINE_FLAG_1);
 	DAT_80090428_videoUpdateRelated = 0;
 	//TODO vsync_updater_function = videoUpdateFunction;
-	//load_palette_into_frame_buffer(4,DAT_8006a3f8);
+	_vm->_screen->loadPalette(4, _vm->_scene->getPalette());
 	_vm->_screen->updatePaletteTransparency(4,1,0xff,true);
 	_vm->videoFlags |= 4;
 	_vm->_scene->setBgLayerPriority(2);
@@ -103,8 +103,7 @@ void Minigame4::run() {
 	// EnableVSyncEvent();
 	_vm->_dragonINIResource->setFlickerRecord(uVar2);
 	_vm->_inventory->setType(uVar3);
-//	load_palette_into_frame_buffer
-//			(4,(uint)*(ushort *)
+//	_vm->_screen->loadPalette(4,(uint)*(ushort *)
 //					(*(int *)(&DAT_80071c30 + (uint)actors[0].actorFileDictionaryIndex * 8) + 10)
 //			   + *(int *)(&DAT_80071c30 + (uint)actors[0].actorFileDictionaryIndex * 8));
 	_vm->_screen->updatePaletteTransparency(4,1,0xff,true);

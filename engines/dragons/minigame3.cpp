@@ -172,12 +172,13 @@ void Minigame3::run() {
 	origSceneId = _vm->getCurrentSceneId();
 	_vm->_scene->setSceneId(6);
 	_vm->_scene->loadScene(6 | 0x8000, 0);
-	_vm->_scene->setFgLayerPriority(0);
+	_vm->_scene->setFgLayerPriority(4);
+
 // TODO
-//	load_palette_into_frame_buffer(1,scrFileData_maybe);
-//	load_palette_into_frame_buffer(4,scrFileData_maybe);
+	_vm->_screen->loadPalette(1, _vm->_scene->getPalette());
+	_vm->_screen->loadPalette(4, _vm->_scene->getPalette());
 	_vm->_screen->updatePaletteTransparency(4, 1, 0xff, true);
-//	FUN_80017ef0();
+	FUN_80017ef0();
 	oldEngineFlags = _vm->getAllFlags();
 	_vm->clearFlags(ENGINE_FLAG_80);
 	_vm->clearFlags(ENGINE_FLAG_20);
@@ -754,12 +755,10 @@ void Minigame3::run() {
 	flicker->sceneId = 1;
 	_vm->setAllFlags(oldEngineFlags);
 	_vm->setFlags(ENGINE_FLAG_40);
-//	load_palette_into_frame_buffer
-//			(1,(uint)*(uint16 *)(*(int *)(&DAT_80071c30 + (uint)actors[0].actorFileDictionaryIndex * 8) + 10) +
+//	_vm->_screen->loadPalette(1,(uint)*(uint16 *)(*(int *)(&DAT_80071c30 + (uint)actors[0].actorFileDictionaryIndex * 8) + 10) +
 //			   *(int *)(&DAT_80071c30 + (uint)actors[0].actorFileDictionaryIndex * 8));
 //	UnkCursorFunc1();
-//	load_palette_into_frame_buffer
-//			(4,(uint)*(uint16 *)(*(int *)(&DAT_80071c30 + (uint)actors[0].actorFileDictionaryIndex * 8) + 10) +
+//	_vm->_screen->loadPalette(4,(uint)*(uint16 *)(*(int *)(&DAT_80071c30 + (uint)actors[0].actorFileDictionaryIndex * 8) + 10) +
 //			   *(int *)(&DAT_80071c30 + (uint)actors[0].actorFileDictionaryIndex * 8));
 	_vm->_screen->updatePaletteTransparency(4,1,0xff,true);
 	_vm->_inventory->setType(origInventoryType);
@@ -769,10 +768,32 @@ void Minigame3::run() {
 
 void Minigame3::FUN_80017e64(uint32 param_1, int16 param_2, int16 param_3) {
 	//TODO what does this do?
+//	int iVar1;
+//
+//	iVar1 = (param_1 & 0xffff) * 0x24;
+//	*(undefined2 *)(&DAT_80069644 + iVar1) = param_2;
+//	*(short *)(&DAT_80069646 + iVar1) = param_3 + 8;
+
 }
 
-void Minigame3::FUN_80017f70_paletteRelated(uint16 unk) {
-	//TODO
+void Minigame3::FUN_80017f70_paletteRelated(uint16 param_1) {
+	if (0x1f < param_1) {
+		param_1 = 0x1f;
+	}
+//	uVar1 = IsVSyncEventEnabled & 1;
+//	DisableVSyncEvent();
+	_vm->_screen->loadPalette(0, _vm->_scene->getPalette());
+	_vm->_screen->setPaletteRecord(0, 0x3f, param_1 * 0x421);
+//	load_palette_into_frame_buffer(0,abStack528);
+	_vm->_screen->updatePaletteTransparency(0, 0x3f,0x3f, true);
+//	if (uVar1 != 0) {
+//		EnableVSyncEvent();
+//	}
+}
+
+void Minigame3::FUN_80017ef0() {
+	//TODO DAT_80069680 = DAT_80069680 | 0x50000000;
+	FUN_80017f70_paletteRelated(0);
 }
 
 } // End of namespace Dragons
