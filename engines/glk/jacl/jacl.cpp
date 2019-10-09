@@ -53,7 +53,11 @@ void JACL::deinitialize() {
 }
 
 Common::Error JACL::readSaveData(Common::SeekableReadStream *rs) {
-	return Common::kNoError;
+	strid_t data_stream = _streams->openStream(rs);
+	bool success = restore_game(data_stream);
+	_streams->deleteStream(data_stream);
+
+	return success ? Common::kNoError : Common::kReadingFailed;
 }
 
 Common::Error JACL::writeGameData(Common::WriteStream *ws) {
