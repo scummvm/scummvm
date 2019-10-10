@@ -1857,11 +1857,15 @@ Audio::AudioStream* Song::createStream(Common::String fileName) {
 #ifdef USE_MAD
 		Audio::SeekableAudioStream* audioStream = Audio::makeMP3Stream(stream, DisposeAfterUse::YES);
 		return new Audio::LoopingAudioStream(audioStream, 0, DisposeAfterUse::YES);
+#else
+		return nullptr;
 #endif
 	} else {
 #ifdef USE_VORBIS
 		Audio::SeekableAudioStream* audioStream = Audio::makeVorbisStream(stream, DisposeAfterUse::YES);
 		return new Audio::LoopingAudioStream(audioStream, 0, DisposeAfterUse::YES);
+#else
+		return nullptr;
 #endif
 	}
 }
