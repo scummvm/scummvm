@@ -1474,8 +1474,8 @@ struct Song {
 	void update();
 
 private:
-	static Common::String Song::getFileName(SoundType song);
-	Audio::AudioStream* Song::createStream(Common::String fileName);
+	static Common::String getFileName(SoundType song);
+	Audio::AudioStream* createStream(Common::String fileName);
 
 	Audio::SoundHandle handle;
 
