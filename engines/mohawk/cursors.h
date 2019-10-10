@@ -28,6 +28,7 @@
 namespace Common {
 class MacResManager;
 class NEResources;
+class PEResources;
 class SeekableReadStream;
 class String;
 }
@@ -182,6 +183,7 @@ private:
 	};
 
 	Common::Array<CursorItem> _cursors;
+	Common::PEResources *_exe;
 };
 
 } // End of namespace Mohawk

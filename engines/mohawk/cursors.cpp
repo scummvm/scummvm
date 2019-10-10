@@ -242,18 +242,20 @@ void LivingBooksCursorManager_v2::setCursor(const Common::String &name) {
 }
 
 PECursorManager::PECursorManager(const Common::String &appName) {
-	Common::PEResources exe;
-	if (!exe.loadFromEXE(appName)) {
+	_exe = new Common::PEResources();
+	if (!_exe->loadFromEXE(appName)) {
 		// Not all have cursors anyway, so this is not a problem
 		return;
 	}
 
-	const Common::Array<Common::WinResourceID> cursorGroups = exe.getNameList(Common::kWinGroupCursor);
+	if(_exe) {
+		const Common::Array<Common::WinResourceID> cursorGroups = _exe->getNameList(Common::kWinGroupCursor);
 
-	_cursors.resize(cursorGroups.size());
-	for (uint i = 0; i < cursorGroups.size(); i++) {
-		_cursors[i].id = cursorGroups[i].getID();
-		_cursors[i].cursorGroup = Graphics::WinCursorGroup::createCursorGroup(exe, cursorGroups[i]);
+		_cursors.resize(cursorGroups.size());
+		for (uint i = 0; i < cursorGroups.size(); i++) {
+			_cursors[i].id = cursorGroups[i].getID();
+			_cursors[i].cursorGroup = Graphics::WinCursorGroup::createCursorGroup(*_exe, cursorGroups[i]);
+		}
 	}
 }
 
