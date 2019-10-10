@@ -102,6 +102,7 @@ int             start_of_last_command;
 int             start_of_this_command;
 
 int             objects, integers, functions, strings;
+int             jpp_error = FALSE;
 
 /* A STREAM FOR THE GAME FILE, WHEN IT'S OPEN. */
 strid_t         game_stream = NULL;

@@ -183,7 +183,6 @@ MODULE_OBJS := \
 	jacl/errors.o \
 	jacl/findroute.o \
 	jacl/glk_saver.o \
-	jacl/glk_startup.o \
 	jacl/interpreter.o \
 	jacl/jacl.o \
 	jacl/jacl_main.o \
