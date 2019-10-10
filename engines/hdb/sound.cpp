@@ -1789,11 +1789,14 @@ void Song::stop() {
 }
 
 void Song::playSong(SoundType song, bool fadeIn, int ramp) {
-	this->_song = song;
-	this->_playing = true;
 
 	Common::String fileName = getFileName(song);
 	Audio::AudioStream* musicStream = createStream(fileName);
+
+	if (musicStream == nullptr) return;
+
+	this->_song = song;
+	this->_playing = true;
 
 	int initialVolume;
 
