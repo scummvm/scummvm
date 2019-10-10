@@ -32,7 +32,7 @@ namespace JACL {
 
 int convert_to_utf32(unsigned char *text);
 
-glui32              status_width, status_height;
+uint                status_width, status_height;
 
 schanid_t           sound_channel[8] = { NULL, NULL, NULL, NULL,
                                          NULL, NULL, NULL, NULL

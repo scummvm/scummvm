@@ -29,7 +29,7 @@ namespace Glk {
 namespace JACL {
 
 #ifdef GLK
-extern glui32                   status_width, status_height;
+extern uint                     status_width, status_height;
 extern winid_t                  statuswin;
 #endif
 
