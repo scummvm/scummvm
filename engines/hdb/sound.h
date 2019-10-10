@@ -1456,8 +1456,8 @@ struct SoundCache {
 	SoundCache() : loaded(SNDMEM_NOTCACHED), size(0), name(nullptr), luaName(nullptr), ext(SNDTYPE_NONE), data(nullptr) {}
 };
 
-struct Song {
-
+class Song {
+public:
 	Song() : _playing(false), _song(SONG_NONE),
 		fadingOut(false), fadeOutVol(0), fadeOutRamp(0),
 		fadingIn(false), fadeInVol(0), fadeInRamp(0) {}
