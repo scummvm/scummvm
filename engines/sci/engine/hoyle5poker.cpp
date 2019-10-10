@@ -140,7 +140,6 @@ int getCardTotal(SciArray *data, int player) {
 
 	Common::sort(cards, cards + 5, Common::Less<int>());
 
-	int lastCard = -1;
 	int sameRank = 0;
 	int sameSuit = 0;
 	int orderedCards = 0;
@@ -157,8 +156,6 @@ int getCardTotal(SciArray *data, int player) {
 		}
 		if (cards[i] == cards[i + 1] - 1)
 			orderedCards == 0 ? orderedCards += 2 : orderedCards++;
-
-		lastCard = cards[i];
 	}
 
 	bool isFullHouse =
