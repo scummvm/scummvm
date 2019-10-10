@@ -262,6 +262,7 @@ void glk_main() {
 		return;
 	}
 
+
 	/* DUMMY RETRIEVE OF 'HERE' FOR TESTING OF GAME STATE */
 	get_here();
 
@@ -289,70 +290,82 @@ void glk_main() {
 			jacl_set_window(inputwin);
 		}
 
-		/* OUTPUT THE CUSTOM COMMAND PROMPT */
-		write_text(string_resolve("command_prompt")->value);
+		// If loading a savegame from the launcher, do it now
+		if (g_vm->loadingSavegame()) {
+			// Load the game
+			if (g_vm->loadLauncherSavegame()) {
+				// Do a look action
+				const uint32 LOOK[5] = { 'l', 'o', 'o', 'k', 0 };
+				Common::copy(LOOK, LOOK + 5, command_buffer_uni);
+				ev.val1 = 4;
+			} else {
+				continue;
+			}
+		} else {
+			/* OUTPUT THE CUSTOM COMMAND PROMPT */
+			write_text(string_resolve("command_prompt")->value);
 
 #ifdef NOUNICODE
-		g_vm->glk_request_line_event(inputwin, command_buffer, 255, 0);
+			g_vm->glk_request_line_event(inputwin, command_buffer, 255, 0);
 #else
-		g_vm->glk_request_line_event_uni(inputwin, command_buffer_uni, 255, 0);
+			g_vm->glk_request_line_event_uni(inputwin, command_buffer_uni, 255, 0);
 #endif
 
-		jacl_set_window(inputwin);
+			jacl_set_window(inputwin);
 
-		gotline = FALSE;
+			gotline = FALSE;
 
-		while (!gotline) {
-			/* GRAB AN EVENT. */
-			g_vm->glk_select(&ev);
-			if (g_vm->shouldQuit())
-				return;
+			while (!gotline) {
+				/* GRAB AN EVENT. */
+				g_vm->glk_select(&ev);
+				if (g_vm->shouldQuit())
+					return;
 
-			switch (ev.type) {
+				switch (ev.type) {
 
-			case evtype_LineInput:
-				if (ev.window == inputwin) {
-					gotline = TRUE;
+				case evtype_LineInput:
+					if (ev.window == inputwin) {
+						gotline = TRUE;
+						jacl_set_window(mainwin);
+						/* REALLY THE EVENT CAN *ONLY* BE FROM MAINWIN,
+						 * BECAUSE WE NEVER REQUEST LINE INPUT FROM THE
+						 * STATUS WINDOW. BUT WE DO A PARANOIA TEST,
+						 * BECAUSE COMMANDBUF IS ONLY FILLED IF THE LINE
+						 * EVENT COMES FROM THE MAINWIN REQUEST. IF THE
+						 * LINE EVENT COMES FROM ANYWHERE ELSE, WE IGNORE
+						 * IT. */
+					}
+					break;
+
+				case evtype_SoundNotify:
+					/* A SOUND HAS FINISHED PLAYING CALL +sound_finished
+					 * WITH THE RESOUCE NUMBER AS THE FIRST ARGUMENT
+					 * AND THE CHANNEL NUMBER AS THE SECOND ARGUMENT */
+					sprintf(temp_buffer, "+sound_finished<%d<%d", (int) ev.val1, (int) ev.val2 - 1);
+					execute(temp_buffer);
+					break;
+
+				case evtype_Timer:
+					/* A TIMER EVENT IS TRIGGERED PERIODICALLY IF THE GAME
+					 * REQUESTS THEM. THIS SIMPLY EXECUTES THE FUNCTION
+					 * +timer WHICH IS LIKE +eachturn EXCEPT IT DOESN'T
+					 * WAIT FOR THE PLAYER TO TYPE A COMMAND */
+
 					jacl_set_window(mainwin);
-					/* REALLY THE EVENT CAN *ONLY* BE FROM MAINWIN,
-					 * BECAUSE WE NEVER REQUEST LINE INPUT FROM THE
-					 * STATUS WINDOW. BUT WE DO A PARANOIA TEST,
-					 * BECAUSE COMMANDBUF IS ONLY FILLED IF THE LINE
-					 * EVENT COMES FROM THE MAINWIN REQUEST. IF THE
-					 * LINE EVENT COMES FROM ANYWHERE ELSE, WE IGNORE
-					 * IT. */
+					execute("+timer");
+					break;
+
+				case evtype_Arrange:
+					/* WINDOWS HAVE CHANGED SIZE, SO WE HAVE TO REDRAW THE
+					 * STATUS WINDOW. */
+					status_line();
+					break;
+
+				default:
+					break;
 				}
-				break;
-
-			case evtype_SoundNotify:
-				/* A SOUND HAS FINISHED PLAYING CALL +sound_finished
-				 * WITH THE RESOUCE NUMBER AS THE FIRST ARGUMENT
-				 * AND THE CHANNEL NUMBER AS THE SECOND ARGUMENT */
-				sprintf(temp_buffer, "+sound_finished<%d<%d", (int) ev.val1, (int) ev.val2 - 1);
-				execute(temp_buffer);
-				break;
-
-			case evtype_Timer:
-				/* A TIMER EVENT IS TRIGGERED PERIODICALLY IF THE GAME
-				 * REQUESTS THEM. THIS SIMPLY EXECUTES THE FUNCTION
-				 * +timer WHICH IS LIKE +eachturn EXCEPT IT DOESN'T
-				 * WAIT FOR THE PLAYER TO TYPE A COMMAND */
-
-				jacl_set_window(mainwin);
-				execute("+timer");
-				break;
-
-			case evtype_Arrange:
-				/* WINDOWS HAVE CHANGED SIZE, SO WE HAVE TO REDRAW THE
-				 * STATUS WINDOW. */
-				status_line();
-				break;
-
-			default:
-				break;
 			}
 		}
-
 		// THE PLAYER'S INPUT WILL BE UTF-32. CONVERT IT TO UTF-8 AND NULL TERMINATE IT
 #ifndef NOUNICODE
 		convert_to_utf8(command_buffer_uni, ev.val1);
@@ -707,8 +720,9 @@ void restore_game_state() {
 }
 
 void write_text(const char *string_buffer) {
-	int             index,
-	                length;
+	int index, length;
+	if (g_vm->loadingSavegame())
+		return;
 
 	if (!strcmp(string_buffer, "tilde")) {
 		g_vm->glk_put_string("~");

@@ -80,6 +80,11 @@ public:
 	bool loadingSavegame() const {
 		return _saveSlot != -1;
 	}
+
+	/**
+	 * Does the actual loading of the savegame from a luancher
+	 */
+	bool loadLauncherSavegame();
 };
 
 extern JACL *g_vm;

@@ -22,6 +22,7 @@
 
 #include "glk/jacl/jacl.h"
 #include "glk/jacl/prototypes.h"
+#include "glk/jacl/types.h"
 #include "common/config-manager.h"
 
 namespace Glk {
@@ -66,6 +67,17 @@ Common::Error JACL::writeGameData(Common::WriteStream *ws) {
 	_streams->deleteStream(data_stream);
 
 	return success ? Common::kNoError : Common::kWritingFailed;
+}
+
+bool JACL::loadLauncherSavegame() {
+	int saveSlot = _saveSlot;
+	_saveSlot = -1;
+
+	if (loadGameState(saveSlot).getCode() == Common::kNoError)
+		return true;
+
+	write_text(cstring_resolve("CANT_RESTORE")->value);
+	return false;
 }
 
 } // End of namespace JACL

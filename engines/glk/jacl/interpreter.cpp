@@ -1094,7 +1094,7 @@ int execute(const char *funcname) {
 						noproprun();
 						return (exit_function(TRUE));
 					} else {
-						if (g_vm->glk_image_draw(mainwin, (glui32) value_of(word[1], TRUE), imagealign_InlineDown, 0) == 0) {
+						if (!g_vm->loadingSavegame() && g_vm->glk_image_draw(mainwin, (glui32) value_of(word[1], TRUE), imagealign_InlineDown, 0) == 0) {
 							sprintf(error_buffer, "Unable to draw image: %ld", value_of(word[1], FALSE));
 							log_error(error_buffer, PLUS_STDERR);
 						}
