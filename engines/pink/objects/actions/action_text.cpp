@@ -103,8 +103,8 @@ void ActionText::start() {
 		uint32 colorBlack = noborder->getSupportedPixelFormat().RGBToColor(0, 0, 0);
 		uint32 colorPink = noborder->getSupportedPixelFormat().RGBToColor(255, 0, 255);
 
-		for (int y = 0; y < 4; y++)
-			for (int x = 0; x < 4; x++)
+		for (int y = 0; y < 3; y++)
+			for (int x = 0; x < 3; x++)
 				*((uint32 *)noborder->getBasePtr(x, y)) = noborderData[y][x] ? colorBlack : colorPink;
 
 		_txtWnd->setBorder(noborder, true);
