@@ -315,6 +315,7 @@ void Scene::loadSceneData(uint32 sceneId, uint32 cameraPointId) {
 
 void Scene::draw() {
 	Common::Rect rect(_camera.x, _camera.y, _camera.x + 320, _camera.y + 200);
+	_vm->_screen->clearScreen();
 
 	for(uint16 priority = 1; priority < 16; priority++) {
 		if (priority == _stage->getBgLayerPriority()) {
@@ -351,7 +352,7 @@ void Scene::draw() {
 					debug(4, "Actor %d %s (%d, %d) w:%d h:%d Priority: %d", actor->_actorID, actor->_actorResource->getFilename(), x,
 						  y,
 						  s->w, s->h, actor->priorityLayer);
-					_screen->copyRectToSurface(*s, x, y, Common::Rect(s->w, s->h), (bool)(actor->frame->flags & Dragons::FRAME_FLAG_FLIP_X));
+					_screen->copyRectToSurface(*s, x, y, Common::Rect(s->w, s->h), (bool)(actor->frame->flags & Dragons::FRAME_FLAG_FLIP_X), actor->isFlagSet(ACTOR_FLAG_8000) ? 255 : 128);
 				} else {
 					debug(4, "Actor (not displayed) %d %s (%d, %d) Priority: %d", actor->_actorID,
 						  actor->_actorResource->getFilename(),

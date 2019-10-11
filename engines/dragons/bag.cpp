@@ -61,8 +61,18 @@ void Bag::load(BigfileArchive *bigFileArchive) {
 
 	stream.seek(0x4);
 	stream.read(pal, 512);
-	pal[0] = 0x80; //FIXME update palette
-	pal[1] = 0x80;
+
+	pal[0] = 0x0;
+	pal[1] = 0x0;
+	for (int i = 1; i < 0x100; i++) {
+		uint c = READ_LE_INT16(&pal[i * 2]);
+		if ( c == 0 ) {
+			c = 0x8000;
+		} else {
+			//c = (ushort)(((uint)c & 0x1f) << 10) | (ushort)(((uint)c & 0x7c00) >> 10) | c & 0x3e0;
+		}
+		WRITE_LE_UINT16(&pal[i * 2], c);
+	}
 
 	stream.seek(0x308);
 	stream.read(tilemap, 0x1f4);

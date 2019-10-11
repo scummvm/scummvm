@@ -47,10 +47,10 @@ Screen::~Screen() {
 }
 
 void Screen::copyRectToSurface(const Graphics::Surface &srcSurface, int destX, int destY) {
-	copyRectToSurface(srcSurface.getBasePtr(0, 0), srcSurface.pitch, srcSurface.w, 0, destX, destY, srcSurface.w, srcSurface.h, false);
+	copyRectToSurface(srcSurface.getBasePtr(0, 0), srcSurface.pitch, srcSurface.w, 0, destX, destY, srcSurface.w, srcSurface.h, false, 255);
 }
 
-void Screen::copyRectToSurface(const Graphics::Surface &srcSurface, int destX, int destY, const Common::Rect srcRect, bool flipX) {
+void Screen::copyRectToSurface(const Graphics::Surface &srcSurface, int destX, int destY, const Common::Rect srcRect, bool flipX, uint8 alpha) {
 	Common::Rect clipRect = clipRectToScreen( destX,  destY, srcRect);
 	if (clipRect.width() == 0 || clipRect.height() == 0) {
 		return;
@@ -63,10 +63,24 @@ void Screen::copyRectToSurface(const Graphics::Surface &srcSurface, int destX, i
 		destY = 0;
 	}
 
-	copyRectToSurface(srcSurface.getBasePtr(clipRect.left, clipRect.top), srcSurface.pitch, srcSurface.w, clipRect.left, destX, destY, clipRect.width(), clipRect.height(), flipX);
+	copyRectToSurface(srcSurface.getBasePtr(clipRect.left, clipRect.top), srcSurface.pitch, srcSurface.w, clipRect.left, destX, destY, clipRect.width(), clipRect.height(), flipX, alpha);
 }
 
-void Screen::copyRectToSurface(const void *buffer, int srcPitch, int srcWidth, int srcXOffset, int destX, int destY, int width, int height, bool flipX) {
+/**
+ * Fast RGB555 pixel blending
+ * @param fg      The foreground color in uint16_t RGB565 format
+ * @param bg      The background color in uint16_t RGB565 format
+ * @param alpha   The alpha in range 0-255
+ **/
+uint16 alphaBlendRGB555( uint32 fg, uint32 bg, uint8 alpha ){
+	alpha = ( alpha + 4 ) >> 3;
+	bg = (bg | (bg << 16)) & 0b00000011111000001111100000011111;
+	fg = (fg | (fg << 16)) & 0b00000011111000001111100000011111;
+	uint32_t result = ((((fg - bg) * alpha) >> 5) + bg) & 0b00000011111000001111100000011111;
+	return (uint16_t)((result >> 16) | result);
+}
+
+void Screen::copyRectToSurface(const void *buffer, int srcPitch, int srcWidth, int srcXOffset, int destX, int destY, int width, int height, bool flipX, uint8 alpha) {
 	assert(buffer);
 
 	assert(destX >= 0 && destX < _backSurface->w);
@@ -80,10 +94,15 @@ void Screen::copyRectToSurface(const void *buffer, int srcPitch, int srcWidth, i
 	for (int i = 0; i < height; i++) {
 		for (int j = 0; j < width; j++) {
 			int32 srcIdx = flipX ? srcWidth - (srcXOffset * 2) - j - 1 : j;
-			if ((src[srcIdx * 2 + 1] & 0x80) == 0) {
-				// only copy opaque pixels
-				dst[j * 2] = src[srcIdx * 2];
-				dst[j * 2 + 1] = src[srcIdx * 2 + 1];
+			if (src[srcIdx * 2] != 0 || src[srcIdx * 2 + 1] != 0) {
+				if ((src[srcIdx * 2 + 1] & 0x80) == 0 || alpha == 255) {
+					// only copy opaque pixels
+					dst[j * 2] = src[srcIdx * 2];
+					dst[j * 2 + 1] = src[srcIdx * 2 + 1];
+				} else {
+					WRITE_LE_UINT16(&dst[j * 2], alphaBlendRGB555(READ_LE_INT16(&src[srcIdx * 2]), READ_LE_INT16(&dst[j * 2]), alpha));
+					// semi-transparent pixels.
+				}
 			}
 		}
 		src += srcPitch;
@@ -176,6 +195,10 @@ void Screen::setPaletteRecord(uint16 paletteNum, uint16 offset, uint16 newValue)
 byte *Screen::getPalette(uint16 paletteNum) {
 	assert(paletteNum < DRAGONS_NUM_PALETTES);
 	return _palettes[paletteNum];
+}
+
+void Screen::clearScreen() {
+	_backSurface->fillRect(Common::Rect(0,0, _backSurface->w, _backSurface->h), 0);
 }
 
 } // End of namespace Dragons
