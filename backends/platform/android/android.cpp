@@ -117,7 +117,18 @@ OSystem_Android::OSystem_Android(int audio_sample_rate, int audio_buffer_size) :
 
 OSystem_Android::~OSystem_Android() {
 	ENTER();
-
+	// _audiocdManager should be deleted before _mixer!
+	// It is normally deleted in proper order in the OSystem destructor.
+	// However, currently _mixer is deleted here (OSystem_Android)
+	// and in the ModularBackend destructor,
+	// hence unless _audiocdManager is deleted here first,
+	// it will cause a crash for the Android app (arm64 v8a) upon exit
+	// -- when the audio cd manager was actually used eg. audio cd test of the testbed
+	// FIXME: A more proper fix would probably be to:
+	//        - delete _mixer in the base class (OSystem) after _audiocdManager (this is already the current behavior)
+	//	      - remove its deletion from OSystem_Android and ModularBackend (this is what needs to be fixed).
+	delete _audiocdManager;
+	_audiocdManager = 0;
 	delete _mixer;
 	_mixer = 0;
 	delete _fsFactory;
