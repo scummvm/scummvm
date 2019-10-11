@@ -161,7 +161,7 @@ static uint findBestColor(byte *palette, uint32 rgb) {
 
 void ActionText::findColorsInPalette() {
 	byte palette[256 * 3];
-	g_system->getPaletteManager()->grabPalette(palette, 0, 255);
+	g_system->getPaletteManager()->grabPalette(palette, 0, 256);
 
 	_textColorIndex = findBestColor(palette, _textRGB);
 	_backgroundColorIndex = findBestColor(palette, _backgroundRGB);
