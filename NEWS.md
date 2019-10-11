@@ -1,7 +1,7 @@
 For a more comprehensive changelog of the latest experimental code, see:
         https://github.com/scummvm/scummvm/commits/
 
-#### 2.1.0 "Electric Sheep" (2019-10-13)
+#### 2.1.0 "Electric Sheep" (2019-10-11)
 
  New games:
    - Added support for Blade Runner.
