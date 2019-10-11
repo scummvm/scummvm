@@ -109,8 +109,8 @@ bool Background::load(byte *dataStart, uint32 size) {
 	_data = dataStart;
 
 	stream.read(_palette, 512);
-	_palette[0] = 0x80; //FIXME update palette
-	_palette[1] = 0x80;
+	_palette[0] = 0x00; //FIXME update palette
+	_palette[1] = 0x00;
 
 	_points1 = loadPoints(stream); // 0x200
 	_points2 = loadPoints(stream); // 0x280

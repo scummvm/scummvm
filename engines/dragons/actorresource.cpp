@@ -57,7 +57,7 @@ bool ActorResource::load(uint32 id, byte *dataStart, Common::SeekableReadStream 
 
 	stream.seek(paletteOffset);
 	stream.read(_palette, 512);
-	_palette[1] = 0x80; // set alpha (bit 15) on first palette entry.
+	//_palette[1] = 0x80; // set alpha (bit 15) on first palette entry.
 
 	stream.seek(frameOffset);
 
