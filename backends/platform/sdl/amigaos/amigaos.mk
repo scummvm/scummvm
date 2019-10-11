@@ -1,13 +1,12 @@
 # Special target to create an AmigaOS snapshot installation.
+# AmigaOS shell doesn't like indented comments.
 amigaosdist: $(EXECUTABLE)
 	mkdir -p $(AMIGAOSPATH)
-	mkdir -p $(AMIGAOSPATH)/themes
 	mkdir -p $(AMIGAOSPATH)/extras
-	$(STRIP) $(EXECUTABLE) -o $(AMIGAOSPATH)/$(EXECUTABLE)
-	cp ${srcdir}/icons/scummvm_drawer.info $(AMIGAOSPATH).info
-	cp ${srcdir}/icons/scummvm.info $(AMIGAOSPATH)/$(EXECUTABLE).info
-	cp $(DIST_FILES_THEMES) $(AMIGAOSPATH)/themes/
+	cp ${srcdir}/dists/amiga/scummvm_drawer.info $(AMIGAOSPATH).info
+	cp ${srcdir}/dists/amiga/scummvm.info $(AMIGAOSPATH)/$(EXECUTABLE).info
 ifdef DIST_FILES_DOCS
+	cp -r $(srcdir)/doc/ $(AMIGAOSPATH)
 	cp $(DIST_FILES_DOCS) $(AMIGAOSPATH)/doc/
 endif
 ifdef DIST_FILES_ENGINEDATA
@@ -19,12 +18,21 @@ endif
 ifdef DIST_FILES_VKEYBD
 	cp $(DIST_FILES_VKEYBD) $(AMIGAOSPATH)/extras/
 endif
-# AmigaOS shell is not happy with indented comments, thus don't do it.
+# Copy shared library plugins, if available.
+ifdef DYNAMIC_MODULES
+	mkdir -p $(AMIGAOSPATH)/plugins
+	cp $(PLUGINS) -o $(AMIGAOSPATH)/plugins/
+endif
+ifdef DIST_FILES_THEMES
+	mkdir -p $(AMIGAOSPATH)/themes
+	cp $(DIST_FILES_THEMES) $(AMIGAOSPATH)/themes/
+endif
+	$(STRIP) $(EXECUTABLE) -o $(AMIGAOSPATH)/$(EXECUTABLE)
 # Prepare README.md for AmigaGuide conversion.
 	cat ${srcdir}/README.md | sed -f ${srcdir}/dists/amiga/convertRM.sed > README.conv
-# AREXX seems to have a problem if ${srcdir} is '.'. It will break with
-# a "Program not found" error. Therefore we copy the script to cwd and
-# remove it again, once it has finished.
+# AmigaOS AREXX has a problem when ${srcdir} is '.'.
+# It will break with a "Program not found" error.
+# We copy the script to cwd first and, once it has finished, remove it again.
 	cp ${srcdir}/dists/amiga/RM2AG.rexx .
 	rx RM2AG.rexx README.conv
 	cp README.guide $(AMIGAOSPATH)
