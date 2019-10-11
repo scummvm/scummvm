@@ -28,7 +28,7 @@
 #if defined(USE_TTS) && defined(WIN32)
 #include <basetyps.h>
 #include <windows.h>
-#include <Servprov.h>
+#include <servprov.h>
 
 // Mingw-w64 is missing symbols for two guids declared in sapi.h which are used
 //  by sphelper-scummvm.h. Mingw32 doesn't include any sapi headers or libraries
