@@ -196,7 +196,6 @@ void GfxCursor32::setView(const GuiResourceId viewId, const int16 loopNo, const 
 	_cursorInfo.loopNo = loopNo;
 	_cursorInfo.celNo = celNo;
 
-#ifdef ENABLE_SCI32_MAC
 	if (!_macCursorRemap.empty() && viewId != -1) {
 		// Mac cursor handling
 		GuiResourceId viewNum = viewId;
@@ -241,9 +240,7 @@ void GfxCursor32::setView(const GuiResourceId viewId, const int16 loopNo, const 
 
 		// The cursor will be drawn on next refresh
 		delete macCursor;
-	} else
-#endif
-	if (viewId != -1) {
+	} else if (viewId != -1) {
 		CelObjView view(viewId, loopNo, celNo);
 
 		_hotSpot = view._origin;
@@ -449,11 +446,9 @@ void GfxCursor32::move() {
 	}
 }
 
-#ifdef ENABLE_SCI32_MAC
 void GfxCursor32::setMacCursorRemapList(int cursorCount, reg_t *cursors) {
 	for (int i = 0; i < cursorCount; i++)
 		_macCursorRemap.push_back(cursors[i].toUint16());
 }
-#endif
 
 } // End of namespace Sci

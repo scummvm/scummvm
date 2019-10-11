@@ -219,14 +219,12 @@ private:
 	 */
 	void move();
 
-#ifdef ENABLE_SCI32_MAC
 public:
 	void setMacCursorRemapList(int cursorCount, reg_t *cursors);
 
 private:
 	// Mac versions of games use a remap list to remap their cursors
 	Common::Array<uint16> _macCursorRemap;
-#endif
 };
 
 } // End of namespace Sci
