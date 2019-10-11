@@ -69,6 +69,15 @@ AmigaOSFilesystemNode::AmigaOSFilesystemNode() {
 AmigaOSFilesystemNode::AmigaOSFilesystemNode(const Common::String &p) {
 	ENTER();
 
+	int offset = p.size();
+
+	//assert(offset > 0);
+
+	if (offset <= 0) {
+		debug(6, "Bad offset");
+		return;
+	}
+
 	// WORKAROUND:
 	// This is a bug in AmigaOS4 newlib.library 53.30 and lower.
 	// It will be removed once a fixed version is available to public.
@@ -80,15 +89,6 @@ AmigaOSFilesystemNode::AmigaOSFilesystemNode(const Common::String &p) {
 	// than one engine/(shared) plugin is available.
 	DOSBase = IExec->OpenLibrary("dos.library", 0);
 	IDOS = (struct DOSIFace *)IExec->GetInterface(DOSBase, "main", 1, NULL);
-	
-	int offset = p.size();
-
-	//assert(offset > 0);
-
-	if (offset <= 0) {
-		debug(6, "Bad offset");
-		return;
-	}
 
 	_sPath = p;
 	_sDisplayName = ::lastPathComponent(_sPath);
