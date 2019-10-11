@@ -523,15 +523,11 @@ void GfxPalette32::updateHardware() {
 	memset(bpal + (maxIndex + 1) * 3, 0, (255 - maxIndex - 1) * 3);
 #endif
 
-#ifdef ENABLE_SCI32_MAC
 	if (g_sci->getPlatform() == Common::kPlatformMacintosh) {
 		bpal[255 * 3    ] = 0;
 		bpal[255 * 3 + 1] = 0;
 		bpal[255 * 3 + 2] = 0;
 	} else {
-#else
-	{
-#endif
 		// The last color must always be white
 		bpal[255 * 3    ] = 255;
 		bpal[255 * 3 + 1] = 255;
