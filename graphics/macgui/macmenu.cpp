@@ -629,7 +629,10 @@ static void underlineAccelerator(ManagedSurface *dst, const Font *font, const Co
 
 	Common::U32String s(str);
 
-	s.erase(shortcutPos + 1);
+	// Erase characters only if it is not end of the string
+	if ((uint)(shortcutPos + 1) < s.size())
+		s.erase(shortcutPos + 1);
+
 	int pos2 = font->getStringWidth(s);
 	s.deleteLastChar();
 	int pos1 = font->getStringWidth(s);
