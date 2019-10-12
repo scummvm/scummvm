@@ -740,13 +740,13 @@ static sc_int gsc_read_line_locale(sc_char *buffer, sc_int length, const gsc_loc
 	 * the Latin1 locale are properly translated.
 	 */
 	if (gsc_unicode_enabled) {
-		glui32 *unicode;
+		uint32 *unicode;
 
 		/*
 		 * Allocate a unicode buffer long enough to hold all the characters,
 		 * then read in a unicode line.
 		 */
-		unicode = (glui32 *)gsc_malloc(length * sizeof(*unicode));
+		unicode = (uint32 *)gsc_malloc(length * sizeof(*unicode));
 		g_vm->glk_request_line_event_uni(gsc_main_window, unicode, length, 0);
 		gsc_event_wait(evtype_LineInput, &event);
 
