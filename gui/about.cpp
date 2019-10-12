@@ -690,16 +690,18 @@ void EE::resetpt() {
 
 void EE::calcscore() {
 	if (_winner == _server) {
-		if (_soundEnabled && _mode != kModeMenu)
+		if (_soundEnabled && _mode != kModeMenu) {
 			playSound(kSndPoint);
-			_score[_winner]++;
+		}
+		_score[_winner]++;
 		if (_score[_winner] > 14 && _score[_winner] - _score[1 - _winner] > 1) {
 			init();
 			return;
 		}
 	} else {
-		if (_soundEnabled && _mode != kModeMenu)
+		if (_soundEnabled && _mode != kModeMenu) {
 			playSound(kSndLoss);
+		}
 		_server = _winner;
 	}
 
@@ -803,7 +805,7 @@ bool EE::moveball() {
 }
 
 void EE::docollisions() {
-	int dx, dy, dist, rndoff, avy, jif, per;
+	int dx, dy, dist, rndoff;
 
 	for (int i = 0; i < 2; i++) {
 		dx = _tbx - _x[i] - i * 7;
@@ -819,20 +821,19 @@ void EE::docollisions() {
 			_bvelx += dx * abs(dx) + ((_keymove[i][kDirRight] + _keymove[i][kDirLeft]) << (4 + _servevel)) + rndoff;
 			if (!_rebound[i]) {
 				if (_mode != kModeMenu) {
-					avy = abs(320 - abs(_bvely));
-					per = 300 + avy;
-					jif = per >> 5;
-					if (_soundEnabled && _mode != kModeMenu)
+					if (_soundEnabled && _mode != kModeMenu) {
 						playSound(kSndHit);
 					}
+				}
 				_bytop = 200;
 				_serve = 0;
 				_rebound[i] = 1;
 				if (_hitter != i) {
 					_hitter = i;
 					_hits = 0;
-				} else
+				} else {
 					_hits++;
+				}
 			}
 		} else if (_rebound[i]) {
 			_rebound[i] = _servevel = 0;
