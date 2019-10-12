@@ -94,6 +94,23 @@ static const CryOmni3DGameDescription gameDescriptions[] = {
 	},
 
 	// Versailles 1685
+	// French Windows from DVD
+	// From Uka in forum
+	{
+		{
+			"versailles",
+			"",
+			AD_ENTRY1s("Versaill.exe", "09b4734ce473e4cb78738677ce39f536", 346624),
+			Common::FR_FRA,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			GUI_OPTIONS_VERSAILLES
+		},
+		GType_VERSAILLES,
+		GF_VERSAILLES_FONTS_NUMERIC | GF_VERSAILLES_AUDIOPADDING_YES,
+	},
+
+	// Versailles 1685
 	// French Windows compressed from DVD
 	// From Uka in forum
 	{
@@ -107,7 +124,7 @@ static const CryOmni3DGameDescription gameDescriptions[] = {
 			GUI_OPTIONS_VERSAILLES
 		},
 		GType_VERSAILLES,
-		GF_VERSAILLES_FONTS_SET_B | GF_VERSAILLES_AUDIOPADDING_YES,
+		GF_VERSAILLES_FONTS_NUMERIC | GF_VERSAILLES_AUDIOPADDING_YES,
 	},
 
 	// Versailles 1685
