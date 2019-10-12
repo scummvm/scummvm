@@ -10,11 +10,13 @@
 			<sparkle:releaseNotesLink>
 				https://scummvm.org/frs/scummvm/2.1.0/ReleaseNotes.html
 			</sparkle:releaseNotesLink>
-			<pubDate>Sun, 13 Oct 2019 22:00:00 +0000</pubDate>
+			<pubDate>Fri, 11 Oct 2019 22:00:00 +0000</pubDate>
+<!--
 			<enclosure url="https://www.scummvm.org/frs/scummvm/2.1.0/scummvm-2.1.0-macosx.dmg"
 						sparkle:version="2.1.0" length="24505986" type="application/octet-stream"
 						sparkle:dsaSignature="MCwCFDoB9wb8PbqkTRKnQyGt7RsNJRrzAhQXOeuQU+AtAj190rN+rI/ONvZn/A=="
 						sparkle:edSignature="rjvKAwQsOCFIcs12c/lBDIeISLs9Q1mH5Oc9/dRJZg8sQ/+kG6EHe+3SnG8jVTPw3aJZfjL+VSAjDUaVlIN8CQ==" />
+-->
 			<enclosure sparkle:os="windows-x86"
 						url="https://www.scummvm.org/frs/scummvm/2.1.0/scummvm-2.1.0-win32.exe"
 						sparkle:version="2.1.0" length="19382458" type="application/octet-stream"
@@ -23,7 +25,7 @@
 						url="https://www.scummvm.org/frs/scummvm/2.1.0/scummvm-2.1.0-win32-x86_64.exe"
 						sparkle:version="2.1.0" length="20395189" type="application/octet-stream"
 						sparkle:dsaSignature="MC0CFHd2FN9gCNMaZgU5B3W5CrK1YOtfAhUAo+262MibKsD78grGoillK8wiMlE=" />
-
+<!--
 			<sparkle:deltas>
 				<enclosure url="https://www.scummvm.org/frs/scummvm/2.1.0/ScummVM2.1.0-2.0.0.1.delta"
 					sparkle:version="2.1.0" sparkle:shortVersionString="2.1.0" sparkle:deltaFrom="2.0.0.1"
@@ -56,6 +58,7 @@
 					sparkle:dsaSignature="MCwCFE8x+m9/KaRrMGLG1XUjEHX7bi/hAhRKG9R0VqyGZhx0PyVnDg+nui8i0w=="
 					sparkle:edSignature="DR+L7KXOt5yALnxV2U0+ktDV1YZ2F0XLQkALR/1lhfG8k5SlziuOMSdtyJ+nwTEDw4G+lm2Gk/ra8kPAR3FyAw=="/>
 			</sparkle:deltas>
+-->
 		</item>
 		<item>
 			<title>Version 2.0.0</title>
