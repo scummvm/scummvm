@@ -4696,10 +4696,11 @@ case $_host_os in
 		if test "$_updates" = no; then
 			_sparkle=no
 		else
-			if test ! -z $_sparklepath ; then
-				SPARKLE_CFLAGS="-F$_sparklepath"
-				SPARKLE_LIBS="-F$_sparklepath"
+			if test -z $_sparklepath; then
+				_sparklepath=/Library/Frameworks
 			fi
+			SPARKLE_CFLAGS="-F$_sparklepath"
+			SPARKLE_LIBS="-F$_sparklepath"
 			if test "$_sparkle" = auto ; then
 				_sparkle=no
 				cat > $TMPC << EOF
