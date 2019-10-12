@@ -365,6 +365,40 @@ static const CryOmni3DGameDescription gameDescriptions[] = {
 		GF_VERSAILLES_FONTS_NUMERIC | GF_VERSAILLES_AUDIOPADDING_YES,
 	},
 
+	// Versailles 1685
+	// Brazilian Windows from DVD
+	// From Uka in forum
+	{
+		{
+			"versailles",
+			"",
+			AD_ENTRY1s("Versaill.exe", "49aa4581b8c652aa88c633b6c5fe84ea", 346112),
+			Common::PT_BRA,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			GUI_OPTIONS_VERSAILLES
+		},
+		GType_VERSAILLES,
+		GF_VERSAILLES_FONTS_NUMERIC | GF_VERSAILLES_AUDIOPADDING_YES,
+	},
+
+	// Versailles 1685
+	// Brazilian Windows compressed from DVD
+	// From Uka in forum
+	{
+		{
+			"versailles",
+			"",
+			AD_ENTRY1s("PROGRAM.Z", "013eabf30fdec7bb7302a5312d094c64", 237952),
+			Common::PT_BRA,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			GUI_OPTIONS_VERSAILLES
+		},
+		GType_VERSAILLES,
+		GF_VERSAILLES_FONTS_NUMERIC | GF_VERSAILLES_AUDIOPADDING_YES,
+	},
+
 	{ AD_TABLE_END_MARKER, 0, 0 }
 };
 
