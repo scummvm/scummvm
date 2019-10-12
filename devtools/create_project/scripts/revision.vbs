@@ -489,12 +489,16 @@ Sub CompareFileAndReplace(src_filename, dst_filename)
 	Set file = FSO.OpenTextFile(src_filename, 1, 0, 0)
 	src_data = file.ReadAll
 	file.Close
-	Set file = FSO.OpenTextFile(dst_filename, 1, 0, 0)
-	dst_data = file.ReadAll
-	file.Close
-	If StrComp(src_data, dst_data, vbBinaryCompare) <> 0 Then
-		' Files are different, overwrite the destination
+	If Not FSO.FileExists(dst_filename) Then
 		FSO.CopyFile src_filename, dst_filename, True
+	Else
+		Set file = FSO.OpenTextFile(dst_filename, 1, 0, 0)
+		dst_data = file.ReadAll
+		file.Close
+		If StrComp(src_data, dst_data, vbBinaryCompare) <> 0 Then
+			' Files are different, overwrite the destination
+			FSO.CopyFile src_filename, dst_filename, True
+		End If
 	End If
 	' Remove temporary source
 	FSO.DeleteFile src_filename
