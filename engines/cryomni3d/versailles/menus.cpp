@@ -48,7 +48,8 @@ void CryOmni3DEngine_Versailles::drawMenuTitle(Graphics::ManagedSurface *surface
 
 	int titleX, titleY, subtitleX, subtitleY;
 	if (getLanguage() == Common::FR_FRA ||
-	        getLanguage() == Common::ES_ESP) {
+	        getLanguage() == Common::ES_ESP ||
+	        getLanguage() == Common::PT_BRA) {
 		titleX = 144;
 		titleY = 160;
 		subtitleX = 305;
@@ -75,7 +76,8 @@ void CryOmni3DEngine_Versailles::drawMenuTitle(Graphics::ManagedSurface *surface
 	_fontManager.displayStr(subtitleX, subtitleY - offY, _messages[24]);
 
 	if (getLanguage() == Common::FR_FRA ||
-	        getLanguage() == Common::ES_ESP) {
+	        getLanguage() == Common::ES_ESP ||
+	        getLanguage() == Common::PT_BRA) {
 		surface->vLine(100, 146, 172, color);
 		surface->hLine(100, 172, 168, color); // minus 1 because hLine draws inclusive
 	}
