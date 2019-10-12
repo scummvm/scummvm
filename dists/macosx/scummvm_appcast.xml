@@ -20,14 +20,6 @@
 						url="https://www.scummvm.org/frs/scummvm/2.1.0/scummvm-2.1.0-win32.exe"
 						sparkle:version="2.1.0" length="19382458" type="application/octet-stream"
 						sparkle:dsaSignature="MC0CFGbQGP4xlylID83atOlkqMHwaH7FAhUAyMhJBVry27rG9ytvKafDNHwIJ80==" />
-			<enclosure sparkle:os="windows-x86"
-						url="https://www.scummvm.org/frs/scummvm/2.1.0/scummvm-2.1.0-win32.exe"
-						sparkle:version="2.1.0" length="19382458" type="application/octet-stream"
-						sparkle:dsaSignature="MC0CFGbQGP4xlylID83atOlkqMHwaH7FAhUAyMhJBVry27rG9ytvKafDNHwIJ80==" />
-			<enclosure sparkle:os="windows-x64"
-						url="https://www.scummvm.org/frs/scummvm/2.1.0/scummvm-2.1.0-win32-x86_64.exe"
-						sparkle:version="2.1.0" length="20395189" type="application/octet-stream"
-						sparkle:dsaSignature="MC0CFHd2FN9gCNMaZgU5B3W5CrK1YOtfAhUAo+262MibKsD78grGoillK8wiMlE=" />
 		</item>
 	</channel>
 </rss>
