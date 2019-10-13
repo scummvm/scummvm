@@ -1,6 +1,6 @@
 # Special target to create an AmigaOS snapshot installation.
 # AmigaOS shell doesn't like indented comments.
-amigaosdist: $(EXECUTABLE)
+amigaosdist: $(EXECUTABLE) $(PLUGINS)
 	mkdir -p $(AMIGAOSPATH)
 	mkdir -p $(AMIGAOSPATH)/extras
 	cp ${srcdir}/dists/amiga/scummvm_drawer.info $(AMIGAOSPATH).info
