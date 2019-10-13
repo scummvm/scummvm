@@ -229,7 +229,12 @@ endif
 ifdef ENABLE_GLK_LEVEL9
 MODULE_OBJS += \
 	level9/detection.o \
-	level9/level9.o
+	level9/level9.o \
+	level9/bitmap.o \
+	level9/detection.o \
+	level9/level9.o \
+	level9/level9_main.o \
+	level9/os_glk.o
 endif
 
 ifdef ENABLE_GLK_MAGNETIC
