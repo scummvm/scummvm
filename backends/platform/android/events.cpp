@@ -99,23 +99,38 @@ void OSystem_Android::pushEvent(int type, int arg1, int arg2, int arg3,
 
 		// special case. we'll only get it's up event
 		case JKEYCODE_BACK:
-			e.kbd.keycode = Common::KEYCODE_ESCAPE;
-			e.kbd.ascii = Common::ASCII_ESCAPE;
+			if (_swap_menu_and_back) {
+				e.type = Common::EVENT_MAINMENU;
+				pushEvent(e);
+			} else {
+				e.kbd.keycode = Common::KEYCODE_ESCAPE;
+				e.kbd.ascii = Common::ASCII_ESCAPE;
 
-			lockMutex(_event_queue_lock);
-			e.type = Common::EVENT_KEYDOWN;
-			_event_queue.push(e);
-			e.type = Common::EVENT_KEYUP;
-			_event_queue.push(e);
-			unlockMutex(_event_queue_lock);
-
+				lockMutex(_event_queue_lock);
+				e.type = Common::EVENT_KEYDOWN;
+				_event_queue.push(e);
+				e.type = Common::EVENT_KEYUP;
+				_event_queue.push(e);
+				unlockMutex(_event_queue_lock);
+			}
 			return;
 
 		// special case. we'll only get it's up event
 		case JKEYCODE_MENU:
-			e.type = Common::EVENT_MAINMENU;
+			if (_swap_menu_and_back) {
+				e.kbd.keycode = Common::KEYCODE_ESCAPE;
+				e.kbd.ascii = Common::ASCII_ESCAPE;
 
-			pushEvent(e);
+				lockMutex(_event_queue_lock);
+				e.type = Common::EVENT_KEYDOWN;
+				_event_queue.push(e);
+				e.type = Common::EVENT_KEYUP;
+				_event_queue.push(e);
+				unlockMutex(_event_queue_lock);
+			} else {
+				e.type = Common::EVENT_MAINMENU;
+				pushEvent(e);
+			}
 
 			return;
 
