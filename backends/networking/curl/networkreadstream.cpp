@@ -84,6 +84,9 @@ void NetworkReadStream::init(const char *url, curl_slist *headersList, const byt
 	curl_easy_setopt(_easy, CURLOPT_NOPROGRESS, 0L);
 	curl_easy_setopt(_easy, CURLOPT_PROGRESSFUNCTION, curlProgressCallbackOlder);
 	curl_easy_setopt(_easy, CURLOPT_PROGRESSDATA, this);
+#ifdef NINTENDO_SWITCH
+	curl_easy_setopt(_easy, CURLOPT_SSL_VERIFYPEER, 0);
+#endif
 #if LIBCURL_VERSION_NUM >= 0x072000
 	// CURLOPT_XFERINFOFUNCTION introduced in libcurl 7.32.0
 	// CURLOPT_PROGRESSFUNCTION is used as a backup plan in case older version is used
@@ -136,6 +139,9 @@ void NetworkReadStream::init(const char *url, curl_slist *headersList, Common::H
 	curl_easy_setopt(_easy, CURLOPT_NOPROGRESS, 0L);
 	curl_easy_setopt(_easy, CURLOPT_PROGRESSFUNCTION, curlProgressCallbackOlder);
 	curl_easy_setopt(_easy, CURLOPT_PROGRESSDATA, this);
+#ifdef NINTENDO_SWITCH
+	curl_easy_setopt(_easy, CURLOPT_SSL_VERIFYPEER, 0);
+#endif
 #if LIBCURL_VERSION_NUM >= 0x072000
 	// CURLOPT_XFERINFOFUNCTION introduced in libcurl 7.32.0
 	// CURLOPT_PROGRESSFUNCTION is used as a backup plan in case older version is used
