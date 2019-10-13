@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2019-10-11 23:40+0200\n"
+"POT-Creation-Date: 2019-10-13 14:11+0200\n"
 "PO-Revision-Date: 2019-09-22 07:54+0000\n"
 "Last-Translator: jepael <kermespersialainen@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
@@ -3432,11 +3432,11 @@ msgstr "Videotiedostoa '%s' ei löytynyt!"
 msgid "Failed to initialize resources"
 msgstr "Resurssien alustus epäonnistui"
 
-#: engines/bladerunner/bladerunner.cpp:1005
+#: engines/bladerunner/bladerunner.cpp:1000
 msgid "A required game resource was not found"
 msgstr "Pakollista pelin resurssia ei löydetty"
 
-#: engines/bladerunner/bladerunner.cpp:2155
+#: engines/bladerunner/bladerunner.cpp:2150
 msgid ""
 "WARNING: This game was saved in Restored Cut Content mode, but you are "
 "playing in Original Content mode. The mode will be adjusted to Restored Cut "
@@ -3447,7 +3447,7 @@ msgstr ""
 "Pelisessio muutetaan 'Leikatut kohtaukset palautettu'-tilaan ja se on "
 "voimassa kunnes poistut kokonaan pelistä."
 
-#: engines/bladerunner/bladerunner.cpp:2157
+#: engines/bladerunner/bladerunner.cpp:2152
 msgid ""
 "WARNING: This game was saved in Original Content mode, but you are playing "
 "in Restored Cut Content mode. The mode will be adjusted to Original Content "
@@ -3458,7 +3458,7 @@ msgstr ""
 "muutetaan 'Alkuperäinen sisältö'-tilaan ja se on voimassa kunnes poistut "
 "kokonaan pelistä."
 
-#: engines/bladerunner/bladerunner.cpp:2159
+#: engines/bladerunner/bladerunner.cpp:2154
 msgid "Continue"
 msgstr "Jatka"
 
