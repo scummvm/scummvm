@@ -46,8 +46,8 @@ class KIASectionSettings;
 class KIASectionPogo;
 class KIASectionSave;
 class KIASectionSuspects;
-class KIAShapes;
 class Shape;
+class Shapes;
 class UIImagePicker;
 class VQAPlayer;
 
@@ -83,7 +83,7 @@ class KIA {
 	uint32             _playerVqaFrame;
 	uint32             _playerVisualizerState;
 	int                _playerPhotographId;
-	Shape             *_playerPhotograph;
+	Shapes            *_playerPhotographs;
 	int                _playerSliceModelId;
 	float              _playerSliceModelAngle;
 	Graphics::Surface  _playerImage;
@@ -121,7 +121,7 @@ public:
 
 	KIALog           *_log;
 	KIAScript        *_script;
-	KIAShapes        *_shapes;
+	Shapes           *_shapes;
 
 	Graphics::Surface _thumbnail;
 

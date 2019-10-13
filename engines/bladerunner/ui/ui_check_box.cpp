@@ -24,11 +24,11 @@
 
 #include "bladerunner/audio_player.h"
 #include "bladerunner/bladerunner.h"
-#include "bladerunner/game_info.h"
-#include "bladerunner/time.h"
 #include "bladerunner/game_constants.h"
+#include "bladerunner/game_info.h"
+#include "bladerunner/shape.h"
+#include "bladerunner/time.h"
 #include "bladerunner/ui/kia.h"
-#include "bladerunner/ui/kia_shapes.h"
 
 namespace BladeRunner {
 

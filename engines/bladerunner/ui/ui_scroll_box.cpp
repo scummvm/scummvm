@@ -30,7 +30,6 @@
 #include "bladerunner/time.h"
 #include "bladerunner/game_constants.h"
 #include "bladerunner/ui/kia.h"
-#include "bladerunner/ui/kia_shapes.h"
 
 namespace BladeRunner {
 

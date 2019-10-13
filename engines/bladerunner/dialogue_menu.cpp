@@ -41,13 +41,7 @@ DialogueMenu::DialogueMenu(BladeRunnerEngine *vm) {
 	_vm = vm;
 	reset();
 	_textResource = new TextResource(_vm);
-	_shapes.reserve(8);
-	for (int i = 0; i != 8; ++i) {
-		_shapes.push_back(Shape(_vm));
-		bool r = _shapes[i].open("DIALOG.SHP", i);
-		assert(r);
-		(void)r;
-	}
+	_shapes = new Shapes(_vm);
 
 	_screenX = 0;
 	_screenY = 0;
@@ -57,12 +51,17 @@ DialogueMenu::DialogueMenu(BladeRunnerEngine *vm) {
 
 DialogueMenu::~DialogueMenu() {
 	delete _textResource;
+	delete _shapes;
 }
 
-bool DialogueMenu::loadText(const Common::String &name) {
-	bool r = _textResource->open(name);
+bool DialogueMenu::loadResources() {
+	bool r = _textResource->open("DLGMENU");
 	if (!r) {
 		error("Failed to load dialogue menu text");
+	}
+	r = _shapes->load("DIALOG.SHP");
+	if (!r) {
+		error("Failed to load dialogue menu shapes");
 	}
 	return r;
 }
@@ -372,21 +371,21 @@ void DialogueMenu::draw(Graphics::Surface &s) {
 		s.hLine(x1 + 8, mouse.y, x2 + 2, s.format.RGBToColor(64, 64, 64));
 	}
 
-	_shapes[0].draw(s, x1, y1);
-	_shapes[3].draw(s, x2, y1);
-	_shapes[2].draw(s, x1, y2);
-	_shapes[5].draw(s, x2, y2);
+	_shapes->get(0)->draw(s, x1, y1);
+	_shapes->get(3)->draw(s, x2, y1);
+	_shapes->get(2)->draw(s, x1, y2);
+	_shapes->get(5)->draw(s, x2, y2);
 
 	for (int i = 0; i != _listSize; ++i) {
-		_shapes[1].draw(s, x1, y);
-		_shapes[4].draw(s, x2, y);
+		_shapes->get(1)->draw(s, x1, y);
+		_shapes->get(4)->draw(s, x2, y);
 		uint32 color = s.format.RGBToColor((_items[i].colorIntensity / 2) * (256 / 32), (_items[i].colorIntensity / 2) * (256 / 32), _items[i].colorIntensity * (256 / 32));
 		_vm->_mainFont->drawString(&s, _items[i].text, x, y, s.w, color);
 		y += kLineHeight;
 	}
 	for (; x != x2; ++x) {
-		_shapes[6].draw(s, x, y1);
-		_shapes[7].draw(s, x, y2);
+		_shapes->get(6)->draw(s, x, y1);
+		_shapes->get(7)->draw(s, x, y2);
 	}
 }
 
@@ -411,8 +410,8 @@ void DialogueMenu::calculatePosition(int unusedX, int unusedY) {
 	}
 	_maxItemWidth += 2;
 
-	int w = kBorderSize + _shapes[4].getWidth() + _maxItemWidth;
-	int h = kBorderSize + _shapes[7].getHeight() + kLineHeight * _listSize;
+	int w = kBorderSize + _shapes->get(4)->getWidth() + _maxItemWidth;
+	int h = kBorderSize + _shapes->get(7)->getHeight() + kLineHeight * _listSize;
 
 	_screenX = _centerX - w / 2;
 	_screenY = _centerY - h / 2;

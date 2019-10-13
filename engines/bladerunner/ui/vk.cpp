@@ -51,12 +51,13 @@ namespace BladeRunner {
 
 VK::VK(BladeRunnerEngine *vm) {
 	_vm = vm;
-
+	_shapes = new Shapes(vm);
 	reset();
 }
 
 VK::~VK() {
 	reset();
+	delete _shapes;
 }
 
 void VK::open(int actorId, int calibrationRatio) {
@@ -84,11 +85,7 @@ void VK::open(int actorId, int calibrationRatio) {
 
 	_buttons = new UIImagePicker(_vm, 8);
 
-	_shapes.resize(15);
-	for (int i = 0; i < (int)_shapes.size(); ++i) {
-		_shapes[i] = new Shape(_vm);
-		_shapes[i]->open("VK.SHP", i);
-	}
+	_shapes->load("VK.SHP");
 
 	_vqaPlayerMain = new VQAPlayer(_vm, &_vm->_surfaceBack, "VK.VQA");
 	if (!_vqaPlayerMain->open()) {
@@ -176,10 +173,7 @@ void VK::close() {
 
 	_questions.clear();
 
-	for (int i = 0; i < (int)_shapes.size(); ++i) {
-		delete _shapes[i];
-	}
-	_shapes.clear();
+	_shapes->unload();
 
 	_vm->closeArchive("MODE.MIX");
 	_vm->_music->setVolume(_volumeMusic);
@@ -447,7 +441,7 @@ void VK::reset() {
 
 	_isOpen = false;
 
-	_shapes.clear();
+	_shapes->unload();
 
 	_volumeAmbient = 0;
 	_volumeMusic   = 0;
@@ -519,14 +513,14 @@ void VK::init() {
 	_vm->_mouse->disable();
 
 	_buttons->activate(nullptr, nullptr, mouseDownCallback, mouseUpCallback, this);
-	_buttons->defineImage(0, Common::Rect(191, 364, 218, 373), nullptr,    _shapes[2],  _shapes[3],  _vm->_textVK->getText(1));
-	_buttons->defineImage(1, Common::Rect(154, 258, 161, 265), _shapes[4], _shapes[4],  _shapes[5],  _vm->_textVK->getText(2));
-	_buttons->defineImage(2, Common::Rect(515, 368, 538, 398), nullptr,    _shapes[6],  _shapes[7],  nullptr);
-	_buttons->defineImage(3, Common::Rect(548, 368, 571, 398), nullptr,    _shapes[8],  _shapes[9],  nullptr);
-	_buttons->defineImage(4, Common::Rect(581, 368, 604, 398), nullptr,    _shapes[10], _shapes[11], nullptr);
-	_buttons->defineImage(5, Common::Rect( 31, 363,  65, 392), nullptr,    _shapes[0],  _shapes[1], _vm->_textVK->getText(0));
-	_buttons->defineImage(6, Common::Rect( 59, 262,  87, 277), nullptr,    nullptr,     nullptr,    _vm->_textVK->getText(6));
-	_buttons->defineImage(7, Common::Rect( 59, 306,  87, 322), nullptr,    nullptr,     nullptr,    _vm->_textVK->getText(7));
+	_buttons->defineImage(0, Common::Rect(191, 364, 218, 373), nullptr,         _shapes->get(2),  _shapes->get(3),  _vm->_textVK->getText(1));
+	_buttons->defineImage(1, Common::Rect(154, 258, 161, 265), _shapes->get(4), _shapes->get(4),  _shapes->get(5),  _vm->_textVK->getText(2));
+	_buttons->defineImage(2, Common::Rect(515, 368, 538, 398), nullptr,         _shapes->get(6),  _shapes->get(7),  nullptr);
+	_buttons->defineImage(3, Common::Rect(548, 368, 571, 398), nullptr,         _shapes->get(8),  _shapes->get(9),  nullptr);
+	_buttons->defineImage(4, Common::Rect(581, 368, 604, 398), nullptr,         _shapes->get(10), _shapes->get(11), nullptr);
+	_buttons->defineImage(5, Common::Rect( 31, 363,  65, 392), nullptr,         _shapes->get(0),  _shapes->get(1),  _vm->_textVK->getText(0));
+	_buttons->defineImage(6, Common::Rect( 59, 262,  87, 277), nullptr,         nullptr,          nullptr,          _vm->_textVK->getText(6));
+	_buttons->defineImage(7, Common::Rect( 59, 306,  87, 322), nullptr,         nullptr,          nullptr,          _vm->_textVK->getText(7));
 
 	_script->initialize(_actorId);
 
@@ -592,11 +586,11 @@ void VK::draw() {
 				_blinkState = 0;
 			} else {
 				if (_humanProbability >= 80) {
-					_buttons->setImageShapeUp(6, _shapes[13]);
+					_buttons->setImageShapeUp(6, _shapes->get(13));
 					_vm->_audioPlayer->playAud(_vm->_gameInfo->getSfxTrack(kSfxCROSLOCK), 100, 0, 0, 50, 0);
 				}
 				if (_replicantProbability >= 80) {
-					_buttons->setImageShapeUp(7, _shapes[14]);
+					_buttons->setImageShapeUp(7, _shapes->get(14));
 					_vm->_audioPlayer->playAud(_vm->_gameInfo->getSfxTrack(kSfxCROSLOCK), 100, 0, 0, 50, 0);
 				}
 				_blinkState = 1;
@@ -662,7 +656,7 @@ void VK::draw() {
 				_buttons->setImageShapeUp(0, nullptr);
 				_blinkState = false;
 			} else {
-				_buttons->setImageShapeUp(0, _shapes[2]);
+				_buttons->setImageShapeUp(0, _shapes->get(2));
 				_vm->_audioPlayer->playAud(_vm->_gameInfo->getSfxTrack(kSfxVKBEEP1), 50, 0, 0, 50, 0);
 				_blinkState = true;
 			}
@@ -696,9 +690,9 @@ void VK::draw() {
 				_buttons->setImageShapeUp(4, nullptr);
 				_blinkState = 0;
 			} else {
-				_buttons->setImageShapeUp(2, _shapes[7]);
-				_buttons->setImageShapeUp(3, _shapes[9]);
-				_buttons->setImageShapeUp(4, _shapes[11]);
+				_buttons->setImageShapeUp(2, _shapes->get(7));
+				_buttons->setImageShapeUp(3, _shapes->get(9));
+				_buttons->setImageShapeUp(4, _shapes->get(11));
 				_blinkState = 1;
 
 				_vm->_audioPlayer->playAud(_vm->_gameInfo->getSfxTrack(kSfxVKBEEP2), 33, 0, 0, 50, 0);
@@ -857,7 +851,7 @@ void VK::drawMouse(Graphics::Surface &surface) {
 }
 
 void VK::drawGauge(Graphics::Surface &surface, int value, int x, int y, int width) {
-	_shapes[12]->draw(surface, x + (width / 2) * value / 20 , y);
+	_shapes->get(12)->draw(surface, x + (width / 2) * value / 20 , y);
 }
 
 void VK::drawHumanGauge(Graphics::Surface &surface) {
@@ -885,16 +879,16 @@ void VK::calibrate() {
 	_calibrationStarted = true;
 	_buttons->setImageShapeUp(0, nullptr);
 
-	_buttons->setImageShapeHovered(2, _shapes[6]);
-	_buttons->setImageShapeDown(2, _shapes[7]);
+	_buttons->setImageShapeHovered(2, _shapes->get(6));
+	_buttons->setImageShapeDown(2, _shapes->get(7));
 	_buttons->setImageTooltip(2, _vm->_textVK->getText(3));
 
-	_buttons->setImageShapeHovered(3, _shapes[8]);
-	_buttons->setImageShapeDown(3, _shapes[9]);
+	_buttons->setImageShapeHovered(3, _shapes->get(8));
+	_buttons->setImageShapeDown(3, _shapes->get(9));
 	_buttons->setImageTooltip(3, _vm->_textVK->getText(4));
 
-	_buttons->setImageShapeHovered(4, _shapes[10]);
-	_buttons->setImageShapeDown(4, _shapes[11]);
+	_buttons->setImageShapeHovered(4, _shapes->get(10));
+	_buttons->setImageShapeDown(4, _shapes->get(11));
 	_buttons->setImageTooltip(4, _vm->_textVK->getText(5));
 }
 
@@ -907,7 +901,7 @@ void VK::beginTest() {
 		_buttons->setImageShapeHovered(0, nullptr);
 		_buttons->setImageShapeDown(0, nullptr);
 		_buttons->setImageTooltip(0, nullptr);
-		_buttons->setImageShapeDown(1, _shapes[4]);
+		_buttons->setImageShapeDown(1, _shapes->get(4));
 		_buttons->setImageTooltip(1, nullptr);
 		_buttons->setImageShapeUp(2, nullptr);
 		_buttons->setImageShapeUp(3, nullptr);

@@ -31,7 +31,7 @@ namespace BladeRunner {
 
 class ActorClues;
 class BladeRunnerEngine;
-class Shape;
+class Shapes;
 class UICheckBox;
 class UIContainer;
 class UIImagePicker;
@@ -77,9 +77,9 @@ class KIASectionSuspects : public KIASectionBase {
 	int   _mouseX;
 	int   _mouseY;
 
-	int    _suspectPhotoShapeId;
-	int    _suspectPhotoNotUsed;
-	Shape *_suspectPhotoShape;
+	int     _suspectPhotoShapeId;
+	int     _suspectPhotoNotUsed;
+	Shapes *_suspectPhotoShapes;
 
 public:
 	int                 _crimeSelected;

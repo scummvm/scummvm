@@ -410,6 +410,8 @@ void Subtitles::reset() {
 	_subtitlesInfo.versionStr = "N/A";
 	_subtitlesInfo.dateOfCompile = "N/A";
 	_subtitlesInfo.languageMode = "N/A";
+	_subtitlesInfo.fontType = kSubtitlesFontTypeInternal;
+	_subtitlesInfo.fontName = "N/A";
 
 	for (int i = 0; i < kMaxTextResourceEntries; ++i) {
 		if (_vqaSubsTextResourceEntries[i] != nullptr) {

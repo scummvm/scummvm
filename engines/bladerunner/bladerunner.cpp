@@ -642,7 +642,7 @@ bool BladeRunnerEngine::startup(bool hasSavegames) {
 	_russianCP1251 = ((uint8)_textOptions->getText(0)[0]) == 209;
 
 	_dialogueMenu = new DialogueMenu(this);
-	if (!_dialogueMenu->loadText("DLGMENU"))
+	if (!_dialogueMenu->loadResources())
 		return false;
 
 	_suspectsDatabase = new SuspectsDatabase(this, _gameInfo->getSuspectCount());
@@ -657,11 +657,8 @@ bool BladeRunnerEngine::startup(bool hasSavegames) {
 
 	_mainFont = Font::load(this, "KIA6PT.FON", 1, false);
 
-	for (int i = 0; i != 43; ++i) {
-		Shape *shape = new Shape(this);
-		shape->open("SHAPES.SHP", i);
-		_shapes.push_back(shape);
-	}
+	_shapes = new Shapes(this);
+	_shapes->load("SHAPES.SHP");
 
 	_esper = new ESPER(this);
 
@@ -759,10 +756,8 @@ void BladeRunnerEngine::shutdown() {
 	delete _esper;
 	_esper = nullptr;
 
-	for (uint i = 0; i != _shapes.size(); ++i) {
-		delete _shapes[i];
-	}
-	_shapes.clear();
+	delete _shapes;
+	_shapes = nullptr;
 
 	delete _mainFont;
 	_mainFont = nullptr;

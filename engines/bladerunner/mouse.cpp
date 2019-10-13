@@ -257,13 +257,7 @@ void Mouse::draw(Graphics::Surface &surface, int x, int y) {
 	_x = CLIP(x, 0, surface.w - 1);
 	_y = CLIP(y, 0, surface.h - 1);
 
-	if (_cursor < 0 || (uint)_cursor >= _vm->_shapes.size()) {
-		return;
-	}
-
-	Shape *cursorShape = _vm->_shapes[_frame];
-
-	cursorShape->draw(surface, _x - _hotspotX, _y - _hotspotY);
+	_vm->_shapes->get(_frame)->draw(surface, _x - _hotspotX, _y - _hotspotY);
 
 	updateCursorFrame();
 }
