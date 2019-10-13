@@ -2,6 +2,9 @@ Umfangreichere Informationen über die Änderungen des aktuellen experimentellen
 Programmcodes finden Sie auf Englisch unter:
         https://github.com/scummvm/scummvm/commits/
 
+#### 2.2.0 (DD.MM.YYYY)
+
+
 #### 2.1.0 "Electric Sheep" (13.10.2019)
 
  Neue Spiele:
