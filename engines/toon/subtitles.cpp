@@ -72,6 +72,7 @@ bool SubtitleRenderer::load(const Common::String &video) {
 
     char srtfile[20] = {0};
     strcpy(srtfile, video.c_str());
+    srtfile[19] = '\0';
     int ln = strlen(srtfile);
     srtfile[ln - 3] = 't';
     srtfile[ln - 2] = 's';
