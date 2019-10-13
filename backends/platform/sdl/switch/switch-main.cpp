@@ -29,8 +29,8 @@
 
 int main(int argc, char *argv[]) {
 
-#ifdef __SWITCH_DEBUG__
 	socketInitializeDefault();
+#ifdef __SWITCH_DEBUG__
 	nxlinkStdio();
 #endif
 
@@ -51,9 +51,7 @@ int main(int argc, char *argv[]) {
 	// Free OSystem
 	g_system->destroy();
 
-#ifdef __SWITCH_DEBUG__
 	socketExit();
-#endif
 
 	return res;
 }
