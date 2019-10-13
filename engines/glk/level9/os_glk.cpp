@@ -95,8 +95,8 @@ typedef L9BYTE gln_byte;
 typedef L9UINT16 gln_uint16;
 typedef L9UINT32 gln_uint32;
 
-extern void save(void);
-extern void restore(void);
+extern void save();
+extern void restore();
 extern gln_bool Cheating;
 extern gln_byte *startdata;
 extern gln_uint32 FileSize;
@@ -106,7 +106,7 @@ static void gln_event_wait(glui32 wait_type, event_t *event);
 static void gln_event_wait_2(glui32 wait_type_1,
                              glui32 wait_type_2, event_t *event);
 
-static void gln_watchdog_tick(void);
+static void gln_watchdog_tick();
 static void gln_standout_string(const char *message);
 
 static int gln_confirm(const char *prompt);
@@ -155,8 +155,7 @@ static void gln_fatal(const char *string) {
  * Non-failing malloc and realloc; call gln_fatal and exit if memory
  * allocation fails.
  */
-static void *
-gln_malloc(size_t size) {
+static void *gln_malloc(size_t size) {
 	void *pointer;
 
 	pointer = malloc(size);
@@ -168,8 +167,7 @@ gln_malloc(size_t size) {
 	return pointer;
 }
 
-static void *
-gln_realloc(void *ptr, size_t size) {
+static void *gln_realloc(void *ptr, size_t size) {
 	void *pointer;
 
 	pointer = realloc(ptr, size);
@@ -192,8 +190,7 @@ gln_realloc(void *ptr, size_t size) {
  * They're global here so that the core interpreter can use them; otherwise
  * it tries to use the non-ANSI str[n]icmp() functions.
  */
-int
-gln_strncasecmp(const char *s1, const char *s2, size_t n) {
+int gln_strncasecmp(const char *s1, const char *s2, size_t n) {
 	size_t index;
 
 	for (index = 0; index < n; index++) {
@@ -207,8 +204,7 @@ gln_strncasecmp(const char *s1, const char *s2, size_t n) {
 	return 0;
 }
 
-int
-gln_strcasecmp(const char *s1, const char *s2) {
+int gln_strcasecmp(const char *s1, const char *s2) {
 	size_t s1len, s2len;
 	int result;
 
@@ -221,47 +217,6 @@ gln_strcasecmp(const char *s1, const char *s2) {
 	else
 		return s1len < s2len ? -1 : s1len > s2len ? 1 : 0;
 }
-
-
-/*---------------------------------------------------------------------*/
-/*  Glk port stub graphics functions                                   */
-/*---------------------------------------------------------------------*/
-
-/*
- * If we're working with a very stripped down, old, or lazy Glk library
- * that neither offers Glk graphics nor graphics stubs functions, here
- * we define our own stubs, to avoid link-time errors.
- */
-#ifndef GLK_MODULE_IMAGE
-static glui32
-g_vm->glk_image_draw(winid_t win, glui32 image, glsi32 val1, glsi32 val2) {
-	return FALSE;
-}
-static glui32
-g_vm->glk_image_draw_scaled(winid_t win, glui32 image, glsi32 val1, glsi32 val2,
-                            glui32 width, glui32 height) {
-	return FALSE;
-}
-static glui32
-g_vm->glk_image_get_info(glui32 image, glui32 *width, glui32 *height) {
-	return FALSE;
-}
-static void
-g_vm->glk_window_flow_break(winid_t win) {
-}
-static void
-g_vm->glk_window_erase_rect(winid_t win, glsi32 left, glsi32 top,
-                            glui32 width, glui32 height) {
-}
-static void
-g_vm->glk_window_fill_rect(winid_t win, glui32 color, glsi32 left, glsi32 top,
-                           glui32 width, glui32 height) {
-}
-static void
-g_vm->glk_window_set_background_color(winid_t win, glui32 color) {
-}
-#endif
-
 
 /*---------------------------------------------------------------------*/
 /*  Glk port CRC functions                                             */
@@ -340,15 +295,15 @@ static const char *gln_gameid_game_name = NULL;
  *
  * The version of l9data_d.h used is 050 (22 Oct 2002).
  */
-typedef const struct {
+struct gln_game_table_t {
 	const gln_uint16 length;    /* Datafile length in bytes */
 	const gln_byte checksum;    /* 8-bit checksum, last datafile byte */
 	const gln_uint16 crc;       /* 16-bit CRC, L9cut-internal */
 	const char *const name;     /* Game title and platform */
-} gln_game_table_t;
-typedef gln_game_table_t *gln_game_tableref_t;
+};
+typedef const gln_game_table_t *gln_game_tableref_t;
 
-static gln_game_table_t GLN_GAME_TABLE[] = {
+static const gln_game_table_t GLN_GAME_TABLE[] = {
 	{0x5323, 0xb7, 0x8af7, "Adventure Quest (Amstrad CPC/Spectrum)"},
 
 	{0x630e, 0x8d, 0x7d7d, "Dungeon Adventure (Amstrad CPC)"},
@@ -763,16 +718,16 @@ static gln_game_table_t GLN_GAME_TABLE[] = {
  *
  * The version of l9data_p.h used is 012 (22 May 2001).
  */
-typedef const struct {
+struct gln_patch_table_t {
 	const gln_uint16 length;        /* Datafile length in bytes */
 	const gln_byte orig_checksum;   /* 8-bit checksum, last datafile byte */
 	const gln_uint16 orig_crc;      /* 16-bit CRC, L9cut-internal */
 	const gln_byte patch_checksum;  /* 8-bit checksum, last datafile byte */
 	const gln_uint16 patch_crc;     /* 16-bit CRC, L9cut-internal */
-} gln_patch_table_t;
-typedef gln_patch_table_t *gln_patch_tableref_t;
+};
+typedef const gln_patch_table_t *gln_patch_tableref_t;
 
-static gln_patch_table_t GLN_PATCH_TABLE[] = {
+static const gln_patch_table_t GLN_PATCH_TABLE[] = {
 	/* Price of Magik (Spectrum128) */
 	{0x7410, 0x5e, 0x60be, 0x70, 0x6cef},
 
@@ -1132,28 +1087,26 @@ static gln_patch_table_t GLN_PATCH_TABLE[] = {
  * Look up and return game table and patch table entries given a game's
  * length, checksum, and CRC.  Returns the entry, or NULL if not found.
  */
-static gln_game_tableref_t
-gln_gameid_lookup_game(gln_uint16 length, gln_byte checksum,
-                       gln_uint16 crc, int ignore_crc) {
+static gln_game_tableref_t gln_gameid_lookup_game(gln_uint16 length, gln_byte checksum,
+		gln_uint16 crc, int ignore_crc) {
 	gln_game_tableref_t game;
 
 	for (game = GLN_GAME_TABLE; game->length; game++) {
 		if (game->length == length && game->checksum == checksum
-		        && (ignore_crc || game->crc == crc))
+				&& (ignore_crc || game->crc == crc))
 			break;
 	}
 
 	return game->length ? game : NULL;
 }
 
-static gln_patch_tableref_t
-gln_gameid_lookup_patch(gln_uint16 length, gln_byte checksum,
-                        gln_uint16 crc) {
+static gln_patch_tableref_t gln_gameid_lookup_patch(gln_uint16 length, gln_byte checksum,
+		gln_uint16 crc) {
 	gln_patch_tableref_t patch;
 
 	for (patch = GLN_PATCH_TABLE; patch->length; patch++) {
 		if (patch->length == length && patch->patch_checksum == checksum
-		        && patch->patch_crc == crc)
+				&& patch->patch_crc == crc)
 			break;
 	}
 
@@ -1170,8 +1123,7 @@ gln_gameid_lookup_patch(gln_uint16 length, gln_byte checksum,
  * This function uses startdata and FileSize from the core interpreter.
  * These aren't advertised symbols, so be warned.
  */
-static gln_game_tableref_t
-gln_gameid_identify_game(void) {
+static gln_game_tableref_t gln_gameid_identify_game() {
 	gln_uint16 length, crc;
 	gln_byte checksum;
 	int is_version2;
@@ -1242,8 +1194,7 @@ gln_gameid_identify_game(void) {
  * This function uses startdata from the core interpreter.  This isn't an
  * advertised symbol, so be warned.
  */
-static const char *
-gln_gameid_get_game_name(void) {
+static const char *gln_gameid_get_game_name() {
 	/*
 	 * If no game name yet known, attempt to identify the game.  If it can't
 	 * be identified, set the cached game name to "" -- this special value
@@ -1278,8 +1229,7 @@ gln_gameid_get_game_name(void) {
  * function should be called by actions that may cause the interpreter to
  * change game file, for example os_set_filenumber().
  */
-static void
-gln_gameid_game_name_reset(void) {
+static void gln_gameid_game_name_reset() {
 	gln_gameid_game_name = NULL;
 }
 
@@ -1289,9 +1239,9 @@ gln_gameid_game_name_reset(void) {
 /*---------------------------------------------------------------------*/
 
 /* R,G,B color triple definition. */
-typedef struct {
+struct gln_rgb_t {
 	int red, green, blue;
-} gln_rgb_t;
+};
 typedef gln_rgb_t *gln_rgbref_t;
 
 /*
@@ -1417,7 +1367,7 @@ static int gln_graphics_color_count = GLN_PALETTE_SIZE;
  * If it's not open, open the graphics window.  Returns TRUE if graphics
  * was successfully started, or already on.
  */
-static int gln_graphics_open(void) {
+static int gln_graphics_open() {
 	if (!gln_graphics_window) {
 		gln_graphics_window = g_vm->glk_window_open(gln_main_window,
 		                      winmethod_Above
@@ -1435,7 +1385,7 @@ static int gln_graphics_open(void) {
  *
  * If open, close the graphics window and set back to NULL.
  */
-static void gln_graphics_close(void) {
+static void gln_graphics_close() {
 	if (gln_graphics_window) {
 		g_vm->glk_window_close(gln_graphics_window, NULL);
 		gln_graphics_window = NULL;
@@ -1448,7 +1398,7 @@ static void gln_graphics_close(void) {
  *
  * If graphics enabled, start any background picture update processing.
  */
-static void gln_graphics_start(void) {
+static void gln_graphics_start() {
 	if (gln_graphics_enabled) {
 		/* If not running, start the updating "thread". */
 		if (!gln_graphics_active) {
@@ -1464,7 +1414,7 @@ static void gln_graphics_start(void) {
  *
  * Stop any background picture update processing.
  */
-static void gln_graphics_stop(void) {
+static void gln_graphics_stop() {
 	/* If running, stop the updating "thread". */
 	if (gln_graphics_active) {
 		g_vm->glk_request_timer_events(0);
@@ -1478,7 +1428,7 @@ static void gln_graphics_stop(void) {
  *
  * Return TRUE if graphics are currently being displayed, FALSE otherwise.
  */
-static int gln_graphics_are_displayed(void) {
+static int gln_graphics_are_displayed() {
 	return gln_graphics_window != NULL;
 }
 
@@ -1490,7 +1440,7 @@ static int gln_graphics_are_displayed(void) {
  * This function should be called on the appropriate Glk window resize and
  * arrange events.
  */
-static void gln_graphics_paint(void) {
+static void gln_graphics_paint() {
 	if (gln_graphics_enabled && gln_graphics_are_displayed()) {
 		/* Set the repaint flag, and start graphics. */
 		gln_graphics_repaint = TRUE;
@@ -1506,7 +1456,7 @@ static void gln_graphics_paint(void) {
  * function should be called whenever graphics is re-enabled after being
  * disabled.
  */
-static void gln_graphics_restart(void) {
+static void gln_graphics_restart() {
 	if (gln_graphics_enabled && gln_graphics_are_displayed()) {
 		/* Set the new picture flag, and start graphics. */
 		gln_graphics_new_picture = TRUE;
@@ -1521,8 +1471,7 @@ static void gln_graphics_restart(void) {
  * Analyze an image, and return an overall count of how many colors out of
  * the palette are used.
  */
-static int gln_graphics_count_colors(gln_byte bitmap[],
-                                     gln_uint16 width, gln_uint16 height) {
+static int gln_graphics_count_colors(gln_byte bitmap[], gln_uint16 width, gln_uint16 height) {
 	int x, y, count;
 	long usage[GLN_PALETTE_SIZE], index_row;
 	assert(bitmap);
@@ -1583,10 +1532,8 @@ static glui32 gln_graphics_combine_color(gln_rgbref_t rgb_color) {
  * picture is going to be rendered.  This attempts a small raised effect
  * for the picture, in keeping with modern trends.
  */
-static void gln_graphics_clear_and_border(winid_t glk_window,
-        int x_offset, int y_offset,
-        int pixel_size, gln_uint16 width,
-        gln_uint16 height) {
+static void gln_graphics_clear_and_border(winid_t glk_window, int x_offset, int y_offset,
+		int pixel_size, gln_uint16 width, gln_uint16 height) {
 	uint background;
 	glui32 fade_color, shading_color;
 	gln_rgb_t rgb_background, rgb_border, rgb_fade;
@@ -1620,7 +1567,7 @@ static void gln_graphics_clear_and_border(winid_t glk_window,
 	 * do any shading.  Failing this check is probably highly unlikely.
 	 */
 	if (width < 2 * GLN_GRAPHICS_SHADE_STEPS
-	        || height < 2 * GLN_GRAPHICS_SHADE_STEPS) {
+			|| height < 2 * GLN_GRAPHICS_SHADE_STEPS) {
 		/* Paint a rectangle bigger than the picture by border pixels. */
 		g_vm->glk_window_fill_rect(glk_window,
 		                           GLN_GRAPHICS_BORDER_COLOR,
@@ -1719,8 +1666,7 @@ static void gln_graphics_convert_palette(Colour ln_palette[], glui32 glk_palette
  * this picture in the current graphics window.
  */
 static void gln_graphics_position_picture(winid_t glk_window, int pixel_size,
-        gln_uint16 width, gln_uint16 height,
-        int *x_offset, int *y_offset) {
+        gln_uint16 width, gln_uint16 height, int *x_offset, int *y_offset) {
 	uint window_width, window_height;
 	assert(glk_window && x_offset && y_offset);
 
@@ -1749,8 +1695,8 @@ static void gln_graphics_position_picture(winid_t glk_window, int pixel_size,
  * the most complex shapes first, we help to minimize the number of fill
  * regions needed to render the complete picture.
  */
-static int gln_graphics_is_vertex(gln_byte off_screen[],
-                                  gln_uint16 width, gln_uint16 height, int x, int y) {
+static int gln_graphics_is_vertex(gln_byte off_screen[], gln_uint16 width, gln_uint16 height,
+		int x, int y) {
 	gln_byte pixel;
 	int above, below, left, right;
 	long index_row;
@@ -1834,8 +1780,7 @@ static int gln_graphics_compare_layering_inverted(const void *void_first,
 }
 
 static void gln_graphics_assign_layers(gln_byte off_screen[], gln_byte on_screen[],
-                                       gln_uint16 width, gln_uint16 height,
-                                       int layers[], long layer_usage[]) {
+		gln_uint16 width, gln_uint16 height, int layers[], long layer_usage[]) {
 	int index, x, y;
 	long index_row;
 	gln_layering_t layering[GLN_PALETTE_SIZE];
@@ -1919,9 +1864,8 @@ static void gln_graphics_assign_layers(gln_byte off_screen[], gln_byte on_screen
  * given point as validated.
  */
 static void gln_graphics_paint_region(winid_t glk_window, glui32 palette[], int layers[],
-                                      gln_byte off_screen[], gln_byte on_screen[],
-                                      int x, int y, int x_offset, int y_offset,
-                                      int pixel_size, gln_uint16 width, gln_uint16 height) {
+		gln_byte off_screen[], gln_byte on_screen[], int x, int y, int x_offset, int y_offset,
+		int pixel_size, gln_uint16 width, gln_uint16 height) {
 	gln_byte pixel;
 	int layer, x_min, x_max, y_min, y_max, x_index, y_index;
 	long index_row;
@@ -2023,11 +1967,8 @@ break_y_max:
 	}
 }
 
-static void gln_graphics_paint_everything(winid_t glk_window,
-        glui32 palette[],
-        gln_byte off_screen[],
-        int x_offset, int y_offset,
-        gln_uint16 width, gln_uint16 height) {
+static void gln_graphics_paint_everything(winid_t glk_window, glui32 palette[],
+		gln_byte off_screen[], int x_offset, int y_offset, gln_uint16 width, gln_uint16 height) {
 	gln_byte        pixel;          /* Reference pixel color */
 	int     x, y;
 
@@ -2060,7 +2001,7 @@ static void gln_graphics_paint_everything(winid_t glk_window,
  * plots required, as only the differences between the two buffers need
  * to be rendered.
  */
-static void gln_graphics_timeout(void) {
+static void gln_graphics_timeout() {
 	static glui32 palette[GLN_PALETTE_SIZE];   /* Precomputed Glk palette */
 
 	static int deferred_repaint = FALSE;       /* Local delayed repaint flag */
@@ -2361,7 +2302,7 @@ static void gln_graphics_locate_bitmaps(const char *gamefile) {
  * Here, then, we try to delay until the picture has rendered, allowing the
  * delay to be broken with a keypress.
  */
-static void gln_graphics_handle_title_picture(void) {
+static void gln_graphics_handle_title_picture() {
 	event_t event;
 	int count;
 
@@ -2501,7 +2442,7 @@ void os_show_bitmap(int picture, int x, int y) {
  * Return TRUE if the graphics module data is loaded with a usable picture,
  * FALSE if there is no picture available to display.
  */
-static int gln_graphics_picture_is_available(void) {
+static int gln_graphics_picture_is_available() {
 	return gln_graphics_bitmap != NULL;
 }
 
@@ -2542,7 +2483,7 @@ static int gln_graphics_get_picture_details(int *width, int *height) {
  * values are returned.
  */
 static int gln_graphics_get_rendering_details(const char **bitmap_type,
-        int *color_count, int *is_active) {
+		int *color_count, int *is_active) {
 	if (gln_graphics_enabled && gln_graphics_are_displayed()) {
 		/*
 		 * Convert the detected bitmap type into a string and return it.
@@ -2613,7 +2554,7 @@ static int gln_graphics_get_rendering_details(const char **bitmap_type,
  * Return TRUE if it looks like interpreter graphics are turned on, FALSE
  * otherwise.
  */
-static int gln_graphics_interpreter_enabled(void) {
+static int gln_graphics_interpreter_enabled() {
 	return gln_graphics_interpreter_state != GLN_GRAPHICS_OFF;
 }
 
@@ -2624,7 +2565,7 @@ static int gln_graphics_interpreter_enabled(void) {
  * Free memory resources allocated by graphics functions.  Called on game
  * end.
  */
-static void gln_graphics_cleanup(void) {
+static void gln_graphics_cleanup() {
 	free(gln_graphics_bitmap);
 	gln_graphics_bitmap = NULL;
 	free(gln_graphics_off_screen);
@@ -2682,7 +2623,7 @@ static int gln_linegraphics_fill_segments_allocation = 0,
  * Initialize a new constructed bitmap graphics context for line drawn
  * graphics.
  */
-static void gln_linegraphics_create_context(void) {
+static void gln_linegraphics_create_context() {
 	int width, height;
 	long picture_bytes;
 
@@ -2712,7 +2653,7 @@ static void gln_linegraphics_create_context(void) {
  * Clear the complete graphical drawing area, setting all pixels to zero,
  * and resetting the palette to all black as well.
  */
-static void gln_linegraphics_clear_context(void) {
+static void gln_linegraphics_clear_context() {
 	long picture_bytes;
 
 	/* Get the picture size, and zero all bytes in the bitmap. */
@@ -2786,7 +2727,7 @@ static void gln_linegraphics_plot_clip(int x, int y, int colour1, int colour2) {
 }
 
 static void gln_linegraphics_draw_line_if(int x1, int y1, int x2, int y2,
-        int colour1, int colour2) {
+		int colour1, int colour2) {
 	int x, y, dx, dy, incx, incy, balance;
 
 	/* Ignore any odd request where there will be no colour changes. */
@@ -3001,7 +2942,7 @@ skip:
  * Interpreter entry points for line drawing graphics.  All calls to these
  * are ignored if line drawing mode is not set.
  */
-void os_cleargraphics(void) {
+void os_cleargraphics() {
 	if (gln_graphics_interpreter_state == GLN_GRAPHICS_LINE_MODE)
 		gln_linegraphics_clear_context();
 }
@@ -3028,7 +2969,7 @@ void os_fill(int x, int y, int colour1, int colour2) {
  * Process as many graphics opcodes as are available, constructing the
  * resulting image as a bitmap.  When complete, treat as normal bitmaps.
  */
-static void gln_linegraphics_process(void) {
+static void gln_linegraphics_process() {
 	/*
 	 * If interpreter graphics are not set to line mode, ignore any call that
 	 * arrives here.
@@ -3063,7 +3004,7 @@ static void gln_linegraphics_process(void) {
  * Free memory resources allocated by line graphics functions.  Called on
  * game end.
  */
-static void gln_linegraphics_cleanup(void) {
+static void gln_linegraphics_cleanup() {
 	free(gln_linegraphics_fill_segments);
 	gln_linegraphics_fill_segments = NULL;
 
@@ -3237,7 +3178,7 @@ static void gln_watchdog_start(int timeout, int period) {
 	gln_watchdog_monitor = g_system->getMillis();
 }
 
-static void gln_watchdog_stop(void) {
+static void gln_watchdog_stop() {
 	gln_watchdog_timeout_secs = 0;
 }
 
@@ -3251,7 +3192,7 @@ static void gln_watchdog_stop(void) {
  * returns to the interpreter, as a means of timing how long the interpreter
  * dwells in running game code.
  */
-static void gln_watchdog_tick(void) {
+static void gln_watchdog_tick() {
 	gln_watchdog_monitor = g_system->getMillis();
 }
 
@@ -3266,7 +3207,7 @@ static void gln_watchdog_tick(void) {
  * This function only checks every N calls; it's called extremely frequently
  * from opcode handling, and will thrash in time() if it checks on each call.
  */
-static int gln_watchdog_has_timed_out(void) {
+static int gln_watchdog_has_timed_out() {
 	/* If loop detection is off or the timeout is set to zero, do nothing. */
 	if (gln_loopcheck_enabled && gln_watchdog_timeout_secs > 0) {
 		time_t now;
@@ -3335,7 +3276,7 @@ static const int GLN_DEFAULT_STATUS_WIDTH = 74;
  * the current game identity string, or a default string if no game identity
  * could be established.
  */
-static void gln_status_update(void) {
+static void gln_status_update() {
 	uint width, height;
 	assert(gln_status_window);
 
@@ -3370,7 +3311,7 @@ static void gln_status_update(void) {
  * to detect changes of game identity string, and gambles a little on the
  * belief that two games' strings won't have the same CRC.
  */
-static void gln_status_print(void) {
+static void gln_status_print() {
 	static int is_initialized = FALSE;
 	static gln_uint16 crc = 0;
 
@@ -3416,7 +3357,7 @@ static void gln_status_print(void) {
  * Front end function for updating status.  Either updates the status window
  * or prints the status line to the main window.
  */
-static void gln_status_notify(void) {
+static void gln_status_notify() {
 	if (gln_status_window)
 		gln_status_update();
 	else
@@ -3431,7 +3372,7 @@ static void gln_status_notify(void) {
  * This function should be called on the appropriate Glk window resize and
  * arrange events.
  */
-static void gln_status_redraw(void) {
+static void gln_status_redraw() {
 	if (gln_status_window) {
 		winid_t parent;
 
@@ -3495,7 +3436,7 @@ static int gln_output_prompt = FALSE;
  * Register recent text output from the interpreter.  This function is
  * called by os_printchar().
  */
-static void gln_output_notify(void) {
+static void gln_output_notify() {
 	gln_output_activity = TRUE;
 }
 
@@ -3507,7 +3448,7 @@ static void gln_output_notify(void) {
  * Clears the flag, so that more output text is required before the next
  * call returns TRUE.
  */
-static int gln_recent_output(void) {
+static int gln_recent_output() {
 	int result;
 
 	result = gln_output_activity;
@@ -3525,15 +3466,15 @@ static int gln_recent_output(void) {
  * Register a request for help, and print a note of how to get Glk command
  * help from the interpreter unless silenced.
  */
-static void gln_output_register_help_request(void) {
+static void gln_output_register_help_request() {
 	gln_help_requested = TRUE;
 }
 
-static void gln_output_silence_help_hints(void) {
+static void gln_output_silence_help_hints() {
 	gln_help_hints_silenced = TRUE;
 }
 
-static void gln_output_provide_help_hint(void) {
+static void gln_output_provide_help_hint() {
 	if (gln_help_requested && !gln_help_hints_silenced) {
 		g_vm->glk_set_style(style_Emphasized);
 		g_vm->glk_put_string("[Try 'glk help' for help on special interpreter"
@@ -3552,7 +3493,7 @@ static void gln_output_provide_help_hint(void) {
  * Once called, the flag is reset to FALSE, and requires more game output
  * to set it again.
  */
-static int gln_game_prompted(void) {
+static int gln_game_prompted() {
 	int result;
 
 	result = gln_output_prompt;
@@ -3569,7 +3510,7 @@ static int gln_game_prompted(void) {
  * to be a prompt, and set the game prompted flag if it does, otherwise
  * clear it.
  */
-static void gln_detect_game_prompt(void) {
+static void gln_detect_game_prompt() {
 	int index;
 
 	gln_output_prompt = FALSE;
@@ -3594,7 +3535,7 @@ static void gln_detect_game_prompt(void) {
  * Delete all buffered output text.  Free all malloc'ed buffer memory, and
  * return the buffer variables to their initial values.
  */
-static void gln_output_delete(void) {
+static void gln_output_delete() {
 	free(gln_output_buffer);
 	gln_output_buffer = NULL;
 	gln_output_allocation = gln_output_length = 0;
@@ -3607,7 +3548,7 @@ static void gln_output_delete(void) {
  * Flush any buffered output text to the Glk main window, and clear the
  * buffer.  Check in passing for game prompts that duplicate our's.
  */
-static void gln_output_flush(void) {
+static void gln_output_flush() {
 	assert(g_vm->glk_stream_get_current());
 
 	if (gln_output_length > 0) {
@@ -3732,7 +3673,7 @@ static void gln_banner_string(const char *message) {
  * line text where we are working with a non-windowing Glk, so it's best
  * ignored where we can.
  */
-void os_flush(void) {
+void os_flush() {
 }
 
 
@@ -4301,17 +4242,17 @@ static void gln_command_commands(const char *argument) {
 
 
 /* Glk subcommands and handler functions. */
-typedef const struct {
+struct gln_command_t {
 	const char *const command;                      /* Glk subcommand. */
 	void (* const handler)(const char *argument);   /* Subcommand handler. */
 	const int takes_argument;                       /* Argument flag. */
-} gln_command_t;
-typedef gln_command_t *gln_commandref_t;
+};
+typedef const gln_command_t *gln_commandref_t;
 
 static void gln_command_summary(const char *argument);
 static void gln_command_help(const char *argument);
 
-static gln_command_t GLN_COMMAND_TABLE[] = {
+static const gln_command_t GLN_COMMAND_TABLE[] = {
 	{"summary",        gln_command_summary,        FALSE},
 	{"script",         gln_command_script,         TRUE},
 	{"inputlog",       gln_command_inputlog,       TRUE},
@@ -4333,8 +4274,7 @@ static gln_command_t GLN_COMMAND_TABLE[] = {
  *
  * Report all current Glk settings.
  */
-static void
-gln_command_summary(const char *argument) {
+static void gln_command_summary(const char *argument) {
 	gln_commandref_t entry;
 	assert(argument);
 
@@ -4357,8 +4297,7 @@ gln_command_summary(const char *argument) {
  *
  * Document the available Glk commands.
  */
-static void
-gln_command_help(const char *command) {
+static void gln_command_help(const char *command) {
 	gln_commandref_t entry, matched;
 	assert(command);
 
@@ -4743,13 +4682,13 @@ static int gln_inside_list = FALSE;
 
 
 /* Table of single-character command abbreviations. */
-typedef const struct {
+struct gln_abbreviation_t {
 	const char abbreviation;       /* Abbreviation character. */
 	const char *const expansion;   /* Expansion string. */
-} gln_abbreviation_t;
-typedef gln_abbreviation_t *gln_abbreviationref_t;
+};
+typedef const gln_abbreviation_t *gln_abbreviationref_t;
 
-static gln_abbreviation_t GLN_ABBREVIATIONS[] = {
+static const gln_abbreviation_t GLN_ABBREVIATIONS[] = {
 	{'c', "close"},    {'g', "again"},  {'i', "inventory"},
 	{'k', "attack"},   {'l', "look"},   {'p', "open"},
 	{'q', "quit"},     {'r', "drop"},   {'t', "take"},
@@ -4814,7 +4753,7 @@ static void gln_expand_abbreviations(char *buffer, int size) {
  * The core interpreter doesn't terminate lists with a newline, so we take
  * care of that here; a fixup for input functions.
  */
-static void gln_output_endlist(void) {
+static void gln_output_endlist() {
 	if (gln_inside_list) {
 		/*
 		 * Supply the missing newline, using os_printchar() so that list output
@@ -5163,7 +5102,7 @@ char os_readchar(int millis) {
  * can't check for keypresses without blocking, so we do no checks at all,
  * and let lists always run to completion.
  */
-gln_bool os_stoplist(void) {
+gln_bool os_stoplist() {
 	static int call_count = 0;
 
 	event_t event;
@@ -5805,7 +5744,7 @@ static int gln_startup_code(int argc, char *argv[]) {
 	return TRUE;
 }
 
-static void gln_main(void) {
+static void gln_main() {
 	char *graphics_file = NULL;
 	int is_running;
 
@@ -6006,7 +5945,7 @@ static int gln_startup_called = FALSE,
  * Main entry point for Glk.  Here, all startup is done, and we call our
  * function to run the game.
  */
-void glk_main(void) {
+void glk_main() {
 	assert(gln_startup_called && !gln_main_called);
 	gln_main_called = TRUE;
 
