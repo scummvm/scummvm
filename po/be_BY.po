@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2019-10-13 14:11+0200\n"
+"POT-Creation-Date: 2019-10-14 00:14+0200\n"
 "PO-Revision-Date: 2018-08-06 21:35+0000\n"
 "Last-Translator: Fiodar <fedor_qd@mail.ru>\n"
 "Language-Team: Belarusian <https://translations.scummvm.org/projects/scummvm/"
@@ -20,16 +20,16 @@ msgstr ""
 "X-Generator: Weblate 2.9\n"
 "X-Language-name: Belarusian\n"
 
-#: gui/about.cpp:94
+#: gui/about.cpp:108
 #, c-format
 msgid "(built on %s)"
 msgstr "(сабраны %s)"
 
-#: gui/about.cpp:101
+#: gui/about.cpp:115
 msgid "Features compiled in:"
 msgstr "Уключаныя ў зборку опцыі:"
 
-#: gui/about.cpp:110
+#: gui/about.cpp:124
 msgid "Available engines:"
 msgstr "Даступныя рухавічкі:"
 
