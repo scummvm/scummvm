@@ -20,39 +20,35 @@
  *
  */
 
-#include "osystem.h"
-#include <3ds.h>
+#ifndef POSIX_DRIVES_FILESYSTEM_FACTORY_H
+#define POSIX_DRIVES_FILESYSTEM_FACTORY_H
 
-int main(int argc, char *argv[]) {
-	// Initialize basic libctru stuff
-	gfxInitDefault();
-	cfguInit();
-	romfsInit();
-	osSetSpeedupEnable(true);
-// 	consoleInit(GFX_TOP, NULL);
+#include "backends/fs/fs-factory.h"
 
-	g_system = new _3DS::OSystem_3DS();
-	assert(g_system);
+/**
+ * A FilesystemFactory implementation for filesystems with a special
+ * top-level directory with hard-coded entries but that otherwise
+ * implement the POSIX APIs.
+ *
+ * For used with paths like these:
+ * - 'sdcard:/games/scummvm.ini'
+ * - 'hdd1:/usr/bin'
+ */
+class DrivesPOSIXFilesystemFactory : public FilesystemFactory {
+public:
+	/**
+	 * Add a drive to the top-level directory
+	 */
+	void addDrive(const Common::String &name);
 
-	// Invoke the actual ScummVM main entry point
-// 	if (argc > 2)
-// 		res = scummvm_main(argc-2, &argv[2]);
-// 	else
-// 		res = scummvm_main(argc, argv);
-//	scummvm_main(0, nullptr);
+protected:
+	// FilesystemFactory API
+	AbstractFSNode *makeRootFileNode() const override;
+	AbstractFSNode *makeCurrentDirectoryFileNode() const override;
+	AbstractFSNode *makeFileNodePath(const Common::String &path) const override;
 
-	int res = scummvm_main(argc, argv);
+private:
+	Common::Array<Common::String> _drives;
+};
 
-	g_system->destroy();
-
-	// Turn on both screen backlights before exiting.
-	if (R_SUCCEEDED(gspLcdInit())) {
-		GSPLCD_PowerOnBacklight(GSPLCD_SCREEN_BOTH);
-		gspLcdExit();
-	}
-
-	romfsExit();
-	cfguExit();
-	gfxExit();
-	return res;
-}
+#endif

@@ -88,6 +88,7 @@ public:
 	virtual void quit();
 
 	virtual Common::String getDefaultConfigFileName();
+	void addSysArchivesToSearchSet(Common::SearchSet &s, int priority) override;
 
 	// Graphics
 	virtual const OSystem::GraphicsMode *getSupportedGraphicsModes() const;
