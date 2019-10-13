@@ -257,6 +257,9 @@ MacMenu *MacMenu::createMenuFromPEexe(Common::PEResources &exe, MacWindowManager
 			}
 		}
 	}
+
+	menu->processTabs();
+
 	delete menuData;
 
 	if (gDebugLevel > 5)
@@ -554,6 +557,97 @@ const Common::String MacMenu::getAcceleratorString(MacMenuItem *item, const char
 		return Common::String();
 
 	return Common::String::format("%s%c%c", prefix, (_wm->_fontMan->hasBuiltInFonts() ? '^' : '\x11'), item->shortcut);
+}
+
+void MacMenu::processTabs() {
+	for (uint i = 0; i < _items.size(); i++)
+		processSubmenuTabs(_items[i]->submenu);
+}
+
+void MacMenu::processSubmenuTabs(MacMenuSubMenu *submenu) {
+	if (submenu == nullptr)
+		return;
+
+	for (uint i = 0; i < submenu->items.size(); i++) {
+		MacMenuSubMenu *menu = submenu->items[i]->submenu;
+
+		if (menu != nullptr)
+			processSubmenuTabs(menu);
+	}
+
+	int maxWidth = 0;
+	bool haveTabs = false;
+
+	Common::U32String tabSymbol("\t");
+
+	// First, we replace \t with one space, and thus, obtain
+	// the widest string
+	for (uint i = 0; i < submenu->items.size(); i++) {
+		MacMenuItem *item = submenu->items[i];
+		if (item->unicodeText.empty())
+			continue;
+
+		int pos = item->unicodeText.find(tabSymbol);
+
+		if (pos == Common::U32String::npos)
+			continue;
+
+		// Sanity check
+		if (pos == 0 || pos >= item->unicodeText.size())
+			error("Malformed menu: tab position");
+
+		if (item->unicodeText.find(tabSymbol, pos + 1) != Common::U32String::npos)
+			error("Malformed menu: extra tab");
+
+		haveTabs = true;
+
+		Common::U32String start(item->unicodeText.c_str(), &item->unicodeText.c_str()[pos]);
+		Common::U32String end(&item->unicodeText.c_str()[pos + 1]);
+		Common::U32String res;
+
+		res = start;
+		res += Common::U32String(" ");
+		res += end;
+
+		int width = _font->getStringWidth(res);
+		if (width > maxWidth) {
+			maxWidth = width;
+		}
+	}
+
+	if (!haveTabs)
+		return;
+
+	// Now expand each tab to the relevant width
+	// And yes, right edge is going to be uneven
+	for (uint i = 0; i < submenu->items.size(); i++) {
+		MacMenuItem *item = submenu->items[i];
+		if (item->unicodeText.empty())
+			continue;
+
+		int pos = item->unicodeText.find(tabSymbol);
+
+		if (pos == Common::U32String::npos)
+			continue;
+
+		Common::U32String start(item->unicodeText.c_str(), &item->unicodeText.c_str()[pos]);
+		Common::U32String end(&item->unicodeText.c_str()[pos + 1]);
+		Common::U32String res;
+		Common::U32String spaces(" ");
+		int width;
+
+		do {
+			res = start;
+			res += spaces;
+			res += end;
+
+			width = _font->getStringWidth(res);
+
+			spaces += spaces[0];
+		} while (width < maxWidth);
+
+		item->unicodeText = res;
+	}
 }
 
 int MacMenu::calcSubMenuWidth(MacMenuSubMenu *submenu) {

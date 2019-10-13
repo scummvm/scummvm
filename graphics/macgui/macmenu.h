@@ -94,6 +94,9 @@ private:
 private:
 	const Font *getMenuFont();
 	const Common::String getAcceleratorString(MacMenuItem *item, const char *prefix);
+	void processTabs();
+	void processSubmenuTabs(MacMenuSubMenu *submenu);
+
 	int calcSubMenuWidth(MacMenuSubMenu *menu);
 	void calcSubMenuBounds(MacMenuSubMenu *menu, int x, int y);
 	void renderSubmenu(MacMenuSubMenu *menu, bool recursive = true);
