@@ -21,6 +21,7 @@ import android.view.View;
 import android.view.SurfaceView;
 import android.view.SurfaceHolder;
 import android.view.MotionEvent;
+import android.view.PointerIcon;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
 import android.widget.Toast;
@@ -403,13 +404,19 @@ public class ScummVMActivity extends Activity {
 	}
 
 	private void showMouseCursor(boolean show) {
-		/* Currently hiding the system mouse cursor is only
-		   supported on OUYA.  If other systems provide similar
-		   intents, please add them here as well */
-		Intent intent =
-			new Intent(show?
-				   "tv.ouya.controller.action.SHOW_CURSOR" :
-				   "tv.ouya.controller.action.HIDE_CURSOR");
-		sendBroadcast(intent);
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+			SurfaceView main_surface = (SurfaceView)findViewById(R.id.main_surface);
+			int type = show ? PointerIcon.TYPE_DEFAULT : PointerIcon.TYPE_NULL;
+			main_surface.setPointerIcon(PointerIcon.getSystemIcon(this, type));
+		} else {
+			/* Currently hiding the system mouse cursor is only
+			   supported on OUYA.  If other systems provide similar
+			   intents, please add them here as well */
+			Intent intent =
+				new Intent(show?
+					   "tv.ouya.controller.action.SHOW_CURSOR" :
+					   "tv.ouya.controller.action.HIDE_CURSOR");
+			sendBroadcast(intent);
+		}
 	}
 }
