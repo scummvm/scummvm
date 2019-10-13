@@ -114,6 +114,8 @@ static const char *const selectorNameTable[] = {
 	"say",          // Quest For Glory 1 VGA, QFG4
 	"script",       // Quest For Glory 1 VGA
 	"solvePuzzle",  // Quest For Glory 3
+	"curIcon",      // Quest For Glory 3, QFG4
+	"curInvIcon",   // Quest For Glory 3, QFG4
 	"timesShownID", // Space Quest 1 VGA
 	"startText",    // King's Quest 6 CD / Laura Bow 2 CD for audio+text support
 	"startAudio",   // King's Quest 6 CD / Laura Bow 2 CD for audio+text support
@@ -178,8 +180,6 @@ static const char *const selectorNameTable[] = {
 	"amount",       // QFG4
 	"approachVerbs", // QFG4
 	"cue",          // QFG4
-	"curIcon",      // QFG4
-	"curInvIcon",   // QFG4
 	"getCursor",    // QFG4
 	"heading",      // QFG4
 	"moveSpeed",    // QFG4
@@ -227,6 +227,8 @@ enum ScriptPatcherSelectors {
 	SELECTOR_say,
 	SELECTOR_script,
 	SELECTOR_solvePuzzle,
+	SELECTOR_curIcon,
+	SELECTOR_curInvIcon,
 	SELECTOR_timesShownID,
 	SELECTOR_startText,
 	SELECTOR_startAudio,
@@ -292,8 +294,6 @@ enum ScriptPatcherSelectors {
 	SELECTOR_amount,
 	SELECTOR_approachVerbs,
 	SELECTOR_cue,
-	SELECTOR_curIcon,
-	SELECTOR_curInvIcon,
 	SELECTOR_getCursor,
 	SELECTOR_heading,
 	SELECTOR_moveSpeed,
@@ -9994,6 +9994,66 @@ static const uint16 qfg3PatchRoom750Bounds3[] = {
 	PATCH_END
 };
 
+// When putting the last instance of an item in the chest in room 310 or 430,
+//  holding the enter key causes a message to be sent to a non-object.
+//
+// This bug is similar to the Dag-Nab-It bug in QFG1VGA Mac. A script tries to
+//  clear the inventory cursor by setting mainIconBar:curInvIcon to zero without
+//  updating curIcon. This briefly places the icon bar in an illegal state which
+//  causes mainIconBar:handleEvent to error when enter is pressed.
+//
+// We fix this by setting mainIconBar:curIcon to theWalkIcon to prevent the
+//  illegal state where curInvIcon is zero while curIcon equals useIconItem.
+//  useCode:init has two similar code paths with this bug.
+//
+// Applies to: All versions
+// Responsible method: useCode:init
+// Fixes bug: #11196
+static const uint16 qfg3SignatureChestIconBar[] = {
+	0x38, SIG_SELECTOR16(say),          // pushi say [ "You put it in the chest." ]
+	0x39, 0x06,                         // pushi 06
+	0x78,                               // push1
+	0x39, 0x06,                         // pushi 06
+	0x39, 0x04,                         // pushi 04
+	0x78,                               // push1
+	0x76,                               // push0
+	0x39, 0x1d,                         // pushi 1d
+	0x81, 0x5b,                         // lag 5b
+	0x4a, 0x10,                         // send 10 [ qg3Messager say: 1 6 4 1 0 29 ]
+	0x38, SIG_SELECTOR16(curInvIcon),   // pushi curInvIcon
+	0x78,                               // push1
+	0x76,                               // push0
+	0x81, 0x45,                         // lag 45
+	SIG_ADDTOOFFSET(+0x8b),
+	0x38, SIG_SELECTOR16(curInvIcon),   // pushi curInvIcon
+	0x78,                               // push1
+	0x76,                               // push0
+	0x81, 0x45,                         // lag 45
+	0x4a, SIG_MAGICDWORD, 0x06,         // send 06 [ mainIconBar curInvIcon: 0 ]
+	0x38, SIG_SELECTOR16(say),          // pushi say [ "You put it in the chest." ]
+	SIG_END
+};
+
+static const uint16 qfg3PatchChestIconBar[] = {
+	0x39, PATCH_SELECTOR8(at),          // pushi at
+	0x78,                               // push1
+	0x78,                               // push1
+	0x81, 0x45,                         // lag 45
+	0x4a, 0x06,                         // send 06 [ mainIconBar at: 1 ]
+	0x38, PATCH_SELECTOR16(curInvIcon), // pushi curInvIcon
+	0x78,                               // push1
+	0x76,                               // push0
+	0x38, PATCH_SELECTOR16(curIcon),    // pushi curIcon
+	0x78,                               // push1
+	0x36,                               // push
+	0x81, 0x45,                         // lag 45
+	0x4a, 0x0c,                         // send 0c [ mainIconBar curInvIcon: 0 curIcon: theWalkIcon ]
+	0x32, PATCH_UINT16(0x0094),         // jmp 0094 [ "You put it in the chest." ]
+	PATCH_ADDTOOFFSET(+0x8b),
+	0x32, PATCH_UINT16(0xff59),         // jmp ff59 [ mainIconBar curInvIcon: 0 curIcon: theWalkIcon ]
+	PATCH_END
+};
+
 //          script, description,                                      signature                    patch
 static const SciScriptPatcherEntry qfg3Signatures[] = {
 	{  true,   944, "import dialog continuous calls",                     1, qfg3SignatureImportDialog,           qfg3PatchImportDialog },
@@ -10010,6 +10070,7 @@ static const SciScriptPatcherEntry qfg3Signatures[] = {
 	{  true,   750, "hero goes out of bounds in room 750",                2, qfg3SignatureRoom750Bounds1,         qfg3PatchRoom750Bounds1 },
 	{  true,   750, "hero goes out of bounds in room 750",                2, qfg3SignatureRoom750Bounds2,         qfg3PatchRoom750Bounds2 },
 	{  true,   750, "hero goes out of bounds in room 750",                2, qfg3SignatureRoom750Bounds3,         qfg3PatchRoom750Bounds3 },
+	{  true,    29, "icon bar crash when using chest",                    1, qfg3SignatureChestIconBar,           qfg3PatchChestIconBar },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
