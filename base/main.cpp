@@ -264,9 +264,7 @@ static Common::Error runGame(const Plugin *plugin, OSystem &system, const Common
 #ifdef USE_TTS
 		Common::TextToSpeechManager *ttsMan;
 		if ((ttsMan = g_system->getTextToSpeechManager()) != nullptr) {
-			Common::String language = ConfMan.get("language");
-			language.setChar(2, '\0');
-			ttsMan->setLanguage(language);
+			ttsMan->setLanguage(ConfMan.get("language"));
 		}
 #endif // USE_TTS
 	}
@@ -301,9 +299,7 @@ static Common::Error runGame(const Plugin *plugin, OSystem &system, const Common
 #ifdef USE_TTS
 		Common::TextToSpeechManager *ttsMan;
 		if ((ttsMan = g_system->getTextToSpeechManager()) != nullptr) {
-			Common::String language = ConfMan.get("language");
-			language.setChar(2, '\0');
-			ttsMan->setLanguage(language);
+			ttsMan->setLanguage(ConfMan.get("language"));
 		}
 #endif // USE_TTS
 #endif // USE_TRANSLATION
