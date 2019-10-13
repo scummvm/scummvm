@@ -64,6 +64,11 @@
 #include "glk/jacl/jacl.h"
 #endif
 
+#ifdef ENABLE_GLK_LEVEL9
+#include "glk/level9/detection.h"
+#include "glk/level9/level9.h"
+#endif
+
 #ifdef ENABLE_GLK_MAGNETIC
 #include "glk/magnetic/detection.h"
 #include "glk/magnetic/magnetic.h"
@@ -228,6 +233,10 @@ Common::Error GlkMetaEngine::createInstance(OSystem *syst, Engine **engine) cons
 	if ((*engine = create<Glk::JACL::JACLMetaEngine, Glk::JACL::JACL>(syst, gameDesc)) != nullptr) {}
 	else
 #endif
+#ifdef ENABLE_GLK_LEVEL9
+		if ((*engine = create<Glk::Level9::Level9MetaEngine, Glk::Level9::Level9>(syst, gameDesc)) != nullptr) {}
+		else
+#endif
 #ifdef ENABLE_GLK_MAGNETIC
 	if ((*engine = create<Glk::Magnetic::MagneticMetaEngine, Glk::Magnetic::Magnetic>(syst, gameDesc)) != nullptr) {}
 	else
@@ -303,6 +312,9 @@ PlainGameList GlkMetaEngine::getSupportedGames() const {
 #ifdef ENABLE_GLK_JACL
 	Glk::JACL::JACLMetaEngine::getSupportedGames(list);
 #endif
+#ifdef ENABLE_GLK_LEVEL9
+	Glk::Level9::Level9MetaEngine::getSupportedGames(list);
+#endif
 #ifdef ENABLE_GLK_MAGNETIC
 	Glk::Magnetic::MagneticMetaEngine::getSupportedGames(list);
 #endif
@@ -347,6 +359,9 @@ PlainGameDescriptor GlkMetaEngine::findGame(const char *gameId) const {
 #endif
 #ifdef ENABLE_GLK_JACL
 	FIND_GAME(JACL);
+#endif
+#ifdef ENABLE_GLK_LEVEL9
+	FIND_GAME(Level9);
 #endif
 #ifdef ENABLE_GLK_MAGNETIC
 	FIND_GAME(Magnetic);
@@ -395,6 +410,9 @@ DetectedGames GlkMetaEngine::detectGames(const Common::FSList &fslist) const {
 #ifdef ENABLE_GLK_JACL
 	Glk::JACL::JACLMetaEngine::detectGames(fslist, detectedGames);
 #endif
+#ifdef ENABLE_GLK_LEVEL9
+	Glk::Level9::Level9MetaEngine::detectGames(fslist, detectedGames);
+#endif
 #ifdef ENABLE_GLK_MAGNETIC
 	Glk::Magnetic::MagneticMetaEngine::detectGames(fslist, detectedGames);
 #endif
@@ -436,6 +454,9 @@ void GlkMetaEngine::detectClashes() const {
 #endif
 #ifdef ENABLE_GLK_JACL
 	Glk::JACL::JACLMetaEngine::detectClashes(map);
+#endif
+#ifdef ENABLE_GLK_LEVEL9
+	Glk::Level9::Level9MetaEngine::detectClashes(map);
 #endif
 #ifdef ENABLE_GLK_MAGNETIC
 	Glk::Magnetic::MagneticMetaEngine::detectClashes(map);

@@ -226,6 +226,12 @@ MODULE_OBJS += \
 	jacl/utils.o
 endif
 
+ifdef ENABLE_GLK_LEVEL9
+MODULE_OBJS += \
+	level9/detection.o \
+	level9/level9.o
+endif
+
 ifdef ENABLE_GLK_MAGNETIC
 MODULE_OBJS += \
 	magnetic/detection.o \
