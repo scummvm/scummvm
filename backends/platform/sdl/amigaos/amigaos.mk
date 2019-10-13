@@ -21,7 +21,7 @@ endif
 # Copy shared library plugins, if available.
 ifdef DYNAMIC_MODULES
 	mkdir -p $(AMIGAOSPATH)/plugins
-	cp $(PLUGINS) -o $(AMIGAOSPATH)/plugins/
+	cp $(PLUGINS) $(AMIGAOSPATH)/plugins/
 endif
 ifdef DIST_FILES_THEMES
 	mkdir -p $(AMIGAOSPATH)/themes
