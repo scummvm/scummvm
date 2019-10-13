@@ -371,6 +371,9 @@ void HiRes5Engine::applyRegionWorkarounds() {
 		// to dig with. Probably a remnant of an earlier version
 		// of the script.
 		removeCommand(_roomCommands, 0);
+		break;
+	default:
+		break;
 	}
 }
 

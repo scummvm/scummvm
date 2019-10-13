@@ -245,6 +245,8 @@ Common::String AdlEngine::inputString(byte prompt) const {
 					s.deleteLastChar();
 				}
 				break;
+			default:
+				break;
 			};
 		} else {
 			if (s.size() < 255) {

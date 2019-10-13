@@ -372,6 +372,9 @@ void Console::printItem(const Item &item) {
 	case IDI_ITEM_DOESNT_MOVE:
 		state = "FIXED";
 		break;
+	default:
+		state = "UNKNOWN";
+		break;
 	}
 
 	debugPrintf("%3d %s %-30s %-10s %-8s (%3d, %3d)\n", item.id, name.c_str(), desc.c_str(), _engine->itemRoomStr(item.room).c_str(), state.c_str(), item.position.x, item.position.y);
