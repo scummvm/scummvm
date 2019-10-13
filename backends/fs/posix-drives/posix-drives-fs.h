@@ -20,39 +20,37 @@
  *
  */
 
-#include "osystem.h"
-#include <3ds.h>
+#ifndef POSIX_DRIVES_FILESYSTEM_H
+#define POSIX_DRIVES_FILESYSTEM_H
 
-int main(int argc, char *argv[]) {
-	// Initialize basic libctru stuff
-	gfxInitDefault();
-	cfguInit();
-	romfsInit();
-	osSetSpeedupEnable(true);
-// 	consoleInit(GFX_TOP, NULL);
+#include "backends/fs/posix/posix-fs.h"
 
-	g_system = new _3DS::OSystem_3DS();
-	assert(g_system);
-
-	// Invoke the actual ScummVM main entry point
-// 	if (argc > 2)
-// 		res = scummvm_main(argc-2, &argv[2]);
-// 	else
-// 		res = scummvm_main(argc, argv);
-//	scummvm_main(0, nullptr);
-
-	int res = scummvm_main(argc, argv);
-
-	g_system->destroy();
-
-	// Turn on both screen backlights before exiting.
-	if (R_SUCCEEDED(gspLcdInit())) {
-		GSPLCD_PowerOnBacklight(GSPLCD_SCREEN_BOTH);
-		gspLcdExit();
+/**
+ * POSIX file system node where the top-level directory is a hardcoded
+ * list of drives.
+ */
+class DrivePOSIXFilesystemNode : public POSIXFilesystemNode {
+protected:
+	AbstractFSNode *makeNode(const Common::String &path) const override {
+		return new DrivePOSIXFilesystemNode(path, _drives);
 	}
 
-	romfsExit();
-	cfguExit();
-	gfxExit();
-	return res;
-}
+public:
+	typedef Common::Array<Common::String> DrivesArray;
+
+	DrivePOSIXFilesystemNode(const Common::String &path, const DrivesArray &drives);
+	DrivePOSIXFilesystemNode(const DrivesArray &drives);
+
+	// POSIXFilesystemNode API
+	AbstractFSNode *getChild(const Common::String &n) const override;
+	bool getChildren(AbstractFSList &list, ListMode mode, bool hidden) const override;
+	AbstractFSNode *getParent() const override;
+
+private:
+	bool _isPseudoRoot;
+	const DrivesArray &_drives;
+
+	bool isDrive(const Common::String &path) const;
+};
+
+#endif

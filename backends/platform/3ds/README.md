@@ -49,19 +49,7 @@ Not having this file will cause many problems with games that need audio, someti
 even crashing, so this is NOT considered optional.
 
 Using any CIA installation software (search elsewhere for that), you need to install
-the `scummvm.cia` file. Then, just like what is done with the 3DSX installation, you
-need to extract all ScummVM 3DS files (`scummvm.cia` excluded) to the root of your SD
-card so that all files reside in the `/3ds/scummvm/` directory.
-
-1.3) Additional files
----------------------
-In order to use the Virtual Keyboard, you need to get the:
-`backends/vkeybd/packs/vkeybd_small.zip` file from ScummVM's repository, and
-place it on your SD card, in the `/3ds/scummvm/kb` folder.
-
-In case you want a translated GUI, you need to get the:
-`scummvm/gui/themes/translations.dat` file from ScummVM's repository, and place
-it on your SD card, in the `/3ds/scummvm/themes` folder.
+the `scummvm.cia` file.
 
 2.0) Controls
 -------------
@@ -229,7 +217,7 @@ Additionally compile to specific formats to be used on the 3DS:
 Assuming everything was successful, you'll be able to find the binary
 files in the root of your scummvm folder.
 
-Note: for the CIA format, you will need the 'makerom' and 'bannertool' tools which are
+Note: for the CIA format, you will need the '3dstool', 'makerom' and 'bannertool' tools which are
 not supplied with devkitPro.
 
 4.3) Warning for build sizes
