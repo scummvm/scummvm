@@ -83,7 +83,7 @@ OSystem_3DS::OSystem_3DS():
 	fsFactory->addDrive("romfs:");
 	_fsFactory = fsFactory;
 
-	Posix::assureDirectoryExists("sdmc:/3ds/scummvm/saves/");
+	Posix::assureDirectoryExists("/3ds/scummvm/saves/");
 }
 
 OSystem_3DS::~OSystem_3DS() {
