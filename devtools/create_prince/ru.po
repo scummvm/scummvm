@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: Prince\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2018-04-17 19:53+0100\n"
-"PO-Revision-Date: 2019-09-19 13:56+0000\n"
+"PO-Revision-Date: 2019-10-14 12:55+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Russian <https://translations.scummvm.org/projects/prince/"
 "prince/ru/>\n"
@@ -10296,11 +10296,12 @@ msgstr "Камин - Там какие-то остатки."
 
 #: mob.lst:18019
 msgid "pogrzebacz - Tu chyba nie potrzeba pogrzebacza, ale|pogrzebu..."
-msgstr "КочерСундукчерга - укчерга"
+msgstr "кочерга - Тут не кочерга нужна, а|лопата..."
 
 #: mob.lst:18020
 msgid "skrzynia - Stara lina, wyszczerbiony miecz, skrzynka|z dziurą...+Trofea?..."
-msgstr "Сундук.. - Старая душаСундукый меч, Сундук.."
+msgstr ""
+"Сундук.. - Старая верёвка, выщербленный меч, шкатулка|с дыркой...+Трофеи?..."
 
 #: mob.lst:18021
 msgid "księga - \"Księga Szarej Magii\""
