@@ -580,34 +580,34 @@ void MacMenu::processSubmenuTabs(MacMenuSubMenu *submenu) {
 
 	Common::U32String tabSymbol("\t");
 
-	// First, we replace \t with one space, and thus, obtain
+	// First, we replace \t with two spaces, and thus, obtain
 	// the widest string
 	for (uint i = 0; i < submenu->items.size(); i++) {
 		MacMenuItem *item = submenu->items[i];
 		if (item->unicodeText.empty())
 			continue;
 
+		Common::U32String res(item->unicodeText);
+
 		int pos = item->unicodeText.find(tabSymbol);
 
-		if (pos == Common::U32String::npos)
-			continue;
+		if (pos != Common::U32String::npos) {
+			// Sanity check
+			if (pos == 0 || pos >= item->unicodeText.size())
+				error("Malformed menu: tab position");
 
-		// Sanity check
-		if (pos == 0 || pos >= item->unicodeText.size())
-			error("Malformed menu: tab position");
+			if (item->unicodeText.find(tabSymbol, pos + 1) != Common::U32String::npos)
+				error("Malformed menu: extra tab");
 
-		if (item->unicodeText.find(tabSymbol, pos + 1) != Common::U32String::npos)
-			error("Malformed menu: extra tab");
+			haveTabs = true;
 
-		haveTabs = true;
+			Common::U32String start(item->unicodeText.c_str(), &item->unicodeText.c_str()[pos]);
+			Common::U32String end(&item->unicodeText.c_str()[pos + 1]);
 
-		Common::U32String start(item->unicodeText.c_str(), &item->unicodeText.c_str()[pos]);
-		Common::U32String end(&item->unicodeText.c_str()[pos + 1]);
-		Common::U32String res;
-
-		res = start;
-		res += Common::U32String(" ");
-		res += end;
+			res = start;
+			res += Common::U32String("  ");
+			res += end;
+		}
 
 		int width = _font->getStringWidth(res);
 		if (width > maxWidth) {
@@ -672,8 +672,12 @@ int MacMenu::calcSubMenuWidth(MacMenuSubMenu *submenu) {
 				maxWidth = width;
 			}
 		} else if (!item->unicodeText.empty()) {
-			// add accelerator
-			int width = _font->getStringWidth(item->unicodeText);
+			Common::U32String text(item->unicodeText);
+
+			if (item->submenu != nullptr) // If we're drawing triangle
+				text += Common::U32String("  ");
+
+			int width = _font->getStringWidth(text);
 			if (width > maxWidth) {
 				maxWidth = width;
 			}
