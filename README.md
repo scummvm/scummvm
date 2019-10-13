@@ -1164,7 +1164,8 @@ The CD games where speech and subtitles can be shown simultaneously are:
   - Police Quest 4 CD
   - Shivers CD
   - Space Quest 4 CD
-  - Space Quest 6 CD Torin's Passage CD
+  - Space Quest 6 CD
+  - Torin's Passage CD
 
 **EcoQuest 1 CD:** Speech and text can be toggled via the game's "Mode"
 option in the options dialog, or via ScummVM's audio options.
