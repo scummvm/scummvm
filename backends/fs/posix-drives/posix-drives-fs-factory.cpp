@@ -20,39 +20,31 @@
  *
  */
 
-#include "osystem.h"
-#include <3ds.h>
+#if defined(POSIX)
 
-int main(int argc, char *argv[]) {
-	// Initialize basic libctru stuff
-	gfxInitDefault();
-	cfguInit();
-	romfsInit();
-	osSetSpeedupEnable(true);
-// 	consoleInit(GFX_TOP, NULL);
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
 
-	g_system = new _3DS::OSystem_3DS();
-	assert(g_system);
+#include "backends/fs/posix-drives/posix-drives-fs-factory.h"
+#include "backends/fs/posix-drives/posix-drives-fs.h"
 
-	// Invoke the actual ScummVM main entry point
-// 	if (argc > 2)
-// 		res = scummvm_main(argc-2, &argv[2]);
-// 	else
-// 		res = scummvm_main(argc, argv);
-//	scummvm_main(0, nullptr);
+#include <unistd.h>
 
-	int res = scummvm_main(argc, argv);
-
-	g_system->destroy();
-
-	// Turn on both screen backlights before exiting.
-	if (R_SUCCEEDED(gspLcdInit())) {
-		GSPLCD_PowerOnBacklight(GSPLCD_SCREEN_BOTH);
-		gspLcdExit();
-	}
-
-	romfsExit();
-	cfguExit();
-	gfxExit();
-	return res;
+void DrivesPOSIXFilesystemFactory::addDrive(const Common::String &name) {
+	_drives.push_back(Common::normalizePath(name, '/'));
 }
+
+AbstractFSNode *DrivesPOSIXFilesystemFactory::makeRootFileNode() const {
+	return new DrivePOSIXFilesystemNode(_drives);
+}
+
+AbstractFSNode *DrivesPOSIXFilesystemFactory::makeCurrentDirectoryFileNode() const {
+	char buf[MAXPATHLEN];
+	return getcwd(buf, MAXPATHLEN) ? new DrivePOSIXFilesystemNode(buf, _drives) : nullptr;
+}
+
+AbstractFSNode *DrivesPOSIXFilesystemFactory::makeFileNodePath(const Common::String &path) const {
+	assert(!path.empty());
+	return new DrivePOSIXFilesystemNode(path, _drives);
+}
+
+#endif
