@@ -1095,7 +1095,7 @@ const Feature s_features[] = {
 	{      "langdetect",                "USE_DETECTLANG",  "", true,  "System language detection support" }, // This feature actually depends on "translation", there
 	                                                                                                         // is just no current way of properly detecting this...
 	{    "text-console", "USE_TEXT_CONSOLE_FOR_DEBUGGER",  "", false, "Text console debugger" }, // This feature is always applied in xcode projects
-	{             "tts",                       "USE_TTS",  "", false, "Text to speech support"}
+	{             "tts",                       "USE_TTS",  "", true, "Text to speech support"}
 };
 
 const Tool s_tools[] = {
