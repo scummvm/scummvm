@@ -23,9 +23,9 @@
 #include "bladerunner/ui/kia_section_help.h"
 
 #include "bladerunner/bladerunner.h"
+#include "bladerunner/shape.h"
 #include "bladerunner/text_resource.h"
 #include "bladerunner/ui/kia.h"
-#include "bladerunner/ui/kia_shapes.h"
 #include "bladerunner/ui/ui_container.h"
 #include "bladerunner/ui/ui_scroll_box.h"
 

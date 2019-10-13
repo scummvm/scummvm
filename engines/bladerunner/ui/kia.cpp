@@ -50,7 +50,6 @@
 #include "bladerunner/ui/kia_section_pogo.h"
 #include "bladerunner/ui/kia_section_save.h"
 #include "bladerunner/ui/kia_section_suspects.h"
-#include "bladerunner/ui/kia_shapes.h"
 #include "bladerunner/ui/ui_image_picker.h"
 #include "bladerunner/vqa_player.h"
 #include "bladerunner/subtitles.h"
@@ -67,7 +66,8 @@ KIA::KIA(BladeRunnerEngine *vm) {
 
 	_script = new KIAScript(_vm);
 	_log = new KIALog(_vm);
-	_shapes = new KIAShapes(_vm);
+	_shapes = new Shapes(_vm);
+	_playerPhotographs = new Shapes(_vm);
 
 	_forceOpen = false;
 	_currentSectionId = kKIASectionNone;
@@ -77,7 +77,6 @@ KIA::KIA(BladeRunnerEngine *vm) {
 	_playerVqaFrame = 0;
 	_playerVisualizerState = 0;
 	_playerPhotographId = -1;
-	_playerPhotograph = nullptr;
 	_playerSliceModelId = -1;
 	_playerSliceModelAngle = 0.0f;
 	_timeLast = _vm->_time->currentSystem();
@@ -128,9 +127,9 @@ KIA::~KIA() {
 	delete _diagnosticSection;
 	delete _pogoSection;
 	_playerImage.free();
-	delete _playerPhotograph;
 	delete _buttons;
 	delete _shapes;
+	delete _playerPhotographs;
 	delete _log;
 	delete _script;
 }
@@ -332,9 +331,10 @@ void KIA::tick() {
 		if (_playerSliceModelId != -1) {
 			_vm->_sliceRenderer->drawOnScreen(_playerSliceModelId, 0, 585, 80, _playerSliceModelAngle, 100.0, _vm->_surfaceFront);
 		} else if (_playerPhotographId != -1) {
-			int width  = _playerPhotograph->getWidth();
-			int height  = _playerPhotograph->getHeight();
-			_playerPhotograph->draw(_vm->_surfaceFront, 590 - width / 2, 80 - height / 2);
+			const Shape *playerPhotograph = _playerPhotographs->get(_playerPhotographId);
+			int width  = playerPhotograph->getWidth();
+			int height  = playerPhotograph->getHeight();
+			playerPhotograph->draw(_vm->_surfaceFront, 590 - width / 2, 80 - height / 2);
 		} else if (_playerImage.getPixels() != nullptr) {
 			_vm->_surfaceFront.fillRect(Common::Rect(549, 49, 631, 111), _vm->_surfaceFront.format.RGBToColor(255, 255, 255));
 			_vm->_surfaceFront.copyRectToSurface(_playerImage.getPixels(), _playerImage.pitch, 550, 50, _playerImage.w,  _playerImage.h);
@@ -550,10 +550,6 @@ void KIA::playerReset() {
 
 	_playerActorDialogueQueueSize = _playerActorDialogueQueuePosition;
 	_playerSliceModelId = -1;
-	if (_playerPhotographId != -1) {
-		delete _playerPhotograph;
-		_playerPhotograph = nullptr;
-	}
 	_playerPhotographId = -1;
 	_playerImage.free();
 	_playerActorDialogueState = 0;
@@ -582,16 +578,10 @@ void KIA::playSliceModel(int sliceModelId) {
 }
 
 void KIA::playPhotograph(int photographId) {
-	if (_playerPhotographId != -1) {
-		delete _playerPhotograph;
-		_playerPhotograph = nullptr;
-	}
 	if (_playerVqaFrame == 8) {
 		_vm->_audioPlayer->playAud(_vm->_gameInfo->getSfxTrack(kSfxBEEP1), 70, 0, 0, 50, 0);
 	}
 	_playerPhotographId = photographId;
-	_playerPhotograph = new Shape(_vm);
-	_playerPhotograph->open("photos.shp", photographId);
 }
 
 void KIA::playImage(const Graphics::Surface &image) {
@@ -740,11 +730,12 @@ void KIA::init() {
 		playPrivateAddon();
 	}
 
-	_shapes->load();
+	_shapes->load("kiaopt.shp");
+	_playerPhotographs->load("photos.shp");
+
 	_buttons->activate(nullptr, nullptr, mouseDownCallback, mouseUpCallback, this);
 	_vm->_mouse->setCursor(0);
 	if (_playerVqaPlayer == nullptr) {
-
 		_playerVqaPlayer = new VQAPlayer(_vm, &_vm->_surfaceFront, "kiaover.vqa");
 		_playerVqaPlayer->open();
 		_playerVqaPlayer->setLoop(0, -1, kLoopSetModeJustStart, nullptr, nullptr);
@@ -772,18 +763,13 @@ void KIA::unload() {
 	_buttons->deactivate();
 
 	_shapes->unload();
+	_playerPhotographs->unload();
 
-	if (_mainVqaPlayer) {
-		_mainVqaPlayer->close();
-		delete _mainVqaPlayer;
-		_mainVqaPlayer = nullptr;
-	}
+	delete _mainVqaPlayer;
+	_mainVqaPlayer = nullptr;
 
-	if (_playerVqaPlayer) {
-		_playerVqaPlayer->close();
-		delete _playerVqaPlayer;
-		_playerVqaPlayer = nullptr;
-	}
+	delete _playerVqaPlayer;
+	_playerVqaPlayer = nullptr;
 
 	_vm->closeArchive("MODE.MIX");
 

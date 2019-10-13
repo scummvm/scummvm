@@ -55,27 +55,27 @@ class DialogueMenu {
 
 	BladeRunnerEngine *_vm;
 
-	TextResource         *_textResource;
-	Common::Array<Shape>  _shapes;
-	bool                  _isVisible;
-	bool                  _waitingForInput;
-	int                   _selectedItemIndex;
-	int                   _listSize;
+	TextResource *_textResource;
+	Shapes       *_shapes;
+	bool          _isVisible;
+	bool          _waitingForInput;
+	int           _selectedItemIndex;
+	int           _listSize;
 
 	// These track whether a dialogue option
 	// has previously been selected
-	int                   _neverRepeatListSize;
-	int                   _neverRepeatValues[kMaxRepeatHistory];
-	bool                  _neverRepeatWasSelected[kMaxRepeatHistory];
+	int           _neverRepeatListSize;
+	int           _neverRepeatValues[kMaxRepeatHistory];
+	bool          _neverRepeatWasSelected[kMaxRepeatHistory];
 
-	int                   _centerX;
-	int                   _centerY;
-	int                   _screenX;
-	int                   _screenY;
-	int                   _maxItemWidth;
-	DialogueItem          _items[kMaxItems];
+	int           _centerX;
+	int           _centerY;
+	int           _screenX;
+	int           _screenY;
+	int           _maxItemWidth;
+	DialogueItem  _items[kMaxItems];
 
-	int                   _fadeInItemIndex;
+	int           _fadeInItemIndex;
 
 public:
 	DialogueMenu(BladeRunnerEngine *vm);
@@ -83,7 +83,7 @@ public:
 
 	void clear();
 
-	bool loadText(const Common::String &name);
+	bool loadResources();
 
 	bool show();
 	bool hide();

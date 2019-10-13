@@ -117,6 +117,10 @@ int AudioMixer::playInChannel(int channel, Audio::Mixer::SoundType type, Audio::
 		audioStream = new Audio::LoopingAudioStream(stream, 0, DisposeAfterUse::YES);
 	}
 
+	if (!_vm->_mixer->isReady()) {
+		return -1;
+	}
+
 	_vm->_mixer->playStream(
 		type,
 		&_channels[channel].handle,

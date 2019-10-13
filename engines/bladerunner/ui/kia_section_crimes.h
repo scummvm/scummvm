@@ -23,7 +23,6 @@
 #ifndef BLADERUNNER_KIA_SECTION_CRIME_H
 #define BLADERUNNER_KIA_SECTION_CRIME_H
 
-#include "bladerunner/shape.h"
 #include "bladerunner/ui/kia_section_base.h"
 
 #include "common/array.h"
@@ -32,6 +31,7 @@ namespace BladeRunner {
 
 class ActorClues;
 class BladeRunnerEngine;
+class Shapes;
 class UIContainer;
 class UIImagePicker;
 class UIScrollBox;
@@ -65,12 +65,12 @@ class KIASectionCrimes : public KIASectionBase {
 	Common::Array<bool> _suspectsFound;
 	Common::Array<bool> _suspectsWithIdentity;
 
-	int   _mouseX;
-	int   _mouseY;
+	int _mouseX;
+	int _mouseY;
 
-	int    _suspectPhotoShapeId;
-	int    _suspectPhotoNotUsed;
-	Shape *_suspectPhotoShape;
+	int     _suspectPhotoShapeId;
+	int     _suspectPhotoNotUsed;
+	Shapes *_suspectPhotoShapes;
 
 public:
 	int _suspectSelected;

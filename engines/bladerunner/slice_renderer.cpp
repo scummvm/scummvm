@@ -38,7 +38,7 @@ SliceRenderer::SliceRenderer(BladeRunnerEngine *vm) {
 	_vm = vm;
 	_pixelFormat = screenPixelFormat();
 
-	for (int i = 0; i < 942; i++) { // yes, its going just to 942 and not 997
+	for (int i = 0; i < ARRAYSIZE(_animationsShadowEnabled); i++) { // original game ss going just yp to 942 and not 997
 		_animationsShadowEnabled[i] = true;
 	}
 	_animation = -1;

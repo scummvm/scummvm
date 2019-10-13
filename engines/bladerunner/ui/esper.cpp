@@ -51,26 +51,28 @@ ESPER::ESPER(BladeRunnerEngine *vm) {
 	_screen = Common::Rect(135, 123, 435, 387);
 
 	_isWaiting          = false;
-	_shapeButton        = nullptr;
-	_shapeThumbnail     = nullptr;
 	_regionSelectedAck  = false;
 	_isDrawingSelection = false;
 
 	_isOpen             = false;
-	_shapeButton        = nullptr;
+	_shapesButtons      = new Shapes(vm);
+	_shapesPhotos       = new Shapes(vm);
 	_shapeThumbnail     = nullptr;
 	_vqaPlayerMain      = nullptr;
 	_vqaPlayerPhoto     = nullptr;
 	_script             = nullptr;
 
-	reset();
-
 	_buttons = new UIImagePicker(vm, kPhotoCount + 4);
+
+	reset();
 }
 
 ESPER::~ESPER() {
-	delete _buttons;
 	reset();
+
+	delete _buttons;
+	delete _shapesPhotos;
+	delete _shapesButtons;
 }
 
 void ESPER::open(Graphics::Surface *surface) {
@@ -96,17 +98,17 @@ void ESPER::open(Graphics::Surface *surface) {
 	}
 
 	_surfacePhoto.create(kPhotoWidth, kPhotoHeight, gameDataPixelFormat());
-
 	_surfaceViewport.create(_screen.width(), _screen.height(), screenPixelFormat());
 
 	_viewportNext = _viewport;
 
-	_shapeButton = new Shape(_vm);
-	if (!_shapeButton->open("ESPBUTTN.SHP", 0)) {
+	if (!_shapesButtons->load("ESPBUTTN.SHP")) {
 		return;
 	}
 
-	_shapesPhotos.resize(10);
+	if (!_shapesPhotos->load("ESPTHUMB.SHP")) {
+		return;
+	}
 
 	_vqaPlayerMain = new VQAPlayer(_vm, &_vm->_surfaceBack, "ESPER.VQA");
 	if (!_vqaPlayerMain->open()) {
@@ -118,6 +120,7 @@ void ESPER::open(Graphics::Surface *surface) {
 	_flash = false;
 
 	_script = new ESPERScript(_vm);
+
 	activate(true);
 }
 
@@ -129,26 +132,18 @@ void ESPER::close() {
 	_vm->_audioPlayer->playAud(_vm->_gameInfo->getSfxTrack(kSfxBR035_7B), 25, 0, 0, 50, 0);
 
 	unloadPhotos();
-	_shapesPhotos.clear();
-
-	delete _shapeThumbnail;
-	_shapeThumbnail = nullptr;
 
 	_buttons->deactivate();
 	_buttons->resetImages();
 
-	delete _shapeButton;
-	_shapeButton = nullptr;
+	_shapesButtons->unload();
+	_shapesPhotos->unload();
 
 	_surfacePhoto.free();
-
 	_surfaceViewport.free();
 
-	if (_vqaPlayerMain) {
-		_vqaPlayerMain->close();
-		delete _vqaPlayerMain;
-		_vqaPlayerMain= nullptr;
-	}
+	delete _vqaPlayerMain;
+	_vqaPlayerMain = nullptr;
 
 	_vm->closeArchive("MODE.MIX");
 
@@ -156,6 +151,7 @@ void ESPER::close() {
 
 	_vm->_ambientSounds->setVolume(_ambientVolume);
 	_vm->_scene->resume();
+
 	reset();
 }
 
@@ -248,11 +244,6 @@ void ESPER::addPhoto(const char *name, int photoId, int shapeId) {
 		_photos[i].photoId   = photoId;
 		_photos[i].name      = name;
 
-		assert((uint)shapeId < _shapesPhotos.size());
-
-		_shapesPhotos[shapeId] = new Shape(_vm);
-		_shapesPhotos[shapeId]->open("ESPTHUMB.SHP", shapeId);
-
 		_buttons->defineImage(i,
 			Common::Rect(
 				100 * (i % 3) + _screen.left + 3,
@@ -260,9 +251,9 @@ void ESPER::addPhoto(const char *name, int photoId, int shapeId) {
 				100 * (i % 3) + _screen.left + 100 - 3,
 				 66 * (i / 3) + _screen.top  +  66 - 3
 			),
-			_shapesPhotos[shapeId],
-			_shapesPhotos[shapeId],
-			_shapesPhotos[shapeId],
+			_shapesPhotos->get(shapeId),
+			_shapesPhotos->get(shapeId),
+			_shapesPhotos->get(shapeId),
 			nullptr);
 	}
 	playSound(kSfxBR028_2A, 25);
@@ -304,14 +295,10 @@ void ESPER::mouseUpCallback(int buttonId, void *callbackData) {
 
 void ESPER::reset() {
 	_surfacePhoto.free();
-
 	_surfaceViewport.free();
 
-	delete _shapeButton;
-	_shapeButton = nullptr;
-
-	delete _shapeThumbnail;
-	_shapeThumbnail = nullptr;
+	_shapesButtons->unload();
+	_shapesPhotos->unload();
 
 	delete _vqaPlayerMain;
 	_vqaPlayerMain = nullptr;
@@ -324,21 +311,14 @@ void ESPER::reset() {
 
 	_isOpen = false;
 
-	_shapesPhotos.clear();
 	resetData();
 }
 
 void ESPER::resetData() {
-	if (_vqaPlayerPhoto) {
-		_vqaPlayerPhoto->close();
-		delete _vqaPlayerPhoto;
-		_vqaPlayerPhoto = nullptr;
-	}
+	delete _vqaPlayerPhoto;
+	_vqaPlayerPhoto = nullptr;
 
-	if (_shapeThumbnail) {
-		delete _shapeThumbnail;
-		_shapeThumbnail = nullptr;
-	}
+	_shapeThumbnail = nullptr;
 
 	_viewport     = Common::Rect();
 	_viewportNext = Common::Rect();
@@ -500,7 +480,7 @@ void ESPER::activate(bool withOpening) {
 	}
 
 	_buttons->activate(nullptr, nullptr, mouseDownCallback, mouseUpCallback, this);
-	_buttons->defineImage(kPhotoCount + 3, Common::Rect(42, 403, 76, 437), nullptr, nullptr, _shapeButton, nullptr);
+	_buttons->defineImage(kPhotoCount + 3, Common::Rect(42, 403, 76, 437), nullptr, nullptr, _shapesButtons->get(0), nullptr);
 
 	playSound(kSfxBR024_4B, 25);
 	wait(1000);
@@ -1446,10 +1426,6 @@ void ESPER::selectPhoto(int photoId) {
 
 	Common::ScopedPtr<Common::SeekableReadStream> s(_vm->getResourceStream(_photos[photoId].name));
 
-	if (!s) {
-		reset();
-	}
-
 	uint photoSize = _surfacePhoto.w * _surfacePhoto.h * _surfacePhoto.format.bytesPerPixel;
 
 	s->skip(3); // not used, but there is compression type
@@ -1473,11 +1449,10 @@ void ESPER::selectPhoto(int photoId) {
 		// _surfacePhoto[j] = Palette[_surfacePhoto[j]];
 	}
 
-	_shapeThumbnail = new Shape(_vm);
-	_shapeThumbnail->open("ESPTHUMB.SHP", _photos[photoId].shapeId);
+	_shapeThumbnail = _shapesPhotos->get(_photos[photoId].shapeId);
 	_buttons->resetImages();
 	_buttons->defineImage(kPhotoCount + 2, Common::Rect(480, 350, 578, 413), _shapeThumbnail, _shapeThumbnail, _shapeThumbnail, nullptr);
-	_buttons->defineImage(kPhotoCount + 3, Common::Rect(42, 403, 76, 437), nullptr, nullptr, _shapeButton, nullptr);
+	_buttons->defineImage(kPhotoCount + 3, Common::Rect(42, 403, 76, 437), nullptr, nullptr, _shapesButtons->get(0), nullptr);
 
 	resetPhotoOpening();
 	resetViewport();
@@ -1490,10 +1465,8 @@ void ESPER::selectPhoto(int photoId) {
 void ESPER::unloadPhotos() {
 	for (int i = 0; i < kPhotoCount; ++i) {
 		if (_photos[i].isPresent) {
-			_buttons->resetImage(i);
-			delete _shapesPhotos[i];
-			_shapesPhotos[i] = nullptr;
 			_photos[i].isPresent = false;
+			_buttons->resetImage(i);
 		}
 	}
 }

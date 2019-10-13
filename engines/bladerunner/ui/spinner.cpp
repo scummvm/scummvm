@@ -48,17 +48,14 @@ Spinner::Spinner(BladeRunnerEngine *vm) {
 	reset();
 	_imagePicker = new UIImagePicker(vm, kSpinnerDestinations);
 	_vqaPlayer = nullptr;
+	_shapes = new Shapes(vm);
 }
 
 Spinner::~Spinner() {
 	delete _imagePicker;
-
+	delete _vqaPlayer;
+	delete _shapes;
 	reset();
-
-	if (_vqaPlayer != nullptr) {
-		_vqaPlayer->close();
-		delete _vqaPlayer;
-	}
 }
 
 void Spinner::setSelectableDestinationFlag(int destination, bool selectable) {
@@ -106,25 +103,17 @@ int Spinner::chooseDestination(int loopId, bool immediately) {
 	}
 
 	_destinations = nullptr;
-	int firstShapeId = 0;
-	int shapeCount = 0;
 	int spinnerLoopId = 4;
 
-	if (mapmask & 4) {
-		_destinations = getDestinationsFar();
-		firstShapeId = 26;
-		shapeCount = 20;
-		spinnerLoopId = 4;
+	if (mapmask & 1) {
+		_destinations = getDestinationsNear();
+		spinnerLoopId = 0;
 	} else if (mapmask & 2) {
 		_destinations = getDestinationsMedium();
-		firstShapeId = 10;
-		shapeCount = 16;
 		spinnerLoopId = 2;
-	} else if (mapmask & 1) {
-		_destinations = getDestinationsNear();
-		firstShapeId = 0;
-		shapeCount = 10;
-		spinnerLoopId = 0;
+	} else if (mapmask & 4) {
+		_destinations = getDestinationsFar();
+		spinnerLoopId = 4;
 	} else {
 		return -1;
 	}
@@ -132,10 +121,7 @@ int Spinner::chooseDestination(int loopId, bool immediately) {
 	_vqaPlayer->setLoop(spinnerLoopId,     -1, kLoopSetModeImmediate, nullptr, nullptr);
 	_vqaPlayer->setLoop(spinnerLoopId + 1, -1, kLoopSetModeJustStart, nullptr, nullptr);
 
-	for (int j = 0; j != shapeCount; ++j) {
-		_shapes.push_back(new Shape(_vm));
-		_shapes[j]->open("SPINNER.SHP", firstShapeId + j);
-	}
+	_shapes->load("SPINNER.SHP");
 
 	_imagePicker->resetImages();
 
@@ -149,9 +135,9 @@ int Spinner::chooseDestination(int loopId, bool immediately) {
 		_imagePicker->defineImage(
 			dest->id,
 			dest->rect,
-			_shapes[dest->id],
-			_shapes[dest->id + _shapes.size() / 2],
-			_shapes[dest->id + _shapes.size() / 2],
+			_shapes->get(dest->shapeId),
+			_shapes->get(dest->shapeIdOver),
+			_shapes->get(dest->shapeIdOver),
 			tooltip
 		);
 	}
@@ -185,12 +171,8 @@ int Spinner::chooseDestination(int loopId, bool immediately) {
 
 	_imagePicker->deactivate();
 
-	for (int i = 0; i != (int)_shapes.size(); ++i) {
-		delete _shapes[i];
-	}
-	_shapes.clear();
+	_shapes->unload();
 
-	_vqaPlayer->close();
 	delete _vqaPlayer;
 	_vqaPlayer = nullptr;
 
@@ -295,11 +277,6 @@ void Spinner::reset() {
 	_actorId = -1;
 	_sentenceId = -1;
 	_timeSpeakDescriptionStart = 0u;
-
-	for (int i = 0; i != (int)_shapes.size(); ++i) {
-		delete _shapes[i];
-	}
-	_shapes.clear();
 }
 
 void Spinner::resume() {
@@ -329,44 +306,44 @@ void Spinner::load(SaveFileReadStream &f) {
 
 const Spinner::Destination *Spinner::getDestinationsFar() {
 	static const Destination destinations[] = {
-		{  0, Common::Rect(220, 227, 246, 262) },
-		{  1, Common::Rect(260, 252, 286, 279) },
-		{  2, Common::Rect(286, 178, 302, 196) },
-		{  3, Common::Rect(244, 178, 263, 195) },
-		{  4, Common::Rect(288, 216, 306, 228) },
-		{  5, Common::Rect(249,  77, 353, 124) },
-		{  6, Common::Rect(190, 127, 208, 138) },
-		{  7, Common::Rect(185, 149, 206, 170) },
-		{  8, Common::Rect(398, 249, 419, 268) },
-		{  9, Common::Rect(390, 218, 419, 236) },
-		{ -1, Common::Rect(-1, -1, -1, -1) }
+		{  0, Common::Rect(220, 227, 246, 262), 26 , 36 },
+		{  1, Common::Rect(260, 252, 286, 279), 27 , 37 },
+		{  2, Common::Rect(286, 178, 302, 196), 28 , 38 },
+		{  3, Common::Rect(244, 178, 263, 195), 29 , 39 },
+		{  4, Common::Rect(288, 216, 306, 228), 30 , 40 },
+		{  5, Common::Rect(249,  77, 353, 124), 31 , 41 },
+		{  6, Common::Rect(190, 127, 208, 138), 32 , 42 },
+		{  7, Common::Rect(185, 149, 206, 170), 33 , 43 },
+		{  8, Common::Rect(398, 249, 419, 268), 34 , 44 },
+		{  9, Common::Rect(390, 218, 419, 236), 35 , 45 },
+		{ -1, Common::Rect(-1, -1, -1, -1), 0, 0 }
 	};
 	return destinations;
 }
 
 const Spinner::Destination *Spinner::getDestinationsMedium() {
 	static const Destination destinations[] = {
-		{  0, Common::Rect(252, 242, 279, 283) },
-		{  1, Common::Rect(301, 273, 328, 304) },
-		{  2, Common::Rect(319, 182, 336, 200) },
-		{  3, Common::Rect(269, 181, 293, 200) },
-		{  4, Common::Rect(325, 227, 345, 240) },
-		{  5, Common::Rect(259,  74, 380, 119) },
-		{  6, Common::Rect(203, 124, 224, 136) },
-		{  7, Common::Rect(200, 147, 222, 170) },
-		{ -1, Common::Rect(-1,-1,-1,-1) }
+		{  0, Common::Rect(252, 242, 279, 283), 10, 18 },
+		{  1, Common::Rect(301, 273, 328, 304), 11, 19 },
+		{  2, Common::Rect(319, 182, 336, 200), 12, 20 },
+		{  3, Common::Rect(269, 181, 293, 200), 13, 21 },
+		{  4, Common::Rect(325, 227, 345, 240), 14, 22 },
+		{  5, Common::Rect(259,  74, 380, 119), 15, 23 },
+		{  6, Common::Rect(203, 124, 224, 136), 16, 24 },
+		{  7, Common::Rect(200, 147, 222, 170), 17, 25 },
+		{ -1, Common::Rect(-1,-1,-1,-1), 0, 0 }
 	};
 	return destinations;
 }
 
 const Spinner::Destination *Spinner::getDestinationsNear() {
 	static const Destination destinations[] = {
-		{  0, Common::Rect(210, 263, 263, 332) },
-		{  1, Common::Rect(307, 330, 361, 381) },
-		{  2, Common::Rect(338, 137, 362, 169) },
-		{  3, Common::Rect(248, 135, 289, 168) },
-		{  4, Common::Rect(352, 222, 379, 238) },
-		{ -1, Common::Rect(-1,-1,-1,-1) }
+		{  0, Common::Rect(210, 263, 263, 332), 0, 5 },
+		{  1, Common::Rect(307, 330, 361, 381), 1, 6 },
+		{  2, Common::Rect(338, 137, 362, 169), 2, 7 },
+		{  3, Common::Rect(248, 135, 289, 168), 3, 8 },
+		{  4, Common::Rect(352, 222, 379, 238), 4, 9 },
+		{ -1, Common::Rect(-1,-1,-1,-1), 0, 0 }
 	};
 	return destinations;
 }

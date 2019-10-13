@@ -26,11 +26,11 @@
 #include "bladerunner/bladerunner.h"
 #include "bladerunner/game_info.h"
 #include "bladerunner/savefile.h"
+#include "bladerunner/shape.h"
 #include "bladerunner/text_resource.h"
 #include "bladerunner/time.h"
 #include "bladerunner/game_constants.h"
 #include "bladerunner/ui/kia.h"
-#include "bladerunner/ui/kia_shapes.h"
 #include "bladerunner/ui/ui_container.h"
 #include "bladerunner/ui/ui_scroll_box.h"
 
