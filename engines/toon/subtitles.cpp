@@ -65,7 +65,7 @@ void SubtitleRenderer::render(const Graphics::Surface &frame, uint32 frameNumber
 }
 
 bool SubtitleRenderer::load(const Common::String &video) {
-	warning(video.c_str());
+	// warning(video.c_str());
 
 	_hasSubtitles = false;
 	_index = 0;
