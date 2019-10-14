@@ -163,7 +163,7 @@ int L9V1Game = -1;
 
 
 /* Prototypes */
-L9BOOL LoadGame2(char *filename, char *picname);
+L9BOOL LoadGame2(const char *filename, char *picname);
 int getlongcode();
 L9BOOL GetWordV2(char *buff, int Word);
 L9BOOL GetWordV3(char *buff, int Word);
@@ -174,7 +174,7 @@ void show_picture(int pic);
 #define CODEFOLLOWFILE "c:\\temp\\level9.txt"
 FILE *f;
 L9UINT16 *cfvar, *cfvar2;
-const char *codes[] = {
+const char *const codes[] = {
 	"Goto",
 	"intgosub",
 	"intreturn",
@@ -208,7 +208,7 @@ const char *codes[] = {
 	"ilins",
 	"ilins",
 };
-const char *functions[] = {
+const char *const functions[] = {
 	"calldriver",
 	"L9Random",
 	"save",
@@ -216,7 +216,7 @@ const char *functions[] = {
 	"clearworkspace",
 	"clearstack"
 };
-const char *drivercalls[] = {
+const char *const drivercalls[] = {
 	"init",
 	"drivercalcchecksum",
 	"driveroswrch",

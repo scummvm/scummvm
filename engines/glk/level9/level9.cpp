@@ -27,12 +27,27 @@ namespace Level9 {
 
 Level9 *g_vm = nullptr;
 
+extern void gln_main(const char *filename);
+extern int gln_startup_code(int argc, char *argv[]);
+
 Level9::Level9(OSystem *syst, const GlkGameDescription &gameDesc) : GlkAPI(syst, gameDesc) {
 	g_vm = this;
 }
 
 void Level9::runGame() {
-	// TODO
+	initialize();
+
+	_gameFile.close();
+	gln_main(getFilename().c_str());
+
+	deinitialize();
+}
+
+bool Level9::initialize() {
+	return gln_startup_code(0, nullptr);
+}
+
+void Level9::deinitialize() {
 }
 
 Common::Error Level9::readSaveData(Common::SeekableReadStream *rs) {

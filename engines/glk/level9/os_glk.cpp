@@ -1681,53 +1681,6 @@ static void gln_graphics_position_picture(winid_t glk_window, int pixel_size,
 	*y_offset = ((int) window_height - height * pixel_size) / 2;
 }
 
-
-/*
- * gln_graphics_is_vertex()
- *
- * Given a point, return TRUE if that point is the vertex of a fillable
- * region.  This is a helper function for layering pictures.  When assign-
- * ing layers, we want to weight the colors that have the most complex
- * shapes, or the largest count of isolated areas, heavier than simpler
- * areas.
- *
- * By painting the colors with the largest number of isolated areas or
- * the most complex shapes first, we help to minimize the number of fill
- * regions needed to render the complete picture.
- */
-static int gln_graphics_is_vertex(gln_byte off_screen[], gln_uint16 width, gln_uint16 height,
-		int x, int y) {
-	gln_byte pixel;
-	int above, below, left, right;
-	long index_row;
-	assert(off_screen);
-
-	/* Use an index row to cut down on multiplications. */
-	index_row = y * width;
-
-	/* Find the color of the reference pixel. */
-	pixel = off_screen[index_row + x];
-	assert(pixel < GLN_PALETTE_SIZE);
-
-	/*
-	 * Detect differences between the reference pixel and its upper, lower, left
-	 * and right neighbors.  Mark as different if the neighbor doesn't exist,
-	 * that is, at the edge of the picture.
-	 */
-	above = (y == 0 || off_screen[index_row - width + x] != pixel);
-	below = (y == height - 1 || off_screen[index_row + width + x] != pixel);
-	left = (x == 0 || off_screen[index_row + x - 1] != pixel);
-	right = (x == width - 1 || off_screen[index_row + x + 1] != pixel);
-
-	/*
-	 * Return TRUE if this pixel lies at the vertex of a rectangular, fillable,
-	 * area.  That is, if two adjacent neighbors aren't the same color (or if
-	 * absent -- at the edge of the picture).
-	 */
-	return ((above || below) && (left || right));
-}
-
-
 /*
  * gms_graphics_compare_layering_inverted()
  * gln_graphics_assign_layers()
@@ -1759,6 +1712,53 @@ struct gln_layering_t {
 	long usage;       /* Color usage count. */
 	int color;        /* Color index into palette. */
 };
+
+#ifndef GARGLK
+
+/*
+ * gln_graphics_is_vertex()
+ *
+ * Given a point, return TRUE if that point is the vertex of a fillable
+ * region.  This is a helper function for layering pictures.  When assign-
+ * ing layers, we want to weight the colors that have the most complex
+ * shapes, or the largest count of isolated areas, heavier than simpler
+ * areas.
+ *
+ * By painting the colors with the largest number of isolated areas or
+ * the most complex shapes first, we help to minimize the number of fill
+ * regions needed to render the complete picture.
+ */
+static int gln_graphics_is_vertex(gln_byte off_screen[], gln_uint16 width, gln_uint16 height,
+	int x, int y) {
+	gln_byte pixel;
+	int above, below, left, right;
+	long index_row;
+	assert(off_screen);
+
+	/* Use an index row to cut down on multiplications. */
+	index_row = y * width;
+
+	/* Find the color of the reference pixel. */
+	pixel = off_screen[index_row + x];
+	assert(pixel < GLN_PALETTE_SIZE);
+
+	/*
+	 * Detect differences between the reference pixel and its upper, lower, left
+	 * and right neighbors.  Mark as different if the neighbor doesn't exist,
+	 * that is, at the edge of the picture.
+	 */
+	above = (y == 0 || off_screen[index_row - width + x] != pixel);
+	below = (y == height - 1 || off_screen[index_row + width + x] != pixel);
+	left = (x == 0 || off_screen[index_row + x - 1] != pixel);
+	right = (x == width - 1 || off_screen[index_row + x + 1] != pixel);
+
+	/*
+	 * Return TRUE if this pixel lies at the vertex of a rectangular, fillable,
+	 * area.  That is, if two adjacent neighbors aren't the same color (or if
+	 * absent -- at the edge of the picture).
+	 */
+	return ((above || below) && (left || right));
+}
 
 static int gln_graphics_compare_layering_inverted(const void *void_first,
         const void *void_second) {
@@ -1832,7 +1832,6 @@ static void gln_graphics_assign_layers(gln_byte off_screen[], gln_byte on_screen
 		layer_usage[index] = layering[index].usage;
 	}
 }
-
 
 /*
  * gln_graphics_paint_region()
@@ -1966,6 +1965,7 @@ break_y_max:
 		index_row += width;
 	}
 }
+#endif
 
 static void gln_graphics_paint_everything(winid_t glk_window, glui32 palette[],
 		gln_byte off_screen[], int x_offset, int y_offset, gln_uint16 width, gln_uint16 height) {
@@ -3640,9 +3640,13 @@ static void gln_standout_string(const char *message) {
 	gln_styled_string(style_Emphasized, message);
 }
 
+#ifndef GARGLK
+
 static void gln_standout_char(char c) {
 	gln_styled_char(style_Emphasized, c);
 }
+
+#endif
 
 static void gln_normal_string(const char *message) {
 	gln_styled_string(style_Normal, message);
@@ -5541,8 +5545,7 @@ static const int GLN_WATCHDOG_TIMEOUT = 5,
  * The following values need to be passed between the startup_code and main
  * functions.
  */
-static const char *gln_gamefile = NULL,      /* Name of game file. */
-             *gln_game_message = NULL;  /* Error message. */
+static const char *gln_game_message = NULL;  /* Error message. */
 
 
 /*
@@ -5677,7 +5680,7 @@ static void gln_establish_picture_filename(const char *name, char **graphics) {
  * handle options.  The second is called from g_vm->glk_main(), and does the real
  * work of running the game.
  */
-static int gln_startup_code(int argc, char *argv[]) {
+int gln_startup_code(int argc, char *argv[]) {
 	int argv_index;
 
 	/* Handle command line arguments. */
@@ -5710,41 +5713,11 @@ static int gln_startup_code(int argc, char *argv[]) {
 		return FALSE;
 	}
 
-	/*
-	 * Get the name of the game file.  Since we need this in our call from
-	 * g_vm->glk_main, we need to keep it in a module static variable.  If the game
-	 * file name is omitted, then here we'll set the pointerto NULL, and
-	 * complain about it later in main.  Passing the message string around
-	 * like this is a nuisance...
-	 */
-	if (argv_index == argc - 1) {
-		gln_gamefile = argv[argv_index];
-		gln_game_message = NULL;
-#ifdef GARGLK
-		{
-			const char *s;
-			s = strrchr(gln_gamefile, '\\');
-			if (s)
-				g_vm->garglk_set_story_name(s + 1);
-			s = strrchr(gln_gamefile, '/');
-			if (s)
-				g_vm->garglk_set_story_name(s + 1);
-		}
-#endif
-	} else {
-		gln_gamefile = NULL;
-		if (argv_index < argc - 1)
-			gln_game_message = "More than one game file was given"
-			                   " on the command line.";
-		else
-			gln_game_message = "No game file was given on the command line.";
-	}
-
 	/* All startup options were handled successfully. */
 	return TRUE;
 }
 
-static void gln_main() {
+void gln_main(const char *filename) {
 	char *graphics_file = NULL;
 	int is_running;
 
@@ -5765,20 +5738,11 @@ static void gln_main() {
 	g_vm->glk_set_window(gln_main_window);
 	g_vm->glk_set_style(style_Normal);
 
-	/* If there's a problem with the game file, complain now. */
-	if (!gln_gamefile) {
-		assert(gln_game_message);
-		gln_header_string("Glk Level 9 Error\n\n");
-		gln_normal_string(gln_game_message);
-		gln_normal_char('\n');
-		g_vm->glk_exit();
-	}
-
 	/*
 	 * Given the basic game name, try to come up with a usable graphics
 	 * filenames.  The graphics file may be null.
 	 */
-	gln_establish_picture_filename(gln_gamefile, &graphics_file);
+	gln_establish_picture_filename(g_vm->getFilename().c_str(), &graphics_file);
 
 	/*
 	 * Check Glk library capabilities, and note pictures are impossible if the
@@ -5798,7 +5762,7 @@ static void gln_main() {
 
 	/* If pictures are possible, search for bitmap graphics. */
 	if (gln_graphics_possible)
-		gln_graphics_locate_bitmaps(gln_gamefile);
+		gln_graphics_locate_bitmaps(g_vm->getFilename().c_str());
 
 	/* Try to create a one-line status window.  We can live without it. */
 	/*
@@ -5820,12 +5784,12 @@ static void gln_main() {
 
 		/* Load the game, sending in any established graphics file. */
 		int errNum = 0;
-		if (!LoadGame(gln_gamefile, graphics_file)) {
+		if (!LoadGame(filename, graphics_file)) {
 			if (gln_status_window)
 				g_vm->glk_window_close(gln_status_window, NULL);
 			gln_header_string("Glk Level 9 Error\n\n");
 			gln_normal_string("Can't find, open, or load game file '");
-			gln_normal_string(gln_gamefile);
+			gln_normal_string(g_vm->getFilename().c_str());
 			gln_normal_char('\'');
 			if (errNum != 0) {
 				gln_normal_string(": ERROR");
@@ -5926,98 +5890,6 @@ static void gln_main() {
 	/* Free any graphics file path. */
 	free(graphics_file);
 }
-
-
-/*---------------------------------------------------------------------*/
-/*  Linkage between Glk entry/exit calls and the real interpreter      */
-/*---------------------------------------------------------------------*/
-
-/*
- * Safety flags, to ensure we always get startup before main, and that
- * we only get a call to main once.
- */
-static int gln_startup_called = FALSE,
-           gln_main_called = FALSE;
-
-/*
- * g_vm->glk_main()
- *
- * Main entry point for Glk.  Here, all startup is done, and we call our
- * function to run the game.
- */
-void glk_main() {
-	assert(gln_startup_called && !gln_main_called);
-	gln_main_called = TRUE;
-
-	/* Call the interpreter main function. */
-	gln_main();
-}
-
-
-/*---------------------------------------------------------------------*/
-/*  Glk linkage relevant only to the UNIX platform                     */
-/*---------------------------------------------------------------------*/
-#ifdef UNUSED
-
-/*
- * Glk arguments for UNIX versions of the Glk interpreter.
- */
-glkunix_argumentlist_t glkunix_arguments[] = {
-	{
-		(char *) "-nc", glkunix_arg_NoValue,
-		(char *) "-nc        No local handling for Glk special commands"
-	},
-	{
-		(char *) "-na", glkunix_arg_NoValue,
-		(char *) "-na        Turn off abbreviation expansions"
-	},
-	{
-		(char *) "-ni", glkunix_arg_NoValue,
-		(char *) "-ni        No local handling for 'quit', 'restart',"
-		" 'save', and 'restore'"
-	},
-	{
-		(char *) "-np", glkunix_arg_NoValue,
-		(char *) "-np        Turn off pictures"
-	},
-	{
-		(char *) "-ne", glkunix_arg_NoValue,
-		(char *) "-ne        Turn off additional interpreter prompt"
-	},
-	{
-		(char *) "-nl", glkunix_arg_NoValue,
-		(char *) "-nl        Turn off infinite loop detection"
-	},
-	{
-		(char *) "", glkunix_arg_ValueCanFollow,
-		(char *) "filename   game to run"
-	},
-	{NULL, glkunix_arg_End, NULL}
-};
-
-
-/*
- * glkunix_startup_code()
- *
- * Startup entry point for UNIX versions of Glk interpreter.  Glk will
- * call glkunix_startup_code() to pass in arguments.  On startup, we call
- * our function to parse arguments and generally set stuff up.
- */
-int glkunix_startup_code(glkunix_startup_t *data) {
-	assert(!gln_startup_called);
-	gln_startup_called = TRUE;
-
-#ifdef GARGLK
-	garg_vm->glk_set_program_name("Level 9 5.1");
-	garg_vm->glk_set_program_info(
-	    "Level 9 5.1 by Glen Summers, David Kinder\n"
-	    "Alan Staniforth, Simon Baldwin and Dieter Baron\n"
-	    "Glk Graphics support by Tor Andersson\n");
-#endif
-
-	return gln_startup_code(data->argc, data->argv);
-}
-#endif
 
 } // End of namespace Level9
 } // End of namespace Glk
