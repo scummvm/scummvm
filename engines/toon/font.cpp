@@ -191,7 +191,7 @@ void FontRenderer::setFontColor(int32 fontColor1, int32 fontColor2, int32 fontCo
 	_currentFontColor[3] = fontColor3;
 }
 
-void FontRenderer::renderMultiLineText(int16 x, int16 y, const Common::String &origText, int32 mode, Graphics::Surface& frame) {
+void FontRenderer::renderMultiLineText(int16 x, int16 y, const Common::String &origText, int32 mode, Graphics::Surface &frame) {
 	debugC(5, kDebugFont, "renderMultiLineText(%d, %d, %s, %d)", x, y, origText.c_str(), mode);
 
 	// divide the text in several lines

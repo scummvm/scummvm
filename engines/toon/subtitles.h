@@ -29,9 +29,9 @@
 namespace Toon {
 
 typedef struct {
-    uint32 fstart;
-    uint32 fend;
-    uint32 foffset;
+	uint32 fstart;
+	uint32 fend;
+	uint32 foffset;
 } TimeWindow;
 
 class SubtitleRenderer {
@@ -39,19 +39,18 @@ public:
 	SubtitleRenderer(ToonEngine *vm);
 	~SubtitleRenderer();
 
-    bool load(const Common::String &video);
-    void render(const Graphics::Surface& frame, uint32 frameNumber, char color);
+	bool load(const Common::String &video);
+	void render(const Graphics::Surface &frame, uint32 frameNumber, byte color);
 protected:
 	ToonEngine *_vm;
-    Graphics::Surface* _subSurface;
-    bool _hasSubtitles;
-
-    char* _lines[384];
-    TimeWindow _tw[384];
-    uint8 *_fileData;
-    uint16 _index;
-    uint16 _last;
-    char* _currentLine;
+	Graphics::Surface *_subSurface;
+	bool _hasSubtitles;
+	char *_lines[384];
+	TimeWindow _tw[384];
+	uint8 *_fileData;
+	uint16 _index;
+	uint16 _last;
+	char *_currentLine;
 };
 
 } // End of namespace Toon

@@ -212,9 +212,7 @@ public:
 	void playRoomMusic();
 	void waitForScriptStep();
 	void doMagnifierEffect();
-
-	void drawCustomText(int16 x, int16 y, char* line, Graphics::Surface* frame, char color);
-
+	void drawCustomText(int16 x, int16 y, char *line, Graphics::Surface *frame, char color);
 	bool canSaveGameStateCurrently();
 	bool canLoadGameStateCurrently();
 	void pauseEngineIntern(bool pause);
