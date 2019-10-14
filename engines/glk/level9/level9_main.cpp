@@ -891,34 +891,6 @@ L9BYTE calcchecksum(L9BYTE *ptr, L9UINT32 num) {
 	return d1;
 }
 
-/*
-L9BOOL Check(L9BYTE* StartFile,L9UINT32 FileSize,L9UINT32 Offset)
-{
-    L9UINT16 d0,num;
-    int i;
-    L9BYTE* Image;
-    L9UINT32 Size=0,Min,Max;
-    L9BOOL ret,JumpKill;
-
-    for (i=0;i<12;i++)
-    {
-        d0=L9WORD (StartFile+Offset+0x12 + i*2);
-        if (d0>=0x8000+LISTAREASIZE) return FALSE;
-    }
-
-    num=L9WORD(StartFile+Offset)+1;
-    if (Offset+num>FileSize) return FALSE;
-    if (calcchecksum(StartFile+Offset,num)) return FALSE;
-
-    Image=calloc(FileSize,1);
-
-    Min=Max=Offset+d0;
-    ret=ValidateSequence(StartFile,Image,Offset+d0,Offset+d0,&Size,FileSize,&Min,&Max,FALSE,&JumpKill,NULL);
-    free(Image);
-    return ret;
-}
-*/
-
 long Scan(L9BYTE *StartFile, L9UINT32 size) {
 	L9BYTE *Chk = (L9BYTE *)malloc(size + 1);
 	L9BYTE *Image = (L9BYTE *)calloc(size, 1);

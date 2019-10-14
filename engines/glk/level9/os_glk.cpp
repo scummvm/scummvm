@@ -31,12 +31,7 @@ namespace Level9 {
 #define BITS_PER_CHAR 8
 
 /* File path delimiter, used to be #defined in v2 interpreter. */
-#if defined(_Windows) || defined(__MSDOS__) \
-    || defined (_WIN32) || defined (__WIN32__)
-static const char GLN_FILE_DELIM = '\\';
-#else
 static const char GLN_FILE_DELIM = '/';
-#endif
 
 /*---------------------------------------------------------------------*/
 /*  Module variables, miscellaneous other stuff                        */
@@ -3660,9 +3655,13 @@ static void gln_header_string(const char *message) {
 	gln_styled_string(style_Header, message);
 }
 
+#ifndef GARGLK
+
 static void gln_banner_string(const char *message) {
 	gln_styled_string(style_Subheader, message);
 }
+
+#endif
 
 
 /*
@@ -5227,6 +5226,8 @@ static void gln_event_wait_2(glui32 wait_type_1, glui32 wait_type_2, event_t *ev
 
 	do {
 		g_vm->glk_select(event);
+		if (g_vm->shouldQuit())
+			return;
 
 		switch (event->type) {
 		case evtype_Arrange:
@@ -5581,46 +5582,46 @@ static void gln_establish_picture_filename(const char *name, char **graphics) {
 	graphics_file = (char *)gln_malloc(strlen(base) + strlen(".___") + 1);
 
 	/* Form a candidate graphics file, using a .PIC extension. */
-	if (f.isOpen()) {
+	if (!f.isOpen()) {
 		strcpy(graphics_file, base);
 		strcat(graphics_file, ".PIC");
 		f.open(graphics_file);
 	}
 
-	if (f.isOpen()) {
+	if (!f.isOpen()) {
 		strcpy(graphics_file, base);
 		strcat(graphics_file, ".pic");
 		f.open(graphics_file);
 	}
 
 	/* Form a candidate graphics file, using a .CGA extension. */
-	if (f.isOpen()) {
+	if (!f.isOpen()) {
 		strcpy(graphics_file, base);
 		strcat(graphics_file, ".CGA");
 		f.open(graphics_file);
 	}
 
-	if (f.isOpen()) {
+	if (!f.isOpen()) {
 		strcpy(graphics_file, base);
 		strcat(graphics_file, ".cga");
 		f.open(graphics_file);
 	}
 
 	/* Form a candidate graphics file, using a .HRC extension. */
-	if (f.isOpen()) {
+	if (!f.isOpen()) {
 		strcpy(graphics_file, base);
 		strcat(graphics_file, ".HRC");
 		f.open(graphics_file);
 	}
 
-	if (f.isOpen()) {
+	if (!f.isOpen()) {
 		strcpy(graphics_file, base);
 		strcat(graphics_file, ".hrc");
 		f.open(graphics_file);
 	}
 
 	/* No access to graphics file. */
-	if (f.isOpen()) {
+	if (!f.isOpen()) {
 		free(graphics_file);
 		graphics_file = NULL;
 	}
@@ -5721,13 +5722,6 @@ void gln_main(const char *filename) {
 	char *graphics_file = NULL;
 	int is_running;
 
-	/* Ensure Level 9 internal types have the right sizes. */
-	if (!(sizeof(gln_byte) == 1
-	        && sizeof(gln_uint16) == 2 && sizeof(gln_uint32) == 4)) {
-		gln_fatal("GLK: Types sized incorrectly, recompilation is needed");
-		g_vm->glk_exit();
-	}
-
 	/* Create the main Glk window, and set its stream as current. */
 	gln_main_window = g_vm->glk_window_open(0, 0, 0, wintype_TextBuffer, 0);
 	if (!gln_main_window) {
@@ -5742,7 +5736,7 @@ void gln_main(const char *filename) {
 	 * Given the basic game name, try to come up with a usable graphics
 	 * filenames.  The graphics file may be null.
 	 */
-	gln_establish_picture_filename(g_vm->getFilename().c_str(), &graphics_file);
+	gln_establish_picture_filename(filename, &graphics_file);
 
 	/*
 	 * Check Glk library capabilities, and note pictures are impossible if the
@@ -5762,7 +5756,7 @@ void gln_main(const char *filename) {
 
 	/* If pictures are possible, search for bitmap graphics. */
 	if (gln_graphics_possible)
-		gln_graphics_locate_bitmaps(g_vm->getFilename().c_str());
+		gln_graphics_locate_bitmaps(filename);
 
 	/* Try to create a one-line status window.  We can live without it. */
 	/*
@@ -5789,7 +5783,7 @@ void gln_main(const char *filename) {
 				g_vm->glk_window_close(gln_status_window, NULL);
 			gln_header_string("Glk Level 9 Error\n\n");
 			gln_normal_string("Can't find, open, or load game file '");
-			gln_normal_string(g_vm->getFilename().c_str());
+			gln_normal_string(filename);
 			gln_normal_char('\'');
 			if (errNum != 0) {
 				gln_normal_string(": ERROR");
@@ -5806,9 +5800,7 @@ void gln_main(const char *filename) {
 		}
 
 		/* Print out a short banner. */
-		gln_header_string("\nLevel 9 Interpreter, version 5.1\n");
-		gln_banner_string("Written by Glen Summers and David Kinder\n"
-		                  "Glk interface by Simon Baldwin\n\n");
+		gln_header_string("\nLevel 9 Interpreter, ScummVM version\n");
 
 		/*
 		 * Set the stop reason indicator to none.  A game will then exit with a
