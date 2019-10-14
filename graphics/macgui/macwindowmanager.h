@@ -23,7 +23,7 @@
 #ifndef GRAPHICS_MACGUI_MACWINDOWMANAGER_H
 #define GRAPHICS_MACGUI_MACWINDOWMANAGER_H
 
-#include "common/array.h"
+#include "common/hashmap.h"
 #include "common/list.h"
 #include "common/events.h"
 
@@ -243,7 +243,7 @@ public:
 
 private:
 	Common::List<BaseMacWindow *> _windowStack;
-	Common::Array<BaseMacWindow *> _windows;
+	Common::HashMap<uint, BaseMacWindow *> _windows;
 
 	Common::List<BaseMacWindow *> _windowsToRemove;
 	bool _needsRemoval;

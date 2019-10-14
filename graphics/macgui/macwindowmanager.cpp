@@ -184,8 +184,8 @@ MacWindowManager::MacWindowManager() {
 }
 
 MacWindowManager::~MacWindowManager() {
-	for (int i = 0; i < _lastId; i++)
-		delete _windows[i];
+	for (Common::HashMap<uint, BaseMacWindow *>::iterator it = _windows.begin(); it != _windows.end(); it++)
+		delete it->_value;
 
 	delete _fontMan;
 	delete _screenCopy;
@@ -223,14 +223,14 @@ MacTextWindow *MacWindowManager::addTextWindow(const MacFont *font, int fgcolor,
 
 
 void MacWindowManager::addWindowInitialized(MacWindow *macwindow) {
-	_windows.push_back(macwindow);
+	_windows[macwindow->getId()] = macwindow;
 	_windowStack.push_back(macwindow);
 }
 
 MacMenu *MacWindowManager::addMenu() {
 	_menu = new MacMenu(getNextId(), _screen->getBounds(), this);
 
-	_windows.push_back(_menu);
+	_windows[_menu->getId()] = _menu;
 
 	return _menu;
 }
@@ -431,7 +431,13 @@ void MacWindowManager::removeMarked() {
 	}
 	_windowsToRemove.clear();
 	_needsRemoval = false;
-	_lastId = _windows.size();
+
+	// Do we need compact lastid?
+	_lastId = 0;
+	for (Common::HashMap<uint, BaseMacWindow *>::iterator lit = _windows.begin(); lit != _windows.end(); lit++) {
+		if (lit->_key > (uint)_lastId)
+			_lastId = lit->_key;
+	}
 }
 
 void MacWindowManager::removeFromStack(BaseMacWindow *target) {
@@ -445,14 +451,13 @@ void MacWindowManager::removeFromStack(BaseMacWindow *target) {
 }
 
 void MacWindowManager::removeFromWindowList(BaseMacWindow *target) {
-	int size = _windows.size();
-	int ndx = 0;
-	for (int i = 0; i < size; i++) {
-		if (_windows[i] == target) {
-			ndx = i;
+	// _windows.erase(target->getId()); // Is applicable?
+	for (Common::HashMap<uint, BaseMacWindow *>::iterator it = _windows.begin(); it != _windows.end(); it++) {
+		if (it->_value == target) {
+			_windows.erase(it);
+			break;
 		}
 	}
-	_windows.remove_at(ndx);
 }
 
 /////////////////
