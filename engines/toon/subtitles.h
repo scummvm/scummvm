@@ -23,8 +23,8 @@
 #ifndef TOON_SUBTITLES_H
 #define TOON_SUBTITLES_H
 
-#include "toon/toon.h"
 #include "graphics/surface.h"
+#include "toon/toon.h"
 
 namespace Toon {
 
