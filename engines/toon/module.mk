@@ -18,10 +18,10 @@ MODULE_OBJS := \
 	script.o \
 	script_func.o \
 	state.o \
+	subtitles.o \
 	text.o \
 	tools.o \
-	toon.o \
-	subtitles.o
+	toon.o
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_TOON), DYNAMIC_PLUGIN)
