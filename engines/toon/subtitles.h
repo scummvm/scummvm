@@ -28,11 +28,11 @@
 
 namespace Toon {
 
-typedef struct {
+struct TimeWindow {
 	uint32 fstart;
 	uint32 fend;
 	uint32 foffset;
-} TimeWindow;
+};
 
 class SubtitleRenderer {
 public:
