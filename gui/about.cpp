@@ -874,7 +874,7 @@ void EE::docollisions() {
 
 
 void EE::computer0() {
-	int ystep, destx, dx, rndoff, dest;
+	int ystep, destx, dx, rndoff, dest = 0;
 
 	_keymove[0][kDirUp] = 0;
 	if (_tby < _bytop) _bytop = _tby;
@@ -961,7 +961,7 @@ void EE::computer0() {
 }
 
 void EE::computer1() {
-	int ystep, destx, dx, rndoff, dest;
+	int ystep, destx, dx, rndoff, dest = 0;
 
 	_keymove[1][kDirUp] = 0;
 	if (_tby < _bytop) _bytop = _tby;
