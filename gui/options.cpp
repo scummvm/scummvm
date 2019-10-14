@@ -2158,8 +2158,7 @@ void GlobalOptionsDialog::apply() {
 		if (newLang == "C")
 			ttsMan->setLanguage("en");
 		else {
-			Common::String guiLang = newLang;
-			guiLang.setChar('\0', 2);
+			Common::String guiLang(newLang.c_str(), 2);
 			ttsMan->setLanguage(guiLang);
 		}
 		_ttsVoiceSelectionPopUp->setSelectedTag(0);
