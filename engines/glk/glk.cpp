@@ -204,7 +204,7 @@ Common::Error GlkEngine::loadGameState(int slot) {
 				Common::String md5 = QuetzalReader::readString(rs);
 				delete rs;
 
-				if (interpType != INTERPRETER_IDS[getInterpreterType()] ||
+				if (interpType != QuetzalBase::getInterpreterTag(getInterpreterType()) ||
 					parseLanguage(langCode) !=getLanguage() || md5 != getGameMD5())
 					errCode = Common::kReadingFailed;
 			}

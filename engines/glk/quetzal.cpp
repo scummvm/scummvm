@@ -30,26 +30,50 @@
 
 namespace Glk {
 
-const uint32 INTERPRETER_IDS[INTERPRETER_TADS3 + 1] = {
-	MKTAG('A', 'D', 'R', 'I'),
-	MKTAG('A', 'S', 'Y', 'S'),
-	MKTAG('A', 'G', 'I', 'L'),
-	MKTAG('A', 'L', 'N', '2'),
-	MKTAG('A', 'L', 'N', '3'),
-	MKTAG('B', 'O', 'C', 'F'),
-	MKTAG('Z', 'C', 'O', 'D'),
-	MKTAG('G', 'E', 'A', 'S'),
-	MKTAG('G', 'L', 'U', 'L'),
-	MKTAG('H', 'U', 'G', 'O'),
-	MKTAG('J', 'A', 'C', 'L'),
-	MKTAG('L', 'V', 'L', '9'),
-	MKTAG('M', 'A', 'G', 'N'),
-	MKTAG('Q', 'U', 'E', 'S'),
-	MKTAG('S', 'C', 'A', 'R'),
-	MKTAG('S', 'C', 'O', 'T'),
-	MKTAG('T', 'A', 'D', '2'),
-	MKTAG('T', 'A', 'D', '3')
-};
+/*--------------------------------------------------------------------------*/
+
+uint32 QuetzalBase::getInterpreterTag(InterpreterType interpType) {
+	switch (interpType) {
+	case INTERPRETER_ADRIFT:
+		return MKTAG('A', 'D', 'R', 'I');
+	case INTERPRETER_ADVSYS:
+		return MKTAG('A', 'S', 'Y', 'S');
+	case INTERPRETER_AGILITY:
+		return MKTAG('A', 'G', 'I', 'L');
+	case INTERPRETER_ALAN2:
+		return MKTAG('A', 'L', 'N', '2');
+	case INTERPRETER_ALAN3:
+		return MKTAG('A', 'L', 'N', '3');
+	case INTERPRETER_FROTZ:
+		return MKTAG('Z', 'C', 'O', 'D');
+	case INTERPRETER_GEAS:
+		return MKTAG('G', 'E', 'A', 'S');
+	case INTERPRETER_GLULXE:
+		return MKTAG('G', 'L', 'U', 'L');
+	case INTERPRETER_HUGO:
+		return MKTAG('H', 'U', 'G', 'O');
+	case INTERPRETER_JACL:
+		return MKTAG('J', 'A', 'C', 'L');
+	case INTERPRETER_LEVEL9:
+		return MKTAG('L', 'V', 'L', '9');
+	case INTERPRETER_MAGNETIC:
+		return MKTAG('M', 'A', 'G', 'N');
+	case INTERPRETER_QUEST:
+		return MKTAG('Q', 'U', 'E', 'S');
+	case INTERPRETER_SCARE:
+		return MKTAG('S', 'C', 'A', 'R');
+	case INTERPRETER_SCOTT:
+		return MKTAG('S', 'C', 'O', 'T');
+	case INTERPRETER_TADS2:
+		return MKTAG('T', 'A', 'D', '2');
+	case INTERPRETER_TADS3:
+		return MKTAG('T', 'A', 'D', '3');
+	default:
+		error("Invalid interpreter type");
+	}
+}
+
+/*--------------------------------------------------------------------------*/
 
 void QuetzalReader::clear() {
 	_chunks.clear();
@@ -222,7 +246,7 @@ void QuetzalWriter::addCommonChunks(const Common::String &saveName) {
 		ws.writeUint32BE(g_vm->_events->getTotalPlayTicks());
 
 		// Write out intrepreter type, language, and game Id
-		ws.writeUint32BE(INTERPRETER_IDS[g_vm->getInterpreterType()]);
+		ws.writeUint32BE(getInterpreterTag(g_vm->getInterpreterType()));
 		const char *langCode = getLanguageCode(g_vm->getLanguage());
 		ws.write(langCode, strlen(langCode) + 1);
 		Common::String md5 = g_vm->getGameMD5();

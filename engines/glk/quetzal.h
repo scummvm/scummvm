@@ -43,12 +43,15 @@ enum QueztalTag {
 	ID_SCVM = MKTAG('S', 'C', 'V', 'M')
 };
 
-extern const uint32 INTERPRETER_IDS[INTERPRETER_TADS3 + 1];
+class QuetzalBase {
+public:
+	static uint32 getInterpreterTag(InterpreterType interpType);
+};
 
 /**
  * Quetzal save file reader
  */
-class QuetzalReader {
+class QuetzalReader : public QuetzalBase {
 	struct Chunk {
 		uint32 _id;
 		size_t _offset, _size;
@@ -156,7 +159,7 @@ public:
 /**
  * Quetzal save file writer
  */
-class QuetzalWriter {
+class QuetzalWriter : public QuetzalBase {
 	/**
 	 * Chunk entry
 	 */
