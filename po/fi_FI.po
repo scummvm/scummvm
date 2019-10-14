@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2019-10-14 01:39+0200\n"
+"POT-Creation-Date: 2019-10-14 21:13+0200\n"
 "PO-Revision-Date: 2019-09-22 07:54+0000\n"
 "Last-Translator: jepael <kermespersialainen@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
@@ -123,7 +123,7 @@ msgstr ""
 #: gui/downloaddialog.cpp:119 gui/downloaddialog.cpp:153
 #: gui/filebrowser-dialog.cpp:133 gui/fluidsynth-dialog.cpp:218
 #: gui/launcher.cpp:326 gui/launcher.cpp:395 gui/launcher.cpp:455
-#: gui/options.cpp:2383 gui/options.cpp:2421
+#: gui/options.cpp:2382 gui/options.cpp:2420
 #: backends/events/symbiansdl/symbiansdl-events.cpp:191
 #: backends/platform/wince/CEActionsPocket.cpp:326
 #: backends/platform/wince/CEActionsSmartphone.cpp:287
@@ -136,7 +136,7 @@ msgstr "Kyll‰"
 #: gui/downloaddialog.cpp:119 gui/downloaddialog.cpp:154
 #: gui/filebrowser-dialog.cpp:133 gui/fluidsynth-dialog.cpp:218
 #: gui/launcher.cpp:326 gui/launcher.cpp:395 gui/launcher.cpp:455
-#: gui/options.cpp:2383 gui/options.cpp:2421
+#: gui/options.cpp:2382 gui/options.cpp:2420
 #: backends/events/symbiansdl/symbiansdl-events.cpp:191
 #: backends/platform/wince/CEActionsPocket.cpp:326
 #: backends/platform/wince/CEActionsSmartphone.cpp:287
@@ -396,19 +396,19 @@ msgstr "Tallennuskansio:"
 #: gui/options.cpp:1642 gui/options.cpp:1651 gui/options.cpp:1852
 #: gui/options.cpp:1858 gui/options.cpp:1866 gui/options.cpp:1890
 #: gui/options.cpp:2018 gui/options.cpp:2024 gui/options.cpp:2031
-#: gui/options.cpp:2040 gui/options.cpp:2266 gui/options.cpp:2269
-#: gui/options.cpp:2277 gui/options.cpp:2288
+#: gui/options.cpp:2040 gui/options.cpp:2265 gui/options.cpp:2268
+#: gui/options.cpp:2276 gui/options.cpp:2287
 msgctxt "path"
 msgid "None"
 msgstr "Ei m‰‰ritelty"
 
 #: gui/editgamedialog.cpp:318 gui/editgamedialog.cpp:416
 #: gui/editgamedialog.cpp:534 gui/options.cpp:1846 gui/options.cpp:2012
-#: gui/options.cpp:2272 backends/platform/wii/options.cpp:56
+#: gui/options.cpp:2271 backends/platform/wii/options.cpp:56
 msgid "Default"
 msgstr "Oletus"
 
-#: gui/editgamedialog.cpp:462 gui/options.cpp:2282
+#: gui/editgamedialog.cpp:462 gui/options.cpp:2281
 msgid "Select SoundFont"
 msgstr "Valitse SoundFont"
 
@@ -416,7 +416,7 @@ msgstr "Valitse SoundFont"
 msgid "Select additional game directory"
 msgstr "Valitse lis‰hakemisto pelille"
 
-#: gui/editgamedialog.cpp:514 gui/options.cpp:2201
+#: gui/editgamedialog.cpp:514 gui/options.cpp:2200
 msgid "Select directory for saved games"
 msgstr "Valitse hakemisto pelitallennuksille"
 
@@ -1341,7 +1341,7 @@ msgstr "Viimeisin synkronointi:"
 msgid "When was the last time saved games were synced with this storage"
 msgstr "Milloin pelitallennukset viimeksi synkronoitiin t‰h‰n tallennustilaan"
 
-#: gui/options.cpp:1935 gui/options.cpp:2621
+#: gui/options.cpp:1935 gui/options.cpp:2620
 msgid "<never>"
 msgstr "<ei koskaan>"
 
@@ -1456,7 +1456,7 @@ msgstr "K‰ynnist‰ palvelin"
 msgid "Run local webserver"
 msgstr "K‰ynnist‰ paikallinen webpalvelin"
 
-#: gui/options.cpp:1976 gui/options.cpp:2736
+#: gui/options.cpp:1976 gui/options.cpp:2735
 msgid "Not running"
 msgstr "Ei k‰ynniss‰"
 
@@ -1525,27 +1525,27 @@ msgstr ""
 "\n"
 "Muut asetukset palautetaan."
 
-#: gui/options.cpp:2208
+#: gui/options.cpp:2207
 msgid "The chosen directory cannot be written to. Please select another one."
 msgstr "Valittuun hakemistoon ei voi kirjoittaa. Valitse toinen hakemisto."
 
-#: gui/options.cpp:2217
+#: gui/options.cpp:2216
 msgid "Select directory for GUI themes"
 msgstr "Valitse hakemisto k‰yttˆliittym‰n teemoille"
 
-#: gui/options.cpp:2227
+#: gui/options.cpp:2226
 msgid "Select directory for extra files"
 msgstr "Valitse hakemisto lis‰tiedostoille"
 
-#: gui/options.cpp:2238
+#: gui/options.cpp:2237
 msgid "Select directory for plugins"
 msgstr "Valitse hakemisto plugineille"
 
-#: gui/options.cpp:2251
+#: gui/options.cpp:2250
 msgid "Select directory for Files Manager /root/"
 msgstr "Valitse /root/ hakemisto tiedostonhallinnalle"
 
-#: gui/options.cpp:2358
+#: gui/options.cpp:2357
 msgid ""
 "Failed to open URL!\n"
 "Please navigate to this page manually."
@@ -1553,47 +1553,47 @@ msgstr ""
 "Osoitteen avaaminen ep‰onnistui!\n"
 "Ole hyv‰ ja siirry osoitteeseen k‰sin."
 
-#: gui/options.cpp:2383
+#: gui/options.cpp:2382
 msgid "Another Storage is working now. Do you want to interrupt it?"
 msgstr "Toinen tallennustila on aktiivinen. Haluatko keskeytt‰‰ sen?"
 
-#: gui/options.cpp:2392 gui/options.cpp:2430
+#: gui/options.cpp:2391 gui/options.cpp:2429
 msgid "Wait until current Storage finishes up and try again."
 msgstr "Odota kunnes aktiivinen Tallennus on valmis ja yrit‰ sitten uudestaan."
 
-#: gui/options.cpp:2405
+#: gui/options.cpp:2404
 msgid "Connecting..."
 msgstr "Yhdistet‰‰n..."
 
-#: gui/options.cpp:2421
+#: gui/options.cpp:2420
 msgid "This Storage is working now. Do you want to interrupt it?"
 msgstr "T‰m‰ tallennustila on nyt aktiivinen. Haluatko keskeytt‰‰ sen?"
 
-#: gui/options.cpp:2619 backends/cloud/cloudmanager.cpp:157
+#: gui/options.cpp:2618 backends/cloud/cloudmanager.cpp:157
 msgid "<right now>"
 msgstr "<nyt>"
 
-#: gui/options.cpp:2728
+#: gui/options.cpp:2727
 msgid "Stop server"
 msgstr "Pys‰yt‰ palvelin"
 
-#: gui/options.cpp:2729
+#: gui/options.cpp:2728
 msgid "Stop local webserver"
 msgstr "Pys‰yt‰ paikallinen webpalvelin"
 
-#: gui/options.cpp:2781
+#: gui/options.cpp:2780
 msgid "Storage connected."
 msgstr "Tallennustilan yhteys avattu."
 
-#: gui/options.cpp:2783
+#: gui/options.cpp:2782
 msgid "Failed to connect storage."
 msgstr "Tallennustilan yhteyden avaaminen ep‰onnistui."
 
-#: gui/options.cpp:2785
+#: gui/options.cpp:2784
 msgid "Failed to connect storage: "
 msgstr "Tallennustilan yhteyden avaaminen ep‰onnistui: "
 
-#: gui/options.cpp:2805
+#: gui/options.cpp:2804
 msgid ""
 "Request failed.\n"
 "Check your Internet connection."

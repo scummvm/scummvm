@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2019-10-14 01:39+0200\n"
+"POT-Creation-Date: 2019-10-14 21:13+0200\n"
 "PO-Revision-Date: 2018-12-18 21:54+0000\n"
 "Last-Translator: Alex ASP <hshunt@questzone.ru>\n"
 "Language-Team: Russian <https://translations.scummvm.org/projects/scummvm/"
@@ -124,7 +124,7 @@ msgstr ""
 #: gui/downloaddialog.cpp:119 gui/downloaddialog.cpp:153
 #: gui/filebrowser-dialog.cpp:133 gui/fluidsynth-dialog.cpp:218
 #: gui/launcher.cpp:326 gui/launcher.cpp:395 gui/launcher.cpp:455
-#: gui/options.cpp:2383 gui/options.cpp:2421
+#: gui/options.cpp:2382 gui/options.cpp:2420
 #: backends/events/symbiansdl/symbiansdl-events.cpp:191
 #: backends/platform/wince/CEActionsPocket.cpp:326
 #: backends/platform/wince/CEActionsSmartphone.cpp:287
@@ -137,7 +137,7 @@ msgstr "Да"
 #: gui/downloaddialog.cpp:119 gui/downloaddialog.cpp:154
 #: gui/filebrowser-dialog.cpp:133 gui/fluidsynth-dialog.cpp:218
 #: gui/launcher.cpp:326 gui/launcher.cpp:395 gui/launcher.cpp:455
-#: gui/options.cpp:2383 gui/options.cpp:2421
+#: gui/options.cpp:2382 gui/options.cpp:2420
 #: backends/events/symbiansdl/symbiansdl-events.cpp:191
 #: backends/platform/wince/CEActionsPocket.cpp:326
 #: backends/platform/wince/CEActionsSmartphone.cpp:287
@@ -396,19 +396,19 @@ msgstr "Путь сохр:"
 #: gui/options.cpp:1642 gui/options.cpp:1651 gui/options.cpp:1852
 #: gui/options.cpp:1858 gui/options.cpp:1866 gui/options.cpp:1890
 #: gui/options.cpp:2018 gui/options.cpp:2024 gui/options.cpp:2031
-#: gui/options.cpp:2040 gui/options.cpp:2266 gui/options.cpp:2269
-#: gui/options.cpp:2277 gui/options.cpp:2288
+#: gui/options.cpp:2040 gui/options.cpp:2265 gui/options.cpp:2268
+#: gui/options.cpp:2276 gui/options.cpp:2287
 msgctxt "path"
 msgid "None"
 msgstr "Не задан"
 
 #: gui/editgamedialog.cpp:318 gui/editgamedialog.cpp:416
 #: gui/editgamedialog.cpp:534 gui/options.cpp:1846 gui/options.cpp:2012
-#: gui/options.cpp:2272 backends/platform/wii/options.cpp:56
+#: gui/options.cpp:2271 backends/platform/wii/options.cpp:56
 msgid "Default"
 msgstr "По умолчанию"
 
-#: gui/editgamedialog.cpp:462 gui/options.cpp:2282
+#: gui/editgamedialog.cpp:462 gui/options.cpp:2281
 msgid "Select SoundFont"
 msgstr "Выберите SoundFont"
 
@@ -416,7 +416,7 @@ msgstr "Выберите SoundFont"
 msgid "Select additional game directory"
 msgstr "Выберите дополнительную директорию игры"
 
-#: gui/editgamedialog.cpp:514 gui/options.cpp:2201
+#: gui/editgamedialog.cpp:514 gui/options.cpp:2200
 msgid "Select directory for saved games"
 msgstr "Выберите директорию для сохранений"
 
@@ -1345,7 +1345,7 @@ msgstr "Последняя синхронизация:"
 msgid "When was the last time saved games were synced with this storage"
 msgstr "Когда производилась последняя синхронизация с этим облаком"
 
-#: gui/options.cpp:1935 gui/options.cpp:2621
+#: gui/options.cpp:1935 gui/options.cpp:2620
 msgid "<never>"
 msgstr "<никогда>"
 
@@ -1456,7 +1456,7 @@ msgstr "Запустить сервер"
 msgid "Run local webserver"
 msgstr "Запускает локальный веб-сервер"
 
-#: gui/options.cpp:1976 gui/options.cpp:2736
+#: gui/options.cpp:1976 gui/options.cpp:2735
 msgid "Not running"
 msgstr "Не запущен"
 
@@ -1524,27 +1524,27 @@ msgstr ""
 "\n"
 "Настройки на закладке Разное будут восстановлены."
 
-#: gui/options.cpp:2208
+#: gui/options.cpp:2207
 msgid "The chosen directory cannot be written to. Please select another one."
 msgstr "Не могу писать в выбранную директорию. Пожалуйста, укажите другую."
 
-#: gui/options.cpp:2217
+#: gui/options.cpp:2216
 msgid "Select directory for GUI themes"
 msgstr "Выберите директорию для тем GUI"
 
-#: gui/options.cpp:2227
+#: gui/options.cpp:2226
 msgid "Select directory for extra files"
 msgstr "Выберите директорию с дополнительными файлами"
 
-#: gui/options.cpp:2238
+#: gui/options.cpp:2237
 msgid "Select directory for plugins"
 msgstr "Выберите директорию с плагинами"
 
-#: gui/options.cpp:2251
+#: gui/options.cpp:2250
 msgid "Select directory for Files Manager /root/"
 msgstr "Выберите директорию для корня в менеджере файлов"
 
-#: gui/options.cpp:2358
+#: gui/options.cpp:2357
 msgid ""
 "Failed to open URL!\n"
 "Please navigate to this page manually."
@@ -1552,53 +1552,53 @@ msgstr ""
 "Не удалось открыть URL!\n"
 "Пожалуйста, перейдите вручную по указанному URL."
 
-#: gui/options.cpp:2383
+#: gui/options.cpp:2382
 #, fuzzy
 msgid "Another Storage is working now. Do you want to interrupt it?"
 msgstr "Другое облако уже активно. Вы хотите прервать процесс?"
 
-#: gui/options.cpp:2392 gui/options.cpp:2430
+#: gui/options.cpp:2391 gui/options.cpp:2429
 msgid "Wait until current Storage finishes up and try again."
 msgstr "Подождите, пока текущее облако завершит работу, и попробуйте снова."
 
-#: gui/options.cpp:2405
+#: gui/options.cpp:2404
 #, fuzzy
 msgid "Connecting..."
 msgstr "Подключить"
 
-#: gui/options.cpp:2421
+#: gui/options.cpp:2420
 #, fuzzy
 msgid "This Storage is working now. Do you want to interrupt it?"
 msgstr "Другое облако уже активно. Вы хотите прервать процесс?"
 
-#: gui/options.cpp:2619 backends/cloud/cloudmanager.cpp:157
+#: gui/options.cpp:2618 backends/cloud/cloudmanager.cpp:157
 msgid "<right now>"
 msgstr "<сейчас>"
 
-#: gui/options.cpp:2728
+#: gui/options.cpp:2727
 msgid "Stop server"
 msgstr "Остановить сервер"
 
-#: gui/options.cpp:2729
+#: gui/options.cpp:2728
 msgid "Stop local webserver"
 msgstr "Останавливает локальный веб-сервер"
 
-#: gui/options.cpp:2781
+#: gui/options.cpp:2780
 #, fuzzy
 msgid "Storage connected."
 msgstr "Диалог подключения к облаку %s"
 
-#: gui/options.cpp:2783
+#: gui/options.cpp:2782
 #, fuzzy
 msgid "Failed to connect storage."
 msgstr "Не удалось сменить облако!"
 
-#: gui/options.cpp:2785
+#: gui/options.cpp:2784
 #, fuzzy
 msgid "Failed to connect storage: "
 msgstr "Не удалось сменить облако!"
 
-#: gui/options.cpp:2805
+#: gui/options.cpp:2804
 msgid ""
 "Request failed.\n"
 "Check your Internet connection."

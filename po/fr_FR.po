@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2019-10-14 01:39+0200\n"
+"POT-Creation-Date: 2019-10-14 21:13+0200\n"
 "PO-Revision-Date: 2019-09-21 21:27+0000\n"
 "Last-Translator: Thierry Crozat <criezy@scummvm.org>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
@@ -124,7 +124,7 @@ msgstr ""
 #: gui/downloaddialog.cpp:119 gui/downloaddialog.cpp:153
 #: gui/filebrowser-dialog.cpp:133 gui/fluidsynth-dialog.cpp:218
 #: gui/launcher.cpp:326 gui/launcher.cpp:395 gui/launcher.cpp:455
-#: gui/options.cpp:2383 gui/options.cpp:2421
+#: gui/options.cpp:2382 gui/options.cpp:2420
 #: backends/events/symbiansdl/symbiansdl-events.cpp:191
 #: backends/platform/wince/CEActionsPocket.cpp:326
 #: backends/platform/wince/CEActionsSmartphone.cpp:287
@@ -137,7 +137,7 @@ msgstr "Oui"
 #: gui/downloaddialog.cpp:119 gui/downloaddialog.cpp:154
 #: gui/filebrowser-dialog.cpp:133 gui/fluidsynth-dialog.cpp:218
 #: gui/launcher.cpp:326 gui/launcher.cpp:395 gui/launcher.cpp:455
-#: gui/options.cpp:2383 gui/options.cpp:2421
+#: gui/options.cpp:2382 gui/options.cpp:2420
 #: backends/events/symbiansdl/symbiansdl-events.cpp:191
 #: backends/platform/wince/CEActionsPocket.cpp:326
 #: backends/platform/wince/CEActionsSmartphone.cpp:287
@@ -398,19 +398,19 @@ msgstr "Sauvegardes :"
 #: gui/options.cpp:1642 gui/options.cpp:1651 gui/options.cpp:1852
 #: gui/options.cpp:1858 gui/options.cpp:1866 gui/options.cpp:1890
 #: gui/options.cpp:2018 gui/options.cpp:2024 gui/options.cpp:2031
-#: gui/options.cpp:2040 gui/options.cpp:2266 gui/options.cpp:2269
-#: gui/options.cpp:2277 gui/options.cpp:2288
+#: gui/options.cpp:2040 gui/options.cpp:2265 gui/options.cpp:2268
+#: gui/options.cpp:2276 gui/options.cpp:2287
 msgctxt "path"
 msgid "None"
 msgstr "Aucun"
 
 #: gui/editgamedialog.cpp:318 gui/editgamedialog.cpp:416
 #: gui/editgamedialog.cpp:534 gui/options.cpp:1846 gui/options.cpp:2012
-#: gui/options.cpp:2272 backends/platform/wii/options.cpp:56
+#: gui/options.cpp:2271 backends/platform/wii/options.cpp:56
 msgid "Default"
 msgstr "Défaut"
 
-#: gui/editgamedialog.cpp:462 gui/options.cpp:2282
+#: gui/editgamedialog.cpp:462 gui/options.cpp:2281
 msgid "Select SoundFont"
 msgstr "Choisir une banque de sons"
 
@@ -418,7 +418,7 @@ msgstr "Choisir une banque de sons"
 msgid "Select additional game directory"
 msgstr "Sélectionner un répertoire supplémentaire"
 
-#: gui/editgamedialog.cpp:514 gui/options.cpp:2201
+#: gui/editgamedialog.cpp:514 gui/options.cpp:2200
 msgid "Select directory for saved games"
 msgstr "Sélectionner le répertoire pour les sauvegardes"
 
@@ -1354,7 +1354,7 @@ msgstr "Synchronisé :"
 msgid "When was the last time saved games were synced with this storage"
 msgstr "Quand la dernière synchronisation des sauvegardes a eu lieu"
 
-#: gui/options.cpp:1935 gui/options.cpp:2621
+#: gui/options.cpp:1935 gui/options.cpp:2620
 msgid "<never>"
 msgstr "<jamais>"
 
@@ -1471,7 +1471,7 @@ msgstr "Démarrer serveur"
 msgid "Run local webserver"
 msgstr "Démarre le serveur web local"
 
-#: gui/options.cpp:1976 gui/options.cpp:2736
+#: gui/options.cpp:1976 gui/options.cpp:2735
 msgid "Not running"
 msgstr "Arrêté"
 
@@ -1542,29 +1542,29 @@ msgstr ""
 "\n"
 "Les réglages Divers vont être restaurés à leurs valeurs précédentes."
 
-#: gui/options.cpp:2208
+#: gui/options.cpp:2207
 msgid "The chosen directory cannot be written to. Please select another one."
 msgstr ""
 "Le répertoire sélectionné est verrouillé en écriture. Sélectionnez un autre "
 "répertoire."
 
-#: gui/options.cpp:2217
+#: gui/options.cpp:2216
 msgid "Select directory for GUI themes"
 msgstr "Sélectionner le répertoire des thèmes d'interface"
 
-#: gui/options.cpp:2227
+#: gui/options.cpp:2226
 msgid "Select directory for extra files"
 msgstr "Sélectionner le répertoire pour les fichiers supplémentaires"
 
-#: gui/options.cpp:2238
+#: gui/options.cpp:2237
 msgid "Select directory for plugins"
 msgstr "Sélectionner le répertoire des plugins"
 
-#: gui/options.cpp:2251
+#: gui/options.cpp:2250
 msgid "Select directory for Files Manager /root/"
 msgstr "Indique le répertoire pour la /racine/ du Gestionnaire de Fichiers"
 
-#: gui/options.cpp:2358
+#: gui/options.cpp:2357
 msgid ""
 "Failed to open URL!\n"
 "Please navigate to this page manually."
@@ -1572,48 +1572,48 @@ msgstr ""
 "Erreur à l'ouverture de l'URL !\n"
 "Veuillez naviguer vers cette page manuellement."
 
-#: gui/options.cpp:2383
+#: gui/options.cpp:2382
 msgid "Another Storage is working now. Do you want to interrupt it?"
 msgstr "Un autre service de stockage est actif. Voulez-vous l'interrompre ?"
 
-#: gui/options.cpp:2392 gui/options.cpp:2430
+#: gui/options.cpp:2391 gui/options.cpp:2429
 msgid "Wait until current Storage finishes up and try again."
 msgstr ""
 "Patientez jusqu'à ce que le Stockage actuel soit fermé et essayez de nouveau."
 
-#: gui/options.cpp:2405
+#: gui/options.cpp:2404
 msgid "Connecting..."
 msgstr "Connection en cours..."
 
-#: gui/options.cpp:2421
+#: gui/options.cpp:2420
 msgid "This Storage is working now. Do you want to interrupt it?"
 msgstr "Ce service de stockage est actif. Voulez-vous l'interrompre ?"
 
-#: gui/options.cpp:2619 backends/cloud/cloudmanager.cpp:157
+#: gui/options.cpp:2618 backends/cloud/cloudmanager.cpp:157
 msgid "<right now>"
 msgstr "<maintenant>"
 
-#: gui/options.cpp:2728
+#: gui/options.cpp:2727
 msgid "Stop server"
 msgstr "Arrêter serveur"
 
-#: gui/options.cpp:2729
+#: gui/options.cpp:2728
 msgid "Stop local webserver"
 msgstr "Arrêter le serveur"
 
-#: gui/options.cpp:2781
+#: gui/options.cpp:2780
 msgid "Storage connected."
 msgstr "Stockage connecté."
 
-#: gui/options.cpp:2783
+#: gui/options.cpp:2782
 msgid "Failed to connect storage."
 msgstr "Échec de la connection au service de stockage."
 
-#: gui/options.cpp:2785
+#: gui/options.cpp:2784
 msgid "Failed to connect storage: "
 msgstr "Échec de la connection au service de stockage : "
 
-#: gui/options.cpp:2805
+#: gui/options.cpp:2804
 msgid ""
 "Request failed.\n"
 "Check your Internet connection."

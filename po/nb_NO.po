@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2019-10-14 01:39+0200\n"
+"POT-Creation-Date: 2019-10-14 21:13+0200\n"
 "PO-Revision-Date: 2019-10-12 04:54+0000\n"
 "Last-Translator: Stian Schultz <Stian.schultz@gmail.com>\n"
 "Language-Team: Norwegian Bokmål <https://translations.scummvm.org/projects/"
@@ -125,7 +125,7 @@ msgstr ""
 #: gui/downloaddialog.cpp:119 gui/downloaddialog.cpp:153
 #: gui/filebrowser-dialog.cpp:133 gui/fluidsynth-dialog.cpp:218
 #: gui/launcher.cpp:326 gui/launcher.cpp:395 gui/launcher.cpp:455
-#: gui/options.cpp:2383 gui/options.cpp:2421
+#: gui/options.cpp:2382 gui/options.cpp:2420
 #: backends/events/symbiansdl/symbiansdl-events.cpp:191
 #: backends/platform/wince/CEActionsPocket.cpp:326
 #: backends/platform/wince/CEActionsSmartphone.cpp:287
@@ -138,7 +138,7 @@ msgstr "Ja"
 #: gui/downloaddialog.cpp:119 gui/downloaddialog.cpp:154
 #: gui/filebrowser-dialog.cpp:133 gui/fluidsynth-dialog.cpp:218
 #: gui/launcher.cpp:326 gui/launcher.cpp:395 gui/launcher.cpp:455
-#: gui/options.cpp:2383 gui/options.cpp:2421
+#: gui/options.cpp:2382 gui/options.cpp:2420
 #: backends/events/symbiansdl/symbiansdl-events.cpp:191
 #: backends/platform/wince/CEActionsPocket.cpp:326
 #: backends/platform/wince/CEActionsSmartphone.cpp:287
@@ -398,19 +398,19 @@ msgstr "Lagringssti:"
 #: gui/options.cpp:1642 gui/options.cpp:1651 gui/options.cpp:1852
 #: gui/options.cpp:1858 gui/options.cpp:1866 gui/options.cpp:1890
 #: gui/options.cpp:2018 gui/options.cpp:2024 gui/options.cpp:2031
-#: gui/options.cpp:2040 gui/options.cpp:2266 gui/options.cpp:2269
-#: gui/options.cpp:2277 gui/options.cpp:2288
+#: gui/options.cpp:2040 gui/options.cpp:2265 gui/options.cpp:2268
+#: gui/options.cpp:2276 gui/options.cpp:2287
 msgctxt "path"
 msgid "None"
 msgstr "Ingen"
 
 #: gui/editgamedialog.cpp:318 gui/editgamedialog.cpp:416
 #: gui/editgamedialog.cpp:534 gui/options.cpp:1846 gui/options.cpp:2012
-#: gui/options.cpp:2272 backends/platform/wii/options.cpp:56
+#: gui/options.cpp:2271 backends/platform/wii/options.cpp:56
 msgid "Default"
 msgstr "Standard"
 
-#: gui/editgamedialog.cpp:462 gui/options.cpp:2282
+#: gui/editgamedialog.cpp:462 gui/options.cpp:2281
 msgid "Select SoundFont"
 msgstr "Velg SoundFont"
 
@@ -418,7 +418,7 @@ msgstr "Velg SoundFont"
 msgid "Select additional game directory"
 msgstr "Velg mappe med ytterligere data"
 
-#: gui/editgamedialog.cpp:514 gui/options.cpp:2201
+#: gui/editgamedialog.cpp:514 gui/options.cpp:2200
 msgid "Select directory for saved games"
 msgstr "Velg mappe for lagrede spill"
 
@@ -1356,7 +1356,7 @@ msgstr "Forrige synctidspunkt:"
 msgid "When was the last time saved games were synced with this storage"
 msgstr "Når forrige sync av lagrede spill til denne lagringsmåten skjedde"
 
-#: gui/options.cpp:1935 gui/options.cpp:2621
+#: gui/options.cpp:1935 gui/options.cpp:2620
 msgid "<never>"
 msgstr "<aldri>"
 
@@ -1466,7 +1466,7 @@ msgstr "Kjør server"
 msgid "Run local webserver"
 msgstr "Kjør lokal webserver"
 
-#: gui/options.cpp:1976 gui/options.cpp:2736
+#: gui/options.cpp:1976 gui/options.cpp:2735
 msgid "Not running"
 msgstr "Kjører ikke"
 
@@ -1534,27 +1534,27 @@ msgid ""
 "Misc settings will be restored."
 msgstr ""
 
-#: gui/options.cpp:2208
+#: gui/options.cpp:2207
 msgid "The chosen directory cannot be written to. Please select another one."
 msgstr "Den valgte mappen kan ikke skrives til. Vennligst velg en annen."
 
-#: gui/options.cpp:2217
+#: gui/options.cpp:2216
 msgid "Select directory for GUI themes"
 msgstr "Velg mappe for GUI-temaer"
 
-#: gui/options.cpp:2227
+#: gui/options.cpp:2226
 msgid "Select directory for extra files"
 msgstr "Velg mappe for ytterligere filer"
 
-#: gui/options.cpp:2238
+#: gui/options.cpp:2237
 msgid "Select directory for plugins"
 msgstr "Velg mappe for plugins"
 
-#: gui/options.cpp:2251
+#: gui/options.cpp:2250
 msgid "Select directory for Files Manager /root/"
 msgstr "Velg mappe for filbehandler /root/"
 
-#: gui/options.cpp:2358
+#: gui/options.cpp:2357
 msgid ""
 "Failed to open URL!\n"
 "Please navigate to this page manually."
@@ -1562,53 +1562,53 @@ msgstr ""
 "Klarte ikke åpne URL.\n"
 "Vennligst naviger til denne siden manuelt."
 
-#: gui/options.cpp:2383
+#: gui/options.cpp:2382
 #, fuzzy
 msgid "Another Storage is working now. Do you want to interrupt it?"
 msgstr "En annen lagringsmåte er aktiv. Vil du avbryte den?"
 
-#: gui/options.cpp:2392 gui/options.cpp:2430
+#: gui/options.cpp:2391 gui/options.cpp:2429
 msgid "Wait until current Storage finishes up and try again."
 msgstr "Vent til gjeldende lagringsmåte fullfører og prøv igjen."
 
-#: gui/options.cpp:2405
+#: gui/options.cpp:2404
 #, fuzzy
 msgid "Connecting..."
 msgstr "Koble til"
 
-#: gui/options.cpp:2421
+#: gui/options.cpp:2420
 #, fuzzy
 msgid "This Storage is working now. Do you want to interrupt it?"
 msgstr "En annen lagringsmåte er aktiv. Vil du avbryte den?"
 
-#: gui/options.cpp:2619 backends/cloud/cloudmanager.cpp:157
+#: gui/options.cpp:2618 backends/cloud/cloudmanager.cpp:157
 msgid "<right now>"
 msgstr "<med en gang>"
 
-#: gui/options.cpp:2728
+#: gui/options.cpp:2727
 msgid "Stop server"
 msgstr "Stopp server"
 
-#: gui/options.cpp:2729
+#: gui/options.cpp:2728
 msgid "Stop local webserver"
 msgstr "Stopp lokal webserver"
 
-#: gui/options.cpp:2781
+#: gui/options.cpp:2780
 #, fuzzy
 msgid "Storage connected."
 msgstr "%s lagringstilkoblingsveiviser"
 
-#: gui/options.cpp:2783
+#: gui/options.cpp:2782
 #, fuzzy
 msgid "Failed to connect storage."
 msgstr "Klarte ikke å kontakte skylagring!"
 
-#: gui/options.cpp:2785
+#: gui/options.cpp:2784
 #, fuzzy
 msgid "Failed to connect storage: "
 msgstr "Klarte ikke å kontakte skylagring!"
 
-#: gui/options.cpp:2805
+#: gui/options.cpp:2804
 msgid ""
 "Request failed.\n"
 "Check your Internet connection."
