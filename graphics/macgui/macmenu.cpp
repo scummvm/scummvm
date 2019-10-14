@@ -589,7 +589,7 @@ void MacMenu::processSubmenuTabs(MacMenuSubMenu *submenu) {
 
 		Common::U32String res(item->unicodeText);
 
-		int pos = item->unicodeText.find(tabSymbol);
+		uint32 pos = item->unicodeText.find(tabSymbol);
 
 		if (pos != Common::U32String::npos) {
 			// Sanity check
@@ -625,7 +625,7 @@ void MacMenu::processSubmenuTabs(MacMenuSubMenu *submenu) {
 		if (item->unicodeText.empty())
 			continue;
 
-		int pos = item->unicodeText.find(tabSymbol);
+		uint32 pos = item->unicodeText.find(tabSymbol);
 
 		if (pos == Common::U32String::npos)
 			continue;
