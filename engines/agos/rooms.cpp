@@ -44,6 +44,8 @@ uint16 AGOSEngine::getBackExit(int n) {
 		return 5;
 	case 5:
 		return 4;
+	default:
+		break;
 	}
 
 	return 0;
