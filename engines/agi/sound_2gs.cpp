@@ -337,6 +337,8 @@ void SoundGen2GS::advanceMidiPlayer() {
 			case 7:
 				_channels[chn].setVolume(parm2);
 				break;
+			default:
+				break;
 			}
 			break;
 		case MIDI_PROGRAM_CHANGE:

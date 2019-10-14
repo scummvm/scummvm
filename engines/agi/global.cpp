@@ -62,6 +62,8 @@ void AgiEngine::setVar(int16 varNr, byte newValue) {
 	case VM_VAR_VOLUME:
 		setVolumeViaScripts(newValue);
 		break;
+	default:
+		break;
 	}
 }
 

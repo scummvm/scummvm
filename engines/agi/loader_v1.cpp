@@ -156,6 +156,10 @@ int AgiLoader_v1::init() {
 		if (ec == errOK)
 			ec = loadDir_BC(_vm->_game.dirSound, BC_SNDDIR_SEC, BC_SNDDIR_MAX);
 		break;
+
+	default:
+		ec = errUnk;
+		break;
 	}
 
 	return ec;
@@ -302,6 +306,8 @@ int AgiLoader_v1::unloadResource(int16 resourceType, int16 resourceNr) {
 		break;
 	case RESOURCETYPE_SOUND:
 		_vm->_sound->unloadSound(resourceNr);
+		break;
+	default:
 		break;
 	}
 

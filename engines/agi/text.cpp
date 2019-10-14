@@ -1192,6 +1192,8 @@ char *TextMgr::stringPrintf(const char *originalText) {
 				if (_vm->_game.logics[_vm->_game.curLogicNr].numTexts > i)
 					safeStrcat(resultString, stringPrintf(_vm->_game.logics[_vm->_game.curLogicNr].texts[i]));
 				break;
+			default:
+				break;
 			}
 
 			while (*originalText >= '0' && *originalText <= '9')

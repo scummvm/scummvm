@@ -138,6 +138,9 @@ int AgiEngine::agiInit() {
 		      (int)(getVersion() >> 12) & 0xF,
 		      (int)(getVersion()) & 0xFFF);
 		break;
+	default:
+		warning("Unknown AGI Emulation Version %x", (int)(getVersion() >> 12));
+		break;
 	}
 
 	if (getPlatform() == Common::kPlatformAmiga)

@@ -88,6 +88,8 @@ void AgiEngine::newRoom(int16 newRoomNr) {
 	case 4:
 		screenObjEgo->xPos = SCRIPT_WIDTH - screenObjEgo->xSize;
 		break;
+	default:
+		break;
 	}
 
 	uint16 agiVersion = getVersion();

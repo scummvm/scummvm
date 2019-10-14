@@ -259,6 +259,10 @@ bool AgiMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameD
 		case GID_WINNIE:
 			*engine = new Agi::WinnieEngine(syst, gd);
 			break;
+		default:
+			res = false;
+			error("PreAGI engine: unknown gameID");
+			break;
 		}
 		break;
 	case Agi::GType_V1:

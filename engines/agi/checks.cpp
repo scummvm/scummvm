@@ -339,6 +339,8 @@ void AgiEngine::fixPosition(ScreenObjEntry *screenObj) {
 			dir = 0;
 			size++;
 			break;
+		default:
+			break;
 		}
 
 		count = size;

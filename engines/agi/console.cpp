@@ -532,6 +532,9 @@ bool Console::Cmd_ScreenObj(int argc, const char **argv) {
 			}
 			debugPrintf("x: %d, y: %d, stepSize: %d, flag: %x\n", screenObj->move_x, screenObj->move_y, screenObj->move_stepSize, screenObj->move_flag);
 			break;
+		default:
+			debugPrintf("motion: UNKNOWN (%d)\n", screenObj->motionType);
+			break;
 		}
 	}
 	return true;

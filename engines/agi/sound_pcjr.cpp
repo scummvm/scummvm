@@ -350,6 +350,8 @@ void SoundGenPCJr::writeData(uint8 val) {
 		case 3:
 			_channel[3].freqCount = _channel[2].freqCount * 2;
 			break;
+		default:
+			break;
 		}
 	} else if (val & 0x80) {
 		reg = (val >> 5) & 0x3;

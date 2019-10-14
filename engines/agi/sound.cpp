@@ -66,6 +66,8 @@ AgiSound *AgiSound::createFromRawResource(uint8 *data, uint32 len, int resnum, i
 		} else {
 			return new PCjrSound(data, len, resnum);
 		}
+	default:
+		break;
 	}
 
 	warning("Sound resource (%d) has unknown type (0x%04x). Not using the sound", resnum, type);

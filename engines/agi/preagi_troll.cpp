@@ -219,6 +219,8 @@ void TrollEngine::waitAnyKeyIntro() {
 			drawStr(22, 3, kColorDefault, IDS_TRO_INTRO_3);
 			g_system->updateScreen();
 			break;
+		default:
+			break;
 		}
 
 		iMsg++;
@@ -286,6 +288,8 @@ void TrollEngine::tutorial() {
 				break;
 			case IDI_TRO_SEL_OPTION_3:
 				done = true;
+				break;
+			default:
 				break;
 			}
 		}
