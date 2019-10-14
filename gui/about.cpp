@@ -918,6 +918,8 @@ void EE::computer0() {
 				dest = 1;
 			}
 			break;
+		default:
+			break;
 		}
 		_keymove[0][kDirUp] = dest;
 	} else if (_bvely > 0 && _tbx < 140) {
@@ -1002,6 +1004,8 @@ void EE::computer1() {
 				destination(1, 272 - _sstage++, 1);
 				dest = 1;
 			}
+			break;
+		default:
 			break;
 		}
 		_keymove[1][kDirUp] = dest;
