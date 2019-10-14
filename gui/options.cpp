@@ -1996,7 +1996,7 @@ void GlobalOptionsDialog::addNetworkControls(GuiObject *boss, const Common::Stri
 		_featureDescriptionLine1 = new StaticTextWidget(boss, prefix + "FeatureDescriptionLine1", _("Run server to manage files with browser (in the same network)."), "", ThemeEngine::kFontStyleNormal);
 		_featureDescriptionLine2 = new StaticTextWidget(boss, prefix + "FeatureDescriptionLine2", _("Closing options dialog will stop the server."), "", ThemeEngine::kFontStyleNormal);
 	}
-	
+
 	reflowNetworkTabLayout();
 
 }
@@ -2736,7 +2736,7 @@ void GlobalOptionsDialog::reflowNetworkTabLayout() {
 			_serverInfoLabel->setLabel(_("Not running"));
 	}
 	if (_rootPathButton) _rootPathButton->setVisible(true);
-	if (_rootPath) _rootPath->setVisible(true);	
+	if (_rootPath) _rootPath->setVisible(true);
 	if (_rootPathClearButton) _rootPathClearButton->setVisible(true);
 #ifdef NETWORKING_LOCALWEBSERVER_ENABLE_PORT_OVERRIDE
 	if (_serverPortDesc) {
