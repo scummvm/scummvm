@@ -415,8 +415,11 @@ void OSystem_3DS::clearOverlay() {
 }
 
 void OSystem_3DS::grabOverlay(void *buf, int pitch) {
+	byte *dst = (byte *)buf;
+
 	for (int y = 0; y < getOverlayHeight(); ++y) {
-		memcpy(buf, _overlay.getBasePtr(0, y), pitch);
+		memcpy(dst, _overlay.getBasePtr(0, y), getOverlayWidth() * _pfGameTexture.bytesPerPixel);
+		dst += pitch;
 	}
 }
 
