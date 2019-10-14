@@ -922,15 +922,15 @@ void OpenGLGraphicsManager::handleResizeImpl(const int width, const int height) 
 	// possible and then scale it to the physical display size. This sounds
 	// bad but actually all recent chips should support full HD resolution
 	// anyway. Thus, it should not be a real issue for modern hardware.
-	if (   overlayWidth  > (uint)g_context.maxTextureSize
-	    || overlayHeight > (uint)g_context.maxTextureSize) {
+	if (   overlayWidth  > getOverlayMaxWidth()
+	    || overlayHeight > getOverlayMaxHeight()) {
 		const frac_t outputAspect = intToFrac(_windowWidth) / _windowHeight;
 
 		if (outputAspect > (frac_t)FRAC_ONE) {
-			overlayWidth  = g_context.maxTextureSize;
+			overlayWidth  = getOverlayMaxWidth();
 			overlayHeight = intToFrac(overlayWidth) / outputAspect;
 		} else {
-			overlayHeight = g_context.maxTextureSize;
+			overlayHeight = getOverlayMaxHeight();
 			overlayWidth  = fracToInt(overlayHeight * outputAspect);
 		}
 	}

@@ -312,6 +312,17 @@ protected:
 	virtual void handleResizeImpl(const int width, const int height) override;
 
 	/**
+	 * Return the maximum allowed width for overlay and ScummVM menu
+	 */
+	virtual uint getOverlayMaxWidth() const { return (uint)g_context.maxTextureSize; }
+
+	/**
+	 * Return the maximum allowed height for overlay and ScummVM menu
+	 */
+	virtual uint getOverlayMaxHeight() const { return (uint)g_context.maxTextureSize; }
+
+
+	/**
 	 * The default pixel format of the backend.
 	 */
 	Graphics::PixelFormat _defaultFormat;

@@ -50,6 +50,8 @@ protected:
 
 	void *getProcAddress(const char *name) const;
 
+	uint getOverlayMaxWidth() const override { return (480 * 16) / 9; }
+	uint getOverlayMaxHeight() const override { return 480; }
 };
 
 #endif
