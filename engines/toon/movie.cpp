@@ -119,22 +119,21 @@ void Movie::playVideo(bool isFirstIntroVideo) {
 				} else {
 					_vm->_system->copyRectToScreen(frame->getPixels(), frame->pitch, 0, 0, frame->w, frame->h);
 
-    				int32 currentFrame = _decoder->getCurFrame();
+					int32 currentFrame = _decoder->getCurFrame();
 
+					// find unused color key to replace with subtitles color
 					int len = frame->w * frame->h;
-					byte pixels[310000] = {0};
-					memcpy(pixels, frame->getPixels(), len);
-					for (int i = 1; i < 256; i++) 
-					{
-						int j;
-						for (j = 0; j < len; j++) {
-							if (pixels[j] == i) {
-								break; 
-							}
-						}
-				
-						if (j == len && i != 255) {
-							unused = i;
+					const byte* pixels = (const byte *)frame->getPixels();
+					byte counts[256];
+					memset(counts, 0, sizeof(counts));
+					for (int i = 0; i < len; i++) {
+						counts[pixels[i]] = 1;
+					}
+
+					// 0 is already used for the border color and should not be used here, so it can be skipped over.
+					for (int j = 1; j < 256; j++) {
+						if (counts[j] == 0) {
+							unused = j;
 							break;
 						}
 					}
@@ -155,16 +154,11 @@ void Movie::playVideo(bool isFirstIntroVideo) {
 				}
 			}
 
-			byte palette[768] = {0};
-			memcpy(palette, _decoder->getPalette(), 768);
-
+			byte subtitleColor[3] = {0xff, 0xff, 0x0};
+			_vm->_system->getPaletteManager()->setPalette(_decoder->getPalette(), 0, 256);
 			if (unused) {
-				palette[3 * unused] = 0xff;
-				palette[3 * unused + 1] = 0xff;
-				palette[3 * unused + 2] = 0x0;
+				_vm->_system->getPaletteManager()->setPalette(subtitleColor, unused, 1);
 			}
-
-			_vm->_system->getPaletteManager()->setPalette(palette, 0, 256);
 			_vm->_system->updateScreen();
 		}
 
