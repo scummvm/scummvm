@@ -90,6 +90,8 @@ void Background::update() {
 			case 33:
 				_vm->_malagauche = 0;
 				break;
+			default:
+				break;
 			}
 		}
 
@@ -141,6 +143,8 @@ void Background::update() {
 			case 2:
 				draw(-1, -1, 2);
 				break;
+			default:
+				break;
 			}
 		}
 		break;
@@ -173,6 +177,8 @@ void Background::update() {
 			case 1:
 				draw(-1, -1, 2); // Frame 1: Natural.
 				break;
+			default:
+				break;
 			}
 		}
 		break;
@@ -184,6 +190,8 @@ void Background::update() {
 				break;
 			case 23:
 				draw(-1, -1, 1); // Frame 1: Back to normal.
+				break;
+			default:
 				break;
 			}
 		}
@@ -213,6 +221,8 @@ void Background::update() {
 			break;
 		case 49 :
 			draw(-1, -1, 9);
+			break;
+		default:
 			break;
 		}
 		break;
@@ -256,6 +266,8 @@ void Background::update() {
 			break;
 		case 2:
 			_vm->_sound->stopSound();
+			break;
+		default:
 			break;
 		}
 	}

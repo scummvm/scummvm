@@ -526,6 +526,8 @@ void DropDownMenu::setupMenuWith() {
 			_activeMenuItem.setupOption("Buy an onion", 'o', "", !_vm->_objects[kObjectOnion - 1]);
 			_verbStr = _verbStr + 105;
 			break;
+		default:
+			break;
 		}
 	}
 	_activeMenuItem.display();
@@ -548,6 +550,8 @@ void DropDownMenu::runMenuGame() {
 		break;
 	case 4:
 		_vm->callVerb(kVerbCodeInfo);
+		break;
+	default:
 		break;
 	}
 }
@@ -575,6 +579,8 @@ void DropDownMenu::runMenuFile() {
 		break;
 	case 5:
 		_vm->callVerb(kVerbCodeQuit);
+		break;
+	default:
 		break;
 	}
 }
@@ -612,6 +618,8 @@ void DropDownMenu::runMenuAction() {
 			avvy->_speedX = kWalk;
 		_vm->_animation->updateSpeed();
 		}
+		break;
+	default:
 		break;
 	}
 }
@@ -809,23 +817,27 @@ Common::String DropDownMenu::getThing(byte which) {
 	switch (which) {
 	case kObjectWine:
 		switch (_vm->_wineState) {
-	case 1:
-	case 4:
-		result = Common::String(things[which - 1]);
-		break;
-	case 3:
-		result = "Vinegar";
-		break;
+		case 1:
+		case 4:
+			result = Common::String(things[which - 1]);
+			break;
+		case 3:
+			result = "Vinegar";
+			break;
+		default:
+			break;
 		}
 		break;
 	case kObjectOnion:
-		if (_vm->_rottenOnion)
+		if (_vm->_rottenOnion) {
 			result = Common::String("rotten onion");
-		else
+		} else {
 			result = Common::String(things[which - 1]);
+		}
 		break;
 	default:
 		result = Common::String(things[which - 1]);
+		break;
 	}
 	return result;
 }

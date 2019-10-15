@@ -198,6 +198,8 @@ void Timer::updateTimer() {
 			case kProcGiveLuteToGeida:
 				giveLuteToGeida();
 				break;
+			default:
+				break;
 			}
 		}
 	}
@@ -363,19 +365,21 @@ void Timer::jacquesWakesUp() {
 	_vm->_jacquesState++;
 
 	switch (_vm->_jacquesState) { // Additional pictures.
-	case 1 :
+	case 1:
 		_vm->_background->draw(-1, -1, 0); // Eyes open.
 		_vm->_dialogs->displayScrollChain('Q', 45);
 		break;
-	case 2 : // Going through the door.
+	case 2: // Going through the door.
 		_vm->_background->draw(-1, -1, 1); // Not on the floor.
 		_vm->_background->draw(-1, -1, 2); // But going through the door.
 		_vm->_magics[5]._operation = kMagicNothing; // You can't wake him up now.
 		break;
-	case 3 :  // Gone through the door.
+	case 3: // Gone through the door.
 		_vm->_background->draw(-1, -1, 1); // Not on the floor, either.
 		_vm->_background->draw(-1, -1, 3); // He's gone... so the door's open.
 		_vm->setRoom(kPeopleJacques, kRoomNowhere); // Gone!
+		break;
+	default:
 		break;
 	}
 
@@ -393,6 +397,8 @@ void Timer::jacquesWakesUp() {
 		break;
 	case 4:
 		addTimer(24, kProcJacquesWakesUp, kReasonJacquesWakingUp);
+		break;
+	default:
 		break;
 	}
 }
@@ -444,6 +450,8 @@ void Timer::jump() {
 	case 18:
 	case 19:
 		avvy->_y++;
+		break;
+	default:
 		break;
 	}
 
