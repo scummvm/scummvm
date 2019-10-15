@@ -63,6 +63,9 @@ public:
 	void appendText(Common::String str, const MacFont *macFont, bool skipAdd = false);
 	void clearText();
 
+	void setEditable(bool editable) { _editable = editable; }
+	void setSelectable(bool selectable) { _selectable = selectable; }
+
 	void undrawCursor();
 
 	const Common::String getInput() { return _inputText; }
@@ -94,6 +97,8 @@ public:
 	bool _cursorDirty;
 	Common::Rect *_cursorRect;
 	bool _cursorOff;
+	bool _editable;
+	bool _selectable;
 
 	int _scrollPos;
 
