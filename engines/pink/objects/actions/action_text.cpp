@@ -109,6 +109,9 @@ void ActionText::start() {
 
 		_txtWnd->setBorder(noborder, true);
 
+		Graphics::TransparentSurface *noborder2 = new Graphics::TransparentSurface(*noborder, true);
+		_txtWnd->setBorder(noborder2, false);
+
 		if (_actor->getPage()->getGame()->getLanguage() == Common::EN_ANY)
 			_txtWnd->appendText(str, font);
 	} else {
