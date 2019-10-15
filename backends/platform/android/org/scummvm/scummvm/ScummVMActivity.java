@@ -231,7 +231,7 @@ public class ScummVMActivity extends Activity {
 		saveDir.mkdirs();
 		if (!saveDir.isDirectory()) {
 			// If it doesn't work, resort to the internal app path.
-			savePath = getDir("saves", MODE_WORLD_READABLE).getPath();
+			savePath = getDir("saves", Context.MODE_PRIVATE).getPath();
 		}
 
 		_clipboard = (ClipboardManager)getSystemService(CLIPBOARD_SERVICE);
