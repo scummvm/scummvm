@@ -436,7 +436,7 @@ void MacWindowManager::removeMarked() {
 	_lastId = 0;
 	for (Common::HashMap<uint, BaseMacWindow *>::iterator lit = _windows.begin(); lit != _windows.end(); lit++) {
 		if (lit->_key > (uint)_lastId)
-			_lastId = lit->_key;
+			_lastId = lit->_key + 1;
 	}
 }
 
