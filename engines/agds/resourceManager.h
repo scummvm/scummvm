@@ -88,7 +88,7 @@ public:
 	bool addPath(const Common::String &grpFilename);
 
 	Common::SeekableReadStream * getResource(const Common::String &name) const;
-	const Graphics::Surface * loadPicture(const Common::String & name, const Graphics::PixelFormat &format);
+	Graphics::Surface * loadPicture(const Common::String & name, const Graphics::PixelFormat &format);
 
 	static Common::String loadText(Common::SeekableReadStream *stream);
 	Common::String loadText(const Common::String & name) const;

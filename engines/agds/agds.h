@@ -136,7 +136,7 @@ public:
 	}
 
 	Graphics::TransparentSurface *loadPicture(const Common::String &name);
-	Graphics::TransparentSurface *convertToTransparent(const Graphics::Surface *surface); //destroys surface!
+	Graphics::TransparentSurface *convertToTransparent(Graphics::Surface *surface); //destroys surface!
 	Graphics::TransparentSurface *loadFromCache(int id) const;
 	int saveToCache(Graphics::TransparentSurface *surface) {
 		if (!surface)
