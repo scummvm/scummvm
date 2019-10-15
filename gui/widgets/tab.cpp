@@ -221,7 +221,8 @@ void TabWidget::handleMouseDown(int x, int y, int button, int clickCount) {
 }
 
 void TabWidget::handleMouseMoved(int x, int y, int button) {
-	assert(y < _tabHeight);
+	if (y < 0 || y >= _tabHeight)
+		return;
 
 	if (x < 0)
 		return;
