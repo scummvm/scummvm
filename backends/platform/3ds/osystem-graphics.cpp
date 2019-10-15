@@ -397,13 +397,11 @@ void OSystem_3DS::updateFocus() {
 void OSystem_3DS::showOverlay() {
 	_overlayVisible = true;
 	updateSize();
-	updateScreen();
 }
 
 void OSystem_3DS::hideOverlay() {
 	_overlayVisible = false;
 	updateSize();
-	updateScreen();
 }
 
 Graphics::PixelFormat OSystem_3DS::getOverlayFormat() const {
@@ -446,7 +444,7 @@ bool OSystem_3DS::showMouse(bool visible) {
 void OSystem_3DS::warpMouse(int x, int y) {
 	_cursorX = x;
 	_cursorY = y;
-	warning("x:%d y:%d", x, y);
+
 	// TODO: adjust for _cursorScalable ?
 	int offsetx = 0;
 	int offsety = 0;
