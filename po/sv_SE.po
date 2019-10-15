@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.5.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2019-10-14 21:13+0200\n"
+"POT-Creation-Date: 2019-10-15 22:50+0200\n"
 "PO-Revision-Date: 2019-04-12 13:26+0000\n"
 "Last-Translator: Adrian Frühwirth <bonki@scummvm.org>\n"
 "Language-Team: Swedish <https://translations.scummvm.org/projects/scummvm/"
@@ -2009,7 +2009,7 @@ msgid "~R~eturn to Launcher"
 msgstr "Åte~r~vänd till launcher"
 
 #: engines/dialogs.cpp:116 engines/agi/saveload.cpp:761
-#: engines/avalanche/parser.cpp:1900 engines/cge/events.cpp:72
+#: engines/avalanche/parser.cpp:1919 engines/cge/events.cpp:72
 #: engines/cge2/events.cpp:64 engines/cine/various.cpp:348
 #: engines/cruise/menu.cpp:212 engines/dm/loadsave.cpp:199
 #: engines/drascula/saveload.cpp:383 engines/dreamweb/saveload.cpp:262
@@ -2031,7 +2031,7 @@ msgstr "Spara spelet:"
 #: backends/platform/wince/CEActionsPocket.cpp:267
 #: backends/platform/wince/CEActionsSmartphone.cpp:45
 #: backends/platform/wince/CEActionsSmartphone.cpp:231
-#: engines/agi/saveload.cpp:761 engines/avalanche/parser.cpp:1900
+#: engines/agi/saveload.cpp:761 engines/avalanche/parser.cpp:1919
 #: engines/cge/events.cpp:72 engines/cge2/events.cpp:64
 #: engines/cine/various.cpp:348 engines/cruise/menu.cpp:212
 #: engines/dm/loadsave.cpp:199 engines/drascula/saveload.cpp:383
@@ -3385,7 +3385,7 @@ msgstr ""
 "Visar ett fönster med en textruta och pausar spelet (som i SCI-spel) "
 "istället för inmatning i realtid."
 
-#: engines/agi/saveload.cpp:774 engines/avalanche/parser.cpp:1888
+#: engines/agi/saveload.cpp:774 engines/avalanche/parser.cpp:1907
 #: engines/cge/events.cpp:83 engines/cge2/events.cpp:75
 #: engines/cine/various.cpp:359 engines/dm/dm.cpp:276
 #: engines/dm/loadsave.cpp:187 engines/drascula/saveload.cpp:396
@@ -3401,7 +3401,7 @@ msgstr ""
 msgid "Restore game:"
 msgstr "Ladda sparfil:"
 
-#: engines/agi/saveload.cpp:774 engines/avalanche/parser.cpp:1888
+#: engines/agi/saveload.cpp:774 engines/avalanche/parser.cpp:1907
 #: engines/cge/events.cpp:83 engines/cge2/events.cpp:75
 #: engines/cine/various.cpp:359 engines/dm/dm.cpp:276
 #: engines/dm/loadsave.cpp:187 engines/drascula/saveload.cpp:396
