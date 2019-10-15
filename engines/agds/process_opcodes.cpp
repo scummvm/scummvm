@@ -1014,7 +1014,7 @@ void Process::stopCharacter() {
 void Process::fogOnCharacter() {
 	int arg2 = pop();
 	int arg1 = pop();
-	Common::String name = popString();
+	Common::String name = popText();
 	debug("fogOnCharacter %s %d %d", name.c_str(), arg1, arg2);
 }
 
