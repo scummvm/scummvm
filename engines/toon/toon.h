@@ -33,7 +33,6 @@
 #include "toon/state.h"
 #include "toon/picture.h"
 #include "toon/anim.h"
-#include "toon/subtitles.h"
 #include "toon/movie.h"
 #include "toon/font.h"
 #include "toon/text.h"
@@ -212,7 +211,7 @@ public:
 	void playRoomMusic();
 	void waitForScriptStep();
 	void doMagnifierEffect();
-	void drawCustomText(int16 x, int16 y, char *line, Graphics::Surface *frame, char color);
+	void drawCustomText(int16 x, int16 y, char *line, Graphics::Surface *frame, byte color);
 	bool canSaveGameStateCurrently();
 	bool canLoadGameStateCurrently();
 	void pauseEngineIntern(bool pause);

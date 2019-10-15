@@ -3293,7 +3293,7 @@ void ToonEngine::drawConversationLine() {
 	}
 }
 
-void ToonEngine::drawCustomText(int16 x, int16 y, char *line, Graphics::Surface *frame, char color) {
+void ToonEngine::drawCustomText(int16 x, int16 y, char *line, Graphics::Surface *frame, byte color) {
 	if (line) {
 		byte col = color; // 0xce
 		_fontRenderer->setFontColor(0, col, col);

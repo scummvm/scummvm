@@ -53,7 +53,7 @@ void SubtitleRenderer::render(const Graphics::Surface &frame, uint32 frameNumber
 		if (_index > _last) {
 			return;
 		}
-		_currentLine = (char*)_fileData + _tw[_index].foffset;
+		_currentLine = (char *)_fileData + _tw[_index].foffset;
 	}
 
 	if (frameNumber < _tw[_index].fstart) {
