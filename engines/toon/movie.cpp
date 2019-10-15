@@ -122,17 +122,17 @@ void Movie::playVideo(bool isFirstIntroVideo) {
 					int32 currentFrame = _decoder->getCurFrame();
 
 					// find unused color key to replace with subtitles color
-					int len = frame->w * frame->h;
-					const byte* pixels = (const byte *)frame->getPixels();
-					byte counts[256];
-					memset(counts, 0, sizeof(counts));
-					for (int i = 0; i < len; i++) {
-						counts[pixels[i]] = 1;
+					uint len = frame->w * frame->h;
+					const byte *pixels = (const byte *)frame->getPixels();
+					bool counts[256];
+					memset(counts, false, sizeof(counts));
+					for (uint i = 0; i < len; i++) {
+						counts[pixels[i]] = true;
 					}
 
 					// 0 is already used for the border color and should not be used here, so it can be skipped over.
 					for (int j = 1; j < 256; j++) {
-						if (counts[j] == 0) {
+						if (!counts[j]) {
 							unused = j;
 							break;
 						}
