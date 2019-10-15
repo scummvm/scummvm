@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: Prince\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2018-04-17 19:53+0100\n"
-"PO-Revision-Date: 2019-10-14 12:54+0000\n"
+"PO-Revision-Date: 2019-10-16 12:43+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: English <https://translations.scummvm.org/projects/prince/"
 "prince/en/>\n"
@@ -4308,7 +4308,7 @@ msgstr "HERO: That's a painful story."
 
 #: dialog0108.txt:5
 msgid "HERO: Cieszę się, że przynajmniej ty|nie musiałeś mnie całowa..."
-msgstr ""
+msgstr "HERO: I'm glad that at least you didn't have to kiss me..."
 
 #: dialog0108.txt:6
 msgid "HERO: Łup, chyba się wygadałem."
@@ -11063,7 +11063,7 @@ msgstr ""
 
 #: mob.lst:34008
 msgid "przejście - Droga w czeluście piekieł."
-msgstr ""
+msgstr "pass - Road to the depths of hell."
 
 #: mob.lst:35001
 msgid "przejście - Prowadzi do znanych mi już obszarów piekielnych."
@@ -11071,7 +11071,7 @@ msgstr ""
 
 #: mob.lst:35002
 msgid "przejście - W inne rejony Piekła."
-msgstr ""
+msgstr "pass - To other parts of the Hell."
 
 #: mob.lst:35003
 msgid "wnęka - Wnęka dość mroczna, ale widzę dwa pilnujące|czegoś diabły."
@@ -11079,15 +11079,15 @@ msgstr ""
 
 #: mob.lst:35004
 msgid "drzwi - Stare, ale jare."
-msgstr ""
+msgstr "door - Old but good."
 
 #: mob.lst:35005
 msgid "wejście - Pukajcie, a będzie wam otworzone."
-msgstr ""
+msgstr "entrance - Keep knocking and it will be opened to you."
 
 #: mob.lst:35006
 msgid "zawór - Kurek z dziwnego metalu..."
-msgstr ""
+msgstr "valve - Strange metal tap..."
 
 #: mob.lst:35007
 msgid "zbiornik - Tutaj lawa znajduje swoje ujście.+Ciekawe, co się z nią dalej dzieje."
@@ -11095,11 +11095,11 @@ msgstr ""
 
 #: mob.lst:35008
 msgid "kawałek różka - Rozdzielnicowy."
-msgstr ""
+msgstr "horn piece - splitting one."
 
 #: mob.lst:36001
 msgid "diabeł - Rozdzielnicowy."
-msgstr ""
+msgstr "devil - splitting one."
 
 #: mob.lst:36002
 msgid "biała świeca - Mała, krótka świeca; stoi najbliżej drzwi do|sali z napisem \"Grzechy lekkie\"."
@@ -11115,15 +11115,15 @@ msgstr ""
 
 #: mob.lst:36005
 msgid "drzwi - \"Wirtualna sala grzechów lekkich.\""
-msgstr ""
+msgstr "door - \"Virtual hall of light sins.\""
 
 #: mob.lst:36006
 msgid "drzwi - \"Wirtualna sala tylko dla V.I.P.-ów.\"+Jest jeszcze dopisek: \"Wersja beta.\""
-msgstr ""
+msgstr "door - \"Virtual hall VIP only.\"+There is also note: \"Beta version.\""
 
 #: mob.lst:36007
 msgid "drzwi - \"Wirtualna sala grzechów ciężkich.\""
-msgstr ""
+msgstr "door - \"Virtual hall of heavy sins.\""
 
 #: mob.lst:36008
 msgid "wyjście - Zejście w głąb korytarzy Piekła."
@@ -11135,7 +11135,7 @@ msgstr ""
 
 #: mob.lst:36010
 msgid "różki - Śliczne!"
-msgstr ""
+msgstr "little horns - Cute!"
 
 #: mob.lst:36011
 msgid "diabeł - Jedzonko nie posłużyło."
