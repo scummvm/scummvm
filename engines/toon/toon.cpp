@@ -106,6 +106,9 @@ void ToonEngine::init() {
 	resources()->openPackage("ONETIME.PAK");
 	resources()->openPackage("DREW.PAK");
 
+	// load subtitles if available (if fails to load it only return false, so there's no need to check)
+	resources()->openPackage("SUBTITLES.PAK");
+
 	for (int32 i = 0; i < 32; i++)
 		_characters[i] = NULL;
 
