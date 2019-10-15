@@ -97,6 +97,8 @@ void ActionText::start() {
 														  _xRight - _xLeft, align, nullptr, false);
 		_txtWnd->move(_xLeft, _yTop);
 		_txtWnd->resize(_xRight - _xLeft, _yBottom - _yTop);
+		_txtWnd->setEditable(false);
+		_txtWnd->setSelectable(false);
 
 		Graphics::TransparentSurface *noborder = new Graphics::TransparentSurface();
 		noborder->create(3, 3, noborder->getSupportedPixelFormat());
