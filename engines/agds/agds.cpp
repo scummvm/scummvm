@@ -53,6 +53,10 @@ AGDSEngine::AGDSEngine(OSystem *system, const ADGameDescription *gameDesc) : Eng
 AGDSEngine::~AGDSEngine() {
 	delete _currentScreen;
 	delete _previousScreen;
+	for(PictureCacheType::iterator i = _pictureCache.begin(); i != _pictureCache.end(); ++i) {
+		i->_value->free();
+		delete i->_value;
+	}
 }
 
 bool AGDSEngine::initGraphics() {
@@ -401,6 +405,7 @@ Common::Error AGDSEngine::run() {
 				Common::Rect srcRect(converted->getRect());
 				if (Common::Rect::getBlitRect(dst, srcRect, backbuffer->getRect()))
 					backbuffer->copyRectToSurface(*converted, dst.x, dst.y, srcRect);
+				converted->free();
 				delete converted;
 			}
 
@@ -484,6 +489,7 @@ Animation * AGDSEngine::loadAnimation(const Common::String &name) {
 	Animation *animation = new Animation();
 	if (!animation->load(stream))
 		error("could not load animation from %s", name.c_str());
+
 	_animations[name] = animation;
 	return animation;
 }
@@ -531,11 +537,12 @@ Font *AGDSEngine::getFont(int id) const {
 	return i->_value;
 }
 
-Graphics::TransparentSurface *AGDSEngine::convertToTransparent(const Graphics::Surface *surface) {
+Graphics::TransparentSurface *AGDSEngine::convertToTransparent(Graphics::Surface *surface) {
 	if (!surface)
 		return NULL;
 	Graphics::TransparentSurface * t = new Graphics::TransparentSurface(*surface, true);
 	t->applyColorKey(0xff, 0, 0xff);
+	surface->free();
 	delete surface;
 	return t;
 }

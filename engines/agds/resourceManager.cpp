@@ -170,7 +170,7 @@ namespace AGDS {
 		return (file.open(name))? file.readStream(file.size()): NULL;
 	}
 
-	const Graphics::Surface * ResourceManager::loadPicture(const Common::String & name, const Graphics::PixelFormat &format) {
+	Graphics::Surface * ResourceManager::loadPicture(const Common::String & name, const Graphics::PixelFormat &format) {
 		Common::SeekableReadStream *stream = getResource(name);
 		if (!stream)
 			return NULL;
@@ -191,7 +191,7 @@ namespace AGDS {
 				return NULL;
 			}
 			const Graphics::Surface *surface = flic.decodeNextFrame();
-			return surface? surface->convertTo(format, flic.getPalette()): surface;
+			return surface? surface->convertTo(format, flic.getPalette()): NULL;
 		} else
 			warning("unknown extensions for resource %s", name.c_str());
 		return NULL;

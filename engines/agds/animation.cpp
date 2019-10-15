@@ -60,6 +60,7 @@ void Animation::paint(AGDSEngine & engine, Graphics::Surface & backbuffer, Commo
 	Common::Rect srcRect = c->getRect();
 	if (Common::Rect::getBlitRect(dst, srcRect, backbuffer.getRect()))
 		c->blit(backbuffer, dst.x, dst.y, Graphics::FLIP_NONE, &srcRect);
+	c->free();
 	delete c;
 }
 
