@@ -5504,7 +5504,7 @@ else
 		echo "linux"
 		_tts=yes
 		define_in_config_if_yes $_tts 'USE_SPEECH_DISPATCHER'
-		append_var LIBS '-lspeechd'
+		append_var LIBS '-lspeechd -lpthread'
 		;;
 	mingw*)
 		echo "win32"
