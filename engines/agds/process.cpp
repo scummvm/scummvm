@@ -47,19 +47,40 @@ void Process::debug(const char *str, ...) {
 	va_end(va);
 }
 
+//fixme: remove copy-paste
+void Process::error(const char *str, ...) {
+	va_list va;
+	va_start(va, str);
+
+	Common::String format = Common::String::format("%s %04x[%u]: %s", _object->getName().c_str(), _lastIp + 7, _stack.size(), str);
+	Common::String buf = Common::String::vformat(format.c_str(), va);
+
+	buf += '\n';
+
+	if (g_system)
+		g_system->logMessage(LogMessageType::kWarning, buf.c_str());
+
+	va_end(va);
+	_status = kStatusError;
+}
+
 void Process::push(int32 value) {
 	_stack.push(value);
 }
 
 int32 Process::pop() {
-	if (_stack.empty())
+	if (_stack.empty()) {
 		error("stack underflow at %s:%04x", _object->getName().c_str(), _lastIp + 7);
+		return 0;
+	}
 	return _stack.pop();
 }
 
 int32 Process::top() {
-	if (_stack.empty())
+	if (_stack.empty()) {
 		error("stack underflow, %s:%04x", _object->getName().c_str(), _lastIp + 7);
+		return 0;
+	}
 	return _stack.top();
 }
 
@@ -86,6 +107,7 @@ void Process::activate() {
 			break;
 		default:
 			error("process in invalid state %d", _status);
+			_status = kStatusError;
 	}
 }
 

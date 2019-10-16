@@ -251,6 +251,7 @@ private:
 	void stub233();
 	void stub235();
 	void debug(const char *str, ...);
+	void error(const char *str, ...);
 
 #define UNARY_OP(NAME, OP) void NAME () { int arg = pop(); debug(#NAME " %d", arg); push( OP arg ); }
 #define BINARY_OP(NAME, OP) void NAME () { int arg2 = pop(); int arg1 = pop(); debug(#NAME " %d " #OP " %d", arg1, arg2); push(arg1 OP arg2); }
