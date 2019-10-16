@@ -252,6 +252,8 @@ Sprite *Sprite::expand() {
 				case 0xFE:
 					s->_next = seqCount - 1;
 					break;
+				default:
+					break;
 				}
 				if (s->_next > maxnxt)
 					maxnxt = s->_next;
@@ -284,6 +286,8 @@ Sprite *Sprite::expand() {
 				c->_ref = atoi(strtok(NULL, " \t,;/"));
 				c->_val = atoi(strtok(NULL, " \t,;/"));
 				c->_spritePtr = NULL;
+				break;
+			default:
 				break;
 			}
 		}
@@ -880,6 +884,7 @@ void Bitmap::xShow(int16 x, int16 y) {
 			while (count-- > 0) {
 				// Transfer operation
 				switch (cmd) {
+				default:
 				case 1:
 					// SKIP
 					break;
@@ -927,6 +932,7 @@ void Bitmap::show(int16 x, int16 y) {
 			while (count-- > 0) {
 				// Transfer operation
 				switch (cmd) {
+				default:
 				case 1:
 					// SKIP
 					break;
