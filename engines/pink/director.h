@@ -48,6 +48,7 @@ class ActionText;
 class Director {
 public:
 	Director();
+	~Director();
 
 	void update();
 	bool processEvent(Common::Event &event);
@@ -75,7 +76,7 @@ public:
 
 	Actor *getActorByPoint(const Common::Point point);
 
-	Graphics::MacWindowManager &getWndManager() { return _wm; };
+	Graphics::MacWindowManager &getWndManager() { return *_wm; };
 
 	void draw(bool blit = true);
 
@@ -85,7 +86,7 @@ private:
 
 private:
 	Graphics::Screen _surface;
-	Graphics::MacWindowManager _wm;
+	Graphics::MacWindowManager *_wm;
 	Common::Array<Common::Rect> _dirtyRects;
 	Common::Array<ActionCEL *> _sprites;
 	Common::Array<ActionCEL *> _savedSprites;

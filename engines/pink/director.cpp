@@ -90,17 +90,22 @@ static void redrawCallback(void *ref) {
 
 Director::Director()
 	: _surface(640, 480), _textRendered(false) {
-	_wm.setScreen(&_surface);
-	_wm.setMode(Graphics::kWMModeNoDesktop | Graphics::kWMModeAutohideMenu | Graphics::kWMModalMenuMode |
-				Graphics::kWMModeForceBuiltinFonts);
-	_wm.setMenuHotzone(Common::Rect(0, 0, 640, 23));
-	_wm.setMenuDelay(250000);
-	_wm.setEngineRedrawCallback(this, redrawCallback);
+	_wm = new Graphics::MacWindowManager(Graphics::kWMModeNoDesktop | Graphics::kWMModeAutohideMenu
+		| Graphics::kWMModalMenuMode | Graphics::kWMModeForceBuiltinFonts);
+
+	_wm->setScreen(&_surface);
+	_wm->setMenuHotzone(Common::Rect(0, 0, 640, 23));
+	_wm->setMenuDelay(250000);
+	_wm->setEngineRedrawCallback(this, redrawCallback);
+}
+
+Director::~Director() {
+	delete _wm;
 }
 
 void Director::update() {
-	if (_wm.isMenuActive()) {
-		_wm.draw();
+	if (_wm->isMenuActive()) {
+		_wm->draw();
 		g_system->updateScreen();
 		return;
 	}
@@ -114,19 +119,19 @@ void Director::update() {
 			_sprites[i]->update();
 	}
 
-	_wm.draw();
+	_wm->draw();
 
 	draw();
 }
 
 bool Director::processEvent(Common::Event &event) {
-	return _wm.processEvent(event);
+	return _wm->processEvent(event);
 }
 
 void Director::setPalette(const byte *palette) {
 	g_system->getPaletteManager()->setPalette(palette, 0, 256);
 
-	_wm.passPalette(palette, 256);
+	_wm->passPalette(palette, 256);
 }
 
 void Director::addTextAction(ActionText *txt) {
