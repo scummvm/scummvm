@@ -217,6 +217,7 @@ void AGDSEngine::runProcess(ProcessListType::iterator &it) {
 	case kExitCodeDestroy:
 		destroy = true;
 		break;
+	case kExitCodeLoadScreenObjectAs:
 	case kExitCodeLoadScreenObject:
 	case kExitCodeRunDialog:
 		runObject(process.getExitArg1(), process.getExitArg2());

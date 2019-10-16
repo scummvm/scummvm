@@ -186,7 +186,7 @@ void Process::cloneObject() {
 	Common::String arg2 = popString();
 	Common::String arg1 = popString();
 	debug("cloneObject: %s %s", arg1.c_str(), arg2.c_str());
-	suspend(kExitCodeLoadScreenObject, arg1, arg2);
+	suspend(kExitCodeLoadScreenObjectAs, arg1, arg2);
 }
 
 void Process::removeScreenObject() {
@@ -1016,6 +1016,8 @@ void Process::fogOnCharacter() {
 	int arg1 = pop();
 	Common::String name = popText();
 	debug("fogOnCharacter %s %d %d", name.c_str(), arg1, arg2);
+	debug("fixme: some script commands call enableUser again");
+	enableUser();
 }
 
 void Process::loadRegionFromObject() {
@@ -1069,7 +1071,8 @@ void Process::stub235() {
 	int arg2 = pop();
 	int arg1 = pop();
 	debug("stub235 (fadeScreen?) %d %d %d", arg1, arg2, arg3);
-	suspend();
+	if (_status == kStatusPassive)
+		suspend();
 }
 
 

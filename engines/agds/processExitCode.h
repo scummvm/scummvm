@@ -31,10 +31,12 @@ namespace AGDS {
 		kExitCodeSetNextScreen					= 6,
 		kExitCodeSetNextScreenSaveInHistory		= 7,
 		kExitCodeLoadScreenObject				= 8,
+		kExitCodeLoadScreenObjectAs				= 9,
 		kExitCodeLoadInventoryObject			= 10,
 		kExitCodeMouseAreaChange				= 11,
 		kExitCodeRunDialog						= 12,
 		kExitCodeCreatePatchLoadResources		= 13,
+		kExitCodeLoadSaveGame					= 14,
 		kExitCodeExitScreen						= 15,
 
 		kExitCodeLoadPreviousScreenObject		= 99
