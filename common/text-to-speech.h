@@ -271,7 +271,7 @@ public:
 	 * because voices are usually language specific and so it is set to some platform
 	 * specific default after switching languages.
 	 */
-	virtual void setLanguage(String language) { _ttsState->_language = language; }
+	virtual void setLanguage(String language);
 
 	/**
 	 * Returns the current speech language

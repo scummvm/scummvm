@@ -338,9 +338,7 @@ void WindowsTextToSpeechManager::setVolume(unsigned volume) {
 }
 
 void WindowsTextToSpeechManager::setLanguage(Common::String language) {
-	if (language == "C")
-		language = "en";
-	_ttsState->_language = language;
+	Common::TextToSpeechManager::setLanguage(language);
 	updateVoices();
 	setVoice(0);
 }
@@ -471,7 +469,7 @@ void WindowsTextToSpeechManager::updateVoices() {
 
 	if (_ttsState->_availableVoices.empty()) {
 		_speechState = NO_VOICE;
-		warning("No voice is available");
+		warning("No voice is available for language: %s", _ttsState->_language.c_str());
 	} else if (_speechState == NO_VOICE)
 		_speechState = READY;
 }
