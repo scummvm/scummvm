@@ -437,7 +437,8 @@ void Process::fadeObject() {
 
 void Process::stub63(unsigned size) {
 	Common::String arg = popString();
-	debug("stub63: [handler] %u instructions, arg: %s", size, arg.c_str());
+	int value = _engine->getGlobal(arg);
+	debug("stub63: [handler] %u instructions, loop range: 0-%d", size, value);
 	_ip += size;
 }
 
