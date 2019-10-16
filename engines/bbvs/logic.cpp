@@ -95,6 +95,8 @@ bool BbvsEngine::evalCondition(Conditions &conditions) {
 		case kCondIsCameraNumTransition:
 			result = false;
 			break;
+		default:
+			break;
 		}
 	}
 	return result;
@@ -223,6 +225,8 @@ int BbvsEngine::evalDialogCondition(Conditions &conditions) {
 		case kCondIsCameraNumTransition:
 			success = false;
 			break;
+		default:
+			break;
 		}
 		if (!success)
 			return -1;
@@ -257,6 +261,8 @@ void BbvsEngine::evalActionResults(ActionResults &results) {
 			break;
 		case kActResChangeScene:
 			_newSceneNum = result.value2;
+			break;
+		default:
 			break;
 		}
 	}

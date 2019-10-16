@@ -138,6 +138,8 @@ void MinigameBbAnt::drawSprites() {
 	case 3:
 		drawSprites3();
 		break;
+	default:
+		break;
 	}
 }
 
@@ -190,6 +192,7 @@ void MinigameBbAnt::initObjects() {
 		break;
 	case 2:
 	case 3:
+	default:
 		// Nothing
 		break;
 	}
@@ -272,6 +275,7 @@ void MinigameBbAnt::initObjects1() {
 
 void MinigameBbAnt::initVars() {
 	switch (_gameState) {
+	default:
 	case 0:
 		// Nothing
 		break;
@@ -341,6 +345,8 @@ bool MinigameBbAnt::updateStatus(int mouseX, int mouseY, uint mouseButtons) {
 		return updateStatus2(mouseX, mouseY, mouseButtons);
 	case 3:
 		return updateStatus3(mouseX, mouseY, mouseButtons);
+	default:
+		break;
 	}
 	return false;
 }
@@ -574,6 +580,8 @@ void MinigameBbAnt::getRandomBugObjValues(int &x, int &y, int &animIndexIncr, in
 		y = _vm->getRandom(190) + 120;
 		animIndexIncr = 6;
 		break;
+	default:
+		break;
 	}
 }
 
@@ -689,6 +697,8 @@ void MinigameBbAnt::updateBugObjAnim(int objIndex) {
 		break;
 	case 3:
 		obj->animIndexIncr = 6;
+		break;
+	default:
 		break;
 	}
 	const ObjAnimation * const *objKindAnimTable = getObjKindAnimTable(obj->kind);
@@ -879,6 +889,8 @@ void MinigameBbAnt::updateBugObj1(int objIndex) {
 		}
 		break;
 
+	default:
+		break;
 	}
 
 }
@@ -1013,6 +1025,8 @@ void MinigameBbAnt::updateFootObj(int objIndex) {
 		}
 		break;
 
+	default:
+		break;
 	}
 
 }
@@ -1158,6 +1172,8 @@ void MinigameBbAnt::updateObjs(uint mouseButtons) {
 				break;
 			case 9:
 				updateStompObj(i);
+				break;
+			default:
 				break;
 			}
 

@@ -82,6 +82,8 @@ void MinigameBbTennis::buildDrawList(DrawList &drawList) {
 	case 2:
 		buildDrawList2(drawList);
 		break;
+	default:
+		break;
 	}
 }
 
@@ -153,6 +155,8 @@ void MinigameBbTennis::buildDrawList1(DrawList &drawList) {
 				}
 				break;
 
+			default:
+				break;
 			}
 
 			drawList.add(index, x, y, priority);
@@ -255,6 +259,8 @@ void MinigameBbTennis::initObjects() {
 	case 2:
 		initObjects2();
 		break;
+	default:
+		break;
 	}
 }
 
@@ -306,6 +312,8 @@ void MinigameBbTennis::initVars() {
 	case 2:
 		initVars2();
 		break;
+	default:
+		break;
 	}
 }
 
@@ -348,6 +356,8 @@ bool MinigameBbTennis::updateStatus(int mouseX, int mouseY, uint mouseButtons) {
 		return updateStatus1(mouseX, mouseY, mouseButtons);
 	case 2:
 		return updateStatus2(mouseX, mouseY, mouseButtons);
+	default:
+		break;
 	}
 	return false;
 }
@@ -479,6 +489,8 @@ void MinigameBbTennis::updateObjs() {
 			break;
 		case 7:
 			updateEnemyTennisBall(i);
+			break;
+		default:
 			break;
 		}
 	}
@@ -691,6 +703,8 @@ void MinigameBbTennis::updateSquirrel(int objIndex) {
 			}
 			break;
 
+		default:
+			break;
 	}
 
 	if (obj->status != 4) {
@@ -862,6 +876,8 @@ void MinigameBbTennis::updateTennisPlayer(int objIndex) {
 	case 8:
 		break;
 
+	default:
+		break;
 	}
 
 	if (obj->status != 8) {
@@ -940,6 +956,8 @@ void MinigameBbTennis::updateThrower(int objIndex) {
 		}
 		break;
 
+	default:
+		break;
 	}
 
 	if (obj->status != 3) {
@@ -1023,6 +1041,9 @@ void MinigameBbTennis::updateNetPlayer(int objIndex) {
 		}
 		break;
 
+	case 4:
+		break;
+
 	case 5:
 		if (--obj->ticks == 0) {
 			++obj->frameIndex;
@@ -1032,9 +1053,8 @@ void MinigameBbTennis::updateNetPlayer(int objIndex) {
 		}
 		break;
 
-	case 4:
+	default:
 		break;
-
 	}
 
 	if (obj->status < 4 && obj->frameIndex != 31) {
@@ -1171,6 +1191,8 @@ void MinigameBbTennis::makeEnemyBall(int x, int y, int frameIndex) {
 		obj->fltStepY = (float)((y - 180) / 6);
 		break;
 
+	default:
+		break;
 	}
 
 }
