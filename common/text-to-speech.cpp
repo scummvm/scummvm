@@ -145,5 +145,18 @@ Array<int> TextToSpeechManager::getVoiceIndicesByGender(TTSVoice::Gender gender)
 	return results;
 }
 
+void TextToSpeechManager::setLanguage(Common::String language) {
+	if (language == "C")
+		language = "en";
+	// The speech manager uses the ISO 639-1 for language codes (2 letter code)
+	// if we get a longer language string, just take the first 2 letters from that
+	// if it won't be a valid language code, the Manager just won't find any voice
+	// for it. This way a code like (en_GB) can also be passed to this.
+	if (language.size() > 2) {
+		language.erase(2, Common::String::npos);
+	}
+	_ttsState->_language = language;
+}
+
 }
 #endif

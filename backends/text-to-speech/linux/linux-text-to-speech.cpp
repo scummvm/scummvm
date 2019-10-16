@@ -330,8 +330,8 @@ void SpeechDispatcherManager::setVolume(unsigned volume) {
 void SpeechDispatcherManager::setLanguage(Common::String language) {
 	if (_speechState == BROKEN)
 		return;
-	spd_set_language(_connection, language.c_str());
-	_ttsState->_language = language;
+	Common::TextToSpeechManager::setLanguage(language);
+	spd_set_language(_connection, _ttsState->_language.c_str());
 	setVoice(_ttsState->_activeVoice);
 }
 
