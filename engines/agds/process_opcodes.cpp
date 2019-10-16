@@ -411,11 +411,21 @@ void Process::disableUser() {
 }
 
 void Process::changeScreenPatch() {
-	Common::String res2 = popString();
-	Common::String res1 = popString();
-	//change screen patch
-	debug("changeScreenPatch: '%s' '%s'", res1.c_str(), res2.c_str());
-	push(0);
+	Common::String objectName = popString();
+	Common::String screenName = popString();
+	Screen * screen = _engine->getCurrentScreen();
+	if (!screen) {
+		error("no current screen");
+		return;
+	}
+
+	if (screenName.empty())
+		screenName = screen->getName();
+
+	//change screen patch (load and return 1)
+	int value = 0;
+	debug("changeScreenPatch: screen: %s, object: %s -> %d", screenName.c_str(), objectName.c_str(), value);
+	push(value);
 }
 
 void Process::loadMouseCursorFromObject() {
