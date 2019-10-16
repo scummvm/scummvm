@@ -163,7 +163,7 @@ protected:
 
 	virtual void setSystemMousePosition(const int x, const int y) override;
 
-	virtual void handleResizeImpl(const int width, const int height) override;
+	virtual void handleResizeImpl(const int width, const int height, const int xdpi, const int ydpi) override;
 
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 public:
