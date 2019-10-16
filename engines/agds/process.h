@@ -303,6 +303,10 @@ private:
 public:
 	Process(AGDSEngine *engine, ObjectPtr object, unsigned ip = 0);
 
+	ObjectPtr getObject() const {
+		return _object;
+	}
+
 	const Common::String & getName() const {
 		return _object->getName();
 	}

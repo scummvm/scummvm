@@ -37,7 +37,7 @@ Object::Object(const Common::String &name, Common::SeekableReadStream * stream) 
 	_name(name), _stringTableLoaded(false),
 	_picture(), _region(),
 	_animation(), _mouseCursor(),
-	_pos(), _alpha(255) {
+	_pos(), _alpha(255), _active(false) {
 	byte id = stream->readByte();
 	byte flag = stream->readByte();
 	debug("id: 0x%02x %u, flag: %u", id, id, flag);

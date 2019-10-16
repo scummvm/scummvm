@@ -423,7 +423,8 @@ void Process::changeScreenPatch() {
 		screenName = screen->getName();
 
 	//change screen patch (load and return 1)
-	int value = 0;
+	ObjectPtr object = screen->find(objectName);
+	int value = object && object->isActive();
 	debug("changeScreenPatch: screen: %s, object: %s -> %d", screenName.c_str(), objectName.c_str(), value);
 	push(value);
 }
