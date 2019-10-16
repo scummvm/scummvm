@@ -26,6 +26,7 @@
 #include "graphics/fonts/bdf.h"
 #include "graphics/fonts/macfont.h"
 
+#include "graphics/macgui/macwindowmanager.h"
 #include "graphics/macgui/macfontmanager.h"
 
 namespace Graphics {
@@ -85,12 +86,16 @@ static const char *const fontStyleSuffixes[] = {
 	"Extend"
 };
 
-MacFontManager::MacFontManager() {
+MacFontManager::MacFontManager(uint32 mode) : _mode(mode) {
 	for (uint i = 0; i < ARRAYSIZE(fontNames); i++)
 		if (fontNames[i])
 			_fontIds.setVal(fontNames[i], i);
 
-	loadFonts();
+	if (_mode & MacGUIConstants::kWMModeForceBuiltinFonts) {
+		_builtInFonts = true;
+	} else {
+		loadFonts();
+	}
 }
 
 void MacFontManager::loadFontsBDF() {

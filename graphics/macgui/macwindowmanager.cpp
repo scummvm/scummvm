@@ -147,14 +147,14 @@ static const byte macCursorCrossBar[] = {
 
 static void menuTimerHandler(void *refCon);
 
-MacWindowManager::MacWindowManager() {
+MacWindowManager::MacWindowManager(uint32 mode) {
 	_screen = 0;
 	_screenCopy = 0;
 	_lastId = 0;
 	_activeWindow = -1;
 	_needsRemoval = false;
 
-	_mode = kWMModeNone;
+	_mode = mode;
 
 	_menu = 0;
 	_menuDelay = 0;
@@ -175,7 +175,7 @@ MacWindowManager::MacWindowManager() {
 
 	g_system->getPaletteManager()->setPalette(palette, 0, ARRAYSIZE(palette) / 3);
 
-	_fontMan = new MacFontManager();
+	_fontMan = new MacFontManager(mode);
 
 	CursorMan.replaceCursorPalette(palette, 0, ARRAYSIZE(palette) / 3);
 	CursorMan.replaceCursor(macCursorArrow, 11, 16, 1, 1, 3);

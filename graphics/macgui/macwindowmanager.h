@@ -98,7 +98,7 @@ void macDrawPixel(int x, int y, int color, void *data);
  */
 class MacWindowManager {
 public:
-	MacWindowManager();
+	MacWindowManager(uint32 mode = 0);
 	~MacWindowManager();
 
 	/**
