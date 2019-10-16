@@ -9,7 +9,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2018-04-17 19:53+0100\n"
 "PO-Revision-Date: 2019-10-16 12:43+0000\n"
-"Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
+"Last-Translator: roka <roka@smug.ovh>\n"
 "Language-Team: English <https://translations.scummvm.org/projects/prince/"
 "prince/en/>\n"
 "Language: en\n"
@@ -25,7 +25,7 @@ msgstr "HERO: Ahem... Excuse me..."
 
 #: dialog0001.txt:2
 msgid "OTHER: Nie ma mowy. Idź sobie. Nie widzisz, że|staram się ciebie ignorować?"
-msgstr "OTHER: Quiet! Can't you see that I'm trying to|ignore you?"
+msgstr "OTHER: Quiet! Go away, can't you see that I'm trying to|ignore you?"
 
 #: dialog0001.txt:3
 msgid "HERO: Ale ja nic..."
@@ -69,7 +69,7 @@ msgstr "$7: It was just a thought."
 
 #: dialog0001.txt:100001
 msgid "OTHER: Nie twój interes. Zgiń, przepadnij,|siło nieczysta!"
-msgstr "OTHER: That's none of your business! Get Lost!|Get away from me impure human!"
+msgstr "OTHER: That's none of your business! Get lost!|Begone, impure human!"
 
 #: dialog0001.txt:100002
 msgid "HERO: Wygląda to chyba na cmentarz."
@@ -78,8 +78,8 @@ msgstr "HERO: It seems to be a cemetery."
 #: dialog0001.txt:100003
 msgid "OTHER: Poważnie? Zawsze myślałem, że mieszkam|na kolorowym i radosnym placu zabaw."
 msgstr ""
-"OTHER: Oh, really? And here I was thinking I was living|at a colorful and "
-"cheerful children's playground."
+"OTHER: Oh, really? And here I was thinking I live|at a colorful and cheerful "
+"children's playground."
 
 #: dialog0001.txt:100004
 msgid "HERO: Placu zabaw? Ach, rozumiem. Staramy|się być dowcipni."
@@ -91,7 +91,7 @@ msgstr "OTHER: For a stupid human, you sure talk too much!|Now, get out of here.
 
 #: dialog0001.txt:100101
 msgid "OTHER: Wróć, którędy przyszedłeś."
-msgstr "OTHER: Go back the way you came."
+msgstr "OTHER: Go back whence you came."
 
 #: dialog0001.txt:100102
 msgid "HERO: Ale tam..."
@@ -99,11 +99,12 @@ msgstr "HERO: But uhhh..."
 
 #: dialog0001.txt:100103
 msgid "HERO: Kiedy nie mogę, naprawdę, proszę mi|wierzyć!"
-msgstr "HERO: You see, I can't do that! Not really...|Believe me!"
+msgstr "HERO: You see, I can't do that! I really can't...|Please believe me!"
 
 #: dialog0001.txt:100104
 msgid "OTHER: Och, zamknij się już. Spróbuję kogoś|obudzić.#X1"
-msgstr "OTHER: Leave me alone! Can't you see that|I'm trying to resurrect somebody here...?#X1"
+msgstr ""
+"OTHER: Oh, shut up already! Fine, I'll try|to raise someone from the dead.#X1"
 
 #: dialog0001.txt:100201
 msgid "OTHER: A to niby dlaczego?#B1"
@@ -421,15 +422,22 @@ msgstr "OTHER: Oh! We have something|in common. That's pretty."
 
 #: dialog0010.txt:19
 msgid "OTHER: Tysiąc lat temu było niedaleko stąd miasto,|a w tym mieście była sobie miła,|przytulna, cieplutka karczma."
-msgstr "OTHER: If I'm not mistaken there has to be a|town around here. There has been one|for thousands of years. And in that town|there's always been a nice, warm and|cozy inn."
+msgstr ""
+"OTHER: If I'm not mistaken, there should be a|town around here. There used "
+"to be one|a millennium ago. And in that town|there was a nice, warm and|cozy "
+"inn."
 
 #: dialog0010.txt:20
 msgid "OTHER: Podawali piwo, krasnoludzki spirytus z piwem|i pyszną golonkę z chrzanem gotowaną w piwie."
-msgstr "OTHER: They used to serve beer and Dwarf|mead with beer and pork cutlets boiled|in beer with horseradish at the side."
+msgstr ""
+"OTHER: They used to serve beer and dwarf|mead with beer and pork cutlets "
+"boiled|in beer with horseradish at the side."
 
 #: dialog0010.txt:21
 msgid "OTHER: Pod ścianą siedziało piwo, to znaczy|bard i pisał poemat."
-msgstr "OTHER: And at the back of the inn|there were Bards, sitting around|and writing their poems."
+msgstr ""
+"OTHER: And at the back of the inn|there were bards, sitting around|and "
+"writing their poems."
 
 #: dialog0010.txt:22
 msgid "OTHER: Najczęściej o mnie."
@@ -4312,11 +4320,11 @@ msgstr "HERO: I'm glad that at least you didn't have to kiss me..."
 
 #: dialog0108.txt:6
 msgid "HERO: Łup, chyba się wygadałem."
-msgstr ""
+msgstr "HERO: Welp, I guess I spilled the beans by accident."
 
 #: dialog0108.txt:7
 msgid "OTHER: Ktoś cię całował? Wspaniale, chłopcze!"
-msgstr ""
+msgstr "OTHER: Somebody kissed you? That's great, boy!"
 
 #: dialog0108.txt:8
 msgid "OTHER: Ach tak, następny skutek uboczny."
@@ -4332,11 +4340,11 @@ msgstr ""
 
 #: dialog0109.txt:2
 msgid "OTHER: Ten demon nie wygląda zbyt przyjaźnie."
-msgstr ""
+msgstr "OTHER: That demon does not look too friendly."
 
 #: dialog0109.txt:3
 msgid "OTHER: Szczerze mówiąc, trochę się boję."
-msgstr ""
+msgstr "OTHER: Frankly speaking, I am a bit afraid."
 
 #: dialog0110.txt:1
 msgid "HERO: Hm."
@@ -4344,11 +4352,11 @@ msgstr "HERO: Hm."
 
 #: dialog0111.txt:1
 msgid "HERO: Znalazłem w zamku Fjord pewną księgę."
-msgstr ""
+msgstr "HERO: I found a certain tome in the Fjord castle."
 
 #: dialog0111.txt:2
 msgid "HERO: Pomyślałem, że może cię zainteresować."
-msgstr ""
+msgstr "HERO: I thought you may find it interesting."
 
 #: dialog0112.txt:1
 msgid "OTHER: To tom poświęcony szarej magii, czyli|czarom pozornie neutralnym wobec|dobra czy zła."
@@ -4488,7 +4496,7 @@ msgstr ""
 
 #: dialog0117.txt:9
 msgid "OTHER: Nauka jest wieczna, a piwo wietrzeje."
-msgstr ""
+msgstr "OTHER: Learning is eternal but beer gets spoiled."
 
 #: dialog0118.txt:1
 msgid "OTHER: \"Nikt cię tu nie chciał ani zapraszał|Rozgniewasz mnie nie na żarty|Wysil więc rozum i daj mi dowód|Żeś czasu mego jest warty.\""
@@ -4613,6 +4621,8 @@ msgstr ""
 #: dialog0125.txt:100101
 msgid "OTHER: Był taki jeden wielki czarodziej, który chciał|znaleźć legendarne źródło spirytusu|w opuszczonej kopalni krasnoludzkiej."
 msgstr ""
+"OTHER: There was once a great wizard|who wanted to find the legendary source "
+"of vodka|in an abandoned dwarven mine."
 
 #: dialog0125.txt:100102
 msgid "OTHER: Zrobili z kumplami wyprawę, ale jak jeden|wszedł do środka z pochodnią, to od oparów był|wybuch i zostały z niego sznurówki."
