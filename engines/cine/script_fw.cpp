@@ -459,6 +459,8 @@ int RawScript::getNextLabel(const FWScriptInfo &info, int offset) const {
 				break;
 			case 'x': // exit script
 				return -pos - 1;
+			default:
+				break;
 			}
 		}
 	}
@@ -1438,6 +1440,8 @@ int FWScript::o1_loadNewPrcName() {
 	case 3:
 		debugC(5, kCineDebugScript, "Line: %d: loadMsg(\"%s\")", _line, param2);
 		Common::strlcpy(newMsgName, param2, sizeof(newMsgName));
+		break;
+	default:
 		break;
 	}
 	return 0;

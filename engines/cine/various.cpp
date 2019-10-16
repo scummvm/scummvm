@@ -523,6 +523,8 @@ void CineEngine::makeSystemMenu() {
 			}
 			break;
 		}
+		default:
+			break;
 		}
 
 		inMenu = false;

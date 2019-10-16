@@ -635,6 +635,9 @@ void FWRenderer::renderOverlay(const Common::List<overlay>::iterator &it) {
 
 		fillSprite(*obj);
 		break;
+
+	default:
+		break;
 	}
 }
 
