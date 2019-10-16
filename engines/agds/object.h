@@ -69,6 +69,7 @@ private:
 	Common::String					_text;
 	uint							_clickHandler;
 	int								_alpha;
+	bool							_active;
 
 public:
 	Object(const Common::String &name, Common::SeekableReadStream * stream);
@@ -159,6 +160,12 @@ public:
 		KeyHandlersType::const_iterator i = _keyHandlers.find(name);
 		return i != _keyHandlers.end()? i->_value: 0;
 	}
+
+	bool isActive() const
+	{ return _active; }
+
+	void activate(bool active)
+	{ _active = active; }
 };
 typedef Common::SharedPtr<Object> ObjectPtr;
 
