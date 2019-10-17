@@ -605,6 +605,31 @@ void String::replace(uint32 posOri, uint32 countOri, const char *str,
 
 }
 
+uint32 String::find(const String &str, uint32 pos) const {
+	if (pos >= _size) {
+		return npos;
+	}
+
+	const char *strP = str.c_str();
+
+	for (const_iterator cur = begin() + pos; *cur; ++cur) {
+		uint i = 0;
+		while (true) {
+			if (!strP[i]) {
+				return cur - begin();
+			}
+
+			if (cur[i] != strP[i]) {
+				break;
+			}
+
+			++i;
+		}
+	}
+
+	return npos;
+}
+
 // static
 String String::format(const char *fmt, ...) {
 	String output;
