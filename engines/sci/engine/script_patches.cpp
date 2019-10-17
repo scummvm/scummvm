@@ -177,6 +177,7 @@ static const char *const selectorNameTable[] = {
 	"advanceCurIcon", // QFG4
 	"amount",       // QFG4
 	"approachVerbs", // QFG4
+	"claimed",      // QFG4
 	"cue",          // QFG4
 	"curIcon",      // QFG4
 	"curInvIcon",   // QFG4
@@ -291,6 +292,7 @@ enum ScriptPatcherSelectors {
 	SELECTOR_advanceCurIcon,
 	SELECTOR_amount,
 	SELECTOR_approachVerbs,
+	SELECTOR_claimed,
 	SELECTOR_cue,
 	SELECTOR_curIcon,
 	SELECTOR_curInvIcon,
@@ -12427,7 +12429,9 @@ static const uint16 qfg4RunesPuzzleSignature2[] = {
 	0x76,                               // push0
 	0x87, 0x01,                         // lap 01
 	0x4a, SIG_UINT16(0x0004),           // send 04 [ event type? ]
-	SIG_ADDTOOFFSET(+1349),
+	SIG_ADDTOOFFSET(+495),
+	0x39, SIG_SELECTOR8(claimed),       // pushi claimed
+	SIG_ADDTOOFFSET(+852),
 	// sTurnTheDial:changeState
 	0x30, SIG_UINT16(0x0112),           // bnt 0112 [ state 2 ]
 	SIG_ADDTOOFFSET(+268),
@@ -12459,7 +12463,7 @@ static const uint16 qfg4RunesPuzzlePatch2[] = {
 	0x38, PATCH_UINT16(0x0163),         // pushi 0163
 	0x45, 0x04, PATCH_UINT16(0x0002),   // callb proc0_3 [ is puzzle solved? ]
 	0x31, 0x1b,                         // bnt 1b   [ handle mouse/key down events ]
-	0x32, PATCH_UINT16(0x01ec),         // jmp 01ec [ ignore events if puzzle is solved ]
+	0x32, PATCH_UINT16(0x01f0),         // jmp 01f0 [ ignore events if puzzle is solved ]
 	PATCH_ADDTOOFFSET(+1350),
 	// sTurnTheDial:changeState
 	0x30, PATCH_UINT16(0x0123),         // bnt 0123 [ state 2 ]
