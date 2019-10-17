@@ -36,10 +36,12 @@ class AGDSEngine;
 class Object;
 
 class Character {
-	int _counter;
+	bool _enabled;
+	int _phase;
+	int _frames;
 
 public:
-	Character(): _counter(-1) {
+	Character(): _enabled(true), _phase(0), _frames(0) {
 	}
 
 	bool load(Common::SeekableReadStream* stream) {
@@ -47,19 +49,21 @@ public:
 	}
 
 	void enable(bool enabled = true) {
+		_enabled = enabled;
 	}
 
 	void animate(int frames) {
-		_counter = frames;
+		_phase = 0;
+		_frames = frames;
 	}
 
 	int getPhase() const {
-		return _counter;
+		return _phase < _frames? _phase: -1;
 	}
 
 	void paint(AGDSEngine & engine, Graphics::Surface & backbuffer) {
-		if (_counter >= 0)
-			--_counter;
+		if (_enabled && _phase < _frames)
+			++_phase;
 	}
 
 };
