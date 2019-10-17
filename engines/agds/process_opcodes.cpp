@@ -770,6 +770,8 @@ void Process::runDialog() {
 	arg3 = _engine->loadText(arg3);
 	debug("definition:\n%s", arg3.c_str());
 	debug("dialog:\n%s", arg2.c_str());
+
+	_engine->getSystemVariable("dialog_var")->setInteger(1);
 	suspend(kExitCodeRunDialog, arg1);
 }
 
@@ -1087,6 +1089,15 @@ void Process::stub235() {
 		suspend();
 }
 
+void Process::stub244() {
+	Common::String arg2 = popString();
+	Common::String arg1 = popString();
+
+	debug("stub244 [text tell status?] %s %s", arg1.c_str(), arg2.c_str());
+	_engine->setGlobal(arg1, 1);
+	_engine->setGlobal(arg2, 1);
+	_engine->getSystemVariable("dialog_var")->setInteger(1);
+}
 
 
 //fixme: add trace here
@@ -1291,6 +1302,7 @@ ProcessExitCode Process::execute() {
 			OP		(kStub231, stub231);
 			OP		(kStub233, stub233);
 			OP		(kStub235, stub235);
+			OP		(kStub244, stub244);
 			OP		(kInventoryHasObject, inventoryHasObject);
 			OP		(kRunDialog, runDialog);
 			OP		(kHasGlobal, hasGlobal);
