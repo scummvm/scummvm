@@ -51,11 +51,11 @@ Region::Region(const Common::String &resourceName, Common::SeekableReadStream * 
 		while(ext--) {
 			int16 a = stream->readSint16LE();
 			int16 b = stream->readSint16LE();
-			/* int16 c = */ stream->readUint16LE();
-//			if (c != -12851) //0xcdcd
-//				debug("extended entry: %d %d %d", a, b, c);
-//			else
-//				debug("extended entry: %d %d", a, b);
+			int16 c = stream->readUint16LE();
+			if (c != -12851) //0xcdcd
+				debug("extended entry: %d %d %d", a, b, c);
+			else
+				debug("extended entry: %d %d", a, b);
 			points.push_back(Common::Point(a, b));
 		}
 		if (stream->pos() != size)
