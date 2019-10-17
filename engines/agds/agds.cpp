@@ -47,7 +47,8 @@ AGDSEngine::AGDSEngine(OSystem *system, const ADGameDescription *gameDesc) : Eng
 		_defaultMouseCursor(),
 		_mouse(400, 300), _userEnabled(false), _currentRegion(),
 		_random("agds"), _soundManager(this, system->getMixer()),
-		_fastMode(false) {
+		_fastMode(false),
+		_dialogScriptPos(0) {
 }
 
 AGDSEngine::~AGDSEngine() {
@@ -616,6 +617,45 @@ SystemVariable *AGDSEngine::getSystemVariable(const Common::String &name) {
 		return i->_value;
 
 	error("no system variable %s", name.c_str());
+}
+
+void AGDSEngine::runDialog(const Common::String &dialogScript, const Common::String & defs) {
+	parseDialogDefs(defs);
+	_dialogScript = dialogScript;
+	debug("dialog:\n%s", dialogScript.c_str());
+	_dialogScriptPos = 0;
+	getSystemVariable("dialog_var")->setInteger(-1);
+}
+
+void AGDSEngine::parseDialogDefs(const Common::String &defs) {
+	Common::String name, value;
+	bool readName = true;
+	for(uint32 p = 0, size = defs.size(); p < size; ++p) {
+		char ch = defs[p];
+		if (ch == ' ') {
+			continue;
+		} else if (ch == '\n' || ch == '\r') {
+			debug("dialog definition: '%s' = '%s'", name.c_str(), value.c_str());
+			if (!name.empty() && !value.empty()) {
+				_dialogDefs[name] = atoi(value.c_str());
+			}
+			readName = true;
+			name.clear();
+			value.clear();
+			continue;
+		} else if (ch == '=') {
+			if (readName) {
+				readName = false;
+			} else {
+				warning("equal sign in value, skipping");
+			}
+		} else {
+			if (readName)
+				name += ch;
+			else
+				value += ch;
+		}
+	}
 }
 
 

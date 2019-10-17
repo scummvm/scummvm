@@ -768,10 +768,9 @@ void Process::runDialog() {
 	debug("runDialog %s %s %s", arg1.c_str(), arg2.c_str(), arg3.c_str());
 	arg2 = _engine->loadText(arg2);
 	arg3 = _engine->loadText(arg3);
-	debug("definition:\n%s", arg3.c_str());
-	debug("dialog:\n%s", arg2.c_str());
 
-	_engine->getSystemVariable("dialog_var")->setInteger(1);
+	_engine->runDialog(arg2, arg3);
+
 	suspend(kExitCodeRunDialog, arg1);
 }
 

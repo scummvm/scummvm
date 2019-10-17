@@ -164,7 +164,11 @@ public:
 	void initSystemVariables();
 	SystemVariable *getSystemVariable(const Common::String &name);
 
+	void runDialog(const Common::String &dialogScript, const Common::String & defs);
+
 private:
+	void parseDialogDefs(const Common::String &defs);
+
 	typedef Common::HashMap<int, Graphics::TransparentSurface *> PictureCacheType;
 	typedef Common::HashMap<Common::String, Object *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> ObjectsType;
 	typedef Common::HashMap<Common::String, Region *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> RegionsType;
@@ -173,6 +177,7 @@ private:
 	typedef Common::HashMap<Common::String, Animation *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> AnimationsType;
 	typedef Common::HashMap<Common::String, Character *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> CharactersType;
 	typedef Common::HashMap<int, Font *> FontsType;
+	typedef Common::HashMap<Common::String, int, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> DialogDefsType;
 
 	const ADGameDescription *	_gameDescription;
 	ResourceManager				_resourceManager;
@@ -203,6 +208,9 @@ private:
 	Common::RandomSource		_random;
 	Inventory					_inventory;
 	bool						_fastMode;
+	DialogDefsType				_dialogDefs;
+	Common::String				_dialogScript;
+	uint32						_dialogScriptPos;
 };
 
 
