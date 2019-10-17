@@ -2683,6 +2683,7 @@ IMG_CB(88003) {
 		FixedImgCallback callback = nullptr;
 		switch (_gameVariables[GameVariables::kBombState]) {
 		case 1:
+		default:
 			callback = &CryOmni3DEngine_Versailles::img_88003b;
 			break;
 		case 2:
@@ -4308,6 +4309,8 @@ void CryOmni3DEngine_Versailles::filterEventLevel5UpdatePlaceStates() {
 			// Ladder is on the scaffolding
 			setPlaceState(16, 5);
 			break;
+		default:
+			break;
 		}
 	} else {
 		// Curtain is opened
@@ -4323,6 +4326,8 @@ void CryOmni3DEngine_Versailles::filterEventLevel5UpdatePlaceStates() {
 		case 2:
 			// Ladder is on the scaffolding
 			setPlaceState(16, 6);
+			break;
+		default:
 			break;
 		}
 	}
