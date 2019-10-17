@@ -25,6 +25,7 @@
 #include "common/macresman.h"
 #include "graphics/fonts/bdf.h"
 #include "graphics/fonts/macfont.h"
+#include "graphics/fonts/ttf.h"
 
 #include "graphics/macgui/macwindowmanager.h"
 #include "graphics/macgui/macfontmanager.h"
@@ -283,7 +284,13 @@ const Font *MacFontManager::getFont(MacFont macFont) {
 		}
 	}
 
-	if (_builtInFonts || !font)
+	if (_builtInFonts || !font) {
+		if (_mode & kWMModeUnicode) {
+			font = Graphics::loadTTFFontFromArchive("FreeSans.ttf", 16, Graphics::kTTFSizeModeCell, 0, Graphics::kTTFRenderModeMonochrome);
+		}
+	}
+
+	if (!font)
 		font = FontMan.getFontByUsage(macFont.getFallback());
 
 	return font;

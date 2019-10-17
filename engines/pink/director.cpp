@@ -91,7 +91,8 @@ static void redrawCallback(void *ref) {
 Director::Director()
 	: _surface(640, 480), _textRendered(false) {
 	_wm = new Graphics::MacWindowManager(Graphics::kWMModeNoDesktop | Graphics::kWMModeAutohideMenu
-		| Graphics::kWMModalMenuMode | Graphics::kWMModeForceBuiltinFonts);
+		| Graphics::kWMModalMenuMode | Graphics::kWMModeForceBuiltinFonts
+		| Graphics::kWMModeUnicode);
 
 	_wm->setScreen(&_surface);
 	_wm->setMenuHotzone(Common::Rect(0, 0, 640, 23));
