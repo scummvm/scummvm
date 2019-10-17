@@ -885,6 +885,7 @@ void EdenGraphics::displayEffect2() {
 		colimacon(pattern3);
 		break;
 	case 4:
+	default:
 		colimacon(pattern4);
 		eff2pat = 0;
 		break;

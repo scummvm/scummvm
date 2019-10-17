@@ -1716,6 +1716,8 @@ void EdenGame::vivredino() {
 				perso->_steps = 1;
 			}
 			break;
+		default:
+			break;
 		}
 	}
 }
@@ -2321,6 +2323,8 @@ void EdenGame::my_bulle() {
 					break;
 				case 2:
 					_globals->_giveObj3 = c2;
+					break;
+				default:
 					break;
 				}
 				_globals->_numGiveObjs++;
@@ -5452,6 +5456,8 @@ void EdenGame::confirmYes() {
 	case 2:
 		reallyquit();
 		break;
+	default:
+		break;
 	}
 }
 
@@ -5846,6 +5852,8 @@ void EdenGame::perso_ici(int16 action) {
 	case 5:
 		rangermammi(perso, _globals->_lastAreaPtr->_citadelRoomPtr);
 		break;
+	default:
+		break;
 	}
 	perso = _persons;
 	do {
@@ -5865,6 +5873,8 @@ void EdenGame::perso_ici(int16 action) {
 				break;
 			case 5:
 				rangermammi(perso, _globals->_lastAreaPtr->_citadelRoomPtr);
+				break;
+			default:
 				break;
 			}
 		}
@@ -7339,6 +7349,8 @@ void EdenGame::Eden_dep_and_rot() {
 		_rotationAngleX = 0;
 		_translationZ = Z_RESET;
 		break;
+	default:
+		break;
 	}
 }
 
@@ -7809,6 +7821,7 @@ void EdenGame::enginePC() {
 	int step = _pcCursor->_speed;
 	switch (_pcCursor->_kind) {
 	case 0:
+	default:
 		break;
 	case 1:	// rot up-down
 		decAngleY();
