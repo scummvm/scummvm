@@ -587,6 +587,8 @@ void Frame::renderSprites(Graphics::ManagedSurface &surface, bool renderTrail) {
 				case 7:
 					castType = kCastText;
 					break;
+				default:
+					break;
 				}
 			} else {
 				if (!_vm->getCurrentScore()->_castTypes.contains(_sprites[i]->_castId)) {
@@ -708,6 +710,9 @@ void Frame::renderButton(Graphics::ManagedSurface &surface, uint16 spriteId) {
 	case kTypeRadio:
 		warning("STUB: renderButton: kTypeRadio");
 		break;
+	default:
+		warning("renderButton: Unknown buttonType");
+		break;
 	}
 }
 
@@ -742,7 +747,6 @@ void Frame::inkBasedBlit(Graphics::ManagedSurface &targetSurface, const Graphics
 
 void Frame::renderText(Graphics::ManagedSurface &surface, uint16 spriteId, Common::Rect *textSize) {
 	TextCast *textCast = _sprites[spriteId]->_buttonCast != nullptr ? (TextCast*)_sprites[spriteId]->_buttonCast : _sprites[spriteId]->_textCast;
-
 
 	int x = _sprites[spriteId]->_startPoint.x; // +rectLeft;
 	int y = _sprites[spriteId]->_startPoint.y; // +rectTop;
@@ -829,6 +833,7 @@ void Frame::renderText(Graphics::ManagedSurface &surface, uint16 spriteId, Commo
 
 	switch (textCast->textAlign) {
 	case kTextAlignLeft:
+	default:
 		break;
 	case kTextAlignCenter:
 		textX = (width / 2) - (textSurface->w / 2) + (padding / 2) + borderSize;

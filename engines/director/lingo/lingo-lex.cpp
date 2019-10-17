@@ -1644,6 +1644,9 @@ case YY_STATE_EOF(INITIAL):
 
 		else switch ( yy_get_next_buffer(  ) )
 			{
+			default:
+				break;
+
 			case EOB_ACT_END_OF_FILE:
 				{
 				(yy_did_buffer_switch_on_eof) = 0;

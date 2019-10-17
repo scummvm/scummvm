@@ -226,8 +226,9 @@ BITDDecoderV4::BITDDecoderV4(int w, int h, uint16 bitsPerPixel) {
 	case 32:
 		//pf = Graphics::PixelFormat::PixelFormat(bitsPerPixel / 8, 8, 8, 8, 8, 24, 16, 8, 0);
 		break;
+	default:
+		break;
 	}
-
 
 	// HACK: Create a padded surface by adjusting w after create()
 	_surface->create(pitch, h, pf);

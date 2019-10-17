@@ -327,6 +327,7 @@ void Lingo::func_cursor(int c) {
 	switch (c) {
 	case 0:
 	case -1:
+	default:
 		_vm->getMacWindowManager()->pushArrowCursor();
 		break;
 	case 1:
