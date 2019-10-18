@@ -267,7 +267,8 @@ void AGDSEngine::runProcess(ProcessListType::iterator &it) {
 		++it;
 }
 
-void AGDSEngine::runProcess() {
+void AGDSEngine::tick() {
+	tickDialog();
 	for(ProcessListType::iterator p = _processes.begin(); active() && p != _processes.end(); ) {
 		runProcess(p);
 	}
@@ -396,7 +397,7 @@ Common::Error AGDSEngine::run() {
 
 		_soundManager.tick();
 		if (active())
-			runProcess();
+			tick();
 
 		Graphics::Surface *backbuffer = _system->lockScreen();
 		backbuffer->fillRect(backbuffer->getRect(), 0);
@@ -635,7 +636,7 @@ void AGDSEngine::parseDialogDefs(const Common::String &defs) {
 		if (ch == ' ') {
 			continue;
 		} else if (ch == '\n' || ch == '\r') {
-			debug("dialog definition: '%s' = '%s'", name.c_str(), value.c_str());
+			//debug("dialog definition: '%s' = '%s'", name.c_str(), value.c_str());
 			if (!name.empty() && !value.empty()) {
 				_dialogDefs[name] = atoi(value.c_str());
 			}
@@ -655,6 +656,46 @@ void AGDSEngine::parseDialogDefs(const Common::String &defs) {
 			else
 				value += ch;
 		}
+	}
+}
+
+void AGDSEngine::tickDialog() {
+	uint n = _dialogScript.size();
+	if (_dialogScriptPos >= n)
+		return;
+
+	Common::String line;
+	while(_dialogScriptPos < n && _dialogScript[_dialogScriptPos] != '\n' && _dialogScript[_dialogScriptPos] != '\r') {
+		line += _dialogScript[_dialogScriptPos++];
+	}
+	++_dialogScriptPos;
+
+	if (line.empty())
+		return;
+
+	if (line[0] == '@') {
+		if (line[1] == '@') //comment
+			return;
+
+		line.erase(0, 1);
+
+		if (line.hasPrefix("sound")) {
+			debug("sound: %s", line.c_str());
+		} else {
+			DialogDefsType::const_iterator it = _dialogDefs.find(line);
+			if (it != _dialogDefs.end()) {
+				int value = it->_value;
+				debug("dialog value %d (0x%04x)", value, value);
+				getSystemVariable("dialog_var")->setInteger(value);
+			} else
+				warning("invalid dialog directive: %s", line.c_str());
+		}
+	} else if (line[0] == ' ') {
+		debug("text: %s", line.c_str() + 1);
+	}
+	if (_dialogScriptPos >= n) {
+		debug("end of dialog");
+		getSystemVariable("dialog_var")->setInteger(-2);
 	}
 }
 

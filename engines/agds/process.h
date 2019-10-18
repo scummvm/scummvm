@@ -215,7 +215,7 @@ private:
 	void stub83();
 	void stub102();
 	void stub119();
-	void stub128();
+	void resetState();
 	void stub129();
 	void setCycles();
 	void setRandom();

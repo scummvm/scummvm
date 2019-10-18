@@ -85,7 +85,7 @@ private:
 	bool initGraphics();
 	bool load();
 	void runProcess(ProcessListType::iterator &it);
-	void runProcess();
+	void tick();
 
 public:
 	ObjectPtr loadObject(const Common::String & name, const Common::String & prototype = Common::String());
@@ -161,6 +161,7 @@ public:
 	SystemVariable *getSystemVariable(const Common::String &name);
 
 	void runDialog(const Common::String &dialogScript, const Common::String & defs);
+	void tickDialog();
 
 private:
 	void parseDialogDefs(const Common::String &defs);

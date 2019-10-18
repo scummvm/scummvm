@@ -145,7 +145,7 @@ enum Opcode {
 	kStub125						= 125,
 	kStub126						= 126,
 	kSetTimer						= 127,
-	kProcessCleanupStub128			= 128,
+	kProcessResetState				= 128,
 	kStub129						= 129,
 	kSetCycles						= 130,
 	kSetRandom						= 131,
