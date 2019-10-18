@@ -495,8 +495,8 @@ void Process::stub119() {
 	debug("stub119");
 }
 
-void Process::stub128() {
-	debug("processCleanupStub128");
+void Process::resetState() {
+	debug("process reset state");
 	_phaseVar.clear();
 }
 
@@ -1220,7 +1220,7 @@ ProcessExitCode Process::execute() {
 			OP		(kPlayerSay, playerSay);
 			OP		(kNPCSay, npcSay);
 			OP		(kSetTimer, setTimer);
-			OP		(kProcessCleanupStub128, stub128);
+			OP		(kProcessResetState, resetState);
 			OP		(kStub129, stub129);
 			OP		(kSetCycles, setCycles);
 			OP		(kSetRandom, setRandom);
