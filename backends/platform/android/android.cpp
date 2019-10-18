@@ -55,6 +55,7 @@
 #include "common/events.h"
 #include "common/config-manager.h"
 
+#include "backends/audiocd/default/default-audiocd.h"
 #include "backends/keymapper/keymapper.h"
 #include "backends/mutex/pthread/pthread-mutex.h"
 #include "backends/saves/default/default-saves.h"
