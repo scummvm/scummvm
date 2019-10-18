@@ -52,6 +52,7 @@ private:
 	int				_exitIntArg1, _exitIntArg2;
 	int				_glyphWidth, _glyphHeight;
 	Common::String	_phaseVar;
+	int				_timer;
 
 private:
 	uint8 next() {
@@ -342,6 +343,13 @@ public:
 
 	int getExitIntArg2() const {
 		return _exitIntArg2;
+	}
+
+	bool active() {
+		if (_timer <= 0)
+			return true;
+		--_timer;
+		return false;
 	}
 
 };
