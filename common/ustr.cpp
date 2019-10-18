@@ -768,4 +768,10 @@ String convertFromU32String(const U32String &string, CodePage page) {
 	return charsetString;
 }
 
+U32String operator+(const U32String &x, const U32String &y) {
+	U32String temp(x);
+	temp += y;
+	return temp;
+}
+
 } // End of namespace Common

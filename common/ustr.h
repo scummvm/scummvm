@@ -237,6 +237,9 @@ enum CodePage {
 	kWindows1257
 };
 
+
+U32String operator+(const U32String &x, const U32String &y);
+
 U32String convertToU32String(const char *str, CodePage page = kUtf8);
 String convertFromU32String(const U32String &str, CodePage page = kUtf8);
 
