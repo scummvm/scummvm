@@ -284,11 +284,13 @@ const Font *MacFontManager::getFont(MacFont macFont) {
 		}
 	}
 
-	if (_builtInFonts || !font) {
+#ifdef USE_FREETYPE2
+	if (!font) {
 		if (_mode & kWMModeUnicode) {
 			font = Graphics::loadTTFFontFromArchive("FreeSans.ttf", 16, Graphics::kTTFSizeModeCell, 0, Graphics::kTTFRenderModeMonochrome);
 		}
 	}
+#endif
 
 	if (!font)
 		font = FontMan.getFontByUsage(macFont.getFallback());
