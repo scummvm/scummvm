@@ -236,6 +236,7 @@ void DrasculaEngine::print_abc(const char *said, int screenX, int screenY) {
 
 				switch (_charMap[i].charType) {
 				case 0:		// letters
+				default:
 					letterY = (_lang == kSpanish) ? 149 : 158;
 					break;
 				case 1:		// signs
