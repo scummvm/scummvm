@@ -225,8 +225,10 @@ void AGDSEngine::runProcess(ProcessListType::iterator &it) {
 		break;
 	case kExitCodeLoadScreenObjectAs:
 	case kExitCodeLoadScreenObject:
-	case kExitCodeRunDialog:
 		runObject(process.getExitArg1(), process.getExitArg2());
+		break;
+	case kExitCodeRunDialog:
+		_dialogProcessName = process.getExitArg1();
 		break;
 	case kExitCodeSetNextScreen:
 		loadScreen(process.getExitArg1());
@@ -693,7 +695,11 @@ void AGDSEngine::tickDialog() {
 	} else if (line[0] == ' ') {
 		debug("text: %s", line.c_str() + 1);
 	}
-	if (_dialogScriptPos >= n) {
+	if (_dialogScriptPos >= n && !_dialogProcessName.empty()) {
+		Common::String process = _dialogProcessName;
+		_dialogProcessName.clear();
+
+		runObject(process);
 		debug("end of dialog");
 		getSystemVariable("dialog_var")->setInteger(-2);
 	}

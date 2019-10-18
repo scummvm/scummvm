@@ -207,6 +207,7 @@ private:
 	DialogDefsType				_dialogDefs;
 	Common::String				_dialogScript;
 	uint32						_dialogScriptPos;
+	Common::String				_dialogProcessName;
 };
 
 
