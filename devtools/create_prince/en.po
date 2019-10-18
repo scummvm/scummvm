@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: Prince\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2018-04-17 19:53+0100\n"
-"PO-Revision-Date: 2019-10-17 12:57+0000\n"
+"PO-Revision-Date: 2019-10-19 20:55+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: English <https://translations.scummvm.org/projects/prince/"
 "prince/en/>\n"
@@ -4363,70 +4363,76 @@ msgstr "HERO: I thought you may find it interesting."
 #: dialog0112.txt:1
 msgid "OTHER: To tom poświęcony szarej magii, czyli|czarom pozornie neutralnym wobec|dobra czy zła."
 msgstr ""
+"OTHER: This volume is dedicated to the grey arts, which|are neutral to bad "
+"and evil|as it seems."
 
 #: dialog0113.txt:1
 msgid "OTHER: Bardzo ciekawe, większość zaklęć|jest mi nie znana."
-msgstr ""
+msgstr "OTHER: Yes, very interesting. Most spells are|unknown to me."
 
 #: dialog0114.txt:1
 msgid "HERO: Coś ciekawego?"
-msgstr ""
+msgstr "HERO: Something of interest?"
 
 #: dialog0114.txt:2
 msgid "OTHER: Bardzo interesujące."
-msgstr ""
+msgstr "OTHER: Very interesting."
 
 #: dialog0114.txt:3
 msgid "OTHER: Większość czarów wymaga długich studiów."
-msgstr ""
+msgstr "OTHER: Most spells require long study."
 
 #: dialog0114.txt:4
 msgid "OTHER: Na przykład zamiana brylantów w węgiel.|Odwrotnie, banał, a tu proszę..."
 msgstr ""
+"OTHER: For example, turning diamonds into coal.|The opposite way is simple, "
+"and here..."
 
 #: dialog0114.txt:5
 msgid "OTHER: Pozwolisz, że wrócę do lektury."
-msgstr ""
+msgstr "OTHER: Let me go back to reading."
 
 #: dialog0115.txt:1
 msgid "HERO: Nie chcę mu przeszkadzać, zanim nie|będę dokładnie wiedział, w czym ta|księga może mi pomóc."
 msgstr ""
+"HERO: I don't want to disturb him until I know|exactly how this book can "
+"help me."
 
 #: dialog0116.txt:1
 msgid "HERO: Czy poznałeś kiedyś Pana Słońce?"
-msgstr ""
+msgstr "HERO: Have you ever met Mr. Sun?"
 
 #: dialog0116.txt:2
 msgid "OTHER: Och, kiedyś mieliśmy okazję się spotkać."
-msgstr ""
+msgstr "OTHER: Oh, we once had the opportunity to meet."
 
 #: dialog0116.txt:3
 msgid "OTHER: Co chciałbyś wiedzieć?"
-msgstr ""
+msgstr "OTHER: What would you like to know?"
 
 #: dialog0116.txt:104
 msgid "$0: Jak się do niego dostać?"
-msgstr ""
+msgstr "$0: How can I get to him?"
 
 #: dialog0116.txt:105
 msgid "$1: Znasz go osobiście?"
-msgstr ""
+msgstr "$1: Do you know him personally?"
 
 #: dialog0116.txt:106
 msgid "$2: Kim on jest?"
-msgstr ""
+msgstr "$2: Who is he?"
 
 #: dialog0116.txt:207
 msgid "$3: Naukowe."
-msgstr ""
+msgstr "$3: Scientifically..."
 
 #: dialog0116.txt:208
 msgid "$4: Po ludzku."
-msgstr ""
+msgstr "$4: Humanly."
 
 #: dialog0116.txt:100001
 msgid "OTHER: To bardzo proste.#X1"
-msgstr ""
+msgstr "OTHER: That is very simple.#X1"
 
 #: dialog0116.txt:100101
 msgid "OTHER: Prosiłem go kiedyś, by poświecił mocniej|nad krasnoludzkimi kopalniami Ghorlargu.|Bardzo niemiłe miejsce."
