@@ -1061,7 +1061,7 @@ void Process::setAnimationPosition() {
 void Process::setTimer() {
 	int value = pop();
 	debug("setTimer %d", value);
-	_engine->setTimer(value);
+	_timer = value;
 	suspend();
 }
 

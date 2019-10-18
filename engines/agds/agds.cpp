@@ -42,7 +42,7 @@
 namespace AGDS {
 
 AGDSEngine::AGDSEngine(OSystem *system, const ADGameDescription *gameDesc) : Engine(system),
-		_gameDescription(gameDesc), _pictureCacheId(0), _sharedStorageIndex(-2), _timer(0),
+		_gameDescription(gameDesc), _pictureCacheId(0), _sharedStorageIndex(-2),
 		_mjpgPlayer(), _currentScreen(), _previousScreen(),
 		_defaultMouseCursor(),
 		_mouse(400, 300), _userEnabled(false), _currentRegion(),
@@ -206,6 +206,9 @@ void AGDSEngine::runProcess(ProcessListType::iterator &it) {
 		return;
 	}
 
+	if (!process.active())
+		return;
+
 	const Common::String &name = process.getName();
 	if (process.getStatus() == Process::kStatusDone || process.getStatus() == Process::kStatusError) {
 		debug("process %s finished", name.c_str());
@@ -302,9 +305,6 @@ Common::Error AGDSEngine::run() {
 
 	while(!shouldQuit()) {
 		uint32 frameStarted = _system->getMillis();
-
-		if (_timer > 0)
-			--_timer;
 
 		Common::Event event;
 		while(eventManager->pollEvent(event)) {

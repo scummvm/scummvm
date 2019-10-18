@@ -103,11 +103,7 @@ public:
 	int appendToSharedStorage(const Common::String &value);
 	const Common::String & getSharedStorage(int id) const;
 
-	void setTimer(int timer) {
-		_timer = timer;
-	}
-
-	bool active() const { return _timer <= 0 && !_mjpgPlayer; }
+	bool active() const { return !_mjpgPlayer; }
 	void playFilm(const Common::String &video, const Common::String &audio);
 	void skipFilm();
 
@@ -194,7 +190,6 @@ private:
 	Common::String				_sharedStorage[10];
 	GlobalsType					_globals;
 	SystemVariablesType			_systemVars;
-	int							_timer;
 	Graphics::PixelFormat		_pixelFormat;
 	MJPGPlayer *				_mjpgPlayer;
 	Screen *					_currentScreen;
