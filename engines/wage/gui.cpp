@@ -361,7 +361,7 @@ void Gui::clearOutput() {
 }
 
 void Gui::actionCopy() {
-	g_system->setTextInClipboard(_consoleWindow->getSelection());
+	g_system->setTextInClipboard(Common::convertUtf32ToUtf8(_consoleWindow->getSelection()));
 
 	_menu->enableCommand(kMenuEdit, kMenuActionPaste, true);
 }
@@ -387,7 +387,7 @@ void Gui::actionClear() {
 	if (_consoleWindow->getSelectedText()->endY == -1)
 		return;
 
-	Common::String input = _consoleWindow->getInput();
+	Common::String input = Common::convertFromU32String(_consoleWindow->getInput());
 
 	_consoleWindow->cutSelection();
 
@@ -400,9 +400,9 @@ void Gui::actionCut() {
 	if (_consoleWindow->getSelectedText()->endY == -1)
 		return;
 
-	Common::String input = _consoleWindow->getInput();
+	Common::String input = Common::convertFromU32String(_consoleWindow->getInput());
 
-	g_system->setTextInClipboard(_consoleWindow->cutSelection());
+	g_system->setTextInClipboard(Common::convertFromU32String(_consoleWindow->cutSelection()));
 
 	_undobuffer = input;
 

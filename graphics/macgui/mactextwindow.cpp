@@ -90,7 +90,7 @@ void MacTextWindow::resize(int w, int h) {
 	_mactext->setMaxWidth(_maxWidth);
 }
 
-void MacTextWindow::appendText(Common::String str, const MacFont *macFont, bool skipAdd) {
+void MacTextWindow::appendText(Common::U32String str, const MacFont *macFont, bool skipAdd) {
 	_mactext->appendText(str, macFont->getId(), macFont->getSize(), macFont->getSlant(), skipAdd);
 
 	_contentIsDirty = true;
@@ -100,6 +100,10 @@ void MacTextWindow::appendText(Common::String str, const MacFont *macFont, bool 
 
 		updateCursorPos();
 	}
+}
+
+void MacTextWindow::appendText(const Common::String &str, const MacFont *macFont, bool skipAdd) {
+	appendText(Common::U32String(str), macFont, skipAdd);
 }
 
 void MacTextWindow::clearText() {
@@ -223,9 +227,9 @@ void MacTextWindow::drawSelection() {
 	}
 }
 
-Common::String MacTextWindow::getSelection(bool formatted, bool newlines) {
+Common::U32String MacTextWindow::getSelection(bool formatted, bool newlines) {
 	if (_selectedText.endY == -1)
-		return Common::String("");
+		return Common::U32String("");
 
 	SelectedText s = _selectedText;
 
@@ -249,9 +253,9 @@ bool MacTextWindow::isCutAllowed() {
 	return false;
 }
 
-Common::String MacTextWindow::cutSelection() {
+Common::U32String MacTextWindow::cutSelection() {
 	if (!isCutAllowed())
-		return Common::String("");
+		return Common::U32String("");
 
 	SelectedText s = _selectedText;
 
@@ -260,18 +264,17 @@ Common::String MacTextWindow::cutSelection() {
 		SWAP(s.startCol, s.endCol);
 	}
 
-	Common::String selection = _mactext->getTextChunk(s.startRow, s.startCol, s.endRow, s.endCol, false, false);
+	Common::U32String selection = _mactext->getTextChunk(s.startRow, s.startCol, s.endRow, s.endCol, false, false);
 
-	const char *selStart = strstr(_inputText.c_str(), selection.c_str());
+	uint32 selPos = _inputText.find(selection);
 
-	if (!selStart) {
-		warning("Cannot find substring '%s' in '%s'", selection.c_str(), _inputText.c_str());
+	if (selPos == Common::U32String::npos) {
+		//warning("Cannot find substring '%s' in '%s'", selection.c_str(), _inputText.c_str()); // Needed encode method
 
-		return Common::String("");
+		return Common::U32String("");
 	}
 
-	int selPos = selStart - _inputText.c_str();
-	Common::String newInput = Common::String(_inputText.c_str(), selPos) + Common::String(_inputText.c_str() + selPos + selection.size());
+	Common::U32String newInput = Common::U32String(_inputText.c_str(), selPos) + Common::U32String(_inputText.c_str() + selPos + selection.size());
 
 	clearSelection();
 	clearInput();
@@ -459,7 +462,7 @@ void MacTextWindow::undrawInput() {
 void MacTextWindow::drawInput() {
 	undrawInput();
 
-	Common::Array<Common::String> text;
+	Common::Array<Common::U32String> text;
 
 	// Now recalc new text height
 	_fontRef->wordWrapText(_inputText, _maxWidth, text);
@@ -482,10 +485,14 @@ void MacTextWindow::clearInput() {
 	_inputText.clear();
 }
 
-void MacTextWindow::appendInput(Common::String str) {
+void MacTextWindow::appendInput(Common::U32String str) {
 	_inputText += str;
 
 	drawInput();
+}
+
+void MacTextWindow::appendInput(const Common::String &str) {
+	appendInput(Common::U32String(str));
 }
 
 //////////////////

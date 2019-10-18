@@ -52,8 +52,39 @@ MacText::~MacText() {
 	delete _macFont;
 }
 
-MacText::MacText(Common::String s, MacWindowManager *wm, const MacFont *macFont, int fgcolor, int bgcolor, int maxWidth, TextAlign textAlignment, int interlinear) {
+MacText::MacText(Common::U32String s, MacWindowManager *wm, const MacFont *macFont, int fgcolor, int bgcolor, int maxWidth, TextAlign textAlignment, int interlinear) {
 	_str = s;
+	_wm = wm;
+	_macFont = macFont;
+	_fgcolor = fgcolor;
+	_bgcolor = bgcolor;
+	_maxWidth = maxWidth;
+	_textMaxWidth = 0;
+	_textMaxHeight = 0;
+	_surface = nullptr;
+	_textAlignment = textAlignment;
+	_interLinear = interlinear;
+
+	if (macFont) {
+		_defaultFormatting.font = wm->_fontMan->getFont(*macFont);
+	} else {
+		_defaultFormatting.font = NULL;
+	}
+
+	_defaultFormatting.wm = wm;
+
+	_currentFormatting = _defaultFormatting;
+
+	if (!_str.empty())
+		splitString(_str);
+
+	recalcDims();
+
+	_fullRefresh = true;
+}
+
+MacText::MacText(const Common::String &s, MacWindowManager *wm, const MacFont *macFont, int fgcolor, int bgcolor, int maxWidth, TextAlign textAlignment, int interlinear) {
+	_str = Common::U32String(s);
 	_wm = wm;
 	_macFont = macFont;
 	_fgcolor = fgcolor;
@@ -97,10 +128,10 @@ void MacText::setMaxWidth(int maxWidth) {
 	}
 }
 
-void MacText::splitString(Common::String &str) {
-	const char *s = str.c_str();
+void MacText::splitString(Common::U32String &str) {
+	const Common::U32String::value_type *s = str.c_str();
 
-	Common::String tmp;
+	Common::U32String tmp;
 	bool prevCR = false;
 
 	if (_textLines.empty()) {
@@ -161,7 +192,7 @@ void MacText::splitString(Common::String &str) {
 		}
 
 		if (*s == '\r' || *s == '\n' || nextChunk) {
-			Common::Array<Common::String> text;
+			Common::Array<Common::U32String> text;
 
 			if (!nextChunk)
 				previousFormatting = _currentFormatting;
@@ -213,7 +244,7 @@ void MacText::splitString(Common::String &str) {
 	}
 
 	if (tmp.size()) {
-		Common::Array<Common::String> text;
+		Common::Array<Common::U32String> text;
 		int w = getLineWidth(curLine, true);
 
 		_currentFormatting.getFont()->wordWrapText(tmp, _maxWidth, text, w);
@@ -369,8 +400,8 @@ void MacText::draw(ManagedSurface *g, int x, int y, int w, int h, int xoff, int 
 }
 
 // Count newline characters in String
-uint getNewlinesInString(const Common::String &str) {
-	Common::String::const_iterator p = str.begin();
+uint getNewlinesInString(const Common::U32String &str) {
+	Common::U32String::const_iterator p = str.begin();
 	uint newLines = 0;
 	while (*p) {
 		if (*p == '\n')
@@ -380,7 +411,7 @@ uint getNewlinesInString(const Common::String &str) {
 	return newLines;
 }
 
-void MacText::appendText(Common::String str, int fontId, int fontSize, int fontSlant, bool skipAdd) {
+void MacText::appendText(Common::U32String str, int fontId, int fontSize, int fontSlant, bool skipAdd) {
 	uint oldLen = _textLines.size();
 
 	MacFontRun fontRun = MacFontRun(_wm, fontId, fontSlant, fontSize, 0, 0, 0);
@@ -398,7 +429,11 @@ void MacText::appendText(Common::String str, int fontId, int fontSize, int fontS
 	render(oldLen - 1, _textLines.size());
 }
 
-void MacText::appendTextDefault(Common::String str, bool skipAdd) {
+void MacText::appendText(const Common::String &str, int fontId, int fontSize, int fontSlant, bool skipAdd) {
+	appendText(Common::U32String(str), fontId, fontSize, fontSlant, skipAdd);
+}
+
+void MacText::appendTextDefault(Common::U32String str, bool skipAdd) {
 	uint oldLen = _textLines.size();
 
 	_currentFormatting = _defaultFormatting;
@@ -414,6 +449,10 @@ void MacText::appendTextDefault(Common::String str, bool skipAdd) {
 	render(oldLen - 1, _textLines.size());
 }
 
+void MacText::appendTextDefault(const Common::String &str, bool skipAdd) {
+	appendTextDefault(Common::U32String(str), skipAdd);
+}
+
 void MacText::clearText() {
 	_textLines.clear();
 	_str.clear();
@@ -424,7 +463,7 @@ void MacText::clearText() {
 	recalcDims();
 }
 
-void MacText::replaceLastLine(Common::String str) {
+void MacText::replaceLastLine(Common::U32String str) {
 	int oldLen = MAX<int>(0, _textLines.size() - 1);
 
 	// TODO: Recalc length, adapt to _textLines
@@ -485,7 +524,7 @@ void MacText::getRowCol(int x, int y, int *sx, int *sy, int *row, int *col) {
 	if (chunk == _textLines[*row].chunks.size())
 		chunk--;
 
-	Common::String str = _textLines[*row].chunks[chunk].text;
+	Common::U32String str = _textLines[*row].chunks[chunk].text;
 
 	*col = mcol;
 
@@ -501,8 +540,8 @@ void MacText::getRowCol(int x, int y, int *sx, int *sy, int *row, int *col) {
 	}
 }
 
-Common::String MacText::getTextChunk(int startRow, int startCol, int endRow, int endCol, bool formatted, bool newlines) {
-	Common::String res;
+Common::U32String MacText::getTextChunk(int startRow, int startCol, int endRow, int endCol, bool formatted, bool newlines) {
+	Common::U32String res;
 
 	startRow = CLIP(startRow, 0, (int)_textLines.size() - 1);
 	endRow = CLIP(endRow, 0, (int)_textLines.size() - 1);
@@ -517,12 +556,12 @@ Common::String MacText::getTextChunk(int startRow, int startCol, int endRow, int
 					if (endCol >= (int)_textLines[i].chunks[chunk].text.size())
 						res += _textLines[i].chunks[chunk].text;
 					else
-						res += Common::String(_textLines[i].chunks[chunk].text.c_str(), endCol);
+						res += Common::U32String(_textLines[i].chunks[chunk].text.c_str(), endCol);
 				} else if ((int)_textLines[i].chunks[chunk].text.size() > startCol) {
 					if (formatted)
 						res += _textLines[i].chunks[chunk].toString();
 
-					res += Common::String(_textLines[i].chunks[chunk].text.c_str() + startCol, endCol - startCol);
+					res += Common::U32String(_textLines[i].chunks[chunk].text.c_str() + startCol, endCol - startCol);
 				}
 
 				startCol -= _textLines[i].chunks[chunk].text.size();
@@ -542,7 +581,7 @@ Common::String MacText::getTextChunk(int startRow, int startCol, int endRow, int
 					if (formatted)
 						res += _textLines[i].chunks[chunk].toString();
 
-					res += Common::String(_textLines[i].chunks[chunk].text.c_str() + startCol);
+					res += Common::U32String(_textLines[i].chunks[chunk].text.c_str() + startCol);
 				}
 
 				startCol -= _textLines[i].chunks[chunk].text.size();
@@ -559,7 +598,7 @@ Common::String MacText::getTextChunk(int startRow, int startCol, int endRow, int
 				if (endCol >= (int)_textLines[i].chunks[chunk].text.size())
 					res += _textLines[i].chunks[chunk].text;
 				else
-					res += Common::String(_textLines[i].chunks[chunk].text.c_str(), endCol);
+					res += Common::U32String(_textLines[i].chunks[chunk].text.c_str(), endCol);
 
 				endCol -= _textLines[i].chunks[chunk].text.size();
 
