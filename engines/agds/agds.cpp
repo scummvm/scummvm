@@ -625,7 +625,6 @@ SystemVariable *AGDSEngine::getSystemVariable(const Common::String &name) {
 void AGDSEngine::runDialog(const Common::String &dialogScript, const Common::String & defs) {
 	parseDialogDefs(defs);
 	_dialogScript = dialogScript;
-	debug("dialog:\n%s", dialogScript.c_str());
 	_dialogScriptPos = 0;
 	getSystemVariable("dialog_var")->setInteger(-1);
 }
