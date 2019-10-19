@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.5.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2019-10-16 19:33+0200\n"
+"POT-Creation-Date: 2019-10-19 20:57+0200\n"
 "PO-Revision-Date: 2018-08-06 21:35+0000\n"
 "Last-Translator: Erik Zubiria <zubiriaerik@hotmail.com>\n"
 "Language-Team: Basque <https://translations.scummvm.org/projects/scummvm/"
@@ -162,7 +162,7 @@ msgstr ""
 #: backends/platform/wii/options.cpp:47
 #: backends/platform/wince/CELauncherDialog.cpp:54
 #: engines/agos/animation.cpp:559 engines/drascula/saveload.cpp:49
-#: engines/groovie/script.cpp:430 engines/parallaction/saveload.cpp:271
+#: engines/groovie/script.cpp:433 engines/parallaction/saveload.cpp:271
 #: engines/sci/engine/kgraphics.cpp:74 engines/sci/graphics/controls32.cpp:817
 #: engines/scumm/dialogs.cpp:189 engines/scumm/scumm.cpp:1900
 #: engines/scumm/players/player_v3m.cpp:130
@@ -3858,7 +3858,7 @@ msgstr "Bideo abiadura azkarra"
 msgid "Play movies at an increased speed"
 msgstr "Erreproduzitu bidoeak abiadura handiagoan"
 
-#: engines/groovie/script.cpp:430
+#: engines/groovie/script.cpp:433
 msgid "Failed to save game"
 msgstr "Ezin izan da jokoa gorde"
 
