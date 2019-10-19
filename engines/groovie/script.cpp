@@ -58,6 +58,9 @@ Script::Script(GroovieEngine *vm, EngineVersion version) :
 	case kGroovieV2:
 		_opcodes = _opcodesV2;
 		break;
+	default:
+		_opcodes = nullptr;
+		break;
 	}
 
 	// Prepare the variables
@@ -566,6 +569,9 @@ void Script::o_videofromref() {			// 0x09
 			debugCN(1, kDebugScript, " (This video is special somehow!)");
 			warning("(This video (0x%04X) is special somehow!)", fileref);
 		}
+
+	default:
+		break;
 	}
 	if (fileref != _videoRef) {
 		debugCN(1, kDebugScript, "\n");

@@ -119,6 +119,8 @@ Common::Error GroovieEngine::run() {
 		initGraphics(640, 480);
 		_pixelFormat = Graphics::PixelFormat::createFormatCLUT8();
 		break;
+	default:
+		break;
 	}
 
 	// Create debugger. It requires GFX to be initialized
@@ -161,6 +163,8 @@ Common::Error GroovieEngine::run() {
 #ifdef ENABLE_GROOVIE2
 		_videoPlayer = new ROQPlayer(this);
 #endif
+		break;
+	default:
 		break;
 	}
 
