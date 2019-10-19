@@ -20,9 +20,7 @@
  *
  */
 
-#include "bladerunner/matrix.h"
-
-#include "common/scummsys.h"
+#include "bladerunner/matrix.h" // Already includes "common/scummsys.h"
 
 namespace BladeRunner {
 

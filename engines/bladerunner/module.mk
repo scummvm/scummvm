@@ -274,6 +274,7 @@ MODULE_OBJS = \
 	ui/ui_scroll_box.o \
 	ui/ui_slider.o \
 	ui/vk.o \
+	vector.o \
 	view.o \
 	vqa_decoder.o \
 	vqa_player.o \

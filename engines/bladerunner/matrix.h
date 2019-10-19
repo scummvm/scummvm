@@ -23,6 +23,8 @@
 #ifndef BLADERUNNER_MATRIX_H
 #define BLADERUNNER_MATRIX_H
 
+#include "common/scummsys.h" // assert
+
 #include "bladerunner/vector.h"
 
 namespace BladeRunner {
