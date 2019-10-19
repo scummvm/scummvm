@@ -91,6 +91,22 @@ void ActionText::start() {
 	stream->read(str, stream->size());
 	delete stream;
 
+	switch(_actor->getPage()->getGame()->getLanguage()) {
+	case Common::RU_RUS:
+		_text = Common::String(str).decode(Common::kWindows1251);
+		break;
+
+	case Common::EN_ANY:
+	default:
+		_text = Common::String(str);
+		break;
+	}
+
+	delete[] str;
+
+	while ( _text.size() > 0 && (_text[ _text.size() - 1 ] == '\n' || _text[ _text.size() - 1 ] == '\r') )
+		_text.deleteLastChar();
+
 	if (_scrollBar) {
 		Graphics::MacFont *font = new Graphics::MacFont;
 		_txtWnd = director->getWndManager().addTextWindow(font, _textColorIndex, _backgroundColorIndex,
@@ -114,12 +130,11 @@ void ActionText::start() {
 		Graphics::TransparentSurface *noborder2 = new Graphics::TransparentSurface(*noborder, true);
 		_txtWnd->setBorder(noborder2, false);
 
-		if (_actor->getPage()->getGame()->getLanguage() == Common::EN_ANY)
-			_txtWnd->appendText(str, font);
+		_txtWnd->appendText(_text, font);
+
 	} else {
 		director->addTextAction(this);
 	}
-	delete[] str;
 }
 
 void ActionText::end() {
@@ -134,12 +149,11 @@ void ActionText::end() {
 
 void ActionText::draw(Graphics::ManagedSurface *surface) {
 	// not working
-	/*Graphics::TextAlign alignment = _centered ? Graphics::kTextAlignCenter : Graphics::kTextAlignLeft;
-	Graphics::MacFont *font = new Graphics::MacFont;
+	Graphics::TextAlign alignment = _centered ? Graphics::kTextAlignCenter : Graphics::kTextAlignLeft;
+	Graphics::MacFont *font = new Graphics::MacFont();
 	Director *director = _actor->getPage()->getGame()->getDirector();
-	Graphics::MacText text("", &director->getWndManager(), font, _textColorIndex, _backgroundColorIndex, _xRight - _xLeft, alignment);
-	text.appendText("TESTING", font->getId(), font->getSize(), font->getSlant(), 0);
-	text.draw(surface, _xLeft, _yTop, _xRight - _xLeft, _yBottom - _yTop, 0, 0);*/
+	Graphics::MacText text(_text, &director->getWndManager(), font, _textColorIndex, _backgroundColorIndex, _xRight - _xLeft, alignment);
+	text.draw(surface, 0, 0, _xRight - _xLeft, _yBottom - _yTop, _xLeft, _yTop);
 }
 
 #define RED(rgb) ((rgb) & 0xFF)
