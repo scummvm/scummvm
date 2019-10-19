@@ -181,6 +181,7 @@ void ThemeLayoutStacked::reflowLayoutVertical() {
 	int curX, curY;
 	int resize[8];
 	int rescount = 0;
+	bool fixedWidth = _w != -1;
 
 	curX = _padding.left;
 	curY = _padding.top;
@@ -202,11 +203,20 @@ void ThemeLayoutStacked::reflowLayoutVertical() {
 
 		_children[i]->offsetY(curY);
 
+		// Center child if it this has been requested *and* the space permits it.
+		if (_centered && _children[i]->getWidth() < (_w - _padding.left - _padding.right) && _w != -1) {
+			_children[i]->offsetX((_w >> 1) - (_children[i]->getWidth() >> 1));
+		} else
+			_children[i]->offsetX(curX);
+
 		// Advance the vertical offset by the height of the newest item, plus
 		// the item spacing value.
 		curY += _children[i]->getHeight() + _spacing;
 
-		// Update the height of this stack layout
+		// Update width and height of this stack layout
+		if (!fixedWidth) {
+			_w = MAX(_w, (int16)(_children[i]->getWidth() + _padding.left + _padding.right));
+		}
 		_h += _children[i]->getHeight() + _spacing;
 	}
 
@@ -231,27 +241,13 @@ void ThemeLayoutStacked::reflowLayoutVertical() {
 				_children[j]->offsetY(newh);
 		}
 	}
-
-	// Set stack width from its children if it was not set by its parent
-	if (_w == -1) {
-		for (uint i = 0; i < _children.size(); ++i) {
-			_w = MAX(_w, (int16)(_children[i]->getWidth() + _padding.left + _padding.right));
-		}
-	}
-
-	for (uint i = 0; i < _children.size(); ++i) {
-		// Center child if it this has been requested *and* the space permits it.
-		if (_centered && _children[i]->getWidth() < (_w - _padding.left - _padding.right) && _w != -1) {
-			_children[i]->offsetX((_w >> 1) - (_children[i]->getWidth() >> 1));
-		} else
-			_children[i]->offsetX(curX);
-	}
 }
 
 void ThemeLayoutStacked::reflowLayoutHorizontal() {
 	int curX, curY;
 	int resize[8];
 	int rescount = 0;
+	bool fixedHeight = _h != -1;
 
 	curX = _padding.left;
 	curY = _padding.top;
@@ -273,12 +269,21 @@ void ThemeLayoutStacked::reflowLayoutHorizontal() {
 
 		_children[i]->offsetX(curX);
 
+		// Center child if it this has been requested *and* the space permits it.
+		if (_centered && _children[i]->getHeight() < (_h - _padding.top - _padding.bottom) && _h != -1)
+			_children[i]->offsetY((_h >> 1) - (_children[i]->getHeight() >> 1));
+		else
+			_children[i]->offsetY(curY);
+
 		// Advance the horizontal offset by the width of the newest item, plus
 		// the item spacing value.
 		curX += (_children[i]->getWidth() + _spacing);
 
-		// Update the width of this stack layout
+		// Update width and height of this stack layout
 		_w += _children[i]->getWidth() + _spacing;
+		if (!fixedHeight) {
+			_h = MAX(_h, (int16)(_children[i]->getHeight() + _padding.top + _padding.bottom));
+		}
 	}
 
 	// If there are any children at all, then we added the spacing value once
@@ -301,21 +306,6 @@ void ThemeLayoutStacked::reflowLayoutHorizontal() {
 			for (uint j = resize[i] + 1; j < _children.size(); ++j)
 				_children[j]->offsetX(neww);
 		}
-	}
-
-	// Set stack height from its children if it was not set by its parent
-	if (_h == -1) {
-		for (uint i = 0; i < _children.size(); ++i) {
-			_h = MAX(_h, (int16)(_children[i]->getHeight() + _padding.top + _padding.bottom));
-		}
-	}
-
-	for (uint i = 0; i < _children.size(); ++i) {
-		// Center child if it this has been requested *and* the space permits it.
-		if (_centered && _children[i]->getHeight() < (_h - _padding.top - _padding.bottom) && _h != -1)
-			_children[i]->offsetY((_h >> 1) - (_children[i]->getHeight() >> 1));
-		else
-			_children[i]->offsetY(curY);
 	}
 }
 
