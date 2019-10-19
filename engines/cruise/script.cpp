@@ -264,6 +264,8 @@ int32 opcodeType2() {
 
 	}
 	break;
+	default:
+		break;
 	}
 
 	return 0;
@@ -312,6 +314,9 @@ int32 opcodeType4() {		// test
 	case 5:
 		if (var2 >= var1)
 			boolVar = 1;
+		break;
+
+	default:
 		break;
 	}
 
@@ -398,6 +403,9 @@ int32 opcodeType5() {
 	case 7:
 		currentScriptPtr->scriptOffset = newSi;	//always
 		break;
+
+	default:
+		break;
 	}
 
 	return (0);
@@ -441,6 +449,8 @@ int32 opcodeType3()	{	// math
 		pushVar(pop2 & pop1);
 		return (0);
 
+	default:
+		break;
 	}
 
 	return 0;

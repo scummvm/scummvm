@@ -128,6 +128,8 @@ void decodeGfxUnified(dataFileEntry *pCurrentFileEntry, int16 format) {
 
 		break;
 	}
+	default:
+		break;
 	}
 
 	MemFree(pCurrentFileEntry->subData.ptr);
