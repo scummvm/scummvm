@@ -103,6 +103,7 @@ private:
 class MacFontManager {
 public:
 	MacFontManager(uint32 mode);
+	~MacFontManager();
 
 	/**
 	 * Accessor method to check the presence of built-in fonts.
@@ -154,6 +155,9 @@ private:
 	Common::HashMap<Common::String, int> _extraFontIds;
 
 	int parseFontSlant(Common::String slant);
+
+	/* Unicode font */
+	Common::HashMap<int, const Graphics::Font *> _uniFonts;
 };
 
 } // End of namespace Graphics

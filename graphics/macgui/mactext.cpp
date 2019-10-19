@@ -66,6 +66,7 @@ MacText::MacText(Common::U32String s, MacWindowManager *wm, const MacFont *macFo
 	_interLinear = interlinear;
 
 	if (macFont) {
+		_defaultFormatting = MacFontRun(_wm, macFont->getId(), macFont->getSlant(), macFont->getSize(), 0, 0, 0);
 		_defaultFormatting.font = wm->_fontMan->getFont(*macFont);
 	} else {
 		_defaultFormatting.font = NULL;
@@ -97,6 +98,7 @@ MacText::MacText(const Common::String &s, MacWindowManager *wm, const MacFont *m
 	_interLinear = interlinear;
 
 	if (macFont) {
+		_defaultFormatting = MacFontRun(_wm, macFont->getId(), macFont->getSlant(), macFont->getSize(), 0, 0, 0);
 		_defaultFormatting.font = wm->_fontMan->getFont(*macFont);
 	} else {
 		_defaultFormatting.font = NULL;
@@ -310,7 +312,7 @@ void MacText::render(int from, int to) {
 
 		// TODO: _textMaxWidth, when -1, was not rendering ANY text.
 		for (uint j = 0; j < _textLines[i].chunks.size(); j++) {
-			debug(5, "line %d[%d]/%d at %d,%d (%s)", i, j, xOffset, _textLines[i].chunks[j].fontId, _textLines[i].y, _textLines[i].chunks[j].text.c_str());
+			debug(5, "line %d[%d]/%d at %d,%d (%s)", i, j, xOffset, _textLines[i].chunks[j].fontId, _textLines[i].y, _textLines[i].chunks[j].text.encode().c_str());
 
 			if (_textLines[i].chunks[j].text.empty())
 				continue;
@@ -324,7 +326,7 @@ void MacText::render(int from, int to) {
 		debugN(4, "%2d ", i);
 
 		for (uint j = 0; j < _textLines[i].chunks.size(); j++)
-			debugN(4, "[%d (%d)] \"%s\" ", _textLines[i].chunks[j].fontId, _textLines[i].chunks[j].textSlant, _textLines[i].chunks[j].text.c_str());
+			debugN(4, "[%d (%d)] \"%s\" ", _textLines[i].chunks[j].fontId, _textLines[i].chunks[j].textSlant, _textLines[i].chunks[j].text.encode().c_str());
 
 		debug(4, "%s", "");
 	}

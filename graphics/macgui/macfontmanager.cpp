@@ -99,6 +99,11 @@ MacFontManager::MacFontManager(uint32 mode) : _mode(mode) {
 	}
 }
 
+MacFontManager::~MacFontManager() {
+	for(Common::HashMap<int, const Graphics::Font *>::iterator it = _uniFonts.begin(); it != _uniFonts.end(); it++)
+		delete it->_value;
+}
+
 void MacFontManager::loadFontsBDF() {
 	Common::Archive *dat;
 
@@ -287,7 +292,17 @@ const Font *MacFontManager::getFont(MacFont macFont) {
 #ifdef USE_FREETYPE2
 	if (!font) {
 		if (_mode & kWMModeUnicode) {
-			font = Graphics::loadTTFFontFromArchive("FreeSans.ttf", 16, Graphics::kTTFSizeModeCell, 0, Graphics::kTTFRenderModeMonochrome);
+			if (macFont.getSize() <= 0) {
+				debug(1, "MacFontManager::getFont() - Font size <= 0!");
+			}
+			Common::HashMap<int, const Graphics::Font *>::iterator pFont = _uniFonts.find(macFont.getSize());
+
+			if (pFont != _uniFonts.end()) {
+				font = pFont->_value;
+			} else {
+				font = Graphics::loadTTFFontFromArchive("FreeSans.ttf", macFont.getSize(), Graphics::kTTFSizeModeCharacter, 0, Graphics::kTTFRenderModeMonochrome);
+				_uniFonts[macFont.getSize()] = font;
+			}
 		}
 	}
 #endif
