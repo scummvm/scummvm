@@ -86,32 +86,34 @@ struct Bitmap {
 #define L9SETWORD(x,val) WRITE_LE_UINT16(x, val)
 #define L9SETDWORD(x,val) WRITE_LE_UINT32(x, val)
 
+extern void level9_initialize();
+
 /* routines provided by os dependent code */
-void os_printchar(char c);
-L9BOOL os_input(char *ibuff, int size);
-char os_readchar(int millis);
-L9BOOL os_stoplist(void);
-void os_flush(void);
-L9BOOL os_save_file(L9BYTE *Ptr, int Bytes);
-L9BOOL os_load_file(L9BYTE *Ptr, int *Bytes, int Max);
-L9BOOL os_get_game_file(char *NewName, int Size);
-void os_set_filenumber(char *NewName, int Size, int n);
-void os_graphics(int mode);
-void os_cleargraphics(void);
-void os_setcolour(int colour, int index);
-void os_drawline(int x1, int y1, int x2, int y2, int colour1, int colour2);
-void os_fill(int x, int y, int colour1, int colour2);
-void os_show_bitmap(int pic, int x, int y);
-Common::SeekableReadStream *os_open_script_file(void);
+extern void os_printchar(char c);
+extern L9BOOL os_input(char *ibuff, int size);
+extern char os_readchar(int millis);
+extern L9BOOL os_stoplist(void);
+extern void os_flush(void);
+extern L9BOOL os_save_file(L9BYTE *Ptr, int Bytes);
+extern L9BOOL os_load_file(L9BYTE *Ptr, int *Bytes, int Max);
+extern L9BOOL os_get_game_file(char *NewName, int Size);
+extern void os_set_filenumber(char *NewName, int Size, int n);
+extern void os_graphics(int mode);
+extern void os_cleargraphics(void);
+extern void os_setcolour(int colour, int index);
+extern void os_drawline(int x1, int y1, int x2, int y2, int colour1, int colour2);
+extern void os_fill(int x, int y, int colour1, int colour2);
+extern void os_show_bitmap(int pic, int x, int y);
+extern Common::SeekableReadStream *os_open_script_file(void);
 
 /* routines provided by level9 interpreter */
-L9BOOL LoadGame(const char *filename, char *picname);
-L9BOOL RunGame(void);
-void StopGame(void);
-void RestoreGame(char *filename);
-void FreeMemory(void);
-void GetPictureSize(int *width, int *height);
-L9BOOL RunGraphics(void);
+extern L9BOOL LoadGame(const char *filename, char *picname);
+extern L9BOOL RunGame(void);
+extern void StopGame(void);
+extern void RestoreGame(char *filename);
+extern void FreeMemory(void);
+extern void GetPictureSize(int *width, int *height);
+extern L9BOOL RunGraphics(void);
 
 /* bitmap routines provided by level9 interpreter */
 BitmapType DetectBitmaps(char *dir);

@@ -20,45 +20,20 @@
  *
  */
 
-#include "glk/level9/level9.h"
-#include "glk/level9/level9_main.h"
-#include "glk/level9/os_glk.h"
+#ifndef GLK_LEVEL9_OS_GLK
+#define GLK_LEVEL9_OS_GLK
 
 namespace Glk {
 namespace Level9 {
 
-Level9 *g_vm = nullptr;
+extern bool gln_graphics_enabled;
+extern bool gln_graphics_possible;
 
-Level9::Level9(OSystem *syst, const GlkGameDescription &gameDesc) : GlkAPI(syst, gameDesc) {
-	g_vm = this;
-}
+extern void gln_initialize();
+extern void gln_main(const char *filename);
+extern int gln_startup_code(int argc, char *argv[]);
 
-void Level9::runGame() {
-	initialize();
-
-
-	_gameFile.close();
-	gln_main(getFilename().c_str());
-
-	deinitialize();
-}
-
-bool Level9::initialize() {
-	return gln_startup_code(0, nullptr);
-}
-
-void Level9::deinitialize() {
-}
-
-Common::Error Level9::readSaveData(Common::SeekableReadStream *rs) {
-	// TODO
-	return Common::kNoError;
-}
-
-Common::Error Level9::writeGameData(Common::WriteStream *ws) {
-	// TODO
-	return Common::kNoError;
-}
-
-} // End of namespace Level9
+} // End of namespace Alan2
 } // End of namespace Glk
+
+#endif

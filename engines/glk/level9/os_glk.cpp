@@ -30,9 +30,6 @@ namespace Level9 {
 #define BYTE_MAX 0xff
 #define BITS_PER_CHAR 8
 
-/* File path delimiter, used to be #defined in v2 interpreter. */
-static const char GLN_FILE_DELIM = '/';
-
 /*---------------------------------------------------------------------*/
 /*  Module variables, miscellaneous other stuff                        */
 /*---------------------------------------------------------------------*/
@@ -43,39 +40,32 @@ static const glui32 GLN_PORT_VERSION = 0x00020201;
 /*
  * We use a maximum of three Glk windows, one for status, one for pictures,
  * and one for everything else.  The status and pictures windows may be
- * NULL, depending on user selections and the capabilities of the Glk
+ * nullptr, depending on user selections and the capabilities of the Glk
  * library.
  */
-static winid_t gln_main_window = NULL,
-               gln_status_window = NULL,
-               gln_graphics_window = NULL;
+static winid_t gln_main_window, gln_status_window, gln_graphics_window;
 
 /*
- * Transcript stream and input log.  These are NULL if there is no current
+ * Transcript stream and input log.  These are nullptr if there is no current
  * collection of these strings.
  */
-static strid_t gln_transcript_stream = NULL,
-               gln_inputlog_stream = NULL;
+static strid_t gln_transcript_stream, gln_inputlog_stream;
 
 /* Input read log stream, for reading back an input log. */
-static strid_t gln_readlog_stream = NULL;
+static strid_t gln_readlog_stream;
 
 /* Note about whether graphics is possible, or not. */
-static int gln_graphics_possible = TRUE;
+bool gln_graphics_possible;
 
 /* Options that may be turned off by command line flags. */
-static int gln_graphics_enabled = TRUE,
-           gln_intercept_enabled = TRUE,
-           gln_prompt_enabled = TRUE,
-           gln_loopcheck_enabled = TRUE,
-           gln_abbreviations_enabled = TRUE,
-           gln_commands_enabled = TRUE;
+bool gln_graphics_enabled, gln_intercept_enabled, gln_prompt_enabled;
+bool gln_loopcheck_enabled, gln_abbreviations_enabled, gln_commands_enabled;
 
 /* Reason for stopping the game, used to detect restarts and ^C exits. */
 enum StopReason {
 	STOP_NONE, STOP_FORCE, STOP_RESTART, STOP_EXIT
 };
-static StopReason gln_stop_reason = STOP_NONE;
+static StopReason gln_stop_reason;
 
 /* Level 9 standard input prompt string. */
 static const char *const GLN_INPUT_PROMPT = "> ";
@@ -111,6 +101,23 @@ static int gln_confirm(const char *prompt);
 /*  Glk port utility functions                                         */
 /*---------------------------------------------------------------------*/
 
+void gln_initialize() {
+	gln_main_window = nullptr;
+	gln_status_window = nullptr;
+	gln_graphics_window = nullptr;
+	gln_transcript_stream = nullptr;
+	gln_inputlog_stream = nullptr;
+	gln_readlog_stream = nullptr;
+	gln_graphics_possible = TRUE;
+	gln_graphics_enabled = TRUE;
+	gln_intercept_enabled = TRUE;
+	gln_prompt_enabled = TRUE;
+	gln_loopcheck_enabled = TRUE;
+	gln_abbreviations_enabled = TRUE;
+	gln_commands_enabled = TRUE;
+	gln_stop_reason = STOP_NONE;
+}
+
 /*
  * gln_fatal()
  *
@@ -128,7 +135,7 @@ static void gln_fatal(const char *string) {
 	}
 
 	/* Cancel all possible pending window input events. */
-	g_vm->glk_cancel_line_event(gln_main_window, NULL);
+	g_vm->glk_cancel_line_event(gln_main_window, nullptr);
 	g_vm->glk_cancel_char_event(gln_main_window);
 
 	/* Print a message indicating the error. */
@@ -279,7 +286,7 @@ static gln_uint16 gln_get_buffer_crc(const void *void_buffer, size_t length, siz
  * and may be re-requested when, say, the game changes, perhaps by moving to
  * the next part of a multipart game.
  */
-static const char *gln_gameid_game_name = NULL;
+static const char *gln_gameid_game_name = nullptr;
 
 
 /*
@@ -701,7 +708,7 @@ static const gln_game_table_t GLN_GAME_TABLE[] = {
 
 	{0x110f, 0x00, 0x4b57, "Champion of the Raj (French) 2/2 GD (ST)"},
 
-	{0x0000, 0x00, 0x0000, NULL}
+	{0x0000, 0x00, 0x0000, nullptr}
 };
 
 
@@ -1080,7 +1087,7 @@ static const gln_patch_table_t GLN_PATCH_TABLE[] = {
  * gln_gameid_lookup_patch()
  *
  * Look up and return game table and patch table entries given a game's
- * length, checksum, and CRC.  Returns the entry, or NULL if not found.
+ * length, checksum, and CRC.  Returns the entry, or nullptr if not found.
  */
 static gln_game_tableref_t gln_gameid_lookup_game(gln_uint16 length, gln_byte checksum,
 		gln_uint16 crc, int ignore_crc) {
@@ -1092,7 +1099,7 @@ static gln_game_tableref_t gln_gameid_lookup_game(gln_uint16 length, gln_byte ch
 			break;
 	}
 
-	return game->length ? game : NULL;
+	return game->length ? game : nullptr;
 }
 
 static gln_patch_tableref_t gln_gameid_lookup_patch(gln_uint16 length, gln_byte checksum,
@@ -1105,7 +1112,7 @@ static gln_patch_tableref_t gln_gameid_lookup_patch(gln_uint16 length, gln_byte 
 			break;
 	}
 
-	return patch->length ? patch : NULL;
+	return patch->length ? patch : nullptr;
 }
 
 
@@ -1113,7 +1120,7 @@ static gln_patch_tableref_t gln_gameid_lookup_patch(gln_uint16 length, gln_byte 
  * gln_gameid_identify_game()
  *
  * Identify a game from its data length, checksum, and CRC.  Returns the
- * entry of the game in the game table, or NULL if not found.
+ * entry of the game in the game table, or nullptr if not found.
  *
  * This function uses startdata and FileSize from the core interpreter.
  * These aren't advertised symbols, so be warned.
@@ -1127,7 +1134,7 @@ static gln_game_tableref_t gln_gameid_identify_game() {
 
 	/* If the data file appears too short for a header, give up now. */
 	if (FileSize < 30)
-		return NULL;
+		return nullptr;
 
 	/*
 	 * Find the version of the game, and the length of game data.  This logic
@@ -1144,7 +1151,7 @@ static gln_game_tableref_t gln_gameid_identify_game() {
 	         ? startdata[28] | startdata[29] << BITS_PER_CHAR
 	         : startdata[0] | startdata[1] << BITS_PER_CHAR;
 	if (length >= FileSize)
-		return NULL;
+		return nullptr;
 
 	/* Calculate or retrieve the checksum, in a version specific way. */
 	if (is_version2) {
@@ -1184,7 +1191,7 @@ static gln_game_tableref_t gln_gameid_identify_game() {
 /*
  * gln_gameid_get_game_name()
  *
- * Return the name of the game, or NULL if not identifiable.
+ * Return the name of the game, or nullptr if not identifiable.
  *
  * This function uses startdata from the core interpreter.  This isn't an
  * advertised symbol, so be warned.
@@ -1200,20 +1207,20 @@ static const char *gln_gameid_get_game_name() {
 		gln_game_tableref_t game;
 
 		/*
-		 * If the interpreter hasn't yet loaded a game, startdata is NULL
-		 * (uninitialized, global).  In this case, we return NULL, allowing
+		 * If the interpreter hasn't yet loaded a game, startdata is nullptr
+		 * (uninitialized, global).  In this case, we return nullptr, allowing
 		 * for retries until a game is loaded.
 		 */
 		if (!startdata)
-			return NULL;
+			return nullptr;
 
 		game = gln_gameid_identify_game();
 		gln_gameid_game_name = game ? game->name : "";
 	}
 
-	/* Return the game's name, or NULL if it was unidentifiable. */
+	/* Return the game's name, or nullptr if it was unidentifiable. */
 	assert(gln_gameid_game_name);
-	return strlen(gln_gameid_game_name) > 0 ? gln_gameid_game_name : NULL;
+	return strlen(gln_gameid_game_name) > 0 ? gln_gameid_game_name : nullptr;
 }
 
 
@@ -1225,7 +1232,7 @@ static const char *gln_gameid_get_game_name() {
  * change game file, for example os_set_filenumber().
  */
 static void gln_gameid_game_name_reset() {
-	gln_gameid_game_name = NULL;
+	gln_gameid_game_name = nullptr;
 }
 
 
@@ -1307,12 +1314,12 @@ static const int GLN_GRAPHICS_BORDER = 1,
 static const int GLN_GRAPHICS_UNUSED_PIXEL = 0xff;
 
 /* Graphics file directory, and type of graphics found in it. */
-static char *gln_graphics_bitmap_directory = NULL;
+static char *gln_graphics_bitmap_directory = nullptr;
 static BitmapType gln_graphics_bitmap_type = NO_BITMAPS;
 
 /* The current picture id being displayed. */
 enum { GLN_PALETTE_SIZE = 32 };
-static gln_byte *gln_graphics_bitmap = NULL;
+static gln_byte *gln_graphics_bitmap = nullptr;
 static gln_uint16 gln_graphics_width = 0,
                   gln_graphics_height = 0;
 static Colour gln_graphics_palette[GLN_PALETTE_SIZE]; /* = { 0, ... }; */
@@ -1343,8 +1350,8 @@ static GraphicsState gln_graphics_interpreter_state = GLN_GRAPHICS_OFF;
  * of pixels, and the other tracking on-screen data.  These are temporary
  * graphics malloc'ed memory, and should be free'd on exit.
  */
-static gln_byte *gln_graphics_off_screen = NULL,
-                 *gln_graphics_on_screen = NULL;
+static gln_byte *gln_graphics_off_screen = nullptr,
+                 *gln_graphics_on_screen = nullptr;
 
 /*
  * The number of colors used in the palette by the current picture.  Because
@@ -1371,19 +1378,19 @@ static int gln_graphics_open() {
 		                      wintype_Graphics, 0);
 	}
 
-	return gln_graphics_window != NULL;
+	return gln_graphics_window != nullptr;
 }
 
 
 /*
  * gln_graphics_close()
  *
- * If open, close the graphics window and set back to NULL.
+ * If open, close the graphics window and set back to nullptr.
  */
 static void gln_graphics_close() {
 	if (gln_graphics_window) {
-		g_vm->glk_window_close(gln_graphics_window, NULL);
-		gln_graphics_window = NULL;
+		g_vm->glk_window_close(gln_graphics_window, nullptr);
+		gln_graphics_window = nullptr;
 	}
 }
 
@@ -1424,7 +1431,7 @@ static void gln_graphics_stop() {
  * Return TRUE if graphics are currently being displayed, FALSE otherwise.
  */
 static int gln_graphics_are_displayed() {
-	return gln_graphics_window != NULL;
+	return gln_graphics_window != nullptr;
 }
 
 
@@ -2263,8 +2270,7 @@ static void gln_graphics_locate_bitmaps(const char *gamefile) {
 	BitmapType bitmap_type;
 
 	/* Find the start of the last element of the filename passed in. */
-	basename = strrchr(gamefile, GLN_FILE_DELIM);
-	basename = basename ? basename + 1 : gamefile;
+	basename = gamefile;
 
 	/* Take a copy of the directory part of the filename. */
 	dirname = (char *)gln_malloc(basename - gamefile + 1);
@@ -2438,7 +2444,7 @@ void os_show_bitmap(int picture, int x, int y) {
  * FALSE if there is no picture available to display.
  */
 static int gln_graphics_picture_is_available() {
-	return gln_graphics_bitmap != NULL;
+	return gln_graphics_bitmap != nullptr;
 }
 
 
@@ -2482,7 +2488,7 @@ static int gln_graphics_get_rendering_details(const char **bitmap_type,
 	if (gln_graphics_enabled && gln_graphics_are_displayed()) {
 		/*
 		 * Convert the detected bitmap type into a string and return it.
-		 * A NULL bitmap string implies no bitmaps.
+		 * A nullptr bitmap string implies no bitmaps.
 		 */
 		if (bitmap_type) {
 			const char *return_type;
@@ -2517,7 +2523,7 @@ static int gln_graphics_get_rendering_details(const char **bitmap_type,
 				break;
 			case NO_BITMAPS:
 			default:
-				return_type = NULL;
+				return_type = nullptr;
 				break;
 			}
 
@@ -2562,13 +2568,13 @@ static int gln_graphics_interpreter_enabled() {
  */
 static void gln_graphics_cleanup() {
 	free(gln_graphics_bitmap);
-	gln_graphics_bitmap = NULL;
+	gln_graphics_bitmap = nullptr;
 	free(gln_graphics_off_screen);
-	gln_graphics_off_screen = NULL;
+	gln_graphics_off_screen = nullptr;
 	free(gln_graphics_on_screen);
-	gln_graphics_on_screen = NULL;
+	gln_graphics_on_screen = nullptr;
 	free(gln_graphics_bitmap_directory);
-	gln_graphics_bitmap_directory = NULL;
+	gln_graphics_bitmap_directory = nullptr;
 
 	gln_graphics_bitmap_type = NO_BITMAPS;
 	gln_graphics_picture = -1;
@@ -2607,7 +2613,7 @@ struct gln_linegraphics_segment_t {
 	int dy;  /* Segment y delta */
 };
 
-static gln_linegraphics_segment_t *gln_linegraphics_fill_segments = NULL;
+static gln_linegraphics_segment_t *gln_linegraphics_fill_segments = nullptr;
 static int gln_linegraphics_fill_segments_allocation = 0,
            gln_linegraphics_fill_segments_length = 0;
 
@@ -3001,7 +3007,7 @@ static void gln_linegraphics_process() {
  */
 static void gln_linegraphics_cleanup() {
 	free(gln_linegraphics_fill_segments);
-	gln_linegraphics_fill_segments = NULL;
+	gln_linegraphics_fill_segments = nullptr;
 
 	gln_linegraphics_fill_segments_allocation = 0;
 	gln_linegraphics_fill_segments_length = 0;
@@ -3383,7 +3389,7 @@ static void gln_status_redraw() {
 		 */
 		parent = g_vm->glk_window_get_parent(gln_status_window);
 		g_vm->glk_window_set_arrangement(parent,
-		                                 winmethod_Above | winmethod_Fixed, 1, NULL);
+		                                 winmethod_Above | winmethod_Fixed, 1, nullptr);
 
 		gln_status_update();
 	}
@@ -3406,7 +3412,7 @@ static int gln_help_requested = FALSE,
  * more efficient for everyone if we buffer them, and output a complete
  * string on a flush call.
  */
-static char *gln_output_buffer = NULL;
+static char *gln_output_buffer = nullptr;
 static int gln_output_allocation = 0,
            gln_output_length = 0;
 
@@ -3532,7 +3538,7 @@ static void gln_detect_game_prompt() {
  */
 static void gln_output_delete() {
 	free(gln_output_buffer);
-	gln_output_buffer = NULL;
+	gln_output_buffer = nullptr;
 	gln_output_allocation = gln_output_length = 0;
 }
 
@@ -3727,10 +3733,10 @@ static void gln_command_script(const char *argument) {
 			return;
 		}
 
-		g_vm->glk_stream_close(gln_transcript_stream, NULL);
-		gln_transcript_stream = NULL;
+		g_vm->glk_stream_close(gln_transcript_stream, nullptr);
+		gln_transcript_stream = nullptr;
 
-		g_vm->glk_window_set_echo_stream(gln_main_window, NULL);
+		g_vm->glk_window_set_echo_stream(gln_main_window, nullptr);
 
 		gln_normal_string("Glk transcript is now off.\n");
 	}
@@ -3792,8 +3798,8 @@ static void gln_command_inputlog(const char *argument) {
 			return;
 		}
 
-		g_vm->glk_stream_close(gln_inputlog_stream, NULL);
-		gln_inputlog_stream = NULL;
+		g_vm->glk_stream_close(gln_inputlog_stream, nullptr);
+		gln_inputlog_stream = nullptr;
 
 		gln_normal_string("Glk input log is now off.\n");
 	}
@@ -3860,8 +3866,8 @@ static void gln_command_readlog(const char *argument) {
 			return;
 		}
 
-		g_vm->glk_stream_close(gln_readlog_stream, NULL);
-		gln_readlog_stream = NULL;
+		g_vm->glk_stream_close(gln_readlog_stream, nullptr);
+		gln_readlog_stream = nullptr;
 
 		gln_normal_string("Glk read log is now off.\n");
 	}
@@ -4268,7 +4274,7 @@ static const gln_command_t GLN_COMMAND_TABLE[] = {
 	{"version",        gln_command_version,        FALSE},
 	{"commands",       gln_command_commands,       TRUE},
 	{"help",           gln_command_help,           TRUE},
-	{NULL, NULL, FALSE}
+	{nullptr, nullptr, FALSE}
 };
 
 
@@ -4323,7 +4329,7 @@ static void gln_command_help(const char *command) {
 		return;
 	}
 
-	matched = NULL;
+	matched = nullptr;
 	for (entry = GLN_COMMAND_TABLE; entry->command; entry++) {
 		if (gln_strncasecmp(command, entry->command, strlen(command)) == 0) {
 			if (matched) {
@@ -4531,7 +4537,7 @@ static int gln_command_escape(const char *string) {
 		 * the command passed in.
 		 */
 		matches = 0;
-		matched = NULL;
+		matched = nullptr;
 		for (entry = GLN_COMMAND_TABLE; entry->command; entry++) {
 			if (gln_strncasecmp(command, entry->command, strlen(command)) == 0) {
 				matches++;
@@ -4696,7 +4702,7 @@ static const gln_abbreviation_t GLN_ABBREVIATIONS[] = {
 	{'k', "attack"},   {'l', "look"},   {'p', "open"},
 	{'q', "quit"},     {'r', "drop"},   {'t', "take"},
 	{'x', "examine"},  {'y', "yes"},    {'z', "wait"},
-	{'\0', NULL}
+	{'\0', nullptr}
 };
 
 
@@ -4720,7 +4726,7 @@ static void gln_expand_abbreviations(char *buffer, int size) {
 
 	/* Scan the abbreviations table for a match. */
 	abbreviation = g_vm->glk_char_to_lower((unsigned char) command[0]);
-	expansion = NULL;
+	expansion = nullptr;
 	for (entry = GLN_ABBREVIATIONS; entry->expansion; entry++) {
 		if (entry->abbreviation == abbreviation) {
 			expansion = entry->expansion;
@@ -4828,8 +4834,8 @@ gln_bool os_input(char *buffer, int size) {
 		 * We're at the end of the log stream.  Close it, and then continue
 		 * on to request a line from Glk.
 		 */
-		g_vm->glk_stream_close(gln_readlog_stream, NULL);
-		gln_readlog_stream = NULL;
+		g_vm->glk_stream_close(gln_readlog_stream, nullptr);
+		gln_readlog_stream = nullptr;
 	}
 
 	/*
@@ -5289,7 +5295,7 @@ gln_bool os_save_file(gln_byte *ptr, int bytes) {
 	/* Write game state. */
 	g_vm->glk_put_buffer_stream(stream, (const char *)ptr, bytes);
 
-	g_vm->glk_stream_close(stream, NULL);
+	g_vm->glk_stream_close(stream, nullptr);
 	g_vm->glk_fileref_destroy(fileref);
 
 	gln_watchdog_tick();
@@ -5331,7 +5337,7 @@ gln_bool os_load_file(gln_byte *ptr, int *bytes, int max) {
 	/* Restore saved game data. */
 	*bytes = g_vm->glk_get_buffer_stream(stream, (char *)ptr, max);
 
-	g_vm->glk_stream_close(stream, NULL);
+	g_vm->glk_stream_close(stream, nullptr);
 	g_vm->glk_fileref_destroy(fileref);
 
 	gln_watchdog_tick();
@@ -5372,9 +5378,7 @@ gln_bool os_get_game_file(char *newname, int size) {
 	Common::File f;
 	assert(newname);
 
-	/* Find the last element of the filename passed in. */
-	basename = strrchr(newname, GLN_FILE_DELIM);
-	basename = basename ? basename + 1 : newname;
+	basename = newname;
 
 	/* Search for the last numeric character in the basename. */
 	digit = -1;
@@ -5453,9 +5457,7 @@ void os_set_filenumber(char *newname, int size, int file_number) {
 		return;
 	}
 
-	/* Find the last element of the new filename. */
-	basename = strrchr(newname, GLN_FILE_DELIM);
-	basename = basename ? basename + 1 : newname;
+	basename = newname;
 
 	/* Search for the last numeric character in the basename. */
 	digit = -1;
@@ -5493,7 +5495,7 @@ void os_set_filenumber(char *newname, int size, int file_number) {
  * own way of handling scripts, this function is a stub.
  */
 Common::SeekableReadStream *os_open_script_file() {
-	return NULL;
+	return nullptr;
 }
 
 
@@ -5546,8 +5548,7 @@ static const int GLN_WATCHDOG_TIMEOUT = 5,
  * The following values need to be passed between the startup_code and main
  * functions.
  */
-static const char *gln_game_message = NULL;  /* Error message. */
-
+static const char *gln_game_message = nullptr;  /* Error message. */
 
 /*
  * gln_establish_picture_filename()
@@ -5557,7 +5558,7 @@ static const char *gln_game_message = NULL;  /* Error message. */
  * PICTURE.DAT or picture.dat in the same directory as X.  If the input file
  * already ends with a three-letter extension, it's stripped first.
  *
- * The function returns NULL if a graphics file is not available.  It's not
+ * The function returns nullptr if a graphics file is not available.  It's not
  * fatal for this to be the case.  Filenames are malloc'ed, and need to be
  * freed by the caller.
  *
@@ -5565,7 +5566,7 @@ static const char *gln_game_message = NULL;  /* Error message. */
  * standard function, and access() isn't.
  */
 static void gln_establish_picture_filename(const char *name, char **graphics) {
-	char *base, *directory_end, *graphics_file;
+	char *base, *graphics_file;
 	Common::File f;
 	assert(name && graphics);
 
@@ -5623,7 +5624,7 @@ static void gln_establish_picture_filename(const char *name, char **graphics) {
 	/* No access to graphics file. */
 	if (!f.isOpen()) {
 		free(graphics_file);
-		graphics_file = NULL;
+		graphics_file = nullptr;
 	}
 
 	f.close();
@@ -5634,11 +5635,6 @@ static void gln_establish_picture_filename(const char *name, char **graphics) {
 		free(base);
 		return;
 	}
-
-	/* Retry with base set to the game file directory part only. */
-	directory_end = strrchr(base, GLN_FILE_DELIM);
-	directory_end = directory_end ? directory_end + 1 : base;
-	base[directory_end - base] = '\0';
 
 	/* Again, allocate space for the return graphics file. */
 	graphics_file = (char *)gln_malloc(strlen(base) + strlen("PICTURE.DAT") + 1);
@@ -5654,23 +5650,22 @@ static void gln_establish_picture_filename(const char *name, char **graphics) {
 		if (!f.open(graphics_file)) {
 			/*
 			 * No access to this graphics file.  In this case, free memory
-			 * and reset graphics file to NULL.
+			 * and reset graphics file to nullptr.
 			 */
 			free(graphics_file);
-			graphics_file = NULL;
+			graphics_file = nullptr;
 		}
 	}
 
 	f.close();
 
 	/*
-	 * Return whatever we found for the graphics file (NULL if none found),
+	 * Return whatever we found for the graphics file (nullptr if none found),
 	 * and free base.
 	 */
 	*graphics = graphics_file;
 	free(base);
 }
-
 
 /*
  * gln_startup_code()
@@ -5719,7 +5714,7 @@ int gln_startup_code(int argc, char *argv[]) {
 }
 
 void gln_main(const char *filename) {
-	char *graphics_file = NULL;
+	char *graphics_file = nullptr;
 	int is_running;
 
 	/* Create the main Glk window, and set its stream as current. */
@@ -5780,7 +5775,7 @@ void gln_main(const char *filename) {
 		int errNum = 0;
 		if (!LoadGame(filename, graphics_file)) {
 			if (gln_status_window)
-				g_vm->glk_window_close(gln_status_window, NULL);
+				g_vm->glk_window_close(gln_status_window, nullptr);
 			gln_header_string("Glk Level 9 Error\n\n");
 			gln_normal_string("Can't find, open, or load game file '");
 			gln_normal_string(filename);
@@ -5867,16 +5862,16 @@ void gln_main(const char *filename) {
 
 	/* Close any open transcript, input log, and/or read log. */
 	if (gln_transcript_stream) {
-		g_vm->glk_stream_close(gln_transcript_stream, NULL);
-		gln_transcript_stream = NULL;
+		g_vm->glk_stream_close(gln_transcript_stream, nullptr);
+		gln_transcript_stream = nullptr;
 	}
 	if (gln_inputlog_stream) {
-		g_vm->glk_stream_close(gln_inputlog_stream, NULL);
-		gln_inputlog_stream = NULL;
+		g_vm->glk_stream_close(gln_inputlog_stream, nullptr);
+		gln_inputlog_stream = nullptr;
 	}
 	if (gln_readlog_stream) {
-		g_vm->glk_stream_close(gln_readlog_stream, NULL);
-		gln_readlog_stream = NULL;
+		g_vm->glk_stream_close(gln_readlog_stream, nullptr);
+		gln_readlog_stream = nullptr;
 	}
 
 	/* Free any graphics file path. */

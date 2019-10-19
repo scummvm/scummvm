@@ -57,10 +57,10 @@ namespace Level9 {
 #define FIRSTLINESIZE 96
 
 /* Typedefs */
-typedef struct {
+struct SaveStruct {
 	L9UINT16 vartable[256];
 	L9BYTE listarea[LISTAREASIZE];
-} SaveStruct;
+};
 
 /* Enumerations */
 enum L9GameTypes { L9_V1, L9_V2, L9_V3, L9_V4 };
@@ -76,7 +76,7 @@ enum L9MsgTypes { MSGT_V1, MSGT_V2 };
 enum L9GfxTypes { GFX_V2, GFX_V3A, GFX_V3B, GFX_V3C };
 
 /* Global Variables */
-L9BYTE *startfile = NULL, *pictureaddress = NULL, *picturedata = NULL;
+L9BYTE *startfile, *pictureaddress, *picturedata;
 L9BYTE *startdata;
 L9UINT32 FileSize, picturesize;
 
@@ -95,43 +95,39 @@ int L9GameType;
 int L9MsgType;
 char LastGame[MAX_PATH];
 char FirstLine[FIRSTLINESIZE];
-int FirstLinePos = 0;
-int FirstPicture = -1;
+int FirstLinePos;
+int FirstPicture;
 
-#if defined(AMIGA) && defined(_DCC)
-__far SaveStruct ramsavearea[RAMSAVESLOTS];
-#else
 SaveStruct ramsavearea[RAMSAVESLOTS];
-#endif
 
 GameState workspace;
 
 L9UINT16 randomseed;
-L9UINT16 constseed = 0;
+L9UINT16 constseed;
 L9BOOL Running;
 
 char ibuff[IBUFFSIZE];
 L9BYTE *ibuffptr;
 char obuff[34];
-Common::SeekableReadStream *scriptfile = NULL;
+Common::SeekableReadStream *scriptfile;
 
-L9BOOL Cheating = FALSE;
+L9BOOL Cheating;
 int CheatWord;
 GameState CheatWorkspace;
 
 int reflectflag, scale, gintcolour, option;
-int l9textmode = 0, drawx = 0, drawy = 0, screencalled = 0, showtitle = 1;
-L9BYTE *gfxa5 = NULL;
-Bitmap *bitmap = NULL;
-int gfx_mode = GFX_V2;
+int l9textmode, drawx, drawy, screencalled, showtitle;
+L9BYTE *gfxa5;
+Bitmap *bitmap;
+int gfx_mode;
 
 L9BYTE *GfxA5Stack[GFXSTACKSIZE];
-int GfxA5StackPos = 0;
+int GfxA5StackPos;
 int GfxScaleStack[GFXSTACKSIZE];
-int GfxScaleStackPos = 0;
+int GfxScaleStackPos;
 
-char lastchar = '.';
-char lastactualchar = 0;
+char lastchar;
+char lastactualchar;
 int d5;
 
 L9BYTE *codeptr; /* instruction codes */
@@ -141,7 +137,7 @@ L9BYTE *list9ptr;
 
 int unpackd3;
 
-L9BYTE exitreversaltable[16] = {0x00, 0x04, 0x06, 0x07, 0x01, 0x08, 0x02, 0x03, 0x05, 0x0a, 0x09, 0x0c, 0x0b, 0xff, 0xff, 0x0f};
+const L9BYTE exitreversaltable[16] = {0x00, 0x04, 0x06, 0x07, 0x01, 0x08, 0x02, 0x03, 0x05, 0x0a, 0x09, 0x0c, 0x0b, 0xff, 0xff, 0x0f};
 
 L9UINT16 gnostack[128];
 L9BYTE gnoscratch[32];
@@ -159,8 +155,7 @@ const L9V1GameInfo L9V1Games[] = {
 	0x15, 0x5d, 252, -0x3e70, 0x0000, -0x3d30, -0x3ca0, 0x0100, 0x4120, -0x3b9d, 0x3988, /* Lords of Time */
 	0x15, 0x6c, 284, -0x00f0, 0x0000, -0x0050, -0x0050, -0x0050, 0x0300, 0x1930, 0x3c17, /* Snowball */
 };
-int L9V1Game = -1;
-
+int L9V1Game;
 
 /* Prototypes */
 L9BOOL LoadGame2(const char *filename, char *picname);
@@ -254,6 +249,30 @@ const char *const drivercalls[] = {
 	"checkfordisc"
 };
 #endif
+
+void level9_initialize() {
+	FirstLinePos = 0;
+	FirstPicture = -1;
+	constseed = 0;
+	scriptfile = nullptr;
+	Cheating = FALSE;
+	l9textmode = 0;
+	drawx = 0;
+	drawy = 0;
+	screencalled = 0;
+	showtitle = 1;
+	gfxa5 = nullptr;
+	gfx_mode = GFX_V2;
+
+	GfxA5StackPos = 0;
+	GfxScaleStackPos = 0;
+
+	lastchar = '.';
+	lastactualchar = 0;
+	L9V1Game = -1;
+
+	startfile = pictureaddress = picturedata = nullptr;
+}
 
 void initdict(L9BYTE *ptr) {
 	dictptr = ptr;
@@ -621,7 +640,7 @@ void printmessageV2(int Msg) {
 void L9Allocate(L9BYTE **ptr, L9UINT32 Size) {
 	if (*ptr) free(*ptr);
 	*ptr = (L9BYTE *)malloc(Size);
-	if (*ptr == NULL) {
+	if (*ptr == nullptr) {
 		error("Unable to allocate memory for the game! Exiting...");
 	}
 }
@@ -629,11 +648,11 @@ void L9Allocate(L9BYTE **ptr, L9UINT32 Size) {
 void FreeMemory() {
 	if (startfile) {
 		free(startfile);
-		startfile = NULL;
+		startfile = nullptr;
 	}
 	if (pictureaddress) {
 		free(pictureaddress);
-		pictureaddress = NULL;
+		pictureaddress = nullptr;
 	}
 	if (bitmap) {
 		free(bitmap);
@@ -641,11 +660,11 @@ void FreeMemory() {
 	}
 	if (scriptfile) {
 		delete scriptfile;
-		scriptfile = NULL;
+		scriptfile = nullptr;
 	}
-	picturedata = NULL;
+	picturedata = nullptr;
 	picturesize = 0;
-	gfxa5 = NULL;
+	gfxa5 = nullptr;
 }
 
 L9BOOL load(const char *filename) {
@@ -901,7 +920,7 @@ long Scan(L9BYTE *StartFile, L9UINT32 size) {
 	long Offset = -1;
 	L9BOOL JumpKill, DriverV4;
 
-	if ((Chk == NULL) || (Image == NULL)) {
+	if ((Chk == nullptr) || (Image == nullptr)) {
 		error("Unable to allocate memory for game scan! Exiting...");
 	}
 
@@ -967,7 +986,7 @@ long ScanV2(L9BYTE *StartFile, L9UINT32 size) {
 	long Offset = -1;
 	L9BOOL JumpKill;
 
-	if ((Chk == NULL) || (Image == NULL)) {
+	if ((Chk == nullptr) || (Image == nullptr)) {
 		error("Unable to allocate memory for game scan! Exiting...");
 	}
 
@@ -992,7 +1011,7 @@ long ScanV2(L9BYTE *StartFile, L9UINT32 size) {
 
 			Size = 0;
 			Min = Max = i + d0;
-			if (ValidateSequence(StartFile, Image, i + d0, i + d0, &Size, size, &Min, &Max, FALSE, &JumpKill, NULL)) {
+			if (ValidateSequence(StartFile, Image, i + d0, i + d0, &Size, size, &Min, &Max, FALSE, &JumpKill, nullptr)) {
 #ifdef L9DEBUG
 				printf("Found valid V2 header at %ld, code size %ld", i, Size);
 #endif
@@ -1021,7 +1040,7 @@ long ScanV1(L9BYTE *StartFile, L9UINT32 size) {
 	int dictOff1 = 0, dictOff2 = 0;
 	L9BYTE dictVal1 = 0xff, dictVal2 = 0xff;
 
-	if (Image == NULL) {
+	if (Image == nullptr) {
 		error("Unable to allocate memory for game scan! Exiting...");
 	}
 
@@ -1030,7 +1049,7 @@ long ScanV1(L9BYTE *StartFile, L9UINT32 size) {
 			Size = 0;
 			Min = Max = i;
 			Replace = 0;
-			if (ValidateSequence(StartFile, Image, i, i, &Size, size, &Min, &Max, FALSE, &JumpKill, NULL)) {
+			if (ValidateSequence(StartFile, Image, i, i, &Size, size, &Min, &Max, FALSE, &JumpKill, nullptr)) {
 				if (Size > MaxCount && Size > 100 && Size < 10000) {
 					MaxCount = Size;
 					//MaxMin = Min;
@@ -1109,7 +1128,7 @@ void FullScan(L9BYTE *StartFile, L9UINT32 size) {
 		Size = 0;
 		Min = Max = i;
 		Replace = 0;
-		if (ValidateSequence(StartFile, Image, i, i, &Size, size, &Min, &Max, FALSE, &JumpKill, NULL)) {
+		if (ValidateSequence(StartFile, Image, i, i, &Size, size, &Min, &Max, FALSE, &JumpKill, nullptr)) {
 			if (Size > MaxCount) {
 				MaxCount = Size;
 				MaxMin = Min;
@@ -1223,11 +1242,11 @@ L9BOOL intinitialise(const char *filename, char *picname) {
 
 	if (pictureaddress) {
 		free(pictureaddress);
-		pictureaddress = NULL;
+		pictureaddress = nullptr;
 	}
-	picturedata = NULL;
+	picturedata = nullptr;
 	picturesize = 0;
-	gfxa5 = NULL;
+	gfxa5 = nullptr;
 
 	if (!load(filename)) {
 		error("\rUnable to load: %s\r", filename);
@@ -1241,7 +1260,7 @@ L9BOOL intinitialise(const char *filename, char *picname) {
 			L9Allocate(&pictureaddress, picturesize);
 			if (f.read(pictureaddress, picturesize) != picturesize) {
 				free(pictureaddress);
-				pictureaddress = NULL;
+				pictureaddress = nullptr;
 				picturesize = 0;
 			}
 			f.close();
@@ -1356,13 +1375,13 @@ L9BOOL intinitialise(const char *filename, char *picname) {
 	/* If there was no graphics file, look in the game data */
 	if (pictureaddress) {
 		if (!findsubs(pictureaddress, picturesize, &picturedata, &picturesize)) {
-			picturedata = NULL;
+			picturedata = nullptr;
 			picturesize = 0;
 		}
 	} else {
 		if (!findsubs(startdata, FileSize, &picturedata, &picturesize)
 		        && !findsubs(startfile, startdata - startfile, &picturedata, &picturesize)) {
-			picturedata = NULL;
+			picturedata = nullptr;
 			picturesize = 0;
 		}
 	}
@@ -1712,7 +1731,7 @@ void calldriver() {
 		} else {
 			os_set_filenumber(NewName, MAX_PATH, *a6);
 		}
-		LoadGame2(NewName, NULL);
+		LoadGame2(NewName, nullptr);
 	} else driver(d0, a6);
 }
 
@@ -1859,10 +1878,10 @@ void l9_fgets(char *s, int n, Common::SeekableReadStream *f) {
 }
 
 L9BOOL scriptinput(char *buffer, int size) {
-	while (scriptfile != NULL) {
+	while (scriptfile != nullptr) {
 		if (scriptfile->eos()) {
 			delete scriptfile;
-			scriptfile = NULL;
+			scriptfile = nullptr;
 		} else {
 			char *p = buffer;
 			*p = '\0';
@@ -2150,7 +2169,7 @@ L9BOOL corruptinginput() {
 
 	list9ptr = list9startptr;
 
-	if (ibuffptr == NULL) {
+	if (ibuffptr == nullptr) {
 		if (Cheating) NextCheat();
 		else {
 			/* flush */
@@ -2183,7 +2202,7 @@ L9BOOL corruptinginput() {
 	while (TRUE) {
 		d0 = *a6++;
 		if (d0 == 0) {
-			ibuffptr = NULL;
+			ibuffptr = nullptr;
 			L9SETWORD(list9ptr, 0);
 			return TRUE;
 		}
@@ -3107,7 +3126,7 @@ void show_picture(int pic) {
 		GfxScaleStackPos = 0;
 		absrunsub(0);
 		if (!findsub(pic, &gfxa5))
-			gfxa5 = NULL;
+			gfxa5 = nullptr;
 	}
 }
 
@@ -3117,14 +3136,14 @@ void picture() {
 
 void GetPictureSize(int *width, int *height) {
 	if (L9GameType == L9_V4) {
-		if (width != NULL)
+		if (width != nullptr)
 			*width = 0;
-		if (height != NULL)
+		if (height != nullptr)
 			*height = 0;
 	} else {
-		if (width != NULL)
+		if (width != nullptr)
 			*width = (gfx_mode != GFX_V3C) ? 160 : 320;
-		if (height != NULL)
+		if (height != nullptr)
 			*height = (gfx_mode == GFX_V2) ? 128 : 96;
 	}
 }
@@ -3132,7 +3151,7 @@ void GetPictureSize(int *width, int *height) {
 L9BOOL RunGraphics() {
 	if (gfxa5) {
 		if (!getinstruction(&gfxa5))
-			gfxa5 = NULL;
+			gfxa5 = nullptr;
 		return TRUE;
 	}
 	return FALSE;
@@ -3506,7 +3525,7 @@ L9BOOL LoadGame2(const char *filename, char *picname) {
 
 	/* may be already running a game, maybe in input routine */
 	Running = FALSE;
-	ibuffptr = NULL;
+	ibuffptr = nullptr;
 
 	/* intstart */
 	if (!intinitialise(filename, picname)) return FALSE;
