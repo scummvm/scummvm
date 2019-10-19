@@ -1370,6 +1370,8 @@ int getValueFromObjectQuerry(objectParamsQuery *params, int idx) {
 		return params->state2;
 	case 7:
 		return params->nbState;
+	default:
+		break;
 	}
 
 	assert(0);
