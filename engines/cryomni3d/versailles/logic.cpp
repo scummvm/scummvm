@@ -2683,7 +2683,6 @@ IMG_CB(88003) {
 		FixedImgCallback callback = nullptr;
 		switch (_gameVariables[GameVariables::kBombState]) {
 		case 1:
-		default:
 			callback = &CryOmni3DEngine_Versailles::img_88003b;
 			break;
 		case 2:
@@ -2697,6 +2696,9 @@ IMG_CB(88003) {
 			break;
 		case 5:
 			callback = &CryOmni3DEngine_Versailles::img_88003f;
+			break;
+		default:
+			error("BUG: Invalid bomb state");
 			break;
 		}
 		ZonFixedImage::CallbackFunctor *functor =
@@ -4310,6 +4312,7 @@ void CryOmni3DEngine_Versailles::filterEventLevel5UpdatePlaceStates() {
 			setPlaceState(16, 5);
 			break;
 		default:
+			error("BUG: Invalid ladder state");
 			break;
 		}
 	} else {
@@ -4328,6 +4331,7 @@ void CryOmni3DEngine_Versailles::filterEventLevel5UpdatePlaceStates() {
 			setPlaceState(16, 6);
 			break;
 		default:
+			error("BUG: Invalid ladder state");
 			break;
 		}
 	}

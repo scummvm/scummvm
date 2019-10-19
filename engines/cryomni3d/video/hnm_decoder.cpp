@@ -286,9 +286,11 @@ void HNMDecoder::HNM4VideoTrack::decodeInterframe(Common::SeekableReadStream *st
 				currentPos += width;
 				break;
 			case 3:
-			default:
 				// End of picture
 				eop = true;
+				break;
+			default:
+				error("BUG: Shouldn't be here");
 				break;
 			}
 		} else {
