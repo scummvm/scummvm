@@ -661,6 +661,18 @@ void AGDSEngine::parseDialogDefs(const Common::String &defs) {
 }
 
 void AGDSEngine::tickDialog() {
+	if (_dialogProcessName.empty())
+		return;
+
+	int dialog_var = getSystemVariable("dialog_var")->getInteger();
+	if (dialog_var > 0) {
+		getSystemVariable("dialog_var")->setInteger(-3);
+		return;
+	} else if (dialog_var < 0) {
+		getSystemVariable("dialog_var")->setInteger(0);
+		return;
+	}
+
 	uint n = _dialogScript.size();
 	if (_dialogScriptPos >= n)
 		return;
