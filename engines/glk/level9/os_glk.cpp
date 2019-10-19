@@ -4844,6 +4844,11 @@ gln_bool os_input(char *buffer, int size) {
 	 */
 	g_vm->glk_request_line_event(gln_main_window, buffer, size - 1, 0);
 	gln_event_wait(evtype_LineInput, &event);
+	if (g_vm->shouldQuit()) {
+		g_vm->glk_cancel_line_event(gln_main_window, &event);
+		gln_stop_reason = STOP_EXIT;
+		return FALSE;
+	}
 
 	/* Terminate the input line with a NUL. */
 	assert((int)event.val1 <= size - 1);

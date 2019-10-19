@@ -3559,6 +3559,10 @@ L9BOOL RunGame() {
 	code = *codeptr++;
 	/*  printf("%d",code); */
 	executeinstruction();
+
+	if (g_vm->shouldQuit())
+		Running = false;
+
 	return Running;
 }
 
