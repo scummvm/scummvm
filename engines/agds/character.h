@@ -58,11 +58,11 @@ public:
 	}
 
 	int getPhase() const {
-		return _phase < _frames? _phase: -1;
+		return _phase <= _frames? _phase + 1: -1;
 	}
 
 	void paint(AGDSEngine & engine, Graphics::Surface & backbuffer) {
-		if (_enabled && _phase < _frames)
+		if (_enabled && _phase <= _frames)
 			++_phase;
 	}
 
