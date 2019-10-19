@@ -24,10 +24,13 @@
 #define COMMON_STRING_H
 
 #include "common/scummsys.h"
+#include "common/str-enc.h"
 
 #include <stdarg.h>
 
 namespace Common {
+
+class U32String;
 
 /**
  * Simple string class for ScummVM. Provides automatic storage managment,
@@ -327,12 +330,18 @@ public:
 		return begin() + size();
 	}
 
+	/** Python-like method **/
+	U32String decode(CodePage page = kUtf8) const;
+
 protected:
 	void makeUnique();
 	void ensureCapacity(uint32 new_size, bool keep_old);
 	void incRefCount() const;
 	void decRefCount(int *oldRefCount);
 	void initWithCStr(const char *str, uint32 len);
+
+	void decodeUTF8(U32String &dst) const;
+	void decodeOneByte(U32String &dst, CodePage page) const;
 };
 
 // Append two strings to form a new (temp) string
