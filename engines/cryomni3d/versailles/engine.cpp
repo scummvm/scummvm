@@ -127,7 +127,9 @@ Common::Error CryOmni3DEngine_Versailles::run() {
 	initDocPeopleRecord();
 	_docManager.init(&_sprites, &_fontManager, &_messages, this,
 	                 _localizedFilenames[LocalizedFilenames::kAllDocs],
-	                 _localizedFilenames[LocalizedFilenames::kLinksDocs]);
+	                 getFeatures() & GF_VERSAILLES_LINK_LOCALIZED ?
+	                 _localizedFilenames[LocalizedFilenames::kLinksDocs] :
+	                 "lien_doc.txt");
 
 	_countdownSurface.create(40, 15, Graphics::PixelFormat::createFormatCLUT8());
 
