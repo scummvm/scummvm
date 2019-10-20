@@ -234,7 +234,7 @@ void Room::mudd2SpockPinchedMudd() {
 	loadActorAnim2(OBJECT_MUDD, "s4sbob", 0x9f, 0xba);
 	loadActorAnim2(OBJECT_SPOCK, "sstnde", 0xd0, 0xbd);
 
-	showText(TX_SPEAKER_SPOCK, 12), true;
+	showText(TX_SPEAKER_SPOCK, 12, true);
 
 	_awayMission->disableInput = false;
 	_awayMission->mudd.muddUnconscious = true;
