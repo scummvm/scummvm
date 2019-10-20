@@ -1,3 +1,15 @@
 # This file is included from the main "configure" script
 # add_engine [name] [desc] [build-by-default] [subengines] [base games] [deps]
-add_engine glk "ScummGlk Interactive Fiction games" no "" "" "freetype2 jpeg png"
+add_engine glk "ScummGlk Interactive Fiction games" no "adrift advsys alan2 alan3 frotz glulxe glkhugo jacl magnetic quest scott tads" "Base" "16bit freetype2 jpeg png"
+add_engine adrift "ADRIFT" no
+add_engine advsys "AdvSys" no
+add_engine alan2 "Alan2" no
+add_engine alan3 "Alan3" no
+add_engine frotz "Frotz" no
+add_engine glulxe "Glulxe" no
+add_engine glkhugo "Hugo" no
+add_engine jacl "JACL" no
+add_engine magnetic "Magnetic" no
+add_engine quest "Quest" no
+add_engine scott "Scott" no
+add_engine tads "TADS" no

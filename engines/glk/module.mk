@@ -26,7 +26,10 @@ MODULE_OBJS := \
 	window_graphics.o \
 	window_pair.o \
 	window_text_buffer.o \
-	window_text_grid.o \
+	window_text_grid.o
+
+ifdef ENABLE_ADRIFT
+MODULE_OBJS += \
 	adrift/adrift.o \
 	adrift/detection.o \
 	adrift/os_glk.o \
@@ -54,12 +57,20 @@ MODULE_OBJS := \
 	adrift/serialization.o \
 	adrift/sxfile.o \
 	adrift/sxglob.o \
-	adrift/sxutils.o \
+	adrift/sxutils.o
+endif
+
+ifdef ENABLE_ADVSYS
+MODULE_OBJS += \
 	advsys/advsys.o \
 	advsys/detection.o \
 	advsys/game.o \
 	advsys/glk_interface.o \
-	advsys/vm.o \
+	advsys/vm.o
+endif
+
+ifdef ENABLE_ALAN2
+MODULE_OBJS += \
 	alan2/alan2.o \
 	alan2/detection.o \
 	alan2/alan_version.o \
@@ -77,7 +88,11 @@ MODULE_OBJS := \
 	alan2/stack.o \
 	alan2/sysdep.o \
 	alan2/term.o \
-	alan2/types.o \
+	alan2/types.o
+endif
+
+ifdef ENABLE_ALAN3
+MODULE_OBJS += \
 	alan3/acode.o \
 	alan3/act.o \
 	alan3/actor.o \
@@ -125,7 +140,11 @@ MODULE_OBJS := \
 	alan3/syserr.o \
 	alan3/types.o \
 	alan3/utils.o \
-	alan3/word.o \
+	alan3/word.o
+endif
+
+ifdef ENABLE_FROTZ
+MODULE_OBJS += \
 	frotz/bitmap_font.o \
 	frotz/config.o \
 	frotz/detection.o \
@@ -149,7 +168,11 @@ MODULE_OBJS := \
 	frotz/quetzal.o \
 	frotz/screen.o \
 	frotz/sound_folder.o \
-	frotz/windows.o \
+	frotz/windows.o
+endif
+
+ifdef ENABLE_GLULXE
+MODULE_OBJS += \
 	glulxe/accel.o \
 	glulxe/detection.o \
 	glulxe/exec.o \
@@ -163,7 +186,11 @@ MODULE_OBJS := \
 	glulxe/search.o \
 	glulxe/serial.o \
 	glulxe/string.o \
-	glulxe/vm.o \
+	glulxe/vm.o
+endif
+
+ifdef ENABLE_GLKHUGO
+MODULE_OBJS += \
 	hugo/detection.o \
 	hugo/heexpr.o \
 	hugo/heglk.o \
@@ -176,7 +203,11 @@ MODULE_OBJS := \
 	hugo/heset.o \
 	hugo/htokens.o \
 	hugo/hugo.o \
-	hugo/stringfn.o \
+	hugo/stringfn.o
+endif
+
+ifdef ENABLE_JACL
+MODULE_OBJS += \
 	jacl/detection.o \
 	jacl/display.o \
 	jacl/encapsulate.o \
@@ -192,12 +223,20 @@ MODULE_OBJS := \
 	jacl/logging.o \
 	jacl/parser.o \
 	jacl/resolvers.o \
-	jacl/utils.o \
+	jacl/utils.o
+endif
+
+ifdef ENABLE_MAGNETIC
+MODULE_OBJS += \
 	magnetic/detection.o \
 	magnetic/emu.o \
 	magnetic/graphics.o \
 	magnetic/magnetic.o \
-	magnetic/sound.o \
+	magnetic/sound.o
+endif
+
+ifdef ENABLE_QUEST
+MODULE_OBJS += \
 	quest/detection.o \
 	quest/geas_file.o \
 	quest/geas_glk.o \
@@ -207,9 +246,17 @@ MODULE_OBJS := \
 	quest/quest.o \
 	quest/read_file.o \
 	quest/string.o \
-	quest/streams.o \
+	quest/streams.o
+endif
+
+ifdef ENABLE_SCOTT
+MODULE_OBJS += \
 	scott/detection.o \
-	scott/scott.o \
+	scott/scott.o
+endif
+
+ifdef ENABLE_TADS
+MODULE_OBJS += \
 	tads/detection.o \
 	tads/os_banners.o \
 	tads/os_buffer.o \
@@ -251,6 +298,7 @@ MODULE_OBJS := \
 	tads/tads2/vocabulary.o \
 	tads/tads2/vocabulary_parser.o \
 	tads/tads3/tads3.o
+endif
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_GLK), DYNAMIC_PLUGIN)
