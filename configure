@@ -1770,6 +1770,11 @@ android)
 		echo "Please set ANDROID_NDK in your environment. export ANDROID_NDK=<path to Android NDK>"
 		exit 1
 	fi
+	ndk_version=$(sed -En -e 's/^Pkg.Revision\s*=\s*([0-9a-f]+).*/\1/p' "$ANDROID_NDK/source.properties")
+	if [ -z "$ndk_version" -o "$ndk_version" -lt 18 ]; then
+		echo "Need Android NDK r18 or later to compile! Found version '$ndk_version'"
+		exit 1
+	fi
 	;;
 3ds | ds | gamecube | wii)
 	if test -z "$DEVKITPRO"; then
@@ -2476,9 +2481,6 @@ case $_host_os in
 				append_var CXXFLAGS "-mfloat-abi=softfp"
 				append_var LDFLAGS "-mthumb"
 				ABI="armeabi"
-				# Platform version 9 is used by ResidualVM
-				ANDROID_PLATFORM=9
-				ANDROID_PLATFORM_ARCH="arm"
 				;;
 			android-v7a | android-arm-v7a)
 				append_var CXXFLAGS "-march=armv7-a"
@@ -2486,36 +2488,20 @@ case $_host_os in
 				append_var CXXFLAGS "-mfpu=vfp"
 				append_var LDFLAGS "-Wl,--fix-cortex-a8"
 				ABI="armeabi-v7a"
-				ANDROID_PLATFORM=9
-				ANDROID_PLATFORM_ARCH="arm"
 				;;
 			android-mips)
 				append_var CXXFLAGS "-march=mips32"
 				append_var CXXFLAGS "-mtune=mips32"
 				ABI="mips"
-				# Platform version 9 is needed as earlier versions of platform do not support this arch.
-				ANDROID_PLATFORM=9
-				ANDROID_PLATFORM_ARCH="mips"
 				;;
 			android-x86)
 				append_var CXXFLAGS "-march=i686"
 				append_var CXXFLAGS "-mtune=i686"
 				ABI="x86"
-				# Platform version 9 is needed as earlier versions of platform do not support this arch.
-				ANDROID_PLATFORM=9
-				ANDROID_PLATFORM_ARCH="x86"
-				;;
-			ouya)
-				append_var CXXFLAGS "-march=armv7-a"
-				append_var CXXFLAGS "-mtune=cortex-a9"
-				append_var CXXFLAGS "-mfloat-abi=softfp"
-				append_var CXXFLAGS "-mfpu=neon"
-				ABI="armeabi-v7a"
-				ANDROID_PLATFORM=9
-				ANDROID_PLATFORM_ARCH="arm"
 				;;
 		esac
 
+		append_var LDFLAGS "-static-libstdc++"
 		append_var CXXFLAGS "-fpic"
 		append_var CXXFLAGS "-ffunction-sections"
 		append_var CXXFLAGS "-funwind-tables"

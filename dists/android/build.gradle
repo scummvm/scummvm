@@ -1,0 +1,54 @@
+buildscript {
+	repositories {
+		google()
+		jcenter()
+	}
+
+	dependencies {
+		classpath 'com.android.tools.build:gradle:3.3.2'
+	}
+}
+
+allprojects {
+	repositories {
+		google()
+		jcenter()
+	}
+	buildDir = "${gradle.buildDir}/android/build"
+}
+
+apply plugin: 'com.android.application'
+
+android {
+	compileSdkVersion 28
+	defaultConfig {
+		applicationId 'com.residualvm.residualvm'
+		minSdkVersion 16
+		targetSdkVersion 28
+		versionCode gradle.versionCode
+		versionName gradle.versionName
+		ndk {
+			abiFilters gradle.androidAbi
+		}
+		aaptOptions {
+			noCompress "zip", "lab"
+		}
+	}
+	lintOptions {
+		disable 'GoogleAppIndexingWarning'
+	}
+
+	sourceSets {
+		main {
+			assets.srcDirs = ["${gradle.buildDir}/android/assets"]
+			java.srcDirs = ["${gradle.sourceDir}/backends/platform/android"]
+			res.srcDirs = ["${gradle.sourceDir}/dists/android/res"]
+			manifest.srcFile "${gradle.sourceDir}/dists/android/AndroidManifest.xml"
+			jniLibs.srcDirs = ["${gradle.buildDir}/android/jni"]
+		}
+	}
+}
+
+dependencies {
+	implementation "com.android.support:appcompat-v7:28.0.0"
+}

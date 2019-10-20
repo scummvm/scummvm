@@ -1,0 +1,17 @@
+#!/bin/sh
+export TOOLCHAIN=$ANDROID_NDK/toolchains/llvm/prebuilt/linux-x86_64
+export ANDROID_LEVEL=${ANDROID_LEVEL:-26}
+if [ "$CROSS_HOST" = "armv7a-linux-androideabi" ]; then
+	export AR=$TOOLCHAIN/bin/arm-linux-androideabi-ar
+	export RANLIB=$TOOLCHAIN/bin/arm-linux-androideabi-ranlib
+else
+	export AR=$TOOLCHAIN/bin/${CROSS_HOST}-ar
+	export RANLIB=$TOOLCHAIN/bin/${CROSS_HOST}-ranlib
+fi
+export AS=$TOOLCHAIN/bin/${CROSS_HOST}-as
+export CC=$TOOLCHAIN/bin/${CROSS_HOST}${ANDROID_LEVEL}-clang
+export CXX=$TOOLCHAIN/bin/${CROSS_HOST}${ANDROID_LEVEL}-clang++
+export LD=$TOOLCHAIN/bin/${CROSS_HOST}-ld
+export STRIP=$TOOLCHAIN/bin/${CROSS_HOST}-strip
+export PATH=$TOOLCHAIN/bin:$ANDROID_NDK:$PATH
+export CXXFLAGS=-Wno-inconsistent-missing-override

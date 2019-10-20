@@ -17,6 +17,7 @@ import javax.microedition.khronos.egl.EGLSurface;
 import java.io.File;
 import java.util.LinkedHashMap;
 
+@SuppressWarnings("JniMissingFunction")
 public abstract class ResidualVM implements SurfaceHolder.Callback, Runnable {
 	final protected static String LOG_TAG = "ResidualVM";
 	final private AssetManager _asset_manager;
