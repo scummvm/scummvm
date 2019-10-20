@@ -555,6 +555,8 @@ uint32 FontRenderer::buildNewBloc(byte *ascii, int16 x, int16 y, uint16 width, u
 			x -= frame_head.width;
 			y -= (frame_head.height) / 2;
 			break;
+		default:
+			break;
 		}
 
 		// Ensure text sprite is a few pixels inside the visible screen

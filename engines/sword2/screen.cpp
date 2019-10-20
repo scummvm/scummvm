@@ -157,6 +157,8 @@ void Screen::setRenderLevel(int8 level) {
 		// edge-blending + improved stretching
 		_renderCaps = RDBLTFX_SPRITEBLEND | RDBLTFX_SHADOWBLEND | RDBLTFX_EDGEBLEND;
 		break;
+	default:
+		break;
 	}
 }
 
@@ -608,6 +610,8 @@ void Screen::processImage(BuildUnit *build_unit) {
 			colTablePtr = _vm->fetchAnimHeader(file) + AnimHeader::size() + anim_head.noAnimFrames * CdtEntry::size();
 			if (Sword2Engine::isPsx())
 				colTablePtr++; // There is one additional byte to skip before the table in psx version
+			break;
+		default:
 			break;
 		}
 	}
@@ -1144,8 +1148,11 @@ void Screen::rollCredits() {
 						spriteInfo.x = (RENDERWIDE - logoWidth) / 2;
 						spriteInfo.w = logoWidth;
 						spriteInfo.h = logoHeight;
-					} else
+					} else {
 						spriteInfo.x = (RENDERWIDE - frame.width) / 2;
+					}
+					break;
+				default:
 					break;
 				}
 

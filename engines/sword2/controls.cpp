@@ -224,6 +224,9 @@ void FontRendererGui::drawText(byte *text, int x, int y, int alignment) {
 		case kAlignCenter:
 			x -= (textWidth / 2);
 			break;
+		case kAlignLeft:
+		default:
+			break;
 		}
 	}
 
@@ -365,6 +368,8 @@ int Dialog::runModal() {
 				case RD_WHEELDOWN:
 					_widgets[newHit]->onWheelDown(newMouseX, newMouseY);
 					break;
+				default:
+					break;
 				}
 			}
 		}
@@ -462,6 +467,8 @@ void Widget::createSurfaceImage(int state, uint32 res, int x, int y, uint32 pc) 
 		// table
 		colTablePtr = _vm->fetchAnimHeader(file) + AnimHeader::size()
 			+ anim_head.noAnimFrames * CdtEntry::size();
+		break;
+	default:
 		break;
 	}
 
@@ -1417,6 +1424,8 @@ int SaveRestoreDialog::runModal() {
 		case kRestoreDialog:
 			if (_vm->restoreGame(_selectedSlot) != SR_OK)
 				result = 0;
+			break;
+		default:
 			break;
 		}
 	}
