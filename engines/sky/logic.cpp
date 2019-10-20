@@ -1318,6 +1318,8 @@ uint16 Logic::script(uint16 scriptNo, uint16 offset) {
 					case 1:
 						a = pop();
 						// fall through
+					default:
+						break;
 					}
 
 					uint16 mcode = *scriptData++ / 4; // get mcode number
