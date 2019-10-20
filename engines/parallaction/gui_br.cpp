@@ -443,6 +443,9 @@ public:
 
 		case 5:	// quit
 			return _helper->getState("quitdialog");
+
+		default:
+			break;
 		}
 
 		if (close) {

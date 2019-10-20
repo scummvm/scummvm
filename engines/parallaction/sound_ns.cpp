@@ -378,6 +378,9 @@ void SoundMan_ns::execute(int command, const char *parm = 0) {
 	case SC_PAUSE:
 		pause(b);
 		break;
+
+	default:
+		break;
 	}
 }
 

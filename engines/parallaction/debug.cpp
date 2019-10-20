@@ -83,7 +83,10 @@ bool Debugger::Cmd_Location(int argc, const char **argv) {
 
 	case 1:
 		debugPrintf("location <location name> [character name]\n");
+		break;
 
+	default:
+		break;
 	}
 
 	return true;

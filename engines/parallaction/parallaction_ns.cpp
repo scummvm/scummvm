@@ -277,6 +277,9 @@ bool Parallaction_ns::processGameEvent(int event) {
 	case kEvLoadGame:
 		_saveLoad->loadGame();
 		break;
+
+	default:
+		break;
 	}
 
 	_input->setArrowCursor();

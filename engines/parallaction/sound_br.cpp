@@ -302,6 +302,8 @@ void MidiPlayer_MSC::send(uint32 b) {
 	case 0x07B0: // volume change
 		_channelsVolume[ch] = param2;
 		break;
+	default:
+		break;
 	}
 
 	sendToChannel(ch, b);
@@ -539,6 +541,9 @@ void SoundMan_br::execute(int command, const char *parm) {
 
 	case SC_PAUSE:
 		pause(b);
+		break;
+
+	default:
 		break;
 	}
 }

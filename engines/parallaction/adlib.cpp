@@ -427,6 +427,8 @@ void AdLibDriver::send(uint32 b) {
 			// all notes off
 			allNotesOff();
 			break;
+		default:
+			break;
 		}
 		break;
 	case 12:
@@ -435,6 +437,8 @@ void AdLibDriver::send(uint32 b) {
 		break;
 	case 14:
 		setPitchBend(channel, (param1 | (param2 << 7)) - 0x2000);
+		break;
+	default:
 		break;
 	}
 }
