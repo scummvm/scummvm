@@ -670,7 +670,7 @@ void CryOmni3DEngine_Versailles::playTransitionEndLevel(int level) {
 	bool cursorWasVisible = showMouse(false);
 
 	if (level == -2) {
-		if (getLanguage() == Common::DE_DEU) {
+		if (getLanguage() == Common::DE_DEU && Common::File::exists("RAVENSBG.HLZ")) {
 			// Display one more copyright
 			if (displayHLZ("RAVENSBG", 5000)) {
 				clearKeys();
