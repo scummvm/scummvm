@@ -46,6 +46,7 @@ public:
 	void create(uint16 width, uint16 height, const Graphics::PixelFormat &format);
 	void free();
 	void convertToInPlace(const Graphics::PixelFormat &dstFormat, const byte *palette = 0);
+	void transfer();
 	void render();
 	void clear(uint32 color = 0);
 	void markDirty(){ dirtyPixels = true; }

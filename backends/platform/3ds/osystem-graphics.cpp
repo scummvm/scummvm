@@ -265,20 +265,28 @@ void OSystem_3DS::unlockScreen() {
 }
 
 void OSystem_3DS::updateScreen() {
-
 	if (sleeping || exiting)
 		return;
 
 // 	updateFocus();
 
-	C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
+	C3D_FrameBegin(0);
+		_gameTopTexture.transfer();
+		if (_overlayVisible) {
+			_overlay.transfer();
+		}
+		if (_cursorVisible && config.showCursor) {
+			_cursorTexture.transfer();
+		}
+	C3D_FrameEnd(0);
+
+	C3D_FrameBegin(0);
 		// Render top screen
 		C3D_RenderTargetClear(_renderTargetTop, C3D_CLEAR_ALL, 0x00000000, 0);
 		C3D_FrameDrawOn(_renderTargetTop);
 		if (config.screen == kScreenTop || config.screen == kScreenBoth) {
 			C3D_FVUnifMtx4x4(GPU_VERTEX_SHADER, _projectionLocation, &_projectionTop);
 			C3D_FVUnifMtx4x4(GPU_VERTEX_SHADER, _modelviewLocation, _gameTopTexture.getMatrix());
-			_gameTopTexture.render();
 			_gameTopTexture.render();
 			if (_overlayVisible && config.screen == kScreenTop) {
 				C3D_FVUnifMtx4x4(GPU_VERTEX_SHADER, _modelviewLocation, _overlay.getMatrix());
@@ -296,7 +304,6 @@ void OSystem_3DS::updateScreen() {
 		if (config.screen == kScreenBottom || config.screen == kScreenBoth) {
 			C3D_FVUnifMtx4x4(GPU_VERTEX_SHADER, _projectionLocation, &_projectionBottom);
 			C3D_FVUnifMtx4x4(GPU_VERTEX_SHADER, _modelviewLocation, _gameBottomTexture.getMatrix());
-			_gameTopTexture.render();
 			_gameTopTexture.render();
 			if (_overlayVisible) {
 				C3D_FVUnifMtx4x4(GPU_VERTEX_SHADER, _modelviewLocation, _overlay.getMatrix());
