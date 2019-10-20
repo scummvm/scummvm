@@ -153,7 +153,7 @@ void ActionText::draw(Graphics::ManagedSurface *surface) {
 	Graphics::MacFont *font = new Graphics::MacFont();
 	Director *director = _actor->getPage()->getGame()->getDirector();
 	Graphics::MacText text(_text, &director->getWndManager(), font, _textColorIndex, _backgroundColorIndex, _xRight - _xLeft, alignment);
-	text.draw(surface, 0, 0, _xRight - _xLeft, _yBottom - _yTop, _xLeft, _yTop);
+	text.drawToPoint(surface, Common::Rect(0, 0, _xRight - _xLeft, _yBottom - _yTop), Common::Point(_xLeft, _yTop));
 }
 
 #define RED(rgb) ((rgb) & 0xFF)
