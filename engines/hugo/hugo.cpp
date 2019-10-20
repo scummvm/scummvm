@@ -287,6 +287,8 @@ Common::Error HugoEngine::run() {
 		_object = new ObjectHandler_v3d(this);
 		_normalTPS = 9;
 		break;
+	default:
+		break;
 	}
 
 	if (!loadHugoDat())
@@ -421,6 +423,8 @@ void HugoEngine::runMachine() {
 	case kViewExit:                                 // Game over or user exited
 		gameStatus._viewState = kViewIdle;
 		_status._doQuitFl = true;
+		break;
+	default:
 		break;
 	}
 }

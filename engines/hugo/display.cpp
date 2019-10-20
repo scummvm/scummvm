@@ -385,6 +385,8 @@ void Screen::displayList(int update, ...) {
 		}
 		_dlAddIndex = 0;                            // Reset add-list
 		break;
+	default:
+		break;
 	}
 }
 

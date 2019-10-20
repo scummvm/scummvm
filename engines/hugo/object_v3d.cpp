@@ -112,6 +112,8 @@ void ObjectHandler_v3d::moveObjects() {
 							obj->_currImagePtr = obj->_seqList[SEQ_LEFT]._seqPtr;
 					}
 					break;
+				default:
+					break;
 				}
 
 				if (obj->_vx || obj->_vy) {

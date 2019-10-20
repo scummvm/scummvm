@@ -108,6 +108,8 @@ void Route::setDirection(const uint16 keyCode) {
 	case Common::KEYCODE_KP3:
 		obj->_currImagePtr = obj->_seqList[SEQ_RIGHT]._seqPtr;
 		break;
+	default:
+		break;
 	}
 }
 
@@ -170,6 +172,8 @@ void Route::setWalk(const uint16 direction) {
 			obj->_vx =  kStepDx;
 			// Note: in v1 Dos and v2 Dos, obj->vy is set to DY
 			obj->_vy =  kStepDy / 2;
+			break;
+		default:
 			break;
 		}
 		_oldWalkDirection = direction;
