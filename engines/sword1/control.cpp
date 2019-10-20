@@ -548,6 +548,8 @@ uint8 Control::handleButtonClick(uint8 id, uint8 mode, uint8 *retVal) {
 		break;
 	case BUTTON_VOLUME_PANEL:
 		return id;
+	default:
+		break;
 	}
 	return 0;
 }

@@ -187,6 +187,8 @@ bool MoviePlayer::load(uint32 id) {
 	case kVideoDecoderMP2:
 		filename = Common::String::format("%s.mp2", sequenceList[id]);
 		break;
+	default:
+		break;
 	}
 
 	// Need to switch to true color for PSX/MP2 videos
@@ -267,6 +269,8 @@ void MoviePlayer::performPostProcessing(byte *screen) {
 					break;
 				case LETTER_COL:
 					dst[x] = findTextColor();
+					break;
+				default:
 					break;
 				}
 			}
@@ -443,6 +447,8 @@ uint32 MoviePlayer::findTextColor() {
 			return g_system->getScreenFormat().RGBToColor(200, 120, 184);
 		case 4:
 			return g_system->getScreenFormat().RGBToColor(80, 152, 184);
+		default:
+			break;
 		}
 
 		return g_system->getScreenFormat().RGBToColor(0xFF, 0xFF, 0xFF);
@@ -457,6 +463,8 @@ uint32 MoviePlayer::findTextColor() {
 		return _c3Color;
 	case 4:
 		return _c4Color;
+	default:
+		break;
 	}
 	return _c1Color;
 }

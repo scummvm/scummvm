@@ -153,6 +153,8 @@ char *ObjectMan::lockText(uint32 textId, uint8 lang) {
 			return const_cast<char *>(_translationId6488082[lang]);
 		case 6488083:
 			return const_cast<char *>(_translationId6488083[lang]);
+		default:
+			break;
 		}
 
 		warning("ObjectMan::lockText(%d): only %d texts in file", textId & ITM_ID, _resMan->readUint32(addr));
