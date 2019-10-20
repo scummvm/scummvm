@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: Prince\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2018-04-17 19:53+0100\n"
-"PO-Revision-Date: 2019-10-19 20:55+0000\n"
-"Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
+"PO-Revision-Date: 2019-10-22 08:56+0000\n"
+"Last-Translator: Krzysztof Targoński <nym@onet.eu>\n"
 "Language-Team: English <https://translations.scummvm.org/projects/prince/"
 "prince/en/>\n"
 "Language: en\n"
@@ -4333,7 +4333,7 @@ msgstr "OTHER: Ah yes, another side effect."
 #: dialog0108.txt:9
 msgid "OTHER: Wystarczy pocałunek. Zapomniałem.|Muszę lecieć. Pa. Do zobaczenia.|Na razie. Trzymaj się."
 msgstr ""
-"OTHER: Just a kiss. I forgot,|I have to go. Cheers!. See you later.|Bye for "
+"OTHER: Just a kiss. I forgot,|I have to go. Cheers! See you later.|Bye for "
 "now. Take care."
 
 #: dialog0109.txt:1
@@ -4437,14 +4437,18 @@ msgstr "OTHER: That is very simple.#X1"
 #: dialog0116.txt:100101
 msgid "OTHER: Prosiłem go kiedyś, by poświecił mocniej|nad krasnoludzkimi kopalniami Ghorlargu.|Bardzo niemiłe miejsce."
 msgstr ""
+"OTHER: I asked him once to shine stronger|over the dwarven mines of "
+"Ghorlarg.| Very unpleasant place."
 
 #: dialog0116.txt:100102
 msgid "OTHER: Była tam fabryka krasnoludzkiego spirytusu,|i kiedy kadź pękła, wszyscy zostali zalani."
 msgstr ""
+"OTHER: There was a dwarven spirits factory|and when fermenting vat broke, "
+"everybody were flooded."
 
 #: dialog0116.txt:100103
 msgid "OTHER: Zalani dosłownie i w przenośni."
-msgstr ""
+msgstr "OTHER: Flooded literally and figuratively."
 
 #: dialog0116.txt:100104
 msgid "OTHER: I nikt nie mógł znaleźć drogi do|wyjścia, a w środku było mało|powietrza."
