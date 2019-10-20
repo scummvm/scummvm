@@ -96,6 +96,56 @@ static void gln_standout_string(const char *message);
 
 static int gln_confirm(const char *prompt);
 
+/* Picture variables */
+/* Graphics file directory, and type of graphics found in it. */
+static char *gln_graphics_bitmap_directory = nullptr;
+static BitmapType gln_graphics_bitmap_type = NO_BITMAPS;
+
+/* The current picture id being displayed. */
+enum { GLN_PALETTE_SIZE = 32 };
+static gln_byte *gln_graphics_bitmap = nullptr;
+static gln_uint16 gln_graphics_width = 0,
+gln_graphics_height = 0;
+static Colour gln_graphics_palette[GLN_PALETTE_SIZE]; /* = { 0, ... }; */
+static int gln_graphics_picture = -1;
+
+/*
+ * Flags set on new picture, and on resize or arrange events, and a flag
+ * to indicate whether background repaint is stopped or active.
+ */
+static int gln_graphics_new_picture = FALSE,
+gln_graphics_repaint = FALSE,
+gln_graphics_active = FALSE;
+
+/*
+ * State to monitor the state of interpreter graphics.  The values of the
+ * enumerations match the modes supplied by os_graphics().
+ */
+enum GraphicsState {
+	GLN_GRAPHICS_OFF = 0,
+	GLN_GRAPHICS_LINE_MODE = 1,
+	GLN_GRAPHICS_BITMAP_MODE = 2
+};
+static GraphicsState gln_graphics_interpreter_state = GLN_GRAPHICS_OFF;
+
+
+/*
+ * Pointer to the two graphics buffers, one the off-screen representation
+ * of pixels, and the other tracking on-screen data.  These are temporary
+ * graphics malloc'ed memory, and should be free'd on exit.
+ */
+static gln_byte *gln_graphics_off_screen = nullptr,
+*gln_graphics_on_screen = nullptr;
+
+/*
+ * The number of colors used in the palette by the current picture.  Because
+ * of the way it's queried, we risk a race, with admittedly a very low
+ * probability, with the updater.  So, it's initialized instead to the
+ * largest possible value.  The real value in use is inserted on the first
+ * picture update timeout call for a new picture.
+ */
+static int gln_graphics_color_count = GLN_PALETTE_SIZE;
+
 
 /*---------------------------------------------------------------------*/
 /*  Glk port utility functions                                         */
@@ -116,6 +166,20 @@ void gln_initialize() {
 	gln_abbreviations_enabled = TRUE;
 	gln_commands_enabled = TRUE;
 	gln_stop_reason = STOP_NONE;
+
+	gln_graphics_bitmap_directory = nullptr;
+	gln_graphics_bitmap_type = NO_BITMAPS;
+	gln_graphics_bitmap = nullptr;
+	gln_graphics_width = 0;
+	gln_graphics_height = 0;
+	gln_graphics_picture = -1;
+	gln_graphics_new_picture = FALSE;
+	gln_graphics_repaint = FALSE;
+	gln_graphics_active = FALSE;
+	gln_graphics_interpreter_state = GLN_GRAPHICS_OFF;
+	gln_graphics_off_screen = nullptr;
+	gln_graphics_on_screen = nullptr;
+	gln_graphics_color_count = GLN_PALETTE_SIZE;
 }
 
 /*
@@ -1312,55 +1376,6 @@ static const int GLN_GRAPHICS_BORDER = 1,
  * pixels since no off-screen, real picture, pixel will match it.
  */
 static const int GLN_GRAPHICS_UNUSED_PIXEL = 0xff;
-
-/* Graphics file directory, and type of graphics found in it. */
-static char *gln_graphics_bitmap_directory = nullptr;
-static BitmapType gln_graphics_bitmap_type = NO_BITMAPS;
-
-/* The current picture id being displayed. */
-enum { GLN_PALETTE_SIZE = 32 };
-static gln_byte *gln_graphics_bitmap = nullptr;
-static gln_uint16 gln_graphics_width = 0,
-                  gln_graphics_height = 0;
-static Colour gln_graphics_palette[GLN_PALETTE_SIZE]; /* = { 0, ... }; */
-static int gln_graphics_picture = -1;
-
-/*
- * Flags set on new picture, and on resize or arrange events, and a flag
- * to indicate whether background repaint is stopped or active.
- */
-static int gln_graphics_new_picture = FALSE,
-           gln_graphics_repaint = FALSE,
-           gln_graphics_active = FALSE;
-
-/*
- * State to monitor the state of interpreter graphics.  The values of the
- * enumerations match the modes supplied by os_graphics().
- */
-enum GraphicsState {
-	GLN_GRAPHICS_OFF = 0,
-	GLN_GRAPHICS_LINE_MODE = 1,
-	GLN_GRAPHICS_BITMAP_MODE = 2
-};
-static GraphicsState gln_graphics_interpreter_state = GLN_GRAPHICS_OFF;
-
-
-/*
- * Pointer to the two graphics buffers, one the off-screen representation
- * of pixels, and the other tracking on-screen data.  These are temporary
- * graphics malloc'ed memory, and should be free'd on exit.
- */
-static gln_byte *gln_graphics_off_screen = nullptr,
-                 *gln_graphics_on_screen = nullptr;
-
-/*
- * The number of colors used in the palette by the current picture.  Because
- * of the way it's queried, we risk a race, with admittedly a very low
- * probability, with the updater.  So, it's initialized instead to the
- * largest possible value.  The real value in use is inserted on the first
- * picture update timeout call for a new picture.
- */
-static int gln_graphics_color_count = GLN_PALETTE_SIZE;
 
 
 /*
