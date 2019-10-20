@@ -143,6 +143,12 @@ MODULE_OBJS += \
 	alan3/word.o
 endif
 
+ifdef ENABLE_GLK_ARCHETYPE
+MODULE_OBJS += \
+	archetype/archetype.o \
+	archetype/detection.o
+endif
+
 ifdef ENABLE_GLK_FROTZ
 MODULE_OBJS += \
 	frotz/bitmap_font.o \
