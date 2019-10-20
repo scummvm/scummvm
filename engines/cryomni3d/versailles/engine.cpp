@@ -74,53 +74,15 @@ bool CryOmni3DEngine_Versailles::hasFeature(EngineFeature f) const {
 	       || (f == kSupportsLoadingDuringRuntime);
 }
 
+void CryOmni3DEngine_Versailles::initializePath(const Common::FSNode &gamePath) {
+	// All files are named uniquely so just add the main directory with a large enough depth and in flat mode
+	// That should do it
+	SearchMan.setIgnoreClashes(true);
+	SearchMan.addDirectory(gamePath.getPath(), gamePath, 0, 5, true);
+}
+
 Common::Error CryOmni3DEngine_Versailles::run() {
 	CryOmni3DEngine::run();
-
-	const Common::FSNode gameDataDir(ConfMan.get("path"));
-	SearchMan.addSubDirectoryMatching(gameDataDir, "sc_trans", 1);
-	SearchMan.addSubDirectoryMatching(gameDataDir, "menu", 1);
-	SearchMan.addSubDirectoryMatching(gameDataDir, "basedoc/fonds", 1);
-	SearchMan.addSubDirectoryMatching(gameDataDir, "fonts", 1);
-	SearchMan.addSubDirectoryMatching(gameDataDir, "spr8col", 1);
-	SearchMan.addSubDirectoryMatching(gameDataDir, "spr8col/bmpok", 1);
-	SearchMan.addSubDirectoryMatching(gameDataDir, "wam", 1);
-	SearchMan.addSubDirectoryMatching(gameDataDir, "objets", 1);
-	SearchMan.addSubDirectoryMatching(gameDataDir, "gto", 1);
-	SearchMan.addSubDirectoryMatching(gameDataDir, "dial/flc_dial", 1);
-	SearchMan.addSubDirectoryMatching(gameDataDir, "dial/voix", 1);
-	SearchMan.addSubDirectoryMatching(gameDataDir, "textes", 1);
-	SearchMan.addSubDirectoryMatching(gameDataDir, "music", 1);
-	SearchMan.addSubDirectoryMatching(gameDataDir, "sound", 1);
-
-	// Sometimes files are taken from other levels
-	// Original game has a logic based on the first character of the file name.
-	// We can't do this here so we put in lower priority all the levels as a fallback
-
-	// Create a first SearchSet in which we will add all others to group everything
-	Common::SearchSet *fallbackFiles = new Common::SearchSet();
-
-	for (uint lvl = 1; lvl <= 7; lvl++) {
-		Common::SearchSet *fallbackFilesAnimacti = new Common::SearchSet();
-		Common::SearchSet *fallbackFilesWarp = new Common::SearchSet();
-		Common::SearchSet *fallbackFilesImgFix = new Common::SearchSet();
-
-		fallbackFilesAnimacti->addSubDirectoryMatching(gameDataDir, Common::String::format(
-		            "animacti/level%d", lvl), 2);
-		fallbackFilesWarp->addSubDirectoryMatching(gameDataDir, Common::String::format(
-		            "warp/level%d/cyclo", lvl), 2);
-		fallbackFilesWarp->addSubDirectoryMatching(gameDataDir, Common::String::format(
-		            "warp/level%d/hnm", lvl), 2);
-		fallbackFilesImgFix->addSubDirectoryMatching(gameDataDir, Common::String::format(
-		            "img_fix/level%d", lvl), 2);
-
-		fallbackFiles->add(Common::String::format("__fallbackFiles_animacti_%d", lvl),
-		                   fallbackFilesAnimacti);
-		fallbackFiles->add(Common::String::format("__fallbackFiles_warp_%d", lvl), fallbackFilesWarp);
-		fallbackFiles->add(Common::String::format("__fallbackFiles_img_fix_%d", lvl), fallbackFilesImgFix);
-	}
-
-	SearchMan.add("__fallbackFiles", fallbackFiles);
 
 	// First thing, load all data that was originally in the executable
 	// We don't need anything prepared for that
@@ -744,37 +706,8 @@ void CryOmni3DEngine_Versailles::changeLevel(int level) {
 }
 
 void CryOmni3DEngine_Versailles::initNewLevel(int level) {
-	// SearchMan can't add several times the same basename
-	// We create several SearchSet with different names that we add to SearchMan instead
-
-	SearchMan.remove("__levelFiles_animacti");
-	SearchMan.remove("__levelFiles_warp");
-	SearchMan.remove("__levelFiles_img_fix");
-
-	const Common::FSNode gameDataDir(ConfMan.get("path"));
-	if (level >= 1 && level <= 7) {
-		// Add current level directories to the search set to be looked up first
-		// If a file is not found in the current level, find it with the fallback
-
-		Common::SearchSet *levelFilesAnimacti = new Common::SearchSet();
-		Common::SearchSet *levelFilesWarp = new Common::SearchSet();
-		Common::SearchSet *levelFilesImgFix = new Common::SearchSet();
-
-		levelFilesAnimacti->addSubDirectoryMatching(gameDataDir, Common::String::format(
-		            "animacti/level%d", level), 1);
-		levelFilesWarp->addSubDirectoryMatching(gameDataDir, Common::String::format(
-		        "warp/level%d/cyclo", level), 1);
-		levelFilesWarp->addSubDirectoryMatching(gameDataDir, Common::String::format(
-		        "warp/level%d/hnm", level), 1);
-		levelFilesImgFix->addSubDirectoryMatching(gameDataDir, Common::String::format(
-		            "img_fix/level%d", level), 1);
-
-		SearchMan.add("__levelFiles_animacti", levelFilesAnimacti);
-		SearchMan.add("__levelFiles_warp", levelFilesWarp);
-		SearchMan.add("__levelFiles_img_fix", levelFilesImgFix);
-	} else if (level == 8 && _isVisiting) {
-		// In visit mode, we take files from all levels so we use the fallback mechanism
-	} else {
+	if (level < 1 || level > 8 ||
+	        (level == 8 && !_isVisiting)) {
 		error("Invalid level %d", level);
 	}
 

@@ -228,6 +228,8 @@ public:
 	CryOmni3DEngine_Versailles(OSystem *syst, const CryOmni3DGameDescription *gamedesc);
 	virtual ~CryOmni3DEngine_Versailles();
 
+	virtual void initializePath(const Common::FSNode &gamePath) override;
+
 	bool hasFeature(EngineFeature f) const override;
 	virtual Common::Error loadGameState(int slot) override;
 	virtual Common::Error saveGameState(int slot, const Common::String &desc) override;
