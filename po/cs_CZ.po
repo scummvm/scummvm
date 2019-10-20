@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.7.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2019-10-19 20:57+0200\n"
+"POT-Creation-Date: 2019-10-20 16:43+0200\n"
 "PO-Revision-Date: 2018-04-18 10:09+0000\n"
 "Last-Translator: Adrian Frühwirth <bonki@scummvm.org>\n"
 "Language-Team: Czech <https://translations.scummvm.org/projects/scummvm/"
@@ -75,7 +75,7 @@ msgstr "Jít nahoru"
 #: engines/mohawk/riven_stacks/aspit.cpp:372
 #: engines/mohawk/riven_stacks/aspit.cpp:456
 #: engines/parallaction/saveload.cpp:271 engines/scumm/dialogs.cpp:187
-#: engines/sword1/control.cpp:887 engines/wintermute/wintermute.cpp:166
+#: engines/sword1/control.cpp:889 engines/wintermute/wintermute.cpp:166
 msgid "Cancel"
 msgstr "Zru¹it"
 
@@ -173,9 +173,9 @@ msgstr ""
 #: engines/scumm/dialogs.cpp:189 engines/scumm/scumm.cpp:1900
 #: engines/scumm/players/player_v3m.cpp:130
 #: engines/scumm/players/player_v5m.cpp:108 engines/sky/compact.cpp:141
-#: engines/sword1/animation.cpp:524 engines/sword1/animation.cpp:545
-#: engines/sword1/animation.cpp:561 engines/sword1/animation.cpp:569
-#: engines/sword1/control.cpp:887 engines/sword1/logic.cpp:1633
+#: engines/sword1/animation.cpp:532 engines/sword1/animation.cpp:553
+#: engines/sword1/animation.cpp:569 engines/sword1/animation.cpp:577
+#: engines/sword1/control.cpp:889 engines/sword1/logic.cpp:1635
 #: engines/sword2/animation.cpp:425 engines/sword2/animation.cpp:445
 #: engines/sword2/animation.cpp:461 engines/sword2/animation.cpp:471
 #: engines/zvision/file/save_manager.cpp:230
@@ -5481,26 +5481,26 @@ msgid ""
 "Removes some repetitive actions, adds possibility to change verbs by keyboard"
 msgstr ""
 
-#: engines/sword1/animation.cpp:524
+#: engines/sword1/animation.cpp:532
 #, c-format
 msgid "PSX stream cutscene '%s' cannot be played in paletted mode"
 msgstr "Proud videa PSX '%s' nemù¾e být pøehrán v re¾imu palety"
 
-#: engines/sword1/animation.cpp:545 engines/sword2/animation.cpp:445
+#: engines/sword1/animation.cpp:553 engines/sword2/animation.cpp:445
 msgid "DXA cutscenes found but ScummVM has been built without zlib"
 msgstr "Videa DXA nalezena, ale ScummVM byl sestaven bez podpory zlib"
 
-#: engines/sword1/animation.cpp:561 engines/sword2/animation.cpp:461
+#: engines/sword1/animation.cpp:569 engines/sword2/animation.cpp:461
 msgid ""
 "MPEG-2 cutscenes found but ScummVM has been built without MPEG-2 support"
 msgstr "Videa MPEG-2 nalezena, ale ScummVM byl sestaven bez podpory MPEG-2"
 
-#: engines/sword1/animation.cpp:568 engines/sword2/animation.cpp:470
+#: engines/sword1/animation.cpp:576 engines/sword2/animation.cpp:470
 #, c-format
 msgid "Cutscene '%s' not found"
 msgstr "Video '%s' nenalezeno"
 
-#: engines/sword1/control.cpp:885
+#: engines/sword1/control.cpp:887
 msgid ""
 "ScummVM found that you have old saved games for Broken Sword 1 that should "
 "be converted.\n"
@@ -5518,7 +5518,7 @@ msgstr ""
 "Stisknìte OK, abyste je pøevedli teï, jinak budete po¾ádáni znovu, pøi "
 "spu¹tìní této hry.\n"
 
-#: engines/sword1/control.cpp:1259
+#: engines/sword1/control.cpp:1261
 #, c-format
 msgid ""
 "Target new saved game already exists!\n"
@@ -5527,15 +5527,15 @@ msgstr ""
 "Nová cílová ulo¾ená hra ji¾ existuje!\n"
 "Chtìli byste ponechat starou ulo¾enou hru (%s), nebo novou (%s)?\n"
 
-#: engines/sword1/control.cpp:1262
+#: engines/sword1/control.cpp:1264
 msgid "Keep the old one"
 msgstr "Ponechat starou"
 
-#: engines/sword1/control.cpp:1262
+#: engines/sword1/control.cpp:1264
 msgid "Keep the new one"
 msgstr "Ponechat novou"
 
-#: engines/sword1/logic.cpp:1633
+#: engines/sword1/logic.cpp:1635
 msgid "This is the end of the Broken Sword 1 Demo"
 msgstr "Toto je konec Dema Broken Sword 1"
 

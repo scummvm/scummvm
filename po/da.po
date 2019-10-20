@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2019-10-19 20:57+0200\n"
+"POT-Creation-Date: 2019-10-20 16:43+0200\n"
 "PO-Revision-Date: 2019-09-23 22:54+0000\n"
 "Last-Translator: scootergrisen <scootergrisen@gmail.com>\n"
 "Language-Team: Danish <https://translations.scummvm.org/projects/scummvm/"
@@ -73,7 +73,7 @@ msgstr "Gå op"
 #: engines/mohawk/riven_stacks/aspit.cpp:372
 #: engines/mohawk/riven_stacks/aspit.cpp:456
 #: engines/parallaction/saveload.cpp:271 engines/scumm/dialogs.cpp:187
-#: engines/sword1/control.cpp:887 engines/wintermute/wintermute.cpp:166
+#: engines/sword1/control.cpp:889 engines/wintermute/wintermute.cpp:166
 msgid "Cancel"
 msgstr "Annuller"
 
@@ -171,9 +171,9 @@ msgstr ""
 #: engines/scumm/dialogs.cpp:189 engines/scumm/scumm.cpp:1900
 #: engines/scumm/players/player_v3m.cpp:130
 #: engines/scumm/players/player_v5m.cpp:108 engines/sky/compact.cpp:141
-#: engines/sword1/animation.cpp:524 engines/sword1/animation.cpp:545
-#: engines/sword1/animation.cpp:561 engines/sword1/animation.cpp:569
-#: engines/sword1/control.cpp:887 engines/sword1/logic.cpp:1633
+#: engines/sword1/animation.cpp:532 engines/sword1/animation.cpp:553
+#: engines/sword1/animation.cpp:569 engines/sword1/animation.cpp:577
+#: engines/sword1/control.cpp:889 engines/sword1/logic.cpp:1635
 #: engines/sword2/animation.cpp:425 engines/sword2/animation.cpp:445
 #: engines/sword2/animation.cpp:461 engines/sword2/animation.cpp:471
 #: engines/zvision/file/save_manager.cpp:230
@@ -5480,28 +5480,28 @@ msgstr ""
 "Fjerner nogen respektive handlinger, tilføjer muligheder for at ændre verbur "
 "med tastaturet"
 
-#: engines/sword1/animation.cpp:524
+#: engines/sword1/animation.cpp:532
 #, c-format
 msgid "PSX stream cutscene '%s' cannot be played in paletted mode"
 msgstr "PSX stream filmsekvens '%s' kan ikke afspilles i palettilstand"
 
-#: engines/sword1/animation.cpp:545 engines/sword2/animation.cpp:445
+#: engines/sword1/animation.cpp:553 engines/sword2/animation.cpp:445
 msgid "DXA cutscenes found but ScummVM has been built without zlib"
 msgstr "DXA filmsekvenser fundet, men ScummVM er bygget uden zlib"
 
-#: engines/sword1/animation.cpp:561 engines/sword2/animation.cpp:461
+#: engines/sword1/animation.cpp:569 engines/sword2/animation.cpp:461
 msgid ""
 "MPEG-2 cutscenes found but ScummVM has been built without MPEG-2 support"
 msgstr ""
 "MPEG-2-filmsekvenser fundet, men ScummVM er bygget uden understøttelse af "
 "MPEG-2"
 
-#: engines/sword1/animation.cpp:568 engines/sword2/animation.cpp:470
+#: engines/sword1/animation.cpp:576 engines/sword2/animation.cpp:470
 #, c-format
 msgid "Cutscene '%s' not found"
 msgstr "Filmsekvens '%s' ikke fundet"
 
-#: engines/sword1/control.cpp:885
+#: engines/sword1/control.cpp:887
 msgid ""
 "ScummVM found that you have old saved games for Broken Sword 1 that should "
 "be converted.\n"
@@ -5519,7 +5519,7 @@ msgstr ""
 "Tryk på OK for at konvertere dem nu, ellers vil du blive spurgt igen, næste "
 "gang du starter spillet.\n"
 
-#: engines/sword1/control.cpp:1259
+#: engines/sword1/control.cpp:1261
 #, c-format
 msgid ""
 "Target new saved game already exists!\n"
@@ -5528,15 +5528,15 @@ msgstr ""
 "Nyt gemt spil findes allerede!\n"
 "Vil du gerne beholde det gamle gemte spil (%s) eller det nye (%s)?\n"
 
-#: engines/sword1/control.cpp:1262
+#: engines/sword1/control.cpp:1264
 msgid "Keep the old one"
 msgstr "Behold den gamle"
 
-#: engines/sword1/control.cpp:1262
+#: engines/sword1/control.cpp:1264
 msgid "Keep the new one"
 msgstr "Behold den nye"
 
-#: engines/sword1/logic.cpp:1633
+#: engines/sword1/logic.cpp:1635
 msgid "This is the end of the Broken Sword 1 Demo"
 msgstr "Her slutter Broken Sword 1-demoen"
 
