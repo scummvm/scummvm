@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2019-10-20 16:43+0200\n"
+"POT-Creation-Date: 2019-10-20 18:13+0200\n"
 "PO-Revision-Date: 2018-08-06 21:28+0000\n"
 "Last-Translator: monkeymadness <ihave13redsox@hotmail.com>\n"
 "Language-Team: Chinese <https://translations.scummvm.org/projects/scummvm/"
@@ -170,8 +170,8 @@ msgstr ""
 #: engines/sword1/animation.cpp:532 engines/sword1/animation.cpp:553
 #: engines/sword1/animation.cpp:569 engines/sword1/animation.cpp:577
 #: engines/sword1/control.cpp:889 engines/sword1/logic.cpp:1635
-#: engines/sword2/animation.cpp:425 engines/sword2/animation.cpp:445
-#: engines/sword2/animation.cpp:461 engines/sword2/animation.cpp:471
+#: engines/sword2/animation.cpp:429 engines/sword2/animation.cpp:449
+#: engines/sword2/animation.cpp:465 engines/sword2/animation.cpp:475
 #: engines/zvision/file/save_manager.cpp:230
 msgid "OK"
 msgstr "Queding"
@@ -5424,16 +5424,16 @@ msgstr ""
 msgid "PSX stream cutscene '%s' cannot be played in paletted mode"
 msgstr "PSX liu Changjing '%s' Wufa zai Tiaosiban Moshi xia Bofang"
 
-#: engines/sword1/animation.cpp:553 engines/sword2/animation.cpp:445
+#: engines/sword1/animation.cpp:553 engines/sword2/animation.cpp:449
 msgid "DXA cutscenes found but ScummVM has been built without zlib"
 msgstr "Zhaodao DXA Guochang Danshi ScummVM Meiyou yu Zlib bianyi"
 
-#: engines/sword1/animation.cpp:569 engines/sword2/animation.cpp:461
+#: engines/sword1/animation.cpp:569 engines/sword2/animation.cpp:465
 msgid ""
 "MPEG-2 cutscenes found but ScummVM has been built without MPEG-2 support"
 msgstr "MPEG-2 Guocheng Zhaodao Dnashi ScummVM Meiyou He MPEG-2 Zhichi Bianyi"
 
-#: engines/sword1/animation.cpp:576 engines/sword2/animation.cpp:470
+#: engines/sword1/animation.cpp:576 engines/sword2/animation.cpp:474
 #, c-format
 msgid "Cutscene '%s' not found"
 msgstr "Guochang '%s' Weizhaodao"
@@ -5477,7 +5477,7 @@ msgstr "Baoliu Xinde"
 msgid "This is the end of the Broken Sword 1 Demo"
 msgstr "Zheshi Broken Sword 1 Demo de Jiewei"
 
-#: engines/sword2/animation.cpp:425
+#: engines/sword2/animation.cpp:429
 msgid ""
 "PSX cutscenes found but ScummVM has been built without RGB color support"
 msgstr "PSX Guochang zhaodao Danshi ScmummVM Meiyou Zhichi RGB Secai Bianyi"

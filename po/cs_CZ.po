@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.7.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2019-10-20 16:43+0200\n"
+"POT-Creation-Date: 2019-10-20 18:13+0200\n"
 "PO-Revision-Date: 2018-04-18 10:09+0000\n"
 "Last-Translator: Adrian Frühwirth <bonki@scummvm.org>\n"
 "Language-Team: Czech <https://translations.scummvm.org/projects/scummvm/"
@@ -176,8 +176,8 @@ msgstr ""
 #: engines/sword1/animation.cpp:532 engines/sword1/animation.cpp:553
 #: engines/sword1/animation.cpp:569 engines/sword1/animation.cpp:577
 #: engines/sword1/control.cpp:889 engines/sword1/logic.cpp:1635
-#: engines/sword2/animation.cpp:425 engines/sword2/animation.cpp:445
-#: engines/sword2/animation.cpp:461 engines/sword2/animation.cpp:471
+#: engines/sword2/animation.cpp:429 engines/sword2/animation.cpp:449
+#: engines/sword2/animation.cpp:465 engines/sword2/animation.cpp:475
 #: engines/zvision/file/save_manager.cpp:230
 msgid "OK"
 msgstr "OK"
@@ -5486,16 +5486,16 @@ msgstr ""
 msgid "PSX stream cutscene '%s' cannot be played in paletted mode"
 msgstr "Proud videa PSX '%s' nemù¾e být pøehrán v re¾imu palety"
 
-#: engines/sword1/animation.cpp:553 engines/sword2/animation.cpp:445
+#: engines/sword1/animation.cpp:553 engines/sword2/animation.cpp:449
 msgid "DXA cutscenes found but ScummVM has been built without zlib"
 msgstr "Videa DXA nalezena, ale ScummVM byl sestaven bez podpory zlib"
 
-#: engines/sword1/animation.cpp:569 engines/sword2/animation.cpp:461
+#: engines/sword1/animation.cpp:569 engines/sword2/animation.cpp:465
 msgid ""
 "MPEG-2 cutscenes found but ScummVM has been built without MPEG-2 support"
 msgstr "Videa MPEG-2 nalezena, ale ScummVM byl sestaven bez podpory MPEG-2"
 
-#: engines/sword1/animation.cpp:576 engines/sword2/animation.cpp:470
+#: engines/sword1/animation.cpp:576 engines/sword2/animation.cpp:474
 #, c-format
 msgid "Cutscene '%s' not found"
 msgstr "Video '%s' nenalezeno"
@@ -5539,7 +5539,7 @@ msgstr "Ponechat novou"
 msgid "This is the end of the Broken Sword 1 Demo"
 msgstr "Toto je konec Dema Broken Sword 1"
 
-#: engines/sword2/animation.cpp:425
+#: engines/sword2/animation.cpp:429
 msgid ""
 "PSX cutscenes found but ScummVM has been built without RGB color support"
 msgstr "Videa PSX nalezena, ale ScummVM byl sestaven bez podpory barev RGB"
