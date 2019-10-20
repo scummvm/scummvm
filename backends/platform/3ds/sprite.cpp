@@ -100,13 +100,15 @@ void Sprite::convertToInPlace(const Graphics::PixelFormat &dstFormat, const byte
 	//
 }
 
-void Sprite::render() {
+void Sprite::transfer() {
 	if (dirtyPixels) {
 		dirtyPixels = false;
 		GSPGPU_FlushDataCache(pixels, w * h * format.bytesPerPixel);
 		C3D_SyncDisplayTransfer((u32*)pixels, GX_BUFFER_DIM(w, h), (u32*)texture.data, GX_BUFFER_DIM(w, h), TEXTURE_TRANSFER_FLAGS);
-// 		gspWaitForPPF();
 	}
+}
+
+void Sprite::render() {
 	C3D_TexBind(0, &texture);
 
 	C3D_BufInfo *bufInfo = C3D_GetBufInfo();
