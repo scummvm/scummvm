@@ -183,8 +183,25 @@ void Room::loadRoomMessage(const char *text) {
 		_lookWithTalkerMessages[messageNum] = text;
 }
 
+struct TypoFix {
+	Common::String prefix;
+	Common::String origText;
+	Common::String newText;
+};
+
 Common::String Room::patchRoomMessage(const char *text) {
 	Common::String txt = text;
+	int i = 0;
+
+	TypoFix typoFixes[] = {
+		{ "#MUD0\\MUD0_023#", "gullability", "gullibility" },
+		{ "#MUD2\\MUD2_002#", "Well, now! I think", "Well, now I think" },
+		{ "#MUD2\\MUD2_014#", "I don't understand enough of the alien's thinking", "I don't understand enough of how the aliens thought," },
+		{ "#MUD3\\MUD3_011#", "to think after all the stunts that Harry has pulled", "to think that after all the stunts that Harry has pulled," },
+		{ "#MUD3\\MUD3_022#", "and they were certain", "and they are certain" },
+		{ "#MUD3\\MUD4_008#", "DId you know", "Did you know" },
+		{ "", "", "" }
+	};
 
 	// Fix typos where some messages contain a hyphen instead of an underscore
 	// (e.g in LOV2)
@@ -202,6 +219,18 @@ Common::String Room::patchRoomMessage(const char *text) {
 	// Original voice clip is someone who's clearly not Kelley saying "he's dead, Jim"
 	if (txt.hasPrefix("#FEA3\\FEA3_030#"))
 		txt = Common::String("#LOVA\\LOVA_100#") + (text + 14);
+
+	// Fix typos
+	do {
+		const Common::String origText = typoFixes[i].origText;
+		const Common::String newText = typoFixes[i].newText;
+
+		int32 pos = txt.find(origText);
+		if (pos > 0)
+			txt.replace(pos, origText.size(), newText, pos, newText.size());
+
+		i++;
+	} while (typoFixes[i].prefix != "");
 
 	return txt;
 }
