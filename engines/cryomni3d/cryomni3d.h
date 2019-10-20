@@ -75,7 +75,10 @@ enum CryOmni3DGameFeatures {
 	GF_VERSAILLES_FONTS_SET_C              = (3 << 0), // Fonts for Italian version (Helvet12 is used for docs texts)
 
 	GF_VERSAILLES_AUDIOPADDING_NO          = (0 << 2), // Audio files have underscore padding before extension
-	GF_VERSAILLES_AUDIOPADDING_YES         = (1 << 2)  // Audio files have underscore padding before extension
+	GF_VERSAILLES_AUDIOPADDING_YES         = (1 << 2), // Audio files have underscore padding before extension
+
+	GF_VERSAILLES_LINK_STANDARD            = (0 << 3), // Links file is lien_doc.txt
+	GF_VERSAILLES_LINK_LOCALIZED           = (1 << 3)  // Links file is taken from cryomni3d.dat
 };
 
 struct CryOmni3DGameDescription;
