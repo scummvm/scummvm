@@ -401,6 +401,29 @@ void MacText::draw(ManagedSurface *g, int x, int y, int w, int h, int xoff, int 
 										Common::Point(xoff, yoff));
 }
 
+void MacText::drawToPoint(ManagedSurface *g, Common::Rect srcRect, Common::Point dstPoint) {
+	if (_textLines.empty())
+		return;
+
+	render();
+
+	srcRect.clip(_surface->getBounds());
+
+	if (srcRect.isEmpty())
+		return;
+
+	g->blitFrom(*_surface, srcRect, dstPoint);
+}
+
+void MacText::drawToPoint(ManagedSurface *g, Common::Point dstPoint) {
+	if (_textLines.empty())
+		return;
+
+	render();
+
+	g->blitFrom(*_surface, dstPoint);
+}
+
 // Count newline characters in String
 uint getNewlinesInString(const Common::U32String &str) {
 	Common::U32String::const_iterator p = str.begin();

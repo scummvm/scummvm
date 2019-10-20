@@ -104,6 +104,8 @@ public:
 			}
 
 	void draw(ManagedSurface *g, int x, int y, int w, int h, int xoff, int yoff);
+	void drawToPoint(ManagedSurface *g, Common::Rect srcRect, Common::Point dstPoint);
+	void drawToPoint(ManagedSurface *g, Common::Point dstPoint);
 	void appendText(Common::U32String str, int fontId = kMacFontChicago, int fontSize = 12, int fontSlant = kMacFontRegular, bool skipAdd = false);
 	void appendText(const Common::String &str, int fontId = kMacFontChicago, int fontSize = 12, int fontSlant = kMacFontRegular, bool skipAdd = false);
 	void appendTextDefault(Common::U32String str, bool skipAdd = false);
