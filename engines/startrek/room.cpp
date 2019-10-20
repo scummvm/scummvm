@@ -194,6 +194,9 @@ Common::String Room::patchRoomMessage(const char *text) {
 	int i = 0;
 
 	TypoFix typoFixes[] = {
+		{ "#LOV2\\LOV2_012#", "#LOV2\\LOV2_012#", "#LOV1\\LOV1_010#" },	// Audio file missing
+		{ "#LOV3\\LOV3_#",    "#LOV3\\LOV3_#", "#LOV3\\LOV3_000#"},	// Message index missing
+		{ "#FEA3\\FEA3_030#", "#FEA3\\FEA3_030#", "#LOVA\\LOVA_100#" },	// Wrong voice actor
 		{ "#MUD0\\MUD0_023#", "gullability", "gullibility" },
 		{ "#MUD2\\MUD2_002#", "Well, now! I think", "Well, now I think" },
 		{ "#MUD2\\MUD2_014#", "I don't understand enough of the alien's thinking", "I don't understand enough of how the aliens thought," },
@@ -207,18 +210,6 @@ Common::String Room::patchRoomMessage(const char *text) {
 	// (e.g in LOV2)
 	if (txt[10] == '-')
 		txt.replace(10, 1, "_");
-
-	// Message index missing
-	if (txt.hasPrefix("#LOV3\\LOV3_#"))
-		txt = Common::String("#LOV3\\LOV3_000#") + (text + 12);
-
-	// Should be TX_LOV2_012, but the audio file is missing
-	if (txt.hasPrefix("#LOV2\\LOV2_012#"))
-		txt = Common::String("#LOV1\\LOV1_010#") + (text + 14);
-
-	// Original voice clip is someone who's clearly not Kelley saying "he's dead, Jim"
-	if (txt.hasPrefix("#FEA3\\FEA3_030#"))
-		txt = Common::String("#LOVA\\LOVA_100#") + (text + 14);
 
 	// Fix typos
 	do {
