@@ -33,6 +33,8 @@ int main(int argc, char *argv[]) {
 	romfsInit();
 	osSetSpeedupEnable(true);
 // 	consoleInit(GFX_TOP, NULL);
+	gdbHioDevInit();
+	gdbHioDevRedirectStdStreams(true, true, true);
 
 #ifdef USE_LIBCURL
 	const uint32 soc_sharedmem_size = 0x10000;
@@ -60,6 +62,7 @@ int main(int argc, char *argv[]) {
 #ifdef USE_LIBCURL
 	socExit();
 #endif
+	gdbHioDevExit();
 	romfsExit();
 	cfguExit();
 	gfxExit();
