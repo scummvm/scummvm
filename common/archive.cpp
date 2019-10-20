@@ -115,7 +115,7 @@ void SearchSet::addDirectory(const String &name, const FSNode &dir, int priority
 	if (!dir.exists() || !dir.isDirectory())
 		return;
 
-	add(name, new FSDirectory(dir, depth, flat), priority);
+	add(name, new FSDirectory(dir, depth, flat, _ignoreClashes), priority);
 }
 
 void SearchSet::addSubDirectoriesMatching(const FSNode &directory, String origPattern, bool ignoreCase, int priority, int depth, bool flat) {
