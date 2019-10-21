@@ -279,6 +279,7 @@ void AGDSEngine::tick() {
 void AGDSEngine::changeMouseArea(int id, int enabled) {
 	if (id < 0)
 		return;
+	debug("changeMouseArea %d %s", id, enabled? "enabled": "disabled");
 	MouseRegion * mouseArea = _mouseMap.find(id);
 	if (mouseArea) {
 		switch(enabled) {

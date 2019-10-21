@@ -632,11 +632,6 @@ void Process::modifyMouseArea() {
 	int enabled = pop();
 	int id = pop();
 	debug("modifyMouseArea %d, %d", id, enabled);
-	MouseRegion * region = _engine->_mouseMap.find(id);
-	if (region) {
-		region->enabled = enabled;
-	} else
-		warning("modifyMouseArea: mouse region %d not found", id);
 	suspend(kExitCodeMouseAreaChange, id, enabled);
 }
 
