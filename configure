@@ -1849,11 +1849,16 @@ esac
 case $_host_os in
 android)
 	if test -z "$ANDROID_SDK"; then
-		echo "Please set ANDROID_SDK in your environment. export ANDROID_SDK=<path to Android SDK>"
+		# $ANDROID_SDK must be the path to the root of the Android SDK folder;
+		# The SDK should have installed the target SDK platform version as specified
+		# in the Android port's manifest files and project.properties
+		echo "Please set ANDROID_SDK in your environment. Export ANDROID_SDK=<path to Android SDK>"
 		exit 1
 	fi
 	if test -z "$ANDROID_NDK"; then
-		echo "Please set ANDROID_NDK in your environment. export ANDROID_NDK=<path to Android NDK>"
+		# $ANDROID_NDK must be the path to the root of the NDK folder;
+		# A ndk-build script should reside (in r14b this calls the actual ndk-build in the build subfolder)
+		echo "Please set ANDROID_NDK in your environment. Export ANDROID_NDK=<path to Android NDK>"
 		exit 1
 	fi
 	;;
