@@ -707,7 +707,7 @@ static SciKernelMapEntry s_kernelMap[] = {
 	{ MAP_CALL(Format),            SIG_EVERYWHERE,           "r[ri](.*)",             NULL,            NULL },
 	{ MAP_CALL(GameIsRestarting),  SIG_EVERYWHERE,           "(i)",                   NULL,            NULL },
 	{ MAP_CALL(GetAngle),          SIG_EVERYWHERE,           "iiii",                  NULL,            kGetAngle_workarounds },
-	{ MAP_CALL(GetCWD),            SIG_EVERYWHERE,           "r",                     NULL,            NULL },
+	{ MAP_CALL(GetCWD),            SIG_EVERYWHERE,           "r",                     NULL,            kGetCWD_workarounds },
 	{ MAP_CALL(GetDistance),       SIG_EVERYWHERE,           "ii(i)(i)(i)(i)",        NULL,            NULL },
 	{ MAP_CALL(GetEvent),          SIG_SCIALL, SIGFOR_MAC,   "io(i*)",                NULL,            NULL },
 	{ MAP_CALL(GetEvent),          SIG_EVERYWHERE,           "io",                    NULL,            NULL },

@@ -745,6 +745,12 @@ const SciWorkaroundEntry kGetAngle_workarounds[] = {
 };
 
 //    gameID,           room,script,lvl,          object-name, method-name, local-call-signature, index-range,   workaround
+const SciWorkaroundEntry kGetCWD_workarounds[] = {
+	{ GID_LSL6,           -1,     0,  0,               "LSL6", "play",                      NULL,     0,     0, { WORKAROUND_IGNORE,    0 } }, // Mac version passes uninitialized global (zero) on startup, then immediately overwrites it with kGetSaveDir
+	SCI_WORKAROUNDENTRY_TERMINATOR
+};
+
+//    gameID,           room,script,lvl,          object-name, method-name, local-call-signature, index-range,   workaround
 const SciWorkaroundEntry kFileIOOpen_workarounds[] = {
 	{ GID_HOYLE5,         -1, 64990,  0,            "Restore", "doit",                      NULL,     0,     0, { WORKAROUND_STILLCALL, 0 } }, // Missing second argument when checking for bridgesg.cat or poker.cat when showing restore dialog
 	{ GID_TORIN,       61000, 61000,  0,       "roSierraLogo", "init",                      NULL,     0,     0, { WORKAROUND_STILLCALL, 0 } }, // Missing second argument when the game checks for autosave.cat after the Sierra logo
