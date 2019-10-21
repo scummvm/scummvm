@@ -160,6 +160,7 @@ SciEngine::SciEngine(OSystem *syst, const ADGameDescription *desc, SciGameId gam
 	SearchMan.addSubDirectoryMatching(gameDataDir, "Sound Folder"); // Mac audio files
 	SearchMan.addSubDirectoryMatching(gameDataDir, "Voices Folder", 0, 2, true); // Mac audio36 files (recursive for Torin)
 	SearchMan.addSubDirectoryMatching(gameDataDir, "Voices"); // Mac audio36 files
+	SearchMan.addSubDirectoryMatching(gameDataDir, "Voices/AUD#"); // LSL6 Mac audio36 files
 	SearchMan.addSubDirectoryMatching(gameDataDir, "VMD Folder"); // Mac VMD files
 
 	// Add the patches directory, except for KQ6CD; The patches folder in some versions of KQ6CD
