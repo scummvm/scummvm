@@ -2722,6 +2722,14 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::ES_ESP, Common::kPlatformDOS, 0, GUIO_STD16	},
 
+	// Larry 6 - English Macintosh Floppy (provided by sluicebox)
+	// VERSION file reports "1.0"
+	{"lsl6", "", {
+		{"Data1", 0, "482e6bcdda3a89390d5c4bcbfb5896b4", 2754907},
+		{"Data2", 0, "ba0799a45076780dfbceb8fce4c549c9", 5846345},
+		AD_LISTEND},
+		Common::EN_ANY, Common::kPlatformMacintosh, ADGF_MACRESFORK, GUIO_STD16_MAC },
+
 	// Crazy Nick's Software Picks: Leisure Suit Larry's Casino - English DOS (from the Leisure Suit Larry Collection)
 	// Executable scanning reports "1.001.029", VERSION file reports "1.000"
 	{"cnick-lsl", "", {
