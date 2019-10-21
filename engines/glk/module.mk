@@ -28,7 +28,7 @@ MODULE_OBJS := \
 	window_text_buffer.o \
 	window_text_grid.o
 
-ifdef ENABLE_ADRIFT
+ifdef ENABLE_GLK_ADRIFT
 MODULE_OBJS += \
 	adrift/adrift.o \
 	adrift/detection.o \
@@ -60,7 +60,7 @@ MODULE_OBJS += \
 	adrift/sxutils.o
 endif
 
-ifdef ENABLE_ADVSYS
+ifdef ENABLE_GLK_ADVSYS
 MODULE_OBJS += \
 	advsys/advsys.o \
 	advsys/detection.o \
@@ -69,7 +69,7 @@ MODULE_OBJS += \
 	advsys/vm.o
 endif
 
-ifdef ENABLE_ALAN2
+ifdef ENABLE_GLK_ALAN2
 MODULE_OBJS += \
 	alan2/alan2.o \
 	alan2/detection.o \
@@ -91,7 +91,7 @@ MODULE_OBJS += \
 	alan2/types.o
 endif
 
-ifdef ENABLE_ALAN3
+ifdef ENABLE_GLK_ALAN3
 MODULE_OBJS += \
 	alan3/acode.o \
 	alan3/act.o \
@@ -143,7 +143,7 @@ MODULE_OBJS += \
 	alan3/word.o
 endif
 
-ifdef ENABLE_FROTZ
+ifdef ENABLE_GLK_FROTZ
 MODULE_OBJS += \
 	frotz/bitmap_font.o \
 	frotz/config.o \
@@ -171,7 +171,7 @@ MODULE_OBJS += \
 	frotz/windows.o
 endif
 
-ifdef ENABLE_GLULXE
+ifdef ENABLE_GLK_GLULXE
 MODULE_OBJS += \
 	glulxe/accel.o \
 	glulxe/detection.o \
@@ -189,7 +189,7 @@ MODULE_OBJS += \
 	glulxe/vm.o
 endif
 
-ifdef ENABLE_GLKHUGO
+ifdef ENABLE_GLK_HUGO
 MODULE_OBJS += \
 	hugo/detection.o \
 	hugo/heexpr.o \
@@ -206,7 +206,7 @@ MODULE_OBJS += \
 	hugo/stringfn.o
 endif
 
-ifdef ENABLE_JACL
+ifdef ENABLE_GLK_JACL
 MODULE_OBJS += \
 	jacl/detection.o \
 	jacl/display.o \
@@ -226,7 +226,7 @@ MODULE_OBJS += \
 	jacl/utils.o
 endif
 
-ifdef ENABLE_MAGNETIC
+ifdef ENABLE_GLK_MAGNETIC
 MODULE_OBJS += \
 	magnetic/detection.o \
 	magnetic/emu.o \
@@ -235,7 +235,7 @@ MODULE_OBJS += \
 	magnetic/sound.o
 endif
 
-ifdef ENABLE_QUEST
+ifdef ENABLE_GLK_QUEST
 MODULE_OBJS += \
 	quest/detection.o \
 	quest/geas_file.o \
@@ -249,13 +249,13 @@ MODULE_OBJS += \
 	quest/streams.o
 endif
 
-ifdef ENABLE_SCOTT
+ifdef ENABLE_GLK_SCOTT
 MODULE_OBJS += \
 	scott/detection.o \
 	scott/scott.o
 endif
 
-ifdef ENABLE_TADS
+ifdef ENABLE_GLK_TADS
 MODULE_OBJS += \
 	tads/detection.o \
 	tads/os_banners.o \

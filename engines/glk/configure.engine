@@ -1,15 +1,15 @@
 # This file is included from the main "configure" script
 # add_engine [name] [desc] [build-by-default] [subengines] [base games] [deps]
-add_engine glk "ScummGlk Interactive Fiction games" no "adrift advsys alan2 alan3 frotz glulxe glkhugo jacl magnetic quest scott tads" "Base" "16bit freetype2 jpeg png"
-add_engine adrift "ADRIFT" no
-add_engine advsys "AdvSys" no
-add_engine alan2 "Alan2" no
-add_engine alan3 "Alan3" no
-add_engine frotz "Frotz" no
-add_engine glulxe "Glulxe" no
-add_engine glkhugo "Hugo" no
-add_engine jacl "JACL" no
-add_engine magnetic "Magnetic" no
-add_engine quest "Quest" no
-add_engine scott "Scott" no
-add_engine tads "TADS" no
+add_engine glk "ScummGlk Interactive Fiction games" no "glk_adrift glk_advsys glk_alan2 glk_alan3 glk_frotz glk_glulxe glk_hugo glk_jacl glk_magnetic glk_quest glk_scott glk_tads" "Base" "16bit freetype2 jpeg png"
+add_engine glk_adrift "ADRIFT" no
+add_engine glk_advsys "AdvSys" no
+add_engine glk_alan2 "Alan2" no
+add_engine glk_alan3 "Alan3" no
+add_engine glk_frotz "Frotz" no
+add_engine glk_glulxe "Glulxe" no
+add_engine glk_hugo "Hugo" no
+add_engine glk_jacl "JACL" no
+add_engine glk_magnetic "Magnetic" no
+add_engine glk_quest "Quest" no
+add_engine glk_scott "Scott" no
+add_engine glk_tads "TADS" no
