@@ -1,32 +1,80 @@
 /*
-README(.md) to .guide converter $VER: RM2AG.rexx 0.20 (18.05.2019)
-This script converts a given markdown README file of ScummVM to a basic
-hypertext Amiga guide file.
+$VER: RM2AG.rexx 0.22 (22.10.2019) README(.md) to .guide converter.
+This script converts a given markdown README file (right now, only
+ScummVM is supported) to a basic hypertext Amiga guide file and installs
+it to a given path, if available.
 */
 
-PARSE ARG readme_md
+PARSE ARG readme_md install_path
 
 /*
-Check if the given file is really the readme.
-If a given filename has spaces, AmigaDOS/AmigaCLI will add extra
-quotation marks to secure a sane working path. We get rid of them to make
-AREXX find the file.
+Check if arguments are available, otherwise quit.
 */
-readme_md=COMPRESS(readme_md,'"')
-OPEN(check_readme,readme_md,'R')
-IF READCH(check_readme,18) = '# [ScummVM README]' THEN
-	CLOSE(check_readme)
-ELSE DO
-	SAY "Not the ScummVM README.md file. Aborting!"
-	CLOSE(check_readme)
-	EXIT 0
+IF ~ARG() THEN DO
+	SAY 'No Arguments given!'
+	SAY 'Usage: RM2AG.rexx README_MD INSTALL_PATH'
+	EXIT No Arguments given!
 END
 
-OPEN(readme_read,readme_md,'R')
-OPEN(guide_write,'README.guide','W')
+/*
+If the given filename/path has spaces in it, AmigaDOS/CLI
+will add extra quotation marks to secure a sane working path.
+Get rid of them to make AREXX find the file and remove leading
+and trailing spaces.
+*/
+IF ~EXISTS(readme_md) THEN DO
+	SAY readme_md' not available!'
+	EXIT README.md not available!
+END
+ELSE DO
+	readme_md=STRIP(readme_md)
+	readme_md=COMPRESS(readme_md,'"')
+END
+IF installpath='' THEN DO
+	SAY 'No installation destination given!'
+	EXIT No installation destination given!
+END
+ELSE DO
+	install_path=STRIP(install_path)
+	install_path=COMPRESS(install_path,'"')
+	/*
+	Check for destination path and create it, if needed.
+	*/
+	IF ~EXISTS(install_path'sobjs/') THEN
+		ADDRESS COMMAND 'makedir 'install_path'sobjs'
+END
+
+IF ~OPEN(check_readme,readme_md,'R') THEN DO
+	SAY readme_md' opening failed!'
+	EXIT README.md opening failed!
+END
+
+IF READCH(check_readme,18) = '# [ScummVM README]' THEN DO
+	IF ~CLOSE(check_readme) THEN DO
+		SAY readme_md' closing failed!'
+		EXIT README.md closing failed!
+	END
+END
+ELSE DO
+	IF ~CLOSE(check_readme) THEN DO
+		SAY readme_md' closing failed!'
+		EXIT File README.md closing failed!
+	END
+	SAY "Not the ScummVM README.md file. Aborting!"
+	EXIT Not the ScummVM README.md file.
+END
+
+IF ~OPEN(readme_read,readme_md,'R')  THEN DO
+	SAY 'File 'readme_md' opening failed!'
+	EXIT File README.md opening failed!
+END
+IF ~OPEN(guide_write,'README.guide','W') THEN DO
+	SAY README.guide' opening failed!'
+	EXIT README.md opening failed!
+END
 
 /*
-Prepare the Amiga guide file, add the intro and fixed text.
+Prepare the Amiga guide file, add intro and fixed text.
 */
 WRITELN(guide_write,'@DATABASE ScummVM README.guide')
 WRITELN(guide_write,'@$VER: ScummVM Readme 2.2.0git')
@@ -39,22 +87,21 @@ WRITELN(guide_write,SUBSTR(READLN(readme_read),4,14))
 WRITELN(guide_write,'@{ub}')
 
 /*
-Creating the main (TOC) link nodes.
+Creating main (TOC) link nodes.
 */
 
 DO WHILE EOF(readme_read) = 0
 	working_line=READLN(readme_read)
 
 	/*
-	Check for the start of actual the content and, if found, leave the
-	TOC link loop.
+	Check for start of actual content and, if available, leave TOC link loop.
 	*/
 	IF POS('## <>1.0<>)',working_line) = 1 THEN
 		LEAVE
 
 	/*
-	Check for any "rolled over" lines, if found, read in the rest (on the
-	following line) and rejoin them again, before processing any further.
+	Check for any "rolled over" lines and, if available, read in the rest
+	(on the following line) and rejoin them again before processing any further.
 	e.g.	- [<>3.6.3<>) Broken Sword games
 		cutscenes](#363-broken-sword-games-cutscenes)
 	*/
@@ -72,10 +119,10 @@ DO WHILE EOF(readme_read) = 0
 		WRITELN(guide_write,working_line)
 	ELSE DO
 		/*
-		Fix the empty chapters:
-		Two chapters (1.0 and 7.8) are "empty", consisting of only it's
-		chapter names. We link them to their respective sub chapters
-		(1.1 and 7.8.1), so we don't end up displaying a blank page.
+		Fix empty chapters:
+		Two chapters (1.0 and 7.8) are "empty", consisting of only
+		it's chapter names. Link them to their respective sub chapters
+		(1.1 and 7.8.1) to not display a blank page.
 		
 		 If chapter 1.0 is found, add a link node to chapter 1.1.
 		*/
@@ -101,11 +148,11 @@ DO WHILE EOF(readme_read) = 0
 		END
 
 		/*
-		If a single number main chapter is found (1.0 upto 9.0), prepare
-		and write the link node.
+		If a single number main chapter is found (1.0 upto 9.0),
+		prepare and write the link node.
 		Just for the record:
 		A "\" (backslash) is treated as escape character in AmigaGuides.
-		Thus we remove it from the node links.
+		Remove it from the node links.
 		*/
 		IF POS('- [<>',working_line) = 3 THEN DO
 			WRITELN(guide_write,' ')
@@ -118,8 +165,8 @@ DO WHILE EOF(readme_read) = 0
 		END
 
 		/*
-		If a single number level one sub chapter is found
-		(i.e. 1.1, 1.2 etc.), prepare and write the link node.
+		If a level one sub chapter is found (i.e. 1.1, 1.2 etc.),
+		prepare and write the link node.
 		*/
 		IF POS('- [<>',working_line) = 7 THEN DO
 			WRITELN(guide_write,'    @{" 'SUBSTR(working_line,POS('<>',working_line)+2,LASTPOS('<>',working_line)-POS('<>',working_line)-2) '" Link "'SUBSTR(working_line,POS('<>',working_line)+2,LASTPOS('<>',working_line)-POS('<>',working_line)-2)'"} 'COMPRESS(SUBSTR(working_line,1,LASTPOS(']',working_line)-1),'*<>[]\'))
@@ -146,8 +193,8 @@ DO WHILE EOF(readme_read) = 0
 END
 
 /*
-Finish the TOC (Hardcoded due the outro text would be read in last, but
-needs to be written after the TOC creation).
+Finish TOC (hardcoded as the outro text would be read in last,
+but needs to be written after TOC creation finished).
 */
 WRITELN(guide_write,'-----')
 WRITELN(guide_write,' ')
@@ -156,11 +203,11 @@ WRITELN(guide_write,'The ScummVM team.')
 WRITELN(guide_write,'@{"https://www.scummvm.org/" System "URLOpen https://www.scummvm.org/"}')
 
 /*
-Creating the sub link nodes.
+Creating sub link nodes.
 */
 DO WHILE EOF(readme_read) = 0
 	/*
-	Change the html/markdown links to AmigaGuide ones
+	Change html/markdown links to AmigaGuide ones.
 	*/
 	IF POS('[here](',working_line) > 0 THEN DO
 		working_line=INSERT('@{"',working_line,POS('[',working_line)-1)
@@ -177,10 +224,10 @@ DO WHILE EOF(readme_read) = 0
 	ELSE DO
 		/*
 		Fix empty chapters:
-		Two chapters (1.0 and 7.8) are "empty", consisting of only it's
-		chapter names. We link them to their respective sub chapters
-		(1.1 and 7.8.1), so we don't end up displaying a blank page.
-		If chapter 1.1 is found don't close the NODE, just write the line.
+		Two chapters (1.0 and 7.8) are "empty", consisting of only
+		it's chapter names. Link them to their respective sub chapters
+		(1.1 and 7.8.1) to not display a blank page.
+		If chapter 1.1 is found, don't close the NODE, just write the line.
 		*/
 		IF POS('<>1.1<>',working_line) = 1 THEN DO
 			/*
@@ -191,8 +238,7 @@ DO WHILE EOF(readme_read) = 0
 		END
 
 		/*
-		If chapter 7.8.1 is found don't close the NODE, just write the
-		line.
+		If chapter 7.8.1 is found don't close the NODE, just write the line.
 		*/
 		IF POS('<>7.8.1<>',working_line) = 1 THEN DO
 			/*
@@ -217,7 +263,7 @@ DO WHILE EOF(readme_read) = 0
 			END
 			ELSE DO
 				/*
-				If a chapter has been found, prepare and write the link.
+				If a chapter has been found, prepare and write the link node.
 				*/
 				WRITELN(guide_write,'@ENDNODE')
 				WRITELN(guide_write,'@NODE "'SUBSTR(working_line,POS('<>',working_line)+2,LASTPOS('<>',working_line)-POS('<>',working_line)-2)'" "'COMPRESS(working_line,'<>#')'"')
@@ -237,7 +283,7 @@ DO WHILE EOF(readme_read) = 0
 	working_line=READLN(readme_read)
 
 	/*
-	If the outtro text is found, leave the loop and prepare for closing.
+	If the outtro text has been found, leave loop and prepare for closing.
 	*/
 	IF POS('-----',working_line,1) =1 THEN
 		LEAVE
@@ -246,11 +292,24 @@ END
 WRITELN(guide_write,'@ENDNODE')
 
 /*
-Close the guide and clean up.
+Close guide and clean up.
 */
 WRITELN(guide_write,'@ENDNODE')
 
-CLOSE(readme_read)
-CLOSE(guide_write)
+IF ~CLOSE(readme_read) THEN DO
+	SAY readme_md' closing failed!'
+	EXIT README.md closing failed!
+END
+IF ~CLOSE(guide_write) THEN DO
+	SAY 'README.guide closing failed!'
+	EXIT README.guide closing failed!
+END
+
+/*
+Install finished README.guide to installation path
+and delete README.guide.
+*/
+ADDRESS COMMAND 'copy README.guide 'install_path
+ADDRESS COMMAND 'delete README.guide'
 
 EXIT 0
