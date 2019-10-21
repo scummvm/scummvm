@@ -710,8 +710,8 @@ void AGDSEngine::tickDialog() {
 		Common::String process = _dialogProcessName;
 		_dialogProcessName.clear();
 
+		debug("end of dialog, running %s", process.c_str());
 		runObject(process);
-		debug("end of dialog");
 		getSystemVariable("dialog_var")->setInteger(-2);
 	}
 }
