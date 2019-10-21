@@ -542,13 +542,15 @@ void Process::stub153() {
 void Process::stub154() {
 	Common::String name = popString();
 	debug("stub154(getSomeX): %s", name.c_str());
-	push(154);
+	ObjectPtr object = _engine->getCurrentScreenObject(name);
+	push(object->getPosition().x);
 }
 
 void Process::stub155() {
 	Common::String name = popString();
-	debug("stub154(getSomeY): %s", name.c_str());
-	push(155);
+	debug("stub155(getSomeY): %s", name.c_str());
+	ObjectPtr object = _engine->getCurrentScreenObject(name);
+	push(object->getPosition().y);
 }
 
 void Process::stub160() {
