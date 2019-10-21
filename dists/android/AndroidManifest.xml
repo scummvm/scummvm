@@ -5,6 +5,8 @@
 		package="org.scummvm.scummvm"
 		android:versionCode="@ANDROID_VERSIONCODE@"
 		android:versionName="2.1.1pre"
+		android:launchMode="singleTask"
+		android:installLocation="auto"
 		android:sharedUserId="org.scummvm.scummvm">
 
 	<uses-sdk android:minSdkVersion="3"
@@ -35,9 +37,16 @@
 			android:name="android.software.leanback"
 			android:required="false"/>
 
+	<supports-screens
+			android:smallScreens="true"
+			android:normalScreens="true"
+			android:largeScreens="true"
+			android:xlargeScreens="true" />
+
 	<application
 			android:label="@string/app_name"
 			android:description="@string/app_desc"
+			android:allowBackup="true"
 			android:isGame="true"
 			android:icon="@drawable/scummvm">
 		<activity android:name=".ScummVMActivity"
