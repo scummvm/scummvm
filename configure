@@ -2603,11 +2603,13 @@ case $_host_os in
 				;;
 			android-x86)
 				append_var CXXFLAGS "-march=i686"
-				append_var CXXFLAGS "-mtune=i686"
+				append_var CXXFLAGS "-mtune=intel"
 				ABI="x86"
 				# Platform version 9 is needed as earlier versions of platform do not support this arch.
 				;;
 			android-x86_64)
+				append_var CXXFLAGS "-march=x86-64"
+				append_var CXXFLAGS "-mtune=intel"
 				ABI="x86_64"
 				;;
 			ouya)
