@@ -2771,6 +2771,8 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 #define GUIO_LSL6HIRES GUIO3(GUIO_NOASPECT, \
                              GUIO_LINKSPEECHTOSFX, \
                              GAMEOPTION_ORIGINAL_SAVELOAD)
+#define GUIO_LSL6HIRES_MAC GUIO2(GUIO_NOASPECT, \
+                                 GUIO_LINKSPEECHTOSFX)
 
 	// Larry 6 - English/German DOS CD - HIRES
 	// SCI interpreter version 2.100.002
@@ -2796,7 +2798,18 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::FR_FRA, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO_LSL6HIRES },
 
+	// Larry 6 - English Macintosh CD - HIRES (provided by michaelklaube in bug report #11218)
+	{"lsl6hires", "Hi-res", {
+		{"Data1", 0, "2c4e00a6910490831d4d84e9e6a49ec4", 3456494},
+		{"Data2", 0, "a7522b925dd5422c2db2b0a2337c76c3", 5856678},
+		{"Data3", 0, "9ebb490ec63721e5261111b918b5520e", 5577998},
+		{"Data4", 0, "d70687689ff3cf19a5e3c79dfced1c94", 3472320},
+		{"Data5", 0, "e91c3b681095a263fcb2f2c8d8fc74b6", 3274099},
+		AD_LISTEND},
+		Common::EN_ANY, Common::kPlatformMacintosh, ADGF_MACRESFORK | ADGF_UNSTABLE, GUIO_LSL6HIRES_MAC },
+
 #undef GUIO_LSL6HIRES
+#undef GUIO_LSL6HIRES_MAC
 
 #define GUIO_LSL7_DEMO GUIO4(GUIO_NOASPECT, \
                              GUIO_NOMIDI, \
