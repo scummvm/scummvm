@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.5.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2019-10-21 01:18+0200\n"
+"POT-Creation-Date: 2019-10-21 20:14+0200\n"
 "PO-Revision-Date: 2019-04-12 13:26+0000\n"
 "Last-Translator: Adrian Frühwirth <bonki@scummvm.org>\n"
 "Language-Team: Swedish <https://translations.scummvm.org/projects/scummvm/"
@@ -4540,7 +4540,7 @@ msgstr ""
 "spelfunktioner inte kommer att fungera. Se konsolen för ytterligare "
 "information och kontrollera att dina spelfiler är giltiga."
 
-#: engines/sci/sci.cpp:385
+#: engines/sci/sci.cpp:386
 msgid ""
 "Subtitles are enabled, but subtitling in King's Quest 7 was unfinished and "
 "disabled in the release version of the game. ScummVM allows the subtitles to "
@@ -4555,7 +4555,7 @@ msgstr ""
 "eller matcha talet. Det här är inte en bugg i ScummVM -- det är ett problem "
 "med spelfilerna."
 
-#: engines/sci/sci.cpp:409
+#: engines/sci/sci.cpp:410
 msgid ""
 "You have selected General MIDI as a sound device. Sierra has provided after-"
 "market support for General MIDI for this game in their \"General MIDI Utility"
@@ -4577,7 +4577,7 @@ msgstr ""
 "spelets mapp. Utan den här patchen kommer General MIDI-musik att låta "
 "väldigt förvrängd i det här spelet."
 
-#: engines/sci/sci.cpp:428
+#: engines/sci/sci.cpp:429
 msgid ""
 "Your game is patched with a fan made script patch. Such patches have been "
 "reported to cause issues, as they modify game scripts extensively. The "
@@ -4591,7 +4591,7 @@ msgstr ""
 "rekommenderas att du tar bort den här patchen från spelmappen för att "
 "undvika oväntade fel eller problem senare."
 
-#: engines/sci/sci.cpp:833
+#: engines/sci/sci.cpp:834
 msgid ""
 "Characters saved inside ScummVM are shown automatically. Character files "
 "saved in the original interpreter need to be put inside ScummVM's saved "
