@@ -2730,6 +2730,87 @@ static const uint16 gk1Day5MoselyVevePointsPatch[] = {
 	PATCH_END
 };
 
+// When turning on the museum's air conditioner prior to day 5 in room 260, the
+//  timing is off and speech is interrupted. Some parts of the sequence run at
+//  game speed and others don't, which at high speeds eliminates pauses between
+//  dialogue. Dr. John's "We have air conditioning, you see" speech is cut off
+//  at all speeds.
+//
+// We fix this by setting ego's speed to its default (6) during this sequence
+//  and waiting for the messages to complete before proceeding. flipTheSwitch
+//  restores ego's speed at the end of the script, even though it never sets it.
+//
+// Applies to: All CD versions
+// Responsible method: flipTheSwitch:changeState
+// Fixes bug: #11219
+static const uint16 gk1AirConditionerSpeechSignature[] = {
+	0x30, SIG_UINT16(0x0020),               // bnt 0020 [ state 1 ]
+	SIG_ADDTOOFFSET(+26),
+	0x4a, SIG_UINT16(0x000c),               // send 0c
+	0x32, SIG_UINT16(0x0409),               // jmp 0409 [ end of method ]
+	0x3c,                                   // dup
+	0x35, SIG_MAGICDWORD, 0x01,             // ldi 01
+	0x1a,                                   // eq?
+	0x30, SIG_UINT16(0x0056),               // bnt 0056 [ state 2 ]
+	SIG_ADDTOOFFSET(+24),
+	0x4a, SIG_UINT16(0x001a),               // send 1a [ GKEgo view: 265 ... ]
+	SIG_ADDTOOFFSET(+33),
+	0x4a, SIG_UINT16(0x000c),               // send 0c
+	0x32, SIG_UINT16(0x03c0),               // jmp 03c0 [ end of method ]
+	SIG_ADDTOOFFSET(+620),
+	0x7a,                                   // push2
+	SIG_ADDTOOFFSET(+3),
+	0x7c,                                   // pushSelf
+	0x81, 0x00,                             // lag 00
+	0x4a, SIG_UINT16(0x0014),               // send 14 [ GKEgo ... setCycle: End self ]
+	SIG_ADDTOOFFSET(+8),
+	0x38, SIG_UINT16(0x0004),               // pushi 0004
+	SIG_ADDTOOFFSET(+10),
+	0x4a, SIG_UINT16(0x000c),               // send 0c  [ gkMessager say: 28 8 7 4 ]
+	0x32, SIG_UINT16(0x012f),               // jmp 012f [ end of method ]
+	SIG_ADDTOOFFSET(+3),
+	0x38, SIG_UINT16(0x0004),               // pushi 0004
+	SIG_ADDTOOFFSET(+9),
+	0x4a, SIG_UINT16(0x000c),               // send 0c  [ gkMessager say: 28 8 8 4 ]
+	0x32, SIG_UINT16(0x011a),               // jmp 011a [ end of method ]
+	SIG_ADDTOOFFSET(+6),
+	0x38, SIG_SELECTOR16(stop),             // pushi stop [ stop snake sound ]
+	SIG_END
+};
+
+static const uint16 gk1AirConditionerSpeechPatch[] = {
+	0x30, PATCH_UINT16(0x001c),             // bnt 001c [ state 1 ]
+	PATCH_ADDTOOFFSET(+26),
+	0x33, 0x47,                             // jmp 47 [ send 0c / end of method ]
+	0x3c,                                   // dup
+	0x18,                                   // not
+	0x1a,                                   // eq?
+	0x31, 0x5c,                             // bnt 5c [ state 2 ]
+	0x38, PATCH_SELECTOR16(cycleSpeed),     // pushi cycleSpeed
+	0x78,                                   // push1
+	0x39, 0x06,                             // pushi 06
+	PATCH_ADDTOOFFSET(+24),
+	0x4a, PATCH_UINT16(0x0020),             // send 20 [ GKEgo cycleSpeed: 6 view: 265 ... ]
+	PATCH_ADDTOOFFSET(+659),
+	0x78,                                   // push1
+	PATCH_ADDTOOFFSET(+3),
+	0x80, PATCH_UINT16(0x0000),             // lag 0000
+	0x4a, PATCH_UINT16(0x0012),             // send 12 [ GKEgo ... setCycle: End ]
+	PATCH_ADDTOOFFSET(+8),
+	0x38, PATCH_UINT16(0x0005),             // pushi 0005
+	PATCH_ADDTOOFFSET(+10),
+	0x7c,                                   // pushSelf
+	0x4a, PATCH_UINT16(0x000e),             // send 0e [ gkMessager say: 28 8 7 4 self ]
+	0x33, 0x1b,                             // jmp 1b  [ stop snake sound ]
+	PATCH_ADDTOOFFSET(+3),
+	0x38, PATCH_UINT16(0x0005),             // pushi 0005
+	PATCH_ADDTOOFFSET(+9),
+	0x7c,                                   // pushSelf
+	0x4a, PATCH_UINT16(0x000e),             // send 0e [ gkMessager say: 28 8 8 4 self ]
+	0x33, 0x06,                             // jmp 06  [ stop snake sound ]
+	PATCH_END
+};
+
 // The day 5 snake attack has speed, audio, and graphics problems.
 //  These occur in all versions and also in Sierra's interpreter.
 //
@@ -3112,6 +3193,7 @@ static const SciScriptPatcherEntry gk1Signatures[] = {
 	{  true,   230, "fix police station ego speed",                1, gk1PoliceEgoSpeedFixSignature,    gk1PoliceEgoSpeedFixPatch },
 	{  true,   240, "fix day 5 mosely veve missing points",        1, gk1Day5MoselyVevePointsSignature, gk1Day5MoselyVevePointsPatch },
 	{  true,   250, "fix ego speed when exiting drug store",       1, gk1DrugStoreEgoSpeedFixSignature, gk1DrugStoreEgoSpeedFixPatch },
+	{  true,   260, "fix air conditioner speech timing",           1, gk1AirConditionerSpeechSignature, gk1AirConditionerSpeechPatch },
 	{  true,   260, "fix day 5 snake attack (1/2)",                1, gk1Day5SnakeAttackSignature1,     gk1Day5SnakeAttackPatch1 },
 	{  true,   260, "fix day 5 snake attack (2/2)",                1, gk1Day5SnakeAttackSignature2,     gk1Day5SnakeAttackPatch2 },
 	{  true,   280, "fix pathfinding in Madame Cazanoux's house",  1, gk1CazanouxPathfindingSignature,  gk1CazanouxPathfindingPatch },
