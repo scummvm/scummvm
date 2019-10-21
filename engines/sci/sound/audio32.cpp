@@ -22,6 +22,7 @@
 
 #include "sci/sound/audio32.h"
 #include "audio/audiostream.h"      // for SeekableAudioStream
+#include "audio/decoders/aiff.h"    // for makeAIFFStream
 #include "audio/decoders/mac_snd.h" // for makeMacSndStream
 #include "audio/decoders/raw.h"     // for makeRawStream, RawFlags::FLAG_16BITS
 #include "audio/decoders/wave.h"    // for makeWAVStream
@@ -78,6 +79,25 @@ bool detectWaveAudio(Common::SeekableReadStream &stream) {
 	const uint32 headerType = READ_BE_UINT32(blockHeader);
 
 	if (headerType != MKTAG('R', 'I', 'F', 'F')) {
+		return false;
+	}
+
+	return true;
+}
+
+bool detectAIFFAudio(Common::SeekableReadStream &stream) {
+	const size_t initialPosition = stream.pos();
+
+	byte blockHeader[8];
+	if (stream.read(blockHeader, sizeof(blockHeader)) != sizeof(blockHeader)) {
+		stream.seek(initialPosition);
+		return false;
+	}
+
+	stream.seek(initialPosition);
+	const uint32 headerType = READ_BE_UINT32(blockHeader);
+
+	if (headerType != MKTAG('F', 'O', 'R', 'M')) {
 		return false;
 	}
 
@@ -811,6 +831,8 @@ uint16 Audio32::play(int16 channelIndex, const ResourceId resourceId, const bool
 		audioStream = makeSOLStream(dataStream, DisposeAfterUse::YES);
 	} else if (detectWaveAudio(*dataStream)) {
 		audioStream = Audio::makeWAVStream(dataStream, DisposeAfterUse::YES);
+	} else if (detectAIFFAudio(*dataStream)) {
+		audioStream = Audio::makeAIFFStream(dataStream, DisposeAfterUse::YES);
 	} else if (detectMacSndAudio(*dataStream)) {
 		audioStream = Audio::makeMacSndStream(dataStream, DisposeAfterUse::YES);
 	} else {
