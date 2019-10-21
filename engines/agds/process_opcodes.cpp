@@ -1086,6 +1086,7 @@ void Process::stub235() {
 	int arg2 = pop();
 	int arg1 = pop();
 	debug("stub235 (fadeScreen?) %d %d %d", arg1, arg2, arg3);
+	enableUser();
 	if (_status == kStatusPassive)
 		suspend();
 }
