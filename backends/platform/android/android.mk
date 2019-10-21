@@ -10,7 +10,7 @@ ANDROID_VERSIONCODE = 40
 # ScummVM 1.9.0: 19
 # ScummVM 1.8.1: 15
 
-ANDROID_TARGET_VERSION = 26
+ANDROID_TARGET_VERSION = 28
 
 # ndk-build will build the ScummVM library in release mode by default unless:
 # - an Application.mk is provided in the jni folder with APP_OPTIM := debug
