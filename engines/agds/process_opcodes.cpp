@@ -869,10 +869,12 @@ void Process::loadPreviousScreen() {
 
 void Process::disableInventory() {
 	debug("disableInventory");
+	_engine->inventory().enable(false);
 }
 
 void Process::enableInventory() {
 	debug("enableInventory");
+	_engine->inventory().enable(true);
 }
 
 void Process::setObjectHeight() {

@@ -162,6 +162,7 @@ public:
 
 	void runDialog(const Common::String &dialogScript, const Common::String & defs);
 	void tickDialog();
+	void tickInventory();
 
 private:
 	void parseDialogDefs(const Common::String &defs);

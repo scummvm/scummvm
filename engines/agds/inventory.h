@@ -34,12 +34,20 @@ typedef Common::SharedPtr<Object> ObjectPtr;
 class Inventory {
 	typedef Common::Array<ObjectPtr> EntriesType;
 	EntriesType _entries;
+	bool _enabled;
 
 public:
 	static const int kMaxSize = 35;
 
 	Inventory();
 	~Inventory();
+
+	bool enabled() const {
+		return _enabled;
+	}
+	void enable(bool enabled) {
+		_enabled = enabled;
+	}
 
 	int add(ObjectPtr object);
 

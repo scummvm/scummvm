@@ -26,7 +26,8 @@
 #include "common/textconsole.h"
 
 namespace AGDS {
-Inventory::Inventory(): _entries(kMaxSize) { }
+
+Inventory::Inventory(): _entries(kMaxSize), _enabled(true) { }
 Inventory::~Inventory() { }
 
 int Inventory::free() const {

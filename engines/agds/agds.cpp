@@ -271,6 +271,7 @@ void AGDSEngine::runProcess(ProcessListType::iterator &it) {
 
 void AGDSEngine::tick() {
 	tickDialog();
+	tickInventory();
 	for(ProcessListType::iterator p = _processes.begin(); active() && p != _processes.end(); ) {
 		runProcess(p);
 	}
@@ -279,7 +280,8 @@ void AGDSEngine::tick() {
 void AGDSEngine::changeMouseArea(int id, int enabled) {
 	if (id < 0)
 		return;
-	debug("changeMouseArea %d %s", id, enabled? "enabled": "disabled");
+
+	debug("changeMouseArea %d %d", id, enabled);
 	MouseRegion * mouseArea = _mouseMap.find(id);
 	if (mouseArea) {
 		switch(enabled) {
@@ -287,14 +289,12 @@ void AGDSEngine::changeMouseArea(int id, int enabled) {
 				mouseArea->enable();
 				break;
 			case 0:
-			case -1:
 				if (mouseArea->currentlyIn) {
 					runObject(mouseArea->onLeave);
 				}
 				mouseArea->disable();
-				if (enabled == -1) {
-					_mouseMap.remove(id);
-				}
+				break;
+			case -1:
 				break;
 		}
 	} else
@@ -659,6 +659,19 @@ void AGDSEngine::parseDialogDefs(const Common::String &defs) {
 				value += ch;
 		}
 	}
+}
+
+void AGDSEngine::tickInventory() {
+	if (!_inventory.enabled())
+		return;
+
+	const Common::String & inv_region_name = getSystemVariable("inv_region")->getString();
+	if (inv_region_name.empty())
+		return;
+
+	Region * inv_region = loadRegion(inv_region_name);
+	if (!inv_region)
+		return;
 }
 
 void AGDSEngine::tickDialog() {
