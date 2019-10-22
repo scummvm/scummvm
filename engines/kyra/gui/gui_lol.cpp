@@ -1300,9 +1300,18 @@ int LoLEngine::clickedScenePickupItem(Button *button) {
 
 	redrawSceneItem();
 
+	// WORKAROUND for original bug that allowed picking up items by clicking exactly 1 pixel from the
+	// left, right or bottom border (which could even cause lockups). We simply clip the item pixel
+	// search zone to the dimensions of the calling button...
+	const ScreenDim *dim = _screen->getScreenDim(button->dimTableIndex);
+	int clipLeft = (dim->sx << 3) + button->x;
+	int clipTop = dim->sy + button->y;
+	int clipRight = (dim->sx << 3) + button->x + button->width - 1;
+	int clipBottom = dim->sy + button->y + button->height - 1;
+
 	int p = 0;
 	for (int i = 0; i < len; i++) {
-		p = _screen->getPagePixel(_screen->_curPage, CLIP(_mouseX + checkX[i], 0, 320), CLIP(_mouseY + checkY[i], 0, 200));
+		p = _screen->getPagePixel(_screen->_curPage, CLIP(_mouseX + checkX[i], clipLeft, clipRight), CLIP(_mouseY + checkY[i], clipTop, clipBottom));
 		if (p)
 			break;
 	}
