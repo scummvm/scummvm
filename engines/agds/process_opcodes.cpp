@@ -610,7 +610,8 @@ void Process::stub199() {
 
 void Process::stub200() {
 	int value = pop();
-	debug("stub200: %d", value);
+	int resource = pop();
+	debug("stub200: %d %d", value, resource);
 }
 
 void Process::stub201(unsigned size) {
