@@ -65,7 +65,7 @@ int Moonbase::callScummFunction(int scriptNumber, int paramCount,...) {
 	memset(args, 0, sizeof(args));
 
 	Common::String str;
-	str = Common::String::format("callScummFunction(%d, [", scriptNumber);
+	str = Common::String::format("Moonbase::callScummFunction(%d, [", scriptNumber);
 
 	for (int i = 0; i < paramCount; i++) {
 		args[i] = va_arg(va_params, int);
@@ -74,7 +74,7 @@ int Moonbase::callScummFunction(int scriptNumber, int paramCount,...) {
 	}
 	str += "])";
 
-	debug(0, "%s", str.c_str());
+	debug(3, "%s", str.c_str());
 
 
 	va_end(va_params);
