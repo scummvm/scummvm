@@ -759,7 +759,7 @@ void OptionsDialog::apply() {
 }
 
 void OptionsDialog::close() {
-	if (getResult())
+	if (getResult() > 0)
 		apply();
 
 	Dialog::close();
