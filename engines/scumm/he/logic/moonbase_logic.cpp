@@ -41,6 +41,8 @@ public:
 
 	int versionID();
 
+	int startOfFrame();
+
 	int32 dispatch(int op, int numArgs, int32 *args);
 
 private:
@@ -162,6 +164,11 @@ int LogicHEmoonbase::versionID() {
 #define OP_NET_ENABLE_SESSION_PLAYER_JOIN	1564
 #define OP_NET_SET_AI_PLAYER_COUNT			1565
 
+int LogicHEmoonbase::startOfFrame() {
+	_vm1->_moonbase->_net->doNetworkOnceAFrame(15); // Value should be passed in...
+
+	return 0;
+}
 
 int32 LogicHEmoonbase::dispatch(int op, int numArgs, int32 *args) {
 	switch (op) {

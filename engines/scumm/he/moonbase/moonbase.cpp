@@ -23,7 +23,7 @@
 #include "scumm/he/intern_he.h"
 #include "scumm/he/moonbase/moonbase.h"
 #include "scumm/he/moonbase/ai_main.h"
-#ifdef USE_SDL_NET
+#ifdef USE_CURL
 #include "scumm/he/moonbase/net_main.h"
 #endif
 
@@ -33,14 +33,17 @@ Moonbase::Moonbase(ScummEngine_v100he *vm) : _vm(vm) {
 	initFOW();
 
 	_ai = new AI(_vm);
-#ifdef USE_SDL_NET
+#ifdef USE_CURL
 	_net = new Net(_vm);
+	_vm->VAR(_vm->VAR_NETWORK_AVAILABLE) = 1;
+#else
+	_vm->VAR(_vm->VAR_NETWORK_AVAILABLE) = 0;
 #endif
 }
 
 Moonbase::~Moonbase() {
 	delete _ai;
-#ifdef USE_SDL_NET
+#ifdef USE_CURL
 	delete _net;
 #endif
 }

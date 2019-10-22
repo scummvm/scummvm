@@ -154,7 +154,7 @@ MODULE_OBJS += \
 	he/moonbase/moonbase.o \
 	he/moonbase/moonbase_fow.o
 
-ifdef USE_SDL_NET
+ifdef USE_LIBCURL
 MODULE_OBJS += \
 	he/moonbase/net_main.o
 endif

@@ -278,4 +278,99 @@ void Net::getProviderName(int providerIndex, char *buffer, int length) {
 	warning("STUB: Net::getProviderName(%d, \"%s\", %d)", providerIndex, buffer, length); // PN_GetProviderName
 }
 
+int Net::getMessageCount() {
+	return 0; // FIXME
+}
+
+void Net::remoteReceiveData() {
+	// FIXME. Get data into _packbuffer
+	uint type = READ_UINT32(_packbuffer);
+	uint len = READ_UINT32(_packbuffer + 4);
+	uint timestamp = READ_UINT32(_packbuffer + 8);
+	byte *p;
+	uint32 *params;
+
+	switch (type) {
+	case PACKETTYPE_REMOTESTARTSCRIPT:
+		{
+			p = _packbuffer + 12;
+			params = (uint32 *)_tmpbuffer;
+
+			for (int i = 0; i < 24; i++) {
+				*params = READ_UINT32(p);
+				params++;
+				p += 4;
+			}
+
+			_vm->runScript(_vm->VAR(_vm->VAR_REMOTE_START_SCRIPT), 1, 0, (int *)_tmpbuffer);
+		}
+		break;
+
+	case PACKETTYPE_REMOTESTARTSCRIPTRETURN:
+		{
+			p = _packbuffer + 12;
+			params = (uint32 *)_tmpbuffer;
+
+			for (int i = 0; i < 24; i++) {
+				*params = READ_UINT32(p);
+				params++;
+				p += 4;
+			}
+
+			_vm->runScript(_vm->VAR(_vm->VAR_REMOTE_START_SCRIPT), 1, 0, (int *)_tmpbuffer);
+			int res = _vm->pop();
+
+			WRITE_UINT32(_tmpbuffer, res);
+
+			// FIXME
+			remoteSendData(PN_SENDTYPE_INDIVIDUAL, 0 /* gdefMultiPlay.from */, PACKETTYPE_REMOTESTARTSCRIPTRESULT, _tmpbuffer, 4, 0);
+		}
+		break;
+
+	case PACKETTYPE_REMOTESTARTSCRIPTRESULT:
+		//
+		// Ignore it.
+		//
+
+		break;
+
+	case PACKETTYPE_REMOTESENDSCUMMARRAY:
+		{
+			int newArray;
+
+			// Assume that the packet data contains a "SCUMM PACKAGE"
+			// and unpack it into an scumm array :-)
+
+			newArray = _vm->findFreeArrayId();
+			unpackageArray(newArray, _packbuffer + 12, len);
+			memset(_tmpbuffer, 0, 25 * 4);
+			WRITE_UINT32(_tmpbuffer, newArray);
+
+			// Quick start the script (1st param is the new array)
+			_vm->runScript(_vm->VAR(_vm->VAR_NETWORK_RECEIVE_ARRAY_SCRIPT), 1, 0, (int *)_tmpbuffer);
+		}
+		break;
+
+	default:
+		warning("Moonbase: Received unknown network command %d", type);
+	}
+}
+
+void Net::unpackageArray(int arrayId, byte *data, int len) {
+	warning("STUB: unpackageArray");
+}
+
+
+void Net::doNetworkOnceAFrame(int msecs) {
+	int	tickCount = g_system->getMillis() + msecs;
+
+	while (getMessageCount()) {
+		remoteReceiveData();
+
+		if (tickCount >= g_system->getMillis()) {
+			break;
+		}
+	}
+}
+
 } // End of namespace Scumm

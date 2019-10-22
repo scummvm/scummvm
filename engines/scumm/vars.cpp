@@ -346,6 +346,9 @@ void ScummEngine_v100he::setupScummVars() {
 	ScummEngine_v90he::setupScummVars();
 
 	if (_game.id == GID_MOONBASE) {
+		VAR_REMOTE_START_SCRIPT = 98;
+		VAR_NETWORK_AVAILABLE = 100;
+		VAR_NETWORK_RECEIVE_ARRAY_SCRIPT = 101;
 		VAR_U32_USER_VAR_A = 108;
 		VAR_U32_USER_VAR_B = 109;
 		VAR_U32_USER_VAR_C = 110;

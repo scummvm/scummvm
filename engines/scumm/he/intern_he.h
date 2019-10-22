@@ -592,6 +592,8 @@ protected:
 
 class ScummEngine_v100he : public ScummEngine_v99he {
 friend class AI;
+friend class Moonbase;
+friend class Net;
 
 protected:
 	ResType _heResType;
@@ -663,6 +665,10 @@ protected:
 	byte VAR_U32_USER_VAR_D;
 	byte VAR_U32_USER_VAR_E;
 	byte VAR_U32_USER_VAR_F;
+
+	byte VAR_REMOTE_START_SCRIPT;
+	byte VAR_NETWORK_AVAILABLE;
+	byte VAR_NETWORK_RECEIVE_ARRAY_SCRIPT;
 };
 
 class ScummEngine_vCUPhe : public Engine {
