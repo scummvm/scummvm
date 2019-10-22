@@ -1010,7 +1010,7 @@ void Process::pointCharacter() {
 
 void Process::getCharacterAnimationPhase() {
 	Common::String name = popString();
-	debug("getCharacterAnimationPhase: stub %s", name.c_str());
+	debug("getCharacterAnimationPhase: %s", name.c_str());
 	Character *character = _engine->getCharacter(name);
 	int phase = character? character->getPhase(): -1;
 	debug("animation phase = %d", phase);
