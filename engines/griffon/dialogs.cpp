@@ -63,7 +63,7 @@ void GriffonEngine::title(int mode) {
 
 	int cursel = 0;
 	int keypause = _ticks + 220;
-	int _ticks1 = _ticks;
+	int ticks1 = _ticks;
 
 	if (config.music) {
 		setChannelVolume(_musicchannel, 0);
@@ -122,8 +122,8 @@ void GriffonEngine::title(int mode) {
 		_itemimg[15]->blit(*_videobuffer, rc.left, rc.top);
 
 		float yf = 255.0;
-		if (_ticks < _ticks1 + 1000) {
-			yf = 255.0 * ((float)(_ticks - _ticks1) / 1000.0);
+		if (_ticks < ticks1 + 1000) {
+			yf = 255.0 * ((float)(_ticks - ticks1) / 1000.0);
 			yf = CLIP<float>(yf, 0.0, 255.0);
 		}
 
@@ -181,12 +181,12 @@ void GriffonEngine::title(int mode) {
 						saveLoadNew();
 						_ticks = g_system->getMillis();
 						keypause = _ticks + 150;
-						_ticks1 = _ticks;
+						ticks1 = _ticks;
 					} else if (cursel == 1) {
 						configMenu();
 						_ticks = g_system->getMillis();
 						keypause = _ticks + 150;
-						_ticks1 = _ticks;
+						ticks1 = _ticks;
 					} else if (cursel == 2) {
 						_shouldQuit = true;
 					} else if (cursel == 3) {
@@ -220,7 +220,7 @@ void GriffonEngine::configMenu() {
 	Graphics::TransparentSurface *configwindow = loadImage("art/configwindow.bmp", true);
 	configwindow->setAlpha(160, true);
 
-	int _ticks1 = _ticks;
+	int ticks1 = _ticks;
 	do {
 		_videobuffer->fillRect(Common::Rect(0, 0, _videobuffer->w, _videobuffer->h), 0);
 
@@ -314,8 +314,8 @@ void GriffonEngine::configMenu() {
 		_itemimg[15]->blit(*_videobuffer, rc.left, rc.top);
 
 		float yy = 255.0;
-		if (_ticks < _ticks1 + 1000) {
-			yy = 255.0 * ((float)(_ticks - _ticks1) / 1000.0);
+		if (_ticks < ticks1 + 1000) {
+			yy = 255.0 * ((float)(_ticks - ticks1) / 1000.0);
 			yy = CLIP<float>(yy, 0.0, 255.0);
 		}
 
@@ -472,7 +472,7 @@ void GriffonEngine::saveLoadNew() {
 	bool lowerLock = false;
 
 	_ticks = g_system->getMillis();
-	int _ticks1 = _ticks;
+	int ticks1 = _ticks;
 	int tickpause = _ticks + 150;
 
 	do {
@@ -734,8 +734,8 @@ void GriffonEngine::saveLoadNew() {
 		}
 
 		int yy = 255;
-		if (_ticks < _ticks1 + 1000) {
-			yy = 255 * (_ticks - _ticks1) / 1000;
+		if (_ticks < ticks1 + 1000) {
+			yy = 255 * (_ticks - ticks1) / 1000;
 			yy = CLIP(yy, 0, 255);
 		}
 
