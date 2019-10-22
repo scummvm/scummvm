@@ -501,8 +501,10 @@ protected:
 	void messageDialog(const char *message);
 	void versionDialog();
 
+public:
 	char displayMessage(const char *altButton, const char *message, ...) GCC_PRINTF(3, 4);
 
+protected:
 	byte _fastMode;
 
 	byte _numActors;
