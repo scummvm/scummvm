@@ -286,7 +286,7 @@ void Net::remoteReceiveData() {
 	// FIXME. Get data into _packbuffer
 	uint type = READ_UINT32(_packbuffer);
 	uint len = READ_UINT32(_packbuffer + 4);
-	uint timestamp = READ_UINT32(_packbuffer + 8);
+	/*uint timestamp =*/ READ_UINT32(_packbuffer + 8);
 	byte *p;
 	uint32 *params;
 
@@ -362,7 +362,7 @@ void Net::unpackageArray(int arrayId, byte *data, int len) {
 
 
 void Net::doNetworkOnceAFrame(int msecs) {
-	int	tickCount = g_system->getMillis() + msecs;
+	uint32 tickCount = g_system->getMillis() + msecs;
 
 	while (getMessageCount()) {
 		remoteReceiveData();
