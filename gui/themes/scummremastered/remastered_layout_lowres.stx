@@ -100,7 +100,7 @@
 				size = '9, 0'
 		/>
 		<widget name = 'TabWidget.Tab'
-				size = '40, 16'
+				size = '40, 18'
 				padding = '0, 0, 2, 0'
 		/>
 		<widget name = 'TabWidget.Body'
