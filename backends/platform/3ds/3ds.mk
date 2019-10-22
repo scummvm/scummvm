@@ -19,7 +19,11 @@ LDFLAGS  += -specs=3dsx.specs $(ARCH) -L$(DEVKITPRO)/libctru/lib -L$(DEVKITPRO)/
 clean: clean_3ds
 
 clean_3ds:
+	$(RM) backends/platform/3ds/shader.shbin
+	$(RM) backends/platform/3ds/shader_shbin.h
+	$(RM) $(TARGET).smdh
 	$(RM) $(TARGET).3dsx
+	$(RM) $(TARGET).bnr
 	$(RM) $(TARGET).cia
 	$(RM) -rf romfs
 
