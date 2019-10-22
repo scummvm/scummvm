@@ -757,9 +757,9 @@ protected:
 //	void nukeResource(ResType type, ResId idx);
 	int getResourceRoomNr(ResType type, ResId idx);
 	virtual uint32 getResourceRoomOffset(ResType type, ResId idx);
-	int getResourceSize(ResType type, ResId idx);
 
 public:
+	int getResourceSize(ResType type, ResId idx);
 	byte *getResourceAddress(ResType type, ResId idx);
 	virtual byte *getStringAddress(ResId idx);
 	byte *getStringAddressVar(int i);
