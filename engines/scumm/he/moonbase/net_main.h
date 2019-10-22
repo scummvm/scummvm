@@ -27,8 +27,6 @@ namespace Scumm {
 
 class ScummEngine_v100he;
 
-//this is a dummy based on ai_main.h Scumm::AI
-
 class Net {
 public:
 	Net(ScummEngine_v100he *vm);
@@ -60,6 +58,7 @@ public:
 	bool initSession();
 	bool initUser();
 	void remoteStartScript(int typeOfSend, int sendTypeParam, int priority, int argsCount, int32 *args);
+	void remoteSendData(int type, byte *data, int len);
 	void remoteSendArray(int typeOfSend, int sendTypeParam, int priority, int arrayIndex);
 	int remoteStartScriptFunction(int typeOfSend, int sendTypeParam, int priority, int defaultReturnValue, int argsCount, int32 *args);
 

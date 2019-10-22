@@ -23,6 +23,7 @@
 #include "scumm/he/intern_he.h"
 #include "scumm/he/moonbase/moonbase.h"
 #include "scumm/he/moonbase/net_main.h"
+#include "scumm/he/moonbase/net_defines.h"
 
 namespace Scumm {
 
@@ -42,7 +43,9 @@ int Net::joinGame(char *IP, char *userName) {
 
 int Net::addUser(char *shortName, char *longName) {
 	warning("STUB: Net::addUser(\"%s\", \"%s\")", shortName, longName); // PN_AddUser
-	return 0;
+
+	// FAKE successful add. FIXME
+	return 1;
 }
 
 int Net::removeUser() {
@@ -67,7 +70,9 @@ int Net::createSession(char *name) {
 
 int Net::joinSession(int sessionIndex) {
 	warning("STUB: Net::joinSession(%d)", sessionIndex); // PN_JoinSession
-	return 0;
+
+	// FAKE successful join. FIXME
+	return 1;
 }
 
 int Net::endSession() {
@@ -88,8 +93,20 @@ void Net::setBotsCount(int botsCount) {
 }
 
 int32 Net::setProviderByName(int32 parameter1, int32 parameter2) {
-	warning("STUB: Net::setProviderByName(%d, %d)", parameter1, parameter2); // PN_SetProviderByName
-	return 0;
+	char name[MAX_PROVIDER_NAME];
+	char ipaddress[MAX_IP_SIZE];
+
+	ipaddress[0] = '\0';
+
+	_vm->getStringFromArray(parameter1, name, sizeof(name));
+	if (parameter2)
+		_vm->getStringFromArray(parameter2, ipaddress, sizeof(ipaddress));
+
+	debug(1, "Net::setProviderByName(\"%s\", \"%s\")", name, ipaddress); // PN_SetProviderByName
+
+	// Emulate that we found a TCP/IP provider
+
+	return 1;
 }
 
 void Net::setFakeLatency(int time) {
@@ -106,12 +123,14 @@ bool Net::destroyPlayer(int32 playerDPID) {
 
 int32 Net::startQuerySessions() {
 	warning("STUB: Net::startQuerySessions()"); // StartQuerySessions
-	return 0;
+
+	// FAKE 1 session. FIXME
+	return 1;
 }
 
 int32 Net::updateQuerySessions() {
 	warning("STUB: Net::updateQuerySessions()"); // UpdateQuerySessions
-	return 0;
+	return startQuerySessions();
 }
 
 void Net::stopQuerySessions() {
@@ -124,8 +143,10 @@ int Net::querySessions() {
 }
 
 int Net::queryProviders() {
-	warning("STUB: Net::queryProviders()"); // PN_QueryProviders
-	return 0;
+	debug(1, "Net::queryProviders()"); // PN_QueryProviders
+
+	// Emulate that we have 1 provider, TCP/IP
+	return 1;
 }
 
 int Net::setProvider(int providerIndex) {
@@ -162,8 +183,25 @@ void Net::remoteStartScript(int typeOfSend, int sendTypeParam, int priority, int
 	warning("STUB: Net::remoteStartScript(%d, %d, %d, %d, ...)", typeOfSend, sendTypeParam, priority, argsCount); // PN_RemoteStartScriptCommand
 }
 
+byte packbuffer[MAX_PACKET_SIZE + 8];
+
+void Net::remoteSendData(int type, byte *data, int len) {
+	WRITE_UINT32(packbuffer, type);
+	WRITE_UINT32(packbuffer + 4, len);
+	memcpy(packbuffer + 8, data, len);
+
+	debug("Package to send, %d bytes", len + 8);
+
+	Common::hexdump(packbuffer, len + 8);
+}
+
 void Net::remoteSendArray(int typeOfSend, int sendTypeParam, int priority, int arrayIndex) {
-	warning("STUB: Net::remoteSendArray(%d, %d, %d, %d)", typeOfSend, sendTypeParam, priority, arrayIndex); // PN_RemoteSendArrayCommand
+	byte *arr = _vm->getResourceAddress(rtString, arrayIndex & ~0x33539000);
+	int len = _vm->getResourceSize(rtString, arrayIndex & ~0x33539000);
+
+	warning("STUB: Net::remoteSendArray(%d, %d, %d, %d)", typeOfSend, sendTypeParam, priority, arrayIndex & ~0x33539000); // PN_RemoteSendArrayCommand
+
+	remoteSendData(PACKETTYPE_REMOTESENDSCUMMARRAY, arr, len);
 }
 
 int Net::remoteStartScriptFunction(int typeOfSend, int sendTypeParam, int priority, int defaultReturnValue, int argsCount, int32 *args) {
@@ -182,6 +220,9 @@ bool Net::getIPfromName(char *ip, int ipLength, char *nameBuffer) {
 }
 
 void Net::getSessionName(int sessionNumber, char *buffer, int length) {
+	// FIXME
+	strcpy(buffer, "test");
+
 	warning("STUB: Net::getSessionName(%d, \"%s\", %d)", sessionNumber, buffer, length); // PN_GetSessionName
 }
 
@@ -189,7 +230,9 @@ int Net::getSessionPlayerCount(int sessionNumber) {
 	warning("STUB: Net::getSessionPlayerCount(%d)", sessionNumber); // case GET_SESSION_PLAYER_COUNT_KLUDGE:
 	//assert(sessionNumber >= 0 && sessionNumber < NUMELEMENTS(gdefMultiPlay.gamedescptr));
 	//return gdefMultiPlay.gamedescptr[sessionNumber].currentplayers;
-	return 0;
+
+	// FAKE 2 players. FIXME
+	return 2;
 }
 
 void Net::getProviderName(int providerIndex, char *buffer, int length) {
