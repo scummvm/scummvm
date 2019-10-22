@@ -32,6 +32,8 @@ Net::Net(ScummEngine_v100he *vm) : _latencyTime(1), _fakeLatency(false), _vm(vm)
 
 	_packbuffer = (byte *)malloc(MAX_PACKET_SIZE + 12);
 	_tmpbuffer = (byte *)malloc(MAX_PACKET_SIZE);
+
+	_myUserId = -1;
 }
 
 Net::~Net() {
@@ -40,10 +42,21 @@ Net::~Net() {
 }
 
 int Net::hostGame(char *sessionName, char *userName) {
-	warning("STUB: op_net_host_tcpip_game(\"%s\", \"%s\")", sessionName, userName); // PN_HostTCPIPGame
+	if (createSession(sessionName)) {
+		if (addUser(userName, userName)) {
+			return 1;
+		} else {
+			_vm->displayMessage(0, "Error Adding User \"%s\" to Session \"%s\"", userName, sessionName);
+			endSession();
+			closeProvider();
+		}
+	} else {
+		_vm->displayMessage(0, "Error creating session \"%s\"", userName );
 
-	// FAKE successful game creation. FIXME
-	return 1;
+		closeProvider();
+	}
+
+	return 0;
 }
 
 int Net::joinGame(char *IP, char *userName) {
@@ -53,6 +66,8 @@ int Net::joinGame(char *IP, char *userName) {
 
 int Net::addUser(char *shortName, char *longName) {
 	warning("STUB: Net::addUser(\"%s\", \"%s\")", shortName, longName); // PN_AddUser
+
+	_myUserId = _vm->_rnd.getRandomNumber(1000000);
 
 	// FAKE successful add. FIXME
 	return 1;
@@ -70,12 +85,14 @@ int Net::whoSentThis() {
 
 int Net::whoAmI() {
 	warning("STUB: Net::whoAmI()"); // PN_WhoAmI
-	return 0;
+	return _myUserId;
 }
 
 int Net::createSession(char *name) {
 	warning("STUB: Net::createSession(\"%s\")", name); // PN_CreateSession
-	return 0;
+
+	// FAKE session creation. FIXME
+	return 1;
 }
 
 int Net::joinSession(int sessionIndex) {

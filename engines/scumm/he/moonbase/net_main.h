@@ -86,6 +86,7 @@ public:
 	byte *_packbuffer;
 	byte *_tmpbuffer;
 
+	int _myUserId;
 };
 
 } // End of namespace Scumm
