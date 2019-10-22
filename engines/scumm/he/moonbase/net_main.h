@@ -30,6 +30,7 @@ class ScummEngine_v100he;
 class Net {
 public:
 	Net(ScummEngine_v100he *vm);
+	~Net();
 
 	int hostGame(char *sessionName, char *userName);
 	int joinGame(char *IP, char *userName);
@@ -58,7 +59,7 @@ public:
 	bool initSession();
 	bool initUser();
 	void remoteStartScript(int typeOfSend, int sendTypeParam, int priority, int argsCount, int32 *args);
-	void remoteSendData(int type, byte *data, int len);
+	int remoteSendData(int typeOfSend, int sendTypeParam, int type, byte *data, int len, int defaultRes);
 	void remoteSendArray(int typeOfSend, int sendTypeParam, int priority, int arrayIndex);
 	int remoteStartScriptFunction(int typeOfSend, int sendTypeParam, int priority, int defaultReturnValue, int argsCount, int32 *args);
 
@@ -81,6 +82,10 @@ public:
 	bool _fakeLatency;
 
 	ScummEngine_v100he *_vm;
+
+	byte *_packbuffer;
+	byte *_tmpbuffer;
+
 };
 
 } // End of namespace Scumm

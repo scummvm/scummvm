@@ -29,11 +29,21 @@ namespace Scumm {
 
 Net::Net(ScummEngine_v100he *vm) : _latencyTime(1), _fakeLatency(false), _vm(vm) {
 	//some defaults for fields
+
+	_packbuffer = (byte *)malloc(MAX_PACKET_SIZE + 12);
+	_tmpbuffer = (byte *)malloc(MAX_PACKET_SIZE);
+}
+
+Net::~Net() {
+	free(_tmpbuffer);
+	free(_packbuffer);
 }
 
 int Net::hostGame(char *sessionName, char *userName) {
 	warning("STUB: op_net_host_tcpip_game(\"%s\", \"%s\")", sessionName, userName); // PN_HostTCPIPGame
-	return 0;
+
+	// FAKE successful game creation. FIXME
+	return 1;
 }
 
 int Net::joinGame(char *IP, char *userName) {
@@ -180,19 +190,26 @@ bool Net::initUser() {
 }
 
 void Net::remoteStartScript(int typeOfSend, int sendTypeParam, int priority, int argsCount, int32 *args) {
+	byte *ptr = _tmpbuffer;
+	for (int i = 0; i < argsCount; i++, ptr += 4)
+		WRITE_UINT32(ptr, args[i]);
+
 	warning("STUB: Net::remoteStartScript(%d, %d, %d, %d, ...)", typeOfSend, sendTypeParam, priority, argsCount); // PN_RemoteStartScriptCommand
+
+	remoteSendData(typeOfSend, sendTypeParam, PACKETTYPE_REMOTESTARTSCRIPTRETURN, _tmpbuffer, argsCount * 4, 0);
 }
 
-byte packbuffer[MAX_PACKET_SIZE + 8];
+int Net::remoteSendData(int typeOfSend, int sendTypeParam, int type, byte *data, int len, int defaultRes) {
+	WRITE_UINT32(_packbuffer, type);
+	WRITE_UINT32(_packbuffer + 4, len);
+	WRITE_UINT32(_packbuffer + 8, g_system->getMillis());
+	memcpy(_packbuffer + 12, data, len);
 
-void Net::remoteSendData(int type, byte *data, int len) {
-	WRITE_UINT32(packbuffer, type);
-	WRITE_UINT32(packbuffer + 4, len);
-	memcpy(packbuffer + 8, data, len);
+	debug("Package to send, to: %d (%d), %d bytes", typeOfSend, sendTypeParam, len + 12);
 
-	debug("Package to send, %d bytes", len + 8);
+	Common::hexdump(_packbuffer, len + 12);
 
-	Common::hexdump(packbuffer, len + 8);
+	return defaultRes;
 }
 
 void Net::remoteSendArray(int typeOfSend, int sendTypeParam, int priority, int arrayIndex) {
@@ -201,12 +218,17 @@ void Net::remoteSendArray(int typeOfSend, int sendTypeParam, int priority, int a
 
 	warning("STUB: Net::remoteSendArray(%d, %d, %d, %d)", typeOfSend, sendTypeParam, priority, arrayIndex & ~0x33539000); // PN_RemoteSendArrayCommand
 
-	remoteSendData(PACKETTYPE_REMOTESENDSCUMMARRAY, arr, len);
+	remoteSendData(typeOfSend, sendTypeParam, PACKETTYPE_REMOTESENDSCUMMARRAY, arr, len, 0);
 }
 
 int Net::remoteStartScriptFunction(int typeOfSend, int sendTypeParam, int priority, int defaultReturnValue, int argsCount, int32 *args) {
+	byte *ptr = _tmpbuffer;
+	for (int i = 0; i < argsCount; i++, ptr += 4)
+		WRITE_UINT32(ptr, args[i]);
+
 	warning("STUB: Net::remoteStartScriptFunction(%d, %d, %d, %d, %d, ...)", typeOfSend, sendTypeParam, priority, defaultReturnValue, argsCount); // PN_RemoteStartScriptFunction
-	return 0;
+
+	return remoteSendData(typeOfSend, sendTypeParam, PACKETTYPE_REMOTESTARTSCRIPTRETURN, _tmpbuffer, argsCount * 4, defaultReturnValue);
 }
 
 bool Net::getHostName(char *hostname, int length) {
