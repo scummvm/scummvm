@@ -84,6 +84,8 @@ const char *getIndefiniteArticle(const Common::String &word) {
 	case 'o': case 'O':
 	case 'u': case 'U':
 		return "an ";
+	default:
+		break;
 	}
 	return "a ";
 }

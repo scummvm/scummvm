@@ -349,10 +349,11 @@ void WageEngine::performMagic(Chr *attacker, Chr *victim, Obj *magicalObject) {
 	case Obj::HEALS_SPIRITUAL_DAMAGE:
 	case Obj::HEALS_PHYSICAL_AND_SPIRITUAL_DAMAGE:
 		performHealingMagic(attacker, magicalObject);
-		return;
+		break;
+	default:
+		performAttack(attacker, victim, magicalObject);
+		break;
 	}
-
-	performAttack(attacker, victim, magicalObject);
 }
 
 void WageEngine::performHealingMagic(Chr *chr, Obj *magicalObject) {
@@ -873,6 +874,8 @@ bool WageEngine::handleAttack(Obj *weapon) {
 		case Obj::HEALS_SPIRITUAL_DAMAGE:
 			performMagic(player, enemy, weapon);
 			return true;
+		default:
+			break;
 		}
 	}
 	if (enemy != NULL)
