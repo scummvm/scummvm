@@ -481,7 +481,7 @@ void OSystem_3DS::setMouseCursor(const void *buf, uint w, uint h,
 	}
 
 	if ( w != 0 && h != 0 ) {
-		_cursor.copyRectToSurface(buf, w, 0, 0, w, h);
+		_cursor.copyRectToSurface(buf, w * _pfCursor.bytesPerPixel, 0, 0, w, h);
 	}
 
 	flushCursor();
@@ -496,6 +496,29 @@ void OSystem_3DS::setCursorPalette(const byte *colors, uint start, uint num) {
 	flushCursor();
 }
 
+namespace {
+template<typename SrcColor>
+void applyKeyColor(Graphics::Surface *src, Graphics::Surface *dst, const SrcColor keyColor) {
+	assert(dst->format.bytesPerPixel == 4);
+	assert((dst->w >= src->w) && (dst->h >= src->h));
+
+	for (uint y = 0; y < src->h; ++y) {
+		SrcColor *srcPtr = (SrcColor *)src->getBasePtr(0, y);
+		uint32 *dstPtr = (uint32 *)dst->getBasePtr(0, y);
+
+		for (uint x = 0; x < src->w; ++x) {
+			const SrcColor color = *srcPtr++;
+
+			if (color == keyColor) {
+				*dstPtr = 0;
+			}
+
+			dstPtr++;
+		}
+	}
+}
+} // End of anonymous namespace
+
 void OSystem_3DS::flushCursor() {
 	if (_cursor.getPixels()) {
 		Graphics::Surface *converted = _cursor.convertTo(_pfGameTexture, _cursorPaletteEnabled ? _cursorPalette : _palette);
@@ -505,17 +528,11 @@ void OSystem_3DS::flushCursor() {
 		delete converted;
 
 		if (_pfCursor.bytesPerPixel == 1) {
-			uint* dest = (uint*) _cursorTexture.getPixels();
-			byte* src = (byte*) _cursor.getPixels();
-			for (int y = 0; y < _cursor.h; ++y) {
-				for (int x = 0; x < _cursor.w; ++x) {
-					if (*src++ == _cursorKeyColor)
-						*dest++ = 0;
-					else
-						dest++;
-				}
-				dest += _cursorTexture.w - _cursorTexture.actualWidth;
-			}
+			applyKeyColor<byte>(&_cursor, &_cursorTexture, _cursorKeyColor);
+		} else if (_pfCursor.bytesPerPixel == 2) {
+			applyKeyColor<uint16>(&_cursor, &_cursorTexture, _cursorKeyColor);
+		} else if (_pfCursor.bytesPerPixel == 4) {
+			applyKeyColor<uint32>(&_cursor, &_cursorTexture, _cursorKeyColor);
 		}
 	}
 }
