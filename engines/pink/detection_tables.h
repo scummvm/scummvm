@@ -180,6 +180,17 @@ static const ADGameDescription gameDescriptions[] = {
 		GUIO1(GUIO_NOMIDI)
 	},
 
+	// Dutch, Version 2.0
+	{
+		"pokus",
+		0,
+		AD_ENTRY1s("HPP.orb", "993b0491d507efee0010e4f1c000ab8b", 509498617),
+		Common::NL_NLD,
+		Common::kPlatformWindows,
+		ADGF_UNSTABLE | ADGF_DROPPLATFORM,
+		GUIO1(GUIO_NOMIDI)
+	},
+
 	// English
 	{
 		"pokus",
