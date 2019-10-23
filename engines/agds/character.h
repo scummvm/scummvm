@@ -71,4 +71,4 @@ public:
 
 } // End of namespace AGDS
 
-#endif /* AGDS_ANIMATION_H */
+#endif /* AGDS_CHARACTER_H */
