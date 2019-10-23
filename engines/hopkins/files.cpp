@@ -182,6 +182,8 @@ byte *FileManager::searchCat(const Common::String &file, CatMode mode, bool &fil
 			case LANG_SP:
 				tmpFilename = "RES_VES.CAT";
 				break;
+			default:
+				break;
 			}
 		}
 

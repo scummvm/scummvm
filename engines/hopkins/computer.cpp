@@ -229,6 +229,8 @@ void ComputerManager::showComputer(ComputerEnum mode) {
 				case '5':
 					readText(4);
 					break;
+				default:
+					break;
 				}
 			} else if (mode == COMPUTER_SAMANTHA) {
 				clearScreen();
@@ -252,6 +254,8 @@ void ComputerManager::showComputer(ComputerEnum mode) {
 				case '6':
 					readText(10);
 					_vm->_globals->_saveData->_data[svField270] = 4;
+					break;
+				default:
 					break;
 				}
 			}
@@ -501,6 +505,8 @@ void ComputerManager::readText(int idx) {
 	case LANG_SP:
 		filename = "THOPKES.TXT";
 		break;
+	default:
+		break;
 	}
 
 	byte *ptr = _vm->_fileIO->loadFile(filename);
@@ -712,6 +718,8 @@ void ComputerManager::displayBricks() {
 			break;
 		case 31:
 			_vm->_graphicsMan->fastDisplay2(_breakoutSpr, cellLeft, cellTop, 23);
+			break;
+		default:
 			break;
 		}
 	}
@@ -1070,6 +1078,8 @@ int ComputerManager::moveBall() {
 		_minBreakoutMoveSpeed = 3;
 		_maxBreakoutMoveSpeed = 2;
 		break;
+	default:
+		break;
 	}
 
 	int moveSpeed = _minBreakoutMoveSpeed;
@@ -1241,6 +1251,8 @@ void ComputerManager::checkBallCollisions() {
 						break;
 					case 6:
 						_breakoutScore += 40;
+						break;
+					default:
 						break;
 					}
 					displayScore();

@@ -159,6 +159,8 @@ int ScriptManager::handleOpcode(const byte *dataP) {
 					case LANG_SP:
 						_vm->_fontMan->initTextBuffers(9, mesgId, "OBJETES.TXT", 2 * textPosX, 60, 6, dataP[7], 253);
 						break;
+					default:
+						break;
 					}
 				}
 
@@ -457,6 +459,8 @@ int ScriptManager::handleOpcode(const byte *dataP) {
 					_vm->_objectsMan->doActionDiagLeft(8);
 				if (_vm->_globals->_actionDirection == DIR_LEFT)
 					_vm->_objectsMan->doActionLeft(8);
+				break;
+			default:
 				break;
 			}
 		}
@@ -797,6 +801,8 @@ int ScriptManager::handleOpcode(const byte *dataP) {
 				case 29:
 					playFl = false;
 					break;
+				default:
+					break;
 				}
 
 				switch (_vm->_objectsMan->getBobAnimDataIdx(10)) {
@@ -821,6 +827,8 @@ int ScriptManager::handleOpcode(const byte *dataP) {
 				case 34:
 					_vm->_graphicsMan->fastDisplay(_vm->_globals->_levelSpriteBuf, 513, 249, 3);
 					playFl = false;
+					break;
+				default:
 					break;
 				}
 				_vm->_events->refreshScreenAndEvents();
@@ -870,6 +878,8 @@ int ScriptManager::handleOpcode(const byte *dataP) {
 				case 9:
 					playFl = false;
 					break;
+				default:
+					break;
 				}
 
 				switch (_vm->_objectsMan->getBobAnimDataIdx(10)) {
@@ -881,6 +891,8 @@ int ScriptManager::handleOpcode(const byte *dataP) {
 					break;
 				case 12:
 					playFl = false;
+					break;
+				default:
 					break;
 				}
 				_vm->_events->refreshScreenAndEvents();
@@ -1024,6 +1036,8 @@ int ScriptManager::handleOpcode(const byte *dataP) {
 					_vm->_objectsMan->setBobAnimation(3);
 					playFl = false;
 					break;
+				default:
+					break;
 				}
 				_vm->_events->refreshScreenAndEvents();
 				if (_vm->_objectsMan->getBobAnimDataIdx(3) == 48)
@@ -1069,6 +1083,8 @@ int ScriptManager::handleOpcode(const byte *dataP) {
 				case 5:
 					playFl = false;
 					break;
+				default:
+					break;
 				}
 
 				switch (_vm->_objectsMan->getBobAnimDataIdx(4)) {
@@ -1080,6 +1096,8 @@ int ScriptManager::handleOpcode(const byte *dataP) {
 					break;
 				case 6:
 					playFl = false;
+					break;
+				default:
 					break;
 				}
 
@@ -1140,6 +1158,8 @@ int ScriptManager::handleOpcode(const byte *dataP) {
 				case 5:
 					playFl = false;
 					break;
+				default:
+					break;
 				}
 
 				switch (_vm->_objectsMan->getBobAnimDataIdx(8)) {
@@ -1151,6 +1171,8 @@ int ScriptManager::handleOpcode(const byte *dataP) {
 					break;
 				case 12:
 					playFl = false;
+					break;
+				default:
 					break;
 				}
 
@@ -1251,6 +1273,8 @@ int ScriptManager::handleOpcode(const byte *dataP) {
 					case 8:
 						playFl = false;
 						break;
+					default:
+						break;
 					}
 					_vm->_events->refreshScreenAndEvents();
 					if (_vm->_objectsMan->getBobAnimDataIdx(1) == 9)
@@ -1287,6 +1311,8 @@ int ScriptManager::handleOpcode(const byte *dataP) {
 					case 6:
 					case 8:
 						playFl = false;
+						break;
+					default:
 						break;
 					}
 					_vm->_events->refreshScreenAndEvents();
@@ -1469,6 +1495,8 @@ int ScriptManager::handleOpcode(const byte *dataP) {
 					case 56:
 						playFl = false;
 						break;
+					default:
+						break;
 					}
 					_vm->_events->refreshScreenAndEvents();
 					if (_vm->_objectsMan->getBobAnimDataIdx(4) == 72)
@@ -1497,6 +1525,8 @@ int ScriptManager::handleOpcode(const byte *dataP) {
 					case 56:
 						playFl = false;
 						break;
+					default:
+						break;
 					}
 					_vm->_events->refreshScreenAndEvents();
 					if (_vm->_objectsMan->getBobAnimDataIdx(6) == 72)
@@ -1524,6 +1554,8 @@ int ScriptManager::handleOpcode(const byte *dataP) {
 					case 33:
 					case 56:
 						playFl = false;
+						break;
+					default:
 						break;
 					}
 					_vm->_events->refreshScreenAndEvents();
@@ -1836,6 +1868,8 @@ int ScriptManager::handleOpcode(const byte *dataP) {
 				case 11:
 					playFl = false;
 					break;
+				default:
+					break;
 				}
 				_vm->_events->refreshScreenAndEvents();
 				if (_vm->_objectsMan->getBobAnimDataIdx(3) == 50)
@@ -1864,6 +1898,8 @@ int ScriptManager::handleOpcode(const byte *dataP) {
 					break;
 				case 11:
 					playFl = false;
+					break;
+				default:
 					break;
 				}
 				_vm->_events->refreshScreenAndEvents();
@@ -2110,6 +2146,8 @@ int ScriptManager::handleOpcode(const byte *dataP) {
 				case 3:
 					vbobFrameIndex = 4;
 					break;
+				default:
+					break;
 				}
 				_vm->_soundMan->playSoundFile("SOUND83.WAV");
 				_vm->_objectsMan->setAndPlayAnim(vbobFrameIndex, 26, 50, false);
@@ -2126,6 +2164,8 @@ int ScriptManager::handleOpcode(const byte *dataP) {
 				case 3:
 					_vm->_graphicsMan->fastDisplay(_vm->_globals->_levelSpriteBuf, 296, 212, 4);
 					_vm->_globals->_saveData->_data[svField340] = 0;
+					break;
+				default:
 					break;
 				}
 			}
@@ -2146,6 +2186,8 @@ int ScriptManager::handleOpcode(const byte *dataP) {
 			case 3:
 				vbobFrameIndex = 4;
 				break;
+			default:
+				break;
 			}
 
 			if (_vm->_globals->_saveData->_data[svField341]) {
@@ -2164,6 +2206,8 @@ int ScriptManager::handleOpcode(const byte *dataP) {
 				case 3:
 					_vm->_graphicsMan->fastDisplay(_vm->_globals->_levelSpriteBuf, 296, 212, 4);
 					_vm->_globals->_saveData->_data[svField340] = 0;
+					break;
+				default:
 					break;
 				}
 			}
@@ -2185,6 +2229,8 @@ int ScriptManager::handleOpcode(const byte *dataP) {
 			case 3:
 				vbobFrameIndex = 4;
 				break;
+			default:
+				break;
 			}
 
 			if (_vm->_globals->_saveData->_data[svField341]) {
@@ -2202,6 +2248,8 @@ int ScriptManager::handleOpcode(const byte *dataP) {
 				case 3:
 					_vm->_graphicsMan->fastDisplay(_vm->_globals->_levelSpriteBuf, 296, 212, 4);
 					_vm->_globals->_saveData->_data[svField340] = 0;
+					break;
+				default:
 					break;
 				}
 			}
@@ -2243,6 +2291,8 @@ int ScriptManager::handleOpcode(const byte *dataP) {
 						_vm->_soundMan->playSoundFile("SOUND85.WAV");
 						soundFlag = true;
 					}
+					break;
+				default:
 					break;
 				}
 			} while (_vm->_objectsMan->getBobAnimDataIdx(1) != 32);
@@ -2447,6 +2497,9 @@ int ScriptManager::handleOpcode(const byte *dataP) {
 			_vm->_objectsMan->setBobAnimation(12);
 			_vm->_objectsMan->setBobAnimation(13);
 			break;
+
+		default:
+			break;
 		}
 		opcodeType = 1;
 		break;
@@ -2625,8 +2678,9 @@ int ScriptManager::checkOpcode(const byte *dataP) {
 	case MKTAG24('J', 'U', 'M'):
 		result = 6;
 		break;
-//	default:
-//		warning("Unhandled opcode %c%c%c", dataP[2], dataP[3], dataP[4]);
+	default:
+		warning("Unhandled opcode %c%c%c", dataP[2], dataP[3], dataP[4]);
+		break;
 	}
 	return result;
 }

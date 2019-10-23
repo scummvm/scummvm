@@ -2280,6 +2280,8 @@ void ObjectsManager::changeCharacterHead(PlayerCharacter oldCharacter, PlayerCha
 			_vm->_globals->_saveData->_data[svField357] = 0;
 			_vm->_globals->_exitId = _vm->_globals->_saveData->_samantha._location;
 			break;
+		default:
+			break;
 		}
 	}
 }
@@ -2770,6 +2772,8 @@ void ObjectsManager::handleSpecialGames() {
 		_vm->_globals->_saveData->_data[svField333] = 1;
 		_vm->_globals->_disableInventFl = false;
 		break;
+	default:
+		break;
 	}
 }
 
@@ -2863,6 +2867,8 @@ void ObjectsManager::doActionBack(int idx) {
 	case 10:
 		showSpecialActionAnimation(_gestureBuf, "23,22,21,20,19,18,17,16,15,-1,", 8);
 		break;
+	default:
+		break;
 	}
 }
 
@@ -2903,6 +2909,8 @@ void ObjectsManager::doActionRight(int idx) {
 		break;
 	case 10:
 		showSpecialActionAnimation(_gestureBuf, "28,27,26,25,24,23,-1,", 8);
+		break;
+	default:
 		break;
 	}
 }
@@ -2945,6 +2953,8 @@ void ObjectsManager::doActionDiagRight(int idx) {
 	case 10:
 		showSpecialActionAnimation(_gestureBuf, "20,19,18,17,15,-1,", 8);
 		break;
+	default:
+		break;
 	}
 }
 
@@ -2967,6 +2977,8 @@ void ObjectsManager::doActionFront(int idx) {
 		break;
 	case 4:
 		showActionAnimation(_gestureBuf, "0,1,2,3,4,5,6,7,9,10,11,12,13,14,13,12,11,10,9,7,6,5,4,3,2,1,0,-1,", 8, false);
+		break;
+	default:
 		break;
 	}
 }
@@ -3009,6 +3021,8 @@ void ObjectsManager::doActionDiagLeft(int idx) {
 	case 10:
 		showSpecialActionAnimation(_gestureBuf, "20,19,18,17,15,-1,", 8);
 		break;
+	default:
+		break;
 	}
 }
 
@@ -3049,6 +3063,8 @@ void ObjectsManager::doActionLeft(int idx) {
 		break;
 	case 10:
 		showSpecialActionAnimation(_gestureBuf, "28,27,26,25,24,23,-1,", 8);
+		break;
+	default:
 		break;
 	}
 }
@@ -3375,6 +3391,9 @@ void ObjectsManager::sceneSpecialIni() {
 		if (!_vm->_globals->_saveData->_data[svField333])
 			setBobAnimation(8);
 		break;
+
+	default:
+		break;
 	}
 }
 
@@ -3450,6 +3469,8 @@ void ObjectsManager::disableVerb(int idx, int a2) {
 	case 15:
 		curZone->_verbFl10 = 0;
 		break;
+	default:
+		break;
 	}
 	_changeVerbFl = true;
 }
@@ -3517,6 +3538,8 @@ void ObjectsManager::enableVerb(int idx, int a2) {
 		break;
 	case 25:
 		curZone->_verbFl9 = 2;
+		break;
+	default:
 		break;
 	}
 }
@@ -3691,6 +3714,8 @@ void ObjectsManager::handleForest(int screenId, int minX, int maxX, int minY, in
 			savegameIdx = 213;
 		else
 			savegameIdx = 212;
+		break;
+	default:
 		break;
 	}
 
@@ -3883,6 +3908,8 @@ void ObjectsManager::sceneControl2(const Common::String &backgroundFile, const C
 		break;
 	case CHARACTER_SAMANTHA:
 		addStaticSprite(_vm->_globals->_characterSpriteBuf, _characterPos, 0, _startSpriteIndex, 0, false, 20, 127);
+		break;
+	default:
 		break;
 	}
 	_vm->_events->setMouseXY(_characterPos);

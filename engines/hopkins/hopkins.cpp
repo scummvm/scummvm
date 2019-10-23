@@ -221,6 +221,8 @@ bool HopkinsEngine::runWin95Demo() {
 					case LANG_SP:
 						_graphicsMan->loadImage("fondes");
 						break;
+					default:
+						break;
 					}
 				}
 				_graphicsMan->fadeInLong();
@@ -437,6 +439,9 @@ bool HopkinsEngine::runWin95Demo() {
 			_globals->_eventMode = EVENTMODE_DEFAULT;
 			_globals->_exitId = 300;
 			break;
+
+		default:
+			break;
 		}
 	}
 	return true;
@@ -536,6 +541,8 @@ bool HopkinsEngine::runLinuxDemo() {
 						break;
 					case LANG_SP:
 						_graphicsMan->loadImage("fondes");
+						break;
+					default:
 						break;
 					}
 				}
@@ -755,6 +762,9 @@ bool HopkinsEngine::runLinuxDemo() {
 			_globals->_eventMode = EVENTMODE_DEFAULT;
 			_globals->_exitId = 300;
 			break;
+
+		default:
+			break;
 		}
 	}
 	return true;
@@ -888,6 +898,8 @@ bool HopkinsEngine::runFull() {
 						break;
 					case LANG_SP:
 						_graphicsMan->loadImage("fondes");
+						break;
+					default:
 						break;
 					}
 				}
@@ -1563,6 +1575,9 @@ bool HopkinsEngine::runFull() {
 			_globals->_characterType = CHARACTER_HOPKINS;
 			_globals->_eventMode = EVENTMODE_DEFAULT;
 			_graphicsMan->_lineNbr = SCREEN_WIDTH;
+			break;
+
+		default:
 			break;
 		}
 	}
@@ -2734,6 +2749,8 @@ void HopkinsEngine::handleOceanMouseEvents() {
 		}
 		_globals->_oceanDirection = DIR_DOWN;
 		_globals->_exitId = 4;
+		break;
+	default:
 		break;
 	}
 }

@@ -80,6 +80,8 @@ int MenuManager::menu() {
 			case LANG_SP:
 				_vm->_graphicsMan->loadImage("MENUES");
 				break;
+			default:
+				break;
 			}
 		}
 
@@ -97,6 +99,8 @@ int MenuManager::menu() {
 				break;
 			case LANG_SP:
 				spriteData = _vm->_objectsMan->loadSprite("MENUES.SPR");
+				break;
+			default:
 				break;
 			}
 		}

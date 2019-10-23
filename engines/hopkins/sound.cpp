@@ -260,6 +260,8 @@ void SoundManager::loadAnimSound() {
 		loadWav("SOUND80.WAV", 1);
 		loadWav("SOUND82.WAV", 2);
 		break;
+	default:
+		break;
 	}
 }
 
@@ -297,6 +299,8 @@ void SoundManager::playAnimSound(int animFrame) {
 		case 122:
 			if (_vm->getLanguage() != Common::PL_POL)
 				playSample(4);
+			break;
+		default:
 			break;
 		}
 	} else if (_specialSoundNum == 1 && animFrame == 17)
@@ -526,10 +530,10 @@ bool SoundManager::mixVoice(int voiceId, int voiceMode, bool dispTxtFl) {
 	bool fileFoundFl = false;
 	_vm->_fileIO->searchCat(filename + ".WAV", RES_VOI, fileFoundFl);
 	if (fileFoundFl) {
-		if (_vm->getPlatform() == Common::kPlatformOS2 || _vm->getPlatform() == Common::kPlatformBeOS)
+		if (_vm->getPlatform() == Common::kPlatformOS2 || _vm->getPlatform() == Common::kPlatformBeOS) {
 			filename = "ENG_VOI.RES";
-		// Win95 and Linux versions uses another set of names
-		else {
+		} else {
+			// Win95 and Linux versions uses another set of names
 			switch (_vm->_globals->_language) {
 			case LANG_FR:
 				filename = "RES_VFR.RES";
@@ -540,6 +544,8 @@ bool SoundManager::mixVoice(int voiceId, int voiceMode, bool dispTxtFl) {
 			case LANG_SP:
 				filename = "RES_VES.RES";
 				break;
+			default:
+				break;
 			}
 		}
 
@@ -548,10 +554,10 @@ bool SoundManager::mixVoice(int voiceId, int voiceMode, bool dispTxtFl) {
 	} else {
 		_vm->_fileIO->searchCat(filename + ".APC", RES_VOI, fileFoundFl);
 		if (fileFoundFl) {
-			if (_vm->getPlatform() == Common::kPlatformOS2 || _vm->getPlatform() == Common::kPlatformBeOS)
+			if (_vm->getPlatform() == Common::kPlatformOS2 || _vm->getPlatform() == Common::kPlatformBeOS) {
 				filename = "ENG_VOI.RES";
-			// Win95 and Linux versions uses another set of names
-			else {
+			} else {
+				// Win95 and Linux versions uses another set of names
 				switch (_vm->_globals->_language) {
 				case LANG_FR:
 					filename = "RES_VFR.RES";
@@ -562,6 +568,8 @@ bool SoundManager::mixVoice(int voiceId, int voiceMode, bool dispTxtFl) {
 				case LANG_SP:
 					filename = "RES_VES.RES";
 					break;
+				default:
+					break;
 				}
 			}
 
@@ -570,10 +578,10 @@ bool SoundManager::mixVoice(int voiceId, int voiceMode, bool dispTxtFl) {
 		} else {
 			_vm->_fileIO->searchCat(filename + ".RAW", RES_VOI, fileFoundFl);
 			if (fileFoundFl) {
-				if (_vm->getPlatform() == Common::kPlatformOS2 || _vm->getPlatform() == Common::kPlatformBeOS)
+				if (_vm->getPlatform() == Common::kPlatformOS2 || _vm->getPlatform() == Common::kPlatformBeOS) {
 					filename = "ENG_VOI.RES";
-				// Win95 and Linux versions uses another set of names
-				else {
+				} else {
+					// Win95 and Linux versions uses another set of names
 					switch (_vm->_globals->_language) {
 					case LANG_FR:
 						filename = "RES_VFR.RES";
@@ -583,6 +591,8 @@ bool SoundManager::mixVoice(int voiceId, int voiceMode, bool dispTxtFl) {
 						break;
 					case LANG_SP:
 						filename = "RES_VES.RES";
+						break;
+					default:
 						break;
 					}
 				}

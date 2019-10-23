@@ -166,6 +166,8 @@ void Globals::setConfig() {
 		_zoneFilename = "ZONEES.TXT";
 		_textFilename = "TEXTEES.TXT";
 		break;
+	default:
+		break;
 	}
 }
 
