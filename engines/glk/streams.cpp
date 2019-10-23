@@ -25,7 +25,6 @@
 #include "glk/events.h"
 #include "glk/glk.h"
 #include "glk/windows.h"
-#include "glk/frotz/detection.h"
 #include "gui/saveload.h"
 #include "common/file.h"
 #include "common/savefile.h"
