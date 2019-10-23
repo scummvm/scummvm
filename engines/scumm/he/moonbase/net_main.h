@@ -23,6 +23,8 @@
 #ifndef SCUMM_HE_MOONBASE_NET_MAIN_H
 #define SCUMM_HE_MOONBASE_NET_MAIN_H
 
+#include "backends/networking/curl/postrequest.h"
+
 namespace Scumm {
 
 class ScummEngine_v100he;
@@ -68,6 +70,9 @@ public:
 private:
 	int getMessageCount();
 	void remoteReceiveData();
+
+	void startQuerySessionsCallback(Common::JSONValue *response);
+	void startQuerySessionsErrorCallback(Networking::ErrorResponse error);
 
 public:
 	//getters

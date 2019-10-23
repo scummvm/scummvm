@@ -151,8 +151,24 @@ bool Net::destroyPlayer(int32 playerDPID) {
 int32 Net::startQuerySessions() {
 	warning("STUB: Net::startQuerySessions()"); // StartQuerySessions
 
+	Networking::PostRequest rq("http://localhost/lobbies", NULL, 0,
+		new Common::Callback<Net, Common::JSONValue *>(this, &Net::startQuerySessionsCallback),
+		new Common::Callback<Net, Networking::ErrorResponse>(this, &Net::startQuerySessionsErrorCallback));
+
+	while(rq.state() == Networking::PROCESSING) {
+		g_system->delayMillis(5);
+	}
+
 	// FAKE 1 session. FIXME
 	return 1;
+}
+
+void Net::startQuerySessionsCallback(Common::JSONValue *response) {
+	warning("Got: '%s'", response->stringify().c_str());
+}
+
+void Net::startQuerySessionsErrorCallback(Networking::ErrorResponse error) {
+	warning("Error in startQuerySessions()");
 }
 
 int32 Net::updateQuerySessions() {
