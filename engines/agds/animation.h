@@ -37,6 +37,7 @@ class Object;
 
 class Animation {
 	Video::FlicDecoder *_flic;
+	Common::Point		_position;
 	Common::String 		_phaseVar;
 	bool				_loop;
 	int					_cycles;
@@ -46,6 +47,10 @@ class Animation {
 public:
 	Animation();
 	~Animation();
+
+	void position(Common::Point position) {
+		_position = position;
+	}
 
 	const Common::String & phaseVar() const {
 		return _phaseVar;

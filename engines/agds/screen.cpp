@@ -21,6 +21,7 @@
  */
 
 #include "agds/screen.h"
+#include "agds/animation.h"
 #include "agds/object.h"
 #include "agds/region.h"
 
@@ -70,6 +71,10 @@ bool Screen::remove(const Common::String &name) {
 void Screen::paint(AGDSEngine & engine, Graphics::Surface & backbuffer) {
 	for(ChildrenType::iterator i = _children.begin(); i != _children.end(); ++i) {
 		(*i)->paint(engine, backbuffer);
+	}
+	for(AnimationsType::iterator i = _animations.begin(); i != _animations.end(); ++i) {
+		Animation * animation = *i;
+		animation->paint(engine, backbuffer, Common::Point());
 	}
 }
 
