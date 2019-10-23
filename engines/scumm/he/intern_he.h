@@ -611,6 +611,7 @@ public:
 	virtual void resetScumm();
 
 	virtual void setupScummVars();
+	virtual void resetScummVars();
 
 protected:
 	virtual void setupOpcodes();

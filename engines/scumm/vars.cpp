@@ -740,6 +740,18 @@ void ScummEngine_v99he::resetScummVars() {
 }
 #endif
 
+void ScummEngine_v100he::resetScummVars() {
+	ScummEngine_v99he::resetScummVars();
+
+	if (_game.id == GID_MOONBASE) {
+#ifdef USE_CURL
+		VAR(VAR_NETWORK_AVAILABLE) = 1;
+#else
+		VAR(VAR_NETWORK_AVAILABLE) = 0;
+#endif
+	}
+}
+
 void ScummEngine::resetScummVars() {
 	if (_game.heversion < 70 && _game.version <= 6) {
 		// VAR_SOUNDCARD modes
