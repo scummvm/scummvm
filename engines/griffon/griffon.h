@@ -286,6 +286,7 @@ public:
 	~GriffonEngine();
 
 	virtual Common::Error run();
+	virtual void syncSoundSettings();
 
 private:
 	Common::RandomSource *_rnd;

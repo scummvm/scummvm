@@ -34,16 +34,12 @@
  *
  */
 
-
 #include "griffon/config.h"
+#include "common/config-manager.h"
 
 namespace Griffon {
 
-CONFIG config = {
-	320, 240, 16, false, 0, 0, true, 127, true, 127
-};
-
-char config_ini[64] = "config.ini";
+CONFIG config;
 
 #define PRINT(A,B)          \
 	do {                    \
@@ -60,81 +56,30 @@ char config_ini[64] = "config.ini";
 	} while(0)
 
 void config_load(CONFIG *config) {
-#if 0
-	char line[128];
-	char arg[128];
+	bool mute = false;
+	if (ConfMan.hasKey("mute"))
+		mute = ConfMan.getBool("mute");
 
-	FILE *fp = fopen(config_ini, "r");
-	if (fp) {
-		while (fgets(line, sizeof(line), fp) != NULL) {
-			sscanf(line, "%s", arg); // eliminate eol and eof by this
+	config->music = mute;
+	config->effects = mute;
 
-			if (strcmp(arg, "SCR_WIDTH:") == 0) {
-				fgets(line, sizeof(line), fp);
-				sscanf(line, "%i", &config->scr_width);
-			} else if (strcmp(arg, "SCR_HEIGHT:") == 0) {
-				fgets(line, sizeof(line), fp);
-				sscanf(line, "%i", &config->scr_height);
-			} else if (strcmp(arg, "SCR_BITS:") == 0) {
-				fgets(line, sizeof(line), fp);
-				sscanf(line, "%i", &config->scr_bpp);
-			} else if (strcmp(arg, "HWACCEL:YES") == 0) {
-				config->hwaccel = true;
-			} else if (strcmp(arg, "HWACCEL:NO") == 0) {
-				config->hwaccel = false;
-			} else if (strcmp(arg, "HWSURFACE:YES") == 0) {
-				config->hwsurface = true;
-			} else if (strcmp(arg, "HWSURFACE:NO") == 0) {
-				config->hwsurface = false;
-			} else if (strcmp(arg, "FULLSCREEN:YES") == 0) {
-				config->fullscreen = true;
-			} else if (strcmp(arg, "FULLSCREEN:NO") == 0) {
-				config->fullscreen = false;
-			} else if (strcmp(arg, "MUSIC:YES") == 0) {
-				config->music = true;
-			} else if (strcmp(arg, "MUSIC:NO") == 0) {
-				config->music = false;
-			} else if (strcmp(arg, "SNDEFFECTS:YES") == 0) {
-				config->effects = true;
-			} else if (strcmp(arg, "SNDEFFECTS:NO") == 0) {
-				config->effects = false;
-			} else if (strcmp(arg, "opmusicvol:") == 0) {
-				fgets(line, sizeof(line), fp);
-				sscanf(line, "%i", &config->musicvol);
-			} else if (strcmp(arg, "opeffectsvol:") == 0) {
-				fgets(line, sizeof(line), fp);
-				sscanf(line, "%i", &config->effectsvol);
-			}
-		}
-
-		fclose(fp);
+	if (!mute) {
+		config->music = !ConfMan.getBool("music_mute");
+		config->effects = !ConfMan.getBool("sfx_mute");
 	}
-#endif
+
+	config->musicvol = ConfMan.getInt("music_volume");
+	config->effectsvol = ConfMan.getInt("sfx_volume");
 }
 
 void config_save(CONFIG *config) {
-#if 0
-	FILE *fp = fopen(config_ini, "w");
+	ConfMan.setBool("mute", !(config->music || config->effectsvol));
+	ConfMan.setBool("music_mute", !config->music);
+	ConfMan.setBool("sfx_mute", !config->effects);
+	ConfMan.setInt("music_volume", config->musicvol);
+	ConfMan.setInt("sfx_volume", config->effectsvol);
 
-	if (fp) {
-		PRINT("%s", "SCR_WIDTH:");
-		PRINT("%i", config->scr_width);
-		PRINT("%s", "SCR_HEIGHT:");
-		PRINT("%i", config->scr_height);
-		PRINT("%s", "SCR_BITS:");
-		PRINT("%i", config->scr_bpp);
-		PRINT("%s", config->hwaccel ? "HWACCEL:YES" : "HWACCEL:NO");
-		PRINT("%s", config->hwsurface ? "HWSURFACE:YES" : "HWSURFACE:NO");
-		PRINT("%s", config->fullscreen ? "FULLSCREEN:YES" : "FULLSCREEN:NO");
-		PRINT("%s", config->music ? "MUSIC:YES" : "MUSIC:NO");
-		PRINT("%s", config->effects ? "SNDEFFECTS:YES" : "SNDEFFECTS:NO");
-		PRINT("%s", "opmusicvol:");
-		PRINT("%i", config->musicvol);
-		PRINT("%s", "opeffectsvol:");
-		PRINT("%i", config->effectsvol);
-		fclose(fp);
-	}
-#endif
+	ConfMan.flushToDisk();
 }
 
 } // end of namespace Griffon

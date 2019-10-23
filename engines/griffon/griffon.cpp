@@ -32,6 +32,7 @@
 #include "engines/util.h"
 
 #include "griffon/griffon.h"
+#include "griffon/config.h"
 #include "griffon/console.h"
 
 namespace Griffon {
@@ -51,12 +52,19 @@ GriffonEngine::GriffonEngine(OSystem *syst) : Engine(syst) {
 	_menuchannel = -1;
 
 	_loopseta = 0;
-
 	clouddeg = 0.0f;
+
+	// Synchronize the sound settings from ScummVM
+	syncSoundSettings();
+	config_load(&config);
 }
 
 GriffonEngine::~GriffonEngine() {
 	delete _rnd;
+}
+
+void GriffonEngine::syncSoundSettings() {
+	Engine::syncSoundSettings();
 }
 
 Common::Error GriffonEngine::run() {
