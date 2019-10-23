@@ -3183,10 +3183,51 @@ static const uint16 gk1EgoPhonePositionPatch[] = {
 	PATCH_END
 };
 
+// Restarting the game doesn't reset the current inventory item in the icon bar.
+//  The previously selected item can then be used on day 1.
+//
+// Room 93 restarts the game and resets inventory by setting each item's owner
+//  to zero. It makes no attempt to reset the icon bar. We fix this by instead
+//  calling GKEgo:put on each item and passing zero for the new owner, as this
+//  handles updating the icon bar when dropping an item. The "state" property is
+//  no longer cleared for items but that's okay because it's never set or used.
+//
+// Applies to: All versions
+// Responsible method: doTheRestart:changeState(0)
+// Fixes bug: #11222
+static const uint16 gk1RestartInventorySignature[] = {
+	SIG_MAGICDWORD,
+	0x38, SIG_SELECTOR16(owner),            // pushi owner
+	0x78,                                   // push1
+	0x76,                                   // push0
+	0x39, SIG_SELECTOR8(state),             // pushi state
+	0x78,                                   // push1
+	0x76,                                   // push0
+	0x39, SIG_SELECTOR8(at),                // pushi at
+	0x78,                                   // push1
+	0x8b, 0x00,                             // lsl 00
+	0x81, 0x09,                             // lag 09
+	0x4a, SIG_UINT16(0x0006),               // send 06 [ GKInventory at: local0 ]
+	0x4a, SIG_UINT16(0x000c),               // send 0c [ item owner: 0 state: 0 ]
+	SIG_END
+};
+
+static const uint16 gk1RestartInventoryPatch[] = {
+	0x38, PATCH_SELECTOR16(put),            // pushi put
+	0x7a,                                   // push2
+	0x8b, 0x00,                             // lsl 00
+	0x76,                                   // push0
+	0x81, 0x00,                             // lag 00
+	0x4a, PATCH_UINT16(0x0008),             // send 08 [ GKEgo put: local0 0 ]
+	0x33, 0x08,                             // jmp 08
+	PATCH_END
+};
+
 //          script, description,                                      signature                         patch
 static const SciScriptPatcherEntry gk1Signatures[] = {
 	{  true,     0, "remove alt+n syslogger hotkey",               1, gk1SysLoggerHotKeySignature,      gk1SysLoggerHotKeyPatch },
 	{  true,    51, "fix interrogation bug",                       1, gk1InterrogationBugSignature,     gk1InterrogationBugPatch },
+	{  true,    93, "fix inventory on restart",                    1, gk1RestartInventorySignature,     gk1RestartInventoryPatch },
 	{  true,   211, "fix day 1 grace phone speech timing",         1, gk1Day1GracePhoneSignature,       gk1Day1GracePhonePatch },
 	{  true,   212, "fix day 5 drum book dialogue error",          1, gk1Day5DrumBookDialogueSignature, gk1Day5DrumBookDialoguePatch },
 	{  true,   212, "fix day 5 phone softlock",                    1, gk1Day5PhoneFreezeSignature,      gk1Day5PhoneFreezePatch },
