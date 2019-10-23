@@ -418,6 +418,12 @@ void Process::disableUser() {
 	_engine->enableUser(false);
 }
 
+void Process::userEnabled() {
+	bool enabled = _engine->userEnabled();
+	debug("userEnabled -> %d", enabled);
+	push(enabled);
+}
+
 void Process::changeScreenPatch() {
 	Common::String objectName = popString();
 	Common::String screenName = popString();
@@ -1354,6 +1360,7 @@ ProcessExitCode Process::execute() {
 			OP		(kStub231, stub231);
 			OP		(kStub233, stub233);
 			OP		(kStub235, stub235);
+			OP		(kUserEnabled, userEnabled);
 			OP		(kStub244, stub244);
 			OP		(kInventoryFindObjectByName, inventoryFindObjectByName);
 			OP		(kRunDialog, runDialog);

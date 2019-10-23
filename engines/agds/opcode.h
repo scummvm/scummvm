@@ -253,7 +253,7 @@ enum Opcode {
 	kStub233						= 233,
 	kGetSampleVolume				= 234,
 	kStub235						= 235,
-	kStub236						= 236,
+	kUserEnabled					= 236,
 	kStub237						= 237,
 	kInventoryFindObjectByName		= 238,
 	kStub239						= 239,
