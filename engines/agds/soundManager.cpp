@@ -36,10 +36,15 @@ namespace AGDS {
 		for(SoundList::iterator i = _sounds.begin(); i != _sounds.end(); ) {
 			Sound & sound = *i;
 			if (!_mixer->isSoundHandleActive(sound.handle)) {
-				_engine->setGlobal(sound.phaseVar, -1);
+				//FIXME: re-enable me later
+				// if (!sound.phaseVar.empty())
+				// 	_engine->setGlobal(sound.phaseVar, -1);
 				i = _sounds.erase(i);
-			} else
+			} else {
+				// if (!sound.phaseVar.empty())
+				// 	_engine->setGlobal(sound.phaseVar, _engine->getGlobal(sound.phaseVar) + 1);
 				++i;
+			}
 		}
 	}
 

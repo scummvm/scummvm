@@ -22,6 +22,7 @@
 
 #include "agds/process.h"
 #include "agds/agds.h"
+#include "agds/animation.h"
 #include "agds/character.h"
 #include "agds/opcode.h"
 #include "agds/region.h"
@@ -1066,6 +1067,13 @@ void Process::loadPictureFromObject() {
 void Process::loadAnimationFromObject() {
 	Common::String name = popText();
 	debug("loadAnimationFromObject %s", name.c_str());
+	if (!_phaseVar.empty()) {
+		_engine->setGlobal(_phaseVar, -2);
+
+		Animation * animation = _engine->loadAnimation(name);
+		if (animation)
+			animation->phaseVar(_phaseVar);
+	}
 }
 
 void Process::setAnimationPosition() {
