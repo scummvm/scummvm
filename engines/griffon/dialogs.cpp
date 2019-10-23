@@ -35,6 +35,7 @@
  */
 
 #include "common/system.h"
+#include "common/config-manager.h"
 
 #include "griffon/griffon.h"
 #include "griffon/config.h"
@@ -221,6 +222,10 @@ void GriffonEngine::configMenu() {
 	configwindow->setAlpha(160, true);
 
 	int ticks1 = _ticks;
+
+	config.musicvol = ConfMan.getInt("music_volume");
+	config.effectsvol = ConfMan.getInt("sfx_volume");
+
 	do {
 		_videobuffer->fillRect(Common::Rect(0, 0, _videobuffer->w, _videobuffer->h), 0);
 
@@ -356,14 +361,14 @@ void GriffonEngine::configMenu() {
 
 				if (_event.kbd.keycode == Common::KEYCODE_LEFT) {
 					if (cursel == 11) {
-						config.musicvol = config.musicvol - 25;
+						config.musicvol -= 25;
 						if (config.musicvol < 0)
 							config.musicvol = 0;
 
 						setChannelVolume(_musicchannel, config.musicvol);
 						setChannelVolume(_menuchannel, config.musicvol);
 					} else if (cursel == 12) {
-						config.effectsvol = config.effectsvol - 25;
+						config.effectsvol -= 25;
 						if (config.effectsvol < 0)
 							config.effectsvol = 0;
 
@@ -379,14 +384,14 @@ void GriffonEngine::configMenu() {
 				}
 				if (_event.kbd.keycode == Common::KEYCODE_RIGHT) {
 					if (cursel == 11) {
-						config.musicvol = config.musicvol + 25;
+						config.musicvol += 25;
 						if (config.musicvol > 255)
 							config.musicvol = 255;
 
 						setChannelVolume(_musicchannel, config.musicvol);
 						setChannelVolume(_menuchannel, config.musicvol);
 					} else if (cursel == 12) {
-						config.effectsvol = config.effectsvol + 25;
+						config.effectsvol += 25;
 						if (config.effectsvol > 255)
 							config.effectsvol = 255;
 
