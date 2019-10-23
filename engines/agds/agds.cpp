@@ -278,6 +278,14 @@ void AGDSEngine::tick() {
 	}
 }
 
+Animation * AGDSEngine::loadMouseCursor(const Common::String &name) {
+	Animation *animation = loadAnimation(name);
+	animation->loop(true);
+	animation->phaseVar(Common::String());
+	animation->play();
+	return animation;
+}
+
 void AGDSEngine::changeMouseArea(int id, int enabled) {
 	if (id < 0)
 		return;
@@ -506,6 +514,16 @@ Animation * AGDSEngine::loadAnimation(const Common::String &name) {
 	_animations[name] = animation;
 	return animation;
 }
+
+Animation * AGDSEngine::findAnimationByPhaseVar(const Common::String &phaseVar) {
+	for(AnimationsType::iterator i = _animations.begin(); i != _animations.end(); ++i) {
+		Animation * animation = i->_value;
+		if (animation->phaseVar() == phaseVar)
+			return animation;
+	}
+	return NULL;
+}
+
 
 Character * AGDSEngine::loadCharacter(const Common::String &name) {
 	CharactersType::iterator i = _characters.find(name);

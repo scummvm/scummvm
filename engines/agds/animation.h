@@ -38,6 +38,10 @@ class Object;
 class Animation {
 	Video::FlicDecoder *_flic;
 	Common::String 		_phaseVar;
+	bool				_loop;
+	int					_cycles;
+	int					_phase;
+	bool				_paused;
 
 public:
 	Animation();
@@ -46,8 +50,29 @@ public:
 	const Common::String & phaseVar() const {
 		return _phaseVar;
 	}
+
 	void phaseVar(const Common::String & phaseVar) {
 		_phaseVar = phaseVar;
+	}
+
+	void loop(bool loop) {
+		_loop = loop;
+	}
+
+	void cycles(int cycles) {
+		_cycles = cycles;
+	}
+
+	int phase() const {
+		return _phase;
+	}
+
+	void play() {
+		_paused = false;
+	}
+
+	void stop() {
+		_paused = true;
 	}
 
 	bool load(Common::SeekableReadStream *stream);

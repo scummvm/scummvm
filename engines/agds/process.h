@@ -53,6 +53,8 @@ private:
 	int				_glyphWidth, _glyphHeight;
 	Common::String	_phaseVar;
 	int				_timer;
+	int				_animationCycles;
+	bool			_animationLoop;
 
 private:
 	uint8 next() {
@@ -177,7 +179,7 @@ private:
 	void setIntegerSystemVariable();
 	void getGlobal(unsigned index);
 	void setGlobal();
-	void resetPhaseVar();
+	void setPhaseVar();
 	void hasGlobal();
 	void postIncrementGlobal();
 	void postDecrementGlobal();
@@ -222,7 +224,6 @@ private:
 	void setCycles();
 	void setRandom();
 	void stub133();
-	void stub136();
 	void stub137();
 	void stub138();
 	void stub152();
@@ -247,7 +248,8 @@ private:
 	void stub215();
 	void stub216();
 	void stub217();
-	void stub221();
+	void playAnimationWithPhaseVar();
+	void setAnimationLoop();
 	void stub223();
 	void stub225();
 	void stub231();

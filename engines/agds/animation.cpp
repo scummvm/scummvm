@@ -30,7 +30,7 @@
 
 namespace AGDS {
 
-Animation::Animation(): _flic() {
+Animation::Animation(): _flic(), _loop(false), _cycles(1), _phase(0), _paused(true) {
 }
 
 Animation::~Animation() {
@@ -51,11 +51,24 @@ bool Animation::load(Common::SeekableReadStream* stream) {
 
 
 void Animation::paint(AGDSEngine & engine, Graphics::Surface & backbuffer, Common::Point dst) {
+	if (_cycles <= 0 || _paused) {
+		return;
+	}
+
 	const Graphics::Surface * frame = _flic->decodeNextFrame();
 	if (!frame) {
+		if (!_loop && --_cycles <= 0) {
+			_phase = -1; //end of animation
+			return;
+		}
+		_phase = 0;
 		_flic->rewind();
 		frame = _flic->decodeNextFrame();
-	}
+		if (!frame)
+			error("failed decoding frame after rewind");
+	} else
+		++_phase;
+
 	Graphics::TransparentSurface * c = engine.convertToTransparent(frame->convertTo(engine.pixelFormat(), _flic->getPalette()));
 	Common::Rect srcRect = c->getRect();
 	if (Common::Rect::getBlitRect(dst, srcRect, backbuffer.getRect()))
