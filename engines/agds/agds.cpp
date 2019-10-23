@@ -281,20 +281,23 @@ void AGDSEngine::changeMouseArea(int id, int enabled) {
 	if (id < 0)
 		return;
 
-	debug("changeMouseArea %d %d", id, enabled);
 	MouseRegion * mouseArea = _mouseMap.find(id);
 	if (mouseArea) {
 		switch(enabled) {
 			case 1:
+				debug("enabling mouse area %d", id);
 				mouseArea->enable();
 				break;
 			case 0:
+				debug("disabling mouse area %d", id);
 				if (mouseArea->currentlyIn) {
 					runObject(mouseArea->onLeave);
 				}
 				mouseArea->disable();
 				break;
 			case -1:
+				debug("removing mouse area %d", id);
+				_mouseMap.remove(id);
 				break;
 		}
 	} else
