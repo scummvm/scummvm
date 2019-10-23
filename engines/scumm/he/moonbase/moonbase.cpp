@@ -23,7 +23,7 @@
 #include "scumm/he/intern_he.h"
 #include "scumm/he/moonbase/moonbase.h"
 #include "scumm/he/moonbase/ai_main.h"
-#ifdef USE_CURL
+#ifdef USE_LIBCURL
 #include "scumm/he/moonbase/net_main.h"
 #endif
 
@@ -33,14 +33,14 @@ Moonbase::Moonbase(ScummEngine_v100he *vm) : _vm(vm) {
 	initFOW();
 
 	_ai = new AI(_vm);
-#ifdef USE_CURL
+#ifdef USE_LIBCURL
 	_net = new Net(_vm);
 #endif
 }
 
 Moonbase::~Moonbase() {
 	delete _ai;
-#ifdef USE_CURL
+#ifdef USE_LIBCURL
 	delete _net;
 #endif
 }
