@@ -33,14 +33,24 @@
 namespace AGDS {
 
 	void SoundManager::tick() {
-		for(SoundList::iterator i = _sounds.begin(); i != _sounds.end(); ++i) {
+		for(SoundList::iterator i = _sounds.begin(); i != _sounds.end(); ) {
 			Sound & sound = *i;
-			int state = _engine->getGlobal(sound.phaseVar);
-			state = 0;
-			_mixer->isSoundHandleActive(sound.handle);
-			_engine->setGlobal(sound.phaseVar, state);
+			if (!_mixer->isSoundHandleActive(sound.handle)) {
+				_engine->setGlobal(sound.phaseVar, -1);
+				i = _sounds.erase(i);
+			} else
+				++i;
 		}
 	}
+
+	void SoundManager::stopAll() {
+		_mixer->stopAll();
+		for(SoundList::iterator i = _sounds.begin(); i != _sounds.end(); ++i) {
+			Sound & sound = *i;
+			_engine->setGlobal(sound.phaseVar, 0);
+		}
+	}
+
 
 	void SoundManager::play(const Common::String &resource, const Common::String &phaseVar) {
 		Common::File *file = new Common::File();

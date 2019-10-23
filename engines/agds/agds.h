@@ -164,6 +164,10 @@ public:
 	void tickDialog();
 	void tickInventory();
 
+	void playSound(const Common::String &resource, const Common::String &phaseVar) {
+		_soundManager.play(resource, phaseVar);
+	}
+
 private:
 	void parseDialogDefs(const Common::String &defs);
 

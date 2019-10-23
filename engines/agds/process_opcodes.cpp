@@ -124,7 +124,7 @@ void Process::loadSample() {
 		warning("playing sample %s without phase var", _phaseVar.c_str());
 		return;
 	}
-	_engine->_soundManager.play(name, _phaseVar);
+	_engine->playSound(name, _phaseVar);
 }
 
 void Process::getSampleVolume() {
@@ -144,6 +144,7 @@ void Process::playSound() {
 	Common::String name = popText();
 	int arg = pop();
 	debug("playSound %s %d", name.c_str(), arg);
+	_engine->playSound(name, _phaseVar);
 }
 
 void Process::updatePhaseVarOr2() {
@@ -753,12 +754,15 @@ void Process::npcSay() {
 }
 
 void Process::playerSay() {
-	Common::String arg3 = popString();
-	Common::String arg2 = popString();
+	Common::String sound = popText();
+	Common::String arg2 = popText();
 	Common::String arg1 = popString();
-	debug("playerSay %s %s %s", arg1.c_str(), arg2.c_str(), arg3.c_str());
+	debug("playerSay '%s' '%s' '%s'", arg1.c_str(), arg2.c_str(), sound.c_str());
+	if (!sound.empty())
+		_engine->playSound(sound, _phaseVar);
 	//close inventory here if close flag was set
 }
+
 void Process::runDialog() {
 	Common::String arg3 = popString();
 	Common::String arg2 = popString();

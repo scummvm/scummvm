@@ -55,6 +55,7 @@ namespace AGDS {
 		SoundManager(AGDSEngine *engine, Audio::Mixer *mixer): _engine(engine), _mixer(mixer) { }
 		void tick();
 		void play(const Common::String &file, const Common::String &phaseVar);
+		void stopAll();
 	};
 
 } // End of namespace AGDS
