@@ -223,9 +223,6 @@ void GriffonEngine::configMenu() {
 
 	int ticks1 = _ticks;
 
-	config.musicvol = ConfMan.getInt("music_volume");
-	config.effectsvol = ConfMan.getInt("sfx_volume");
-
 	do {
 		_videobuffer->fillRect(Common::Rect(0, 0, _videobuffer->w, _videobuffer->h), 0);
 

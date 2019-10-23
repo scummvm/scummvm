@@ -40,12 +40,6 @@
 namespace Griffon {
 
 struct CONFIG {
-	int scr_width;
-	int scr_height;
-	int scr_bpp;
-	bool fullscreen;
-	int hwaccel;
-	int hwsurface; // Unused
 	bool music;
 	int musicvol;
 	bool effects;
@@ -53,7 +47,6 @@ struct CONFIG {
 };
 
 extern CONFIG config;
-extern char config_ini[];
 
 void config_load(CONFIG *config);
 void config_save(CONFIG *config);
