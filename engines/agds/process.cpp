@@ -30,7 +30,8 @@ namespace AGDS {
 Process::Process(AGDSEngine *engine, ObjectPtr object, unsigned ip) :
 	_engine(engine), _parentScreen(engine->getCurrentScreenName()), _object(object), _ip(ip), _status(kStatusActive), _exitCode(kExitCodeDestroy),
 	_glyphWidth(16), _glyphHeight(16),
-	_timer(0) {
+	_timer(0),
+	_animationCycles(1), _animationLoop(false) {
 }
 
 void Process::debug(const char *str, ...) {

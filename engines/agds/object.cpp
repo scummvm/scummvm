@@ -111,6 +111,10 @@ void Object::paint(AGDSEngine &engine, Graphics::Surface &backbuffer) {
 	}
 	if (_animation) {
 		_animation->paint(engine, backbuffer, _animationPos);
+		const Common::String & phaseVar = _animation->phaseVar();
+		if (!phaseVar.empty()) {
+			engine.setGlobal(_animation->phaseVar(), _animation->phase()); //-1 eof
+		}
 	}
 	if (!_text.empty()) {
 		Common::Point pos = _region? _region->center: _pos;

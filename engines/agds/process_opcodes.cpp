@@ -115,7 +115,13 @@ void Process::loadPicture() {
 void Process::loadAnimation() {
 	Common::String name = popText();
 	debug("loadAnimation %s", name.c_str());
-	_object->setAnimation(_engine->loadAnimation(name));
+	Animation *animation = _engine->loadAnimation(name);
+	if (animation) {
+		animation->phaseVar(_phaseVar);
+		animation->loop(_animationLoop);
+		animation->cycles(_animationCycles);
+		_object->setAnimation(animation);
+	}
 }
 
 void Process::loadSample() {
@@ -228,11 +234,11 @@ void Process::setGlobal() {
 	_engine->setGlobal(name, value);
 }
 
-void Process::resetPhaseVar() {
+void Process::setPhaseVar() {
 	Common::String name = popString();
 	_engine->setGlobal(name, 0);
 	_phaseVar = name;
-	debug("resetPhaseVar %s", name.c_str());
+	debug("setPhaseVar %s", name.c_str());
 }
 
 void Process::getGlobal(unsigned index) {
@@ -434,7 +440,8 @@ void Process::changeScreenPatch() {
 void Process::loadMouseCursorFromObject() {
 	Common::String name = popText();
 	debug("loadMouseCursorFromObject %s", name.c_str());
-	_object->setMouseCursor(_engine->loadAnimation(name)); //overlay cursor
+	Animation *cursor = _engine->loadMouseCursor(name);
+	_object->setMouseCursor(cursor); //overlay cursor
 }
 
 void Process::fadeObject() {
@@ -468,7 +475,8 @@ void Process::setDelay() {
 
 void Process::setCycles() {
 	int value = pop();
-	debug("setCycles stub %d", value);
+	debug("setCycles %d", value);
+	_animationCycles = value;
 }
 
 void Process::setRandom() {
@@ -500,6 +508,8 @@ void Process::stub119() {
 void Process::resetState() {
 	debug("process reset state");
 	_phaseVar.clear();
+	_animationCycles = 1;
+	_animationLoop = false;
 }
 
 void Process::stub129() {
@@ -513,8 +523,9 @@ void Process::stub133() {
 	debug("stub133: pan? %d volume? %d", pan, volume);
 }
 
-void Process::stub136() {
-	debug("stub136 sets value of stub130 (loops?) to 1000000000");
+void Process::setAnimationLoop() {
+	debug("loopAnimation");
+	_animationLoop = true;
 }
 
 void Process::stub137() {
@@ -657,9 +668,16 @@ void Process::stub217() {
 	debug("stub217: animation? id: %d, frame: %d, soundGroup: %d", id, frame, soundGroup);
 }
 
-void Process::stub221() {
+void Process::playAnimationWithPhaseVar() {
 	Common::String phaseVar = popString();
-	debug("stub221: animation related, phaseVar %s", phaseVar.c_str());
+	debug("playAnimationWithPhaseVar %s", phaseVar.c_str());
+	Animation * animation = _engine->findAnimationByPhaseVar(phaseVar);
+	if (animation) {
+		animation->phaseVar(phaseVar);
+		animation->play();
+	}
+	else
+		warning("no animation with phase var %s found", phaseVar.c_str());
 }
 
 void Process::stub223() {
@@ -1069,10 +1087,12 @@ void Process::loadAnimationFromObject() {
 	debug("loadAnimationFromObject %s", name.c_str());
 	if (!_phaseVar.empty()) {
 		_engine->setGlobal(_phaseVar, -2);
-
-		Animation * animation = _engine->loadAnimation(name);
-		if (animation)
-			animation->phaseVar(_phaseVar);
+	}
+	Animation * animation = _engine->loadAnimation(name);
+	if (animation) {
+		animation->phaseVar(_phaseVar);
+		animation->loop(_animationLoop);
+		animation->cycles(_animationCycles);
 	}
 }
 
@@ -1253,8 +1273,8 @@ ProcessExitCode Process::execute() {
 			OP		(kSetRandom, setRandom);
 			OP		(kStub133, stub133);
 			OP		(kSetAnimationPosition, setAnimationPosition);
-			OP		(kResetPhaseVar, resetPhaseVar);
-			OP		(kStub136, stub136);
+			OP		(kSetPhaseVar, setPhaseVar);
+			OP		(kSetAnimationLoop, setAnimationLoop);
 			OP		(kStub137, stub137);
 			OP		(kStub138, stub138);
 			OP		(kScreenChangeScreenPatch, changeScreenPatch);
@@ -1310,7 +1330,7 @@ ProcessExitCode Process::execute() {
 			OP		(kStub216, stub216);
 			OP		(kStub217, stub217);
 			OP		(kStopCharacter, stopCharacter);
-			OP		(kStub221, stub221);
+			OP		(kPlayAnimationWithPhaseVar, playAnimationWithPhaseVar);
 			OP		(kStub223, stub223);
 			OP		(kStub225, stub225);
 			OP		(kFadeObject, fadeObject);

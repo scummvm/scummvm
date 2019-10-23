@@ -146,12 +146,15 @@ public:
 	Font *getFont(int id) const;
 
 	Animation * loadAnimation(const Common::String &name);
+	Animation * loadMouseCursor(const Common::String &name);
+	Animation * findAnimationByPhaseVar(const Common::String &phaseVar);
 	Character * loadCharacter(const Common::String &name);
 	Character * getCharacter(const Common::String &name) const;
 
 	void loadDefaultMouseCursor(const Common::String &name) {
-		_defaultMouseCursor = loadAnimation(name);
+		_defaultMouseCursor = loadMouseCursor(name);
 	}
+
 	void changeMouseArea(int id, int enabled);
 	void enableUser(bool enabled) {
 		_userEnabled = enabled;
