@@ -1,5 +1,5 @@
 /*
-$VER: Ext_Inst_so.rexx 0.3 (21.10.2019) Extract and install compiled-in shared libraries from a given ELF binary.
+$VER: Ext_Inst_so.rexx 0.4 (23.10.2019) Extract and install compiled-in shared libraries from a given ELF binary.
 */
 
 PARSE ARG executable install_path
@@ -10,7 +10,7 @@ Check if arguments are available, otherwise quit.
 IF ~ARG() THEN DO
 	SAY 'No Arguments given!'
 	SAY 'Usage: Ext_Inst_so.rexx EXECUTABLE INSTALL_PATH'
-	EXIT No Arguments given!
+	EXIT
 END
 
 /*
@@ -21,7 +21,7 @@ and trailing spaces.
 */
 IF ~EXISTS(executable) THEN DO
 	SAY executable' not available!'
-	EXIT EXECUTABLE not available!
+	EXIT
 END
 ELSE DO
 	executable=STRIP(executable)
@@ -29,10 +29,11 @@ ELSE DO
 END
 IF installpath='' THEN DO
 	SAY 'No installation destination given!'
-	EXIT No installation destination given!
+	EXIT
 END
 ELSE DO
 	install_path=STRIP(install_path)
+	install_path=STRIP(install_path,'T','/')
 	install_path=COMPRESS(install_path,'"')
 	/*
 	Check for destination path and create it, if needed.
@@ -51,7 +52,7 @@ Error check, if I/O went wrong.
 */
 IF ~OPEN(SO_read,'so_dump','R') THEN DO
 	SAY 'File so_dump opening failed!'
-	EXIT File so_dump opening failed!
+	EXIT
 END
 
 /*
@@ -79,14 +80,14 @@ DO WHILE i>0
 		IF EXISTS('SDK:local/newlib/lib/'lib.so) THEN
 			ADDRESS COMMAND 'copy clone SDK:local/newlib/lib/'lib.so install_path'/sobjs/'
 		ELSE
-			IF EXISTS('SYS:SOBJS/'lib.so) THEN
+			IF EXISTS('SDK:gcc/lib/'lib.so) THEN
 				ADDRESS COMMAND 'copy clone SYS:SOBJS/'lib.so install_path'/sobjs/'
 			ELSE DO
 				/*
 				If a shared library is not found, abort.
 				*/
 				SAY lib.so' not found! Aborting!'
-				EXIT Shared Library not found! Aborting!
+				EXIT
 		END
 	END
 	ELSE
@@ -99,9 +100,9 @@ Close the file manually anyway.
 */
 IF ~CLOSE(SO_Read) THEN DO
 	SAY 'File so_dump closing failed!'
-	EXIT File so_dump opening failed!
+	EXIT
 END
 
 ADDRESS COMMAND 'delete so_dump'
 
-EXIT 0
+EXIT
