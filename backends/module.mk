@@ -65,6 +65,7 @@ MODULE_OBJS += \
 	networking/curl/networkreadstream.o \
 	networking/curl/curlrequest.o \
 	networking/curl/curljsonrequest.o \
+	networking/curl/postrequest.o \
 	networking/curl/request.o
 endif
 
