@@ -28,7 +28,7 @@
 
 namespace Networking {
 
-PostRequest::PostRequest(Common::String url, byte *postData, int postLen, Networking::JsonCallback cb, Networking::ErrorCallback ecb):
+PostRequest::PostRequest(Common::String url, byte *postData, int postLen, Networking::JSONValueCallback cb, Networking::ErrorCallback ecb):
 	Networking::Request(nullptr, ecb), _url(url), _jsonCallback(cb),
 	_workingRequest(nullptr), _ignoreCallback(false), _postData(postData), _postLen(postLen) {
 	start();
@@ -87,7 +87,7 @@ void PostRequest::responseCallback(Networking::JsonResponse response) {
 	finishSuccess();
 
 	if (_jsonCallback)
-		(*_jsonCallback)(Networking::JsonResponse(this, json));
+		(*_jsonCallback)(json);
 
 	delete json;
 }

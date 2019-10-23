@@ -30,7 +30,7 @@ namespace Networking {
 
 class PostRequest: public Networking::Request {
 	Common::String _url;
-	Networking::JsonCallback _jsonCallback;
+	Networking::JSONValueCallback _jsonCallback;
 	Request *_workingRequest;
 	bool _ignoreCallback;
 	Common::String _date;
@@ -43,7 +43,7 @@ class PostRequest: public Networking::Request {
 	void errorCallback(Networking::ErrorResponse error);
 
 public:
-	PostRequest(Common::String url, byte *postData, int postLen, Networking::JsonCallback cb, Networking::ErrorCallback ecb);
+	PostRequest(Common::String url, byte *postData, int postLen, Networking::JSONValueCallback cb, Networking::ErrorCallback ecb);
 	virtual ~PostRequest();
 
 	virtual void handle();
