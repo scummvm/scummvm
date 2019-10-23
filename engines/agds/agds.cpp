@@ -662,8 +662,19 @@ void AGDSEngine::parseDialogDefs(const Common::String &defs) {
 }
 
 void AGDSEngine::tickInventory() {
-	if (!_inventory.enabled())
-		return;
+	if (!_inventory.enabled() && _inventory.visible()) {
+		debug("closing inventory...");
+		Common::String inv_close = getSystemVariable("inv_close")->getString();
+		if (!inv_close.empty())
+			runObject(inv_close);
+		_inventory.visible(false);
+	} else if (_inventory.enabled() && !_inventory.visible()) {
+		debug("opening inventory...");
+		Common::String inv_open = getSystemVariable("inv_open")->getString();
+		if (!inv_open.empty())
+			runObject(inv_open);
+		_inventory.visible(true);
+	}
 
 	const Common::String & inv_region_name = getSystemVariable("inv_region")->getString();
 	if (inv_region_name.empty())

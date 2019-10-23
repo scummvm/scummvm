@@ -110,6 +110,7 @@ private:
 	void inventoryClear();
 	void inventoryAddObject();
 	void inventoryHasObject();
+	void inventoryFindObjectByName();
 	void getMaxInventorySize();
 	void getInventoryFreeSpace();
 	void appendInventoryObjectNameToSharedSpace();
@@ -208,6 +209,7 @@ private:
 	void onKey(unsigned size);
 	void onUse(unsigned size);
 	void onLook(unsigned size);
+	void onObjectC1(unsigned size);
 	void onScreenBD(unsigned size);
 
 	void stub63(unsigned size);
