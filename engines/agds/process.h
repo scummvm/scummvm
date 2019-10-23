@@ -255,6 +255,7 @@ private:
 	void stub231();
 	void stub233();
 	void stub235();
+	void userEnabled();
 	void stub244();
 	void debug(const char *str, ...);
 	void error(const char *str, ...);

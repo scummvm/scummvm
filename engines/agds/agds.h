@@ -156,8 +156,12 @@ public:
 	}
 
 	void changeMouseArea(int id, int enabled);
+
 	void enableUser(bool enabled) {
 		_userEnabled = enabled;
+	}
+	bool userEnabled() const {
+		return _userEnabled;
 	}
 
 	void initSystemVariables();
