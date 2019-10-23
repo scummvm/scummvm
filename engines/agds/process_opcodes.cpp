@@ -117,10 +117,12 @@ void Process::loadAnimation() {
 	debug("loadAnimation %s", name.c_str());
 	Animation *animation = _engine->loadAnimation(name);
 	if (animation) {
+		animation->position(_animationPosition);
 		animation->phaseVar(_phaseVar);
 		animation->loop(_animationLoop);
 		animation->cycles(_animationCycles);
-		_object->setAnimation(animation);
+		animation->play();
+		_engine->getCurrentScreen()->add(animation);
 	}
 }
 
@@ -516,6 +518,7 @@ void Process::resetState() {
 	_phaseVar.clear();
 	_animationCycles = 1;
 	_animationLoop = false;
+	_animationPosition = Common::Point();
 }
 
 void Process::stub129() {
@@ -1111,7 +1114,8 @@ void Process::setAnimationPosition() {
 	int arg2 = pop();
 	int arg1 = pop();
 	debug("setAnimationPosition %d %d", arg1, arg2);
-	_object->setAnimationPosition(Common::Point(arg1, arg2));
+	_animationPosition.x = arg1;
+	_animationPosition.y = arg2;
 }
 
 void Process::setTimer() {

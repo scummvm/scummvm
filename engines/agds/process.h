@@ -55,6 +55,7 @@ private:
 	int				_timer;
 	int				_animationCycles;
 	bool			_animationLoop;
+	Common::Point	_animationPosition;
 
 private:
 	uint8 next() {

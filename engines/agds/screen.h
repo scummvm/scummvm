@@ -37,6 +37,7 @@ namespace AGDS {
 
 class AGDSEngine;
 class Object;
+class Animation;
 typedef Common::SharedPtr<Object> ObjectPtr;
 struct Region;
 
@@ -91,11 +92,13 @@ public:
 };
 
 class Screen {
+	typedef Common::List<Animation *> AnimationsType;
 	typedef Common::List<ObjectPtr> ChildrenType;
 
 	ObjectPtr		_object;
 	Common::String	_name;
 	ChildrenType	_children;
+	AnimationsType	_animations;
 	MouseMap		_mouseMap;
 
 public:
@@ -123,6 +126,9 @@ public:
 	}
 
 	void add(ObjectPtr object);
+	void add(Animation * animation) {
+		_animations.push_back(animation);
+	}
 	bool remove(const Common::String & name);
 	void paint(AGDSEngine & engine, Graphics::Surface & backbuffer);
 	ObjectPtr find(Common::Point pos) const;

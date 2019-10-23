@@ -70,6 +70,7 @@ void Animation::paint(AGDSEngine & engine, Graphics::Surface & backbuffer, Commo
 		++_phase;
 
 	Graphics::TransparentSurface * c = engine.convertToTransparent(frame->convertTo(engine.pixelFormat(), _flic->getPalette()));
+	dst += _position;
 	Common::Rect srcRect = c->getRect();
 	if (Common::Rect::getBlitRect(dst, srcRect, backbuffer.getRect()))
 		c->blit(backbuffer, dst.x, dst.y, Graphics::FLIP_NONE, &srcRect);
