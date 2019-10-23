@@ -46,7 +46,9 @@
 
 namespace Griffon {
 
-void GriffonEngine::setChannelVolume(int channel, int volume) {}
+void GriffonEngine::setChannelVolume(int channel, int volume) {
+	_mixer->setChannelVolume(_handles[channel], volume);
+}
 
 int GriffonEngine::getSoundHandle() {
 	for (uint i = 0; i < kSoundHandles; i++) {
