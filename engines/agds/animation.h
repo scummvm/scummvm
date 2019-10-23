@@ -37,10 +37,18 @@ class Object;
 
 class Animation {
 	Video::FlicDecoder *_flic;
+	Common::String 		_phaseVar;
 
 public:
 	Animation();
 	~Animation();
+
+	const Common::String & phaseVar() const {
+		return _phaseVar;
+	}
+	void phaseVar(const Common::String & phaseVar) {
+		_phaseVar = phaseVar;
+	}
 
 	bool load(Common::SeekableReadStream *stream);
 	void paint(AGDSEngine & engine, Graphics::Surface & backbuffer, Common::Point dst);
