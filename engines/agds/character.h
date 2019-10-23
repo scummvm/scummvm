@@ -36,12 +36,23 @@ class AGDSEngine;
 class Object;
 
 class Character {
+	Common::String _name;
+	Common::String _object;
 	bool _enabled;
 	int _phase;
 	int _frames;
 
 public:
-	Character(): _enabled(true), _phase(0), _frames(0) {
+	Character(const Common::String & name, const Common::String & object):
+		_enabled(true), _phase(0), _frames(0), _name(name), _object(object) {
+	}
+
+	const Common::String & name() const {
+		return _name;
+	}
+
+	const Common::String & object() const {
+		return _object;
 	}
 
 	bool load(Common::SeekableReadStream* stream) {
