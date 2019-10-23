@@ -168,6 +168,7 @@ void AGDSEngine::runObject(const Common::String & name, const Common::String &pr
 void AGDSEngine::loadScreen(const Common::String & name) {
 	debug("loadScreen %s", name.c_str());
 	resetCurrentScreen();
+	_soundManager.stopAll();
 	_currentScreenName = name;
 	_currentScreen = new Screen(loadObject(name), _mouseMap);
 	_mouseMap.clear();
