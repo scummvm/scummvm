@@ -543,14 +543,14 @@ void Process::stub154() {
 	Common::String name = popString();
 	debug("stub154(getSomeX): %s", name.c_str());
 	ObjectPtr object = _engine->getCurrentScreenObject(name);
-	push(object->getPosition().x);
+	push(0);
 }
 
 void Process::stub155() {
 	Common::String name = popString();
 	debug("stub155(getSomeY): %s", name.c_str());
 	ObjectPtr object = _engine->getCurrentScreenObject(name);
-	push(object->getPosition().y);
+	push(0);
 }
 
 void Process::stub160() {
@@ -824,12 +824,20 @@ void Process::inventoryAddObject() {
 	suspend(kExitCodeLoadInventoryObject, name);
 }
 
-void Process::inventoryHasObject() {
+void Process::inventoryFindObjectByName() {
 	Common::String name = popString();
-	debug("inventoryHasObject %s", name.c_str());
+	debug("inventoryFindObjectByName %s", name.c_str());
 	int index = _engine->inventory().find(name);
 	debug("\t->%d", index);
 	push(index);
+}
+
+void Process::inventoryHasObject() {
+	int index = pop();
+	debug("inventoryHasObject %d", index);
+	bool hasObject = _engine->inventory().get(index);
+	debug("\t->%d", hasObject);
+	push(hasObject);
 }
 
 void Process::getMaxInventorySize() {
@@ -913,6 +921,11 @@ void Process::onKey(unsigned size) {
 void Process::onUse(unsigned size) {
 	debug("lclick [handler], %u instructions", size);
 	_object->setClickHandler(_ip);
+	_ip += size;
+}
+
+void Process::onObjectC1(unsigned size) {
+	debug("unknown (0xc1) [handler], %u instructions", size);
 	_ip += size;
 }
 
@@ -1180,7 +1193,7 @@ ProcessExitCode Process::execute() {
 			OP_U	(kCallImm16, call);
 			OP_U	(kObjectRegisterLookHandler, onLook);
 			OP_U	(kObjectRegisterUseHandler, onUse);
-			OP_U	(kStub63, stub63);
+			OP_U	(kObjectRegisterHandlerC1, onObjectC1);
 			OP_U	(kScreenRegisterHandlerBD, onScreenBD);
 			OP		(kLoadMouseCursorFromObject, loadMouseCursorFromObject);
 			OP		(kLoadRegionFromObject, loadRegionFromObject);
@@ -1202,6 +1215,7 @@ ProcessExitCode Process::execute() {
 			OP		(kLoadMouse, loadMouse);
 			OP		(kInventoryAddObject, inventoryAddObject);
 			OP		(kSetNextScreenSaveInHistory, setNextScreenSaveInHistory);
+			OP_U	(kStub63, stub63);
 			OP		(kStub82, stub82);
 			OP		(kStub83, stub83);
 			OP		(kAnimateCharacter, animateCharacter);
@@ -1268,6 +1282,7 @@ ProcessExitCode Process::execute() {
 			OP		(kGetMaxInventorySize, getMaxInventorySize);
 			OP		(kAppendInventoryObjectNameToSharedSpace, appendInventoryObjectNameToSharedSpace);
 			OP		(kStub184, stub184);
+			OP		(kInventoryHasObject, inventoryHasObject);
 			OP		(kSetObjectText, setObjectText);
 			OP		(kStub190, stub190);
 			OP		(kStub191, disableMouseAreas);
@@ -1303,7 +1318,7 @@ ProcessExitCode Process::execute() {
 			OP		(kStub233, stub233);
 			OP		(kStub235, stub235);
 			OP		(kStub244, stub244);
-			OP		(kInventoryHasObject, inventoryHasObject);
+			OP		(kInventoryFindObjectByName, inventoryFindObjectByName);
 			OP		(kRunDialog, runDialog);
 			OP		(kHasGlobal, hasGlobal);
 			OP		(kSetDialogForNextFilm, setDialogForNextFilm);

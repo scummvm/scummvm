@@ -35,6 +35,7 @@ class Inventory {
 	typedef Common::Array<ObjectPtr> EntriesType;
 	EntriesType _entries;
 	bool _enabled;
+	bool _visible;
 
 public:
 	static const int kMaxSize = 35;
@@ -49,10 +50,18 @@ public:
 		_enabled = enabled;
 	}
 
+	bool visible() const {
+		return _visible;
+	}
+
+	void visible(bool visible) {
+		_visible = visible;
+	}
+
 	int add(ObjectPtr object);
 
 	ObjectPtr get(int index) const {
-		return _entries[index];
+		return index >= 0 && index < kMaxSize? _entries[index]: ObjectPtr();
 	}
 	int find(const Common::String &name) const;
 

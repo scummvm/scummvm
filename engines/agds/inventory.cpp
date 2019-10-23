@@ -27,7 +27,7 @@
 
 namespace AGDS {
 
-Inventory::Inventory(): _entries(kMaxSize), _enabled(true) { }
+Inventory::Inventory(): _entries(kMaxSize), _enabled(false) { }
 Inventory::~Inventory() { }
 
 int Inventory::free() const {
