@@ -53,7 +53,7 @@ static const ADGameDescription gameDescriptions[] = {
 		AD_ENTRY1s("EDEN6.HSQ", 0, 17093),
 		Common::EN_ANY,
 		Common::kPlatformDOS,
-		ADGF_DEMO,
+		ADGF_DEMO | ADGF_UNSTABLE,
 		GUIO1(GUIO_NOMIDI)
 	},
 
@@ -64,7 +64,7 @@ static const ADGameDescription gameDescriptions[] = {
 		AD_ENTRY1s("EDEN.DAT", 0, 205473728),
 		Common::EN_ANY,
 		Common::kPlatformDOS,
-		ADGF_DEMO,
+		ADGF_DEMO | ADGF_UNSTABLE,
 		GUIO1(GUIO_NOMIDI)
 	},
 
