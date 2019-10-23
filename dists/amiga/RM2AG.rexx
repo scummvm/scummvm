@@ -13,7 +13,7 @@ Check if arguments are available, otherwise quit.
 IF ~ARG() THEN DO
 	SAY 'No Arguments given!'
 	SAY 'Usage: RM2AG.rexx README_MD INSTALL_PATH'
-	EXIT No Arguments given!
+	EXIT
 END
 
 /*
@@ -24,7 +24,7 @@ and trailing spaces.
 */
 IF ~EXISTS(readme_md) THEN DO
 	SAY readme_md' not available!'
-	EXIT README.md not available!
+	EXIT
 END
 ELSE DO
 	readme_md=STRIP(readme_md)
@@ -32,7 +32,7 @@ ELSE DO
 END
 IF installpath='' THEN DO
 	SAY 'No installation destination given!'
-	EXIT No installation destination given!
+	EXIT
 END
 ELSE DO
 	install_path=STRIP(install_path)
@@ -46,31 +46,31 @@ END
 
 IF ~OPEN(check_readme,readme_md,'R') THEN DO
 	SAY readme_md' opening failed!'
-	EXIT README.md opening failed!
+	EXIT
 END
 
 IF READCH(check_readme,18) = '# [ScummVM README]' THEN DO
 	IF ~CLOSE(check_readme) THEN DO
 		SAY readme_md' closing failed!'
-		EXIT README.md closing failed!
+		EXIT
 	END
 END
 ELSE DO
 	IF ~CLOSE(check_readme) THEN DO
 		SAY readme_md' closing failed!'
-		EXIT File README.md closing failed!
+		EXIT
 	END
 	SAY "Not the ScummVM README.md file. Aborting!"
-	EXIT Not the ScummVM README.md file.
+	EXIT
 END
 
 IF ~OPEN(readme_read,readme_md,'R')  THEN DO
 	SAY 'File 'readme_md' opening failed!'
-	EXIT File README.md opening failed!
+	EXIT
 END
 IF ~OPEN(guide_write,'README.guide','W') THEN DO
 	SAY README.guide' opening failed!'
-	EXIT README.md opening failed!
+	EXIT
 END
 
 /*
@@ -298,11 +298,11 @@ WRITELN(guide_write,'@ENDNODE')
 
 IF ~CLOSE(readme_read) THEN DO
 	SAY readme_md' closing failed!'
-	EXIT README.md closing failed!
+	EXIT
 END
 IF ~CLOSE(guide_write) THEN DO
 	SAY 'README.guide closing failed!'
-	EXIT README.guide closing failed!
+	EXIT
 END
 
 /*
@@ -312,4 +312,4 @@ and delete README.guide.
 ADDRESS COMMAND 'copy README.guide 'install_path
 ADDRESS COMMAND 'delete README.guide'
 
-EXIT 0
+EXIT
