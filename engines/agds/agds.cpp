@@ -525,18 +525,13 @@ Animation * AGDSEngine::findAnimationByPhaseVar(const Common::String &phaseVar) 
 }
 
 
-Character * AGDSEngine::loadCharacter(const Common::String &name) {
-	CharactersType::iterator i = _characters.find(name);
+Character * AGDSEngine::loadCharacter(const Common::String &id, const Common::String &name, const Common::String &object) {
+	CharactersType::iterator i = _characters.find(id);
 	if (i != _characters.end())
 		return i->_value;
 
-//	Common::SeekableReadStream *stream = _resourceManager.getResource(name);
-//	if (!stream)
-//		error("could not load character from %s", name.c_str());
-	Character *character = new Character();
-//	if (!character->load(stream))
-//		error("could not load character from %s", name.c_str());
-	_characters[name] = character;
+	Character *character = new Character(name, object);
+	_characters[id] = character;
 	return character;
 }
 

@@ -148,7 +148,7 @@ public:
 	Animation * loadAnimation(const Common::String &name);
 	Animation * loadMouseCursor(const Common::String &name);
 	Animation * findAnimationByPhaseVar(const Common::String &phaseVar);
-	Character * loadCharacter(const Common::String &name);
+	Character * loadCharacter(const Common::String &id, const Common::String &name, const Common::String &object);
 	Character * getCharacter(const Common::String &name) const;
 
 	void loadDefaultMouseCursor(const Common::String &name) {

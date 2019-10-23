@@ -982,11 +982,11 @@ void Process::addMouseArea() {
 }
 
 void Process::loadCharacter() {
-	Common::String arg3 = popString();
-	Common::String arg2 = popString();
-	Common::String name = popString();
-	debug("loadCharacter %s %s %s", name.c_str(), arg2.c_str(), arg3.c_str());
-	_engine->loadCharacter(name);
+	Common::String object = popString();
+	Common::String name = popText();
+	Common::String id = popString();
+	debug("loadCharacter %s %s %s", id.c_str(), name.c_str(), object.c_str());
+	_engine->loadCharacter(id, name, object);
 }
 
 void Process::enableCharacter() {
@@ -1011,7 +1011,7 @@ void Process::moveCharacter(bool usermove) {
 void Process::animateCharacter() {
 	int arg2 = pop();
 	Common::String name = popString();
-	debug("animateCharacter: stub %s %d", name.c_str(), arg2);
+	debug("animateCharacter: %s %d", name.c_str(), arg2);
 
 	Character *character = _engine->getCharacter(name);
 	if (character)
@@ -1023,6 +1023,11 @@ void Process::animateCharacter() {
 void Process::showCharacter() {
 	Common::String name = popString();
 	debug("showCharacter %s", name.c_str());
+	Character *character = _engine->getCharacter(name);
+	if (character)
+		_engine->runObject(character->object());
+	else
+		warning("character %s could not be found", name.c_str());
 }
 
 void Process::leaveCharacter() {
