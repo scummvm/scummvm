@@ -182,8 +182,8 @@ void GriffonEngine::intro() {
 
 	if (config.music) {
 		haltSoundChannel(-1);
-		_musicchannel = playSound(_mendofgame, true);
-		setChannelVolume(_musicchannel, 0);
+		_musicChannel = playSound(_mendofgame, true);
+		setChannelVolume(_musicChannel, 0);
 	}
 
 	_secsingame = 0;
@@ -200,7 +200,7 @@ void GriffonEngine::intro() {
 		if ((int)ld > config.musicvol)
 			ld = config.musicvol;
 		if (!ldstop) {
-			setChannelVolume(_musicchannel, (int)ld);
+			setChannelVolume(_musicChannel, (int)ld);
 			if ((int)ld == config.musicvol)
 				ldstop = true;
 		}
@@ -276,8 +276,8 @@ void GriffonEngine::endOfGame() {
 
 	if (config.music) {
 		haltSoundChannel(-1);
-		_musicchannel = playSound(_mendofgame, true);
-		setChannelVolume(_musicchannel, 0);
+		_musicChannel = playSound(_mendofgame, true);
+		setChannelVolume(_musicChannel, 0);
 	}
 
 	int ticks1 = _ticks;
@@ -295,7 +295,7 @@ void GriffonEngine::endOfGame() {
 		if (ld > config.musicvol)
 			ld = config.musicvol;
 		if (!ldstop) {
-			setChannelVolume(_musicchannel, (int)ld);
+			setChannelVolume(_musicChannel, (int)ld);
 			if ((int)ld == config.musicvol)
 				ldstop = true;
 		}

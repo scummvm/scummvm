@@ -193,50 +193,53 @@ void GriffonEngine::updateMusic() {
 	DataChunk *iplaysound = NULL;
 
 	if (config.music) {
-
 		// if(_curmap > 5 && _curmap < 42) iplaysound = macademy;
 		// if(_curmap > 47) iplaysound = _mgardens;
 		iplaysound = _mgardens;
 		if (_roomlock)
 			iplaysound = _mboss;
 
-		if (iplaysound == _mboss && _pboss)
+		if (iplaysound == _mboss && _playingBoss)
 			iplaysound = NULL;
-		if (iplaysound == _mgardens && _pgardens)
+		if (iplaysound == _mgardens && _playingGardens)
 			iplaysound = NULL;
 
 		if (iplaysound != NULL) {
-			haltSoundChannel(_musicchannel);
+			haltSoundChannel(_musicChannel);
 
-			_pboss = false;
-			_pgardens = false;
+			_playingBoss = (iplaysound == _mboss);
+			_playingGardens = (iplaysound == _mgardens);
 
-			if (iplaysound == _mboss)
-				_pboss = true;
-			if (iplaysound == _mgardens)
-				_pgardens = true;
-
-			_musicchannel = playSound(iplaysound, true);
-			setChannelVolume(_musicchannel, config.musicvol);
+			_musicChannel = playSound(iplaysound, true);
+			setChannelVolume(_musicChannel, config.musicvol);
 		} else {
-			if (!isSoundChannelPlaying(_musicchannel)) {
+			if (!isSoundChannelPlaying(_musicChannel)) {
 				_loopseta += 1;
 				if (_loopseta == 4)
 					_loopseta = 0;
 
-				if (_pgardens) {
-					haltSoundChannel(_musicchannel);
-					if (_pgardens && _loopseta == 0)
-						_musicchannel = playSound(_mgardens);
-					if (_pgardens && _loopseta == 1)
-						_musicchannel = playSound(_mgardens2);
-					if (_pgardens && _loopseta == 2)
-						_musicchannel = playSound(_mgardens3);
-					if (_pgardens && _loopseta == 3)
-						_musicchannel = playSound(_mgardens4);
+				if (_playingGardens) {
+					haltSoundChannel(_musicChannel);
+					if (_playingGardens) {
+						switch (_loopseta) {
+							case 0:
+								playSound(_mgardens);
+								break;
+							case 1:
+								playSound(_mgardens2);
+								break;
+							case 2:
+								playSound(_mgardens3);
+								break;
+							case 3:
+								playSound(_mgardens4);
+							default:
+								break;
+						}
+					}
 				}
 
-				setChannelVolume(_musicchannel, config.musicvol);
+				setChannelVolume(_musicChannel, config.musicvol);
 			}
 		}
 	}

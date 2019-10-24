@@ -48,8 +48,8 @@ GriffonEngine::GriffonEngine(OSystem *syst) : Engine(syst) {
 
 	_shouldQuit = false;
 
-	_musicchannel = -1;
-	_menuchannel = -1;
+	_musicChannel = -1;
+	_menuChannel = -1;
 
 	_loopseta = 0;
 	clouddeg = 0.0f;

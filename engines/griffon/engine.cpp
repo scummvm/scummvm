@@ -52,7 +52,7 @@ void GriffonEngine::mainLoop() {
 	swash();
 
 	if (_pmenu) {
-		haltSoundChannel(_menuchannel);
+		haltSoundChannel(_menuChannel);
 		_pmenu = false;
 	}
 
@@ -315,8 +315,8 @@ void GriffonEngine::newGame() {
 	_player.py = 6 * 16 - 4;
 	_player.walkDir = 1;
 
-	_pgardens = false;
-	_pboss = false;
+	_playingGardens = false;
+	_playingBoss = false;
 
 	loadMap(2);
 
