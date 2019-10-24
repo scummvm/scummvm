@@ -103,6 +103,8 @@ public:
 	int _lastResult;
 
 	int _sessionid;
+
+	Common::String _serverprefix;
 };
 
 } // End of namespace Scumm

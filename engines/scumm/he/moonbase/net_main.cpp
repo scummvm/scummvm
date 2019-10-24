@@ -37,6 +37,8 @@ Net::Net(ScummEngine_v100he *vm) : _latencyTime(1), _fakeLatency(false), _vm(vm)
 	_lastResult = 0;
 
 	_sessionid = -1;
+
+	_serverprefix = "http://localhost/moonbase";
 }
 
 Net::~Net() {
@@ -94,7 +96,7 @@ int Net::whoAmI() {
 int Net::createSession(char *name) {
 	warning("STUB: Net::createSession(\"%s\")", name); // PN_CreateSession
 
-	Networking::PostRequest rq("http://localhost/moonbase/createsession",
+	Networking::PostRequest rq(_serverprefix + "/createsession",
 		new Common::Callback<Net, Common::JSONValue *>(this, &Net::startQuerySessionsCallback),
 		new Common::Callback<Net, Networking::ErrorResponse>(this, &Net::startQuerySessionsErrorCallback));
 
@@ -185,7 +187,7 @@ bool Net::destroyPlayer(int32 playerDPID) {
 int32 Net::startQuerySessions() {
 	warning("STUB: Net::startQuerySessions()"); // StartQuerySessions
 
-	Networking::PostRequest rq("http://localhost/moonbase/lobbies",
+	Networking::PostRequest rq(_serverprefix + "/lobbies",
 		new Common::Callback<Net, Common::JSONValue *>(this, &Net::startQuerySessionsCallback),
 		new Common::Callback<Net, Networking::ErrorResponse>(this, &Net::startQuerySessionsErrorCallback));
 
