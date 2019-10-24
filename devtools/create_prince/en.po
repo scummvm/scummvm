@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: Prince\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2018-04-17 19:53+0100\n"
-"PO-Revision-Date: 2019-10-22 08:56+0000\n"
-"Last-Translator: Krzysztof Targoński <nym@onet.eu>\n"
+"PO-Revision-Date: 2019-10-25 07:56+0000\n"
+"Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: English <https://translations.scummvm.org/projects/prince/"
 "prince/en/>\n"
 "Language: en\n"
@@ -4452,51 +4452,60 @@ msgstr "OTHER: Flooded literally and figuratively."
 
 #: dialog0116.txt:100104
 msgid "OTHER: I nikt nie mógł znaleźć drogi do|wyjścia, a w środku było mało|powietrza."
-msgstr ""
+msgstr "OTHER: No one could find the exit|and there was very little air left."
 
 #: dialog0116.txt:100105
 msgid "OTHER: Nie można było wejść z pochodniami,|bo groziło to wybuchem."
 msgstr ""
+"OTHER: It was impossible to enter there,|as explosion danger was imminent."
 
 #: dialog0116.txt:100106
 msgid "OTHER: Reszty już się domyślasz.#B0"
-msgstr ""
+msgstr "OTHER: Think about the rest yourself.#B0"
 
 #: dialog0116.txt:100201
 msgid "OTHER: Jakie chcesz wyjaśnienie, naukowe|czy zrozumiałe?#B1"
 msgstr ""
+"OTHER: Which explanation do you like more:|the scientific or the "
+"understandable?#B1"
 
 #: dialog0116.txt:100301
 msgid "OTHER: Steruje centralną gwiazdą naszego|systemu planetarnego, zwaną|popularnie Słońcem.#B0"
 msgstr ""
+"OTHER: He's in control of our central planetary systems star,|commonly named "
+"the Sun.#B0"
 
 #: dialog0116.txt:100401
 msgid "OTHER: Steruje tym małym, żółtym kółeczkiem,|od patrzenia w które bolą oczka.#B0"
 msgstr ""
+"OTHER: He's moving this little yellow ball in the skies,|which makes your "
+"eyes hurt when you stare at it.#B0"
 
 #: dialog0117.txt:1
 msgid "HERO: Wyrwałeś kartkę z książki?!"
-msgstr ""
+msgstr "HERO: Did you tear the page out of the book?!"
 
 #: dialog0117.txt:2
 msgid "OTHER: Księga to narzędzie, a nie cel|sam w sobie."
-msgstr ""
+msgstr "OTHER: The book is a tool,|not the goal."
 
 #: dialog0117.txt:3
 msgid "OTHER: To prosty czar. Nie wiedziałem wcześniej,|że można skrócić drogę do Pana Słońce."
 msgstr ""
+"OTHER: This spell is easy. I didn't know its|possible to take a shortcut to "
+"the Mr.Sun."
 
 #: dialog0117.txt:4
 msgid "HERO: Skrócić?"
-msgstr ""
+msgstr "HERO: A shortcut?"
 
 #: dialog0117.txt:5
 msgid "OTHER: Zwykle można tam się dostać tylko|drogą magiczną."
-msgstr ""
+msgstr "OTHER: Usually you can only find there|by ways of magic."
 
 #: dialog0117.txt:6
 msgid "OTHER: Ten czar tworzy coś w rodzaju|miejsca przenosin."
-msgstr ""
+msgstr "OTHER: The spell creates something like|a transportation point."
 
 #: dialog0117.txt:7
 msgid "HERO: Dzięki."
@@ -4504,7 +4513,7 @@ msgstr "HERO: Thanks."
 
 #: dialog0117.txt:8
 msgid "HERO: Widzę, że schowałeś księgę.|Koniec studiów?"
-msgstr ""
+msgstr "HERO: I see you put the book aside.|No more studies?"
 
 #: dialog0117.txt:9
 msgid "OTHER: Nauka jest wieczna, a piwo wietrzeje."
@@ -4513,34 +4522,37 @@ msgstr "OTHER: Learning is eternal but beer gets spoiled."
 #: dialog0118.txt:1
 msgid "OTHER: \"Nikt cię tu nie chciał ani zapraszał|Rozgniewasz mnie nie na żarty|Wysil więc rozum i daj mi dowód|Żeś czasu mego jest warty.\""
 msgstr ""
+"OTHER: \"Nobody asked you to be here or invited you.|You won't harass me for "
+"fun.|So get thinking and show me|that you're worthy of my time.\""
 
 #: dialog0119.txt:1
 msgid "OTHER: \"Wskaż moich braci\"."
-msgstr ""
+msgstr "OTHER: \"Show my brothers\"."
 
 #: dialog0120.txt:1
 msgid "OTHER: \"Wskaż wrogów Ziemi\"."
-msgstr ""
+msgstr "OTHER: \"Show enemies of Earth\"."
 
 #: dialog0121.txt:1
 msgid "OTHER: \"Wskaż moich przyjaciół\"."
-msgstr ""
+msgstr "OTHER: \"Show my friends\"."
 
 #: dialog0122.txt:1
 msgid "HERO: Wskaż moich braci?..."
-msgstr ""
+msgstr "HERO: Show my brothers?..."
 
 #: dialog0123.txt:1
 msgid "HERO: Wskaż wrogów Ziemi?..."
-msgstr ""
+msgstr "HERO: Show enemies of Earth?..."
 
 #: dialog0124.txt:1
 msgid "HERO: Wskaż moich przyjaciół?..."
-msgstr ""
+msgstr "HERO: Show my friends?..."
 
 #: dialog0125.txt:1
 msgid "HERO: Przepraszam, Panie Słońce, czy mógłbyś podarować|trochę swego cennego czasu?"
 msgstr ""
+"HERO: Excuse me, Mr.Sun, would you|present me a moment of your precious time?"
 
 #: dialog0125.txt:2
 msgid "OTHER: Mmmm... Znowu..."
@@ -4548,7 +4560,7 @@ msgstr "OTHER: Mmmm... Again..."
 
 #: dialog0125.txt:3
 msgid "OTHER: To już drugi w ciągu ostatniego tysiąclecia."
-msgstr ""
+msgstr "OTHER: Thats the second this millenium."
 
 #: dialog0125.txt:4
 msgid "OTHER: O co chodzi?"
@@ -4556,15 +4568,15 @@ msgstr "OTHER: What's the matter?"
 
 #: dialog0125.txt:105
 msgid "$0: Jest taki zamek spowity wiecznymi ciemnościami..."
-msgstr ""
+msgstr "$0: There's a castle in eternal darkness..."
 
 #: dialog0125.txt:106
 msgid "$4: Ale tam musi stać się dzień!"
-msgstr ""
+msgstr "$4: It must have daylight there again!"
 
 #: dialog0125.txt:107
 msgid "$1: Drugi? A kto był przede mną?"
-msgstr ""
+msgstr "$1: Who was here before me?"
 
 #: dialog0125.txt:108
 msgid "$2: Bardzo miło."
@@ -4572,11 +4584,11 @@ msgstr "$2: Very nice."
 
 #: dialog0125.txt:109
 msgid "$3: Przepraszam za kłopot, na razie to wszystko."
-msgstr ""
+msgstr "$3: Excuse me, this is all for now."
 
 #: dialog0125.txt:100001
 msgid "OTHER: O nie, tylko nie Fjord..."
-msgstr ""
+msgstr "OTHER: Oh no, not Fjord..."
 
 #: dialog0125.txt:100002
 msgid "HERO: Skąd pan wie?!"
