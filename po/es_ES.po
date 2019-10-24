@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2019-10-23 03:57+0200\n"
+"POT-Creation-Date: 2019-10-24 06:09+0200\n"
 "PO-Revision-Date: 2019-10-01 04:55+0000\n"
 "Last-Translator: Rodrigo Vegas Sánchez-Ferrero <rodrigo.vegas@gmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
@@ -4566,7 +4566,7 @@ msgstr ""
 "No se puede cargar esta partida porque se ha creado desde una versión "
 "distinta del juego"
 
-#: engines/sci/resource.cpp:827
+#: engines/sci/resource.cpp:828
 msgid ""
 "Missing or corrupt game resources have been detected. Some game features may "
 "not work properly. Please check the console for more information, and verify "

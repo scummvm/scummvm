@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2019-10-23 03:57+0200\n"
+"POT-Creation-Date: 2019-10-24 06:09+0200\n"
 "PO-Revision-Date: 2019-09-24 11:44+0000\n"
 "Last-Translator: Ben Castricum <github@bencastricum.nl>\n"
 "Language-Team: Dutch <https://translations.scummvm.org/projects/scummvm/"
@@ -4565,7 +4565,7 @@ msgstr ""
 "Dit opgeslagen spel is gemaakt met een andere versie van het spel, het laden "
 "is niet mogelijk"
 
-#: engines/sci/resource.cpp:827
+#: engines/sci/resource.cpp:828
 msgid ""
 "Missing or corrupt game resources have been detected. Some game features may "
 "not work properly. Please check the console for more information, and verify "

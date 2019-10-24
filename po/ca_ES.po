@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2019-10-23 03:57+0200\n"
+"POT-Creation-Date: 2019-10-24 06:09+0200\n"
 "PO-Revision-Date: 2019-09-21 10:54+0000\n"
 "Last-Translator: Andrea G <andreagswaterloo@gmail.com>\n"
 "Language-Team: Catalan <https://translations.scummvm.org/projects/scummvm/"
@@ -4522,7 +4522,7 @@ msgid ""
 "load it"
 msgstr ""
 
-#: engines/sci/resource.cpp:827
+#: engines/sci/resource.cpp:828
 msgid ""
 "Missing or corrupt game resources have been detected. Some game features may "
 "not work properly. Please check the console for more information, and verify "
