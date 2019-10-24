@@ -485,7 +485,6 @@ private:
 	// music info
 	DataChunk *_mgardens, *_mgardens2, *_mgardens3, *_mgardens4, *_mboss, *_mmenu, *_mendofgame;
 	int _musicchannel, _menuchannel;
-	bool _ptown, _pacademy, _pcitadel; // CHECKME: They look unused.
 	bool _pboss;
 	bool _pgardens;
 	int _loopseta;

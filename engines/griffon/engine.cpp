@@ -316,10 +316,7 @@ void GriffonEngine::newGame() {
 	_player.walkDir = 1;
 
 	_pgardens = false;
-	_ptown = false;
 	_pboss = false;
-	_pacademy = false;
-	_pcitadel = false;
 
 	loadMap(2);
 

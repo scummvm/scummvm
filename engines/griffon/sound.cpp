@@ -210,9 +210,6 @@ void GriffonEngine::updateMusic() {
 
 			_pboss = false;
 			_pgardens = false;
-			_ptown = false;
-			_pacademy = false;
-			_pcitadel = false;
 
 			if (iplaysound == _mboss)
 				_pboss = true;
