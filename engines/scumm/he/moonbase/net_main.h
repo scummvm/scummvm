@@ -71,6 +71,9 @@ private:
 	int getMessageCount();
 	void remoteReceiveData();
 
+	void createSessionCallback(Common::JSONValue *response);
+	void createSessionErrorCallback(Networking::ErrorResponse error);
+
 	void startQuerySessionsCallback(Common::JSONValue *response);
 	void startQuerySessionsErrorCallback(Networking::ErrorResponse error);
 
@@ -96,6 +99,10 @@ public:
 	byte *_tmpbuffer;
 
 	int _myUserId;
+
+	int _lastResult;
+
+	int _sessionid;
 };
 
 } // End of namespace Scumm

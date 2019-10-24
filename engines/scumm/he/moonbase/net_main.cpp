@@ -34,6 +34,9 @@ Net::Net(ScummEngine_v100he *vm) : _latencyTime(1), _fakeLatency(false), _vm(vm)
 	_tmpbuffer = (byte *)malloc(MAX_PACKET_SIZE);
 
 	_myUserId = -1;
+	_lastResult = 0;
+
+	_sessionid = -1;
 }
 
 Net::~Net() {
@@ -91,8 +94,39 @@ int Net::whoAmI() {
 int Net::createSession(char *name) {
 	warning("STUB: Net::createSession(\"%s\")", name); // PN_CreateSession
 
-	// FAKE session creation. FIXME
+	Networking::PostRequest rq("http://localhost/moonbase/createsession",
+		new Common::Callback<Net, Common::JSONValue *>(this, &Net::startQuerySessionsCallback),
+		new Common::Callback<Net, Networking::ErrorResponse>(this, &Net::startQuerySessionsErrorCallback));
+
+	snprintf((char *)_tmpbuffer, MAX_PACKET_SIZE, "{\"name\":\"%s\"}", name);
+	rq.setPostData(_tmpbuffer, strlen((char *)_tmpbuffer));
+	rq.setContentType("application/json");
+
+	rq.start();
+
+	_sessionid = -1;
+
+	while(rq.state() == Networking::PROCESSING) {
+		g_system->delayMillis(5);
+	}
+
+	if (_sessionid == -1)
+		return 0;
+
 	return 1;
+}
+
+void Net::createSessionCallback(Common::JSONValue *response) {
+	Common::JSONObject info = response->asObject();
+
+	if (info.contains("sessionid")) {
+		_sessionid = info["sessionid"]->asIntegerNumber();
+	}
+	warning("Got: '%s' as %d", response->stringify().c_str(), _sessionid);
+}
+
+void Net::createSessionErrorCallback(Networking::ErrorResponse error) {
+	warning("Error in createSession(): %ld %s", error.httpResponseCode, error.response.c_str());
 }
 
 int Net::joinSession(int sessionIndex) {
@@ -151,9 +185,11 @@ bool Net::destroyPlayer(int32 playerDPID) {
 int32 Net::startQuerySessions() {
 	warning("STUB: Net::startQuerySessions()"); // StartQuerySessions
 
-	Networking::PostRequest rq("http://localhost/lobbies", NULL, 0,
+	Networking::PostRequest rq("http://localhost/moonbase/lobbies",
 		new Common::Callback<Net, Common::JSONValue *>(this, &Net::startQuerySessionsCallback),
 		new Common::Callback<Net, Networking::ErrorResponse>(this, &Net::startQuerySessionsErrorCallback));
+
+	rq.start();
 
 	while(rq.state() == Networking::PROCESSING) {
 		g_system->delayMillis(5);
@@ -168,7 +204,7 @@ void Net::startQuerySessionsCallback(Common::JSONValue *response) {
 }
 
 void Net::startQuerySessionsErrorCallback(Networking::ErrorResponse error) {
-	warning("Error in startQuerySessions()");
+	warning("Error in startQuerySessions(): %ld %s", error.httpResponseCode, error.response.c_str());
 }
 
 int32 Net::updateQuerySessions() {
