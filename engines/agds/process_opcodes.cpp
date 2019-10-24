@@ -970,6 +970,7 @@ void Process::onObjectC1(unsigned size) {
 
 void Process::onLook(unsigned size) {
 	debug("look? [handler], %u instructions", size);
+	_object->setExamineHandler(_ip);
 	_ip += size;
 }
 

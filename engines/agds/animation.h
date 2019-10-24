@@ -37,6 +37,7 @@ class Object;
 
 class Animation {
 	Video::FlicDecoder *_flic;
+	int					_frames;
 	Common::Point		_position;
 	Common::String 		_phaseVar;
 	bool				_loop;
@@ -75,6 +76,7 @@ public:
 
 	void play() {
 		_paused = false;
+		_phase = 0;
 	}
 
 	void stop() {
@@ -86,6 +88,7 @@ public:
 	}
 
 	bool load(Common::SeekableReadStream *stream);
+	void updatePhaseVar(AGDSEngine & engine);
 	void paint(AGDSEngine & engine, Graphics::Surface & backbuffer, Common::Point dst);
 	int width() const;
 	int height() const;
