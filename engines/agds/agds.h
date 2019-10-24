@@ -168,7 +168,7 @@ public:
 	SystemVariable *getSystemVariable(const Common::String &name);
 
 	void runDialog(const Common::String &dialogScript, const Common::String & defs);
-	void tickDialog();
+	bool tickDialog();
 	void tickInventory();
 
 	void playSound(const Common::String &resource, const Common::String &phaseVar) {

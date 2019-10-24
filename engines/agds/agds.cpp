@@ -271,7 +271,8 @@ void AGDSEngine::runProcess(ProcessListType::iterator &it) {
 }
 
 void AGDSEngine::tick() {
-	tickDialog();
+	if (tickDialog())
+		return;
 	tickInventory();
 	for(ProcessListType::iterator p = _processes.begin(); active() && p != _processes.end(); ) {
 		runProcess(p);
@@ -702,22 +703,22 @@ void AGDSEngine::tickInventory() {
 		return;
 }
 
-void AGDSEngine::tickDialog() {
+bool AGDSEngine::tickDialog() {
 	if (_dialogProcessName.empty())
-		return;
+		return false;
 
 	int dialog_var = getSystemVariable("dialog_var")->getInteger();
 	if (dialog_var > 0) {
 		getSystemVariable("dialog_var")->setInteger(-3);
-		return;
+		return false;
 	} else if (dialog_var < 0) {
 		getSystemVariable("dialog_var")->setInteger(0);
-		return;
+		return true;
 	}
 
 	uint n = _dialogScript.size();
 	if (_dialogScriptPos >= n)
-		return;
+		return false;
 
 	Common::String line;
 	while(_dialogScriptPos < n && _dialogScript[_dialogScriptPos] != '\n' && _dialogScript[_dialogScriptPos] != '\r') {
@@ -726,11 +727,11 @@ void AGDSEngine::tickDialog() {
 	++_dialogScriptPos;
 
 	if (line.empty())
-		return;
+		return true;
 
 	if (line[0] == '@') {
 		if (line[1] == '@') //comment
-			return;
+			return true;
 
 		line.erase(0, 1);
 
@@ -755,7 +756,9 @@ void AGDSEngine::tickDialog() {
 		debug("end of dialog, running %s", process.c_str());
 		runObject(process);
 		getSystemVariable("dialog_var")->setInteger(-2);
+		return false;
 	}
+	return true;
 }
 
 
