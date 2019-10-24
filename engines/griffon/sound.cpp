@@ -158,38 +158,40 @@ void GriffonEngine::setupAudio() {
 	_mmenu = cacheSound("music/menu.ogg");
 	drawProgress(7, 21);
 
-	_sfx[0] = cacheSound("sfx/bite.ogg");
+	_sfx[kSndBite] = cacheSound("sfx/bite.ogg");
 	drawProgress(8, 21);
-	_sfx[1] = cacheSound("sfx/crystal.ogg");
+	_sfx[kSndCrystal] = cacheSound("sfx/crystal.ogg");
 	drawProgress(9, 21);
-	_sfx[2] = cacheSound("sfx/door.ogg");
+	_sfx[kSndDoor] = cacheSound("sfx/door.ogg");
 	drawProgress(10, 21);
-	_sfx[3] = cacheSound("sfx/enemyhit.ogg");
+	_sfx[kSndEnemyHit] = cacheSound("sfx/enemyhit.ogg");
 	drawProgress(11, 21);
-	_sfx[4] = cacheSound("sfx/ice.ogg");
+	_sfx[kSndIce] = cacheSound("sfx/ice.ogg");
 	drawProgress(12, 21);
-	_sfx[5] = cacheSound("sfx/lever.ogg");
+	_sfx[kSndLever] = cacheSound("sfx/lever.ogg");
 	drawProgress(13, 21);
-	_sfx[6] = cacheSound("sfx/lightning.ogg");
+	_sfx[kSndLightning] = cacheSound("sfx/lightning.ogg");
 	drawProgress(14, 21);
-	_sfx[7] = cacheSound("sfx/metalhit.ogg");
+	_sfx[kSndMetalHit] = cacheSound("sfx/metalhit.ogg");
 	drawProgress(15, 21);
-	_sfx[8] = cacheSound("sfx/powerup.ogg");
+	_sfx[kSndPowerUp] = cacheSound("sfx/powerup.ogg");
 	drawProgress(16, 21);
-	_sfx[9] = cacheSound("sfx/rocks.ogg");
+	_sfx[kSndRocks] = cacheSound("sfx/rocks.ogg");
 	drawProgress(17, 21);
-	_sfx[10] = cacheSound("sfx/swordhit.ogg");
+	_sfx[kSndSwordHit] = cacheSound("sfx/swordhit.ogg");
 	drawProgress(18, 21);
-	_sfx[11] = cacheSound("sfx/throw.ogg");
+	_sfx[kSndThrow] = cacheSound("sfx/throw.ogg");
 	drawProgress(19, 21);
-	_sfx[12] = cacheSound("sfx/chest.ogg");
+	_sfx[kSndChest] = cacheSound("sfx/chest.ogg");
 	drawProgress(20, 21);
-	_sfx[13] = cacheSound("sfx/fire.ogg");
+	_sfx[kSndFire] = cacheSound("sfx/fire.ogg");
 	drawProgress(21, 21);
-	_sfx[14] = cacheSound("sfx/beep.ogg");
+	_sfx[kSndBeep] = cacheSound("sfx/beep.ogg");
 }
 
 void GriffonEngine::updateMusic() {
+	static int loopseta = 0;
+
 	DataChunk *iplaysound = NULL;
 
 	if (config.music) {
@@ -214,14 +216,14 @@ void GriffonEngine::updateMusic() {
 			setChannelVolume(_musicChannel, config.musicvol);
 		} else {
 			if (!isSoundChannelPlaying(_musicChannel)) {
-				_loopseta += 1;
-				if (_loopseta == 4)
-					_loopseta = 0;
+				loopseta += 1;
+				if (loopseta == 4)
+					loopseta = 0;
 
 				if (_playingGardens) {
 					haltSoundChannel(_musicChannel);
 					if (_playingGardens) {
-						switch (_loopseta) {
+						switch (loopseta) {
 							case 0:
 								playSound(_mgardens);
 								break;
