@@ -432,7 +432,7 @@ void Set::load(SaveFileReadStream &f) {
 /**
 * Used for bugfixes mainly with respect to bad box positioning / bounding box fixes
 * TODO If we have many such cases, perhaps we could use a lookup table
-*		using sceneId, objectId (or name) as keys
+*      using sceneId, objectId (or name) as keys
 */
 void Set::overrideSceneObjectInfo(int objectId) const {
 	switch (_vm->_scene->getSceneId()) {
