@@ -28,10 +28,11 @@
 
 namespace Networking {
 
-PostRequest::PostRequest(Common::String url, byte *postData, int postLen, Networking::JSONValueCallback cb, Networking::ErrorCallback ecb):
+PostRequest::PostRequest(Common::String url, Networking::JSONValueCallback cb, Networking::ErrorCallback ecb):
 	Networking::Request(nullptr, ecb), _url(url), _jsonCallback(cb),
-	_workingRequest(nullptr), _ignoreCallback(false), _postData(postData), _postLen(postLen) {
-	start();
+	_workingRequest(nullptr), _ignoreCallback(false), _postData(nullptr), _postLen(0), _jsonData(nullptr) {
+
+	_contentType = "application/octet-stream";
 }
 
 PostRequest::~PostRequest() {
@@ -39,6 +40,19 @@ PostRequest::~PostRequest() {
 	if (_workingRequest)
 		_workingRequest->finish();
 	delete _jsonCallback;
+}
+
+void PostRequest::setPostData(byte *postData, int postLen) {
+	_postData = postData;
+	_postLen = postLen;
+
+	_contentType = "application/octet-stream";
+}
+
+void PostRequest::setJSONData(Common::JSONValue *jsonData) {
+	_jsonData = jsonData;
+
+	_contentType = "application/json";
 }
 
 void PostRequest::start() {
@@ -50,9 +64,21 @@ void PostRequest::start() {
 	Networking::JsonCallback innerCallback = new Common::Callback<PostRequest, Networking::JsonResponse>(this, &PostRequest::responseCallback);
 	Networking::ErrorCallback errorResponseCallback = new Common::Callback<PostRequest, Networking::ErrorResponse>(this, &PostRequest::errorCallback);
 	Networking::CurlJsonRequest *request = new Networking::CurlJsonRequest(innerCallback, errorResponseCallback, _url);
-	request->addHeader("Content-Type: application/json");
 
-	request->setBuffer(_postData, _postLen);
+	if (_postData && _jsonData) {
+		warning("Error, both data and JSON present while calling %s", _url.c_str());
+
+		_jsonData = nullptr;
+	}
+
+	request->addHeader(Common::String::format("Content-Type: %s", _contentType.c_str()));
+
+	if (_postData)
+		request->setBuffer(_postData, _postLen);
+
+
+	if (_jsonData)
+		request->addPostField(Common::JSON::stringify(_jsonData));
 
 	_workingRequest = ConnMan.addRequest(request);
 }

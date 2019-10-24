@@ -37,14 +37,22 @@ class PostRequest: public Networking::Request {
 
 	byte *_postData;
 	int _postLen;
+	Common::JSONValue *_jsonData;
 
-	void start();
+	Common::String _contentType;
+
 	void responseCallback(Networking::JsonResponse response);
 	void errorCallback(Networking::ErrorResponse error);
 
 public:
-	PostRequest(Common::String url, byte *postData, int postLen, Networking::JSONValueCallback cb, Networking::ErrorCallback ecb);
+	PostRequest(Common::String url, Networking::JSONValueCallback cb, Networking::ErrorCallback ecb);
 	virtual ~PostRequest();
+
+	void start();
+
+	void setPostData(byte *postData, int postLen);
+	void setJSONData(Common::JSONValue *jsonData);
+	void setContentType(Common::String type) { _contentType = type; }
 
 	virtual void handle();
 	virtual void restart();
