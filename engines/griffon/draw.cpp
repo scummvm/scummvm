@@ -507,7 +507,7 @@ void GriffonEngine::drawNPCs(int mode) {
 
 				// onewing
 				if (_npcinfo[i].spriteset == kMonsterOneWing) {
-					for (int f = 0; f <= 7; f++) {
+					for (int f = 0; f < 7; f++) {
 						int s = _npcinfo[i].bodysection[f].sprite;
 						rcSrc.left = _animset2[s].x;
 						rcSrc.top = _animset2[s].y;
@@ -524,7 +524,7 @@ void GriffonEngine::drawNPCs(int mode) {
 
 				// twowing
 				if (_npcinfo[i].spriteset == kMonsterTwoWing) {
-					for (int f = 0; f <= 7; f++) {
+					for (int f = 0; f < 7; f++) {
 						int yp = 0;
 
 						if (f == 0 && (_curmap == 53 || _curmap == 57 || _curmap == 61 || _curmap == 65 || _curmap == 56 || _curmap > 66) && _scriptflag[kScriptLever][0] > 0)
