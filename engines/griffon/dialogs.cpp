@@ -67,11 +67,11 @@ void GriffonEngine::title(int mode) {
 	int ticks1 = _ticks;
 
 	if (config.music) {
-		setChannelVolume(_musicchannel, 0);
-		pauseSoundChannel(_musicchannel);
+		setChannelVolume(_musicChannel, 0);
+		pauseSoundChannel(_musicChannel);
 
-		_menuchannel = playSound(_mmenu, true);
-		setChannelVolume(_menuchannel, config.musicvol);
+		_menuChannel = playSound(_mmenu, true);
+		setChannelVolume(_menuChannel, config.musicvol);
 		_pmenu = true;
 	}
 
@@ -85,7 +85,7 @@ void GriffonEngine::title(int mode) {
 		if (ld > config.musicvol)
 			ld = config.musicvol;
 		if (!ldstop) {
-			setChannelVolume(_menuchannel, (int)ld);
+			setChannelVolume(_menuChannel, (int)ld);
 			if ((int)ld == config.musicvol)
 				ldstop = true;
 		}
@@ -203,9 +203,9 @@ void GriffonEngine::title(int mode) {
 	_itemticks = _ticks + 210;
 
 	if (config.music) {
-		haltSoundChannel(_menuchannel);
-		resumeSoundChannel(_musicchannel);
-		setChannelVolume(_musicchannel, config.musicvol);
+		haltSoundChannel(_menuChannel);
+		resumeSoundChannel(_musicChannel);
+		setChannelVolume(_musicChannel, config.musicvol);
 		_pmenu = false;
 	}
 }
@@ -362,16 +362,16 @@ void GriffonEngine::configMenu() {
 						if (config.musicvol < 0)
 							config.musicvol = 0;
 
-						setChannelVolume(_musicchannel, config.musicvol);
-						setChannelVolume(_menuchannel, config.musicvol);
+						setChannelVolume(_musicChannel, config.musicvol);
+						setChannelVolume(_menuChannel, config.musicvol);
 					} else if (cursel == 12) {
 						config.effectsvol -= 25;
 						if (config.effectsvol < 0)
 							config.effectsvol = 0;
 
 						setChannelVolume(-1, config.effectsvol);
-						setChannelVolume(_musicchannel, config.musicvol);
-						setChannelVolume(_menuchannel, config.musicvol);
+						setChannelVolume(_musicChannel, config.musicvol);
+						setChannelVolume(_menuChannel, config.musicvol);
 
 						if (config.effects) {
 							int snd = playSound(_sfx[kSndDoor]);
@@ -385,16 +385,16 @@ void GriffonEngine::configMenu() {
 						if (config.musicvol > 255)
 							config.musicvol = 255;
 
-						setChannelVolume(_musicchannel, config.musicvol);
-						setChannelVolume(_menuchannel, config.musicvol);
+						setChannelVolume(_musicChannel, config.musicvol);
+						setChannelVolume(_menuChannel, config.musicvol);
 					} else if (cursel == 12) {
 						config.effectsvol += 25;
 						if (config.effectsvol > 255)
 							config.effectsvol = 255;
 
 						setChannelVolume(-1, config.effectsvol);
-						setChannelVolume(_musicchannel, config.musicvol);
-						setChannelVolume(_menuchannel, config.musicvol);
+						setChannelVolume(_musicChannel, config.musicvol);
+						setChannelVolume(_menuChannel, config.musicvol);
 
 						if (config.effects) {
 							int snd = playSound(_sfx[kSndDoor]);
@@ -417,13 +417,13 @@ void GriffonEngine::configMenu() {
 				if (_event.kbd.keycode == Common::KEYCODE_RETURN) {
 					if (cursel == 7 && !config.music) {
 						config.music = true;
-						_menuchannel = playSound(_mmenu, true);
-						setChannelVolume(_menuchannel, config.musicvol);
+						_menuChannel = playSound(_mmenu, true);
+						setChannelVolume(_menuChannel, config.musicvol);
 					}
 					if (cursel == 8 && config.music) {
 						config.music = false;
-						haltSoundChannel(_musicchannel);
-						haltSoundChannel(_menuchannel);
+						haltSoundChannel(_musicChannel);
+						haltSoundChannel(_menuChannel);
 					}
 					if (cursel == 9 && !config.effects) {
 						config.effects = true;
@@ -560,8 +560,8 @@ void GriffonEngine::saveLoadNew() {
 							attacking = false;
 							_player.attackSpeed = 1.5f;
 
-							_pgardens = false;
-							_pboss = false;
+							_playingGardens = false;
+							_playingBoss = false;
 
 							haltSoundChannel(-1);
 

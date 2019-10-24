@@ -484,9 +484,8 @@ private:
 
 	// music info
 	DataChunk *_mgardens, *_mgardens2, *_mgardens3, *_mgardens4, *_mboss, *_mmenu, *_mendofgame;
-	int _musicchannel, _menuchannel;
-	bool _pboss;
-	bool _pgardens;
+	int _musicChannel, _menuChannel;
+	bool _playingBoss, _playingGardens;
 	int _loopseta;
 
 	DataChunk *_sfx[21];
