@@ -43,6 +43,7 @@ class Animation {
 	int					_cycles;
 	int					_phase;
 	bool				_paused;
+	int					_speed;
 
 public:
 	Animation();
@@ -78,6 +79,10 @@ public:
 
 	void stop() {
 		_paused = true;
+	}
+
+	void speed(int speed) {
+		_speed = speed;
 	}
 
 	bool load(Common::SeekableReadStream *stream);

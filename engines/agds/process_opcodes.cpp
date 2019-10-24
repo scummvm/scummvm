@@ -542,9 +542,11 @@ void Process::setAnimationLoop() {
 	_animationLoop = true;
 }
 
-void Process::stub137() {
+void Process::setAnimationSpeed() {
 	int value = pop();
-	debug("stub137 %d", value);
+	debug("setAnimationSpeed %d", value);
+	if (value != 0)
+		_animationSpeed = value;
 }
 
 void Process::stub138() {
@@ -1029,7 +1031,7 @@ void Process::animateCharacter() {
 
 	Character *character = _engine->getCharacter(name);
 	if (character)
-		character->animate(arg2);
+		character->animate(arg2 * 100 / _animationSpeed);
 	else
 		warning("character %s could not be found", name.c_str());
 }
@@ -1303,7 +1305,7 @@ ProcessExitCode Process::execute() {
 			OP		(kSetAnimationPosition, setAnimationPosition);
 			OP		(kSetPhaseVar, setPhaseVar);
 			OP		(kSetAnimationLoop, setAnimationLoop);
-			OP		(kStub137, stub137);
+			OP		(kSetAnimationSpeed, setAnimationSpeed);
 			OP		(kStub138, stub138);
 			OP		(kScreenChangeScreenPatch, changeScreenPatch);
 			OP		(kGetFreeInventorySpace, getInventoryFreeSpace);
