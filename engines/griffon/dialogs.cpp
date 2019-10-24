@@ -45,6 +45,7 @@ namespace Griffon {
 #define MINCURSEL 7
 #define MAXCURSEL 14
 #define SY 22
+#define PI 3.141593
 
 void GriffonEngine::title(int mode) {
 	float xofs = 0;
@@ -117,8 +118,8 @@ void GriffonEngine::title(int mode) {
 		else
 			drawString(_videobuffer, "(c) 2005 by Daniel 'Syn9' Kennedy", 28, 224, 4);
 
-		rc.left = (float)(x - 16 - 4 * cos(3.14159 * 2 * _itemyloc / 16));
-		rc.top = (float)(y - 4 + 16 * cursel);
+		rc.left = (int16)(x - 16 - 4 * cos(2 * PI * _itemyloc / 16));
+		rc.top = (int16)(y - 4 + 16 * cursel);
 
 		_itemimg[15]->blit(*_videobuffer, rc.left, rc.top);
 
@@ -226,8 +227,8 @@ void GriffonEngine::configMenu() {
 	do {
 		_videobuffer->fillRect(Common::Rect(0, 0, _videobuffer->w, _videobuffer->h), 0);
 
-		rcDest.left = 256 + 256 * cos(3.141592 / 180 * clouddeg * 40);
-		rcDest.top = 192 + 192 * sin(3.141592 / 180 * clouddeg * 40);
+		rcDest.left = 256 + 256 * cos(PI / 180 * clouddeg * 40);
+		rcDest.top = 192 + 192 * sin(PI / 180 * clouddeg * 40);
 		rcDest.setWidth(320);
 		rcDest.setHeight(240);
 
@@ -310,7 +311,7 @@ void GriffonEngine::configMenu() {
 			curselt += 1;
 
 		Common::Rect rc;
-		rc.left = 148 + 3 * cos(3.14159 * 2 * _itemyloc / 16.0);
+		rc.left = 148 + 3 * cos(2 * PI * _itemyloc / 16.0);
 		rc.top = sy + 8 * curselt - 4;
 
 		_itemimg[15]->blit(*_videobuffer, rc.left, rc.top);
@@ -406,11 +407,11 @@ void GriffonEngine::configMenu() {
 				if (_event.kbd.keycode == Common::KEYCODE_UP) {
 					cursel--;
 					if (cursel < MINCURSEL)
-						cursel = 14;
+						cursel = MAXCURSEL;
 				}
 				if (_event.kbd.keycode == Common::KEYCODE_DOWN) {
 					++cursel;
-					if (cursel > 14)
+					if (cursel > MAXCURSEL)
 						cursel = MINCURSEL;
 				}
 
@@ -482,8 +483,8 @@ void GriffonEngine::saveLoadNew() {
 
 		y += 1 * _fpsr;
 
-		rcDest.left = 256 + 256 * cos(3.141592 / 180 * clouddeg * 40);
-		rcDest.top = 192 + 192 * sin(3.141592 / 180 * clouddeg * 40);
+		rcDest.left = 256 + 256 * cos(PI / 180 * clouddeg * 40);
+		rcDest.top = 192 + 192 * sin(PI / 180 * clouddeg * 40);
 		rcDest.setWidth(320);
 		rcDest.setHeight(240);
 
@@ -545,7 +546,7 @@ void GriffonEngine::saveLoadNew() {
 
 					if (lowerLock && curcol == 1 && tickpause < _ticks) {
 						if (saveState(currow - 1)) {
-							_secstart = _secstart + _secsingame;
+							_secstart += _secsingame;
 							_secsingame = 0;
 							lowerLock = false;
 							_saveslot = currow - 1;
@@ -668,13 +669,13 @@ void GriffonEngine::saveLoadNew() {
 					ss = 18;
 				_itemimg[ss]->blit(*_videobuffer, rcSrc.left, rcSrc.top);
 
-				rcSrc.left = rcSrc.left + 16;
+				rcSrc.left += 16;
 				ss = (_playera.shield - 1) * 3 + 1;
 				if (_playera.shield == 3)
 					ss = 19;
 				_itemimg[ss]->blit(*_videobuffer, rcSrc.left, rcSrc.top);
 
-				rcSrc.left = rcSrc.left + 16;
+				rcSrc.left += 16;
 				ss = (_playera.armour - 1) * 3 + 2;
 				if (_playera.armour == 3)
 					ss = 20;
@@ -700,20 +701,28 @@ void GriffonEngine::saveLoadNew() {
 
 		if (currow == 0) {
 			rcDest.top = 18;
-			if (curcol == 0)
-				rcDest.left = 10;
-			if (curcol == 1)
-				rcDest.left = 108;
-			if (curcol == 2)
-				rcDest.left = 170;
-			if (curcol == 3)
-				rcDest.left = 230;
-			rcDest.left = (float)(rcDest.left + 2 + 2 * sin(3.14159 * 2 * _itemyloc / 16));
+			switch(curcol) {
+				case 0:
+					rcDest.left = 10;
+					break;
+				case 1:
+					rcDest.left = 108;
+					break;
+				case 2:
+					rcDest.left = 170;
+					break;
+				case 3:
+					rcDest.left = 230;
+				default:
+					break;
+			}
+
+			rcDest.left += (int16)(2 + 2 * sin(2 * PI * _itemyloc / 16));
 		}
 
 		if (currow > 0) {
-			rcDest.left = (float)(0 + 2 * sin(3.14159 * 2 * _itemyloc / 16));
-			rcDest.top = (float)(53 + (currow - 1) * 48);
+			rcDest.left = (int16)(0 + 2 * sin(2 * PI * _itemyloc / 16));
+			rcDest.top = (int16)(53 + (currow - 1) * 48);
 		}
 
 		_itemimg[15]->blit(*_videobuffer, rcDest.left, rcDest.top);
@@ -723,11 +732,11 @@ void GriffonEngine::saveLoadNew() {
 			rcDest.top = 18;
 			if (curcol == 1)
 				rcDest.left = 108;
-			if (curcol == 2)
+			else if (curcol == 2)
 				rcDest.left = 170;
 
 			// CHECKME: Useless code? or temporary commented?
-			// rcDest.left = rcDest.left; // + 2 + 2 * sin(-3.14159 * 2 * _itemyloc / 16)
+			// rcDest.left = rcDest.left; // + 2 + 2 * sin(-2 * PI * _itemyloc / 16)
 
 			_itemimg[15]->blit(*_videobuffer, rcDest.left, rcDest.top);
 		}
