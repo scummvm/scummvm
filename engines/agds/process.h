@@ -57,6 +57,7 @@ private:
 	bool			_animationLoop;
 	Common::Point	_animationPosition;
 	bool			_animationPaused;
+	int				_animationSpeed;
 
 private:
 	uint8 next() {
@@ -225,7 +226,6 @@ private:
 	void setCycles();
 	void setRandom();
 	void stub133();
-	void stub137();
 	void stub138();
 	void stub152();
 	void stub153();
@@ -252,6 +252,7 @@ private:
 	void playAnimationWithPhaseVar();
 	void setAnimationLoop();
 	void setAnimationPaused();
+	void setAnimationSpeed();
 	void stub223();
 	void stub225();
 	void stub231();

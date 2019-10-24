@@ -154,7 +154,7 @@ enum Opcode {
 	kSetAnimationPosition			= 134,
 	kSetPhaseVar					= 135,
 	kSetAnimationLoop				= 136,
-	kStub137						= 137,
+	kSetAnimationSpeed				= 137,
 	kStub138						= 138,
 	kStub139						= 139,
 	kScreenChangeScreenPatch		= 140,

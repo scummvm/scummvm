@@ -31,7 +31,7 @@ Process::Process(AGDSEngine *engine, ObjectPtr object, unsigned ip) :
 	_engine(engine), _parentScreen(engine->getCurrentScreenName()), _object(object), _ip(ip), _status(kStatusActive), _exitCode(kExitCodeDestroy),
 	_glyphWidth(16), _glyphHeight(16),
 	_timer(0),
-	_animationCycles(1), _animationLoop(false), _animationPaused(false) {
+	_animationCycles(1), _animationLoop(false), _animationPaused(false), _animationSpeed(100) {
 }
 
 void Process::debug(const char *str, ...) {
