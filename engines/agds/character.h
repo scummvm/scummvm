@@ -64,8 +64,12 @@ public:
 	}
 
 	void animate(int frames) {
+		_frames += frames;
+	}
+
+	void stop() {
 		_phase = 0;
-		_frames = frames;
+		_frames = 0;
 	}
 
 	int getPhase() const {

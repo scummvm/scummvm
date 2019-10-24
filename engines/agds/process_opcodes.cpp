@@ -1077,6 +1077,11 @@ void Process::stopCharacter() {
 	int arg = pop();
 	Common::String name = popString();
 	debug("stopCharacter: stub %s %d", name.c_str(), arg);
+	Character * character = _engine->getCharacter(name);
+	if (character)
+		character->stop();
+	else
+		warning("could not find character %s", name.c_str());
 }
 
 void Process::fogOnCharacter() {
