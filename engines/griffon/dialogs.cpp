@@ -561,10 +561,7 @@ void GriffonEngine::saveLoadNew() {
 							_player.attackSpeed = 1.5f;
 
 							_pgardens = false;
-							_ptown = false;
 							_pboss = false;
-							_pacademy = false;
-							_pcitadel = false;
 
 							haltSoundChannel(-1);
 
