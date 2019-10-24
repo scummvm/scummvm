@@ -663,10 +663,14 @@ reg_t kPlatform32(EngineState *s, int argc, reg_t *argv) {
 			return make_reg(0, kSciPlatformWindows);
 		case Common::kPlatformMacintosh:
 			// For Mac versions, kPlatform(0) with other args has more functionality
-			if (argc > 1)
+			if (argc > 1) {
 				return kMacPlatform(s, argc - 1, argv + 1);
-			else
-				return make_reg(0, kSciPlatformMacintosh);
+			} else {
+				// SCI32 Mac claims to be DOS. GK1 depends on this in order to play its
+				//  view-based slideshow movies. It appears that Sierra opted to change
+				//  this return value instead of updating the game scripts for Mac.
+				return make_reg(0, kSciPlatformDOS);
+			}
 		default:
 			error("Unknown platform %d", g_sci->getPlatform());
 		}
