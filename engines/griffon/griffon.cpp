@@ -53,6 +53,11 @@ GriffonEngine::GriffonEngine(OSystem *syst) : Engine(syst) {
 
 	clouddeg = 0.0f;
 
+	for (int i = 0; i < 33; ++i) {
+		for (int j = 0; j < 6; ++j)
+			_objectInfo[i][j] = 0;
+	}
+
 	// Synchronize the sound settings from ScummVM
 	syncSoundSettings();
 	config_load(&config);
