@@ -121,7 +121,10 @@ void Process::loadAnimation() {
 		animation->phaseVar(_phaseVar);
 		animation->loop(_animationLoop);
 		animation->cycles(_animationCycles);
-		animation->play();
+		if (_animationPaused)
+			animation->stop();
+		else
+			animation->play();
 		_engine->getCurrentScreen()->add(animation);
 	}
 }
@@ -509,8 +512,9 @@ void Process::stub102() {
 	debug("stub102: load picture? %s");
 }
 
-void Process::stub119() {
-	debug("stub119");
+void Process::setAnimationPaused() {
+	debug("setAnimationPaused");
+	_animationPaused = true;
 }
 
 void Process::resetState() {
@@ -519,6 +523,7 @@ void Process::resetState() {
 	_animationCycles = 1;
 	_animationLoop = false;
 	_animationPosition = Common::Point();
+	_animationPaused = false;
 }
 
 void Process::stub129() {
@@ -1107,6 +1112,8 @@ void Process::loadAnimationFromObject() {
 		animation->phaseVar(_phaseVar);
 		animation->loop(_animationLoop);
 		animation->cycles(_animationCycles);
+		if (_animationPaused)
+			animation->stop();
 	}
 }
 
@@ -1278,7 +1285,7 @@ ProcessExitCode Process::execute() {
 			OP		(kScreenRemoveObject, removeScreenObject);
 			OP		(kLoadAnimation, loadAnimation);
 			OP		(kLoadSample, loadSample);
-			OP		(kStub119, stub119);
+			OP		(kSetAnimationPaused, setAnimationPaused);
 			OP		(kPlayerSay, playerSay);
 			OP		(kNPCSay, npcSay);
 			OP		(kSetTimer, setTimer);

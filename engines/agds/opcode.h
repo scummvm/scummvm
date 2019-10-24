@@ -136,7 +136,7 @@ enum Opcode {
 	kStub116						= 116,
 	kLoadAnimation					= 117,
 	kLoadSample						= 118,
-	kStub119						= 119,
+	kSetAnimationPaused				= 119,
 	kStub120						= 120,
 	kStub121						= 121,
 	kPlayerSay						= 122,
