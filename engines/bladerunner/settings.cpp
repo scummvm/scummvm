@@ -65,12 +65,14 @@ Settings::Settings(BladeRunnerEngine *vm) {
 	_fullHDFrames = true;
 	_mst3k = false;
 
-	// TODO: A bug? why is this set again here, overriding the initialization above?
+#if BLADERUNNER_ORIGINAL_BUGS
+	// Probably a bug. Assigning these here again, overrides the initialization above.
 	//       Also note: the reset() method assigns "_ammoAmounts[0] = 1" like above!
 	_ammoType = 0;
 	_ammoAmounts[0] = 0;
 	_ammoAmounts[1] = 0;
 	_ammoAmounts[2] = 0;
+#endif // BLADERUNNER_ORIGINAL_BUGS
 
 	_learyMode = false;
 }
