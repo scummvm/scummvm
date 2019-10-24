@@ -68,6 +68,7 @@ private:
 	Common::Point					_pos, _animationPos;
 	Common::String					_text;
 	uint							_clickHandler;
+	uint							_examineHandler;
 	int								_alpha;
 	bool							_active;
 
@@ -132,6 +133,14 @@ public:
 
 	uint getClickHandler() const {
 		return _clickHandler;
+	}
+
+	void setExamineHandler(uint ip) {
+		_examineHandler = ip;
+	}
+
+	uint getExamineHandler() const {
+		return _examineHandler;
 	}
 
 	void paint(AGDSEngine &engine, Graphics::Surface &backbuffer);

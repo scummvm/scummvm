@@ -31,7 +31,7 @@
 namespace AGDS {
 
 Animation::Animation():
-	_flic(), _loop(false), _cycles(1), _phase(0), _paused(true), _speed(100) {
+	_flic(), _frames(0), _loop(false), _cycles(1), _phase(0), _paused(true), _speed(100) {
 }
 
 Animation::~Animation() {
@@ -41,34 +41,42 @@ Animation::~Animation() {
 bool Animation::load(Common::SeekableReadStream* stream) {
 	Video::FlicDecoder * flic = new Video::FlicDecoder;
 	if (flic->loadStream(stream)) {
+		_frames = flic->getFrameCount();
 		delete _flic;
 		_flic = flic;
 		return true;
 	} else {
+		_frames = 0;
 		delete flic;
 		return false;
 	}
 }
 
+void Animation::updatePhaseVar(AGDSEngine & engine) {
+	if (!_phaseVar.empty())
+		engine.setGlobal(_phaseVar, _phase);
+}
 
 void Animation::paint(AGDSEngine & engine, Graphics::Surface & backbuffer, Common::Point dst) {
-	if (_cycles <= 0 || _paused) {
+	if (_paused || _phase == -1) {
 		return;
 	}
 
 	const Graphics::Surface * frame = _flic->decodeNextFrame();
 	if (!frame) {
-		if (!_loop && --_cycles <= 0) {
+		if (!_loop && _phase >= _cycles * _frames) {
 			_phase = -1; //end of animation
+			updatePhaseVar(engine);
 			return;
 		}
-		_phase = 0;
 		_flic->rewind();
 		frame = _flic->decodeNextFrame();
 		if (!frame)
 			error("failed decoding frame after rewind");
-	} else
-		++_phase;
+	}
+
+	++_phase;
+	updatePhaseVar(engine);
 
 	Graphics::TransparentSurface * c = engine.convertToTransparent(frame->convertTo(engine.pixelFormat(), _flic->getPalette()));
 	dst += _position;

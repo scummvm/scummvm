@@ -37,7 +37,9 @@ Object::Object(const Common::String &name, Common::SeekableReadStream * stream) 
 	_name(name), _stringTableLoaded(false),
 	_picture(), _region(),
 	_animation(), _mouseCursor(),
-	_pos(), _alpha(255), _active(false) {
+	_pos(),
+	_clickHandler(0), _examineHandler(0),
+	_alpha(255), _active(false) {
 	byte id = stream->readByte();
 	byte flag = stream->readByte();
 	debug("id: 0x%02x %u, flag: %u", id, id, flag);
@@ -111,10 +113,6 @@ void Object::paint(AGDSEngine &engine, Graphics::Surface &backbuffer) {
 	}
 	if (_animation) {
 		_animation->paint(engine, backbuffer, _animationPos);
-		const Common::String & phaseVar = _animation->phaseVar();
-		if (!phaseVar.empty()) {
-			engine.setGlobal(_animation->phaseVar(), _animation->phase()); //-1 eof
-		}
 	}
 	if (!_text.empty()) {
 		Common::Point pos = _region? _region->center: _pos;
