@@ -360,6 +360,8 @@ int LeverControl::calculateVectorAngle(const Common::Point &pointOne, const Comm
 		case 3:
 			angle = 180 + angle;
 			break;
+		default:
+			break;
 		}
 
 		return angle;

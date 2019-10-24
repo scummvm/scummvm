@@ -201,6 +201,9 @@ void MenuZGI::onMouseUp(const Common::Point &Pos) {
 					_engine->getScriptManager()->changeLocation('g', 'j', 's', 'e', 0);
 				}
 			break;
+
+		default:
+			break;
 		}
 	}
 }

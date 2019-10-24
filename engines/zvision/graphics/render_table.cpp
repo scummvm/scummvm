@@ -63,6 +63,8 @@ void RenderTable::setRenderState(RenderState newState) {
 	case FLAT:
 		// Intentionally left empty
 		break;
+	default:
+		break;
 	}
 }
 
@@ -136,6 +138,8 @@ void RenderTable::generateRenderTable() {
 		break;
 	case ZVision::RenderTable::FLAT:
 		// Intentionally left empty
+		break;
+	default:
 		break;
 	}
 }
