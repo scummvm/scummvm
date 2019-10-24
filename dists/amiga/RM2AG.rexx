@@ -1,5 +1,5 @@
 /*
-$VER: RM2AG.rexx 0.22 (22.10.2019) README(.md) to .guide converter.
+$VER: RM2AG.rexx 0.23 (24.10.2019) README(.md) to .guide converter.
 This script converts a given markdown README file (right now, only
 ScummVM is supported) to a basic hypertext Amiga guide file and installs
 it to a given path, if available.
@@ -36,12 +36,13 @@ IF installpath='' THEN DO
 END
 ELSE DO
 	install_path=STRIP(install_path)
+	install_path=STRIP(install_path,'T','/')
 	install_path=COMPRESS(install_path,'"')
 	/*
 	Check for destination path and create it, if needed.
 	*/
-	IF ~EXISTS(install_path'sobjs/') THEN
-		ADDRESS COMMAND 'makedir 'install_path'sobjs'
+	IF ~EXISTS(install_path'/') THEN
+		ADDRESS COMMAND 'makedir 'install_path
 END
 
 IF ~OPEN(check_readme,readme_md,'R') THEN DO
@@ -121,17 +122,17 @@ DO WHILE EOF(readme_read) = 0
 		/*
 		Fix empty chapters:
 		Two chapters (1.0 and 7.8) are "empty", consisting of only
-		it's chapter names. Link them to their respective sub chapters
+		it`s chapter names. Link them to their respective sub chapters
 		(1.1 and 7.8.1) to not display a blank page.
 		
-		 If chapter 1.0 is found, add a link node to chapter 1.1.
+		If chapter 1.0 is found, add a link node to chapter 1.1.
 		*/
 		IF POS('  - [<>1.0<>)',working_line) = 1 THEN DO
 			/*
-			Get rid of the markers, so the following loops won't process
+			Get rid of the markers, so the following loops won`t process
 			them again.
 			*/
-			working_line=COMPRESS(working_line,'-[<>')
+			working_line=COMPRESS(working_line,'[<>')
 			WRITELN(guide_write,'  @{" 1.0 " Link "1.1"} 'SUBSTR(working_line,1,LASTPOS(']',working_line)-1))
 		END
 
@@ -140,10 +141,10 @@ DO WHILE EOF(readme_read) = 0
 		*/
 		IF POS('      - [<>7.8<>)',working_line) = 1 THEN DO
 			/*
-			Get rid of the markers, so the following loops won't process
+			Get rid of the markers, so the following loops won`t process
 			them again.
 			*/
-			working_line=COMPRESS(working_line,'-[<>')
+			working_line=COMPRESS(working_line,'[<>')
 			WRITELN(guide_write,'    @{" 7.8 " Link "7.8.1"} 'SUBSTR(working_line,1,LASTPOS(']',working_line)-1))
 		END
 
@@ -158,7 +159,7 @@ DO WHILE EOF(readme_read) = 0
 			WRITELN(guide_write,' ')
 			WRITELN(guide_write,'  @{" 'SUBSTR(working_line,POS('<>',working_line)+2,LASTPOS('<>',working_line)-POS('<>',working_line)-2) '" Link "'SUBSTR(working_line,POS('<>',working_line)+2,LASTPOS('<>',working_line)-POS('<>',working_line)-2)'"} 'COMPRESS(SUBSTR(working_line,1,LASTPOS(']',working_line)-1),'*<>[]\'))
 			/*
-			Get rid of the markers, so the following loops won't process
+			Get rid of the markers, so the following loops won`t process
 			them again.
 			*/
 			working_line=COMPRESS(working_line,'-[<>')
@@ -171,7 +172,7 @@ DO WHILE EOF(readme_read) = 0
 		IF POS('- [<>',working_line) = 7 THEN DO
 			WRITELN(guide_write,'    @{" 'SUBSTR(working_line,POS('<>',working_line)+2,LASTPOS('<>',working_line)-POS('<>',working_line)-2) '" Link "'SUBSTR(working_line,POS('<>',working_line)+2,LASTPOS('<>',working_line)-POS('<>',working_line)-2)'"} 'COMPRESS(SUBSTR(working_line,1,LASTPOS(']',working_line)-1),'*<>[]\'))
 			/*
-			Get rid of the markers, so the following loops won't process
+			Get rid of the markers, so the following loops won`t process
 			them again.
 			*/
 			working_line=COMPRESS(working_line,'.[<>')
@@ -184,7 +185,7 @@ DO WHILE EOF(readme_read) = 0
 		IF POS('- [<>',working_line) = 11 THEN DO
 			WRITELN(guide_write,'      @{" 'SUBSTR(working_line,POS('<>',working_line)+2,LASTPOS('<>',working_line)-POS('<>',working_line)-2) '" Link "'SUBSTR(working_line,POS('<>',working_line)+2,LASTPOS('<>',working_line)-POS('<>',working_line)-2)'"} 'COMPRESS(SUBSTR(working_line,1,LASTPOS(']',working_line)-1),'*<>[]\'))
 			/*
-			Get rid of the markers, so the following loops won't process
+			Get rid of the markers, so the following loops won`t process
 			them again.
 			*/
 			working_line=COMPRESS(working_line,'.[<>')
@@ -225,24 +226,25 @@ DO WHILE EOF(readme_read) = 0
 		/*
 		Fix empty chapters:
 		Two chapters (1.0 and 7.8) are "empty", consisting of only
-		it's chapter names. Link them to their respective sub chapters
+		it`s chapter names. Link them to their respective sub chapters
 		(1.1 and 7.8.1) to not display a blank page.
-		If chapter 1.1 is found, don't close the NODE, just write the line.
+		
+		If chapter 1.1 is found, don`t close the NODE, just write the line.
 		*/
 		IF POS('<>1.1<>',working_line) = 1 THEN DO
 			/*
-			Get rid of the markers, so the following loops won't process
+			Get rid of the markers, so the following loops won`t process
 			them again.
 			*/
 			WRITELN(guide_write,COMPRESS(working_line,'<>'))
 		END
 
 		/*
-		If chapter 7.8.1 is found don't close the NODE, just write the line.
+		If chapter 7.8.1 is found don`t close the NODE, just write the line.
 		*/
 		IF POS('<>7.8.1<>',working_line) = 1 THEN DO
 			/*
-			Get rid of the markers, so the following loops won't process
+			Get rid of the markers, so the following loops won`t process
 			them again.
 			*/
 			WRITELN(guide_write,COMPRESS(working_line,'<>'))
@@ -256,7 +258,7 @@ DO WHILE EOF(readme_read) = 0
 			IF POS('section <>',working_line) > 0 THEN DO
 				working_line=SUBSTR(working_line,1,POS('<>',working_line)-1)'@{"'SUBSTR(working_line,POS('<>',working_line)+2,LASTPOS('<>',working_line)-POS('<>',working_line)-2)'" Link "'SUBSTR(working_line,POS('<>',working_line)+2,LASTPOS('<>',working_line)-POS('<>',working_line)-2)'"}'SUBSTR(working_line,LASTPOS('<>',working_line)+2)
 				/*
-				Get rid of the markers, so the following loops won't
+				Get rid of the markers, so the following loops won`t
 				process them again.
 				*/
 				WRITELN(guide_write,COMPRESS(working_line,'<>'))
@@ -269,7 +271,7 @@ DO WHILE EOF(readme_read) = 0
 				WRITELN(guide_write,'@NODE "'SUBSTR(working_line,POS('<>',working_line)+2,LASTPOS('<>',working_line)-POS('<>',working_line)-2)'" "'COMPRESS(working_line,'<>#')'"')
 				WRITELN(guide_write,' ')
 				/*
-				Get rid of the markers, so the following loops won't process
+				Get rid of the markers, so the following loops won`t process
 				them again.
 				*/
 				WRITELN(guide_write,COMPRESS(working_line,'<>'))
