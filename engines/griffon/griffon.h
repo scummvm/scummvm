@@ -33,8 +33,8 @@
  *
  */
 
-#ifndef GRIFFON_H
-#define GRIFFON_H
+#ifndef GRIFFON_GRIFFON_H
+#define GRIFFON_GRIFFON_H
 
 #include "common/scummsys.h"
 #include "common/events.h"
@@ -511,4 +511,4 @@ private:
 
 }
 
-#endif
+#endif // GRIFFON_GRIFFON_H
