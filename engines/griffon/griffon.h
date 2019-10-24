@@ -486,9 +486,8 @@ private:
 	DataChunk *_mgardens, *_mgardens2, *_mgardens3, *_mgardens4, *_mboss, *_mmenu, *_mendofgame;
 	int _musicChannel, _menuChannel;
 	bool _playingBoss, _playingGardens;
-	int _loopseta;
 
-	DataChunk *_sfx[21];
+	DataChunk *_sfx[15];
 	Audio::SoundHandle _handles[kSoundHandles];
 	Audio::Mixer *_mixer;
 

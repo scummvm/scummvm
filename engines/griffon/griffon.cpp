@@ -51,7 +51,6 @@ GriffonEngine::GriffonEngine(OSystem *syst) : Engine(syst) {
 	_musicChannel = -1;
 	_menuChannel = -1;
 
-	_loopseta = 0;
 	clouddeg = 0.0f;
 
 	// Synchronize the sound settings from ScummVM
