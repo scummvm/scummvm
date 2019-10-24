@@ -640,7 +640,8 @@ int ResourceManager::addAppropriateSources() {
 	} else if (Common::MacResManager::exists("Data1")) {
 		// Mac SCI1.1+ file naming scheme
 		Common::StringArray files;
-		Common::MacResManager::listFiles(files, "Data?");
+		Common::MacResManager::listFiles(files, "Data#");
+		Common::MacResManager::listFiles(files, "Data##");
 
 		for (Common::StringArray::const_iterator x = files.begin(); x != files.end(); ++x) {
 			addSource(new MacResourceForkResourceSource(*x, atoi(x->c_str() + 4)));
