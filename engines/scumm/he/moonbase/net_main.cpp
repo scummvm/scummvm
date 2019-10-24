@@ -72,10 +72,39 @@ int Net::joinGame(char *IP, char *userName) {
 int Net::addUser(char *shortName, char *longName) {
 	warning("STUB: Net::addUser(\"%s\", \"%s\")", shortName, longName); // PN_AddUser
 
-	_myUserId = _vm->_rnd.getRandomNumber(1000000);
+	Networking::PostRequest rq(_serverprefix + "/adduser",
+		new Common::Callback<Net, Common::JSONValue *>(this, &Net::addUserCallback),
+		new Common::Callback<Net, Networking::ErrorResponse>(this, &Net::addUserErrorCallback));
 
-	// FAKE successful add. FIXME
+	snprintf((char *)_tmpbuffer, MAX_PACKET_SIZE, "{\"shortname\":\"%s\",\"longname\":\"%s\",\"sessionid\":%d}", shortName, longName, _sessionid);
+	rq.setPostData(_tmpbuffer, strlen((char *)_tmpbuffer));
+	rq.setContentType("application/json");
+
+	rq.start();
+
+	_myUserId = -1;
+
+	while(rq.state() == Networking::PROCESSING) {
+		g_system->delayMillis(5);
+	}
+
+	if (_myUserId == -1)
+		return 0;
+
 	return 1;
+}
+
+void Net::addUserCallback(Common::JSONValue *response) {
+	Common::JSONObject info = response->asObject();
+
+	if (info.contains("userid")) {
+		_myUserId = info["userid"]->asIntegerNumber();
+	}
+	debug(1, "addUserCallback: got: '%s' as %d", response->stringify().c_str(), _myUserId);
+}
+
+void Net::addUserErrorCallback(Networking::ErrorResponse error) {
+	warning("Error in addUser(): %ld %s", error.httpResponseCode, error.response.c_str());
 }
 
 int Net::removeUser() {
@@ -94,11 +123,11 @@ int Net::whoAmI() {
 }
 
 int Net::createSession(char *name) {
-	warning("STUB: Net::createSession(\"%s\")", name); // PN_CreateSession
+	debug(1, "Net::createSession(\"%s\")", name); // PN_CreateSession
 
 	Networking::PostRequest rq(_serverprefix + "/createsession",
-		new Common::Callback<Net, Common::JSONValue *>(this, &Net::startQuerySessionsCallback),
-		new Common::Callback<Net, Networking::ErrorResponse>(this, &Net::startQuerySessionsErrorCallback));
+		new Common::Callback<Net, Common::JSONValue *>(this, &Net::createSessionCallback),
+		new Common::Callback<Net, Networking::ErrorResponse>(this, &Net::createSessionErrorCallback));
 
 	snprintf((char *)_tmpbuffer, MAX_PACKET_SIZE, "{\"name\":\"%s\"}", name);
 	rq.setPostData(_tmpbuffer, strlen((char *)_tmpbuffer));
@@ -124,7 +153,7 @@ void Net::createSessionCallback(Common::JSONValue *response) {
 	if (info.contains("sessionid")) {
 		_sessionid = info["sessionid"]->asIntegerNumber();
 	}
-	warning("Got: '%s' as %d", response->stringify().c_str(), _sessionid);
+	debug(1, "createSessionCallback: got: '%s' as %d", response->stringify().c_str(), _sessionid);
 }
 
 void Net::createSessionErrorCallback(Networking::ErrorResponse error) {
@@ -202,7 +231,7 @@ int32 Net::startQuerySessions() {
 }
 
 void Net::startQuerySessionsCallback(Common::JSONValue *response) {
-	warning("Got: '%s'", response->stringify().c_str());
+	warning("startQuerySessions: Got: '%s'", response->stringify().c_str());
 }
 
 void Net::startQuerySessionsErrorCallback(Networking::ErrorResponse error) {

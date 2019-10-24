@@ -77,6 +77,9 @@ private:
 	void startQuerySessionsCallback(Common::JSONValue *response);
 	void startQuerySessionsErrorCallback(Networking::ErrorResponse error);
 
+	void addUserCallback(Common::JSONValue *response);
+	void addUserErrorCallback(Networking::ErrorResponse error);
+
 public:
 	//getters
 	bool getHostName(char *hostname, int length);
