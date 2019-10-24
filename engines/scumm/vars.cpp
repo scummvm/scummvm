@@ -738,7 +738,6 @@ void ScummEngine_v99he::resetScummVars() {
 		VAR(157) = 0;
 	}
 }
-#endif
 
 void ScummEngine_v100he::resetScummVars() {
 	ScummEngine_v99he::resetScummVars();
@@ -751,6 +750,7 @@ void ScummEngine_v100he::resetScummVars() {
 #endif
 	}
 }
+#endif
 
 void ScummEngine::resetScummVars() {
 	if (_game.heversion < 70 && _game.version <= 6) {
