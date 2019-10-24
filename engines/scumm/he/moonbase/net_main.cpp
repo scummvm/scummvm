@@ -70,7 +70,7 @@ int Net::joinGame(char *IP, char *userName) {
 }
 
 int Net::addUser(char *shortName, char *longName) {
-	warning("STUB: Net::addUser(\"%s\", \"%s\")", shortName, longName); // PN_AddUser
+	debug(1, "Net::addUser(\"%s\", \"%s\")", shortName, longName); // PN_AddUser
 
 	Networking::PostRequest rq(_serverprefix + "/adduser",
 		new Common::Callback<Net, Common::JSONValue *>(this, &Net::addUserCallback),
