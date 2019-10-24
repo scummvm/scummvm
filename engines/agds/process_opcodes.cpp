@@ -1052,9 +1052,10 @@ void Process::leaveCharacter() {
 }
 
 void Process::setCharacter() {
-	Common::String arg2 = popString();
-	Common::String arg1 = popString();
-	debug("setCharacter %s %s", arg1.c_str(), arg2.c_str());
+	Common::String object = popString();
+	Common::String region = popString();
+	debug("setCharacter %s %s", region.c_str(), object.c_str());
+	_engine->runObject(object);
 }
 
 void Process::pointCharacter() {
