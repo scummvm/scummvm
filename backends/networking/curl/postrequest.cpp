@@ -103,13 +103,6 @@ void PostRequest::responseCallback(Networking::JsonResponse response) {
 		return;
 	}
 
-	if (!json->isObject()) {
-		error.response = "Passed JSON is not an object!";
-		finishError(error);
-		delete json;
-		return;
-	}
-
 	finishSuccess();
 
 	if (_jsonCallback)
