@@ -41,20 +41,6 @@ namespace Griffon {
 
 CONFIG config;
 
-#define PRINT(A,B)          \
-	do {                    \
-		char line[256];         \
-		sprintf(line, A "\n", B);   \
-		fputs(line, fp);        \
-	} while(0)
-
-#define INPUT(A, B)         \
-	do {                    \
-		char line[256];         \
-		fgets(line, sizeof(line), fp);  \
-		sscanf(line, A, B);     \
-	} while(0)
-
 void config_load(CONFIG *config) {
 	bool mute = false;
 	if (ConfMan.hasKey("mute"))
