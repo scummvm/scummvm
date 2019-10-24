@@ -76,8 +76,9 @@ int Net::addUser(char *shortName, char *longName) {
 		new Common::Callback<Net, Common::JSONValue *>(this, &Net::addUserCallback),
 		new Common::Callback<Net, Networking::ErrorResponse>(this, &Net::addUserErrorCallback));
 
-	snprintf((char *)_tmpbuffer, MAX_PACKET_SIZE, "{\"shortname\":\"%s\",\"longname\":\"%s\",\"sessionid\":%d}", shortName, longName, _sessionid);
-	rq.setPostData(_tmpbuffer, strlen((char *)_tmpbuffer));
+	char *buf = (char *)malloc(MAX_PACKET_SIZE);
+	snprintf(buf, MAX_PACKET_SIZE, "{\"shortname\":\"%s\",\"longname\":\"%s\",\"sessionid\":%d}", shortName, longName, _sessionid);
+	rq.setPostData((byte *)buf, strlen(buf));
 	rq.setContentType("application/json");
 
 	rq.start();
@@ -129,8 +130,9 @@ int Net::createSession(char *name) {
 		new Common::Callback<Net, Common::JSONValue *>(this, &Net::createSessionCallback),
 		new Common::Callback<Net, Networking::ErrorResponse>(this, &Net::createSessionErrorCallback));
 
-	snprintf((char *)_tmpbuffer, MAX_PACKET_SIZE, "{\"name\":\"%s\"}", name);
-	rq.setPostData(_tmpbuffer, strlen((char *)_tmpbuffer));
+	char *buf = (char *)malloc(MAX_PACKET_SIZE);
+	snprintf(buf, MAX_PACKET_SIZE, "{\"name\":\"%s\"}", name);
+	rq.setPostData((byte *)buf, strlen(buf));
 	rq.setContentType("application/json");
 
 	rq.start();
