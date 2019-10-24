@@ -65,7 +65,8 @@ Settings::Settings(BladeRunnerEngine *vm) {
 	_fullHDFrames = true;
 	_mst3k = false;
 
-	// TODO: A bug? why is this set again here?
+	// TODO: A bug? why is this set again here, overriding the initialization above?
+	//       Also note: the reset() method assigns "_ammoAmounts[0] = 1" like above!
 	_ammoType = 0;
 	_ammoAmounts[0] = 0;
 	_ammoAmounts[1] = 0;
