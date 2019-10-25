@@ -36,7 +36,6 @@ Level9::Level9(OSystem *syst, const GlkGameDescription &gameDesc) : GlkAPI(syst,
 void Level9::runGame() {
 	initialize();
 
-
 	_gameFile.close();
 	gln_main(getFilename().c_str());
 
@@ -44,6 +43,7 @@ void Level9::runGame() {
 }
 
 bool Level9::initialize() {
+	gln_initialize();
 	return gln_startup_code(0, nullptr);
 }
 

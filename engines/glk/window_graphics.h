@@ -52,8 +52,10 @@ public:
 	 */
 	virtual ~GraphicsWindow();
 
-	uint drawPicture(uint image, int xpos, int ypos, int scale,
+	bool drawPicture(uint image, int xpos, int ypos, bool scale,
 	                   uint imagewidth, uint imageheight);
+	void drawPicture(const Graphics::Surface &image, uint transColor, int x0, int y0,
+		int width, int height, uint linkval = 0);
 
 	/**
 	 * Rearranges the window

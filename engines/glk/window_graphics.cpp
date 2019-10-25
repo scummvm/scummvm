@@ -96,7 +96,7 @@ void GraphicsWindow::redraw() {
 	}
 }
 
-uint GraphicsWindow::drawPicture(uint image, int xpos, int ypos, int scale,
+bool GraphicsWindow::drawPicture(uint image, int xpos, int ypos, bool scale,
                                    uint imagewidth, uint imageheight) {
 	Picture *pic = g_vm->_pictures->load(image);
 	uint hyperlink = _attr.hyper;
@@ -177,26 +177,31 @@ void GraphicsWindow::fillRect(uint color, const Rect &box) {
 	touch();
 }
 
-void GraphicsWindow::drawPicture(Picture *src,  int x0, int y0, int width, int height, uint linkval) {
-	int dx1, dy1, x1, y1, sx0, sy0, sx1, sy1;
-	int hx0, hx1, hy0, hy1;
-	int w, h;
-
+void GraphicsWindow::drawPicture(Picture *src, int x0, int y0, int width, int height, uint linkval) {
 	if (width != src->w || height != src->h) {
 		src = g_vm->_pictures->scale(src, width, height);
 		if (!src)
 			return;
 	}
 
+	drawPicture(*src, src->getTransparentColor(), x0, y0, width, height, linkval);
+}
+
+void GraphicsWindow::drawPicture(const Graphics::Surface &image, uint transColor, int x0, int y0,
+		int width, int height, uint linkval) {
+	int dx1, dy1, x1, y1, sx0, sy0, sx1, sy1;
+	int hx0, hx1, hy0, hy1;
+	int w, h;
+
 	sx0 = 0;
 	sy0 = 0;
-	sx1 = src->w;
-	sy1 = src->h;
+	sx1 = image.w;
+	sy1 = image.h;
 	dx1 = _w;
 	dy1 = _h;
 
-	x1 = x0 + src->w;
-	y1 = y0 + src->h;
+	x1 = x0 + image.w;
+	y1 = y0 + image.h;
 
 	if (x1 <= 0 || x0 >= dx1) return;
 	if (y1 <= 0 || y0 >= dy1) return;
@@ -228,7 +233,7 @@ void GraphicsWindow::drawPicture(Picture *src,  int x0, int y0, int width, int h
 	w = sx1 - sx0;
 	h = sy1 - sy0;
 
-	_surface->transBlitFrom(*src, Rect(sx0, sy0, sx0 + w, sy0 + h), Point(x0, y0), src->getTransparentColor());
+	_surface->transBlitFrom(image, Rect(sx0, sy0, sx0 + w, sy0 + h), Point(x0, y0), transColor);
 }
 
 void GraphicsWindow::getSize(uint *width, uint *height) const {

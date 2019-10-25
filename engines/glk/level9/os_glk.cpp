@@ -1984,21 +1984,23 @@ break_y_max:
 }
 #endif
 
-static void gln_graphics_paint_everything(winid_t glk_window, glui32 palette[],
+static void gln_graphics_paint_everything(winid_t glk_window, Colour palette[],
 		gln_byte off_screen[], int x_offset, int y_offset, gln_uint16 width, gln_uint16 height) {
-	gln_byte        pixel;          /* Reference pixel color */
-	int     x, y;
+	Graphics::PixelFormat format(4, 8, 8, 8, 8, 24, 16, 8, 0);
+	Graphics::ManagedSurface s(width, height, format);
 
-	for (y = 0; y < height; y++) {
-		for (x = 0; x < width; x ++) {
-			pixel = off_screen[ y * width + x ];
-			g_vm->glk_window_fill_rect(glk_window,
-			                           palette[ pixel ],
-			                           x * GLN_GRAPHICS_PIXEL + x_offset,
-			                           y * GLN_GRAPHICS_PIXEL + y_offset,
-			                           GLN_GRAPHICS_PIXEL, GLN_GRAPHICS_PIXEL);
+	for (int y = 0; y < height; ++y) {
+		uint32 *lineP = (uint32 *)s.getBasePtr(0, y);
+		for (int x = 0; x < width; ++x, ++lineP) {
+			byte pixel = off_screen[y * width + x];
+			assert(pixel < GLN_PALETTE_SIZE);
+			const Colour &col = palette[pixel];
+
+			*lineP = format.RGBToColor(col.red, col.green, col.blue);
 		}
 	}
+
+	g_vm->glk_image_draw(glk_window, s, (uint)-1, x_offset, y_offset);
 }
 
 /*
@@ -2260,12 +2262,8 @@ static void gln_graphics_timeout() {
 	total_regions += regions;
 
 #else
-	gln_graphics_paint_everything
-	(gln_graphics_window,
-	 palette, off_screen,
-	 x_offset, y_offset,
-	 gln_graphics_width,
-	 gln_graphics_height);
+	gln_graphics_paint_everything(gln_graphics_window, gln_graphics_palette, off_screen,
+		x_offset, y_offset, gln_graphics_width, gln_graphics_height);
 #endif
 
 	/* Stop graphics; there's no more to be done until something restarts us. */
