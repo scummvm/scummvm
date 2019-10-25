@@ -58,6 +58,11 @@ GriffonEngine::GriffonEngine(OSystem *syst) : Engine(syst) {
 			_objectInfo[i][j] = 0;
 	}
 
+	for (int i = 0; i < 256; ++i) {
+		_objectFrame[i][0] = 0;
+		_objectFrame[i][1] = 0;
+	}
+
 	// Synchronize the sound settings from ScummVM
 	syncSoundSettings();
 	config_load(&config);
