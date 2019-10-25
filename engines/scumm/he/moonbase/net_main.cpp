@@ -30,7 +30,7 @@ namespace Scumm {
 Net::Net(ScummEngine_v100he *vm) : _latencyTime(1), _fakeLatency(false), _vm(vm) {
 	//some defaults for fields
 
-	_packbuffer = (byte *)malloc(MAX_PACKET_SIZE + 12);
+	_packbuffer = (byte *)malloc(MAX_PACKET_SIZE + DATA_HEADER_SIZE);
 	_tmpbuffer = (byte *)malloc(MAX_PACKET_SIZE);
 
 	_myUserId = -1;
@@ -333,14 +333,19 @@ void Net::remoteStartScript(int typeOfSend, int sendTypeParam, int priority, int
 }
 
 int Net::remoteSendData(int typeOfSend, int sendTypeParam, int type, byte *data, int len, int defaultRes) {
-	WRITE_UINT32(_packbuffer, type);
-	WRITE_UINT32(_packbuffer + 4, len);
-	WRITE_UINT32(_packbuffer + 8, g_system->getMillis());
-	memcpy(_packbuffer + 12, data, len);
+	Common::MemoryWriteStream pack(_packbuffer, MAX_PACKET_SIZE + DATA_HEADER_SIZE);
 
-	debug("Package to send, to: %d (%d), %d bytes", typeOfSend, sendTypeParam, len + 12);
+	pack.writeUint32LE(_sessionid);
+	pack.writeUint32LE(_myUserId);
+	pack.writeUint32LE(typeOfSend);
+	pack.writeUint32LE(sendTypeParam);
+	pack.writeUint32LE(len);
+	pack.writeUint32LE(g_system->getMillis());
+	pack.write(data, len);
 
-	Common::hexdump(_packbuffer, len + 12);
+	debug("Package to send, to: %d (%d), %d bytes", typeOfSend, sendTypeParam, len + DATA_HEADER_SIZE);
+
+	Common::hexdump(_packbuffer, len + DATA_HEADER_SIZE);
 
 	return defaultRes;
 }
@@ -423,22 +428,28 @@ int Net::getMessageCount() {
 
 void Net::remoteReceiveData() {
 	// FIXME. Get data into _packbuffer
-	uint type = READ_UINT32(_packbuffer);
-	uint len = READ_UINT32(_packbuffer + 4);
-	/*uint timestamp =*/ READ_UINT32(_packbuffer + 8);
-	byte *p;
+
+	int _packetsize = 0;
+
+	Common::MemoryReadStream pack(_packbuffer, _packetsize);
+
+	pack.readUint32LE(); // sessionid
+	uint from = pack.readUint32LE();
+	uint type = pack.readUint32LE(); // typeOfSend
+	pack.readUint32LE(); // sendTypeParam
+	uint len = pack.readUint32LE();
+	pack.readUint32LE(); // timestamp
+
 	uint32 *params;
 
 	switch (type) {
 	case PACKETTYPE_REMOTESTARTSCRIPT:
 		{
-			p = _packbuffer + 12;
 			params = (uint32 *)_tmpbuffer;
 
 			for (int i = 0; i < 24; i++) {
-				*params = READ_UINT32(p);
+				*params = pack.readUint32LE();
 				params++;
-				p += 4;
 			}
 
 			_vm->runScript(_vm->VAR(_vm->VAR_REMOTE_START_SCRIPT), 1, 0, (int *)_tmpbuffer);
@@ -447,13 +458,11 @@ void Net::remoteReceiveData() {
 
 	case PACKETTYPE_REMOTESTARTSCRIPTRETURN:
 		{
-			p = _packbuffer + 12;
 			params = (uint32 *)_tmpbuffer;
 
 			for (int i = 0; i < 24; i++) {
-				*params = READ_UINT32(p);
+				*params = pack.readUint32LE();
 				params++;
-				p += 4;
 			}
 
 			_vm->runScript(_vm->VAR(_vm->VAR_REMOTE_START_SCRIPT), 1, 0, (int *)_tmpbuffer);
@@ -461,8 +470,7 @@ void Net::remoteReceiveData() {
 
 			WRITE_UINT32(_tmpbuffer, res);
 
-			// FIXME
-			remoteSendData(PN_SENDTYPE_INDIVIDUAL, 0 /* gdefMultiPlay.from */, PACKETTYPE_REMOTESTARTSCRIPTRESULT, _tmpbuffer, 4, 0);
+			remoteSendData(PN_SENDTYPE_INDIVIDUAL, from, PACKETTYPE_REMOTESTARTSCRIPTRESULT, _tmpbuffer, 4, 0);
 		}
 		break;
 
@@ -481,7 +489,7 @@ void Net::remoteReceiveData() {
 			// and unpack it into an scumm array :-)
 
 			newArray = _vm->findFreeArrayId();
-			unpackageArray(newArray, _packbuffer + 12, len);
+			unpackageArray(newArray, _packbuffer + DATA_HEADER_SIZE, len);
 			memset(_tmpbuffer, 0, 25 * 4);
 			WRITE_UINT32(_tmpbuffer, newArray);
 
