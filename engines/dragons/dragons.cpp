@@ -88,6 +88,9 @@ DragonsEngine::DragonsEngine(OSystem *syst) : Engine(syst) {
 	_dKeyDown = false;
 	_oKeyDown = false;
 	_pKeyDown = false;
+
+	_debugMode = false;
+
 	reset();
 }
 
@@ -172,6 +175,8 @@ void DragonsEngine::updateEvents() {
 					_oKeyDown = true;
 				} else if (event.kbd.keycode == Common::KeyCode::KEYCODE_p) {
 					_pKeyDown = true;
+				} else if (event.kbd.keycode == Common::KeyCode::KEYCODE_TAB) {
+					_debugMode = !_debugMode;
 				}
 				break;
 			default:
@@ -1240,6 +1245,14 @@ void DragonsEngine::loadScene(uint16 sceneId) {
 	_inventory->init(_actorManager, _backgroundResourceLoader, new Bag(_bigfileArchive, _screen), _dragonINIResource);
 	_talk->init();
 
+	_screen->loadPalette(1, _cursor->getPalette());
+	setupPalette1();
+
+	_screen->loadPalette(2, _cursor->getPalette());
+	_screen->loadPalette(4, _cursor->getPalette());
+	_screen->updatePaletteTransparency(4, 1, 0xff, true);
+
+	// TODO FUN_80017010_update_actor_texture_maybe();
 	if (sceneId > 2) {
 		_dragonVAR->setVar(1, 1);
 	}
@@ -1276,7 +1289,7 @@ void DragonsEngine::reset() {
 	data_800633fa = 0;
 
 	for(int i = 0; i < 8; i++) {
-		opCode1A_tbl[i].field0 = 0;
+		opCode1A_tbl[i].paletteType = 0;
 		opCode1A_tbl[i].field2 = 0;
 		opCode1A_tbl[i].field4 = 0;
 		opCode1A_tbl[i].field6 = 0;
@@ -1307,8 +1320,8 @@ uint32 DragonsEngine::shuffleRandState()
 
 	returnBit = _randomState & 1;
 	_randomState = _randomState >> 1 |
-				  (_randomState << 0x1e ^ _randomState ^ _randomState << 0x1d ^ _randomState << 0x1b ^
-						  _randomState << 0x19) & 0x80000000;
+			((_randomState << 0x1e ^ _randomState ^ _randomState << 0x1d ^ _randomState << 0x1b ^
+						  _randomState << 0x19) & 0x80000000);
 	return returnBit;
 }
 
@@ -1351,6 +1364,18 @@ bool DragonsEngine::isL1ButtonPressed() {
 
 bool DragonsEngine::isR1ButtonPressed() {
 	return _pKeyDown;
+}
+
+void DragonsEngine::setupPalette1() {
+	byte palette[512];
+	memcpy(palette, _cursor->getPalette(), 0x100);
+	memcpy(palette + 0x100, _cursor->getPalette(), 0x100);
+	_screen->loadPalette(1, palette);
+	_screen->updatePaletteTransparency(1,0x40,0x7f,true);
+}
+
+bool DragonsEngine::isDebugMode() {
+	return _debugMode;
 }
 
 void (*DragonsEngine::getSceneUpdateFunction())() {

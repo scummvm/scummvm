@@ -76,7 +76,6 @@ public:
 	byte *getPalette();
 
 private:
-	void writePixelBlock(byte *pixels, byte *data, byte *palette);
 };
 
 } // End of namespace Dragons

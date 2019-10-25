@@ -25,6 +25,7 @@
 #include "actorresource.h"
 #include "actor.h"
 #include "scene.h"
+#include "dragons/screen.h"
 
 namespace Dragons {
 
@@ -186,18 +187,16 @@ void Actor::loadFrame(uint16 frameOffset) {
 	}
 
 	frame = _actorResource->loadFrameHeader(frameOffset);
-	uint16 paletteId = 0;
-	if (flags & Dragons::ACTOR_FLAG_4000) {
-		paletteId = 0xf7;
-	} else if (flags & Dragons::ACTOR_FLAG_8000) {
-		paletteId = 0xf1;
+
+	if (frame->flags & 0x800) {
+		frame_flags |= ACTOR_FRAME_FLAG_2;
 	} else {
-		paletteId = 0;
+		frame_flags &= ~ACTOR_FRAME_FLAG_2;
 	}
 
 	surface = _actorResource->loadFrame(*frame, NULL); // TODO paletteId == 0xf1 ? getEngine()->getBackgroundPalette() : NULL);
 
-	debug(5, "ActorId: %d load frame header: (%d,%d) palette: %X", _actorID, frame->width, frame->height, paletteId);
+	debug(5, "ActorId: %d load frame header: (%d,%d)", _actorID, frame->width, frame->height);
 
 	flags |= Dragons::ACTOR_FLAG_8; //TODO check if this is the right spot. engine sets it at 0x800185b0
 
@@ -882,6 +881,18 @@ bool Actor::waitUntilFlag4IsSetAllowSkip() {
 	}
 
 	return false;
+}
+
+byte *Actor::getPalette() {
+	if (!isFlagSet(ACTOR_FLAG_4000)) {
+		if (!isFlagSet(ACTOR_FLAG_8000)) {
+			//TODO need to support per actor custom palettes.
+			return getEngine()->_screen->getPalette(1);
+		} else {
+			return getEngine()->_scene->getPalette();
+		}
+	}
+	return getEngine()->_screen->getPalette(4);
 }
 
 } // End of namespace Dragons

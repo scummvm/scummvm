@@ -66,6 +66,22 @@ void Screen::copyRectToSurface(const Graphics::Surface &srcSurface, int destX, i
 	copyRectToSurface(srcSurface.getBasePtr(clipRect.left, clipRect.top), srcSurface.pitch, srcSurface.w, clipRect.left, destX, destY, clipRect.width(), clipRect.height(), flipX, alpha);
 }
 
+void Screen::copyRectToSurface8bpp(const Graphics::Surface &srcSurface, byte *palette, int destX, int destY, const Common::Rect srcRect, bool flipX, uint8 alpha) {
+	Common::Rect clipRect = clipRectToScreen( destX,  destY, srcRect);
+	if (clipRect.width() == 0 || clipRect.height() == 0) {
+		return;
+	}
+
+	if (destX < 0) {
+		destX = 0;
+	}
+	if (destY < 0) {
+		destY = 0;
+	}
+
+	copyRectToSurface8bpp(srcSurface.getBasePtr(clipRect.left, clipRect.top), palette, srcSurface.pitch, srcSurface.w, clipRect.left, destX, destY, clipRect.width(), clipRect.height(), flipX, alpha);
+}
+
 /**
  * Fast RGB555 pixel blending
  * @param fg      The foreground color in uint16_t RGB565 format
@@ -74,9 +90,9 @@ void Screen::copyRectToSurface(const Graphics::Surface &srcSurface, int destX, i
  **/
 uint16 alphaBlendRGB555( uint32 fg, uint32 bg, uint8 alpha ){
 	alpha = ( alpha + 4 ) >> 3;
-	bg = (bg | (bg << 16)) & 0b00000011111000001111100000011111;
-	fg = (fg | (fg << 16)) & 0b00000011111000001111100000011111;
-	uint32_t result = ((((fg - bg) * alpha) >> 5) + bg) & 0b00000011111000001111100000011111;
+	bg = (bg | (bg << 16)) & 0b00000011111000000111110000011111;
+	fg = (fg | (fg << 16)) & 0b00000011111000000111110000011111;
+	uint32_t result = ((((fg - bg) * alpha) >> 5) + bg) & 0b00000011111000000111110000011111;
 	return (uint16_t)((result >> 16) | result);
 }
 
@@ -101,6 +117,36 @@ void Screen::copyRectToSurface(const void *buffer, int srcPitch, int srcWidth, i
 					dst[j * 2 + 1] = src[srcIdx * 2 + 1];
 				} else {
 					WRITE_LE_UINT16(&dst[j * 2], alphaBlendRGB555(READ_LE_INT16(&src[srcIdx * 2]), READ_LE_INT16(&dst[j * 2]), alpha));
+					// semi-transparent pixels.
+				}
+			}
+		}
+		src += srcPitch;
+		dst += _backSurface->pitch;
+	}
+}
+
+void Screen::copyRectToSurface8bpp(const void *buffer, byte* palette, int srcPitch, int srcWidth, int srcXOffset, int destX, int destY, int width, int height, bool flipX, uint8 alpha) {
+	assert(buffer);
+
+	assert(destX >= 0 && destX < _backSurface->w);
+	assert(destY >= 0 && destY < _backSurface->h);
+	assert(height > 0 && destY + height <= _backSurface->h);
+	assert(width > 0 && destX + width <= _backSurface->w);
+
+	// Copy buffer data to internal buffer
+	const byte *src = (const byte *)buffer;
+	byte *dst = (byte *)_backSurface->getBasePtr(destX, destY);
+	for (int i = 0; i < height; i++) {
+		for (int j = 0; j < width; j++) {
+			int32 srcIdx = flipX ? srcWidth - (srcXOffset * 2) - j - 1 : j;
+			uint16 c = READ_LE_UINT16(&palette[src[srcIdx] * 2]);
+			if (c != 0) {
+				if (!(c & 0x8000) || alpha == 255) {
+					// only copy opaque pixels
+					WRITE_LE_UINT16(&dst[j * 2], c & ~0x8000);
+				} else {
+					WRITE_LE_UINT16(&dst[j * 2], alphaBlendRGB555(c, READ_LE_INT16(&dst[j * 2]), alpha));
 					// semi-transparent pixels.
 				}
 			}
@@ -175,12 +221,36 @@ void Screen::updatePaletteTransparency(uint16 paletteNum, uint16 startOffset, ui
 }
 
 void Screen::loadPalette(uint16 paletteNum, byte *palette) {
+	bool isTransPalette = (paletteNum & 0x8000);
+	paletteNum &= ~0x8000;
 	assert(paletteNum < DRAGONS_NUM_PALETTES);
 	if (paletteNum == 0) {
 		Dragons::getEngine()->_scene->setStagePalette(palette);
 	} else {
 		memcpy(&_palettes[paletteNum][0], palette, 512);
+		if (paletteNum == 2 || paletteNum == 4 || paletteNum == 5) {
+			_palettes[paletteNum][2] = 0;
+			_palettes[paletteNum][3] = 0;
+		}
+		if (paletteNum == 1) {
+			_palettes[paletteNum][2] = 1;
+			_palettes[paletteNum][3] = 0;
+		}
 	}
+
+	for (int i =1 ; i < 0x100; i++) {
+		uint16 c = READ_LE_INT16(&_palettes[paletteNum][i * 2]);
+		if ((c & ~0x8000) == 0) {
+			if (!isTransPalette) {
+				WRITE_LE_UINT16(&_palettes[paletteNum][i * 2], 0x8000);
+			}
+		} else {
+			//TODO is this needed? see load_palette_into_frame_buffer()
+//			c = (ushort)(((uint)c & 0x1f) << 10) | (ushort)(((uint)c & 0x7c00) >> 10) |
+//					(c & 0x3e0) | (c & 0x8000);
+		}
+	}
+	WRITE_LE_UINT16(&_palettes[paletteNum][0], 0);
 }
 
 void Screen::setPaletteRecord(uint16 paletteNum, uint16 offset, uint16 newValue) {
@@ -199,6 +269,19 @@ byte *Screen::getPalette(uint16 paletteNum) {
 
 void Screen::clearScreen() {
 	_backSurface->fillRect(Common::Rect(0,0, _backSurface->w, _backSurface->h), 0);
+}
+
+void Screen::drawRect(uint16 colour, Common::Rect rect, int id) {
+	Common::Rect clippedRect = clipRectToScreen(0, 0, rect);
+	//top
+	_backSurface->drawLine(clippedRect.left, clippedRect.top, clippedRect.right, clippedRect.top, colour);
+	//right
+	_backSurface->drawLine(clippedRect.right, clippedRect.top, clippedRect.right, clippedRect.bottom, colour);
+	//bottom
+	_backSurface->drawLine(clippedRect.left, clippedRect.bottom, clippedRect.right, clippedRect.bottom, colour);
+	//left
+	_backSurface->drawLine(clippedRect.left, clippedRect.top, clippedRect.left, clippedRect.bottom, colour);
+
 }
 
 } // End of namespace Dragons

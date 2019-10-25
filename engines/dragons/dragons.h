@@ -95,7 +95,7 @@ enum UnkFlags {
 };
 
 struct opCode1AStruct {
-	int16 field0;
+	int16 paletteType;
 	int16 field2;
 	int16 field4;
 	int16 field6;
@@ -184,6 +184,8 @@ private:
 	bool _oKeyDown;
 	bool _pKeyDown;
 
+	bool _debugMode;
+
 	void (*_sceneUpdateFunction)();
 protected:
 	virtual bool hasFeature(EngineFeature f) const;
@@ -259,7 +261,11 @@ public:
 	bool checkForDownKeyRelease();
 	bool checkForUpKeyRelease();
 
+	bool isDebugMode();
+
 	uint16 getRand(uint16 max);
+
+	void setupPalette1();
 private:
 	bool savegame(const char *filename, const char *description);
 	bool loadgame(const char *filename);

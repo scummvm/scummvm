@@ -57,7 +57,15 @@ bool ActorResource::load(uint32 id, byte *dataStart, Common::SeekableReadStream 
 
 	stream.seek(paletteOffset);
 	stream.read(_palette, 512);
-	//_palette[1] = 0x80; // set alpha (bit 15) on first palette entry.
+	_palette[0] = 0;
+	_palette[1] = 0;
+//	_palette[1] = 0x80; // set alpha (bit 15) on first palette entry.
+
+//	for (int i = 1; i < 0x100; i++) {
+//		if (_palette[i * 2] == 0 && _palette[i * 2 + 1] == 0) {
+//			_palette[i * 2 + 1] = 0x80;
+//		}
+//	}
 
 	stream.seek(frameOffset);
 
@@ -86,25 +94,13 @@ bool ActorResource::load(uint32 id, byte *dataStart, Common::SeekableReadStream 
 	return false;
 }
 
-void ActorResource::writePixelBlock(byte *pixels, byte *data, byte *palette) {
-	pixels[0] = palette[data[0] * 2];
-	pixels[1] = palette[data[0] * 2 + 1];
-	pixels[2] = palette[data[1] * 2];
-	pixels[3] = palette[data[1] * 2 + 1];
-	pixels[4] = palette[data[2] * 2];
-	pixels[5] = palette[data[2] * 2 + 1];
-	pixels[6] = palette[data[3] * 2];
-	pixels[7] = palette[data[3] * 2 + 1];
-}
-
 Graphics::Surface *ActorResource::loadFrame(ActorFrame &actorFrame, byte *palette) {
 	if (!palette) {
 		palette = _palette;
 	}
 
 	Graphics::Surface *surface = new Graphics::Surface();
-	Graphics::PixelFormat pixelFormat16(2, 5, 5, 5, 1, 10, 5, 0, 15); //TODO move this to a better location.
-	surface->create(actorFrame.width, actorFrame.height, pixelFormat16);
+	surface->create(actorFrame.width, actorFrame.height, Graphics::PixelFormat::createFormatCLUT8());
 
 	byte *pixels = (byte *)surface->getPixels();
 
@@ -124,13 +120,9 @@ Graphics::Surface *ActorResource::loadFrame(ActorFrame &actorFrame, byte *palett
 			blockSize -= size;
 
 			if (size != 0) {
-				for(int32 i = size; i != 0; i--) {
-					//TODO clean up this copy.
-					writePixelBlock(pixels, data, palette);
-
-					data += 4;
-					pixels += 8;
-				}
+				memcpy(pixels, data, size * 4);
+				data += size * 4;
+				pixels += size * 4;
 			}
 		} else {
 			size = size & 0x7fffffff;
@@ -140,9 +132,8 @@ Graphics::Surface *ActorResource::loadFrame(ActorFrame &actorFrame, byte *palett
 			blockSize -= size;
 			if (size != 0) {
 				for(int32 i = size; i != 0; i--) {
-					//TODO write bytes to pixel data.
-					writePixelBlock(pixels, data, palette);
-					pixels += 8;
+					memcpy(pixels, data, 4);
+					pixels += 4;
 				}
 			}
 			data += 4;

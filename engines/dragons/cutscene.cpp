@@ -28,6 +28,7 @@
 #include "dragons/cursor.h"
 #include "dragons/dragonini.h"
 #include "dragons/scene.h"
+#include "dragons/screen.h"
 #include "dragons/talk.h"
 
 namespace Dragons {
@@ -469,7 +470,7 @@ void CutScene::changeBackgroundPosition(uint16 newPosition, int16 sParm2)
 		_vm->_scene->setMgLayerPriority(1); //TODO investigate why this is 1 not 2
 		_vm->_scene->_camera.x = sParm2 + 0x3c0;
 		_vm->_scene->setFgLayerPriority(0);
-		_vm->_scene->setStagePalette(_palettes + 2 * 512);
+		_vm->_screen->loadPalette(0, _palettes + 2 * 512);
 		for (int i = 2; i < 0x17; i++) {
 			Actor *actor = _vm->_actorManager->getActor(i);
 			actor->x_pos += 0x3c0;
@@ -480,14 +481,14 @@ void CutScene::changeBackgroundPosition(uint16 newPosition, int16 sParm2)
 			if (newPosition != 0) {
 				return;
 			}
-			_vm->_scene->setStagePalette(_palettes + 0 * 512);
+			_vm->_screen->loadPalette(0, _palettes + 0 * 512);
 			_vm->_scene->setMgLayerPriority(0);
 			_vm->_scene->setFgLayerPriority(0);
 			_vm->_scene->_camera.x = 0;
 		}
 		else {
 			if (newPosition == 2) {
-				_vm->_scene->setStagePalette(_palettes + 3 * 512);
+				_vm->_screen->loadPalette(0, _palettes + 3 * 512);
 				_vm->_scene->setMgLayerPriority(2);
 				_vm->_scene->setFgLayerPriority(3);
 				_vm->_scene->_camera.x = 0;
@@ -496,7 +497,7 @@ void CutScene::changeBackgroundPosition(uint16 newPosition, int16 sParm2)
 				if (newPosition != 3) {
 					return;
 				}
-				_vm->_scene->setStagePalette(_palettes + 1 * 512);
+				_vm->_screen->loadPalette(0, _palettes + 1 * 512);
 				_vm->_scene->setMgLayerPriority(2);
 				_vm->_scene->setFgLayerPriority(0);
 				_vm->_scene->_camera.x = sParm2;
@@ -529,7 +530,7 @@ void CutScene::diamondScene() {
 			_vm->waitForFramesAllowSkip(0x2c);
 			//TODO fade_related_calls_with_1f();
 			memcpy(palette, _vm->_scene->getPalette(), 512);
-			_vm->_scene->setStagePalette(actorId_00->_actorResource->getPalette());
+			_vm->_screen->loadPalette(0, actorId_00->_actorResource->getPalette());
 			_vm->_scene->_camera.x = 0x140;
 			//TODO call_fade_related_1f();
 			if (!actorId_00->actorSetSequenceAndWaitAllowSkip(0)) {
@@ -537,7 +538,7 @@ void CutScene::diamondScene() {
 				if (_vm->_talk->somethingTextAndSpeechAndAnimRelated(actorId_00,1,2,0x42a66,0x3c01) != 2) {
 					_vm->waitForFramesAllowSkip(0x13);
 					//TODO fade_related_calls_with_1f();
-					_vm->_scene->setStagePalette(palette);
+					_vm->_screen->loadPalette(0, palette);
 					_vm->_scene->_camera.x = 0;
 					//TODO call_fade_related_1f();
 					actorId_01->updateSequence(0x19);
@@ -692,7 +693,7 @@ void CutScene::flameReturnsCutScene() {
 //	load_actor_file(0x7e);
 //	load_actor_file(0x8f);
 //	load_actor_file(0xaa);
-	DAT_80063514 = DAT_80063514 & 0xfffe | 0x600;
+	DAT_80063514 = (DAT_80063514 & 0xfffe) | 0x600;
 	FUN_8003d388();
 	DAT_80072de8->updateSequence(0x1f);
 	DAT_80072e04->x_pos = 0x10b;

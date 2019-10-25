@@ -40,14 +40,17 @@ public:
 	Graphics::PixelFormat getPixelFormat() { return _pixelFormat; }
 	void copyRectToSurface(const Graphics::Surface &srcSurface, int destX, int destY);
 	void copyRectToSurface(const Graphics::Surface &srcSurface, int destX, int destY, Common::Rect srcRect, bool flipX = false, uint8 alpha = 255);
+	void copyRectToSurface8bpp(const Graphics::Surface &srcSurface, byte *palette, int destX, int destY, Common::Rect srcRect, bool flipX = false, uint8 alpha = 255);
 	void updateScreen();
 	void loadPalette(uint16 paletteNum, byte *palette);
 	byte *getPalette(uint16 paletteNum);
 	void setPaletteRecord(uint16 paletteNum, uint16 offset, uint16 newValue);
 	void updatePaletteTransparency(uint16 paletteNum, uint16 startOffset, uint16 endOffset, bool isTransparent);
 	void clearScreen();
+	void drawRect(uint16 colour, Common::Rect rect, int id);
 private:
 	void copyRectToSurface(const void *buffer, int srcPitch, int srcWidth, int srcXOffset, int destX, int destY, int width, int height, bool flipX, uint8 alpha);
+	void copyRectToSurface8bpp(const void *buffer, byte* palette, int srcPitch, int srcWidth, int srcXOffset, int destX, int destY, int width, int height, bool flipX, uint8 alpha);
 	Common::Rect clipRectToScreen(int destX, int destY, const Common::Rect rect);
 };
 
