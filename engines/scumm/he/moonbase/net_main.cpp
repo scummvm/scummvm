@@ -394,7 +394,7 @@ void Net::getSessionName(int sessionNumber, char *buffer, int length) {
 		return;
 	}
 
-	strlcpy(buffer, _sessions->child(sessionNumber)->child("name")->asString().c_str(), length);
+	Common::strlcpy(buffer, _sessions->child(sessionNumber)->child("name")->asString().c_str(), length);
 }
 
 int Net::getSessionPlayerCount(int sessionNumber) {
