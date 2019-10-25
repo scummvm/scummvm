@@ -122,7 +122,8 @@ int Net::whoSentThis() {
 }
 
 int Net::whoAmI() {
-	warning("STUB: Net::whoAmI()"); // PN_WhoAmI
+	debug(1, "Net::whoAmI()"); // PN_WhoAmI
+
 	return _myUserId;
 }
 
@@ -273,7 +274,9 @@ int32 Net::updateQuerySessions() {
 }
 
 void Net::stopQuerySessions() {
-	warning("STUB: Net::stopQuerySessions()"); // StopQuerySessions
+	debug(1, "Net::stopQuerySessions()"); // StopQuerySessions
+
+	// No op
 }
 
 int Net::querySessions() {
@@ -294,8 +297,9 @@ int Net::setProvider(int providerIndex) {
 }
 
 int Net::closeProvider() {
-	warning("STUB: Net::closeProvider()"); // PN_CloseProvider
-	return 0;
+	debug(1, "Net::closeProvider()"); // PN_CloseProvider
+
+	return 1;
 }
 
 bool Net::initAll() {
