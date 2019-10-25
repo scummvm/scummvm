@@ -355,7 +355,7 @@ bool Net::getIPfromName(char *ip, int ipLength, char *nameBuffer) {
 }
 
 void Net::getSessionName(int sessionNumber, char *buffer, int length) {
-	warning("STUB: Net::getSessionName(%d, ..., %d)", sessionNumber, length); // PN_GetSessionName
+	debug(1, "Net::getSessionName(%d, ..., %d)", sessionNumber, length); // PN_GetSessionName
 
 	if (!_sessions) {
 		*buffer = '\0';
@@ -368,19 +368,29 @@ void Net::getSessionName(int sessionNumber, char *buffer, int length) {
 		warning("Net::getSessionName(): session number too big: %d >= %lu", sessionNumber, _sessions->countChildren());
 		return;
 	}
-	// FIXME
-	strcpy(buffer, _sessions->child(sessionNumber)->child("name")->asString().c_str());
 
-	warning("STUB: Net::getSessionName(%d, \"%s\", %d)", sessionNumber, buffer, length); // PN_GetSessionName
+	strlcpy(buffer, _sessions->child(sessionNumber)->child("name")->asString().c_str(), length);
 }
 
 int Net::getSessionPlayerCount(int sessionNumber) {
-	warning("STUB: Net::getSessionPlayerCount(%d)", sessionNumber); // case GET_SESSION_PLAYER_COUNT_KLUDGE:
-	//assert(sessionNumber >= 0 && sessionNumber < NUMELEMENTS(gdefMultiPlay.gamedescptr));
-	//return gdefMultiPlay.gamedescptr[sessionNumber].currentplayers;
+	debug(1, "Net::getSessionPlayerCount(%d)", sessionNumber); // case GET_SESSION_PLAYER_COUNT_KLUDGE:
 
-	// FAKE 2 players. FIXME
-	return 2;
+	if (!_sessions) {
+		warning("Net::getSessionName(): no sessions");
+		return 0;
+	}
+
+	if (sessionNumber >= _sessions->countChildren()) {
+		warning("Net::getSessionName(): session number too big: %d >= %lu", sessionNumber, _sessions->countChildren());
+		return 0;
+	}
+
+	if (!_sessions->child(sessionNumber)->hasChild("players")) {
+		warning("Net::getSessionName(): no players in session");
+		return 0;
+	}
+
+	return _sessions->child(sessionNumber)->child("players")->countChildren();
 }
 
 void Net::getProviderName(int providerIndex, char *buffer, int length) {
