@@ -166,9 +166,25 @@ void Net::createSessionErrorCallback(Networking::ErrorResponse error) {
 }
 
 int Net::joinSession(int sessionIndex) {
-	warning("STUB: Net::joinSession(%d)", sessionIndex); // PN_JoinSession
+	debug(1, "Net::joinSession(%d)", sessionIndex); // PN_JoinSession
 
-	// FAKE successful join. FIXME
+	if (!_sessions) {
+		warning("Net::joinSession(): no sessions");
+		return 0;
+	}
+
+	if (sessionIndex >= _sessions->countChildren()) {
+		warning("Net::joinSession(): session number too big: %d >= %lu", sessionIndex, _sessions->countChildren());
+		return 0;
+	}
+
+	if (!_sessions->child(sessionIndex)->hasChild("sessionid")) {
+		warning("Net::joinSession(): no sessionid in session");
+		return 0;
+	}
+
+	_sessionid = _sessions->child(sessionIndex)->child("sessionid")->asIntegerNumber();
+
 	return 1;
 }
 
@@ -376,17 +392,17 @@ int Net::getSessionPlayerCount(int sessionNumber) {
 	debug(1, "Net::getSessionPlayerCount(%d)", sessionNumber); // case GET_SESSION_PLAYER_COUNT_KLUDGE:
 
 	if (!_sessions) {
-		warning("Net::getSessionName(): no sessions");
+		warning("Net::getSessionPlayerCount(): no sessions");
 		return 0;
 	}
 
 	if (sessionNumber >= _sessions->countChildren()) {
-		warning("Net::getSessionName(): session number too big: %d >= %lu", sessionNumber, _sessions->countChildren());
+		warning("Net::getSessionPlayerCount(): session number too big: %d >= %lu", sessionNumber, _sessions->countChildren());
 		return 0;
 	}
 
 	if (!_sessions->child(sessionNumber)->hasChild("players")) {
-		warning("Net::getSessionName(): no players in session");
+		warning("Net::getSessionPlayerCount(): no players in session");
 		return 0;
 	}
 
