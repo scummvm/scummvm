@@ -333,7 +333,8 @@ void Net::remoteStartScript(int typeOfSend, int sendTypeParam, int priority, int
 }
 
 int Net::remoteSendData(int typeOfSend, int sendTypeParam, int type, byte *data, int len, int defaultRes) {
-	Common::MemoryWriteStream pack(_packbuffer, MAX_PACKET_SIZE + DATA_HEADER_SIZE);
+	byte *buf = (byte *)malloc(MAX_PACKET_SIZE + DATA_HEADER_SIZE);
+	Common::MemoryWriteStream pack(buf, MAX_PACKET_SIZE + DATA_HEADER_SIZE);
 
 	pack.writeUint32LE(_sessionid);
 	pack.writeUint32LE(_myUserId);
@@ -343,11 +344,36 @@ int Net::remoteSendData(int typeOfSend, int sendTypeParam, int type, byte *data,
 	pack.writeUint32LE(g_system->getMillis());
 	pack.write(data, len);
 
-	debug("Package to send, to: %d (%d), %d bytes", typeOfSend, sendTypeParam, len + DATA_HEADER_SIZE);
+	debug("Package to send, to: %d (%d), %d(%x) bytes", typeOfSend, sendTypeParam, len + DATA_HEADER_SIZE, len);
 
-	Common::hexdump(_packbuffer, len + DATA_HEADER_SIZE);
+	Common::hexdump(buf, len + DATA_HEADER_SIZE);
+
+	Networking::PostRequest rq(_serverprefix + "/packet",
+		new Common::Callback<Net, Common::JSONValue *>(this, &Net::remoteSendDataCallback),
+		new Common::Callback<Net, Networking::ErrorResponse>(this, &Net::remoteSendDataErrorCallback));
+
+	rq.setPostData(buf, len + DATA_HEADER_SIZE);
+
+	rq.start();
+
+	while(rq.state() == Networking::PROCESSING) {
+		g_system->delayMillis(5);
+	}
+
+	if (!_sessions)
+		return 0;
 
 	return defaultRes;
+}
+
+void Net::remoteSendDataCallback(Common::JSONValue *response) {
+	debug(1, "remoteSendData: Got: '%s'", response->stringify().c_str());
+
+	_sessions = new Common::JSONValue(*response);
+}
+
+void Net::remoteSendDataErrorCallback(Networking::ErrorResponse error) {
+	warning("Error in remoteSendData(): %ld %s", error.httpResponseCode, error.response.c_str());
 }
 
 void Net::remoteSendArray(int typeOfSend, int sendTypeParam, int priority, int arrayIndex) {

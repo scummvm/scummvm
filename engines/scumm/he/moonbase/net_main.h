@@ -80,6 +80,9 @@ private:
 	void addUserCallback(Common::JSONValue *response);
 	void addUserErrorCallback(Networking::ErrorResponse error);
 
+	void remoteSendDataCallback(Common::JSONValue *response);
+	void remoteSendDataErrorCallback(Networking::ErrorResponse error);
+
 public:
 	//getters
 	bool getHostName(char *hostname, int length);
