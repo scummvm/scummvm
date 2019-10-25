@@ -52,6 +52,7 @@ enum ActorFlags {
 };
 
 enum ActorFrameFlags {
+	ACTOR_FRAME_FLAG_2 = 0x2,
 	ACTOR_FRAME_FLAG_10 = 0x10,
 	ACTOR_FRAME_FLAG_20 = 0x20
 };
@@ -85,7 +86,7 @@ private:
 class Actor {
 public:
 	uint16 _actorID;
-	ActorResource*_actorResource;
+	ActorResource* _actorResource;
 	uint16 actorFileDictionaryIndex;
 	int16 resourceID;
 	byte *_seqCodeIp;
@@ -145,6 +146,7 @@ public:
 	bool isFlagSet(uint32 flag);
 	bool isFlagClear(uint32 flag) { return !isFlagSet(flag); }
 
+	byte *getPalette();
 private:
 	void pathfindingCleanup();
 	uint16 pathfindingUnk(int16 actor_x, int16 actor_y, int16 target_x, int16 target_y, uint16 unkType);

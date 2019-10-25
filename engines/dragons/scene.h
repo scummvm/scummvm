@@ -83,6 +83,7 @@ public:
 
 private:
 	void resetActorFrameFlags();
+	void drawActorNumber(int16 x, int16 y, uint16 actorId);
 };
 
 } // End of namespace Dragons

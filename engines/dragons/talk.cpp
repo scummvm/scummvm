@@ -558,7 +558,7 @@ bool Talk::talkToActor(ScriptOpCall &scriptOpCall) {
 		callMaybeResetData();
 		int numActiveDialogEntries = 0;
 		for (Common::Array<TalkDialogEntry*>::iterator it = _dialogEntries.begin(); it != _dialogEntries.end(); it++) {
-			if (!(*it)->flags & 1) {
+			if (!((*it)->flags & 1)) {
 				numActiveDialogEntries++;
 			}
 		}

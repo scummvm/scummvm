@@ -757,7 +757,7 @@ void Minigame3::run() {
 	_vm->setFlags(ENGINE_FLAG_40);
 //	_vm->_screen->loadPalette(1,(uint)*(uint16 *)(*(int *)(&DAT_80071c30 + (uint)actors[0].actorFileDictionaryIndex * 8) + 10) +
 //			   *(int *)(&DAT_80071c30 + (uint)actors[0].actorFileDictionaryIndex * 8));
-//	UnkCursorFunc1();
+	_vm->setupPalette1();
 //	_vm->_screen->loadPalette(4,(uint)*(uint16 *)(*(int *)(&DAT_80071c30 + (uint)actors[0].actorFileDictionaryIndex * 8) + 10) +
 //			   *(int *)(&DAT_80071c30 + (uint)actors[0].actorFileDictionaryIndex * 8));
 	_vm->_screen->updatePaletteTransparency(4,1,0xff,true);

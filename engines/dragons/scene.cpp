@@ -203,13 +203,13 @@ void Scene::loadSceneData(uint32 sceneId, uint32 cameraPointId) {
 
 				if (actor) {
 					ini->actor = actor;
-					if (ini->sequenceId & 0x1000) {
+					if (ini->field_1a_flags_maybe & 0x1000) {
 						actor->frame_flags |= 0x10;
 					} else {
 						if (ini->field_1a_flags_maybe & 0x2000) {
 							actor->frame_flags |= 0x20;
 						} else {
-							actor->frame_flags &= 0xffef;
+							actor->frame_flags &= ~0x10;
 						}
 					}
 
@@ -352,7 +352,11 @@ void Scene::draw() {
 					debug(4, "Actor %d %s (%d, %d) w:%d h:%d Priority: %d", actor->_actorID, actor->_actorResource->getFilename(), x,
 						  y,
 						  s->w, s->h, actor->priorityLayer);
-					_screen->copyRectToSurface(*s, x, y, Common::Rect(s->w, s->h), (bool)(actor->frame->flags & Dragons::FRAME_FLAG_FLIP_X), actor->isFlagSet(ACTOR_FLAG_8000) ? 255 : 128);
+					_screen->copyRectToSurface8bpp(*s, actor->getPalette(), x, y, Common::Rect(s->w, s->h), (bool)(actor->frame->flags & Dragons::FRAME_FLAG_FLIP_X), actor->isFlagSet(ACTOR_FLAG_8000) ? 255 : 128);
+					if (_vm->isDebugMode()) {
+						_screen->drawRect(0x7fff, Common::Rect(x, y, x + s->w, y + s->h), actor->_actorID);
+						drawActorNumber(x + s->w, y + 8, actor->_actorID);
+					}
 				} else {
 					debug(4, "Actor (not displayed) %d %s (%d, %d) Priority: %d", actor->_actorID,
 						  actor->_actorResource->getFilename(),
@@ -362,6 +366,9 @@ void Scene::draw() {
 		}
 	}
 	_vm->_fontManager->draw();
+	if (_vm->isDebugMode()) {
+		_vm->_fontManager->clearText();
+	}
 }
 
 int16 Scene::getPriorityAtPosition(Common::Point pos) {
@@ -439,6 +446,19 @@ void Scene::setFgLayerPriority(uint8 newPriority) {
 
 void Scene::setStagePalette(byte *newPalette) {
 	_stage->setPalette(newPalette);
+}
+
+
+void Scene::drawActorNumber(int16 x, int16 y, uint16 actorId) {
+	uint16 text[30];
+	char text8[15];
+
+	sprintf(text8, "%d", actorId);
+
+	for(int i = 0; i < strlen(text8); i++) {
+		text[i] = text8[i];
+	}
+	_vm->_fontManager->addText(x, y, text, strlen(text8), 1);
 }
 
 } // End of namespace Dragons

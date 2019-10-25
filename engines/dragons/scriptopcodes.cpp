@@ -1094,7 +1094,7 @@ void ScriptOpcodes::opUnk1A(ScriptOpCall &scriptOpCall) {
 
 	assert(index < 8);
 
-	_vm->opCode1A_tbl[index].field0 = field4;
+	_vm->opCode1A_tbl[index].paletteType = field4;
 	_vm->opCode1A_tbl[index].field2 = field6;
 	_vm->opCode1A_tbl[index].field4 = field8;
 	_vm->opCode1A_tbl[index].field6 = fieldA;
