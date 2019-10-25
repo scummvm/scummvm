@@ -3556,7 +3556,8 @@ case $_backend in
 		append_var DEFINES "-DREDUCE_MEMORY_USAGE"
 		append_var CXXFLAGS "-Wa,--noexecstack"
 		append_var LDFLAGS "-Wl,-z,noexecstack"
-		append_var INCLUDES "-isystem $ANDROID_NDK/sources/cxx-stl/system/include"
+		# removed the following directive - was causing compilation issues when not also explicitly using --disable-mt32emu
+#		append_var INCLUDES "-isystem $ANDROID_NDK/sources/cxx-stl/system/include"
 		;;
 	androidsdl)
 		_sdl=auto
