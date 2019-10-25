@@ -175,8 +175,7 @@ Common::Point *Background::loadPoints(Common::SeekableReadStream &stream) {
 
 Graphics::Surface *Background::initGfxLayer(TileMap &tileMap) {
 	Graphics::Surface *surface = new Graphics::Surface();
-	Graphics::PixelFormat pixelFormat16(2, 5, 5, 5, 1, 10, 5, 0, 15); //TODO move this to a better location.
-	surface->create(tileMap.w * TILE_WIDTH, tileMap.h * TILE_HEIGHT, pixelFormat16);
+	surface->create(tileMap.w * TILE_WIDTH, tileMap.h * TILE_HEIGHT, Graphics::PixelFormat::createFormatCLUT8());
 	return surface;
 }
 
@@ -192,13 +191,20 @@ void Background::loadGfxLayer(Graphics::Surface *surface, TileMap &tileMap, byte
 
 void drawTileToSurface(Graphics::Surface *surface, byte *palette, byte *tile, uint32 x, uint32 y) {
 	byte *pixels = (byte *)surface->getPixels();
-	for(int ty = 0; ty < TILE_HEIGHT; ty++) {
-		for(int tx = 0; tx < TILE_WIDTH; tx++) {
-			uint32 cidx = *tile;
-			uint32 offset = (y + ty) * surface->pitch + (x + tx) * 2;
-			pixels[offset] = palette[cidx * 2];
-			pixels[offset + 1] = palette[cidx * 2 + 1];
-			tile++;
+	if (surface->format.bpp() == 16) {
+		for(int ty = 0; ty < TILE_HEIGHT; ty++) {
+			for(int tx = 0; tx < TILE_WIDTH; tx++) {
+				uint32 cidx = *tile;
+				uint32 offset = (y + ty) * surface->pitch + (x + tx) * 2;
+				pixels[offset] = palette[cidx * 2];
+				pixels[offset + 1] = palette[cidx * 2 + 1];
+				tile++;
+			}
+		}
+	} else {
+		for (int ty = 0; ty < TILE_HEIGHT; ty++) {
+			memcpy(&pixels[(y + ty) * surface->pitch + x], tile, TILE_WIDTH);
+			tile += TILE_WIDTH;
 		}
 	}
 }
