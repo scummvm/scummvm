@@ -225,7 +225,7 @@ void Screen::loadPalette(uint16 paletteNum, byte *palette) {
 	paletteNum &= ~0x8000;
 	assert(paletteNum < DRAGONS_NUM_PALETTES);
 	if (paletteNum == 0) {
-		Dragons::getEngine()->_scene->setStagePalette(palette);
+		memcpy(&_palettes[paletteNum][0], palette, 512);
 	} else {
 		memcpy(&_palettes[paletteNum][0], palette, 512);
 		if (paletteNum == 2 || paletteNum == 4 || paletteNum == 5) {
