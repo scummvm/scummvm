@@ -318,6 +318,8 @@ void GriffonEngine::newGame() {
 	_playingGardens = false;
 	_playingBoss = false;
 
+	_player.spellStrength = 0;
+
 	loadMap(2);
 
 	mainLoop();
