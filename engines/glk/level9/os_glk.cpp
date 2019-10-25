@@ -2000,7 +2000,8 @@ static void gln_graphics_paint_everything(winid_t glk_window, Colour palette[],
 		}
 	}
 
-	g_vm->glk_image_draw(glk_window, s, (uint)-1, x_offset, y_offset);
+	g_vm->glk_image_draw_scaled(glk_window, s, (uint)-1, x_offset, y_offset,
+		width * GLN_GRAPHICS_PIXEL, height * GLN_GRAPHICS_PIXEL);
 }
 
 /*

@@ -930,15 +930,19 @@ bool GlkAPI::glk_image_draw_scaled(winid_t win, const Graphics::Surface &image, 
 	if (!win) {
 		warning("image_draw_scaled: invalid ref");
 	} else if (g_conf->_graphics) {
-		GraphicsWindow *gfxWin = dynamic_cast<GraphicsWindow *>(win);
+		if (image.w == width && image.h == height) {
+			return glk_image_draw(win, image, transColor, xp, yp);
 
-		Graphics::ManagedSurface s(width, height);
-		s.clear(transColor);
-		s.transBlitFrom(image, Common::Rect(0, 0, image.w, image.h),
-			Common::Rect(0, 0, width, height), transColor);
+		} else {
+			GraphicsWindow *gfxWin = dynamic_cast<GraphicsWindow *>(win);
 
-		if (gfxWin)
-			gfxWin->drawPicture(s, transColor, xp, yp, s.w, s.h);
+			Graphics::ManagedSurface s(width, height, image.format);
+			s.transBlitFrom(image, Common::Rect(0, 0, image.w, image.h),
+				Common::Rect(0, 0, width, height));
+
+			if (gfxWin)
+				gfxWin->drawPicture(s, transColor, xp, yp, s.w, s.h);
+		}
 	}
 
 	return true;
