@@ -37,6 +37,7 @@ Net::Net(ScummEngine_v100he *vm) : _latencyTime(1), _fakeLatency(false), _vm(vm)
 	_lastResult = 0;
 
 	_sessionid = -1;
+	_sessions = nullptr;
 
 	_serverprefix = "http://localhost/moonbase";
 }
@@ -44,6 +45,8 @@ Net::Net(ScummEngine_v100he *vm) : _latencyTime(1), _fakeLatency(false), _vm(vm)
 Net::~Net() {
 	free(_tmpbuffer);
 	free(_packbuffer);
+
+	delete _sessions;
 }
 
 int Net::hostGame(char *sessionName, char *userName) {
@@ -216,11 +219,13 @@ bool Net::destroyPlayer(int32 playerDPID) {
 }
 
 int32 Net::startQuerySessions() {
-	warning("STUB: Net::startQuerySessions()"); // StartQuerySessions
+	debug(1, "Net::startQuerySessions()"); // StartQuerySessions
 
 	Networking::PostRequest rq(_serverprefix + "/lobbies",
 		new Common::Callback<Net, Common::JSONValue *>(this, &Net::startQuerySessionsCallback),
 		new Common::Callback<Net, Networking::ErrorResponse>(this, &Net::startQuerySessionsErrorCallback));
+
+	delete _sessions;
 
 	rq.start();
 
@@ -228,12 +233,18 @@ int32 Net::startQuerySessions() {
 		g_system->delayMillis(5);
 	}
 
-	// FAKE 1 session. FIXME
-	return 1;
+	if (!_sessions)
+		return 0;
+
+	debug(1, "Net::startQuerySessions(): got %lu", _sessions->countChildren());
+
+	return _sessions->countChildren();
 }
 
 void Net::startQuerySessionsCallback(Common::JSONValue *response) {
-	warning("startQuerySessions: Got: '%s'", response->stringify().c_str());
+	debug(1, "startQuerySessions: Got: '%s' which is %lu", response->stringify().c_str(), response->countChildren());
+
+	_sessions = new Common::JSONValue(*response);
 }
 
 void Net::startQuerySessionsErrorCallback(Networking::ErrorResponse error) {
@@ -344,8 +355,21 @@ bool Net::getIPfromName(char *ip, int ipLength, char *nameBuffer) {
 }
 
 void Net::getSessionName(int sessionNumber, char *buffer, int length) {
+	warning("STUB: Net::getSessionName(%d, ..., %d)", sessionNumber, length); // PN_GetSessionName
+
+	if (!_sessions) {
+		*buffer = '\0';
+		warning("Net::getSessionName(): no sessions");
+		return;
+	}
+
+	if (sessionNumber >= _sessions->countChildren()) {
+		*buffer = '\0';
+		warning("Net::getSessionName(): session number too big: %d >= %lu", sessionNumber, _sessions->countChildren());
+		return;
+	}
 	// FIXME
-	strcpy(buffer, "test");
+	strcpy(buffer, _sessions->child(sessionNumber)->child("name")->asString().c_str());
 
 	warning("STUB: Net::getSessionName(%d, \"%s\", %d)", sessionNumber, buffer, length); // PN_GetSessionName
 }

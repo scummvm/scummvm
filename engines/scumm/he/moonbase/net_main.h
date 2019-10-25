@@ -107,6 +107,8 @@ public:
 
 	int _sessionid;
 
+	Common::JSONValue *_sessions;
+
 	Common::String _serverprefix;
 };
 
