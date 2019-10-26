@@ -340,6 +340,7 @@ int Net::remoteSendData(int typeOfSend, int sendTypeParam, int type, byte *data,
 	pack.writeUint32LE(_myUserId);
 	pack.writeUint32LE(typeOfSend);
 	pack.writeUint32LE(sendTypeParam);
+	pack.writeUint32LE(type);
 	pack.writeUint32LE(len);
 	pack.writeUint32LE(g_system->getMillis());
 	pack.write(data, len);
@@ -453,16 +454,32 @@ int Net::getMessageCount() {
 }
 
 void Net::remoteReceiveData() {
-	// FIXME. Get data into _packbuffer
+	Networking::PostRequest rq(_serverprefix + "/getpacket",
+		new Common::Callback<Net, Common::JSONValue *>(this, &Net::remoteReceiveDataCallback),
+		new Common::Callback<Net, Networking::ErrorResponse>(this, &Net::remoteReceiveDataErrorCallback));
 
-	int _packetsize = 0;
+	char *buf = (char *)malloc(MAX_PACKET_SIZE);
+	snprintf(buf, MAX_PACKET_SIZE, "{\"sessionid\":%d, \"userid\":%d}", _sessionid, _myUserId);
+	rq.setPostData((byte *)buf, strlen(buf));
+	rq.setContentType("application/json");
+
+	_packetsize = -1;
+	rq.start();
+
+	while(rq.state() == Networking::PROCESSING) {
+		g_system->delayMillis(5);
+	}
+
+	if (_packetsize == -1)
+		return;
 
 	Common::MemoryReadStream pack(_packbuffer, _packetsize);
 
 	pack.readUint32LE(); // sessionid
 	uint from = pack.readUint32LE();
-	uint type = pack.readUint32LE(); // typeOfSend
+	pack.readUint32LE(); // typeOfSend
 	pack.readUint32LE(); // sendTypeParam
+	uint type = pack.readUint32LE();
 	uint len = pack.readUint32LE();
 	pack.readUint32LE(); // timestamp
 
@@ -527,6 +544,21 @@ void Net::remoteReceiveData() {
 	default:
 		warning("Moonbase: Received unknown network command %d", type);
 	}
+}
+
+void Net::remoteReceiveDataCallback(Common::JSONValue *response) {
+	debug(1, "remoteReceiveData: Got: '%s'", response->stringify().c_str());
+
+	if (!response->child("size")->asIntegerNumber())
+		return;
+
+	_packetsize = response->child("size")->asIntegerNumber();
+
+	strncpy((char *)_packbuffer, response->child("data")->asString().c_str(), _packetsize);
+}
+
+void Net::remoteReceiveDataErrorCallback(Networking::ErrorResponse error) {
+	warning("Error in remoteReceiveData(): %ld %s", error.httpResponseCode, error.response.c_str());
 }
 
 void Net::unpackageArray(int arrayId, byte *data, int len) {

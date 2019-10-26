@@ -83,6 +83,9 @@ private:
 	void remoteSendDataCallback(Common::JSONValue *response);
 	void remoteSendDataErrorCallback(Networking::ErrorResponse error);
 
+	void remoteReceiveDataCallback(Common::JSONValue *response);
+	void remoteReceiveDataErrorCallback(Networking::ErrorResponse error);
+
 public:
 	//getters
 	bool getHostName(char *hostname, int length);
@@ -102,6 +105,7 @@ public:
 	ScummEngine_v100he *_vm;
 
 	byte *_packbuffer;
+	int _packetsize;
 	byte *_tmpbuffer;
 
 	int _myUserId;
