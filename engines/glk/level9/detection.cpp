@@ -22,6 +22,7 @@
 
 #include "glk/level9/detection.h"
 #include "glk/level9/detection_tables.h"
+#include "glk/level9/level9_main.h"
 #include "glk/level9/os_glk.h"
 #include "glk/blorb.h"
 #include "common/debug.h"
@@ -31,6 +32,486 @@
 
 namespace Glk {
 namespace Level9 {
+
+long Scanner::scanner(byte *startFile, uint32 size, byte **dictData, byte **aCodePtr) {
+	_dictData = dictData;
+	_aCodePtr = aCodePtr;
+
+#ifdef FULLSCAN
+	FullScan(startfile, FileSize);
+#endif
+
+	int offset = scan(startFile, size);
+	if (offset < 0) {
+		offset = ScanV2(startFile, size);
+		_gameType = L9_V2;
+		if (offset < 0) {
+			offset = ScanV1(startFile, size);
+			_gameType = L9_V1;
+			if (offset < 0) {
+				return -1;
+			}
+		}
+	}
+
+	return offset;
+}
+
+const L9V1GameInfo &Scanner::v1Game() const {
+	assert(_gameType == L9_V1);
+	return L9_V1_GAMES[_l9V1Game];
+}
+
+long Scanner::scan(byte *StartFile, uint32 size) {
+	byte *Chk = (byte *)malloc(size + 1);
+	byte *Image = (byte *)calloc(size, 1);
+	uint32 i, num, Size, MaxSize = 0;
+	int j;
+	uint16 d0 = 0, l9, md, ml, dd, dl;
+	uint32 Min, Max;
+	long Offset = -1;
+	bool JumpKill, DriverV4;
+
+	if ((Chk == nullptr) || (Image == nullptr)) {
+		error("Unable to allocate memory for game scan! Exiting...");
+	}
+
+	Chk[0] = 0;
+	for (i = 1; i <= size; i++)
+		Chk[i] = Chk[i - 1] + StartFile[i - 1];
+
+	for (i = 0; i < size - 33; i++) {
+		num = L9WORD(StartFile + i) + 1;
+		/*
+		        Chk[i] = 0 +...+ i-1
+		        Chk[i+n] = 0 +...+ i+n-1
+		        Chk[i+n] - Chk[i] = i + ... + i+n
+		*/
+		if (num > 0x2000 && i + num <= size && Chk[i + num] == Chk[i]) {
+			md = L9WORD(StartFile + i + 0x2);
+			ml = L9WORD(StartFile + i + 0x4);
+			dd = L9WORD(StartFile + i + 0xa);
+			dl = L9WORD(StartFile + i + 0xc);
+
+			if (ml > 0 && md > 0 && i + md + ml <= size && dd > 0 && dl > 0 && i + dd + dl * 4 <= size) {
+				/* v4 files may have acodeptr in 8000-9000, need to fix */
+				for (j = 0; j < 12; j++) {
+					d0 = L9WORD(StartFile + i + 0x12 + j * 2);
+					if (j != 11 && d0 >= 0x8000 && d0 < 0x9000) {
+						if (d0 >= 0x8000 + LISTAREASIZE) break;
+					} else if (i + d0 > size) break;
+				}
+				/* list9 ptr must be in listarea, acode ptr in data */
+				if (j < 12 /*|| (d0>=0x8000 && d0<0x9000)*/) continue;
+
+				l9 = L9WORD(StartFile + i + 0x12 + 10 * 2);
+				if (l9 < 0x8000 || l9 >= 0x8000 + LISTAREASIZE) continue;
+
+				Size = 0;
+				Min = Max = i + d0;
+				DriverV4 = 0;
+				if (ValidateSequence(StartFile, Image, i + d0, i + d0, &Size, size, &Min, &Max, false, &JumpKill, &DriverV4)) {
+					if (Size > MaxSize && Size > 100) {
+						Offset = i;
+						MaxSize = Size;
+						_gameType = DriverV4 ? L9_V4 : L9_V3;
+					}
+				}
+			}
+		}
+	}
+
+	free(Chk);
+	free(Image);
+	return Offset;
+}
+
+long Scanner::ScanV2(byte *StartFile, uint32 size) {
+	byte *Chk = (byte *)malloc(size + 1);
+	byte *Image = (byte *)calloc(size, 1);
+	uint32 i, Size, MaxSize = 0, num;
+	int j;
+	uint16 d0 = 0, l9;
+	uint32 Min, Max;
+	long Offset = -1;
+	bool JumpKill;
+
+	if ((Chk == nullptr) || (Image == nullptr)) {
+		error("Unable to allocate memory for game scan! Exiting...");
+	}
+
+	Chk[0] = 0;
+	for (i = 1; i <= size; i++)
+		Chk[i] = Chk[i - 1] + StartFile[i - 1];
+
+	for (i = 0; i < size - 28; i++) {
+		num = L9WORD(StartFile + i + 28) + 1;
+		if (i + num <= size && ((Chk[i + num] - Chk[i + 32]) & 0xff) == StartFile[i + 0x1e]) {
+			for (j = 0; j < 14; j++) {
+				d0 = L9WORD(StartFile + i + j * 2);
+				if (j != 13 && d0 >= 0x8000 && d0 < 0x9000) {
+					if (d0 >= 0x8000 + LISTAREASIZE) break;
+				} else if (i + d0 > size) break;
+			}
+			/* list9 ptr must be in listarea, acode ptr in data */
+			if (j < 14 /*|| (d0>=0x8000 && d0<0x9000)*/) continue;
+
+			l9 = L9WORD(StartFile + i + 6 + 9 * 2);
+			if (l9 < 0x8000 || l9 >= 0x8000 + LISTAREASIZE) continue;
+
+			Size = 0;
+			Min = Max = i + d0;
+			if (ValidateSequence(StartFile, Image, i + d0, i + d0, &Size, size, &Min, &Max, false, &JumpKill, nullptr)) {
+#ifdef L9DEBUG
+				printf("Found valid V2 header at %ld, code size %ld", i, Size);
+#endif
+				if (Size > MaxSize && Size > 100) {
+					Offset = i;
+					MaxSize = Size;
+				}
+			}
+		}
+	}
+	free(Chk);
+	free(Image);
+	return Offset;
+}
+
+long Scanner::ScanV1(byte *StartFile, uint32 size) {
+	byte *Image = (byte *)calloc(size, 1);
+	uint32 i, Size;
+	int Replace;
+	byte *ImagePtr;
+	long MaxPos = -1;
+	uint32 MaxCount = 0;
+	uint32 Min, Max; //, MaxMax, MaxMin;
+	bool JumpKill; // , MaxJK;
+
+	int dictOff1 = 0, dictOff2 = 0;
+	byte dictVal1 = 0xff, dictVal2 = 0xff;
+
+	if (Image == nullptr) {
+		error("Unable to allocate memory for game scan! Exiting...");
+	}
+
+	for (i = 0; i < size; i++) {
+		if ((StartFile[i] == 0 && StartFile[i + 1] == 6) || (StartFile[i] == 32 && StartFile[i + 1] == 4)) {
+			Size = 0;
+			Min = Max = i;
+			Replace = 0;
+			if (ValidateSequence(StartFile, Image, i, i, &Size, size, &Min, &Max, false, &JumpKill, nullptr)) {
+				if (Size > MaxCount && Size > 100 && Size < 10000) {
+					MaxCount = Size;
+					//MaxMin = Min;
+					//MaxMax = Max;
+
+					MaxPos = i;
+					//MaxJK = JumpKill;
+				}
+				Replace = 0;
+			}
+			for (ImagePtr = Image + Min; ImagePtr <= Image + Max; ImagePtr++) {
+				if (*ImagePtr == 2)
+					*ImagePtr = Replace;
+			}
+		}
+	}
+
+	/* V1 dictionary detection from L9Cut by Paul David Doherty */
+	for (i = 0; i < size - 20; i++) {
+		if (StartFile[i] == 'A') {
+			if (StartFile[i + 1] == 'T' && StartFile[i + 2] == 'T' && StartFile[i + 3] == 'A' && StartFile[i + 4] == 'C' && StartFile[i + 5] == 0xcb) {
+				dictOff1 = i;
+				dictVal1 = StartFile[dictOff1 + 6];
+				break;
+			}
+		}
+	}
+	for (i = dictOff1; i < size - 20; i++) {
+		if (StartFile[i] == 'B') {
+			if (StartFile[i + 1] == 'U' && StartFile[i + 2] == 'N' && StartFile[i + 3] == 'C' && StartFile[i + 4] == 0xc8) {
+				dictOff2 = i;
+				dictVal2 = StartFile[dictOff2 + 5];
+				break;
+			}
+		}
+	}
+	_l9V1Game = -1;
+	if (_dictData && (dictVal1 != 0xff || dictVal2 != 0xff)) {
+		for (i = 0; i < sizeof L9_V1_GAMES / sizeof L9_V1_GAMES[0]; i++) {
+			if ((L9_V1_GAMES[i].dictVal1 == dictVal1) && (L9_V1_GAMES[i].dictVal2 == dictVal2)) {
+				_l9V1Game = i;
+				(*_dictData) = StartFile + dictOff1 - L9_V1_GAMES[i].dictStart;
+			}
+		}
+	}
+
+	free(Image);
+
+	if (MaxPos > 0 && _aCodePtr) {
+		(*_aCodePtr) = StartFile + MaxPos;
+		return 0;
+	}
+
+	return -1;
+}
+
+bool Scanner::ValidateSequence(byte *Base, byte *Image, uint32 iPos, uint32 acode, uint32 *Size, uint32 size, uint32 *Min, uint32 *Max, bool Rts, bool *JumpKill, bool *DriverV4) {
+	uint32 Pos;
+	bool Finished = false, Valid;
+	uint32 Strange = 0;
+	int ScanCodeMask;
+	int Code;
+	*JumpKill = false;
+
+	if (iPos >= size)
+		return false;
+	Pos = iPos;
+	if (Pos < *Min) *Min = Pos;
+
+	if (Image[Pos]) return true; /* hit valid code */
+
+	do {
+		Code = Base[Pos];
+		Valid = true;
+		if (Image[Pos]) break; /* converged to found code */
+		Image[Pos++] = 2;
+		if (Pos > *Max) *Max = Pos;
+
+		ScanCodeMask = 0x9f;
+		if (Code & 0x80) {
+			ScanCodeMask = 0xff;
+			if ((Code & 0x1f) > 0xa)
+				Valid = false;
+			Pos += 2;
+		}
+		else switch (Code & 0x1f) {
+		case 0: { /* goto */
+			uint32 Val = scangetaddr(Code, Base, &Pos, acode, &ScanCodeMask);
+			Valid = ValidateSequence(Base, Image, Val, acode, Size, size, Min, Max, true/*Rts*/, JumpKill, DriverV4);
+			Finished = true;
+			break;
+		}
+		case 1: { /* intgosub */
+			uint32 Val = scangetaddr(Code, Base, &Pos, acode, &ScanCodeMask);
+			Valid = ValidateSequence(Base, Image, Val, acode, Size, size, Min, Max, true, JumpKill, DriverV4);
+			break;
+		}
+		case 2: /* intreturn */
+			Valid = Rts;
+			Finished = true;
+			break;
+		case 3: /* printnumber */
+			Pos++;
+			break;
+		case 4: /* messagev */
+			Pos++;
+			break;
+		case 5: /* messagec */
+			scangetcon(Code, &Pos, &ScanCodeMask);
+			break;
+		case 6: /* function */
+			switch (Base[Pos++]) {
+			case 2:/* random */
+				Pos++;
+				break;
+			case 1:/* calldriver */
+				if (DriverV4) {
+					if (CheckCallDriverV4(Base, Pos - 2))
+						*DriverV4 = true;
+				}
+				break;
+			case 3:/* save */
+			case 4:/* restore */
+			case 5:/* clearworkspace */
+			case 6:/* clear stack */
+				break;
+			case 250: /* printstr */
+				while (Base[Pos++]);
+				break;
+
+			default:
+				Valid = false;
+				break;
+			}
+			break;
+		case 7: /* input */
+			Pos += 4;
+			break;
+		case 8: /* varcon */
+			scangetcon(Code, &Pos, &ScanCodeMask);
+			Pos++;
+			break;
+		case 9: /* varvar */
+			Pos += 2;
+			break;
+		case 10: /* _add */
+			Pos += 2;
+			break;
+		case 11: /* _sub */
+			Pos += 2;
+			break;
+		case 14: /* jump */
+			*JumpKill = true;
+			Finished = true;
+			break;
+		case 15: /* exit */
+			Pos += 4;
+			break;
+		case 16: /* ifeqvt */
+		case 17: /* ifnevt */
+		case 18: /* ifltvt */
+		case 19: { /* ifgtvt */
+			uint32 Val;
+			Pos += 2;
+			Val = scangetaddr(Code, Base, &Pos, acode, &ScanCodeMask);
+			Valid = ValidateSequence(Base, Image, Val, acode, Size, size, Min, Max, Rts, JumpKill, DriverV4);
+			break;
+		}
+		case 20: /* screen */
+			if (Base[Pos++]) Pos++;
+			break;
+		case 21: /* cleartg */
+			Pos++;
+			break;
+		case 22: /* picture */
+			Pos++;
+			break;
+		case 23: /* getnextobject */
+			Pos += 6;
+			break;
+		case 24: /* ifeqct */
+		case 25: /* ifnect */
+		case 26: /* ifltct */
+		case 27: { /* ifgtct */
+			uint32 Val;
+			Pos++;
+			scangetcon(Code, &Pos, &ScanCodeMask);
+			Val = scangetaddr(Code, Base, &Pos, acode, &ScanCodeMask);
+			Valid = ValidateSequence(Base, Image, Val, acode, Size, size, Min, Max, Rts, JumpKill, DriverV4);
+			break;
+		}
+		case 28: /* printinput */
+			break;
+		case 12: /* ilins */
+		case 13: /* ilins */
+		case 29: /* ilins */
+		case 30: /* ilins */
+		case 31: /* ilins */
+			Valid = false;
+			break;
+		}
+		if (Valid && (Code & ~ScanCodeMask))
+			Strange++;
+	} while (Valid && !Finished && Pos < size); /* && Strange==0); */
+	(*Size) += Pos - iPos;
+	return Valid; /* && Strange==0; */
+}
+
+uint16 Scanner::scanmovewa5d0(byte *Base, uint32 *Pos) {
+	uint16 ret = L9WORD(Base + *Pos);
+	(*Pos) += 2;
+	return ret;
+}
+
+uint32 Scanner::scangetaddr(int Code, byte *Base, uint32 *Pos, uint32 acode, int *Mask) {
+	(*Mask) |= 0x20;
+	if (Code & 0x20) {
+		/* getaddrshort */
+		signed char diff = Base[*Pos];
+		(*Pos)++;
+		return (*Pos) + diff - 1;
+	} else {
+		return acode + scanmovewa5d0(Base, Pos);
+	}
+}
+
+void Scanner::scangetcon(int Code, uint32 *Pos, int *Mask) {
+	(*Pos)++;
+	if (!(Code & 64))(*Pos)++;
+	(*Mask) |= 0x40;
+}
+
+bool Scanner::CheckCallDriverV4(byte *Base, uint32 Pos) {
+	int i, j;
+
+	// Look back for an assignment from a variable to list9[0], which is used
+	// to specify the driver call.
+	for (i = 0; i < 2; i++) {
+		int x = Pos - ((i + 1) * 3);
+		if ((Base[x] == 0x89) && (Base[x + 1] == 0x00)) {
+			// Get the variable being copied to list9[0]
+			int var = Base[x + 2];
+
+			// Look back for an assignment to the variable
+			for (j = 0; j < 2; j++) {
+				int y = x - ((j + 1) * 3);
+				if ((Base[y] == 0x48) && (Base[y + 2] == var)) {
+					// If this a V4 driver call?
+					switch (Base[y + 1]) {
+					case 0x0E:
+					case 0x20:
+					case 0x22:
+						return TRUE;
+					}
+					return FALSE;
+				}
+			}
+		}
+	}
+	return FALSE;
+}
+
+#ifdef FULLSCAN
+void Scanner::fullScan(byte *StartFile, uint32 size) {
+	byte *Image = (byte *)calloc(size, 1);
+	uint32 i, Size;
+	int Replace;
+	byte *ImagePtr;
+	uint32 MaxPos = 0;
+	uint32 MaxCount = 0;
+	uint32 Min, Max, MaxMin, MaxMax;
+	int Offset;
+	bool JumpKill, MaxJK;
+	for (i = 0; i < size; i++) {
+		Size = 0;
+		Min = Max = i;
+		Replace = 0;
+		if (ValidateSequence(StartFile, Image, i, i, &Size, size, &Min, &Max, FALSE, &JumpKill, nullptr)) {
+			if (Size > MaxCount) {
+				MaxCount = Size;
+				MaxMin = Min;
+				MaxMax = Max;
+
+				MaxPos = i;
+				MaxJK = JumpKill;
+			}
+			Replace = 0;
+		}
+		for (ImagePtr = Image + Min; ImagePtr <= Image + Max; ImagePtr++) {
+			if (*ImagePtr == 2)
+				*ImagePtr = Replace;
+		}
+	}
+	printf("%ld %ld %ld %ld %s", MaxPos, MaxCount, MaxMin, MaxMax, MaxJK ? "jmp killed" : "");
+	/* search for reference to MaxPos */
+	Offset = 0x12 + 11 * 2;
+	for (i = 0; i < size - Offset - 1; i++) {
+		if ((L9WORD(StartFile + i + Offset)) + i == MaxPos) {
+			printf("possible v3,4 Code reference at : %ld", i);
+			/* startdata=StartFile+i; */
+		}
+	}
+	Offset = 13 * 2;
+	for (i = 0; i < size - Offset - 1; i++) {
+		if ((L9WORD(StartFile + i + Offset)) + i == MaxPos)
+			printf("possible v2 Code reference at : %ld", i);
+	}
+	free(Image);
+}
+#endif
+
+/*----------------------------------------------------------------------*/
 
 GameDetection::GameDetection(byte *&startData, size_t &fileSize) :
 		_startData(startData), _fileSize(fileSize), _crcInitialized(false), _gameName(nullptr) {
@@ -198,7 +679,6 @@ const char *GameDetection::gln_gameid_get_game_name() {
 void GameDetection::gln_gameid_game_name_reset() {
 	_gameName = nullptr;
 }
-
 
 /*----------------------------------------------------------------------*/
 

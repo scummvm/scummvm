@@ -31,6 +31,8 @@
 namespace Glk {
 namespace Level9 {
 
+enum L9GameTypes { L9_V1, L9_V2, L9_V3, L9_V4 };
+
 struct gln_game_table_t {
 	const size_t length;        ///< Datafile length in bytes
 	const byte checksum;        ///< 8-bit checksum, last datafile byte
@@ -48,10 +50,53 @@ struct gln_patch_table_t {
 };
 typedef const gln_patch_table_t *gln_patch_tableref_t;
 
+struct L9V1GameInfo {
+	byte dictVal1, dictVal2;
+	int dictStart, L9Ptrs[5], absData, msgStart, msgLen;
+};
+
+/**
+ * Scanner for game data
+ */
+class Scanner {
+private:
+	long scan(byte *StartFile, uint32 size);
+	long ScanV2(byte *StartFile, uint32 size);
+	long ScanV1(byte *StartFile, uint32 size);
+
+	bool ValidateSequence(byte *Base, byte *Image, uint32 iPos, uint32 acode, uint32 *Size, uint32 size, uint32 *Min, uint32 *Max, bool Rts, bool *JumpKill, bool *DriverV4);
+	uint16 scanmovewa5d0(byte *Base, uint32 *Pos);
+	uint32 scangetaddr(int Code, byte *Base, uint32 *Pos, uint32 acode, int *Mask);
+	void scangetcon(int Code, uint32 *Pos, int *Mask);
+	bool CheckCallDriverV4(byte *Base, uint32 Pos);
+#ifdef FULLSCAN
+	void Scanner::fullScan(byte *StartFile, uint32 size);
+#endif
+private:
+	byte **_dictData;
+	byte **_aCodePtr;
+public:
+	L9GameTypes _gameType;
+	int _l9V1Game;
+public:
+	Scanner() : _dictData(nullptr), _aCodePtr(nullptr), _gameType(L9_V1), _l9V1Game(-1) {}
+
+	/**
+	 * Scan passed file for a valid game, and if found return it's offset
+	 */
+	long scanner(byte *StartFile, uint32 size, byte **dictData = nullptr,
+		byte **aCodePtr = nullptr);
+
+	/**
+	 * Returns the info for a V1 game
+	 */
+	const L9V1GameInfo &v1Game() const;
+};
+
 /**
  * Detection manager for specific games
  */
-class GameDetection {
+class GameDetection : public Scanner {
 private:
 	byte *&_startData;
 	size_t &_fileSize;
