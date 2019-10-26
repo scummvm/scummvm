@@ -2150,7 +2150,7 @@ static const glui32 GLN_WATCHDOG_FIXUP = 50;
  * remains silent for long enough, set by the timeout, we'll offer the
  * option to end the game.  A timeout of zero disables the watchdog.
  */
-static time_t gln_watchdog_monitor = 0;
+static uint32 gln_watchdog_monitor = 0;
 static double gln_watchdog_timeout_secs = 0.0;
 
 /*
@@ -2208,7 +2208,7 @@ static void gln_watchdog_tick() {
 static int gln_watchdog_has_timed_out() {
 	/* If loop detection is off or the timeout is set to zero, do nothing. */
 	if (gln_loopcheck_enabled && gln_watchdog_timeout_secs > 0) {
-		time_t now;
+		uint32 now;
 		double delta_time;
 
 		/*
