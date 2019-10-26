@@ -1113,10 +1113,7 @@ void GriffonEngine::drawPlayer() {
 
 
 	int ww = 14 * _player.hp / _player.maxHp;
-	if (ww > 14)
-		ww = 14;
-	if (ww < 1)
-		ww = 1;
+	ww = CLIP(ww, 1, 14);
 
 	rcDest.setWidth(ww);
 	rcDest.setHeight(2);
