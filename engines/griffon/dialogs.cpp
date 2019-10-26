@@ -49,6 +49,7 @@ namespace Griffon {
 
 void GriffonEngine::title(int mode) {
 	float xofs = 0;
+	bool exitTitle = false;
 
 	rcSrc.left = 0;
 	rcSrc.top = 0;
@@ -168,38 +169,52 @@ void GriffonEngine::title(int mode) {
 			if (_event.type == Common::EVENT_KEYDOWN) {
 				keypause = _ticks + 150;
 
-				if (_event.kbd.keycode == Common::KEYCODE_ESCAPE && mode == 1)
-					break;
-				else if (_event.kbd.keycode == Common::KEYCODE_UP) {
-					cursel--;
-					if (cursel < 0)
-						cursel = (mode == 1 ? 3 : 2);
-				} else if (_event.kbd.keycode == Common::KEYCODE_DOWN) {
-					cursel++;
-					if (cursel >= (mode == 1 ? 4 : 3))
-						cursel = 0;
-				} else if (_event.kbd.keycode == Common::KEYCODE_RETURN) {
-					if (cursel == 0) {
-						saveLoadNew();
-						_ticks = g_system->getMillis();
-						keypause = _ticks + 150;
-						ticks1 = _ticks;
-					} else if (cursel == 1) {
-						configMenu();
-						_ticks = g_system->getMillis();
-						keypause = _ticks + 150;
-						ticks1 = _ticks;
-					} else if (cursel == 2) {
-						_shouldQuit = true;
-					} else if (cursel == 3) {
+				switch(_event.kbd.keycode){
+					case Common::KEYCODE_ESCAPE:
+						if (mode == 1)
+							exitTitle = true;
 						break;
-					}
+					case Common::KEYCODE_UP:
+						cursel--;
+						if (cursel < 0)
+							cursel = (mode == 1 ? 3 : 2);
+						break;
+					case Common::KEYCODE_DOWN:
+						cursel++;
+						if (cursel >= (mode == 1 ? 4 : 3))
+							cursel = 0;
+						break;
+					case Common::KEYCODE_RETURN:
+						switch(cursel) {
+						case 0:
+							saveLoadNew();
+							_ticks = g_system->getMillis();
+							keypause = _ticks + 150;
+							ticks1 = _ticks;
+							break;
+						case 1:
+							configMenu();
+							_ticks = g_system->getMillis();
+							keypause = _ticks + 150;
+							ticks1 = _ticks;
+							break;
+						case 2:
+							_shouldQuit = true;
+							break;
+						case 3:
+							exitTitle = true;
+						default:
+							break;
+						}
+						break;
+					default:
+						break;
 				}
 			}
 		}
 
 		g_system->delayMillis(10);
-	} while (!_shouldQuit);
+	} while (!_shouldQuit && !exitTitle);
 
 	_itemticks = _ticks + 210;
 
@@ -212,7 +227,29 @@ void GriffonEngine::title(int mode) {
 }
 
 void GriffonEngine::configMenu() {
+	static const char *vr[22] = {
+		"", "",
+		"", "", "", "",
+		"", "", "",
+		"Music:", "", "",
+		"Sound Effects:", "", "",
+		"Music Volume:", "",
+		"Effects Volume:", "", "", "", ""
+	};
+	static const char *vl[22] = {
+		"", "",
+		"", "", "", "",
+		"", "", "",
+		"On", "Off", "",
+		"On", "Off", "",
+		"[----------]", "",
+		"[----------]", "",
+		"Exit + Save", "",
+		"Exit"
+	};
+
 	int cursel = MINCURSEL;
+	bool exitMenu = false;
 
 	int tickwait = 1000 / 60;
 
@@ -250,26 +287,6 @@ void GriffonEngine::configMenu() {
 		int sy = SY;
 
 		for (int i = 0; i <= 21; i++) {
-			static const char *vr[22] = {
-				"", "",
-				"", "", "", "",
-				"", "", "",
-				"Music:", "", "",
-				"Sound Effects:", "", "",
-				"Music Volume:", "",
-				"Effects Volume:", "", "", "", ""
-			};
-			static const char *vl[22] = {
-				"", "",
-				"", "", "", "",
-				"", "", "",
-				"On", "Off", "",
-				"On", "Off", "",
-				"[----------]", "",
-				"[----------]", "",
-				"Exit + Save", "",
-				"Exit"
-			};
 			static char line[24];
 
 			if (i == 15 || i == 17) {
@@ -416,34 +433,39 @@ void GriffonEngine::configMenu() {
 				}
 
 				if (_event.kbd.keycode == Common::KEYCODE_RETURN) {
-					if (cursel == 7 && !config.music) {
-						config.music = true;
-						_menuChannel = playSound(_mmenu, true);
-						setChannelVolume(_menuChannel, config.musicvol);
-					}
-					if (cursel == 8 && config.music) {
-						config.music = false;
-						haltSoundChannel(_musicChannel);
-						haltSoundChannel(_menuChannel);
-					}
-					if (cursel == 9 && !config.effects) {
-						config.effects = true;
-						int snd = playSound(_sfx[kSndDoor]);
-						setChannelVolume(snd, config.effectsvol);
-					}
-
-					if (cursel == 10 && config.effects)
-						config.effects = false;
-
-					if (cursel == 13) {
-						config_save(&config);
-						break;
-					}
-
-					if (cursel == 14) {
-						// reset keys to avoid returning
-						// keys[SDLK_SPACE] = keys[SDLK_RETURN] = 0; // FIXME
-						break;
+					switch (cursel) {
+						case 7:
+							if (!config.music) {
+								config.music = true;
+								_menuChannel = playSound(_mmenu, true);
+								setChannelVolume(_menuChannel, config.musicvol);
+							}
+							break;
+						case 8:
+							if (config.music) {
+								config.music = false;
+								haltSoundChannel(_musicChannel);
+								haltSoundChannel(_menuChannel);
+							}
+							break;
+						case 9:
+							if (!config.effects) {
+								config.effects = true;
+								int snd = playSound(_sfx[kSndDoor]);
+								setChannelVolume(snd, config.effectsvol);
+							}
+							break;
+						case 10:
+							if (config.effects)
+								config.effects = false;
+							break;
+						case 13:
+							config_save(&config);
+							// no break on purpose
+						case 14:
+							exitMenu = true;
+						default:
+							break;
 					}
 				}
 			}
@@ -454,7 +476,7 @@ void GriffonEngine::configMenu() {
 			clouddeg -= 360;
 
 		g_system->delayMillis(10);
-	} while (!_shouldQuit);
+	} while (!_shouldQuit && !exitMenu);
 
 	configwindow->free();
 	_itemticks = _ticks + 210;
@@ -542,7 +564,6 @@ void GriffonEngine::saveLoadNew() {
 						currow = 1;
 						tickpause = _ticks + 125;
 					}
-
 
 					if (lowerLock && curcol == 1 && tickpause < _ticks) {
 						if (saveState(currow - 1)) {
