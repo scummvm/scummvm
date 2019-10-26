@@ -27,6 +27,7 @@
 #include "common/serializer.h"
 #include "common/stack.h"
 #include "glk/glk_api.h"
+#include "glk/level9/detection.h"
 
 namespace Glk {
 namespace Level9 {
@@ -45,6 +46,8 @@ private:
 	 * Deinitialization
 	 */
 	void deinitialize();
+public:
+	GameDetection _detection;
 public:
 	/**
 	 * Constructor

@@ -86,6 +86,9 @@ struct Bitmap {
 #define L9SETWORD(x,val) WRITE_LE_UINT16(x, val)
 #define L9SETDWORD(x,val) WRITE_LE_UINT32(x, val)
 
+extern byte *startdata;
+extern size_t FileSize;
+
 extern void level9_initialize();
 
 /* routines provided by os dependent code */

@@ -77,8 +77,8 @@ enum L9GfxTypes { GFX_V2, GFX_V3A, GFX_V3B, GFX_V3C };
 
 /* Global Variables */
 L9BYTE *startfile, *pictureaddress, *picturedata;
-L9BYTE *startdata;
-L9UINT32 FileSize, picturesize;
+byte *startdata;
+size_t FileSize, picturesize;
 
 L9BYTE *L9Pointers[12];
 L9BYTE *absdatablock, *list2ptr, *list3ptr, *list9startptr, *acodeptr;

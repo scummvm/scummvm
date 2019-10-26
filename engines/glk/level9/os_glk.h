@@ -26,6 +26,9 @@
 namespace Glk {
 namespace Level9 {
 
+#define BYTE_MAX 0xff
+#define BITS_PER_CHAR 8
+
 extern bool gln_graphics_enabled;
 extern bool gln_graphics_possible;
 
