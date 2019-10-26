@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2019-10-24 06:09+0200\n"
+"POT-Creation-Date: 2019-10-26 20:17+0200\n"
 "PO-Revision-Date: 2019-09-22 07:54+0000\n"
 "Last-Translator: jepael <kermespersialainen@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
@@ -3526,7 +3526,7 @@ msgstr "Näytä grafiikat käyttäen pelin kirkasta palettia"
 msgid "[ press any key to exit ]"
 msgstr "[ paina mitä tahansa näppäintä poistuaksesi ]"
 
-#: engines/glk/quetzal.cpp:118 engines/glk/quetzal.cpp:127
+#: engines/glk/quetzal.cpp:142 engines/glk/quetzal.cpp:151
 msgid "Untitled Savegame"
 msgstr "Nimetön pelitallennus"
 

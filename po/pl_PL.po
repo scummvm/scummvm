@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2019-10-24 06:09+0200\n"
+"POT-Creation-Date: 2019-10-26 20:17+0200\n"
 "PO-Revision-Date: 2019-09-15 20:54+0000\n"
 "Last-Translator: Rafa³ Bêd¼kowski <ravcik@gmail.com>\n"
 "Language-Team: Polish <https://translations.scummvm.org/projects/scummvm/"
@@ -3553,7 +3553,7 @@ msgstr "Wy¶wietlaj grafikê za pomoc± jasnej palety gry"
 msgid "[ press any key to exit ]"
 msgstr ""
 
-#: engines/glk/quetzal.cpp:118 engines/glk/quetzal.cpp:127
+#: engines/glk/quetzal.cpp:142 engines/glk/quetzal.cpp:151
 #, fuzzy
 msgid "Untitled Savegame"
 msgstr "Nienazwany stan gry"
