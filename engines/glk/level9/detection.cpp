@@ -25,6 +25,7 @@
 #include "glk/level9/level9_main.h"
 #include "glk/level9/os_glk.h"
 #include "glk/blorb.h"
+#include "glk/detection.h"
 #include "common/debug.h"
 #include "common/file.h"
 #include "common/md5.h"
@@ -62,14 +63,14 @@ const L9V1GameInfo &Scanner::v1Game() const {
 	return L9_V1_GAMES[_l9V1Game];
 }
 
-long Scanner::scan(byte *StartFile, uint32 size) {
+long Scanner::scan(byte *startFile, uint32 size) {
 	byte *Chk = (byte *)malloc(size + 1);
 	byte *Image = (byte *)calloc(size, 1);
 	uint32 i, num, Size, MaxSize = 0;
 	int j;
 	uint16 d0 = 0, l9, md, ml, dd, dl;
 	uint32 Min, Max;
-	long Offset = -1;
+	long offset = -1;
 	bool JumpKill, DriverV4;
 
 	if ((Chk == nullptr) || (Image == nullptr)) {
@@ -78,25 +79,25 @@ long Scanner::scan(byte *StartFile, uint32 size) {
 
 	Chk[0] = 0;
 	for (i = 1; i <= size; i++)
-		Chk[i] = Chk[i - 1] + StartFile[i - 1];
+		Chk[i] = Chk[i - 1] + startFile[i - 1];
 
 	for (i = 0; i < size - 33; i++) {
-		num = L9WORD(StartFile + i) + 1;
+		num = L9WORD(startFile + i) + 1;
 		/*
 		        Chk[i] = 0 +...+ i-1
 		        Chk[i+n] = 0 +...+ i+n-1
 		        Chk[i+n] - Chk[i] = i + ... + i+n
 		*/
 		if (num > 0x2000 && i + num <= size && Chk[i + num] == Chk[i]) {
-			md = L9WORD(StartFile + i + 0x2);
-			ml = L9WORD(StartFile + i + 0x4);
-			dd = L9WORD(StartFile + i + 0xa);
-			dl = L9WORD(StartFile + i + 0xc);
+			md = L9WORD(startFile + i + 0x2);
+			ml = L9WORD(startFile + i + 0x4);
+			dd = L9WORD(startFile + i + 0xa);
+			dl = L9WORD(startFile + i + 0xc);
 
 			if (ml > 0 && md > 0 && i + md + ml <= size && dd > 0 && dl > 0 && i + dd + dl * 4 <= size) {
 				/* v4 files may have acodeptr in 8000-9000, need to fix */
 				for (j = 0; j < 12; j++) {
-					d0 = L9WORD(StartFile + i + 0x12 + j * 2);
+					d0 = L9WORD(startFile + i + 0x12 + j * 2);
 					if (j != 11 && d0 >= 0x8000 && d0 < 0x9000) {
 						if (d0 >= 0x8000 + LISTAREASIZE) break;
 					} else if (i + d0 > size) break;
@@ -104,15 +105,15 @@ long Scanner::scan(byte *StartFile, uint32 size) {
 				/* list9 ptr must be in listarea, acode ptr in data */
 				if (j < 12 /*|| (d0>=0x8000 && d0<0x9000)*/) continue;
 
-				l9 = L9WORD(StartFile + i + 0x12 + 10 * 2);
+				l9 = L9WORD(startFile + i + 0x12 + 10 * 2);
 				if (l9 < 0x8000 || l9 >= 0x8000 + LISTAREASIZE) continue;
 
 				Size = 0;
 				Min = Max = i + d0;
 				DriverV4 = 0;
-				if (ValidateSequence(StartFile, Image, i + d0, i + d0, &Size, size, &Min, &Max, false, &JumpKill, &DriverV4)) {
+				if (ValidateSequence(startFile, Image, i + d0, i + d0, &Size, size, &Min, &Max, false, &JumpKill, &DriverV4)) {
 					if (Size > MaxSize && Size > 100) {
-						Offset = i;
+						offset = i;
 						MaxSize = Size;
 						_gameType = DriverV4 ? L9_V4 : L9_V3;
 					}
@@ -123,17 +124,17 @@ long Scanner::scan(byte *StartFile, uint32 size) {
 
 	free(Chk);
 	free(Image);
-	return Offset;
+	return offset;
 }
 
-long Scanner::ScanV2(byte *StartFile, uint32 size) {
+long Scanner::ScanV2(byte *startFile, uint32 size) {
 	byte *Chk = (byte *)malloc(size + 1);
 	byte *Image = (byte *)calloc(size, 1);
 	uint32 i, Size, MaxSize = 0, num;
 	int j;
 	uint16 d0 = 0, l9;
 	uint32 Min, Max;
-	long Offset = -1;
+	long offset = -1;
 	bool JumpKill;
 
 	if ((Chk == nullptr) || (Image == nullptr)) {
@@ -142,13 +143,13 @@ long Scanner::ScanV2(byte *StartFile, uint32 size) {
 
 	Chk[0] = 0;
 	for (i = 1; i <= size; i++)
-		Chk[i] = Chk[i - 1] + StartFile[i - 1];
+		Chk[i] = Chk[i - 1] + startFile[i - 1];
 
 	for (i = 0; i < size - 28; i++) {
-		num = L9WORD(StartFile + i + 28) + 1;
-		if (i + num <= size && ((Chk[i + num] - Chk[i + 32]) & 0xff) == StartFile[i + 0x1e]) {
+		num = L9WORD(startFile + i + 28) + 1;
+		if (i + num <= size && ((Chk[i + num] - Chk[i + 32]) & 0xff) == startFile[i + 0x1e]) {
 			for (j = 0; j < 14; j++) {
-				d0 = L9WORD(StartFile + i + j * 2);
+				d0 = L9WORD(startFile + i + j * 2);
 				if (j != 13 && d0 >= 0x8000 && d0 < 0x9000) {
 					if (d0 >= 0x8000 + LISTAREASIZE) break;
 				} else if (i + d0 > size) break;
@@ -156,17 +157,17 @@ long Scanner::ScanV2(byte *StartFile, uint32 size) {
 			/* list9 ptr must be in listarea, acode ptr in data */
 			if (j < 14 /*|| (d0>=0x8000 && d0<0x9000)*/) continue;
 
-			l9 = L9WORD(StartFile + i + 6 + 9 * 2);
+			l9 = L9WORD(startFile + i + 6 + 9 * 2);
 			if (l9 < 0x8000 || l9 >= 0x8000 + LISTAREASIZE) continue;
 
 			Size = 0;
 			Min = Max = i + d0;
-			if (ValidateSequence(StartFile, Image, i + d0, i + d0, &Size, size, &Min, &Max, false, &JumpKill, nullptr)) {
+			if (ValidateSequence(startFile, Image, i + d0, i + d0, &Size, size, &Min, &Max, false, &JumpKill, nullptr)) {
 #ifdef L9DEBUG
 				printf("Found valid V2 header at %ld, code size %ld", i, Size);
 #endif
 				if (Size > MaxSize && Size > 100) {
-					Offset = i;
+					offset = i;
 					MaxSize = Size;
 				}
 			}
@@ -174,10 +175,10 @@ long Scanner::ScanV2(byte *StartFile, uint32 size) {
 	}
 	free(Chk);
 	free(Image);
-	return Offset;
+	return offset;
 }
 
-long Scanner::ScanV1(byte *StartFile, uint32 size) {
+long Scanner::ScanV1(byte *startFile, uint32 size) {
 	byte *Image = (byte *)calloc(size, 1);
 	uint32 i, Size;
 	int Replace;
@@ -195,11 +196,11 @@ long Scanner::ScanV1(byte *StartFile, uint32 size) {
 	}
 
 	for (i = 0; i < size; i++) {
-		if ((StartFile[i] == 0 && StartFile[i + 1] == 6) || (StartFile[i] == 32 && StartFile[i + 1] == 4)) {
+		if ((startFile[i] == 0 && startFile[i + 1] == 6) || (startFile[i] == 32 && startFile[i + 1] == 4)) {
 			Size = 0;
 			Min = Max = i;
 			Replace = 0;
-			if (ValidateSequence(StartFile, Image, i, i, &Size, size, &Min, &Max, false, &JumpKill, nullptr)) {
+			if (ValidateSequence(startFile, Image, i, i, &Size, size, &Min, &Max, false, &JumpKill, nullptr)) {
 				if (Size > MaxCount && Size > 100 && Size < 10000) {
 					MaxCount = Size;
 					//MaxMin = Min;
@@ -219,19 +220,19 @@ long Scanner::ScanV1(byte *StartFile, uint32 size) {
 
 	/* V1 dictionary detection from L9Cut by Paul David Doherty */
 	for (i = 0; i < size - 20; i++) {
-		if (StartFile[i] == 'A') {
-			if (StartFile[i + 1] == 'T' && StartFile[i + 2] == 'T' && StartFile[i + 3] == 'A' && StartFile[i + 4] == 'C' && StartFile[i + 5] == 0xcb) {
+		if (startFile[i] == 'A') {
+			if (startFile[i + 1] == 'T' && startFile[i + 2] == 'T' && startFile[i + 3] == 'A' && startFile[i + 4] == 'C' && startFile[i + 5] == 0xcb) {
 				dictOff1 = i;
-				dictVal1 = StartFile[dictOff1 + 6];
+				dictVal1 = startFile[dictOff1 + 6];
 				break;
 			}
 		}
 	}
 	for (i = dictOff1; i < size - 20; i++) {
-		if (StartFile[i] == 'B') {
-			if (StartFile[i + 1] == 'U' && StartFile[i + 2] == 'N' && StartFile[i + 3] == 'C' && StartFile[i + 4] == 0xc8) {
+		if (startFile[i] == 'B') {
+			if (startFile[i + 1] == 'U' && startFile[i + 2] == 'N' && startFile[i + 3] == 'C' && startFile[i + 4] == 0xc8) {
 				dictOff2 = i;
-				dictVal2 = StartFile[dictOff2 + 5];
+				dictVal2 = startFile[dictOff2 + 5];
 				break;
 			}
 		}
@@ -241,7 +242,7 @@ long Scanner::ScanV1(byte *StartFile, uint32 size) {
 		for (i = 0; i < sizeof L9_V1_GAMES / sizeof L9_V1_GAMES[0]; i++) {
 			if ((L9_V1_GAMES[i].dictVal1 == dictVal1) && (L9_V1_GAMES[i].dictVal2 == dictVal2)) {
 				_l9V1Game = i;
-				(*_dictData) = StartFile + dictOff1 - L9_V1_GAMES[i].dictStart;
+				(*_dictData) = startFile + dictOff1 - L9_V1_GAMES[i].dictStart;
 			}
 		}
 	}
@@ -249,7 +250,7 @@ long Scanner::ScanV1(byte *StartFile, uint32 size) {
 	free(Image);
 
 	if (MaxPos > 0 && _aCodePtr) {
-		(*_aCodePtr) = StartFile + MaxPos;
+		(*_aCodePtr) = startFile + MaxPos;
 		return 0;
 	}
 
@@ -463,7 +464,7 @@ bool Scanner::CheckCallDriverV4(byte *Base, uint32 Pos) {
 }
 
 #ifdef FULLSCAN
-void Scanner::fullScan(byte *StartFile, uint32 size) {
+void Scanner::fullScan(byte *startFile, uint32 size) {
 	byte *Image = (byte *)calloc(size, 1);
 	uint32 i, Size;
 	int Replace;
@@ -471,13 +472,13 @@ void Scanner::fullScan(byte *StartFile, uint32 size) {
 	uint32 MaxPos = 0;
 	uint32 MaxCount = 0;
 	uint32 Min, Max, MaxMin, MaxMax;
-	int Offset;
+	int offset;
 	bool JumpKill, MaxJK;
 	for (i = 0; i < size; i++) {
 		Size = 0;
 		Min = Max = i;
 		Replace = 0;
-		if (ValidateSequence(StartFile, Image, i, i, &Size, size, &Min, &Max, FALSE, &JumpKill, nullptr)) {
+		if (ValidateSequence(startFile, Image, i, i, &Size, size, &Min, &Max, FALSE, &JumpKill, nullptr)) {
 			if (Size > MaxCount) {
 				MaxCount = Size;
 				MaxMin = Min;
@@ -495,16 +496,16 @@ void Scanner::fullScan(byte *StartFile, uint32 size) {
 	}
 	printf("%ld %ld %ld %ld %s", MaxPos, MaxCount, MaxMin, MaxMax, MaxJK ? "jmp killed" : "");
 	/* search for reference to MaxPos */
-	Offset = 0x12 + 11 * 2;
-	for (i = 0; i < size - Offset - 1; i++) {
-		if ((L9WORD(StartFile + i + Offset)) + i == MaxPos) {
+	offset = 0x12 + 11 * 2;
+	for (i = 0; i < size - offset - 1; i++) {
+		if ((L9WORD(startFile + i + offset)) + i == MaxPos) {
 			printf("possible v3,4 Code reference at : %ld", i);
-			/* startdata=StartFile+i; */
+			/* startdata=startFile+i; */
 		}
 	}
-	Offset = 13 * 2;
-	for (i = 0; i < size - Offset - 1; i++) {
-		if ((L9WORD(StartFile + i + Offset)) + i == MaxPos)
+	offset = 13 * 2;
+	for (i = 0; i < size - offset - 1; i++) {
+		if ((L9WORD(startFile + i + offset)) + i == MaxPos)
 			printf("possible v2 Code reference at : %ld", i);
 	}
 	free(Image);
@@ -585,7 +586,6 @@ gln_game_tableref_t GameDetection::gln_gameid_identify_game() {
 static const uint16 GLN_CRC_POLYNOMIAL = 0xa001;
 
 uint16 GameDetection::gln_get_buffer_crc(const void *void_buffer, size_t length, size_t padding) {
-
 	const char *buffer = (const char *)void_buffer;
 	uint16 crc;
 	size_t index;
@@ -683,15 +683,26 @@ void GameDetection::gln_gameid_game_name_reset() {
 /*----------------------------------------------------------------------*/
 
 void Level9MetaEngine::getSupportedGames(PlainGameList &games) {
-	for (const PlainGameDescriptor *pd = LEVEL9_GAME_LIST; pd->gameId; ++pd) {
-		games.push_back(*pd);
+	const char *prior_id = nullptr;
+
+	for (const gln_game_table_t *pd = GLN_GAME_TABLE; pd->name; ++pd) {
+		if (prior_id == nullptr || strcmp(pd->gameId, prior_id)) {
+			PlainGameDescriptor gd;
+			gd.gameId = pd->gameId;
+			gd.description = pd->name;
+			games.push_back(gd);
+
+			prior_id = pd->gameId;
+		}
 	}
 }
 
 GameDescriptor Level9MetaEngine::findGame(const char *gameId) {
-	for (const PlainGameDescriptor *pd = LEVEL9_GAME_LIST; pd->gameId; ++pd) {
-		if (!strcmp(gameId, pd->gameId))
-			return *pd;
+	for (const gln_game_table_t *pd = GLN_GAME_TABLE; pd->gameId; ++pd) {
+		if (!strcmp(gameId, pd->gameId)) {
+			GameDescriptor gd(pd->gameId, pd->name, 0);
+			return gd;
+		}
 	}
 
 	return PlainGameDescriptor();
@@ -704,42 +715,64 @@ bool Level9MetaEngine::detectGames(const Common::FSList &fslist, DetectedGames &
 		if (file->isDirectory())
 			continue;
 		Common::String filename = file->getName();
-		if (!filename.hasSuffixIgnoreCase(".l9"))
+		if (!filename.hasSuffixIgnoreCase(".l9") && !filename.hasSuffixIgnoreCase(".dat"))
 			continue;
 
-		// Open up the file and calculate the md5
+		// Open up the file so we can get it's size
 		Common::File gameFile;
 		if (!gameFile.open(*file))
 			continue;
 
-		Common::String md5 = Common::computeStreamMD5AsString(gameFile, 5000);
-		size_t _fileSize = gameFile.size();
-		gameFile.seek(0);
-		bool isBlorb = Blorb::isBlorb(gameFile, ID_ADRI);
+		size_t fileSize = gameFile.size();
+		if (fileSize > 0xffff) {
+			// Too big to possibly be a Level 9 game
+			gameFile.close();
+			continue;
+		}
+
+		// Read in the game data
+		Common::Array<byte> data;
+		data.resize(fileSize);
+		gameFile.read(&data[0], fileSize);
 		gameFile.close();
 
-		if (!isBlorb && Blorb::hasBlorbExt(filename))
+		// Check if it's a valid Level 9 game
+		byte *startFile = &data[0];
+		Scanner scanner;
+		int offset = scanner.scanner(&data[0], fileSize) < 0;
+		if (offset < 0)
 			continue;
 
-		// Check for known games
-		const GlkDetectionEntry *p = LEVEL9_GAMES;
-		while (p->_gameId && (md5 != p->_md5 || _fileSize != p->_filesize))
-			++p;
+		// Check for the specific game
+		byte *startData = startFile + offset;
+		GameDetection detection(startData, fileSize);
 
-		if (!p->_gameId) {
-			const PlainGameDescriptor &desc = LEVEL9_GAME_LIST[0];
-			gameList.push_back(GlkDetectedGame(desc.gameId, desc.description, filename, md5, _fileSize));
-		} else {
-			PlainGameDescriptor gameDesc = findGame(p->_gameId);
-			gameList.push_back(GlkDetectedGame(p->_gameId, gameDesc.description, p->_extra, filename, p->_language));
-		}
+		const gln_game_tableref_t game = detection.gln_gameid_identify_game();
+		if (!game)
+			continue;
+
+		// Found the game, add a detection entry
+		DetectedGame gd = DetectedGame(game->gameId, game->name, Common::UNK_LANG,
+			Common::kPlatformUnknown, game->extra);
+		gd.addExtraEntry("filename", filename);
+		gameList.push_back(gd);
 	}
 
 	return !gameList.empty();
 }
 
 void Level9MetaEngine::detectClashes(Common::StringMap &map) {
-	// No implementation
+	const char *prior_id = nullptr;
+
+	for (const gln_game_table_t *pd = GLN_GAME_TABLE; pd->name; ++pd) {
+		if (prior_id == nullptr || strcmp(pd->gameId, prior_id)) {
+			prior_id = pd->gameId;
+
+			if (map.contains(pd->gameId))
+				error("Duplicate game Id found - %s", pd->gameId);
+			map[pd->gameId] = "";
+		}
+	}
 }
 
 } // End of namespace Level9

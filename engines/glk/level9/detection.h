@@ -37,7 +37,9 @@ struct gln_game_table_t {
 	const size_t length;        ///< Datafile length in bytes
 	const byte checksum;        ///< 8-bit checksum, last datafile byte
 	const uint16 crc;           ///< 16-bit CRC, L9cut-internal
-	const char *const name;     ///< Game title and platform
+	const char *const gameId;   ///< Game Id
+	const char *const name;     ///< Game title
+	const char *const extra;    ///< Disk number, platform, etc.
 };
 typedef const gln_game_table_t *gln_game_tableref_t;
 
