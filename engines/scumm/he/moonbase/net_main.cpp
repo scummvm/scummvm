@@ -174,7 +174,7 @@ int Net::joinSession(int sessionIndex) {
 		return 0;
 	}
 
-	if (sessionIndex >= _sessions->countChildren()) {
+	if (sessionIndex >= (int)_sessions->countChildren()) {
 		warning("Net::joinSession(): session number too big: %d >= %lu", sessionIndex, _sessions->countChildren());
 		return 0;
 	}
@@ -388,7 +388,7 @@ void Net::getSessionName(int sessionNumber, char *buffer, int length) {
 		return;
 	}
 
-	if (sessionNumber >= _sessions->countChildren()) {
+	if (sessionNumber >= (int)_sessions->countChildren()) {
 		*buffer = '\0';
 		warning("Net::getSessionName(): session number too big: %d >= %lu", sessionNumber, _sessions->countChildren());
 		return;
@@ -405,7 +405,7 @@ int Net::getSessionPlayerCount(int sessionNumber) {
 		return 0;
 	}
 
-	if (sessionNumber >= _sessions->countChildren()) {
+	if (sessionNumber >= (int)_sessions->countChildren()) {
 		warning("Net::getSessionPlayerCount(): session number too big: %d >= %lu", sessionNumber, _sessions->countChildren());
 		return 0;
 	}
