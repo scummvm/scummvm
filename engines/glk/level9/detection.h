@@ -101,7 +101,7 @@ public:
 class GameDetection : public Scanner {
 private:
 	byte *&_startData;
-	size_t &_fileSize;
+	uint32 &_fileSize;
 	bool _crcInitialized;
 	uint16 _crcTable[256];
 public:
@@ -110,7 +110,7 @@ public:
 	/**
 	 * Constructor
 	 */
-	GameDetection(byte *&startData, size_t &fileSize);
+	GameDetection(byte *&startData, uint32 &fileSize);
 
 	/**
 	 * Identify a game from its data length, checksum, and CRC.  Returns the

@@ -514,7 +514,7 @@ void Scanner::fullScan(byte *startFile, uint32 size) {
 
 /*----------------------------------------------------------------------*/
 
-GameDetection::GameDetection(byte *&startData, size_t &fileSize) :
+GameDetection::GameDetection(byte *&startData, uint32 &fileSize) :
 		_startData(startData), _fileSize(fileSize), _crcInitialized(false), _gameName(nullptr) {
 	Common::fill(&_crcTable[0], &_crcTable[256], 0);
 }
@@ -723,7 +723,7 @@ bool Level9MetaEngine::detectGames(const Common::FSList &fslist, DetectedGames &
 		if (!gameFile.open(*file))
 			continue;
 
-		size_t fileSize = gameFile.size();
+		uint32 fileSize = gameFile.size();
 		if (fileSize > 0xffff) {
 			// Too big to possibly be a Level 9 game
 			gameFile.close();

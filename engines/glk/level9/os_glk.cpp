@@ -1007,14 +1007,15 @@ static void gln_graphics_timeout() {
 
 	static int deferred_repaint = FALSE;       /* Local delayed repaint flag */
 	static int ignore_counter;                 /* Count of calls ignored */
-
 	static int x_offset, y_offset;             /* Point plot offsets */
+
+#ifndef GARGLK
 	static int yield_counter;                  /* Yields in rendering */
 	static int saved_layer;                    /* Saved current layer */
 	static int saved_x, saved_y;               /* Saved x,y coord */
 
 	static int total_regions;                  /* Debug statistic */
-
+#endif
 	gln_byte *on_screen;                       /* On-screen image buffer */
 	gln_byte *off_screen;                      /* Off-screen image buffer */
 	long picture_size;                         /* Picture size in pixels */
@@ -1133,13 +1134,14 @@ static void gln_graphics_timeout() {
 		                              x_offset, y_offset,
 		                              GLN_GRAPHICS_PIXEL,
 		                              gln_graphics_width, gln_graphics_height);
-
+#ifndef GARGLK
 		/* Start a fresh picture rendering pass. */
 		yield_counter = 0;
 		saved_layer = 0;
 		saved_x = 0;
 		saved_y = 0;
 		total_regions = 0;
+#endif
 
 		/* Clear the new picture and deferred repaint flags. */
 		gln_graphics_new_picture = FALSE;
@@ -2333,7 +2335,7 @@ static void gln_status_print() {
 
 			/* Bracket, and output the extracted game name. */
 			g_vm->glk_put_string("[ ");
-			g_vm->glk_put_string((char *) game_name);
+			g_vm->glk_put_string(game_name);
 
 			for (index = strlen(game_name);
 			        index <= GLN_DEFAULT_STATUS_WIDTH; index++)
@@ -4543,12 +4545,6 @@ int __wrap_tolower(int ch) {
  */
 static const int GLN_WATCHDOG_TIMEOUT = 5,
                  GLN_WATCHDOG_PERIOD = 10240;
-
-/*
- * The following values need to be passed between the startup_code and main
- * functions.
- */
-static const char *gln_game_message = nullptr;  /* Error message. */
 
 /*
  * gln_establish_picture_filename()

@@ -78,7 +78,7 @@ enum L9GfxTypes { GFX_V2, GFX_V3A, GFX_V3B, GFX_V3C };
 /* Global Variables */
 L9BYTE *startfile, *pictureaddress, *picturedata;
 byte *startdata;
-size_t FileSize, picturesize;
+uint32 FileSize, picturesize;
 
 byte *L9Pointers[12];
 byte *absdatablock, *list2ptr, *list3ptr, *list9startptr, *acodeptr;
@@ -1808,6 +1808,10 @@ L9BOOL corruptinginput() {
 	} while (TRUE);
 	/* ip22 */
 	checknumber();
+
+	// Unused variables
+	(void)keywordnumber;
+
 	return TRUE;
 }
 
