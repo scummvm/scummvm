@@ -16296,8 +16296,40 @@ static const uint16 sq5PatchDriveBayPathfindingFix[] = {
 	PATCH_END
 };
 
+// Sitting in the captain's chair while Droole plays paddle ball randomly locks
+//  up the game. Upon sitting, sTakeCommand plays a sound using theMusic3 and
+//  waits for it to complete. This is the same object that's used to play the
+//  paddle ball sound. If ego sits before a paddle ball sound starts or Droole
+//  stops paddling and disposes the sound then sTakeCommand is never cued.
+//
+// We fix this conflict by using a different Sound object for the chair.
+//  theMusic4 is only used once while meeting the crew in sNewCaptain.
+//
+// Applies to: All versions
+// Responsible method: sTakeCommand:changeState
+// Fixes bug: #6130
+static const uint16 sq5SignatureCaptainChairFix[] = {
+	SIG_MAGICDWORD,
+	0x76,                           // push0
+	0x72, SIG_UINT16(0x0018),       // lofsa theMusic4
+	SIG_ADDTOOFFSET(+947),
+	0x72, SIG_UINT16(0x02ec),       // lofsa theMusic3
+	SIG_ADDTOOFFSET(+26),
+	0x72, SIG_UINT16(0x02ec),       // lofsa theMusic3
+	SIG_END
+};
+
+static const uint16 sq5PatchCaptainChairFix[] = {
+	PATCH_ADDTOOFFSET(+951),
+	0x72, PATCH_UINT16(0x0018),     // lofsa theMusic4
+	PATCH_ADDTOOFFSET(+26),
+	0x72, PATCH_UINT16(0x0018),     // lofsa theMusic4
+	PATCH_END
+};
+
 //          script, description,                                      signature                             patch
 static const SciScriptPatcherEntry sq5Signatures[] = {
+	{  true,   200, "captain chair lockup fix",                    1, sq5SignatureCaptainChairFix,          sq5PatchCaptainChairFix },
 	{  true,   226, "toolbox fix",                                 1, sq5SignatureToolboxFix,               sq5PatchToolboxFix },
 	{  true,  1000, "drive bay pathfinding fix",                   1, sq5SignatureDriveBayPathfindingFix,   sq5PatchDriveBayPathfindingFix },
 	SCI_SIGNATUREENTRY_TERMINATOR
