@@ -89,6 +89,14 @@ struct FuncDesc {
 
 typedef Common::HashMap<void *, FuncDesc *> FuncHash;
 
+struct Opcode {
+    inst func;
+    const char *proto;
+
+    Opcode(inst f, const char *p) { func = f; proto = p; }
+};
+typedef Common::HashMap<int, Opcode *> OpcodeHash;
+
 struct Symbol {	/* symbol table entry */
 	Common::String name;
 	int type;
@@ -170,6 +178,7 @@ public:
 
 	void initBuiltIns();
 	void initFuncs();
+    void initBytecode();
 	void initTheEntities();
 
 	void runTests();
@@ -207,6 +216,7 @@ public:
 	int code1(inst code) { _currentScript->push_back(code); return _currentScript->size() - 1; }
 	int code2(inst code_1, inst code_2) { int o = code1(code_1); code1(code_2); return o; }
 	int code3(inst code_1, inst code_2, inst code_3) { int o = code1(code_1); code1(code_2); code1(code_3); return o; }
+	int code4(inst code_1, inst code_2, inst code_3, inst code_4) { int o = code1(code_1); code1(code_2); code1(code_3); code1(code_4); return o; }
 	int codeString(const char *s);
 	void codeLabel(int label);
 	int codeInt(int val);
@@ -270,6 +280,7 @@ public:
 	static void c_stringpush();
 	static void c_symbolpush();
 	static void c_varpush();
+	static void c_argspush();
 	static void c_arraypush();
 	static void c_assign();
 	bool verify(Symbol *s);
@@ -316,6 +327,13 @@ public:
 
 	static void c_open();
     static void c_hilite();
+
+    static void c_jump();
+    static void c_jumpif();
+
+    static void c_nop();
+    static void c_nop1();
+    static void c_nop2();
 
 	void printSTUBWithArglist(const char *funcname, int nargs, const char *prefix = "STUB:");
 	void convertVOIDtoString(int arg, int nargs);
@@ -562,6 +580,8 @@ private:
 	SymbolHash *_localvars;
 
 	FuncHash _functions;
+
+    OpcodeHash _lingoV4;
 
 	uint _pc;
 

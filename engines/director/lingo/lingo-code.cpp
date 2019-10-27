@@ -57,7 +57,8 @@ static struct FuncDescr {
 } funcDescr[] = {
 	{ 0,					"STOP",			"" },
 	{ Lingo::c_xpop,		"c_xpop",		"" },
-	{ Lingo::c_arraypush,	"c_arraypush",		"i" },
+	{ Lingo::c_argspush,	"c_argspush",	"i" },
+	{ Lingo::c_arraypush,	"c_arraypush",	"i" },
 	{ Lingo::c_printtop,	"c_printtop",	"" },
 	{ Lingo::c_intpush,	    "c_intpush",	"i" },
 	{ Lingo::c_voidpush,	"c_voidpush",	"" },
@@ -125,6 +126,11 @@ static struct FuncDescr {
 	{ Lingo::c_instance,	"c_instance",	"s" },
 	{ Lingo::c_open,		"c_open",		"" },
     { Lingo::c_hilite,      "c_hilite",     "" },
+    { Lingo::c_jump,        "c_jump",       "" },
+    { Lingo::c_jumpif,      "c_jumpif",     "" },
+    { Lingo::c_nop,         "c_nop",        "i" },
+    { Lingo::c_nop1,        "c_nop1",       "ii" },
+    { Lingo::c_nop2,        "c_nop2",       "iii" },
 	{ 0, 0, 0 }
 };
 
@@ -242,6 +248,21 @@ void Lingo::c_symbolpush() {
 
 	// TODO: FIXME: Must push symbol instead of string
 	g_lingo->push(Datum(new Common::String(s)));
+}
+
+void Lingo::c_argspush() {
+	Datum d;
+	inst v = (*g_lingo->_currentScript)[g_lingo->_pc++];
+	int argsSize = READ_UINT32(&v);
+
+	warning("STUB: c_argspush()");
+
+	for (int i = 0; i < argsSize; i++)
+		g_lingo->pop();
+
+	d.u.i = argsSize;
+	d.type = INT;
+	g_lingo->push(d);
 }
 
 void Lingo::c_arraypush() {
@@ -1245,5 +1266,38 @@ void Lingo::c_hilite() {
                 first_item.u.i, last_item.u.i, first_line.u.i, last_line.u.i,
                 cast_id.u.i);
 }
+
+void Lingo::c_jump() {
+
+}
+
+void Lingo::c_jumpif() {
+    
+}
+
+void Lingo::c_nop() {
+    int savepc = g_lingo->_pc;
+    uint opcode = READ_UINT32(&(*g_lingo->_currentScript)[savepc]);
+    warning("STUB: c_nop: %d", opcode);
+    g_lingo->_pc += 1;
+}
+
+void Lingo::c_nop1() {
+    int savepc = g_lingo->_pc;
+    uint opcode = READ_UINT32(&(*g_lingo->_currentScript)[savepc]);
+    uint arg1 = READ_UINT32(&(*g_lingo->_currentScript)[savepc+1]);
+    warning("STUB: c_nop1: %d %d", opcode, arg1);
+    g_lingo->_pc += 2;
+}
+
+void Lingo::c_nop2() {
+    int savepc = g_lingo->_pc;
+    uint opcode = READ_UINT32(&(*g_lingo->_currentScript)[savepc]);
+    uint arg1 = READ_UINT32(&(*g_lingo->_currentScript)[savepc+1]);
+    uint arg2 = READ_UINT32(&(*g_lingo->_currentScript)[savepc+2]);
+    warning("STUB: c_nop2: %d %d %d", opcode, arg1, arg2);
+    g_lingo->_pc += 3;
+}
+
 
 }
