@@ -73,6 +73,7 @@ Lingo::Lingo(DirectorEngine *vm) : _vm(vm) {
 
 	initBuiltIns();
 	initFuncs();
+    initBytecode();
 	initTheEntities();
 
 	warning("Lingo Inited");
