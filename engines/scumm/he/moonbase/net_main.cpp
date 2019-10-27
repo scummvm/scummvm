@@ -547,6 +547,11 @@ bool Net::remoteReceiveData() {
 void Net::remoteReceiveDataCallback(Common::JSONValue *response) {
 	debug(1, "remoteReceiveData: Got: '%s'", response->stringify().c_str());
 
+	if (!response->hasChild("size")) {
+		warning("Net::remoteReceiveDataCallback(): invalid response");
+		return;
+	}
+
 	_packetsize = response->child("size")->asIntegerNumber();
 
 	if (!_packetsize)
@@ -565,6 +570,9 @@ void Net::unpackageArray(int arrayId, byte *data, int len) {
 
 
 void Net::doNetworkOnceAFrame(int msecs) {
+	if (_sessionid == -1 || _myUserId == -1)
+		return;
+
 	uint32 tickCount = g_system->getMillis() + msecs;
 
 	while (remoteReceiveData()) {
