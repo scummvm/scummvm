@@ -33,6 +33,7 @@ namespace _3DS {
 
 static Common::Mutex *eventMutex;
 static InputMode inputMode = MODE_DRAG;
+MagnifyMode magnifyMode = MODE_MAGOFF;
 static aptHookCookie cookie;
 static bool optionMenuOpening = false;
 static Common::String messageOSD;
@@ -146,6 +147,15 @@ static void eventThreadFunc(void *arg) {
 		}
 
 		// Button events
+		if (keysPressed & KEY_L) {
+			if (magnifyMode == MODE_MAGOFF) {
+				magnifyMode = MODE_MAGON;
+				osys->displayMessageOnOSD("Magnify On");
+			} else {
+				magnifyMode = MODE_MAGOFF;
+				osys->displayMessageOnOSD("Magnify Off");
+			}
+		}
 		if (keysPressed & KEY_R) {
 			if (inputMode == MODE_DRAG) {
 				inputMode = MODE_HOVER;
@@ -165,6 +175,16 @@ static void eventThreadFunc(void *arg) {
 				event.type = Common::EVENT_LBUTTONUP;
 			pushEventQueue(eventQueue, event);
 		}
+		if (keysPressed & KEY_B || keysReleased & KEY_B || keysPressed & KEY_DDOWN || keysReleased & KEY_DDOWN) {
+			if (keysPressed & KEY_B || keysPressed & KEY_DDOWN)
+				event.type = Common::EVENT_KEYDOWN;
+			else
+				event.type = Common::EVENT_KEYUP;
+			event.kbd.keycode = Common::KEYCODE_ESCAPE;
+			event.kbd.ascii = Common::ASCII_ESCAPE;
+			event.kbd.flags = 0;
+			pushEventQueue(eventQueue, event);
+		}
 		if (keysPressed & KEY_X || keysPressed & KEY_DUP || keysReleased & KEY_X || keysReleased & KEY_DUP) {
 			// SIMULATE RIGHT CLICK
 			event.mouse.x = lastTouch.px;
@@ -175,7 +195,7 @@ static void eventThreadFunc(void *arg) {
 				event.type = Common::EVENT_RBUTTONUP;
 			pushEventQueue(eventQueue, event);
 		}
-		if (keysPressed & KEY_L) {
+		if (keysPressed & KEY_Y || keysPressed & KEY_DRIGHT || keysReleased & KEY_Y || keysReleased & KEY_DRIGHT) {
 			event.type = Common::EVENT_VIRTUAL_KEYBOARD;
 			pushEventQueue(eventQueue, event);
 		}
@@ -186,16 +206,6 @@ static void eventThreadFunc(void *arg) {
 		if (keysPressed & KEY_SELECT) {
 			if (!optionMenuOpened)
 				optionMenuOpening = true;
-		}
-		if (keysPressed & KEY_B || keysReleased & KEY_B || keysPressed & KEY_DDOWN || keysReleased & KEY_DDOWN) {
-			if (keysPressed & KEY_B || keysPressed & KEY_DDOWN)
-				event.type = Common::EVENT_KEYDOWN;
-			else
-				event.type = Common::EVENT_KEYUP;
-			event.kbd.keycode = Common::KEYCODE_ESCAPE;
-			event.kbd.ascii = Common::ASCII_ESCAPE;
-			event.kbd.flags = 0;
-			pushEventQueue(eventQueue, event);
 		}
 
 		// TODO: EVENT_PREDICTIVE_DIALOG

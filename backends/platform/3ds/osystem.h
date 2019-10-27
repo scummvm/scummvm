@@ -44,6 +44,11 @@ enum {
 	GFX_NEAREST = 1
 };
 
+enum MagnifyMode {
+	MODE_MAGON,
+	MODE_MAGOFF,
+};
+
 enum InputMode {
 	MODE_HOVER,
 	MODE_DRAG,
