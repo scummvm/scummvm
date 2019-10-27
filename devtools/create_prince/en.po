@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: Prince\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2018-04-17 19:53+0100\n"
-"PO-Revision-Date: 2019-10-25 07:56+0000\n"
+"PO-Revision-Date: 2019-10-28 06:56+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: English <https://translations.scummvm.org/projects/prince/"
 "prince/en/>\n"
@@ -4597,6 +4597,8 @@ msgstr "HERO: How do you know?!"
 #: dialog0125.txt:100003
 msgid "OTHER: Bo to jedyne miejsce na świecie, gdzie|nie dochodzi Słońce podczas swojej|normalnej wędrówki."
 msgstr ""
+"OTHER: This is the only place in the world where the Sun doesn't reach|"
+"during its path."
 
 #: dialog0125.txt:100004
 msgid "HERO: I zawsze tak było?"
@@ -4604,15 +4606,19 @@ msgstr "HERO: And was it always like that?"
 
 #: dialog0125.txt:100005
 msgid "OTHER: Oczywiście, że nie zawsze! Co za pytanie!"
-msgstr ""
+msgstr "OTHER: What's the question is this! Of course not!"
 
 #: dialog0125.txt:100006
 msgid "OTHER: Od kilkuset lat, a może dłużej hmm... żyje tam|sprytny nekromanta, którego czary spowodowały|ten godny pożałowania incydent."
 msgstr ""
+"OTHER: For couple hundred years, maybe more... a devious necromancer lives "
+"there, whose magic|is responsible for this regrettable incident."
 
 #: dialog0125.txt:100007
 msgid "HERO: Co do nekromanty, to czas teraźniejszy|jest już chyba nieaktualny."
 msgstr ""
+"HERO: In relation to the necromancer, we should rather|use past tense from "
+"now on."
 
 #: dialog0125.txt:100008
 msgid "HERO: Co do Fjord, nie ma szans, żeby tam|wpuścić trochę światła?"
