@@ -27,7 +27,7 @@ namespace Director {
 static struct LingoV4Bytecode {
     const uint8 opcode;
     const inst func;
-    const char *args;
+    const char *proto;
 } lingoV4[] = {
     { 0x03, Lingo::c_voidpush, "" },
     { 0x04, Lingo::c_mul, "" },
@@ -63,7 +63,7 @@ static struct LingoV4Bytecode {
 
 void Lingo::initBytecode() {
     for (LingoV4Bytecode *op = lingoV4; op->opcode; op++) {
-        _lingoV4[op->opcode] = new Opcode( op->func, op->args );
+        _lingoV4[op->opcode] = new Opcode( op->func, op->proto );
     }
 }
 
@@ -96,13 +96,13 @@ void Lingo::addCodeV4(Common::SeekableSubReadStreamEndian &stream, ScriptType ty
         stream.readByte();
     }
     uint16 functions_count = stream.readUint16();
-    uint16 unk4 = stream.readUint16();
-    uint16 unk5 = stream.readUint16();
+    stream.readUint16();
+    stream.readUint16();
     uint16 consts_count = stream.readUint16();
     stream.readUint16();
     uint16 consts_offset = stream.readUint16();
     stream.readUint16();
-    uint16 unk6 = stream.readUint16();
+    stream.readUint16();
     stream.readUint16();
     uint16 consts_base = stream.readUint16();
 
@@ -216,7 +216,7 @@ void Lingo::addCodeV4(Common::SeekableSubReadStreamEndian &stream, ScriptType ty
             continue;
         }
 
-        uint32 pointer = start_offset-code_store_offset;
+        uint16 pointer = start_offset-code_store_offset;
         Common::Array<uint32> offset_list;
         while (pointer < end_offset-code_store_offset) {
             uint8 opcode = code_store[pointer];
@@ -224,38 +224,48 @@ void Lingo::addCodeV4(Common::SeekableSubReadStreamEndian &stream, ScriptType ty
             pointer += 1;
             if (_lingoV4.contains(opcode)) {
                 offset_list.push_back(_currentScript->size());
-                _currentScript->push_back(_lingoV4[opcode]->func);
+                g_lingo->code1(_lingoV4[opcode]->func);
+                size_t argc = strlen(_lingoV4[opcode]->proto);
+                for (uint c=0; c<argc; c++) {
+                    switch (_lingoV4[opcode]->proto[c]) {
+                        case 'b':
+                            offset_list.push_back(_currentScript->size());
+                            g_lingo->codeInt((int8)code_store[pointer]);
+                            pointer += 1;
+                            break;
+                        case 'w':
+                            offset_list.push_back(_currentScript->size());
+                            offset_list.push_back(_currentScript->size());
+                            g_lingo->codeInt((int16)READ_UINT16(&code_store[pointer]));
+                            pointer += 2;
+                            break;
+                        default:
+                            break;
+                    }
+                }
 
             } else {
                 // unimplemented instruction
-                inst op_value = 0;
-                WRITE_UINT32(&op_value, opcode);
 
                 if (opcode < 0x40) {
                     offset_list.push_back(_currentScript->size());
-                    _currentScript->push_back(Lingo::c_nop);
-                    _currentScript->push_back(op_value);
+                    g_lingo->code1(Lingo::c_nop);
+                    g_lingo->codeInt(opcode);
                 } else if (opcode < 0x80) {
                     offset_list.push_back(_currentScript->size());
-                    _currentScript->push_back(Lingo::c_nop1);
-                    _currentScript->push_back(op_value);
-                    inst arg1 = 0;
-                    WRITE_UINT32(&arg1, code_store[pointer]);
+                    g_lingo->code1(Lingo::c_nop1);
+                    g_lingo->codeInt(opcode);
                     offset_list.push_back(_currentScript->size());
-                    _currentScript->push_back(arg1);
+                    g_lingo->codeInt((uint)code_store[pointer]);
                     pointer += 1;
                 } else {
                     offset_list.push_back(_currentScript->size());
-                    _currentScript->push_back(Lingo::c_nop2);
-                    _currentScript->push_back(op_value);
-                    inst arg1 = 0;
-                    WRITE_UINT32(&arg1, code_store[pointer]);
+                    g_lingo->code1(Lingo::c_nop2);
+                    g_lingo->codeInt(opcode);
                     offset_list.push_back(_currentScript->size());
-                    _currentScript->push_back(arg1);
-                    inst arg2 = 0;
-                    WRITE_UINT32(&arg2, code_store[pointer+1]);
+                    g_lingo->codeInt((uint)code_store[pointer]);
                     offset_list.push_back(_currentScript->size());
-                    _currentScript->push_back(arg2);
+                    g_lingo->codeInt((uint)code_store[pointer+1]);
                     pointer += 2;
                 }
             }

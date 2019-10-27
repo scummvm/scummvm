@@ -275,21 +275,19 @@ int Lingo::codeFloat(double f) {
 }
 
 int Lingo::codeInt(int val) {
-	int res = g_lingo->code1(g_lingo->c_intpush);
 	inst i = 0;
 	WRITE_UINT32(&i, val);
 	g_lingo->code1(i);
 
-	return res;
+	return _currentScript->size();
 }
 
 int Lingo::codeArray(int arraySize) {
-	int res = g_lingo->code1(g_lingo->c_arraypush);
 	inst i = 0;
 	WRITE_UINT32(&i, arraySize);
 	g_lingo->code1(i);
 
-	return res;
+	return _currentScript->size();
 }
 
 void Lingo::codeArg(Common::String *s) {
