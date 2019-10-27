@@ -892,10 +892,15 @@ void MystGraphics::replaceImageWithRect(uint16 destImage, uint16 sourceImage, co
 }
 
 void MystGraphics::clearScreen() {
-	if (_vm->getFeatures() & GF_ME)
-		_vm->_system->fillScreen(_pixelFormat.RGBToColor(0, 0, 0));
-	else
-		_vm->_system->fillScreen(0);
+	Graphics::Surface *screen = _vm->_system->lockScreen();
+	if (screen) {
+		if (_vm->getFeatures() & GF_ME)
+			screen->fillRect(_viewport, _pixelFormat.RGBToColor(0, 0, 0));
+		else
+			screen->fillRect(_viewport, 0);
+
+		_vm->_system->unlockScreen();
+	}
 }
 
 } // End of namespace Mohawk
