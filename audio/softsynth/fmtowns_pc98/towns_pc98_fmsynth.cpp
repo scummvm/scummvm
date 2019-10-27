@@ -981,10 +981,10 @@ TownsPC98_FmSynth::TownsPC98_FmSynth(Audio::Mixer *mixer, EmuType type) :
 }
 
 TownsPC98_FmSynth::~TownsPC98_FmSynth() {
-	Common::StackLock lock(_mutex);
 	if (_ready)
 		deinit();
 
+	Common::StackLock lock(_mutex);
 	delete _ssg;
 #ifndef DISABLE_PC98_RHYTHM_CHANNEL
 	delete _prc;
@@ -1065,7 +1065,7 @@ void TownsPC98_FmSynth::reset() {
 	_waitCycleRemainder = 0;
 #endif
 
-	writeReg(0, 0x27, 0x33);
+	writeReg(0, 0x27, 0x30);
 
 	if (_ssg)
 		_ssg->reset();
@@ -1147,18 +1147,28 @@ int TownsPC98_FmSynth::readBuffer(int16 *buffer, const int numSamples) {
 		int render = inSamplesLeft;
 	
 		for (int i = 0; i < 2; i++) {
-			if (_timers[i].enabled && _timers[i].cb) {
+			if (_timers[i].enabled) {
 				if (!_timers[i].smpTillCb) {
+					int spc = i ? ((0x100 - _timers[i].value) << 4) << _rateScale : (0x400 - _timers[i].value) << _rateScale;
+					if (spc < 1)
+						spc = 1;
+
+					_timers[i].smpPerCb = (int32)spc;
+					_timers[i].smpPerCbRem = (uint32)((spc - (float)_timers[i].smpPerCb) * 1000000.0f);
+
 					if (_timers[i].cb) {
 						if (_timers[i].cb->isValid())
 							(*_timers[i].cb)();
-					}					
+					}
+
 					_timers[i].smpTillCb = _timers[i].smpPerCb;
 					_timers[i].smpTillCbRem += _timers[i].smpPerCbRem;
-					if (_timers[i].smpTillCbRem >= 1000000) {
+					while (_timers[i].smpTillCbRem >= 1000000) {
 						_timers[i].smpTillCb++;
 						_timers[i].smpTillCbRem -= 1000000;
 					}
+
+					_timers[i].enabled = _registers[0x27][0] & (4 << i);
 				}
 				render = MIN(render, _timers[i].smpTillCb);
 			}
@@ -1428,7 +1438,7 @@ void TownsPC98_FmSynth::writeRegInternal(uint8 part, uint8 regAddress, uint8 val
 			// Timer B
 			_timers[1].value = value & 0xff;
 		} else if (l == 7) {
-			if (value & 1) {
+			if ((value & 1) && !_timers[0].enabled) {
 				int spc = (0x400 - _timers[0].value) << _rateScale;
 				if (spc < 1) {
 					warning("TownsPC98_FmSynth: Invalid Timer A setting: %d", _timers[0].value);
@@ -1440,11 +1450,11 @@ void TownsPC98_FmSynth::writeRegInternal(uint8 part, uint8 regAddress, uint8 val
 				_timers[0].smpTillCb = _timers[0].smpPerCb;
 				_timers[0].smpTillCbRem = _timers[0].smpPerCbRem;
 				_timers[0].enabled = true;
-			} else {
+			} else if (!(value & 1)) {
 				_timers[0].enabled = false;
 			}
 
-			if (value & 2) {
+			if ((value & 2) && !_timers[1].enabled) {
 				int spc = ((0x100 - _timers[1].value) << 4) << _rateScale;
 				if (spc < 1) {
 					warning("TownsPC98_FmSynth: Invalid Timer B setting: %d", _timers[1].value);
@@ -1456,18 +1466,18 @@ void TownsPC98_FmSynth::writeRegInternal(uint8 part, uint8 regAddress, uint8 val
 				_timers[1].smpTillCb = _timers[1].smpPerCb;
 				_timers[1].smpTillCbRem = _timers[1].smpPerCbRem;
 				_timers[1].enabled = true;
-			} else {
+			} else if (!(value & 2)) {
 				_timers[1].enabled = false;
 			}
 
 			if (value & 0x10) {
-				_timers[0].smpTillCb = _timers[0].smpPerCb;
-				_timers[0].smpTillCbRem = _timers[0].smpPerCbRem;
+				// clear timer a over flag
+				// Unneeded / not implemented for ScummVM
 			}
 
 			if (value & 0x20) {
-				_timers[1].smpTillCb = _timers[1].smpPerCb;
-				_timers[1].smpTillCbRem = _timers[1].smpPerCbRem;
+				// clear timer b over flag
+				// Unneeded / not implemented for ScummVM
 			}
 
 		} else if (l == 2) {
