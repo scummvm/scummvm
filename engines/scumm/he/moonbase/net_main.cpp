@@ -333,27 +333,26 @@ void Net::remoteStartScript(int typeOfSend, int sendTypeParam, int priority, int
 }
 
 int Net::remoteSendData(int typeOfSend, int sendTypeParam, int type, byte *data, int len, int defaultRes) {
-	byte *buf = (byte *)malloc(MAX_PACKET_SIZE + DATA_HEADER_SIZE);
-	Common::MemoryWriteStream pack(buf, MAX_PACKET_SIZE + DATA_HEADER_SIZE);
+	// Since I am lazy, instead of constructing the JSON object manually
+	// I'd rather parse it
+	Common::String res = Common::String::format(
+		"{\"sessionid\":%d, \"userid\":%d, \"to\":%d, \"toparam\": %d, "
+		"\"type\":%d, \"timestamp\": %d, \"data\": [", _sessionid, _myUserId,
+		typeOfSend, sendTypeParam, type, g_system->getMillis());
 
-	pack.writeUint32LE(_sessionid);
-	pack.writeUint32LE(_myUserId);
-	pack.writeUint32LE(typeOfSend);
-	pack.writeUint32LE(sendTypeParam);
-	pack.writeUint32LE(type);
-	pack.writeUint32LE(len);
-	pack.writeUint32LE(g_system->getMillis());
-	pack.write(data, len);
+	for (int i = 0; i < len - 1; i++)
+		res += Common::String::format("%d, ", data[i]);
 
-	debug("Package to send, to: %d (%d), %d(%x) bytes", typeOfSend, sendTypeParam, len + DATA_HEADER_SIZE, len);
+	res += Common::String::format("%d] }", data[len - 1]);
 
-	Common::hexdump(buf, len + DATA_HEADER_SIZE);
+	debug("Package to send: %s", res.c_str());
 
 	Networking::PostRequest rq(_serverprefix + "/packet",
 		new Common::Callback<Net, Common::JSONValue *>(this, &Net::remoteSendDataCallback),
 		new Common::Callback<Net, Networking::ErrorResponse>(this, &Net::remoteSendDataErrorCallback));
 
-	rq.setPostData(buf, len + DATA_HEADER_SIZE);
+	rq.setPostData((byte *)res.c_str(), res.size());
+	rq.setContentType("application/json");
 
 	rq.start();
 
