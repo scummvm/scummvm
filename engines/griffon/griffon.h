@@ -92,6 +92,7 @@ enum {
 
 //  in game scripts
 enum {
+	kScriptFlask = 0,			// get flask
 	kScriptMasterKey = 2, 		// find master key
 	kScriptFindCtystal = 3,		// find crystal
 	kScriptFindShield = 4,		// find shield - obj 8

@@ -43,11 +43,10 @@ CONFIG config;
 
 void config_load(CONFIG *config) {
 	bool mute = false;
+	config->music = config->effects = false;
+
 	if (ConfMan.hasKey("mute"))
 		mute = ConfMan.getBool("mute");
-
-	config->music = mute;
-	config->effects = mute;
 
 	if (!mute) {
 		config->music = !ConfMan.getBool("music_mute");
