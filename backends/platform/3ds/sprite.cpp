@@ -42,6 +42,8 @@ Sprite::Sprite()
 	, actualHeight(0)
 	, posX(0)
 	, posY(0)
+	, offsetX(0)
+	, offsetY(0)
 	, scaleX(1.f)
 	, scaleY(1.f)
 {
@@ -84,7 +86,6 @@ void Sprite::create(uint16 width, uint16 height, const Graphics::PixelFormat &f)
 	};
 	memcpy(vertices, tmp, sizeof(vertex) * 4);
 }
-
 
 void Sprite::free() {
 	linearFree(vertices);
@@ -138,12 +139,18 @@ void Sprite::setPosition(int x, int y) {
 	}
 }
 
+void Sprite::setOffset(uint16 x, uint16 y) {
+	offsetX = x;
+	offsetY = y;
+	dirtyMatrix = true;
+}
+
 C3D_Mtx* Sprite::getMatrix() {
 	if (dirtyMatrix) {
 		dirtyMatrix = false;
 		Mtx_Identity(&modelview);
 		Mtx_Scale(&modelview, scaleX, scaleY, 1.f);
-		Mtx_Translate(&modelview, posX, posY, 0, true);
+		Mtx_Translate(&modelview, posX - offsetX, posY - offsetY, 0, true);
 	}
 	return &modelview;
 }

@@ -149,6 +149,8 @@ void OSystem_3DS::initSize(uint width, uint height,
 	_gameHeight = height;
 	_gameTopTexture.create(width, height, _pfGameTexture);
 	_overlay.create(getOverlayWidth(), getOverlayHeight(), _pfGameTexture);
+	_topHalfWidth = _topWidth / 2;
+	_topHalfHeight = _topHeight / 2;
 
 	if (format) {
 		debug("pixelformat: %d %d %d %d %d", format->bytesPerPixel, format->rBits(), format->gBits(), format->bBits(), format->aBits());
@@ -196,6 +198,8 @@ void OSystem_3DS::updateSize() {
 	}
 	_gameTopTexture.setPosition(_gameTopX, _gameTopY);
 	_gameBottomTexture.setPosition(_gameBottomX, _gameBottomY);
+	_gameTopTexture.setOffset(0, 0);
+	_gameBottomTexture.setOffset(0, 0);
 	if (_overlayVisible)
 		_cursorTexture.setScale(1.f, 1.f);
 	else if (config.screen == kScreenTop)
@@ -273,6 +277,17 @@ void OSystem_3DS::updateScreen() {
 
 	C3D_FrameBegin(0);
 		_gameTopTexture.transfer();
+		if (_magnifyMode == MODE_MAGON) {
+			_topX = (_cursorX < _topHalfWidth) ?
+				0 : ((_cursorX < (_gameWidth - _topHalfWidth)) ?
+				_cursorX - _topHalfWidth : _gameWidth - _topWidth);
+			_topY = (_cursorY < _topHalfHeight) ?
+				0 : ((_cursorY < _gameHeight - _topHalfHeight) ?
+				_cursorY - _topHalfHeight : _gameHeight - _topHeight);
+			_gameTopTexture.setScale(1.f,1.f);
+			_gameTopTexture.setPosition(0,0);
+			_gameTopTexture.setOffset(_topX, _topY);
+		}
 		if (_overlayVisible) {
 			_overlay.transfer();
 		}

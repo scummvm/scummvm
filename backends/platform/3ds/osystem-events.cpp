@@ -33,6 +33,7 @@ namespace _3DS {
 
 static Common::Mutex *eventMutex;
 static InputMode inputMode = MODE_DRAG;
+static InputMode savedInputMode = MODE_DRAG;
 static aptHookCookie cookie;
 static bool optionMenuOpening = false;
 static Common::String messageOSD;
@@ -146,13 +147,41 @@ static void eventThreadFunc(void *arg) {
 		}
 
 		// Button events
+		if (keysPressed & KEY_L) {
+			if (osys->getWidth() >= 400 || osys->getHeight() >= 240) {
+				if (osys->getMagnifyMode() == MODE_MAGOFF) {
+					osys->setMagnifyMode(MODE_MAGON);
+					if (inputMode == MODE_DRAG) {
+						inputMode = MODE_HOVER;
+						osys->displayMessageOnOSD("Magnify Mode On. Switching to Hover Mode...");
+					} else
+						osys->displayMessageOnOSD("Magnify Mode On");
+				} else {
+					osys->setMagnifyMode(MODE_MAGOFF);
+					osys->updateSize();
+					if (savedInputMode == MODE_DRAG) {
+						inputMode = savedInputMode;
+						osys->displayMessageOnOSD("Magnify Mode Off. Reactivating Drag Mode...");
+					} else
+						osys->displayMessageOnOSD("Magnify Mode Off");
+				}
+			} else {
+				if (osys->getWidth() == 0 || osys->getHeight() == 0) {
+					osys->displayMessageOnOSD("Magnify Mode cannot be activated in Launcher.");
+				} else
+					osys->displayMessageOnOSD("In-game resolution too small to magnify.");
+			}
+		}
 		if (keysPressed & KEY_R) {
 			if (inputMode == MODE_DRAG) {
-				inputMode = MODE_HOVER;
+				inputMode = savedInputMode = MODE_HOVER;
 				osys->displayMessageOnOSD("Hover Mode");
 			} else {
-				inputMode = MODE_DRAG;
-				osys->displayMessageOnOSD("Drag Mode");
+				if (osys->getMagnifyMode() == MODE_MAGOFF) {
+					inputMode = savedInputMode = MODE_DRAG;
+					osys->displayMessageOnOSD("Drag Mode");
+				} else
+					osys->displayMessageOnOSD("Cannot Switch to Drag Mode while Magnify Mode is On");
 			}
 		}
 		if (keysPressed & KEY_A || keysPressed & KEY_DLEFT || keysReleased & KEY_A || keysReleased & KEY_DLEFT) {
@@ -165,6 +194,16 @@ static void eventThreadFunc(void *arg) {
 				event.type = Common::EVENT_LBUTTONUP;
 			pushEventQueue(eventQueue, event);
 		}
+		if (keysPressed & KEY_B || keysReleased & KEY_B || keysPressed & KEY_DDOWN || keysReleased & KEY_DDOWN) {
+			if (keysPressed & KEY_B || keysPressed & KEY_DDOWN)
+				event.type = Common::EVENT_KEYDOWN;
+			else
+				event.type = Common::EVENT_KEYUP;
+			event.kbd.keycode = Common::KEYCODE_ESCAPE;
+			event.kbd.ascii = Common::ASCII_ESCAPE;
+			event.kbd.flags = 0;
+			pushEventQueue(eventQueue, event);
+		}
 		if (keysPressed & KEY_X || keysPressed & KEY_DUP || keysReleased & KEY_X || keysReleased & KEY_DUP) {
 			// SIMULATE RIGHT CLICK
 			event.mouse.x = lastTouch.px;
@@ -175,7 +214,7 @@ static void eventThreadFunc(void *arg) {
 				event.type = Common::EVENT_RBUTTONUP;
 			pushEventQueue(eventQueue, event);
 		}
-		if (keysPressed & KEY_L) {
+		if (keysPressed & KEY_Y || keysPressed & KEY_DRIGHT) {
 			event.type = Common::EVENT_VIRTUAL_KEYBOARD;
 			pushEventQueue(eventQueue, event);
 		}
@@ -187,15 +226,18 @@ static void eventThreadFunc(void *arg) {
 			if (!optionMenuOpened)
 				optionMenuOpening = true;
 		}
-		if (keysPressed & KEY_B || keysReleased & KEY_B || keysPressed & KEY_DDOWN || keysReleased & KEY_DDOWN) {
-			if (keysPressed & KEY_B || keysPressed & KEY_DDOWN)
-				event.type = Common::EVENT_KEYDOWN;
-			else
-				event.type = Common::EVENT_KEYUP;
-			event.kbd.keycode = Common::KEYCODE_ESCAPE;
-			event.kbd.ascii = Common::ASCII_ESCAPE;
-			event.kbd.flags = 0;
-			pushEventQueue(eventQueue, event);
+
+		// If magnify mode is on when returning to Launcher, turn it off
+		if (g_system->getEventManager()->shouldRTL()) {
+			if (osys->getMagnifyMode() == MODE_MAGON) {
+				osys->setMagnifyMode(MODE_MAGOFF);
+				osys->updateSize();
+				if (savedInputMode == MODE_DRAG) {
+					inputMode = savedInputMode;
+					osys->displayMessageOnOSD("Magnify Mode Off. Reactivating Drag Mode.\nReturning to Launcher...");
+				} else
+					osys->displayMessageOnOSD("Magnify Mode Off. Returning to Launcher...");
+			}
 		}
 
 		// TODO: EVENT_PREDICTIVE_DIALOG
@@ -266,6 +308,10 @@ void OSystem_3DS::transformPoint(touchPosition &point) {
 		point.px = static_cast<float>(point.px) / _gameBottomTexture.getScaleX() - _gameBottomX;
 		point.py = static_cast<float>(point.py) / _gameBottomTexture.getScaleY() - _gameBottomY;
 	}
+}
+
+void OSystem_3DS::setMagnifyMode(MagnifyMode mode) {
+	_magnifyMode = mode;
 }
 
 void OSystem_3DS::displayMessageOnOSD(const char *msg) {

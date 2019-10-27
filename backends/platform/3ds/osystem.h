@@ -44,6 +44,11 @@ enum {
 	GFX_NEAREST = 1
 };
 
+enum MagnifyMode {
+	MODE_MAGON,
+	MODE_MAGOFF,
+};
+
 enum InputMode {
 	MODE_HOVER,
 	MODE_DRAG,
@@ -143,6 +148,9 @@ public:
 	void updateFocus();
 	void updateConfig();
 	void updateSize();
+	void setMagnifyMode(MagnifyMode mode);
+	MagnifyMode getMagnifyMode(){ return _magnifyMode; }
+
 
 private:
 	void initGraphics();
@@ -162,6 +170,9 @@ private:
 	u16 _gameWidth, _gameHeight;
 	u16 _gameTopX, _gameTopY;
 	u16 _gameBottomX, _gameBottomY;
+	u16 _topWidth, _topHeight;
+	u16 _topHalfWidth, _topHalfHeight;
+	u16 _topX, _topY;
 
 	// Audio
 	Thread audioThread;
@@ -218,6 +229,7 @@ private:
 	float _cursorDeltaX, _cursorDeltaY;
 	int _cursorHotspotX, _cursorHotspotY;
 	uint32 _cursorKeyColor;
+	MagnifyMode _magnifyMode;
 };
 
 } // namespace _3DS
