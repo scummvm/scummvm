@@ -68,8 +68,7 @@ public:
 	void unpackageArray(int arrayId, byte *data, int len);
 
 private:
-	int getMessageCount();
-	void remoteReceiveData();
+	bool remoteReceiveData();
 
 	void createSessionCallback(Common::JSONValue *response);
 	void createSessionErrorCallback(Networking::ErrorResponse error);

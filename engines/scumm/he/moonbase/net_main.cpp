@@ -449,11 +449,7 @@ void Net::getProviderName(int providerIndex, char *buffer, int length) {
 	warning("STUB: Net::getProviderName(%d, \"%s\", %d)", providerIndex, buffer, length); // PN_GetProviderName
 }
 
-int Net::getMessageCount() {
-	return 0; // FIXME
-}
-
-void Net::remoteReceiveData() {
+bool Net::remoteReceiveData() {
 	Networking::PostRequest rq(_serverprefix + "/getpacket",
 		new Common::Callback<Net, Common::JSONValue *>(this, &Net::remoteReceiveDataCallback),
 		new Common::Callback<Net, Networking::ErrorResponse>(this, &Net::remoteReceiveDataErrorCallback));
@@ -470,8 +466,8 @@ void Net::remoteReceiveData() {
 		g_system->delayMillis(5);
 	}
 
-	if (_packetsize == -1)
-		return;
+	if (!_packetsize)
+		return false;
 
 	Common::MemoryReadStream pack(_packbuffer, _packetsize);
 
@@ -544,15 +540,17 @@ void Net::remoteReceiveData() {
 	default:
 		warning("Moonbase: Received unknown network command %d", type);
 	}
+
+	return true;
 }
 
 void Net::remoteReceiveDataCallback(Common::JSONValue *response) {
 	debug(1, "remoteReceiveData: Got: '%s'", response->stringify().c_str());
 
-	if (!response->child("size")->asIntegerNumber())
-		return;
-
 	_packetsize = response->child("size")->asIntegerNumber();
+
+	if (!_packetsize)
+		return;
 
 	strncpy((char *)_packbuffer, response->child("data")->asString().c_str(), _packetsize);
 }
@@ -569,9 +567,7 @@ void Net::unpackageArray(int arrayId, byte *data, int len) {
 void Net::doNetworkOnceAFrame(int msecs) {
 	uint32 tickCount = g_system->getMillis() + msecs;
 
-	while (getMessageCount()) {
-		remoteReceiveData();
-
+	while (remoteReceiveData()) {
 		if (tickCount >= g_system->getMillis()) {
 			break;
 		}
