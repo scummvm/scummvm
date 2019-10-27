@@ -52,9 +52,7 @@ void GriffonEngine::attack() {
 		if (ly > 0) {
 			int o2 = 0; // ??
 			int o = _objectMap[lx][ly - 1];
-			if (ly > 1 && _curmap == 58)
-				o2 = _objectMap[lx][ly - 2];
-			if (ly > 1 && _curmap == 54)
+			if (ly > 1 && (_curmap == 54 || _curmap == 58))
 				o2 = _objectMap[lx][ly - 2];
 
 			// cst
@@ -63,7 +61,7 @@ void GriffonEngine::attack() {
 					o = 10;
 
 				int oscript = _objectInfo[o][5];
-				if (oscript == 0 && _player.inventory[kInvFlask] < 9) {
+				if (oscript == kScriptFlask && _player.inventory[kInvFlask] < 9) {
 					_player.inventory[kInvFlask]++;
 					addFloatIcon(6, lx * 16, (ly - 1) * 16);
 
@@ -82,7 +80,7 @@ void GriffonEngine::attack() {
 					return;
 				}
 
-				if (oscript == 0 && _player.inventory[kInvFlask] == 9) {
+				if (oscript == kScriptFlask && _player.inventory[kInvFlask] == 9) {
 					if (config.effects) {
 						int snd = playSound(_sfx[kSndChest]);
 						setChannelVolume(snd, config.effectsvol);
@@ -481,7 +479,7 @@ void GriffonEngine::castSpell(int spellnum, float homex, float homey, float enem
 							spellinfo[i].fireballs[nballs][3] = 0;
 
 							spellinfo[i].ballon[nballs] = 1;
-							nballs = nballs + 1;
+							++nballs;
 						}
 					}
 				}

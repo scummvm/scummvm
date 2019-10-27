@@ -227,7 +227,7 @@ void GriffonEngine::title(int mode) {
 }
 
 void GriffonEngine::configMenu() {
-	static const char *vr[22] = {
+	static const char *optionTitles[22] = {
 		"", "",
 		"", "", "", "",
 		"", "", "",
@@ -236,7 +236,7 @@ void GriffonEngine::configMenu() {
 		"Music Volume:", "",
 		"Effects Volume:", "", "", "", ""
 	};
-	static const char *vl[22] = {
+	static const char *optionValues[22] = {
 		"", "",
 		"", "", "", "",
 		"", "", "",
@@ -289,30 +289,27 @@ void GriffonEngine::configMenu() {
 		for (int i = 0; i <= 21; i++) {
 			static char line[24];
 
-			if (i == 15 || i == 17) {
+			int destColumn = 3;
+			if (i == 9 && config.music)
+				destColumn = 0;
+			else if (i == 10 && !config.music)
+				destColumn = 0;
+			else if (i == 12 && config.effects)
+				destColumn = 0;
+			else if (i == 13 && !config.effects)
+				destColumn = 0;
+			else if (i == 15 || i == 17) {
 				int vol = (i == 15 ? config.musicvol : config.effectsvol) * 9 / 255;
 				vol = CLIP(vol, 0, 9);
 
 				strcpy(line, "[----------]");
 				line[vol + 1] = 'X';
-				vl[i] = line;
-			}
+				optionValues[i] = line;
+			} else if (i > 18)
+				destColumn = 0;
 
-			int cl = 3;
-
-			if (i == 9 && config.music)
-				cl = 0;
-			else if (i == 10 && !config.music)
-				cl = 0;
-			else if (i == 12 && config.effects)
-				cl = 0;
-			else if (i == 13 && !config.effects)
-				cl = 0;
-			else if (i > 18)
-				cl = 0;
-
-			drawString(_videobuffer, vr[i], 156 - 8 * strlen(vr[i]), sy + i * 8, 0);
-			drawString(_videobuffer, vl[i], 164, sy + i * 8, cl);
+			drawString(_videobuffer, optionTitles[i], 156 - 8 * strlen(optionTitles[i]), sy + i * 8, 0);
+			drawString(_videobuffer, optionValues[i], 164, sy + i * 8, destColumn);
 		}
 
 		int curselt = cursel + 2;
@@ -376,17 +373,11 @@ void GriffonEngine::configMenu() {
 
 				if (_event.kbd.keycode == Common::KEYCODE_LEFT) {
 					if (cursel == 11) {
-						config.musicvol -= 25;
-						if (config.musicvol < 0)
-							config.musicvol = 0;
-
+						config.musicvol = CLIP(config.musicvol - 25, 0, 255);
 						setChannelVolume(_musicChannel, config.musicvol);
 						setChannelVolume(_menuChannel, config.musicvol);
 					} else if (cursel == 12) {
-						config.effectsvol -= 25;
-						if (config.effectsvol < 0)
-							config.effectsvol = 0;
-
+						config.effectsvol = CLIP(config.effectsvol - 25, 0, 255);
 						setChannelVolume(-1, config.effectsvol);
 						setChannelVolume(_musicChannel, config.musicvol);
 						setChannelVolume(_menuChannel, config.musicvol);
@@ -399,16 +390,11 @@ void GriffonEngine::configMenu() {
 				}
 				if (_event.kbd.keycode == Common::KEYCODE_RIGHT) {
 					if (cursel == 11) {
-						config.musicvol += 25;
-						if (config.musicvol > 255)
-							config.musicvol = 255;
-
+						config.musicvol = CLIP(config.musicvol + 25, 0, 255);
 						setChannelVolume(_musicChannel, config.musicvol);
 						setChannelVolume(_menuChannel, config.musicvol);
 					} else if (cursel == 12) {
-						config.effectsvol += 25;
-						if (config.effectsvol > 255)
-							config.effectsvol = 255;
+						config.effectsvol = CLIP(config.effectsvol + 25, 0, 255);
 
 						setChannelVolume(-1, config.effectsvol);
 						setChannelVolume(_musicChannel, config.musicvol);

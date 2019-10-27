@@ -252,7 +252,7 @@ void GriffonEngine::intro() {
 			add = 1;
 		xofs += add;
 		if (xofs >= 320)
-			xofs = xofs - 320;
+			xofs -= 320;
 
 		g_system->getEventManager()->pollEvent(_event);
 
@@ -391,9 +391,9 @@ void GriffonEngine::endOfGame() {
 		float add = 0.5 * _fpsr;
 		if (add > 1)
 			add = 1;
-		xofs = xofs + add;
+		xofs += add;
 		if (xofs >= 320)
-			xofs = xofs - 320;
+			xofs -= 320;
 
 		if (_event.type == Common::EVENT_KEYDOWN)
 			spd = 1.0f;
