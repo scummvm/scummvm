@@ -94,7 +94,7 @@ enum {
 enum {
 	kScriptFlask = 0,			// get flask
 	kScriptMasterKey = 2, 		// find master key
-	kScriptFindCtystal = 3,		// find crystal
+	kScriptFindCrystal = 3,		// find crystal
 	kScriptFindShield = 4,		// find shield - obj 8
 	kScriptFindSword = 5,		// find sword - obj 9
 	kScriptKeyChest = 6,		// regular key chest
