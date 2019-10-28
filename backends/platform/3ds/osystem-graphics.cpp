@@ -144,6 +144,8 @@ int OSystem_3DS::getGraphicsMode() const {
 void OSystem_3DS::initSize(uint width, uint height,
                                    const Graphics::PixelFormat *format) {
 	debug("3ds initsize w:%d h:%d", width, height);
+	loadConfig();
+
 	_gameWidth = width;
 	_gameHeight = height;
 	_gameTopTexture.create(width, height, _pfGameTexture);
