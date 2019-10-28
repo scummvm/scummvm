@@ -282,7 +282,7 @@ int StarTrekEngine::showText(TextGetterFunc textGetter, uintptr var, int xoffset
 		error("showText: Not all choices have titles.");
 
 	Sprite textboxSprite;
-	SharedPtr<TextBitmap> textBitmap = initTextSprite(&xoffset, &yoffset, textColor, numTextboxLines, numChoicesWithNames, &textboxSprite);
+	TextBitmap *textBitmap = initTextSprite(&xoffset, &yoffset, textColor, numTextboxLines, numChoicesWithNames, &textboxSprite);
 
 	int choiceIndex = 0;
 	int scrollOffset = 0;
@@ -309,8 +309,6 @@ int StarTrekEngine::showText(TextGetterFunc textGetter, uintptr var, int xoffset
 		loadMenuButtons("textbtns", xoffset + 0x96, yoffset - 0x11);
 
 		Common::Point oldMousePos = _gfx->getMousePos();
-		SharedPtr<Bitmap> oldMouseBitmap = _gfx->getMouseBitmap();
-
 		_gfx->warpMouse(xoffset + 0xde, yoffset - 0x08);
 		_gfx->setMouseBitmap(_gfx->loadBitmap("pushbtn"));
 
@@ -450,7 +448,7 @@ readjustScroll:
 			ticksUntilClickingEnabled = 0;
 		}
 
-		_gfx->setMouseBitmap(oldMouseBitmap);
+		_gfx->popMouseBitmap();
 		_gfx->warpMouse(oldMousePos.x, oldMousePos.y);
 
 		_mouseControllingShip = tmpMouseControllingShip;
@@ -458,11 +456,14 @@ readjustScroll:
 
 		textboxSprite.dontDrawNextFrame();
 		_gfx->drawAllSprites();
+		//delete textBitmap;
+		textboxSprite.bitmap.reset();
 		_gfx->delSprite(&textboxSprite);
 	}
 
 	_textboxVar2 = _frameIndex;
 	stopPlayingSpeech();
+
 	return choiceIndex;
 }
 
@@ -501,7 +502,7 @@ String StarTrekEngine::putTextIntoLines(const String &_text) {
 	return output;
 }
 
-SharedPtr<TextBitmap> StarTrekEngine::initTextSprite(int *xoffsetPtr, int *yoffsetPtr, byte textColor, int numTextLines, bool withHeader, Sprite *sprite) {
+TextBitmap *StarTrekEngine::initTextSprite(int *xoffsetPtr, int *yoffsetPtr, byte textColor, int numTextLines, bool withHeader, Sprite *sprite) {
 	int linesBeforeTextStart = 2;
 	if (withHeader)
 		linesBeforeTextStart = 4;
@@ -511,12 +512,12 @@ SharedPtr<TextBitmap> StarTrekEngine::initTextSprite(int *xoffsetPtr, int *yoffs
 
 	int textHeight = numTextLines + linesBeforeTextStart;
 
-	SharedPtr<TextBitmap> bitmap(new TextBitmap(TEXTBOX_WIDTH * 8, textHeight * 8));
+	TextBitmap *bitmap = new TextBitmap(TEXTBOX_WIDTH * 8, textHeight * 8);
 
 	*sprite = Sprite();
 	sprite->drawPriority = 15;
 	sprite->drawPriority2 = 8;
-	sprite->bitmap = bitmap;
+	sprite->bitmap = SharedPtr<TextBitmap>(bitmap);	// This is deallocated explicitly at the end of showText()
 	sprite->textColor = textColor;
 
 	memset(bitmap->pixels, ' ', textHeight * TEXTBOX_WIDTH);
@@ -575,7 +576,7 @@ SharedPtr<TextBitmap> StarTrekEngine::initTextSprite(int *xoffsetPtr, int *yoffs
 	return bitmap;
 }
 
-void StarTrekEngine::drawMainText(SharedPtr<TextBitmap> bitmap, int numTextLines, int numTextboxLines, const String &_text, bool withHeader) {
+void StarTrekEngine::drawMainText(TextBitmap *bitmap, int numTextLines, int numTextboxLines, const String &_text, bool withHeader) {
 	byte *dest = bitmap->pixels + TEXTBOX_WIDTH + 1; // Start of 2nd row
 	const char *text = _text.c_str();
 
@@ -601,7 +602,7 @@ void StarTrekEngine::drawMainText(SharedPtr<TextBitmap> bitmap, int numTextLines
 	}
 }
 
-String StarTrekEngine::readLineFormattedText(TextGetterFunc textGetter, uintptr var, int choiceIndex, SharedPtr<TextBitmap> textBitmap, int numTextboxLines, int *numTextLines) {
+String StarTrekEngine::readLineFormattedText(TextGetterFunc textGetter, uintptr var, int choiceIndex, TextBitmap *textBitmap, int numTextboxLines, int *numTextLines) {
 	String headerText;
 	String text = (this->*textGetter)(choiceIndex, var, &headerText);
 

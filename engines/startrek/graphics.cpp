@@ -61,14 +61,7 @@ Graphics::Graphics(StarTrekEngine *vm) : _vm(vm), _egaMode(false) {
 	memset(_lutData, 0, 256 * 3);
 
 	_paletteFadeLevel = 0;
-	_mouseLocked = false;
-	_mouseToBeShown = false;
-	_mouseToBeHidden = false;
-	_mouseWarpX = -1;
-	_mouseWarpY = -1;
-
-	setMouseBitmap(loadBitmap("pushbtn"));
-	CursorMan.showMouse(true);
+	_lockedMousePos = Common::Point(-1, -1);
 }
 
 Graphics::~Graphics() {
@@ -79,9 +72,8 @@ Graphics::~Graphics() {
 	delete _font;
 }
 
-
-void Graphics::setBackgroundImage(SharedPtr<Bitmap> bitmap) {
-	_backgroundImage = SharedPtr<Bitmap>(new Bitmap(*bitmap));
+void Graphics::setBackgroundImage(Bitmap *bitmap) {
+	_backgroundImage = SharedPtr<Bitmap>(bitmap);
 }
 
 void Graphics::drawBitmapToBackground(const Common::Rect &origRect, const Common::Rect &drawRect, Bitmap *bitmap) {
@@ -246,68 +238,43 @@ byte Graphics::getPriValue(int x, int y) {
 		return b >> 4;
 }
 
-SharedPtr<Bitmap> Graphics::loadBitmap(Common::String basename) {
-	return SharedPtr<Bitmap>(new Bitmap(SharedPtr<Common::MemoryReadStreamEndian>(_vm->loadFile(basename + ".BMP"))));
+Bitmap *Graphics::loadBitmap(Common::String basename) {
+	return new Bitmap(SharedPtr<Common::MemoryReadStreamEndian>(_vm->loadFile(basename + ".BMP")));
 }
 
 Common::Point Graphics::getMousePos() {
-	if (_mouseWarpX != -1)
-		return Common::Point(_mouseWarpX, _mouseWarpY);
-
 	return _vm->_system->getEventManager()->getMousePos();
 }
 
-void Graphics::setMouseBitmap(SharedPtr<Bitmap> bitmap) {
-	_mouseBitmap = bitmap;
+void Graphics::setMouseBitmap(Bitmap *bitmap) {
+	CursorMan.pushCursor(
+		bitmap->pixels,
+		bitmap->width,
+		bitmap->height,
+		bitmap->xoffset,
+		bitmap->yoffset,
+		0
+	);
+}
 
-	if (_mouseLocked)
-		_lockedMouseSprite.setBitmap(_mouseBitmap);
+void Graphics::popMouseBitmap() {
+	CursorMan.popCursor();
+}
+
+void Graphics::toggleMouse(bool visible) {
+	CursorMan.showMouse(visible);
 }
 
 void Graphics::lockMousePosition(int16 x, int16 y) {
-	if (_mouseLocked) {
-		if (x != _lockedMouseSprite.pos.x || y != _lockedMouseSprite.pos.y) {
-			_lockedMouseSprite.pos.x = x;
-			_lockedMouseSprite.pos.y = y;
-			_lockedMouseSprite.bitmapChanged = true;
-		}
-		return;
-	}
-
-	_mouseLocked = true;
-	_mouseToBeHidden = true;
-	_mouseToBeShown = false;
-
-	_lockedMouseSprite = Sprite();
-	_lockedMouseSprite.setBitmap(_mouseBitmap);
-	_lockedMouseSprite.drawPriority = 15;
-	_lockedMouseSprite.drawPriority2 = 16;
-	_lockedMouseSprite.pos.x = x;
-	_lockedMouseSprite.pos.y = y;
-
-	addSprite(&_lockedMouseSprite);
+	_lockedMousePos = Common::Point(x, y);
 }
 
 void Graphics::unlockMousePosition() {
-	if (!_mouseLocked)
-		return;
-
-	_mouseLocked = false;
-	_mouseToBeShown = true;
-	_mouseToBeHidden = false;
-
-	_lockedMouseSprite.dontDrawNextFrame();
-	drawAllSprites(false);
-	delSprite(&_lockedMouseSprite);
-}
-
-SharedPtr<Bitmap> Graphics::getMouseBitmap() {
-	return _mouseBitmap;
+	_lockedMousePos = Common::Point(-1, -1);
 }
 
 void Graphics::warpMouse(int16 x, int16 y) {
-	_mouseWarpX = x;
-	_mouseWarpY = y;
+	_vm->_system->warpMouse(x, y);
 }
 
 void Graphics::drawSprite(const Sprite &sprite, ::Graphics::Surface *surface) {
@@ -621,24 +588,8 @@ void Graphics::forceDrawAllSprites(bool updateScreenFlag) {
 }
 
 void Graphics::updateScreen() {
-	// Check if there are any pending updates to the mouse.
-	if (_mouseBitmap != _mouseBitmapLastFrame) {
-		_mouseBitmapLastFrame = _mouseBitmap;
-		_vm->_system->setMouseCursor(_mouseBitmap->pixels, _mouseBitmap->width, _mouseBitmap->height, _mouseBitmap->xoffset, _mouseBitmap->yoffset, 0);
-	}
-	if (_mouseToBeShown) {
-		CursorMan.showMouse(true);
-		_mouseToBeShown = false;
-	} else if (_mouseToBeHidden) {
-		CursorMan.showMouse(false);
-		_mouseToBeHidden = false;
-	}
-
-	if (_mouseWarpX != -1) {
-		_vm->_system->warpMouse(_mouseWarpX, _mouseWarpY);
-		_mouseWarpX = -1;
-		_mouseWarpY = -1;
-	}
+	if (_lockedMousePos.x != -1)
+		_vm->_system->warpMouse(_lockedMousePos.x, _lockedMousePos.y);
 
 	_vm->_console->onFrame();
 	_vm->_system->updateScreen();
@@ -649,8 +600,6 @@ Sprite *Graphics::getSpriteAt(int16 x, int16 y) {
 	for (int i = _numSprites - 1; i >= 0; i--) {
 		Sprite *sprite = _sprites[i];
 
-		if (sprite == &_lockedMouseSprite)
-			continue;
 		if (sprite->drawMode == 1) // Invisible
 			continue;
 
@@ -723,15 +672,16 @@ byte *Graphics::getFontGfx(char c) {
 	return _font->getCharData(c & 0xff);
 }
 
-
 void Graphics::copyBackgroundScreen() {
-	drawDirectToScreen(_backgroundImage);
+	_vm->_system->copyRectToScreen(
+		_backgroundImage->pixels,
+		_backgroundImage->width,
+		_backgroundImage->xoffset,
+		_backgroundImage->yoffset,
+		_backgroundImage->width,
+		_backgroundImage->height
+	);
 }
-
-void Graphics::drawDirectToScreen(SharedPtr<Bitmap> bitmap) {
-	_vm->_system->copyRectToScreen(bitmap->pixels, bitmap->width, bitmap->xoffset, bitmap->yoffset, bitmap->width, bitmap->height);
-}
-
 
 void Graphics::loadEGAData(const char *filename) {
 	// Load EGA palette data

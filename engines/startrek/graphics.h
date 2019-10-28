@@ -51,7 +51,7 @@ public:
 	Graphics(StarTrekEngine *vm);
 	~Graphics();
 
-	void setBackgroundImage(SharedPtr<Bitmap> bitmap);
+	void setBackgroundImage(Bitmap *bitmap);
 	/**
 	 * @param origRect The rectangle containing the original bitmap (must contain the
 	 *                 whole bitmap, even if some is outside the drawable space)
@@ -84,14 +84,17 @@ public:
 	void setPri(byte val);
 	byte getPriValue(int x, int y);
 
-	SharedPtr<Bitmap> loadBitmap(String basename);
+	Bitmap *loadBitmap(String basename);
 
 	Common::Point getMousePos();
 	/**
 	 * Changes the mouse bitmap. The change won't take effect until drawAllSprites is
 	 * called again.
 	 */
-	void setMouseBitmap(SharedPtr<Bitmap> bitmap);
+	void setMouseBitmap(Bitmap *bitmap);
+	void popMouseBitmap();
+	void toggleMouse(bool visible);
+
 	/**
 	 * This function is a workaround for when the mouse position needs to be locked in a set
 	 * position (used in the action menu). This only affects the position it is drawn at; the
@@ -101,7 +104,6 @@ public:
 	 */
 	void lockMousePosition(int16 x, int16 y);
 	void unlockMousePosition();
-	SharedPtr<Bitmap> getMouseBitmap();
 	void warpMouse(int16 x, int16 y);
 
 	void drawSprite(const Sprite &sprite, ::Graphics::Surface *surface);
@@ -146,7 +148,6 @@ public:
 	byte *getFontGfx(char c);
 
 	void copyBackgroundScreen();
-	void drawDirectToScreen(SharedPtr<Bitmap> bitmap);
 	void loadEGAData(const char *egaFile);
 	void drawBackgroundImage(const char *filename);
 
@@ -174,20 +175,7 @@ private:
 	Sprite *_pushedSprites[MAX_SPRITES];
 	int _pushedNumSprites;
 
-	// Any changes to the mouse image are buffered until the next time "drawAllSprites" is
-	// called (since the original game treats it like a sprite).
-	bool _mouseToBeShown;
-	bool _mouseToBeHidden;
-	int16 _mouseWarpX, _mouseWarpY;
-	SharedPtr<Bitmap> _mouseBitmapLastFrame;
-	SharedPtr<Bitmap> _mouseBitmap;
-
-	// These are used as a workaround for when the mouse position must be locked.
-	// The mouse is turned into a native game sprite when this happens.
-	bool _mouseLocked;
-	Sprite _lockedMouseSprite;
-
-public:
+	Common::Point _lockedMousePos;
 };
 
 } // End of namespace StarTrek

@@ -397,9 +397,9 @@ bool Room::demon4ShowSunPuzzle() {
 	sprites[1].setBitmap(_vm->_gfx->loadBitmap("leverr"));
 	sprites[2].setBitmap(_vm->_gfx->loadBitmap("leverb"));
 
-	SharedPtr<Bitmap> lightyBitmap = _vm->_gfx->loadBitmap("lighty");
-	SharedPtr<Bitmap> lightrBitmap = _vm->_gfx->loadBitmap("lightr");
-	SharedPtr<Bitmap> lightbBitmap = _vm->_gfx->loadBitmap("lightb");
+	SharedPtr<Bitmap> lightyBitmap = SharedPtr<Bitmap>(_vm->_gfx->loadBitmap("lighty"));
+	SharedPtr<Bitmap> lightrBitmap = SharedPtr<Bitmap>(_vm->_gfx->loadBitmap("lightr"));
+	SharedPtr<Bitmap> lightbBitmap = SharedPtr<Bitmap>(_vm->_gfx->loadBitmap("lightb"));
 
 	for (int i = 3; i < 9; i++)
 		sprites[i].bitmap = lightyBitmap;

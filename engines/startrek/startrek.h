@@ -407,7 +407,7 @@ public:
 	/**
 	 * Loads a bitmap for the animation frame with the given scale.
 	 */
-	SharedPtr<Bitmap> loadAnimationFrame(const Common::String &filename, Fixed8 scale);
+	Bitmap *loadAnimationFrame(const Common::String &filename, Fixed8 scale);
 
 	/**
 	 * Called when the "get" action is first selected. Returns a selected object.
@@ -436,8 +436,8 @@ public:
 	void showInventoryIcons(bool showItem);
 	void hideInventoryIcons();
 	int showInventoryMenu(int x, int y, bool restoreMouse);
-	void initStarfieldSprite(Sprite *sprite, SharedPtr<Bitmap> bitmap, const Common::Rect &rect);
-	SharedPtr<Bitmap> scaleBitmap(SharedPtr<Bitmap> bitmap, Fixed8 scale);
+	void initStarfieldSprite(Sprite *sprite, Bitmap *bitmap, const Common::Rect &rect);
+	Bitmap *scaleBitmap(Bitmap *bitmap, Fixed8 scale);
 	/**
 	 * This takes a row of an unscaled bitmap, and copies it to a row of a scaled bitmap.
 	 * This was heavily optimized in the original game (manually constructed an unrolled
@@ -531,13 +531,13 @@ public:
 	/**
 	 * Creates a blank textbox in a TextBitmap, and initializes a sprite to use it.
 	 */
-	SharedPtr<TextBitmap> initTextSprite(int *xoffsetPtr, int *yoffsetPtr, byte textColor, int numTextLines, bool withHeader, Sprite *sprite);
+	TextBitmap *initTextSprite(int *xoffsetPtr, int *yoffsetPtr, byte textColor, int numTextLines, bool withHeader, Sprite *sprite);
 	/**
 	 * Draws the "main" text (everything but the header at the top) to a TextBitmap.
 	 */
-	void drawMainText(SharedPtr<TextBitmap> bitmap, int numTextLines, int numTextboxLines, const String &text, bool withHeader);
+	void drawMainText(TextBitmap *bitmap, int numTextLines, int numTextboxLines, const String &text, bool withHeader);
 
-	String readLineFormattedText(TextGetterFunc textGetter, uintptr var, int choiceIndex, SharedPtr<TextBitmap> textBitmap, int numTextboxLines, int *numLines);
+	String readLineFormattedText(TextGetterFunc textGetter, uintptr var, int choiceIndex, TextBitmap *textBitmap, int numTextboxLines, int *numLines);
 
 	/**
 	 * Text getter for showText which reads choices from an array of pointers.
@@ -781,7 +781,7 @@ public:
 	Graphics *_gfx;
 	Sound *_sound;
 	Console *_console;
-	SharedPtr<IWFile> _iwFile;
+	IWFile *_iwFile;
 
 private:
 	Common::RandomSource _randomSource;

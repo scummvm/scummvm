@@ -536,8 +536,8 @@ void Room::loadMapFile(const Common::String &name) {
 	delete _vm->_mapFile;
 	_vm->_mapFile = _vm->loadFile(name + ".map");
 
-	_vm->_iwFile.reset();
-	_vm->_iwFile = SharedPtr<IWFile>(new IWFile(_vm, name + ".iw"));
+	delete _vm->_iwFile;
+	_vm->_iwFile = new IWFile(_vm, name + ".iw");
 }
 
 void Room::showBitmapFor5Ticks(const Common::String &bmpName, int priority) {

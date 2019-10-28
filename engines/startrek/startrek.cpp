@@ -97,6 +97,7 @@ StarTrekEngine::StarTrekEngine(OSystem *syst, const StarTrekGameDescription *gam
 	_missionToLoad = "DEMON";
 	_roomIndexToLoad = 0;
 	_mapFile = nullptr;
+	_iwFile = nullptr;
 
 	_showSubtitles = true;
 	Common::fill(_r3List, _r3List + NUM_SPACE_OBJECTS, (R3 *)nullptr);
@@ -130,6 +131,9 @@ Common::Error StarTrekEngine::run() {
 
 	initGraphics(SCREEN_WIDTH, SCREEN_HEIGHT);
 	initializeEventsAndMouse();
+
+	_gfx->setMouseBitmap(_gfx->loadBitmap("pushbtn"));
+	_gfx->toggleMouse(true);
 
 	bool shouldPlayIntro = true;
 	bool loadedSave = false;
@@ -260,11 +264,11 @@ void StarTrekEngine::runTransportSequence(const Common::String &name) {
 	actorFunc1();
 	initActors();
 
-	SharedPtr<Bitmap> bgImage = _gfx->loadBitmap("transprt");
+	Bitmap *bgImage = _gfx->loadBitmap("transprt");
 	_gfx->setBackgroundImage(bgImage);
 	_gfx->clearPri();
 	_gfx->loadPalette("palette");
-	_gfx->drawDirectToScreen(bgImage);
+	_gfx->copyBackgroundScreen();
 	_system->updateScreen();
 	_system->delayMillis(10);
 

@@ -61,7 +61,7 @@ struct Sprite : Common::Serializable {
 
 	Sprite();
 
-	void setBitmap(SharedPtr<Bitmap> b);
+	void setBitmap(Bitmap *b);
 	void setXYAndPriority(int16 x, int16 y, int16 priority);
 	void dontDrawNextFrame();
 

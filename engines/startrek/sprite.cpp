@@ -32,8 +32,8 @@ Sprite::Sprite() :
 	drawRect(), rectangle2(), drawX(0), drawY(0)
 {}
 
-void Sprite::setBitmap(SharedPtr<Bitmap> b) {
-	bitmap = b;
+void Sprite::setBitmap(Bitmap *b) {
+	bitmap = SharedPtr<Bitmap>(b);
 	bitmapChanged = true;
 }
 

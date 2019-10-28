@@ -694,8 +694,8 @@ int StarTrekEngine::findObjectAt(int x, int y) {
 	return -1;
 }
 
-SharedPtr<Bitmap> StarTrekEngine::loadAnimationFrame(const Common::String &filename, Fixed8 scale) {
-	SharedPtr<Bitmap> bitmapToReturn;
+Bitmap *StarTrekEngine::loadAnimationFrame(const Common::String &filename, Fixed8 scale) {
+	Bitmap *bitmapToReturn = nullptr;
 
 	char basename[5];
 	strncpy(basename, filename.c_str() + 1, 4);
@@ -718,12 +718,12 @@ SharedPtr<Bitmap> StarTrekEngine::loadAnimationFrame(const Common::String &filen
 			if (bitmapToReturn == nullptr) {
 				Common::String mccoyFilename = filename;
 				mccoyFilename.setChar('m', 0);
-				SharedPtr<Bitmap> bitmap = _gfx->loadBitmap(mccoyFilename);
+				Bitmap *bitmap = _gfx->loadBitmap(mccoyFilename);
 
 				uint16 width = bitmap->width;
 				uint16 height = bitmap->height;
 
-				bitmapToReturn = SharedPtr<Bitmap>(new Bitmap(width, height));
+				bitmapToReturn = new Bitmap(width, height);
 				bitmapToReturn->xoffset = bitmap->xoffset;
 				bitmapToReturn->yoffset = bitmap->yoffset;
 
@@ -1278,7 +1278,7 @@ exitWithoutSelection:
 	return lastItemIndex;
 }
 
-void StarTrekEngine::initStarfieldSprite(Sprite *sprite, SharedPtr<Bitmap> bitmap, const Common::Rect &rect) {
+void StarTrekEngine::initStarfieldSprite(Sprite *sprite, Bitmap *bitmap, const Common::Rect &rect) {
 	sprite->setXYAndPriority(rect.left, rect.top, 0);
 	sprite->setBitmap(bitmap);
 	bitmap->xoffset = 0;
@@ -1289,7 +1289,7 @@ void StarTrekEngine::initStarfieldSprite(Sprite *sprite, SharedPtr<Bitmap> bitma
 	sprite->drawMode = 1;
 }
 
-SharedPtr<Bitmap> StarTrekEngine::scaleBitmap(SharedPtr<Bitmap> bitmap, Fixed8 scale) {
+Bitmap *StarTrekEngine::scaleBitmap(Bitmap *bitmap, Fixed8 scale) {
 	int scaledWidth  = scale.multToInt(bitmap->width);
 	int scaledHeight = scale.multToInt(bitmap->height);
 	int origWidth  = bitmap->width;
@@ -1300,7 +1300,7 @@ SharedPtr<Bitmap> StarTrekEngine::scaleBitmap(SharedPtr<Bitmap> bitmap, Fixed8 s
 	if (scaledHeight < 1)
 		scaledHeight = 1;
 
-	SharedPtr<Bitmap> scaledBitmap(new Bitmap(scaledWidth, scaledHeight));
+	Bitmap *scaledBitmap = new Bitmap(scaledWidth, scaledHeight);
 	scaledBitmap->xoffset = scale.multToInt(bitmap->xoffset);
 	scaledBitmap->yoffset = scale.multToInt(bitmap->yoffset);
 
@@ -1359,6 +1359,8 @@ SharedPtr<Bitmap> StarTrekEngine::scaleBitmap(SharedPtr<Bitmap> bitmap, Fixed8 s
 
 		delete[] rowData;
 	}
+
+	delete bitmap;
 
 	return scaledBitmap;
 }

@@ -185,8 +185,6 @@ void StarTrekEngine::showOptionsMenu(int x, int y) {
 	_mouseControllingShip = false;
 
 	Common::Point oldMousePos = _gfx->getMousePos();
-	SharedPtr<Bitmap> oldMouseBitmap = _gfx->getMouseBitmap();
-
 	_gfx->setMouseBitmap(_gfx->loadBitmap("options"));
 	loadMenuButtons("options", x, y);
 
@@ -213,7 +211,7 @@ void StarTrekEngine::showOptionsMenu(int x, int y) {
 
 	unloadMenuButtons();
 	_mouseControllingShip = tmpMouseControllingShip;
-	_gfx->setMouseBitmap(oldMouseBitmap);
+	_gfx->popMouseBitmap();
 
 	if (event != MENUEVENT_LCLICK_OFFBUTTON && event != MENUEVENT_RCLICK_OFFBUTTON)
 		_gfx->warpMouse(oldMousePos.x, oldMousePos.y);
@@ -306,7 +304,7 @@ int StarTrekEngine::showActionMenu() {
 	bool addEventBack = false;
 	int action = ACTION_WALK;
 
-	menuSprite.bitmap = _gfx->loadBitmap("action");
+	menuSprite.setBitmap(_gfx->loadBitmap("action"));
 	int menuWidth = menuSprite.bitmap->width;
 	int menuHeight = menuSprite.bitmap->height;
 
@@ -522,7 +520,7 @@ void StarTrekEngine::loadMenuButtons(String mnuFilename, int xpos, int ypos) {
 		}
 		bitmapBasename[10] = '\0';
 
-		_activeMenu->sprites[i].bitmap = _gfx->loadBitmap(bitmapBasename);
+		_activeMenu->sprites[i].setBitmap(_gfx->loadBitmap(bitmapBasename));
 		_activeMenu->sprites[i].pos.x = stream->readUint16() + xpos;
 		_activeMenu->sprites[i].pos.y = stream->readUint16() + ypos;
 		_activeMenu->retvals[i] = stream->readUint16();
@@ -1131,7 +1129,7 @@ lclick:
 				if (!spriteLoaded) {
 					_gfx->addSprite(&someSprite);
 					someSprite.setXYAndPriority(3, 168, 15);
-					someSprite.bitmap = _gfx->loadBitmap(Common::String::format("turbo%d", clickedArea));
+					someSprite.setBitmap(_gfx->loadBitmap(Common::String::format("turbo%d", clickedArea)));
 					spriteLoaded = true;
 				}
 			} else {

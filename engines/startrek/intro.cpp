@@ -30,8 +30,7 @@ void StarTrekEngine::playIntro() {
 	initStarfieldPosition();
 	initStarfield(10, 20, 309, 169, 128);
 
-	SharedPtr<Bitmap> fakeStarfieldBitmap(new StubBitmap(0, 0));
-	_starfieldSprite.bitmap = fakeStarfieldBitmap;
+	Bitmap *fakeStarfieldBitmap = new StubBitmap(0, 0);
 	initStarfieldSprite(&_starfieldSprite, fakeStarfieldBitmap, _starfieldRect);
 
 	//delR3(&_enterpriseR3); // TODO: uncomment
@@ -58,7 +57,7 @@ void StarTrekEngine::playIntro() {
 	Sprite subtitleSprite;
 	_gfx->addSprite(&subtitleSprite);
 	subtitleSprite.setXYAndPriority(0, 0, 12);
-	subtitleSprite.bitmap = _gfx->loadBitmap("blank");
+	subtitleSprite.setBitmap(_gfx->loadBitmap("blank"));
 	subtitleSprite.drawPriority2 = 16;
 
 	int index = 12;
