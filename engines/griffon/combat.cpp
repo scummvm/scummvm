@@ -78,18 +78,16 @@ void GriffonEngine::attack() {
 							_objectMap[lx][ly - 1] = 3;
 
 						eventText("Found Flask!");
-						_itemticks = _ticks + 215;
-						return;
-					} else if (_player.inventory[kInvFlask] == 9) {
+					} else {
 						if (config.effects) {
 							int snd = playSound(_sfx[kSndChest]);
 							setChannelVolume(snd, config.effectsvol);
 						}
 
 						eventText("Cannot Carry any more Flasks!");
-						_itemticks = _ticks + 215;
-						return;
 					}
+					_itemticks = _ticks + 215;
+					return;
 					break;
 				case kScriptMasterKey:
 					_player.inventory[kInvMasterKey]++;
@@ -218,19 +216,17 @@ void GriffonEngine::attack() {
 							_objectMap[lx][ly - 1] = 3;
 
 						eventText("Found Mega Flask!");
-						_itemticks = _ticks + 215;
-						return;
-					} else if (_player.inventory[kInvDoubleFlask] == 9) {
+					} else {
 						if (config.effects) {
 							int snd = playSound(_sfx[kSndChest]);
 							setChannelVolume(snd, config.effectsvol);
 						}
 
 						eventText("Cannot Carry any more Mega Flasks!");
-						_itemticks = _ticks + 215;
-						return;
 					}
 
+					_itemticks = _ticks + 215;
+					return;
 					break;
 				case kScriptBlueFlaskChest:
 					if (_player.inventory[kInvDoubleFlask] < 9) {
@@ -248,18 +244,16 @@ void GriffonEngine::attack() {
 							_objectMap[lx][ly - 1] = 3;
 
 						eventText("Found Mega Flask!");
-						_itemticks = _ticks + 215;
-						return;
-					} else if (_player.inventory[kInvDoubleFlask] == 9) {
+					} else {
 						if (config.effects) {
 							int snd = playSound(_sfx[kSndChest]);
 							setChannelVolume(snd, config.effectsvol);
 						}
 
 						eventText("Cannot Carry any more Mega Flasks!");
-						_itemticks = _ticks + 215;
-						return;
 					}
+					_itemticks = _ticks + 215;
+					return;
 					break;
 				case kScriptLightningChest:
 					if (_player.inventory[kInvShock] < 9) {
@@ -277,18 +271,16 @@ void GriffonEngine::attack() {
 							_objectMap[lx][ly - 1] = 3;
 
 						eventText("Found Lightning Bomb!");
-						_itemticks = _ticks + 215;
-						return;
-					} else if (_player.inventory[kInvShock] == 9) {
+					} else {
 						if (config.effects) {
 							int snd = playSound(_sfx[kSndChest]);
 							setChannelVolume(snd, config.effectsvol);
 						}
 
 						eventText("Cannot Carry any more Lightning Bombs!");
-						_itemticks = _ticks + 215;
-						return;
 					}
+					_itemticks = _ticks + 215;
+					return;
 					break;
 				case kScriptArmourChest:
 					if (_player.armour == 1) {
@@ -317,7 +309,6 @@ void GriffonEngine::attack() {
 							int snd = playSound(_sfx[kSndLever]);
 							setChannelVolume(snd, config.effectsvol);
 						}
-
 					} else if (_curmap == 58 && _scriptflag[kScriptLever][0] > 0) {
 						if (config.effects) {
 							int snd = playSound(_sfx[kSndDoor]);
@@ -325,9 +316,7 @@ void GriffonEngine::attack() {
 						}
 
 						eventText("It's stuck!");
-					}
-
-					if (_curmap == 54 && _scriptflag[kScriptLever][0] == 1) {
+					} else if (_curmap == 54 && _scriptflag[kScriptLever][0] == 1) {
 						if (config.effects) {
 							int snd = playSound(_sfx[kSndLever]);
 							setChannelVolume(snd, config.effectsvol);
