@@ -24,6 +24,11 @@
 #define ARCHETYPE_ARCHETYPE
 
 #include "glk/glk_api.h"
+#include "glk/archetype/array.h"
+#include "glk/archetype/interpreter.h"
+#include "glk/archetype/semantic.h"
+#include "glk/archetype/statement.h"
+#include "glk/archetype/string.h"
 
 namespace Glk {
 namespace Archetype {
@@ -34,6 +39,23 @@ namespace Archetype {
 class Archetype : public GlkAPI {
 private:
 	int _saveSlot;
+	bool Translating;
+public:
+	// keywords.cpp
+	XArrayType Literals, Vocabulary;
+	XArrayType Type_ID_List, Object_ID_List, Attribute_ID_List;
+
+	// parser.cpp
+	String Command;
+	int Abbreviate;
+	ListType Proximate;
+	ListType verb_names;
+	ListType object_names;
+
+	// semantic.cpp
+	XArrayType Type_List, Object_List;
+	ListType Overlooked;
+	StringPtr NullStr;
 private:
 	/**
 	 * Engine initialization
@@ -44,6 +66,64 @@ private:
 	 * Engine cleanup
 	 */
 	void deinitialize();
+
+	/**
+	 * Main interpreter method
+	 */
+	void interpret();
+
+	/**
+	 * Loads the text adventure game
+	 */
+	bool loadGame();
+
+	/**
+	 * Given an object number, attribute number, anddesired_type, returns the value of the lookup
+	 * in the given result.If the desired_type is LVALUE, then it creates a new attribute node
+	 * in the object's own attribute list(if not already existing) and returns a pointer to it.
+	 * If RVALUE, it evaluates any expression it may find, returning the result of the evaluation.
+	 *
+	 * Also performs inheritance, looking back through the object's family tree to find the attribute.
+	 */
+	void lookup(int the_obj, int the_attr, ResultType &result, ContextType &context, DesiredType desired);
+
+	/**
+	 * Sends the given message number to the object of the given number. This procedure performs
+	 * inheritance; that is, it will search back through the object's ancestry in order to find
+	 * someone to perform the message.Has to do something tricky with the default message:
+	 * it must first search the entire ancestry for an explicit message, then search again for
+	 * a default, if none found.
+	 * @param transport			how to send the message : sending to an object,
+	 *							passing to an object, or sending(passing) to a type.
+	 * @param message			message to send
+	 * @param recipient			number of object to receive message
+	 * @param result			Output result of the sending
+	 * @param context			Context
+	 * @returns true if the recipient handles the message; false if it doesn't
+	 */
+	bool send_message(int transport, int message_sent, int recipient, ResultType &result,
+		ContextType &context);
+
+	/**
+	 * Evaluates the given expression
+	 */
+	void eval_expr(ExprTree the_expr, ResultType &result, ContextType &context, DesiredType desired);
+
+	/**
+	 * Evaluates the given expression as though it were a condition. Will succeed if the given
+	 * expression is not UNDEFINED and not false.
+	 * @param the_expr		Expression to evaluate
+	 * @returns				true if the condition can be considered true; false otherwise
+	 */
+	bool eval_condition(ExprTree the_expr, ContextType &context);
+
+	/**
+	 * Given a pointer to a statement, executes that statement. Very heavily called
+	 * @param the_stmt		pointer to statement to be executed
+	 * @param result		the "value" of the execution(for example, the last expression
+	 *						of a compound statement
+	 */
+	void exec_stmt(StatementPtr the_stmt, ResultType &result, ContextType &context);
 public:
 	/**
 	 * Constructor
@@ -78,6 +158,21 @@ public:
 	bool loadingSavegame() const {
 		return _saveSlot != -1;
 	}
+
+	/**
+	 * Write some text to the screen
+	 */
+	void write(const String &fmt, ...);
+
+	/**
+	 * Write a line to the screen
+	 */
+	void writeln(const String &fmt, ...);
+	void writeln() { writeln(""); }
+
+	void readln(String &s);
+
+	char ReadKey();
 };
 
 extern Archetype *g_vm;

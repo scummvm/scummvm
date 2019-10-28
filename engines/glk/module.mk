@@ -146,7 +146,26 @@ endif
 ifdef ENABLE_GLK_ARCHETYPE
 MODULE_OBJS += \
 	archetype/archetype.o \
-	archetype/detection.o
+	archetype/array.o \
+	archetype/crypt.o \
+	archetype/detection.o \
+	archetype/error.o \
+	archetype/expression.o \
+	archetype/game_stat.o \
+	archetype/heap_sort.o \
+	archetype/id_table.o \
+	archetype/interpreter.o \
+	archetype/keywords.o \
+	archetype/linked_list.o \
+	archetype/misc.o \
+	archetype/parser.o \
+	archetype/saveload.o \
+	archetype/semantic.o \
+	archetype/string.o \
+	archetype/sys_object.o \
+	archetype/timestamp.o \
+	archetype/token.o \
+	archetype/wrap.o
 endif
 
 ifdef ENABLE_GLK_FROTZ
