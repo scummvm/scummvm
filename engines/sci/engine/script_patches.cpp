@@ -1435,12 +1435,36 @@ static const uint16 ecoquest2PatchRoom500Items[] = {
 	PATCH_END
 };
 
+// The Ecorder cursor only highlights over one of the four Victoria lilies, even
+//  though they all respond to Ecorder clicks. Each lily has a doit method that
+//  highlights the cursor but three of them never execute because they are
+//  added to the room pic. This removes them from the cast and prevents doit.
+//
+// We fix this by removing the addToPic calls so the lilies remain in the cast.
+//
+// Applies to: All versions
+// Responsible methods: lilly1:init, lilly2:init, lilly3:init
+// Fixes bug: #5552
+static const uint16 ecoquest2SignatureEcorderLily[] = {
+	0x38, SIG_MAGICDWORD,               // pushi addToPic
+	      SIG_SELECTOR16(addToPic),
+	0x76,                               // push0
+	0x54, 0x04,                         // self 04 [ self addToPic: ]
+	SIG_END
+};
+
+static const uint16 ecoquest2PatchEcorderLily[] = {
+	0x32, PATCH_UINT16(0x0003),         // jmp 0003
+	PATCH_END
+};
+
 //          script, description,                                        signature                          patch
 static const SciScriptPatcherEntry ecoquest2Signatures[] = {
 	{  true,     0, "icon bar tutorial",                            10, ecoquest2SignatureIconBarTutorial, ecoquest2PatchIconBarTutorial },
 	{  true,    50, "initial text not removed on ecorder",           1, ecoquest2SignatureEcorder,         ecoquest2PatchEcorder },
 	{  true,   333, "initial text not removed on ecorder tutorial",  1, ecoquest2SignatureEcorderTutorial, ecoquest2PatchEcorderTutorial },
 	{  true,   500, "room 500 items reappear",                       1, ecoquest2SignatureRoom500Items,    ecoquest2PatchRoom500Items },
+	{  true,   702, "ecorder not highlighting lilies",               3, ecoquest2SignatureEcorderLily,     ecoquest2PatchEcorderLily },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
