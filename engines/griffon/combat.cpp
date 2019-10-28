@@ -434,25 +434,35 @@ void GriffonEngine::castSpell(int spellnum, float homex, float homey, float enem
 					spellinfo[i].strength = 1.5f;
 			}
 
-			// set earthslide vars
-			if (spellnum == 2) {
+			switch(spellnum) {
+			case 1:
+				if (config.effects) {
+					int snd = playSound(_sfx[kSndThrow]);
+					setChannelVolume(snd, config.effectsvol);
+				}
+				break;
+			case 2:
+				// set earthslide vars
 				for (int f = 0; f <= 8; f++) {
 					spellinfo[i].rocky[f] = 0;
 					spellinfo[i].rockimg[f] = (int)(RND() * 4);
 					spellinfo[i].rockdeflect[f] = ((int)(RND() * 128) - 64) * 1.5;
 				}
-			}
-
-			// set fire vars
-			if (spellnum == 3) {
-				for (int f = 0; f <= 4; f++) {
+				break;
+			case 3:
+				// set fire vars
+				for (int f = 0; f <= 4; f++)
 					spellinfo[i].legalive[f] = 32;
+
+				break;
+			case 5:
+				if (config.effects) {
+					int snd = playSound(_sfx[kSndCrystal]);
+					setChannelVolume(snd, config.effectsvol);
 				}
-			}
-
-
-			// room fireball vars
-			if (spellnum == 6) {
+				break;
+			case 6: {
+				// room fireball vars
 				int nballs = 0;
 				for (int x = 0; x <= 19; x++) {
 					for (int y = 0; y <= 14; y++) {
@@ -471,19 +481,17 @@ void GriffonEngine::castSpell(int spellnum, float homex, float homey, float enem
 					}
 				}
 				spellinfo[i].nfballs = nballs;
-			}
-
-			if (config.effects) {
-				if (spellnum == 1) {
-					int snd = playSound(_sfx[kSndThrow]);
-					setChannelVolume(snd, config.effectsvol);
-				} else if (spellnum == 5) {
-					int snd = playSound(_sfx[kSndCrystal]);
-					setChannelVolume(snd, config.effectsvol);
-				} else if (spellnum == 8 || spellnum == 9) {
+				}
+				break;
+			case 8:
+			case 9:
+				if (config.effects) {
 					int snd = playSound(_sfx[kSndLightning]);
 					setChannelVolume(snd, config.effectsvol);
 				}
+				break;
+			default:
+				break;
 			}
 
 			return;
