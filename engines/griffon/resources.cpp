@@ -706,9 +706,9 @@ void GriffonEngine::loadMap(int mapnum) {
 			}
 		}
 
-		if (_npcinfo[i].script == kScriptFindCtystal) {
+		if (_npcinfo[i].script == kScriptFindCrystal) {
 			_roomlock = true;
-			if (_scriptflag[kScriptFindCtystal][0] > 0) {
+			if (_scriptflag[kScriptFindCrystal][0] > 0) {
 				_roomlock = false;
 				_npcinfo[i].hp = 0;
 			}
@@ -763,7 +763,7 @@ void GriffonEngine::loadMap(int mapnum) {
 	}
 
 	// academy crystal
-	if (_curmap == 24 && _player.foundSpell[0] == 0 && _scriptflag[kScriptFindCtystal][0] == 1) {
+	if (_curmap == 24 && _player.foundSpell[0] == 0 && _scriptflag[kScriptFindCrystal][0] == 1) {
 		cx = 9;
 		cy = 7;
 

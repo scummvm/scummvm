@@ -61,37 +61,37 @@ void GriffonEngine::attack() {
 					o = 10;
 
 				int oscript = _objectInfo[o][5];
-				if (oscript == kScriptFlask && _player.inventory[kInvFlask] < 9) {
-					_player.inventory[kInvFlask]++;
-					addFloatIcon(6, lx * 16, (ly - 1) * 16);
+				switch (oscript) {
+				case kScriptFlask:
+					if (_player.inventory[kInvFlask] < 9) {
+						_player.inventory[kInvFlask]++;
+						addFloatIcon(6, lx * 16, (ly - 1) * 16);
 
-					_objmapf[_curmap][lx][ly - 1] = 1;
+						_objmapf[_curmap][lx][ly - 1] = 1;
 
-					if (config.effects) {
-						int snd = playSound(_sfx[kSndPowerUp]);
-						setChannelVolume(snd, config.effectsvol);
+						if (config.effects) {
+							int snd = playSound(_sfx[kSndPowerUp]);
+							setChannelVolume(snd, config.effectsvol);
+						}
+
+						if (_objectInfo[o][4] == 1)
+							_objectMap[lx][ly - 1] = 3;
+
+						eventText("Found Flask!");
+						_itemticks = _ticks + 215;
+						return;
+					} else if (_player.inventory[kInvFlask] == 9) {
+						if (config.effects) {
+							int snd = playSound(_sfx[kSndChest]);
+							setChannelVolume(snd, config.effectsvol);
+						}
+
+						eventText("Cannot Carry any more Flasks!");
+						_itemticks = _ticks + 215;
+						return;
 					}
-
-					if (_objectInfo[o][4] == 1)
-						_objectMap[lx][ly - 1] = 3;
-
-					eventText("Found Flask!");
-					_itemticks = _ticks + 215;
-					return;
-				}
-
-				if (oscript == kScriptFlask && _player.inventory[kInvFlask] == 9) {
-					if (config.effects) {
-						int snd = playSound(_sfx[kSndChest]);
-						setChannelVolume(snd, config.effectsvol);
-					}
-
-					eventText("Cannot Carry any more Flasks!");
-					_itemticks = _ticks + 215;
-					return;
-				}
-
-				if (oscript == kScriptMasterKey) {
+					break;
+				case kScriptMasterKey:
 					_player.inventory[kInvMasterKey]++;
 
 					addFloatIcon(14, lx * 16, (ly - 1) * 16);
@@ -100,9 +100,9 @@ void GriffonEngine::attack() {
 
 					if (_curmap == 34)
 						_scriptflag[kScriptMasterKey][0] = 2;
-					if (_curmap == 62)
+					else if (_curmap == 62)
 						_scriptflag[kScriptGardenMasterKey][0] = 2;
-					if (_curmap == 81)
+					else if (_curmap == 81)
 						_scriptflag[kScriptCitadelMasterKey][0] = 2;
 
 					if (config.effects) {
@@ -114,9 +114,7 @@ void GriffonEngine::attack() {
 						_objectMap[lx][ly - 1] = 3;
 					eventText("Found the Temple Key!");
 					return;
-				}
-
-				if (oscript == kScriptFindCtystal) {
+				case kScriptFindCrystal:
 					_player.foundSpell[0] = 1;
 					_player.spellCharge[0] = 0;
 
@@ -133,47 +131,47 @@ void GriffonEngine::attack() {
 					eventText("Found the Infinite Crystal!");
 					_itemticks = _ticks + 215;
 					return;
-				}
+				case kScriptFindShield:
+					if (_player.shield == 1) {
+						_player.shield = 2;
 
-				if (oscript == kScriptFindShield && _player.shield == 1) {
-					_player.shield = 2;
+						addFloatIcon(4, lx * 16, (ly - 1) * 16);
 
-					addFloatIcon(4, lx * 16, (ly - 1) * 16);
+						_itemticks = _ticks + 215;
 
-					_itemticks = _ticks + 215;
+						if (config.effects) {
+							int snd = playSound(_sfx[kSndPowerUp]);
+							setChannelVolume(snd, config.effectsvol);
+						}
 
-					if (config.effects) {
-						int snd = playSound(_sfx[kSndPowerUp]);
-						setChannelVolume(snd, config.effectsvol);
+						if (_objectInfo[o][4] == 1)
+							_objectMap[lx][ly - 1] = 3;
+
+						eventText("Found the Obsidian Shield!");
+						_objmapf[4][1][2] = 1;
+						return;
 					}
+					break;
+				case kScriptFindSword:
+					if (_player.sword == 1) {
+						_player.sword = 2;
 
-					if (_objectInfo[o][4] == 1)
-						_objectMap[lx][ly - 1] = 3;
+						addFloatIcon(3, lx * 16, (ly - 1) * 16);
 
-					eventText("Found the Obsidian Shield!");
-					_objmapf[4][1][2] = 1;
-					return;
-				}
+						_itemticks = _ticks + 215;
 
-				if (oscript == kScriptFindSword && _player.sword == 1) {
-					_player.sword = 2;
+						if (config.effects) {
+							int snd = playSound(_sfx[kSndPowerUp]);
+							setChannelVolume(snd, config.effectsvol);
+						}
 
-					addFloatIcon(3, lx * 16, (ly - 1) * 16);
-
-					_itemticks = _ticks + 215;
-
-					if (config.effects) {
-						int snd = playSound(_sfx[kSndPowerUp]);
-						setChannelVolume(snd, config.effectsvol);
+						if (_objectInfo[o][4] == 1)
+							_objectMap[lx][ly - 1] = 3;
+						eventText("Found the Fidelis Sword!");
+						return;
 					}
-
-					if (_objectInfo[o][4] == 1)
-						_objectMap[lx][ly - 1] = 3;
-					eventText("Found the Fidelis Sword!");
-					return;
-				}
-
-				if (oscript == kScriptKeyChest) {
+					break;
+				case kScriptKeyChest:
 					if (_player.inventory[kInvNormalKey] < 9) {
 						_player.inventory[kInvNormalKey]++;
 
@@ -203,117 +201,115 @@ void GriffonEngine::attack() {
 
 						eventText("Cannot Carry Any More Keys");
 					}
-				}
+					break;
+				case kScriptBlueFlask:
+					if (_player.inventory[kInvDoubleFlask] < 9) {
+						_player.inventory[kInvDoubleFlask]++;
+						addFloatIcon(12, lx * 16, (ly - 1) * 16);
 
-				if (oscript == kScriptBlueFlask && _player.inventory[kInvDoubleFlask] < 9) {
-					_player.inventory[kInvDoubleFlask]++;
-					addFloatIcon(12, lx * 16, (ly - 1) * 16);
+						_objmapf[_curmap][lx][ly - 1] = 1;
 
-					_objmapf[_curmap][lx][ly - 1] = 1;
+						if (config.effects) {
+							int snd = playSound(_sfx[kSndPowerUp]);
+							setChannelVolume(snd, config.effectsvol);
+						}
 
-					if (config.effects) {
-						int snd = playSound(_sfx[kSndPowerUp]);
-						setChannelVolume(snd, config.effectsvol);
+						if (_objectInfo[o][4] == 1)
+							_objectMap[lx][ly - 1] = 3;
+
+						eventText("Found Mega Flask!");
+						_itemticks = _ticks + 215;
+						return;
+					} else if (_player.inventory[kInvDoubleFlask] == 9) {
+						if (config.effects) {
+							int snd = playSound(_sfx[kSndChest]);
+							setChannelVolume(snd, config.effectsvol);
+						}
+
+						eventText("Cannot Carry any more Mega Flasks!");
+						_itemticks = _ticks + 215;
+						return;
 					}
 
-					if (_objectInfo[o][4] == 1)
-						_objectMap[lx][ly - 1] = 3;
+					break;
+				case kScriptBlueFlaskChest:
+					if (_player.inventory[kInvDoubleFlask] < 9) {
+						_player.inventory[kInvDoubleFlask]++;
+						addFloatIcon(12, lx * 16, (ly - 1) * 16);
 
-					eventText("Found Mega Flask!");
-					_itemticks = _ticks + 215;
-					return;
-				}
+						_objmapf[_curmap][lx][ly - 1] = 1;
 
-				if (oscript == kScriptBlueFlask && _player.inventory[kInvDoubleFlask] == 9) {
-					if (config.effects) {
-						int snd = playSound(_sfx[kSndChest]);
-						setChannelVolume(snd, config.effectsvol);
+						if (config.effects) {
+							int snd = playSound(_sfx[kSndPowerUp]);
+							setChannelVolume(snd, config.effectsvol);
+						}
+
+						if (_objectInfo[o][4] == 1)
+							_objectMap[lx][ly - 1] = 3;
+
+						eventText("Found Mega Flask!");
+						_itemticks = _ticks + 215;
+						return;
+					} else if (_player.inventory[kInvDoubleFlask] == 9) {
+						if (config.effects) {
+							int snd = playSound(_sfx[kSndChest]);
+							setChannelVolume(snd, config.effectsvol);
+						}
+
+						eventText("Cannot Carry any more Mega Flasks!");
+						_itemticks = _ticks + 215;
+						return;
 					}
+					break;
+				case kScriptLightningChest:
+					if (_player.inventory[kInvShock] < 9) {
+						_player.inventory[kInvShock]++;
+						addFloatIcon(17, lx * 16, (ly - 1) * 16);
 
-					eventText("Cannot Carry any more Mega Flasks!");
-					_itemticks = _ticks + 215;
-					return;
-				}
+						_objmapf[_curmap][lx][ly - 1] = 1;
 
-				if (oscript == kScriptBlueFlaskChest && _player.inventory[kInvDoubleFlask] < 9) {
-					_player.inventory[kInvDoubleFlask]++;
-					addFloatIcon(12, lx * 16, (ly - 1) * 16);
+						if (config.effects) {
+							int snd = playSound(_sfx[kSndPowerUp]);
+							setChannelVolume(snd, config.effectsvol);
+						}
 
-					_objmapf[_curmap][lx][ly - 1] = 1;
+						if (_objectInfo[o][4] == 1)
+							_objectMap[lx][ly - 1] = 3;
 
-					if (config.effects) {
-						int snd = playSound(_sfx[kSndPowerUp]);
-						setChannelVolume(snd, config.effectsvol);
+						eventText("Found Lightning Bomb!");
+						_itemticks = _ticks + 215;
+						return;
+					} else if (_player.inventory[kInvShock] == 9) {
+						if (config.effects) {
+							int snd = playSound(_sfx[kSndChest]);
+							setChannelVolume(snd, config.effectsvol);
+						}
+
+						eventText("Cannot Carry any more Lightning Bombs!");
+						_itemticks = _ticks + 215;
+						return;
 					}
+					break;
+				case kScriptArmourChest:
+					if (_player.armour == 1) {
+						_player.armour = 2;
 
-					if (_objectInfo[o][4] == 1)
-						_objectMap[lx][ly - 1] = 3;
+						addFloatIcon(5, lx * 16, (ly - 1) * 16);
 
-					eventText("Found Mega Flask!");
-					_itemticks = _ticks + 215;
-					return;
-				}
+						if (config.effects) {
+							int snd = playSound(_sfx[kSndPowerUp]);
+							setChannelVolume(snd, config.effectsvol);
+						}
 
-				if (oscript == kScriptBlueFlaskChest && _player.inventory[kInvDoubleFlask] == 9) {
-					if (config.effects) {
-						int snd = playSound(_sfx[kSndChest]);
-						setChannelVolume(snd, config.effectsvol);
+						if (_objectInfo[o][4] == 1)
+							_objectMap[lx][ly - 1] = 3;
+
+						eventText("Found the Fidelis Mail!");
+						_itemticks = _ticks + 215;
+						return;
 					}
-
-					eventText("Cannot Carry any more Mega Flasks!");
-					_itemticks = _ticks + 215;
-					return;
-				}
-
-				if (oscript == kScriptLightningChest && _player.inventory[kInvShock] < 9) {
-					_player.inventory[kInvShock]++;
-					addFloatIcon(17, lx * 16, (ly - 1) * 16);
-
-					_objmapf[_curmap][lx][ly - 1] = 1;
-
-					if (config.effects) {
-						int snd = playSound(_sfx[kSndPowerUp]);
-						setChannelVolume(snd, config.effectsvol);
-					}
-
-					if (_objectInfo[o][4] == 1)
-						_objectMap[lx][ly - 1] = 3;
-
-					eventText("Found Lightning Bomb!");
-					_itemticks = _ticks + 215;
-					return;
-				}
-
-				if (oscript == kScriptLightningChest && _player.inventory[kInvShock] == 9) {
-					if (config.effects) {
-						int snd = playSound(_sfx[kSndChest]);
-						setChannelVolume(snd, config.effectsvol);
-					}
-
-					eventText("Cannot Carry any more Lightning Bombs!");
-					_itemticks = _ticks + 215;
-					return;
-				}
-
-				if (oscript == kScriptArmourChest && _player.armour == 1) {
-					_player.armour = 2;
-
-					addFloatIcon(5, lx * 16, (ly - 1) * 16);
-
-					if (config.effects) {
-						int snd = playSound(_sfx[kSndPowerUp]);
-						setChannelVolume(snd, config.effectsvol);
-					}
-
-					if (_objectInfo[o][4] == 1)
-						_objectMap[lx][ly - 1] = 3;
-
-					eventText("Found the Fidelis Mail!");
-					_itemticks = _ticks + 215;
-					return;
-				}
-
-				if (oscript == kScriptLever) {
+					break;
+				case kScriptLever:
 					if (_curmap == 58 && _scriptflag[kScriptLever][0] == 0) {
 						_scriptflag[kScriptLever][0] = 1;
 
@@ -346,62 +342,64 @@ void GriffonEngine::attack() {
 
 						eventText("It's stuck!");
 					}
+					break;
+				case kScriptGetSword3:
+					if (_player.sword < 3) {
+						_player.sword = 3;
 
-				}
+						addFloatIcon(18, lx * 16, (ly - 1) * 16);
 
-				if (oscript == kScriptGetSword3 && _player.sword < 3) {
-					_player.sword = 3;
+						_itemticks = _ticks + 215;
 
-					addFloatIcon(18, lx * 16, (ly - 1) * 16);
+						if (config.effects) {
+							int snd = playSound(_sfx[kSndPowerUp]);
+							setChannelVolume(snd, config.effectsvol);
+						}
 
-					_itemticks = _ticks + 215;
-
-					if (config.effects) {
-						int snd = playSound(_sfx[kSndPowerUp]);
-						setChannelVolume(snd, config.effectsvol);
+						if (_objectInfo[o][4] == 1)
+							_objectMap[lx][ly - 1] = 3;
+						eventText("Found the Blood Sword!");
+						_objmapf[4][1][2] = 1;
+						return;
 					}
+					break;
+				case kScriptShield3:
+					if (_player.shield < 3) {
+						_player.shield = 3;
+						addFloatIcon(19, lx * 16, (ly - 1) * 16);
+						_itemticks = _ticks + 215;
 
-					if (_objectInfo[o][4] == 1)
-						_objectMap[lx][ly - 1] = 3;
-					eventText("Found the Blood Sword!");
-					_objmapf[4][1][2] = 1;
-					return;
-				}
+						if (config.effects) {
+							int snd = playSound(_sfx[kSndPowerUp]);
+							setChannelVolume(snd, config.effectsvol);
+						}
 
-				if (oscript == kScriptShield3 && _player.shield < 3) {
-					_player.shield = 3;
-					addFloatIcon(19, lx * 16, (ly - 1) * 16);
-					_itemticks = _ticks + 215;
-
-					if (config.effects) {
-						int snd = playSound(_sfx[kSndPowerUp]);
-						setChannelVolume(snd, config.effectsvol);
+						if (_objectInfo[o][4] == 1)
+							_objectMap[lx][ly - 1] = 3;
+						eventText("Found the Entropy Shield!");
+						_objmapf[4][1][2] = 1;
+						return;
 					}
+					break;
+				case kScriptArmour3:
+					if (_player.armour < 3) {
+						_player.armour = 3;
+						addFloatIcon(20, lx * 16, (ly - 1) * 16);
+						_itemticks = _ticks + 215;
 
-					if (_objectInfo[o][4] == 1)
-						_objectMap[lx][ly - 1] = 3;
-					eventText("Found the Entropy Shield!");
-					_objmapf[4][1][2] = 1;
-					return;
-				}
+						if (config.effects) {
+							int snd = playSound(_sfx[kSndPowerUp]);
+							setChannelVolume(snd, config.effectsvol);
+						}
 
-				if (oscript == kScriptArmour3 && _player.armour < 3) {
-					_player.armour = 3;
-					addFloatIcon(20, lx * 16, (ly - 1) * 16);
-					_itemticks = _ticks + 215;
-
-					if (config.effects) {
-						int snd = playSound(_sfx[kSndPowerUp]);
-						setChannelVolume(snd, config.effectsvol);
+						if (_objectInfo[o][4] == 1)
+							_objectMap[lx][ly - 1] = 3;
+						eventText("Found the Rubyscale Armour!");
+						_objmapf[4][1][2] = 1;
+						return;
 					}
-
-					if (_objectInfo[o][4] == 1)
-						_objectMap[lx][ly - 1] = 3;
-					eventText("Found the Rubyscale Armour!");
-					_objmapf[4][1][2] = 1;
-					return;
+					break;
 				}
-
 			}
 		}
 	}
@@ -681,7 +679,7 @@ void GriffonEngine::damageNPC(int npcnum, int damage, int spell) {
 		}
 
 		// academy crystal chest script
-		if (_npcinfo[npcnum].script == kScriptFindCtystal) {
+		if (_npcinfo[npcnum].script == kScriptFindCrystal) {
 			bool alive = false;
 			for (int i = 1; i <= _lastnpc; i++) {
 				if (_npcinfo[i].hp > 0)
@@ -707,7 +705,7 @@ void GriffonEngine::damageNPC(int npcnum, int damage, int spell) {
 
 				if (lx == cx && ly == cy)
 					_player.py += 16;
-				_scriptflag[kScriptFindCtystal][0] = 1;
+				_scriptflag[kScriptFindCrystal][0] = 1;
 				_clipbg2->fillRect(rcDest, _clipbg->format.RGBToColor(255, 255, 255));
 			}
 		}
