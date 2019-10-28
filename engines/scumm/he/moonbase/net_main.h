@@ -114,6 +114,7 @@ public:
 	int _sessionid;
 
 	Common::JSONValue *_sessions;
+	Common::JSONValue *_packetdata;
 
 	Common::String _serverprefix;
 };

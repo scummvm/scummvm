@@ -38,6 +38,7 @@ Net::Net(ScummEngine_v100he *vm) : _latencyTime(1), _fakeLatency(false), _vm(vm)
 
 	_sessionid = -1;
 	_sessions = nullptr;
+	_packetdata = nullptr;
 
 	_serverprefix = "http://localhost/moonbase";
 }
@@ -345,13 +346,16 @@ int Net::remoteSendData(int typeOfSend, int sendTypeParam, int type, byte *data,
 
 	res += Common::String::format("%d] }", data[len - 1]);
 
+	byte *buf = (byte *)malloc(res.size() + 1);
+	strncpy((char *)buf, res.c_str(), res.size());
+
 	debug("Package to send: %s", res.c_str());
 
 	Networking::PostRequest rq(_serverprefix + "/packet",
 		new Common::Callback<Net, Common::JSONValue *>(this, &Net::remoteSendDataCallback),
 		new Common::Callback<Net, Networking::ErrorResponse>(this, &Net::remoteSendDataErrorCallback));
 
-	rq.setPostData((byte *)res.c_str(), res.size());
+	rq.setPostData(buf, res.size());
 	rq.setContentType("application/json");
 
 	rq.start();
@@ -454,29 +458,31 @@ bool Net::remoteReceiveData() {
 		new Common::Callback<Net, Networking::ErrorResponse>(this, &Net::remoteReceiveDataErrorCallback));
 
 	char *buf = (char *)malloc(MAX_PACKET_SIZE);
-	snprintf(buf, MAX_PACKET_SIZE, "{\"sessionid\":%d, \"userid\":%d}", _sessionid, _myUserId);
+	snprintf(buf, MAX_PACKET_SIZE, "{\"sessionid\":%d, \"playerid\":%d}", _sessionid, _myUserId);
 	rq.setPostData((byte *)buf, strlen(buf));
 	rq.setContentType("application/json");
 
-	_packetsize = -1;
+	delete _packetdata;
+	_packetdata = nullptr;
+
 	rq.start();
 
 	while(rq.state() == Networking::PROCESSING) {
 		g_system->delayMillis(5);
 	}
 
-	if (!_packetsize)
+	if (!_packetdata)
 		return false;
 
-	Common::MemoryReadStream pack(_packbuffer, _packetsize);
+	uint from = _packetdata->child("from")->asIntegerNumber();
+	uint type = _packetdata->child("type")->asIntegerNumber();
 
-	pack.readUint32LE(); // sessionid
-	uint from = pack.readUint32LE();
-	pack.readUint32LE(); // typeOfSend
-	pack.readUint32LE(); // sendTypeParam
-	uint type = pack.readUint32LE();
-	uint len = pack.readUint32LE();
-	pack.readUint32LE(); // timestamp
+	int datalen = _packetdata->child("data")->asArray().size();
+	for (uint i = 0; i < datalen; i++) {
+		_packbuffer[i] = _packetdata->child("data")->asArray()[i]->asIntegerNumber();
+	}
+
+	Common::MemoryReadStream pack(_packbuffer, datalen);
 
 	uint32 *params;
 
@@ -527,7 +533,7 @@ bool Net::remoteReceiveData() {
 			// and unpack it into an scumm array :-)
 
 			newArray = _vm->findFreeArrayId();
-			unpackageArray(newArray, _packbuffer + DATA_HEADER_SIZE, len);
+			unpackageArray(newArray, _packbuffer + DATA_HEADER_SIZE, datalen);
 			memset(_tmpbuffer, 0, 25 * 4);
 			WRITE_UINT32(_tmpbuffer, newArray);
 
@@ -546,17 +552,7 @@ bool Net::remoteReceiveData() {
 void Net::remoteReceiveDataCallback(Common::JSONValue *response) {
 	debug(1, "remoteReceiveData: Got: '%s'", response->stringify().c_str());
 
-	if (!response->hasChild("size")) {
-		warning("Net::remoteReceiveDataCallback(): invalid response");
-		return;
-	}
-
-	_packetsize = response->child("size")->asIntegerNumber();
-
-	if (!_packetsize)
-		return;
-
-	strncpy((char *)_packbuffer, response->child("data")->asString().c_str(), _packetsize);
+	_packetdata = new Common::JSONValue(*response);
 }
 
 void Net::remoteReceiveDataErrorCallback(Networking::ErrorResponse error) {
