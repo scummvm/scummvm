@@ -78,9 +78,9 @@ typedef ExprNode *ExprPtr;
 typedef ExprPtr ExprTree;
 
 // Global variables
-extern bool Right_Assoc[NUM_OPERS + 1];
-extern bool Binary[NUM_OPERS + 1];
-extern int8 Precedence[NUM_OPERS + 1];
+extern bool Right_Assoc[NUM_OPERS + 2];
+extern bool Binary[NUM_OPERS + 2];
+extern int8 Precedence[NUM_OPERS + 2];
 
 extern void expression_init();
 

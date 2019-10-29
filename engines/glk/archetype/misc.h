@@ -110,7 +110,6 @@ public:
 
 enum ClassifyType { TYPE_ID, OBJECT_ID, ATTRIBUTE_ID, ENUMERATE_ID, UNDEFINED_ID };
 
-extern const char *const VERSION;
 extern const char *const VERSION_STUB;
 extern const double VERSION_NUM;
 extern size_t Bytes;		// Bytes consumed by allocated memory

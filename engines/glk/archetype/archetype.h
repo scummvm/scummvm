@@ -73,11 +73,6 @@ private:
 	void interpret();
 
 	/**
-	 * Loads the text adventure game
-	 */
-	bool loadGame();
-
-	/**
 	 * Given an object number, attribute number, anddesired_type, returns the value of the lookup
 	 * in the given result.If the desired_type is LVALUE, then it creates a new attribute node
 	 * in the object's own attribute list(if not already existing) and returns a pointer to it.

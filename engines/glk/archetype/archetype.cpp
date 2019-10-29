@@ -93,7 +93,7 @@ Common::Error Archetype::writeGameData(Common::WriteStream *ws) {
 
 void Archetype::interpret() {
 	Translating = false;
-	bool success = loadGame();
+	bool success = load_game(&_gameFile);
 	_gameFile.close();
 
 	if (!success)
@@ -107,10 +107,6 @@ void Archetype::interpret() {
 		error("Cannot execute; no ''START'' message for main object.");
 
 	cleanup(result);
-}
-
-bool Archetype::loadGame() {
-	return false;
 }
 
 void Archetype::write(const String &fmt, ...) {
@@ -773,7 +769,7 @@ void Archetype::exec_stmt(StatementPtr the_stmt, ResultType &result, ContextType
 		else if (the_stmt->_kind == ST_STOP) {
 			g_vm->writeln();
 			g_vm->writeln();
-			error("%s", VERSION);
+			error("%f", VERSION_NUM);
 		}
 		break;
 

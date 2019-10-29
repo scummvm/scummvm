@@ -25,11 +25,12 @@
 namespace Glk {
 namespace Archetype {
 
-bool Right_Assoc[NUM_OPERS + 1];
-bool Binary[NUM_OPERS + 1];
-int8 Precedence[NUM_OPERS + 1];
+bool Right_Assoc[NUM_OPERS + 2];
+bool Binary[NUM_OPERS + 2];
+int8 Precedence[NUM_OPERS + 2];
 
 void expression_init() {
+	Binary[OP_NOP]        = false;
 	Binary[OP_LPAREN]     = false;
 	Binary[OP_DOT]        = true;
 	Binary[OP_CHS]        = false;
@@ -123,7 +124,6 @@ void expression_init() {
 	Precedence[OP_C_CONCAT]   = 1;
 	Precedence[OP_ASSIGN]     = 1;
 }
-
 
 } // End of namespace Archetype
 } // End of namespace Glk

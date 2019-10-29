@@ -53,8 +53,8 @@ extern bool Translating;
 
 extern void saveload_init();
 
-extern void load_item_list(Common::ReadStream *f_in, ListType elements, ContentType content);
-extern void dump_item_list(Common::WriteStream *f_out, ListType elements, ContentType content);
+extern void load_item_list(Common::ReadStream *f_in, ListType &elements, ContentType content);
+extern void dump_item_list(Common::WriteStream *f_out, ListType &elements, ContentType content);
 extern void dispose_item_list(ListType &elements, ContentType content);
 
 extern void load_expr(Common::ReadStream *f_in, ExprTree &the_expr);

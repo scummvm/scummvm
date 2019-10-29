@@ -423,14 +423,20 @@ bool load_game(Common::ReadStream *f_in) {
 		}
 	}
 
+	// Get the textual version of the game's version. This is easier than dealing with
+	// the Pascal Real type the game files use for their version number
+	String versionStr;
+	while (!f_in->eos() && (ch = (char)f_in->readByte()) != '\n')
+		versionStr += ch;
+	fileVersion = atof(versionStr.c_str());
+
 	// Bleed off string version information
 	while (!f_in->eos() && ch != 26)
 		ch = f_in->readByte();
 
-	// Check encoded version
-	// TODO: Figure out real format
-	fileVersion = 0;
+	// Skip over 6 byte Real encoded version number
 	(void)f_in->readUint32LE();
+	(void)f_in->readUint16LE();
 
 	if (fileVersion > VERSION_NUM) {
 		g_vm->writeln("This version of PERFORM is %.1f; file version is %.1f",
@@ -440,7 +446,7 @@ bool load_game(Common::ReadStream *f_in) {
 	}
 
 	// Get encryption information
-	Encryption = (EncryptionType)f_in->readUint16LE();
+	Encryption = (EncryptionType)f_in->readByte();
 
 	// Read the timestamp.  It is used to verify saved game states, and also to prime the encryption
 	GTimeStamp = f_in->readUint32LE();
@@ -455,7 +461,7 @@ bool load_game(Common::ReadStream *f_in) {
 	cryptinit(Encryption, GTimeStamp);
 
 	// Where's the main object?
-	MainObject = f_in->readSint32LE();
+	MainObject = f_in->readUint16LE();
 
 	load_obj_list(f_in, g_vm->Object_List);
 	load_obj_list(f_in, g_vm->Type_List);

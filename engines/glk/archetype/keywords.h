@@ -77,6 +77,7 @@ enum ReservedWordId {
 };
 
 enum OperatorId {
+	OP_NOP = 0,
 	OP_CONCAT = 1,
 	OP_C_CONCAT = 2,
 	OP_MULTIPLY = 3,

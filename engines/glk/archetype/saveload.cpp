@@ -42,7 +42,7 @@ void saveload_init() {
 // ===================== Forward Declarations =======================
 
 static void walk_item_list(MissionType mission, Common::Stream *bfile,
-	ListType elements, ContentType content);
+	ListType &elements, ContentType content);
 static void walk_expr(MissionType mission, Common::Stream *bfile, ExprTree &the_expr);
 static void walk_stmt(MissionType mission, Common::Stream *bfile, StatementPtr &the_stmt);
 
@@ -50,11 +50,11 @@ static void walk_stmt(MissionType mission, Common::Stream *bfile, StatementPtr &
 
 // Wrappers
 
-void load_item_list(Common::ReadStream *f_in, ListType elements, ContentType content) {
+void load_item_list(Common::ReadStream *f_in, ListType &elements, ContentType content) {
 	walk_item_list(LOAD, f_in, elements, content);
 }
 
-void dump_item_list(Common::WriteStream *f_out, ListType elements, ContentType content) {
+void dump_item_list(Common::WriteStream *f_out, ListType &elements, ContentType content) {
 	walk_item_list(DUMP, f_out, elements, content);
 }
 
@@ -70,7 +70,7 @@ void dispose_item_list(ListType &elements, ContentType content) {
  * @param elements			list of items
  * @param content			contents of each of the items
  */
-void walk_item_list(MissionType mission, Common::Stream *bfile, ListType elements, ContentType content) {
+void walk_item_list(MissionType mission, Common::Stream *bfile, ListType &elements, ContentType content) {
 	StatementKind sentinel;
 	StatementPtr this_stmt;
 	ExprTree this_expr;
@@ -85,7 +85,7 @@ void walk_item_list(MissionType mission, Common::Stream *bfile, ListType element
 	switch (mission) {
 	case LOAD:
 		assert(readStream);
-		sentinel = (StatementKind)readStream->readUint32LE();
+		sentinel = (StatementKind)readStream->readUint16LE();
 		new_list(elements);
 		yet_more = sentinel == CONT_SEQ;
 		break;
@@ -107,13 +107,13 @@ void walk_item_list(MissionType mission, Common::Stream *bfile, ListType element
 			assert(readStream);
 			np = (NodePtr)malloc(sizeof(NodeType));
 			add_bytes(sizeof(NodeType));
-			np->key = readStream->readSint32LE();
+			np->key = readStream->readSint16LE();
 			break;
 
 		case DUMP:
 			assert(writeStream);
-			writeStream->writeUint32LE(vContSeq);
-			writeStream->writeSint32LE(np->key);
+			writeStream->writeUint16LE(vContSeq);
+			writeStream->writeSint16LE(np->key);
 			break;
 
 		default:
@@ -189,7 +189,7 @@ void walk_item_list(MissionType mission, Common::Stream *bfile, ListType element
 		case LOAD:
 			assert(readStream);
 			append_to_list(elements, np);
-			sentinel = (StatementKind)readStream->readUint32LE();
+			sentinel = (StatementKind)readStream->readUint16LE();
 			yet_more = sentinel == CONT_SEQ;
 			break;
 
@@ -206,7 +206,7 @@ void walk_item_list(MissionType mission, Common::Stream *bfile, ListType element
 	// Postlude
 	switch (mission) {
 	case DUMP:
-		writeStream->writeUint32LE(vEndSeq);
+		writeStream->writeUint16LE(vEndSeq);
 		break;
 	case FREE:
 		dispose_list(elements);
@@ -260,7 +260,7 @@ static void walk_expr(MissionType mission, Common::Stream *bfile, ExprTree &the_
 		assert(readStream);
 		the_expr = (ExprTree)malloc(sizeof(ExprNode));
 		add_bytes(sizeof(ExprNode));
-		the_expr->_kind = (AclType)readStream->readUint32LE();
+		the_expr->_kind = (AclType)readStream->readUint16LE();
 		break;
 
 	case DUMP:
@@ -271,7 +271,7 @@ static void walk_expr(MissionType mission, Common::Stream *bfile, ExprTree &the_
 		while (the_expr->_kind == OPER && the_expr->_oper.op_name == OP_LPAREN)
 			the_expr = the_expr->_oper.right;
 
-		writeStream->writeUint32LE(the_expr->_kind);
+		writeStream->writeUint16LE(the_expr->_kind);
 		break;
 
 	case FREE:
@@ -306,10 +306,10 @@ static void walk_expr(MissionType mission, Common::Stream *bfile, ExprTree &the_
 	case NUMERIC:
 		switch (mission) {
 		case LOAD:
-			the_expr->_numeric.acl_int = readStream->readSint32LE();
+			the_expr->_numeric.acl_int = readStream->readSint16LE();
 			break;
 		case DUMP:
-			writeStream->writeSint32LE(the_expr->_numeric.acl_int);
+			writeStream->writeSint16LE(the_expr->_numeric.acl_int);
 			break;
 		default:
 			break;
@@ -321,10 +321,10 @@ static void walk_expr(MissionType mission, Common::Stream *bfile, ExprTree &the_
 	case QUOTE_LIT:
 		switch (mission) {
 		case LOAD:
-			the_expr->_msgTextQuote.index = readStream->readSint32LE();
+			the_expr->_msgTextQuote.index = readStream->readSint16LE();
 			break;
 		case DUMP:
-			writeStream->writeSint32LE(the_expr->_msgTextQuote.index);
+			writeStream->writeSint16LE(the_expr->_msgTextQuote.index);
 			break;
 		default:
 			break;
@@ -334,8 +334,8 @@ static void walk_expr(MissionType mission, Common::Stream *bfile, ExprTree &the_
 	case IDENT:
 		switch (mission) {
 		case LOAD:
-			the_expr->_ident.ident_kind = (ClassifyType)readStream->readUint32LE();
-			the_expr->_ident.ident_int = readStream->readSint32LE();
+			the_expr->_ident.ident_kind = (ClassifyType)readStream->readUint16LE();
+			the_expr->_ident.ident_int = readStream->readSint16LE();
 			break;
 		case DUMP:
 			if (Translating && the_expr->_ident.ident_kind == DefaultClassification) {
@@ -348,8 +348,8 @@ static void walk_expr(MissionType mission, Common::Stream *bfile, ExprTree &the_
 				the_expr->_ident.ident_int = temp;
 			}
 
-			writeStream->writeUint32LE(the_expr->_ident.ident_kind);
-			writeStream->writeSint32LE(the_expr->_ident.ident_int);
+			writeStream->writeUint16LE(the_expr->_ident.ident_kind);
+			writeStream->writeSint16LE(the_expr->_ident.ident_int);
 			break;
 		default:
 			break;
@@ -439,7 +439,7 @@ static void walk_stmt(MissionType mission, Common::Stream *bfile, StatementPtr &
 		if (readStream->eos())
 			return;
 
-		sentinel = (StatementKind)readStream->readUint32LE();
+		sentinel = (StatementKind)readStream->readUint16LE();
 		if (sentinel == END_SEQ)
 			return;
 
@@ -450,10 +450,10 @@ static void walk_stmt(MissionType mission, Common::Stream *bfile, StatementPtr &
 
 	case DUMP:
 		if (the_stmt == nullptr) {
-			writeStream->writeUint32LE(vEndSeq);
+			writeStream->writeUint16LE(vEndSeq);
 			return;
 		} else {
-			writeStream->writeUint32LE(this_stmt->_kind);
+			writeStream->writeUint16LE(this_stmt->_kind);
 		}
 		break;
 
@@ -491,10 +491,10 @@ static void walk_stmt(MissionType mission, Common::Stream *bfile, StatementPtr &
 	case ST_CREATE:
 		switch (mission) {
 		case LOAD:
-			this_stmt->_create.archetype = readStream->readSint32LE();
+			this_stmt->_create.archetype = readStream->readSint16LE();
 			break;
 		case DUMP:
-			writeStream->writeSint32LE(this_stmt->_create.archetype);
+			writeStream->writeSint16LE(this_stmt->_create.archetype);
 			break;
 		default:
 			break;
@@ -519,7 +519,7 @@ static void walk_stmt(MissionType mission, Common::Stream *bfile, StatementPtr &
 		switch (mission) {
 		case LOAD:
 			new_list(this_stmt->_write.print_list);
-			sentinel = (StatementKind)readStream->readUint32LE();
+			sentinel = (StatementKind)readStream->readUint16LE();
 
 			while (sentinel != END_SEQ) {
 				walk_expr(mission, bfile, this_expr);
@@ -529,7 +529,7 @@ static void walk_stmt(MissionType mission, Common::Stream *bfile, StatementPtr &
 				np->data = this_expr;
 				append_to_list(this_stmt->_write.print_list, np);
 
-				sentinel = (StatementKind)readStream->readUint32LE();
+				sentinel = (StatementKind)readStream->readUint16LE();
 			}
 			break;
 
@@ -538,7 +538,7 @@ static void walk_stmt(MissionType mission, Common::Stream *bfile, StatementPtr &
 			np = nullptr;
 			while (iterate_list(this_stmt->_write.print_list, np)) {
 				if (mission == DUMP)
-					writeStream->writeUint32LE(vContSeq);
+					writeStream->writeUint16LE(vContSeq);
 				this_expr = (ExprTree)np->data;
 				walk_expr(mission, bfile, this_expr);
 
@@ -547,7 +547,7 @@ static void walk_stmt(MissionType mission, Common::Stream *bfile, StatementPtr &
 			}
 
 			if (mission == DUMP)
-				writeStream->writeUint32LE(vEndSeq);
+				writeStream->writeUint16LE(vEndSeq);
 			else
 				dispose_list(this_stmt->_write.print_list);
 			break;
@@ -581,11 +581,11 @@ void load_object(Common::ReadStream *f_in, ObjectPtr &the_object) {
 	the_object = (ObjectPtr)malloc(sizeof(ObjectType));
 	add_bytes(sizeof(ObjectType));
 
-	the_object->inherited_from = f_in->readSint32LE();
+	the_object->inherited_from = f_in->readSint16LE();
 	load_item_list(f_in, the_object->attributes, EXPR_LIST);
 	load_item_list(f_in, the_object->methods, STMT_LIST);
 
-	sentinel = (StatementKind)f_in->readUint32LE();
+	sentinel = (StatementKind)f_in->readUint16LE();
 	if (sentinel == CONT_SEQ)
 		load_stmt(f_in, the_object->other);
 	else
@@ -593,14 +593,14 @@ void load_object(Common::ReadStream *f_in, ObjectPtr &the_object) {
 }
 
 void dump_object(Common::WriteStream *f_out, const ObjectPtr the_object) {
-	f_out->writeUint32LE(the_object->inherited_from);
+	f_out->writeUint16LE(the_object->inherited_from);
 	dump_item_list(f_out, the_object->attributes, EXPR_LIST);
 	dump_item_list(f_out, the_object->methods, STMT_LIST);
 
 	if (the_object->other == nullptr) {
-		f_out->writeUint32LE(vEndSeq);
+		f_out->writeUint16LE(vEndSeq);
 	} else {
-		f_out->writeUint32LE(vContSeq);
+		f_out->writeUint16LE(vContSeq);
 		dump_stmt(f_out, the_object->other);
 	}
 }
@@ -625,7 +625,7 @@ void load_obj_list(Common::ReadStream *f_in, XArrayType &obj_list) {
 	int i, list_size;
 
 	new_xarray(obj_list);
-	list_size = f_in->readUint32LE();
+	list_size = f_in->readUint16LE();
 
 	for (i = 0; i < list_size; ++i) {
 		load_object(f_in, new_object);
@@ -643,7 +643,7 @@ void dump_obj_list(Common::WriteStream *f_out, XArrayType &obj_list) {
 	void *p;
 	ObjectPtr this_obj;
 
-	f_out->writeUint32LE(obj_list.size());
+	f_out->writeUint16LE(obj_list.size());
 
 	for (i = 0; i < obj_list.size(); ++i) {
 		if (index_xarray(obj_list, i, p)) {
