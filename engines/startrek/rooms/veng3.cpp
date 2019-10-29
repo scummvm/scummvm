@@ -147,7 +147,7 @@ void Room::veng3WalkToDoor() {
 	if (_awayMission->veng.clearedDebris)
 		walkCrewmanC(OBJECT_KIRK, 0xa6, 0x6e, &Room::veng3ReachedTurbolift2);
 	else
-		showDescription(TX_VEN3N006);
+		showDescription(6, true);
 }
 
 void Room::veng3ReachedTurbolift2() {
@@ -175,62 +175,62 @@ void Room::veng3SickbayDoorOpened() {
 }
 
 void Room::veng3LookAtSupportBeam() {
-	showDescription(TX_VEN3N007);
+	showDescription(7, true);
 }
 
 void Room::veng3LookAtDebris() {
 	if (!_awayMission->veng.clearedDebris)
-		showDescription(TX_VEN3N009);
+		showDescription(9, true);
 	else
-		showDescription(TX_VEN3N007); // UNUSED (debris is gone)
+		showDescription(7, true); // UNUSED (debris is gone)
 }
 
 void Room::veng3LookAtTurbolift2Door() {
-	showDescription(TX_VEN3N012);
+	showDescription(12, true);
 
 	if (!_awayMission->veng.lookedAtTurbolift2Door) {
 		_awayMission->veng.lookedAtTurbolift2Door = true;
 		if (!_awayMission->veng.clearedDebris) {
-			showText(TX_SPEAKER_SPOCK, TX_VEN3_013);
-			showText(TX_SPEAKER_MCCOY, TX_VEN3_006);
+			showText(TX_SPEAKER_SPOCK, 13, true);
+			showText(TX_SPEAKER_MCCOY,  6, true);
 		}
 	}
 }
 
 void Room::veng3LookAtSickbayDoor() {
-	showDescription(TX_VEN3N011);
+	showDescription(11, true);
 }
 
 void Room::veng3LookAtCable() {
-	showDescription(TX_VEN3N013);
+	showDescription(13, true);
 }
 
 void Room::veng3LookAtDeadGuy() {
-	showDescription(TX_VEN3N005);
+	showDescription(5, true);
 }
 
 void Room::veng3LookAtKirk() {
-	showDescription(TX_VEN3N001);
+	showDescription(1, true);
 }
 
 void Room::veng3LookAtMccoy() {
-	showDescription(TX_VEN3N002);
+	showDescription(2, true);
 }
 
 void Room::veng3LookAtSpock() {
-	showDescription(TX_VEN3N004);
+	showDescription(4, true);
 }
 
 void Room::veng3LookAtRedshirt() {
-	showDescription(TX_VEN3N000);
+	showDescription(0, true);
 }
 
 void Room::veng3LookAnywhere() {
-	showDescription(TX_VEN3N003);
+	showDescription(3, true);
 }
 
 void Room::veng3UseStunPhaserOnDebris() {
-	showText(TX_SPEAKER_SPOCK, TX_VEN3_002);
+	showText(TX_SPEAKER_SPOCK,  2, true);
 }
 
 void Room::veng3UseKillPhaserOnDebris() {
@@ -258,7 +258,7 @@ void Room::veng3DebrisVaporized() {
 	} else {
 		_awayMission->disableInput = false;
 		loadMapFile("veng3");
-		showText(TX_SPEAKER_SPOCK, TX_VEN3_015);
+		showText(TX_SPEAKER_SPOCK, 15, true);
 		_awayMission->veng.clearedDebris = true;
 	}
 }
@@ -266,30 +266,30 @@ void Room::veng3DebrisVaporized() {
 void Room::veng3DebrisFellAgain() {
 	loadActorAnim2(OBJECT_DEBRIS, "s7r3d2", 0xa5, 0x68);
 	_awayMission->disableInput = false;
-	showText(TX_SPEAKER_SPOCK, TX_VEN3_014);
+	showText(TX_SPEAKER_SPOCK, 14, true);
 }
 
 void Room::veng3UseSpockOnDebris() {
 	if (!_awayMission->veng.putSupportBeamInSickbayHallway)
-		showText(TX_SPEAKER_SPOCK, TX_VEN3_008);
+		showText(TX_SPEAKER_SPOCK,  8, true);
 	else {
-		showText(TX_SPEAKER_SPOCK, TX_VEN3_011);
+		showText(TX_SPEAKER_SPOCK, 11, true);
 		// BUGFIX: Game would crash here due to jumping to non-code.
 	}
 }
 
 void Room::veng3UseRedshirtOnDebris() {
 	if (!_awayMission->veng.putSupportBeamInSickbayHallway)
-		showText(TX_SPEAKER_KIJE, TX_VEN3_017);
+		showText(TX_SPEAKER_KIJE, 17, true);
 	else {
 		// BUGFIX: Original had a "jne" opcode with no comparison beforehand, causing it
-		// to jump to some of Spock's code (TX_VEN3_007)? In any case, this makes more sense.
-		showText(TX_SPEAKER_KIJE, TX_VEN3_016);
+		// to jump to some of Spock's code (07, true)? In any case, this makes more sense.
+		showText(TX_SPEAKER_KIJE, 16, true);
 	}
 }
 
 void Room::veng3UseMccoyOnDebris() {
-	showText(TX_SPEAKER_MCCOY, TX_VEN3_004);
+	showText(TX_SPEAKER_MCCOY, 04, true);
 }
 
 void Room::veng3UseBeamOnDebris() {
@@ -311,34 +311,34 @@ void Room::veng3PlacedBeam() {
 
 void Room::veng3UseSTricorderOnDebris() {
 	if (!_awayMission->veng.putSupportBeamInSickbayHallway)
-		spockScan(DIR_N, TX_VEN3_009);
+		spockScan(DIR_N, 9, true);
 	else
-		spockScan(DIR_N, TX_VEN3_007);
+		spockScan(DIR_N, 7, true);
 }
 
 void Room::veng3UseMolecularSawOnDebris() {
-	showText(TX_SPEAKER_SPOCK, TX_VEN3_010);
+	showText(TX_SPEAKER_SPOCK, 10, true);
 }
 
 void Room::veng3TalkToKirk() {
-	showText(TX_SPEAKER_KIRK, TX_VEN3_001);
+	showText(TX_SPEAKER_KIRK, 01, true);
 }
 
 void Room::veng3TalkToSpock() {
-	showText(TX_SPEAKER_SPOCK, TX_VEN3_012);
+	showText(TX_SPEAKER_SPOCK, 12, true);
 }
 
 void Room::veng3TalkToMccoy() {
-	showText(TX_SPEAKER_MCCOY, TX_VEN3_003);
+	showText(TX_SPEAKER_MCCOY, 03, true);
 }
 
 void Room::veng3TalkToRedshirt() {
-	showText(TX_SPEAKER_KIJE,  TX_VEN3_018);
-	showText(TX_SPEAKER_MCCOY, TX_VEN3_005);
+	showText(TX_SPEAKER_KIJE,  18, true);
+	showText(TX_SPEAKER_MCCOY, 05, true);
 }
 
 void Room::veng3GetDebris() {
-	showDescription(TX_VEN3N010);
+	showDescription(10, true);
 }
 
 void Room::veng3GetCable() {
@@ -354,7 +354,7 @@ void Room::veng3ReachedCable() {
 void Room::veng3PickedUpCable() {
 	_awayMission->disableInput = false;
 	loadActorStandAnim(OBJECT_CABLE);
-	showDescription(TX_VEN3N014);
+	showDescription(14, true);
 	giveItem(OBJECT_ICABLE2);
 	_awayMission->veng.tookCableFromSickbayHallway = true;
 }

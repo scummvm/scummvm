@@ -136,27 +136,27 @@ void Room::veng4Tick1() {
 }
 
 void Room::veng4TalkToKirk() {
-	showText(TX_SPEAKER_KIRK, TX_VEN4_002);
+	showText(TX_SPEAKER_KIRK, 2, true);
 }
 
 void Room::veng4TalkToMccoy() {
-	showText(TX_SPEAKER_MCCOY, TX_VEN4_015);
+	showText(TX_SPEAKER_MCCOY, 15, true);
 }
 
 void Room::veng4TalkToSpock() {
-	showText(TX_SPEAKER_SPOCK, TX_VEN4_017);
+	showText(TX_SPEAKER_SPOCK, 17, true);
 }
 
 void Room::veng4TalkToRedshirt() {
-	showText(TX_SPEAKER_KIJE, TX_VEN4_022);
+	showText(TX_SPEAKER_KIJE, 22, true);
 }
 
 void Room::veng4UseMccoyOnDeadGuy() {
-	showText(TX_SPEAKER_MCCOY, TX_VEN4_007);
+	showText(TX_SPEAKER_MCCOY, 7, true);
 }
 
 void Room::veng4UseHypoOnBrittany() {
-	showText(TX_SPEAKER_MCCOY, TX_VEN4_008);
+	showText(TX_SPEAKER_MCCOY, 8, true);
 }
 
 void Room::veng4UseMedkitOnBrittany() {
@@ -171,13 +171,13 @@ void Room::veng4UseMTricorderOnBrittany() {
 
 void Room::veng4UseMccoyOnBrittany() {
 	if (_awayMission->veng.brittanyDead)
-		showText(TX_SPEAKER_MCCOY, TX_VEN4_013);
+		showText(TX_SPEAKER_MCCOY, 13, true);
 	else if (_awayMission->veng.usedMedkitOnBrittany)
-		showText(TX_SPEAKER_MCCOY, TX_VEN4_009);
+		showText(TX_SPEAKER_MCCOY,  9, true);
 	else {
 		if (!_awayMission->veng.lookedAtBrittany) {
 			_awayMission->veng.lookedAtBrittany = true;
-			showText(TX_SPEAKER_KIRK, TX_VEN4_005);
+			showText(TX_SPEAKER_KIRK,  5, true);
 		}
 		_awayMission->crewDirectionsAfterWalk[OBJECT_MCCOY] = DIR_E;
 		walkCrewmanC(OBJECT_MCCOY, 0x3c, 0xa0, &Room::veng4MccoyReachedBrittany);
@@ -198,12 +198,12 @@ void Room::veng4UsedMedkitOnBrittany() {
 	_awayMission->veng.getPointsForHealingBrittany = true;
 	_awayMission->veng.usedMedkitOnBrittany = true;
 	_awayMission->veng.kirkShouldSuggestReestablishingPower = true;
-	showText(TX_SPEAKER_MCCOY, TX_VEN4_009);
+	showText(TX_SPEAKER_MCCOY, 9, true);
 }
 
 void Room::veng4MccoyScannedBrittany() {
-	showText(TX_SPEAKER_MCCOY, TX_VEN4_011);
-	showText(TX_SPEAKER_KIRK,  TX_VEN4_001);
+	showText(TX_SPEAKER_MCCOY, 11, true);
+	showText(TX_SPEAKER_KIRK,   1, true);
 
 	_roomVar.veng.usingMedkitOnBrittany = true;
 	veng4UseMccoyOnBrittany();
@@ -211,20 +211,20 @@ void Room::veng4MccoyScannedBrittany() {
 
 void Room::veng4TalkToBrittany() {
 	if (_awayMission->veng.talkedToBrittany)
-		showText(TX_SPEAKER_MCCOY, TX_VEN4_012);
+		showText(TX_SPEAKER_MCCOY, 12, true);
 	else if (!_awayMission->veng.usedMedkitOnBrittany)
-		showText(TX_SPEAKER_MCCOY, TX_VEN4_010);
+		showText(TX_SPEAKER_MCCOY, 10, true);
 	else {
 		_awayMission->veng.talkedToBrittany = true;
-		showText(TX_SPEAKER_BRITTANY_MARATA, TX_VEN4_019);
-		showText(TX_SPEAKER_KIRK,            TX_VEN4_004);
-		showText(TX_SPEAKER_BRITTANY_MARATA, TX_VEN4_020);
-		showText(TX_SPEAKER_KIRK,            TX_VEN4_006);
-		showText(TX_SPEAKER_BRITTANY_MARATA, TX_VEN4_021);
-		showText(TX_SPEAKER_KIRK,            TX_VEN4_003);
+		showText(TX_SPEAKER_BRITTANY_MARATA, 19, true);
+		showText(TX_SPEAKER_KIRK,             4, true);
+		showText(TX_SPEAKER_BRITTANY_MARATA, 20, true);
+		showText(TX_SPEAKER_KIRK,             6, true);
+		showText(TX_SPEAKER_BRITTANY_MARATA, 21, true);
+		showText(TX_SPEAKER_KIRK,             3, true);
 
 		loadActorAnim2(OBJECT_BRITTANY, "s9r1bm", BRITTANY_X, BRITTANY_Y);
-		showText(TX_SPEAKER_MCCOY, TX_VEN4_016);
+		showText(TX_SPEAKER_MCCOY, 16, true);
 		loadActorAnim2(OBJECT_LEFT_READINGS, "s7r4m1", LEFT_READINGS_X, LEFT_READINGS_Y);
 		loadActorAnim2(OBJECT_BRITTANY, "s7r4bd", BRITTANY_X, BRITTANY_Y);
 		_awayMission->veng.brittanyDead = true;
@@ -234,31 +234,31 @@ void Room::veng4TalkToBrittany() {
 }
 
 void Room::veng4LookAtDeadGuy() {
-	showDescription(TX_VEN4N014);
+	showDescription(14, true);
 }
 
 void Room::veng4LookAtRightBedReadings() {
-	showDescription(TX_VEN4N013);
+	showDescription(13, true);
 }
 
 void Room::veng4LookAtDoorHotspot() {
-	showDescription(TX_VEN4N008);
+	showDescription(8, true);
 }
 
 void Room::veng4LookAtKirk() {
-	showDescription(TX_VEN4N002);
+	showDescription(2, true);
 }
 
 void Room::veng4LookAtSpock() {
-	showText(TX_SPEAKER_SPOCK, TX_VEN4N003);
+	showText(TX_SPEAKER_SPOCK, 3, true);
 }
 
 void Room::veng4LookAtMccoy() {
-	showText(TX_SPEAKER_MCCOY, TX_VEN4N000);
+	showText(TX_SPEAKER_MCCOY, 0, true);
 }
 
 void Room::veng4LookAtRedshirt() {
-	showText(TX_SPEAKER_KIJE, TX_VEN4N001);
+	showText(TX_SPEAKER_KIJE, 1, true);
 }
 
 void Room::veng4LookAtLeftBed() {
@@ -266,45 +266,45 @@ void Room::veng4LookAtLeftBed() {
 		// ENHANCEMENT: Original game showed a string with no corresponding audio ("This
 		// bed contains the body of a recently deceaced crewman." Yes that's a typo.)
 		// Instead, show some appropriate voiced text.
-		showDescription(TX_VEN4N017);
+		showDescription(17, true);
 	} else
-		showDescription(TX_VEN4N007);
+		showDescription( 7, true);
 }
 
 void Room::veng4LookAtLeftBedReadings() {
 	if (!_awayMission->veng.brittanyDead)
-		showDescription(TX_VEN4N006);
+		showDescription( 6, true);
 	else
-		showDescription(TX_VEN4N005);
+		showDescription( 5, true);
 }
 
 void Room::veng4LookAtBrittany() {
 	if (_awayMission->veng.brittanyDead)
-		showDescription(TX_VEN4N017);
+		showDescription(17, true);
 	else if (!_awayMission->veng.lookedAtBrittany) {
 		_awayMission->veng.lookedAtBrittany = true;
-		showText(TX_SPEAKER_KIRK,  TX_VEN4_005);
-		showText(TX_SPEAKER_MCCOY, TX_VEN4_014);
+		showText(TX_SPEAKER_KIRK,   5, true);
+		showText(TX_SPEAKER_MCCOY, 14, true);
 	} else if (_awayMission->veng.talkedToBrittany)
-		showDescription(TX_VEN4N017);
+		showDescription(17, true);
 	else
-		showDescription(TX_VEN4N004);
+		showDescription( 4, true);
 }
 
 void Room::veng4LookAtDrill() {
-	showDescription(TX_VEN4N012);
+	showDescription(12, true);
 }
 
 void Room::veng4LookAtHypoOnTable() {
-	showDescription(TX_VEN4N010);
+	showDescription(10, true);
 }
 
 void Room::veng4LookAtDoorObject() {
-	showDescription(TX_VEN4N009);
+	showDescription( 9, true);
 }
 
 void Room::veng4LookAnywhere() {
-	showDescription(TX_VEN4N011);
+	showDescription(11, true);
 }
 
 void Room::veng4GetHypo() {
@@ -320,7 +320,7 @@ void Room::veng4PickedUpHypo() {
 	giveItem(OBJECT_IHYPO);
 	_awayMission->veng.tookHypoFromSickbay = true;
 	loadActorStandAnim(OBJECT_HYPO);
-	showDescription(TX_VEN4N015);
+	showDescription(15, true);
 	walkCrewman(OBJECT_KIRK, 0xcd, 0xc2);
 	_awayMission->disableInput = false;
 }
@@ -338,7 +338,7 @@ void Room::veng4PickedUpDrill() {
 	giveItem(OBJECT_IDRILL);
 	_awayMission->veng.tookDrillFromSickbay = true;
 	loadActorStandAnim(OBJECT_DRILL);
-	showDescription(TX_VEN4N016);
+	showDescription(16, true);
 	walkCrewman(OBJECT_KIRK, 0xcd, 0xc2);
 	_awayMission->disableInput = false;
 }

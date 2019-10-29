@@ -189,11 +189,11 @@ void Room::veng6DoorOpened() {
 }
 
 void Room::veng6LookAtLeftPort() {
-	showDescription(TX_VEN6N018);
+	showDescription(18, true);
 }
 
 void Room::veng6LookAtRightPort() {
-	showDescription(TX_VEN6N016);
+	showDescription(16, true);
 }
 
 void Room::veng6LookAtDoor() {
@@ -201,52 +201,52 @@ void Room::veng6LookAtDoor() {
 }
 
 void Room::veng6LookAtOilCanister() {
-	showDescription(TX_VEN6N011);
+	showDescription(11, true);
 }
 
 void Room::veng6LookAtCabinet() {
-	showDescription(TX_VEN6N015);
+	showDescription(15, true);
 }
 
 void Room::veng6LookAtCable() {
-	showDescription(TX_VEN6N013);
+	showDescription(13, true);
 }
 
 void Room::veng6LookAtRightConsole() {
-	showDescription(TX_VEN6N017);
+	showDescription(17, true);
 }
 
 void Room::veng6LookAtImpulseEngines() {
-	showDescription(TX_VEN6N010);
+	showDescription(10, true);
 }
 
 void Room::veng6LookAtLeftConsole() {
-	showDescription(TX_VEN6N009);
+	showDescription(9, true);
 }
 
 void Room::veng6LookAtJunctionBox() {
-	showDescription(TX_VEN6N012);
+	showDescription(12, true);
 }
 
 void Room::veng6LookAtJournal() {
-	showDescription(TX_VEN6N025);
-	showText(TX_SPEAKER_SPOCK, TX_VEN6_021);
+	showDescription(25, true);
+	showText(TX_SPEAKER_SPOCK, 21, true);
 }
 
 void Room::veng6LookAtKirk() {
-	showDescription(TX_VEN6N001);
+	showDescription(1, true);
 }
 
 void Room::veng6LookAtSpock() {
-	showDescription(TX_VEN6N003);
+	showDescription(3, true);
 }
 
 void Room::veng6LookAtMccoy() {
-	showDescription(TX_VEN6N002);
+	showDescription(2, true);
 }
 
 void Room::veng6LookAtRedshirt() {
-	showDescription(TX_VEN6N000);
+	showDescription(0, true);
 }
 
 void Room::veng6LookAtDeadGuy() {
@@ -254,25 +254,25 @@ void Room::veng6LookAtDeadGuy() {
 }
 
 void Room::veng6LookAnywhere() {
-	showDescription(TX_VEN6N019);
+	showDescription(19, true);
 }
 
 void Room::veng6TalkToKirk() {
-	showText(TX_SPEAKER_KIRK,  TX_VEN6_005);
-	showText(TX_SPEAKER_MCCOY, TX_VEN6_009);
+	showText(TX_SPEAKER_KIRK,   5, true);
+	showText(TX_SPEAKER_MCCOY,  9, true);
 }
 
 void Room::veng6TalkToSpock() {
-	showText(TX_SPEAKER_SPOCK, TX_VEN6_014);
+	showText(TX_SPEAKER_SPOCK, 14, true);
 }
 
 void Room::veng6TalkToMccoy() {
-	showText(TX_SPEAKER_MCCOY, TX_VEN6_008);
-	showText(TX_SPEAKER_SPOCK, TX_VEN6_018);
+	showText(TX_SPEAKER_MCCOY,  8, true);
+	showText(TX_SPEAKER_SPOCK, 18, true);
 }
 
 void Room::veng6TalkToRedshirt() {
-	showText(TX_SPEAKER_KIJE, TX_VEN6_023);
+	showText(TX_SPEAKER_KIJE, 23, true);
 }
 
 void Room::veng6UseCable1OnLeftPort() {
@@ -303,7 +303,7 @@ void Room::veng6KirkOrSpockReachedLeftPort() {
 
 void Room::veng6AttachedLeftCable() {
 	loadActorAnim(OBJECT_CABLE_1, "s7r6cl", CABLE_1_X, CABLE_1_Y);
-	showDescription(TX_VEN6N020);
+	showDescription(20, true);
 	_awayMission->veng.junctionCablesConnected |= 1;
 	loseItem(_roomVar.veng.cableInUse);
 	_awayMission->disableInput = false;
@@ -337,7 +337,7 @@ void Room::veng6KirkOrSpockReachedRightPort() {
 
 void Room::veng6AttachedRightCable() {
 	loadActorAnim(OBJECT_CABLE_2, "s7r6cr", CABLE_2_X, CABLE_2_Y);
-	showDescription(TX_VEN6N022);
+	showDescription(22, true);
 	_awayMission->veng.junctionCablesConnected |= 2;
 	loseItem(_roomVar.veng.cableInUse);
 	_awayMission->disableInput = false;
@@ -345,19 +345,19 @@ void Room::veng6AttachedRightCable() {
 
 void Room::veng6UseCrewmanOnJunctionBox() {
 	if (_awayMission->veng.impulseEnginesOn)
-		showText(TX_SPEAKER_SPOCK, TX_VEN6_012);
+		showText(TX_SPEAKER_SPOCK, 12, true);
 	else if ((_awayMission->veng.junctionCablesConnected & 3) == 3) {
 		showText(TX_SPEAKER_COMPUTER, TX_COMPA185);
-		showText(TX_SPEAKER_KIRK, TX_VEN6_003);
+		showText(TX_SPEAKER_KIRK,  3, true);
 		if (!_awayMission->veng.readEngineeringJournal)
-			showText(TX_SPEAKER_SPOCK, TX_VEN6_017);
+			showText(TX_SPEAKER_SPOCK, 17, true);
 		else {
-			showText(TX_SPEAKER_SPOCK, TX_VEN6_016);
-			showText(TX_SPEAKER_KIRK,  TX_VEN6_002);
+			showText(TX_SPEAKER_SPOCK, 16, true);
+			showText(TX_SPEAKER_KIRK,   2, true);
 			walkCrewmanC(OBJECT_SPOCK, 0x99, 0xb4, &Room::veng6SpockReachedJunctionBox);
 		}
 	} else
-		showText(TX_SPEAKER_SPOCK, TX_VEN6_011);
+		showText(TX_SPEAKER_SPOCK, 11, true);
 }
 
 void Room::veng6SpockReachedJunctionBox() {
@@ -365,7 +365,7 @@ void Room::veng6SpockReachedJunctionBox() {
 }
 
 void Room::veng6SpockAdjustedJunctionBox() {
-	showText(TX_SPEAKER_SPOCK, TX_VEN6_019);
+	showText(TX_SPEAKER_SPOCK, 19, true);
 	loadActorAnim(OBJECT_IMPULSE_ENGINES, "s7r6i1", IMPULSE_ENGINE_X, IMPULSE_ENGINE_Y);
 	_awayMission->veng.impulseEnginesOn = true;
 	stopAllVocSounds();
@@ -374,7 +374,7 @@ void Room::veng6SpockAdjustedJunctionBox() {
 
 void Room::veng6UseHypoOnOilCanister() {
 	if (_awayMission->veng.oilInHypo)
-		showDescription(TX_VEN6N006);
+		showDescription(6, true);
 	else {
 		_awayMission->disableInput = true;
 		walkCrewmanC(OBJECT_KIRK, 0x3c, 0x9e, &Room::veng6ReachedOilCanister);
@@ -387,7 +387,7 @@ void Room::veng6ReachedOilCanister() {
 
 void Room::veng6FilledHypoWithOil() {
 	_awayMission->disableInput = false;
-	showDescription(TX_VEN6N007);
+	showDescription(7, true);
 	_awayMission->veng.oilInHypo = true;
 }
 
@@ -412,33 +412,33 @@ void Room::veng6OpenedOrClosedCabinet() {
 		playSoundEffectIndex(SND_DOOR1);
 		_awayMission->veng.engineeringCabinetOpen = true;
 		if (!_awayMission->veng.tookEngineeringJournal)
-			showDescription(TX_VEN6N005);
+			showDescription(5, true);
 	}
 }
 
 void Room::veng6UseSTricorderOnImpulseEngines() {
 	if (_awayMission->veng.impulseEnginesOn)
-		spockScan(DIR_S, TX_VEN6_010);
+		spockScan(DIR_S, 10, false, true);
 	else {
-		spockScan(DIR_S, TX_VEN6_020);
-		showText(TX_SPEAKER_KIRK,  TX_VEN6_001);
-		showText(TX_SPEAKER_SPOCK, TX_VEN6_022);
+		spockScan(DIR_S, 20, false, true);
+		showText(TX_SPEAKER_KIRK,   1, true);
+		showText(TX_SPEAKER_SPOCK, 22, true);
 	}
 }
 
 void Room::veng6UseSTricorderOnRightConsole() {
 	if (_awayMission->veng.impulseEnginesOn)
-		spockScan(DIR_S, TX_VEN6_013);
+		spockScan(DIR_S, 13, false, true);
 	else
-		spockScan(DIR_S, TX_VEN6_007);
+		spockScan(DIR_S,  7, false, true);
 }
 
 void Room::veng6UseSTricorderOnJunctionBox() {
-	spockScan(DIR_S, TX_VEN6_015);
+	spockScan(DIR_S, 15, false, true);
 }
 
 void Room::veng6UsePowerPackOnLeftConsole() {
-	showText(TX_SPEAKER_SPOCK, TX_VEN6_006);
+	showText(TX_SPEAKER_SPOCK,  6, true);
 }
 
 void Room::veng6GetJunctionBox() {
@@ -446,7 +446,7 @@ void Room::veng6GetJunctionBox() {
 }
 
 void Room::veng6GetOilCanister() {
-	showDescription(TX_VEN6N008);
+	showDescription(8, true);
 }
 
 void Room::veng6GetEngineeringJournal() {
@@ -461,7 +461,7 @@ void Room::veng6ReachedEngineeringJournal() {
 void Room::veng6TookEngineeringJournal() {
 	loadActorStandAnim(OBJECT_JOURNAL);
 	_awayMission->disableInput = false;
-	showDescription(TX_VEN6N024);
+	showDescription(24, true);
 	_awayMission->veng.tookEngineeringJournal = true;
 	giveItem(OBJECT_ITECH);
 }

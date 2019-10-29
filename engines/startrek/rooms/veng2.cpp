@@ -256,12 +256,12 @@ void Room::veng2Timer0Expired() { // Elasi decloak if they haven't already
 void Room::veng2ElasiShipDecloaked() {
 	_awayMission->disableInput = false;
 
-	showText(TX_SPEAKER_KIJE,  TX_VEN2_093);
-	showText(TX_SPEAKER_KIRK,  TX_VEN2_019);
-	showText(TX_SPEAKER_SPOCK, TX_VEN2_076);
-	showText(TX_SPEAKER_MCCOY, TX_VEN2_042);
+	showText(TX_SPEAKER_KIJE,  93, true);
+	showText(TX_SPEAKER_KIRK,  19, true);
+	showText(TX_SPEAKER_SPOCK, 76, true);
+	showText(TX_SPEAKER_MCCOY, 42, true);
 	if (_awayMission->veng.poweredSystem != 2) {
-		showText(TX_SPEAKER_SPOCK, TX_VEN2_032);
+		showText(TX_SPEAKER_SPOCK, 32, true);
 		_awayMission->veng.counterUntilElasiBoardWithShieldsDown = 1800;
 	} else
 		veng2Timer2Expired();
@@ -272,38 +272,38 @@ void Room::veng2Timer2Expired() { // Elasi hail the Enterprise if they haven't a
 		return;
 	_awayMission->veng.elasiHailedRepublic = true;
 
-	showText(TX_SPEAKER_SPOCK, TX_VEN2_073);
-	showText(TX_SPEAKER_KIRK,  TX_VEN2_016);
+	showText(TX_SPEAKER_SPOCK, 73, true);
+	showText(TX_SPEAKER_KIRK,  16, true);
 	loadActorAnim2(OBJECT_VIEWSCREEN, "s7r2p1", VIEWSCREEN_X, VIEWSCREEN_Y);
-	showText(TX_SPEAKER_ELASI_CAPTAIN, TX_VEN2_109);
-	showText(TX_SPEAKER_KIRK,          TX_VEN2_027);
-	showText(TX_SPEAKER_ELASI_CAPTAIN, TX_VEN2_113);
-	showText(TX_SPEAKER_KIRK,          TX_VEN2_010);
-	showText(TX_SPEAKER_ELASI_CAPTAIN, TX_VEN2_103);
-	showText(TX_SPEAKER_KIRK,          TX_VEN2_006);
-	showText(TX_SPEAKER_ELASI_CAPTAIN, TX_VEN2_111);
-	showText(TX_SPEAKER_KIRK,          TX_VEN2_020);
-	showText(TX_SPEAKER_ELASI_CAPTAIN, TX_VEN2_112);
+	showText(TX_SPEAKER_ELASI_CAPTAIN, 109, true);
+	showText(TX_SPEAKER_KIRK,          27, true);
+	showText(TX_SPEAKER_ELASI_CAPTAIN, 113, true);
+	showText(TX_SPEAKER_KIRK,          10, true);
+	showText(TX_SPEAKER_ELASI_CAPTAIN, 103, true);
+	showText(TX_SPEAKER_KIRK,          06, true);
+	showText(TX_SPEAKER_ELASI_CAPTAIN, 111, true);
+	showText(TX_SPEAKER_KIRK,          20, true);
+	showText(TX_SPEAKER_ELASI_CAPTAIN, 112, true);
 
 	const TextRef choices[] = {
 		TX_SPEAKER_KIRK,
-		TX_VEN2_012, TX_VEN2_011,
+		12, 11,
 		TX_BLANK
 	};
 
-	int choice = showMultipleTexts(choices);
+	int choice = showMultipleTexts(choices, true);
 
 	if (choice == 0) {
-		showText(TX_SPEAKER_ELASI_CAPTAIN, TX_VEN2_099);
-		showText(TX_SPEAKER_KIRK,          TX_VEN2_008);
+		showText(TX_SPEAKER_ELASI_CAPTAIN, 99, true);
+		showText(TX_SPEAKER_KIRK,           8, true);
 	}
 
-	showText(TX_SPEAKER_ELASI_CAPTAIN, TX_VEN2_105);
-	showText(TX_SPEAKER_KIRK,          TX_VEN2_021);
-	showText(TX_SPEAKER_ELASI_CAPTAIN, TX_VEN2_102);
-	showText(TX_SPEAKER_SPOCK,         TX_VEN2_072);
-	showText(TX_SPEAKER_MCCOY,         TX_VEN2_044);
-	showText(TX_SPEAKER_KIRK,          TX_VEN2_022);
+	showText(TX_SPEAKER_ELASI_CAPTAIN, 105, true);
+	showText(TX_SPEAKER_KIRK,          21, true);
+	showText(TX_SPEAKER_ELASI_CAPTAIN, 102, true);
+	showText(TX_SPEAKER_SPOCK,         72, true);
+	showText(TX_SPEAKER_MCCOY,         44, true);
+	showText(TX_SPEAKER_KIRK,          22, true);
 
 	loadActorAnim2(OBJECT_VIEWSCREEN, "s7r2u2", VIEWSCREEN_X, VIEWSCREEN_Y);
 	_awayMission->veng.counterUntilElasiAttack = 27000;
@@ -317,147 +317,147 @@ void Room::veng2TouchedDoor() {
 
 void Room::veng2LookAtViewscreen() {
 	if (!_awayMission->veng.elasiShipDecloaked)
-		showDescription(TX_VEN2N022);
+		showDescription(22, true);
 	else
-		showDescription(TX_VEN2N002);
+		showDescription( 2, true);
 }
 
 void Room::veng2LookAtMiddleConsole() {
-	showDescription(TX_VEN2N030);
+	showDescription(30, true);
 }
 
 void Room::veng2LookAtDamageDisplay() {
 	if (!_awayMission->veng.impulseEnginesOn)
-		showDescription(TX_VEN2N035);
+		showDescription(35, true);
 	else
-		showDescription(TX_VEN2N032);
+		showDescription(32, true);
 
 	// NOTE: There were originally 2 more cases, where "poweredSystem == 2" or otherwise. For
 	// the case where poweredSystem == 2, it played TX_VEN2N032, but with mismatching text.
 }
 
 void Room::veng2LookAtSTricorder() {
-	showDescription(TX_VEN2N027);
+	showDescription(27, true);
 }
 
 void Room::veng2LookAtMTricorder() {
-	showDescription(TX_VEN2N024);
+	showDescription(24, true);
 }
 
 void Room::veng2LookAtTorpedoButton() {
-	showDescription(TX_VEN2N033);
+	showDescription(33, true);
 }
 
 // TODO: Consider merging "veng2LookAtTorpedoButton" with "veng2LookAtTorpedoControl"
 // (and the same for use actions)
 void Room::veng2LookAtTorpedoControl() {
-	showDescription(TX_VEN2N033);
+	showDescription(33, true);
 
 	if (!_awayMission->veng.impulseEnginesOn)
-		showDescription(TX_VEN2N001); // Unused, since it can't be selected when impulse is off?
+		showDescription(1, true); // Unused, since it can't be selected when impulse is off?
 	else if (!_awayMission->veng.torpedoLoaded) {
-		showDescription(TX_VEN2N000);
+		showDescription(0, true);
 		if (!_awayMission->veng.elasiShipDecloaked)
-			showText(TX_SPEAKER_SPOCK, TX_VEN2_036);
+			showText(TX_SPEAKER_SPOCK, 36, true);
 		else
-			showText(TX_SPEAKER_SPOCK, TX_VEN2_037);
+			showText(TX_SPEAKER_SPOCK, 37, true);
 		_awayMission->veng.examinedTorpedoControl = true;
 	} else if (!_awayMission->veng.firedTorpedo)
-		showDescription(TX_VEN2N021);
+		showDescription(21, true);
 	else
-		showDescription(TX_VEN2N020); // Unused, since after firing the torpedo, the mission ends
+		showDescription(20, true); // Unused, since after firing the torpedo, the mission ends
 }
 
 void Room::veng2LookAtImpulseConsole() {
-	showDescription(TX_VEN2N034);
+	showDescription(34, true);
 
 	if (!_awayMission->veng.impulseEnginesOn)
-		showDescription(TX_VEN2N008);
+		showDescription(8, true);
 	else if (_awayMission->veng.tricordersPluggedIntoComputer != 3)
-		showDescription(TX_VEN2N009);
+		showDescription(9, true);
 	else if (_awayMission->veng.poweredSystem == 0)
-		showDescription(TX_VEN2N009);
+		showDescription(9, true);
 	else if (_awayMission->veng.poweredSystem == 1)
-		showDescription(TX_VEN2N007);
+		showDescription(7, true);
 	else if (_awayMission->veng.poweredSystem == 2)
-		showDescription(TX_VEN2N005);
+		showDescription(5, true);
 	else
-		showDescription(TX_VEN2N006);
+		showDescription(6, true);
 }
 
 void Room::veng2LookAtMainComputer() {
 	if (_awayMission->veng.tricordersPluggedIntoComputer == 0)
-		showDescription(TX_VEN2N003);
+		showDescription( 3, true);
 	else if (_awayMission->veng.tricordersPluggedIntoComputer == 1) // Med tricorder plugged in
-		showDescription(TX_VEN2N023);
+		showDescription(23, true);
 	else if (_awayMission->veng.tricordersPluggedIntoComputer == 2) // Sci tricorder plugged in
-		showDescription(TX_VEN2N027);
+		showDescription(27, true);
 	else // Both
-		showDescription(TX_VEN2N025);
+		showDescription(25, true);
 }
 
 void Room::veng2LookAtRecordDeck() {
-	showDescription(TX_VEN2N029);
+	showDescription(29, true);
 }
 
 void Room::veng2LookAtDeckIOConsole() {
-	showDescription(TX_VEN2N031);
+	showDescription(31, true);
 }
 
 void Room::veng2LookAtKirk() {
-	showDescription(TX_VEN2N010);
+	showDescription(10, true);
 }
 
 void Room::veng2LookAtSpock() {
-	showDescription(TX_VEN2N019);
+	showDescription(19, true);
 }
 
 void Room::veng2LookAtMccoy() {
-	showDescription(TX_VEN2N012);
+	showDescription(12, true);
 }
 
 void Room::veng2LookAtRedshirt() {
-	showDescription(TX_VEN2N004);
+	showDescription( 4, true);
 }
 
 void Room::veng2LookAnywhere() {
-	showDescription(TX_VEN2N035);
+	showDescription(35, true);
 }
 
 void Room::veng2TalkToKirk() {
 	if (_awayMission->veng.countdownStarted)
-		showText(TX_SPEAKER_KIRK, TX_VEN2_004);
+		showText(TX_SPEAKER_KIRK, 04, true);
 	else
-		showText(TX_SPEAKER_KIRK, TX_VEN2_005);
+		showText(TX_SPEAKER_KIRK, 5, true);
 }
 
 void Room::veng2TalkToSpock() {
 	if (_awayMission->veng.countdownStarted) {
-		showText(TX_SPEAKER_SPOCK, TX_VEN2_075);
-		showText(TX_SPEAKER_KIRK,  TX_VEN2_009);
+		showText(TX_SPEAKER_SPOCK, 75, true);
+		showText(TX_SPEAKER_KIRK,   9, true);
 	} else
 		showText(TX_SPEAKER_SPOCK, TX_VEN4_017);
 }
 
 void Room::veng2TalkToMccoy() {
 	if (_awayMission->veng.countdownStarted) {
-		showText(TX_SPEAKER_MCCOY, TX_VEN2_041);
-		showText(TX_SPEAKER_KIRK,  TX_VEN2_007);
+		showText(TX_SPEAKER_MCCOY, 41, true);
+		showText(TX_SPEAKER_KIRK,   7, true);
 	} else
-		showText(TX_SPEAKER_MCCOY, TX_VEN2_039);
+		showText(TX_SPEAKER_MCCOY, 39, true);
 }
 
 void Room::veng2TalkToRedshirt() {
 	if (_awayMission->veng.countdownStarted) {
-		showText(TX_SPEAKER_KIJE,  TX_VEN2_094);
-		showText(TX_SPEAKER_SPOCK, TX_VEN2_078);
+		showText(TX_SPEAKER_KIJE,  94, true);
+		showText(TX_SPEAKER_SPOCK, 78, true);
 	} else
-		showText(TX_SPEAKER_KIJE, TX_VEN2_086);
+		showText(TX_SPEAKER_KIJE, 86, true);
 }
 
 void Room::veng2UseTechJournalOnDeckIOConsole() {
 	if (_awayMission->veng.readEngineeringJournal)
-		showText(TX_SPEAKER_SPOCK, TX_VEN2_046);
+		showText(TX_SPEAKER_SPOCK, 46, true);
 	else {
 		_awayMission->disableInput = true;
 		walkCrewmanC(OBJECT_SPOCK, 0x112, 0x98, &Room::veng2ReachedDeckIOWithTechJournal);
@@ -470,10 +470,10 @@ void Room::veng2ReachedDeckIOWithTechJournal() {
 
 void Room::veng2DoneReadingTechJournal() {
 	_awayMission->disableInput = false;
-	showText(TX_SPEAKER_SPOCK, TX_VEN2_070);
-	showText(TX_SPEAKER_MCCOY, TX_VEN2_043);
-	showText(TX_SPEAKER_KIRK,  TX_VEN2_017);
-	showText(TX_SPEAKER_SPOCK, TX_VEN2_081);
+	showText(TX_SPEAKER_SPOCK, 70, true);
+	showText(TX_SPEAKER_MCCOY, 43, true);
+	showText(TX_SPEAKER_KIRK,  17, true);
+	showText(TX_SPEAKER_SPOCK, 81, true);
 	_awayMission->veng.readEngineeringJournal = true;
 }
 
@@ -492,22 +492,22 @@ void Room::veng2LoadedLog() {
 	_awayMission->veng.captainsLogIndex++;
 
 	if (_awayMission->veng.captainsLogIndex == 1)
-		showText(TX_SPEAKER_PATTERSON, TX_VEN2_082);
+		showText(TX_SPEAKER_PATTERSON, 82, true);
 	else if (_awayMission->veng.captainsLogIndex == 2)
-		showText(TX_SPEAKER_PATTERSON, TX_VEN2_083);
+		showText(TX_SPEAKER_PATTERSON, 83, true);
 	else if (_awayMission->veng.captainsLogIndex == 3)
-		showText(TX_SPEAKER_PATTERSON, TX_VEN2_084);
+		showText(TX_SPEAKER_PATTERSON, 84, true);
 	else if (_awayMission->veng.captainsLogIndex == 4) {
-		showText(TX_SPEAKER_ANDRADE, TX_VEN2_097);
+		showText(TX_SPEAKER_ANDRADE, 97, true);
 		_awayMission->veng.readAllLogs = true;
-		showText(TX_SPEAKER_SPOCK, TX_VEN2_061);
+		showText(TX_SPEAKER_SPOCK, 61, true);
 	} else
-		showText(TX_SPEAKER_SPOCK, TX_VEN2_061);
+		showText(TX_SPEAKER_SPOCK, 61, true);
 }
 
 void Room::veng2UseCommunicator() {
 	if (_awayMission->veng.toldElasiToBeamOver)
-		showText(TX_SPEAKER_ELASI_CAPTAIN, TX_VEN2_098);
+		showText(TX_SPEAKER_ELASI_CAPTAIN, 98, true);
 	else if (_awayMission->veng.countdownStarted) {
 		const TextRef choices[] = {
 			TX_SPEAKER_KIRK,
@@ -518,47 +518,47 @@ void Room::veng2UseCommunicator() {
 
 		if (choice == 0) { // Hail Elasi
 			if (!_awayMission->veng.torpedoLoaded)
-				showText(TX_SPEAKER_MCCOY, TX_VEN2_040);
+				showText(TX_SPEAKER_MCCOY, 40, true);
 			else {
 				loadActorAnim2(OBJECT_VIEWSCREEN, "s7r2p1", VIEWSCREEN_X, VIEWSCREEN_Y);
-				showText(TX_SPEAKER_ELASI_CAPTAIN, TX_VEN2_108);
+				showText(TX_SPEAKER_ELASI_CAPTAIN, 108, true);
 
 				const TextRef choices2[] = {
 					TX_SPEAKER_KIRK,
-					TX_VEN2_015, TX_VEN2_029,
+					15, 29,
 					TX_BLANK
 				};
-				choice = showMultipleTexts(choices2);
+				choice = showMultipleTexts(choices2, true);
 
 				if (choice == 0) { // "We don't have it yet"
-					showText(TX_SPEAKER_ELASI_CAPTAIN, TX_VEN2_100);
+					showText(TX_SPEAKER_ELASI_CAPTAIN, 100, true);
 					loadActorAnim2(OBJECT_VIEWSCREEN, "s7r2u2", VIEWSCREEN_X, VIEWSCREEN_Y);
 				} else { // "You'll have to beam over"
-					showText(TX_SPEAKER_ELASI_CAPTAIN, TX_VEN2_114);
-					showText(TX_SPEAKER_KIRK, TX_VEN2_025);
+					showText(TX_SPEAKER_ELASI_CAPTAIN, 114, true);
+					showText(TX_SPEAKER_KIRK, 25, true);
 					loadActorAnim2(OBJECT_VIEWSCREEN, "s7r2u2", VIEWSCREEN_X, VIEWSCREEN_Y);
 					_awayMission->veng.counterUntilElasiNagToDisableShields = 1800;
 					_awayMission->veng.toldElasiToBeamOver = true;
 				}
 			}
 		} else if (choice == 1) // Hail enterprise
-			showText(TX_SPEAKER_SPOCK, TX_VEN2_066);
+			showText(TX_SPEAKER_SPOCK, 66, true);
 	} else if (_awayMission->veng.elasiShipDecloaked) {
-		showText(TX_SPEAKER_SPOCK, TX_VEN2_066);
+		showText(TX_SPEAKER_SPOCK, 66, true);
 	} else {
 		showText(TX_SPEAKER_KIRK,  TX_MUD4_018);
 		showText(TX_SPEAKER_UHURA, TX_VEN2U093);
-		showText(TX_SPEAKER_KIRK,  TX_VEN2_028);
+		showText(TX_SPEAKER_KIRK,  28, true);
 	}
 }
 
 void Room::veng2UseKirkOnTorpedoButton() {
 	if (_awayMission->veng.poweredSystem != 1)
-		showDescription(TX_VEN2N028);
+		showDescription(28, true);
 	else if (!_awayMission->veng.torpedoLoaded)
-		showText(TX_SPEAKER_SPOCK, TX_VEN2_058);
+		showText(TX_SPEAKER_SPOCK, 58, true);
 	else if (!_awayMission->veng.elasiShieldsDown)
-		showText(TX_SPEAKER_SPOCK, TX_VEN2_054); // Probably unused; weapons can't be powered while elasi shields are up?
+		showText(TX_SPEAKER_SPOCK, 54, true); // Probably unused; weapons can't be powered while elasi shields are up?
 	else { // Fire on the defenseless Elasi
 		_awayMission->disableInput = true;
 		walkCrewmanC(OBJECT_KIRK, 0x90, 0x95, &Room::veng2UseKirkReachedTorpedoButton);
@@ -577,21 +577,21 @@ void Room::veng2KirkFiredTorpedo() {
 
 void Room::veng2TorpedoStruckElasiShip() {
 	loadActorAnim2(OBJECT_VIEWSCREEN, "s7r2p1", VIEWSCREEN_X, VIEWSCREEN_Y);
-	showText(TX_SPEAKER_ELASI_CAPTAIN, TX_VEN2_104);
+	showText(TX_SPEAKER_ELASI_CAPTAIN, 104, true);
 	showText(TX_SPEAKER_ELASI_WEAPONS_MASTER, TX_VEN2_F29);
 	showText(TX_SPEAKER_ELASI_CREWMAN, TX_VEN2_F28);
-	showText(TX_SPEAKER_ELASI_CAPTAIN, TX_VEN2_101);
-	showText(TX_SPEAKER_KIRK, TX_VEN2_014);
-	showText(TX_SPEAKER_ELASI_CAPTAIN, TX_VEN2_106);
+	showText(TX_SPEAKER_ELASI_CAPTAIN, 101, true);
+	showText(TX_SPEAKER_KIRK, 14, true);
+	showText(TX_SPEAKER_ELASI_CAPTAIN, 106, true);
 	loadActorAnimC(OBJECT_VIEWSCREEN, "s7r2rc", 0, 0, &Room::veng2ElasiRetreated);
 }
 
 void Room::veng2ElasiRetreated() {
-	showText(TX_SPEAKER_UHURA,  TX_VEN2U094);
-	showText(TX_SPEAKER_KIRK,   TX_VEN2_026);
-	showText(TX_SPEAKER_CHEKOV, TX_VEN2_115);
-	showText(TX_SPEAKER_KIRK,   TX_VEN2_013);
-	showText(TX_SPEAKER_SCOTT,  TX_VEN2_S09);
+	showText(TX_SPEAKER_UHURA,  94, true);
+	showText(TX_SPEAKER_KIRK,   26, true);
+	showText(TX_SPEAKER_CHEKOV, 115, true);
+	showText(TX_SPEAKER_KIRK,   13, true);
+	showText(TX_SPEAKER_SCOTT,  9 + SCOTTY_MESSAGE_OFFSET, true);
 	_awayMission->veng.firedTorpedo = true;
 
 	walkCrewmanC(OBJECT_KIRK,     0xec,  0x9d, &Room::veng2CrewmanInPositionToBeamOut);
@@ -624,46 +624,46 @@ void Room::veng2UseSTricorderOnTorpedoButton() {
 
 void Room::veng2UseSTricorderOnMiddleConsole() {
 	spockScan(DIR_N, -1);
-	showDescription(TX_VEN2N030); // This is a narration, not Spock speaking
+	showDescription(30, true); // This is a narration, not Spock speaking
 }
 
 void Room::veng2UseSTricorderOnTorpedoControl() {
-	showText(TX_SPEAKER_KIRK, TX_VEN2_001);
+	showText(TX_SPEAKER_KIRK, 01, true);
 	spockScan(DIR_N, -1); // FIXME: delete this since Spock might not have his tricorder?
 
 	if (_awayMission->veng.poweredSystem != 1) { // No power to weapons
 		if (!_awayMission->veng.scannedMainComputer)
-			showText(TX_SPEAKER_SPOCK, TX_VEN2_062);
+			showText(TX_SPEAKER_SPOCK, 62, true);
 		else
-			showText(TX_SPEAKER_SPOCK, TX_VEN2_064);
+			showText(TX_SPEAKER_SPOCK, 64, true);
 	} else if (_awayMission->veng.tricordersPluggedIntoComputer != 3)
-		showText(TX_SPEAKER_SPOCK, TX_VEN2_055);
+		showText(TX_SPEAKER_SPOCK, 55, true);
 #if 0
 	// FIXME: Unused, since the same condition is above. Fix needed?
 	else if (_awayMission->veng.poweredSystem != 1)
-		showText(TX_SPEAKER_SPOCK, TX_VEN2_065);
+		showText(TX_SPEAKER_SPOCK, 65, true);
 #endif
 	else if (!_awayMission->veng.torpedoLoaded) {
-		showText(TX_SPEAKER_SPOCK, TX_VEN2_068);
+		showText(TX_SPEAKER_SPOCK, 68, true);
 		if (!_awayMission->veng.elasiShipDecloaked)
-			showText(TX_SPEAKER_SPOCK, TX_VEN2_036);
+			showText(TX_SPEAKER_SPOCK, 36, true);
 		else
-			showText(TX_SPEAKER_SPOCK, TX_VEN2_037);
+			showText(TX_SPEAKER_SPOCK, 37, true);
 		_awayMission->veng.examinedTorpedoControl = true;
 		// TODO: consider making it easier to trigger the above flag? (using spock on it
 		// won't work once the elasi are there, since you can't power the system; you need
 		// to look at it instead.)
 	} else
-		showText(TX_SPEAKER_SPOCK, TX_VEN2_050);
+		showText(TX_SPEAKER_SPOCK, 50, true);
 }
 
 void Room::veng2UseImpulseConsole() {
 	if (!_awayMission->veng.impulseEnginesOn) {
-		showText(TX_SPEAKER_KIRK,  TX_VEN2_003);
-		showText(TX_SPEAKER_SPOCK, TX_VEN2_063);
+		showText(TX_SPEAKER_KIRK,   3, true);
+		showText(TX_SPEAKER_SPOCK, 63, true);
 	} else if (_awayMission->veng.tricordersPluggedIntoComputer != 3) {
-		showText(TX_SPEAKER_KIRK,  TX_VEN2_003);
-		showText(TX_SPEAKER_SPOCK, TX_VEN2_057);
+		showText(TX_SPEAKER_KIRK,   3, true);
+		showText(TX_SPEAKER_SPOCK, 57, true);
 	} else {
 		_awayMission->disableInput = true;
 		walkCrewmanC(OBJECT_SPOCK, 0x22, 0x9b, &Room::veng2SpockReachedImpulseConsole);
@@ -676,7 +676,7 @@ void Room::veng2SpockReachedImpulseConsole() {
 
 void Room::veng2SpockUsedImpulseConsole() {
 	_awayMission->disableInput = false;
-	showText(TX_SPEAKER_SPOCK, TX_VEN2_069);
+	showText(TX_SPEAKER_SPOCK, 69, true);
 
 	// Choose where to transfer power
 	const TextRef choices[] = {
@@ -694,52 +694,52 @@ powerWeapons:
 				loadActorAnim2(OBJECT_DAMAGE_DISPLAY_1, "s7r2sh3", DAMAGE_DISPLAY_1_X, DAMAGE_DISPLAY_1_Y);
 			}
 			_awayMission->veng.poweredSystem = 1;
-			showText(TX_SPEAKER_KIJE, TX_VEN2_088);
+			showText(TX_SPEAKER_KIJE, 88, true);
 			if (_awayMission->veng.toldElasiToBeamOver) {
-				showText(TX_SPEAKER_SPOCK, TX_VEN2_052);
+				showText(TX_SPEAKER_SPOCK, 52, true);
 				_awayMission->veng.elasiShieldsDown = true;
 				_awayMission->veng.counterUntilElasiBoardWithInvitation = 900;
 			}
 			if (_awayMission->veng.elasiShipDecloaked && !_awayMission->veng.elasiHailedRepublic) {
-				showText(TX_SPEAKER_SPOCK, TX_VEN2_033);
+				showText(TX_SPEAKER_SPOCK, 33, true);
 				_awayMission->veng.counterUntilElasiBoardWithShieldsDown = 1800;
 			}
 		} else if (_awayMission->veng.countdownStarted)
-			showText(TX_SPEAKER_SPOCK, TX_VEN2_035);
+			showText(TX_SPEAKER_SPOCK, 35, true);
 		else if (_awayMission->veng.poweredSystem == 1) // Weapons already powered
-			showText(TX_SPEAKER_KIJE, TX_VEN2_091);
+			showText(TX_SPEAKER_KIJE, 91, true);
 		else
 			goto powerWeapons;
 	} else if (choice == 1) { // Shields
 		if (_awayMission->veng.poweredSystem == 2) // Shields already powered
-			showText(TX_SPEAKER_KIJE, TX_VEN2_089);
+			showText(TX_SPEAKER_KIJE, 89, true);
 		else if (_awayMission->veng.toldElasiToBeamOver)
-			showText(TX_SPEAKER_KIJE, TX_VEN2_085);
+			showText(TX_SPEAKER_KIJE, 85, true);
 		else {
 			loadActorAnim2(OBJECT_DAMAGE_DISPLAY_1, "s7r2sh", DAMAGE_DISPLAY_1_X, DAMAGE_DISPLAY_1_Y);
 			_awayMission->veng.poweredSystem = 2;
 			if (_awayMission->veng.elasiShipDecloaked)
 				_awayMission->timers[2] = 45; // Timer until the elasi hail the ship
-			showText(TX_SPEAKER_KIJE, TX_VEN2_092);
+			showText(TX_SPEAKER_KIJE, 92, true);
 		}
 	} else if (choice == 2) { // Transporter
 		if (_awayMission->veng.countdownStarted) {
-			showText(TX_SPEAKER_SPOCK, TX_VEN2_034);
+			showText(TX_SPEAKER_SPOCK, 34, true);
 			if (_awayMission->veng.havePowerPack) {
-				showText(TX_SPEAKER_KIRK,  TX_VEN2_018);
-				showText(TX_SPEAKER_SPOCK, TX_VEN2_077);
+				showText(TX_SPEAKER_KIRK,  18, true);
+				showText(TX_SPEAKER_SPOCK, 77, true);
 			}
 		} else if (_awayMission->veng.poweredSystem == 3) // Transporter already powered
-			showText(TX_SPEAKER_KIJE, TX_VEN2_090); // BUGFIX: audio didn't play properly
+			showText(TX_SPEAKER_KIJE, 90, true); // BUGFIX: audio didn't play properly
 		else {
 			if (_awayMission->veng.poweredSystem == 2) {
 				playVoc("LD6BMOFF"); // ENHANCEMENT: make this consistent with the weapons code
 				loadActorAnim2(OBJECT_DAMAGE_DISPLAY_1, "s7r2sh3", DAMAGE_DISPLAY_1_X, DAMAGE_DISPLAY_1_Y);
 			}
 			_awayMission->veng.poweredSystem = 3;
-			showText(TX_SPEAKER_KIJE, TX_VEN2_087);
+			showText(TX_SPEAKER_KIJE, 87, true);
 			if (_awayMission->veng.elasiShipDecloaked && !_awayMission->veng.elasiHailedRepublic) {
-				showText(TX_SPEAKER_SPOCK, TX_VEN2_071);
+				showText(TX_SPEAKER_SPOCK, 71, true);
 				_awayMission->veng.counterUntilElasiBoardWithShieldsDown = 1800;
 			}
 		}
@@ -748,24 +748,24 @@ powerWeapons:
 }
 
 void Room::veng2UseMainComputer() {
-	showText(TX_SPEAKER_KIRK, TX_VEN2_002);
+	showText(TX_SPEAKER_KIRK, 02, true);
 	if (_awayMission->veng.tricordersPluggedIntoComputer != 3) {
-		spockScan(DIR_W, TX_VEN2_079);
-		showText(TX_SPEAKER_KIRK,  TX_VEN2_024);
-		showText(TX_SPEAKER_SPOCK, TX_VEN2_080);
-		showText(TX_SPEAKER_MCCOY, TX_VEN2_045);
-		showText(TX_SPEAKER_SPOCK, TX_VEN2_074);
-		showText(TX_SPEAKER_KIJE,  TX_VEN2_096);
+		spockScan(DIR_W, 79, true);
+		showText(TX_SPEAKER_KIRK,  24, true);
+		showText(TX_SPEAKER_SPOCK, 80, true);
+		showText(TX_SPEAKER_MCCOY, 45, true);
+		showText(TX_SPEAKER_SPOCK, 74, true);
+		showText(TX_SPEAKER_KIJE,  96, true);
 		_awayMission->veng.scannedMainComputer = true;
 	} else
-		showText(TX_SPEAKER_SPOCK, TX_VEN2_059);
+		showText(TX_SPEAKER_SPOCK, 59, true);
 }
 
 void Room::veng2UseSTricorderOnMainComputer() {
 	if (!_awayMission->veng.scannedMainComputer)
 		veng2UseMainComputer();
 	else if (!_awayMission->veng.impulseEnginesOn)
-		showText(TX_SPEAKER_SPOCK, TX_VEN2_031);
+		showText(TX_SPEAKER_SPOCK, 31, true);
 	else {
 		_awayMission->disableInput = true;
 		walkCrewmanC(OBJECT_SPOCK, 0x52, 0x84, &Room::veng2SpockReachedMainComputerToPutTricorder);
@@ -789,7 +789,7 @@ void Room::veng2AttachedSTricorderToComputer() {
 	loseItem(OBJECT_ISTRICOR);
 	loadActorAnim2(OBJECT_STRICORDER, "s7r2t1", STRICORDER_POS_X, STRICORDER_POS_Y);
 
-	showDescription(TX_VEN2N017);
+	showDescription(17, true);
 
 	walkCrewman(OBJECT_SPOCK, 0x5f, 0xaa);
 	if (_awayMission->veng.tricordersPluggedIntoComputer == 3) // Both tricorders plugged in
@@ -798,7 +798,7 @@ void Room::veng2AttachedSTricorderToComputer() {
 
 void Room::veng2UseMTricorderOnMainComputer() {
 	if (!_awayMission->veng.impulseEnginesOn)
-		showText(TX_SPEAKER_MCCOY, TX_VEN2_038);
+		showText(TX_SPEAKER_MCCOY, 38, true);
 	else {
 		_awayMission->disableInput = true;
 		walkCrewmanC(OBJECT_SPOCK, 0x52, 0x84, &Room::veng2MccoyReachedMainComputerToPutTricorder);
@@ -822,7 +822,7 @@ void Room::veng2AttachedMTricorderToComputer() {
 	loseItem(OBJECT_IMTRICOR);
 	loadActorAnim2(OBJECT_MTRICORDER, "s7r2t2", MTRICORDER_POS_X, MTRICORDER_POS_Y);
 
-	showDescription(TX_VEN2N016);
+	showDescription(16, true);
 
 	walkCrewman(OBJECT_SPOCK, 0x5f, 0xaa);
 	if (_awayMission->veng.tricordersPluggedIntoComputer == 3) // Both tricorders plugged in
@@ -831,22 +831,22 @@ void Room::veng2AttachedMTricorderToComputer() {
 
 void Room::veng2BothTricordersPluggedIn() {
 	loadActorAnim2(OBJECT_MAIN_COMPUTER, "s7r2t3", MAIN_COMPUTER_X, MAIN_COMPUTER_Y);
-	showText(TX_SPEAKER_SPOCK, TX_VEN2_030);
+	showText(TX_SPEAKER_SPOCK, 30, true);
 }
 
 void Room::veng2UseSTricorderOnDeckIOConsole() {
-	spockScan(DIR_E, TX_VEN2_067);
+	spockScan(DIR_E, 67, true);
 }
 
 void Room::veng2UseSTricorderOnImpulseConsole() {
 	if (!_awayMission->veng.impulseEnginesOn)
-		spockScan(DIR_W, TX_VEN2_056);
+		spockScan(DIR_W, 56, true);
 	else
-		spockScan(DIR_W, TX_VEN2_051);
+		spockScan(DIR_W, 51, true);
 }
 
 void Room::veng2UseFusionPackOnMainComputer() {
-	showText(TX_SPEAKER_SPOCK, TX_VEN2_060);
+	showText(TX_SPEAKER_SPOCK, 60, true);
 }
 
 void Room::veng2GetLogDeck() {
@@ -862,13 +862,13 @@ void Room::veng2PickedUpLogDeck() {
 	loadActorStandAnim(OBJECT_DECK);
 	_awayMission->disableInput = false;
 	_awayMission->veng.tookRecordDeckFromAuxilaryControl = true;
-	showDescription(TX_VEN2N039);
+	showDescription(39, true);
 	giveItem(OBJECT_IDECK);
 }
 
 void Room::veng2GetSTricorder() {
 	if (_awayMission->veng.countdownStarted)
-		showText(TX_SPEAKER_SPOCK, TX_VEN2_047);
+		showText(TX_SPEAKER_SPOCK, 47, true);
 	else {
 		_awayMission->disableInput = true;
 		walkCrewmanC(OBJECT_SPOCK, 0x52, 0x84, &Room::veng2ReachedSTricorderToGet);
@@ -886,12 +886,12 @@ void Room::veng2PickedUpSTricorder() {
 	loadActorStandAnim(OBJECT_STRICORDER);
 	loadActorStandAnim(OBJECT_MAIN_COMPUTER);
 	walkCrewman(OBJECT_SPOCK, 0x5f, 0xaa);
-	showDescription(TX_VEN2N015);
+	showDescription(15, true);
 }
 
 void Room::veng2GetMTricorder() {
 	if (_awayMission->veng.countdownStarted)
-		showText(TX_SPEAKER_SPOCK, TX_VEN2_047);
+		showText(TX_SPEAKER_SPOCK, 47, true);
 	else {
 		_awayMission->disableInput = true;
 		walkCrewmanC(OBJECT_SPOCK, 0x52, 0x84, &Room::veng2ReachedMTricorderToGet);
@@ -909,7 +909,7 @@ void Room::veng2PickedUpMTricorder() {
 	loadActorStandAnim(OBJECT_MTRICORDER);
 	loadActorStandAnim(OBJECT_MAIN_COMPUTER);
 	walkCrewman(OBJECT_SPOCK, 0x5f, 0xaa);
-	showDescription(TX_VEN2N013);
+	showDescription(13, true);
 }
 
 }

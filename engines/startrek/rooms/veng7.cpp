@@ -107,53 +107,53 @@ void Room::veng7TouchedTurboliftDoor() {
 }
 
 void Room::veng7LookAtCollapsedSection() {
-	showDescription(TX_VEN7N001);
+	showDescription(1, true);
 }
 
 void Room::veng7LookAtDeadGuy() {
 	// ENHANCEMENT: Original played TX_VEN0N016. This is reused and boring, and there is
 	// a more interesting unused audio file, so use that instead.
-	showDescription(TX_VEN7N000);
+	showDescription(0, true);
 }
 
 void Room::veng7LookAtDoor() {
-	showDescription(TX_VEN7N007);
+	showDescription(7, true);
 }
 
 void Room::veng7LookAtCable() {
-	showDescription(TX_VEN7N008);
+	showDescription(8, true);
 }
 
 void Room::veng7LookAtKirk() {
-	showDescription(TX_VEN7N003);
+	showDescription(3, true);
 }
 
 void Room::veng7LookAtSpock() {
-	showDescription(TX_VEN7N005);
+	showDescription(5, true);
 }
 
 void Room::veng7LookAtMccoy() {
-	showDescription(TX_VEN7N004);
+	showDescription(4, true);
 }
 
 void Room::veng7LookAtRedshirt() {
-	showDescription(TX_VEN7N002);
+	showDescription(2, true);
 }
 
 void Room::veng7LookAnywhere() {
-	showDescription(TX_VEN7N006);
+	showDescription(6, true);
 }
 
 void Room::veng7TalkToKirk() {
-	showText(TX_SPEAKER_KIRK, TX_VEN7_001);
+	showText(TX_SPEAKER_KIRK, 1, true);
 }
 
 void Room::veng7TalkToSpock() {
-	showText(TX_SPEAKER_SPOCK, TX_VEN7_005);
+	showText(TX_SPEAKER_SPOCK, 5, true);
 }
 
 void Room::veng7TalkToMccoy() {
-	// NOTE: TX_VEN7_007 could also fit here. It might be more fitting since it's not
+	// NOTE: 07, true could also fit here. It might be more fitting since it's not
 	// reused. However, it mentions that McCoy gave up medical practice in Georgia. Maybe
 	// they removed this for continuity reasons or something. I don't want to be
 	// responsible for creating any possible confusion over his backstory.
@@ -161,15 +161,15 @@ void Room::veng7TalkToMccoy() {
 }
 
 void Room::veng7TalkToRedshirt() {
-	showText(TX_SPEAKER_KIJE, TX_VEN7_007);
+	showText(TX_SPEAKER_KIJE, 7, true);
 }
 
 void Room::veng7UseSTricorderOnCollapsedSection() {
-	spockScan(DIR_S, TX_VEN7_006);
+	spockScan(DIR_S, 6, true);
 }
 
 void Room::veng7TouchedHotspot0() { // Got too close to the collapsed section
-	showText(TX_SPEAKER_SPOCK, TX_VEN7_003);
+	showText(TX_SPEAKER_SPOCK, 3, true);
 }
 
 void Room::veng7GetCable() {
@@ -184,7 +184,7 @@ void Room::veng7ReachedCable() {
 
 void Room::veng7PickedUpCable() {
 	loadActorStandAnim(OBJECT_CABLE);
-	showDescription(TX_VEN7N009);
+	showDescription(9, true);
 	giveItem(OBJECT_ICABLE1);
 	_awayMission->veng.tookCableFromTransporterRoomHallway = true;
 	_awayMission->disableInput = false;

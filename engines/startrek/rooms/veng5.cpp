@@ -105,7 +105,7 @@ void Room::veng5Tick1() {
 void Room::veng5Tick45() {
 	if (!_awayMission->veng.enteredRoom5FirstTime) {
 		_awayMission->veng.enteredRoom5FirstTime = true;
-		showText(TX_SPEAKER_SPOCK, TX_VEN5_005); // "I'm picking up on a nearby power source"
+		showText(TX_SPEAKER_SPOCK, 5, true); // "I'm picking up on a nearby power source"
 	}
 }
 
@@ -130,51 +130,51 @@ void Room::veng5TouchedTurboliftDoor() {
 }
 
 void Room::veng5LookAtDoor() {
-	showDescription(TX_VEN5N007);
+	showDescription(7, true);
 }
 
 void Room::veng5LookAtLadder() {
-	showDescription(TX_VEN5N008);
+	showDescription(8, true);
 }
 
 void Room::veng5LookAtDeadGuy() {
-	showDescription(TX_VEN5N000);
+	showDescription(0, true);
 }
 
 void Room::veng5LookAtPowerPack() {
-	showDescription(TX_VEN5N009);
+	showDescription(9, true);
 }
 
 void Room::veng5LookAtDebris() {
-	showDescription(TX_VEN5N001);
+	showDescription(1, true);
 }
 
 void Room::veng5LookAtKirk() {
-	showDescription(TX_VEN5N003);
+	showDescription(3, true);
 }
 
 void Room::veng5LookAtSpock() {
-	showDescription(TX_VEN5N002);
+	showDescription(2, true);
 }
 
 void Room::veng5LookAtMccoy() {
-	showDescription(TX_VEN5N004);
+	showDescription(4, true);
 }
 
 void Room::veng5LookAtRedshirt() {
-	showDescription(TX_VEN5N005);
+	showDescription(5, true);
 }
 
 void Room::veng5LookAnywhere() {
-	showDescription(TX_VEN5N006);
+	showDescription(6, true);
 }
 
 void Room::veng5UsePhaserOnPowerPack() {
-	showText(TX_SPEAKER_MCCOY, TX_VEN5_007);
+	showText(TX_SPEAKER_MCCOY, 7, true);
 }
 
 void Room::veng5UseStunPhaserOnDebris() {
-	showText(TX_SPEAKER_SPOCK, TX_VEN5_013);
+	showText(TX_SPEAKER_SPOCK, 13, true);
 }
 
 void Room::veng5UseKillPhaserOnDebris() {
@@ -195,42 +195,42 @@ void Room::veng5DrewPhaser() {
 void Room::veng5VaporizedDebris() {
 	loadActorStandAnim(OBJECT_KIRK);
 
-	showText(TX_SPEAKER_MCCOY, TX_VEN5_011);
-	showText(TX_SPEAKER_SPOCK, TX_VEN5_018);
-	showText(TX_SPEAKER_MCCOY, TX_VEN5_010);
-	showText(TX_SPEAKER_SPOCK, TX_VEN5_019);
-	showText(TX_SPEAKER_KIRK,  TX_VEN5_003);
+	showText(TX_SPEAKER_MCCOY, 11, true);
+	showText(TX_SPEAKER_SPOCK, 18, true);
+	showText(TX_SPEAKER_MCCOY, 10, true);
+	showText(TX_SPEAKER_SPOCK, 19, true);
+	showText(TX_SPEAKER_KIRK,  03, true);
 
 	_awayMission->veng.clearedDebrisInRoom5 = true;
 	_awayMission->disableInput = false;
 }
 
 void Room::veng5UseMTricorderOnDebris() {
-	mccoyScan(DIR_W, TX_VEN5_008);
+	mccoyScan(DIR_W, 8, false, true);
 }
 
 void Room::veng5UseSTricorderOnDebris() {
-	spockScan(DIR_N, TX_VEN5_012);
+	spockScan(DIR_N, 12, false, true);
 }
 
 void Room::veng5UseMTricorderOnPowerPack() {
-	mccoyScan(DIR_W, TX_VEN5_009); // ENHANCEMENT: Use mccoyScan, not showText
+	mccoyScan(DIR_W,  9, false, true); // ENHANCEMENT: Use mccoyScan, not showText
 }
 
 void Room::veng5UseSTricorderOnPowerPack() {
-	spockScan(DIR_N, TX_VEN5_004);
+	spockScan(DIR_N,  4, false, true);
 }
 
 void Room::veng5TalkToKirk() {
-	showText(TX_SPEAKER_KIRK, TX_VEN5_001);
+	showText(TX_SPEAKER_KIRK, 1, true);
 }
 
 void Room::veng5TalkToMccoy() {
-	showText(TX_SPEAKER_MCCOY, TX_VEN5_006);
+	showText(TX_SPEAKER_MCCOY, 6, true);
 }
 
 void Room::veng5TalkToSpock() {
-	showText(TX_SPEAKER_SPOCK, TX_VEN5_017);
+	showText(TX_SPEAKER_SPOCK, 17, true);
 	showText(TX_SPEAKER_KIJE,  TX_VEN5_R20);
 }
 
@@ -239,12 +239,12 @@ void Room::veng5TalkToRedshirt() {
 }
 
 void Room::veng5TouchedHotspot0() { // Approached too close to fire
-	showText(TX_SPEAKER_SPOCK, TX_VEN5_015);
+	showText(TX_SPEAKER_SPOCK, 15, true);
 
 	if (!_awayMission->veng.askedSpockAboutFire) {
 		_awayMission->veng.askedSpockAboutFire = true;
-		showText(TX_SPEAKER_KIRK,  TX_VEN5_002);
-		showText(TX_SPEAKER_SPOCK, TX_VEN5_016);
+		showText(TX_SPEAKER_KIRK,   2, true);
+		showText(TX_SPEAKER_SPOCK, 16, true);
 	}
 }
 
@@ -259,7 +259,7 @@ void Room::veng5ReachedPowerPack() {
 void Room::veng5PickedUpPowerPack() {
 	if (!_awayMission->veng.havePowerPack) {
 		loadActorStandAnim(OBJECT_POWER_PACK);
-		showDescription(TX_VEN5N010);
+		showDescription(10, true);
 		_awayMission->veng.havePowerPack = true;
 		giveItem(OBJECT_IFUSION);
 	}

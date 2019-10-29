@@ -242,6 +242,9 @@ Common::String Room::patchRoomMessage(const char *text) {
 		{ "#TRI5\\TRI5N019#", "a emerald", "an emerald" },
 		{ "#TRI5\\TRI5N020#", "a emerald", "an emerald" },
 		{ "#TRI5\\TRI5N021#", "a emerald", "an emerald" },
+		{ "#VEN2\\VEN2_050#", "torpedo is loaded", "torpedoes are loaded" },
+		{ "#VEN6\\VEN6_005#", "><upon", "upon" },
+		{ "#VEN8\\VEN8_037#", "Its not", "It's not" },
 		{ "", "", "" }
 	};
 
