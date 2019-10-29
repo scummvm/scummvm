@@ -122,6 +122,10 @@ Common::Error MohawkEngine_Riven::run() {
 		return Common::kAudioDeviceInitFailed;
 	}
 
+	ConfMan.registerDefault("zip_mode", false);
+	ConfMan.registerDefault("water_effects", true);
+	ConfMan.registerDefault("transition_mode", kRivenTransitionModeFastest);
+
 	// Let's try to open the installer file (it holds extras.mhk)
 	// Though, we set a low priority to prefer the extracted version
 	if (_installerArchive.open("arcriven.z"))
@@ -385,6 +389,17 @@ void MohawkEngine_Riven::pauseEngineIntern(bool pause) {
 			_stack->onMouseMove(_eventMan->getMousePos());
 		}
 	}
+}
+
+uint32 MohawkEngine_Riven::sanitizeTransitionMode(uint32 mode) {
+	if (mode != kRivenTransitionModeDisabled
+	    && mode != kRivenTransitionModeFastest
+	    && mode != kRivenTransitionModeNormal
+	    && mode != kRivenTransitionModeBest) {
+		return kRivenTransitionModeFastest;
+	}
+
+	return mode;
 }
 
 // Stack/Card-Related Functions
@@ -666,6 +681,8 @@ void MohawkEngine_Riven::startNewGame() {
 
 	_zipModeData.clear();
 
+	_gfx->setTransitionMode((RivenTransitionMode) _vars["transitionmode"]);
+
 	setTotalPlayTime(0);
 }
 
@@ -820,7 +837,32 @@ void MohawkEngine_Riven::setGameEnded() {
 }
 
 void MohawkEngine_Riven::runOptionsDialog() {
+	if (isGameStarted()) {
+		_optionsDialog->setZipMode(_vars["azip"] != 0);
+		_optionsDialog->setWaterEffect(_vars["waterenabled"] != 0);
+		_optionsDialog->setTransitions(_vars["transitionmode"]);
+	} else {
+		_optionsDialog->setZipMode(ConfMan.getBool("zip_mode"));
+		_optionsDialog->setWaterEffect(ConfMan.getBool("water_effects"));
+
+		uint32 transitions = ConfMan.getInt("transition_mode");
+		_optionsDialog->setTransitions(sanitizeTransitionMode(transitions));
+	}
+
 	runDialog(*_optionsDialog);
+
+	if (_optionsDialog->getResult() > 0) {
+		if (isGameStarted()) {
+			_vars["azip"] = _optionsDialog->getZipMode() ? 1 : 0;
+			_vars["waterenabled"] = _optionsDialog->getWaterEffect() ? 1 : 0;
+			_vars["transitionmode"] = _optionsDialog->getTransitions();
+		} else {
+			ConfMan.setBool("zip_mode", _optionsDialog->getZipMode());
+			ConfMan.setBool("water_effects", _optionsDialog->getWaterEffect());
+			ConfMan.setInt("transition_mode", _optionsDialog->getTransitions());
+			ConfMan.flushToDisk();
+		}
+	}
 
 	if (hasGameEnded()) {
 		// Attempt to autosave before exiting

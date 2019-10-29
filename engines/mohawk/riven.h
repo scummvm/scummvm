@@ -135,6 +135,7 @@ private:
 	void initVars();
 
 	void pauseEngineIntern(bool) override;
+	uint32 sanitizeTransitionMode(uint32 mode);
 public:
 	// Stack/card/script funtions
 	RivenStack *constructStackById(uint16 id);

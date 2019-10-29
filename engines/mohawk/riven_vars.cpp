@@ -21,6 +21,7 @@
  */
 
 #include "common/str.h"
+#include "common/config-manager.h"
 
 #include "mohawk/riven.h"
 #include "mohawk/riven_stack.h"
@@ -302,7 +303,8 @@ void MohawkEngine_Riven::initVars() {
 	_vars["blabpage"] = 1;
 	_vars["bidvlv"] = 1;
 	_vars["bvise"] = 1;
-	_vars["waterenabled"] = 1;
+	_vars["azip"]         = ConfMan.getBool("zip_mode");
+	_vars["waterenabled"] = ConfMan.getBool("water_effects");
 	_vars["ogehnpage"] = 1;
 	_vars["bblrsw"] = 1;
 	_vars["ocage"] = 1;
@@ -319,8 +321,10 @@ void MohawkEngine_Riven::initVars() {
 	_vars["gpinpos"] = 1;
 	_vars["grviewmpos"] = 1617;
 	_vars["omusicplayer"] = 1;
-	_vars["transitionmode"] = kRivenTransitionModeFastest;
 	_vars["tdomeelev"] = 1;
+
+	uint32 transitions = ConfMan.getInt("transition_mode");
+	_vars["transitionmode"] = sanitizeTransitionMode(transitions);
 
 	// Randomize the telescope combination
 	uint32 &teleCombo = _vars["tcorrectorder"];
