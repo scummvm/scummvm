@@ -338,8 +338,8 @@ int Net::remoteSendData(int typeOfSend, int sendTypeParam, int type, byte *data,
 	// I'd rather parse it
 	Common::String res = Common::String::format(
 		"{\"sessionid\":%d, \"userid\":%d, \"to\":%d, \"toparam\": %d, "
-		"\"type\":%d, \"timestamp\": %d, \"data\": [", _sessionid, _myUserId,
-		typeOfSend, sendTypeParam, type, g_system->getMillis());
+		"\"type\":%d, \"timestamp\": %d, \"size\": %d, \"data\": [", _sessionid, _myUserId,
+		typeOfSend, sendTypeParam, type, g_system->getMillis(), len);
 
 	for (int i = 0; i < len - 1; i++)
 		res += Common::String::format("%d, ", data[i]);
@@ -471,7 +471,7 @@ bool Net::remoteReceiveData() {
 		g_system->delayMillis(5);
 	}
 
-	if (!_packetdata)
+	if (!_packetdata || _packetdata->child("size")->asIntegerNumber() == 0)
 		return false;
 
 	uint from = _packetdata->child("from")->asIntegerNumber();
