@@ -432,20 +432,27 @@ void Process::userEnabled() {
 void Process::changeScreenPatch() {
 	Common::String objectName = popString();
 	Common::String screenName = popString();
+	Common::String inventoryScr = _engine->getSystemVariable("inventory_scr")->getString();
+	debug("changeScreenPatch: screen: %s, object: %s, inventory: %s",
+		screenName.empty()? "none": screenName.c_str(), objectName.c_str(), inventoryScr.empty()? "none": inventoryScr.c_str());
+
 	Screen * screen = _engine->getCurrentScreen();
 	if (!screen) {
 		error("no current screen");
 		return;
 	}
 
-	if (screenName.empty())
-		screenName = screen->getName();
-
-	//change screen patch (load and return 1)
-	ObjectPtr object = screen->find(objectName);
-	int value = object && object->isActive();
-	debug("changeScreenPatch: screen: %s, object: %s -> %d", screenName.c_str(), objectName.c_str(), value);
-	push(value);
+	if (!screenName.empty()) {
+		debug("stub, returning 0");
+		//check that patch exist
+		push(0);
+		return;
+	} else {
+		//change screen patch (load and return 1)
+		ObjectPtr object = screen->find(objectName);
+		int value = object && object->isActive();
+		push(value);
+	}
 }
 
 void Process::loadMouseCursorFromObject() {
