@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.5.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2019-10-26 20:17+0200\n"
+"POT-Creation-Date: 2019-10-29 21:31+0100\n"
 "PO-Revision-Date: 2018-08-06 21:35+0000\n"
 "Last-Translator: Erik Zubiria <zubiriaerik@hotmail.com>\n"
 "Language-Team: Basque <https://translations.scummvm.org/projects/scummvm/"
@@ -678,7 +678,7 @@ msgstr "Bilatu:"
 
 #: gui/launcher.cpp:201 engines/dialogs.cpp:115 engines/cruise/menu.cpp:214
 #: engines/mohawk/dialogs.cpp:162 engines/mohawk/myst.cpp:942
-#: engines/mohawk/riven.cpp:673 engines/pegasus/pegasus.cpp:355
+#: engines/mohawk/riven.cpp:690 engines/pegasus/pegasus.cpp:355
 #: engines/tsage/scenes.cpp:601 engines/wage/saveload.cpp:748
 msgid "Load game:"
 msgstr "Jokoa kargatu:"
@@ -687,7 +687,7 @@ msgstr "Jokoa kargatu:"
 #: backends/platform/wince/CEActionsPocket.cpp:267
 #: backends/platform/wince/CEActionsSmartphone.cpp:231
 #: engines/cruise/menu.cpp:214 engines/mohawk/dialogs.cpp:162
-#: engines/mohawk/myst.cpp:942 engines/mohawk/riven.cpp:673
+#: engines/mohawk/myst.cpp:942 engines/mohawk/riven.cpp:690
 #: engines/parallaction/saveload.cpp:194 engines/pegasus/pegasus.cpp:355
 #: engines/scumm/dialogs.cpp:185 engines/tsage/scenes.cpp:601
 #: engines/wage/saveload.cpp:748
@@ -2021,7 +2021,7 @@ msgstr "It~z~uli abiarazlera"
 #: engines/glk/streams.cpp:1424 engines/gnap/menu.cpp:464
 #: engines/hugo/file.cpp:298 engines/mads/nebular/dialogs_nebular.cpp:350
 #: engines/mohawk/dialogs.cpp:163 engines/mohawk/myst.cpp:954
-#: engines/mohawk/riven.cpp:685 engines/neverhood/menumodule.cpp:880
+#: engines/mohawk/riven.cpp:702 engines/neverhood/menumodule.cpp:880
 #: engines/pegasus/pegasus.cpp:379 engines/sci/engine/guest_additions.cpp:682
 #: engines/sci/engine/kfile.cpp:1035 engines/sherlock/scalpel/scalpel.cpp:1250
 #: engines/sherlock/tattoo/widget_files.cpp:75 engines/startrek/saveload.cpp:42
@@ -2043,7 +2043,7 @@ msgstr "Gorde jokoa:"
 #: engines/dreamweb/saveload.cpp:262 engines/glk/streams.cpp:1424
 #: engines/gnap/menu.cpp:464 engines/hugo/file.cpp:298
 #: engines/mads/nebular/dialogs_nebular.cpp:350 engines/mohawk/dialogs.cpp:163
-#: engines/mohawk/myst.cpp:954 engines/mohawk/riven.cpp:685
+#: engines/mohawk/myst.cpp:954 engines/mohawk/riven.cpp:702
 #: engines/neverhood/menumodule.cpp:880 engines/parallaction/saveload.cpp:209
 #: engines/pegasus/pegasus.cpp:379 engines/sci/engine/guest_additions.cpp:683
 #: engines/sci/engine/kfile.cpp:1035 engines/scumm/dialogs.cpp:184
@@ -4256,25 +4256,25 @@ msgstr "Gorde"
 msgid "Are you sure you want to quit? All unsaved progress will be lost."
 msgstr "   Ziur irten nahi duzula?   "
 
-#: engines/mohawk/riven.cpp:158
+#: engines/mohawk/riven.cpp:162
 msgid ""
 "You're missing a Riven executable. The Windows executable is 'riven.exe' or "
 "'rivendmo.exe'. "
 msgstr ""
 
-#: engines/mohawk/riven.cpp:159
+#: engines/mohawk/riven.cpp:163
 msgid ""
 "Using the 'arcriven.z' installer file also works. In addition, you can use "
 "the Mac 'Riven' executable."
 msgstr ""
 
-#: engines/mohawk/riven.cpp:170
+#: engines/mohawk/riven.cpp:174
 msgid ""
 "You're missing 'extras.mhk'. Using the 'arcriven.z' installer file also "
 "works."
 msgstr ""
 
-#: engines/mohawk/riven.cpp:515
+#: engines/mohawk/riven.cpp:530
 msgid "You are missing the following required Riven data files:\n"
 msgstr ""
 
