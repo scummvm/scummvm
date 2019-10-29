@@ -216,8 +216,8 @@ private:
 	void onLook(unsigned size);
 	void onObjectC1(unsigned size);
 	void onScreenBD(unsigned size);
+	void onObjectUse(unsigned size);
 
-	void stub63(unsigned size);
 	void stub82();
 	void stub83();
 	void stub102();

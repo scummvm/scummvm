@@ -82,7 +82,7 @@ enum Opcode {
 	kObjectRegisterLookHandler		= 60,
 	kObjectRegisterUseHandler		= 61,
 	kObjectRegisterHandlerC1		= 62,
-	kStub63							= 63,
+	kObjectRegisterUseObjectHandler = 63,
 	kScreenRegisterHandlerBD		= 64,
 	kStub65							= 65,
 	kLoadMouseCursorFromObject		= 66,

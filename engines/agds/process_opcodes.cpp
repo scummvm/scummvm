@@ -466,10 +466,10 @@ void Process::fadeObject() {
 		warning("fadeObject: object %s not found", name.c_str());
 }
 
-void Process::stub63(unsigned size) {
+void Process::onObjectUse(unsigned size) {
 	Common::String arg = popString();
-	int value = _engine->getGlobal(arg);
-	debug("stub63: [handler] %u instructions, loop range: 0-%d", size, value);
+	debug("register use object handler %s -> %u", arg.c_str(), _ip);
+	_object->setUseHandler(arg, _ip);
 	_ip += size;
 }
 
@@ -1278,7 +1278,7 @@ ProcessExitCode Process::execute() {
 			OP		(kLoadMouse, loadMouse);
 			OP		(kInventoryAddObject, inventoryAddObject);
 			OP		(kSetNextScreenSaveInHistory, setNextScreenSaveInHistory);
-			OP_U	(kStub63, stub63);
+			OP_U	(kObjectRegisterUseObjectHandler, onObjectUse);
 			OP		(kStub82, stub82);
 			OP		(kStub83, stub83);
 			OP		(kAnimateCharacter, animateCharacter);
