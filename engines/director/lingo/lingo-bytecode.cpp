@@ -128,11 +128,7 @@ void Lingo::addCodeV4(Common::SeekableSubReadStreamEndian &stream, ScriptType ty
             case 1: { // String type
                 constant.type = STRING;
                 constant.u.s = new Common::String();
-                if (value < consts_store_offset) {
-                    warning("Constant string start offset is out of bounds!");
-                    break;
-                }
-                uint32 pointer = value - consts_store_offset;
+                uint32 pointer = value;
                 while (pointer < consts_store_size) {
                     if (const_store[pointer] == '\r') {
                         constant.u.s += '\n';
@@ -143,8 +139,8 @@ void Lingo::addCodeV4(Common::SeekableSubReadStreamEndian &stream, ScriptType ty
                     }
                     pointer += 1;
                 }
-                if (pointer == consts_store_size) {
-                    warning("Constant string has no null terminator!");
+                if (pointer >= consts_store_size) {
+                    warning("Constant string has no null terminator");
                     break;
                 }
             }
@@ -156,13 +152,13 @@ void Lingo::addCodeV4(Common::SeekableSubReadStreamEndian &stream, ScriptType ty
             case 9: { // Float type
                 constant.type = FLOAT;
                 if (value < consts_store_offset) {
-                    warning("Constant float start offset is out of bounds!");
+                    warning("Constant float start offset is out of bounds");
                     break;
-                } else if (value+4 > consts_store_offset + consts_store_size) {
-                    warning("Constant float end offset is out of bounds!");
+                } else if (value+4 > consts_store_size) {
+                    warning("Constant float end offset is out of bounds");
                     break;
                 }
-                constant.u.f = *(float *)(const_store+value-consts_store_offset);
+                constant.u.f = *(float *)(const_store+value);
             }
             break;
             default:
@@ -186,39 +182,35 @@ void Lingo::addCodeV4(Common::SeekableSubReadStreamEndian &stream, ScriptType ty
     // read each entry in the function table.
     stream.seek(functions_offset);
     for (uint16 i=0; i<functions_count; i++) {
-        stream.readUint16();
-        stream.readUint16();
-        stream.readUint16();
-        stream.readUint16();
-        stream.readUint16();
-        stream.readUint16();
-        uint16 arg_count = stream.readUint16();
-        stream.readUint16();
-        stream.readUint16();
-        uint16 var_count = stream.readUint16();
-        stream.readUint16();
-        stream.readUint16();
         uint16 name_index = stream.readUint16();
         stream.readUint16();
+        uint32 length = stream.readUint32();
+        uint32 start_offset = stream.readUint32();
+        uint16 arg_count = stream.readUint16();
+        uint32 arg_offset = stream.readUint32();
+        uint16 var_count = stream.readUint16();
+        uint32 var_names_offset = stream.readUint32();
         stream.readUint16();
-        uint16 length = stream.readUint16();
-        stream.readUint16();
-        uint16 start_offset = stream.readUint16();
         stream.readUint16();
         stream.readUint16();
-        uint16 end_offset = stream.readUint16();
+        stream.readUint16();
+        stream.readUint16();
+        stream.readUint16();
+        stream.readUint16();
+        stream.readUint16();
+        stream.readUint16();
 
         if (start_offset < code_store_offset) {
             warning("Function %d start offset is out of bounds!", i);
             continue;
-        } else if (end_offset >= code_store_offset+code_store_size) {
-            warning("Function %d end offset is out of bounds!", i);
+        } else if (start_offset + length >= code_store_offset + code_store_size) {
+            warning("Function %d end offset is out of bounds", i);
             continue;
         }
 
         uint16 pointer = start_offset-code_store_offset;
         Common::Array<uint32> offset_list;
-        while (pointer < end_offset-code_store_offset) {
+        while (pointer < start_offset+length-code_store_offset) {
             uint8 opcode = code_store[pointer];
 
             pointer += 1;
@@ -247,20 +239,20 @@ void Lingo::addCodeV4(Common::SeekableSubReadStreamEndian &stream, ScriptType ty
             } else {
                 // unimplemented instruction
 
-                if (opcode < 0x40) {
+                if (opcode < 0x40) { // 1 byte instruction
                     offset_list.push_back(_currentScript->size());
-                    g_lingo->code1(Lingo::c_nop);
+                    g_lingo->code1(Lingo::c_unk);
                     g_lingo->codeInt(opcode);
-                } else if (opcode < 0x80) {
+                } else if (opcode < 0x80) { // 2 byte instruction
                     offset_list.push_back(_currentScript->size());
-                    g_lingo->code1(Lingo::c_nop1);
+                    g_lingo->code1(Lingo::c_unk1);
                     g_lingo->codeInt(opcode);
                     offset_list.push_back(_currentScript->size());
                     g_lingo->codeInt((uint)code_store[pointer]);
                     pointer += 1;
-                } else {
+                } else { // 3 byte instruction
                     offset_list.push_back(_currentScript->size());
-                    g_lingo->code1(Lingo::c_nop2);
+                    g_lingo->code1(Lingo::c_unk2);
                     g_lingo->codeInt(opcode);
                     offset_list.push_back(_currentScript->size());
                     g_lingo->codeInt((uint)code_store[pointer]);

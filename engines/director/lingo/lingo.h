@@ -331,9 +331,10 @@ public:
     static void c_jump();
     static void c_jumpif();
 
-    static void c_nop();
-    static void c_nop1();
-    static void c_nop2();
+    // stubs for unknown instructions
+    static void c_unk();
+    static void c_unk1();
+    static void c_unk2();
 
 	void printSTUBWithArglist(const char *funcname, int nargs, const char *prefix = "STUB:");
 	void convertVOIDtoString(int arg, int nargs);

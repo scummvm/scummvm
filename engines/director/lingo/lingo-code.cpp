@@ -128,9 +128,9 @@ static struct FuncDescr {
     { Lingo::c_hilite,      "c_hilite",     "" },
     { Lingo::c_jump,        "c_jump",       "" },
     { Lingo::c_jumpif,      "c_jumpif",     "" },
-    { Lingo::c_nop,         "c_nop",        "i" },
-    { Lingo::c_nop1,        "c_nop1",       "ii" },
-    { Lingo::c_nop2,        "c_nop2",       "iii" },
+    { Lingo::c_unk,         "c_unk",        "i" },
+    { Lingo::c_unk1,        "c_unk1",       "ii" },
+    { Lingo::c_unk2,        "c_unk2",       "iii" },
 	{ 0, 0, 0 }
 };
 
@@ -1275,27 +1275,27 @@ void Lingo::c_jumpif() {
     
 }
 
-void Lingo::c_nop() {
+void Lingo::c_unk() {
     int savepc = g_lingo->_pc;
     uint opcode = READ_UINT32(&(*g_lingo->_currentScript)[savepc]);
-    warning("STUB: c_nop: %d", opcode);
+    warning("STUB: opcode 0x%02x", opcode);
     g_lingo->_pc += 1;
 }
 
-void Lingo::c_nop1() {
+void Lingo::c_unk1() {
     int savepc = g_lingo->_pc;
     uint opcode = READ_UINT32(&(*g_lingo->_currentScript)[savepc]);
     uint arg1 = READ_UINT32(&(*g_lingo->_currentScript)[savepc+1]);
-    warning("STUB: c_nop1: %d %d", opcode, arg1);
+    warning("STUB: opcode 0x%02x (%d)", opcode, arg1);
     g_lingo->_pc += 2;
 }
 
-void Lingo::c_nop2() {
+void Lingo::c_unk2() {
     int savepc = g_lingo->_pc;
     uint opcode = READ_UINT32(&(*g_lingo->_currentScript)[savepc]);
     uint arg1 = READ_UINT32(&(*g_lingo->_currentScript)[savepc+1]);
     uint arg2 = READ_UINT32(&(*g_lingo->_currentScript)[savepc+2]);
-    warning("STUB: c_nop2: %d %d %d", opcode, arg1, arg2);
+    warning("STUB: opcode 0x%02x (%d, %d)", opcode, arg1, arg2);
     g_lingo->_pc += 3;
 }
 
