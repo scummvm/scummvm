@@ -85,7 +85,6 @@ void Sprite::create(uint16 width, uint16 height, const Graphics::PixelFormat &f)
 	memcpy(vertices, tmp, sizeof(vertex) * 4);
 }
 
-
 void Sprite::free() {
 	linearFree(vertices);
 	linearFree(pixels);

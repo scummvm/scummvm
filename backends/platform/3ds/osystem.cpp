@@ -72,6 +72,10 @@ OSystem_3DS::OSystem_3DS():
 	_gameBottomY(0),
 	_gameWidth(320),
 	_gameHeight(240),
+	_magX(0),
+	_magY(0),
+	_magWidth(400),
+	_magHeight(240),
 	_overlayVisible(false),
 	exiting(false),
 	sleeping(false)

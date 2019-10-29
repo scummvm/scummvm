@@ -115,6 +115,7 @@ public:
 	void grabPalette(byte *colors, uint start, uint num) const;
 	void copyRectToScreen(const void *buf, int pitch, int x, int y, int w,
 	                      int h);
+	void copyRectToMag(int x, int y);
 	Graphics::Surface *lockScreen();
 	void unlockScreen();
 	void updateScreen();
@@ -167,6 +168,9 @@ private:
 	u16 _gameWidth, _gameHeight;
 	u16 _gameTopX, _gameTopY;
 	u16 _gameBottomX, _gameBottomY;
+	u16 _magWidth, _magHeight;
+	u16 _magHalfWidth, _magHalfHeight;
+	u16 _magX, _magY;
 
 	// Audio
 	Thread audioThread;
@@ -181,6 +185,7 @@ private:
 	Graphics::Surface _gameScreen;
 	Sprite _gameTopTexture;
 	Sprite _gameBottomTexture;
+	Sprite _gameMagTexture;
 	Sprite _overlay;
 	Sprite _activityIcon;
 
@@ -192,6 +197,7 @@ private:
 	int _projectionLocation;
 	int _modelviewLocation;
 	C3D_Mtx _projectionTop;
+	C3D_Mtx _projectionMag;
 	C3D_Mtx _projectionBottom;
 	C3D_RenderTarget* _renderTargetTop;
 	C3D_RenderTarget* _renderTargetBottom;

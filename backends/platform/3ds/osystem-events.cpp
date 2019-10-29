@@ -33,6 +33,7 @@ namespace _3DS {
 
 static Common::Mutex *eventMutex;
 static InputMode inputMode = MODE_DRAG;
+static InputMode savedInputMode = MODE_DRAG;
 MagnifyMode magnifyMode = MODE_MAGOFF;
 static aptHookCookie cookie;
 static bool optionMenuOpening = false;
@@ -148,21 +149,35 @@ static void eventThreadFunc(void *arg) {
 
 		// Button events
 		if (keysPressed & KEY_L) {
-			if (magnifyMode == MODE_MAGOFF) {
-				magnifyMode = MODE_MAGON;
-				osys->displayMessageOnOSD("Magnify On");
-			} else {
-				magnifyMode = MODE_MAGOFF;
-				osys->displayMessageOnOSD("Magnify Off");
-			}
+			if (osys->getWidth() >= 400 && osys->getHeight() >= 240) {
+				if (magnifyMode == MODE_MAGOFF) {
+					magnifyMode = MODE_MAGON;
+					if (inputMode == MODE_DRAG) {
+						inputMode = MODE_HOVER;
+						osys->displayMessageOnOSD("Magnify On. Switching to Hover Mode...");
+					} else
+						osys->displayMessageOnOSD("Magnify On");
+				} else {
+					magnifyMode = MODE_MAGOFF;
+					if (savedInputMode == MODE_DRAG) {
+						inputMode = savedInputMode;
+						osys->displayMessageOnOSD("Magnify Off. Returning to Drag Mode...");
+					} else
+						osys->displayMessageOnOSD("Magnify Off");
+				}
+			} else
+				osys->displayMessageOnOSD("In-game resolution too small to magnify.");
 		}
 		if (keysPressed & KEY_R) {
 			if (inputMode == MODE_DRAG) {
-				inputMode = MODE_HOVER;
+				inputMode = savedInputMode = MODE_HOVER;
 				osys->displayMessageOnOSD("Hover Mode");
 			} else {
-				inputMode = MODE_DRAG;
-				osys->displayMessageOnOSD("Drag Mode");
+				if (magnifyMode == MODE_MAGOFF) {
+					inputMode = savedInputMode = MODE_DRAG;
+					osys->displayMessageOnOSD("Drag Mode");
+				} else
+					osys->displayMessageOnOSD("Cannot Switch to Drag Mode while Magnify is On");
 			}
 		}
 		if (keysPressed & KEY_A || keysPressed & KEY_DLEFT || keysReleased & KEY_A || keysReleased & KEY_DLEFT) {

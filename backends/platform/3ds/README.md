@@ -12,6 +12,7 @@ Table of Contents:
  * 2.1 Default key mappings
  * 2.2 Hover mode
  * 2.3 Drag mode
+ * 2.4 Magnify mode
 
 3.0) Supported Games
 
@@ -64,7 +65,8 @@ depending on if you're right or left-handed.
 | A / D-left | Left-click                     |
 | X / D-up   | Right-click                    |
 | B / D-down | ESC (skips cutscenes and such) |
-| L          | Use virtual keyboard           |
+| Y / D-right| Use virtual keyboard           |
+| L          | Toggle magnify mode on/off     |
 | R          | Toggle hover/drag modes        |
 | Start      | Open game menu                 |
 | Select     | Open 3DS config menu           |
@@ -80,6 +82,31 @@ mouse button without using buttons mapped to right/left-click.
 --------------
 Every time you touch and release the touchscreen, you are simulating the click and
 release of the mouse buttons. At the moment, this is only a left-click.
+
+2.4) Magnify mode
+-----------------
+Due to the low resolutions of the 3DS's two screens (400x240 for the top, and 320x240
+for the bottom), games that run at a higher resolution will inevitably lose some visual
+detail from being scaled down. This can result in situations where essential information
+is undiscernable, such as text. Magnify mode increases the scale factor of the top screen
+back to 1; the bottom screen remains unchanged. The touchscreen can then be used to change
+which part of the game display is being magnified. This can all be done even in situations
+where the cursor is disabled, such as during full-motion video (FMV) segments.
+
+When activating magnify mode, touchscreen controls are automatically switched to hover
+mode; this is to reduce the risk of the user accidentally inputting a click when changing
+the magnified area via dragging the stylus. Clicking can still be done at will as in normal
+hover mode. Turning off magnify mode will revert controls back to what was being used
+previously (ex: if drag mode was in use prior to activating magnify mode, drag mode will
+be reactivated upon exiting magnify mode), as well as restore the top screen's previous
+scale factor.
+
+Currently magnify mode can only be used when both of the following conditions are met:
+ - In the 3DS config menu, "Use Screen" is set to "Both"
+ - A game is currently being played
+ - The horizontal and/or vertical resolution in-game is greater than that of the top screen
+
+Magnify mode cannot be used in the Launcher menu.
 
 3.0) Supported Games
 --------------------

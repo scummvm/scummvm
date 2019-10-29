@@ -72,6 +72,7 @@ void OSystem_3DS::initGraphics() {
 	AttrInfo_AddLoader(attrInfo, 1, GPU_FLOAT, 2); // v1=texcoord
 
 	Mtx_OrthoTilt(&_projectionTop, 0.0, 400.0, 240.0, 0.0, 0.0, 1.0, true);
+	Mtx_OrthoTilt(&_projectionMag, 0.0, 400.0, 240.0, 0.0, 0.0, 1.0, true);
 	Mtx_OrthoTilt(&_projectionBottom, 0.0, 320.0, 240.0, 0.0, 0.0, 1.0, true);
 
 	C3D_TexEnv *env = C3D_GetTexEnv(0);
@@ -87,6 +88,7 @@ void OSystem_3DS::destroyGraphics() {
 	_gameScreen.free();
 	_gameTopTexture.free();
 	_gameBottomTexture.free();
+	_gameMagTexture.free();
 	_overlay.free();
 	_activityIcon.free();
 
@@ -153,6 +155,9 @@ void OSystem_3DS::initSize(uint width, uint height,
 	_gameHeight = height;
 	_gameTopTexture.create(width, height, _pfGameTexture);
 	_overlay.create(getOverlayWidth(), getOverlayHeight(), _pfGameTexture);
+	_gameMagTexture.create(_magWidth, _magHeight, _pfGameTexture);
+	_magHalfWidth = _magWidth / 2;
+	_magHalfHeight = _magHeight / 2;
 
 	if (format) {
 		debug("pixelformat: %d %d %d %d %d", format->bytesPerPixel, format->rBits(), format->gBits(), format->bBits(), format->aBits());
@@ -206,6 +211,8 @@ void OSystem_3DS::updateSize() {
 		_cursorTexture.setScale(_gameTopTexture.getScaleX(), _gameTopTexture.getScaleY());
 	else
 		_cursorTexture.setScale(_gameBottomTexture.getScaleX(), _gameBottomTexture.getScaleY());
+	_gameMagTexture.setPosition(0,0);
+	_gameMagTexture.setScale(1.f,1.f);
 }
 
 Common::List<Graphics::PixelFormat> OSystem_3DS::getSupportedFormats() const {
@@ -254,6 +261,18 @@ void OSystem_3DS::copyRectToScreen(const void *buf, int pitch, int x,
 	_gameTopTexture.markDirty();
 }
 
+void OSystem_3DS::copyRectToMag(int x, int y) {
+	Common::Rect rect(x, y, x+_magWidth, y+_magHeight);
+	Graphics::Surface subSurface = _gameScreen.getSubArea(rect);
+
+	Graphics::Surface *convertedSubSurface = subSurface.convertTo(_pfGameTexture, _palette);
+	_gameMagTexture.copyRectToSurface(*convertedSubSurface, 0, 0, Common::Rect(_magWidth, _magHeight));
+
+	convertedSubSurface->free();
+	delete convertedSubSurface;
+	_gameMagTexture.markDirty();
+}
+
 void OSystem_3DS::flushGameScreen() {
 	Graphics::Surface *converted = _gameScreen.convertTo(_pfGameTexture, _palette);
 	_gameTopTexture.copyRectToSurface(*converted, 0, 0, Common::Rect(converted->w, converted->h));
@@ -277,6 +296,16 @@ void OSystem_3DS::updateScreen() {
 
 	C3D_FrameBegin(0);
 		_gameTopTexture.transfer();
+		if (magnifyMode == MODE_MAGON) {
+			_magX = (_cursorX < _magHalfWidth) ?
+				0 : ((_cursorX < (_gameWidth - _magHalfWidth)) ?
+				_cursorX - _magHalfWidth : _gameWidth - _magWidth);
+			_magY = (_cursorY < _magHalfHeight) ?
+				0 : ((_cursorY < _gameHeight - _magHalfHeight) ?
+				_cursorY - _magHalfHeight : _gameHeight - _magHeight);
+			copyRectToMag(_magX, _magY);
+			_gameMagTexture.transfer();
+		}
 		if (_overlayVisible) {
 			_overlay.transfer();
 		}
@@ -291,11 +320,15 @@ void OSystem_3DS::updateScreen() {
 		C3D_RenderTargetClear(_renderTargetTop, C3D_CLEAR_ALL, 0x00000000, 0);
 		C3D_FrameDrawOn(_renderTargetTop);
 		if (config.screen == kScreenTop || config.screen == kScreenBoth) {
-			if (magnifyMode == MODE_MAGON) {
+			if (config.screen == kScreenBoth && magnifyMode == MODE_MAGON) {
+				C3D_FVUnifMtx4x4(GPU_VERTEX_SHADER, _projectionLocation, &_projectionMag);
+				C3D_FVUnifMtx4x4(GPU_VERTEX_SHADER, _modelviewLocation, _gameMagTexture.getMatrix());
+				_gameMagTexture.render();
+			} else {
+				C3D_FVUnifMtx4x4(GPU_VERTEX_SHADER, _projectionLocation, &_projectionTop);
+				C3D_FVUnifMtx4x4(GPU_VERTEX_SHADER, _modelviewLocation, _gameTopTexture.getMatrix());
+				_gameTopTexture.render();
 			}
-			C3D_FVUnifMtx4x4(GPU_VERTEX_SHADER, _projectionLocation, &_projectionTop);
-			C3D_FVUnifMtx4x4(GPU_VERTEX_SHADER, _modelviewLocation, _gameTopTexture.getMatrix());
-			_gameTopTexture.render();
 			if (_overlayVisible && config.screen == kScreenTop) {
 				C3D_FVUnifMtx4x4(GPU_VERTEX_SHADER, _modelviewLocation, _overlay.getMatrix());
 				_overlay.render();
