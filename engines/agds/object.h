@@ -55,12 +55,14 @@ public:
 private:
 	typedef Common::Array<StringEntry> StringTableType;
 	typedef Common::HashMap<Common::String, uint, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> KeyHandlersType;
+	typedef Common::HashMap<Common::String, uint> UseHandlersType;
 
 	Common::String					_name;
 	CodeType						_code;
 	StringTableType					_stringTable;
 	bool							_stringTableLoaded;
 	KeyHandlersType					_keyHandlers;
+	UseHandlersType					_useHandlers;
 	Graphics::TransparentSurface *	_picture;
 	Region *						_region;
 	Animation *						_animation;
@@ -141,6 +143,10 @@ public:
 
 	uint getExamineHandler() const {
 		return _examineHandler;
+	}
+
+	void setUseHandler(const Common::String &name, uint ip) {
+		_useHandlers[name] = ip;
 	}
 
 	void paint(AGDSEngine &engine, Graphics::Surface &backbuffer);
