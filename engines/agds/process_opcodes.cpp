@@ -141,7 +141,7 @@ void Process::loadSample() {
 
 void Process::getSampleVolume() {
 	Common::String name = popString();
-	debug("getSampleVolume: stub");
+	debug("getSampleVolume: stub %s", name.c_str());
 	push(100);
 }
 
@@ -516,7 +516,7 @@ void Process::stub83() {
 
 void Process::stub102() {
 	Common::String name = popString();
-	debug("stub102: load picture? %s");
+	debug("stub102: load picture? %s", name.c_str());
 }
 
 void Process::setAnimationPaused() {
@@ -723,7 +723,6 @@ void Process::setFontGlyphSize() {
 void Process::generateRegion() {
 	Common::String name = popString();
 	debug("generateRegion %s", name.c_str());
-
 }
 
 void Process::stub184() {
