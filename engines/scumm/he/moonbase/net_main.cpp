@@ -550,9 +550,10 @@ bool Net::remoteReceiveData() {
 }
 
 void Net::remoteReceiveDataCallback(Common::JSONValue *response) {
-	debug(1, "remoteReceiveData: Got: '%s'", response->stringify().c_str());
-
 	_packetdata = new Common::JSONValue(*response);
+
+	if (_packetdata->child("size")->asIntegerNumber() != 0)
+		debug(1, "remoteReceiveData: Got: '%s'", response->stringify().c_str());
 }
 
 void Net::remoteReceiveDataErrorCallback(Networking::ErrorResponse error) {
