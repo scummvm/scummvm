@@ -203,6 +203,16 @@ Common::String Room::patchRoomMessage(const char *text) {
 		{ "#MUD3\\MUD3_011#", "to think after all the stunts that Harry has pulled", "to think that after all the stunts that Harry has pulled," },
 		{ "#MUD3\\MUD3_022#", "and they were certain", "and they are certain" },
 		{ "#MUD3\\MUD4_008#", "DId you know", "Did you know" },
+		{ "#FEA1\\FEA1_035#", "before it retreats Captain", "before it retreats, Captain" },
+		{ "#FEA1\\FEA1_041#", "it must have a nasty bite", "it may have a nasty bite" },
+		{ "#FEA3\\FEA3_012#", "he'll be up in about an hour", "he'll be up in about a half hour" },
+		{ "#FEA3\\FEA3_030#", "sHe's dead, Jim!", "He's dead, Jim!" },
+		{ "#FEA5\\FEA5_009#", "those thorns.You might", "those thorns. You might" },
+		{ "#FEA5\\FEA5_018#", "with our phaser not working", "with our phasers not working" },
+		{ "#FEA5\\FEA5_020#", "in a previous life", "in your previous life" },
+		{ "#FEA6\\FEA6_017#", "isn't that just great", "isn't this just great" },
+		{ "#FEA6\\FEA6_019#", "that action, Captain It may", "that action, Captain. It may" },
+		{ "#FEA6\\FEA6N016#", "that attack you", "that attacked you" },
 		{ "", "", "" }
 	};
 
@@ -210,6 +220,11 @@ Common::String Room::patchRoomMessage(const char *text) {
 	// (e.g in LOV2)
 	if (txt[10] == '-')
 		txt.replace(10, 1, "_");
+
+	// Fix typos where some messages contain double spacing (e.g. in FEA3_020)
+	int32 spacePos = txt.find("  ");
+	if (spacePos > 0)
+		txt.deleteChar(spacePos);
 
 	// Fix typos
 	do {
