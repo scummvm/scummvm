@@ -158,20 +158,11 @@ enum GameStringIDs {
 
 	TX_DEM0N009,	// kept because it's also used as an enhancement in mudd1 and mudd3
 	TX_DEM0C001,	// "C" = "Custom" (no ID originally assigned)
-	TX_DEM1_F23,
 	TX_DEM3_019,	// kept because it's also used as an enhancement in venga
 	TX_DEM3_A32,
-	TX_DEM3_F21,
 
-	TX_TUG0_F30,
-	TX_TUG0_F31,
-	TX_TUG0_S06,
-	TX_TUG0_S11,
 	TX_TUG2J003,
 	TX_TUG2C001, // Custom
-	TX_TUG3_F27,
-	TX_TUG3_S07,
-	TX_TUG3_S08,
 
 	TX_LOV3NA08,
 	TX_LOV3NA09,
@@ -181,15 +172,6 @@ enum GameStringIDs {
 	TX_LOV3NA23,
 	TX_LOV3NJ32,
 	TX_LOV5C001, // Custom
-	TX_LOVA_F01,
-	TX_LOVA_F02,
-	TX_LOVA_F03,
-	TX_LOVA_F04,
-	TX_LOVA_F07,
-	TX_LOVA_F08,
-	TX_LOVA_F10,
-	TX_LOVA_F54,
-	TX_LOVA_F55,
 
 	TX_MUD0_018,
 	TX_MUD0_019,
@@ -200,14 +182,9 @@ enum GameStringIDs {
 	TX_MUD4_019,	// kept for now because of TX_MUD4_A29
 	TX_MUD4_023,	// kept for now because of TX_MUD4_A29
 	TX_MUD4_A29,
-	TX_MUD4_S02,
-	TX_MUD4_S03,
-	TX_MUD4_S04,
 
 	TX_FEA1_A46,
-	TX_FEA1_F25,
 
-	TX_TRI0_F24,
 	TX_TRI1_J00,
 	TX_TRI1U080,
 	TX_TRI1C001, // Custom
@@ -215,8 +192,6 @@ enum GameStringIDs {
 	TX_QUIET,
 	TX_TRI4_076,
 
-	TX_SIN2_F12,
-	TX_SIN2_F26,
 	TX_SIN3_008,
 	TX_SIN3_012,
 	TX_SIN3_LASERSETTING001, // Custom named text
@@ -229,13 +204,9 @@ enum GameStringIDs {
 	TX_VEN0_016,
 	TX_VEN0N016,
 	TX_VEN1_004,
-	TX_VEN1_F33,
 	TX_VEN2_028,
 	TX_VEN2_066,
 	TX_VEN2_098,
-	TX_VEN2_F28,
-	TX_VEN2_F29,
-	TX_VEN2_F35,
 	TX_VEN2_SHI,
 	TX_VEN2_TRA,
 	TX_VEN2_WEA,
@@ -253,10 +224,6 @@ enum GameStringIDs {
 	TX_VEN5N002,
 	TX_VEN5N004,
 	TX_VEN5N007,
-	TX_VENA_F32,
-	TX_VENA_F34,
-	TX_VENA_F40,
-	TX_VENA_F41,
 
 	TX_SPOKCOFF,
 	TX_STATICU1,

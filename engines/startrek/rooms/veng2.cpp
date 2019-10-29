@@ -578,8 +578,8 @@ void Room::veng2KirkFiredTorpedo() {
 void Room::veng2TorpedoStruckElasiShip() {
 	loadActorAnim2(OBJECT_VIEWSCREEN, "s7r2p1", VIEWSCREEN_X, VIEWSCREEN_Y);
 	showText(TX_SPEAKER_ELASI_CAPTAIN, 104, true);
-	showText(TX_SPEAKER_ELASI_WEAPONS_MASTER, TX_VEN2_F29);
-	showText(TX_SPEAKER_ELASI_CREWMAN, TX_VEN2_F28);
+	showText(TX_SPEAKER_ELASI_WEAPONS_MASTER, 29 + FOLLOWUP_MESSAGE_OFFSET, true);
+	showText(TX_SPEAKER_ELASI_CREWMAN, 28 + FOLLOWUP_MESSAGE_OFFSET, true);
 	showText(TX_SPEAKER_ELASI_CAPTAIN, 101, true);
 	showText(TX_SPEAKER_KIRK, 14, true);
 	showText(TX_SPEAKER_ELASI_CAPTAIN, 106, true);
@@ -619,7 +619,7 @@ void Room::veng2CrewmanInPositionToBeamOut() {
 }
 
 void Room::veng2UseSTricorderOnTorpedoButton() {
-	spockScan(DIR_N, TX_VEN2_F35); // ENHANCEMENT: Use spockScan (don't just show text)
+	spockScan(DIR_N, 35 + FOLLOWUP_MESSAGE_OFFSET, true); // ENHANCEMENT: Use spockScan (don't just show text)
 }
 
 void Room::veng2UseSTricorderOnMiddleConsole() {

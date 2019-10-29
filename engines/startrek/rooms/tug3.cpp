@@ -246,7 +246,7 @@ void Room::tug3TalkToElasi1() {
 
 	case 1: // Cereth shoots console, doesn't surrender
 		_awayMission->disableInput = true;
-		showText(TX_SPEAKER_ELASI_CERETH, TX_TUG3_F27);
+		showText(TX_SPEAKER_ELASI_CERETH, 27 + FOLLOWUP_MESSAGE_OFFSET, true);
 		loadActorAnim2(OBJECT_ELASI_1, "p1draw", -1, -1, 3);
 		break;
 
@@ -389,7 +389,7 @@ void Room::tug3UseCommunicator() {
 	} else {
 		if (_awayMission->tug.orbitalDecayCounter < 16) {
 			showText(TX_SPEAKER_KIRK, 6, true);
-			showText(TX_SPEAKER_SCOTT, TX_TUG3_S07);
+			showText(TX_SPEAKER_SCOTT, 7 + SCOTTY_MESSAGE_OFFSET, true);
 
 			playMidiMusicTracks(-1, -1);
 
@@ -482,7 +482,7 @@ void Room::tug3SecurityTeamBeamedIn() {
 	loadActorAnim2(OBJECT_15, "rfiren", -1, -1, 10);
 
 	showText(TX_SPEAKER_KIRK, 5, true);
-	showText(TX_SPEAKER_SCOTT, TX_TUG3_S08);
+	showText(TX_SPEAKER_SCOTT, 8 + SCOTTY_MESSAGE_OFFSET, true);
 
 	playMidiMusicTracks(-1, -1);
 	_awayMission->disableInput = true;

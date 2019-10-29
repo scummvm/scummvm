@@ -280,14 +280,14 @@ void Room::mudd4KirkUsedCommunications() {
 		if (!_awayMission->mudd.contactedEnterpriseFirstTime) {
 			_awayMission->mudd.missionScore++;
 			showText(TX_SPEAKER_KIRK,  25, true);
-			showText(TX_SPEAKER_SCOTT, TX_MUD4_S02);
+			showText(TX_SPEAKER_SCOTT, 2 + SCOTTY_MESSAGE_OFFSET, true);
 
 			if (_awayMission->mudd.torpedoStatus == 1)
 				showText(TX_SPEAKER_KIRK, 27, true);
 			else
 				showText(TX_SPEAKER_KIRK, 28, true);
 
-			showText(TX_SPEAKER_SCOTT, TX_MUD4_S04);
+			showText(TX_SPEAKER_SCOTT, 4 + SCOTTY_MESSAGE_OFFSET, true);
 
 			const TextRef choices[] = {
 				TX_SPEAKER_KIRK,
@@ -316,7 +316,7 @@ void Room::mudd4KirkUsedCommunications() {
 			};
 
 			showText(TX_SPEAKER_KIRK,  20, true);
-			showText(TX_SPEAKER_SCOTT, TX_MUD4_S03);
+			showText(TX_SPEAKER_SCOTT, 3 + SCOTTY_MESSAGE_OFFSET, true);
 			int choice = showMultipleTexts(choices);
 
 			if (choice == 1) {

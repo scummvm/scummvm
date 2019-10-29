@@ -314,7 +314,7 @@ void Room::feather1UseSnakeOnKirk() {
 }
 
 void Room::feather1UseSnakeOnMccoy() {
-	showText(TX_SPEAKER_MCCOY, TX_FEA1_F25);
+	showText(TX_SPEAKER_MCCOY, 25 + FOLLOWUP_MESSAGE_OFFSET, true);
 }
 
 void Room::feather1UseSnakeOnRedshirt() {

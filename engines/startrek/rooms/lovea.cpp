@@ -81,7 +81,7 @@ void Room::loveaUseCureSampleOnSpock() {
 		walkCrewman(OBJECT_SPOCK, _roomVar.love.cmnXPosToCureSpock, _roomVar.love.cmnYPosToCureSpock, 99);
 		walkCrewman(OBJECT_MCCOY, _roomVar.love.cmnXPosToCureSpock, _roomVar.love.cmnYPosToCureSpock + 10, 99);
 	} else
-		showText(TX_SPEAKER_MCCOY, TX_LOVA_F55);
+		showText(TX_SPEAKER_MCCOY, 55 + COMMON_MESSAGE_OFFSET, true);
 }
 
 
@@ -123,13 +123,13 @@ void Room::loveaTimer2Expired() {
 			showText(TX_SPEAKER_SPOCK, TX_SPOKCOFF);
 			_awayMission->love.spockInfectionCounter++;
 		} else if (_awayMission->love.spockInfectionCounter == 30) {
-			showText(TX_SPEAKER_MCCOY, TX_LOVA_F08);
+			showText(TX_SPEAKER_MCCOY, 8 + COMMON_MESSAGE_OFFSET, true);
 			_awayMission->love.spockInfectionCounter++;
 		} else if (_awayMission->love.spockInfectionCounter == 45) {
 			showText(TX_SPEAKER_SPOCK, TX_SPOKCOFF);
 			_awayMission->love.spockInfectionCounter++;
 		} else if (_awayMission->love.spockInfectionCounter == 60) {
-			showText(TX_SPEAKER_SPOCK, TX_LOVA_F54);
+			showText(TX_SPEAKER_SPOCK, 54 + COMMON_MESSAGE_OFFSET, true);
 			_awayMission->love.romulansUnconsciousFromVirus = true;
 			_awayMission->love.spockInfectionCounter++;
 		}
@@ -144,26 +144,26 @@ void Room::loveaUseMTricorderOnSpock() {
 	playSoundEffectIndex(SND_TRICORDER);
 
 	if (_awayMission->love.spockCured)
-		showText(TX_SPEAKER_MCCOY, TX_LOVA_F01);
+		showText(TX_SPEAKER_MCCOY, 1 + COMMON_MESSAGE_OFFSET, true);
 	else if (!_awayMission->love.knowAboutVirus)
-		showText(TX_SPEAKER_MCCOY, TX_LOVA_F02);
+		showText(TX_SPEAKER_MCCOY, 2 + COMMON_MESSAGE_OFFSET, true);
 	else if (_awayMission->love.spockInfectionCounter < 10)
-		showText(TX_SPEAKER_MCCOY, TX_LOVA_F04);
+		showText(TX_SPEAKER_MCCOY, 4 + COMMON_MESSAGE_OFFSET, true);
 	else if (_awayMission->love.spockInfectionCounter < 30)
-		showText(TX_SPEAKER_MCCOY, TX_LOVA_F03);
+		showText(TX_SPEAKER_MCCOY, 3 + COMMON_MESSAGE_OFFSET, true);
 	else if (_awayMission->love.spockInfectionCounter < 50)
-		showText(TX_SPEAKER_MCCOY, TX_LOVA_F08);
+		showText(TX_SPEAKER_MCCOY, 8 + COMMON_MESSAGE_OFFSET, true);
 	else if (_awayMission->love.spockInfectionCounter < 70) // BUGFIX: < 70 instead of == 70
 		showText(TX_SPEAKER_MCCOY, COMMON_MESSAGE_OFFSET + 10, true);	// TX_TUG2_010
 	else if (_awayMission->love.spockInfectionCounter < 100)
-		showText(TX_SPEAKER_MCCOY, TX_LOVA_F10);
+		showText(TX_SPEAKER_MCCOY, 10 + COMMON_MESSAGE_OFFSET, true);
 	else
 		showText(TX_SPEAKER_MCCOY, COMMON_MESSAGE_OFFSET + 100);
 }
 
 void Room::loveaUseMTricorderOnHuman() {
 	playSoundEffectIndex(SND_TRICORDER);
-	showText(TX_SPEAKER_MCCOY, TX_LOVA_F07);
+	showText(TX_SPEAKER_MCCOY, 7 + COMMON_MESSAGE_OFFSET, true);
 }
 
 void Room::loveaUseRomulanLaughingGas() {
@@ -200,7 +200,7 @@ void Room::loveaUseCommunicator() {
 
 	showText(TX_SPEAKER_KIRK,  TX_MUD4_018);
 	showText(TX_SPEAKER_UHURA, TX_BRIDU146);
-	showText(TX_SPEAKER_KIRK,  TX_VENA_F41);
+	showText(TX_SPEAKER_KIRK,  41 + COMMON_MESSAGE_OFFSET, true);
 	_awayMission->love.contactedEnterpriseBeforeCure = true;
 }
 

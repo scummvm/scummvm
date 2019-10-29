@@ -459,7 +459,7 @@ void Room::demon3GetMiner() {
 void Room::demon3TalkToMiner() {
 	if (!_awayMission->demon.healedMiner)
 		return;
-	showText(TX_SPEAKER_KANDREY, TX_DEM3_F21);
+	showText(TX_SPEAKER_KANDREY, 21 + FOLLOWUP_MESSAGE_OFFSET, true);
 }
 
 void Room::demon3TalkToKirk() {

@@ -179,7 +179,7 @@ void Room::tug0MccoyHealedEngineer() {
 }
 
 void Room::tug0EngineerGotUp() {
-	showText(TX_SPEAKER_SIMPSON, TX_TUG0_F31);
+	showText(TX_SPEAKER_SIMPSON, 31 + FOLLOWUP_MESSAGE_OFFSET, true);
 	_awayMission->tug.engineerConscious = true;
 	loadActorAnim2(8, "tcshow", 0x27, 0xa8, 0);
 	loadActorAnim2(9, "popen", 0x27, 0xa9, 0);
@@ -329,9 +329,9 @@ void Room::tug0BombExploded() {
 	showText(TX_SPEAKER_SPOCK, 37, true);
 	showText(TX_SPEAKER_MCCOY, 27, true);
 	showText(TX_SPEAKER_KIRK,  4, true);
-	showText(TX_SPEAKER_SCOTT, TX_TUG0_S11);
+	showText(TX_SPEAKER_SCOTT, 11 + SCOTTY_MESSAGE_OFFSET, true);
 	showText(TX_SPEAKER_KIRK,  3, true);
-	showText(TX_SPEAKER_SCOTT, TX_TUG0_S06);
+	showText(TX_SPEAKER_SCOTT, 6 + SCOTTY_MESSAGE_OFFSET, true);
 
 	_awayMission->tug.field2d = 1;
 	_awayMission->disableInput = true;
@@ -433,7 +433,7 @@ void Room::tug0TalkToRedshirt() {
 
 void Room::tug0TalkToEngineer() {
 	if (_awayMission->tug.engineerConscious) {
-		showText(TX_SPEAKER_SIMPSON, TX_TUG0_F30);
+		showText(TX_SPEAKER_SIMPSON, 30 + FOLLOWUP_MESSAGE_OFFSET, true);
 		showText(TX_SPEAKER_MCCOY,  26, true);
 		showText(TX_SPEAKER_KIRK,   12, true);
 	}

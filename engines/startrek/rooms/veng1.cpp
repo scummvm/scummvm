@@ -294,7 +294,7 @@ void Room::veng1KirkAccessedPanel() {
 		loadActorAnim2(OBJECT_DEBRIS, "s7r1p2", 0xd1, 0x6a);
 		loadActorStandAnim(OBJECT_PANEL);
 	} else
-		showDescription(TX_VEN1_F33);
+		showDescription(33 + FOLLOWUP_MESSAGE_OFFSET, true);
 
 	walkCrewman(OBJECT_KIRK, 0xc9, 0x98);
 }

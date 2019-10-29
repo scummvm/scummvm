@@ -249,7 +249,7 @@ void Room::trial0TalkToVlict() {
 }
 
 void Room::trial0TalkToGuard() {
-	showText(TX_SPEAKER_KLINGON_GUARD, TX_TRI0_F24);
+	showText(TX_SPEAKER_KLINGON_GUARD, 24 + FOLLOWUP_MESSAGE_OFFSET, true);
 	showText(TX_SPEAKER_BENNIE, 65, true);
 	showText(TX_SPEAKER_KIRK,    7, true);
 	showText(TX_SPEAKER_BENNIE, 64, true);
@@ -285,7 +285,7 @@ void Room::trial0UseSnakeOnVlict() {
 
 void Room::trial0UseSnakeOnGuard() {
 	// Unused, since the snake item doesn't carry over to the courtroom
-	showText(TX_SPEAKER_KLINGON_GUARD, TX_TRI0_F24);
+	showText(TX_SPEAKER_KLINGON_GUARD, 24 + FOLLOWUP_MESSAGE_OFFSET, true);
 }
 
 void Room::trial0UseMTricorderOnQuetzecoatl() {

@@ -249,7 +249,7 @@ void Room::demon1KlingonDropsHand() {
 	if (_roomVar.demon.numKlingonsKilled == 3)
 		return;
 
-	showText(TX_SPEAKER_KLINGON, TX_DEM1_F23);
+	showText(TX_SPEAKER_KLINGON, 23 + FOLLOWUP_MESSAGE_OFFSET, true);
 
 	_awayMission->timers[1] = 1;
 }

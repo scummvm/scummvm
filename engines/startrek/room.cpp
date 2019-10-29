@@ -158,11 +158,12 @@ void Room::loadRoomMessage(const char *text) {
 	text = patchedText.c_str();
 
 	char textType = text[10];	// _, U and S: talk message, N: look message, L: look with talker message
+	char numberType = text[11];	// Sxx: Scotty
 
 	if (text[5] != '\\')
 		error("loadRoomMessage: Invalid message");
 
-	isTalkMessage = (textType == '_' || textType == 'U' || textType == 'S');	// U = Uhura, S = Scotty
+	isTalkMessage = (textType == '_' || textType == 'U' || numberType == 'S' || numberType == 'F');	// U = Uhura, S = Scotty, F = followup
 	isLookMessage = (textType == 'N');
 	isLookWithTalkerMessage = (textType == 'L');
 
@@ -173,12 +174,13 @@ void Room::loadRoomMessage(const char *text) {
 	if (memcmp(text + 1, _vm->_missionName.c_str(), 3) || text[4] != _vm->_roomIndex + '0') {
 		// String with a prefix of another mission, separate it
 		messageNum += COMMON_MESSAGE_OFFSET;
-	}
-
-	// For some reason, Uhura's messages (Uxx) follow the same numbering as the
-	// rest, but Scott's don't, and start from one.
-	if (textType == 'S')
+	} else if (numberType == 'S') {
+		// For some reason, Uhura's messages (Uxx) follow the same numbering as the
+		// rest, but Scott's don't, and start from one.
 		messageNum += SCOTTY_MESSAGE_OFFSET;
+	} else if (numberType == 'F') {
+		messageNum += FOLLOWUP_MESSAGE_OFFSET;
+	}
 
 	if (isTalkMessage)
 		_talkMessages[messageNum] = text;
@@ -201,6 +203,8 @@ Common::String Room::patchRoomMessage(const char *text) {
 	TypoFix typoFixes[] = {
 		{ "#LOV2\\LOV2_012#", "#LOV2\\LOV2_012#", "#LOV1\\LOV1_010#" },	// Audio file missing
 		{ "#LOV3\\LOV3_#",    "#LOV3\\LOV3_#", "#LOV3\\LOV3_000#"},	// Message index missing
+		{ "#LOVA\\LOVA_F08#", "spock", "Spock" },
+		{ "#LOVA\\LOVA_F55#", "sysnthesize", "synthesize" },
 		{ "#FEA3\\FEA3_030#", "#FEA3\\FEA3_030#", "#LOVA\\LOVA_100#" },	// Wrong voice actor
 		{ "#MUD0\\MUD0_023#", "gullability", "gullibility" },
 		{ "#MUD2\\MUD2_002#", "Well, now! I think", "Well, now I think" },

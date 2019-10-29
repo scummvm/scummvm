@@ -99,20 +99,11 @@ extern const char *const g_gameStrings[] = {
 
 	"#DEM0\\DEM0N009#Spock raises an eyebrow.",	// kept because it's used as an enhancement in mudd1
 	"All mining equipment use this road.",
-	"#DEM1\\DEM1_F23#Federation Scum!",
 	"#DEM3\\DEM3_019#He's dead, Jim...",
 	"#DEM3\\DEM3_A32#Aieeee!",
-	"#DEM3\\DEM3_F21#Oh, thank you, kind souls, for saving my life. Let me rest here for a little before returning to report this miracle to Prelate Angiven.",
 
-	"#TUG0\\TUG0_F30#I suppose I should be grateful to see anyone after that. I thought I was dead.",
-	"#TUG0\\TUG0_F31#Thank you, Doctor. Be careful, Captain, the Elasi like to set boobytraps. if you need any equipment I've got my tools in this workspace.",
-	"#TUG0\\TUG0_S06#Aye Captain.",
-	"#TUG0\\TUG0_S11#Captain, you're alive!",
 	"#TUG2\\TUG2J003#I recommend extreme caution, Captain. We must be ready to expect anything.",
 	"Snip...snip...snip.",
-	"#TUG3\\TUG3_F27#Foolhardy words, Kirk. You have underestimated me at every turn.",
-	"#TUG3\\TUG3_S07#Aye, Captain.",
-	"#TUG3\\TUG3_S08#Aye, Captain.",
 
 	"#LOV3\\LOV3NA08#With a hiss, the Romulan Laughing Gas billows down the vent. Things are strangely quiet below.",
 	"#LOV3\\LOV3NA09#With a hiss, the Romulan Laughing Gas billows down the vent. You hear the muffled sounds through the vent of hearty Romulan laughter, followed by the dull thud of bodies hitting the deck.",
@@ -122,15 +113,6 @@ extern const char *const g_gameStrings[] = {
 	"#LOV3\\LOV3NA23#This is the engineering center for the ARK7 space station.",
 	"#LOV3\\LOV3NJ32#You attach the antigrav unit to the gas tank. It can be moved freely.",
 	"(Raises an eyebrow)", // NOTE: no corresponding audio
-	"#LOVA\\LOVA_F01#He's been cured of the Oroborus virus.",
-	"#LOVA\\LOVA_F02#I'm picking up some kind of virus. I can't identify it without more information.",
-	"#LOVA\\LOVA_F03#He's infected with the virus, Jim.",
-	"#LOVA\\LOVA_F04#The virus affects the Romulan-Vulcan genotype, Jim.",
-	"#LOVA\\LOVA_F07#All lifesigns are normal.",
-	"#LOVA\\LOVA_F08#It's what I was afraid of, Jim. I think Spock is getting worse.", // TYPO
-	"#LOVA\\LOVA_F10#He has weak vital signs.",
-	"#LOVA\\LOVA_F54#The virus has spread to me, Captain. I suggest you concentrate your efforts on the problem.",
-	"#LOVA\\LOVA_F55#Jim, we need to synthesize more to make the serum before we can use it.", // TYPO
 
 	"#MUD0\\MUD0_018#Life support down to 25%, Captain.",
 	"#MUD0\\MUD0_019#Life support down to 50%, Captain.",
@@ -141,14 +123,9 @@ extern const char *const g_gameStrings[] = {
 	"#MUD4\\MUD4_019#Later, Mr. Scott.",
 	"#MUD4\\MUD4_023#No, I need to have a word with Harry Mudd before we go.",
 	"#MUD4\\MUD4_A29#Very well, bring us home, Mr. Scott.",
-	"#MUD4\\MUD4_S02#The Elasi pirates have been driven off, Captain. We have damage, and injuries among the crew. We just arrived back here a few minutes ago, and we've been trying to raise you on the communicators.",
-	"#MUD4\\MUD4_S03#The neutron star is causing more and more problems, Captain.  I would recommend beaming over at your earliest possible convenience.",
-	"#MUD4\\MUD4_S04#We can do it, Captain, no problem. At least right now, but the situation is only going to get worse. Are you ready to beam over now?",
 	
 	"#FEA1\\FEA1_A46#There is not enough support, Captain.",
-	"#FEA1\\FEA1_F25#What on Earth are you doing with that slithering thing!",
 
-	"#TRI0\\TRI0_F24#How amusing. Federation weaklings.",
 	"#TRI1\\TRI1_J00#Why do I have the feeling that I'm about to have a bad day?",
 	"#TRI1\\TRI1U080#Affirmative, sir.",
 	"Zzzt! Sptttz! Zzzt! Tttt!",
@@ -156,8 +133,6 @@ extern const char *const g_gameStrings[] = {
 	"#SFX\\QUIET#Zzzzzzzzzzzmmmm.",
 	"#TRI4\\TRI4_076#You humans have an excellent imagination, but a poor grasp of reality.",
 
-	"#SIN2\\SIN2_F12#This says: \"Dominant People only to dominate things beyond >,<these Submissive Walls\". My guess is that only authorized personnel were allowed beyond this door.",
-	"#SIN2\\SIN2_F26#Computer science sounds more like medicine every day.",
 	"#SIN3\\SIN3_008#All readings are normal. The structure seems to be protecting us from the cosmic rays.",
 	"#SIN3\\SIN3_012#Can't say I like the decor.",
 	"Laser Setting: 001",
@@ -170,13 +145,9 @@ extern const char *const g_gameStrings[] = {
 	"#VEN0\\VEN0_016#They're dead, Jim. All of them.", // TYPO (for only some rooms this text appears in)
 	"#VEN0\\VEN0N016#This man is dead.",
 	"#VEN1\\VEN1_004#I'd like to meet the people responsible for this and give them a piece of my mind.",
-	"#VEN1\\VEN1_F33#The panel is open.",
 	"#VEN2\\VEN2_028#Yes, Uhura, Just wanted a status report. Kirk out.",
 	"#VEN2\\VEN2_066#They are jamming all frequencies, Captain. We will not be able to contact the Enterprise.",
 	"#VEN2\\VEN2_098#What are you stalling for? Lower your shields.",
-	"#VEN2\\VEN2_F28#Captain, the Enterprise is coming on high speed approach!",
-	"#VEN2\\VEN2_F29#We can't, Captain. All weapons systems off-line!",
-	"#VEN2\\VEN2_F35#This is the photon torpedo launching control.",
 	"#VEN2\\VEN2_SHI#Shields",
 	"#VEN2\\VEN2_TRA#Transporter Circuits",
 	"#VEN2\\VEN2_WEA#Weapons",
@@ -194,10 +165,6 @@ extern const char *const g_gameStrings[] = {
 	"#VEN5\\VEN5N002#A resolute Mr. Spock.",
 	"#VEN5\\VEN5N004#Dr. McCoy avoids the glances of his crewmates.",
 	"#VEN5\\VEN5N007#This door leads to main engineering.",
-	"#VENA\\VENA_F32#The landing party has been taken captive by the Elasi, and you know Starfleet does not negotiate with terrorists. As you look forward to a long captivity you wonder who will take command of the Enterprise. Better luck next time.",
-	"#VENA\\VENA_F34#Captain, it would be unwise to use your phaser considering the already extensive damage sustained by the Republic.",
-	"#VENA\\VENA_F40#The Elasi fire photon torpedoes. The Republic has been destroyed.",
-	"#VENA\\VENA_F41#Kirk out.",
 
 	"#sfx\\spokcoff#cough... cough...",
 	"#SFX\\STATICU1#Ent... neu ... trans...",

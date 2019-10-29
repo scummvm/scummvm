@@ -228,7 +228,7 @@ void Room::sins2Tick40() {
 		showText(TX_SPEAKER_UHURA, 85, true);
 		showText(TX_SPEAKER_KIRK,   8, true);
 		showText(TX_SPEAKER_UHURA, 97, true);
-		showText(TX_SPEAKER_MCCOY, TX_SIN2_F26);
+		showText(TX_SPEAKER_MCCOY, 26 + FOLLOWUP_MESSAGE_OFFSET, true);
 		showText(TX_SPEAKER_UHURA, 96, true);
 		showText(TX_SPEAKER_MCCOY, 19, true);
 		showText(TX_SPEAKER_KIRK,   4, true);
@@ -294,7 +294,7 @@ void Room::sins2LookAtDoor() {
 
 void Room::sins2UseSpockOnDoor() {
 	if (!_awayMission->sins.openedInnerDoor) {
-		showText(TX_SPEAKER_SPOCK,  TX_SIN2_F12);
+		showText(TX_SPEAKER_SPOCK,  12 + FOLLOWUP_MESSAGE_OFFSET, true);
 		showText(TX_SPEAKER_MOSHER, 48, true);
 		showText(TX_SPEAKER_SPOCK,  30, true);
 	}
