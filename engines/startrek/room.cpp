@@ -157,12 +157,12 @@ void Room::loadRoomMessage(const char *text) {
 	Common::String patchedText = patchRoomMessage(text);
 	text = patchedText.c_str();
 
-	char textType = text[10];	// _ and U: talk message, N: look message, L: look with talker message
+	char textType = text[10];	// _, U and S: talk message, N: look message, L: look with talker message
 
 	if (text[5] != '\\')
 		error("loadRoomMessage: Invalid message");
 
-	isTalkMessage = (textType == '_' || textType == 'U');	// U = Uhura
+	isTalkMessage = (textType == '_' || textType == 'U' || textType == 'S');	// U = Uhura, S = Scotty
 	isLookMessage = (textType == 'N');
 	isLookWithTalkerMessage = (textType == 'L');
 
@@ -174,6 +174,11 @@ void Room::loadRoomMessage(const char *text) {
 		// String with a prefix of another mission, separate it
 		messageNum += COMMON_MESSAGE_OFFSET;
 	}
+
+	// For some reason, Uhura's messages (Uxx) follow the same numbering as the
+	// rest, but Scott's don't, and start from one.
+	if (textType == 'S')
+		messageNum += SCOTTY_MESSAGE_OFFSET;
 
 	if (isTalkMessage)
 		_talkMessages[messageNum] = text;
@@ -213,6 +218,9 @@ Common::String Room::patchRoomMessage(const char *text) {
 		{ "#FEA6\\FEA6_017#", "isn't that just great", "isn't this just great" },
 		{ "#FEA6\\FEA6_019#", "that action, Captain It may", "that action, Captain. It may" },
 		{ "#FEA6\\FEA6N016#", "that attack you", "that attacked you" },
+		{ "#SIN2\\SIN2_012#", "I'm a surgeon not a alien", "I'm a surgeon, not an alien" },
+		{ "#SIN4\\SIN4_023#", "to bypass it's lock system", "to bypass its lock system" },
+		{ "#SIN5\\SIN5N012#", "Sparks explode and", "Sparks fly and" },
 		{ "", "", "" }
 	};
 

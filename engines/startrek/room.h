@@ -62,6 +62,7 @@ const int RDF_BEAM_IN_POSITIONS = 0xaa;
 const int RDF_SPAWN_POSITIONS = 0xba;
 
 #define COMMON_MESSAGE_OFFSET 1000
+#define SCOTTY_MESSAGE_OFFSET 500
 
 class Room {
 public:
