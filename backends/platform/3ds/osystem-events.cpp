@@ -149,7 +149,7 @@ static void eventThreadFunc(void *arg) {
 
 		// Button events
 		if (keysPressed & KEY_L) {
-			if (osys->getWidth() >= 400 && osys->getHeight() >= 240) {
+			if (osys->getWidth() >= 400 || osys->getHeight() >= 240) {
 				if (magnifyMode == MODE_MAGOFF) {
 					magnifyMode = MODE_MAGON;
 					if (inputMode == MODE_DRAG) {
