@@ -65,7 +65,7 @@ void GriffonEngine::checkInputs() {
 		}
 	}
 
-	if (attacking || (_forcepause && _itemselon == 0))
+	if (attacking || (_forcepause && !_itemSelOn))
 		return;
 
 	if (_event.type == Common::EVENT_QUIT) {
@@ -81,10 +81,10 @@ void GriffonEngine::checkInputs() {
 			_console->attach();
 			_event.type = Common::EVENT_INVALID;
 		} else if (_event.kbd.hasFlags(Common::KBD_CTRL)) {
-			if (_itemselon == 0 && _itemticks < _ticks)
+			if (!_itemSelOn && (_itemticks < _ticks))
 				attack();
 
-			if (_itemselon == 1 && _itemticks < _ticks) {
+			if (_itemSelOn && _itemticks < _ticks) {
 				if (_curitem == 0 && _player.inventory[kInvFlask] > 0) {
 					_itemticks = _ticks + ntickdelay;
 
@@ -107,7 +107,7 @@ void GriffonEngine::checkInputs() {
 						setChannelVolume(snd, config.effectsvol);
 					}
 
-					_itemselon = 0;
+					_itemSelOn = false;
 					_forcepause = false;
 				}
 
@@ -115,12 +115,12 @@ void GriffonEngine::checkInputs() {
 					_itemticks = _ticks + ntickdelay;
 
 					int heal = 200;
-					int maxh = _player.maxHp - _player.hp;
+					int maxHeal = _player.maxHp - _player.hp;
 
-					if (heal > maxh)
-						heal = maxh;
+					if (heal > maxHeal)
+						heal = maxHeal;
 
-					_player.hp = _player.hp + heal;
+					_player.hp += heal;
 
 					char text[256];
 					sprintf(text, "+%i", heal);
@@ -133,7 +133,7 @@ void GriffonEngine::checkInputs() {
 						setChannelVolume(snd, config.effectsvol);
 					}
 
-					_itemselon = 0;
+					_itemSelOn = false;
 					_forcepause = false;
 				}
 
@@ -145,8 +145,8 @@ void GriffonEngine::checkInputs() {
 					_player.inventory[kInvShock]--;
 
 					_itemticks = _ticks + ntickdelay;
-					_selenemyon = 0;
-					_itemselon = 0;
+					_selEnemyOn = false;
+					_itemSelOn = false;
 
 				}
 
@@ -157,8 +157,8 @@ void GriffonEngine::checkInputs() {
 					_player.inventory[kInvNormalKey]--;
 
 					_itemticks = _ticks + ntickdelay;
-					_selenemyon = 0;
-					_itemselon = 0;
+					_selEnemyOn = false;
+					_itemSelOn = false;
 					return;
 				}
 
@@ -169,8 +169,8 @@ void GriffonEngine::checkInputs() {
 					_player.inventory[kInvMasterKey]--;
 
 					_itemticks = _ticks + ntickdelay;
-					_selenemyon = 0;
-					_itemselon = 0;
+					_selEnemyOn = false;
+					_itemSelOn = false;
 					return;
 				}
 
@@ -182,11 +182,11 @@ void GriffonEngine::checkInputs() {
 					_forcepause = true;
 
 					_itemticks = _ticks + ntickdelay;
-					_selenemyon = 0;
-					_itemselon = 0;
+					_selEnemyOn = false;
+					_itemSelOn = false;
 				}
 
-				if (_curitem > 5 && _selenemyon == 1) {
+				if (_curitem > 5 && _selEnemyOn) {
 					if (_curenemy <= _lastnpc) {
 						castSpell(_curitem - 6, _player.px, _player.py, _npcinfo[_curenemy].x, _npcinfo[_curenemy].y, 0);
 					} else {
@@ -199,16 +199,16 @@ void GriffonEngine::checkInputs() {
 					_player.spellStrength = 0;
 
 					_itemticks = _ticks + ntickdelay;
-					_selenemyon = 0;
-					_itemselon = 0;
+					_selEnemyOn = false;
+					_itemSelOn = false;
 					_forcepause = false;
 				}
 
-				if (_curitem > 5 && _selenemyon == 0 && _itemselon == 1) {
+				if (_curitem > 5 && !_selEnemyOn && _itemSelOn) {
 					if (ABS(_player.spellCharge[_curitem - 5] - 100) < kEpsilon) {
 						_itemticks = _ticks + ntickdelay;
 
-						_selenemyon = 1;
+						_selEnemyOn = true;
 
 						int i = 0;
 						do {
@@ -218,14 +218,14 @@ void GriffonEngine::checkInputs() {
 							}
 							i = i + 1;
 							if (i == _lastnpc + 1) {
-								_selenemyon = 0;
+								_selEnemyOn = false;
 								goto __exit_do;
 							}
 						} while (1);
 __exit_do:
 
-						if (nposts > 0 && _selenemyon == 0) {
-							_selenemyon = 1;
+						if (nposts > 0 && !_selEnemyOn) {
+							_selEnemyOn = true;
 							_curenemy = _lastnpc + 1;
 						}
 					}
@@ -234,13 +234,13 @@ __exit_do:
 			}
 		} else if (_event.kbd.hasFlags(Common::KBD_ALT)) {
 			if (_itemticks < _ticks) {
-				_selenemyon = 0;
-				if (_itemselon == 1) {
-					_itemselon = 0;
+				_selEnemyOn = false;
+				if (_itemSelOn) {
+					_itemSelOn = false;
 					_itemticks = _ticks + 220;
 					_forcepause = false;
 				} else {
-					_itemselon = 1;
+					_itemSelOn = true;
 					_itemticks = _ticks + 220;
 					_forcepause = true;
 					_player.itemselshade = 0;
@@ -249,7 +249,7 @@ __exit_do:
 		}
 	}
 
-	if (_itemselon == 0) {
+	if (!_itemSelOn) {
 		movingup = false;
 		movingdown = false;
 		movingleft = false;
@@ -268,7 +268,7 @@ __exit_do:
 		movingleft = false;
 		movingright = false;
 
-		if (_selenemyon == 1) {
+		if (_selEnemyOn) {
 			if (_itemticks < _ticks) {
 				if (_event.kbd.keycode == Common::KEYCODE_LEFT) {
 					int origin = _curenemy;

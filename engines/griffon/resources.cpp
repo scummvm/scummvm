@@ -158,27 +158,27 @@ void GriffonEngine::loadMap(int mapnum) {
 	_clipbg2->fillRect(trect, ccc);
 
 	_forcepause = false;
-	cloudson = 0;
+	_cloudsOn = false;
 	if (mapnum < 6)
-		cloudson = 1;
+		_cloudsOn = true;
 	if (mapnum > 41)
-		cloudson = 1;
+		_cloudsOn = true;
 	if (mapnum > 47)
-		cloudson = 0;
+		_cloudsOn = false;
 	if (mapnum == 52)
-		cloudson = 1;
+		_cloudsOn = true;
 	if (mapnum == 60)
-		cloudson = 1;
+		_cloudsOn = true;
 	if (mapnum == 50)
-		cloudson = 1;
+		_cloudsOn = true;
 	if (mapnum == 54)
-		cloudson = 1;
+		_cloudsOn = true;
 	if (mapnum == 58)
-		cloudson = 1;
+		_cloudsOn = true;
 	if (mapnum == 62)
-		cloudson = 1;
+		_cloudsOn = true;
 	if (mapnum == 83)
-		cloudson = 1;
+		_cloudsOn = true;
 
 	// -----------special case
 	dontdrawover = 0;
@@ -390,7 +390,7 @@ void GriffonEngine::loadMap(int mapnum) {
 	_lastnpc = 0;
 
 	for (int i = 0; i < kMaxNPC; i++)
-		_npcinfo[i].onmap = 0;
+		_npcinfo[i].onmap = false;
 
 	for (int x = 0; x <= 19; x++) {
 		for (int y = 0; y <= 19; y++) {
@@ -444,7 +444,7 @@ void GriffonEngine::loadMap(int mapnum) {
 				_npcinfo[o].y = y * 16 - 5;
 
 				_npcinfo[o].walkdir = 1;
-				_npcinfo[o].onmap = 1;
+				_npcinfo[o].onmap = true;
 			}
 		}
 	}
@@ -644,12 +644,12 @@ void GriffonEngine::loadMap(int mapnum) {
 			_npcinfo[i].floating = RND() * 16;
 		}
 
-		if (_npcinfo[i].onmap == 0)
+		if (!_npcinfo[i].onmap)
 			_npcinfo[i].hp = 0;
 
 		_npcinfo[i].maxhp = _npcinfo[i].hp;
 
-		_npcinfo[i].attacking = 0;
+		_npcinfo[i].attacking = false;
 		_npcinfo[i].attackframe = 0;
 		_npcinfo[i].cattackframe = 0;
 		_npcinfo[i].attackspd = 1.5;
@@ -693,7 +693,7 @@ void GriffonEngine::loadMap(int mapnum) {
 				_npcinfo[i].headtargetx[f] = _npcinfo[i].x + 12;
 				_npcinfo[i].headtargety[f] = _npcinfo[i].y + 14;
 
-				_npcinfo[i].attacking2[f] = 0;
+				_npcinfo[i].attacking2[f] = false;
 				_npcinfo[i].attackframe2[f] = 0;
 			}
 		}
@@ -763,7 +763,7 @@ void GriffonEngine::loadMap(int mapnum) {
 	}
 
 	// academy crystal
-	if (_curmap == 24 && _player.foundSpell[0] == 0 && _scriptflag[kScriptFindCrystal][0] == 1) {
+	if (_curmap == 24 && !_player.foundSpell[0] && _scriptflag[kScriptFindCrystal][0] == 1) {
 		cx = 9;
 		cy = 7;
 

@@ -152,7 +152,7 @@ struct Player {
 	int sword;
 	int shield;
 	int armour;
-	int foundSpell[5];
+	bool foundSpell[5];
 	float spellCharge[5];
 	int inventory[5];
 	float attackStrength;
@@ -197,7 +197,7 @@ struct NPC {
 	float   frame;
 	float   frame2;     // end boss specific
 	int cframe;
-	int onmap;      // is this npc set to be genned in the mapfile
+	bool onmap;      // is this npc set to be genned in the mapfile
 
 	int ticks;
 	int pause;
@@ -207,12 +207,12 @@ struct NPC {
 	int walkdir;
 	float   walkspd;
 	int movingdir;
-	int moving;
+	bool moving;
 
-	int attacking;
-	float   attackframe;
+	bool attacking;
+	float attackframe;
 	int cattackframe;
-	float   attackspd;
+	float attackspd;
 	int attackdelay;
 	int attacknext;
 	int attackattempt;
@@ -231,7 +231,7 @@ struct NPC {
 
 	// firehydra specific
 	int attacknext2[4];
-	int attacking2[4];
+	bool attacking2[4];
 	int attackframe2[4];
 
 	// dragon2 specific
@@ -399,9 +399,11 @@ private:
 	Graphics::TransparentSurface *_itemimg[21], *_windowimg;
 	Graphics::TransparentSurface *_spellimg;
 
-	int _itemselon, _curitem, _itemticks;
+	bool _itemSelOn;
+	int _curitem, _itemticks;
 	float _itemyloc;
-	int _selenemyon, _curenemy;
+	bool _selEnemyOn;
+	int _curenemy;
 	bool _forcepause;
 	bool _roomlock; // set to disable any room jumps while in the room
 	int _scriptflag[100][10], _saveslot;  // script, flag
@@ -429,7 +431,7 @@ private:
 	// cloud info
 	Graphics::TransparentSurface *cloudimg;
 	float clouddeg;
-	int cloudson;
+	int _cloudsOn;
 
 	// spell info
 	Spell spellinfo[kMaxSpell];

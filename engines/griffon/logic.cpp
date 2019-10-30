@@ -132,15 +132,15 @@ void GriffonEngine::updateNPCs() {
 		if (_npcinfo[i].hp > 0) {
 			//  is npc walking
 			int pass = 0;
-			if (_npcinfo[i].attacking == 0)
+			if (!_npcinfo[i].attacking)
 				pass = 1;
 			if (_npcinfo[i].spriteset == kMonsterFireHydra)
 				pass = 1;
 			if (pass == 1) {
-				int moveup = 0;
-				int movedown = 0;
-				int moveleft = 0;
-				int moveright = 0;
+				bool moveup = false;
+				bool movedown = false;
+				bool moveleft = false;
+				bool moveright = false;
 
 				float npx = _npcinfo[i].x;
 				float npy = _npcinfo[i].y;
@@ -200,13 +200,13 @@ void GriffonEngine::updateNPCs() {
 					}
 
 					if (xdif < 4)
-						moveleft = 1;
+						moveleft = true;
 					if (xdif > -4)
-						moveright = 1;
+						moveright = true;
 					if (ydif < 4)
-						moveup = 1;
+						moveup = true;
 					if (ydif > -4)
-						movedown = 1;
+						movedown = true;
 				}
 				// *******************
 
@@ -226,32 +226,32 @@ void GriffonEngine::updateNPCs() {
 
 					if (movingdir == 0) {
 						wdir = 2; // left
-						moveup = 1;
-						moveleft = 1;
+						moveup = true;
+						moveleft = true;
 					} else if (movingdir == 1) {
 						wdir = 0; // up
-						moveup = 1;
+						moveup = true;
 					} else if (movingdir == 2) {
 						wdir = 3; // right
-						moveup = 1;
-						moveright = 1;
+						moveup = true;
+						moveright = true;
 					} else if (movingdir == 3) {
 						wdir = 3; // right
-						moveright = 1;
+						moveright = true;
 					} else if (movingdir == 4) {
 						wdir = 3; // right
-						moveright = 1;
-						movedown = 1;
+						moveright = true;
+						movedown = true;
 					} else if (movingdir == 5) {
 						wdir = 1; // down
-						movedown = 1;
+						movedown = true;
 					} else if (movingdir == 6) {
 						wdir = 2; // left
-						movedown = 1;
-						moveleft = 1;
+						movedown = true;
+						moveleft = true;
 					} else if (movingdir == 7) {
 						wdir = 2; // left
-						moveleft = 1;
+						moveleft = true;
 					}
 
 					checkpass = true;
@@ -278,21 +278,21 @@ void GriffonEngine::updateNPCs() {
 					}
 
 					if (xdif < 4)
-						moveright = 1;
+						moveright = true;
 					if (xdif > -4)
-						moveleft = 1;
+						moveleft = true;
 					if (ydif < 4)
-						movedown = 1;
+						movedown = true;
 					if (ydif > -4)
-						moveup = 1;
+						moveup = true;
 				}
 				// *******************
 
 				// -------------- ?? move*** vs movin***
-				int movinup = 0;
-				int movindown = 0;
-				int movinleft = 0;
-				int movinright = 0;
+				bool movinup = false;
+				bool movindown = false;
+				bool movinleft = false;
+				bool movinright = false;
 
 				float xp = (npx / 2 + 6);
 				float yp = (npy / 2 + 10);
@@ -313,7 +313,7 @@ void GriffonEngine::updateNPCs() {
 						dq = 0;
 
 					if (dq == 0)
-						movinup = 1;
+						movinup = true;
 					if (dq > 0) {
 						sx = xp - ii;
 						sy = yp - ii;
@@ -322,8 +322,8 @@ void GriffonEngine::updateNPCs() {
 						if (_npcinfo[i].spriteset == kMonsterFinalBoss)
 							dq = 0;
 						if (dq == 0) {
-							movinup = 1;
-							movinleft = 1;
+							movinup = true;
+							movinleft = true;
 						}
 					}
 					if (dq > 0) {
@@ -334,8 +334,8 @@ void GriffonEngine::updateNPCs() {
 						if (_npcinfo[i].spriteset == kMonsterFinalBoss)
 							dq = 0;
 						if (dq == 0) {
-							movinup = 1;
-							movinright = 1;
+							movinup = true;
+							movinright = true;
 						}
 					}
 				}
@@ -348,7 +348,7 @@ void GriffonEngine::updateNPCs() {
 					if (_npcinfo[i].spriteset == kMonsterFinalBoss)
 						dq = 0;
 					if (dq == 0)
-						movindown = 1;
+						movindown = true;
 					if (dq > 0) {
 						sx = xp - ii;
 						sy = yp + ii;
@@ -357,8 +357,8 @@ void GriffonEngine::updateNPCs() {
 						if (_npcinfo[i].spriteset == kMonsterFinalBoss)
 							dq = 0;
 						if (dq == 0) {
-							movindown = 1;
-							movinleft = 1;
+							movindown = true;
+							movinleft = true;
 						}
 					}
 					if (dq > 0) {
@@ -369,8 +369,8 @@ void GriffonEngine::updateNPCs() {
 						if (_npcinfo[i].spriteset == kMonsterFinalBoss)
 							dq = 0;
 						if (dq == 0) {
-							movindown = 1;
-							movinright = 1;
+							movindown = true;
+							movinright = true;
 						}
 					}
 				}
@@ -383,7 +383,7 @@ void GriffonEngine::updateNPCs() {
 					if (_npcinfo[i].spriteset == kMonsterFinalBoss)
 						dq = 0;
 					if (dq == 0)
-						movinleft = 1;
+						movinleft = true;
 					if (dq > 0) {
 						sx = xp - ii;
 						sy = yp - ii;
@@ -392,8 +392,8 @@ void GriffonEngine::updateNPCs() {
 						if (_npcinfo[i].spriteset == kMonsterFinalBoss)
 							dq = 0;
 						if (dq == 0) {
-							movinleft = 1;
-							movinup = 1;
+							movinleft = true;
+							movinup = true;
 						}
 					}
 					if (dq > 0) {
@@ -404,8 +404,8 @@ void GriffonEngine::updateNPCs() {
 						if (_npcinfo[i].spriteset == kMonsterFinalBoss)
 							dq = 0;
 						if (dq == 0) {
-							movinleft = 1;
-							movindown = 1;
+							movinleft = true;
+							movindown = true;
 						}
 					}
 				}
@@ -418,7 +418,7 @@ void GriffonEngine::updateNPCs() {
 					if (_npcinfo[i].spriteset == kMonsterFinalBoss)
 						dq = 0;
 					if (dq == 0)
-						movinright = 1;
+						movinright = true;
 					if (dq > 0) {
 						sx = xp + ii;
 						sy = yp - ii;
@@ -427,8 +427,8 @@ void GriffonEngine::updateNPCs() {
 						if (_npcinfo[i].spriteset == kMonsterFinalBoss)
 							dq = 0;
 						if (dq == 0) {
-							movinright = 1;
-							movinup = 1;
+							movinright = true;
+							movinup = true;
 						}
 					}
 					if (dq > 0) {
@@ -439,20 +439,20 @@ void GriffonEngine::updateNPCs() {
 						if (_npcinfo[i].spriteset == kMonsterFinalBoss)
 							dq = 0;
 						if (dq == 0) {
-							movinright = 1;
-							movindown = 1;
+							movinright = true;
+							movindown = true;
 						}
 					}
 				}
 
 				if (movinup)
-					npy = npy - wspd * _fpsr;
+					npy -= wspd * _fpsr;
 				if (movindown)
-					npy = npy + wspd * _fpsr;
+					npy += wspd * _fpsr;
 				if (movinleft)
-					npx = npx - wspd * _fpsr;
+					npx -= wspd * _fpsr;
 				if (movinright)
-					npx = npx + wspd * _fpsr;
+					npx += wspd * _fpsr;
 
 				if (checkpass) {
 					pass = 0;
@@ -489,14 +489,14 @@ void GriffonEngine::updateNPCs() {
 				if (_npcinfo[i].spriteset == kMonsterFinalBoss)
 					bgc = 0;
 
-				int rst = 0;
+				bool rst = false;
 
 				if (_npcinfo[i].spriteset == kMonsterFinalBoss) {
 					if (npx < 40 || npx > 280 || npy < 36 || npy > 204)
-						rst = 1;
+						rst = true;
 				}
 
-				if (bgc > 0 || rst == 1) {
+				if (bgc > 0 || rst) {
 					npx = onpx;
 					npy = onpy;
 				}
@@ -505,12 +505,12 @@ void GriffonEngine::updateNPCs() {
 				_npcinfo[i].y = npy;
 
 				_npcinfo[i].walkdir = wdir;
-				_npcinfo[i].moving = 0;
+				_npcinfo[i].moving = false;
 
 				if (npx != onpx || npy != onpy)
-					_npcinfo[i].moving = 1;
+					_npcinfo[i].moving = true;
 
-				if (_npcinfo[i].moving == 1) {
+				if (_npcinfo[i].moving) {
 					float frame = _npcinfo[i].frame;
 
 					frame += aspd * _fpsr;
@@ -527,7 +527,7 @@ void GriffonEngine::updateNPCs() {
 
 				// spriteset1 specific
 				if (_npcinfo[i].spriteset == kMonsterBabyDragon && _npcinfo[i].attackattempt < _ticks) {
-					if (_npcinfo[i].attacknext < _ticks && _npcinfo[i].pause < _ticks && _npcinfo[i].attacking == 0) {
+					if (_npcinfo[i].attacknext < _ticks && _npcinfo[i].pause < _ticks && !_npcinfo[i].attacking) {
 						npx = _npcinfo[i].x;
 						npy = _npcinfo[i].y;
 
@@ -542,7 +542,7 @@ void GriffonEngine::updateNPCs() {
 									setChannelVolume(snd, config.effectsvol);
 								}
 
-								_npcinfo[i].attacking = 1;
+								_npcinfo[i].attacking = true;
 								_npcinfo[i].attackframe = 0;
 							}
 						}
@@ -553,7 +553,7 @@ void GriffonEngine::updateNPCs() {
 
 				// onewing specific
 				if (_npcinfo[i].spriteset == kMonsterOneWing) {
-					if (_npcinfo[i].attacknext < _ticks && _npcinfo[i].pause < _ticks && _npcinfo[i].attacking == 0) {
+					if (_npcinfo[i].attacknext < _ticks && _npcinfo[i].pause < _ticks && !_npcinfo[i].attacking) {
 						npx = _npcinfo[i].x;
 						npy = _npcinfo[i].y;
 
@@ -569,7 +569,7 @@ void GriffonEngine::updateNPCs() {
 									setChannelVolume(snd, config.effectsvol);
 								}
 
-								_npcinfo[i].attacking = 1;
+								_npcinfo[i].attacking = true;
 								_npcinfo[i].attackframe = 0;
 
 								_npcinfo[i].headtargetx[0] = _player.px + 12;
@@ -581,7 +581,7 @@ void GriffonEngine::updateNPCs() {
 
 					dospell = false;
 
-					if (_npcinfo[i].attacking == 0 && _npcinfo[i].castpause < _ticks) {
+					if (!_npcinfo[i].attacking && _npcinfo[i].castpause < _ticks) {
 						_npcinfo[i].swayspd = _npcinfo[i].swayspd + _npcinfo[i].swayspd / 200 * _fpsr;
 						if (_npcinfo[i].swayspd > 15) {
 							dospell = true;
@@ -634,8 +634,8 @@ void GriffonEngine::updateNPCs() {
 
 				// boss1 specific and blackknight
 				if (_npcinfo[i].spriteset == kMonsterBoss1 || _npcinfo[i].spriteset == kMonsterBlackKnight) {
-					if (_npcinfo[i].attacknext < _ticks && _npcinfo[i].pause < _ticks && _npcinfo[i].attacking == 0) {
-						_npcinfo[i].attacking = 1;
+					if (_npcinfo[i].attacknext < _ticks && _npcinfo[i].pause < _ticks && !_npcinfo[i].attacking) {
+						_npcinfo[i].attacking = true;
 						_npcinfo[i].attackframe = 0;
 
 						castSpell(1, _npcinfo[i].x, _npcinfo[i].y, _player.px, _player.py, i);
@@ -675,7 +675,7 @@ void GriffonEngine::updateNPCs() {
 											setChannelVolume(snd, config.effectsvol);
 										}
 
-										_npcinfo[i].attacking = 1;
+										_npcinfo[i].attacking = true;
 										_npcinfo[i].attacking2[ff] = 1;
 										_npcinfo[i].attackframe2[ff] = 0;
 
@@ -719,7 +719,7 @@ void GriffonEngine::updateNPCs() {
 
 				// spriteset6 specific
 				if (_npcinfo[i].spriteset == kMonsterRedDragon && _npcinfo[i].attackattempt < _ticks) {
-					if (_npcinfo[i].attacknext < _ticks && _npcinfo[i].pause < _ticks && _npcinfo[i].attacking == 0) {
+					if (_npcinfo[i].attacknext < _ticks && _npcinfo[i].pause < _ticks && !_npcinfo[i].attacking) {
 						npx = _npcinfo[i].x;
 						npy = _npcinfo[i].y;
 
@@ -735,7 +735,7 @@ void GriffonEngine::updateNPCs() {
 						if (pass > 0) {
 							_npcinfo[i].attackattempt = _ticks + 100;
 							if ((int)(RND() * 2) == 0) {
-								_npcinfo[i].attacking = 1;
+								_npcinfo[i].attacking = true;
 								_npcinfo[i].attackframe = 0;
 								float nnxa = 0, nnya = 0, nnxb = 0, nnyb = 0;
 
@@ -769,8 +769,8 @@ void GriffonEngine::updateNPCs() {
 
 				// wizard1 specific
 				if (_npcinfo[i].spriteset == kMonsterPriest) {
-					if (_npcinfo[i].attacknext < _ticks && _npcinfo[i].pause < _ticks && _npcinfo[i].attacking == 0) {
-						_npcinfo[i].attacking = 1;
+					if (_npcinfo[i].attacknext < _ticks && _npcinfo[i].pause < _ticks && !_npcinfo[i].attacking) {
+						_npcinfo[i].attacking = true;
 						_npcinfo[i].attackframe = 0;
 
 						castSpell(9, _npcinfo[i].x, _npcinfo[i].y, _player.px, _player.py, i);
@@ -785,7 +785,7 @@ void GriffonEngine::updateNPCs() {
 
 				// spriteset6 specific
 				if (_npcinfo[i].spriteset == kMonsterYellowDragon && _npcinfo[i].attackattempt < _ticks) {
-					if (_npcinfo[i].attacknext < _ticks && _npcinfo[i].pause < _ticks && _npcinfo[i].attacking == 0) {
+					if (_npcinfo[i].attacknext < _ticks && _npcinfo[i].pause < _ticks && !_npcinfo[i].attacking) {
 						npx = _npcinfo[i].x;
 						npy = _npcinfo[i].y;
 
@@ -801,7 +801,7 @@ void GriffonEngine::updateNPCs() {
 						if (pass > 0) {
 							_npcinfo[i].attackattempt = _ticks + 100;
 							if ((int)(RND() * 2) == 0) {
-								_npcinfo[i].attacking = 1;
+								_npcinfo[i].attacking = true;
 								_npcinfo[i].attackframe = 0;
 
 								float nnxa = 0, nnya = 0, nnxb = 0, nnyb = 0;
@@ -839,7 +839,7 @@ void GriffonEngine::updateNPCs() {
 
 				// twowing specific
 				if (_npcinfo[i].spriteset == kMonsterTwoWing) {
-					if (_npcinfo[i].attacknext < _ticks && _npcinfo[i].pause < _ticks && _npcinfo[i].attacking == 0) {
+					if (_npcinfo[i].attacknext < _ticks && _npcinfo[i].pause < _ticks && !_npcinfo[i].attacking) {
 						npx = _npcinfo[i].bodysection[7].x;
 						npy = _npcinfo[i].bodysection[7].y;
 
@@ -855,7 +855,7 @@ void GriffonEngine::updateNPCs() {
 									setChannelVolume(snd, config.effectsvol);
 								}
 
-								_npcinfo[i].attacking = 1;
+								_npcinfo[i].attacking = true;
 								_npcinfo[i].attackframe = 0;
 
 								_npcinfo[i].headtargetx[0] = _player.px + 12;
@@ -865,7 +865,7 @@ void GriffonEngine::updateNPCs() {
 
 					}
 
-					if (_npcinfo[i].attacking == 0 && _npcinfo[i].castpause < _ticks) {
+					if (!_npcinfo[i].attacking && _npcinfo[i].castpause < _ticks) {
 						_npcinfo[i].swayspd = 4;
 
 						// sway code
@@ -914,7 +914,7 @@ void GriffonEngine::updateNPCs() {
 
 				// dragon2 specific
 				if (_npcinfo[i].spriteset == kMonsterDragon2 && _npcinfo[i].attackattempt < _ticks) {
-					if (_npcinfo[i].attacknext < _ticks && _npcinfo[i].pause < _ticks && _npcinfo[i].attacking == 0) {
+					if (_npcinfo[i].attacknext < _ticks && _npcinfo[i].pause < _ticks && !_npcinfo[i].attacking) {
 						npx = _npcinfo[i].x;
 						npy = _npcinfo[i].y;
 
@@ -929,7 +929,7 @@ void GriffonEngine::updateNPCs() {
 									setChannelVolume(snd, config.effectsvol);
 								}
 
-								_npcinfo[i].attacking = 1;
+								_npcinfo[i].attacking = true;
 								_npcinfo[i].attackframe = 0;
 							}
 						}
@@ -939,7 +939,7 @@ void GriffonEngine::updateNPCs() {
 
 				// endboss specific
 				if (_npcinfo[i].spriteset == kMonsterFinalBoss && _npcinfo[i].attackattempt < _ticks) {
-					if (_npcinfo[i].attacknext < _ticks && _npcinfo[i].pause < _ticks && _npcinfo[i].attacking == 0) {
+					if (_npcinfo[i].attacknext < _ticks && _npcinfo[i].pause < _ticks && !_npcinfo[i].attacking) {
 						npx = _npcinfo[i].x;
 						npy = _npcinfo[i].y;
 
@@ -953,7 +953,7 @@ void GriffonEngine::updateNPCs() {
 									int snd = playSound(_sfx[kSndIce]);
 									setChannelVolume(snd, config.effectsvol);
 								}
-								_npcinfo[i].attacking = 1;
+								_npcinfo[i].attacking = true;
 								_npcinfo[i].attackframe = 0;
 							}
 						}
@@ -978,14 +978,10 @@ void GriffonEngine::updateNPCs() {
 
 
 			pass = 0;
-			if (_npcinfo[i].attacking == 1)
+			if (_npcinfo[i].attacking)
 				pass = 1;
 			if (_npcinfo[i].spriteset == kMonsterFireHydra) {
-				if (_npcinfo[i].attacking2[0] == 1)
-					pass = 1;
-				if (_npcinfo[i].attacking2[1] == 1)
-					pass = 1;
-				if (_npcinfo[i].attacking2[2] == 1)
+				if (_npcinfo[i].attacking2[0] || _npcinfo[i].attacking2[1] || _npcinfo[i].attacking2[2])
 					pass = 1;
 			}
 
@@ -997,7 +993,7 @@ void GriffonEngine::updateNPCs() {
 					_npcinfo[i].attackframe = _npcinfo[i].attackframe + _npcinfo[i].attackspd * _fpsr;
 					if (_npcinfo[i].attackframe >= 16) {
 						_npcinfo[i].attackframe = 0;
-						_npcinfo[i].attacking = 0;
+						_npcinfo[i].attacking = false;
 						_npcinfo[i].attacknext = _ticks + _npcinfo[i].attackdelay;
 					}
 
@@ -1014,7 +1010,7 @@ void GriffonEngine::updateNPCs() {
 					if (abs(xdif) < dist && abs(ydif) < dist && _player.pause < _ticks) {
 						_npcinfo[i].attacknext = _ticks + _npcinfo[i].attackdelay;
 						// _npcinfo[i].attackframe = 0;
-						// _npcinfo[i].attacking = 0;
+						// _npcinfo[i].attacking = false;
 
 						damage = (float)_npcinfo[i].attackdamage * (0.5 + RND() * 1.0);
 
@@ -1048,7 +1044,7 @@ void GriffonEngine::updateNPCs() {
 					_npcinfo[i].attackframe = _npcinfo[i].attackframe + _npcinfo[i].attackspd * _fpsr;
 					if (_npcinfo[i].attackframe >= 16) {
 						_npcinfo[i].attackframe = 0;
-						_npcinfo[i].attacking = 0;
+						_npcinfo[i].attacking = false;
 						_npcinfo[i].attacknext = _ticks + _npcinfo[i].attackdelay;
 					}
 
@@ -1065,7 +1061,7 @@ void GriffonEngine::updateNPCs() {
 					if (abs(xdif) < dist && abs(ydif) < dist && _player.pause < _ticks) {
 						_npcinfo[i].attacknext = _ticks + _npcinfo[i].attackdelay;
 						// _npcinfo[i].attackframe = 0
-						// _npcinfo[i].attacking = 0
+						// _npcinfo[i].attacking = false
 						damage = (float)_npcinfo[i].attackdamage * (1.0 + (RND() * 0.5));
 						if (_player.hp > 0)
 							damagePlayer(damage);
@@ -1076,7 +1072,7 @@ void GriffonEngine::updateNPCs() {
 				// firehydra
 				if (_npcinfo[i].spriteset == kMonsterFireHydra) {
 					for (int ff = 0; ff <= 2; ff++) {
-						if (_npcinfo[i].attacking2[ff] == 1) {
+						if (_npcinfo[i].attacking2[ff]) {
 							float xdif = _npcinfo[i].bodysection[10 * ff + 9].x - _npcinfo[i].headtargetx[ff];
 							float ydif = _npcinfo[i].bodysection[10 * ff + 9].y - _npcinfo[i].headtargety[ff];
 
@@ -1100,7 +1096,7 @@ void GriffonEngine::updateNPCs() {
 							_npcinfo[i].attackframe2[ff] = _npcinfo[i].attackframe2[ff] + _npcinfo[i].attackspd * _fpsr;
 							if (_npcinfo[i].attackframe2[ff] >= 16) {
 								_npcinfo[i].attackframe2[ff] = 0;
-								_npcinfo[i].attacking2[ff] = 0;
+								_npcinfo[i].attacking2[ff] = false;
 								_npcinfo[i].attacknext2[ff] = _ticks + _npcinfo[i].attackdelay;
 							}
 
@@ -1117,7 +1113,7 @@ void GriffonEngine::updateNPCs() {
 							if (abs(xdif) < dist && abs(ydif) < dist && _player.pause < _ticks) {
 								_npcinfo[i].attacknext2[ff] = _ticks + _npcinfo[i].attackdelay;
 								// _npcinfo[i].attackframe2(ff) = 0
-								// _npcinfo[i].attacking2(ff) = 0
+								// _npcinfo[i].attacking2(ff) = false
 								damage = (float)_npcinfo[i].attackdamage * (1.0 + RND() * 0.5);
 								if (_player.hp > 0)
 									damagePlayer(damage);
@@ -1153,7 +1149,7 @@ void GriffonEngine::updateNPCs() {
 					_npcinfo[i].attackframe = _npcinfo[i].attackframe + _npcinfo[i].attackspd * _fpsr;
 					if (_npcinfo[i].attackframe >= 16) {
 						_npcinfo[i].attackframe = 0;
-						_npcinfo[i].attacking = 0;
+						_npcinfo[i].attacking = false;
 						_npcinfo[i].attacknext = _ticks + _npcinfo[i].attackdelay;
 					}
 
@@ -1170,7 +1166,7 @@ void GriffonEngine::updateNPCs() {
 					if (abs(xdif) < dist && abs(ydif) < dist && _player.pause < _ticks) {
 						_npcinfo[i].attacknext = _ticks + _npcinfo[i].attackdelay;
 						// _npcinfo[i].attackframe = 0
-						// _npcinfo[i].attacking = 0
+						// _npcinfo[i].attacking = false
 						damage = (float)_npcinfo[i].attackdamage * (1.0 + RND() * 0.5);
 						if (_player.hp > 0)
 							damagePlayer(damage);
@@ -1183,7 +1179,7 @@ void GriffonEngine::updateNPCs() {
 					_npcinfo[i].attackframe = _npcinfo[i].attackframe + _npcinfo[i].attackspd * _fpsr;
 					if (_npcinfo[i].attackframe >= 16) {
 						_npcinfo[i].attackframe = 0;
-						_npcinfo[i].attacking = 0;
+						_npcinfo[i].attacking = false;
 						_npcinfo[i].attacknext = _ticks + _npcinfo[i].attackdelay;
 					}
 
@@ -1200,7 +1196,7 @@ void GriffonEngine::updateNPCs() {
 					if (abs(xdif) < dist && abs(ydif) < dist && _player.pause < _ticks) {
 						_npcinfo[i].attacknext = _ticks + _npcinfo[i].attackdelay;
 						// _npcinfo[i].attackframe = 0
-						// _npcinfo[i].attacking = 0
+						// _npcinfo[i].attacking = false
 						damage = (float)_npcinfo[i].attackdamage * (0.5 + RND() * 1.0);
 						if (_player.hp > 0)
 							damagePlayer(damage);
@@ -1212,7 +1208,7 @@ void GriffonEngine::updateNPCs() {
 					_npcinfo[i].attackframe = _npcinfo[i].attackframe + _npcinfo[i].attackspd * _fpsr;
 					if (_npcinfo[i].attackframe >= 16) {
 						_npcinfo[i].attackframe = 0;
-						_npcinfo[i].attacking = 0;
+						_npcinfo[i].attacking = false;
 						_npcinfo[i].attacknext = _ticks + _npcinfo[i].attackdelay;
 					}
 
@@ -1229,7 +1225,7 @@ void GriffonEngine::updateNPCs() {
 					if (abs(xdif) < dist && abs(ydif) < dist && _player.pause < _ticks) {
 						_npcinfo[i].attacknext = _ticks + _npcinfo[i].attackdelay;
 						// _npcinfo[i].attackframe = 0
-						// _npcinfo[i].attacking = 0
+						// _npcinfo[i].attacking = false
 						damage = (float)_npcinfo[i].attackdamage * (0.5 + RND() * 1.0);
 						if (_player.hp > 0)
 							damagePlayer(damage);
@@ -1418,7 +1414,7 @@ void GriffonEngine::updateSpells() {
 					if (ABS(spellinfo[i].frame) < 0 && _npcinfo[spellinfo[i].npc].spriteset == kMonsterBoss1) {
 						int npc = spellinfo[i].npc;
 						_npcinfo[npc].attackframe = 0;
-						_npcinfo[npc].attacking = 0;
+						_npcinfo[npc].attacking = false;
 
 						_npcinfo[npc].pause = _ticks + 1000;
 						_npcinfo[npc].attacknext = _ticks + 4000;
@@ -1429,7 +1425,7 @@ void GriffonEngine::updateSpells() {
 					if (ABS(spellinfo[i].frame) < 0 && _npcinfo[spellinfo[i].npc].spriteset == kMonsterBlackKnight) {
 						int npc = spellinfo[i].npc;
 						_npcinfo[npc].attackframe = 0;
-						_npcinfo[npc].attacking = 0;
+						_npcinfo[npc].attacking = false;
 
 						_npcinfo[npc].pause = _ticks + 1000;
 						_npcinfo[npc].attacknext = _ticks + 3500;
@@ -1495,13 +1491,13 @@ void GriffonEngine::updateSpells() {
 						rcSrc.setWidth(32);
 						rcSrc.setHeight(32);
 
-						int scatter = 0;
+						bool scatter = false;
 						if (fr < 8 + f) {
 							xloc = spellinfo[i].enemyx - 4;
 							yloc = spellinfo[i].enemyy * (1 - cos(3.14159 / 2 * (fr - f) / 8)); // ^ 2;
 							yloc *= yloc;
 						} else {
-							scatter = 1;
+							scatter = true;
 							xloc = spellinfo[i].enemyx - 4 - spellinfo[i].rockdeflect[f] * sin(3.14159 / 2 * ((fr - f) - 8) / 8);
 							yloc = spellinfo[i].enemyy + hght * (1 - cos(3.14159 / 2 * ((fr - f) - 8) / 8));
 						}
@@ -1512,7 +1508,7 @@ void GriffonEngine::updateSpells() {
 						if (xloc > -16 && xloc < 304 && yloc > -16 && yloc < 224) {
 							_spellimg->blit(*_videobuffer, rcDest.left, rcDest.top, Graphics::FLIP_NONE, &rcSrc);
 
-							if (scatter == 1) {
+							if (scatter) {
 								if (spellinfo[i].damagewho == 0) {
 									for (int e = 1; e <= _lastnpc; e++) {
 										float xdif = (xloc + 16) - (_npcinfo[e].x + 12);
@@ -1604,9 +1600,9 @@ void GriffonEngine::updateSpells() {
 					int lx = (int)npx / 16;
 					int ly = (int)npy / 16;
 
-					int foundel[5];
+					bool foundel[5];
 					for (int f1 = 0; f1 < 5; f1++) { // !! f < 5
-						foundel[f1] = 0;
+						foundel[f1] = false;
 					}
 
 					for (int xo = -2; xo <= 2; xo++) {
@@ -1627,17 +1623,17 @@ void GriffonEngine::updateSpells() {
 
 										int element = elementmap[curtiley][curtilex];
 										if (element > -1 && curtilel == 0)
-											foundel[element + 1] = 1;
+											foundel[element + 1] = true;
 									}
 								}
 
 								int o = _objectMap[sx][sy];
 								if (o > -1) {
 									if (_objectInfo[o][4] == 1)
-										foundel[2] = 1;
+										foundel[2] = true;
 									if (o == 1 || o == 2) {
-										foundel[2] = 1;
-										foundel[4] = 1;
+										foundel[2] = true;
+										foundel[4] = true;
 									}
 								}
 							}
@@ -1648,8 +1644,8 @@ void GriffonEngine::updateSpells() {
 					strcpy(line, "Found... nothing...");
 
 					for (int f1 = 0; f1 < 5; f1++) {
-						if (foundel[f1] == 1 && _player.foundSpell[f1] == 0) {
-							_player.foundSpell[f1] = 1;
+						if (foundel[f1] && !_player.foundSpell[f1]) {
+							_player.foundSpell[f1] = true;
 							_player.spellCharge[f1] = 0;
 							if (f1 == 1)
 								strcpy(line, "Found... Water Essence");
@@ -2067,7 +2063,7 @@ void GriffonEngine::updateSpells() {
 				if (spellinfo[i].frame < 0) {
 					spellinfo[i].frame = 0;
 
-					_npcinfo[spellinfo[i].npc].attacking = 0;
+					_npcinfo[spellinfo[i].npc].attacking = false;
 					_npcinfo[spellinfo[i].npc].attacknext = _ticks + _npcinfo[spellinfo[i].npc].attackdelay;
 				}
 			}
@@ -2361,7 +2357,7 @@ void GriffonEngine::updateSpellsUnder() {
 					spellinfo[i].frame = 0;
 
 				if (ABS(spellinfo[i].frame) < kEpsilon) {
-					_npcinfo[spellinfo[i].npc].attacking = 0;
+					_npcinfo[spellinfo[i].npc].attacking = false;
 					_npcinfo[spellinfo[i].npc].attacknext = _ticks + _npcinfo[spellinfo[i].npc].attackdelay;
 				}
 			}

@@ -187,7 +187,7 @@ void GriffonEngine::updateEngine() {
 
 	if (!_forcepause) {
 		for (int i = 0; i < 5; i++) {
-			if (_player.foundSpell[i] == 1)
+			if (_player.foundSpell[i])
 				_player.spellCharge[i] += 1 * _player.level * 0.01 * _fpsr;
 			if (_player.spellCharge[i] > 100)
 				_player.spellCharge[i] = 100;
@@ -236,9 +236,9 @@ void GriffonEngine::updateEngine() {
 		}
 	}
 
-	// cloudson = 0
+	// cloudson = false
 
-	if (_itemselon == 1)
+	if (_itemSelOn)
 		_player.itemselshade = _player.itemselshade + 2 * _fpsr;
 	if (_player.itemselshade > 24)
 		_player.itemselshade = 24;
@@ -272,7 +272,7 @@ void GriffonEngine::newGame() {
 	_player.shield = 0;
 	_player.armour = 0;
 	for (int i = 0; i < 5; i++) {
-		_player.foundSpell[i] = 0;
+		_player.foundSpell[i] = false;
 		_player.spellCharge[i] = 0;
 		_player.inventory[i] = 0;
 	}

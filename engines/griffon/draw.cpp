@@ -152,17 +152,17 @@ void GriffonEngine::drawAnims(int Layer) {
 									rcDest.setWidth(16);
 									rcDest.setHeight(16);
 
-									int pass = 1;
+									bool pass = true;
 									if (curtilel == 1) {
 										for (int ff = 0; ff <= 5; ff++) {
 											int ffa = 20 * 5 - 1 + ff * 20;
 											int ffb = 20 * 5 + 4 + ff * 20;
 											if (curtile > ffa && curtile < ffb)
-												pass = 0;
+												pass = false;
 										}
 									}
 
-									if (pass == 1)
+									if (pass)
 										_tiles[curtilel]->blit(*_videobuffer, rcDest.left, rcDest.top, Graphics::FLIP_NONE, &rcSrc);
 								}
 							}
@@ -197,8 +197,7 @@ void GriffonEngine::drawHud() {
 				c = 1;
 			else if (fc == 5)
 				c = 0;
-
-			if (fc == 1 || fc == 3)
+			else if (fc == 1 || fc == 3)
 				c2 = 2;
 
 			if (fc != 0) {
@@ -239,20 +238,19 @@ void GriffonEngine::drawHud() {
 		}
 	}
 
-	if (_itemselon == 0) {
+	if (!_itemSelOn) {
 		int sy = 211;
-
-
 		int nx = 19 * 8 + 13;
+
 		rcSrc.left = nx - 17 + 48;
 		rcSrc.top = sy;
 
 		// spells in game
-		if (_player.foundSpell[0] == 1) {
+		if (_player.foundSpell[0]) {
 			for (int i = 0; i < 5; i++) {
 				rcSrc.left = rcSrc.left + 17;
 
-				if (_player.foundSpell[i] == 1) {
+				if (_player.foundSpell[i]) {
 					_itemimg[7 + i]->blit(*_videobuffer, rcSrc.left, rcSrc.top);
 
 					game_fillrect(_videobuffer, rcSrc.left, sy + 16, 16, 4, RGB(0, 32, 32));
@@ -265,7 +263,7 @@ void GriffonEngine::drawHud() {
 		return;
 	}
 
-	if (_selenemyon == 0) {
+	if (_selEnemyOn == false) {
 		rcDest.left = 0;
 		rcDest.top = 0;
 		rcDest.right = 320;
@@ -392,13 +390,13 @@ void GriffonEngine::drawHud() {
 		}
 
 		// spells in menu
-		if (_player.foundSpell[0] == 1) {
+		if (_player.foundSpell[0]) {
 			for (int i = 0; i < 5; i++) {
 				rcSrc.left = 243;
 				rcSrc.top = 67 + i * 24;
 				sy = rcSrc.top;
 
-				if (_player.foundSpell[i] == 1) {
+				if (_player.foundSpell[i]) {
 					_itemimg[7 + i]->blit(*_videobuffer, rcSrc.left, rcSrc.top);
 
 					game_fillrect(_videobuffer, rcSrc.left, sy + 16, 16, 4, RGB(0, 32, 32));
@@ -409,7 +407,7 @@ void GriffonEngine::drawHud() {
 			}
 		}
 
-		if (_itemselon == 1) {
+		if (_itemSelOn) {
 			for (int i = 0; i <= 4; i++) {
 				if (_curitem == 5 + i) {
 					rcDest.left = (float)(243 - 12 + 3 * sin(3.141592 * 2 * _itemyloc / 16));
@@ -426,7 +424,7 @@ void GriffonEngine::drawHud() {
 		}
 	}
 
-	if (_selenemyon == 1) {
+	if (_selEnemyOn) {
 		if (_curenemy > _lastnpc) {
 			int pst = _curenemy - _lastnpc - 1;
 			rcDest.left = postinfo[pst][0];
@@ -466,7 +464,7 @@ void GriffonEngine::drawNPCs(int mode) {
 				// spriteset1 specific
 				if (_npcinfo[i].spriteset == kMonsterBabyDragon) {
 
-					if (_npcinfo[i].attacking == 0) {
+					if (!_npcinfo[i].attacking) {
 
 						int cframe = _npcinfo[i].cframe;
 
@@ -546,57 +544,40 @@ void GriffonEngine::drawNPCs(int mode) {
 
 				//  boss 1
 				if (_npcinfo[i].spriteset == kMonsterBoss1) {
-					if (_npcinfo[i].attacking == 0) {
+					if (!_npcinfo[i].attacking) {
 						int cframe = _npcinfo[i].cframe;
-
 						rcSrc.left = (int)(cframe / 4) * 24;
-						rcSrc.top = 0;
-						rcSrc.setWidth(24);
-						rcSrc.setHeight(48);
-
-						rcDest.left = npx - 2;
-						rcDest.top = npy - 24;
-
-						_anims[3]->blit(*_videobuffer, rcDest.left, rcDest.top, Graphics::FLIP_NONE, &rcSrc);
 					} else {
 						rcSrc.left = 4 * 24;
-						rcSrc.top = 0;
-						rcSrc.setWidth(24);
-						rcSrc.setHeight(48);
-
-						rcDest.left = npx - 2;
-						rcDest.top = npy - 24;
-
-						_anims[3]->blit(*_videobuffer, rcDest.left, rcDest.top, Graphics::FLIP_NONE, &rcSrc);
 					}
+
+					rcSrc.top = 0;
+					rcSrc.setWidth(24);
+					rcSrc.setHeight(48);
+
+					rcDest.left = npx - 2;
+					rcDest.top = npy - 24;
+
+					_anims[3]->blit(*_videobuffer, rcDest.left, rcDest.top, Graphics::FLIP_NONE, &rcSrc);
 
 				}
 
 				// black knight
 				if (_npcinfo[i].spriteset == kMonsterBlackKnight) {
-					if (_npcinfo[i].attacking == 0) {
+					if (!_npcinfo[i].attacking) {
 						int cframe = _npcinfo[i].cframe;
-
 						rcSrc.left = (int)(cframe / 4) * 24;
-						rcSrc.top = 0;
-						rcSrc.setWidth(24);
-						rcSrc.setHeight(48);
-
-						rcDest.left = npx - 2;
-						rcDest.top = npy - 24;
-
-						_anims[4]->blit(*_videobuffer, rcDest.left, rcDest.top, Graphics::FLIP_NONE, &rcSrc);
 					} else {
 						rcSrc.left = 4 * 24;
-						rcSrc.top = 0;
-						rcSrc.setWidth(24);
-						rcSrc.setHeight(48);
-
-						rcDest.left = npx - 2;
-						rcDest.top = npy - 24;
-
-						_anims[4]->blit(*_videobuffer, rcDest.left, rcDest.top, Graphics::FLIP_NONE, &rcSrc);
 					}
+					rcSrc.top = 0;
+					rcSrc.setWidth(24);
+					rcSrc.setHeight(48);
+
+					rcDest.left = npx - 2;
+					rcDest.top = npy - 24;
+
+					_anims[4]->blit(*_videobuffer, rcDest.left, rcDest.top, Graphics::FLIP_NONE, &rcSrc);
 				}
 
 
@@ -739,7 +720,7 @@ void GriffonEngine::drawNPCs(int mode) {
 
 				// dragon2
 				if (_npcinfo[i].spriteset == kMonsterDragon2) {
-					if (_npcinfo[i].attacking == 0) {
+					if (!_npcinfo[i].attacking) {
 						_npcinfo[i].floating = _npcinfo[i].floating + 0.25 * _fpsr;
 						while (_npcinfo[i].floating >= 16)
 							_npcinfo[i].floating = _npcinfo[i].floating - 16;
@@ -893,7 +874,7 @@ void GriffonEngine::drawNPCs(int mode) {
 
 					_spellimg->setAlpha(255, true);
 
-					if (_npcinfo[i].attacking == 0) {
+					if (!_npcinfo[i].attacking) {
 						int cframe = (int)(frame);
 						rcSrc.left = 0;
 						rcSrc.top = 72 * (int)(cframe / 4);
@@ -1171,7 +1152,7 @@ void GriffonEngine::drawView() {
 
 	updateSpells();
 
-	if (cloudson == 1) {
+	if (_cloudsOn) {
 		Common::Rect rc;
 		rc.left = (float)(256 + 256 * cos(3.141592 / 180 * clouddeg));
 		rc.top = (float)(192 + 192 * sin(3.141592 / 180 * clouddeg));
@@ -1189,7 +1170,7 @@ void GriffonEngine::drawView() {
 void GriffonEngine::swash() {
 	float y = 0.0;
 	do {
-		y = y + 1 * _fpsr;
+		y += 1 * _fpsr;
 
 		_videobuffer->setAlpha((int)y);
 		_videobuffer->fillRect(Common::Rect(0, 0, _videobuffer->w, _videobuffer->h), 0);
@@ -1228,7 +1209,7 @@ void GriffonEngine::swash() {
 		_videobuffer->setAlpha((int)(y * 25));
 		_mapbg->blit(*_videobuffer);
 
-		if (cloudson == 1) {
+		if (_cloudsOn) {
 			rcDest.left = (float)(256 + 256 * cos(3.141592 / 180 * clouddeg));
 			rcDest.top = (float)(192 + 192 * sin(3.141592 / 180 * clouddeg));
 			rcDest.setWidth(320);
