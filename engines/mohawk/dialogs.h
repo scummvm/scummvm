@@ -80,7 +80,6 @@ public:
 	~MohawkOptionsDialog() override;
 
 	void reflowLayout() override;
-	int getResult() const { return GUI::Dialog::getResult(); }
 	void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data) override;
 };
 
@@ -96,7 +95,7 @@ public:
 	~MystOptionsDialog() override;
 
 	enum ResultAction {
-		kActionNone = 1,
+		kActionSaveSettings = 1,
 		kActionDropPage,
 		kActionShowMap,
 		kActionGoToMenu,
@@ -106,6 +105,11 @@ public:
 	void setCanDropPage(bool canDropPage);
 	void setCanShowMap(bool canShowMap);
 	void setCanReturnToMenu(bool canReturnToMenu);
+
+	bool getZipMode() const;
+	void setZipMode(bool enabled);
+	bool getTransitions() const;
+	void setTransitions(bool enabled);
 
 	void open() override;
 	void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data) override;

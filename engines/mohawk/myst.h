@@ -215,6 +215,7 @@ private:
 	void pauseEngineIntern(bool pause) override;
 
 	void goToMainMenu();
+	bool isGameStarted() const;
 
 	void dropPage();
 

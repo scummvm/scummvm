@@ -398,6 +398,9 @@ Common::Error MohawkEngine_Myst::run() {
 		return Common::kAudioDeviceInitFailed;
 	}
 
+	ConfMan.registerDefault("zip_mode", false);
+	ConfMan.registerDefault("transition_mode", false);
+
 	_gfx = new MystGraphics(this);
 	_video = new VideoManager(this);
 	_sound = new MystSound(this);
@@ -610,6 +613,14 @@ void MohawkEngine_Myst::runOptionsDialog() {
 		stack = _stack;
 	}
 
+	if (isGameStarted()) {
+		_optionsDialog->setZipMode(_gameState->_globals.zipMode);
+		_optionsDialog->setTransitions(_gameState->_globals.transitions);
+	} else {
+		_optionsDialog->setZipMode(ConfMan.getBool("zip_mode"));
+		_optionsDialog->setTransitions(ConfMan.getBool("transition_mode"));
+	}
+
 	_optionsDialog->setCanDropPage(actionsAllowed && _gameState->_globals.heldPage != kNoPage);
 	_optionsDialog->setCanShowMap(actionsAllowed && stack->getMap());
 	_optionsDialog->setCanReturnToMenu(actionsAllowed && stack->getStackId() != kDemoStack);
@@ -645,6 +656,16 @@ void MohawkEngine_Myst::runOptionsDialog() {
 			// because it unloads the previous age, removing data needed by the
 			// rest of the script. Instead we just quit without showing the credits.
 			quitGame();
+		}
+		break;
+	case MystOptionsDialog::kActionSaveSettings:
+		if (isGameStarted()) {
+			_gameState->_globals.zipMode = _optionsDialog->getZipMode();
+			_gameState->_globals.transitions = _optionsDialog->getTransitions();
+		} else {
+			ConfMan.setBool("zip_mode", _optionsDialog->getZipMode());
+			ConfMan.setBool("transition_mode", _optionsDialog->getTransitions());
+			ConfMan.flushToDisk();
 		}
 		break;
 	default:
@@ -1138,6 +1159,10 @@ void MohawkEngine_Myst::goToMainMenu() {
 	_card->enter();
 
 	_gfx->copyBackBufferToScreen(Common::Rect(544, 333));
+}
+
+bool MohawkEngine_Myst::isGameStarted() const {
+	return _prevStack || (_stack->getStackId() != kMenuStack);
 }
 
 void MohawkEngine_Myst::resumeFromMainMenu() {

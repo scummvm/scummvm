@@ -849,9 +849,7 @@ void MohawkEngine_Riven::runOptionsDialog() {
 		_optionsDialog->setTransitions(sanitizeTransitionMode(transitions));
 	}
 
-	runDialog(*_optionsDialog);
-
-	if (_optionsDialog->getResult() > 0) {
+	if (runDialog(*_optionsDialog) > 0) {
 		if (isGameStarted()) {
 			_vars["azip"] = _optionsDialog->getZipMode() ? 1 : 0;
 			_vars["waterenabled"] = _optionsDialog->getWaterEffect() ? 1 : 0;
