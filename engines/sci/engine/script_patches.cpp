@@ -10203,6 +10203,42 @@ static const uint16 qfg3PatchChestIconBar[] = {
 	PATCH_END
 };
 
+// Entering the jungle close to the Leopardman village and then exiting with
+//  Johari causes the game to display corrupt message boxes and divide by zero.
+//  Manu's script has the same bugs which could potentially be triggered.
+//
+// The script fromJungle in room 170 sets local0 to the result of calculations
+//  based on ego's initial distance to his destination. The scripts walkJohari
+//  and walkManu divide by local0. fromJungle checks to see if it's set local0
+//  to zero, but instead of addressing this, it displays a series of messages
+//  all at once and corrupts the screen before continuing on to the error.
+//
+// We fix this by not setting local0 to zero and disabling the broken messages.
+//  The message code is unnecessary since later in the same game cycle a local
+//  procedure displays the messages correctly. This is similar to the fix in the
+//  QFG3 Unofficial Update: https://github.com/AshLancer/QFG3-Fan-Patch
+//
+// Applies to: All versions
+// Responsible method: fromJungle:changeState(0)
+// Fixes bug: #11216
+static const uint16 qfg3SignatureJohariManuMapBugs[] = {
+	SIG_MAGICDWORD,
+	0xa3, 0x00,                         // sal 00 [ local0 = result ]
+	0x36,                               // push
+	0x35, 0x01,                         // ldi 01
+	0x22,                               // lt? [ local0 < 1 ]
+	0x31,                               // bnt [ skip broken messages ]
+	SIG_END
+};
+
+static const uint16 qfg3PatchJohariManuMapBugs[] = {
+	0x2f, 0x02,                         // bt 02
+	0x35, 0x01,                         // ldi 01
+	0xa3, 0x00,                         // sal 00 [ local0 = result ? result : 1 ]
+	0x33,                               // jmp    [ always skip broken messages  ]
+	PATCH_END
+};
+
 //          script, description,                                      signature                    patch
 static const SciScriptPatcherEntry qfg3Signatures[] = {
 	{  true,   944, "import dialog continuous calls",                     1, qfg3SignatureImportDialog,           qfg3PatchImportDialog },
@@ -10220,6 +10256,7 @@ static const SciScriptPatcherEntry qfg3Signatures[] = {
 	{  true,   750, "hero goes out of bounds in room 750",                2, qfg3SignatureRoom750Bounds2,         qfg3PatchRoom750Bounds2 },
 	{  true,   750, "hero goes out of bounds in room 750",                2, qfg3SignatureRoom750Bounds3,         qfg3PatchRoom750Bounds3 },
 	{  true,    29, "icon bar crash when using chest",                    1, qfg3SignatureChestIconBar,           qfg3PatchChestIconBar },
+	{  true,   170, "johari/manu map crash and message bugs",             2, qfg3SignatureJohariManuMapBugs,      qfg3PatchJohariManuMapBugs },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
