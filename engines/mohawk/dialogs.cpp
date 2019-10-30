@@ -186,9 +186,6 @@ void MystOptionsDialog::open() {
 	if (_vm->getFeatures() & GF_DEMO)
 		_zipModeCheckbox->setEnabled(false);
 
-	_zipModeCheckbox->setState(_vm->_gameState->_globals.zipMode);
-	_transitionsCheckbox->setState(_vm->_gameState->_globals.transitions);
-
 	if (_vm->getFeatures() & GF_25TH) {
 		// The 25th anniversary version has a main menu, no need to show these buttons here
 		_loadButton->setVisible(false);
@@ -247,15 +244,12 @@ void MystOptionsDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd, ui
 		setResult(kActionGoToMenu);
 		close();
 		break;
-	case kQuitCmd: {
+	case kQuitCmd:
 		setResult(kActionShowCredits);
 		close();
-	}
 		break;
 	case GUI::kOKCmd:
-		_vm->_gameState->_globals.zipMode = _zipModeCheckbox->getState();
-		_vm->_gameState->_globals.transitions = _transitionsCheckbox->getState();
-		setResult(kActionNone);
+		setResult(kActionSaveSettings);
 		close();
 		break;
 	default:
@@ -273,6 +267,22 @@ void MystOptionsDialog::setCanShowMap(bool canShowMap) {
 
 void MystOptionsDialog::setCanReturnToMenu(bool canReturnToMenu) {
 	_canReturnToMenu = canReturnToMenu;
+}
+
+bool MystOptionsDialog::getZipMode() const {
+	return _zipModeCheckbox->getState();
+}
+
+void MystOptionsDialog::setZipMode(bool enabled) {
+	_zipModeCheckbox->setState(enabled);
+}
+
+bool MystOptionsDialog::getTransitions() const {
+	return _transitionsCheckbox->getState();
+}
+
+void MystOptionsDialog::setTransitions(bool enabled) {
+	_transitionsCheckbox->setState(enabled);
 }
 
 #endif
