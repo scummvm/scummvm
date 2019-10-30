@@ -1064,7 +1064,6 @@ void Process::setCharacter() {
 	Common::String object = popString();
 	Common::String region = popString();
 	debug("setCharacter %s %s", region.c_str(), object.c_str());
-	_engine->runObject(object);
 }
 
 void Process::pointCharacter() {
