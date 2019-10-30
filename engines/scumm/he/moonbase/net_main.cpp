@@ -533,7 +533,7 @@ bool Net::remoteReceiveData() {
 			// and unpack it into an scumm array :-)
 
 			newArray = _vm->findFreeArrayId();
-			unpackageArray(newArray, _packbuffer + DATA_HEADER_SIZE, datalen);
+			unpackageArray(newArray, _packbuffer, datalen);
 			memset(_tmpbuffer, 0, 25 * 4);
 			WRITE_UINT32(_tmpbuffer, newArray);
 
