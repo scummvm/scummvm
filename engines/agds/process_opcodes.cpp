@@ -698,6 +698,7 @@ void Process::playAnimationWithPhaseVar() {
 	if (animation) {
 		animation->phaseVar(phaseVar);
 		animation->play();
+		_engine->setGlobal(phaseVar, 0);
 	}
 	else
 		warning("no animation with phase var %s found", phaseVar.c_str());
