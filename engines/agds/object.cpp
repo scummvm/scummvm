@@ -85,6 +85,7 @@ void Object::readStringTable(unsigned resOffset, uint16 resCount) {
 		//debug("resource table 1[%04u]: 0x%04x %s", i, flags, name.c_str());
 		_stringTable[i] = StringEntry(name, flags);
 	}
+	debug("loaded %u strings", resCount);
 	_stringTableLoaded = true;
 }
 
@@ -92,8 +93,11 @@ const Object::StringEntry & Object::getString(uint16 index) const {
 	if (!_stringTableLoaded)
 		error("no string table loaded");
 
-	if (index >= _stringTable.size())
-		error("no resource name with id %u", index);
+	if (index >= _stringTable.size()) {
+		static StringEntry empty;
+		warning("no resource name with id %u", index);
+		return empty;
+	}
 
 	return _stringTable[index];
 }
