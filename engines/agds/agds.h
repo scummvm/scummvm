@@ -91,7 +91,7 @@ public:
 	ObjectPtr loadObject(const Common::String & name, const Common::String & prototype = Common::String());
 	void runObject(ObjectPtr object);
 	void runObject(const Common::String & name, const Common::String &prototype = Common::String());
-	void runProcess(ObjectPtr object, uint ip = 0);
+	void runProcess(ObjectPtr object, uint ip = 0, Process * caller = NULL);
 
 	void resetCurrentScreen();
 	void loadScreen(const Common::String & name);

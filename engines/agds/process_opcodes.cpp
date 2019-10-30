@@ -950,9 +950,8 @@ void Process::call(uint16 addr) {
 	debug("call %04x", addr);
 	//original engine just create new process, save exit code in screen object
 	//and on stack, then just ignore return code, fixme?
-	Process callee(_engine, _object, _ip + addr);
-	ProcessExitCode code = callee.execute();
-	debug("call returned %d", code);
+	_waitForCall = true;
+	_engine->runProcess(_object, _ip + addr, this);
 	suspend();
 }
 
@@ -1207,6 +1206,10 @@ void Process::stub244() {
 	case NAME: { uint16 arg1 = next16(); uint32 arg2 = next16(); METHOD (arg1 | (arg2 << 16)); } break
 
 ProcessExitCode Process::execute() {
+	if (_waitForCall) {
+		_exitCode = kExitCodeSuspend;
+		return _exitCode;
+	}
 	_exitCode = kExitCodeDestroy;
 
 	const Object::CodeType &code = _object->getCode();
