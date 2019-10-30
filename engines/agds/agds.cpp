@@ -46,7 +46,9 @@ AGDSEngine::AGDSEngine(OSystem *system, const ADGameDescription *gameDesc) : Eng
 		_mjpgPlayer(), _currentScreen(), _previousScreen(),
 		_defaultMouseCursor(),
 		_mouse(400, 300), _userEnabled(false), _currentRegion(),
-		_random("agds"), _soundManager(this, system->getMixer()),
+		_random("agds"),
+		_inventoryRegion(),
+		_soundManager(this, system->getMixer()),
 		_fastMode(false),
 		_dialogScriptPos(0) {
 }
@@ -383,6 +385,8 @@ Common::Error AGDSEngine::run() {
 								runObject(region->onEnter);
 							}
 						}
+						if (_inventoryRegion)
+							_inventory.visible(_inventoryRegion->pointIn(_mouse));
 					}
 					break;
 				case Common::EVENT_LBUTTONDOWN:
@@ -700,9 +704,7 @@ void AGDSEngine::tickInventory() {
 	if (inv_region_name.empty())
 		return;
 
-	Region * inv_region = loadRegion(inv_region_name);
-	if (!inv_region)
-		return;
+	_inventoryRegion = loadRegion(inv_region_name);
 }
 
 bool AGDSEngine::tickDialog() {

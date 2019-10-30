@@ -215,6 +215,7 @@ private:
 	MouseMap					_mouseMap;
 	Common::RandomSource		_random;
 	Inventory					_inventory;
+	Region *					_inventoryRegion;
 	bool						_fastMode;
 	DialogDefsType				_dialogDefs;
 	Common::String				_dialogScript;
