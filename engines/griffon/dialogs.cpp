@@ -691,10 +691,10 @@ void GriffonEngine::saveLoadNew() {
 				int nx = rcSrc.left + 13 + 3 * 8;
 				rcSrc.left = nx - 17;
 
-				if (_playera.foundSpell[0] == 1) {
+				if (_playera.foundSpell[0]) {
 					for (int i = 0; i < 5; i++) {
 						rcSrc.left += 17;
-						if (_playera.foundSpell[i] == 1)
+						if (_playera.foundSpell[i])
 							_itemimg[7 + i]->blit(*_videobuffer, rcSrc.left, rcSrc.top);
 					}
 				}
