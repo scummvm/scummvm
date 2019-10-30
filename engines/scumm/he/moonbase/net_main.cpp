@@ -324,27 +324,29 @@ bool Net::initUser() {
 }
 
 void Net::remoteStartScript(int typeOfSend, int sendTypeParam, int priority, int argsCount, int32 *args) {
-	byte *ptr = _tmpbuffer;
-	for (int i = 0; i < argsCount; i++, ptr += 4)
-		WRITE_UINT32(ptr, args[i]);
+	Common::String res = "\"params\": [";
+
+	if (argsCount > 2)
+		for (int i = 0; i < argsCount - 1; i++)
+			res += Common::String::format("%d, ", args[i]);
+
+	if (argsCount > 1)
+		res += Common::String::format("%d]", args[argsCount - 1]);
+	else
+		res += "]";
 
 	warning("STUB: Net::remoteStartScript(%d, %d, %d, %d, ...)", typeOfSend, sendTypeParam, priority, argsCount); // PN_RemoteStartScriptCommand
 
-	remoteSendData(typeOfSend, sendTypeParam, PACKETTYPE_REMOTESTARTSCRIPTRETURN, _tmpbuffer, argsCount * 4, 0);
+	remoteSendData(typeOfSend, sendTypeParam, PACKETTYPE_REMOTESTARTSCRIPT, res, 0);
 }
 
-int Net::remoteSendData(int typeOfSend, int sendTypeParam, int type, byte *data, int len, int defaultRes) {
+int Net::remoteSendData(int typeOfSend, int sendTypeParam, int type, Common::String data, int defaultRes) {
 	// Since I am lazy, instead of constructing the JSON object manually
 	// I'd rather parse it
 	Common::String res = Common::String::format(
 		"{\"sessionid\":%d, \"from\":%d, \"to\":%d, \"toparam\": %d, "
-		"\"type\":%d, \"timestamp\": %d, \"size\": %d, \"data\": [", _sessionid, _myUserId,
-		typeOfSend, sendTypeParam, type, g_system->getMillis(), len);
-
-	for (int i = 0; i < len - 1; i++)
-		res += Common::String::format("%d, ", data[i]);
-
-	res += Common::String::format("%d] }", data[len - 1]);
+		"\"type\":%d, \"timestamp\": %d, \"size\": 1, \"data\": { %s } }", _sessionid, _myUserId,
+		typeOfSend, sendTypeParam, type, g_system->getMillis(), data.c_str());
 
 	byte *buf = (byte *)malloc(res.size() + 1);
 	strncpy((char *)buf, res.c_str(), res.size());
@@ -381,22 +383,40 @@ void Net::remoteSendDataErrorCallback(Networking::ErrorResponse error) {
 }
 
 void Net::remoteSendArray(int typeOfSend, int sendTypeParam, int priority, int arrayIndex) {
-	byte *arr = _vm->getResourceAddress(rtString, arrayIndex & ~0x33539000);
-	int len = _vm->getResourceSize(rtString, arrayIndex & ~0x33539000);
+	ScummEngine_v100he::ArrayHeader *ah = (ScummEngine_v100he::ArrayHeader *)_vm->getResourceAddress(rtString, arrayIndex & ~0x33539000);
+
+	Common::String jsonData = Common::String::format(
+		"\"type\":%d, \"dim1start\":%d, \"dim1end\":%d, \"dim2start\":%d, \"dim2end\":%d, \"data\": [",
+		ah->type, ah->dim1start, ah->dim1end, ah->dim2start, ah->dim2end);
+
+	int32 size = (FROM_LE_32(ah->dim1end) - FROM_LE_32(ah->dim1start) + 1) *
+		(FROM_LE_32(ah->dim2end) - FROM_LE_32(ah->dim2start) + 1);
+
+	for (int i = 0; i < size - 1; i++)
+		jsonData += Common::String::format("%d, ", ah->data[i]);
+
+	jsonData += Common::String::format("%d]", ah->data[size - 1]);
 
 	warning("STUB: Net::remoteSendArray(%d, %d, %d, %d)", typeOfSend, sendTypeParam, priority, arrayIndex & ~0x33539000); // PN_RemoteSendArrayCommand
 
-	remoteSendData(typeOfSend, sendTypeParam, PACKETTYPE_REMOTESENDSCUMMARRAY, arr, len, 0);
+	remoteSendData(typeOfSend, sendTypeParam, PACKETTYPE_REMOTESENDSCUMMARRAY, jsonData, 0);
 }
 
 int Net::remoteStartScriptFunction(int typeOfSend, int sendTypeParam, int priority, int defaultReturnValue, int argsCount, int32 *args) {
-	byte *ptr = _tmpbuffer;
-	for (int i = 0; i < argsCount; i++, ptr += 4)
-		WRITE_UINT32(ptr, args[i]);
+	Common::String res = "\"params\": [";
+
+	if (argsCount > 2)
+		for (int i = 0; i < argsCount - 1; i++)
+			res += Common::String::format("%d, ", args[i]);
+
+	if (argsCount > 1)
+		res += Common::String::format("%d]", args[argsCount - 1]);
+	else
+		res += "]";
 
 	warning("STUB: Net::remoteStartScriptFunction(%d, %d, %d, %d, %d, ...)", typeOfSend, sendTypeParam, priority, defaultReturnValue, argsCount); // PN_RemoteStartScriptFunction
 
-	return remoteSendData(typeOfSend, sendTypeParam, PACKETTYPE_REMOTESTARTSCRIPTRETURN, _tmpbuffer, argsCount * 4, defaultReturnValue);
+	return remoteSendData(typeOfSend, sendTypeParam, PACKETTYPE_REMOTESTARTSCRIPTRETURN, res, defaultReturnValue);
 }
 
 bool Net::getHostName(char *hostname, int length) {
@@ -510,11 +530,11 @@ bool Net::remoteReceiveData() {
 			}
 
 			_vm->runScript(_vm->VAR(_vm->VAR_REMOTE_START_SCRIPT), 1, 0, (int *)_tmpbuffer);
-			int res = _vm->pop();
+			int result = _vm->pop();
 
-			WRITE_UINT32(_tmpbuffer, res);
+			Common::String res = Common::String::format("\"result\": %d", result);
 
-			remoteSendData(PN_SENDTYPE_INDIVIDUAL, from, PACKETTYPE_REMOTESTARTSCRIPTRESULT, _tmpbuffer, 4, 0);
+			remoteSendData(PN_SENDTYPE_INDIVIDUAL, from, PACKETTYPE_REMOTESTARTSCRIPTRESULT, res, 0);
 		}
 		break;
 

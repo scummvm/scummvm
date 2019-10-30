@@ -61,7 +61,7 @@ public:
 	bool initSession();
 	bool initUser();
 	void remoteStartScript(int typeOfSend, int sendTypeParam, int priority, int argsCount, int32 *args);
-	int remoteSendData(int typeOfSend, int sendTypeParam, int type, byte *data, int len, int defaultRes);
+	int remoteSendData(int typeOfSend, int sendTypeParam, int type, Common::String data, int defaultRes);
 	void remoteSendArray(int typeOfSend, int sendTypeParam, int priority, int arrayIndex);
 	int remoteStartScriptFunction(int typeOfSend, int sendTypeParam, int priority, int defaultReturnValue, int argsCount, int32 *args);
 	void doNetworkOnceAFrame(int msecs);
