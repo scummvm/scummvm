@@ -46,7 +46,7 @@ Object::Object(const Common::String &name, Common::SeekableReadStream * stream) 
 
 	uint16 dataSize = stream->readUint16LE();
 	if (dataSize != 0)
-		error("implement me: object with data (%u)", dataSize);
+		error("implement me: object with data (%u/0x%04x)", dataSize, dataSize);
 	uint16 codeSize = stream->readUint16LE();
 	uint8 flags = stream->readByte();
 	if (flags != 1)
