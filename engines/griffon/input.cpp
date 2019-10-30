@@ -50,22 +50,22 @@ void GriffonEngine::checkInputs() {
 	nposts = 0;
 
 	for (int i = 0; i <= 20; i++) {
-		postinfo[i][0] = 0;
-		postinfo[i][1] = 0;
+		_postInfo[i][0] = 0;
+		_postInfo[i][1] = 0;
 	}
 
 	for (int x = 0; x <= 19; x++) {
 		for (int y = 0; y <= 14; y++) {
 			int o = _objectMap[x][y];
 			if (_objectInfo[o][4] == 3) {
-				postinfo[nposts][0] = x * 16;
-				postinfo[nposts][1] = y * 16;
+				_postInfo[nposts][0] = x * 16;
+				_postInfo[nposts][1] = y * 16;
 				nposts = nposts + 1;
 			}
 		}
 	}
 
-	if (attacking || (_forcepause && !_itemSelOn))
+	if (attacking || (_forcePause && !_itemSelOn))
 		return;
 
 	if (_event.type == Common::EVENT_QUIT) {
@@ -75,18 +75,18 @@ void GriffonEngine::checkInputs() {
 
 	if (_event.type == Common::EVENT_KEYDOWN) {
 		if (_event.kbd.keycode == Common::KEYCODE_ESCAPE) {
-			if (_itemticks < _ticks)
+			if (_itemTicks < _ticks)
 				title(1);
 		} else if (_event.kbd.keycode == Common::KEYCODE_d && _event.kbd.hasFlags(Common::KBD_CTRL)) {
 			_console->attach();
 			_event.type = Common::EVENT_INVALID;
 		} else if (_event.kbd.hasFlags(Common::KBD_CTRL)) {
-			if (!_itemSelOn && (_itemticks < _ticks))
+			if (!_itemSelOn && (_itemTicks < _ticks))
 				attack();
 
-			if (_itemSelOn && _itemticks < _ticks) {
-				if (_curitem == 0 && _player.inventory[kInvFlask] > 0) {
-					_itemticks = _ticks + ntickdelay;
+			if (_itemSelOn && _itemTicks < _ticks) {
+				if (_curItem == 0 && _player.inventory[kInvFlask] > 0) {
+					_itemTicks = _ticks + ntickdelay;
 
 					int heal = 50;
 					int maxh = _player.maxHp - _player.hp;
@@ -108,11 +108,11 @@ void GriffonEngine::checkInputs() {
 					}
 
 					_itemSelOn = false;
-					_forcepause = false;
+					_forcePause = false;
 				}
 
-				if (_curitem == 1 && _player.inventory[kInvDoubleFlask] > 0) {
-					_itemticks = _ticks + ntickdelay;
+				if (_curItem == 1 && _player.inventory[kInvDoubleFlask] > 0) {
+					_itemTicks = _ticks + ntickdelay;
 
 					int heal = 200;
 					int maxHeal = _player.maxHp - _player.hp;
@@ -134,86 +134,86 @@ void GriffonEngine::checkInputs() {
 					}
 
 					_itemSelOn = false;
-					_forcepause = false;
+					_forcePause = false;
 				}
 
-				if (_curitem == 2 && _player.inventory[kInvShock] > 0) {
-					castSpell(8, _player.px, _player.py, _npcinfo[_curenemy].x, _npcinfo[_curenemy].y, 0);
+				if (_curItem == 2 && _player.inventory[kInvShock] > 0) {
+					castSpell(8, _player.px, _player.py, _npcinfo[_curEnemy].x, _npcinfo[_curEnemy].y, 0);
 
-					_forcepause = true;
+					_forcePause = true;
 
 					_player.inventory[kInvShock]--;
 
-					_itemticks = _ticks + ntickdelay;
+					_itemTicks = _ticks + ntickdelay;
 					_selEnemyOn = false;
 					_itemSelOn = false;
 
 				}
 
-				if (_curitem == 3 && _player.inventory[kInvNormalKey] > 0 && _canUseKey && _lockType == 1) {
+				if (_curItem == 3 && _player.inventory[kInvNormalKey] > 0 && _canUseKey && _lockType == 1) {
 					_roomLocks[_roomToUnlock] = 0;
 					eventText("UnLocked!");
 
 					_player.inventory[kInvNormalKey]--;
 
-					_itemticks = _ticks + ntickdelay;
+					_itemTicks = _ticks + ntickdelay;
 					_selEnemyOn = false;
 					_itemSelOn = false;
 					return;
 				}
 
-				if (_curitem == 4 && _player.inventory[kInvMasterKey] > 0 && _canUseKey && _lockType == 2) {
+				if (_curItem == 4 && _player.inventory[kInvMasterKey] > 0 && _canUseKey && _lockType == 2) {
 					_roomLocks[_roomToUnlock] = 0;
 					eventText("UnLocked!");
 
 					_player.inventory[kInvMasterKey]--;
 
-					_itemticks = _ticks + ntickdelay;
+					_itemTicks = _ticks + ntickdelay;
 					_selEnemyOn = false;
 					_itemSelOn = false;
 					return;
 				}
 
-				if (_curitem == 5 && _player.spellCharge[0] == 100) {
-					castSpell(5, _player.px, _player.py, _npcinfo[_curenemy].x, _npcinfo[_curenemy].y, 0);
+				if (_curItem == 5 && _player.spellCharge[0] == 100) {
+					castSpell(5, _player.px, _player.py, _npcinfo[_curEnemy].x, _npcinfo[_curEnemy].y, 0);
 
 					_player.spellCharge[0] = 0;
 
-					_forcepause = true;
+					_forcePause = true;
 
-					_itemticks = _ticks + ntickdelay;
+					_itemTicks = _ticks + ntickdelay;
 					_selEnemyOn = false;
 					_itemSelOn = false;
 				}
 
-				if (_curitem > 5 && _selEnemyOn) {
-					if (_curenemy <= _lastnpc) {
-						castSpell(_curitem - 6, _player.px, _player.py, _npcinfo[_curenemy].x, _npcinfo[_curenemy].y, 0);
+				if (_curItem > 5 && _selEnemyOn) {
+					if (_curEnemy <= _lastnpc) {
+						castSpell(_curItem - 6, _player.px, _player.py, _npcinfo[_curEnemy].x, _npcinfo[_curEnemy].y, 0);
 					} else {
-						int pst = _curenemy - _lastnpc - 1;
-						castSpell(_curitem - 6, _player.px, _player.py, postinfo[pst][0], postinfo[pst][1], 0);
+						int pst = _curEnemy - _lastnpc - 1;
+						castSpell(_curItem - 6, _player.px, _player.py, _postInfo[pst][0], _postInfo[pst][1], 0);
 					}
 
-					_player.spellCharge[_curitem - 5] = 0;
+					_player.spellCharge[_curItem - 5] = 0;
 
 					_player.spellStrength = 0;
 
-					_itemticks = _ticks + ntickdelay;
+					_itemTicks = _ticks + ntickdelay;
 					_selEnemyOn = false;
 					_itemSelOn = false;
-					_forcepause = false;
+					_forcePause = false;
 				}
 
-				if (_curitem > 5 && !_selEnemyOn && _itemSelOn) {
-					if (ABS(_player.spellCharge[_curitem - 5] - 100) < kEpsilon) {
-						_itemticks = _ticks + ntickdelay;
+				if (_curItem > 5 && !_selEnemyOn && _itemSelOn) {
+					if (ABS(_player.spellCharge[_curItem - 5] - 100) < kEpsilon) {
+						_itemTicks = _ticks + ntickdelay;
 
 						_selEnemyOn = true;
 
 						int i = 0;
 						do {
 							if (_npcinfo[i].hp > 0) {
-								_curenemy = i;
+								_curEnemy = i;
 								goto __exit_do;
 							}
 							i = i + 1;
@@ -226,23 +226,23 @@ __exit_do:
 
 						if (nposts > 0 && !_selEnemyOn) {
 							_selEnemyOn = true;
-							_curenemy = _lastnpc + 1;
+							_curEnemy = _lastnpc + 1;
 						}
 					}
 
 				}
 			}
 		} else if (_event.kbd.hasFlags(Common::KBD_ALT)) {
-			if (_itemticks < _ticks) {
+			if (_itemTicks < _ticks) {
 				_selEnemyOn = false;
 				if (_itemSelOn) {
 					_itemSelOn = false;
-					_itemticks = _ticks + 220;
-					_forcepause = false;
+					_itemTicks = _ticks + 220;
+					_forcePause = false;
 				} else {
 					_itemSelOn = true;
-					_itemticks = _ticks + 220;
-					_forcepause = true;
+					_itemTicks = _ticks + 220;
+					_forcePause = true;
 					_player.itemselshade = 0;
 				}
 			}
@@ -269,75 +269,75 @@ __exit_do:
 		movingright = false;
 
 		if (_selEnemyOn) {
-			if (_itemticks < _ticks) {
+			if (_itemTicks < _ticks) {
 				if (_event.kbd.keycode == Common::KEYCODE_LEFT) {
-					int origin = _curenemy;
+					int origin = _curEnemy;
 					do {
-						_curenemy = _curenemy - 1;
-						if (_curenemy < 1)
-							_curenemy = _lastnpc + nposts;
-						if (_curenemy == origin)
+						_curEnemy = _curEnemy - 1;
+						if (_curEnemy < 1)
+							_curEnemy = _lastnpc + nposts;
+						if (_curEnemy == origin)
 							break;
-						if (_curenemy <= _lastnpc && _npcinfo[_curenemy].hp > 0)
+						if (_curEnemy <= _lastnpc && _npcinfo[_curEnemy].hp > 0)
 							break;
-						if (_curenemy > _lastnpc)
+						if (_curEnemy > _lastnpc)
 							break;
 					} while (1);
-					_itemticks = _ticks + ntickdelay;
+					_itemTicks = _ticks + ntickdelay;
 				}
 				if (_event.kbd.keycode == Common::KEYCODE_RIGHT) {
-					int origin = _curenemy;
+					int origin = _curEnemy;
 					do {
-						_curenemy = _curenemy + 1;
-						if (_curenemy > _lastnpc + nposts)
-							_curenemy = 1;
-						if (_curenemy == origin)
+						_curEnemy = _curEnemy + 1;
+						if (_curEnemy > _lastnpc + nposts)
+							_curEnemy = 1;
+						if (_curEnemy == origin)
 							break;
-						if (_curenemy <= _lastnpc && _npcinfo[_curenemy].hp > 0)
+						if (_curEnemy <= _lastnpc && _npcinfo[_curEnemy].hp > 0)
 							break;
-						if (_curenemy > _lastnpc)
+						if (_curEnemy > _lastnpc)
 							break;
 					} while (1);
-					_itemticks = _ticks + ntickdelay;
+					_itemTicks = _ticks + ntickdelay;
 				}
 
 
-				if (_curenemy > _lastnpc + nposts)
-					_curenemy = 1;
-				if (_curenemy < 1)
-					_curenemy = _lastnpc + nposts;
+				if (_curEnemy > _lastnpc + nposts)
+					_curEnemy = 1;
+				if (_curEnemy < 1)
+					_curEnemy = _lastnpc + nposts;
 			}
 		} else {
-			if (_itemticks < _ticks) {
+			if (_itemTicks < _ticks) {
 				if (_event.kbd.keycode == Common::KEYCODE_UP) {
-					_curitem = _curitem - 1;
-					_itemticks = _ticks + ntickdelay;
-					if (_curitem == 4)
-						_curitem = 9;
-					if (_curitem == -1)
-						_curitem = 4;
+					_curItem = _curItem - 1;
+					_itemTicks = _ticks + ntickdelay;
+					if (_curItem == 4)
+						_curItem = 9;
+					if (_curItem == -1)
+						_curItem = 4;
 				}
 				if (_event.kbd.keycode == Common::KEYCODE_DOWN) {
-					_curitem = _curitem + 1;
-					_itemticks = _ticks + ntickdelay;
-					if (_curitem == 5)
-						_curitem = 0;
-					if (_curitem == 10)
-						_curitem = 5;
+					_curItem = _curItem + 1;
+					_itemTicks = _ticks + ntickdelay;
+					if (_curItem == 5)
+						_curItem = 0;
+					if (_curItem == 10)
+						_curItem = 5;
 				}
 				if (_event.kbd.keycode == Common::KEYCODE_LEFT) {
-					_curitem = _curitem - 5;
-					_itemticks = _ticks + ntickdelay;
+					_curItem = _curItem - 5;
+					_itemTicks = _ticks + ntickdelay;
 				}
 				if (_event.kbd.keycode == Common::KEYCODE_RIGHT) {
-					_curitem = _curitem + 5;
-					_itemticks = _ticks + ntickdelay;
+					_curItem = _curItem + 5;
+					_itemTicks = _ticks + ntickdelay;
 				}
 
-				if (_curitem > 9)
-					_curitem = _curitem - 10;
-				if (_curitem < 0)
-					_curitem = _curitem + 10;
+				if (_curItem > 9)
+					_curItem = _curItem - 10;
+				if (_curItem < 0)
+					_curItem = _curItem + 10;
 			}
 		}
 	}
@@ -362,7 +362,7 @@ void GriffonEngine::handleWalking() {
 	int lx = (int)npx / 16;
 	int ly = (int)npy / 16;
 
-	int ramp = _rampdata[lx][ly];
+	int ramp = _rampData[lx][ly];
 	if (ramp == 1 && movingup)
 		spd *= 2;
 	if (ramp == 1 && movingdown)
@@ -385,10 +385,10 @@ void GriffonEngine::handleWalking() {
 			int sx = nx + x;
 			int sy = ny + y;
 
-			_clipsurround[x + 1][y + 1] = 0;
+			_clipSurround[x + 1][y + 1] = 0;
 			if (sx > -1 && sx < 320 && sy > -1 && sy < 192) {
-				temp = (uint32 *)_clipbg->getBasePtr(sx, sy);
-				_clipsurround[x + 1][y + 1] = *temp;
+				temp = (uint32 *)_clipBg->getBasePtr(sx, sy);
+				_clipSurround[x + 1][y + 1] = *temp;
 			}
 		}
 	}
@@ -402,66 +402,66 @@ void GriffonEngine::handleWalking() {
 	if (movingright)
 		_player.walkDir = 3;
 
-	if (movingup && _clipsurround[1][0] == 0) {
+	if (movingup && _clipSurround[1][0] == 0) {
 		py -= spd;
 		_player.walkDir = 0;
-	} else if (movingup && _clipsurround[1][0] > 0) {
+	} else if (movingup && _clipSurround[1][0] > 0) {
 		// move upleft
-		if (!movingright && _clipsurround[0][0] == 0) {
+		if (!movingright && _clipSurround[0][0] == 0) {
 			py -= spd;
 			px -= spd;
 		}
 
 		// move upright
-		if (!movingleft && _clipsurround[2][0] == 0) {
+		if (!movingleft && _clipSurround[2][0] == 0) {
 			py -= spd;
 			px += spd;
 		}
 	}
-	if (movingdown && _clipsurround[1][2] == 0) {
+	if (movingdown && _clipSurround[1][2] == 0) {
 		py += spd;
 		_player.walkDir = 1;
-	} else if (movingdown && _clipsurround[1][2] > 0) {
+	} else if (movingdown && _clipSurround[1][2] > 0) {
 		// move downleft
-		if (movingright == 0 && _clipsurround[0][2] == 0) {
+		if (movingright == 0 && _clipSurround[0][2] == 0) {
 			py += spd;
 			px -= spd;
 		}
 
 		// move downright
-		if (movingleft == 0 && _clipsurround[2][2] == 0) {
+		if (movingleft == 0 && _clipSurround[2][2] == 0) {
 			py += spd;
 			px += spd;
 		}
 	}
-	if (movingleft && _clipsurround[0][1] == 0) {
+	if (movingleft && _clipSurround[0][1] == 0) {
 		px -= spd;
 		_player.walkDir = 2;
-	} else if (movingleft && _clipsurround[0][1] > 0) {
+	} else if (movingleft && _clipSurround[0][1] > 0) {
 		// move leftup
-		if (!movingdown && _clipsurround[0][0] == 0) {
+		if (!movingdown && _clipSurround[0][0] == 0) {
 			py -= spd;
 			px -= spd;
 		}
 
 		// move leftdown
-		if (!movingup && _clipsurround[0][2] == 0) {
+		if (!movingup && _clipSurround[0][2] == 0) {
 			py += spd;
 			px -= spd;
 		}
 	}
-	if (movingright && _clipsurround[2][1] == 0) {
+	if (movingright && _clipSurround[2][1] == 0) {
 		px += spd;
 		_player.walkDir = 3;
-	} else if (movingright && _clipsurround[2][1] > 0) {
+	} else if (movingright && _clipSurround[2][1] > 0) {
 		// move rightup
-		if (!movingdown && _clipsurround[2][0] == 0) {
+		if (!movingdown && _clipSurround[2][0] == 0) {
 			px += spd;
 			py -= spd;
 		}
 
 		// move rightdown
-		if (!movingup && _clipsurround[2][2] == 0) {
+		if (!movingup && _clipSurround[2][2] == 0) {
 			py += spd;
 			px += spd;
 		}
@@ -480,7 +480,7 @@ void GriffonEngine::handleWalking() {
 
 	int sx = (px / 2 + 6);
 	int sy = (py / 2 + 10);
-	temp = (uint32 *)_clipbg->getBasePtr(sx, sy);
+	temp = (uint32 *)_clipBg->getBasePtr(sx, sy);
 	bgc = *temp;
 	if (bgc > 0 && bgc != 1000) {
 		px = opx;
@@ -520,7 +520,7 @@ void GriffonEngine::handleWalking() {
 
 				sx = (int)(npx / 2 + 6);
 				sy = (int)(npy / 2 + 10);
-				temp = (uint32 *)_clipbg->getBasePtr(sx, sy);
+				temp = (uint32 *)_clipBg->getBasePtr(sx, sy);
 				bgc = *temp;
 
 				if (bgc > 0) {
@@ -537,7 +537,7 @@ void GriffonEngine::handleWalking() {
 	_player.py = py;
 
 	if (_player.px != _player.opx || _player.py != _player.opy)
-		_player.walkFrame += _animspd * _fpsr;
+		_player.walkFrame += _animSpeed * _fpsr;
 	if (_player.walkFrame >= 16)
 		_player.walkFrame -= 16;
 
@@ -552,7 +552,7 @@ void GriffonEngine::handleWalking() {
 			_player.inventory[kInvFlask]++;
 			addFloatIcon(6, lx * 16, ly * 16);
 
-			_objmapf[_curmap][lx][ly] = 1;
+			_objmapf[_curMap][lx][ly] = 1;
 
 			if (config.effects) {
 				int snd = playSound(_sfx[kSndPowerUp]);
@@ -566,7 +566,7 @@ void GriffonEngine::handleWalking() {
 			_player.inventory[kInvDoubleFlask]++;
 			addFloatIcon(12, lx * 16, ly * 16);
 
-			_objmapf[_curmap][lx][ly] = 1;
+			_objmapf[_curMap][lx][ly] = 1;
 
 			if (config.effects) {
 				int snd = playSound(_sfx[kSndPowerUp]);
@@ -574,15 +574,15 @@ void GriffonEngine::handleWalking() {
 			}
 		}
 
-		if (_objectInfo[o][5] == 9 && _player.inventory[kInvShock] < 9 && (_curmap == 41 && _scriptflag[kScriptLightningBomb][1] == 0)) {
+		if (_objectInfo[o][5] == 9 && _player.inventory[kInvShock] < 9 && (_curMap == 41 && _scriptFlag[kScriptLightningBomb][1] == 0)) {
 			_objectMap[lx][ly] = -1;
 
 			_player.inventory[kInvShock]++;
 			addFloatIcon(17, lx * 16, ly * 16);
 
-			_objmapf[_curmap][lx][ly] = 1;
-			if (_curmap == 41)
-				_scriptflag[kScriptLightningBomb][1] = 1;
+			_objmapf[_curMap][lx][ly] = 1;
+			if (_curMap == 41)
+				_scriptFlag[kScriptLightningBomb][1] = 1;
 
 			if (config.effects) {
 				int snd = playSound(_sfx[kSndPowerUp]);
@@ -597,7 +597,7 @@ void GriffonEngine::handleWalking() {
 			_player.inventory[kInvShock]++;
 			addFloatIcon(17, lx * 16, ly * 16);
 
-			_objmapf[_curmap][lx][ly] = 1;
+			_objmapf[_curMap][lx][ly] = 1;
 
 			if (config.effects) {
 				int snd = playSound(_sfx[kSndPowerUp]);
@@ -624,7 +624,7 @@ void GriffonEngine::checkTrigger() {
 void GriffonEngine::processTrigger(int trignum) {
 	int trigtype = _triggers[trignum][0];
 
-	if (_roomlock)
+	if (_roomLock)
 		return;
 
 	// map jump------------------------------

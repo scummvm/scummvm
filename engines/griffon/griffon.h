@@ -381,51 +381,51 @@ private:
 	void updateMusic();
 
 private:
-	Graphics::TransparentSurface *_video, *_videobuffer, *_videobuffer2, *_videobuffer3;
+	Graphics::TransparentSurface *_video, *_videoBuffer, *_videoBuffer2, *_videoBuffer3;
 
 	// system
-	Graphics::TransparentSurface *_titleimg, *_titleimg2, *_inventoryimg;
-	Graphics::TransparentSurface *_logosimg, *_theendimg;
+	Graphics::TransparentSurface *_titleImg, *_titleImg2, *_inventoryImg;
+	Graphics::TransparentSurface *_logosImg, *_theEndImg;
 	Common::Event _event;
 
-	Graphics::TransparentSurface *_mapbg, *_clipbg, *_clipbg2;
-	unsigned int _clipsurround[4][4];
+	Graphics::TransparentSurface *_mapBg, *_clipBg, *_clipBg2;
+	unsigned int _clipSurround[4][4];
 
-	float _animspd; // CHECKME: it seems to always be 0.5
-	int _rampdata[40][24];
+	float _animSpeed; // CHECKME: it seems to always be 0.5
+	int _rampData[40][24];
 
-	int _curmap;
-	Graphics::TransparentSurface *_fontchr[224][5]; // 256 - 32
-	Graphics::TransparentSurface *_itemimg[21], *_windowimg;
-	Graphics::TransparentSurface *_spellimg;
+	int _curMap;
+	Graphics::TransparentSurface *_fontChr[224][5]; // 256 - 32
+	Graphics::TransparentSurface *_itemImg[21], *_windowImg;
+	Graphics::TransparentSurface *_spellImg;
 
 	bool _itemSelOn;
-	int _curitem, _itemticks;
+	int _curItem, _itemTicks;
 	float _itemyloc;
 	bool _selEnemyOn;
-	int _curenemy;
-	bool _forcepause;
-	bool _roomlock; // set to disable any room jumps while in the room
-	int _scriptflag[100][10], _saveslot;  // script, flag
+	int _curEnemy;
+	bool _forcePause;
+	bool _roomLock; // set to disable any room jumps while in the room
+	int _scriptFlag[100][10], _saveSlot;  // script, flag
 
 	// timer related - move to local later
-	int _ticks, _tickspassed, _nextticks;
+	int _ticks, _ticksPassed, _nextTicks;
 	float _fp, _fps, _fpsr; // CHECKME: _fp and _fps seems to be integers
-	int _secsingame, _secstart;
+	int _secsingame, _secStart;
 
-	Graphics::TransparentSurface *mapimg[4];
+	Graphics::TransparentSurface *mapImg[4];
 
 	Common::Rect rcSrc, rcDest;
 
 	// -----------special case
-	int dontdrawover;   // used in map24 so that the candles don't draw over the boss, default set to 0
+	bool _dontDrawOver;   // used in map24 so that the candles don't draw over the boss, default set to 0
 
 	// saveload info
-	Graphics::TransparentSurface *saveloadimg;
+	Graphics::TransparentSurface *_saveLoadImg;
 
 
 	// post info
-	float postinfo[21][3];
+	float _postInfo[21][3];
 	int nposts;
 
 	// cloud info
@@ -450,7 +450,7 @@ private:
 	// animation info
 	Graphics::TransparentSurface *_anims[100];
 	// id number 0&1 = players
-	Graphics::TransparentSurface *_animsa[100];
+	Graphics::TransparentSurface *_animsAttack[100];
 	// attack anims
 	float _playerattackofs[4][16][3];
 	// [dir] [frame] [x,y ofs, completed(0/1)]

@@ -59,41 +59,41 @@ void GriffonEngine::initialize() {
 
 	_video = new Graphics::TransparentSurface;
 	_video->create(320, 240, g_system->getScreenFormat());
-	_videobuffer = new Graphics::TransparentSurface;
-	_videobuffer->create(320, 240, g_system->getScreenFormat());
-	_videobuffer2 = new Graphics::TransparentSurface;
-	_videobuffer2->create(320, 240, g_system->getScreenFormat());
-	_videobuffer3 = new Graphics::TransparentSurface;
-	_videobuffer3->create(320, 240, g_system->getScreenFormat());
-	_mapbg = new Graphics::TransparentSurface;
-	_mapbg->create(320, 240, g_system->getScreenFormat());
-	_clipbg = new Graphics::TransparentSurface;
-	_clipbg->create(320, 240, g_system->getScreenFormat());
-	_clipbg2 = new Graphics::TransparentSurface;
-	_clipbg2->create(320, 240, g_system->getScreenFormat());
+	_videoBuffer = new Graphics::TransparentSurface;
+	_videoBuffer->create(320, 240, g_system->getScreenFormat());
+	_videoBuffer2 = new Graphics::TransparentSurface;
+	_videoBuffer2->create(320, 240, g_system->getScreenFormat());
+	_videoBuffer3 = new Graphics::TransparentSurface;
+	_videoBuffer3->create(320, 240, g_system->getScreenFormat());
+	_mapBg = new Graphics::TransparentSurface;
+	_mapBg->create(320, 240, g_system->getScreenFormat());
+	_clipBg = new Graphics::TransparentSurface;
+	_clipBg->create(320, 240, g_system->getScreenFormat());
+	_clipBg2 = new Graphics::TransparentSurface;
+	_clipBg2->create(320, 240, g_system->getScreenFormat());
 
 	for (int i = 0; i <= 3; i++) {
 		char name[128];
 
 		sprintf(name, "art/map%i.bmp", i + 1);
-		mapimg[i] = loadImage(name, true);
+		mapImg[i] = loadImage(name, true);
 	}
 
 	cloudimg = loadImage("art/clouds.bmp", true);
 	cloudimg->setAlpha(96, true);
 
 
-	saveloadimg = loadImage("art/saveloadnew.bmp", true);
-	saveloadimg->setAlpha(160, true);
+	_saveLoadImg = loadImage("art/saveloadnew.bmp", true);
+	_saveLoadImg->setAlpha(160, true);
 
-	_titleimg = loadImage("art/titleb.bmp");
-	_titleimg2 = loadImage("art/titlea.bmp", true);
+	_titleImg = loadImage("art/titleb.bmp");
+	_titleImg2 = loadImage("art/titlea.bmp", true);
 	//_titleimg2->setAlpha(204, true);
 
-	_inventoryimg = loadImage("art/inventory.bmp", true);
+	_inventoryImg = loadImage("art/inventory.bmp", true);
 
-	_logosimg = loadImage("art/logos.bmp");
-	_theendimg = loadImage("art/theend.bmp");
+	_logosImg = loadImage("art/logos.bmp");
+	_theEndImg = loadImage("art/theend.bmp");
 
 
 	loadTiles();
@@ -104,7 +104,7 @@ void GriffonEngine::initialize() {
 	loadItemImgs();
 
 	_fpsr = 1.0f;
-	_nextticks = _ticks + 1000;
+	_nextTicks = _ticks + 1000;
 
 	for (int i = 0; i <= 15; i++) {
 		_playerattackofs[0][i][0] = 0; // -1// -(i + 1)
@@ -148,16 +148,16 @@ Graphics::TransparentSurface *GriffonEngine::loadImage(const char *name, bool co
 void GriffonEngine::loadMap(int mapnum) {
 	debug(2, "Loaded map %d", mapnum);
 
-	unsigned int ccc = _clipbg->format.RGBToColor(255, 255, 255);
+	unsigned int ccc = _clipBg->format.RGBToColor(255, 255, 255);
 
-	_curmap = mapnum;
+	_curMap = mapnum;
 	Common::Rect trect(320, 240);
 
-	_mapbg->fillRect(trect, 0);
-	_clipbg->fillRect(trect, ccc);
-	_clipbg2->fillRect(trect, ccc);
+	_mapBg->fillRect(trect, 0);
+	_clipBg->fillRect(trect, ccc);
+	_clipBg2->fillRect(trect, ccc);
 
-	_forcepause = false;
+	_forcePause = false;
 	_cloudsOn = false;
 	if (mapnum < 6)
 		_cloudsOn = true;
@@ -181,19 +181,19 @@ void GriffonEngine::loadMap(int mapnum) {
 		_cloudsOn = true;
 
 	// -----------special case
-	dontdrawover = 0;
+	_dontDrawOver = false;
 	if (mapnum == 24)
-		dontdrawover = 1;
+		_dontDrawOver = true;
 
-	if ((mapnum == 53 || mapnum == 57 || mapnum == 61 || mapnum == 65 || mapnum == 62) && _scriptflag[kScriptLever][0] > 0)
+	if ((mapnum == 53 || mapnum == 57 || mapnum == 61 || mapnum == 65 || mapnum == 62) && _scriptFlag[kScriptLever][0] > 0)
 		mapnum = mapnum + 100;
-	if ((mapnum == 161 || mapnum == 162) && _scriptflag[kScriptLever][0] == 2)
+	if ((mapnum == 161 || mapnum == 162) && _scriptFlag[kScriptLever][0] == 2)
 		mapnum = mapnum + 100;
 
 	for (int i = 0; i < kMaxSpell; i++)
 		spellinfo[i].frame = 0;
 
-	_roomlock = false;
+	_roomLock = false;
 
 	char name[256];
 	// read *.map file
@@ -242,7 +242,7 @@ void GriffonEngine::loadMap(int mapnum) {
 
 	for (int y = 0; y <= 23; y++) {
 		for (int x = 0; x <= 39; x++)
-			_rampdata[x][y] = tempmap[3 * 40 + x][y + 40];
+			_rampData[x][y] = tempmap[3 * 40 + x][y + 40];
 	}
 
 	for (int y = 0; y <= 23; y++) {
@@ -254,7 +254,7 @@ void GriffonEngine::loadMap(int mapnum) {
 		}
 	}
 
-	if (_scriptflag[kScriptFindShield][0] == 1 && _curmap == 4) {
+	if (_scriptFlag[kScriptFindShield][0] == 1 && _curMap == 4) {
 		_triggerloc[9][7] = 5004;
 		tempmap[9][7] = 41;
 		tempmap[9][7 + 40] = 0;
@@ -307,7 +307,7 @@ void GriffonEngine::loadMap(int mapnum) {
 						}
 					}
 
-					_tiles[curtilel]->blit(*_mapbg, rcDest.left, rcDest.top, Graphics::FLIP_NONE, &rcSrc);
+					_tiles[curtilel]->blit(*_mapBg, rcDest.left, rcDest.top, Graphics::FLIP_NONE, &rcSrc);
 					_tiles[curtilel]->setAlpha(255, true);
 
 					rcDest.left = x * 8;
@@ -315,7 +315,7 @@ void GriffonEngine::loadMap(int mapnum) {
 					rcDest.setWidth(8);
 					rcDest.setHeight(8);
 
-					_clipbg->fillRect(rcDest, 0);
+					_clipBg->fillRect(rcDest, 0);
 				}
 			}
 		}
@@ -325,7 +325,7 @@ void GriffonEngine::loadMap(int mapnum) {
 		for (int y = 0; y <= 23; y++) {
 			int d = tempmap[3 * 40 + x][y];
 
-			if (_scriptflag[kScriptFindShield][0] == 1 && x == 9 && y == 7)
+			if (_scriptFlag[kScriptFindShield][0] == 1 && x == 9 && y == 7)
 				d = 99;
 
 			if (d > 0) {
@@ -348,37 +348,37 @@ void GriffonEngine::loadMap(int mapnum) {
 
 					if (d == 1) {
 						for (int i = 0; i <= 7; i++) {
-							drawLine(_clipbg, x1, y1 + i, x1 + 7 - i, y1 + i, ccc);
+							drawLine(_clipBg, x1, y1 + i, x1 + 7 - i, y1 + i, ccc);
 						}
 					} else if (d == 2) {
-						drawLine(_clipbg, x1, y1, x1 + 7, y1, ccc);
-						drawLine(_clipbg, x1, y1 + 1, x1 + 7, y1 + 1, ccc);
+						drawLine(_clipBg, x1, y1, x1 + 7, y1, ccc);
+						drawLine(_clipBg, x1, y1 + 1, x1 + 7, y1 + 1, ccc);
 					} else if (d == 3) {
 						for (int i = 0; i <= 7; i++) {
-							drawLine(_clipbg, x1 + i, y1 + i, x1 + 7, y1 + i, ccc);
+							drawLine(_clipBg, x1 + i, y1 + i, x1 + 7, y1 + i, ccc);
 						}
 					} else if (d == 4) {
-						drawLine(_clipbg, x1, y1, x1, y1 + 7, ccc);
-						drawLine(_clipbg, x1 + 1, y1, x1 + 1, y1 + 7, ccc);
+						drawLine(_clipBg, x1, y1, x1, y1 + 7, ccc);
+						drawLine(_clipBg, x1 + 1, y1, x1 + 1, y1 + 7, ccc);
 					} else if (d == 5) {
 						rcDest.left = x1;
 						rcDest.top = y1;
 						rcDest.setWidth(8);
 						rcDest.setHeight(8);
-						_clipbg->fillRect(rcDest, ccc);
+						_clipBg->fillRect(rcDest, ccc);
 					} else if (d == 6) {
-						drawLine(_clipbg, x1 + 7, y1, x1 + 7, y1 + 7, ccc);
-						drawLine(_clipbg, x1 + 6, y1, x1 + 6, y1 + 7, ccc);
+						drawLine(_clipBg, x1 + 7, y1, x1 + 7, y1 + 7, ccc);
+						drawLine(_clipBg, x1 + 6, y1, x1 + 6, y1 + 7, ccc);
 					} else if (d == 7) {
 						for (int i = 0; i <= 7; i++) {
-							drawLine(_clipbg, x1, y1 + i, x1 + i, y1 + i, ccc);
+							drawLine(_clipBg, x1, y1 + i, x1 + i, y1 + i, ccc);
 						}
 					} else if (d == 8) {
-						drawLine(_clipbg, x1, y1 + 7, x1 + 7, y1 + 7, ccc);
-						drawLine(_clipbg, x1, y1 + 7, x1 + 6, y1 + 6, ccc);
+						drawLine(_clipBg, x1, y1 + 7, x1 + 7, y1 + 7, ccc);
+						drawLine(_clipBg, x1, y1 + 7, x1 + 6, y1 + 6, ccc);
 					} else if (d == 9) {
 						for (int i = 0; i <= 7; i++) {
-							drawLine(_clipbg, x1 + 7 - i, y1 + i, x1 + 7, y1 + i, ccc);
+							drawLine(_clipBg, x1 + 7 - i, y1 + i, x1 + 7, y1 + i, ccc);
 						}
 					}
 				}
@@ -412,7 +412,7 @@ void GriffonEngine::loadMap(int mapnum) {
 
 				int o = tempmap[5 * 40 + x][y];
 
-				if (_objmapf[_curmap][x][y] == 0) {
+				if (_objmapf[_curMap][x][y] == 0) {
 					_objectMap[x][y] = o;
 
 					if (_objectInfo[o][0] > 1) {
@@ -429,9 +429,9 @@ void GriffonEngine::loadMap(int mapnum) {
 					rcDest.setHeight(8);
 
 					if (_objectInfo[o][4] == 1)
-						_clipbg->fillRect(rcDest, ccc);
+						_clipBg->fillRect(rcDest, ccc);
 					if (_objectInfo[o][4] == 3)
-						_clipbg->fillRect(rcDest, ccc);
+						_clipBg->fillRect(rcDest, ccc);
 				}
 			}
 			if (npc == 1) {
@@ -450,21 +450,21 @@ void GriffonEngine::loadMap(int mapnum) {
 	}
 
 
-	if (_curmap == 62 && _scriptflag[kScriptGardenMasterKey][0] > 0)
+	if (_curMap == 62 && _scriptFlag[kScriptGardenMasterKey][0] > 0)
 		_lastnpc = 0;
-	if (_curmap == 73 && _scriptflag[kScriptArmourChest][0] > 0)
+	if (_curMap == 73 && _scriptFlag[kScriptArmourChest][0] > 0)
 		_lastnpc = 0;
-	if (_curmap == 81 && _scriptflag[kScriptCitadelMasterKey][0] > 0)
+	if (_curMap == 81 && _scriptFlag[kScriptCitadelMasterKey][0] > 0)
 		_lastnpc = 0;
 
-	if (_curmap == 73 && _scriptflag[kScriptArmourChest][0] == 0)
-		_roomlock = true;
-	if (_curmap == 81 && _scriptflag[kScriptCitadelMasterKey][0] == 0)
-		_roomlock = true;
-	if (_curmap == 83 && _scriptflag[kScriptGetSword3][0] == 0)
-		_roomlock = true;
-	if (_curmap == 82)
-		_roomlock = true;
+	if (_curMap == 73 && _scriptFlag[kScriptArmourChest][0] == 0)
+		_roomLock = true;
+	if (_curMap == 81 && _scriptFlag[kScriptCitadelMasterKey][0] == 0)
+		_roomLock = true;
+	if (_curMap == 83 && _scriptFlag[kScriptGetSword3][0] == 0)
+		_roomLock = true;
+	if (_curMap == 82)
+		_roomLock = true;
 
 	// read *.npc file
 	sprintf(name, "mapdb/%04i.npc", mapnum);
@@ -699,33 +699,33 @@ void GriffonEngine::loadMap(int mapnum) {
 		}
 
 		if (_npcinfo[i].script == kScriptMasterKey) {
-			_roomlock = true;
-			if (_scriptflag[kScriptMasterKey][0] > 0) {
-				_roomlock = false;
+			_roomLock = true;
+			if (_scriptFlag[kScriptMasterKey][0] > 0) {
+				_roomLock = false;
 				_npcinfo[i].hp = 0;
 			}
 		}
 
 		if (_npcinfo[i].script == kScriptFindCrystal) {
-			_roomlock = true;
-			if (_scriptflag[kScriptFindCrystal][0] > 0) {
-				_roomlock = false;
+			_roomLock = true;
+			if (_scriptFlag[kScriptFindCrystal][0] > 0) {
+				_roomLock = false;
 				_npcinfo[i].hp = 0;
 			}
 		}
 
 		if (_npcinfo[i].script == kScriptFindSword) {
-			_roomlock = true;
-			if (_scriptflag[kScriptFindSword][0] > 0) {
-				_roomlock = false;
+			_roomLock = true;
+			if (_scriptFlag[kScriptFindSword][0] > 0) {
+				_roomLock = false;
 				_npcinfo[i].hp = 0;
 			}
 		}
 
 		if (_npcinfo[i].script == kScriptGetSword3) {
-			_roomlock = true;
-			if (_scriptflag[kScriptGetSword3][0] > 0) {
-				_roomlock = false;
+			_roomLock = true;
+			if (_scriptFlag[kScriptGetSword3][0] > 0) {
+				_roomLock = false;
 				_npcinfo[i].hp = 0;
 			}
 		}
@@ -739,7 +739,7 @@ void GriffonEngine::loadMap(int mapnum) {
 	int cx, cy, npx, npy, lx, ly;
 
 	// academy master key
-	if (_curmap == 34 && _scriptflag[kScriptMasterKey][0] == 1) {
+	if (_curMap == 34 && _scriptFlag[kScriptMasterKey][0] == 1) {
 		cx = 9;
 		cy = 7;
 
@@ -759,11 +759,11 @@ void GriffonEngine::loadMap(int mapnum) {
 		if (lx == cx && ly == cy)
 			_player.py = _player.py + 16;
 
-		_clipbg->fillRect(rcDest, ccc);
+		_clipBg->fillRect(rcDest, ccc);
 	}
 
 	// academy crystal
-	if (_curmap == 24 && !_player.foundSpell[0] && _scriptflag[kScriptFindCrystal][0] == 1) {
+	if (_curMap == 24 && !_player.foundSpell[0] && _scriptFlag[kScriptFindCrystal][0] == 1) {
 		cx = 9;
 		cy = 7;
 
@@ -783,11 +783,11 @@ void GriffonEngine::loadMap(int mapnum) {
 		if (lx == cx && ly == cy)
 			_player.py = _player.py + 16;
 
-		_clipbg->fillRect(rcDest, ccc);
+		_clipBg->fillRect(rcDest, ccc);
 	}
 
 	// gardens master key
-	if (_curmap == 62 && _scriptflag[kScriptGardenMasterKey][0] == 1) {
+	if (_curMap == 62 && _scriptFlag[kScriptGardenMasterKey][0] == 1) {
 		cx = 13;
 		cy = 7;
 
@@ -807,11 +807,11 @@ void GriffonEngine::loadMap(int mapnum) {
 		if (lx == cx && ly == cy)
 			_player.py = _player.py + 16;
 
-		_clipbg->fillRect(rcDest, ccc);
+		_clipBg->fillRect(rcDest, ccc);
 	}
 
 	// gardens fidelis sword
-	if (_curmap == 66 && _scriptflag[kScriptFindSword][0] == 1 && _player.sword == 1) {
+	if (_curMap == 66 && _scriptFlag[kScriptFindSword][0] == 1 && _player.sword == 1) {
 		cx = 9;
 		cy = 6;
 
@@ -831,11 +831,11 @@ void GriffonEngine::loadMap(int mapnum) {
 		if (lx == cx && ly == cy)
 			_player.py = _player.py + 16;
 
-		_clipbg->fillRect(rcDest, ccc);
+		_clipBg->fillRect(rcDest, ccc);
 	}
 
 	// citadel armour
-	if (_curmap == 73 && _scriptflag[kScriptArmourChest][0] == 1 && _player.armour == 1) {
+	if (_curMap == 73 && _scriptFlag[kScriptArmourChest][0] == 1 && _player.armour == 1) {
 		cx = 8;
 		cy = 7;
 
@@ -855,11 +855,11 @@ void GriffonEngine::loadMap(int mapnum) {
 		if (lx == cx && ly == cy)
 			_player.py = _player.py + 16;
 
-		_clipbg->fillRect(rcDest, ccc);
+		_clipBg->fillRect(rcDest, ccc);
 	}
 
 	// citadel master key
-	if (_curmap == 81 && _scriptflag[kScriptCitadelMasterKey][0] == 1) {
+	if (_curMap == 81 && _scriptFlag[kScriptCitadelMasterKey][0] == 1) {
 		cx = 11;
 		cy = 10;
 
@@ -879,12 +879,12 @@ void GriffonEngine::loadMap(int mapnum) {
 		if (lx == cx && ly == cy)
 			_player.py = _player.py + 16;
 
-		_clipbg->fillRect(rcDest, ccc);
+		_clipBg->fillRect(rcDest, ccc);
 	}
 
 
 	// max ups
-	if (_curmap == 83 && _scriptflag[kScriptGetSword3][0] == 1 && _player.sword < 3) {
+	if (_curMap == 83 && _scriptFlag[kScriptGetSword3][0] == 1 && _player.sword < 3) {
 		cx = 6;
 		cy = 8;
 
@@ -904,10 +904,10 @@ void GriffonEngine::loadMap(int mapnum) {
 		if (lx == cx && ly == cy)
 			_player.py = _player.py + 16;
 
-		_clipbg->fillRect(rcDest, ccc);
+		_clipBg->fillRect(rcDest, ccc);
 	}
 
-	if (_curmap == 83 && _scriptflag[kScriptShield3][0] == 1 && _player.shield < 3) {
+	if (_curMap == 83 && _scriptFlag[kScriptShield3][0] == 1 && _player.shield < 3) {
 		cx = 9;
 		cy = 8;
 
@@ -927,10 +927,10 @@ void GriffonEngine::loadMap(int mapnum) {
 		if (lx == cx && ly == cy)
 			_player.py = _player.py + 16;
 
-		_clipbg->fillRect(rcDest, ccc);
+		_clipBg->fillRect(rcDest, ccc);
 	}
 
-	if (_curmap == 83 && _scriptflag[kScriptArmour3][0] == 1 && _player.armour < 3) {
+	if (_curMap == 83 && _scriptFlag[kScriptArmour3][0] == 1 && _player.armour < 3) {
 		cx = 12;
 		cy = 8;
 
@@ -950,20 +950,20 @@ void GriffonEngine::loadMap(int mapnum) {
 		if (lx == cx && ly == cy)
 			_player.py = _player.py + 16;
 
-		_clipbg->fillRect(rcDest, ccc);
+		_clipBg->fillRect(rcDest, ccc);
 	}
 
-	_clipbg2->copyRectToSurface(_clipbg->getPixels(), _clipbg->pitch, 0, 0, _clipbg->w, _clipbg->h);
+	_clipBg2->copyRectToSurface(_clipBg->getPixels(), _clipBg->pitch, 0, 0, _clipBg->w, _clipBg->h);
 }
 
 void GriffonEngine::loadAnims() {
-	_spellimg = loadImage("art/spells.bmp", true);
+	_spellImg = loadImage("art/spells.bmp", true);
 	_anims[0] = loadImage("art/anims0.bmp", true);
-	_animsa[0] = loadImage("art/anims0a.bmp", true);
+	_animsAttack[0] = loadImage("art/anims0a.bmp", true);
 	_anims[13] = loadImage("art/anims0x.bmp", true);
-	_animsa[13] = loadImage("art/anims0xa.bmp", true);
+	_animsAttack[13] = loadImage("art/anims0xa.bmp", true);
 	_anims[1] = loadImage("art/anims1.bmp", true);
-	_animsa[1] = loadImage("art/anims1a.bmp", true);
+	_animsAttack[1] = loadImage("art/anims1a.bmp", true);
 	_anims[2] = loadImage("art/anims2.bmp", true);
 
 	// huge
@@ -1061,9 +1061,9 @@ void GriffonEngine::loadAnims() {
 	_anims[7] = loadImage("art/anims7.bmp", true);
 	_anims[8] = loadImage("art/anims8.bmp", true);
 	_anims[10] = loadImage("art/anims10.bmp", true);
-	_animsa[10] = loadImage("art/anims10a.bmp", true);
+	_animsAttack[10] = loadImage("art/anims10a.bmp", true);
 	_anims[11] = loadImage("art/anims11.bmp", true);
-	_animsa[11] = loadImage("art/anims11a.bmp", true);
+	_animsAttack[11] = loadImage("art/anims11a.bmp", true);
 	_anims[12] = loadImage("art/anims12.bmp", true);
 }
 
@@ -1071,15 +1071,15 @@ void GriffonEngine::loadItemImgs() {
 	Graphics::TransparentSurface *temp = loadImage("art/icons.bmp", true);
 
 	for (int i = 0; i <= 20; i++) {
-		_itemimg[i] = new Graphics::TransparentSurface;
-		_itemimg[i]->create(16, 16, g_system->getScreenFormat());
+		_itemImg[i] = new Graphics::TransparentSurface;
+		_itemImg[i]->create(16, 16, g_system->getScreenFormat());
 
 		rcSrc.left = i * 16;
 		rcSrc.top = 0;
 		rcSrc.setWidth(16);
 		rcSrc.setHeight(16);
 
-		temp->blit(*_itemimg[i], 0, 0, Graphics::FLIP_NONE, &rcSrc);
+		temp->blit(*_itemImg[i], 0, 0, Graphics::FLIP_NONE, &rcSrc);
 	}
 
 	temp->free();
@@ -1092,8 +1092,8 @@ void GriffonEngine::loadFont() {
 		for (int f = 0; f <= 4; f++) {
 			int i2 = i - 32;
 
-			_fontchr[i2][f] = new Graphics::TransparentSurface;
-			_fontchr[i2][f]->create(8, 8, g_system->getScreenFormat());
+			_fontChr[i2][f] = new Graphics::TransparentSurface;
+			_fontChr[i2][f]->create(8, 8, g_system->getScreenFormat());
 
 			int col = i2 % 40;
 
@@ -1106,7 +1106,7 @@ void GriffonEngine::loadFont() {
 
 			rcDest.left = 0;
 			rcDest.top = 0;
-			font->blit(*_fontchr[i2][f], rcDest.left, rcDest.top, Graphics::FLIP_NONE, &rcSrc);
+			font->blit(*_fontChr[i2][f], rcDest.left, rcDest.top, Graphics::FLIP_NONE, &rcSrc);
 		}
 
 	font->free();
@@ -1118,7 +1118,7 @@ void GriffonEngine::loadTiles() {
 	_tiles[2] = loadImage("art/tx2.bmp", true);
 	_tiles[3] = loadImage("art/tx3.bmp", true);
 
-	_windowimg = loadImage("art/window.bmp", true);
+	_windowImg = loadImage("art/window.bmp", true);
 }
 
 void GriffonEngine::loadTriggers() {

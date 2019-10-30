@@ -52,7 +52,7 @@ void GriffonEngine::attack() {
 		if (ly > 0) {
 			int o2 = 0; // ??
 			int o = _objectMap[lx][ly - 1];
-			if (ly > 1 && (_curmap == 54 || _curmap == 58))
+			if (ly > 1 && (_curMap == 54 || _curMap == 58))
 				o2 = _objectMap[lx][ly - 2];
 
 			// cst
@@ -67,7 +67,7 @@ void GriffonEngine::attack() {
 						_player.inventory[kInvFlask]++;
 						addFloatIcon(6, lx * 16, (ly - 1) * 16);
 
-						_objmapf[_curmap][lx][ly - 1] = 1;
+						_objmapf[_curMap][lx][ly - 1] = 1;
 
 						if (config.effects) {
 							int snd = playSound(_sfx[kSndPowerUp]);
@@ -86,7 +86,7 @@ void GriffonEngine::attack() {
 
 						eventText("Cannot Carry any more Flasks!");
 					}
-					_itemticks = _ticks + 215;
+					_itemTicks = _ticks + 215;
 					return;
 					break;
 				case kScriptMasterKey:
@@ -94,14 +94,14 @@ void GriffonEngine::attack() {
 
 					addFloatIcon(14, lx * 16, (ly - 1) * 16);
 
-					_itemticks = _ticks + 215;
+					_itemTicks = _ticks + 215;
 
-					if (_curmap == 34)
-						_scriptflag[kScriptMasterKey][0] = 2;
-					else if (_curmap == 62)
-						_scriptflag[kScriptGardenMasterKey][0] = 2;
-					else if (_curmap == 81)
-						_scriptflag[kScriptCitadelMasterKey][0] = 2;
+					if (_curMap == 34)
+						_scriptFlag[kScriptMasterKey][0] = 2;
+					else if (_curMap == 62)
+						_scriptFlag[kScriptGardenMasterKey][0] = 2;
+					else if (_curMap == 81)
+						_scriptFlag[kScriptCitadelMasterKey][0] = 2;
 
 					if (config.effects) {
 						int snd = playSound(_sfx[kSndPowerUp]);
@@ -127,7 +127,7 @@ void GriffonEngine::attack() {
 						_objectMap[lx][ly - 1] = 3;
 
 					eventText("Found the Infinite Crystal!");
-					_itemticks = _ticks + 215;
+					_itemTicks = _ticks + 215;
 					return;
 				case kScriptFindShield:
 					if (_player.shield == 1) {
@@ -135,7 +135,7 @@ void GriffonEngine::attack() {
 
 						addFloatIcon(4, lx * 16, (ly - 1) * 16);
 
-						_itemticks = _ticks + 215;
+						_itemTicks = _ticks + 215;
 
 						if (config.effects) {
 							int snd = playSound(_sfx[kSndPowerUp]);
@@ -156,7 +156,7 @@ void GriffonEngine::attack() {
 
 						addFloatIcon(3, lx * 16, (ly - 1) * 16);
 
-						_itemticks = _ticks + 215;
+						_itemTicks = _ticks + 215;
 
 						if (config.effects) {
 							int snd = playSound(_sfx[kSndPowerUp]);
@@ -174,8 +174,8 @@ void GriffonEngine::attack() {
 						_player.inventory[kInvNormalKey]++;
 
 						for (int s = 20; s <= 23; s++) {
-							if (_scriptflag[s][0] == 1) {
-								_scriptflag[s][0] = 2;
+							if (_scriptFlag[s][0] == 1) {
+								_scriptFlag[s][0] = 2;
 							}
 						}
 
@@ -184,7 +184,7 @@ void GriffonEngine::attack() {
 							setChannelVolume(snd, config.effectsvol);
 						}
 
-						_objmapf[_curmap][lx][ly - 1] = 1;
+						_objmapf[_curMap][lx][ly - 1] = 1;
 
 						if (_objectInfo[o][4] == 1)
 							_objectMap[lx][ly - 1] = 3;
@@ -205,7 +205,7 @@ void GriffonEngine::attack() {
 						_player.inventory[kInvDoubleFlask]++;
 						addFloatIcon(12, lx * 16, (ly - 1) * 16);
 
-						_objmapf[_curmap][lx][ly - 1] = 1;
+						_objmapf[_curMap][lx][ly - 1] = 1;
 
 						if (config.effects) {
 							int snd = playSound(_sfx[kSndPowerUp]);
@@ -225,7 +225,7 @@ void GriffonEngine::attack() {
 						eventText("Cannot Carry any more Mega Flasks!");
 					}
 
-					_itemticks = _ticks + 215;
+					_itemTicks = _ticks + 215;
 					return;
 					break;
 				case kScriptBlueFlaskChest:
@@ -233,7 +233,7 @@ void GriffonEngine::attack() {
 						_player.inventory[kInvDoubleFlask]++;
 						addFloatIcon(12, lx * 16, (ly - 1) * 16);
 
-						_objmapf[_curmap][lx][ly - 1] = 1;
+						_objmapf[_curMap][lx][ly - 1] = 1;
 
 						if (config.effects) {
 							int snd = playSound(_sfx[kSndPowerUp]);
@@ -252,7 +252,7 @@ void GriffonEngine::attack() {
 
 						eventText("Cannot Carry any more Mega Flasks!");
 					}
-					_itemticks = _ticks + 215;
+					_itemTicks = _ticks + 215;
 					return;
 					break;
 				case kScriptLightningChest:
@@ -260,7 +260,7 @@ void GriffonEngine::attack() {
 						_player.inventory[kInvShock]++;
 						addFloatIcon(17, lx * 16, (ly - 1) * 16);
 
-						_objmapf[_curmap][lx][ly - 1] = 1;
+						_objmapf[_curMap][lx][ly - 1] = 1;
 
 						if (config.effects) {
 							int snd = playSound(_sfx[kSndPowerUp]);
@@ -279,7 +279,7 @@ void GriffonEngine::attack() {
 
 						eventText("Cannot Carry any more Lightning Bombs!");
 					}
-					_itemticks = _ticks + 215;
+					_itemTicks = _ticks + 215;
 					return;
 					break;
 				case kScriptArmourChest:
@@ -297,33 +297,33 @@ void GriffonEngine::attack() {
 							_objectMap[lx][ly - 1] = 3;
 
 						eventText("Found the Fidelis Mail!");
-						_itemticks = _ticks + 215;
+						_itemTicks = _ticks + 215;
 						return;
 					}
 					break;
 				case kScriptLever:
-					if (_curmap == 58 && _scriptflag[kScriptLever][0] == 0) {
-						_scriptflag[kScriptLever][0] = 1;
+					if (_curMap == 58 && _scriptFlag[kScriptLever][0] == 0) {
+						_scriptFlag[kScriptLever][0] = 1;
 
 						if (config.effects) {
 							int snd = playSound(_sfx[kSndLever]);
 							setChannelVolume(snd, config.effectsvol);
 						}
-					} else if (_curmap == 58 && _scriptflag[kScriptLever][0] > 0) {
+					} else if (_curMap == 58 && _scriptFlag[kScriptLever][0] > 0) {
 						if (config.effects) {
 							int snd = playSound(_sfx[kSndDoor]);
 							setChannelVolume(snd, config.effectsvol);
 						}
 
 						eventText("It's stuck!");
-					} else if (_curmap == 54 && _scriptflag[kScriptLever][0] == 1) {
+					} else if (_curMap == 54 && _scriptFlag[kScriptLever][0] == 1) {
 						if (config.effects) {
 							int snd = playSound(_sfx[kSndLever]);
 							setChannelVolume(snd, config.effectsvol);
 						}
 
-						_scriptflag[kScriptLever][0] = 2;
-					} else if (_curmap == 54 && _scriptflag[kScriptLever][0] > 1) {
+						_scriptFlag[kScriptLever][0] = 2;
+					} else if (_curMap == 54 && _scriptFlag[kScriptLever][0] > 1) {
 						if (config.effects) {
 							int snd = playSound(_sfx[kSndDoor]);
 							setChannelVolume(snd, config.effectsvol);
@@ -338,7 +338,7 @@ void GriffonEngine::attack() {
 
 						addFloatIcon(18, lx * 16, (ly - 1) * 16);
 
-						_itemticks = _ticks + 215;
+						_itemTicks = _ticks + 215;
 
 						if (config.effects) {
 							int snd = playSound(_sfx[kSndPowerUp]);
@@ -356,7 +356,7 @@ void GriffonEngine::attack() {
 					if (_player.shield < 3) {
 						_player.shield = 3;
 						addFloatIcon(19, lx * 16, (ly - 1) * 16);
-						_itemticks = _ticks + 215;
+						_itemTicks = _ticks + 215;
 
 						if (config.effects) {
 							int snd = playSound(_sfx[kSndPowerUp]);
@@ -374,7 +374,7 @@ void GriffonEngine::attack() {
 					if (_player.armour < 3) {
 						_player.armour = 3;
 						addFloatIcon(20, lx * 16, (ly - 1) * 16);
-						_itemticks = _ticks + 215;
+						_itemTicks = _ticks + 215;
 
 						if (config.effects) {
 							int snd = playSound(_sfx[kSndPowerUp]);
@@ -670,8 +670,8 @@ void GriffonEngine::damageNPC(int npcnum, int damage, int spell) {
 
 				if (lx == cx && ly == cy)
 					_player.py += 16;
-				_clipbg2->fillRect(rcDest, _clipbg->format.RGBToColor(255, 255, 255));
-				_scriptflag[kScriptMasterKey][0] = 1;
+				_clipBg2->fillRect(rcDest, _clipBg->format.RGBToColor(255, 255, 255));
+				_scriptFlag[kScriptMasterKey][0] = 1;
 			}
 		}
 
@@ -702,13 +702,13 @@ void GriffonEngine::damageNPC(int npcnum, int damage, int spell) {
 
 				if (lx == cx && ly == cy)
 					_player.py += 16;
-				_scriptflag[kScriptFindCrystal][0] = 1;
-				_clipbg2->fillRect(rcDest, _clipbg->format.RGBToColor(255, 255, 255));
+				_scriptFlag[kScriptFindCrystal][0] = 1;
+				_clipBg2->fillRect(rcDest, _clipBg->format.RGBToColor(255, 255, 255));
 			}
 		}
 
 		// tower shield chest script
-		if (_npcinfo[npcnum].script == kScriptFindShield && _scriptflag[kScriptFindShield][0] == 0) {
+		if (_npcinfo[npcnum].script == kScriptFindShield && _scriptFlag[kScriptFindShield][0] == 0) {
 			_triggerloc[9][7] = 5004;
 
 			int curTile = 40;
@@ -730,7 +730,7 @@ void GriffonEngine::damageNPC(int npcnum, int damage, int spell) {
 			rcDest.setWidth(16);
 			rcDest.setHeight(16);
 
-			_tiles[curTileL]->blit(*_mapbg, rcDest.left, rcDest.top, Graphics::FLIP_NONE, &rcSrc);
+			_tiles[curTileL]->blit(*_mapBg, rcDest.left, rcDest.top, Graphics::FLIP_NONE, &rcSrc);
 		}
 
 		// firehydra sword chest
@@ -760,14 +760,14 @@ void GriffonEngine::damageNPC(int npcnum, int damage, int spell) {
 
 				if (lx == cx && ly == cy)
 					_player.py += 16;
-				_scriptflag[kScriptFindSword][0] = 1;
-				_clipbg2->fillRect(rcDest, _clipbg->format.RGBToColor(255, 255, 255));
+				_scriptFlag[kScriptFindSword][0] = 1;
+				_clipBg2->fillRect(rcDest, _clipBg->format.RGBToColor(255, 255, 255));
 			}
 
 		}
 
 		// gardens master key script
-		if (_npcinfo[npcnum].script == kScriptGardenMasterKey && _scriptflag[kScriptKeyChest][0] == 0) {
+		if (_npcinfo[npcnum].script == kScriptGardenMasterKey && _scriptFlag[kScriptKeyChest][0] == 0) {
 			bool alive = false;
 			for (int i = 1; i <= _lastnpc; i++) {
 				if (_npcinfo[i].hp > 0)
@@ -793,14 +793,14 @@ void GriffonEngine::damageNPC(int npcnum, int damage, int spell) {
 
 				if (lx == cx && ly == cy)
 					_player.py += 16;
-				_clipbg2->fillRect(rcDest, _clipbg->format.RGBToColor(255, 255, 255));
-				_scriptflag[kScriptGardenMasterKey][0] = 1;
+				_clipBg2->fillRect(rcDest, _clipBg->format.RGBToColor(255, 255, 255));
+				_scriptFlag[kScriptGardenMasterKey][0] = 1;
 			}
 		}
 
 		// regular key chest 1
 		for (int s = 20; s <= 23; s++) {
-			if (_npcinfo[npcnum].script == s && _scriptflag[s][0] < 2) {
+			if (_npcinfo[npcnum].script == s && _scriptFlag[s][0] < 2) {
 				bool alive = false;
 				for (int i = 1; i <= _lastnpc; i++) {
 					if (_npcinfo[i].hp > 0)
@@ -826,14 +826,14 @@ void GriffonEngine::damageNPC(int npcnum, int damage, int spell) {
 
 					if (lx == cx && ly == cy)
 						_player.py += 16;
-					_scriptflag[s][0] = 1;
-					_clipbg2->fillRect(rcDest, _clipbg->format.RGBToColor(255, 255, 255));
+					_scriptFlag[s][0] = 1;
+					_clipBg2->fillRect(rcDest, _clipBg->format.RGBToColor(255, 255, 255));
 				}
 			}
 		}
 
 		// pickup lightning bomb
-		if (_npcinfo[npcnum].script == kScriptLightningBomb && (_curmap == 41 && _scriptflag[kScriptLightningBomb][1] == 0)) {
+		if (_npcinfo[npcnum].script == kScriptLightningBomb && (_curMap == 41 && _scriptFlag[kScriptLightningBomb][1] == 0)) {
 			bool alive = false;
 			for (int i = 1; i <= _lastnpc; i++) {
 				if (_npcinfo[i].hp > 0)
@@ -889,13 +889,13 @@ void GriffonEngine::damageNPC(int npcnum, int damage, int spell) {
 
 				if (lx == cx && ly == cy)
 					_player.py += 16;
-				_scriptflag[kScriptArmourChest][0] = 1;
-				_clipbg2->fillRect(rcDest, _clipbg->format.RGBToColor(255, 255, 255));
+				_scriptFlag[kScriptArmourChest][0] = 1;
+				_clipBg2->fillRect(rcDest, _clipBg->format.RGBToColor(255, 255, 255));
 			}
 		}
 
 		// citadel master key script
-		if (_npcinfo[npcnum].script == kScriptCitadelMasterKey && _scriptflag[kScriptCitadelMasterKey][0] == 0) {
+		if (_npcinfo[npcnum].script == kScriptCitadelMasterKey && _scriptFlag[kScriptCitadelMasterKey][0] == 0) {
 			bool alive = false;
 			for (int i = 1; i <= _lastnpc; i++) {
 				if (_npcinfo[i].hp > 0)
@@ -921,13 +921,13 @@ void GriffonEngine::damageNPC(int npcnum, int damage, int spell) {
 
 				if (lx == cx && ly == cy)
 					_player.py += 16;
-				_clipbg2->fillRect(rcDest, _clipbg->format.RGBToColor(255, 255, 255));
-				_scriptflag[kScriptCitadelMasterKey][0] = 1;
+				_clipBg2->fillRect(rcDest, _clipBg->format.RGBToColor(255, 255, 255));
+				_scriptFlag[kScriptCitadelMasterKey][0] = 1;
 			}
 		}
 
 		// max ups
-		if (_npcinfo[npcnum].script == kScriptGetSword3 && _scriptflag[kScriptGetSword3][0] == 0) {
+		if (_npcinfo[npcnum].script == kScriptGetSword3 && _scriptFlag[kScriptGetSword3][0] == 0) {
 			bool alive = false;
 			for (int i = 1; i <= _lastnpc; i++) {
 				if (_npcinfo[i].hp > 0)
@@ -953,8 +953,8 @@ void GriffonEngine::damageNPC(int npcnum, int damage, int spell) {
 
 				if (lx == cx && ly == cy)
 					_player.py += 16;
-				_clipbg2->fillRect(rcDest, _clipbg->format.RGBToColor(255, 255, 255));
-				_scriptflag[kScriptGetSword3][0] = 1;
+				_clipBg2->fillRect(rcDest, _clipBg->format.RGBToColor(255, 255, 255));
+				_scriptFlag[kScriptGetSword3][0] = 1;
 
 				cx = 9;
 				cy = 8;
@@ -974,9 +974,9 @@ void GriffonEngine::damageNPC(int npcnum, int damage, int spell) {
 
 				if (lx == cx && ly == cy)
 					_player.py += 16;
-				_clipbg2->fillRect(rcDest, _clipbg->format.RGBToColor(255, 255, 255));
+				_clipBg2->fillRect(rcDest, _clipBg->format.RGBToColor(255, 255, 255));
 
-				_scriptflag[kScriptShield3][0] = 1;
+				_scriptFlag[kScriptShield3][0] = 1;
 
 				cx = 12;
 				cy = 8;
@@ -996,8 +996,8 @@ void GriffonEngine::damageNPC(int npcnum, int damage, int spell) {
 
 				if (lx == cx && ly == cy)
 					_player.py += 16;
-				_clipbg2->fillRect(rcDest, _clipbg->format.RGBToColor(255, 255, 255));
-				_scriptflag[kScriptArmour3][0] = 1;
+				_clipBg2->fillRect(rcDest, _clipBg->format.RGBToColor(255, 255, 255));
+				_scriptFlag[kScriptArmour3][0] = 1;
 			}
 		}
 
