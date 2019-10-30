@@ -56,13 +56,13 @@ void GriffonEngine::title(int mode) {
 	rcSrc.setWidth(320);
 	rcSrc.setHeight(240);
 
-	_videobuffer2->fillRect(rcSrc, 0);
-	_videobuffer3->fillRect(rcSrc, 0);
+	_videoBuffer2->fillRect(rcSrc, 0);
+	_videoBuffer3->fillRect(rcSrc, 0);
 
 	_ticks = g_system->getMillis();
 
-	_videobuffer->blit(*_videobuffer3);
-	_videobuffer->blit(*_videobuffer2);
+	_videoBuffer->blit(*_videoBuffer3);
+	_videoBuffer->blit(*_videoBuffer2);
 
 	int cursel = 0;
 	int keypause = _ticks + 220;
@@ -95,34 +95,34 @@ void GriffonEngine::title(int mode) {
 		rc.left = -xofs;
 		rc.top = 0;
 
-		_titleimg->blit(*_videobuffer, rc.left, rc.top);
+		_titleImg->blit(*_videoBuffer, rc.left, rc.top);
 
 		rc.left = -xofs + 320.0;
 		rc.top = 0;
 
-		_titleimg->blit(*_videobuffer, rc.left, rc.top);
+		_titleImg->blit(*_videoBuffer, rc.left, rc.top);
 
 		rc.left = 0;
 		rc.top = 0;
 
-		_titleimg2->blit(*_videobuffer, rc.left, rc.top);
+		_titleImg2->blit(*_videoBuffer, rc.left, rc.top);
 
 		int y = 172;
 		int x = 160 - 14 * 4;
 
-		drawString(_videobuffer, "new game/save/load", x, y, 4);
-		drawString(_videobuffer, "options", x, y + 16, 4);
-		drawString(_videobuffer, "quit game", x, y + 32, 4);
+		drawString(_videoBuffer, "new game/save/load", x, y, 4);
+		drawString(_videoBuffer, "options", x, y + 16, 4);
+		drawString(_videoBuffer, "quit game", x, y + 32, 4);
 
 		if (mode == 1)
-			drawString(_videobuffer, "return", x, y + 48, 4);
+			drawString(_videoBuffer, "return", x, y + 48, 4);
 		else
-			drawString(_videobuffer, "(c) 2005 by Daniel 'Syn9' Kennedy", 28, 224, 4);
+			drawString(_videoBuffer, "(c) 2005 by Daniel 'Syn9' Kennedy", 28, 224, 4);
 
 		rc.left = (int16)(x - 16 - 4 * cos(2 * PI * _itemyloc / 16));
 		rc.top = (int16)(y - 4 + 16 * cursel);
 
-		_itemimg[15]->blit(*_videobuffer, rc.left, rc.top);
+		_itemImg[15]->blit(*_videoBuffer, rc.left, rc.top);
 
 		float yf = 255.0;
 		if (_ticks < ticks1 + 1000) {
@@ -130,19 +130,19 @@ void GriffonEngine::title(int mode) {
 			yf = CLIP<float>(yf, 0.0, 255.0);
 		}
 
-		_videobuffer->setAlpha((int)yf);
-		g_system->copyRectToScreen(_videobuffer->getPixels(), _videobuffer->pitch, 0, 0, _videobuffer->w, _videobuffer->h);
+		_videoBuffer->setAlpha((int)yf);
+		g_system->copyRectToScreen(_videoBuffer->getPixels(), _videoBuffer->pitch, 0, 0, _videoBuffer->w, _videoBuffer->h);
 		g_system->updateScreen();
 
-		_tickspassed = _ticks;
+		_ticksPassed = _ticks;
 		_ticks = g_system->getMillis();
 
-		_tickspassed = _ticks - _tickspassed;
-		_fpsr = (float)_tickspassed / 24.0;
+		_ticksPassed = _ticks - _ticksPassed;
+		_fpsr = (float)_ticksPassed / 24.0;
 
 		_fp++;
-		if (_ticks > _nextticks) {
-			_nextticks = _ticks + 1000;
+		if (_ticks > _nextTicks) {
+			_nextTicks = _ticks + 1000;
 			_fps = _fp;
 			_fp = 0;
 		}
@@ -216,7 +216,7 @@ void GriffonEngine::title(int mode) {
 		g_system->delayMillis(10);
 	} while (!_shouldQuit && !exitTitle);
 
-	_itemticks = _ticks + 210;
+	_itemTicks = _ticks + 210;
 
 	if (config.music) {
 		haltSoundChannel(_menuChannel);
@@ -262,7 +262,7 @@ void GriffonEngine::configMenu() {
 	int ticks1 = _ticks;
 
 	do {
-		_videobuffer->fillRect(Common::Rect(0, 0, _videobuffer->w, _videobuffer->h), 0);
+		_videoBuffer->fillRect(Common::Rect(0, 0, _videoBuffer->w, _videoBuffer->h), 0);
 
 		rcDest.left = 256 + 256 * cos(PI / 180 * clouddeg * 40);
 		rcDest.top = 192 + 192 * sin(PI / 180 * clouddeg * 40);
@@ -270,7 +270,7 @@ void GriffonEngine::configMenu() {
 		rcDest.setHeight(240);
 
 		cloudimg->setAlpha(128, true);
-		cloudimg->blit(*_videobuffer, 0, 0, Graphics::FLIP_NONE, &rcDest);
+		cloudimg->blit(*_videoBuffer, 0, 0, Graphics::FLIP_NONE, &rcDest);
 		cloudimg->setAlpha(64, true);
 
 		rcDest.left = 256;
@@ -279,10 +279,10 @@ void GriffonEngine::configMenu() {
 		rcDest.setHeight(240);
 
 		cloudimg->setAlpha(128, true);
-		cloudimg->blit(*_videobuffer, 0, 0, Graphics::FLIP_NONE, &rcDest);
+		cloudimg->blit(*_videoBuffer, 0, 0, Graphics::FLIP_NONE, &rcDest);
 		cloudimg->setAlpha(64, true);
 
-		_videobuffer->copyRectToSurface(configwindow->getPixels(), configwindow->pitch, 0, 0, configwindow->w, configwindow->h);
+		_videoBuffer->copyRectToSurface(configwindow->getPixels(), configwindow->pitch, 0, 0, configwindow->w, configwindow->h);
 
 		int sy = SY;
 
@@ -308,8 +308,8 @@ void GriffonEngine::configMenu() {
 			} else if (i > 18)
 				destColumn = 0;
 
-			drawString(_videobuffer, optionTitles[i], 156 - 8 * strlen(optionTitles[i]), sy + i * 8, 0);
-			drawString(_videobuffer, optionValues[i], 164, sy + i * 8, destColumn);
+			drawString(_videoBuffer, optionTitles[i], 156 - 8 * strlen(optionTitles[i]), sy + i * 8, 0);
+			drawString(_videoBuffer, optionValues[i], 164, sy + i * 8, destColumn);
 		}
 
 		int curselt = cursel + 2;
@@ -328,7 +328,7 @@ void GriffonEngine::configMenu() {
 		rc.left = 148 + 3 * cos(2 * PI * _itemyloc / 16.0);
 		rc.top = sy + 8 * curselt - 4;
 
-		_itemimg[15]->blit(*_videobuffer, rc.left, rc.top);
+		_itemImg[15]->blit(*_videoBuffer, rc.left, rc.top);
 
 		float yy = 255.0;
 		if (_ticks < ticks1 + 1000) {
@@ -336,21 +336,21 @@ void GriffonEngine::configMenu() {
 			yy = CLIP<float>(yy, 0.0, 255.0);
 		}
 
-		_videobuffer->setAlpha((int)yy);
-		g_system->copyRectToScreen(_videobuffer->getPixels(), _videobuffer->pitch, 0, 0, _videobuffer->w, _videobuffer->h);
+		_videoBuffer->setAlpha((int)yy);
+		g_system->copyRectToScreen(_videoBuffer->getPixels(), _videoBuffer->pitch, 0, 0, _videoBuffer->w, _videoBuffer->h);
 		g_system->updateScreen();
 
 		g_system->getEventManager()->pollEvent(_event);
 
-		_tickspassed = _ticks;
+		_ticksPassed = _ticks;
 		_ticks = g_system->getMillis();
 
-		_tickspassed = _ticks - _tickspassed;
-		_fpsr = (float)_tickspassed / 24;
+		_ticksPassed = _ticks - _ticksPassed;
+		_fpsr = (float)_ticksPassed / 24;
 
 		_fp++;
-		if (_ticks > _nextticks) {
-			_nextticks = _ticks + 1000;
+		if (_ticks > _nextTicks) {
+			_nextTicks = _ticks + 1000;
 			_fps = _fp;
 			_fp = 0;
 		}
@@ -465,7 +465,7 @@ void GriffonEngine::configMenu() {
 	} while (!_shouldQuit && !exitMenu);
 
 	configwindow->free();
-	_itemticks = _ticks + 210;
+	_itemTicks = _ticks + 210;
 
 	cloudimg->setAlpha(64, true);
 }
@@ -475,8 +475,8 @@ void GriffonEngine::saveLoadNew() {
 
 	clouddeg = 0;
 
-	_videobuffer->setAlpha(255);
-	saveloadimg->setAlpha(192, true);
+	_videoBuffer->setAlpha(255);
+	_saveLoadImg->setAlpha(192, true);
 
 	int currow = 0;
 	int curcol = 0;
@@ -487,7 +487,7 @@ void GriffonEngine::saveLoadNew() {
 	int tickpause = _ticks + 150;
 
 	do {
-		_videobuffer->fillRect(Common::Rect(0, 0, _videobuffer->w, _videobuffer->h), 0);
+		_videoBuffer->fillRect(Common::Rect(0, 0, _videoBuffer->w, _videoBuffer->h), 0);
 
 		y += 1 * _fpsr;
 
@@ -497,7 +497,7 @@ void GriffonEngine::saveLoadNew() {
 		rcDest.setHeight(240);
 
 		cloudimg->setAlpha(128, true);
-		cloudimg->blit(*_videobuffer, 0, 0, Graphics::FLIP_NONE, &rcDest);
+		cloudimg->blit(*_videoBuffer, 0, 0, Graphics::FLIP_NONE, &rcDest);
 		cloudimg->setAlpha(64, true);
 
 		rcDest.left = 256;
@@ -506,10 +506,10 @@ void GriffonEngine::saveLoadNew() {
 		rcDest.setHeight(240);
 
 		cloudimg->setAlpha(128, true);
-		cloudimg->blit(*_videobuffer, 0, 0, Graphics::FLIP_NONE, &rcDest);
+		cloudimg->blit(*_videoBuffer, 0, 0, Graphics::FLIP_NONE, &rcDest);
 		cloudimg->setAlpha(64, true);
 
-		saveloadimg->blit(*_videobuffer);
+		_saveLoadImg->blit(*_videoBuffer);
 
 		g_system->getEventManager()->pollEvent(_event);
 
@@ -520,7 +520,7 @@ void GriffonEngine::saveLoadNew() {
 
 		if (tickpause < _ticks) {
 			if (_event.type == Common::EVENT_KEYDOWN) {
-				_itemticks = _ticks + 220;
+				_itemTicks = _ticks + 220;
 
 				if (_event.kbd.keycode == Common::KEYCODE_RETURN) {
 					// QUIT - non existent :)
@@ -541,7 +541,7 @@ void GriffonEngine::saveLoadNew() {
 					// LOAD GAME
 					if (currow == 0 && curcol == 1) {
 						lowerLock = true;
-						currow = 1 + _saveslot;
+						currow = 1 + _saveSlot;
 						tickpause = _ticks + 125;
 					}
 					// SAVE GAME
@@ -553,10 +553,10 @@ void GriffonEngine::saveLoadNew() {
 
 					if (lowerLock && curcol == 1 && tickpause < _ticks) {
 						if (saveState(currow - 1)) {
-							_secstart += _secsingame;
+							_secStart += _secsingame;
 							_secsingame = 0;
 							lowerLock = false;
-							_saveslot = currow - 1;
+							_saveSlot = currow - 1;
 							currow = 0;
 						}
 					}
@@ -564,7 +564,7 @@ void GriffonEngine::saveLoadNew() {
 					if (lowerLock && curcol == 2 && tickpause < _ticks) {
 						if (loadState(currow - 1)) {
 							_player.walkSpeed = 1.1f;
-							_animspd = 0.5f;
+							_animSpeed = 0.5f;
 							attacking = false;
 							_player.attackSpeed = 1.5f;
 
@@ -574,8 +574,8 @@ void GriffonEngine::saveLoadNew() {
 							haltSoundChannel(-1);
 
 							_secsingame = 0;
-							_saveslot = currow - 1;
-							loadMap(_curmap);
+							_saveSlot = currow - 1;
+							loadMap(_curMap);
 							mainLoop();
 						}
 					}
@@ -652,21 +652,21 @@ void GriffonEngine::saveLoadNew() {
 
 				char line[256];
 				sprintf(line, "Game Time: %02i:%02i:%02i", h, m, s);
-				drawString(_videobuffer, line, 160 - strlen(line) * 4, sy, 0);
+				drawString(_videoBuffer, line, 160 - strlen(line) * 4, sy, 0);
 
 				sx  = 12;
 				sy += 11;
 				int cc = 0;
 
 				sprintf(line, "Health: %i/%i", _playera.hp, _playera.maxHp);
-				drawString(_videobuffer, line, sx, sy, cc);
+				drawString(_videoBuffer, line, sx, sy, cc);
 
 				if (_playera.level == 22)
 					strcpy(line, "Level: MAX");
 				else
 					sprintf(line, "Level: %i", _playera.level);
 
-				drawString(_videobuffer, line, sx, sy + 11, 0);
+				drawString(_videoBuffer, line, sx, sy + 11, 0);
 
 				rcSrc.left = sx + 15 * 8 + 24;
 				rcSrc.top = sy + 1;
@@ -674,19 +674,19 @@ void GriffonEngine::saveLoadNew() {
 				int ss = (_playera.sword - 1) * 3;
 				if (_playera.sword == 3)
 					ss = 18;
-				_itemimg[ss]->blit(*_videobuffer, rcSrc.left, rcSrc.top);
+				_itemImg[ss]->blit(*_videoBuffer, rcSrc.left, rcSrc.top);
 
 				rcSrc.left += 16;
 				ss = (_playera.shield - 1) * 3 + 1;
 				if (_playera.shield == 3)
 					ss = 19;
-				_itemimg[ss]->blit(*_videobuffer, rcSrc.left, rcSrc.top);
+				_itemImg[ss]->blit(*_videoBuffer, rcSrc.left, rcSrc.top);
 
 				rcSrc.left += 16;
 				ss = (_playera.armour - 1) * 3 + 2;
 				if (_playera.armour == 3)
 					ss = 20;
-				_itemimg[ss]->blit(*_videobuffer, rcSrc.left, rcSrc.top);
+				_itemImg[ss]->blit(*_videoBuffer, rcSrc.left, rcSrc.top);
 
 				int nx = rcSrc.left + 13 + 3 * 8;
 				rcSrc.left = nx - 17;
@@ -695,12 +695,12 @@ void GriffonEngine::saveLoadNew() {
 					for (int i = 0; i < 5; i++) {
 						rcSrc.left += 17;
 						if (_playera.foundSpell[i])
-							_itemimg[7 + i]->blit(*_videobuffer, rcSrc.left, rcSrc.top);
+							_itemImg[7 + i]->blit(*_videoBuffer, rcSrc.left, rcSrc.top);
 					}
 				}
 			} else {
 				int sy = 57 + ff * 48;
-				drawString(_videobuffer, "Empty", 160 - 5 * 4, sy, 0);
+				drawString(_videoBuffer, "Empty", 160 - 5 * 4, sy, 0);
 			}
 		}
 		// ------------------------------------------
@@ -732,7 +732,7 @@ void GriffonEngine::saveLoadNew() {
 			rcDest.top = (int16)(53 + (currow - 1) * 48);
 		}
 
-		_itemimg[15]->blit(*_videobuffer, rcDest.left, rcDest.top);
+		_itemImg[15]->blit(*_videoBuffer, rcDest.left, rcDest.top);
 
 
 		if (lowerLock) {
@@ -745,7 +745,7 @@ void GriffonEngine::saveLoadNew() {
 			// CHECKME: Useless code? or temporary commented?
 			// rcDest.left = rcDest.left; // + 2 + 2 * sin(-2 * PI * _itemyloc / 16)
 
-			_itemimg[15]->blit(*_videobuffer, rcDest.left, rcDest.top);
+			_itemImg[15]->blit(*_videoBuffer, rcDest.left, rcDest.top);
 		}
 
 		int yy = 255;
@@ -754,21 +754,21 @@ void GriffonEngine::saveLoadNew() {
 			yy = CLIP(yy, 0, 255);
 		}
 
-		_videobuffer->setAlpha((int)yy);
-		g_system->copyRectToScreen(_videobuffer->getPixels(), _videobuffer->pitch, 0, 0, _videobuffer->w, _videobuffer->h);
+		_videoBuffer->setAlpha((int)yy);
+		g_system->copyRectToScreen(_videoBuffer->getPixels(), _videoBuffer->pitch, 0, 0, _videoBuffer->w, _videoBuffer->h);
 		g_system->updateScreen();
 
 		g_system->getEventManager()->pollEvent(_event);
 
-		_tickspassed = _ticks;
+		_ticksPassed = _ticks;
 		_ticks = g_system->getMillis();
 
-		_tickspassed = _ticks - _tickspassed;
-		_fpsr = (float)_tickspassed / 24;
+		_ticksPassed = _ticks - _ticksPassed;
+		_fpsr = (float)_ticksPassed / 24;
 
 		_fp++;
-		if (_ticks > _nextticks) {
-			_nextticks = _ticks + 1000;
+		if (_ticks > _nextTicks) {
+			_nextTicks = _ticks + 1000;
 			_fps = _fp;
 			_fp = 0;
 		}

@@ -121,7 +121,7 @@ void GriffonEngine::setupAudio() {
 	//atexit(Mix_CloseAudio);
 
 	const char *stri = "Loading...";
-	drawString(_videobuffer, stri, 160 - 4 * strlen(stri), 116, 0);
+	drawString(_videoBuffer, stri, 160 - 4 * strlen(stri), 116, 0);
 
 	Graphics::TransparentSurface *loadimg = loadImage("art/load.bmp", true);
 
@@ -134,9 +134,9 @@ void GriffonEngine::setupAudio() {
 	rcDest.top = 116 + 12;
 
 	loadimg->setAlpha(160, true); // 128
-	loadimg->blit(*_videobuffer, rcDest.left, rcDest.top, Graphics::FLIP_NONE, &rcSrc);
+	loadimg->blit(*_videoBuffer, rcDest.left, rcDest.top, Graphics::FLIP_NONE, &rcSrc);
 
-	g_system->copyRectToScreen(_videobuffer->getPixels(), _videobuffer->pitch, 0, 0, _videobuffer->w, _videobuffer->h);
+	g_system->copyRectToScreen(_videoBuffer->getPixels(), _videoBuffer->pitch, 0, 0, _videoBuffer->w, _videoBuffer->h);
 	g_system->updateScreen();
 
 	rcDest.left = 160 - 44 + 7;
@@ -198,7 +198,7 @@ void GriffonEngine::updateMusic() {
 		// if(_curmap > 5 && _curmap < 42) iplaysound = macademy;
 		// if(_curmap > 47) iplaysound = _mgardens;
 		iplaysound = _mgardens;
-		if (_roomlock)
+		if (_roomLock)
 			iplaysound = _mboss;
 
 		if (iplaysound == _mboss && _playingBoss)

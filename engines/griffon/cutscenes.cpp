@@ -138,10 +138,10 @@ void GriffonEngine::showLogos() {
 			y = CLIP<float>(y, 0.0, 255.0);
 		}
 
-		_videobuffer->fillRect(Common::Rect(0, 0, 320, 240), 0);
-		_logosimg->blit(*_videobuffer, 0, 0, Graphics::FLIP_NONE, nullptr, TS_ARGB((int)y, (int)y, (int)y, (int)y));
+		_videoBuffer->fillRect(Common::Rect(0, 0, 320, 240), 0);
+		_logosImg->blit(*_videoBuffer, 0, 0, Graphics::FLIP_NONE, nullptr, TS_ARGB((int)y, (int)y, (int)y, (int)y));
 
-		g_system->copyRectToScreen(_videobuffer->getPixels(), _videobuffer->pitch, 0, 0, _videobuffer->w, _videobuffer->h);
+		g_system->copyRectToScreen(_videoBuffer->getPixels(), _videoBuffer->pitch, 0, 0, _videoBuffer->w, _videoBuffer->h);
 		g_system->updateScreen();
 
 		g_system->getEventManager()->pollEvent(_event);
@@ -149,15 +149,15 @@ void GriffonEngine::showLogos() {
 		if (_event.type == Common::EVENT_QUIT)
 			_shouldQuit = true;
 
-		_tickspassed = _ticks;
+		_ticksPassed = _ticks;
 		_ticks = g_system->getMillis();
 
-		_tickspassed = _ticks - _tickspassed;
-		_fpsr = (float)_tickspassed / 24;
+		_ticksPassed = _ticks - _ticksPassed;
+		_fpsr = (float)_ticksPassed / 24;
 
 		_fp++;
-		if (_ticks > _nextticks) {
-			_nextticks = _ticks + 1000;
+		if (_ticks > _nextTicks) {
+			_nextTicks = _ticks + 1000;
 			_fps = _fp;
 			_fp = 0;
 		}
@@ -169,13 +169,13 @@ void GriffonEngine::showLogos() {
 }
 
 void GriffonEngine::intro() {
-	_videobuffer2->fillRect(Common::Rect(0, 0, _videobuffer2->w, _videobuffer2->h), 0);
-	_videobuffer3->fillRect(Common::Rect(0, 0, _videobuffer3->w, _videobuffer3->h), 0);
+	_videoBuffer2->fillRect(Common::Rect(0, 0, _videoBuffer2->w, _videoBuffer2->h), 0);
+	_videoBuffer3->fillRect(Common::Rect(0, 0, _videoBuffer3->w, _videoBuffer3->h), 0);
 
 	_ticks = g_system->getMillis();
 
-	_videobuffer->blit(*_videobuffer3);
-	_videobuffer->blit(*_videobuffer2);
+	_videoBuffer->blit(*_videoBuffer3);
+	_videoBuffer->blit(*_videoBuffer2);
 
 	_fpsr = 0.0;
 	int y = 140;
@@ -187,7 +187,7 @@ void GriffonEngine::intro() {
 	}
 
 	_secsingame = 0;
-	_secstart = 0;
+	_secStart = 0;
 
 	bool ldstop = false;
 	int cnt = 0;
@@ -208,12 +208,12 @@ void GriffonEngine::intro() {
 		rc.left = -xofs;
 		rc.top = 0;
 
-		_titleimg->blit(*_videobuffer, rc.left, rc.top);
+		_titleImg->blit(*_videoBuffer, rc.left, rc.top);
 
 		rc.left = -xofs + 320;
 		rc.top = 0;
 
-		_titleimg->blit(*_videobuffer, rc.left, rc.top);
+		_titleImg->blit(*_videoBuffer, rc.left, rc.top);
 
 		if (++cnt >= 6) {
 			cnt = 0;
@@ -224,25 +224,25 @@ void GriffonEngine::intro() {
 			int yy = y + i * 10;
 			if (yy > -8 && yy < 240) {
 				int x = 160 - strlen(story[i]) * 4;
-				drawString(_videobuffer, story[i], x, yy, 4);
+				drawString(_videoBuffer, story[i], x, yy, 4);
 			}
 
 			if (yy < 10 && i == 47)
 				return;
 		}
 
-		g_system->copyRectToScreen(_videobuffer->getPixels(), _videobuffer->pitch, 0, 0, _videobuffer->w, _videobuffer->h);
+		g_system->copyRectToScreen(_videoBuffer->getPixels(), _videoBuffer->pitch, 0, 0, _videoBuffer->w, _videoBuffer->h);
 		g_system->updateScreen();
 
-		_tickspassed = _ticks;
+		_ticksPassed = _ticks;
 		_ticks = g_system->getMillis();
 
-		_tickspassed = _ticks - _tickspassed;
-		_fpsr = (float)_tickspassed / 24.0;
+		_ticksPassed = _ticks - _ticksPassed;
+		_fpsr = (float)_ticksPassed / 24.0;
 
 		_fp++;
-		if (_ticks > _nextticks) {
-			_nextticks = _ticks + 1000;
+		if (_ticks > _nextTicks) {
+			_nextTicks = _ticks + 1000;
 			_fps = _fp;
 			_fp = 0;
 		}
@@ -283,9 +283,9 @@ void GriffonEngine::endOfGame() {
 	int ticks1 = _ticks;
 	int ya = 0;
 
-	_videobuffer2->fillRect(Common::Rect(0, 0, _videobuffer2->w, _videobuffer2->h), 0);
-	_videobuffer3->fillRect(Common::Rect(0, 0, _videobuffer3->w, _videobuffer3->h), 0);
-	_videobuffer2->copyRectToSurface(_videobuffer->getPixels(), _videobuffer->pitch, 0, 0, _videobuffer->w, _videobuffer->h);
+	_videoBuffer2->fillRect(Common::Rect(0, 0, _videoBuffer2->w, _videoBuffer2->h), 0);
+	_videoBuffer3->fillRect(Common::Rect(0, 0, _videoBuffer3->w, _videoBuffer3->h), 0);
+	_videoBuffer2->copyRectToSurface(_videoBuffer->getPixels(), _videoBuffer->pitch, 0, 0, _videoBuffer->w, _videoBuffer->h);
 
 	float ld = 0;
 	bool ldstop = false; // CHECKME: Check if actually used
@@ -307,27 +307,27 @@ void GriffonEngine::endOfGame() {
 		} else
 			break;
 
-		_videobuffer->fillRect(Common::Rect(0, 0, _videobuffer->w, _videobuffer->h), 0);
+		_videoBuffer->fillRect(Common::Rect(0, 0, _videoBuffer->w, _videoBuffer->h), 0);
 
-		_videobuffer->setAlpha(ya);
-		_videobuffer3->copyRectToSurface(_videobuffer2->getPixels(), _videobuffer2->pitch, 0, 0, _videobuffer2->w, _videobuffer2->h);
-		_videobuffer3->copyRectToSurface(_videobuffer->getPixels(), _videobuffer->pitch, 0, 0, _videobuffer->w, _videobuffer->h);
+		_videoBuffer->setAlpha(ya);
+		_videoBuffer3->copyRectToSurface(_videoBuffer2->getPixels(), _videoBuffer2->pitch, 0, 0, _videoBuffer2->w, _videoBuffer2->h);
+		_videoBuffer3->copyRectToSurface(_videoBuffer->getPixels(), _videoBuffer->pitch, 0, 0, _videoBuffer->w, _videoBuffer->h);
 
-		g_system->copyRectToScreen(_videobuffer3->getPixels(), _videobuffer3->pitch, 0, 0, _videobuffer3->w, _videobuffer3->h);
+		g_system->copyRectToScreen(_videoBuffer3->getPixels(), _videoBuffer3->pitch, 0, 0, _videoBuffer3->w, _videoBuffer3->h);
 		g_system->updateScreen();
 
 		g_system->getEventManager()->pollEvent(_event);
 		g_system->delayMillis(10);
 
-		_tickspassed = _ticks;
+		_ticksPassed = _ticks;
 		_ticks = g_system->getMillis();
 
-		_tickspassed = _ticks - _tickspassed;
-		_fpsr = (float)_tickspassed / 24;
+		_ticksPassed = _ticks - _ticksPassed;
+		_fpsr = (float)_ticksPassed / 24;
 
 		_fp++;
-		if (_ticks > _nextticks) {
-			_nextticks = _ticks + 1000;
+		if (_ticks > _nextTicks) {
+			_nextTicks = _ticks + 1000;
 			_fps = _fp;
 			_fp = 0;
 		}
@@ -343,19 +343,19 @@ void GriffonEngine::endOfGame() {
 		rc.left = -xofs;
 		rc.top = 0;
 
-		_titleimg->blit(*_videobuffer, rc.left, rc.top);
+		_titleImg->blit(*_videoBuffer, rc.left, rc.top);
 
 		rc.left = -xofs + 320;
 		rc.top = 0;
 
-		_titleimg->blit(*_videobuffer, rc.left, rc.top);
+		_titleImg->blit(*_videoBuffer, rc.left, rc.top);
 
 		y = y - spd * _fpsr;
 		for (int i = 0; i <= 26; i++) {
 			int yy = y + i * 10;
 			if (yy > -8 && yy < 240) {
 				int x = 160 - strlen(story2[i]) * 4;
-				drawString(_videobuffer, story2[i], x, yy, 4);
+				drawString(_videoBuffer, story2[i], x, yy, 4);
 			}
 
 			if (yy < 10 && i == 25)
@@ -368,22 +368,22 @@ void GriffonEngine::endOfGame() {
 			ya = CLIP(ya, 0, 255);
 		}
 
-		_videobuffer->setAlpha(ya);
-		g_system->copyRectToScreen(_videobuffer->getPixels(), _videobuffer->pitch, 0, 0, _videobuffer->w, _videobuffer->h);
+		_videoBuffer->setAlpha(ya);
+		g_system->copyRectToScreen(_videoBuffer->getPixels(), _videoBuffer->pitch, 0, 0, _videoBuffer->w, _videoBuffer->h);
 		g_system->updateScreen();
 
 		g_system->getEventManager()->pollEvent(_event);
 		g_system->delayMillis(10);
 
-		_tickspassed = _ticks;
+		_ticksPassed = _ticks;
 		_ticks = g_system->getMillis();
 
-		_tickspassed = _ticks - _tickspassed;
-		_fpsr = (float)_tickspassed / 24;
+		_ticksPassed = _ticks - _ticksPassed;
+		_fpsr = (float)_ticksPassed / 24;
 
 		_fp++;
-		if (_ticks > _nextticks) {
-			_nextticks = _ticks + 1000;
+		if (_ticks > _nextTicks) {
+			_nextTicks = _ticks + 1000;
 			_fps = _fp;
 			_fp = 0;
 		}
@@ -408,7 +408,7 @@ void GriffonEngine::endOfGame() {
 	ticks1 = _ticks;
 	int y1 = 0;
 
-	_videobuffer2->copyRectToSurface(_videobuffer->getPixels(), _videobuffer->pitch, 0, 0, _videobuffer->w, _videobuffer->h);
+	_videoBuffer2->copyRectToSurface(_videoBuffer->getPixels(), _videoBuffer->pitch, 0, 0, _videoBuffer->w, _videoBuffer->h);
 
 	do {
 		if (_ticks < ticks1 + 1500) {
@@ -418,27 +418,27 @@ void GriffonEngine::endOfGame() {
 		else
 			break;
 
-		_videobuffer->fillRect(Common::Rect(0, 0, _videobuffer->w, _videobuffer->h), 0);
+		_videoBuffer->fillRect(Common::Rect(0, 0, _videoBuffer->w, _videoBuffer->h), 0);
 
-		_videobuffer->setAlpha(y1);
-		_videobuffer2->blit(*_videobuffer3);
-		_videobuffer->blit(*_videobuffer3);
+		_videoBuffer->setAlpha(y1);
+		_videoBuffer2->blit(*_videoBuffer3);
+		_videoBuffer->blit(*_videoBuffer3);
 
-		g_system->copyRectToScreen(_videobuffer3->getPixels(), _videobuffer3->pitch, 0, 0, _videobuffer3->w, _videobuffer3->h);
+		g_system->copyRectToScreen(_videoBuffer3->getPixels(), _videoBuffer3->pitch, 0, 0, _videoBuffer3->w, _videoBuffer3->h);
 		g_system->updateScreen();
 
 		g_system->getEventManager()->pollEvent(_event);
 		g_system->delayMillis(10);
 
-		_tickspassed = _ticks;
+		_ticksPassed = _ticks;
 		_ticks = g_system->getMillis();
 
-		_tickspassed = _ticks - _tickspassed;
-		_fpsr = (float)_tickspassed / 24;
+		_ticksPassed = _ticks - _ticksPassed;
+		_fpsr = (float)_ticksPassed / 24;
 
 		_fp++;
-		if (_ticks > _nextticks) {
-			_nextticks = _ticks + 1000;
+		if (_ticks > _nextTicks) {
+			_nextTicks = _ticks + 1000;
 			_fps = _fp;
 			_fp = 0;
 		}
@@ -451,7 +451,7 @@ void GriffonEngine::endOfGame() {
 	y1 = 0;
 	do {
 
-		_videobuffer->copyRectToSurface(_theendimg->getPixels(), _theendimg->pitch, 0, 0, _theendimg->w, _theendimg->h);
+		_videoBuffer->copyRectToSurface(_theEndImg->getPixels(), _theEndImg->pitch, 0, 0, _theEndImg->w, _theEndImg->h);
 
 		y1 = 255;
 		if (_ticks < ticks1 + 1000) {
@@ -459,22 +459,22 @@ void GriffonEngine::endOfGame() {
 			y1 = CLIP(y1, 0, 255);
 		}
 
-		_videobuffer->setAlpha(y1);
-		g_system->copyRectToScreen(_videobuffer->getPixels(), _videobuffer->pitch, 0, 0, _videobuffer->w, _videobuffer->h);
+		_videoBuffer->setAlpha(y1);
+		g_system->copyRectToScreen(_videoBuffer->getPixels(), _videoBuffer->pitch, 0, 0, _videoBuffer->w, _videoBuffer->h);
 		g_system->updateScreen();
 
 		g_system->getEventManager()->pollEvent(_event);
 		g_system->delayMillis(10);
 
-		_tickspassed = _ticks;
+		_ticksPassed = _ticks;
 		_ticks = g_system->getMillis();
 
-		_tickspassed = _ticks - _tickspassed;
-		_fpsr = (float)_tickspassed / 24;
+		_ticksPassed = _ticks - _ticksPassed;
+		_fpsr = (float)_ticksPassed / 24;
 
 		_fp++;
-		if (_ticks > _nextticks) {
-			_nextticks = _ticks + 1000;
+		if (_ticks > _nextTicks) {
+			_nextTicks = _ticks + 1000;
 			_fps = _fp;
 			_fp = 0;
 		}
@@ -486,8 +486,8 @@ void GriffonEngine::endOfGame() {
 
 	} while (1);
 
-	_videobuffer2->fillRect(Common::Rect(0, 0, _videobuffer2->w, _videobuffer2->h), 0);
-	_videobuffer3->fillRect(Common::Rect(0, 0, _videobuffer3->w, _videobuffer3->h), 0);
+	_videoBuffer2->fillRect(Common::Rect(0, 0, _videoBuffer2->w, _videoBuffer2->h), 0);
+	_videoBuffer3->fillRect(Common::Rect(0, 0, _videoBuffer3->w, _videoBuffer3->h), 0);
 
 	theEnd();
 
@@ -500,23 +500,23 @@ void GriffonEngine::theEnd() {
 	}
 
 	for (float y = 0; y < 100; y += _fpsr) {
-		_videobuffer->setAlpha((int)y);
-		_videobuffer->fillRect(Common::Rect(0, 0, _videobuffer->w, _videobuffer->h), 0);
-		g_system->copyRectToScreen(_videobuffer->getPixels(), _videobuffer->pitch, 0, 0, _videobuffer->w, _videobuffer->h);
+		_videoBuffer->setAlpha((int)y);
+		_videoBuffer->fillRect(Common::Rect(0, 0, _videoBuffer->w, _videoBuffer->h), 0);
+		g_system->copyRectToScreen(_videoBuffer->getPixels(), _videoBuffer->pitch, 0, 0, _videoBuffer->w, _videoBuffer->h);
 		g_system->updateScreen();
 
 		g_system->getEventManager()->pollEvent(_event);
 		g_system->delayMillis(10);
 
-		_tickspassed = _ticks;
+		_ticksPassed = _ticks;
 		_ticks = g_system->getMillis();
 
-		_tickspassed = _ticks - _tickspassed;
-		_fpsr = (float)_tickspassed / 24.0;
+		_ticksPassed = _ticks - _ticksPassed;
+		_fpsr = (float)_ticksPassed / 24.0;
 
 		_fp++;
-		if (_ticks > _nextticks) {
-			_nextticks = _ticks + 1000;
+		if (_ticks > _nextTicks) {
+			_nextTicks = _ticks + 1000;
 			_fps = _fp;
 			_fp = 0;
 		}

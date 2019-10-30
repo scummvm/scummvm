@@ -307,7 +307,7 @@ void GriffonEngine::updateNPCs() {
 				if (moveup) {
 					int sx = xp;
 					int sy = yp - ii;
-					uint32 *temp = (uint32 *)_clipbg->getBasePtr(sx, sy);
+					uint32 *temp = (uint32 *)_clipBg->getBasePtr(sx, sy);
 					uint32 dq = *temp;
 					if (_npcinfo[i].spriteset == kMonsterFinalBoss)
 						dq = 0;
@@ -317,7 +317,7 @@ void GriffonEngine::updateNPCs() {
 					if (dq > 0) {
 						sx = xp - ii;
 						sy = yp - ii;
-						temp = (uint32 *)_clipbg->getBasePtr(sx, sy);
+						temp = (uint32 *)_clipBg->getBasePtr(sx, sy);
 						dq = *temp;
 						if (_npcinfo[i].spriteset == kMonsterFinalBoss)
 							dq = 0;
@@ -329,7 +329,7 @@ void GriffonEngine::updateNPCs() {
 					if (dq > 0) {
 						sx = xp + ii;
 						sy = yp - ii;
-						temp = (uint32 *)_clipbg->getBasePtr(sx, sy);
+						temp = (uint32 *)_clipBg->getBasePtr(sx, sy);
 						dq = *temp;
 						if (_npcinfo[i].spriteset == kMonsterFinalBoss)
 							dq = 0;
@@ -343,7 +343,7 @@ void GriffonEngine::updateNPCs() {
 				if (movedown) {
 					int sx = xp;
 					int sy = yp + ii;
-					uint32 *temp = (uint32 *)_clipbg->getBasePtr(sx, sy);
+					uint32 *temp = (uint32 *)_clipBg->getBasePtr(sx, sy);
 					uint32 dq = *temp;
 					if (_npcinfo[i].spriteset == kMonsterFinalBoss)
 						dq = 0;
@@ -352,7 +352,7 @@ void GriffonEngine::updateNPCs() {
 					if (dq > 0) {
 						sx = xp - ii;
 						sy = yp + ii;
-						temp = (uint32 *)_clipbg->getBasePtr(sx, sy);
+						temp = (uint32 *)_clipBg->getBasePtr(sx, sy);
 						dq = *temp;
 						if (_npcinfo[i].spriteset == kMonsterFinalBoss)
 							dq = 0;
@@ -364,7 +364,7 @@ void GriffonEngine::updateNPCs() {
 					if (dq > 0) {
 						sx = xp + ii;
 						sy = yp + ii;
-						temp = (uint32 *)_clipbg->getBasePtr(sx, sy);
+						temp = (uint32 *)_clipBg->getBasePtr(sx, sy);
 						dq = *temp;
 						if (_npcinfo[i].spriteset == kMonsterFinalBoss)
 							dq = 0;
@@ -378,7 +378,7 @@ void GriffonEngine::updateNPCs() {
 				if (moveleft) {
 					int sx = xp - ii;
 					int sy = yp;
-					uint32 *temp = (uint32 *)_clipbg->getBasePtr(sx, sy);
+					uint32 *temp = (uint32 *)_clipBg->getBasePtr(sx, sy);
 					uint32 dq = *temp;
 					if (_npcinfo[i].spriteset == kMonsterFinalBoss)
 						dq = 0;
@@ -387,7 +387,7 @@ void GriffonEngine::updateNPCs() {
 					if (dq > 0) {
 						sx = xp - ii;
 						sy = yp - ii;
-						temp = (uint32 *)_clipbg->getBasePtr(sx, sy);
+						temp = (uint32 *)_clipBg->getBasePtr(sx, sy);
 						dq = *temp;
 						if (_npcinfo[i].spriteset == kMonsterFinalBoss)
 							dq = 0;
@@ -399,7 +399,7 @@ void GriffonEngine::updateNPCs() {
 					if (dq > 0) {
 						sx = xp - ii;
 						sy = yp + ii;
-						temp = (uint32 *)_clipbg->getBasePtr(sx, sy);
+						temp = (uint32 *)_clipBg->getBasePtr(sx, sy);
 						dq = *temp;
 						if (_npcinfo[i].spriteset == kMonsterFinalBoss)
 							dq = 0;
@@ -413,7 +413,7 @@ void GriffonEngine::updateNPCs() {
 				if (moveright) {
 					int sx = xp + ii;
 					int sy = yp;
-					uint32 *temp = (uint32 *)_clipbg->getBasePtr(sx, sy);
+					uint32 *temp = (uint32 *)_clipBg->getBasePtr(sx, sy);
 					uint32 dq = *temp;
 					if (_npcinfo[i].spriteset == kMonsterFinalBoss)
 						dq = 0;
@@ -422,7 +422,7 @@ void GriffonEngine::updateNPCs() {
 					if (dq > 0) {
 						sx = xp + ii;
 						sy = yp - ii;
-						temp = (uint32 *)_clipbg->getBasePtr(sx, sy);
+						temp = (uint32 *)_clipBg->getBasePtr(sx, sy);
 						dq = *temp;
 						if (_npcinfo[i].spriteset == kMonsterFinalBoss)
 							dq = 0;
@@ -434,7 +434,7 @@ void GriffonEngine::updateNPCs() {
 					if (dq > 0) {
 						sx = xp + ii;
 						sy = yp + ii;
-						temp = (uint32 *)_clipbg->getBasePtr(sx, sy);
+						temp = (uint32 *)_clipBg->getBasePtr(sx, sy);
 						dq = *temp;
 						if (_npcinfo[i].spriteset == kMonsterFinalBoss)
 							dq = 0;
@@ -475,7 +475,7 @@ void GriffonEngine::updateNPCs() {
 
 				int sx = xp;
 				int sy = yp;
-				uint32 *temp = (uint32 *)_clipbg->getBasePtr(sx, sy);
+				uint32 *temp = (uint32 *)_clipBg->getBasePtr(sx, sy);
 				uint32 bgc = *temp;
 
 				float anpx = npx + 12;
@@ -974,7 +974,7 @@ void GriffonEngine::updateNPCs() {
 			rcSrc.setHeight(3);
 
 			if (_npcinfo[i].pause < _ticks)
-				_clipbg->fillRect(rcSrc, i);
+				_clipBg->fillRect(rcSrc, i);
 
 
 			pass = 0;
@@ -1245,7 +1245,7 @@ void GriffonEngine::updateSpells() {
 			int spellnum = spellinfo[i].spellnum;
 
 			// water
-			if (spellnum == 0 && !_forcepause) {
+			if (spellnum == 0 && !_forcePause) {
 				float fr = (32 - spellinfo[i].frame);
 				int ll[4][2];
 
@@ -1307,9 +1307,9 @@ void GriffonEngine::updateSpells() {
 						}
 
 						if (xloc > -16 && xloc < 304 && yloc > -16 && yloc < 224) {
-							_spellimg->setAlpha(alf, true);
-							_spellimg->blit(*_videobuffer, rcDest.left, rcDest.top, Graphics::FLIP_NONE, &rcSrc);
-							_spellimg->setAlpha(255, true);
+							_spellImg->setAlpha(alf, true);
+							_spellImg->blit(*_videoBuffer, rcDest.left, rcDest.top, Graphics::FLIP_NONE, &rcSrc);
+							_spellImg->setAlpha(255, true);
 
 							if (spellinfo[i].damagewho == 0) {
 								for (int e = 1; e <= _lastnpc; e++) {
@@ -1333,21 +1333,21 @@ void GriffonEngine::updateSpells() {
 							// check for post damage
 							if (nposts > 0) {
 								for (int e = 0; e <= nposts - 1; e++) {
-									float xdif = (xloc + 16) - (postinfo[e][0] + 8);
-									float ydif = (yloc + 16) - (postinfo[e][1] + 8);
+									float xdif = (xloc + 16) - (_postInfo[e][0] + 8);
+									float ydif = (yloc + 16) - (_postInfo[e][1] + 8);
 
 									if ((abs(xdif) < 16 && abs(ydif) < 16)) {
-										_objmapf[_curmap][(int)postinfo[e][0] / 16][(int)postinfo[e][1] / 16] = 1;
-										_objectMap[(int)postinfo[e][0] / 16][(int)postinfo[e][1] / 16] = -1;
+										_objmapf[_curMap][(int)_postInfo[e][0] / 16][(int)_postInfo[e][1] / 16] = 1;
+										_objectMap[(int)_postInfo[e][0] / 16][(int)_postInfo[e][1] / 16] = -1;
 
-										rcSrc.left = postinfo[e][0] / 2;
-										rcSrc.top = postinfo[e][1] / 2;
+										rcSrc.left = _postInfo[e][0] / 2;
+										rcSrc.top = _postInfo[e][1] / 2;
 										rcSrc.setWidth(8);
 										rcSrc.setHeight(8);
 
-										_clipbg2->fillRect(rcSrc, 0);
+										_clipBg2->fillRect(rcSrc, 0);
 
-										addFloatIcon(99, postinfo[e][0], postinfo[e][1]);
+										addFloatIcon(99, _postInfo[e][0], _postInfo[e][1]);
 
 										if (config.effects) {
 											int snd = playSound(_sfx[kSndIce]);
@@ -1362,7 +1362,7 @@ void GriffonEngine::updateSpells() {
 			}
 
 			// metal
-			if (spellnum == 1 && !_forcepause) {
+			if (spellnum == 1 && !_forcePause) {
 				int fr = (int)((32 - spellinfo[i].frame) * 4) % 3;
 
 				rcSrc.left = fr * 48;
@@ -1384,7 +1384,7 @@ void GriffonEngine::updateSpells() {
 				rcDest.left = xloc;
 				rcDest.top = yloc;
 
-				_spellimg->blit(*_videobuffer, rcDest.left, rcDest.top, Graphics::FLIP_NONE, &rcSrc);
+				_spellImg->blit(*_videoBuffer, rcDest.left, rcDest.top, Graphics::FLIP_NONE, &rcSrc);
 
 				spellinfo[i].frame = spellinfo[i].frame - 0.2 * _fpsr;
 				if (spellinfo[i].frame < 0)
@@ -1452,21 +1452,21 @@ void GriffonEngine::updateSpells() {
 				// check for(int post damage
 				if (nposts > 0) {
 					for (int e = 0; e <= nposts - 1; e++) {
-						float xdif = (xloc + 24) - (postinfo[e][0] + 8);
-						float ydif = (yloc + 24) - (postinfo[e][1] + 8);
+						float xdif = (xloc + 24) - (_postInfo[e][0] + 8);
+						float ydif = (yloc + 24) - (_postInfo[e][1] + 8);
 
 						if ((abs(xdif) < 24 && abs(ydif) < 24)) {
-							_objmapf[_curmap][(int)postinfo[e][0] / 16][(int)postinfo[e][1] / 16] = 1;
-							_objectMap[(int)postinfo[e][0] / 16][(int)postinfo[e][1] / 16] = -1;
+							_objmapf[_curMap][(int)_postInfo[e][0] / 16][(int)_postInfo[e][1] / 16] = 1;
+							_objectMap[(int)_postInfo[e][0] / 16][(int)_postInfo[e][1] / 16] = -1;
 
-							rcSrc.left = postinfo[e][0] / 2;
-							rcSrc.top = postinfo[e][1] / 2;
+							rcSrc.left = _postInfo[e][0] / 2;
+							rcSrc.top = _postInfo[e][1] / 2;
 							rcSrc.setWidth(8);
 							rcSrc.setHeight(8);
 
-							_clipbg2->fillRect(rcSrc, 0);
+							_clipBg2->fillRect(rcSrc, 0);
 
-							addFloatIcon(99, postinfo[e][0], postinfo[e][1]);
+							addFloatIcon(99, _postInfo[e][0], _postInfo[e][1]);
 
 							if (config.effects) {
 								int snd = playSound(_sfx[kSndMetalHit]);
@@ -1478,7 +1478,7 @@ void GriffonEngine::updateSpells() {
 			}
 
 			// earth
-			if (spellnum == 2 && !_forcepause) {
+			if (spellnum == 2 && !_forcePause) {
 				float hght = 240 - spellinfo[i].enemyy;
 
 				for (int f = 8; f >= 0; f--) {
@@ -1506,7 +1506,7 @@ void GriffonEngine::updateSpells() {
 						rcDest.top = yloc;
 
 						if (xloc > -16 && xloc < 304 && yloc > -16 && yloc < 224) {
-							_spellimg->blit(*_videobuffer, rcDest.left, rcDest.top, Graphics::FLIP_NONE, &rcSrc);
+							_spellImg->blit(*_videoBuffer, rcDest.left, rcDest.top, Graphics::FLIP_NONE, &rcSrc);
 
 							if (scatter) {
 								if (spellinfo[i].damagewho == 0) {
@@ -1532,21 +1532,21 @@ void GriffonEngine::updateSpells() {
 								// check for(int post damage
 								if (nposts > 0) {
 									for (int e = 0; e <= nposts - 1; e++) {
-										float xdif = (xloc + 16) - (postinfo[e][0] + 8);
-										float ydif = (yloc + 16) - (postinfo[e][1] + 8);
+										float xdif = (xloc + 16) - (_postInfo[e][0] + 8);
+										float ydif = (yloc + 16) - (_postInfo[e][1] + 8);
 
 										if ((abs(xdif) < 16 && abs(ydif) < 16)) {
-											_objmapf[_curmap][(int)postinfo[e][0] / 16][(int)postinfo[e][1] / 16] = 1;
-											_objectMap[(int)postinfo[e][0] / 16][(int)postinfo[e][1] / 16] = -1;
+											_objmapf[_curMap][(int)_postInfo[e][0] / 16][(int)_postInfo[e][1] / 16] = 1;
+											_objectMap[(int)_postInfo[e][0] / 16][(int)_postInfo[e][1] / 16] = -1;
 
-											rcSrc.left = postinfo[e][0] / 2;
-											rcSrc.top = postinfo[e][1] / 2;
+											rcSrc.left = _postInfo[e][0] / 2;
+											rcSrc.top = _postInfo[e][1] / 2;
 											rcSrc.setWidth(8);
 											rcSrc.setHeight(8);
 
-											_clipbg2->fillRect(rcSrc, 0);
+											_clipBg2->fillRect(rcSrc, 0);
 
-											addFloatIcon(99, postinfo[e][0], postinfo[e][1]);
+											addFloatIcon(99, _postInfo[e][0], _postInfo[e][1]);
 
 											if (config.effects) {
 												int snd = playSound(_sfx[kSndRocks]);
@@ -1585,14 +1585,14 @@ void GriffonEngine::updateSpells() {
 				if (fra > 24)
 					f = 192 * (1 - (fra - 24) / 8);
 
-				_spellimg->setAlpha(f, true);
-				_spellimg->blit(*_videobuffer, rcDest.left, rcDest.top, Graphics::FLIP_NONE, &rcSrc);
-				_spellimg->setAlpha(255, true);
+				_spellImg->setAlpha(f, true);
+				_spellImg->blit(*_videoBuffer, rcDest.left, rcDest.top, Graphics::FLIP_NONE, &rcSrc);
+				_spellImg->setAlpha(255, true);
 
 				spellinfo[i].frame = spellinfo[i].frame - 0.3 * _fpsr;
 				if (spellinfo[i].frame < 0) {
 					spellinfo[i].frame = 0;
-					_forcepause = false;
+					_forcePause = false;
 
 					float npx = _player.px + 12;
 					float npy = _player.py + 20;
@@ -1664,12 +1664,12 @@ void GriffonEngine::updateSpells() {
 			}
 
 			// room fireballs
-			if (spellnum == 6 && !_forcepause) {
+			if (spellnum == 6 && !_forcePause) {
 
 				if (spellinfo[i].frame > 16) {
 					float fr = (32 - spellinfo[i].frame);
 
-					_spellimg->setAlpha(192 * sin(3.14159 * fr / 4), true);
+					_spellImg->setAlpha(192 * sin(3.14159 * fr / 4), true);
 
 					rcSrc.left = 16 * (int)(RND() * 2);
 					rcSrc.top = 80;
@@ -1684,12 +1684,12 @@ void GriffonEngine::updateSpells() {
 						rcDest.left = xloc;
 						rcDest.top = yloc;
 
-						_spellimg->blit(*_videobuffer, rcDest.left, rcDest.top, Graphics::FLIP_NONE, &rcSrc);
+						_spellImg->blit(*_videoBuffer, rcDest.left, rcDest.top, Graphics::FLIP_NONE, &rcSrc);
 					}
 
-					_spellimg->setAlpha(255, true);
+					_spellImg->setAlpha(255, true);
 				} else {
-					_spellimg->setAlpha(192, true);
+					_spellImg->setAlpha(192, true);
 
 					rcSrc.left = 16 * (int)(RND() * 2);
 					rcSrc.top = 80;
@@ -1719,14 +1719,14 @@ void GriffonEngine::updateSpells() {
 							rcDest.left = xloc;
 							rcDest.top = yloc;
 
-							_spellimg->blit(*_videobuffer, rcDest.left, rcDest.top, Graphics::FLIP_NONE, &rcSrc);
+							_spellImg->blit(*_videoBuffer, rcDest.left, rcDest.top, Graphics::FLIP_NONE, &rcSrc);
 						}
 
 						if (xloc < -1 || yloc < -1 || xloc > 304 || yloc > 224)
 							spellinfo[i].ballon[ff] = 0;
 					}
 
-					_spellimg->setAlpha(255, true);
+					_spellImg->setAlpha(255, true);
 				}
 
 				spellinfo[i].frame = spellinfo[i].frame - 0.2 * _fpsr;
@@ -1760,9 +1760,9 @@ void GriffonEngine::updateSpells() {
 
 			// lightning bomb
 			if (spellnum == 8) {
-				long cl1 = _videobuffer->format.RGBToColor(0, 32, 204);
-				long cl2 = _videobuffer->format.RGBToColor(142, 173, 191);
-				long cl3 = _videobuffer->format.RGBToColor(240, 240, 240);
+				long cl1 = _videoBuffer->format.RGBToColor(0, 32, 204);
+				long cl2 = _videoBuffer->format.RGBToColor(142, 173, 191);
+				long cl3 = _videoBuffer->format.RGBToColor(240, 240, 240);
 
 				float px = _player.px + 12;
 				float py = _player.py + 12;
@@ -1781,13 +1781,13 @@ void GriffonEngine::updateSpells() {
 						else if (orn == 2)
 							++y;
 
-						drawLine(_videobuffer, x, y - 1, x, y + 2, cl1);
-						drawLine(_videobuffer, x, y, x, y + 1, cl3);
+						drawLine(_videoBuffer, x, y - 1, x, y + 2, cl1);
+						drawLine(_videoBuffer, x, y, x, y + 1, cl3);
 
 						if (rn == 0)
-							drawLine(_videobuffer, x, y + 1, x, y + 1, cl2);
+							drawLine(_videoBuffer, x, y + 1, x, y + 1, cl2);
 						if (rn == 2)
-							drawLine(_videobuffer, x, y, x, y, cl2);
+							drawLine(_videoBuffer, x, y, x, y, cl2);
 
 						orn = rn;
 
@@ -1808,21 +1808,21 @@ void GriffonEngine::updateSpells() {
 						// check for post damage
 						if (nposts > 0) {
 							for (int e = 0; e <= nposts - 1; e++) {
-								float xdif = (xloc + 16) - (postinfo[e][0] + 8);
-								float ydif = (yloc + 16) - (postinfo[e][1] + 8);
+								float xdif = (xloc + 16) - (_postInfo[e][0] + 8);
+								float ydif = (yloc + 16) - (_postInfo[e][1] + 8);
 
 								if ((abs(xdif) < 16 && abs(ydif) < 16)) {
-									_objmapf[_curmap][(int)postinfo[e][0] / 16][(int)postinfo[e][1] / 16] = 1;
-									_objectMap[(int)postinfo[e][0] / 16][(int)postinfo[e][1] / 16] = -1;
+									_objmapf[_curMap][(int)_postInfo[e][0] / 16][(int)_postInfo[e][1] / 16] = 1;
+									_objectMap[(int)_postInfo[e][0] / 16][(int)_postInfo[e][1] / 16] = -1;
 
-									rcSrc.left = postinfo[e][0] / 2;
-									rcSrc.top = postinfo[e][1] / 2;
+									rcSrc.left = _postInfo[e][0] / 2;
+									rcSrc.top = _postInfo[e][1] / 2;
 									rcSrc.setWidth(8);
 									rcSrc.setHeight(8);
 
-									_clipbg2->fillRect(rcSrc, 0);
+									_clipBg2->fillRect(rcSrc, 0);
 
-									addFloatIcon(99, postinfo[e][0], postinfo[e][1]);
+									addFloatIcon(99, _postInfo[e][0], _postInfo[e][1]);
 								}
 							}
 						}
@@ -1838,13 +1838,13 @@ void GriffonEngine::updateSpells() {
 						else if (orn == 2)
 							++y;
 
-						drawLine(_videobuffer, x, y - 1, x, y + 2, cl1);
-						drawLine(_videobuffer, x, y, x, y + 1, cl3);
+						drawLine(_videoBuffer, x, y - 1, x, y + 2, cl1);
+						drawLine(_videoBuffer, x, y, x, y + 1, cl3);
 
 						if (rn == 0)
-							drawLine(_videobuffer, x, y + 1, x, y + 1, cl2);
+							drawLine(_videoBuffer, x, y + 1, x, y + 1, cl2);
 						if (rn == 2)
-							drawLine(_videobuffer, x, y, x, y, cl2);
+							drawLine(_videoBuffer, x, y, x, y, cl2);
 
 						orn = rn;
 
@@ -1865,21 +1865,21 @@ void GriffonEngine::updateSpells() {
 						// check for post damage
 						if (nposts > 0) {
 							for (int e = 0; e <= nposts - 1; e++) {
-								float xdif = (xloc + 16) - (postinfo[e][0] + 8);
-								float ydif = (yloc + 16) - (postinfo[e][1] + 8);
+								float xdif = (xloc + 16) - (_postInfo[e][0] + 8);
+								float ydif = (yloc + 16) - (_postInfo[e][1] + 8);
 
 								if ((abs(xdif) < 16 && abs(ydif) < 16)) {
-									_objmapf[_curmap][(int)postinfo[e][0] / 16][(int)postinfo[e][1] / 16] = 1;
-									_objectMap[(int)postinfo[e][0] / 16][(int)postinfo[e][1] / 16] = -1;
+									_objmapf[_curMap][(int)_postInfo[e][0] / 16][(int)_postInfo[e][1] / 16] = 1;
+									_objectMap[(int)_postInfo[e][0] / 16][(int)_postInfo[e][1] / 16] = -1;
 
-									rcSrc.left = postinfo[e][0] / 2;
-									rcSrc.top = postinfo[e][1] / 2;
+									rcSrc.left = _postInfo[e][0] / 2;
+									rcSrc.top = _postInfo[e][1] / 2;
 									rcSrc.setWidth(8);
 									rcSrc.setHeight(8);
 
-									_clipbg2->fillRect(rcSrc, 0);
+									_clipBg2->fillRect(rcSrc, 0);
 
-									addFloatIcon(99, postinfo[e][0], postinfo[e][1]);
+									addFloatIcon(99, _postInfo[e][0], _postInfo[e][1]);
 								}
 							}
 						}
@@ -1895,13 +1895,13 @@ void GriffonEngine::updateSpells() {
 						if (orn == 2)
 							x = x + 1;
 
-						drawLine(_videobuffer, x - 1, y, x + 2, y, cl1);
-						drawLine(_videobuffer, x, y, x + 1, y, cl3);
+						drawLine(_videoBuffer, x - 1, y, x + 2, y, cl1);
+						drawLine(_videoBuffer, x, y, x + 1, y, cl3);
 
 						if (rn == 0)
-							drawLine(_videobuffer, x + 1, y, x + 1, y, cl2);
+							drawLine(_videoBuffer, x + 1, y, x + 1, y, cl2);
 						if (rn == 2)
-							drawLine(_videobuffer, x, y, x, y, cl2);
+							drawLine(_videoBuffer, x, y, x, y, cl2);
 
 						orn = rn;
 
@@ -1922,21 +1922,21 @@ void GriffonEngine::updateSpells() {
 						// check for post damage
 						if (nposts > 0) {
 							for (int e = 0; e <= nposts - 1; e++) {
-								float xdif = (xloc + 16) - (postinfo[e][0] + 8);
-								float ydif = (yloc + 16) - (postinfo[e][1] + 8);
+								float xdif = (xloc + 16) - (_postInfo[e][0] + 8);
+								float ydif = (yloc + 16) - (_postInfo[e][1] + 8);
 
 								if ((abs(xdif) < 16 && abs(ydif) < 16)) {
-									_objmapf[_curmap][(int)postinfo[e][0] / 16][(int)postinfo[e][1] / 16] = 1;
-									_objectMap[(int)postinfo[e][0] / 16][(int)postinfo[e][1] / 16] = -1;
+									_objmapf[_curMap][(int)_postInfo[e][0] / 16][(int)_postInfo[e][1] / 16] = 1;
+									_objectMap[(int)_postInfo[e][0] / 16][(int)_postInfo[e][1] / 16] = -1;
 
-									rcSrc.left = postinfo[e][0] / 2;
-									rcSrc.top = postinfo[e][1] / 2;
+									rcSrc.left = _postInfo[e][0] / 2;
+									rcSrc.top = _postInfo[e][1] / 2;
 									rcSrc.setWidth(8);
 									rcSrc.setHeight(8);
 
-									_clipbg2->fillRect(rcSrc, 0);
+									_clipBg2->fillRect(rcSrc, 0);
 
-									addFloatIcon(99, postinfo[e][0], postinfo[e][1]);
+									addFloatIcon(99, _postInfo[e][0], _postInfo[e][1]);
 								}
 							}
 						}
@@ -1952,13 +1952,13 @@ void GriffonEngine::updateSpells() {
 						if (orn == 2)
 							x = x + 1;
 
-						drawLine(_videobuffer, x - 1, y, x + 2, y, cl1);
-						drawLine(_videobuffer, x, y, x + 1, y, cl3);
+						drawLine(_videoBuffer, x - 1, y, x + 2, y, cl1);
+						drawLine(_videoBuffer, x, y, x + 1, y, cl3);
 
 						if (rn == 0)
-							drawLine(_videobuffer, x + 1, y, x + 1, y, cl2);
+							drawLine(_videoBuffer, x + 1, y, x + 1, y, cl2);
 						if (rn == 2)
-							drawLine(_videobuffer, x, y, x, y, cl2);
+							drawLine(_videoBuffer, x, y, x, y, cl2);
 
 						orn = rn;
 
@@ -1979,21 +1979,21 @@ void GriffonEngine::updateSpells() {
 						// check for post damage
 						if (nposts > 0) {
 							for (int e = 0; e <= nposts - 1; e++) {
-								float xdif = (xloc + 16) - (postinfo[e][0] + 8);
-								float ydif = (yloc + 16) - (postinfo[e][1] + 8);
+								float xdif = (xloc + 16) - (_postInfo[e][0] + 8);
+								float ydif = (yloc + 16) - (_postInfo[e][1] + 8);
 
 								if ((abs(xdif) < 16 && abs(ydif) < 16)) {
-									_objmapf[_curmap][(int)postinfo[e][0] / 16][(int)postinfo[e][1] / 16] = 1;
-									_objectMap[(int)postinfo[e][0] / 16][(int)postinfo[e][1] / 16] = -1;
+									_objmapf[_curMap][(int)_postInfo[e][0] / 16][(int)_postInfo[e][1] / 16] = 1;
+									_objectMap[(int)_postInfo[e][0] / 16][(int)_postInfo[e][1] / 16] = -1;
 
-									rcSrc.left = postinfo[e][0] / 2;
-									rcSrc.top = postinfo[e][1] / 2;
+									rcSrc.left = _postInfo[e][0] / 2;
+									rcSrc.top = _postInfo[e][1] / 2;
 									rcSrc.setWidth(8);
 									rcSrc.setHeight(8);
 
-									_clipbg2->fillRect(rcSrc, 0);
+									_clipBg2->fillRect(rcSrc, 0);
 
-									addFloatIcon(99, postinfo[e][0], postinfo[e][1]);
+									addFloatIcon(99, _postInfo[e][0], _postInfo[e][1]);
 								}
 							}
 						}
@@ -2003,15 +2003,15 @@ void GriffonEngine::updateSpells() {
 				spellinfo[i].frame -= 0.5 * _fpsr;
 				if (spellinfo[i].frame < 0) {
 					spellinfo[i].frame = 0;
-					_forcepause = false;
+					_forcePause = false;
 				}
 			}
 
 			// wizard 1 lightning
 			if (spellnum == 9) {
-				long cl1 = _videobuffer->format.RGBToColor(0, 32, 204);
-				long cl2 = _videobuffer->format.RGBToColor(142, 173, 191);
-				long cl3 = _videobuffer->format.RGBToColor(240, 240, 240);
+				long cl1 = _videoBuffer->format.RGBToColor(0, 32, 204);
+				long cl2 = _videoBuffer->format.RGBToColor(142, 173, 191);
+				long cl3 = _videoBuffer->format.RGBToColor(240, 240, 240);
 
 				int px = spellinfo[i].enemyx + 12;
 				int py = spellinfo[i].enemyy + 24;
@@ -2030,13 +2030,13 @@ void GriffonEngine::updateSpells() {
 						if (orn == 2)
 							x = x + 1;
 
-						drawLine(_videobuffer, x - 1, y, x + 2, y, cl1);
-						drawLine(_videobuffer, x, y, x + 1, y, cl3);
+						drawLine(_videoBuffer, x - 1, y, x + 2, y, cl1);
+						drawLine(_videoBuffer, x, y, x + 1, y, cl3);
 
 						if (rn == 0)
-							drawLine(_videobuffer, x + 1, y, x + 1, y, cl2);
+							drawLine(_videoBuffer, x + 1, y, x + 1, y, cl2);
 						if (rn == 2)
-							drawLine(_videobuffer, x, y, x, y, cl2);
+							drawLine(_videoBuffer, x, y, x, y, cl2);
 
 						orn = rn;
 
@@ -2072,7 +2072,7 @@ void GriffonEngine::updateSpells() {
 }
 
 void GriffonEngine::updateSpellsUnder() {
-	if (_forcepause)
+	if (_forcePause)
 		return;
 
 	for (int i = 0; i < kMaxSpell; i++) {
@@ -2098,9 +2098,9 @@ void GriffonEngine::updateSpellsUnder() {
 				if (fra > 24)
 					f = 160 * (1 - (fra - 24) / 8);
 
-				_spellimg->setAlpha(f, true);
-				_spellimg->blit(*_videobuffer, rcDest.left, rcDest.top, Graphics::FLIP_NONE, &rcSrc);
-				_spellimg->setAlpha(255, true);
+				_spellImg->setAlpha(f, true);
+				_spellImg->blit(*_videoBuffer, rcDest.left, rcDest.top, Graphics::FLIP_NONE, &rcSrc);
+				_spellImg->setAlpha(255, true);
 
 				spellinfo[i].frame = spellinfo[i].frame - 0.2 * _fpsr;
 				if (spellinfo[i].frame < 0)
@@ -2125,7 +2125,7 @@ void GriffonEngine::updateSpellsUnder() {
 						int sx = (newx / 2 + 6);
 						int sy = (newy / 2 + 10);
 
-						unsigned int *temp = (uint32 *)_clipbg->getBasePtr(sx, sy);
+						unsigned int *temp = (uint32 *)_clipBg->getBasePtr(sx, sy);
 						unsigned int dq = *temp;
 
 						if (dq == 0) {
@@ -2138,7 +2138,7 @@ void GriffonEngine::updateSpellsUnder() {
 
 							sx = (newx / 2 + 6);
 							sy = (_npcinfo[f].y / 2 + 10);
-							temp = (uint32 *)_clipbg->getBasePtr(sx, sy);
+							temp = (uint32 *)_clipBg->getBasePtr(sx, sy);
 							dq = *temp;
 
 							if (dq == 0)
@@ -2147,7 +2147,7 @@ void GriffonEngine::updateSpellsUnder() {
 
 							sx = (_npcinfo[f].x / 2 + 6);
 							sy = (newy / 2 + 10);
-							temp = (uint32 *)_clipbg->getBasePtr(sx, sy);
+							temp = (uint32 *)_clipBg->getBasePtr(sx, sy);
 							dq = *temp;
 
 							if (dq == 0)
@@ -2187,7 +2187,7 @@ void GriffonEngine::updateSpellsUnder() {
 				for (int f = 0; f <= 4; f++) {
 					for (int x = 0; x <= fra; x += 2) {
 						if (spellinfo[i].legalive[f] >= x) {
-							_spellimg->setAlpha(192 * sin(3.14159 * x / 32) * s / 8, true);
+							_spellImg->setAlpha(192 * sin(3.14159 * x / 32) * s / 8, true);
 
 							float an = 360 / 5 * f + x / 32 * 180;
 
@@ -2202,12 +2202,12 @@ void GriffonEngine::updateSpellsUnder() {
 							rcDest.top = (int)yloc;
 
 							if (xloc > -1 && xloc < 304 && yloc > -1 && yloc < 224) {
-								_spellimg->blit(*_videobuffer, rcDest.left, rcDest.top, Graphics::FLIP_NONE, &rcSrc);
+								_spellImg->blit(*_videoBuffer, rcDest.left, rcDest.top, Graphics::FLIP_NONE, &rcSrc);
 
 								int sx = (xloc / 2 + 4);
 								int sy = (yloc / 2 + 8);
 
-								unsigned int *temp = (uint32 *)_clipbg->getBasePtr(sx, sy);
+								unsigned int *temp = (uint32 *)_clipBg->getBasePtr(sx, sy);
 								unsigned int dq = *temp;
 
 								if (dq > 1000 && x > 4)
@@ -2257,26 +2257,26 @@ void GriffonEngine::updateSpellsUnder() {
 								// check for post damage
 								if (nposts > 0) {
 									for (int e = 0; e <= nposts - 1; e++) {
-										float xdif = (xloc + 8) - (postinfo[e][0] + 8);
-										float ydif = (yloc + 8) - (postinfo[e][1] + 8);
+										float xdif = (xloc + 8) - (_postInfo[e][0] + 8);
+										float ydif = (yloc + 8) - (_postInfo[e][1] + 8);
 
 										if ((abs(xdif) < 8 && abs(ydif) < 8)) {
-											_objmapf[_curmap][(int)postinfo[e][0] / 16][(int)postinfo[e][1] / 16] = 1;
-											_objectMap[(int)postinfo[e][0] / 16][(int)postinfo[e][1] / 16] = -1;
+											_objmapf[_curMap][(int)_postInfo[e][0] / 16][(int)_postInfo[e][1] / 16] = 1;
+											_objectMap[(int)_postInfo[e][0] / 16][(int)_postInfo[e][1] / 16] = -1;
 
-											rcSrc.left = postinfo[e][0] / 2;
-											rcSrc.top = postinfo[e][1] / 2;
+											rcSrc.left = _postInfo[e][0] / 2;
+											rcSrc.top = _postInfo[e][1] / 2;
 											rcSrc.setWidth(8);
 											rcSrc.setHeight(8);
 
-											_clipbg2->fillRect(rcSrc, 0);
+											_clipBg2->fillRect(rcSrc, 0);
 
 											if (config.effects) {
 												int snd = playSound(_sfx[kSndFire]);
 												setChannelVolume(snd, config.effectsvol);
 											}
 
-											addFloatIcon(99, postinfo[e][0], postinfo[e][1]);
+											addFloatIcon(99, _postInfo[e][0], _postInfo[e][1]);
 										}
 									}
 								}
@@ -2285,7 +2285,7 @@ void GriffonEngine::updateSpellsUnder() {
 					}
 				}
 
-				_spellimg->setAlpha(255, true);
+				_spellImg->setAlpha(255, true);
 
 				spellinfo[i].frame = spellinfo[i].frame - 0.2 * _fpsr;
 				if (spellinfo[i].frame < 0)
@@ -2313,7 +2313,7 @@ void GriffonEngine::updateSpellsUnder() {
 					float yy = 16 * sin(3.141592 / 2 * xx / 16) - 8;
 
 					alpha = CLIP(alpha, 0, 255);
-					_spellimg->setAlpha(alpha, true);
+					_spellImg->setAlpha(alpha, true);
 
 					rcSrc.left = 16 * (int)(RND() * 2);
 					rcSrc.top = 80;
@@ -2327,7 +2327,7 @@ void GriffonEngine::updateSpellsUnder() {
 					rcDest.top = yloc;
 
 					if (xloc > -16 && xloc < 320 && yloc > -16 && yloc < 240) {
-						_spellimg->blit(*_videobuffer, rcDest.left, rcDest.top, Graphics::FLIP_NONE, &rcSrc);
+						_spellImg->blit(*_videoBuffer, rcDest.left, rcDest.top, Graphics::FLIP_NONE, &rcSrc);
 
 						if (spellinfo[i].damagewho == 1) {
 							float xdif = (xloc + 8) - (_player.px + 12);
@@ -2351,7 +2351,7 @@ void GriffonEngine::updateSpellsUnder() {
 
 				}
 
-				_spellimg->setAlpha(255, true);
+				_spellImg->setAlpha(255, true);
 				spellinfo[i].frame = spellinfo[i].frame - 0.5 * _fpsr;
 				if (spellinfo[i].frame < 0)
 					spellinfo[i].frame = 0;

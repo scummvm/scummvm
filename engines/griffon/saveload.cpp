@@ -69,7 +69,7 @@ int GriffonEngine::loadState(int slotnum) {
 	if (_player.level > 0) {
 		char temp[256];
 
-		INPUT("%i", &_secstart);
+		INPUT("%i", &_secStart);
 		INPUT("%s", temp);
 
 		INPUT("%f", &_player.px);
@@ -103,10 +103,10 @@ int GriffonEngine::loadState(int slotnum) {
 		INPUT("%i", &_player.nextLevel);
 		for (int a = 0; a <= 99; a++) {
 			for (int b = 0; b <= 9; b++) {
-				INPUT("%i", &_scriptflag[a][b]);
+				INPUT("%i", &_scriptFlag[a][b]);
 			}
 		}
-		INPUT("%i", &_curmap);
+		INPUT("%i", &_curMap);
 
 		for (int a = 0; a <= 999; a++) {
 			for (int b = 0; b <= 20; b++) {
@@ -194,7 +194,7 @@ int GriffonEngine::saveState(int slotnum) {
 	PRINT("%i", _player.level);
 
 	if (_player.level > 0) {
-		PRINT("%i", (_secstart + _secsingame));
+		PRINT("%i", (_secStart + _secsingame));
 		PRINT("%s", "a");
 
 		PRINT("%f", _player.px);
@@ -228,10 +228,10 @@ int GriffonEngine::saveState(int slotnum) {
 		PRINT("%i", _player.nextLevel);
 		for (int a = 0; a <= 99; a++) {
 			for (int b = 0; b <= 9; b++) {
-				PRINT("%i", _scriptflag[a][b]);
+				PRINT("%i", _scriptFlag[a][b]);
 			}
 		}
-		PRINT("%i", _curmap);
+		PRINT("%i", _curMap);
 
 		for (int a = 0; a <= 999; a++) {
 			for (int b = 0; b <= 20; b++) {

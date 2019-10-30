@@ -57,7 +57,7 @@ void GriffonEngine::mainLoop() {
 	}
 
 	do {
-		if (!_forcepause) {
+		if (!_forcePause) {
 			updateAnims();
 			updateNPCs();
 		}
@@ -65,7 +65,7 @@ void GriffonEngine::mainLoop() {
 		checkTrigger();
 		checkInputs();
 
-		if (!_forcepause)
+		if (!_forcePause)
 			handleWalking();
 
 		updateY();
@@ -83,15 +83,15 @@ void GriffonEngine::updateEngine() {
 	g_system->updateScreen();
 	g_system->getEventManager()->pollEvent(_event);
 
-	_tickspassed = _ticks;
+	_ticksPassed = _ticks;
 	_ticks = g_system->getMillis();
 
-	_tickspassed = _ticks - _tickspassed;
-	_fpsr = (float)_tickspassed / 24.0;
+	_ticksPassed = _ticks - _ticksPassed;
+	_fpsr = (float)_ticksPassed / 24.0;
 
 	_fp++;
-	if (_ticks > _nextticks) {
-		_nextticks = _ticks + 1000;
+	if (_ticks > _nextTicks) {
+		_nextTicks = _ticks + 1000;
 		_fps = _fp;
 		_fp = 0;
 		_secsingame = _secsingame + 1;
@@ -119,7 +119,7 @@ void GriffonEngine::updateEngine() {
 
 				int sx = (int)(_player.px / 2 + 6);
 				int sy = (int)(_player.py / 2 + 10);
-				uint32 *temp = (uint32 *)_clipbg->getBasePtr(sx, sy);
+				uint32 *temp = (uint32 *)_clipBg->getBasePtr(sx, sy);
 				uint32 bgc = *temp;
 				if (bgc > 0) {
 					_player.px = opx;
@@ -174,7 +174,7 @@ void GriffonEngine::updateEngine() {
 		}
 	}
 
-	_clipbg->copyRectToSurface(_clipbg2->getPixels(), _clipbg2->pitch, 0, 0, _clipbg2->w, _clipbg2->h);
+	_clipBg->copyRectToSurface(_clipBg2->getPixels(), _clipBg2->pitch, 0, 0, _clipBg2->w, _clipBg2->h);
 
 	Common::Rect rc;
 
@@ -183,9 +183,9 @@ void GriffonEngine::updateEngine() {
 	rc.setWidth(5);
 	rc.setHeight(5);
 
-	_clipbg->fillRect(rc, 1000);
+	_clipBg->fillRect(rc, 1000);
 
-	if (!_forcepause) {
+	if (!_forcePause) {
 		for (int i = 0; i < 5; i++) {
 			if (_player.foundSpell[i])
 				_player.spellCharge[i] += 1 * _player.level * 0.01 * _fpsr;
@@ -213,11 +213,11 @@ void GriffonEngine::updateEngine() {
 	if (_player.hp <= 0)
 		theEnd();
 
-	if (_roomlock) {
-		_roomlock = false;
+	if (_roomLock) {
+		_roomLock = false;
 		for (int i = 1; i <= _lastnpc; i++)
 			if (_npcinfo[i].hp > 0)
-				_roomlock = true;
+				_roomLock = true;
 	}
 
 	clouddeg += 0.1 * _fpsr;
@@ -282,7 +282,7 @@ void GriffonEngine::newGame() {
 	_player.exp = 0;
 	_player.nextLevel = 0;
 
-	memset(_scriptflag, 0, sizeof(_scriptflag));
+	memset(_scriptFlag, 0, sizeof(_scriptFlag));
 	memset(_objmapf, 0, sizeof(_objmapf));
 	memset(_roomLocks, 0, sizeof(_roomLocks));
 
@@ -295,7 +295,7 @@ void GriffonEngine::newGame() {
 	_roomLocks[82] = 2;
 
 	_player.walkSpeed = 1.1f;
-	_animspd = 0.5f;
+	_animSpeed = 0.5f;
 	attacking = false;
 	_player.attackSpeed = 1.5f;
 

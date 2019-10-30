@@ -66,8 +66,8 @@ void GriffonEngine::addFloatText(const char *stri, float xloc, float yloc, int c
 }
 
 void GriffonEngine::eventText(const char *stri) {
-	_videobuffer2->fillRect(Common::Rect(0, 0, _videobuffer2->w, _videobuffer2->h), 0);
-	_videobuffer3->fillRect(Common::Rect(0, 0, _videobuffer3->w, _videobuffer3->h), 0);
+	_videoBuffer2->fillRect(Common::Rect(0, 0, _videoBuffer2->w, _videoBuffer2->h), 0);
+	_videoBuffer3->fillRect(Common::Rect(0, 0, _videoBuffer3->w, _videoBuffer3->h), 0);
 
 	int x = 160 - 4 * strlen(stri);
 
@@ -75,15 +75,15 @@ void GriffonEngine::eventText(const char *stri) {
 	int pause_ticks = _ticks + 500;
 	int b_ticks = _ticks;
 
-	_videobuffer->blit(*_videobuffer3);
-	_videobuffer->blit(*_videobuffer2);
+	_videoBuffer->blit(*_videoBuffer3);
+	_videoBuffer->blit(*_videoBuffer2);
 
 	do {
 		g_system->getEventManager()->pollEvent(_event);
 
 		if (_event.type == Common::EVENT_KEYDOWN && pause_ticks < _ticks)
 			break;
-		_videobuffer2->blit(*_videobuffer);
+		_videoBuffer2->blit(*_videoBuffer);
 
 		int fr = 192;
 
@@ -92,27 +92,27 @@ void GriffonEngine::eventText(const char *stri) {
 		if (fr > 192)
 			fr = 192;
 
-		_windowimg->setAlpha(fr, true);
+		_windowImg->setAlpha(fr, true);
 
-		_windowimg->blit(*_videobuffer);
+		_windowImg->blit(*_videoBuffer);
 		if (pause_ticks < _ticks)
-			drawString(_videobuffer, stri, x, 15, 0);
+			drawString(_videoBuffer, stri, x, 15, 0);
 
-		g_system->copyRectToScreen(_videobuffer->getPixels(), _videobuffer->pitch, 0, 0, _videobuffer->w, _videobuffer->h);
+		g_system->copyRectToScreen(_videoBuffer->getPixels(), _videoBuffer->pitch, 0, 0, _videoBuffer->w, _videoBuffer->h);
 		g_system->updateScreen();
 
 		g_system->getEventManager()->pollEvent(_event);
 		g_system->delayMillis(10);
 
-		_tickspassed = _ticks;
+		_ticksPassed = _ticks;
 		_ticks = g_system->getMillis();
 
-		_tickspassed = _ticks - _tickspassed;
-		_fpsr = (float)_tickspassed / 24.0;
+		_ticksPassed = _ticks - _ticksPassed;
+		_fpsr = (float)_ticksPassed / 24.0;
 
 		_fp++;
-		if (_ticks > _nextticks) {
-			_nextticks = _ticks + 1000;
+		if (_ticks > _nextTicks) {
+			_nextTicks = _ticks + 1000;
 			_fps = _fp;
 			_fp = 0;
 		}
@@ -120,9 +120,9 @@ void GriffonEngine::eventText(const char *stri) {
 		g_system->delayMillis(10);
 	} while (1);
 
-	_videobuffer3->blit(*_videobuffer);
+	_videoBuffer3->blit(*_videoBuffer);
 
-	_itemticks = _ticks + 210;
+	_itemTicks = _ticks + 210;
 }
 
 void GriffonEngine::drawLine(Graphics::TransparentSurface *buffer, int x1, int y1, int x2, int y2, int col) {
@@ -151,17 +151,17 @@ void GriffonEngine::drawString(Graphics::TransparentSurface *buffer, const char 
 		rcDest.left = xloc + i * 8;
 		rcDest.top = yloc;
 
-		_fontchr[stri[i] - 32][col]->blit(*buffer, rcDest.left, rcDest.top);
+		_fontChr[stri[i] - 32][col]->blit(*buffer, rcDest.left, rcDest.top);
 	}
 }
 
 void GriffonEngine::drawProgress(int w, int wm) {
-	long ccc = _videobuffer->format.RGBToColor(0, 255, 0);
+	long ccc = _videoBuffer->format.RGBToColor(0, 255, 0);
 
 	rcDest.setWidth(w * 74 / wm);
-	_videobuffer->fillRect(rcDest, ccc);
+	_videoBuffer->fillRect(rcDest, ccc);
 
-	g_system->copyRectToScreen(_videobuffer->getPixels(), _videobuffer->pitch, 0, 0, _videobuffer->w, _videobuffer->h);
+	g_system->copyRectToScreen(_videoBuffer->getPixels(), _videoBuffer->pitch, 0, 0, _videoBuffer->w, _videoBuffer->h);
 	g_system->updateScreen();
 
 	g_system->getEventManager()->pollEvent(_event);
