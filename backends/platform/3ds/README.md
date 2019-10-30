@@ -101,7 +101,7 @@ previously (ex: if drag mode was in use prior to activating magnify mode, drag m
 be reactivated upon exiting magnify mode), as well as restore the top screen's previous
 scale factor.
 
-Currently magnify mode can only be used when both of the following conditions are met:
+Currently magnify mode can only be used when the following conditions are met:
  - In the 3DS config menu, "Use Screen" is set to "Both"
  - A game is currently being played
  - The horizontal and/or vertical resolution in-game is greater than that of the top screen
