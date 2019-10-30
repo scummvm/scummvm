@@ -337,7 +337,7 @@ int Net::remoteSendData(int typeOfSend, int sendTypeParam, int type, byte *data,
 	// Since I am lazy, instead of constructing the JSON object manually
 	// I'd rather parse it
 	Common::String res = Common::String::format(
-		"{\"sessionid\":%d, \"userid\":%d, \"to\":%d, \"toparam\": %d, "
+		"{\"sessionid\":%d, \"from\":%d, \"to\":%d, \"toparam\": %d, "
 		"\"type\":%d, \"timestamp\": %d, \"size\": %d, \"data\": [", _sessionid, _myUserId,
 		typeOfSend, sendTypeParam, type, g_system->getMillis(), len);
 
