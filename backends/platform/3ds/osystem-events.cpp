@@ -149,6 +149,7 @@ static void eventThreadFunc(void *arg) {
 
 		// Button events
 		if (keysPressed & KEY_L) {
+			//TODO: Automatically exit magnify mode when returning to launcher
 			if (osys->getWidth() >= 400 || osys->getHeight() >= 240) {
 				if (magnifyMode == MODE_MAGOFF) {
 					magnifyMode = MODE_MAGON;
