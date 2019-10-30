@@ -24,6 +24,7 @@ clean_3ds:
 	$(RM) $(TARGET).smdh
 	$(RM) $(TARGET).3dsx
 	$(RM) $(TARGET).bnr
+	$(RM) $(TARGET).romfs
 	$(RM) $(TARGET).cia
 	$(RM) -rf romfs
 
