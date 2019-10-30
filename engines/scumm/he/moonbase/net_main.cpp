@@ -118,8 +118,8 @@ int Net::removeUser() {
 }
 
 int Net::whoSentThis() {
-	warning("STUB: Net::whoSentThis()"); // PN_WhoSentThis
-	return 0;
+	debug(1, "Net::whoSentThis()"); // PN_WhoSentThis
+	return _packetdata->child("from")->asIntegerNumber();
 }
 
 int Net::whoAmI() {
