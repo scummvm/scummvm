@@ -150,9 +150,9 @@ void AGDSEngine::runObject(ObjectPtr object) {
 	runProcess(object);
 }
 
-void AGDSEngine::runProcess(ObjectPtr object, uint ip) {
+void AGDSEngine::runProcess(ObjectPtr object, uint ip, Process * caller) {
 	object->activate(true);
-	_processes.push_front(Process(this, object, ip));
+	_processes.push_front(Process(this, object, ip, caller));
 	ProcessListType::iterator it = _processes.begin();
 	runProcess(it);
 }
@@ -207,17 +207,19 @@ void AGDSEngine::runProcess(ProcessListType::iterator &it) {
 		return;
 	}
 
-	if (!process.active())
+	if (!process.active()) {
+		++it;
 		return;
+	}
 
 	const Common::String &name = process.getName();
 	if (process.getStatus() == Process::kStatusDone || process.getStatus() == Process::kStatusError) {
 		debug("process %s finished", name.c_str());
-		process.getObject()->activate(false);
+		process.activate(false);
 		it = _processes.erase(it);
 		return;
 	}
-	process.activate();
+	process.activate(true);
 	ProcessExitCode code = process.execute();
 	bool destroy = false;
 	switch(code) {
@@ -264,7 +266,7 @@ void AGDSEngine::runProcess(ProcessListType::iterator &it) {
 	}
 	if (destroy) {
 		debug("destroying process %s...", name.c_str());
-		process.getObject()->activate(false);
+		process.activate(false);
 		it = _processes.erase(it);
 	} else
 		++it;

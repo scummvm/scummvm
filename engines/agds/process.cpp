@@ -27,11 +27,13 @@
 
 namespace AGDS {
 
-Process::Process(AGDSEngine *engine, ObjectPtr object, unsigned ip) :
-	_engine(engine), _parentScreen(engine->getCurrentScreenName()), _object(object), _ip(ip), _status(kStatusActive), _exitCode(kExitCodeDestroy),
+Process::Process(AGDSEngine *engine, ObjectPtr object, unsigned ip, Process * caller) :
+	_engine(engine), _parentScreen(engine->getCurrentScreenName()), _object(object), _ip(ip), 
+	_status(kStatusActive), _caller(caller), _exitCode(kExitCodeDestroy),
 	_glyphWidth(16), _glyphHeight(16),
 	_timer(0),
-	_animationCycles(1), _animationLoop(false), _animationPaused(false), _animationSpeed(100) {
+	_animationCycles(1), _animationLoop(false), _animationPaused(false), _animationSpeed(100),
+	_waitForCall(false) {
 }
 
 void Process::debug(const char *str, ...) {
@@ -99,17 +101,27 @@ Common::String Process::popText() {
 	return _engine->loadText(popString());
 }
 
-void Process::activate() {
-	switch(_status)
-	{
-		case kStatusActive:
-			break;
-		case kStatusPassive:
-			_status = kStatusActive;
-			break;
-		default:
-			error("process in invalid state %d", _status);
-			_status = kStatusError;
+void Process::activate(bool active) {
+	if (active) {
+		_object->activate(active);
+		switch(_status)
+		{
+			case kStatusActive:
+				break;
+			case kStatusPassive:
+				_status = kStatusActive;
+				break;
+			default:
+				error("process in invalid state %d", _status);
+				_status = kStatusError;
+		}
+	} else {
+		if (_caller) {
+			debug("returning to caller");
+			_caller->_waitForCall = false;
+		} else {
+			_object->activate(false);
+		}
 	}
 }
 

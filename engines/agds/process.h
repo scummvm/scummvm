@@ -47,6 +47,7 @@ private:
 	StackType		_stack;
 	unsigned		_ip, _lastIp;
 	Status			_status;
+	Process *		_caller;
 	ProcessExitCode	_exitCode;
 	Common::String	_exitArg1, _exitArg2;
 	int				_exitIntArg1, _exitIntArg2;
@@ -58,6 +59,7 @@ private:
 	Common::Point	_animationPosition;
 	bool			_animationPaused;
 	int				_animationSpeed;
+	bool			_waitForCall;
 
 private:
 	uint8 next() {
@@ -311,7 +313,7 @@ private:
 	}
 
 public:
-	Process(AGDSEngine *engine, ObjectPtr object, unsigned ip = 0);
+	Process(AGDSEngine *engine, ObjectPtr object, unsigned ip = 0, Process * caller = NULL);
 
 	ObjectPtr getObject() const {
 		return _object;
@@ -329,7 +331,7 @@ public:
 		return _status;
 	}
 
-	void activate();
+	void activate(bool active);
 
 	ProcessExitCode execute();
 
