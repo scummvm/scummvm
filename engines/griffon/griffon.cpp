@@ -51,7 +51,7 @@ GriffonEngine::GriffonEngine(OSystem *syst) : Engine(syst) {
 	_musicChannel = -1;
 	_menuChannel = -1;
 
-	clouddeg = 0.0f;
+	_cloudAngle = 0.0f;
 
 	for (int i = 0; i < 33; ++i) {
 		for (int j = 0; j < 6; ++j)

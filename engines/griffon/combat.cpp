@@ -67,7 +67,7 @@ void GriffonEngine::attack() {
 						_player.inventory[kInvFlask]++;
 						addFloatIcon(6, lx * 16, (ly - 1) * 16);
 
-						_objmapf[_curMap][lx][ly - 1] = 1;
+						_objectMapFull[_curMap][lx][ly - 1] = 1;
 
 						if (config.effects) {
 							int snd = playSound(_sfx[kSndPowerUp]);
@@ -146,7 +146,7 @@ void GriffonEngine::attack() {
 							_objectMap[lx][ly - 1] = 3;
 
 						eventText("Found the Obsidian Shield!");
-						_objmapf[4][1][2] = 1;
+						_objectMapFull[4][1][2] = 1;
 						return;
 					}
 					break;
@@ -184,7 +184,7 @@ void GriffonEngine::attack() {
 							setChannelVolume(snd, config.effectsvol);
 						}
 
-						_objmapf[_curMap][lx][ly - 1] = 1;
+						_objectMapFull[_curMap][lx][ly - 1] = 1;
 
 						if (_objectInfo[o][4] == 1)
 							_objectMap[lx][ly - 1] = 3;
@@ -205,7 +205,7 @@ void GriffonEngine::attack() {
 						_player.inventory[kInvDoubleFlask]++;
 						addFloatIcon(12, lx * 16, (ly - 1) * 16);
 
-						_objmapf[_curMap][lx][ly - 1] = 1;
+						_objectMapFull[_curMap][lx][ly - 1] = 1;
 
 						if (config.effects) {
 							int snd = playSound(_sfx[kSndPowerUp]);
@@ -233,7 +233,7 @@ void GriffonEngine::attack() {
 						_player.inventory[kInvDoubleFlask]++;
 						addFloatIcon(12, lx * 16, (ly - 1) * 16);
 
-						_objmapf[_curMap][lx][ly - 1] = 1;
+						_objectMapFull[_curMap][lx][ly - 1] = 1;
 
 						if (config.effects) {
 							int snd = playSound(_sfx[kSndPowerUp]);
@@ -260,7 +260,7 @@ void GriffonEngine::attack() {
 						_player.inventory[kInvShock]++;
 						addFloatIcon(17, lx * 16, (ly - 1) * 16);
 
-						_objmapf[_curMap][lx][ly - 1] = 1;
+						_objectMapFull[_curMap][lx][ly - 1] = 1;
 
 						if (config.effects) {
 							int snd = playSound(_sfx[kSndPowerUp]);
@@ -348,7 +348,7 @@ void GriffonEngine::attack() {
 						if (_objectInfo[o][4] == 1)
 							_objectMap[lx][ly - 1] = 3;
 						eventText("Found the Blood Sword!");
-						_objmapf[4][1][2] = 1;
+						_objectMapFull[4][1][2] = 1;
 						return;
 					}
 					break;
@@ -366,7 +366,7 @@ void GriffonEngine::attack() {
 						if (_objectInfo[o][4] == 1)
 							_objectMap[lx][ly - 1] = 3;
 						eventText("Found the Entropy Shield!");
-						_objmapf[4][1][2] = 1;
+						_objectMapFull[4][1][2] = 1;
 						return;
 					}
 					break;
@@ -384,7 +384,7 @@ void GriffonEngine::attack() {
 						if (_objectInfo[o][4] == 1)
 							_objectMap[lx][ly - 1] = 3;
 						eventText("Found the Rubyscale Armour!");
-						_objmapf[4][1][2] = 1;
+						_objectMapFull[4][1][2] = 1;
 						return;
 					}
 					break;
@@ -393,12 +393,12 @@ void GriffonEngine::attack() {
 		}
 	}
 
-	attacking = true;
+	_attacking = true;
 	_player.attackFrame = 0;
-	movingup = false;
-	movingdown = false;
-	movingleft = false;
-	movingright = false;
+	_movingUp = false;
+	_movingDown = false;
+	_movingLeft = false;
+	_movingRight = false;
 
 	for (int i = 0; i <= 15; i++) {
 		for (int a = 0; a <= 3; a++) {
@@ -411,12 +411,12 @@ void GriffonEngine::castSpell(int spellnum, float homex, float homey, float enem
 	// spellnum 7 = sprite 6 spitfire
 
 	for (int i = 0; i < kMaxSpell; i++) {
-		if (ABS(spellinfo[i].frame) < kEpsilon) {
-			spellinfo[i].homex = homex;
-			spellinfo[i].homey = homey;
-			spellinfo[i].enemyx = enemyx;
-			spellinfo[i].enemyy = enemyy;
-			spellinfo[i].spellnum = spellnum;
+		if (ABS(_spellInfo[i].frame) < kEpsilon) {
+			_spellInfo[i].homex = homex;
+			_spellInfo[i].homey = homey;
+			_spellInfo[i].enemyx = enemyx;
+			_spellInfo[i].enemyy = enemyy;
+			_spellInfo[i].spellnum = spellnum;
 			int dw = 0;
 			int npc = 0;
 			if (damagewho > 0) {
@@ -424,14 +424,14 @@ void GriffonEngine::castSpell(int spellnum, float homex, float homey, float enem
 				npc = damagewho;
 			}
 
-			spellinfo[i].damagewho = dw;
-			spellinfo[i].npc = npc;
+			_spellInfo[i].damagewho = dw;
+			_spellInfo[i].npc = npc;
 
-			spellinfo[i].frame = 32.0f;
+			_spellInfo[i].frame = 32.0f;
 			if (damagewho == 0) {
-				spellinfo[i].strength = _player.spellStrength / 100;
+				_spellInfo[i].strength = _player.spellStrength / 100;
 				if (ABS(_player.spellStrength - 100) < kEpsilon)
-					spellinfo[i].strength = 1.5f;
+					_spellInfo[i].strength = 1.5f;
 			}
 
 			switch(spellnum) {
@@ -444,15 +444,15 @@ void GriffonEngine::castSpell(int spellnum, float homex, float homey, float enem
 			case 2:
 				// set earthslide vars
 				for (int f = 0; f <= 8; f++) {
-					spellinfo[i].rocky[f] = 0;
-					spellinfo[i].rockimg[f] = (int)(RND() * 4);
-					spellinfo[i].rockdeflect[f] = ((int)(RND() * 128) - 64) * 1.5;
+					_spellInfo[i].rocky[f] = 0;
+					_spellInfo[i].rockimg[f] = (int)(RND() * 4);
+					_spellInfo[i].rockdeflect[f] = ((int)(RND() * 128) - 64) * 1.5;
 				}
 				break;
 			case 3:
 				// set fire vars
 				for (int f = 0; f <= 4; f++)
-					spellinfo[i].legalive[f] = 32;
+					_spellInfo[i].legalive[f] = 32;
 
 				break;
 			case 5:
@@ -470,17 +470,17 @@ void GriffonEngine::castSpell(int spellnum, float homex, float homey, float enem
 							int ax = x * 16;
 							int ay = y * 16;
 
-							spellinfo[i].fireballs[nballs][0] = ax;
-							spellinfo[i].fireballs[nballs][1] = ay;
-							spellinfo[i].fireballs[nballs][2] = 0;
-							spellinfo[i].fireballs[nballs][3] = 0;
+							_spellInfo[i].fireballs[nballs][0] = ax;
+							_spellInfo[i].fireballs[nballs][1] = ay;
+							_spellInfo[i].fireballs[nballs][2] = 0;
+							_spellInfo[i].fireballs[nballs][3] = 0;
 
-							spellinfo[i].ballon[nballs] = 1;
+							_spellInfo[i].ballon[nballs] = 1;
 							++nballs;
 						}
 					}
 				}
-				spellinfo[i].nfballs = nballs;
+				_spellInfo[i].nfballs = nballs;
 				}
 				break;
 			case 8:
@@ -500,11 +500,11 @@ void GriffonEngine::castSpell(int spellnum, float homex, float homey, float enem
 }
 
 void GriffonEngine::checkHit() {
-	if (attacking) {
-		for (int i = 1; i <= _lastnpc; i++) {
-			if (_npcinfo[i].hp > 0 && _npcinfo[i].pause < _ticks && (int)(RND() * 2) == 0) {
-				float npx = _npcinfo[i].x;
-				float npy = _npcinfo[i].y;
+	if (_attacking) {
+		for (int i = 1; i <= _lastNpc; i++) {
+			if (_npcInfo[i].hp > 0 && _npcInfo[i].pause < _ticks && (int)(RND() * 2) == 0) {
+				float npx = _npcInfo[i].x;
+				float npy = _npcInfo[i].y;
 
 				float xdif = _player.px - npx;
 				float ydif = _player.py - npy;
@@ -563,47 +563,47 @@ void GriffonEngine::damageNPC(int npcnum, int damage, int spell) {
 		damage = abs(damage);
 
 		if (heal == 0) {
-			if (damage > _npcinfo[npcnum].hp) {
-				ratio = (damage - _npcinfo[npcnum].hp) * 100 / damage;
-				damage = _npcinfo[npcnum].hp;
+			if (damage > _npcInfo[npcnum].hp) {
+				ratio = (damage - _npcInfo[npcnum].hp) * 100 / damage;
+				damage = _npcInfo[npcnum].hp;
 			}
 
-			_npcinfo[npcnum].hp -= damage;
-			if (_npcinfo[npcnum].hp < 0)
-				_npcinfo[npcnum].hp = 0;
+			_npcInfo[npcnum].hp -= damage;
+			if (_npcInfo[npcnum].hp < 0)
+				_npcInfo[npcnum].hp = 0;
 
 			sprintf(line, "-%i", damage);
 			fcol = 1;
 		} else {
-			_npcinfo[npcnum].hp += damage;
-			if (_npcinfo[npcnum].hp > _npcinfo[npcnum].maxhp)
-				_npcinfo[npcnum].hp = _npcinfo[npcnum].maxhp;
+			_npcInfo[npcnum].hp += damage;
+			if (_npcInfo[npcnum].hp > _npcInfo[npcnum].maxhp)
+				_npcInfo[npcnum].hp = _npcInfo[npcnum].maxhp;
 
 			sprintf(line, "+%i", damage);
 			fcol = 5;
 		}
 
-		_npcinfo[npcnum].pause = _ticks + 900;
+		_npcInfo[npcnum].pause = _ticks + 900;
 
 		if (spell == 0)
 			_player.attackStrength = ratio;
 	}
 
-	addFloatText(line, _npcinfo[npcnum].x + 12 - 4 * strlen(line), _npcinfo[npcnum].y + 16, fcol);
+	addFloatText(line, _npcInfo[npcnum].x + 12 - 4 * strlen(line), _npcInfo[npcnum].y + 16, fcol);
 
-	if (_npcinfo[npcnum].spriteset == kMonsterBatKitty)
-		castSpell(9, _npcinfo[npcnum].x, _npcinfo[npcnum].y, _player.px, _player.py, npcnum);
+	if (_npcInfo[npcnum].spriteset == kMonsterBatKitty)
+		castSpell(9, _npcInfo[npcnum].x, _npcInfo[npcnum].y, _player.px, _player.py, npcnum);
 
 	// if enemy is killed
-	if (_npcinfo[npcnum].hp == 0) {
-		_player.exp += _npcinfo[npcnum].maxhp;
+	if (_npcInfo[npcnum].hp == 0) {
+		_player.exp += _npcInfo[npcnum].maxhp;
 
-		if (_npcinfo[npcnum].spriteset == kMonsterBabyDragon || _npcinfo[npcnum].spriteset == kMonsterPriest ||
-				_npcinfo[npcnum].spriteset == kMonsterRedDragon) {
+		if (_npcInfo[npcnum].spriteset == kMonsterBabyDragon || _npcInfo[npcnum].spriteset == kMonsterPriest ||
+				_npcInfo[npcnum].spriteset == kMonsterRedDragon) {
 			int ff = (int)(RND() * _player.level * 3);
 			if (ff == 0) {
-				float npx = _npcinfo[npcnum].x + 12;
-				float npy = _npcinfo[npcnum].y + 20;
+				float npx = _npcInfo[npcnum].x + 12;
+				float npy = _npcInfo[npcnum].y + 20;
 
 				int lx = (int)npx / 16;
 				int ly = (int)npy / 16;
@@ -613,12 +613,12 @@ void GriffonEngine::damageNPC(int npcnum, int damage, int spell) {
 			}
 		}
 
-		if (_npcinfo[npcnum].spriteset == kMonsterOneWing || _npcinfo[npcnum].spriteset == kMonsterTwoWing || 
-					_npcinfo[npcnum].spriteset == kMonsterBlackKnight || _npcinfo[npcnum].spriteset == kMonsterFireHydra) {
+		if (_npcInfo[npcnum].spriteset == kMonsterOneWing || _npcInfo[npcnum].spriteset == kMonsterTwoWing || 
+					_npcInfo[npcnum].spriteset == kMonsterBlackKnight || _npcInfo[npcnum].spriteset == kMonsterFireHydra) {
 			int ff = (int)(RND() * _player.level);
 			if (ff == 0) {
-				float npx = _npcinfo[npcnum].x + 12;
-				float npy = _npcinfo[npcnum].y + 20;
+				float npx = _npcInfo[npcnum].x + 12;
+				float npy = _npcInfo[npcnum].y + 20;
 
 				int lx = (int)npx / 16;
 				int ly = (int)npy / 16;
@@ -628,12 +628,12 @@ void GriffonEngine::damageNPC(int npcnum, int damage, int spell) {
 			}
 		}
 
-		if (_npcinfo[npcnum].spriteset == kMonsterTwoWing || _npcinfo[npcnum].spriteset == kMonsterDragon2 ||
-				_npcinfo[npcnum].spriteset == kMonsterFireHydra) {
+		if (_npcInfo[npcnum].spriteset == kMonsterTwoWing || _npcInfo[npcnum].spriteset == kMonsterDragon2 ||
+				_npcInfo[npcnum].spriteset == kMonsterFireHydra) {
 			int ff = (int)(RND() * _player.level * 2);
 			if (ff == 0) {
-				float npx = _npcinfo[npcnum].x + 12;
-				float npy = _npcinfo[npcnum].y + 20;
+				float npx = _npcInfo[npcnum].x + 12;
+				float npy = _npcInfo[npcnum].y + 20;
 
 				int lx = (int)npx / 16;
 				int ly = (int)npy / 16;
@@ -644,10 +644,10 @@ void GriffonEngine::damageNPC(int npcnum, int damage, int spell) {
 		}
 
 		// academy master key chest script
-		if (_npcinfo[npcnum].script == kScriptMasterKey) {
+		if (_npcInfo[npcnum].script == kScriptMasterKey) {
 			bool alive = false;
-			for (int i = 1; i <= _lastnpc; i++) {
-				if (_npcinfo[i].hp > 0)
+			for (int i = 1; i <= _lastNpc; i++) {
+				if (_npcInfo[i].hp > 0)
 					alive = true;
 			}
 
@@ -676,10 +676,10 @@ void GriffonEngine::damageNPC(int npcnum, int damage, int spell) {
 		}
 
 		// academy crystal chest script
-		if (_npcinfo[npcnum].script == kScriptFindCrystal) {
+		if (_npcInfo[npcnum].script == kScriptFindCrystal) {
 			bool alive = false;
-			for (int i = 1; i <= _lastnpc; i++) {
-				if (_npcinfo[i].hp > 0)
+			for (int i = 1; i <= _lastNpc; i++) {
+				if (_npcInfo[i].hp > 0)
 					alive = true;
 			}
 
@@ -708,8 +708,8 @@ void GriffonEngine::damageNPC(int npcnum, int damage, int spell) {
 		}
 
 		// tower shield chest script
-		if (_npcinfo[npcnum].script == kScriptFindShield && _scriptFlag[kScriptFindShield][0] == 0) {
-			_triggerloc[9][7] = 5004;
+		if (_npcInfo[npcnum].script == kScriptFindShield && _scriptFlag[kScriptFindShield][0] == 0) {
+			_triggerLoc[9][7] = 5004;
 
 			int curTile = 40;
 			int curTileL = 0;
@@ -734,10 +734,10 @@ void GriffonEngine::damageNPC(int npcnum, int damage, int spell) {
 		}
 
 		// firehydra sword chest
-		if (_npcinfo[npcnum].script == kScriptFindSword) {
+		if (_npcInfo[npcnum].script == kScriptFindSword) {
 			bool alive = false;
-			for (int i = 1; i <= _lastnpc; i++) {
-				if (_npcinfo[i].hp > 0)
+			for (int i = 1; i <= _lastNpc; i++) {
+				if (_npcInfo[i].hp > 0)
 					alive = true;
 			}
 
@@ -767,10 +767,10 @@ void GriffonEngine::damageNPC(int npcnum, int damage, int spell) {
 		}
 
 		// gardens master key script
-		if (_npcinfo[npcnum].script == kScriptGardenMasterKey && _scriptFlag[kScriptKeyChest][0] == 0) {
+		if (_npcInfo[npcnum].script == kScriptGardenMasterKey && _scriptFlag[kScriptKeyChest][0] == 0) {
 			bool alive = false;
-			for (int i = 1; i <= _lastnpc; i++) {
-				if (_npcinfo[i].hp > 0)
+			for (int i = 1; i <= _lastNpc; i++) {
+				if (_npcInfo[i].hp > 0)
 					alive = true;
 			}
 
@@ -800,10 +800,10 @@ void GriffonEngine::damageNPC(int npcnum, int damage, int spell) {
 
 		// regular key chest 1
 		for (int s = 20; s <= 23; s++) {
-			if (_npcinfo[npcnum].script == s && _scriptFlag[s][0] < 2) {
+			if (_npcInfo[npcnum].script == s && _scriptFlag[s][0] < 2) {
 				bool alive = false;
-				for (int i = 1; i <= _lastnpc; i++) {
-					if (_npcinfo[i].hp > 0)
+				for (int i = 1; i <= _lastNpc; i++) {
+					if (_npcInfo[i].hp > 0)
 						alive = true;
 				}
 
@@ -833,10 +833,10 @@ void GriffonEngine::damageNPC(int npcnum, int damage, int spell) {
 		}
 
 		// pickup lightning bomb
-		if (_npcinfo[npcnum].script == kScriptLightningBomb && (_curMap == 41 && _scriptFlag[kScriptLightningBomb][1] == 0)) {
+		if (_npcInfo[npcnum].script == kScriptLightningBomb && (_curMap == 41 && _scriptFlag[kScriptLightningBomb][1] == 0)) {
 			bool alive = false;
-			for (int i = 1; i <= _lastnpc; i++) {
-				if (_npcinfo[i].hp > 0)
+			for (int i = 1; i <= _lastNpc; i++) {
+				if (_npcInfo[i].hp > 0)
 					alive = true;
 			}
 
@@ -863,10 +863,10 @@ void GriffonEngine::damageNPC(int npcnum, int damage, int spell) {
 		}
 
 		// citadel armour chest
-		if (_npcinfo[npcnum].script == kScriptArmourChest) {
+		if (_npcInfo[npcnum].script == kScriptArmourChest) {
 			bool alive = false;
-			for (int i = 1; i <= _lastnpc; i++) {
-				if (_npcinfo[i].hp > 0)
+			for (int i = 1; i <= _lastNpc; i++) {
+				if (_npcInfo[i].hp > 0)
 					alive = true;
 			}
 
@@ -895,10 +895,10 @@ void GriffonEngine::damageNPC(int npcnum, int damage, int spell) {
 		}
 
 		// citadel master key script
-		if (_npcinfo[npcnum].script == kScriptCitadelMasterKey && _scriptFlag[kScriptCitadelMasterKey][0] == 0) {
+		if (_npcInfo[npcnum].script == kScriptCitadelMasterKey && _scriptFlag[kScriptCitadelMasterKey][0] == 0) {
 			bool alive = false;
-			for (int i = 1; i <= _lastnpc; i++) {
-				if (_npcinfo[i].hp > 0)
+			for (int i = 1; i <= _lastNpc; i++) {
+				if (_npcInfo[i].hp > 0)
 					alive = true;
 			}
 
@@ -927,10 +927,10 @@ void GriffonEngine::damageNPC(int npcnum, int damage, int spell) {
 		}
 
 		// max ups
-		if (_npcinfo[npcnum].script == kScriptGetSword3 && _scriptFlag[kScriptGetSword3][0] == 0) {
+		if (_npcInfo[npcnum].script == kScriptGetSword3 && _scriptFlag[kScriptGetSword3][0] == 0) {
 			bool alive = false;
-			for (int i = 1; i <= _lastnpc; i++) {
-				if (_npcinfo[i].hp > 0)
+			for (int i = 1; i <= _lastNpc; i++) {
+				if (_npcInfo[i].hp > 0)
 					alive = true;
 			}
 
@@ -1001,7 +1001,7 @@ void GriffonEngine::damageNPC(int npcnum, int damage, int spell) {
 			}
 		}
 
-		if (_npcinfo[npcnum].script == kScriptEndOfGame)
+		if (_npcInfo[npcnum].script == kScriptEndOfGame)
 			endOfGame();
 	}
 }

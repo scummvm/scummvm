@@ -55,7 +55,7 @@ namespace Griffon {
 void GriffonEngine::initialize() {
 	// init char *_floatstri[kMaxFloat]
 	for (int i = 0; i < kMaxFloat; i++)
-		_floatstri[i] = (char *)malloc(64); // 64 bytes each string (should be enough)
+		_floatStr[i] = (char *)malloc(64); // 64 bytes each string (should be enough)
 
 	_video = new Graphics::TransparentSurface;
 	_video->create(320, 240, g_system->getScreenFormat());
@@ -79,8 +79,8 @@ void GriffonEngine::initialize() {
 		mapImg[i] = loadImage(name, true);
 	}
 
-	cloudimg = loadImage("art/clouds.bmp", true);
-	cloudimg->setAlpha(96, true);
+	_cloudImg = loadImage("art/clouds.bmp", true);
+	_cloudImg->setAlpha(96, true);
 
 
 	_saveLoadImg = loadImage("art/saveloadnew.bmp", true);
@@ -191,7 +191,7 @@ void GriffonEngine::loadMap(int mapnum) {
 		mapnum = mapnum + 100;
 
 	for (int i = 0; i < kMaxSpell; i++)
-		spellinfo[i].frame = 0;
+		_spellInfo[i].frame = 0;
 
 	_roomLock = false;
 
@@ -215,7 +215,7 @@ void GriffonEngine::loadMap(int mapnum) {
 
 	for (int x = 0; x <= 319; x++) {
 		for (int y = 0; y <= 239; y++)
-			_triggerloc[x][y] = -1;
+			_triggerLoc[x][y] = -1;
 	}
 
 	// read *.trg file
@@ -226,16 +226,16 @@ void GriffonEngine::loadMap(int mapnum) {
 	if (!file.isOpen())
 		error("Cannot open file %s", name);
 
-	INPUT("%i", &_ntriggers);
+	INPUT("%i", &_triggerNbr);
 
-	for (int i = 0; i < _ntriggers; i++) {
+	for (int i = 0; i < _triggerNbr; i++) {
 		int mapx, mapy, trig;
 
 		INPUT("%i", &mapx);
 		INPUT("%i", &mapy);
 		INPUT("%i", &trig);
 
-		_triggerloc[mapx][mapy] = trig;
+		_triggerLoc[mapx][mapy] = trig;
 	}
 	file.close();
 
@@ -255,7 +255,7 @@ void GriffonEngine::loadMap(int mapnum) {
 	}
 
 	if (_scriptFlag[kScriptFindShield][0] == 1 && _curMap == 4) {
-		_triggerloc[9][7] = 5004;
+		_triggerLoc[9][7] = 5004;
 		tempmap[9][7] = 41;
 		tempmap[9][7 + 40] = 0;
 	}
@@ -387,10 +387,10 @@ void GriffonEngine::loadMap(int mapnum) {
 	}
 
 	_lastObj = 0;
-	_lastnpc = 0;
+	_lastNpc = 0;
 
 	for (int i = 0; i < kMaxNPC; i++)
-		_npcinfo[i].onmap = false;
+		_npcInfo[i].onmap = false;
 
 	for (int x = 0; x <= 19; x++) {
 		for (int y = 0; y <= 19; y++) {
@@ -412,7 +412,7 @@ void GriffonEngine::loadMap(int mapnum) {
 
 				int o = tempmap[5 * 40 + x][y];
 
-				if (_objmapf[_curMap][x][y] == 0) {
+				if (_objectMapFull[_curMap][x][y] == 0) {
 					_objectMap[x][y] = o;
 
 					if (_objectInfo[o][0] > 1) {
@@ -437,25 +437,25 @@ void GriffonEngine::loadMap(int mapnum) {
 			if (npc == 1) {
 				int o = tempmap[4 * 40 + x][y];
 
-				if (o > _lastnpc)
-					_lastnpc = o;
+				if (o > _lastNpc)
+					_lastNpc = o;
 
-				_npcinfo[o].x = x * 16 - 4;
-				_npcinfo[o].y = y * 16 - 5;
+				_npcInfo[o].x = x * 16 - 4;
+				_npcInfo[o].y = y * 16 - 5;
 
-				_npcinfo[o].walkdir = 1;
-				_npcinfo[o].onmap = true;
+				_npcInfo[o].walkdir = 1;
+				_npcInfo[o].onmap = true;
 			}
 		}
 	}
 
 
 	if (_curMap == 62 && _scriptFlag[kScriptGardenMasterKey][0] > 0)
-		_lastnpc = 0;
+		_lastNpc = 0;
 	if (_curMap == 73 && _scriptFlag[kScriptArmourChest][0] > 0)
-		_lastnpc = 0;
+		_lastNpc = 0;
 	if (_curMap == 81 && _scriptFlag[kScriptCitadelMasterKey][0] > 0)
-		_lastnpc = 0;
+		_lastNpc = 0;
 
 	if (_curMap == 73 && _scriptFlag[kScriptArmourChest][0] == 0)
 		_roomLock = true;
@@ -475,262 +475,262 @@ void GriffonEngine::loadMap(int mapnum) {
 		error("Cannot open file %s", name);
 
 	for (int i = 0; i < kMaxNPC; i++) {
-		INPUT("%i", &_npcinfo[i].spriteset);
-		INPUT("%i", &_npcinfo[i].x1);
-		INPUT("%i", &_npcinfo[i].y1);
-		INPUT("%i", &_npcinfo[i].x2);
-		INPUT("%i", &_npcinfo[i].y2);
-		INPUT("%i", &_npcinfo[i].movementmode);
-		INPUT("%i", &_npcinfo[i].hp);
-		INPUT("%i", &_npcinfo[i].item1);
-		INPUT("%i", &_npcinfo[i].item2);
-		INPUT("%i", &_npcinfo[i].item3);
-		INPUT("%i", &_npcinfo[i].script);
+		INPUT("%i", &_npcInfo[i].spriteset);
+		INPUT("%i", &_npcInfo[i].x1);
+		INPUT("%i", &_npcInfo[i].y1);
+		INPUT("%i", &_npcInfo[i].x2);
+		INPUT("%i", &_npcInfo[i].y2);
+		INPUT("%i", &_npcInfo[i].movementmode);
+		INPUT("%i", &_npcInfo[i].hp);
+		INPUT("%i", &_npcInfo[i].item1);
+		INPUT("%i", &_npcInfo[i].item2);
+		INPUT("%i", &_npcInfo[i].item3);
+		INPUT("%i", &_npcInfo[i].script);
 
 		// baby dragon
-		if (_npcinfo[i].spriteset == kMonsterBabyDragon) {
-			_npcinfo[i].hp = 12;
-			_npcinfo[i].attackdelay = 2000;
+		if (_npcInfo[i].spriteset == kMonsterBabyDragon) {
+			_npcInfo[i].hp = 12;
+			_npcInfo[i].attackdelay = 2000;
 
-			_npcinfo[i].attackdamage = 2;
-			_npcinfo[i].spelldamage = 0;
+			_npcInfo[i].attackdamage = 2;
+			_npcInfo[i].spelldamage = 0;
 
-			_npcinfo[i].walkspd = 1;
+			_npcInfo[i].walkspd = 1;
 
 			if (RND() * 5 == 0)
-				_npcinfo[i].hp = 0;
+				_npcInfo[i].hp = 0;
 		}
 
 		// onewing
-		if (_npcinfo[i].spriteset == kMonsterOneWing) {
-			_npcinfo[i].hp = 200;
-			_npcinfo[i].attackdelay = 2000;
-			_npcinfo[i].swayspd = 1;
+		if (_npcInfo[i].spriteset == kMonsterOneWing) {
+			_npcInfo[i].hp = 200;
+			_npcInfo[i].attackdelay = 2000;
+			_npcInfo[i].swayspd = 1;
 
-			_npcinfo[i].attackdamage = 24;
-			_npcinfo[i].spelldamage = 30;
+			_npcInfo[i].attackdamage = 24;
+			_npcInfo[i].spelldamage = 30;
 
-			_npcinfo[i].walkspd = 1.4f;
-			_npcinfo[i].castpause = _ticks;
+			_npcInfo[i].walkspd = 1.4f;
+			_npcInfo[i].castpause = _ticks;
 		}
 
 		// boss1
-		if (_npcinfo[i].spriteset == kMonsterBoss1) {
-			_npcinfo[i].hp = 300;
-			_npcinfo[i].attackdelay = 2200;
+		if (_npcInfo[i].spriteset == kMonsterBoss1) {
+			_npcInfo[i].hp = 300;
+			_npcInfo[i].attackdelay = 2200;
 
-			_npcinfo[i].attackdamage = 0;
-			_npcinfo[i].spelldamage = 30;
+			_npcInfo[i].attackdamage = 0;
+			_npcInfo[i].spelldamage = 30;
 
-			_npcinfo[i].walkspd = 1.2f;
+			_npcInfo[i].walkspd = 1.2f;
 		}
 
 		// black knights
-		if (_npcinfo[i].spriteset == kMonsterBlackKnight) {
-			_npcinfo[i].hp = 200;
-			_npcinfo[i].attackdelay = 2800;
+		if (_npcInfo[i].spriteset == kMonsterBlackKnight) {
+			_npcInfo[i].hp = 200;
+			_npcInfo[i].attackdelay = 2800;
 
-			_npcinfo[i].attackdamage = 0;
-			_npcinfo[i].spelldamage = 30;
+			_npcInfo[i].attackdamage = 0;
+			_npcInfo[i].spelldamage = 30;
 
-			_npcinfo[i].walkspd = 1;
+			_npcInfo[i].walkspd = 1;
 		}
 
 		// boss2 firehydra
-		if (_npcinfo[i].spriteset == kMonsterFireHydra) {
-			_npcinfo[i].hp = 600;
-			_npcinfo[i].attackdelay = 2200;
+		if (_npcInfo[i].spriteset == kMonsterFireHydra) {
+			_npcInfo[i].hp = 600;
+			_npcInfo[i].attackdelay = 2200;
 
-			_npcinfo[i].attackdamage = 50;
-			_npcinfo[i].spelldamage = 30;
+			_npcInfo[i].attackdamage = 50;
+			_npcInfo[i].spelldamage = 30;
 
-			_npcinfo[i].walkspd = 1.3f;
+			_npcInfo[i].walkspd = 1.3f;
 
-			_npcinfo[i].swayangle = 0;
+			_npcInfo[i].swayangle = 0;
 		}
 
 		// baby fire dragon
-		if (_npcinfo[i].spriteset == kMonsterRedDragon) {
-			_npcinfo[i].hp = 20;
-			_npcinfo[i].attackdelay = 1500;
+		if (_npcInfo[i].spriteset == kMonsterRedDragon) {
+			_npcInfo[i].hp = 20;
+			_npcInfo[i].attackdelay = 1500;
 
-			_npcinfo[i].attackdamage = 0;
-			_npcinfo[i].spelldamage = 12;
+			_npcInfo[i].attackdamage = 0;
+			_npcInfo[i].spelldamage = 12;
 
-			_npcinfo[i].walkspd = 1;
+			_npcInfo[i].walkspd = 1;
 
 			if (RND() * 5 == 0)
-				_npcinfo[i].hp = 0;
+				_npcInfo[i].hp = 0;
 		}
 
 		// priest1
-		if (_npcinfo[i].spriteset == kMonsterPriest) {
-			_npcinfo[i].hp = 40;
-			_npcinfo[i].attackdelay = 5000;
+		if (_npcInfo[i].spriteset == kMonsterPriest) {
+			_npcInfo[i].hp = 40;
+			_npcInfo[i].attackdelay = 5000;
 
-			_npcinfo[i].attackdamage = 0;
-			_npcinfo[i].spelldamage = 8;
+			_npcInfo[i].attackdamage = 0;
+			_npcInfo[i].spelldamage = 8;
 
-			_npcinfo[i].walkspd = 1;
+			_npcInfo[i].walkspd = 1;
 
 			if (RND() * 8 == 0)
-				_npcinfo[i].hp = 0;
+				_npcInfo[i].hp = 0;
 		}
 
 		// yellow fire dragon
-		if (_npcinfo[i].spriteset == kMonsterYellowDragon) {
-			_npcinfo[i].hp = 100;
-			_npcinfo[i].attackdelay = 1500;
+		if (_npcInfo[i].spriteset == kMonsterYellowDragon) {
+			_npcInfo[i].hp = 100;
+			_npcInfo[i].attackdelay = 1500;
 
-			_npcinfo[i].attackdamage = 0;
-			_npcinfo[i].spelldamage = 24;
+			_npcInfo[i].attackdamage = 0;
+			_npcInfo[i].spelldamage = 24;
 
-			_npcinfo[i].walkspd = 1;
+			_npcInfo[i].walkspd = 1;
 
 			if (RND() * 5 == 0)
-				_npcinfo[i].hp = 0;
+				_npcInfo[i].hp = 0;
 		}
 
 		// twowing
-		if (_npcinfo[i].spriteset == kMonsterTwoWing) {
-			_npcinfo[i].hp = 140;
-			_npcinfo[i].attackdelay = 2000;
-			_npcinfo[i].swayspd = 1;
+		if (_npcInfo[i].spriteset == kMonsterTwoWing) {
+			_npcInfo[i].hp = 140;
+			_npcInfo[i].attackdelay = 2000;
+			_npcInfo[i].swayspd = 1;
 
-			_npcinfo[i].attackdamage = 30;
-			_npcinfo[i].spelldamage = 0;
+			_npcInfo[i].attackdamage = 30;
+			_npcInfo[i].spelldamage = 0;
 
-			_npcinfo[i].walkspd = 1;
+			_npcInfo[i].walkspd = 1;
 
-			_npcinfo[i].castpause = 0;
+			_npcInfo[i].castpause = 0;
 		}
 
 		// dragon2
-		if (_npcinfo[i].spriteset == kMonsterDragon2) {
-			_npcinfo[i].hp = 80;
-			_npcinfo[i].attackdelay = 1500;
+		if (_npcInfo[i].spriteset == kMonsterDragon2) {
+			_npcInfo[i].hp = 80;
+			_npcInfo[i].attackdelay = 1500;
 
-			_npcinfo[i].attackdamage = 24;
-			_npcinfo[i].spelldamage = 0;
+			_npcInfo[i].attackdamage = 24;
+			_npcInfo[i].spelldamage = 0;
 
-			_npcinfo[i].walkspd = 1;
+			_npcInfo[i].walkspd = 1;
 
-			_npcinfo[i].floating = RND() * 16;
+			_npcInfo[i].floating = RND() * 16;
 		}
 
 		// end boss
-		if (_npcinfo[i].spriteset == kMonsterFinalBoss) {
-			_npcinfo[i].hp = 1200;
-			_npcinfo[i].attackdelay = 2000;
+		if (_npcInfo[i].spriteset == kMonsterFinalBoss) {
+			_npcInfo[i].hp = 1200;
+			_npcInfo[i].attackdelay = 2000;
 
-			_npcinfo[i].attackdamage = 100;
-			_npcinfo[i].spelldamage = 60;
+			_npcInfo[i].attackdamage = 100;
+			_npcInfo[i].spelldamage = 60;
 
-			_npcinfo[i].walkspd = 1;
+			_npcInfo[i].walkspd = 1;
 
-			_npcinfo[i].floating = RND() * 16;
+			_npcInfo[i].floating = RND() * 16;
 		}
 
 		// bat kitty
-		if (_npcinfo[i].spriteset == kMonsterBatKitty) {
-			_npcinfo[i].hp = 800;
-			_npcinfo[i].attackdelay = 2000;
+		if (_npcInfo[i].spriteset == kMonsterBatKitty) {
+			_npcInfo[i].hp = 800;
+			_npcInfo[i].attackdelay = 2000;
 
-			_npcinfo[i].attackdamage = 100;
-			_npcinfo[i].spelldamage = 50;
+			_npcInfo[i].attackdamage = 100;
+			_npcInfo[i].spelldamage = 50;
 
-			_npcinfo[i].walkspd = 1;
+			_npcInfo[i].walkspd = 1;
 
-			_npcinfo[i].floating = RND() * 16;
+			_npcInfo[i].floating = RND() * 16;
 		}
 
-		if (!_npcinfo[i].onmap)
-			_npcinfo[i].hp = 0;
+		if (!_npcInfo[i].onmap)
+			_npcInfo[i].hp = 0;
 
-		_npcinfo[i].maxhp = _npcinfo[i].hp;
+		_npcInfo[i].maxhp = _npcInfo[i].hp;
 
-		_npcinfo[i].attacking = false;
-		_npcinfo[i].attackframe = 0;
-		_npcinfo[i].cattackframe = 0;
-		_npcinfo[i].attackspd = 1.5;
-		_npcinfo[i].attacknext = _ticks + _npcinfo[i].attackdelay * (1 + RND() * 2);
+		_npcInfo[i].attacking = false;
+		_npcInfo[i].attackframe = 0;
+		_npcInfo[i].cattackframe = 0;
+		_npcInfo[i].attackspd = 1.5;
+		_npcInfo[i].attacknext = _ticks + _npcInfo[i].attackdelay * (1 + RND() * 2);
 
-		if (_npcinfo[i].spriteset == kMonsterOneWing || _npcinfo[i].spriteset == kMonsterTwoWing) {
-			_npcinfo[i].bodysection[0].sprite = 0;
-			_npcinfo[i].bodysection[1].sprite = 1;
-			_npcinfo[i].bodysection[2].sprite = 2;
-			_npcinfo[i].bodysection[3].sprite = 3;
-			_npcinfo[i].bodysection[4].sprite = 4;
-			_npcinfo[i].bodysection[5].sprite = 3;
-			_npcinfo[i].bodysection[6].sprite = 3;
-			_npcinfo[i].bodysection[7].sprite = 5;
+		if (_npcInfo[i].spriteset == kMonsterOneWing || _npcInfo[i].spriteset == kMonsterTwoWing) {
+			_npcInfo[i].bodysection[0].sprite = 0;
+			_npcInfo[i].bodysection[1].sprite = 1;
+			_npcInfo[i].bodysection[2].sprite = 2;
+			_npcInfo[i].bodysection[3].sprite = 3;
+			_npcInfo[i].bodysection[4].sprite = 4;
+			_npcInfo[i].bodysection[5].sprite = 3;
+			_npcInfo[i].bodysection[6].sprite = 3;
+			_npcInfo[i].bodysection[7].sprite = 5;
 
-			_npcinfo[i].bodysection[0].bonelength = 8;
-			_npcinfo[i].bodysection[1].bonelength = 7;
-			_npcinfo[i].bodysection[2].bonelength = 6;
-			_npcinfo[i].bodysection[3].bonelength = 4;
-			_npcinfo[i].bodysection[4].bonelength = 4;
-			_npcinfo[i].bodysection[5].bonelength = 4;
-			_npcinfo[i].bodysection[6].bonelength = 4;
+			_npcInfo[i].bodysection[0].bonelength = 8;
+			_npcInfo[i].bodysection[1].bonelength = 7;
+			_npcInfo[i].bodysection[2].bonelength = 6;
+			_npcInfo[i].bodysection[3].bonelength = 4;
+			_npcInfo[i].bodysection[4].bonelength = 4;
+			_npcInfo[i].bodysection[5].bonelength = 4;
+			_npcInfo[i].bodysection[6].bonelength = 4;
 
 			for (int f = 0; f <= 7; f++) {
-				_npcinfo[i].bodysection[f].x = _npcinfo[i].x + 12;
-				_npcinfo[i].bodysection[f].y = _npcinfo[i].y + 14;
+				_npcInfo[i].bodysection[f].x = _npcInfo[i].x + 12;
+				_npcInfo[i].bodysection[f].y = _npcInfo[i].y + 14;
 			}
 
-			_npcinfo[i].headtargetx[0] = _npcinfo[i].x + 12;
-			_npcinfo[i].headtargety[0] = _npcinfo[i].y + 14;
+			_npcInfo[i].headtargetx[0] = _npcInfo[i].x + 12;
+			_npcInfo[i].headtargety[0] = _npcInfo[i].y + 14;
 
 		}
 
-		if (_npcinfo[i].spriteset == kMonsterFireHydra) {
+		if (_npcInfo[i].spriteset == kMonsterFireHydra) {
 			for (int f = 0; f <= 29; f++) {
-				_npcinfo[i].bodysection[f].x = _npcinfo[i].x + 12;
-				_npcinfo[i].bodysection[f].y = _npcinfo[i].y + 14;
+				_npcInfo[i].bodysection[f].x = _npcInfo[i].x + 12;
+				_npcInfo[i].bodysection[f].y = _npcInfo[i].y + 14;
 			}
 
 			for (int f = 0; f <= 2; f++) {
-				_npcinfo[i].headtargetx[f] = _npcinfo[i].x + 12;
-				_npcinfo[i].headtargety[f] = _npcinfo[i].y + 14;
+				_npcInfo[i].headtargetx[f] = _npcInfo[i].x + 12;
+				_npcInfo[i].headtargety[f] = _npcInfo[i].y + 14;
 
-				_npcinfo[i].attacking2[f] = false;
-				_npcinfo[i].attackframe2[f] = 0;
+				_npcInfo[i].attacking2[f] = false;
+				_npcInfo[i].attackframe2[f] = 0;
 			}
 		}
 
-		if (_npcinfo[i].script == kScriptMasterKey) {
+		if (_npcInfo[i].script == kScriptMasterKey) {
 			_roomLock = true;
 			if (_scriptFlag[kScriptMasterKey][0] > 0) {
 				_roomLock = false;
-				_npcinfo[i].hp = 0;
+				_npcInfo[i].hp = 0;
 			}
 		}
 
-		if (_npcinfo[i].script == kScriptFindCrystal) {
+		if (_npcInfo[i].script == kScriptFindCrystal) {
 			_roomLock = true;
 			if (_scriptFlag[kScriptFindCrystal][0] > 0) {
 				_roomLock = false;
-				_npcinfo[i].hp = 0;
+				_npcInfo[i].hp = 0;
 			}
 		}
 
-		if (_npcinfo[i].script == kScriptFindSword) {
+		if (_npcInfo[i].script == kScriptFindSword) {
 			_roomLock = true;
 			if (_scriptFlag[kScriptFindSword][0] > 0) {
 				_roomLock = false;
-				_npcinfo[i].hp = 0;
+				_npcInfo[i].hp = 0;
 			}
 		}
 
-		if (_npcinfo[i].script == kScriptGetSword3) {
+		if (_npcInfo[i].script == kScriptGetSword3) {
 			_roomLock = true;
 			if (_scriptFlag[kScriptGetSword3][0] > 0) {
 				_roomLock = false;
-				_npcinfo[i].hp = 0;
+				_npcInfo[i].hp = 0;
 			}
 		}
 
-		_npcinfo[i].pause = _ticks;
+		_npcInfo[i].pause = _ticks;
 	}
 
 	file.close();
@@ -967,92 +967,92 @@ void GriffonEngine::loadAnims() {
 	_anims[2] = loadImage("art/anims2.bmp", true);
 
 	// huge
-	_animset2[0].xofs = 8;
-	_animset2[0].yofs = 7;
-	_animset2[0].x = 123;
-	_animset2[0].y = 0;
-	_animset2[0].w = 18;
-	_animset2[0].h = 16;
+	_animSet2[0].xofs = 8;
+	_animSet2[0].yofs = 7;
+	_animSet2[0].x = 123;
+	_animSet2[0].y = 0;
+	_animSet2[0].w = 18;
+	_animSet2[0].h = 16;
 	// big
-	_animset2[1].xofs = 7;
-	_animset2[1].yofs = 7;
-	_animset2[1].x = 107;
-	_animset2[1].y = 0;
-	_animset2[1].w = 16;
-	_animset2[1].h = 14;
+	_animSet2[1].xofs = 7;
+	_animSet2[1].yofs = 7;
+	_animSet2[1].x = 107;
+	_animSet2[1].y = 0;
+	_animSet2[1].w = 16;
+	_animSet2[1].h = 14;
 	// med
-	_animset2[2].xofs = 6;
-	_animset2[2].yofs = 6;
-	_animset2[2].x = 93;
-	_animset2[2].y = 0;
-	_animset2[2].w = 14;
-	_animset2[2].h = 13;
+	_animSet2[2].xofs = 6;
+	_animSet2[2].yofs = 6;
+	_animSet2[2].x = 93;
+	_animSet2[2].y = 0;
+	_animSet2[2].w = 14;
+	_animSet2[2].h = 13;
 	// small
-	_animset2[3].xofs = 4;
-	_animset2[3].yofs = 4;
-	_animset2[3].x = 83;
-	_animset2[3].y = 0;
-	_animset2[3].w = 10;
-	_animset2[3].h = 10;
+	_animSet2[3].xofs = 4;
+	_animSet2[3].yofs = 4;
+	_animSet2[3].x = 83;
+	_animSet2[3].y = 0;
+	_animSet2[3].w = 10;
+	_animSet2[3].h = 10;
 	// wing
-	_animset2[4].xofs = 4;
-	_animset2[4].yofs = 20;
-	_animset2[4].x = 42;
-	_animset2[4].y = 0;
-	_animset2[4].w = 41;
-	_animset2[4].h = 33;
+	_animSet2[4].xofs = 4;
+	_animSet2[4].yofs = 20;
+	_animSet2[4].x = 42;
+	_animSet2[4].y = 0;
+	_animSet2[4].w = 41;
+	_animSet2[4].h = 33;
 	// head
-	_animset2[5].xofs = 20;
-	_animset2[5].yofs = 18;
-	_animset2[5].x = 0;
-	_animset2[5].y = 0;
-	_animset2[5].w = 42;
-	_animset2[5].h = 36;
+	_animSet2[5].xofs = 20;
+	_animSet2[5].yofs = 18;
+	_animSet2[5].x = 0;
+	_animSet2[5].y = 0;
+	_animSet2[5].w = 42;
+	_animSet2[5].h = 36;
 
 	_anims[9] = loadImage("art/anims9.bmp", true);
 
 	// huge
-	_animset9[0].xofs = 8;
-	_animset9[0].yofs = 7;
-	_animset9[0].x = 154;
-	_animset9[0].y = 0;
-	_animset9[0].w = 18;
-	_animset9[0].h = 16;
+	_animSet9[0].xofs = 8;
+	_animSet9[0].yofs = 7;
+	_animSet9[0].x = 154;
+	_animSet9[0].y = 0;
+	_animSet9[0].w = 18;
+	_animSet9[0].h = 16;
 	// big
-	_animset9[1].xofs = 7;
-	_animset9[1].yofs = 7;
-	_animset9[1].x = 138;
-	_animset9[1].y = 0;
-	_animset9[1].w = 16;
-	_animset9[1].h = 14;
+	_animSet9[1].xofs = 7;
+	_animSet9[1].yofs = 7;
+	_animSet9[1].x = 138;
+	_animSet9[1].y = 0;
+	_animSet9[1].w = 16;
+	_animSet9[1].h = 14;
 	// med
-	_animset9[2].xofs = 6;
-	_animset9[2].yofs = 6;
-	_animset9[2].x = 93 + 31;
-	_animset9[2].y = 0;
-	_animset9[2].w = 14;
-	_animset9[2].h = 13;
+	_animSet9[2].xofs = 6;
+	_animSet9[2].yofs = 6;
+	_animSet9[2].x = 93 + 31;
+	_animSet9[2].y = 0;
+	_animSet9[2].w = 14;
+	_animSet9[2].h = 13;
 	// small
-	_animset9[3].xofs = 4;
-	_animset9[3].yofs = 4;
-	_animset9[3].x = 83 + 31;
-	_animset9[3].y = 0;
-	_animset9[3].w = 10;
-	_animset9[3].h = 10;
+	_animSet9[3].xofs = 4;
+	_animSet9[3].yofs = 4;
+	_animSet9[3].x = 83 + 31;
+	_animSet9[3].y = 0;
+	_animSet9[3].w = 10;
+	_animSet9[3].h = 10;
 	// wing
-	_animset9[4].xofs = 36;
-	_animset9[4].yofs = 20;
-	_animset9[4].x = 42;
-	_animset9[4].y = 0;
-	_animset9[4].w = 72;
-	_animset9[4].h = 33;
+	_animSet9[4].xofs = 36;
+	_animSet9[4].yofs = 20;
+	_animSet9[4].x = 42;
+	_animSet9[4].y = 0;
+	_animSet9[4].w = 72;
+	_animSet9[4].h = 33;
 	// head
-	_animset9[5].xofs = 20;
-	_animset9[5].yofs = 18;
-	_animset9[5].x = 0;
-	_animset9[5].y = 0;
-	_animset9[5].w = 42;
-	_animset9[5].h = 36;
+	_animSet9[5].xofs = 20;
+	_animSet9[5].yofs = 18;
+	_animSet9[5].x = 0;
+	_animSet9[5].y = 0;
+	_animSet9[5].w = 42;
+	_animSet9[5].h = 36;
 
 	_anims[3] = loadImage("art/anims3.bmp", true);
 	_anims[4] = loadImage("art/anims4.bmp", true);
