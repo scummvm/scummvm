@@ -201,7 +201,7 @@ enum Opcode {
 	kStub181						= 181,
 	kSetTileSize					= 182,
 	kGenerateRegion					= 183,
-	kStub184						= 184,
+	kSetObjectTile					= 184,
 	kGetMaxInventorySize			= 185,
 	kInventoryHasObject				= 186,
 	kAppendInventoryObjectNameToSharedSpace	= 187,

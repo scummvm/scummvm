@@ -653,9 +653,9 @@ void Process::stub199() {
 }
 
 void Process::setTileIndex() {
-	int index = pop();
-	int resource = pop();
-	debug("setTileIndex: index: %d, resource id: %d ", index, resource);
+	_tileIndex = pop();
+	_tileResource = pop();
+	debug("setTileIndex: index: %d, resource id: %d ", _tileIndex, _tileResource);
 }
 
 void Process::stub201(unsigned size) {
@@ -734,9 +734,18 @@ void Process::generateRegion() {
 	debug("generateRegion %s", name.c_str());
 }
 
-void Process::stub184() {
+void Process::setObjectTile() {
 	Common::String name = popString();
-	debug("stub184: %s", name.c_str());
+	debug("setObjectTile: %s, tile: %d, resource: %d", name.c_str(), _tileIndex, _tileResource);
+	if (_tileResource <= 0) {
+		warning("invalid resource id, skipping");
+		return;
+	}
+	Graphics::TransparentSurface * surface = _engine->loadFromCache(_tileResource);
+	if (!surface) {
+		warning("picture %d was not loaded", _tileResource);
+	}
+	debug("OK");
 }
 
 void Process::setObjectText() {
@@ -1361,7 +1370,7 @@ ProcessExitCode Process::execute() {
 			OP		(kGenerateRegion, generateRegion);
 			OP		(kGetMaxInventorySize, getMaxInventorySize);
 			OP		(kAppendInventoryObjectNameToSharedSpace, appendInventoryObjectNameToSharedSpace);
-			OP		(kStub184, stub184);
+			OP		(kSetObjectTile, setObjectTile);
 			OP		(kInventoryHasObject, inventoryHasObject);
 			OP		(kSetObjectText, setObjectText);
 			OP		(kStub190, stub190);

@@ -141,6 +141,7 @@ private:
 	void loadRegionFromObject();
 	void generateRegion();
 	void loadPictureFromObject();
+	void setObjectTile();
 	void loadAnimationFromObject();
 	void loadTextFromObject();
 	void loadAnimation();
@@ -241,7 +242,6 @@ private:
 	void stub172();
 	void stub173();
 	void stub174();
-	void stub184();
 	void stub190();
 	void stub192();
 	void stub193();
