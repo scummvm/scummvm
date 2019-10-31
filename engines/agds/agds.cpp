@@ -385,7 +385,7 @@ Common::Error AGDSEngine::run() {
 								runObject(region->onEnter);
 							}
 						}
-						_inventory.enable(_inventoryRegion? _inventoryRegion->pointIn(_mouse): false);
+						_inventory.enable(_inventoryRegion? !mouseMap.disabled() && _inventoryRegion->pointIn(_mouse): false);
 					}
 					break;
 				case Common::EVENT_LBUTTONDOWN:
