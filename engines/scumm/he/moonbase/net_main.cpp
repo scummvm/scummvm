@@ -497,22 +497,16 @@ bool Net::remoteReceiveData() {
 	uint from = _packetdata->child("from")->asIntegerNumber();
 	uint type = _packetdata->child("type")->asIntegerNumber();
 
-	int datalen = _packetdata->child("data")->asArray().size();
-	for (uint i = 0; i < datalen; i++) {
-		_packbuffer[i] = _packetdata->child("data")->asArray()[i]->asIntegerNumber();
-	}
-
-	Common::MemoryReadStream pack(_packbuffer, datalen);
-
 	uint32 *params;
 
 	switch (type) {
 	case PACKETTYPE_REMOTESTARTSCRIPT:
 		{
+			int datalen = _packetdata->child("data")->child("params")->asArray().size();
 			params = (uint32 *)_tmpbuffer;
 
-			for (int i = 0; i < 24; i++) {
-				*params = pack.readUint32LE();
+			for (int i = 0; i < datalen; i++) {
+				*params = _packetdata->child("data")->child("params")->asArray()[i]->asIntegerNumber();
 				params++;
 			}
 
@@ -522,10 +516,11 @@ bool Net::remoteReceiveData() {
 
 	case PACKETTYPE_REMOTESTARTSCRIPTRETURN:
 		{
+			int datalen = _packetdata->child("data")->child("params")->asArray().size();
 			params = (uint32 *)_tmpbuffer;
 
-			for (int i = 0; i < 24; i++) {
-				*params = pack.readUint32LE();
+			for (int i = 0; i < datalen; i++) {
+				*params = _packetdata->child("data")->child("params")->asArray()[i]->asIntegerNumber();
 				params++;
 			}
 
@@ -553,7 +548,7 @@ bool Net::remoteReceiveData() {
 			// and unpack it into an scumm array :-)
 
 			newArray = _vm->findFreeArrayId();
-			unpackageArray(newArray, _packbuffer, datalen);
+			//unpackageArray(newArray, _packbuffer, datalen);
 			memset(_tmpbuffer, 0, 25 * 4);
 			WRITE_UINT32(_tmpbuffer, newArray);
 
