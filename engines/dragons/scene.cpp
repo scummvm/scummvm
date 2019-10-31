@@ -334,6 +334,10 @@ void Scene::draw() {
 	_vm->_screen->clearScreen();
 
 	for(uint16 priority = 1; priority < 16; priority++) {
+		if (priority == 7 && _vm->isFlagSet(ENGINE_FLAG_200)) {
+			_vm->_fontManager->updatePalette();
+		}
+
 		if (priority == _stage->getBgLayerPriority()) {
 			_screen->copyRectToSurface8bpp(*_stage->getBgLayer(), _screen->getPalette(0), 0, 0, rect);
 		} else if (priority == _stage->getMgLayerPriority()) {

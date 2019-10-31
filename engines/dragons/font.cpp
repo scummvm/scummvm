@@ -60,23 +60,19 @@ uint16 Font::mapChar(uint16 in) {
 	return _map[in - _map[0x03] + 0x05];
 }
 
-Graphics::Surface *Font::render(uint16 *text, uint16 length, byte *palette) {
+Graphics::Surface *Font::render(uint16 *text, uint16 length) {
 	Graphics::Surface *surface = new Graphics::Surface();
-	Graphics::PixelFormat pixelFormat16(2, 5, 5, 5, 1, 10, 5, 0, 15); //TODO move this to a better location.
-	surface->create(length * 8, 8, pixelFormat16);
+	surface->create(length * 8, 8, Graphics::PixelFormat::createFormatCLUT8());
 
 
 	for (int i = 0; i < length; i++) {
 		byte *pixels = (byte *)surface->getPixels();
-		pixels += i * 8 * 2;
+		pixels += i * 8;
 //		debug("char: %d size: %d %d", (text[i] - 0x20), _numChars, (30 + i));
 		byte *data = _pixels + mapChar(text[i]) * 64;
 		for (int y = 0; y < 8; y++) {
-			for (int x = 0; x < 8; x++) {
-				pixels[x * 2] = palette[(data[0]) * 2];
-				pixels[x * 2 + 1] = palette[(data[0]) * 2 + 1];
-				data++;
-			}
+			memcpy(pixels, data, 8);
+			data += 8;
 			pixels += surface->pitch;
 		}
 	}
@@ -96,6 +92,8 @@ FontManager::FontManager(DragonsEngine *vm, Screen *screen, BigfileArchive *bigf
 	loadPalettes();
 
 	delete readStream;
+
+	DAT_80086f48_fontColor_flag = 0;
 }
 
 FontManager::~FontManager() {
@@ -111,7 +109,7 @@ void FontManager::addText(int16 x, int16 y, uint16 *text, uint16 length, uint8 f
 	byte *palette = _vm->_cursor->getPalette();
 	ScreenTextEntry *screenTextEntry = new ScreenTextEntry();
 	screenTextEntry->position = Common::Point(x, y);
-	screenTextEntry->surface = _fonts[fontType]->render(text, length, _palettes); //palette);
+	screenTextEntry->surface = _fonts[fontType]->render(text, length);
 
 	_screenTexts.push_back(screenTextEntry);
 
@@ -121,9 +119,7 @@ void FontManager::draw() {
 	Common::List<ScreenTextEntry*>::iterator it = _screenTexts.begin();
 	while (it != _screenTexts.end()) {
 		ScreenTextEntry *entry = *it;
-//		_screen->copyRectToSurface(*entry->surface, entry->position.x, entry->position.y);
-		_screen->copyRectToSurface(*entry->surface, entry->position.x, entry->position.y, Common::Rect(entry->surface->w, entry->surface->h));
-
+		_screen->copyRectToSurface8bpp(*entry->surface, _screen->getPalette(2), entry->position.x, entry->position.y, Common::Rect(entry->surface->w, entry->surface->h), false, 128);
 		it++;
 	}
 }
@@ -194,6 +190,47 @@ void FontManager::loadPalettes() {
 	WRITE_LE_INT16(&_palettes[0x21 * 2], packColor(175, 175, 175));
 	WRITE_LE_INT16(&_palettes[0x22 * 2], 0);
 	WRITE_LE_INT16(&_palettes[0x23 * 2], packColor(175, 175, 175));
+}
+
+void updatePalEntry(uint16 *pal, uint16 index, uint16 newValue) {
+	newValue = (uint16)(((uint16)newValue & 0x1f) << 10) | (uint16)(((uint16)newValue & 0x7c00) >> 10) |
+			(newValue & 0x3e0) | (newValue & 0x8000);
+	WRITE_LE_INT16(pal + index, newValue);
+}
+
+void FontManager::updatePalette() {
+//	if (( != 0 && ((engine_flags_maybe & 0x200) != 0))) {
+	uint16 *palette_f2_font_maybe = (uint16 *)_screen->getPalette(2);
+	uint16 cursor3 = 0x14a5 | 0x8000;
+	if(_vm->isFlagSet(ENGINE_FLAG_200)) {
+		if (!_vm->isUnkFlagSet(ENGINE_UNK1_FLAG_1)) {
+			updatePalEntry(palette_f2_font_maybe, 16, cursor3);
+		} else {
+			updatePalEntry(palette_f2_font_maybe, 16, 0);
+		}
+		if (_vm->isUnkFlagSet(ENGINE_UNK1_FLAG_4) && DAT_80086f48_fontColor_flag != 0) {
+			updatePalEntry(palette_f2_font_maybe, 17, 0x421);
+		} else {
+			updatePalEntry(palette_f2_font_maybe, 17, 0xfff);
+		}
+		updatePalEntry(palette_f2_font_maybe, 18, 0x421);
+		updatePalEntry(palette_f2_font_maybe, 19, 0x3def);
+		updatePalEntry(palette_f2_font_maybe, 32, cursor3);
+		updatePalEntry(palette_f2_font_maybe, 49, 0xfff);
+		updatePalEntry(palette_f2_font_maybe, 1, 0x8000);
+
+		updatePalEntry(palette_f2_font_maybe, 34, 0x421);
+		updatePalEntry(palette_f2_font_maybe, 35, 0x3def);
+		updatePalEntry(palette_f2_font_maybe, 48, cursor3);
+		updatePalEntry(palette_f2_font_maybe, 50, 0x421);
+		updatePalEntry(palette_f2_font_maybe, 51, 0x3def);
+		//TODO WRITE_LE_INT16(&palette_f2_font_maybe[33], READ_LE_INT16(&palette_f0[DAT_80084f58 >> 8]) & 0x7fff);
+		if (_vm->isUnkFlagSet(ENGINE_UNK1_FLAG_1)) {
+			updatePalEntry(palette_f2_font_maybe, 17, 0x3bee);
+			updatePalEntry(palette_f2_font_maybe, 33, 0x3bee);
+			updatePalEntry(palette_f2_font_maybe, 49, 0x3bee);
+		}
+	}
 }
 
 } // End of namespace Dragons
