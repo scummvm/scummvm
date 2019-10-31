@@ -485,7 +485,7 @@ private:
 	int _lastNpc;
 
 	// music info
-	DataChunk *_mgardens, *_mgardens2, *_mgardens3, *_mgardens4, *_mboss, *_mmenu, *_mendofgame;
+	DataChunk *_musicGardens1, *_musicGardens2, *_musicGardens3, *_musicGardens4, *_musicBoss, *_musicMenu, *_musicEndOfGame;
 	int _musicChannel, _menuChannel;
 	bool _playingBoss, _playingGardens;
 

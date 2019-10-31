@@ -539,7 +539,7 @@ void GriffonEngine::updateNPCs() {
 							if ((int)(RND() * 2) == 0) {
 								if (config.effects) {
 									int snd = playSound(_sfx[kSndEnemyHit]);
-									setChannelVolume(snd, config.effectsvol);
+									setChannelVolume(snd, config.effectsVol);
 								}
 
 								_npcInfo[i].attacking = true;
@@ -566,7 +566,7 @@ void GriffonEngine::updateNPCs() {
 							if ((dist) < 24) {
 								if (config.effects) {
 									int snd = playSound(_sfx[kSndBite]);
-									setChannelVolume(snd, config.effectsvol);
+									setChannelVolume(snd, config.effectsVol);
 								}
 
 								_npcInfo[i].attacking = true;
@@ -672,7 +672,7 @@ void GriffonEngine::updateNPCs() {
 									if ((dist) < 36) {
 										if (config.effects) {
 											int snd = playSound(_sfx[kSndBite]);
-											setChannelVolume(snd, config.effectsvol);
+											setChannelVolume(snd, config.effectsVol);
 										}
 
 										_npcInfo[i].attacking = true;
@@ -852,7 +852,7 @@ void GriffonEngine::updateNPCs() {
 							if ((dist) < 24) {
 								if (config.effects) {
 									int snd = playSound(_sfx[kSndBite]);
-									setChannelVolume(snd, config.effectsvol);
+									setChannelVolume(snd, config.effectsVol);
 								}
 
 								_npcInfo[i].attacking = true;
@@ -926,7 +926,7 @@ void GriffonEngine::updateNPCs() {
 							if ((int)(RND() * 2) == 0) {
 								if (config.effects) {
 									int snd = playSound(_sfx[kSndEnemyHit]);
-									setChannelVolume(snd, config.effectsvol);
+									setChannelVolume(snd, config.effectsVol);
 								}
 
 								_npcInfo[i].attacking = true;
@@ -951,7 +951,7 @@ void GriffonEngine::updateNPCs() {
 							if ((int)(RND() * 2) == 0) {
 								if (config.effects) {
 									int snd = playSound(_sfx[kSndIce]);
-									setChannelVolume(snd, config.effectsvol);
+									setChannelVolume(snd, config.effectsVol);
 								}
 								_npcInfo[i].attacking = true;
 								_npcInfo[i].attackframe = 0;
@@ -1323,7 +1323,7 @@ void GriffonEngine::updateSpells() {
 											damageNPC(e, damage, 1);
 											if (config.effects) {
 												int snd = playSound(_sfx[kSndIce]);
-												setChannelVolume(snd, config.effectsvol);
+												setChannelVolume(snd, config.effectsVol);
 											}
 										}
 									}
@@ -1351,7 +1351,7 @@ void GriffonEngine::updateSpells() {
 
 										if (config.effects) {
 											int snd = playSound(_sfx[kSndIce]);
-											setChannelVolume(snd, config.effectsvol);
+											setChannelVolume(snd, config.effectsVol);
 										}
 									}
 								}
@@ -1402,7 +1402,7 @@ void GriffonEngine::updateSpells() {
 								damageNPC(e, damage, 1);
 								if (config.effects) {
 									int snd = playSound(_sfx[kSndMetalHit]);
-									setChannelVolume(snd, config.effectsvol);
+									setChannelVolume(snd, config.effectsVol);
 								}
 							}
 						}
@@ -1442,7 +1442,7 @@ void GriffonEngine::updateSpells() {
 							damagePlayer(damage);
 							if (config.effects) {
 								int snd = playSound(_sfx[kSndMetalHit]);
-								setChannelVolume(snd, config.effectsvol);
+								setChannelVolume(snd, config.effectsVol);
 							}
 						}
 					}
@@ -1470,7 +1470,7 @@ void GriffonEngine::updateSpells() {
 
 							if (config.effects) {
 								int snd = playSound(_sfx[kSndMetalHit]);
-								setChannelVolume(snd, config.effectsvol);
+								setChannelVolume(snd, config.effectsVol);
 							}
 						}
 					}
@@ -1521,7 +1521,7 @@ void GriffonEngine::updateSpells() {
 												damageNPC(e, damage, 1);
 												if (config.effects) {
 													int snd = playSound(_sfx[kSndRocks]);
-													setChannelVolume(snd, config.effectsvol);
+													setChannelVolume(snd, config.effectsVol);
 												}
 											}
 										}
@@ -1550,7 +1550,7 @@ void GriffonEngine::updateSpells() {
 
 											if (config.effects) {
 												int snd = playSound(_sfx[kSndRocks]);
-												setChannelVolume(snd, config.effectsvol);
+												setChannelVolume(snd, config.effectsVol);
 											}
 										}
 									}
@@ -1750,7 +1750,7 @@ void GriffonEngine::updateSpells() {
 
 								if (config.effects) {
 									int snd = playSound(_sfx[kSndFire]);
-									setChannelVolume(snd, config.effectsvol);
+									setChannelVolume(snd, config.effectsVol);
 								}
 							}
 						}
@@ -2229,7 +2229,7 @@ void GriffonEngine::updateSpellsUnder() {
 												damageNPC(e, damage, 1);
 												if (config.effects) {
 													int snd = playSound(_sfx[kSndFire]);
-													setChannelVolume(snd, config.effectsvol);
+													setChannelVolume(snd, config.effectsVol);
 												}
 											}
 										}
@@ -2248,7 +2248,7 @@ void GriffonEngine::updateSpellsUnder() {
 
 											if (config.effects) {
 												int snd = playSound(_sfx[kSndFire]);
-												setChannelVolume(snd, config.effectsvol);
+												setChannelVolume(snd, config.effectsVol);
 											}
 										}
 									}
@@ -2273,7 +2273,7 @@ void GriffonEngine::updateSpellsUnder() {
 
 											if (config.effects) {
 												int snd = playSound(_sfx[kSndFire]);
-												setChannelVolume(snd, config.effectsvol);
+												setChannelVolume(snd, config.effectsVol);
 											}
 
 											addFloatIcon(99, _postInfo[e][0], _postInfo[e][1]);
@@ -2340,7 +2340,7 @@ void GriffonEngine::updateSpellsUnder() {
 									damagePlayer(damage);
 									if (config.effects) {
 										int snd = playSound(_sfx[kSndFire]);
-										setChannelVolume(snd, config.effectsvol);
+										setChannelVolume(snd, config.effectsVol);
 									}
 								}
 

@@ -41,7 +41,7 @@ namespace Griffon {
 
 CONFIG config;
 
-void config_load(CONFIG *config) {
+void loadConfig(CONFIG *config) {
 	bool mute = false;
 	config->music = config->effects = false;
 
@@ -53,16 +53,16 @@ void config_load(CONFIG *config) {
 		config->effects = !ConfMan.getBool("sfx_mute");
 	}
 
-	config->musicvol = ConfMan.getInt("music_volume");
-	config->effectsvol = ConfMan.getInt("sfx_volume");
+	config->musicVol = ConfMan.getInt("music_volume");
+	config->effectsVol = ConfMan.getInt("sfx_volume");
 }
 
-void config_save(CONFIG *config) {
-	ConfMan.setBool("mute", !(config->music || config->effectsvol));
+void saveConfig(CONFIG *config) {
+	ConfMan.setBool("mute", !(config->music || config->effectsVol));
 	ConfMan.setBool("music_mute", !config->music);
 	ConfMan.setBool("sfx_mute", !config->effects);
-	ConfMan.setInt("music_volume", config->musicvol);
-	ConfMan.setInt("sfx_volume", config->effectsvol);
+	ConfMan.setInt("music_volume", config->musicVol);
+	ConfMan.setInt("sfx_volume", config->effectsVol);
 
 	ConfMan.flushToDisk();
 }

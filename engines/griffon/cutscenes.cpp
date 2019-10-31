@@ -182,7 +182,7 @@ void GriffonEngine::intro() {
 
 	if (config.music) {
 		haltSoundChannel(-1);
-		_musicChannel = playSound(_mendofgame, true);
+		_musicChannel = playSound(_musicEndOfGame, true);
 		setChannelVolume(_musicChannel, 0);
 	}
 
@@ -197,11 +197,11 @@ void GriffonEngine::intro() {
 		Common::Rect rc;
 
 		ld += 4 * _fpsr;
-		if ((int)ld > config.musicvol)
-			ld = config.musicvol;
+		if ((int)ld > config.musicVol)
+			ld = config.musicVol;
 		if (!ldstop) {
 			setChannelVolume(_musicChannel, (int)ld);
-			if ((int)ld == config.musicvol)
+			if ((int)ld == config.musicVol)
 				ldstop = true;
 		}
 
@@ -276,7 +276,7 @@ void GriffonEngine::endOfGame() {
 
 	if (config.music) {
 		haltSoundChannel(-1);
-		_musicChannel = playSound(_mendofgame, true);
+		_musicChannel = playSound(_musicEndOfGame, true);
 		setChannelVolume(_musicChannel, 0);
 	}
 
@@ -292,11 +292,11 @@ void GriffonEngine::endOfGame() {
 
 	do {
 		ld = ld + 4 * _fpsr;
-		if (ld > config.musicvol)
-			ld = config.musicvol;
+		if (ld > config.musicVol)
+			ld = config.musicVol;
 		if (!ldstop) {
 			setChannelVolume(_musicChannel, (int)ld);
-			if ((int)ld == config.musicvol)
+			if ((int)ld == config.musicVol)
 				ldstop = true;
 		}
 

@@ -65,7 +65,7 @@ GriffonEngine::GriffonEngine(OSystem *syst) : Engine(syst) {
 
 	// Synchronize the sound settings from ScummVM
 	syncSoundSettings();
-	config_load(&config);
+	loadConfig(&config);
 }
 
 GriffonEngine::~GriffonEngine() {

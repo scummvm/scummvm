@@ -71,7 +71,7 @@ void GriffonEngine::attack() {
 
 						if (config.effects) {
 							int snd = playSound(_sfx[kSndPowerUp]);
-							setChannelVolume(snd, config.effectsvol);
+							setChannelVolume(snd, config.effectsVol);
 						}
 
 						if (_objectInfo[o][4] == 1)
@@ -81,7 +81,7 @@ void GriffonEngine::attack() {
 					} else {
 						if (config.effects) {
 							int snd = playSound(_sfx[kSndChest]);
-							setChannelVolume(snd, config.effectsvol);
+							setChannelVolume(snd, config.effectsVol);
 						}
 
 						eventText("Cannot Carry any more Flasks!");
@@ -105,7 +105,7 @@ void GriffonEngine::attack() {
 
 					if (config.effects) {
 						int snd = playSound(_sfx[kSndPowerUp]);
-						setChannelVolume(snd, config.effectsvol);
+						setChannelVolume(snd, config.effectsVol);
 					}
 
 					if (_objectInfo[o][4] == 1)
@@ -120,7 +120,7 @@ void GriffonEngine::attack() {
 
 					if (config.effects) {
 						int snd = playSound(_sfx[kSndPowerUp]);
-						setChannelVolume(snd, config.effectsvol);
+						setChannelVolume(snd, config.effectsVol);
 					}
 
 					if (_objectInfo[o][4] == 1)
@@ -139,7 +139,7 @@ void GriffonEngine::attack() {
 
 						if (config.effects) {
 							int snd = playSound(_sfx[kSndPowerUp]);
-							setChannelVolume(snd, config.effectsvol);
+							setChannelVolume(snd, config.effectsVol);
 						}
 
 						if (_objectInfo[o][4] == 1)
@@ -160,7 +160,7 @@ void GriffonEngine::attack() {
 
 						if (config.effects) {
 							int snd = playSound(_sfx[kSndPowerUp]);
-							setChannelVolume(snd, config.effectsvol);
+							setChannelVolume(snd, config.effectsVol);
 						}
 
 						if (_objectInfo[o][4] == 1)
@@ -181,7 +181,7 @@ void GriffonEngine::attack() {
 
 						if (config.effects) {
 							int snd = playSound(_sfx[kSndPowerUp]);
-							setChannelVolume(snd, config.effectsvol);
+							setChannelVolume(snd, config.effectsVol);
 						}
 
 						_objectMapFull[_curMap][lx][ly - 1] = 1;
@@ -194,7 +194,7 @@ void GriffonEngine::attack() {
 					} else {
 						if (config.effects) {
 							int snd = playSound(_sfx[kSndChest]);
-							setChannelVolume(snd, config.effectsvol);
+							setChannelVolume(snd, config.effectsVol);
 						}
 
 						eventText("Cannot Carry Any More Keys");
@@ -209,7 +209,7 @@ void GriffonEngine::attack() {
 
 						if (config.effects) {
 							int snd = playSound(_sfx[kSndPowerUp]);
-							setChannelVolume(snd, config.effectsvol);
+							setChannelVolume(snd, config.effectsVol);
 						}
 
 						if (_objectInfo[o][4] == 1)
@@ -219,7 +219,7 @@ void GriffonEngine::attack() {
 					} else {
 						if (config.effects) {
 							int snd = playSound(_sfx[kSndChest]);
-							setChannelVolume(snd, config.effectsvol);
+							setChannelVolume(snd, config.effectsVol);
 						}
 
 						eventText("Cannot Carry any more Mega Flasks!");
@@ -237,7 +237,7 @@ void GriffonEngine::attack() {
 
 						if (config.effects) {
 							int snd = playSound(_sfx[kSndPowerUp]);
-							setChannelVolume(snd, config.effectsvol);
+							setChannelVolume(snd, config.effectsVol);
 						}
 
 						if (_objectInfo[o][4] == 1)
@@ -247,7 +247,7 @@ void GriffonEngine::attack() {
 					} else {
 						if (config.effects) {
 							int snd = playSound(_sfx[kSndChest]);
-							setChannelVolume(snd, config.effectsvol);
+							setChannelVolume(snd, config.effectsVol);
 						}
 
 						eventText("Cannot Carry any more Mega Flasks!");
@@ -264,7 +264,7 @@ void GriffonEngine::attack() {
 
 						if (config.effects) {
 							int snd = playSound(_sfx[kSndPowerUp]);
-							setChannelVolume(snd, config.effectsvol);
+							setChannelVolume(snd, config.effectsVol);
 						}
 
 						if (_objectInfo[o][4] == 1)
@@ -274,7 +274,7 @@ void GriffonEngine::attack() {
 					} else {
 						if (config.effects) {
 							int snd = playSound(_sfx[kSndChest]);
-							setChannelVolume(snd, config.effectsvol);
+							setChannelVolume(snd, config.effectsVol);
 						}
 
 						eventText("Cannot Carry any more Lightning Bombs!");
@@ -290,7 +290,7 @@ void GriffonEngine::attack() {
 
 						if (config.effects) {
 							int snd = playSound(_sfx[kSndPowerUp]);
-							setChannelVolume(snd, config.effectsvol);
+							setChannelVolume(snd, config.effectsVol);
 						}
 
 						if (_objectInfo[o][4] == 1)
@@ -307,26 +307,26 @@ void GriffonEngine::attack() {
 
 						if (config.effects) {
 							int snd = playSound(_sfx[kSndLever]);
-							setChannelVolume(snd, config.effectsvol);
+							setChannelVolume(snd, config.effectsVol);
 						}
 					} else if (_curMap == 58 && _scriptFlag[kScriptLever][0] > 0) {
 						if (config.effects) {
 							int snd = playSound(_sfx[kSndDoor]);
-							setChannelVolume(snd, config.effectsvol);
+							setChannelVolume(snd, config.effectsVol);
 						}
 
 						eventText("It's stuck!");
 					} else if (_curMap == 54 && _scriptFlag[kScriptLever][0] == 1) {
 						if (config.effects) {
 							int snd = playSound(_sfx[kSndLever]);
-							setChannelVolume(snd, config.effectsvol);
+							setChannelVolume(snd, config.effectsVol);
 						}
 
 						_scriptFlag[kScriptLever][0] = 2;
 					} else if (_curMap == 54 && _scriptFlag[kScriptLever][0] > 1) {
 						if (config.effects) {
 							int snd = playSound(_sfx[kSndDoor]);
-							setChannelVolume(snd, config.effectsvol);
+							setChannelVolume(snd, config.effectsVol);
 						}
 
 						eventText("It's stuck!");
@@ -342,7 +342,7 @@ void GriffonEngine::attack() {
 
 						if (config.effects) {
 							int snd = playSound(_sfx[kSndPowerUp]);
-							setChannelVolume(snd, config.effectsvol);
+							setChannelVolume(snd, config.effectsVol);
 						}
 
 						if (_objectInfo[o][4] == 1)
@@ -360,7 +360,7 @@ void GriffonEngine::attack() {
 
 						if (config.effects) {
 							int snd = playSound(_sfx[kSndPowerUp]);
-							setChannelVolume(snd, config.effectsvol);
+							setChannelVolume(snd, config.effectsVol);
 						}
 
 						if (_objectInfo[o][4] == 1)
@@ -378,7 +378,7 @@ void GriffonEngine::attack() {
 
 						if (config.effects) {
 							int snd = playSound(_sfx[kSndPowerUp]);
-							setChannelVolume(snd, config.effectsvol);
+							setChannelVolume(snd, config.effectsVol);
 						}
 
 						if (_objectInfo[o][4] == 1)
@@ -438,7 +438,7 @@ void GriffonEngine::castSpell(int spellnum, float homex, float homey, float enem
 			case 1:
 				if (config.effects) {
 					int snd = playSound(_sfx[kSndThrow]);
-					setChannelVolume(snd, config.effectsvol);
+					setChannelVolume(snd, config.effectsVol);
 				}
 				break;
 			case 2:
@@ -458,7 +458,7 @@ void GriffonEngine::castSpell(int spellnum, float homex, float homey, float enem
 			case 5:
 				if (config.effects) {
 					int snd = playSound(_sfx[kSndCrystal]);
-					setChannelVolume(snd, config.effectsvol);
+					setChannelVolume(snd, config.effectsVol);
 				}
 				break;
 			case 6: {
@@ -487,7 +487,7 @@ void GriffonEngine::castSpell(int spellnum, float homex, float homey, float enem
 			case 9:
 				if (config.effects) {
 					int snd = playSound(_sfx[kSndLightning]);
-					setChannelVolume(snd, config.effectsvol);
+					setChannelVolume(snd, config.effectsVol);
 				}
 				break;
 			default:
@@ -538,7 +538,7 @@ void GriffonEngine::checkHit() {
 				if (hit) {
 					if (config.effects) {
 						int snd = playSound(_sfx[kSndSwordHit]);
-						setChannelVolume(snd, config.effectsvol);
+						setChannelVolume(snd, config.effectsVol);
 					}
 
 					damageNPC(i, damage, 0);

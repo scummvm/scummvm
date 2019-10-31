@@ -170,7 +170,7 @@ void GriffonEngine::updateEngine() {
 
 		if (config.effects) {
 			int snd = playSound(_sfx[kSndPowerUp]);
-			setChannelVolume(snd, config.effectsvol);
+			setChannelVolume(snd, config.effectsVol);
 		}
 	}
 
@@ -232,7 +232,7 @@ void GriffonEngine::updateEngine() {
 			_player.hpflashb = 0;
 		if (config.effects && _player.hpflashb == 0 && _player.hp < _player.maxHp / 4) {
 			int snd = playSound(_sfx[kSndBeep]);
-			setChannelVolume(snd, config.effectsvol);
+			setChannelVolume(snd, config.effectsVol);
 		}
 	}
 
