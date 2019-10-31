@@ -133,14 +133,10 @@ public:
 
 	Graphics::TransparentSurface *loadPicture(const Common::String &name);
 	Graphics::TransparentSurface *convertToTransparent(Graphics::Surface *surface); //destroys surface!
+
+	int loadFromCache(const Common::String & name) const;
 	Graphics::TransparentSurface *loadFromCache(int id) const;
-	int saveToCache(Graphics::TransparentSurface *surface) {
-		if (!surface)
-			return -1;
-		int id = _pictureCacheId++;
-		_pictureCache[id] = surface;
-		return id;
-	}
+	int saveToCache(const Common::String &name, Graphics::TransparentSurface *surface);
 
 	void loadFont(int id, const Common::String &name, int gw, int gh);
 	Font *getFont(int id) const;
@@ -179,6 +175,7 @@ private:
 	void parseDialogDefs(const Common::String &defs);
 
 	typedef Common::HashMap<int, Graphics::TransparentSurface *> PictureCacheType;
+	typedef Common::HashMap<Common::String, int, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> PictureCacheLookup;
 	typedef Common::HashMap<Common::String, Object *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> ObjectsType;
 	typedef Common::HashMap<Common::String, Region *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> RegionsType;
 	typedef Common::HashMap<Common::String, SystemVariable *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> SystemVariablesType;
@@ -193,6 +190,7 @@ private:
 	SoundManager				_soundManager;
 	Database					_data, _patch; //data and patch databases
 	PictureCacheType			_pictureCache;
+	PictureCacheLookup			_pictureCacheLookup;
 	int							_pictureCacheId;
 	FontsType					_fonts;
 	RegionsType					_regions;
