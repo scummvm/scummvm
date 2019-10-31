@@ -385,8 +385,7 @@ Common::Error AGDSEngine::run() {
 								runObject(region->onEnter);
 							}
 						}
-						if (_inventoryRegion)
-							_inventory.visible(_inventoryRegion->pointIn(_mouse));
+						_inventory.enable(_inventoryRegion? _inventoryRegion->pointIn(_mouse): false);
 					}
 					break;
 				case Common::EVENT_LBUTTONDOWN:
