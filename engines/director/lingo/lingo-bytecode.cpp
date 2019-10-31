@@ -237,9 +237,12 @@ void Lingo::addCodeV4(Common::SeekableSubReadStreamEndian &stream, ScriptType ty
                 }
 
             } else {
+                // exit condition
+                if (opcode == 0x01) {
+                    offset_list.push_back(_currentScript->size());
+                    g_lingo->code1(STOP);
                 // unimplemented instruction
-
-                if (opcode < 0x40) { // 1 byte instruction
+                } else if (opcode < 0x40) { // 1 byte instruction
                     offset_list.push_back(_currentScript->size());
                     g_lingo->code1(Lingo::c_unk);
                     g_lingo->codeInt(opcode);
