@@ -148,7 +148,11 @@ struct Builtin {
 	Builtin(void (*func1)(void), int nargs1) : func(func1), nargs(nargs1) {}
 };
 
-typedef Common::HashMap<int32, ScriptData *> ScriptHash;
+struct ScriptContext {
+    Common::Array<ScriptData *> functions;
+};
+
+typedef Common::HashMap<int32, ScriptContext *> ScriptContextHash;
 typedef Common::Array<Datum> StackData;
 typedef Common::HashMap<Common::String, Symbol *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> SymbolHash;
 typedef Common::HashMap<Common::String, Builtin *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> BuiltinHash;
@@ -172,7 +176,7 @@ public:
 
 	void addCode(const char *code, ScriptType type, uint16 id);
 	void addCodeV4(Common::SeekableSubReadStreamEndian &stream, ScriptType type, uint16 id);
-	void executeScript(ScriptType type, uint16 id);
+	void executeScript(ScriptType type, uint16 id, uint16 function);
 	void printStack(const char *s);
 	Common::String decodeInstruction(uint pc, uint *newPC = NULL);
 
@@ -532,9 +536,11 @@ public:
 	Datum getTheCast(Datum &id, int field);
 
 public:
-	ScriptData *_currentScript;
 	ScriptType _currentScriptType;
 	uint16 _currentEntityId;
+	ScriptContext *_currentScriptContext;
+	uint16 _currentScriptFunction;
+	ScriptData *_currentScript;
 	bool _returning;
 	bool _indef;
 	bool _ignoreMe;
@@ -575,7 +581,7 @@ private:
 	Common::HashMap<Common::String, uint32> _eventHandlerTypeIds;
 	Common::HashMap<Common::String, Audio::AudioStream *> _audioAliases;
 
-	ScriptHash _scripts[kMaxScriptType + 1];
+	ScriptContextHash _scriptContexts[kMaxScriptType + 1];
 
 	SymbolHash _globalvars;
 	SymbolHash *_localvars;

@@ -122,14 +122,19 @@ const char *Lingo::findNextDefinition(const char *s) {
 void Lingo::addCode(const char *code, ScriptType type, uint16 id) {
 	debugC(1, kDebugLingoCompile, "Add code \"%s\" for type %s with id %d", code, scriptType2str(type), id);
 
-	if (_scripts[type].contains(id)) {
-		delete _scripts[type][id];
+	if (_scriptContexts[type].contains(id)) {
+		delete _scriptContexts[type][id];
 	}
 
-	_currentScript = new ScriptData;
+	_currentScriptContext = new ScriptContext;
 	_currentScriptType = type;
-	_scripts[type][id] = _currentScript;
 	_currentEntityId = id;
+	_scriptContexts[type][id] = _currentScriptContext;
+
+	// FIXME: unpack into seperate functions
+	_currentScriptFunction = 0;
+	_currentScriptContext->functions.push_back(new ScriptData);
+	_currentScript = _currentScriptContext->functions[_currentScriptFunction];
 
 	_linenumber = _colnumber = 1;
 	_hadError = false;
@@ -203,15 +208,20 @@ void Lingo::addCode(const char *code, ScriptType type, uint16 id) {
 	}
 }
 
-void Lingo::executeScript(ScriptType type, uint16 id) {
-	if (!_scripts[type].contains(id)) {
+void Lingo::executeScript(ScriptType type, uint16 id, uint16 function) {
+	if (!_scriptContexts[type].contains(id)) {
 		debugC(3, kDebugLingoExec, "Request to execute non-existant script type %d id %d", type, id);
 		return;
 	}
+	if (function >= _scriptContexts[type][id]->functions.size()) {
+		debugC(3, kDebugLingoExec, "Request to execute non-existant function %d in script type %d id %d", function, type, id);
+		return;
+	}
 
-	debugC(1, kDebugLingoExec, "Executing script type: %s, id: %d", scriptType2str(type), id);
+	debugC(1, kDebugLingoExec, "Executing script type: %s, id: %d, function: %d", scriptType2str(type), id, function);
 
-	_currentScript = _scripts[type][id];
+	_currentScriptContext = _scriptContexts[type][id];
+    _currentScript = _currentScriptContext->functions[function];
 	_pc = 0;
 	_returning = false;
 
@@ -226,10 +236,14 @@ void Lingo::restartLingo() {
 	warning("STUB: restartLingo()");
 
 	for (int i = 0; i <= kMaxScriptType; i++) {
-		for (ScriptHash::iterator it = _scripts[i].begin(); it != _scripts[i].end(); ++it)
+		for (ScriptContextHash::iterator it = _scriptContexts[i].begin(); it != _scriptContexts[i].end(); ++it) {
+            for (size_t j = 0; j < it->_value->functions.size(); j++) {
+                delete it->_value->functions[j];
+            }
 			delete it->_value;
+        }
 
-		_scripts[i].clear();
+		_scriptContexts[i].clear();
 	}
 
 	// TODO
@@ -392,7 +406,7 @@ void Lingo::runTests() {
 			addCode(script, kMovieScript, counter);
 
 			if (!_hadError)
-				executeScript(kMovieScript, counter);
+				executeScript(kMovieScript, counter, 0);
 			else
 				debug(">> Skipping execution");
 

@@ -70,7 +70,7 @@ Score::Score(DirectorEngine *vm) {
 
 	// FIXME: TODO: Check whether the original truely does it
 	if (_vm->getVersion() <= 3) {
-		_lingo->executeScript(kMovieScript, 0);
+		_lingo->executeScript(kMovieScript, 0, 0);
 	}
 	_movieScriptCount = 0;
 	_labels = NULL;
