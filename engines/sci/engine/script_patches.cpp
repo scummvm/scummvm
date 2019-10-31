@@ -4638,10 +4638,32 @@ static const uint16 kq7PragmaFailSpinPatch[] = {
 	PATCH_END
 };
 
+// Room 6100 creates an extra ambrosia, usually floating in upper left of the
+//  screen, due to an off by one error. The script's local arrays contain four
+//  ambrosia coordinates but the loop that accesses them iterates five times.
+//
+// Applies to: All versions
+// Responsible method: rm6100:init
+// Fixes bug #9790
+static const uint16 kq7ExtraAmbrosiaSignature[] = {
+	SIG_MAGICDWORD,
+	0x8d, 0x00,                 // lst 00
+	0x35, 0x04,                 // ldi 04
+	0x24,                       // le?
+	SIG_END
+};
+
+static const uint16 kq7ExtraAmbrosiaPatch[] = {
+	PATCH_ADDTOOFFSET(+4),
+	0x22,                       // lt?
+	PATCH_END
+};
+
 //          script, description,                                      signature                                 patch
 static const SciScriptPatcherEntry kq7Signatures[] = {
 	{  true,     0, "disable video benchmarking",                  1, kq7BenchmarkSignature,                    kq7BenchmarkPatch },
 	{  true,     0, "remove hardcoded spin loop",                  1, kq7PragmaFailSpinSignature,               kq7PragmaFailSpinPatch },
+	{  true,  6100, "fix extra ambrosia",                          1, kq7ExtraAmbrosiaSignature,                kq7ExtraAmbrosiaPatch },
 	{  true,    31, "enable subtitles (1/3)",                      1, kq7SubtitleFixSignature1,                 kq7SubtitleFixPatch1 },
 	{  true, 64928, "enable subtitles (2/3)",                      1, kq7SubtitleFixSignature2,                 kq7SubtitleFixPatch2 },
 	{  true, 64928, "enable subtitles (3/3)",                      1, kq7SubtitleFixSignature3,                 kq7SubtitleFixPatch3 },
