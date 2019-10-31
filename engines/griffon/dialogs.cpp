@@ -264,23 +264,23 @@ void GriffonEngine::configMenu() {
 	do {
 		_videoBuffer->fillRect(Common::Rect(0, 0, _videoBuffer->w, _videoBuffer->h), 0);
 
-		rcDest.left = 256 + 256 * cos(PI / 180 * clouddeg * 40);
-		rcDest.top = 192 + 192 * sin(PI / 180 * clouddeg * 40);
+		rcDest.left = 256 + 256 * cos(PI / 180 * _cloudAngle * 40);
+		rcDest.top = 192 + 192 * sin(PI / 180 * _cloudAngle * 40);
 		rcDest.setWidth(320);
 		rcDest.setHeight(240);
 
-		cloudimg->setAlpha(128, true);
-		cloudimg->blit(*_videoBuffer, 0, 0, Graphics::FLIP_NONE, &rcDest);
-		cloudimg->setAlpha(64, true);
+		_cloudImg->setAlpha(128, true);
+		_cloudImg->blit(*_videoBuffer, 0, 0, Graphics::FLIP_NONE, &rcDest);
+		_cloudImg->setAlpha(64, true);
 
 		rcDest.left = 256;
 		rcDest.top = 192;
 		rcDest.setWidth(320);
 		rcDest.setHeight(240);
 
-		cloudimg->setAlpha(128, true);
-		cloudimg->blit(*_videoBuffer, 0, 0, Graphics::FLIP_NONE, &rcDest);
-		cloudimg->setAlpha(64, true);
+		_cloudImg->setAlpha(128, true);
+		_cloudImg->blit(*_videoBuffer, 0, 0, Graphics::FLIP_NONE, &rcDest);
+		_cloudImg->setAlpha(64, true);
 
 		_videoBuffer->copyRectToSurface(configwindow->getPixels(), configwindow->pitch, 0, 0, configwindow->w, configwindow->h);
 
@@ -457,9 +457,9 @@ void GriffonEngine::configMenu() {
 			}
 		}
 
-		clouddeg += 0.01 * _fpsr;
-		while (clouddeg >= 360)
-			clouddeg -= 360;
+		_cloudAngle += 0.01 * _fpsr;
+		while (_cloudAngle >= 360)
+			_cloudAngle -= 360;
 
 		g_system->delayMillis(10);
 	} while (!_shouldQuit && !exitMenu);
@@ -467,13 +467,13 @@ void GriffonEngine::configMenu() {
 	configwindow->free();
 	_itemTicks = _ticks + 210;
 
-	cloudimg->setAlpha(64, true);
+	_cloudImg->setAlpha(64, true);
 }
 
 void GriffonEngine::saveLoadNew() {
 	float y = 0.0;
 
-	clouddeg = 0;
+	_cloudAngle = 0;
 
 	_videoBuffer->setAlpha(255);
 	_saveLoadImg->setAlpha(192, true);
@@ -491,23 +491,23 @@ void GriffonEngine::saveLoadNew() {
 
 		y += 1 * _fpsr;
 
-		rcDest.left = 256 + 256 * cos(PI / 180 * clouddeg * 40);
-		rcDest.top = 192 + 192 * sin(PI / 180 * clouddeg * 40);
+		rcDest.left = 256 + 256 * cos(PI / 180 * _cloudAngle * 40);
+		rcDest.top = 192 + 192 * sin(PI / 180 * _cloudAngle * 40);
 		rcDest.setWidth(320);
 		rcDest.setHeight(240);
 
-		cloudimg->setAlpha(128, true);
-		cloudimg->blit(*_videoBuffer, 0, 0, Graphics::FLIP_NONE, &rcDest);
-		cloudimg->setAlpha(64, true);
+		_cloudImg->setAlpha(128, true);
+		_cloudImg->blit(*_videoBuffer, 0, 0, Graphics::FLIP_NONE, &rcDest);
+		_cloudImg->setAlpha(64, true);
 
 		rcDest.left = 256;
 		rcDest.top = 192;
 		rcDest.setWidth(320);
 		rcDest.setHeight(240);
 
-		cloudimg->setAlpha(128, true);
-		cloudimg->blit(*_videoBuffer, 0, 0, Graphics::FLIP_NONE, &rcDest);
-		cloudimg->setAlpha(64, true);
+		_cloudImg->setAlpha(128, true);
+		_cloudImg->blit(*_videoBuffer, 0, 0, Graphics::FLIP_NONE, &rcDest);
+		_cloudImg->setAlpha(64, true);
 
 		_saveLoadImg->blit(*_videoBuffer);
 
@@ -565,7 +565,7 @@ void GriffonEngine::saveLoadNew() {
 						if (loadState(currow - 1)) {
 							_player.walkSpeed = 1.1f;
 							_animSpeed = 0.5f;
-							attacking = false;
+							_attacking = false;
 							_player.attackSpeed = 1.5f;
 
 							_playingGardens = false;
@@ -773,9 +773,9 @@ void GriffonEngine::saveLoadNew() {
 			_fp = 0;
 		}
 
-		clouddeg += 0.01 * _fpsr;
-		while (clouddeg >= 360)
-			clouddeg -= 360;
+		_cloudAngle += 0.01 * _fpsr;
+		while (_cloudAngle >= 360)
+			_cloudAngle -= 360;
 
 		_itemyloc += 0.6 * _fpsr;
 		while (_itemyloc >= 16)
@@ -784,7 +784,7 @@ void GriffonEngine::saveLoadNew() {
 		g_system->delayMillis(10);
 	} while (!_shouldQuit);
 
-	cloudimg->setAlpha(64, true);
+	_cloudImg->setAlpha(64, true);
 }
 
 

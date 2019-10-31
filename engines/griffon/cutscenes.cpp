@@ -495,8 +495,8 @@ void GriffonEngine::endOfGame() {
 
 void GriffonEngine::theEnd() {
 	for (int i = 0; i < kMaxFloat; i++) {
-		_floattext[i][0] = 0;
-		_floaticon[i][0] = 0;
+		_floatText[i][0] = 0;
+		_floatIcon[i][0] = 0;
 	}
 
 	for (float y = 0; y < 100; y += _fpsr) {

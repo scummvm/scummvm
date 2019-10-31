@@ -423,24 +423,23 @@ private:
 	// saveload info
 	Graphics::TransparentSurface *_saveLoadImg;
 
-
 	// post info
 	float _postInfo[21][3];
-	int nposts;
+	int _postInfoNbr;
 
 	// cloud info
-	Graphics::TransparentSurface *cloudimg;
-	float clouddeg;
+	Graphics::TransparentSurface *_cloudImg;
+	float _cloudAngle;
 	int _cloudsOn;
 
 	// spell info
-	Spell spellinfo[kMaxSpell];
+	Spell _spellInfo[kMaxSpell];
 
 	// player info
-	bool movingup, movingdown, movingleft, movingright;
 	Player _player;
-	bool attacking;
 	Player _playera;
+	bool _movingUp, _movingDown, _movingLeft, _movingRight;
+	bool _attacking;
 	int _asecstart;
 
 	// tile info
@@ -455,12 +454,12 @@ private:
 	float _playerattackofs[4][16][3];
 	// [dir] [frame] [x,y ofs, completed(0/1)]
 
-	float _floattext[kMaxFloat][4]; // [id] [framesleft, x, y, col]
-	char *_floatstri[kMaxFloat];
-	float  _floaticon[kMaxFloat][4]; // [id] [framesleft, x, y, ico]
+	float _floatText[kMaxFloat][4]; // [id] [framesleft, x, y, col]
+	char *_floatStr[kMaxFloat];
+	float  _floatIcon[kMaxFloat][4]; // [id] [framesleft, x, y, ico]
 
 	// special for animset2
-	AnimSet _animset2[7], _animset9[7];
+	AnimSet _animSet2[7], _animSet9[7];
 
 	// object info
 	float _objectFrame[256][2];
@@ -472,18 +471,18 @@ private:
 	// [objnum] [frame] [x] [y] [tile/layer]
 	int _objectMap[21][15];
 
-	int _objmapf[1000][21][15];
+	int _objectMapFull[1000][21][15];
 	// [mapnum] x, y  set to 1 to make this objmap spot stay at -1
 
 	// trigger info
 	int _triggers[10000][9];
 	// [map#][index], [var]
 	// map#,x,y
-	int _triggerloc[320][240], _ntriggers;
+	int _triggerLoc[320][240], _triggerNbr;
 
 	// npc info
-	NPC _npcinfo[kMaxNPC];
-	int _lastnpc;
+	NPC _npcInfo[kMaxNPC];
+	int _lastNpc;
 
 	// music info
 	DataChunk *_mgardens, *_mgardens2, *_mgardens3, *_mgardens4, *_mboss, *_mmenu, *_mendofgame;

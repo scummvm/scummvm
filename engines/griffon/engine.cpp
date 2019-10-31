@@ -97,10 +97,10 @@ void GriffonEngine::updateEngine() {
 		_secsingame = _secsingame + 1;
 	}
 
-	if (attacking) {
+	if (_attacking) {
 		_player.attackFrame += _player.attackSpeed * _fpsr;
 		if (_player.attackFrame >= 16) {
-			attacking = false;
+			_attacking = false;
 			_player.attackFrame = 0;
 			_player.walkFrame = 0;
 		}
@@ -135,20 +135,20 @@ void GriffonEngine::updateEngine() {
 	}
 
 	for (int i = 0; i < kMaxFloat; i++) {
-		if (_floattext[i][0] > 0) {
+		if (_floatText[i][0] > 0) {
 			float spd = 0.5 * _fpsr;
-			_floattext[i][0] = _floattext[i][0] - spd;
-			_floattext[i][2] = _floattext[i][2] - spd;
-			if (_floattext[i][0] < 0)
-				_floattext[i][0] = 0;
+			_floatText[i][0] = _floatText[i][0] - spd;
+			_floatText[i][2] = _floatText[i][2] - spd;
+			if (_floatText[i][0] < 0)
+				_floatText[i][0] = 0;
 		}
 
-		if (_floaticon[i][0] > 0) {
+		if (_floatIcon[i][0] > 0) {
 			float spd = 0.5 * _fpsr;
-			_floaticon[i][0] = _floaticon[i][0] - spd;
-			_floaticon[i][2] = _floaticon[i][2] - spd;
-			if (_floaticon[i][0] < 0)
-				_floaticon[i][0] = 0;
+			_floatIcon[i][0] = _floatIcon[i][0] - spd;
+			_floatIcon[i][2] = _floatIcon[i][2] - spd;
+			if (_floatIcon[i][0] < 0)
+				_floatIcon[i][0] = 0;
 		}
 	}
 
@@ -215,14 +215,14 @@ void GriffonEngine::updateEngine() {
 
 	if (_roomLock) {
 		_roomLock = false;
-		for (int i = 1; i <= _lastnpc; i++)
-			if (_npcinfo[i].hp > 0)
+		for (int i = 1; i <= _lastNpc; i++)
+			if (_npcInfo[i].hp > 0)
 				_roomLock = true;
 	}
 
-	clouddeg += 0.1 * _fpsr;
-	while (clouddeg >= 360)
-		clouddeg = clouddeg - 360;
+	_cloudAngle += 0.1 * _fpsr;
+	while (_cloudAngle >= 360)
+		_cloudAngle = _cloudAngle - 360;
 
 	_player.hpflash = _player.hpflash + 0.1 * _fpsr;
 	if (_player.hpflash >= 2) {
@@ -283,7 +283,7 @@ void GriffonEngine::newGame() {
 	_player.nextLevel = 0;
 
 	memset(_scriptFlag, 0, sizeof(_scriptFlag));
-	memset(_objmapf, 0, sizeof(_objmapf));
+	memset(_objectMapFull, 0, sizeof(_objectMapFull));
 	memset(_roomLocks, 0, sizeof(_roomLocks));
 
 	_roomLocks[66] = 2;
@@ -296,7 +296,7 @@ void GriffonEngine::newGame() {
 
 	_player.walkSpeed = 1.1f;
 	_animSpeed = 0.5f;
-	attacking = false;
+	_attacking = false;
 	_player.attackSpeed = 1.5f;
 
 	_player.sword = 1;
