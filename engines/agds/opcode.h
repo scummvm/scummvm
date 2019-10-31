@@ -207,7 +207,7 @@ enum Opcode {
 	kAppendInventoryObjectNameToSharedSpace	= 187,
 	kSetObjectText					= 188,
 	kStub189						= 189,
-	kStub190						= 190,
+	kSetObjectScale					= 190,
 	kStub191						= 191,
 	kStub192						= 192,
 	kStub193						= 193,

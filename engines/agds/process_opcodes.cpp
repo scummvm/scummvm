@@ -632,9 +632,9 @@ void Process::stub193() {
 	debug("stub193: removing inventory object 0?");
 }
 
-void Process::stub190() {
+void Process::setObjectScale() {
 	int value = pop();
-	debug("stub190 %d", value);
+	debug("setObjectScale stub %d", value);
 }
 
 void Process::disableMouseAreas() {
@@ -1397,7 +1397,7 @@ ProcessExitCode Process::execute() {
 			OP		(kSetObjectTile, setObjectTile);
 			OP		(kInventoryHasObject, inventoryHasObject);
 			OP		(kSetObjectText, setObjectText);
-			OP		(kStub190, stub190);
+			OP		(kSetObjectScale, setObjectScale);
 			OP		(kStub191, disableMouseAreas);
 			OP		(kStub193, stub193);
 			OP		(kStub194, stub194);
