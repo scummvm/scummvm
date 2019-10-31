@@ -53,10 +53,8 @@ DrivePOSIXFilesystemNode::DrivePOSIXFilesystemNode(const DrivesArray &drives) :
 	_isValid = false;
 }
 
-AbstractFSNode *DrivePOSIXFilesystemNode::getChild(const Common::String &n) const {
-	if (!_isPseudoRoot) {
-		return POSIXFilesystemNode::getChild(n);
-	}
+DrivePOSIXFilesystemNode *DrivePOSIXFilesystemNode::getChildWithKnownType(const Common::String &n, bool isDirectory) const {
+	assert(_isDirectory);
 
 	// Make sure the string contains no slashes
 	assert(!n.contains('/'));
@@ -66,7 +64,21 @@ AbstractFSNode *DrivePOSIXFilesystemNode::getChild(const Common::String &n) cons
 		newPath += '/';
 	newPath += n;
 
-	return makeNode(newPath);
+	DrivePOSIXFilesystemNode *child = new DrivePOSIXFilesystemNode(_drives);
+	child->_path = newPath;
+	child->_isValid = true;
+	child->_isPseudoRoot = false;
+	child->_isDirectory = isDirectory;
+	child->_displayName = n;
+
+	return child;
+}
+
+AbstractFSNode *DrivePOSIXFilesystemNode::getChild(const Common::String &n) const {
+	DrivePOSIXFilesystemNode *child = getChildWithKnownType(n, false);
+	child->setFlags();
+
+	return child;
 }
 
 bool DrivePOSIXFilesystemNode::getChildren(AbstractFSList &list, AbstractFSNode::ListMode mode, bool hidden) const {
@@ -96,7 +108,16 @@ bool DrivePOSIXFilesystemNode::getChildren(AbstractFSList &list, AbstractFSNode:
 				continue;
 			}
 
-			AbstractFSNode *child = getChild(dp->d_name);
+			AbstractFSNode *child = nullptr;
+
+#if !defined(SYSTEM_NOT_SUPPORTING_D_TYPE)
+			if (dp->d_type == DT_DIR || dp->d_type == DT_REG) {
+				child = getChildWithKnownType(dp->d_name, dp->d_type == DT_DIR);
+			} else
+#endif
+			{
+				child = getChild(dp->d_name);
+			}
 
 			// Honor the chosen mode
 			if ((mode == Common::FSNode::kListFilesOnly && child->isDirectory()) ||

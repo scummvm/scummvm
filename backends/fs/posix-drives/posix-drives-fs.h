@@ -50,6 +50,7 @@ private:
 	bool _isPseudoRoot;
 	const DrivesArray &_drives;
 
+	DrivePOSIXFilesystemNode *getChildWithKnownType(const Common::String &n, bool isDirectory) const;
 	bool isDrive(const Common::String &path) const;
 };
 
