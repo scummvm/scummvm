@@ -531,6 +531,11 @@ void Process::resetState() {
 	_animationLoop = false;
 	_animationPosition = Common::Point();
 	_animationPaused = false;
+
+	_tileWidth = 16;
+	_tileHeight = 16;
+	_tileIndex = 0;
+	_tileResource = 0;
 }
 
 void Process::stub129() {
@@ -644,10 +649,10 @@ void Process::stub199() {
 	debug("stub199: %d", value);
 }
 
-void Process::stub200() {
-	int value = pop();
+void Process::setTileIndex() {
+	int index = pop();
 	int resource = pop();
-	debug("stub200: %d %d", value, resource);
+	debug("setTileIndex: index: %d, resource id: %d ", index, resource);
 }
 
 void Process::stub201(unsigned size) {
@@ -1380,7 +1385,7 @@ ProcessExitCode Process::execute() {
 			OP		(kPlayFilm, playFilm);
 			OP		(kAddMouseArea, addMouseArea);
 			OP		(kFogOnCharacter, fogOnCharacter);
-			OP		(kStub200, stub200);
+			OP		(kSetTileIndex, setTileIndex);
 			OP		(kModifyMouseArea, modifyMouseArea);
 			OP_U	(kStub209, stub209);
 			OP_I	(kMoveCharacterNoUserMove, moveCharacter, false);

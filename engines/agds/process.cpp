@@ -30,7 +30,7 @@ namespace AGDS {
 Process::Process(AGDSEngine *engine, ObjectPtr object, unsigned ip, Process * caller) :
 	_engine(engine), _parentScreen(engine->getCurrentScreenName()), _object(object), _ip(ip), 
 	_status(kStatusActive), _caller(caller), _exitCode(kExitCodeDestroy),
-	_tileWidth(16), _tileHeight(16),
+	_tileWidth(16), _tileHeight(16), _tileResource(0), _tileIndex(0),
 	_timer(0),
 	_animationCycles(1), _animationLoop(false), _animationPaused(false), _animationSpeed(100),
 	_waitForCall(false) {
