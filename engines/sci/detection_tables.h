@@ -1258,6 +1258,15 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformWindows, ADGF_DROPPLATFORM, GUIO_HOYLE5 },
 
+	// Hoyle 5 (Hoyle Classic Games) - Macintosh CD
+	// VERSION file reports "1.000.000"
+	{"hoyle5", "", {
+		{"Data1", 0, "b280fbcdb1e0fa9d708e1f8d6050ef2d", 553372},
+		{"Data2", 0, "a1b4d73bc7672e4db2665657911fc5f2", 14429682},
+		{"Data3", 0, "65f9b79f2f8904a6277c8e6ee4fd7ac0", 75704},
+		AD_LISTEND},
+		Common::EN_ANY, Common::kPlatformMacintosh, ADGF_MACRESFORK | ADGF_UNSTABLE, GUIO_HOYLE5_SAVELOAD },
+
 #undef GUIO_HOYLE5
 #undef GUIO_HOYLE5_SAVELOAD
 
@@ -2031,6 +2040,27 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.000", 0, "bad61d50aaa64298fa57a7c6ccd3bccf", 84020382},
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformWindows, ADGF_DEMO, GUIO_KQ7_DEMO },
+
+	// King's Quest 7 - English Macintosh
+	{"kq7", "", {
+		{"Data1", 0, "e0d120473fee7a548b1418b18bffbd7d", 4964646},
+		{"Data2", 0, "a260b97fb2396a9cd6ac3df6a56a2499", 14645782},
+		{"Data3", 0, "a5a660a469c9ba7b179ba9757181d2af", 6664388},
+		{"Data4", 0, "556721a5e3f158c0a7a39e428402dd1f", 6438951},
+		{"Data5", 0, "c38c2f51c9c2bafd5fefdffca83bd372", 6661526},
+		{"Data6", 0, "2054e1ec891cad31b5c647b57eccff9c", 4489712},
+		{"Data7", 0, "c6e634ea56f6f82954baeab9c468c47b", 7552537},
+		{"Data8", 0, "5b4d7cc7b1b7fdd262c1f65bb9c8af5f", 7478357},
+		{"Data9", 0, "7aba74ca9a52fba1199ab06f602bd268", 7304634},
+		{"Data10", 0, "2ee17c2a1037067ecc218a7b65582062", 7066946},
+		{"Data11", 0, "5df02ec2b6289bd84cd97a9bc677773e", 7555953},
+		{"Data12", 0, "4a8cebdff7f8d431dbcd36d39c5af29e", 6925934},
+		{"Data13", 0, "3dd2903e170518011d3bc0eadada399a", 7071386},
+		//{"Data14", 0, "60d8435ae44c7e0e1d553269bf8a58e0", 7872208},
+		//{"Data15", 0, "4c4c33e93a2352473c1adf9e3981e6ca", 6924278},
+		//{"Data16", 0, "753d9bddf035bbb5391119e8dc0f464a", 3971083},
+		AD_LISTEND},
+		Common::EN_ANY, Common::kPlatformMacintosh, ADGF_MACRESFORK | ADGF_UNSTABLE, GUIO_KQ7 },
 
 #undef GUIO_KQ7_DEMO
 #undef GUIO_KQ7
@@ -3130,6 +3160,16 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"ressci.000", 0, "227685bc59d90821978d330713e44a7a", 17205800},
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformWindows, ADGF_DROPPLATFORM, GUIO_MOTHERGOOSEHIRES },
+
+	// Mixed-Up Mother Goose Deluxe - English Macintosh CD
+	{ "mothergoosehires", "",{
+		{"Data1", 0, "8a7ef3307d80adcd393c012f78a4e1d7", 609389},
+		{"Data2", 0, "94e72a735be859cac3cdf084497a03c7", 5550743},
+		{"Data3", 0, "4819cca5624615fcdd8838605661cd77", 5362685},
+		{"Data4", 0, "ea260cdb42405649136b08bdac45c708", 6368421},
+		{"Data5", 0, "eb5d6c76c69acafbbafa9e75b65f1da8", 3522384},
+		AD_LISTEND},
+		Common::EN_ANY, Common::kPlatformMacintosh, ADGF_MACRESFORK | ADGF_UNSTABLE, GUIO_MOTHERGOOSEHIRES },
 
 #undef GUIO_MOTHERGOOSEHIRES
 
