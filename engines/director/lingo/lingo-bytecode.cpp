@@ -71,14 +71,17 @@ void Lingo::initBytecode() {
 void Lingo::addCodeV4(Common::SeekableSubReadStreamEndian &stream, ScriptType type, uint16 id) { 
 	debugC(1, kDebugLingoCompile, "Add V4 bytecode for type %s with id %d", scriptType2str(type), id);
 
-	if (_scripts[type].contains(id)) {
-		delete _scripts[type][id];
+	if (_scriptContexts[type].contains(id)) {
+		for (size_t j = 0; j < _scriptContexts[type][id]->functions.size(); j++) {
+            delete _scriptContexts[type][id]->functions[j];
+        }
+        delete _scriptContexts[type][id];
 	}
 
-	_currentScript = new ScriptData;
-	_currentScriptType = type;
-	_scripts[type][id] = _currentScript;
-	_currentEntityId = id;
+    _currentScriptContext = new ScriptContext;
+    _currentScriptType = type;
+    _currentEntityId = id;
+    _scriptContexts[type][id] = _currentScriptContext;
 
     // read the Lscr header!
     // unk1
@@ -182,6 +185,10 @@ void Lingo::addCodeV4(Common::SeekableSubReadStreamEndian &stream, ScriptType ty
     // read each entry in the function table.
     stream.seek(functions_offset);
     for (uint16 i=0; i<functions_count; i++) {
+        _currentScriptFunction = i;
+        _currentScriptContext->functions.push_back(new ScriptData);
+        _currentScript = _currentScriptContext->functions[_currentScriptFunction];
+
         uint16 name_index = stream.readUint16();
         stream.readUint16();
         uint32 length = stream.readUint32();
@@ -267,7 +274,7 @@ void Lingo::addCodeV4(Common::SeekableSubReadStreamEndian &stream, ScriptType ty
         }
 
     }
-
+    free(code_store);
 }
 
 }
