@@ -52,6 +52,8 @@ private:
 	Common::String	_exitArg1, _exitArg2;
 	int				_exitIntArg1, _exitIntArg2;
 	int				_tileWidth, _tileHeight;
+	int				_tileResource;
+	int				_tileIndex;
 	Common::String	_phaseVar;
 	int				_timer;
 	int				_animationCycles;
@@ -157,6 +159,7 @@ private:
 	void fadeObject();
 	void moveScreenObject();
 	void setTileSize();
+	void setTileIndex();
 	void getObjectPictureWidth();
 	void getObjectPictureHeight();
 	void loadCharacter();
@@ -244,7 +247,6 @@ private:
 	void stub193();
 	void stub194();
 	void stub199();
-	void stub200();
 	void stub201(unsigned size);
 	void stub202(unsigned size);
 	void stub209(unsigned size);
