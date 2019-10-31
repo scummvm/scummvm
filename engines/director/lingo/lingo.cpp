@@ -73,7 +73,7 @@ Lingo::Lingo(DirectorEngine *vm) : _vm(vm) {
 
 	initBuiltIns();
 	initFuncs();
-    initBytecode();
+	initBytecode();
 	initTheEntities();
 
 	warning("Lingo Inited");
@@ -221,7 +221,7 @@ void Lingo::executeScript(ScriptType type, uint16 id, uint16 function) {
 	debugC(1, kDebugLingoExec, "Executing script type: %s, id: %d, function: %d", scriptType2str(type), id, function);
 
 	_currentScriptContext = _scriptContexts[type][id];
-    _currentScript = _currentScriptContext->functions[function];
+	_currentScript = _currentScriptContext->functions[function];
 	_pc = 0;
 	_returning = false;
 
@@ -237,11 +237,11 @@ void Lingo::restartLingo() {
 
 	for (int i = 0; i <= kMaxScriptType; i++) {
 		for (ScriptContextHash::iterator it = _scriptContexts[i].begin(); it != _scriptContexts[i].end(); ++it) {
-            for (size_t j = 0; j < it->_value->functions.size(); j++) {
-                delete it->_value->functions[j];
-            }
+			for (size_t j = 0; j < it->_value->functions.size(); j++) {
+				delete it->_value->functions[j];
+			}
 			delete it->_value;
-        }
+		}
 
 		_scriptContexts[i].clear();
 	}
