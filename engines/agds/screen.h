@@ -78,6 +78,10 @@ public:
 		_disabled = disabled;
 	}
 
+	bool disabled() const {
+		return _disabled;
+	}
+
 	int add(const MouseRegion & area) {
 		_mouseRegions.push_back(area);
 		_mouseRegions.back().id = _nextId++;
