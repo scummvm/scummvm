@@ -242,7 +242,7 @@ private:
 	void stub172();
 	void stub173();
 	void stub174();
-	void stub190();
+	void setObjectScale();
 	void stub192();
 	void stub193();
 	void stub194();
