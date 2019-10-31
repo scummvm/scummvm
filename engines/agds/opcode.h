@@ -199,7 +199,7 @@ enum Opcode {
 	kSetCloneVar					= 179,
 	kGetObjectId					= 180,
 	kStub181						= 181,
-	kSetGlyphSize					= 182,
+	kSetTileSize					= 182,
 	kGenerateRegion					= 183,
 	kStub184						= 184,
 	kGetMaxInventorySize			= 185,

@@ -51,7 +51,7 @@ private:
 	ProcessExitCode	_exitCode;
 	Common::String	_exitArg1, _exitArg2;
 	int				_exitIntArg1, _exitIntArg2;
-	int				_glyphWidth, _glyphHeight;
+	int				_tileWidth, _tileHeight;
 	Common::String	_phaseVar;
 	int				_timer;
 	int				_animationCycles;
@@ -156,7 +156,7 @@ private:
 	void getRegionCenterY();
 	void fadeObject();
 	void moveScreenObject();
-	void setFontGlyphSize();
+	void setTileSize();
 	void getObjectPictureWidth();
 	void getObjectPictureHeight();
 	void loadCharacter();

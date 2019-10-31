@@ -216,7 +216,7 @@ void Process::loadFont() {
 	Common::String name = popText();
 	int id = pop();
 	debug("loadFont %s %d", name.c_str(), id);
-	_engine->loadFont(id, name, _glyphWidth, _glyphHeight);
+	_engine->loadFont(id, name, _tileWidth, _tileHeight);
 }
 
 void Process::loadMouse() {
@@ -715,10 +715,10 @@ void Process::stub225() {
 	debug("stub225: animation related, phaseVar %s, arg %d", phaseVar.c_str(), arg);
 }
 
-void Process::setFontGlyphSize() {
-	_glyphHeight = pop();
-	_glyphWidth = pop();
-	debug("setFontGlyphSize %d %d", _glyphWidth, _glyphHeight);
+void Process::setTileSize() {
+	_tileHeight = pop();
+	_tileWidth = pop();
+	debug("setTileSize %d %d", _tileWidth, _tileHeight);
 }
 
 void Process::generateRegion() {
@@ -1349,7 +1349,7 @@ ProcessExitCode Process::execute() {
 			OP		(kLoadPreviousScreen, loadPreviousScreen);
 			OP		(kMoveScreenObject, moveScreenObject);
 			OP		(kGetObjectId, getObjectId);
-			OP		(kSetGlyphSize, setFontGlyphSize);
+			OP		(kSetTileSize, setTileSize);
 			OP		(kGenerateRegion, generateRegion);
 			OP		(kGetMaxInventorySize, getMaxInventorySize);
 			OP		(kAppendInventoryObjectNameToSharedSpace, appendInventoryObjectNameToSharedSpace);
