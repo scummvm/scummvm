@@ -39,11 +39,11 @@ struct EventHandlerType {
 	{ kEventBeginSprite,		"beginSprite" },
 	{ kEventEndSprite,			"endSprite" },
 
-	{ kEventEnterFrame, 		"enterFrame" },			//			D4
-	{ kEventPrepareFrame, 		"prepareFrame" },
+	{ kEventEnterFrame,			"enterFrame" },			//			D4
+	{ kEventPrepareFrame,		"prepareFrame" },
 	{ kEventIdle,				"idle" },
 	{ kEventStepFrame,			"stepFrame"},
-	{ kEventExitFrame, 			"exitFrame" },			//			D4
+	{ kEventExitFrame,			"exitFrame" },			//			D4
 
 	{ kEventActivateWindow,		"activateWindow" },
 	{ kEventDeactivateWindow,	"deactivateWindow" },
@@ -200,7 +200,7 @@ void Lingo::runMovieScript(LEvent event) {
 
 void Lingo::processFrameEvent(LEvent event) {
 	/* [in D4] the enterFrame, exitFrame, idle and timeout messages
-	 * are sent to a frame script and then a movie script.  If the
+	 * are sent to a frame script and then a movie script.	If the
 	 * current frame has no frame script when the event occurs, the
 	 * message goes to movie scripts.
 	 * [p.81 of D4 docs]
@@ -224,8 +224,8 @@ void Lingo::processFrameEvent(LEvent event) {
 			entity = score->_frames[score->getCurrentFrame()]->_actionId;
 		}
 		processEvent(event,
-		             kFrameScript,
-		             entity);
+					 kFrameScript,
+					 entity);
 		runMovieScript(event);
 	}
 }

@@ -90,10 +90,10 @@ struct FuncDesc {
 typedef Common::HashMap<void *, FuncDesc *> FuncHash;
 
 struct Opcode {
-    inst func;
-    const char *proto;
+	inst func;
+	const char *proto;
 
-    Opcode(inst f, const char *p) { func = f; proto = p; }
+	Opcode(inst f, const char *p) { func = f; proto = p; }
 };
 typedef Common::HashMap<int, Opcode *> OpcodeHash;
 
@@ -149,7 +149,7 @@ struct Builtin {
 };
 
 struct ScriptContext {
-    Common::Array<ScriptData *> functions;
+	Common::Array<ScriptData *> functions;
 };
 
 typedef Common::HashMap<int32, ScriptContext *> ScriptContextHash;
@@ -182,7 +182,7 @@ public:
 
 	void initBuiltIns();
 	void initFuncs();
-    void initBytecode();
+	void initBytecode();
 	void initTheEntities();
 
 	void runTests();
@@ -267,8 +267,8 @@ public:
 
 	static void c_intersects();
 	static void c_within();
-    static void c_field();
-    static void c_of();
+	static void c_field();
+	static void c_of();
 	static void c_charOf();
 	static void c_charToOf();
 	static void c_itemOf();
@@ -330,15 +330,15 @@ public:
 	static void c_playdone();
 
 	static void c_open();
-    static void c_hilite();
+	static void c_hilite();
 
-    static void c_jump();
-    static void c_jumpif();
+	static void c_jump();
+	static void c_jumpif();
 
-    // stubs for unknown instructions
-    static void c_unk();
-    static void c_unk1();
-    static void c_unk2();
+	// stubs for unknown instructions
+	static void c_unk();
+	static void c_unk1();
+	static void c_unk2();
 
 	void printSTUBWithArglist(const char *funcname, int nargs, const char *prefix = "STUB:");
 	void convertVOIDtoString(int arg, int nargs);
@@ -588,7 +588,7 @@ private:
 
 	FuncHash _functions;
 
-    OpcodeHash _lingoV4;
+	OpcodeHash _lingoV4;
 
 	uint _pc;
 
