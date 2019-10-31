@@ -75,6 +75,7 @@ extern const SciWorkaroundEntry kDoSoundPlay_workarounds[];
 extern const SciWorkaroundEntry kDoSoundFade_workarounds[];
 extern const SciWorkaroundEntry kFileIOOpen_workarounds[];
 extern const SciWorkaroundEntry kFileIOCheckFreeSpace_workarounds[];
+extern const SciWorkaroundEntry kFileIOReadString_workarounds[];
 extern const SciWorkaroundEntry kFindKey_workarounds[];
 extern const SciWorkaroundEntry kFrameOut_workarounds[];
 extern const SciWorkaroundEntry kDeleteKey_workarounds[];

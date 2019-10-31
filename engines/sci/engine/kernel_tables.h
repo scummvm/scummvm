@@ -315,7 +315,7 @@ static const SciKernelMapSubEntry kFileIO_subops[] = {
 	{ SIG_SCIALL,          2, MAP_CALL(FileIOReadRaw),             "iri",                  NULL },
 	{ SIG_SCIALL,          3, MAP_CALL(FileIOWriteRaw),            "iri",                  NULL },
 	{ SIG_SCIALL,          4, MAP_CALL(FileIOUnlink),              "r",                    NULL },
-	{ SIG_SCIALL,          5, MAP_CALL(FileIOReadString),          "rii",                  NULL },
+	{ SIG_SCIALL,          5, MAP_CALL(FileIOReadString),          "rii",                  kFileIOReadString_workarounds },
 	{ SIG_SCIALL,          6, MAP_CALL(FileIOWriteString),         "ir",                   NULL },
 	{ SIG_SCIALL,          7, MAP_CALL(FileIOSeek),                "iii",                  NULL },
 	{ SIG_SCIALL,          8, MAP_CALL(FileIOFindFirst),           "rri",                  NULL },

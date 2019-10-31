@@ -778,6 +778,12 @@ const SciWorkaroundEntry kFileIOCheckFreeSpace_workarounds[] = {
 	SCI_WORKAROUNDENTRY_TERMINATOR
 };
 
+//    gameID,           room,script,lvl,          object-name, method-name,              local-call-signature, index-range,   workaround
+const SciWorkaroundEntry kFileIOReadString_workarounds[] = {
+	{ GID_HOYLE5,         -1, 64993,  0,           "version", "readString",                 NULL,     0,     0, { WORKAROUND_IGNORE, 0 } }, // Zero passed as string when game initializes and VERSION file is present, which only Mac includes. Result is unused
+	SCI_WORKAROUNDENTRY_TERMINATOR
+};
+
 //    gameID,           room,script,lvl,          object-name, method-name, local-call-signature, index-range,   workaround
 const SciWorkaroundEntry kFindKey_workarounds[] = {
 	{ GID_ECOQUEST2,     100,   999,  0,            "myList", "contains",                   NULL,     0,     0, { WORKAROUND_FAKE, 0 } }, // When Noah Greene gives Adam the Ecorder, and just before the game gives a demonstration, a null reference to a list is passed - bug #4987
