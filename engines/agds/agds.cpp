@@ -42,7 +42,7 @@
 namespace AGDS {
 
 AGDSEngine::AGDSEngine(OSystem *system, const ADGameDescription *gameDesc) : Engine(system),
-		_gameDescription(gameDesc), _pictureCacheId(0), _sharedStorageIndex(-2),
+		_gameDescription(gameDesc), _pictureCacheId(1), _sharedStorageIndex(-2),
 		_mjpgPlayer(), _currentScreen(), _previousScreen(),
 		_defaultMouseCursor(),
 		_mouse(400, 300), _userEnabled(false), _currentRegion(),
@@ -548,6 +548,20 @@ Character * AGDSEngine::getCharacter(const Common::String &name) const {
 
 Graphics::TransparentSurface * AGDSEngine::loadPicture(const Common::String &name)
 { return convertToTransparent(_resourceManager.loadPicture(name, _pixelFormat)); }
+
+int AGDSEngine::loadFromCache(const Common::String & name) const {
+	PictureCacheLookup::const_iterator i = _pictureCacheLookup.find(name);
+	return i != _pictureCacheLookup.end()? i->_value: -1;
+}
+
+int AGDSEngine::saveToCache(const Common::String & name, Graphics::TransparentSurface *surface) {
+	if (!surface)
+		return -1;
+	int id = _pictureCacheId++;
+	_pictureCacheLookup[name] = id;
+	_pictureCache[id] = surface;
+	return id;
+}
 
 Graphics::TransparentSurface *AGDSEngine::loadFromCache(int id) const {
 	PictureCacheType::const_iterator i = _pictureCache.find(id);

@@ -107,9 +107,12 @@ void Process::getObjectId() {
 
 void Process::loadPicture() {
 	Common::String name = popText();
-	int value = _engine->saveToCache(_engine->loadPicture(name));
-	debug("loadPicture %s -> %d", name.c_str(), value);
-	push(value);
+	int cacheId = _engine->loadFromCache(name);
+	if (cacheId < 0) {
+		cacheId = _engine->saveToCache(name, _engine->loadPicture(name));
+	}
+	debug("loadPicture %s -> %d", name.c_str(), cacheId);
+	push(cacheId);
 }
 
 void Process::loadAnimation() {
