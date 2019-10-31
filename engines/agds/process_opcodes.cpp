@@ -574,13 +574,13 @@ void Process::stub138() {
 void Process::stub152() {
 	Common::String name = popString();
 	debug("stub152(getSomeX): %s", name.c_str());
-	push(152);
+	push(0);
 }
 
 void Process::stub153() {
 	Common::String name = popString();
 	debug("stub153:(getSomeY): %s", name.c_str());
-	push(153);
+	push(0);
 }
 
 void Process::stub154() {
