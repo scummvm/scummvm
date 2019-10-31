@@ -149,25 +149,28 @@ static void eventThreadFunc(void *arg) {
 
 		// Button events
 		if (keysPressed & KEY_L) {
-			//TODO: Automatically exit magnify mode when returning to launcher
 			if (osys->getWidth() >= 400 || osys->getHeight() >= 240) {
 				if (magnifyMode == MODE_MAGOFF) {
 					magnifyMode = MODE_MAGON;
 					if (inputMode == MODE_DRAG) {
 						inputMode = MODE_HOVER;
-						osys->displayMessageOnOSD("Magnify On. Switching to Hover Mode...");
+						osys->displayMessageOnOSD("Magnify Mode On. Switching to Hover Mode...");
 					} else
-						osys->displayMessageOnOSD("Magnify On");
+						osys->displayMessageOnOSD("Magnify Mode On");
 				} else {
 					magnifyMode = MODE_MAGOFF;
 					if (savedInputMode == MODE_DRAG) {
 						inputMode = savedInputMode;
-						osys->displayMessageOnOSD("Magnify Off. Returning to Drag Mode...");
+						osys->displayMessageOnOSD("Magnify Mode Off. Reactivating Drag Mode...");
 					} else
-						osys->displayMessageOnOSD("Magnify Off");
+						osys->displayMessageOnOSD("Magnify Mode Off");
 				}
-			} else
-				osys->displayMessageOnOSD("In-game resolution too small to magnify.");
+			} else {
+				if (osys->getWidth() == 0 || osys->getHeight() == 0) {
+					osys->displayMessageOnOSD("Magnify Mode cannot be activated in Launcher.");
+				} else
+					osys->displayMessageOnOSD("In-game resolution too small to magnify.");
+			}
 		}
 		if (keysPressed & KEY_R) {
 			if (inputMode == MODE_DRAG) {
@@ -178,7 +181,7 @@ static void eventThreadFunc(void *arg) {
 					inputMode = savedInputMode = MODE_DRAG;
 					osys->displayMessageOnOSD("Drag Mode");
 				} else
-					osys->displayMessageOnOSD("Cannot Switch to Drag Mode while Magnify is On");
+					osys->displayMessageOnOSD("Cannot Switch to Drag Mode while Magnify Mode is On");
 			}
 		}
 		if (keysPressed & KEY_A || keysPressed & KEY_DLEFT || keysReleased & KEY_A || keysReleased & KEY_DLEFT) {
@@ -222,6 +225,18 @@ static void eventThreadFunc(void *arg) {
 		if (keysPressed & KEY_SELECT) {
 			if (!optionMenuOpened)
 				optionMenuOpening = true;
+		}
+
+		// If magnify mode is on when returning to Launcher, turn it off
+		if (g_system->getEventManager()->shouldRTL()) {
+			if (magnifyMode == MODE_MAGON) {
+				magnifyMode = MODE_MAGOFF;
+				if (savedInputMode == MODE_DRAG) {
+					inputMode = savedInputMode;
+					osys->displayMessageOnOSD("Magnify Mode Off. Reactivating Drag Mode.\nReturning to Launcher...");
+				} else
+					osys->displayMessageOnOSD("Magnify Mode Off. Returning to Launcher...");
+			}
 		}
 
 		// TODO: EVENT_PREDICTIVE_DIALOG
