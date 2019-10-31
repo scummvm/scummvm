@@ -736,16 +736,40 @@ void Process::generateRegion() {
 
 void Process::setObjectTile() {
 	Common::String name = popString();
-	debug("setObjectTile: %s, tile: %d, resource: %d", name.c_str(), _tileIndex, _tileResource);
+	debug("setObjectTile: %s, tile: %d %dx%d, resource: %d", name.c_str(), _tileIndex, _tileWidth, _tileHeight, _tileResource);
+
+	ObjectPtr object = _engine->getCurrentScreen()->find(name);
+	if (!object) {
+		warning("could not find object %s in screen", name.c_str());
+		return;
+	}
+
 	if (_tileResource <= 0) {
 		warning("invalid resource id, skipping");
+		return;
+	}
+	if (_tileHeight <= 0 || _tileWidth <= 0) {
+		warning("invalid tile size");
 		return;
 	}
 	Graphics::TransparentSurface * surface = _engine->loadFromCache(_tileResource);
 	if (!surface) {
 		warning("picture %d was not loaded", _tileResource);
+		return;
 	}
-	debug("OK");
+
+	int tw = surface->w / _tileWidth;
+	int y = _tileIndex / tw;
+	int x = _tileIndex % tw;
+	debug("tile coordinate %dx%d", x, y);
+
+	Graphics::TransparentSurface * tile = new Graphics::TransparentSurface();
+	tile->create(_tileWidth, _tileHeight, surface->format);
+	tile->applyColorKey(0xff, 0, 0xff);
+	Common::Rect srcRect(_tileWidth, _tileHeight);
+	srcRect.translate(x * _tileWidth, y * _tileHeight);
+	surface->blit(*tile, 0, 0, Graphics::FLIP_NONE, &srcRect);
+	object->setPicture(tile);
 }
 
 void Process::setObjectText() {
