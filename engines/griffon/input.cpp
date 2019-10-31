@@ -104,7 +104,7 @@ void GriffonEngine::checkInputs() {
 
 					if (config.effects) {
 						int snd = playSound(_sfx[kSndPowerUp]);
-						setChannelVolume(snd, config.effectsvol);
+						setChannelVolume(snd, config.effectsVol);
 					}
 
 					_itemSelOn = false;
@@ -130,7 +130,7 @@ void GriffonEngine::checkInputs() {
 
 					if (config.effects) {
 						int snd = playSound(_sfx[kSndPowerUp]);
-						setChannelVolume(snd, config.effectsvol);
+						setChannelVolume(snd, config.effectsVol);
 					}
 
 					_itemSelOn = false;
@@ -556,7 +556,7 @@ void GriffonEngine::handleWalking() {
 
 			if (config.effects) {
 				int snd = playSound(_sfx[kSndPowerUp]);
-				setChannelVolume(snd, config.effectsvol);
+				setChannelVolume(snd, config.effectsVol);
 			}
 		}
 
@@ -570,7 +570,7 @@ void GriffonEngine::handleWalking() {
 
 			if (config.effects) {
 				int snd = playSound(_sfx[kSndPowerUp]);
-				setChannelVolume(snd, config.effectsvol);
+				setChannelVolume(snd, config.effectsVol);
 			}
 		}
 
@@ -586,7 +586,7 @@ void GriffonEngine::handleWalking() {
 
 			if (config.effects) {
 				int snd = playSound(_sfx[kSndPowerUp]);
-				setChannelVolume(snd, config.effectsvol);
+				setChannelVolume(snd, config.effectsVol);
 			}
 
 		}
@@ -601,7 +601,7 @@ void GriffonEngine::handleWalking() {
 
 			if (config.effects) {
 				int snd = playSound(_sfx[kSndPowerUp]);
-				setChannelVolume(snd, config.effectsvol);
+				setChannelVolume(snd, config.effectsVol);
 			}
 
 		}
@@ -672,7 +672,7 @@ void GriffonEngine::processTrigger(int trignum) {
 			if (tmap > 0) {
 				if (config.effects) {
 					int snd = playSound(_sfx[kSndDoor]);
-					setChannelVolume(snd, config.effectsvol);
+					setChannelVolume(snd, config.effectsVol);
 				}
 
 				loadMap(tmap);

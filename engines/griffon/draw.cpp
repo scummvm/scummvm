@@ -839,7 +839,7 @@ void GriffonEngine::drawNPCs(int mode) {
 									damagePlayer(damage);
 									if (config.effects) {
 										int snd = playSound(_sfx[kSndFire]);
-										setChannelVolume(snd, config.effectsvol);
+										setChannelVolume(snd, config.effectsVol);
 									}
 								}
 
@@ -865,7 +865,7 @@ void GriffonEngine::drawNPCs(int mode) {
 									damagePlayer(damage);
 									if (config.effects) {
 										int snd = playSound(_sfx[kSndFire]);
-										setChannelVolume(snd, config.effectsvol);
+										setChannelVolume(snd, config.effectsVol);
 									}
 								}
 							}

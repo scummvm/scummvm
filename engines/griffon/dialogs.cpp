@@ -72,8 +72,8 @@ void GriffonEngine::title(int mode) {
 		setChannelVolume(_musicChannel, 0);
 		pauseSoundChannel(_musicChannel);
 
-		_menuChannel = playSound(_mmenu, true);
-		setChannelVolume(_menuChannel, config.musicvol);
+		_menuChannel = playSound(_musicMenu, true);
+		setChannelVolume(_menuChannel, config.musicVol);
 		_pmenu = true;
 	}
 
@@ -84,11 +84,11 @@ void GriffonEngine::title(int mode) {
 		Common::Rect rc;
 
 		ld += 4.0 * _fpsr;
-		if (ld > config.musicvol)
-			ld = config.musicvol;
+		if (ld > config.musicVol)
+			ld = config.musicVol;
 		if (!ldstop) {
 			setChannelVolume(_menuChannel, (int)ld);
-			if ((int)ld == config.musicvol)
+			if ((int)ld == config.musicVol)
 				ldstop = true;
 		}
 
@@ -221,7 +221,7 @@ void GriffonEngine::title(int mode) {
 	if (config.music) {
 		haltSoundChannel(_menuChannel);
 		resumeSoundChannel(_musicChannel);
-		setChannelVolume(_musicChannel, config.musicvol);
+		setChannelVolume(_musicChannel, config.musicVol);
 		_pmenu = false;
 	}
 }
@@ -299,7 +299,7 @@ void GriffonEngine::configMenu() {
 			else if (i == 13 && !config.effects)
 				destColumn = 0;
 			else if (i == 15 || i == 17) {
-				int vol = (i == 15 ? config.musicvol : config.effectsvol) * 9 / 255;
+				int vol = (i == 15 ? config.musicVol : config.effectsVol) * 9 / 255;
 				vol = CLIP(vol, 0, 9);
 
 				strcpy(line, "[----------]");
@@ -373,36 +373,36 @@ void GriffonEngine::configMenu() {
 
 				if (_event.kbd.keycode == Common::KEYCODE_LEFT) {
 					if (cursel == 11) {
-						config.musicvol = CLIP(config.musicvol - 25, 0, 255);
-						setChannelVolume(_musicChannel, config.musicvol);
-						setChannelVolume(_menuChannel, config.musicvol);
+						config.musicVol = CLIP(config.musicVol - 25, 0, 255);
+						setChannelVolume(_musicChannel, config.musicVol);
+						setChannelVolume(_menuChannel, config.musicVol);
 					} else if (cursel == 12) {
-						config.effectsvol = CLIP(config.effectsvol - 25, 0, 255);
-						setChannelVolume(-1, config.effectsvol);
-						setChannelVolume(_musicChannel, config.musicvol);
-						setChannelVolume(_menuChannel, config.musicvol);
+						config.effectsVol = CLIP(config.effectsVol - 25, 0, 255);
+						setChannelVolume(-1, config.effectsVol);
+						setChannelVolume(_musicChannel, config.musicVol);
+						setChannelVolume(_menuChannel, config.musicVol);
 
 						if (config.effects) {
 							int snd = playSound(_sfx[kSndDoor]);
-							setChannelVolume(snd, config.effectsvol);
+							setChannelVolume(snd, config.effectsVol);
 						}
 					}
 				}
 				if (_event.kbd.keycode == Common::KEYCODE_RIGHT) {
 					if (cursel == 11) {
-						config.musicvol = CLIP(config.musicvol + 25, 0, 255);
-						setChannelVolume(_musicChannel, config.musicvol);
-						setChannelVolume(_menuChannel, config.musicvol);
+						config.musicVol = CLIP(config.musicVol + 25, 0, 255);
+						setChannelVolume(_musicChannel, config.musicVol);
+						setChannelVolume(_menuChannel, config.musicVol);
 					} else if (cursel == 12) {
-						config.effectsvol = CLIP(config.effectsvol + 25, 0, 255);
+						config.effectsVol = CLIP(config.effectsVol + 25, 0, 255);
 
-						setChannelVolume(-1, config.effectsvol);
-						setChannelVolume(_musicChannel, config.musicvol);
-						setChannelVolume(_menuChannel, config.musicvol);
+						setChannelVolume(-1, config.effectsVol);
+						setChannelVolume(_musicChannel, config.musicVol);
+						setChannelVolume(_menuChannel, config.musicVol);
 
 						if (config.effects) {
 							int snd = playSound(_sfx[kSndDoor]);
-							setChannelVolume(snd, config.effectsvol);
+							setChannelVolume(snd, config.effectsVol);
 						}
 					}
 				}
@@ -423,8 +423,8 @@ void GriffonEngine::configMenu() {
 						case 7:
 							if (!config.music) {
 								config.music = true;
-								_menuChannel = playSound(_mmenu, true);
-								setChannelVolume(_menuChannel, config.musicvol);
+								_menuChannel = playSound(_musicMenu, true);
+								setChannelVolume(_menuChannel, config.musicVol);
 							}
 							break;
 						case 8:
@@ -438,7 +438,7 @@ void GriffonEngine::configMenu() {
 							if (!config.effects) {
 								config.effects = true;
 								int snd = playSound(_sfx[kSndDoor]);
-								setChannelVolume(snd, config.effectsvol);
+								setChannelVolume(snd, config.effectsVol);
 							}
 							break;
 						case 10:
@@ -446,7 +446,7 @@ void GriffonEngine::configMenu() {
 								config.effects = false;
 							break;
 						case 13:
-							config_save(&config);
+							saveConfig(&config);
 							// no break on purpose
 						case 14:
 							exitMenu = true;

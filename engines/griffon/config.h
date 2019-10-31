@@ -41,15 +41,15 @@ namespace Griffon {
 
 struct CONFIG {
 	bool music;
-	int musicvol;
+	int musicVol;
 	bool effects;
-	int effectsvol;
+	int effectsVol;
 };
 
 extern CONFIG config;
 
-void config_load(CONFIG *config);
-void config_save(CONFIG *config);
+void loadConfig(CONFIG *config);
+void saveConfig(CONFIG *config);
 
 } // end of namespace Griffon
 

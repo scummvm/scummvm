@@ -143,19 +143,19 @@ void GriffonEngine::setupAudio() {
 	rcDest.top = 116 + 12 + 12;
 	rcDest.setHeight(8);
 
-	_mboss = cacheSound("music/boss.ogg");
+	_musicBoss = cacheSound("music/boss.ogg");
 	drawProgress(1, 21);
-	_mgardens = cacheSound("music/gardens.ogg");
+	_musicGardens1 = cacheSound("music/gardens.ogg");
 	drawProgress(2, 21);
-	_mgardens2 = cacheSound("music/gardens2.ogg");
+	_musicGardens2 = cacheSound("music/gardens2.ogg");
 	drawProgress(3, 21);
-	_mgardens3 = cacheSound("music/gardens3.ogg");
+	_musicGardens3 = cacheSound("music/gardens3.ogg");
 	drawProgress(4, 21);
-	_mgardens4 = cacheSound("music/gardens4.ogg");
+	_musicGardens4 = cacheSound("music/gardens4.ogg");
 	drawProgress(5, 21);
-	_mendofgame = cacheSound("music/endofgame.ogg");
+	_musicEndOfGame = cacheSound("music/endofgame.ogg");
 	drawProgress(6, 21);
-	_mmenu = cacheSound("music/menu.ogg");
+	_musicMenu = cacheSound("music/menu.ogg");
 	drawProgress(7, 21);
 
 	_sfx[kSndBite] = cacheSound("sfx/bite.ogg");
@@ -197,23 +197,23 @@ void GriffonEngine::updateMusic() {
 	if (config.music) {
 		// if(_curmap > 5 && _curmap < 42) iplaysound = macademy;
 		// if(_curmap > 47) iplaysound = _mgardens;
-		iplaysound = _mgardens;
+		iplaysound = _musicGardens1;
 		if (_roomLock)
-			iplaysound = _mboss;
+			iplaysound = _musicBoss;
 
-		if (iplaysound == _mboss && _playingBoss)
+		if (iplaysound == _musicBoss && _playingBoss)
 			iplaysound = NULL;
-		if (iplaysound == _mgardens && _playingGardens)
+		if (iplaysound == _musicGardens1 && _playingGardens)
 			iplaysound = NULL;
 
 		if (iplaysound != NULL) {
 			haltSoundChannel(_musicChannel);
 
-			_playingBoss = (iplaysound == _mboss);
-			_playingGardens = (iplaysound == _mgardens);
+			_playingBoss = (iplaysound == _musicBoss);
+			_playingGardens = (iplaysound == _musicGardens1);
 
 			_musicChannel = playSound(iplaysound, true);
-			setChannelVolume(_musicChannel, config.musicvol);
+			setChannelVolume(_musicChannel, config.musicVol);
 		} else {
 			if (!isSoundChannelPlaying(_musicChannel)) {
 				loopseta += 1;
@@ -225,23 +225,23 @@ void GriffonEngine::updateMusic() {
 					if (_playingGardens) {
 						switch (loopseta) {
 							case 0:
-								playSound(_mgardens);
+								playSound(_musicGardens1);
 								break;
 							case 1:
-								playSound(_mgardens2);
+								playSound(_musicGardens2);
 								break;
 							case 2:
-								playSound(_mgardens3);
+								playSound(_musicGardens3);
 								break;
 							case 3:
-								playSound(_mgardens4);
+								playSound(_musicGardens4);
 							default:
 								break;
 						}
 					}
 				}
 
-				setChannelVolume(_musicChannel, config.musicvol);
+				setChannelVolume(_musicChannel, config.musicVol);
 			}
 		}
 	}
