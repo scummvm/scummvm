@@ -57,6 +57,14 @@ Object::Object(const Common::String &name, Common::SeekableReadStream * stream) 
 	stream->read(_code.data(), _code.size());
 }
 
+Object::~Object() {
+	if (_picture) {
+		_picture->free();
+		delete _picture;
+	}
+}
+
+
 void Object::readStringTable(unsigned resOffset, uint16 resCount) {
 	if (_stringTableLoaded)
 		return;
@@ -103,7 +111,10 @@ const Object::StringEntry & Object::getString(uint16 index) const {
 }
 
 void Object::setPicture(Graphics::TransparentSurface *picture) {
-	delete _picture;
+	if (_picture) {
+		_picture->free();
+		delete _picture;
+	}
 	_picture = picture;
 }
 

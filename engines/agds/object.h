@@ -76,6 +76,7 @@ private:
 
 public:
 	Object(const Common::String &name, Common::SeekableReadStream * stream);
+	~Object();
 
 	void readStringTable(unsigned resOffset, uint16 resCount);
 	const StringEntry & getString(uint16 index) const;
