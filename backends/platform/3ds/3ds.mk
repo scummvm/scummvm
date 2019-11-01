@@ -24,7 +24,6 @@ clean_3ds:
 	$(RM) $(TARGET).smdh
 	$(RM) $(TARGET).3dsx
 	$(RM) $(TARGET).bnr
-	$(RM) $(TARGET).romfs
 	$(RM) $(TARGET).cia
 	$(RM) -rf romfs
 
@@ -54,12 +53,8 @@ $(TARGET).bnr: $(APP_BANNER_IMAGE) $(APP_BANNER_AUDIO)
 	@bannertool makebanner -o $@ -i $(APP_BANNER_IMAGE) -a $(APP_BANNER_AUDIO)
 	@echo built ... $(notdir $@)
 
-$(TARGET).romfs: romfs
-	@3dstool -cvtf romfs $(TARGET).romfs --romfs-dir romfs
-	@echo built ... $(notdir $@)
-
-$(TARGET).cia: $(EXECUTABLE) $(APP_RSF) $(TARGET).smdh $(TARGET).bnr $(TARGET).romfs
-	@makerom -f cia -target t -exefslogo -o $@ -elf $(EXECUTABLE) -rsf $(APP_RSF) -banner $(TARGET).bnr -icon $(TARGET).smdh -romfs $(TARGET).romfs
+$(TARGET).cia: $(EXECUTABLE) $(APP_RSF) $(TARGET).smdh $(TARGET).bnr romfs
+	@makerom -f cia -target t -exefslogo -o $@ -elf $(EXECUTABLE) -rsf $(APP_RSF) -banner $(TARGET).bnr -icon $(TARGET).smdh -DAPP_ROMFS=romfs/
 	@echo built ... $(notdir $@)
 
 #---------------------------------------------------------------------------------
