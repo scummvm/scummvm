@@ -39,6 +39,7 @@ struct Region {
 	PointsType		points;
 
 	Region(const Common::String &resourceName, Common::SeekableReadStream * stream);
+	Region(const Common::Rect rect);
 
 	bool pointIn(Common::Point point) const;
 };
