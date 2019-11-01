@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2019-10-30 19:59+0100\n"
+"POT-Creation-Date: 2019-11-01 12:40+0100\n"
 "PO-Revision-Date: 2018-08-06 21:28+0000\n"
 "Last-Translator: monkeymadness <ihave13redsox@hotmail.com>\n"
 "Language-Team: Chinese <https://translations.scummvm.org/projects/scummvm/"
@@ -2459,34 +2459,34 @@ msgstr ""
 msgid "Stretch to window"
 msgstr ""
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:603
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:605
 #, c-format
 msgid "Resolution: %dx%d"
 msgstr ""
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:624
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:626
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2525
 msgid "Enabled aspect ratio correction"
 msgstr "Qiyong Bili Jiaozheng"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:626
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:628
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2531
 msgid "Disabled aspect ratio correction"
 msgstr "Jinyong Bili Jiaozheng"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:646
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:648
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2548
 #, fuzzy
 msgid "Filtering enabled"
 msgstr "Qidong Dianji"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:648
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:650
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2550
 #, fuzzy
 msgid "Filtering disabled"
 msgstr "Jinyong Dianji"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:676
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:678
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2579
 msgid "Stretch mode"
 msgstr ""
