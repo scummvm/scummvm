@@ -305,7 +305,8 @@ void OpenGLSdlGraphicsManager::notifyResize(const int width, const int height) {
 	getWindowSizeFromSdl(&currentWidth, &currentHeight);
 	if (width != currentWidth || height != currentHeight)
 		return;
-	handleResize(width, height);
+	// TODO: Implement high DPI support
+	handleResize(width, height, 90, 90);
 #else
 	if (!_ignoreResizeEvents && _hwScreen && !(_hwScreen->flags & SDL_FULLSCREEN)) {
 		// We save that we handled a resize event here. We need to know this
@@ -357,9 +358,9 @@ void *OpenGLSdlGraphicsManager::getProcAddress(const char *name) const {
 	return SDL_GL_GetProcAddress(name);
 }
 
-void OpenGLSdlGraphicsManager::handleResizeImpl(const int width, const int height) {
-	OpenGLGraphicsManager::handleResizeImpl(width, height);
-	SdlGraphicsManager::handleResizeImpl(width, height);
+void OpenGLSdlGraphicsManager::handleResizeImpl(const int width, const int height, const int xdpi, const int ydpi) {
+	OpenGLGraphicsManager::handleResizeImpl(width, height, xdpi, ydpi);
+	SdlGraphicsManager::handleResizeImpl(width, height, xdpi, ydpi);
 }
 
 bool OpenGLSdlGraphicsManager::saveScreenshot(const Common::String &filename) const {
@@ -463,7 +464,8 @@ bool OpenGLSdlGraphicsManager::setupMode(uint width, uint height) {
 	notifyContextCreate(rgba8888, rgba8888);
 	int actualWidth, actualHeight;
 	getWindowSizeFromSdl(&actualWidth, &actualHeight);
-	handleResize(actualWidth, actualHeight);
+	// TODO: Implement high DPI support
+	handleResize(actualWidth, actualHeight, 90, 90);
 	return true;
 #else
 	// WORKAROUND: Working around infamous SDL bugs when switching
@@ -510,7 +512,7 @@ bool OpenGLSdlGraphicsManager::setupMode(uint width, uint height) {
 
 	if (_hwScreen) {
 		notifyContextCreate(rgba8888, rgba8888);
-		handleResize(_hwScreen->w, _hwScreen->h);
+		handleResize(_hwScreen->w, _hwScreen->h, 90, 90);
 	}
 
 	// Ignore resize events (from SDL) for a few frames, if this isn't
