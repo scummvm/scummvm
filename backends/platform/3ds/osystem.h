@@ -149,6 +149,9 @@ public:
 	void updateFocus();
 	void updateConfig();
 	void updateSize();
+	void setMagnifyMode(MagnifyMode mode);
+	MagnifyMode getMagnifyMode(){ return _magnifyMode; }
+
 
 private:
 	void initGraphics();
@@ -229,6 +232,7 @@ private:
 	float _cursorDeltaX, _cursorDeltaY;
 	int _cursorHotspotX, _cursorHotspotY;
 	uint32 _cursorKeyColor;
+	MagnifyMode _magnifyMode;
 };
 
 } // namespace _3DS

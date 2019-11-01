@@ -77,6 +77,7 @@ OSystem_3DS::OSystem_3DS():
 	_magWidth(400),
 	_magHeight(240),
 	_overlayVisible(false),
+	_magnifyMode(MODE_MAGOFF),
 	exiting(false),
 	sleeping(false)
 {

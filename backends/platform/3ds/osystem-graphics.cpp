@@ -36,8 +36,6 @@
 
 namespace _3DS {
 
-extern MagnifyMode magnifyMode;
-
 void OSystem_3DS::initGraphics() {
 	_pfGame = Graphics::PixelFormat::createFormatCLUT8();
 	_pfGameTexture = Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0);
@@ -296,7 +294,7 @@ void OSystem_3DS::updateScreen() {
 
 	C3D_FrameBegin(0);
 		_gameTopTexture.transfer();
-		if (magnifyMode == MODE_MAGON) {
+		if (_magnifyMode == MODE_MAGON) {
 			_magX = (_cursorX < _magHalfWidth) ?
 				0 : ((_cursorX < (_gameWidth - _magHalfWidth)) ?
 				_cursorX - _magHalfWidth : _gameWidth - _magWidth);
@@ -320,7 +318,7 @@ void OSystem_3DS::updateScreen() {
 		C3D_RenderTargetClear(_renderTargetTop, C3D_CLEAR_ALL, 0x00000000, 0);
 		C3D_FrameDrawOn(_renderTargetTop);
 		if (config.screen == kScreenTop || config.screen == kScreenBoth) {
-			if (config.screen == kScreenBoth && magnifyMode == MODE_MAGON) {
+			if (config.screen == kScreenBoth && _magnifyMode == MODE_MAGON) {
 				C3D_FVUnifMtx4x4(GPU_VERTEX_SHADER, _projectionLocation, &_projectionMag);
 				C3D_FVUnifMtx4x4(GPU_VERTEX_SHADER, _modelviewLocation, _gameMagTexture.getMatrix());
 				_gameMagTexture.render();

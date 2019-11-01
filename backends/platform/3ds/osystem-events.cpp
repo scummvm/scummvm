@@ -34,7 +34,6 @@ namespace _3DS {
 static Common::Mutex *eventMutex;
 static InputMode inputMode = MODE_DRAG;
 static InputMode savedInputMode = MODE_DRAG;
-MagnifyMode magnifyMode = MODE_MAGOFF;
 static aptHookCookie cookie;
 static bool optionMenuOpening = false;
 static Common::String messageOSD;
@@ -150,15 +149,15 @@ static void eventThreadFunc(void *arg) {
 		// Button events
 		if (keysPressed & KEY_L) {
 			if (osys->getWidth() >= 400 || osys->getHeight() >= 240) {
-				if (magnifyMode == MODE_MAGOFF) {
-					magnifyMode = MODE_MAGON;
+				if (osys->getMagnifyMode() == MODE_MAGOFF) {
+					osys->setMagnifyMode(MODE_MAGON);
 					if (inputMode == MODE_DRAG) {
 						inputMode = MODE_HOVER;
 						osys->displayMessageOnOSD("Magnify Mode On. Switching to Hover Mode...");
 					} else
 						osys->displayMessageOnOSD("Magnify Mode On");
 				} else {
-					magnifyMode = MODE_MAGOFF;
+					osys->setMagnifyMode(MODE_MAGOFF);
 					if (savedInputMode == MODE_DRAG) {
 						inputMode = savedInputMode;
 						osys->displayMessageOnOSD("Magnify Mode Off. Reactivating Drag Mode...");
@@ -177,7 +176,7 @@ static void eventThreadFunc(void *arg) {
 				inputMode = savedInputMode = MODE_HOVER;
 				osys->displayMessageOnOSD("Hover Mode");
 			} else {
-				if (magnifyMode == MODE_MAGOFF) {
+				if (osys->getMagnifyMode() == MODE_MAGOFF) {
 					inputMode = savedInputMode = MODE_DRAG;
 					osys->displayMessageOnOSD("Drag Mode");
 				} else
@@ -229,8 +228,8 @@ static void eventThreadFunc(void *arg) {
 
 		// If magnify mode is on when returning to Launcher, turn it off
 		if (g_system->getEventManager()->shouldRTL()) {
-			if (magnifyMode == MODE_MAGON) {
-				magnifyMode = MODE_MAGOFF;
+			if (osys->getMagnifyMode() == MODE_MAGON) {
+				osys->setMagnifyMode(MODE_MAGOFF);
 				if (savedInputMode == MODE_DRAG) {
 					inputMode = savedInputMode;
 					osys->displayMessageOnOSD("Magnify Mode Off. Reactivating Drag Mode.\nReturning to Launcher...");
@@ -307,6 +306,10 @@ void OSystem_3DS::transformPoint(touchPosition &point) {
 		point.px = static_cast<float>(point.px) / _gameBottomTexture.getScaleX() - _gameBottomX;
 		point.py = static_cast<float>(point.py) / _gameBottomTexture.getScaleY() - _gameBottomY;
 	}
+}
+
+void OSystem_3DS::setMagnifyMode(MagnifyMode mode) {
+	_magnifyMode = mode;
 }
 
 void OSystem_3DS::displayMessageOnOSD(const char *msg) {
