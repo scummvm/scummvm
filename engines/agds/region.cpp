@@ -63,6 +63,16 @@ Region::Region(const Common::String &resourceName, Common::SeekableReadStream * 
 	}
 }
 
+Region::Region(const Common::Rect rect): flags(0) {
+	points.push_back(Common::Point(rect.left, rect.top));
+	points.push_back(Common::Point(rect.right, rect.top));
+	points.push_back(Common::Point(rect.right, rect.bottom));
+	points.push_back(Common::Point(rect.left, rect.bottom));
+	center.x = (rect.left + rect.right) / 2;
+	center.y = (rect.top + rect.bottom) / 2;
+}
+
+
 //FIXME: copied from wintermute/base_region.cpp
 
 typedef struct {
