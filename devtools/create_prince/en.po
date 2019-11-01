@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: Prince\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2018-04-17 19:53+0100\n"
-"PO-Revision-Date: 2019-10-28 06:56+0000\n"
+"PO-Revision-Date: 2019-11-02 11:55+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: English <https://translations.scummvm.org/projects/prince/"
 "prince/en/>\n"
@@ -4623,14 +4623,17 @@ msgstr ""
 #: dialog0125.txt:100008
 msgid "HERO: Co do Fjord, nie ma szans, żeby tam|wpuścić trochę światła?"
 msgstr ""
+"HERO: As for the Fjord, is there is a chance to let some|light in there?"
 
 #: dialog0125.txt:100009
 msgid "OTHER: Jest, ale do tego musiałby być spełniony|pewien niesamowicie trudny warunek."
 msgstr ""
+"OTHER: There is, but for that to happen,|an unusually difficult condition "
+"must be met."
 
 #: dialog0125.txt:100010
 msgid "HERO: Jaki? Zgadzam się z góry na wszystko!"
-msgstr ""
+msgstr "HERO: What is that? I agree in advance on everything!"
 
 #: dialog0125.txt:100011
 msgid "OTHER: Musiałoby mi się chcieć."
