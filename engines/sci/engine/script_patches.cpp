@@ -108,6 +108,7 @@ static const char *const selectorNameTable[] = {
 	"localize",     // Freddy Pharkas
 	"roomFlags",    // Iceman
 	"put",          // Police Quest 1 VGA
+	"approachVerbs", // Police Quest 1 VGA, QFG4
 	"newRoom",      // Police Quest 3, GK1
 	"changeState",  // Quest For Glory 1 VGA, QFG4
 	"hide",         // Quest For Glory 1 VGA, QFG4
@@ -178,7 +179,6 @@ static const char *const selectorNameTable[] = {
 	"getSubscriberObj", // RAMA
 	"advanceCurIcon", // QFG4
 	"amount",       // QFG4
-	"approachVerbs", // QFG4
 	"claimed",      // QFG4
 	"cue",          // QFG4
 	"getCursor",    // QFG4
@@ -222,6 +222,7 @@ enum ScriptPatcherSelectors {
 	SELECTOR_localize,
 	SELECTOR_roomFlags,
 	SELECTOR_put,
+	SELECTOR_approachVerbs,
 	SELECTOR_newRoom,
 	SELECTOR_changeState,
 	SELECTOR_hide,
@@ -293,7 +294,6 @@ enum ScriptPatcherSelectors {
 	SELECTOR_getSubscriberObj,
 	SELECTOR_advanceCurIcon,
 	SELECTOR_amount,
-	SELECTOR_approachVerbs,
 	SELECTOR_claimed,
 	SELECTOR_cue,
 	SELECTOR_getCursor,
@@ -8119,8 +8119,52 @@ static const uint16 pq1vgaPatchMapSaveRestoreBug[] = {
 	PATCH_END
 };
 
+// In the first release of PQ1VGA, looking at objects while sitting in the car
+//  outside of Carol's breaks the game. The objects set Look as an approachVerb,
+//  causing ego to float towards them without leaving the car and initializing.
+//
+// We fix this as Sierra did by removing Look from all approachVerbs in room 30.
+//
+// Applies to: English Floppy without 30.HEP and 30.SCR
+// Responsible methods: door:init, harleys:init, willySign:init, carolSign:init,
+//                      carolWindow:init, weeds:init, alley:init, mat:init
+// Fixes bug: #5826
+static const uint16 pq1vgaSignatureFloatOutsideCarols1[] = {
+	0x38, SIG_SELECTOR16(approachVerbs), // pushi approachVerbs
+	SIG_MAGICDWORD,
+	0x78,                                // push1
+	0x78,                                // push1
+	0x54, 0x06,                          // self 06 [ self approachVerbs: 1 ]
+	SIG_END
+};
+
+static const uint16 pq1vgaPatchFloatOutsideCarols1[] = {
+	0x32, PATCH_UINT16(0x0004),          // jmp 0004 [ don't set approachVerbs ]
+	PATCH_END
+};
+
+static const uint16 pq1vgaSignatureFloatOutsideCarols2[] = {
+	0x38, SIG_SELECTOR16(approachVerbs), // pushi approachVerbs
+	SIG_MAGICDWORD,
+	0x7a,                                // push2
+	0x78,                                // push1
+	0x39, 0x04,                          // pushi 04
+	0x54, 0x08,                          // self 08 [ self approachVerbs: 1 4 ]
+	SIG_END
+};
+
+static const uint16 pq1vgaPatchFloatOutsideCarols2[] = {
+	PATCH_ADDTOOFFSET(+3),
+	0x39, 0x01,                          // pushi 01
+	PATCH_ADDTOOFFSET(+2),
+	0x54, 0x06,                          // self 06 [ self approachVerbs: 4 ]
+	PATCH_END
+};
+
 //          script, description,                                         signature                            patch
 static const SciScriptPatcherEntry pq1vgaSignatures[] = {
+	{  true,    30, "float outside carol's (1/2)",                    7, pq1vgaSignatureFloatOutsideCarols1,  pq1vgaPatchFloatOutsideCarols1 },
+	{  true,    30, "float outside carol's (2/2)",                    1, pq1vgaSignatureFloatOutsideCarols2,  pq1vgaPatchFloatOutsideCarols2 },
 	{  true,   152, "getting stuck while briefing is about to start", 1, pq1vgaSignatureBriefingGettingStuck, pq1vgaPatchBriefingGettingStuck },
 	{  true,   341, "put gun in locker bug",                          1, pq1vgaSignaturePutGunInLockerBug,    pq1vgaPatchPutGunInLockerBug },
 	{  true,   500, "map save/restore bug",                           2, pq1vgaSignatureMapSaveRestoreBug,    pq1vgaPatchMapSaveRestoreBug },
