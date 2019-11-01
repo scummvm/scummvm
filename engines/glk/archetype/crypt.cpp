@@ -28,10 +28,40 @@ namespace Archetype {
 
 byte CryptMask;
 EncryptionType Encryption;
+static uint RandSeed;
+const int RANDOM_KEY = 33797;
 
 void crypt_init() {
 	Encryption = NONE;
 	CryptMask = 0x55;
+	RandSeed = 0;
+}
+
+static void setDecryptionSeed(uint new_seed) {
+	RandSeed = new_seed;
+}
+
+static void cycleRandomSeed() {
+	uint16 c = RandSeed & 0xffff;
+	uint val = (uint)c * RANDOM_KEY;
+	c <<= 3;
+	c = (c & 0xff) | ((((c >> 8) + c) & 0xff) << 8);
+	val += (uint)c << 16;
+
+	uint16 b = RandSeed >> 16;
+	val += (uint)b << 16;
+	b <<= 2;
+	val += (uint)b << 16;
+	val += (uint)(b & 0xff) << 24;
+	b <<= 5;
+	val += (uint)(b & 0xff) << 24;
+
+	RandSeed = val + 1;
+}
+
+static uint getDeterministicRandomNumber(uint limit) {
+	cycleRandomSeed();
+	return (limit == 0) ? 0 : (RandSeed >> 16) % limit;
 }
 
 void cryptinit(EncryptionType crypt_kind, uint seed) {
@@ -39,37 +69,38 @@ void cryptinit(EncryptionType crypt_kind, uint seed) {
 	Encryption = crypt_kind;
 
 	if (Encryption == COMPLEX)
-		g_vm->setRandomNumberSeed(seed);
+		setDecryptionSeed(seed);
 }
 
-void cryptstr(Common::String &s) {
+void cryptstr(char *buffer, size_t length) {
 	byte nextMask;
+	char *p = buffer;
 
 	switch (Encryption) {
 	case SIMPLE:
-		for (uint i = 0; i < s.size(); ++i)
-			s.setChar(s[i] ^ CryptMask, i);
+		for (size_t i = 0; i < length; ++i, ++p)
+			*p ^= CryptMask;
 		break;
 
 	case PURPLE:
-		for (uint i = 0; i < s.size(); ++i) {
-			s.setChar(s[i] ^ CryptMask, i);
-			CryptMask += s[i] & 7;
+		for (size_t i = 0; i < length; ++i, ++p) {
+			*p ^= CryptMask;
+			CryptMask += *p & 7;
 		}
 		break;
 
 	case UNPURPLE:
-		for (uint i = 0; i < s.size(); ++i) {
-			nextMask = CryptMask + (s[i] & 7);
-			s.setChar(s[i] ^ CryptMask, i);
+		for (size_t i = 0; i < length; ++i, ++p) {
+			nextMask = CryptMask + (*p & 7);
+			*p ^= CryptMask;
 			CryptMask = nextMask;
 		}
 		break;
 
 	case COMPLEX:
-		for (uint i = 0; i < s.size(); ++i) {
-			s.setChar(s[i] ^ CryptMask, i);
-			CryptMask = g_vm->getRandomNumber(0x100);
+		for (size_t i = 0; i < length; ++i, ++p) {
+			*p ^= CryptMask;
+			CryptMask = (byte)getDeterministicRandomNumber(0x100);
 		}
 		break;
 

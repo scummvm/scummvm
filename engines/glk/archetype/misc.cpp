@@ -155,11 +155,13 @@ String formatFilename(const String &name, const String &ext, bool replace) {
 void load_string(Common::ReadStream *fIn, String &the_string) {
 	char buffer[257];
 	size_t strSize = fIn->readByte();
+	(void)fIn->readByte();		// Redundant second copy of the length
+
 	fIn->read(buffer, strSize);
 	buffer[strSize] = '\0';
 
+	cryptstr(buffer, strSize);
 	the_string = String(buffer);
-	cryptstr(the_string);
 }
 
 void dump_string(Common::WriteStream *fOut, const String &the_string) {
@@ -170,9 +172,12 @@ void dump_string(Common::WriteStream *fOut, const String &the_string) {
 		fOut->write(the_string.c_str(), the_string.size());
 
 	} else {
-		String tmp = the_string;
-		cryptstr(tmp);
-		fOut->write(tmp.c_str(), tmp.size());
+		char buffer[257];
+		strncpy(buffer, the_string.c_str(), 256);
+		buffer[256] = '\0';
+
+		cryptstr(buffer, the_string.size());
+		fOut->write(buffer, the_string.size());
 	}
 }
 

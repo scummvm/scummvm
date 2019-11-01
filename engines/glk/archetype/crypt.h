@@ -23,8 +23,7 @@
 #ifndef ARCHETYPE_CRYPT
 #define ARCHETYPE_CRYPT
 
-#include "common/scummsys.h"
-#include "common/str.h"
+#include "glk/archetype/string.h"
 
 namespace Glk {
 namespace Archetype {
@@ -56,7 +55,7 @@ extern void cryptinit(EncryptionType crypt_kind, uint seed);
  * if <method> is COMPLEX, a pseudorandom sequence is used to alter the
  * CryptMask.This can make prediction well-nigh impossible.
  */
-extern void cryptstr(Common::String &s);
+extern void cryptstr(char *buffer, size_t length);
 
 } // End of namespace Archetype
 } // End of namespace Glk
