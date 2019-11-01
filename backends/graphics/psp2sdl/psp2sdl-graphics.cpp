@@ -94,7 +94,7 @@ PSP2SdlGraphicsManager::PSP2SdlGraphicsManager(SdlEventSource *sdlEventSource, S
 	_shaders[0] = NULL;
 
 	/* Vita display size is always 960x544 (that's just the hardware) */
-	handleResize(960, 544);
+	handleResize(960, 544, 90, 90);
 }
 
 PSP2SdlGraphicsManager::~PSP2SdlGraphicsManager() {

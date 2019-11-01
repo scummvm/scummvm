@@ -231,7 +231,7 @@ void SdlGraphicsManager::setSystemMousePosition(const int x, const int y) {
 	}
 }
 
-void SdlGraphicsManager::handleResizeImpl(const int width, const int height) {
+void SdlGraphicsManager::handleResizeImpl(const int width, const int height, const int xdpi, const int ydpi) {
 	_eventSource->resetKeyboardEmulation(width - 1, height - 1);
 	_forceRedraw = true;
 }

@@ -905,7 +905,7 @@ void OpenGLGraphicsManager::grabPalette(byte *colors, uint start, uint num) cons
 	memcpy(colors, _gamePalette + start * 3, num * 3);
 }
 
-void OpenGLGraphicsManager::handleResizeImpl(const int width, const int height) {
+void OpenGLGraphicsManager::handleResizeImpl(const int width, const int height, const int xdpi, const int ydpi) {
 	// Setup backbuffer size.
 	_backBuffer.setDimensions(width, height);
 
@@ -937,6 +937,10 @@ void OpenGLGraphicsManager::handleResizeImpl(const int width, const int height) 
 	// GUI has working layouts.
 	overlayWidth = MAX<uint>(overlayWidth, 256);
 	overlayHeight = MAX<uint>(overlayHeight, 200);
+
+	// HACK: Reduce the size of the overlay on high DPI screens.
+	overlayWidth = fracToInt(overlayWidth * (intToFrac(90) / xdpi));
+	overlayHeight = fracToInt(overlayHeight * (intToFrac(90) / ydpi));
 
 	if (!_overlay || _overlay->getFormat() != _defaultFormatAlpha) {
 		delete _overlay;
@@ -1004,7 +1008,7 @@ void OpenGLGraphicsManager::notifyContextCreate(const Graphics::PixelFormat &def
 
 	// Refresh the output screen dimensions if some are set up.
 	if (_windowWidth != 0 && _windowHeight != 0) {
-		handleResize(_windowWidth, _windowHeight);
+		handleResize(_windowWidth, _windowHeight, _xdpi, _ydpi);
 	}
 
 	// TODO: Should we try to convert textures into one of those formats if
@@ -1271,6 +1275,16 @@ void OpenGLGraphicsManager::recalculateCursorScaling() {
 
 		_cursorHotspotYScaled = fracToInt(_cursorHotspotYScaled * screenScaleFactorY);
 		_cursorHeightScaled   = fracToInt(_cursorHeightScaled   * screenScaleFactorY);
+	} else {
+		const frac_t screenScaleFactorX = intToFrac(90) / _xdpi;
+		const frac_t screenScaleFactorY = intToFrac(90) / _ydpi;
+
+		// FIXME: Replace this with integer maths
+		_cursorHotspotXScaled /= fracToDouble(screenScaleFactorX);
+		_cursorWidthScaled    /= fracToDouble(screenScaleFactorX);
+
+		_cursorHotspotYScaled /= fracToDouble(screenScaleFactorY);
+		_cursorHeightScaled   /= fracToDouble(screenScaleFactorY);
 	}
 }
 
