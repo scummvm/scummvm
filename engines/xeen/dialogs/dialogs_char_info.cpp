@@ -289,13 +289,7 @@ Common::String CharacterInfo::loadCharacterDetails(const Character &c) {
 		c._energyResistence._permanent + c.itemScan(15) + c._energyResistence._temporary +
 		c._magicResistence._permanent + c.itemScan(16) + c._magicResistence._temporary;
 
-	// WORKAROUND: xeen.ccs format string has %lu for gold, gems, and experience
-	Common::String charDetails = Res.CHARACTER_DETAILS;
-	const char *p;
-	while ((p = strstr(charDetails.c_str(), "%lu")) != nullptr)
-		charDetails.deleteChar(p - charDetails.c_str() + 1);
-
-	return Common::String::format(charDetails.c_str(),
+	return Common::String::format(Res.CHARACTER_DETAILS,
 		Res.PARTY_GOLD, c._name.c_str(), Res.SEX_NAMES[c._sex],
 		Res.RACE_NAMES[c._race], Res.CLASS_NAMES[c._class],
 		c.statColor(c.getStat(MIGHT), c.getStat(MIGHT, true)), c.getStat(MIGHT),

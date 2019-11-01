@@ -944,14 +944,14 @@ const int TAVERN_EXIT_LIST[2][6][5][2] = {
 const char *const TEMPLE_TEXT =
 	"\r\x3""c\v000\t000Temple Options for"
 	"\t039\v027%s\x3l\t000\v046"
-	"\f37H\fdeal\x3r\t000%lu\x3l\n"
-	"\f37D\fdonation\x3r\t000%lu\x3l\n"
+	"\f37H\fdeal\x3r\t000%u\x3l\n"
+	"\f37D\fdonation\x3r\t000%u\x3l\n"
 	"\f37U\fdnCurse\x3r\t000%s"
 	"\x3l\t000\v090Gold\x3r\t000%s"
 	"\x2\x3""c\v122\t040ESC\x1";
 
 const char *const EXPERIENCE_FOR_LEVEL =
-	"%s needs %lu experience for level %u.";
+	"%s needs %u experience for level %u.";
 
 const char *const TRAINING_LEARNED_ALL = "%s has learned all we can teach!";
 
@@ -1115,7 +1115,7 @@ const char *const SPELLS_DIALOG_SPELLS = "\x3l\v015"
 	"\t010\f%2u%s\fd\x3l\n"
 	"\t010\f%2u%s\fd\x3l\n"
 	"\t010\f%2u%s\fd\x3l"
-	"\t004\v110%s - %lu\x1";
+	"\t004\v110%s - %u\x1";
 
 const char *const SPELL_PTS = "Spell Pts";
 
@@ -1171,11 +1171,11 @@ const char *const WEEK_DAY_STRINGS[10] = {
 const char *const CHARACTER_DETAILS =
 	"\x3l\v041\t196%s\t000\v002%s : %s %s %s"
 	"\x3r\t053\v028\f%02u%u\fd\t103\f%02u%u\fd"
-	"\x3l\t131\f%02u%d\fd\t196\f15%lu\fd\x3r"
+	"\x3l\t131\f%02u%d\fd\t196\f15%u\fd\x3r"
 	"\t053\v051\f%02u%u\fd\t103\f%02u%u\fd"
-	"\x3l\t131\f%02u%u\fd\t196\f15%lu\fd"
+	"\x3l\t131\f%02u%u\fd\t196\f15%u\fd"
 	"\x3r\t053\v074\f%02u%u\fd\t103\f%02u%u\fd"
-	"\x3l\t131\f15%u\fd\t196\f15%lu\fd"
+	"\x3l\t131\f15%u\fd\t196\f15%u\fd"
 	"\x3r\t053\v097\f%02u%u\fd\t103\f%02u%u\fd"
 	"\x3l\t131\f15%u\fd\t196\f15%u day%c\fd"
 	"\x3r\t053\v120\f%02u%u\fd\t103\f%02u%u\fd"
@@ -1198,7 +1198,7 @@ const char *const EXCHANGING_IN_COMBAT = "\x3""c\v007\t000Exchanging in combat i
 
 const char *const CURRENT_MAXIMUM_RATING_TEXT = "\x2\x3""c%s\n"
 	"Current / Maximum\n"
-	"\x3r\t054%lu\x3l\t058/ %lu\n"
+	"\x3r\t054%u\x3l\t058/ %u\n"
 	"\x3""cRating: %s";
 
 const char *const CURRENT_MAXIMUM_TEXT = "\x2\x3""c%s\n"
@@ -1235,15 +1235,15 @@ const char *const RESISTENCES_TEXT =
 const char *const NONE = "\n\t020None";
 
 const char *const EXPERIENCE_TEXT = "\x2\x3""c%s\x3l\n"
-	"\t010Current:\t070%lu\n"
+	"\t010Current:\t070%u\n"
 	"\t010Next Level:\t070%s\x1";
 
 const char *const ELIGIBLE = "\f12Eligible\fd";
 
 const char *const IN_PARTY_IN_BANK =
 	"\x2\x3""cParty %s\n"
-	"%lu on hand\n"
-	"%lu in bank\x1\x3l";
+	"%u on hand\n"
+	"%u in bank\x1\x3l";
 
 const char *const FOOD_TEXT =
 	"\x2\x3""cParty %s\n"
@@ -1263,7 +1263,7 @@ const char *const QUICK_REFERENCE =
 	"\t212S.P.\t241A.C.\t270Cond"
 	"%s%s%s%s%s%s%s%s"
 	"\v110\t064\x3""cGold\t144Gems\t224Food\v119"
-	"\t064\f15%lu\t144%lu\t224%u day%s\fd";
+	"\t064\f15%u\t144%u\t224%u day%s\fd";
 
 const int BLACKSMITH_MAP_IDS[2][4] = { { 28, 30, 73, 49 }, { 29, 31, 37, 43 } };
 
@@ -1275,7 +1275,7 @@ const char *const ITEMS_DIALOG_TEXT2 =
 	"\r\x2\x3""c\v021\t017\f37W\fdeap\t051\f37A\fdrmor\t085A"
 	"\f37c\fdces\t119\f37M\fdisc\t153\f37%s\t289Exit";
 const char *const ITEMS_DIALOG_LINE1 = "\x3r\f%02u\t023%2d)\x3l\t028%s\n";
-const char *const ITEMS_DIALOG_LINE2 = "\x3r\f%02u\t023%2d)\x3l\t028%s\x3r\t000%lu\n";
+const char *const ITEMS_DIALOG_LINE2 = "\x3r\f%02u\t023%2d)\x3l\t028%s\x3r\t000%u\n";
 
 const char *const BTN_BUY = "\f37B\fduy";
 const char *const BTN_SELL = "\f37S\fdell";
@@ -1512,13 +1512,13 @@ const char *const X_FOR_Y =
 	"\x1\fd\r\x3l\v000\t000%s for %s\x3r\t000%s\x3l\v011\x2%s%s%s%s%s%s%s%s%s\x1\fd";
 
 const char *const X_FOR_Y_GOLD =
-	"\x1\fd\r\x3l\v000\t000%s for %s\t150Gold - %lu%s\x3l\v011"
+	"\x1\fd\r\x3l\v000\t000%s for %s\t150Gold - %u%s\x3l\v011"
 	"\x2%s%s%s%s%s%s%s%s%s\x1\fd";
 
 const char *const FMT_CHARGES = "\x3rr\t000Charges\x3l";
 
 const char *const AVAILABLE_GOLD_COST =
-	"\x1\fd\r\x3l\v000\t000Available %s\t150Gold - %lu\x3r\t000Cost"
+	"\x1\fd\r\x3l\v000\t000Available %s\t150Gold - %u\x3r\t000Cost"
 	"\x3l\v011\x2%s%s%s%s%s%s%s%s%s\x1\fd";
 
 const char *const CHARGES = "Charges";
@@ -1560,9 +1560,9 @@ const char *const CATEGORY_BACKPACK_IS_FULL[4] = {
 	"\v010\t000\x3""c%s's miscellaneous backpack is full."
 };
 
-const char *const BUY_X_FOR_Y_GOLD = "\x3l\v000\t000\fdBuy %s\fd for %lu gold?";
+const char *const BUY_X_FOR_Y_GOLD = "\x3l\v000\t000\fdBuy %s\fd for %u gold?";
 
-const char *const SELL_X_FOR_Y_GOLD = "\x3l\v000\t000\fdSell %s\fd for %lu gold?";
+const char *const SELL_X_FOR_Y_GOLD = "\x3l\v000\t000\fdSell %s\fd for %u gold?";
 
 const char *const NO_NEED_OF_THIS = "\v005\x3""c\fdWe have no need of this %s\f!";
 
@@ -1576,7 +1576,7 @@ const char *const ITEM_NOT_BROKEN =  "\fdThat item is not broken!";
 
 const char *const FIX_IDENTIFY[2] = { "Fix", "Identify" };
 
-const char *const FIX_IDENTIFY_GOLD = "\x3l\v000\t000%s %s\fd for %lu gold?";
+const char *const FIX_IDENTIFY_GOLD = "\x3l\v000\t000%s %s\fd for %u gold?";
 
 const char *const IDENTIFY_ITEM_MSG = "\fd\v000\t000\x3""cIdentify Item\x3l\n"
 	"\n"
@@ -1740,8 +1740,8 @@ const char *const CAST_SPELL_DETAILS =
 const char *const PARTY_FOUND =
 	"\x3""cThe Party Found:\n"
 	"\n"
-	"\x3r\t000%lu Gold\n"
-	"%lu Gems";
+	"\x3r\t000%u Gold\n"
+	"%u Gems";
 
 const char *const BACKPACKS_FULL_PRESS_KEY =
 	"\v007\f12Warning!  BackPacks Full!\fd\n"
