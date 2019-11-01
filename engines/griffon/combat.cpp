@@ -402,7 +402,7 @@ void GriffonEngine::attack() {
 
 	for (int i = 0; i <= 15; i++) {
 		for (int a = 0; a <= 3; a++) {
-			_playerattackofs[a][i][2] = 0;
+			_playerAttackOfs[a][i].completed = false;
 		}
 	}
 }

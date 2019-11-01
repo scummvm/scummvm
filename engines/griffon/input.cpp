@@ -682,8 +682,8 @@ void GriffonEngine::processTrigger(int trignum) {
 	}
 
 	for (int i = 0; i < kMaxFloat; i++) {
-		_floatText[i][0] = 0;
-		_floatIcon[i][0] = 0;
+		_floatText[i].framesLeft = 0;
+		_floatIcon[i].framesLeft = 0;
 	}
 }
 

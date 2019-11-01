@@ -108,14 +108,14 @@ void GriffonEngine::updateEngine() {
 		int pa = (int)(_player.attackFrame);
 
 		for (int i = 0; i <= pa; i++) {
-			if (ABS(_playerattackofs[_player.walkDir][i][2]) < kEpsilon) {
-				_playerattackofs[_player.walkDir][i][2] = 1;
+			if (!_playerAttackOfs[_player.walkDir][i].completed) {
+				_playerAttackOfs[_player.walkDir][i].completed = true;
 
 				float opx = _player.px;
 				float opy = _player.py;
 
-				_player.px = _player.px + _playerattackofs[_player.walkDir][i][0];
-				_player.py = _player.py + _playerattackofs[_player.walkDir][i][1];
+				_player.px += _playerAttackOfs[_player.walkDir][i].x;
+				_player.py += _playerAttackOfs[_player.walkDir][i].y;
 
 				int sx = (int)(_player.px / 2 + 6);
 				int sy = (int)(_player.py / 2 + 10);
@@ -135,20 +135,20 @@ void GriffonEngine::updateEngine() {
 	}
 
 	for (int i = 0; i < kMaxFloat; i++) {
-		if (_floatText[i][0] > 0) {
+		if (_floatText[i].framesLeft > 0) {
 			float spd = 0.5 * _fpsr;
-			_floatText[i][0] = _floatText[i][0] - spd;
-			_floatText[i][2] = _floatText[i][2] - spd;
-			if (_floatText[i][0] < 0)
-				_floatText[i][0] = 0;
+			_floatText[i].framesLeft -= spd;
+			_floatText[i].y -= spd;
+			if (_floatText[i].framesLeft < 0)
+				_floatText[i].framesLeft = 0;
 		}
 
-		if (_floatIcon[i][0] > 0) {
+		if (_floatIcon[i].framesLeft > 0) {
 			float spd = 0.5 * _fpsr;
-			_floatIcon[i][0] = _floatIcon[i][0] - spd;
-			_floatIcon[i][2] = _floatIcon[i][2] - spd;
-			if (_floatIcon[i][0] < 0)
-				_floatIcon[i][0] = 0;
+			_floatIcon[i].framesLeft -= spd;
+			_floatIcon[i].y -= spd;
+			if (_floatIcon[i].framesLeft < 0)
+				_floatIcon[i].framesLeft = 0;
 		}
 	}
 
@@ -236,7 +236,7 @@ void GriffonEngine::updateEngine() {
 		}
 	}
 
-	// cloudson = false
+	// _cloudsOn = false
 
 	if (_itemSelOn)
 		_player.itemselshade = _player.itemselshade + 2 * _fpsr;
