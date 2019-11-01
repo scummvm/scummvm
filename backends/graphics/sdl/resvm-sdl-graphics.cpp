@@ -72,6 +72,24 @@ Common::Rect ResVmSdlGraphicsManager::getPreferredFullscreenResolution() {
 	uint preferredWidth = _capabilities.desktopWidth;
 	uint preferredHeight = _capabilities.desktopHeight;
 
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+	// When using SDL2, we can query the desktop resolution for the screen our window sits in
+	int displayIndex = -1;
+
+	SDL_Window *sdlWindow = _window->getSDLWindow();
+	if (sdlWindow) {
+		displayIndex = SDL_GetWindowDisplayIndex(sdlWindow);
+	}
+
+	if (displayIndex >= 0) {
+		SDL_DisplayMode displayMode;
+		if (!SDL_GetDesktopDisplayMode(displayIndex, &displayMode)) {
+			preferredWidth = displayMode.w;
+			preferredHeight = displayMode.h;
+		}
+	}
+#endif
+
 	// ... unless the user has set a resolution in the configuration file
 	const Common::String &fsres = ConfMan.get("fullscreen_res");
 	if (fsres != "desktop") {
