@@ -81,6 +81,7 @@ public:
 	void setMgLayerPriority(uint8 newPriority);
 	void setFgLayerPriority(uint8 newPriority);
 
+	void setLayerXOffset(uint8 layerNumber, uint16 xOffset);
 private:
 	void resetActorFrameFlags();
 	void drawActorNumber(int16 x, int16 y, uint16 actorId);

@@ -283,9 +283,9 @@ void Minigame3::run() {
 		i = i + 1;
 	}
 	_vm->waitForFrames(1);
-	FUN_80017e64(2,0x280,0);
-	FUN_80017e64(1,0,0);
-	FUN_80017e64(0,0,0);
+	updateBackgroundLayerOffset(2, 0x280, 0);
+	updateBackgroundLayerOffset(1, 0, 0);
+	updateBackgroundLayerOffset(0, 0, 0);
 //	call_fade_related_1f();
 	_vm->waitForFrames(0xf);
 	_vm->_talk->loadAndDisplayDialogAroundPoint(0x479A,0x14,3,0x1e01,0);
@@ -510,7 +510,7 @@ void Minigame3::run() {
 						local_1c8 = 1;
 						flags = flags | 1;
 						local_1c6 = 3;
-						FUN_80017e64(2,0x640,0);
+						updateBackgroundLayerOffset(2, 0x640, 0);
 						if (((currentState != 3) && (currentState != 6)) && (local_e == 0)) {
 							local_10 = 0x5a;
 							local_e = 1;
@@ -522,7 +522,7 @@ void Minigame3::run() {
 						if (local_1c8 == 2) {
 							local_1c6 = 3;
 							local_1c8 = 1;
-							FUN_80017e64(2,0x640,0);
+							updateBackgroundLayerOffset(2, 0x640, 0);
 						}
 						else {
 							if (local_1c8 == 1) {
@@ -558,7 +558,7 @@ void Minigame3::run() {
 					flags = flags & 0xfffd | 4;
 					local_1c8 = 2;
 					local_1c6 = 3;
-					FUN_80017e64(2,0x780,0);
+					updateBackgroundLayerOffset(2, 0x780, 0);
 					tearBlinkActorTbl[0]->y_pos = 0xcc;
 					tearBlinkActorTbl[1]->y_pos = 0xcc;
 				}
@@ -572,7 +572,7 @@ void Minigame3::run() {
 				if (local_1c8 == 1) {
 					local_1c6 = 3;
 					local_1c8 = 2;
-					FUN_80017e64(2,0x780,0);
+					updateBackgroundLayerOffset(2, 0x780, 0);
 					tearBlinkActorTbl2[0]->updateSequence(0);
 					tearBlinkActorTbl2[1]->updateSequence(1);
 					tearBlinkActorTbl2[0]->priorityLayer = 4;
@@ -582,7 +582,7 @@ void Minigame3::run() {
 					if (local_1c8 == 2) {
 						local_1c6 = 0x14;
 						local_1c8 = 3;
-						FUN_80017e64(2,0x8c0,0);
+						updateBackgroundLayerOffset(2, 0x8c0, 0);
 						tearBlinkActorTbl2[0]->updateSequence(2);
 						tearBlinkActorTbl2[1]->updateSequence(3);
 						flags = flags & 0xfffe | 2;
@@ -650,9 +650,9 @@ void Minigame3::run() {
 					if (local_14 == 5) {
 						local_14 = 4;
 					}
-					FUN_80017e64(2,(int)local_14 * 0x1400000 >> 0x10,0);
-					FUN_80017e64(1,(int)-local_1c0,(int)asStack412[local_1c0]);
-					FUN_80017e64(0,(int)-local_1c0,(int)asStack412[local_1c0]);
+					updateBackgroundLayerOffset(2, (int) local_14 * 0x140, 0);
+					updateBackgroundLayerOffset(1, (int) -local_1c0, (int) asStack412[local_1c0]);
+					updateBackgroundLayerOffset(0, (int) -local_1c0, (int) asStack412[local_1c0]);
 				}
 			}
 			else {
@@ -665,7 +665,7 @@ void Minigame3::run() {
 	while ((int16)i < 3) {
 		local_16 = 0;
 		while ((int16)local_16 < 3) {
-			FUN_80017e64(2,((int)(int16)local_16 * 0x140 + 0x640) * 0x10000 >> 0x10,0);
+			updateBackgroundLayerOffset(2, ((int) (int16) local_16 * 0x140 + 0x640) * 0x10000 >> 0x10, 0);
 			_vm->waitForFrames(5);
 			local_16 = local_16 + 1;
 		}
@@ -685,7 +685,7 @@ void Minigame3::run() {
 		_vm->waitForFrames(0xf);
 		local_16 = 1;
 		while (-1 < (int16)local_16) {
-			FUN_80017e64(2,((int)(int16)local_16 * 0x140 + 0x640) * 0x10000 >> 0x10,0);
+			updateBackgroundLayerOffset(2, ((int) (int16) local_16 * 0x140 + 0x640) * 0x10000 >> 0x10, 0);
 			_vm->waitForFrames(5);
 			local_16 = local_16 + -1;
 		}
@@ -693,9 +693,9 @@ void Minigame3::run() {
 	}
 	tearBlinkActorTbl[0]->flags = tearBlinkActorTbl[0]->flags | 4;
 	tearBlinkActorTbl[1]->flags = tearBlinkActorTbl[1]->flags | 4;
-	FUN_80017e64(2,0x280,0);
-	FUN_80017e64(1,0,0);
-	FUN_80017e64(0,0,0);
+	updateBackgroundLayerOffset(2, 0x280, 0);
+	updateBackgroundLayerOffset(1, 0, 0);
+	updateBackgroundLayerOffset(0, 0, 0);
 	local_224 = _vm->getRand(2);
 	handActorId->updateSequence(0);
 	handActorId->x_pos = handPositionsTbl[local_224].x;
@@ -766,8 +766,8 @@ void Minigame3::run() {
 	_vm->_scene->loadScene(origSceneId, 0);
 }
 
-void Minigame3::FUN_80017e64(uint32 param_1, int16 param_2, int16 param_3) {
-	//TODO what does this do?
+void Minigame3::updateBackgroundLayerOffset(uint32 layerNumber, int16 xOffset, int16 yOffset) {
+	_vm->_scene->setLayerXOffset(layerNumber, xOffset);
 //	int iVar1;
 //
 //	iVar1 = (param_1 & 0xffff) * 0x24;

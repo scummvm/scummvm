@@ -200,8 +200,9 @@ void SpecialOpcodes::freeOpcodes() {
 // Opcodes
 
 void SpecialOpcodes::spcCatapultMiniGame() {
-	Minigame1 minigame1(_vm);
-	minigame1.run();
+	spcRabbitsMiniGame();
+//	Minigame1 minigame1(_vm);
+//	minigame1.run();
 }
 
 void SpecialOpcodes::spcClearEngineFlag10() {

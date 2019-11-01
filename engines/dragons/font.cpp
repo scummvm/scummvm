@@ -224,7 +224,8 @@ void FontManager::updatePalette() {
 		updatePalEntry(palette_f2_font_maybe, 48, cursor3);
 		updatePalEntry(palette_f2_font_maybe, 50, 0x421);
 		updatePalEntry(palette_f2_font_maybe, 51, 0x3def);
-		//TODO WRITE_LE_INT16(&palette_f2_font_maybe[33], READ_LE_INT16(&palette_f0[DAT_80084f58 >> 8]) & 0x7fff);
+		//TODO WRITE_LE_INT16(&palette_f2_font_maybe[33], READ_LE_INT16(&palette_f0[DAT_80084f58 >> 8]) & 0x7fff); //DAT_80084f58 is set in ActuallyShowMessage()
+		updatePalEntry(palette_f2_font_maybe, 33, 0x3def); //temporarily put in standard gray
 		if (_vm->isUnkFlagSet(ENGINE_UNK1_FLAG_1)) {
 			updatePalEntry(palette_f2_font_maybe, 17, 0x3bee);
 			updatePalEntry(palette_f2_font_maybe, 33, 0x3bee);

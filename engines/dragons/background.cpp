@@ -88,6 +88,7 @@ Background::Background() : _priorityLayer(0), _points1(0), _points2(0), _data(0)
 	_layerSurface[0] = NULL;
 	_layerSurface[1] = NULL;
 	_layerSurface[2] = NULL;
+	_xOffset = 0;
 }
 
 Background::~Background() {
@@ -271,6 +272,14 @@ void Background::setPalette(byte *newPalette) {
 	for (int i = 0; i < 3; i++) {
 		loadGfxLayer(_layerSurface[i], _tileMap[i], _tileDataOffset);
 	}
+}
+
+void Background::setXOffset(int16 xOffset) {
+	_xOffset = xOffset;
+}
+
+int16 Background::getXOffset() {
+	return _xOffset;
 }
 
 BackgroundResourceLoader::BackgroundResourceLoader(BigfileArchive *bigFileArchive, DragonRMS *dragonRMS) : _bigFileArchive(
