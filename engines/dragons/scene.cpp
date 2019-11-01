@@ -330,7 +330,7 @@ void Scene::loadSceneData(uint32 sceneId, uint32 cameraPointId) {
 }
 
 void Scene::draw() {
-	Common::Rect rect(_camera.x, _camera.y, _camera.x + 320, _camera.y + 200);
+	Common::Rect rect(_camera.x + _stage->getXOffset(), _camera.y, _camera.x + 320 + _stage->getXOffset(), _camera.y + 200);
 	_vm->_screen->clearScreen();
 
 	for(uint16 priority = 1; priority < 16; priority++) {
@@ -479,6 +479,12 @@ void Scene::drawActorNumber(int16 x, int16 y, uint16 actorId) {
 		text[i] = text8[i];
 	}
 	_vm->_fontManager->addText(x, y, text, strlen(text8), 1);
+}
+
+void Scene::setLayerXOffset(uint8 layerNumber, uint16 xOffset) {
+	if (layerNumber == 2) {
+		_stage->setXOffset(xOffset);
+	}
 }
 
 } // End of namespace Dragons

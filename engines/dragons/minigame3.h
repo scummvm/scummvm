@@ -34,7 +34,7 @@ public:
 
 	void run();
 private:
-	void FUN_80017e64(uint32 param_1, int16 param_2, int16 param_3);
+	void updateBackgroundLayerOffset(uint32 layerNumber, int16 xOffset, int16 yOffset);
 	void FUN_80017f70_paletteRelated(uint16 unk);
 	void FUN_80017ef0();
 
