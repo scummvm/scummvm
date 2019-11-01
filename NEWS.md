@@ -2,7 +2,8 @@ For a more comprehensive changelog of the latest experimental code, see:
         https://github.com/scummvm/scummvm/commits/
 
 #### 2.2.0 (XXXX-XX-XX)
-
+ Xeen:
+   - Fix display of gold and gem amounts on the Switch
 
 #### 2.1.0 "Electric Sheep" (2019-10-11)
 
