@@ -68,9 +68,9 @@ enum EnvelopeState {
 class TownsPC98_FmSynth : public Audio::AudioStream {
 public:
 	enum EmuType {
-		kTypeTowns,
-		kType26,
-		kType86
+		kTypeTowns = 0,
+		kType26 = 1,
+		kType86 = 2
 	};
 
 	TownsPC98_FmSynth(Audio::Mixer *mixer, EmuType type);

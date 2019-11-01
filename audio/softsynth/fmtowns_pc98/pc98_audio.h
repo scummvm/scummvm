@@ -33,9 +33,9 @@ class PC98AudioCoreInternal;
 class PC98AudioPluginDriver {
 public:
 	enum EmuType {
-		kTypeTowns,
-		kType26,
-		kType86
+		kTypeTowns = 0,
+		kType26 = 1,
+		kType86 = 2
 	};
 
 	virtual ~PC98AudioPluginDriver() {}
