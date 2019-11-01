@@ -148,4 +148,10 @@ NetworkReadStreamResponse CurlRequest::execute() {
 
 const NetworkReadStream *CurlRequest::getNetworkReadStream() const { return _stream; }
 
+void CurlRequest::wait(int spinlockDelay) {
+	while (state() == Networking::PROCESSING) {
+		g_system->delayMillis(spinlockDelay);
+	}
+}
+
 } // End of namespace Networking

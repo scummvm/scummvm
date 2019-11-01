@@ -93,6 +93,9 @@ public:
 
 	/** Returns Request's NetworkReadStream. */
 	const NetworkReadStream *getNetworkReadStream() const;
+
+	/** Waits for Request to be processed. Should be called after Request is put into ConnMan. */
+	void wait(int spinlockDelay = 5);
 };
 
 } // End of namespace Networking
