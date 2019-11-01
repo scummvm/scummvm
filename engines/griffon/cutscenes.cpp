@@ -37,7 +37,6 @@
 #include "common/system.h"
 
 #include "griffon/griffon.h"
-#include "griffon/config.h"
 
 namespace Griffon {
 

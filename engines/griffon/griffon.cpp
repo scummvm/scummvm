@@ -32,7 +32,6 @@
 #include "engines/util.h"
 
 #include "griffon/griffon.h"
-#include "griffon/config.h"
 #include "griffon/console.h"
 
 namespace Griffon {

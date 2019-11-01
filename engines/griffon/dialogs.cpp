@@ -38,7 +38,6 @@
 #include "common/config-manager.h"
 
 #include "griffon/griffon.h"
-#include "griffon/config.h"
 
 namespace Griffon {
 

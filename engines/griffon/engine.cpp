@@ -35,7 +35,6 @@
  */
 
 #include "griffon/griffon.h"
-#include "griffon/config.h"
 #include "griffon/console.h"
 
 #include "common/system.h"
