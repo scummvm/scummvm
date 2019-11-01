@@ -189,8 +189,8 @@ void GriffonEngine::drawHud() {
 	game_fillrect(_videoBuffer2, 0, 0, 320, 240, 0);
 
 	for (int i = 0; i < kMaxFloat; i++) {
-		if (_floatText[i][0] > 0) {
-			int fc = (int)_floatText[i][3];
+		if (_floatText[i].framesLeft > 0) {
+			int fc = _floatText[i].col;
 			int c = fc, c2 = 3;
 
 			if (fc == 4)
@@ -201,19 +201,19 @@ void GriffonEngine::drawHud() {
 				c2 = 2;
 
 			if (fc != 0) {
-				drawString(_videoBuffer, _floatStr[i], (int)(_floatText[i][1]) + 0, (int)(_floatText[i][2]) - 1, c2);
-				drawString(_videoBuffer, _floatStr[i], (int)(_floatText[i][1]) + 0, (int)(_floatText[i][2]) + 1, c2);
-				drawString(_videoBuffer, _floatStr[i], (int)(_floatText[i][1]) - 1, (int)(_floatText[i][2]) + 0, c2);
-				drawString(_videoBuffer, _floatStr[i], (int)(_floatText[i][1]) + 1, (int)(_floatText[i][2]) + 0, c2);
+				drawString(_videoBuffer, _floatText[i].text, (int)(_floatText[i].x) + 0, (int)(_floatText[i].y) - 1, c2);
+				drawString(_videoBuffer, _floatText[i].text, (int)(_floatText[i].x) + 0, (int)(_floatText[i].y) + 1, c2);
+				drawString(_videoBuffer, _floatText[i].text, (int)(_floatText[i].x) - 1, (int)(_floatText[i].y) + 0, c2);
+				drawString(_videoBuffer, _floatText[i].text, (int)(_floatText[i].x) + 1, (int)(_floatText[i].y) + 0, c2);
 			}
 
-			drawString(_videoBuffer, _floatStr[i], (int)(_floatText[i][1]), (int)(_floatText[i][2]), c);
+			drawString(_videoBuffer, _floatText[i].text, (int)(_floatText[i].x), (int)(_floatText[i].y), c);
 		}
 
-		if (_floatIcon[i][0] > 0) {
-			int ico = _floatIcon[i][3];
-			int ix = _floatIcon[i][1];
-			int iy = _floatIcon[i][2];
+		if (_floatIcon[i].framesLeft > 0) {
+			int ico = _floatIcon[i].ico;
+			int ix = _floatIcon[i].x;
+			int iy = _floatIcon[i].y;
 
 			rcDest.left = ix;
 			rcDest.top = iy;
@@ -833,7 +833,7 @@ void GriffonEngine::drawNPCs(int mode) {
 							int ydif = (yloc + 8) - (_player.py + 12);
 
 							if ((abs(xdif) < 8 && abs(ydif) < 8) && _player.pause < _ticks) {
-								float damage = (float)_npcInfo[i].spelldamage * (1.0 + RND() * 0.5);
+								float damage = (float)_npcInfo[i].spellDamage * (1.0 + RND() * 0.5);
 
 								if (_player.hp > 0) {
 									damagePlayer(damage);
@@ -859,7 +859,7 @@ void GriffonEngine::drawNPCs(int mode) {
 							ydif = (yloc + 8) - (_player.py + 12);
 
 							if ((abs(xdif) < 8 && abs(ydif) < 8) && _player.pause < _ticks) {
-								float damage = (float)_npcInfo[i].spelldamage * (1.0 + RND() * 0.5);
+								float damage = (float)_npcInfo[i].spellDamage * (1.0 + RND() * 0.5);
 
 								if (_player.hp > 0) {
 									damagePlayer(damage);

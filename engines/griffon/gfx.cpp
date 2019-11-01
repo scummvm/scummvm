@@ -42,11 +42,11 @@ namespace Griffon {
 
 void GriffonEngine::addFloatIcon(int ico, float xloc, float yloc) {
 	for (int i = 0; i < kMaxFloat; i++) {
-		if (ABS(_floatIcon[i][0]) < kEpsilon) {
-			_floatIcon[i][0] = 32;
-			_floatIcon[i][1] = xloc;
-			_floatIcon[i][2] = yloc;
-			_floatIcon[i][3] = ico;
+		if (ABS(_floatIcon[i].framesLeft) < kEpsilon) {
+			_floatIcon[i].framesLeft = 32;
+			_floatIcon[i].x = xloc;
+			_floatIcon[i].y = yloc;
+			_floatIcon[i].ico = ico;
 			return;
 		}
 	}
@@ -54,12 +54,12 @@ void GriffonEngine::addFloatIcon(int ico, float xloc, float yloc) {
 
 void GriffonEngine::addFloatText(const char *stri, float xloc, float yloc, int col) {
 	for (int i = 0; i < kMaxFloat; i++) {
-		if (ABS(_floatText[i][0]) < kEpsilon) {
-			_floatText[i][0] = 32;
-			_floatText[i][1] = xloc;
-			_floatText[i][2] = yloc;
-			_floatText[i][3] = col;
-			strcpy(_floatStr[i], stri);
+		if (ABS(_floatText[i].framesLeft) < kEpsilon) {
+			_floatText[i].framesLeft = 32;
+			_floatText[i].x = xloc;
+			_floatText[i].y = yloc;
+			_floatText[i].col = col;
+			strcpy(_floatText[i].text, stri);
 			return;
 		}
 	}

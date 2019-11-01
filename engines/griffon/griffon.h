@@ -179,8 +179,8 @@ struct BodySection {
 };
 
 struct NPC {
-	float   x;
-	float   y;
+	float x;
+	float y;
 	int spriteset;
 	int x1;     // patrol area
 	int y1;
@@ -194,10 +194,10 @@ struct NPC {
 	int item2;
 	int item3;
 	int script;
-	float   frame;
-	float   frame2;     // end boss specific
+	float frame;
+	float frame2;     // end boss specific
 	int cframe;
-	bool onmap;      // is this npc set to be genned in the mapfile
+	bool onMap;      // is this npc set to be genned in the mapfile
 
 	int ticks;
 	int pause;
@@ -205,7 +205,7 @@ struct NPC {
 
 	int movementmode;
 	int walkdir;
-	float   walkspd;
+	float walkspd;
 	int movingdir;
 	bool moving;
 
@@ -217,17 +217,17 @@ struct NPC {
 	int attacknext;
 	int attackattempt;
 
-	int spelldamage;
-	int attackdamage;
+	int spellDamage;
+	int attackDamage;
 
 
 	// one wing and firehydra specific
 	BodySection bodysection[31];
-	float   swayangle;
-	float   swayspd;
-	float   headtargetx[4];
-	float   headtargety[4];
-	int castpause;
+	float swayAngle;
+	float swaySpeed;
+	float headTargetX[4];
+	float headTargetY[4];
+	int castPause;
 
 	// firehydra specific
 	int attacknext2[4];
@@ -279,6 +279,27 @@ struct AnimSet {
 struct DataChunk {
 	byte *data;
 	int size;
+};
+
+struct FloatTextStruct {
+	float framesLeft;
+	float x;
+	float y;
+	int col;
+	char *text;
+};
+
+struct FloatIconStruct {
+	float framesLeft;
+	float x;
+	float y;
+	int ico;
+};
+
+struct AttackOffsetStruct {
+	float x;
+	float y;
+	bool completed;
 };
 
 class GriffonEngine : public Engine {
@@ -451,12 +472,10 @@ private:
 	// id number 0&1 = players
 	Graphics::TransparentSurface *_animsAttack[100];
 	// attack anims
-	float _playerattackofs[4][16][3];
-	// [dir] [frame] [x,y ofs, completed(0/1)]
+	AttackOffsetStruct _playerAttackOfs[4][16];
 
-	float _floatText[kMaxFloat][4]; // [id] [framesleft, x, y, col]
-	char *_floatStr[kMaxFloat];
-	float  _floatIcon[kMaxFloat][4]; // [id] [framesleft, x, y, ico]
+	FloatTextStruct _floatText[kMaxFloat];
+	FloatIconStruct _floatIcon[kMaxFloat];
 
 	// special for animset2
 	AnimSet _animSet2[7], _animSet9[7];

@@ -55,7 +55,7 @@ namespace Griffon {
 void GriffonEngine::initialize() {
 	// init char *_floatstri[kMaxFloat]
 	for (int i = 0; i < kMaxFloat; i++)
-		_floatStr[i] = (char *)malloc(64); // 64 bytes each string (should be enough)
+		_floatText[i].text = (char *)malloc(64); // 64 bytes each string (should be enough)
 
 	_video = new Graphics::TransparentSurface;
 	_video->create(320, 240, g_system->getScreenFormat());
@@ -107,17 +107,17 @@ void GriffonEngine::initialize() {
 	_nextTicks = _ticks + 1000;
 
 	for (int i = 0; i <= 15; i++) {
-		_playerattackofs[0][i][0] = 0; // -1// -(i + 1)
-		_playerattackofs[0][i][1] = -sin(3.14159 * 2 * (i + 1) / 16) * 2 - 1;
+		_playerAttackOfs[0][i].x = 0; // -1// -(i + 1)
+		_playerAttackOfs[0][i].y = -sin(3.14159 * 2 * (i + 1) / 16) * 2 - 1;
 
-		_playerattackofs[1][i][0] = 0; // i + 1
-		_playerattackofs[1][i][1] = -sin(3.14159 * 2 * (i + 1) / 16) * 2 + 1;
+		_playerAttackOfs[1][i].x = 0; // i + 1
+		_playerAttackOfs[1][i].y = -sin(3.14159 * 2 * (i + 1) / 16) * 2 + 1;
 
-		_playerattackofs[2][i][0] = -1; // -(i + 1)
-		_playerattackofs[2][i][1] = -sin(3.14159 * 2 * (i + 1) / 16) * 2;
+		_playerAttackOfs[2][i].x = -1; // -(i + 1)
+		_playerAttackOfs[2][i].y = -sin(3.14159 * 2 * (i + 1) / 16) * 2;
 
-		_playerattackofs[3][i][0] = 1; // i + 1
-		_playerattackofs[3][i][1] = -sin(3.14159 * 2 * (i + 1) / 16) * 2;
+		_playerAttackOfs[3][i].x = 1; // i + 1
+		_playerAttackOfs[3][i].y = -sin(3.14159 * 2 * (i + 1) / 16) * 2;
 	}
 
 	setupAudio();
@@ -390,7 +390,7 @@ void GriffonEngine::loadMap(int mapnum) {
 	_lastNpc = 0;
 
 	for (int i = 0; i < kMaxNPC; i++)
-		_npcInfo[i].onmap = false;
+		_npcInfo[i].onMap = false;
 
 	for (int x = 0; x <= 19; x++) {
 		for (int y = 0; y <= 19; y++) {
@@ -444,7 +444,7 @@ void GriffonEngine::loadMap(int mapnum) {
 				_npcInfo[o].y = y * 16 - 5;
 
 				_npcInfo[o].walkdir = 1;
-				_npcInfo[o].onmap = true;
+				_npcInfo[o].onMap = true;
 			}
 		}
 	}
@@ -492,8 +492,8 @@ void GriffonEngine::loadMap(int mapnum) {
 			_npcInfo[i].hp = 12;
 			_npcInfo[i].attackdelay = 2000;
 
-			_npcInfo[i].attackdamage = 2;
-			_npcInfo[i].spelldamage = 0;
+			_npcInfo[i].attackDamage = 2;
+			_npcInfo[i].spellDamage = 0;
 
 			_npcInfo[i].walkspd = 1;
 
@@ -505,13 +505,13 @@ void GriffonEngine::loadMap(int mapnum) {
 		if (_npcInfo[i].spriteset == kMonsterOneWing) {
 			_npcInfo[i].hp = 200;
 			_npcInfo[i].attackdelay = 2000;
-			_npcInfo[i].swayspd = 1;
+			_npcInfo[i].swaySpeed = 1;
 
-			_npcInfo[i].attackdamage = 24;
-			_npcInfo[i].spelldamage = 30;
+			_npcInfo[i].attackDamage = 24;
+			_npcInfo[i].spellDamage = 30;
 
 			_npcInfo[i].walkspd = 1.4f;
-			_npcInfo[i].castpause = _ticks;
+			_npcInfo[i].castPause = _ticks;
 		}
 
 		// boss1
@@ -519,8 +519,8 @@ void GriffonEngine::loadMap(int mapnum) {
 			_npcInfo[i].hp = 300;
 			_npcInfo[i].attackdelay = 2200;
 
-			_npcInfo[i].attackdamage = 0;
-			_npcInfo[i].spelldamage = 30;
+			_npcInfo[i].attackDamage = 0;
+			_npcInfo[i].spellDamage = 30;
 
 			_npcInfo[i].walkspd = 1.2f;
 		}
@@ -530,8 +530,8 @@ void GriffonEngine::loadMap(int mapnum) {
 			_npcInfo[i].hp = 200;
 			_npcInfo[i].attackdelay = 2800;
 
-			_npcInfo[i].attackdamage = 0;
-			_npcInfo[i].spelldamage = 30;
+			_npcInfo[i].attackDamage = 0;
+			_npcInfo[i].spellDamage = 30;
 
 			_npcInfo[i].walkspd = 1;
 		}
@@ -541,12 +541,12 @@ void GriffonEngine::loadMap(int mapnum) {
 			_npcInfo[i].hp = 600;
 			_npcInfo[i].attackdelay = 2200;
 
-			_npcInfo[i].attackdamage = 50;
-			_npcInfo[i].spelldamage = 30;
+			_npcInfo[i].attackDamage = 50;
+			_npcInfo[i].spellDamage = 30;
 
 			_npcInfo[i].walkspd = 1.3f;
 
-			_npcInfo[i].swayangle = 0;
+			_npcInfo[i].swayAngle = 0;
 		}
 
 		// baby fire dragon
@@ -554,8 +554,8 @@ void GriffonEngine::loadMap(int mapnum) {
 			_npcInfo[i].hp = 20;
 			_npcInfo[i].attackdelay = 1500;
 
-			_npcInfo[i].attackdamage = 0;
-			_npcInfo[i].spelldamage = 12;
+			_npcInfo[i].attackDamage = 0;
+			_npcInfo[i].spellDamage = 12;
 
 			_npcInfo[i].walkspd = 1;
 
@@ -568,8 +568,8 @@ void GriffonEngine::loadMap(int mapnum) {
 			_npcInfo[i].hp = 40;
 			_npcInfo[i].attackdelay = 5000;
 
-			_npcInfo[i].attackdamage = 0;
-			_npcInfo[i].spelldamage = 8;
+			_npcInfo[i].attackDamage = 0;
+			_npcInfo[i].spellDamage = 8;
 
 			_npcInfo[i].walkspd = 1;
 
@@ -582,8 +582,8 @@ void GriffonEngine::loadMap(int mapnum) {
 			_npcInfo[i].hp = 100;
 			_npcInfo[i].attackdelay = 1500;
 
-			_npcInfo[i].attackdamage = 0;
-			_npcInfo[i].spelldamage = 24;
+			_npcInfo[i].attackDamage = 0;
+			_npcInfo[i].spellDamage = 24;
 
 			_npcInfo[i].walkspd = 1;
 
@@ -595,14 +595,14 @@ void GriffonEngine::loadMap(int mapnum) {
 		if (_npcInfo[i].spriteset == kMonsterTwoWing) {
 			_npcInfo[i].hp = 140;
 			_npcInfo[i].attackdelay = 2000;
-			_npcInfo[i].swayspd = 1;
+			_npcInfo[i].swaySpeed = 1;
 
-			_npcInfo[i].attackdamage = 30;
-			_npcInfo[i].spelldamage = 0;
+			_npcInfo[i].attackDamage = 30;
+			_npcInfo[i].spellDamage = 0;
 
 			_npcInfo[i].walkspd = 1;
 
-			_npcInfo[i].castpause = 0;
+			_npcInfo[i].castPause = 0;
 		}
 
 		// dragon2
@@ -610,8 +610,8 @@ void GriffonEngine::loadMap(int mapnum) {
 			_npcInfo[i].hp = 80;
 			_npcInfo[i].attackdelay = 1500;
 
-			_npcInfo[i].attackdamage = 24;
-			_npcInfo[i].spelldamage = 0;
+			_npcInfo[i].attackDamage = 24;
+			_npcInfo[i].spellDamage = 0;
 
 			_npcInfo[i].walkspd = 1;
 
@@ -623,8 +623,8 @@ void GriffonEngine::loadMap(int mapnum) {
 			_npcInfo[i].hp = 1200;
 			_npcInfo[i].attackdelay = 2000;
 
-			_npcInfo[i].attackdamage = 100;
-			_npcInfo[i].spelldamage = 60;
+			_npcInfo[i].attackDamage = 100;
+			_npcInfo[i].spellDamage = 60;
 
 			_npcInfo[i].walkspd = 1;
 
@@ -636,15 +636,15 @@ void GriffonEngine::loadMap(int mapnum) {
 			_npcInfo[i].hp = 800;
 			_npcInfo[i].attackdelay = 2000;
 
-			_npcInfo[i].attackdamage = 100;
-			_npcInfo[i].spelldamage = 50;
+			_npcInfo[i].attackDamage = 100;
+			_npcInfo[i].spellDamage = 50;
 
 			_npcInfo[i].walkspd = 1;
 
 			_npcInfo[i].floating = RND() * 16;
 		}
 
-		if (!_npcInfo[i].onmap)
+		if (!_npcInfo[i].onMap)
 			_npcInfo[i].hp = 0;
 
 		_npcInfo[i].maxhp = _npcInfo[i].hp;
@@ -678,8 +678,8 @@ void GriffonEngine::loadMap(int mapnum) {
 				_npcInfo[i].bodysection[f].y = _npcInfo[i].y + 14;
 			}
 
-			_npcInfo[i].headtargetx[0] = _npcInfo[i].x + 12;
-			_npcInfo[i].headtargety[0] = _npcInfo[i].y + 14;
+			_npcInfo[i].headTargetX[0] = _npcInfo[i].x + 12;
+			_npcInfo[i].headTargetY[0] = _npcInfo[i].y + 14;
 
 		}
 
@@ -690,8 +690,8 @@ void GriffonEngine::loadMap(int mapnum) {
 			}
 
 			for (int f = 0; f <= 2; f++) {
-				_npcInfo[i].headtargetx[f] = _npcInfo[i].x + 12;
-				_npcInfo[i].headtargety[f] = _npcInfo[i].y + 14;
+				_npcInfo[i].headTargetX[f] = _npcInfo[i].x + 12;
+				_npcInfo[i].headTargetY[f] = _npcInfo[i].y + 14;
 
 				_npcInfo[i].attacking2[f] = false;
 				_npcInfo[i].attackframe2[f] = 0;
