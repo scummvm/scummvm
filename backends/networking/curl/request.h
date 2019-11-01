@@ -82,8 +82,8 @@ struct ErrorResponse {
 	ErrorResponse(Request *rq, bool interrupt, bool failure, Common::String resp, long httpCode);
 };
 
-typedef Response<void *> DataReponse;
-typedef Common::BaseCallback<DataReponse> *DataCallback;
+typedef Response<void *> DataResponse;
+typedef Common::BaseCallback<DataResponse> *DataCallback;
 typedef Common::BaseCallback<ErrorResponse> *ErrorCallback;
 
 /**
