@@ -43,4 +43,4 @@ bool Console::Cmd_godMode(int argc, const char** argv) {
 	return true;
 }
 
-} // End of namespace Plumbers
+} // End of namespace Griffon
