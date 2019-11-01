@@ -65,7 +65,6 @@ GriffonEngine::GriffonEngine(OSystem *syst) : Engine(syst) {
 
 	// Synchronize the sound settings from ScummVM
 	syncSoundSettings();
-	loadConfig(&config);
 }
 
 GriffonEngine::~GriffonEngine() {
@@ -74,6 +73,30 @@ GriffonEngine::~GriffonEngine() {
 
 void GriffonEngine::syncSoundSettings() {
 	Engine::syncSoundSettings();
+
+	bool mute = false;
+	config.music = config.effects = false;
+
+	if (ConfMan.hasKey("mute"))
+		mute = ConfMan.getBool("mute");
+
+	if (!mute) {
+		config.music = !ConfMan.getBool("music_mute");
+		config.effects = !ConfMan.getBool("sfx_mute");
+	}
+
+	config.musicVol = ConfMan.getInt("music_volume");
+	config.effectsVol = ConfMan.getInt("sfx_volume");
+}
+
+void GriffonEngine::saveConfig() {
+	ConfMan.setBool("mute", !(config.music || config.effectsVol));
+	ConfMan.setBool("music_mute", !config.music);
+	ConfMan.setBool("sfx_mute", !config.effects);
+	ConfMan.setInt("music_volume", config.musicVol);
+	ConfMan.setInt("sfx_volume", config.effectsVol);
+
+	ConfMan.flushToDisk();
 }
 
 Common::Error GriffonEngine::run() {

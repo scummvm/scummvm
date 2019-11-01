@@ -302,6 +302,13 @@ struct AttackOffsetStruct {
 	bool completed;
 };
 
+struct CONFIG {
+	bool music;
+	int musicVol;
+	bool effects;
+	int effectsVol;
+};
+
 class GriffonEngine : public Engine {
 public:
 	GriffonEngine(OSystem *syst);
@@ -520,11 +527,13 @@ private:
 	bool _saidLocked;
 	bool _saidJammed;
 
-
 	// ysort
 	int _ysort[2401], _lasty, _firsty;
 
 	bool _pmenu;
+
+	CONFIG config;
+	void saveConfig();
 };
 
 }

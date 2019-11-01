@@ -446,7 +446,7 @@ void GriffonEngine::configMenu() {
 								config.effects = false;
 							break;
 						case 13:
-							saveConfig(&config);
+							saveConfig();
 							// no break on purpose
 						case 14:
 							exitMenu = true;
