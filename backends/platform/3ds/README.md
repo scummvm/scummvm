@@ -235,7 +235,7 @@ Additionally compile to specific formats to be used on the 3DS:
 Assuming everything was successful, you'll be able to find the binary
 files in the root of your scummvm folder.
 
-Note: for the CIA format, you will need the '3dstool', 'makerom' and 'bannertool' tools which are
+Note: for the CIA format, you will need the 'makerom' and 'bannertool' tools which are
 not supplied with devkitPro.
 
 4.3) Warning for build sizes
