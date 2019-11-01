@@ -392,10 +392,32 @@ void Net::remoteSendArray(int typeOfSend, int sendTypeParam, int priority, int a
 	int32 size = (FROM_LE_32(ah->dim1end) - FROM_LE_32(ah->dim1start) + 1) *
 		(FROM_LE_32(ah->dim2end) - FROM_LE_32(ah->dim2start) + 1);
 
-	for (int i = 0; i < size - 1; i++)
-		jsonData += Common::String::format("%d, ", ah->data[i]);
+	for (int i = 0; i < size; i++) {
+		int32 data;
 
+		switch (FROM_LE_32(ah->type)) {
+		case ScummEngine_v100he::kByteArray:
+		case ScummEngine_v100he::kStringArray:
+			data = ah->data[i];
+			break;
+
+		case ScummEngine_v100he::kIntArray:
+			data = (int16)READ_LE_UINT16(ah->data + i * 2);
+			break;
+
+		case ScummEngine_v100he::kDwordArray:
+			data = (int32)READ_LE_UINT32(ah->data + i * 4);
+			break;
+		}
+
+		jsonData += Common::String::format("%d, ", data);
+
+		if (i < size - 1)
+			jsonData += ", ";
+		else
+			jsonData += "]";
 	jsonData += Common::String::format("%d]", ah->data[size - 1]);
+	}
 
 	warning("STUB: Net::remoteSendArray(%d, %d, %d, %d)", typeOfSend, sendTypeParam, priority, arrayIndex & ~0x33539000); // PN_RemoteSendArrayCommand
 
