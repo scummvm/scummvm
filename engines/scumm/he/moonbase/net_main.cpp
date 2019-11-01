@@ -548,7 +548,20 @@ bool Net::remoteReceiveData() {
 			// and unpack it into an scumm array :-)
 
 			newArray = _vm->findFreeArrayId();
-			//unpackageArray(newArray, _packbuffer, datalen);
+
+			int dim1start = _packetdata->child("data")->child("dim1start")->asIntegerNumber();
+			int dim1end   = _packetdata->child("data")->child("dim1end")->asIntegerNumber();
+			int dim2start = _packetdata->child("data")->child("dim2start")->asIntegerNumber();
+			int dim2end   = _packetdata->child("data")->child("dim2end")->asIntegerNumber();
+			int atype     = _packetdata->child("data")->child("type")->asIntegerNumber();
+
+			byte *data = _vm->defineArray(newArray, atype, dim2start, dim2end, dim1start, dim1end);
+
+			int32 size = (dim1end - dim1start + 1) * (dim2end - dim2start + 1);
+
+			for (int i = 0; i < size; i++)
+				*data++ = _packetdata->child("data")->child("data")->asArray()[i]->asIntegerNumber();
+
 			memset(_tmpbuffer, 0, 25 * 4);
 			WRITE_UINT32(_tmpbuffer, newArray);
 
