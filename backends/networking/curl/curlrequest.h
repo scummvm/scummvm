@@ -50,6 +50,8 @@ protected:
 	uint32 _bytesBufferSize;
 	bool _uploading; //using PUT method
 	bool _usingPatch; //using PATCH method
+	bool _keepAlive;
+	long _keepAliveIdle, _keepAliveInterval;
 
 	virtual NetworkReadStream *makeStream();
 
@@ -84,6 +86,10 @@ public:
 
 	/** Remembers to use PATCH method when it would create NetworkReadStream. */
 	virtual void usePatch();
+
+	/** Remembers to use Connection: keep-alive or close. */
+	virtual void connectionKeepAlive(long idle = 120, long interval = 60);
+	virtual void connectionClose();
 
 	/**
 	 * Starts this Request with ConnMan.

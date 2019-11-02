@@ -38,6 +38,8 @@ protected:
 	char *_text;
 	bool _started, _complete, _success;
 
+	bool reuseStream();
+
 	/** Prepares raw bytes from _contentsStream. */
 	char *getPreparedContents();
 
@@ -48,14 +50,16 @@ public:
 	SessionRequest(Common::String url, DataCallback cb = nullptr, ErrorCallback ecb = nullptr);
 	virtual ~SessionRequest();
 
-	virtual void start();
+	void start();
+	void startAndWait();
+
+	void reuse(Common::String url, DataCallback cb = nullptr, ErrorCallback ecb = nullptr);
+
 	virtual void handle();
 	virtual void restart();
 
 	/** This request DOES NOT delete automatically after calling callbacks. It gets PAUSED, and in order to make it FINISHED (i.e. delete), this method MUST be called. */
-	virtual void close();
-
-	void startAndWait();
+	void close();	
 
 	bool complete();
 	bool success();

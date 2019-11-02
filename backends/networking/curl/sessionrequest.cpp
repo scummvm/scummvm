@@ -34,10 +34,30 @@ namespace Networking {
 SessionRequest::SessionRequest(Common::String url, DataCallback cb, ErrorCallback ecb):
 	CurlRequest(cb, ecb, url), _contentsStream(DisposeAfterUse::YES),
 	_buffer(new byte[CURL_SESSION_REQUEST_BUFFER_SIZE]), _text(nullptr),
-	_started(false), _complete(false), _success(false) {}
+	_started(false), _complete(false), _success(false) {
+
+	// automatically go under ConnMan control so nobody would be able to leak the memory
+	// but, we don't need it to be working just yet
+	_state = PAUSED;
+	ConnMan.addRequest(this);
+}
 
 SessionRequest::~SessionRequest() {
 	delete[] _buffer;
+}
+
+bool SessionRequest::reuseStream() {
+	if (!_stream) {
+		return false;
+	}
+
+	if (_bytesBuffer)
+		return _stream->reuse(_url.c_str(), _headersList, _bytesBuffer, _bytesBufferSize, _uploading, _usingPatch, true);
+
+	if (!_formFields.empty() || !_formFiles.empty())
+		return _stream->reuse(_url.c_str(), _headersList, _formFields, _formFiles);
+
+	return _stream->reuse(_url.c_str(), _headersList, _postFields, _uploading, _usingPatch);
 }
 
 char *SessionRequest::getPreparedContents() {
@@ -71,12 +91,29 @@ void SessionRequest::finishSuccess() {
 }
 
 void SessionRequest::start() {
-	if (_started) {
+	if (_state != PAUSED || _started) {
 		warning("Can't start() SessionRequest as it is already started");
-	} else {
-		_started = true;
-		ConnMan.addRequest(this);
+		return;
 	}
+
+	_state = PROCESSING;
+	_started = true;
+}
+
+void SessionRequest::startAndWait() {
+	start();
+	wait();
+}
+
+void SessionRequest::reuse(Common::String url, DataCallback cb, ErrorCallback ecb) {
+	_url = url;
+
+	delete _callback;
+	delete _errorCallback;
+	_callback = cb;
+	_errorCallback = ecb;
+
+	restart();
 }
 
 void SessionRequest::handle() {
@@ -95,23 +132,28 @@ void SessionRequest::handle() {
 }
 
 void SessionRequest::restart() {
-	if (_stream)
-		delete _stream;
-	_stream = nullptr;
+	if (_stream) {
+		bool deleteStream = true;
+		if (_keepAlive && reuseStream()) {
+			deleteStream = false;
+		}
+
+		if (deleteStream) {
+			delete _stream;
+			_stream = nullptr;
+		}
+	}
+
 	_contentsStream = Common::MemoryWriteStreamDynamic(DisposeAfterUse::YES);
 	_text = nullptr;
 	_complete = false;
 	_success = false;
+	_started = false;
 	//with no stream available next handle() will create another one
 }
 
 void SessionRequest::close() {
 	_state = FINISHED;
-}
-
-void SessionRequest::startAndWait() {
-	start();
-	wait();
 }
 
 bool SessionRequest::complete() {
