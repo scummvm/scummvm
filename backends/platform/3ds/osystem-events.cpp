@@ -213,7 +213,7 @@ static void eventThreadFunc(void *arg) {
 				event.type = Common::EVENT_RBUTTONUP;
 			pushEventQueue(eventQueue, event);
 		}
-		if (keysPressed & KEY_Y || keysPressed & KEY_DRIGHT || keysReleased & KEY_Y || keysReleased & KEY_DRIGHT) {
+		if (keysPressed & KEY_Y || keysPressed & KEY_DRIGHT) {
 			event.type = Common::EVENT_VIRTUAL_KEYBOARD;
 			pushEventQueue(eventQueue, event);
 		}
