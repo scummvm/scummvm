@@ -109,6 +109,7 @@ void load_text_list(Common::ReadStream *fIn, XArrayType &the_list) {
 
 	new_xarray(the_list);
 	n = fIn->readUint16LE();
+
 	for (i = 0; i < n; ++i) {
 		load_string(fIn, s);
 		append_to_xarray(the_list, NewConstStr(s));

@@ -101,6 +101,7 @@ void Archetype::interpret() {
 
 	ContextType context;
 	ResultType result;
+
 	undefine(result);
 
 	if (!send_message(OP_SEND, find_message("START"), MainObject, result, context))
@@ -140,8 +141,8 @@ void Archetype::lookup(int the_obj, int the_attr, ResultType &result, ContextTyp
 
 	if (desired == NAME) {
 		result._kind = IDENT;
-		result._ident.ident_kind = ATTRIBUTE_ID;
-		result._ident.ident_int = the_attr;
+		result._data._ident.ident_kind = ATTRIBUTE_ID;
+		result._data._ident.ident_int = the_attr;
 		return;
 	}
 
@@ -202,19 +203,19 @@ void Archetype::lookup(int the_obj, int the_attr, ResultType &result, ContextTyp
 	case LVALUE:
 		if (first_pass) {
 			result._kind = ATTR_PTR;
-			result._attr.acl_attr = np;
+			result._data._attr.acl_attr = np;
 		} else {
 			// inherited - must create new node }
 			result._kind = ATTR_PTR;
-			result._attr.acl_attr = (NodePtr)malloc(sizeof(NodeType));
+			result._data._attr.acl_attr = (NodePtr)malloc(sizeof(NodeType));
 
 			e = (ExprTree)malloc(sizeof(ExprNode));
 			undefine(*e);
 			eval_expr((ExprPtr)np->data, *e, c, RVALUE);
 
-			result._attr.acl_attr->data = e;
-			result._attr.acl_attr->key = the_attr;
-			insert_item(((ObjectPtr)original)->attributes, result._attr.acl_attr);
+			result._data._attr.acl_attr->data = e;
+			result._data._attr.acl_attr->key = the_attr;
+			insert_item(((ObjectPtr)original)->attributes, result._data._attr.acl_attr);
 		}
 		break;
 
@@ -228,7 +229,7 @@ bool Archetype::send_message(int transport, int message_sent, int recipient,
 	bool done, find_other;
 	ObjectPtr op, original;
 	ResultType r;
-	NodePtr np;
+	NodePtr np;  
 	StatementPtr st;
 	void *p;
 	ContextType c;
@@ -240,8 +241,8 @@ bool Archetype::send_message(int transport, int message_sent, int recipient,
 
 	if ((Debug & DEBUG_MSGS) > 0) {
 		r._kind = IDENT;
-		r._ident.ident_kind = OBJECT_ID;
-		r._ident.ident_int = context.self;
+		r._data._ident.ident_kind = OBJECT_ID;
+		r._data._ident.ident_int = context.self;
 		wrapout(" : ", false);
 		display_result(r);
 
@@ -256,10 +257,10 @@ bool Archetype::send_message(int transport, int message_sent, int recipient,
 		}
 
 		if (transport == OP_SEND_TO_TYPE)
-			r._ident.ident_kind = TYPE_ID;
+			r._data._ident.ident_kind = TYPE_ID;
 
 		wrapout(" to ", false);
-		r._ident.ident_int = recipient;
+		r._data._ident.ident_int = recipient;
 		display_result(r);
 		wrapout("", true);
 	}
@@ -319,7 +320,7 @@ bool Archetype::send_message(int transport, int message_sent, int recipient,
 	// If we get here, it means that there was not even a "default" handler for
 	// the message in the given object or its lineage.  Return ABSENT
 	result._kind = RESERVED;
-	result._reserved.keyword = RW_ABSENT;
+	result._data._reserved.keyword = RW_ABSENT;
 
 	return false;
 }
@@ -342,19 +343,19 @@ void Archetype::eval_expr(ExprTree the_expr, ResultType &result, ContextType &co
 		return;
 
 	// Check:  if this is a lone attribute, look it up in this object"s table
-	if (the_expr->_kind == IDENT && the_expr->_ident.ident_kind == ATTRIBUTE_ID)
-		lookup(context.self, the_expr->_ident.ident_int, result, context, desired);
+	if (the_expr->_kind == IDENT && the_expr->_data._ident.ident_kind == ATTRIBUTE_ID)
+		lookup(context.self, the_expr->_data._ident.ident_int, result, context, desired);
 
 	else if (the_expr->_kind == RESERVED) {
 		// it is a special reserved word that requires an action
-		switch (the_expr->_reserved.keyword) {
+		switch (the_expr->_data._reserved.keyword) {
 		case RW_READ:
 		case RW_KEY:
 			result._kind = STR_PTR;
-			if (the_expr->_reserved.keyword == RW_READ)
-				result._str.acl_str = ReadLine(true);			// read full line
+			if (the_expr->_data._reserved.keyword == RW_READ)
+				result._data._str.acl_str = ReadLine(true);			// read full line
 			else
-				result._str.acl_str = ReadLine(false);			// read single key
+				result._data._str.acl_str = ReadLine(false);			// read single key
 
 			Rows = 0;
 			cursor_reset();				// user will have had to hit <RETURN>
@@ -362,24 +363,24 @@ void Archetype::eval_expr(ExprTree the_expr, ResultType &result, ContextType &co
 
 		case RW_MESSAGE:
 			result._kind = MESSAGE;
-			result._msgTextQuote.index = context.message;
+			result._data._msgTextQuote.index = context.message;
 			break;
 
 		case RW_EACH:
 		case RW_SELF:
 		case RW_SENDER:
 			result._kind = IDENT;
-			result._ident.ident_kind = OBJECT_ID;
+			result._data._ident.ident_kind = OBJECT_ID;
 
-			switch (the_expr->_reserved.keyword) {
+			switch (the_expr->_data._reserved.keyword) {
 			case RW_EACH:
-				result._ident.ident_int = context.each;
+				result._data._ident.ident_int = context.each;
 				break;
 			case RW_SELF:
-				result._ident.ident_int = context.self;
+				result._data._ident.ident_int = context.self;
 				break;
 			case RW_SENDER:
-				result._ident.ident_int = context.sender;
+				result._data._ident.ident_int = context.sender;
 				break;
 			default:
 				break;
@@ -391,37 +392,37 @@ void Archetype::eval_expr(ExprTree the_expr, ResultType &result, ContextType &co
 		}
 	} else if (the_expr->_kind == OPER) {
 		// It's an operator, need to evaulate it
-		switch (the_expr->_oper.op_name) {
+		switch (the_expr->_data._oper.op_name) {
 		case OP_SEND:
 		case OP_PASS:
-			eval_expr(the_expr->_oper.left, r1, context, RVALUE);
-			eval_expr(the_expr->_oper.right, r2, context, RVALUE);
+			eval_expr(the_expr->_data._oper.left, r1, context, RVALUE);
+			eval_expr(the_expr->_data._oper.right, r2, context, RVALUE);
 
-			if (r2._kind == IDENT && (r2._ident.ident_kind == OBJECT_ID || r2._ident.ident_kind == TYPE_ID)) {
+			if (r2._kind == IDENT && (r2._data._ident.ident_kind == OBJECT_ID || r2._data._ident.ident_kind == TYPE_ID)) {
 				// Object 0 is the system object and always receives string messages
 
-				if (r2._ident.ident_kind == OBJECT_ID && r2._ident.ident_int == 0) {
+				if (r2._data._ident.ident_kind == OBJECT_ID && r2._data._ident.ident_int == 0) {
 					if (convert_to(STR_PTR, r1))
-						send_to_system(the_expr->_oper.op_name, *r1._str.acl_str, result, context);
+						send_to_system(the_expr->_data._oper.op_name, *r1._data._str.acl_str, result, context);
 
 				} else if (convert_to(MESSAGE, r1)) {
-					if (r2._ident.ident_kind == TYPE_ID)
-						b = send_message(OP_SEND_TO_TYPE, r1._msgTextQuote.index, r2._ident.ident_int,
+					if (r2._data._ident.ident_kind == TYPE_ID)
+						b = send_message(OP_SEND_TO_TYPE, r1._data._msgTextQuote.index, r2._data._ident.ident_int,
 							result, context);
 					else
-						b = send_message(the_expr->_oper.op_name, r1._msgTextQuote.index,
-							r2._ident.ident_int, result, context);
+						b = send_message(the_expr->_data._oper.op_name, r1._data._msgTextQuote.index,
+							r2._data._ident.ident_int, result, context);
 				}
 			}
 			break;
 
 		case OP_DOT:
-			eval_expr(the_expr->_oper.left, r1, context, RVALUE);
+			eval_expr(the_expr->_data._oper.left, r1, context, RVALUE);
 
-			if (r1._kind == IDENT && r1._ident.ident_kind == OBJECT_ID) {
-				eval_expr(the_expr->_oper.right, r2, context, NAME);
-				if (r2._kind == IDENT && r2._ident.ident_kind == ATTRIBUTE_ID)
-					lookup(r1._ident.ident_int, r2._ident.ident_int, result, context, desired);
+			if (r1._kind == IDENT && r1._data._ident.ident_kind == OBJECT_ID) {
+				eval_expr(the_expr->_data._oper.right, r2, context, NAME);
+				if (r2._kind == IDENT && r2._data._ident.ident_kind == ATTRIBUTE_ID)
+					lookup(r1._data._ident.ident_int, r2._data._ident.ident_int, result, context, desired);
 			}
 			break;
 
@@ -429,15 +430,15 @@ void Archetype::eval_expr(ExprTree the_expr, ResultType &result, ContextType &co
 			if (desired == NAME)
 				return;
 
-			eval_expr(the_expr->_oper.right, result, context, RVALUE);
-			eval_expr(the_expr->_oper.left, r1, context, LVALUE);
+			eval_expr(the_expr->_data._oper.right, result, context, RVALUE);
+			eval_expr(the_expr->_data._oper.left, r1, context, LVALUE);
 
 			if (!assignment(r1, result))
 				cleanup(result);
 			else if (desired == LVALUE) {
 				cleanup(result);
 				result._kind = ATTR_PTR;
-				result._attr.acl_attr = r1._attr.acl_attr;
+				result._data._attr.acl_attr = r1._data._attr.acl_attr;
 			}
 			break;
 
@@ -453,29 +454,29 @@ void Archetype::eval_expr(ExprTree the_expr, ResultType &result, ContextType &co
 			e = (ExprTree)malloc(sizeof(ExprNode));
 			*e = *the_expr;
 
-			switch (the_expr->_oper.op_name) {
+			switch (the_expr->_data._oper.op_name) {
 			case OP_C_MULTIPLY:
-				e->_oper.op_name = OP_MULTIPLY;
+				e->_data._oper.op_name = OP_MULTIPLY;
 				break;
 			case OP_C_DIVIDE:
-				e->_oper.op_name = OP_DIVIDE;
+				e->_data._oper.op_name = OP_DIVIDE;
 				break;
 			case OP_C_PLUS:
-				e->_oper.op_name = OP_PLUS;
+				e->_data._oper.op_name = OP_PLUS;
 				break;
 			case OP_C_MINUS:
-				e->_oper.op_name = OP_MINUS;
+				e->_data._oper.op_name = OP_MINUS;
 				break;
 			case OP_C_CONCAT:
-				e->_oper.op_name = OP_CONCAT;
+				e->_data._oper.op_name = OP_CONCAT;
 				break;
 			default:
 				break;
 			}
 
 			eval_expr(e, r1, context, RVALUE);
-			e->_oper.op_name = OP_ASSIGN;
-			e->_oper.right = &r1;
+			e->_data._oper.op_name = OP_ASSIGN;
+			e->_data._oper.right = &r1;
 
 			eval_expr(e, result, context, desired);
 			free(e);
@@ -483,24 +484,24 @@ void Archetype::eval_expr(ExprTree the_expr, ResultType &result, ContextType &co
 
 		case OP_CHS:
 		case OP_NUMERIC:
-			eval_expr(the_expr->_oper.right, result, context, RVALUE);
+			eval_expr(the_expr->_data._oper.right, result, context, RVALUE);
 			if (!convert_to(NUMERIC, result))
 				cleanup(result);
-			else if (the_expr->_oper.op_name == OP_CHS)
-				result._numeric.acl_int = -result._numeric.acl_int;
+			else if (the_expr->_data._oper.op_name == OP_CHS)
+				result._data._numeric.acl_int = -result._data._numeric.acl_int;
 			break;
 
 		case OP_STRING:
-			eval_expr(the_expr->_oper.right, result, context, RVALUE);
+			eval_expr(the_expr->_data._oper.right, result, context, RVALUE);
 			if (!convert_to(STR_PTR, result))
 				cleanup(result);
 			break;
 
 		case OP_LENGTH:
-			eval_expr(the_expr->_oper.right, r1, context, RVALUE);
+			eval_expr(the_expr->_data._oper.right, r1, context, RVALUE);
 			if (convert_to(STR_PTR, r1)) {
 				result._kind = NUMERIC;
-				result._numeric.acl_int = r1._str.acl_str->size();
+				result._data._numeric.acl_int = r1._data._str.acl_str->size();
 			}
 			break;
 
@@ -509,45 +510,45 @@ void Archetype::eval_expr(ExprTree the_expr, ResultType &result, ContextType &co
 			// range 1 - 1234. However, we can neither immediately convert it to string, because
 			// ? 6 should produce a value in the range 1 - 6, not the character "6". }
 		case OP_RANDOM:
-			eval_expr(the_expr->_oper.right, result, context, RVALUE);
+			eval_expr(the_expr->_data._oper.right, result, context, RVALUE);
 			if (result._kind == NUMERIC)
 				// convert x < range to 1 <= x <= range
-				result._numeric.acl_int = g_vm->getRandomNumber(result._numeric.acl_int - 1) + 1;
+				result._data._numeric.acl_int = g_vm->getRandomNumber(result._data._numeric.acl_int - 1) + 1;
 			else if (convert_to(STR_PTR, result)) {
 				// Replace the string with a single random character for it
-				String &s = *result._str.acl_str;
+				String &s = *result._data._str.acl_str;
 				s = s[g_vm->getRandomNumber(s.size() - 1)];
 			}
 			break;
 
 		case OP_NOT:
 			result._kind = RESERVED;
-			if (eval_condition(the_expr->_oper.right, context))
-				result._reserved.keyword = RW_FALSE;
+			if (eval_condition(the_expr->_data._oper.right, context))
+				result._data._reserved.keyword = RW_FALSE;
 			else
-				result._reserved.keyword = RW_TRUE;
+				result._data._reserved.keyword = RW_TRUE;
 			break;
 
 		case OP_PLUS:
 		case OP_MINUS:
 		case OP_MULTIPLY:
 		case OP_DIVIDE:
-			eval_expr(the_expr->_oper.left, r1, context, RVALUE);
-			eval_expr(the_expr->_oper.right, r2, context, RVALUE);
+			eval_expr(the_expr->_data._oper.left, r1, context, RVALUE);
+			eval_expr(the_expr->_data._oper.right, r2, context, RVALUE);
 			if (convert_to(NUMERIC, r1) && convert_to(NUMERIC, r2)) {
 				result._kind = NUMERIC;
-				switch (the_expr->_oper.op_name) {
+				switch (the_expr->_data._oper.op_name) {
 				case OP_PLUS:
-					result._numeric.acl_int = r1._numeric.acl_int + r2._numeric.acl_int;
+					result._data._numeric.acl_int = r1._data._numeric.acl_int + r2._data._numeric.acl_int;
 					break;
 				case OP_MINUS:
-					result._numeric.acl_int = r1._numeric.acl_int - r2._numeric.acl_int;
+					result._data._numeric.acl_int = r1._data._numeric.acl_int - r2._data._numeric.acl_int;
 					break;
 				case OP_MULTIPLY:
-					result._numeric.acl_int = r1._numeric.acl_int * r2._numeric.acl_int;
+					result._data._numeric.acl_int = r1._data._numeric.acl_int * r2._data._numeric.acl_int;
 					break;
 				case OP_DIVIDE:
-					result._numeric.acl_int = r1._numeric.acl_int / r2._numeric.acl_int;
+					result._data._numeric.acl_int = r1._data._numeric.acl_int / r2._data._numeric.acl_int;
 					break;
 				default:
 					break;
@@ -557,59 +558,59 @@ void Archetype::eval_expr(ExprTree the_expr, ResultType &result, ContextType &co
 
 		case OP_AND:
 			result._kind = RESERVED;
-			if (eval_condition(the_expr->_oper.left, context) && eval_condition(the_expr->_oper.right, context))
-				result._reserved.keyword = RW_TRUE;
+			if (eval_condition(the_expr->_data._oper.left, context) && eval_condition(the_expr->_data._oper.right, context))
+				result._data._reserved.keyword = RW_TRUE;
 			else
-				result._reserved.keyword = RW_FALSE;
+				result._data._reserved.keyword = RW_FALSE;
 			break;
 
 		case OP_OR:
-			if (eval_condition(the_expr->_oper.left, context) || eval_condition(the_expr->_oper.right, context))
-				result._reserved.keyword = RW_TRUE;
+			if (eval_condition(the_expr->_data._oper.left, context) || eval_condition(the_expr->_data._oper.right, context))
+				result._data._reserved.keyword = RW_TRUE;
 			else
-				result._reserved.keyword = RW_FALSE;
+				result._data._reserved.keyword = RW_FALSE;
 			break;
 
 		case OP_POWER:
-			eval_expr(the_expr->_oper.right, r2, context, RVALUE);
-			eval_expr(the_expr->_oper.left, r1, context, RVALUE);
+			eval_expr(the_expr->_data._oper.right, r2, context, RVALUE);
+			eval_expr(the_expr->_data._oper.left, r1, context, RVALUE);
 			if (convert_to(NUMERIC, r2) && convert_to(NUMERIC, r1)) {
 				result._kind = NUMERIC;
-				result._numeric.acl_int = 1;
-				for (i = 1; i <= r2._numeric.acl_int; ++i)
-					result._numeric.acl_int *= r1._numeric.acl_int;
+				result._data._numeric.acl_int = 1;
+				for (i = 1; i <= r2._data._numeric.acl_int; ++i)
+					result._data._numeric.acl_int *= r1._data._numeric.acl_int;
 			}
 			break;
 
 		case OP_CONCAT:
-			eval_expr(the_expr->_oper.left, r1, context, RVALUE);
-			eval_expr(the_expr->_oper.right, r2, context, RVALUE);
+			eval_expr(the_expr->_data._oper.left, r1, context, RVALUE);
+			eval_expr(the_expr->_data._oper.right, r2, context, RVALUE);
 			if (convert_to(STR_PTR, r1) && convert_to(STR_PTR, r2)) {
 				result._kind = STR_PTR;
-				result._str.acl_str = MakeNewDynStr(*r1._str.acl_str + *r2._str.acl_str);
+				result._data._str.acl_str = MakeNewDynStr(*r1._data._str.acl_str + *r2._data._str.acl_str);
 			}
 			break;
 
 		case OP_LEFTFROM:
 		case OP_RIGHTFROM:
-			eval_expr(the_expr->_oper.left, r1, context, RVALUE);
-			eval_expr(the_expr->_oper.right, r2, context, RVALUE);
+			eval_expr(the_expr->_data._oper.left, r1, context, RVALUE);
+			eval_expr(the_expr->_data._oper.right, r2, context, RVALUE);
 			if (convert_to(STR_PTR, r1) && convert_to(NUMERIC, r2)) {
 				result._kind = STR_PTR;
-				if (the_expr->_oper.op_name == OP_LEFTFROM)
-					result._str.acl_str = MakeNewDynStr(r1._str.acl_str->left(r2._numeric.acl_int));
+				if (the_expr->_data._oper.op_name == OP_LEFTFROM)
+					result._data._str.acl_str = MakeNewDynStr(r1._data._str.acl_str->left(r2._data._numeric.acl_int));
 				else
-					result._str.acl_str = MakeNewDynStr(r1._str.acl_str->right(r2._numeric.acl_int));
+					result._data._str.acl_str = MakeNewDynStr(r1._data._str.acl_str->right(r2._data._numeric.acl_int));
 			}
 			break;
 
 		case OP_WITHIN:
-			eval_expr(the_expr->_oper.left, r1, context, RVALUE);
-			eval_expr(the_expr->_oper.right, r2, context, RVALUE);
+			eval_expr(the_expr->_data._oper.left, r1, context, RVALUE);
+			eval_expr(the_expr->_data._oper.right, r2, context, RVALUE);
 			if (convert_to(STR_PTR, r1) && convert_to(STR_PTR, r2)) {
 				result._kind = NUMERIC;
-				result._numeric.acl_int = r2._str.acl_str->indexOf(*r1._str.acl_str);
-				if (result._numeric.acl_int == -1)
+				result._data._numeric.acl_int = r2._data._str.acl_str->indexOf(*r1._data._str.acl_str);
+				if (result._data._numeric.acl_int == -1)
 					cleanup(result);
 			}
 			break;
@@ -620,18 +621,18 @@ void Archetype::eval_expr(ExprTree the_expr, ResultType &result, ContextType &co
 		case OP_GT:
 		case OP_LE:
 		case OP_GE:
-			eval_expr(the_expr->_oper.left, r1, context, RVALUE);
-			eval_expr(the_expr->_oper.right, r2, context, RVALUE);
+			eval_expr(the_expr->_data._oper.left, r1, context, RVALUE);
+			eval_expr(the_expr->_data._oper.right, r2, context, RVALUE);
 
 			result._kind = RESERVED;
-			if (result_compare(the_expr->_oper.op_name, r1, r2))
-				result._reserved.keyword = RW_TRUE;
+			if (result_compare(the_expr->_data._oper.op_name, r1, r2))
+				result._data._reserved.keyword = RW_TRUE;
 			else
-				result._reserved.keyword = RW_FALSE;
+				result._data._reserved.keyword = RW_FALSE;
 			break;
 
 		default:
-			g_vm->writeln("Internal error: \"%s\" not yet supported", Operators[the_expr->_oper.op_name]);
+			g_vm->writeln("Internal error: \"%s\" not yet supported", Operators[the_expr->_data._oper.op_name]);
 			break;
 		}
 
@@ -666,8 +667,8 @@ bool Archetype::eval_condition(ExprTree the_expr, ContextType &context) {
 	undefine(result);
 	eval_expr(the_expr, result, context, RVALUE);
 
-	failure = (result._kind == RESERVED) && (result._reserved.keyword = RW_UNDEFINED
-		|| result._reserved.keyword == RW_FALSE || result._reserved.keyword == RW_ABSENT);
+	failure = (result._kind == RESERVED) && (result._data._reserved.keyword = RW_UNDEFINED
+		|| result._data._reserved.keyword == RW_FALSE || result._data._reserved.keyword == RW_ABSENT);
 
 	cleanup(result);
 	return !failure;
@@ -697,32 +698,32 @@ void Archetype::exec_stmt(StatementPtr the_stmt, ResultType &result, ContextType
 	case COMPOUND:
 		np = nullptr;
 		b = false;
-		while (!b && iterate_list(the_stmt->_compound.statements, np)) {
+		while (!b && iterate_list(the_stmt->_data._compound.statements, np)) {
 			cleanup(result);
 			exec_stmt((StatementPtr)np->data, result, context);
 
-			b = (result._kind == RESERVED) && (result._reserved.keyword == RW_BREAK);
+			b = (result._kind == RESERVED) && (result._data._reserved.keyword == RW_BREAK);
 		}
 		break;
 
 	case ST_EXPR:
 		if (verbose)
-			display_expr(the_stmt->_expr.expression);
+			display_expr(the_stmt->_data._expr.expression);
 
-		switch (the_stmt->_expr.expression->_kind) {
+		switch (the_stmt->_data._expr.expression->_kind) {
 		case QUOTE_LIT:
-			if (index_xarray(Literals, the_stmt->_expr.expression->_msgTextQuote.index, p)) {
+			if (index_xarray(Literals, the_stmt->_data._expr.expression->_data._msgTextQuote.index, p)) {
 				result._kind = TEXT_LIT;
-				result._msgTextQuote.index = the_stmt->_expr.expression->_msgTextQuote.index;
+				result._data._msgTextQuote.index = the_stmt->_data._expr.expression->_data._msgTextQuote.index;
 				wrapout(*((StringPtr)p), true);
 			}
 			break;
 
 		case MESSAGE:
-			b = send_message(OP_PASS, the_stmt->_expr.expression->_msgTextQuote.index,
+			b = send_message(OP_PASS, the_stmt->_data._expr.expression->_data._msgTextQuote.index,
 				context.self, result, context);
 		default:
-			eval_expr(the_stmt->_expr.expression, result, context, RVALUE);
+			eval_expr(the_stmt->_data._expr.expression, result, context, RVALUE);
 			break;
 		}
 		break;
@@ -747,9 +748,9 @@ void Archetype::exec_stmt(StatementPtr the_stmt, ResultType &result, ContextType
 
 			wrapout(" ", false);
 			np = nullptr;
-			while (iterate_list(the_stmt->_write.print_list, np)) {
+			while (iterate_list(the_stmt->_data._write.print_list, np)) {
 				display_expr((ExprTree)np->data);
-				if (np->next != the_stmt->_write.print_list)
+				if (np->next != the_stmt->_data._write.print_list)
 					wrapout(", ", false);
 			}
 
@@ -757,7 +758,7 @@ void Archetype::exec_stmt(StatementPtr the_stmt, ResultType &result, ContextType
 		}
 
 		np = nullptr;
-		while (iterate_list(the_stmt->_write.print_list, np)) {
+		while (iterate_list(the_stmt->_data._write.print_list, np)) {
 			cleanup(result);
 			eval_expr((ExprTree)np->data, result, context, RVALUE);
 			write_result(result);
@@ -776,38 +777,38 @@ void Archetype::exec_stmt(StatementPtr the_stmt, ResultType &result, ContextType
 	case ST_IF:
 		if (verbose) {
 			wrapout("if: Testing ", false);
-			display_expr(the_stmt->_if.condition);
+			display_expr(the_stmt->_data._if.condition);
 		}
-		if (eval_condition(the_stmt->_if.condition, context)) {
+		if (eval_condition(the_stmt->_data._if.condition, context)) {
 			if (verbose)
 				wrapout(" Evaluated true; executing then branch", true);
-			exec_stmt(the_stmt->_if.then_branch, result, context);
+			exec_stmt(the_stmt->_data._if.then_branch, result, context);
 
 		}
-		else if (the_stmt->_if.else_branch != nullptr) {
+		else if (the_stmt->_data._if.else_branch != nullptr) {
 			if (verbose)
 				wrapout(" Evaluated false; executing else branch", true);
-			exec_stmt(the_stmt->_if.else_branch, result, context);
+			exec_stmt(the_stmt->_data._if.else_branch, result, context);
 		}
 		break;
 
 	case ST_CASE:
 		if (verbose) {
 			wrapout("case ", false);
-			display_expr(the_stmt->_case.test_expr);
+			display_expr(the_stmt->_data._case.test_expr);
 			wrapout(" of", false);
 			wrapout("", true);
 		}
 
-		eval_expr(the_stmt->_case.test_expr, r1, context, RVALUE);
+		eval_expr(the_stmt->_data._case.test_expr, r1, context, RVALUE);
 		np = nullptr;
 
-		while (iterate_list(the_stmt->_case.cases, np)) {
+		while (iterate_list(the_stmt->_data._case.cases, np)) {
 			this_case = (CasePairPtr)np->data;
 
 			//with this_case^ do begin
 			eval_expr(this_case->value, r2, context, RVALUE);
-			if ((r2._kind == RESERVED && r2._reserved.keyword == RW_DEFAULT)
+			if ((r2._kind == RESERVED && r2._data._reserved.keyword == RW_DEFAULT)
 				|| result_compare(OP_EQ, r1, r2)) {
 				exec_stmt(this_case->action, result, context);
 				cleanup(r1);
@@ -824,7 +825,7 @@ void Archetype::exec_stmt(StatementPtr the_stmt, ResultType &result, ContextType
 
 	case ST_BREAK:
 		result._kind = RESERVED;
-		result._reserved.keyword = RW_BREAK;
+		result._data._reserved.keyword = RW_BREAK;
 		break;
 
 	case ST_FOR:
@@ -833,9 +834,9 @@ void Archetype::exec_stmt(StatementPtr the_stmt, ResultType &result, ContextType
 		c.each = 1;
 
 		while (!b && c.each < (int)Object_List.size()) {
-			if (eval_condition(the_stmt->_loop.selection, c)) {
-				exec_stmt(the_stmt->_loop.action, result, c);
-				b = (result._kind == RESERVED) && (result._reserved.keyword == RW_BREAK);
+			if (eval_condition(the_stmt->_data._loop.selection, c)) {
+				exec_stmt(the_stmt->_data._loop.action, result, c);
+				b = (result._kind == RESERVED) && (result._data._reserved.keyword == RW_BREAK);
 				cleanup(result);
 			}
 
@@ -845,20 +846,20 @@ void Archetype::exec_stmt(StatementPtr the_stmt, ResultType &result, ContextType
 
 	case ST_WHILE:
 		b = false;
-		while (!b && eval_condition(the_stmt->_loop.selection, context)) {
-			exec_stmt(the_stmt->_loop.action, result, context);
-			b = (result._kind == RESERVED) && (result._reserved.keyword == RW_BREAK);
+		while (!b && eval_condition(the_stmt->_data._loop.selection, context)) {
+			exec_stmt(the_stmt->_data._loop.action, result, context);
+			b = (result._kind == RESERVED) && (result._data._reserved.keyword == RW_BREAK);
 			cleanup(result);
 		}
 		break;
 
 	case ST_CREATE:
-		eval_expr(the_stmt->_create.new_name, r1, context, LVALUE);
+		eval_expr(the_stmt->_data._create.new_name, r1, context, LVALUE);
 
 		// Attempt a dummy assignment just to see if it works
 		result._kind = IDENT;
-		result._ident.ident_kind = OBJECT_ID;
-		result._ident.ident_int = 0;
+		result._data._ident.ident_kind = OBJECT_ID;
+		result._data._ident.ident_int = 0;
 
 		if (!assignment(r1, result)) {
 			cleanup(result);
@@ -866,7 +867,7 @@ void Archetype::exec_stmt(StatementPtr the_stmt, ResultType &result, ContextType
 		else {
 			// do it for real
 			the_object = (ObjectPtr)malloc(sizeof(ObjectType));
-			the_object->inherited_from = the_stmt->_create.archetype;
+			the_object->inherited_from = the_stmt->_data._create.archetype;
 			new_list(the_object->attributes);
 			new_list(the_object->methods);
 			the_object->other = nullptr;
@@ -885,8 +886,8 @@ void Archetype::exec_stmt(StatementPtr the_stmt, ResultType &result, ContextType
 
 			// Now we know its number; go back and update the result"s object reference.
 			// "Return" this same value
-			((ExprPtr)r1._attr.acl_attr->data)->_ident.ident_int = i;
-			copy_result(result, *(ExprPtr)r1._attr.acl_attr->data);
+			((ExprPtr)r1._data._attr.acl_attr->data)->_data._ident.ident_int = i;
+			copy_result(result, *(ExprPtr)r1._data._attr.acl_attr->data);
 
 			cleanup(r1);
 		}
@@ -895,14 +896,14 @@ void Archetype::exec_stmt(StatementPtr the_stmt, ResultType &result, ContextType
 		// Just dispose of the indicated object in the Object_List.  Shrink the list only if
 		// the very last object was destroyed
 	case ST_DESTROY:
-		eval_expr(the_stmt->_destroy.victim, result, context, RVALUE);
-		if (result._kind == IDENT && result._ident.ident_kind == OBJECT_ID
-				&& index_xarray(Object_List, result._ident.ident_int, p)) {
+		eval_expr(the_stmt->_data._destroy.victim, result, context, RVALUE);
+		if (result._kind == IDENT && result._data._ident.ident_kind == OBJECT_ID
+				&& index_xarray(Object_List, result._data._ident.ident_int, p)) {
 			the_object = (ObjectPtr)p;
 			dispose_object(the_object);
 			p = nullptr;
-			b = access_xarray(Object_List, result._ident.ident_int, p, POKE_ACCESS);
-			if (result._ident.ident_int == ((int)Object_List.size() - 1))
+			b = access_xarray(Object_List, result._data._ident.ident_int, p, POKE_ACCESS);
+			if (result._data._ident.ident_int == ((int)Object_List.size() - 1))
 				shrink_xarray(Object_List);
 		} else {
 			wraperr("Can only destroy previously created objects");

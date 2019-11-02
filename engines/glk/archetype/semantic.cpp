@@ -174,19 +174,19 @@ bool verify_expr(progfile &f, ExprTree the_expr) {
 
 	switch (the_expr->_kind) {
 	case OPER:
-		switch (the_expr->_oper.op_name) {
+		switch (the_expr->_data._oper.op_name) {
 		case OP_DOT:
-			if (the_expr->_oper.right->_kind != IDENT) {
+			if (the_expr->_data._oper.right->_kind != IDENT) {
 				error_message(f, "Right side of dot must be an identifier");
 				success = false;
 			}
-			else if (the_expr->_oper.right->_ident.ident_kind != ATTRIBUTE_ID) {
-				the_expr->_oper.right->_ident.ident_int = classify_as(f,
-					the_expr->_oper.right->_ident.ident_int, ATTRIBUTE_ID, nullptr);
+			else if (the_expr->_data._oper.right->_data._ident.ident_kind != ATTRIBUTE_ID) {
+				the_expr->_data._oper.right->_data._ident.ident_int = classify_as(f,
+					the_expr->_data._oper.right->_data._ident.ident_int, ATTRIBUTE_ID, nullptr);
 			}
 
-			the_expr->_oper.right->_ident.ident_kind = ATTRIBUTE_ID;
-			if (the_expr->_oper.right->_ident.ident_int == 0)
+			the_expr->_data._oper.right->_data._ident.ident_kind = ATTRIBUTE_ID;
+			if (the_expr->_data._oper.right->_data._ident.ident_int == 0)
 				success = false;
 
 		case OP_ASSIGN:
@@ -195,17 +195,17 @@ bool verify_expr(progfile &f, ExprTree the_expr) {
 		case OP_C_DIVIDE:
 		case OP_C_PLUS:
 		case OP_C_MINUS:
-			if (the_expr->_oper.left->_kind == IDENT) {
-				get_meaning(the_expr->_oper.left->_ident.ident_int,
-					the_expr->_oper.left->_ident.ident_kind, the_expr->_oper.left->_ident.ident_int);
+			if (the_expr->_data._oper.left->_kind == IDENT) {
+				get_meaning(the_expr->_data._oper.left->_data._ident.ident_int,
+					the_expr->_data._oper.left->_data._ident.ident_kind, the_expr->_data._oper.left->_data._ident.ident_int);
 
-				if (the_expr->_oper.left->_ident.ident_kind != ATTRIBUTE_ID) {
+				if (the_expr->_data._oper.left->_data._ident.ident_kind != ATTRIBUTE_ID) {
 					error_message(f, "Left side of assignment is not an attribute");
 					success = false;
 				}
 			}
-			else if (!(the_expr->_oper.left->_kind == OPER &&
-				the_expr->_oper.left->_oper.op_name == OP_DOT)) {
+			else if (!(the_expr->_data._oper.left->_kind == OPER &&
+				the_expr->_data._oper.left->_data._oper.op_name == OP_DOT)) {
 				error_message(f, "Left side of assignment must reference an attribute");
 				success = false;
 			}
@@ -216,11 +216,11 @@ bool verify_expr(progfile &f, ExprTree the_expr) {
 		}
 
 		if (success) {
-			if (Binary[the_expr->_oper.op_name])
-				success = verify_expr(f, the_expr->_oper.left);
+			if (Binary[the_expr->_data._oper.op_name])
+				success = verify_expr(f, the_expr->_data._oper.left);
 		}
 		if (success)
-			success = verify_expr(f, the_expr->_oper.right);
+			success = verify_expr(f, the_expr->_data._oper.right);
 		break;
 
 	default:

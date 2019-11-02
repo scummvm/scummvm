@@ -77,42 +77,42 @@ bool convert_to(AclType target_type, ResultType &the_scalar) {
 	switch (the_scalar._kind) {
     case NUMERIC:
         dir_from = 'N';
-		the_number = the_scalar._numeric.acl_int;
+		the_number = the_scalar._data._numeric.acl_int;
 		break;
 
 	case MESSAGE:
 		dir_from = 'S';
-		if (index_xarray(g_vm->Vocabulary, the_scalar._msgTextQuote.index, p))
+		if (index_xarray(g_vm->Vocabulary, the_scalar._data._msgTextQuote.index, p))
 			s1 = *(StringPtr)p;
 		break;
 
 	case TEXT_LIT:
 	case QUOTE_LIT:
         dir_from = 'S';
-		if (index_xarray(g_vm->Literals, the_scalar._msgTextQuote.index, p))
+		if (index_xarray(g_vm->Literals, the_scalar._data._msgTextQuote.index, p))
 			s1 = *(StringPtr)p;
 		break;
 
 	case STR_PTR:
 		// string memory will be disposed ONLY if successful convert
         dir_from = 'S';
-		s1 = *the_scalar._str.acl_str;
+		s1 = *the_scalar._data._str.acl_str;
 		break;
 
 	case IDENT:
 		//with the_scalar do begin
         dir_from = 'S';
         
-		switch (the_scalar._ident.ident_kind) {
+		switch (the_scalar._data._ident.ident_kind) {
 		case ENUMERATE_ID:
 			dir_from = 'N';
-			the_number = the_scalar._ident.ident_int;
+			the_number = the_scalar._data._ident.ident_int;
 			break;
 
 		case OBJECT_ID:
-			if (the_scalar._ident.ident_int == 0)
+			if (the_scalar._data._ident.ident_int == 0)
 				s1 = "system";
-			else if (index_xarray(g_vm->Object_ID_List, the_scalar._ident.ident_int, p)) {
+			else if (index_xarray(g_vm->Object_ID_List, the_scalar._data._ident.ident_int, p)) {
 				if (p == nullptr)
 					s1 = "null";
 				else
@@ -123,16 +123,16 @@ bool convert_to(AclType target_type, ResultType &the_scalar) {
 			break;
 
 		case TYPE_ID:
-			if (the_scalar._ident.ident_int == 0)
+			if (the_scalar._data._ident.ident_int == 0)
 				s1 = "null";
-			else if (index_xarray(g_vm->Type_ID_List, the_scalar._ident.ident_int, p))
+			else if (index_xarray(g_vm->Type_ID_List, the_scalar._data._ident.ident_int, p))
 				s1 = *(StringPtr)p;
 			else
 				return false;
 			break;
 
 		case ATTRIBUTE_ID:
-			if (index_xarray(g_vm->Attribute_ID_List, the_scalar._ident.ident_int, p))
+			if (index_xarray(g_vm->Attribute_ID_List, the_scalar._data._ident.ident_int, p))
 				s1 = *((StringPtr)p);
 			else
 				return false;
@@ -144,9 +144,9 @@ bool convert_to(AclType target_type, ResultType &the_scalar) {
 		break;
 
 	case RESERVED:
-		if (the_scalar._reserved.keyword == RW_TRUE || the_scalar._reserved.keyword == RW_FALSE) {
+		if (the_scalar._data._reserved.keyword == RW_TRUE || the_scalar._data._reserved.keyword == RW_FALSE) {
 			dir_from = 'B';
-			boolval = (the_scalar._reserved.keyword == RW_TRUE);
+			boolval = (the_scalar._data._reserved.keyword == RW_TRUE);
 		} else {
 			return false;
 		}
@@ -158,7 +158,7 @@ bool convert_to(AclType target_type, ResultType &the_scalar) {
 
 	if (target_type == STR_PTR || target_type == MESSAGE) {
 		if (the_scalar._kind == STR_PTR)
-			FreeDynStr(the_scalar._str.acl_str);	// we know this will succeed
+			FreeDynStr(the_scalar._data._str.acl_str);	// we know this will succeed
 
 		the_scalar._kind = target_type;
 
@@ -174,9 +174,9 @@ bool convert_to(AclType target_type, ResultType &the_scalar) {
 		}
 
 		if (target_type == MESSAGE)
-			the_scalar._msgTextQuote.index = find_message(s1);
+			the_scalar._data._msgTextQuote.index = find_message(s1);
 		else
-			the_scalar._str.acl_str = NewDynStr(s1);
+			the_scalar._data._str.acl_str = NewDynStr(s1);
 
 		return true;
 	} else {
@@ -184,12 +184,12 @@ bool convert_to(AclType target_type, ResultType &the_scalar) {
 		switch (dir_from) {
 		case 'N':
 			the_scalar._kind = NUMERIC;
-			the_scalar._numeric.acl_int = the_number;
+			the_scalar._data._numeric.acl_int = the_number;
 			return true;
 
 		case 'B':
 			the_scalar._kind = NUMERIC;
-			the_scalar._numeric.acl_int = boolval ? 1 : 0;
+			the_scalar._data._numeric.acl_int = boolval ? 1 : 0;
 			break;
 
 		case  'S':
@@ -201,10 +201,10 @@ bool convert_to(AclType target_type, ResultType &the_scalar) {
 			} else {
 				// successful
 				if (the_scalar._kind == STR_PTR)
-					FreeDynStr(the_scalar._str.acl_str);		// memory no longer needed
+					FreeDynStr(the_scalar._data._str.acl_str);		// memory no longer needed
 
 				the_scalar._kind = NUMERIC;
-				the_scalar._numeric.acl_int = the_number;
+				the_scalar._data._numeric.acl_int = the_number;
 			}
 
 			return true;
@@ -219,21 +219,21 @@ bool convert_to(AclType target_type, ResultType &the_scalar) {
 
 void undefine(ResultType &result) {
 	result._kind = RESERVED;
-	result._reserved.keyword = RW_UNDEFINED;
+	result._data._reserved.keyword = RW_UNDEFINED;
 }
 
 void cleanup(ResultType &result) {
 	if (result._kind == STR_PTR)
-		FreeDynStr(result._str.acl_str);
+		FreeDynStr(result._data._str.acl_str);
 	result._kind = RESERVED;
-	result._reserved.keyword = RW_UNDEFINED;
+	result._data._reserved.keyword = RW_UNDEFINED;
 }
 
 void copy_result(ResultType &r1, const ResultType &r2) {
 	cleanup(r1);
 	r1 = r2;
 	if (r1._kind == STR_PTR)
-		r1._str.acl_str = NewDynStr(*r2._str.acl_str);
+		r1._data._str.acl_str = NewDynStr(*r2._data._str.acl_str);
 }
 
 bool result_compare(short comparison, ResultType &r1, ResultType &r2) {
@@ -244,19 +244,19 @@ bool result_compare(short comparison, ResultType &r1, ResultType &r2) {
 		switch (comparison) {
 		case OP_EQ:
 		case OP_NE:
-			verdict = r1._numeric.acl_int == r2._numeric.acl_int;
+			verdict = r1._data._numeric.acl_int == r2._data._numeric.acl_int;
 			break;
 		case OP_LT:
-			verdict = r1._numeric.acl_int <  r2._numeric.acl_int;
+			verdict = r1._data._numeric.acl_int <  r2._data._numeric.acl_int;
 			break;
 		case OP_LE:
-			verdict = r1._numeric.acl_int <= r2._numeric.acl_int;
+			verdict = r1._data._numeric.acl_int <= r2._data._numeric.acl_int;
 			break;
 		case OP_GT:
-			verdict = r1._numeric.acl_int >  r2._numeric.acl_int;
+			verdict = r1._data._numeric.acl_int >  r2._data._numeric.acl_int;
 			break;
 		case OP_GE:
-			verdict = r1._numeric.acl_int >= r2._numeric.acl_int;
+			verdict = r1._data._numeric.acl_int >= r2._data._numeric.acl_int;
 			break;
 		default:
 			break;
@@ -266,19 +266,19 @@ bool result_compare(short comparison, ResultType &r1, ResultType &r2) {
 		switch (comparison) {
 		case OP_EQ:
 		case OP_NE:
-			verdict = *r1._str.acl_str == *r2._str.acl_str;
+			verdict = *r1._data._str.acl_str == *r2._data._str.acl_str;
 			break;
 		case OP_LT:
-			verdict = *r1._str.acl_str < *r2._str.acl_str;
+			verdict = *r1._data._str.acl_str < *r2._data._str.acl_str;
 			break;
 		case OP_LE:
-			verdict = *r1._str.acl_str <= *r2._str.acl_str;
+			verdict = *r1._data._str.acl_str <= *r2._data._str.acl_str;
 			break;
 		case OP_GT:
-			verdict = *r1._str.acl_str > *r2._str.acl_str;
+			verdict = *r1._data._str.acl_str > *r2._data._str.acl_str;
 			break;
 		case OP_GE:
-			verdict = *r1._str.acl_str >= *r2._str.acl_str;
+			verdict = *r1._data._str.acl_str >= *r2._data._str.acl_str;
 			break;
 		default:
 			break;
@@ -290,18 +290,18 @@ bool result_compare(short comparison, ResultType &r1, ResultType &r2) {
 			switch (comparison) {
 			case OP_EQ:
 			case OP_NE:
-				verdict = r1._reserved.keyword ==  r2._reserved.keyword;
+				verdict = r1._data._reserved.keyword ==  r2._data._reserved.keyword;
 				break;
 			default:
 				break;
 			}
 
 		case IDENT:
-			if (r1._ident.ident_kind == r2._ident.ident_kind) {
+			if (r1._data._ident.ident_kind == r2._data._ident.ident_kind) {
 				switch (comparison) {
 				case OP_EQ:
 				case OP_NE:
-					verdict = r1._ident.ident_int ==  r2._ident.ident_int;
+					verdict = r1._data._ident.ident_int ==  r2._data._ident.ident_int;
 					break;
 				default:
 					break;
@@ -327,7 +327,7 @@ bool assignment(ResultType &target, ResultType &value) {
 		wraperr("Warning: attempted assignment to a non-attribute");
 		return false;
 	} else {
-		e = (ExprPtr)target._attr.acl_attr->data;
+		e = (ExprPtr)target._data._attr.acl_attr->data;
 
 		// If the current expression starts with an operator, we know it isn't a flat result
 		// and must therefore be disposed of before proceeding.  Otherwise simply clean up
@@ -342,7 +342,7 @@ bool assignment(ResultType &target, ResultType &value) {
 	}
 
 	copy_result(*e, value);
-	target._attr.acl_attr->data = e;
+	target._data._attr.acl_attr->data = e;
 
 	return true;
 }
@@ -352,16 +352,16 @@ void write_result(ResultType &result) {
 
 	undefine(r1);
 	if (result._kind == STR_PTR)
-		wrapout(*result._str.acl_str, false);
+		wrapout(*result._data._str.acl_str, false);
 	else if (result._kind == RESERVED)
-		wrapout(Reserved_Wds[result._reserved.keyword], false);
+		wrapout(Reserved_Wds[result._data._reserved.keyword], false);
 	else {
 		if (result._kind == ATTR_PTR)
-			copy_result(r1, *(ResultType *)result._attr.acl_attr->data);
+			copy_result(r1, *(ResultType *)result._data._attr.acl_attr->data);
 		else
 			copy_result(r1, result);
 		if (convert_to(STR_PTR, r1))
-			wrapout(*r1._str.acl_str, false);
+			wrapout(*r1._data._str.acl_str, false);
 		cleanup(r1);
 	}
 }
@@ -395,15 +395,15 @@ void display_expr(ExprTree the_tree) {
 	if (the_tree->_kind != OPER) {
 		display_result(*the_tree);
 	} else {
-		if (Binary[the_tree->_oper.op_name]) {
+		if (Binary[the_tree->_data._oper.op_name]) {
 			wrapout(" (", false);
-			display_expr(the_tree->_oper.left);
+			display_expr(the_tree->_data._oper.left);
 			wrapout(") ", false);
 		}
 
-		wrapout(Operators[the_tree->_oper.op_name], false);
+		wrapout(Operators[the_tree->_data._oper.op_name], false);
 		wrapout(" (", false);
-		display_expr(the_tree->_oper.right);
+		display_expr(the_tree->_data._oper.right);
 		wrapout(") ", false);
 	}
 }

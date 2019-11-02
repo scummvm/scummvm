@@ -117,15 +117,15 @@ void send_to_system(int transport, String &strmsg, ResultType &result, ContextTy
 		case NORMALIZE:
 			// last normalized command
 			result._kind = STR_PTR;
-			result._str.acl_str = NewDynStr(g_vm->Command);
+			result._data._str.acl_str = NewDynStr(g_vm->Command);
 			sys_state = IDLING;
 
 		case ABBR:
 			result._kind = STR_PTR;
-			result._str.acl_str = NewDynStr(strmsg);
+			result._data._str.acl_str = NewDynStr(strmsg);
 
 			if (convert_to(NUMERIC, result)) {
-				g_vm->Abbreviate = result._numeric.acl_int;
+				g_vm->Abbreviate = result._data._numeric.acl_int;
 			}
 			else {
 				wraperr("Warning: non-numeric abbreviation message sent to system");
@@ -180,7 +180,7 @@ void send_to_system(int transport, String &strmsg, ResultType &result, ContextTy
 				cleanup(result);
 			} else {
 				result._kind = STR_PTR;
-				result._str.acl_str = (StringPtr)p;
+				result._data._str.acl_str = (StringPtr)p;
 				sys_state = IDLING;
 			}
 			break;
@@ -189,8 +189,8 @@ void send_to_system(int transport, String &strmsg, ResultType &result, ContextTy
 			obj_index = find_object(strmsg);
 			if (obj_index != 0) {
 				result._kind = IDENT;
-				result._ident.ident_kind = OBJECT_ID;
-				result._ident.ident_int = obj_index;
+				result._data._ident.ident_kind = OBJECT_ID;
+				result._data._ident.ident_int = obj_index;
 			}
 			sys_state = IDLING;
 			break;
@@ -220,11 +220,11 @@ void send_to_system(int transport, String &strmsg, ResultType &result, ContextTy
 				cleanup(result);
 			} else if (obj_index < 0) {
 				result._kind = STR_PTR;
-				result._str.acl_str = NewDynStr(nomatch);
+				result._data._str.acl_str = NewDynStr(nomatch);
 			} else {
 				result._kind = IDENT;
-				result._ident.ident_kind = OBJECT_ID;
-				result._ident.ident_int = obj_index;
+				result._data._ident.ident_kind = OBJECT_ID;
+				result._data._ident.ident_int = obj_index;
 			}
 
 			sys_state = IDLING;
@@ -254,7 +254,7 @@ void send_to_system(int transport, String &strmsg, ResultType &result, ContextTy
 
 		case FREE_MEMORY:
 			result._kind = NUMERIC;
-			result._numeric.acl_int = 0xffff;		// MemAvail;
+			result._data._numeric.acl_int = 0xffff;		// MemAvail;
 			sys_state = IDLING;
 			break;
 
@@ -267,7 +267,7 @@ void send_to_system(int transport, String &strmsg, ResultType &result, ContextTy
 			else {
 				save_game_state(stfile, g_vm->Object_List);
 				result._kind = RESERVED;
-				result._reserved.keyword = RW_TRUE;
+				result._data._reserved.keyword = RW_TRUE;
 
 				stfile->finalize();
 				delete stfile;
@@ -284,7 +284,7 @@ void send_to_system(int transport, String &strmsg, ResultType &result, ContextTy
 				cleanup(result);
 			} else {
 				result._kind = RESERVED;
-				result._reserved.keyword = load_game_state(stfile, g_vm->Object_List) ? RW_TRUE : RW_FALSE;
+				result._data._reserved.keyword = load_game_state(stfile, g_vm->Object_List) ? RW_TRUE : RW_FALSE;
 				delete stfile;
 			}
 

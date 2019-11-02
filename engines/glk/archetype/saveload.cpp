@@ -268,8 +268,8 @@ static void walk_expr(MissionType mission, Common::Stream *bfile, ExprTree &the_
 			return;
 
 		assert(writeStream);
-		while (the_expr->_kind == OPER && the_expr->_oper.op_name == OP_LPAREN)
-			the_expr = the_expr->_oper.right;
+		while (the_expr->_kind == OPER && the_expr->_data._oper.op_name == OP_LPAREN)
+			the_expr = the_expr->_data._oper.right;
 
 		writeStream->writeByte(the_expr->_kind);
 		break;
@@ -288,28 +288,28 @@ static void walk_expr(MissionType mission, Common::Stream *bfile, ExprTree &the_
 	case OPER:
 		switch (mission) {
 		case LOAD:
-			the_expr->_oper.op_name = readStream->readSByte();
-			the_expr->_oper.left = nullptr;
+			the_expr->_data._oper.op_name = readStream->readSByte();
+			the_expr->_data._oper.left = nullptr;
 			break;
 		case DUMP:
-			writeStream->writeSByte(the_expr->_oper.op_name);
+			writeStream->writeSByte(the_expr->_data._oper.op_name);
 			break;
 		default:
 			break;
 		}
 
-		if (Binary[the_expr->_oper.op_name])
-			walk_expr(mission, bfile, the_expr->_oper.left);
-		walk_expr(mission, bfile, the_expr->_oper.right);
+		if (Binary[the_expr->_data._oper.op_name])
+			walk_expr(mission, bfile, the_expr->_data._oper.left);
+		walk_expr(mission, bfile, the_expr->_data._oper.right);
 		break;
 
 	case NUMERIC:
 		switch (mission) {
 		case LOAD:
-			the_expr->_numeric.acl_int = readStream->readUint32LE();
+			the_expr->_data._numeric.acl_int = readStream->readUint32LE();
 			break;
 		case DUMP:
-			writeStream->writeSint32LE(the_expr->_numeric.acl_int);
+			writeStream->writeSint32LE(the_expr->_data._numeric.acl_int);
 			break;
 		default:
 			break;
@@ -321,10 +321,10 @@ static void walk_expr(MissionType mission, Common::Stream *bfile, ExprTree &the_
 	case QUOTE_LIT:
 		switch (mission) {
 		case LOAD:
-			the_expr->_msgTextQuote.index = readStream->readSint16LE();
+			the_expr->_data._msgTextQuote.index = readStream->readSint16LE();
 			break;
 		case DUMP:
-			writeStream->writeSint16LE(the_expr->_msgTextQuote.index);
+			writeStream->writeSint16LE(the_expr->_data._msgTextQuote.index);
 			break;
 		default:
 			break;
@@ -334,22 +334,22 @@ static void walk_expr(MissionType mission, Common::Stream *bfile, ExprTree &the_
 	case IDENT:
 		switch (mission) {
 		case LOAD:
-			the_expr->_ident.ident_kind = (ClassifyType)readStream->readByte();
-			the_expr->_ident.ident_int = readStream->readSint16LE();
+			the_expr->_data._ident.ident_kind = (ClassifyType)readStream->readByte();
+			the_expr->_data._ident.ident_int = readStream->readSint16LE();
 			break;
 		case DUMP:
-			if (Translating && the_expr->_ident.ident_kind == DefaultClassification) {
+			if (Translating && the_expr->_data._ident.ident_kind == DefaultClassification) {
 				// may have changed meaning
-				get_meaning(the_expr->_ident.ident_int, ID_kind, temp);
+				get_meaning(the_expr->_data._ident.ident_int, ID_kind, temp);
 				if (ID_kind == UNDEFINED_ID)
-					add_undefined(the_expr->_ident.ident_int);
+					add_undefined(the_expr->_data._ident.ident_int);
 			} else {
-				the_expr->_ident.ident_kind = ID_kind;
-				the_expr->_ident.ident_int = temp;
+				the_expr->_data._ident.ident_kind = ID_kind;
+				the_expr->_data._ident.ident_int = temp;
 			}
 
-			writeStream->writeByte(the_expr->_ident.ident_kind);
-			writeStream->writeSint16LE(the_expr->_ident.ident_int);
+			writeStream->writeByte(the_expr->_data._ident.ident_kind);
+			writeStream->writeSint16LE(the_expr->_data._ident.ident_int);
 			break;
 		default:
 			break;
@@ -359,10 +359,10 @@ static void walk_expr(MissionType mission, Common::Stream *bfile, ExprTree &the_
 	case RESERVED:
 		switch (mission) {
 		case LOAD:
-			the_expr->_reserved.keyword = readStream->readSByte();
+			the_expr->_data._reserved.keyword = readStream->readSByte();
 			break;
 		case DUMP:
-			writeStream->writeSByte(the_expr->_reserved.keyword);
+			writeStream->writeSByte(the_expr->_data._reserved.keyword);
 			break;
 		default:
 			break;
@@ -372,13 +372,13 @@ static void walk_expr(MissionType mission, Common::Stream *bfile, ExprTree &the_
 	case STR_PTR:
 		switch (mission) {
 		case LOAD:
-			the_expr->_str.acl_str = LoadDynStr(readStream);
+			the_expr->_data._str.acl_str = LoadDynStr(readStream);
 			break;
 		case DUMP:
-			dump_string(writeStream, *the_expr->_str.acl_str);
+			dump_string(writeStream, *the_expr->_data._str.acl_str);
 			break;
 		case FREE:
-			FreeDynStr(the_expr->_str.acl_str);
+			FreeDynStr(the_expr->_data._str.acl_str);
 			break;
 		default:
 			break;
@@ -468,47 +468,47 @@ static void walk_stmt(MissionType mission, Common::Stream *bfile, StatementPtr &
 	// Main walk
 	switch (the_stmt->_kind) {
 	case COMPOUND:
-		walk_item_list(mission, bfile, the_stmt->_compound.statements, STMT_LIST);
+		walk_item_list(mission, bfile, the_stmt->_data._compound.statements, STMT_LIST);
 		break;
 
 	case ST_EXPR:
-		walk_expr(mission, bfile, the_stmt->_expr.expression);
+		walk_expr(mission, bfile, the_stmt->_data._expr.expression);
 		break;
 
 	case ST_IF:
-		walk_expr(mission, bfile, the_stmt->_if.condition);
-		walk_stmt(mission, bfile, the_stmt->_if.then_branch);
-		walk_stmt(mission, bfile, the_stmt->_if.else_branch);
+		walk_expr(mission, bfile, the_stmt->_data._if.condition);
+		walk_stmt(mission, bfile, the_stmt->_data._if.then_branch);
+		walk_stmt(mission, bfile, the_stmt->_data._if.else_branch);
 		break;
 
 	case ST_CASE:
-		walk_expr(mission, bfile, the_stmt->_case.test_expr);
-		walk_item_list(mission, bfile, the_stmt->_case.cases, CASE_LIST);
+		walk_expr(mission, bfile, the_stmt->_data._case.test_expr);
+		walk_item_list(mission, bfile, the_stmt->_data._case.cases, CASE_LIST);
 		break;
 
 	case ST_CREATE:
 		switch (mission) {
 		case LOAD:
-			the_stmt->_create.archetype = readStream->readSint16LE();
+			the_stmt->_data._create.archetype = readStream->readSint16LE();
 			break;
 		case DUMP:
-			writeStream->writeSint16LE(the_stmt->_create.archetype);
+			writeStream->writeSint16LE(the_stmt->_data._create.archetype);
 			break;
 		default:
 			break;
 		}
 
-		walk_expr(mission, bfile, the_stmt->_create.new_name);
+		walk_expr(mission, bfile, the_stmt->_data._create.new_name);
 		break;
 
 	case ST_DESTROY:
-		walk_expr(mission, bfile, the_stmt->_destroy.victim);
+		walk_expr(mission, bfile, the_stmt->_data._destroy.victim);
 		break;
 
 	case ST_FOR:
 	case ST_WHILE:
-		walk_expr(mission, bfile, the_stmt->_loop.selection);
-		walk_stmt(mission, bfile, the_stmt->_loop.action);
+		walk_expr(mission, bfile, the_stmt->_data._loop.selection);
+		walk_stmt(mission, bfile, the_stmt->_data._loop.action);
 		break;
 
 	case ST_WRITE:
@@ -516,7 +516,7 @@ static void walk_stmt(MissionType mission, Common::Stream *bfile, StatementPtr &
 	case ST_STOP:
 		switch (mission) {
 		case LOAD:
-			new_list(the_stmt->_write.print_list);
+			new_list(the_stmt->_data._write.print_list);
 			sentinel = (StatementKind)readStream->readByte();
 
 			while (sentinel != END_SEQ) {
@@ -525,7 +525,7 @@ static void walk_stmt(MissionType mission, Common::Stream *bfile, StatementPtr &
 				add_bytes(sizeof(NodeType));
 
 				np->data = this_expr;
-				append_to_list(the_stmt->_write.print_list, np);
+				append_to_list(the_stmt->_data._write.print_list, np);
 
 				sentinel = (StatementKind)readStream->readByte();
 			}
@@ -534,7 +534,7 @@ static void walk_stmt(MissionType mission, Common::Stream *bfile, StatementPtr &
 		case DUMP:
 		case FREE:
 			np = nullptr;
-			while (iterate_list(the_stmt->_write.print_list, np)) {
+			while (iterate_list(the_stmt->_data._write.print_list, np)) {
 				if (mission == DUMP)
 					writeStream->writeByte(vContSeq);
 				this_expr = (ExprTree)np->data;
@@ -547,7 +547,7 @@ static void walk_stmt(MissionType mission, Common::Stream *bfile, StatementPtr &
 			if (mission == DUMP)
 				writeStream->writeByte(vEndSeq);
 			else
-				dispose_list(the_stmt->_write.print_list);
+				dispose_list(the_stmt->_data._write.print_list);
 			break;
 
 		default:

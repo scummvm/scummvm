@@ -35,6 +35,8 @@ typedef ExprNode ResultType;
 
 struct ContextType {
 	int sender, self, each, message;
+
+	ContextType() : sender(0), self(0), each(0), message(0) {}
 };
 
 extern int MainObject;

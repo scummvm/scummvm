@@ -35,7 +35,7 @@ const int OP_SEND_TO_TYPE = NUM_OPERS + 2;	// for use with interpreter
 
 struct OperNode {
 	int8 op_name;
-	union ExprNode *left, *right;
+	struct ExprNode *left, *right;
 };
 
 struct MessageTextQuoteNode {
@@ -63,8 +63,7 @@ struct IdentNode {
 	int ident_int;
 };
 
-union ExprNode {
-	AclType _kind;
+union ExprNodeData {
 	OperNode _oper;
 	NumericNode _numeric;
 	MessageTextQuoteNode _msgTextQuote;
@@ -72,6 +71,11 @@ union ExprNode {
 	AttrNode _attr;
 	ReservedNode _reserved;
 	IdentNode _ident;
+};
+
+struct ExprNode {
+	AclType _kind;
+	ExprNodeData _data;
 };
 
 typedef ExprNode *ExprPtr;

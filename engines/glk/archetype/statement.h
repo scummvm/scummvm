@@ -34,7 +34,7 @@ enum StatementKind {
 	ST_DESTROY, ST_WRITE, ST_WRITES, ST_STOP, CONT_SEQ, END_SEQ
 };
 
-union StatementType;
+struct StatementType;
 typedef StatementType *StatementPtr;
 
 struct StmtCompound {
@@ -74,8 +74,7 @@ struct StmtWrite {
 	ListType print_list;
 };
 
-union StatementType {
-	StatementKind _kind;
+union StatementTypeData {
 	StmtCompound _compound;
 	StmtExpr _expr;
 	StmtIf _if;
@@ -84,6 +83,11 @@ union StatementType {
 	StmtDestroy _destroy;
 	StmtLoop _loop;
 	StmtWrite _write;
+};
+
+struct StatementType {
+	StatementKind _kind;
+	StatementTypeData _data;
 };
 
 struct CasePairType {
