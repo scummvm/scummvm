@@ -158,6 +158,7 @@ static void eventThreadFunc(void *arg) {
 						osys->displayMessageOnOSD("Magnify Mode On");
 				} else {
 					osys->setMagnifyMode(MODE_MAGOFF);
+					osys->updateSize();
 					if (savedInputMode == MODE_DRAG) {
 						inputMode = savedInputMode;
 						osys->displayMessageOnOSD("Magnify Mode Off. Reactivating Drag Mode...");
@@ -230,6 +231,7 @@ static void eventThreadFunc(void *arg) {
 		if (g_system->getEventManager()->shouldRTL()) {
 			if (osys->getMagnifyMode() == MODE_MAGON) {
 				osys->setMagnifyMode(MODE_MAGOFF);
+				osys->updateSize();
 				if (savedInputMode == MODE_DRAG) {
 					inputMode = savedInputMode;
 					osys->displayMessageOnOSD("Magnify Mode Off. Reactivating Drag Mode.\nReturning to Launcher...");

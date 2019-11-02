@@ -51,10 +51,13 @@ public:
 	void clear(uint32 color = 0);
 	void markDirty(){ dirtyPixels = true; }
 
-	void setPosition(int x, int y);
+	void setPosition(uint16 x, uint16 y);
+	void setOffset(uint16 x, uint16 y);
 	void setScale(float x, float y);
 	float getScaleX(){ return scaleX; }
 	float getScaleY(){ return scaleY; }
+	int getPosX(){ return posX; }
+	int getPosY(){ return posY; }
 	C3D_Mtx* getMatrix();
 
 	uint16 actualWidth;
@@ -68,6 +71,8 @@ private:
 	vertex* vertices;
 	int posX;
 	int posY;
+	uint16 offsetX;
+	uint16 offsetY;
 	float scaleX;
 	float scaleY;
 };
