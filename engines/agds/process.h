@@ -59,6 +59,7 @@ private:
 	int				_animationCycles;
 	bool			_animationLoop;
 	Common::Point	_animationPosition;
+	int				_animationZ;
 	bool			_animationPaused;
 	int				_animationSpeed;
 	bool			_waitForCall;
@@ -228,7 +229,6 @@ private:
 	void stub83();
 	void stub102();
 	void resetState();
-	void stub129();
 	void setCycles();
 	void setRandom();
 	void stub133();
@@ -257,6 +257,7 @@ private:
 	void setAnimationLoop();
 	void setAnimationPaused();
 	void setAnimationSpeed();
+	void setAnimationZ();
 	void stub223();
 	void stub225();
 	void stub231();

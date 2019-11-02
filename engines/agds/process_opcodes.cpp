@@ -121,6 +121,7 @@ void Process::loadAnimation() {
 	Animation *animation = _engine->loadAnimation(name);
 	if (animation) {
 		animation->position(_animationPosition);
+		animation->z(_animationZ);
 		animation->phaseVar(_phaseVar);
 		animation->loop(_animationLoop);
 		animation->cycles(_animationCycles);
@@ -534,6 +535,7 @@ void Process::resetState() {
 	_animationLoop = false;
 	_animationPosition = Common::Point();
 	_animationPaused = false;
+	_animationZ = 0;
 
 	_tileWidth = 16;
 	_tileHeight = 16;
@@ -541,9 +543,10 @@ void Process::resetState() {
 	_tileResource = 0;
 }
 
-void Process::stub129() {
-	int value = pop();
-	debug("stub129 %d animation duration?", value);
+void Process::setAnimationZ() {
+	int z = pop();
+	debug("setAnimationZ %d", z);
+	_animationZ = z;
 }
 
 void Process::stub133() {
@@ -1360,7 +1363,7 @@ ProcessExitCode Process::execute() {
 			OP		(kNPCSay, npcSay);
 			OP		(kSetTimer, setTimer);
 			OP		(kProcessResetState, resetState);
-			OP		(kStub129, stub129);
+			OP		(kSetAnimationZ, setAnimationZ);
 			OP		(kSetCycles, setCycles);
 			OP		(kSetRandom, setRandom);
 			OP		(kStub133, stub133);

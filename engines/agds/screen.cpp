@@ -31,7 +31,13 @@ int Screen::ObjectZCompare(const ObjectPtr & a, const ObjectPtr & b) {
 	return a->z() - b->z();
 }
 
-Screen::Screen(ObjectPtr object, const MouseMap &mouseMap) : _object(object), _name(object->getName()), _mouseMap(mouseMap), _children(&ObjectZCompare) {
+int Screen::AnimationZCompare(const Animation *a, const Animation *b) {
+	return a->z() - b->z();
+}
+
+Screen::Screen(ObjectPtr object, const MouseMap &mouseMap) :
+	_object(object), _name(object->getName()), _mouseMap(mouseMap),
+	_children(&ObjectZCompare), _animations(&AnimationZCompare) {
 	add(object);
 }
 
@@ -85,21 +91,50 @@ bool Screen::remove(const Common::String &name) {
 
 
 void Screen::paint(AGDSEngine & engine, Graphics::Surface & backbuffer) {
+#if 0
+	ChildrenType::iterator child = _children.begin();
+	AnimationsType::iterator animation = _animations.begin();
+	int idx = 0;
+	while(child != _children.end() || animation != _animations.end()) {
+		bool child_valid = child != _children.end();
+		bool animation_valid = animation != _animations.end();
+		if (child_valid && animation_valid) {
+			if ((*child)->z() < (*animation)->z()) {
+				debug("object %d, z: %d", idx++, (*child)->z());
+				(*child)->paint(engine, backbuffer);
+				++child;
+			} else {
+				debug("animatin %d, z: %d", idx++, (*animation)->z());
+				(*animation)->paint(engine, backbuffer, Common::Point());
+				++animation;
+			}
+		} else if (child_valid) {
+			debug("object %d, z: %d", idx++, (*child)->z());
+			(*child)->paint(engine, backbuffer);
+			++child;
+		} else {
+			debug("animatin %d, z: %d", idx++, (*animation)->z());
+			(*animation)->paint(engine, backbuffer, Common::Point());
+			++animation;
+		}
+	}
+#else
 	ChildrenType::iterator i;
 	for(i = _children.begin(); i != _children.end(); ++i) {
-		ObjectPtr object = *i;
-		if (object->z() > 0)
-			break;
-		object->paint(engine, backbuffer);
+			ObjectPtr object = *i;
+			if (object->z() > 0)
+					break;
+			object->paint(engine, backbuffer);
 	}
 	for(AnimationsType::iterator j = _animations.begin(); j != _animations.end(); ++j) {
-		Animation * animation = *j;
-		animation->paint(engine, backbuffer, Common::Point());
+			Animation * animation = *j;
+			animation->paint(engine, backbuffer, Common::Point());
 	}
 	for(; i != _children.end(); ++i) {
-		ObjectPtr object = *i;
-		object->paint(engine, backbuffer);
+			ObjectPtr object = *i;
+			object->paint(engine, backbuffer);
 	}
+#endif
 }
 
 ObjectPtr Screen::find(Common::Point pos) const {

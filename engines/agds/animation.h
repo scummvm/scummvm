@@ -45,6 +45,7 @@ class Animation {
 	int					_phase;
 	bool				_paused;
 	int					_speed;
+	int					_z;
 
 public:
 	Animation();
@@ -85,6 +86,14 @@ public:
 
 	void speed(int speed) {
 		_speed = speed;
+	}
+
+	void z(int z) {
+		_z = z;
+	}
+
+	int z() const {
+		return _z;
 	}
 
 	bool load(Common::SeekableReadStream *stream);
