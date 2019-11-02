@@ -208,20 +208,19 @@ void ConnectionManager::processTransfers() {
 	int messagesInQueue;
 	CURLMsg *curlMsg;
 	while ((curlMsg = curl_multi_info_read(_multi, &messagesInQueue))) {
-		CURL *easyHandle = curlMsg->easy_handle;
-
-		NetworkReadStream *stream;
-		curl_easy_getinfo(easyHandle, CURLINFO_PRIVATE, &stream);
-		if (stream)
-			stream->finished();
-
 		if (curlMsg->msg == CURLMSG_DONE) {
-			debug(9, "ConnectionManager: SUCCESS (%d - %s)", curlMsg->data.result, curl_easy_strerror(curlMsg->data.result));
-		} else {
-			warning("ConnectionManager: FAILURE (CURLMsg (%d))", curlMsg->msg);
-		}
+			CURL *easyHandle = curlMsg->easy_handle;
 
-		curl_multi_remove_handle(_multi, easyHandle);
+			NetworkReadStream *stream = nullptr;
+			curl_easy_getinfo(easyHandle, CURLINFO_PRIVATE, &stream);
+
+			if (stream)
+				stream->finished(curlMsg->data.result);
+
+			curl_multi_remove_handle(_multi, easyHandle);
+		} else {
+			warning("Unknown libcurl message type %d", curlMsg->msg);
+		}
 	}
 }
 
