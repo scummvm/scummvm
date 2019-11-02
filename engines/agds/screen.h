@@ -24,6 +24,7 @@
 #define AGDS_SCREEN_H
 
 #include "common/scummsys.h"
+#include "common/array.h"
 #include "common/list.h"
 #include "common/ptr.h"
 #include "common/str.h"
@@ -96,8 +97,10 @@ public:
 };
 
 class Screen {
+	static int ObjectZCompare(const ObjectPtr & a, const ObjectPtr & b);
+
 	typedef Common::List<Animation *> AnimationsType;
-	typedef Common::List<ObjectPtr> ChildrenType;
+	typedef Common::SortedArray<ObjectPtr, const ObjectPtr &> ChildrenType;
 
 	ObjectPtr		_object;
 	Common::String	_name;
@@ -134,6 +137,7 @@ public:
 		_animations.push_back(animation);
 	}
 	bool remove(const Common::String & name);
+	bool remove(const ObjectPtr & object);
 	void paint(AGDSEngine & engine, Graphics::Surface & backbuffer);
 	ObjectPtr find(Common::Point pos) const;
 	ObjectPtr find(const Common::String &name);

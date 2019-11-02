@@ -27,7 +27,11 @@
 
 namespace AGDS {
 
-Screen::Screen(ObjectPtr object, const MouseMap &mouseMap) : _object(object), _name(object->getName()), _mouseMap(mouseMap) {
+int Screen::ObjectZCompare(const ObjectPtr & a, const ObjectPtr & b) {
+	return a->z() - b->z();
+}
+
+Screen::Screen(ObjectPtr object, const MouseMap &mouseMap) : _object(object), _name(object->getName()), _mouseMap(mouseMap), _children(&ObjectZCompare) {
 	add(object);
 }
 
@@ -44,7 +48,7 @@ void Screen::add(ObjectPtr object) {
 		if (*i == object)
 			return;
 	}
-	_children.push_back(object);
+	_children.insert(object);
 }
 
 ObjectPtr Screen::find(const Common::String &name) {
@@ -53,6 +57,18 @@ ObjectPtr Screen::find(const Common::String &name) {
 			return *i;
 	}
 	return ObjectPtr();
+}
+
+bool Screen::remove(const ObjectPtr & object) {
+	bool found = false;
+	for(ChildrenType::iterator i = _children.begin(); i != _children.end(); ) {
+		if (*i == object) {
+			i = _children.erase(i);
+			found = true;
+		} else
+			++i;
+	}
+	return found;
 }
 
 bool Screen::remove(const Common::String &name) {
@@ -69,12 +85,20 @@ bool Screen::remove(const Common::String &name) {
 
 
 void Screen::paint(AGDSEngine & engine, Graphics::Surface & backbuffer) {
-	for(ChildrenType::iterator i = _children.begin(); i != _children.end(); ++i) {
-		(*i)->paint(engine, backbuffer);
+	ChildrenType::iterator i;
+	for(i = _children.begin(); i != _children.end(); ++i) {
+		ObjectPtr object = *i;
+		if (object->z() > 0)
+			break;
+		object->paint(engine, backbuffer);
 	}
-	for(AnimationsType::iterator i = _animations.begin(); i != _animations.end(); ++i) {
-		Animation * animation = *i;
+	for(AnimationsType::iterator j = _animations.begin(); j != _animations.end(); ++j) {
+		Animation * animation = *j;
 		animation->paint(engine, backbuffer, Common::Point());
+	}
+	for(; i != _children.end(); ++i) {
+		ObjectPtr object = *i;
+		object->paint(engine, backbuffer);
 	}
 }
 

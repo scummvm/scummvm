@@ -981,6 +981,12 @@ void Process::enableInventory() {
 void Process::setObjectZ() {
 	int z = pop();
 	debug("setObjectZ %d", z);
+	_object->z(z);
+	Screen *screen = _engine->getCurrentScreen();
+	bool found = screen->remove(_object);
+	if (found) {
+		screen->add(_object);
+	}
 }
 
 void Process::updateScreenHeightToDisplay() {

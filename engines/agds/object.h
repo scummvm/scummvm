@@ -68,6 +68,7 @@ private:
 	Animation *						_animation;
 	Animation *						_mouseCursor;
 	Common::Point					_pos, _animationPos;
+	int								_z;
 	Common::String					_text;
 	uint							_clickHandler;
 	uint							_examineHandler;
@@ -154,6 +155,14 @@ public:
 
 	void move(Common::Point pos) {
 		_pos = pos;
+	}
+
+	void z(int z) {
+		_z = z;
+	}
+
+	int z() const {
+		return _z;
 	}
 
 	const Common::String & getText() const {
