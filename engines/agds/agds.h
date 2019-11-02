@@ -58,6 +58,7 @@ class Object;
 typedef Common::SharedPtr<Object> ObjectPtr;
 class Process;
 struct Region;
+typedef Common::SharedPtr<Region> RegionPtr;
 struct MouseRegion;
 class MJPGPlayer;
 class Screen;
@@ -97,7 +98,7 @@ public:
 	void loadScreen(const Common::String & name);
 	void setCurrentScreen(Screen *screen);
 
-	Region * loadRegion(const Common::String &name);
+	RegionPtr loadRegion(const Common::String &name);
 	Common::String loadText(const Common::String &name);
 
 	int appendToSharedStorage(const Common::String &value);
@@ -177,7 +178,6 @@ private:
 	typedef Common::HashMap<int, Graphics::TransparentSurface *> PictureCacheType;
 	typedef Common::HashMap<Common::String, int, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> PictureCacheLookup;
 	typedef Common::HashMap<Common::String, Object *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> ObjectsType;
-	typedef Common::HashMap<Common::String, Region *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> RegionsType;
 	typedef Common::HashMap<Common::String, SystemVariable *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> SystemVariablesType;
 	typedef Common::HashMap<Common::String, int, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> GlobalsType;
 	typedef Common::HashMap<Common::String, Animation *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> AnimationsType;
@@ -193,7 +193,6 @@ private:
 	PictureCacheLookup			_pictureCacheLookup;
 	int							_pictureCacheId;
 	FontsType					_fonts;
-	RegionsType					_regions;
 	AnimationsType				_animations;
 	CharactersType				_characters;
 	ProcessListType				_processes;
@@ -213,7 +212,7 @@ private:
 	MouseMap					_mouseMap;
 	Common::RandomSource		_random;
 	Inventory					_inventory;
-	Region *					_inventoryRegion;
+	RegionPtr					_inventoryRegion;
 	bool						_fastMode;
 	DialogDefsType				_dialogDefs;
 	Common::String				_dialogScript;

@@ -37,6 +37,7 @@ namespace AGDS {
 
 class AGDSEngine;
 struct Region;
+typedef Common::SharedPtr<Region> RegionPtr;
 class Animation;
 
 class Object {
@@ -64,7 +65,7 @@ private:
 	KeyHandlersType					_keyHandlers;
 	UseHandlersType					_useHandlers;
 	Graphics::TransparentSurface *	_picture;
-	Region *						_region;
+	RegionPtr						_region;
 	Animation *						_animation;
 	Animation *						_mouseCursor;
 	Common::Point					_pos, _animationPos;
@@ -123,11 +124,11 @@ public:
 		_alpha = (100 - alpha) * 255 / 100;
 	}
 
-	void setRegion(Region *region) {
+	void region(RegionPtr region) {
 		_region = region;
 	}
 
-	Region * getRegion() const {
+	RegionPtr region() const {
 		return _region;
 	}
 

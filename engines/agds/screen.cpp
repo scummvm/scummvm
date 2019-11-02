@@ -36,7 +36,7 @@ int Screen::AnimationZCompare(const Animation *a, const Animation *b) {
 }
 
 Screen::Screen(ObjectPtr object, const MouseMap &mouseMap) :
-	_object(object), _name(object->getName()), _mouseMap(mouseMap), _region(NULL),
+	_object(object), _name(object->getName()), _mouseMap(mouseMap),
 	_children(&ObjectZCompare), _animations(&AnimationZCompare) {
 	add(object);
 }
@@ -140,7 +140,7 @@ void Screen::paint(AGDSEngine & engine, Graphics::Surface & backbuffer) {
 ObjectPtr Screen::find(Common::Point pos) const {
 	for(ChildrenType::const_iterator i = _children.begin(); i != _children.end(); ++i) {
 		ObjectPtr object = *i;
-		Region *region = object->getRegion();
+		RegionPtr region = object->region();
 		if (region && region->pointIn(pos))
 			return object;
 	}
