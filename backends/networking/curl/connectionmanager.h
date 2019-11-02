@@ -118,6 +118,9 @@ public:
 	Common::String urlEncode(Common::String s) const;
 
 	static uint32 getCloudRequestsPeriodInMicroseconds();
+
+	/** Return the path to the CA certificates bundle. */
+	static const char *getCaCertPath();
 };
 
 /** Shortcut for accessing the connection manager. */
