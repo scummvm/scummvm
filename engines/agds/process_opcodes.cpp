@@ -734,12 +734,16 @@ void Process::setTileSize() {
 
 void Process::generateRegion() {
 	Common::String name = popString();
-	debug("generateRegion %d %d %d %d", _animationPosition.x, _animationPosition.y, _tileWidth, _tileHeight);
+	debug("generateRegion %s %d %d %d %d", name.c_str(), _animationPosition.x, _animationPosition.y, _tileWidth, _tileHeight);
 	Common::Rect rect(_tileWidth, _tileHeight);
 	rect.translate(_animationPosition.x, _animationPosition.y);
 	Region * region = new Region(rect);
 	//fixme: leaking region
-	_object->setRegion(region);
+	ObjectPtr object = _engine->getCurrentScreen()->find(name);
+	if (object)
+		_object->setRegion(region);
+	else
+		warning("no object found");
 }
 
 void Process::setObjectTile() {
