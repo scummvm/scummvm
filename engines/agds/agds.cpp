@@ -111,20 +111,15 @@ bool AGDSEngine::load() {
 	return true;
 }
 
-Region * AGDSEngine::loadRegion(const Common::String &name) {
-	RegionsType::iterator i = _regions.find(name);
-	if (i != _regions.end())
-		return i->_value;
-
+RegionPtr AGDSEngine::loadRegion(const Common::String &name) {
 	debug("loading region %s", name.c_str());
 	Common::SeekableReadStream * stream = _data.getEntry(name);
 	if (!stream)
 		error("no database entry for %s\n", name.c_str());
 
-	Region *region = new Region(name, stream);
+	RegionPtr region(new Region(name, stream));
 	delete stream;
 
-	_regions[name] = region;
 	return region;
 }
 

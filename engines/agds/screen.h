@@ -41,10 +41,12 @@ class Object;
 class Animation;
 typedef Common::SharedPtr<Object> ObjectPtr;
 struct Region;
+typedef Common::SharedPtr<Region> RegionPtr;
+
 
 struct MouseRegion {
 	int			id;
-	Region *	region;
+	RegionPtr	region;
 	int			enabled;
 	bool		currentlyIn;
 
@@ -60,7 +62,7 @@ struct MouseRegion {
 			--enabled;
 	}
 
-	MouseRegion(Region * reg, const Common::String &enter, const Common::String &leave):
+	MouseRegion(RegionPtr reg, const Common::String &enter, const Common::String &leave):
 		id(-1), region(reg), enabled(1), currentlyIn(false), onEnter(enter), onLeave(leave) {
 	}
 };
@@ -108,7 +110,7 @@ class Screen {
 	ChildrenType	_children;
 	AnimationsType	_animations;
 	MouseMap		_mouseMap;
-	Region *		_region;
+	RegionPtr		_region;
 
 public:
 	struct KeyHandler {
@@ -134,11 +136,11 @@ public:
 		return _mouseMap;
 	}
 
-	Region * region() const {
+	RegionPtr region() const {
 		return _region;
 	}
 
-	void region(Region * region) {
+	void region(RegionPtr region) {
 		_region = region;
 	}
 

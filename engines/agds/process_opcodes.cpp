@@ -78,7 +78,7 @@ void Process::getIntegerSystemVariable() {
 
 void Process::getRegionCenterX() {
 	Common::String name = popString();
-	Region *reg = _engine->loadRegion(name);
+	RegionPtr reg = _engine->loadRegion(name);
 	int value = reg->center.x;
 	push(value);
 	debug("getRegionCenterX %s -> %d", name.c_str(), value);
@@ -86,7 +86,7 @@ void Process::getRegionCenterX() {
 
 void Process::getRegionCenterY() {
 	Common::String name = popString();
-	Region *reg = _engine->loadRegion(name);
+	RegionPtr reg = _engine->loadRegion(name);
 	int value = reg->center.y;
 	push(value);
 	debug("getRegionCenterY %s -> %d", name.c_str(), value);
@@ -192,7 +192,9 @@ void Process::loadScreenObject() {
 void Process::loadScreenRegion() {
 	Common::String name = popString();
 	debug("loadScreenRegion %s", name.c_str());
-	_engine->getCurrentScreen()->region(_engine->loadRegion(name));
+	RegionPtr region = _engine->loadRegion(name);
+	_engine->getCurrentScreen()->region(region);
+	debug("region: %s", region->toString().c_str());
 }
 
 void Process::cloneObject() {
@@ -733,12 +735,11 @@ void Process::generateRegion() {
 	debug("generateRegion %s %d %d %d %d", name.c_str(), _animationPosition.x, _animationPosition.y, _tileWidth, _tileHeight);
 	Common::Rect rect(_tileWidth, _tileHeight);
 	rect.translate(_animationPosition.x, _animationPosition.y);
-	Region * region = new Region(rect);
+	RegionPtr region(new Region(rect));
 	debug("result region: %s", region->toString().c_str());
-	//fixme: leaking region, convert regions to RegionPtr
 	ObjectPtr object = _engine->getCurrentScreen()->find(name);
 	if (object)
-		_object->setRegion(region);
+		_object->region(region);
 	else
 		warning("no object found");
 }
@@ -824,9 +825,12 @@ void Process::moveScreenObject() {
 	Common::String name = popString();
 	debug("moveScreenObject %s %d %d", name.c_str(), arg2, arg3);
 	ObjectPtr object = _engine->getCurrentScreenObject(name);
-	if (object)
+	if (object) {
+		RegionPtr region = object->region();
+		if (region)
+			debug("object region %s", region->toString().c_str());
 		object->move(Common::Point(arg2, arg3));
-	else
+	} else
 		warning("moveScreenObject: object %s not found", name.c_str());
 }
 
@@ -1053,7 +1057,8 @@ void Process::addMouseArea() {
 	Common::String name = popString();
 
 	debug("addMouseArea (region: %s) %s %s", name.c_str(), onEnter.c_str(), onLeave.c_str());
-	Region *region = _engine->loadRegion(name);
+	RegionPtr region = _engine->loadRegion(name);
+	debug("region: %s", region->toString().c_str());
 
 	int value = _engine->_mouseMap.add(MouseRegion(region, onEnter, onLeave));
 	debug("\tmouse area id -> %d", value);
@@ -1113,7 +1118,8 @@ void Process::leaveCharacter() {
 	Common::String arg2 = popString();
 	Common::String arg1 = popString();
 	debug("leaveCharacter %s %s", arg1.c_str(), arg2.c_str());
-	_engine->loadRegion(arg2);
+	RegionPtr region = _engine->loadRegion(arg2);
+	debug("region: %s", region->toString().c_str());
 }
 
 void Process::setCharacter() {
@@ -1161,7 +1167,9 @@ void Process::fogOnCharacter() {
 void Process::loadRegionFromObject() {
 	Common::String name = popString();
 	debug("loadRegionFromObject %s", name.c_str());
-	_object->setRegion(_engine->loadRegion(name));
+	RegionPtr region = _engine->loadRegion(name);
+	debug("region: %s", region->toString().c_str());
+	_object->region(region);
 }
 
 
