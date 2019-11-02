@@ -42,6 +42,7 @@ struct Region {
 	Region(const Common::Rect rect);
 
 	bool pointIn(Common::Point point) const;
+	Common::String toString() const;
 };
 
 

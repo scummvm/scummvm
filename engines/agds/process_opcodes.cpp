@@ -734,7 +734,8 @@ void Process::generateRegion() {
 	Common::Rect rect(_tileWidth, _tileHeight);
 	rect.translate(_animationPosition.x, _animationPosition.y);
 	Region * region = new Region(rect);
-	//fixme: leaking region
+	debug("result region: %s", region->toString().c_str());
+	//fixme: leaking region, convert regions to RegionPtr
 	ObjectPtr object = _engine->getCurrentScreen()->find(name);
 	if (object)
 		_object->setRegion(region);

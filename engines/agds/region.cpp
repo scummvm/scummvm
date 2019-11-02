@@ -72,6 +72,16 @@ Region::Region(const Common::Rect rect): flags(0) {
 	center.y = (rect.top + rect.bottom) / 2;
 }
 
+Common::String Region::toString() const {
+	Common::String str = Common::String::format("region(%d, %d, [", center.x, center.y);
+	for(size_t i = 0; i < points.size(); ++i) {
+		if (i != 0)
+			str += ", ";
+		str += Common::String::format("(%d, %d)", points[i].x, points[i].y);
+	}
+	str += "]";
+	return str;
+}
 
 //FIXME: copied from wintermute/base_region.cpp
 
