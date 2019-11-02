@@ -34,6 +34,8 @@
 namespace Glk {
 namespace Archetype {
 
+#define MAX_INPUT_LINE 100
+
 Archetype *g_vm;
 
 Archetype::Archetype(OSystem *syst, const GlkGameDescription &gameDesc) : GlkAPI(syst, gameDesc),
@@ -75,10 +77,15 @@ bool Archetype::initialize() {
 	new_xarray(Object_List);
 	NullStr = NewConstStr("null");
 
+	// GLK window
+	_mainWindow = glk_window_open(0, 0, 0, wintype_TextBuffer);
+	glk_set_window(_mainWindow);
+
 	return true;
 }
 
 void Archetype::deinitialize() {
+	glk_window_close(_mainWindow);
 }
 
 Common::Error Archetype::readSaveData(Common::SeekableReadStream *rs) {
@@ -110,16 +117,43 @@ void Archetype::interpret() {
 	cleanup(result);
 }
 
-void Archetype::write(const String &fmt, ...) {
-	// TODO
+void Archetype::write(const String fmt, ...) {
+	va_list ap;
+	va_start(ap, fmt);
+	Common::String s = Common::String::format(fmt.c_str(), ap);
+	va_end(ap);
+
+	glk_put_buffer(s.c_str(), s.size());
 }
 
-void Archetype::writeln(const String &fmt, ...) {
-	// TODO
+void Archetype::writeln(const String fmt, ...) {
+	va_list ap;
+	va_start(ap, fmt);
+	Common::String s = Common::String::format(fmt.c_str(), ap);
+	va_end(ap);
+
+	s += '\n';
+	glk_put_buffer(s.c_str(), s.size());
 }
 
 void Archetype::readln(String &s) {
-	// TODO
+	event_t ev;
+	char buffer[MAX_INPUT_LINE + 1];
+
+	glk_request_line_event(_mainWindow, buffer, MAX_INPUT_LINE, 0);
+
+	do {
+		glk_select(&ev);
+		if (ev.type == evtype_Quit) {
+			glk_cancel_line_event(_mainWindow, &ev);
+			return;
+		} else if (ev.type == evtype_LineInput)
+			break;
+	} while (ev.type != evtype_Quit);
+
+	buffer[ev.val1] = 0;
+
+	s = String(buffer);
 }
 
 char Archetype::ReadKey() {

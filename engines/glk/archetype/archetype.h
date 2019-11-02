@@ -40,6 +40,7 @@ class Archetype : public GlkAPI {
 private:
 	int _saveSlot;
 	bool Translating;
+	winid_t _mainWindow;
 public:
 	// keywords.cpp
 	XArrayType Literals, Vocabulary;
@@ -157,12 +158,12 @@ public:
 	/**
 	 * Write some text to the screen
 	 */
-	void write(const String &fmt, ...);
+	void write(const String fmt, ...);
 
 	/**
 	 * Write a line to the screen
 	 */
-	void writeln(const String &fmt, ...);
+	void writeln(const String fmt, ...);
 	void writeln() { writeln(""); }
 
 	void readln(String &s);
