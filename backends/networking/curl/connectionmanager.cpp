@@ -26,6 +26,7 @@
 #include "backends/networking/curl/connectionmanager.h"
 #include "backends/networking/curl/networkreadstream.h"
 #include "common/debug.h"
+#include "common/fs.h"
 #include "common/system.h"
 #include "common/timer.h"
 
@@ -96,6 +97,29 @@ Common::String ConnectionManager::urlEncode(Common::String s) const {
 
 uint32 ConnectionManager::getCloudRequestsPeriodInMicroseconds() {
 	return TIMER_INTERVAL * CLOUD_PERIOD;
+}
+
+const char *ConnectionManager::getCaCertPath() {
+#if defined(DATA_PATH)
+	static enum {
+		kNotInitialized,
+		kFileNotFound,
+		kFileExists
+	} state = kNotInitialized;
+
+	if (state == kNotInitialized) {
+		Common::FSNode node(DATA_PATH"/cacert.pem");
+		state = node.exists() ? kFileExists : kFileNotFound;
+	}
+
+	if (state == kFileExists) {
+		return DATA_PATH"/cacert.pem";
+	} else {
+		return nullptr;
+	}
+#else
+	return nullptr;
+#endif
 }
 
 //private goes here:

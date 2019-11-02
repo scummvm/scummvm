@@ -88,6 +88,11 @@ void NetworkReadStream::init(const char *url, curl_slist *headersList, const byt
 	curl_easy_setopt(_easy, CURLOPT_SSL_VERIFYPEER, 0);
 #endif
 
+	const char *caCertPath = ConnMan.getCaCertPath();
+	if (caCertPath) {
+		curl_easy_setopt(_easy, CURLOPT_CAINFO, caCertPath);
+	}
+
 #if LIBCURL_VERSION_NUM >= 0x072000
 	// CURLOPT_XFERINFOFUNCTION introduced in libcurl 7.32.0
 	// CURLOPT_PROGRESSFUNCTION is used as a backup plan in case older version is used
@@ -143,6 +148,11 @@ void NetworkReadStream::init(const char *url, curl_slist *headersList, Common::H
 #if defined NINTENDO_SWITCH || defined ANDROID_PLAIN_PORT
 	curl_easy_setopt(_easy, CURLOPT_SSL_VERIFYPEER, 0);
 #endif
+
+	const char *caCertPath = ConnMan.getCaCertPath();
+	if (caCertPath) {
+		curl_easy_setopt(_easy, CURLOPT_CAINFO, caCertPath);
+	}
 
 #if LIBCURL_VERSION_NUM >= 0x072000
 	// CURLOPT_XFERINFOFUNCTION introduced in libcurl 7.32.0
