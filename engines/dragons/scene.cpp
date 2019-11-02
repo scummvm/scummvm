@@ -167,6 +167,15 @@ void Scene::loadSceneData(uint32 sceneId, uint32 cameraPointId) {
 	}
 	_screen->loadPalette(0, _stage->getPalette());
 
+	for(int i = 1; i < 0x100; i ++) {
+		byte *stagePalette = _stage->getPalette();
+		uint16 c = READ_LE_INT16(stagePalette + i * 2);
+		if ((c & 0x7fff) == 0) {
+			stagePalette[i * 2] = 1;
+			stagePalette[i * 2 + 1] = 0;
+		}
+	}
+
 	_camera = _stage->getPoint2(cameraPointId);
 
 	if (flicker && !(sceneId & 0x8000)) {
@@ -339,11 +348,11 @@ void Scene::draw() {
 		}
 
 		if (priority == _stage->getBgLayerPriority()) {
-			_screen->copyRectToSurface8bpp(*_stage->getBgLayer(), _screen->getPalette(0), 0, 0, rect);
+			_screen->copyRectToSurface8bpp(*_stage->getBgLayer(), _screen->getPalette(0), 0, 0, rect, false, 128);
 		} else if (priority == _stage->getMgLayerPriority()) {
-			_screen->copyRectToSurface8bpp(*_stage->getMgLayer(), _screen->getPalette(0), 0, 0, rect);
+			_screen->copyRectToSurface8bpp(*_stage->getMgLayer(), _screen->getPalette(0), 0, 0, rect, false, 128);
 		} else if (priority == _stage->getFgLayerPriority()) {
-			_screen->copyRectToSurface8bpp(*_stage->getFgLayer(), _screen->getPalette(0), 0, 0, rect);
+			_screen->copyRectToSurface8bpp(*_stage->getFgLayer(), _screen->getPalette(0), 0, 0, rect, false, 128);
 		} else if (priority == 5) {
 			if (_vm->isFlagSet(ENGINE_FLAG_80)) {
 				_vm->_inventory->draw();
