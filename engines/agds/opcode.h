@@ -89,7 +89,7 @@ enum Opcode {
 	kLoadRegionFromObject			= 68,
 	kLoadPictureFromObject			= 69,
 	kLoadAnimationFromObject		= 70,
-	kSetObjectHeight				= 71,
+	kSetObjectZ						= 71,
 	kUpdateScreenHeightToDisplay	= 72,
 	kLoadTextFromObject				= 73,
 	kScreenSetHeight				= 74,

@@ -134,7 +134,7 @@ private:
 	void loadFont();
 	void removeScreenObject();
 	void changeScreenPatch();
-	void setObjectHeight();
+	void setObjectZ();
 	void setScreenHeight();
 	void updateScreenHeightToDisplay();
 	void addMouseArea();
