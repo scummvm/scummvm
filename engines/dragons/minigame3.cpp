@@ -729,8 +729,7 @@ void Minigame3::run() {
 		}
 	}
 	handActorId->updateSequence(1);
-	do {
-	} while ((handActorId->flags & 4) == 0);
+	handActorId->waitUntilFlag4IsSet();
 	_vm->_dragonINIResource->getRecord(0x178)->field_12 = local_224 + 1;
 	if (goodRabbitPositionTbl[local_224] == 1) {
 		bunnyActorTbl[bunnyPositionTbl[local_224]]->updateSequence(2);
@@ -743,7 +742,7 @@ void Minigame3::run() {
 			i = i + 1;
 		}
 		_vm->waitForFrames(0x1e);
-		bunnyActorTbl[bunnyPositionTbl[local_224]]->updateSequence(2);
+		bunnyActorTbl[bunnyPositionTbl[i]]->updateSequence(2);
 		_vm->_dragonINIResource->getRecord(0x178)->field_14 = 0;
 	}
 	_vm->waitForFrames(0x3c * 2);
@@ -777,7 +776,7 @@ void Minigame3::updateBackgroundLayerOffset(uint32 layerNumber, int16 xOffset, i
 }
 
 void Minigame3::FUN_80017f70_paletteRelated(uint16 param_1) {
-	if (0x1f < param_1) {
+	if (param_1 > 0x1f) {
 		param_1 = 0x1f;
 	}
 //	uVar1 = IsVSyncEventEnabled & 1;
@@ -785,7 +784,7 @@ void Minigame3::FUN_80017f70_paletteRelated(uint16 param_1) {
 	_vm->_screen->loadPalette(0, _vm->_scene->getPalette());
 	_vm->_screen->setPaletteRecord(0, 0x3f, param_1 * 0x421);
 //	load_palette_into_frame_buffer(0,abStack528);
-	_vm->_screen->updatePaletteTransparency(0, 0x3f,0x3f, true);
+	_vm->_screen->updatePaletteTransparency(0, 0x3f,0x3f, param_1 == 0x1e ? false : true);
 //	if (uVar1 != 0) {
 //		EnableVSyncEvent();
 //	}

@@ -257,9 +257,6 @@ void Screen::setPaletteRecord(uint16 paletteNum, uint16 offset, uint16 newValue)
 	assert(paletteNum < DRAGONS_NUM_PALETTES);
 	assert(offset < 256);
 	WRITE_LE_UINT16(&_palettes[paletteNum][offset * 2], newValue);
-	if (paletteNum == 0) {
-		Dragons::getEngine()->_scene->setStagePalette(&_palettes[0][0]);
-	}
 }
 
 byte *Screen::getPalette(uint16 paletteNum) {
