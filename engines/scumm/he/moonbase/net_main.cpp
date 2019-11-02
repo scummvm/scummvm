@@ -415,13 +415,12 @@ void Net::remoteSendArray(int typeOfSend, int sendTypeParam, int priority, int a
 			error("Net::remoteSendArray(): Unknown array type %d for array %d", FROM_LE_32(ah->type), arrayIndex);
 		}
 
-		jsonData += Common::String::format("%d, ", data);
+		jsonData += Common::String::format("%d", data);
 
 		if (i < size - 1)
 			jsonData += ", ";
 		else
 			jsonData += "]";
-	jsonData += Common::String::format("%d]", ah->data[size - 1]);
 	}
 
 	remoteSendData(typeOfSend, sendTypeParam, PACKETTYPE_REMOTESENDSCUMMARRAY, jsonData, 0);
