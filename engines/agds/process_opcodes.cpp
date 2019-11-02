@@ -978,9 +978,9 @@ void Process::enableInventory() {
 	_engine->inventory().enable(true);
 }
 
-void Process::setObjectHeight() {
-	int height = pop();
-	debug("setObjectHeight %d", height);
+void Process::setObjectZ() {
+	int z = pop();
+	debug("setObjectZ %d", z);
 }
 
 void Process::updateScreenHeightToDisplay() {
@@ -1338,7 +1338,7 @@ ProcessExitCode Process::execute() {
 			OP		(kStub83, stub83);
 			OP		(kAnimateCharacter, animateCharacter);
 			OP		(kLoadCharacter, loadCharacter);
-			OP		(kSetObjectHeight, setObjectHeight);
+			OP		(kSetObjectZ, setObjectZ);
 			OP		(kUpdateScreenHeightToDisplay, updateScreenHeightToDisplay);
 			OP		(kLoadTextFromObject, loadTextFromObject);
 			OP		(kScreenSetHeight, setScreenHeight);
