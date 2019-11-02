@@ -389,12 +389,14 @@ Common::Error AGDSEngine::run() {
 					}
 					break;
 				case Common::EVENT_LBUTTONDOWN:
+				case Common::EVENT_RBUTTONDOWN:
 					_mouse = event.mouse;
 					if (_userEnabled) {
-						debug("lclick %d, %d", _mouse.x, _mouse.y);
+						bool lclick = event.type == Common::EVENT_LBUTTONDOWN;
+						debug("%s %d, %d", lclick? "lclick": "rclick", _mouse.x, _mouse.y);
 						ObjectPtr object = _currentScreen->find(_mouse);
 						if (object) {
-							uint ip = object->getClickHandler();
+							uint ip = lclick? object->getClickHandler(): object->getExamineHandler();
 							if (ip) {
 								debug("found handler: %s %08x", object->getName().c_str(), ip + 7);
 								runProcess(object, ip);
