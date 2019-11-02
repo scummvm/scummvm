@@ -98,8 +98,9 @@ public:
 
 class Screen {
 	static int ObjectZCompare(const ObjectPtr & a, const ObjectPtr & b);
+	static int AnimationZCompare(const Animation *a, const Animation *b);
 
-	typedef Common::List<Animation *> AnimationsType;
+	typedef Common::SortedArray<Animation *, const Animation *> AnimationsType;
 	typedef Common::SortedArray<ObjectPtr, const ObjectPtr &> ChildrenType;
 
 	ObjectPtr		_object;
@@ -134,7 +135,7 @@ public:
 
 	void add(ObjectPtr object);
 	void add(Animation * animation) {
-		_animations.push_back(animation);
+		_animations.insert(animation);
 	}
 	bool remove(const Common::String & name);
 	bool remove(const ObjectPtr & object);
