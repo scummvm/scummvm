@@ -108,6 +108,7 @@ class Screen {
 	ChildrenType	_children;
 	AnimationsType	_animations;
 	MouseMap		_mouseMap;
+	Region *		_region;
 
 public:
 	struct KeyHandler {
@@ -131,6 +132,14 @@ public:
 
 	MouseMap & mouseMap() {
 		return _mouseMap;
+	}
+
+	Region * region() const {
+		return _region;
+	}
+
+	void region(Region * region) {
+		_region = region;
 	}
 
 	void add(ObjectPtr object);
