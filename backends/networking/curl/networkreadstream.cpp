@@ -26,6 +26,7 @@
 #include "backends/networking/curl/networkreadstream.h"
 #include "backends/networking/curl/connectionmanager.h"
 #include "base/version.h"
+#include "common/debug.h"
 
 namespace Networking {
 
@@ -64,6 +65,7 @@ int NetworkReadStream::curlProgressCallbackOlder(void *p, double dltotal, double
 
 void NetworkReadStream::init(const char *url, curl_slist *headersList, const byte *buffer, uint32 bufferSize, bool uploading, bool usingPatch, bool post) {
 	_eos = _requestComplete = false;
+	_errorBuffer = (char *)calloc(CURL_ERROR_SIZE, 1);
 	_sendingContentsBuffer = nullptr;
 	_sendingContentsSize = _sendingContentsPos = 0;
 	_progressDownloaded = _progressTotal = 0;
@@ -77,6 +79,7 @@ void NetworkReadStream::init(const char *url, curl_slist *headersList, const byt
 	curl_easy_setopt(_easy, CURLOPT_HEADERDATA, this);
 	curl_easy_setopt(_easy, CURLOPT_HEADERFUNCTION, curlHeadersCallback);
 	curl_easy_setopt(_easy, CURLOPT_URL, url);
+	curl_easy_setopt(_easy, CURLOPT_ERRORBUFFER, _errorBuffer);
 	curl_easy_setopt(_easy, CURLOPT_VERBOSE, 0L);
 	curl_easy_setopt(_easy, CURLOPT_FOLLOWLOCATION, 1L); //probably it's OK to have it always on
 	curl_easy_setopt(_easy, CURLOPT_HTTPHEADER, headersList);
@@ -120,6 +123,7 @@ void NetworkReadStream::init(const char *url, curl_slist *headersList, const byt
 
 void NetworkReadStream::init(const char *url, curl_slist *headersList, Common::HashMap<Common::String, Common::String> formFields, Common::HashMap<Common::String, Common::String> formFiles) {
 	_eos = _requestComplete = false;
+	_errorBuffer = (char *)calloc(CURL_ERROR_SIZE, 1);
 	_sendingContentsBuffer = nullptr;
 	_sendingContentsSize = _sendingContentsPos = 0;
 	_progressDownloaded = _progressTotal = 0;
@@ -133,6 +137,7 @@ void NetworkReadStream::init(const char *url, curl_slist *headersList, Common::H
 	curl_easy_setopt(_easy, CURLOPT_HEADERDATA, this);
 	curl_easy_setopt(_easy, CURLOPT_HEADERFUNCTION, curlHeadersCallback);
 	curl_easy_setopt(_easy, CURLOPT_URL, url);
+	curl_easy_setopt(_easy, CURLOPT_ERRORBUFFER, _errorBuffer);
 	curl_easy_setopt(_easy, CURLOPT_VERBOSE, 0L);
 	curl_easy_setopt(_easy, CURLOPT_FOLLOWLOCATION, 1L); //probably it's OK to have it always on
 	curl_easy_setopt(_easy, CURLOPT_HTTPHEADER, headersList);
@@ -205,6 +210,7 @@ NetworkReadStream::~NetworkReadStream() {
 	if (_easy)
 		curl_easy_cleanup(_easy);
 	free(_bufferCopy);
+	free(_errorBuffer);
 }
 
 bool NetworkReadStream::eos() const {
@@ -223,8 +229,18 @@ uint32 NetworkReadStream::read(void *dataPtr, uint32 dataSize) {
 	return actuallyRead;
 }
 
-void NetworkReadStream::finished() {
+void NetworkReadStream::finished(uint32 errorCode) {
 	_requestComplete = true;
+
+	char *url = nullptr;
+	curl_easy_getinfo(_easy, CURLINFO_EFFECTIVE_URL, &url);
+
+	if (errorCode == CURLE_OK) {
+		debug(9, "NetworkReadStream: %s - Request succeeded", url);
+	} else {
+		warning("NetworkReadStream: %s - Request failed (%d - %s)", url, errorCode,
+		        strlen(_errorBuffer) ? _errorBuffer : curl_easy_strerror((CURLcode)errorCode));
+	}
 }
 
 long NetworkReadStream::httpResponseCode() const {
