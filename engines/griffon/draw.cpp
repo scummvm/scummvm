@@ -106,8 +106,7 @@ void GriffonEngine::drawAnims(int Layer) {
 						int y1 = (sy + y) * 16;
 
 						if (_objectTile[o][cframe][x][y][1] == Layer) {
-							int c = _objectTile[o][cframe][x][y][0];
-							c = c - 1;
+							int c = _objectTile[o][cframe][x][y][0] - 1;
 							int curtilel = 3;
 							int curtilex = c % 20;
 							int curtiley = (c - curtilex) / 20;
@@ -176,7 +175,7 @@ void GriffonEngine::drawAnims(int Layer) {
 int hud_recalc(int a, int b, int c) {
 	int result = a * b / c;
 
-	return result > b ? b : result;
+	return MIN(result, b);
 }
 
 #define RGB(R, G, B) (_videoBuffer->format.RGBToColor((R), (G), (B)))
@@ -263,10 +262,7 @@ void GriffonEngine::drawHud() {
 	}
 
 	if (_selEnemyOn == false) {
-		rcDest.left = 0;
-		rcDest.top = 0;
-		rcDest.right = 320;
-		rcDest.bottom = 240;
+		rcDest = Common::Rect(320, 240);
 		_videoBuffer2->fillRect(rcDest, 0);
 		_videoBuffer2->setAlpha((int)(_player.itemselshade * 4)); // FIXME
 		_videoBuffer2->blit(*_videoBuffer);
