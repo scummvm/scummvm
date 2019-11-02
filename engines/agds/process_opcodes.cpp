@@ -192,11 +192,7 @@ void Process::loadScreenObject() {
 void Process::loadScreenRegion() {
 	Common::String name = popString();
 	debug("loadScreenRegion %s", name.c_str());
-	Screen * screen = _engine->getCurrentScreen();
-	if (screen)
-		screen->getObject()->setRegion(_engine->loadRegion(name));
-	else
-		warning("no current screen");
+	_engine->getCurrentScreen()->region(_engine->loadRegion(name));
 }
 
 void Process::cloneObject() {
