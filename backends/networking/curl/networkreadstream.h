@@ -38,6 +38,7 @@ class NetworkReadStream: public Common::ReadStream {
 	CURL *_easy;
 	Common::MemoryReadWriteStream _backingStream;
 	bool _eos, _requestComplete;
+	char *_errorBuffer;
 	const byte *_sendingContentsBuffer;
 	uint32 _sendingContentsSize;
 	uint32 _sendingContentsPos;
@@ -111,7 +112,7 @@ public:
 	 *
 	 * @note It's called on failure too.
 	 */
-	void finished();
+	void finished(uint32 errorCode);
 
 	/**
 	 * Returns HTTP response code from inner CURL handle.
