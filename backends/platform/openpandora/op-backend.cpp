@@ -42,13 +42,8 @@
 
 #include "audio/mixer_intern.h"
 
-#include <stdio.h>
-#include <stdlib.h>
 #include <unistd.h>
 #include <limits.h>
-#include <errno.h>
-#include <sys/stat.h>
-#include <time.h>   // for getTimeAndDate()
 
 /* Dump console info to files. */
 #define DUMP_STDOUT
@@ -76,12 +71,6 @@ void OSystem_OP::initBackend() {
 	strcpy(savePath, workDirName);
 	strcat(savePath, "/../saves");
 	printf("Current save directory: %s\n", savePath);
-	struct stat sb;
-	if (stat(savePath, &sb) == -1)
-		if (errno == ENOENT) // Create the dir if it does not exist
-			if (mkdir(savePath, 0755) != 0)
-				warning("mkdir for '%s' failed!", savePath);
-
 	_savefileManager = new DefaultSaveFileManager(savePath);
 
 #ifdef DUMP_STDOUT
