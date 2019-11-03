@@ -566,12 +566,10 @@ bool Net::remoteReceiveData() {
 
 	case PACKETTYPE_REMOTESENDSCUMMARRAY:
 		{
-			int newArray;
+			int newArray = 0;
 
 			// Assume that the packet data contains a "SCUMM PACKAGE"
 			// and unpack it into an scumm array :-)
-
-			newArray = _vm->findFreeArrayId();
 
 			int dim1start = _packetdata->child("data")->child("dim1start")->asIntegerNumber();
 			int dim1end   = _packetdata->child("data")->child("dim1end")->asIntegerNumber();
@@ -579,7 +577,7 @@ bool Net::remoteReceiveData() {
 			int dim2end   = _packetdata->child("data")->child("dim2end")->asIntegerNumber();
 			int atype     = _packetdata->child("data")->child("type")->asIntegerNumber();
 
-			byte *data = _vm->defineArray(newArray, atype, dim2start, dim2end, dim1start, dim1end);
+			byte *data = _vm->defineArray(0, atype, dim2start, dim2end, dim1start, dim1end, true, &newArray);
 
 			int32 size = (dim1end - dim1start + 1) * (dim2end - dim2start + 1);
 

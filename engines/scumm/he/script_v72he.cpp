@@ -102,7 +102,7 @@ void ScummEngine_v72he::setupOpcodes() {
 static const int arrayDataSizes[] = { 0, 1, 4, 8, 8, 16, 32 };
 
 byte *ScummEngine_v72he::defineArray(int array, int type, int dim2start, int dim2end,
-											int dim1start, int dim1end) {
+											int dim1start, int dim1end, bool newArray, int *newid) {
 	int id;
 	int size;
 	ArrayHeader *ah;
@@ -115,13 +115,17 @@ byte *ScummEngine_v72he::defineArray(int array, int type, int dim2start, int dim
 	if (type == kBitArray || type == kNibbleArray)
 		type = kByteArray;
 
-	nukeArray(array);
+	if (!newArray)
+		nukeArray(array);
 
 	id = findFreeArrayId();
 
+	if (newid != NULL)
+		*newid = id;
+
 	debug(9, "defineArray (array %d, dim2start %d, dim2end %d dim1start %d dim1end %d", id, dim2start, dim2end, dim1start, dim1end);
 
-	if (array & 0x80000000) {
+	if (!newArray && (array & 0x80000000)) {
 		error("Can't define bit variable as array pointer");
 	}
 
@@ -130,7 +134,8 @@ byte *ScummEngine_v72he::defineArray(int array, int type, int dim2start, int dim
 	if (_game.heversion >= 80)
 		id |= 0x33539000;
 
-	writeVar(array, id);
+	if (!newArray)
+		writeVar(array, id);
 
 	if (_game.heversion >= 80)
 		id &= ~0x33539000;
