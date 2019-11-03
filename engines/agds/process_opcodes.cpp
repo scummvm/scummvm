@@ -908,7 +908,9 @@ void Process::playFilm() {
 	Common::String video = popText();
 
 	debug("playFilm %s %s", video.c_str(), audio.c_str());
-	_engine->playFilm(video, audio);
+	if (!_engine->fastMode()) {
+		_engine->playFilm(video, audio);
+	}
 	suspend();
 }
 
