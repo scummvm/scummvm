@@ -40,6 +40,9 @@ protected:
 	 */
 	bool _buttonStateL;
 
+	int _tapmodeLevel;
+
+	void ToggleTapMode();
 
 	bool handleMouseButtonDown(SDL_Event &ev, Common::Event &event);
 	bool handleMouseButtonUp(SDL_Event &ev, Common::Event &event);

@@ -155,7 +155,20 @@ enum {
 };
 
 GPHEventSource::GPHEventSource()
-	: _buttonStateL(false) {
+	: _buttonStateL(false),
+	  _tapmodeLevel(TAPMODE_LEFT) {
+}
+
+void GPHEventSource::ToggleTapMode() {
+	if (_tapmodeLevel == TAPMODE_LEFT) {
+		_tapmodeLevel = TAPMODE_RIGHT;
+	} else if (_tapmodeLevel == TAPMODE_RIGHT) {
+		_tapmodeLevel = TAPMODE_HOVER;
+	} else if (_tapmodeLevel == TAPMODE_HOVER) {
+		_tapmodeLevel = TAPMODE_LEFT;
+	} else {
+		_tapmodeLevel = TAPMODE_LEFT;
+	}
 }
 
 /* Custom handleMouseButtonDown/handleMouseButtonUp to deal with 'Tap Mode' for the touchscreen */
@@ -164,11 +177,11 @@ bool GPHEventSource::handleMouseButtonDown(SDL_Event &ev, Common::Event &event) 
 	if (ev.button.button == SDL_BUTTON_LEFT) {
 		if (_buttonStateL == true) /* _buttonStateL = Left Trigger Held, force Right Click */
 			event.type = Common::EVENT_RBUTTONDOWN;
-		else if (GPH::tapmodeLevel == TAPMODE_LEFT) /* TAPMODE_LEFT = Left Click Tap Mode */
+		else if (_tapmodeLevel == TAPMODE_LEFT) /* TAPMODE_LEFT = Left Click Tap Mode */
 			event.type = Common::EVENT_LBUTTONDOWN;
-		else if (GPH::tapmodeLevel == TAPMODE_RIGHT) /* TAPMODE_RIGHT = Right Click Tap Mode */
+		else if (_tapmodeLevel == TAPMODE_RIGHT) /* TAPMODE_RIGHT = Right Click Tap Mode */
 			event.type = Common::EVENT_RBUTTONDOWN;
-		else if (GPH::tapmodeLevel == TAPMODE_HOVER) /* TAPMODE_HOVER = Hover (No Click) Tap Mode */
+		else if (_tapmodeLevel == TAPMODE_HOVER) /* TAPMODE_HOVER = Hover (No Click) Tap Mode */
 			event.type = Common::EVENT_MOUSEMOVE;
 		else
 			event.type = Common::EVENT_LBUTTONDOWN; /* For normal mice etc. */
@@ -199,11 +212,11 @@ bool GPHEventSource::handleMouseButtonUp(SDL_Event &ev, Common::Event &event) {
 	if (ev.button.button == SDL_BUTTON_LEFT) {
 		if (_buttonStateL == true) /* _buttonStateL = Left Trigger Held, force Right Click */
 			event.type = Common::EVENT_RBUTTONUP;
-		else if (GPH::tapmodeLevel == TAPMODE_LEFT) /* TAPMODE_LEFT = Left Click Tap Mode */
+		else if (_tapmodeLevel == TAPMODE_LEFT) /* TAPMODE_LEFT = Left Click Tap Mode */
 			event.type = Common::EVENT_LBUTTONUP;
-		else if (GPH::tapmodeLevel == TAPMODE_RIGHT) /* TAPMODE_RIGHT = Right Click Tap Mode */
+		else if (_tapmodeLevel == TAPMODE_RIGHT) /* TAPMODE_RIGHT = Right Click Tap Mode */
 			event.type = Common::EVENT_RBUTTONUP;
-		else if (GPH::tapmodeLevel == TAPMODE_HOVER) /* TAPMODE_HOVER = Hover (No Click) Tap Mode */
+		else if (_tapmodeLevel == TAPMODE_HOVER) /* TAPMODE_HOVER = Hover (No Click) Tap Mode */
 			event.type = Common::EVENT_MOUSEMOVE;
 		else
 			event.type = Common::EVENT_LBUTTONUP; /* For normal mice etc. */
@@ -383,12 +396,12 @@ bool GPHEventSource::handleJoyButtonDown(SDL_Event &ev, Common::Event &event) {
 	case BUTTON_Y:
 		event.type = Common::EVENT_KEYDOWN;
 		if (_buttonStateL == true) {
-			GPH::ToggleTapMode();
-			if (GPH::tapmodeLevel == TAPMODE_LEFT) {
+			ToggleTapMode();
+			if (_tapmodeLevel == TAPMODE_LEFT) {
 				g_system->displayMessageOnOSD(_("Touchscreen 'Tap Mode' - Left Click"));
-			} else if (GPH::tapmodeLevel == TAPMODE_RIGHT) {
+			} else if (_tapmodeLevel == TAPMODE_RIGHT) {
 				g_system->displayMessageOnOSD(_("Touchscreen 'Tap Mode' - Right Click"));
-			} else if (GPH::tapmodeLevel == TAPMODE_HOVER) {
+			} else if (_tapmodeLevel == TAPMODE_HOVER) {
 				g_system->displayMessageOnOSD(_("Touchscreen 'Tap Mode' - Hover (No Click)"));
 			}
 		} else {
@@ -426,12 +439,12 @@ bool GPHEventSource::handleJoyButtonDown(SDL_Event &ev, Common::Event &event) {
 		event.type = Common::EVENT_QUIT;
 		break;
 	case BUTTON_HELP2:
-		GPH::ToggleTapMode();
-		if (GPH::tapmodeLevel == TAPMODE_LEFT) {
+		ToggleTapMode();
+		if (_tapmodeLevel == TAPMODE_LEFT) {
 			g_system->displayMessageOnOSD(_("Touchscreen 'Tap Mode' - Left Click"));
-		} else if (GPH::tapmodeLevel == TAPMODE_RIGHT) {
+		} else if (_tapmodeLevel == TAPMODE_RIGHT) {
 			g_system->displayMessageOnOSD(_("Touchscreen 'Tap Mode' - Right Click"));
-		} else if (GPH::tapmodeLevel == TAPMODE_HOVER) {
+		} else if (_tapmodeLevel == TAPMODE_HOVER) {
 			g_system->displayMessageOnOSD(_("Touchscreen 'Tap Mode' - Hover (No Click)"));
 		}
 		break;

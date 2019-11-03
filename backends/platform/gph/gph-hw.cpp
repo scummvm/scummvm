@@ -82,28 +82,3 @@ void mixerMoveVolume(int direction) {
 }
 
 } /* namespace WIZ_HW */
-
-namespace GPH {
-
-enum {
-	/* Touchscreen TapMode */
-	TAPMODE_LEFT        = 0,
-	TAPMODE_RIGHT       = 1,
-	TAPMODE_HOVER       = 2
-};
-
-int tapmodeLevel = TAPMODE_LEFT;
-
-void ToggleTapMode() {
-	if (tapmodeLevel == TAPMODE_LEFT) {
-		tapmodeLevel = TAPMODE_RIGHT;
-	} else if (tapmodeLevel == TAPMODE_RIGHT) {
-		tapmodeLevel = TAPMODE_HOVER;
-	} else if (tapmodeLevel == TAPMODE_HOVER) {
-		tapmodeLevel = TAPMODE_LEFT;
-	} else {
-		tapmodeLevel = TAPMODE_LEFT;
-	}
-}
-
-} /* namespace GPH */
