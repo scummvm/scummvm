@@ -15,6 +15,9 @@ endif
 ifdef DIST_FILES_VKEYBD
 	cp $(DIST_FILES_VKEYBD) ps3pkg/USRDIR/data/
 endif
+ifdef DIST_PS3_EXTRA_FILES
+	@cp -a $(DIST_PS3_EXTRA_FILES) ps3pkg/USRDIR/data/
+endif
 	cp $(DIST_FILES_DOCS) ps3pkg/USRDIR/doc/
 	cp $(srcdir)/dists/ps3/readme-ps3.md ps3pkg/USRDIR/doc/
 	cp $(srcdir)/dists/ps3/ICON0.PNG ps3pkg/
