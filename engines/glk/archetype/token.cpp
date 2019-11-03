@@ -188,8 +188,7 @@ bool get_token(progfile &f) {
 				case ';':
 					if (!f.newlines) {
 						state = START;
-					}
-					else {
+					} else {
 						f.ttype = NEWLINE;
 						f.tnum = (int)NEWLINE_CH;
 						state = STOP;
@@ -379,8 +378,7 @@ void write_token(AclType the_type, int the_number) {
 	case IDENT:
 		if (the_number < 0) {
 			g_vm->write("an identifier");
-		}
-		else {
+		} else {
 			g_vm->write("<identifier %d >: ", the_number);
 			if (index_ident(the_number, the_id_ptr))
 				g_vm->write("\"%s\"", the_id_ptr->id_name);
@@ -411,8 +409,7 @@ void write_token(AclType the_type, int the_number) {
 		else if (index_xarray(g_vm->Literals, the_number, p)) {
 			str_ptr = (StringPtr)p;
 			g_vm->write("\"%s\"", str_ptr->c_str());
-		}
-		else {
+		} else {
 			g_vm->write("<text literal %d >: ", the_number);
 		}
 		break;

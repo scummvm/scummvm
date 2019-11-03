@@ -127,8 +127,7 @@ void send_to_system(int transport, String &strmsg, ResultType &result, ContextTy
 
 			if (convert_to(NUMERIC, result)) {
 				g_vm->Abbreviate = result._data._numeric.acl_int;
-			}
-			else {
+			} else {
 				wraperr("Warning: non-numeric abbreviation message sent to system");
 				cleanup(result);
 			}
@@ -155,8 +154,7 @@ void send_to_system(int transport, String &strmsg, ResultType &result, ContextTy
 				default:
 					break;
 				}
-			}
-			else {
+			} else {
 				add_parse_word(target_list, strmsg, the_caller);
 			}
 
@@ -273,8 +271,7 @@ void send_to_system(int transport, String &strmsg, ResultType &result, ContextTy
 			if (stfile == nullptr) {
 				g_vm->writeln("Error opening %s", strmsg.c_str());
 				cleanup(result);
-			}
-			else {
+			} else {
 				save_game_state(stfile, g_vm->Object_List);
 				result._kind = RESERVED;
 				result._data._reserved.keyword = RW_TRUE;

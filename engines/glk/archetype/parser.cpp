@@ -67,8 +67,7 @@ void normalize_string(const String &first, String &second) {
 				j = 0;
 				in_word = false;
 				second = second + " ";
-			}
-			else {
+			} else {
 				++i;
 			}
 
@@ -102,24 +101,25 @@ void add_parse_word(TargetListType which_list, String &the_word, int the_object)
 
 	the_word += '|';
 
-	do {
+	for (;;) {
 		bar = the_word.indexOf('|');
-		if (bar != -1) {
-			pp = new ParseType();
-			tempstr = the_word.left(bar - 1).left(g_vm->Abbreviate);
+		if (bar == -1)
+			break;
 
-			pp->word = NewConstStr(tempstr);
-			pp->word->toLowercase();
-			the_word = String(the_word.c_str() + bar + 1);
-			pp->object = the_object;
+		pp = new ParseType();
+		tempstr = the_word.left(bar).left(g_vm->Abbreviate);
 
-			np = new NodeType();
-			np->key = pp->word->size();
-			np->data = pp;
+		pp->word = NewConstStr(tempstr);
+		pp->word->toLowercase();
+		the_word = String(the_word.c_str() + bar + 1);
+		pp->object = the_object;
 
-			insert_item(the_list, np);
-		}
-	} while (bar != 0);
+		np = new NodeType();
+		np->key = pp->word->size();
+		np->data = pp;
+
+		insert_item(the_list, np);
+	}
 }
 
 static void parse_sentence_substitute(int start, ParsePtr pp, int &next_starting) {
@@ -235,8 +235,7 @@ bool pop_object(int &intback, String &strback) {
 			// parsed object
 			intback = ((int)g_vm->Command[1] << 8) | ((int)g_vm->Command[2]);
 			g_vm->Command.del(0, 4);
-		}
-		else {
+		} else {
 			intback = -1;
 			i = g_vm->Command.indexOf('%');
 			if (i < 0)
