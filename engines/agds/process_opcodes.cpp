@@ -920,7 +920,6 @@ void Process::inventoryClear() {
 void Process::inventoryAddObject() {
 	Common::String name = popString();
 	debug("inventoryAddObject %s", name.c_str());
-	_engine->inventory().add(_engine->loadObject(name));
 	suspend(kExitCodeLoadInventoryObject, name);
 }
 
