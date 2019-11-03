@@ -240,7 +240,7 @@ String StarTrekEngine::playTextAudio(const String &str) {
 	}
 
 	soundFile[len] = '\0';
-	playSpeech(soundFile);
+	_sound->playSpeech(soundFile);
 
 	return String(text + 1);
 }
@@ -462,7 +462,7 @@ readjustScroll:
 	}
 
 	_textboxVar2 = _frameIndex;
-	stopPlayingSpeech();
+	_sound->stopPlayingSpeech();
 
 	return choiceIndex;
 }

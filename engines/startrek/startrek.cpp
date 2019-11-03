@@ -300,12 +300,12 @@ void StarTrekEngine::runTransportSequence(const Common::String &name) {
 	_gfx->drawAllSprites();
 	_gfx->fadeinScreen();
 
-	playSoundEffectIndex(0x0a);
+	_sound->playSoundEffectIndex(0x0a);
 
 	if (name.equalsIgnoreCase("teled"))
-		playSoundEffectIndex(0x08);
+		_sound->playSoundEffectIndex(0x08);
 	else
-		playSoundEffectIndex(0x09);
+		_sound->playSoundEffectIndex(0x09);
 
 	while (_actorList[0].field62 == 0) {
 		TrekEvent event;
@@ -325,75 +325,6 @@ void StarTrekEngine::runTransportSequence(const Common::String &name) {
 	_gfx->fadeoutScreen();
 	actorFunc1();
 	initActors();
-}
-
-void StarTrekEngine::playSoundEffectIndex(int index) {
-	if (!(getFeatures() & GF_CDROM))
-		_sound->playMidiTrack(index);
-	else {
-		switch (index) {
-		case 0x04:
-			_sound->playVoc("tricorde");
-			break;
-		case 0x05:
-			_sound->playVoc("STDOOR1");
-			break;
-		case 0x06:
-			_sound->playVoc("PHASSHOT");
-			break;
-		case 0x07:
-			_sound->playMidiTrack(index);
-			break;
-		case 0x08:
-			_sound->playVoc("TRANSDEM");
-			break;
-		case 0x09: // Beaming in?
-			_sound->playVoc("TRANSMAT");
-			break;
-		case 0x0a: // Beaming out?
-			_sound->playVoc("TRANSENE");
-			break;
-		case 0x10: // Menu selection sound
-			_sound->playMidiTrack(index);
-			break;
-		case 0x22:
-			_sound->playVoc("HAILING");
-			break;
-		case 0x24:
-			_sound->playVoc("PHASSHOT");
-			break;
-		case 0x25:
-			_sound->playVoc("PHOTSHOT");
-			break;
-		case 0x26:
-			_sound->playVoc("HITSHIEL");
-			break;
-		case 0x27:
-			_sound->playMidiTrack(index);
-			break;
-		case 0x28:
-			_sound->playVoc("REDALERT");
-			break;
-		case 0x29:
-			_sound->playVoc("WARP");
-			break;
-		default:
-			debugC(kDebugSound, 6, "Unmapped sound 0x%x", index);
-			break;
-		}
-	}
-}
-
-void StarTrekEngine::playMidiMusicTracks(int startTrack, int loopTrack) {
-	_sound->playMidiMusicTracks(startTrack, loopTrack);
-}
-
-void StarTrekEngine::playSpeech(const Common::String &filename) {
-	_sound->playSpeech(filename.c_str());
-}
-
-void StarTrekEngine::stopPlayingSpeech() {
-	_sound->stopPlayingSpeech();
 }
 
 /**

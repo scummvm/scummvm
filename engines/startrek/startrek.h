@@ -243,12 +243,6 @@ public:
 	void initBridge(bool b) {}; // TODO
 	void cleanupBridge() {}; // TODO
 
-	// Running the game
-	void playSoundEffectIndex(int index);
-	void playMidiMusicTracks(int startTrack, int loopTrack);
-	void playSpeech(const Common::String &filename);
-	void stopPlayingSpeech();
-
 	Common::MemoryReadStreamEndian *loadFile(Common::String filename, int fileIndex = 0);
 	/**
 	 * TODO: Figure out what the extra parameters are, and if they're important.

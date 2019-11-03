@@ -469,7 +469,7 @@ lookupNextAction:
 		}
 	}
 
-	playSoundEffectIndex(SND_SELECTION);
+	_sound->playSoundEffectIndex(SND_SELECTION);
 
 	menuSprite.dontDrawNextFrame();
 	_gfx->drawAllSprites();
@@ -656,12 +656,12 @@ int StarTrekEngine::handleMenuEvents(uint32 ticksUntilClickingEnabled, bool inTe
 			case TREKEVENT_LBUTTONDOWN:
 lclick:
 				if (_activeMenu->selectedButton != -1) {
-					playSoundEffectIndex(SND_SELECTION);
+					_sound->playSoundEffectIndex(SND_SELECTION);
 					return _activeMenu->retvals[_activeMenu->selectedButton];
 				} else {
 					Common::Point mouse = _gfx->getMousePos();
 					if (getMenuButtonAt(_activeMenu->sprites, _activeMenu->numButtons, mouse.x, mouse.y) == -1) {
-						playSoundEffectIndex(SND_SELECTION);
+						_sound->playSoundEffectIndex(SND_SELECTION);
 						return MENUEVENT_LCLICK_OFFBUTTON;
 					}
 				}
@@ -669,7 +669,7 @@ lclick:
 
 			case TREKEVENT_RBUTTONDOWN:
 rclick:
-				playSoundEffectIndex(SND_SELECTION);
+				_sound->playSoundEffectIndex(SND_SELECTION);
 				if (_activeMenu->selectedButton == -1)
 					return MENUEVENT_RCLICK_OFFBUTTON;
 				else
@@ -686,13 +686,13 @@ rclick:
 					case Common::KEYCODE_RETURN:
 					case Common::KEYCODE_KP_ENTER:
 					case Common::KEYCODE_F1:
-						playSoundEffectIndex(SND_SELECTION);
+						_sound->playSoundEffectIndex(SND_SELECTION);
 						return TEXTBUTTON_CONFIRM;
 
 					case Common::KEYCODE_SPACE:
 						if (!(_activeMenu->disabledButtons & (1 << TEXTBUTTON_NEXTCHOICE))
 						        && _activeMenu->sprites[TEXTBUTTON_NEXTCHOICE].drawMode == 2) {
-							playSoundEffectIndex(SND_SELECTION);
+							_sound->playSoundEffectIndex(SND_SELECTION);
 							return TEXTBUTTON_NEXTCHOICE;
 						}
 						break;
@@ -701,7 +701,7 @@ rclick:
 					case Common::KEYCODE_KP7:
 						if (!(_activeMenu->disabledButtons & (1 << TEXTBUTTON_SCROLLUP))
 						        && _activeMenu->sprites[TEXTBUTTON_SCROLLUP].drawMode == 2) {
-							playSoundEffectIndex(SND_SELECTION);
+							_sound->playSoundEffectIndex(SND_SELECTION);
 							return TEXTBUTTON_GOTO_TOP;
 						}
 						break;
@@ -710,7 +710,7 @@ rclick:
 					case Common::KEYCODE_KP8:
 						if (!(_activeMenu->disabledButtons & (1 << TEXTBUTTON_SCROLLUP))
 						        && _activeMenu->sprites[TEXTBUTTON_SCROLLUP].drawMode == 2) {
-							playSoundEffectIndex(SND_SELECTION);
+							_sound->playSoundEffectIndex(SND_SELECTION);
 							return TEXTBUTTON_SCROLLUP_ONELINE;
 						}
 						break;
@@ -719,7 +719,7 @@ rclick:
 					case Common::KEYCODE_KP9:
 						if (!(_activeMenu->disabledButtons & (1 << TEXTBUTTON_SCROLLUP))
 						        && _activeMenu->sprites[TEXTBUTTON_SCROLLUP].drawMode == 2) {
-							playSoundEffectIndex(SND_SELECTION);
+							_sound->playSoundEffectIndex(SND_SELECTION);
 							return TEXTBUTTON_SCROLLUP;
 						}
 						break;
@@ -728,7 +728,7 @@ rclick:
 					case Common::KEYCODE_KP4:
 						if (!(_activeMenu->disabledButtons & (1 << TEXTBUTTON_PREVCHOICE))
 						        && _activeMenu->sprites[TEXTBUTTON_PREVCHOICE].drawMode == 2) {
-							playSoundEffectIndex(SND_SELECTION);
+							_sound->playSoundEffectIndex(SND_SELECTION);
 							return TEXTBUTTON_PREVCHOICE;
 						}
 						break;
@@ -737,7 +737,7 @@ rclick:
 					case Common::KEYCODE_KP6:
 						if (!(_activeMenu->disabledButtons & (1 << TEXTBUTTON_NEXTCHOICE))
 						        && _activeMenu->sprites[TEXTBUTTON_NEXTCHOICE].drawMode == 2) {
-							playSoundEffectIndex(SND_SELECTION);
+							_sound->playSoundEffectIndex(SND_SELECTION);
 							return TEXTBUTTON_NEXTCHOICE;
 						}
 						break;
@@ -746,7 +746,7 @@ rclick:
 					case Common::KEYCODE_KP1:
 						if (!(_activeMenu->disabledButtons & (1 << TEXTBUTTON_SCROLLDOWN))
 						        && _activeMenu->sprites[TEXTBUTTON_SCROLLDOWN].drawMode == 2) {
-							playSoundEffectIndex(SND_SELECTION);
+							_sound->playSoundEffectIndex(SND_SELECTION);
 							return TEXTBUTTON_GOTO_BOTTOM;
 						}
 						break;
@@ -755,7 +755,7 @@ rclick:
 					case Common::KEYCODE_KP2:
 						if (!(_activeMenu->disabledButtons & (1 << TEXTBUTTON_SCROLLDOWN))
 						        && _activeMenu->sprites[TEXTBUTTON_SCROLLDOWN].drawMode == 2) {
-							playSoundEffectIndex(SND_SELECTION);
+							_sound->playSoundEffectIndex(SND_SELECTION);
 							return TEXTBUTTON_SCROLLDOWN_ONELINE;
 						}
 						break;
@@ -764,7 +764,7 @@ rclick:
 					case Common::KEYCODE_KP3:
 						if (!(_activeMenu->disabledButtons & (1 << TEXTBUTTON_SCROLLDOWN))
 						        && _activeMenu->sprites[TEXTBUTTON_SCROLLDOWN].drawMode == 2) {
-							playSoundEffectIndex(SND_SELECTION);
+							_sound->playSoundEffectIndex(SND_SELECTION);
 							return TEXTBUTTON_SCROLLDOWN;
 						}
 						break;

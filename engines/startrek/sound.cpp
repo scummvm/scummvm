@@ -281,6 +281,62 @@ void Sound::stopPlayingSpeech() {
 	}
 }
 
+void Sound::playSoundEffectIndex(int index) {
+	if (!(_vm->getFeatures() & GF_CDROM))
+		playMidiTrack(index);
+	else {
+		switch (index) {
+		case 0x04:
+			playVoc("tricorde");
+			break;
+		case 0x05:
+			playVoc("STDOOR1");
+			break;
+		case 0x06:
+			playVoc("PHASSHOT");
+			break;
+		case 0x07:
+			playMidiTrack(index);
+			break;
+		case 0x08:
+			playVoc("TRANSDEM");
+			break;
+		case 0x09: // Beaming in?
+			playVoc("TRANSMAT");
+			break;
+		case 0x0a: // Beaming out?
+			playVoc("TRANSENE");
+			break;
+		case 0x10: // Menu selection sound
+			playMidiTrack(index);
+			break;
+		case 0x22:
+			playVoc("HAILING");
+			break;
+		case 0x24:
+			playVoc("PHASSHOT");
+			break;
+		case 0x25:
+			playVoc("PHOTSHOT");
+			break;
+		case 0x26:
+			playVoc("HITSHIEL");
+			break;
+		case 0x27:
+			playMidiTrack(index);
+			break;
+		case 0x28:
+			playVoc("REDALERT");
+			break;
+		case 0x29:
+			playVoc("WARP");
+			break;
+		default:
+			debugC(kDebugSound, 6, "Unmapped sound 0x%x", index);
+			break;
+		}
+	}
+}
 
 void Sound::setMusicEnabled(bool enable) {
 	if (!_vm->_musicWorking || _vm->_musicEnabled == enable)

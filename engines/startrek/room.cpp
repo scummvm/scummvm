@@ -630,11 +630,11 @@ int16 Room::getRandomWordInRange(int start, int end) {
 }
 
 void Room::playSoundEffectIndex(int soundEffect) {
-	_vm->playSoundEffectIndex(soundEffect);
+	_vm->_sound->playSoundEffectIndex(soundEffect);
 }
 
 void Room::playMidiMusicTracks(int startTrack, int loopTrack) {
-	_vm->playMidiMusicTracks(startTrack, loopTrack);
+	_vm->_sound->playMidiMusicTracks(startTrack, loopTrack);
 }
 
 void Room::endMission(int16 score, int16 arg1, int16 arg2) {

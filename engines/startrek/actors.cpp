@@ -1253,7 +1253,7 @@ exitWithoutSelection:
 		removeNextEvent();
 	}
 
-	playSoundEffectIndex(0x10);
+	_sound->playSoundEffectIndex(0x10);
 	if (lastItemIndex >= 0)
 		drawMenuButtonOutline(itemSprites[lastItemIndex].bitmap, 0);
 

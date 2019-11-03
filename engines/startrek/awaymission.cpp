@@ -153,7 +153,7 @@ void StarTrekEngine::initAwayCrewPositions(int warpEntryIndex) {
 		_kirkActor->triggerActionWhenAnimFinished = true;
 		_kirkActor->finishedAnimActionParam = 0xff;
 		_awayMission.disableInput = true;
-		playSoundEffectIndex(0x09);
+		_sound->playSoundEffectIndex(0x09);
 		_warpHotspotsActive = false;
 		break;
 	case 5: // Crew spawns in directly at a position.
@@ -364,7 +364,7 @@ void StarTrekEngine::awayMissionSelectAction(bool openActionMenu) {
 		if (_awayMission.disableInput)
 			return;
 		hideInventoryIcons();
-		playSoundEffectIndex(SND_07);
+		_sound->playSoundEffectIndex(SND_07);
 		_awayMission.activeAction = showActionMenu();
 	}
 
