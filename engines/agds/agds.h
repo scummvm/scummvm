@@ -172,6 +172,10 @@ public:
 		_soundManager.play(resource, phaseVar);
 	}
 
+	bool fastMode() const {
+		return _fastMode;
+	}
+
 private:
 	void parseDialogDefs(const Common::String &defs);
 
