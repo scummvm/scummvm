@@ -23,6 +23,7 @@
 #include "glk/archetype/misc.h"
 #include "glk/archetype/archetype.h"
 #include "glk/quetzal.h"
+#include "common/debug-channels.h"
 
 namespace Glk {
 namespace Archetype {
@@ -31,7 +32,6 @@ const char *const VERSION_STUB = "Archetype version ";
 const double VERSION_NUM = 1.02;
 
 size_t Bytes;
-int Debug;
 bool KeepLooking;
 bool AllErrors;
 
@@ -43,7 +43,6 @@ void misc_init() {
 	//HeapError = @HeapFunc;
 	//Mark(Prior)
 	Bytes = 0;
-	Debug = 0;
 	KeepLooking = true;
 	AllErrors = false;
 }
@@ -126,7 +125,7 @@ void progfile::sourcePos() {
 void add_bytes(int delta) {
 	Bytes += delta;
 
-	if ((Debug & DEBUG_BYTES) != 0) {
+	if (DebugMan.isDebugChannelEnabled(DEBUG_BYTES)) {
 		if (delta >= 0)
 			g_vm->write("Allocated   ");
 		else

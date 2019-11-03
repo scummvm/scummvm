@@ -34,13 +34,6 @@ namespace Archetype {
 #define NULL_CH '\0'
 #define NEWLINE_CH '\r'
 
-enum {
-	DEBUG_BYTES = 0x01,
-	DEBUG_MSGS = 0x02,
-	DEBUG_EXPR = 0x04,
-	DEBUG_STMT = 0x08
-};
-
 enum AclType {
 	RESERVED, IDENT, MESSAGE, OPER, TEXT_LIT, QUOTE_LIT, NUMERIC, PUNCTUATION,
 	STR_PTR, ATTR_PTR, BAD_TOKEN, NEWLINE
@@ -113,7 +106,6 @@ enum ClassifyType { TYPE_ID, OBJECT_ID, ATTRIBUTE_ID, ENUMERATE_ID, UNDEFINED_ID
 extern const char *const VERSION_STUB;
 extern const double VERSION_NUM;
 extern size_t Bytes;		// Bytes consumed by allocated memory
-extern int Debug;
 extern bool KeepLooking;
 extern bool AllErrors;
 

@@ -21,6 +21,7 @@
  */
 
 #include "common/config-manager.h"
+#include "common/debug-channels.h"
 #include "glk/archetype/archetype.h"
 #include "glk/archetype/crypt.h"
 #include "glk/archetype/expression.h"
@@ -41,6 +42,11 @@ Archetype *g_vm;
 Archetype::Archetype(OSystem *syst, const GlkGameDescription &gameDesc) : GlkAPI(syst, gameDesc),
 		_saveSlot(-1) {
 	g_vm = this;
+
+	DebugMan.addDebugChannel(DEBUG_BYTES, "bytes", "Memory usage");
+	DebugMan.addDebugChannel(DEBUG_MSGS, "messages", "Messages debugging");
+	DebugMan.addDebugChannel(DEBUG_EXPR, "expressions", "Expressions debugging");
+	DebugMan.addDebugChannel(DEBUG_STMT, "statements", "Statements debugging");
 }
 
 void Archetype::runGame() {
@@ -268,12 +274,12 @@ bool Archetype::send_message(int transport, int message_sent, int recipient,
 	void *p;
 	ContextType c;
 
-	if (message_sent == 0) {
+	if (message_sent == -1) {
 		cleanup(result);
 		return false;
 	}
 
-	if ((Debug & DEBUG_MSGS) > 0) {
+	if (DebugMan.isDebugChannelEnabled(DEBUG_MSGS)) {
 		r._kind = IDENT;
 		r._data._ident.ident_kind = OBJECT_ID;
 		r._data._ident.ident_int = context.self;
@@ -673,7 +679,7 @@ void Archetype::eval_expr(ExprTree the_expr, ResultType &result, ContextType &co
 		cleanup(r1);
 		cleanup(r2);
 
-		if ((Debug & DEBUG_EXPR) > 0) {
+		if (DebugMan.isDebugChannelEnabled(DEBUG_EXPR)) {
 			wrapout(" -- ", false);
 			display_expr(the_expr);
 			wrapout("  ==>  ", false);
@@ -723,7 +729,7 @@ void Archetype::exec_stmt(StatementPtr the_stmt, ResultType &result, ContextType
 	undefine(r2);
 	cleanup(result);
 
-	verbose = (Debug & DEBUG_STMT) > 0;
+	verbose = DebugMan.isDebugChannelEnabled(DEBUG_STMT);
 
 	if (verbose)
 		wrapout(" == ", false);

@@ -33,6 +33,13 @@
 namespace Glk {
 namespace Archetype {
 
+enum DebugFlag {
+	DEBUG_BYTES = 0x01,
+	DEBUG_MSGS = 0x02,
+	DEBUG_EXPR = 0x04,
+	DEBUG_STMT = 0x08
+};
+
 /**
  * Archetype game interpreter
  */

@@ -27,6 +27,7 @@
 #include "glk/archetype/parser.h"
 #include "glk/archetype/wrap.h"
 #include "common/algorithm.h"
+#include "common/debug-channels.h"
 #include "common/savefile.h"
 
 namespace Glk {
@@ -231,17 +232,26 @@ void send_to_system(int transport, String &strmsg, ResultType &result, ContextTy
 			break;
 
 		case DEBUG_MESSAGES:
-			Debug = Debug ^ DEBUG_MSGS;
+			if (DebugMan.isDebugChannelEnabled(DEBUG_MSGS))
+				DebugMan.disableDebugChannel(DEBUG_MSGS);
+			else
+				DebugMan.enableDebugChannel(DEBUG_MSGS);
 			sys_state = IDLING;
 			break;
 
 		case DEBUG_EXPRESSIONS:
-			Debug = Debug ^ DEBUG_EXPR;
+			if (DebugMan.isDebugChannelEnabled(DEBUG_EXPRESSIONS))
+				DebugMan.disableDebugChannel(DEBUG_EXPRESSIONS);
+			else
+				DebugMan.enableDebugChannel(DEBUG_EXPRESSIONS);
 			sys_state = IDLING;
 			break;
 
 		case DEBUG_STATEMENTS:
-			Debug = Debug ^ DEBUG_STMT;
+			if (DebugMan.isDebugChannelEnabled(DEBUG_STATEMENTS))
+				DebugMan.disableDebugChannel(DEBUG_STATEMENTS);
+			else
+				DebugMan.enableDebugChannel(DEBUG_STATEMENTS);
 			sys_state = IDLING;
 			break;
 
