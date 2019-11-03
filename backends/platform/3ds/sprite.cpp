@@ -101,7 +101,7 @@ void Sprite::convertToInPlace(const Graphics::PixelFormat &dstFormat, const byte
 }
 
 void Sprite::transfer() {
-	if (dirtyPixels) {
+	if (pixels && dirtyPixels) {
 		dirtyPixels = false;
 		GSPGPU_FlushDataCache(pixels, w * h * format.bytesPerPixel);
 		C3D_SyncDisplayTransfer((u32*)pixels, GX_BUFFER_DIM(w, h), (u32*)texture.data, GX_BUFFER_DIM(w, h), TEXTURE_TRANSFER_FLAGS);
@@ -123,15 +123,19 @@ void Sprite::clear(uint32 color) {
 }
 
 void Sprite::setScale (float x, float y) {
-	scaleX = x;
-	scaleY = y;
-	dirtyMatrix = true;
+	if (x != scaleX || y != scaleY) {
+		scaleX = x;
+		scaleY = y;
+		dirtyMatrix = true;
+	}
 }
 
 void Sprite::setPosition(int x, int y) {
-	posX = x;
-	posY = y;
-	dirtyMatrix = true;
+	if (x != posX || y != posY) {
+		posX = x;
+		posY = y;
+		dirtyMatrix = true;
+	}
 }
 
 C3D_Mtx* Sprite::getMatrix() {

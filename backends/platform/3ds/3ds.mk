@@ -28,7 +28,7 @@ clean_3ds:
 	$(RM) $(TARGET).cia
 	$(RM) -rf romfs
 
-romfs: $(DIST_FILES_THEMES) $(DIST_FILES_ENGINEDATA) $(DIST_FILES_NETWORKING) $(DIST_FILES_VKEYBD)
+romfs: $(DIST_FILES_THEMES) $(DIST_FILES_ENGINEDATA) $(DIST_FILES_NETWORKING) $(DIST_FILES_VKEYBD) $(DIST_3DS_EXTRA_FILES)
 	@rm -rf romfs
 	@mkdir -p romfs
 	@cp $(DIST_FILES_THEMES) romfs/
@@ -41,6 +41,9 @@ endif
 ifdef DIST_FILES_VKEYBD
 	@cp $(DIST_FILES_VKEYBD) romfs/
 endif
+ifdef DIST_3DS_EXTRA_FILES
+	@cp -a $(DIST_3DS_EXTRA_FILES) romfs/
+endif
 
 $(TARGET).smdh: $(APP_ICON)
 	@smdhtool --create "$(APP_TITLE)" "$(APP_DESCRIPTION)" "$(APP_AUTHOR)" $(APP_ICON) $@
@@ -49,7 +52,7 @@ $(TARGET).smdh: $(APP_ICON)
 $(TARGET).3dsx: $(EXECUTABLE) $(TARGET).smdh romfs
 	@3dsxtool $< $@ --smdh=$(TARGET).smdh --romfs=romfs
 	@echo built ... $(notdir $@)
-	
+
 $(TARGET).bnr: $(APP_BANNER_IMAGE) $(APP_BANNER_AUDIO)
 	@bannertool makebanner -o $@ -i $(APP_BANNER_IMAGE) -a $(APP_BANNER_AUDIO)
 	@echo built ... $(notdir $@)
