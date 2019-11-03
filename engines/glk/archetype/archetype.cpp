@@ -245,7 +245,7 @@ void Archetype::lookup(int the_obj, int the_attr, ResultType &result, ContextTyp
 			result._kind = ATTR_PTR;
 			result._data._attr.acl_attr = np;
 		} else {
-			// inherited - must create new node }
+			// inherited - must create new node
 			result._kind = ATTR_PTR;
 			result._data._attr.acl_attr = new NodeType();
 
@@ -264,6 +264,8 @@ void Archetype::lookup(int the_obj, int the_attr, ResultType &result, ContextTyp
 	}
 }
 
+static int scummvm = 0;
+
 bool Archetype::send_message(int transport, int message_sent, int recipient,
 		ResultType &result, ContextType &context) {
 	bool done, find_other;
@@ -280,6 +282,9 @@ bool Archetype::send_message(int transport, int message_sent, int recipient,
 	}
 
 	if (DebugMan.isDebugChannelEnabled(DEBUG_MSGS)) {
+		++scummvm;
+		debugN(String::format("%d  ", scummvm).c_str());
+
 		r._kind = IDENT;
 		r._data._ident.ident_kind = OBJECT_ID;
 		r._data._ident.ident_int = context.self;
@@ -347,8 +352,7 @@ bool Archetype::send_message(int transport, int message_sent, int recipient,
 						op = original;
 						find_other = true;
 					}
-				}
-				else if (index_xarray(Type_List, op->inherited_from, p)) {
+				} else if (index_xarray(Type_List, op->inherited_from, p)) {
 					op = (ObjectPtr)p;
 				} else {
 					wraperr("Internal error:  invalid inheritance");
@@ -396,7 +400,7 @@ void Archetype::eval_expr(ExprTree the_expr, ResultType &result, ContextType &co
 			if (the_expr->_data._reserved.keyword == RW_READ)
 				result._data._str.acl_str = ReadLine(true);			// read full line
 			else
-				result._data._str.acl_str = ReadLine(false);			// read single key
+				result._data._str.acl_str = ReadLine(false);		// read single key
 
 			Rows = 0;
 			cursor_reset();				// user will have had to hit <RETURN>
@@ -549,7 +553,7 @@ void Archetype::eval_expr(ExprTree the_expr, ResultType &result, ContextType &co
 			// For the random operator, we must be careful:  ? "01234" should select a random digit
 			// out of that set, not attempt to convert it to 1234 and take a random number in the
 			// range 1 - 1234. However, we can neither immediately convert it to string, because
-			// ? 6 should produce a value in the range 1 - 6, not the character "6". }
+			// ? 6 should produce a value in the range 1 - 6, not the character "6"
 		case OP_RANDOM:
 			eval_expr(the_expr->_data._oper.right, result, context, RVALUE);
 			if (result._kind == NUMERIC)
@@ -651,7 +655,7 @@ void Archetype::eval_expr(ExprTree the_expr, ResultType &result, ContextType &co
 			if (convert_to(STR_PTR, r1) && convert_to(STR_PTR, r2)) {
 				result._kind = NUMERIC;
 				result._data._numeric.acl_int = r2._data._str.acl_str->indexOf(*r1._data._str.acl_str);
-				if (result._data._numeric.acl_int == -1)
+				if (result._data._numeric.acl_int == 0)
 					cleanup(result);
 			}
 			break;

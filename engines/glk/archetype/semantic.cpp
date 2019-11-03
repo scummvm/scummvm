@@ -145,21 +145,21 @@ bool display_undefined() {
 
 	while (iterate_list(g_vm->Overlooked, np)) {
 		if (!exists) {
-			g_vm->writeln("The following identifiers were not explicitly defined.");
+			debugN("The following identifiers were not explicitly defined.");
 			exists = true;
 		}
 
 		ip = (IntegerPtr)np->data;
-		g_vm->write("Used %d", *ip);
+		debugN("Used %d", *ip);
 		if (*ip == 1)
-			g_vm->write(" time:   ");
+			debugN(" time:   ");
 		else
-			g_vm->write(" times:  ");
+			debugN(" times:  ");
 
 		if (index_ident(np->key, id_rec))
-			g_vm->writeln("%s", id_rec->id_name->c_str());
+			debug("%s", id_rec->id_name->c_str());
 		else
-			g_vm->writeln("<unknown identifier>");
+			debug("<unknown identifier>");
 
 		delete ip;
 	}

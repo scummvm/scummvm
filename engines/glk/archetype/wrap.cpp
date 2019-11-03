@@ -51,7 +51,7 @@ static void wrap_wait() {
 	ch := ReadKey;
 	write(chr(13));
 	NormVideo;
-	ClrScr;				//or ClrEol if you don't want the whole screen }
+	ClrScr;				// or ClrEol if you don't want the whole screen
 	Rows : = 0
 #endif
 }
@@ -67,7 +67,7 @@ void wrapout(const String &str, bool terminate) {
 
 	// 'thisline' starts out as the maximum number of characters that can be
 	// written before a newline; it gets trimmed back to being the number of
-	// characters from the string that are actually written on this line. }
+	// characters from the string that are actually written on this line
 	maxchars = MAXCOLS - cursor;
 
 	const char CHARS[7] = { '.', ',', ':', ';', ')', '-', '"' };
