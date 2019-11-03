@@ -38,12 +38,4 @@ extern void mixerMoveVolume(int);
 
 } /* namespace WIZ_HW */
 
-namespace GPH {
-
-extern int tapmodeLevel;
-
-extern void ToggleTapMode();
-
-} /* namespace GPH */
-
 #endif //GPH_HW_H
