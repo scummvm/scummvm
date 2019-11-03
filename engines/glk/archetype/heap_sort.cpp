@@ -46,7 +46,7 @@ static void heapup() {
 	Element temp;
 
 	L = H.size();
-	while (L > 0) {
+	while (L > 1) {
 		if ((L % 2) == 0)
 			parent = L / 2;
 		else
@@ -73,17 +73,17 @@ static void heapdown() {
 	Element comparep;
 	Element temp;
 
-	L = 0;
+	L = 1;
 	while (L < H.size()) {
 		lc = L * 2;
-		if (lc >= H.size()) {
+		if (lc > H.size()) {
 			L = lc;
 		} else {
 			rc = lc + 1;
 			if (!access_xarray(H, lc, lcp, PEEK_ACCESS))
 				g_vm->writeln(CANT_PEEK);
 			
-			if (rc >= H.size()) {
+			if (rc > H.size()) {
 				compare = lc;
 				comparep = lcp;
 			} else {
@@ -106,7 +106,7 @@ static void heapdown() {
 					g_vm->writeln(CANT_POKE);
 				L = compare;
 			} else {
-				L = H.size();
+				L = H.size() + 1;
 			}
 		}
 	}

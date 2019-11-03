@@ -49,13 +49,13 @@ int add_ident(const String &id_str) {
 		append_to_xarray(h_index, new_rec);
 		
 		new_rec->id_kind    = DefaultClassification;
-		new_rec->id_index   = h_index.size() - 1;
+		new_rec->id_index   = h_index.size();
 		new_rec->id_integer = new_rec->id_index;
 		new_rec->id_name    = NewConstStr(id_str);
 		new_rec->next       = p->next;
 
 		p->next = new_rec;
-		return h_index.size() - 1;
+		return h_index.size();
 	} else {
 		// found existing identifier
 		return p->next->id_index;

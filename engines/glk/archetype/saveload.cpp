@@ -633,7 +633,7 @@ void load_obj_list(Common::ReadStream *f_in, XArrayType &obj_list) {
 
 	// Objects may be dynamically allocated beneath this limit.  It is okay to set that limit
 	// at this time since this routine is only invoked when initially loading a game
-	Dynamic = obj_list.size();			// TODO: Check if this should be size() + 1
+	Dynamic = obj_list.size() + 1;
 }
 
 void dump_obj_list(Common::WriteStream *f_out, XArrayType &obj_list) {
@@ -643,7 +643,7 @@ void dump_obj_list(Common::WriteStream *f_out, XArrayType &obj_list) {
 
 	f_out->writeUint16LE(obj_list.size());
 
-	for (i = 0; i < obj_list.size(); ++i) {
+	for (i = 1; i <= obj_list.size(); ++i) {
 		if (index_xarray(obj_list, i, p)) {
 			this_obj = (ObjectPtr)p;
 			dump_object(f_out, this_obj);
@@ -656,7 +656,7 @@ void dispose_obj_list(XArrayType &obj_list) {
 	void *p;
 	ObjectPtr axe_obj;
 
-	for (i = 0; i < obj_list.size(); ++i) {
+	for (i = 1; i <= obj_list.size(); ++i) {
 		if (index_xarray(obj_list, i, p)) {
 			axe_obj = (ObjectPtr)p;
 			dispose_object(axe_obj);

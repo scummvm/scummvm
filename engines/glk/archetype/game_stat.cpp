@@ -40,7 +40,7 @@ void save_game_state(Common::WriteStream *bfile, XArrayType &objects) {
 	// Get the encryption straight - reset the seed
 	cryptinit(Encryption, GTimeStamp);
 
-	for (i = 0; i < Dynamic - 1; ++i) {
+	for (i = 1; i < Dynamic; ++i) {
 		if (index_xarray(objects, i, p)) {
 			ObjectPtr op = (ObjectPtr)p;
 			bfile->writeUint32LE(vContSeq);
@@ -49,7 +49,7 @@ void save_game_state(Common::WriteStream *bfile, XArrayType &objects) {
 		}
 	}
 
-	for (i = Dynamic; i < (int)objects.size(); ++i) {
+	for (i = Dynamic; i <= (int)objects.size(); ++i) {
 		if (index_xarray(objects, i, p)) {
 			bfile->writeUint32LE(vContSeq);
 			dump_object(bfile, (ObjectPtr)p);
@@ -81,7 +81,7 @@ bool load_game_state(Common::ReadStream *bfile, XArrayType &objects) {
 
 	// Need to flush out the previous attributes andload in the new ones. Dynamically allocated
 	// objects are a little different since they might vary between game states
-	for (i = 0; i < Dynamic - 1; ++i) {
+	for (i = 1; i < Dynamic; ++i) {
 		if (index_xarray(objects, i, p)) {
 			sentinel = (StatementKind)bfile->readUint32LE();
 			op = (ObjectPtr)p;
@@ -92,7 +92,7 @@ bool load_game_state(Common::ReadStream *bfile, XArrayType &objects) {
 
 	// Flush dynamic objects.Dispose of each object andshrink back the xarray
 
-	for (i = objects.size() - 1; i >= Dynamic; --i) {
+	for (i = objects.size(); i >= Dynamic; --i) {
 		if (index_xarray(objects, i, p)) {
 			op = (ObjectPtr)p;
 			dispose_object(op);

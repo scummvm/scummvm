@@ -29,9 +29,7 @@ namespace Archetype {
 void new_list(ListType &the_list) {
 	the_list = new NodeType();
 	add_bytes(sizeof(NodeType));
-	the_list->key = 0;
-	the_list->data = nullptr;
-	the_list->next = nullptr;
+	the_list->next = the_list;
 }
 
 void dispose_list(ListType &the_list) {
@@ -45,7 +43,7 @@ void dispose_list(ListType &the_list) {
 
 }
 
-bool iterate_list(ListType &the_list, NodePtr index) {
+bool iterate_list(ListType &the_list, NodePtr &index) {
 	if (index == nullptr)
 		index = the_list->next;
 	else

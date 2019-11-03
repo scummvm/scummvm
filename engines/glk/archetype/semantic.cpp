@@ -52,7 +52,7 @@ int classify_as(progfile &f, int id_number, ClassifyType interpretation, void *p
 			case TYPE_ID:
 				append_to_xarray(g_vm->Type_List, ptr_to_data);
 				append_to_xarray(g_vm->Type_ID_List, (void *)the_id_ptr->id_name);
-				the_id_ptr->id_integer = g_vm->Type_List.size() - 1;
+				the_id_ptr->id_integer = g_vm->Type_List.size();
 				break;
 
 			case OBJECT_ID:
@@ -66,13 +66,13 @@ int classify_as(progfile &f, int id_number, ClassifyType interpretation, void *p
 
 					append_to_xarray(g_vm->Object_List, ptr_to_data);
 					append_to_xarray(g_vm->Object_ID_List, (void *)the_id_ptr->id_name);
-					the_id_ptr->id_integer = g_vm->Object_List.size() - 1;
+					the_id_ptr->id_integer = g_vm->Object_List.size();
 				}
 				break;
 
 			case ATTRIBUTE_ID:
 				append_to_xarray(g_vm->Attribute_ID_List, (void *)the_id_ptr->id_name);
-				the_id_ptr->id_integer = g_vm->Attribute_ID_List.size() - 1;
+				the_id_ptr->id_integer = g_vm->Attribute_ID_List.size();
 				break;
 
 			default:

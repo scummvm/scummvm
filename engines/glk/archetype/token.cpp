@@ -112,7 +112,7 @@ static int add_unique_str(XArrayType &the_xarray, const String &the_str) {
 
 	if (the_xarray.empty()) {
 		append_to_xarray(the_xarray, (void *)new_str);
-		return the_xarray.size() - 1;
+		return the_xarray.size();
 	} else {
 		i = 1;
 		while (index_xarray(the_xarray, i, p) && *((StringPtr)p) != the_str)
@@ -123,7 +123,7 @@ static int add_unique_str(XArrayType &the_xarray, const String &the_str) {
 			return i;
 		} else {
 			append_to_xarray(the_xarray, (void *)new_str);
-			return the_xarray.size() - 1;
+			return the_xarray.size();
 		}
 	}
 }
@@ -134,7 +134,7 @@ static int add_unique_str(XArrayType &the_xarray, const String &the_str) {
  */
 static int add_non_unique_str(XArrayType &the_xarray, const String &the_str) {
 	append_to_xarray(the_xarray, (void *)NewConstStr(the_str));
-	return the_xarray.size() - 1;
+	return the_xarray.size();
 }
 
 bool get_token(progfile &f) {

@@ -53,7 +53,7 @@ extern void dispose_list(ListType &the_list);
 /**
  * Iterates through the given list
  */
-extern bool iterate_list(ListType &the_list, NodePtr index);
+extern bool iterate_list(ListType &the_list, NodePtr &index);
 
 /**
  * Appends a new item to the list

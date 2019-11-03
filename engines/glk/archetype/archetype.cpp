@@ -873,7 +873,7 @@ void Archetype::exec_stmt(StatementPtr the_stmt, ResultType &result, ContextType
 		c = context;
 		c.each = 1;
 
-		while (!b && c.each < (int)Object_List.size()) {
+		while (!b && c.each <= (int)Object_List.size()) {
 			if (eval_condition(the_stmt->_data._loop.selection, c)) {
 				exec_stmt(the_stmt->_data._loop.action, result, c);
 				b = (result._kind == RESERVED) && (result._data._reserved.keyword == RW_BREAK);
@@ -903,8 +903,7 @@ void Archetype::exec_stmt(StatementPtr the_stmt, ResultType &result, ContextType
 
 		if (!assignment(r1, result)) {
 			cleanup(result);
-		}
-		else {
+		} else {
 			// do it for real
 			the_object = new ObjectType();
 			the_object->inherited_from = the_stmt->_data._create.archetype;
@@ -919,7 +918,7 @@ void Archetype::exec_stmt(StatementPtr the_stmt, ResultType &result, ContextType
 			while (access_xarray(Object_List, i, q, PEEK_ACCESS) && q != nullptr)
 				++i;
 
-			if (i >= (int)Object_List.size())
+			if (i > (int)Object_List.size())
 				append_to_xarray(Object_List, p);
 			else
 				b = access_xarray(Object_List, i, p, POKE_ACCESS);
@@ -943,7 +942,7 @@ void Archetype::exec_stmt(StatementPtr the_stmt, ResultType &result, ContextType
 			dispose_object(the_object);
 			p = nullptr;
 			b = access_xarray(Object_List, result._data._ident.ident_int, p, POKE_ACCESS);
-			if (result._data._ident.ident_int == ((int)Object_List.size() - 1))
+			if (result._data._ident.ident_int == (int)Object_List.size())
 				shrink_xarray(Object_List);
 		} else {
 			wraperr("Can only destroy previously created objects");

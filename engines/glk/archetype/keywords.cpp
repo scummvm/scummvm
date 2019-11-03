@@ -120,7 +120,7 @@ void dump_text_list(Common::WriteStream *fOut, XArrayType &the_list) {
 	void *p;
 
 	fOut->writeUint16LE(the_list.size());
-	for (uint i = 0; i < the_list.size(); ++i) {
+	for (uint i = 1; i <= the_list.size(); ++i) {
 		if (index_xarray(the_list, i, p))
 			dump_string(fOut, *(StringPtr)(p));
 	}
@@ -129,7 +129,7 @@ void dump_text_list(Common::WriteStream *fOut, XArrayType &the_list) {
 void dispose_text_list(XArrayType &the_list) {
 	void *p;
 
-	for (uint i = 0; i < the_list.size(); ++i) {
+	for (uint i = 1; i <= the_list.size(); ++i) {
 		if (index_xarray(the_list, i, p))
 			delete (StringPtr)p;
 	}

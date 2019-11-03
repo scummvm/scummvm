@@ -38,7 +38,10 @@ void append_to_xarray(XArrayType &the_xarray, void *element) {
 }
 
 bool access_xarray(XArrayType &the_xarray, int index, void *&result, AccessType direction) {
-	if (index < 1 || index > (int)the_xarray.size())
+	if (index <= 0)
+		error("Invalid index - double check arrays were 1 based in original");
+
+	if (index > (int)the_xarray.size())
 		return false;
 
 	switch (direction) {
