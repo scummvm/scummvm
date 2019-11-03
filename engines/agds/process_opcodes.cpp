@@ -820,16 +820,16 @@ void Process::clearScreen() {
 }
 
 void Process::moveScreenObject() {
-	int arg3 = pop();
-	int arg2 = pop();
+	int y = pop();
+	int x = pop();
 	Common::String name = popString();
-	debug("moveScreenObject %s %d %d", name.c_str(), arg2, arg3);
+	debug("moveScreenObject %s %d %d", name.c_str(), x, y);
 	ObjectPtr object = _engine->getCurrentScreenObject(name);
 	if (object) {
 		RegionPtr region = object->region();
 		if (region)
 			debug("object region %s", region->toString().c_str());
-		object->moveTo(Common::Point(arg2, arg3));
+		object->moveTo(Common::Point(x, y));
 	} else
 		warning("moveScreenObject: object %s not found", name.c_str());
 }
