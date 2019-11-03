@@ -337,10 +337,10 @@ void Net::remoteStartScript(int typeOfSend, int sendTypeParam, int priority, int
 
 	warning("STUB: Net::remoteStartScript(%d, %d, %d, %d, ...)", typeOfSend, sendTypeParam, priority, argsCount); // PN_RemoteStartScriptCommand
 
-	remoteSendData(typeOfSend, sendTypeParam, PACKETTYPE_REMOTESTARTSCRIPT, res, 0);
+	remoteSendData(typeOfSend, sendTypeParam, PACKETTYPE_REMOTESTARTSCRIPT, res);
 }
 
-int Net::remoteSendData(int typeOfSend, int sendTypeParam, int type, Common::String data, int defaultRes) {
+int Net::remoteSendData(int typeOfSend, int sendTypeParam, int type, Common::String data, int defaultRes, bool wait) {
 	// Since I am lazy, instead of constructing the JSON object manually
 	// I'd rather parse it
 	Common::String res = Common::String::format(
@@ -362,8 +362,13 @@ int Net::remoteSendData(int typeOfSend, int sendTypeParam, int type, Common::Str
 
 	rq.start();
 
+	if (!wait)
+		return 0;
+
 	while(rq.state() == Networking::PROCESSING) {
 		g_system->delayMillis(5);
+
+		_vm->parseEvents();
 	}
 
 	if (!_sessions)
@@ -423,7 +428,7 @@ void Net::remoteSendArray(int typeOfSend, int sendTypeParam, int priority, int a
 			jsonData += "]";
 	}
 
-	remoteSendData(typeOfSend, sendTypeParam, PACKETTYPE_REMOTESENDSCUMMARRAY, jsonData, 0);
+	remoteSendData(typeOfSend, sendTypeParam, PACKETTYPE_REMOTESENDSCUMMARRAY, jsonData);
 }
 
 int Net::remoteStartScriptFunction(int typeOfSend, int sendTypeParam, int priority, int defaultReturnValue, int argsCount, int32 *args) {
@@ -440,7 +445,7 @@ int Net::remoteStartScriptFunction(int typeOfSend, int sendTypeParam, int priori
 
 	warning("STUB: Net::remoteStartScriptFunction(%d, %d, %d, %d, %d, ...)", typeOfSend, sendTypeParam, priority, defaultReturnValue, argsCount); // PN_RemoteStartScriptFunction
 
-	return remoteSendData(typeOfSend, sendTypeParam, PACKETTYPE_REMOTESTARTSCRIPTRETURN, res, defaultReturnValue);
+	return remoteSendData(typeOfSend, sendTypeParam, PACKETTYPE_REMOTESTARTSCRIPTRETURN, res, defaultReturnValue, true);
 }
 
 bool Net::getHostName(char *hostname, int length) {
@@ -553,7 +558,7 @@ bool Net::remoteReceiveData() {
 
 			Common::String res = Common::String::format("\"result\": %d", result);
 
-			remoteSendData(PN_SENDTYPE_INDIVIDUAL, from, PACKETTYPE_REMOTESTARTSCRIPTRESULT, res, 0);
+			remoteSendData(PN_SENDTYPE_INDIVIDUAL, from, PACKETTYPE_REMOTESTARTSCRIPTRESULT, res);
 		}
 		break;
 
