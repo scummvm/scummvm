@@ -188,7 +188,7 @@ void GriffonEngine::intro() {
 	_secsingame = 0;
 	_secStart = 0;
 
-	bool ldstop = false;
+	bool ldStop = false;
 	int cnt = 0;
 	float xofs = 0.0;
 	float ld = 0.0;
@@ -198,10 +198,10 @@ void GriffonEngine::intro() {
 		ld += 4 * _fpsr;
 		if ((int)ld > config.musicVol)
 			ld = config.musicVol;
-		if (!ldstop) {
+		if (!ldStop) {
 			setChannelVolume(_musicChannel, (int)ld);
 			if ((int)ld == config.musicVol)
-				ldstop = true;
+				ldStop = true;
 		}
 
 		rc.left = -xofs;
@@ -226,7 +226,7 @@ void GriffonEngine::intro() {
 				drawString(_videoBuffer, story[i], x, yy, 4);
 			}
 
-			if (yy < 10 && i == 47)
+			if (yy < 10 && i == 37)
 				return;
 		}
 
