@@ -14,7 +14,7 @@
 is an interpreter that will play graphic adventure games
 based on a variety of game engines.
 .Pp
-\fIGAME\fR is a short name of game to load. For example, \fImonkey\fR for
+\fIGAME\fR is a short name of game to load. For example, \fIscumm:monkey\fR for
 Monkey Island. This can be either a built-in gameid, or a user configured
 target.
 .Sh OPTIONS
@@ -36,6 +36,8 @@ Display a brief help text and exit.
 Display list of supported games and exit.
 .It Fl t, -list-targets
 Display list of configured targets and exit.
+.It Fl t, -list-engines
+Display list of suppported engines and exit.
 .It Fl -list-saves
 Display a list of saved games for the target specified with
 \fB--game=\fITARGET\fR or all targets if none is specified.
@@ -61,7 +63,7 @@ Use alternate configuration file.
 Path to where the game is installed.
 .It Fl x, -save-slot= Ns Ar [SLOT]
 Saved game slot to load (default: autosave).
-.It Fl f, -fulscreen
+.It Fl f, -fullscreen
 Force full-screen mode.
 .It Fl F, -no-fullscreen
 Force windowed mode.
@@ -296,15 +298,15 @@ Running the builtin game launcher:
 .Pp
 Running Day of the Tentacle specifying the path:
 .Pp
-.Dl $ scummvm -p /usr/local/share/games/tentacle tentacle
+.Dl $ scummvm -p /usr/local/share/games/tentacle scumm:tentacle
 .Pp
 Running The Dig with advmame2x filter with subtitles:
 .Pp
-.Dl $ scummvm -g advmame2x -n dig
+.Dl $ scummvm -g advmame2x -n scumm:dig
 .Pp
 Running the Italian version of Maniac Mansion fullscreen:
 .Pp
-.Dl $ scummvm -q it -f maniac
+.Dl $ scummvm -q it -f scumm:maniac
 .Sh SEE ALSO
 More information can be found in the \fIREADME\fR and on the website
 .Pa https://www.scummvm.org .
