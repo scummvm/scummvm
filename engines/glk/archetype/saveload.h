@@ -43,6 +43,9 @@ struct ObjectType {
 	ListType attributes;
 	ListType methods;
 	StatementPtr other;
+
+	ObjectType() : inherited_from(0), attributes(nullptr), methods(nullptr),
+		other(nullptr) {}
 };
 typedef ObjectType *ObjectPtr;
 

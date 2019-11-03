@@ -105,7 +105,7 @@ void walk_item_list(MissionType mission, Common::Stream *bfile, ListType &elemen
 		switch (mission) {
 		case LOAD:
 			assert(readStream);
-			np = (NodePtr)malloc(sizeof(NodeType));
+			np = new NodeType();
 			add_bytes(sizeof(NodeType));
 			np->key = readStream->readSint16LE();
 			break;
@@ -156,7 +156,7 @@ void walk_item_list(MissionType mission, Common::Stream *bfile, ListType &elemen
 		case CASE_LIST:
 			switch (mission) {
 			case LOAD:
-				this_case = (CasePairPtr)malloc(sizeof(CasePairType));
+				this_case = new CasePairType();
 				add_bytes(sizeof(CasePairType));
 				walk_expr(mission, bfile, this_case->value);
 				walk_stmt(mission, bfile, this_case->action);
@@ -172,7 +172,7 @@ void walk_item_list(MissionType mission, Common::Stream *bfile, ListType &elemen
 
 				if (mission == FREE) {
 					add_bytes(sizeof(CasePairType));
-					free(this_case);
+					delete this_case;
 				}
 				break;
 
@@ -258,7 +258,7 @@ static void walk_expr(MissionType mission, Common::Stream *bfile, ExprTree &the_
 	switch (mission) {
 	case LOAD:
 		assert(readStream);
-		the_expr = (ExprTree)malloc(sizeof(ExprNode));
+		the_expr = new ExprNode();
 		add_bytes(sizeof(ExprNode));
 		the_expr->_kind = (AclType)readStream->readByte();
 		break;
@@ -392,7 +392,7 @@ static void walk_expr(MissionType mission, Common::Stream *bfile, ExprTree &the_
 	// Postlude
 	switch (mission) {
 	case FREE:
-		free(the_expr);
+		delete the_expr;
 		the_expr = nullptr;
 		break;
 	default:
@@ -442,7 +442,7 @@ static void walk_stmt(MissionType mission, Common::Stream *bfile, StatementPtr &
 		if (sentinel == END_SEQ)
 			return;
 
-		the_stmt = (StatementPtr)malloc(sizeof(StatementType));
+		the_stmt = new StatementType();
 		add_bytes(sizeof(StatementType));
 		the_stmt->_kind = sentinel;
 		break;
@@ -521,7 +521,7 @@ static void walk_stmt(MissionType mission, Common::Stream *bfile, StatementPtr &
 
 			while (sentinel != END_SEQ) {
 				walk_expr(mission, bfile, this_expr);
-				np = (NodePtr)malloc(sizeof(NodeType));
+				np = new NodeType();
 				add_bytes(sizeof(NodeType));
 
 				np->data = this_expr;
@@ -563,7 +563,7 @@ static void walk_stmt(MissionType mission, Common::Stream *bfile, StatementPtr &
 	switch (mission) {
 	case FREE:
 		add_bytes(sizeof(StatementType));
-		free(the_stmt);
+		delete the_stmt;
 		break;
 	default:
 		break;
@@ -576,7 +576,7 @@ static void walk_stmt(MissionType mission, Common::Stream *bfile, StatementPtr &
 void load_object(Common::ReadStream *f_in, ObjectPtr &the_object) {
 	StatementKind sentinel;
 
-	the_object = (ObjectPtr)malloc(sizeof(ObjectType));
+	the_object = new ObjectType();
 	add_bytes(sizeof(ObjectType));
 
 	the_object->inherited_from = f_in->readSint16LE();
@@ -610,7 +610,7 @@ void dispose_object(ObjectPtr &the_object) {
 		dispose_stmt(the_object->other);
 
 	add_bytes(sizeof(ObjectType));
-	free(the_object);
+	delete the_object;
 	the_object = nullptr;
 }
 

@@ -88,6 +88,10 @@ union StatementTypeData {
 struct StatementType {
 	StatementKind _kind;
 	StatementTypeData _data;
+
+	StatementType() : _kind(COMPOUND) {
+		_data._compound.statements = nullptr;
+	}
 };
 
 struct CasePairType {

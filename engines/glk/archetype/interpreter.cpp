@@ -336,7 +336,7 @@ bool assignment(ResultType &target, ResultType &value) {
 			cleanup(*e);
 		} else {
 			dispose_expr(e);
-			e = (ExprPtr)malloc(sizeof(ExprNode));
+			e = new ExprNode();
 			undefine(*e);
 		}
 	}

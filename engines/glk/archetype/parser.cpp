@@ -32,6 +32,8 @@ const int WORD_LEN = 32;
 struct ParseType {
 	StringPtr word;
 	int object;
+
+	ParseType() : word(nullptr), object(0) {}
 };
 typedef ParseType *ParsePtr;
 
@@ -103,7 +105,7 @@ void add_parse_word(TargetListType which_list, String &the_word, int the_object)
 	do {
 		bar = the_word.indexOf('|');
 		if (bar != -1) {
-			pp = (ParsePtr)malloc(sizeof(ParseType));
+			pp = new ParseType();
 			tempstr = the_word.left(bar - 1).left(g_vm->Abbreviate);
 
 			pp->word = NewConstStr(tempstr);
@@ -111,7 +113,7 @@ void add_parse_word(TargetListType which_list, String &the_word, int the_object)
 			the_word = String(the_word.c_str() + bar + 1);
 			pp->object = the_object;
 
-			np = (NodePtr)malloc(sizeof(NodeType));
+			np = new NodeType();
 			np->key = pp->word->size();
 			np->data = pp;
 
@@ -275,7 +277,7 @@ void clear_parse_list(ListType &the_list) {
 	while (iterate_list(the_list, np)) {
 		pp = (ParsePtr)np->data;
 		FreeConstStr(pp->word);
-		free(pp);
+		delete pp;
 	}
 
 	dispose_list(the_list);

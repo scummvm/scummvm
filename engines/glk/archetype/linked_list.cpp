@@ -27,7 +27,7 @@ namespace Glk {
 namespace Archetype {
 
 void new_list(ListType &the_list) {
-	the_list = (ListType)malloc(sizeof(NodeType));
+	the_list = new NodeType();
 	add_bytes(sizeof(NodeType));
 	the_list->key = 0;
 	the_list->data = nullptr;
@@ -40,7 +40,7 @@ void dispose_list(ListType &the_list) {
 		axe = theNode;
 		theNode = theNode->next;
 		add_bytes(-(int)sizeof(*axe));
-		free(axe);
+		delete axe;
 	}
 
 }

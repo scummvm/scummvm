@@ -247,9 +247,9 @@ void Archetype::lookup(int the_obj, int the_attr, ResultType &result, ContextTyp
 		} else {
 			// inherited - must create new node }
 			result._kind = ATTR_PTR;
-			result._data._attr.acl_attr = (NodePtr)malloc(sizeof(NodeType));
+			result._data._attr.acl_attr = new NodeType();
 
-			e = (ExprTree)malloc(sizeof(ExprNode));
+			e = new ExprNode();
 			undefine(*e);
 			eval_expr((ExprPtr)np->data, *e, c, RVALUE);
 
@@ -491,7 +491,7 @@ void Archetype::eval_expr(ExprTree the_expr, ResultType &result, ContextType &co
 				return;
 
 			// Do the two operations using a dummy expression node
-			e = (ExprTree)malloc(sizeof(ExprNode));
+			e = new ExprNode();
 			*e = *the_expr;
 
 			switch (the_expr->_data._oper.op_name) {
@@ -519,7 +519,7 @@ void Archetype::eval_expr(ExprTree the_expr, ResultType &result, ContextType &co
 			e->_data._oper.right = &r1;
 
 			eval_expr(e, result, context, desired);
-			free(e);
+			delete e;
 			break;
 
 		case OP_CHS:
@@ -906,7 +906,7 @@ void Archetype::exec_stmt(StatementPtr the_stmt, ResultType &result, ContextType
 		}
 		else {
 			// do it for real
-			the_object = (ObjectPtr)malloc(sizeof(ObjectType));
+			the_object = new ObjectType();
 			the_object->inherited_from = the_stmt->_data._create.archetype;
 			new_list(the_object->attributes);
 			new_list(the_object->methods);

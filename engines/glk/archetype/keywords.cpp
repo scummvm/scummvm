@@ -131,7 +131,7 @@ void dispose_text_list(XArrayType &the_list) {
 
 	for (uint i = 0; i < the_list.size(); ++i) {
 		if (index_xarray(the_list, i, p))
-			free((StringPtr)p);
+			delete (StringPtr)p;
 	}
 
 	dispose_xarray(the_list);

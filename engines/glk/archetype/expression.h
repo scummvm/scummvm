@@ -33,9 +33,11 @@ namespace Archetype {
 const int OP_LPAREN = NUM_OPERS + 1;		// book-keeping operator
 const int OP_SEND_TO_TYPE = NUM_OPERS + 2;	// for use with interpreter
 
+struct ExprNode;
+
 struct OperNode {
 	int8 op_name;
-	struct ExprNode *left, *right;
+	ExprNode *left, *right;
 };
 
 struct MessageTextQuoteNode {
@@ -76,6 +78,10 @@ union ExprNodeData {
 struct ExprNode {
 	AclType _kind;
 	ExprNodeData _data;
+
+	ExprNode() : _kind(RESERVED) {
+		_data._reserved.keyword = RW_UNDEFINED;
+	}
 };
 
 typedef ExprNode *ExprPtr;

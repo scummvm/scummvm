@@ -49,6 +49,9 @@ struct IdRecType {
 	int id_index;			// The ID's index in the ID table
 	StringPtr id_name;
 	IdRecType *next;
+
+	IdRecType() : id_kind(UNDEFINED_ID), id_integer(0), id_index(0),
+		id_name(nullptr), next(nullptr) {}
 };
 typedef IdRecType *IdRecPtr;
 

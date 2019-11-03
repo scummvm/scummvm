@@ -32,6 +32,8 @@ struct NodeType {
 	void *data;
 	int key;
 	NodeType *next;
+
+	NodeType() : data(nullptr), key(0), next(nullptr) {}
 };
 typedef NodeType *NodePtr;
 

@@ -203,7 +203,7 @@ void send_to_system(int transport, String &strmsg, ResultType &result, ContextTy
 			break;
 
 		case PRESENT:
-			np = (NodePtr)malloc(sizeof(NodeType));
+			np = new NodeType();
 			np->data = nullptr;
 			np->key = the_caller;
 

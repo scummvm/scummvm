@@ -128,9 +128,9 @@ void add_undefined(int the_ID) {
 	if (np != nullptr) {
 		++*((IntegerPtr)np->data);
 	} else {
-		np = (NodePtr)malloc(sizeof(NodeType));
+		np = new NodeType();
 		np->key = the_ID;
-		ip = (IntegerPtr)malloc(sizeof(int));
+		ip = new int();
 		*ip = 1;			// TODO: Should this be 0-based?
 		np->data = ip;
 		insert_item(g_vm->Overlooked, np);
@@ -161,7 +161,7 @@ bool display_undefined() {
 		else
 			g_vm->writeln("<unknown identifier>");
 
-		free(ip);
+		delete ip;
 	}
 
 	dispose_list(g_vm->Overlooked);
