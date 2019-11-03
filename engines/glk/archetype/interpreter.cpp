@@ -43,14 +43,14 @@ StringPtr MakeNewDynStr(const String &s) {
 int find_message(const String &message) {
 	void *p;
 
-	for (uint i = 0; i < g_vm->Vocabulary.size(); ++i) {
+	for (uint i = 1; i <= g_vm->Vocabulary.size(); ++i) {
 		if (!index_xarray(g_vm->Vocabulary, i, p))
 			g_vm->writeln("Internal error - cannot index element %d of Vocabulary", i);
 		else if (message == *((StringPtr)p))
 			return i;
 	}
 
-	return -1;
+	return 0;
 }
 
 bool convert_to(AclType target_type, ResultType &the_scalar) {

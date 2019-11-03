@@ -38,15 +38,15 @@ void append_to_xarray(XArrayType &the_xarray, void *element) {
 }
 
 bool access_xarray(XArrayType &the_xarray, int index, void *&result, AccessType direction) {
-	if (index < 0 || index >= (int)the_xarray.size())
+	if (index < 1 || index > (int)the_xarray.size())
 		return false;
 
 	switch (direction) {
 	case PEEK_ACCESS:
-		result = the_xarray[index];
+		result = the_xarray[index - 1];
 		break;
 	case POKE_ACCESS:
-		the_xarray[index] = result;
+		the_xarray[index - 1] = result;
 		break;
 	}
 

@@ -274,7 +274,7 @@ bool Archetype::send_message(int transport, int message_sent, int recipient,
 	void *p;
 	ContextType c;
 
-	if (message_sent == -1) {
+	if (message_sent == 0) {
 		cleanup(result);
 		return false;
 	}

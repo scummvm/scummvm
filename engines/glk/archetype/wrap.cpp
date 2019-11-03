@@ -72,7 +72,7 @@ void wrapout(const String &str, bool terminate) {
 
 	const char CHARS[7] = { '.', ',', ':', ';', ')', '-', '"' };
 	for (int i = 0; i < 7; ++i) {
-		if (s[0] == CHARS[i]) {
+		if (!s.empty() && s[0] == CHARS[i]) {
 			maxchars += SAFETY_MARGIN;
 			break;
 		}
