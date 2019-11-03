@@ -31,10 +31,6 @@
 #include "backends/events/gph/gph-events.h"
 #include "backends/graphics/gph/gph-graphics.h"
 
-#ifndef PATH_MAX
-#define PATH_MAX 255
-#endif
-
 class OSystem_GPH : public OSystem_POSIX {
 public:
 	OSystem_GPH();
@@ -48,6 +44,9 @@ protected:
 	bool _inited;
 	bool _initedSDL;
 	virtual void initSDL();
+
+private:
+	Common::String getCurrentDirectory();
 };
 
 #endif
