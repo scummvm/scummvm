@@ -83,6 +83,16 @@ Common::String Region::toString() const {
 	return str;
 }
 
+void Region::move(Common::Point rel) {
+	if (rel.x == 0 && rel.y == 0)
+		return;
+
+	center += rel;
+	for(uint i = 0; i < points.size(); ++i)
+		points[i] += rel;
+}
+
+
 //FIXME: copied from wintermute/base_region.cpp
 
 typedef struct {
