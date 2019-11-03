@@ -1532,6 +1532,12 @@ case $_host in
 	_host_os=3ds
 	_host_cpu=arm
 	_host_alias=arm-none-eabi
+
+	test "x$prefix" = xNONE && prefix=romfs:
+
+	datarootdir='${prefix}'
+	datadir='${datarootdir}'
+	docdir='${prefix}/doc'
 	;;
 android | android-arm | android-v7a | android-arm-v7a | ouya)
 	_host_os=android
