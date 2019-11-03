@@ -31,10 +31,6 @@
 #include "backends/events/openpandora/op-events.h"
 #include "backends/graphics/openpandora/op-graphics.h"
 
-#ifndef PATH_MAX
-#define PATH_MAX 255
-#endif
-
 class OSystem_OP : public OSystem_POSIX {
 public:
 	OSystem_OP();
@@ -53,6 +49,9 @@ protected:
 	 * with an OpenPandora workaround.
 	 */
 	virtual void initSDL();
+
+private:
+	Common::String getCurrentDirectory();
 };
 #endif
 #endif //OP_SDL_H
