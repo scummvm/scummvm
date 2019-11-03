@@ -130,7 +130,7 @@ Common::String OSystem_3DS::getDefaultConfigFileName() {
 }
 
 void OSystem_3DS::addSysArchivesToSearchSet(Common::SearchSet &s, int priority) {
-	s.add("RomFS", new Common::FSDirectory("romfs:/"), priority);
+	s.add("RomFS", new Common::FSDirectory(DATA_PATH"/"), priority);
 }
 
 uint32 OSystem_3DS::getMillis(bool skipRecord) {
