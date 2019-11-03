@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: Prince\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2018-04-17 19:53+0100\n"
-"PO-Revision-Date: 2019-11-02 11:55+0000\n"
+"PO-Revision-Date: 2019-11-04 22:55+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: English <https://translations.scummvm.org/projects/prince/"
 "prince/en/>\n"
@@ -4637,19 +4637,21 @@ msgstr "HERO: What is that? I agree in advance on everything!"
 
 #: dialog0125.txt:100011
 msgid "OTHER: Musiałoby mi się chcieć."
-msgstr ""
+msgstr "OTHER: I'd need a desire for that."
 
 #: dialog0125.txt:100012
 msgid "P#HERO: A konkretnie?"
-msgstr "P#HERO: And specifically?"
+msgstr "P#HERO: What specifically?"
 
 #: dialog0125.txt:100013
 msgid "OTHER: Szczerze mówiąc, nawet mi się nie chce|mówić o tym, dlaczego mi się nic nie chce."
 msgstr ""
+"OTHER: To be honest, I don't even want to talk|about why I don't have any "
+"desires."
 
 #: dialog0125.txt:100014
 msgid "OTHER: Więc pozwól mi drzemać dalej.#E4#B0"
-msgstr ""
+msgstr "OTHER: So let me continue taking my nap.#E4#B0"
 
 #: dialog0125.txt:100101
 msgid "OTHER: Był taki jeden wielki czarodziej, który chciał|znaleźć legendarne źródło spirytusu|w opuszczonej kopalni krasnoludzkiej."
@@ -4660,10 +4662,15 @@ msgstr ""
 #: dialog0125.txt:100102
 msgid "OTHER: Zrobili z kumplami wyprawę, ale jak jeden|wszedł do środka z pochodnią, to od oparów był|wybuch i zostały z niego sznurówki."
 msgstr ""
+"OTHER: They did an expedition with their buddies, but as one of them|entered "
+"inside with a torch, the fumes caused|an explosion and only his laces "
+"remained."
 
 #: dialog0125.txt:100103
 msgid "OTHER: Więc wymarudził u mnie oświetlenie jaskiń,|a że miał argumenty, to się zgodziłem."
 msgstr ""
+"OTHER: He dreamed of bringing light to the caves,|and because he had "
+"arguments, I agreed."
 
 #: dialog0125.txt:100104
 msgid "HERO: Jakie argumenty?"
