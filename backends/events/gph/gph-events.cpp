@@ -41,9 +41,6 @@
 #define JOY_XAXIS 0
 #define JOY_YAXIS 1
 
-/* Quick default button states for modifiers. */
-int BUTTON_STATE_L                  =   false;
-
 #if defined(CAANOO)
 
 /* Caanoo: Main Joystick Button Mappings */
@@ -165,7 +162,7 @@ GPHEventSource::GPHEventSource()
 
 bool GPHEventSource::handleMouseButtonDown(SDL_Event &ev, Common::Event &event) {
 	if (ev.button.button == SDL_BUTTON_LEFT) {
-		if (BUTTON_STATE_L == true) /* BUTTON_STATE_L = Left Trigger Held, force Right Click */
+		if (_buttonStateL == true) /* _buttonStateL = Left Trigger Held, force Right Click */
 			event.type = Common::EVENT_RBUTTONDOWN;
 		else if (GPH::tapmodeLevel == TAPMODE_LEFT) /* TAPMODE_LEFT = Left Click Tap Mode */
 			event.type = Common::EVENT_LBUTTONDOWN;
@@ -200,7 +197,7 @@ bool GPHEventSource::handleMouseButtonDown(SDL_Event &ev, Common::Event &event) 
 
 bool GPHEventSource::handleMouseButtonUp(SDL_Event &ev, Common::Event &event) {
 	if (ev.button.button == SDL_BUTTON_LEFT) {
-		if (BUTTON_STATE_L == true) /* BUTTON_STATE_L = Left Trigger Held, force Right Click */
+		if (_buttonStateL == true) /* _buttonStateL = Left Trigger Held, force Right Click */
 			event.type = Common::EVENT_RBUTTONUP;
 		else if (GPH::tapmodeLevel == TAPMODE_LEFT) /* TAPMODE_LEFT = Left Click Tap Mode */
 			event.type = Common::EVENT_LBUTTONUP;
@@ -348,11 +345,11 @@ bool GPHEventSource::handleJoyButtonDown(SDL_Event &ev, Common::Event &event) {
 		processMouseEvent(event, _km.x / MULTIPLIER, _km.y / MULTIPLIER);
 		break;
 	case BUTTON_L:
-		BUTTON_STATE_L = true;
+		_buttonStateL = true;
 		break;
 	case BUTTON_R:
 		event.type = Common::EVENT_KEYDOWN;
-		if (BUTTON_STATE_L == true) {
+		if (_buttonStateL == true) {
 #ifdef ENABLE_VKEYBD
 			event.type = Common::EVENT_VIRTUAL_KEYBOARD;
 #else
@@ -367,7 +364,7 @@ bool GPHEventSource::handleJoyButtonDown(SDL_Event &ev, Common::Event &event) {
 	case BUTTON_SELECT:
 	case BUTTON_HOME:
 		event.type = Common::EVENT_KEYDOWN;
-		if (BUTTON_STATE_L == true) {
+		if (_buttonStateL == true) {
 			event.type = Common::EVENT_QUIT;
 		} else {
 			event.kbd.keycode = Common::KEYCODE_ESCAPE;
@@ -376,7 +373,7 @@ bool GPHEventSource::handleJoyButtonDown(SDL_Event &ev, Common::Event &event) {
 		break;
 	case BUTTON_A:
 		event.type = Common::EVENT_KEYDOWN;
-		if (BUTTON_STATE_L == true) {
+		if (_buttonStateL == true) {
 			event.type = Common::EVENT_PREDICTIVE_DIALOG;
 		} else {
 			event.kbd.keycode = Common::KEYCODE_PERIOD;
@@ -385,7 +382,7 @@ bool GPHEventSource::handleJoyButtonDown(SDL_Event &ev, Common::Event &event) {
 		break;
 	case BUTTON_Y:
 		event.type = Common::EVENT_KEYDOWN;
-		if (BUTTON_STATE_L == true) {
+		if (_buttonStateL == true) {
 			GPH::ToggleTapMode();
 			if (GPH::tapmodeLevel == TAPMODE_LEFT) {
 				g_system->displayMessageOnOSD(_("Touchscreen 'Tap Mode' - Left Click"));
@@ -402,7 +399,7 @@ bool GPHEventSource::handleJoyButtonDown(SDL_Event &ev, Common::Event &event) {
 	case BUTTON_MENU:
 	case BUTTON_HELP:
 		event.type = Common::EVENT_KEYDOWN;
-		if (BUTTON_STATE_L == true) {
+		if (_buttonStateL == true) {
 			event.type = Common::EVENT_MAINMENU;
 		} else {
 			event.kbd.keycode = Common::KEYCODE_F5;
@@ -472,7 +469,7 @@ bool GPHEventSource::handleJoyButtonUp(SDL_Event &ev, Common::Event &event) {
 		processMouseEvent(event, _km.x / MULTIPLIER, _km.y / MULTIPLIER);
 		break;
 	case BUTTON_L:
-		BUTTON_STATE_L = false;
+		_buttonStateL = false;
 		break;
 	case BUTTON_SELECT:
 	case BUTTON_HOME:
@@ -493,7 +490,7 @@ bool GPHEventSource::handleJoyButtonUp(SDL_Event &ev, Common::Event &event) {
 	case BUTTON_MENU:
 	case BUTTON_HELP:
 		event.type = Common::EVENT_KEYUP;
-		if (BUTTON_STATE_L == true) {
+		if (_buttonStateL == true) {
 			event.type = Common::EVENT_MAINMENU;
 		} else {
 			event.kbd.keycode = Common::KEYCODE_F5;
@@ -502,7 +499,7 @@ bool GPHEventSource::handleJoyButtonUp(SDL_Event &ev, Common::Event &event) {
 		break;
 	case BUTTON_R:
 		event.type = Common::EVENT_KEYUP;
-		if (BUTTON_STATE_L == true) {
+		if (_buttonStateL == true) {
 #ifdef ENABLE_VKEYBD
 			event.kbd.keycode = Common::KEYCODE_F7;
 			event.kbd.ascii = mapKey(SDLK_F7, ev.key.keysym.mod, 0);
