@@ -154,7 +154,7 @@ public:
 
 	void paint(AGDSEngine &engine, Graphics::Surface &backbuffer);
 
-	void move(Common::Point pos) {
+	void moveTo(Common::Point pos) {
 		_pos = pos;
 	}
 

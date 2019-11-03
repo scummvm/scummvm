@@ -829,7 +829,7 @@ void Process::moveScreenObject() {
 		RegionPtr region = object->region();
 		if (region)
 			debug("object region %s", region->toString().c_str());
-		object->move(Common::Point(arg2, arg3));
+		object->moveTo(Common::Point(arg2, arg3));
 	} else
 		warning("moveScreenObject: object %s not found", name.c_str());
 }
