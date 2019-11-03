@@ -14465,6 +14465,62 @@ static const uint16 qfg4BridgeSecretExitPatch[] = {
 	PATCH_END
 };
 
+// The bone cage in room 770 has two problems. Clicking Do and selecting Jump
+//  Out of Cage as a thief leaves the cursor stuck. Selecting Break Cage as a
+//  fighter allows the player to click during what's supposed to be a handsOff
+//  script and break the game. Both bugs are due to egoTeller:sayMessage. Its
+//  Jump handler is missing a call to self:clean and its Break Cage handler
+//  incorrectly calls self:clean after running sBreakBones instead of before.
+//
+// We fix this by calling self:clean before running sBreakBones or sJumpOut.
+//
+// Applies to: All versions
+// Responsible method: egoTeller:sayMessage
+// Fixes bug: #11238
+static const uint16 qfg4BoneCageTellerSignature[] = {
+	0x30, SIG_UINT16(0x001b),           // bnt 001b
+	0x38, SIG_SELECTOR16(setScript),    // pushi setScript
+	0x38, SIG_UINT16(0x0003),           // pushi 0003
+	0x72, SIG_ADDTOOFFSET(+2),          // lofsa sBreakBones
+	0x36,                               // push
+	0x76,                               // push0
+	0x76,                               // push0
+	0x81, 0x02,                         // lag 02
+	0x4a, SIG_UINT16(0x000a),           // send 0a [ rm770 setScript: sBreakBones 0 0 ]
+	0x38, SIG_ADDTOOFFSET(+2),          // pushi clean
+	0x76,                               // push0
+	0x54, SIG_UINT16(0x0004),           // self 04 [ self clean: ]
+	0x32, SIG_UINT16(0x0021),           // jmp 0021 [ end of method ]
+	SIG_MAGICDWORD,
+	0x3c,                               // dup
+	0x35, 0x23,                         // ldi 23 [ "Jump Out of Cage" ]
+	0x1a,                               // eq?
+	0x30, SIG_UINT16(0x0010),           // bnt 0010
+	SIG_END
+};
+
+static const uint16 qfg4BoneCageTellerPatch[] = {
+	0x31, 0x15,                         // bnt 15
+	0x38, PATCH_GETORIGINALUINT16(+21), // pushi clean
+	0x76,                               // push0
+	0x54, PATCH_UINT16(0x0004),         // self 0004 [ self clean: ]
+	0x38, PATCH_SELECTOR16(setScript),  // pushi setScript
+	0x78,                               // push1
+	0x74, PATCH_GETORIGINALUINT16(+10), // lofss sBreakBones
+	0x81, 0x02,                         // lag 02
+	0x4a, PATCH_UINT16(0x0006),         // send 06 [ rm770 setScript: sBreakBones ]
+	0x3a,                               // toss
+	0x48,                               // ret
+	0x3c,                               // dup
+	0x35, 0x23,                         // ldi 23 [ "Jump Out of Cage" ]
+	0x1a,                               // eq?
+	0x30, PATCH_UINT16(0x0017),         // bnt 0017
+	0x38, PATCH_GETORIGINALUINT16(+21), // pushi clean
+	0x76,                               // push0
+	0x54, PATCH_UINT16(0x0004),         // self 04 [ self clean: ]
+	PATCH_END
+};
+
 //          script, description,                                     signature                      patch
 static const SciScriptPatcherEntry qfg4Signatures[] = {
 	{  true,     0, "prevent autosave from deleting save games",   1, qfg4AutosaveSignature,         qfg4AutosavePatch },
@@ -14561,6 +14617,7 @@ static const SciScriptPatcherEntry qfg4Signatures[] = {
 	{  true,   730, "fix ad avis projectile message",              1, qfg4AdAvisMessageSignature,    qfg4AdAvisMessagePatch },
 	{  true,   730, "fix throwing weapons at ad avis",             1, qfg4AdAvisThrowWeaponSignature,qfg4AdAvisThrowWeaponPatch },
 	{  true,   730, "fix fighter's spear animation",               1, qfg4FighterSpearSignature,     qfg4FighterSpearPatch },
+	{  true,   770, "fix bone cage teller",                        1, qfg4BoneCageTellerSignature,   qfg4BoneCageTellerPatch },
 	{  true,   800, "fix setScaler calls",                         1, qfg4SetScalerSignature,        qfg4SetScalerPatch },
 	{  true,   800, "fix grapnel removing hero's scaler",          1, qfg4RopeScalerSignature,       qfg4RopeScalerPatch },
 	{  true,   801, "fix runes puzzle (1/2)",                      1, qfg4RunesPuzzleSignature1,     qfg4RunesPuzzlePatch1 },
