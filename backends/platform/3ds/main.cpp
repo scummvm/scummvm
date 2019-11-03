@@ -22,6 +22,7 @@
 
 #include "osystem.h"
 #include <3ds.h>
+#include <malloc.h>
 
 int main(int argc, char *argv[]) {
 	// Initialize basic libctru stuff
@@ -30,6 +31,12 @@ int main(int argc, char *argv[]) {
 	romfsInit();
 	osSetSpeedupEnable(true);
 // 	consoleInit(GFX_TOP, NULL);
+
+#ifdef USE_LIBCURL
+	const uint32 soc_sharedmem_size = 0x10000;
+	void *soc_sharedmem = memalign(0x1000, soc_sharedmem_size);
+	socInit((u32 *)soc_sharedmem, soc_sharedmem_size);
+#endif
 
 	g_system = new _3DS::OSystem_3DS();
 	assert(g_system);
@@ -51,6 +58,9 @@ int main(int argc, char *argv[]) {
 		gspLcdExit();
 	}
 
+#ifdef USE_LIBCURL
+	socExit();
+#endif
 	romfsExit();
 	cfguExit();
 	gfxExit();

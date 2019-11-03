@@ -193,7 +193,7 @@ void OSystem_3DS::fatalError() {
 }
 
 void OSystem_3DS::logMessage(LogMessageType::Type type, const char *message) {
-	printf("3DS log: %s\n", message);
+	printf("%s", message);
 }
 
 } // namespace _3DS

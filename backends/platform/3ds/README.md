@@ -202,6 +202,12 @@ Note: In more recent codebases of ScummVM, you may or may not need to set the fo
 ```$ export PKG_CONFIG_LIBDIR=$PORTLIBS/lib/pkgconfig```
 See above for $PORTLIBS.
 
+ScummVM doesn't provide the CA certificates bundle required by the cloud synchronization features.
+You need to download it from the curl website: https://curl.haxx.se/ca/cacert.pem, and instruct
+the build system to package it in the binary:
+```$ export DIST_3DS_EXTRA_FILES=/path/to/cacert.pem```
+The name of the file must be `cacert.pem`.
+
 From the root of the scummvm repository:
 ```
  $ ./configure --host=3ds

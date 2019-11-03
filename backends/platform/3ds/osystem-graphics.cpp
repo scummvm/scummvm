@@ -86,6 +86,7 @@ void OSystem_3DS::destroyGraphics() {
 	_gameTopTexture.free();
 	_gameBottomTexture.free();
 	_overlay.free();
+	_activityIcon.free();
 
 	shaderProgramFree(&_program);
 	DVLB_Free(_dvlb);
@@ -280,6 +281,7 @@ void OSystem_3DS::updateScreen() {
 		if (_cursorVisible && config.showCursor) {
 			_cursorTexture.transfer();
 		}
+		_activityIcon.transfer();
 	C3D_FrameEnd(0);
 
 	C3D_FrameBegin(0);
@@ -293,6 +295,11 @@ void OSystem_3DS::updateScreen() {
 			if (_overlayVisible && config.screen == kScreenTop) {
 				C3D_FVUnifMtx4x4(GPU_VERTEX_SHADER, _modelviewLocation, _overlay.getMatrix());
 				_overlay.render();
+			}
+			if (_activityIcon.getPixels() && config.screen == kScreenTop) {
+				_activityIcon.setPosition(400 - _activityIcon.actualWidth, 0);
+				C3D_FVUnifMtx4x4(GPU_VERTEX_SHADER, _modelviewLocation, _activityIcon.getMatrix());
+				_activityIcon.render();
 			}
 			if (_cursorVisible && config.showCursor && config.screen == kScreenTop) {
 				C3D_FVUnifMtx4x4(GPU_VERTEX_SHADER, _modelviewLocation, _cursorTexture.getMatrix());
@@ -310,6 +317,11 @@ void OSystem_3DS::updateScreen() {
 			if (_overlayVisible) {
 				C3D_FVUnifMtx4x4(GPU_VERTEX_SHADER, _modelviewLocation, _overlay.getMatrix());
 				_overlay.render();
+			}
+			if (_activityIcon.getPixels()) {
+				_activityIcon.setPosition(320 - _activityIcon.actualWidth, 0);
+				C3D_FVUnifMtx4x4(GPU_VERTEX_SHADER, _modelviewLocation, _activityIcon.getMatrix());
+				_activityIcon.render();
 			}
 			if (_cursorVisible && config.showCursor) {
 				C3D_FVUnifMtx4x4(GPU_VERTEX_SHADER, _modelviewLocation, _cursorTexture.getMatrix());
@@ -434,6 +446,22 @@ void OSystem_3DS::copyRectToOverlay(const void *buf, int pitch, int x,
                                             int y, int w, int h) {
 	_overlay.copyRectToSurface(buf, pitch, x, y, w, h);
 	_overlay.markDirty();
+}
+
+void OSystem_3DS::displayActivityIconOnOSD(const Graphics::Surface *icon) {
+	if (!icon) {
+		_activityIcon.free();
+	} else {
+		if (!_activityIcon.getPixels() || icon->w != _activityIcon.w || icon->h != _activityIcon.h) {
+			_activityIcon.create(icon->w, icon->h, _pfGameTexture);
+		}
+
+		Graphics::Surface *converted = icon->convertTo(_pfGameTexture);
+		_activityIcon.copyRectToSurface(*converted, 0, 0, Common::Rect(converted->w, converted->h));
+		_activityIcon.markDirty();
+		converted->free();
+		delete converted;
+	}
 }
 
 int16 OSystem_3DS::getOverlayHeight() {
