@@ -254,9 +254,8 @@ void send_to_system(int transport, String &strmsg, ResultType &result, ContextTy
 			break;
 
 		case DEBUG_MEMORY:
-			wrapout("", true);			// get to beginning of line
-			//g_vm->writeln("Maximum memory request: %d bytes", MaxAvail);
-			//g_vm->writeln("Actual free memory:     %d bytes", MemAvail);
+			//debug("Maximum memory request: %d bytes", MaxAvail);
+			//debug("Actual free memory:     %d bytes", MemAvail);
 			sys_state = IDLING;
 			break;
 

@@ -283,26 +283,27 @@ bool Archetype::send_message(int transport, int message_sent, int recipient,
 		r._kind = IDENT;
 		r._data._ident.ident_kind = OBJECT_ID;
 		r._data._ident.ident_int = context.self;
-		wrapout(" : ", false);
+		
+		debugN(" : ");
 		display_result(r);
 
 		if (transport == OP_SEND)
-			wrapout(" sending ", false);
+			debugN(" sending ");
 		else
-			wrapout(" passing ", false);
+			debugN(" passing ");
 
 		if (index_xarray(Vocabulary, message_sent, p)) {
 			String str = String::format("'%s'", ((StringPtr)p)->c_str());
-			wrapout(str, false);
+			debugN(str.c_str());
 		}
 
 		if (transport == OP_SEND_TO_TYPE)
 			r._data._ident.ident_kind = TYPE_ID;
 
-		wrapout(" to ", false);
+		debugN(" to ");
 		r._data._ident.ident_int = recipient;
 		display_result(r);
-		wrapout("", true);
+		debug("");
 	}
 
 	// Trying to send a message to a destroyed object results in UNDEFINED
@@ -680,11 +681,11 @@ void Archetype::eval_expr(ExprTree the_expr, ResultType &result, ContextType &co
 		cleanup(r2);
 
 		if (DebugMan.isDebugChannelEnabled(DEBUG_EXPR)) {
-			wrapout(" -- ", false);
+			debugN(" -- ");
 			display_expr(the_expr);
-			wrapout("  ==>  ", false);
+			debugN("  ==>  ");
 			display_result(result);
-			wrapout("", true);
+			debug("");
 		}
 	} else {
 		switch (desired) {
@@ -732,7 +733,7 @@ void Archetype::exec_stmt(StatementPtr the_stmt, ResultType &result, ContextType
 	verbose = DebugMan.isDebugChannelEnabled(DEBUG_STMT);
 
 	if (verbose)
-		wrapout(" == ", false);
+		debugN(" == ");
 
 	switch (the_stmt->_kind) {
 	case COMPOUND:
@@ -774,27 +775,27 @@ void Archetype::exec_stmt(StatementPtr the_stmt, ResultType &result, ContextType
 		if (verbose) {
 			switch (the_stmt->_kind) {
 			case ST_WRITE:
-				wrapout("write ", false);
+				debugN("write ");
 				break;
 			case ST_WRITES:
-				wrapout("writes ", false);
+				debugN("writes ");
 				break;
 			case ST_STOP:
-				wrapout("stop ", false);
+				debugN("stop ");
 				break;
 			default:
 				break;
 			}
 
-			wrapout(" ", false);
+			debugN(" ");
 			np = nullptr;
 			while (iterate_list(the_stmt->_data._write.print_list, np)) {
 				display_expr((ExprTree)np->data);
 				if (np->next != the_stmt->_data._write.print_list)
-					wrapout(", ", false);
+					debugN(", ");
 			}
 
-			wrapout("", true);
+			debug("");
 		}
 
 		np = nullptr;
@@ -816,28 +817,28 @@ void Archetype::exec_stmt(StatementPtr the_stmt, ResultType &result, ContextType
 
 	case ST_IF:
 		if (verbose) {
-			wrapout("if: Testing ", false);
+			debugN("if: Testing ");
 			display_expr(the_stmt->_data._if.condition);
 		}
 		if (eval_condition(the_stmt->_data._if.condition, context)) {
 			if (verbose)
-				wrapout(" Evaluated true; executing then branch", true);
+				debug(" Evaluated true; executing then branch");
 			exec_stmt(the_stmt->_data._if.then_branch, result, context);
 
 		}
 		else if (the_stmt->_data._if.else_branch != nullptr) {
 			if (verbose)
-				wrapout(" Evaluated false; executing else branch", true);
+				debug(" Evaluated false; executing else branch");
 			exec_stmt(the_stmt->_data._if.else_branch, result, context);
 		}
 		break;
 
 	case ST_CASE:
 		if (verbose) {
-			wrapout("case ", false);
+			debugN("case ");
 			display_expr(the_stmt->_data._case.test_expr);
-			wrapout(" of", false);
-			wrapout("", true);
+			debugN(" of");
+			debug("");
 		}
 
 		eval_expr(the_stmt->_data._case.test_expr, r1, context, RVALUE);
@@ -957,7 +958,7 @@ void Archetype::exec_stmt(StatementPtr the_stmt, ResultType &result, ContextType
 	}
 
 	if (verbose)
-		wrapout("", true);		// finish off dangling lines
+		debug("");		// finish off dangling lines
 }
 
 } // End of namespace Archetype

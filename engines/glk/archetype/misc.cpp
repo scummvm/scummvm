@@ -126,12 +126,9 @@ void add_bytes(int delta) {
 	Bytes += delta;
 
 	if (DebugMan.isDebugChannelEnabled(DEBUG_BYTES)) {
-		if (delta >= 0)
-			g_vm->write("Allocated   ");
-		else
-			g_vm->write("Deallocated ");
-
-		g_vm->writeln("%.3d bytes.  Current consumed memory: %.6d", ABS(delta), Bytes);
+		String line = (delta >= 0) ? "Allocated   " : "Deallocated ";
+		line += String::format("%.3d bytes.  Current consumed memory: %.6d", ABS(delta), Bytes);
+		debug(line.c_str());
 	}
 }
 

@@ -352,16 +352,16 @@ void write_result(ResultType &result) {
 
 	undefine(r1);
 	if (result._kind == STR_PTR)
-		wrapout(*result._data._str.acl_str, false);
+		debugN(result._data._str.acl_str->c_str());
 	else if (result._kind == RESERVED)
-		wrapout(Reserved_Wds[result._data._reserved.keyword], false);
+		debugN(Reserved_Wds[result._data._reserved.keyword]);
 	else {
 		if (result._kind == ATTR_PTR)
 			copy_result(r1, *(ResultType *)result._data._attr.acl_attr->data);
 		else
 			copy_result(r1, result);
 		if (convert_to(STR_PTR, r1))
-			wrapout(*r1._data._str.acl_str, false);
+			debugN(r1._data._str.acl_str->c_str());
 		cleanup(r1);
 	}
 }
@@ -385,10 +385,10 @@ void display_result(ResultType &result) {
 	}
 
 	if (enclose != " ")
-		wrapout(enclose, false);
+		debugN(enclose.c_str());
 	write_result(result);
 	if (enclose != " ")
-		wrapout(enclose, false);
+		debugN(enclose.c_str());
 }
 
 void display_expr(ExprTree the_tree) {
@@ -396,15 +396,15 @@ void display_expr(ExprTree the_tree) {
 		display_result(*the_tree);
 	} else {
 		if (Binary[the_tree->_data._oper.op_name]) {
-			wrapout(" (", false);
+			debugN(" (");
 			display_expr(the_tree->_data._oper.left);
-			wrapout(") ", false);
+			debugN(") ");
 		}
 
 		wrapout(Operators[the_tree->_data._oper.op_name], false);
-		wrapout(" (", false);
+		debugN(" (");
 		display_expr(the_tree->_data._oper.right);
-		wrapout(") ", false);
+		debugN(") ");
 	}
 }
 
