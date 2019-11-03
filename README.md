@@ -1360,7 +1360,7 @@ arguments -- see the next section.
 
     Usage: scummvm [OPTIONS]... [GAME]
 
-    [GAME]                   Short name of game to load. For example, 'monkey'
+    [GAME]                   Short name of game to load. For example, 'scumm:monkey'
                               for Monkey Island. This can be either a built-in
                               gameid, or a user configured target.
 
@@ -1368,6 +1368,7 @@ arguments -- see the next section.
     -h, --help               Display a brief help text and exit
     -z, --list-games         Display list of supported games and exit
     -t, --list-targets       Display list of configured targets and exit
+    --list-engines           Display list of suppported engines and exit
     --list-saves             Display a list of saved games for the target specified
                               with --game=TARGET, or all targets if none is specified
     -a, --add                Add all games from current or specified directory.
@@ -1461,17 +1462,17 @@ Examples:
   - Win32:
     Running Monkey Island, fullscreen, from a hard disk:
     `C:\Games\LucasArts\scummvm.exe -f -pC:\Games\LucasArts\monkey\
-    monkey`
+    scumm:monkey`
     Running Full Throttle from CD, fullscreen and with subtitles
     enabled:
-    `C:\Games\LucasArts\scummvm.exe -f -n -pD:\resource\ ft`
+    `C:\Games\LucasArts\scummvm.exe -f -n -pD:\resource\ scumm:ft`
 
   - Unix:
     Running Monkey Island, fullscreen, from a hard disk:
-    `/path/to/scummvm -f -p/games/LucasArts/monkey/ monkey`
+    `/path/to/scummvm -f -p/games/LucasArts/monkey/ scumm:monkey`
     Running Full Throttle from CD, fullscreen and with subtitles
     enabled:
-    `/path/to/scummvm -f -n -p/cdrom/resource/ ft`
+    `/path/to/scummvm -f -n -p/cdrom/resource/ scumm:ft`
 
 ### 5.2) Global Menu
 
@@ -1549,7 +1550,7 @@ They are:
 To select a graphics filter, select it in the Launcher, or pass its name
 via the '-g' option to scummvm, for example:
 
-    scummvm -gadvmame2x monkey2
+    scummvm -gadvmame2x scumm:monkey2
 
 Note \#1: Not all backends support all (or even any) of the filters
 listed above; some may support additional ones. The filters listed above
@@ -2114,7 +2115,7 @@ depending on your operating system and configuration.
 To select a sound driver, select it in the Launcher, or pass its name
 via the `-e` option to scummvm, for example:
 
-`scummvm -eadlib monkey2`
+`scummvm -eadlib scumm:monkey2`
 
 ### 7.1) AdLib emulation
 
