@@ -22,6 +22,9 @@
 #ifndef CHEWY_CHEWY_H
 #define CHEWY_CHEWY_H
 
+// FIXME
+#define AIL
+#define ENGLISCH
 
 #include "common/scummsys.h"
 #include "common/error.h"
@@ -33,6 +36,7 @@
 namespace Chewy {
 
 struct ChewyGameDescription;
+class Sound;
 
 class ChewyEngine : public Engine {
 public:
@@ -54,6 +58,8 @@ protected:
 
 	void initialize();
 	void shutdown();
+
+	Sound *_sound;
 };
 
 } // End of namespace Chewy

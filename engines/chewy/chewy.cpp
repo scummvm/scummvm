@@ -21,15 +21,19 @@
 
 #include "common/config-manager.h"
 #include "common/fs.h"
+#include "common/system.h"
 #include "engines/util.h"
 #include "chewy/chewy.h"
+#include "chewy/main.h"
+#include "chewy/resource.h"
+#include "chewy/sound.h"
 
 namespace Chewy {
 
 ChewyEngine::ChewyEngine(OSystem *syst, const ChewyGameDescription *gameDesc)
 	: Engine(syst),
-	_gameDescription(gameDesc),
-	_rnd("chewy") {
+	  _gameDescription(gameDesc),
+	  _rnd("chewy") {
 
 	const Common::FSNode gameDataDir(ConfMan.get("path"));
 
@@ -43,9 +47,11 @@ ChewyEngine::ChewyEngine(OSystem *syst, const ChewyGameDescription *gameDesc)
 }
 
 ChewyEngine::~ChewyEngine() {
+	delete _sound;
 }
 
 void ChewyEngine::initialize() {
+	_sound = new Sound(_mixer);
 }
 
 Common::Error ChewyEngine::run() {
@@ -54,6 +60,14 @@ Common::Error ChewyEngine::run() {
 	initGraphics(320, 200);
 
 	initialize();
+
+	game_main();
+
+	// Run a dummy loop
+	while (!shouldQuit()) {
+		g_system->updateScreen();
+		g_system->delayMillis(10);
+	}
 
 	return Common::kNoError;
 }
