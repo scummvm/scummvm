@@ -56,7 +56,7 @@ void GriffonEngine::checkInputs() {
 	for (int x = 0; x <= 19; x++) {
 		for (int y = 0; y <= 14; y++) {
 			int o = _objectMap[x][y];
-			if (_objectInfo[o][4] == 3) {
+			if (_objectInfo[o].type == 3) {
 				_postInfo[_postInfoNbr][0] = x * 16;
 				_postInfo[_postInfoNbr][1] = y * 16;
 				_postInfoNbr = _postInfoNbr + 1;
@@ -545,7 +545,7 @@ void GriffonEngine::handleWalking() {
 
 	if (o > -1) {
 		// fsk
-		if (_objectInfo[o][4] == 2 && _player.inventory[kInvFlask] < 9) {
+		if (_objectInfo[o].type == 2 && _player.inventory[kInvFlask] < 9) {
 			_objectMap[lx][ly] = -1;
 
 			_player.inventory[kInvFlask]++;
@@ -559,7 +559,7 @@ void GriffonEngine::handleWalking() {
 			}
 		}
 
-		if (_objectInfo[o][5] == 7 && _player.inventory[kInvDoubleFlask] < 9) {
+		if (_objectInfo[o].script == 7 && _player.inventory[kInvDoubleFlask] < 9) {
 			_objectMap[lx][ly] = -1;
 
 			_player.inventory[kInvDoubleFlask]++;
@@ -573,7 +573,7 @@ void GriffonEngine::handleWalking() {
 			}
 		}
 
-		if (_objectInfo[o][5] == 9 && _player.inventory[kInvShock] < 9 && (_curMap == 41 && _scriptFlag[kScriptLightningBomb][1] == 0)) {
+		if (_objectInfo[o].script == 9 && _player.inventory[kInvShock] < 9 && (_curMap == 41 && _scriptFlag[kScriptLightningBomb][1] == 0)) {
 			_objectMap[lx][ly] = -1;
 
 			_player.inventory[kInvShock]++;
@@ -590,7 +590,7 @@ void GriffonEngine::handleWalking() {
 
 		}
 
-		if (_objectInfo[o][5] == 9 && _player.inventory[kInvShock] < 9) {
+		if (_objectInfo[o].script == 9 && _player.inventory[kInvShock] < 9) {
 			_objectMap[lx][ly] = -1;
 
 			_player.inventory[kInvShock]++;

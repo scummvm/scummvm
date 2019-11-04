@@ -76,15 +76,14 @@ const int elementmap[15][20] = {
 
 void GriffonEngine::updateAnims() {
 	for (int i = 0; i <= _lastObj; i++) {
-		int nframes = _objectInfo[i][0];
-		int o_animspd = _objectInfo[i][3];
+		int nFrames = _objectInfo[i].nFrames;
+		int objAnimSpeed = _objectInfo[i].speed;
 		float frame = _objectFrame[i][0];
-		// _objectinfo[i][6] = 0; // ?? out of bounds
 
-		if (nframes > 1) {
-			frame += o_animspd / 50 * _fpsr;
-			while (frame >= nframes)
-				frame -= nframes;
+		if (nFrames > 1) {
+			frame += objAnimSpeed / 50 * _fpsr;
+			while (frame >= nFrames)
+				frame -= nFrames;
 
 			int cframe = (int)frame; // truncate fractional part
 			if (cframe < 0)
@@ -1628,7 +1627,7 @@ void GriffonEngine::updateSpells() {
 
 								int o = _objectMap[sx][sy];
 								if (o > -1) {
-									if (_objectInfo[o][4] == 1)
+									if (_objectInfo[o].type == 1)
 										foundel[2] = true;
 									if (o == 1 || o == 2) {
 										foundel[2] = true;

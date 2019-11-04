@@ -96,8 +96,8 @@ void GriffonEngine::drawAnims(int Layer) {
 			int o = _objectMap[sx][sy];
 
 			if (o > -1) {
-				int xtiles = _objectInfo[o][1];
-				int ytiles = _objectInfo[o][2];
+				int xtiles = _objectInfo[o].xTiles;
+				int ytiles = _objectInfo[o].yTiles;
 				int cframe = _objectFrame[o][1];
 
 				for (int x = 0; x <= xtiles - 1; x++) {
@@ -174,7 +174,6 @@ void GriffonEngine::drawAnims(int Layer) {
 
 int hud_recalc(int a, int b, int c) {
 	int result = a * b / c;
-
 	return MIN(result, b);
 }
 
@@ -371,13 +370,13 @@ void GriffonEngine::drawHud() {
 			rcSrc.top = sy;
 			if (i == 0)
 				_itemImg[6]->blit(*_videoBuffer, rcSrc.left, rcSrc.top);
-			if (i == 1)
+			else if (i == 1)
 				_itemImg[12]->blit(*_videoBuffer, rcSrc.left, rcSrc.top);
-			if (i == 2)
+			else if (i == 2)
 				_itemImg[17]->blit(*_videoBuffer, rcSrc.left, rcSrc.top);
-			if (i == 3)
+			else if (i == 3)
 				_itemImg[16]->blit(*_videoBuffer, rcSrc.left, rcSrc.top);
-			if (i == 4)
+			else if (i == 4)
 				_itemImg[14]->blit(*_videoBuffer, rcSrc.left, rcSrc.top);
 
 			sprintf(line, "x%i", _player.inventory[i]);
@@ -408,9 +407,7 @@ void GriffonEngine::drawHud() {
 					rcDest.left = (float)(243 - 12 + 3 * sin(3.141592 * 2 * _itemyloc / 16));
 					rcDest.top = 67 + 24 * i;
 					_itemImg[15]->blit(*_videoBuffer, rcDest.left, rcDest.top);
-				}
-
-				if (_curItem == i) {
+				} else if (_curItem == i) {
 					rcDest.left = (float)(189 - 12 + 3 * sin(3.141592 * 2 * _itemyloc / 16));
 					rcDest.top = 70 + 24 * i;
 					_itemImg[15]->blit(*_videoBuffer, rcDest.left, rcDest.top);
@@ -1193,7 +1190,7 @@ void GriffonEngine::swash() {
 
 	y = 0;
 	do {
-		y = y + 1 * _fpsr;
+		y += _fpsr;
 
 		_videoBuffer->setAlpha((int)(y * 25));
 		_mapBg->blit(*_videoBuffer);
@@ -1230,9 +1227,7 @@ void GriffonEngine::swash() {
 		while (_cloudAngle >= 360)
 			_cloudAngle -= 360;
 
-		if (y > 10)
-			break;
-	} while (1);
+	} while (y <= 10);
 
 
 	_videoBuffer->setAlpha(255);

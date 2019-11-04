@@ -53,8 +53,14 @@ GriffonEngine::GriffonEngine(OSystem *syst) : Engine(syst) {
 	_cloudAngle = 0.0f;
 
 	for (int i = 0; i < 33; ++i) {
-		for (int j = 0; j < 6; ++j)
-			_objectInfo[i][j] = 0;
+		for (int j = 0; j < 6; ++j) {
+			_objectInfo[i].nFrames = 0;
+			_objectInfo[i].xTiles = 0;
+			_objectInfo[i].yTiles = 0;
+			_objectInfo[i].speed = 0;
+			_objectInfo[i].type = 0;
+			_objectInfo[i].script = 0;
+		}
 	}
 
 	for (int i = 0; i < 256; ++i) {
