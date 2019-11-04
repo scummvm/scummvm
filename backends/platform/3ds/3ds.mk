@@ -14,7 +14,7 @@ CXXFLAGS += -std=gnu++11
 ASFLAGS  += -mfloat-abi=hard
 LDFLAGS  += -specs=3dsx.specs $(ARCH) -L$(DEVKITPRO)/libctru/lib -L$(DEVKITPRO)/portlibs/3ds/lib
 
-.PHONY: clean_3ds
+.PHONY: clean_3ds dist_3ds
 
 clean: clean_3ds
 
@@ -27,6 +27,7 @@ clean_3ds:
 	$(RM) $(TARGET).romfs
 	$(RM) $(TARGET).cia
 	$(RM) -rf romfs
+	$(RM) -rf dist_3ds
 
 romfs: $(DIST_FILES_THEMES) $(DIST_FILES_ENGINEDATA) $(DIST_FILES_NETWORKING) $(DIST_FILES_VKEYBD) $(DIST_3DS_EXTRA_FILES)
 	@rm -rf romfs
@@ -63,6 +64,14 @@ $(TARGET).romfs: romfs
 
 $(TARGET).cia: $(EXECUTABLE) $(APP_RSF) $(TARGET).smdh $(TARGET).bnr $(TARGET).romfs
 	@makerom -f cia -target t -exefslogo -o $@ -elf $(EXECUTABLE) -rsf $(APP_RSF) -banner $(TARGET).bnr -icon $(TARGET).smdh -romfs $(TARGET).romfs
+	@echo built ... $(notdir $@)
+
+dist_3ds: $(TARGET).cia $(TARGET).3dsx $(DIST_FILES_DOCS)
+	@rm -rf dist_3ds
+	@mkdir -p dist_3ds
+	@cp $(TARGET).3dsx $(TARGET).cia dist_3ds/
+	@cp $(DIST_FILES_DOCS) dist_3ds/
+	@cp $(srcdir)/backends/platform/3ds/README.md dist_3ds/README-3DS.md
 	@echo built ... $(notdir $@)
 
 #---------------------------------------------------------------------------------
