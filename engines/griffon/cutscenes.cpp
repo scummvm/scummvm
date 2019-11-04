@@ -290,7 +290,7 @@ void GriffonEngine::endOfGame() {
 	bool ldstop = false; // CHECKME: Check if actually used
 
 	do {
-		ld = ld + 4 * _fpsr;
+		ld += 4 * _fpsr;
 		if (ld > config.musicVol)
 			ld = config.musicVol;
 		if (!ldstop) {
@@ -413,8 +413,7 @@ void GriffonEngine::endOfGame() {
 		if (_ticks < ticks1 + 1500) {
 			y1 = 255 * (_ticks - ticks1) / 1500;
 			y1 = CLIP(y1, 0, 255);
-		}
-		else
+		} else
 			break;
 
 		_videoBuffer->fillRect(Common::Rect(0, 0, _videoBuffer->w, _videoBuffer->h), 0);

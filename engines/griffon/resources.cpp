@@ -415,7 +415,7 @@ void GriffonEngine::loadMap(int mapnum) {
 				if (_objectMapFull[_curMap][x][y] == 0) {
 					_objectMap[x][y] = o;
 
-					if (_objectInfo[o][0] > 1) {
+					if (_objectInfo[o].nFrames > 1) {
 						if (o > _lastObj)
 							_lastObj = o;
 					}
@@ -428,9 +428,9 @@ void GriffonEngine::loadMap(int mapnum) {
 					rcDest.setWidth(8);
 					rcDest.setHeight(8);
 
-					if (_objectInfo[o][4] == 1)
+					if (_objectInfo[o].type == 1)
 						_clipBg->fillRect(rcDest, ccc);
-					if (_objectInfo[o][4] == 3)
+					if (_objectInfo[o].type == 3)
 						_clipBg->fillRect(rcDest, ccc);
 				}
 			}
@@ -1144,9 +1144,12 @@ void GriffonEngine::loadObjectDB() {
 		error("Cannot open file objectdb.dat");
 
 	for (int a = 0; a <= 32; a++) {
-		for (int b = 0; b <= 5; b++) {
-			INPUT("%i", &_objectInfo[a][b]);
-		}
+		INPUT("%i", &_objectInfo[a].nFrames);
+		INPUT("%i", &_objectInfo[a].xTiles);
+		INPUT("%i", &_objectInfo[a].yTiles);
+		INPUT("%i", &_objectInfo[a].speed);
+		INPUT("%i", &_objectInfo[a].type);
+		INPUT("%i", &_objectInfo[a].script);
 
 		for (int b = 0; b <= 8; b++) {
 			for (int c = 0; c <= 2; c++) {

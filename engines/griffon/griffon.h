@@ -302,11 +302,20 @@ struct AttackOffsetStruct {
 	bool completed;
 };
 
-struct CONFIG {
+struct Config {
 	bool music;
 	int musicVol;
 	bool effects;
 	int effectsVol;
+};
+
+struct ObjectInfoStruct {
+	int nFrames;
+	int xTiles;
+	int yTiles;
+	int speed;
+	int type;
+	int script;
 };
 
 class GriffonEngine : public Engine {
@@ -491,8 +500,8 @@ private:
 	float _objectFrame[256][2];
 	int _lastObj;
 	// frame!, curframe
-	int _objectInfo[33][6];
-	// nframes,xtiles,ytiles,speed,type,script, update?
+	ObjectInfoStruct _objectInfo[33];
+
 	int _objectTile[33][9][3][3][2];
 	// [objnum] [frame] [x] [y] [tile/layer]
 	int _objectMap[21][15];
@@ -532,7 +541,7 @@ private:
 
 	bool _pmenu;
 
-	CONFIG config;
+	Config config;
 	void saveConfig();
 };
 

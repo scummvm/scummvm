@@ -55,11 +55,11 @@ void GriffonEngine::attack() {
 				o2 = _objectMap[lx][ly - 2];
 
 			// cst
-			if ((_objectInfo[o][4] == 1 && (o == 0 || o > 4)) || (_objectInfo[o2][4] == 0 && o2 == 10)) {
+			if ((_objectInfo[o].type == 1 && (o == 0 || o > 4)) || (_objectInfo[o2].type == 0 && o2 == 10)) {
 				if (o2 == 10)
 					o = 10;
 
-				int oscript = _objectInfo[o][5];
+				int oscript = _objectInfo[o].script;
 				switch (oscript) {
 				case kScriptFlask:
 					if (_player.inventory[kInvFlask] < 9) {
@@ -73,7 +73,7 @@ void GriffonEngine::attack() {
 							setChannelVolume(snd, config.effectsVol);
 						}
 
-						if (_objectInfo[o][4] == 1)
+						if (_objectInfo[o].type == 1)
 							_objectMap[lx][ly - 1] = 3;
 
 						eventText("Found Flask!");
@@ -107,7 +107,7 @@ void GriffonEngine::attack() {
 						setChannelVolume(snd, config.effectsVol);
 					}
 
-					if (_objectInfo[o][4] == 1)
+					if (_objectInfo[o].type == 1)
 						_objectMap[lx][ly - 1] = 3;
 					eventText("Found the Temple Key!");
 					return;
@@ -122,7 +122,7 @@ void GriffonEngine::attack() {
 						setChannelVolume(snd, config.effectsVol);
 					}
 
-					if (_objectInfo[o][4] == 1)
+					if (_objectInfo[o].type == 1)
 						_objectMap[lx][ly - 1] = 3;
 
 					eventText("Found the Infinite Crystal!");
@@ -141,7 +141,7 @@ void GriffonEngine::attack() {
 							setChannelVolume(snd, config.effectsVol);
 						}
 
-						if (_objectInfo[o][4] == 1)
+						if (_objectInfo[o].type == 1)
 							_objectMap[lx][ly - 1] = 3;
 
 						eventText("Found the Obsidian Shield!");
@@ -162,7 +162,7 @@ void GriffonEngine::attack() {
 							setChannelVolume(snd, config.effectsVol);
 						}
 
-						if (_objectInfo[o][4] == 1)
+						if (_objectInfo[o].type == 1)
 							_objectMap[lx][ly - 1] = 3;
 						eventText("Found the Fidelis Sword!");
 						return;
@@ -185,7 +185,7 @@ void GriffonEngine::attack() {
 
 						_objectMapFull[_curMap][lx][ly - 1] = 1;
 
-						if (_objectInfo[o][4] == 1)
+						if (_objectInfo[o].type == 1)
 							_objectMap[lx][ly - 1] = 3;
 
 						eventText("Found Key");
@@ -211,7 +211,7 @@ void GriffonEngine::attack() {
 							setChannelVolume(snd, config.effectsVol);
 						}
 
-						if (_objectInfo[o][4] == 1)
+						if (_objectInfo[o].type == 1)
 							_objectMap[lx][ly - 1] = 3;
 
 						eventText("Found Mega Flask!");
@@ -239,7 +239,7 @@ void GriffonEngine::attack() {
 							setChannelVolume(snd, config.effectsVol);
 						}
 
-						if (_objectInfo[o][4] == 1)
+						if (_objectInfo[o].type == 1)
 							_objectMap[lx][ly - 1] = 3;
 
 						eventText("Found Mega Flask!");
@@ -266,7 +266,7 @@ void GriffonEngine::attack() {
 							setChannelVolume(snd, config.effectsVol);
 						}
 
-						if (_objectInfo[o][4] == 1)
+						if (_objectInfo[o].type == 1)
 							_objectMap[lx][ly - 1] = 3;
 
 						eventText("Found Lightning Bomb!");
@@ -292,7 +292,7 @@ void GriffonEngine::attack() {
 							setChannelVolume(snd, config.effectsVol);
 						}
 
-						if (_objectInfo[o][4] == 1)
+						if (_objectInfo[o].type == 1)
 							_objectMap[lx][ly - 1] = 3;
 
 						eventText("Found the Fidelis Mail!");
@@ -344,7 +344,7 @@ void GriffonEngine::attack() {
 							setChannelVolume(snd, config.effectsVol);
 						}
 
-						if (_objectInfo[o][4] == 1)
+						if (_objectInfo[o].type == 1)
 							_objectMap[lx][ly - 1] = 3;
 						eventText("Found the Blood Sword!");
 						_objectMapFull[4][1][2] = 1;
@@ -362,7 +362,7 @@ void GriffonEngine::attack() {
 							setChannelVolume(snd, config.effectsVol);
 						}
 
-						if (_objectInfo[o][4] == 1)
+						if (_objectInfo[o].type == 1)
 							_objectMap[lx][ly - 1] = 3;
 						eventText("Found the Entropy Shield!");
 						_objectMapFull[4][1][2] = 1;
@@ -380,7 +380,7 @@ void GriffonEngine::attack() {
 							setChannelVolume(snd, config.effectsVol);
 						}
 
-						if (_objectInfo[o][4] == 1)
+						if (_objectInfo[o].type == 1)
 							_objectMap[lx][ly - 1] = 3;
 						eventText("Found the Rubyscale Armour!");
 						_objectMapFull[4][1][2] = 1;
