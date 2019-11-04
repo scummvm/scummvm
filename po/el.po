@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2019-11-03 11:43+0100\n"
-"PO-Revision-Date: 2019-11-04 06:57+0000\n"
+"PO-Revision-Date: 2019-11-05 01:55+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/el/>\n"
@@ -1472,9 +1472,8 @@ msgid "3. Connect"
 msgstr "3. Συνδεθείτε"
 
 #: gui/options.cpp:1966
-#, fuzzy
 msgid "Connect your cloud storage account"
-msgstr "Συνδέστε τον λογαριασμό της δικής σας αποθήκης Νέφους"
+msgstr "Συνδέστε τον λογαριασμό του δικού σας αποθηκευτικού χώρου στο Νέφος"
 
 #: gui/options.cpp:1975
 msgid "Run server"
@@ -1494,10 +1493,10 @@ msgid "/root/ Path:"
 msgstr "/root/ Διαδρομή:"
 
 #: gui/options.cpp:1980 gui/options.cpp:1982 gui/options.cpp:1983
-#, fuzzy
 msgid "Select which directory will be shown as /root/ in the Files Manager"
 msgstr ""
-"Επιλέξτε το φάκελο που θα φαίνεται ως κορυφαίος /root/ στη Διαχείριση Αρχείων"
+"Επιλέξτε το φάκελο που θα εμφανίζεται ως κορυφαίος /root/ στη Διαχείριση "
+"Αρχείων"
 
 #: gui/options.cpp:1982
 msgid "/root/ Path:"
@@ -2711,7 +2710,6 @@ msgid "Index of"
 msgstr "Δείκτης του"
 
 #: backends/networking/sdl_net/handlers/indexpagehandler.cpp:42
-#, fuzzy
 msgid "This is a local webserver index page."
 msgstr "Αυτή είναι η αρχική σελίδα τοπικού εξυπηρετητή ιστού."
 
@@ -3324,7 +3322,7 @@ msgstr ""
 
 #: engines/adl/detection.cpp:51
 msgid "TV emulation"
-msgstr "Εξομοιωτής TV"
+msgstr "Προσομοιωτής TV"
 
 #: engines/adl/detection.cpp:52
 msgid "Emulate composite output to an NTSC TV"
@@ -3338,7 +3336,7 @@ msgstr "Χρήση έγχρωμων γραφικών"
 #: engines/adl/detection.cpp:62 engines/adl/detection.cpp:72
 #, fuzzy
 msgid "Use color graphics instead of monochrome"
-msgstr "Χρήση έγχρωμων γραφικών"
+msgstr "Χρήση έγχρωμων γραφικών αντί για μονόχρωμα"
 
 #: engines/adl/detection.cpp:81
 msgid "Show scanlines"
@@ -3347,7 +3345,7 @@ msgstr "Προβολή γραμμών σάρωσης"
 #: engines/adl/detection.cpp:82
 msgid "Darken every other scanline to mimic the look of a CRT"
 msgstr ""
-"Σκοτείνιασμα κάθε δεύτερης γραμμής σάρωσης για μίμηση της εικόνας CRT οθόνης"
+"Σκοτείνιασμα κάθε δεύτερης γραμμής σάρωσης για μίμηση εικόνας CRT οθόνης"
 
 #: engines/adl/detection.cpp:91
 msgid "Always use sharp monochrome text"
@@ -3599,18 +3597,16 @@ msgid "Untitled Savegame"
 msgstr "Αποθηκευμένο παιχνίδι χωρίς όνομα"
 
 #: engines/glk/advsys/advsys.cpp:35
-#, fuzzy
 msgid "Could not start AdvSys game"
-msgstr "Δεν ήταν δυνατή η αλλαγή σε λειτουργία οθόνης: '"
+msgstr "Αδυναμία εκκίνησης παιχνιδιού AdvSys"
 
 #: engines/glk/advsys/advsys.cpp:48 engines/glk/advsys/vm.cpp:319
 msgid "Sorry, the savegame couldn't be restored"
 msgstr "Λυπούμαστε, δεν ήταν δυνατή η φόρτωση του αποθηκευμένου παιχνιδιού"
 
 #: engines/glk/advsys/vm.cpp:314
-#, fuzzy
 msgid "Sorry, the savegame couldn't be created"
-msgstr "δεν ήταν δυνατή η αλλαγή της λειτουργίας βίντεο"
+msgstr "Λυπούμαστε, δεν ήταν δυνατή η αποθήκευση του παιχνιδιού"
 
 #: engines/glk/advsys/vm.cpp:560
 msgid "Speak up! I can't hear you!\n"
@@ -3627,24 +3623,20 @@ msgid "I don't understand.\n"
 msgstr "Δεν καταλαβαίνω την εντολή σου. "
 
 #: engines/glk/alan2/alan2.cpp:76
-#, fuzzy
 msgid "This is too short to be a valid Alan2 file."
-msgstr "Αυτό είναι πολύ σύντομο για να είναι έγκυρο αρχείο Glulx."
+msgstr "Αυτό είναι πολύ σύντομο για να είναι έγκυρο αρχείο Alan2."
 
 #: engines/glk/alan2/alan2.cpp:81
-#, fuzzy
 msgid "This is not a valid Alan2 file."
-msgstr "Αυτό δεν είναι ένα έγκυρο αρχείο Glulx."
+msgstr "Αυτό δεν είναι ένα έγκυρο αρχείο Alan2."
 
 #: engines/glk/frotz/frotz.cpp:126
-#, fuzzy
 msgid "Error reading save file"
-msgstr "Σφάλμα κατά την εκτέλεση του παιχνιδιού:"
+msgstr "Σφάλμα στην ανάγνωση αποθηκευμένου παιχνιδιού"
 
 #: engines/glk/frotz/frotz.cpp:144
-#, fuzzy
 msgid "Error writing save file\n"
-msgstr "Σφάλμα κατά την εκτέλεση του παιχνιδιού:"
+msgstr "Σφάλμα στην εγγραφή αποθηκευμένου παιχνιδιού\n"
 
 #: engines/glk/glulxe/glulxe.cpp:79 engines/glk/magnetic/magnetic.cpp:73
 msgid "This is too short to be a valid Glulx file."
@@ -3904,9 +3896,8 @@ msgid "Failed to save game"
 msgstr "Αδυναμία αποθήκευσης παιχνιδιού"
 
 #: engines/hdb/detection.cpp:157
-#, fuzzy
 msgid "Enable cheat mode"
-msgstr "Ενεργοποίηση λειτουργίας ηλίου"
+msgstr "Ενεργοποίηση cheat"
 
 #: engines/hdb/detection.cpp:158
 msgid "Debug info and level selection becomes available"
@@ -5599,11 +5590,10 @@ msgid "Improved mode"
 msgstr "Βελτιωμένη λειτουργία"
 
 #: engines/supernova/detection.cpp:41
-#, fuzzy
 msgid ""
 "Removes some repetitive actions, adds possibility to change verbs by keyboard"
 msgstr ""
-"Αφαιρεί κάποιες επαναλαμβανόμενες πράξεις, προσθέτει δυνατότητα αλλαγής "
+"Αφαιρεί κάποιες επαναλαμβανόμενες πράξεις, προσθέτει δυνατότητα επιλογής "
 "μεταξύ ρημάτων από το πληκτρολόγιο"
 
 #: engines/sword1/animation.cpp:532
@@ -5819,8 +5809,8 @@ msgid ""
 "This saved game uses version %u, but this engine only supports up to version "
 "%d. You will need an updated version of the engine to use this saved game."
 msgstr ""
-"Αυτό το αποθηκευμένο παιχνίδι χρησιμοποιεί έκδοση%u, αλλά η μηχανή αυτή "
-"υποστηρίζει μόνο μέχρι την έκδοση%d. Θα χρειαστείτε μια ενημερωμένη έκδοση "
+"Αυτό το αποθηκευμένο παιχνίδι χρησιμοποιεί έκδοση %u, αλλά η μηχανή αυτή "
+"υποστηρίζει μόνο μέχρι την έκδοση %d. Θα χρειαστείτε μια ενημερωμένη έκδοση "
 "της μηχανής για να χρησιμοποιήσετε αυτό το αποθηκευμένο παιχνίδι."
 
 #, fuzzy
