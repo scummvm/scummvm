@@ -256,7 +256,7 @@ int32 Net::setProviderByName(int32 parameter1, int32 parameter2) {
 
 void Net::setFakeLatency(int time) {
 	_latencyTime = time;
-	debug("NETWORK: Setting Fake Latency to %d ms \n", _latencyTime); // TODO: is it OK to use debug instead of SPUTM_xprintf?
+	debug("NETWORK: Setting Fake Latency to %d ms", _latencyTime);
 	_fakeLatency = true;
 }
 
@@ -304,13 +304,14 @@ void Net::startQuerySessionsErrorCallback(Networking::ErrorResponse error) {
 }
 
 int32 Net::updateQuerySessions() {
-	warning("STUB: Net::updateQuerySessions()"); // UpdateQuerySessions
+	debug(1, "Net::updateQuerySessions()"); // UpdateQuerySessions
 	return startQuerySessions();
 }
 
 void Net::stopQuerySessions() {
 	debug(1, "Net::stopQuerySessions()"); // StopQuerySessions
 
+	_sessionsBeingQueried = false;
 	// No op
 }
 
@@ -374,7 +375,7 @@ void Net::remoteStartScript(int typeOfSend, int sendTypeParam, int priority, int
 	remoteSendData(typeOfSend, sendTypeParam, PACKETTYPE_REMOTESTARTSCRIPT, res);
 }
 
-int Net::remoteSendData(int typeOfSend, int sendTypeParam, int type, Common::String data, int defaultRes, bool wait) {
+int Net::remoteSendData(int typeOfSend, int sendTypeParam, int type, Common::String data, int defaultRes, bool wait, int callid) {
 	// Since I am lazy, instead of constructing the JSON object manually
 	// I'd rather parse it
 	Common::String res = Common::String::format(
@@ -399,8 +400,18 @@ int Net::remoteSendData(int typeOfSend, int sendTypeParam, int type, Common::Str
 	if (!wait)
 		return 0;
 
-	while(rq.state() == Networking::PROCESSING) {
-		g_system->delayMillis(5);
+	int timeout = g_system->getMillis() + 1000;
+
+	while (g_system->getMillis() < timeout) {
+		if (remoteReceiveData()) {
+			if (_packetdata->child("data")->hasChild("callid")) {
+				if (_packetdata->child("data")->child("callid")->asIntegerNumber() == callid) {
+					return _packetdata->child("data")->child("result")->asIntegerNumber();
+				}
+			}
+
+			warning("Net::remoteSendData(): Received wrong package: %s", _packetdata->stringify().c_str());
+		}
 
 		_vm->parseEvents();
 	}
@@ -413,8 +424,6 @@ int Net::remoteSendData(int typeOfSend, int sendTypeParam, int type, Common::Str
 
 void Net::remoteSendDataCallback(Common::JSONValue *response) {
 	debug(1, "remoteSendData: Got: '%s'", response->stringify().c_str());
-
-	_sessions = new Common::JSONValue(*response);
 }
 
 void Net::remoteSendDataErrorCallback(Networking::ErrorResponse error) {
@@ -466,7 +475,9 @@ void Net::remoteSendArray(int typeOfSend, int sendTypeParam, int priority, int a
 }
 
 int Net::remoteStartScriptFunction(int typeOfSend, int sendTypeParam, int priority, int defaultReturnValue, int argsCount, int32 *args) {
-	Common::String res = "\"params\": [";
+	int callid = _vm->_rnd.getRandomNumber(1000000);
+
+	Common::String res = Common::String::format("\"callid\":%d, \"params\": [", callid);
 
 	if (argsCount > 2)
 		for (int i = 0; i < argsCount - 1; i++)
@@ -479,7 +490,7 @@ int Net::remoteStartScriptFunction(int typeOfSend, int sendTypeParam, int priori
 
 	debug(1, "Net::remoteStartScriptFunction(%d, %d, %d, %d, %d, ...)", typeOfSend, sendTypeParam, priority, defaultReturnValue, argsCount); // PN_RemoteStartScriptFunction
 
-	return remoteSendData(typeOfSend, sendTypeParam, PACKETTYPE_REMOTESTARTSCRIPTRETURN, res, defaultReturnValue, true);
+	return remoteSendData(typeOfSend, sendTypeParam, PACKETTYPE_REMOTESTARTSCRIPTRETURN, res, defaultReturnValue, true, callid);
 }
 
 bool Net::getHostName(char *hostname, int length) {
@@ -590,7 +601,8 @@ bool Net::remoteReceiveData() {
 			_vm->runScript(_vm->VAR(_vm->VAR_REMOTE_START_SCRIPT), 1, 0, (int *)_tmpbuffer);
 			int result = _vm->pop();
 
-			Common::String res = Common::String::format("\"result\": %d", result);
+			Common::String res = Common::String::format("\"result\": %d, \"callid\": %d", result,
+					(int)_packetdata->child("data")->child("callid")->asIntegerNumber());
 
 			remoteSendData(PN_SENDTYPE_INDIVIDUAL, from, PACKETTYPE_REMOTESTARTSCRIPTRESULT, res);
 		}
