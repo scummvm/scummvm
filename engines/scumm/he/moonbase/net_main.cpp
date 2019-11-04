@@ -443,7 +443,7 @@ int Net::remoteStartScriptFunction(int typeOfSend, int sendTypeParam, int priori
 	else
 		res += "]";
 
-	warning("STUB: Net::remoteStartScriptFunction(%d, %d, %d, %d, %d, ...)", typeOfSend, sendTypeParam, priority, defaultReturnValue, argsCount); // PN_RemoteStartScriptFunction
+	debug(1, "Net::remoteStartScriptFunction(%d, %d, %d, %d, %d, ...)", typeOfSend, sendTypeParam, priority, defaultReturnValue, argsCount); // PN_RemoteStartScriptFunction
 
 	return remoteSendData(typeOfSend, sendTypeParam, PACKETTYPE_REMOTESTARTSCRIPTRETURN, res, defaultReturnValue, true);
 }
@@ -634,10 +634,6 @@ void Net::remoteReceiveDataCallback(Common::JSONValue *response) {
 
 void Net::remoteReceiveDataErrorCallback(Networking::ErrorResponse error) {
 	warning("Error in remoteReceiveData(): %ld %s", error.httpResponseCode, error.response.c_str());
-}
-
-void Net::unpackageArray(int arrayId, byte *data, int len) {
-	warning("STUB: unpackageArray");
 }
 
 

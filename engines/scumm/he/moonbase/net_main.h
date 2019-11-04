@@ -65,7 +65,6 @@ public:
 	void remoteSendArray(int typeOfSend, int sendTypeParam, int priority, int arrayIndex);
 	int remoteStartScriptFunction(int typeOfSend, int sendTypeParam, int priority, int defaultReturnValue, int argsCount, int32 *args);
 	void doNetworkOnceAFrame(int msecs);
-	void unpackageArray(int arrayId, byte *data, int len);
 
 private:
 	bool remoteReceiveData();
