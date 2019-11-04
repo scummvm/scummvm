@@ -93,14 +93,15 @@ void Lingo::addCodeV4(Common::SeekableSubReadStreamEndian &stream, ScriptType ty
 	for (uint32 i = 0; i < 0x2e; i++) {
 		stream.readByte();
 	}
-	uint16 functions_offset = stream.readUint16();
+	uint16 globals_offset = stream.readUint16();
+	uint16 globals_count = stream.readUint16();
 	// unk3
-	for (uint32 i = 0; i < 0x6; i++) {
+	for (uint32 i = 0; i < 0x4; i++) {
 		stream.readByte();
 	}
 	uint16 functions_count = stream.readUint16();
 	stream.readUint16();
-	stream.readUint16();
+	uint16 functions_offset = stream.readUint16();
 	uint16 consts_count = stream.readUint16();
 	stream.readUint16();
 	uint16 consts_offset = stream.readUint16();

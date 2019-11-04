@@ -123,6 +123,9 @@ void Lingo::addCode(const char *code, ScriptType type, uint16 id) {
 	debugC(1, kDebugLingoCompile, "Add code \"%s\" for type %s with id %d", code, scriptType2str(type), id);
 
 	if (_scriptContexts[type].contains(id)) {
+		for (size_t j = 0; j < _scriptContexts[type][id]->functions.size(); j++) {
+			delete _scriptContexts[type][id]->functions[j];
+		}
 		delete _scriptContexts[type][id];
 	}
 
