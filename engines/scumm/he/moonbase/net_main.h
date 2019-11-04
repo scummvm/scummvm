@@ -78,6 +78,9 @@ private:
 	void addUserCallback(Common::JSONValue *response);
 	void addUserErrorCallback(Networking::ErrorResponse error);
 
+	void endSessionCallback(Common::JSONValue *response);
+	void endSessionErrorCallback(Networking::ErrorResponse error);
+
 	void remoteSendDataCallback(Common::JSONValue *response);
 	void remoteSendDataErrorCallback(Networking::ErrorResponse error);
 

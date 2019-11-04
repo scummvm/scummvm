@@ -194,9 +194,36 @@ int Net::joinSession(int sessionIndex) {
 }
 
 int Net::endSession() {
-	warning("STUB: Net::endSession()"); // PN_EndSession
-	return 0;
+	debug(1, "Net::endSession()"); // PN_EndSession
+
+	Networking::PostRequest rq(_serverprefix + "/endsession",
+		new Common::Callback<Net, Common::JSONValue *>(this, &Net::endSessionCallback),
+		new Common::Callback<Net, Networking::ErrorResponse>(this, &Net::endSessionErrorCallback));
+
+	char *buf = (char *)malloc(MAX_PACKET_SIZE);
+	snprintf(buf, MAX_PACKET_SIZE, "{\"sessionid\":%d}", _sessionid);
+	rq.setPostData((byte *)buf, strlen(buf));
+	rq.setContentType("application/json");
+
+	rq.start();
+
+	while(rq.state() == Networking::PROCESSING) {
+		g_system->delayMillis(5);
+	}
+
+	return _lastResult;
 }
+
+void Net::endSessionCallback(Common::JSONValue *response) {
+	_lastResult = 1;
+}
+
+void Net::endSessionErrorCallback(Networking::ErrorResponse error) {
+	warning("Error in endSession(): %ld %s", error.httpResponseCode, error.response.c_str());
+
+	_lastResult = 0;
+}
+
 
 void Net::disableSessionJoining() {
 	warning("STUB: Net::disableSessionJoining()"); // PN_DisableSessionPlayerJoin
