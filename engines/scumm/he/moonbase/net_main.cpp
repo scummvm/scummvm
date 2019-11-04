@@ -36,6 +36,8 @@ Net::Net(ScummEngine_v100he *vm) : _latencyTime(1), _fakeLatency(false), _vm(vm)
 	_myUserId = -1;
 	_lastResult = 0;
 
+	_sessionsBeingQueried = false;
+
 	_sessionid = -1;
 	_sessions = nullptr;
 	_packetdata = nullptr;
@@ -48,6 +50,7 @@ Net::~Net() {
 	free(_packbuffer);
 
 	delete _sessions;
+	delete _packetdata;
 }
 
 int Net::hostGame(char *sessionName, char *userName) {
@@ -237,18 +240,16 @@ bool Net::destroyPlayer(int32 playerDPID) {
 }
 
 int32 Net::startQuerySessions() {
-	debug(1, "Net::startQuerySessions()"); // StartQuerySessions
+	if (!_sessionsBeingQueried) { // Do not run parallel queries
+		debug(1, "Net::startQuerySessions()"); // StartQuerySessions
 
-	Networking::PostRequest rq(_serverprefix + "/lobbies",
-		new Common::Callback<Net, Common::JSONValue *>(this, &Net::startQuerySessionsCallback),
-		new Common::Callback<Net, Networking::ErrorResponse>(this, &Net::startQuerySessionsErrorCallback));
+		Networking::PostRequest rq(_serverprefix + "/lobbies",
+			new Common::Callback<Net, Common::JSONValue *>(this, &Net::startQuerySessionsCallback),
+			new Common::Callback<Net, Networking::ErrorResponse>(this, &Net::startQuerySessionsErrorCallback));
 
-	delete _sessions;
+		_sessionsBeingQueried = true;
 
-	rq.start();
-
-	while(rq.state() == Networking::PROCESSING) {
-		g_system->delayMillis(5);
+		rq.start();
 	}
 
 	if (!_sessions)
@@ -262,11 +263,17 @@ int32 Net::startQuerySessions() {
 void Net::startQuerySessionsCallback(Common::JSONValue *response) {
 	debug(1, "startQuerySessions: Got: '%s' which is %lu", response->stringify().c_str(), response->countChildren());
 
+	_sessionsBeingQueried = false;
+
+	delete _sessions;
+
 	_sessions = new Common::JSONValue(*response);
 }
 
 void Net::startQuerySessionsErrorCallback(Networking::ErrorResponse error) {
 	warning("Error in startQuerySessions(): %ld %s", error.httpResponseCode, error.response.c_str());
+
+	_sessionsBeingQueried = false;
 }
 
 int32 Net::updateQuerySessions() {

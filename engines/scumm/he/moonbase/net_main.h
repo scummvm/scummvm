@@ -112,6 +112,8 @@ public:
 
 	int _sessionid;
 
+	bool _sessionsBeingQueried;
+
 	Common::JSONValue *_sessions;
 	Common::JSONValue *_packetdata;
 
