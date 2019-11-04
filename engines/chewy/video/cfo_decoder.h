@@ -61,9 +61,9 @@ private:
 
 		Sound *_sound;
 
-		byte *_soundEffects[MAX_SOUND_EFFECTS];
+		uint8 *_soundEffects[MAX_SOUND_EFFECTS];
 		uint32 _soundEffectSize[MAX_SOUND_EFFECTS];
-		byte *_musicData;
+		uint8 *_musicData;
 		uint32 _musicSize;
 	};
 };

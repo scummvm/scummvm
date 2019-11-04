@@ -20,6 +20,7 @@
  */
 
 #include "common/events.h"
+#include "common/stream.h"
 #include "common/system.h"
 #include "engines/engine.h"
 #include "graphics/palette.h"
@@ -194,7 +195,7 @@ void CfoDecoder::CfoVideoTrack::handleCustomFrame() {
 		case kChunkLoadMusic:
 			// Used in videos 0, 18, 34, 71
 			_musicSize = frameSize;
-			_musicData = new byte[frameSize];
+			_musicData = new uint8[frameSize];
 			_fileStream->read(_musicData, frameSize);
 			break;
 		case kChunkLoadRaw:
@@ -206,7 +207,7 @@ void CfoDecoder::CfoVideoTrack::handleCustomFrame() {
 			delete[] _soundEffects[number];
 
 			_soundEffectSize[number] = frameSize - 2;
-			_soundEffects[number] = new byte[frameSize - 2];
+			_soundEffects[number] = new uint8[frameSize - 2];
 			_fileStream->read(_soundEffects[number], frameSize - 2);
 			break;
 		case kChunkPlayMusic:
