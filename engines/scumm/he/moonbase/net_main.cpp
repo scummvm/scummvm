@@ -20,6 +20,8 @@
  *
  */
 
+#include "backends/networking/curl/connectionmanager.h"
+
 #include "scumm/he/intern_he.h"
 #include "scumm/he/moonbase/moonbase.h"
 #include "scumm/he/moonbase/net_main.h"
@@ -270,13 +272,15 @@ int32 Net::startQuerySessions() {
 	if (!_sessionsBeingQueried) { // Do not run parallel queries
 		debug(1, "Net::startQuerySessions()"); // StartQuerySessions
 
-		Networking::PostRequest rq(_serverprefix + "/lobbies",
+		Networking::PostRequest *rq = new Networking::PostRequest(_serverprefix + "/lobbies",
 			new Common::Callback<Net, Common::JSONValue *>(this, &Net::startQuerySessionsCallback),
 			new Common::Callback<Net, Networking::ErrorResponse>(this, &Net::startQuerySessionsErrorCallback));
 
 		_sessionsBeingQueried = true;
 
-		rq.start();
+		rq->start();
+
+		ConnMan.addRequest(rq);
 	}
 
 	if (!_sessions)
@@ -388,14 +392,16 @@ int Net::remoteSendData(int typeOfSend, int sendTypeParam, int type, Common::Str
 
 	debug("Package to send: %s", res.c_str());
 
-	Networking::PostRequest rq(_serverprefix + "/packet",
+	Networking::PostRequest *rq = new Networking::PostRequest(_serverprefix + "/packet",
 		new Common::Callback<Net, Common::JSONValue *>(this, &Net::remoteSendDataCallback),
 		new Common::Callback<Net, Networking::ErrorResponse>(this, &Net::remoteSendDataErrorCallback));
 
-	rq.setPostData(buf, res.size());
-	rq.setContentType("application/json");
+	rq->setPostData(buf, res.size());
+	rq->setContentType("application/json");
 
-	rq.start();
+	rq->start();
+
+	ConnMan.addRequest(rq);
 
 	if (!wait)
 		return 0;
