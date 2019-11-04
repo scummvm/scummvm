@@ -51,7 +51,7 @@ public:
 	void clear(uint32 color = 0);
 	void markDirty(){ dirtyPixels = true; }
 
-	void setPosition(uint16 x, uint16 y);
+	void setPosition(int x, int y);
 	void setOffset(uint16 x, uint16 y);
 	void setScale(float x, float y);
 	float getScaleX(){ return scaleX; }
