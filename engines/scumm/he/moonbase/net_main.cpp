@@ -228,7 +228,27 @@ void Net::endSessionErrorCallback(Networking::ErrorResponse error) {
 
 
 void Net::disableSessionJoining() {
-	warning("STUB: Net::disableSessionJoining()"); // PN_DisableSessionPlayerJoin
+	debug(1, "Net::disableSessionJoining()"); // PN_DisableSessionPlayerJoin
+
+	Networking::PostRequest *rq = new Networking::PostRequest(_serverprefix + "/disablesession",
+		new Common::Callback<Net, Common::JSONValue *>(this, &Net::disableSessionJoiningCallback),
+		new Common::Callback<Net, Networking::ErrorResponse>(this, &Net::disableSessionJoiningErrorCallback));
+
+	char *buf = (char *)malloc(MAX_PACKET_SIZE);
+	snprintf(buf, MAX_PACKET_SIZE, "{\"sessionid\":%d}", _sessionid);
+	rq->setPostData((byte *)buf, strlen(buf));
+	rq->setContentType("application/json");
+
+	rq->start();
+
+	ConnMan.addRequest(rq);
+}
+
+void Net::disableSessionJoiningCallback(Common::JSONValue *response) {
+}
+
+void Net::disableSessionJoiningErrorCallback(Networking::ErrorResponse error) {
+	warning("Error in disableSessionJoining(): %ld %s", error.httpResponseCode, error.response.c_str());
 }
 
 void Net::enableSessionJoining() {
