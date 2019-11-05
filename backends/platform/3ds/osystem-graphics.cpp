@@ -180,23 +180,23 @@ void OSystem_3DS::updateSize() {
 			float r = 400.f / _gameWidth;
 			_gameTopTexture.setScale(r, r);
 			_gameTopX = 0;
-			_gameTopY = (240.f - r * _gameHeight) / 2.f;
+			_gameTopY = (240.f / r - _gameHeight) / 2.f;
 		} else {
 			float r = 240.f / _gameHeight;
 			_gameTopTexture.setScale(r, r);
 			_gameTopY = 0;
-			_gameTopX = (400.f - r * _gameWidth) / 2.f;
+			_gameTopX = (400.f / r - _gameWidth) / 2.f;
 		}
 		if (ratio > 320.f / 240.f) {
 			float r = 320.f / _gameWidth;
 			_gameBottomTexture.setScale(r, r);
 			_gameBottomX = 0;
-			_gameBottomY = (240.f - r * _gameHeight) / 2.f;
+			_gameBottomY = (240.f / r - _gameHeight) / 2.f;
 		} else {
 			float r = 240.f / _gameHeight;
 			_gameBottomTexture.setScale(r, r);
 			_gameBottomY = 0;
-			_gameBottomX = (320.f - r * _gameWidth) / 2.f;
+			_gameBottomX = (320.f / r - _gameWidth) / 2.f;
 		}
 	}
 	_gameTopTexture.setPosition(_gameTopX, _gameTopY);
