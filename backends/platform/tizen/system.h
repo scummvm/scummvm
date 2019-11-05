@@ -86,6 +86,7 @@ private:
 	void delayMillis(uint msecs);
 	void getTimeAndDate(TimeDate &t) const;
 	void fatalError();
+	void quit();
 	void logMessage(LogMessageType::Type type, const char *message);
 	void addSysArchivesToSearchSet(Common::SearchSet &s, int priority);
 
