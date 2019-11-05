@@ -229,7 +229,6 @@ void Storage::savesSyncDefaultCallback(BoolResponse response) {
 
 	if (!response.value)
 		warning("SavesSyncRequest called success callback with `false` argument");
-	Common::OSDMessageQueue::instance().addMessage(_("Saved games sync complete."));
 }
 
 void Storage::savesSyncDefaultErrorCallback(Networking::ErrorResponse error) {
