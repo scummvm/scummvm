@@ -20,6 +20,8 @@
  *
  */
 
+#define FORBIDDEN_SYMBOL_EXCEPTION_exit
+
 #include <FUiCtrlMessageBox.h>
 #include <FLocales.h>
 
@@ -452,6 +454,10 @@ void TizenSystem::exitSystem() {
 		closeGraphics();
 		_appForm->exitSystem();
 	}
+}
+
+void TizenSystem::quit() {
+	exit(0);
 }
 
 void TizenSystem::logMessage(LogMessageType::Type type, const char *message) {
