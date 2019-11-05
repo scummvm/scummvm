@@ -159,7 +159,11 @@ void SavesSyncRequest::directoryListedCallback(Storage::ListDirectoryResponse re
 	_totalFilesToHandle = _filesToDownload.size() + _filesToUpload.size();
 
 	//start downloading files
-	downloadNextFile();
+	if (!_filesToDownload.empty()) {
+		downloadNextFile();
+	} else {
+		uploadNextFile();
+	}
 }
 
 void SavesSyncRequest::directoryListedErrorCallback(Networking::ErrorResponse error) {
