@@ -24,6 +24,7 @@
 #include "backends/platform/3ds/osystem.h"
 #include "backends/platform/3ds/shader_shbin.h"
 #include "common/rect.h"
+#include "graphics/fontman.h"
 #include "options-dialog.h"
 #include "config.h"
 
@@ -276,6 +277,10 @@ void OSystem_3DS::updateScreen() {
 // 	updateFocus();
 	updateMagnify();
 
+	if (_osdMessage.getPixels() && _osdMessageEndTime <= getMillis(true)) {
+		_osdMessage.free();
+	}
+
 	C3D_FrameBegin(0);
 		_gameTopTexture.transfer();
 		if (_overlayVisible) {
@@ -284,6 +289,7 @@ void OSystem_3DS::updateScreen() {
 		if (_cursorVisible && config.showCursor) {
 			_cursorTexture.transfer();
 		}
+		_osdMessage.transfer();
 		_activityIcon.transfer();
 	C3D_FrameEnd(0);
 
@@ -303,6 +309,11 @@ void OSystem_3DS::updateScreen() {
 				_activityIcon.setPosition(400 - _activityIcon.actualWidth, 0);
 				C3D_FVUnifMtx4x4(GPU_VERTEX_SHADER, _modelviewLocation, _activityIcon.getMatrix());
 				_activityIcon.render();
+			}
+			if (_osdMessage.getPixels() && config.screen == kScreenTop) {
+				_osdMessage.setPosition((400 - _osdMessage.actualWidth) / 2, (240 - _osdMessage.actualHeight) / 2);
+				C3D_FVUnifMtx4x4(GPU_VERTEX_SHADER, _modelviewLocation, _osdMessage.getMatrix());
+				_osdMessage.render();
 			}
 			if (_cursorVisible && config.showCursor && config.screen == kScreenTop) {
 				C3D_FVUnifMtx4x4(GPU_VERTEX_SHADER, _modelviewLocation, _cursorTexture.getMatrix());
@@ -325,6 +336,11 @@ void OSystem_3DS::updateScreen() {
 				_activityIcon.setPosition(320 - _activityIcon.actualWidth, 0);
 				C3D_FVUnifMtx4x4(GPU_VERTEX_SHADER, _modelviewLocation, _activityIcon.getMatrix());
 				_activityIcon.render();
+			}
+			if (_osdMessage.getPixels()) {
+				_osdMessage.setPosition((320 - _osdMessage.actualWidth) / 2, (240 - _osdMessage.actualHeight) / 2);
+				C3D_FVUnifMtx4x4(GPU_VERTEX_SHADER, _modelviewLocation, _osdMessage.getMatrix());
+				_osdMessage.render();
 			}
 			if (_cursorVisible && config.showCursor) {
 				C3D_FVUnifMtx4x4(GPU_VERTEX_SHADER, _modelviewLocation, _cursorTexture.getMatrix());
@@ -468,6 +484,57 @@ void OSystem_3DS::copyRectToOverlay(const void *buf, int pitch, int x,
                                             int y, int w, int h) {
 	_overlay.copyRectToSurface(buf, pitch, x, y, w, h);
 	_overlay.markDirty();
+}
+
+void OSystem_3DS::displayMessageOnOSD(const char *msg) {
+	// The font we are going to use:
+	const Graphics::Font *font = FontMan.getFontByUsage(Graphics::FontManager::kLocalizedFont);
+	if (!font) {
+		warning("No available font to render OSD messages");
+		return;
+	}
+
+	// Split the message into separate lines.
+	Common::Array<Common::String> lines;
+	const char *ptr;
+	for (ptr = msg; *ptr; ++ptr) {
+		if (*ptr == '\n') {
+			lines.push_back(Common::String(msg, ptr - msg));
+			msg = ptr + 1;
+		}
+	}
+	lines.push_back(Common::String(msg, ptr - msg));
+
+	// Determine a rect which would contain the message string (clipped to the
+	// screen dimensions).
+	const int vOffset = 6;
+	const int lineSpacing = 1;
+	const int lineHeight = font->getFontHeight() + 2 * lineSpacing;
+	int width = 0;
+	int height = lineHeight * lines.size() + 2 * vOffset;
+	uint i;
+	for (i = 0; i < lines.size(); i++) {
+		width = MAX(width, font->getStringWidth(lines[i]) + 14);
+	}
+
+	// Clip the rect
+	if (width > getOverlayWidth())
+		width = getOverlayWidth();
+	if (height > getOverlayHeight())
+		height = getOverlayHeight();
+
+	_osdMessage.create(width, height, _pfGameTexture);
+	_osdMessage.fillRect(Common::Rect(width, height), _pfGameTexture.ARGBToColor(200, 0, 0, 0));
+
+	// Render the message, centered, and in white
+	for (i = 0; i < lines.size(); i++) {
+		font->drawString(&_osdMessage, lines[i],
+		                 0, 0 + i * lineHeight + vOffset + lineSpacing, width,
+		                 _pfGameTexture.RGBToColor(255, 255, 255),
+		                 Graphics::kTextAlignCenter);
+	}
+
+	_osdMessageEndTime = getMillis(true) + kOSDMessageDuration;
 }
 
 void OSystem_3DS::displayActivityIconOnOSD(const Graphics::Surface *icon) {

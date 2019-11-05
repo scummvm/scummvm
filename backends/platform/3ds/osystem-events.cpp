@@ -37,8 +37,6 @@ static InputMode inputMode = MODE_DRAG;
 static InputMode savedInputMode = MODE_DRAG;
 static aptHookCookie cookie;
 static bool optionMenuOpening = false;
-static Common::String messageOSD;
-static bool showMessageOSD = false;
 
 static void pushEventQueue(Common::Queue<Common::Event> *queue, Common::Event &event) {
 	Common::StackLock lock(*eventMutex);
@@ -320,18 +318,7 @@ void OSystem_3DS::setMagnifyMode(MagnifyMode mode) {
 	_magnifyMode = mode;
 }
 
-void OSystem_3DS::displayMessageOnOSD(const char *msg) {
-	messageOSD = msg;
-	showMessageOSD = true;
-}
-
 bool OSystem_3DS::pollEvent(Common::Event &event) {
-	if (showMessageOSD) {
-		showMessageOSD = false;
-		StatusMessageDialog dialog(messageOSD, 800);
-		dialog.runModal();
-	}
-
 	aptMainLoop(); // Call apt hook when necessary
 
 	if (optionMenuOpening) {

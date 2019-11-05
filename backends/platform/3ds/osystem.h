@@ -130,7 +130,7 @@ public:
 	                       int h);
 	virtual int16 getOverlayHeight();
 	virtual int16 getOverlayWidth();
-	virtual void displayMessageOnOSD(const char *msg);
+	void displayMessageOnOSD(const char *msg) override;
 	void displayActivityIconOnOSD(const Graphics::Surface *icon) override;
 
 	bool showMouse(bool visible);
@@ -190,6 +190,12 @@ private:
 	Sprite _gameBottomTexture;
 	Sprite _overlay;
 	Sprite _activityIcon;
+	Sprite _osdMessage;
+
+	enum {
+		kOSDMessageDuration = 800
+	};
+	uint32 _osdMessageEndTime;
 
 	int _screenShakeOffset;
 	bool _overlayVisible;
