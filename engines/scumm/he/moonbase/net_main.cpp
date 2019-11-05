@@ -203,7 +203,7 @@ int Net::endSession() {
 		new Common::Callback<Net, Networking::ErrorResponse>(this, &Net::endSessionErrorCallback));
 
 	char *buf = (char *)malloc(MAX_PACKET_SIZE);
-	snprintf(buf, MAX_PACKET_SIZE, "{\"sessionid\":%d}", _sessionid);
+	snprintf(buf, MAX_PACKET_SIZE, "{\"sessionid\":%d, \"userid\":%d}", _sessionid, _myUserId);
 	rq.setPostData((byte *)buf, strlen(buf));
 	rq.setContentType("application/json");
 
