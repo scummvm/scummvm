@@ -146,6 +146,7 @@ public:
 	void setCursorDelta(float deltaX, float deltaY);
 
 	void updateFocus();
+	void updateMagnify();
 	void updateConfig();
 	void updateSize();
 	void setMagnifyMode(MagnifyMode mode);

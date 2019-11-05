@@ -24,6 +24,7 @@
 
 #include "osystem.h"
 #include "backends/timer/default/default-timer.h"
+#include "gui/gui-manager.h"
 #include "engines/engine.h"
 #include "gui.h"
 #include "options-dialog.h"
@@ -148,28 +149,33 @@ static void eventThreadFunc(void *arg) {
 
 		// Button events
 		if (keysPressed & KEY_L) {
-			if (osys->getWidth() >= 400 || osys->getHeight() >= 240) {
+			if (g_gui.isActive()) {
+				// TODO: Prevent the magnify effect from updating while the GUI is active
+				osys->displayMessageOnOSD("Magnify Mode cannot be activated in menus.");
+			} else if (config.screen != kScreenBoth && osys->getMagnifyMode() == MODE_MAGOFF) {
+				// TODO: Automatically enable both screens while magnify mode is on
+				osys->displayMessageOnOSD("Magnify Mode can only be activated\n when both screens are enabled.");
+			} else if (osys->getWidth() <= 400 && osys->getHeight() <= 240) {
+				osys->displayMessageOnOSD("In-game resolution too small to magnify.");
+			} else {
 				if (osys->getMagnifyMode() == MODE_MAGOFF) {
 					osys->setMagnifyMode(MODE_MAGON);
 					if (inputMode == MODE_DRAG) {
 						inputMode = MODE_HOVER;
 						osys->displayMessageOnOSD("Magnify Mode On. Switching to Hover Mode...");
-					} else
+					} else {
 						osys->displayMessageOnOSD("Magnify Mode On");
+					}
 				} else {
 					osys->setMagnifyMode(MODE_MAGOFF);
 					osys->updateSize();
 					if (savedInputMode == MODE_DRAG) {
 						inputMode = savedInputMode;
 						osys->displayMessageOnOSD("Magnify Mode Off. Reactivating Drag Mode...");
-					} else
+					} else {
 						osys->displayMessageOnOSD("Magnify Mode Off");
+					}
 				}
-			} else {
-				if (osys->getWidth() == 0 || osys->getHeight() == 0) {
-					osys->displayMessageOnOSD("Magnify Mode cannot be activated in Launcher.");
-				} else
-					osys->displayMessageOnOSD("In-game resolution too small to magnify.");
 			}
 		}
 		if (keysPressed & KEY_R) {
