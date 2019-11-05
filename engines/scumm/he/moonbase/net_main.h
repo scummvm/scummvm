@@ -84,6 +84,9 @@ private:
 	void endSessionCallback(Common::JSONValue *response);
 	void endSessionErrorCallback(Networking::ErrorResponse error);
 
+	void destroyPlayerCallback(Common::JSONValue *response);
+	void destroyPlayerErrorCallback(Networking::ErrorResponse error);
+
 	void remoteSendDataCallback(Common::JSONValue *response);
 	void remoteSendDataErrorCallback(Networking::ErrorResponse error);
 

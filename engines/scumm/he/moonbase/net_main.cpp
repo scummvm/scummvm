@@ -284,8 +284,29 @@ void Net::setFakeLatency(int time) {
 
 bool Net::destroyPlayer(int32 playerDPID) {
 	// bool PNETWIN_destroyplayer(DPID idPlayer)
-	warning("STUB: Net::destroyPlayer(%d)", playerDPID);
-	return false;
+	debug(1, "Net::destroyPlayer(%d)", playerDPID);
+
+	Networking::PostRequest *rq = new Networking::PostRequest(_serverprefix + "/removeuser",
+		new Common::Callback<Net, Common::JSONValue *>(this, &Net::destroyPlayerCallback),
+		new Common::Callback<Net, Networking::ErrorResponse>(this, &Net::destroyPlayerErrorCallback));
+
+	char *buf = (char *)malloc(MAX_PACKET_SIZE);
+	snprintf(buf, MAX_PACKET_SIZE, "{\"sessionid\":%d, \"userid\":%d}", _sessionid, playerDPID);
+	rq->setPostData((byte *)buf, strlen(buf));
+	rq->setContentType("application/json");
+
+	rq->start();
+
+	ConnMan.addRequest(rq);
+
+	return true;
+}
+
+void Net::destroyPlayerCallback(Common::JSONValue *response) {
+}
+
+void Net::destroyPlayerErrorCallback(Networking::ErrorResponse error) {
+	warning("Error in destroyPlayer(): %ld %s", error.httpResponseCode, error.response.c_str());
 }
 
 int32 Net::startQuerySessions() {
