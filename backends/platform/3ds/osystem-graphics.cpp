@@ -274,20 +274,10 @@ void OSystem_3DS::updateScreen() {
 		return;
 
 // 	updateFocus();
+	updateMagnify();
 
 	C3D_FrameBegin(0);
 		_gameTopTexture.transfer();
-		if (_magnifyMode == MODE_MAGON) {
-			_topX = (_cursorX < _topHalfWidth) ?
-				0 : ((_cursorX < (_gameWidth - _topHalfWidth)) ?
-				_cursorX - _topHalfWidth : _gameWidth - _topWidth);
-			_topY = (_cursorY < _topHalfHeight) ?
-				0 : ((_cursorY < _gameHeight - _topHalfHeight) ?
-				_cursorY - _topHalfHeight : _gameHeight - _topHeight);
-			_gameTopTexture.setScale(1.f,1.f);
-			_gameTopTexture.setPosition(0,0);
-			_gameTopTexture.setOffset(_topX, _topY);
-		}
 		if (_overlayVisible) {
 			_overlay.transfer();
 		}
@@ -425,6 +415,25 @@ void OSystem_3DS::updateFocus() {
 		Mtx_Identity(&_focusMatrix);
 		Mtx_Translate(&_focusMatrix, -_focusPosX, -_focusPosY, 0, true);
 		Mtx_Scale(&_focusMatrix, _focusScaleX, _focusScaleY, 1.f);
+	}
+}
+
+void OSystem_3DS::updateMagnify() {
+	if (_magnifyMode == MODE_MAGON && config.screen != kScreenBoth) {
+		// Only allow to magnify when both screens are enabled
+		_magnifyMode = MODE_MAGOFF;
+	}
+
+	if (_magnifyMode == MODE_MAGON) {
+		_topX = (_cursorX < _topHalfWidth) ?
+			0 : ((_cursorX < (_gameWidth - _topHalfWidth)) ?
+			_cursorX - _topHalfWidth : _gameWidth - _topWidth);
+		_topY = (_cursorY < _topHalfHeight) ?
+			0 : ((_cursorY < _gameHeight - _topHalfHeight) ?
+			_cursorY - _topHalfHeight : _gameHeight - _topHeight);
+		_gameTopTexture.setScale(1.f,1.f);
+		_gameTopTexture.setPosition(0,0);
+		_gameTopTexture.setOffset(_topX, _topY);
 	}
 }
 
