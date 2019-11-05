@@ -27,6 +27,7 @@
 #define FORBIDDEN_SYMBOL_EXCEPTION_stdout
 #define FORBIDDEN_SYMBOL_EXCEPTION_stderr
 #define FORBIDDEN_SYMBOL_EXCEPTION_fputs
+#define FORBIDDEN_SYMBOL_EXCEPTION_exit
 
 #include "backends/modular-backend.h"
 #include "base/main.h"
@@ -66,6 +67,8 @@ public:
 	virtual uint32 getMillis(bool skipRecord = false);
 	virtual void delayMillis(uint msecs);
 	virtual void getTimeAndDate(TimeDate &t) const {}
+
+	virtual void quit();
 
 	virtual void logMessage(LogMessageType::Type type, const char *message);
 };
@@ -113,6 +116,10 @@ uint32 OSystem_NULL::getMillis(bool skipRecord) {
 }
 
 void OSystem_NULL::delayMillis(uint msecs) {
+}
+
+void OSystem_NULL::quit() {
+	exit(0);
 }
 
 void OSystem_NULL::logMessage(LogMessageType::Type type, const char *message) {
