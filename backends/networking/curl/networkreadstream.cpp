@@ -108,11 +108,14 @@ void NetworkReadStream::initCurl(const char *url, curl_slist *headersList) {
 	curl_easy_setopt(_easy, CURLOPT_XFERINFODATA, this);
 #endif
 
+#if LIBCURL_VERSION_NUM >= 0x071900
+	// Added in libcurl 7.25.0
 	if (_keepAlive) {
 		curl_easy_setopt(_easy, CURLOPT_TCP_KEEPALIVE, 1L);
 		curl_easy_setopt(_easy, CURLOPT_TCP_KEEPIDLE, _keepAliveIdle);
 		curl_easy_setopt(_easy, CURLOPT_TCP_KEEPINTVL, _keepAliveInterval);
 	}
+#endif
 }
 
 bool NetworkReadStream::reuseCurl(const char *url, curl_slist *headersList) {
@@ -212,7 +215,7 @@ bool NetworkReadStream::reuse(const char *url, curl_slist *headersList, Common::
 	if (!reuseCurl(url, headersList))
 		return false;
 
-	_backingStream = Common::MemoryReadWriteStream(DisposeAfterUse::YES);	
+	_backingStream = Common::MemoryReadWriteStream(DisposeAfterUse::YES);
 	setupBufferContents((const byte *)postFields.c_str(), postFields.size(), uploading, usingPatch, false);
 	return true;
 }
@@ -231,7 +234,7 @@ bool NetworkReadStream::reuse(const char *url, curl_slist *headersList, const by
 		return false;
 
 	_backingStream = Common::MemoryReadWriteStream(DisposeAfterUse::YES);
-	setupBufferContents(buffer, bufferSize, uploading, usingPatch, post);	
+	setupBufferContents(buffer, bufferSize, uploading, usingPatch, post);
 	return true;
 }
 
