@@ -152,7 +152,7 @@ struct Player {
 	int sword;
 	int shield;
 	int armour;
-	bool foundSpell[5];
+	int foundSpell[5];
 	float spellCharge[5];
 	int inventory[5];
 	float attackStrength;

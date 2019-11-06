@@ -112,7 +112,7 @@ void GriffonEngine::attack() {
 					eventText("Found the Temple Key!");
 					return;
 				case kScriptFindCrystal:
-					_player.foundSpell[0] = true;
+					_player.foundSpell[0] = 1;
 					_player.spellCharge[0] = 0;
 
 					addFloatIcon(7, lx * 16, (ly - 1) * 16);
