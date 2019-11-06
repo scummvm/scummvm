@@ -255,6 +255,7 @@ void GriffonEngine::configMenu() {
 
 	do {
 		_videoBuffer->fillRect(Common::Rect(0, 0, _videoBuffer->w, _videoBuffer->h), 0);
+		_videoBuffer2->fillRect(Common::Rect(0, 0, _videoBuffer2->w, _videoBuffer2->h), 0);
 
 		rcDest.left = 256 + 256 * cos(PI / 180 * _cloudAngle * 40);
 		rcDest.top = 192 + 192 * sin(PI / 180 * _cloudAngle * 40);
@@ -322,9 +323,10 @@ void GriffonEngine::configMenu() {
 		if (_ticks < ticks1 + 1000) {
 			yy = 255.0 * ((float)(_ticks - ticks1) / 1000.0);
 			yy = CLIP<float>(yy, 0.0, 255.0);
+
+			_videoBuffer->setAlpha((int)yy);
 		}
 
-		_videoBuffer->setAlpha((int)yy);
 		_videoBuffer->blit(*_videoBuffer2);
 		g_system->copyRectToScreen(_videoBuffer2->getPixels(), _videoBuffer2->pitch, 0, 0, _videoBuffer2->w, _videoBuffer2->h);
 
