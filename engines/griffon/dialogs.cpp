@@ -735,7 +735,10 @@ void GriffonEngine::saveLoadNew() {
 			_videoBuffer->setAlpha((int)yy);
 		}
 
-		g_system->copyRectToScreen(_videoBuffer->getPixels(), _videoBuffer->pitch, 0, 0, _videoBuffer->w, _videoBuffer->h);
+		_videoBuffer3->fillRect(Common::Rect(0, 0, _videoBuffer3->w, _videoBuffer3->h), 0);
+		_videoBuffer->blit(*_videoBuffer3);
+
+		g_system->copyRectToScreen(_videoBuffer3->getPixels(), _videoBuffer3->pitch, 0, 0, _videoBuffer3->w, _videoBuffer3->h);
 		g_system->updateScreen();
 		g_system->getEventManager()->pollEvent(_event);
 
