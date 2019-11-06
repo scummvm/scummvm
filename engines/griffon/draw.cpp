@@ -665,22 +665,7 @@ void GriffonEngine::drawNPCs(int mode) {
 						rcDest.top = rcDest.top + (int)(RND() * 3) - 1;
 					}
 					_anims[sprite]->blit(*_videoBuffer, rcDest.left, rcDest.top, Graphics::FLIP_NONE, &rcSrc);
-					// } else {
-					//cframe = _npcinfo[i].cattackframe;
-
-					//rcSrc.left = (int)(cframe / 4) * 24;
-					//rcSrc.top = wdir * 24;
-					//rcSrc.setWidth(24);
-					//rcSrc.setHeight(24);
-
-					//rcDest.left = npx;
-					//rcDest.top = npy;
-					//rcDest.setWidth(24);
-					//rcDest.setHeight(24);
-					// _animsa(sprite)->blit(*_videobuffer, rcDest.left, rcDest.top, Graphics::FLIP_NONE, &rcSrc);
-					// }
 				}
-
 
 				// yellow dragon
 				if (_npcInfo[i].spriteset == kMonsterYellowDragon) {
