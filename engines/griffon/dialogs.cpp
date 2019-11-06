@@ -348,14 +348,18 @@ void GriffonEngine::configMenu() {
 			_itemyloc -= 16;
 
 		while (g_system->getEventManager()->pollEvent(_event)) {
-			if (_event.type == Common::EVENT_QUIT)
+			switch (_event.type) {
+			case Common::EVENT_QUIT:
 				_shouldQuit = true;
+				break;
 
-			if (_event.type == Common::EVENT_KEYDOWN) {
-				if (_event.kbd.keycode == Common::KEYCODE_ESCAPE)
+			case Common::EVENT_KEYDOWN:
+				switch (_event.kbd.keycode) {
+				case Common::KEYCODE_ESCAPE:
+					exitMenu = true;
 					break;
 
-				if (_event.kbd.keycode == Common::KEYCODE_LEFT) {
+				case Common::KEYCODE_LEFT:
 					if (cursel == 11) {
 						config.musicVol = CLIP(config.musicVol - 25, 0, 255);
 						setChannelVolume(_musicChannel, config.musicVol);
@@ -371,8 +375,9 @@ void GriffonEngine::configMenu() {
 							setChannelVolume(snd, config.effectsVol);
 						}
 					}
-				}
-				if (_event.kbd.keycode == Common::KEYCODE_RIGHT) {
+					break;
+
+				case Common::KEYCODE_RIGHT:
 					if (cursel == 11) {
 						config.musicVol = CLIP(config.musicVol + 25, 0, 255);
 						setChannelVolume(_musicChannel, config.musicVol);
@@ -389,55 +394,63 @@ void GriffonEngine::configMenu() {
 							setChannelVolume(snd, config.effectsVol);
 						}
 					}
-				}
+					break;
 
-				if (_event.kbd.keycode == Common::KEYCODE_UP) {
+				case Common::KEYCODE_UP:
 					cursel--;
 					if (cursel < MINCURSEL)
 						cursel = MAXCURSEL;
-				}
-				if (_event.kbd.keycode == Common::KEYCODE_DOWN) {
+					break;
+
+				case Common::KEYCODE_DOWN:
 					++cursel;
 					if (cursel > MAXCURSEL)
 						cursel = MINCURSEL;
+					break;
+
+				case Common::KEYCODE_RETURN:
+					switch (cursel) {
+					case 7:
+						if (!config.music) {
+							config.music = true;
+							_menuChannel = playSound(_musicMenu, true);
+							setChannelVolume(_menuChannel, config.musicVol);
+						}
+						break;
+					case 8:
+						if (config.music) {
+							config.music = false;
+							haltSoundChannel(_musicChannel);
+							haltSoundChannel(_menuChannel);
+						}
+						break;
+					case 9:
+						if (!config.effects) {
+							config.effects = true;
+							int snd = playSound(_sfx[kSndDoor]);
+							setChannelVolume(snd, config.effectsVol);
+						}
+						break;
+					case 10:
+						if (config.effects)
+							config.effects = false;
+						break;
+					case 13:
+						saveConfig();
+						// no break on purpose
+					case 14:
+						exitMenu = true;
+					default:
+						break;
+					}
+					break;
+
+				default:
+					break;
 				}
 
-				if (_event.kbd.keycode == Common::KEYCODE_RETURN) {
-					switch (cursel) {
-						case 7:
-							if (!config.music) {
-								config.music = true;
-								_menuChannel = playSound(_musicMenu, true);
-								setChannelVolume(_menuChannel, config.musicVol);
-							}
-							break;
-						case 8:
-							if (config.music) {
-								config.music = false;
-								haltSoundChannel(_musicChannel);
-								haltSoundChannel(_menuChannel);
-							}
-							break;
-						case 9:
-							if (!config.effects) {
-								config.effects = true;
-								int snd = playSound(_sfx[kSndDoor]);
-								setChannelVolume(snd, config.effectsVol);
-							}
-							break;
-						case 10:
-							if (config.effects)
-								config.effects = false;
-							break;
-						case 13:
-							saveConfig();
-							// no break on purpose
-						case 14:
-							exitMenu = true;
-						default:
-							break;
-					}
-				}
+			default:
+				break;
 			}
 		}
 
