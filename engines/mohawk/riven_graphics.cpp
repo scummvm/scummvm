@@ -285,10 +285,17 @@ public:
 				uint16 *src1 = (uint16 *) _mainScreen->getBasePtr(0, y);
 				uint16 *src2 = (uint16 *) _effectScreen->getBasePtr(0, y);
 				uint16 *dst = (uint16 *) screen->getBasePtr(0, y);
-				for (uint x = 0; x < _mainScreen->w; x++) {
+
+				uint16 widthMulti = _mainScreen->format.bytesPerPixel / 2;
+				for (uint x = 0; x < _mainScreen->w * widthMulti; x++) {
 					uint8 r1, g1, b1, r2, g2, b2;
-					Graphics::colorToRGB< Graphics::ColorMasks<565> >(*src1++, r1, g1, b1);
-					Graphics::colorToRGB< Graphics::ColorMasks<565> >(*src2++, r2, g2, b2);
+					if (_effectScreen->format.bytesPerPixel == 2) {
+						Graphics::colorToRGB< Graphics::ColorMasks<565> >(*src1++, r1, g1, b1);
+						Graphics::colorToRGB< Graphics::ColorMasks<565> >(*src2++, r2, g2, b2);
+					} else {
+						Graphics::colorToRGB< Graphics::ColorMasks<8888> >(*src1++, r1, g1, b1);
+						Graphics::colorToRGB< Graphics::ColorMasks<8888> >(*src2++, r2, g2, b2);
+					}
 
 					uint r = r1 * alpha + r2 * (255 - alpha);
 					uint g = g1 * alpha + g2 * (255 - alpha);
@@ -298,7 +305,11 @@ public:
 					g /= 255;
 					b /= 255;
 
-					*dst++ = (uint16) Graphics::RGBToColor< Graphics::ColorMasks<565> >(r, g, b);
+					if (_effectScreen->format.bytesPerPixel == 2) {
+						*dst++ = (uint16) Graphics::RGBToColor< Graphics::ColorMasks<565> >(r, g, b);
+					} else {
+						*dst++ = (uint16) Graphics::RGBToColor< Graphics::ColorMasks<8888> >(r, g, b);
+					}
 				}
 			}
 
@@ -327,8 +338,14 @@ RivenGraphics::RivenGraphics(MohawkEngine_Riven* vm) :
 		_transitionDuration(0) {
 	_bitmapDecoder = new MohawkBitmap();
 
-	// Restrict ourselves to a single pixel format to simplify the effects implementation
-	_pixelFormat = Graphics::createPixelFormat<565>();
+	// Restrict ourselves to a single pixel format (depending on platform) to simplify the effects implementation
+	if (!g_system->getSupportedFormats().empty()) {
+		// Pull directly from platform's supported formats list to
+		// prevent video and effects slowdown on low-power platforms.
+		_pixelFormat = g_system->getSupportedFormats().front();
+	} else {
+		_pixelFormat = Graphics::createPixelFormat<565>();
+	}
 	initGraphics(608, 436, &_pixelFormat);
 
 	// The actual game graphics only take up the first 392 rows. The inventory
@@ -1147,21 +1164,40 @@ void FliesEffect::draw() {
 
 		bool hoveringBrightBackground = false;
 		for (uint y = 0; y < fly.height; y++) {
-			uint16 *pixel = (uint16 *) _effectSurface->getBasePtr(fly.posX, fly.posY + y);
+			if (format.bytesPerPixel == 2) {
+				uint16 *pixel = (uint16 *) _effectSurface->getBasePtr(fly.posX, fly.posY + y);
 
-			for (uint x = 0; x < fly.width; x++) {
-				byte r, g, b;
-				format.colorToRGB(*pixel, r, g, b);
+				for (uint x = 0; x < fly.width; x++) {
+					byte r, g, b;
+					format.colorToRGB(*pixel, r, g, b);
 
-				if (_parameters->unlightIfTooBright) {
-					if (r >= 192 || g >= 192 || b >= 192) {
-						hoveringBrightBackground = true;
+					if (_parameters->unlightIfTooBright) {
+						if (r >= 192 || g >= 192 || b >= 192) {
+							hoveringBrightBackground = true;
+						}
 					}
-				}
-				colorBlending(color, r, g, b, fly.alphaMap[fly.width * y + x] - fly.posZ);
+					colorBlending(color, r, g, b, fly.alphaMap[fly.width * y + x] - fly.posZ);
 
-				*pixel = format.RGBToColor(r, g, b);
-				++pixel;
+					*pixel = format.RGBToColor(r, g, b);
+					++pixel;
+				}
+			} else {
+				uint32 *pixel = (uint32 *) _effectSurface->getBasePtr(fly.posX, fly.posY + y);
+
+				for (uint x = 0; x < fly.width; x++) {
+					byte r, g, b;
+					format.colorToRGB(*pixel, r, g, b);
+
+					if (_parameters->unlightIfTooBright) {
+						if (r >= 192 || g >= 192 || b >= 192) {
+							hoveringBrightBackground = true;
+						}
+					}
+					colorBlending(color, r, g, b, fly.alphaMap[fly.width * y + x] - fly.posZ);
+
+					*pixel = format.RGBToColor(r, g, b);
+					++pixel;
+				}
 			}
 		}
 
@@ -1172,15 +1208,28 @@ void FliesEffect::draw() {
 
 		if (fly.hasBlur) {
 			for (uint y = 0; y < fly.blurHeight; y++) {
-				uint16 *pixel = (uint16 *) _effectSurface->getBasePtr(fly.blurPosX, fly.blurPosY + y);
-				for (uint x = 0; x < fly.blurWidth; x++) {
-					byte r, g, b;
-					format.colorToRGB(*pixel, r, g, b);
+				if (format.bytesPerPixel == 2) {
+					uint16 *pixel = (uint16 *) _effectSurface->getBasePtr(fly.blurPosX, fly.blurPosY + y);
+					for (uint x = 0; x < fly.blurWidth; x++) {
+						byte r, g, b;
+						format.colorToRGB(*pixel, r, g, b);
 
-					colorBlending(color, r, g, b, fly.blurAlphaMap[fly.blurWidth * y + x] - fly.posZ);
+						colorBlending(color, r, g, b, fly.blurAlphaMap[fly.blurWidth * y + x] - fly.posZ);
 
-					*pixel = format.RGBToColor(r, g, b);
-					++pixel;
+						*pixel = format.RGBToColor(r, g, b);
+						++pixel;
+					}
+				} else {
+					uint32 *pixel = (uint32 *) _effectSurface->getBasePtr(fly.blurPosX, fly.blurPosY + y);
+					for (uint x = 0; x < fly.blurWidth; x++) {
+						byte r, g, b;
+						format.colorToRGB(*pixel, r, g, b);
+
+						colorBlending(color, r, g, b, fly.blurAlphaMap[fly.blurWidth * y + x] - fly.posZ);
+
+						*pixel = format.RGBToColor(r, g, b);
+						++pixel;
+					}
 				}
 			}
 
