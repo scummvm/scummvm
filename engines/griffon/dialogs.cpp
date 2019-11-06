@@ -507,6 +507,9 @@ void GriffonEngine::saveLoadNew() {
 						if (curCol == 0) {
 							// NEW GAME
 							newGame();
+
+							if (_shouldQuit || _gameEnd)
+								return;
 						} else if (curCol == 1) {
 							// LOAD GAME
 							lowerLock = true;

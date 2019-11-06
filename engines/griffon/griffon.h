@@ -329,6 +329,7 @@ public:
 private:
 	Common::RandomSource *_rnd;
 	bool _shouldQuit;
+	bool _gameEnd;
 
 	Console *_console;
 

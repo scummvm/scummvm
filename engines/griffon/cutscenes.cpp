@@ -520,8 +520,6 @@ void GriffonEngine::theEnd() {
 			_fp = 0;
 		}
 	}
-
-	title(0);
 }
 
 
