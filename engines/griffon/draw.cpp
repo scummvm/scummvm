@@ -229,8 +229,6 @@ void GriffonEngine::drawHud() {
 				rcDest.top = iy;
 
 				_spellImg->blit(*_videoBuffer, rcDest.left, rcDest.top, Graphics::FLIP_NONE, &rcSrc);
-
-				_spellImg->setAlpha(255, true);
 			}
 		}
 	}
@@ -590,7 +588,6 @@ void GriffonEngine::drawNPCs(int mode) {
 								x = 255;
 							_spellImg->setAlpha(x, true);
 							_spellImg->blit(*_videoBuffer, rcDest.left, rcDest.top, Graphics::FLIP_NONE, &rcSrc);
-							_spellImg->setAlpha(255, true);
 
 							for (int f = 1; f <= 8; f++) {
 								rcSrc.left = 16 * (int)(RND() * 2);
@@ -606,7 +603,6 @@ void GriffonEngine::drawNPCs(int mode) {
 									x = 255;
 								_spellImg->setAlpha(x, true);
 								_spellImg->blit(*_videoBuffer, rcDest.left, rcDest.top, Graphics::FLIP_NONE, &rcSrc);
-								_spellImg->setAlpha(255, true);
 							}
 
 							rcSrc.left = 0;
@@ -619,7 +615,6 @@ void GriffonEngine::drawNPCs(int mode) {
 
 							_spellImg->setAlpha(192, true);
 							_anims[5]->blit(*_videoBuffer, rcDest.left, rcDest.top, Graphics::FLIP_NONE, &rcSrc);
-							_spellImg->setAlpha(255, true);
 						}
 
 					}
@@ -863,8 +858,6 @@ void GriffonEngine::drawNPCs(int mode) {
 							}
 						}
 					}
-
-					_spellImg->setAlpha(255, true);
 
 					if (!_npcInfo[i].attacking) {
 						int cframe = (int)(frame);

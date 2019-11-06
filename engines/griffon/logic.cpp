@@ -1307,7 +1307,6 @@ void GriffonEngine::updateSpells() {
 						if (xloc > -16 && xloc < 304 && yloc > -16 && yloc < 224) {
 							_spellImg->setAlpha(alf, true);
 							_spellImg->blit(*_videoBuffer, rcDest.left, rcDest.top, Graphics::FLIP_NONE, &rcSrc);
-							_spellImg->setAlpha(255, true);
 
 							if (_spellInfo[i].damagewho == 0) {
 								for (int e = 1; e <= _lastNpc; e++) {
@@ -1382,6 +1381,7 @@ void GriffonEngine::updateSpells() {
 				rcDest.left = xloc;
 				rcDest.top = yloc;
 
+				_spellImg->setAlpha(255, true);
 				_spellImg->blit(*_videoBuffer, rcDest.left, rcDest.top, Graphics::FLIP_NONE, &rcSrc);
 
 				_spellInfo[i].frame = _spellInfo[i].frame - 0.2 * _fpsr;
@@ -1504,6 +1504,7 @@ void GriffonEngine::updateSpells() {
 						rcDest.top = yloc;
 
 						if (xloc > -16 && xloc < 304 && yloc > -16 && yloc < 224) {
+							_spellImg->setAlpha(255, true);
 							_spellImg->blit(*_videoBuffer, rcDest.left, rcDest.top, Graphics::FLIP_NONE, &rcSrc);
 
 							if (scatter) {
@@ -1585,7 +1586,6 @@ void GriffonEngine::updateSpells() {
 
 				_spellImg->setAlpha(f, true);
 				_spellImg->blit(*_videoBuffer, rcDest.left, rcDest.top, Graphics::FLIP_NONE, &rcSrc);
-				_spellImg->setAlpha(255, true);
 
 				_spellInfo[i].frame = _spellInfo[i].frame - 0.3 * _fpsr;
 				if (_spellInfo[i].frame < 0) {
@@ -1684,8 +1684,6 @@ void GriffonEngine::updateSpells() {
 
 						_spellImg->blit(*_videoBuffer, rcDest.left, rcDest.top, Graphics::FLIP_NONE, &rcSrc);
 					}
-
-					_spellImg->setAlpha(255, true);
 				} else {
 					_spellImg->setAlpha(192, true);
 
@@ -1723,8 +1721,6 @@ void GriffonEngine::updateSpells() {
 						if (xloc < -1 || yloc < -1 || xloc > 304 || yloc > 224)
 							_spellInfo[i].ballon[ff] = 0;
 					}
-
-					_spellImg->setAlpha(255, true);
 				}
 
 				_spellInfo[i].frame = _spellInfo[i].frame - 0.2 * _fpsr;
@@ -2098,7 +2094,6 @@ void GriffonEngine::updateSpellsUnder() {
 
 				_spellImg->setAlpha(f, true);
 				_spellImg->blit(*_videoBuffer, rcDest.left, rcDest.top, Graphics::FLIP_NONE, &rcSrc);
-				_spellImg->setAlpha(255, true);
 
 				_spellInfo[i].frame = _spellInfo[i].frame - 0.2 * _fpsr;
 				if (_spellInfo[i].frame < 0)
@@ -2283,8 +2278,6 @@ void GriffonEngine::updateSpellsUnder() {
 					}
 				}
 
-				_spellImg->setAlpha(255, true);
-
 				_spellInfo[i].frame = _spellInfo[i].frame - 0.2 * _fpsr;
 				if (_spellInfo[i].frame < 0)
 					_spellInfo[i].frame = 0;
@@ -2349,7 +2342,6 @@ void GriffonEngine::updateSpellsUnder() {
 
 				}
 
-				_spellImg->setAlpha(255, true);
 				_spellInfo[i].frame = _spellInfo[i].frame - 0.5 * _fpsr;
 				if (_spellInfo[i].frame < 0)
 					_spellInfo[i].frame = 0;
