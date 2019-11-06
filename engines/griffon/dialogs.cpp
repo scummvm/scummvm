@@ -449,6 +449,8 @@ void GriffonEngine::configMenu() {
 		g_system->delayMillis(10);
 	} while (!_shouldQuit && !exitMenu);
 
+	_cloudImg->setAlpha(64, true);
+
 	configwindow->free();
 	_itemTicks = _ticks + 210;
 }
@@ -458,9 +460,6 @@ void GriffonEngine::saveLoadNew() {
 
 	_cloudAngle = 0;
 
-	_videoBuffer->setAlpha(255);
-	_saveLoadImg->setAlpha(192, true);
-
 	int curRow = 0;
 	int curCol = 0;
 	bool lowerLock = false;
@@ -468,6 +467,8 @@ void GriffonEngine::saveLoadNew() {
 	_ticks = g_system->getMillis();
 	int ticks1 = _ticks;
 	int tickpause = _ticks + 150;
+
+	_cloudImg->setAlpha(128, true);
 
 	do {
 		_videoBuffer->fillRect(Common::Rect(0, 0, _videoBuffer->w, _videoBuffer->h), 0);
@@ -479,18 +480,14 @@ void GriffonEngine::saveLoadNew() {
 		rcDest.setWidth(320);
 		rcDest.setHeight(240);
 
-		_cloudImg->setAlpha(128, true);
 		_cloudImg->blit(*_videoBuffer, 0, 0, Graphics::FLIP_NONE, &rcDest);
-		_cloudImg->setAlpha(64, true);
 
 		rcDest.left = 256;
 		rcDest.top = 192;
 		rcDest.setWidth(320);
 		rcDest.setHeight(240);
 
-		_cloudImg->setAlpha(128, true);
 		_cloudImg->blit(*_videoBuffer, 0, 0, Graphics::FLIP_NONE, &rcDest);
-		_cloudImg->setAlpha(64, true);
 
 		_saveLoadImg->blit(*_videoBuffer);
 
@@ -729,9 +726,10 @@ void GriffonEngine::saveLoadNew() {
 		if (_ticks < ticks1 + 1000) {
 			yy = 255 * (_ticks - ticks1) / 1000;
 			yy = CLIP(yy, 0, 255);
+
+			_videoBuffer->setAlpha((int)yy);
 		}
 
-		_videoBuffer->setAlpha((int)yy);
 		g_system->copyRectToScreen(_videoBuffer->getPixels(), _videoBuffer->pitch, 0, 0, _videoBuffer->w, _videoBuffer->h);
 		g_system->updateScreen();
 		g_system->getEventManager()->pollEvent(_event);
