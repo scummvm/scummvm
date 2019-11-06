@@ -41,6 +41,36 @@
 
 namespace Griffon {
 
+void Player::reset() {
+	px = 0;
+	py = 0;
+	opx = 0;
+	opy = 0;
+	walkDir = 0;
+	walkFrame = 0;
+	walkSpeed = 0;
+	attackFrame = 0;
+	attackSpeed = 0;
+	hp = 0;
+	maxHp = 0;
+	hpflash = 0;
+	level = 0;
+	maxLevel = 0;
+	sword = 0;
+	shield = 0;
+	armour = 0;
+	for (int i = 0; i < 5; i++) {
+		foundSpell[i] = 0;
+		spellCharge[i] = 0;
+		inventory[i] = 0;
+	}
+	attackStrength = 0;
+	spellDamage = 0;
+	swordDamage = 0;
+	exp = 0;
+	nextLevel = 0;
+}
+
 // copypaste from hRnd_CRT()
 float GriffonEngine::RND() {
 	/* return between 0 and 1 (but never 1) */
@@ -260,33 +290,8 @@ void GriffonEngine::newGame() {
 	if (_shouldQuit)
 		return;
 
-	_player.px = 0;
-	_player.py = 0;
-	_player.opx = 0;
-	_player.opy = 0;
-	_player.walkDir = 0;
-	_player.walkFrame = 0;
-	_player.walkSpeed = 0;
-	_player.attackFrame = 0;
-	_player.attackSpeed = 0;
-	_player.hp = 0;
-	_player.maxHp = 0;
-	_player.hpflash = 0;
-	_player.level = 0;
-	_player.maxLevel = 0;
-	_player.sword = 0;
-	_player.shield = 0;
-	_player.armour = 0;
-	for (int i = 0; i < 5; i++) {
-		_player.foundSpell[i] = 0;
-		_player.spellCharge[i] = 0;
-		_player.inventory[i] = 0;
-	}
-	_player.attackStrength = 0;
-	_player.spellDamage = 0;
-	_player.swordDamage = 0;
-	_player.exp = 0;
-	_player.nextLevel = 0;
+	_player.reset();
+	_playera.reset();
 
 	memset(_scriptFlag, 0, sizeof(_scriptFlag));
 	memset(_objectMapFull, 0, sizeof(_objectMapFull));

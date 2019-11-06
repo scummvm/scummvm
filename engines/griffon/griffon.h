@@ -167,6 +167,8 @@ struct Player {
 
 	float itemselshade;
 	int ysort;
+
+	void reset();
 };
 
 struct BodySection {
