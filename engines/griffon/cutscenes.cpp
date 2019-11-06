@@ -40,6 +40,18 @@
 
 namespace Griffon {
 
+#define POLL_AND_CHECK_QUIT() 		if (g_system->getEventManager()->pollEvent(_event)) { \
+		if (_event.type == Common::EVENT_QUIT) { \
+			_shouldQuit = true; \
+			return; \
+		} \
+	}
+
+#define CHECK_QUIT() 		if (_event.type == Common::EVENT_QUIT) { \
+		_shouldQuit = true; \
+		return; \
+	}
+
 const char *story[48] = {
 	"The Griffon Legend",
 	"http://syn9.thehideoutgames.com/",
@@ -143,10 +155,7 @@ void GriffonEngine::showLogos() {
 		g_system->copyRectToScreen(_videoBuffer->getPixels(), _videoBuffer->pitch, 0, 0, _videoBuffer->w, _videoBuffer->h);
 		g_system->updateScreen();
 
-		if (g_system->getEventManager()->pollEvent(_event)) {
-			if (_event.type == Common::EVENT_QUIT)
-				_shouldQuit = true;
-		}
+		POLL_AND_CHECK_QUIT();
 
 		_ticksPassed = _ticks;
 		_ticks = g_system->getMillis();
@@ -260,8 +269,7 @@ void GriffonEngine::intro() {
 			if (_event.kbd.keycode == Common::KEYCODE_ESCAPE)
 				return;
 
-			if (_event.type == Common::EVENT_QUIT)
-				_shouldQuit = true;
+			CHECK_QUIT();
 		}
 
 		g_system->delayMillis(10);
@@ -309,12 +317,7 @@ void GriffonEngine::endOfGame() {
 
 		g_system->copyRectToScreen(_videoBuffer2->getPixels(), _videoBuffer2->pitch, 0, 0, _videoBuffer2->w, _videoBuffer2->h);
 
-		if (g_system->getEventManager()->pollEvent(_event)) {
-			if (_event.type == Common::EVENT_QUIT) {
-				_shouldQuit = true;
-				return;
-			}
-		}
+		POLL_AND_CHECK_QUIT();
 
 		g_system->updateScreen();
 		g_system->delayMillis(10);
@@ -400,10 +403,7 @@ void GriffonEngine::endOfGame() {
 			if (_event.kbd.keycode == Common::KEYCODE_ESCAPE)
 				break;
 
-			if (_event.type == Common::EVENT_QUIT) {
-				_shouldQuit = true;
-				return;
-			}
+			CHECK_QUIT();
 		}
 
 		g_system->updateScreen();
@@ -432,12 +432,7 @@ void GriffonEngine::endOfGame() {
 		g_system->copyRectToScreen(_videoBuffer3->getPixels(), _videoBuffer3->pitch, 0, 0, _videoBuffer3->w, _videoBuffer3->h);
 		g_system->updateScreen();
 
-		if (g_system->getEventManager()->pollEvent(_event)) {
-			if (_event.type == Common::EVENT_QUIT) {
-				_shouldQuit = true;
-				return;
-			}
-		}
+		POLL_AND_CHECK_QUIT();
 
 		g_system->delayMillis(10);
 
@@ -494,10 +489,7 @@ void GriffonEngine::endOfGame() {
 		}
 
 		if (g_system->getEventManager()->pollEvent(_event)) {
-			if (_event.type == Common::EVENT_QUIT) {
-				_shouldQuit = true;
-				return;
-			}
+			CHECK_QUIT();
 
 			if (_event.type == Common::EVENT_KEYDOWN && keywait < _ticks)
 				break;
@@ -525,12 +517,7 @@ void GriffonEngine::theEnd() {
 		g_system->copyRectToScreen(_videoBuffer2->getPixels(), _videoBuffer2->pitch, 0, 0, _videoBuffer2->w, _videoBuffer2->h);
 		g_system->updateScreen();
 
-		if (g_system->getEventManager()->pollEvent(_event)) {
-			if (_event.type == Common::EVENT_QUIT) {
-				_shouldQuit = true;
-				return;
-			}
-		}
+		POLL_AND_CHECK_QUIT();
 
 		g_system->delayMillis(10);
 
