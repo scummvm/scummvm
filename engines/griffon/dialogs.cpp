@@ -251,6 +251,8 @@ void GriffonEngine::configMenu() {
 
 	int ticks1 = _ticks;
 
+	_cloudImg->setAlpha(128, true);
+
 	do {
 		_videoBuffer->fillRect(Common::Rect(0, 0, _videoBuffer->w, _videoBuffer->h), 0);
 
@@ -259,18 +261,14 @@ void GriffonEngine::configMenu() {
 		rcDest.setWidth(320);
 		rcDest.setHeight(240);
 
-		_cloudImg->setAlpha(128, true);
 		_cloudImg->blit(*_videoBuffer, 0, 0, Graphics::FLIP_NONE, &rcDest);
-		_cloudImg->setAlpha(64, true);
 
 		rcDest.left = 256;
 		rcDest.top = 192;
 		rcDest.setWidth(320);
 		rcDest.setHeight(240);
 
-		_cloudImg->setAlpha(128, true);
 		_cloudImg->blit(*_videoBuffer, 0, 0, Graphics::FLIP_NONE, &rcDest);
-		_cloudImg->setAlpha(64, true);
 
 		configwindow->blit(*_videoBuffer);
 
@@ -327,7 +325,8 @@ void GriffonEngine::configMenu() {
 		}
 
 		_videoBuffer->setAlpha((int)yy);
-		g_system->copyRectToScreen(_videoBuffer->getPixels(), _videoBuffer->pitch, 0, 0, _videoBuffer->w, _videoBuffer->h);
+		_videoBuffer->blit(*_videoBuffer2);
+		g_system->copyRectToScreen(_videoBuffer2->getPixels(), _videoBuffer2->pitch, 0, 0, _videoBuffer2->w, _videoBuffer2->h);
 
 		_ticksPassed = _ticks;
 		_ticks = g_system->getMillis();
@@ -450,8 +449,6 @@ void GriffonEngine::configMenu() {
 
 	configwindow->free();
 	_itemTicks = _ticks + 210;
-
-	_cloudImg->setAlpha(64, true);
 }
 
 void GriffonEngine::saveLoadNew() {
