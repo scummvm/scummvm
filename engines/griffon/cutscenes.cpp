@@ -471,10 +471,13 @@ void GriffonEngine::endOfGame() {
 		}
 
 		_videoBuffer->setAlpha(y1);
-		g_system->copyRectToScreen(_videoBuffer->getPixels(), _videoBuffer->pitch, 0, 0, _videoBuffer->w, _videoBuffer->h);
-		g_system->updateScreen();
 
-		g_system->getEventManager()->pollEvent(_event);
+		_videoBuffer2->fillRect(Common::Rect(0, 0, _videoBuffer2->w, _videoBuffer2->h), 0);
+		_videoBuffer->blit(*_videoBuffer2);
+
+		g_system->copyRectToScreen(_videoBuffer2->getPixels(), _videoBuffer2->pitch, 0, 0, _videoBuffer2->w, _videoBuffer2->h);
+
+		g_system->updateScreen();
 		g_system->delayMillis(10);
 
 		_ticksPassed = _ticks;
