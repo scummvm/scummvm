@@ -283,8 +283,6 @@ void GriffonEngine::endOfGame() {
 	int ticks1 = _ticks;
 	int ya = 0;
 
-	_videoBuffer->copyRectToSurface(_videoBuffer2->getPixels(), _videoBuffer2->pitch, 0, 0, _videoBuffer2->w, _videoBuffer2->h);
-
 	float ld = 0;
 	bool ldstop = false; // CHECKME: Check if actually used
 
@@ -305,11 +303,11 @@ void GriffonEngine::endOfGame() {
 		} else
 			break;
 
-		_videoBuffer->fillRect(Common::Rect(0, 0, _videoBuffer->w, _videoBuffer->h), 0);
-		_videoBuffer2->setAlpha(ya);
-		_videoBuffer2->blit(*_videoBuffer);
+		_videoBuffer2->fillRect(Common::Rect(0, 0, _videoBuffer2->w, _videoBuffer2->h), 0);
+		_videoBuffer->setAlpha(255 - ya);
+		_videoBuffer->blit(*_videoBuffer2);
 
-		g_system->copyRectToScreen(_videoBuffer->getPixels(), _videoBuffer->pitch, 0, 0, _videoBuffer->w, _videoBuffer->h);
+		g_system->copyRectToScreen(_videoBuffer2->getPixels(), _videoBuffer2->pitch, 0, 0, _videoBuffer2->w, _videoBuffer2->h);
 
 		if (g_system->getEventManager()->pollEvent(_event)) {
 			if (_event.type == Common::EVENT_QUIT) {
@@ -517,9 +515,11 @@ void GriffonEngine::theEnd() {
 	}
 
 	for (float y = 0; y < 100; y += _fpsr) {
-		_videoBuffer->setAlpha((int)y);
-		_videoBuffer->fillRect(Common::Rect(0, 0, _videoBuffer->w, _videoBuffer->h), 0);
-		g_system->copyRectToScreen(_videoBuffer->getPixels(), _videoBuffer->pitch, 0, 0, _videoBuffer->w, _videoBuffer->h);
+		_videoBuffer2->fillRect(Common::Rect(0, 0, _videoBuffer2->w, _videoBuffer2->h), 0);
+		_videoBuffer->setAlpha((int)((100.0 - y) / 100 * 255));
+		_videoBuffer->blit(*_videoBuffer2);
+
+		g_system->copyRectToScreen(_videoBuffer2->getPixels(), _videoBuffer2->pitch, 0, 0, _videoBuffer2->w, _videoBuffer2->h);
 		g_system->updateScreen();
 
 		if (g_system->getEventManager()->pollEvent(_event)) {
