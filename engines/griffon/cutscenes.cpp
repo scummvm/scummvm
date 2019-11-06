@@ -283,9 +283,7 @@ void GriffonEngine::endOfGame() {
 	int ticks1 = _ticks;
 	int ya = 0;
 
-	_videoBuffer2->fillRect(Common::Rect(0, 0, _videoBuffer2->w, _videoBuffer2->h), 0);
-	_videoBuffer3->fillRect(Common::Rect(0, 0, _videoBuffer3->w, _videoBuffer3->h), 0);
-	_videoBuffer2->copyRectToSurface(_videoBuffer->getPixels(), _videoBuffer->pitch, 0, 0, _videoBuffer->w, _videoBuffer->h);
+	_videoBuffer->copyRectToSurface(_videoBuffer2->getPixels(), _videoBuffer2->pitch, 0, 0, _videoBuffer2->w, _videoBuffer2->h);
 
 	float ld = 0;
 	bool ldstop = false; // CHECKME: Check if actually used
@@ -308,15 +306,19 @@ void GriffonEngine::endOfGame() {
 			break;
 
 		_videoBuffer->fillRect(Common::Rect(0, 0, _videoBuffer->w, _videoBuffer->h), 0);
+		_videoBuffer2->setAlpha(ya);
+		_videoBuffer2->blit(*_videoBuffer);
 
-		_videoBuffer->setAlpha(ya);
-		_videoBuffer3->copyRectToSurface(_videoBuffer2->getPixels(), _videoBuffer2->pitch, 0, 0, _videoBuffer2->w, _videoBuffer2->h);
-		_videoBuffer3->copyRectToSurface(_videoBuffer->getPixels(), _videoBuffer->pitch, 0, 0, _videoBuffer->w, _videoBuffer->h);
+		g_system->copyRectToScreen(_videoBuffer->getPixels(), _videoBuffer->pitch, 0, 0, _videoBuffer->w, _videoBuffer->h);
 
-		g_system->copyRectToScreen(_videoBuffer3->getPixels(), _videoBuffer3->pitch, 0, 0, _videoBuffer3->w, _videoBuffer3->h);
+		if (g_system->getEventManager()->pollEvent(_event)) {
+			if (_event.type == Common::EVENT_QUIT) {
+				_shouldQuit = true;
+				return;
+			}
+		}
+
 		g_system->updateScreen();
-
-		g_system->getEventManager()->pollEvent(_event);
 		g_system->delayMillis(10);
 
 		_ticksPassed = _ticks;
@@ -399,6 +401,11 @@ void GriffonEngine::endOfGame() {
 
 			if (_event.kbd.keycode == Common::KEYCODE_ESCAPE)
 				break;
+
+			if (_event.type == Common::EVENT_QUIT) {
+				_shouldQuit = true;
+				return;
+			}
 		}
 
 		g_system->updateScreen();
@@ -427,7 +434,13 @@ void GriffonEngine::endOfGame() {
 		g_system->copyRectToScreen(_videoBuffer3->getPixels(), _videoBuffer3->pitch, 0, 0, _videoBuffer3->w, _videoBuffer3->h);
 		g_system->updateScreen();
 
-		g_system->getEventManager()->pollEvent(_event);
+		if (g_system->getEventManager()->pollEvent(_event)) {
+			if (_event.type == Common::EVENT_QUIT) {
+				_shouldQuit = true;
+				return;
+			}
+		}
+
 		g_system->delayMillis(10);
 
 		_ticksPassed = _ticks;
@@ -480,6 +493,11 @@ void GriffonEngine::endOfGame() {
 		}
 
 		if (g_system->getEventManager()->pollEvent(_event)) {
+			if (_event.type == Common::EVENT_QUIT) {
+				_shouldQuit = true;
+				return;
+			}
+
 			if (_event.type == Common::EVENT_KEYDOWN && keywait < _ticks)
 				break;
 		}
@@ -504,7 +522,13 @@ void GriffonEngine::theEnd() {
 		g_system->copyRectToScreen(_videoBuffer->getPixels(), _videoBuffer->pitch, 0, 0, _videoBuffer->w, _videoBuffer->h);
 		g_system->updateScreen();
 
-		g_system->getEventManager()->pollEvent(_event);
+		if (g_system->getEventManager()->pollEvent(_event)) {
+			if (_event.type == Common::EVENT_QUIT) {
+				_shouldQuit = true;
+				return;
+			}
+		}
+
 		g_system->delayMillis(10);
 
 		_ticksPassed = _ticks;
