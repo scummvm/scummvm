@@ -117,12 +117,13 @@ Common::Error GriffonEngine::run() {
 	if (_shouldQuit)
 		return Common::kNoError;
 
-	title(0);
+	while (!_shouldQuit) {
+		title(0);
 
-	if (_shouldQuit)
-		return Common::kNoError;
+		if (!_shouldQuit)
 
-	saveLoadNew();
+		saveLoadNew();
+	}
 
 	return Common::kNoError;
 }

@@ -186,10 +186,11 @@ void GriffonEngine::title(int mode) {
 					case Common::KEYCODE_RETURN:
 						switch(cursel) {
 						case 0:
-							saveLoadNew();
 							_ticks = g_system->getMillis();
 							keypause = _ticks + 150;
 							ticks1 = _ticks;
+
+							exitTitle = true;
 							break;
 						case 1:
 							configMenu();
@@ -546,7 +547,7 @@ void GriffonEngine::saveLoadNew() {
 							_shouldQuit = true;
 							return;
 						}
-					} 
+					}
 
 					if (lowerLock && tickpause < _ticks) {
 						if ((curCol == 1) && saveState(curRow - 1)) {
