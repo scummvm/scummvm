@@ -1541,8 +1541,8 @@ protected:
 	 * @param string The string that should be converted
 	 * @param length Size of the string in bytes
 	 *
-	 * @return Converted string, which must be freed, or nullptr if the conversion
-	 * isn't possible.
+	 * @return Converted string, which must be freed by the caller (using free()
+	 * and not delete[]), or nullptr if the conversion isn't possible.
 	 */
 	virtual char *convertEncoding(const char *to, const char *from, const char *string, size_t length) { return nullptr; }
 };
