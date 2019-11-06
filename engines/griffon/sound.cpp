@@ -85,7 +85,12 @@ void GriffonEngine::pauseSoundChannel(int channel) {
 }
 
 void GriffonEngine::haltSoundChannel(int channel) {
-	_mixer->stopHandle(_handles[channel]);
+	if (channel == -1) {
+		for (int i = 0; i < kSoundHandles; i++)
+			_mixer->stopHandle(_handles[i]);
+	} else {
+		_mixer->stopHandle(_handles[channel]);
+	}
 }
 
 void GriffonEngine::resumeSoundChannel(int channel) {
