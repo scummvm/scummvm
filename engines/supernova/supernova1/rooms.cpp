@@ -130,7 +130,7 @@ void Intro::titleScreen() {
 		g_system->delayMillis(_vm->_delay);
 	}
 	_vm->playSound(kAudioVoiceYeah);
-	while (_vm->_sound->isPlaying())
+	while (_vm->_sound->isPlaying() && !_vm->shouldQuit())
 		_gm->wait(1);
 	_vm->paletteFadeOut();
 }
