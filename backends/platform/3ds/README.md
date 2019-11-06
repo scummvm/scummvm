@@ -148,10 +148,12 @@ The following libraries can be downloaded with pacman:
 |  libmad       |  3ds-libmad           |
 |  libogg       |  3ds-libogg           |
 |  tremor       |  3ds-libvorbisidec    |
+|  flac         |  3ds-flac             |
+|  curl         |  3ds-curl             |
 
-At the moment of writing, `faad` and `flac` are not in the devkitPro 3DS pacman
-repository. They can be compiled by following the instructions in the section below,
-in case they cannot be found through pacman.
+At the moment of writing, `faad` is not in the devkitPro 3DS pacman repository. It
+can be compiled by following the instructions in the section below, in case it cannot
+be found through pacman.
 
 The following pacman packages are also recommended:
  - `3ds-dev`
@@ -202,21 +204,6 @@ In the source directory of the library:
  $ export CPPFLAGS="-I$PORTLIBS/include -I$CTRULIB/include"
  $ export LDFLAGS="-L$PORTLIBS/lib"
  ```
-
-4.1.3) Note on FLAC:
---------------------
-At the moment of writing, the `libflac` library cannot be compiled for the 3DS out of the box.
-However, the following patch (for the Nintendo Switch) can be adapted and applied to it:
-https://github.com/devkitPro/pacman-packages/tree/master/switch/flac
-
-Afterwards, the library can be built with:
-```
- $  CFLAGS="${CFLAGS} -D__3DS__ " \
-    ./configure --prefix="${PORTLIBS_PREFIX}" --host=arm-none-eabi \
-    --disable-shared --enable-static \
-    --disable-xmms-plugin --disable-cpplibs \
-    --disable-sse --without-ogg
-```
 
 4.2) Compiling ScummVM
 ----------------------
