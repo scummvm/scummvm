@@ -470,6 +470,77 @@ void GriffonEngine::saveLoadNew() {
 
 	_cloudImg->setAlpha(128, true);
 
+	// savestates---------------------------------
+	_videoBuffer2->fillRect(Common::Rect(0, 0, _videoBuffer2->w, _videoBuffer2->h), 0);
+
+	for (int ff = 0; ff <= 3; ff++) {
+		loadPlayer(ff);
+
+		if (_playera.level > 0) {
+			int sx = 8;
+			int sy = 57 + ff * 48;
+
+			// time
+			int ase = _asecstart;
+			int h = ((ase - (ase % 3600)) / 3600);
+			ase = (ase - h * 3600);
+			int m = ((ase - (ase % 60)) / 60);
+			int s = (ase - m * 60);
+
+			char line[256];
+			sprintf(line, "Game Time: %02i:%02i:%02i", h, m, s);
+			drawString(_videoBuffer2, line, 160 - strlen(line) * 4, sy, 0);
+
+			sx = 12;
+			sy += 11;
+			int cc = 0;
+
+			sprintf(line, "Health: %i/%i", _playera.hp, _playera.maxHp);
+			drawString(_videoBuffer2, line, sx, sy, cc);
+
+			if (_playera.level == 22)
+				strcpy(line, "Level: MAX");
+			else
+				sprintf(line, "Level: %i", _playera.level);
+
+			drawString(_videoBuffer2, line, sx, sy + 11, 0);
+
+			rcSrc.left = sx + 15 * 8 + 24;
+			rcSrc.top = sy + 1;
+
+			int ss = (_playera.sword - 1) * 3;
+			if (_playera.sword == 3)
+				ss = 18;
+			_itemImg[ss]->blit(*_videoBuffer2, rcSrc.left, rcSrc.top);
+
+			rcSrc.left += 16;
+			ss = (_playera.shield - 1) * 3 + 1;
+			if (_playera.shield == 3)
+				ss = 19;
+			_itemImg[ss]->blit(*_videoBuffer2, rcSrc.left, rcSrc.top);
+
+			rcSrc.left += 16;
+			ss = (_playera.armour - 1) * 3 + 2;
+			if (_playera.armour == 3)
+				ss = 20;
+			_itemImg[ss]->blit(*_videoBuffer2, rcSrc.left, rcSrc.top);
+
+			int nx = rcSrc.left + 13 + 3 * 8;
+			rcSrc.left = nx - 17;
+
+			if (_playera.foundSpell[0]) {
+				for (int i = 0; i < 5; i++) {
+					rcSrc.left += 17;
+					if (_playera.foundSpell[i])
+						_itemImg[7 + i]->blit(*_videoBuffer2, rcSrc.left, rcSrc.top);
+				}
+			}
+		} else {
+			int sy = 57 + ff * 48;
+			drawString(_videoBuffer2, "Empty", 160 - 5 * 4, sy, 0);
+		}
+	}
+
 	do {
 		_videoBuffer->fillRect(Common::Rect(0, 0, _videoBuffer->w, _videoBuffer->h), 0);
 
@@ -609,79 +680,10 @@ void GriffonEngine::saveLoadNew() {
 			}
 		}
 
+		// Render savestates
+		_videoBuffer2->blit(*_videoBuffer);
 
-		// savestates---------------------------------
-		// read it only when needed!
-
-		for (int ff = 0; ff <= 3; ff++) {
-			loadPlayer(ff);
-
-			if (_playera.level > 0) {
-				int sx = 8;
-				int sy = 57 + ff * 48;
-
-				// time
-				int ase = _asecstart;
-				int h = ((ase - (ase % 3600)) / 3600);
-				ase = (ase - h * 3600);
-				int m = ((ase - (ase % 60)) / 60);
-				int s = (ase - m * 60);
-
-				char line[256];
-				sprintf(line, "Game Time: %02i:%02i:%02i", h, m, s);
-				drawString(_videoBuffer, line, 160 - strlen(line) * 4, sy, 0);
-
-				sx = 12;
-				sy += 11;
-				int cc = 0;
-
-				sprintf(line, "Health: %i/%i", _playera.hp, _playera.maxHp);
-				drawString(_videoBuffer, line, sx, sy, cc);
-
-				if (_playera.level == 22)
-					strcpy(line, "Level: MAX");
-				else
-					sprintf(line, "Level: %i", _playera.level);
-
-				drawString(_videoBuffer, line, sx, sy + 11, 0);
-
-				rcSrc.left = sx + 15 * 8 + 24;
-				rcSrc.top = sy + 1;
-
-				int ss = (_playera.sword - 1) * 3;
-				if (_playera.sword == 3)
-					ss = 18;
-				_itemImg[ss]->blit(*_videoBuffer, rcSrc.left, rcSrc.top);
-
-				rcSrc.left += 16;
-				ss = (_playera.shield - 1) * 3 + 1;
-				if (_playera.shield == 3)
-					ss = 19;
-				_itemImg[ss]->blit(*_videoBuffer, rcSrc.left, rcSrc.top);
-
-				rcSrc.left += 16;
-				ss = (_playera.armour - 1) * 3 + 2;
-				if (_playera.armour == 3)
-					ss = 20;
-				_itemImg[ss]->blit(*_videoBuffer, rcSrc.left, rcSrc.top);
-
-				int nx = rcSrc.left + 13 + 3 * 8;
-				rcSrc.left = nx - 17;
-
-				if (_playera.foundSpell[0]) {
-					for (int i = 0; i < 5; i++) {
-						rcSrc.left += 17;
-						if (_playera.foundSpell[i])
-							_itemImg[7 + i]->blit(*_videoBuffer, rcSrc.left, rcSrc.top);
-					}
-				}
-			} else {
-				int sy = 57 + ff * 48;
-				drawString(_videoBuffer, "Empty", 160 - 5 * 4, sy, 0);
-			}
-		}
 		// ------------------------------------------
-
 
 		if (curRow == 0) {
 			rcDest.top = 18;
