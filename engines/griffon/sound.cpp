@@ -222,19 +222,19 @@ void GriffonEngine::updateMusic() {
 					haltSoundChannel(_musicChannel);
 					if (_playingGardens) {
 						switch (loopseta) {
-							case 0:
-								playSound(_musicGardens1);
-								break;
-							case 1:
-								playSound(_musicGardens2);
-								break;
-							case 2:
-								playSound(_musicGardens3);
-								break;
-							case 3:
-								playSound(_musicGardens4);
-							default:
-								break;
+						case 0:
+							playSound(_musicGardens1);
+							break;
+						case 1:
+							playSound(_musicGardens2);
+							break;
+						case 2:
+							playSound(_musicGardens3);
+							break;
+						case 3:
+							playSound(_musicGardens4);
+						default:
+							break;
 						}
 					}
 				}
