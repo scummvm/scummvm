@@ -1000,8 +1000,10 @@ void GriffonEngine::damageNPC(int npcnum, int damage, int spell) {
 			}
 		}
 
-		if (_npcInfo[npcnum].script == kScriptEndOfGame)
+		if (_npcInfo[npcnum].script == kScriptEndOfGame) {
+			endOfGame();
 			_gameEnd = true;
+		}
 	}
 }
 

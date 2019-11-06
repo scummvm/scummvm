@@ -212,8 +212,13 @@ void GriffonEngine::updateEngine() {
 	while (_itemyloc >= 16)
 		_itemyloc -= 16;
 
-	if (_player.hp <= 0)
+	if (_player.hp <= 0) {
 		theEnd();
+
+		_gameEnd = true;
+
+		return;
+	}
 
 	if (_roomLock) {
 		_roomLock = false;

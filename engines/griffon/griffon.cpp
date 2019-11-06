@@ -125,9 +125,6 @@ Common::Error GriffonEngine::run() {
 
 		if (!_shouldQuit && !_gameEnd)
 			saveLoadNew();
-
-		if (_gameEnd)
-			endOfGame();
 	}
 
 	return Common::kNoError;
