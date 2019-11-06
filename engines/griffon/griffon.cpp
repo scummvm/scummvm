@@ -66,6 +66,8 @@ GriffonEngine::GriffonEngine(OSystem *syst) : Engine(syst) {
 
 	_cloudAngle = 0.0f;
 
+	_dontDrawOver = false;
+
 	for (int i = 0; i < 33; ++i) {
 		for (int j = 0; j < 6; ++j) {
 			_objectInfo[i].nFrames = 0;
