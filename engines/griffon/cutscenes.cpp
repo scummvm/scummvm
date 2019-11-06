@@ -143,10 +143,10 @@ void GriffonEngine::showLogos() {
 		g_system->copyRectToScreen(_videoBuffer->getPixels(), _videoBuffer->pitch, 0, 0, _videoBuffer->w, _videoBuffer->h);
 		g_system->updateScreen();
 
-		g_system->getEventManager()->pollEvent(_event);
-
-		if (_event.type == Common::EVENT_QUIT)
-			_shouldQuit = true;
+		if (g_system->getEventManager()->pollEvent(_event)) {
+			if (_event.type == Common::EVENT_QUIT)
+				_shouldQuit = true;
+		}
 
 		_ticksPassed = _ticks;
 		_ticks = g_system->getMillis();
@@ -253,15 +253,16 @@ void GriffonEngine::intro() {
 		if (xofs >= 320)
 			xofs -= 320;
 
-		g_system->getEventManager()->pollEvent(_event);
+		if (g_system->getEventManager()->pollEvent(_event)) {
 
-		if (_event.type == Common::EVENT_KEYDOWN)
-			cnt = 6;
-		if (_event.kbd.keycode == Common::KEYCODE_ESCAPE)
-			return;
+			if (_event.type == Common::EVENT_KEYDOWN)
+				cnt = 6;
+			if (_event.kbd.keycode == Common::KEYCODE_ESCAPE)
+				return;
 
-		if (_event.type == Common::EVENT_QUIT)
-			_shouldQuit = true;
+			if (_event.type == Common::EVENT_QUIT)
+				_shouldQuit = true;
+		}
 
 		g_system->delayMillis(10);
 	} while (!_shouldQuit);
@@ -369,10 +370,6 @@ void GriffonEngine::endOfGame() {
 
 		_videoBuffer->setAlpha(ya);
 		g_system->copyRectToScreen(_videoBuffer->getPixels(), _videoBuffer->pitch, 0, 0, _videoBuffer->w, _videoBuffer->h);
-		g_system->updateScreen();
-
-		g_system->getEventManager()->pollEvent(_event);
-		g_system->delayMillis(10);
 
 		_ticksPassed = _ticks;
 		_ticks = g_system->getMillis();
@@ -394,13 +391,18 @@ void GriffonEngine::endOfGame() {
 		if (xofs >= 320)
 			xofs -= 320;
 
-		if (_event.type == Common::EVENT_KEYDOWN)
-			spd = 1.0f;
-		if (_event.type == Common::EVENT_KEYUP)
-			spd = 0.2f;
+		if (g_system->getEventManager()->pollEvent(_event)) {
+			if (_event.type == Common::EVENT_KEYDOWN)
+				spd = 1.0f;
+			if (_event.type == Common::EVENT_KEYUP)
+				spd = 0.2f;
 
-		if (_event.kbd.keycode == Common::KEYCODE_ESCAPE)
-			break;
+			if (_event.kbd.keycode == Common::KEYCODE_ESCAPE)
+				break;
+		}
+
+		g_system->updateScreen();
+		g_system->delayMillis(10);
 	} while (1);
 
 
@@ -477,10 +479,10 @@ void GriffonEngine::endOfGame() {
 			_fp = 0;
 		}
 
-		g_system->getEventManager()->pollEvent(_event);
-
-		if (_event.type == Common::EVENT_KEYDOWN && keywait < _ticks)
-			break;
+		if (g_system->getEventManager()->pollEvent(_event)) {
+			if (_event.type == Common::EVENT_KEYDOWN && keywait < _ticks)
+				break;
+		}
 
 	} while (1);
 
@@ -488,7 +490,6 @@ void GriffonEngine::endOfGame() {
 	_videoBuffer3->fillRect(Common::Rect(0, 0, _videoBuffer3->w, _videoBuffer3->h), 0);
 
 	theEnd();
-
 }
 
 void GriffonEngine::theEnd() {
