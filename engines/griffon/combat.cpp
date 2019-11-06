@@ -612,7 +612,7 @@ void GriffonEngine::damageNPC(int npcnum, int damage, int spell) {
 			}
 		}
 
-		if (_npcInfo[npcnum].spriteset == kMonsterOneWing || _npcInfo[npcnum].spriteset == kMonsterTwoWing || 
+		if (_npcInfo[npcnum].spriteset == kMonsterOneWing || _npcInfo[npcnum].spriteset == kMonsterTwoWing ||
 					_npcInfo[npcnum].spriteset == kMonsterBlackKnight || _npcInfo[npcnum].spriteset == kMonsterFireHydra) {
 			int ff = (int)(RND() * _player.level);
 			if (ff == 0) {
@@ -1001,7 +1001,7 @@ void GriffonEngine::damageNPC(int npcnum, int damage, int spell) {
 		}
 
 		if (_npcInfo[npcnum].script == kScriptEndOfGame)
-			endOfGame();
+			_gameEnd = true;
 	}
 }
 

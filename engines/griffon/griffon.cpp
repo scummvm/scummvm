@@ -46,6 +46,7 @@ GriffonEngine::GriffonEngine(OSystem *syst) : Engine(syst) {
 	_mixer = nullptr;
 
 	_shouldQuit = false;
+	_gameEnd = false;
 
 	_musicChannel = -1;
 	_menuChannel = -1;
@@ -118,11 +119,15 @@ Common::Error GriffonEngine::run() {
 		return Common::kNoError;
 
 	while (!_shouldQuit) {
+		_gameEnd = false;
+
 		title(0);
 
-		if (!_shouldQuit)
+		if (!_shouldQuit && !_gameEnd)
+			saveLoadNew();
 
-		saveLoadNew();
+		if (_gameEnd)
+			endOfGame();
 	}
 
 	return Common::kNoError;

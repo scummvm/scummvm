@@ -75,7 +75,7 @@ void GriffonEngine::mainLoop() {
 		 _console->onFrame();
 
 		updateEngine();
-	} while (!_shouldQuit);
+	} while (!_shouldQuit && !_gameEnd);
 }
 
 void GriffonEngine::updateEngine() {
@@ -131,6 +131,9 @@ void GriffonEngine::updateEngine() {
 		_player.opy = _player.py;
 
 		checkHit();
+
+		if (_gameEnd)
+			return;
 	}
 
 	for (int i = 0; i < kMaxFloat; i++) {
