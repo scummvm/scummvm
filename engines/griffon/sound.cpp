@@ -118,12 +118,6 @@ DataChunk *cacheSound(const char *name) {
 }
 
 void GriffonEngine::setupAudio() {
-	// FIXME
-	//Mix_OpenAudio(22050, MIX_DEFAULT_FORMAT, 2, 1024);
-
-	//atexit(Mix_Quit);
-	//atexit(Mix_CloseAudio);
-
 	const char *stri = "Loading...";
 	drawString(_videoBuffer, stri, 160 - 4 * strlen(stri), 116, 0);
 

@@ -261,7 +261,7 @@ void GriffonEngine::drawHud() {
 	if (_selEnemyOn == false) {
 		rcDest = Common::Rect(320, 240);
 		_videoBuffer2->fillRect(rcDest, 0);
-		_videoBuffer2->setAlpha((int)(_player.itemselshade * 4)); // FIXME
+		_videoBuffer2->setAlpha((int)(_player.itemselshade * 4));
 		_videoBuffer2->blit(*_videoBuffer);
 
 		int sy = 202;

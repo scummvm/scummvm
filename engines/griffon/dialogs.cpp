@@ -599,8 +599,6 @@ void GriffonEngine::saveLoadNew() {
 							curRow = 1;
 						} else if (curCol == 3) {
 							// RETURN
-							// reset keys to avoid returning
-							// keys[SDLK_RETURN] = keys[SDLK_SPACE] = 0; // FIXME
 							return;
 						} else if (curCol == 4) {
 							// QUIT - non existent :)
