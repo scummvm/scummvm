@@ -18,6 +18,19 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
+ *              Originally written by Syn9 in FreeBASIC with SDL
+ *              http://syn9.thehideoutgames.com/index_backup.php
+ *
+ *            Ported to plain C for GCW-Zero handheld by Dmitry Smagin
+ *                http://github.com/dmitrysmagin/griffon_legend
+ *
+ *
+ *                 Programming/Graphics: Daniel "Syn9" Kennedy
+ *                     Music/Sound effects: David Turner
+ *
+ *                   Beta testing and gameplay design help:
+ *                    Deleter, Cha0s, Aether Fox, and Kiz
+ *
  */
 
 #include "common/config-manager.h"
