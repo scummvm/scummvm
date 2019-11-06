@@ -3,26 +3,24 @@ ScummVM 3DS README
 
 Table of Contents:
 ------------------
-1.0) Installation
- * 1.1 3DSX installation
- * 1.2 CIA installation
- * 1.3 Additional files
+[1.0) Installation](#10-installation)
+ * [1.1 3DSX installation](#11-3dsx-installation)
+ * [1.2 CIA installation](#12-cia-installation)
 
-2.0) Controls
- * 2.1 Default key mappings
- * 2.2 Hover mode
- * 2.3 Drag mode
- * 2.4 Magnify mode
+[2.0) Controls](#20-controls)
+ * [2.1 Default key mappings](#21-default-key-mappings)
+ * [2.2 Hover mode](#22-hover-mode)
+ * [2.3 Drag mode](#23-drag-mode)
+ * [2.4 Magnify mode](#24-magnify-mode)
 
-3.0) Supported Games
+[3.0) Supported Games](#30-supported-games)
 
-4.0) Compiling
- * 4.1 Prerequisites
- * * 4.1.1 Compiling third-party libraries
- * * 4.1.2 Manually setting up the environment
- * * 4.1.3 Note on FLAC
- * 4.2 Compiling ScummVM
- * 4.3 Warning for build sizes
+[4.0) Compiling](#40-compiling)
+ * [4.1 Prerequisites](#41-prerequisites)
+ * * [4.1.1 Compiling third-party libraries](#411-compiling-third-party-libraries)
+ * * [4.1.2 Manually setting up the environment](#412-manually-setting-up-the-environment)
+ * [4.2 Compiling ScummVM](#42-compiling-scummvm)
+ * [4.3 Warning for build sizes](#43-warning-for-build-sizes)
 
 1.0) Installation
 -----------------
