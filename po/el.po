@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2019-11-03 11:43+0100\n"
-"PO-Revision-Date: 2019-11-05 01:55+0000\n"
+"PO-Revision-Date: 2019-11-07 02:03+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/el/>\n"
@@ -16,7 +16,7 @@ msgstr ""
 "Content-Type: text/plain; charset=iso-8859-7\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 3.7.1\n"
+"X-Generator: Weblate 3.9.1\n"
 "X-Language-name: Greek\n"
 
 #: gui/about.cpp:108
@@ -1263,12 +1263,12 @@ msgstr "Ελέγξτε τώρα"
 
 #: gui/options.cpp:1765
 msgid "Cloud"
-msgstr "Σύννεφο"
+msgstr "Νέφος"
 
 #: gui/options.cpp:1767
 msgctxt "lowres"
 msgid "Cloud"
-msgstr "Σύννεφο"
+msgstr "Νέφος"
 
 #: gui/options.cpp:1781
 msgid "LAN"
@@ -1304,11 +1304,11 @@ msgstr "Εφαρμογή"
 
 #: gui/options.cpp:1915
 msgid "Active storage:"
-msgstr "Ενεργή αποθήκη Νέφους:"
+msgstr "Ενεργή αποθήκη:"
 
 #: gui/options.cpp:1915
 msgid "Active cloud storage"
-msgstr "Ενεργή αποθήκευση σύννεφου"
+msgstr "Ενεργή αποθήκη"
 
 #: gui/options.cpp:1923
 msgctxt "lowres"
@@ -2680,9 +2680,8 @@ msgid "Or select a directory (works in Chrome only):"
 msgstr "Ή επιλέξτε ένα φάκελο (δουλεύει μόνο σε Chrome):"
 
 #: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:74
-#, fuzzy
 msgid "Index of "
-msgstr "Δείκτης του "
+msgstr "Ευρετήριο για "
 
 #: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:76
 msgid "Error occurred"
@@ -2705,9 +2704,8 @@ msgid "ScummVM couldn't list the directory you specified."
 msgstr "Το ScummVM δεν μπόρεσε να παραθέσει τον φάκελο που προσδιορίσατε."
 
 #: backends/networking/sdl_net/handlers/filespagehandler.cpp:232
-#, fuzzy
 msgid "Index of"
-msgstr "Δείκτης του"
+msgstr "Ευρετήριο για"
 
 #: backends/networking/sdl_net/handlers/indexpagehandler.cpp:42
 msgid "This is a local webserver index page."
@@ -3329,12 +3327,10 @@ msgid "Emulate composite output to an NTSC TV"
 msgstr "Προσομοίωση σύνθετου σήματος εξόδου (composite) σε τηλεόραση NTSC"
 
 #: engines/adl/detection.cpp:61 engines/adl/detection.cpp:71
-#, fuzzy
 msgid "Color graphics"
-msgstr "Χρήση έγχρωμων γραφικών"
+msgstr "Έγχρωμα γραφικά"
 
 #: engines/adl/detection.cpp:62 engines/adl/detection.cpp:72
-#, fuzzy
 msgid "Use color graphics instead of monochrome"
 msgstr "Χρήση έγχρωμων γραφικών αντί για μονόχρωμα"
 
@@ -3592,9 +3588,8 @@ msgid "[ press any key to exit ]"
 msgstr "[ πατήστε κάποιο πλήκτρο για έξοδο ]"
 
 #: engines/glk/quetzal.cpp:142 engines/glk/quetzal.cpp:151
-#, fuzzy
 msgid "Untitled Savegame"
-msgstr "Αποθηκευμένο παιχνίδι χωρίς όνομα"
+msgstr "¶τιτλο αποθηκευμένο παιχνίδι"
 
 #: engines/glk/advsys/advsys.cpp:35
 msgid "Could not start AdvSys game"
@@ -3618,9 +3613,8 @@ msgid "I don't know the word \"%s\".\n"
 msgstr "Δεν γνωρίζω τη λέξη \"%s\".\n"
 
 #: engines/glk/advsys/vm.cpp:682
-#, fuzzy
 msgid "I don't understand.\n"
-msgstr "Δεν καταλαβαίνω την εντολή σου. "
+msgstr "Δεν καταλαβαίνω.\n"
 
 #: engines/glk/alan2/alan2.cpp:76
 msgid "This is too short to be a valid Alan2 file."
@@ -5741,12 +5735,11 @@ msgid "This game requires PNG, JPEG and Vorbis support."
 msgstr "Το παιχνίδι αυτό απαιτεί υποστήριξη PNG, JPEG και Vorbis."
 
 #: engines/wintermute/wintermute.cpp:164
-#, fuzzy
 msgid ""
 "This game requires 3D characters support, which is out of ScummVM's scope."
 msgstr ""
-"Το παιχνίδι αυτό απαιτεί υποστήριξη μοντέλων 3D για τους χαρακτήρες, που "
-"είναι εκτός του πλαισίου στόχων του ScummVM."
+"Το παιχνίδι αυτό απαιτεί υποστήριξη 3D μοντέλων, που είναι εκτός πλαισίου "
+"στόχων του ScummVM."
 
 #: engines/xeen/detection.cpp:96
 msgid "Show item costs in standard inventory mode"
