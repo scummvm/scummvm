@@ -278,7 +278,7 @@ void GriffonEngine::newGame() {
 	_player.shield = 0;
 	_player.armour = 0;
 	for (int i = 0; i < 5; i++) {
-		_player.foundSpell[i] = false;
+		_player.foundSpell[i] = 0;
 		_player.spellCharge[i] = 0;
 		_player.inventory[i] = 0;
 	}

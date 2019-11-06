@@ -1643,7 +1643,7 @@ void GriffonEngine::updateSpells() {
 
 					for (int f1 = 0; f1 < 5; f1++) {
 						if (foundel[f1] && !_player.foundSpell[f1]) {
-							_player.foundSpell[f1] = true;
+							_player.foundSpell[f1] = 1;
 							_player.spellCharge[f1] = 0;
 							if (f1 == 1)
 								strcpy(line, "Found... Water Essence");
