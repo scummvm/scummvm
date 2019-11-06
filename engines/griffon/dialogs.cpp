@@ -282,7 +282,7 @@ void GriffonEngine::configMenu() {
 		_cloudImg->blit(*_videoBuffer, 0, 0, Graphics::FLIP_NONE, &rcDest);
 		_cloudImg->setAlpha(64, true);
 
-		_videoBuffer->copyRectToSurface(configwindow->getPixels(), configwindow->pitch, 0, 0, configwindow->w, configwindow->h);
+		configwindow->blit(*_videoBuffer);
 
 		int sy = SY;
 
