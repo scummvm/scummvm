@@ -43,8 +43,10 @@ namespace Griffon {
 
 void GriffonEngine::checkInputs() {
 	int ntickdelay = 175;
+	bool _keyPressed = false;
 
-	g_system->getEventManager()->pollEvent(_event);
+	if (g_system->getEventManager()->pollEvent(_event))
+		_keyPressed = true;
 
 	_postInfoNbr = 0;
 
@@ -307,7 +309,7 @@ __exit_do:
 					_curEnemy = _lastNpc + _postInfoNbr;
 			}
 		} else {
-			if (_itemTicks < _ticks) {
+			if (_keyPressed && _event.type == Common::EVENT_KEYDOWN) {
 				if (_event.kbd.keycode == Common::KEYCODE_UP) {
 					_curItem = _curItem - 1;
 					_itemTicks = _ticks + ntickdelay;

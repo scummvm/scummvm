@@ -80,7 +80,6 @@ void GriffonEngine::mainLoop() {
 
 void GriffonEngine::updateEngine() {
 	g_system->updateScreen();
-	g_system->getEventManager()->pollEvent(_event);
 
 	_ticksPassed = _ticks;
 	_ticks = g_system->getMillis();
