@@ -205,7 +205,7 @@
 163
 # 0xA4 (164)
 8364
-8367
+165 0   # was: 8367. Not required and it is missing from our TTF fonts ( "DRACHMA SIGN" (U+20AF))
 166
 167
 # 0xA8 (168)
