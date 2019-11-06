@@ -459,9 +459,6 @@ char *OSystem_Win32::convertEncoding(const char* to, const char *from, const cha
 	}
 
 	// Add ending zeros
-	char *wString = (char *) calloc(sizeof(char), length + 2);
-	memcpy(wString, string, length);
-
 	WCHAR *tmpStr;
 	if (Common::String(from).hasPrefixIgnoreCase("utf-16")) {
 		// Allocate space for string and 2 ending zeros
@@ -474,10 +471,19 @@ char *OSystem_Win32::convertEncoding(const char* to, const char *from, const cha
 		}
 		memcpy(tmpStr, string, length);
 	} else {
-		tmpStr = Win32::ansiToUnicode(string, Win32::getCodePageId(from));
+		// Win32::ansiToUnicode uses new to allocate the memory. We need to copy it into an array
+		// allocated with malloc as it is going to be freed using free.
+		WCHAR *tmpStr2 = Win32::ansiToUnicode(string, Win32::getCodePageId(from));
+		if (!tmpStr2) {
+			if (newString != nullptr)
+				free(newString);
+			return nullptr;
+		}
+		size_t size = wcslen(tmpStr2) + 1; // +1 for the terminating null wchar
+		tmpStr = (WCHAR *) malloc(sizeof(WCHAR) * size);
+		memcpy(tmpStr, tmpStr2, sizeof(WCHAR) * size);
+		delete[] tmpStr2;
 	}
-
-	free(wString);
 
 	if (newString != nullptr)
 		free(newString);
@@ -492,7 +498,15 @@ char *OSystem_Win32::convertEncoding(const char* to, const char *from, const cha
 	} else {
 		result = Win32::unicodeToAnsi(tmpStr, Win32::getCodePageId(to));
 		free(tmpStr);
-		return result;
+		if (!result)
+			return nullptr;
+		// Win32::unicodeToAnsi uses new to allocate the memory. We need to copy it into an array
+		// allocated with malloc as it is going to be freed using free.
+		size_t size = strlen(result) + 1;
+		char *resultCopy = (char *) malloc(sizeof(char) * size);
+		memcpy(resultCopy, result, sizeof(char) * size);
+		delete[] result;
+		return resultCopy;
 	}
 }
 
