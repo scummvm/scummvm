@@ -462,11 +462,9 @@ void GriffonEngine::saveLoadNew() {
 
 	int curRow = 0;
 	int curCol = 0;
-	bool lowerLock = false;
 
 	_ticks = g_system->getMillis();
 	int ticks1 = _ticks;
-	int tickpause = _ticks + 150;
 
 	_cloudImg->setAlpha(128, true);
 
@@ -541,6 +539,7 @@ void GriffonEngine::saveLoadNew() {
 		}
 	}
 
+	// Main menu loop
 	do {
 		_videoBuffer->fillRect(Common::Rect(0, 0, _videoBuffer->w, _videoBuffer->h), 0);
 
@@ -562,14 +561,12 @@ void GriffonEngine::saveLoadNew() {
 
 		_saveLoadImg->blit(*_videoBuffer);
 
-		g_system->getEventManager()->pollEvent(_event);
+		if (g_system->getEventManager()->pollEvent(_event)) {
+			if (_event.type == Common::EVENT_QUIT) {
+				_shouldQuit = true;
+				return;
+			}
 
-		if (_event.type == Common::EVENT_QUIT) {
-			_shouldQuit = true;
-			return;
-		}
-
-		if (tickpause < _ticks) {
 			if (_event.type == Common::EVENT_KEYDOWN) {
 				_itemTicks = _ticks + 220;
 
@@ -583,14 +580,10 @@ void GriffonEngine::saveLoadNew() {
 								return;
 						} else if (curCol == 1) {
 							// LOAD GAME
-							lowerLock = true;
 							curRow = 1 + _saveSlot;
-							tickpause = _ticks + 125;
 						} else if (curCol == 2) {
 							// SAVE GAME
-							lowerLock = true;
 							curRow = 1;
-							tickpause = _ticks + 125;
 						} else if (curCol == 3) {
 							// RETURN
 							// reset keys to avoid returning
@@ -601,13 +594,10 @@ void GriffonEngine::saveLoadNew() {
 							_shouldQuit = true;
 							return;
 						}
-					}
-
-					if (lowerLock && tickpause < _ticks) {
+					} else {
 						if ((curCol == 1) && saveState(curRow - 1)) {
 							_secStart += _secsingame;
 							_secsingame = 0;
-							lowerLock = false;
 							_saveSlot = curRow - 1;
 							curRow = 0;
 						} else if ((curCol == 2) && loadState(curRow - 1)) {
@@ -627,51 +617,43 @@ void GriffonEngine::saveLoadNew() {
 							mainLoop();
 						}
 					}
-
-					tickpause = _ticks + 125;
 				}
 
 				switch (_event.kbd.keycode) {
 				case Common::KEYCODE_ESCAPE:
-					if (!lowerLock)
+					if (curRow == 0)
 						return;
-					lowerLock = false;
 					curRow = 0;
-					tickpause = _ticks + 125;
 					break;
 				case Common::KEYCODE_DOWN:
-					if (lowerLock) {
+					if (curRow != 0) {
 						++curRow;
 						if (curRow == 5)
 							curRow = 1;
-						tickpause = _ticks + 125;
 					}
 					break;
 
 				case Common::KEYCODE_UP:
-					if (lowerLock) {
+					if (curRow != 0) {
 						--curRow;
 						if (curRow == 0)
 							curRow = 4;
-						tickpause = _ticks + 125;
 					}
 					break;
 
 				case Common::KEYCODE_LEFT:
-					if (!lowerLock) {
+					if (curRow == 0) {
 						--curCol;
 						if (curCol == -1)
 							curCol = 3;
-						tickpause = _ticks + 125;
 					}
 					break;
 
 				case Common::KEYCODE_RIGHT:
-					if (!lowerLock) {
+					if (curRow == 0) {
 						++curCol;
 						if (curCol == 4)
 							curCol = 0;
-						tickpause = _ticks + 125;
 					}
 					break;
 				default:
@@ -713,8 +695,7 @@ void GriffonEngine::saveLoadNew() {
 
 		_itemImg[15]->blit(*_videoBuffer, rcDest.left, rcDest.top);
 
-
-		if (lowerLock) {
+		if (curRow != 0) {
 			rcDest.top = 18;
 			if (curCol == 1)
 				rcDest.left = 108;
@@ -740,7 +721,6 @@ void GriffonEngine::saveLoadNew() {
 
 		g_system->copyRectToScreen(_videoBuffer3->getPixels(), _videoBuffer3->pitch, 0, 0, _videoBuffer3->w, _videoBuffer3->h);
 		g_system->updateScreen();
-		g_system->getEventManager()->pollEvent(_event);
 
 		_ticksPassed = _ticks;
 		_ticks = g_system->getMillis();
