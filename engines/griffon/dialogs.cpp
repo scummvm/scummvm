@@ -64,7 +64,6 @@ void GriffonEngine::title(int mode) {
 	_videoBuffer->blit(*_videoBuffer2);
 
 	int cursel = 0;
-	int keypause = _ticks + 220;
 	int ticks1 = _ticks;
 
 	if (config.music) {
@@ -159,56 +158,50 @@ void GriffonEngine::title(int mode) {
 		while (_itemyloc >= 16)
 			_itemyloc = _itemyloc - 16;
 
-		g_system->getEventManager()->pollEvent(_event);
+		if (g_system->getEventManager()->pollEvent(_event)) {
+			if (_event.type == Common::EVENT_QUIT)
+				_shouldQuit = true;
 
-		if (_event.type == Common::EVENT_QUIT)
-			_shouldQuit = true;
-
-		if (keypause < _ticks) {
 			if (_event.type == Common::EVENT_KEYDOWN) {
-				keypause = _ticks + 150;
+				switch(_event.kbd.keycode) {
+				case Common::KEYCODE_ESCAPE:
+					if (mode == 1)
+						exitTitle = true;
+					break;
+				case Common::KEYCODE_UP:
+					cursel--;
+					if (cursel < 0)
+						cursel = (mode == 1 ? 3 : 2);
+					break;
+				case Common::KEYCODE_DOWN:
+					cursel++;
+					if (cursel >= (mode == 1 ? 4 : 3))
+						cursel = 0;
+					break;
+				case Common::KEYCODE_RETURN:
+					switch(cursel) {
+					case 0:
+						_ticks = g_system->getMillis();
+						ticks1 = _ticks;
 
-				switch(_event.kbd.keycode){
-					case Common::KEYCODE_ESCAPE:
-						if (mode == 1)
-							exitTitle = true;
+						exitTitle = true;
 						break;
-					case Common::KEYCODE_UP:
-						cursel--;
-						if (cursel < 0)
-							cursel = (mode == 1 ? 3 : 2);
+					case 1:
+						configMenu();
+						_ticks = g_system->getMillis();
+						ticks1 = _ticks;
 						break;
-					case Common::KEYCODE_DOWN:
-						cursel++;
-						if (cursel >= (mode == 1 ? 4 : 3))
-							cursel = 0;
+					case 2:
+						_shouldQuit = true;
 						break;
-					case Common::KEYCODE_RETURN:
-						switch(cursel) {
-						case 0:
-							_ticks = g_system->getMillis();
-							keypause = _ticks + 150;
-							ticks1 = _ticks;
-
-							exitTitle = true;
-							break;
-						case 1:
-							configMenu();
-							_ticks = g_system->getMillis();
-							keypause = _ticks + 150;
-							ticks1 = _ticks;
-							break;
-						case 2:
-							_shouldQuit = true;
-							break;
-						case 3:
-							exitTitle = true;
-						default:
-							break;
-						}
-						break;
+					case 3:
+						exitTitle = true;
 					default:
 						break;
+					}
+					break;
+				default:
+					break;
 				}
 			}
 		}
@@ -251,10 +244,7 @@ void GriffonEngine::configMenu() {
 	int cursel = MINCURSEL;
 	bool exitMenu = false;
 
-	int tickwait = 1000 / 60;
-
 	_ticks = g_system->getMillis();
-	int keypause = _ticks + tickwait;
 
 	Graphics::TransparentSurface *configwindow = loadImage("art/configwindow.bmp", true);
 	configwindow->setAlpha(160, true);
@@ -338,9 +328,6 @@ void GriffonEngine::configMenu() {
 
 		_videoBuffer->setAlpha((int)yy);
 		g_system->copyRectToScreen(_videoBuffer->getPixels(), _videoBuffer->pitch, 0, 0, _videoBuffer->w, _videoBuffer->h);
-		g_system->updateScreen();
-
-		g_system->getEventManager()->pollEvent(_event);
 
 		_ticksPassed = _ticks;
 		_ticks = g_system->getMillis();
@@ -359,15 +346,11 @@ void GriffonEngine::configMenu() {
 		while (_itemyloc >= 16)
 			_itemyloc -= 16;
 
-		if (keypause < _ticks) {
-			g_system->getEventManager()->pollEvent(_event);
-
+		while (g_system->getEventManager()->pollEvent(_event)) {
 			if (_event.type == Common::EVENT_QUIT)
 				_shouldQuit = true;
 
 			if (_event.type == Common::EVENT_KEYDOWN) {
-				keypause = _ticks + tickwait;
-
 				if (_event.kbd.keycode == Common::KEYCODE_ESCAPE)
 					break;
 
@@ -461,6 +444,7 @@ void GriffonEngine::configMenu() {
 		while (_cloudAngle >= 360)
 			_cloudAngle -= 360;
 
+		g_system->updateScreen();
 		g_system->delayMillis(10);
 	} while (!_shouldQuit && !exitMenu);
 
