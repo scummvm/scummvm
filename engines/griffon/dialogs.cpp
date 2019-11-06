@@ -702,9 +702,6 @@ void GriffonEngine::saveLoadNew() {
 			else if (curCol == 2)
 				rcDest.left = 170;
 
-			// CHECKME: Useless code? or temporary commented?
-			// rcDest.left = rcDest.left; // + 2 + 2 * sin(-2 * PI * _itemyloc / 16)
-
 			_itemImg[15]->blit(*_videoBuffer, rcDest.left, rcDest.top);
 		}
 
