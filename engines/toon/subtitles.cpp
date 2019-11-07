@@ -38,7 +38,7 @@ SubtitleRenderer::~SubtitleRenderer() {
 
 
 void SubtitleRenderer::render(const Graphics::Surface &frame, uint32 frameNumber, byte color) {
-	if (!_hasSubtitles || _index > _last) {
+	if (!_hasSubtitles || _tw.empty()) {
 		return;
 	}
 
@@ -48,19 +48,18 @@ void SubtitleRenderer::render(const Graphics::Surface &frame, uint32 frameNumber
 	// _vm->drawCostumeLine(0, 0, strf, _subSurface);
 	// _vm->_system->copyRectToScreen(_subSurface->getBasePtr(0, 0), _subSurface->pitch, 0, 0, _subSurface->w,  _subSurface->h);
 
-	if (frameNumber > _tw[_index].fend) {
-		_index++;
-		if (_index > _last) {
+	if (frameNumber > _tw.front()._endFrame) {
+		_tw.pop_front();
+		if (_tw.empty()) {
 			return;
 		}
-		_currentLine = (char *)_fileData + _tw[_index].foffset;
 	}
 
-	if (frameNumber < _tw[_index].fstart) {
+	if (frameNumber < _tw.front()._startFrame) {
 		return;
 	}
 
-	_vm->drawCustomText(TOON_SCREEN_WIDTH / 2, TOON_SCREEN_HEIGHT, _currentLine, _subSurface, color);
+	_vm->drawCustomText(TOON_SCREEN_WIDTH / 2, TOON_SCREEN_HEIGHT, _tw.front()._text.c_str(), _subSurface, color);
 	_vm->_system->copyRectToScreen(_subSurface->getBasePtr(0, 0), _subSurface->pitch, 0, 0, _subSurface->w,  _subSurface->h);
 }
 
@@ -68,25 +67,45 @@ bool SubtitleRenderer::load(const Common::String &video) {
 	// warning(video.c_str());
 
 	_hasSubtitles = false;
-	_index = 0;
 
 	Common::String subfile(video);
 	Common::String ext("tss");
 	subfile.replace(subfile.size() - ext.size(), ext.size(), ext);
 
-	uint32 fileSize = 0;
-	uint8 *fileData = _vm->resources()->getFileData(subfile, &fileSize);
-	if (!fileData) {
+	Common::SeekableReadStream *file;
+	file = _vm->resources()->openFile(subfile);
+	if (!file) {
 		return false;
 	}
 
-	uint32 numOflines = *((uint32 *) fileData);
-	uint32 idx_size = numOflines * sizeof(TimeWindow);
-	memcpy(_tw, sizeof(numOflines) + fileData, idx_size);
-	_fileData = sizeof(numOflines) + fileData + idx_size;
-	_last = numOflines - 1;
+	Common::String line;
+	int lineNo = 0;
 
-	_currentLine = (char *)_fileData + _tw[0].foffset;
+	_tw.clear();
+	while (!file->eos() && !file->err()) {
+		line = file->readLine();
+
+		lineNo++;
+		if (line.empty() || line[0] == '#') {
+			continue;
+		}
+
+		const char *ptr = line.c_str();
+
+		int startFrame = strtoul(ptr, const_cast<char **>(&ptr), 10);
+		int endFrame = strtoul(ptr, const_cast<char **>(&ptr), 10);
+
+		while (*ptr && Common::isSpace(*ptr))
+			ptr++;
+
+		if (startFrame > endFrame) {
+			warning("%s:%d: startFrame (%d) > endFrame (%d)", subfile.c_str(), lineNo, startFrame, endFrame);
+			continue;
+		}
+
+		_tw.push_back(TimeWindow(startFrame, endFrame, ptr));
+	}
+
 	_hasSubtitles = true;
 	return _hasSubtitles;
 }

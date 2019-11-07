@@ -28,10 +28,16 @@
 
 namespace Toon {
 
-struct TimeWindow {
-	uint32 fstart;
-	uint32 fend;
-	uint32 foffset;
+class TimeWindow {
+public:
+	uint16 _startFrame;
+	uint16 _endFrame;
+	Common::String _text;
+	TimeWindow(int startFrame, int endFrame, const Common::String &text) {
+		_startFrame = startFrame;
+		_endFrame = endFrame;
+		_text = text;
+	}
 };
 
 class SubtitleRenderer {
@@ -45,12 +51,7 @@ protected:
 	ToonEngine *_vm;
 	Graphics::Surface *_subSurface;
 	bool _hasSubtitles;
-	char *_lines[384];
-	TimeWindow _tw[384];
-	uint8 *_fileData;
-	uint16 _index;
-	uint16 _last;
-	char *_currentLine;
+	Common::List<TimeWindow> _tw;
 };
 
 } // End of namespace Toon
