@@ -111,6 +111,7 @@ public:
 	OSystem::TransactionError endGFXTransaction();
 	int16 getHeight(){ return _gameHeight; }
 	int16 getWidth(){ return _gameWidth; }
+	float getScaleRatio() const;
 	void setPalette(const byte *colors, uint start, uint num);
 	void grabPalette(byte *colors, uint start, uint num) const;
 	void copyRectToScreen(const void *buf, int pitch, int x, int y, int w,
@@ -142,6 +143,8 @@ public:
 
 	// Transform point from touchscreen coords into gamescreen coords
 	void transformPoint(touchPosition &point);
+	// Clip point to gamescreen coords
+	void clipPoint(touchPosition &point);
 
 	void setCursorDelta(float deltaX, float deltaY);
 

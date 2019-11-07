@@ -233,6 +233,16 @@ OSystem::TransactionError OSystem_3DS::endGFXTransaction() {
 	return OSystem::kTransactionSuccess;
 }
 
+float OSystem_3DS::getScaleRatio() const {
+	if (_overlayVisible) {
+		return 1.0;
+	} else if (config.screen == kScreenTop) {
+		return _gameTopTexture.getScaleX();
+	} else {
+		return _gameBottomTexture.getScaleX();
+	}
+}
+
 void OSystem_3DS::setPalette(const byte *colors, uint start, uint num) {
 	assert(start + num <= 256);
 	memcpy(_palette + 3 * start, colors, 3 * num);
@@ -578,18 +588,17 @@ void OSystem_3DS::warpMouse(int x, int y) {
 	_cursorY = y;
 
 	// TODO: adjust for _cursorScalable ?
-	int offsetx = 0;
-	int offsety = 0;
 	x -= _cursorHotspotX;
 	y -= _cursorHotspotY;
+
+	int offsetx = 0;
+	int offsety = 0;
 	if (!_overlayVisible) {
-		offsetx += config.screen == kScreenTop ? _gameTopX : _gameBottomX;
-		offsety += config.screen == kScreenTop ? _gameTopY : _gameBottomY;
+		offsetx = config.screen == kScreenTop ? _gameTopTexture.getPosX() : _gameBottomTexture.getPosX();
+		offsety = config.screen == kScreenTop ? _gameTopTexture.getPosY() : _gameBottomTexture.getPosY();
 	}
-	float scalex = config.screen == kScreenTop ? (float)_gameTopTexture.actualWidth / _gameWidth : 1.f;
-	float scaley = config.screen == kScreenTop ? (float)_gameTopTexture.actualHeight / _gameHeight : 1.f;
-	_cursorTexture.setPosition(scalex * x + offsetx,
-							   scaley * y + offsety);
+
+	_cursorTexture.setPosition(x + offsetx, y + offsety);
 }
 
 void OSystem_3DS::setCursorDelta(float deltaX, float deltaY) {

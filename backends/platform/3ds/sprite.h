@@ -54,10 +54,10 @@ public:
 	void setPosition(int x, int y);
 	void setOffset(uint16 x, uint16 y);
 	void setScale(float x, float y);
-	float getScaleX(){ return scaleX; }
-	float getScaleY(){ return scaleY; }
-	int getPosX(){ return posX; }
-	int getPosY(){ return posY; }
+	float getScaleX() const { return scaleX; }
+	float getScaleY() const { return scaleY; }
+	int getPosX() const { return posX; }
+	int getPosY() const { return posY; }
 	C3D_Mtx* getMatrix();
 
 	uint16 actualWidth;

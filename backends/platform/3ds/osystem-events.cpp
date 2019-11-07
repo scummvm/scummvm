@@ -51,8 +51,6 @@ static void eventThreadFunc(void *arg) {
 	uint32 touchStartTime = osys->getMillis();
 	touchPosition lastTouch = {0, 0};
 	bool isRightClick = false;
-	float cursorX = 0;
-	float cursorY = 0;
 	float cursorDeltaX = 0;
 	float cursorDeltaY = 0;
 	int circleDeadzone = 20;
@@ -93,8 +91,7 @@ static void eventThreadFunc(void *arg) {
 				if (touch.py > 239 - borderSnapZone)
 					touch.py = 239;
 			}
-			cursorX = touch.px;
-			cursorY = touch.py;
+
 			osys->transformPoint(touch);
 
 			osys->warpMouse(touch.px, touch.py);
@@ -130,16 +127,14 @@ static void eventThreadFunc(void *arg) {
 				pushEventQueue(eventQueue, event);
 			}
 		} else if (cursorDeltaX != 0 || cursorDeltaY != 0) {
-			cursorX += cursorDeltaX;
-			cursorY -= cursorDeltaY;
-			if (cursorX < 0) cursorX = 0;
-			if (cursorY < 0) cursorY = 0;
-			if (cursorX > 320) cursorX = 320;
-			if (cursorY > 240) cursorY = 240;
-			lastTouch.px = cursorX;
-			lastTouch.py = cursorY;
-			osys->transformPoint(lastTouch);
+			float scaleRatio = osys->getScaleRatio();
+
+			lastTouch.px += cursorDeltaX / scaleRatio;
+			lastTouch.py -= cursorDeltaY / scaleRatio;
+
+			osys->clipPoint(lastTouch);
 			osys->warpMouse(lastTouch.px, lastTouch.py);
+
 			event.mouse.x = lastTouch.px;
 			event.mouse.y = lastTouch.py;
 			event.type = Common::EVENT_MOUSEMOVE;
@@ -312,10 +307,18 @@ void OSystem_3DS::transformPoint(touchPosition &point) {
 	if (!_overlayVisible) {
 		point.px = static_cast<float>(point.px) / _gameBottomTexture.getScaleX() - _gameBottomTexture.getPosX();
 		point.py = static_cast<float>(point.py) / _gameBottomTexture.getScaleY() - _gameBottomTexture.getPosY();
+	}
+
+	clipPoint(point);
+}
+
+void OSystem_3DS::clipPoint(touchPosition &point) {
+	if (_overlayVisible) {
+		point.px = CLIP<uint16>(point.px, 0, getOverlayWidth()  - 1);
+		point.py = CLIP<uint16>(point.py, 0, getOverlayHeight() - 1);
 	} else {
-		if (config.screen == kScreenTop) {
-			point.px = (uint32) point.px * 400 / 320; // TODO: Fix horizontal speed
-		}
+		point.px = CLIP<uint16>(point.px, 0, _gameTopTexture.actualWidth  - 1);
+		point.py = CLIP<uint16>(point.py, 0, _gameTopTexture.actualHeight - 1);
 	}
 }
 
