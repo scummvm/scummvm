@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: Prince\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2018-04-17 19:53+0100\n"
-"PO-Revision-Date: 2019-11-04 22:55+0000\n"
+"PO-Revision-Date: 2019-11-08 18:03+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: English <https://translations.scummvm.org/projects/prince/"
 "prince/en/>\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 3.7.1\n"
+"X-Generator: Weblate 3.9.1\n"
 
 #: dialog0001.txt:1
 msgid "HERO: Przeppp... raszam..."
@@ -4678,43 +4678,43 @@ msgstr "HERO: What arguments?"
 
 #: dialog0125.txt:100105
 msgid "OTHER: Podzielił się ze mną tym szlachetnym|trunkiem, i jeszcze dołożył magiczny|most."
-msgstr ""
+msgstr "OTHER: He shared this noble drink|with me, and added a magic|bridge."
 
 #: dialog0125.txt:100106
 msgid "OTHER: Tak, tak, Awiwat to specjalista od|zabezpieczeń."
-msgstr ""
+msgstr "OTHER: Yes, yes, Awiwat is a security|specialist."
 
 #: dialog0125.txt:100107
 msgid "HERO: Awiwat? Może Arivald?"
-msgstr ""
+msgstr "HERO: Awiwat? Maybe Arivald?"
 
 #: dialog0125.txt:100108
 msgid "OTHER: Może i Aribalt, nie pamiętam.#B0"
-msgstr ""
+msgstr "OTHER: Maybe Aribalt, I don't remember.#B0"
 
 #: dialog0125.txt:100201
 msgid "OTHER: Wszystko może się znudzić, mój|chłopcze."
-msgstr ""
+msgstr "OTHER: Everything can get boring,|my boy."
 
 #: dialog0125.txt:100202
 msgid "OTHER: Nawet szemrzący strumyk, zielone|drzewa i soczyste owoce."
-msgstr ""
+msgstr "OTHER: Even the murmuring stream, green trees and juicy fruits."
 
 #: dialog0125.txt:100203
 msgid "HERO: Ale te dwie piękne istoty|z wachlarzami..."
-msgstr ""
+msgstr "HERO: But these two beautiful beings with the fans..."
 
 #: dialog0125.txt:100204
 msgid "OTHER: Nawet i one. Nawet i one..."
-msgstr ""
+msgstr "OTHER: Even them. Even them..."
 
 #: dialog0125.txt:100205
 msgid "P#HERO: Mam to jeszcze przed sobą.#B0"
-msgstr ""
+msgstr "P#HERO: I have it in front of me.#B0"
 
 #: dialog0125.txt:100301
 msgid "OTHER: Tu na górę dochodzi niewiele dźwięków.|Jestem spragniony muzyki."
-msgstr ""
+msgstr "OTHER: Very few sounds reach up here.|I am thirsty for music."
 
 #: dialog0125.txt:100302
 msgid "OTHER: Tak, muuuzyka."
@@ -4722,19 +4722,21 @@ msgstr "OTHER: Yes, muuuusic."
 
 #: dialog0125.txt:100303
 msgid "OTHER: Ale ludzka mowa to nie jest to, co|tygrysy lubią najbardziej."
-msgstr ""
+msgstr "OTHER: But human speech is not|what the tigers like the most."
 
 #: dialog0125.txt:100304
 msgid "OTHER: Więc nie musisz szybko wracać.#E3"
-msgstr ""
+msgstr "OTHER: So you don't have to come back quickly.#E3"
 
 #: dialog0125.txt:100401
 msgid "OTHER: Ja nic nie muszę."
-msgstr ""
+msgstr "OTHER: I don't owe anything anybody."
 
 #: dialog0125.txt:100402
 msgid "OTHER: A jak jeszcze raz wrzaśniesz, to|spopielę cię i rzucę jako nawóz|dla trolli.#B0"
 msgstr ""
+"OTHER: And if you scream again, I will|burn you and throw you as a dung|for "
+"trolls.#B0"
 
 #: dialog0126.txt:1
 msgid "HERO: Hi babe..."
@@ -4742,7 +4744,7 @@ msgstr "HERO: Hi babe.."
 
 #: dialog0127.txt:1
 msgid "HERO: Gdybym powiedział ci o czym myślę pewnie|byś się obraziła."
-msgstr ""
+msgstr "HERO: If I told you what I was thinking|you would get offended."
 
 #: dialog0128.txt:1
 msgid "OTHER: Czego?"
@@ -4822,35 +4824,35 @@ msgstr ""
 
 #: dialog0132.txt:2
 msgid "OTHER: Zatłukę tego małego gnojka!"
-msgstr ""
+msgstr "OTHER: I'll beat this little bastard!"
 
 #: dialog0133.txt:1
 msgid "OTHER: Koniec z wysłuchiwaniem rzępolenia!"
-msgstr ""
+msgstr "OTHER: No more listening to fiddling!"
 
 #: dialog0133.txt:2
 msgid "OTHER: Koniec z lutnią-samograjką!"
-msgstr ""
+msgstr "OTHER: No more self-playing lute!"
 
 #: dialog0133.txt:3
 msgid "OTHER: Koniec z praniem skarpetek!"
-msgstr ""
+msgstr "OTHER: No more socks washing!"
 
 #: dialog0133.txt:4
 msgid "OTHER: Koniec z gotowaniem rosołu na kaca!"
-msgstr ""
+msgstr "OTHER: No more preparing a hangover broth!"
 
 #: dialog0133.txt:5
 msgid "OTHER: Żeby tu więcej jego brudna stopa|nie postała!"
-msgstr ""
+msgstr "OTHER: Let his dirty feet stand here|no more!"
 
 #: dialog0134.txt:1
 msgid "HERO: Na razie nie muszę mu o niczym mówić."
-msgstr ""
+msgstr "HERO: I don't have to tell him anything yet."
 
 #: dialog0134.txt:2
 msgid "HERO: Trzeba jakoś wykorzystać tę sytuację|dla siebie."
-msgstr ""
+msgstr "HERO: I'd rather somehow use this situation|to my advantage."
 
 #: dialog0135.txt:1
 msgid "HERO: Mój drogi, mam dla ciebie dwie wiadomości.|Jedną dobrą, a drugą złą."
