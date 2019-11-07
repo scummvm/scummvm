@@ -52,7 +52,7 @@ public:
 	}
 
 	virtual const char *getEngineId() const {
-		return "gnap";
+		return "griffon";
 	}
 
 	virtual const char *getName() const {
