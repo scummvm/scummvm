@@ -237,7 +237,7 @@ void Net::disableSessionJoining() {
 	debug(1, "Net::disableSessionJoining()"); // PN_DisableSessionPlayerJoin
 
 	Networking::PostRequest *rq = new Networking::PostRequest(_serverprefix + "/disablesession",
-		new Common::Callback<Net, Common::JSONValue *>(this, &Net::disableSessionJoiningCallback),
+		nullptr,
 		new Common::Callback<Net, Networking::ErrorResponse>(this, &Net::disableSessionJoiningErrorCallback));
 
 	char *buf = (char *)malloc(MAX_PACKET_SIZE);
@@ -248,9 +248,6 @@ void Net::disableSessionJoining() {
 	rq->start();
 
 	ConnMan.addRequest(rq);
-}
-
-void Net::disableSessionJoiningCallback(Common::JSONValue *response) {
 }
 
 void Net::disableSessionJoiningErrorCallback(Networking::ErrorResponse error) {
@@ -293,7 +290,7 @@ bool Net::destroyPlayer(int32 playerDPID) {
 	debug(1, "Net::destroyPlayer(%d)", playerDPID);
 
 	Networking::PostRequest *rq = new Networking::PostRequest(_serverprefix + "/removeuser",
-		new Common::Callback<Net, Common::JSONValue *>(this, &Net::destroyPlayerCallback),
+		nullptr,
 		new Common::Callback<Net, Networking::ErrorResponse>(this, &Net::destroyPlayerErrorCallback));
 
 	char *buf = (char *)malloc(MAX_PACKET_SIZE);
@@ -306,9 +303,6 @@ bool Net::destroyPlayer(int32 playerDPID) {
 	ConnMan.addRequest(rq);
 
 	return true;
-}
-
-void Net::destroyPlayerCallback(Common::JSONValue *response) {
 }
 
 void Net::destroyPlayerErrorCallback(Networking::ErrorResponse error) {
@@ -440,7 +434,7 @@ int Net::remoteSendData(int typeOfSend, int sendTypeParam, int type, Common::Str
 	debug("Package to send: %s", res.c_str());
 
 	Networking::PostRequest *rq = new Networking::PostRequest(_serverprefix + "/packet",
-		new Common::Callback<Net, Common::JSONValue *>(this, &Net::remoteSendDataCallback),
+		nullptr,
 		new Common::Callback<Net, Networking::ErrorResponse>(this, &Net::remoteSendDataErrorCallback));
 
 	rq->setPostData(buf, res.size());
@@ -473,10 +467,6 @@ int Net::remoteSendData(int typeOfSend, int sendTypeParam, int type, Common::Str
 		return 0;
 
 	return defaultRes;
-}
-
-void Net::remoteSendDataCallback(Common::JSONValue *response) {
-	debug(1, "remoteSendData: Got: '%s'", response->stringify().c_str());
 }
 
 void Net::remoteSendDataErrorCallback(Networking::ErrorResponse error) {

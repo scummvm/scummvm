@@ -78,16 +78,13 @@ private:
 	void addUserCallback(Common::JSONValue *response);
 	void addUserErrorCallback(Networking::ErrorResponse error);
 
-	void disableSessionJoiningCallback(Common::JSONValue *response);
 	void disableSessionJoiningErrorCallback(Networking::ErrorResponse error);
 
 	void endSessionCallback(Common::JSONValue *response);
 	void endSessionErrorCallback(Networking::ErrorResponse error);
 
-	void destroyPlayerCallback(Common::JSONValue *response);
 	void destroyPlayerErrorCallback(Networking::ErrorResponse error);
 
-	void remoteSendDataCallback(Common::JSONValue *response);
 	void remoteSendDataErrorCallback(Networking::ErrorResponse error);
 
 	void remoteReceiveDataCallback(Common::JSONValue *response);
