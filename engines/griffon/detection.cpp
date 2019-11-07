@@ -49,7 +49,10 @@ static const ADGameDescription gameDescriptions[] = {
 class GriffonMetaEngine: public AdvancedMetaEngine {
 public:
 	GriffonMetaEngine() : AdvancedMetaEngine(Griffon::gameDescriptions, sizeof(ADGameDescription), griffonGames) {
-		_singleId = "griffon";
+	}
+
+	virtual const char *getEngineId() const {
+		return "gnap";
 	}
 
 	virtual const char *getName() const {
