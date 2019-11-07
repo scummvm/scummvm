@@ -299,19 +299,19 @@ int16 Cursor::updateIniFromScene() {
 }
 
 int16 Cursor::executeScript(ScriptOpCall &scriptOpCall, uint16 unkFlag) {
-	int16 temp = _vm->_scriptOpcodes->_data_800728c0;
+	int16 temp = _vm->_scriptOpcodes->_scriptTargetINI;
 	scriptOpCall._field8 = 1;
 	scriptOpCall._result = 0;
 	_vm->_scriptOpcodes->_data_80071f5c = 0;
 	_vm->_scriptOpcodes->executeScriptLoop(scriptOpCall);
 
 	if (!(scriptOpCall._result & 1) && data_800728b0_cursor_seqID == 5 && unkFlag != 0) {
-		_vm->_scriptOpcodes->_data_800728c0 = -1;
+		_vm->_scriptOpcodes->_scriptTargetINI = -1;
 		scriptOpCall._field8 = 1;
 		scriptOpCall._result = 0;
 		_vm->_scriptOpcodes->_data_80071f5c = 0;
 		_vm->_scriptOpcodes->executeScriptLoop(scriptOpCall);
-		_vm->_scriptOpcodes->_data_800728c0 = temp;
+		_vm->_scriptOpcodes->_scriptTargetINI = temp;
 		if (scriptOpCall._result & 1) {
 			scriptOpCall._result |= 2;
 		}
