@@ -300,6 +300,7 @@ int16 Cursor::updateIniFromScene() {
 
 int16 Cursor::executeScript(ScriptOpCall &scriptOpCall, uint16 unkFlag) {
 	int16 temp = _vm->_scriptOpcodes->_scriptTargetINI;
+	byte *codeStart = scriptOpCall._code;
 	scriptOpCall._field8 = 1;
 	scriptOpCall._result = 0;
 	_vm->_scriptOpcodes->_data_80071f5c = 0;
@@ -307,6 +308,7 @@ int16 Cursor::executeScript(ScriptOpCall &scriptOpCall, uint16 unkFlag) {
 
 	if (!(scriptOpCall._result & 1) && data_800728b0_cursor_seqID == 5 && unkFlag != 0) {
 		_vm->_scriptOpcodes->_scriptTargetINI = -1;
+		scriptOpCall._code = codeStart;
 		scriptOpCall._field8 = 1;
 		scriptOpCall._result = 0;
 		_vm->_scriptOpcodes->_data_80071f5c = 0;
