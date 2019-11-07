@@ -319,12 +319,11 @@ void GriffonEngine::configMenu() {
 
 		_itemImg[15]->blit(*_videoBuffer, rc.left, rc.top);
 
-		float yy = 255.0;
 		if (_ticks < ticks1 + 1000) {
-			yy = 255.0 * ((float)(_ticks - ticks1) / 1000.0);
+			float yy = 255.0 * ((float)(_ticks - ticks1) / 1000.0);
 			yy = CLIP<float>(yy, 0.0, 255.0);
 
-			_videoBuffer->setAlpha((int)yy);
+			_videoBuffer->setAlpha((uint8)yy);
 		}
 
 		_videoBuffer->blit(*_videoBuffer2);
@@ -716,12 +715,11 @@ void GriffonEngine::saveLoadNew() {
 			_itemImg[15]->blit(*_videoBuffer, rcDest.left, rcDest.top);
 		}
 
-		int yy = 255;
 		if (_ticks < ticks1 + 1000) {
-			yy = 255 * (_ticks - ticks1) / 1000;
+			int yy = 255 * (_ticks - ticks1) / 1000;
 			yy = CLIP(yy, 0, 255);
 
-			_videoBuffer->setAlpha((int)yy);
+			_videoBuffer->setAlpha((uint8)yy);
 		}
 
 		_videoBuffer3->fillRect(Common::Rect(0, 0, _videoBuffer3->w, _videoBuffer3->h), 0);
