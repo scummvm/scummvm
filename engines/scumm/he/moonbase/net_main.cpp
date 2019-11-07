@@ -120,8 +120,12 @@ void Net::addUserErrorCallback(Networking::ErrorResponse error) {
 }
 
 int Net::removeUser() {
-	warning("STUB: Net::removeUser()"); // PN_RemoveUser
-	return 0;
+	debug(1, "Net::removeUser()"); // PN_RemoveUser
+
+	if (_myUserId != -1)
+		destroyPlayer(_myUserId);
+
+	return 1;
 }
 
 int Net::whoSentThis() {
