@@ -16515,10 +16515,92 @@ static const uint16 sq5PatchCaptainChairFix[] = {
 	PATCH_END
 };
 
+// When using the fruit on WD40 in room 305, she can take off before ego's
+//  animation completes and lock up the game. WD40 remains on the log for five
+//  seconds but ego's animation runs at the game speed setting and the scripts
+//  don't coordinate. At slow speeds, ego's animation can take all five seconds.
+//
+// We fix this by not allowing WD40 to take off while ego has a script running.
+//  To do this we use existing code in sWD40LandOverRog that retries the current
+//  state after 10 ticks. This preserves the scene's timing unless WD40 would
+//  have gotten stuck, in which case she now waits for sFruitUpWD40 to complete.
+//
+// Applies to: All versions
+// Responsible method: sWD40LandOverRog:changeState
+// Fixes bug: #5162
+static const uint16 sq5SignatureWd40FruitFix[] = {
+	0x6d, 0x14,                     // dpToa state [ state-- ]
+	0x35, 0x0a,                     // ldi 0a
+	SIG_MAGICDWORD,
+	0x65, 0x20,                     // aTop ticks [ ticks = 10 ]
+	0x32, SIG_UINT16(0x0106),       // jmp 0106   [ end of method ]
+	SIG_ADDTOOFFSET(+57),
+	0x31, 0x28,                     // bnt 28 [ state 5 ]
+	SIG_ADDTOOFFSET(+7),
+	0x31, 0x18,                     // bnt 18
+	0x78,                           // push1
+	SIG_ADDTOOFFSET(+20),
+	0x32, SIG_UINT16(0x00aa),       // jmp 00aa [ end of method ]
+	0x35, 0x01,                     // ldi 01
+	0x65, 0x1a,                     // aTop cycles
+	0x32, SIG_UINT16(0x00a3),       // jmp 00a3 [ end of method ]
+	0x3c,                           // dup
+	0x35, 0x05,                     // ldi 05
+	0x1a,                           // eq?
+	0x31, 0x11,                     // bnt 11 [ state 6 ]
+	0x39, SIG_SELECTOR8(play),      // pushi play
+	0x78,                           // push1
+	0x39, 0x4b,                     // pushi 4b
+	0x72, SIG_UINT16(0x096e),       // lofsa theMusic3
+	0x4a, 0x06,                     // send 06 [ theMusic3 play: 75 ]
+	0x35, 0x05,                     // ldi 05
+	0x65, 0x1c,                     // aTop seconds [ seconds = 5 ]
+	0x32, SIG_UINT16(0x008c),       // jmp 008c [ end of method ]
+	0x3c,                           // dup
+	0x35, 0x06,                     // ldi 06
+	0x1a,                           // eq?
+	0x30, SIG_UINT16(0x0053),       // bnt 0053 [ state 7 ]
+	SIG_END
+};
+
+static const uint16 sq5PatchWd40FruitFix[] = {
+	PATCH_ADDTOOFFSET(+66),
+	0x31, 0x22,                     // bnt 22 [ state 5 ]
+	PATCH_ADDTOOFFSET(+7),
+	0x78,                           // push1
+	0x31, 0x16,                     // bnt 16
+	PATCH_ADDTOOFFSET(+20),
+	0x3a,                           // toss
+	0x48,                           // ret
+	0x69, 0x1a,                     // sTop cycles [ cycles = 1 ]
+	0x3c,                           // dup
+	0x35, 0x05,                     // ldi 05
+	0x1a,                           // eq?
+	0x31, 0x0d,                     // bnt 0d [ state 6 ]
+	0x39, PATCH_SELECTOR8(play),    // pushi play
+	0x78,                           // push1
+	0x39, 0x4b,                     // pushi 4b
+	0x72, PATCH_UINT16(0x096e),     // lofsa theMusic3
+	0x4a, 0x06,                     // send 06 [ theMusic3 play: 75 ]
+	0x69, 0x1c,                     // sTop seconds [ seconds = 5 ]
+	0x48,                           // ret
+	0x3c,                           // dup
+	0x35, 0x06,                     // ldi 06
+	0x1a,                           // eq?
+	0x31, 0x5e,                     // bnt 5e [ state 7 ]
+	0X38, PATCH_SELECTOR16(script), // pushi script
+	0x76,                           // push0
+	0x81, 0x00,                     // lag 00
+	0x4a, 0x04,                     // send 04 [ ego script? ]
+	0x2e, PATCH_UINT16(0xff76),     // bt ff76 [ state--, ticks = 10 ]
+	PATCH_END
+};
+
 //          script, description,                                      signature                             patch
 static const SciScriptPatcherEntry sq5Signatures[] = {
 	{  true,   200, "captain chair lockup fix",                    1, sq5SignatureCaptainChairFix,          sq5PatchCaptainChairFix },
 	{  true,   226, "toolbox fix",                                 1, sq5SignatureToolboxFix,               sq5PatchToolboxFix },
+	{  true,   305, "wd40 fruit fix",                              1, sq5SignatureWd40FruitFix,             sq5PatchWd40FruitFix },
 	{  true,  1000, "drive bay pathfinding fix",                   1, sq5SignatureDriveBayPathfindingFix,   sq5PatchDriveBayPathfindingFix },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
