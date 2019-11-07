@@ -1434,7 +1434,7 @@ void ToonEngine::updateAnimationSceneScripts(int32 timeElapsed) {
 
 	do {
 		if (_sceneAnimationScripts[_lastProcessedSceneScript]._lastTimer <= _system->getMillis() &&
-		        !_sceneAnimationScripts[_lastProcessedSceneScript]._frozen && !_sceneAnimationScripts[_lastProcessedSceneScript]._frozenForConversation) {
+				!_sceneAnimationScripts[_lastProcessedSceneScript]._frozen && !_sceneAnimationScripts[_lastProcessedSceneScript]._frozenForConversation) {
 			_animationSceneScriptRunFlag = true;
 
 			while (_animationSceneScriptRunFlag && _sceneAnimationScripts[_lastProcessedSceneScript]._lastTimer <= _system->getMillis() && !_shouldQuit) {
@@ -2992,8 +2992,8 @@ int32 ToonEngine::showInventory() {
 				int32 x = 57 * (i % 7) + 114;
 				int32 y = ((9 * (i % 7)) & 0xf) + 56 * (i / 7) + 80;
 				if (_mouseX >= (_gameState->_currentScrollValue + x - 6) &&
-				        _mouseX <= (_gameState->_currentScrollValue + x + 44 + 7) &&
-				        _mouseY >= y - 6 && _mouseY <= y + 50) {
+						_mouseX <= (_gameState->_currentScrollValue + x + 44 + 7) &&
+						_mouseY >= y - 6 && _mouseY <= y + 50) {
 					foundObj = i;
 					break;
 				}
@@ -3297,7 +3297,7 @@ void ToonEngine::drawConversationLine() {
 	}
 }
 
-void ToonEngine::drawCustomText(int16 x, int16 y, char *line, Graphics::Surface *frame, byte color) {
+void ToonEngine::drawCustomText(int16 x, int16 y, const char *line, Graphics::Surface *frame, byte color) {
 	if (line) {
 		byte col = color; // 0xce
 		_fontRenderer->setFontColor(0, col, col);
