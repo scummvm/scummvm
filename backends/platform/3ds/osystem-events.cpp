@@ -22,13 +22,14 @@
 
 #define FORBIDDEN_SYMBOL_EXCEPTION_time_h
 
-#include "osystem.h"
+#include "backends/platform/3ds/osystem.h"
+
+#include "backends/platform/3ds/config.h"
+#include "backends/platform/3ds/options-dialog.h"
 #include "backends/timer/default/default-timer.h"
-#include "gui/gui-manager.h"
+#include "common/translation.h"
 #include "engines/engine.h"
-#include "gui.h"
-#include "options-dialog.h"
-#include "config.h"
+#include "gui/gui-manager.h"
 
 namespace _3DS {
 
@@ -149,29 +150,29 @@ static void eventThreadFunc(void *arg) {
 		if (keysPressed & KEY_L) {
 			if (g_gui.isActive()) {
 				// TODO: Prevent the magnify effect from updating while the GUI is active
-				osys->displayMessageOnOSD("Magnify Mode cannot be activated in menus.");
+				osys->displayMessageOnOSD(_("Magnify Mode cannot be activated in menus."));
 			} else if (config.screen != kScreenBoth && osys->getMagnifyMode() == MODE_MAGOFF) {
 				// TODO: Automatically enable both screens while magnify mode is on
-				osys->displayMessageOnOSD("Magnify Mode can only be activated\n when both screens are enabled.");
+				osys->displayMessageOnOSD(_("Magnify Mode can only be activated\n when both screens are enabled."));
 			} else if (osys->getWidth() <= 400 && osys->getHeight() <= 240) {
-				osys->displayMessageOnOSD("In-game resolution too small to magnify.");
+				osys->displayMessageOnOSD(_("In-game resolution too small to magnify."));
 			} else {
 				if (osys->getMagnifyMode() == MODE_MAGOFF) {
 					osys->setMagnifyMode(MODE_MAGON);
 					if (inputMode == MODE_DRAG) {
 						inputMode = MODE_HOVER;
-						osys->displayMessageOnOSD("Magnify Mode On. Switching to Hover Mode...");
+						osys->displayMessageOnOSD(_("Magnify Mode On. Switching to Hover Mode..."));
 					} else {
-						osys->displayMessageOnOSD("Magnify Mode On");
+						osys->displayMessageOnOSD(_("Magnify Mode On"));
 					}
 				} else {
 					osys->setMagnifyMode(MODE_MAGOFF);
 					osys->updateSize();
 					if (savedInputMode == MODE_DRAG) {
 						inputMode = savedInputMode;
-						osys->displayMessageOnOSD("Magnify Mode Off. Reactivating Drag Mode...");
+						osys->displayMessageOnOSD(_("Magnify Mode Off. Reactivating Drag Mode..."));
 					} else {
-						osys->displayMessageOnOSD("Magnify Mode Off");
+						osys->displayMessageOnOSD(_("Magnify Mode Off"));
 					}
 				}
 			}
@@ -179,13 +180,13 @@ static void eventThreadFunc(void *arg) {
 		if (keysPressed & KEY_R) {
 			if (inputMode == MODE_DRAG) {
 				inputMode = savedInputMode = MODE_HOVER;
-				osys->displayMessageOnOSD("Hover Mode");
+				osys->displayMessageOnOSD(_("Hover Mode"));
 			} else {
 				if (osys->getMagnifyMode() == MODE_MAGOFF) {
 					inputMode = savedInputMode = MODE_DRAG;
-					osys->displayMessageOnOSD("Drag Mode");
+					osys->displayMessageOnOSD(_("Drag Mode"));
 				} else
-					osys->displayMessageOnOSD("Cannot Switch to Drag Mode while Magnify Mode is On");
+					osys->displayMessageOnOSD(_("Cannot Switch to Drag Mode while Magnify Mode is On"));
 			}
 		}
 		if (keysPressed & KEY_A || keysPressed & KEY_DLEFT || keysReleased & KEY_A || keysReleased & KEY_DLEFT) {
@@ -238,9 +239,9 @@ static void eventThreadFunc(void *arg) {
 				osys->updateSize();
 				if (savedInputMode == MODE_DRAG) {
 					inputMode = savedInputMode;
-					osys->displayMessageOnOSD("Magnify Mode Off. Reactivating Drag Mode.\nReturning to Launcher...");
+					osys->displayMessageOnOSD(_("Magnify Mode Off. Reactivating Drag Mode.\nReturning to Launcher..."));
 				} else
-					osys->displayMessageOnOSD("Magnify Mode Off. Returning to Launcher...");
+					osys->displayMessageOnOSD(_("Magnify Mode Off. Returning to Launcher..."));
 			}
 		}
 
@@ -309,8 +310,12 @@ void OSystem_3DS::destroyEvents() {
 
 void OSystem_3DS::transformPoint(touchPosition &point) {
 	if (!_overlayVisible) {
-		point.px = static_cast<float>(point.px) / _gameBottomTexture.getScaleX() - _gameBottomX;
-		point.py = static_cast<float>(point.py) / _gameBottomTexture.getScaleY() - _gameBottomY;
+		point.px = static_cast<float>(point.px) / _gameBottomTexture.getScaleX() - _gameBottomTexture.getPosX();
+		point.py = static_cast<float>(point.py) / _gameBottomTexture.getScaleY() - _gameBottomTexture.getPosY();
+	} else {
+		if (config.screen == kScreenTop) {
+			point.px = (uint32) point.px * 400 / 320; // TODO: Fix horizontal speed
+		}
 	}
 }
 
@@ -323,12 +328,7 @@ bool OSystem_3DS::pollEvent(Common::Event &event) {
 
 	if (optionMenuOpening) {
 		optionMenuOpening = false;
-		OptionsDialog dialog;
-		if (g_engine)
-			g_engine->pauseEngine(true);
-		dialog.runModal();
-		if (g_engine)
-			g_engine->pauseEngine(false);
+		runOptionsDialog();
 	}
 
 	Common::StackLock lock(*eventMutex);
@@ -338,6 +338,33 @@ bool OSystem_3DS::pollEvent(Common::Event &event) {
 
 	event = _eventQueue.pop();
 	return true;
+}
+
+void OSystem_3DS::runOptionsDialog() {
+	OptionsDialog dialog;
+	if (g_engine)
+		g_engine->pauseEngine(true);
+	int result = dialog.runModal();
+	if (g_engine)
+		g_engine->pauseEngine(false);
+
+	if (result > 0) {
+		int oldScreen = config.screen;
+
+		config.showCursor   = dialog.getShowCursor();
+		config.snapToBorder = dialog.getSnapToBorder();
+		config.stretchToFit = dialog.getStretchToFit();
+		config.sensitivity  = dialog.getSensitivity();
+		config.screen       = dialog.getScreen();
+
+		saveConfig();
+		loadConfig();
+
+		if (config.screen != oldScreen) {
+			_screenChangeId++;
+			g_gui.checkScreenChange();
+		}
+	}
 }
 
 } // namespace _3DS
