@@ -116,6 +116,7 @@ public:
 	byte *_tmpbuffer;
 
 	int _myUserId;
+	int _myPlayerKey;
 
 	int _lastResult;
 

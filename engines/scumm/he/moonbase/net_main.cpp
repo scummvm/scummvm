@@ -36,6 +36,7 @@ Net::Net(ScummEngine_v100he *vm) : _latencyTime(1), _fakeLatency(false), _vm(vm)
 	_tmpbuffer = (byte *)malloc(MAX_PACKET_SIZE);
 
 	_myUserId = -1;
+	_myPlayerKey = -1;
 	_lastResult = 0;
 
 	_sessionsBeingQueried = false;
@@ -109,6 +110,7 @@ void Net::addUserCallback(Common::JSONValue *response) {
 
 	if (info.contains("userid")) {
 		_myUserId = info["userid"]->asIntegerNumber();
+		_myPlayerKey = info["playerkey"]->asIntegerNumber();
 	}
 	debug(1, "addUserCallback: got: '%s' as %d", response->stringify().c_str(), _myUserId);
 }
