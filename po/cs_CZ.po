@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.7.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2019-11-03 11:43+0100\n"
+"POT-Creation-Date: 2019-11-07 11:02+0100\n"
 "PO-Revision-Date: 2019-11-02 17:55+0000\n"
 "Last-Translator: Zbynìk Schwarz <zbynek.schwarz@gmail.com>\n"
 "Language-Team: Czech <https://translations.scummvm.org/projects/scummvm/"
@@ -1066,7 +1066,7 @@ msgstr "Øeè"
 msgid "Subtitles"
 msgstr "Titulky"
 
-#: gui/options.cpp:1260
+#: gui/options.cpp:1260 backends/platform/3ds/options-dialog.cpp:60
 msgid "Both"
 msgstr "Oba"
 
@@ -1984,7 +1984,8 @@ msgstr "~P~okraèovat"
 msgid "~L~oad"
 msgstr "~N~ahrát"
 
-#: engines/dialogs.cpp:91 engines/mohawk/dialogs.cpp:141
+#: engines/dialogs.cpp:91 backends/platform/3ds/options-dialog.cpp:45
+#: engines/mohawk/dialogs.cpp:141
 msgid "~S~ave"
 msgstr "~U~lo¾it"
 
@@ -2736,10 +2737,97 @@ msgstr ""
 msgid "Uploaded successfully!"
 msgstr "DVD úspì¹nì pøipojeno"
 
+#: backends/platform/3ds/options-dialog.cpp:44
 #: backends/platform/ds/arm9/source/dsoptions.cpp:56
 #: engines/scumm/dialogs.cpp:287
 msgid "~C~lose"
 msgstr "~Z~avøít"
+
+#: backends/platform/3ds/options-dialog.cpp:47
+#: backends/platform/ds/arm9/source/dsoptions.cpp:65
+msgid "Show mouse cursor"
+msgstr "Zobrazit kurzor my¹i"
+
+#: backends/platform/3ds/options-dialog.cpp:50
+#: backends/platform/ds/arm9/source/dsoptions.cpp:66
+msgid "Snap to edges"
+msgstr "Pøichytit k okrajùm"
+
+#: backends/platform/3ds/options-dialog.cpp:53
+msgid "Stretch to fit"
+msgstr ""
+
+#: backends/platform/3ds/options-dialog.cpp:56
+#, fuzzy
+msgid "Use Screen:"
+msgstr "Rychlost:"
+
+#: backends/platform/3ds/options-dialog.cpp:58
+msgid "Top"
+msgstr ""
+
+#: backends/platform/3ds/options-dialog.cpp:59
+msgid "Bottom"
+msgstr ""
+
+#: backends/platform/3ds/options-dialog.cpp:63
+#, fuzzy
+msgid "C-Pad Sensitivity:"
+msgstr "Citlivost GC Padu:"
+
+#: backends/platform/3ds/osystem-events.cpp:148
+msgid "Magnify Mode cannot be activated in menus."
+msgstr ""
+
+#: backends/platform/3ds/osystem-events.cpp:151
+msgid ""
+"Magnify Mode can only be activated\n"
+" when both screens are enabled."
+msgstr ""
+
+#: backends/platform/3ds/osystem-events.cpp:153
+msgid "In-game resolution too small to magnify."
+msgstr ""
+
+#: backends/platform/3ds/osystem-events.cpp:159
+msgid "Magnify Mode On. Switching to Hover Mode..."
+msgstr ""
+
+#: backends/platform/3ds/osystem-events.cpp:161
+msgid "Magnify Mode On"
+msgstr ""
+
+#: backends/platform/3ds/osystem-events.cpp:168
+msgid "Magnify Mode Off. Reactivating Drag Mode..."
+msgstr ""
+
+#: backends/platform/3ds/osystem-events.cpp:170
+msgid "Magnify Mode Off"
+msgstr ""
+
+#: backends/platform/3ds/osystem-events.cpp:178
+#, fuzzy
+msgid "Hover Mode"
+msgstr "Povolit násilné scény"
+
+#: backends/platform/3ds/osystem-events.cpp:182
+#, fuzzy
+msgid "Drag Mode"
+msgstr "Povolit násilné scény"
+
+#: backends/platform/3ds/osystem-events.cpp:184
+msgid "Cannot Switch to Drag Mode while Magnify Mode is On"
+msgstr ""
+
+#: backends/platform/3ds/osystem-events.cpp:237
+msgid ""
+"Magnify Mode Off. Reactivating Drag Mode.\n"
+"Returning to Launcher..."
+msgstr ""
+
+#: backends/platform/3ds/osystem-events.cpp:239
+msgid "Magnify Mode Off. Returning to Launcher..."
+msgstr ""
 
 #: backends/platform/ds/arm9/source/dsoptions.cpp:57
 msgid "ScummVM Main Menu"
@@ -2752,14 +2840,6 @@ msgstr "~R~e¾im pro leváky"
 #: backends/platform/ds/arm9/source/dsoptions.cpp:64
 msgid "~I~ndy fight controls"
 msgstr "~O~vládání Indyho boje"
-
-#: backends/platform/ds/arm9/source/dsoptions.cpp:65
-msgid "Show mouse cursor"
-msgstr "Zobrazit kurzor my¹i"
-
-#: backends/platform/ds/arm9/source/dsoptions.cpp:66
-msgid "Snap to edges"
-msgstr "Pøichytit k okrajùm"
 
 #: backends/platform/ds/arm9/source/dsoptions.cpp:68
 msgid "Touch X Offset"
@@ -5798,11 +5878,6 @@ msgstr ""
 #, fuzzy
 #~ msgid "Speed multiplier for mouse emulation"
 #~ msgstr "Napodobit levé tlaèítko my¹i"
-
-#, fuzzy
-#~ msgctxt "lowres"
-#~ msgid "Mouse Speed:"
-#~ msgstr "Rychlost:"
 
 #~ msgid ""
 #~ "Unable to find \"sky.cpt\" file!\n"

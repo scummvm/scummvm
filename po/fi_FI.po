@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2019-11-03 11:43+0100\n"
+"POT-Creation-Date: 2019-11-07 11:02+0100\n"
 "PO-Revision-Date: 2019-09-22 07:54+0000\n"
 "Last-Translator: jepael <kermespersialainen@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
@@ -1065,7 +1065,7 @@ msgstr "Puhe"
 msgid "Subtitles"
 msgstr "Tekstitys"
 
-#: gui/options.cpp:1260
+#: gui/options.cpp:1260 backends/platform/3ds/options-dialog.cpp:60
 msgid "Both"
 msgstr "Molemmat"
 
@@ -1978,7 +1978,8 @@ msgstr "~J~atka"
 msgid "~L~oad"
 msgstr "~L~ataa"
 
-#: engines/dialogs.cpp:91 engines/mohawk/dialogs.cpp:141
+#: engines/dialogs.cpp:91 backends/platform/3ds/options-dialog.cpp:45
+#: engines/mohawk/dialogs.cpp:141
 msgid "~S~ave"
 msgstr "~T~allenna"
 
@@ -2701,10 +2702,98 @@ msgstr "Yhtään tiedostoa ei siirretty!"
 msgid "Uploaded successfully!"
 msgstr "Lähetetty onnistuneesti!"
 
+#: backends/platform/3ds/options-dialog.cpp:44
 #: backends/platform/ds/arm9/source/dsoptions.cpp:56
 #: engines/scumm/dialogs.cpp:287
 msgid "~C~lose"
 msgstr "~S~ulje"
+
+#: backends/platform/3ds/options-dialog.cpp:47
+#: backends/platform/ds/arm9/source/dsoptions.cpp:65
+msgid "Show mouse cursor"
+msgstr "Näytä hiiren kursori"
+
+#: backends/platform/3ds/options-dialog.cpp:50
+#: backends/platform/ds/arm9/source/dsoptions.cpp:66
+msgid "Snap to edges"
+msgstr "Tartu reunoihin"
+
+#: backends/platform/3ds/options-dialog.cpp:53
+#, fuzzy
+msgid "Stretch to fit"
+msgstr "Venytä ikkunaan"
+
+#: backends/platform/3ds/options-dialog.cpp:56
+#, fuzzy
+msgid "Use Screen:"
+msgstr "Hiiren Nopeus:"
+
+#: backends/platform/3ds/options-dialog.cpp:58
+msgid "Top"
+msgstr ""
+
+#: backends/platform/3ds/options-dialog.cpp:59
+msgid "Bottom"
+msgstr ""
+
+#: backends/platform/3ds/options-dialog.cpp:63
+#, fuzzy
+msgid "C-Pad Sensitivity:"
+msgstr "GC Padin herkkyys:"
+
+#: backends/platform/3ds/osystem-events.cpp:148
+msgid "Magnify Mode cannot be activated in menus."
+msgstr ""
+
+#: backends/platform/3ds/osystem-events.cpp:151
+msgid ""
+"Magnify Mode can only be activated\n"
+" when both screens are enabled."
+msgstr ""
+
+#: backends/platform/3ds/osystem-events.cpp:153
+msgid "In-game resolution too small to magnify."
+msgstr ""
+
+#: backends/platform/3ds/osystem-events.cpp:159
+msgid "Magnify Mode On. Switching to Hover Mode..."
+msgstr ""
+
+#: backends/platform/3ds/osystem-events.cpp:161
+msgid "Magnify Mode On"
+msgstr ""
+
+#: backends/platform/3ds/osystem-events.cpp:168
+msgid "Magnify Mode Off. Reactivating Drag Mode..."
+msgstr ""
+
+#: backends/platform/3ds/osystem-events.cpp:170
+msgid "Magnify Mode Off"
+msgstr ""
+
+#: backends/platform/3ds/osystem-events.cpp:178
+#, fuzzy
+msgid "Hover Mode"
+msgstr "Hurmemoodi"
+
+#: backends/platform/3ds/osystem-events.cpp:182
+#, fuzzy
+msgid "Drag Mode"
+msgstr "Hurmemoodi"
+
+#: backends/platform/3ds/osystem-events.cpp:184
+msgid "Cannot Switch to Drag Mode while Magnify Mode is On"
+msgstr ""
+
+#: backends/platform/3ds/osystem-events.cpp:237
+msgid ""
+"Magnify Mode Off. Reactivating Drag Mode.\n"
+"Returning to Launcher..."
+msgstr ""
+
+#: backends/platform/3ds/osystem-events.cpp:239
+msgid "Magnify Mode Off. Returning to Launcher..."
+msgstr ""
 
 #: backends/platform/ds/arm9/source/dsoptions.cpp:57
 msgid "ScummVM Main Menu"
@@ -2717,14 +2806,6 @@ msgstr "~V~asenkätinen tila"
 #: backends/platform/ds/arm9/source/dsoptions.cpp:64
 msgid "~I~ndy fight controls"
 msgstr "~I~ndyn tappelukontrollit"
-
-#: backends/platform/ds/arm9/source/dsoptions.cpp:65
-msgid "Show mouse cursor"
-msgstr "Näytä hiiren kursori"
-
-#: backends/platform/ds/arm9/source/dsoptions.cpp:66
-msgid "Snap to edges"
-msgstr "Tartu reunoihin"
 
 #: backends/platform/ds/arm9/source/dsoptions.cpp:68
 msgid "Touch X Offset"
@@ -5849,10 +5930,6 @@ msgstr ""
 
 #~ msgid "Speed multiplier for mouse emulation"
 #~ msgstr "Hiiriemulaation nopeuskerroin"
-
-#~ msgctxt "lowres"
-#~ msgid "Mouse Speed:"
-#~ msgstr "Hiiren Nopeus:"
 
 #~ msgid ""
 #~ "Unable to find \"sky.cpt\" file!\n"
