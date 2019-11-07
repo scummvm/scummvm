@@ -72,8 +72,7 @@ bool SubtitleRenderer::load(const Common::String &video) {
 	Common::String ext("tss");
 	subfile.replace(subfile.size() - ext.size(), ext.size(), ext);
 
-	Common::SeekableReadStream *file;
-	file = _vm->resources()->openFile(subfile);
+	Common::SeekableReadStream *file = _vm->resources()->openFile(subfile);
 	if (!file) {
 		return false;
 	}
