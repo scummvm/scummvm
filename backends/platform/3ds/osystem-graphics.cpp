@@ -146,10 +146,16 @@ int OSystem_3DS::getGraphicsMode() const {
 void OSystem_3DS::initSize(uint width, uint height,
                                    const Graphics::PixelFormat *format) {
 	debug("3ds initsize w:%d h:%d", width, height);
+	int oldScreen = config.screen;
+	loadConfig();
+	if (config.screen != oldScreen) {
+		_screenChangeId++;
+	}
+
 	_gameWidth = width;
 	_gameHeight = height;
 	_gameTopTexture.create(width, height, _pfGameTexture);
-	_overlay.create(getOverlayWidth(), getOverlayHeight(), _pfGameTexture);
+	_overlay.create(400, 320, _pfGameTexture);
 	_topHalfWidth = _topWidth / 2;
 	_topHalfHeight = _topHeight / 2;
 
@@ -558,7 +564,7 @@ int16 OSystem_3DS::getOverlayHeight() {
 }
 
 int16 OSystem_3DS::getOverlayWidth() {
-	return 320;
+	return config.screen == kScreenTop ? 400 : 320;
 }
 
 bool OSystem_3DS::showMouse(bool visible) {

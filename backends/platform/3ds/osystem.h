@@ -105,7 +105,7 @@ public:
 	virtual Common::List<Graphics::PixelFormat> getSupportedFormats() const;
 	void initSize(uint width, uint height,
 	              const Graphics::PixelFormat *format = NULL);
-	virtual int getScreenChangeID() const { return 0; };
+	virtual int getScreenChangeID() const { return _screenChangeId; };
 
 	void beginGFXTransaction();
 	OSystem::TransactionError endGFXTransaction();
@@ -152,7 +152,6 @@ public:
 	void setMagnifyMode(MagnifyMode mode);
 	MagnifyMode getMagnifyMode(){ return _magnifyMode; }
 
-
 private:
 	void initGraphics();
 	void destroyGraphics();
@@ -160,6 +159,7 @@ private:
 	void destroyAudio();
 	void initEvents();
 	void destroyEvents();
+	void runOptionsDialog();
 
 	void flushGameScreen();
 	void flushCursor();
@@ -199,6 +199,7 @@ private:
 
 	int _screenShakeOffset;
 	bool _overlayVisible;
+	int _screenChangeId;
 
 	DVLB_s *_dvlb;
 	shaderProgram_s _program;

@@ -77,6 +77,7 @@ OSystem_3DS::OSystem_3DS():
 	_topWidth(400),
 	_topHeight(240),
 	_overlayVisible(false),
+	_screenChangeId(0),
 	_magnifyMode(MODE_MAGOFF),
 	exiting(false),
 	sleeping(false)
