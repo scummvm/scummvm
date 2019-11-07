@@ -475,6 +475,8 @@ void GriffonEngine::saveLoadNew() {
 	int curRow = 0;
 	int curCol = 0;
 
+	bool lowerlock = false;
+
 	_ticks = g_system->getMillis();
 	int ticks1 = _ticks;
 
@@ -592,9 +594,11 @@ void GriffonEngine::saveLoadNew() {
 								return;
 						} else if (curCol == 1) {
 							// LOAD GAME
+							lowerlock = true;
 							curRow = 1 + _saveSlot;
 						} else if (curCol == 2) {
 							// SAVE GAME
+							lowerlock = true;
 							curRow = 1;
 						} else if (curCol == 3) {
 							// RETURN
@@ -604,10 +608,12 @@ void GriffonEngine::saveLoadNew() {
 							_shouldQuit = true;
 							return;
 						}
-					} else {
+					} 
+					if (lowerlock && curRow == 1) {
 						if ((curCol == 1) && saveState(curRow - 1)) {
 							_secStart += _secsingame;
 							_secsingame = 0;
+							lowerlock = false;
 							_saveSlot = curRow - 1;
 							curRow = 0;
 						} else if ((curCol == 2) && loadState(curRow - 1)) {
@@ -633,10 +639,11 @@ void GriffonEngine::saveLoadNew() {
 				case Common::KEYCODE_ESCAPE:
 					if (curRow == 0)
 						return;
+					lowerlock = false;
 					curRow = 0;
 					break;
 				case Common::KEYCODE_DOWN:
-					if (curRow != 0) {
+					if (lowerlock) {
 						++curRow;
 						if (curRow == 5)
 							curRow = 1;
@@ -644,7 +651,7 @@ void GriffonEngine::saveLoadNew() {
 					break;
 
 				case Common::KEYCODE_UP:
-					if (curRow != 0) {
+					if (lowerlock) {
 						--curRow;
 						if (curRow == 0)
 							curRow = 4;
@@ -652,7 +659,7 @@ void GriffonEngine::saveLoadNew() {
 					break;
 
 				case Common::KEYCODE_LEFT:
-					if (curRow == 0) {
+					if (!lowerlock) {
 						--curCol;
 						if (curCol == -1)
 							curCol = 3;
@@ -660,7 +667,7 @@ void GriffonEngine::saveLoadNew() {
 					break;
 
 				case Common::KEYCODE_RIGHT:
-					if (curRow == 0) {
+					if (!lowerlock) {
 						++curCol;
 						if (curCol == 4)
 							curCol = 0;
