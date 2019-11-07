@@ -65,7 +65,7 @@ ScriptOpcodes::ScriptOpcodes(DragonsEngine *vm, DragonFLG *dragonFLG)
 	: _vm(vm), _dragonFLG(dragonFLG), _data_80071f5c(0) {
 	_specialOpCodes = new SpecialOpcodes(_vm);
 	initOpcodes();
-	_data_800728c0 = 0;
+	_scriptTargetINI = 0;
 }
 
 ScriptOpcodes::~ScriptOpcodes() {
@@ -219,7 +219,7 @@ void ScriptOpcodes::opUnk1(ScriptOpCall &scriptOpCall) {
 	ARG_INT16(field6);
 
 	if ((field2 >> _vm->_cursor->data_800728b0_cursor_seqID) & 1
-	&& (_vm->_cursor->data_800728b0_cursor_seqID < 5 || field4 == _data_800728c0)
+	&& (_vm->_cursor->data_800728b0_cursor_seqID < 5 || field4 == _scriptTargetINI)
 	&& scriptOpCall._field8 == 1) {
 		scriptOpCall._code -= 8;
 		scriptOpCall._result |= 1;
@@ -300,7 +300,7 @@ void ScriptOpcodes::opUnk6(ScriptOpCall &scriptOpCall) {
 		return;
 	}
 
-	int16 uVar6 = _data_800728c0;
+	int16 uVar6 = _scriptTargetINI;
 	int16 uVar5 = _vm->_cursor->data_800728b0_cursor_seqID;
 	int16 uVar4 = _vm->_cursor->data_80072890;
 	int16 uVar3 = _vm->_cursor->_iniUnderCursor;
@@ -315,7 +315,7 @@ void ScriptOpcodes::opUnk6(ScriptOpCall &scriptOpCall) {
 		_vm->_cursor->_sequenceID++;
 	}
 
-	_data_800728c0 = field6;
+	_scriptTargetINI = field6;
 	_vm->_cursor->data_800728b0_cursor_seqID = _vm->_cursor->_sequenceID;
 	_vm->_cursor->data_80072890 = _vm->_cursor->_iniUnderCursor;
 //	EnableVSyncEvent();
@@ -327,7 +327,7 @@ void ScriptOpcodes::opUnk6(ScriptOpCall &scriptOpCall) {
 	_vm->_cursor->_iniUnderCursor = uVar3;
 	_vm->_cursor->data_80072890 = uVar4;
 	_vm->_cursor->data_800728b0_cursor_seqID = uVar5;
-	_data_800728c0 = uVar6;
+	_scriptTargetINI = uVar6;
 }
 
 void ScriptOpcodes::opUnk7(ScriptOpCall &scriptOpCall) {
@@ -472,7 +472,7 @@ bool ScriptOpcodes::checkPropertyFlag(ScriptOpCall &scriptOpCall) {
 
 			if (*codePtrOffsetA & 4) {
 				t2 = getINIField(READ_LE_INT16(codePtrOffsetA - 6) - 1, READ_LE_INT16(codePtrOffset2));
-				debug(3, "Op13 get here!! & 4 %d, %d", READ_LE_INT16(codePtrOffsetA - 6), t2);
+				debug(3, "Op13 get here!! & 4 read ini field ini: %X fieldOffset: %X value: %d", READ_LE_INT16(codePtrOffsetA - 6) - 1, READ_LE_INT16(codePtrOffset2), t2);
 
 			}
 
@@ -492,8 +492,8 @@ bool ScriptOpcodes::checkPropertyFlag(ScriptOpCall &scriptOpCall) {
 			}
 
 			if (!(*codePtrOffsetA & 0x18)) {
-				debug(3, "Op13 get here!! & 0x18");
 				t0 = READ_LE_UINT16(codePtrOffsetA - 2);
+				debug(3, "Op13 get here!! & 0x18 t0 == %d", t0);
 			}
 
 			if (*(codePtrOffsetA + 1) == 0 && t0 == t2) {
@@ -696,7 +696,7 @@ void ScriptOpcodes::opUnk10(ScriptOpCall &scriptOpCall) {
 
 	//TODO these should be passed in as arguments and xparam should be set correctly.
 	int16 someXParam = 0;
-	int16 someYParam = _data_800728c0;
+	int16 someYParam = _scriptTargetINI;
 	uint someBooleanFlag = 0;
 	if (scriptOpCall._field8 != 0) {
 		return;

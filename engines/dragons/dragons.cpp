@@ -377,7 +377,7 @@ void DragonsEngine::gameLoop()
 			bit_flags_8006fbd8 = 0;
 			DragonINI *flicker = _dragonINIResource->getFlickerRecord();
 			if (flicker->sceneId == getCurrentSceneId() && flicker->actor->_sequenceID2 != -1) {
-				uVar6 = _scriptOpcodes->_data_800728c0;
+				uVar6 = _scriptOpcodes->_scriptTargetINI;
 				if (_cursor->_sequenceID != 5) {
 					uVar6 = _cursor->data_80072890;
 				}
@@ -482,7 +482,7 @@ void DragonsEngine::gameLoop()
 							if (bit_flags_8006fbd8 != 0) {
 								clearFlags(ENGINE_FLAG_8);
 							}
-							_scriptOpcodes->_data_800728c0 = _cursor->data_80072890;
+							_scriptOpcodes->_scriptTargetINI = _cursor->data_80072890;
 							_cursor->data_80072890 = _cursor->iniItemInHand;
 						}
 					}
@@ -547,7 +547,7 @@ void DragonsEngine::gameLoop()
 					_cursor->data_80072890 = _cursor->_iniUnderCursor;
 					if (4 < _cursor->_sequenceID) {
 						_cursor->data_80072890 = _cursor->iniItemInHand;
-						_scriptOpcodes->_data_800728c0 = _cursor->_iniUnderCursor;
+						_scriptOpcodes->_scriptTargetINI = _cursor->_iniUnderCursor;
 					}
 					clearFlags(ENGINE_FLAG_8);
 					walkFlickerToObject();
@@ -1040,7 +1040,7 @@ void DragonsEngine::performAction() {
 	byte * pvVar7;
 	byte * pvVar8;
 
-	uVar2 = _scriptOpcodes->_data_800728c0;
+	uVar2 = _scriptOpcodes->_scriptTargetINI;
 	uVar1 = _flags;
 	local_58._code = NULL;
 	local_58._codeEnd = NULL;
@@ -1060,14 +1060,14 @@ void DragonsEngine::performAction() {
 	if (_cursor->data_800728b0_cursor_seqID > 4) {
 		_scriptOpcodes->_data_80071f5c = 0;
 
-		obd = _dragonOBD->getFromOpt(_scriptOpcodes->_data_800728c0 - 1);
-		_scriptOpcodes->_data_800728c0 = _cursor->data_80072890;
+		obd = _dragonOBD->getFromOpt(_scriptOpcodes->_scriptTargetINI - 1);
+		_scriptOpcodes->_scriptTargetINI = _cursor->data_80072890;
 
 		local_38._code = obd + 8;
 		local_38._codeEnd = local_38._code + READ_LE_UINT32(obd);
 
 		uVar6 = _cursor->executeScript(local_38, 1);
-		_scriptOpcodes->_data_800728c0 = uVar2;
+		_scriptOpcodes->_scriptTargetINI = uVar2;
 	}
 	if ((uVar6 & 0xffff) != 0) {
 		local_58._code = local_38._code + 8;
@@ -1240,7 +1240,7 @@ void DragonsEngine::loadScene(uint16 sceneId) {
 
 	clearFlags(ENGINE_FLAG_1000_TEXT_ENABLED); //TODO wire this up to subtitle config.
 
-	_scriptOpcodes->_data_800728c0 = 0; //TODO this should be reset in scriptopcode.
+	_scriptOpcodes->_scriptTargetINI = 0; //TODO this should be reset in scriptopcode.
 	_cursor->init(_actorManager, _dragonINIResource);
 	_inventory->init(_actorManager, _backgroundResourceLoader, new Bag(_bigfileArchive, _screen), _dragonINIResource);
 	_talk->init();
