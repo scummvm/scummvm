@@ -59,7 +59,7 @@ GriffonEngine::GriffonEngine(OSystem *syst) : Engine(syst) {
 	_mixer = nullptr;
 
 	_shouldQuit = false;
-	_gameEnd = false;
+	_gameMode = kGameModeIntro;
 
 	_musicChannel = -1;
 	_menuChannel = -1;
@@ -138,11 +138,27 @@ Common::Error GriffonEngine::run() {
 		return Common::kNoError;
 
 	while (!_shouldQuit) {
-		_gameEnd = false;
-
 		title(0);
 
-		if (!_shouldQuit && !_gameEnd)
+		if (_gameMode == kGameModeNewGame) {
+			newGame();
+		} else if (_gameMode == kGameModeLoadGame) {
+			_player.walkSpeed = 1.1f;
+			_animSpeed = 0.5f;
+			_attacking = false;
+			_player.attackSpeed = 1.5f;
+
+			_playingGardens = false;
+			_playingBoss = false;
+
+			haltSoundChannel(-1);
+
+			_secsInGame = 0;
+			loadMap(_curMap);
+			mainLoop();
+		}
+
+		if (!_shouldQuit && _gameMode != kGameModeEnd)
 			saveLoadNew();
 	}
 

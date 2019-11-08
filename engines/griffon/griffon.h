@@ -320,6 +320,14 @@ struct ObjectInfoStruct {
 	int script;
 };
 
+enum {
+	kGameModeIntro,
+	kGameModeEnd,
+	kGameModeSaveLoad,
+	kGameModeNewGame,
+	kGameModeLoadGame
+};
+
 class GriffonEngine : public Engine {
 public:
 	GriffonEngine(OSystem *syst);
@@ -331,7 +339,7 @@ public:
 private:
 	Common::RandomSource *_rnd;
 	bool _shouldQuit;
-	bool _gameEnd;
+	int _gameMode;
 
 	Console *_console;
 
