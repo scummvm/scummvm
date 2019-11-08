@@ -12,7 +12,6 @@ submaker.py INFILE.sbv OUTFILE.tss
 Subtitles format:
 <start frame> <end frame> <subtitle text>
 '''
-import io
 import sys
 
 from datetime import datetime
