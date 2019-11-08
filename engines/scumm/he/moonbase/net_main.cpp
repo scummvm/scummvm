@@ -447,7 +447,7 @@ int Net::remoteSendData(int typeOfSend, int sendTypeParam, int type, Common::Str
 	if (!wait)
 		return 0;
 
-	int timeout = g_system->getMillis() + 1000;
+	uint32 timeout = g_system->getMillis() + 1000;
 
 	while (g_system->getMillis() < timeout) {
 		if (remoteReceiveData()) {
