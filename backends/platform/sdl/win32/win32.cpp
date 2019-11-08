@@ -117,7 +117,7 @@ void OSystem_Win32::initBackend() {
 
 #if defined(USE_SPARKLE)
 	// Initialize updates manager
-	_updateManager = new Win32UpdateManager();
+	_updateManager = new Win32UpdateManager((SdlWindow_Win32*)_window);
 #endif
 
 	// Initialize text to speech
