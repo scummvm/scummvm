@@ -34,7 +34,6 @@ def generate_index(data_files):
 
 def create_entry(filename):
     name, ext = os.path.splitext(os.path.basename(filename))
-    assert ext.lower() == '.sbv', ext.lower()
     return name + '.tss', ''.join(sbv2tss(filename)).encode()
 
 if __name__ == "__main__":
