@@ -451,11 +451,11 @@ bool EEHandler::handleKeyDown(Common::KeyState &state) {
 }
 
 EE::EE() {
-	_windowX = (g_system->getOverlayWidth() - 320) / 2;
-	_windowY = (g_system->getOverlayHeight() - 200) / 2;
+	_windowX = (g_system->getOverlayWidth() > 320) ? (g_system->getOverlayWidth() - 320) / 2 : 0;
+	_windowY = (g_system->getOverlayHeight() > 200) ? (g_system->getOverlayHeight() - 200) / 2 : 0;
 
 	_format = g_system->getOverlayFormat();
-	_back.create(320, 200, _format);
+	_back.create(MIN<int>(g_system->getOverlayWidth(), 320), MIN<int>(g_system->getOverlayHeight(), 200), _format);
 
 	_colorBlue   = _format.RGBToColor(5 * 16, 7 * 16, 8 * 16);
 	_colorOrange = _format.RGBToColor(15 * 16, 7 * 16, 8 * 16);
@@ -467,10 +467,10 @@ EE::~EE() {
 }
 
 void EE::cls(bool update) {
-	_back.fillRect(Common::Rect(0, 0, 320, 200), 0);
+	_back.fillRect(Common::Rect(0, 0, MIN<int>(g_system->getOverlayWidth(), 320), MIN<int>(g_system->getOverlayHeight(), 200)), 0);
 
 	if (update)
-		g_system->copyRectToOverlay(_back.getPixels(), _back.pitch, _windowX, _windowY, 320, 200);
+		g_system->copyRectToOverlay(_back.getPixels(), _back.pitch, _windowX, _windowY, MIN<int>(g_system->getOverlayWidth(), 320), MIN<int>(g_system->getOverlayHeight(), 200));
 }
 
 void EE::run() {
@@ -1107,7 +1107,12 @@ void EE::drawStatus(Common::String str, int x, uint32 color, int y, int color2, 
 
 void EE::draw(int sn, int x, int y) {
 	_back.transBlitFrom(_sp[sn], Common::Point(x, y), 0);
-	g_system->copyRectToOverlay(_back.getBasePtr(x, y), _back.pitch, _windowX + x, _windowY + y, _sp[sn].w, _sp[sn].h);
+	g_system->copyRectToOverlay(_back.getBasePtr(x, y),
+	                           _back.pitch,
+	                           MIN<int>(_windowX + x, g_system->getOverlayWidth()),
+	                           MIN<int>(_windowY + y, g_system->getOverlayHeight()),
+	                           MIN<int>(_sp[sn].w, g_system->getOverlayWidth() - MIN<int>(_windowX + x, g_system->getOverlayWidth())),
+	                           MIN<int>(_sp[sn].h, g_system->getOverlayHeight() - MIN<int>(_windowY + y, g_system->getOverlayHeight()) ));
 }
 
 const char *codes =
@@ -1120,9 +1125,24 @@ void EE::putshapes() {
 	cls(false);
 
 	if (_oCoords) {
-		g_system->copyRectToOverlay(_back.getBasePtr(_obx, _oby), _back.pitch, _windowX + _obx, _windowY + _oby, _sp[kSpB1].w, _sp[kSpB1].h);
-		g_system->copyRectToOverlay(_back.getBasePtr(_olx, _oly), _back.pitch, _windowX + _olx, _windowY + _oly, _sp[kSpL1].w, _sp[kSpL1].h);
-		g_system->copyRectToOverlay(_back.getBasePtr(_orx, _ory), _back.pitch, _windowX + _orx, _windowY + _ory, _sp[kSpR1].w, _sp[kSpR1].h);
+		g_system->copyRectToOverlay(_back.getBasePtr(_obx, _oby),
+		                            _back.pitch,
+		                            MIN<int>(_windowX + _obx, g_system->getOverlayWidth()),
+		                            MIN<int>(_windowY + _oby, g_system->getOverlayHeight()),
+		                            MIN<int>(_sp[kSpB1].w, g_system->getOverlayWidth() - MIN<int>(_windowX + _obx, g_system->getOverlayWidth())),
+		                            MIN<int>(_sp[kSpB1].h, g_system->getOverlayHeight() - MIN<int>(_windowY + _oby, g_system->getOverlayHeight()) ));
+		g_system->copyRectToOverlay(_back.getBasePtr(_olx, _oly),
+		                            _back.pitch,
+		                            MIN<int>(_windowX + _olx, g_system->getOverlayWidth()),
+		                            MIN<int>(_windowY + _oly, g_system->getOverlayHeight()),
+		                            MIN<int>(_sp[kSpL1].w, g_system->getOverlayWidth() - MIN<int>(_windowX + _olx, g_system->getOverlayWidth())),
+		                            MIN<int>(_sp[kSpL1].h, g_system->getOverlayHeight() - MIN<int>(_windowY + _oly, g_system->getOverlayHeight()) ));
+		g_system->copyRectToOverlay(_back.getBasePtr(_orx, _ory),
+		                            _back.pitch,
+		                            MIN<int>(_windowX + _orx, g_system->getOverlayWidth()),
+		                            MIN<int>(_windowY + _ory, g_system->getOverlayHeight()),
+		                            MIN<int>(_sp[kSpR1].w, g_system->getOverlayWidth() - MIN<int>(_windowX + _orx, g_system->getOverlayWidth())),
+		                            MIN<int>(_sp[kSpR1].h, g_system->getOverlayHeight() - MIN<int>(_windowY + _ory, g_system->getOverlayHeight()) ));
 	}
 
 	sprite = kSpB1 + (_tbx / 16) % 4;
@@ -1172,7 +1192,12 @@ void EE::putshapes() {
 	for (int i = 0; i < 6; i++, ptr += 4) {
 		Common::Rect r(ptr[0], ptr[1], ptr[2], ptr[3]);
 		_back.fillRect(r, (i < 5 ? color1 : color2));
-		g_system->copyRectToOverlay(_back.getBasePtr(ptr[0], ptr[1]), _back.pitch, _windowX + ptr[0], _windowY + ptr[1], r.width(), r.height());
+		g_system->copyRectToOverlay(_back.getBasePtr(ptr[0], ptr[1]),
+		                            _back.pitch,
+		                            MIN<int>(_windowX + ptr[0], g_system->getOverlayWidth()),
+		                            MIN<int>(_windowY + ptr[1], g_system->getOverlayHeight()),
+		                            MIN<int>(r.width(), g_system->getOverlayWidth() - MIN<int>(_windowX + ptr[0], g_system->getOverlayWidth())),
+		                            MIN<int>(r.height(), g_system->getOverlayHeight() - MIN<int>(_windowY + ptr[1], g_system->getOverlayHeight()) ));
 	}
 
 	int startx = 32;
@@ -1210,10 +1235,21 @@ void EE::putshapes() {
 			break;
 	}
 
-	g_system->copyRectToOverlay(_back.getPixels(), _back.pitch, _windowX, _windowY, 320, 10);
+	g_system->copyRectToOverlay(_back.getPixels(),
+	                            _back.pitch,
+	                            MIN<int>(_windowX, g_system->getOverlayWidth()),
+	                            MIN<int>(_windowY, g_system->getOverlayHeight()),
+	                            MIN<int>(320, g_system->getOverlayWidth() - MIN<int>(_windowX, g_system->getOverlayWidth())),
+	                            MIN<int>(10, g_system->getOverlayHeight() - MIN<int>(_windowY, g_system->getOverlayHeight()) ));
 
-	if (_mode == kModeMenu)
-		g_system->copyRectToOverlay(_back.getBasePtr(92, 30), _back.pitch, _windowX + 92, _windowY + 30, 135, 5 * 10);
+	if (_mode == kModeMenu) {
+		g_system->copyRectToOverlay(_back.getBasePtr(92, 30),
+		                            _back.pitch,
+		                            MIN<int>(_windowX + 92, g_system->getOverlayWidth()),
+		                            MIN<int>(_windowY + 30, g_system->getOverlayHeight()),
+		                            MIN<int>(135, g_system->getOverlayWidth() - MIN<int>(_windowX + 92, g_system->getOverlayWidth())),
+		                            MIN<int>(5 * 10, g_system->getOverlayHeight() - MIN<int>(_windowY + 30, g_system->getOverlayHeight()) ));
+	}
 }
 
 void EE::doMenu(Common::Event &e) {
