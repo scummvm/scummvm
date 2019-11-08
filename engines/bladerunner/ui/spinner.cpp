@@ -105,15 +105,24 @@ int Spinner::chooseDestination(int loopId, bool immediately) {
 	_destinations = nullptr;
 	int spinnerLoopId = 4;
 
-	if (mapmask & 1) {
-		_destinations = getDestinationsNear();
-		spinnerLoopId = 0;
+	// mapmask determines which map version will be displayed
+	// Depending on which destinations are available, mapmaks will have value:
+	// 1: For the near view (first chapter locations, and animoid row for some reason)
+	// 3: For medium view locations (includes the near view ones)
+	// 7: For far view locations (includes all the previous ones)
+	// This values are determined in mapmaskv table
+	//
+	// Since the checks below use bitwise AND, we need to check in order
+	// from the "far" version to the "near" version
+	if (mapmask & 4) {
+		_destinations = getDestinationsFar();
+		spinnerLoopId = 4;
 	} else if (mapmask & 2) {
 		_destinations = getDestinationsMedium();
 		spinnerLoopId = 2;
-	} else if (mapmask & 4) {
-		_destinations = getDestinationsFar();
-		spinnerLoopId = 4;
+	} else if (mapmask & 1) {
+		_destinations = getDestinationsNear();
+		spinnerLoopId = 0;
 	} else {
 		return -1;
 	}
