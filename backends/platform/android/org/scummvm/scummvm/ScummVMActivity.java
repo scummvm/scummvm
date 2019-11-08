@@ -76,9 +76,15 @@ public class ScummVMActivity extends Activity {
 		}
 
 		@Override
-		protected void displayMessageOnOSD(String msg) {
-			Log.i(LOG_TAG, "OSD: " + msg);
-			Toast.makeText(ScummVMActivity.this, msg, Toast.LENGTH_LONG).show();
+		protected void displayMessageOnOSD(final String msg) {
+			if (msg != null) {
+				Log.i(LOG_TAG, "MessageOnOSD: " + msg + " " + getCurrentCharset());
+				runOnUiThread(new Runnable() {
+					public void run() {
+						Toast.makeText(ScummVMActivity.this, msg, Toast.LENGTH_SHORT).show();
+					}
+				});
+			}
 		}
 
 		@Override
