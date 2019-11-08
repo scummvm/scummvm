@@ -186,7 +186,7 @@ void GriffonEngine::title(int mode) {
 
 						saveLoadNew();
 
-						if (_gameMode == kGameModeNewGame) {
+						if (_gameMode == kGameModeNewGame || _gameMode == kGameModeLoadGame) {
 							exitTitle = true;
 						}
 						break;
