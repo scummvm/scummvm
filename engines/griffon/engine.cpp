@@ -105,7 +105,7 @@ void GriffonEngine::mainLoop() {
 		 _console->onFrame();
 
 		updateEngine();
-	} while (!_shouldQuit && !_gameEnd);
+	} while (!_shouldQuit && _gameMode != kGameModeEnd);
 }
 
 void GriffonEngine::updateEngine() {
@@ -161,7 +161,7 @@ void GriffonEngine::updateEngine() {
 
 		checkHit();
 
-		if (_gameEnd)
+		if (_gameMode == kGameModeEnd)
 			return;
 	}
 
@@ -244,7 +244,7 @@ void GriffonEngine::updateEngine() {
 	if (_player.hp <= 0) {
 		theEnd();
 
-		_gameEnd = true;
+		_gameMode = kGameModeEnd;
 
 		return;
 	}

@@ -184,7 +184,11 @@ void GriffonEngine::title(int mode) {
 						_ticks = g_system->getMillis();
 						ticks1 = _ticks;
 
-						exitTitle = true;
+						saveLoadNew();
+
+						if (_gameMode == kGameModeNewGame) {
+							exitTitle = true;
+						}
 						break;
 					case 1:
 						configMenu();
@@ -589,10 +593,9 @@ void GriffonEngine::saveLoadNew() {
 					if (curRow == 0) {
 						if (curCol == 0) {
 							// NEW GAME
-							newGame();
+							_gameMode = kGameModeNewGame;
 
-							if (_shouldQuit || _gameEnd)
-								return;
+							return;
 						} else if (curCol == 1) {
 							// SAVE GAME
 							lowerLock = true;
@@ -611,7 +614,7 @@ void GriffonEngine::saveLoadNew() {
 							_shouldQuit = true;
 							return;
 						}
-					} 
+					}
 					if (lowerLock && tickPause < _ticks) {
 						if ((curCol == 1) && saveState(curRow - 1)) {
 							_secStart += _secsInGame;
@@ -620,20 +623,11 @@ void GriffonEngine::saveLoadNew() {
 							_saveSlot = curRow - 1;
 							curRow = 0;
 						} else if ((curCol == 2) && loadState(curRow - 1)) {
-							_player.walkSpeed = 1.1f;
-							_animSpeed = 0.5f;
-							_attacking = false;
-							_player.attackSpeed = 1.5f;
-
-							_playingGardens = false;
-							_playingBoss = false;
-
-							haltSoundChannel(-1);
-
-							_secsInGame = 0;
 							_saveSlot = curRow - 1;
-							loadMap(_curMap);
-							mainLoop();
+
+							_gameMode = kGameModeLoadGame;
+
+							return;
 						}
 						tickPause = _ticks + 125;
 					}
