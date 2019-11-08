@@ -32,22 +32,6 @@ namespace Cryo {
 
 class CryoEngine;
 
-#define SW16(n) ( (((n) & 0xFF) << 8) | (((n) >> 8) & 0xFF) )
-#define SW32(n) ( (((n) & 0xFF) << 24) | (((n) >> 24) & 0xFF) | (((n) & 0xFF00) << 8) | (((n) >> 8) & 0xFF00))
-#ifdef SCUMM_BIG_ENDIAN
-//big-endian host
-#define LE16(n) SW16(n)
-#define LE32(n) SW32(n)
-#define BE16(n) (n)
-#define BE32(n) (n)
-#else
-//little-endian host
-#define LE16(n) (n)
-#define LE32(n) (n)
-#define BE16(n) SW16(n)
-#define BE32(n) SW32(n)
-#endif
-
 enum {
 	fsFromStart = 1
 };
