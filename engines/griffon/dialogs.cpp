@@ -479,6 +479,7 @@ void GriffonEngine::saveLoadNew() {
 
 	_ticks = g_system->getMillis();
 	int ticks1 = _ticks;
+	int tickpause = _ticks + 150;
 
 	_cloudImg->setAlpha(128, true);
 
@@ -581,7 +582,7 @@ void GriffonEngine::saveLoadNew() {
 				return;
 			}
 
-			if (_event.type == Common::EVENT_KEYDOWN) {
+			if (tickpause < _ticks && _event.type == Common::EVENT_KEYDOWN) {
 				_itemTicks = _ticks + 220;
 
 				if (_event.kbd.keycode == Common::KEYCODE_RETURN) {
@@ -596,10 +597,12 @@ void GriffonEngine::saveLoadNew() {
 							// SAVE GAME
 							lowerlock = true;
 							curRow = 1 + _saveSlot;
+							tickpause = _ticks + 125;
 						} else if (curCol == 2) {
 							// LOAD GAME
 							lowerlock = true;
 							curRow = 1;
+							tickpause = _ticks + 125;
 						} else if (curCol == 3) {
 							// RETURN
 							return;
@@ -609,7 +612,7 @@ void GriffonEngine::saveLoadNew() {
 							return;
 						}
 					} 
-					if (lowerlock && curRow == 1) {
+					if (lowerlock && tickpause < _ticks) {
 						if ((curCol == 1) && saveState(curRow - 1)) {
 							_secStart += _secsingame;
 							_secsingame = 0;
@@ -632,6 +635,7 @@ void GriffonEngine::saveLoadNew() {
 							loadMap(_curMap);
 							mainLoop();
 						}
+						tickpause = _ticks + 125;
 					}
 				}
 
@@ -641,12 +645,14 @@ void GriffonEngine::saveLoadNew() {
 						return;
 					lowerlock = false;
 					curRow = 0;
+					tickpause = _ticks + 125;
 					break;
 				case Common::KEYCODE_DOWN:
 					if (lowerlock) {
 						++curRow;
 						if (curRow == 5)
 							curRow = 1;
+						tickpause = _ticks + 125;
 					}
 					break;
 
@@ -655,6 +661,7 @@ void GriffonEngine::saveLoadNew() {
 						--curRow;
 						if (curRow == 0)
 							curRow = 4;
+						tickpause = _ticks + 125;
 					}
 					break;
 
@@ -663,6 +670,7 @@ void GriffonEngine::saveLoadNew() {
 						--curCol;
 						if (curCol == -1)
 							curCol = 3;
+						tickpause = _ticks + 125;
 					}
 					break;
 
@@ -671,6 +679,7 @@ void GriffonEngine::saveLoadNew() {
 						++curCol;
 						if (curCol == 4)
 							curCol = 0;
+						tickpause = _ticks + 125;
 					}
 					break;
 				default:
