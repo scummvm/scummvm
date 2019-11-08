@@ -27,10 +27,12 @@
 #include "backends/updates/win32/win32-updates.h"
 
 #ifdef USE_SPARKLE
+#include "backends/platform/sdl/win32/win32-window.h"
 #include "common/translation.h"
 #include "common/config-manager.h"
 
 #include <time.h>
+#include <windows.h>
 #include <winsparkle.h>
 
 /**
@@ -50,10 +52,15 @@
  * https://winsparkle.org/
  *
  */
-Win32UpdateManager::Win32UpdateManager() {
-    const char *appcastUrl = "https://www.scummvm.org/appcasts/macosx/release.xml";
 
-    win_sparkle_set_appcast_url(appcastUrl);
+static SdlWindow_Win32 *_window;
+
+Win32UpdateManager::Win32UpdateManager(SdlWindow_Win32 *window) {
+	_window = window;
+	const char *appcastUrl = "https://www.scummvm.org/appcasts/macosx/release.xml";
+	win_sparkle_set_appcast_url(appcastUrl);
+	win_sparkle_set_can_shutdown_callback(canShutdownCallback);
+	win_sparkle_set_shutdown_request_callback(shutdownRequestCallback);
     win_sparkle_init();
 
     if (!ConfMan.hasKey("updates_check")
@@ -127,6 +134,22 @@ bool Win32UpdateManager::getLastUpdateCheckTimeAndDate(TimeDate &t) {
     t.tm_sec  = ut->tm_sec;
 
     return true;
+}
+
+// WinSparkle calls this to ask if we can shut down.
+//  At this point the download has completed, the user has
+//  selected Install Update, and the installer has started.
+//  This callback runs on a non-main thread.
+int Win32UpdateManager::canShutdownCallback() {
+	return true;
+}
+
+// WinSparkle calls this to request that we shut down.
+//  This callback runs on a non-main thread so we post
+//  a WM_CLOSE message to our window so that we exit
+//  cleanly, as opposed to calling g_system->quit().
+void Win32UpdateManager::shutdownRequestCallback() {
+	PostMessage(_window->getHwnd(), WM_CLOSE, 0, 0);
 }
 
 #endif
