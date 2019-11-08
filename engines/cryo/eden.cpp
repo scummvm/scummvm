@@ -113,7 +113,6 @@ EdenGame::EdenGame(CryoEngine *vm) : _vm(vm), kMaxMusicSize(2200000) {
 	_soundAllocated = false;
 	_musicChannel = _voiceChannel = nullptr;
 	_hnmSoundChannel = nullptr;
-	_voiceSound = nullptr;
 	_cirsorPanX = 0;
 	_inventoryScrollDelay = 0;
 	_cursorPosY = _cursorPosX = 0;
@@ -4084,9 +4083,7 @@ void EdenGame::run() {
 	_vm->_video->setupSound(11025, false, false);
 	_vm->_video->setForceZero2Black(true);
 	_vm->_video->setupTimer(12.5);
-	_voiceSound = new Sound(0, 11025 * 65536.0, 8, 0);
 	_hnmSoundChannel = _vm->_video->getSoundChannel();
-	_voiceSound->setWantsDesigned(1); // CHECKME: Used?
 
 	_musicChannel = new CSoundChannel(_vm->_mixer, 11025, false);
 	_voiceChannel = new CSoundChannel(_vm->_mixer, 11025, false);

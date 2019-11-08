@@ -95,54 +95,6 @@ struct HNMHeader {
 	int32   _bufferSize;
 };
 
-class Sound {
-private:
-	int32  _headerOffset;
-	int16  _mode;
-	int16  _volume;
-
-public:
-	Sound(int16 length, float rate, int16 sampleSize, int16 mode);
-	~Sound();
-
-	void assignBuffer(void *buffer, int bufferOffs, int length);
-	void prepareSample(int16 mode);
-	void setWantsDesigned(int16 designed);
-
-	char  *_sndHandle;
-	char  *_buffer;
-
-	float  _rate;
-
-	int16  _maxLength;
-	int16  _headerLen;
-	int16  _sampleSize;
-
-	int    _length;
-};
-
-#define kCryoMaxChSounds 10
-
-class SoundChannel {
-private:
-	int16   _volumeLeft;
-	int16   _volumeRight;
-	int16   _numSounds;
-
-	Sound *_sounds[kCryoMaxChSounds];
-
-public:
-	SoundChannel(int arg1);
-	~SoundChannel();
-
-	void stop();
-	void play(Sound *sound);
-	int16 getVolume();
-	void setVolume(int16 volume);
-	void setVolumeRight(int16 volume);
-	void setVolumeLeft(int16 volume);
-};
-
 void SysBeep(int x);
 void FlushEvents(int16 arg1, int16 arg2);
 
