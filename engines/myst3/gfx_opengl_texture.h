@@ -34,16 +34,20 @@ namespace Myst3 {
 class OpenGLTexture : public Texture {
 public:
 	OpenGLTexture(const Graphics::Surface *surface);
+	OpenGLTexture();
 	virtual ~OpenGLTexture();
 
 	void update(const Graphics::Surface *surface) override;
 	void updatePartial(const Graphics::Surface *surface, const Common::Rect &rect) override;
+
+	void copyFromFramebuffer(const Common::Rect &screen);
 
 	GLuint id;
 	GLuint internalFormat;
 	GLuint sourceFormat;
 	uint32 internalWidth;
 	uint32 internalHeight;
+	bool upsideDown;
 
 private:
 	void updateTexture(const Graphics::Surface *surface, const Common::Rect &rect);

@@ -249,6 +249,7 @@ void ShaderRenderer::drawTexturedRect2D(const Common::Rect &screenRect, const Co
 	_boxShader->setUniform("verSizeWH", scaled(sWidth, sHeight));
 	_boxShader->setUniform("texOffsetXY", Math::Vector2d(tLeft, tTop));
 	_boxShader->setUniform("texSizeWH", Math::Vector2d(tWidth, tHeight));
+	_boxShader->setUniform("flipY", glTexture->upsideDown);
 
 	glDepthMask(GL_FALSE);
 
@@ -396,6 +397,15 @@ Graphics::Surface *ShaderRenderer::getScreenshot() {
 	flipVertical(s);
 
 	return s;
+}
+
+Texture *ShaderRenderer::copyScreenshotToTexture() {
+	OpenGLTexture *texture = new OpenGLTexture();
+
+	Common::Rect screen = viewport();
+	texture->copyFromFramebuffer(screen);
+
+	return texture;
 }
 
 } // End of namespace Myst3

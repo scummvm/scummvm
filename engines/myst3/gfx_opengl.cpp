@@ -168,10 +168,14 @@ void OpenGLRenderer::drawTexturedRect2D(const Common::Rect &screenRect, const Co
 	const float tTop = textureRect.top / (float)glTexture->internalHeight;
 	const float tHeight = textureRect.height() / (float)glTexture->internalHeight;
 
-	const float sLeft = screenRect.left;
-	const float sTop = screenRect.top;
-	const float sWidth = screenRect.width();
-	const float sHeight = screenRect.height();
+	float sLeft = screenRect.left;
+	float sTop = screenRect.top;
+	float sRight = sLeft + screenRect.width();
+	float sBottom = sTop + screenRect.height();
+
+	if (glTexture->upsideDown) {
+		SWAP(sTop, sBottom);
+	}
 
 	if (transparency >= 0.0) {
 		if (additiveBlending) {
@@ -192,16 +196,16 @@ void OpenGLRenderer::drawTexturedRect2D(const Common::Rect &screenRect, const Co
 	glBindTexture(GL_TEXTURE_2D, glTexture->id);
 	glBegin(GL_TRIANGLE_STRIP);
 		glTexCoord2f(tLeft, tTop + tHeight);
-		glVertex3f(sLeft + 0, sTop + sHeight, 1.0f);
+		glVertex3f(sLeft + 0, sBottom, 1.0f);
 
 		glTexCoord2f(tLeft + tWidth, tTop + tHeight);
-		glVertex3f(sLeft + sWidth, sTop + sHeight, 1.0f);
+		glVertex3f(sRight, sBottom, 1.0f);
 
 		glTexCoord2f(tLeft, tTop);
 		glVertex3f(sLeft + 0, sTop + 0, 1.0f);
 
 		glTexCoord2f(tLeft + tWidth, tTop);
-		glVertex3f(sLeft + sWidth, sTop + 0, 1.0f);
+		glVertex3f(sRight, sTop + 0, 1.0f);
 	glEnd();
 
 	glDisable(GL_BLEND);
@@ -326,6 +330,15 @@ Graphics::Surface *OpenGLRenderer::getScreenshot() {
 	flipVertical(s);
 
 	return s;
+}
+
+Texture *OpenGLRenderer::copyScreenshotToTexture() {
+	OpenGLTexture *texture = new OpenGLTexture();
+
+	Common::Rect screen = viewport();
+	texture->copyFromFramebuffer(screen);
+
+	return texture;
 }
 
 } // End of namespace Myst3

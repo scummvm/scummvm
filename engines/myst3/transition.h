@@ -47,7 +47,7 @@ private:
 	FrameLimiter *_frameLimiter;
 	TransitionType _type;
 
-	Graphics::Surface *_sourceScreenshot;
+	Texture *_sourceScreenshot;
 
 };
 

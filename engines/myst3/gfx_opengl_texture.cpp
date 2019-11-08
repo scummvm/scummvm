@@ -42,10 +42,20 @@ static uint32 upperPowerOfTwo(uint32 v) {
 	return v;
 }
 
+OpenGLTexture::OpenGLTexture() :
+		internalFormat(0),
+		sourceFormat(0),
+		internalWidth(0),
+		internalHeight(0),
+		upsideDown(false) {
+	glGenTextures(1, &id);
+}
+
 OpenGLTexture::OpenGLTexture(const Graphics::Surface *surface) {
 	width = surface->w;
 	height = surface->h;
 	format = surface->format;
+	upsideDown = false;
 
 	// Pad the textures if non power of two support is unavailable
 	if (OpenGLContext.NPOTSupported) {
@@ -90,7 +100,7 @@ void OpenGLTexture::update(const Graphics::Surface *surface) {
 	updatePartial(surface, Common::Rect(surface->w, surface->h));
 }
 
-void OpenGLTexture::updateTexture(const Graphics::Surface* surface, const Common::Rect& rect) {
+void OpenGLTexture::updateTexture(const Graphics::Surface *surface, const Common::Rect &rect) {
 	assert(surface->format == format);
 
 	glBindTexture(GL_TEXTURE_2D, id);
@@ -109,6 +119,28 @@ void OpenGLTexture::updateTexture(const Graphics::Surface* surface, const Common
 
 void OpenGLTexture::updatePartial(const Graphics::Surface *surface, const Common::Rect &rect) {
 	updateTexture(surface, rect);
+}
+
+void OpenGLTexture::copyFromFramebuffer(const Common::Rect &screen) {
+	internalFormat = GL_RGB;
+	width  = screen.width();
+	height = screen.height();
+	upsideDown = true;
+
+	// Pad the textures if non power of two support is unavailable
+	if (OpenGLContext.NPOTSupported) {
+		internalHeight = height;
+		internalWidth = width;
+	} else {
+		internalHeight = upperPowerOfTwo(height);
+		internalWidth = upperPowerOfTwo(width);
+	}
+
+	glBindTexture(GL_TEXTURE_2D, id);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+	glCopyTexImage2D(GL_TEXTURE_2D, 0, internalFormat, screen.left, screen.top, internalWidth, internalHeight, 0);
 }
 
 } // End of namespace Myst3

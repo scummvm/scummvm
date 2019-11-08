@@ -95,6 +95,17 @@ void Renderer::freeFont() {
 	}
 }
 
+Texture *Renderer::copyScreenshotToTexture() {
+	Graphics::Surface *surface = getScreenshot();
+
+	Texture *texture = createTexture(surface);
+
+	surface->free();
+	delete surface;
+
+	return texture;
+}
+
 Common::Rect Renderer::getFontCharacterRect(uint8 character) {
 	uint index = 0;
 

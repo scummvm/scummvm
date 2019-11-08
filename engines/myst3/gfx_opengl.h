@@ -55,6 +55,8 @@ public:
 	virtual void draw2DText(const Common::String &text, const Common::Point &position) override;
 
 	virtual Graphics::Surface *getScreenshot() override;
+	Texture *copyScreenshotToTexture() override;
+
 private:
 	void drawFace(uint face, Texture *texture);
 };

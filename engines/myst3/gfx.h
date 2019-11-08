@@ -137,6 +137,7 @@ public:
 	virtual void draw2DText(const Common::String &text, const Common::Point &position) = 0;
 
 	virtual Graphics::Surface *getScreenshot() = 0;
+	virtual Texture *copyScreenshotToTexture();
 
 	/** Render a Drawable in the specified window */
 	void renderDrawable(Drawable *drawable, Window *window);

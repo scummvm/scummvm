@@ -38,19 +38,15 @@ Transition::Transition(Myst3Engine *vm) :
 		_sourceScreenshot(nullptr),
 		_frameLimiter(new FrameLimiter(g_system, ConfMan.getInt("engine_speed"))) {
 
-	int transitionSpeed = ConfMan.getInt("transition_speed");
-
 	// Capture a screenshot of the source node
-	if (transitionSpeed != 100) {
-		_sourceScreenshot = _vm->_gfx->getScreenshot();
+	int durationTicks = computeDuration();
+	if (durationTicks) {
+		_sourceScreenshot = _vm->_gfx->copyScreenshotToTexture();
 	}
 }
 
 Transition::~Transition() {
-	if (_sourceScreenshot) {
-		_sourceScreenshot->free();
-		delete _sourceScreenshot;
-	}
+	_vm->_gfx->freeTexture(_sourceScreenshot);
 
 	delete _frameLimiter;
 }
@@ -87,13 +83,7 @@ void Transition::draw(TransitionType type) {
 
 	// Capture a screenshot of the destination node
 	_vm->drawFrame(true);
-	Graphics::Surface *target = _vm->_gfx->getScreenshot();
-
-	Texture *sourceTexture = _vm->_gfx->createTexture(_sourceScreenshot);
-	Texture *targetTexture = _vm->_gfx->createTexture(target);
-
-	target->free();
-	delete target;
+	Texture *targetScreenshot = _vm->_gfx->copyScreenshotToTexture();
 
 	// Compute the start and end frames for the animation
 	int startTick = _vm->_state->getTickCount();
@@ -109,7 +99,9 @@ void Transition::draw(TransitionType type) {
 
 		completion = CLIP<int>(100 * (_vm->_state->getTickCount() - startTick) / durationTicks, 0, 100);
 
-		drawStep(targetTexture, sourceTexture, completion);
+		_vm->_gfx->clear();
+
+		drawStep(targetScreenshot, _sourceScreenshot, completion);
 
 		_vm->_gfx->flipBuffer();
 		_frameLimiter->delayBeforeSwap();
@@ -132,8 +124,9 @@ void Transition::draw(TransitionType type) {
 		}
 	}
 
-	_vm->_gfx->freeTexture(sourceTexture);
-	_vm->_gfx->freeTexture(targetTexture);
+	_vm->_gfx->freeTexture(targetScreenshot);
+	_vm->_gfx->freeTexture(_sourceScreenshot);
+	_sourceScreenshot = nullptr;
 }
 
 void Transition::drawStep(Texture *targetTexture, Texture *sourceTexture, uint completion) {
