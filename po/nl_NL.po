@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2019-11-07 11:02+0100\n"
-"PO-Revision-Date: 2019-09-24 11:44+0000\n"
+"PO-Revision-Date: 2019-11-08 08:00+0000\n"
 "Last-Translator: Ben Castricum <github@bencastricum.nl>\n"
 "Language-Team: Dutch <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/nl/>\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=iso-8859-1\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 3.7.1\n"
+"X-Generator: Weblate 3.9.1\n"
 "X-Poedit-SourceCharset: iso-8859-1\n"
 "X-Language-name: Nederlands\n"
 
@@ -2728,81 +2728,81 @@ msgid "Snap to edges"
 msgstr "Klik vast aan randen"
 
 #: backends/platform/3ds/options-dialog.cpp:53
-#, fuzzy
 msgid "Stretch to fit"
-msgstr "Rek uit naar window"
+msgstr "Passend oprekken"
 
 #: backends/platform/3ds/options-dialog.cpp:56
-#, fuzzy
 msgid "Use Screen:"
-msgstr "Muis Snelheid:"
+msgstr "Gebruik Scherm:"
 
 #: backends/platform/3ds/options-dialog.cpp:58
 msgid "Top"
-msgstr ""
+msgstr "Top"
 
 #: backends/platform/3ds/options-dialog.cpp:59
 msgid "Bottom"
-msgstr ""
+msgstr "Bodem"
 
 #: backends/platform/3ds/options-dialog.cpp:63
-#, fuzzy
 msgid "C-Pad Sensitivity:"
-msgstr "GC Pad gevoeligheid:"
+msgstr "C-Pad Gevoeligheid:"
 
 #: backends/platform/3ds/osystem-events.cpp:148
 msgid "Magnify Mode cannot be activated in menus."
-msgstr ""
+msgstr "Vergroot Modus kan niet in menus geactiveerd worden."
 
 #: backends/platform/3ds/osystem-events.cpp:151
 msgid ""
 "Magnify Mode can only be activated\n"
 " when both screens are enabled."
 msgstr ""
+"Vergroot Modus kan alleen worden gebruikt\n"
+"als beide schermen gebruikt worden."
 
 #: backends/platform/3ds/osystem-events.cpp:153
 msgid "In-game resolution too small to magnify."
-msgstr ""
+msgstr "Spel resolutie te klein om te vergroten."
 
 #: backends/platform/3ds/osystem-events.cpp:159
 msgid "Magnify Mode On. Switching to Hover Mode..."
-msgstr ""
+msgstr "Vergroot Modus Aan. Schakel over naar Zweef Modus..."
 
 #: backends/platform/3ds/osystem-events.cpp:161
 msgid "Magnify Mode On"
-msgstr ""
+msgstr "Vergroot Modus Aan"
 
 #: backends/platform/3ds/osystem-events.cpp:168
 msgid "Magnify Mode Off. Reactivating Drag Mode..."
-msgstr ""
+msgstr "Vergroot Modus Uit. Sleep Modus wordt geheractiveerd..."
 
 #: backends/platform/3ds/osystem-events.cpp:170
 msgid "Magnify Mode Off"
-msgstr ""
+msgstr "Vergroot Modus Uit"
 
 #: backends/platform/3ds/osystem-events.cpp:178
-#, fuzzy
 msgid "Hover Mode"
-msgstr "Gore Modus"
+msgstr "Zweef Modus"
 
 #: backends/platform/3ds/osystem-events.cpp:182
-#, fuzzy
 msgid "Drag Mode"
-msgstr "Gore Modus"
+msgstr "Sleep Modus"
 
 #: backends/platform/3ds/osystem-events.cpp:184
 msgid "Cannot Switch to Drag Mode while Magnify Mode is On"
 msgstr ""
+"Kan niet overschakelen naar Sleep Modus wanneer Vergroot Modus aan staat"
 
 #: backends/platform/3ds/osystem-events.cpp:237
 msgid ""
 "Magnify Mode Off. Reactivating Drag Mode.\n"
 "Returning to Launcher..."
 msgstr ""
+"Vergroot Modus Uit. Sleep Modus wordt geheractiveerd.\n"
+"Terug naar startscherm..."
 
 #: backends/platform/3ds/osystem-events.cpp:239
 msgid "Magnify Mode Off. Returning to Launcher..."
-msgstr ""
+msgstr "Vergroot Modus Uit. Terug naar Startscherm..."
 
 #: backends/platform/ds/arm9/source/dsoptions.cpp:57
 msgid "ScummVM Main Menu"
