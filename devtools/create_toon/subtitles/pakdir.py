@@ -33,7 +33,7 @@ def generate_index(data_files):
         off += len(fdata)
 
 def create_entry(filename):
-    name, ext = os.path.splitext(os.path.basename(filename))
+    name, _ = os.path.splitext(os.path.basename(filename))
     return name + '.tss', ''.join(sbv2tss(filename)).encode()
 
 if __name__ == "__main__":
