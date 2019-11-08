@@ -70,6 +70,7 @@ GriffonEngine::GriffonEngine(OSystem *syst) : Engine(syst) {
 
 	_firsty = 0;
 	_lasty = 0;
+	_saveSlot = 0;
 
 	for (int i = 0; i < 33; ++i) {
 		for (int j = 0; j < 6; ++j) {
