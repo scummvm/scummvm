@@ -329,7 +329,7 @@ void GriffonEngine::drawHud() {
 		              ABS(_player.spellStrength - 100) < kEpsilon ? RGB(224, 0, 0) : RGB(128, 0, 224));
 
 		// time
-		int ase = _secStart + _secsingame;
+		int ase = _secStart + _secsInGame;
 		int h = ((ase - (ase % 3600)) / 3600);
 		ase -= h * 3600;
 		int m = ((ase - (ase % 60)) / 60);

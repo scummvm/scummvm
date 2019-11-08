@@ -451,7 +451,7 @@ private:
 	// timer related - move to local later
 	int _ticks, _ticksPassed, _nextTicks;
 	float _fp, _fps, _fpsr; // CHECKME: _fp and _fps seems to be integers
-	int _secsingame, _secStart;
+	int _secsInGame, _secStart;
 
 	Graphics::TransparentSurface *mapImg[4];
 

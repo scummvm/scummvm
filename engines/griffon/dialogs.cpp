@@ -475,11 +475,11 @@ void GriffonEngine::saveLoadNew() {
 	int curRow = 0;
 	int curCol = 0;
 
-	bool lowerlock = false;
+	bool lowerLock = false;
 
 	_ticks = g_system->getMillis();
 	int ticks1 = _ticks;
-	int tickpause = _ticks + 150;
+	int tickPause = _ticks + 150;
 
 	_cloudImg->setAlpha(128, true);
 
@@ -582,7 +582,7 @@ void GriffonEngine::saveLoadNew() {
 				return;
 			}
 
-			if (tickpause < _ticks && _event.type == Common::EVENT_KEYDOWN) {
+			if (tickPause < _ticks && _event.type == Common::EVENT_KEYDOWN) {
 				_itemTicks = _ticks + 220;
 
 				if (_event.kbd.keycode == Common::KEYCODE_RETURN) {
@@ -595,14 +595,14 @@ void GriffonEngine::saveLoadNew() {
 								return;
 						} else if (curCol == 1) {
 							// SAVE GAME
-							lowerlock = true;
+							lowerLock = true;
 							curRow = 1 + _saveSlot;
-							tickpause = _ticks + 125;
+							tickPause = _ticks + 125;
 						} else if (curCol == 2) {
 							// LOAD GAME
-							lowerlock = true;
+							lowerLock = true;
 							curRow = 1;
-							tickpause = _ticks + 125;
+							tickPause = _ticks + 125;
 						} else if (curCol == 3) {
 							// RETURN
 							return;
@@ -612,11 +612,11 @@ void GriffonEngine::saveLoadNew() {
 							return;
 						}
 					} 
-					if (lowerlock && tickpause < _ticks) {
+					if (lowerLock && tickPause < _ticks) {
 						if ((curCol == 1) && saveState(curRow - 1)) {
-							_secStart += _secsingame;
-							_secsingame = 0;
-							lowerlock = false;
+							_secStart += _secsInGame;
+							_secsInGame = 0;
+							lowerLock = false;
 							_saveSlot = curRow - 1;
 							curRow = 0;
 						} else if ((curCol == 2) && loadState(curRow - 1)) {
@@ -630,12 +630,12 @@ void GriffonEngine::saveLoadNew() {
 
 							haltSoundChannel(-1);
 
-							_secsingame = 0;
+							_secsInGame = 0;
 							_saveSlot = curRow - 1;
 							loadMap(_curMap);
 							mainLoop();
 						}
-						tickpause = _ticks + 125;
+						tickPause = _ticks + 125;
 					}
 				}
 
@@ -643,43 +643,43 @@ void GriffonEngine::saveLoadNew() {
 				case Common::KEYCODE_ESCAPE:
 					if (curRow == 0)
 						return;
-					lowerlock = false;
+					lowerLock = false;
 					curRow = 0;
-					tickpause = _ticks + 125;
+					tickPause = _ticks + 125;
 					break;
 				case Common::KEYCODE_DOWN:
-					if (lowerlock) {
+					if (lowerLock) {
 						++curRow;
 						if (curRow == 5)
 							curRow = 1;
-						tickpause = _ticks + 125;
+						tickPause = _ticks + 125;
 					}
 					break;
 
 				case Common::KEYCODE_UP:
-					if (lowerlock) {
+					if (lowerLock) {
 						--curRow;
 						if (curRow == 0)
 							curRow = 4;
-						tickpause = _ticks + 125;
+						tickPause = _ticks + 125;
 					}
 					break;
 
 				case Common::KEYCODE_LEFT:
-					if (!lowerlock) {
+					if (!lowerLock) {
 						--curCol;
 						if (curCol == -1)
 							curCol = 3;
-						tickpause = _ticks + 125;
+						tickPause = _ticks + 125;
 					}
 					break;
 
 				case Common::KEYCODE_RIGHT:
-					if (!lowerlock) {
+					if (!lowerLock) {
 						++curCol;
 						if (curCol == 4)
 							curCol = 0;
-						tickpause = _ticks + 125;
+						tickPause = _ticks + 125;
 					}
 					break;
 				default:
