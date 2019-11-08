@@ -593,11 +593,11 @@ void GriffonEngine::saveLoadNew() {
 							if (_shouldQuit || _gameEnd)
 								return;
 						} else if (curCol == 1) {
-							// LOAD GAME
+							// SAVE GAME
 							lowerlock = true;
 							curRow = 1 + _saveSlot;
 						} else if (curCol == 2) {
-							// SAVE GAME
+							// LOAD GAME
 							lowerlock = true;
 							curRow = 1;
 						} else if (curCol == 3) {
