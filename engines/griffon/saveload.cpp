@@ -194,7 +194,7 @@ int GriffonEngine::saveState(int slotnum) {
 	PRINT("%i", _player.level);
 
 	if (_player.level > 0) {
-		PRINT("%i", (_secStart + _secsingame));
+		PRINT("%i", (_secStart + _secsInGame));
 		PRINT("%s", "a");
 
 		PRINT("%f", _player.px);

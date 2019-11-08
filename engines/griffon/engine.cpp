@@ -122,7 +122,7 @@ void GriffonEngine::updateEngine() {
 		_nextTicks = _ticks + 1000;
 		_fps = _fp;
 		_fp = 0;
-		_secsingame = _secsingame + 1;
+		_secsInGame = _secsInGame + 1;
 	}
 
 	if (_attacking) {

@@ -194,7 +194,7 @@ void GriffonEngine::intro() {
 		setChannelVolume(_musicChannel, 0);
 	}
 
-	_secsingame = 0;
+	_secsInGame = 0;
 	_secStart = 0;
 
 	bool ldStop = false;
