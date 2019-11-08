@@ -157,9 +157,6 @@ Common::Error GriffonEngine::run() {
 			loadMap(_curMap);
 			mainLoop();
 		}
-
-		if (!_shouldQuit && _gameMode != kGameModeEnd)
-			saveLoadNew();
 	}
 
 	return Common::kNoError;
