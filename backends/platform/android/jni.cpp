@@ -46,6 +46,7 @@
 #include "common/error.h"
 #include "common/textconsole.h"
 #include "common/translation.h"
+#include "common/encoding.h"
 #include "engines/engine.h"
 
 #include "backends/platform/android/android.h"
@@ -225,8 +226,24 @@ void JNI::getDPI(float *values) {
 }
 
 void JNI::displayMessageOnOSD(const char *msg) {
+	// called from common/osd_message_queue, method: OSDMessageQueue::pollEvent()
 	JNIEnv *env = JNI::getEnv();
-	jstring java_msg = env->NewStringUTF(msg);
+//	LOGD("OSD orig MESSAGE: %s", msg);
+	Common::String fromEncoding = "ISO-8859-1";
+#ifdef USE_TRANSLATION
+	if (TransMan.getCurrentCharset() != "ASCII") {
+		fromEncoding = TransMan.getCurrentCharset();
+	}
+#endif
+	Common::Encoding converter("UTF-8", fromEncoding.c_str());
+
+	const char *utf8Msg = converter.convert(msg, converter.stringLength(msg, fromEncoding) );
+	if (utf8Msg == nullptr) {
+		LOGE("Failed to convert message to UTF-8 for OSD!");
+		return;
+	}
+//	LOGD("OSD target MESSAGE: %s", utf8Msg);
+	jstring java_msg = env->NewStringUTF(utf8Msg);
 
 	env->CallVoidMethod(_jobj, _MID_displayMessageOnOSD, java_msg);
 
@@ -693,6 +710,7 @@ void JNI::setPause(JNIEnv *env, jobject self, jboolean value) {
 jstring JNI::getCurrentCharset(JNIEnv *env, jobject self) {
 #ifdef USE_TRANSLATION
 	if (TransMan.getCurrentCharset() != "ASCII") {
+//		LOGD("getCurrentCharset: %s", TransMan.getCurrentCharset().c_str());
 		return env->NewStringUTF(TransMan.getCurrentCharset().c_str());
 	}
 #endif
