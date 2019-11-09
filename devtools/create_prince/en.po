@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: Prince\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2018-04-17 19:53+0100\n"
-"PO-Revision-Date: 2019-11-08 18:03+0000\n"
-"Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
+"PO-Revision-Date: 2019-11-12 08:29+0000\n"
+"Last-Translator: Anton <ton4ick@gmail.com>\n"
 "Language-Team: English <https://translations.scummvm.org/projects/prince/"
 "prince/en/>\n"
 "Language: en\n"
@@ -204,7 +204,7 @@ msgstr "OTHER: Sorry, little human, but I told you, I can't help you..."
 
 #: dialog0006.txt:101
 msgid "$0: Może trzeba z nimi inaczej porozmawiać?"
-msgstr "$0: That's no way to conduct a dialogue! How about|you change your tone?"
+msgstr "$0: Maybe you should talk to them in a different tone?"
 
 #: dialog0006.txt:102
 msgid "$1: Czy one się przypadkiem pana nie boją?"
@@ -430,14 +430,14 @@ msgstr ""
 #: dialog0010.txt:20
 msgid "OTHER: Podawali piwo, krasnoludzki spirytus z piwem|i pyszną golonkę z chrzanem gotowaną w piwie."
 msgstr ""
-"OTHER: They used to serve beer and dwarf|mead with beer and pork cutlets "
+"OTHER: They used to serve beer and dwarven|spirit with beer and pork cutlets "
 "boiled|in beer with horseradish at the side."
 
 #: dialog0010.txt:21
 msgid "OTHER: Pod ścianą siedziało piwo, to znaczy|bard i pisał poemat."
 msgstr ""
-"OTHER: And at the back of the inn|there were bards, sitting around|and "
-"writing their poems."
+"OTHER: And at the back of the inn there was beer,|I mean there was a bard "
+"sitting around|and writing his poems."
 
 #: dialog0010.txt:22
 msgid "OTHER: Najczęściej o mnie."
@@ -466,12 +466,13 @@ msgstr ""
 #: dialog0010.txt:27
 msgid "OTHER: Sam Adanor Wszobrody odmówił mi trzydziestego|siódmego kubeczka krasnoludzkiego spirytusu."
 msgstr ""
-"OTHER: The Adanor Everbearded himself pulled me away from my thirty|sevenths "
-"pint of Grog XD."
+"OTHER: The Adanor Lousebearded himself gave up after drinking his|thirty "
+"seventh pint of dwarven spirit with me."
 
 #: dialog0010.txt:28
 msgid "OTHER: Następnego dnia zresztą uroczyście ślubował|abstynencję do końca życia."
-msgstr "OTHER: Then, the next day, I vowed abstinence|for the rest of my life."
+msgstr ""
+"OTHER: Then, the next day, he vowed abstinence|for the rest of his life."
 
 #: dialog0010.txt:29
 msgid "HERO: Moglibyśmy razem sprawdzić, czy ta karczma|jeszcze stoi."
@@ -495,7 +496,9 @@ msgstr "OTHER: In the meantime you can search|the graves around here."
 
 #: dialog0011.txt:3
 msgid "OTHER: Skoro w moim było coś tak ciekawego jak|ja, może i w innych coś się znajdzie."
-msgstr "OTHER: You found ME in one of them,|so you knows, maybe you find|something intersting in the|others too."
+msgstr ""
+"OTHER: You found ME in one of them,|so who knows, maybe you'll find|"
+"something interesting in the|others too."
 
 #: dialog0011.txt:4
 msgid "HERO: Co?!..."
@@ -563,7 +566,7 @@ msgstr "$3: <sob, sob>"
 
 #: dialog0013.txt:100001
 msgid "OTHER: Nie ma mowy, to grób czarodzieja Arivalda."
-msgstr "OTHER: No question, that is the grave of Arivald the wizard."
+msgstr "OTHER: No way, that is the grave of Arivald the wizard."
 
 #: dialog0013.txt:100002
 msgid "OTHER: Mówiono o nim, że ma niemiły zwyczaj|zamieniania w stonogi tych, którzy|przeszkadzają mu we śnie."
@@ -719,19 +722,19 @@ msgstr "$2: I have to go now, but I'll come back."
 
 #: dialog0016.txt:206
 msgid "$4: Pustelnikuje?"
-msgstr "$4: He likes the life?"
+msgstr "$4: Hermitizing?"
 
 #: dialog0016.txt:207
 msgid "$5: Wariuje?"
-msgstr "$5: He is mad?"
+msgstr "$5: Going insane?"
 
 #: dialog0016.txt:208
 msgid "$6: Ucieka przed prawem?"
-msgstr "$6: He's running away from the law?"
+msgstr "$6: Hiding from the law?"
 
 #: dialog0016.txt:209
 msgid "$7: Pokutuje?"
-msgstr "$7: He's doing penance?"
+msgstr "$7: Repenting?"
 
 #: dialog0016.txt:310
 msgid "$8: Nie, skąd ten pomysł?"
@@ -835,7 +838,9 @@ msgstr "OTHER: Did he not know that there is such a thing as \"luck\"?"
 
 #: dialog0016.txt:100607
 msgid "OTHER: No, ale odeszliśmy od pytania. Więc|czym się zajmuje pustelnik?#B1"
-msgstr "OTHER: Anyway, it seems we strayed off topic again.|So, why would anyone become a hermit?#B1"
+msgstr ""
+"OTHER: Anyway, it seems we strayed off topic again.|So what does a hermit "
+"do?#B1"
 
 #: dialog0016.txt:100701
 msgid "OTHER: Tak jest, mój panie!"
@@ -843,7 +848,7 @@ msgstr "OTHER: Exactly, my Lord!"
 
 #: dialog0016.txt:100702
 msgid "OTHER: Pokutuje!"
-msgstr "OTHER: Atonement!"
+msgstr "OTHER: Repenting!"
 
 #: dialog0016.txt:100703
 msgid "OTHER: Jestem tu, by zdławić wszelkie grzeszne|myśli, które palą me ciało niby żywy|ogień!"
@@ -949,7 +954,7 @@ msgstr "OTHER: In fact, I've done it a|thousand times already."
 
 #: dialog0016.txt:101204
 msgid "OTHER: A więc pustelnik?...#B1"
-msgstr "OTHER: Now, why would anyone become a hermit?#B1"
+msgstr "OTHER: Now, what does a hermit do?#B1"
 
 #: dialog0017.txt:1
 msgid "OTHER: \"Z przyczyn znanych tylko Naszemu Królewskiemu|Majestatowi, a które publicznie ujawnione|zostać nie mogą...\""
@@ -997,7 +1002,7 @@ msgstr "OTHER: Sure is..."
 
 #: dialog0019.txt:5
 msgid "HERO: Znaleźć pracę."
-msgstr "HERO: Then go find a job."
+msgstr "HERO: To find a job."
 
 #: dialog0019.txt:6
 msgid "OTHER: Taaa..."
@@ -1005,7 +1010,7 @@ msgstr "OTHER: Sure..."
 
 #: dialog0019.txt:7
 msgid "P#HERO: P-r-a-c-ę."
-msgstr "P#HERO: GET. A. JOB."
+msgstr "P#HERO: A J-O-B."
 
 #: dialog0019.txt:8
 msgid "OTHER: Tak tak..."
@@ -1077,7 +1082,9 @@ msgstr "OTHER: It's not that difficult, you know."
 
 #: dialog0019.txt:100102
 msgid "OTHER: Trzeba dużo pić, nie przychodzić do pracy,|nie szanować szefa i klientów, napastować|żony notabli..."
-msgstr "OTHER: You just have to drink a lot,|stop going to work, insult your|boss and your customers, then|take their wives ..."
+msgstr ""
+"OTHER: You just have to drink a lot,|stop going to work, disrespect your|"
+"boss and your customers,|harass wives of others…"
 
 #: dialog0019.txt:100103
 msgid "HERO: Eee..."
@@ -1197,7 +1204,7 @@ msgstr "$14: Frankly, the evidence is all against you."
 
 #: dialog0020.txt:416
 msgid "$15: Faktycznie, to żaden dowód."
-msgstr "$15: Actually, that's not the evidence."
+msgstr "$15: Actually, that's not an evidence."
 
 #: dialog0020.txt:417
 msgid "$16: Czyli zostałeś kozłem ofiarnym?"
