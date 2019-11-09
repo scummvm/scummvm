@@ -9,7 +9,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2018-04-17 19:53+0100\n"
 "PO-Revision-Date: 2019-11-12 08:29+0000\n"
-"Last-Translator: Anton <ton4ick@gmail.com>\n"
+"Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: English <https://translations.scummvm.org/projects/prince/"
 "prince/en/>\n"
 "Language: en\n"
@@ -330,7 +330,7 @@ msgstr "OTHER: Alright then!#X1"
 
 #: dialog0007.txt:1
 msgid "OTHER: A może tak: Saippuakivikauppias!"
-msgstr "OTHER: Didn't work... Maybe it's Saippuakivikauppias!"
+msgstr "OTHER: Didn't work... Maybe it's Wasitacaroracatisaw!"
 
 #: dialog0008.txt:1
 msgid "OTHER: ...Cholera!"
