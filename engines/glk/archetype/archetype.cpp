@@ -30,7 +30,6 @@
 #include "glk/archetype/saveload.h"
 #include "glk/archetype/sys_object.h"
 #include "glk/archetype/timestamp.h"
-#include "glk/archetype/wrap.h"
 
 namespace Glk {
 namespace Archetype {
@@ -142,7 +141,7 @@ void Archetype::writeln(const String fmt, ...) {
 	glk_put_buffer(s.c_str(), s.size());
 }
 
-void Archetype::readln(String &s) {
+String Archetype::readLine() {
 	event_t ev;
 	char buffer[MAX_INPUT_LINE + 1];
 
@@ -152,19 +151,30 @@ void Archetype::readln(String &s) {
 		glk_select(&ev);
 		if (ev.type == evtype_Quit) {
 			glk_cancel_line_event(_mainWindow, &ev);
-			return;
+			return "";
 		} else if (ev.type == evtype_LineInput)
 			break;
 	} while (ev.type != evtype_Quit);
 
 	buffer[ev.val1] = 0;
 
-	s = String(buffer);
+	return String(buffer);
 }
 
-char Archetype::ReadKey() {
-	// TODO
-	return '\0';
+char Archetype::readKey() {
+	glk_request_char_event(_mainWindow);
+
+	event_t ev;
+	while (ev.type != evtype_CharInput) {
+		glk_select(&ev);
+
+		if (ev.type == evtype_Quit) {
+			glk_cancel_char_event(_mainWindow);
+			return '\0';
+		}
+	}
+
+	return (char)ev.val1;
 }
 
 void Archetype::lookup(int the_obj, int the_attr, ResultType &result, ContextType &context,
@@ -355,7 +365,7 @@ bool Archetype::send_message(int transport, int message_sent, int recipient,
 				} else if (index_xarray(Type_List, op->inherited_from, p)) {
 					op = (ObjectPtr)p;
 				} else {
-					wraperr("Internal error:  invalid inheritance");
+					error("Internal error:  invalid inheritance");
 					return false;
 				}
 			}
@@ -398,12 +408,12 @@ void Archetype::eval_expr(ExprTree the_expr, ResultType &result, ContextType &co
 		case RW_KEY:
 			result._kind = STR_PTR;
 			if (the_expr->_data._reserved.keyword == RW_READ)
-				result._data._str.acl_str = ReadLine(true);			// read full line
-			else
-				result._data._str.acl_str = ReadLine(false);		// read single key
-
-			Rows = 0;
-			cursor_reset();				// user will have had to hit <RETURN>
+				result._data._str.acl_str = MakeNewDynStr(readLine());	// read full line
+			else {
+				String s;
+				s += readKey();
+				result._data._str.acl_str = MakeNewDynStr(s);	// read single key
+			}
 			break;
 
 		case RW_MESSAGE:
@@ -753,6 +763,9 @@ void Archetype::exec_stmt(StatementPtr the_stmt, ResultType &result, ContextType
 			exec_stmt((StatementPtr)np->data, result, context);
 
 			b = (result._kind == RESERVED) && (result._data._reserved.keyword == RW_BREAK);
+
+			if (shouldQuit())
+				return;
 		}
 		break;
 
@@ -765,7 +778,7 @@ void Archetype::exec_stmt(StatementPtr the_stmt, ResultType &result, ContextType
 			if (index_xarray(Literals, the_stmt->_data._expr.expression->_data._msgTextQuote.index, p)) {
 				result._kind = TEXT_LIT;
 				result._data._msgTextQuote.index = the_stmt->_data._expr.expression->_data._msgTextQuote.index;
-				wrapout(*((StringPtr)p), true);
+				writeln(*((StringPtr)p));
 			}
 			break;
 
@@ -817,7 +830,7 @@ void Archetype::exec_stmt(StatementPtr the_stmt, ResultType &result, ContextType
 		}
 
 		if (the_stmt->_kind == ST_WRITE) {
-			wrapout("", true);
+			g_vm->writeln();
 		} else if (the_stmt->_kind == ST_STOP) {
 			g_vm->writeln();
 			g_vm->writeln();
@@ -900,6 +913,9 @@ void Archetype::exec_stmt(StatementPtr the_stmt, ResultType &result, ContextType
 			exec_stmt(the_stmt->_data._loop.action, result, context);
 			b = (result._kind == RESERVED) && (result._data._reserved.keyword == RW_BREAK);
 			cleanup(result);
+
+			if (shouldQuit())
+				return;
 		}
 		break;
 
@@ -955,14 +971,14 @@ void Archetype::exec_stmt(StatementPtr the_stmt, ResultType &result, ContextType
 			if (result._data._ident.ident_int == (int)Object_List.size())
 				shrink_xarray(Object_List);
 		} else {
-			wraperr("Can only destroy previously created objects");
+			error("Can only destroy previously created objects");
 		}
 
 		cleanup(result);
 		break;
 
 	default:
-		wraperr("Internal error:  statement not supported yet");
+		error("Internal error:  statement not supported yet");
 		break;
 	}
 

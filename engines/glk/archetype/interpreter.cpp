@@ -25,7 +25,6 @@
 #include "glk/archetype/misc.h"
 #include "glk/archetype/saveload.h"
 #include "glk/archetype/timestamp.h"
-#include "glk/archetype/wrap.h"
 
 namespace Glk {
 namespace Archetype {
@@ -325,7 +324,7 @@ bool assignment(ResultType &target, ResultType &value) {
 	ExprPtr e;
 
 	if (target._kind != ATTR_PTR) {
-		wraperr("Warning: attempted assignment to a non-attribute");
+		error("Warning: attempted assignment to a non-attribute");
 		return false;
 	} else {
 		e = (ExprPtr)target._data._attr.acl_attr->data;
@@ -377,7 +376,7 @@ void display_result(ResultType &result) {
 		break;
 	case QUOTE_LIT:
 		enclose = " ";
-		wrapout(">>", false);
+		debugN(">>");
 		break;
 	case MESSAGE:
 		enclose = "\'";

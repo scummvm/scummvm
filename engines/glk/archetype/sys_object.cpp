@@ -25,7 +25,6 @@
 #include "glk/archetype/game_stat.h"
 #include "glk/archetype/heap_sort.h"
 #include "glk/archetype/parser.h"
-#include "glk/archetype/wrap.h"
 #include "common/algorithm.h"
 #include "common/debug-channels.h"
 #include "common/savefile.h"
@@ -128,7 +127,7 @@ void send_to_system(int transport, String &strmsg, ResultType &result, ContextTy
 			if (convert_to(NUMERIC, result)) {
 				g_vm->Abbreviate = result._data._numeric.acl_int;
 			} else {
-				wraperr("Warning: non-numeric abbreviation message sent to system");
+				error("Warning: non-numeric abbreviation message sent to system");
 				cleanup(result);
 			}
 			sys_state = IDLING;

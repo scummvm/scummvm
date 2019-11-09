@@ -164,8 +164,7 @@ MODULE_OBJS += \
 	archetype/string.o \
 	archetype/sys_object.o \
 	archetype/timestamp.o \
-	archetype/token.o \
-	archetype/wrap.o
+	archetype/token.o
 endif
 
 ifdef ENABLE_GLK_FROTZ

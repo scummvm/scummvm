@@ -173,9 +173,15 @@ public:
 	void writeln(const String fmt, ...);
 	void writeln() { writeln(""); }
 
-	void readln(String &s);
+	/**
+	 * Read an input line typed by the player
+	 */
+	String readLine();
 
-	char ReadKey();
+	/**
+	 * Read in a single key
+	 */
+	char readKey();
 };
 
 extern Archetype *g_vm;
