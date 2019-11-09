@@ -25,6 +25,7 @@
 #include "backends/platform/sdl/sdl.h"
 #include "backends/events/sdl/sdl-events.h"
 #include "common/config-manager.h"
+#include "common/fs.h"
 #include "common/textconsole.h"
 #include "graphics/scaler/aspect.h"
 #ifdef USE_OSD
@@ -279,19 +280,16 @@ void SdlGraphicsManager::saveScreenshot() {
 		screenshotsPath = sdl_g_system->getScreenshotsPath();
 
 	for (int n = 0;; n++) {
-		SDL_RWops *file;
-
 #ifdef USE_PNG
 		filename = Common::String::format("scummvm%05d.png", n);
 #else
 		filename = Common::String::format("scummvm%05d.bmp", n);
 #endif
 
-		file = SDL_RWFromFile((screenshotsPath + filename).c_str(), "r");
-
-		if (!file)
+		Common::FSNode file = Common::FSNode(screenshotsPath + filename);
+		if (!file.exists()) {
 			break;
-		SDL_RWclose(file);
+		}
 	}
 
 	if (saveScreenshot(screenshotsPath + filename)) {
