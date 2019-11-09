@@ -440,9 +440,10 @@ void GriffonEngine::configMenu() {
 						break;
 					case 13:
 						saveConfig();
-						// no break on purpose
+						// fall through
 					case 14:
 						exitMenu = true;
+						break;
 					default:
 						break;
 					}

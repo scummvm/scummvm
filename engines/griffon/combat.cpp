@@ -387,6 +387,8 @@ void GriffonEngine::attack() {
 						return;
 					}
 					break;
+				default:
+					break;
 				}
 			}
 		}
