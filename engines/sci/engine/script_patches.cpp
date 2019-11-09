@@ -16596,11 +16596,50 @@ static const uint16 sq5PatchWd40FruitFix[] = {
 	PATCH_END
 };
 
+// In the first release of SQ5, when the cloaking device alarm countdown on
+//  WD40's ship expires, a script enters an infinite loop and the interpreter
+//  stops responding.
+//
+// We fix this as Sierra did in later versions by adding a call to SQ5:handsOn
+//  and removing the call to sCountDown:dispose before going to deathRoom.
+//
+// Applies to: English PC 1.03
+// Responsible method: sCountDown:changeState(3)
+// Fixes bug: #11255
+static const uint16 sq5SignatureWd40AlarmCountdownFix[] = {
+	0x3c,                           // dup
+	0x35, 0x03,                     // ldi 03
+	0x1a,                           // eq?
+	0x31, 0x0b,                     // bnt 0b [ end of method ]
+	0x78,                           // push1
+	0x39, 0x15,                     // pushi 15
+	SIG_MAGICDWORD,
+	0x45, 0x09, 0x02,               // callb proc0_9 02 [ go to deathRoom ]
+	0x39, SIG_SELECTOR8(dispose),   // pushi dispose
+	0x76,                           // push0
+	0x54, 0x04,                     // self 04 [ self dispose: ]
+	SIG_END
+};
+
+static const uint16 sq5PatchWd40AlarmCountdownFix[] = {
+	0x38, PATCH_SELECTOR16(handsOn),// pushi handsOn
+	0x76,                           // push0
+	0x81, 0x01,                     // lag 01
+	0x4a, 0x04,                     // send 04 [ SQ5 handsOn: ]
+	0x78,                           // push1
+	0x39, 0x15,                     // pushi 15
+	0x45, 0x09, 0x02,               // callb proc0_9 02 [ go to deathRoom ]
+	0x3a,                           // toss
+	0x48,                           // ret
+	PATCH_END
+};
+
 //          script, description,                                      signature                             patch
 static const SciScriptPatcherEntry sq5Signatures[] = {
 	{  true,   200, "captain chair lockup fix",                    1, sq5SignatureCaptainChairFix,          sq5PatchCaptainChairFix },
 	{  true,   226, "toolbox fix",                                 1, sq5SignatureToolboxFix,               sq5PatchToolboxFix },
 	{  true,   305, "wd40 fruit fix",                              1, sq5SignatureWd40FruitFix,             sq5PatchWd40FruitFix },
+	{  true,   335, "wd40 alarm countdown fix",                    1, sq5SignatureWd40AlarmCountdownFix,    sq5PatchWd40AlarmCountdownFix },
 	{  true,  1000, "drive bay pathfinding fix",                   1, sq5SignatureDriveBayPathfindingFix,   sq5PatchDriveBayPathfindingFix },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
