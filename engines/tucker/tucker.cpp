@@ -655,6 +655,8 @@ void TuckerEngine::parseEvents() {
 			case '.':
 				_inputKeys[kInputKeySkipSpeech] = true;
 				break;
+			default:
+				break;
 			}
 			switch (ev.kbd.keycode) {
 			case Common::KEYCODE_f:
@@ -908,6 +910,8 @@ void TuckerEngine::updateCharPosition() {
 					}
 					_speechSoundNum = 281 + _flagsTable[200];
 					break;
+				default:
+					break;
 				}
 			}
 			_speechSoundNum += 1865;
@@ -932,6 +936,8 @@ void TuckerEngine::updateCharPosition() {
 				updateCharPositionHelper();
 				return;
 			}
+			break;
+		default:
 			break;
 		}
 	}
@@ -1628,6 +1634,8 @@ void TuckerEngine::updateSoundsTypes3_4() {
 				return;
 			}
 			break;
+		default:
+			break;
 		}
 	}
 }
@@ -2087,6 +2095,8 @@ const uint8 *TuckerEngine::getStringBuf(int type) const {
 	case 3:
 		p = _objTxtBuf;
 		break;
+	default:
+		break;
 	}
 	return p;
 }
@@ -2356,6 +2366,8 @@ void TuckerEngine::updateCharacterAnimation() {
 				break;
 			case 4:
 				num = 2;
+				break;
+			default:
 				break;
 			}
 		}
@@ -3513,6 +3525,8 @@ int TuckerEngine::executeTableInstruction() {
 		// opcodes mapped here are treated as NOOPs
 		readTableInstructionParam(3);
 		return 0;
+	default:
+		break;
 	}
 	return 2;
 }
@@ -3632,6 +3646,8 @@ void TuckerEngine::setSelectedObjectKey() {
 		case 3:
 			_selectedObject._xPos = _xPosCurrent;
 			_selectedObject._yPos = _yPosCurrent;
+			break;
+		default:
 			break;
 		}
 	}
@@ -3767,6 +3783,8 @@ void TuckerEngine::handleMouseClickOnInventoryObject() {
 				_actionVerbLocked = false;
 			}
 		}
+		break;
+	default:
 		break;
 	}
 }
