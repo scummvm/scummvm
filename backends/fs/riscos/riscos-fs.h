@@ -33,6 +33,7 @@
 class RISCOSFilesystemNode : public AbstractFSNode {
 protected:
 	Common::String _displayName;
+	Common::String _nativePath;
 	Common::String _path;
 	bool _isDirectory;
 	bool _isValid;
