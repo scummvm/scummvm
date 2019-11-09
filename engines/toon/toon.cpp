@@ -1064,6 +1064,8 @@ bool ToonEngine::showMainmenu(bool &loadedGame) {
 		case MAINMENUHOTSPOT_HOTKEYSCLOSE:
 			menuMask = MAINMENUMASK_BASE;
 			continue;
+		default:
+			break;
 		}
 
 		if (musicPlaying) {
@@ -1097,6 +1099,8 @@ bool ToonEngine::showMainmenu(bool &loadedGame) {
 		case MAINMENUHOTSPOT_QUIT:
 			exitGame = true;
 			doExit = true;
+			break;
+		default:
 			break;
 		}
 	}
@@ -2886,7 +2890,7 @@ int32 ToonEngine::runConversationCommand(int16 **command) {
 		}
 		break;
 	case 103:
-		return result;
+	default:
 		break;
 	}
 	return result;
@@ -3972,7 +3976,6 @@ int32 ToonEngine::handleInventoryOnInventory(int32 itemDest, int32 itemSrc) {
 		break;
 	case 21:
 		switch (itemSrc) {
-
 		case 107:
 			characterTalk(1296);
 			replaceItemFromInventory(107, 109);
@@ -4001,6 +4004,8 @@ int32 ToonEngine::handleInventoryOnInventory(int32 itemDest, int32 itemSrc) {
 			setCursor(0, false, 0, 0);
 			rearrangeInventory();
 			return 1;
+		default:
+			break;
 		}
 		break;
 	case 22:
@@ -4316,6 +4321,8 @@ int32 ToonEngine::handleInventoryOnInventory(int32 itemDest, int32 itemSrc) {
 			setCursor(0, false, 0, 0);
 			rearrangeInventory();
 			return 1;
+		default:
+			break;
 		}
 		break;
 	case 71:
@@ -4628,6 +4635,9 @@ int32 ToonEngine::handleInventoryOnInventory(int32 itemDest, int32 itemSrc) {
 		} else if (itemSrc == 0x59 || itemSrc == 0x52) {
 			characterTalk(1496);
 		}
+		break;
+	default:
+		break;
 	}
 	return 0;
 }
@@ -4822,6 +4832,8 @@ int32 ToonEngine::handleInventoryOnDrew(int32 itemId) {
 			runEventScript(_mouseX, _mouseY, 2, 108, 0);
 		}
 		return 1;
+	default:
+		break;
 	}
 	return 0;
 }
