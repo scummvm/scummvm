@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2019-11-09 04:28+0100\n"
-"PO-Revision-Date: 2019-10-01 04:55+0000\n"
+"PO-Revision-Date: 2019-11-09 23:03+0000\n"
 "Last-Translator: Rodrigo Vegas Sánchez-Ferrero <rodrigo.vegas@gmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/es/>\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=iso-8859-1\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 3.7.1\n"
+"X-Generator: Weblate 3.9.1\n"
 "X-Language-name: Espanol\n"
 
 #: gui/about.cpp:108
@@ -2742,81 +2742,82 @@ msgid "Snap to edges"
 msgstr "Pegar a los bordes"
 
 #: backends/platform/3ds/options-dialog.cpp:53
-#, fuzzy
 msgid "Stretch to fit"
-msgstr "Estirar a la ventana"
+msgstr "Ajuste estirado"
 
 #: backends/platform/3ds/options-dialog.cpp:56
-#, fuzzy
 msgid "Use Screen:"
-msgstr "Velocidad:"
+msgstr "Pantalla:"
 
 #: backends/platform/3ds/options-dialog.cpp:58
 msgid "Top"
-msgstr ""
+msgstr "Parte superior"
 
 #: backends/platform/3ds/options-dialog.cpp:59
 msgid "Bottom"
-msgstr ""
+msgstr "Parte inferior"
 
 #: backends/platform/3ds/options-dialog.cpp:63
-#, fuzzy
 msgid "C-Pad Sensitivity:"
-msgstr "Sensibilidad del pad GC:"
+msgstr "Sensibilidad del C-Pad:"
 
 #: backends/platform/3ds/osystem-events.cpp:148
 msgid "Magnify Mode cannot be activated in menus."
-msgstr ""
+msgstr "No se puede activar el modo aumentado desde el menú."
 
 #: backends/platform/3ds/osystem-events.cpp:151
 msgid ""
 "Magnify Mode can only be activated\n"
 " when both screens are enabled."
 msgstr ""
+"El modo aumentado solo puede ser activado\n"
+" cuando las dos pantallas están activadas."
 
 #: backends/platform/3ds/osystem-events.cpp:153
 msgid "In-game resolution too small to magnify."
-msgstr ""
+msgstr "Resolución de juego demasiado pequeña para aumentar."
 
 #: backends/platform/3ds/osystem-events.cpp:159
 msgid "Magnify Mode On. Switching to Hover Mode..."
-msgstr ""
+msgstr "Modo aumentado encendido. Cambiando al modo flotante..."
 
 #: backends/platform/3ds/osystem-events.cpp:161
 msgid "Magnify Mode On"
-msgstr ""
+msgstr "Modo aumentado encendido"
 
 #: backends/platform/3ds/osystem-events.cpp:168
 msgid "Magnify Mode Off. Reactivating Drag Mode..."
-msgstr ""
+msgstr "Modo aumentado apagado. Reactivando modo de arrastre..."
 
 #: backends/platform/3ds/osystem-events.cpp:170
 msgid "Magnify Mode Off"
-msgstr ""
+msgstr "Modo aumentado apagado"
 
 #: backends/platform/3ds/osystem-events.cpp:178
-#, fuzzy
 msgid "Hover Mode"
-msgstr "Modo sangriento"
+msgstr "Modo flotante"
 
 #: backends/platform/3ds/osystem-events.cpp:182
-#, fuzzy
 msgid "Drag Mode"
-msgstr "Modo sangriento"
+msgstr "Modo de arrastre"
 
 #: backends/platform/3ds/osystem-events.cpp:184
 msgid "Cannot Switch to Drag Mode while Magnify Mode is On"
 msgstr ""
+"No se puede cambiar al modo de arrastre mientras el modo aumentado esté "
+"encendido"
 
 #: backends/platform/3ds/osystem-events.cpp:237
 msgid ""
 "Magnify Mode Off. Reactivating Drag Mode.\n"
 "Returning to Launcher..."
 msgstr ""
+"Modo aumentado apagado. Reactivando modo de arrastre.\n"
+"Volviendo al lanzador..."
 
 #: backends/platform/3ds/osystem-events.cpp:239
 msgid "Magnify Mode Off. Returning to Launcher..."
-msgstr ""
+msgstr "Modo aumentado apagado. Volviendo al lanzador..."
 
 #: backends/platform/ds/arm9/source/dsoptions.cpp:57
 msgid "ScummVM Main Menu"
