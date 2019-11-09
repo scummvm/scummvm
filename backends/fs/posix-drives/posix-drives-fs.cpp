@@ -53,7 +53,7 @@ DrivePOSIXFilesystemNode::DrivePOSIXFilesystemNode(const DrivesArray &drives) :
 	_isValid = false;
 }
 
-DrivePOSIXFilesystemNode *DrivePOSIXFilesystemNode::getChildWithKnownType(const Common::String &n, bool isDirectory) const {
+DrivePOSIXFilesystemNode *DrivePOSIXFilesystemNode::getChildWithKnownType(const Common::String &n, bool isDirectoryFlag) const {
 	assert(_isDirectory);
 
 	// Make sure the string contains no slashes
@@ -68,7 +68,7 @@ DrivePOSIXFilesystemNode *DrivePOSIXFilesystemNode::getChildWithKnownType(const 
 	child->_path = newPath;
 	child->_isValid = true;
 	child->_isPseudoRoot = false;
-	child->_isDirectory = isDirectory;
+	child->_isDirectory = isDirectoryFlag;
 	child->_displayName = n;
 
 	return child;
