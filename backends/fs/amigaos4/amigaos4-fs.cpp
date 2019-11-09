@@ -223,7 +223,6 @@ bool AmigaOSFilesystemNode::exists() const {
 	// IDOS->FreeDosObject(DOS_FIB, fib);
 	//
 	// =============================  New code
-
 	BPTR pLock = IDOS->Lock(_sPath.c_str(), SHARED_LOCK);
 	if (pLock) {
 		nodeExists = true;
@@ -391,7 +390,7 @@ AbstractFSList AmigaOSFilesystemNode::listVolumes() const {
 
 	struct DosList *dosList = IDOS->LockDosList(kLockFlags);
 	if (!dosList) {
-		debug(6, "Cannot lock DOS list!");
+		debug(6, "Cannot LockDOSList!");
 		LEAVE();
 		return myList;
 	}
