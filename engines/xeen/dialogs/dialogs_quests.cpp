@@ -204,6 +204,9 @@ void Quests::execute() {
 			));
 			break;
 		}
+
+		default:
+			break;
 		}
 
 		windows[30].writeString("\v000\t000");

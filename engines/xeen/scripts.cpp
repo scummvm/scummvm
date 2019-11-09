@@ -791,6 +791,8 @@ bool Scripts::cmdTakeOrGive(ParamsIterator &params) {
 							// Break out of character loop
 							idx = party._activeParty.size();
 							break;
+						default:
+							break;
 						}
 						break;
 					}

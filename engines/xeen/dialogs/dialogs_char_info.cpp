@@ -208,6 +208,9 @@ void CharacterInfo::execute(int charIndex) {
 
 		case Common::KEYCODE_ESCAPE:
 			goto exit;
+
+		default:
+			break;
 		}
 	} while (!_vm->shouldExit());
 exit:

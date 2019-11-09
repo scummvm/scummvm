@@ -482,6 +482,9 @@ Character *ItemsDialog::execute(Character *c, ItemsMode mode) {
 			category = CATEGORY_WEAPON;
 			redrawFlag = REDRAW_FULL;
 			break;
+
+		default:
+			break;
 		}
 	}
 

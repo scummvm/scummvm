@@ -1551,6 +1551,8 @@ void Combat::attack2(int damage, RangeType rangeType) {
 							}
 						}
 						break;
+					default:
+						break;
 					}
 				}
 			}

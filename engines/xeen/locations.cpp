@@ -1958,6 +1958,9 @@ int DwarfCutscene::show() {
 		case 2:
 			sound.playSound("dwarf12.voc");
 			break;
+
+		default:
+			break;
 		}
 
 		events.updateGameCounter();
@@ -2157,6 +2160,8 @@ int SphinxCutscene::show() {
 			break;
 		case 2:
 			sound.playSound("sphinx12.voc");
+			break;
+		default:
 			break;
 		}
 

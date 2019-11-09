@@ -1669,6 +1669,9 @@ void Interface::doCombat() {
 					combat.moveMonsters();
 				party._stepped = true;
 				break;
+
+			default:
+				break;
 			}
 
 			// Handling for if the combat turn is complete
