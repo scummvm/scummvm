@@ -126,7 +126,6 @@ AmigaOSFilesystemNode::AmigaOSFilesystemNode(const Common::String &p) {
 
 AmigaOSFilesystemNode::AmigaOSFilesystemNode(BPTR pLock, const char *pDisplayName) {
 	ENTER();
-
 	int bufSize = MAXPATHLEN;
 	_pFileLock = 0;
 
@@ -160,7 +159,6 @@ AmigaOSFilesystemNode::AmigaOSFilesystemNode(BPTR pLock, const char *pDisplayNam
 		_nProt = pExd->Protection;
 		if (EXD_IS_DIRECTORY(pExd)) {
 			_bIsDirectory = true;
-
 			_pFileLock = IDOS->DupLock(pLock);
 			_bIsValid = _pFileLock != 0;
 
@@ -226,29 +224,11 @@ bool AmigaOSFilesystemNode::exists() const {
 	//
 	// =============================  New code
 
-	// WORKAROUND:
-	// This is a workaround for a bug present in AmigaOS4's
-	// newlib.library 53.30 and lower.
-	// It will be removed once a fixed version of said library is
-	// available to the public.
-	// DESCRIPTION:
-	// We need to explicitly open dos.library and it's IDOS interface.
-	// Otherwise it will hit a NULL pointer with a shared binary build.
-	// The hit will happen on loading a game from any engine, if
-	// more than one engine (shared) plugin is available.
-	DOSBase = IExec->OpenLibrary("dos.library", 0);
-	IDOS = (struct DOSIFace *)IExec->GetInterface(DOSBase, "main", 1, NULL);
-
 	BPTR pLock = IDOS->Lock(_sPath.c_str(), SHARED_LOCK);
 	if (pLock) {
 		nodeExists = true;
 		IDOS->UnLock(pLock);
 	}
-
-	// WORKAROUND 2:
-	// Close dos.library and its IDOS interface again.
-	IExec->DropInterface((struct Interface *)IDOS);
-	IExec->CloseLibrary(DOSBase);
 
 	LEAVE();
 	return nodeExists;
@@ -490,4 +470,3 @@ bool AmigaOSFilesystemNode::createDirectory() {
 }
 
 #endif //defined(__amigaos4__)
-
