@@ -98,10 +98,30 @@ String String::vformat(const char *fmt, va_list args) {
 }
 
 int String::val(int *code) {
+	const char *srcP = c_str();
+	int result = 0, sign = 0, idx = 1;
+
+	if (*srcP == '-') {
+		sign = -1;
+		++srcP;
+		++idx;
+	}
+
+	for (; *srcP; ++srcP, ++idx) {
+		if (*srcP < '0' || *srcP > '9') {
+			// Invalid character
+			if (code)
+				*code = idx;
+			return result;
+		}
+
+		result = (result * 10) + (*srcP - '0');
+	}
+
 	if (code)
 		*code = 0;
 
-	return atoi(c_str());
+	return result;
 }
 
 String String::left(size_t count) const {

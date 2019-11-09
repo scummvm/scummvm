@@ -433,6 +433,7 @@ void Archetype::eval_expr(ExprTree the_expr, ResultType &result, ContextType &co
 			break;
 
 		default:
+			result = *the_expr;
 			break;
 		}
 	} else if (the_expr->_kind == OPER) {
@@ -645,7 +646,8 @@ void Archetype::eval_expr(ExprTree the_expr, ResultType &result, ContextType &co
 				if (the_expr->_data._oper.op_name == OP_LEFTFROM)
 					result._data._str.acl_str = MakeNewDynStr(r1._data._str.acl_str->left(r2._data._numeric.acl_int));
 				else
-					result._data._str.acl_str = MakeNewDynStr(r1._data._str.acl_str->right(r2._data._numeric.acl_int));
+					result._data._str.acl_str = MakeNewDynStr(r1._data._str.acl_str->right(
+						r1._data._str.acl_str->size() - r2._data._numeric.acl_int + 1));
 			}
 			break;
 
@@ -654,7 +656,7 @@ void Archetype::eval_expr(ExprTree the_expr, ResultType &result, ContextType &co
 			eval_expr(the_expr->_data._oper.right, r2, context, RVALUE);
 			if (convert_to(STR_PTR, r1) && convert_to(STR_PTR, r2)) {
 				result._kind = NUMERIC;
-				result._data._numeric.acl_int = r2._data._str.acl_str->indexOf(*r1._data._str.acl_str);
+				result._data._numeric.acl_int = r2._data._str.acl_str->indexOf(*r1._data._str.acl_str) + 1;
 				if (result._data._numeric.acl_int == 0)
 					cleanup(result);
 			}
@@ -712,8 +714,11 @@ bool Archetype::eval_condition(ExprTree the_expr, ContextType &context) {
 	undefine(result);
 	eval_expr(the_expr, result, context, RVALUE);
 
-	failure = (result._kind == RESERVED) && (result._data._reserved.keyword = RW_UNDEFINED
-		|| result._data._reserved.keyword == RW_FALSE || result._data._reserved.keyword == RW_ABSENT);
+	failure = (result._kind == RESERVED) && (
+		result._data._reserved.keyword == RW_UNDEFINED ||
+		result._data._reserved.keyword == RW_FALSE ||
+		result._data._reserved.keyword == RW_ABSENT
+	);
 
 	cleanup(result);
 	return !failure;
@@ -767,6 +772,8 @@ void Archetype::exec_stmt(StatementPtr the_stmt, ResultType &result, ContextType
 		case MESSAGE:
 			b = send_message(OP_PASS, the_stmt->_data._expr.expression->_data._msgTextQuote.index,
 				context.self, result, context);
+			break;
+
 		default:
 			eval_expr(the_stmt->_data._expr.expression, result, context, RVALUE);
 			break;
@@ -811,8 +818,7 @@ void Archetype::exec_stmt(StatementPtr the_stmt, ResultType &result, ContextType
 
 		if (the_stmt->_kind == ST_WRITE) {
 			wrapout("", true);
-		}
-		else if (the_stmt->_kind == ST_STOP) {
+		} else if (the_stmt->_kind == ST_STOP) {
 			g_vm->writeln();
 			g_vm->writeln();
 			error("%f", VERSION_NUM);
@@ -826,13 +832,12 @@ void Archetype::exec_stmt(StatementPtr the_stmt, ResultType &result, ContextType
 		}
 		if (eval_condition(the_stmt->_data._if.condition, context)) {
 			if (verbose)
-				debug(" Evaluated true; executing then branch");
+				debug(" Evaluated TRUE; executing then branch");
 			exec_stmt(the_stmt->_data._if.then_branch, result, context);
 
-		}
-		else if (the_stmt->_data._if.else_branch != nullptr) {
+		} else if (the_stmt->_data._if.else_branch != nullptr) {
 			if (verbose)
-				debug(" Evaluated false; executing else branch");
+				debug(" Evaluated FALSE; executing else branch");
 			exec_stmt(the_stmt->_data._if.else_branch, result, context);
 		}
 		break;

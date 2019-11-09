@@ -295,6 +295,7 @@ bool result_compare(short comparison, ResultType &r1, ResultType &r2) {
 			default:
 				break;
 			}
+			break;
 
 		case IDENT:
 			if (r1._data._ident.ident_kind == r2._data._ident.ident_kind) {
@@ -380,8 +381,10 @@ void display_result(ResultType &result) {
 		break;
 	case MESSAGE:
 		enclose = "\'";
+		break;
 	default:
 		enclose = ' ';
+		break;
 	}
 
 	if (enclose != " ")
@@ -401,7 +404,7 @@ void display_expr(ExprTree the_tree) {
 			debugN(") ");
 		}
 
-		wrapout(Operators[the_tree->_data._oper.op_name], false);
+		debugN(Operators[the_tree->_data._oper.op_name]);
 		debugN(" (");
 		display_expr(the_tree->_data._oper.right);
 		debugN(") ");
