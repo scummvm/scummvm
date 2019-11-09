@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2019-11-09 04:28+0100\n"
-"PO-Revision-Date: 2019-09-23 22:54+0000\n"
+"PO-Revision-Date: 2019-11-09 23:03+0000\n"
 "Last-Translator: scootergrisen <scootergrisen@gmail.com>\n"
 "Language-Team: Danish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/da/>\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=iso-8859-1\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 3.7.1\n"
+"X-Generator: Weblate 3.9.1\n"
 "X-Language-name: Dansk\n"
 
 #: gui/about.cpp:108
@@ -2711,81 +2711,80 @@ msgid "Snap to edges"
 msgstr "Hæft til hjørner"
 
 #: backends/platform/3ds/options-dialog.cpp:53
-#, fuzzy
 msgid "Stretch to fit"
-msgstr "Stræk til vindue"
+msgstr "Stræk til at passe"
 
 #: backends/platform/3ds/options-dialog.cpp:56
-#, fuzzy
 msgid "Use Screen:"
-msgstr "Hastighed:"
+msgstr "Brug skærm:"
 
 #: backends/platform/3ds/options-dialog.cpp:58
 msgid "Top"
-msgstr ""
+msgstr "Øverst"
 
 #: backends/platform/3ds/options-dialog.cpp:59
 msgid "Bottom"
-msgstr ""
+msgstr "Nederst"
 
 #: backends/platform/3ds/options-dialog.cpp:63
-#, fuzzy
 msgid "C-Pad Sensitivity:"
-msgstr "GC Pad følsomhed:"
+msgstr "C-pad følsomhed:"
 
 #: backends/platform/3ds/osystem-events.cpp:148
 msgid "Magnify Mode cannot be activated in menus."
-msgstr ""
+msgstr "Forstørrelsestilstand kan ikke være aktiveret i menuer."
 
 #: backends/platform/3ds/osystem-events.cpp:151
 msgid ""
 "Magnify Mode can only be activated\n"
 " when both screens are enabled."
 msgstr ""
+"Forstørrelsestilstand kan kun aktiveres\n"
+" når begge skærme er aktiveret."
 
 #: backends/platform/3ds/osystem-events.cpp:153
 msgid "In-game resolution too small to magnify."
-msgstr ""
+msgstr "Opløsningen i spillet er for lille til at kunne forstørres."
 
 #: backends/platform/3ds/osystem-events.cpp:159
 msgid "Magnify Mode On. Switching to Hover Mode..."
-msgstr ""
+msgstr "Forstørrelsestilstand til. Skifter til henover-tilstand ..."
 
 #: backends/platform/3ds/osystem-events.cpp:161
 msgid "Magnify Mode On"
-msgstr ""
+msgstr "Forstørrelsestilstand til"
 
 #: backends/platform/3ds/osystem-events.cpp:168
 msgid "Magnify Mode Off. Reactivating Drag Mode..."
-msgstr ""
+msgstr "Forstørrelsestilstand til. Genaktiverer træktilstand ..."
 
 #: backends/platform/3ds/osystem-events.cpp:170
 msgid "Magnify Mode Off"
-msgstr ""
+msgstr "Forstørrelsestilstand fra"
 
 #: backends/platform/3ds/osystem-events.cpp:178
-#, fuzzy
 msgid "Hover Mode"
-msgstr "Splatter-tilstand"
+msgstr "Henover-tilstand"
 
 #: backends/platform/3ds/osystem-events.cpp:182
-#, fuzzy
 msgid "Drag Mode"
-msgstr "Splatter-tilstand"
+msgstr "Træktilstand"
 
 #: backends/platform/3ds/osystem-events.cpp:184
 msgid "Cannot Switch to Drag Mode while Magnify Mode is On"
-msgstr ""
+msgstr "Kan ikke skifte til træktilstand når forstørrelsestilstand er slået til"
 
 #: backends/platform/3ds/osystem-events.cpp:237
 msgid ""
 "Magnify Mode Off. Reactivating Drag Mode.\n"
 "Returning to Launcher..."
 msgstr ""
+"Forstørrelsestilstand fra. Genaktiverer træktilstand.\n"
+"Vender tilbage til oversigten ..."
 
 #: backends/platform/3ds/osystem-events.cpp:239
 msgid "Magnify Mode Off. Returning to Launcher..."
-msgstr ""
+msgstr "Forstørrelsestilstand fra. Vender tilbage til oversigt ..."
 
 #: backends/platform/ds/arm9/source/dsoptions.cpp:57
 msgid "ScummVM Main Menu"
