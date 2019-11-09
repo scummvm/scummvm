@@ -422,6 +422,8 @@ void ToucheEngine::op_setFlag() {
 	case 619:
 		debug(0, "Unknown music flag %d", val);
 		break;
+	default:
+		break;
 	}
 }
 

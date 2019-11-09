@@ -338,6 +338,8 @@ void ToucheEngine::writeConfigurationSettings() {
 		ConfMan.setBool("speech_mute", false);
 		ConfMan.setBool("subtitles", true);
 		break;
+	default:
+		break;
 	}
 	ConfMan.setInt("music_volume", getMusicVolume());
 	ConfMan.flushToDisk();
@@ -850,6 +852,8 @@ void ToucheEngine::setKeyCharFrame(int keyChar, int16 type, int16 value1, int16 
 	case 4:
 		key->anim3Start = value1;
 		key->anim3Count = value2;
+		break;
+	default:
 		break;
 	}
 }
@@ -1612,6 +1616,8 @@ void ToucheEngine::handleLeftMouseButtonClickOnInventory() {
 						drawInventory(_objectDescriptionNum, 1);
 					}
 					break;
+				default:
+					break;
 				}
 			}
 			break;
@@ -1698,6 +1704,8 @@ void ToucheEngine::handleMouseClickOnRoom(int flag) {
 						hitPosY = mousePos.y;
 					}
 				}
+				break;
+			default:
 				break;
 			}
 			if (_giveItemToCounter == 0 && !_hideInventoryTexts) {
@@ -2097,6 +2105,8 @@ void ToucheEngine::updateRoomRegions() {
 					_programAreaTable[i].animNext = 0;
 				}
 				i += _programAreaTable[i].animCount + 1;
+				break;
+			default:
 				break;
 			}
 		}
@@ -2778,6 +2788,8 @@ void ToucheEngine::adjustKeyCharPosToWalkBox(KeyChar *key, int moveType) {
 			key->yPos = dy * kz / dz + y1;
 		}
 		break;
+	default:
+		break;
 	}
 }
 
@@ -3056,6 +3068,8 @@ void ToucheEngine::updateKeyCharWalkPath(KeyChar *key, int16 dx, int16 dy, int16
 				key->zPos = zpos;
 			}
 		}
+		break;
+	default:
 		break;
 	}
 }
