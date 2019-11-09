@@ -1380,7 +1380,10 @@ void EE::genSprites() {
 
 				pixels >>= 1;
 
-				*((uint16 *)_sp[kSpB1 + s].getBasePtr(posx, posy)) = (uint16)palette[color + 8];
+				if (_back.format.bytesPerPixel == 2)
+					*((uint16 *)_sp[kSpB1 + s].getBasePtr(posx, posy)) = (uint16)palette[color + 8];
+				else if (_back.format.bytesPerPixel == 4)
+					*((uint32 *)_sp[kSpB1 + s].getBasePtr(posx, posy)) = palette[color + 8];
 			}
 		}
 	}
@@ -1403,7 +1406,10 @@ void EE::genSprites() {
 				if (x == 15)
 					pixels = *ptr;
 
-				*((uint16 *)_sp[kSpL1 + s].getBasePtr(posx, y)) = (uint16)palette[color + 4 * (s / 3)];
+				if (_back.format.bytesPerPixel == 2)
+					*((uint16 *)_sp[kSpL1 + s].getBasePtr(posx, y)) = (uint16)palette[color + 4 * (s / 3)];
+				else if (_back.format.bytesPerPixel == 4)
+					*((uint32 *)_sp[kSpL1 + s].getBasePtr(posx, y)) = palette[color + 4 * (s / 3)];
 			}
 		}
 	}
