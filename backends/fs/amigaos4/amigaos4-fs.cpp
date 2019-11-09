@@ -40,7 +40,7 @@ const char *lastPathComponent(const Common::String &str) {
 	int offset = str.size();
 
 	if (offset <= 0) {
-		debug(6, "Bad offset");
+		debug(6, "Bad offset!");
 		return 0;
 	}
 
@@ -71,30 +71,29 @@ AmigaOSFilesystemNode::AmigaOSFilesystemNode(const Common::String &p) {
 
 	int offset = p.size();
 
-	//assert(offset > 0);
-
 	if (offset <= 0) {
-		debug(6, "Bad offset");
+		debug(6, "Bad offset!");
 		return;
 	}
-
-	// WORKAROUND:
-	// This is a bug in AmigaOS4 newlib.library 53.30 and lower.
-	// It will be removed once a fixed version is available to public.
-	// DESCRIPTION:
-	// We need to explicitly open dos.library and its IDOS interface.
-	// Otherwise we will hit an IDOS NULL pointer after compiling a
-	// shared binary with (shared) plugins.
-	// The hit will happen on loading a game from any engine, if more
-	// than one engine/(shared) plugin is available.
-	DOSBase = IExec->OpenLibrary("dos.library", 0);
-	IDOS = (struct DOSIFace *)IExec->GetInterface(DOSBase, "main", 1, NULL);
 
 	_sPath = p;
 	_sDisplayName = ::lastPathComponent(_sPath);
 	_pFileLock = 0;
 	_bIsDirectory = false;
 	_bIsValid = false;
+
+	// WORKAROUND:
+	// This is a workaround for a bug present in AmigaOS4's
+	// newlib.library 53.30 and lower.
+	// It will be removed once a fixed version of said library is
+	// available to the public.
+	// DESCRIPTION:
+	// We need to explicitly open dos.library and it's IDOS interface.
+	// Otherwise it will hit a NULL pointer with a shared binary build.
+	// The hit will happen on loading a game from any engine, if
+	// more than one engine (shared) plugin is available.
+	DOSBase = IExec->OpenLibrary("dos.library", 0);
+	IDOS = (struct DOSIFace *)IExec->GetInterface(DOSBase, "main", 1, NULL);
 
 	// Check whether the node exists and if it's a directory.
 	struct ExamineData * pExd = IDOS->ExamineObjectTags(EX_StringNameInput,_sPath.c_str(),TAG_END);
@@ -105,7 +104,7 @@ AmigaOSFilesystemNode::AmigaOSFilesystemNode(const Common::String &p) {
 			_pFileLock = IDOS->Lock((CONST_STRPTR)_sPath.c_str(), SHARED_LOCK);
 			_bIsValid = (_pFileLock != 0);
 
-			// Add a trailing slash if needed.
+			// Add a trailing slash, if needed.
 			const char c = _sPath.lastChar();
 			if (c != '/' && c != ':')
 				_sPath += '/';
@@ -127,6 +126,7 @@ AmigaOSFilesystemNode::AmigaOSFilesystemNode(const Common::String &p) {
 
 AmigaOSFilesystemNode::AmigaOSFilesystemNode(BPTR pLock, const char *pDisplayName) {
 	ENTER();
+
 	int bufSize = MAXPATHLEN;
 	_pFileLock = 0;
 
@@ -151,17 +151,20 @@ AmigaOSFilesystemNode::AmigaOSFilesystemNode(BPTR pLock, const char *pDisplayNam
 		delete[] n;
 	}
 
-	_bIsValid = false;
 	_bIsDirectory = false;
+	_bIsValid = false;
 
+	// Check whether the node exists and if it's a directory.
 	struct ExamineData * pExd = IDOS->ExamineObjectTags(EX_FileLockInput,pLock,TAG_END);
 	if (pExd) {
 		_nProt = pExd->Protection;
 		if (EXD_IS_DIRECTORY(pExd)) {
 			_bIsDirectory = true;
+
 			_pFileLock = IDOS->DupLock(pLock);
 			_bIsValid = _pFileLock != 0;
 
+			// Add a trailing slash, if needed.
 			const char c = _sPath.lastChar();
 			if (c != '/' && c != ':')
 				_sPath += '/';
@@ -172,7 +175,7 @@ AmigaOSFilesystemNode::AmigaOSFilesystemNode(BPTR pLock, const char *pDisplayNam
 
         IDOS->FreeDosObject(DOS_EXAMINEDATA, pExd);
 	} else {
-		debug(6, "ExamineObject() returned NULL");
+		debug(6, "ExamineObject() returned NULL!");
     }
 
 	LEAVE();
@@ -222,11 +225,30 @@ bool AmigaOSFilesystemNode::exists() const {
 	// IDOS->FreeDosObject(DOS_FIB, fib);
 	//
 	// =============================  New code
+
+	// WORKAROUND:
+	// This is a workaround for a bug present in AmigaOS4's
+	// newlib.library 53.30 and lower.
+	// It will be removed once a fixed version of said library is
+	// available to the public.
+	// DESCRIPTION:
+	// We need to explicitly open dos.library and it's IDOS interface.
+	// Otherwise it will hit a NULL pointer with a shared binary build.
+	// The hit will happen on loading a game from any engine, if
+	// more than one engine (shared) plugin is available.
+	DOSBase = IExec->OpenLibrary("dos.library", 0);
+	IDOS = (struct DOSIFace *)IExec->GetInterface(DOSBase, "main", 1, NULL);
+
 	BPTR pLock = IDOS->Lock(_sPath.c_str(), SHARED_LOCK);
 	if (pLock) {
 		nodeExists = true;
 		IDOS->UnLock(pLock);
 	}
+
+	// WORKAROUND 2:
+	// Close dos.library and its IDOS interface again.
+	IExec->DropInterface((struct Interface *)IDOS);
+	IExec->CloseLibrary(DOSBase);
 
 	LEAVE();
 	return nodeExists;
@@ -235,7 +257,7 @@ bool AmigaOSFilesystemNode::exists() const {
 AbstractFSNode *AmigaOSFilesystemNode::getChild(const Common::String &n) const {
 	ENTER();
 	if (!_bIsDirectory) {
-		debug(6, "Not a directory");
+		debug(6, "Not a directory!");
 		return 0;
 	}
 
@@ -255,30 +277,31 @@ bool AmigaOSFilesystemNode::getChildren(AbstractFSList &myList, ListMode mode, b
 	bool ret = false;
 
 	if (!_bIsValid) {
-		debug(6, "Invalid node");
+		debug(6, "Invalid node!");
 		LEAVE();
 		return false; // Empty list
 	}
 
 	if (!_bIsDirectory) {
-		debug(6, "Not a directory");
+		debug(6, "Not a directory!");
 		LEAVE();
 		return false; // Empty list
 	}
 
 	if (isRootNode()) {
-		debug(6, "Root node");
+		debug(6, "Root node!");
 		LEAVE();
 		myList = listVolumes();
 		return true;
 	}
 
 	APTR context = IDOS->ObtainDirContextTags(  EX_FileLockInput,	_pFileLock,
-												EX_DoCurrentDir,	TRUE,  /* for softlinks */
-												EX_DataFields,		(EXF_NAME|EXF_LINK|EXF_TYPE),
-												TAG_END);
+										EX_DoCurrentDir,	TRUE,  /* for softlinks */
+										EX_DataFields,		(EXF_NAME|EXF_LINK|EXF_TYPE),
+										TAG_END);
 	if (context) {
-		struct ExamineData * pExd = NULL; // NB: No need to free the value after usage, everything will be dealt with by the DirContext release
+		struct ExamineData * pExd = NULL; // No need to free the value after usage, everything
+									// will be dealt with by the DirContext release.
 
 		AmigaOSFilesystemNode *entry;
 		while ( (pExd = IDOS->ExamineDir(context)) ) {
@@ -300,7 +323,7 @@ bool AmigaOSFilesystemNode::getChildren(AbstractFSList &myList, ListMode mode, b
 		}
 
 		if (ERROR_NO_MORE_ENTRIES != IDOS->IoErr() ) {
-			debug(6, "An error occurred during ExamineDir");
+			debug(6, "IoErr() - ExamineDir (NO_MORE_ENTRIES)!");
 			ret = false;
 		} else {
 			ret = true;
@@ -309,7 +332,7 @@ bool AmigaOSFilesystemNode::getChildren(AbstractFSList &myList, ListMode mode, b
 
 		IDOS->ReleaseDirContext(context);
 	} else {
-		debug(6, "Unable to ObtainDirContext");
+		debug(6, "Unable to ObtainDirContext!");
 		ret = false;
 	}
 
@@ -322,7 +345,7 @@ AbstractFSNode *AmigaOSFilesystemNode::getParent() const {
 	ENTER();
 
 	if (isRootNode()) {
-		debug(6, "Root node");
+		debug(6, "Root node!");
 		LEAVE();
 		return new AmigaOSFilesystemNode(*this);
 	}
@@ -388,7 +411,7 @@ AbstractFSList AmigaOSFilesystemNode::listVolumes() const {
 
 	struct DosList *dosList = IDOS->LockDosList(kLockFlags);
 	if (!dosList) {
-		debug(6, "Cannot lock the DOS list");
+		debug(6, "Cannot lock DOS list!");
 		LEAVE();
 		return myList;
 	}
@@ -408,7 +431,7 @@ AbstractFSList AmigaOSFilesystemNode::listVolumes() const {
 			// which errored using SDK 53.24 with a
 			//	'struct dosList' has no member called 'dol_Task'
 			// The reason for that was, that
-			//	1) dol_Task wasn't a task pointer, it is a message port instead.
+			//	1) dol_Task wasn't a task pointer, it was a message port instead.
 			//	2) it was redefined to be dol_Port in dos/obsolete.h in aforementioned SDK.
 
 			// Copy name to buffer.
@@ -429,7 +452,7 @@ AbstractFSList AmigaOSFilesystemNode::listVolumes() const {
 				// Find device name.
 				IDOS->DevNameFromLock(volumeLock, devName, MAXPATHLEN, DN_DEVICEONLY);
 
-				sprintf(buffer, "%s (%s)", volName, devName);
+				snprintf(buffer, MAXPATHLEN, "%s (%s)", volName, devName);
 
 				delete[] devName;
 
@@ -467,3 +490,4 @@ bool AmigaOSFilesystemNode::createDirectory() {
 }
 
 #endif //defined(__amigaos4__)
+
