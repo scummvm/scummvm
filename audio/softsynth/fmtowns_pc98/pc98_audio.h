@@ -71,11 +71,13 @@ public:
 	public:
 		~MutexLock();
 	private:
-		MutexLock(PC98AudioCoreInternal *pc98int);
+		MutexLock(PC98AudioCoreInternal *pc98int, int reverse = 0);
 		PC98AudioCoreInternal *_pc98int;
+		int _count;
 	};
 
 	MutexLock stackLockMutex();
+	MutexLock stackUnlockMutex();
 
 private:
 	PC98AudioCoreInternal *_internal;
