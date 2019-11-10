@@ -38,13 +38,7 @@ class EE;
 
 class EEHandler {
 public:
-	EEHandler();
-	~EEHandler();
-
 	bool handleKeyDown(Common::KeyState &state);
-
-private:
-	EE *_ee;
 };
 
 enum {
@@ -146,8 +140,6 @@ AboutDialog::AboutDialog()
 
 	for (i = 0; i < ARRAYSIZE(credits); i++)
 		addLine(credits[i]);
-
-	_eeHandler = new EEHandler;
 }
 
 void AboutDialog::addLine(const char *str) {
@@ -296,7 +288,9 @@ void AboutDialog::handleMouseUp(int x, int y, int button, int clickCount) {
 }
 
 void AboutDialog::handleKeyDown(Common::KeyState state) {
-	if (_eeHandler->handleKeyDown(state)) {
+	EEHandler eeHandler;
+
+	if (eeHandler.handleKeyDown(state)) {
 		reflowLayout();
 		return;
 	}
@@ -430,17 +424,11 @@ private:
 	void drawStatus(Common::String str, int x, uint32 color, int y = 0, int color2 = 0, int w = 16);
 };
 
-EEHandler::EEHandler() {
-	_ee = new EE;
-}
-
-EEHandler::~EEHandler() {
-	delete _ee;
-}
-
 bool EEHandler::handleKeyDown(Common::KeyState &state) {
 	if (state.ascii == 'v') {
-		_ee->run();
+		EE *ee = new EE();
+		ee->run();
+		delete ee;
 
 		g_gui.redrawFull();
 
