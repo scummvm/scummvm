@@ -57,7 +57,7 @@ const char *lastPathComponent(const Common::String &str) {
 
 AmigaOSFilesystemNode::AmigaOSFilesystemNode() {
 	ENTER();
-	_sDisplayName = "Available Disks";
+	_sDisplayName = "Available HDDs/Partitions";
 	_bIsValid = true;
 	_bIsDirectory = true;
 	_sPath = "";
@@ -140,7 +140,7 @@ AmigaOSFilesystemNode::AmigaOSFilesystemNode(BPTR pLock, const char *pDisplayNam
 
 		if (IDOS->IoErr() != ERROR_LINE_TOO_LONG) {
 			_bIsValid = false;
-			debug(6, "IoErr() != ERROR_LINE_TOO_LONG");
+			debug(6, "IDOS->IoErr() failed - ERROR_LINE_TOO_LONG not matched!");
 			LEAVE();
 			delete[] n;
 			return;
@@ -173,7 +173,7 @@ AmigaOSFilesystemNode::AmigaOSFilesystemNode(BPTR pLock, const char *pDisplayNam
 
         IDOS->FreeDosObject(DOS_EXAMINEDATA, pExd);
 	} else {
-		debug(6, "ExamineObject() returned NULL!");
+		debug(6, "IDOS->ExamineData() failed - ExamineDosObject returned NULL!");
     }
 
 	LEAVE();
@@ -274,13 +274,13 @@ bool AmigaOSFilesystemNode::getChildren(AbstractFSList &myList, ListMode mode, b
 		return true;
 	}
 
-	APTR context = IDOS->ObtainDirContextTags(  EX_FileLockInput,	_pFileLock,
-										EX_DoCurrentDir,	TRUE,  /* for softlinks */
-										EX_DataFields,		(EXF_NAME|EXF_LINK|EXF_TYPE),
-										TAG_END);
+	APTR context = IDOS->ObtainDirContextTags(  	EX_FileLockInput,	_pFileLock,
+							EX_DoCurrentDir,	TRUE,  /* for softlinks */
+							EX_DataFields,		(EXF_NAME|EXF_LINK|EXF_TYPE),
+							TAG_END);
 	if (context) {
 		struct ExamineData * pExd = NULL; // No need to free the value after usage, everything
-									// will be dealt with by the DirContext release.
+						// will be dealt with by the DirContext release.
 
 		AmigaOSFilesystemNode *entry;
 		while ( (pExd = IDOS->ExamineDir(context)) ) {
@@ -311,7 +311,7 @@ bool AmigaOSFilesystemNode::getChildren(AbstractFSList &myList, ListMode mode, b
 
 		IDOS->ReleaseDirContext(context);
 	} else {
-		debug(6, "Unable to ObtainDirContext!");
+		debug(6, "IDOS->ObtainDirContext() failed!");
 		ret = false;
 	}
 
@@ -390,7 +390,7 @@ AbstractFSList AmigaOSFilesystemNode::listVolumes() const {
 
 	struct DosList *dosList = IDOS->LockDosList(kLockFlags);
 	if (!dosList) {
-		debug(6, "Cannot LockDOSList!");
+		debug(6, "IDOS->LockDOSList() failed!");
 		LEAVE();
 		return myList;
 	}
