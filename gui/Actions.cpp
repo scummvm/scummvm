@@ -24,11 +24,7 @@
 #include "gui/message.h"
 #include "common/config-manager.h"
 
-#ifdef _WIN32_WCE
-	#include "backends/platform/wince/CEActionsPocket.h"
-	#include "backends/platform/wince/CEActionsSmartphone.h"
-	#include "backends/platform/wince/CEDevice.h"
-#elif defined(__SYMBIAN32__)
+#ifdef __SYMBIAN32__
 	#include "backends/platform/symbian/src/SymbianActions.h"
 #endif
 
@@ -48,13 +44,7 @@ Actions::~Actions() {
 
 // call the correct object creator function according to the Factory Pattern
 void Actions::init() {
-#ifdef _WIN32_WCE
-	// For WinCE: now use software + Factory pattern to create correct objects
-	if (!CEDevice::isSmartphone())
-		CEActionsPocket::init();
-	else
-		CEActionsSmartphone::init();
-#elif defined(__SYMBIAN32__)
+#if defined(__SYMBIAN32__)
 	SymbianActions::init();
 #endif
 }

@@ -339,16 +339,6 @@ MODULE_OBJS += \
 	events/webossdl/webossdl-events.o
 endif
 
-ifeq ($(BACKEND),wince)
-MODULE_OBJS += \
-	events/wincesdl/wincesdl-events.o \
-	fs/windows/windows-fs.o \
-	fs/windows/windows-fs-factory.o \
-	graphics/wincesdl/wincesdl-graphics.o \
-	mixer/wincesdl/wincesdl-mixer.o \
-	plugins/win32/win32-provider.o
-endif
-
 ifeq ($(BACKEND),wii)
 MODULE_OBJS += \
 	fs/wii/wii-fs.o \

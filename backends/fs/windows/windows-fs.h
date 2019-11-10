@@ -24,9 +24,6 @@
 #define WINDOWS_FILESYSTEM_H
 
 #include <windows.h>
-#ifdef _WIN32_WCE
-#undef GetCurrentDirectory
-#endif
 
 #include "backends/fs/abstract-fs.h"
 
@@ -53,7 +50,6 @@ public:
 	 * Creates a WindowsFilesystemNode with the root node as path.
 	 *
 	 * In regular windows systems, a virtual root path is used "".
-	 * In windows CE, the "\" root is used instead.
 	 */
 	WindowsFilesystemNode();
 

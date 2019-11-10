@@ -1344,7 +1344,7 @@ bool SdlEventSource::handleResizeEvent(Common::Event &event, int w, int h) {
 }
 
 SDLKey SdlEventSource::obtainKeycode(const SDL_keysym keySym) {
-#if !SDL_VERSION_ATLEAST(2, 0, 0) && defined(WIN32) && !defined(_WIN32_WCE)
+#if !SDL_VERSION_ATLEAST(2, 0, 0) && defined(WIN32)
 	// WORKAROUND: SDL 1.2 on Windows does not use the user configured keyboard layout,
 	// resulting in "keySym.sym" values to always be those expected for an US keyboard.
 	// For example, SDL returns SDLK_Q when pressing the 'A' key on an AZERTY keyboard.

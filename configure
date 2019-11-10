@@ -534,7 +534,7 @@ get_system_exe_extension() {
 	gph-linux)
 		_exeext=".gph"
 		;;
-	mingw* | *os2-emx | wince)
+	mingw* | *os2-emx)
 		_exeext=".exe"
 		;;
 	*)
@@ -941,7 +941,7 @@ Configuration:
   -h, --help              display this help and exit
   --backend=BACKEND       backend to build (3ds, android, dc, dingux, ds, gcw0,
                           gph, iphone, ios7, linuxmoto, maemo, n64, null, openpandora,
-                          ps2, psp, psp2, samsungtv, sdl, switch, tizen, webos, wii, wince) [sdl]
+                          ps2, psp, psp2, samsungtv, sdl, switch, tizen, webos, wii) [sdl]
 
 Installation directories:
   --prefix=PREFIX         install architecture-independent files in PREFIX
@@ -1002,7 +1002,6 @@ Special configuration feature:
                                            tizen for Samsung Tizen
                                            webos for HP Palm WebOS
                                            wii for Nintendo Wii
-                                           wince for Windows CE
 
 Game engines:
   --enable-all-engines     enable all engines, including those which are
@@ -1789,11 +1788,6 @@ wii)
 	_host_cpu=powerpc
 	_host_alias=powerpc-eabi
 	;;
-wince)
-	_host_os=wince
-	_host_cpu=arm
-	_host_alias=arm-mingw32ce
-	;;
 *)
 	if test -n "$_host"; then
 		guessed_host=`$_srcdir/config.sub $_host`
@@ -2185,7 +2179,7 @@ if test "$have_gcc" = yes ; then
 			case $_host_os in
 			# newlib-based system include files suppress non-C89 function
 			# declarations under __STRICT_ANSI__
-			3ds | amigaos* | android | androidsdl | dreamcast | ds | gamecube | mingw* | mint* | n64 | psp | ps2 | ps3 | psp2 | switch | tizen | wii | wince )
+			3ds | amigaos* | android | androidsdl | dreamcast | ds | gamecube | mingw* | mint* | n64 | psp | ps2 | ps3 | psp2 | switch | tizen | wii )
 				;;
 			*)
 				append_var CXXFLAGS "-ansi"
@@ -2499,7 +2493,7 @@ case $_host_cpu in
 			openpandora)
 				define_in_config_if_yes yes 'USE_ARM_NEON_ASPECT_CORRECTOR'
 				;;
-			android | android-arm | androidsdl-armeabi | arm-*riscos | caanoo | ds | gp2x | gp2xwiz | maemo | tizen | wince)
+			android | android-arm | androidsdl-armeabi | arm-*riscos | caanoo | ds | gp2x | gp2xwiz | maemo | tizen)
 				define_in_config_if_yes yes 'USE_ARM_SCALER_ASM'
 				# FIXME: The following feature exhibits a bug. It produces distorted
 				# sound since 9003ce517ff9906b0288f9f7c02197fd091d4554. The ARM
@@ -3039,23 +3033,6 @@ case $_host_os in
 			append_var LDFLAGS "-Wl,--no-gc-sections"
 		fi
 		;;
-	wince)
-		_optimization_level=-O3
-		append_var CXXFLAGS "-fno-inline-functions"
-		append_var CXXFLAGS "-march=armv4"
-		append_var CXXFLAGS "-mtune=xscale"
-		append_var DEFINES "-D_WIN32_WCE=300"
-		append_var DEFINES "-D__ARM__"
-		append_var DEFINES "-D_ARM_"
-		append_var DEFINES "-DUNICODE"
-		append_var DEFINES "-DFPM_DEFAULT"
-		append_var DEFINES "-DNONSTANDARD_PORT"
-		append_var DEFINES "-DWRAP_MALLOC"
-		append_var DEFINES "-DWIN32"
-		append_var DEFINES "-Dcdecl="
-		append_var DEFINES "-D__cdecl__="
-		add_line_to_config_mk "WRAP_MALLOC = 1"
-		;;
 esac
 
 if test -n "$_host"; then
@@ -3537,16 +3514,6 @@ if test -n "$_host"; then
 			add_line_to_config_h "#define USE_WII_SMB"
 			add_line_to_config_h "#define USE_WII_KBD"
 			;;
-		wince)
-			append_var LDFLAGS "-Wl,--stack,65536"
-			if test "$_tremor" = auto; then
-				_tremolo=yes
-			fi
-			_backend="wince"
-			_detectlang=yes
-			_mt32emu=no
-			_port_mk="backends/platform/wince/wince.mk"
-			;;
 		*)
 			echo "WARNING: Unknown target, continuing with auto-detected values"
 			;;
@@ -3736,15 +3703,6 @@ case $_backend in
 			;;
 		esac
 		;;
-	wince)
-		append_var INCLUDES '-I$(srcdir)/backends/platform/wince'
-		append_var INCLUDES '-I$(srcdir)/backends/platform/wince/CEgui'
-		append_var INCLUDES '-I$(srcdir)/backends/platform/wince/CEkeys'
-		append_var INCLUDES '-I$(srcdir)/backends/platform/wince/missing'
-		append_var LIBS "-static -lSDL"
-		_sdl=yes
-		_sdlversion=1.2.0
-		;;
 	*)
 		echo "support for $_backend backend not implemented in configure script yet"
 		exit 1
@@ -3892,7 +3850,7 @@ esac
 #
 echo_n "Checking if host is POSIX compliant... "
 case $_host_os in
-	amigaos* | cygwin* | dreamcast | ds | gamecube | mingw* | n64 | ps2 | ps3 | psp2 | psp | riscos | wii | wince)
+	amigaos* | cygwin* | dreamcast | ds | gamecube | mingw* | n64 | ps2 | ps3 | psp2 | psp | riscos | wii)
 		_posix=no
 		;;
 	3ds | android | androidsdl | beos* | bsd* | darwin* | freebsd* | gnu* | gph-linux | haiku* | hpux* | iphone | ios7 | irix*| k*bsd*-gnu* | linux* | maemo | mint* | netbsd* | openbsd* | solaris* | sunos* | switch | uclinux* | webos)
@@ -4094,18 +4052,6 @@ PLUGIN_EXTRA_DEPS	= $(EXECUTABLE)
 PLUGIN_LDFLAGS		:= -Wl,--enable-auto-import -shared ./libscummvm.a
 PRE_OBJS_FLAGS		:= -Wl,--whole-archive
 POST_OBJS_FLAGS		:= -Wl,--export-all-symbols -Wl,--no-whole-archive -Wl,--out-implib,./libscummvm.a
-'
-		;;
-	wince)
-		append_var DEFINES "-DUNCACHED_PLUGINS"
-		HOSTEXEEXT=".dll"
-		_plugin_prefix=""
-		_plugin_suffix=".plugin"
-_mak_plugins='
-PLUGIN_EXTRA_DEPS	= $(EXECUTABLE)
-PLUGIN_LDFLAGS		:= -shared -lscummvm -L.
-PRE_OBJS_FLAGS		:= -Wl,--whole-archive
-POST_OBJS_FLAGS		:= -Wl,--export-all-symbols -Wl,--no-whole-archive -Wl,--out-implib,./libscummvm.a -shared
 '
 		;;
 	ps2)
