@@ -125,7 +125,7 @@ void Archetype::interpret() {
 void Archetype::write(const String fmt, ...) {
 	va_list ap;
 	va_start(ap, fmt);
-	Common::String s = Common::String::format(fmt.c_str(), ap);
+	Common::String s = Common::String::vformat(fmt.c_str(), ap);
 	va_end(ap);
 
 	glk_put_buffer(s.c_str(), s.size());
@@ -134,7 +134,7 @@ void Archetype::write(const String fmt, ...) {
 void Archetype::writeln(const String fmt, ...) {
 	va_list ap;
 	va_start(ap, fmt);
-	Common::String s = Common::String::format(fmt.c_str(), ap);
+	Common::String s = Common::String::vformat(fmt.c_str(), ap);
 	va_end(ap);
 
 	s += '\n';
@@ -826,7 +826,8 @@ void Archetype::exec_stmt(StatementPtr the_stmt, ResultType &result, ContextType
 		while (iterate_list(the_stmt->_data._write.print_list, np)) {
 			cleanup(result);
 			eval_expr((ExprTree)np->data, result, context, RVALUE);
-			write_result(result);
+			String line = get_result_string(result);
+			g_vm->write("%s", line.c_str());
 		}
 
 		if (the_stmt->_kind == ST_WRITE) {
@@ -834,7 +835,8 @@ void Archetype::exec_stmt(StatementPtr the_stmt, ResultType &result, ContextType
 		} else if (the_stmt->_kind == ST_STOP) {
 			g_vm->writeln();
 			g_vm->writeln();
-			error("%f", VERSION_NUM);
+			g_vm->writeln("%f", VERSION_NUM);
+			g_vm->quitGame();
 		}
 		break;
 

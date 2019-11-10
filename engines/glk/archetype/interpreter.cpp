@@ -347,23 +347,30 @@ bool assignment(ResultType &target, ResultType &value) {
 	return true;
 }
 
-void write_result(ResultType &result) {
+String get_result_string(ResultType &result) {
 	ResultType r1;
+	String str;
 
 	undefine(r1);
 	if (result._kind == STR_PTR)
-		debugN(result._data._str.acl_str->c_str());
+		str = result._data._str.acl_str->c_str();
 	else if (result._kind == RESERVED)
-		debugN(Reserved_Wds[result._data._reserved.keyword]);
+		str = Reserved_Wds[result._data._reserved.keyword];
 	else {
 		if (result._kind == ATTR_PTR)
 			copy_result(r1, *(ResultType *)result._data._attr.acl_attr->data);
 		else
 			copy_result(r1, result);
 		if (convert_to(STR_PTR, r1))
-			debugN(r1._data._str.acl_str->c_str());
+			str = r1._data._str.acl_str->c_str();
 		cleanup(r1);
 	}
+
+	return str;
+}
+
+void write_result(ResultType &result) {
+	debugN("%s", get_result_string(result).c_str());
 }
 
 void display_result(ResultType &result) {

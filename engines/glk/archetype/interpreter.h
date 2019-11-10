@@ -102,6 +102,11 @@ extern bool result_compare(short comparison, ResultType &r1, ResultType &r2);
 extern bool assignment(ResultType &target, ResultType &value);
 
 /**
+ * Gets a textual version of a passed result
+ */
+extern String get_result_string(ResultType &result);
+
+/**
  * Writes the given result to screen w/o terminating it with a newline
  */
 extern void write_result(ResultType &result);
