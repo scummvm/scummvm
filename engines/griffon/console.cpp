@@ -27,8 +27,9 @@
 namespace Griffon {
 
 Console::Console() {
-	_godMode = false;
+	_godMode = kGodModeNone;
 	 registerCmd("godmode", WRAP_METHOD(Console, Cmd_godMode));
+	 registerCmd("nodamage", WRAP_METHOD(Console, Cmd_noDamage));
 }
 
 bool Console::Cmd_godMode(int argc, const char** argv) {
@@ -38,8 +39,28 @@ bool Console::Cmd_godMode(int argc, const char** argv) {
 		return true;
 	}
 
-	_godMode ^= true;
-	debugPrintf("God mode is now %s\n", _godMode ? "Enabled" : "Disabled");
+	if (_godMode != kGodModeNone)
+		_godMode = kGodModeNone;
+	else
+		_godMode = kGodModeAll;
+
+	debugPrintf("God mode is now %s\n", _godMode == kGodModeAll ? "Invincibility/Damage" : "Disabled");
+	return true;
+}
+
+bool Console::Cmd_noDamage(int argc, const char** argv) {
+	if (argc != 1) {
+		debugPrintf("Usage: %s\n", argv[0]);
+		debugPrintf("Enables/Disables invincibility\n");
+		return true;
+	}
+
+	if (_godMode != kGodModeNone)
+		_godMode = kGodModeNone;
+	else
+		_godMode = kGodModeNoDamage;
+
+	debugPrintf("God mode is now %s\n", _godMode ? "Invincibility" : "Disabled");
 	return true;
 }
 
