@@ -504,6 +504,7 @@ static const char *credits[] = {
 "C0""Nicolas Bacca",
 "C2""(retired)",
 "C0""Ismail Khatib",
+"C2""(retired)",
 "C0""Kostas Nakos",
 "C2""(retired)",
 "",
