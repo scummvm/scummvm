@@ -2135,7 +2135,7 @@ DynamicPhase::DynamicPhase(DynamicPhase *src, bool reverse) {
 	_dynFlags = src->_dynFlags;
 
 	debug(8, "DynamicPhase::DynamicPhase(): pal: %p, pal size: %d",
-		(void *)&src->getPaletteData(), src->getPaletteData().size());
+		(const void *)&src->getPaletteData(), src->getPaletteData().size());
 	setPaletteData(src->getPaletteData());
 
 	copyMemoryObject2(*src);
