@@ -325,7 +325,8 @@ enum {
 	kGameModeEnd,
 	kGameModeSaveLoad,
 	kGameModeNewGame,
-	kGameModeLoadGame
+	kGameModeLoadGame,
+	kGameModePlay
 };
 
 class GriffonEngine : public Engine {

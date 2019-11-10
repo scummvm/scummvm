@@ -138,7 +138,8 @@ Common::Error GriffonEngine::run() {
 		return Common::kNoError;
 
 	while (!_shouldQuit) {
-		title(0);
+		if (_gameMode != kGameModeNewGame)
+			title(0);
 
 		if (_gameMode == kGameModeNewGame) {
 			newGame();
