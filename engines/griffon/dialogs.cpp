@@ -472,23 +472,7 @@ void GriffonEngine::configMenu() {
 	_itemTicks = _ticks + 210;
 }
 
-void GriffonEngine::saveLoadNew() {
-	float y = 0.0;
-
-	_cloudAngle = 0;
-
-	int curRow = 0;
-	int curCol = 0;
-
-	bool lowerLock = false;
-
-	_ticks = g_system->getMillis();
-	int ticks1 = _ticks;
-	int tickPause = _ticks + 150;
-
-	_cloudImg->setAlpha(128, true);
-
-	// savestates---------------------------------
+void GriffonEngine::renderSaveStates() {
 	_videoBuffer2->fillRect(Common::Rect(0, 0, _videoBuffer2->w, _videoBuffer2->h), 0);
 
 	for (int ff = 0; ff <= 3; ff++) {
@@ -558,6 +542,25 @@ void GriffonEngine::saveLoadNew() {
 			drawString(_videoBuffer2, "Empty", 160 - 5 * 4, sy, 0);
 		}
 	}
+}
+
+void GriffonEngine::saveLoadNew() {
+	float y = 0.0;
+
+	_cloudAngle = 0;
+
+	int curRow = 0;
+	int curCol = 0;
+
+	bool lowerLock = false;
+
+	_ticks = g_system->getMillis();
+	int ticks1 = _ticks;
+	int tickPause = _ticks + 150;
+
+	_cloudImg->setAlpha(128, true);
+
+	renderSaveStates();
 
 	// Main menu loop
 	do {
@@ -623,6 +626,8 @@ void GriffonEngine::saveLoadNew() {
 							lowerLock = false;
 							_saveSlot = curRow - 1;
 							curRow = 0;
+
+							renderSaveStates();
 						} else if ((curCol == 2) && loadState(curRow - 1)) {
 							_saveSlot = curRow - 1;
 
