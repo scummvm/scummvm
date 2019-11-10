@@ -69,6 +69,15 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 			false
 		}
 	},
+	{
+		GAMEOPTION_FRAMELIMITER_FPS,
+		{
+			_s("Max frames per second limit"),
+			_s("This mode targets a maximum of 120 fps. When disabled, the game targets 60 fps"),
+			"frames_per_secondfl",
+			false
+		}
+	},
 	AD_EXTRA_GUI_OPTIONS_TERMINATOR
 };
 

@@ -83,6 +83,7 @@
 #include "common/events.h"
 #include "common/savefile.h"
 #include "common/system.h"
+#include "common/debug.h"
 #include "common/debug-channels.h"
 #include "common/translation.h"
 #include "gui/message.h"
@@ -111,10 +112,11 @@ BladeRunnerEngine::BladeRunnerEngine(OSystem *syst, const ADGameDescription *des
 
 	_subtitlesEnabled = false;
 
-	_sitcomMode                = false;
-	_shortyMode                = false;
-	_noDelayMillisFramelimiter = false;
-	_cutContent                = Common::String(desc->gameId).contains("bladerunner-final");
+	_sitcomMode                   = false;
+	_shortyMode                   = false;
+	_noDelayMillisFramelimiter    = false;
+	_framesPerSecondMax           = false;
+	_cutContent                   = Common::String(desc->gameId).contains("bladerunner-final");
 
 	_playerLosesControlCounter = 0;
 
@@ -464,8 +466,24 @@ bool BladeRunnerEngine::checkFiles(Common::Array<Common::String> &missingFiles) 
 }
 
 bool BladeRunnerEngine::startup(bool hasSavegames) {
-	// These are static objects in original game
+		// Assign default values to the ScummVM configuration manager, in case settings are missing
+	ConfMan.registerDefault("subtitles", "true");
+	ConfMan.registerDefault("sfx_volume", 192);
+	ConfMan.registerDefault("music_volume", 192);
+	ConfMan.registerDefault("speech_volume", 192);
+	ConfMan.registerDefault("mute", "false");
+	ConfMan.registerDefault("speech_mute", "false");
+	ConfMan.registerDefault("sitcom", "false");
+	ConfMan.registerDefault("shorty", "false");
+	ConfMan.registerDefault("nodelaymillisfl", "false");
+	ConfMan.registerDefault("frames_per_secondfl", "false");
 
+	_sitcomMode                = ConfMan.getBool("sitcom");
+	_shortyMode                = ConfMan.getBool("shorty");
+	_noDelayMillisFramelimiter = ConfMan.getBool("nodelaymillisfl");
+	_framesPerSecondMax        = ConfMan.getBool("frames_per_secondfl");
+
+	// These are static objects in original game
 	_screenEffects = new ScreenEffects(this, 0x8000);
 
 	_endCredits = new EndCredits(this);
@@ -493,7 +511,8 @@ bool BladeRunnerEngine::startup(bool hasSavegames) {
 
 	_time = new Time(this);
 
-	_framelimiter = new Framelimiter(this);
+	debug("_framesPerSecondMax:: %s", _framesPerSecondMax? "true" : "false");
+	_framelimiter = new Framelimiter(this, _framesPerSecondMax? 120 : 60);
 
 	// Try to load the SUBTITLES.MIX first, before Startup.MIX
 	// allows overriding any identically named resources (such as the original font files and as a bonus also the TRE files for the UI and dialogue menu)
@@ -559,25 +578,9 @@ bool BladeRunnerEngine::startup(bool hasSavegames) {
 
 	_ambientSounds = new AmbientSounds(this);
 
-	// Assign default values to the ScummVM configuration manager, in case settings are missing
-	ConfMan.registerDefault("subtitles", "true");
-	ConfMan.registerDefault("sfx_volume", 192);
-	ConfMan.registerDefault("music_volume", 192);
-	ConfMan.registerDefault("speech_volume", 192);
-	ConfMan.registerDefault("mute", "false");
-	ConfMan.registerDefault("speech_mute", "false");
-
-	// get value from the ScummVM configuration manager
-	syncSoundSettings();
-
-	_sitcomMode                = ConfMan.getBool("sitcom");
-	_shortyMode                = ConfMan.getBool("shorty");
-
-	if (!ConfMan.hasKey("nodelaymillisfl")) {
-		ConfMan.setBool("nodelaymillisfl", false);
-	}
-	_noDelayMillisFramelimiter = ConfMan.getBool("nodelaymillisfl");
 	// BLADE.INI was read here, but it was replaced by ScummVM configuration
+	//
+	syncSoundSettings();
 
 	_chapters = new Chapters(this);
 	if (!_chapters)

@@ -215,6 +215,7 @@ public:
 	bool _sitcomMode;
 	bool _shortyMode;
 	bool _noDelayMillisFramelimiter;
+	bool _framesPerSecondMax;
 	bool _cutContent;
 
 	int _walkSoundId;
