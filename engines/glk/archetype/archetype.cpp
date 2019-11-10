@@ -293,7 +293,7 @@ bool Archetype::send_message(int transport, int message_sent, int recipient,
 
 	if (DebugMan.isDebugChannelEnabled(DEBUG_MSGS)) {
 		++scummvm;
-		debugN(String::format("%d  ", scummvm).c_str());
+		//debugN(String::format("%d  ", scummvm).c_str());
 
 		r._kind = IDENT;
 		r._data._ident.ident_kind = OBJECT_ID;

@@ -108,6 +108,7 @@ void send_to_system(int transport, String &strmsg, ResultType &result, ContextTy
 					break;
 				}
 			}
+			break;
 
 		case PLAYER_CMD:
 			normalize_string(strmsg, g_vm->Command);
@@ -119,6 +120,7 @@ void send_to_system(int transport, String &strmsg, ResultType &result, ContextTy
 			result._kind = STR_PTR;
 			result._data._str.acl_str = NewDynStr(g_vm->Command);
 			sys_state = IDLING;
+			break;
 
 		case ABBR:
 			result._kind = STR_PTR;

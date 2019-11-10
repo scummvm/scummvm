@@ -128,8 +128,10 @@ static void parse_sentence_substitute(int start, ParsePtr pp, int &next_starting
 	if (sublen > g_vm->Abbreviate)
 		sublen = g_vm->Abbreviate;
 
+	// WORKAROUND: Original encoded object number as two bytes. ScummVM strings don't like
+	// 0 bytes in the middle of the string, so we encode it as plain text
 	g_vm->Command = g_vm->Command.left(start)
-		+ String::format("%%%c%c^", pp->object >> 8, pp->object & 0xff)
+		+ String::format("%%%d^", pp->object)
 		+ String(g_vm->Command.c_str() + start + sublen + 1);
 
 	next_starting = next_starting - sublen + 4;
@@ -163,7 +165,7 @@ static bool parse_sentence_next_chunk(int &start_at, String &the_chunk, int &nex
 void parse_sentence() {
 	const int nfillers = 3;
 	const char *const FILTERS[nfillers] = { " a ", " an ", " the " };
-	int next_starting;
+	int next_starting = 0;
 	String s;
 	NodePtr np, near_match, far_match;
 	ParsePtr pp;
@@ -233,8 +235,9 @@ bool pop_object(int &intback, String &strback) {
 	} else {
 		if (g_vm->Command.firstChar() == '%') {
 			// parsed object
-			intback = ((int)g_vm->Command[1] << 8) | ((int)g_vm->Command[2]);
-			g_vm->Command.del(0, 4);
+			int nextPos = -1;
+			intback = String(g_vm->Command.c_str() + 1).val(&nextPos);
+			g_vm->Command = String(g_vm->Command.c_str() + nextPos + 1);
 		} else {
 			intback = -1;
 			i = g_vm->Command.indexOf('%');
