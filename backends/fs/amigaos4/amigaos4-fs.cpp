@@ -279,8 +279,8 @@ bool AmigaOSFilesystemNode::getChildren(AbstractFSList &myList, ListMode mode, b
 							EX_DataFields,		(EXF_NAME|EXF_LINK|EXF_TYPE),
 							TAG_END);
 	if (context) {
-		struct ExamineData * pExd = NULL; // No need to free the value after usage, everything
-						// will be dealt with by the DirContext release.
+		// No need to free the value after usage, everything will be dealt with by the DirContext release.
+		struct ExamineData * pExd = NULL;
 
 		AmigaOSFilesystemNode *entry;
 		while ( (pExd = IDOS->ExamineDir(context)) ) {
