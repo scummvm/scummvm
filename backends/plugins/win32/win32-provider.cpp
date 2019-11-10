@@ -95,11 +95,7 @@ Plugin* Win32PluginProvider::createPlugin(const Common::FSNode &node) const {
 bool Win32PluginProvider::isPluginFilename(const Common::FSNode &node) const {
 	// Check the plugin suffix
 	Common::String filename = node.getName();
-#ifndef _WIN32_WCE
 	if (!filename.hasSuffix(".dll"))
-#else
-	if (!filename.hasSuffix(".plugin"))
-#endif
 		return false;
 
 	return true;

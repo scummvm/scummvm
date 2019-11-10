@@ -578,15 +578,7 @@ bool DrasculaEngine::runCurrentChapter() {
 
 		_canSaveLoad = true;
 		delay(25);
-#ifndef _WIN32_WCE
-		// FIXME
-		// This and the following #ifndefs disable the excess updateEvents() calls *within* the game loop.
-		// Events such as keypresses or mouse clicks are dropped on the ground with no processing
-		// by these calls. They are properly handled by the implicit call through getScan() below.
-		// It is not a good practice to not process events and indeed this created problems with synthesized
-		// events in the wince port.
 		updateEvents();
-#endif
 		_canSaveLoad = false;
 		if (_loadedDifferentChapter)
 			return true;
@@ -594,12 +586,7 @@ bool DrasculaEngine::runCurrentChapter() {
 		if (!_menuScreen && takeObject == 1)
 			checkObjects();
 
-#ifdef _WIN32_WCE
-		if (_rightMouseButton) {
-			if (_menuScreen) {
-#else
 		if (_rightMouseButton == 1 && _menuScreen) {
-#endif
 			_rightMouseButton = 0;
 			if (currentChapter == 2) {
 				loadPic(menuBackground, cursorSurface);
@@ -610,16 +597,11 @@ bool DrasculaEngine::runCurrentChapter() {
 			}
 			setPalette((byte *)&gamePalette);
 			_menuScreen = false;
-#ifndef _WIN32_WCE
 			// FIXME: This call here is in hope that it will catch the rightmouseup event so the
 			// next if block won't be executed. This too is not a good coding practice. I've recoded it
 			// with a mutual exclusive if block for the menu. I would commit this properly but I cannot test
 			// for other (see Desktop) ports right now.
 			updateEvents();
-#endif
-#ifdef _WIN32_WCE
-			} else {
-#else
 		}
 
 		// Do not show the inventory screen in chapter 5, if the right mouse button is clicked
@@ -627,7 +609,6 @@ bool DrasculaEngine::runCurrentChapter() {
 		// Fixes bug #2059621 - "DRASCULA: Plug bug"
 		if (_rightMouseButton == 1 && !_menuScreen &&
 			!(currentChapter == 5 && pickedObject == 16)) {
-#endif
 			_rightMouseButton = 0;
 			_characterMoved = false;
 			if (trackProtagonist == 2)
@@ -646,14 +627,9 @@ bool DrasculaEngine::runCurrentChapter() {
 				loadPic("icons.alg", cursorSurface);
 			}
 			_menuScreen = true;
-#ifndef _WIN32_WCE
 			updateEvents();
-#endif
 			selectVerb(kVerbNone);
 		}
-#ifdef _WIN32_WCE
-		}
-#endif
 
 		if (_leftMouseButton == 1 && _menuBar) {
 			selectVerbFromBar();
@@ -842,11 +818,7 @@ void DrasculaEngine::updateEvents() {
 
 	updateMusic();
 
-#ifdef _WIN32_WCE
-	if (eventMan->pollEvent(event)) {
-#else
 	while (eventMan->pollEvent(event)) {
-#endif
 		switch (event.type) {
 		case Common::EVENT_KEYDOWN:
 			if (event.kbd.keycode == Common::KEYCODE_d && event.kbd.hasFlags(Common::KBD_CTRL)) {

@@ -44,9 +44,7 @@
 #include "common/config-manager.h"
 #include "common/zlib.h"
 
-#ifndef _WIN32_WCE
 #include <errno.h>	// for removeSavefile()
-#endif
 
 #if defined(USE_CLOUD) && defined(USE_LIBCURL)
 const char *DefaultSaveFileManager::TIMESTAMPS_FILENAME = "timestamps";
@@ -211,13 +209,12 @@ bool DefaultSaveFileManager::removeSavefile(const Common::String &filename) {
 		// compile because of this, please let us know (scummvm-devel).
 		// There is a nicely portable workaround, too: Make this method overloadable.
 		if (remove(fileNode.getPath().c_str()) != 0) {
-#ifndef _WIN32_WCE
 			if (errno == EACCES)
 				setError(Common::kWritePermissionDenied, "Search or write permission denied: "+fileNode.getName());
 
 			if (errno == ENOENT)
 				setError(Common::kPathDoesNotExist, "removeSavefile: '"+fileNode.getName()+"' does not exist or path is invalid");
-#endif
+
 			return false;
 		} else {
 			return true;
@@ -239,11 +236,6 @@ Common::String DefaultSaveFileManager::getSavePath() const {
 		ConfMan.flushToDisk();
 		dir = ConfMan.get("savepath");
 	}
-
-#ifdef _WIN32_WCE
-	if (dir.empty())
-		dir = ConfMan.get("path");
-#endif
 
 	return dir;
 }

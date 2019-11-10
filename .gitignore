@@ -77,22 +77,6 @@ lib*.a
 !/backends/platform/symbian/*/ScummVM_*_App.mmp
 /backends/platform/symbian/*/BLD.INF
 
-/backends/platform/wince/scummvm.exe*
-/backends/platform/wince/sound
-/backends/platform/wince/tools
-/backends/platform/wince/gui
-/backends/platform/wince/engines
-/backends/platform/wince/common
-/backends/platform/wince/libs
-/backends/platform/wince/graphics
-/backends/platform/wince/base
-/backends/platform/wince/backends
-/backends/platform/wince/.deps
-/backends/platform/wince/libscummvm.a
-/backends/platform/wince/plugins
-/backends/platform/wince/scummvm.dll
-/backends/platform/wince/*.swp
-
 /dists/rpl.exe
 
 /dists/codeblocks/*.cbp

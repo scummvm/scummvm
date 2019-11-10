@@ -41,9 +41,6 @@
 #include "scumm/sound.h"
 
 
-#ifdef _WIN32_WCE
-#define		KEY_ALL_SKIP	3457
-#endif
 
 namespace Scumm {
 
@@ -349,17 +346,6 @@ void ScummEngine::processInput() {
 
 	_leftBtnPressed &= ~msClicked;
 	_rightBtnPressed &= ~msClicked;
-
-#ifdef _WIN32_WCE
-	if (lastKeyHit.ascii == KEY_ALL_SKIP) {
-		// Skip talk
-		if (VAR_TALKSTOP_KEY != 0xFF && _talkDelay > 0) {
-			lastKeyHit = Common::KeyState(Common::KEYCODE_PERIOD);
-		} else {
-			lastKeyHit = Common::KeyState(Common::KEYCODE_ESCAPE);
-		}
-	}
-#endif
 
 	if (!lastKeyHit.ascii)
 		return;

@@ -78,9 +78,7 @@
 #endif
 #endif
 
-#if defined(_WIN32_WCE)
-#include "backends/platform/wince/CELauncherDialog.h"
-#elif defined(__DC__)
+#if defined(__DC__)
 #include "backends/platform/dc/DCLauncherDialog.h"
 #else
 #include "gui/launcher.h"
@@ -97,9 +95,7 @@ static bool launcherDialog() {
 	// blindly be passed to the first game launched from the launcher.
 	ConfMan.getDomain(Common::ConfigManager::kTransientDomain)->clear();
 
-#if defined(_WIN32_WCE)
-	CELauncherDialog dlg;
-#elif defined(__DC__)
+#if defined(__DC__)
 	DCLauncherDialog dlg;
 #else
 	GUI::LauncherDialog dlg;
