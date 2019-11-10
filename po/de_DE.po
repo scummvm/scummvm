@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2019-11-10 16:38+0100\n"
-"PO-Revision-Date: 2019-10-20 16:51+0000\n"
+"PO-Revision-Date: 2019-11-10 16:00+0000\n"
 "Last-Translator: Lothar Serra Mari <serra@scummvm.org>\n"
 "Language-Team: German <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/de/>\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=iso-8859-1\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 3.7.1\n"
+"X-Generator: Weblate 3.9.1\n"
 "X-Language-name: Deutsch\n"
 
 #: gui/about.cpp:108
@@ -2740,81 +2740,80 @@ msgid "Snap to edges"
 msgstr "An Ecken anheften"
 
 #: backends/platform/3ds/options-dialog.cpp:53
-#, fuzzy
 msgid "Stretch to fit"
 msgstr "Auf Fenstergröße strecken"
 
 #: backends/platform/3ds/options-dialog.cpp:56
-#, fuzzy
 msgid "Use Screen:"
-msgstr "Maus-Geschwindigkeit:"
+msgstr "Verwende Bildschirm:"
 
 #: backends/platform/3ds/options-dialog.cpp:58
 msgid "Top"
-msgstr ""
+msgstr "Oben"
 
 #: backends/platform/3ds/options-dialog.cpp:59
 msgid "Bottom"
-msgstr ""
+msgstr "Unten"
 
 #: backends/platform/3ds/options-dialog.cpp:63
-#, fuzzy
 msgid "C-Pad Sensitivity:"
-msgstr "GC-Pad-Empfindlichkeit:"
+msgstr "C-Pad-Empfindlichkeit:"
 
 #: backends/platform/3ds/osystem-events.cpp:148
 msgid "Magnify Mode cannot be activated in menus."
-msgstr ""
+msgstr "Vergrößerungs-Modus kann in Menüs nicht aktiviert werden."
 
 #: backends/platform/3ds/osystem-events.cpp:151
 msgid ""
 "Magnify Mode can only be activated\n"
 " when both screens are enabled."
 msgstr ""
+"Vergrößerungs-Modus kann nur aktiviert werden,\n"
+"wenn beide Bildschirme aktiviert sind."
 
 #: backends/platform/3ds/osystem-events.cpp:153
 msgid "In-game resolution too small to magnify."
-msgstr ""
+msgstr "Spiel-Auflösung zu niedrig zum Vergrößern."
 
 #: backends/platform/3ds/osystem-events.cpp:159
 msgid "Magnify Mode On. Switching to Hover Mode..."
-msgstr ""
+msgstr "Vergrößerungs-Modus aktiv. Wechsel zu Hover-Modus..."
 
 #: backends/platform/3ds/osystem-events.cpp:161
 msgid "Magnify Mode On"
-msgstr ""
+msgstr "Vergrößerungs-Modus aktiv"
 
 #: backends/platform/3ds/osystem-events.cpp:168
 msgid "Magnify Mode Off. Reactivating Drag Mode..."
-msgstr ""
+msgstr "Vergrößerungs-Modus deaktiviert. Aktiviere Drag-Modus..."
 
 #: backends/platform/3ds/osystem-events.cpp:170
 msgid "Magnify Mode Off"
-msgstr ""
+msgstr "Vergrößerungs-Modus deaktiviert"
 
 #: backends/platform/3ds/osystem-events.cpp:178
-#, fuzzy
 msgid "Hover Mode"
-msgstr "Blutmodus"
+msgstr "Hover-Modus"
 
 #: backends/platform/3ds/osystem-events.cpp:182
-#, fuzzy
 msgid "Drag Mode"
-msgstr "Blutmodus"
+msgstr "Drag-Modus"
 
 #: backends/platform/3ds/osystem-events.cpp:184
 msgid "Cannot Switch to Drag Mode while Magnify Mode is On"
-msgstr ""
+msgstr "Kann nicht zu Drag-Modus wechsel, während Vergrößerungs-Modus aktiv ist"
 
 #: backends/platform/3ds/osystem-events.cpp:237
 msgid ""
 "Magnify Mode Off. Reactivating Drag Mode.\n"
 "Returning to Launcher..."
 msgstr ""
+"Vergrößerungs-Modus deaktiviert. Reaktiviere\n"
+"Drag-Modus. Kehre zum Launcher zurück..."
 
 #: backends/platform/3ds/osystem-events.cpp:239
 msgid "Magnify Mode Off. Returning to Launcher..."
-msgstr ""
+msgstr "Vergrößerunggs-Modus deaktiviert. Kehre zum Launcher zurück..."
 
 #: backends/platform/ds/arm9/source/dsoptions.cpp:57
 msgid "ScummVM Main Menu"
@@ -3599,13 +3598,15 @@ msgstr ""
 
 #: engines/bladerunner/detection.cpp:75
 msgid "Max frames per second limit"
-msgstr ""
+msgstr "Begrenze Bild-Wiederholrate"
 
 #: engines/bladerunner/detection.cpp:76
 msgid ""
 "This mode targets a maximum of 120 fps. When disabled, the game targets 60 "
 "fps"
 msgstr ""
+"Dieser Modus aktiviert eine Bildwiederholrate von 120 FPS. Wenn deaktiviert, "
+"wird das Spiel mit 60 FPS abgespielt"
 
 #: engines/cge/detection.cpp:105 engines/cge2/detection.cpp:111
 msgid "Color Blind Mode"
