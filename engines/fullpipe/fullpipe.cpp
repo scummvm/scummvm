@@ -185,7 +185,6 @@ FullpipeEngine::FullpipeEngine(OSystem *syst, const ADGameDescription *gameDesc)
 }
 
 FullpipeEngine::~FullpipeEngine() {
-	g_fp = nullptr;
 	delete g_vars;
 	g_vars = nullptr;
 }
