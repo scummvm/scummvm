@@ -152,7 +152,7 @@ check back often.
 Among the systems on which you can play those games are regular desktop
 computers (running Windows, Linux, Mac OS X, ...), game consoles
 (Dreamcast, Nintendo DS & Wii, PS2, PSP, ...), smartphones (Android,
-iPhone, PocketPC, Symbian ...) and more.
+iPhone, Symbian ...) and more.
 
 At this time ScummVM is still under heavy development. Be aware that
 whilst we attempt to make sure that many games can be completed with few
@@ -1295,8 +1295,6 @@ Supported platforms include (but are not limited to):
 
   - UNIX (Linux, Solaris, IRIX, \*BSD, ...)
   - Windows
-  - Windows CE
-  - Windows Mobile (including Smartphones and PocketPCs)
   - Mac OS X
   - AmigaOS
   - Android
@@ -1806,10 +1804,6 @@ games and other games.
 Note that using Ctrl-f or Ctrl-g is not recommended: games can crash
 when being run faster than their normal speed, as scripts will lose
 synchronisation.
-
-Note for WinCE users: Due to the limited keyboard input in most devices,
-a small subset of these hot keys are supported via key remapping and/or
-panel actions. Please consult the README-WinCE.txt file.
 
 ### 5.5) Language options
 
