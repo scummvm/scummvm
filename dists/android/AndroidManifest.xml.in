@@ -54,6 +54,7 @@
 			android:description="@string/app_desc"
 			android:allowBackup="true"
 			android:isGame="true"
+			android:resizeableActivity="false"
 			android:icon="@drawable/scummvm">
 		<activity android:name=".ScummVMActivity"
 				android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
