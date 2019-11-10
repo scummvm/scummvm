@@ -362,6 +362,7 @@ private:
 	void title(int mode);
 	void configMenu();
 	void saveLoadNew();
+	void renderSaveStates();
 
 	// draw.cpp
 	void drawAnims(int Layer);
