@@ -80,6 +80,7 @@ protected:
 	int _loadSaveSlot;
 	Common::File _gameFile;
 	PCSpeaker *_pcSpeaker;
+	bool _quitFlag;
 
 	// Engine APIs
 	virtual Common::Error run();
@@ -241,6 +242,21 @@ public:
 	 * Set a random number seed
 	 */
 	void setRandomNumberSeed(uint seed) { _random.setSeed(seed); }
+
+	/**
+	 * Flags to quit the game
+	 */
+	void quitGame() {
+		_quitFlag = true;
+		Engine::quitGame();
+	}
+
+	/**
+	 * Returns true if the game should be quit
+	 */
+	bool shouldQuit() const {
+		return _quitFlag || Engine::shouldQuit();
+	}
 };
 
 extern GlkEngine *g_vm;

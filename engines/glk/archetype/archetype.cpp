@@ -833,9 +833,8 @@ void Archetype::exec_stmt(StatementPtr the_stmt, ResultType &result, ContextType
 		if (the_stmt->_kind == ST_WRITE) {
 			g_vm->writeln();
 		} else if (the_stmt->_kind == ST_STOP) {
+			// End the game
 			g_vm->writeln();
-			g_vm->writeln();
-			g_vm->writeln("%f", VERSION_NUM);
 			g_vm->quitGame();
 		}
 		break;
