@@ -302,7 +302,7 @@ bool AmigaOSFilesystemNode::getChildren(AbstractFSList &myList, ListMode mode, b
 		}
 
 		if (ERROR_NO_MORE_ENTRIES != IDOS->IoErr() ) {
-			debug(6, "IoErr() - ExamineDir (NO_MORE_ENTRIES)!");
+			debug(6, "IDOS->IoErr() failed - ERROR_NO_MORE_ENTRIES!");
 			ret = false;
 		} else {
 			ret = true;
