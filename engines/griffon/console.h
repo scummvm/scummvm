@@ -27,14 +27,21 @@
 
 namespace Griffon {
 
+enum {
+	kGodModeNone = 0,
+	kGodModeAll = 1,
+	kGodModeNoDamage = 2
+};
+
 class Console : public GUI::Debugger {
 public:
-	bool _godMode;
+	int _godMode;
 
 	explicit Console();
 	virtual ~Console(void) {}
 
 	bool Cmd_godMode(int argc, const char** argv);
+	bool Cmd_noDamage(int argc, const char** argv);
 };
 }
 

@@ -515,7 +515,7 @@ void GriffonEngine::checkHit() {
 					ps *= 0.75;
 				float damage = (float)_player.swordDamage * (1.0 + RND() * 1.0) * _player.attackStrength / 100.0 * ps;
 
-				if (_console->_godMode)
+				if (_console->_godMode == kGodModeAll)
 					damage = 1000;
 
 				if (ABS(_player.attackStrength - 100) < kEpsilon)
@@ -1012,8 +1012,10 @@ void GriffonEngine::damageNPC(int npcnum, int damage, int spell) {
 void GriffonEngine::damagePlayer(int damage) {
 	char line[256];
 
-	if (!_console->_godMode)
-		_player.hp -= damage;
+	if (_console->_godMode != kGodModeNone)
+		damage = 0;
+
+	_player.hp -= damage;
 
 	if (_player.hp < 0)
 		_player.hp = 0;
