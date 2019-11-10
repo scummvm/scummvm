@@ -68,6 +68,8 @@ void Lingo::initBytecode() {
 }
 
 
+
+
 void Lingo::addCodeV4(Common::SeekableSubReadStreamEndian &stream, ScriptType type, uint16 id) { 
 	debugC(1, kDebugLingoCompile, "Add V4 bytecode for type %s with id %d", scriptType2str(type), id);
 
@@ -276,6 +278,38 @@ void Lingo::addCodeV4(Common::SeekableSubReadStreamEndian &stream, ScriptType ty
 
 	}
 	free(code_store);
+}
+
+
+void Lingo::addNamesV4(Common::SeekableSubReadStreamEndian &stream) {
+	debugC(1, kDebugLingoCompile, "Add V4 script name index");
+
+	// read the Lnam header!
+	stream.readUint16();
+	stream.readUint16();
+	stream.readUint16();
+	stream.readUint16();
+	stream.readUint16();
+	stream.readUint16();
+	stream.readUint16();
+	stream.readUint16();
+	uint16 offset = stream.readUint16();
+	uint16 count = stream.readUint16();
+
+	stream.seek(offset);
+
+	_namelist.clear();
+
+	Common::Array<Common::String> names;
+	for (uint32 i = 0; i < count; i++) {
+		uint8 size = stream.readByte();
+		Common::String name;
+		for (uint8 j = 0; j < size; j++) {
+			name += stream.readByte();
+		}
+		_namelist.push_back(name);
+	}
+
 }
 
 }

@@ -176,6 +176,7 @@ public:
 
 	void addCode(const char *code, ScriptType type, uint16 id);
 	void addCodeV4(Common::SeekableSubReadStreamEndian &stream, ScriptType type, uint16 id);
+	void addNamesV4(Common::SeekableSubReadStreamEndian &stream);
 	void executeScript(ScriptType type, uint16 id, uint16 function);
 	void printStack(const char *s);
 	Common::String decodeInstruction(uint pc, uint *newPC = NULL);
@@ -551,6 +552,7 @@ public:
 	TheEntityHash _theEntities;
 	TheEntityFieldHash _theEntityFields;
 	Common::Array<int> _labelstack;
+	Common::Array<Common::String> _namelist;
 
 	SymbolHash _builtins;
 	Common::HashMap<Common::String, bool> _twoWordBuiltins;
