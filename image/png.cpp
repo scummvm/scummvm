@@ -265,16 +265,6 @@ bool writePNG(Common::WriteStream &out, const Graphics::Surface &input, const bo
 	const Graphics::PixelFormat requiredFormat_4byte(4, 8, 8, 8, 8, 24, 16, 8, 0);
 #endif
 
-	if (input.format.bytesPerPixel == 3) {
-		if (input.format != requiredFormat_3byte) {
-			warning("Cannot currently write PNG with 3-byte pixel format other than %s", requiredFormat_3byte.toString().c_str());
-			return false;
-		}
-	} else if (input.format.bytesPerPixel != 4) {
-		warning("Cannot currently write PNG with pixel format of bpp other than 3, 4");
-		return false;
-	}
-
 	int colorType;
 	Graphics::Surface *tmp = NULL;
 	const Graphics::Surface *surface;
