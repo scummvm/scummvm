@@ -85,6 +85,8 @@ void GriffonEngine::mainLoop() {
 		_pmenu = false;
 	}
 
+	_gameMode = kGameModePlay;
+
 	do {
 		if (!_forcePause) {
 			updateAnims();
@@ -105,7 +107,7 @@ void GriffonEngine::mainLoop() {
 		 _console->onFrame();
 
 		updateEngine();
-	} while (!_shouldQuit && _gameMode != kGameModeEnd);
+	} while (!_shouldQuit && _gameMode != kGameModeEnd && _gameMode != kGameModeNewGame);
 }
 
 void GriffonEngine::updateEngine() {
