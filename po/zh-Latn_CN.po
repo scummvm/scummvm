@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2019-11-09 04:28+0100\n"
+"POT-Creation-Date: 2019-11-10 06:08+0100\n"
 "PO-Revision-Date: 2018-08-06 21:28+0000\n"
 "Last-Translator: monkeymadness <ihave13redsox@hotmail.com>\n"
 "Language-Team: Chinese <https://translations.scummvm.org/projects/scummvm/"
@@ -911,7 +911,7 @@ msgstr "Youxi Zhichi Teshu de Doudong Moshi"
 msgid "Stretch mode:"
 msgstr ""
 
-#: gui/options.cpp:1096 backends/graphics/sdl/sdl-graphics.cpp:354
+#: gui/options.cpp:1096 backends/graphics/sdl/sdl-graphics.cpp:352
 msgid "Fullscreen mode"
 msgstr "Quanping Moshi"
 
@@ -2511,7 +2511,7 @@ msgstr "Putong"
 msgid "Active graphics filter:"
 msgstr "Huodong de Tuxing Guolvqi:"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:356
+#: backends/graphics/sdl/sdl-graphics.cpp:354
 msgid "Windowed mode"
 msgstr "Chuangkou Moshi"
 
