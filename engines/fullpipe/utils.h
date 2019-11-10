@@ -56,7 +56,6 @@ public:
 	Common::String readPascalString(bool twoByte = false);
 	void writePascalString(const Common::String &str, bool twoByte = false);
 	int readCount();
-	double readDouble();
 	CObject *parseClass(bool *isCopyReturned);
 
 	/** ownership of returned object is passed to caller */

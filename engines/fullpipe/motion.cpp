@@ -2871,8 +2871,8 @@ bool MovGraphLink::load(MfcArchive &file) {
 	debugC(8, kDebugLoading, "GraphNode2");
 	_graphDst = file.readClass<MovGraphNode>();
 
-	_length = file.readDouble();
-	_angle = file.readDouble();
+	_length = file.readDoubleLE();
+	_angle = file.readDoubleLE();
 
 	debugC(8, kDebugLoading, "length: %g, angle: %g", _length, _angle);
 
