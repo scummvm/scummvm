@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2019-11-10 16:38+0100\n"
+"POT-Creation-Date: 2019-11-10 20:17+0100\n"
 "PO-Revision-Date: 2019-06-22 10:59+0000\n"
 "Last-Translator: DreadnoughtPT <Dreadnoughtpt@gmail.com>\n"
 "Language-Team: Portuguese (Portugal) <https://translations.scummvm.org/"
@@ -20,16 +20,16 @@ msgstr ""
 "X-Generator: Weblate 3.3\n"
 "X-Language-name: Portugues (Portugal)\n"
 
-#: gui/about.cpp:108
+#: gui/about.cpp:102
 #, c-format
 msgid "(built on %s)"
 msgstr "(desenvolvido em %s)"
 
-#: gui/about.cpp:115
+#: gui/about.cpp:109
 msgid "Features compiled in:"
 msgstr "Recursos compilados em:"
 
-#: gui/about.cpp:124
+#: gui/about.cpp:118
 msgid "Available engines:"
 msgstr "Motores de jogo disponíveis:"
 
