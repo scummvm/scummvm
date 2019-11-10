@@ -963,7 +963,7 @@ TownsPC98_FmSynth::TownsPC98_FmSynth(Audio::Mixer *mixer, EmuType type) :
 	_samplesPerWaitCycle(type == kType26 ? 72 : 144),
 #endif
 	_outputRate(mixer->getOutputRate()), _rateScale(type == kType26 ? 0 : 1),
-	_volMaskA(0), _volMaskB(0), _volumeA(255), _volumeB(255), _ready(false) {
+	_volMaskA(0), _volMaskB(0), _volumeA(255), _volumeB(255), _mixerThreadLockCounter(0), _ready(false) {
 
 	memset(&_timers[0], 0, sizeof(ChipTimer));
 	memset(&_timers[1], 0, sizeof(ChipTimer));
@@ -1119,10 +1119,13 @@ uint8 TownsPC98_FmSynth::readReg(uint8 part, uint8 regAddress) {
 }
 
 int TownsPC98_FmSynth::readBuffer(int16 *buffer, const int numSamples) {
-	Common::StackLock lock(_mutex);
-	if (!_ready)
+	_mutex.lock();
+	if (!_ready) {
+		_mutex.unlock();
 		return 0;
-
+	}
+	_mixerThreadLockCounter++;
+	
 	// This assumes that the numSamples parameter will be the same on most (if not on all) calls to readBuffer(),
 	// although I don't know whether this is true for all backends. There is no need to reallocate the temp
 	// buffer every time, unless its size needs to be increased.
@@ -1235,6 +1238,9 @@ int TownsPC98_FmSynth::readBuffer(int16 *buffer, const int numSamples) {
 		_offsPending = consumed - _numPending;
 		_numPending = render + _numPending - consumed;
 	}
+
+	_mutex.unlock();
+	_mixerThreadLockCounter--;
 
 	return numSamples;
 }

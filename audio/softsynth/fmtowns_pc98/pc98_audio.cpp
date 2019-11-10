@@ -47,6 +47,7 @@ public:
 	void ssgSetVolume(int volume);
 
 	Common::Mutex &mutex();
+	int mixerThreadLockCounter() const;
 
 private:
 	bool assignPluginDriver(PC98AudioCore *owner, PC98AudioPluginDriver *driver, bool externalMutexHandling = false);
@@ -192,6 +193,10 @@ Common::Mutex &PC98AudioCoreInternal::mutex() {
 	return _mutex;
 }
 
+int PC98AudioCoreInternal::mixerThreadLockCounter() const {
+	return _mixerThreadLockCounter;
+}
+
 bool PC98AudioCoreInternal::assignPluginDriver(PC98AudioCore *owner, PC98AudioPluginDriver *driver, bool externalMutexHandling) {
 	Common::StackLock lock(_mutex);
 	if (_refCount <= 1)
@@ -215,13 +220,11 @@ void PC98AudioCoreInternal::removePluginDriver(PC98AudioCore *owner) {
 }
 
 void PC98AudioCoreInternal::timerCallbackA() {
-	Common::StackLock lock(_mutex);
 	if (_drv && _ready)
 		_drv->timerCallbackA();
 }
 
 void PC98AudioCoreInternal::timerCallbackB() {
-	Common::StackLock lock(_mutex);
 	if (_drv && _ready)
 		_drv->timerCallbackB();
 }
@@ -283,12 +286,30 @@ PC98AudioCore::MutexLock PC98AudioCore::stackLockMutex() {
 	return MutexLock(_internal);
 }
 
-PC98AudioCore::MutexLock::MutexLock(PC98AudioCoreInternal *pc98int) : _pc98int(pc98int) {
-	if (_pc98int)
+PC98AudioCore::MutexLock PC98AudioCore::stackUnlockMutex() {
+	return MutexLock(_internal, _internal->mixerThreadLockCounter());
+}
+
+PC98AudioCore::MutexLock::MutexLock(PC98AudioCoreInternal *pc98int, int reverse) : _pc98int(pc98int), _count(reverse) {
+	if (!_pc98int)
+		return;
+
+	if (!reverse) {
 		_pc98int->mutex().lock();
+		return;
+	}
+
+	while (reverse--)
+		_pc98int->mutex().unlock();
 }
 
 PC98AudioCore::MutexLock::~MutexLock() {
-	if (_pc98int)
+	if (!_pc98int)
+		return;
+
+	if (!_count)
 		_pc98int->mutex().unlock();
+
+	while (_count--)
+		_pc98int->mutex().lock();
 }

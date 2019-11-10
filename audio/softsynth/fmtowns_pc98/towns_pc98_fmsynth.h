@@ -114,6 +114,7 @@ protected:
 	const bool _hasPercussion;
 
 	Common::Mutex _mutex;
+	int _mixerThreadLockCounter;
 
 private:
 	void generateTables();
