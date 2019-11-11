@@ -284,6 +284,7 @@ void MohawkEngine_Myst::playFlybyMovie(MystStack stack) {
 
 	// Play Flyby Entry Movie on Masterpiece Edition.
 	const char *flyby = nullptr;
+	bool looping = true;
 
 	switch (stack) {
 		case kSeleniticStack:
@@ -295,8 +296,10 @@ void MohawkEngine_Myst::playFlybyMovie(MystStack stack) {
 			// Myst Flyby Movie not used in Original Masterpiece Edition Engine
 			// We play it when first arriving on Myst, and if the user has chosen so.
 		case kMystStack:
-			if (ConfMan.getBool("playmystflyby"))
+			if (ConfMan.getBool("playmystflyby")) {
 				flyby = "myst flyby";
+				looping = false;
+			}
 			break;
 		case kMechanicalStack:
 			flyby = "mech age flyby";
@@ -321,7 +324,36 @@ void MohawkEngine_Myst::playFlybyMovie(MystStack stack) {
 	}
 
 	video->center();
-	waitUntilMovieEnds(video);
+	playSkippableMovie(video, looping);
+}
+
+void MohawkEngine_Myst::playSkippableMovie(const VideoEntryPtr &video, bool looping) {
+	_waitingOnBlockingOperation = true;
+
+	video->setLooping(true);
+
+	_cursor->setCursor(_mainCursor);
+
+	while ((looping || !video->endOfVideo()) && !shouldQuit()) {
+		doFrame();
+
+		// Allow skipping
+		if (_escapePressed) {
+			_escapePressed = false;
+			break;
+		}
+
+		if (_mouseClicked) {
+			_mouseClicked = false;
+			break;
+		}
+	}
+
+	_cursor->setCursor(0);
+
+	// Ensure it's removed
+	_video->removeEntry(video);
+	_waitingOnBlockingOperation = false;
 }
 
 void MohawkEngine_Myst::waitUntilMovieEnds(const VideoEntryPtr &video) {
