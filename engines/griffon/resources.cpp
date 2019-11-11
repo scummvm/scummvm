@@ -82,8 +82,7 @@ void GriffonEngine::initialize() {
 	_cloudImg = loadImage("art/clouds.bmp", true);
 	_cloudImg->setAlpha(64, true);
 
-	_saveLoadImg = loadImage("art/saveloadnew.bmp", true);
-	_saveLoadImg->setAlpha(192, true);
+	_saveLoadImg = nullptr;
 
 	_titleImg = loadImage("art/titleb.bmp");
 	_titleImg2 = loadImage("art/titlea.bmp", true);
