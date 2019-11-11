@@ -166,6 +166,8 @@ void GameScreen::handleEvent(const Common::Event &event) {
 			_currentAction = ActionInfo::PickUp;
 			_currentPickedItem.clear();
 			break;
+		default:
+			break;
 		}
 		break;
 	}
@@ -294,6 +296,7 @@ void GameScreen::updateStatusBarText(const Common::String &entity, bool inventor
 		case ActionInfo::Use:
 			actionStringType = HardcodedStrings::USE;
 			break;
+		case ActionInfo::Look:
 		default:
 			actionStringType = HardcodedStrings::LOOK;
 			break;
@@ -301,6 +304,7 @@ void GameScreen::updateStatusBarText(const Common::String &entity, bool inventor
 	} else {
 		switch (_currentAction) {
 		case ActionInfo::Look:
+		default:
 			actionStringType = HardcodedStrings::LOOK;
 			break;
 		case ActionInfo::Walk:

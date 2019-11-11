@@ -51,6 +51,7 @@ void SequentialTask::runTasks() {
 			getTaskManager()->startTask(task);
 			break;
 		case RUNNING:
+		default:
 			return;
 		case FINISHED:
 			_tasks.remove_at(0);
