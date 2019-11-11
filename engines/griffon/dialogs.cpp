@@ -566,7 +566,8 @@ void GriffonEngine::saveLoadNew() {
 
 	_saveLoadImg = loadImage("art/saveloadnew.bmp", true);
 	if (_gameMode == kGameModeIntro) {
-		_saveLoadImg->fillRect(Common::Rect(125, 15, 160, 33), _videoBuffer->format.ARGBToColor(0, 0, 0, 0));
+		uint32 color = *(uint32 *)_saveLoadImg->getBasePtr(120, 10);
+		_saveLoadImg->fillRect(Common::Rect(125, 15, 160, 33), color);
 	}
 	_saveLoadImg->setAlpha(192, true);
 
@@ -678,6 +679,10 @@ void GriffonEngine::saveLoadNew() {
 						--curCol;
 						if (curCol == -1)
 							curCol = 3;
+
+						if (curCol == 1 && _gameMode == kGameModeIntro)
+							curCol = 0;
+
 						tickPause = _ticks + 125;
 					}
 					break;
@@ -687,6 +692,10 @@ void GriffonEngine::saveLoadNew() {
 						++curCol;
 						if (curCol == 4)
 							curCol = 0;
+
+						if (curCol == 1 && _gameMode == kGameModeIntro)
+							curCol = 2;
+
 						tickPause = _ticks + 125;
 					}
 					break;
