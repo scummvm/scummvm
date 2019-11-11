@@ -322,11 +322,9 @@ struct ObjectInfoStruct {
 
 enum {
 	kGameModeIntro,
-	kGameModeEnd,
-	kGameModeSaveLoad,
+	kGameModePlay,
 	kGameModeNewGame,
-	kGameModeLoadGame,
-	kGameModePlay
+	kGameModeLoadGame
 };
 
 class GriffonEngine : public Engine {
