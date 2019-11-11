@@ -2290,6 +2290,8 @@ void MortevielleEngine::prepareRoom() {
 			case CHAPEL:
 				setRandomPresenceChapel(_coreVar._faithScore);
 				break;
+			default:
+				break;
 			}
 			if ((_savedBitIndex != 0) && (_currBitIndex != 10))
 				_savedBitIndex = _currBitIndex;
@@ -2830,6 +2832,8 @@ int MortevielleEngine::getPresence(int roomId) {
 			case CHAPEL:
 				pres = getPresenceStatsChapel(h);
 				break;
+			default:
+				break;
 			}
 			pres += _coreVar._faithScore;
 			rand = getRandomNumber(1, 100);
@@ -2855,6 +2859,8 @@ int MortevielleEngine::getPresence(int roomId) {
 					break;
 				case CHAPEL:
 					pres = setPresenceChapel(h);
+					break;
+				default:
 					break;
 				}
 				retVal = pres;
@@ -2939,6 +2945,8 @@ void MortevielleEngine::drawPicture() {
 			case WELL:
 				if (_coreVar._wellObjectId != 0)
 					displayAnimFrame(1, 1);
+				break;
+			default:
 				break;
 			}
 		}
