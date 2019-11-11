@@ -131,8 +131,8 @@ static void parse_sentence_substitute(int start, ParsePtr pp, int &next_starting
 	// WORKAROUND: Original encoded object number as two bytes. ScummVM strings don't like
 	// 0 bytes in the middle of the string, so we encode it as plain text
 	g_vm->Command = g_vm->Command.left(start)
-		+ String::format("%%%d^", pp->object)
-		+ String(g_vm->Command.c_str() + start + sublen + 1);
+		+ String::format(" %%%d^", pp->object)
+		+ g_vm->Command.mid(start + sublen + 1);
 
 	next_starting = next_starting - sublen + 4;
 }
@@ -140,7 +140,7 @@ static void parse_sentence_substitute(int start, ParsePtr pp, int &next_starting
 static bool parse_sentence_next_chunk(int &start_at, String &the_chunk, int &next_starting) {
 	int i;
 
-	if (next_starting == 0) {
+	if (next_starting == -1) {
 		return false;
 	} else {
 		do {
@@ -149,14 +149,16 @@ static bool parse_sentence_next_chunk(int &start_at, String &the_chunk, int &nex
 
 			i = the_chunk.indexOf('%');
 			if (i == -1) {
-				next_starting = 0;
+				next_starting = -1;
 			} else {
-				the_chunk = the_chunk.left(i - 1);
-				next_starting = next_starting + i + 3;
+				next_starting = the_chunk.indexOf("^", i) + 1;
+				assert(next_starting != 0);
+
+				the_chunk = the_chunk.left(i);
 			}
 
 			the_chunk.trim();
-		} while (!(next_starting == 0 || !the_chunk.empty()));
+		} while (!(next_starting == -1 || !the_chunk.empty()));
 
 		return !the_chunk.empty();
 	}
@@ -197,10 +199,10 @@ void parse_sentence() {
 
 	// Second pass:  carefully search for the remaining string chunks; search only the part
 	// of the noun list of the same length; give preference to those in the Proximate list
-	next_starting = 1;
+	next_starting = 0;
 
 	while (parse_sentence_next_chunk(i, s, next_starting)) {
-		lchunk = s.size() - 1;
+		lchunk = s.size();
 
 		np = find_item(g_vm->object_names, lchunk);
 		if (np != nullptr) {
@@ -215,7 +217,7 @@ void parse_sentence() {
 					else
 						far_match = np;
 				}
-			} while (!(iterate_list(g_vm->object_names, np) && (lchunk == (int)((ParsePtr)np->data)->word->size())));
+			} while (iterate_list(g_vm->object_names, np) && (lchunk = (int)((ParsePtr)np->data)->word->size()) != 0);
 
 			if (near_match != nullptr)
 				parse_sentence_substitute(i, (ParsePtr)near_match->data, next_starting);

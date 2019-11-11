@@ -77,6 +77,11 @@ public:
 	int indexOf(const String &substr) const;
 
 	/**
+	 * Returns the index of a substring within this string starting at a given index
+	 */
+	int indexOf(const String &substr, int start) const;
+
+	/**
 	 * Returns the last index of a character in a string, or -1 if it isn't present
 	 */
 	int lastIndexOf(char c) const;

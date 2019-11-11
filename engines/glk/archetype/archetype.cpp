@@ -274,7 +274,7 @@ void Archetype::lookup(int the_obj, int the_attr, ResultType &result, ContextTyp
 	}
 }
 
-static int scummvm = 0;
+static int messageCtr = 0;
 
 bool Archetype::send_message(int transport, int message_sent, int recipient,
 		ResultType &result, ContextType &context) {
@@ -292,8 +292,8 @@ bool Archetype::send_message(int transport, int message_sent, int recipient,
 	}
 
 	if (DebugMan.isDebugChannelEnabled(DEBUG_MSGS)) {
-		++scummvm;
-		//debugN(String::format("%d  ", scummvm).c_str());
+		++messageCtr;
+		//debugN(String::format("%d  ", messageCtr).c_str());
 
 		r._kind = IDENT;
 		r._data._ident.ident_kind = OBJECT_ID;

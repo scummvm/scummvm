@@ -36,6 +36,11 @@ int String::indexOf(const String &substr) const {
 	return c ? c - c_str() : -1;
 }
 
+int String::indexOf(const String &substr, int start) const {
+	const char *c = strstr(c_str() + start, substr.c_str());
+	return c ? c - c_str() : -1;
+}
+
 int String::lastIndexOf(char c) const {
 	for (int i = (int)size() - 1; i >= 0; --i) {
 		if (operator[](i) == c)
@@ -49,6 +54,9 @@ void String::trim() {
 	while (!empty() && (lastChar() == ' ' || lastChar() == '\t' || lastChar() == '\n'
 			|| lastChar() == '\r'))
 		deleteLastChar();
+
+	while (hasPrefix(" ") || hasPrefix("\t") || hasPrefix("\n"))
+		deleteChar(0);
 }
 
 String operator+(const String &x, const String &y) {
