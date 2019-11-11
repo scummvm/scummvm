@@ -127,8 +127,8 @@ void add_bytes(int delta) {
 
 	if (DebugMan.isDebugChannelEnabled(DEBUG_BYTES)) {
 		String line = (delta >= 0) ? "Allocated   " : "Deallocated ";
-		line += String::format("%.3d bytes.  Current consumed memory: %.6d", ABS(delta), Bytes);
-		debug(line.c_str());
+		line += String::format("%.3u bytes.  Current consumed memory: %.6u", (uint)ABS(delta), (uint)Bytes);
+		debug("%s", line.c_str());
 	}
 }
 

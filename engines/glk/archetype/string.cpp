@@ -129,7 +129,7 @@ int String::val(int *code) {
 	if (code)
 		*code = 0;
 
-	return result;
+	return sign * result;
 }
 
 String String::left(size_t count) const {

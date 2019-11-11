@@ -394,10 +394,10 @@ void display_result(ResultType &result) {
 	}
 
 	if (enclose != " ")
-		debugN(enclose.c_str());
+		debugN("%s", enclose.c_str());
 	write_result(result);
 	if (enclose != " ")
-		debugN(enclose.c_str());
+		debugN("%s", enclose.c_str());
 }
 
 void display_expr(ExprTree the_tree) {
@@ -410,7 +410,7 @@ void display_expr(ExprTree the_tree) {
 			debugN(") ");
 		}
 
-		debugN(Operators[the_tree->_data._oper.op_name]);
+		debugN("%s", Operators[the_tree->_data._oper.op_name]);
 		debugN(" (");
 		display_expr(the_tree->_data._oper.right);
 		debugN(") ");

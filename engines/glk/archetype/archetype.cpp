@@ -309,7 +309,7 @@ bool Archetype::send_message(int transport, int message_sent, int recipient,
 
 		if (index_xarray(Vocabulary, message_sent, p)) {
 			String str = String::format("'%s'", ((StringPtr)p)->c_str());
-			debugN(str.c_str());
+			debugN("%s", str.c_str());
 		}
 
 		if (transport == OP_SEND_TO_TYPE)
@@ -318,7 +318,7 @@ bool Archetype::send_message(int transport, int message_sent, int recipient,
 		debugN(" to ");
 		r._data._ident.ident_int = recipient;
 		display_result(r);
-		debug("");
+		debug("%s", "");
 	}
 
 	// Trying to send a message to a destroyed object results in UNDEFINED
@@ -384,7 +384,6 @@ void Archetype::eval_expr(ExprTree the_expr, ResultType &result, ContextType &co
 	ResultType r1, r2;
 	int i;
 	ExprTree e;
-	bool b;
 
 	// It is very important to make sure that the "kind" fields of our temporary result variables
 	// are properly set to RESERVED/UNDEFINED before doing anything with them, so that if someone
@@ -463,10 +462,10 @@ void Archetype::eval_expr(ExprTree the_expr, ResultType &result, ContextType &co
 
 				} else if (convert_to(MESSAGE, r1)) {
 					if (r2._data._ident.ident_kind == TYPE_ID)
-						b = send_message(OP_SEND_TO_TYPE, r1._data._msgTextQuote.index, r2._data._ident.ident_int,
+						send_message(OP_SEND_TO_TYPE, r1._data._msgTextQuote.index, r2._data._ident.ident_int,
 							result, context);
 					else
-						b = send_message(the_expr->_data._oper.op_name, r1._data._msgTextQuote.index,
+						send_message(the_expr->_data._oper.op_name, r1._data._msgTextQuote.index,
 							r2._data._ident.ident_int, result, context);
 				}
 			}
@@ -701,7 +700,7 @@ void Archetype::eval_expr(ExprTree the_expr, ResultType &result, ContextType &co
 			display_expr(the_expr);
 			debugN("  ==>  ");
 			display_result(result);
-			debug("");
+			debug("%s", "");
 		}
 	} else {
 		switch (desired) {
@@ -819,7 +818,7 @@ void Archetype::exec_stmt(StatementPtr the_stmt, ResultType &result, ContextType
 					debugN(", ");
 			}
 
-			debug("");
+			debug("%s", "");
 		}
 
 		np = nullptr;
@@ -860,8 +859,7 @@ void Archetype::exec_stmt(StatementPtr the_stmt, ResultType &result, ContextType
 		if (verbose) {
 			debugN("case ");
 			display_expr(the_stmt->_data._case.test_expr);
-			debugN(" of");
-			debug("");
+			debug(" of");
 		}
 
 		eval_expr(the_stmt->_data._case.test_expr, r1, context, RVALUE);
@@ -984,7 +982,7 @@ void Archetype::exec_stmt(StatementPtr the_stmt, ResultType &result, ContextType
 	}
 
 	if (verbose)
-		debug("");		// finish off dangling lines
+		debug("%s", "");		// finish off dangling lines
 }
 
 } // End of namespace Archetype
