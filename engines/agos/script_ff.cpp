@@ -328,6 +328,8 @@ void AGOSEngine_Feeble::setLoyaltyRating(byte rating) {
 		// Arriving at rebel base: Freedom Fighters Operative
 		writeVariable(120, 6);
 		break;
+	default:
+		break;
 	}
 }
 
