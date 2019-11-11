@@ -562,6 +562,14 @@ void GriffonEngine::saveLoadNew() {
 
 	renderSaveStates();
 
+	delete _saveLoadImg;
+
+	_saveLoadImg = loadImage("art/saveloadnew.bmp", true);
+	if (_gameMode == kGameModeIntro) {
+		_saveLoadImg->fillRect(Common::Rect(125, 15, 160, 33), _videoBuffer->format.ARGBToColor(0, 0, 0, 0));
+	}
+	_saveLoadImg->setAlpha(192, true);
+
 	// Main menu loop
 	do {
 		_videoBuffer->fillRect(Common::Rect(0, 0, _videoBuffer->w, _videoBuffer->h), 0);
