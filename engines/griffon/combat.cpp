@@ -1004,7 +1004,7 @@ void GriffonEngine::damageNPC(int npcnum, int damage, int spell) {
 
 		if (_npcInfo[npcnum].script == kScriptEndOfGame) {
 			endOfGame();
-			_gameMode = kGameModeEnd;
+			_gameMode = kGameModeIntro;
 		}
 	}
 }

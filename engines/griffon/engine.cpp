@@ -107,7 +107,7 @@ void GriffonEngine::mainLoop() {
 		 _console->onFrame();
 
 		updateEngine();
-	} while (!_shouldQuit && _gameMode != kGameModeEnd && _gameMode != kGameModeNewGame);
+	} while (!_shouldQuit && _gameMode == kGameModePlay);
 }
 
 void GriffonEngine::updateEngine() {
@@ -163,7 +163,7 @@ void GriffonEngine::updateEngine() {
 
 		checkHit();
 
-		if (_gameMode == kGameModeEnd)
+		if (_gameMode != kGameModePlay)
 			return;
 	}
 
@@ -246,7 +246,7 @@ void GriffonEngine::updateEngine() {
 	if (_player.hp <= 0) {
 		theEnd();
 
-		_gameMode = kGameModeEnd;
+		_gameMode = kGameModeIntro;
 
 		return;
 	}

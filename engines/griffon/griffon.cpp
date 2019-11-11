@@ -137,13 +137,20 @@ Common::Error GriffonEngine::run() {
 	if (_shouldQuit)
 		return Common::kNoError;
 
-	while (!_shouldQuit) {
-		if (_gameMode != kGameModeNewGame)
-			title(0);
+	_gameMode = kGameModeIntro;
 
-		if (_gameMode == kGameModeNewGame) {
+	while (!_shouldQuit) {
+		switch (_gameMode) {
+		case kGameModeIntro:
+		case kGameModePlay:
+			title(0);
+			break;
+
+		case kGameModeNewGame:
 			newGame();
-		} else if (_gameMode == kGameModeLoadGame) {
+			break;
+
+		case kGameModeLoadGame:
 			_player.walkSpeed = 1.1f;
 			_animSpeed = 0.5f;
 			_attacking = false;
@@ -157,6 +164,10 @@ Common::Error GriffonEngine::run() {
 			_secsInGame = 0;
 			loadMap(_curMap);
 			mainLoop();
+			break;
+
+		default:
+			error("Bad game mode: %d", _gameMode);
 		}
 	}
 
