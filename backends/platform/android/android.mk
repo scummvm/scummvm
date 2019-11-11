@@ -35,11 +35,12 @@ $(PATH_BUILD_JNI): libresidualvm.so
 	$(INSTALL) -C -D -m 644 libresidualvm.so $(PATH_BUILD_JNI)
 
 $(PATH_BUILD_GRADLE): $(PATH_BUILD_ASSETS) $(PATH_DIST)/build.gradle
-	@echo "gradle.ext.versionCode = $(ANDROID_VERSIONCODE)" >> $@
+	$(eval ABIS = $(notdir $(wildcard $(PATH_BUILD)/jni/*)))
+	@echo "gradle.ext.versionCode = $(ANDROID_VERSIONCODE)" > $@
 	@echo "gradle.ext.versionName = '$(ANDROID_VERSIONNAME)'" >> $@
 	@echo "gradle.ext.sourceDir = '$(abspath $(srcdir))'" >> $@
 	@echo "gradle.ext.buildDir = '$(CURDIR)'" >> $@
-	@echo "gradle.ext.androidAbi = '$(ABI)'" >> $@
+	@echo "gradle.ext.androidAbi = '$(ABIS)'" >> $@
 	@echo "include ':ResidualVM'" >> $@
 	@echo "project(':ResidualVM').projectDir = new File('$(abspath $(PATH_DIST))')" >> $@
 	@echo "ndk.dir=$(ANDROID_NDK)" > $(PATH_BUILD)/local.properties

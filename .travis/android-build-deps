@@ -19,7 +19,7 @@ echo ">>> Building libjpeg-turbo for $CROSS_HOST"
 pushd libjpeg-turbo
 git clean -fdx
 autoreconf -fiv
-./configure --host=$CROSS_HOST --prefix=$prefix --without-turbojpeg --disable-shared && make -j4 install || false
+./configure --host=$CROSS_HOST --prefix=$prefix --without-turbojpeg --disable-shared && make install || false
 popd
 
 echo ">>> Building freetype for $CROSS_HOST"
@@ -27,7 +27,7 @@ echo ">>> Building freetype for $CROSS_HOST"
 pushd freetype
 git clean -fdx
 sh autogen.sh
-./configure --host=$CROSS_HOST --with-harfbuzz=no --with-bzip2=no --with-png=no --prefix=$prefix --disable-shared && make -j4 install || false
+./configure --host=$CROSS_HOST --with-harfbuzz=no --with-bzip2=no --with-png=no --prefix=$prefix --disable-shared && make install || false
 popd
 cp -p .travis/android-freetype-config $prefix/bin/freetype-config
 

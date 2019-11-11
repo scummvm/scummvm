@@ -28,7 +28,7 @@ android {
 		versionCode gradle.versionCode
 		versionName gradle.versionName
 		ndk {
-			abiFilters gradle.androidAbi
+			abiFilters gradle.androidAbi.split(" ")
 		}
 		aaptOptions {
 			noCompress "zip", "lab"
