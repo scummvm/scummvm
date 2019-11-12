@@ -188,6 +188,8 @@ bool verify_expr(progfile &f, ExprTree the_expr) {
 			the_expr->_data._oper.right->_data._ident.ident_kind = ATTRIBUTE_ID;
 			if (the_expr->_data._oper.right->_data._ident.ident_int == 0)
 				success = false;
+			// fallthrough
+			// FIXME: is this fallthrough intentional?
 
 		case OP_ASSIGN:
 		case OP_C_CONCAT:

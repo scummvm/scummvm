@@ -185,6 +185,8 @@ bool get_token(progfile &f) {
 				switch (next_ch) {
 				case '#':
 					state = COMMENT;
+				// fallthrough
+				// FIXME: is this fallthrough intentional?
 				case ';':
 					if (!f.newlines) {
 						state = START;
@@ -193,12 +195,14 @@ bool get_token(progfile &f) {
 						f.tnum = (int)NEWLINE_CH;
 						state = STOP;
 					}
+					// fallthrough
+					// FIXME: is this fallthrough intentional?
 				default:
 					f.ttype = PUNCTUATION;
 					f.tnum = (int)next_ch;
 					state = STOP;
+					break;
 				}
-				break;
 			}
 			break;
 
