@@ -132,6 +132,7 @@ static const char *const selectorNameTable[] = {
 	"nMsgType",     // Space Quest 4
 	"doVerb",       // Space Quest 4
 	"setRegions",   // Space Quest 4
+	"setSpeed",     // Space Quest 5, QFG4
 	"loop",         // Laura Bow 1 Colonel's Bequest, QFG4
 	"setLoop",      // Laura Bow 1 Colonel's Bequest, QFG4
 	"ignoreActors", // Laura Bow 1 Colonel's Bequest
@@ -188,7 +189,6 @@ static const char *const selectorNameTable[] = {
 	"sayMessage",   // QFG4
 	"setCursor",    // QFG4
 	"setLooper",    // QFG4
-	"setSpeed",     // QFG4
 	"useStamina",   // QFG4
 	"value",        // QFG4
 #endif
@@ -246,6 +246,7 @@ enum ScriptPatcherSelectors {
 	SELECTOR_nMsgType,
 	SELECTOR_doVerb,
 	SELECTOR_setRegions,
+	SELECTOR_setSpeed,
 	SELECTOR_loop,
 	SELECTOR_setLoop,
 	SELECTOR_ignoreActors,
@@ -303,7 +304,6 @@ enum ScriptPatcherSelectors {
 	SELECTOR_sayMessage,
 	SELECTOR_setCursor,
 	SELECTOR_setLooper,
-	SELECTOR_setSpeed,
 	SELECTOR_useStamina,
 	SELECTOR_value
 #endif
@@ -16630,10 +16630,34 @@ static const uint16 sq5PatchWd40AlarmCountdownFix[] = {
 	PATCH_END
 };
 
+// In the transporter room, several scripts attempt to temporarily set ego's
+//  speed to 6 but instead change the game speed. This prevents ego's speed from
+//  being restored. The user must then do this manually in the control panel.
+//  These bugs are due to calling ego:setSpeed instead of ego:cycleSpeed, which
+//  we fix. This occurs when randomly beaming in with the funnyBeam script and
+//  when talking to Cliffy about Bea before curing her.
+//
+// Applies to: All versions
+// Responsible methods: funnyBeam:changeState, talkAboutBea:changeState
+// Fixes bug: #11264
+static const uint16 sq5SignatureTransporterRoomSpeedFix[] = {
+	0x38, SIG_MAGICDWORD,           // pushi setSpeed
+	      SIG_SELECTOR16(setSpeed),
+	0x78,                           // push1
+	0x39, 0x06,                     // pushi 06
+	SIG_END
+};
+
+static const uint16 sq5PatchTransporterRoomSpeedFix[] = {
+	0x38, PATCH_SELECTOR16(cycleSpeed), // pushi cycleSpeed
+	PATCH_END
+};
+
 //          script, description,                                      signature                             patch
 static const SciScriptPatcherEntry sq5Signatures[] = {
 	{  true,   200, "captain chair lockup fix",                    1, sq5SignatureCaptainChairFix,          sq5PatchCaptainChairFix },
 	{  true,   226, "toolbox fix",                                 1, sq5SignatureToolboxFix,               sq5PatchToolboxFix },
+	{  true,   243, "transporter room speed fix",                  3, sq5SignatureTransporterRoomSpeedFix,  sq5PatchTransporterRoomSpeedFix },
 	{  true,   305, "wd40 fruit fix",                              1, sq5SignatureWd40FruitFix,             sq5PatchWd40FruitFix },
 	{  true,   335, "wd40 alarm countdown fix",                    1, sq5SignatureWd40AlarmCountdownFix,    sq5PatchWd40AlarmCountdownFix },
 	{  true,  1000, "drive bay pathfinding fix",                   1, sq5SignatureDriveBayPathfindingFix,   sq5PatchDriveBayPathfindingFix },
