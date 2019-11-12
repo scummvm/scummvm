@@ -3800,10 +3800,20 @@ if test "$_sdl" = yes ; then
 	case $_sdlversion in
 		2.0.*)
 			add_line_to_config_mk "USE_SDL2 = 1"
-			append_var SDL_NET_LIBS "-lSDL2_net"
+			if test "$_pkg_config" = "yes" && $_pkgconfig --exists sdl2_net; then
+				append_var SDL_NET_LIBS "`$_pkgconfig --libs sdl2_net`"
+				append_var SDL_NET_CFLAGS "`$_pkgconfig --cflags sdl2_net`"
+			else
+				append_var SDL_NET_LIBS "-lSDL2_net"
+			fi
 			;;
 		*)
-			append_var SDL_NET_LIBS "-lSDL_net"
+			if test "$_pkg_config" = "yes" && $_pkgconfig --exists sdl_net; then
+				append_var SDL_NET_LIBS "`$_pkgconfig --libs sdl_net`"
+				append_var SDL_NET_CFLAGS "`$_pkgconfig --cflags sdl_net`"
+			else
+				append_var SDL_NET_LIBS "-lSDL_net"
+			fi
 			;;
 	esac
 
