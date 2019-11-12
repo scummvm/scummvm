@@ -32,7 +32,6 @@
 #include "backends/modular-backend.h"
 #include "backends/plugins/posix/posix-provider.h"
 #include "backends/fs/posix/posix-fs-factory.h"
-#include "backends/fs/posix/posix-fs-factory.h"
 
 #include <pthread.h>
 
