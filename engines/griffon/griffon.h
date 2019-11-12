@@ -37,6 +37,7 @@
 #define GRIFFON_GRIFFON_H
 
 #include "common/scummsys.h"
+#include "common/error.h"
 #include "common/events.h"
 #include "common/random.h"
 #include "engines/engine.h"
@@ -427,6 +428,17 @@ private:
 	bool isSoundChannelPlaying(int channel);
 	void setupAudio();
 	void updateMusic();
+
+	Common::Error loadGameState(int slot) {
+		return loadPlayer(slot) ? Common::kNoError : Common::kUnknownError;
+	}
+	Common::Error saveGameState(int slot, const Common::String &description) {
+		return saveState(slot) ? Common::kNoError : Common::kUnknownError;
+	}
+
+	virtual bool canLoadGameStateCurrently() { return true; }
+	virtual bool canSaveGameStateCurrently() { return _gameMode == kGameModePlay; }
+	virtual bool hasFeature(EngineFeature f) const;
 
 private:
 	Graphics::TransparentSurface *_video, *_videoBuffer, *_videoBuffer2, *_videoBuffer3;
