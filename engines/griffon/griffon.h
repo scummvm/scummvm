@@ -430,7 +430,7 @@ private:
 	void updateMusic();
 
 	Common::Error loadGameState(int slot) {
-		return loadPlayer(slot) ? Common::kNoError : Common::kUnknownError;
+		return loadState(slot) ? Common::kNoError : Common::kUnknownError;
 	}
 	Common::Error saveGameState(int slot, const Common::String &description) {
 		return saveState(slot) ? Common::kNoError : Common::kUnknownError;
