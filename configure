@@ -3756,6 +3756,18 @@ esac
 append_var MODULES "backends/platform/$_backend"
 
 #
+# Check for pkg-config
+#
+echocheck "pkg-config"
+_pkg_config=no
+command -v $_pkgconfig >/dev/null 2>&1 && _pkg_config=yes
+echo "$_pkg_config"
+
+if test "$_pkg_config" = yes && test -n "$_host" && test -z "$PKG_CONFIG_LIBDIR"; then
+	echo "WARNING: When cross-compiling PKG_CONFIG_LIBDIR must be set to the location of the .pc files for the target"
+fi
+
+#
 # Setup SDL specifics for SDL based backends
 #
 if test "$_sdl" = auto ; then
@@ -4223,18 +4235,6 @@ cat > $TMPC << EOF
 int main(void) { return 0; }
 EOF
 cc_check -lm && append_var LIBS "-lm"
-
-#
-# Check for pkg-config
-#
-echocheck "pkg-config"
-_pkg_config=no
-command -v $_pkgconfig >/dev/null 2>&1 && _pkg_config=yes
-echo "$_pkg_config"
-
-if test "$_pkg_config" = yes && test -n "$_host" && test -z "$PKG_CONFIG_LIBDIR"; then
-	echo "WARNING: When cross-compiling PKG_CONFIG_LIBDIR must be set to the location of the .pc files for the target"
-fi
 
 #
 # Check for Ogg
