@@ -51,7 +51,7 @@
 
 #include "backends/platform/android/android.h"
 #include "backends/platform/android/asset-archive.h"
-#include "backends/platform/android/jni.h"
+#include "backends/platform/android/jni-android.h"
 
 __attribute__ ((visibility("default")))
 jint JNICALL JNI_OnLoad(JavaVM *vm, void *) {
@@ -228,7 +228,6 @@ void JNI::getDPI(float *values) {
 void JNI::displayMessageOnOSD(const char *msg) {
 	// called from common/osd_message_queue, method: OSDMessageQueue::pollEvent()
 	JNIEnv *env = JNI::getEnv();
-//	LOGD("OSD orig MESSAGE: %s", msg);
 	Common::String fromEncoding = "ISO-8859-1";
 #ifdef USE_TRANSLATION
 	if (TransMan.getCurrentCharset() != "ASCII") {
@@ -239,10 +238,10 @@ void JNI::displayMessageOnOSD(const char *msg) {
 
 	const char *utf8Msg = converter.convert(msg, converter.stringLength(msg, fromEncoding) );
 	if (utf8Msg == nullptr) {
+		// Show a placeholder indicative of the translation error instead of silent failing
+		utf8Msg = "?";
 		LOGE("Failed to convert message to UTF-8 for OSD!");
-		return;
 	}
-//	LOGD("OSD target MESSAGE: %s", utf8Msg);
 	jstring java_msg = env->NewStringUTF(utf8Msg);
 
 	env->CallVoidMethod(_jobj, _MID_displayMessageOnOSD, java_msg);

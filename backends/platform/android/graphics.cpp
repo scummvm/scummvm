@@ -39,7 +39,7 @@
 
 #include "backends/platform/android/android.h"
 #include "backends/platform/android/graphics.h"
-#include "backends/platform/android/jni.h"
+#include "backends/platform/android/jni-android.h"
 
 //
 // AndroidGraphicsManager
