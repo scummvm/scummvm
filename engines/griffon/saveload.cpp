@@ -37,6 +37,7 @@
 #include "griffon/griffon.h"
 
 #include "common/savefile.h"
+#include "engines/metaengine.h"
 
 namespace Griffon {
 
@@ -55,7 +56,7 @@ namespace Griffon {
 	} while(0)
 
 Common::String GriffonEngine::makeSaveGameName(int slot) {
-	return (_targetName + Common::String::format(".%02d", slot));
+	return (_targetName + Common::String::format(".s%02d", slot));
 }
 
 int GriffonEngine::loadState(int slotnum) {
@@ -247,6 +248,12 @@ int GriffonEngine::saveState(int slotnum) {
 
 		PRINT("%f", _player.spellStrength);
 	}
+
+	drawView();
+
+	Common::String desc = Common::String::format("Level: %d Map: %d", _player.level, _curMap);
+
+	MetaEngine::appendExtendedSave(file, (_secStart + _secsInGame) * 1000, desc);
 
 	file->finalize();
 
