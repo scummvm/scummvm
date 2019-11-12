@@ -339,7 +339,7 @@ void Scene::loadSceneData(uint32 sceneId, uint32 cameraPointId) {
 }
 
 void Scene::draw() {
-	Common::Rect rect(_camera.x + _stage->getXOffset(), _camera.y, _camera.x + 320 + _stage->getXOffset(), _camera.y + 200);
+	Common::Rect rect(_camera.x, _camera.y, _camera.x + 320, _camera.y + 200);
 	_vm->_screen->clearScreen();
 
 	for(uint16 priority = 1; priority < 16; priority++) {
@@ -348,11 +348,11 @@ void Scene::draw() {
 		}
 
 		if (priority == _stage->getBgLayerPriority()) {
-			_screen->copyRectToSurface8bpp(*_stage->getBgLayer(), _screen->getPalette(0), 0, 0, rect, false, 128);
+			drawBgLayer(0, rect, _stage->getBgLayer());
 		} else if (priority == _stage->getMgLayerPriority()) {
-			_screen->copyRectToSurface8bpp(*_stage->getMgLayer(), _screen->getPalette(0), 0, 0, rect, false, 128);
+			drawBgLayer(1, rect, _stage->getMgLayer());
 		} else if (priority == _stage->getFgLayerPriority()) {
-			_screen->copyRectToSurface8bpp(*_stage->getFgLayer(), _screen->getPalette(0), 0, 0, rect, false, 128);
+			drawBgLayer(2, rect, _stage->getFgLayer());
 		} else if (priority == 5) {
 			if (_vm->isFlagSet(ENGINE_FLAG_80)) {
 				_vm->_inventory->draw();
@@ -490,10 +490,22 @@ void Scene::drawActorNumber(int16 x, int16 y, uint16 actorId) {
 	_vm->_fontManager->addText(x, y, text, strlen(text8), 1);
 }
 
-void Scene::setLayerXOffset(uint8 layerNumber, uint16 xOffset) {
-	if (layerNumber == 2) {
-		_stage->setXOffset(xOffset);
-	}
+void Scene::setLayerOffset(uint8 layerNumber, Common::Point offset) {
+	_stage->setLayerOffset(layerNumber, offset);
+}
+
+Common::Point Scene::getLayerOffset(uint8 layerNumber) {
+	return _stage->getLayerOffset(layerNumber);
+}
+
+void Scene::drawBgLayer(uint8 layerNumber, Common::Rect rect, Graphics::Surface *surface) {
+	Common::Point offset = _stage->getLayerOffset(layerNumber);
+	Common::Rect clippedRect = _screen->clipRectToRect(offset.x, offset.y, rect, Common::Rect(_stage->getBgLayer()->w, _stage->getBgLayer()->h));
+	clippedRect.left += offset.x < 0 ? -offset.x : 0;
+	clippedRect.right += offset.x < 0 ? -offset.x : 0;
+	clippedRect.top += offset.y < 0 ? -offset.y : 0;
+	clippedRect.bottom += offset.y < 0 ? -offset.y : 0;
+	_screen->copyRectToSurface8bpp(*surface, _screen->getPalette(0), 0, 0, clippedRect, false, 128);
 }
 
 } // End of namespace Dragons

@@ -157,17 +157,21 @@ void Screen::copyRectToSurface8bpp(const void *buffer, byte* palette, int srcPit
 }
 
 Common::Rect Screen::clipRectToScreen(int destX, int destY, const Common::Rect rect) {
+	return clipRectToRect(destX, destY, rect, Common::Rect(320, 200));
+}
+
+Common::Rect Screen::clipRectToRect(int destX, int destY, const Common::Rect rect, const Common::Rect containerRect) {
 	int16 x, y, w, h;
 	x = rect.left;
 	y = rect.top;
 	w = rect.width();
 	h = rect.height();
 
-	if (destX >= 320) {
+	if (destX >= containerRect.width()) {
 		w = 0;
 	}
 
-	if (destY >= 200) {
+	if (destY >= containerRect.height()) {
 		h = 0;
 	}
 
@@ -181,12 +185,12 @@ Common::Rect Screen::clipRectToScreen(int destX, int destY, const Common::Rect r
 		y += -destY;
 	}
 
-	if (w > 0 && destX + w >= 320) {
-		w -= (destX + w) - 320;
+	if (w > 0 && destX + w >= containerRect.width()) {
+		w -= (destX + w) - containerRect.width();
 	}
 
-	if (h > 0 && destY + h >= 200) {
-		h -= (destY + h) - 200;
+	if (h > 0 && destY + h >= containerRect.height()) {
+		h -= (destY + h) - containerRect.height();
 	}
 
 	if (w < 0) {

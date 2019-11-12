@@ -164,30 +164,30 @@ bool ScriptOpcodes::runScript4(ScriptOpCall &scriptOpCall) {
 }
 
 void ScriptOpcodes::executeScriptLoop(ScriptOpCall &scriptOpCall) {
-
-	if (scriptOpCall._code >= scriptOpCall._codeEnd || scriptOpCall._result & 1) {
-		return;
-	}
-
-	if (_vm->isFlagSet(Dragons::ENGINE_FLAG_100000)) {
-		return;
-	}
-
-	if (_vm->isFlagSet(Dragons::ENGINE_FLAG_80000)) {
-		//TODO
-//		if (IsPressedStart(0)) {
-//			Dragons::getEngine()->setFlags(Dragons::ENGINE_FLAG_100000);
-//		}
-	}
-
-	uint16 opcode = READ_LE_UINT16(scriptOpCall._code) & 0x7fff;
-
-	scriptOpCall._op = (byte) opcode;
-	if (opcode < DRAGONS_NUM_SCRIPT_OPCODES) {
-		execOpcode(scriptOpCall);
-	}
-
-	while (scriptOpCall._code < scriptOpCall._codeEnd && !(scriptOpCall._result & 1) && _data_80071f5c == 0) {
+//
+//	if (scriptOpCall._code >= scriptOpCall._codeEnd || scriptOpCall._result & 1) {
+//		return;
+//	}
+//
+//	if (_vm->isFlagSet(Dragons::ENGINE_FLAG_100000)) {
+//		return;
+//	}
+//
+//	if (_vm->isFlagSet(Dragons::ENGINE_FLAG_80000)) {
+//		//TODO
+////		if (IsPressedStart(0)) {
+////			Dragons::getEngine()->setFlags(Dragons::ENGINE_FLAG_100000);
+////		}
+//	}
+//
+//	uint16 opcode = READ_LE_UINT16(scriptOpCall._code) & 0x7fff;
+//
+//	scriptOpCall._op = (byte) opcode;
+//	if (opcode < DRAGONS_NUM_SCRIPT_OPCODES) {
+//		execOpcode(scriptOpCall);
+//	}
+//
+	while (scriptOpCall._code < scriptOpCall._codeEnd && !(scriptOpCall._result & 1)) {
 
 		if (_vm->isFlagSet(Dragons::ENGINE_FLAG_100000)) {
 			return;
@@ -200,13 +200,18 @@ void ScriptOpcodes::executeScriptLoop(ScriptOpCall &scriptOpCall) {
 //		}
 		}
 
-		opcode = READ_LE_UINT16(scriptOpCall._code) & 0x7fff;
+		uint16 opcode = READ_LE_UINT16(scriptOpCall._code) & 0x7fff;
 
 		if (opcode >= DRAGONS_NUM_SCRIPT_OPCODES) {
 			return; //TODO should continue here.
 		}
 		scriptOpCall._op = (byte) opcode;
 		execOpcode(scriptOpCall);
+
+		if (_data_80071f5c != 0) {
+			scriptOpCall._result |= 1;
+			break;
+		}
 	}
 }
 
