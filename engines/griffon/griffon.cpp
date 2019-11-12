@@ -132,12 +132,19 @@ Common::Error GriffonEngine::run() {
 	_console = new Console();
 
 	initialize();
-	showLogos();
+
+	if (ConfMan.hasKey("save_slot")) {
+		_saveSlot = ConfMan.getInt("save_slot");
+		loadGameState(_saveSlot);
+
+		_gameMode = kGameModeLoadGame;
+	} else {
+		showLogos();
+		_gameMode = kGameModeIntro;
+	}
 
 	if (_shouldQuit)
 		return Common::kNoError;
-
-	_gameMode = kGameModeIntro;
 
 	while (!_shouldQuit) {
 		switch (_gameMode) {
