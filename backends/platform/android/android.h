@@ -25,11 +25,13 @@
 
 #if defined(__ANDROID__)
 
+#include "backends/platform/android/portdefs.h"
 #include "common/fs.h"
 #include "common/archive.h"
 #include "audio/mixer_intern.h"
 #include "backends/modular-backend.h"
 #include "backends/plugins/posix/posix-provider.h"
+#include "backends/fs/posix/posix-fs-factory.h"
 #include "backends/fs/posix/posix-fs-factory.h"
 
 #include <pthread.h>

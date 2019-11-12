@@ -58,7 +58,7 @@
 #endif
 
 #if defined(__ANDROID__) && !defined(ANDROIDSDL)
-#include "backends/platform/android/jni.h"
+#include "backends/platform/android/jni-android.h"
 #endif
 
 bool POSIXFilesystemNode::exists() const {

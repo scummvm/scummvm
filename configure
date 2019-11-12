@@ -3075,6 +3075,7 @@ if test -n "$_host"; then
 			_port_mk="backends/platform/3ds/3ds.mk"
 			;;
 		android | android-arm | android-v7a | android-arm-v7a | android-arm64-v8a | android-mips | android-mips64 | android-x86 | android-x86_64 | ouya)
+			# also __ANDROID__ is defined by Clang in the NDK
 			DEFINES="$DEFINES -D__ANDROID_PLAIN_PORT__ -DANDROID_PLAIN_PORT"
 			# we link a .so as default
 			append_var LDFLAGS "-shared"
@@ -3561,6 +3562,8 @@ case $_backend in
 		;;
 	android)
 		append_var DEFINES "-DREDUCE_MEMORY_USAGE"
+		append_var DEFINES "-DNONSTANDARD_PORT"
+		append_var INCLUDES '-I$(srcdir)/backends/platform/android'
 		append_var CXXFLAGS "-Wa,--noexecstack"
 		append_var LDFLAGS "-Wl,-z,noexecstack"
 		# removed the following directive - was causing compilation issues when not also explicitly using --disable-mt32emu
