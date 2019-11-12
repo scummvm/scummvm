@@ -88,7 +88,9 @@ Background::Background() : _priorityLayer(0), _points1(0), _points2(0), _data(0)
 	_layerSurface[0] = NULL;
 	_layerSurface[1] = NULL;
 	_layerSurface[2] = NULL;
-	_xOffset = 0;
+	layerOffset[0] = Common::Point(0,0);
+	layerOffset[1] = Common::Point(0,0);
+	layerOffset[2] = Common::Point(0,0);
 }
 
 Background::~Background() {
@@ -274,12 +276,14 @@ void Background::setPalette(byte *newPalette) {
 	}
 }
 
-void Background::setXOffset(int16 xOffset) {
-	_xOffset = xOffset;
+void Background::setLayerOffset(uint8 layerNumber, Common::Point offset) {
+	assert(layerNumber < 4);
+	layerOffset[layerNumber] = offset;
 }
 
-int16 Background::getXOffset() {
-	return _xOffset;
+Common::Point Background::getLayerOffset(uint8 layerNumber) {
+	assert(layerNumber < 4);
+	return layerOffset[layerNumber];
 }
 
 BackgroundResourceLoader::BackgroundResourceLoader(BigfileArchive *bigFileArchive, DragonRMS *dragonRMS) : _bigFileArchive(

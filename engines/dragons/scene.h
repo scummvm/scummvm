@@ -81,10 +81,12 @@ public:
 	void setMgLayerPriority(uint8 newPriority);
 	void setFgLayerPriority(uint8 newPriority);
 
-	void setLayerXOffset(uint8 layerNumber, uint16 xOffset);
+	void setLayerOffset(uint8 layerNumber, Common::Point offset);
+	Common::Point getLayerOffset(uint8 layerNumber);
 private:
 	void resetActorFrameFlags();
 	void drawActorNumber(int16 x, int16 y, uint16 actorId);
+	void drawBgLayer(uint8 layerNumber, Common::Rect rect, Graphics::Surface *surface);
 };
 
 } // End of namespace Dragons

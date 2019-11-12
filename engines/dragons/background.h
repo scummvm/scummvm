@@ -62,8 +62,7 @@ private:
 	Common::Point *_points1;
 	Common::Point *_points2;
 	uint8 layerPriority[3];
-	int16 _xOffset;
-
+	Common::Point layerOffset[3];
 public:
 	Background();
 	~Background();
@@ -91,8 +90,8 @@ public:
 	void overlayImage(uint16 layerNum, byte *data, int16 x, int16 y, int16 w, int16 h);
 	void restoreTiles(uint16 layerNum, int16 x, int16 y, int16 w, int16 h);
 	void setPalette(byte *newPalette);
-	void setXOffset(int16 xOffset);
-	int16 getXOffset();
+	void setLayerOffset(uint8 layerNumber, Common::Point offset);
+	Common::Point getLayerOffset(uint8 layerNumber);
 private:
 	Common::Point *loadPoints(Common::SeekableReadStream &stream);
 	Graphics::Surface *initGfxLayer(TileMap &tileMap);

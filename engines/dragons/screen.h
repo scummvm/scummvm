@@ -48,10 +48,12 @@ public:
 	void updatePaletteTransparency(uint16 paletteNum, uint16 startOffset, uint16 endOffset, bool isTransparent);
 	void clearScreen();
 	void drawRect(uint16 colour, Common::Rect rect, int id);
+	Common::Rect clipRectToScreen(int destX, int destY, const Common::Rect rect);
+	Common::Rect clipRectToRect(int destX, int destY, const Common::Rect rect, const Common::Rect containerRect);
+
 private:
 	void copyRectToSurface(const void *buffer, int srcPitch, int srcWidth, int srcXOffset, int destX, int destY, int width, int height, bool flipX, uint8 alpha);
 	void copyRectToSurface8bpp(const void *buffer, byte* palette, int srcPitch, int srcWidth, int srcXOffset, int destX, int destY, int width, int height, bool flipX, uint8 alpha);
-	Common::Rect clipRectToScreen(int destX, int destY, const Common::Rect rect);
 };
 
 } // End of namespace Dragons

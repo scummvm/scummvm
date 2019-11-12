@@ -766,13 +766,7 @@ void Minigame3::run() {
 }
 
 void Minigame3::updateBackgroundLayerOffset(uint32 layerNumber, int16 xOffset, int16 yOffset) {
-	_vm->_scene->setLayerXOffset(layerNumber, xOffset);
-//	int iVar1;
-//
-//	iVar1 = (param_1 & 0xffff) * 0x24;
-//	*(undefined2 *)(&DAT_80069644 + iVar1) = param_2;
-//	*(short *)(&DAT_80069646 + iVar1) = param_3 + 8;
-
+	_vm->_scene->setLayerOffset(layerNumber, Common::Point(xOffset, yOffset));
 }
 
 void Minigame3::FUN_80017f70_paletteRelated(uint16 param_1) {
