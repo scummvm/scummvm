@@ -5,6 +5,7 @@ MODULE_OBJS := \
 	dialogs.o \
 	engine.o \
 	game.o \
+	metaengine.o \
 	obsolete.o \
 	savestate.o
 

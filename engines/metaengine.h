@@ -37,7 +37,14 @@ class OSystem;
 
 namespace Common {
 class FSList;
+class OutSaveFile;
 class String;
+
+typedef SeekableReadStream InSaveFile;
+}
+
+namespace Graphics {
+struct Surface;
 }
 
 /**
@@ -52,6 +59,28 @@ struct ExtraGuiOption {
 };
 
 typedef Common::Array<ExtraGuiOption> ExtraGuiOptions;
+
+#define EXTENDED_SAVE_VERSION 3
+
+struct ExtendedSavegameHeader {
+	char id[6];
+	uint8 version;
+	Common::String saveName;
+	Common::String description;
+	uint32 date;
+	uint16 time;
+	uint32 playtime;
+	Graphics::Surface *thumbnail;
+
+	ExtendedSavegameHeader() {
+		memset(id, 0, 6);
+		version = 0;
+		date = 0;
+		time = 0;
+		playtime = 0;
+		thumbnail = nullptr;
+	}
+};
 
 /**
  * A meta engine is essentially a factory for Engine instances with the
@@ -114,9 +143,7 @@ public:
 	 * @param target	name of a config manager target
 	 * @return			a list of save state descriptors
 	 */
-	virtual SaveStateList listSaves(const char *target) const {
-		return SaveStateList();
-	}
+	virtual SaveStateList listSaves(const char *target) const;
 
 	/**
 	 * Return a list of extra GUI options for the specified target.
@@ -161,7 +188,7 @@ public:
 	 * @param target	name of a config manager target
 	 * @param slot		slot number of the save state to be removed
 	 */
-	virtual void removeSaveState(const char *target, int slot) const {}
+	virtual void removeSaveState(const char *target, int slot) const;
 
 	/**
 	 * Returns meta infos from the specified save state.
@@ -172,9 +199,22 @@ public:
 	 * @param target	name of a config manager target
 	 * @param slot		slot number of the save state
 	 */
-	virtual SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const {
-		return SaveStateDescriptor();
-	}
+	virtual SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const;
+
+	/**
+	 * Returns name of the save file for given slot and optional target.
+	 *
+	 * @param saveGameIdx	index of the save
+	 * @param target		game target. If omitted, then the engine id is used
+	 */
+	virtual const char *getSavegameFile(int saveGameIdx, const char *target = nullptr) const;
+
+	/**
+	 * Returns pattern for save files.
+	 *
+	 * @param target		game target. If omitted, then the engine id is used
+	 */
+	virtual const char *getSavegamePattern(const char *target = nullptr) const;
 
 	/** @name MetaEngineFeature flags */
 	//@{
@@ -251,7 +291,16 @@ public:
 		* unavailable. In that case Save/Load dialog for engine's
 		* games is locked during cloud saves sync.
 		*/
-		kSimpleSavesNames
+		kSimpleSavesNames,
+
+		/**
+		 * Uses default implementation of save header and thumbnail
+		 * appended to the save.
+		 * This flag requires the following flags to be set:
+		 *   kSavesSupportMetaInfo, kSavesSupportThumbnail, kSavesSupportCreationDate,
+		 *   kSavesSupportPlayTime
+		 */
+		kSavesUseExtendedFormat
 	};
 
 	/**
@@ -261,6 +310,11 @@ public:
 	virtual bool hasFeature(MetaEngineFeature f) const {
 		return false;
 	}
+
+	static void appendExtendedSave(Common::OutSaveFile *saveFile, uint32 playtime, Common::String desc);
+	static void parseSavegameHeader(ExtendedSavegameHeader *header, SaveStateDescriptor *desc);
+	static void fillDummyHeader(ExtendedSavegameHeader *header);
+	static WARN_UNUSED_RESULT bool readSavegameHeader(Common::InSaveFile *in, ExtendedSavegameHeader *header, bool skipThumbnail = true);
 
 	//@}
 };
