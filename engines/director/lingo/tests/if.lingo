@@ -25,3 +25,24 @@ repeat with x = 1 to 6
 	if x = 4 then put 40
 	else put 50
 end repeat
+
+
+macro checkKey
+    if the keyCode = 36 then                    --  return key goes to first menu
+        go to frame 1
+    else if the keyCode = 123 then           --  left arrow goes to previous menu
+        dontPassEvent
+        go to marker(-1)
+    else if the keyCode = 124 then           --  right arrow goes to next menu
+        dontPassEvent
+        go to marker(1)
+    else if the keyCode = 125 then           --  down arrow goes to last (bottom) menu
+        dontPassEvent
+        go to frame "credits"
+    else if the keyCode = 126 then           --  up arrow goes to first (top) menu
+        dontPassEvent
+        go to frame 1
+    end if
+
+--  specialized macros to determine which sub-menu to return to
+--  (these two files appear in two different menus)
