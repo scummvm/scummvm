@@ -211,7 +211,7 @@ void GriffonEngine::title(int mode) {
 		}
 
 		g_system->delayMillis(10);
-	} while (!_shouldQuit && !exitTitle);
+	} while (!_shouldQuit && !exitTitle && _gameMode != kGameModeNewGame && _gameMode != kGameModeLoadGame);
 
 	_itemTicks = _ticks + 210;
 
@@ -464,7 +464,7 @@ void GriffonEngine::configMenu() {
 
 		g_system->updateScreen();
 		g_system->delayMillis(10);
-	} while (!_shouldQuit && !exitMenu);
+	} while (!_shouldQuit && !exitMenu && _gameMode != kGameModeNewGame && _gameMode != kGameModeLoadGame);
 
 	_cloudImg->setAlpha(64, true);
 
