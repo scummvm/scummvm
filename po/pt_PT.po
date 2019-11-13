@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2019-11-13 05:58+0100\n"
+"POT-Creation-Date: 2019-11-13 08:01+0100\n"
 "PO-Revision-Date: 2019-06-22 10:59+0000\n"
 "Last-Translator: DreadnoughtPT <Dreadnoughtpt@gmail.com>\n"
 "Language-Team: Portuguese (Portugal) <https://translations.scummvm.org/"
@@ -3409,7 +3409,7 @@ msgstr ""
 #: engines/agi/detection.cpp:147 engines/cine/detection.cpp:62
 #: engines/drascula/detection.cpp:331 engines/dreamweb/detection.cpp:48
 #: engines/neverhood/detection.cpp:177 engines/sci/detection.cpp:457
-#: engines/sherlock/detection.cpp:71 engines/toltecs/detection.cpp:214
+#: engines/sherlock/detection.cpp:71 engines/toltecs/detection.cpp:228
 #: engines/zvision/detection_tables.h:50
 msgid "Use original save/load screens"
 msgstr "Usar ecrãs originais de Salvar/Carregar"
@@ -3417,7 +3417,7 @@ msgstr "Usar ecrãs originais de Salvar/Carregar"
 #: engines/agi/detection.cpp:148 engines/cine/detection.cpp:63
 #: engines/drascula/detection.cpp:332 engines/dreamweb/detection.cpp:49
 #: engines/neverhood/detection.cpp:178 engines/sci/detection.cpp:458
-#: engines/sherlock/detection.cpp:72 engines/toltecs/detection.cpp:215
+#: engines/sherlock/detection.cpp:72 engines/toltecs/detection.cpp:229
 #: engines/zvision/detection_tables.h:51
 msgid "Use the original save/load screens instead of the ScummVM ones"
 msgstr "Usar ecrãs originais de Salvar/Carregar ao invés dos do ScummVM"
