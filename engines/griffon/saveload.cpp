@@ -123,6 +123,9 @@ int GriffonEngine::loadState(int slotnum) {
 
 		INPUT("%f", &_player.spellStrength);
 
+		_saveSlot = slotnum;
+		_gameMode = kGameModeLoadGame;
+
 		return 1; // success
 	}
 
