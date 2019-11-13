@@ -638,9 +638,6 @@ void GriffonEngine::saveLoadNew() {
 
 							renderSaveStates();
 						} else if ((curCol == 2) && loadState(curRow - 1)) {
-							_saveSlot = curRow - 1;
-
-							_gameMode = kGameModeLoadGame;
 
 							return;
 						}
