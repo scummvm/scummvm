@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2019-11-10 20:17+0100\n"
+"POT-Creation-Date: 2019-11-13 05:58+0100\n"
 "PO-Revision-Date: 2018-08-06 21:28+0000\n"
 "Last-Translator: monkeymadness <ihave13redsox@hotmail.com>\n"
 "Language-Team: Chinese <https://translations.scummvm.org/projects/scummvm/"
@@ -3629,7 +3629,7 @@ msgstr "Shiyong youxi de Liang Tiaoseban Lai Xianshi Tuxiang"
 msgid "[ press any key to exit ]"
 msgstr ""
 
-#: engines/glk/quetzal.cpp:142 engines/glk/quetzal.cpp:151
+#: engines/glk/quetzal.cpp:144 engines/glk/quetzal.cpp:153
 #, fuzzy
 msgid "Untitled Savegame"
 msgstr "Wuming Baocun Zhuangtai"

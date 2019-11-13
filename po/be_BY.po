@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2019-11-10 20:17+0100\n"
+"POT-Creation-Date: 2019-11-13 05:58+0100\n"
 "PO-Revision-Date: 2018-08-06 21:35+0000\n"
 "Last-Translator: Fiodar <fedor_qd@mail.ru>\n"
 "Language-Team: Belarusian <https://translations.scummvm.org/projects/scummvm/"
@@ -3658,7 +3658,7 @@ msgstr "Малюе графіку з выкарыстаннем яркай палітры гульні"
 msgid "[ press any key to exit ]"
 msgstr ""
 
-#: engines/glk/quetzal.cpp:142 engines/glk/quetzal.cpp:151
+#: engines/glk/quetzal.cpp:144 engines/glk/quetzal.cpp:153
 #, fuzzy
 msgid "Untitled Savegame"
 msgstr "Захаваная гульня без імя"

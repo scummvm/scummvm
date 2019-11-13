@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2019-11-10 20:17+0100\n"
+"POT-Creation-Date: 2019-11-13 05:58+0100\n"
 "PO-Revision-Date: 2019-11-13 02:03+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
@@ -2824,7 +2824,8 @@ msgstr "Mode Déplacement"
 #: backends/platform/3ds/osystem-events.cpp:184
 #, fuzzy
 msgid "Cannot Switch to Drag Mode while Magnify Mode is On"
-msgstr "Impossible de passer au Mode Déplacement quand le Mode Loupe est activé"
+msgstr ""
+"Impossible de passer au Mode Déplacement quand le Mode Loupe est activé"
 
 #: backends/platform/3ds/osystem-events.cpp:237
 #, fuzzy
@@ -3666,7 +3667,7 @@ msgstr "Utiliser la palette lumineuse du jeu pour l'affichage"
 msgid "[ press any key to exit ]"
 msgstr "[ appuyez sur une touche pour sortir ]"
 
-#: engines/glk/quetzal.cpp:142 engines/glk/quetzal.cpp:151
+#: engines/glk/quetzal.cpp:144 engines/glk/quetzal.cpp:153
 msgid "Untitled Savegame"
 msgstr "Sauvegarde sans nom"
 

@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2019-11-10 20:17+0100\n"
+"POT-Creation-Date: 2019-11-13 05:58+0100\n"
 "PO-Revision-Date: 2019-11-13 02:03+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
@@ -2379,7 +2379,8 @@ msgstr "Η μεταφόρτωση απέτυχε."
 
 #: backends/events/default/default-events.cpp:190
 msgid "Do you really want to return to the Launcher?"
-msgstr "Σίγουρα επιθυμείτε επιστροφή στο Launcher (Κεντρικό Μενού του ScummVM);"
+msgstr ""
+"Σίγουρα επιθυμείτε επιστροφή στο Launcher (Κεντρικό Μενού του ScummVM);"
 
 #: backends/events/default/default-events.cpp:190
 msgid "Launcher"
@@ -2817,7 +2818,8 @@ msgstr "Η Λειτουργία Μεγέθυνσης Ενεργοποιήθηκε"
 
 #: backends/platform/3ds/osystem-events.cpp:168
 msgid "Magnify Mode Off. Reactivating Drag Mode..."
-msgstr "Η Λειτουργία Μεγέθυνσης Απενεργοποιήθηκε. Επαναφορά Λειτουργίας Drag..."
+msgstr ""
+"Η Λειτουργία Μεγέθυνσης Απενεργοποιήθηκε. Επαναφορά Λειτουργίας Drag..."
 
 #: backends/platform/3ds/osystem-events.cpp:170
 msgid "Magnify Mode Off"
@@ -3683,7 +3685,7 @@ msgstr "Προβολή γραφικών με χρήση της λαμπερής παλέτας του παιχνιδιού"
 msgid "[ press any key to exit ]"
 msgstr "[ πατήστε κάποιο πλήκτρο για έξοδο ]"
 
-#: engines/glk/quetzal.cpp:142 engines/glk/quetzal.cpp:151
+#: engines/glk/quetzal.cpp:144 engines/glk/quetzal.cpp:153
 msgid "Untitled Savegame"
 msgstr "¶τιτλο αποθηκευμένο παιχνίδι"
 

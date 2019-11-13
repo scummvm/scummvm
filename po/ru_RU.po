@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2019-11-10 20:17+0100\n"
+"POT-Creation-Date: 2019-11-13 05:58+0100\n"
 "PO-Revision-Date: 2019-11-05 01:55+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Russian <https://translations.scummvm.org/projects/scummvm/"
@@ -3627,7 +3627,7 @@ msgstr "Рисует графику с использованием яркой палитры игры"
 msgid "[ press any key to exit ]"
 msgstr "[ нажмите любую клавишу для выхода ]"
 
-#: engines/glk/quetzal.cpp:142 engines/glk/quetzal.cpp:151
+#: engines/glk/quetzal.cpp:144 engines/glk/quetzal.cpp:153
 msgid "Untitled Savegame"
 msgstr "Без названия Savegame"
 
