@@ -193,7 +193,7 @@ SaveStateList FullpipeMetaEngine::listSaves(const char *target) const {
 
 				SaveStateDescriptor desc;
 
-				parseSavegameHeader(header, desc);
+				Fullpipe::parseSavegameHeader(header, desc);
 
 				desc.setSaveSlot(slotNum);
 
@@ -224,7 +224,7 @@ SaveStateDescriptor FullpipeMetaEngine::querySaveMetaInfos(const char *target, i
 		// Create the return descriptor
 		SaveStateDescriptor desc;
 
-		parseSavegameHeader(header, desc);
+		Fullpipe::parseSavegameHeader(header, desc);
 
 		desc.setSaveSlot(slot);
 		desc.setThumbnail(header.thumbnail);
