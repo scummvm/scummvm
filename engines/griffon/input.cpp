@@ -379,7 +379,7 @@ void GriffonEngine::handleWalking() {
 	if (ramp == 3 && _movingLeft)
 		_movingDown = true;
 
-	unsigned int *temp/*, c*/, bgc;
+	uint32 *temp/*, c*/, bgc;
 
 	for (int x = -1; x <= 1; x++) {
 		for (int y = -1; y <= 1; y++) {

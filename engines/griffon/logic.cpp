@@ -2118,8 +2118,8 @@ void GriffonEngine::updateSpellsUnder() {
 						int sx = (newx / 2 + 6);
 						int sy = (newy / 2 + 10);
 
-						unsigned int *temp = (uint32 *)_clipBg->getBasePtr(sx, sy);
-						unsigned int dq = *temp;
+						uint32 *temp = (uint32 *)_clipBg->getBasePtr(sx, sy);
+						uint32 dq = *temp;
 
 						if (dq == 0) {
 							_npcInfo[f].x = newx;
@@ -2200,8 +2200,8 @@ void GriffonEngine::updateSpellsUnder() {
 								int sx = (xloc / 2 + 4);
 								int sy = (yloc / 2 + 8);
 
-								unsigned int *temp = (uint32 *)_clipBg->getBasePtr(sx, sy);
-								unsigned int dq = *temp;
+								uint32 *temp = (uint32 *)_clipBg->getBasePtr(sx, sy);
+								uint32 dq = *temp;
 
 								if (dq > 1000 && x > 4)
 									_spellInfo[i].legalive[f] = x;
