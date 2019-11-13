@@ -43,7 +43,7 @@ void save_game_state(Common::WriteStream *bfile, XArrayType &objects) {
 	for (i = 1; i < Dynamic; ++i) {
 		if (index_xarray(objects, i, p)) {
 			ObjectPtr op = (ObjectPtr)p;
-			bfile->writeUint32LE(vContSeq);
+			bfile->writeByte(vContSeq);
 
 			dump_item_list(bfile, op->attributes, EXPR_LIST);
 		}
@@ -51,12 +51,12 @@ void save_game_state(Common::WriteStream *bfile, XArrayType &objects) {
 
 	for (i = Dynamic; i <= (int)objects.size(); ++i) {
 		if (index_xarray(objects, i, p)) {
-			bfile->writeUint32LE(vContSeq);
+			bfile->writeByte(vContSeq);
 			dump_object(bfile, (ObjectPtr)p);
 		}
 	}
 
-	bfile->writeUint32LE(vEndSeq);
+	bfile->writeByte(vEndSeq);
 }
 
 bool load_game_state(Common::ReadStream *bfile, XArrayType &objects) {
@@ -83,7 +83,7 @@ bool load_game_state(Common::ReadStream *bfile, XArrayType &objects) {
 	// objects are a little different since they might vary between game states
 	for (i = 1; i < Dynamic; ++i) {
 		if (index_xarray(objects, i, p)) {
-			sentinel = (StatementKind)bfile->readUint32LE();
+			sentinel = (StatementKind)bfile->readByte();
 			op = (ObjectPtr)p;
 			dispose_item_list(op->attributes, EXPR_LIST);
 			load_item_list(bfile, op->attributes, EXPR_LIST);
@@ -102,13 +102,13 @@ bool load_game_state(Common::ReadStream *bfile, XArrayType &objects) {
 	}
 
 	// sentinel has been set from before
-	sentinel = (StatementKind)bfile->readUint32LE();
+	sentinel = (StatementKind)bfile->readByte();
 	while (sentinel == CONT_SEQ) {
 		load_object(bfile, op);
 		p = op;
 		append_to_xarray(objects, p);
 
-		sentinel = (StatementKind)bfile->readUint32LE();
+		sentinel = (StatementKind)bfile->readByte();
 	}
 
 	if (Encryption == UNPURPLE)

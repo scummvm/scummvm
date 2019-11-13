@@ -36,7 +36,7 @@ void saveload_init() {
 	vContSeq = CONT_SEQ;
 
 	Dynamic = 0;
-	Translating = true;
+	Translating = false;
 }
 
 // ===================== Forward Declarations =======================
@@ -306,7 +306,7 @@ static void walk_expr(MissionType mission, Common::Stream *bfile, ExprTree &the_
 	case NUMERIC:
 		switch (mission) {
 		case LOAD:
-			the_expr->_data._numeric.acl_int = readStream->readUint32LE();
+			the_expr->_data._numeric.acl_int = readStream->readSint32LE();
 			break;
 		case DUMP:
 			writeStream->writeSint32LE(the_expr->_data._numeric.acl_int);
@@ -591,14 +591,14 @@ void load_object(Common::ReadStream *f_in, ObjectPtr &the_object) {
 }
 
 void dump_object(Common::WriteStream *f_out, const ObjectPtr the_object) {
-	f_out->writeUint16LE(the_object->inherited_from);
+	f_out->writeSint16LE(the_object->inherited_from);
 	dump_item_list(f_out, the_object->attributes, EXPR_LIST);
 	dump_item_list(f_out, the_object->methods, STMT_LIST);
 
 	if (the_object->other == nullptr) {
-		f_out->writeUint16LE(vEndSeq);
+		f_out->writeByte(vEndSeq);
 	} else {
-		f_out->writeUint16LE(vContSeq);
+		f_out->writeByte(vContSeq);
 		dump_stmt(f_out, the_object->other);
 	}
 }

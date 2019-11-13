@@ -30,6 +30,7 @@
 #include "glk/archetype/saveload.h"
 #include "glk/archetype/sys_object.h"
 #include "glk/archetype/timestamp.h"
+#include "glk/archetype/game_stat.h"
 
 namespace Glk {
 namespace Archetype {
@@ -94,13 +95,13 @@ void Archetype::deinitialize() {
 }
 
 Common::Error Archetype::readSaveData(Common::SeekableReadStream *rs) {
-	// TODO
-	return Common::kReadingFailed;
+	return load_game_state(rs, Object_List) ? Common::kNoError : Common::kNoGameDataFoundError;
 }
 
 Common::Error Archetype::writeGameData(Common::WriteStream *ws) {
-	// TODO
-	return Common::kWritingFailed;
+	save_game_state(ws, Object_List);
+
+	return Common::kNoError;
 }
 
 void Archetype::interpret() {
@@ -128,6 +129,7 @@ void Archetype::write(const String fmt, ...) {
 	Common::String s = Common::String::vformat(fmt.c_str(), ap);
 	va_end(ap);
 
+	_lastOutputText = s;
 	glk_put_buffer(s.c_str(), s.size());
 }
 
@@ -138,10 +140,21 @@ void Archetype::writeln(const String fmt, ...) {
 	va_end(ap);
 
 	s += '\n';
+	_lastOutputText = s;
 	glk_put_buffer(s.c_str(), s.size());
 }
 
 String Archetype::readLine() {
+	// WORKAROUND: THe original archetype games prompt for save file names due to script
+	// code before calling the save/load code. It's a bit hacky, but we detect the occurance
+	// of save/load in the text just before the readLine call and skip waiting for text
+	String text = _lastOutputText;
+	text.toLowercase();
+	if (text.contains("save") || text.contains("load")) {
+		writeln();
+		return "";
+	}
+
 	event_t ev;
 	char buffer[MAX_INPUT_LINE + 1];
 

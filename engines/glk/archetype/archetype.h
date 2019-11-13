@@ -46,8 +46,8 @@ enum DebugFlag {
 class Archetype : public GlkAPI {
 private:
 	int _saveSlot;
-	bool Translating;
 	winid_t _mainWindow;
+	String _lastOutputText;
 public:
 	// keywords.cpp
 	XArrayType Literals, Vocabulary;

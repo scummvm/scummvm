@@ -151,7 +151,8 @@ String formatFilename(const String &name, const String &ext, bool replace) {
 void load_string(Common::ReadStream *fIn, String &the_string) {
 	char buffer[257];
 	size_t strSize = fIn->readByte();
-	(void)fIn->readByte();		// Redundant second copy of the length
+	size_t strSize2 = fIn->readByte();		// Redundant second copy of the length
+	assert(strSize2 == strSize);
 
 	fIn->read(buffer, strSize);
 	buffer[strSize] = '\0';
@@ -162,6 +163,7 @@ void load_string(Common::ReadStream *fIn, String &the_string) {
 
 void dump_string(Common::WriteStream *fOut, const String &the_string) {
 	assert(the_string.size() < 256);
+	fOut->writeByte(the_string.size());
 	fOut->writeByte(the_string.size());
 
 	if (Encryption == NONE) {

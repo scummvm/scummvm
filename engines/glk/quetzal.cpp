@@ -44,6 +44,8 @@ uint32 QuetzalBase::getInterpreterTag(InterpreterType interpType) {
 		return MKTAG('A', 'L', 'N', '2');
 	case INTERPRETER_ALAN3:
 		return MKTAG('A', 'L', 'N', '3');
+	case INTERPRETER_ARCHETYPE:
+		return MKTAG('A', 'R', 'C', 'H');
 	case INTERPRETER_FROTZ:
 		return MKTAG('Z', 'C', 'O', 'D');
 	case INTERPRETER_GEAS:

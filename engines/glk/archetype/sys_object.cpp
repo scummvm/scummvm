@@ -73,6 +73,9 @@ void send_to_system(int transport, String &strmsg, ResultType &result, ContextTy
     NodePtr np;
 	void *p;
 
+	if (g_vm->shouldQuit())
+		return;
+
 	if (transport == OP_SEND)
 		the_caller = context.self;
 	else
@@ -266,33 +269,32 @@ void send_to_system(int transport, String &strmsg, ResultType &result, ContextTy
 			sys_state = IDLING;
 			break;
 
-		case SAVE_STATE: {
-			Common::OutSaveFile *stfile = g_system->getSavefileManager()->openForSaving(strmsg);
-			if (stfile == nullptr) {
-				g_vm->writeln("Error opening %s", strmsg.c_str());
+		case SAVE_STATE:
+			if (g_vm->saveGame().getCode() != Common::kNoError) {
+				g_vm->writeln("Error saving savegame");
 				cleanup(result);
 			} else {
-				save_game_state(stfile, g_vm->Object_List);
 				result._kind = RESERVED;
 				result._data._reserved.keyword = RW_TRUE;
-
-				stfile->finalize();
-				delete stfile;
 			}
 
 			sys_state = IDLING;
 			break;
-		}
 
 		case LOAD_STATE: {
-			Common::InSaveFile *stfile = g_system->getSavefileManager()->openForLoading(strmsg);
-			if (stfile == nullptr) {
-				g_vm->writeln("Error opening %s", strmsg.c_str());
-				cleanup(result);
-			} else {
+			Common::ErrorCode errCode = g_vm->loadGame().getCode();
+
+			if (errCode == Common::kNoError) {
 				result._kind = RESERVED;
-				result._data._reserved.keyword = load_game_state(stfile, g_vm->Object_List) ? RW_TRUE : RW_FALSE;
-				delete stfile;
+				result._data._reserved.keyword = RW_TRUE;
+
+			} else if (errCode == Common::kNoGameDataFoundError) {
+				result._kind = RESERVED;
+				result._data._reserved.keyword = RW_FALSE;
+
+			} else {
+				g_vm->writeln("Error restoring savegame");
+				cleanup(result);
 			}
 
 			sys_state = IDLING;
