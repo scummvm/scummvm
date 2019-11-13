@@ -2154,22 +2154,24 @@ void GlobalOptionsDialog::apply() {
 	}
 #ifdef USE_TTS
 	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
-	if (newLang != oldLang) {
-		if (newLang == "C")
-			ttsMan->setLanguage("en");
-		else {
-			ttsMan->setLanguage(newLang);
+	if (ttsMan) {
+		if (newLang != oldLang) {
+			if (newLang == "C")
+				ttsMan->setLanguage("en");
+			else {
+				ttsMan->setLanguage(newLang);
+			}
+			_ttsVoiceSelectionPopUp->setSelectedTag(0);
 		}
-		_ttsVoiceSelectionPopUp->setSelectedTag(0);
+		int volume = (ConfMan.getInt("speech_volume", "scummvm") * 100) / 256;
+		if (ConfMan.hasKey("mute", "scummvm") && ConfMan.getBool("mute", "scummvm"))
+			volume = 0;
+		ttsMan->setVolume(volume);
+		ConfMan.setBool("tts_enabled", _ttsCheckbox->getState(), _domain);
+		int selectedVoice = _ttsVoiceSelectionPopUp->getSelectedTag();
+		ConfMan.setInt("tts_voice", selectedVoice, _domain);
+		ttsMan->setVoice(selectedVoice);
 	}
-	int volume = (ConfMan.getInt("speech_volume", "scummvm") * 100) / 256;
-	if (ConfMan.hasKey("mute", "scummvm") && ConfMan.getBool("mute", "scummvm"))
-		volume = 0;
-	ttsMan->setVolume(volume);
-	ConfMan.setBool("tts_enabled", _ttsCheckbox->getState(), _domain);
-	int selectedVoice = _ttsVoiceSelectionPopUp->getSelectedTag();
-	ConfMan.setInt("tts_voice", selectedVoice, _domain);
-	ttsMan->setVoice(selectedVoice);
 #endif
 
 	if (isRebuildNeeded) {

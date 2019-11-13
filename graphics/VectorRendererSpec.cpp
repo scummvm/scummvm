@@ -670,9 +670,9 @@ gradientFillClip(PixelType *ptr, int width, int x, int y, int realX, int realY) 
 	if (grad == 0 ||
 		_gradCache[curGrad] == _gradCache[curGrad + 1] || // no color change
 		stripSize < 2) { // the stip is small
-		colorFill<PixelType>(ptr, ptr + width, _gradCache[curGrad]);
+		colorFillClip<PixelType>(ptr, ptr + width, _gradCache[curGrad], realX, realY, _clippingArea);
 	} else if (grad == 3 && ox) {
-		colorFill<PixelType>(ptr, ptr + width, _gradCache[curGrad + 1]);
+		colorFillClip<PixelType>(ptr, ptr + width, _gradCache[curGrad + 1], realX, realY, _clippingArea);
 	} else {
 		for (int j = x; j < x + width; j++, ptr++) {
 			if (realX + j - x < _clippingArea.left || realX + j - x >= _clippingArea.right) continue;

@@ -234,8 +234,39 @@ public:
 protected:
 	void drawWidget();
 	bool _duringPress;
-private:
-	uint32 _lastTime;
+};
+
+/* DropdownButtonWidget */
+class DropdownButtonWidget : public ButtonWidget {
+public:
+	DropdownButtonWidget(GuiObject *boss, int x, int y, int w, int h, const Common::String &label, const char *tooltip = nullptr, uint32 cmd = 0, uint8 hotkey = 0);
+	DropdownButtonWidget(GuiObject *boss, const Common::String &name, const Common::String &label, const char *tooltip = nullptr, uint32 cmd = 0, uint8 hotkey = 0);
+
+	void handleMouseMoved(int x, int y, int button) override;
+	void handleMouseUp(int x, int y, int button, int clickCount) override;
+	void reflowLayout() override;
+
+	void appendEntry(const Common::String &label, uint32 cmd);
+	void clearEntries();
+
+protected:
+	struct Entry {
+		Common::String label;
+		uint32 cmd;
+	};
+	typedef Common::Array<Entry> EntryList;
+
+	// Widget API
+	void drawWidget() override;
+
+	void reset();
+	bool isInDropDown(int x, int y) const;
+
+	EntryList _entries;
+
+	uint32 _dropdownWidth;
+	bool _inDropdown;
+	bool _inButton;
 };
 
 /* PicButtonWidget */

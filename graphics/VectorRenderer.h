@@ -64,6 +64,7 @@ struct DrawStep {
 						  negative values mean counting from the opposite direction */
 
 	Common::Rect padding;
+	Common::Rect clip; /**< Clipping rect restriction */
 
 	enum VectorAlignment {
 		kVectorAlignManual,
@@ -392,6 +393,11 @@ public:
 	int stepGetRadius(const DrawStep &step, const Common::Rect &area);
 
 	/**
+	 * Restrict a draw call clipping rect with a step specific clipping rect
+	 */
+	Common::Rect applyStepClippingRect(const Common::Rect &area, const Common::Rect &clip, const DrawStep &step);
+
+	/**
 	 * DrawStep callback functions for each drawing feature
 	 */
 	void drawCallback_CIRCLE(const Common::Rect &area, const DrawStep &step) {
@@ -412,7 +418,7 @@ public:
 	void drawCallback_LINE(const Common::Rect &area, const DrawStep &step) {
 		uint16 x, y, w, h;
 		stepGetPositions(step, area, x, y, w, h);
-		drawLine(x, y, x + w, y + w);
+		drawLine(x, y, x + w, y + h);
 	}
 
 	void drawCallback_ROUNDSQ(const Common::Rect &area, const DrawStep &step) {

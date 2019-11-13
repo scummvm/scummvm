@@ -126,9 +126,16 @@ static const DrawDataInfo kDrawDataDefaults[] = {
 	{kDDWidgetBackgroundSlider,     "widget_slider",    kDrawLayerBackground,   kDDNone},
 
 	{kDDButtonIdle,                 "button_idle",      kDrawLayerBackground,   kDDNone},
-	{kDDButtonHover,                "button_hover",     kDrawLayerForeground,  kDDButtonIdle},
+	{kDDButtonHover,                "button_hover",     kDrawLayerForeground,   kDDButtonIdle},
 	{kDDButtonDisabled,             "button_disabled",  kDrawLayerBackground,   kDDNone},
-	{kDDButtonPressed,              "button_pressed",   kDrawLayerForeground,  kDDButtonIdle},
+	{kDDButtonPressed,              "button_pressed",   kDrawLayerForeground,   kDDButtonIdle},
+
+	{kDDDropDownButtonIdle,         "dropdown_button_idle",          kDrawLayerBackground, kDDNone},
+	{kDDDropDownButtonHoverLeft,    "dropdown_button_hover_left",    kDrawLayerForeground, kDDDropDownButtonIdle},
+	{kDDDropDownButtonHoverRight,   "dropdown_button_hover_right",   kDrawLayerForeground, kDDDropDownButtonIdle},
+	{kDDDropDownButtonDisabled,     "dropdown_button_disabled",      kDrawLayerForeground, kDDNone},
+	{kDDDropDownButtonPressedLeft,  "dropdown_button_pressed_left",  kDrawLayerForeground, kDDDropDownButtonIdle},
+	{kDDDropDownButtonPressedRight, "dropdown_button_pressed_right", kDrawLayerForeground, kDDDropDownButtonIdle},
 
 	{kDDSliderFull,                 "slider_full",      kDrawLayerForeground,  kDDNone},
 	{kDDSliderHover,                "slider_hover",     kDrawLayerForeground,  kDDNone},
@@ -932,6 +939,35 @@ void ThemeEngine::drawButton(const Common::Rect &r, const Common::String &str, W
 
 	drawDD(dd, r, 0, hints & WIDGET_CLEARBG);
 	drawDDText(getTextData(dd), getTextColor(dd), r, str, false, true, _widgets[dd]->_textAlignH,
+	           _widgets[dd]->_textAlignV);
+}
+
+void ThemeEngine::drawDropDownButton(const Common::Rect &r, uint32 dropdownWidth, const Common::String &str,
+                                     ThemeEngine::WidgetStateInfo buttonState, bool inButton, bool inDropdown) {
+	if (!ready())
+		return;
+
+	DrawData dd;
+	if (buttonState == kStateHighlight && inButton)
+		dd = kDDDropDownButtonHoverLeft;
+	else if (buttonState == kStateHighlight && inDropdown)
+		dd = kDDDropDownButtonHoverRight;
+	else if (buttonState == kStateDisabled)
+		dd = kDDDropDownButtonDisabled;
+	else if (buttonState == kStatePressed && inButton)
+		dd = kDDDropDownButtonPressedLeft;
+	else if (buttonState == kStatePressed && inDropdown)
+		dd = kDDDropDownButtonPressedRight;
+	else
+		dd = kDDDropDownButtonIdle;
+
+	drawDD(dd, r);
+
+	// Center the text in the button without using the area of the drop down button
+	Common::Rect textRect = r;
+	textRect.left  = r.left  + dropdownWidth;
+	textRect.right = r.right - dropdownWidth;
+	drawDDText(getTextData(dd), getTextColor(dd), textRect, str, false, true, _widgets[dd]->_textAlignH,
 	           _widgets[dd]->_textAlignV);
 }
 

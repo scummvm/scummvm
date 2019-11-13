@@ -32,6 +32,7 @@
 #include "gui/ThemeEval.h"
 
 #include "gui/dialog.h"
+#include "gui/widgets/popup.h"
 
 namespace GUI {
 
@@ -322,7 +323,7 @@ void StaticTextWidget::drawWidget() {
 
 ButtonWidget::ButtonWidget(GuiObject *boss, int x, int y, int w, int h, const Common::String &label, const char *tooltip, uint32 cmd, uint8 hotkey)
 	: StaticTextWidget(boss, x, y, w, h, cleanupHotkey(label), Graphics::kTextAlignCenter, tooltip), CommandSender(boss),
-	  _cmd(cmd), _hotkey(hotkey), _lastTime(0), _duringPress(false) {
+	  _cmd(cmd), _hotkey(hotkey), _duringPress(false) {
 
 	if (hotkey == 0)
 		_hotkey = parseHotkey(label);
@@ -333,7 +334,7 @@ ButtonWidget::ButtonWidget(GuiObject *boss, int x, int y, int w, int h, const Co
 
 ButtonWidget::ButtonWidget(GuiObject *boss, const Common::String &name, const Common::String &label, const char *tooltip, uint32 cmd, uint8 hotkey)
 	: StaticTextWidget(boss, name, cleanupHotkey(label), tooltip), CommandSender(boss),
-	  _cmd(cmd), _hotkey(hotkey), _lastTime(0), _duringPress(false) {
+	  _cmd(cmd), _hotkey(hotkey), _duringPress(false) {
 	if (hotkey == 0)
 		_hotkey = parseHotkey(label);
 	setFlags(WIDGET_ENABLED/* | WIDGET_BORDER*/ | WIDGET_CLEARBG);
@@ -396,6 +397,104 @@ void ButtonWidget::setPressedState() {
 void ButtonWidget::setUnpressedState() {
 	clearFlags(WIDGET_PRESSED);
 	markAsDirty();
+}
+
+#pragma mark -
+
+DropdownButtonWidget::DropdownButtonWidget(GuiObject *boss, int x, int y, int w, int h, const Common::String &label, const char *tooltip, uint32 cmd, uint8 hotkey) :
+		ButtonWidget(boss, x, y, w, h, label, tooltip, cmd, hotkey) {
+	setFlags(getFlags() | WIDGET_TRACK_MOUSE);
+
+	reset();
+}
+
+DropdownButtonWidget::DropdownButtonWidget(GuiObject *boss, const Common::String &name, const Common::String &label, const char *tooltip, uint32 cmd, uint8 hotkey) :
+		ButtonWidget(boss, name, label, tooltip, cmd, hotkey) {
+	setFlags(getFlags() | WIDGET_TRACK_MOUSE);
+
+	reset();
+}
+
+void DropdownButtonWidget::reset() {
+	_inDropdown = false;
+	_inButton   = false;
+	_dropdownWidth = g_gui.xmlEval()->getVar("Globals.DropdownButton.Width", 13);
+}
+
+bool DropdownButtonWidget::isInDropDown(int x, int y) const {
+	Common::Rect dropdownRect(_w - _dropdownWidth, 0, _w, _h);
+	return dropdownRect.contains(x, y);
+}
+
+void DropdownButtonWidget::handleMouseMoved(int x, int y, int button) {
+	if (_entries.empty()) {
+		return;
+	}
+
+	// Detect which part of the button the cursor is over
+	bool inDropdown = isInDropDown(x, y);
+	bool inButton   = Common::Rect(_w, _h).contains(x, y) && !inDropdown;
+
+	if (inDropdown != _inDropdown) {
+		_inDropdown = inDropdown;
+		markAsDirty();
+	}
+
+	if (inButton != _inButton) {
+		_inButton = inButton;
+		markAsDirty();
+	}
+}
+
+void DropdownButtonWidget::handleMouseUp(int x, int y, int button, int clickCount) {
+	if (isEnabled() && !_entries.empty() && _duringPress && isInDropDown(x, y)) {
+
+		PopUpDialog popupDialog(this, "DropdownDialog", x + getAbsX(), y + getAbsY());
+		popupDialog.setPosition(getAbsX(), getAbsY() + _h);
+		popupDialog.setLineHeight(_h);
+		popupDialog.setPadding(_dropdownWidth, _dropdownWidth);
+
+		for (uint i = 0; i < _entries.size(); i++) {
+			popupDialog.appendEntry(_entries[i].label);
+		}
+
+		int newSel = popupDialog.runModal();
+		if (newSel != -1) {
+			sendCommand(_entries[newSel].cmd, 0);
+		}
+
+		setUnpressedState();
+		_duringPress = false;
+	} else {
+		ButtonWidget::handleMouseUp(x, y, button, clickCount);
+	}
+}
+
+void DropdownButtonWidget::reflowLayout() {
+	ButtonWidget::reflowLayout();
+
+	reset();
+}
+
+void DropdownButtonWidget::appendEntry(const Common::String &label, uint32 cmd) {
+	Entry e;
+	e.label = label;
+	e.cmd = cmd;
+	_entries.push_back(e);
+}
+
+void DropdownButtonWidget::clearEntries() {
+	_entries.clear();
+}
+
+void DropdownButtonWidget::drawWidget() {
+	if (_entries.empty()) {
+		// Degrade to a regular button
+		g_gui.theme()->drawButton(Common::Rect(_x, _y, _x + _w, _y + _h), _label, _state);
+	} else {
+		g_gui.theme()->drawDropDownButton(Common::Rect(_x, _y, _x + _w, _y + _h), _dropdownWidth, _label,
+		                                  _state, _inButton, _inDropdown);
+	}
 }
 
 #pragma mark -
