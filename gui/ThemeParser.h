@@ -147,6 +147,7 @@ protected:
 					XML_PROP(orientation, false)
 					XML_PROP(file, false)
 					XML_PROP(autoscale, false)
+					XML_PROP(clip, false)
 				KEY_END()
 
 				XML_KEY(text)

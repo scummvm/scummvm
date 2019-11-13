@@ -629,6 +629,17 @@ bool ThemeParser::parseDrawStep(ParserNode *stepNode, Graphics::DrawStep *drawst
 		}
 	}
 
+	if (stepNode->values.contains("clip")) {
+		val = stepNode->values["clip"];
+		int cl, ct, cr, cb;
+		if (parseIntegerKey(val, 4, &cl, &ct, &cr, &cb)) {
+			drawstep->clip.left = cl;
+			drawstep->clip.top = ct;
+			drawstep->clip.right = cr;
+			drawstep->clip.bottom = cb;
+		}
+	}
+
 #undef PARSER_ASSIGN_INT
 #undef PARSER_ASSIGN_RGB
 

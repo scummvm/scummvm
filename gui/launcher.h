@@ -82,7 +82,6 @@ protected:
 	void updateListing();
 
 	void updateButtons();
-	void switchButtonsText(ButtonWidget *button, const char *normalText, const char *shiftedText);
 
 	void build();
 	void clean();
@@ -94,6 +93,7 @@ protected:
 	 * Handle "Add game..." button.
 	 */
 	virtual void addGame();
+	void massAddGame();
 
 	/**
 	 * Handle "Remove game..." button.
@@ -104,11 +104,6 @@ protected:
 	 * Handle "Edit game..." button.
 	 */
 	void editGame(int item);
-
-	/**
-	 * Facade for "Load..."/"Record..." buttons.
-	 */
-	void loadGameButtonPressed(int item);
 
 	/**
 	 * Handle "Record..." button.
