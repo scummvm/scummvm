@@ -155,7 +155,13 @@ void GriffonEngine::showLogos() {
 		g_system->copyRectToScreen(_videoBuffer->getPixels(), _videoBuffer->pitch, 0, 0, _videoBuffer->w, _videoBuffer->h);
 		g_system->updateScreen();
 
-		POLL_AND_CHECK_QUIT();
+		if (g_system->getEventManager()->pollEvent(_event)) {
+
+			if (_event.kbd.keycode == Common::KEYCODE_ESCAPE)
+				return;
+
+			CHECK_QUIT();
+		}
 
 		_ticksPassed = _ticks;
 		_ticks = g_system->getMillis();
