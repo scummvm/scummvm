@@ -167,6 +167,9 @@ bool AdTalkDef::loadBuffer(char *buffer, bool complete) {
 		case TOKEN_EDITOR_PROPERTY:
 			parseEditorProperty(params, false);
 			break;
+
+		default:
+			break;
 		}
 	}
 	if (cmd == PARSERR_TOKENNOTFOUND) {

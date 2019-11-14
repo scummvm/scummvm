@@ -164,6 +164,9 @@ bool PartParticle::update(PartEmitter *emitter, uint32 currentTime, uint32 timer
 				_velocity += force->_direction * dist * elapsedTime;
 			}
 			break;
+
+			default:
+				break;
 			}
 		}
 		_pos += _velocity * elapsedTime;

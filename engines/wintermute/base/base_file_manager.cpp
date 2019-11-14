@@ -133,6 +133,7 @@ bool BaseFileManager::addPath(TPathType type, const Common::FSNode &path) {
 
 	switch (type) {
 	case PATH_SINGLE:
+	default:
 		//  _singlePaths.push_back(path);
 		error("TODO: Allow adding single-paths");
 		break;

@@ -1381,8 +1381,14 @@ bool AdGame::loadBuffer(char *buffer, bool complete) {
 				case TOKEN_DEBUG_STARTUP_SCENE:
 					BaseUtils::setString(&_debugStartupScene, params2);
 					break;
+
+				default:
+					break;
 				}
 			}
+			break;
+
+		default:
 			break;
 		}
 	}
@@ -1577,6 +1583,9 @@ bool AdGame::loadItemsBuffer(char *buffer, bool merge) {
 			}
 		}
 		break;
+
+		default:
+			break;
 		}
 	}
 
@@ -1648,6 +1657,9 @@ bool AdGame::windowLoadHook(UIWindow *win, char **buffer, char **params) {
 		}
 	}
 	break;
+
+	default:
+		break;
 	}
 
 	if (cmd == PARSERR_TOKENNOTFOUND || cmd == PARSERR_GENERIC) {

@@ -443,6 +443,8 @@ int32 BaseParser::scanStr(const char *in, const char *format, ...) {
 				*a = '\0';
 				break;
 			}
+			default:
+				break;
 			}
 			if (*format) {
 				format++;

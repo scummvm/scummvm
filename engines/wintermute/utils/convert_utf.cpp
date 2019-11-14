@@ -292,6 +292,8 @@ ConversionResult ConvertUTF16toUTF8(
 		case 1:
 			*--target = (UTF8)(ch | firstByteMark[bytesToWrite]);
 			// fall through
+		default:
+			break;
 		}
 		target += bytesToWrite;
 	}
@@ -415,6 +417,9 @@ ConversionResult ConvertUTF8toUTF16(
 			// fall through
 		case 0:
 			ch += *source++;
+			break;
+		default:
+			break;
 		}
 		ch -= offsetsFromUTF8[extraBytesToRead];
 
@@ -523,6 +528,9 @@ ConversionResult ConvertUTF32toUTF8(
 			// fall through
 		case 1:
 			*--target = (UTF8)(ch | firstByteMark[bytesToWrite]);
+			break;
+		default:
+			break;
 		}
 		target += bytesToWrite;
 	}
@@ -577,6 +585,9 @@ ConversionResult ConvertUTF8toUTF32(
 			// fall through
 		case 0:
 			ch += *source++;
+			break;
+		default:
+			break;
 		}
 		ch -= offsetsFromUTF8[extraBytesToRead];
 

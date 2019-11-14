@@ -79,6 +79,8 @@ Common::String Error::getErrorLevelStr() const {
 	case ERROR:
 		return "ERROR";
 		break;
+	default:
+		break;
 	}
 	return "SUCCESS";
 }

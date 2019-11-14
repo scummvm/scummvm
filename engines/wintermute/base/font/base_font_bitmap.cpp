@@ -419,6 +419,9 @@ bool BaseFontBitmap::loadBuffer(char *buffer) {
 		case TOKEN_EDITOR_PROPERTY:
 			parseEditorProperty(params, false);
 			break;
+
+		default:
+			break;
 		}
 
 	}

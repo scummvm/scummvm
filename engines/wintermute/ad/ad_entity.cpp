@@ -489,6 +489,9 @@ bool AdEntity::loadBuffer(char *buffer, bool complete) {
 			_walkToDir = (TDirection)i;
 		}
 		break;
+
+		default:
+			break;
 		}
 	}
 	if (cmd == PARSERR_TOKENNOTFOUND) {

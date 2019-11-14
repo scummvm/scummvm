@@ -136,6 +136,9 @@ bool BaseClass::parseEditorProperty(char *buffer, bool complete) {
 				cmd = PARSERR_GENERIC;
 			}
 			break;
+
+		default:
+			break;
 		}
 
 	}

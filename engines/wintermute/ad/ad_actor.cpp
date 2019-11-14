@@ -456,6 +456,9 @@ bool AdActor::loadBuffer(char *buffer, bool complete) {
 			}
 		}
 		break;
+
+		default:
+			break;
 		}
 	}
 	if (cmd == PARSERR_TOKENNOTFOUND) {
@@ -1435,6 +1438,9 @@ bool AdActor::mergeAnims(const char *animsFilename) {
 			}
 		}
 		break;
+
+		default:
+			break;
 		}
 	}
 	delete[] fileBuffer;

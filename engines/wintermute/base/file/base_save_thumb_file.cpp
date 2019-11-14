@@ -132,6 +132,7 @@ bool BaseSaveThumbFile::seek(uint32 pos, int whence) {
 
 	switch (whence) {
 	case SEEK_SET:
+	default:
 		newPos = pos;
 		break;
 	case SEEK_END:

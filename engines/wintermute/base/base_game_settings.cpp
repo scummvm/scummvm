@@ -187,6 +187,9 @@ bool BaseGameSettings::loadSettings(const char *filename) {
 
 			case TOKEN_GUID:
 				break;
+
+			default:
+				break;
 		}
 	}
 	if (cmd == PARSERR_TOKENNOTFOUND) {

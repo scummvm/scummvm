@@ -442,6 +442,8 @@ bool BaseFontTT::loadBuffer(char *buffer) {
 		}
 		break;
 
+		default:
+			break;
 		}
 	}
 	if (cmd == PARSERR_TOKENNOTFOUND) {
@@ -500,6 +502,9 @@ bool BaseFontTT::parseLayer(BaseTTFontLayer *layer, char *buffer) {
 			layer->_color = BYTETORGBA(RGBCOLGetR(layer->_color), RGBCOLGetG(layer->_color), RGBCOLGetB(layer->_color), a);
 		}
 		break;
+
+		default:
+			break;
 		}
 	}
 	if (cmd != PARSERR_EOF) {

@@ -367,6 +367,9 @@ bool AdResponseBox::loadBuffer(char *buffer, bool complete) {
 				cmd = PARSERR_GENERIC;
 			}
 			break;
+
+		default:
+			break;
 		}
 	}
 	if (cmd == PARSERR_TOKENNOTFOUND) {
@@ -422,6 +425,7 @@ bool AdResponseBox::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 
 	switch (_verticalAlign) {
 	case VAL_TOP:
+	default:
 		buffer->putTextIndent(indent + 2, "VERTICAL_ALIGN=\"%s\"\n", "top");
 		break;
 	case VAL_BOTTOM:
@@ -487,6 +491,7 @@ bool AdResponseBox::display() {
 			break;
 
 		case VAL_TOP:
+		default:
 			// do nothing
 			break;
 		}

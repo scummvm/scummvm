@@ -225,6 +225,9 @@ bool AdSpriteSet::loadBuffer(char *buffer, bool complete, int lifeTime, TSpriteC
 		case TOKEN_EDITOR_PROPERTY:
 			parseEditorProperty(params, false);
 			break;
+
+		default:
+			break;
 		}
 	}
 	if (cmd == PARSERR_TOKENNOTFOUND) {
@@ -327,6 +330,8 @@ bool AdSpriteSet::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 				break;
 			case DI_UPLEFT:
 				buffer->putTextIndent(indent + 2, "UP_LEFT=\"%s\"\n",    _sprites[i]->getFilename());
+				break;
+			default:
 				break;
 			}
 		}

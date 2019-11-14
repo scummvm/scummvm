@@ -938,6 +938,9 @@ bool BaseGame::loadBuffer(char *buffer, bool complete) {
 		case TOKEN_COMPAT_KILL_METHOD_THREADS:
 			parser.scanStr(params, "%b", &_compatKillMethodThreads);
 			break;
+
+		default:
+			break;
 		}
 	}
 
