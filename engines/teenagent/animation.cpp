@@ -199,6 +199,9 @@ void Animation::load(Common::SeekableReadStream &s, Type type) {
 		}
 
 		break;
+
+	default:
+		break;
 	}
 
 	debugC(2, kDebugAnimation, "%u frames", dataSize / 3);

@@ -167,6 +167,7 @@ void TeenAgentEngine::processObject() {
 	break;
 
 	case kActionNone:
+	default:
 		break;
 	}
 }
