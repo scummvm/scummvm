@@ -59,6 +59,11 @@ matrix:
       compiler: clang
     - os: osx
       compiler: clang
+      cache:
+        directories:
+          - $HOME/Library/Caches/Homebrew
+      before_cache:
+        - brew cleanup
 
 dist: trusty
 
