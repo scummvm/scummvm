@@ -202,43 +202,43 @@ void sceneHandler26_animateVents(StaticANIObject *ani) {
 
 	switch (ani->_odelay) {
 	case 0:
-		if (g_fp->getObjectState(sO_Valve1_26) == g_fp->getObjectEnumState(sO_Valve1_26, sO_Closed))
+		if (g_fp->getObjectState(sO_Valve1_26) == g_fp->getObjectEnumState(sO_Valve1_26, sO_Closed)) {
 			qId = QU_SC26_OPEN1;
-		else
+		} else {
 			qId = QU_SC26_CLOSE1;
-
+		}
 		break;
 
 	case 1:
-		if (g_fp->getObjectState(sO_Valve2_26) == g_fp->getObjectEnumState(sO_Valve2_26, sO_Closed))
+		if (g_fp->getObjectState(sO_Valve2_26) == g_fp->getObjectEnumState(sO_Valve2_26, sO_Closed)) {
 			qId = QU_SC26_OPEN2;
-		else
+		} else {
 			qId = QU_SC26_CLOSE2;
-
+		}
 		break;
 
 	case 2:
-		if (g_fp->getObjectState(sO_Valve3_26) == g_fp->getObjectEnumState(sO_Valve3_26, sO_Closed))
+		if (g_fp->getObjectState(sO_Valve3_26) == g_fp->getObjectEnumState(sO_Valve3_26, sO_Closed)) {
 			qId = QU_SC26_OPEN3;
-		else
+		} else {
 			qId = QU_SC26_CLOSE3;
-
+		}
 		break;
 
 	case 3:
-		if (g_fp->getObjectState(sO_Valve4_26) == g_fp->getObjectEnumState(sO_Valve4_26, sO_Closed))
+		if (g_fp->getObjectState(sO_Valve4_26) == g_fp->getObjectEnumState(sO_Valve4_26, sO_Closed)) {
 			qId = QU_SC26_OPEN4;
-		else
+		} else {
 			qId = QU_SC26_CLOSE4;
-
+		}
 		break;
 
 	case 4:
-		if (g_fp->getObjectState(sO_Valve5_26) == g_fp->getObjectEnumState(sO_Valve5_26, sO_Closed))
+		if (g_fp->getObjectState(sO_Valve5_26) == g_fp->getObjectEnumState(sO_Valve5_26, sO_Closed)) {
 			qId = QU_SC26_OPEN5;
-		else
+		} else {
 			qId = QU_SC26_CLOSE5;
-
+		}
 		break;
 
 	default:
@@ -316,11 +316,11 @@ int sceneHandler26(ExCommand *cmd) {
 		{
 			StaticANIObject *ani = g_fp->_currentScene->getStaticANIObject1ById(ANI_VENT, cmd->_param);
 
-			if (ani && ani->_id == ANI_VENT)
+			if (ani && ani->_id == ANI_VENT) {
 				sceneHandler26_clickVent(ani, cmd);
-
-			break;
+			}
 		}
+		break;
 
 	case MSG_SC26_HIDEVENT:
 		sceneHandler26_hideVent();
@@ -330,11 +330,11 @@ int sceneHandler26(ExCommand *cmd) {
 		{
 			StaticANIObject *ani = g_fp->_currentScene->getStaticANIObjectAtPos(cmd->_sceneClickX, cmd->_sceneClickY);
 
-			if (ani && ani->_id == ANI_VENT)
+			if (ani && ani->_id == ANI_VENT) {
 				sceneHandler26_clickVent(ani, cmd);
-
-			break;
+			}
 		}
+		break;
 
 	case 33:
 		if (g_fp->_aniMan2) {
@@ -351,6 +351,9 @@ int sceneHandler26(ExCommand *cmd) {
 
 		g_fp->startSceneTrack();
 
+		break;
+
+	default:
 		break;
 	}
 

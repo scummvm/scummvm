@@ -257,6 +257,7 @@ void sceneHandler28_clickLift(int numLift) {
 	case 4: x = 1517; break;
 	case 5: x = 1748; break;
 	case 6: x = 1979; break;
+	default: break;
 	}
 
 	if (abs(x - g_fp->_aniMan->_ox) > 1 || abs(472 - g_fp->_aniMan->_oy) > 1
@@ -298,7 +299,7 @@ void sceneHandler28_clickLift(int numLift) {
 			sceneHandler28_lift6Start();
 			break;
 		default:
-			return;
+			break;
 		}
 	}
 }
@@ -428,8 +429,8 @@ int sceneHandler28(ExCommand *cmd) {
 						g_fp->processArcade(cmd);
 				}
 			}
-			break;
 		}
+		break;
 
 	case 33:
 		if (g_fp->_aniMan2) {
@@ -474,6 +475,9 @@ int sceneHandler28(ExCommand *cmd) {
 
 		g_fp->startSceneTrack();
 
+		break;
+
+	default:
 		break;
 	}
 

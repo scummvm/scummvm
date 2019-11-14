@@ -644,7 +644,6 @@ int sceneHandler27(ExCommand *cmd) {
 		g_vars->scene27_wipeIsNeeded = true;
 
 		g_fp->playSound(SND_27_027, 0);
-
 		break;
 
 	case MSG_SC27_CLICKBET:
@@ -652,22 +651,21 @@ int sceneHandler27(ExCommand *cmd) {
 		break;
 
 	case MSG_SC27_STARTBET:
-		if (g_vars->scene27_bat)
+		if (g_vars->scene27_bat) {
 			sceneHandler27_startBat(g_vars->scene27_bat);
-
+		}
 		break;
 
 	case 30:
-		if (g_vars->scene27_dudeIsAiming)
+		if (g_vars->scene27_dudeIsAiming) {
 			sceneHandler27_startAiming();
-
+		}
 		break;
 
 	case 29:
-		if (g_fp->_aniMan == g_fp->_currentScene->getStaticANIObjectAtPos(g_fp->_sceneRect.left + cmd->_x, g_fp->_sceneRect.top + cmd->_y)
-			&& g_vars->scene27_maxPhaseReached)
+		if (g_fp->_aniMan == g_fp->_currentScene->getStaticANIObjectAtPos(g_fp->_sceneRect.left + cmd->_x, g_fp->_sceneRect.top + cmd->_y) && g_vars->scene27_maxPhaseReached) {
 			sceneHandler27_initAiming(cmd);
-
+		}
 		break;
 
 	case 33:
@@ -696,6 +694,9 @@ int sceneHandler27(ExCommand *cmd) {
 		g_fp->_behaviorManager->updateBehaviors();
 		g_fp->startSceneTrack();
 
+		break;
+
+	default:
 		break;
 	}
 

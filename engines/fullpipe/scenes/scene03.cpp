@@ -298,9 +298,8 @@ int sceneHandler03(ExCommand *ex) {
 								return 0;
 							}
 			}
-
-			break;
 		}
+		break;
 
 	case 33:
 		{
@@ -322,6 +321,10 @@ int sceneHandler03(ExCommand *ex) {
 
 			return res;
 		}
+		break;
+
+	default:
+		break;
 	}
 
 	return 0;

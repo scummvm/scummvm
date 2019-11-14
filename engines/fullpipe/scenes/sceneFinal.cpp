@@ -175,6 +175,9 @@ int sceneHandlerFinal(ExCommand *cmd) {
 		g_fp->startSceneTrack();
 
 		break;
+
+	default:
+		break;
 	}
 
 	updateMusic();

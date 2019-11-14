@@ -1734,6 +1734,8 @@ bool MctlGraph::fillData(StaticANIObject *obj, MctlAni &item) {
 		case 3:
 			varD = var->getSubVarByName("Down");
 			break;
+		default:
+			break;
 		}
 
 		if (!varD)
@@ -1751,6 +1753,8 @@ bool MctlGraph::fillData(StaticANIObject *obj, MctlAni &item) {
 				break;
 			case 2:
 				idx = varD->getSubVarAsInt("Stop");
+				break;
+			default:
 				break;
 			}
 
@@ -1782,6 +1786,8 @@ bool MctlGraph::fillData(StaticANIObject *obj, MctlAni &item) {
 			case 3:
 				idx = varD->getSubVarAsInt("TurnD");
 				break;
+			default:
+				break;
 			}
 
 			item._subItems[dir]._turn[act]._movementId = idx;
@@ -1811,6 +1817,8 @@ bool MctlGraph::fillData(StaticANIObject *obj, MctlAni &item) {
 				break;
 			case 3:
 				idx = varD->getSubVarAsInt("TurnSD");
+				break;
+			default:
 				break;
 			}
 

@@ -545,8 +545,11 @@ int sceneHandler23(ExCommand *cmd) {
 				cmd->_messageKind = 0;
 			}
 
-			break;
 		}
+		break;
+
+	default:
+		break;
 	}
 
 	return 0;

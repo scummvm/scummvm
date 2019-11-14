@@ -241,7 +241,6 @@ int sceneHandler37(ExCommand *cmd) {
 		sceneHandler37_updateRing(0);
 		sceneHandler37_updateRing(1);
 		sceneHandler37_updateRing(2);
-
 		break;
 
 	case 29:
@@ -261,7 +260,6 @@ int sceneHandler37(ExCommand *cmd) {
 				}
 			}
 		}
-
 		break;
 
 	case 33:
@@ -323,6 +321,9 @@ int sceneHandler37(ExCommand *cmd) {
 			g_vars->scene37_soundFlipper = 0;
 		}
 
+		break;
+
+	default:
 		break;
 	}
 

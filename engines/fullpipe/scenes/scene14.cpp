@@ -729,10 +729,9 @@ int sceneHandler14(ExCommand *cmd) {
 		break;
 
 	case MSG_SC14_HIDEPINK:
-		if (!g_vars->scene14_pink)
-			break;
-
-		g_vars->scene14_pink->hide();
+		if (g_vars->scene14_pink) {
+			g_vars->scene14_pink->hide();
+		}
 		break;
 
 	case MSG_SC14_GMATOTRUBA:
@@ -797,8 +796,8 @@ int sceneHandler14(ExCommand *cmd) {
 
 			g_fp->_behaviorManager->updateBehaviors();
 			g_fp->startSceneTrack();
-			break;
 		}
+		break;
 
 	case 30:
 		if (g_vars->scene14_dudeIsKicking) {
@@ -841,6 +840,9 @@ int sceneHandler14(ExCommand *cmd) {
 				}
 			}
 		}
+		break;
+
+	default:
 		break;
 	}
 

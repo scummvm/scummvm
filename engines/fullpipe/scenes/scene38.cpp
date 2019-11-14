@@ -380,8 +380,8 @@ int sceneHandler38(ExCommand *cmd) {
 
 				cmd->_messageKind = 0;
 			}
-			break;
 		}
+		break;
 
 	case 33:
 		if (g_fp->_aniMan2) {
@@ -400,6 +400,9 @@ int sceneHandler38(ExCommand *cmd) {
 
 		g_fp->startSceneTrack();
 
+		break;
+
+	default:
 		break;
 	}
 

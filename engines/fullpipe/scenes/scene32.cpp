@@ -427,6 +427,9 @@ int sceneHandler32(ExCommand *cmd) {
 		cmd->_messageKind = 0;
 
 		break;
+
+	default:
+		break;
 	}
 
 	return 0;

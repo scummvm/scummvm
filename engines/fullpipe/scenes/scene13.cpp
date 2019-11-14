@@ -128,6 +128,9 @@ void sceneHandler13_testOpen() {
 
 		chainQueue(QU_SC13_OPENSUCCESS, 1);
 		break;
+
+	default:
+		break;
 	}
 }
 
@@ -329,8 +332,8 @@ int sceneHandler13(ExCommand *cmd) {
 					}
 				}
 			}
-			break;
 		}
+		break;
 
 	case 33:
 		{
@@ -378,6 +381,10 @@ int sceneHandler13(ExCommand *cmd) {
 
 			return res;
 		}
+		break;
+
+	default:
+		break;
 	}
 
 	return 0;

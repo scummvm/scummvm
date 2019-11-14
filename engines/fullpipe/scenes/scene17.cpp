@@ -274,9 +274,11 @@ int sceneHandler17(ExCommand *cmd) {
 			g_fp->_behaviorManager->updateBehaviors();
 
 			g_fp->startSceneTrack();
-
-			break;
 		}
+		break;
+
+	default:
+		break;
 	}
 
 	return 0;

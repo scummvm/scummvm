@@ -84,19 +84,19 @@ int sceneHandler02(ExCommand *ex) {
 	switch(ex->_messageNum) {
 	case MSG_SC2_LADDERCLICK:
 		sceneHandler02_ladderClick();
-		return 0;
+		break;
 
 	case MSG_SC2_SHOWLADDER:
 		sceneHandler02_showLadder();
-		return 0;
+		break;
 
 	case MSG_SC2_PUTMANUP:
 		g_fp->_aniMan2->_priority = 0;
-		return 0;
+		break;
 
 	case MSG_SC2_HIDELADDER:
 		sceneHandler02_hideLadder();
-		return 0;
+		break;
 
 	case 33:
 		if (g_fp->_aniMan2) {
@@ -130,6 +130,10 @@ int sceneHandler02(ExCommand *ex) {
 		g_fp->_behaviorManager->updateBehaviors();
 
 		g_fp->startSceneTrack();
+		break;
+
+	default:
+		break;
 	}
 
 	return res;

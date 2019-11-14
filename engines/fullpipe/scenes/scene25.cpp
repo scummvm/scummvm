@@ -579,6 +579,7 @@ int sceneHandler25(ExCommand *cmd) {
 			g_fp->playSound(SND_25_026, 0);
 			break;
 
+		case 2:
 		default:
 			g_fp->playSound(SND_25_027, 0);
 			break;
@@ -713,11 +714,14 @@ int sceneHandler25(ExCommand *cmd) {
 				return 0;
 			}
 
-			if (picId == PIC_SC25_LADDERUP && !cmd->_param)
+			if (picId == PIC_SC25_LADDERUP && !cmd->_param) {
 				sceneHandler25_ladderUp();
-
-			return 0;
+			}
 		}
+		break;
+
+	default:
+		break;
 	}
 
 	return 0;
