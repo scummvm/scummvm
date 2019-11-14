@@ -843,6 +843,9 @@ void LabEngine::processMainButton(uint16 &curInv, uint16 &lastInv, uint16 &oldDi
 
 		_interface->mayShowCrumbIndicator();
 		break;
+
+	default:
+		break;
 	}
 
 	_graphics->screenUpdate();
@@ -960,6 +963,9 @@ void LabEngine::processAltButton(uint16 &curInv, uint16 &lastInv, uint16 buttonI
 			}
 		}
 		break;
+
+	default:
+		break;
 	}
 
 	_graphics->screenUpdate();
@@ -1024,6 +1030,10 @@ void LabEngine::performAction(uint16 actionMode, Common::Point curPos, uint16 &c
 			else if (curPos.y < (_utils->vgaScaleY(149) + _utils->svgaCord(2)))
 				drawStaticMessage(kTextNothing);
 		}
+		break;
+
+	default:
+		break;
 	}
 }
 
