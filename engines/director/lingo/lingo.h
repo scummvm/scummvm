@@ -333,9 +333,6 @@ public:
 	static void c_open();
 	static void c_hilite();
 
-	static void c_jump();
-	static void c_jumpif();
-
 	// stubs for unknown instructions
 	static void c_unk();
 	static void c_unk1();

@@ -423,10 +423,10 @@ bool RIFXArchive::openStream(Common::SeekableReadStream *stream, uint32 startOff
 				 tag == MKTAG('D', 'I', 'B', ' ') ||
 				 tag == MKTAG('R', 'T', 'E', '0') ||
 				 tag == MKTAG('R', 'T', 'E', '1') ||
-				 tag == MKTAG('R', 'T', 'E', '2') || 
-				 tag == MKTAG('L', 'c', 't', 'x') || 
-				 tag == MKTAG('L', 'n', 'a', 'm') || 
-                 tag == MKTAG('L', 's', 'c', 'r'))
+				 tag == MKTAG('R', 'T', 'E', '2') ||
+				 tag == MKTAG('L', 'c', 't', 'x') ||
+				 tag == MKTAG('L', 'n', 'a', 'm') ||
+				 tag == MKTAG('L', 's', 'c', 'r'))
 			_types[tag][i] = res;
 	}
 
