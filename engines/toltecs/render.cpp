@@ -238,6 +238,8 @@ RenderQueueItem *RenderQueue::findItemInQueue(RenderQueueArray *queue, const Ren
 				if (prevItem->mask.surface == item.mask.surface)
 					return prevItem;
 				break;
+			default:
+				break;
 			}
 		}
 	}
