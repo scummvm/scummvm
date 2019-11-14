@@ -60,7 +60,7 @@ static struct FuncDescr {
 	{ Lingo::c_argspush,	"c_argspush",	"i" },
 	{ Lingo::c_arraypush,	"c_arraypush",	"i" },
 	{ Lingo::c_printtop,	"c_printtop",	"" },
-	{ Lingo::c_intpush,	    "c_intpush",	"i" },
+	{ Lingo::c_intpush,	"c_intpush",	"i" },
 	{ Lingo::c_voidpush,	"c_voidpush",	"" },
 	{ Lingo::c_floatpush,	"c_floatpush",	"f" },
 	{ Lingo::c_stringpush,	"c_stringpush",	"s" },
@@ -86,8 +86,8 @@ static struct FuncDescr {
 	{ Lingo::c_starts,		"c_starts",		"" },
 	{ Lingo::c_intersects,	"c_intersects",	"" },
 	{ Lingo::c_within,		"c_within",		"" },
-    { Lingo::c_field,       "c_field",      "" },
-    { Lingo::c_of,		    "c_of",		    "" },	// D9
+	{ Lingo::c_field,       "c_field",      "" },
+	{ Lingo::c_of,		    "c_of",		    "" },	// D9
 	{ Lingo::c_charOf,		"c_charOf",		"" },	// D3
 	{ Lingo::c_charToOf,	"c_charToOf",	"" },	// D3
 	{ Lingo::c_itemOf,		"c_itemOf",		"" },	// D3
@@ -110,8 +110,8 @@ static struct FuncDescr {
 	{ Lingo::c_exitRepeat,	"c_exitRepeat",	"" },
 	{ Lingo::c_ifcode,		"c_ifcode",		"oooi" },
 	{ Lingo::c_tellcode,	"c_tellcode",	"o" },
-    { Lingo::c_tell,        "c_tell",       "" },
-    { Lingo::c_telldone,    "c_telldone",   "" },
+	{ Lingo::c_tell,        "c_tell",       "" },
+	{ Lingo::c_telldone,    "c_telldone",   "" },
 	{ Lingo::c_whencode,	"c_whencode",	"os" },
 	{ Lingo::c_goto,		"c_goto",		"" },
 	{ Lingo::c_gotoloop,	"c_gotoloop",	"" },
@@ -125,12 +125,10 @@ static struct FuncDescr {
 	{ Lingo::c_property,	"c_property",	"s" },
 	{ Lingo::c_instance,	"c_instance",	"s" },
 	{ Lingo::c_open,		"c_open",		"" },
-    { Lingo::c_hilite,      "c_hilite",     "" },
-    { Lingo::c_jump,        "c_jump",       "" },
-    { Lingo::c_jumpif,      "c_jumpif",     "" },
-    { Lingo::c_unk,         "c_unk",        "i" },
-    { Lingo::c_unk1,        "c_unk1",       "ii" },
-    { Lingo::c_unk2,        "c_unk2",       "iii" },
+	{ Lingo::c_hilite,      "c_hilite",     "" },
+	{ Lingo::c_unk,         "c_unk",        "i" },
+	{ Lingo::c_unk1,        "c_unk1",       "ii" },
+	{ Lingo::c_unk2,        "c_unk2",       "iii" },
 	{ 0, 0, 0 }
 };
 
@@ -667,30 +665,30 @@ void Lingo::c_within() {
 }
 
 void Lingo::c_field() {
-    Datum d1 = g_lingo->pop();
+	Datum d1 = g_lingo->pop();
 
-    warning("STUB: c_field: %d", d1.u.i);
+	warning("STUB: c_field: %d", d1.u.i);
 
-    g_lingo->push(d1);
+	g_lingo->push(d1);
 }
 
 void Lingo::c_of() {
-    Datum first_char = g_lingo->pop();
-    Datum last_char = g_lingo->pop();
-    Datum first_word = g_lingo->pop();
-    Datum last_word = g_lingo->pop();
-    Datum first_item = g_lingo->pop();
-    Datum last_item = g_lingo->pop();
-    Datum first_line = g_lingo->pop();
-    Datum last_line = g_lingo->pop();
-    Datum target = g_lingo->pop();
+	Datum first_char = g_lingo->pop();
+	Datum last_char = g_lingo->pop();
+	Datum first_word = g_lingo->pop();
+	Datum last_word = g_lingo->pop();
+	Datum first_item = g_lingo->pop();
+	Datum last_item = g_lingo->pop();
+	Datum first_line = g_lingo->pop();
+	Datum last_line = g_lingo->pop();
+	Datum target = g_lingo->pop();
 
-    warning("STUB: c_of: %d %d %d %d %d %d %d %d %s", 
-                first_char.u.i, last_char.u.i, first_word.u.i, last_word.u.i,
-                first_item.u.i, last_item.u.i, first_line.u.i, last_line.u.i,
-                target.u.s->c_str());
+	warning("STUB: c_of: %d %d %d %d %d %d %d %d %s",
+		first_char.u.i, last_char.u.i, first_word.u.i, last_word.u.i,
+		first_item.u.i, last_item.u.i, first_line.u.i, last_line.u.i,
+		target.u.s->c_str());
 
-    g_lingo->push(target);
+	g_lingo->push(target);
 
 }
 
@@ -1024,7 +1022,7 @@ void Lingo::c_tellcode() {
 }
 
 void Lingo::c_tell() {
-    Datum d1 = g_lingo->pop();
+	Datum d1 = g_lingo->pop();
 	warning("STUB: c_tell %d", d1.u.i);
 }
 
@@ -1251,52 +1249,44 @@ void Lingo::c_open() {
 }
 
 void Lingo::c_hilite() {
-    Datum first_char = g_lingo->pop();
-    Datum last_char = g_lingo->pop();
-    Datum first_word = g_lingo->pop();
-    Datum last_word = g_lingo->pop();
-    Datum first_item = g_lingo->pop();
-    Datum last_item = g_lingo->pop();
-    Datum first_line = g_lingo->pop();
-    Datum last_line = g_lingo->pop();
-    Datum cast_id = g_lingo->pop();
+	Datum first_char = g_lingo->pop();
+	Datum last_char = g_lingo->pop();
+	Datum first_word = g_lingo->pop();
+	Datum last_word = g_lingo->pop();
+	Datum first_item = g_lingo->pop();
+	Datum last_item = g_lingo->pop();
+	Datum first_line = g_lingo->pop();
+	Datum last_line = g_lingo->pop();
+	Datum cast_id = g_lingo->pop();
 
-    warning("STUB: c_hilite: %d %d %d %d %d %d %d %d %d", 
-                first_char.u.i, last_char.u.i, first_word.u.i, last_word.u.i,
-                first_item.u.i, last_item.u.i, first_line.u.i, last_line.u.i,
-                cast_id.u.i);
-}
-
-void Lingo::c_jump() {
-
-}
-
-void Lingo::c_jumpif() {
-    
+	warning("STUB: c_hilite: %d %d %d %d %d %d %d %d %d",
+		first_char.u.i, last_char.u.i, first_word.u.i, last_word.u.i,
+		first_item.u.i, last_item.u.i, first_line.u.i, last_line.u.i,
+		cast_id.u.i);
 }
 
 void Lingo::c_unk() {
-    int savepc = g_lingo->_pc;
-    uint opcode = READ_UINT32(&(*g_lingo->_currentScript)[savepc]);
-    warning("STUB: opcode 0x%02x", opcode);
-    g_lingo->_pc += 1;
+	int savepc = g_lingo->_pc;
+	uint opcode = READ_UINT32(&(*g_lingo->_currentScript)[savepc]);
+	warning("STUB: opcode 0x%02x", opcode);
+	g_lingo->_pc += 1;
 }
 
 void Lingo::c_unk1() {
-    int savepc = g_lingo->_pc;
-    uint opcode = READ_UINT32(&(*g_lingo->_currentScript)[savepc]);
-    uint arg1 = READ_UINT32(&(*g_lingo->_currentScript)[savepc+1]);
-    warning("STUB: opcode 0x%02x (%d)", opcode, arg1);
-    g_lingo->_pc += 2;
+	int savepc = g_lingo->_pc;
+	uint opcode = READ_UINT32(&(*g_lingo->_currentScript)[savepc]);
+	uint arg1 = READ_UINT32(&(*g_lingo->_currentScript)[savepc+1]);
+	warning("STUB: opcode 0x%02x (%d)", opcode, arg1);
+	g_lingo->_pc += 2;
 }
 
 void Lingo::c_unk2() {
-    int savepc = g_lingo->_pc;
-    uint opcode = READ_UINT32(&(*g_lingo->_currentScript)[savepc]);
-    uint arg1 = READ_UINT32(&(*g_lingo->_currentScript)[savepc+1]);
-    uint arg2 = READ_UINT32(&(*g_lingo->_currentScript)[savepc+2]);
-    warning("STUB: opcode 0x%02x (%d, %d)", opcode, arg1, arg2);
-    g_lingo->_pc += 3;
+	int savepc = g_lingo->_pc;
+	uint opcode = READ_UINT32(&(*g_lingo->_currentScript)[savepc]);
+	uint arg1 = READ_UINT32(&(*g_lingo->_currentScript)[savepc+1]);
+	uint arg2 = READ_UINT32(&(*g_lingo->_currentScript)[savepc+2]);
+	warning("STUB: opcode 0x%02x (%d, %d)", opcode, arg1, arg2);
+	g_lingo->_pc += 3;
 }
 
 

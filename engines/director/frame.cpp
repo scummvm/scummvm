@@ -627,7 +627,7 @@ void Frame::renderSprites(Graphics::ManagedSurface &surface, bool renderTrail) {
 				int y = _sprites[i]->_startPoint.y - regY + rectTop;
 				int height = _sprites[i]->_height;
 				int width = _vm->getVersion() > 4 ? _sprites[i]->_bitmapCast->initialRect.width() : _sprites[i]->_width;
-                warning("drawRect: x=%d, y=%d, w=%d h=%d", x, y, width, height);
+				warning("drawRect: x=%d, y=%d, w=%d h=%d", x, y, width, height);
 				Common::Rect drawRect(x, y, x + width, y + height);
 				addDrawRect(i, drawRect);
 				inkBasedBlit(surface, *(_sprites[i]->_bitmapCast->surface), i, drawRect);

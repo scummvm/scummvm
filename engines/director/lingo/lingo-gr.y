@@ -151,7 +151,7 @@ asgn: tPUT expr tINTO ID 		{
 		delete $2; }
 	| tSET THEENTITY '=' expr	{
 		g_lingo->code1(g_lingo->c_intpush);
-        g_lingo->codeInt(0); // Put dummy id
+		g_lingo->codeInt(0); // Put dummy id
 		g_lingo->code1(g_lingo->c_theentityassign);
 		inst e = 0, f = 0;
 		WRITE_UINT32(&e, $2[0]);
@@ -416,9 +416,9 @@ tell:	  tTELL				{
 		$$ = g_lingo->code1(g_lingo->c_tellcode);
 		g_lingo->code1(STOP); }
 
-expr: INT		{ 
+expr: INT		{
 		$$ = g_lingo->code1(g_lingo->c_intpush);
-        g_lingo->codeInt($1); }
+		g_lingo->codeInt($1); }
 	| FLOAT		{
 		$$ = g_lingo->code1(g_lingo->c_floatpush);
 		g_lingo->codeFloat($1); }
