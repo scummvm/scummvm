@@ -2751,7 +2751,7 @@ static const AGOSGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformWindows,
 			ADGF_NO_FLAGS,
-			GUIO3(GUIO_NOSUBTITLES, GUIO_NOMUSIC, GUIO_NOASPECT)
+			GUIO4(GUIO_NOSUBTITLES, GUIO_NOMUSIC, GUIO_NOASPECT, GUIO_NOMIDI)
 		},
 
 		GType_FF,
