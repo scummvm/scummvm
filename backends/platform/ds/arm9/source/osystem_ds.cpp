@@ -490,8 +490,8 @@ void OSystem_DS::updateScreen() {
 	}
 }
 
-void OSystem_DS::setShakePos(int shakeOffset) {
-	DS::setShakePos(shakeOffset);
+void OSystem_DS::setShakePos(int shakeXOffset, int shakeYOffset) {
+	DS::setShakePos(shakeXOffset, shakeYOffset);
 }
 
 void OSystem_DS::showOverlay() {

@@ -454,7 +454,8 @@ uint getSizeNextPOT(uint size) {
 	_overlayTexture = 0;
 	_mouseCursorTexture = 0;
 
-	_scaledShakeOffsetY = 0;
+	_scaledShakeXOffset = 0;
+	_scaledShakeYOffset = 0;
 
 	_firstTouch = NULL;
 	_secondTouch = NULL;
@@ -868,9 +869,9 @@ uint getSizeNextPOT(uint size) {
 - (void)setViewTransformation {
 	// Scale the shake offset according to the overlay size. We need this to
 	// adjust the overlay mouse click coordinates when an offset is set.
-	_scaledShakeOffsetY = (int)(_videoContext.shakeOffsetY / (GLfloat)_videoContext.screenHeight * CGRectGetHeight(_overlayRect));
+	_scaledShakeYOffset = (int)(_videoContext.shakeYOffset / (GLfloat)_videoContext.screenHeight * CGRectGetHeight(_overlayRect));
 
-	glUniform1f(_shakeSlot, _scaledShakeOffsetY);
+	glUniform1f(_shakeSlot, _scaledShakeYOffset);
 }
 
 - (void)clearColorBuffer {
@@ -914,12 +915,12 @@ uint getSizeNextPOT(uint size) {
 		area = &_overlayRect;
 		width = _videoContext.overlayWidth;
 		height = _videoContext.overlayHeight;
-		offsetY = _scaledShakeOffsetY;
+		offsetY = _scaledShakeYOffset;
 	} else {
 		area = &_gameScreenRect;
 		width = _videoContext.screenWidth;
 		height = _videoContext.screenHeight;
-		offsetY = _videoContext.shakeOffsetY;
+		offsetY = _videoContext.shakeYOffset;
 	}
 
 	point.x = (point.x - CGRectGetMinX(*area)) / CGRectGetWidth(*area);

@@ -72,7 +72,8 @@ void OSystem_IPHONE::initSize(uint width, uint height, const Graphics::PixelForm
 
 	_videoContext->screenWidth = width;
 	_videoContext->screenHeight = height;
-	_videoContext->shakeOffsetY = 0;
+	_videoContext->shakeXOffset = 0;
+	_videoContext->shakeYOffset = 0;
 
 	// In case we use the screen texture as frame buffer we reset the pixels
 	// pointer here to avoid freeing the screen texture.
@@ -282,9 +283,10 @@ void OSystem_IPHONE::unlockScreen() {
 	dirtyFullScreen();
 }
 
-void OSystem_IPHONE::setShakePos(int shakeOffset) {
-	//printf("setShakePos(%i)\n", shakeOffset);
-	_videoContext->shakeOffsetY = shakeOffset;
+void OSystem_IPHONE::setShakePos(int shakeXOffset, int shakeYOffset) {
+	//printf("setShakePos(%i, %i)\n", shakeXOffset, shakeYOffset);
+	_videoContext->shakeXOffset = shakeXOffset;
+	_videoContext->shakeYOffset = shakeYOffset;
 	[g_iPhoneViewInstance performSelectorOnMainThread:@selector(setViewTransformation) withObject:nil waitUntilDone: YES];
 	// HACK: We use this to force a redraw.
 	_mouseDirty = true;

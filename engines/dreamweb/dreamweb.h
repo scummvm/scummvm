@@ -138,7 +138,7 @@ public:
 
 	Common::String getSavegameFilename(int slot) const;
 
-	void setShakePos(int pos) { _system->setShakePos(pos); }
+	void setShakePos(int pos) { _system->setShakePos(0, pos); }
 	void printUnderMonitor();
 
 	void quit();

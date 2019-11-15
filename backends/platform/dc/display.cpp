@@ -35,7 +35,7 @@
 #define OVL_H 200
 #define OVL_TXSTRIDE 512
 
-#define TOP_OFFSET (_top_offset+_yscale*_current_shake_pos)
+#define TOP_OFFSET (_top_offset+_yscale*_current_shake_y_pos)
 
 static const struct {
   Graphics::PixelFormat pixelFormat;
@@ -320,9 +320,10 @@ void OSystem_Dreamcast::setMouseCursor(const void *buf, uint w, uint h,
   memcpy(_ms_buf, buf, w * h);
 }
 
-void OSystem_Dreamcast::setShakePos(int shake_pos)
+void OSystem_Dreamcast::setShakePos(int shake_x_pos, int shake_y_pos)
 {
-  _current_shake_pos = shake_pos;
+  _current_shake_x_pos = shake_x_pos;
+  _current_shake_y_pos = shake_y_pos;
 }
 
 void OSystem_Dreamcast::updateScreenTextures(void)
