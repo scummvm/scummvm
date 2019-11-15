@@ -34,7 +34,7 @@ static const AccessGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
-			GUIO1(GUIO_NONE)
+			GUIO2(GUIO_NONE, GUIO_NOMIDI)
 		},
 		GType_Amazon,
 		0
@@ -80,7 +80,7 @@ static const AccessGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			ADGF_CD,
-			GUIO1(GUIO_NONE)
+			GUIO2(GUIO_NONE, GUIO_NOMIDI)
 		},
 		GType_Amazon,
 		0
