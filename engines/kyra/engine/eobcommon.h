@@ -459,6 +459,8 @@ protected:
 	EoBItemType *_itemTypes;
 	char **_itemNames;
 	uint16 _numItemNames;
+	int _numItemNamesPC98;
+	const char * const *_itemNamesPC98;
 	uint32 _partyEffectFlags;
 	Item _lastUsedItem;
 
@@ -864,6 +866,9 @@ protected:
 	const uint8 *_cgaMappingDeco;
 	const uint8 *_cgaMappingLevel[5];
 	const uint8 *_cgaLevelMappingIndex;
+
+	// hard coded 16 color palettes for PC98 version of EOB1
+	const uint8 *_palette16c[10];
 
 	bool _enableHiResDithering;
 

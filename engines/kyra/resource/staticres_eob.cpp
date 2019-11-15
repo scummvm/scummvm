@@ -1162,6 +1162,13 @@ void EoBEngine::initStaticResource() {
 	_cgaLevelMappingIndex = _staticres->loadRawData(kEoB1CgaLevelMappingIndex, temp);
 	for (int i = 0; i < 5; i++)
 		_cgaMappingLevel[i] = _staticres->loadRawData(kEoB1CgaMappingLevel0 + i, temp);
+	const uint8 *pal16c = _staticres->loadRawData(kEoB1Palettes16c, temp);
+	if (pal16c) {
+		for (int i = 0; i < 10; i++)
+			_palette16c[i] = pal16c + i * 48;
+	}
+
+	_itemNamesPC98 = _staticres->loadStrings(kEoB1ItemNames, _numItemNamesPC98);
 
 	_turnUndeadString = _staticres->loadStrings(kEoB1TurnUndeadString, temp);
 

@@ -82,8 +82,9 @@ EoBCoreEngine::EoBCoreEngine(OSystem *system, const GameFlags &flags) : KyraRpgE
 	_items = 0;
 	_itemTypes = 0;
 	_itemNames = 0;
+	_itemNamesPC98 = 0;
 	_itemInHand = -1;
-	_numItems = _numItemNames = 0;
+	_numItems = _numItemNames = _numItemNamesPC98 = 0;
 
 	_castScrollSlot = 0;
 	_currentSub = 0;

@@ -104,7 +104,7 @@ const Game eob1Games[] = {
 	{ kEoB1, kPlatformAmiga, kNoSpecial, EN_ANY },
 	{ kEoB1, kPlatformAmiga, kNoSpecial, DE_DEU },
 
-	//{ kEoB1, kPlatformPC98, kNoSpecial, JA_JPN },
+	{ kEoB1, kPlatformPC98, kNoSpecial, JA_JPN },
 
 	GAME_DUMMY_ENTRY
 };
@@ -1757,6 +1757,22 @@ const int eob1PC98Need[] = {
 	kEoB1IntroTvlW,
 	kEoB1IntroTvlH,
 
+	kEoB1IntroStringsTower,
+	kEoB1IntroStringsOrb,
+	kEoB1IntroStringsWdEntry,
+	kEoB1IntroStringsKing,
+	kEoB1IntroStringsHands,
+	kEoB1IntroStringsWdExit,
+	kEoB1IntroStringsTunnel,
+
+	kEoB1FinaleStrings,
+	kEoB1FinaleEyesAnim,
+	kEoB1FinaleHandsAnim,
+	kEoB1FinaleHandsAnim2,
+	kEoB1FinaleHandsAnim3,
+	kEoB1CreditsStrings,
+	kEoB1CreditsCharWdth,
+
 	kEoB1DoorShapeDefs,
 	kEoB1DoorSwitchShapeDefs,
 	kEoB1DoorSwitchCoords,
@@ -1767,20 +1783,10 @@ const int eob1PC98Need[] = {
 	kEoB1BeholderSfx,
 	kEoB1TurnUndeadString,
 
-	kEoB1CgaMappingDefault,
-	kEoB1CgaMappingAlt,
-	kEoB1CgaMappingInv,
-	kEoB1CgaMappingItemsL,
-	kEoB1CgaMappingItemsS,
-	kEoB1CgaMappingThrown,
-	kEoB1CgaMappingIcons,
-	kEoB1CgaMappingDeco,
-	kEoB1CgaLevelMappingIndex,
-	kEoB1CgaMappingLevel0,
-	kEoB1CgaMappingLevel1,
-	kEoB1CgaMappingLevel2,
-	kEoB1CgaMappingLevel3,
-	kEoB1CgaMappingLevel4,
+	kEoB1Palettes16c,
+	kEoB1PalCycleData,
+	kEoB1PalCycleStyle1,
+	kEoB1PalCycleStyle2,
 
 	kEoB1NpcShpData,
 	kEoB1NpcSubShpIndex1,
@@ -1797,6 +1803,11 @@ const int eob1PC98Need[] = {
 	kEoB1Npc5Strings,
 	kEoB1Npc6Strings,
 	kEoB1Npc7Strings,
+
+	kEoB1ItemNames,
+	kEoB1Ascii2SjisTable1,
+	kEoB1Ascii2SjisTable2,
+	kEoB1FontLookupTable,
 
 	kEoBBasePryDoorStrings,
 	kEoBBaseWarningStrings,
@@ -1945,9 +1956,6 @@ const int eob1PC98Need[] = {
 	kEoBBaseDscTelptrShpCoords,
 
 	kEoBBasePortalSeqData,
-	kEoBBaseManDef,
-	kEoBBaseManWord,
-	kEoBBaseManPrompt,
 
 	kEoBBaseDscMonsterFrmOffsTbl1,
 	kEoBBaseDscMonsterFrmOffsTbl2,
@@ -1991,6 +1999,10 @@ const int eob1PC98Need[] = {
 	kEoBBaseMonsterDistAttStrings,
 	kEoBBaseEncodeMonsterDefs,
 	kEoBBaseNpcPresets,
+
+	kEoBBaseSoundFilesIntro,
+	kEoBBaseSoundFilesIngame,
+	kEoBBaseSoundFilesFinale,
 
 	-1
 };
@@ -3056,6 +3068,7 @@ const int eob2FMTownsNeed[] = {
 	kEoBBaseMenuStringsRest3,
 	kEoBBaseMenuStringsRest4,
 	kEoBBaseMenuStringsDefeat,
+	kEoBBaseMenuStringsTransfer,
 	kEoBBaseMenuStringsSpec,
 	kEoBBaseMenuStringsSpellNo,
 	kEoBBaseMenuYesNoStrings,
@@ -3595,7 +3608,7 @@ const GameNeed gameNeedTable[] = {
 
 	{ kEoB1, kPlatformDOS, kNoSpecial, eob1FloppyNeed },
 	{ kEoB1, kPlatformAmiga, kNoSpecial, eob1AmigaNeed },
-	//{ kEoB1, kPlatformPC98, kNoSpecial, eob1PC98Need },
+	{ kEoB1, kPlatformPC98, kNoSpecial, eob1PC98Need },
 
 	{ kEoB2, kPlatformDOS, kNoSpecial, eob2FloppyNeed },
 	{ kEoB2, kPlatformAmiga, kNoSpecial, eob2AmigaNeed },

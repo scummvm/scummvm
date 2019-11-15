@@ -34,6 +34,8 @@ EoBEngine::EoBEngine(OSystem *system, const GameFlags &flags)
 	_menuChoiceInit = 4;
 
 	_turnUndeadString = 0;
+	_itemNamesPC98 = 0;
+	_numItemNamesPC98 = 0;
 	_finBonusStrings = _npcStrings[1] = _npcStrings[2] = 0;
 	_npcStrings[3] = _npcStrings[4] = _npcStrings[5] = _npcStrings[6] = 0;
 	_npcStrings[7] = _npcStrings[8] = _npcStrings[9] = _npcStrings[10] = 0;
