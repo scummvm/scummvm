@@ -87,7 +87,7 @@ static struct FuncDescr {
 	{ Lingo::c_intersects,	"c_intersects",	"" },
 	{ Lingo::c_within,		"c_within",		"" },
 	{ Lingo::c_field,       "c_field",      "" },
-	{ Lingo::c_of,		    "c_of",		    "" },	// D9
+	{ Lingo::c_of,		    "c_of",		    "" },
 	{ Lingo::c_charOf,		"c_charOf",		"" },	// D3
 	{ Lingo::c_charToOf,	"c_charToOf",	"" },	// D3
 	{ Lingo::c_itemOf,		"c_itemOf",		"" },	// D3
