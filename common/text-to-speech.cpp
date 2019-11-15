@@ -88,15 +88,6 @@ TextToSpeechManager::TextToSpeechManager() {
 	_ttsState->_next = nullptr;
 }
 
-TextToSpeechManager::~TextToSpeechManager() {
-	TTSState *tmp = _ttsState;
-	while (tmp != nullptr) {
-		tmp = _ttsState->_next;
-		delete _ttsState;
-		_ttsState = tmp;
-	}
-}
-
 void TextToSpeechManager::pushState() {
 	stop();
 	TTSState *newState = new TTSState;
@@ -128,6 +119,15 @@ bool TextToSpeechManager::popState() {
 	setRate(_ttsState->_rate);
 	setVoice(voice);
 	return false;
+}
+
+void TextToSpeechManager::clearState() {
+	TTSState *tmp = _ttsState;
+	while (tmp != nullptr) {
+		tmp = _ttsState->_next;
+		delete _ttsState;
+		_ttsState = tmp;
+	}
 }
 
 TTSVoice TextToSpeechManager::getVoice() {

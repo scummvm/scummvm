@@ -127,6 +127,9 @@ void SpeechDispatcherManager::init() {
 
 SpeechDispatcherManager::~SpeechDispatcherManager() {
 	stop();
+
+	clearState();
+
 	if (_connection != 0)
 		spd_close(_connection);
 	if (_threadCreated)

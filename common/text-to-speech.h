@@ -149,7 +149,7 @@ public:
 	 * pitch and volume to their middle values.
 	 */
 	TextToSpeechManager();
-	virtual ~TextToSpeechManager();
+	virtual ~TextToSpeechManager() {}
 
 	/**
 	 * Interrupts what's being said and says the given string
@@ -311,6 +311,7 @@ public:
 protected:
 	TTSState *_ttsState;
 
+	void clearState();
 	virtual void updateVoices() {};
 };
 

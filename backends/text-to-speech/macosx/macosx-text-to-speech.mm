@@ -66,6 +66,8 @@ MacOSXTextToSpeechManager::MacOSXTextToSpeechManager() : Common::TextToSpeechMan
 }
 
 MacOSXTextToSpeechManager::~MacOSXTextToSpeechManager() {
+	clearState();
+
 	[synthesizer release];
 	[synthesizerDelegate release];
 }

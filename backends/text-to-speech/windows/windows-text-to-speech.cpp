@@ -120,6 +120,9 @@ void WindowsTextToSpeechManager::init() {
 
 WindowsTextToSpeechManager::~WindowsTextToSpeechManager() {
 	stop();
+
+	clearState();
+
 	if (_thread != NULL) {
 		WaitForSingleObject(_thread, INFINITE);
 		CloseHandle(_thread);
