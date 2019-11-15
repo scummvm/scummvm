@@ -124,52 +124,52 @@ void Lingo::addCodeV4(Common::SeekableSubReadStreamEndian &stream, ScriptType ty
 
 	// read each entry in the reference table.
 	stream.seek(constsOffset);
-	for (uint16 i=0; i < constsCount; i++) {
+	for (uint16 i = 0; i < constsCount; i++) {
 		Datum constant;
 		uint16 constType = stream.readUint16();
 		uint32 value = stream.readUint32();
 		switch (constType) {
-			case 1: // String type
-				{
-					constant.type = STRING;
-					constant.u.s = new Common::String();
-					uint32 pointer = value;
-					while (pointer < constsStoreSize) {
-						if (constsStore[pointer] == '\r') {
-							constant.u.s += '\n';
-						} else if (constsStore[pointer] == '\0') {
-							break;
-						} else {
-							constant.u.s += constsStore[pointer];
-						}
-						pointer += 1;
-					}
-					if (pointer >= constsStoreSize) {
-						warning("Constant string has no null terminator");
+		case 1: // String type
+			{
+				constant.type = STRING;
+				constant.u.s = new Common::String();
+				uint32 pointer = value;
+				while (pointer < constsStoreSize) {
+					if (constsStore[pointer] == '\r') {
+						constant.u.s += '\n';
+					} else if (constsStore[pointer] == '\0') {
 						break;
+					} else {
+						constant.u.s += constsStore[pointer];
 					}
+					pointer += 1;
 				}
-				break;
-			case 4: // Integer type
-				constant.type = INT;
-				constant.u.i = (int)value;
-				break;
-			case 9:  // Float type
-				{
-					constant.type = FLOAT;
-					if (value < constsStoreOffset) {
-						warning("Constant float start offset is out of bounds");
-						break;
-					} else if (value + 4 > constsStoreSize) {
-						warning("Constant float end offset is out of bounds");
-						break;
-					}
-					constant.u.f = *(float *)(constsStore + value);
+				if (pointer >= constsStoreSize) {
+					warning("Constant string has no null terminator");
+					break;
 				}
-				break;
-			default:
-				warning("Unknown constant type %d", type);
-				break;
+			}
+			break;
+		case 4: // Integer type
+			constant.type = INT;
+			constant.u.i = (int)value;
+			break;
+		case 9:  // Float type
+			{
+				constant.type = FLOAT;
+				if (value < constsStoreOffset) {
+					warning("Constant float start offset is out of bounds");
+					break;
+				} else if (value + 4 > constsStoreSize) {
+					warning("Constant float end offset is out of bounds");
+					break;
+				}
+				constant.u.f = *(float *)(constsStore + value);
+			}
+			break;
+		default:
+			warning("Unknown constant type %d", type);
+			break;
 		}
 
 		constsData.push_back(constant);
@@ -187,7 +187,7 @@ void Lingo::addCodeV4(Common::SeekableSubReadStreamEndian &stream, ScriptType ty
 
 	// read each entry in the function table.
 	stream.seek(functionsOffset);
-	for (uint16 i=0; i<functionsCount; i++) {
+	for (uint16 i = 0; i < functionsCount; i++) {
 		_currentScriptFunction = i;
 		_currentScriptContext->functions.push_back(new ScriptData);
 		_currentScript = _currentScriptContext->functions[_currentScriptFunction];
@@ -228,21 +228,21 @@ void Lingo::addCodeV4(Common::SeekableSubReadStreamEndian &stream, ScriptType ty
 				offsetList.push_back(_currentScript->size());
 				g_lingo->code1(_lingoV4[opcode]->func);
 				size_t argc = strlen(_lingoV4[opcode]->proto);
-				for (uint c=0; c < argc; c++) {
+				for (uint c = 0; c < argc; c++) {
 					switch (_lingoV4[opcode]->proto[c]) {
-						case 'b':
-							offsetList.push_back(_currentScript->size());
-							g_lingo->codeInt((int8)codeStore[pointer]);
-							pointer += 1;
-							break;
-						case 'w':
-							offsetList.push_back(_currentScript->size());
-							offsetList.push_back(_currentScript->size());
-							g_lingo->codeInt((int16)READ_UINT16(&codeStore[pointer]));
-							pointer += 2;
-							break;
-						default:
-							break;
+					case 'b':
+						offsetList.push_back(_currentScript->size());
+						g_lingo->codeInt((int8)codeStore[pointer]);
+						pointer += 1;
+						break;
+					case 'w':
+						offsetList.push_back(_currentScript->size());
+						offsetList.push_back(_currentScript->size());
+						g_lingo->codeInt((int16)READ_UINT16(&codeStore[pointer]));
+						pointer += 2;
+						break;
+					default:
+						break;
 					}
 				}
 

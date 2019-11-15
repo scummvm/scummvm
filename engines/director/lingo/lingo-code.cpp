@@ -206,7 +206,7 @@ void Lingo::c_printtop(void) {
 }
 
 void Lingo::c_intpush() {
-    Datum d;
+	Datum d;
 	inst i = (*g_lingo->_currentScript)[g_lingo->_pc++];
 	d.u.i = READ_UINT32(&i);
 	d.type = INT;
