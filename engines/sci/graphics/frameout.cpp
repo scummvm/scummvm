@@ -1189,27 +1189,27 @@ void GfxFrameout::throttle() {
 }
 
 void GfxFrameout::shakeScreen(int16 numShakes, const ShakeDirection direction) {
-	if (direction & kShakeHorizontal) {
-		// Used by QFG4 room 750
-		warning("TODO: Horizontal shake not implemented");
-		return;
-	}
-
 	while (numShakes--) {
 		if (g_engine->shouldQuit()) {
 			break;
 		}
 
-		if (direction & kShakeVertical) {
-			g_system->setShakePos(0, _isHiRes ? 8 : 4);
+		int shakeXOffset = 0;
+		if (direction & kShakeHorizontal) {
+			shakeXOffset = _isHiRes ? 8 : 4;
 		}
+
+		int shakeYOffset = 0;
+		if (direction & kShakeVertical) {
+			shakeYOffset = _isHiRes ? 8 : 4;
+		}
+
+		g_system->setShakePos(shakeXOffset, shakeYOffset);
 
 		updateScreen();
 		g_sci->getEngineState()->sleep(3);
 
-		if (direction & kShakeVertical) {
-			g_system->setShakePos(0, 0);
-		}
+		g_system->setShakePos(0, 0);
 
 		updateScreen();
 		g_sci->getEngineState()->sleep(3);
