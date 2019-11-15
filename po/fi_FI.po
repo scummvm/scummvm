@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2019-11-15 19:33+0100\n"
+"POT-Creation-Date: 2019-11-15 19:42+0100\n"
 "PO-Revision-Date: 2019-11-13 02:03+0000\n"
 "Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
@@ -685,7 +685,7 @@ msgid "Search:"
 msgstr "Etsi:"
 
 #: gui/launcher.cpp:201 engines/dialogs.cpp:115 engines/cruise/menu.cpp:214
-#: engines/mohawk/dialogs.cpp:162 engines/mohawk/myst.cpp:963
+#: engines/mohawk/dialogs.cpp:162 engines/mohawk/myst.cpp:995
 #: engines/mohawk/riven.cpp:690 engines/pegasus/pegasus.cpp:355
 #: engines/tsage/scenes.cpp:601 engines/wage/saveload.cpp:748
 msgid "Load game:"
@@ -695,7 +695,7 @@ msgstr "Lataa peli:"
 #: backends/platform/wince/CEActionsPocket.cpp:267
 #: backends/platform/wince/CEActionsSmartphone.cpp:231
 #: engines/cruise/menu.cpp:214 engines/mohawk/dialogs.cpp:162
-#: engines/mohawk/myst.cpp:963 engines/mohawk/riven.cpp:690
+#: engines/mohawk/myst.cpp:995 engines/mohawk/riven.cpp:690
 #: engines/parallaction/saveload.cpp:194 engines/pegasus/pegasus.cpp:355
 #: engines/scumm/dialogs.cpp:185 engines/tsage/scenes.cpp:601
 #: engines/wage/saveload.cpp:748
@@ -2011,7 +2011,7 @@ msgstr "Palaa p~e~livalitsimeen"
 #: engines/drascula/saveload.cpp:383 engines/dreamweb/saveload.cpp:262
 #: engines/glk/streams.cpp:1424 engines/gnap/menu.cpp:464
 #: engines/hugo/file.cpp:298 engines/mads/nebular/dialogs_nebular.cpp:350
-#: engines/mohawk/dialogs.cpp:163 engines/mohawk/myst.cpp:975
+#: engines/mohawk/dialogs.cpp:163 engines/mohawk/myst.cpp:1007
 #: engines/mohawk/riven.cpp:702 engines/neverhood/menumodule.cpp:878
 #: engines/pegasus/pegasus.cpp:374 engines/sci/engine/guest_additions.cpp:682
 #: engines/sci/engine/kfile.cpp:1035 engines/sherlock/scalpel/scalpel.cpp:1250
@@ -2034,7 +2034,7 @@ msgstr "Tallenna peli:"
 #: engines/dreamweb/saveload.cpp:262 engines/glk/streams.cpp:1424
 #: engines/gnap/menu.cpp:464 engines/hugo/file.cpp:298
 #: engines/mads/nebular/dialogs_nebular.cpp:350 engines/mohawk/dialogs.cpp:163
-#: engines/mohawk/myst.cpp:975 engines/mohawk/riven.cpp:702
+#: engines/mohawk/myst.cpp:1007 engines/mohawk/riven.cpp:702
 #: engines/neverhood/menumodule.cpp:878 engines/parallaction/saveload.cpp:209
 #: engines/pegasus/pegasus.cpp:374 engines/sci/engine/guest_additions.cpp:683
 #: engines/sci/engine/kfile.cpp:1035 engines/scumm/dialogs.cpp:184
