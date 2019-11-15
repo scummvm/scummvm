@@ -156,9 +156,9 @@ void ActionText::draw(Graphics::ManagedSurface *surface) {
 	text.drawToPoint(surface, Common::Rect(0, 0, _xRight - _xLeft, _yBottom - _yTop), Common::Point(_xLeft, _yTop));
 }
 
-#define RED(rgb) ((rgb) & 0xFF)
+#define BLUE(rgb) ((rgb) & 0xFF)
 #define GREEN(rgb) (((rgb) >> 8) & 0xFF)
-#define BLUE(rgb) (((rgb) >> 16) & 0xFF)
+#define RED(rgb) (((rgb) >> 16) & 0xFF)
 
 static uint findBestColor(byte *palette, uint32 rgb) {
 	uint bestColor = 0;
@@ -175,6 +175,9 @@ static uint findBestColor(byte *palette, uint32 rgb) {
 			min = dist;
 		}
 	}
+
+	debug(2, "for color %06x the best color is %02x%02x%02x", rgb, palette[bestColor * 3], palette[bestColor * 3 + 1], palette[bestColor * 3 + 2]);
+
 	return bestColor;
 }
 
@@ -182,7 +185,9 @@ void ActionText::findColorsInPalette() {
 	byte palette[256 * 3];
 	g_system->getPaletteManager()->grabPalette(palette, 0, 256);
 
+	debug(2, "textcolorindex: %06x", _textRGB);
 	_textColorIndex = findBestColor(palette, _textRGB);
+	debug(2, "backgroundColorIndex: %06x", _backgroundRGB);
 	_backgroundColorIndex = findBestColor(palette, _backgroundRGB);
 }
 
