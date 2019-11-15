@@ -33,7 +33,7 @@ static const tSageGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			ADGF_CD,
-			GUIO2(GUIO_NOSPEECH, GUIO_NOSFX)
+			GUIO3(GUIO_NOSPEECH, GUIO_NOSFX, GUIO_NOMIDI)
 		},
 		GType_Ringworld,
 		GF_CD | GF_ALT_REGIONS
@@ -166,7 +166,7 @@ static const tSageGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			ADGF_CD,
-			GUIO0()
+			GUIO1(GUIO_NOMIDI)
 		},
 		GType_Ringworld2,
 		GF_CD | GF_ALT_REGIONS
