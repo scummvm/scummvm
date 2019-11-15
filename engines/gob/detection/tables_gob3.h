@@ -278,7 +278,7 @@
 	kFeaturesAdLib,
 	0, 0, 0
 },
-{ // Found in Found in french ADI 2.5 Anglais Multimedia 5e
+{ // Found in french ADI 2.5 Anglais Multimedia 5e
 	{
 		"gob3",
 		"",
@@ -355,7 +355,7 @@
 		EN_USA,
 		kPlatformDOS,
 		ADGF_NO_FLAGS,
-		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
+		GUIO3(GUIO_NOSUBTITLES, GUIO_NOSPEECH, GUIO_NOMIDI)
 	},
 	kGameTypeGob3,
 	kFeaturesCD,
