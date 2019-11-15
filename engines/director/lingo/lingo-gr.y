@@ -153,18 +153,14 @@ asgn: tPUT expr tINTO ID 		{
 		g_lingo->code1(g_lingo->c_intpush);
 		g_lingo->codeInt(0); // Put dummy id
 		g_lingo->code1(g_lingo->c_theentityassign);
-		inst e = 0, f = 0;
-		WRITE_UINT32(&e, $2[0]);
-		WRITE_UINT32(&f, $2[1]);
-		g_lingo->code2(e, f);
+		g_lingo->codeInt($2[0]);
+		g_lingo->codeInt($2[1]);
 		$$ = $4; }
 	| tSET THEENTITYWITHID expr '=' expr	{
 		g_lingo->code1(g_lingo->c_swap);
 		g_lingo->code1(g_lingo->c_theentityassign);
-		inst e = 0, f = 0;
-		WRITE_UINT32(&e, $2[0]);
-		WRITE_UINT32(&f, $2[1]);
-		g_lingo->code2(e, f);
+		g_lingo->codeInt($2[0]);
+		g_lingo->codeInt($2[1]);
 		$$ = $5; }
 	| tSET ID tTO expr			{
 		g_lingo->code1(g_lingo->c_varpush);
@@ -176,18 +172,14 @@ asgn: tPUT expr tINTO ID 		{
 		g_lingo->code1(g_lingo->c_intpush);
 		g_lingo->codeInt(0); // Put dummy id
 		g_lingo->code1(g_lingo->c_theentityassign);
-		inst e = 0, f = 0;
-		WRITE_UINT32(&e, $2[0]);
-		WRITE_UINT32(&f, $2[1]);
-		g_lingo->code2(e, f);
+		g_lingo->codeInt($2[0]);
+		g_lingo->codeInt($2[1]);
 		$$ = $4; }
 	| tSET THEENTITYWITHID expr tTO expr	{
 		g_lingo->code1(g_lingo->c_swap);
 		g_lingo->code1(g_lingo->c_theentityassign);
-		inst e = 0, f = 0;
-		WRITE_UINT32(&e, $2[0]);
-		WRITE_UINT32(&f, $2[1]);
-		g_lingo->code2(e, f);
+		g_lingo->codeInt($2[0]);
+		g_lingo->codeInt($2[1]);
 		$$ = $5; }
 	;
 
