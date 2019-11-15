@@ -382,7 +382,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformUnknown,
 			ADGF_CD,
-			GUIO0()
+			GUIO1(GUIO_NOMIDI)
 		},
 		GID_ITE,
 		0,
