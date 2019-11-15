@@ -89,6 +89,8 @@ MadeEngine::MadeEngine(OSystem *syst, const MadeGameDescription *gameDesc) : Eng
 	case GID_RTZ:
 		// Return to Zork sets it itself via a script funtion
 		break;
+	default:
+		break;
 	}
 }
 

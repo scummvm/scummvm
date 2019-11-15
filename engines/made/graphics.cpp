@@ -159,6 +159,8 @@ void decompressImage(byte *source, Graphics::Surface &surface, uint16 cmdOffs, u
 					}
 					break;
 
+				default:
+					break;
 				}
 
 				drawDestOfs += 4;
@@ -264,6 +266,8 @@ void decompressMovieImage(byte *source, Graphics::Surface &surface, uint16 cmdOf
 				case 3:
 					break;
 
+				default:
+					break;
 				}
 
 				if (cmd != 3) {
