@@ -43,7 +43,7 @@ static const ADGameDescription gameDescriptions[] = {
 			{"stock_n.dat", 0, "46819043d019a2f36b727cc2bdd6980f", 12515823},
 			AD_LISTEND
 		},
-		Common::EN_ANY, Common::kPlatformWindows, ADGF_NO_FLAGS, GUIO0()
+		Common::EN_ANY, Common::kPlatformWindows, ADGF_NO_FLAGS, GUIO1(GUIO_NOMIDI)
 	},
 	{
 		"gnap", "",
