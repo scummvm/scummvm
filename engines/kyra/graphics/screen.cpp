@@ -3223,9 +3223,9 @@ void Screen::shakeScreen(int times) {
 	while (times--) {
 		// seems to be 1 line (320 pixels) offset in the original
 		// 4 looks more like dosbox though, maybe check this again
-		_system->setShakePos(4);
+		_system->setShakePos(0, 4);
 		_system->updateScreen();
-		_system->setShakePos(0);
+		_system->setShakePos(0, 0);
 		_system->updateScreen();
 	}
 }

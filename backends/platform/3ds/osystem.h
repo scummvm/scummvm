@@ -119,7 +119,7 @@ public:
 	Graphics::Surface *lockScreen();
 	void unlockScreen();
 	void updateScreen();
-	void setShakePos(int shakeOffset);
+	void setShakePos(int shakeXOffset, int shakeYOffset);
 	void setFocusRectangle(const Common::Rect &rect);
 	void clearFocusRectangle();
 	void showOverlay();
@@ -197,7 +197,8 @@ private:
 	};
 	uint32 _osdMessageEndTime;
 
-	int _screenShakeOffset;
+	int _screenShakeXOffset;
+	int _screenShakeYOffset;
 	bool _overlayVisible;
 	int _screenChangeId;
 

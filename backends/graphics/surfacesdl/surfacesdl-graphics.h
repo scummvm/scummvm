@@ -387,7 +387,8 @@ protected:
 
 	// Shake mode
 	// This is always set to 0 when building with SDL2.
-	int _currentShakePos;
+	int _currentShakeXOffset;
+	int _currentShakeYOffset;
 
 	// Palette data
 	SDL_Color *_currentPalette;

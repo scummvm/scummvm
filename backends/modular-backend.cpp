@@ -185,8 +185,8 @@ void ModularBackend::updateScreen() {
 #endif
 }
 
-void ModularBackend::setShakePos(int shakeOffset) {
-	_graphicsManager->setShakePos(shakeOffset);
+void ModularBackend::setShakePos(int shakeXOffset, int shakeYOffset) {
+	_graphicsManager->setShakePos(shakeXOffset, shakeYOffset);
 }
 void ModularBackend::setFocusRectangle(const Common::Rect& rect) {
 	_graphicsManager->setFocusRectangle(rect);

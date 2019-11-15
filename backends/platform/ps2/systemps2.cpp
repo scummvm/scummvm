@@ -731,8 +731,8 @@ FilesystemFactory *OSystem_PS2::getFilesystemFactory() {
 	return &Ps2FilesystemFactory::instance();
 }
 
-void OSystem_PS2::setShakePos(int shakeOffset) {
-	_screen->setShakePos(shakeOffset);
+void OSystem_PS2::setShakePos(int shakeXOffset, int shakeYOffset) {
+	_screen->setShakePos(shakeXOffset, shakeYOffset);
 }
 
 bool OSystem_PS2::showMouse(bool visible) {

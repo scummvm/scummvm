@@ -981,10 +981,10 @@ TestExitStatus GFXtests::shakingEffect() {
 	Testsuite::writeOnScreen("If Shaking Effect works, this should shake!", pt);
 	int times = 15;
 	while (times--) {
-		g_system->setShakePos(25);
+		g_system->setShakePos(25, 25);
 		g_system->delayMillis(50);
 		g_system->updateScreen();
-		g_system->setShakePos(0);
+		g_system->setShakePos(0, 0);
 		g_system->delayMillis(50);
 		g_system->updateScreen();
 	}
@@ -1187,12 +1187,12 @@ TestExitStatus GFXtests::cursorTrails() {
 		return kTestSkipped;
 	}
 	TestExitStatus passed = kTestFailed;
-	g_system->setShakePos(25);
+	g_system->setShakePos(25, 25);
 	g_system->updateScreen();
 	if (Testsuite::handleInteractiveInput("Does the cursor leaves trails while moving?", "Yes", "No", kOptionRight)) {
 		passed = kTestPassed;
 	}
-	g_system->setShakePos(0);
+	g_system->setShakePos(0, 0);
 	g_system->updateScreen();
 	return passed;
 }

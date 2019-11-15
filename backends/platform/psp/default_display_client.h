@@ -78,14 +78,14 @@ public:
  */
 class Screen : public DefaultDisplayClient {
 public:
-	Screen() : _shakePos(0) {
+	Screen() : _shakeXOffset(0), _shakeYOffset(0) {
 		memset(&_pixelFormat, 0, sizeof(_pixelFormat));
 		memset(&_frameBuffer, 0, sizeof(_frameBuffer));
 	}
 
 	void init();
 	bool allocate();
-	void setShakePos(int pos);
+	void setShakePos(int shakeXOffset, int shakeYOffset);
 	void setScummvmPixelFormat(const Graphics::PixelFormat *format);
 	const Graphics::PixelFormat &getScummvmPixelFormat() const { return _pixelFormat; }
 	Graphics::Surface *lockAndGetForEditing();
@@ -93,7 +93,8 @@ public:
 	void setSize(uint32 width, uint32 height);
 
 private:
-	uint32 _shakePos;
+	uint32 _shakeXOffset;
+	uint32 _shakeYOffset;
 	Graphics::PixelFormat _pixelFormat;
 	Graphics::Surface _frameBuffer;
 };

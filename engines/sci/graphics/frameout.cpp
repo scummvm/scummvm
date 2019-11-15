@@ -1201,14 +1201,14 @@ void GfxFrameout::shakeScreen(int16 numShakes, const ShakeDirection direction) {
 		}
 
 		if (direction & kShakeVertical) {
-			g_system->setShakePos(_isHiRes ? 8 : 4);
+			g_system->setShakePos(0, _isHiRes ? 8 : 4);
 		}
 
 		updateScreen();
 		g_sci->getEngineState()->sleep(3);
 
 		if (direction & kShakeVertical) {
-			g_system->setShakePos(0);
+			g_system->setShakePos(0, 0);
 		}
 
 		updateScreen();

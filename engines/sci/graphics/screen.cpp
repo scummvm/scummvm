@@ -595,23 +595,23 @@ void GfxScreen::bitsRestoreDisplayScreen(Common::Rect rect, byte *&memoryPtr) {
 	}
 }
 
-void GfxScreen::setVerticalShakePos(uint16 shakePos) {
+void GfxScreen::setShakePos(uint16 shakeXOffset, uint16 shakeYOffset) {
 	if (!_upscaledHires)
-		g_system->setShakePos(shakePos);
+		g_system->setShakePos(shakeXOffset, shakeYOffset);
 	else
-		g_system->setShakePos(_upscaledHeightMapping[shakePos]);
+		g_system->setShakePos(_upscaledWidthMapping[shakeXOffset], _upscaledHeightMapping[shakeYOffset]);
 }
 
 void GfxScreen::kernelShakeScreen(uint16 shakeCount, uint16 directions) {
 	while (shakeCount--) {
 		if (directions & kShakeVertical)
-			setVerticalShakePos(10);
+			setShakePos(0, 10);
 		// TODO: horizontal shakes
 		g_system->updateScreen();
 		g_sci->getEngineState()->sleep(3);
 
 		if (directions & kShakeVertical)
-			setVerticalShakePos(0);
+			setShakePos(0, 0);
 
 		g_system->updateScreen();
 		g_sci->getEngineState()->sleep(3);

@@ -112,7 +112,7 @@ void	setShowCursor(bool enable);
 void	setMouseCursorVisible(bool visible);
 
 // Shake
-void 	setShakePos(int shakePos);
+void 	setShakePos(int shakeXOffset, int shakeYOffset);
 
 // Reports
 void 	memoryReport();
