@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2019-11-13 08:01+0100\n"
+"POT-Creation-Date: 2019-11-15 19:33+0100\n"
 "PO-Revision-Date: 2018-10-10 04:23+0000\n"
 "Last-Translator: scootergrisen <scootergrisen@gmail.com>\n"
 "Language-Team: Galician <https://translations.scummvm.org/projects/scummvm/"
@@ -2326,15 +2326,11 @@ msgstr "Emulador de C64 Audio"
 msgid "<syncing...>"
 msgstr "Conectar"
 
-#: backends/cloud/storage.cpp:232
-msgid "Saved games sync complete."
-msgstr "Sincronización de partidas gardadas completada."
-
-#: backends/cloud/storage.cpp:243
+#: backends/cloud/storage.cpp:242
 msgid "Saved games sync was cancelled."
 msgstr "Cancelouse a sincronización de partidas gardadas."
 
-#: backends/cloud/storage.cpp:245
+#: backends/cloud/storage.cpp:244
 msgid ""
 "Saved games sync failed.\n"
 "Check your Internet connection."
@@ -2342,7 +2338,7 @@ msgstr ""
 "Erro ao sincronizar as partidas gardadas.\n"
 "Comproba a túa conexión á Internet."
 
-#: backends/cloud/storage.cpp:349
+#: backends/cloud/storage.cpp:348
 #, c-format
 msgid ""
 "Download complete.\n"
@@ -2351,11 +2347,11 @@ msgstr ""
 "Descarga completada.\n"
 "Erro ao descargar %u ficheiros."
 
-#: backends/cloud/storage.cpp:351
+#: backends/cloud/storage.cpp:350
 msgid "Download complete."
 msgstr "Descarga completada."
 
-#: backends/cloud/storage.cpp:361
+#: backends/cloud/storage.cpp:360
 msgid "Download failed."
 msgstr "Erro ao descargar."
 
@@ -5789,6 +5785,9 @@ msgstr ""
 "Esta partida gardada emprega a versión %u. No entanto, o motor só é "
 "compatíbel até a versión %d. Cómpre descargar unha versión actualizada do "
 "motor para empregar esta partida gardada."
+
+#~ msgid "Saved games sync complete."
+#~ msgstr "Sincronización de partidas gardadas completada."
 
 #, fuzzy
 #~ msgid "Loading..."

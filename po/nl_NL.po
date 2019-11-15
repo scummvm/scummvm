@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2019-11-13 08:01+0100\n"
+"POT-Creation-Date: 2019-11-15 19:33+0100\n"
 "PO-Revision-Date: 2019-11-08 08:00+0000\n"
 "Last-Translator: Ben Castricum <github@bencastricum.nl>\n"
 "Language-Team: Dutch <https://translations.scummvm.org/projects/scummvm/"
@@ -2302,15 +2302,11 @@ msgstr "C64 Geluid emulator"
 msgid "<syncing...>"
 msgstr "<aan het synchroniseren...>"
 
-#: backends/cloud/storage.cpp:232
-msgid "Saved games sync complete."
-msgstr "Klaar met synchronisatie van opgeslagen spellen."
-
-#: backends/cloud/storage.cpp:243
+#: backends/cloud/storage.cpp:242
 msgid "Saved games sync was cancelled."
 msgstr "Synchronisatie van opgeslagen spellen was geannuleerd."
 
-#: backends/cloud/storage.cpp:245
+#: backends/cloud/storage.cpp:244
 msgid ""
 "Saved games sync failed.\n"
 "Check your Internet connection."
@@ -2318,7 +2314,7 @@ msgstr ""
 "Synchronisatie van opgeslagen spellen is mislukt.\n"
 "Controleer a.u.b. uw Internet verbinding."
 
-#: backends/cloud/storage.cpp:349
+#: backends/cloud/storage.cpp:348
 #, c-format
 msgid ""
 "Download complete.\n"
@@ -2327,11 +2323,11 @@ msgstr ""
 "Download klaar.\n"
 "%u bestanden konden niet gedownload worden."
 
-#: backends/cloud/storage.cpp:351
+#: backends/cloud/storage.cpp:350
 msgid "Download complete."
 msgstr "Download klaar."
 
-#: backends/cloud/storage.cpp:361
+#: backends/cloud/storage.cpp:360
 msgid "Download failed."
 msgstr "Download mislukt."
 
@@ -5815,6 +5811,9 @@ msgstr ""
 "Dit opgeslagen spel gebruikt versie %u, maar deze engine ondersteund alleen "
 "tot versie %d. U heeft een nieuwere versie van deze engine nodig om dit "
 "opgeslagen te gebruiken."
+
+#~ msgid "Saved games sync complete."
+#~ msgstr "Klaar met synchronisatie van opgeslagen spellen."
 
 #~ msgid "Loading..."
 #~ msgstr "Laden..."

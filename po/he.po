@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.1.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2019-11-13 08:01+0100\n"
+"POT-Creation-Date: 2019-11-15 19:33+0100\n"
 "PO-Revision-Date: 2019-11-04 06:57+0000\n"
 "Last-Translator: Matan Bareket <mataniko@gmail.com>\n"
 "Language-Team: Hebrew <https://translations.scummvm.org/projects/scummvm/"
@@ -2251,15 +2251,11 @@ msgstr "אמולטור שמע C64"
 msgid "<syncing...>"
 msgstr "<סנכרון ...>"
 
-#: backends/cloud/storage.cpp:232
-msgid "Saved games sync complete."
-msgstr "סנכרון המשחקים השמורים הושלם."
-
-#: backends/cloud/storage.cpp:243
+#: backends/cloud/storage.cpp:242
 msgid "Saved games sync was cancelled."
 msgstr "סנכרון המשחקים השמורים בוטל."
 
-#: backends/cloud/storage.cpp:245
+#: backends/cloud/storage.cpp:244
 msgid ""
 "Saved games sync failed.\n"
 "Check your Internet connection."
@@ -2267,7 +2263,7 @@ msgstr ""
 "סנכרון המשחקים השמורים נכשל.\n"
 "תבדוק את חיבור האינטרנט שלך."
 
-#: backends/cloud/storage.cpp:349
+#: backends/cloud/storage.cpp:348
 #, c-format
 msgid ""
 "Download complete.\n"
@@ -2276,11 +2272,11 @@ msgstr ""
 "ההורדה הושלמה.\n"
 "הורדת קבצי% u נכשלה."
 
-#: backends/cloud/storage.cpp:351
+#: backends/cloud/storage.cpp:350
 msgid "Download complete."
 msgstr "ההורדה הושלמה."
 
-#: backends/cloud/storage.cpp:361
+#: backends/cloud/storage.cpp:360
 msgid "Download failed."
 msgstr "הורדה נכשלה."
 
@@ -5675,3 +5671,6 @@ msgid ""
 msgstr ""
 "משחק שמור זה משתמש בגרסה% u, אך מנוע זה תומך רק עד לגרסה% d. תצטרך גרסה "
 "מעודכנת של המנוע כדי להשתמש במשחק שנשמר זה."
+
+#~ msgid "Saved games sync complete."
+#~ msgstr "סנכרון המשחקים השמורים הושלם."

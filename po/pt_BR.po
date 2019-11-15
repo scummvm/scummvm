@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2019-11-13 08:01+0100\n"
+"POT-Creation-Date: 2019-11-15 19:33+0100\n"
 "PO-Revision-Date: 2019-09-14 12:06+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Portuguese (Brazil) <https://translations.scummvm.org/"
@@ -2335,34 +2335,29 @@ msgstr "Emulador Som C64"
 msgid "<syncing...>"
 msgstr ""
 
-#: backends/cloud/storage.cpp:232
-#, fuzzy
-msgid "Saved games sync complete."
-msgstr "Busca completa!"
-
-#: backends/cloud/storage.cpp:243
+#: backends/cloud/storage.cpp:242
 msgid "Saved games sync was cancelled."
 msgstr ""
 
-#: backends/cloud/storage.cpp:245
+#: backends/cloud/storage.cpp:244
 msgid ""
 "Saved games sync failed.\n"
 "Check your Internet connection."
 msgstr ""
 
-#: backends/cloud/storage.cpp:349
+#: backends/cloud/storage.cpp:348
 #, c-format
 msgid ""
 "Download complete.\n"
 "Failed to download %u files."
 msgstr ""
 
-#: backends/cloud/storage.cpp:351
+#: backends/cloud/storage.cpp:350
 #, fuzzy
 msgid "Download complete."
 msgstr "Busca completa!"
 
-#: backends/cloud/storage.cpp:361
+#: backends/cloud/storage.cpp:360
 #, fuzzy
 msgid "Download failed."
 msgstr "Carregar jogo:"
@@ -5767,6 +5762,10 @@ msgid ""
 "This saved game uses version %u, but this engine only supports up to version "
 "%d. You will need an updated version of the engine to use this saved game."
 msgstr ""
+
+#, fuzzy
+#~ msgid "Saved games sync complete."
+#~ msgstr "Busca completa!"
 
 #, fuzzy
 #~ msgid "Loading..."

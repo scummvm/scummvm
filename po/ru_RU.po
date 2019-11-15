@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2019-11-13 08:01+0100\n"
+"POT-Creation-Date: 2019-11-15 19:33+0100\n"
 "PO-Revision-Date: 2019-11-05 01:55+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Russian <https://translations.scummvm.org/projects/scummvm/"
@@ -2303,15 +2303,11 @@ msgstr "Эмулятор звука C64"
 msgid "<syncing...>"
 msgstr "<Синхронизация ...>"
 
-#: backends/cloud/storage.cpp:232
-msgid "Saved games sync complete."
-msgstr "Синхронизация сохранений игр завершена."
-
-#: backends/cloud/storage.cpp:243
+#: backends/cloud/storage.cpp:242
 msgid "Saved games sync was cancelled."
 msgstr "Синхронизация сохранений игр была прервана."
 
-#: backends/cloud/storage.cpp:245
+#: backends/cloud/storage.cpp:244
 msgid ""
 "Saved games sync failed.\n"
 "Check your Internet connection."
@@ -2319,7 +2315,7 @@ msgstr ""
 "Ошибка синхронизации сохранений игр.\n"
 "Проверьте ваше соединение с Интернетом."
 
-#: backends/cloud/storage.cpp:349
+#: backends/cloud/storage.cpp:348
 #, c-format
 msgid ""
 "Download complete.\n"
@@ -2328,11 +2324,11 @@ msgstr ""
 "Загрузка завершена.\n"
 "Не удалось загрузить %u файлов."
 
-#: backends/cloud/storage.cpp:351
+#: backends/cloud/storage.cpp:350
 msgid "Download complete."
 msgstr "Загрузка завершена."
 
-#: backends/cloud/storage.cpp:361
+#: backends/cloud/storage.cpp:360
 msgid "Download failed."
 msgstr "Ошибка загрузки."
 
@@ -5803,6 +5799,9 @@ msgstr ""
 "Этот файл сохранённой игры имеет версию %u, но движок поддерживает только "
 "версии не выше %d. Для использования этого файла необходима свежая версия "
 "движка."
+
+#~ msgid "Saved games sync complete."
+#~ msgstr "Синхронизация сохранений игр завершена."
 
 #, fuzzy
 #~ msgid "Loading..."

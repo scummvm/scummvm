@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.5.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2019-11-13 08:01+0100\n"
+"POT-Creation-Date: 2019-11-15 19:33+0100\n"
 "PO-Revision-Date: 2019-04-12 13:26+0000\n"
 "Last-Translator: Adrian Frühwirth <bonki@scummvm.org>\n"
 "Language-Team: Swedish <https://translations.scummvm.org/projects/scummvm/"
@@ -2302,15 +2302,11 @@ msgstr "C64 ljudemulator"
 msgid "<syncing...>"
 msgstr "Anslut"
 
-#: backends/cloud/storage.cpp:232
-msgid "Saved games sync complete."
-msgstr "Synkningen av sparade speldata är färdig."
-
-#: backends/cloud/storage.cpp:243
+#: backends/cloud/storage.cpp:242
 msgid "Saved games sync was cancelled."
 msgstr "Synkningen av sparade speldata avbröts."
 
-#: backends/cloud/storage.cpp:245
+#: backends/cloud/storage.cpp:244
 msgid ""
 "Saved games sync failed.\n"
 "Check your Internet connection."
@@ -2318,7 +2314,7 @@ msgstr ""
 "Synkningen av sparade speldata misslyckades. Kontrollera din "
 "internetanslutning."
 
-#: backends/cloud/storage.cpp:349
+#: backends/cloud/storage.cpp:348
 #, c-format
 msgid ""
 "Download complete.\n"
@@ -2327,11 +2323,11 @@ msgstr ""
 "Nedladdningen är färdig.\n"
 "Kunde inte ladda ner %u filer."
 
-#: backends/cloud/storage.cpp:351
+#: backends/cloud/storage.cpp:350
 msgid "Download complete."
 msgstr "Nedladdning färdig."
 
-#: backends/cloud/storage.cpp:361
+#: backends/cloud/storage.cpp:360
 msgid "Download failed."
 msgstr "Nedladdningen misslyckades."
 
@@ -5752,6 +5748,9 @@ msgstr ""
 "Den här sparfilen använder version %u, men spelmotorn har bara stöd för upp "
 "till version %d. Det krävs en uppdaterad version av spelmotorn för att "
 "använda den här sparfilen."
+
+#~ msgid "Saved games sync complete."
+#~ msgstr "Synkningen av sparade speldata är färdig."
 
 #, fuzzy
 #~ msgid "Loading..."

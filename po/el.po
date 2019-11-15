@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2019-11-13 08:01+0100\n"
+"POT-Creation-Date: 2019-11-15 19:33+0100\n"
 "PO-Revision-Date: 2019-11-13 02:03+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
@@ -2344,15 +2344,11 @@ msgstr "Εξομοιωτής Ήχου C64"
 msgid "<syncing...>"
 msgstr "<συγχρονισμός...>"
 
-#: backends/cloud/storage.cpp:232
-msgid "Saved games sync complete."
-msgstr "Ο συγχρονισμός αποθηκευμένων παιχνιδιών ολοκληρώθηκε."
-
-#: backends/cloud/storage.cpp:243
+#: backends/cloud/storage.cpp:242
 msgid "Saved games sync was cancelled."
 msgstr "Ο συγχρονισμός αποθηκευμένων παιχνιδιών ακυρώθηκε."
 
-#: backends/cloud/storage.cpp:245
+#: backends/cloud/storage.cpp:244
 msgid ""
 "Saved games sync failed.\n"
 "Check your Internet connection."
@@ -2360,7 +2356,7 @@ msgstr ""
 "Ο συγχρονισμός αποθηκευμένων παιχνιδιών απέτυχε.\n"
 "Ελέγξτε τη σύνδεσή σας στο Internet."
 
-#: backends/cloud/storage.cpp:349
+#: backends/cloud/storage.cpp:348
 #, c-format
 msgid ""
 "Download complete.\n"
@@ -2369,11 +2365,11 @@ msgstr ""
 "Η μεταφόρτωση ολοκληρώθηκε.\n"
 "Δεν ήταν δυνατή η μεταφόρτωση %u αρχείων."
 
-#: backends/cloud/storage.cpp:351
+#: backends/cloud/storage.cpp:350
 msgid "Download complete."
 msgstr "Η μεταφόρτωση ολοκληρώθηκε."
 
-#: backends/cloud/storage.cpp:361
+#: backends/cloud/storage.cpp:360
 msgid "Download failed."
 msgstr "Η μεταφόρτωση απέτυχε."
 
@@ -5903,6 +5899,9 @@ msgstr ""
 "Αυτό το αποθηκευμένο παιχνίδι χρησιμοποιεί έκδοση %u, αλλά η μηχανή αυτή "
 "υποστηρίζει μόνο μέχρι την έκδοση %d. Θα χρειαστείτε μια ενημερωμένη έκδοση "
 "της μηχανής για να χρησιμοποιήσετε αυτό το αποθηκευμένο παιχνίδι."
+
+#~ msgid "Saved games sync complete."
+#~ msgstr "Ο συγχρονισμός αποθηκευμένων παιχνιδιών ολοκληρώθηκε."
 
 #, fuzzy
 #~ msgid "Loading..."

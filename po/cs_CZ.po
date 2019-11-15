@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.7.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2019-11-13 08:01+0100\n"
+"POT-Creation-Date: 2019-11-15 19:33+0100\n"
 "PO-Revision-Date: 2019-11-02 17:55+0000\n"
 "Last-Translator: Zbynìk Schwarz <zbynek.schwarz@gmail.com>\n"
 "Language-Team: Czech <https://translations.scummvm.org/projects/scummvm/"
@@ -2312,15 +2312,11 @@ msgstr "Emulátor zvuku C64"
 msgid "<syncing...>"
 msgstr "Pøipojit"
 
-#: backends/cloud/storage.cpp:232
-msgid "Saved games sync complete."
-msgstr "Synchronizace ulo¾ených her dokonèena."
-
-#: backends/cloud/storage.cpp:243
+#: backends/cloud/storage.cpp:242
 msgid "Saved games sync was cancelled."
 msgstr "Synchronizace ulo¾ených her byla zru¹ena."
 
-#: backends/cloud/storage.cpp:245
+#: backends/cloud/storage.cpp:244
 msgid ""
 "Saved games sync failed.\n"
 "Check your Internet connection."
@@ -2328,7 +2324,7 @@ msgstr ""
 "Synchronizace ulo¾ených her byla zru¹ena.\n"
 "Zkontrolujte své internetové pøipojení."
 
-#: backends/cloud/storage.cpp:349
+#: backends/cloud/storage.cpp:348
 #, c-format
 msgid ""
 "Download complete.\n"
@@ -2337,11 +2333,11 @@ msgstr ""
 "Stahování dokonèeno.\n"
 "Ne¹lo stáhnout %u souborù."
 
-#: backends/cloud/storage.cpp:351
+#: backends/cloud/storage.cpp:350
 msgid "Download complete."
 msgstr "Stahování dokonèeno."
 
-#: backends/cloud/storage.cpp:361
+#: backends/cloud/storage.cpp:360
 msgid "Download failed."
 msgstr "Sta¾ení selhalo."
 
@@ -5757,6 +5753,9 @@ msgid ""
 msgstr ""
 "Tato ulo¾ená hra je z verze %u, ale nejvy¹¹í verze, které toto jádro "
 "podporuje, je %d. Abyste tuto hru naèetli, musíte získat novìj¹í verzi jádra."
+
+#~ msgid "Saved games sync complete."
+#~ msgstr "Synchronizace ulo¾ených her dokonèena."
 
 #, fuzzy
 #~ msgid "Loading..."

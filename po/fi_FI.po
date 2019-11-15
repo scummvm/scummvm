@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2019-11-13 08:01+0100\n"
+"POT-Creation-Date: 2019-11-15 19:33+0100\n"
 "PO-Revision-Date: 2019-11-13 02:03+0000\n"
 "Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
@@ -2293,15 +2293,11 @@ msgstr "C64 Audio emulaattori"
 msgid "<syncing...>"
 msgstr "<synkronoidaan...>"
 
-#: backends/cloud/storage.cpp:232
-msgid "Saved games sync complete."
-msgstr "Pelitallennusten synkronointi valmis."
-
-#: backends/cloud/storage.cpp:243
+#: backends/cloud/storage.cpp:242
 msgid "Saved games sync was cancelled."
 msgstr "Pelitallennusten synkronointi peruttiin."
 
-#: backends/cloud/storage.cpp:245
+#: backends/cloud/storage.cpp:244
 msgid ""
 "Saved games sync failed.\n"
 "Check your Internet connection."
@@ -2309,7 +2305,7 @@ msgstr ""
 "Pelitallennusten synkronointi ep‰onnistui.\n"
 "Tarkista verkkoyhteytesi."
 
-#: backends/cloud/storage.cpp:349
+#: backends/cloud/storage.cpp:348
 #, c-format
 msgid ""
 "Download complete.\n"
@@ -2318,11 +2314,11 @@ msgstr ""
 "Lataus valmis.\n"
 "%u:n tiedoston lataus ep‰onnistui."
 
-#: backends/cloud/storage.cpp:351
+#: backends/cloud/storage.cpp:350
 msgid "Download complete."
 msgstr "Lataus valmis."
 
-#: backends/cloud/storage.cpp:361
+#: backends/cloud/storage.cpp:360
 msgid "Download failed."
 msgstr "Lataus ep‰onnistui."
 
@@ -5783,6 +5779,9 @@ msgstr ""
 "T‰m‰ pelitallennus k‰ytt‰‰ versiota %u, mutta t‰m‰ pelimoottorin tuki on "
 "vain versioon %d asti. Tarvitset p‰ivitetyn version t‰st‰ pelimoottorista "
 "k‰ytt‰‰ksesi t‰t‰ pelitallennusta."
+
+#~ msgid "Saved games sync complete."
+#~ msgstr "Pelitallennusten synkronointi valmis."
 
 #~ msgid "Loading..."
 #~ msgstr "Ladataan..."
