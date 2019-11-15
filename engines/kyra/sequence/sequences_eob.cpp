@@ -1520,31 +1520,29 @@ void EoBEngine::seq_playFinale() {
 	gui_drawBox(0, 0, 176, 175, guiSettings()->colors.frame1, guiSettings()->colors.frame2, guiSettings()->colors.fill);
 	_txt->printDialogueText(51, _moreStrings[0]);
 
-	if (!checkScriptFlags(0x1FFE)) {
-		_screen->fadeToBlack();
-		return;
-	}
-
-	_txt->printDialogueText(_finBonusStrings[0]);
-	for (int i = 0; i < 6; i++) {
-		_txt->printDialogueText(_finBonusStrings[1]);
-		if (_characters[i].flags & 1)
-			_txt->printDialogueText(_characters[i].name);
-	}
-
-	uint32 password = 0;
-	for (int i = 0; i < 4; i++) {
-		if (!(_characters[i].flags & 1))
-			continue;
-
-		int len = strlen(_characters[i].name);
-		for (int ii = 0; ii < len; ii++) {
-			uint32 c = _characters[i].name[ii];
-			password += (c * c);
+	if (checkScriptFlags(0x1FFE)) {
+		_txt->printDialogueText(_finBonusStrings[0]);
+		for (int i = 0; i < 6; i++) {
+			_txt->printDialogueText(_finBonusStrings[1]);
+			if (_characters[i].flags & 1)
+				_txt->printDialogueText(_characters[i].name);
 		}
+
+		uint32 password = 0;
+		for (int i = 0; i < 4; i++) {
+			if (!(_characters[i].flags & 1))
+				continue;
+
+			int len = strlen(_characters[i].name);
+			for (int ii = 0; ii < len; ii++) {
+				uint32 c = _characters[i].name[ii];
+				password += (c * c);
+			}
+		}
+
+		_txt->printDialogueText(Common::String::format(_finBonusStrings[2], password).c_str(), true);
 	}
 
-	_txt->printDialogueText(Common::String::format(_finBonusStrings[2], password).c_str(), true);
 	_screen->fadeToBlack();
 
 	if (_flags.platform == Common::kPlatformAmiga)
