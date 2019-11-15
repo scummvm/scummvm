@@ -116,7 +116,6 @@ public:
 	bool renderAll();	// return true if rendered or nothing dirty. False otherwise
 	void waitUntilRenderFinished();
 	bool setGraphicsMode(int mode);
-	bool setGraphicsMode(const char *name);
 	int getGraphicsMode() const { return _graphicsMode; }
 	uint32 getDefaultGraphicsMode() const { return FIT_TO_SCREEN; }
 	const OSystem::GraphicsMode* getSupportedGraphicsModes() const { return _supportedModes; }

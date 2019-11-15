@@ -146,7 +146,6 @@ public:
 	virtual bool getFeatureState(Feature f);
 	virtual const GraphicsMode *getSupportedGraphicsModes() const;
 	virtual int getDefaultGraphicsMode() const;
-	bool setGraphicsMode(const char *name);
 	virtual bool setGraphicsMode(int mode);
 	virtual int getGraphicsMode() const;
 	virtual void initSize(uint width, uint height, const Graphics::PixelFormat *format);

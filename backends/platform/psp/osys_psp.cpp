@@ -150,13 +150,6 @@ bool OSystem_PSP::setGraphicsMode(int mode) {
 	return _displayManager.setGraphicsMode(mode);
 }
 
-bool OSystem_PSP::setGraphicsMode(const char *name) {
-	DEBUG_ENTER_FUNC();
-	_displayManager.waitUntilRenderFinished();
-	_pendingUpdate = false;
-	return _displayManager.setGraphicsMode(name);
-}
-
 int OSystem_PSP::getGraphicsMode() const {
 	DEBUG_ENTER_FUNC();
 	return _displayManager.getGraphicsMode();
