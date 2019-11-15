@@ -604,14 +604,23 @@ void GfxScreen::setShakePos(uint16 shakeXOffset, uint16 shakeYOffset) {
 
 void GfxScreen::kernelShakeScreen(uint16 shakeCount, uint16 directions) {
 	while (shakeCount--) {
-		if (directions & kShakeVertical)
-			setShakePos(0, 10);
-		// TODO: horizontal shakes
+
+		uint16 shakeXOffset = 0;
+		if (directions & kShakeHorizontal) {
+			shakeXOffset = 10;
+		}
+
+		uint16 shakeYOffset = 0;
+		if (directions & kShakeVertical) {
+			shakeYOffset = 10;
+		}
+
+		setShakePos(shakeXOffset, shakeYOffset);
+
 		g_system->updateScreen();
 		g_sci->getEngineState()->sleep(3);
 
-		if (directions & kShakeVertical)
-			setShakePos(0, 0);
+		setShakePos(0, 0);
 
 		g_system->updateScreen();
 		g_sci->getEngineState()->sleep(3);
