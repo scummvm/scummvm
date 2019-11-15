@@ -461,6 +461,8 @@ void AmigaSound::playSong(int16 song) {
 	case 195:
 		song = 32;
 		break;
+	default:
+		break;
 	}
 
 	if (_lastOverride != 32 && _lastOverride != 44) {

@@ -813,6 +813,9 @@ void Talk::speakSegment(
 		faceDirectionCommand = command;
 		command = 0;
 		break;
+
+	default:
+		break;
 	}
 
 	bool isJoe = (0 == person->actor->bobNum);
@@ -859,7 +862,8 @@ void Talk::speakSegment(
 				color = isJoe ? 6 : 30;
 			}
 			break;
-		default: // FRANK_HEAD
+		case FRANK_HEAD:
+		default:
 			textX = 150;
 			if (_vm->resource()->getPlatform() == Common::kPlatformAmiga) {
 				color = 17;
@@ -934,6 +938,8 @@ void Talk::speakSegment(
 				break;
 			case SPEAK_FACE_BACK:
 				faceDirection = DIR_BACK;
+				break;
+			default:
 				break;
 			}
 			if (isJoe)

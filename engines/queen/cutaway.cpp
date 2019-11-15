@@ -147,6 +147,8 @@ void Cutaway::load(const char *filename) {
 		case 'B':
 			_vm->logic()->joeCutFacing(DIR_BACK);
 			break;
+		default:
+			break;
 		}
 	}
 
@@ -449,6 +451,8 @@ Cutaway::ObjectType Cutaway::getObjectType(CutawayObject &object) {
 	case -4:
 		// Text to be displayed only (not spoken)
 		objectType = OBJECT_TYPE_TEXT_DISPLAY;
+		break;
+	default:
 		break;
 	}
 

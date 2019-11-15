@@ -514,6 +514,8 @@ int16 Command::executeCommand(uint16 comId, int16 condResult) {
 	case 4:
 		_vm->logic()->joeUseUnderwear();
 		break;
+	default:
+		break;
 	}
 
 	if (_state.subject[0] > 0)
@@ -1227,6 +1229,8 @@ uint16 Command::nextObjectDescription(ObjectDescription* objDesc, uint16 firstDe
 		if (objDesc->lastSeenNumber != objDesc->lastDescription) {
 			++objDesc->lastSeenNumber;
 		}
+		break;
+	default:
 		break;
 	}
 	return objDesc->lastSeenNumber;

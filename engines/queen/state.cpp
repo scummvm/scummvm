@@ -90,6 +90,8 @@ void State::alterOn(uint16 *objState, StateOn state) {
 	case STATE_ON_OFF:
 		*objState &= ~(1 << 8);
 		break;
+	default:
+		break;
 	}
 }
 

@@ -648,6 +648,8 @@ void Logic::setupJoeInRoom(bool autoPosition, uint16 scale) {
 		case DIR_RIGHT:
 			joeFacing(DIR_LEFT);
 			break;
+		default:
+			break;
 		}
 	}
 	joePrevFacing(joeFacing());
@@ -712,6 +714,8 @@ uint16 Logic::joeFace() {
 		case 37:
 			frame = 5;
 			break;
+		default:
+			break;
 		}
 	}
 	pbs->frameNum = 31;
@@ -755,6 +759,8 @@ void Logic::joeGrab(int16 grabState) {
 		_vm->update();
 		// turn back
 		frame = 7;
+		break;
+	default:
 		break;
 	}
 
@@ -1107,6 +1113,8 @@ void Logic::handleSpecialArea(Direction facing, uint16 areaNum, uint16 walkDataN
 			case 1:
 				playCutaway("C50H.CUT", nextCut);
 				break;
+			default:
+				break;
 			}
 		}
 		break;
@@ -1134,6 +1142,8 @@ void Logic::handleSpecialArea(Direction facing, uint16 areaNum, uint16 walkDataN
 		case 2:
 			playCutaway("C73C.CUT");
 			break;
+		default:
+			break;
 		}
 		break;
 	case ROOM_TEMPLE_MAZE_5:
@@ -1156,8 +1166,12 @@ void Logic::handleSpecialArea(Direction facing, uint16 areaNum, uint16 walkDataN
 			case 1:
 				playCutaway("C103E.CUT", nextCut);
 				break;
+			default:
+				break;
 			}
 		}
+		break;
+	default:
 		break;
 	}
 
@@ -1359,6 +1373,8 @@ void Logic::setupRestoredGame() {
 	case 2:
 		_vm->display()->palSetJoeDress();
 		loadJoeBanks("JOED_A.BBK", "JOED_B.BBK");
+		break;
+	default:
 		break;
 	}
 
