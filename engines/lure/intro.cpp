@@ -149,6 +149,7 @@ bool Introduction::show() {
 			break;
 
 		case ABORT_NEXT_SCENE:
+		default:
 			break;
 		}
 		delete anim;

@@ -194,6 +194,8 @@ uint8 Menu::execute() {
 			return MENUITEM_SAVE_GAME;
 		case 3:
 			return MENUITEM_RESTORE_GAME;
+		default:
+			break;
 		}
 	} else {
 		switch (_selectedIndex) {
@@ -203,6 +205,8 @@ uint8 Menu::execute() {
 			return MENUITEM_TEXT_SPEED;
 		case 3:
 			return MENUITEM_SOUND;
+		default:
+			break;
 		}
 	}
 	return MENUITEM_NONE;
