@@ -922,11 +922,13 @@ public:
 	 * not cause any graphic data to be lost - that is, to restore the original
 	 * view, the game engine only has to call this method again with offset
 	 * equal to zero. No calls to copyRectToScreen are necessary.
-	 * @param shakeOffset	the shake offset
+	 * @param shakeXOffset	the shake x offset
+	 * @param shakeYOffset	the shake y offset
 	 *
-	 * @note This is currently used in the SCUMM, QUEEN and KYRA engines.
+	 * @note This is currently used in the SCUMM, QUEEN, KYRA, SCI, DREAMWEB,
+	 * SUPERNOVA, TEENAGENT, and TOLTECS engines.
 	 */
-	virtual void setShakePos(int shakeOffset) = 0;
+	virtual void setShakePos(int shakeXOffset, int shakeYOffset) = 0;
 
 	/**
 	 * Sets the area of the screen that has the focus.  For example, when a character

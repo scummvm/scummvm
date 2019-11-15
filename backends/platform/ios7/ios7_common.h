@@ -80,7 +80,8 @@ struct VideoContext {
 	VideoContext() : asprectRatioCorrection(), screenWidth(), screenHeight(), overlayVisible(false),
 	                 overlayWidth(), overlayHeight(), mouseX(), mouseY(),
 	                 mouseHotspotX(), mouseHotspotY(), mouseWidth(), mouseHeight(),
-	                 mouseIsVisible(), graphicsMode(kGraphicsModeNone), filtering(false), shakeOffsetY() {
+	                 mouseIsVisible(), graphicsMode(kGraphicsModeNone), filtering(false),
+	                 shakeXOffset(), shakeYOffset() {
 	}
 
 	// Game screen state
@@ -103,7 +104,8 @@ struct VideoContext {
 	// Misc state
 	GraphicsModes graphicsMode;
 	bool filtering;
-	int shakeOffsetY;
+	int shakeXOffset;
+	int shakeYOffset;
 };
 
 struct InternalEvent {

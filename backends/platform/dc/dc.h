@@ -145,7 +145,7 @@ public:
   void setCursorPalette(const byte *colors, uint start, uint num);
 
   // Shaking is used in SCUMM. Set current shake position.
-  void setShakePos(int shake_pos);
+  void setShakePos(int shake_x_pos, int shake_y_pos);
 
   // Get the number of milliseconds since the program was started.
   uint32 getMillis(bool skipRecord = false);
@@ -201,7 +201,7 @@ public:
 
   int _ms_cur_x, _ms_cur_y, _ms_cur_w, _ms_cur_h, _ms_old_x, _ms_old_y;
   int _ms_hotspot_x, _ms_hotspot_y, _ms_visible, _devpoll, _last_screen_refresh;
-  int _current_shake_pos, _screen_w, _screen_h;
+  int _current_shake_x_pos, _current_shake_y_pos, _screen_w, _screen_h;
   int _overlay_x, _overlay_y;
   unsigned char *_ms_buf;
   uint32 _ms_keycolor;

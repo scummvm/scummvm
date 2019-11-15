@@ -147,7 +147,7 @@ public:
 	virtual void updateScreen();
 	virtual Graphics::Surface *lockScreen();
 	virtual void unlockScreen();
-	virtual void setShakePos(int shakeOffset);
+	virtual void setShakePos(int shakeXOffset, int shakeYOffset);
 
 	virtual void showOverlay();
 	virtual void hideOverlay();

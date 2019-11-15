@@ -1111,19 +1111,19 @@ bool Scene::processEventQueue() {
 
 		case SceneEvent::kEffect:
 			_vm->_system->delayMillis(80); // 2 vsyncs
-			_vm->_system->setShakePos(8);
+			_vm->_system->setShakePos(0, 8);
 			_vm->_system->updateScreen();
 
 			_vm->_system->delayMillis(80); // 2 vsyncs
-			_vm->_system->setShakePos(0);
+			_vm->_system->setShakePos(0, 0);
 			_vm->_system->updateScreen();
 
 			_vm->_system->delayMillis(80); // 2 vsyncs
-			_vm->_system->setShakePos(4);
+			_vm->_system->setShakePos(0, 4);
 			_vm->_system->updateScreen();
 
 			_vm->_system->delayMillis(80); // 2 vsyncs
-			_vm->_system->setShakePos(0);
+			_vm->_system->setShakePos(0, 0);
 			_vm->_system->updateScreen();
 
 			currentEvent.clear();
