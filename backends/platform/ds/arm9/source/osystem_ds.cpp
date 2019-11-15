@@ -175,11 +175,6 @@ bool OSystem_DS::setGraphicsMode(int mode) {
 	return true;
 }
 
-bool OSystem_DS::setGraphicsMode(const char *name) {
-	consolePrintf("Set gfx mode %s\n", name);
-	return true;
-}
-
 int OSystem_DS::getGraphicsMode() const {
 	return -1;
 }

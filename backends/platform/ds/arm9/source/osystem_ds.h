@@ -87,7 +87,6 @@ public:
 	virtual const GraphicsMode *getSupportedGraphicsModes() const;
 	virtual int getDefaultGraphicsMode() const;
 	virtual bool setGraphicsMode(int mode);
-	bool setGraphicsMode(const char *name);
 	virtual int getGraphicsMode() const;
 	virtual void initSize(uint width, uint height, const Graphics::PixelFormat *format);
 	virtual int16 getHeight();

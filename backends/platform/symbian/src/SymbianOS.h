@@ -37,7 +37,6 @@ public:
 	virtual void quit();
 	virtual void engineInit();
 	virtual void engineDone();
-	virtual bool setGraphicsMode(const char *name);
 	virtual Common::String getDefaultConfigFileName();
 	virtual bool hasFeature(Feature f);
 

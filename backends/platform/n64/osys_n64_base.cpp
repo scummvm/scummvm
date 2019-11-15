@@ -224,22 +224,6 @@ int OSystem_N64::getDefaultGraphicsMode() const {
 	return OVERS_NTSC_340X240;
 }
 
-bool OSystem_N64::setGraphicsMode(const char *mode) {
-	int i = 0;
-	while (s_supportedGraphicsModes[i].name) {
-		if (!scumm_stricmp(s_supportedGraphicsModes[i].name, mode)) {
-			_graphicMode = s_supportedGraphicsModes[i].id;
-
-			switchGraphicModeId(_graphicMode);
-
-			return true;
-		}
-		i++;
-	}
-
-	return true;
-}
-
 bool OSystem_N64::setGraphicsMode(int mode) {
 	_graphicMode = mode;
 	switchGraphicModeId(_graphicMode);
