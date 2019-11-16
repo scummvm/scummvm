@@ -371,8 +371,12 @@ void OSystem_3DS::setShakePos(int shakeXOffset, int shakeYOffset) {
 	// TODO: implement this in overlay, top screen, and mouse too
 	_screenShakeXOffset = shakeXOffset;
 	_screenShakeYOffset = shakeYOffset;
-	_gameTopTexture.setPosition(_gameTopX, _gameTopY + _gameTopTexture.getScaleY() * shakeYOffset);
-	_gameBottomTexture.setPosition(_gameBottomX, _gameBottomY + _gameBottomTexture.getScaleY() * shakeYOffset);
+	int topX = _gameTopX + (_gameTopTexture.getScaleX() * shakeXOffset);
+	int topY = _gameTopY + (_gameTopTexture.getScaleY() * shakeYOffset);
+	_gameTopTexture.setPosition(topX, topY);
+	int bottomX = _gameBottomX + (_gameBottomTexture.getScaleX() * shakeXOffset);
+	int bottomY = _gameBottomY + (_gameBottomTexture.getScaleY() * shakeYOffset);
+	_gameBottomTexture.setPosition(bottomX, bottomY);
 }
 
 void OSystem_3DS::setFocusRectangle(const Common::Rect &rect) {
