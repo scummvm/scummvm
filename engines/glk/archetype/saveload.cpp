@@ -341,11 +341,12 @@ static void walk_expr(MissionType mission, Common::Stream *bfile, ExprTree &the_
 			if (Translating && the_expr->_data._ident.ident_kind == DefaultClassification) {
 				// may have changed meaning
 				get_meaning(the_expr->_data._ident.ident_int, ID_kind, temp);
-				if (ID_kind == UNDEFINED_ID)
+				if (ID_kind == UNDEFINED_ID) {
 					add_undefined(the_expr->_data._ident.ident_int);
-			} else {
-				the_expr->_data._ident.ident_kind = ID_kind;
-				the_expr->_data._ident.ident_int = temp;
+				} else {
+					the_expr->_data._ident.ident_kind = ID_kind;
+					the_expr->_data._ident.ident_int = temp;
+				}
 			}
 
 			writeStream->writeByte(the_expr->_data._ident.ident_kind);
