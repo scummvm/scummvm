@@ -523,16 +523,16 @@ void GriffonEngine::checkHit() {
 
 				bool hit = false;
 				if (_player.walkDir == 0) {
-					if (abs(xdif) <= 8 && ydif >= 0 && ydif < 8)
+					if (ABS(xdif) <= 8 && ydif >= 0 && ydif < 8)
 						hit = true;
 				} else if (_player.walkDir == 1) {
-					if (abs(xdif) <= 8 && ydif <= 0 && ydif > -8)
+					if (ABS(xdif) <= 8 && ydif <= 0 && ydif > -8)
 						hit = true;
 				} else if (_player.walkDir == 2) {
-					if (abs(ydif) <= 8 && xdif >= -8 && xdif < 8)
+					if (ABS(ydif) <= 8 && xdif >= -8 && xdif < 8)
 						hit = true;
 				} else if (_player.walkDir == 3) {
-					if (abs(ydif) <= 8 && xdif <= 8 && xdif > -8)
+					if (ABS(ydif) <= 8 && xdif <= 8 && xdif > -8)
 						hit = true;
 				}
 
@@ -561,7 +561,7 @@ void GriffonEngine::damageNPC(int npcnum, int damage, int spell) {
 		int heal = 0;
 		if (damage < 0)
 			heal = 1;
-		damage = abs(damage);
+		damage = ABS(damage);
 
 		if (heal == 0) {
 			if (damage > _npcInfo[npcnum].hp) {
