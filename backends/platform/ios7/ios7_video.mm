@@ -266,7 +266,8 @@ uint getSizeNextPOT(uint size) {
 - (void)compileShaders {
 	const char *vertexPrg =
 			"uniform vec2 ScreenSize;"
-			"uniform float Shake;"
+			"uniform float ShakeX;"
+			"uniform float ShakeY;"
 			""
 			"attribute vec2 Position;"
 			"attribute vec2 TexCoord;"
@@ -277,7 +278,7 @@ uint getSizeNextPOT(uint size) {
 			"void main(void) {"
 			"	DestColor = vec4(Position.x, Position.y, 0, 1);"
 			"	o_TexCoord = TexCoord;"
-			"	gl_Position = vec4((Position.x / ScreenSize.x) * 2.0 - 1.0, (1.0 - (Position.y + Shake) / ScreenSize.y) * 2.0 - 1.0, 0, 1);"
+			"	gl_Position = vec4(((Position.x + ShakeX) / ScreenSize.x) * 2.0 - 1.0, (1.0 - (Position.y + ShakeY) / ScreenSize.y) * 2.0 - 1.0, 0, 1);"
 			"}";
 
 	const char *fragmentPrg =
@@ -309,7 +310,8 @@ uint getSizeNextPOT(uint size) {
 
 	_screenSizeSlot = (GLuint) glGetUniformLocation(programHandle, "ScreenSize");
 	_textureSlot = (GLuint) glGetUniformLocation(programHandle, "Texture");
-	_shakeSlot = (GLuint) glGetUniformLocation(programHandle, "Shake");
+	_shakeXSlot = (GLuint) glGetUniformLocation(programHandle, "ShakeX");
+	_shakeYSlot = (GLuint) glGetUniformLocation(programHandle, "ShakeY");
 
 	_positionSlot = (GLuint) glGetAttribLocation(programHandle, "Position");
 	_textureCoordSlot = (GLuint) glGetAttribLocation(programHandle, "TexCoord");
@@ -869,9 +871,11 @@ uint getSizeNextPOT(uint size) {
 - (void)setViewTransformation {
 	// Scale the shake offset according to the overlay size. We need this to
 	// adjust the overlay mouse click coordinates when an offset is set.
+	_scaledShakeXOffset = (int)(_videoContext.shakeXOffset / (GLfloat)_videoContext.screenWidth * CGRectGetWidth(_overlayRect));
 	_scaledShakeYOffset = (int)(_videoContext.shakeYOffset / (GLfloat)_videoContext.screenHeight * CGRectGetHeight(_overlayRect));
 
-	glUniform1f(_shakeSlot, _scaledShakeYOffset);
+	glUniform1f(_shakeXSlot, _scaledShakeXOffset);
+	glUniform1f(_shakeYSlot, _scaledShakeYOffset);
 }
 
 - (void)clearColorBuffer {
@@ -910,23 +914,25 @@ uint getSizeNextPOT(uint size) {
 	point.y *= self.contentScaleFactor;
 
 	CGRect *area;
-	int width, height, offsetY;
+	int width, height, offsetX, offsetY;
 	if (_videoContext.overlayVisible) {
 		area = &_overlayRect;
 		width = _videoContext.overlayWidth;
 		height = _videoContext.overlayHeight;
+		offsetX = _scaledShakeXOffset;
 		offsetY = _scaledShakeYOffset;
 	} else {
 		area = &_gameScreenRect;
 		width = _videoContext.screenWidth;
 		height = _videoContext.screenHeight;
+		offsetX = _videoContext.shakeXOffset;
 		offsetY = _videoContext.shakeYOffset;
 	}
 
 	point.x = (point.x - CGRectGetMinX(*area)) / CGRectGetWidth(*area);
 	point.y = (point.y - CGRectGetMinY(*area)) / CGRectGetHeight(*area);
 
-	*x = (int)(point.x * width);
+	*x = (int)(point.x * width + offsetX);
 	// offsetY describes the translation of the screen in the upward direction,
 	// thus we need to add it here.
 	*y = (int)(point.y * height + offsetY);

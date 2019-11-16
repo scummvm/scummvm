@@ -64,7 +64,8 @@ typedef struct {
 
 	GLuint _screenSizeSlot;
 	GLuint _textureSlot;
-	GLuint _shakeSlot;
+	GLuint _shakeXSlot;
+	GLuint _shakeYSlot;
 
 	GLuint _positionSlot;
 	GLuint _textureCoordSlot;
