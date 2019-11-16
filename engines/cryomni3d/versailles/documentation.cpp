@@ -1448,6 +1448,12 @@ void Versailles_Documentation::drawRecordData(Graphics::ManagedSurface &surface,
 		blockContent1 = Common::Rect(60, 80, 351, 345);
 		blockContent2 = Common::Rect(60, 345, 605, 437);
 	}
+	// Fix of overlapping areas for Chinese (as in original binary)
+	if (_engine->getLanguage() == Common::ZH_TWN && !_currentMapLayout) {
+		blockContent1.bottom += 30;
+		blockContent2.top += 30;
+	}
+
 	if (_currentInTimeline) {
 		background = "CHRONO1";
 		foreColor = 241;

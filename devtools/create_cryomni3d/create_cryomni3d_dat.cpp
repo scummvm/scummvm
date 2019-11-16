@@ -55,6 +55,7 @@ DEFINE_GAME_PLATFORM_LANG_FUNCS(Versailles, ALL, DE)
 DEFINE_GAME_PLATFORM_LANG_FUNCS(Versailles, ALL, EN)
 DEFINE_GAME_PLATFORM_LANG_FUNCS(Versailles, ALL, ES)
 DEFINE_GAME_PLATFORM_LANG_FUNCS(Versailles, ALL, IT)
+DEFINE_GAME_PLATFORM_LANG_FUNCS(Versailles, ALL, ZT)
 
 static Parts gamesParts[] = {
 	GAME_PLATFORM_LANG_PART(Versailles, ALL, FR),
@@ -63,6 +64,7 @@ static Parts gamesParts[] = {
 	GAME_PLATFORM_LANG_PART(Versailles, ALL, EN),
 	GAME_PLATFORM_LANG_PART(Versailles, ALL, ES),
 	GAME_PLATFORM_LANG_PART(Versailles, ALL, IT),
+	GAME_PLATFORM_LANG_PART(Versailles, ALL, ZT),
 };
 
 #define CRYOMNI3D_DAT_VER 1 // 32-bit integer

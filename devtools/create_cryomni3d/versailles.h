@@ -82,6 +82,13 @@ static char const *const versaillesBRlocalizedFilenames[] = {
 	"credits.BR",
 	"LEB1_BR.WAV",
 };
+static char const *const versaillesZTlocalizedFilenames[] = {
+	"DIALOG1.TW",
+	"tous_doc.TW",
+	"lien_doc.txt",
+	"credits.TW",
+	"LEB1_GB.WAV",
+};
 
 static char const versaillesFREpilMsg[] = "FELIXFORTUNADIVINUMEXPLORATUMACTUIIT";
 static char const versaillesFREpilPwd[] = "LELOUPETLATETE";
@@ -95,6 +102,8 @@ static char const versaillesESEpilMsg[] = "FELIXFORTUNADIVINUMEXPLORATUMACTUIIT"
 static char const versaillesESEpilPwd[] = "ELZORROYLAGRULLA";
 static char const versaillesITEpilMsg[] = "FELIXFORTUNADIVINUMEXPLORATUMACTUIIT";
 static char const versaillesITEpilPwd[] = "LEANATREEILCANE";
+static char const versaillesZTEpilMsg[] = "FELIXFORTUNADIVINUMEXPLORATUMACTUIIT";
+static char const versaillesZTEpilPwd[] = "FOXANDCRANE";
 
 static char const versaillesFRBombPwd[] = "JEMENVAISMAISLETATDEMEURERATOUJOURS";
 static char const versaillesBRBombPwd[] = "O PODER DE UM REI NAO O TORNA IMORTAL";
@@ -103,6 +112,7 @@ static char const versaillesDEBombPwd[] =
 static char const versaillesENBombPwd[] = "IT IS NOT IN THE POWER OF KINGS TO ATTAIN PERFECTION";
 static char const versaillesESBombPwd[] = "NO ES PODER DE REYES EL ALCANZAR LA PERFECCION";
 static char const versaillesITBombPwd[] = "AI SOVRANI NON E DATO RAGGIUNGERE LA PERFEZIONE";
+static char const versaillesZTBombPwd[] = "IT IS NOT IN THE POWER OF KINGS TO ATTAIN PERFECTION";
 
 #define VERSAILLES_MESSAGES_COUNT 146
 #define VERSAILLES_MESSAGES_COUNT_CJK 151
@@ -1403,6 +1413,863 @@ static char const *const versaillesITpaintings[] = {
 	"\"Ritratto del Principe Palatine e di suo fratello il Principe "
 	"Robert\"\rVan Dyck",                                                 /* 46: 43157 */
 	"\"Cristo calato dalla Croce\"\rCharles Lebrun",                      /* 47: 45260 */
+};
+
+static char const *const versaillesZTmessages[] = {
+	"\xa5\xd8\xab" "e" "\xb8" "T" "\xa4\xee\xb6" "}" "\xb1\xd2\xb3" "o" ""
+	"\xae\xb0\xaa\xf9\xa1" "C",                                           /*   0 */
+	"\xb3" "o" "\xae\xb0\xaa\xf9\xac" "O" ""
+	"\xc2\xea\xb5\xdb\xaa\xba\xa1" "C",                                   /*   1 */
+	"\xb3" "o" "\xae\xb0\xaa\xf9\xac" "O" ""
+	"\xc2\xea\xb5\xdb\xaa\xba\xa1" "C",                                   /*   2 */
+	"\xb3" "o" "\xad\xd3\xc2" "d" "\xa4" "l" "\xac" "O" ""
+	"\xaa\xc5\xaa\xba\xa1" "C",                                           /*   3 */
+	"\xa7" "A" "\xb5" "L" "\xaa" "k" ""
+	"\xb1\xb5\xc4\xb2\xa8\xec\xa8\xba\xad\xd3\xbb\\\xa4" "l" "\xa1" "C",  /*   4 */
+	"\xb3" "o" "\xb4\xca\xbe\xef\xa4" "l" "\xbe\xf0\xa4" "W" "\xa8" "S" ""
+	"\xa6\xb3\xaa" "F" "\xa6\xe8\xa1" "C",                                /*   5 */
+	"\xb3" "o" "\xa4\xa3\xac" "O" "\xbe\xef\xa4" "l" "\xbe\xf0\xa1" "I",  /*   6 */
+	"\xa4\xd3\xb7" "t" "\xa4" "F" "\xa1" "C",                             /*   7 */
+	"\xb3" "o" "\xad\xd3\xa4" "p" "\xbd" "c" "\xa4" "l" "\xa4" "W" ""
+	"\xc2\xea\xa4" "F" "\xa1" "C",                                        /*   8 */
+	"\xa7" "A" "\xa5" "i" "\xa5" "H" "\xa5\xb4\xb6" "}" ""
+	"\xa8\xba\xae\xb0\xaa\xf9\xa1" "C",                                   /*   9 */
+	"\xa7" "A" "\xbb\xdd\xad" "n" "\xa4" "@" "\xa8\xc7\xaa" "F" ""
+	"\xa6\xe8\xa1" "A" "\xa4" "~" ""
+	"\xaf\xe0\xb1\xb5\xc4\xb2\xa8\xec\xac\xb5\xbc" "u" "\xa1" "C",        /*  10 */
+	"\xb3" "o" "\xad\xd3\xaa\xe1\xb2" "~" "\xac" "O" ""
+	"\xaa\xc5\xaa\xba\xa1" "C",                                           /*  11 */
+	"\xb2" "{" "\xa6" "b" "\xa7" "A" "\xa5" "i" "\xa5" "H" "\xb8" "g" ""
+	"\xb9" "L" "\xa4" "F" "\xa1" "C",                                     /*  12 */
+	"\xa7" "A" "\xa8" "S" "\xa6\xb3\xae\xc9\xb6\xa1\xa4" "F" ""
+	"\xb8\xd1\xae" "c" "\xa7\xca\xa1" "I",                                /*  13 */
+	"\xad" "n" "\xac\xdd\xb9\xcf\xb5" "e" "\xa1" "A" "\xb2" "{" "\xa6" ""
+	"b" "\xa4" "]" "\xa4\xd3\xb1\xdf\xa4" "F" "\xa1" "C",                 /*  14 */
+	"\xb5\xa5\xa4" "@" "\xa4" "U" "\xa1" "I" "\xa7\xe2\xa7" "A" ""
+	"\xaa\xba\xbd" "u" "\xaf\xc1\xa5\xe6\xb5\xb9\xaa\xf9\xa9\xd0\xa1" ""
+	"C",                                                                  /*  15 */
+	"\xa7" "A" "\xb7" "p" "\xa4\xa3\xa8\xec\xa8\xba\xb1" "i" ""
+	"\xaf\xc8\xa1" "C",                                                   /*  16 */
+	"\xa9\xb9\xc3\xc4\xbe\xaf\xae" "v" "\xb3" "B" "\xa1" "C",             /*  17 */
+	"\xc4\xb5\xa7" "i" "\xa1" "G" "\xa7" "A" "\xa5" "i" "\xa5" "H" ""
+	"\xab" "e" "\xa9\xb9\xa6\xb9\xbc" "h" ""
+	"\xaa\xba\xb5\xb2\xa7\xf4\xa6" "a" "\xc2" "I" "\xa1" "A" ""
+	"\xa6\xfd\xac" "O" "\xa7" "A" "\xa9" "|" ""
+	"\xa5\xbc\xa7\xb9\xa6\xa8\xa5" "i" "\xa5" "H" "\xc4" "~" ""
+	"\xc4\xf2\xb6" "i" "\xa6\xe6\xb9" "C" ""
+	"\xc0\xb8\xa9\xd2\xbb\xdd\xaa\xba\xa4" "@" ""
+	"\xa4\xc1\xa6\xe6\xb0\xca\xa1" "C" "\xab\xd8\xc4\xb3\xa7" "A" ""
+	"\xb2" "{" "\xa6" "b" "\xb4" "N" "\xc0" "x" "\xa6" "s" "\xb9" "C" ""
+	"\xc0\xb8\xb6" "i" "\xab\xd7\xa1" "C",                                /*  18 */
+	"\xc4\xb5\xa7" "i" "\xa1" "G" "\xa7" "A" "\xa5" "i" "\xa5" "H" ""
+	"\xab" "e" "\xa9\xb9\xa6\xb9\xbc" "h" ""
+	"\xaa\xba\xb5\xb2\xa7\xf4\xa6" "a" "\xc2" "I" "\xa1" "A" ""
+	"\xa6\xfd\xac" "O" "\xa7" "A" "\xa6\xb3\xa5" "i" "\xaf\xe0\xa9" "|" ""
+	"\xa5\xbc\xa7\xb9\xa6\xa8\xa5" "i" "\xa5" "H" "\xc4" "~" ""
+	"\xc4\xf2\xb6" "i" "\xa6\xe6\xb9" "C" ""
+	"\xc0\xb8\xa9\xd2\xbb\xdd\xaa\xba\xa4" "@" ""
+	"\xa4\xc1\xa6\xe6\xb0\xca\xa1" "C" "\xab\xd8\xc4\xb3\xa7" "A" ""
+	"\xb2" "{" "\xa6" "b" "\xb4" "N" "\xc0" "x" "\xa6" "s" "\xb9" "C" ""
+	"\xc0\xb8\xb6" "i" "\xab\xd7\xa1" "C",                                /*  19 */
+	"\xa7" "A" "\xa4\xa3\xaf\xe0\xb1" "a" "\xb5\xdb\xa4" "@" "\xae" "y" ""
+	"\xbc\xd3\xb1\xe8\xa8\xec\xb3" "B" "\xb6" "]" "\xa1" "I",             /*  20 */
+	"\xb3" "o" "\xb8\xcc\xa8" "S" "\xa6\xb3\xa7" "O" "\xaa\xba\xaa" "F" ""
+	"\xa6\xe8\xa1" "C",                                                   /*  21 */
+	"\xa6" "A" "\xa8\xa3\xa1" "I",                                        /*  22 */
+	"\xa4" "Z" "\xba\xb8\xc1\xc9\xa1\xd0\xae" "c" ""
+	"\xa7\xca\xba\xc3\xb6\xb3",                                           /*  23 */
+	"\xb8\xf4\xa9\xf6\xa4" "Q" "\xa5" "|" "\xae" "c" ""
+	"\xa7\xca\xaa\xba\xb3\xb1\xbf\xd1",                                   /*  24 */
+	"\xb0\xd1\xbe\\\xa4\xe5\xa5\xf3\xb0\xcf",                             /*  25 */
+	"           " "\xc4" "~" "\xc4\xf2\xa5\xbb\xa6\xb8\xb9" "C" ""
+	"\xc0\xb8",                                                           /*  26 */
+	"           " "\xb6" "}" "\xa9" "l" "\xb7" "s" "\xb9" "C" ""
+	"\xc0\xb8",                                                           /*  27 */
+	"           " "\xb8\xfc\xa4" "J" "\xb9" "C" "\xc0\xb8\xb6" "i" ""
+	"\xab\xd7",                                                           /*  28 */
+	"           " "\xc0" "x" "\xa6" "s" "\xa5\xbb\xa6\xb8\xb9" "C" ""
+	"\xc0\xb8",                                                           /*  29 */
+	"           " "\xc5\xe3\xa5\xdc\xa6" "r" "\xb9\xf5\xa1" "G" "\xb6" ""
+	"}" "\xb1\xd2",                                                       /*  30 */
+	"           " "\xc5\xe3\xa5\xdc\xa6" "r" "\xb9\xf5\xa1" "G" ""
+	"\xc3\xf6\xb3\xac",                                                   /*  31 */
+	"           " "\xad\xb5\xbc\xd6\xa1" "G" "\xb6" "}" "\xb1\xd2",       /*  32 */
+	"           " "\xad\xb5\xbc\xd6\xa1" "G" "\xc3\xf6\xb3\xac",          /*  33 */
+	"           " "\xb1" "N" "\xa4" "@" ""
+	"\xad\xba\xad\xb5\xbc\xd6\xbd\xc6\xbb" "s" "\xa6\xdc\xb5" "w" ""
+	"\xba\xd0" "(20 Mb)",                                                 /*  34 */
+	"           " "\xb1" "N" ""
+	"\xa9\xd2\xa6\xb3\xad\xb5\xbc\xd6\xbd\xc6\xbb" "s" "\xa6\xdc\xb5" ""
+	"w" "\xba\xd0" "(92 Mb)",                                             /*  35 */
+	"           " "\xa4\xa3\xb1" "N" "\xad\xb5\xbc\xd6\xbd\xc6\xbb" "s" ""
+	"\xa6\xdc\xb5" "w" "\xba\xd0" "(" "\xb1" "qCD" "\xbc\xbd\xa9\xf1" ""
+	")",                                                                  /*  36 */
+	nullptr,                                                              /*  37 */
+	nullptr,                                                              /*  38 */
+	"\xad\xb5\xb6" "q",                                                   /*  39 */
+	"\xc2\xf7\xb6" "}" "\xb9" "C" "\xc0\xb8",                             /*  40 */
+	"",                                                                   /*  41 */
+	"\xb0\xd1\xc6" "[" "\xab\xb0\xb3\xf9",                                /*  42 */
+	"\xbb" "s" "\xa7" "@" "\xb8" "s",                                     /*  43 */
+	"           " "\xc4" "~" "\xc4\xf2\xa5\xbb\xa6\xb8\xb0\xd1\xb3" "X",  /*  44 */
+	"           " "\xc0" "x" "\xa6" "s" "\xa5\xbb\xa6\xb8\xb0\xd1\xb3" ""
+	"X",                                                                  /*  45 */
+	"           " "\xb8\xfc\xa4" "J" "\xb0\xd1\xb3" "X" "\xb6" "i" ""
+	"\xab\xd7",                                                           /*  46 */
+	nullptr,                                                              /*  47 */
+	"           Omni3D" "\xa1" "G" "\xbc\xd0\xb7\xc7",                    /*  48 */
+	"           Omni3D" "\xa1" "G" "\xba" "C" "\xb3" "t",                 /*  49 */
+	"           Omni3D" "\xa1" "G" "\xb7\xa5\xba" "C" "\xb3" "t",         /*  50 */
+	"           Omni3D" "\xa1" "G" "\xa7\xd6\xb3" "t",                    /*  51 */
+	"           Omni3D" "\xa1" "G" "\xb7\xa5\xa7\xd6\xb3" "t",            /*  52 */
+	"\xbd" "T" "\xa9" "w",                                                /*  53 */
+	"\xa8\xfa\xae\xf8",                                                   /*  54 */
+	"\xaa\xc5\xa5\xd5\xc4\xe6\xa6\xec",                                   /*  55 */
+	"\xb5" "L" "\xc0\xc9\xa6" "W",                                        /*  56 */
+	"\xc4\xb5\xa7" "i" "\xa1" "G" ""
+	"\xb7\xc7\xb3\xc6\xa9\xf1\xb1\xf3\xb3" "o" "\xad\xd3\xb9" "C" ""
+	"\xc0\xb8\xa1" "C",                                                   /*  57 */
+	"\xaa\xf0\xa6" "^",                                                   /*  58 */
+	"\xab\xb0\xb3\xf9",                                                   /*  59 */
+	"\xa6" "^" "\xa5" "D" "\xbf\xef\xb3\xe6",                             /*  60 */
+	"\xa4\xe5\xa5\xf3\xb0\xcf\xba" "K" "\xad" "n",                        /*  61 */
+	"\xab\xb0\xb3\xf9\xa4\xce\xaa\xe1\xb6\xe9\xa6" "a" "\xb9\xcf",        /*  62 */
+	"\xab\xb0\xb3\xf9\xa4\xba\xb3\xa1\xb5\xb2\xba" "c" "\xb9\xcf",        /*  63 */
+	"\xb5" "L" "\xaa" "k" "\xbc" "g" "\xa4" "J" "\xb5" "w" ""
+	"\xba\xd0\xa1" "G" "\xb5" "w" "\xba\xd0\xa4" "w" "\xba\xa1",          /*  64 */
+	nullptr,                                                              /*  65 */
+	"\xa9\xf1\xa4" "J" "\xa5\xfa\xba\xd0\xa4\xf9",                        /*  66 */
+	"\xa9\xf1\xa4" "J" "\xb2\xc4" "%d" "\xb1" "i" ""
+	"\xa5\xfa\xba\xd0\xa4\xf9\xa8\xc3\xab\xf6\xa5\xf4\xa4" "@" ""
+	"\xc1\xe4",                                                           /*  67 */
+	"\xc3\xc0\xb3" "N",                                                   /*  68 */
+	"\xb0\xf5\xac" "F" "\xaa\xcc",                                        /*  69 */
+	"\xae" "c" "\xa7\xca\xa4" "H" "\xad\xfb",                             /*  70 */
+	"\xab\xb0\xb3\xf9\xa4\xa4\xaa\xba\xa5\xcd\xac\xa1",                   /*  71 */
+	"\xab\xb0\xb3\xf9\xa4\xce\xaa\xe1\xb6\xe9",                           /*  72 */
+	"\xac\xf6\xa8\xc6\xaa\xed",                                           /*  73 */
+	"\xaa\xfc\xaa" "i" "\xc3\xb9\xbc" "Q" "\xac" "u",                     /*  74 */
+	"\xab\xb0\xb3\xf9",                                                   /*  75 */
+	"\xac" "W" "\xb4" "Y",                                                /*  76 */
+	"\xb0" "g" "\xae" "c",                                                /*  77 */
+	"\xa9\xd4\xc5" "M" "\xae" "R" "\xbc" "Q" "\xac" "u",                  /*  78 */
+	"\xbe\xef\xa4" "l" "\xb7\xc5\xab\xc7",                                /*  79 */
+	"\xa4\xf4\xa6\xc0\xb0\xcf",                                           /*  80 */
+	"\xba\xf1\xbd\xae\xa4" "j" "\xb9" "D",                                /*  81 */
+	"\xa4" "j" "\xb0\xa8\xb4\\",                                          /*  82 */
+	"\xa4" "p" "\xb0\xa8\xb4\\",                                          /*  83 */
+	"\xaa\xe1\xb6\xe9",                                                   /*  84 */
+	"\xab" "e" "\xae" "x",                                                /*  85 */
+	"\xa4" "j" "\xb9" "B" "\xaa" "e",                                     /*  86 */
+	"\xab" "n" "\xaf\xf3\xa9" "W",                                        /*  87 */
+	"\xa5" "_" "\xaf\xf3\xa9" "W",                                        /*  88 */
+	"\xb0\xea\xa4\xfd\xaa\xba\xb5\xe6\xb6\xe9",                           /*  89 */
+	"\xbb" "R" "\xc6" "U",                                                /*  90 */
+	"\xae\xfc\xac" "v" "\xa4\xa7\xac" "u",                                /*  91 */
+	"\xa6" "u" "\xbd\xc3\xa4\xa7\xb4\xf2",                                /*  92 */
+	"\xc0" "@" "\xa4" "l",                                                /*  93 */
+	"\xb0\xc5\xa4" "M",                                                   /*  94 */
+	"\xaf\xc8",                                                           /*  95 */
+	"\xc3\xf6\xa9\xf3\xc3\xc0\xb3" "N" "\xaa\xba\xa4" "p" "\xa5" "U" ""
+	"\xa4" "l",                                                           /*  96 */
+	"\xa4" "p" "\xc6" "_" "\xb0\xcd" "1",                                 /*  97 */
+	"\xa7\xef\xc5\xdc\xb9" "L" "\xaa\xba\xaf\xc8",                        /*  98 */
+	"\xa7\xcb\xc5\xbc\xaa\xba\xaf\xc8",                                   /*  99 */
+	"\xb1" "q" "\xa4" "p" "\xbd" "c" "\xa4" "l" ""
+	"\xb8\xcc\xae\xb3\xa8\xec\xaa\xba\xaf\xc8",                           /* 100 */
+	"\xc3\xf6\xa9\xf3\xac\xd3\xab\xc7\xa6\xe5\xb2\xce\xaa\xba\xa4" "p" ""
+	"\xa5" "U" "\xa4" "l",                                                /* 101 */
+	"\xc2" "I" "\xbf" "U" "\xaa\xba\xc4\xfa\xc0\xeb",                     /* 102 */
+	"\xc4\xfa\xc0\xeb",                                                   /* 103 */
+	"\xc6" "_" "\xb0\xcd" " ",                                            /* 104 */
+	"\xaf\xf3\xb9\xcf\xa7\xa8",                                           /* 105 */
+	"\xaf\xf3\xb9\xcf\xa7\xa8",                                           /* 106 */
+	"\xb0\xb2\xaf\xf3\xb9\xcf",                                           /* 107 */
+	"\xbc\xd3\xb1\xe8",                                                   /* 108 */
+	"\xb3" "Q" "\xaf" "}" "\xc3" "a" "\xaa\xba\xaf\xf3\xb9\xcf",          /* 109 */
+	"\xa8\xea\xa4" "l",                                                   /* 110 */
+	"\xaa\xf7\xa6\xe2\xaa\xba\xa8\xea\xa4" "l",                           /* 111 */
+	"\xac\xf5\xa6\xe2\xaa\xba\xa8\xea\xa4" "l",                           /* 112 */
+	"\xac\xb4\xb5\xa7",                                                   /* 113 */
+	"\xaf\xc8",                                                           /* 114 */
+	"\xc3\xf6\xa9\xf3\xab\xd8\xbf" "v" "\xaa\xba\xa4" "p" "\xa5" "U" ""
+	"\xa4" "l",                                                           /* 115 */
+	"\xa4" "p" "\xc6" "_" "\xb0\xcd" "2",                                 /* 116 */
+	"Archer(useless!)",                                                   /* 117 */
+	"\xbc\xd6\xc3\xd0",                                                   /* 118 */
+	"\xbc\xb2\xb2" "y" "\xb1\xec",                                        /* 119 */
+	"\xb3\\\xa5" "i" "\xb5\xfd\xa9\xfa",                                  /* 120 */
+	"\xbe\xb1\xb3\xb9\xaa\xba\xa6" "A" "\xbb" "s" "\xab" "~",             /* 121 */
+	"\xa9\xf1\xbe\xb1\xb3\xb9\xaa\xba\xc3" "o" "\xc2" "d",                /* 122 */
+	"\xb3" "q" "\xa9\xb9\xaa\xfc\xaa" "i" "\xc3\xb9\xa4" "p" ""
+	"\xaa\xf9\xaa\xba\xc6" "_" "\xb0\xcd",                                /* 123 */
+	"\xad\xb9\xaa\xab",                                                   /* 124 */
+	"\xc3\xf6\xa9\xf3\xa9" "v" "\xb1\xd0\xaa\xba\xa4" "p" "\xa5" "U" ""
+	"\xa4" "l",                                                           /* 125 */
+	"\xb8" "O" "\xa4\xe5",                                                /* 126 */
+	"\xc3\xf6\xa9\xf3\xac" "F" "\xa9\xb2\xaa\xba\xa4" "p" "\xa5" "U" ""
+	"\xa4" "l",                                                           /* 127 */
+	"\xc3" "Z" "\xa4\xf2\xb5\xa7",                                        /* 128 */
+	"\xb3\xc6\xa7\xd1\xbf\xfd",                                           /* 129 */
+	"\xb1\xe6\xbb\xb7\xc3\xe8",                                           /* 130 */
+	"\xa8" "U" "\xa8\xb9\xb3" "]" "\xad" "p" "\xb9\xcf",                  /* 131 */
+	"\xa8" "U" "\xa8\xb9\xb3" "]" "\xad" "p" "\xb9\xcf",                  /* 132 */
+	"\xc3\xb7\xaf\xc1",                                                   /* 133 */
+	"\xc0" "J" "\xaa\xa9",                                                /* 134 */
+	"\xa4" "p" "\xc6" "_" "\xb0\xcd" "3",                                 /* 135 */
+	"\xa4" "p" "\xc6" "_" "\xb0\xcd" "4",                                 /* 136 */
+	"\xab" "K" "\xba\xe0",                                                /* 137 */
+	"\xab\xb0\xb3\xf9\xb3" "]" "\xad" "p" "\xb9\xcf",                     /* 138 */
+	"\xab\xb0\xb3\xf9\xb3" "]" "\xad" "p" "\xb9\xcf",                     /* 139 */
+	"\xbb\xd5\xbc\xd3\xaa\xba\xc6" "_" "\xb0\xcd",                        /* 140 */
+	"\xb4" "J" "\xa8\xa5",                                                /* 141 */
+	"\xb0" "g" "\xae" "c" "\xb3" "]" "\xad" "p" "\xb9\xcf",               /* 142 */
+	"\xa4" "u" "\xa8\xe3",                                                /* 143 */
+	"\xc3\xc4",                                                           /* 144 */
+	"\xba\xb6\xb7\xc0\xc4\xfa\xc0\xeb\xaa\xba\xb0\xc5\xa4" "l",           /* 145 */
+	"Act %d",                                                             /* 146 */
+	"Visit",                                                              /* 147 */
+	/* These ones are not in messages but it's simpler */
+	nullptr,                                                              /* 148/Epigraph */
+	nullptr,                                                              /* 149/Memo */
+	nullptr,                                                              /* 150/Bomb */
+};
+
+static char const *const versaillesZTpaintings[] = {
+	"\"The Animals entering the Ark\"\rGerolamo Bassano",                 /*  0: 41201 */
+	"\"The Supper at Emmaus\"\rJacopo Bassano",                           /*  1: 41202 */
+	"\"Mary Magdalen at the feet of the Christ",                          /*  2: 41203 */
+	"\"Leaving the Ark\"\rGerolamo Bassano",                              /*  3: 41204 */
+	"\"Striking the Rock\"\rJacopo Bassano",                              /*  4: 41205 */
+	"\"The Battle of Arbelles\"\rJoseph Parrocel",                        /*  5: 41301 */
+	"\"Alexander the Great, Vanquisher of Darisu at the battle of "
+	"Arbelles\"\rLe Bourguignon",                                         /*  6: 41302 */
+	"\"The Combat of Leuze\"\rJoseph Parrocel",                           /*  7: 42401 */
+	"\"Saint Cecilia with an angel holding musical notation\"\rIl "
+	"Domenichino",                                                        /*  8: 42901 */
+	"\"Don Francisco of Moncada\"\rVan Dyck",                             /*  9: 42902 */
+	"\"The young John the Baptist\"\rCarracci",                           /* 10: 42903 */
+	"\"Saint Matthew\"\rValentin",                                        /* 11: 42904 */
+	"\"Render unto Caesar\"\rValentin",                                   /* 12: 42905 */
+	"\"Saint Luke\"\rValentin",                                           /* 13: 42906 */
+	"\"The Mystical Marriage of Saint Catherine\"\r Alessandro Turchi",   /* 14: 42907 */
+	"\"The Meeting of the Drinkers\"\rNicolas Tournier",                  /* 15: 42908 */
+	"\"The Fortune-teller\"\rValentin",                                   /* 16: 42909 */
+	"\"King David playing the Harp\"\rIl Domenichino",                    /* 17: 42910 */
+	"\"Mary Magdalen\"\rIl Domenichino",                                  /* 18: 42911 */
+	"\"Self-portrait\"\rVan Dyck",                                        /* 19: 42912 */
+	"\"Saint John the Evangelist\"\r Valentin",                           /* 20: 42913 */
+	"\"Hagar being helped by an angel\"\rGiovanni Lanfranco",             /* 21: 42914 */
+	"\"Saint Mark\"\rValentin",                                           /* 22: 42915 */
+	"\"Meleager with the head of the boar of Calydon at his "
+	"feet\"\rJacques Rousseau",                                           /* 23: 43090 */ /* BUG: Switched */
+	"\"The King in Roman dress\"\rJean Warin",                            /* 24: 43091 */
+	"\"Atalanta\"\rJacques Rousseau",                                     /* 25: 43092 */
+	"\"Aeneas carrying Anchises\"\rSpada",                                /* 26: 43100 */
+	"\"David and Bethsheba\"\rVeronese",                                  /* 27: 43101 */
+	"\"The Flight into Egypt\"\rGuido Reni",                              /* 28: 43102 */
+	"\"Louis XIV on horseback\"\rPierre Mignard",                         /* 29: 43103 */
+	"\"Royal Magnificence and the Progress of the Beaux "
+	"Arts\"\rHouasse",                                                    /* 30: 43104 */
+	"\"The Sacrifice of Iphigeneia\"\rCharles de La Fosse",               /* 31: 43130 */
+	"\"Bust of Louis XIV\"\rsculpted by Bernini",                         /* 32: 43131 */
+	"\"Diana  discovers Endymion in the arms of Morpheus\"\rGabriel "
+	"Blanchard",                                                          /* 33: 43132 */
+	"\"Saint Peter and the Virgin Mary\"\rIl Guercino",                   /* 34: 43140 */
+	"\"The Disciples at Emmaus\"\rVeronese",                              /* 35: 43141 */
+	"\"The Holy Family\"\rVeronese",                                      /* 36: 43142 */
+	"\"Darius' family at the feet of Alexander\"\rCharles LeBrun",        /* 37: 43143 */
+	"\"Saint John the Baptist\"\rRaphael",                                /* 38: 43144 */
+	"\"Marie de Medici\"\rVan Dyck",                                      /* 39: 43150 */
+	"\"Hercules struggling with Achelous\"\rGuido Reni",                  /* 40: 43151 */
+	"\"The Centaur Nessus carrying away Deianeira\"\rGuido Reni",         /* 41: 43152 */
+	"\"Saint Francis of Assissi comforted after receiving the "
+	"stigmata\"\rSeghers",                                                /* 42: 43153 */
+	"\"Thomiris plunging Cyrus' head in blood\"\rRubens",                 /* 43: 43154 */
+	"\"Hercules Slaying the Hydra\"\rGuido Reni",                         /* 44: 43155 */
+	"\"Hercules in flames \"\rGuido Reni",                                /* 45: 43156 */
+	"\"Portrait of the Prince Palatine & his brother Prince "
+	"Robert\"\rVan Dyck",                                                 /* 46: 43157 */
+	"\"Christ being taken down from the cross\"\rCharles Lebrun",         /* 47: 45260 */
+};
+
+static const Subtitle versaillesZTsubtitles[] = {
+	{
+		"a0_vf.hns", {
+			{
+				75, "\xa4" "Z" "\xba\xb8\xc1\xc9\xab\xb0\xb3\xf9\xa1" "@" "\xb4" "N" ""
+				"\xb9\xb3\xa8\xc8\xa8\xaf\xae" "c" "\xb7\xb5\xa1" "@" "\xb1" "N" ""
+				"\xa6" "b" "\xae" "L" "\xa6\xdc\xae\xc9\xa1" "@" "\xb2" "l" ""
+				"\xa4\xf5\xa8" "R" "\xa4\xd1\xa1" "@" "\xa6" "i" ""
+				"\xac\xb0\xa5\xad\xa6" "a"
+			},
+			{180, ""},
+			{
+				210, "\xb0\xea\xa4\xfd\xbb" "{" "\xac\xb0\xb3" "o" "\xac" "O" "\xa4" "@" ""
+				"\xad\xd3\xba\xc6\xa4" "l" "\xaa\xba\xa4\xdb\xb7" "Q" "\xa1" "A" ""
+				"\xa9" "_" "\xab\xe4\xb2\xa7\xb7" "Q" "\xaa\xba\xb5\xb2\xaa" "G" ""
+				"\x85" "."
+			},
+			{
+				260, "\xb0\xa3\xab" "D" "\xa8\xb9\xa5\xd0\xa5\xce\xba\xc9\xa5" "L" ""
+				"\xa9\xd2\xa6\xb3\xaa\xba\xa4" "O" "\xb6" "q" "\xa1" "@" "\xa7" "_" ""
+				"\xab" "h" "\xb3\xa3\xb1" "N" "\xc2" "k" ""
+				"\xa9\xf3\xb5\xea\xaa\xc5\xa1" "@" "\xa6" "]" ""
+				"\xac\xb0\xae\xc9\xb6\xa1\xa5\xbf\xa6" "b" "\xac" "y" "\xb3" "u" ""
+				"\xa1" "@" "\xa7\xda\xa6" "V" "\xa6" "p" "\xac" "P" ""
+				"\xaf\xeb\xb0\xaa\xb6\xc6\xaa\xba\xb0\xea\xa4\xfd\xac" "D" ""
+				"\xbe\xd4\xa1" "@" "\xa5\xce\xb3\xf2\xc2\xb6\xa6" "b" "\xa5" "L" ""
+				"\xb6" "g" "\xb3\xf2\xaa\xba\xb2\xb3\xac" "P" "\xa1" "@" ""
+				"\xa7\xe4\xa5" "X" "\xc1\xbc\xc3" "D" "\xa9" "M" "\xad" "p" ""
+				"\xb9\xba\xa1" "@" "\xa6\xb3\xbc\xd0\xc3" "D" "\xa1" "A" ""
+				"\xa6\xb3\xc0" "Y" "\xba\xfc\xa1" "@" ""
+				"\xc1\xd9\xa6\xb3\xa5\xec\xaf\xc1\xaa\xba\xb4" "J" "\xa8\xa5\xa1" ""
+				"@" "\xa5\xad\xae\xa7\xa7\xda\xbf" "U" "\xbf" "N" "\xaa\xba\xaf" ""
+				"O" "\xa6" "L" "\xa1" "C" "\xa6\xb6\xa4\xf1\xaf" "S" "\xa9" "M" ""
+				"\xb3\xb1\xbf\xd1\xa1" "C"
+			},
+			{
+				450, "\xb3" "o" "\xaa" "F" "\xa6\xe8\xc5\xaa\xb0" "_" ""
+				"\xa8\xd3\xb9\xb3\xac" "O" "\xba\xc6\xa4" "l" "\xaa\xba\xad" "J" ""
+				"\xa8\xa5\xb6\xc3\xbb" "y" "\xa1" "I" "\xb2" "{" "\xa6" "b" ""
+				"\xa7\xda\xa5\xb2\xb6\xb7\xaa" "A" "\xa8\xcd\xb0\xea\xa4\xfd\xa1" ""
+				"A" "\xa9\xd2\xa5" "H" "\xa7\xda\xb5" "L" "\xaa" "k" "\xb3" "B" ""
+				"\xb2" "z" "\xb3" "o" "\xa5\xf3\xa8\xc6\xa1" "C" ""
+				"\xa9\xd4\xb6\xa9\xbc" "w" "\xa1" "A" "\xa7\xda\xad" "n" "\xa7" "A" ""
+				"\xad" "t" "\xb3" "d" "\xbd\xd5\xac" "d" "\xb3" "o" ""
+				"\xa5\xf3\xa8\xc6\xb1\xa1\xa1" "C" "\xa8\xad\xac\xb0\xb9\xec\xae" ""
+				"c" "\xaa\xba\xa8\xcd\xaa\xcc\xa1" "A" "\xa7" "A" "\xa5" "i" "\xa5" ""
+				"H" "\xa6\xdb\xa5\xd1\xa6" "a" "\xa6" "b" "\xae" "c" ""
+				"\xa4\xa4\xa8\xab\xb0\xca\xa1" "C"
+			},
+			{
+				536, "\xa7" "A" "\xa4" "F" "\xb8\xd1\xab\xb0\xb3\xf9\xa1" "A" "\xbb" "{" ""
+				"\xc3\xd1\xb8\xcc\xad\xb1\xaa\xba\xa4" "H" "\xa9" "M" ""
+				"\xa5\xa6\xaa\xba\xc2\xa7\xb8" "`" "\xa1" "C" "\xa6" "b" ""
+				"\xbd\xd5\xac" "d" "\xae\xc9\xa5\xb2\xb6\xb7\xa4\xa3\xc2" "_" ""
+				"\xa6" "a" "\xb0\xdd\xb0\xdd\xc3" "D" "\xa1" "A" "\xa8\xc3\xa6" "b" ""
+				"\xa7\xe4\xa8\xec\xa5\xf4\xa6\xf3\xa5" "i" ""
+				"\xba\xc3\xaa\xba\xa8\xc6\xb1\xa1\xae\xc9\xa6" "V" ""
+				"\xa7\xda\xb3\xf8\xa7" "i" "\xa1" "C"
+			},
+			{
+				622, "\xa6\xfd\xac" "O" "\xad" "n" "\xa4" "p" "\xa4\xdf\xa1" "I" ""
+				"\xa4\xa3\xad" "n" "\xb4\xb2\xa7" "G" "\xc1\xc1\xa8\xa5\xa1" "A" ""
+				"\xbb\xa1\xa6\xb3\xad\xd3\xba\xc6\xa4" "l" "\xa6" "b" ""
+				"\xab\xc2\xaf\xd9\xb0\xea\xa4\xfd\xa1" "I" "\xa5" "B" "\xa7" "A" ""
+				"\xb0\xca\xa7" "@" "\xad" "n" "\xa7\xd6\xa1" "A" "\xa6" "]" ""
+				"\xac\xb0\xa7" "A" "\xa5" "u" "\xa6\xb3\xa4" "@" ""
+				"\xa4\xd1\xaa\xba\xae\xc9\xb6\xa1" "...."
+			},
+			{690, "\xa4" "K" "\xc2" "I" "\xa5" "b" "\xa1" "C"},
+		}
+	}, /* a0_vf.hns */
+	{
+		"a1_vf.hns", {
+			{
+				150, "\xa4" "Z" "\xba\xb8\xc1\xc9\xa1\xd0\xae" "c" ""
+				"\xa7\xca\xba\xc3\xb6\xb3"
+			},
+			{225, ""},
+			{
+				358, "\xb0\xa1\xa4" "U" "\xa1" "A" "\xae\xc9\xb6\xa1\xa8\xec\xa4" "F" ""
+				"\xa1" "C"
+			},
+			{
+				388, "\xb7\xed\xb0\xea\xa4\xfd\xbf\xf4\xa8\xd3\xae\xc9\xa1" "A" ""
+				"\xad\xba\xae" "u" "\xc2\xe5\xa5\xcd\xb9" "F" "\xa5" "i" ""
+				"\xa9\xf8\xc0\xcb\xac" "d" "\xa5" "L" "\xaa\xba\xb0\xb7\xb1" "d" ""
+				"\xa1" "C"
+			},
+			{
+				440, "\xb0\xa1\xa4" "U" "\xba\xce\xb1" "o" "\xa5" "i" "\xa6" "n" "\xa1" ""
+				"H" "\xb7" "|" "\xc4\xb1\xb1" "o" "\xa4\xd3\xbc\xf6\xb6\xdc\xa1" ""
+				"H" "\xc1\xd9\xac" "O" "\xad" "n" "\xa6" "A" "\xab\xf6\xbc\xaf\xa4" ""
+				"@" "\xa4" "U" "\xa1" "H"
+			},
+			{500, "\xc1\xc2\xc1\xc2\xa1" "A" "\xb9" "F" "\xa5" "i" "\xa9\xf8\xa1" "C"},
+			{
+				510, "\xb9" "L" "\xa5" "h" "\xa8\xe2\xad\xd3\xa4\xeb\xa5" "H" ""
+				"\xa8\xd3\xa1" "A" "\xb0\xa1\xa4" "U" "\xaa\xba\xb0\xb7\xb1" "d" ""
+				"\xb1\xa1\xa7\xce\xb3\xa3\xab\xdc\xa8" "}" "\xa6" "n" "\xa1" "C"
+			},
+			{550, ""},
+			{
+				580, "\xb7\xed\xa8\xb9\xa5\xd0\xb2" "M" "\xac" "~" ""
+				"\xb0\xea\xa4\xfd\xaa\xba\xa4\xe2\xae\xc9\xa1" "A" ""
+				"\xac\xd3\xb1\xda\xaa\xba\xa4" "H" "\xa4" "@" "\xa6" "p" ""
+				"\xa9\xb9\xb1" "`" "\xaa\xba\xa6" "b" "\xa8" "C" ""
+				"\xa4\xd1\xa6\xad\xb1\xe1\xa9\xe8\xb9" "F" "\xa6\xb9\xa6" "a" ""
+				"\xa1" "C" "\xac\xd3\xa4\xd3\xa4" "l" "\xa1" "A" ""
+				"\xb0\xea\xa4\xfd\xaa\xba\xa5" "S" "\xa7\xcc\xa1" "A" "\xa5" "H" ""
+				"\xa4\xce\xbd" "q" "\xa6" "]" "\xa4\xbd\xc0\xef\xa1" "A" ""
+				"\xb3\xa3\xab" "e" "\xa8\xd3\xa5\xd8\xb8" "@" ""
+				"\xb0\xea\xa4\xfd\xb0" "_" "\xa8\xad\xa1" "C"
+			},
+			{713, ""},
+			{
+				750, "\xb6\xe2\xa1" "I" "\xab\xc4\xa4" "l" "\xa1" "A" "\xa7" "A" ""
+				"\xa4\xb5\xa4\xd1\xa6\xad\xa4" "W" "\xad" "n" ""
+				"\xa4\xb0\xbb\xf2\xae\xc9\xad\xd4\xa5" "X" "\xb5" "o" "\xa5" "h" ""
+				"\xc2" "y" "\xaf" "T" "\xa9" "O" "\xa1" "H"
+			},
+			{795, ""},
+		}
+	}, /* a1_vf.hns */
+	{
+		"a2_vf.hns", {
+			{
+				60, "\xa4\xa3\xa1" "A" "\xac\xd3\xa5" "S" "\xa1" "C" "\xa7" "A" ""
+				"\xaa\xba\xb2\xca\xb3\xa5\xa4\xe8\xaa" "k" ""
+				"\xa4\xa3\xaf\xe0\xab\xec\xb4" "_" "\xb0\xea\xa4\xba\xaa\xba\xa9" ""
+				"M" "\xa5\xad\xa1" "C"
+			},
+			{
+				74, "\xb7\xed\xb5" "M" "\xa1" "A" "\xb0\xea\xa4\xfd\xa4" "w" "\xb8" "g" ""
+				"\xb4\xa3\xa8\xec\xad" "n" ""
+				"\xac\xa3\xbb\xba\xa7\xf9\xa9\xd4\xb4\xb5\xa5\xfd\xa5\xcd\xab" "e" ""
+				"\xa5" "h" "\xa8\xa3\xa9\xd4\xa5\xb1\xb4\xb5\xa4\xbd\xc0\xef"
+			},
+			{
+				130, "\xa7\xda\xb8\xf2\xa7" "A" "\xab" "O" "\xb5\xfd\xa1" "A" "\xa5" "L" ""
+				"\xb5" "L" "\xaa" "k" ""
+				"\xa8\xa3\xa8\xec\xa9\xd4\xa5\xb1\xb4\xb5\xa4\xbd\xc0\xef\xa1" "C"
+			},
+			{160, ""},
+			{
+				200, "\xb0\xea\xa4\xfd\xb0" "_" "\xa7\xc9\xbf" "d" "\xac" "~" ""
+				"\xa4\xa7\xab\xe1\xa4\xce\xb4\xc2\xa6\xda\xb6" "i" ""
+				"\xbf\xd6\xa4\xa7\xab" "e" "\xa1" "A" "\xb2" "z" "\xbe" "v" "\xae" ""
+				"v" "\xb7" "|" "\xa5\xfd\xac\xb0\xb0\xea\xa4\xfd\xae\xde\xb2" "z" ""
+				"\xa1" "A" "\xc0\xb9\xa4" "W" "\xb5" "u" "\xb0\xb2\xbe" "v" "\xa1" ""
+				"C"
+			},
+			{307, ""},
+			{
+				360, "\xb5" "M" "\xab\xe1\xb0\xea\xa4\xfd\xab" "K" ""
+				"\xb7\xc7\xb3\xc6\xab" "e" "\xa9\xb9\xa4" "j" "\xc6" "U" "\xa1" "A" ""
+				"\xb6" "i" "\xa6\xe6\xb5\xdb\xb3" "T" "\xbb\xf6\xa6\xa1\xa1" "C"
+			},
+			{406, ""},
+			{
+				440, "\xa9" "^" "\xad\xe3\xaa\xba\xb4\xc2\xa6\xda\xad\xcc\xa5" "i" ""
+				"\xa5" "H" "\xb3\xad\xa6\xf1\xb0\xea\xa4\xfd\xa4" "@" "\xa6" "P" ""
+				"\xa8\xc9\xa5\xce\xa4" "p" "\xc2" "I" "\xa4\xdf\xa1" "C"
+			},
+			{
+				520, "\xa8" "C" "\xad\xd3\xa4" "H" ""
+				"\xb3\xa3\xa7\xc6\xb1\xe6\xb0\xea\xa4\xfd\xaf\xe0\xac\xdd\xa5" "L" ""
+				"\xa4" "@" "\xb2\xb4\xa1" "A" "\xb8\xdf\xb0\xdd\xa5" "L" ""
+				"\xaa\xba\xb0\xb7\xb1" "d" ""
+				"\xb1\xa1\xa7\xce\xa8\xc3\xb2\xe2\xc5\xa5\xa9\xce\xb4\xb2\xbc\xbd\xb7\xed\xa4\xd1\xaa\xba\xc1\xc1\xa8\xa5\xa1" ""
+				"C"
+			},
+			{
+				600, "\xb0\xea\xa4\xfd\xa6" "b" "\xa4\xbd\xb2\xb3\xaa\xba\xaa" "`" ""
+				"\xa5\xd8\xa4\xa7\xa4" "U" "\xa1" "A" "\xa7\xea\xba" "t" ""
+				"\xb5\xdb\xa5" "L" "\xa9\xb9\xb1" "`" ""
+				"\xaa\xba\xa8\xa4\xa6\xe2\xa1" "C" "\xa6\xb3\xa4" "H" ""
+				"\xc0\xb0\xa5" "L" "\xab" "c" "\xc5\xbd\xa1" "A" "\xac" "~" "\xc1" ""
+				"y" "\xa1" "A" "\xb5" "M" "\xab\xe1\xb5\xdb\xb8\xcb\xa1" "C"
+			},
+			{679, ""},
+			{
+				815, "\xb5\xdb\xa6" "n" "\xb8\xcb\xab\xe1\xa1" "A" ""
+				"\xb0\xea\xa4\xfd\xab" "K" "\xa6" "^" "\xa8\xec\xa6\xdb\xa4" "v" ""
+				"\xaa\xba\xb9\xec\xab\xc7\xa1" "A" "\xb0\xb5\xa4" "@" ""
+				"\xad\xd3\xc2\xb2\xb5" "u" "\xaa\xba\xa6\xad\xc3\xab\xa1" "C"
+			},
+			{860, ""},
+			{
+				948, "\xc3\xab\xa7" "i" "\xa4\xa7\xab\xe1\xa1" "A" ""
+				"\xb0\xea\xa4\xfd\xb7" "|" "\xc0" "H" "\xb5\xdb\xa9" "x" ""
+				"\xad\xfb\xa1" "A" "\xab" "e" "\xa9\xb9\xc4\xb3\xb7" "|" "\xc6" "U" ""
+				"\xa1" "A" "\xa6" "b" "\xa8\xba\xb8\xcc\xb0" "Q" ""
+				"\xbd\xd7\xb0\xea\xae" "a" "\xa8\xc6\xb0\xc8\xa1" "C"
+			},
+			{1027, ""},
+		}
+	}, /* a2_vf.hns */
+	{
+		"a3_vf.hns", {
+			{
+				30, "\xb5\xdb\xb3" "T" "\xbb\xf6\xa6\xa1\xb5\xb2\xa7\xf4\xab\xe1\xa1" ""
+				"A" "\xb0\xea\xa4\xfd\xab" "K" "\xab" "e" "\xa9\xb9\xc4\xb3\xb7" ""
+				"|" "\xc6" "U" "\xa1" "C" "\xbb" "P" "\xa9" "x" ""
+				"\xad\xfb\xad\xcc\xb3" "B" "\xb2" "z" "\xb0\xea\xae" "a" ""
+				"\xaa\xba\xa8\xc6\xb0\xc8\xa1" "C"
+			},
+			{
+				110, "\xac\xb0\xbd" "T" "\xab" "O" "\xbe\xf7\xb1" "K" "\xa1" "A" ""
+				"\xa9\xd2\xa6\xb3\xaa\xba\xaa\xf9\xb1" "N" "\xb3" "Q" ""
+				"\xa4\xcf\xc2\xea\xa1" "C" "\xa9" "x" "\xad\xfb\xbf" "c" ""
+				"\xa5\xcb\xab" "K" "\xb6" "}" "\xa9" "l" ""
+				"\xb7\xed\xa4\xd1\xaa\xba\xad\xab\xad" "n" "\xc4\xb3\xc3" "D" ""
+				"\xa1" "C"
+			},
+			{211, ""},
+			{280, "\xa6" "U" "\xa6\xec\xa1" "A" "\xbd\xd0\xa7\xa4\xa1" "I"},
+			{
+				290, "\xb0\xea\xa4\xfd\xb7" "|" "\xb6\xc9\xc5\xa5\xa8\xd3\xa6\xdb\xa6" ""
+				"U" "\xa4\xe8\xa4\xa3\xa6" "P" "\xaa\xba\xb7" "N" "\xa8\xa3\xa1" ""
+				"A" "\xb5" "M" "\xab\xe1\xb0\xb5\xa8" "M" "\xa9" "w" "\xa1" "C" ""
+				"\xa5" "L" "\xb3" "q" "\xb1" "`" "\xb7" "|" "\xb1\xb5\xa8\xfc\xa4" ""
+				"j" "\xa6" "h" "\xbc\xc6\xa4" "H" "\xaa\xba\xb7" "N" "\xa8\xa3\xa1" ""
+				"C"
+			},
+			{
+				360, "\xa6" "b" "\xb3" "o" "\xa6" "P" "\xae\xc9\xa1" "A" ""
+				"\xb2\xb3\xb4\xc2\xa6\xda\xa6" "b" "\xa4" "j" "\xc6" "U" ""
+				"\xa4\xa4\xb5\xa5\xad\xd4\xb0\xea\xa4\xfd\xb2" "{" "\xa8\xad\xa1" ""
+				"C"
+			},
+			{411, ""},
+			{
+				440, "\xa6" "U" "\xa6\xec\xa1" "A" "\xb0\xa1\xa4" "U" "\xbe" "r" ""
+				"\xa8\xec\xa1" "C"
+			},
+			{450, ""},
+			{
+				550, "\xb2" "{" "\xa6" "b" "\xac" "O" ""
+				"\xa4\xa4\xa4\xc8\xae\xc9\xa4\xc0\xa1" "C" "\xb0\xea\xa4\xfd\xa5" ""
+				"h" "\xb0\xd1\xa5" "[" "\xc0\xb1\xbc\xbb\xa1" "C" ""
+				"\xb4\xc2\xa6\xda\xa6" "b" "\xa5" "L" ""
+				"\xaa\xba\xab\xe1\xad\xb1\xb1\xc6\xa6\xa8\xa4" "@" "\xa6" "C" ""
+				"\xa1" "C" "\xb0\xea\xa4\xfd\xa6" "b" "\xa4\xfd\xa4" "l" "\xa9" "M" ""
+				"\xa4\xbd\xa5" "D" "\xaa\xba\xb3\xad\xa6" "P" "\xa4" "U" "\xa1" "A" ""
+				"\xac\xef\xb9" "L" "\xa4" "j" "\xc6" "U" "\xa1" "A" "\xab" "e" ""
+				"\xa9\xb9\xb1\xd0\xb0\xf3\xa1" "C"
+			},
+			{687, ""},
+			{
+				728, "\xa6" "p" "\xaa" "G" "\xb0\xa1\xa4" "U" "\xa4\xaf\xb7" "O" "\xa1" ""
+				"A" "\xc4" "@" "\xb7" "N" "\xac\xdd\xac\xdd\xb3" "o" ""
+				"\xa5\xf7\xbd\xd0\xc4" "@" "\xae\xd1\xa1" "A" "\xbd\xd0\xa8" "D" ""
+				"\xb0\xa1\xa4" "U" "\xac\xb0\xa7\xda\xa8\xba\xa6" "b" ""
+				"\xa4\xa3\xa4\xbd\xaa\xba\xbc" "f" "\xa7" "P" "\xa4\xa4\xa1" "A" ""
+				"\xa6\xa8\xac\xb0\xc4\xeb\xac\xb9\xaa\xcc\xaa\xba\xa8\xe0\xa4" "l" ""
+				"\xa6\xf9\xad\xde\xa1" "C"
+			},
+			{
+				805, "\xa7\xda\xad\xcc\xb7" "|" "\xaa" "`" "\xb7" "N" "\xb3" "o" ""
+				"\xa5\xf3\xa8\xc6\xa1" "A" "\xa5\xfd\xa5\xcd\xa1" "A" ""
+				"\xa7\xda\xad\xcc\xb7" "|" "\xaa" "`" "\xb7" "N"
+			},
+			{840, ""},
+			{
+				1060, "\xb0\xea\xa4\xfd\xa6" "b" "\xac\xd3\xae" "a" "\xaa\xf8\xb4" "Y" ""
+				"\xa4\xa4\xaf\xb8\xa9" "w" "\xa1" "A" "\xa4\xfd\xa4" "l" "\xa9" "M" ""
+				"\xa4\xbd\xa5" "D" "\xa8\xcc\xb6\xa5\xbc" "h" ""
+				"\xa5\xfd\xab\xe1\xaf\xb8\xa6" "b" "\xa5" "L" ""
+				"\xaa\xba\xab\xe1\xad\xb1\xa1" "C" "\xb0\xea\xa4\xfd\xc4" "Y" ""
+				"\xb8" "T" "\xa5\xe6\xbd\xcd\xa8\xc3\xad" "n" "\xa8" "D" "\xa5" "L" ""
+				"\xad\xcc\xb0" "@" "\xb7" "q" "\xa1" "C"
+			},
+			{1220, ""},
+		}
+	}, /* a3_vf.hns */
+	{
+		"a4_vf.hns", {
+			{
+				90, "\xa6" "b" "\xc0\xb1\xbc\xbb\xae\xc9\xa1" "A" "\xac\xd3\xae" "a" ""
+				"\xbc" "p" "\xa9\xd0\xaa\xba\xa9" "x" "\xad\xfb\xa1" "A" "\xaf" "N" ""
+				"\xa6\xd7\xa6" "K" "\xa1" "A" "\xc4\xd1\xa5" "]" "\xae" "v" ""
+				"\xb3\xc5\xa9" "M" "\xa5" "L" "\xad\xcc\xaa\xba\xa7" "U" ""
+				"\xa4\xe2\xa5\xbf\xa6\xa3\xb5\xdb\xb7\xc7\xb3\xc6\xc0\\\xc2" "I" ""
+				"\xa1" "C"
+			},
+			{
+				200, "\xb0\xea\xa4\xfd\xaa\xba\xad" "G" "\xa4" "f" "\xab\xdc\xa4" "j" ""
+				"\xa1" "A" "\xa6\xd3\xb0\xea\xa4\xfd\xa8" "S" "\xa6\xb3\xa6" "Y" ""
+				"\xa7\xb9\xaa\xba\xad\xb9\xaa\xab\xab" "h" "\xb7" "|" "\xaf" "d" ""
+				"\xb5\xb9\xa5" "L" "\xa4" "H" "\xad\xb9\xa5\xce\xa1" "A" ""
+				"\xa6\xd3\xa4" "@" "\xaf\xeb\xa4" "H" "\xa4" "]" "\xa4\xa3\xb7" "|" ""
+				"\xac\xdd\xa4\xa3\xb0" "_" "\xa6" "V" "\xbc" "p" ""
+				"\xa9\xd0\xc1\xca\xb6" "R" "\xb3\xd1\xbe" "l" "\xb5\xe6\xc0" "a" ""
+				"\xaa\xba\xa6\xe6\xac\xb0\xa1" "C"
+			},
+			{300, ""},
+			{
+				320, "\xa4\xbd\xb6" "}" "\xa5\xce\xc0\\\xac" "O" "\xa5\xf3\xa4" "j" ""
+				"\xa8\xc6\xa1" "A" ""
+				"\xa9\xd2\xa6\xb3\xaa\xba\xb4\xc2\xa6\xda\xb3\xa3\xb7" "|" ""
+				"\xbb\xb0\xa5" "h" "\xb0\xd1\xa5" "["
+			},
+			{
+				366, "\xa6" "U" "\xa6\xec\xa5\xfd\xa5\xcd\xa1" "A" "\xb0\xa1\xa4" "U" ""
+				"\xa5\xce\xc0\\\xa1" "C"
+			},
+			{393, ""},
+			{
+				610, "\xa5" "u" "\xa6\xb3\xac\xd3\xab\xc7\xaa\xba\xa4" "H" "\xa5" "i" ""
+				"\xa5" "H" "\xa9" "M" "\xb0\xea\xa4\xfd\xa6" "P" "\xa7\xa4\xa1" "A" ""
+				"\xa6\xd3\xa5" "B" "\xa5" "u" "\xa6\xb3\xa4" "k" ""
+				"\xa4\xbd\xc0\xef\xa5" "i" "\xa5" "H" "\xa7\xa4\xa6" "b" "\xa5" "L" ""
+				"\xaa\xba\xad\xb1\xab" "e" "\xa1" "C"
+			},
+			{685, ""},
+			{
+				705, "\xb6\xe2\xa1" "A" "\xab\xc4\xa4" "l" "\xa1" "A" "\xa7" "A" ""
+				"\xb7\xc7\xb3\xc6\xac\xb0\xa7\xda\xad\xcc\xaa\xed\xba" "t" "\xc3" ""
+				"M" "\xb3" "N" "\xb6\xdc\xa1" "H"
+			},
+			{747, ""},
+			{
+				760, "\xa6" "b" "\xa5\xce\xc0\\\xae\xc9\xa1" "A" "\xa6\xb3\xa4" "T" ""
+				"\xb9" "D" "\xb5" "{" "\xa7\xc7\xa1" "A" "\xa8" "C" "\xa4" "@" ""
+				"\xb9" "D" "\xb3\xa3\xa6\xb3\xa4\xbb\xb9" "D" "\xa4\xa3\xa6" "P" ""
+				"\xaa\xba\xb5\xe6\xc0" "a" "\xa1" "G" "\xb4\xf6\xa9" "M" "\xb6" "}" ""
+				"\xad" "G" "\xb5\xe6\xa1" "A" "\xaf" "N" "\xa6\xd7\xa9" "M" "\xc2" ""
+				"I" "\xa4\xdf"
+			},
+			{847, ""},
+		}
+	}, /* a4_vf.hns */
+	{
+		"a5_vf.hns", {
+			{13, "\xc0\\\xab\xe1\xa6\xb3\xa4\xf4\xaa" "G...." "\xa1" "A....."},
+			{36, ""},
+			{
+				90, "\xa4\xa7\xab\xe1\xb0\xea\xa4\xfd\xaa\xe1\xbc\xc6\xa4" "p" ""
+				"\xae\xc9\xaa\xba\xae\xc9\xb6\xa1\xa8\xd3\xb3" "B" "\xb2" "z" ""
+				"\xb0\xea\xae" "a" "\xa8\xc6\xb0\xc8\xa1" "C" "\xa6" "b" "\xb3" "o" ""
+				"\xac" "q" "\xae\xc9\xb6\xa1\xa4\xba\xa1" "A" "\xa5" "L" ""
+				"\xb3\xdf\xc5" "w" "\xa6" "b" "\xb0\xd2\xaf" "S" ""
+				"\xbb\xfa\xa4\xd2\xa4" "H" "\xaa\xba\xa9\xd0\xa4" "l" ""
+				"\xb8\xcc\xbf\xec\xa4\xbd\xa1" "A" ""
+				"\xa6\xb3\xa8\xc7\xae\xc9\xad\xd4\xb7" "|" "\xa6\xb3\xa9" "x" ""
+				"\xad\xfb\xb3\xad\xa6\xf1\xa1" "C"
+			},
+			{
+				200, "\xb3" "o" "\xad\xd3\xbb" "P" "\xa5" "L" "\xaf\xb5\xb1" "K" ""
+				"\xa6\xa8\xb1" "B" "\xa4" "k" "\xa4" "H" "\xaa\xba\xa9\xd0\xa4" "l" ""
+				"\xb8\xcc\xa1" "A" "\xa5" "L" "\xb7" "P" ""
+				"\xa8\xfc\xa8\xec\xa5\xad\xc0" "R" "\xa4\xce\xb7\xc5\xb7" "x" ""
+				"\xa1" "A" "\xb3" "o" "\xa5\xbf\xac" "O" "\xa5" "L" "\xa4" "u" ""
+				"\xa7" "@" "\xae\xc9\xa9\xd2\xbb\xdd\xad" "n" "\xaa\xba\xa1" "C"
+			},
+			{296, ""},
+			{
+				310, "\xb0\xea\xa4\xfd\xa5\xce\xa4" "T" "\xad\xd3\xa4" "p" ""
+				"\xae\xc9\xaa\xba\xae\xc9\xb6\xa1\xb8\xd4\xb2\xd3\xac" "d" ""
+				"\xac\xdd\xa6" "U" "\xb6\xb5\xa8\xc6\xb0\xc8"
+			},
+			{345, ""},
+			{
+				360, "\xb9\xef\xb4\xc2\xa6\xda\xa6\xd3\xa8\xa5\xa1" "A" "\xb3" "o" ""
+				"\xac" "O" "\xa4" "@" "\xa4\xd1\xb7\xed\xa4\xa4\xa5" "L" ""
+				"\xad\xcc\xa4\xa3\xb6\xb7\xb9\xb3\xb0\xea\xa4\xfd\xaa\xba\xbc" "v" ""
+				"\xa4" "l" "\xa4" "@" "\xbc\xcb\xa1" "A" "\xc0" "H" ""
+				"\xae\xc9\xb8\xf2\xb5\xdb\xb0\xea\xa4\xfd\xa8" "C" "\xa4" "@" ""
+				"\xa8" "B" "\xa6\xe6\xb0\xca\xaa\xba\xae\xc9\xa8\xe8\xa1" "C"
+			},
+			{
+				460, "\xa6\xb3\xa8\xc7\xa4" "H" "\xaa\xb1\xb5" "P" "\xa1" "C" "\xb5" "P" ""
+				"\xae\xe0\xa5" "i" "\xa5" "H" "\xb4\xa3\xa8\xd1\xa4" "@" ""
+				"\xa8\xc7\xa6\xac\xa4" "J" "\xa1" "A" "\xa6\xb3\xa8\xc7\xa4" "H" ""
+				"\xb7" "|" "\xb2" "@" "\xa4\xa3\xb5" "S" "\xbf\xdd\xa6" "a" "\xab" ""
+				"_" "\xb5\xdb\xa5\xa2\xc3" "d" "\xaa\xba\xa6" "M" "\xc0" "I" "\xa5" ""
+				"X" "\xa6\xd1\xa4" "d" "\xa1" "C"
+			},
+			{560, ""},
+			{
+				665, "\xa8\xe4\xa5" "L" "\xa4" "H" "\xab" "h" "\xb1" "q" "\xa8\xc6\xa4" ""
+				"@" "\xa8\xc7\xbb\xdd\xad" "n" ""
+				"\xa7\xde\xa5\xa9\xaa\xba\xac\xa1\xb0\xca\xa1" "A" "\xa6" "p" ""
+				"\xbc\xb2\xb2" "y" "\xb5\xa5\xa1" "C" "\xa6\xfd\xac" "O" "\xa4" "~" ""
+				"\xb5\xd8\xac" "v" "\xb7\xb8\xaa\xba\xb9\xef\xb8\xdc\xac" "O" ""
+				"\xa4" "Z" "\xba\xb8\xb6\xeb\xae" "c" ""
+				"\xa4\xa4\xb3\xcc\xa8\xfc\xb3\xdf\xb7" "R" "\xaa\xba\xae" "T" ""
+				"\xbc\xd6"
+			},
+			{766, ""},
+		}
+	}, /* a5_vf.hns */
+	{
+		"a6_vf.hns", {
+			{
+				45, "\xb1\xb5\xaa\xf1\xa4" "U" "\xa4\xc8\xa4\xad\xc2" "I" ""
+				"\xc4\xc1\xaa\xba\xae\xc9\xad\xd4\xa1" "A" "\xb5\xb2\xa7\xf4\xa4" ""
+				"@" "\xa4\xd1\xaa\xba\xa4" "u" "\xa7" "@" "\xa1" "A" ""
+				"\xb0\xea\xa4\xfd\xb7" "|" ""
+				"\xa8\xec\xaa\xe1\xb6\xe9\xb8\xcc\xb4\xb2\xa8" "B" ""
+				"\xa8\xc3\xb0\xd1\xc6" "[" "\xa6" "U" "\xad\xd3\xae" "x" "\xb0" "| "
+				""
+			},
+			{
+				90, "..." "\xa5" "L" "\xa5" "[" "\xa4" "J" "\xa6" "b" "\xa4" "j" "\xb2" ""
+				"z" "\xa5\xdb\xae" "x" "\xb0" "|" "\xb5\xa5\xad\xd4\xa5" "L" ""
+				"\xaa\xba\xb4\xc2\xa6\xda\xa1" "C"
+			},
+			{160, ""},
+			{
+				170, "\xa5" "u" "\xa6\xb3\xc0\xf2\xb1" "o" "\xaf" "S" ""
+				"\xb3\\\xaa\xba\xa4" "H" "\xa4" "~" "\xaf\xe0\xbb" "P" ""
+				"\xb0\xea\xa4\xfd\xa4" "@" "\xa6" "P" "\xb4\xb2\xa8" "B" "\xa1" "C"
+			},
+			{208, ""},
+			{
+				295, "\xa4" "H" "\xb8" "s" "\xac\xef\xb9" "L" "\xa7" "C" "\xaa\xf8\xb4" ""
+				"Y" "\xa1" "A" "\xa8\xab\xa6" "V" "\xae" "x" "\xb0" "|" "\xa1" "A" ""
+				"\xb5" "M" "\xab\xe1\xab" "e" ""
+				"\xa9\xb9\xa4\xf4\xa6\xc0\xaf\xf3\xa9" "W" "\xa1" "A" "\xa6" "b" ""
+				"\xa8\xba\xb8\xcc\xb0\xea\xa4\xfd\xb3\xdf\xc5" "w" "\xaa\xe1\xa4" ""
+				"@" "\xa8\xc7\xae\xc9\xb6\xa1\xaa" "Y" ""
+				"\xbd\xe0\xab\xb0\xb3\xf9\xaa\xba\xb4\xba\xc6" "[" "\xa1" "C"
+			},
+			{
+				430, "\xb1" "q" "\xbe\xef\xb6\xe9\xa8\xec\xac" "W" "\xb4" "Y" "\xa1" "A" ""
+				"\xb0\xea\xa4\xfd\xa5" "J" "\xb2\xd3\xb9\xee\xac\xdd\xa8" "C" ""
+				"\xb6\xb5\xa4" "u" "\xa7" "@" "\xb6" "i" ""
+				"\xa6\xe6\xa4\xa4\xaa\xba\xb1\xa1\xa7\xce\xa1" "C"
+			},
+			{492, ""},
+			{
+				945, "\xb0\xd1\xb3" "X" "\xa6" "b" "\xa4" "p" ""
+				"\xab\xc2\xa5\xa7\xb4\xb5\xb5\xb2\xa7\xf4\xa1" "C" ""
+				"\xb0\xea\xa4\xfd\xb1" "q" "\xb9" "D" "\xa9" "_" ""
+				"\xab\xb0\xa7\xe4\xa8\xd3\xa5\xad\xa9\xb3\xb2\xee\xaa\xba\xb2\xee\xa4\xd2\xa1" ""
+				"A" "\xa6" "b" "\xa4\xd1\xae\xf0\xa8" "}" "\xa6" "n" ""
+				"\xaa\xba\xae\xc9\xad\xd4\xa1" "A" "\xa5" "L" "\xad\xcc\xb4" "N" ""
+				"\xb7" "|" "\xb1" "a" "\xb5\xdb\xae" "c" "\xa7\xca\xaa\xba\xa4" "H" ""
+				"\xa6" "b" "\xb9" "B" "\xaa" "e" "\xa4" "W" "\xaf\xe8\xa6\xe6\xa1" ""
+				"C"
+			},
+		}
+	}, /* a6_vf.hns */
+	{
+		"a7_vf.hns", {
+			{
+				40, "\xa6" "b" "\xae" "L" "\xa4\xd1\xb1\xdf\xa4" "W" "\xa1" "A" ""
+				"\xb2\xb3\xa4" "H" "\xac\xd2\xaa\xbe\xad" "n" "\xa6" "b" ""
+				"\xaa\xe1\xb6\xe9\xaa\xba\xa4" "p" "\xbe\xf0\xc2" "O" ""
+				"\xb6\xa1\xa5\xce\xab" "K" "\xc0\\\xa8\xd3\xa8\xfa\xa5" "N" ""
+				"\xb1\xdf\xc0\\\xa1" "C"
+			},
+			{107, ""},
+			{
+				198, "\xb5" "M" "\xab\xe1\xa1" "A" "\xb7\xed\xa9" "]" ""
+				"\xb1\xdf\xa8\xd3\xc1" "{" "\xae\xc9\xa1" "A" ""
+				"\xa9\xd2\xa6\xb3\xa4" "H" "\xb3\xa3\xa6" "^" ""
+				"\xab\xb0\xb3\xf9\xb0\xd1\xa5" "[" "\xb0\xea\xa4\xfd\xaa\xba\xb4" ""
+				"N" "\xb9\xec\xbb\xf6\xa6\xa1\xa1" "C"
+			},
+			{245, ""},
+			{
+				355, "\xa4" "k" "\xa4" "h" "\xa4\xa3\xaf\xe0\xb0\xd1\xa5" "[" ""
+				"\xb0\xea\xa4\xfd\xaa\xba\xb4" "N" "\xb9\xec\xbb\xf6\xa6\xa1\xa1" ""
+				"A" "\xa4" "]" "\xa4\xa3\xb7" "|" "\xc0\xf2\xc1\xdc\xb0\xd1\xa5" ""
+				"[" "\xb0" "_" "\xa7\xc9\xa9" "M" "\xb5\xdb\xb3" "T" "\xc2\xa7\xa1" ""
+				"C" "\xb0\xea\xa4\xfd\xa5" "l" "\xb6\xb0\xa6" "o" "\xad\xcc\xab" ""
+				"e" "\xa9\xb9\xa4" "j" "\xc6" "U" "\xa1" "A" "\xa6" "V" "\xa6" "o" ""
+				"\xad\xcc\xb9" "D" "\xb1\xdf\xa6" "w" "\xa1" "C"
+			},
+			{442, ""},
+			{
+				454, "\xa4" "k" "\xa4" "h" "\xad\xcc\xa1" "A" "\xa7\xc6\xb1\xe6\xa6" "b" ""
+				"\xb3" "o" "\xa9" "]" "\xb1\xdf\xae\xc9\xa4\xc0\xa1" "A" "\xac" "O" ""
+				"\xbe" "A" "\xa6" "X" "\xa7" "A" ""
+				"\xad\xcc\xa5\xf0\xae\xa7\xaa\xba\xae\xc9\xb6\xa1\xa1" "C"
+			},
+			{512, ""},
+			{
+				647, "\xb5" "M" "\xab\xe1\xb4" "N" "\xb9\xec\xbb\xf6\xa6\xa1\xab" "K" ""
+				"\xa5\xbf\xa6\xa1\xb6" "}" "\xa9" "l" "\xa1" "C" "\xa6\xad\xa4" "W" ""
+				"\xb0\xd1\xa5" "[" "\xb5\xdb\xb3" "T" ""
+				"\xc2\xa7\xaa\xba\xb4\xc2\xa6\xda\xa5\xb2\xb5" "M" "\xb7" "|" ""
+				"\xa8\xd3\xb0\xd1\xa5" "[" "\xb4" "N" ""
+				"\xb9\xec\xbb\xf6\xa6\xa1\xa1" "C"
+			},
+			{722, ""},
+			{
+				733, "\xad" "n" "\xbd\xd0\xbd\xd6\xb0\xf5\xc0\xeb\xa9" "O" "\xa1" "A" ""
+				"\xb0\xa1\xa4" "U" "\xa1" "H"
+			},
+			{763, ""},
+			{
+				925, "\xb0\xea\xa4\xfd\xa8" "C" "\xa4\xd1\xaa\xba\xa6\xe6\xb0\xca\xac" ""
+				"O" "\xa4" "@" "\xba\xd8\xac\xb0\xb0\xaa\xa9" "|" ""
+				"\xaa\xba\xaa\xed\xb2" "{" "\xa1" "C" "\xa6" "b" "\xa5" "L" "\xa4" ""
+				"W" "\xa7\xc9\xae\xc9\xac\xb0\xa5" "L" ""
+				"\xae\xb3\xc4\xfa\xc0\xeb\xaa\xba\xc5" "v" "\xa7" "Q" "\xa1" "A" ""
+				"\xb7" "|" "\xbd\xe7\xb5\xb9\xa6" "a" "\xa6\xec\xaf" "S" ""
+				"\xae\xed\xaa\xba\xa4" "H" "\xa1" "A" "\xb3" "q" "\xb1" "`" "\xac" ""
+				"O" "\xa8\xd3\xb3" "X" "\xaa\xba\xa5" "~" "\xbb\xab"
+			},
+			{1048, ""},
+			{
+				1060, "\xa6" "]" "\xa6\xb9\xa5" "L" "\xb4" "N" "\xc0\xf2\xb1" "o" ""
+				"\xb3\xad\xa6\xf1\xb0\xea\xa4\xfd\xab" "e" "\xa9\xb9\xb9\xec\xae" ""
+				"c" "\xaa\xba\xc5" "v" "\xa7" "Q" "\xa1" "C"
+			},
+			{1100, ""},
+			{
+				1115, "\xa6\xfd\xac" "O" "\xa1" "A" "\xb4" "N" "\xa6" "b" "\xb3" "o" ""
+				"\xa4\xd1\xb1\xdf\xa4" "W...."
+			},
+			{1135, ""},
+			{
+				1188, "\xa4\xf5\xa1" "I" "\xa4\xf5\xa1" "I" "\xa9\xd4\xb6\xa9\xbc" "w" ""
+				"\xa1" "A" "\xb9" "L" "\xa8\xd3\xa1" "A" "\xaa\xfd\xa4\xee\xb3" "o" ""
+				"\xad\xd3\xba\xc6\xa4" "l" "\xa1" "I"
+			},
+			{
+				1230, " " "\xa6" "U" "\xa6\xec\xa1" "A" "\xa5" "v" "\xa5" "[" ""
+				"\xa9\xac\xb7\xe7\xa9\xd4\xab" "J" "\xc0\xef\xa6" "V" "\xa4" "j" ""
+				"\xae" "a" "\xb9" "D" "\xb1\xdf\xa6" "w" "\xa1" "C"
+			},
+		}
+	}, /* a7_vf.hns */
+	{
+		"a8_vf.hns", {
+			{
+				212, "\xa7" "Y" "\xa8\xcf\xac" "O" "\xa6" "b" "\xb9\xda\xa4\xa4\xa1" "A" ""
+				"\xbd\xd6\xaf\xe0\xb1\xb5\xa8\xfc\xa4" "@" "\xad\xd3\xba\xc6\xa4" ""
+				"l" "\xb3\xba\xb5" "M" "\xaf\xe0\xb0\xf7\xb7\xb4\xb1\xbc\xb3" "o" ""
+				"\xae" "y" "\xab\xb0\xb3\xf9\xa9" "O" "\xa1" "H" "\xa6" "A" ""
+				"\xb8\xd5\xa4" "@" "\xa6\xb8\xa7" "a" "\xa1" "I" "\xb2" "{" "\xa6" ""
+				"b" "\xa4\xa3\xb0\xb5\xa1" "A" "\xb4" "N" "\xa5\xc3\xbb\xb7\xa8" ""
+				"S" "\xa6\xb3\xbe\xf7\xb7" "|" "\xa4" "F" "\xa1" "C"
+			},
+			{320, ""},
+		}
+	}, /* a8_vf.hns */
+	{
+		"a9_vf.hns", {
+			{
+				30, "\xa9\xd4\xb6\xa9\xbc" "w" "\xa1" "A" "\xa7\xda\xa4" "w" "\xb8" "g" ""
+				"\xa6" "V" "\xb0\xea\xa4\xfd\xb3\xf8\xa7" "i" "\xa7" "A" ""
+				"\xbc\xf6\xa4\xdf\xb3" "B" "\xb2" "z" "\xb3" "o" ""
+				"\xa5\xf3\xa8\xc6\xaa\xba\xba" "A" "\xab\xd7\xa4" "F" "\xa1" "C" ""
+				"\xb0\xea\xa4\xfd\xad" "n" "\xa7\xda\xa6" "V" "\xa7" "A" ""
+				"\xaa\xed\xa5\xdc\xb7" "q" "\xb7" "N" "\xa1" "C"
+			},
+			{125, ""},
+			{
+				200, "\xa8\xb9\xa5\xd0\xa5\xfd\xa5\xcd\xa7" "i" "\xb6" "D" ""
+				"\xa7\xda\xad\xcc\xa9\xd2\xa6\xb3\xa7" "A" "\xb8" "g" ""
+				"\xbe\xfa\xb9" "L" "\xaa\xba\xa8\xc6\xa1" "C"
+			},
+			{
+				300, "\xa7\xda\xa5\xad\xc0" "R" "\xa6" "a" "\xac\xdd\xb5\xdb\xb3" "o" ""
+				"\xa4\xa3\xa5\xad\xa4" "Z" "\xaa\xba\xa4" "@" ""
+				"\xa4\xd1\xb5\xb2\xa7\xf4\xa1" "A" ""
+				"\xa5\xa6\xc0\xb3\xb8\xd3\xa9\xf1\xa6" "b" ""
+				"\xa4\xeb\xa5\xfa\xa4\xa7\xa4" "U" "\xa1" "A" ""
+				"\xa6\xd3\xa4\xa3\xac" "O" "\xa9\xf1\xa6" "b" ""
+				"\xb6\xa7\xa5\xfa\xa4\xa7\xa4" "U" "\xa1" "C"
+			},
+			{
+				400, "\xc1\xd9\xac" "O" "\xa6\xb3\xa4" "@" ""
+				"\xa8\xc7\xaf\xab\xaf\xb5\xa5\xbc\xb8\xd1\xa1" "C" "\xa6\xfd\xac" ""
+				"O" "\xa1" "A" "\xa5\xfd\xa5\xcd\xa1" "A" "\xb5" "L" "\xbd\xd7\xa7" ""
+				"A" "\xa8\xec\xa8\xba\xb8\xcc\xa1" "A" "\xa7" "A" "\xb3\xa3\xb0" ""
+				"t" "\xba\xd9\xac\xb0\xac" "O" "\xa7\xda\xad\xcc\xaa\xba\xaf" "S" ""
+				"\xa8\xcf\xa1" "C"
+			},
+			{515, ""},
+		}
+	}, /* a9_vf.hns */
 };
 
 #endif

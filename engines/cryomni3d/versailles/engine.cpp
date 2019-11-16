@@ -277,6 +277,23 @@ void CryOmni3DEngine_Versailles::setupFonts() {
 	// Fonts loaded are not always the same: FR Mac and EN DOS don't use the same font for debug doc/unused
 	// The important is that the loaded one is present in all versions
 
+	if (getLanguage() == Common::ZH_TWN) {
+		fonts.push_back("tw13.CRF"); // 0: Doc titles
+		fonts.push_back("tw18.CRF"); // 1: Menu and T0 in credits
+		fonts.push_back("tw13.CRF"); // 2: T1 and T3 in credits
+		fonts.push_back("tw12.CRF"); // 3: Menu title, options messages boxes buttons
+		fonts.push_back("tw12.CRF"); // 4: T2 in credits, text in docs
+		fonts.push_back("tw12.CRF"); // 5: objects description in toolbar, options messages boxes text, T4 in credits
+		fonts.push_back("tw12.CRF"); // 6: T5 in credits, doc subtitle
+		fonts.push_back("tw12.CRF"); // 7: dialogs texts
+		fonts.push_back("tw12.CRF"); // 8: unused
+		fonts.push_back("tw12.CRF"); // 9: Warp messages texts
+		fonts.push_back("tw12.CRF"); // 10: debug
+
+		_fontManager.loadFonts(fonts, Common::kWindows950);
+		return;
+	}
+
 	// Code below is for SBCS encodings (ie. non CJK)
 	uint8 fontsSet = getFeatures() & GF_VERSAILLES_FONTS_MASK;
 	switch (fontsSet) {
@@ -361,7 +378,9 @@ void CryOmni3DEngine_Versailles::setupFonts() {
 void CryOmni3DEngine_Versailles::setupSprites() {
 	Common::File file;
 
-	if (!file.open("all_spr.bin")) {
+	Common::String fName = getLanguage() == Common::ZH_TWN ? "allsprtw.bin" : "all_spr.bin";
+
+	if (!file.open(fName)) {
 		error("Failed to open all_spr.bin file");
 	}
 	_sprites.loadSprites(file);
