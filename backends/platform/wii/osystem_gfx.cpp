@@ -546,6 +546,7 @@ void OSystem_Wii::unlockScreen() {
 
 void OSystem_Wii::setShakePos(int shakeXOffset, int shakeYOffset) {
 	gfx_coords(&_coordsGame, &_texGame, GFX_COORD_FULLSCREEN);
+	_coordsGame.x -= f32(shakeXOffset) * _currentXScale;
 	_coordsGame.y -= f32(shakeYOffset) * _currentYScale;
 }
 
