@@ -176,7 +176,7 @@ void EoBCoreEngine::killMonster(EoBMonsterInPlay *m, bool giveExperience) {
 	int pos = (m->pos == 4) ? rollDice(1, 4, -1) : m->pos;
 
 	if (m->randItem) {
-		if (rollDice(1, 10, 0) == 1)
+		if (rollDice(1, _flags.gameID == GI_EOB1 ? 2 : 10, 0) == 1)
 			setItemPosition((Item *)&_levelBlockProperties[m->block & 0x3FF].drawObjects, m->block, duplicateItem(m->randItem), pos);
 	}
 
