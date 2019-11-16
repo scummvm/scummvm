@@ -160,7 +160,7 @@ void Screen::init() {
 void Screen::setShakePos(int shakeXOffset, int shakeYOffset) {
 	_shakeXOffset = shakeXOffset;
 	_shakeYOffset = shakeYOffset;
-	_renderer.setOffsetOnScreen(0, shakeYOffset);
+	_renderer.setOffsetOnScreen(shakeXOffset, shakeYOffset);
 	setDirty();
 }
 
