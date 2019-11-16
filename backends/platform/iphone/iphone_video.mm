@@ -568,10 +568,11 @@ const char *iPhone_getDocumentsDir() {
 
 	// Scale the shake offset according to the overlay size. We need this to
 	// adjust the overlay mouse click coordinates when an offset is set.
+	_scaledShakeXOffset = (int)(_videoContext.shakeXOffset / (GLfloat)_videoContext.screenWidth * CGRectGetWidth(_overlayRect));
 	_scaledShakeYOffset = (int)(_videoContext.shakeYOffset / (GLfloat)_videoContext.screenHeight * CGRectGetHeight(_overlayRect));
 
 	// Apply the shaking to the output screen.
-	glTranslatef(0, -_scaledShakeYOffset, 0);
+	glTranslatef(_scaledShakeXOffset, -_scaledShakeYOffset, 0);
 }
 
 - (void)clearColorBuffer {
@@ -637,23 +638,25 @@ const char *iPhone_getDocumentsDir() {
 		return false;
 
 	CGRect *area;
-	int width, height, offsetY;
+	int width, height, offsetX, offsetY;
 	if (_videoContext.overlayVisible) {
 		area = &_overlayRect;
 		width = _videoContext.overlayWidth;
 		height = _videoContext.overlayHeight;
+		offsetX = _scaledShakeXOffset;
 		offsetY = _scaledShakeYOffset;
 	} else {
 		area = &_gameScreenRect;
 		width = _videoContext.screenWidth;
 		height = _videoContext.screenHeight;
+		offsetX = _videoContext.shakeXOffset;
 		offsetY = _videoContext.shakeYOffset;
 	}
 
 	point.x = (point.x - CGRectGetMinX(*area)) / CGRectGetWidth(*area);
 	point.y = (point.y - CGRectGetMinY(*area)) / CGRectGetHeight(*area);
 
-	*x = (int)(point.x * width);
+	*x = (int)(point.x * width + offsetX);
 	// offsetY describes the translation of the screen in the upward direction,
 	// thus we need to add it here.
 	*y = (int)(point.y * height + offsetY);
