@@ -5549,7 +5549,6 @@ echo "$_bink"
 # Check whether to build updates support
 #
 echo_n "Building updates support... "
-define_in_config_if_yes $_updates 'USE_UPDATES'
 if test "$_updates" = yes; then
 	if test "$_sparkle" = yes; then
 		echo "Sparkle"
@@ -5560,6 +5559,7 @@ if test "$_updates" = yes; then
 else
 	echo "$_updates"
 fi
+define_in_config_if_yes $_updates 'USE_UPDATES'
 
 #
 # Figure out installation directories
