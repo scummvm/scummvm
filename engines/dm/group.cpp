@@ -355,6 +355,9 @@ bool GroupMan::isDestVisibleFromSource(uint16 dir, int16 srcMapX, int16 srcMapY,
 		SWAP(srcMapX, srcMapY);
 		SWAP(destMapX, destMapY);
 		break;
+	case kDMDirWest:
+	default:
+		break;
 	}
 	return ((srcMapX -= (destMapX - 1)) > 0) && ((((srcMapY -= destMapY) < 0) ? -srcMapY : srcMapY) <= srcMapX);
 }
@@ -1500,6 +1503,10 @@ bool GroupMan::isCreatureAttacking(Group *group, int16 mapX, int16 mapY, uint16 
 					break;
 				case 3:
 					projectileThing = _vm->_thingExplOpenDoor;
+					break;
+				default:
+					projectileThing = _vm->_thingNone;
+					break;
 				}
 			}
 			break;
@@ -2068,6 +2075,9 @@ void GroupMan::fuseAction(uint16 mapX, uint16 mapY) {
 						break;
 					case 3:
 						destMapY++;
+						break;
+					default:
+						break;
 					}
 					break;
 				}

@@ -794,6 +794,9 @@ T0252001:
 					break;
 				case 3:
 					mapY++;
+					break;
+				default:
+					break;
 				}
 				if (_vm->_groupMan->isSquareACorridorTeleporterPitOrDoor(mapX, mapY))
 					goto T0252001;
@@ -953,6 +956,9 @@ T0255002:
 		break;
 	case 0:
 		_vm->_championMan->viAltarRebirth(event->_priority);
+		break;
+	default:
+		break;
 	}
 }
 

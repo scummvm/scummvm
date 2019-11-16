@@ -193,6 +193,8 @@ bool ProjExpl::hasProjectileImpactOccurred(int16 impactType, int16 mapXCombo, in
 		}
 		}
 		break;
+	default:
+		break;
 	}
 	if (championAttack && _projectilePoisonAttack && _vm->getRandomNumber(2)
 	&& _vm->_championMan->addPendingDamageAndWounds_getDamage(championIndex, attack, kDMWoundHead | kDMWoundTorso, _projectileAttackType))
@@ -549,6 +551,8 @@ void ProjExpl::processEvent25(TimelineEvent *event) {
 			explosion->setAttack(explosion->getAttack() - 3);
 			AddEventFl = true;
 		}
+		break;
+	default:
 		break;
 	}
 	if (AddEventFl) {

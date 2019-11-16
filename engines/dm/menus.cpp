@@ -694,6 +694,9 @@ int16 MenuMan::getChampionSpellCastResult(uint16 champIndex) {
 			break;
 		}
 		}
+		break;
+	default:
+		break;
 	}
 	championMan.addSkillExperience(champIndex, curSpell->_skillIndex, experience);
 	championMan.disableAction(champIndex, curSpell->getDuration());
@@ -1352,6 +1355,8 @@ bool MenuMan::isActionPerformed(uint16 champIndex, int16 actionIndex) {
 		if (actionPerformed)
 			_vm->_timeline->_events[curChampion->_enableActionEventIndex]._Bu._slotOrdinal = _vm->indexToOrdinal(kDMSlotActionHand);
 		break;
+	default:
+		break;
 	}
 
 	if (setDirectionFl) {
@@ -1522,12 +1527,16 @@ bool MenuMan::isMeleeActionPerformed(int16 champIndex, Champion *champ, int16 ac
 		switch (viewCell) {
 		case kDMViewCellBackRight: /* Champion is on the back right of the square and tries to attack a creature in the front right of its square */
 		case kDMViewCellBackLeft: /* Champion is on the back left of the square and tries to attack a creature in the front left of its square */
-			uint16 cellDelta = (viewCell == kDMViewCellBackRight) ? 3 : 1;
-			/* Check if there is another champion in front */
-			if (_vm->_championMan->getIndexInCell(_vm->normalizeModulo4(championCell + cellDelta)) != kDMChampionNone) {
-				_actionDamage = kDMDamageCantReach;
-				return false;
+			{
+				uint16 cellDelta = (viewCell == kDMViewCellBackRight) ? 3 : 1;
+				/* Check if there is another champion in front */
+				if (_vm->_championMan->getIndexInCell(_vm->normalizeModulo4(championCell + cellDelta)) != kDMChampionNone) {
+					_actionDamage = kDMDamageCantReach;
+					return false;
+				}
 			}
+			break;
+		default:
 			break;
 		}
 
@@ -1577,6 +1586,8 @@ bool MenuMan::isGroupFrightenedByAction(int16 champIndex, uint16 actionIndex, in
 	case kDMActionConfuse:
 		frightAmount = 12;
 		experience = 45;
+		break;
+	default:
 		break;
 	}
 
