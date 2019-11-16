@@ -63,6 +63,18 @@ Screen_EoB::Screen_EoB(EoBCoreEngine *vm, OSystem *system) : Screen(vm, system, 
 	_cgaMappingDefault = 0;
 	_cgaDitheringTables[0] = _cgaDitheringTables[1] = 0;
 	_useHiResEGADithering = _dualPaletteMode = false;
+	for (int i = 0; i < 10; ++i)
+		_palette16c[i] = 0;
+
+	_cpsFilePattern = "%s.CPS";
+	if (_vm->gameFlags().platform == Common::kPlatformFMTowns) {
+		_cpsFilePattern = "%s.SHP";
+	} else if (_vm->game() == GI_EOB1) {
+		if (_vm->gameFlags().platform == Common::kPlatformPC98)
+			_cpsFilePattern = "%s.BIN";
+		else if (_renderMode == Common::kRenderEGA || _renderMode == Common::kRenderCGA)
+			_cpsFilePattern = "%s.EGA";
+	}
 }
 
 Screen_EoB::~Screen_EoB() {
@@ -112,6 +124,12 @@ bool Screen_EoB::init() {
 			memset(_cgaScaleTable, 0, 256 * sizeof(uint8));
 			for (int i = 0; i < 256; i++)
 				_cgaScaleTable[i] = ((i & 0xF0) >> 2) | (i & 0x03);
+		}
+
+		const uint8 *pal16c = _vm->staticres()->loadRawData(kEoB1Palettes16c, temp);
+		if (pal16c) {
+			for (int i = 0; i < 10; i++)
+				_palette16c[i] = pal16c + i * 48;
 		}
 
 		return true;
@@ -235,11 +253,11 @@ void Screen_EoB::loadShapeSetBitmap(const char *file, int tempPage, int destPage
 void Screen_EoB::loadBitmap(const char *filename, int tempPage, int dstPage, Palette *pal, bool skip) {
 	Screen::loadBitmap(filename, tempPage, dstPage, pal);
 
-	Common::SeekableReadStream *str = _vm->resource()->createReadStream(filename);
-	str->skip(4);
-	uint32 imgSize = str->readUint32LE();
-
 	if (_isAmiga && !skip) {
+		Common::SeekableReadStream *str = _vm->resource()->createReadStream(filename);
+		str->skip(4);
+		uint32 imgSize = str->readUint32LE();
+
 		if (_vm->game() == GI_EOB1 && (dstPage == 3 || dstPage == 4) && imgSize == 40064) {
 			// Yay, this is where EOB1 Amiga hides the palette data
 			loadPalette(_pagePtrs[dstPage] + 40000, *_palettes[0], 64);
@@ -253,15 +271,14 @@ void Screen_EoB::loadBitmap(const char *filename, int tempPage, int dstPage, Pal
 					_palettes[i]->loadAmigaPalette(*str, 0, 32);
 			}
 		}
-		Screen::convertAmigaGfx(getPagePtr(dstPage), 320, 200);
-	}
 
-	delete str;
+		Screen::convertAmigaGfx(getPagePtr(dstPage), 320, 200);
+		delete str;
+	}	
 }
 
 void Screen_EoB::loadEoBBitmap(const char *file, const uint8 *cgaMapping, int tempPage, int destPage, int convertToPage) {
-	const char *filePattern = _vm->gameFlags().platform == Common::kPlatformFMTowns ? "%s.SHP" : ((_vm->game() == GI_EOB1 && (_renderMode == Common::kRenderEGA || _renderMode == Common::kRenderCGA)) ? "%s.EGA" : "%s.CPS");
-	Common::String tmp = Common::String::format(filePattern, file);
+	Common::String tmp = Common::String::format(_cpsFilePattern, file);
 	Common::SeekableReadStream *s = _vm->resource()->createReadStream(tmp);
 	bool loadAlternative = false;
 
@@ -271,6 +288,14 @@ void Screen_EoB::loadEoBBitmap(const char *file, const uint8 *cgaMapping, int te
 		s->read(_shpBuffer, s->size());
 		decodeSHP(_shpBuffer, destPage);
 
+	} if (_vm->gameFlags().platform == Common::kPlatformPC98) {
+		if (!s)
+			error("Screen_EoB::loadEoBBitmap(): Failed to load file '%s'", file);
+		s->skip(2);
+		uint16 imgSize = s->readUint16LE();
+		loadFileDataToPage(s, tempPage, s->size() - 4);
+		decodeBIN(_pagePtrs[tempPage], _pagePtrs[destPage], imgSize);
+	
 	} else if (s) {
 		// This additional check is necessary since some localized versions of EOB II seem to contain invalid (size zero) cps files
 		if (s->size() == 0) {			
@@ -368,9 +393,9 @@ void Screen_EoB::setScreenPalette(const Palette &pal) {
 	if (_bytesPerPixel == 2) {
 		for (int i = 0; i < 4; i++)
 			createFadeTable16bit((const uint16*)(pal.getData()), &_16bitPalette[i * 256], 0, i * 85);
-	}else if (_useHiResEGADithering && pal.getNumColors() != 16) {
+	} else if (_useHiResEGADithering && pal.getNumColors() != 16) {
 		generateEGADitheringTable(pal);
-	} else if (_renderMode == Common::kRenderEGA && pal.getNumColors() == 16) {
+	} else if ((_renderMode == Common::kRenderEGA) && pal.getNumColors() == 16) {
 		_screenPalette->copy(pal);
 		_system->getPaletteManager()->setPalette(_screenPalette->getData(), 0, _screenPalette->getNumColors());
 	} else if (_renderMode != Common::kRenderCGA && _renderMode != Common::kRenderEGA) {
@@ -400,7 +425,7 @@ uint8 *Screen_EoB::encodeShape(uint16 x, uint16 y, uint16 w, uint16 h, bool enco
 	uint8 *srcLineStart = getPagePtr(_curPage | 1) + y * 320 + (x << 3);
 	uint8 *src = srcLineStart;
 
-	if (_renderMode == Common::kRenderEGA && !_useHiResEGADithering)
+	if (_use16ColorMode || (_renderMode == Common::kRenderEGA && !_useHiResEGADithering))
 		encode8bit = false;
 
 	if (_bytesPerPixel == 2 && encode8bit) {
@@ -1648,6 +1673,16 @@ void Screen_EoB::loadSpecialAmigaCPS(const char *fileName, int destPage, bool is
 
 	if (isGraphics)
 		convertAmigaGfx(_pagePtrs[destPage], 320, 200);
+}
+
+void Screen_EoB::load16ColPalette(int palID, Palette &dest) {
+	if (!_palette16c[palID])
+		return;
+	loadPalette(_palette16c[palID], dest, 48);
+}
+
+void Screen_EoB::decodeBIN(const uint8 *src, uint8 *dst, uint32 dstSize) {
+
 }
 
 void Screen_EoB::setupDualPalettesSplitScreen(Palette &top, Palette &bottom) {

@@ -53,7 +53,13 @@ private:
 	void startupLoad();
 
 	// Intro/Outro
-	void seq_playIntro();
+	enum IntroPart {
+		kOnlyCredits = 0,
+		kOnlyIntro,
+		kCreditsAndIntro,
+	};
+
+	void seq_playIntro(int part);
 	void seq_playFinale();
 	void seq_xdeath();
 

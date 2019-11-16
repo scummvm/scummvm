@@ -500,9 +500,7 @@ void EoBCoreEngine::initStaticResource() {
 		data = _staticres->loadRawData(kEoB2PcmSoundEffectsFinale, temp2);
 		SoundResourceInfo_TownsEoB finale(files, temp, data, temp2, 40);
 		sndInfo_finale = &finale;
-	} else if (_flags.platform == Common::kPlatformPC98) {
-
-	} else {
+	} else if (_flags.platform != Common::kPlatformPC98) {
 		const char *const *files = _staticres->loadStrings(kEoBBaseSoundFilesIngame, temp);
 		SoundResourceInfo_PC ingame(files, temp);
 		sndInfo_ingame = &ingame;
@@ -1162,11 +1160,6 @@ void EoBEngine::initStaticResource() {
 	_cgaLevelMappingIndex = _staticres->loadRawData(kEoB1CgaLevelMappingIndex, temp);
 	for (int i = 0; i < 5; i++)
 		_cgaMappingLevel[i] = _staticres->loadRawData(kEoB1CgaMappingLevel0 + i, temp);
-	const uint8 *pal16c = _staticres->loadRawData(kEoB1Palettes16c, temp);
-	if (pal16c) {
-		for (int i = 0; i < 10; i++)
-			_palette16c[i] = pal16c + i * 48;
-	}
 
 	_itemNamesPC98 = _staticres->loadStrings(kEoB1ItemNames, _numItemNamesPC98);
 
@@ -1213,16 +1206,41 @@ void EoBEngine::initStaticResource() {
 		p->dmgModifierEvade = *ps++;
 	}
 
+	if (_flags.platform == Common::kPlatformPC98) {
+		const char *const *files = _staticres->loadStrings(kEoBBaseSoundFilesIngame, temp);
+		SoundResourceInfo_PC ingame(files, temp);
+		_sound->initAudioResourceInfo(kMusicIngame, &ingame);
+		files = _staticres->loadStrings(kEoBBaseSoundFilesIntro, temp);
+		SoundResourceInfo_PC intro(files, temp);
+		_sound->initAudioResourceInfo(kMusicIntro, &intro);
+		files = _staticres->loadStrings(kEoBBaseSoundFilesFinale, temp);
+		SoundResourceInfo_PC finale(files, temp);
+		_sound->initAudioResourceInfo(kMusicFinale, &finale);
+	}
+
 	_monsterAcHitChanceTable1 = _monsterAcHitChanceTbl1;
 	_monsterAcHitChanceTable2 = _monsterAcHitChanceTbl2;
 
-	static const char *const errorSlotNoNameString[3] = {
+	static const char *const errorSlotNoNameString[4] = {
 		" You must specify\r a name for your\r save game!",
 		" Spielstaende mues-\r sen einen Namen\r haben!",
+		"",
 		0
 	};
 
-	_errorSlotNoNameString = errorSlotNoNameString[(_flags.lang == Common::EN_ANY) ? 0 : ((_flags.lang == Common::DE_DEU) ? 1 : 2)];
+	switch (_flags.lang) {
+	case Common::EN_ANY:
+		_errorSlotNoNameString = errorSlotNoNameString[0];
+		break;
+	case Common::DE_DEU:
+		_errorSlotNoNameString = errorSlotNoNameString[1];
+		break;
+	case Common::JA_JPN:
+		_errorSlotNoNameString = errorSlotNoNameString[2];
+		break;
+	default:
+		_errorSlotNoNameString = errorSlotNoNameString[ARRAYSIZE(errorSlotNoNameString) - 1];
+	}
 }
 
 void EoBEngine::initSpells() {

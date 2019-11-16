@@ -212,6 +212,7 @@ bool CharacterGenerator::start(EoBCharacter *characters, uint8 ***faceShapes) {
 				// Unlike the original we allow returning to the main menu if no character has been created yet or all characters have been deleted
 				if (!_characters[0].name[0] && !_characters[1].name[0] && !_characters[2].name[0] && !_characters[3].name[0]) {
 					_vm->snd_stopSound();
+					*faceShapes = _faceShapes;
 					return false;
 				}
 			}

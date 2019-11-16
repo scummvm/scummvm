@@ -38,7 +38,13 @@ public:
 	EoBIntroPlayer(EoBEngine *vm, Screen_EoB *screen);
 	~EoBIntroPlayer() {}
 
-	void start();
+	enum IntroPart {
+		kOnlyCredits = 0,
+		kOnlyIntro,
+		kCreditsAndIntro,
+	};
+
+	void start(int part);
 
 private:
 	void openingCredits();
@@ -50,7 +56,7 @@ private:
 	void waterdeepExit();
 	void tunnel();
 
-	void loadAndSetPalette(const char *filename);
+	void loadAndSetPalette(const char *dosPaletteFile, int pc98PaletteID = 0);
 	void copyBlurRegion(int x1, int y1, int x2, int y2, int w, int h, int step);
 	void whirlTransition();
 
@@ -143,17 +149,23 @@ EoBIntroPlayer::EoBIntroPlayer(EoBEngine *vm, Screen_EoB *screen) : _vm(vm), _sc
 	_screen->loadPalette(orbFadePal, _screen->getPalette(2), temp);
 }
 
-void EoBIntroPlayer::start() {
+void EoBIntroPlayer::start(int part) {
 	_vm->_allowSkip = true;
-	openingCredits();
 
-	if (!_vm->shouldQuit() && !_vm->skipFlag()) {
-		_vm->snd_playSong(2);
-		_screen->loadBitmap(_vm->gameFlags().platform == Common::kPlatformAmiga ? "TITLE.CPS" : (_vm->_configRenderMode == Common::kRenderCGA || _vm->_configRenderMode == Common::kRenderEGA) ? "TITLE-E.CMP" : "TITLE-V.CMP", 3, 5, 0);
-		_screen->convertPage(5, 2, _vm->_cgaMappingDefault);
-		uint32 del = 120 * _vm->_tickLength;
-		_screen->crossFadeRegion(0, 0, 0, 0, 320, 200, 2, 0);
-		_vm->delay(del);
+	if (part != kOnlyIntro) {
+		openingCredits();
+
+		if (part == kOnlyCredits)
+			return;
+
+		if (!_vm->shouldQuit() && !_vm->skipFlag()) {
+			_vm->snd_playSong(2);
+			_screen->loadBitmap(_vm->gameFlags().platform == Common::kPlatformAmiga ? "TITLE.CPS" : (_vm->_configRenderMode == Common::kRenderCGA || _vm->_configRenderMode == Common::kRenderEGA) ? "TITLE-E.CMP" : "TITLE-V.CMP", 3, 5, 0);
+			_screen->convertPage(5, 2, _vm->_cgaMappingDefault);
+			uint32 del = 120 * _vm->_tickLength;
+			_screen->crossFadeRegion(0, 0, 0, 0, 320, 200, 2, 0);
+			_vm->delay(del);
+		}
 	}
 
 	Common::SeekableReadStream *s = _vm->resource()->createReadStream("TEXT.RAW");
@@ -162,9 +174,12 @@ void EoBIntroPlayer::start() {
 		_screen->loadFileDataToPage(s, 5, s->size() - 768);
 		delete s;
 	} else {
-		_screen->loadBitmap(_vm->gameFlags().platform == Common::kPlatformAmiga ? "TEXT.CPS" : "TEXT.CMP", 3, 5, 0);
+		_screen->loadBitmap(_vm->gameFlags().platform == Common::kPlatformAmiga ? "TEXT.CPS" : (_vm->gameFlags().platform == Common::kPlatformPC98 ? "TEXT.BIN" : "TEXT.CMP"), 3, 5, 0);
 	}
 	_screen->convertPage(5, 6, _vm->_cgaMappingAlt);
+
+	if (part == kOnlyIntro)
+		_vm->snd_playSong(1);
 
 	tower();
 	orb();
@@ -180,7 +195,8 @@ void EoBIntroPlayer::start() {
 }
 
 void EoBIntroPlayer::openingCredits() {
-	_vm->snd_playSong(1);
+	if (_vm->gameFlags().platform != Common::kPlatformPC98)
+		_vm->snd_playSong(1);
 
 	_screen->loadBitmap(_filesOpening[4], 5, 3, 0);
 	_screen->convertPage(3, 0, _vm->_cgaMappingAlt);
@@ -188,7 +204,7 @@ void EoBIntroPlayer::openingCredits() {
 	if (_vm->gameFlags().platform == Common::kPlatformAmiga) {
 		_screen->fadeFromBlack(64);
 	} else {
-		loadAndSetPalette(_filesOpening[5]);
+		loadAndSetPalette(_filesOpening[5], 1);
 		_screen->updateScreen();
 	}
 
@@ -912,12 +928,14 @@ void EoBIntroPlayer::tunnel() {
 	_vm->delay(50 * _vm->_tickLength);
 }
 
-void EoBIntroPlayer::loadAndSetPalette(const char *filename) {
+void EoBIntroPlayer::loadAndSetPalette(const char *dosPaletteFile, int pc98PaletteID) {
 	if (_vm->_configRenderMode == Common::kRenderCGA || _vm->_configRenderMode == Common::kRenderEGA)
 		return;
 
-	if (_vm->gameFlags().platform != Common::kPlatformAmiga)
-		_screen->loadPalette(filename, _screen->getPalette(0));
+	if (_vm->gameFlags().platform == Common::kPlatformDOS)
+		_screen->loadPalette(dosPaletteFile, _screen->getPalette(0));
+	else if (_vm->gameFlags().platform == Common::kPlatformPC98)
+		_screen->load16ColPalette(pc98PaletteID, _screen->getPalette(0));
 
 	_screen->getPalette(0).fill(0, 1, 0);
 	_screen->setScreenPalette(_screen->getPalette(0));
@@ -1462,6 +1480,18 @@ int EoBEngine::mainMenu() {
 
 		case 2:
 			// create new party
+			if (_flags.platform == Common::kPlatformPC98) {
+				_sound->selectAudioResourceSet(kMusicIntro);
+				_sound->loadSoundFile(0);
+				_screen->hideMouse();
+
+				seq_playIntro(kOnlyIntro);
+
+				_screen->showMouse();
+				_sound->selectAudioResourceSet(kMusicIngame);
+				_sound->loadSoundFile(0);
+			}
+
 			menuChoice = -2;
 			break;
 
@@ -1476,7 +1506,7 @@ int EoBEngine::mainMenu() {
 			_sound->loadSoundFile(0);
 			_screen->hideMouse();
 
-			seq_playIntro();
+			seq_playIntro(_flags.platform == Common::kPlatformPC98 ? kOnlyCredits : kCreditsAndIntro);
 
 			_screen->showMouse();
 			_sound->selectAudioResourceSet(kMusicIngame);
@@ -1506,8 +1536,8 @@ int EoBEngine::mainMenuLoop() {
 	return sel + 1;
 }
 
-void EoBEngine::seq_playIntro() {
-	EoBIntroPlayer(this, _screen).start();
+void EoBEngine::seq_playIntro(int part) {
+	EoBIntroPlayer(this, _screen).start((EoBIntroPlayer::IntroPart)part);
 }
 
 void EoBEngine::seq_playFinale() {

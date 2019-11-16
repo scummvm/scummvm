@@ -443,6 +443,37 @@ private:
 	bool _ready;
 };
 
+class MLALF98;
+class SoundPC98_EoB : public Sound {
+public:
+	SoundPC98_EoB(KyraEngine_v1 *vm, Audio::Mixer *mixer);
+	virtual ~SoundPC98_EoB();
+
+	kType getMusicType() const;
+
+	bool init();
+	void initAudioResourceInfo(int set, void *info);
+	void selectAudioResourceSet(int set);
+	bool hasSoundFile(uint file) const { return false; }
+	void loadSoundFile(uint file);
+	void loadSoundFile(Common::String file) {}
+	void loadSfxFile(Common::String file);
+	void playTrack(uint8 track);
+	void haltTrack();
+	void playSoundEffect(uint8 track, uint8);
+	void beginFadeOut() {}
+	void updateVolumeSettings();
+
+private:
+	KyraEngine_v1 *_vm;
+	MLALF98 *_driver;
+
+	SoundResourceInfo_PC *_resInfo[3];
+	int _currentResourceSet;
+
+	bool _ready;
+};
+
 #endif
 
 } // End of namespace Kyra

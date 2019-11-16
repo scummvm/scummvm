@@ -413,13 +413,17 @@ Common::Error EoBCoreEngine::init() {
 	} else if (_flags.platform == Common::kPlatformFMTowns) {
 		_sound = new SoundTowns_Darkmoon(this, _mixer);
 	} else if (_flags.platform == Common::kPlatformPC98) {
-
+		if (_flags.gameID == GI_EOB1)
+			_sound = new SoundPC98_EoB(this, _mixer);
 	} else if (_flags.platform == Common::kPlatformAmiga) {
 		_sound = new SoundAmiga_EoB(this, _mixer);
 	}
 
 	assert(_sound);
 	_sound->init();
+
+	// This if for EOB1 / PC98 only
+	_sound->loadSfxFile("EFECT.OBJ");
 
 	// Setup volume settings (and read in all ConfigManager settings)
 	syncSoundSettings();
@@ -566,9 +570,9 @@ Common::Error EoBCoreEngine::go() {
 
 	// Import original save game files (especially the "Quick Start Party")
 	if (ConfMan.getBool("importOrigSaves")) {
-		importOriginalSaveFile(-1);
-		ConfMan.setBool("importOrigSaves", false);
-		ConfMan.flushToDisk();
+		//importOriginalSaveFile(-1);
+		//ConfMan.setBool("importOrigSaves", false);
+		//ConfMan.flushToDisk();
 	}
 
 	loadItemDefs();

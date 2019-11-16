@@ -706,7 +706,7 @@ int EoBCoreEngine::calcNewBlockPositionAndTestPassability(uint16 curBlock, uint1
 
 void EoBCoreEngine::notifyBlockNotPassable() {
 	_txt->printMessage(_warningStrings[0]);
-	snd_playSoundEffect(29);
+	snd_playSoundEffect(29); //PC98 : 45
 	removeInputTop();
 }
 
