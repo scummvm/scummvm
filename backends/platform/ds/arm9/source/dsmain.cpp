@@ -2097,6 +2097,7 @@ void VBlankHandler(void) {
 	} else {
 		SUB_BG3_CX = subScX + 64;
 	}
+	SUB_BG3_CX += (s_shakeXOffset << 8)
 
 	SUB_BG3_CY = subScY + (s_shakeYOffset << 8);*/
 
@@ -2230,7 +2231,7 @@ void VBlankHandler(void) {
 			setZoomedScreenScale(subScreenWidth, ((subScreenHeight * (256 << 8)) / 192) >> 8);
 
 
-			setMainScreenScroll(scX << 8, (scY << 8) + (s_shakeYOffset << 8));
+			setMainScreenScroll((scX << 8) + (s_shakeXOffset << 8), (scY << 8) + (s_shakeYOffset << 8));
 			setMainScreenScale(256, 256);		// 1:1 scale
 
 		} else {
@@ -2246,7 +2247,7 @@ void VBlankHandler(void) {
 			setZoomedScreenScroll(subScX, subScY, (subScreenWidth != 256) && (subScreenWidth != 128));
 			setZoomedScreenScale(subScreenWidth, ((subScreenHeight * (256 << 8)) / 192) >> 8);
 
-			setMainScreenScroll(64, (scY << 8) + (s_shakeYOffset << 8));
+			setMainScreenScroll(64 + (s_shakeXOffset << 8), (scY << 8) + (s_shakeYOffset << 8));
 			setMainScreenScale(320, 256);		// 1:1 scale
 
 		}
