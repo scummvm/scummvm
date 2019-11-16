@@ -431,7 +431,7 @@ int Net::remoteSendData(int typeOfSend, int sendTypeParam, int type, Common::Str
 	byte *buf = (byte *)malloc(res.size() + 1);
 	strncpy((char *)buf, res.c_str(), res.size());
 
-	debug("Package to send: %s", res.c_str());
+	debug(2, "Package to send: %s", res.c_str());
 
 	Networking::PostRequest *rq = new Networking::PostRequest(_serverprefix + "/packet",
 		nullptr,
