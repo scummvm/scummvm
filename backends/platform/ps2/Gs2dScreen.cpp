@@ -680,8 +680,11 @@ int16 Gs2dScreen::getOverlayHeight(void) {
 }
 
 void Gs2dScreen::setShakePos(int shakeXOffset, int shakeYOffset) {
+	_shakeXOffset = (shakeXOffset * _mouseScaleX) >> 8;
 	_shakeYOffset = (shakeYOffset * _mouseScaleY) >> 8;
+	_blitCoords[0].x = SCALE(_shakeXOffset) + ORIGIN_X;
 	_blitCoords[0].y = SCALE(_shakeYOffset) + ORIGIN_Y;
+	_blitCoords[1].x = SCALE(_tvWidth + _shakeXOffset) + ORIGIN_X;
 	_blitCoords[1].y = SCALE(_tvHeight + _shakeYOffset) + ORIGIN_Y;
 }
 
