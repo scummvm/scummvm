@@ -35,6 +35,7 @@
 #define OVL_H 200
 #define OVL_TXSTRIDE 512
 
+#define LEFT_OFFSET (_xscale*_current_shake_x_pos)
 #define TOP_OFFSET (_top_offset+_yscale*_current_shake_y_pos)
 
 static const struct {
@@ -407,7 +408,7 @@ void OSystem_Dreamcast::updateScreenPolygons(void)
   myvertex.u = 0.0;
   myvertex.v = 0.0;
 
-  myvertex.x = 0.0;
+  myvertex.x = LEFT_OFFSET;
   myvertex.y = TOP_OFFSET;
   ta_commit_list(&myvertex);
 
@@ -462,7 +463,7 @@ void OSystem_Dreamcast::updateScreenPolygons(void)
     myvertex.u = 0.0;
     myvertex.v = 0.0;
 
-    myvertex.x = _overlay_x*_xscale;
+    myvertex.x = _overlay_x*_xscale+LEFT_OFFSET;
     myvertex.y = _overlay_y*_yscale+TOP_OFFSET;
     ta_commit_list(&myvertex);
 
@@ -601,7 +602,7 @@ void OSystem_Dreamcast::drawMouse(int xdraw, int ydraw, int w, int h,
   myvertex.u = 0.0;
   myvertex.v = 0.0;
 
-  myvertex.x = (xdraw-_ms_hotspot_x)*_xscale;
+  myvertex.x = (xdraw-_ms_hotspot_x)*_xscale + LEFT_OFFSET;
   myvertex.y = (ydraw-_ms_hotspot_y)*_yscale + TOP_OFFSET;
   ta_commit_list(&myvertex);
 
@@ -624,7 +625,7 @@ void OSystem_Dreamcast::drawMouse(int xdraw, int ydraw, int w, int h,
 void OSystem_Dreamcast::mouseToSoftKbd(int x, int y, int &rx, int &ry) const
 {
   if (_softkbd_motion) {
-    rx = (int)(x*_xscale - (330.0*sin(0.013*_softkbd_motion) - 320.0));
+    rx = (int)(x*_xscale - (330.0*sin(0.013*_softkbd_motion) + LEFT_OFFSET - 320.0));
     ry = (int)(y*_yscale + TOP_OFFSET - 200.0);
   } else {
     rx = -1;
