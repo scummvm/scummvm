@@ -804,7 +804,7 @@ void GriffonEngine::drawNPCs(int mode) {
 							int xdif = (xloc + 8) - (_player.px + 12);
 							int ydif = (yloc + 8) - (_player.py + 12);
 
-							if ((abs(xdif) < 8 && abs(ydif) < 8) && _player.pause < _ticks) {
+							if ((ABS(xdif) < 8 && ABS(ydif) < 8) && _player.pause < _ticks) {
 								float damage = (float)_npcInfo[i].spellDamage * (1.0 + RND() * 0.5);
 
 								if (_player.hp > 0) {
@@ -830,7 +830,7 @@ void GriffonEngine::drawNPCs(int mode) {
 							xdif = (xloc + 8) - (_player.px + 12);
 							ydif = (yloc + 8) - (_player.py + 12);
 
-							if ((abs(xdif) < 8 && abs(ydif) < 8) && _player.pause < _ticks) {
+							if ((ABS(xdif) < 8 && ABS(ydif) < 8) && _player.pause < _ticks) {
 								float damage = (float)_npcInfo[i].spellDamage * (1.0 + RND() * 0.5);
 
 								if (_player.hp > 0) {

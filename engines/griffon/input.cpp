@@ -503,16 +503,16 @@ void GriffonEngine::handleWalking() {
 				int ydif = _player.py - npy;
 
 				if (_player.walkDir == 0) {
-					if (abs(xdif) <= 8 && ydif > 0 && ydif < 8)
+					if (ABS(xdif) <= 8 && ydif > 0 && ydif < 8)
 						_npcInfo[i].y -= spd;
 				} else if (_player.walkDir == 1) {
-					if (abs(xdif) <= 8 && ydif < 0 && ydif > -8)
+					if (ABS(xdif) <= 8 && ydif < 0 && ydif > -8)
 						_npcInfo[i].y += spd;
 				} else if (_player.walkDir == 2) {
-					if (abs(ydif) <= 8 && xdif > 0 && xdif < 8)
+					if (ABS(ydif) <= 8 && xdif > 0 && xdif < 8)
 						_npcInfo[i].x -= spd;
 				} else if (_player.walkDir == 3) {
-					if (abs(ydif) <= 8 && xdif < 0 && xdif > -8)
+					if (ABS(ydif) <= 8 && xdif < 0 && xdif > -8)
 						_npcInfo[i].x += spd;
 				}
 

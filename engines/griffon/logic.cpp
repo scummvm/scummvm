@@ -157,7 +157,7 @@ void GriffonEngine::updateNPCs() {
 				float xdif = _player.px - npx;
 				float ydif = _player.py - npy;
 
-				if (abs(xdif) < 4 * 16 && abs(ydif) < 4 * 16 && mode < 3)
+				if (ABS(xdif) < 4 * 16 && ABS(ydif) < 4 * 16 && mode < 3)
 					mode = 0;
 				if (_npcInfo[i].hp < _npcInfo[i].maxhp * 0.25)
 					mode = 3;
@@ -169,7 +169,7 @@ void GriffonEngine::updateNPCs() {
 
 				if (mode == 3) {
 					mode = 1;
-					if (abs(xdif) < 4 * 16 && abs(ydif) < 4 * 16)
+					if (ABS(xdif) < 4 * 16 && ABS(ydif) < 4 * 16)
 						mode = 3;
 				}
 
@@ -185,7 +185,7 @@ void GriffonEngine::updateNPCs() {
 					xdif = _player.px - npx;
 					ydif = _player.py - npy;
 
-					if (abs(xdif) > abs(ydif)) {
+					if (ABS(xdif) > ABS(ydif)) {
 						if (xdif < 4)
 							wdir = 2;
 						if (xdif > -4)
@@ -263,7 +263,7 @@ void GriffonEngine::updateNPCs() {
 					xdif = _player.px - npx;
 					ydif = _player.py - npy;
 
-					if (abs(xdif) > abs(ydif)) {
+					if (ABS(xdif) > ABS(ydif)) {
 						if (xdif < 4)
 							wdir = 3;
 						if (xdif > -4)
@@ -532,7 +532,7 @@ void GriffonEngine::updateNPCs() {
 						xdif = _player.px - npx;
 						ydif = _player.py - npy;
 
-						if (abs(xdif) < 20 && abs(ydif) < 20) {
+						if (ABS(xdif) < 20 && ABS(ydif) < 20) {
 							_npcInfo[i].attackattempt = _ticks + 100;
 							if ((int)(RND() * 2) == 0) {
 								if (config.effects) {
@@ -558,7 +558,7 @@ void GriffonEngine::updateNPCs() {
 						xdif = _player.px - npx;
 						ydif = _player.py - npy;
 
-						if (abs(xdif) < 24 && abs(ydif) < 24) {
+						if (ABS(xdif) < 24 && ABS(ydif) < 24) {
 							float dist = sqrt(xdif * xdif + ydif * ydif);
 
 							if ((dist) < 24) {
@@ -664,7 +664,7 @@ void GriffonEngine::updateNPCs() {
 								xdif = _player.px - npx;
 								ydif = _player.py - npy;
 
-								if (abs(xdif) < 48 && abs(ydif) < 48) {
+								if (ABS(xdif) < 48 && ABS(ydif) < 48) {
 									float dist = sqrt(xdif * xdif + ydif * ydif);
 
 									if ((dist) < 36) {
@@ -725,9 +725,9 @@ void GriffonEngine::updateNPCs() {
 						ydif = _player.py - npy;
 
 						pass = 0;
-						if (abs(xdif) < 48 && abs(ydif) < 6)
+						if (ABS(xdif) < 48 && ABS(ydif) < 6)
 							pass = 1;
-						if (abs(ydif) < 48 && abs(xdif) < 6)
+						if (ABS(ydif) < 48 && ABS(xdif) < 6)
 							pass = 2;
 
 						if (pass > 0) {
@@ -791,9 +791,9 @@ void GriffonEngine::updateNPCs() {
 						ydif = _player.py - npy;
 
 						pass = 0;
-						if (abs(xdif) < 56 && abs(ydif) < 6)
+						if (ABS(xdif) < 56 && ABS(ydif) < 6)
 							pass = 1;
-						if (abs(ydif) < 56 && abs(xdif) < 6)
+						if (ABS(ydif) < 56 && ABS(xdif) < 6)
 							pass = 2;
 
 						if (pass > 0) {
@@ -844,7 +844,7 @@ void GriffonEngine::updateNPCs() {
 						xdif = _player.px - npx;
 						ydif = _player.py - npy;
 
-						if (abs(xdif) < 24 && abs(ydif) < 24) {
+						if (ABS(xdif) < 24 && ABS(ydif) < 24) {
 							float dist = sqrt(xdif * xdif + ydif * ydif);
 
 							if ((dist) < 24) {
@@ -919,7 +919,7 @@ void GriffonEngine::updateNPCs() {
 						xdif = _player.px - npx;
 						ydif = _player.py - npy;
 
-						if (abs(xdif) < 32 && abs(ydif) < 32) {
+						if (ABS(xdif) < 32 && ABS(ydif) < 32) {
 							_npcInfo[i].attackattempt = _ticks + 100;
 							if ((int)(RND() * 2) == 0) {
 								if (config.effects) {
@@ -944,7 +944,7 @@ void GriffonEngine::updateNPCs() {
 						xdif = _player.px - npx;
 						ydif = _player.py - npy;
 
-						if (abs(xdif) < 38 && abs(ydif) < 38) {
+						if (ABS(xdif) < 38 && ABS(ydif) < 38) {
 							_npcInfo[i].attackattempt = _ticks + 100;
 							if ((int)(RND() * 2) == 0) {
 								if (config.effects) {
@@ -1005,7 +1005,7 @@ void GriffonEngine::updateNPCs() {
 
 					dist = 10;
 
-					if (abs(xdif) < dist && abs(ydif) < dist && _player.pause < _ticks) {
+					if (ABS(xdif) < dist && ABS(ydif) < dist && _player.pause < _ticks) {
 						_npcInfo[i].attacknext = _ticks + _npcInfo[i].attackdelay;
 						// _npcinfo[i].attackframe = 0;
 						// _npcinfo[i].attacking = false;
@@ -1056,7 +1056,7 @@ void GriffonEngine::updateNPCs() {
 
 					dist = 8;
 
-					if (abs(xdif) < dist && abs(ydif) < dist && _player.pause < _ticks) {
+					if (ABS(xdif) < dist && ABS(ydif) < dist && _player.pause < _ticks) {
 						_npcInfo[i].attacknext = _ticks + _npcInfo[i].attackdelay;
 						// _npcinfo[i].attackframe = 0
 						// _npcinfo[i].attacking = false
@@ -1108,7 +1108,7 @@ void GriffonEngine::updateNPCs() {
 
 							dist = 8;
 
-							if (abs(xdif) < dist && abs(ydif) < dist && _player.pause < _ticks) {
+							if (ABS(xdif) < dist && ABS(ydif) < dist && _player.pause < _ticks) {
 								_npcInfo[i].attacknext2[ff] = _ticks + _npcInfo[i].attackdelay;
 								// _npcinfo[i].attackframe2(ff) = 0
 								// _npcinfo[i].attacking2(ff) = false
@@ -1161,7 +1161,7 @@ void GriffonEngine::updateNPCs() {
 
 					dist = 8;
 
-					if (abs(xdif) < dist && abs(ydif) < dist && _player.pause < _ticks) {
+					if (ABS(xdif) < dist && ABS(ydif) < dist && _player.pause < _ticks) {
 						_npcInfo[i].attacknext = _ticks + _npcInfo[i].attackdelay;
 						// _npcinfo[i].attackframe = 0
 						// _npcinfo[i].attacking = false
@@ -1191,7 +1191,7 @@ void GriffonEngine::updateNPCs() {
 
 					dist = 16 + _npcInfo[i].attackframe;
 
-					if (abs(xdif) < dist && abs(ydif) < dist && _player.pause < _ticks) {
+					if (ABS(xdif) < dist && ABS(ydif) < dist && _player.pause < _ticks) {
 						_npcInfo[i].attacknext = _ticks + _npcInfo[i].attackdelay;
 						// _npcinfo[i].attackframe = 0
 						// _npcinfo[i].attacking = false
@@ -1220,7 +1220,7 @@ void GriffonEngine::updateNPCs() {
 
 					dist = 36;
 
-					if (abs(xdif) < dist && abs(ydif) < dist && _player.pause < _ticks) {
+					if (ABS(xdif) < dist && ABS(ydif) < dist && _player.pause < _ticks) {
 						_npcInfo[i].attacknext = _ticks + _npcInfo[i].attackdelay;
 						// _npcinfo[i].attackframe = 0
 						// _npcinfo[i].attacking = false
@@ -1313,7 +1313,7 @@ void GriffonEngine::updateSpells() {
 									float xdif = (xloc + 16) - (_npcInfo[e].x + 12);
 									float ydif = (yloc + 16) - (_npcInfo[e].y + 12);
 
-									if ((abs(xdif) < 16 && abs(ydif) < 16)) {
+									if ((ABS(xdif) < 16 && ABS(ydif) < 16)) {
 										float damage = (float)_player.spellDamage * (1.0 + RND() * 0.5) * (float)_spellInfo[i].strength;
 
 										if (_npcInfo[e].hp > 0 && _npcInfo[e].pause < _ticks) {
@@ -1333,7 +1333,7 @@ void GriffonEngine::updateSpells() {
 									float xdif = (xloc + 16) - (_postInfo[e][0] + 8);
 									float ydif = (yloc + 16) - (_postInfo[e][1] + 8);
 
-									if ((abs(xdif) < 16 && abs(ydif) < 16)) {
+									if ((ABS(xdif) < 16 && ABS(ydif) < 16)) {
 										_objectMapFull[_curMap][(int)_postInfo[e][0] / 16][(int)_postInfo[e][1] / 16] = 1;
 										_objectMap[(int)_postInfo[e][0] / 16][(int)_postInfo[e][1] / 16] = -1;
 
@@ -1393,7 +1393,7 @@ void GriffonEngine::updateSpells() {
 						float xdif = (xloc + 24) - (_npcInfo[e].x + 12);
 						float ydif = (yloc + 24) - (_npcInfo[e].y + 12);
 
-						if ((abs(xdif) < 24 && abs(ydif) < 24)) {
+						if ((ABS(xdif) < 24 && ABS(ydif) < 24)) {
 							float damage = (float)_player.spellDamage * (1.0 + RND() * 0.5) * (float)_spellInfo[i].strength;
 
 							if (_npcInfo[e].hp > 0 && _npcInfo[e].pause < _ticks) {
@@ -1433,7 +1433,7 @@ void GriffonEngine::updateSpells() {
 					float xdif = (xloc + 24) - (_player.px + 12);
 					float ydif = (yloc + 24) - (_player.py + 12);
 
-					if ((abs(xdif) < 24 && abs(ydif) < 24) && _player.pause < _ticks) {
+					if ((ABS(xdif) < 24 && ABS(ydif) < 24) && _player.pause < _ticks) {
 						float damage = (float)_npcInfo[_spellInfo[i].npc].spellDamage * (1.0 + RND() * 0.5);
 
 						if (_player.hp > 0) {
@@ -1453,7 +1453,7 @@ void GriffonEngine::updateSpells() {
 						float xdif = (xloc + 24) - (_postInfo[e][0] + 8);
 						float ydif = (yloc + 24) - (_postInfo[e][1] + 8);
 
-						if ((abs(xdif) < 24 && abs(ydif) < 24)) {
+						if ((ABS(xdif) < 24 && ABS(ydif) < 24)) {
 							_objectMapFull[_curMap][(int)_postInfo[e][0] / 16][(int)_postInfo[e][1] / 16] = 1;
 							_objectMap[(int)_postInfo[e][0] / 16][(int)_postInfo[e][1] / 16] = -1;
 
@@ -1513,7 +1513,7 @@ void GriffonEngine::updateSpells() {
 										float xdif = (xloc + 16) - (_npcInfo[e].x + 12);
 										float ydif = (yloc + 16) - (_npcInfo[e].y + 12);
 
-										if ((abs(xdif) < 16 && abs(ydif) < 16)) {
+										if ((ABS(xdif) < 16 && ABS(ydif) < 16)) {
 											float damage = (float)_player.spellDamage * (1.0 + RND() * 0.5) * (float)_spellInfo[i].strength;
 
 											if (_npcInfo[e].hp > 0 && _npcInfo[e].pause < _ticks) {
@@ -1534,7 +1534,7 @@ void GriffonEngine::updateSpells() {
 										float xdif = (xloc + 16) - (_postInfo[e][0] + 8);
 										float ydif = (yloc + 16) - (_postInfo[e][1] + 8);
 
-										if ((abs(xdif) < 16 && abs(ydif) < 16)) {
+										if ((ABS(xdif) < 16 && ABS(ydif) < 16)) {
 											_objectMapFull[_curMap][(int)_postInfo[e][0] / 16][(int)_postInfo[e][1] / 16] = 1;
 											_objectMap[(int)_postInfo[e][0] / 16][(int)_postInfo[e][1] / 16] = -1;
 
@@ -1736,7 +1736,7 @@ void GriffonEngine::updateSpells() {
 							float xdif = (xloc + 8) - (_player.px + 12);
 							float ydif = (yloc + 8) - (_player.py + 12);
 
-							if ((abs(xdif) < 8 && abs(ydif) < 8) && _player.pause < _ticks) {
+							if ((ABS(xdif) < 8 && ABS(ydif) < 8) && _player.pause < _ticks) {
 								float damage = _npcInfo[_spellInfo[i].npc].spellDamage * (1 + RND() * 0.5) / 3;
 
 								if (_player.hp > 0)
@@ -1790,7 +1790,7 @@ void GriffonEngine::updateSpells() {
 								float xdif = (x + 16) - (_npcInfo[e].x + 12);
 								float ydif = (y + 16) - (_npcInfo[e].y + 12);
 
-								if ((abs(xdif) < 8 && abs(ydif) < 8)) {
+								if ((ABS(xdif) < 8 && ABS(ydif) < 8)) {
 									float damage = 30 * (1 + RND() * 0.5);
 
 									if (_npcInfo[e].hp > 0 && _npcInfo[e].pause < _ticks)
@@ -1805,7 +1805,7 @@ void GriffonEngine::updateSpells() {
 								float xdif = (xloc + 16) - (_postInfo[e][0] + 8);
 								float ydif = (yloc + 16) - (_postInfo[e][1] + 8);
 
-								if ((abs(xdif) < 16 && abs(ydif) < 16)) {
+								if ((ABS(xdif) < 16 && ABS(ydif) < 16)) {
 									_objectMapFull[_curMap][(int)_postInfo[e][0] / 16][(int)_postInfo[e][1] / 16] = 1;
 									_objectMap[(int)_postInfo[e][0] / 16][(int)_postInfo[e][1] / 16] = -1;
 
@@ -1847,7 +1847,7 @@ void GriffonEngine::updateSpells() {
 								float xdif = (x + 16) - (_npcInfo[e].x + 12);
 								float ydif = (y + 16) - (_npcInfo[e].y + 12);
 
-								if ((abs(xdif) < 8 && abs(ydif) < 8)) {
+								if ((ABS(xdif) < 8 && ABS(ydif) < 8)) {
 									float damage = 30 * (1 + RND() * 0.5);
 
 									if (_npcInfo[e].hp > 0 && _npcInfo[e].pause < _ticks)
@@ -1862,7 +1862,7 @@ void GriffonEngine::updateSpells() {
 								float xdif = (xloc + 16) - (_postInfo[e][0] + 8);
 								float ydif = (yloc + 16) - (_postInfo[e][1] + 8);
 
-								if ((abs(xdif) < 16 && abs(ydif) < 16)) {
+								if ((ABS(xdif) < 16 && ABS(ydif) < 16)) {
 									_objectMapFull[_curMap][(int)_postInfo[e][0] / 16][(int)_postInfo[e][1] / 16] = 1;
 									_objectMap[(int)_postInfo[e][0] / 16][(int)_postInfo[e][1] / 16] = -1;
 
@@ -1904,7 +1904,7 @@ void GriffonEngine::updateSpells() {
 								float xdif = (x + 16) - (_npcInfo[e].x + 12);
 								float ydif = (y + 16) - (_npcInfo[e].y + 12);
 
-								if ((abs(xdif) < 8 && abs(ydif) < 8)) {
+								if ((ABS(xdif) < 8 && ABS(ydif) < 8)) {
 									float damage = 30 * (1 + RND() * 0.5);
 
 									if (_npcInfo[e].hp > 0 && _npcInfo[e].pause < _ticks)
@@ -1919,7 +1919,7 @@ void GriffonEngine::updateSpells() {
 								float xdif = (xloc + 16) - (_postInfo[e][0] + 8);
 								float ydif = (yloc + 16) - (_postInfo[e][1] + 8);
 
-								if ((abs(xdif) < 16 && abs(ydif) < 16)) {
+								if ((ABS(xdif) < 16 && ABS(ydif) < 16)) {
 									_objectMapFull[_curMap][(int)_postInfo[e][0] / 16][(int)_postInfo[e][1] / 16] = 1;
 									_objectMap[(int)_postInfo[e][0] / 16][(int)_postInfo[e][1] / 16] = -1;
 
@@ -1961,7 +1961,7 @@ void GriffonEngine::updateSpells() {
 								float xdif = (x + 16) - (_npcInfo[e].x + 12);
 								float ydif = (y + 16) - (_npcInfo[e].y + 12);
 
-								if ((abs(xdif) < 8 && abs(ydif) < 8)) {
+								if ((ABS(xdif) < 8 && ABS(ydif) < 8)) {
 									float damage = 30 * (1 + RND() * 0.5);
 
 									if (_npcInfo[e].hp > 0 && _npcInfo[e].pause < _ticks)
@@ -1976,7 +1976,7 @@ void GriffonEngine::updateSpells() {
 								float xdif = (xloc + 16) - (_postInfo[e][0] + 8);
 								float ydif = (yloc + 16) - (_postInfo[e][1] + 8);
 
-								if ((abs(xdif) < 16 && abs(ydif) < 16)) {
+								if ((ABS(xdif) < 16 && ABS(ydif) < 16)) {
 									_objectMapFull[_curMap][(int)_postInfo[e][0] / 16][(int)_postInfo[e][1] / 16] = 1;
 									_objectMap[(int)_postInfo[e][0] / 16][(int)_postInfo[e][1] / 16] = -1;
 
@@ -2038,7 +2038,7 @@ void GriffonEngine::updateSpells() {
 							float xdif = (x + 8) - (_player.px + 12);
 							float ydif = (y + 8) - (_player.py + 12);
 
-							if ((abs(xdif) < 8 && abs(ydif) < 8) && _player.pause < _ticks) {
+							if ((ABS(xdif) < 8 && ABS(ydif) < 8) && _player.pause < _ticks) {
 								float damage = ((float)_player.hp * 0.75) * (RND() * 0.5 + 0.5);
 								if (damage < 5)
 									damage = 5;
@@ -2211,7 +2211,7 @@ void GriffonEngine::updateSpellsUnder() {
 										float xdif = (xloc + 8) - (_npcInfo[e].x + 12);
 										float ydif = (yloc + 8) - (_npcInfo[e].y + 12);
 
-										if ((abs(xdif) < 8 && abs(ydif) < 8)) {
+										if ((ABS(xdif) < 8 && ABS(ydif) < 8)) {
 											float damage = (float)_player.spellDamage * (1.0 + RND() * 0.5) * (float)_spellInfo[i].strength;
 
 											if (_npcInfo[e].spriteset == kMonsterFireHydra)
@@ -2233,7 +2233,7 @@ void GriffonEngine::updateSpellsUnder() {
 									float xdif = (xloc + 8) - (_player.px + 12);
 									float ydif = (yloc + 8) - (_player.py + 12);
 
-									if ((abs(xdif) < 8 && abs(ydif) < 8) && _player.pause < _ticks) {
+									if ((ABS(xdif) < 8 && ABS(ydif) < 8) && _player.pause < _ticks) {
 										float damage = (float)_npcInfo[_spellInfo[i].npc].spellDamage * (1.0 + RND() * 0.5);
 
 										if (_player.hp > 0) {
@@ -2253,7 +2253,7 @@ void GriffonEngine::updateSpellsUnder() {
 										float xdif = (xloc + 8) - (_postInfo[e][0] + 8);
 										float ydif = (yloc + 8) - (_postInfo[e][1] + 8);
 
-										if ((abs(xdif) < 8 && abs(ydif) < 8)) {
+										if ((ABS(xdif) < 8 && ABS(ydif) < 8)) {
 											_objectMapFull[_curMap][(int)_postInfo[e][0] / 16][(int)_postInfo[e][1] / 16] = 1;
 											_objectMap[(int)_postInfo[e][0] / 16][(int)_postInfo[e][1] / 16] = -1;
 
@@ -2324,7 +2324,7 @@ void GriffonEngine::updateSpellsUnder() {
 							float xdif = (xloc + 8) - (_player.px + 12);
 							float ydif = (yloc + 8) - (_player.py + 12);
 
-							if ((abs(xdif) < 8 && abs(ydif) < 8) && _player.pause < _ticks && alpha > 64) {
+							if ((ABS(xdif) < 8 && ABS(ydif) < 8) && _player.pause < _ticks && alpha > 64) {
 								float damage = (float)_npcInfo[_spellInfo[i].npc].spellDamage * (1.0 + RND() * 0.5);
 
 								if (_player.hp > 0) {
