@@ -843,6 +843,8 @@ void ScriptOpcodes_BBDOU::opCompareBlockCounter(ScriptThread *scriptThread, OpCa
 	case 6:
 		compareResult = lvalue <= rvalue;
 		break;
+	default:
+		break;
 	}
 	_vm->_stack->push(compareResult ? 1 : 0);
 }

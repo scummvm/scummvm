@@ -312,6 +312,8 @@ uint BbdouCursor::calcTrackingCursorIndex(uint trackingFlags) {
 				cursorIndex = 8;
 		}
 		break;
+	default:
+		break;
 	}
 	return cursorIndex;
 }

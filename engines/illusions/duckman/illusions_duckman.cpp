@@ -790,6 +790,8 @@ void IllusionsEngine_Duckman::cursorControlRoutine(Control *control, uint32 delt
 		case 4:
 			_menuSystem->update(_cursor._control);
 			break;
+		default:
+			break;
 		}
 	}
 }
@@ -1188,9 +1190,13 @@ void IllusionsEngine_Duckman::playSoundEffect(int index) {
 	case 18:
 		soundEffectId = soundIds[26];
 		break;
+	default:
+		break;
 	}
-	if (soundEffectId)
+
+	if (soundEffectId) {
 		_soundMan->playSound(soundEffectId, 255, 0);
+	}
 }
 
 bool IllusionsEngine_Duckman::getTriggerCause(uint32 verbId, uint32 objectId2, uint32 objectId, uint32 &outThreadId) {

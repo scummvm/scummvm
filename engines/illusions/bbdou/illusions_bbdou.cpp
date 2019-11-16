@@ -405,6 +405,8 @@ Common::Point IllusionsEngine_BBDOU::getNamedPointPosition(uint32 namedPointId) 
 		return Common::Point(640, 0);
 	case 0x70023:
 		return Common::Point(320, 240);
+	default:
+		break;
 	}
 	debug("getNamedPointPosition(%08X) UNKNOWN", namedPointId);
 	return Common::Point(0, 0);
@@ -456,6 +458,8 @@ void IllusionsEngine_BBDOU::cursorControlRoutine(Control *control, uint32 deltaT
 			break;
 		case 3:
 			_menuSystem->update(control);
+			break;
+		default:
 			break;
 		}
 	}

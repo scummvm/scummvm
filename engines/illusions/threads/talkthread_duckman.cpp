@@ -197,6 +197,8 @@ int TalkThread_Duckman::onUpdate() {
 		}
 		return kTSTerminate;
 
+	default:
+		break;
 	}
 
 	return kTSTerminate;
@@ -271,6 +273,8 @@ uint32 TalkThread_Duckman::sendMessage(int msgNum, uint32 msgValue) {
 		break;
 	case kMsgClearSequenceId2:
 		_sequenceId2 = 0;
+		break;
+	default:
 		break;
 	}
 	return 0;

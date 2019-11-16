@@ -213,6 +213,8 @@ void Camera::pushCameraMode() {
 		item._panTargetPoint = _activeState._panTargetPoint;
 		item._panNotifyId = _activeState._panNotifyId;
 		break;
+	default:
+		break;
 	}
 	_stack.push(item);
 }
@@ -245,6 +247,8 @@ void Camera::popCameraMode() {
 	case 6:
 		stopPan();
 		break;
+	default:
+		break;
 	}
 
 }
@@ -267,6 +271,8 @@ void Camera::update(uint32 currTime) {
 		break;
 	case 3:
 		updateMode3(currTime);
+		break;
+	default:
 		break;
 	}
 
@@ -333,6 +339,8 @@ bool Camera::isAtPanLimit(int limitNum) {
 		return _activeState._currPan.x <= _activeState._bounds._topLeft.x;
 	case 4:
 		return _activeState._currPan.x >= _activeState._bounds._bottomRight.x;
+	default:
+		break;
 	}
 	return false;
 }
@@ -539,6 +547,8 @@ void Camera::init() {
 		break;
 	case kGameIdBBDOU:
 		initBBDOU();
+		break;
+	default:
 		break;
 	}
 }

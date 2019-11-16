@@ -338,6 +338,8 @@ void DuckmanSpecialCode::spcHoldGlowingElvisPoster(OpCall &opCall) {
 			_vm->_cursor._field14[_vm->_cursor._actorIndex - 1] = true;
 		}
 		break;
+	default:
+		break;
 	}
 	_vm->notifyThreadId(opCall._threadId);
 }

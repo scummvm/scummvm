@@ -492,6 +492,8 @@ void BbdouSpecialCode::spcSaladCtl(OpCall &opCall) {
 	case 2:
 		addSalad(sequenceId);
 		break;
+	default:
+		break;
 	}
 }
 
@@ -874,6 +876,8 @@ void BbdouSpecialCode::cursorCrosshairControlRoutine(Control *cursorControl, uin
 					break;
 				case 7:
 					cursorData._sequenceId = 0x60014;
+					break;
+				default:
 					break;
 				}
 				_cursor->show(cursorControl);
