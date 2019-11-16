@@ -276,6 +276,8 @@ void CryOmni3DEngine_Versailles::setupFonts() {
 	// Explainations below are based on original binaries, debug is not used in this engine
 	// Fonts loaded are not always the same: FR Mac and EN DOS don't use the same font for debug doc/unused
 	// The important is that the loaded one is present in all versions
+
+	// Code below is for SBCS encodings (ie. non CJK)
 	uint8 fontsSet = getFeatures() & GF_VERSAILLES_FONTS_MASK;
 	switch (fontsSet) {
 	case GF_VERSAILLES_FONTS_NUMERIC:
@@ -352,7 +354,8 @@ void CryOmni3DEngine_Versailles::setupFonts() {
 		error("Font set invalid");
 	}
 
-	_fontManager.loadFonts(fonts);
+	// Use a SBCS codepage as a placeholder, we won't convert characters anyway
+	_fontManager.loadFonts(fonts, Common::kWindows1250);
 }
 
 void CryOmni3DEngine_Versailles::setupSprites() {

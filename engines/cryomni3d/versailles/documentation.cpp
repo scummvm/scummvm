@@ -1508,7 +1508,7 @@ void Versailles_Documentation::drawRecordData(Graphics::ManagedSurface &surface,
 		blockContent2.top = _fontManager->blockTextLastPos().y + lineHeight;
 		_fontManager->setupBlock(blockContent2);
 
-		if (!_fontManager->displayBlockText(text, _fontManager->blockTextRemaining())) {
+		if (!_fontManager->displayBlockTextContinue()) {
 			// All text was drawn
 			break;
 		}
