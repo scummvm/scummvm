@@ -20,8 +20,10 @@
  *
  */
 
+#include "common/encoding.h"
 #include "common/str.h"
 #include "common/ustr.h"
+#include "common/util.h"
 
 namespace Common {
 
@@ -265,6 +267,21 @@ static const uint32 g_windows1257ConversionTable[] = {0x20AC, 0x0081, 0x201A, 0x
 										 0x0173, 0x0142, 0x015B, 0x016B, 0x00FC, 0x017C, 0x017E, 0x02D9};
 
 
+/* This array must match the enum defined in str-enc.h */
+static char const *const g_codePageMap[] = {
+	"UTF-8", /* kUtf8 */
+	"WINDOWS-1250", /* kWindows1250 */
+	"WINDOWS-1251", /* kWindows1251 */
+	"WINDOWS-1252", /* kWindows1252 */
+	"WINDOWS-1253", /* kWindows1253 */
+	"WINDOWS-1254", /* kWindows1254 */
+	"WINDOWS-1255", /* kWindows1255 */
+	"WINDOWS-1257", /* kWindows1257 */
+	"MS932", /* kWindows932 */
+	"MSCP949", /* kWindows949 */
+	"CP950"  /* kWindows950 */
+};
+
 void String::decodeOneByte(U32String &dst, CodePage page) const {
     for (uint i = 0; i < _size; ++i) {
 		if ((byte)_str[i] <= 0x7F) {
@@ -303,11 +320,22 @@ void String::decodeOneByte(U32String &dst, CodePage page) const {
 }
 
 U32String String::decode(CodePage page) const {
-    U32String unicodeString;
-    if (page == kUtf8) {
+	if (page == kCodePageInvalid ||
+	        page >= ARRAYSIZE(g_codePageMap)) {
+		error("Invalid codepage");
+	}
+	char *result = Encoding::convert("UTF-32", g_codePageMap[page], _str, _size);
+	if (result) {
+		U32String unicodeString((uint32 *)result);
+		free(result);
+		return unicodeString;
+	}
+
+	U32String unicodeString;
+	if (page == kUtf8) {
 		decodeUTF8(unicodeString);
 	} else {
-	    decodeOneByte(unicodeString, page);
+		decodeOneByte(unicodeString, page);
 	}
 	return unicodeString;
 }
@@ -363,11 +391,24 @@ void U32String::encodeOneByte(String &dst, CodePage page) const {
 
 
 String U32String::encode(CodePage page) const {
-    String string;
-    if (page == kUtf8) {
+	if (page == kCodePageInvalid ||
+	        page >= ARRAYSIZE(g_codePageMap)) {
+		error("Invalid codepage");
+	}
+	char *result = Encoding::convert(g_codePageMap[page], "UTF-32", (const char *)_str, _size);
+	if (result) {
+		// Encodings in CodePage all use '\0' as string ending
+		// That would be problematic if CodePage has UTF-16 or UTF-32
+		String string(result);
+		free(result);
+		return string;
+	}
+
+	String string;
+	if (page == kUtf8) {
 		encodeUTF8(string);
 	} else {
-	    encodeOneByte(string, page);
+		encodeOneByte(string, page);
 	}
 	return string;
 }

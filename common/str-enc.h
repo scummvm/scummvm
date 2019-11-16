@@ -29,14 +29,18 @@ class String;
 class U32String;
 
 enum CodePage {
-	kUtf8,
+	kCodePageInvalid = -1,
+	kUtf8 = 0,
 	kWindows1250,
 	kWindows1251,
 	kWindows1252,
 	kWindows1253,
 	kWindows1254,
 	kWindows1255,
-	kWindows1257
+	kWindows1257,
+	kWindows932,
+	kWindows949,
+	kWindows950
 };
 
 U32String convertUtf8ToUtf32(const String &str);
