@@ -20,6 +20,8 @@
  *
  */
 
+ /* Based on Geas interpreter version 3.53 */
+
 #ifndef GLK_QUEST_QUEST
 #define GLK_QUEST_QUEST
 

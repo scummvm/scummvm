@@ -38,6 +38,7 @@ const PlainGameDescriptor QUEST_GAME_LIST[] = {
 	{ "worldsend", "World's End" },
 
 #ifdef QUEST_EXT
+	// The games below are newer games that the Geas interpreter doesn't yet support
 	{ "attackonfrightside", "Attack On Frightside" },
 	{ "balaclava", "Balaclava" },
 	{ "bearsepicquest", "Bear's Epic Quest" },
@@ -69,6 +70,7 @@ const GlkDetectionEntry QUEST_GAMES[] = {
 	DT_ENTRY0("worldsend", "4f5daac10085927bf5180bea24f7ef0d", 73396),
 
 #ifdef QUEST_EXT
+	// The games below are newer games that the Geas interpreter doesn't yet support
 	DT_ENTRY0("attackonfrightside", "84542fc6460833bbf2594ed83f8b1fc7", 46019),
 	DT_ENTRY0("balaclava", "8b30af05d9986f9f962c677181ecc766", 57719),
 	DT_ENTRY0("bearsepicquest", "e6896a65527f456b4362aaebcf39e354", 62075),
