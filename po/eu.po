@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.5.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2019-11-15 19:42+0100\n"
+"POT-Creation-Date: 2019-11-17 09:23+0100\n"
 "PO-Revision-Date: 2018-08-06 21:35+0000\n"
 "Last-Translator: Erik Zubiria <zubiriaerik@hotmail.com>\n"
 "Language-Team: Basque <https://translations.scummvm.org/projects/scummvm/"
@@ -2185,7 +2185,7 @@ msgstr ""
 msgid "Matched game IDs for the %s engine:"
 msgstr ""
 
-#: audio/adlib.cpp:2290
+#: audio/adlib.cpp:2293
 #, fuzzy
 msgid "AdLib emulator"
 msgstr "AdLib emuladorea:"
@@ -2269,7 +2269,7 @@ msgstr "Musikarik ez"
 msgid "Apple II GS emulator (NOT IMPLEMENTED)"
 msgstr "Apple II GS emuladorea (INPLEMENTATU GABE)"
 
-#: audio/softsynth/cms.cpp:350
+#: audio/softsynth/cms.cpp:351
 #, fuzzy
 msgid "Creative Music System emulator"
 msgstr "Creative musika sistema emuladorea"
@@ -2286,7 +2286,7 @@ msgstr "PC-98 Soinua"
 msgid "Initializing MT-32 Emulator"
 msgstr "MT-32 emuladorea hasieratzen"
 
-#: audio/softsynth/mt32.cpp:437
+#: audio/softsynth/mt32.cpp:439
 #, fuzzy
 msgid "MT-32 emulator"
 msgstr "MT-32 emuladorea"
@@ -2301,7 +2301,7 @@ msgstr "PC bozgoragailuaren emuladorea"
 msgid "IBM PCjr emulator"
 msgstr "IBM PCjr emuladorea"
 
-#: audio/softsynth/sid.cpp:1430
+#: audio/softsynth/sid.cpp:1434
 #, fuzzy
 msgid "C64 Audio emulator"
 msgstr "C64 Audio emuladorea"

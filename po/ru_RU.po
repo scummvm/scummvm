@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2019-11-15 19:42+0100\n"
+"POT-Creation-Date: 2019-11-17 09:23+0100\n"
 "PO-Revision-Date: 2019-11-05 01:55+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Russian <https://translations.scummvm.org/projects/scummvm/"
@@ -2186,7 +2186,7 @@ msgstr ""
 msgid "Matched game IDs for the %s engine:"
 msgstr "Возможные ID игры для движка %s:"
 
-#: audio/adlib.cpp:2290
+#: audio/adlib.cpp:2293
 msgid "AdLib emulator"
 msgstr "Эмулятор AdLib"
 
@@ -2267,7 +2267,7 @@ msgstr "Без музыки"
 msgid "Apple II GS emulator (NOT IMPLEMENTED)"
 msgstr "Эмулятор Apple II GS (НЕ ПОДДЕРЖИВАЕТСЯ)"
 
-#: audio/softsynth/cms.cpp:350
+#: audio/softsynth/cms.cpp:351
 msgid "Creative Music System emulator"
 msgstr "Эмулятор Creative Music System"
 
@@ -2283,7 +2283,7 @@ msgstr "Аудио PC-98"
 msgid "Initializing MT-32 Emulator"
 msgstr "Настраиваю эмулятор MT-32"
 
-#: audio/softsynth/mt32.cpp:437
+#: audio/softsynth/mt32.cpp:439
 msgid "MT-32 emulator"
 msgstr "Эмулятор MT-32"
 
@@ -2295,7 +2295,7 @@ msgstr "Эмулятор динамика ПК"
 msgid "IBM PCjr emulator"
 msgstr "Эмулятор IBM PCjr"
 
-#: audio/softsynth/sid.cpp:1430
+#: audio/softsynth/sid.cpp:1434
 msgid "C64 Audio emulator"
 msgstr "Эмулятор звука C64"
 

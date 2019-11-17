@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.7.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2019-11-15 19:42+0100\n"
+"POT-Creation-Date: 2019-11-17 09:23+0100\n"
 "PO-Revision-Date: 2019-11-02 17:55+0000\n"
 "Last-Translator: Zbynìk Schwarz <zbynek.schwarz@gmail.com>\n"
 "Language-Team: Czech <https://translations.scummvm.org/projects/scummvm/"
@@ -2186,7 +2186,7 @@ msgstr ""
 msgid "Matched game IDs for the %s engine:"
 msgstr "Shodné ID hry:"
 
-#: audio/adlib.cpp:2290
+#: audio/adlib.cpp:2293
 #, fuzzy
 msgid "AdLib emulator"
 msgstr "AdLib emulátor:"
@@ -2270,7 +2270,7 @@ msgstr "Bez hudby"
 msgid "Apple II GS emulator (NOT IMPLEMENTED)"
 msgstr "Apple II GS Emulátor (NENÍ ZAVEDEN)"
 
-#: audio/softsynth/cms.cpp:350
+#: audio/softsynth/cms.cpp:351
 #, fuzzy
 msgid "Creative Music System emulator"
 msgstr "Emulátor hudebního systému Creative"
@@ -2287,7 +2287,7 @@ msgstr "Zvuk PC-98"
 msgid "Initializing MT-32 Emulator"
 msgstr "Zavádím MT-32 Emulátor"
 
-#: audio/softsynth/mt32.cpp:437
+#: audio/softsynth/mt32.cpp:439
 #, fuzzy
 msgid "MT-32 emulator"
 msgstr "MT-32 Emulátor"
@@ -2302,7 +2302,7 @@ msgstr "PC Speaker Emulátor"
 msgid "IBM PCjr emulator"
 msgstr "IBM PCjr Emulátor"
 
-#: audio/softsynth/sid.cpp:1430
+#: audio/softsynth/sid.cpp:1434
 #, fuzzy
 msgid "C64 Audio emulator"
 msgstr "Emulátor zvuku C64"

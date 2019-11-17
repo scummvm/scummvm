@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2019-11-15 19:42+0100\n"
+"POT-Creation-Date: 2019-11-17 09:23+0100\n"
 "PO-Revision-Date: 2019-10-12 04:54+0000\n"
 "Last-Translator: Stian Schultz <Stian.schultz@gmail.com>\n"
 "Language-Team: Norwegian Bokmål <https://translations.scummvm.org/projects/"
@@ -2195,7 +2195,7 @@ msgstr ""
 msgid "Matched game IDs for the %s engine:"
 msgstr ""
 
-#: audio/adlib.cpp:2290
+#: audio/adlib.cpp:2293
 #, fuzzy
 msgid "AdLib emulator"
 msgstr "AdLib-emulator:"
@@ -2279,7 +2279,7 @@ msgstr "Ingen musikk"
 msgid "Apple II GS emulator (NOT IMPLEMENTED)"
 msgstr "Apple II GS Emulator (IKKE IMPLEMENTERT)"
 
-#: audio/softsynth/cms.cpp:350
+#: audio/softsynth/cms.cpp:351
 #, fuzzy
 msgid "Creative Music System emulator"
 msgstr "Creative Music System Emulator"
@@ -2296,7 +2296,7 @@ msgstr "PC-98 Lyd"
 msgid "Initializing MT-32 Emulator"
 msgstr "Initialiserer MT-32-Emulator"
 
-#: audio/softsynth/mt32.cpp:437
+#: audio/softsynth/mt32.cpp:439
 #, fuzzy
 msgid "MT-32 emulator"
 msgstr "MT-32 Emulator"
@@ -2311,7 +2311,7 @@ msgstr "PC Speaker Emulator"
 msgid "IBM PCjr emulator"
 msgstr "IBM PCjr Emulator"
 
-#: audio/softsynth/sid.cpp:1430
+#: audio/softsynth/sid.cpp:1434
 #, fuzzy
 msgid "C64 Audio emulator"
 msgstr "C64 Lydemulator"

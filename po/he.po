@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.1.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2019-11-15 19:42+0100\n"
+"POT-Creation-Date: 2019-11-17 09:23+0100\n"
 "PO-Revision-Date: 2019-11-04 06:57+0000\n"
 "Last-Translator: Matan Bareket <mataniko@gmail.com>\n"
 "Language-Team: Hebrew <https://translations.scummvm.org/projects/scummvm/"
@@ -2142,7 +2142,7 @@ msgstr ""
 msgid "Matched game IDs for the %s engine:"
 msgstr "מזהי משחק תואמים למנוע% s:"
 
-#: audio/adlib.cpp:2290
+#: audio/adlib.cpp:2293
 msgid "AdLib emulator"
 msgstr "אמולטור AdLib"
 
@@ -2215,7 +2215,7 @@ msgstr "אין מוזיקה"
 msgid "Apple II GS emulator (NOT IMPLEMENTED)"
 msgstr "Apple II GS אמולטור (לא מיושם)"
 
-#: audio/softsynth/cms.cpp:350
+#: audio/softsynth/cms.cpp:351
 msgid "Creative Music System emulator"
 msgstr "אמולטור מערכת מוסיקה יצירתית"
 
@@ -2231,7 +2231,7 @@ msgstr "אודיו PC-98"
 msgid "Initializing MT-32 Emulator"
 msgstr "מאתחל אמולטור MT-32"
 
-#: audio/softsynth/mt32.cpp:437
+#: audio/softsynth/mt32.cpp:439
 msgid "MT-32 emulator"
 msgstr "אמולטור MT-32"
 
@@ -2243,7 +2243,7 @@ msgstr "אמולטור רמקולים למחשב"
 msgid "IBM PCjr emulator"
 msgstr "אמולטור PCjr של יבמ"
 
-#: audio/softsynth/sid.cpp:1430
+#: audio/softsynth/sid.cpp:1434
 msgid "C64 Audio emulator"
 msgstr "אמולטור שמע C64"
 
