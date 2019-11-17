@@ -72,7 +72,7 @@ bool AdriftMetaEngine::detectGames(const Common::FSList &fslist, DetectedGames &
 			continue;
 
 		// Check for known games
-		const AdriftGameDescription *p = ADRIFT_GAMES;
+		const GlkDetectionEntry *p = ADRIFT_GAMES;
 		while (p->_gameId && (md5 != p->_md5 || filesize != p->_filesize))
 			++p;
 

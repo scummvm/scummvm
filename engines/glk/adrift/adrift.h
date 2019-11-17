@@ -20,6 +20,8 @@
  *
  */
 
+/* Based on Scare interpreter 1.3.10 */
+
 #ifndef GLK_ADRIFT_ADRIFT
 #define GLK_ADRIFT_ADRIFT
 
@@ -37,16 +39,6 @@ namespace Adrift {
  */
 class Adrift : public GlkAPI {
 private:
-	/**
-	 * Initialization
-	 */
-	bool initialize();
-
-	/**
-	 * Deinitialization
-	 */
-	void deinitialize();
-
 	static void if_write_saved_game(void *opaque, const sc_byte *buffer, sc_int length);
 	static sc_int if_read_saved_game(void *opaque, sc_byte *buffer, sc_int length);
 public:
@@ -77,7 +69,6 @@ public:
 	 * in the Quetzal save file that will be created
 	 */
 	virtual Common::Error writeGameData(Common::WriteStream *ws) override;
-
 };
 
 extern Adrift *g_vm;

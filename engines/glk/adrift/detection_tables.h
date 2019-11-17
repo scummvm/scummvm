@@ -27,17 +27,6 @@
 namespace Glk {
 namespace Adrift {
 
-/**
- * Game description
- */
-struct AdriftGameDescription {
-	const char *const _gameId;
-	const char *const _extra;
-	const char *const _md5;
-	size_t _filesize;
-	Common::Language _language;
-};
-
 const PlainGameDescriptor ADRIFT_GAME_LIST[] = {
 	{ "Adrift", "Adrift IF Game" },
 
@@ -259,7 +248,7 @@ const PlainGameDescriptor ADRIFT_GAME_LIST[] = {
 	{ nullptr, nullptr }
 };
 
-const AdriftGameDescription ADRIFT_GAMES[] = {
+const GlkDetectionEntry ADRIFT_GAMES[] = {
 	// English Games
 	DT_ENTRY0("3monkeys", "dec34c282511b1eadfe231dbbb49f625", 79286),
 	DT_ENTRY0("akron", "2461ceeef3ef1eac15a2051a549b4402", 22258),
