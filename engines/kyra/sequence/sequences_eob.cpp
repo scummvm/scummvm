@@ -935,7 +935,7 @@ void EoBIntroPlayer::loadAndSetPalette(const char *dosPaletteFile, int pc98Palet
 	if (_vm->gameFlags().platform == Common::kPlatformDOS)
 		_screen->loadPalette(dosPaletteFile, _screen->getPalette(0));
 	else if (_vm->gameFlags().platform == Common::kPlatformPC98)
-		_screen->load16ColPalette(pc98PaletteID, _screen->getPalette(0));
+		_screen->loadPC98Palette(pc98PaletteID, _screen->getPalette(0));
 
 	_screen->getPalette(0).fill(0, 1, 0);
 	_screen->setScreenPalette(_screen->getPalette(0));

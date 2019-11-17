@@ -90,13 +90,15 @@ public:
 	void convertToHiColor(int page);
 	void shadeRect(int x1, int y1, int x2, int y2, int shadingLevel);
 
+	// PC-98 specific
+	void loadPC98Palette(int palID, Palette &dest);
+	void decodeBIN(const uint8 *src, uint8 *dst, uint16 inSize);
+	void decodePC98PlanarBitmap(int srcDstPage, int tempPage);
+
+	uint8 *_decodeTempBuffer;
+
 	// Amiga specific
 	void loadSpecialAmigaCPS(const char *fileName, int destPage, bool isGraphics);
-
-	// PC-98 specific
-	void load16ColPalette(int palID, Palette &dest);
-	void decodeBIN(const uint8 *src, uint8 *dst, uint32 dstSize);
-
 	// This is a simple way of emulating the Amiga copper list palette magic for more than 32 colors.
 	// I use colors 32 to 63 for these extra colors (which the Amiga copper sends to the color
 	// registers on the fly at vertical beam position 120).
@@ -143,7 +145,7 @@ private:
 	// hard coded 16 color palettes for PC98 version of EOB1
 	const uint8 *_palette16c[10];
 
-	const char *_cpsFilePattern;
+	const char *_cpsFileExt;
 
 	const uint16 _cursorColorKey16Bit;
 

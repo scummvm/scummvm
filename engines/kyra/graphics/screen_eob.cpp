@@ -63,18 +63,10 @@ Screen_EoB::Screen_EoB(EoBCoreEngine *vm, OSystem *system) : Screen(vm, system, 
 	_cgaMappingDefault = 0;
 	_cgaDitheringTables[0] = _cgaDitheringTables[1] = 0;
 	_useHiResEGADithering = _dualPaletteMode = false;
+	_cpsFileExt = 0;
+	_decodeTempBuffer = 0;
 	for (int i = 0; i < 10; ++i)
-		_palette16c[i] = 0;
-
-	_cpsFilePattern = "%s.CPS";
-	if (_vm->gameFlags().platform == Common::kPlatformFMTowns) {
-		_cpsFilePattern = "%s.SHP";
-	} else if (_vm->game() == GI_EOB1) {
-		if (_vm->gameFlags().platform == Common::kPlatformPC98)
-			_cpsFilePattern = "%s.BIN";
-		else if (_renderMode == Common::kRenderEGA || _renderMode == Common::kRenderCGA)
-			_cpsFilePattern = "%s.EGA";
-	}
+		_palette16c[i] = 0;	
 }
 
 Screen_EoB::~Screen_EoB() {
@@ -86,6 +78,7 @@ Screen_EoB::~Screen_EoB() {
 	delete[] _egaDitheringTempPage;
 	delete[] _cgaDitheringTables[0];
 	delete[] _cgaDitheringTables[1];
+	delete[] _decodeTempBuffer;
 }
 
 bool Screen_EoB::init() {
@@ -131,6 +124,20 @@ bool Screen_EoB::init() {
 			for (int i = 0; i < 10; i++)
 				_palette16c[i] = pal16c + i * 48;
 		}
+
+		static const char *cpsExt[] = { "CPS", "EGA", "SHP", "BIN" };
+		int ci = 0;
+		if (_vm->game() == GI_EOB1) {
+			if (_vm->gameFlags().platform == Common::kPlatformPC98) {
+				_decodeTempBuffer = new uint8[2048];
+				ci = 3;
+			} else if (_renderMode == Common::kRenderEGA || _renderMode == Common::kRenderCGA) {
+				ci = 1;
+			}
+		} else if (_vm->gameFlags().platform == Common::kPlatformFMTowns) {
+			ci = 2;
+		}
+		_cpsFileExt = cpsExt[ci];
 
 		return true;
 	}
@@ -251,7 +258,22 @@ void Screen_EoB::loadShapeSetBitmap(const char *file, int tempPage, int destPage
 }
 
 void Screen_EoB::loadBitmap(const char *filename, int tempPage, int dstPage, Palette *pal, bool skip) {
-	Screen::loadBitmap(filename, tempPage, dstPage, pal);
+	if (_use16ColorMode) {
+		Common::SeekableReadStream *str = _vm->resource()->createReadStream(filename);
+		if (!str)
+			error("Screen_EoB::loadBitmap(): Failed to load file '%s'", filename);
+		str->skip(2);
+		uint16 imgSize = str->readUint16LE();
+		assert(imgSize == str->size() - 4);
+		loadFileDataToPage(str, tempPage, imgSize);
+		delete str;
+
+		decodeBIN(_pagePtrs[tempPage], _pagePtrs[dstPage], imgSize);
+		if (!skip)
+			decodePC98PlanarBitmap(dstPage, tempPage);
+	} else {
+		Screen::loadBitmap(filename, tempPage, dstPage, pal);
+	}
 
 	if (_isAmiga && !skip) {
 		Common::SeekableReadStream *str = _vm->resource()->createReadStream(filename);
@@ -278,7 +300,7 @@ void Screen_EoB::loadBitmap(const char *filename, int tempPage, int dstPage, Pal
 }
 
 void Screen_EoB::loadEoBBitmap(const char *file, const uint8 *cgaMapping, int tempPage, int destPage, int convertToPage) {
-	Common::String tmp = Common::String::format(_cpsFilePattern, file);
+	Common::String tmp = Common::String::format("%s.%s", file, _cpsFileExt);
 	Common::SeekableReadStream *s = _vm->resource()->createReadStream(tmp);
 	bool loadAlternative = false;
 
@@ -288,14 +310,6 @@ void Screen_EoB::loadEoBBitmap(const char *file, const uint8 *cgaMapping, int te
 		s->read(_shpBuffer, s->size());
 		decodeSHP(_shpBuffer, destPage);
 
-	} if (_vm->gameFlags().platform == Common::kPlatformPC98) {
-		if (!s)
-			error("Screen_EoB::loadEoBBitmap(): Failed to load file '%s'", file);
-		s->skip(2);
-		uint16 imgSize = s->readUint16LE();
-		loadFileDataToPage(s, tempPage, s->size() - 4);
-		decodeBIN(_pagePtrs[tempPage], _pagePtrs[destPage], imgSize);
-	
 	} else if (s) {
 		// This additional check is necessary since some localized versions of EOB II seem to contain invalid (size zero) cps files
 		if (s->size() == 0) {			
@@ -1553,6 +1567,84 @@ void Screen_EoB::shadeRect(int x1, int y1, int x2, int y2, int shadingLevel) {
 	_16bitShadingLevel = l;
 }
 
+void Screen_EoB::loadPC98Palette(int palID, Palette &dest) {
+	if (!_palette16c[palID])
+		return;
+	loadPalette(_palette16c[palID], dest, 48);
+}
+
+void Screen_EoB::decodeBIN(const uint8 *src, uint8 *dst, uint16 inSize) {
+	const uint8 *end = src + inSize;
+	memset(_decodeTempBuffer, 0, 2048);
+	int tmpDstOffs = 0;
+
+	while (src < end) {
+		uint8 code = *src++;
+		if (!(code & 0x80)) {
+			int offs = code << 4;
+			code = *src++;
+			offs |= (code >> 4);
+			int len = (code & 0x0F) + 2;
+			int tmpSrcOffs = (tmpDstOffs - offs) & 0x7FF;
+			const uint8 *tmpSrc2 = dst;
+
+			for (int len2 = len; len2; len2--) {
+				*dst++ = _decodeTempBuffer[tmpSrcOffs++];
+				tmpSrcOffs &= 0x7FF;
+			}
+
+			while (len--) {
+				_decodeTempBuffer[tmpDstOffs++] = *tmpSrc2++;
+				tmpDstOffs &= 0x7FF;
+			}
+
+		} else if (code & 0x40) {
+			int len = code & 7;
+			if (code & 0x20)
+				len = (len << 8) | *src++;
+			len += 2;
+
+			int planes = ((code >> 3) & 3) + 1;
+			while (len--) {
+				for (int i = 0; i < planes; ++i) {
+					*dst++ = _decodeTempBuffer[tmpDstOffs++] = src[i];
+					tmpDstOffs &= 0x7FF;
+				}
+			}
+			src += planes;
+		} else {
+			for (int len = (code & 0x3F) + 1; len; len--) {
+				*dst++ = _decodeTempBuffer[tmpDstOffs++] = *src++;
+				tmpDstOffs &= 0x7FF;
+			}
+		}
+	}
+}
+
+void Screen_EoB::decodePC98PlanarBitmap(int srcDstPage, int tempPage) {
+	assert(tempPage != srcDstPage);
+	copyPage(srcDstPage, tempPage);
+	const uint8 *src = getCPagePtr(tempPage);
+	uint8 *dst1 = _pagePtrs[srcDstPage];
+	uint8 *dst2 = _pagePtrs[srcDstPage] + 4;
+	uint16 len = (SCREEN_W * SCREEN_H) >> 3;
+	while (len--) {
+		for (int i = 0; i < 4; ++i) {
+			uint8 col1 = 0;
+			uint8 col2 = 0;
+			for (int ii = 0; ii < 4; ++ii) {
+				col1 |= ((src[ii] >> (7 - i)) & 1) << ii;
+				col2 |= ((src[ii] >> (3 - i)) & 1) << ii;
+			}
+			*dst1++ = col1;
+			*dst2++ = col2;
+		}
+		src += 4;
+		dst1 += 4;
+		dst2 += 4;
+	}
+}
+
 static uint32 _decodeFrameAmiga_x = 0;
 
 bool decodeFrameAmiga_readNextBit(const uint8 *&data, uint32 &code, uint32 &chk) {
@@ -1673,16 +1765,6 @@ void Screen_EoB::loadSpecialAmigaCPS(const char *fileName, int destPage, bool is
 
 	if (isGraphics)
 		convertAmigaGfx(_pagePtrs[destPage], 320, 200);
-}
-
-void Screen_EoB::load16ColPalette(int palID, Palette &dest) {
-	if (!_palette16c[palID])
-		return;
-	loadPalette(_palette16c[palID], dest, 48);
-}
-
-void Screen_EoB::decodeBIN(const uint8 *src, uint8 *dst, uint32 dstSize) {
-
 }
 
 void Screen_EoB::setupDualPalettesSplitScreen(Palette &top, Palette &bottom) {
