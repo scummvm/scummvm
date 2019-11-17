@@ -20,6 +20,8 @@
  *
  */
 
+/* Based on Glulxe intrepreter version 0.5.4 */
+
 #ifndef GLK_GLULXE
 #define GLK_GLULXE
 
@@ -44,15 +46,16 @@ private:
 	 * \defgroup vm fields
 	 * @{
 	 */
-	CharHandler stream_char_handler;
-	UnicharHandler stream_unichar_handler, glkio_unichar_han_ptr;
 
 	bool vm_exited_cleanly;
 	uint gamefile_start, gamefile_len;
+	UnicharHandler glkio_unichar_han_ptr;
 	char *init_err, *init_err2;
+	CharHandler stream_char_handler;
 
 	byte *memmap;
 	byte *stack;
+	UnicharHandler stream_unichar_handler;
 
 	uint ramstart;
 	uint endgamefile;
