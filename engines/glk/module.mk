@@ -87,7 +87,6 @@ MODULE_OBJS += \
 	alan2/rules.o \
 	alan2/stack.o \
 	alan2/sysdep.o \
-	alan2/term.o \
 	alan2/types.o
 endif
 

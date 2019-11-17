@@ -85,7 +85,6 @@ extern const char *advnam;
 
 /* Screen formatting info */
 extern int col, lin;
-extern int paglen, pagwidth;
 
 extern Boolean verbose, errflg, trcflg, dbgflg, stpflg, logflg, statusflg;
 extern Boolean fail;

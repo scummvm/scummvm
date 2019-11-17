@@ -52,7 +52,6 @@ struct Product {
 	const Version version;
 };
 
-
 } // End of namespace Alan2
 } // End of namespace Glk
 

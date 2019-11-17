@@ -279,7 +279,7 @@ struct ParamElem {  /* PARAMETER */
 	Aword lastWord;           /* d:o to last */
 } PACKED_STRUCT;
 
-typedef enum Type {TYPNUM, TYPSTR} Type;
+enum Type { TYPNUM, TYPSTR };
 
 struct LitElem {    /* LITERAL */
 	Type type;

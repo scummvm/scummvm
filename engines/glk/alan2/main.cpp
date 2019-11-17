@@ -36,7 +36,6 @@
 #include "glk/alan2/stack.h"
 #include "glk/alan2/sysdep.h"
 #include "glk/alan2/types.h"
-#include "glk/alan2/term.h"
 #include "common/file.h"
 
 namespace Glk {
@@ -92,7 +91,6 @@ Common::WriteStream *logfil;
 
 /* Screen formatting info */
 int col, lin;
-int paglen, pagwidth;
 
 Boolean needsp = FALSE;
 Boolean skipsp = FALSE;
@@ -1244,8 +1242,6 @@ static void init() {
 
 	/* Initialise string attributes */
 	initstrings();
-
-	getPageSize();
 
 	/* Find first conjunction and use that for ',' handling */
 	for (i = 0; i < dictsize; i++)

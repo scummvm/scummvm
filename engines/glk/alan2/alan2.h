@@ -20,6 +20,8 @@
  *
  */
 
+/* Based on Alan2 interpreter version 2.8(6) */
+
 #ifndef GLK_ALAN2
 #define GLK_ALAN2
 

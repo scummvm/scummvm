@@ -83,7 +83,7 @@ typedef int WrdKind;
 
 
 /* Parameter Classes */
-typedef enum ClaKind {      /* NOTE! These must have the same order as */
+enum ClaKind {      /* NOTE! These must have the same order as */
 	CLA_OBJ = 1,          /* the name classes in NAM.H */
 	CLA_CNT = (int)CLA_OBJ << 1,
 	CLA_ACT = (int)CLA_CNT << 1,
@@ -91,26 +91,26 @@ typedef enum ClaKind {      /* NOTE! These must have the same order as */
 	CLA_STR = (int)CLA_NUM << 1,
 	CLA_COBJ = (int)CLA_STR << 1,
 	CLA_CACT = (int)CLA_COBJ << 1
-} ClaKind;
+};
 
 
 /* Verb Qualifiers */
-typedef enum QualClass {
+enum QualClass {
 	Q_DEFAULT,
 	Q_AFTER,
 	Q_BEFORE,
 	Q_ONLY
-} QualClass;
+};
 
 
 /* The AMACHINE Operations */
-typedef enum OpClass {
+enum OpClass {
 	C_CONST,
 	C_STMOP,
 	C_CURVAR
-} OpClass;
+};
 
-typedef enum InstClass {
+enum InstClass {
 	I_PRINT,          /* Print a string from the text file */
 	I_QUIT,
 	I_LOOK,
@@ -178,16 +178,16 @@ typedef enum InstClass {
 	I_DEPEXEC,            /*  -""-  */
 	I_DEPELSE,            /*  -""-  */
 	I_DEPEND          /*  -""-  */
-} InstClass;
+};
 
 
-typedef enum VarClass {
+enum VarClass {
 	V_PARAM,
 	V_CURLOC,
 	V_CURACT,
 	V_CURVRB,
 	V_SCORE
-} VarClass;
+};
 
 
 #define I_CLASS(x) ((x)>>28)
@@ -204,8 +204,8 @@ struct AcdHdr {
 	Aword size;         /* 02 - Size of ACD-file in Awords */
 	/* Options */
 	Abool pack;         /* 03 - Is the text packed ? */
-	Aword paglen;       /* 04 - Length of a page */
-	Aword pagwidth;     /* 05 - and width */
+	Aword paglen;       /* 04 - Unused - Length of a page */
+	Aword pagwidth;     /* 05 - Unused - and width */
 	Aword debug;        /* 06 - Option debug */
 	/* Data structures */
 	Aaddr dict;         /* 07 - Dictionary */
@@ -241,7 +241,7 @@ struct AcdHdr {
 #include "common/pack-end.h"    // END STRUCT PACKING
 
 /* Error message numbers */
-typedef enum MsgKind {
+enum MsgKind {
 	M_HUH,            /* Obsolete */
 	M_WHAT,
 	M_WHAT_ALL,
@@ -287,7 +287,7 @@ typedef enum MsgKind {
 	M_QUITACTION,         /* INTRODUCED: v2.7, so M_ARTICLE moved */
 	M_ARTICLE,            /* INTRODUCED: v2.6 but replaced the M_NOMSG*/
 	MSGMAX
-} MsgKind;
+};
 
 #define M_ARTICLE26 M_QUITACTION
 #define M_MSGMAX26 M_ARTICLE

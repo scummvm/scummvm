@@ -28,7 +28,6 @@
 #include "glk/alan2/main.h"
 #include "glk/alan2/params.h"
 #include "glk/alan2/parse.h"
-#include "glk/alan2/term.h"
 #include "glk/alan2/types.h"
 
 namespace Glk {
@@ -166,7 +165,6 @@ static void agetline(CONTEXT) {
 			CALL0(quit)
 		}
 
-		getPageSize();
 		anyOutput = FALSE;
 		if (logflg)
 			fprintf(logfil, "%s\n", buf);
