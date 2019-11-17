@@ -20,6 +20,8 @@
  *
  */
 
+/* Based on ScottFree interpreter version 1.14 */
+
 #ifndef GLK_SCOTT
 #define GLK_SCOTT
 

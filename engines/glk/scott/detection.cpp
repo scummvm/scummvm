@@ -64,7 +64,7 @@ bool ScottMetaEngine::detectGames(const Common::FSList &fslist, DetectedGames &g
 		if (!gameFile.open(*file))
 			continue;
 		Common::String md5 = Common::computeStreamMD5AsString(gameFile, 5000);
-		int32 filesize = gameFile.size();
+		size_t filesize = (size_t)gameFile.size();
 		gameFile.seek(0);
 		isBlorb = Blorb::isBlorb(gameFile, ID_SAAI);
 		gameFile.close();
@@ -73,7 +73,7 @@ bool ScottMetaEngine::detectGames(const Common::FSList &fslist, DetectedGames &g
 			continue;
 
 		// Scan through the Scott game list for a match
-		const ScottGame *p = SCOTT_GAMES;
+		const GlkDetectionEntry *p = SCOTT_GAMES;
 		while (p->_md5 && p->_filesize != filesize && md5 != p->_md5)
 			++p;
 
