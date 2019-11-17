@@ -239,6 +239,9 @@ bool TTFFont::load(Common::SeekableReadStream &stream, int size, TTFSizeMode siz
 		_loadFlags = FT_LOAD_TARGET_MONO;
 		_renderMode = FT_RENDER_MODE_MONO;
 		break;
+
+	default:
+		break;
 	}
 
 	FT_Fixed yScale = _face->size->metrics.y_scale;
@@ -297,6 +300,8 @@ int TTFFont::computePointSize(int size, TTFSizeMode sizeMode) const {
 	}
 	case kTTFSizeModeCharacter:
 		ptSize = size;
+		break;
+	default:
 		break;
 	}
 

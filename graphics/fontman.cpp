@@ -187,6 +187,9 @@ const Font *FontManager::getFontByUsage(FontUsage usage) const {
 			return g_sysfont_big;
 		else
 			return _fontMap[_localizedFontName];
+		break;
+	default:
+		break;
 	}
 
 	return 0;

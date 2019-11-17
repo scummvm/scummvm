@@ -59,6 +59,7 @@ static inline void stage_scale2x(void* dst0, void* dst1, const void* src0, const
 	case 2: scale2x_16_def(DST(16,0), DST(16,1), SRC(16,0), SRC(16,1), SRC(16,2), pixel_per_row); break;
 	case 4: scale2x_32_def(DST(32,0), DST(32,1), SRC(32,0), SRC(32,1), SRC(32,2), pixel_per_row); break;
 #endif
+	default: break;
 	}
 }
 
@@ -70,6 +71,7 @@ static inline void stage_scale3x(void* dst0, void* dst1, void* dst2, const void*
 	case 1: scale3x_8_def( DST( 8,0), DST( 8,1), DST( 8,2), SRC( 8,0), SRC( 8,1), SRC( 8,2), pixel_per_row); break;
 	case 2: scale3x_16_def(DST(16,0), DST(16,1), DST(16,2), SRC(16,0), SRC(16,1), SRC(16,2), pixel_per_row); break;
 	case 4: scale3x_32_def(DST(32,0), DST(32,1), DST(32,2), SRC(32,0), SRC(32,1), SRC(32,2), pixel_per_row); break;
+	default: break;
 	}
 }
 
@@ -290,6 +292,8 @@ int scale_precondition(unsigned scale, unsigned pixel, unsigned width, unsigned 
 		if (height < 4)
 			return -1;
 		break;
+	default:
+		break;
 	}
 
 #if defined(__GNUC__) && (defined(__i386__) || defined(__x86_64__))
@@ -304,6 +308,8 @@ int scale_precondition(unsigned scale, unsigned pixel, unsigned width, unsigned 
 	case 3:
 		if (width < 2)
 			return -1;
+		break;
+	default:
 		break;
 	}
 #else
@@ -337,6 +343,8 @@ void scale(unsigned scale, void* void_dst, unsigned dst_slice, const void* void_
 		break;
 	case 4:
 		scale4x(void_dst, dst_slice, void_src, src_slice, pixel, width, height);
+		break;
+	default:
 		break;
 	}
 }

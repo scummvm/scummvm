@@ -448,6 +448,7 @@ void colorFill(PixelType *first, PixelType *last, PixelType color) {
 		return;
 	int n = (count + 7) >> 3;
 	switch (count % 8) {
+	default:
 	case 0:	do {
 	       		*first++ = color; // fall through
 	case 7:		*first++ = color; // fall through
@@ -488,6 +489,7 @@ void colorFillClip(PixelType *first, PixelType *last, PixelType color, int realX
 
 	int n = (count + 7) >> 3;
 	switch (count % 8) {
+	default:
 	case 0:	do {
 	       		*first++ = color; // fall through
 	case 7:		*first++ = color; // fall through
@@ -1205,6 +1207,9 @@ drawCircle(int x, int y, int r) {
 
 	case kFillGradient:
 		break;
+
+	default:
+		break;
 	}
 }
 
@@ -1262,6 +1267,9 @@ drawSquare(int x, int y, int w, int h) {
 			else
 				drawSquareAlg(x, y, w, h, _fgColor, kFillDisabled);
 		}
+		break;
+
+	default:
 		break;
 	}
 }
@@ -1350,6 +1358,9 @@ drawTab(int x, int y, int r, int w, int h) {
 		else
 			drawTabAlg(x, y, w, h, r, _fgColor, Base::_fillMode);
 		break;
+
+	default:
+		break;
 	}
 }
 
@@ -1392,6 +1403,7 @@ drawTriangle(int x, int y, int w, int h, TriangleOrientation orient) {
 		case kTriangleLeft:
 		case kTriangleRight:
 		case kTriangleAuto:
+		default:
 			break;
 		}
 
@@ -1418,6 +1430,7 @@ drawTriangle(int x, int y, int w, int h, TriangleOrientation orient) {
 		case kTriangleLeft:
 		case kTriangleRight:
 		case kTriangleAuto:
+		default:
 			break;
 		}
 
@@ -2286,6 +2299,8 @@ drawTriangleVertAlg(int x1, int y1, int w, int h, bool inverted, PixelType color
 				blendPixelPtr(ptr_right, color, rfpart(intery));
 				blendPixelPtr(ptr_left, color, rfpart(intery));
 				break;
+			default:
+				break;
 			}
 		}
 
@@ -2339,6 +2354,8 @@ drawTriangleVertAlg(int x1, int y1, int w, int h, bool inverted, PixelType color
 				blendPixelPtr(ptr_right, color, rfpart(interx));
 				blendPixelPtr(ptr_left, color, rfpart(interx));
 				break;
+			default:
+				break;
 			}
 		}
 
@@ -2381,6 +2398,8 @@ drawTriangleVertAlg(int x1, int y1, int w, int h, bool inverted, PixelType color
 			colorFill<PixelType>(ptr_right, ptr_left, calcGradient(gradient_h++, h));
 			blendPixelPtr(ptr_right, color, rfpart(interx));
 			blendPixelPtr(ptr_left, color, rfpart(interx));
+			break;
+		default:
 			break;
 		}
 	}
@@ -2480,6 +2499,8 @@ drawTriangleVertAlgClip(int x1, int y1, int w, int h, bool inverted, PixelType c
 				blendPixelPtrClip(ptr_right, color, rfpart(intery), x_right, y_right);
 				blendPixelPtrClip(ptr_left, color, rfpart(intery), x_left, y_left);
 				break;
+			default:
+				break;
 			}
 			}
 
@@ -2539,6 +2560,8 @@ drawTriangleVertAlgClip(int x1, int y1, int w, int h, bool inverted, PixelType c
 				blendPixelPtrClip(ptr_right, color, rfpart(interx), x_right, y_right);
 				blendPixelPtrClip(ptr_left, color, rfpart(interx), x_left, y_left);
 				break;
+			default:
+				break;
 			}
 			}
 
@@ -2587,6 +2610,8 @@ drawTriangleVertAlgClip(int x1, int y1, int w, int h, bool inverted, PixelType c
 			blendPixelPtrClip(ptr_right, color, rfpart(interx), x_right, y_right);
 			blendPixelPtrClip(ptr_left, color, rfpart(interx), x_left, y_left);
 			break;
+		default:
+			break;
 		}
 	}
 }
@@ -2633,6 +2658,8 @@ drawTriangleFast(int x1, int y1, int size, bool inverted, PixelType color, Vecto
 			break;
 		case kFillGradient:
 			colorFill<PixelType>(ptr_right, ptr_left, calcGradient(gradient_h++, size));
+			break;
+		default:
 			break;
 		}
 

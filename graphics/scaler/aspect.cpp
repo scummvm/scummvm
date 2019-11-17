@@ -252,6 +252,8 @@ int stretch200To240Interpolated(uint8 *buf, uint32 pitch, int width, int height,
 		case 4:
 			interpolate5Line<ColorMask, 1>((uint16 *)dstPtr, (const uint16 *)srcPtr, (const uint16 *)(srcPtr - pitch), width);
 			break;
+		default:
+			break;
 		}
 		dstPtr -= pitch;
 	}
@@ -314,6 +316,8 @@ void Normal1xAspectTemplate(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr,
 			// Sixth (and last) output line is copied from fifth (and last) input line
 			srcPtr -= srcPitch;
 			memcpy(dstPtr, srcPtr, sizeof(uint16) * width);
+			break;
+		default:
 			break;
 		}
 #endif

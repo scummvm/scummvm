@@ -2917,6 +2917,8 @@ static void HQ3x_implementation(const uint8 *srcPtr, uint32 srcPitch, uint8 *dst
 					PIXEL22_2
 				}
 				break;
+			default:
+				break;
 			}
 
 			w1 = w2;
