@@ -282,7 +282,11 @@ void send_to_system(int transport, String &strmsg, ResultType &result, ContextTy
 			break;
 
 		case LOAD_STATE: {
-			Common::ErrorCode errCode = g_vm->loadGame().getCode();
+			Common::ErrorCode errCode;
+			if (g_vm->loadingSavegame())
+				errCode = g_vm->loadLauncherSavegame().getCode();
+			else
+				errCode = g_vm->loadGame().getCode();
 
 			if (errCode == Common::kNoError) {
 				result._kind = RESERVED;

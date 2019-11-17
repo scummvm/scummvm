@@ -159,8 +159,13 @@ public:
 	 * Returns true if a savegame is being loaded directly from the ScummVM launcher
 	 */
 	bool loadingSavegame() const {
-		return _saveSlot != -1;
+		return _saveSlot >= 0;
 	}
+
+	/**
+	 * Handles loading the savegame specified in the ScummVM launcher
+	 */
+	Common::Error loadLauncherSavegame();
 
 	/**
 	 * Write some text to the screen

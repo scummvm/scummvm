@@ -87,6 +87,9 @@ bool Archetype::initialize() {
 	_mainWindow = glk_window_open(0, 0, 0, wintype_TextBuffer);
 	glk_set_window(_mainWindow);
 
+	// Check for savegame to load
+	_saveSlot = ConfMan.hasKey("save_slot") ? ConfMan.getInt("save_slot") : -1;
+
 	return true;
 }
 
@@ -102,6 +105,12 @@ Common::Error Archetype::writeGameData(Common::WriteStream *ws) {
 	save_game_state(ws, Object_List);
 
 	return Common::kNoError;
+}
+
+Common::Error Archetype::loadLauncherSavegame() {
+	Common::Error result = loadGameState(_saveSlot);
+	_saveSlot = -2;
+	return result;
 }
 
 void Archetype::interpret() {
@@ -130,7 +139,9 @@ void Archetype::write(const String fmt, ...) {
 	va_end(ap);
 
 	_lastOutputText = s;
-	glk_put_buffer(s.c_str(), s.size());
+
+	if (!loadingSavegame())
+		glk_put_buffer(s.c_str(), s.size());
 }
 
 void Archetype::writeln(const String fmt, ...) {
@@ -141,7 +152,9 @@ void Archetype::writeln(const String fmt, ...) {
 
 	s += '\n';
 	_lastOutputText = s;
-	glk_put_buffer(s.c_str(), s.size());
+
+	if (!loadingSavegame())
+		glk_put_buffer(s.c_str(), s.size());
 }
 
 String Archetype::readLine() {
@@ -153,6 +166,14 @@ String Archetype::readLine() {
 	if (text.contains("save") || text.contains("load")) {
 		writeln();
 		return "";
+	
+	} else if (loadingSavegame()) {
+		// Automatically trigger a load action if a savegame needs loading from the launcher
+		return String("load");
+	
+	} else if (_saveSlot == -2) {
+		_saveSlot = -1;
+		return String("look");
 	}
 
 	event_t ev;
