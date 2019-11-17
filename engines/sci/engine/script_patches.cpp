@@ -10383,80 +10383,6 @@ static const uint16 qfg4BenchmarkPatch[] = {
 	PATCH_END
 };
 
-// In room 800, at the start of the game, when automatically sliding down a
-// slope an error may happen inside Grooper::doit caused by a timing issue.
-//
-// We delay a bit, so that hero::cycler should always be set.
-//
-// Applies to at least: English CD, English floppy, German floppy
-// Responsible method: sFallsBackSide::changeState in script 803
-// Fixes bug: #9801
-static const uint16 qfg4SlidingDownSlopeSignature[] = {
-	0x87, 0x01,                       // lap param[1]
-	0x65, SIG_ADDTOOFFSET(+1),        // aTop state
-	0x36,                             // push
-	0x3c,                             // dup
-	0x35, 0x00,                       // ldi 00
-	0x1a,                             // eq?
-	0x31, 0x30,                       // bnt [skip state 0]
-	0x38, SIG_SELECTOR16(handsOff),   // pushi handsOff
-	0x76,                             // push0
-	0x81, 0x01,                       // lag global[1]
-	0x4a, SIG_UINT16(0x0004),         // send 04
-	SIG_MAGICDWORD,
-	0x38, SIG_SELECTOR16(cycleSpeed), // pushi cycleSpeed
-	0x76,                             // push0
-	0x81, 0x00,                       // lag global[0]
-	0x4a, SIG_UINT16(0x0004),         // send 04
-	0xa3, 0x00,                       // sal local[0]
-	0x38, SIG_SELECTOR16(setStep),    // pushi setStep
-	0x7a,                             // push2
-	0x78,                             // push1
-	0x78,                             // push1
-	0x38, SIG_SELECTOR16(setMotion),  // pushi setMotion
-	0x38, SIG_UINT16(0x0004),         // pushi 04
-	0x51, SIG_ADDTOOFFSET(+1),        // class PolyPath
-	0x36,                             // push
-	0x39, 0x49,                       // pushi $49
-	0x39, 0x50,                       // pushi $50
-	0x7c,                             // pushSelf
-	0x81, 0x00,                       // lag global[0]
-	0x4a, SIG_UINT16(0x0014),         // send $14
-	SIG_END
-};
-
-static const uint16 qfg4SlidingDownSlopePatch[] = {
-	PATCH_ADDTOOFFSET(+5),
-	0x2f, 0x34,                         // bt [skip state 0]
-	0x38, PATCH_SELECTOR16(handsOff),   // pushi handsOff
-	0x76,                               // push0
-	0x81, 0x01,                         // lag global[1]
-	0x4a, PATCH_UINT16(0x0004),         // send 04
-
-	0x78,                                     // push1
-	0x39, 0x20,                               // pushi $20
-	0x43, kScummVMWaitId, PATCH_UINT16(0x02), // callk Wait, $2
-	0x38, PATCH_SELECTOR16(setStep),    // pushi setStep
-	0x7a,                               // push2
-	0x78,                               // push1
-	0x78,                               // push1
-	0x38, PATCH_SELECTOR16(setMotion),  // pushi setMotion
-	0x38, PATCH_UINT16(0x0004),         // pushi 04
-	0x51, PATCH_GETORIGINALBYTE(+44),   // class PolyPath
-	0x36,                               // push
-	0x39, 0x49,                         // pushi $49
-	0x39, 0x50,                         // pushi $50
-	0x7c,                               // pushSelf
-	0x81, 0x00,                         // lag global[0]
-	0x38, PATCH_SELECTOR16(cycleSpeed), // pushi cycleSpeed
-	0x76,                               // push0
-	0x4a, PATCH_UINT16(0x0018),         // send $18
-	0xa3, 0x00,                         // sal local[0]
-	0x3a,                               // toss
-	0x48,                               // ret
-	PATCH_END
-};
-
 // WORKAROUND: Script needed, because of differences in our pathfinding
 // algorithm.
 // At the inn, there is a path that goes off screen. In our pathfinding
@@ -13148,6 +13074,43 @@ static const uint16 qfg4InnDoorCDPatch[] = {
 	PATCH_END
 };
 
+// In room 800, at the start of the game, automatically sliding down the top of
+//  the slope can crash the CD version in Grooper:doit. See the inn door patch
+//  above for details on these motion regressions and their solution.
+//
+// We fix this by calling hero:normalize at the start of sFallsBackSide to reset
+//  hero's state before starting the motion sequence.
+//
+// This patch is not applied to the NRS fan-patch included in the GOG version.
+//  It fixes this bug by adding a spin loop delay that's relative to game speed
+//  to sFallsBackSide.
+//
+// Applies to: English CD
+// Responsible method: sFallsBackSide:changeState(0)
+// Fixes bug: #9801
+static const uint16 qfg4SlidingDownSlopeCDSignature[] = {
+	0x87, 0x01,                       // lap 01
+	0x65, 0x16,                       // aTop state
+	0x36,                             // push
+	0x3c,                             // dup
+	0x35, SIG_MAGICDWORD, 0x00,       // ldi 00
+	0x1a,                             // eq?
+	0x31, 0x30,                       // bnt 30 [ state 1 ]
+	SIG_ADDTOOFFSET(+42),
+	0x4a, SIG_UINT16(0x0014),         // send 14 [ hero: setStep: 1 1 ... ]
+	SIG_END
+};
+
+static const uint16 qfg4SlidingDownSlopeCDPatch[] = {
+	PATCH_ADDTOOFFSET(+5),
+	0x2f, 0x34,                         // bt 34 [ state 1 ]
+	0x38, PATCH_SELECTOR16(normalize),  // pushi normalize
+	0x76,                               // push0
+	PATCH_ADDTOOFFSET(+42),
+	0x4a, PATCH_UINT16(0x0018),         // send 18 [ hero: normalize: setStep: 1 1 ... ]
+	PATCH_END
+};
+
 // Walking around the base of the slippery slope in room 800 can crash the CD
 //  version in either the Grooper or Grycler classes. See the inn door patch
 //  above for details on these regressions and their solution.
@@ -14622,7 +14585,7 @@ static const SciScriptPatcherEntry qfg4Signatures[] = {
 	{  true,   800, "fix grapnel removing hero's scaler",          1, qfg4RopeScalerSignature,       qfg4RopeScalerPatch },
 	{  true,   801, "fix runes puzzle (1/2)",                      1, qfg4RunesPuzzleSignature1,     qfg4RunesPuzzlePatch1 },
 	{  true,   801, "fix runes puzzle (2/2)",                      1, qfg4RunesPuzzleSignature2,     qfg4RunesPuzzlePatch2 },
-	{  true,   803, "fix sliding down slope",                      1, qfg4SlidingDownSlopeSignature, qfg4SlidingDownSlopePatch },
+	{  true,   803, "CD: fix sliding down slope",                  1, qfg4SlidingDownSlopeCDSignature, qfg4SlidingDownSlopeCDPatch },
 	{  true,   803, "CD: fix walking up slippery slope",           1, qfg4WalkUpSlopeCDSignature,    qfg4WalkUpSlopeCDPatch },
 	{  true,   803, "CD: fix walking down slippery slope",         1, qfg4WalkDownSlopeCDSignature,  qfg4WalkDownSlopeCDPatch },
 	{  true,   803, "NRS: fix walking down slippery slope",        1, qfg4WalkDownSlopeNrsSignature, qfg4WalkDownSlopeNrsPatch },
