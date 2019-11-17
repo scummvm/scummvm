@@ -20,6 +20,8 @@
  *
  */
 
+/* Based on AdvSys interpreter 1.2 */
+
 #ifndef GLK_ADVSYS_ADVSYS
 #define GLK_ADVSYS_ADVSYS
 

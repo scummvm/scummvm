@@ -385,6 +385,5 @@ void Game::readMsgBlock() {
 		ce->_data[idx] = (ce->_data[idx] + 30) & 0xff;
 }
 
-
 } // End of namespace AdvSys
 } // End of namespace Glk
