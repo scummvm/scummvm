@@ -75,7 +75,7 @@ bool GlulxeMetaEngine::detectGames(const Common::FSList &fslist, DetectedGames &
 			continue;
 
 		// Check for known games
-		const GlulxeGameDescription *p = GLULXE_GAMES;
+		const GlkDetectionEntry *p = GLULXE_GAMES;
 		while (p->_gameId && (md5 != p->_md5 || filesize != p->_filesize))
 			++p;
 
