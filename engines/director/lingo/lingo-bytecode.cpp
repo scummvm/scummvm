@@ -126,7 +126,12 @@ void Lingo::addCodeV4(Common::SeekableSubReadStreamEndian &stream, ScriptType ty
 	stream.seek(constsOffset);
 	for (uint16 i = 0; i < constsCount; i++) {
 		Datum constant;
-		uint16 constType = stream.readUint16();
+		uint32 constType = 0;
+		if (_vm->getVersion() >= 5) {
+			constType = stream.readUint32();
+		} else {
+			constType = (uint32)stream.readUint16();
+		}
 		uint32 value = stream.readUint32();
 		switch (constType) {
 		case 1: // String type
