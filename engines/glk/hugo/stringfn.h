@@ -62,7 +62,6 @@ public:
 	char *strupr(char *s);
 };
 
-
 } // End of namespace Hugo
 } // End of namespace Glk
 

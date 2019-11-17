@@ -20,6 +20,8 @@
  *
  */
 
+/* Based on the Hugo interpreter version 3.3.0 */
+
 #ifndef GLK_HUGO_HUGO
 #define GLK_HUGO_HUGO
 

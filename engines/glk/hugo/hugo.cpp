@@ -79,6 +79,8 @@ Hugo::Hugo(OSystem *syst, const GlkGameDescription &gameDesc) : GlkAPI(syst, gam
 		active_screen(0), step_nest(0), history_last(0)
 #endif
 		{
+	strcpy(gamefile, "");
+
 	// heexpr
 	Common::fill(&eval[0], &eval[MAX_EVAL_ELEMENTS], 0);
 	Common::fill(&var[0], &var[MAXLOCALS + MAXGLOBALS], 0);

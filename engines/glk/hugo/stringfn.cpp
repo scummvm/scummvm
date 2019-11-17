@@ -25,9 +25,6 @@
 namespace Glk {
 namespace Hugo {
 
-
-/* LEFT */
-
 char *StringFunctions::Left(char a[], int l) {
 	static char *temp;
 	int i;

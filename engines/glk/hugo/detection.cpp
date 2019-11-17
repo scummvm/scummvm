@@ -70,7 +70,7 @@ bool HugoMetaEngine::detectGames(const Common::FSList &fslist, DetectedGames &ga
 		gameFile.close();
 
 		// Check for known games
-		const HugoGameDescription *p = HUGO_GAMES;
+		const GlkDetectionEntry *p = HUGO_GAMES;
 		while (p->_gameId && (md5 != p->_md5 || filesize != p->_filesize))
 			++p;
 
