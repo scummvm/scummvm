@@ -409,6 +409,8 @@ inline uint OPL_CALC_SLOT(OPL_SLOT *SLOT) {
 			SLOT->eve = EG_OFF + 1;
 			SLOT->evs = 0;
 			break;
+		default:
+			break;
 		}
 	}
 	/* calcrate envelope */
@@ -859,6 +861,8 @@ void OPLWriteReg(FM_OPL *OPL, int r, int v) {
 				}
 			}
 			return;
+		default:
+			break;
 		}
 		break;
 	case 0x20:	/* am,vib,ksr,eg type,mul */
@@ -995,6 +999,8 @@ void OPLWriteReg(FM_OPL *OPL, int r, int v) {
 			CH->SLOT[slot&1].wavetable = &SIN_TABLE[(v & 0x03) * SIN_ENT];
 		}
 		return;
+	default:
+		break;
 	}
 }
 

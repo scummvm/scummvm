@@ -92,36 +92,40 @@ bool Chip::write(uint32 reg, uint8 val) {
 		timer[1].counter = val;
 		return true;
 	case 0x04:
-		double time = g_system->getMillis() / 1000.0;
+		{
+			double time = g_system->getMillis() / 1000.0;
 
-		if (val & 0x80) {
-			timer[0].reset(time);
-			timer[1].reset(time);
-		} else {
-			timer[0].update(time);
-			timer[1].update(time);
+			if (val & 0x80) {
+				timer[0].reset(time);
+				timer[1].reset(time);
+			} else {
+				timer[0].update(time);
+				timer[1].update(time);
 
-			if (val & 0x1)
-				timer[0].start(time, 80);
-			else
-				timer[0].stop();
+				if (val & 0x1)
+					timer[0].start(time, 80);
+				else
+					timer[0].stop();
 
-			timer[0].masked = (val & 0x40) > 0;
+				timer[0].masked = (val & 0x40) > 0;
 
-			if (timer[0].masked)
-				timer[0].overflow = false;
+				if (timer[0].masked)
+					timer[0].overflow = false;
 
-			if (val & 0x2)
-				timer[1].start(time, 320);
-			else
-				timer[1].stop();
+				if (val & 0x2)
+					timer[1].start(time, 320);
+				else
+					timer[1].stop();
 
-			timer[1].masked = (val & 0x20) > 0;
+				timer[1].masked = (val & 0x20) > 0;
 
-			if (timer[1].masked)
-				timer[1].overflow = false;
+				if (timer[1].masked)
+					timer[1].overflow = false;
+			}
 		}
 		return true;
+	default:
+		break;
 	}
 	return false;
 }
@@ -203,6 +207,8 @@ void OPL::write(int port, int val) {
 				dualWrite(1, _reg.dual[1], val);
 			}
 			break;
+		default:
+			break;
 		}
 	} else {
 		// Ask the handler to write the address
@@ -223,6 +229,8 @@ void OPL::write(int port, int val) {
 				_reg.dual[0] = val & 0xff;
 				_reg.dual[1] = val & 0xff;
 			}
+			break;
+		default:
 			break;
 		}
 	}
@@ -245,6 +253,8 @@ byte OPL::read(int port) {
 			return 0xff;
 		// Make sure the low bits are 6 on opl2
 		return _chip[(port >> 1) & 1].read() | 0x6;
+	default:
+		break;
 	}
 	return 0;
 }
@@ -281,6 +291,8 @@ void OPL::writeReg(int r, int v) {
 		} else {
 			write(0x388, tempReg);
 		}
+		break;
+	default:
 		break;
 	};
 }

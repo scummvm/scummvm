@@ -118,6 +118,9 @@ Config::DriverId Config::detect(OplType type) {
 	case kOpl3:
 		flags = kFlagOpl3;
 		break;
+
+	default:
+		break;
 	}
 
 	DriverId drv = parse(ConfMan.get("opl_driver"));

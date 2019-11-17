@@ -278,6 +278,8 @@ void ModXmS3mStream::tickChannel(Channel &channel) {
 			case 0xF0: /* Tone Porta.*/
 				tonePorta(channel);
 				break;
+			default:
+				break;
 		}
 	}
 	switch (channel.note.effect) {
@@ -374,6 +376,8 @@ void ModXmS3mStream::tickChannel(Channel &channel) {
 		case 0x95: /* Fine Vibrato. */
 			channel.vibratoPhase += channel.vibratoSpeed;
 			vibrato(channel, 1);
+			break;
+		default:
 			break;
 	}
 	autoVibrato(channel);
@@ -567,6 +571,8 @@ void ModXmS3mStream::retrigVolSlide(Channel &channel) {
 			case 0xF:
 				channel.volume = channel.volume << 1;
 				break;
+			default:
+				break;
 		}
 		if (channel.volume < 0) {
 			channel.volume = 0;
@@ -638,6 +644,8 @@ void ModXmS3mStream::trigger(Channel &channel) {
 			if ((channel.note.volume & 0xF) > 0) {
 				channel.tonePortaParam = channel.note.volume & 0xF;
 			}
+			break;
+		default:
 			break;
 	}
 	if (channel.note.key > 0) {
@@ -883,6 +891,8 @@ void ModXmS3mStream::updateChannelRow(Channel &channel, Note note) {
 				case 0x20:
 					portaDown(channel, 0xE0 | (channel.xfinePortaParam & 0xF));
 					break;
+				default:
+					break;
 			}
 			break;
 		case 0x71: /* Fine Porta Up. */
@@ -949,6 +959,8 @@ void ModXmS3mStream::updateChannelRow(Channel &channel, Note note) {
 			break;
 		case 0xF8: /* Set Panning. */
 			channel.panning = channel.note.param * 17;
+			break;
+		default:
 			break;
 	}
 	autoVibrato(channel);
@@ -1090,6 +1102,8 @@ void ModXmS3mStream::updateRow() {
 			case 0x7E:
 			case 0xFE: /* Pattern Delay.*/
 				_tick = _speed + _speed * note.param;
+				break;
+			default:
 				break;
 		}
 	}

@@ -210,6 +210,9 @@ void OPL::write(int port, int val) {
 			break;
 		case Config::kOpl3:
 			writeOplReg(chip, index[chip], val);
+			break;
+		default:
+			break;
 		}
 	} else {
 		switch(_type) {
@@ -225,6 +228,9 @@ void OPL::write(int port, int val) {
 			break;
 		case Config::kOpl3:
 			index[chip] = val;
+			break;
+		default:
+			break;
 		}
 	}
 }
@@ -244,6 +250,9 @@ void OPL::writeReg(int r, int v) {
 		break;
 	case Config::kOpl3:
 		writeOplReg(r >= 0x100, r & 0xff, v);
+		break;
+	default:
+		break;
 	}
 }
 
@@ -305,6 +314,9 @@ void OPL::writeOplReg(int c, int r, int v) {
 		case 0xf0:
 			_oper[idx].waveform = v & (_type == Config::kOpl3 ? 0x7 : 0x3);
 			snd_hwdep_ioctl(_opl, SNDRV_DM_FM_IOCTL_SET_VOICE, (void *)&_oper[idx]);
+			break;
+		default:
+			break;
 		}
 	} else {
 		// Voice
@@ -337,6 +349,9 @@ void OPL::writeOplReg(int c, int r, int v) {
 				_oper[opIdx].right = _oper[opIdx + 3].right = (v >> 5) & 0x1;
 			}
 			snd_hwdep_ioctl(_opl, SNDRV_DM_FM_IOCTL_SET_VOICE, (void *)&_oper[opIdx]);
+			break;
+		default:
+			break;
 		}
 	}
 }

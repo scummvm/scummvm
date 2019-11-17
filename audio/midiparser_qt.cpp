@@ -176,6 +176,8 @@ uint32 MidiParser_QT::readNextEvent() {
 		// General
 		handleGeneralEvent(control);
 		break;
+	default:
+		break;
 	}
 
 	return 0;
@@ -235,6 +237,8 @@ void MidiParser_QT::handleControllerEvent(uint32 control, uint32 part, byte intP
 			break;
 		case 10:
 			_partMap[part].pan = intPart;
+			break;
+		default:
 			break;
 		}
 	}

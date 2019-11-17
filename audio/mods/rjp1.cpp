@@ -163,6 +163,8 @@ bool Rjp1::load(Common::SeekableReadStream *songData, Common::SeekableReadStream
 			case 6:
 				// sequence data
 				break;
+			default:
+				break;
 			}
 		}
 
@@ -284,6 +286,8 @@ bool Rjp1::executeSfxSequenceOp(Rjp1Channel *channel, uint8 code, const uint8 *&
 	case 7:
 		loop = false;
 		break;
+	default:
+		break;
 	}
 	return loop;
 }
@@ -344,6 +348,8 @@ bool Rjp1::executeSongSequenceOp(Rjp1Channel *channel, uint8 code, const uint8 *
 		break;
 	case 7:
 		loop = false;
+		break;
+	default:
 		break;
 	}
 	return loop;

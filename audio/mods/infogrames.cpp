@@ -346,7 +346,10 @@ void Infogrames::getNextSample(Channel &chn) {
 							break;
 						default:
 							warning("Unknown Infogrames command: %X", cmd);
+							break;
 						}
+						break;
+					default:
 						break;
 					}
 				} else { // 0xxxxxxx - Set period

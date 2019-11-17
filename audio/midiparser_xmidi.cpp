@@ -183,6 +183,7 @@ void MidiParser_XMIDI::parseNextEvent(EventInfo &info) {
 				warning("Unsupported XMIDI controller %d (0x%2x)",
 					info.basic.param1, info.basic.param1);
 			}
+			break;
 		}
 
 		// Should we really keep passing the XMIDI controller events to
@@ -234,7 +235,12 @@ void MidiParser_XMIDI::parseNextEvent(EventInfo &info) {
 
 		default:
 			warning("MidiParser_XMIDI::parseNextEvent: Unsupported event code %x", info.event);
+			break;
 		}
+		break;
+
+	default:
+		break;
 	}
 }
 

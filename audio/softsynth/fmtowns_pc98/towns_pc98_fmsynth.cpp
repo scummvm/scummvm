@@ -230,6 +230,9 @@ void TownsPC98_FmSynthOperator::generateOutput(int32 phasebuf, int32 *feed, int3
 				targetLevel = 1023;
 				levelIncrement = _adTbl[fs_r.rate + ((_tickCount >> fs_r.shift) & 7)];
 				break;
+
+			default:
+				break;
 			}
 			loop = false;
 		}
@@ -1535,6 +1538,8 @@ void TownsPC98_FmSynth::nextTick(int32 *buffer, uint32 bufferSize) {
 				o[1]->generateOutput(0, 0, output);
 				o[3]->generateOutput(0, 0, output);
 				*del = 0;
+				break;
+			default:
 				break;
 			};
 
