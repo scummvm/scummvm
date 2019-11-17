@@ -83,6 +83,11 @@ void Lingo::addCodeV4(Common::SeekableSubReadStreamEndian &stream, ScriptType ty
 	_currentEntityId = id;
 	_scriptContexts[type][id] = _currentScriptContext;
 
+	if (debugChannelSet(5, kDebugLoading)) {
+		debugC(5, kDebugLoading, "Lscr header:");
+		stream.hexdump(0x5c);
+	}
+
 	// read the Lscr header!
 	// unk1
 	for (uint32 i = 0; i < 0x10; i++) {
@@ -117,6 +122,12 @@ void Lingo::addCodeV4(Common::SeekableSubReadStreamEndian &stream, ScriptType ty
 	uint32 constsStoreOffset = constsOffset + 6 * constsCount;
 	uint32 constsStoreSize = stream.size() - constsStoreOffset;
 	stream.seek(constsStoreOffset);
+
+	if (debugChannelSet(5, kDebugLoading)) {
+		debugC(5, kDebugLoading, "Lscr consts store:");
+		stream.hexdump(constsStoreSize);
+	}
+
 	byte *constsStore = (byte *)malloc(constsStoreSize);
 	stream.read(constsStore, constsStoreSize);
 
@@ -193,6 +204,11 @@ void Lingo::addCodeV4(Common::SeekableSubReadStreamEndian &stream, ScriptType ty
 	// read each entry in the function table.
 	stream.seek(functionsOffset);
 	for (uint16 i = 0; i < functionsCount; i++) {
+		if (debugChannelSet(5, kDebugLoading)) {
+			debugC(5, kDebugLoading, "Function %d header:", i);
+			stream.hexdump(0x2a);
+		}
+
 		_currentScriptFunction = i;
 		_currentScriptContext->functions.push_back(new ScriptData);
 		_currentScript = _currentScriptContext->functions[_currentScriptFunction];
@@ -221,6 +237,11 @@ void Lingo::addCodeV4(Common::SeekableSubReadStreamEndian &stream, ScriptType ty
 		} else if (startOffset + length >= codeStoreOffset + codeStoreSize) {
 			warning("Function %d end offset is out of bounds", i);
 			continue;
+		}
+
+		if (debugChannelSet(5, kDebugLoading)) {
+			debugC(5, kDebugLoading, "Function %d code:", i);
+			Common::hexdump(codeStore, length, 16, startOffset);
 		}
 
 		uint16 pointer = startOffset - codeStoreOffset;
@@ -254,10 +275,12 @@ void Lingo::addCodeV4(Common::SeekableSubReadStreamEndian &stream, ScriptType ty
 			} else {
 				// unimplemented instruction
 				if (opcode < 0x40) { // 1 byte instruction
+					debugC(5, kDebugLingoCompile, "Unimplemented opcode: 0x%02x", opcode);
 					offsetList.push_back(_currentScript->size());
 					g_lingo->code1(Lingo::c_unk);
 					g_lingo->codeInt(opcode);
 				} else if (opcode < 0x80) { // 2 byte instruction
+					debugC(5, kDebugLingoCompile, "Unimplemented opcode: 0x%02x (%d)", opcode, (uint)codeStore[pointer]);
 					offsetList.push_back(_currentScript->size());
 					g_lingo->code1(Lingo::c_unk1);
 					g_lingo->codeInt(opcode);
@@ -265,6 +288,7 @@ void Lingo::addCodeV4(Common::SeekableSubReadStreamEndian &stream, ScriptType ty
 					g_lingo->codeInt((uint)codeStore[pointer]);
 					pointer += 1;
 				} else { // 3 byte instruction
+					debugC(5, kDebugLingoCompile, "Unimplemented opcode: 0x%02x (%d, %d)", opcode, (uint)codeStore[pointer], (uint)codeStore[pointer+1]);
 					offsetList.push_back(_currentScript->size());
 					g_lingo->code1(Lingo::c_unk2);
 					g_lingo->codeInt(opcode);
@@ -286,6 +310,11 @@ void Lingo::addNamesV4(Common::SeekableSubReadStreamEndian &stream) {
 	debugC(1, kDebugLingoCompile, "Add V4 script name index");
 
 	// read the Lnam header!
+	if (debugChannelSet(5, kDebugLoading)) {
+		debugC(5, kDebugLoading, "Lnam header:");
+		stream.hexdump(0x14);
+	}
+
 	stream.readUint16();
 	stream.readUint16();
 	stream.readUint16();
