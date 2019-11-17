@@ -29,7 +29,7 @@ namespace Glk {
 namespace Archetype {
 
 const char *const VERSION_STUB = "Archetype version ";
-const double VERSION_NUM = 1.02;
+const double VERSION_NUM = 1.01;
 
 size_t Bytes;
 bool KeepLooking;

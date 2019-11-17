@@ -20,6 +20,8 @@
  *
  */
 
+/* Based on Archetype interpreter version 1.01 */
+
 #ifndef ARCHETYPE_ARCHETYPE
 #define ARCHETYPE_ARCHETYPE
 
