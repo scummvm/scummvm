@@ -20,6 +20,8 @@
  *
  */
 
+/* Based on the JACL interpreter version 3.0.0 */
+
 #ifndef JACL_JACL
 #define JACL_JACL
 
