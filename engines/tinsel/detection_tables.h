@@ -556,6 +556,26 @@ static const TinselGameDescription gameDescriptions[] = {
 		TINSEL_V1,
 	},
 
+	{	// English CD "Argentum Collection"
+		{
+			"dw",
+			"CD",
+			{
+				{"dw.scn", 0, "36795d539e290838fa1d4c11789cb142", 776188},
+				{"english.smp", 0, NULL, -1},
+				{NULL, 0, NULL, 0}
+			},
+			Common::EN_ANY,
+			Common::kPlatformDOS,
+			ADGF_CD | ADGF_TESTING,
+			GUIO0()
+		},
+		GID_DW1,
+		0,
+		GF_SCNFILES | GF_ENHANCED_AUDIO_SUPPORT,
+		TINSEL_V1,
+	},
+
 	{	// Russian Discworld 1. Fan translation v1.1
 		{
 			"dw",
