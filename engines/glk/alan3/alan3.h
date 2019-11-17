@@ -20,6 +20,8 @@
  *
  */
 
+/* Based on Alan 3 interpreter 3.0beta6 */
+
 #ifndef GLK_ALAN3
 #define GLK_ALAN3
 

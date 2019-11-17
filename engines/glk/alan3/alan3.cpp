@@ -47,7 +47,6 @@ Alan3::Alan3(OSystem *syst, const GlkGameDescription &gameDesc) : GlkIO(syst, ga
 	// main
 	codfil = nullptr;
 	textFile = nullptr;
-//	logfil = nullptr;
 	memory = nullptr;
 
 	// exe

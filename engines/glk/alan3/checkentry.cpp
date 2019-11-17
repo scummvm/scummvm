@@ -28,7 +28,6 @@
 namespace Glk {
 namespace Alan3 {
 
-/*======================================================================*/
 bool checksFailed(CONTEXT, Aaddr adr, bool execute) {
 	CheckEntry *chk = (CheckEntry *) pointerTo(adr);
 	bool flag;
