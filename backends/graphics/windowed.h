@@ -397,7 +397,7 @@ private:
 			}
 		}
 
-		drawRect.left = ((_windowWidth - width) / 2);
+		drawRect.left = ((_windowWidth - width) / 2) + _gameScreenShakeXOffset;
 		drawRect.top = ((_windowHeight - height) / 2) + _gameScreenShakeYOffset;
 		drawRect.setWidth(width);
 		drawRect.setHeight(height);
