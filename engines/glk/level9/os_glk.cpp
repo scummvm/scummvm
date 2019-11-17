@@ -326,11 +326,13 @@ static const glui32 GLN_GRAPHICS_TIMEOUT = 50;
  */
 static const int GLN_GRAPHICS_REPAINT_WAIT = 10;
 
+#ifdef GFX_SCALE_BY_FACTOR
 /* Pixel size multiplier for image size scaling. */
 static const int GLN_GRAPHICS_PIXEL = 1;
+#endif
 
 /* Proportion of the display to use for graphics. */
-static const glui32 GLN_GRAPHICS_PROPORTION = 30;
+static const glui32 GLN_GRAPHICS_PROPORTION = 50;
 
 /*
  * Special title picture number, requiring its own handling, and count of
@@ -656,7 +658,7 @@ static void gln_graphics_convert_palette(Colour ln_palette[], glui32 glk_palette
 	}
 }
 
-
+#ifdef GFX_SCALE_BY_FACTOR
 /*
  * gln_graphics_position_picture()
  *
@@ -678,6 +680,7 @@ static void gln_graphics_position_picture(winid_t glk_window, int pixel_size,
 	*x_offset = ((int) window_width - width * pixel_size) / 2;
 	*y_offset = ((int) window_height - height * pixel_size) / 2;
 }
+#endif
 
 /*
  * gms_graphics_compare_layering_inverted()
@@ -981,8 +984,14 @@ static void gln_graphics_paint_everything(winid_t glk_window, Colour palette[],
 		}
 	}
 
+	#ifdef GFX_SCALE_BY_FACTOR
 	g_vm->glk_image_draw_scaled(glk_window, s, (uint)-1, x_offset, y_offset,
 		width * GLN_GRAPHICS_PIXEL, height * GLN_GRAPHICS_PIXEL);
+	#else
+	uint winWidth, winHeight;
+	g_vm->glk_window_get_size(glk_window, &winWidth, &winHeight);
+	g_vm->glk_image_draw_scaled(glk_window, s, (uint)-1, 0, 0, winWidth, winHeight);
+	#endif
 }
 
 /*
@@ -1095,6 +1104,7 @@ static void gln_graphics_timeout() {
 	 * graphics window.
 	 */
 	if (gln_graphics_new_picture || deferred_repaint) {
+		#ifdef GFX_SCALE_BY_FACTOR
 		/*
 		 * Calculate the x and y offset to center the picture in the graphics
 		 * window.
@@ -1103,6 +1113,9 @@ static void gln_graphics_timeout() {
 		                              GLN_GRAPHICS_PIXEL,
 		                              gln_graphics_width, gln_graphics_height,
 		                              &x_offset, &y_offset);
+		#else
+		x_offset = y_offset = 0;
+		#endif
 
 		/*
 		 * Reset all on-screen pixels to an unused value, guaranteed not to
@@ -1132,7 +1145,11 @@ static void gln_graphics_timeout() {
 		/* Clear the graphics window. */
 		gln_graphics_clear_and_border(gln_graphics_window,
 		                              x_offset, y_offset,
+		#ifdef GFX_SCALE_BY_FACTOR
 		                              GLN_GRAPHICS_PIXEL,
+		#else
+										1,
+		#endif
 		                              gln_graphics_width, gln_graphics_height);
 #ifndef GARGLK
 		/* Start a fresh picture rendering pass. */

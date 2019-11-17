@@ -20,6 +20,8 @@
  *
  */
 
+/* Based on Level 9 interpreter 4.1 */
+
 #ifndef GLK_LEVEL9_LEVEL9
 #define GLK_LEVEL9_LEVEL9
 
