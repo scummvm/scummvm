@@ -766,7 +766,6 @@ XcodeProvider::ValueList& XcodeProvider::getResourceFiles() const {
 	static ValueList files;
 	if (files.empty()) {
 		files.push_back("gui/themes/scummclassic.zip");
-		files.push_back("gui/themes/scummmodern.zip");
 		files.push_back("gui/themes/scummremastered.zip");
 		files.push_back("gui/themes/translations.dat");
 		files.push_back("dists/engine-data/access.dat");

@@ -38,14 +38,12 @@ override_dh_auto_configure:
             --enable-verbose-build \
             --prefix=/usr $(OPTARGS)
 
-FPATH=gui/themes/scummmodern
+FPATH=gui/themes/scummremastered
 override_dh_auto_build:
 	## replacing bundled fonts...
 	for F in $(FPATH)/Free*.ttf; do cp -v /usr/share/fonts/truetype/freefont/$$(basename $${F}) $(FPATH)/ ;done
-	## re-compressing "modern" theme...
-	cd $(FPATH) && zip -9 -X ../scummmodern.zip -r .
 	## re-compressing "remastered" theme...
-	cd gui/themes/scummremastered && zip -9 -X ../scummremastered.zip -r .
+	cd $(FPATH) && zip -9 -X ../scummremastered.zip -r .
 	## re-compressing "classic" theme...
 	cd gui/themes/scummclassic && zip -9 -X ../scummclassic.zip -r .
 	## build executable(s)...

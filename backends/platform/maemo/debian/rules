@@ -38,13 +38,13 @@ install: build
 #	install -m0755 scummvm debian/scummvm/usr/games/scummvm.bin
 #	install -m0644 -d debian/scummvm/usr/share/scummvm
 #	install -m0644 dists/pred.dic debian/scummvm/usr/share/scummvm
-#	install -m0644 gui/themes/scummclassic.zip  gui/themes/scummmodern.zip debian/scummvm/usr/share/scummvm
+#	install -m0644 gui/themes/scummclassic.zip  gui/themes/scummremastered.zip debian/scummvm/usr/share/scummvm
 # optified version (save rootfs space on N900), see also configure prefix and datadir paths above
 	install -m0644 -d debian/scummvm/opt/scummvm/bin
 	install -m0755 scummvm debian/scummvm/opt/scummvm/bin
 	install -m0644 -d debian/scummvm/opt/scummvm/share
 	install -m0644 dists/pred.dic debian/scummvm/opt/scummvm/share
-	install -m0644 gui/themes/scummclassic.zip  gui/themes/scummmodern.zip gui/themes/scummremastered.zip debian/scummvm/opt/scummvm/share
+	install -m0644 gui/themes/scummclassic.zip  gui/themes/scummremastered.zip debian/scummvm/opt/scummvm/share
 	install -m0644 backends/vkeybd/packs/vkeybd_default.zip debian/scummvm/opt/scummvm/share
 	install -m0644 backends/vkeybd/packs/vkeybd_small.zip debian/scummvm/opt/scummvm/share
 # for optified version we can also add engine datafiles
