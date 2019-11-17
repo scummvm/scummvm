@@ -1207,6 +1207,19 @@ void SurfaceSdlGraphicsManager::internUpdateScreen() {
 	// If the shake position changed, fill the dirty area with blackness
 	// When building with SDL2, the shake offset is added to the active rect instead,
 	// so this isn't needed there.
+	if (_currentShakeXOffset != _gameScreenShakeXOffset ||
+		(_cursorNeedsRedraw && _mouseBackup.x <= _currentShakeXOffset)) {
+		SDL_Rect blackrect = {0, 0, (Uint16)(_gameScreenShakeXOffset * _videoMode.scaleFactor), (Uint16)(_videoMode.screenHeight * _videoMode.scaleFactor)};
+
+		if (_videoMode.aspectRatioCorrection && !_overlayVisible)
+			blackrect.h = real2Aspect(blackrect.h - 1) + 1;
+
+		SDL_FillRect(_hwScreen, &blackrect, 0);
+
+		_currentShakeXOffset = _gameScreenShakeXOffset;
+
+		_forceRedraw = true;
+	}
 	if (_currentShakeYOffset != _gameScreenShakeYOffset ||
 		(_cursorNeedsRedraw && _mouseBackup.y <= _currentShakeYOffset)) {
 		SDL_Rect blackrect = {0, 0, (Uint16)(_videoMode.screenWidth * _videoMode.scaleFactor), (Uint16)(_gameScreenShakeYOffset * _videoMode.scaleFactor)};
@@ -1294,14 +1307,19 @@ void SurfaceSdlGraphicsManager::internUpdateScreen() {
 		dstPitch = _hwScreen->pitch;
 
 		for (r = _dirtyRectList; r != lastRect; ++r) {
+			int dst_x = r->x + _currentShakeXOffset;
 			int dst_y = r->y + _currentShakeYOffset;
+			int dst_w = 0;
 			int dst_h = 0;
 #ifdef USE_SCALERS
 			int orig_dst_y = 0;
 #endif
-			int rx1 = r->x * scale1;
 
-			if (dst_y < height) {
+			if (dst_x < width && dst_y < height) {
+				dst_w = r->w;
+				if (dst_w > width - dst_x)
+					dst_w = width - dst_x;
+
 				dst_h = r->h;
 				if (dst_h > height - dst_y)
 					dst_h = height - dst_y;
@@ -1309,19 +1327,20 @@ void SurfaceSdlGraphicsManager::internUpdateScreen() {
 #ifdef USE_SCALERS
 				orig_dst_y = dst_y;
 #endif
-				dst_y = dst_y * scale1;
+				dst_x *= scale1;
+				dst_y *= scale1;
 
 				if (_videoMode.aspectRatioCorrection && !_overlayVisible)
 					dst_y = real2Aspect(dst_y);
 
 				assert(scalerProc != NULL);
 				scalerProc((byte *)srcSurf->pixels + (r->x * 2 + 2) + (r->y + 1) * srcPitch, srcPitch,
-					(byte *)_hwScreen->pixels + rx1 * 2 + dst_y * dstPitch, dstPitch, r->w, dst_h);
+					(byte *)_hwScreen->pixels + dst_x * 2 + dst_y * dstPitch, dstPitch, dst_w, dst_h);
 			}
 
-			r->x = rx1;
+			r->x = dst_x;
 			r->y = dst_y;
-			r->w = r->w * scale1;
+			r->w = dst_w * scale1;
 			r->h = dst_h * scale1;
 
 #ifdef USE_SCALERS
@@ -1335,7 +1354,9 @@ void SurfaceSdlGraphicsManager::internUpdateScreen() {
 		// Readjust the dirty rect list in case we are doing a full update.
 		// This is necessary if shaking is active.
 		if (_forceRedraw) {
+			_dirtyRectList[0].x = 0;
 			_dirtyRectList[0].y = 0;
+			_dirtyRectList[0].w = _videoMode.hardwareWidth;
 			_dirtyRectList[0].h = _videoMode.hardwareHeight;
 		}
 
@@ -1350,17 +1371,22 @@ void SurfaceSdlGraphicsManager::internUpdateScreen() {
 		// Of course when the overlay is visible we do not show it, since it is only for game
 		// specific focus.
 		if (_enableFocusRect && !_overlayVisible) {
+			int x = _focusRect.left + _currentShakeXOffset;
 			int y = _focusRect.top + _currentShakeYOffset;
-			int h = 0;
-			int x = _focusRect.left * scale1;
-			int w = _focusRect.width() * scale1;
 
-			if (y < height) {
-				h = _focusRect.height();
+			if (x < width && y < height) {
+				int w = _focusRect.width();
+				if (w > width - x)
+					w = width - x;
+
+				int h = _focusRect.height();
 				if (h > height - y)
 					h = height - y;
 
+				x *= scale1;
 				y *= scale1;
+				w *= scale1;
+				h *= scale1;
 
 				if (_videoMode.aspectRatioCorrection && !_overlayVisible)
 					y = real2Aspect(y);
@@ -2277,6 +2303,7 @@ void SurfaceSdlGraphicsManager::drawMouse() {
 	// We draw the pre-scaled cursor image, so now we need to adjust for
 	// scaling, shake position and aspect ratio correction manually.
 
+	dst.x += _currentShakeXOffset;
 	dst.y += _currentShakeYOffset;
 
 	if (_videoMode.aspectRatioCorrection && !_overlayVisible)
