@@ -98,8 +98,8 @@ void Lingo::addCodeV4(Common::SeekableSubReadStreamEndian &stream, ScriptType ty
 	for (uint32 i = 0; i < 0x2e; i++) {
 		stream.readByte();
 	}
-	uint16 globalsOffset = stream.readUint16();
-	uint16 globalsCount = stream.readUint16();
+	/*uint16 globalsOffset = */stream.readUint16();
+	/*uint16 globalsCount = */stream.readUint16();
 	// unk3
 	for (uint32 i = 0; i < 0x4; i++) {
 		stream.readByte();
@@ -113,7 +113,7 @@ void Lingo::addCodeV4(Common::SeekableSubReadStreamEndian &stream, ScriptType ty
 	stream.readUint16();
 	stream.readUint16();
 	stream.readUint16();
-	uint16 constsBase = stream.readUint16();
+	/*uint16 constsBase = */stream.readUint16();
 
 	// preload all the constants!
 	// these are stored as a reference table of 6 byte entries, followed by a storage area.
@@ -213,14 +213,14 @@ void Lingo::addCodeV4(Common::SeekableSubReadStreamEndian &stream, ScriptType ty
 		_currentScriptContext->functions.push_back(new ScriptData);
 		_currentScript = _currentScriptContext->functions[_currentScriptFunction];
 
-		uint16 nameIndex = stream.readUint16();
+		/*uint16 nameIndex = */stream.readUint16();
 		stream.readUint16();
 		uint32 length = stream.readUint32();
 		uint32 startOffset = stream.readUint32();
-		uint16 argCount = stream.readUint16();
-		uint32 argOffset = stream.readUint32();
-		uint16 varCount = stream.readUint16();
-		uint32 varNamesOffset = stream.readUint32();
+		/*uint16 argCount = */stream.readUint16();
+		/*uint32 argOffset = */stream.readUint32();
+		/*uint16 varCount = */stream.readUint16();
+		/*uint32 varNamesOffset = */stream.readUint32();
 		stream.readUint16();
 		stream.readUint16();
 		stream.readUint16();
