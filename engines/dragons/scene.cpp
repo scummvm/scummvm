@@ -74,9 +74,7 @@ void Scene::loadScene(uint32 sceneId, uint32 cameraPointId) {
 
 	if (!(sceneId & 0x8000)) {
 		byte *obd = _dragonRMS->getObdDataFieldC(sceneId);
-		ScriptOpCall scriptOpCall;
-		scriptOpCall._code = obd + 4;
-		scriptOpCall._codeEnd = scriptOpCall._code + READ_LE_UINT32(obd);
+		ScriptOpCall scriptOpCall(obd + 4, READ_LE_UINT32(obd));
 		_scriptOpcodes->runScript(scriptOpCall);
 	}
 	DragonINI *ini = _dragonINIResource->getRecord(0xc4);
@@ -106,9 +104,7 @@ void Scene::loadSceneData(uint32 sceneId, uint32 cameraPointId) {
 
 	if (!(sceneId & 0x8000)) {
 		byte *obd = _dragonRMS->getObdDataField10(sceneId);
-		ScriptOpCall scriptOpCall;
-		scriptOpCall._code = obd + 4;
-		scriptOpCall._codeEnd = scriptOpCall._code + READ_LE_UINT32(obd);
+		ScriptOpCall scriptOpCall(obd + 4, READ_LE_UINT32(obd));
 		uint16 oldSceneId = _currentSceneId;
 		_currentSceneId = -1;
 		_scriptOpcodes->runScript(scriptOpCall);
@@ -330,9 +326,7 @@ void Scene::loadSceneData(uint32 sceneId, uint32 cameraPointId) {
 
 	if (!(sceneId & 0x8000)) {
 		byte *obd = _dragonRMS->getObdData(sceneId);
-		ScriptOpCall scriptOpCall;
-		scriptOpCall._code = obd + 4;
-		scriptOpCall._codeEnd = scriptOpCall._code + READ_LE_UINT32(obd);
+		ScriptOpCall scriptOpCall(obd + 4, READ_LE_UINT32(obd));
 		_scriptOpcodes->runScript(scriptOpCall);
 	}
 
@@ -500,12 +494,22 @@ Common::Point Scene::getLayerOffset(uint8 layerNumber) {
 
 void Scene::drawBgLayer(uint8 layerNumber, Common::Rect rect, Graphics::Surface *surface) {
 	Common::Point offset = _stage->getLayerOffset(layerNumber);
-	Common::Rect clippedRect = _screen->clipRectToRect(offset.x, offset.y, rect, Common::Rect(_stage->getBgLayer()->w, _stage->getBgLayer()->h));
-	clippedRect.left += offset.x < 0 ? -offset.x : 0;
-	clippedRect.right += offset.x < 0 ? -offset.x : 0;
-	clippedRect.top += offset.y < 0 ? -offset.y : 0;
-	clippedRect.bottom += offset.y < 0 ? -offset.y : 0;
-	_screen->copyRectToSurface8bpp(*surface, _screen->getPalette(0), 0, 0, clippedRect, false, 128);
+//	Common::Rect clippedRect = _screen->clipRectToRect(offset.x, offset.y, rect, Common::Rect(_stage->getBgLayer()->w, _stage->getBgLayer()->h));
+	rect.left += rect.left + offset.x < 0 ? -(rect.left + offset.x) : offset.x;
+	if (rect.right + offset.x > surface->w) {
+		rect.right = surface->w - 1;
+	} else {
+		rect.right += offset.x;
+	}
+//	clippedRect.right += offset.x < 0 ? -offset.x : 0;
+	rect.top += rect.top + offset.y < 0 ? -(rect.top + offset.y) : offset.y;
+	if (rect.bottom + offset.y > surface->h) {
+		rect.bottom = surface->h - 1;
+	} else {
+		rect.bottom += offset.y;
+	}
+//	clippedRect.bottom += offset.y < 0 ? -offset.y : 0;
+	_screen->copyRectToSurface8bpp(*surface, _screen->getPalette(0), 0, 0, rect, false, 128);
 }
 
 } // End of namespace Dragons

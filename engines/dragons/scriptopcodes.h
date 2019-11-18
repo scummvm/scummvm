@@ -34,10 +34,12 @@ class DragonsEngine;
 
 struct ScriptOpCall {
 	byte _op;
+	byte *_base;
 	byte *_code;
 	byte *_codeEnd;
 	int _field8;
 	int _result;
+	ScriptOpCall(byte *start, uint32 length);
 	void skip(uint size);
 	byte readByte();
 	int16 readSint16();
