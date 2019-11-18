@@ -5554,6 +5554,7 @@ if test "$_updates" = yes; then
 	if test "$_sparkle" = yes; then
 		echo "Sparkle"
 	else
+		_updates=no;
 		echo "$_updates"
 	fi
 else
