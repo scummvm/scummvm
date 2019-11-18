@@ -93,8 +93,7 @@ void Minigame3::run() {
 	int16 local_1bc;
 	int16 local_1ba;
 	uint16 local_1b8;
-//	undefined auStack432 [20];
-	int16 asStack412 [14];
+	int16 eyeBgYOffsetTbl[21];
 	TearInfo tearInfo [30];
 	Common::Point bunnyPositionsTbl [4];
 	Common::Point handPositionsTbl [4];
@@ -127,7 +126,9 @@ void Minigame3::run() {
 		error("Failed to open arc1.bin");
 	}
 
-	//TODO do we need this?	memcpy(auStack432,&DAT_8008e88c,0x2a);
+	for (i = 0;i < 21; i++) {
+		eyeBgYOffsetTbl[i] = fd->readUint16LE();
+	}
 
 	fd->seek(0x2c);
 	for (i = 0; i < 30; i++) {
@@ -651,8 +652,8 @@ void Minigame3::run() {
 						local_14 = 4;
 					}
 					updateBackgroundLayerOffset(2, (int) local_14 * 0x140, 0);
-					updateBackgroundLayerOffset(1, (int) -local_1c0, (int) asStack412[local_1c0]);
-					updateBackgroundLayerOffset(0, (int) -local_1c0, (int) asStack412[local_1c0]);
+					updateBackgroundLayerOffset(1, (int) -local_1c0, (int) eyeBgYOffsetTbl[local_1c0 + 10]);
+					updateBackgroundLayerOffset(0, (int) -local_1c0, (int) eyeBgYOffsetTbl[local_1c0 + 10]);
 				}
 			}
 			else {

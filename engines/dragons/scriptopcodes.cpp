@@ -59,6 +59,11 @@ uint32 ScriptOpCall::readUint32() {
 	return value;
 }
 
+ScriptOpCall::ScriptOpCall(byte *start, uint32 length): _op(0), _result(0), _field8(0) {
+	_code = _base = start;
+	_codeEnd = _code + length;
+}
+
 // ScriptOpcodes
 
 ScriptOpcodes::ScriptOpcodes(DragonsEngine *vm, DragonFLG *dragonFLG)
@@ -76,7 +81,7 @@ ScriptOpcodes::~ScriptOpcodes() {
 void ScriptOpcodes::execOpcode(ScriptOpCall &scriptOpCall) {
 	if (!_opcodes[scriptOpCall._op])
 		error("ScriptOpcodes::execOpcode() Unimplemented opcode %d (0x%X)", scriptOpCall._op, scriptOpCall._op);
-	debug("execScriptOpcode(0x%X) %s", scriptOpCall._op, _opcodeNames[scriptOpCall._op].c_str());
+	debug("execScriptOpcode(0x%X) @%X  %s", scriptOpCall._op, scriptOpCall._code - scriptOpCall._base, _opcodeNames[scriptOpCall._op].c_str());
 	(*_opcodes[scriptOpCall._op])(scriptOpCall);
 }
 
@@ -273,11 +278,9 @@ void ScriptOpcodes::opUnk3(ScriptOpCall &scriptOpCall) {
 void ScriptOpcodes::opExecuteScript(ScriptOpCall &scriptOpCall) {
 	ARG_SKIP(2);
 	ARG_UINT32(obdOffset);
-	ScriptOpCall newScriptOpCall;
 	byte *data =_vm->_dragonOBD->getObdAtOffset(obdOffset);
 
-	newScriptOpCall._code = data + 4;
-	newScriptOpCall._codeEnd = newScriptOpCall._code + READ_LE_UINT32(data);
+	ScriptOpCall newScriptOpCall(data + 4, READ_LE_UINT32(data));
 	newScriptOpCall._field8 = scriptOpCall._field8;
 	newScriptOpCall._result = 0;
 
@@ -393,9 +396,7 @@ void ScriptOpcodes::opUnk13PropertiesRelated(ScriptOpCall &scriptOpCall) {
 
 void ScriptOpcodes::opUnk14PropertiesRelated(ScriptOpCall &scriptOpCall) {
 	if (checkPropertyFlag(scriptOpCall)) {
-		ScriptOpCall localScriptOpCall;
-		localScriptOpCall._code = scriptOpCall._code + 4;
-		localScriptOpCall._codeEnd = localScriptOpCall._code + READ_LE_UINT16(scriptOpCall._code);
+		ScriptOpCall localScriptOpCall(scriptOpCall._code + 4, READ_LE_UINT16(scriptOpCall._code));
 		localScriptOpCall._field8 = scriptOpCall._field8;
 		localScriptOpCall._result = 0;
 
@@ -418,9 +419,7 @@ void ScriptOpcodes::opUnk14PropertiesRelated(ScriptOpCall &scriptOpCall) {
 void ScriptOpcodes::opUnk15PropertiesRelated(ScriptOpCall &scriptOpCall) {
 	while (true) {
 		if (checkPropertyFlag(scriptOpCall)) {
-			ScriptOpCall localScriptOpCall;
-			localScriptOpCall._code = scriptOpCall._code + 4;
-			localScriptOpCall._codeEnd = localScriptOpCall._code + READ_LE_UINT32(scriptOpCall._code);
+			ScriptOpCall localScriptOpCall(scriptOpCall._code + 4, READ_LE_UINT32(scriptOpCall._code));
 
 			runScript(localScriptOpCall);
 
@@ -1076,9 +1075,7 @@ void ScriptOpcodes::opUnk19(ScriptOpCall &scriptOpCall) {
 	ARG_INT16(size);
 
 	if (scriptOpCall._field8 == 3) {
-		ScriptOpCall newCall;
-		newCall._code = scriptOpCall._code;
-		newCall._codeEnd = scriptOpCall._code + size;
+		ScriptOpCall newCall(scriptOpCall._code, size);
 		_vm->_scriptOpcodes->runScript(newCall);
 	}
 	scriptOpCall._code += size;

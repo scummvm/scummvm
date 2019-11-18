@@ -247,9 +247,7 @@ int16 Cursor::updateIniFromScene() {
 					for(int idx=0; idx < 5; idx++) {
 						data_800728b0_cursor_seqID = idx;
 						byte *obd = _vm->_dragonOBD->getFromOpt(cursorOverIni - 1); //_dragonRMS->getObdDataFieldC(sceneId);
-						ScriptOpCall scriptOpCall;
-						scriptOpCall._code = obd + 8;
-						scriptOpCall._codeEnd = scriptOpCall._code + READ_LE_UINT32(obd);
+						ScriptOpCall scriptOpCall(obd + 8, READ_LE_UINT32(obd));
 
 //						uVar17 = uVar15;
 //						local_58 = dragon_Obd_Offset + *(int *)(uVar16 * 8 + dragon_Opt_Offset + -8) + 8;
@@ -276,9 +274,7 @@ int16 Cursor::updateIniFromScene() {
 					return _iniUnderCursor;
 				}
 				byte *obd = _vm->_dragonOBD->getFromOpt(cursorOverIni - 1); //_dragonRMS->getObdDataFieldC(sceneId);
-				ScriptOpCall scriptOpCall;
-				scriptOpCall._code = obd + 8;
-				scriptOpCall._codeEnd = scriptOpCall._code + READ_LE_UINT32(obd);
+				ScriptOpCall scriptOpCall(obd + 8, READ_LE_UINT32(obd));
 
 //				local_48 = dragon_Obd_Offset + *(int *)(uVar16 * 8 + dragon_Opt_Offset + -8) + 8;
 //				local_44 = read_int32();

@@ -263,7 +263,6 @@ void DragonsEngine::gameLoop()
 	uint16_t sequenceId;
 	DragonINI *pDVar8;
 	ushort *puVar9;
-	ScriptOpCall local_30;
 
 	_cursor->_cursorActivationSeqOffset = 0;
 	bit_flags_8006fbd8 = 0;
@@ -314,9 +313,7 @@ void DragonsEngine::gameLoop()
 			if (actorId_00 == 0) goto LAB_80026d34;
 			if (actorId_00 != (actorId & 0xffff)) {
 				byte *obd = _dragonOBD->getFromOpt(actorId_00 - 1);
-				ScriptOpCall scriptOpCall;
-				scriptOpCall._code = obd + 8;
-				scriptOpCall._codeEnd = scriptOpCall._code + READ_LE_UINT32(obd);
+				ScriptOpCall scriptOpCall(obd + 8, READ_LE_UINT32(obd));
 
 				if(_scriptOpcodes->runScript4(scriptOpCall)) {
 					scriptOpCall._codeEnd = scriptOpCall._code + 4 + READ_LE_UINT16(scriptOpCall._code + 2);
@@ -832,9 +829,7 @@ void DragonsEngine::runINIScripts() {
 		if (ini->field_1a_flags_maybe & Dragons::INI_FLAG_10) {
 			ini->field_1a_flags_maybe &= ~Dragons::INI_FLAG_10;
 			byte *data = _dragonOBD->getFromOpt(i);
-			ScriptOpCall scriptOpCall;
-			scriptOpCall._code = data + 8;
-			scriptOpCall._codeEnd = scriptOpCall._code + READ_LE_UINT32(data);
+			ScriptOpCall scriptOpCall(data + 8, READ_LE_UINT32(data));
 			uint32 currentFlags = _flags;
 			clearFlags(Dragons::ENGINE_FLAG_8);
 			_scriptOpcodes->runScript3(scriptOpCall);
@@ -1034,17 +1029,16 @@ void DragonsEngine::performAction() {
 	uint uVar4;
 	uint uVar5;
 	uint uVar6;
-	ScriptOpCall local_48;
-	ScriptOpCall local_38;
-	ScriptOpCall local_58;
 	byte * pvVar7;
 	byte * pvVar8;
+	byte *local_58_code;
+	byte *local_58_codeEnd;
+	bool load_58_result = false;
 
 	uVar2 = _scriptOpcodes->_scriptTargetINI;
 	uVar1 = _flags;
-	local_58._code = NULL;
-	local_58._codeEnd = NULL;
-	local_58._result = 0;
+	local_58_code = NULL;
+	local_58_codeEnd = NULL;
 
 	uVar6 = 0;
 	_scriptOpcodes->_data_80071f5c = 0;
@@ -1053,8 +1047,9 @@ void DragonsEngine::performAction() {
 	byte *obd = _dragonOBD->getFromOpt(_cursor->data_80072890 - 1);
 
 
-	local_48._code = pvVar7 = obd + 8;
-	local_48._codeEnd = pvVar8 = local_48._code + READ_LE_UINT32(obd);
+	ScriptOpCall local_48(obd + 8, READ_LE_UINT32(obd));
+	pvVar7 = local_48._code;
+	pvVar8 = local_48._codeEnd;
 
 	uVar4 = _cursor->executeScript(local_48, 1);
 	if (_cursor->data_800728b0_cursor_seqID > 4) {
@@ -1063,29 +1058,30 @@ void DragonsEngine::performAction() {
 		obd = _dragonOBD->getFromOpt(_scriptOpcodes->_scriptTargetINI - 1);
 		_scriptOpcodes->_scriptTargetINI = _cursor->data_80072890;
 
-		local_38._code = obd + 8;
-		local_38._codeEnd = local_38._code + READ_LE_UINT32(obd);
+		ScriptOpCall local_38(obd + 8, READ_LE_UINT32(obd));
 
 		uVar6 = _cursor->executeScript(local_38, 1);
 		_scriptOpcodes->_scriptTargetINI = uVar2;
-	}
-	if ((uVar6 & 0xffff) != 0) {
-		local_58._code = local_38._code + 8;
-		local_58._codeEnd = local_58._code + READ_LE_UINT16(local_38._code + 6);
+
+		if ((uVar6 & 0xffff) != 0) {
+			local_58_code = local_38._code + 8;
+			local_58_codeEnd = local_58_code + READ_LE_UINT16(local_38._code + 6);
+		}
 	}
 	if (((uVar4 & 0xffff) != 0) && ((((uVar4 & 2) == 0 || ((uVar6 & 2) != 0)) || ((uVar6 & 0xffff) == 0)))) {
-		local_58._code = local_48._code + 8;
-		local_58._codeEnd = local_58._code + READ_LE_UINT16(local_48._code + 6);
+		local_58_code = local_48._code + 8;
+		local_58_codeEnd = local_58_code + READ_LE_UINT16(local_48._code + 6);
 	}
 	uVar4 = uVar4 & 0xfffd;
-	if (local_58._code != NULL && local_58._codeEnd != NULL) {
+	if (local_58_code != NULL && local_58_codeEnd != NULL) {
 		clearFlags(ENGINE_FLAG_8);
+		ScriptOpCall local_58(local_58_code, local_58_codeEnd - local_58_code);
 		_scriptOpcodes->runScript(local_58);
+		load_58_result = local_58._result;
 	}
-	if ((local_58._result & 1U) == 0) {
+	if (!load_58_result) {
 		if (_cursor->data_800728b0_cursor_seqID == 3) {
-			local_58._code = pvVar7;
-			local_58._codeEnd = pvVar8;
+			ScriptOpCall local_58(pvVar7, pvVar8 - pvVar7);
 			uVar5 = _talk->talkToActor(local_58);
 			uVar4 = uVar4 | uVar5;
 		}
@@ -1260,9 +1256,7 @@ void DragonsEngine::loadScene(uint16 sceneId) {
 	//if (sceneId > 2) { //TODO remove this restriction to enable intro sequence.
 		_scene->setSceneId(2);
 		byte *obd = _dragonOBD->getFromSpt(3);
-		ScriptOpCall scriptOpCall;
-		scriptOpCall._code = obd + 4;
-		scriptOpCall._codeEnd = scriptOpCall._code + READ_LE_UINT32(obd);
+		ScriptOpCall scriptOpCall(obd + 4, READ_LE_UINT32(obd));
 		_scriptOpcodes->runScript(scriptOpCall);
 	//} else {
 //		sceneId = 0x12; // HACK the first scene. TODO remove this

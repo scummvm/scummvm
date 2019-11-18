@@ -536,7 +536,6 @@ bool Talk::talkToActor(ScriptOpCall &scriptOpCall) {
 	uint16_t sequenceId;
 	TalkDialogEntry *selectedDialogText;
 	uint iniId;
-	ScriptOpCall local_1d20;
 	short local_990 [5];
 	uint16 auStack2438 [195];
 	uint16 local_800 [1000];
@@ -610,8 +609,7 @@ bool Talk::talkToActor(ScriptOpCall &scriptOpCall) {
 				iniActor->updateSequence(sequenceId);
 			}
 		}
-		local_1d20._code = selectedDialogText->scriptCodeStartPtr;
-		local_1d20._codeEnd = selectedDialogText->scriptCodeEndPtr;
+		ScriptOpCall local_1d20(selectedDialogText->scriptCodeStartPtr, selectedDialogText->scriptCodeEndPtr - selectedDialogText->scriptCodeStartPtr);
 		_vm->_scriptOpcodes->runScript(local_1d20);
 		if (_vm->_scriptOpcodes->_data_80071f5c != 0) break;
 		local_1d20._code = selectedDialogText->scriptCodeStartPtr;
