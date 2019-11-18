@@ -155,7 +155,8 @@ void PopUpDialog::handleMouseUp(int x, int y, int button, int clickCount) {
 	// let the popup stay open. If it did move, assume the user made his selection.
 	int dist = (_clickX - absX) * (_clickX - absX) + (_clickY - absY) * (_clickY - absY);
 	if (dist > 3 * 3 || g_system->getMillis() - _openTime > 300) {
-		setResult(_selection);
+		int item = findItem(x, y);
+		setResult(item);
 		close();
 	}
 	_clickX = -1;
