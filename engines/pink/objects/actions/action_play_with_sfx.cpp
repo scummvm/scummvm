@@ -76,7 +76,7 @@ void ActionPlayWithSfx::end() {
 	ActionCEL::end();
 	debugC(6, kPinkDebugActions, "ActionPlayWithSfx %s of Actor %s is ended", _name.c_str(), _actor->getName().c_str());
 	// original bug fix
-	if (_actor->getPage()->getSequencer()->isSkipping()) {
+	if (_actor->getPage()->getSequencer() && _actor->getPage()->getSequencer()->isSkipping()) {
 		for (uint i = 0; i < _sfxArray.size(); ++i) {
 			_sfxArray[i]->end();
 		}
