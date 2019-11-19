@@ -68,7 +68,7 @@ matrix:
 dist: trusty
 
 script:
-  - ./configure --enable-all-engines --enable-opl2lpt
+  - ./configure --enable-all-engines --enable-opl2lpt --enable-verbose-build
   - make -j 2
   - make test
   - make devtools
