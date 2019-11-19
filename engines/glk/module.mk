@@ -262,9 +262,9 @@ ifdef ENABLE_GLK_MAGNETIC
 MODULE_OBJS += \
 	magnetic/detection.o \
 	magnetic/emu.o \
-	magnetic/graphics.o \
+	magnetic/glk.o \
 	magnetic/magnetic.o \
-	magnetic/sound.o
+	magnetic/main.o
 endif
 
 ifdef ENABLE_GLK_QUEST

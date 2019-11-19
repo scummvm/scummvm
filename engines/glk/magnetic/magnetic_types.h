@@ -24,6 +24,7 @@
 #define GLK_MAGNETIC_TYPES
 
 #include "common/scummsys.h"
+#include "common/algorithm.h"
 
 namespace Glk {
 namespace Magnetic {
@@ -47,7 +48,7 @@ struct lookup {
 };
 
 struct picture {
-	byte * data;
+	byte *data;
 	uint32 data_size;
 	uint16 width;
 	uint16 height;
@@ -121,7 +122,7 @@ struct ms_position {
 struct ms_hint {
 	uint16 elcount;
 	uint16 nodetype;
-	byte *content;
+	const char *content;
 	uint16 links[MAX_HITEMS];
 	uint16 parent;
 
