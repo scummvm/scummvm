@@ -65,7 +65,7 @@ matrix:
       before_cache:
         - brew cleanup
 
-dist: trusty
+dist: xenial
 
 script:
   - ./configure --enable-all-engines --enable-opl2lpt
