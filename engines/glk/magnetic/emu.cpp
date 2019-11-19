@@ -21,6 +21,7 @@
  */
 
 #include "glk/magnetic/defs.h"
+#include "glk/magnetic/magnetic.h"
 #include "common/file.h"
 
 namespace Glk {
@@ -2386,6 +2387,8 @@ void do_line_a(void) {
 			tmp16 = 0;
 			do {
 				if (!(l1c = ms_getchar(1))) {
+					if (g_vm->shouldQuit())
+						return;
 					if ((l1c = ms_undo()) != 0)
 						output_text(undo_ok);
 					else

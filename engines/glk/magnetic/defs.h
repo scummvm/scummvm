@@ -461,8 +461,6 @@ extern void write(const char *fmt, ...);
 
 extern void writeChar(char c);
 
-extern int gms_startup_code(int argc, char *argv[]);
-
 extern void gms_main();
 
 } // End of namespace Magnetic

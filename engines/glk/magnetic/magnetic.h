@@ -32,10 +32,24 @@
 namespace Glk {
 namespace Magnetic {
 
+enum GammaMode {
+	GAMMA_OFF, GAMMA_NORMAL, GAMMA_HIGH
+};
+
 /**
  * Magnetic game interpreter
  */
 class Magnetic : public GlkAPI {
+public:
+	GammaMode gms_gamma_mode;
+	bool gms_animation_enabled, gms_prompt_enabled;
+	bool gms_abbreviations_enabled, gms_commands_enabled;
+	bool gms_graphics_enabled;
+private:
+	/**
+	 * Performs initialization
+	 */
+	void initialize();
 public:
 	/**
 	 * Constructor

@@ -35,7 +35,7 @@ namespace Magnetic {
 # define FALSE false
 #endif
 #ifndef TRUE
-# define TRUE false
+# define TRUE true
 #endif
 
 #define BYTE_MAX 255
@@ -75,17 +75,6 @@ static strid_t gms_readlog_stream = NULL;
 
 /* Note about whether graphics is possible, or not. */
 static int gms_graphics_possible = TRUE;
-
-/* Options that may be turned off or set by command line flags. */
-static int gms_graphics_enabled = TRUE;
-enum GammaMode {
-	GAMMA_OFF, GAMMA_NORMAL, GAMMA_HIGH
-};
-static GammaMode gms_gamma_mode = GAMMA_NORMAL;
-static int gms_animation_enabled = TRUE,
-           gms_prompt_enabled = TRUE,
-           gms_abbreviations_enabled = TRUE,
-           gms_commands_enabled = TRUE;
 
 /* Magnetic Scrolls standard input prompt string. */
 static const char *const GMS_INPUT_PROMPT = ">";
@@ -351,7 +340,7 @@ static gms_game_tableref_t gms_gameid_lookup_game(type32 undo_size, type32 undo_
 static type32 gms_gameid_read_uint32(int offset, Common::SeekableReadStream *stream) {
 	if (!stream->seek(offset))
 		return 0;
-	return stream->readUint32LE();
+	return stream->readUint32BE();
 }
 
 
@@ -361,24 +350,22 @@ static type32 gms_gameid_read_uint32(int offset, Common::SeekableReadStream *str
  * Identify a game from its text file header, and cache the game's name for
  * later queries.  Sets the cache to NULL if not found.
  */
-static void gms_gameid_identify_game(const char *text_file) {
+static void gms_gameid_identify_game(const Common::String &text_file) {
 	Common::File stream;
 
-	if (stream.open(text_file)) {
-		type32 undo_size, undo_pc;
-		gms_game_tableref_t game;
+	if (!stream.open(text_file))
+		error("Error opening game file");
 
-		/* Read the game's signature undo size and undo pc values. */
-		undo_size = gms_gameid_read_uint32(0x22, &stream);
-		undo_pc = gms_gameid_read_uint32(0x26, &stream);
-		stream.close();
+	type32 undo_size, undo_pc;
+	gms_game_tableref_t game;
 
-		/* Search for these values in the table, and set game name if found. */
-		game = gms_gameid_lookup_game(undo_size, undo_pc);
-		gms_gameid_game_name = game ? game->name : NULL;
-	} else {
-		gms_gameid_game_name = NULL;
-	}
+	/* Read the game's signature undo size and undo pc values. */
+	undo_size = gms_gameid_read_uint32(0x22, &stream);
+	undo_pc = gms_gameid_read_uint32(0x26, &stream);
+
+	/* Search for these values in the table, and set game name if found. */
+	game = gms_gameid_lookup_game(undo_size, undo_pc);
+	gms_gameid_game_name = game ? game->name : NULL;
 }
 
 
@@ -638,7 +625,7 @@ static void gms_graphics_close(void) {
  * If graphics enabled, start any background picture update processing.
  */
 static void gms_graphics_start(void) {
-	if (gms_graphics_enabled) {
+	if (g_vm->gms_graphics_enabled) {
 		/* If not running, start the updating "thread". */
 		if (!gms_graphics_active) {
 			g_vm->glk_request_timer_events(GMS_GRAPHICS_TIMEOUT);
@@ -680,7 +667,7 @@ static int gms_graphics_are_displayed(void) {
  * arrange events.
  */
 static void gms_graphics_paint(void) {
-	if (gms_graphics_enabled && gms_graphics_are_displayed()) {
+	if (g_vm->gms_graphics_enabled && gms_graphics_are_displayed()) {
 		/* Set the repaint flag, and start graphics. */
 		gms_graphics_repaint = TRUE;
 		gms_graphics_start();
@@ -697,7 +684,7 @@ static void gms_graphics_paint(void) {
  * of animation policy.
  */
 static void gms_graphics_restart(void) {
-	if (gms_graphics_enabled && gms_graphics_are_displayed()) {
+	if (g_vm->gms_graphics_enabled && gms_graphics_are_displayed()) {
 		/*
 		 * If the picture is animated, we'll need to be able to re-get the
 		 * first animation frame so that the picture can be treated as if
@@ -1009,7 +996,7 @@ static gms_gammaref_t gms_graphics_select_gamma(type8 bitmap[],
 	 * Check to see if automated correction is turned off; if it is, return
 	 * the linear gamma.
 	 */
-	if (gms_gamma_mode == GAMMA_OFF)
+	if (g_vm->gms_gamma_mode == GAMMA_OFF)
 		return linear_gamma;
 
 	/*
@@ -1030,11 +1017,11 @@ static gms_gammaref_t gms_graphics_select_gamma(type8 bitmap[],
 	 * For normal automated correction, return a gamma value half way between
 	 * the linear gamma and the equal contrast gamma.
 	 */
-	if (gms_gamma_mode == GAMMA_NORMAL)
+	if (g_vm->gms_gamma_mode == GAMMA_NORMAL)
 		return linear_gamma + (contrast_gamma - linear_gamma) / 2;
 
 	/* Correction must be high; return the equal contrast gamma. */
-	assert(gms_gamma_mode == GAMMA_HIGH);
+	assert(g_vm->gms_gamma_mode == GAMMA_HIGH);
 	return contrast_gamma;
 }
 
@@ -1937,7 +1924,7 @@ static void gms_graphics_timeout() {
 	 * If animated, and if animations are enabled, handle further animation
 	 * frames, if any.
 	 */
-	if (gms_animation_enabled && gms_graphics_animated) {
+	if (g_vm->gms_animation_enabled && gms_graphics_animated) {
 		int more_animation;
 
 		/*
@@ -2053,7 +2040,7 @@ void ms_showpic(type32 picture, type8 mode) {
 		 * If we are currently displaying the graphics window, stop any update
 		 * "thread" and turn off graphics.
 		 */
-		if (gms_graphics_enabled && gms_graphics_are_displayed()) {
+		if (g_vm->gms_graphics_enabled && gms_graphics_are_displayed()) {
 			gms_graphics_stop();
 			gms_graphics_close();
 		}
@@ -2088,7 +2075,7 @@ void ms_showpic(type32 picture, type8 mode) {
 	if (width == gms_graphics_width
 	        && height == gms_graphics_height
 	        && crc == current_crc
-	        && gms_graphics_enabled && gms_graphics_are_displayed())
+	        && g_vm->gms_graphics_enabled && gms_graphics_are_displayed())
 		return;
 
 	/*
@@ -2119,7 +2106,7 @@ void ms_showpic(type32 picture, type8 mode) {
 	 * the picture details will simply stick around in module variables until
 	 * they are required.
 	 */
-	if (gms_graphics_enabled) {
+	if (g_vm->gms_graphics_enabled) {
 		/*
 		 * Ensure graphics on, then set the new picture flag and start the
 		 * updating "thread".
@@ -2183,7 +2170,7 @@ static int gms_graphics_get_picture_details(int *width, int *height, int *is_ani
  */
 static int gms_graphics_get_rendering_details(const char **gamma, int *color_count,
         int *is_active) {
-	if (gms_graphics_enabled && gms_graphics_are_displayed()) {
+	if (g_vm->gms_graphics_enabled && gms_graphics_are_displayed()) {
 		/*
 		 * Return the string representing the gamma correction.  If racing
 		 * with timeouts, we might return the gamma for the last picture.
@@ -3763,28 +3750,28 @@ static void gms_command_abbreviations(const char *argument) {
 	assert(argument);
 
 	if (gms_strcasecmp(argument, "on") == 0) {
-		if (gms_abbreviations_enabled) {
+		if (g_vm->gms_abbreviations_enabled) {
 			gms_normal_string("Glk abbreviation expansions are already on.\n");
 			return;
 		}
 
-		gms_abbreviations_enabled = TRUE;
+		g_vm->gms_abbreviations_enabled = TRUE;
 		gms_normal_string("Glk abbreviation expansions are now on.\n");
 	}
 
 	else if (gms_strcasecmp(argument, "off") == 0) {
-		if (!gms_abbreviations_enabled) {
+		if (!g_vm->gms_abbreviations_enabled) {
 			gms_normal_string("Glk abbreviation expansions are already off.\n");
 			return;
 		}
 
-		gms_abbreviations_enabled = FALSE;
+		g_vm->gms_abbreviations_enabled = FALSE;
 		gms_normal_string("Glk abbreviation expansions are now off.\n");
 	}
 
 	else if (strlen(argument) == 0) {
 		gms_normal_string("Glk abbreviation expansions are ");
-		gms_normal_string(gms_abbreviations_enabled ? "on" : "off");
+		gms_normal_string(g_vm->gms_abbreviations_enabled ? "on" : "off");
 		gms_normal_string(".\n");
 	}
 
@@ -3814,12 +3801,12 @@ static void gms_command_graphics(const char *argument) {
 	}
 
 	if (gms_strcasecmp(argument, "on") == 0) {
-		if (gms_graphics_enabled) {
+		if (g_vm->gms_graphics_enabled) {
 			gms_normal_string("Glk graphics are already on.\n");
 			return;
 		}
 
-		gms_graphics_enabled = TRUE;
+		g_vm->gms_graphics_enabled = TRUE;
 
 		/* If a picture is loaded, call the restart function to repaint it. */
 		if (gms_graphics_picture_is_available()) {
@@ -3834,7 +3821,7 @@ static void gms_command_graphics(const char *argument) {
 	}
 
 	else if (gms_strcasecmp(argument, "off") == 0) {
-		if (!gms_graphics_enabled) {
+		if (!g_vm->gms_graphics_enabled) {
 			gms_normal_string("Glk graphics are already off.\n");
 			return;
 		}
@@ -3843,7 +3830,7 @@ static void gms_command_graphics(const char *argument) {
 		 * Set graphics to disabled, and stop any graphics processing.  Close
 		 * the graphics window.
 		 */
-		gms_graphics_enabled = FALSE;
+		g_vm->gms_graphics_enabled = FALSE;
 		gms_graphics_stop();
 		gms_graphics_close();
 
@@ -3852,7 +3839,7 @@ static void gms_command_graphics(const char *argument) {
 
 	else if (strlen(argument) == 0) {
 		gms_normal_string("Glk graphics are available,");
-		gms_normal_string(gms_graphics_enabled
+		gms_normal_string(g_vm->gms_graphics_enabled
 		                  ? " and enabled.\n" : " but disabled.\n");
 
 		if (gms_graphics_picture_is_available()) {
@@ -3879,7 +3866,7 @@ static void gms_command_graphics(const char *argument) {
 		if (!gms_graphics_interpreter_enabled())
 			gms_normal_string("Interpreter graphics are disabled.\n");
 
-		if (gms_graphics_enabled && gms_graphics_are_displayed()) {
+		if (g_vm->gms_graphics_enabled && gms_graphics_are_displayed()) {
 			int color_count, is_active;
 			const char *gamma;
 
@@ -3894,7 +3881,7 @@ static void gms_command_graphics(const char *argument) {
 				gms_normal_string(buffer);
 				gms_normal_string(" colours");
 
-				if (gms_gamma_mode == GAMMA_OFF)
+				if (g_vm->gms_gamma_mode == GAMMA_OFF)
 					gms_normal_string(", without gamma correction");
 				else {
 					gms_normal_string(", with gamma ");
@@ -3906,7 +3893,7 @@ static void gms_command_graphics(const char *argument) {
 				gms_normal_string("Graphics are being displayed.\n");
 		}
 
-		if (gms_graphics_enabled && !gms_graphics_are_displayed())
+		if (g_vm->gms_graphics_enabled && !gms_graphics_are_displayed())
 			gms_normal_string("Graphics are not being displayed.\n");
 	}
 
@@ -3934,13 +3921,13 @@ static void gms_command_gamma(const char *argument) {
 	}
 
 	if (gms_strcasecmp(argument, "high") == 0) {
-		if (gms_gamma_mode == GAMMA_HIGH) {
+		if (g_vm->gms_gamma_mode == GAMMA_HIGH) {
 			gms_normal_string("Glk automatic gamma correction mode is"
 			                  " already 'high'.\n");
 			return;
 		}
 
-		gms_gamma_mode = GAMMA_HIGH;
+		g_vm->gms_gamma_mode = GAMMA_HIGH;
 		gms_graphics_restart();
 
 		gms_normal_string("Glk automatic gamma correction mode is"
@@ -3949,13 +3936,13 @@ static void gms_command_gamma(const char *argument) {
 
 	else if (gms_strcasecmp(argument, "normal") == 0
 	         || gms_strcasecmp(argument, "on") == 0) {
-		if (gms_gamma_mode == GAMMA_NORMAL) {
+		if (g_vm->gms_gamma_mode == GAMMA_NORMAL) {
 			gms_normal_string("Glk automatic gamma correction mode is"
 			                  " already 'normal'.\n");
 			return;
 		}
 
-		gms_gamma_mode = GAMMA_NORMAL;
+		g_vm->gms_gamma_mode = GAMMA_NORMAL;
 		gms_graphics_restart();
 
 		gms_normal_string("Glk automatic gamma correction mode is"
@@ -3964,13 +3951,13 @@ static void gms_command_gamma(const char *argument) {
 
 	else if (gms_strcasecmp(argument, "none") == 0
 	         || gms_strcasecmp(argument, "off") == 0) {
-		if (gms_gamma_mode == GAMMA_OFF) {
+		if (g_vm->gms_gamma_mode == GAMMA_OFF) {
 			gms_normal_string("Glk automatic gamma correction mode is"
 			                  " already 'off'.\n");
 			return;
 		}
 
-		gms_gamma_mode = GAMMA_OFF;
+		g_vm->gms_gamma_mode = GAMMA_OFF;
 		gms_graphics_restart();
 
 		gms_normal_string("Glk automatic gamma correction mode is"
@@ -3979,7 +3966,7 @@ static void gms_command_gamma(const char *argument) {
 
 	else if (strlen(argument) == 0) {
 		gms_normal_string("Glk automatic gamma correction mode is '");
-		switch (gms_gamma_mode) {
+		switch (g_vm->gms_gamma_mode) {
 		case GAMMA_OFF:
 			gms_normal_string("off");
 			break;
@@ -4021,7 +4008,7 @@ static void gms_command_animations(const char *argument) {
 	if (gms_strcasecmp(argument, "on") == 0) {
 		int is_animated;
 
-		if (gms_animation_enabled) {
+		if (g_vm->gms_animation_enabled) {
 			gms_normal_string("Glk graphics animations are already on.\n");
 			return;
 		}
@@ -4031,7 +4018,7 @@ static void gms_command_animations(const char *argument) {
 		 * is animated; if it isn't, we can leave it displayed as is, since
 		 * changing animation mode doesn't affect this picture.
 		 */
-		gms_animation_enabled = TRUE;
+		g_vm->gms_animation_enabled = TRUE;
 		if (gms_graphics_get_picture_details(NULL, NULL, &is_animated)) {
 			if (is_animated)
 				gms_graphics_restart();
@@ -4043,12 +4030,12 @@ static void gms_command_animations(const char *argument) {
 	else if (gms_strcasecmp(argument, "off") == 0) {
 		int is_animated;
 
-		if (!gms_animation_enabled) {
+		if (!g_vm->gms_animation_enabled) {
 			gms_normal_string("Glk graphics animations are already off.\n");
 			return;
 		}
 
-		gms_animation_enabled = FALSE;
+		g_vm->gms_animation_enabled = FALSE;
 		if (gms_graphics_get_picture_details(NULL, NULL, &is_animated)) {
 			if (is_animated)
 				gms_graphics_restart();
@@ -4059,7 +4046,7 @@ static void gms_command_animations(const char *argument) {
 
 	else if (strlen(argument) == 0) {
 		gms_normal_string("Glk graphics animations are ");
-		gms_normal_string(gms_animation_enabled ? "on" : "off");
+		gms_normal_string(g_vm->gms_animation_enabled ? "on" : "off");
 		gms_normal_string(".\n");
 	}
 
@@ -4082,12 +4069,12 @@ static void gms_command_prompts(const char *argument) {
 	assert(argument);
 
 	if (gms_strcasecmp(argument, "on") == 0) {
-		if (gms_prompt_enabled) {
+		if (g_vm->gms_prompt_enabled) {
 			gms_normal_string("Glk extra prompts are already on.\n");
 			return;
 		}
 
-		gms_prompt_enabled = TRUE;
+		g_vm->gms_prompt_enabled = TRUE;
 		gms_normal_string("Glk extra prompts are now on.\n");
 
 		/* Check for a game prompt to clear the flag. */
@@ -4095,18 +4082,18 @@ static void gms_command_prompts(const char *argument) {
 	}
 
 	else if (gms_strcasecmp(argument, "off") == 0) {
-		if (!gms_prompt_enabled) {
+		if (!g_vm->gms_prompt_enabled) {
 			gms_normal_string("Glk extra prompts are already off.\n");
 			return;
 		}
 
-		gms_prompt_enabled = FALSE;
+		g_vm->gms_prompt_enabled = FALSE;
 		gms_normal_string("Glk extra prompts are now off.\n");
 	}
 
 	else if (strlen(argument) == 0) {
 		gms_normal_string("Glk extra prompts are ");
-		gms_normal_string(gms_prompt_enabled ? "on" : "off");
+		gms_normal_string(g_vm->gms_prompt_enabled ? "on" : "off");
 		gms_normal_string(".\n");
 	}
 
@@ -4166,13 +4153,13 @@ static void gms_command_commands(const char *argument) {
 	}
 
 	else if (gms_strcasecmp(argument, "off") == 0) {
-		gms_commands_enabled = FALSE;
+		g_vm->gms_commands_enabled = FALSE;
 		gms_normal_string("Glk commands are now off.\n");
 	}
 
 	else if (strlen(argument) == 0) {
 		gms_normal_string("Glk commands are ");
-		gms_normal_string(gms_commands_enabled ? "on" : "off");
+		gms_normal_string(g_vm->gms_commands_enabled ? "on" : "off");
 		gms_normal_string(".\n");
 	}
 
@@ -4658,7 +4645,7 @@ static void gms_buffer_input(void) {
 	 * To slightly improve things, if it looks like we didn't get a prompt from
 	 * the game, do our own.
 	 */
-	if (gms_prompt_enabled && !gms_game_prompted()) {
+	if (g_vm->gms_prompt_enabled && !gms_game_prompted()) {
 		gms_normal_char('\n');
 		gms_normal_string(GMS_INPUT_PROMPT);
 	}
@@ -4699,6 +4686,10 @@ static void gms_buffer_input(void) {
 	g_vm->glk_request_line_event(gms_main_window,
 	                             gms_input_buffer, sizeof(gms_input_buffer) - 1, 0);
 	gms_event_wait(evtype_LineInput, &event);
+	if (g_vm->shouldQuit()) {
+		g_vm->glk_cancel_line_event(gms_main_window, &event);
+		return;
+	}
 
 	/* Terminate the input line with a NUL. */
 	assert(event.val1 <= sizeof(gms_input_buffer) - 1);
@@ -4724,7 +4715,7 @@ static void gms_buffer_input(void) {
 	 * If neither abbreviations nor local commands are enabled, use the data
 	 * read above without further massaging.
 	 */
-	if (gms_abbreviations_enabled || gms_commands_enabled) {
+	if (g_vm->gms_abbreviations_enabled || g_vm->gms_commands_enabled) {
 		char *command;
 
 		/*
@@ -4738,7 +4729,7 @@ static void gms_buffer_input(void) {
 			memmove(command, command + 1, strlen(command));
 		} else {
 			/* Check for, and expand, any abbreviated commands. */
-			if (gms_abbreviations_enabled) {
+			if (g_vm->gms_abbreviations_enabled) {
 				gms_expand_abbreviations(gms_input_buffer,
 				                         sizeof(gms_input_buffer));
 			}
@@ -4748,7 +4739,7 @@ static void gms_buffer_input(void) {
 			 * suppress the interpreter's use of this input for Glk commands
 			 * by overwriting the line with a single newline character.
 			 */
-			if (gms_commands_enabled) {
+			if (g_vm->gms_commands_enabled) {
 				int posn;
 
 				posn = strspn(gms_input_buffer, "\t ");
@@ -4811,6 +4802,9 @@ type8 ms_getchar(type8 trans) {
 		gms_buffer_input();
 		gms_input_cursor = 0;
 
+		if (g_vm->shouldQuit())
+			return '\0';
+		
 		if (gms_undo_notification) {
 			/*
 			 * Clear the undo notification, and discard buffered input (usually
@@ -4900,6 +4894,9 @@ static void gms_event_wait(glui32 wait_type, event_t *event) {
 			gms_graphics_timeout();
 			break;
 
+		case evtype_Quit:
+			return;
+
 		default:
 			break;
 		}
@@ -4947,8 +4944,7 @@ int __wrap_tolower(int ch) {
  * The following values need to be passed between the startup_code and main
  * functions.
  */
-static const char *gms_gamefile = NULL,      /* Name of game file. */
-                   *gms_game_message = NULL;  /* Error message. */
+static const char *gms_game_message = NULL;  /* Error message. */
 
 
 /*
@@ -5065,132 +5061,28 @@ static void gms_establish_filenames(const char *name, char **text, char **graphi
 	free(base);
 }
 
-
-/*
- * gms_startup_code()
- * gms_main()
- *
- * Together, these functions take the place of the original main().  The
- * first one is called from glkunix_startup_code(), to parse and generally
- * handle options.  The second is called from g_vm->glk_main(), and does the real
- * work of running the game.
- */
-int gms_startup_code(int argc, char *argv[]) {
-	int argv_index;
-
-	/* Handle command line arguments. */
-	for (argv_index = 1;
-	        argv_index < argc && argv[argv_index][0] == '-'; argv_index++) {
-		if (strcmp(argv[argv_index], "-nc") == 0) {
-			gms_commands_enabled = FALSE;
-			continue;
-		}
-		if (strcmp(argv[argv_index], "-na") == 0) {
-			gms_abbreviations_enabled = FALSE;
-			continue;
-		}
-		if (strcmp(argv[argv_index], "-np") == 0) {
-			gms_graphics_enabled = FALSE;
-			continue;
-		}
-		if (strcmp(argv[argv_index], "-ng") == 0) {
-			gms_gamma_mode = GAMMA_OFF;
-			continue;
-		}
-		if (strcmp(argv[argv_index], "-nx") == 0) {
-			gms_animation_enabled = FALSE;
-			continue;
-		}
-		if (strcmp(argv[argv_index], "-ne") == 0) {
-			gms_prompt_enabled = FALSE;
-			continue;
-		}
-		return FALSE;
-	}
-
-	/*
-	 * Get the name of the game file.  Since we need this in our call from
-	 * g_vm->glk_main, we need to keep it in a module static variable.  If the game
-	 * file name is omitted, then here we'll set the pointer to NULL, and
-	 * complain about it later in main.  Passing the message string around
-	 * like this is a nuisance...
-	 */
-	if (argv_index == argc - 1) {
-		gms_gamefile = argv[argv_index];
-		gms_game_message = NULL;
-#ifdef GARGLK
-		{
-			const char *s;
-			s = strrchr(gms_gamefile, '\\');
-			if (s)
-				g_vm->garglk_set_story_name(s + 1);
-			s = strrchr(gms_gamefile, '/');
-			if (s)
-				g_vm->garglk_set_story_name(s + 1);
-		}
-#endif
-	} else {
-		gms_gamefile = NULL;
-		if (argv_index < argc - 1)
-			gms_game_message = "More than one game file was given"
-			                   " on the command line.";
-		else
-			gms_game_message = "No game file was given on the command line.";
-	}
-
-	/* All startup options were handled successfully. */
-	return TRUE;
-}
-
 void gms_main() {
 	char *text_file = NULL, *graphics_file = NULL, *hints_file = NULL;
 	int ms_init_status, is_running;
-
-	/* Ensure Magnetic Scrolls internal types have the right sizes. */
-	if (!(sizeof(type8) == 1 && sizeof(type8s) == 1
-	        && sizeof(type16) == 2 && sizeof(type16s) == 2
-	        && sizeof(type32) == 4 && sizeof(type32s) == 4)) {
-		gms_fatal("GLK: Types sized incorrectly, recompilation is needed");
-		g_vm->glk_exit();
-	}
 
 	/* Create the main Glk window, and set its stream as current. */
 	gms_main_window = g_vm->glk_window_open(0, 0, 0, wintype_TextBuffer, 0);
 	if (!gms_main_window) {
 		gms_fatal("GLK: Can't open main window");
 		g_vm->glk_exit();
+		return;
 	}
 	g_vm->glk_window_clear(gms_main_window);
 	g_vm->glk_set_window(gms_main_window);
 	g_vm->glk_set_style(style_Normal);
-
-	/* If there's a problem with the game file, complain now. */
-	if (!gms_gamefile) {
-		assert(gms_game_message);
-		gms_header_string("Glk Magnetic Error\n\n");
-		gms_normal_string(gms_game_message);
-		gms_normal_char('\n');
-		g_vm->glk_exit();
-		return;
-	}
 
 	/*
 	 * Given the basic game name, try to come up with usable text, graphics,
 	 * and hints filenames.  The graphics and hints files may be null, but the
 	 * text file may not.
 	 */
-	gms_establish_filenames(gms_gamefile,
-	                        &text_file, &graphics_file, &hints_file);
-	if (!text_file) {
-		assert(!graphics_file && !hints_file);
-		gms_header_string("Glk Magnetic Error\n\n");
-		gms_normal_string("Can't find or open game '");
-		gms_normal_string(gms_gamefile);
-		gms_normal_string("[.mag|.MAG]'");
-
-		gms_normal_char('\n');
-		g_vm->glk_exit();
-	}
+	Common::String gameFile = g_vm->getFilename();
+	gms_establish_filenames(gameFile.c_str(), &text_file, &graphics_file, &hints_file);
 
 	/* Set the possibility of pictures depending on graphics file. */
 	if (graphics_file) {
@@ -5211,7 +5103,7 @@ void gms_main() {
 	 * been.  If pictures are impossible, they can never be enabled.
 	 */
 	if (!gms_graphics_possible)
-		gms_graphics_enabled = FALSE;
+		g_vm->gms_graphics_enabled = FALSE;
 
 	/* Try to create a one-line status window.  We can live without it. */
 	g_vm->glk_stylehint_set(wintype_TextGrid, style_User1, stylehint_ReverseColor, 1);
@@ -5235,7 +5127,7 @@ void gms_main() {
 			g_vm->glk_window_close(gms_status_window, NULL);
 		gms_header_string("Glk Magnetic Error\n\n");
 		gms_normal_string("Can't load game '");
-		gms_normal_string(gms_gamefile);
+		gms_normal_string(gameFile.c_str());
 		gms_normal_char('\'');
 
 		gms_normal_char('\n');
@@ -5254,11 +5146,6 @@ void gms_main() {
 	/* Try to identify the game from its text file header. */
 	gms_gameid_identify_game(text_file);
 
-	/* Print out a short banner. */
-	gms_header_string("\nMagnetic Scrolls Interpreter, version 2.3\n");
-	gms_banner_string("Written by Niclas Karlsson\n"
-	                  "Glk interface by Simon Baldwin\n\n");
-
 	/* Look for failure to load just game graphics. */
 	if (gms_graphics_possible && ms_init_status == 1) {
 		/*
@@ -5273,7 +5160,7 @@ void gms_main() {
 
 	/* Run the game opcodes -- ms_rungame() returns FALSE on game end. */
 	do {
-		is_running = ms_rungame();
+		is_running = ms_rungame() && !g_vm->shouldQuit();
 		g_vm->glk_tick();
 	} while (is_running);
 
@@ -5326,56 +5213,18 @@ static int gms_startup_called = FALSE,
            gms_main_called = FALSE;
 
 /*
- * g_vm->glk_main()
+ * glk_main()
  *
  * Main entry point for Glk.  Here, all startup is done, and we call our
  * function to run the game.
  */
-void glk_main(void) {
+void glk_main() {
 	assert(gms_startup_called && !gms_main_called);
 	gms_main_called = TRUE;
 
 	/* Call the interpreter main function. */
 	gms_main();
 }
-
-
-/*
- * Glk arguments for UNIX versions of the Glk interpreter.
- */
-#if 0
-glkunix_argumentlist_t glkunix_arguments[] = {
-	{
-		(char *) "-nc", glkunix_arg_NoValue,
-		(char *) "-nc        No local handling for Glk special commands"
-	},
-	{
-		(char *) "-na", glkunix_arg_NoValue,
-		(char *) "-na        Turn off abbreviation expansions"
-	},
-	{
-		(char *) "-np", glkunix_arg_NoValue,
-		(char *) "-np        Turn off pictures"
-	},
-	{
-		(char *) "-ng", glkunix_arg_NoValue,
-		(char *) "-ng        Turn off automatic gamma correction on pictures"
-	},
-	{
-		(char *) "-nx", glkunix_arg_NoValue,
-		(char *) "-nx        Turn off picture animations"
-	},
-	{
-		(char *) "-ne", glkunix_arg_NoValue,
-		(char *) "-ne        Turn off additional interpreter prompt"
-	},
-	{
-		(char *) "", glkunix_arg_ValueCanFollow,
-		(char *) "filename   game to run"
-	},
-	{NULL, glkunix_arg_End, NULL}
-};
-#endif
 
 void write(const char *fmt, ...) {
 	va_list ap;

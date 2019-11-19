@@ -22,19 +22,47 @@
 
 #include "glk/magnetic/magnetic.h"
 #include "glk/magnetic/defs.h"
+#include "common/config-manager.h"
 
 namespace Glk {
 namespace Magnetic {
 
 Magnetic *g_vm;
 
-Magnetic::Magnetic(OSystem *syst, const GlkGameDescription &gameDesc) : GlkAPI(syst, gameDesc) {
+Magnetic::Magnetic(OSystem *syst, const GlkGameDescription &gameDesc) : GlkAPI(syst, gameDesc),
+		gms_gamma_mode(GAMMA_NORMAL), gms_animation_enabled(true),
+		gms_prompt_enabled(true), gms_abbreviations_enabled(true), gms_commands_enabled(true),
+		gms_graphics_enabled(false) {
 	g_vm = this;
 }
 
 void Magnetic::runGame() {
-	gms_startup_code(0, nullptr);
+	initialize();
 	gms_main();
+}
+
+void Magnetic::initialize() {
+	// Local handling for Glk special commands
+	if (ConfMan.hasKey("commands_enabled"))
+		gms_commands_enabled = ConfMan.getBool("commands_enabled");
+	// Abbreviation expansions
+	if (ConfMan.hasKey("abbreviations_enabled"))
+		gms_abbreviations_enabled = ConfMan.getBool("abbreviations_enabled");
+	// Pictures enabled
+	if (ConfMan.hasKey("graphics_enabled"))
+		gms_graphics_enabled = ConfMan.getBool("graphics_enabled");
+	// Automatic gamma correction on pictures
+	if (ConfMan.hasKey("gamma_mode") && !ConfMan.getBool("gamma_mode"))
+		gms_gamma_mode = GAMMA_OFF;
+	// Animations
+	if (ConfMan.hasKey("animation_enabled"))
+		gms_animation_enabled = ConfMan.getBool("animation_enabled");
+	// Prompt enabled
+	if (ConfMan.hasKey("prompt_enabled"))
+		gms_prompt_enabled = ConfMan.getBool("prompt_enabled");
+
+	// Close the already opened gamefile, since the Magnetic code will open it on it's own
+	_gameFile.close();
 }
 
 Common::Error Magnetic::readSaveData(Common::SeekableReadStream *rs) {
