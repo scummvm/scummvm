@@ -7,6 +7,7 @@ addons:
   apt:
     packages:
     - g++ make
+    - ccache
     - libsdl2-dev
     - libsdl2-net-dev
     - libcurl4-openssl-dev
@@ -27,6 +28,7 @@ addons:
     - libunity-dev
   homebrew:
     packages:
+    - ccache
     - sdl2
     - sdl2_net
     - curl
@@ -55,8 +57,13 @@ matrix:
   include:
     - os: linux
       compiler: gcc
+      cache: ccache
     - os: linux
       compiler: clang
+      cache: ccache
+      before_script:
+        - sudo ln -s $(which ccache) /usr/lib/ccache/clang
+        - sudo ln -s $(which ccache) /usr/lib/ccache/clang++
     - os: osx
       compiler: clang
       cache:
@@ -68,6 +75,7 @@ matrix:
 dist: xenial
 
 script:
+  - export PATH="/usr/local/opt/ccache/libexec:/usr/lib/ccache:$PATH"
   - ./configure --enable-all-engines --enable-opl2lpt --enable-verbose-build
   - make -j 2
   - make test
