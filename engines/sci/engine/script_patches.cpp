@@ -812,10 +812,45 @@ static const uint16 camelotPatchSwordSheathing[] = {
 	PATCH_END
 };
 
+// When Arthur's sword is drawn, ARTHUR:doit calls kGetEvent a second time on
+//  each cycle to test if a shift key is pressed, causing input events to be
+//  frequently dropped. This is similar to Freddy Pharkas and QFG1VGA where this
+//  technique just happened to usually work in Sierra's interpreter. We fix this
+//  in the same way by using the current event instead of consuming a new one.
+//
+// Applies to: All versions
+// Responsible method: ARTHUR:doit
+// Fixes bug: #11269
+static const uint16 camelotSignatureSwordEvents[] = {
+	0x30, SIG_MAGICDWORD,               // bnt 0045
+	      SIG_UINT16(0x0045),
+	0x39, SIG_SELECTOR8(new),           // pushi new
+	0x76,                               // push0
+	0x51, 0x07,                         // class Event
+	0x4a, 0x04,                         // send 04 [ Event new: ]
+	0xa5, 0x01,                         // sat 01 [ temp1 = Event new: ]
+	SIG_ADDTOOFFSET(+53),
+	0x39, SIG_SELECTOR8(dispose),       // pushi dispose
+	0x76,                               // push0
+	0x85, 0x01,                         // lat 01
+	0x4a, 0x04,                         // send 04 [ temp1 dispose: ]
+	SIG_END
+};
+
+static const uint16 camelotPatchSwordEvents[] = {
+	0x31, 0x46,                         // bnt 46
+	0x38, PATCH_SELECTOR16(curEvent),   // pushi curEvent
+	0x76,                               // push0
+	0x51, 0x30,                         // class User [ User: curEvent ]
+	PATCH_ADDTOOFFSET(+57),
+	0x33, 0x05,                         // jmp 05 [ don't dispose event ]
+	PATCH_END
+};
 
 //         script, description,                                       signature                             patch
 static const SciScriptPatcherEntry camelotSignatures[] = {
 	{ true,     0, "fix sword sheathing",                          1, camelotSignatureSwordSheathing,       camelotPatchSwordSheathing },
+	{ true,     0, "fix sword events",                             1, camelotSignatureSwordEvents,          camelotPatchSwordEvents },
 	{ true,    11, "fix hunter missing points",                    1, camelotSignatureHunterMissingPoints,  camelotPatchHunterMissingPoints },
 	{ true,    62, "fix peepingTom Sierra bug",                    1, camelotSignaturePeepingTom,           camelotPatchPeepingTom },
 	{ true,    64, "fix Fatima room messages",                     2, camelotSignatureFatimaRoomMessages,   camelotPatchFatimaRoomMessages },
