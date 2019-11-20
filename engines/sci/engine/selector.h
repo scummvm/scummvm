@@ -135,6 +135,7 @@ struct SelectorCache {
 	Selector setStep;
 	Selector setMotion;
 	Selector cycleSpeed;
+	Selector owner;
 
 #ifdef ENABLE_SCI32
 	Selector data; // Used by Array()/String()

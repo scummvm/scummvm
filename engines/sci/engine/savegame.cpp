@@ -1194,6 +1194,47 @@ extern void showScummVMDialog(const Common::String &message);
 
 void gamestate_afterRestoreFixUp(EngineState *s, int savegameId) {
 	switch (g_sci->getGameId()) {
+	case GID_CAMELOT: {
+		// WORKAROUND: CAMELOT depends on its dynamic menu state persisting. The menu items'
+		//  enabled states determines when the player can draw or sheathe their sword and
+		//  open a purse. If these aren't updated then the player may be unable to perform
+		//  necessary actions, or may be able to perform unexpected ones that break the game.
+		//  Since we don't persist menu state (yet) we need to recreate it from game state.
+		//
+		// - Action \ Open Purse: Enabled while one of the purses is in inventory.
+		// - Action \ Draw Sword: Enabled while flag 3 is set, unless disabled by room scripts.
+		// * The text "Draw Sword" toggles to "Sheathe Sword" depending on global 124,
+		//   but this is only cosmetic. Exported proc #1 in script 997 refreshes this
+		//   when the sword status or room changes.
+		//
+		// After evaluating all the scripts that disable the sword, we enforce the few
+		//  that prevent breaking the game: room 50 under the aqueduct and sitting with
+		//  the scholar while in room 82 (ego view 84).
+		//
+		// FIXME: Save and restore full menu state as SSCI did and don't apply these
+		//  workarounds when restoring saves that contain menu state.
+
+		// Action \ Open Purse
+		reg_t enablePurse = NULL_REG;
+		Common::Array<reg_t> purses = s->_segMan->findObjectsByName("purse");
+		reg_t ego = s->variables[VAR_GLOBAL][0];
+		for (uint i = 0; i < purses.size(); ++i) {
+			reg_t purseOwner = readSelector(s->_segMan, purses[i], SELECTOR(owner));
+			if (purseOwner == ego) {
+				enablePurse = TRUE_REG;
+				break;
+			}
+		}
+		g_sci->_gfxMenu->kernelSetAttribute(1281 >> 8, 1281 & 0xFF, SCI_MENU_ATTRIBUTE_ENABLED, enablePurse);
+
+		// Action \ Draw Sword
+		bool hasSword = (s->variables[VAR_GLOBAL][250].getOffset() & 0x1000); // flag 3
+		bool underAqueduct = (s->variables[VAR_GLOBAL][11].getOffset() == 50);
+		bool sittingWithScholar = (readSelectorValue(s->_segMan, ego, SELECTOR(view)) == 84);
+		reg_t enableSword = (hasSword && !underAqueduct && !sittingWithScholar) ? TRUE_REG : NULL_REG;
+		g_sci->_gfxMenu->kernelSetAttribute(1283 >> 8, 1283 & 0xFF, SCI_MENU_ATTRIBUTE_ENABLED, enableSword);
+		break;
+	}
 	case GID_MOTHERGOOSE:
 		// WORKAROUND: Mother Goose SCI0
 		//  Script 200 / rm200::newRoom will set global C5h directly right after creating a child to the
