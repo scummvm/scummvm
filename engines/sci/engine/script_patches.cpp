@@ -738,7 +738,7 @@ static const uint16 camelotSignatureSwordSheathing[] = {
 	0x32, SIG_UINT16(0x0085),           // jmp 0085 [ end of switch ]
 	0x3c,                               // dup
 	0x35, 0x02,                         // ldi 02
-	0x1a,                               // eq? [ sword-command == 2 (sheath) ]
+	0x1a,                               // eq? [ sword-command == 2 (sheathe) ]
 	0x30, SIG_UINT16(0x0013),           // bnt 0013
 	0x39, SIG_SELECTOR8(setScript),     // pushi setScript
 	0x78,                               // push1
