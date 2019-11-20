@@ -464,7 +464,7 @@ reg_t GfxMenu::kernelSelect(reg_t eventObject, bool pauseSound) {
 		while (itemIterator != itemEnd) {
 			itemEntry = *itemIterator;
 
-			if (!itemEntry->saidVmPtr.isNull()) {
+			if (!itemEntry->saidVmPtr.isNull() && itemEntry->enabled) {
 				byte *saidSpec = _segMan->derefBulkPtr(itemEntry->saidVmPtr, 0);
 
 				if (!saidSpec) {
