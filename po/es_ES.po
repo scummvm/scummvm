@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2019-11-17 09:23+0100\n"
-"PO-Revision-Date: 2019-11-09 23:03+0000\n"
+"PO-Revision-Date: 2019-11-21 20:32+0000\n"
 "Last-Translator: Rodrigo Vegas Sánchez-Ferrero <rodrigo.vegas@gmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/es/>\n"
@@ -3588,13 +3588,15 @@ msgstr ""
 
 #: engines/bladerunner/detection.cpp:75
 msgid "Max frames per second limit"
-msgstr ""
+msgstr "Límite máximo de fps"
 
 #: engines/bladerunner/detection.cpp:76
 msgid ""
 "This mode targets a maximum of 120 fps. When disabled, the game targets 60 "
 "fps"
 msgstr ""
+"Este modo alcanza un máximo de 120 fps. Cuando está desactivado, el juego "
+"alcanza 60 fps"
 
 #: engines/cge/detection.cpp:105 engines/cge2/detection.cpp:111
 msgid "Color Blind Mode"
