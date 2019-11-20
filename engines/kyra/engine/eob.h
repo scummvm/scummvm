@@ -48,6 +48,27 @@ private:
 	int mainMenuLoop();
 	int _menuChoiceInit;
 
+	struct RenderModePalFile {
+		int renderMode;
+		char filename[12];
+	};
+
+	struct TitleScreenConfig {
+		const Common::Platform platform;
+		const char bmpFile[12];
+		const RenderModePalFile *palFiles;
+		const int pc98PaletteID;
+		const int page;
+		const bool fade;
+		const int menu1X, menu1Y, menu1W, menu1H, menu1col1, menu1col2, menu1col3;
+		const int menu2X, menu2Y, menu2W, menu2H, menu2col1, menu2col2, menu2col3;
+		const int versionStrYOffs;
+	};
+
+	static const RenderModePalFile _renderModePalFiles[3];
+	static const TitleScreenConfig _titleConfig[3];
+	const TitleScreenConfig *_ttlCfg;
+
 	// Main loop
 	void startupNew();
 	void startupLoad();

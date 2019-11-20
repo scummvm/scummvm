@@ -564,7 +564,7 @@ Common::Error EoBCoreEngine::init() {
 Common::Error EoBCoreEngine::go() {
 	_debugger->initialize();
 	_txt->removePageBreakFlag();
-	_screen->setFont(Screen::FID_8_FNT);
+	_screen->setFont(_flags.platform == Common::kPlatformPC98 ? Screen::FID_SJIS_FNT : Screen::FID_8_FNT);
 	loadItemsAndDecorationsShapes();
 	_screen->setMouseCursor(0, 0, _itemIconShapes[0]);
 

@@ -313,7 +313,7 @@ protected:
 
 private:
 	const uint8 _invisColor;
-	const bool _is16Color;
+	const bool _isTextMode;
 	// We use this for cases where the font width returned by getWidth() or getCharWidth() does not match the original.
 	// The original Japanese game versions use hard coded sjis font widths of 8 or 9. However, this does not necessarily
 	// depend on whether an outline is used or not (neither LOL/PC-9801 nor LOL/FM-TOWNS use an outline, but the first
@@ -684,6 +684,7 @@ protected:
 	bool _useOverlays;
 	bool _useSJIS;
 	bool _use16ColorMode;
+	bool _4bitPixelPacking;
 	bool _useHiResEGADithering;
 	bool _useHiColorScreen;
 	bool _isAmiga;

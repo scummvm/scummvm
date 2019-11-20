@@ -65,6 +65,8 @@ Screen_EoB::Screen_EoB(EoBCoreEngine *vm, OSystem *system) : Screen(vm, system, 
 	_useHiResEGADithering = _dualPaletteMode = false;
 	_cpsFileExt = 0;
 	_decodeTempBuffer = 0;
+	_curPalID = 0;
+	_curPal = 0;
 	for (int i = 0; i < 10; ++i)
 		_palette16c[i] = 0;	
 }
@@ -258,7 +260,7 @@ void Screen_EoB::loadShapeSetBitmap(const char *file, int tempPage, int destPage
 }
 
 void Screen_EoB::loadBitmap(const char *filename, int tempPage, int dstPage, Palette *pal, bool skip) {
-	if (_use16ColorMode) {
+	if (!scumm_stricmp(filename + strlen(filename) - 3, "BIN")) {
 		Common::SeekableReadStream *str = _vm->resource()->createReadStream(filename);
 		if (!str)
 			error("Screen_EoB::loadBitmap(): Failed to load file '%s'", filename);
@@ -1568,9 +1570,23 @@ void Screen_EoB::shadeRect(int x1, int y1, int x2, int y2, int shadingLevel) {
 }
 
 void Screen_EoB::loadPC98Palette(int palID, Palette &dest) {
-	if (!_palette16c[palID])
+	if (palID < 0 || palID > 9)
 		return;
+	if (!_use16ColorMode || !_palette16c[palID])
+		return;
+	_curPalID = palID;
+	_curPal = &dest;
 	loadPalette(_palette16c[palID], dest, 48);
+}
+
+void Screen_EoB::setPC98PaletteBrightness(int modifier) {
+	if (!_use16ColorMode || !_palette16c[_curPalID])
+		return;
+	uint8 pal[48];
+	for (int i = 0; i < 48; ++i)
+		pal[i] = CLIP<int>(_palette16c[_curPalID][i] + modifier, 0, 15);
+	loadPalette(pal, *_curPal, 48);
+	setScreenPalette(*_curPal);
 }
 
 void Screen_EoB::decodeBIN(const uint8 *src, uint8 *dst, uint16 inSize) {

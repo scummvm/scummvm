@@ -155,6 +155,7 @@ private:
 	static const uint8 _highlightColorTableVGA[];
 	static const uint8 _highlightColorTableEGA[];
 	static const uint8 _highlightColorTableAmiga[];
+	static const uint8 _highlightColorTablePC98[];
 
 	// FM-Towns specific
 	int checkKatakanaSelection();

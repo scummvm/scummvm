@@ -195,7 +195,7 @@ bool CharacterGenerator::start(EoBCharacter *characters, uint8 ***faceShapes) {
 	checkForCompleteParty();
 	initButtonsFromList(0, 5);
 
-	_vm->snd_playSong(_vm->game() == GI_EOB1 ? 20 : 13);
+	_vm->snd_playSong(_vm->game() == GI_EOB1 ? (_vm->gameFlags().platform == Common::kPlatformPC98 ? 1 : 20) : 13);
 	_activeBox = 0;
 
 	for (bool loop = true; loop && (!_vm->shouldQuit());) {
@@ -266,7 +266,7 @@ bool CharacterGenerator::start(EoBCharacter *characters, uint8 ***faceShapes) {
 }
 
 void CharacterGenerator::init() {
-	_screen->loadShapeSetBitmap("CHARGENA", 3, 3);
+	_screen->loadShapeSetBitmap("CHARGENA", 5, 3);
 	if (_faceShapes) {
 		for (int i = 0; i < 44; i++)
 			delete[] _faceShapes[i];
@@ -278,15 +278,16 @@ void CharacterGenerator::init() {
 		_faceShapes[i] = _screen->encodeShape((i % 10) << 2, (i / 10) << 5, 4, 32, true, _vm->_cgaMappingDefault);
 	_screen->_curPage = 0;
 
-	if (_vm->gameFlags().platform == Common::kPlatformAmiga)
+	if (_vm->gameFlags().platform == Common::kPlatformAmiga || (_vm->game() == GI_EOB1 && _vm->gameFlags().platform == Common::kPlatformPC98))
 		_screen->fadeToBlack(32);
 
-	_screen->loadEoBBitmap("CHARGEN", _vm->_cgaMappingDefault, 3, 3, 0);
+	_screen->loadEoBBitmap("CHARGEN", _vm->_cgaMappingDefault, 5, 3, 0);
+	_screen->loadPC98Palette(4, _screen->getPalette(0));
 
-	if (_vm->gameFlags().platform == Common::kPlatformAmiga)
+	if (_vm->gameFlags().platform == Common::kPlatformAmiga || (_vm->game() == GI_EOB1 && _vm->gameFlags().platform == Common::kPlatformPC98))
 		_screen->fadeFromBlack(32);
 
-	_screen->loadShapeSetBitmap("CHARGENB", 3, 3);
+	_screen->loadShapeSetBitmap("CHARGENB", 5, 3);
 	if (_chargenMagicShapes) {
 		for (int i = 0; i < 10; i++)
 			delete[] _chargenMagicShapes[i];
@@ -301,7 +302,7 @@ void CharacterGenerator::init() {
 		const CreatePartyModButton *c = &_chargenModButtons[i];
 		_chargenButtonLabels[i] = c->labelW ? _screen->encodeShape(c->encodeLabelX, c->encodeLabelY, c->labelW, c->labelH, true, _vm->_cgaMappingDefault) : 0;
 	}
-	
+
 	_screen->convertPage(3, 2, _vm->_cgaMappingDefault);
 	_screen->_curPage = 0;
 	_screen->convertToHiColor(2);

@@ -92,10 +92,13 @@ public:
 
 	// PC-98 specific
 	void loadPC98Palette(int palID, Palette &dest);
+	void setPC98PaletteBrightness(int modifier);
 	void decodeBIN(const uint8 *src, uint8 *dst, uint16 inSize);
 	void decodePC98PlanarBitmap(int srcDstPage, int tempPage);
 
 	uint8 *_decodeTempBuffer;
+	int _curPalID;
+	Palette *_curPal;
 
 	// Amiga specific
 	void loadSpecialAmigaCPS(const char *fileName, int destPage, bool isGraphics);

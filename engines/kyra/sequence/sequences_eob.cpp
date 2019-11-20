@@ -56,13 +56,17 @@ private:
 	void waterdeepExit();
 	void tunnel();
 
-	void loadAndSetPalette(const char *dosPaletteFile, int pc98PaletteID = 0);
+	void loadAndSetPalette(const char *dosPaletteFile, int pc98PaletteID);
 	void copyBlurRegion(int x1, int y1, int x2, int y2, int w, int h, int step);
 	void whirlTransition();
+	void printSubtitle(const char *str, int textmodeX, int textmodeY, int col, int mode = 0);
+
+	uint8 _textColor;
 
 	EoBEngine *_vm;
 	Screen_EoB *_screen;
 
+	int _lastFileOpening;
 	const char *const *_filesOpening;
 	const char *const *_filesTower;
 	const char *const *_filesOrb;
@@ -71,6 +75,13 @@ private:
 	const char *const *_filesHands;
 	const char *const *_filesWdExit;
 	const char *const *_filesTunnel;
+	const char *const *_stringsTower;
+	const char *const *_stringsOrb;
+	const char *const *_stringsWdEntry;
+	const char *const *_stringsKing;
+	const char *const *_stringsHands;
+	const char *const *_stringsWdExit;
+	const char *const *_stringsTunnel;
 	const uint8 *_openingFrmDelay;
 	const uint8 *_wdEncodeX;
 	const uint8 *_wdEncodeY;
@@ -123,9 +134,10 @@ private:
 };
 
 EoBIntroPlayer::EoBIntroPlayer(EoBEngine *vm, Screen_EoB *screen) : _vm(vm), _screen(screen), 
-	_fillColor1(vm->gameFlags().platform == Common::kPlatformAmiga ? 19 : 12), _fillColor2(vm->gameFlags().platform == Common::kPlatformAmiga ? 10 : 157) {
+	_fillColor1(vm->gameFlags().platform == Common::kPlatformAmiga ? 19 : (vm->gameFlags().platform == Common::kPlatformPC98 ? 0 : 12)), _fillColor2(vm->gameFlags().platform == Common::kPlatformAmiga ? 10 : 157) {
 	int temp = 0;
 	_filesOpening = _vm->staticres()->loadStrings(kEoB1IntroFilesOpening, temp);
+	_lastFileOpening = temp - 2;
 	_filesTower = _vm->staticres()->loadStrings(kEoB1IntroFilesTower, temp);
 	_filesOrb = _vm->staticres()->loadStrings(kEoB1IntroFilesOrb, temp);
 	_filesWdEntry = _vm->staticres()->loadStrings(kEoB1IntroFilesWdEntry, temp);
@@ -133,6 +145,13 @@ EoBIntroPlayer::EoBIntroPlayer(EoBEngine *vm, Screen_EoB *screen) : _vm(vm), _sc
 	_filesHands = _vm->staticres()->loadStrings(kEoB1IntroFilesHands, temp);
 	_filesWdExit = _vm->staticres()->loadStrings(kEoB1IntroFilesWdExit, temp);
 	_filesTunnel = _vm->staticres()->loadStrings(kEoB1IntroFilesTunnel, temp);
+	_stringsTower = _vm->staticres()->loadStrings(kEoB1IntroStringsTower, temp);
+	_stringsOrb = _vm->staticres()->loadStrings(kEoB1IntroStringsOrb, temp);
+	_stringsWdEntry = _vm->staticres()->loadStrings(kEoB1IntroStringsWdEntry, temp);
+	_stringsKing = _vm->staticres()->loadStrings(kEoB1IntroStringsKing, temp);
+	_stringsHands = _vm->staticres()->loadStrings(kEoB1IntroStringsHands, temp);
+	_stringsWdExit = _vm->staticres()->loadStrings(kEoB1IntroStringsWdExit, temp);
+	_stringsTunnel = _vm->staticres()->loadStrings(kEoB1IntroStringsTunnel, temp);
 	_openingFrmDelay = _vm->staticres()->loadRawData(kEoB1IntroOpeningFrmDelay, temp);
 	_wdEncodeX = _vm->staticres()->loadRawData(kEoB1IntroWdEncodeX, temp);
 	_wdEncodeY = _vm->staticres()->loadRawData(kEoB1IntroWdEncodeY, temp);
@@ -147,6 +166,7 @@ EoBIntroPlayer::EoBIntroPlayer(EoBEngine *vm, Screen_EoB *screen) : _vm(vm), _sc
 	_tvlH = _vm->staticres()->loadRawData(kEoB1IntroTvlH, temp);
 	const uint8 *orbFadePal = _vm->staticres()->loadRawData(kEoB1IntroOrbFadePal, temp);
 	_screen->loadPalette(orbFadePal, _screen->getPalette(2), temp);
+	_textColor = 0xE1;
 }
 
 void EoBIntroPlayer::start(int part) {
@@ -173,6 +193,8 @@ void EoBIntroPlayer::start(int part) {
 		s->seek(768);
 		_screen->loadFileDataToPage(s, 5, s->size() - 768);
 		delete s;
+	} else if (_vm->gameFlags().platform == Common::kPlatformPC98) {
+		_screen->clearPage(5);
 	} else {
 		_screen->loadBitmap(_vm->gameFlags().platform == Common::kPlatformAmiga ? "TEXT.CPS" : (_vm->gameFlags().platform == Common::kPlatformPC98 ? "TEXT.BIN" : "TEXT.CMP"), 3, 5, 0);
 	}
@@ -190,6 +212,7 @@ void EoBIntroPlayer::start(int part) {
 	tunnel();
 
 	whirlTransition();
+
 	_vm->snd_stopSound();
 	_vm->_allowSkip = false;
 }
@@ -198,29 +221,40 @@ void EoBIntroPlayer::openingCredits() {
 	if (_vm->gameFlags().platform != Common::kPlatformPC98)
 		_vm->snd_playSong(1);
 
-	_screen->loadBitmap(_filesOpening[4], 5, 3, 0);
+	_screen->loadBitmap(_filesOpening[_lastFileOpening], 5, 3, 0);
 	_screen->convertPage(3, 0, _vm->_cgaMappingAlt);
 
-	if (_vm->gameFlags().platform == Common::kPlatformAmiga) {
-		_screen->fadeFromBlack(64);
-	} else {
+	if (_vm->gameFlags().platform == Common::kPlatformPC98)
+		_screen->loadPC98Palette(1, _screen->getPalette(0));
+
+	if (_vm->gameFlags().platform == Common::kPlatformDOS) {
 		loadAndSetPalette(_filesOpening[5], 1);
 		_screen->updateScreen();
+	} else {
+		_screen->fadeFromBlack(64);
 	}
 
 	_vm->delay(_openingFrmDelay[0] * _vm->_tickLength);
 
-	for (int i = 0; i < 4 && !_vm->shouldQuit() && !_vm->skipFlag(); i++) {
+	for (int i = 0; i < _lastFileOpening && !_vm->shouldQuit() && !_vm->skipFlag(); i++) {
 		_screen->loadBitmap(_filesOpening[i], 5, 3, 0);
 		uint32 nextFrameTimer = _vm->_system->getMillis() + _openingFrmDelay[i + 1] * _vm->_tickLength;
 		_screen->convertPage(3, 4, _vm->_cgaMappingAlt);
-		_screen->crossFadeRegion(0, 50, 0, 50, 320, 102, 4, 0);
+		if (i == 5)
+			_screen->crossFadeRegion(0, 0, 0, 0, 320, 200, 4, 0);
+		else
+			_screen->crossFadeRegion(0, 50, 0, 50, 320, 102, 4, 0);
 		_vm->delayUntil(nextFrameTimer);
 	}
 
 	if (_vm->gameFlags().platform == Common::kPlatformAmiga)
 		_vm->delay(50 * _vm->_tickLength);
 }
+
+#define printSub(stringArray, index, x, y, col, mode) if (stringArray) printSubtitle(stringArray[index], x, y, col, mode)
+#define displaySubtitle(gfxTitleSrcY, gfxTitleDstY, gfxTitleH, stringArray, index, x, y, col, mode) \
+	printSub(stringArray, index, x, y, col, mode); \
+	else _screen->copyRegion(0, gfxTitleSrcY, 0, gfxTitleDstY, 320, gfxTitleH, 6, 0, Screen::CR_NO_P_CHECK)
 
 void EoBIntroPlayer::tower() {
 	if (_vm->shouldQuit() || _vm->skipFlag())
@@ -240,8 +274,9 @@ void EoBIntroPlayer::tower() {
 	int cp = _screen->setCurPage(0);
 
 	whirlTransition();
-	loadAndSetPalette(_filesTower[0]);
 
+	loadAndSetPalette(_filesTower[0], 0);
+	_screen->setPC98PaletteBrightness(-15);
 	_screen->setCurPage(cp);
 	_screen->clearCurPage();
 
@@ -250,15 +285,19 @@ void EoBIntroPlayer::tower() {
 
 	_screen->setCurPage(0);
 
+	displaySubtitle(0, 168, 32, _stringsTower, 0, 17, 22, 0xE1, 2);
+	printSub(_stringsTower, 1, 13, 24, 0xE1, 2);
+
 	for (int i = 0; i < 64 && !_vm->shouldQuit() && !_vm->skipFlag(); i += 2) {
 		uint32 end = _vm->_system->getMillis() + 2 * _vm->_tickLength;
 		_screen->copyRegion(0, 142 - i, 96, 0, 128, i + 1, 4, 0, Screen::CR_NO_P_CHECK);
 		_screen->copyRegion(0, 0, 96, i + 1, 128, 167 - i, 2, 0, Screen::CR_NO_P_CHECK);
-		if (!i)
-			_screen->copyRegion(0, 0, 0, 168, 320, 32, 6, 0, Screen::CR_NO_P_CHECK);
+		_screen->setPC98PaletteBrightness(MIN(i / 4 - 14, 0));
 		_screen->updateScreen();
 		_vm->delayUntil(end);
 	}
+
+	_screen->setPC98PaletteBrightness(0);
 
 	for (int i = 0; i < 24 && !_vm->shouldQuit() && !_vm->skipFlag(); i += 2) {
 		uint32 end = _vm->_system->getMillis() + 2 * _vm->_tickLength;
@@ -293,7 +332,8 @@ void EoBIntroPlayer::tower() {
 		_vm->delayUntil(end);
 	}
 
-	_screen->copyRegion(0, 32, 0, 168, 320, 32, 6, 0, Screen::CR_NO_P_CHECK);
+	_screen->fillRect(0, 168, 319, 199, _fillColor1);
+	displaySubtitle(32, 168, 32, _stringsTower, 2, 20, 23, 0xE1, 0);
 	_screen->updateScreen();
 	_vm->delay(65 * _vm->_tickLength);
 	delete[] shp;
@@ -320,9 +360,9 @@ void EoBIntroPlayer::orb() {
 	_screen->setCurPage(0);
 	_screen->convertPage(3, 4, _vm->_cgaMappingAlt);
 
-	if (_vm->gameFlags().platform == Common::kPlatformAmiga) {
+	if (_vm->gameFlags().platform != Common::kPlatformDOS) {
 		_screen->fadeToBlack(16);
-		loadAndSetPalette(0);
+		loadAndSetPalette(0, 0);
 	}
 
 	_screen->clearCurPage();
@@ -341,7 +381,7 @@ void EoBIntroPlayer::orb() {
 			_vm->delayUntil(end);
 	}
 
-	_screen->copyRegion(0, 64, 0, 168, 320, 16, 6, 0, Screen::CR_NO_P_CHECK);
+	displaySubtitle(64, 168, 16, _stringsOrb, 0, 32, 23, 0xE1, 0);
 	_screen->updateScreen();
 
 	if (_vm->gameFlags().platform == Common::kPlatformAmiga) {
@@ -381,7 +421,8 @@ void EoBIntroPlayer::waterdeepEntry() {
 	uint8 *shp2[31];
 	uint8 *shp3[3];
 
-	loadAndSetPalette(_filesWdEntry[0]);
+	if (_vm->gameFlags().platform != Common::kPlatformPC98)
+		loadAndSetPalette(_filesWdEntry[0], -1);
 	_screen->loadBitmap(_filesWdEntry[1], 5, 3, 0);
 
 	if (_vm->gameFlags().platform == Common::kPlatformAmiga)
@@ -408,7 +449,8 @@ void EoBIntroPlayer::waterdeepEntry() {
 		_vm->delayUntil(end);
 	}
 
-	_screen->copyRegion(0, 80, 0, 168, 320, 16, 6, 0, Screen::CR_NO_P_CHECK);
+	displaySubtitle(80, 168, 16, _stringsWdEntry, 0, 21, 23, 0xE1, 0);
+
 	_screen->updateScreen();
 	_vm->delay(50 * _vm->_tickLength);
 
@@ -485,9 +527,9 @@ void EoBIntroPlayer::king() {
 	_screen->loadBitmap(_filesKing[0], 5, 3, 0);
 	_screen->convertPage(3, 4, _vm->_cgaMappingAlt);
 
-	if (_vm->gameFlags().platform == Common::kPlatformAmiga) {
+	if (_vm->gameFlags().platform != Common::kPlatformDOS) {
 		_screen->fadeToBlack(32);
-		loadAndSetPalette(0);
+		loadAndSetPalette(0, 3);
 	}
 
 	int x = 15;
@@ -561,7 +603,7 @@ void EoBIntroPlayer::king() {
 		_vm->delayUntil(end);
 	}
 
-	_screen->copyRegion(0, 96, 0, 160, 320, 32, 6, 0, Screen::CR_NO_P_CHECK);
+	displaySubtitle(96, 160, 32, _stringsKing, 0, 10, 24, 0xE1, 0);
 	_screen->updateScreen();
 	_vm->delay(70 * _vm->_tickLength);
 
@@ -574,9 +616,15 @@ void EoBIntroPlayer::hands() {
 		return;
 
 	_screen->setCurPage(2);
+	_screen->clearPage(0);
 	uint8 *shp1 = _screen->encodeShape(0, 140, 21, 60, true, _vm->_cgaMappingAlt);
 	uint8 *shp2 = _screen->encodeShape(21, 140, 12, 60, true, _vm->_cgaMappingAlt);
 	_screen->loadBitmap(_filesHands[0], 3, 5, 0);
+
+	if (_vm->gameFlags().platform == Common::kPlatformPC98) {
+		_screen->fadeToBlack(32);
+		loadAndSetPalette(0, 2);
+	}
 
 	if (_vm->gameFlags().platform == Common::kPlatformAmiga)
 		_vm->delay(60 * _vm->_tickLength);
@@ -586,7 +634,8 @@ void EoBIntroPlayer::hands() {
 	_screen->drawShape(2, shp1, 0, 4, 0);
 	_screen->drawShape(2, shp2, 151, 4, 0);
 	_vm->boxMorphTransition(25, 8, 18, 4, 3, 0, 21, 8, 6, 0, 28, 23);
-	_screen->copyRegion(0, 128, 0, 176, 320, 16, 6, 0, Screen::CR_NO_P_CHECK);
+
+	displaySubtitle(128, 176, 16, _stringsHands, 0, 24, 23, 0xE1, 0);
 
 	_screen->updateScreen();
 	_vm->delay(15 * _vm->_tickLength);
@@ -778,10 +827,10 @@ void EoBIntroPlayer::waterdeepExit() {
 	_screen->loadBitmap(_filesWdExit[2], 3, dstPage, 0);
 	_screen->convertPage(dstPage, 2, _vm->_cgaMappingAlt);
 	whirlTransition();
-	loadAndSetPalette(_filesWdExit[1]);
+	loadAndSetPalette(_filesWdExit[1], 0);
 	_vm->delay(6 * _vm->_tickLength);
 
-	_screen->copyRegion(0, 144, 0, 184, 320, 16, 6, 0, Screen::CR_NO_P_CHECK);
+	displaySubtitle(144, 184, 16, _stringsWdExit, 0, 24, 23, 0xE1, 0);
 
 	cx = 0;
 	cy = 136;
@@ -799,7 +848,9 @@ void EoBIntroPlayer::waterdeepExit() {
 		_vm->delayUntil(end);
 	}
 
-	_vm->snd_playSong(3);
+	if (_vm->gameFlags().platform != Common::kPlatformPC98)
+		_vm->snd_playSong(3);
+
 	_vm->delay(60 * _vm->_tickLength);
 
 	for (int i = 0; i < 56 && !_vm->shouldQuit() && !_vm->skipFlag(); i++) {
@@ -824,7 +875,7 @@ void EoBIntroPlayer::waterdeepExit() {
 	_screen->fillRect(0, 16, 319, 31, _fillColor1);
 	_screen->fillRect(0, 136, 319, 199, _fillColor1);
 	_screen->copyRegion(0, 0, 80, 32, 160, 120, 2, 0, Screen::CR_NO_P_CHECK);
-	loadAndSetPalette(_filesWdExit[4]);
+	loadAndSetPalette(_filesWdExit[4], 0);
 	_screen->updateScreen();
 	_vm->delay(50 * _vm->_tickLength);
 }
@@ -854,8 +905,10 @@ void EoBIntroPlayer::tunnel() {
 		_vm->delayUntil(end);
 	}
 
+	// subtitle "We have them" - the PC-98 version does not have this string.
 	_screen->copyRegion(0, 160, 0, 184, 320, 16, 6, 0, Screen::CR_NO_P_CHECK);
 	_screen->updateScreen();
+
 	_vm->delay(18 * _vm->_tickLength);
 	_screen->copyRegion(160, 0, 80, 32, 160, 120, 2, 0, Screen::CR_NO_P_CHECK);
 	_screen->updateScreen();
@@ -922,10 +975,12 @@ void EoBIntroPlayer::tunnel() {
 	_vm->delay(2 * _vm->_tickLength);
 	_screen->copyRegion(0, 120, 80, 30, 160, 64, 4, 0, Screen::CR_NO_P_CHECK);
 	_screen->copyRegion(160, 120, 80, 94, 160, 64, 4, 0, Screen::CR_NO_P_CHECK);
-	_screen->copyRegion(0, 176, 0, 184, 320, 16, 6, 0, Screen::CR_NO_P_CHECK);
+
+	displaySubtitle(176, 184, 16, _stringsTunnel, 0, 27, 23, 0xE1, 0);
+
 	_screen->setCurPage(0);
 	_screen->updateScreen();
-	_vm->delay(50 * _vm->_tickLength);
+	_vm->delay((_vm->gameFlags().platform == Common::kPlatformPC98 ? 130 : 50) * _vm->_tickLength);
 }
 
 void EoBIntroPlayer::loadAndSetPalette(const char *dosPaletteFile, int pc98PaletteID) {
@@ -934,7 +989,7 @@ void EoBIntroPlayer::loadAndSetPalette(const char *dosPaletteFile, int pc98Palet
 
 	if (_vm->gameFlags().platform == Common::kPlatformDOS)
 		_screen->loadPalette(dosPaletteFile, _screen->getPalette(0));
-	else if (_vm->gameFlags().platform == Common::kPlatformPC98)
+	else if (_vm->gameFlags().platform == Common::kPlatformPC98 && pc98PaletteID >= 0)
 		_screen->loadPC98Palette(pc98PaletteID, _screen->getPalette(0));
 
 	_screen->getPalette(0).fill(0, 1, 0);
@@ -1010,13 +1065,13 @@ void EoBIntroPlayer::whirlTransition() {
 
 	for (int i = 0; i < 2; i++) {
 		for (int ii = 0; ii < 8; ii++) {
-			uint32 e = _vm->_system->getMillis() + 3;
+			uint32 e = _vm->_system->getMillis() + 16;
 			if (ii & 1) {
 				for (int iii = i + ii; iii < 320; iii += 8)
-					_screen->drawClippedLine(iii, 0, iii, 199, 12);
+					_screen->drawClippedLine(iii, 0, iii, 199, _fillColor1);
 			} else {
 				for (int iii = i + ii; iii < 200; iii += 8)
-					_screen->drawClippedLine(0, iii, 319, iii, 12);
+					_screen->drawClippedLine(0, iii, 319, iii, _fillColor1);
 			}
 			_screen->updateScreen();
 			uint32 c = _vm->_system->getMillis();
@@ -1024,6 +1079,57 @@ void EoBIntroPlayer::whirlTransition() {
 				_vm->_system->delayMillis(e - c);
 		}
 	}
+}
+
+void EoBIntroPlayer::printSubtitle(const char *str, int textmodeX, int textmodeY, int col, int mode) {
+	if (col)
+		_textColor = col & 0xFF;
+
+	char charStr[3];
+	charStr[2] = 0;
+	int curX = 0;
+
+	if (!str)
+		return;
+
+	int cp = _screen->setCurPage(0);
+
+	for (int i = 0; str[i]; ) {
+		uint8 c = str[i++];
+		if (c == 13) {
+			curX = 0;
+			textmodeY++;
+		} else if (c == 10) {
+			_textColor = str[i++];
+		} else if (c == 7) {
+			_vm->delay(960);
+			_screen->fillRect(0, 160, 319, 199, _fillColor1, 0);
+			curX = 0;
+		}
+
+		charStr[0] = c;
+		charStr[1] = (c >= 0x81 && (c <= 0x9F || (c >= 0xE0 && c <= 0xFC))) ? str[i++] : 0;
+
+		_screen->printText(charStr, (textmodeX << 2) + (curX << 3), textmodeY << 3, _textColor, 0);
+
+		if ((++curX + textmodeX) == 80) {
+			curX = 0;
+			textmodeY++;
+		}
+
+		if (mode == 0) {
+			_vm->_system->delayMillis(40);
+			_screen->updateScreen();
+		} else if (mode == 1) {
+			_vm->delay(40);
+			_screen->updateScreen();
+		}
+	}
+
+	if (mode == 2)
+		_screen->updateScreen();
+	
+	_screen->setCurPage(cp);
 }
 
 EoBAmigaFinalePlayer::EoBAmigaFinalePlayer(EoBEngine *vm, Screen_EoB *screen) : _vm(vm), _screen(screen) {
@@ -1430,37 +1536,38 @@ void EoBAmigaFinalePlayer::playDialogue(int line, bool withAnim) {
 int EoBEngine::mainMenu() {
 	int menuChoice = _menuChoiceInit;
 	_menuChoiceInit = 0;
-
 	Screen::FontId of = _screen->_currentFont;
 
 	while (menuChoice >= 0 && !shouldQuit()) {
 		switch (menuChoice) {
 		case 0: {
-			if (_flags.platform == Common::kPlatformAmiga) {
+			if (_ttlCfg->fade)
 				_screen->fadeToBlack(10);
-				_screen->loadEoBBitmap("TITLE", 0, 5, 3, 1);
-				_screen->fadeFromBlack(10);
-			} else {
-				if (_configRenderMode != Common::kRenderEGA)
-					_screen->loadPalette("EOBPAL.COL", _screen->getPalette(0));
-				_screen->loadEoBBitmap("INTRO", _cgaMappingDefault, 5, 3, 2);
-				_screen->setScreenPalette(_screen->getPalette(0));
+			
+			_screen->loadPC98Palette(_ttlCfg->pc98PaletteID, _screen->getPalette(0));
+			for (int i = 0; i < 3; ++i) {
+				if (_ttlCfg->palFiles[i].renderMode == -1)
+					break;
+				if (_configRenderMode == (Common::RenderMode)_ttlCfg->palFiles[i].renderMode)
+					_screen->loadPalette(_ttlCfg->palFiles[i].filename, _screen->getPalette(0));
 			}
+
+			_screen->loadEoBBitmap(_ttlCfg->bmpFile, _cgaMappingDefault, 5, 3, _ttlCfg->page);
+
+			if (_ttlCfg->fade)
+				_screen->fadeFromBlack(10);
+			else
+				_screen->setScreenPalette(_screen->getPalette(0));
 
 			_screen->_curPage = 2;
 			of = _screen->setFont(Screen::FID_6_FNT);
 			Common::String versionString(Common::String::format("ScummVM %s", gScummVMVersion));
-			_screen->printText(versionString.c_str(), 280 - versionString.size() * 6, 153, _screen->getPagePixel(2, 0, 0), 0);
+			_screen->printText(versionString.c_str(), 280 - versionString.size() * 6, 153 + _ttlCfg->versionStrYOffs, _screen->getPagePixel(2, 0, 0), 0);
 			_screen->setFont(of);
-			_screen->fillRect(0, 159, 319, 199, _screen->getPagePixel(2, 0, 0));
+			_screen->fillRect(0, 159 + _ttlCfg->versionStrYOffs, 319, 199, _screen->getPagePixel(2, 0, 0));
 
-			if (_flags.platform == Common::kPlatformAmiga) {
-				gui_drawBox(75, 165, 177, 29, 22, 28, -1);
-				gui_drawBox(74, 164, 179, 31, 22, 28, -1);
-			} else {
-				gui_drawBox(77, 165, 173, 29, 14, 13, 12);
-				gui_drawBox(76, 164, 175, 31, 14, 13, -1);
-			}
+			gui_drawBox(_ttlCfg->menu1X, _ttlCfg->menu1Y, _ttlCfg->menu1W, _ttlCfg->menu1H, _ttlCfg->menu1col1, _ttlCfg->menu1col2, _ttlCfg->menu1col3);
+			gui_drawBox(_ttlCfg->menu2X, _ttlCfg->menu2Y, _ttlCfg->menu2W, _ttlCfg->menu2H, _ttlCfg->menu2col1, _ttlCfg->menu2col2, _ttlCfg->menu2col3);
 
 			_screen->_curPage = 0;
 			_screen->copyRegion(0, 0, 0, 0, 320, 200, 2, 0, Screen::CR_NO_P_CHECK);
@@ -1490,9 +1597,11 @@ int EoBEngine::mainMenu() {
 				_screen->showMouse();
 				_sound->selectAudioResourceSet(kMusicIngame);
 				_sound->loadSoundFile(0);
+				resetSkipFlag();
+				_eventList.clear();
 			}
 
-			menuChoice = -2;
+			menuChoice = shouldQuit() ? -5 : -2;
 			break;
 
 		case 3:
@@ -1701,6 +1810,9 @@ void EoBEngine::boxMorphTransition(int targetDestX, int targetDestY, int targetF
 		delayUntil(end);
 	}
 }
+
+#undef displaySubtitle
+#undef printSub
 
 } // End of namespace Kyra
 

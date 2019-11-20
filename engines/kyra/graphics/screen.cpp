@@ -62,6 +62,7 @@ Screen::Screen(KyraEngine_v1 *vm, OSystem *system, const ScreenDim *dimTable, co
 	_16bitConversionPalette = 0;
 	_16bitShadingLevel = 0;
 	_bytesPerPixel = 1;
+	_4bitPixelPacking = false;
 
 	_currentFont = FID_8_FNT;
 	_paletteChanged = true;
@@ -99,6 +100,7 @@ bool Screen::init() {
 	_useOverlays = false;
 	_useSJIS = false;
 	_use16ColorMode = _vm->gameFlags().use16ColorMode;
+	_4bitPixelPacking = (_use16ColorMode && _vm->game() == GI_LOL);
 	_isAmiga = (_vm->gameFlags().platform == Common::kPlatformAmiga);
 	// Amiga copper palette magic requires the use of more than 32 colors for some purposes.
 	_useAmigaExtraColors = (_isAmiga && _vm->game() == GI_EOB2);
@@ -762,12 +764,12 @@ void Screen::setPagePixel(int pageNum, int x, int y, uint8 color) {
 	if (pageNum == 0 || pageNum == 1)
 		addDirtyRect(x, y, 1, 1);
 
-	if (_use16ColorMode) {
+	if (_4bitPixelPacking) {
 		color &= 0x0F;
 		color |= (color << 4);
 	} else if (_renderMode == Common::kRenderCGA) {
 		color &= 0x03;
-	} else if (_renderMode == Common::kRenderEGA && !_useHiResEGADithering) {
+	} else if (_use16ColorMode || (_renderMode == Common::kRenderEGA && !_useHiResEGADithering)) {
 		color &= 0x0F;
 	} 
 	
@@ -1204,12 +1206,12 @@ void Screen::fillRect(int x1, int y1, int x2, int y2, uint8 color, int pageNum, 
 
 	clearOverlayRect(pageNum, x1, y1, x2-x1+1, y2-y1+1);
 
-	if (_use16ColorMode) {
+	if (_4bitPixelPacking) {
 		color &= 0x0F;
 		color |= (color << 4);
 	} else if (_renderMode == Common::kRenderCGA) {
 		color &= 0x03;
-	} else if (_renderMode == Common::kRenderEGA && !_useHiResEGADithering) {
+	} else if (_use16ColorMode || (_renderMode == Common::kRenderEGA && !_useHiResEGADithering)) {
 		color &= 0x0F;
 	} else if (_bytesPerPixel == 2)
 		color16 = shade16bitColor(_16bitPalette[color]);
@@ -1289,12 +1291,12 @@ void Screen::drawClippedLine(int x1, int y1, int x2, int y2, int color) {
 void Screen::drawLine(bool vertical, int x, int y, int length, int color) {
 	uint8 *ptr = getPagePtr(_curPage) + y * SCREEN_W * _bytesPerPixel + x * _bytesPerPixel;
 
-	if (_use16ColorMode) {
+	if (_4bitPixelPacking) {
 		color &= 0x0F;
 		color |= (color << 4);
 	} else if (_renderMode == Common::kRenderCGA) {
 		color &= 0x03;
-	} else if (_renderMode == Common::kRenderEGA && !_useHiResEGADithering) {
+	} else if (_use16ColorMode || (_renderMode == Common::kRenderEGA && !_useHiResEGADithering)) {
 		color &= 0x0F;
 	} else if (_bytesPerPixel == 2)
 		color = shade16bitColor(_16bitPalette[color]);
@@ -3769,7 +3771,7 @@ void AMIGAFont::unload() {
 }
 
 SJISFont::SJISFont(Graphics::FontSJIS *font, const uint8 invisColor, bool is16Color, bool drawOutline, bool fatPrint, int extraSpacing)
-	: _colorMap(0), _font(font), _invisColor(invisColor), _is16Color(is16Color), _drawOutline(drawOutline), _sjisWidthOffset(extraSpacing) {
+	: _colorMap(0), _font(font), _invisColor(invisColor), _isTextMode(is16Color), _drawOutline(drawOutline), _sjisWidthOffset(extraSpacing) {
 	assert(_font);
 	_font->setDrawingMode(_drawOutline ? Graphics::FontSJIS::kOutlineMode : Graphics::FontSJIS::kDefaultMode);
 	_font->toggleFatPrint(fatPrint);
@@ -3801,7 +3803,7 @@ int SJISFont::getCharWidth(uint16 c) const {
 void SJISFont::setColorMap(const uint8 *src) {
 	_colorMap = src;
 
-	if (!_is16Color) {
+	if (!_isTextMode) {
 		if (_colorMap[0] == _invisColor)
 			_font->setDrawingMode(Graphics::FontSJIS::kDefaultMode);
 		else
@@ -3812,7 +3814,7 @@ void SJISFont::setColorMap(const uint8 *src) {
 void SJISFont::drawChar(uint16 c, byte *dst, int pitch, int) const {
 	uint8 color1, color2;
 
-	if (_is16Color) {
+	if (_isTextMode) {
 		// PC98 16 color games specify a color value which is for the
 		// PC98 text mode palette, thus we need to remap it.
 		color1 = ((_colorMap[1] >> 5) & 0x7) + 16;

@@ -1441,6 +1441,8 @@ GUI_EoB::GUI_EoB(EoBCoreEngine *vm) : GUI(vm), _vm(vm), _screen(vm->_screen) {
 		_highLightColorTable = _highlightColorTableAmiga;
 	else if (_vm->game() == GI_EOB1 && (_vm->_configRenderMode == Common::kRenderCGA || _vm->_configRenderMode == Common::kRenderEGA))
 		_highLightColorTable = _highlightColorTableEGA;
+	else if (_vm->game() == GI_EOB1 && _vm->gameFlags().platform == Common::kPlatformPC98)
+		_highLightColorTable = _highlightColorTablePC98;
 	else
 		_highLightColorTable = _highlightColorTableVGA;
 
@@ -3076,12 +3078,12 @@ int GUI_EoB::selectSaveSlotDialogue(int x, int y, int id) {
 			drawSaveSlotButton(newHighlight, 0, _vm->guiSettings()->colors.guiColorLightRed);
 
 			// Display highlighted slot index in the bottom left corner to avoid people getting lost with the 990 save slots
-			_screen->setFont(Screen::FID_6_FNT);
+			Screen::FontId of = _screen->setFont(Screen::FID_6_FNT);
 			int sli = (newHighlight == 6) ? _savegameOffset : (_savegameOffset + newHighlight);
 			_screen->set16bitShadingLevel(4);
 			_screen->printText(Common::String::format("%03d/989", sli).c_str(), _saveSlotX + 5, _saveSlotY + 135, _vm->guiSettings()->colors.frame2, _vm->guiSettings()->colors.fill);
 			_screen->set16bitShadingLevel(0);
-			_screen->setFont(Screen::FID_8_FNT);
+			_screen->setFont(of);
 
 			_screen->updateScreen();
 			lastHighlight = newHighlight;
@@ -4376,6 +4378,8 @@ const uint8 GUI_EoB::_highlightColorTableVGA[] = { 0x0F, 0xB0, 0xB2, 0xB4, 0xB6,
 const uint8 GUI_EoB::_highlightColorTableEGA[] = { 0x0C, 0x0D, 0x0E, 0x0F, 0x0E, 0x0D, 0x00 };
 
 const uint8 GUI_EoB::_highlightColorTableAmiga[] = { 0x13, 0x0B, 0x12, 0x0A, 0x11, 0x09, 0x11, 0x0A, 0x12, 0x0B, 0x00 };
+
+const uint8 GUI_EoB::_highlightColorTablePC98[] = { 0x0C, 0x0D, 0x0E, 0x0F, 0x0E, 0x0D, 0x00 };
 
 } // End of namespace Kyra
 
