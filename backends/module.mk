@@ -220,8 +220,7 @@ endif
 
 ifeq ($(BACKEND),androidsdl)
 MODULE_OBJS += \
-	events/androidsdl/androidsdl-events.o \
-	graphics/androidsdl/androidsdl-graphics.o
+	events/androidsdl/androidsdl-events.o
 endif
 
 ifdef AMIGAOS
