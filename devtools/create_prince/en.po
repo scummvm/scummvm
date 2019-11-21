@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: Prince\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2018-04-17 19:53+0100\n"
-"PO-Revision-Date: 2019-11-12 08:29+0000\n"
-"Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
+"PO-Revision-Date: 2019-11-21 20:31+0000\n"
+"Last-Translator: Anton <ton4ick@gmail.com>\n"
 "Language-Team: English <https://translations.scummvm.org/projects/prince/"
 "prince/en/>\n"
 "Language: en\n"
@@ -1796,7 +1796,7 @@ msgstr ""
 
 #: dialog0023.txt:100607
 msgid "OTHER2: Myślałem, że nigdy go nie docucimy."
-msgstr "OTHER2: I thought I will never|quit him."
+msgstr "OTHER2: I thought we will never|resuscitate him."
 
 #: dialog0023.txt:100608
 msgid "OTHER: Oddech żebraka postawi na nogi nawet|umarłego."
