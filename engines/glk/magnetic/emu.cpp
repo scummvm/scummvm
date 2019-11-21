@@ -20,57 +20,20 @@
  *
  */
 
-#include "glk/magnetic/defs.h"
+#include "glk/magnetic/magnetic_defs.h"
 #include "glk/magnetic/magnetic.h"
 #include "common/file.h"
+#include "common/textconsole.h"
 
 namespace Glk {
 namespace Magnetic {
 
-type32 dreg[8], areg[8], i_count, string_size, rseed = 0, pc, arg1i, mem_size;
-type16 properties, fl_sub, fl_tab, fl_size, fp_tab, fp_size;
-type8 zflag, nflag, cflag, vflag, byte1, byte2, regnr, admode, opsize;
-type8 *arg1, *arg2, is_reversible, running = 0, tmparg[4] = {0, 0, 0, 0};
-type8 lastchar = 0, version = 0, sd = 0;
-type8 *decode_table, *restart = 0, *code = 0, *string = 0, *string2 = 0;
-type8 *string3 = 0, *dict = 0;
-type8 quick_flag = 0, gfx_ver = 0, *gfx_buf = nullptr, *gfx_data = 0;
-type8 *gfx2_hdr = 0, *gfx2_buf = nullptr;
-const char *gfx2_name = nullptr;
-type16 gfx2_hsize = 0;
-Common::File *gfx_fp = nullptr;
-type8 *snd_buf = nullptr, *snd_hdr = nullptr;
-type16 snd_hsize = 0;
-Common::File *snd_fp = nullptr;
-
-const char *const undo_ok = "\n[Previous turn undone.]";
-const char *const undo_fail = "\n[You can't \"undo\" what hasn't been done!]";
-type32 undo_regs[2][18], undo_pc, undo_size;
-type8 *undo[2] = {0, 0}, undo_stat[2] = {0, 0};
-type16 gfxtable = 0, table_dist = 0;
-type16 v4_id = 0, next_table = 1;
-
-#ifndef NO_ANIMATION
-
-struct picture anim_frame_table[MAX_ANIMS];
-type16 pos_table_size = 0;
-type16 pos_table_count[MAX_POSITIONS];
-struct ms_position pos_table[MAX_POSITIONS][MAX_ANIMS];
-type8 *command_table = 0;
-type16s command_index = -1;
-struct lookup anim_table[MAX_POSITIONS];
-type16s pos_table_index = -1;
-type16s pos_table_max = -1;
-struct ms_position pos_array[MAX_FRAMES];
-type8 anim_repeat = 0;
-
-#endif
-
-/* Hint support */
-struct ms_hint *hints = 0;
-type8 *hint_contents = 0;
 const char *const no_hints = "[Hints are not available.]\n";
 const char *const not_supported = "[This function is not supported.]\n";
+const char *const undo_ok = "\n[Previous turn undone.]";
+const char *const undo_fail = "\n[You can't \"undo\" what hasn't been done!]";
+
+#define ms_fatal error
 
 #if defined(LOGEMU) || defined(LOGGFX) || defined(LOGHNT)
 FILE *dbg_log;
@@ -78,14 +41,6 @@ FILE *dbg_log;
 #error LOG_FILE must be defined to be the name of the log file.
 #endif
 #endif
-
-/* prototypes */
-type32 read_reg(int, int);
-void write_reg(int, int, type32);
-
-#define MAX_STRING_SIZE  0xFF00
-#define MAX_PICTURE_SIZE 0xC800
-#define MAX_MUSIC_SIZE   0x4E20
 
 #ifdef LOGEMU
 void out(char *format, ...) {
@@ -108,7 +63,7 @@ void out2(char *format, ...) {
 #endif
 
 /* Convert virtual pointer to effective pointer */
-type8 *effective(type32 ptr) {
+type8 *Magnetic::effective(type32 ptr) {
 	if ((version < 4) && (mem_size == 0x10000))
 		return &(code[ptr & 0xffff]);
 	if (ptr >= mem_size) {
@@ -119,16 +74,7 @@ type8 *effective(type32 ptr) {
 	return &(code[ptr]);
 }
 
-type32 read_l(type8 *ptr) {
-
-	return (type32)((type32) ptr[0] << 24 | (type32) ptr[1] << 16 | (type32) ptr[2] << 8 | (type32) ptr[3]);
-}
-
-type16 read_w(type8 *ptr) {
-	return (type16)(ptr[0] << 8 | ptr[1]);
-}
-
-void write_l(type8 *ptr, type32 val) {
+void Magnetic::write_l(type8 *ptr, type32 val) {
 	ptr[3] = (type8) val;
 	val >>= 8;
 	ptr[2] = (type8) val;
@@ -138,32 +84,18 @@ void write_l(type8 *ptr, type32 val) {
 	ptr[0] = (type8) val;
 }
 
-void write_w(type8 *ptr, type16 val) {
+void Magnetic::write_w(type8 *ptr, type16 val) {
 	ptr[1] = (type8) val;
 	val >>= 8;
 	ptr[0] = (type8) val;
 }
 
-type32 read_l2(type8 *ptr) {
-	return ((type32) ptr[1] << 24 | (type32) ptr[0] << 16 | (type32) ptr[3] << 8 | (type32) ptr[2]);
-}
-
-type16 read_w2(type8 *ptr) {
-	return (type16)(ptr[1] << 8 | ptr[0]);
-}
-
-/* Standard rand - for equal cross-platform behaviour */
-
-void ms_seed(type32 seed) {
-	rseed = seed;
-}
-
-type32 rand_emu(void) {
+type32 Magnetic::rand_emu() {
 	rseed = 1103515245L * rseed + 12345L;
 	return rseed & 0x7fffffffL;
 }
 
-void ms_freemem(void) {
+void Magnetic::ms_freemem() {
 	if (code)
 		free(code);
 	if (string)
@@ -219,19 +151,7 @@ void ms_freemem(void) {
 	snd_buf = nullptr;
 }
 
-type8 ms_is_running(void) {
-	return running;
-}
-
-type8 ms_is_magwin(void) {
-	return (version == 4) ? 1 : 0;
-}
-
-void ms_stop(void) {
-	running = 0;
-}
-
-type8 init_gfx1(type8 *header) {
+type8 Magnetic::init_gfx1(type8 *header) {
 #ifdef SAVEMEM
 	type32 i;
 #endif
@@ -278,7 +198,7 @@ type8 init_gfx1(type8 *header) {
 	return 2;
 }
 
-type8 init_gfx2(type8 *header) {
+type8 Magnetic::init_gfx2(type8 *header) {
 	if (!(gfx_buf = (type8 *)malloc(MAX_PICTURE_SIZE))) {
 		delete gfx_fp;
 		gfx_fp = nullptr;
@@ -309,7 +229,7 @@ type8 init_gfx2(type8 *header) {
 	return 2;
 }
 
-type8 init_snd(type8 *header) {
+type8 Magnetic::init_snd(type8 *header) {
 	if (!(snd_buf = (type8 *)malloc(MAX_MUSIC_SIZE))) {
 		delete snd_fp;
 		snd_fp = nullptr;
@@ -339,9 +259,7 @@ type8 init_snd(type8 *header) {
 	return 2;
 }
 
-/* zero all registers and flags and load the game */
-
-type8 ms_init(const char *name, const char *gfxname, const char *hntname, const char *sndname) {
+type8 Magnetic::ms_init(const char *name, const char *gfxname, const char *hntname, const char *sndname) {
 	Common::File fp;
 	type8 header[42], header2[8], header3[4];
 	type32 i, dict_size, string2_size, code_size, dec;
@@ -601,7 +519,7 @@ type8 ms_init(const char *name, const char *gfxname, const char *hntname, const 
 	return 1;
 }
 
-type8 is_blank(type16 line, type16 width) {
+type8 Magnetic::is_blank(type16 line, type16 width) {
 	type32s i;
 
 	for (i = line * width; i < (line + 1) * width; i++)
@@ -610,8 +528,8 @@ type8 is_blank(type16 line, type16 width) {
 	return 1;
 }
 
-type8 *ms_extract1(type8 pic, type16 *w, type16 *h, type16 *pal) {
-	type8 *decodeTable, *data, bit, val, *buffer;
+type8 *Magnetic::ms_extract1(type8 pic, type16 *w, type16 *h, type16 *pal) {
+	type8 *decodeTable, *data, bit, val, *buf;
 	type16 tablesize, count;
 	type32 i, j, upsize, offset;
 
@@ -622,22 +540,22 @@ type8 *ms_extract1(type8 pic, type16 *w, type16 *h, type16 *pal) {
 	if (fseek(gfx_fp, offset, SEEK_SET) < 0)
 		return 0;
 	datasize = read_l(gfx_data + 4 * (pic + 1)) - offset;
-	if (!(buffer = (type8 *)malloc(datasize)))
+	if (!(buf = (type8 *)malloc(datasize)))
 		return 0;
-	if (fp.read(buffer, 1, datasize, gfx_fp) != datasize)
+	if (fp.read(buf, 1, datasize, gfx_fp) != datasize)
 		return 0;
 #else
-	buffer = gfx_data + offset - 8;
+	buf = gfx_data + offset - 8;
 #endif
 
 	for (i = 0; i < 16; i++)
-		pal[i] = read_w(buffer + 0x1c + 2 * i);
-	w[0] = (type16)(read_w(buffer + 4) - read_w(buffer + 2));
-	h[0] = read_w(buffer + 6);
+		pal[i] = read_w(buf + 0x1c + 2 * i);
+	w[0] = (type16)(read_w(buf + 4) - read_w(buf + 2));
+	h[0] = read_w(buf + 6);
 
-	tablesize = read_w(buffer + 0x3c);
-	//datasize = read_l(buffer + 0x3e);
-	decodeTable = buffer + 0x42;
+	tablesize = read_w(buf + 0x3c);
+	//datasize = read_l(buf + 0x3e);
+	decodeTable = buf + 0x42;
 	data = decodeTable + tablesize * 2 + 2;
 	upsize = h[0] * w[0];
 
@@ -667,14 +585,14 @@ type8 *ms_extract1(type8 pic, type16 *w, type16 *h, type16 *pal) {
 		gfx_buf[j] ^= gfx_buf[j - w[0]];
 
 #ifdef SAVEMEM
-	free(buffer);
+	free(buf);
 #endif
 	for (; h[0] > 0 && is_blank((type16)(h[0] - 1), w[0]); h[0]--);
 	for (i = 0; h[0] > 0 && is_blank((type16)i, w[0]); h[0]--, i++);
 	return gfx_buf + i * w[0];
 }
 
-type16s find_name_in_header(const char *name, type8 upper) {
+type16s Magnetic::find_name_in_header(const char *name, type8 upper) {
 	type16s header_pos = 0;
 	char pic_name[8];
 	type8 i;
@@ -696,7 +614,7 @@ type16s find_name_in_header(const char *name, type8 upper) {
 	return -1;
 }
 
-void extract_frame(struct picture *pic) {
+void Magnetic::extract_frame(struct picture *pic) {
 	type32 i, x, y, bit_x, mask, ywb, yw, value, values[4];
 
 	if (pic->width * pic->height > MAX_PICTURE_SIZE) {
@@ -727,7 +645,7 @@ void extract_frame(struct picture *pic) {
 	}
 }
 
-type8 *ms_extract2(const char *name, type16 *w, type16 *h, type16 *pal, type8 *is_anim) {
+type8 *Magnetic::ms_extract2(const char *name, type16 *w, type16 *h, type16 *pal, type8 *is_anim) {
 	struct picture main_pic;
 	type32 offset = 0, length = 0, i;
 	type16s header_pos = -1;
@@ -885,7 +803,7 @@ type8 *ms_extract2(const char *name, type16 *w, type16 *h, type16 *pal, type8 *i
 	return 0;
 }
 
-type8 *ms_extract(type32 pic, type16 *w, type16 *h, type16 *pal, type8 *is_anim) {
+type8 *Magnetic::ms_extract(type32 pic, type16 *w, type16 *h, type16 *pal, type8 *is_anim) {
 	if (is_anim)
 		*is_anim = 0;
 
@@ -902,7 +820,7 @@ type8 *ms_extract(type32 pic, type16 *w, type16 *h, type16 *pal, type8 *is_anim)
 	return 0;
 }
 
-type8 ms_animate(struct ms_position **positions, type16 *count) {
+type8 Magnetic::ms_animate(struct ms_position **positions, type16 *count) {
 #ifndef NO_ANIMATION
 	type8 got_anim = 0;
 	type16 i, j, ttable;
@@ -1054,7 +972,7 @@ type8 ms_animate(struct ms_position **positions, type16 *count) {
 #endif
 }
 
-type8 *ms_get_anim_frame(type16s number, type16 *width, type16 *height, type8 **mask) {
+type8 *Magnetic::ms_get_anim_frame(type16s number, type16 *width, type16 *height, type8 **mask) {
 #ifndef NO_ANIMATION
 	if (number >= 0) {
 		extract_frame(anim_frame_table + number);
@@ -1067,7 +985,7 @@ type8 *ms_get_anim_frame(type16s number, type16 *width, type16 *height, type8 **
 	return 0;
 }
 
-type8 ms_anim_is_repeating(void) {
+type8 Magnetic::ms_anim_is_repeating() const {
 #ifndef NO_ANIMATION
 	return anim_repeat;
 #else
@@ -1075,7 +993,7 @@ type8 ms_anim_is_repeating(void) {
 #endif
 }
 
-type16s find_name_in_sndheader(const char *name) {
+type16s Magnetic::find_name_in_sndheader(const char *name) {
 	type16s header_pos = 0;
 
 	while (header_pos < snd_hsize) {
@@ -1088,7 +1006,7 @@ type16s find_name_in_sndheader(const char *name) {
 	return -1;
 }
 
-type8 *sound_extract(const char *name, type32 *length, type16 *tempo) {
+type8 *Magnetic::sound_extract(const char *name, type32 *length, type16 *tempo) {
 	type32 offset = 0;
 	type16s header_pos = -1;
 
@@ -1113,7 +1031,7 @@ type8 *sound_extract(const char *name, type32 *length, type16 *tempo) {
 	return nullptr;
 }
 
-void save_undo(void) {
+void Magnetic::save_undo() {
 	type8 *tmp, i;
 	type32 tmp32;
 
@@ -1139,7 +1057,7 @@ void save_undo(void) {
 	undo_stat[1] = 1;
 }
 
-type8 ms_undo(void) {
+type8 Magnetic::ms_undo() {
 	type8 i;
 
 	ms_flush();
@@ -1158,7 +1076,7 @@ type8 ms_undo(void) {
 }
 
 #ifdef LOGEMU
-void log_status(void) {
+void Magnetic::log_status() {
 	int j;
 
 	fprintf(dbg_log, "\nD0:");
@@ -1172,7 +1090,7 @@ void log_status(void) {
 }
 #endif
 
-void ms_status(void) {
+void Magnetic::ms_status() {
 	int j;
 
 	Common::String s = "D0:";
@@ -1187,13 +1105,7 @@ void ms_status(void) {
 	warning("%s", s.c_str());
 }
 
-type32 ms_count(void) {
-	return i_count;
-}
-
-/* align register pointer for word/byte accesses */
-
-type8 *reg_align(type8 *ptr, type8 size) {
+type8 *Magnetic::reg_align(type8 *ptr, type8 size) {
 	if (size == 1)
 		ptr += 2;
 	if (size == 0)
@@ -1201,7 +1113,7 @@ type8 *reg_align(type8 *ptr, type8 size) {
 	return ptr;
 }
 
-type32 read_reg(int i, int s) {
+type32 Magnetic::read_reg(int i, int s) {
 	type8 *ptr;
 
 	if (i > 15) {
@@ -1223,7 +1135,7 @@ type32 read_reg(int i, int s) {
 	}
 }
 
-void write_reg(int i, int s, type32 val) {
+void Magnetic::write_reg(int i, int s, type32 val) {
 	type8 *ptr;
 
 	if (i > 15) {
@@ -1248,9 +1160,7 @@ void write_reg(int i, int s, type32 val) {
 	}
 }
 
-/* [35c4] */
-
-void char_out(type8 c) {
+void Magnetic::char_out(type8 c) {
 	static type8 big = 0, period = 0, pipe = 0;
 
 	if (c == 0xff) {
@@ -1327,18 +1237,13 @@ void char_out(type8 c) {
 	ms_putchar(c);
 }
 
-
-/* extract addressing mode information [1c6f] */
-
-void set_info(type8 b) {
+void Magnetic::set_info(type8 b) {
 	regnr = (type8)(b & 0x07);
 	admode = (type8)((b >> 3) & 0x07);
 	opsize = (type8)(b >> 6);
 }
 
-/* read a word and increase pc */
-
-void read_word(void) {
+void Magnetic::read_word() {
 	type8 *epc;
 
 	epc = effective(pc);
@@ -1347,9 +1252,7 @@ void read_word(void) {
 	pc += 2;
 }
 
-/* get addressing mode and set arg1 [1c84] */
-
-void set_arg1(void) {
+void Magnetic::set_arg1() {
 	type8 tmp[2], l1c;
 
 	is_reversible = 1;
@@ -1479,9 +1382,7 @@ void set_arg1(void) {
 		arg1 = effective(arg1i);
 }
 
-/* get addressing mode and set arg2 [1bc5] */
-
-void set_arg2_nosize(int use_dx, type8 b) {
+void Magnetic::set_arg2_nosize(int use_dx, type8 b) {
 	if (use_dx)
 		arg2 = (type8 *) dreg;
 	else
@@ -1489,14 +1390,12 @@ void set_arg2_nosize(int use_dx, type8 b) {
 	arg2 += (b & 0x0e) << 1;
 }
 
-void set_arg2(int use_dx, type8 b) {
+void Magnetic::set_arg2(int use_dx, type8 b) {
 	set_arg2_nosize(use_dx, b);
 	arg2 = reg_align(arg2, opsize);
 }
 
-/* [1b9e] */
-
-void swap_args(void) {
+void Magnetic::swap_args() {
 	type8 *tmp;
 
 	tmp = arg1;
@@ -1504,16 +1403,12 @@ void swap_args(void) {
 	arg2 = tmp;
 }
 
-/* [1cdc] */
-
-void push(type32 c) {
+void Magnetic::push(type32 c) {
 	write_reg(15, 2, read_reg(15, 2) - 4);
 	write_l(effective(read_reg(15, 2)), c);
 }
 
-/* [1cd1] */
-
-type32 pop(void) {
+type32 Magnetic::pop() {
 	type32 c;
 
 	c = read_l(effective(read_reg(15, 2)));
@@ -1521,9 +1416,7 @@ type32 pop(void) {
 	return c;
 }
 
-/* check addressing mode and get argument [2e85] */
-
-void get_arg(void) {
+void Magnetic::get_arg() {
 #ifdef LOGEMU
 	out(" %.4X", pc);
 #endif
@@ -1537,7 +1430,7 @@ void get_arg(void) {
 	set_arg1();
 }
 
-void set_flags(void) {
+void Magnetic::set_flags() {
 	type16 i;
 	type32 j;
 
@@ -1566,9 +1459,7 @@ void set_flags(void) {
 	}
 }
 
-/* [263a] */
-
-int condition(type8 b) {
+int Magnetic::condition(type8 b) {
 	switch (b & 0x0f) {
 	case 0:
 		return 0xff;
@@ -1604,9 +1495,7 @@ int condition(type8 b) {
 	return 0x00;
 }
 
-/* [26dc] */
-
-void branch(type8 b) {
+void Magnetic::branch(type8 b) {
 	if (b == 0)
 		pc += (type16s) read_w(effective(pc));
 	else
@@ -1616,9 +1505,7 @@ void branch(type8 b) {
 #endif
 }
 
-/* [2869] */
-
-void do_add(type8 adda) {
+void Magnetic::do_add(type8 adda) {
 	if (adda) {
 		if (opsize == 0)
 			write_l(arg1, read_l(arg1) + (type8s) arg2[0]);
@@ -1651,9 +1538,7 @@ void do_add(type8 adda) {
 	}
 }
 
-/* [2923] */
-
-void do_sub(type8 suba) {
+void Magnetic::do_sub(type8 suba) {
 	if (suba) {
 		if (opsize == 0)
 			write_l(arg1, read_l(arg1) - (type8s) arg2[0]);
@@ -1686,9 +1571,7 @@ void do_sub(type8 suba) {
 	}
 }
 
-/* [283b] */
-
-void do_eor(void) {
+void Magnetic::do_eor() {
 	if (opsize == 0)
 		arg1[0] ^= arg2[0];
 	if (opsize == 1)
@@ -1699,9 +1582,7 @@ void do_eor(void) {
 	set_flags();
 }
 
-/* [280d] */
-
-void do_and(void) {
+void Magnetic::do_and() {
 	if (opsize == 0)
 		arg1[0] &= arg2[0];
 	if (opsize == 1)
@@ -1712,9 +1593,7 @@ void do_and(void) {
 	set_flags();
 }
 
-/* [27df] */
-
-void do_or(void) {
+void Magnetic::do_or() {
 	if (opsize == 0)
 		arg1[0] |= arg2[0];
 	if (opsize == 1)
@@ -1725,9 +1604,7 @@ void do_or(void) {
 	set_flags();    /* [1c2b] */
 }
 
-/* [289f] */
-
-void do_cmp(void) {
+void Magnetic::do_cmp() {
 	type8 *tmp;
 
 	tmp = arg1;
@@ -1741,9 +1618,7 @@ void do_cmp(void) {
 	arg1 = tmp;
 }
 
-/* [2973] */
-
-void do_move(void) {
+void Magnetic::do_move() {
 
 	if (opsize == 0)
 		arg1[0] = arg2[0];
@@ -1758,7 +1633,7 @@ void do_move(void) {
 	}
 }
 
-type8 do_btst(type8 a) {
+type8 Magnetic::do_btst(type8 a) {
 	a &= admode ? 0x7 : 0x1f;
 	while (admode == 0 && a >= 8) {
 		a -= 8;
@@ -1770,9 +1645,7 @@ type8 do_btst(type8 a) {
 	return a;
 }
 
-/* bit operation entry point [307c] */
-
-void do_bop(type8 b, type8 a) {
+void Magnetic::do_bop(type8 b, type8 a) {
 #ifdef LOGEMU
 	out("bop (%.2x,%.2x) ", (int) b, (int) a);
 #endif
@@ -1802,7 +1675,7 @@ void do_bop(type8 b, type8 a) {
 	}
 }
 
-void check_btst(void) {
+void Magnetic::check_btst() {
 #ifdef LOGEMU
 	out("btst");
 #endif
@@ -1812,7 +1685,7 @@ void check_btst(void) {
 	do_bop(byte2, arg2[0]);
 }
 
-void check_lea(void) {
+void Magnetic::check_lea() {
 #ifdef LOGEMU
 	out("lea");
 #endif
@@ -1831,9 +1704,7 @@ void check_lea(void) {
 	}
 }
 
-/* [33cc] */
-
-void check_movem(void) {
+void Magnetic::check_movem() {
 	type8 l1c;
 
 #ifdef LOGEMU
@@ -1861,9 +1732,7 @@ void check_movem(void) {
 	}
 }
 
-/* [3357] */
-
-void check_movem2(void) {
+void Magnetic::check_movem2() {
 	type8 l1c;
 
 #ifdef LOGEMU
@@ -1891,10 +1760,7 @@ void check_movem2(void) {
 	}
 }
 
-/* [30e4] in Jinxter, ~540 lines of 6510 spaghetti-code */
-/* The mother of all bugs, but hey - no gotos used :-) */
-
-void dict_lookup(void) {
+void Magnetic::dict_lookup() {
 	type16 dtab, doff, output, output_bak, bank, word, output2;
 	type16 tmp16, i, obj_adj, adjlist, adjlist_bak;
 	type8 c, c2, c3, flag, matchlen, longest, flag2;
@@ -2066,9 +1932,7 @@ void dict_lookup(void) {
 	write_reg(8 + 6, 1, read_reg(8 + 5, 1) + 1);
 }
 
-/* A0=findproperties(D0) [2b86], properties_ptr=[2b78] A0FE */
-
-void do_findprop(void) {
+void Magnetic::do_findprop() {
 	type16 tmp;
 
 	if ((version > 2) && ((read_reg(0, 1) & 0x3fff) > fp_size)) {
@@ -2086,7 +1950,7 @@ void do_findprop(void) {
 	write_reg(8 + 0, 2, tmp * 14 + properties);
 }
 
-void write_string(void) {
+void Magnetic::write_string() {
 	static type32 offset_bak;
 	static type8 mask_bak;
 	type8 c, b, mask;
@@ -2142,7 +2006,7 @@ void write_string(void) {
 	}
 }
 
-void output_number(type16 number) {
+void Magnetic::output_number(type16 number) {
 	type16 tens = number / 10;
 
 	if (tens > 0)
@@ -2151,7 +2015,7 @@ void output_number(type16 number) {
 	ms_putchar('0' + number);
 }
 
-type16 output_text(const char *text) {
+type16 Magnetic::output_text(const char *text) {
 	type16 i;
 
 	for (i = 0; text[i] != 0; i++)
@@ -2159,7 +2023,7 @@ type16 output_text(const char *text) {
 	return i;
 }
 
-type16s hint_input(void) {
+type16s Magnetic::hint_input() {
 	type8 c1, c2, c3;
 
 	output_text(">>");
@@ -2208,7 +2072,7 @@ type16s hint_input(void) {
 	return 0;
 }
 
-type16 show_hints_text(ms_hint *hintsData, type16 index) {
+type16 Magnetic::show_hints_text(ms_hint *hintsData, type16 index) {
 	type16 i = 0, j = 0;
 	type16s input;
 	ms_hint *hint = hintsData + index;
@@ -2282,7 +2146,7 @@ type16 show_hints_text(ms_hint *hintsData, type16 index) {
 	return 0;
 }
 
-void do_line_a(void) {
+void Magnetic::do_line_a() {
 	type8 l1c;
 	char *str;
 	type16 ptr, ptr2, tmp16, dtype;
@@ -2656,9 +2520,7 @@ void do_line_a(void) {
 		}
 }
 
-/* emulate an instruction [1b7e] */
-
-type8 ms_rungame(void) {
+type8 Magnetic::ms_rungame() {
 	type8 l1c;
 	type16 ptr;
 	type32 tmp32;

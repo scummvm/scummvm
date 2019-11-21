@@ -24,21 +24,10 @@
 #define GLK_MAGNETIC_TYPES
 
 #include "common/scummsys.h"
-#include "common/algorithm.h"
+#include "glk/magnetic/magnetic_defs.h"
 
 namespace Glk {
 namespace Magnetic {
-
-#define MAX_HINTS 260
-#define MAX_HCONTENTS 30000
-
-#define MAX_POSITIONS 20
-#define MAX_ANIMS 200
-#define MAX_FRAMES 20
-#define MAX_STRING_SIZE  0xFF00
-#define MAX_PICTURE_SIZE 0xC800
-#define MAX_MUSIC_SIZE   0x4E20
-#define MAX_HITEMS 25
 
 struct lookup {
 	int16 flag;
@@ -130,6 +119,34 @@ struct ms_hint {
 		Common::fill(&links[0], &links[MAX_HITEMS], 0);
 	}
 };
+
+struct gms_gamma_t {
+	const char *const level;       ///< Gamma correction level
+	const unsigned char table[8];  ///< Color lookup table
+	const bool is_corrected;       ///< Flag if non-linear
+};
+typedef const gms_gamma_t *gms_gammaref_t;
+
+/* R,G,B color triple definition. */
+struct gms_rgb_t {
+	int red, green, blue;
+};
+typedef gms_rgb_t *gms_rgbref_t;
+
+#ifndef GARGLK
+struct gms_layering_t {
+	long complexity;  /* Count of vertices for this color. */
+	long usage;       /* Color usage count. */
+	int color;        /* Color index into palette. */
+};
+#endif
+
+/* Table of single-character command abbreviations. */
+struct gms_abbreviation_t {
+	const char abbreviation;       /* Abbreviation character. */
+	const char *const expansion;   /* Expansion string. */
+};
+typedef gms_abbreviation_t *gms_abbreviationref_t;
 
 } // End of namespace Magnetic
 } // End of namespace Glk

@@ -21,7 +21,7 @@
  */
 
 #include "glk/magnetic/magnetic.h"
-#include "glk/magnetic/defs.h"
+#include "glk/magnetic/magnetic_defs.h"
 #include "common/config-manager.h"
 
 namespace Glk {
@@ -32,7 +32,57 @@ Magnetic *g_vm;
 Magnetic::Magnetic(OSystem *syst, const GlkGameDescription &gameDesc) : GlkAPI(syst, gameDesc),
 		gms_gamma_mode(GAMMA_NORMAL), gms_animation_enabled(true),
 		gms_prompt_enabled(true), gms_abbreviations_enabled(true), gms_commands_enabled(true),
-		gms_graphics_enabled(false) {
+		gms_graphics_enabled(false), GMS_PORT_VERSION(0x00010601),
+		gms_main_window(nullptr), gms_status_window(nullptr), gms_graphics_window(nullptr),
+		gms_hint_menu_window(nullptr), gms_hint_text_window(nullptr),
+		gms_transcript_stream(nullptr), gms_readlog_stream(nullptr),
+		gms_inputlog_stream(nullptr), gms_graphics_possible(true),
+		GMS_INPUT_PROMPT(">"), gms_gameid_game_name(nullptr), gms_graphics_bitmap(nullptr),
+		gms_graphics_width(0), gms_graphics_height(0), gms_graphics_animated(false),
+		gms_graphics_picture(0), gms_graphics_new_picture(false),
+		gms_graphics_repaint(false), gms_graphics_active(false),
+		gms_graphics_interpreter(false), gms_graphics_off_screen(nullptr),
+		gms_graphics_on_screen(nullptr),// gms_graphics_current_gamma(Magnetic::GMS_GAMMA_TABLE),
+		gms_graphics_color_count(GMS_PALETTE_SIZE), gms_status_length(0),
+		gms_help_requested(false), gms_help_hints_silenced(false),
+		gms_output_buffer(nullptr), gms_output_allocation(0),gms_output_length(0),
+		gms_output_prompt(false), gms_hints(nullptr), gms_current_hint_node(0),
+		gms_hint_cursor(nullptr), gms_input_length(0), gms_input_cursor(0),
+		gms_undo_notification(false), gms_game_message(nullptr), gms_startup_called(false),
+		gms_main_called(false), gms_graphics_current_gamma(nullptr),
+		i_count(0), string_size(0), rseed(0), pc(0), arg1i(0), mem_size(0), properties(0),
+		fl_sub(0), fl_tab(0), fl_size(0), fp_tab(0), fp_size(0), zflag(0), nflag(0),
+		cflag(0), vflag(0), byte1(0), byte2(0), regnr(0), admode(0), opsize(0),
+		arg1(nullptr), arg2(nullptr), is_reversible(0), running(0), lastchar(0), version(0),
+		sd(0), decode_table(nullptr), restart(nullptr), code(nullptr), string(nullptr),
+		string2(nullptr), string3(nullptr), dict(nullptr), quick_flag(0), gfx_ver(0),
+		gfx_buf(nullptr), gfx_data(nullptr), gfx2_hdr(nullptr), gfx2_buf(nullptr),
+		gfx2_name(nullptr), gfx2_hsize(0), gfx_fp(nullptr), snd_buf(nullptr), snd_hdr(nullptr),
+		snd_hsize(0), snd_fp(nullptr), undo_pc(0), undo_size(0), gfxtable(0), table_dist(0),
+		v4_id(0), next_table(1)
+#ifndef NO_ANIMATION
+		, pos_table_size(0), command_table(nullptr), command_index(-1),
+		pos_table_index(-1), pos_table_max(-1), anim_repeat(0)
+#endif
+		, hints(nullptr), hint_contents(nullptr), xpos(0), bufpos(0), log_on(0),
+		ms_gfx_enabled(0), log1(nullptr), log2(nullptr) {
+
+	Common::fill(&gms_graphics_palette[0], &gms_graphics_palette[GMS_PALETTE_SIZE], 0);
+	Common::fill(&gms_status_buffer[0], &gms_status_buffer[GMS_STATBUFFER_LENGTH], '\0');
+	Common::fill(&gms_input_buffer[0], &gms_input_buffer[GMS_INPUTBUFFER_LENGTH], '\0');
+	Common::fill(&dreg[0], &dreg[8], 0);
+	Common::fill(&areg[0], &areg[8], 0);
+	Common::fill(&tmparg[0], &tmparg[4], 0);
+	Common::fill(&undo_regs[0][0], &undo_regs[3][0], 0);
+	undo[0] = undo[1] = nullptr;
+	undo_stat[0] = undo_stat[1] = 0;
+	Common::fill(&buffer[0], &buffer[80], 0);
+	Common::fill(&filename[0], &filename[256], 0);
+
+#ifndef NO_ANIMATION
+	Common::fill(&pos_table_count[0], &pos_table_count[MAX_POSITIONS], 0);
+#endif
+
 	g_vm = this;
 }
 
