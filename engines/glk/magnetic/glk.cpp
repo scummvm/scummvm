@@ -289,7 +289,7 @@ glui32 Magnetic::gms_get_buffer_crc(const void *void_buffer, size_t length) {
 	 */
 	crc = 0xffffffff;
 	for (index = 0; index < length; index++)
-		crc = crc_table[(crc ^ buf[index]) & BYTE_MAX] ^ (crc >> CHAR_BIT);
+		crc = crc_table[(crc ^ buf[index]) & BYTE_MAX] ^ (crc >> BITS_PER_BYTE);
 	return crc ^ 0xffffffff;
 }
 
@@ -767,8 +767,8 @@ void Magnetic::gms_graphics_apply_animation_frame(type8 bitmap[],
 	 * even.  Here we'll calculate the real width of a mask, and also set a high
 	 * bit for later on.
 	 */
-	mask_width = (((frame_width - 1) / CHAR_BIT) + 2) & (~1);
-	mask_hibit = 1 << (CHAR_BIT - 1);
+	mask_width = (((frame_width - 1) / BITS_PER_BYTE) + 2) & (~1);
+	mask_hibit = 1 << (BITS_PER_BYTE - 1);
 
 	/*
 	 * Initialize row index components; these are optimizations to avoid the
@@ -808,8 +808,8 @@ void Magnetic::gms_graphics_apply_animation_frame(type8 bitmap[],
 				type8 mask_byte;
 
 				/* Isolate the mask byte, and test the transparency bit. */
-				mask_byte = mask[mask_row + (x / CHAR_BIT)];
-				if ((mask_byte & (mask_hibit >> (x % CHAR_BIT))) != 0)
+				mask_byte = mask[mask_row + (x / BITS_PER_BYTE)];
+				if ((mask_byte & (mask_hibit >> (x % BITS_PER_BYTE))) != 0)
 					continue;
 			}
 

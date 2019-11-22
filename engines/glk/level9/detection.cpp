@@ -542,8 +542,8 @@ gln_game_tableref_t GameDetection::gln_gameid_identify_game() {
 		&& _startData[21] == _startData[23];
 
 	length = is_version2
-		? _startData[28] | _startData[29] << BITS_PER_CHAR
-		: _startData[0] | _startData[1] << BITS_PER_CHAR;
+		? _startData[28] | _startData[29] << BITS_PER_BYTE
+		: _startData[0] | _startData[1] << BITS_PER_BYTE;
 	if (length >= _fileSize)
 		return nullptr;
 
@@ -596,7 +596,7 @@ uint16 GameDetection::gln_get_buffer_crc(const void *void_buffer, size_t length,
 			int bit;
 
 			crc = (uint16)index;
-			for (bit = 0; bit < BITS_PER_CHAR; bit++)
+			for (bit = 0; bit < BITS_PER_BYTE; bit++)
 				crc = crc & 1 ? GLN_CRC_POLYNOMIAL ^ (crc >> 1) : crc >> 1;
 
 			_crcTable[index] = crc;
@@ -611,11 +611,11 @@ uint16 GameDetection::gln_get_buffer_crc(const void *void_buffer, size_t length,
 	/* Start with zero in the crc, then update using table entries. */
 	crc = 0;
 	for (index = 0; index < length; index++)
-		crc = _crcTable[(crc ^ buffer[index]) & BYTE_MAX] ^ (crc >> BITS_PER_CHAR);
+		crc = _crcTable[(crc ^ buffer[index]) & BYTE_MAX] ^ (crc >> BITS_PER_BYTE);
 
 	/* Add in any requested NUL padding bytes. */
 	for (index = 0; index < padding; index++)
-		crc = _crcTable[crc & BYTE_MAX] ^ (crc >> BITS_PER_CHAR);
+		crc = _crcTable[crc & BYTE_MAX] ^ (crc >> BITS_PER_BYTE);
 
 	return crc;
 }

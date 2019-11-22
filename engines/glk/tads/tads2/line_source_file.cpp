@@ -31,7 +31,7 @@ namespace Glk {
 namespace TADS {
 namespace TADS2 {
 
-#define BYTE_MAX 0xff
+enum { BYTE_MAX = 0xff };
 
 /* initialize a pre-allocated linfdef, skipping debugger page setup */
 void linfini2(mcmcxdef *mctx, linfdef *linf,

@@ -135,7 +135,7 @@ void Magnetic::initializeCRC() {
 		int bit;
 
 		crc = index;
-		for (bit = 0; bit < CHAR_BIT; bit++)
+		for (bit = 0; bit < BITS_PER_BYTE; bit++)
 			crc = crc & 1 ? GMS_CRC_POLYNOMIAL ^ (crc >> 1) : crc >> 1;
 
 		crc_table[index] = crc;
