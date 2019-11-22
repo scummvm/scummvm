@@ -824,17 +824,19 @@ uint16 DragonsEngine::getIniFromImg() {
 }
 
 void DragonsEngine::runINIScripts() {
+	bool isFlag8Set = isFlagSet(ENGINE_FLAG_8);
 	for (uint16 i = 0; i < _dragonINIResource->totalRecords(); i++) {
 		DragonINI *ini = getINI(i);
 		if (ini->field_1a_flags_maybe & Dragons::INI_FLAG_10) {
 			ini->field_1a_flags_maybe &= ~Dragons::INI_FLAG_10;
 			byte *data = _dragonOBD->getFromOpt(i);
 			ScriptOpCall scriptOpCall(data + 8, READ_LE_UINT32(data));
-			uint32 currentFlags = _flags;
 			clearFlags(Dragons::ENGINE_FLAG_8);
 			_scriptOpcodes->runScript3(scriptOpCall);
-			_flags = currentFlags;
 		}
+	}
+	if (isFlag8Set) {
+		setFlags(ENGINE_FLAG_8);
 	}
 }
 /*
@@ -911,6 +913,7 @@ void DragonsEngine::engineFlag0x20UpdateFunction() {
 	return (uint)run_func_ptr_unk_countdown_timer;
 } */
 
+//TODO the logic in this function doesn't match the original. It should be redone.
 void DragonsEngine::engineFlag0x20UpdateFunction() {
 	if (_flags & Dragons::ENGINE_FLAG_20) {
 		if ((_flags & (Dragons::ENGINE_FLAG_80000000 | Dragons::ENGINE_FLAG_8)) == 8) {
