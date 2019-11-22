@@ -118,7 +118,7 @@ protected:
 	void opUnk20(ScriptOpCall &scriptOpCall);
 	void opUnk21(ScriptOpCall &scriptOpCall);
 
-	bool checkPropertyFlag(ScriptOpCall &scriptOpCall);
+	bool evaluateExpression(ScriptOpCall &scriptOpCall);
 	void opCode_UnkA_setsProperty(ScriptOpCall &scriptOpCall);
 	void opCode_Unk7(ScriptOpCall &scriptOpCall);
 

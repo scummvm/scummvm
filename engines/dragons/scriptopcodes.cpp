@@ -387,7 +387,7 @@ void ScriptOpcodes::opPlayMusic(ScriptOpCall &scriptOpCall) {
 }
 
 void ScriptOpcodes::opUnk13PropertiesRelated(ScriptOpCall &scriptOpCall) {
-	if (checkPropertyFlag(scriptOpCall)) {
+	if (evaluateExpression(scriptOpCall)) {
 		scriptOpCall._code += 4;
 	} else {
 		scriptOpCall._code += 4 + READ_LE_UINT16(scriptOpCall._code);
@@ -395,7 +395,7 @@ void ScriptOpcodes::opUnk13PropertiesRelated(ScriptOpCall &scriptOpCall) {
 }
 
 void ScriptOpcodes::opUnk14PropertiesRelated(ScriptOpCall &scriptOpCall) {
-	if (checkPropertyFlag(scriptOpCall)) {
+	if (evaluateExpression(scriptOpCall)) {
 		ScriptOpCall localScriptOpCall(scriptOpCall._code + 4, READ_LE_UINT16(scriptOpCall._code));
 		localScriptOpCall._field8 = scriptOpCall._field8;
 		localScriptOpCall._result = 0;
@@ -418,7 +418,7 @@ void ScriptOpcodes::opUnk14PropertiesRelated(ScriptOpCall &scriptOpCall) {
 
 void ScriptOpcodes::opUnk15PropertiesRelated(ScriptOpCall &scriptOpCall) {
 	while (true) {
-		if (checkPropertyFlag(scriptOpCall)) {
+		if (evaluateExpression(scriptOpCall)) {
 			ScriptOpCall localScriptOpCall(scriptOpCall._code + 4, READ_LE_UINT32(scriptOpCall._code));
 
 			runScript(localScriptOpCall);
@@ -452,15 +452,15 @@ void ScriptOpcodes::opUnk21(ScriptOpCall &scriptOpCall) {
 	}
 }
 
-bool ScriptOpcodes::checkPropertyFlag(ScriptOpCall &scriptOpCall) {
+bool ScriptOpcodes::evaluateExpression(ScriptOpCall &scriptOpCall) {
 	byte *codePtrOffsetA = scriptOpCall._code + 0xA;
 	byte *codePtrOffset2 = scriptOpCall._code + 2;
 
 	uint16 status = 0;
 	uint16 result = 0;
 
-	uint16 t2 = 0;
-	uint16 t0 = 0;
+	int16 t2 = 0;
+	int16 t0 = 0;
 
 	for(;;) {
 		byte value = 0;

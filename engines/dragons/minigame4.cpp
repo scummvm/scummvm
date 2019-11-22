@@ -34,14 +34,14 @@ Minigame4::Minigame4(DragonsEngine *vm) : _vm(vm) {}
 
 void Minigame4::run() {
 	uint16 uVar1;
-	DragonINI *uVar2;
+	DragonINI *flicker;
 	uint uVar4;
 	ushort result;
 	int16_t uVar3;
 
 	uVar4 = _vm->getAllFlags();
 	uVar3 = _vm->_inventory->getType();
-	uVar2 = _vm->_dragonINIResource->getFlickerRecord();
+	flicker = _vm->_dragonINIResource->getFlickerRecord();
 	uVar1 = _vm->getCurrentSceneId();
 	// fade_related_calls_with_1f();
 	_vm->reset_screen_maybe();
@@ -101,7 +101,7 @@ void Minigame4::run() {
 	_vm->setFlags(ENGINE_FLAG_1);
 	_vm->videoFlags &= ~(uint16)4;
 	// EnableVSyncEvent();
-	_vm->_dragonINIResource->setFlickerRecord(uVar2);
+	_vm->_dragonINIResource->setFlickerRecord(flicker);
 	_vm->_inventory->setType(uVar3);
 //	_vm->_screen->loadPalette(4,(uint)*(ushort *)
 //					(*(int *)(&DAT_80071c30 + (uint)actors[0].actorFileDictionaryIndex * 8) + 10)
@@ -109,7 +109,7 @@ void Minigame4::run() {
 	_vm->_screen->updatePaletteTransparency(4,1,0xff,true);
 	_vm->_scene->setSceneId(uVar1);
 	_vm->setAllFlags(uVar4);
-	uVar2->sceneId = uVar1;
+	flicker->sceneId = uVar1;
 	_vm->_scene->loadScene(uVar1,0x1e);
 }
 
