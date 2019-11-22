@@ -246,6 +246,7 @@ ifdef PLAYSTATION3
 MODULE_OBJS += \
 	fs/posix/posix-fs.o \
 	fs/posix/posix-fs-factory.o \
+	fs/posix/posix-iostream.o \
 	fs/ps3/ps3-fs-factory.o \
 	events/ps3sdl/ps3sdl-events.o
 endif
@@ -323,6 +324,7 @@ endif
 ifeq ($(BACKEND),psp2)
 MODULE_OBJS += \
 	fs/posix/posix-fs.o \
+	fs/posix/posix-iostream.o \
 	fs/psp2/psp2-fs-factory.o \
 	fs/psp2/psp2-dirent.o \
 	events/psp2sdl/psp2sdl-events.o \
