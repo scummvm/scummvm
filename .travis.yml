@@ -77,7 +77,7 @@ dist: xenial
 script:
   - ccache --show-stats > /tmp/ccache_before
   - export PATH="/usr/local/opt/ccache/libexec:/usr/lib/ccache:$PATH"
-  - ./configure --enable-all-engines --enable-opl2lpt --enable-verbose-build
+  - ./configure --enable-all-engines --enable-opl2lpt
   - make -j 2
   - make test
   - make devtools
