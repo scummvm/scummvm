@@ -44,9 +44,7 @@ const gms_command_t Magnetic::GMS_COMMAND_TABLE[14] = {
 	{ nullptr, nullptr, false, false}
 };
 
-
-
-static gms_gamma_t GMS_GAMMA_TABLE[] = {
+const gms_gamma_t Magnetic::GMS_GAMMA_TABLE[38] = {
 	{ "0.90", { 0,  29,  63,  99, 137, 175, 215, 255 }, true },
 	{ "0.95", { 0,  33,  68, 105, 141, 179, 217, 255 }, true },
 	{ "1.00", { 0,  36,  73, 109, 146, 182, 219, 255 }, false },
@@ -99,23 +97,11 @@ static gms_abbreviation_t GMS_ABBREVIATIONS[] = {
 /*  Module constants                                                   */
 /*---------------------------------------------------------------------*/
 
-/* CRC table initialization polynomial. */
-static const glui32 GMS_CRC_POLYNOMIAL = 0xedb88320;
-
 /* Glk Magnetic Scrolls port version number. */
 static const glui32 GMS_PORT_VERSION = 0x00010601;
 
 /* Magnetic Scrolls standard input prompt string. */
 static const char *const GMS_INPUT_PROMPT = ">";
-
-/*
- * Weighting values for calculating the luminance of a color.  There are
- * two commonly used sets of values for these -- 299,587,114, taken from
- * NTSC (Never The Same Color) 1953 standards, and 212,716,72, which is the
- * set that modern CRTs tend to match.  The NTSC ones seem to give the best
- * subjective results.
- */
-static const gms_rgb_t GMS_LUMINANCE_WEIGHTS = { 299, 587, 114 };
 
 /*
  * Maximum number of regions to consider in a single repaint pass.  A
@@ -293,30 +279,9 @@ int Magnetic::gms_strcasecmp(const char *s1, const char *s2) {
 /*---------------------------------------------------------------------*/
 
 glui32 Magnetic::gms_get_buffer_crc(const void *void_buffer, size_t length) {
-	static int is_initialized = false;
-	static glui32 crc_table[BYTE_MAX + 1];
-
 	const char *buf = (const char *) void_buffer;
-	glui32 crc;
+	uint32 crc;
 	size_t index;
-
-	/* Build the static CRC lookup table on first call. */
-	if (!is_initialized) {
-		for (index = 0; index < BYTE_MAX + 1; index++) {
-			int bit;
-
-			crc = (glui32) index;
-			for (bit = 0; bit < CHAR_BIT; bit++)
-				crc = crc & 1 ? GMS_CRC_POLYNOMIAL ^ (crc >> 1) : crc >> 1;
-
-			crc_table[index] = crc;
-		}
-
-		is_initialized = true;
-
-		/* CRC lookup table self-test, after is_initialized set -- recursion. */
-		assert(gms_get_buffer_crc("123456789", 9) == 0xcbf43926);
-	}
 
 	/*
 	 * Start with all ones in the crc, then update using table entries.  Xor
@@ -508,26 +473,13 @@ glui32 Magnetic::gms_graphics_combine_color(gms_rgbref_t rgb_color) {
 }
 
 int Magnetic::gms_graphics_color_luminance(gms_rgbref_t rgb_color) {
-	static int is_initialized = false;
-	static int weighting = 0;
-
-	long luminance;
-
-	/* On the first call, calculate the overall weighting. */
-	if (!is_initialized) {
-		weighting = GMS_LUMINANCE_WEIGHTS.red + GMS_LUMINANCE_WEIGHTS.green
-		            + GMS_LUMINANCE_WEIGHTS.blue;
-
-		is_initialized = true;
-	}
-
 	/* Calculate the luminance and scale back by 1000 to 0-255 before return. */
-	luminance = ((long) rgb_color->red   * (long) GMS_LUMINANCE_WEIGHTS.red
+	long luminance = ((long) rgb_color->red   * (long) GMS_LUMINANCE_WEIGHTS.red
 	             + (long) rgb_color->green * (long) GMS_LUMINANCE_WEIGHTS.green
 	             + (long) rgb_color->blue  * (long) GMS_LUMINANCE_WEIGHTS.blue);
 
-	assert(weighting > 0);
-	return (int)(luminance / weighting);
+	assert(luminance_weighting > 0);
+	return (int)(luminance / luminance_weighting);
 }
 
 int Magnetic::gms_graphics_compare_luminance(const void *void_first,
@@ -627,26 +579,9 @@ gms_gammaref_t Magnetic::gms_graphics_equal_contrast_gamma(type16 palette[], lon
 
 gms_gammaref_t Magnetic::gms_graphics_select_gamma(type8 bitmap[],
         type16 width, type16 height, type16 palette[]) {
-	static int is_initialized = false;
-	static gms_gammaref_t linear_gamma = NULL;
-
 	long color_usage[GMS_PALETTE_SIZE];
 	int color_count;
 	gms_gammaref_t contrast_gamma;
-
-	/* On first call, find and cache the uncorrected gamma table entry. */
-	if (!is_initialized) {
-		gms_gammaref_t gamma;
-
-		for (gamma = GMS_GAMMA_TABLE; gamma->level; gamma++) {
-			if (!gamma->is_corrected) {
-				linear_gamma = gamma;
-				break;
-			}
-		}
-
-		is_initialized = true;
-	}
 	assert(linear_gamma);
 
 	/*
@@ -1517,8 +1452,6 @@ void Magnetic::gms_graphics_timeout() {
 }
 
 void Magnetic::ms_showpic(type32 picture, type8 mode) {
-	static glui32 current_crc = 0;  /* CRC of the current picture */
-
 	type8 *bitmap, animated;
 	type16 width, height, palette[GMS_PALETTE_SIZE];
 	long picture_bytes;
@@ -1567,7 +1500,7 @@ void Magnetic::ms_showpic(type32 picture, type8 mode) {
 	 */
 	if (width == gms_graphics_width
 	        && height == gms_graphics_height
-	        && crc == current_crc
+	        && crc == pic_current_crc
 	        && gms_graphics_enabled && gms_graphics_are_displayed())
 		return;
 
@@ -1591,7 +1524,7 @@ void Magnetic::ms_showpic(type32 picture, type8 mode) {
 	gms_graphics_animated = animated;
 
 	/* Retain the new picture CRC. */
-	current_crc = crc;
+	pic_current_crc = crc;
 
 	/*
 	 * If graphics are enabled, ensure the window is displayed, set the
@@ -2525,9 +2458,6 @@ type16 Magnetic::gms_hint_handle(const ms_hint hints_[],
 }
 
 type8 Magnetic::ms_showhints(ms_hint *hints_) {
-	static int is_initialized = false;
-	static glui32 current_crc = 0;
-
 	type16 hint_count;
 	glui32 crc;
 	assert(hints_);
@@ -2545,7 +2475,7 @@ type8 Magnetic::ms_showhints(ms_hint *hints_) {
 	 * this is the first call, assign a new cursor array.
 	 */
 	crc = gms_get_buffer_crc(hints_, hint_count * sizeof(*hints_));
-	if (crc != current_crc || !is_initialized) {
+	if (crc != hints_current_crc || !hints_crc_initialized) {
 		int bytes;
 
 		/* Allocate new cursors, and set all to zero initial state. */
@@ -2558,8 +2488,8 @@ type8 Magnetic::ms_showhints(ms_hint *hints_) {
 		 * Retain the hints_ CRC, for later comparisons, and set is_initialized
 		 * flag.
 		 */
-		current_crc = crc;
-		is_initialized = true;
+		hints_current_crc = crc;
+		hints_crc_initialized = true;
 	}
 
 	/*

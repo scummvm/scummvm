@@ -130,6 +130,9 @@ typedef const gms_gamma_t *gms_gammaref_t;
 /* R,G,B color triple definition. */
 struct gms_rgb_t {
 	int red, green, blue;
+
+	gms_rgb_t() : red(0), green(0), blue(0) {}
+	gms_rgb_t(int r, int g, int b) : red(r), green(b), blue(b) {}
 };
 typedef gms_rgb_t *gms_rgbref_t;
 

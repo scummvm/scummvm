@@ -42,14 +42,13 @@ Magnetic::Magnetic(OSystem *syst, const GlkGameDescription &gameDesc) : GlkAPI(s
 		gms_graphics_picture(0), gms_graphics_new_picture(false),
 		gms_graphics_repaint(false), gms_graphics_active(false),
 		gms_graphics_interpreter(false), gms_graphics_off_screen(nullptr),
-		gms_graphics_on_screen(nullptr),// gms_graphics_current_gamma(Magnetic::GMS_GAMMA_TABLE),
+		gms_graphics_on_screen(nullptr), gms_graphics_current_gamma(Magnetic::GMS_GAMMA_TABLE),
 		gms_graphics_color_count(GMS_PALETTE_SIZE), gms_status_length(0),
-		gms_help_requested(false), gms_help_hints_silenced(false),
-		gms_output_buffer(nullptr), gms_output_allocation(0),gms_output_length(0),
-		gms_output_prompt(false), gms_hints(nullptr), gms_current_hint_node(0),
-		gms_hint_cursor(nullptr), gms_input_length(0), gms_input_cursor(0),
-		gms_undo_notification(false), gms_game_message(nullptr), gms_startup_called(false),
-		gms_main_called(false), gms_graphics_current_gamma(nullptr),
+		gms_help_requested(false), gms_help_hints_silenced(false), gms_output_buffer(nullptr),
+		gms_output_allocation(0),gms_output_length(0), gms_output_prompt(false),
+		gms_hints(nullptr), gms_current_hint_node(0), gms_hint_cursor(nullptr),
+		gms_input_length(0), gms_input_cursor(0), gms_undo_notification(false),
+		gms_game_message(nullptr), gms_startup_called(false), gms_main_called(false),
 		i_count(0), string_size(0), rseed(0), pc(0), arg1i(0), mem_size(0), properties(0),
 		fl_sub(0), fl_tab(0), fl_size(0), fp_tab(0), fp_size(0), zflag(0), nflag(0),
 		cflag(0), vflag(0), byte1(0), byte2(0), regnr(0), admode(0), opsize(0),
@@ -65,7 +64,9 @@ Magnetic::Magnetic(OSystem *syst, const GlkGameDescription &gameDesc) : GlkAPI(s
 		pos_table_index(-1), pos_table_max(-1), anim_repeat(0)
 #endif
 		, hints(nullptr), hint_contents(nullptr), xpos(0), bufpos(0), log_on(0),
-		ms_gfx_enabled(0), log1(nullptr), log2(nullptr) {
+		ms_gfx_enabled(0), log1(nullptr), log2(nullptr), GMS_LUMINANCE_WEIGHTS(299, 587, 114),
+		linear_gamma(nullptr), pic_current_crc(0), hints_current_crc(0),
+		hints_crc_initialized(false) {
 
 	Common::fill(&gms_graphics_palette[0], &gms_graphics_palette[GMS_PALETTE_SIZE], 0);
 	Common::fill(&gms_status_buffer[0], &gms_status_buffer[GMS_STATBUFFER_LENGTH], '\0');
@@ -78,10 +79,14 @@ Magnetic::Magnetic(OSystem *syst, const GlkGameDescription &gameDesc) : GlkAPI(s
 	undo_stat[0] = undo_stat[1] = 0;
 	Common::fill(&buffer[0], &buffer[80], 0);
 	Common::fill(&filename[0], &filename[256], 0);
+	Common::fill(&crc_table[0], &crc_table[BYTE_MAX + 1], 0);
 
 #ifndef NO_ANIMATION
 	Common::fill(&pos_table_count[0], &pos_table_count[MAX_POSITIONS], 0);
 #endif
+
+	luminance_weighting = GMS_LUMINANCE_WEIGHTS.red + GMS_LUMINANCE_WEIGHTS.green
+		+ GMS_LUMINANCE_WEIGHTS.blue;
 
 	g_vm = this;
 }
@@ -92,6 +97,15 @@ void Magnetic::runGame() {
 }
 
 void Magnetic::initialize() {
+	initializeSettings();
+	initializeCRC();
+	initializeLinearGamma();
+
+	// Close the already opened gamefile, since the Magnetic code will open it on it's own
+	_gameFile.close();
+}
+
+void Magnetic::initializeSettings() {
 	// Local handling for Glk special commands
 	if (ConfMan.hasKey("commands_enabled"))
 		gms_commands_enabled = ConfMan.getBool("commands_enabled");
@@ -110,9 +124,37 @@ void Magnetic::initialize() {
 	// Prompt enabled
 	if (ConfMan.hasKey("prompt_enabled"))
 		gms_prompt_enabled = ConfMan.getBool("prompt_enabled");
+}
 
-	// Close the already opened gamefile, since the Magnetic code will open it on it's own
-	_gameFile.close();
+void Magnetic::initializeCRC() {
+	/* CRC table initialization polynomial. */
+	const glui32 GMS_CRC_POLYNOMIAL = 0xedb88320;
+	uint32 crc;
+
+	for (uint index = 0; index < BYTE_MAX + 1; ++index) {
+		int bit;
+
+		crc = index;
+		for (bit = 0; bit < CHAR_BIT; bit++)
+			crc = crc & 1 ? GMS_CRC_POLYNOMIAL ^ (crc >> 1) : crc >> 1;
+
+		crc_table[index] = crc;
+	}
+
+	/* CRC lookup table self-test, after is_initialized set -- recursion. */
+	assert(gms_get_buffer_crc("123456789", 9) == 0xcbf43926);
+}
+
+void Magnetic::initializeLinearGamma() {
+	/* Find and cache the uncorrected gamma table entry. */
+	gms_gammaref_t gamma;
+
+	for (gamma = GMS_GAMMA_TABLE; gamma->level; gamma++) {
+		if (!gamma->is_corrected) {
+			linear_gamma = gamma;
+			break;
+		}
+	}
 }
 
 Common::Error Magnetic::readSaveData(Common::SeekableReadStream *rs) {

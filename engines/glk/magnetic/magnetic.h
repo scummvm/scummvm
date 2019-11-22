@@ -54,6 +54,7 @@ typedef gms_command_t *gms_commandref_t;
 class Magnetic : public GlkAPI {
 public:
 	static const gms_command_t GMS_COMMAND_TABLE[14];
+	static const gms_gamma_t GMS_GAMMA_TABLE[38];
 private:
 	GammaMode gms_gamma_mode;
 	bool gms_animation_enabled, gms_prompt_enabled;
@@ -244,14 +245,46 @@ private:
 	/* Hint support */
 	ms_hint *hints;
 	type8 *hint_contents;
+
+	/**
+	 * Weighting values for calculating the luminance of a color.  There are
+	 * two commonly used sets of values for these -- 299,587,114, taken from
+	 * NTSC (Never The Same Color) 1953 standards, and 212,716,72, which is the
+	 * set that modern CRTs tend to match.  The NTSC ones seem to give the best
+	 * subjective results.
+	 */
+	const gms_rgb_t GMS_LUMINANCE_WEIGHTS;
 private:
 	type8 buffer[80], xpos, bufpos, log_on, ms_gfx_enabled, filename[256];
 	Common::DumpFile *log1, *log2;
+private:
+	/* Method local statics in original code */
+	glui32 crc_table[BYTE_MAX + 1];
+	int luminance_weighting;
+	gms_gammaref_t linear_gamma;
+	uint32 pic_current_crc;			/* CRC of the current picture */
+	uint32 hints_current_crc;		/* CRC of hints */
+	bool hints_crc_initialized;
 private:
 	/**
 	 * Performs initialization
 	 */
 	void initialize();
+
+	/**
+	 * Initializes settings from the ScummVM configuration
+	 */
+	void initializeSettings();
+
+	/**
+	 * Initializes the CRC table
+	 */
+	void initializeCRC();
+
+	/**
+	 * Initializes the linear gamma entry
+	 */
+	void initializeLinearGamma();
 
 	/**
 	 * Fatal error handler.  The function returns, expecting the caller to
