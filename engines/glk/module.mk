@@ -263,8 +263,7 @@ MODULE_OBJS += \
 	magnetic/detection.o \
 	magnetic/emu.o \
 	magnetic/glk.o \
-	magnetic/magnetic.o \
-	magnetic/main.o
+	magnetic/magnetic.o
 endif
 
 ifdef ENABLE_GLK_QUEST

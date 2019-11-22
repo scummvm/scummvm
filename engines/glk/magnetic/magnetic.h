@@ -254,6 +254,9 @@ private:
 	 * subjective results.
 	 */
 	const gms_rgb_t GMS_LUMINANCE_WEIGHTS;
+
+	type8 *_saveData;
+	size_t _saveSize;
 private:
 	type8 buffer[80], xpos, bufpos, log_on, ms_gfx_enabled, filename[256];
 	Common::DumpFile *log1, *log2;
@@ -1378,6 +1381,20 @@ public:
 	 */
 	virtual InterpreterType getInterpreterType() const override {
 		return INTERPRETER_MAGNETIC;
+	}
+
+	/**
+	 * The Magnetic engine currently doesn't support loading savegames from the GMM
+	 */
+	virtual bool canLoadGameStateCurrently() override {
+		return false;
+	}
+
+	/**
+	 * The Magnetic engine currently doesn't support saving games from the GMM
+	 */
+	virtual bool canSaveGameStateCurrently() override {
+		return false;
 	}
 
 	/**

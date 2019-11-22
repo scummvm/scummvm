@@ -66,7 +66,7 @@ Magnetic::Magnetic(OSystem *syst, const GlkGameDescription &gameDesc) : GlkAPI(s
 		, hints(nullptr), hint_contents(nullptr), xpos(0), bufpos(0), log_on(0),
 		ms_gfx_enabled(0), log1(nullptr), log2(nullptr), GMS_LUMINANCE_WEIGHTS(299, 587, 114),
 		linear_gamma(nullptr), pic_current_crc(0), hints_current_crc(0),
-		hints_crc_initialized(false) {
+		hints_crc_initialized(false), _saveData(nullptr), _saveSize(0) {
 
 	Common::fill(&gms_graphics_palette[0], &gms_graphics_palette[GMS_PALETTE_SIZE], 0);
 	Common::fill(&gms_status_buffer[0], &gms_status_buffer[GMS_STATBUFFER_LENGTH], '\0');
@@ -157,14 +157,26 @@ void Magnetic::initializeLinearGamma() {
 	}
 }
 
+type8 Magnetic::ms_load_file(const char *name, type8 *ptr, type16 size) {
+	_saveData = ptr;
+	_saveSize = size;
+
+	return loadGame().getCode() == Common::kNoError ? 0 : 1;
+}
+
 Common::Error Magnetic::readSaveData(Common::SeekableReadStream *rs) {
-	// TODO
-	return Common::kReadingFailed;
+	return rs->read(_saveData, _saveSize) == _saveSize ? Common::kNoError : Common::kReadingFailed;
+}
+
+type8 Magnetic::ms_save_file(const char *name, type8 *ptr, type16 size) {
+	_saveData = ptr;
+	_saveSize = size;
+
+	return saveGame().getCode() == Common::kNoError ? 0 : 1;
 }
 
 Common::Error Magnetic::writeGameData(Common::WriteStream *ws) {
-	// TODO
-	return Common::kWritingFailed;
+	return ws->write(_saveData, _saveSize) == _saveSize ? Common::kNoError : Common::kWritingFailed;
 }
 
 } // End of namespace Magnetic

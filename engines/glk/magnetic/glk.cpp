@@ -3979,5 +3979,15 @@ void Magnetic::writeChar(char c) {
 	glk_put_char(c);
 }
 
+void Magnetic::script_write(type8 c) {
+	if (log_on == 2)
+		log1->writeByte(c);
+}
+
+void Magnetic::transcript_write(type8 c) {
+	if (log2)
+		log2->writeByte(c);
+}
+
 } // End of namespace Magnetic
 } // End of namespace Glk
