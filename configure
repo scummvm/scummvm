@@ -3535,6 +3535,10 @@ case $_backend in
 		append_var LDFLAGS "-Wl,-z,noexecstack"
 		# removed the following directive - was causing compilation issues when not also explicitly using --disable-mt32emu
 #		append_var INCLUDES "-isystem $ANDROID_NDK/sources/cxx-stl/system/include"
+		_sdl=no
+		if test "$_host" = ouya; then
+			_sdlnet=no
+		fi
 		;;
 	androidsdl)
 		_sdl=auto
@@ -3750,6 +3754,8 @@ EOF
 		exit 1
 	fi
 fi
+
+_sdlMajorVersionNumber=0
 if test "$_sdl" = yes ; then
 	append_var DEFINES "-DSDL_BACKEND"
 	add_line_to_config_mk "SDL_BACKEND = 1"
@@ -3758,33 +3764,67 @@ if test "$_sdl" = yes ; then
 	case $_sdlversion in
 		2.0.*)
 			add_line_to_config_mk "USE_SDL2 = 1"
-			if test "$_pkg_config" = "yes" && $_pkgconfig --exists sdl2_net; then
-				append_var SDL_NET_LIBS "`$_pkgconfig --libs sdl2_net`"
-				append_var SDL_NET_CFLAGS "`$_pkgconfig --cflags sdl2_net`"
-			else
-				append_var SDL_NET_LIBS "-lSDL2_net"
-			fi
+			_sdlMajorVersionNumber=2
 			;;
 		*)
-			if test "$_pkg_config" = "yes" && $_pkgconfig --exists sdl_net; then
-				append_var SDL_NET_LIBS "`$_pkgconfig --libs sdl_net`"
-				append_var SDL_NET_CFLAGS "`$_pkgconfig --cflags sdl_net`"
-			else
-				append_var SDL_NET_LIBS "-lSDL_net"
-			fi
+			_sdlMajorVersionNumber=1
 			;;
 	esac
+fi
+
+#
+# Some platforms (eg. Android, iOS) may use an edited version
+# of SDL-net or SDL2-net that does not require SDL or SDL2 respectively
+#
+if test "$_sdlnet" = auto ; then
+	# If SDL2 was detected, then test for SDL2_net exclusively
+	# If SDL was detected, then test for SDL_net exclusively
+	# If neither SDL nor SDL2 detected, then test for both (SDL2_net success takes priority)
+	set_var SDL2_NET_LIBS   "$SDL_NET_LIBS"
+	set_var SDL2_NET_CFLAGS "$SDL_NET_CFLAGS"
+	set_var SDL1_NET_LIBS   "$SDL_NET_LIBS"
+	set_var SDL1_NET_CFLAGS "$SDL_NET_CFLAGS"
+
+	if test "$_sdl" = no || test "$_sdlMajorVersionNumber" = 2; then
+		if test "$_pkg_config" = "yes" && $_pkgconfig --exists SDL2_net; then
+			append_var SDL2_NET_LIBS "`$_pkgconfig --libs SDL2_net`"
+			append_var SDL2_NET_CFLAGS "`$_pkgconfig --cflags SDL2_net`"
+		else
+			append_var SDL2_NET_LIBS "-lSDL2_net"
+		fi
+	fi
+
+	if test "$_sdl" = no || test "$_sdlMajorVersionNumber" = 1; then
+		if test "$_pkg_config" = "yes" && $_pkgconfig --exists SDL_net; then
+			append_var SDL1_NET_LIBS "`$_pkgconfig --libs SDL_net`"
+			append_var SDL1_NET_CFLAGS "`$_pkgconfig --cflags SDL_net`"
+		else
+			append_var SDL1_NET_LIBS "-lSDL_net"
+		fi
+	fi
 
 	# Check for SDL_Net
 	echocheck "SDL_Net"
-	if test "$_sdlnet" = auto ; then
-		_sdlnet=no
+	_sdlnet=no
+	cat > $TMPC << EOF
+#include "SDL_net.h"
+int main(int argc, char *argv[]) { SDLNet_Init(); return 0; }
+EOF
+
+	cc_check $SDL2_NET_LIBS $LIBS $INCLUDES $SDL2_NET_CFLAGS && _sdlnet=yes
+	if test "$_sdlnet" = yes ; then
+		set_var SDL_NET_LIBS   "$SDL2_NET_LIBS"
+		set_var SDL_NET_CFLAGS "$SDL2_NET_CFLAGS"
+	else
 		cat > $TMPC << EOF
 #include "SDL_net.h"
 int main(int argc, char *argv[]) { SDLNet_Init(); return 0; }
 EOF
-		cc_check $SDL_NET_LIBS $LIBS $INCLUDES $SDL_NET_CFLAGS && _sdlnet=yes
+		cc_check $SDL1_NET_LIBS $LIBS $INCLUDES $SDL1_NET_CFLAGS && _sdlnet=yes
+		set_var SDL_NET_LIBS   "$SDL1_NET_LIBS"
+		set_var SDL_NET_CFLAGS "$SDL1_NET_CFLAGS"
 	fi
+
 	if test "$_sdlnet" = yes ; then
 		# Some platforms require SDL to be after SDL_Net, thus we prepend var
 		prepend_var LIBS "$SDL_NET_LIBS"
