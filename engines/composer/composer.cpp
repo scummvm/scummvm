@@ -86,12 +86,14 @@ Common::Error ComposerEngine::run() {
 	}
 
 	if (!_bookIni.loadFromFile("book.ini")) {
-		_directoriesToStrip = 0;
-		if (!_bookIni.loadFromFile("programs/book.ini")) {
-			// mac version?
-			if (!_bookIni.loadFromFile("Darby the Dragon.ini"))
-				if (!_bookIni.loadFromFile("Gregory.ini"))
-					error("failed to find book.ini");
+		if (!_bookIni.loadFromFile("demo.ini") && !_bookIni.loadFromFile("ls_demo.ini") && !_bookIni.loadFromFile("by_demo.ini")) {
+			_directoriesToStrip = 0;
+			if (!_bookIni.loadFromFile("programs/book.ini")) {
+				// mac version?
+				if (!_bookIni.loadFromFile("Darby the Dragon.ini"))
+					if (!_bookIni.loadFromFile("Gregory.ini"))
+						error("failed to find book.ini");
+			}
 		}
 	}
 
