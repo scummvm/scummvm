@@ -383,7 +383,7 @@ void Lingo::printSTUBWithArglist(const char *funcname, int nargs, const char *pr
 
 	s += ")";
 
-	warning("%s %s", prefix, s.c_str());
+	debug(5, "%s %s", prefix, s.c_str());
 }
 
 void Lingo::convertVOIDtoString(int arg, int nargs) {

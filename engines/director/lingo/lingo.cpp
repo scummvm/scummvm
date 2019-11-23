@@ -325,6 +325,35 @@ Common::String *Datum::toString() {
 		s = u.s;
 		break;
 	case SYMBOL:
+		switch (u.i) {
+		case INT:
+			*s = "#integer";
+			break;
+		case FLOAT:
+			*s = "#float";
+			break;
+		case STRING:
+			*s = "#string";
+			break;
+		case SYMBOL:
+			*s = "#symbol";
+			break;
+		case OBJECT:
+			*s = "#object";
+			break;
+		case VOID:
+			*s = "#void";
+			break;
+		case VAR:
+			*s = "#scumm-var";
+			break;
+		case REFERENCE:
+			*s = "#scumm-ref";
+			break;
+		default:
+			*s = Common::String::format("#unknown%d", u.i);
+		}
+		break;
 	case OBJECT:
 		*s = Common::String::format("#%s", u.s->c_str());
 		break;
