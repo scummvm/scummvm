@@ -35,7 +35,8 @@ enum {
 
 TextDisplayer_rpg::TextDisplayer_rpg(KyraRpgEngine *engine, Screen *scr) : _vm(engine), _screen(scr),
 	_lineCount(0), _printFlag(false), _lineWidth(0), _numCharsTotal(0), _allowPageBreak(true),
-	_numCharsLeft(0), _numCharsPrinted(0), _sjisTextModeLineBreak(false), _waitButtonMode(1) {
+	_numCharsLeft(0), _numCharsPrinted(0), _sjisTextModeLineBreak(false), _waitButtonMode(1),
+	_pc98TextMode(engine->gameFlags().use16ColorMode && engine->game() == GI_LOL) {
 
 	static const uint8 amigaColorMap[16] = {
 		0x00, 0x06, 0x1d, 0x1b, 0x1a, 0x17, 0x18, 0x0e, 0x19, 0x1c, 0x1c, 0x1e, 0x13, 0x0a, 0x11, 0x1f
@@ -138,7 +139,7 @@ void TextDisplayer_rpg::displayText(char *str, ...) {
 	const ScreenDim *sd = _screen->_curDim;
 	int sdx = _screen->curDimIndex();
 
-	bool sjisTextMode = (_vm->gameFlags().lang == Common::JA_JPN && _vm->gameFlags().use16ColorMode && (sdx == 3 || sdx == 4 || sdx == 5 || sdx == 15)) ? true : false;
+	bool sjisTextMode = (_pc98TextMode && (sdx == 3 || sdx == 4 || sdx == 5 || sdx == 15)) ? true : false;
 	int sjisOffs = (sjisTextMode || _vm->game() == GI_EOB2) ? 8 : 9;
 	Screen::FontId of = (_vm->game() == GI_EOB2 && _vm->gameFlags().platform == Common::kPlatformFMTowns) ? _screen->setFont(Screen::FID_8_FNT) : _screen->_currentFont;
 
@@ -232,7 +233,7 @@ void TextDisplayer_rpg::displayText(char *str, ...) {
 
 		default:
 			if (_vm->game() == GI_EOB1 || _vm->game() == GI_LOL || (unsigned char)c > 30) {
-				_lineWidth += (sjisTextMode ? 4 : (_screen->_currentFont == Screen::FID_SJIS_FNT ? 9 : _screen->getCharWidth((uint8)c)));
+				_lineWidth += (sjisTextMode ? 4 : (_screen->_currentFont == Screen::FID_SJIS_TEXTMODE_FNT ? 9 : _screen->getCharWidth((uint8)c)));
 				_currentLine[_numCharsLeft++] = c;
 				_currentLine[_numCharsLeft] = 0;
 
@@ -310,7 +311,7 @@ void TextDisplayer_rpg::printLine(char *str) {
 	int sdx = _screen->curDimIndex();
 	bool sjisTextMode = _vm->gameFlags().lang == Common::JA_JPN && (_vm->gameFlags().use16ColorMode && (sdx == 3 || sdx == 4 || sdx == 5 || sdx == 15)) ? true : false;
 
-	int fh = (_screen->_currentFont == Screen::FID_SJIS_FNT) ? 9 : (_screen->getFontHeight() + _screen->_charOffset);
+	int fh = (_screen->_currentFont == Screen::FID_SJIS_TEXTMODE_FNT) ? 9 : (_screen->getFontHeight() + _screen->_charOffset);
 	int lines = (sd->h - _screen->_charOffset) / fh;
 
 	while (_textDimData[sdx].line >= lines) {
@@ -510,7 +511,7 @@ void TextDisplayer_rpg::printLine(char *str) {
 	str[len] = 0;
 
 	_numCharsLeft = strlen(str);
-	_lineWidth = sjisTextMode ? (_numCharsLeft << 2) : (_screen->_currentFont == Screen::FID_SJIS_FNT ? _numCharsLeft * 9 : _screen->getTextWidth(str));
+	_lineWidth = sjisTextMode ? (_numCharsLeft << 2) : (_screen->_currentFont == Screen::FID_SJIS_TEXTMODE_FNT ? _numCharsLeft * 9 : _screen->getTextWidth(str));
 
 	if (!_numCharsLeft && (_textDimData[sdx].column + twoByteCharOffs) <= (sd->w << 3))
 		return;
@@ -598,7 +599,7 @@ void TextDisplayer_rpg::textPageBreak() {
 		SWAP(_vm->_dialogueButtonLabelColor1, _vm->_dialogueButtonLabelColor2);
 
 	int cp = _screen->setCurPage(0);
-	Screen::FontId cf = _screen->setFont((_vm->gameFlags().lang == Common::JA_JPN && _vm->gameFlags().use16ColorMode) ? Screen::FID_SJIS_FNT : ((_vm->game() == GI_EOB2 && _vm->gameFlags().platform == Common::kPlatformFMTowns) ? Screen::FID_8_FNT : Screen::FID_6_FNT));
+	Screen::FontId cf = _screen->setFont(_pc98TextMode ? Screen::FID_SJIS_TEXTMODE_FNT : ((_vm->game() == GI_EOB2 && _vm->gameFlags().platform == Common::kPlatformFMTowns) ? Screen::FID_8_FNT : Screen::FID_6_FNT));
 
 	if (_vm->game() == GI_LOL)
 		_vm->_timer->pauseSingleTimer(11, true);

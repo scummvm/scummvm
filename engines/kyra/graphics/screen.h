@@ -290,8 +290,8 @@ private:
  */
 class SJISFont : public Font {
 public:
-	SJISFont(Graphics::FontSJIS *font, const uint8 invisColor, bool is16Color, bool drawOutline, bool fatPrint, int extraSpacing);
-	virtual ~SJISFont() { unload(); }
+	SJISFont(Common::SharedPtr<Graphics::FontSJIS> &font, const uint8 invisColor, bool is16Color, bool drawOutline, bool fatPrint, int extraSpacing);
+	virtual ~SJISFont() {}
 
 	virtual bool usesOverlay() const { return true; }
 
@@ -303,13 +303,12 @@ public:
 	virtual void drawChar(uint16 c, byte *dst, int pitch, int) const;
 
 protected:
-	void unload();
-
 	const uint8 *_colorMap;
-	Graphics::FontSJIS *_font;	
+	Common::SharedPtr<Graphics::FontSJIS> _font;
 	int _sjisWidth, _asciiWidth;
 	int _fontHeight;
 	const bool _drawOutline;
+	const bool _fatPrint;
 
 private:
 	const uint8 _invisColor;
@@ -485,9 +484,15 @@ public:
 		FID_GOLDFONT_FNT,
 		FID_INTRO_FNT,
 		FID_SJIS_FNT,
+		FID_SJIS_TEXTMODE_FNT,
 		FID_SJIS_LARGE_FNT,
 		FID_SJIS_SMALL_FNT,
 		FID_NUM
+	};
+
+	enum FontType {
+		FTYPE_ASCII = 0,
+		FTYPE_SJIS
 	};
 
 	Screen(KyraEngine_v1 *vm, OSystem *system, const ScreenDim *dimTable, const int dimTableSize);
@@ -629,6 +634,7 @@ public:
 	uint8 *_shapePages[2];
 	int _maskMinY, _maskMaxY;
 	FontId _currentFont;
+	FontType _currentFontType;
 
 	// decoding functions
 	static void decodeFrame1(const uint8 *src, uint8 *dst, uint32 size);

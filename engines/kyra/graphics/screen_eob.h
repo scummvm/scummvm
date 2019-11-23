@@ -162,8 +162,8 @@ private:
 */
 class SJISFontLarge : public SJISFont {
 public:
-	SJISFontLarge(Graphics::FontSJIS *font);
-	virtual ~SJISFontLarge() { unload(); }
+	SJISFontLarge(Common::SharedPtr<Graphics::FontSJIS> &font);
+	virtual ~SJISFontLarge() {}
 
 	virtual bool usesOverlay() const { return false; }
 	virtual void drawChar(uint16 c, byte *dst, int pitch, int) const;

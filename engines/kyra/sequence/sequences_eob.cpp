@@ -1092,6 +1092,7 @@ void EoBIntroPlayer::printSubtitle(const char *str, int textmodeX, int textmodeY
 	if (!str)
 		return;
 
+	Screen::FontId of = _screen->setFont(Screen::FID_SJIS_TEXTMODE_FNT);
 	int cp = _screen->setCurPage(0);
 
 	for (int i = 0; str[i]; ) {
@@ -1129,6 +1130,7 @@ void EoBIntroPlayer::printSubtitle(const char *str, int textmodeX, int textmodeY
 	if (mode == 2)
 		_screen->updateScreen();
 	
+	_screen->setFont(of);
 	_screen->setCurPage(cp);
 }
 
@@ -1591,7 +1593,7 @@ int EoBEngine::mainMenu() {
 				_sound->selectAudioResourceSet(kMusicIntro);
 				_sound->loadSoundFile(0);
 				_screen->hideMouse();
-
+				
 				seq_playIntro(kOnlyIntro);
 
 				_screen->showMouse();

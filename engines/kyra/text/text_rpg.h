@@ -83,6 +83,7 @@ protected:
 
 	bool _printFlag;
 	bool _sjisTextModeLineBreak;
+	const bool _pc98TextMode;
 
 	char _pageBreakString[20];
 	char _scriptParaString[11];

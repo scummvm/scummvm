@@ -368,6 +368,7 @@ protected:
 
 	bool _dialogueField;
 	bool _dialogueFieldAmiga;
+	Screen::FontId _buttonFont;
 
 	const char *_dialogueButtonString[9];
 	const uint16 *_dialogueButtonPosX;

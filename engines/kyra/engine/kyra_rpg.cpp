@@ -124,6 +124,12 @@ KyraRpgEngine::KyraRpgEngine(OSystem *system, const GameFlags &flags) : KyraEngi
 
 	_environmentSfx = _environmentSfxVol = _envSfxDistThreshold = 0;
 	_monsterStepCounter = _monsterStepMode = 0;
+
+	_buttonFont = Screen::FID_6_FNT;
+	if (_flags.use16ColorMode)
+		_buttonFont = _flags.gameID == GI_LOL ? Screen::FID_SJIS_TEXTMODE_FNT : Screen::FID_SJIS_FNT;
+	else if (_flags.gameID == GI_EOB2 && _flags.platform == Common::kPlatformFMTowns)
+		_buttonFont = Screen::FID_8_FNT;
 }
 
 KyraRpgEngine::~KyraRpgEngine() {
@@ -222,7 +228,7 @@ bool KyraRpgEngine::posWithinRect(int posX, int posY, int x1, int y1, int x2, in
 
 void KyraRpgEngine::drawDialogueButtons() {
 	int cp = screen()->setCurPage(0);
-	Screen::FontId of = screen()->setFont((_flags.lang == Common::JA_JPN && _flags.use16ColorMode) ? Screen::FID_SJIS_FNT : ((_flags.gameID == GI_EOB2 && _flags.platform == Common::kPlatformFMTowns) ? Screen::FID_8_FNT : Screen::FID_6_FNT));
+	Screen::FontId of = screen()->setFont(_buttonFont);
 
 	for (int i = 0; i < _dialogueNumButtons; i++) {
 		int x = _dialogueButtonPosX[i];

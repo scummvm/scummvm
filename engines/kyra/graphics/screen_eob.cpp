@@ -92,13 +92,7 @@ bool Screen_EoB::init() {
 		if (_vm->gameFlags().platform == Common::kPlatformFMTowns) {
 			_shpBuffer = new uint8[SCREEN_H * SCREEN_W];
 			_convertHiColorBuffer = new uint8[SCREEN_H * SCREEN_W];
-			enableHiColorMode(true);
-			
-			Graphics::FontSJIS *font = Graphics::FontSJIS::createFont(Common::kPlatformFMTowns);
-			if (!font)
-				error("Could not load any SJIS font, neither the original nor ScummVM's 'SJIS.FNT'");
-			_fonts[FID_SJIS_LARGE_FNT] = new SJISFontLarge(font);
-
+			enableHiColorMode(true);			
 			loadFont(FID_SJIS_SMALL_FNT, "FONT.DMP");
 		}
 
@@ -2519,13 +2513,15 @@ void AmigaDOSFont::selectMode(int mode) {
 	_last = _content[mode].data->lastChar;
 }
 
-SJISFontLarge::SJISFontLarge(Graphics::FontSJIS *font) : SJISFont(font, 0, false, false, false, 0) {
+SJISFontLarge::SJISFontLarge(Common::SharedPtr<Graphics::FontSJIS> &font) : SJISFont(font, 0, false, false, false, 0) {
 	_sjisWidth = _font->getMaxFontWidth();
 	_fontHeight = _font->getFontHeight();
 	_asciiWidth = _font->getCharWidth('a');
 }
 
 void SJISFontLarge::drawChar(uint16 c, byte *dst, int pitch, int) const {
+	_font->setDrawingMode(Graphics::FontSJIS::kDefaultMode);
+	_font->toggleFatPrint(false);
 	_font->drawChar(dst, c, 320, 1, _colorMap[1], _colorMap[0], 320, 200);
 }
 

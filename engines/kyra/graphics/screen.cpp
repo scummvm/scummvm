@@ -65,6 +65,7 @@ Screen::Screen(KyraEngine_v1 *vm, OSystem *system, const ScreenDim *dimTable, co
 	_4bitPixelPacking = false;
 
 	_currentFont = FID_8_FNT;
+	_currentFontType = FTYPE_ASCII;
 	_paletteChanged = true;
 	_curDim = 0;
 }
@@ -160,12 +161,21 @@ bool Screen::init() {
 		}
 
 		if (_useSJIS) {
-			Graphics::FontSJIS *font = Graphics::FontSJIS::createFont(_vm->gameFlags().platform);
+			Common::SharedPtr<Graphics::FontSJIS> font(Graphics::FontSJIS::createFont(_vm->gameFlags().platform));
 
-			if (!font)
+			if (!font.get())
 				error("Could not load any SJIS font, neither the original nor ScummVM's 'SJIS.FNT'");
 
-			_fonts[FID_SJIS_FNT] = new SJISFont(font, _sjisInvisibleColor, _use16ColorMode, !_use16ColorMode && _vm->game() != GI_LOL && _vm->game() != GI_EOB2, _vm->game() == GI_EOB2 && _vm->gameFlags().platform == Common::kPlatformFMTowns, !_use16ColorMode && _vm->game() == GI_LOL ? 1 : 0);
+			if (_use16ColorMode) {
+				_fonts[FID_SJIS_TEXTMODE_FNT] = new SJISFont(font, _sjisInvisibleColor, true, false, _vm->game() == GI_EOB2 && _vm->gameFlags().platform == Common::kPlatformFMTowns, 0);
+				if (_vm->game() == GI_EOB1)
+					_fonts[FID_SJIS_FNT] = new SJISFont(font, _sjisInvisibleColor, false, false, _vm->game() == GI_EOB2 && _vm->gameFlags().platform == Common::kPlatformFMTowns, 0);
+			} else {
+				_fonts[FID_SJIS_FNT] = new SJISFont(font, _sjisInvisibleColor, false, _vm->game() != GI_LOL && _vm->game() != GI_EOB2, _vm->game() == GI_EOB2 && _vm->gameFlags().platform == Common::kPlatformFMTowns, _vm->game() == GI_LOL ? 1 : 0);
+			}
+
+			if (_vm->game() == GI_EOB2 && _vm->gameFlags().platform == Common::kPlatformFMTowns)
+				_fonts[FID_SJIS_LARGE_FNT] = new SJISFontLarge(font);		
 		}
 	}
 
@@ -1397,6 +1407,7 @@ bool Screen::loadFont(FontId fontId, const char *filename) {
 Screen::FontId Screen::setFont(FontId fontId) {
 	FontId prev = _currentFont;
 	_currentFont = fontId;
+	_currentFontType = _currentFont >= FID_SJIS_FNT ? FTYPE_SJIS : FTYPE_ASCII;
 
 	assert(_fonts[_currentFont]);
 	return prev;
@@ -1420,9 +1431,10 @@ int Screen::getTextWidth(const char *str) {
 	int maxLineLen = 0;
 
 	FontId curFont = _currentFont;
+	FontType curType = _currentFontType;
 
 	while (1) {
-		if (_sjisMixedFontMode && curFont != FID_SJIS_FNT && curFont != FID_SJIS_LARGE_FNT && curFont != FID_SJIS_SMALL_FNT)
+		if (_sjisMixedFontMode && curType == FTYPE_ASCII)
 			setFont((*str & 0x80) ? ((_vm->game() == GI_EOB2 && curFont == FID_6_FNT) ? FID_SJIS_SMALL_FNT : FID_SJIS_FNT) : curFont);
 
 		uint c = fetchChar(str);
@@ -1456,6 +1468,7 @@ void Screen::printText(const char *str, int x, int y, uint8 color1, uint8 color2
 	setTextColor(cmap8, 0, 1);
 
 	FontId curFont = _currentFont;
+	FontType curType = _currentFontType;
 
 	if (x < 0)
 		x = 0;
@@ -1469,7 +1482,7 @@ void Screen::printText(const char *str, int x, int y, uint8 color1, uint8 color2
 		return;
 
 	while (1) {
-		if (_sjisMixedFontMode && curFont != FID_SJIS_FNT && curFont != FID_SJIS_LARGE_FNT && curFont != FID_SJIS_SMALL_FNT)
+		if (_sjisMixedFontMode && curType == FTYPE_ASCII)
 			setFont((*str & 0x80) ? ((_vm->game() == GI_EOB2 && curFont == FID_6_FNT) ? FID_SJIS_SMALL_FNT : FID_SJIS_FNT) : curFont);
 
 		uint8 charHeightFnt = getFontHeight();
@@ -1497,7 +1510,7 @@ void Screen::printText(const char *str, int x, int y, uint8 color1, uint8 color2
 }
 
 uint16 Screen::fetchChar(const char *&s) const {
-	if (_currentFont != FID_SJIS_FNT && _currentFont != FID_SJIS_LARGE_FNT && _currentFont != FID_SJIS_SMALL_FNT)
+	if (_currentFontType == FTYPE_ASCII)
 		return (uint8)*s++;
 
 	uint16 ch = (uint8)*s++;
@@ -1529,7 +1542,7 @@ void Screen::drawChar(uint16 c, int x, int y) {
 			return;
 		}
 
-		int bpp = (_currentFont == Screen::FID_SJIS_FNT || _currentFont == Screen::FID_SJIS_SMALL_FNT) ? 1 : 2;
+		int bpp = (_currentFont == Screen::FID_SJIS_LARGE_FNT) ? 2 : 1;
 		destPage += (y * 2) * 640 * bpp + (x * 2 * bpp);
 
 		fnt->drawChar(c, destPage, 640, bpp);
@@ -3770,19 +3783,12 @@ void AMIGAFont::unload() {
 	memset(_chars, 0, sizeof(_chars));
 }
 
-SJISFont::SJISFont(Graphics::FontSJIS *font, const uint8 invisColor, bool is16Color, bool drawOutline, bool fatPrint, int extraSpacing)
-	: _colorMap(0), _font(font), _invisColor(invisColor), _isTextMode(is16Color), _drawOutline(drawOutline), _sjisWidthOffset(extraSpacing) {
+SJISFont::SJISFont(Common::SharedPtr<Graphics::FontSJIS> &font, const uint8 invisColor, bool is16Color, bool drawOutline, bool fatPrint, int extraSpacing)
+	: _colorMap(0), _font(font), _invisColor(invisColor), _isTextMode(is16Color), _drawOutline(drawOutline), _fatPrint(fatPrint), _sjisWidthOffset(extraSpacing) {
 	assert(_font);
-	_font->setDrawingMode(_drawOutline ? Graphics::FontSJIS::kOutlineMode : Graphics::FontSJIS::kDefaultMode);
-	_font->toggleFatPrint(fatPrint);
 	_sjisWidth = _font->getMaxFontWidth() >> 1;
 	_fontHeight = _font->getFontHeight() >> 1;
 	_asciiWidth = _font->getCharWidth('a') >> 1;
-}
-
-void SJISFont::unload() {
-	delete _font;
-	_font = 0;
 }
 
 int SJISFont::getHeight() const {
@@ -3802,13 +3808,6 @@ int SJISFont::getCharWidth(uint16 c) const {
 
 void SJISFont::setColorMap(const uint8 *src) {
 	_colorMap = src;
-
-	if (!_isTextMode) {
-		if (_colorMap[0] == _invisColor)
-			_font->setDrawingMode(Graphics::FontSJIS::kDefaultMode);
-		else
-			_font->setDrawingMode(_drawOutline ? Graphics::FontSJIS::kOutlineMode : Graphics::FontSJIS::kDefaultMode);
-	}
 }
 
 void SJISFont::drawChar(uint16 c, byte *dst, int pitch, int) const {
@@ -3824,6 +3823,12 @@ void SJISFont::drawChar(uint16 c, byte *dst, int pitch, int) const {
 		color2 = _colorMap[0];
 	}
 
+	if (!_isTextMode && _colorMap[0] == _invisColor)
+		_font->setDrawingMode(Graphics::FontSJIS::kDefaultMode);
+	else
+		_font->setDrawingMode(_drawOutline ? Graphics::FontSJIS::kOutlineMode : Graphics::FontSJIS::kDefaultMode);
+
+	_font->toggleFatPrint(_fatPrint);
 	_font->drawChar(dst, c, 640, 1, color1, color2, 640, 400);
 }
 
