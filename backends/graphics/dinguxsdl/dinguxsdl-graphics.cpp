@@ -39,8 +39,8 @@ static const OSystem::GraphicsMode s_supportedGraphicsModes[] = {
 #define DownscaleAllByHalf 0
 #endif
 
-DINGUXSdlGraphicsManager::DINGUXSdlGraphicsManager(SdlEventSource *boss, SdlWindow *window)
-	: SurfaceSdlGraphicsManager(boss, window) {
+DINGUXSdlGraphicsManager::DINGUXSdlGraphicsManager(SdlEventSource *sdlEventSource, SdlWindow *window)
+	: SurfaceSdlGraphicsManager(sdlEventSource, window) {
 }
 
 const OSystem::GraphicsMode *DINGUXSdlGraphicsManager::getSupportedGraphicsModes() const {
@@ -189,7 +189,6 @@ void DINGUXSdlGraphicsManager::drawMouse() {
 
 	// The screen will be updated using real surface coordinates, i.e.
 	// they will not be scaled or aspect-ratio corrected.
-
 	addDirtyRect(dst.x, dst.y, dst.w, dst.h, true);
 }
 
@@ -204,7 +203,7 @@ void DINGUXSdlGraphicsManager::undrawMouse() {
 
 	if (_mouseBackup.w != 0 && _mouseBackup.h != 0) {
 		if (_videoMode.mode == GFX_HALF && !_overlayVisible) {
-			addDirtyRect(x*2, y*2, _mouseBackup.w*2, _mouseBackup.h*2);
+			addDirtyRect(x * 2, y * 2, _mouseBackup.w * 2, _mouseBackup.h * 2);
 		} else {
 			addDirtyRect(x, y, _mouseBackup.w, _mouseBackup.h);
 		}
@@ -305,8 +304,8 @@ void DINGUXSdlGraphicsManager::internUpdateScreen() {
 
 		for (r = _dirtyRectList; r != lastRect; ++r) {
 			dst = *r;
-			dst.x++;	// Shift rect by one since 2xSai needs to access the data around
-			dst.y++;	// any pixel to scale it, and we want to avoid mem access crashes.
+			dst.x++;    // Shift rect by one since 2xSai needs to access the data around
+			dst.y++;    // any pixel to scale it, and we want to avoid mem access crashes.
 
 			if (SDL_BlitSurface(origSurf, r, srcSurf, &dst) != 0)
 				error("SDL_BlitSurface failed: %s", SDL_GetError());
@@ -345,7 +344,7 @@ void DINGUXSdlGraphicsManager::internUpdateScreen() {
 
 				assert(scalerProc != NULL);
 
-				if ((_videoMode.mode == GFX_HALF) && (scalerProc == DownscaleAllByHalf)) {
+				if (_videoMode.mode == GFX_HALF && scalerProc == DownscaleAllByHalf) {
 					if (dst_x % 2 == 1) {
 						dst_x--;
 						dst_w++;
@@ -361,7 +360,6 @@ void DINGUXSdlGraphicsManager::internUpdateScreen() {
 
 					scalerProc((byte *)srcSurf->pixels + (src_x * 2 + 2) + (src_y + 1) * srcPitch, srcPitch,
 					           (byte *)_hwScreen->pixels + dst_x * 2 + dst_y * dstPitch, dstPitch, dst_w, dst_h);
-
 				} else {
 					scalerProc((byte *)srcSurf->pixels + (r->x * 2 + 2) + (r->y + 1) * srcPitch, srcPitch,
 					           (byte *)_hwScreen->pixels + dst_x * 2 + dst_y * dstPitch, dstPitch, dst_w, dst_h);
@@ -378,7 +376,6 @@ void DINGUXSdlGraphicsManager::internUpdateScreen() {
 
 			r->x = dst_x;
 			r->y = dst_y;
-
 
 #ifdef USE_SCALERS
 			if (_videoMode.aspectRatioCorrection && orig_dst_y < height && !_overlayVisible)
@@ -402,6 +399,7 @@ void DINGUXSdlGraphicsManager::internUpdateScreen() {
 #ifdef USE_OSD
 		drawOSD();
 #endif
+
 		// Finally, blit all our changes to the screen
 		SDL_UpdateRects(_hwScreen, _numDirtyRects, _dirtyRectList);
 	}
@@ -413,16 +411,16 @@ void DINGUXSdlGraphicsManager::internUpdateScreen() {
 
 void DINGUXSdlGraphicsManager::showOverlay() {
 	if (_videoMode.mode == GFX_HALF) {
-		_cursorX = _cursorX / 2;
-		_cursorY = _cursorY / 2;
+		_cursorX /= 2;
+		_cursorY /= 2;
 	}
 	SurfaceSdlGraphicsManager::showOverlay();
 }
 
 void DINGUXSdlGraphicsManager::hideOverlay() {
 	if (_videoMode.mode == GFX_HALF) {
-		_cursorX = _cursorX * 2;
-		_cursorY = _cursorY * 2;
+		_cursorX *= 2;
+		_cursorY *= 2;
 	}
 	SurfaceSdlGraphicsManager::hideOverlay();
 }
@@ -497,7 +495,7 @@ bool DINGUXSdlGraphicsManager::getFeatureState(OSystem::Feature f) const {
 
 	switch (f) {
 	case OSystem::kFeatureAspectRatioCorrection:
-			return _videoMode.aspectRatioCorrection;
+		return _videoMode.aspectRatioCorrection;
 	case OSystem::kFeatureCursorPalette:
 		return !_cursorPaletteDisabled;
 	default:
@@ -508,8 +506,8 @@ bool DINGUXSdlGraphicsManager::getFeatureState(OSystem::Feature f) const {
 void DINGUXSdlGraphicsManager::warpMouse(int x, int y) {
 	if (_cursorX != x || _cursorY != y) {
 		if (_videoMode.mode == GFX_HALF && !_overlayVisible) {
-			x = x / 2;
-			y = y / 2;
+			x /= 2;
+			y /= 2;
 		}
 	}
 	SurfaceSdlGraphicsManager::warpMouse(x, y);

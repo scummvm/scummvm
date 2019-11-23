@@ -35,10 +35,6 @@
 #include "graphics/scaler/downscaler.h"
 #include "graphics/surface.h"
 
-enum {
-	GFX_HALF = 12
-};
-
 static const OSystem::GraphicsMode s_supportedGraphicsModes[] = {
 	{"1x", "Fullscreen", GFX_NORMAL},
 	{"½x", "Downscale", GFX_HALF},
@@ -46,7 +42,7 @@ static const OSystem::GraphicsMode s_supportedGraphicsModes[] = {
 };
 
 LinuxmotoSdlGraphicsManager::LinuxmotoSdlGraphicsManager(SdlEventSource *sdlEventSource, SdlWindow *window)
- : SurfaceSdlGraphicsManager(sdlEventSource, window) {
+	: SurfaceSdlGraphicsManager(sdlEventSource, window) {
 }
 
 const OSystem::GraphicsMode *LinuxmotoSdlGraphicsManager::getSupportedGraphicsModes() const {
@@ -116,7 +112,7 @@ void LinuxmotoSdlGraphicsManager::initSize(uint w, uint h, const Graphics::Pixel
 	_videoMode.screenWidth = w;
 	_videoMode.screenHeight = h;
 
-	if	(w > 320 || h > 240) {
+	if (w > 320 || h > 240) {
 		setGraphicsMode(GFX_HALF);
 		setGraphicsModeIntern();
 		_window->toggleMouseGrab();
@@ -127,6 +123,7 @@ void LinuxmotoSdlGraphicsManager::initSize(uint w, uint h, const Graphics::Pixel
 
 bool LinuxmotoSdlGraphicsManager::loadGFXMode() {
 	debug("Game ScreenMode = %d*%d",_videoMode.screenWidth, _videoMode.screenHeight);
+
 	if (_videoMode.screenWidth > 320 || _videoMode.screenHeight > 240) {
 		_videoMode.aspectRatioCorrection = false;
 		setGraphicsMode(GFX_HALF);
@@ -135,6 +132,7 @@ bool LinuxmotoSdlGraphicsManager::loadGFXMode() {
 		setGraphicsMode(GFX_NORMAL);
 		debug("GraphicsMode set to NORMAL");
 	}
+
 	if (_videoMode.mode == GFX_HALF && !_overlayVisible) {
 		_videoMode.overlayWidth = 320;
 		_videoMode.overlayHeight = 240;
@@ -231,7 +229,7 @@ void LinuxmotoSdlGraphicsManager::undrawMouse() {
 
 	if (_mouseBackup.w != 0 && _mouseBackup.h != 0) {
 		if (_videoMode.mode == GFX_HALF && !_overlayVisible) {
-			addDirtyRect(x*2, y*2, _mouseBackup.w*2, _mouseBackup.h*2);
+			addDirtyRect(x * 2, y * 2, _mouseBackup.w * 2, _mouseBackup.h * 2);
 		} else {
 			addDirtyRect(x, y, _mouseBackup.w, _mouseBackup.h);
 		}
@@ -244,7 +242,7 @@ void LinuxmotoSdlGraphicsManager::internUpdateScreen() {
 	ScalerProc *scalerProc;
 	int scale1;
 
-#if defined(DEBUG) // definitions not available for non-DEBUG here. (needed this to compile in SYMBIAN32 & linux?)
+#if defined(DEBUG)
 	assert(_hwScreen != NULL);
 	assert(_hwScreen->map->sw_data != NULL);
 #endif
@@ -268,8 +266,8 @@ void LinuxmotoSdlGraphicsManager::internUpdateScreen() {
 	// screen surface accordingly.
 	if (_screen && _paletteDirtyEnd != 0) {
 		SDL_SetColors(_screen, _currentPalette + _paletteDirtyStart,
-			_paletteDirtyStart,
-			_paletteDirtyEnd - _paletteDirtyStart);
+		              _paletteDirtyStart,
+		              _paletteDirtyEnd - _paletteDirtyStart);
 
 		_paletteDirtyEnd = 0;
 
@@ -319,8 +317,8 @@ void LinuxmotoSdlGraphicsManager::internUpdateScreen() {
 
 		for (r = _dirtyRectList; r != lastRect; ++r) {
 			dst = *r;
-			dst.x++;	// Shift rect by one since 2xSai needs to access the data around
-			dst.y++;	// any pixel to scale it, and we want to avoid mem access crashes.
+			dst.x++;    // Shift rect by one since 2xSai needs to access the data around
+			dst.y++;    // any pixel to scale it, and we want to avoid mem access crashes.
 
 			if (SDL_BlitSurface(origSurf, r, srcSurf, &dst) != 0)
 				error("SDL_BlitSurface failed: %s", SDL_GetError());
@@ -356,12 +354,11 @@ void LinuxmotoSdlGraphicsManager::internUpdateScreen() {
 				assert(scalerProc != NULL);
 
 				if (_videoMode.mode == GFX_HALF && scalerProc == DownscaleAllByHalf) {
-
-					if (dst_x%2==1) {
+					if (dst_x % 2 == 1) {
 						dst_x--;
 						dst_w++;
 					}
-					if (dst_y%2==1) {
+					if (dst_y % 2 == 1) {
 						dst_y--;
 						dst_h++;
 					}

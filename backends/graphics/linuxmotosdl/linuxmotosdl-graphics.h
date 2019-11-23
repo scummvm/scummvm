@@ -25,6 +25,10 @@
 
 #include "backends/graphics/surfacesdl/surfacesdl-graphics.h"
 
+enum {
+	GFX_HALF = 12
+};
+
 class LinuxmotoSdlGraphicsManager : public SurfaceSdlGraphicsManager {
 public:
 	LinuxmotoSdlGraphicsManager(SdlEventSource *sdlEventSource, SdlWindow *window);
