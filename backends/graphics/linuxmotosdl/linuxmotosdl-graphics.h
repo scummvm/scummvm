@@ -31,7 +31,6 @@ public:
 
 	virtual void initSize(uint w, uint h, const Graphics::PixelFormat *format = NULL) override;
 	const OSystem::GraphicsMode *getSupportedGraphicsModes() const override;
-	virtual void setGraphicsModeIntern() override;
 	virtual int getGraphicsModeScale(int mode) const override;
 	virtual void internUpdateScreen() override;
 	virtual ScalerProc *getGraphicsScalerProc(int mode) const override;
