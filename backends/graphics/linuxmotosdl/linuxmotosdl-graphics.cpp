@@ -148,7 +148,7 @@ bool LinuxmotoSdlGraphicsManager::loadGFXMode() {
 			_videoMode.overlayHeight = real2Aspect(_videoMode.overlayHeight);
 
 		_videoMode.hardwareWidth = _videoMode.screenWidth * _videoMode.scaleFactor;
-		_videoMode.hardwareHeight = effectiveScreenHeight();
+		_videoMode.hardwareHeight = _videoMode.hardwareHeight;
 	}
 
 	return SurfaceSdlGraphicsManager::loadGFXMode();
@@ -294,7 +294,7 @@ void LinuxmotoSdlGraphicsManager::internUpdateScreen() {
 
 	// Add the area covered by the mouse cursor to the list of dirty rects if
 	// we have to redraw the mouse.
-	if (_mouseNeedsRedraw)
+	if (_cursorNeedsRedraw)
 		undrawMouse();
 
 #ifdef USE_OSD
@@ -311,7 +311,7 @@ void LinuxmotoSdlGraphicsManager::internUpdateScreen() {
 	}
 
 	// Only draw anything if necessary
-	if (_numDirtyRects > 0 || _mouseNeedsRedraw) {
+	if (_numDirtyRects > 0 || _cursorNeedsRedraw) {
 		SDL_Rect *r;
 		SDL_Rect dst;
 		uint32 srcPitch, dstPitch;
@@ -403,7 +403,7 @@ void LinuxmotoSdlGraphicsManager::internUpdateScreen() {
 		// This is necessary if shaking is active.
 		if (_forceRedraw) {
 			_dirtyRectList[0].y = 0;
-			_dirtyRectList[0].h = (_videoMode.mode == GFX_HALF) ? effectiveScreenHeight()/2 : effectiveScreenHeight();
+			_dirtyRectList[0].h = (_videoMode.mode == GFX_HALF) ? _videoMode.hardwareHeight / 2 : _videoMode.hardwareHeight;
 		}
 
 		drawMouse();
@@ -418,7 +418,7 @@ void LinuxmotoSdlGraphicsManager::internUpdateScreen() {
 
 	_numDirtyRects = 0;
 	_forceRedraw = false;
-	_mouseNeedsRedraw = false;
+	_cursorNeedsRedraw = false;
 }
 
 void LinuxmotoSdlGraphicsManager::showOverlay() {
