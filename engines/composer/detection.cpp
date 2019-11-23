@@ -63,6 +63,7 @@ static const PlainGameDescriptor composerGames[] = {
 	{"littlesamurai", "Magic Tales: The Little Samurai"},
 	{"princess", "Magic Tales: The Princess and the Crab"},
 	{"sleepingcub", "Magic Tales: Sleeping Cub's Test of Courage"},
+	{"magictales", "Magic Tales"},
 	{0, 0}
 };
 
@@ -125,6 +126,57 @@ static const ComposerGameDescription gameDescriptions[] = {
 		GType_ComposerV1
 	},
 
+	// Magic Tales: Imo and the King Hebrew
+	{
+		{
+			"imoking",
+			"",
+			{
+				{"book.ini", 0, "2b3eb997e8f55a03e81f67563c40adf4", 3337},
+				AD_LISTEND
+			},
+			Common::HE_ISR,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			GUIO2(GUIO_NOASPECT, GUIO_NOMIDI)
+		},
+		GType_ComposerV1
+	},
+
+	// Baba Yaga Demo from Imo and the King Hebrew CD
+	{
+		{
+			"babayaga",
+			"Magic Tales: Baba Yaga and the Magic Geese Demo",
+			{
+				{"by_demo.ini", 0, "4a87806683add232916298d6b62b9420", 224},
+				AD_LISTEND
+			},
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_USEEXTRAASTITLE | ADGF_DEMO,
+			GUIO2(GUIO_NOASPECT, GUIO_NOMIDI)
+		},
+		GType_ComposerV1
+	},
+
+	// Little Samurai Demo from Imo and the King Hebrew CD
+	{
+		{
+			"littlesamurai",
+			"Magic Tales: The Little Samurai Demo",
+			{
+				{"ls_demo.ini", 0, "462cad83006721d2491dde7ef7a2d243", 223},
+				AD_LISTEND
+			},
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_USEEXTRAASTITLE | ADGF_DEMO,
+			GUIO2(GUIO_NOASPECT, GUIO_NOMIDI)
+		},
+		GType_ComposerV1
+	},
+
 	// Magic Tales: Imo and the King Mac - from bug #3466402
 	{
 		{
@@ -167,6 +219,20 @@ static const ComposerGameDescription gameDescriptions[] = {
 		GType_ComposerV1
 	},
 
+	// Magic Tales: The Little Samurai Hebrew
+	{
+		{
+			"littlesamurai",
+			"",
+			AD_ENTRY1s("book.ini", "c5f2c84df04780e7e67c70ec85b780a8", 3789),
+			Common::HE_ISR,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			GUIO2(GUIO_NOASPECT, GUIO_NOMIDI)
+		},
+		GType_ComposerV1
+	},
+
 	// Magic Tales: The Little Samurai Mac - from bug #3466402
 	{
 		{
@@ -188,6 +254,20 @@ static const ComposerGameDescription gameDescriptions[] = {
 			"Magic Tales Demo: Baby Yaga, Samurai, Imo",
 			AD_ENTRY1("book.ini", "dbc98c566f4ac61b544443524585dccb"),
 			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_USEEXTRAASTITLE | ADGF_DEMO,
+			GUIO2(GUIO_NOASPECT, GUIO_NOMIDI)
+		},
+		GType_ComposerV1
+	},
+
+	// from Little Samurai Hebrew CD
+	{
+		{
+			"magictales",
+			"Magic Tales Demo: Baby Yaga, Samurai, Imo",
+			AD_ENTRY1("demo.ini", "ea784af960375834d655eb7281cd4500"),
+			Common::HE_ISR,
 			Common::kPlatformWindows,
 			ADGF_USEEXTRAASTITLE | ADGF_DEMO,
 			GUIO2(GUIO_NOASPECT, GUIO_NOMIDI)
