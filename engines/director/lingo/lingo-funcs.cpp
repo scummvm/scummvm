@@ -290,6 +290,11 @@ void Lingo::func_play(Datum &frame, Datum &movie) {
 		return;
 	}
 
+	if (!_vm->getCurrentScore()) {
+		warning("Lingo::func_play(): no score");
+		return;
+	}
+
 	ref.frameI = _vm->getCurrentScore()->getCurrentFrame();
 
 	_vm->_movieStack.push_back(ref);
