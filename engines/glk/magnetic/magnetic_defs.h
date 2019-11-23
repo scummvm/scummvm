@@ -42,10 +42,10 @@ typedef int16 type16s;
 typedef uint32 type32;
 typedef int32 type32s;
 
-enum { BYTE_MAX = 255 };
+enum { BYTE_MAX_VAL = 255 };
 enum { BITS_PER_BYTE = 8 };
-enum { UINT16_MAX = 0xffff };
-enum { INT32_MAX = 0x7fffffff };
+enum { UINT16_MAX_VAL = 0xffff };
+enum { INT32_MAX_VAL = 0x7fffffff };
 
 #define MAX_HINTS 260
 #define MAX_HCONTENTS 30000

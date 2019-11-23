@@ -182,7 +182,7 @@ GMS_HINT_DEFAULT_HEIGHT = 25;
  * quit from hints subsystem.
  */
 static const type16 GMS_HINT_ROOT_NODE = 0,
-GMS_HINTS_DONE = UINT16_MAX;
+GMS_HINTS_DONE = UINT16_MAX_VAL;
 
 /* Generic hint topic for the root hints node. */
 static const char *const GMS_GENERIC_TOPIC = "Hints Menu";
@@ -289,7 +289,7 @@ glui32 Magnetic::gms_get_buffer_crc(const void *void_buffer, size_t length) {
 	 */
 	crc = 0xffffffff;
 	for (index = 0; index < length; index++)
-		crc = crc_table[(crc ^ buf[index]) & BYTE_MAX] ^ (crc >> BITS_PER_BYTE);
+		crc = crc_table[(crc ^ buf[index]) & BYTE_MAX_VAL] ^ (crc >> BITS_PER_BYTE);
 	return crc ^ 0xffffffff;
 }
 
@@ -554,7 +554,7 @@ gms_gammaref_t Magnetic::gms_graphics_equal_contrast_gamma(type16 palette[], lon
 	assert(palette && color_usage);
 
 	result = NULL;
-	lowest_variance = INT32_MAX;
+	lowest_variance = INT32_MAX_VAL;
 
 	/* Search the gamma table for the entry with the lowest contrast variance. */
 	for (gamma = GMS_GAMMA_TABLE; gamma->level; gamma++) {
@@ -2345,7 +2345,7 @@ type16 Magnetic::gms_hint_handle_folder(const ms_hint hints_[],
 		response = 'Q';
 		break;
 	default:
-		response = keycode <= BYTE_MAX ? glk_char_to_upper(keycode) : 0;
+		response = keycode <= BYTE_MAX_VAL ? glk_char_to_upper(keycode) : 0;
 		break;
 	}
 
@@ -2406,7 +2406,7 @@ type16 Magnetic::gms_hint_handle_text(const ms_hint hints_[],
 		response = 'Q';
 		break;
 	default:
-		response = keycode <= BYTE_MAX ? glk_char_to_upper(keycode) : 0;
+		response = keycode <= BYTE_MAX_VAL ? glk_char_to_upper(keycode) : 0;
 		break;
 	}
 
