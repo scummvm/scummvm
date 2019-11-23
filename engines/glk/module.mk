@@ -69,6 +69,12 @@ MODULE_OBJS += \
 	advsys/vm.o
 endif
 
+ifdef ENABLE_GLK_AGT
+MODULE_OBJS += \
+	agt/agt.o \
+	agt/detection.o
+endif
+
 ifdef ENABLE_GLK_ALAN2
 MODULE_OBJS += \
 	alan2/alan2.o \

@@ -34,6 +34,11 @@
 #include "glk/advsys/advsys.h"
 #endif
 
+#ifdef ENABLE_GLK_AGT
+#include "glk/agt/detection.h"
+#include "glk/agt/agt.h"
+#endif
+
 #ifdef ENABLE_GLK_ALAN2
 #include "glk/alan2/detection.h"
 #include "glk/alan2/alan2.h"
@@ -214,6 +219,10 @@ Common::Error GlkMetaEngine::createInstance(OSystem *syst, Engine **engine) cons
 	if ((*engine = create<Glk::AdvSys::AdvSysMetaEngine, Glk::AdvSys::AdvSys>(syst, gameDesc)) != nullptr) {}
 	else
 #endif
+#ifdef ENABLE_GLK_AGT
+		if ((*engine = create<Glk::AGT::AGTMetaEngine, Glk::AGT::AGT>(syst, gameDesc)) != nullptr) {}
+		else
+#endif
 #ifdef ENABLE_GLK_ALAN2
 	if ((*engine = create<Glk::Alan2::Alan2MetaEngine, Glk::Alan2::Alan2>(syst, gameDesc)) != nullptr) {}
 	else
@@ -303,6 +312,9 @@ PlainGameList GlkMetaEngine::getSupportedGames() const {
 #ifdef ENABLE_GLK_ADVSYS
 	Glk::AdvSys::AdvSysMetaEngine::getSupportedGames(list);
 #endif
+#ifdef ENABLE_GLK_AGT
+	Glk::AGT::AGTMetaEngine::getSupportedGames(list);
+#endif
 #ifdef ENABLE_GLK_ALAN2
 	Glk::Alan2::Alan2MetaEngine::getSupportedGames(list);
 #endif
@@ -357,6 +369,9 @@ PlainGameDescriptor GlkMetaEngine::findGame(const char *gameId) const {
 #ifdef ENABLE_GLK_ALAN2
 	FIND_GAME(Alan2);
 #endif
+#ifdef ENABLE_GLK_AGT
+	FIND_GAME(AGT);
+#endif
 #ifdef ENABLE_GLK_ALAN3
 	FIND_GAME(Alan3);
 #endif
@@ -407,6 +422,9 @@ DetectedGames GlkMetaEngine::detectGames(const Common::FSList &fslist) const {
 #ifdef ENABLE_GLK_ADVSYS
 	Glk::AdvSys::AdvSysMetaEngine::detectGames(fslist, detectedGames);
 #endif
+#ifdef ENABLE_GLK_AGT
+	Glk::AGT::AGTMetaEngine::detectGames(fslist, detectedGames);
+#endif
 #ifdef ENABLE_GLK_ALAN2
 	Glk::Alan2::Alan2MetaEngine::detectGames(fslist, detectedGames);
 #endif
@@ -454,6 +472,9 @@ void GlkMetaEngine::detectClashes() const {
 #endif
 #ifdef ENABLE_GLK_ADVSYS
 	Glk::AdvSys::AdvSysMetaEngine::detectClashes(map);
+#endif
+#ifdef ENABLE_GLK_AGT
+	Glk::AGT::AGTMetaEngine::detectClashes(map);
 #endif
 #ifdef ENABLE_GLK_ALAN2
 	Glk::Alan2::Alan2MetaEngine::detectClashes(map);
