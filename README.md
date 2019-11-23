@@ -2541,6 +2541,10 @@ previous default location of `~/.scummvmrc` will be kept.
 `~/Library/Preferences/ScummVM Preferences` (here, `~` refers to your
 home directory)
 
+**iOS:**
+
+`/var/mobile/Library/ScummVM/scummvm.ini`
+
 **Others:**
 
 `scummvm.ini` in the current directory
