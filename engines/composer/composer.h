@@ -175,6 +175,7 @@ public:
 	const char *getGameId() const;
 	uint32 getFeatures() const;
 	Common::Language getLanguage() const;
+	Common::Platform getPlatform() const;
 
 	const ComposerGameDescription *_gameDescription;
 

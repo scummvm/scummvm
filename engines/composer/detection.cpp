@@ -52,6 +52,10 @@ Common::Language ComposerEngine::getLanguage() const {
 	return _gameDescription->desc.language;
 }
 
+Common::Platform ComposerEngine::getPlatform() const {
+	return _gameDescription->desc.platform;
+}
+
 }
 
 static const PlainGameDescriptor composerGames[] = {
@@ -126,7 +130,7 @@ static const ComposerGameDescription gameDescriptions[] = {
 		GType_ComposerV1
 	},
 
-	// Magic Tales: Imo and the King Hebrew
+	// Magic Tales: Imo and the King Hebrew Windows
 	{
 		{
 			"imoking",
@@ -137,6 +141,23 @@ static const ComposerGameDescription gameDescriptions[] = {
 			},
 			Common::HE_ISR,
 			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			GUIO2(GUIO_NOASPECT, GUIO_NOMIDI)
+		},
+		GType_ComposerV1
+	},
+
+	// Magic Tales: Imo and the King Hebrew Macintosh
+	{
+		{
+			"imoking",
+			"",
+			{
+				{"book.mac", 0, "4896a22874bb660f5ba26a0af111f9c0", 1868},
+				AD_LISTEND
+			},
+			Common::HE_ISR,
+			Common::kPlatformMacintosh,
 			ADGF_NO_FLAGS,
 			GUIO2(GUIO_NOASPECT, GUIO_NOMIDI)
 		},
@@ -171,6 +192,40 @@ static const ComposerGameDescription gameDescriptions[] = {
 			},
 			Common::EN_ANY,
 			Common::kPlatformWindows,
+			ADGF_USEEXTRAASTITLE | ADGF_DEMO,
+			GUIO2(GUIO_NOASPECT, GUIO_NOMIDI)
+		},
+		GType_ComposerV1
+	},
+
+	// Baba Yaga Demo from Imo and the King Hebrew CD
+	{
+		{
+			"babayaga",
+			"Magic Tales: Baba Yaga and the Magic Geese Demo",
+			{
+				{"book.mac", 0, "ed4a902df3b26d58e9c013f814a30ee8", 134},
+				AD_LISTEND
+			},
+			Common::EN_ANY,
+			Common::kPlatformMacintosh,
+			ADGF_USEEXTRAASTITLE | ADGF_DEMO,
+			GUIO2(GUIO_NOASPECT, GUIO_NOMIDI)
+		},
+		GType_ComposerV1
+	},
+
+	// Little Samurai Demo from Imo and the King Hebrew CD
+	{
+		{
+			"littlesamurai",
+			"Magic Tales: The Little Samurai Demo",
+			{
+				{"book.mac", 0, "57a82d563800001ed88b2742c3650a2d", 136},
+				AD_LISTEND
+			},
+			Common::EN_ANY,
+			Common::kPlatformMacintosh,
 			ADGF_USEEXTRAASTITLE | ADGF_DEMO,
 			GUIO2(GUIO_NOASPECT, GUIO_NOMIDI)
 		},
@@ -219,7 +274,21 @@ static const ComposerGameDescription gameDescriptions[] = {
 		GType_ComposerV1
 	},
 
-	// Magic Tales: The Little Samurai Hebrew
+	// Magic Tales: The Little Samurai Mac - from bug #3466402
+	{
+		{
+			"littlesamurai",
+			"",
+			AD_ENTRY1("The Little Samurai", "38121dd649c24e8676aa108cf35d44b5"),
+			Common::EN_ANY,
+			Common::kPlatformMacintosh,
+			ADGF_NO_FLAGS,
+			GUIO2(GUIO_NOASPECT, GUIO_NOMIDI)
+		},
+		GType_ComposerV1
+	},
+
+	// Magic Tales: The Little Samurai Hebrew Windows
 	{
 		{
 			"littlesamurai",
@@ -233,13 +302,13 @@ static const ComposerGameDescription gameDescriptions[] = {
 		GType_ComposerV1
 	},
 
-	// Magic Tales: The Little Samurai Mac - from bug #3466402
+	// Magic Tales: The Little Samurai Hebrew Macintosh
 	{
 		{
 			"littlesamurai",
 			"",
-			AD_ENTRY1("The Little Samurai", "38121dd649c24e8676aa108cf35d44b5"),
-			Common::EN_ANY,
+			AD_ENTRY1s("book.mac", "190158751630f69c2b6cf146aa2f1efc", 1874),
+			Common::HE_ISR,
 			Common::kPlatformMacintosh,
 			ADGF_NO_FLAGS,
 			GUIO2(GUIO_NOASPECT, GUIO_NOMIDI)
@@ -261,7 +330,7 @@ static const ComposerGameDescription gameDescriptions[] = {
 		GType_ComposerV1
 	},
 
-	// from Little Samurai Hebrew CD
+	// Windows Demo from Little Samurai Hebrew CD
 	{
 		{
 			"magictales",
@@ -269,6 +338,20 @@ static const ComposerGameDescription gameDescriptions[] = {
 			AD_ENTRY1("demo.ini", "ea784af960375834d655eb7281cd4500"),
 			Common::HE_ISR,
 			Common::kPlatformWindows,
+			ADGF_USEEXTRAASTITLE | ADGF_DEMO,
+			GUIO2(GUIO_NOASPECT, GUIO_NOMIDI)
+		},
+		GType_ComposerV1
+	},
+
+	// Macintosh Demo from Little Samurai Hebrew CD
+	{
+		{
+			"magictales",
+			"Magic Tales Demo: Baby Yaga, Samurai, Imo",
+			AD_ENTRY1s("demo.mac", "6e775cda6539102d1ddee852bebf32c1", 488),
+			Common::HE_ISR,
+			Common::kPlatformMacintosh,
 			ADGF_USEEXTRAASTITLE | ADGF_DEMO,
 			GUIO2(GUIO_NOASPECT, GUIO_NOMIDI)
 		},
