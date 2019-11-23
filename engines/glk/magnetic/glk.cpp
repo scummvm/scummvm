@@ -3980,13 +3980,17 @@ void Magnetic::writeChar(char c) {
 }
 
 void Magnetic::script_write(type8 c) {
-	if (log_on == 2)
-		log1->writeByte(c);
+	if (log_on == 2) {
+		if (_log1) {
+			_log1->writeByte(c);
+		}
+	}
 }
 
 void Magnetic::transcript_write(type8 c) {
-	if (log2)
-		log2->writeByte(c);
+	if (_log2) {
+		_log2->writeByte(c);
+	}
 }
 
 } // End of namespace Magnetic

@@ -64,7 +64,7 @@ Magnetic::Magnetic(OSystem *syst, const GlkGameDescription &gameDesc) : GlkAPI(s
 		pos_table_index(-1), pos_table_max(-1), anim_repeat(0)
 #endif
 		, hints(nullptr), hint_contents(nullptr), xpos(0), bufpos(0), log_on(0),
-		ms_gfx_enabled(0), log1(nullptr), log2(nullptr), GMS_LUMINANCE_WEIGHTS(299, 587, 114),
+		ms_gfx_enabled(0), _log1(nullptr), _log2(nullptr), GMS_LUMINANCE_WEIGHTS(299, 587, 114),
 		linear_gamma(nullptr), pic_current_crc(0), hints_current_crc(0),
 		hints_crc_initialized(false), _saveData(nullptr), _saveSize(0) {
 

@@ -259,7 +259,7 @@ private:
 	size_t _saveSize;
 private:
 	type8 buffer[80], xpos, bufpos, log_on, ms_gfx_enabled, filename[256];
-	Common::DumpFile *log1, *log2;
+	Common::DumpFile *_log1, *_log2;
 private:
 	/* Method local statics in original code */
 	glui32 crc_table[BYTE_MAX_VAL + 1];
