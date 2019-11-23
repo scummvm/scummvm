@@ -2706,6 +2706,9 @@ Standardmäßig wird die Konfigurationsdatei hier gespeichert und geladen:
     ~/Library/Preferences/ScummVM Preferences
     (Hierbei bezieht sich ~ auf das Benutzerverzeichnis.)
 
+    iOS:
+    /var/mobile/Library/ScummVM/scummvm.ini
+
     Sonstige:
     scummvm.ini im aktuellen Verzeichnis
 
