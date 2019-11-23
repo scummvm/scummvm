@@ -2102,6 +2102,7 @@ type16 Magnetic::show_hints_text(ms_hint *hintsData, type16 index) {
 			case -4: /* Show parent hint list */
 				if (hint->parent != 0xffff)
 					return 0;
+				// fallthrough
 			default:
 				if ((input > 0) && (input <= hint->elcount)) {
 					if (show_hints_text(hintsData, hint->links[input - 1]) == 1)

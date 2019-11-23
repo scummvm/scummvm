@@ -738,7 +738,7 @@ void Magnetic::gms_graphics_convert_palette(type16 ms_palette[], gms_gammaref_t 
 
 void Magnetic::gms_graphics_position_picture(winid_t glk_window,
         int pixel_size, type16 width, type16 height, int *x_offset, int *y_offset) {
-	glui32 window_width, window_height;
+	uint window_width, window_height;
 	assert(glk_window && x_offset && y_offset);
 
 	/* Measure the current graphics window dimensions. */
@@ -1630,7 +1630,7 @@ void Magnetic::ms_statuschar(type8 c) {
 }
 
 void Magnetic::gms_status_update() {
-	glui32 width, height;
+	uint width, height;
 	int index;
 	assert(gms_status_window);
 
@@ -2197,8 +2197,13 @@ void Magnetic::gms_hint_arrange_windows(int requested_lines, glui32 *width, glui
 		                                 winmethod_Above | winmethod_Fixed,
 		                                 requested_lines, NULL);
 
+		uint width_temp, height_temp;
+
 		/* Measure, and return the size of the hint menu window. */
-		glk_window_get_size(gms_hint_menu_window, width, height);
+		glk_window_get_size(gms_hint_menu_window, &width_temp, &height_temp);
+
+		*width = width_temp;
+		*height = height_temp;
 
 		/* Clear both the hint menu and the hint text window. */
 		glk_window_clear(gms_hint_menu_window);
