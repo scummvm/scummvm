@@ -619,7 +619,8 @@ gms_gammaref_t Magnetic::gms_graphics_select_gamma(type8 bitmap[],
 
 void Magnetic::gms_graphics_clear_and_border(winid_t glk_window,
         int x_offset, int y_offset, int pixel_size, type16 width, type16 height) {
-	glui32 background, fade_color, shading_color;
+	uint background;
+	glui32 fade_color, shading_color;
 	gms_rgb_t rgb_background, rgb_border, rgb_fade;
 	int index;
 	assert(glk_window);
