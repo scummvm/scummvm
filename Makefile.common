@@ -56,15 +56,6 @@ CPPFLAGS := $(DEFINES) $(INCLUDES)
 DEPDIRS = $(addsuffix $(DEPDIR),$(MODULE_DIRS))
 DEPFILES =
 
-# Make base/version.o depend on all other object files. This way if anything is
-# changed, it causes version.cpp to be recompiled. This in turn ensures that
-# the build date in gScummVMBuildDate is correct.
-base/version.o: $(filter-out base/libbase.a,$(OBJS))
-
-ifdef USE_ELF_LOADER
-backends/plugins/elf/version.o: $(filter-out base/libbase.a,$(filter-out backends/libbackends.a,$(OBJS)))
-endif
-
 # Replace regular output with quiet messages
 ifneq ($(findstring $(MAKEFLAGS),s),s)
 ifneq ($(VERBOSE_BUILD),1)
@@ -215,6 +206,11 @@ endif
 # specified by the user, but only for base/version.cpp.
 ifneq ($(origin VER_REV), undefined)
 base/version.o: CXXFLAGS:=$(CXXFLAGS) -DSCUMMVM_REVISION=\"$(VER_REV)\"
+base/version.o: .FORCE
+endif
+
+ifdef USE_ELF_LOADER
+backends/plugins/elf/version.o: .FORCE
 endif
 
 ######################################################################
@@ -378,3 +374,5 @@ DIST_FILES_ENGINEDATA+=$(srcdir)/dists/pred.dic
 endif
 
 .PHONY: all clean distclean plugins dist-src
+
+.FORCE:
