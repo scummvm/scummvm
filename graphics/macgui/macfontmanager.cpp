@@ -340,6 +340,9 @@ void MacFontManager::clearFontMapping() {
 const Common::String MacFontManager::getFontName(int id, int size, int slant, bool tryGen) {
 	Common::String n;
 
+	if (id == 3) // This is Geneva
+		id = 1;
+
 	if (_extraFontNames.contains(id)) {
 		n = _extraFontNames[id];
 	} else if (id < ARRAYSIZE(fontNames)) {
