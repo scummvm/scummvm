@@ -43,6 +43,7 @@ public:
 	virtual ~FontManager();
 
 	void loadFonts(const Common::Array<Common::String> &fontFiles, Common::CodePage codepage);
+	void loadTTFList(const Common::String &listFile, Common::CodePage codepage);
 	void setCurrentFont(int currentFont);
 	uint getCurrentFont() { return _currentFontId; }
 	void setTransparentBackground(bool transparent) { _transparentBackground = transparent; }

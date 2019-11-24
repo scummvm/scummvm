@@ -24,6 +24,9 @@
 #include "common/file.h"
 #include "common/hash-ptr.h"
 #include "common/hash-str.h"
+#ifdef USE_FREETYPE2
+#include "graphics/fonts/ttf.h"
+#endif
 #include "graphics/managed_surface.h"
 
 #include "cryomni3d/font_manager.h"
@@ -88,6 +91,68 @@ void FontManager::loadFonts(const Common::Array<Common::String> &fontFiles,
 			fontsCache[*it] = font;
 		}
 	}
+}
+
+void FontManager::loadTTFList(const Common::String &ttfList, Common::CodePage codepage) {
+#ifdef USE_FREETYPE2
+	assert(codepage != Common::kCodePageInvalid);
+	_codepage = codepage;
+	setupWrapParameters();
+
+	// Freetype2 is configured to use Unicode
+	_toUnicode = true;
+
+	_fonts.clear();
+
+	Common::File list;
+
+	if (!list.open(ttfList)) {
+		error("can't open file %s", ttfList.c_str());
+	}
+
+	Common::String line = list.readLine();
+	uint32 num = atoi(line.c_str());
+
+	_fonts.reserve(num);
+
+	for (uint i = 0; i < num; i++) {
+		line = list.readLine();
+		if (line.size() == 0) {
+			error("Invalid font list: missing line");
+		}
+
+		uint32 sharpFile = line.find("#");
+		if (sharpFile == Common::String::npos) {
+			error("Invalid font list: missing #");
+		}
+		uint32 sharpFlags = line.find("#", sharpFile + 1);
+		if (sharpFlags == Common::String::npos) {
+			error("Invalid font list: missing #");
+		}
+
+		Common::String fontFace(line.begin(), line.begin() + sharpFile);
+		Common::U32String uniFontFace = fontFace.decode(codepage);
+		Common::String fontFile(line.begin() + sharpFile + 1, line.begin() + sharpFlags);
+		Common::String sizeFlags(line.begin() + sharpFlags + 1, line.end());
+
+		uint32 size = atoi(sizeFlags.c_str());
+		bool bold = sizeFlags.contains('B');
+		bool italic = sizeFlags.contains('I');
+
+		Common::Array<Common::String> fontFiles;
+		fontFiles.push_back(fontFile);
+
+		// Use 96 dpi as it's the default under Windows
+		Graphics::Font *font = Graphics::findTTFace(fontFiles, uniFontFace, bold, italic, -size,
+		                       96, Graphics::kTTFRenderModeMonochrome);
+		if (!font) {
+			error("Can't find required face (line %u) in %s", i, fontFile.c_str());
+		}
+		_fonts.push_back(font);
+	}
+#else
+	error("TrueType support not compiled in");
+#endif
 }
 
 Common::U32String FontManager::toU32(const Common::String &str) const {
