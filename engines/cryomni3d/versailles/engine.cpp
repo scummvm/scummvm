@@ -292,6 +292,9 @@ void CryOmni3DEngine_Versailles::setupFonts() {
 
 		_fontManager.loadFonts(fonts, Common::kWindows950);
 		return;
+	} else if (getLanguage() == Common::KO_KOR) {
+		_fontManager.loadTTFList("FONTS_KR.LST", Common::kWindows949);
+		return;
 	}
 
 	// Code below is for SBCS encodings (ie. non CJK)
