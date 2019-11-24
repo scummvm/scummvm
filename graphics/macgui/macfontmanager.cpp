@@ -38,7 +38,7 @@ static const char *const fontNames[] = {
 	"Chicago",	// system font
 	"Geneva",	// application font
 	"New York",
-	"Geneva",
+	NULL, // FIXME: "Geneva",
 
 	"Monaco",
 	"Venice",
