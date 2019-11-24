@@ -33,6 +33,8 @@ void CachedMacText::makeMacText() {
 	assert(_width != -1);
 	assert(_wm != NULL);
 
+	delete _macText;
+
 	if ((int)_textCast->textAlign == -1)
 		_align = (Graphics::TextAlign)3;
 	else
@@ -96,8 +98,9 @@ void CachedMacText::clip(int width) {
 }
 
 void CachedMacText::forceDirty() {
-	// STUB
-	assert(false);
+	_dirty = true;
+
+	makeMacText();
 }
 
 const Graphics::ManagedSurface *CachedMacText::getSurface() {
