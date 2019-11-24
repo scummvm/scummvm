@@ -193,7 +193,7 @@ void Score::loadArchive() {
 	}
 
 	// Try to load compiled Lingo scripts
-	if (_vm->getVersion() >= 4) {
+	if (_vm->getVersion() >= 4 && 0) {
 		Common::Array<uint16> lscr =  _movieArchive->getResourceIDList(MKTAG('L','s','c','r'));
 		if (lscr.size() > 0) {
 			debugC(2, kDebugLoading, "****** Loading %d Lscr resources", lscr.size());
