@@ -792,6 +792,9 @@ void Frame::renderText(Graphics::ManagedSurface &surface, uint16 spriteId, Commo
 	textCast->cachedMacText->setWm(_vm->_wm); // TODO this is not a good place to do it
 	const Graphics::ManagedSurface *textSurface = textCast->cachedMacText->getSurface();
 
+	if (!textSurface)
+		return;
+
 	height = textSurface->h;
 	if (textSize != NULL) {
 		// TODO: this offset could be due to incorrect fonts loaded!
