@@ -690,6 +690,7 @@ protected:
 	bool _useOverlays;
 	bool _useSJIS;
 	bool _use16ColorMode;
+	bool _use256ColorMode;
 	bool _4bitPixelPacking;
 	bool _useHiResEGADithering;
 	bool _useHiColorScreen;

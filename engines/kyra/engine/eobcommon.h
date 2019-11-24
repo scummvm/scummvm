@@ -629,6 +629,8 @@ protected:
 	int8 _currentSub;
 	Common::String _curGfxFile;
 	Common::String _curBlockFile;
+	Common::String _vcnFilePattern;
+	Common::String _vmpFilePattern;
 
 	uint32 _drawSceneTimer;
 	uint32 _flashShapeTimer;

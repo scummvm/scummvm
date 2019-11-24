@@ -282,7 +282,7 @@ void CharacterGenerator::init() {
 		_screen->fadeToBlack(32);
 
 	_screen->loadEoBBitmap("CHARGEN", _vm->_cgaMappingDefault, 5, 3, 0);
-	_screen->loadPC98Palette(4, _screen->getPalette(0));
+	_screen->selectPC98Palette(4, _screen->getPalette(0));
 
 	if (_vm->gameFlags().platform == Common::kPlatformAmiga || (_vm->game() == GI_EOB1 && _vm->gameFlags().platform == Common::kPlatformPC98))
 		_screen->fadeFromBlack(32);

@@ -181,9 +181,9 @@ friend class ::KyraMetaEngine;
 friend class GUI;
 friend class GUI_v1;
 friend class GUI_EoB;
-friend class SoundMidiPC;    // For _eventMan
-friend class SeqPlayer_HOF; // For skipFlag()
-friend class TransferPartyWiz; // For save state API
+friend class SoundMidiPC;		// For _eventMan
+friend class SeqPlayer_HOF;		// For skipFlag()
+friend class TransferPartyWiz;	// For save state API
 public:
 	KyraEngine_v1(OSystem *system, const GameFlags &flags);
 	virtual ~KyraEngine_v1();

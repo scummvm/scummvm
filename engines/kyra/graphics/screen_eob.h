@@ -91,14 +91,11 @@ public:
 	void shadeRect(int x1, int y1, int x2, int y2, int shadingLevel);
 
 	// PC-98 specific
-	void loadPC98Palette(int palID, Palette &dest);
-	void setPC98PaletteBrightness(int modifier);
+	void selectPC98Palette(int paletteIndex, Palette &dest, int brightness = 0, bool set = false);
 	void decodeBIN(const uint8 *src, uint8 *dst, uint16 inSize);
-	void decodePC98PlanarBitmap(int srcDstPage, int tempPage);
+	void decodePC98PlanarBitmap(uint8 *srcDstBuffer, uint8 *tmpBuffer, uint16 size = 64000);
 
 	uint8 *_decodeTempBuffer;
-	int _curPalID;
-	Palette *_curPal;
 
 	// Amiga specific
 	void loadSpecialAmigaCPS(const char *fileName, int destPage, bool isGraphics);
@@ -148,7 +145,7 @@ private:
 	// hard coded 16 color palettes for PC98 version of EOB1
 	const uint8 *_palette16c[10];
 
-	const char *_cpsFileExt;
+	Common::String _cpsFilePattern;
 
 	const uint16 _cursorColorKey16Bit;
 

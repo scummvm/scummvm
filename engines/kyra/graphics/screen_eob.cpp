@@ -63,10 +63,8 @@ Screen_EoB::Screen_EoB(EoBCoreEngine *vm, OSystem *system) : Screen(vm, system, 
 	_cgaMappingDefault = 0;
 	_cgaDitheringTables[0] = _cgaDitheringTables[1] = 0;
 	_useHiResEGADithering = _dualPaletteMode = false;
-	_cpsFileExt = 0;
 	_decodeTempBuffer = 0;
-	_curPalID = 0;
-	_curPal = 0;
+	_cpsFilePattern = "%s.";
 	for (int i = 0; i < 10; ++i)
 		_palette16c[i] = 0;	
 }
@@ -133,7 +131,7 @@ bool Screen_EoB::init() {
 		} else if (_vm->gameFlags().platform == Common::kPlatformFMTowns) {
 			ci = 2;
 		}
-		_cpsFileExt = cpsExt[ci];
+		_cpsFilePattern += cpsExt[ci];
 
 		return true;
 	}
@@ -261,12 +259,15 @@ void Screen_EoB::loadBitmap(const char *filename, int tempPage, int dstPage, Pal
 		str->skip(2);
 		uint16 imgSize = str->readUint16LE();
 		assert(imgSize == str->size() - 4);
-		loadFileDataToPage(str, tempPage, imgSize);
+		uint8 *buf = new uint8[SCREEN_W * SCREEN_H];
+		str->read(buf, imgSize);
 		delete str;
 
-		decodeBIN(_pagePtrs[tempPage], _pagePtrs[dstPage], imgSize);
+		decodeBIN(buf, _pagePtrs[dstPage], imgSize);
 		if (!skip)
-			decodePC98PlanarBitmap(dstPage, tempPage);
+			decodePC98PlanarBitmap(_pagePtrs[dstPage], buf, SCREEN_W * SCREEN_H);
+
+		delete[] buf;
 	} else {
 		Screen::loadBitmap(filename, tempPage, dstPage, pal);
 	}
@@ -296,7 +297,7 @@ void Screen_EoB::loadBitmap(const char *filename, int tempPage, int dstPage, Pal
 }
 
 void Screen_EoB::loadEoBBitmap(const char *file, const uint8 *cgaMapping, int tempPage, int destPage, int convertToPage) {
-	Common::String tmp = Common::String::format("%s.%s", file, _cpsFileExt);
+	Common::String tmp = Common::String::format(_cpsFilePattern.c_str(), file);
 	Common::SeekableReadStream *s = _vm->resource()->createReadStream(tmp);
 	bool loadAlternative = false;
 
@@ -1563,24 +1564,19 @@ void Screen_EoB::shadeRect(int x1, int y1, int x2, int y2, int shadingLevel) {
 	_16bitShadingLevel = l;
 }
 
-void Screen_EoB::loadPC98Palette(int palID, Palette &dest) {
-	if (palID < 0 || palID > 9)
+void Screen_EoB::selectPC98Palette(int paletteIndex, Palette &dest, int brightness, bool set) {
+	if (paletteIndex < 0 || paletteIndex > 9)
 		return;
-	if (!_use16ColorMode || !_palette16c[palID])
+	if (!_use16ColorMode || !_palette16c[paletteIndex])
 		return;
-	_curPalID = palID;
-	_curPal = &dest;
-	loadPalette(_palette16c[palID], dest, 48);
-}
 
-void Screen_EoB::setPC98PaletteBrightness(int modifier) {
-	if (!_use16ColorMode || !_palette16c[_curPalID])
-		return;
 	uint8 pal[48];
 	for (int i = 0; i < 48; ++i)
-		pal[i] = CLIP<int>(_palette16c[_curPalID][i] + modifier, 0, 15);
-	loadPalette(pal, *_curPal, 48);
-	setScreenPalette(*_curPal);
+		pal[i] = CLIP<int>(_palette16c[paletteIndex][i] + brightness, 0, 15);
+	loadPalette(pal, dest, 48);
+	
+	if (set)
+		setScreenPalette(dest);
 }
 
 void Screen_EoB::decodeBIN(const uint8 *src, uint8 *dst, uint16 inSize) {
@@ -1631,14 +1627,14 @@ void Screen_EoB::decodeBIN(const uint8 *src, uint8 *dst, uint16 inSize) {
 	}
 }
 
-void Screen_EoB::decodePC98PlanarBitmap(int srcDstPage, int tempPage) {
-	assert(tempPage != srcDstPage);
-	copyPage(srcDstPage, tempPage);
-	const uint8 *src = getCPagePtr(tempPage);
-	uint8 *dst1 = _pagePtrs[srcDstPage];
-	uint8 *dst2 = _pagePtrs[srcDstPage] + 4;
-	uint16 len = (SCREEN_W * SCREEN_H) >> 3;
-	while (len--) {
+void Screen_EoB::decodePC98PlanarBitmap(uint8 *srcDstBuffer, uint8 *tmpBuffer, uint16 size) {
+	assert(tmpBuffer != srcDstBuffer);
+	memcpy(tmpBuffer, srcDstBuffer, size);
+	const uint8 *src = tmpBuffer;
+	uint8 *dst1 = srcDstBuffer;
+	uint8 *dst2 = srcDstBuffer + 4;
+	size >>= 3;
+	while (size--) {
 		for (int i = 0; i < 4; ++i) {
 			uint8 col1 = 0;
 			uint8 col2 = 0;
@@ -1862,7 +1858,7 @@ void Screen_EoB::drawShapeSetPixel(uint8 *dst, uint8 col) {
 	if (_bytesPerPixel == 2) {
 		*(uint16*)dst = _16bitPalette[(_dsShapeFadingLevel << 8) + col];
 		return;
-	} else if ((!_isAmiga && _renderMode != Common::kRenderCGA && _renderMode != Common::kRenderEGA) || _useHiResEGADithering) {
+	} else if (_use256ColorMode || _useHiResEGADithering) {
 		if (_dsBackgroundFading) {
 			if (_dsShapeFadingLevel) {
 				col = *dst;

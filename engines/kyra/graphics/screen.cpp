@@ -57,6 +57,7 @@ Screen::Screen(KyraEngine_v1 *vm, OSystem *system, const ScreenDim *dimTable, co
 	_sjisMixedFontMode = false;
 
 	_useHiColorScreen = _vm->gameFlags().useHiColorMode;
+	_use256ColorMode = true;
 	_screenPageSize = SCREEN_PAGE_SIZE;
 	_16bitPalette = 0;
 	_16bitConversionPalette = 0;
@@ -189,6 +190,7 @@ bool Screen::init() {
 	// We allow 256 color palettes in EGA mode, since original EOB II code does the same and requires it
 	const int numColors = _use16ColorMode ? 16 : (_isAmiga ? 32 : (_renderMode == Common::kRenderCGA ? 4 : 256));
 	const int numColorsInternal = _useAmigaExtraColors ? 64 : numColors;
+	_use256ColorMode = (_bytesPerPixel != 2 && !_isAmiga && !_use16ColorMode && _renderMode != Common::kRenderCGA && _renderMode != Common::kRenderEGA);
 
 	_interfacePaletteEnabled = false;
 

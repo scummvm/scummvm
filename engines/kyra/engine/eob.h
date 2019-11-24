@@ -31,6 +31,7 @@ namespace Kyra {
 
 class EoBEngine : public EoBCoreEngine {
 friend class GUI_EoB;
+friend class EoBSeqPlayerCommon;
 friend class EoBIntroPlayer;
 friend class EoBAmigaFinalePlayer;
 public:
@@ -83,8 +84,6 @@ private:
 	void seq_playIntro(int part);
 	void seq_playFinale();
 	void seq_xdeath();
-
-	void boxMorphTransition(int targetDestX, int targetDestY, int targetFinalX, int targetFinalY, int targetSrcX, int targetSrcY, int targetFinalW, int targetFinalH, int originX1, int originY1, int originW, int originH, int fillColor = -1);
 
 	const char *const *_finBonusStrings;
 

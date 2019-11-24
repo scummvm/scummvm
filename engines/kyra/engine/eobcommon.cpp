@@ -59,6 +59,8 @@ EoBCoreEngine::EoBCoreEngine(OSystem *system, const GameFlags &flags) : KyraRpgE
 	_envAudioTimer = 0;
 	_flashShapeTimer = 0;
 	_drawSceneTimer = 0;
+	_vcnFilePattern = "%s.VCN";
+	_vmpFilePattern = "%s.VMP";
 
 	_largeItemShapes = _smallItemShapes = _thrownItemShapes = _spellShapes = _firebeamShapes = 0;
 	_itemIconShapes = _amigaBlueItemIconShapes = _wallOfForceShapes = _teleporterShapes = _sparkShapes = _compassShapes = 0;

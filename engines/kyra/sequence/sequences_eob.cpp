@@ -33,10 +33,29 @@
 
 namespace Kyra {
 
-class EoBIntroPlayer {
+class EoBSeqPlayerCommon {
+public:
+	EoBSeqPlayerCommon(EoBEngine *vm, Screen_EoB *screen);
+	virtual ~EoBSeqPlayerCommon() {}
+
+protected:
+	void boxMorphTransition(int targetDestX, int targetDestY, int targetFinalX, int targetFinalY, int targetSrcX, int targetSrcY, int targetFinalW, int targetFinalH, int originX1, int originY1, int originW, int originH, int fillColor = -1);
+	void printSubtitle(const char *str, int textmodeX, int textmodeY, int col, int mode = 0);
+
+	const uint8 _fillColor1;
+	const uint8 _fillColor2;
+
+	EoBEngine *_vm;
+	Screen_EoB *_screen;
+
+private:
+	uint8 _textColor;
+};
+
+class EoBIntroPlayer : public EoBSeqPlayerCommon {
 public:
 	EoBIntroPlayer(EoBEngine *vm, Screen_EoB *screen);
-	~EoBIntroPlayer() {}
+	virtual ~EoBIntroPlayer() {}
 
 	enum IntroPart {
 		kOnlyCredits = 0,
@@ -59,12 +78,6 @@ private:
 	void loadAndSetPalette(const char *dosPaletteFile, int pc98PaletteID);
 	void copyBlurRegion(int x1, int y1, int x2, int y2, int w, int h, int step);
 	void whirlTransition();
-	void printSubtitle(const char *str, int textmodeX, int textmodeY, int col, int mode = 0);
-
-	uint8 _textColor;
-
-	EoBEngine *_vm;
-	Screen_EoB *_screen;
 
 	int _lastFileOpening;
 	const char *const *_filesOpening;
@@ -94,15 +107,12 @@ private:
 	const uint8 *_tvlY2;
 	const uint8 *_tvlW;
 	const uint8 *_tvlH;
-	
-	const uint8 _fillColor1;
-	const uint8 _fillColor2;
 };
 
-class EoBAmigaFinalePlayer {
+class EoBAmigaFinalePlayer : public EoBSeqPlayerCommon {
 public:
 	EoBAmigaFinalePlayer(EoBEngine *vm, Screen_EoB *screen);
-	~EoBAmigaFinalePlayer();
+	virtual ~EoBAmigaFinalePlayer();
 
 	void start();
 
@@ -128,13 +138,129 @@ private:
 	const uint8 *_textFrameDuration;
 
 	int _animCurFrame;
-
-	EoBEngine *_vm;
-	Screen_EoB *_screen;
 };
 
-EoBIntroPlayer::EoBIntroPlayer(EoBEngine *vm, Screen_EoB *screen) : _vm(vm), _screen(screen), 
-	_fillColor1(vm->gameFlags().platform == Common::kPlatformAmiga ? 19 : (vm->gameFlags().platform == Common::kPlatformPC98 ? 0 : 12)), _fillColor2(vm->gameFlags().platform == Common::kPlatformAmiga ? 10 : 157) {
+EoBSeqPlayerCommon::EoBSeqPlayerCommon(EoBEngine *vm, Screen_EoB *screen) : _vm(vm), _screen(screen), _textColor(0xE1),
+	_fillColor1(vm->gameFlags().platform == Common::kPlatformAmiga ? 19 : (vm->gameFlags().platform == Common::kPlatformPC98 ? 0 : 12)),
+	_fillColor2(vm->gameFlags().platform == Common::kPlatformAmiga ? 10 : 157) {
+}
+
+void EoBSeqPlayerCommon::boxMorphTransition(int targetDestX, int targetDestY, int targetFinalX, int targetFinalY, int targetSrcX, int targetSrcY, int targetFinalW, int targetFinalH, int originX1, int originY1, int originW, int originH, int fillColor) {
+	int originX2 = originX1 + originW;
+	int originY2 = originY1 + originH;
+	if (originY2 > 21)
+		originY2 = 21;
+
+	if (fillColor != -1) {
+		_screen->fillRect(0, 170, 319, 186, fillColor, 0);
+		_screen->fillRect(0, 170, 319, 186, fillColor, 2);
+	}
+
+	int w = 1;
+	int h = 1;
+	for (bool runloop = true; runloop && !_vm->shouldQuit() && !_vm->skipFlag(); ) {
+		uint32 end = _vm->_system->getMillis() + _vm->tickLength();
+		_screen->copyRegion(targetSrcX << 3, targetSrcY << 3, targetDestX << 3, targetDestY << 3, w << 3, h << 3, 2, 0, Screen::CR_NO_P_CHECK);
+		if (originX1 < targetDestX)
+			_screen->copyRegion(312, 0, originX1 << 3, 0, 8, 176, 0, 0, Screen::CR_NO_P_CHECK);
+		if (originY1 < targetDestY)
+			_screen->copyRegion(0, 192, 0, originY1 << 3, 320, 8, 0, 0, Screen::CR_NO_P_CHECK);
+		if ((targetFinalX + targetFinalW) <= originX2)
+			_screen->copyRegion(312, 0, originX2 << 3, 0, 8, 176, 0, 0, Screen::CR_NO_P_CHECK);
+		if ((targetFinalY + targetFinalH) <= originY2)
+			_screen->copyRegion(0, 192, 0, originY2 << 3, 320, 8, 0, 0, Screen::CR_NO_P_CHECK);
+
+		if (!(targetDestX != targetFinalX || targetDestY != targetFinalY || w != targetFinalW || h != targetFinalH || originX1 < targetFinalX || originY1 < targetFinalY || (targetFinalX + targetFinalW) < originX2 || (targetFinalY + targetFinalH) < originY2))
+			runloop = false;
+
+		int v = targetFinalX - targetDestX;
+		v = (v < 0) ? -1 : ((v > 0) ? 1 : 0);
+		targetDestX += v;
+		v = targetFinalY - targetDestY;
+		v = (v < 0) ? -1 : ((v > 0) ? 1 : 0);
+		targetDestY += v;
+
+		if (w != targetFinalW)
+			w += 2;
+		if (w > targetFinalW)
+			w = targetFinalW;
+
+		if (h != targetFinalH)
+			h += 2;
+		if (h > targetFinalH)
+			h = targetFinalH;
+
+		if (++originX1 > targetFinalX)
+			originX1 = targetFinalX;
+
+		if (++originY1 > targetFinalY)
+			originY1 = targetFinalY;
+
+		if ((targetFinalX + targetFinalW) < originX2)
+			originX2--;
+
+		if ((targetFinalY + targetFinalH) < originY2)
+			originY2--;
+
+		_screen->updateScreen();
+		_vm->delayUntil(end);
+	}
+}
+
+void EoBSeqPlayerCommon::printSubtitle(const char *str, int textmodeX, int textmodeY, int col, int mode) {
+	if (col)
+		_textColor = col & 0xFF;
+
+	char charStr[3];
+	charStr[2] = 0;
+	int curX = 0;
+
+	if (!str)
+		return;
+
+	Screen::FontId of = _screen->setFont(Screen::FID_SJIS_TEXTMODE_FNT);
+	int cp = _screen->setCurPage(0);
+
+	for (int i = 0; str[i] &&!_vm->shouldQuit() && !_vm->skipFlag(); ) {
+		uint8 c = str[i++];
+		if (c == 13) {
+			curX = 0;
+			textmodeY++;
+		} else if (c == 10) {
+			_textColor = str[i++];
+		} else if (c == 7) {
+			_vm->delay(960);
+			_screen->fillRect(0, 160, 319, 199, _fillColor1, 0);
+			curX = 0;
+		}
+
+		charStr[0] = c;
+		charStr[1] = (c >= 0x81 && (c <= 0x9F || (c >= 0xE0 && c <= 0xFC))) ? str[i++] : 0;
+
+		_screen->printText(charStr, (textmodeX << 2) + (curX << 3), textmodeY << 3, _textColor, 0);
+
+		if ((++curX + textmodeX) == 80) {
+			curX = 0;
+			textmodeY++;
+		}
+
+		if (mode == 0) {
+			_vm->_system->delayMillis(40);
+			_screen->updateScreen();
+		} else if (mode == 1) {
+			_vm->delay(40);
+			_screen->updateScreen();
+		}
+	}
+
+	if (mode == 2)
+		_screen->updateScreen();
+
+	_screen->setFont(of);
+	_screen->setCurPage(cp);
+}
+
+EoBIntroPlayer::EoBIntroPlayer(EoBEngine *vm, Screen_EoB *screen) : EoBSeqPlayerCommon(vm, screen) {
 	int temp = 0;
 	_filesOpening = _vm->staticres()->loadStrings(kEoB1IntroFilesOpening, temp);
 	_lastFileOpening = temp - 2;
@@ -166,7 +292,6 @@ EoBIntroPlayer::EoBIntroPlayer(EoBEngine *vm, Screen_EoB *screen) : _vm(vm), _sc
 	_tvlH = _vm->staticres()->loadRawData(kEoB1IntroTvlH, temp);
 	const uint8 *orbFadePal = _vm->staticres()->loadRawData(kEoB1IntroOrbFadePal, temp);
 	_screen->loadPalette(orbFadePal, _screen->getPalette(2), temp);
-	_textColor = 0xE1;
 }
 
 void EoBIntroPlayer::start(int part) {
@@ -225,7 +350,7 @@ void EoBIntroPlayer::openingCredits() {
 	_screen->convertPage(3, 0, _vm->_cgaMappingAlt);
 
 	if (_vm->gameFlags().platform == Common::kPlatformPC98)
-		_screen->loadPC98Palette(1, _screen->getPalette(0));
+		_screen->selectPC98Palette(1, _screen->getPalette(0));
 
 	if (_vm->gameFlags().platform == Common::kPlatformDOS) {
 		loadAndSetPalette(_filesOpening[5], 1);
@@ -275,8 +400,8 @@ void EoBIntroPlayer::tower() {
 
 	whirlTransition();
 
-	loadAndSetPalette(_filesTower[0], 0);
-	_screen->setPC98PaletteBrightness(-15);
+	loadAndSetPalette(_filesTower[0], -1);
+	_screen->selectPC98Palette(0, _screen->getPalette(0), -15, true);
 	_screen->setCurPage(cp);
 	_screen->clearCurPage();
 
@@ -292,12 +417,12 @@ void EoBIntroPlayer::tower() {
 		uint32 end = _vm->_system->getMillis() + 2 * _vm->_tickLength;
 		_screen->copyRegion(0, 142 - i, 96, 0, 128, i + 1, 4, 0, Screen::CR_NO_P_CHECK);
 		_screen->copyRegion(0, 0, 96, i + 1, 128, 167 - i, 2, 0, Screen::CR_NO_P_CHECK);
-		_screen->setPC98PaletteBrightness(MIN(i / 4 - 14, 0));
+		_screen->selectPC98Palette(0, _screen->getPalette(0), MIN(i / 4 - 14, 0), true);
 		_screen->updateScreen();
 		_vm->delayUntil(end);
 	}
 
-	_screen->setPC98PaletteBrightness(0);
+	_screen->selectPC98Palette(0, _screen->getPalette(0), 0, true);
 
 	for (int i = 0; i < 24 && !_vm->shouldQuit() && !_vm->skipFlag(); i += 2) {
 		uint32 end = _vm->_system->getMillis() + 2 * _vm->_tickLength;
@@ -633,7 +758,7 @@ void EoBIntroPlayer::hands() {
 	_screen->fillRect(0, 0, 191, 63, _fillColor2, 2);
 	_screen->drawShape(2, shp1, 0, 4, 0);
 	_screen->drawShape(2, shp2, 151, 4, 0);
-	_vm->boxMorphTransition(25, 8, 18, 4, 3, 0, 21, 8, 6, 0, 28, 23);
+	boxMorphTransition(25, 8, 18, 4, 3, 0, 21, 8, 6, 0, 28, 23);
 
 	displaySubtitle(128, 176, 16, _stringsHands, 0, 24, 23, 0xE1, 0);
 
@@ -666,7 +791,7 @@ void EoBIntroPlayer::hands() {
 	_screen->fillRect(0, 0, 135, 63, _fillColor2);
 	_screen->drawShape(2, shp1, 32, -80, 0);
 	_screen->drawShape(2, shp2, 40, -16, 0);
-	_vm->boxMorphTransition(18, 16, 10, 12, 0, 0, 17, 8, 17, 3, 25, 10);
+	boxMorphTransition(18, 16, 10, 12, 0, 0, 17, 8, 17, 3, 25, 10);
 	_vm->delay(15 * _vm->_tickLength);
 
 	for (int i = -80; i <= 0 && !_vm->shouldQuit() && !_vm->skipFlag(); i += 4) {
@@ -705,7 +830,7 @@ void EoBIntroPlayer::hands() {
 	_screen->fillRect(0, 0, 143, 95, _fillColor2);
 	_screen->drawShape(2, shp1, -56, -56, 0);
 	_screen->drawShape(2, shp2, 52, 49, 0);
-	_vm->boxMorphTransition(9, 6, 0, 0, 0, 0, 18, 12, 8, 11, 21, 10);
+	boxMorphTransition(9, 6, 0, 0, 0, 0, 18, 12, 8, 11, 21, 10);
 	_vm->delay(15 * _vm->_tickLength);
 	_vm->snd_playSoundEffect(11);
 
@@ -731,7 +856,7 @@ void EoBIntroPlayer::hands() {
 	_screen->setCurPage(2);
 	_screen->fillRect(0, 0, 87, 112, _fillColor2);
 	_screen->drawShape(2, shp2, 0, 90, 0);
-	_vm->boxMorphTransition(20, 13, 15, 6, 0, 0, 11, 14, 0, 0, 24, 16);
+	boxMorphTransition(20, 13, 15, 6, 0, 0, 11, 14, 0, 0, 24, 16);
 	_vm->delay(15 * _vm->_tickLength);
 
 	int dy = 90;
@@ -990,7 +1115,7 @@ void EoBIntroPlayer::loadAndSetPalette(const char *dosPaletteFile, int pc98Palet
 	if (_vm->gameFlags().platform == Common::kPlatformDOS)
 		_screen->loadPalette(dosPaletteFile, _screen->getPalette(0));
 	else if (_vm->gameFlags().platform == Common::kPlatformPC98 && pc98PaletteID >= 0)
-		_screen->loadPC98Palette(pc98PaletteID, _screen->getPalette(0));
+		_screen->selectPC98Palette(pc98PaletteID, _screen->getPalette(0));
 
 	_screen->getPalette(0).fill(0, 1, 0);
 	_screen->setScreenPalette(_screen->getPalette(0));
@@ -1081,60 +1206,7 @@ void EoBIntroPlayer::whirlTransition() {
 	}
 }
 
-void EoBIntroPlayer::printSubtitle(const char *str, int textmodeX, int textmodeY, int col, int mode) {
-	if (col)
-		_textColor = col & 0xFF;
-
-	char charStr[3];
-	charStr[2] = 0;
-	int curX = 0;
-
-	if (!str)
-		return;
-
-	Screen::FontId of = _screen->setFont(Screen::FID_SJIS_TEXTMODE_FNT);
-	int cp = _screen->setCurPage(0);
-
-	for (int i = 0; str[i]; ) {
-		uint8 c = str[i++];
-		if (c == 13) {
-			curX = 0;
-			textmodeY++;
-		} else if (c == 10) {
-			_textColor = str[i++];
-		} else if (c == 7) {
-			_vm->delay(960);
-			_screen->fillRect(0, 160, 319, 199, _fillColor1, 0);
-			curX = 0;
-		}
-
-		charStr[0] = c;
-		charStr[1] = (c >= 0x81 && (c <= 0x9F || (c >= 0xE0 && c <= 0xFC))) ? str[i++] : 0;
-
-		_screen->printText(charStr, (textmodeX << 2) + (curX << 3), textmodeY << 3, _textColor, 0);
-
-		if ((++curX + textmodeX) == 80) {
-			curX = 0;
-			textmodeY++;
-		}
-
-		if (mode == 0) {
-			_vm->_system->delayMillis(40);
-			_screen->updateScreen();
-		} else if (mode == 1) {
-			_vm->delay(40);
-			_screen->updateScreen();
-		}
-	}
-
-	if (mode == 2)
-		_screen->updateScreen();
-	
-	_screen->setFont(of);
-	_screen->setCurPage(cp);
-}
-
-EoBAmigaFinalePlayer::EoBAmigaFinalePlayer(EoBEngine *vm, Screen_EoB *screen) : _vm(vm), _screen(screen) {
+EoBAmigaFinalePlayer::EoBAmigaFinalePlayer(EoBEngine *vm, Screen_EoB *screen) : EoBSeqPlayerCommon(vm, screen) {
 	_animCurFrame = 0;
 	int size = 0;
 	_textShapes = new uint8*[10];
@@ -1281,7 +1353,7 @@ void EoBAmigaFinalePlayer::inspection() {
 	_screen->fillRect(0, 48, 9, 120, 31, 0);
 	_screen->fillRect(312, 48, 319, 120, 31, 0);
 
-	_vm->boxMorphTransition(18, 6, 12, 3, 12, 3, 16, 5, 1, 5, 39, 10, 31);
+	boxMorphTransition(18, 6, 12, 3, 12, 3, 16, 5, 1, 5, 39, 10, 31);
 
 	for (int i = 0; i < 5; ++i)
 		shp[i] = _screen->encodeShape((i << 2) + 8, 0, 4, 24, true);
@@ -1327,7 +1399,7 @@ void EoBAmigaFinalePlayer::surprise() {
 		_screen->copyRegion(crds[0] << 3, crds[1], crds[4] << 3, crds[5], crds[2] << 3, crds[3], 4, 2, Screen::CR_NO_P_CHECK);
 	}
 
-	_vm->boxMorphTransition(0, 9, 0, 6, 0, 10, 40, 9, 12, 3, 16, 21, 31);
+	boxMorphTransition(0, 9, 0, 6, 0, 10, 40, 9, 12, 3, 16, 21, 31);
 
 	for (int i = 0; i < 15 && !_vm->skipFlag() && !_vm->shouldQuit(); ++i) {
 		animateCouncil1(4, 2);
@@ -1546,7 +1618,7 @@ int EoBEngine::mainMenu() {
 			if (_ttlCfg->fade)
 				_screen->fadeToBlack(10);
 			
-			_screen->loadPC98Palette(_ttlCfg->pc98PaletteID, _screen->getPalette(0));
+			_screen->selectPC98Palette(_ttlCfg->pc98PaletteID, _screen->getPalette(0));
 			for (int i = 0; i < 3; ++i) {
 				if (_ttlCfg->palFiles[i].renderMode == -1)
 					break;
@@ -1749,68 +1821,6 @@ void EoBEngine::seq_xdeath() {
 
 	gui_drawPlayField(false);
 	gui_drawAllCharPortraitsWithStats();
-}
-
-void EoBEngine::boxMorphTransition(int targetDestX, int targetDestY, int targetFinalX, int targetFinalY, int targetSrcX, int targetSrcY, int targetFinalW, int targetFinalH, int originX1, int originY1, int originW, int originH, int fillColor) {
-	int originX2 = originX1 + originW;
-	int originY2 = originY1 + originH;
-	if (originY2 > 21)
-		originY2 = 21;
-
-	if (fillColor != -1) {
-		_screen->fillRect(0, 170, 319, 186, fillColor, 0);
-		_screen->fillRect(0, 170, 319, 186, fillColor, 2);
-	}
-
-	int w = 1;
-	int h = 1;
-	for (bool runloop = true; runloop && !shouldQuit() && !skipFlag();) {
-		uint32 end = _system->getMillis() + _tickLength;
-		_screen->copyRegion(targetSrcX << 3, targetSrcY << 3, targetDestX << 3, targetDestY << 3, w << 3, h << 3, 2, 0, Screen::CR_NO_P_CHECK);
-		if (originX1 < targetDestX)
-			_screen->copyRegion(312, 0, originX1 << 3, 0, 8, 176, 0, 0, Screen::CR_NO_P_CHECK);
-		if (originY1 < targetDestY)
-			_screen->copyRegion(0, 192, 0, originY1 << 3, 320, 8, 0, 0, Screen::CR_NO_P_CHECK);
-		if ((targetFinalX + targetFinalW) <= originX2)
-			_screen->copyRegion(312, 0, originX2 << 3, 0, 8, 176, 0, 0, Screen::CR_NO_P_CHECK);
-		if ((targetFinalY + targetFinalH) <= originY2)
-			_screen->copyRegion(0, 192, 0, originY2 << 3, 320, 8, 0, 0, Screen::CR_NO_P_CHECK);
-
-		if (!(targetDestX != targetFinalX || targetDestY != targetFinalY || w != targetFinalW || h != targetFinalH || originX1 < targetFinalX || originY1 < targetFinalY || (targetFinalX + targetFinalW) < originX2 || (targetFinalY + targetFinalH) < originY2))
-			runloop = false;
-
-		int v = targetFinalX - targetDestX;
-		v = (v < 0) ? -1 : ((v > 0) ? 1 : 0);
-		targetDestX += v;
-		v = targetFinalY - targetDestY;
-		v = (v < 0) ? -1 : ((v > 0) ? 1 : 0);
-		targetDestY += v;
-
-		if (w != targetFinalW)
-			w += 2;
-		if (w > targetFinalW)
-			w = targetFinalW;
-
-		if (h != targetFinalH)
-			h += 2;
-		if (h > targetFinalH)
-			h = targetFinalH;
-
-		if (++originX1 > targetFinalX)
-			originX1 = targetFinalX;
-
-		if (++originY1 > targetFinalY)
-			originY1 = targetFinalY;
-
-		if ((targetFinalX + targetFinalW) < originX2)
-			originX2--;
-
-		if ((targetFinalY + targetFinalH) < originY2)
-			originY2--;
-
-		_screen->updateScreen();
-		delayUntil(end);
-	}
 }
 
 #undef displaySubtitle
