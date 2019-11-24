@@ -133,7 +133,7 @@ TextCast::TextCast(Common::ReadStreamEndian &stream, uint16 version) {
 				warning("TextCast: t: %x", t);
 			}
 
-			initialRect = Score::readRect(stream); 
+			initialRect = Score::readRect(stream);
 		}
 
 		textShadow = static_cast<SizeType>(stream.readByte());
@@ -179,11 +179,11 @@ TextCast::TextCast(Common::ReadStreamEndian &stream, uint16 version) {
 		fontSize = 12;
 
 		stream.readUint32();
-		stream.readUint32(); 
+		stream.readUint32();
 		stream.readUint32();
 		stream.readUint32();
 		uint16 skip = stream.readUint16();
-		for (int i = 0; i < skip; i++) 
+		for (int i = 0; i < skip; i++)
 			stream.readUint32();
 
 		stream.readUint32();
@@ -203,7 +203,7 @@ TextCast::TextCast(Common::ReadStreamEndian &stream, uint16 version) {
 
 	modified = 0;
 
-	cachedMacText = new CachedMacText(this, version);
+	cachedMacText = new CachedMacText(this, version, -1, g_director->_wm);
 	// TODO Destroy me
 }
 

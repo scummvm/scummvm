@@ -789,7 +789,6 @@ void Frame::renderText(Graphics::ManagedSurface &surface, uint16 spriteId, Commo
 	//uint32 rectTop = textCast->initialRect.top;
 
 	textCast->cachedMacText->clip(width);
-	textCast->cachedMacText->setWm(_vm->_wm); // TODO this is not a good place to do it
 	const Graphics::ManagedSurface *textSurface = textCast->cachedMacText->getSurface();
 
 	if (!textSurface)
