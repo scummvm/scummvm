@@ -262,7 +262,7 @@ void LinuxmotoSdlGraphicsManager::internUpdateScreen() {
 
 		_currentShakeXOffset = _gameScreenShakeXOffset;
 
-		_forceFull = true;
+		_forceRedraw = true;
 	}
 	if (_currentShakeYOffset != _gameScreenShakeYOffset ||
 		(_cursorNeedsRedraw && _mouseBackup.y <= _currentShakeYOffset)) {
