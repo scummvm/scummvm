@@ -35,10 +35,10 @@ void CachedMacText::makeMacText() {
 
 	delete _macText;
 
-	if ((int)_textCast->textAlign == -1)
+	if ((int)_textCast->_textAlign == -1)
 		_align = (Graphics::TextAlign)3;
 	else
-		_align = (Graphics::TextAlign)((int)_textCast->textAlign + 1);
+		_align = (Graphics::TextAlign)((int)_textCast->_textAlign + 1);
 
 	_macText = new Graphics::MacText(_textCast->_ftext,
 										_wm,
@@ -62,17 +62,17 @@ CachedMacText::CachedMacText(TextCast *const textCast,
 	_surface(NULL), _macFont(NULL),
 	_macText(NULL), _width(defaultWidth), _dirty(true), _textCast(textCast),
 	_wm(wm) {
-	_macFont = new Graphics::MacFont(_textCast->fontId,
-	                                 _textCast->fontSize,
-	                                 _textCast->textSlant);
+	_macFont = new Graphics::MacFont(_textCast->_fontId,
+										_textCast->_fontSize,
+										_textCast->_textSlant);
 	// TODO destroy me
 
 	if (_width == -1)  {
 		if (version >= 4) {
 			// This came from frame.cpp
-			_width = _textCast->initialRect.right;
+			_width = _textCast->_initialRect.right;
 		} else {
-			_width = _textCast->initialRect.width();
+			_width = _textCast->_initialRect.width();
 		}
 	}
 

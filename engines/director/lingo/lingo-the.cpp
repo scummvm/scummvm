@@ -687,7 +687,7 @@ Datum Lingo::getTheCast(Datum &id1, int field) {
 			}
 
 			ShapeCast *shape = _vm->getCurrentScore()->_loadedShapes->getVal(id);
-			d.u.i = shape->bgCol;
+			d.u.i = shape->_bgCol;
 		}
 		break;
 	case kTheForeColor:
@@ -699,7 +699,7 @@ Datum Lingo::getTheCast(Datum &id1, int field) {
 			}
 
 			ShapeCast *shape = _vm->getCurrentScore()->_loadedShapes->getVal(id);
-			d.u.i = shape->fgCol;
+			d.u.i = shape->_fgCol;
 		}
 		break;
 	case kTheLoaded:
@@ -767,8 +767,8 @@ void Lingo::setTheCast(Datum &id1, int field, Datum &d) {
 				warning("Field %d of cast %d not found", field, id);
 			}
 			ShapeCast *shape = _vm->getCurrentScore()->_loadedShapes->getVal(id);
-			shape->bgCol = d.u.i;
-			shape->modified = 1;
+			shape->_bgCol = d.u.i;
+			shape->_modified = 1;
 		}
 		break;
 	case kTheForeColor:
@@ -778,8 +778,8 @@ void Lingo::setTheCast(Datum &id1, int field, Datum &d) {
 				return;
 			}
 			ShapeCast *shape = _vm->getCurrentScore()->_loadedShapes->getVal(id);
-			shape->fgCol = d.u.i;
-			shape->modified = 1;
+			shape->_fgCol = d.u.i;
+			shape->_modified = 1;
 		}
 		break;
 	default:

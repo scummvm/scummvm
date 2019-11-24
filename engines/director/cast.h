@@ -51,30 +51,30 @@ enum CastType {
 
 class Cast {
 public:
-	CastType type;
-	Common::Rect initialRect;
-	Common::Rect boundingRect;
-	Common::Array<Resource> children;
+	CastType _type;
+	Common::Rect _initialRect;
+	Common::Rect _boundingRect;
+	Common::Array<Resource> _children;
 
-	const Graphics::Surface *surface;
+	const Graphics::Surface *_surface;
 
-	byte modified;
+	byte _modified;
 };
 
 class BitmapCast : public Cast {
 public:
 	BitmapCast(Common::ReadStreamEndian &stream, uint32 castTag, uint16 version = 2);
 
-	uint16 pitch;
-	uint16 regX;
-	uint16 regY;
-	uint8 flags;
-	uint16 someFlaggyThing;
-	uint16 unk1, unk2;
+	uint16 _pitch;
+	uint16 _regX;
+	uint16 _regY;
+	uint8 _flags;
+	uint16 _someFlaggyThing;
+	uint16 _unk1, _unk2;
 
-	uint16 bitsPerPixel;
+	uint16 _bitsPerPixel;
 
-	uint32 tag;
+	uint32 _tag;
 };
 
 enum ShapeType {
@@ -88,13 +88,13 @@ class ShapeCast : public Cast {
 public:
 	ShapeCast(Common::ReadStreamEndian &stream, uint16 version = 2);
 
-	ShapeType shapeType;
-	uint16 pattern;
-	byte fgCol;
-	byte bgCol;
-	byte fillType;
-	byte lineThickness;
-	byte lineDirection;
+	ShapeType _shapeType;
+	uint16 _pattern;
+	byte _fgCol;
+	byte _bgCol;
+	byte _fillType;
+	byte _lineThickness;
+	byte _lineDirection;
 };
 
 enum TextType {
@@ -128,24 +128,24 @@ class TextCast : public Cast {
 public:
 	TextCast(Common::ReadStreamEndian &stream, uint16 version = 2);
 
-	SizeType borderSize;
-	SizeType gutterSize;
-	SizeType boxShadow;
+	SizeType _borderSize;
+	SizeType _gutterSize;
+	SizeType _boxShadow;
 
-	byte flags1;
-	uint32 fontId;
-	uint16 fontSize;
-	TextType textType;
-	TextAlignType textAlign;
-	SizeType textShadow;
-	byte textSlant;
-	Common::Array<TextFlag> textFlags;
-	uint16 palinfo1, palinfo2, palinfo3;
+	byte _flags1;
+	uint32 _fontId;
+	uint16 _fontSize;
+	TextType _textType;
+	TextAlignType _textAlign;
+	SizeType _textShadow;
+	byte _textSlant;
+	Common::Array<TextFlag> _textFlags;
+	uint16 _palinfo1, _palinfo2, _palinfo3;
 
 	Common::String _ftext;
 	void importStxt(const Stxt *stxt);
 	void importRTE(byte* text);
-	CachedMacText *cachedMacText;
+	CachedMacText *_cachedMacText;
 };
 
 enum ButtonType {
@@ -158,14 +158,14 @@ class ButtonCast : public TextCast {
 public:
 	ButtonCast(Common::ReadStreamEndian &stream, uint16 version = 2);
 
-	ButtonType buttonType;
+	ButtonType _buttonType;
 };
 
 class ScriptCast : public Cast {
 public:
 	ScriptCast(Common::ReadStreamEndian &stream, uint16 version = 2);
 
-	uint32 id;
+	uint32 _id;
 };
 
 

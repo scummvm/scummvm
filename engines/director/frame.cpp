@@ -618,19 +618,19 @@ void Frame::renderSprites(Graphics::ManagedSurface &surface, bool renderTrail) {
 					continue;
 				}
 
-				int32 regX = _sprites[i]->_bitmapCast->regX;
-				int32 regY = _sprites[i]->_bitmapCast->regY;
-				int32 rectLeft = _sprites[i]->_bitmapCast->initialRect.left;
-				int32 rectTop = _sprites[i]->_bitmapCast->initialRect.top;
+				int32 regX = _sprites[i]->_bitmapCast->_regX;
+				int32 regY = _sprites[i]->_bitmapCast->_regY;
+				int32 rectLeft = _sprites[i]->_bitmapCast->_initialRect.left;
+				int32 rectTop = _sprites[i]->_bitmapCast->_initialRect.top;
 
 				int x = _sprites[i]->_startPoint.x - regX + rectLeft;
 				int y = _sprites[i]->_startPoint.y - regY + rectTop;
 				int height = _sprites[i]->_height;
-				int width = _vm->getVersion() > 4 ? _sprites[i]->_bitmapCast->initialRect.width() : _sprites[i]->_width;
+				int width = _vm->getVersion() > 4 ? _sprites[i]->_bitmapCast->_initialRect.width() : _sprites[i]->_width;
 				warning("drawRect: x=%d, y=%d, w=%d h=%d", x, y, width, height);
 				Common::Rect drawRect(x, y, x + width, y + height);
 				addDrawRect(i, drawRect);
-				inkBasedBlit(surface, *(_sprites[i]->_bitmapCast->surface), i, drawRect);
+				inkBasedBlit(surface, *(_sprites[i]->_bitmapCast->_surface), i, drawRect);
 			}
 		}
 	}
@@ -676,13 +676,13 @@ void Frame::renderButton(Graphics::ManagedSurface &surface, uint16 spriteId) {
 	uint16 castId = _sprites[spriteId]->_castId;
 	ButtonCast *button = _vm->getCurrentScore()->_loadedButtons->getVal(castId);
 
-	uint32 rectLeft = button->initialRect.left;
-	uint32 rectTop = button->initialRect.top;
+	uint32 rectLeft = button->_initialRect.left;
+	uint32 rectTop = button->_initialRect.top;
 
 	int x = _sprites[spriteId]->_startPoint.x + rectLeft;
 	int y = _sprites[spriteId]->_startPoint.y + rectTop;
-	int height = button->initialRect.height();
-	int width = button->initialRect.width() + 3;
+	int height = button->_initialRect.height();
+	int width = button->_initialRect.width() + 3;
 
 	Common::Rect textRect(0, 0, width, height);
 	// pass the rect of the button into the label.
@@ -693,7 +693,7 @@ void Frame::renderButton(Graphics::ManagedSurface &surface, uint16 spriteId) {
 
 	Common::Rect _rect;
 
-	switch (button->buttonType) {
+	switch (button->_buttonType) {
 	case kTypeCheckBox:
 		// Magic numbers: checkbox square need to move left about 5px from text and 12px side size (D4)
 		_rect = Common::Rect(x - 17, y, x + 12, y + 12);
@@ -750,20 +750,20 @@ void Frame::renderText(Graphics::ManagedSurface &surface, uint16 spriteId, Commo
 
 	int x = _sprites[spriteId]->_startPoint.x; // +rectLeft;
 	int y = _sprites[spriteId]->_startPoint.y; // +rectTop;
-	int height = textCast->initialRect.height(); //_sprites[spriteId]->_height;
+	int height = textCast->_initialRect.height(); //_sprites[spriteId]->_height;
 	int width;
 
 	if (_vm->getVersion() >= 4) {
 		if (textSize == NULL)
-			width = textCast->initialRect.right;
+			width = textCast->_initialRect.right;
 		else {
 			width = textSize->width();
 		}
 	} else {
-		width = textCast->initialRect.width(); //_sprites[spriteId]->_width;
+		width = textCast->_initialRect.width(); //_sprites[spriteId]->_width;
 	}
 
-	if (_vm->getCurrentScore()->_fontMap.contains(textCast->fontId)) {
+	if (_vm->getCurrentScore()->_fontMap.contains(textCast->_fontId)) {
 		// We need to make sure that the Shared Cast fonts have been loaded in?
 		// might need a mapping table here of our own.
 		// textCast->fontId = _vm->_wm->_fontMan->getFontIdByName(_vm->getCurrentScore()->_fontMap[textCast->fontId]);
@@ -774,22 +774,22 @@ void Frame::renderText(Graphics::ManagedSurface &surface, uint16 spriteId, Commo
 		return;
 	}
 
-	Graphics::MacFont *macFont = new Graphics::MacFont(textCast->fontId, textCast->fontSize, textCast->textSlant);
+	Graphics::MacFont *macFont = new Graphics::MacFont(textCast->_fontId, textCast->_fontSize, textCast->_textSlant);
 
 	debugC(3, kDebugText, "renderText: x: %d y: %d w: %d h: %d font: '%s' text: '%s'", x, y, width, height, _vm->_wm->_fontMan->getFontName(*macFont).c_str(), textCast->_ftext.c_str());
 
-	uint16 boxShadow = (uint16)textCast->boxShadow;
-	uint16 borderSize = (uint16)textCast->borderSize;
+	uint16 boxShadow = (uint16)textCast->_boxShadow;
+	uint16 borderSize = (uint16)textCast->_borderSize;
 	if (textSize != NULL)
 		borderSize = 0;
-	uint16 padding = (uint16)textCast->gutterSize;
-	uint16 textShadow = (uint16)textCast->textShadow;
+	uint16 padding = (uint16)textCast->_gutterSize;
+	uint16 textShadow = (uint16)textCast->_textShadow;
 
 	//uint32 rectLeft = textCast->initialRect.left;
 	//uint32 rectTop = textCast->initialRect.top;
 
-	textCast->cachedMacText->clip(width);
-	const Graphics::ManagedSurface *textSurface = textCast->cachedMacText->getSurface();
+	textCast->_cachedMacText->clip(width);
+	const Graphics::ManagedSurface *textSurface = textCast->_cachedMacText->getSurface();
 
 	if (!textSurface)
 		return;
@@ -797,7 +797,7 @@ void Frame::renderText(Graphics::ManagedSurface &surface, uint16 spriteId, Commo
 	height = textSurface->h;
 	if (textSize != NULL) {
 		// TODO: this offset could be due to incorrect fonts loaded!
-		textSize->bottom = height + textCast->cachedMacText->getLineCount();
+		textSize->bottom = height + textCast->_cachedMacText->getLineCount();
 	}
 
 	uint16 textX = 0, textY = 0;
@@ -821,7 +821,7 @@ void Frame::renderText(Graphics::ManagedSurface &surface, uint16 spriteId, Commo
 			textY += padding / 2;
 		}
 
-		if (textCast->textAlign == kTextAlignRight)
+		if (textCast->_textAlign == kTextAlignRight)
 			textX -= 1;
 
 		if (textShadow > 0)
@@ -833,7 +833,7 @@ void Frame::renderText(Graphics::ManagedSurface &surface, uint16 spriteId, Commo
 		y += 2;
 	}
 
-	switch (textCast->textAlign) {
+	switch (textCast->_textAlign) {
 	case kTextAlignLeft:
 	default:
 		break;
