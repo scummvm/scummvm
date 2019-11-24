@@ -596,7 +596,7 @@ void Score::loadCastData(Common::SeekableSubReadStreamEndian &stream, uint16 id,
 		size2 = stream.readUint32();
 		size1 = stream.readUint32();
 		if (castType == 1) {
-			if (size3 == 0) 
+			if (size3 == 0)
 				return;
 			for (uint32 skip = 0; skip < (size1 - 4) / 4; skip++)
 				stream.readUint32();

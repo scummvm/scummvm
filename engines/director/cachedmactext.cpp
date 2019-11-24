@@ -39,21 +39,23 @@ void CachedMacText::makeMacText() {
 		_align = (Graphics::TextAlign)((int)_textCast->textAlign + 1);
 
 	_macText = new Graphics::MacText(_textCast->_ftext,
-	                                 _wm,
-	                                 _macFont,
-	                                 0x00,
-	                                 0xff,
-	                                 _width,
-	                                 _align,
-	                                 1);
+										_wm,
+										_macFont,
+										0x00,
+										0xff,
+										_width,
+										_align,
+										1);
 	// TODO destroy me
+
+	debug(5, "CachedMacText::makeMacText(): rendering '%s'", _textCast->_ftext.c_str());
 }
 
 CachedMacText::CachedMacText(TextCast *const textCast,
-                             int version,
-                             int defaultWidth,
-                             Graphics::MacWindowManager *const wm
-                            )
+								int version,
+								int defaultWidth,
+								Graphics::MacWindowManager *const wm
+								)
 	:
 	_surface(NULL), _macFont(NULL),
 	_macText(NULL), _width(defaultWidth), _dirty(true), _textCast(textCast),
