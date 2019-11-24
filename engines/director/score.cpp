@@ -223,14 +223,33 @@ void Score::loadArchive() {
 }
 
 void Score::copyCastStxts() {
+	debugC(2, kDebugLoading,"######### copyCastStxts(), %d texts", _loadedText->size());
 	Common::HashMap<int, TextCast *>::iterator tc;
 	for (tc = _loadedText->begin(); tc != _loadedText->end(); ++tc) {
 		uint stxtid = (_vm->getVersion() < 4) ?
 			tc->_key + 1024 :
 			tc->_value->children[0].index;
-		if (_loadedStxts->getVal(stxtid)){
+		if (_loadedStxts->getVal(stxtid)) {
+			debugC(3, kDebugLoading,"Yes to STXT: %d", stxtid);
 			const Stxt *stxt = _loadedStxts->getVal(stxtid);
 			tc->_value->importStxt(stxt);
+		} else {
+			debugC(3, "No to STXT: %d", stxtid);
+		}
+	}
+
+	debugC(2, kDebugLoading,"######### copyCastStxts(), %d buttons", _loadedButtons->size());
+	Common::HashMap<int, ButtonCast *>::iterator bc;
+	for (bc = _loadedButtons->begin(); bc != _loadedButtons->end(); ++bc) {
+		uint stxtid = (_vm->getVersion() < 4) ?
+			bc->_key + 1024 :
+			bc->_value->children[0].index;
+		if (_loadedStxts->getVal(stxtid)) {
+			debugC(3, "Yes to STXT: %d", stxtid);
+			const Stxt *stxt = _loadedStxts->getVal(stxtid);
+			bc->_value->importStxt(stxt);
+		} else {
+			debugC(3, "No to STXT: %d", stxtid);
 		}
 	}
 }
