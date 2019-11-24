@@ -204,24 +204,22 @@ void Score::loadArchive() {
 		}
 	}
 
+	// Now process STXTs
+	Common::Array<uint16> stxt = _movieArchive->getResourceIDList(MKTAG('S','T','X','T'));
+
 	// Try to load movie script, it sits in resource A11
 	if (_vm->getVersion() <= 3) {
-		Common::Array<uint16> stxt = _movieArchive->getResourceIDList(MKTAG('S','T','X','T'));
 		if (stxt.size() > 0) {
-			debugC(2, kDebugLoading, "****** Loading %d STXT resources", stxt.size());
-
-			for (Common::Array<uint16>::iterator iterator = stxt.begin(); iterator != stxt.end(); ++iterator) {
-				loadScriptText(*_movieArchive->getResource(MKTAG('S','T','X','T'), *iterator));
-				// Load STXTS
-
-				_loadedStxts->setVal(*iterator,
-									 new Stxt(*_movieArchive->getResource(MKTAG('S','T','X','T'),
-																		  *iterator))
-									 );
-			}
+			loadScriptText(*_movieArchive->getResource(MKTAG('S','T','X','T'), *stxt.begin()));
 		}
-		copyCastStxts();
 	}
+
+	debugC(2, kDebugLoading, "****** Loading %d STXT resources", stxt.size());
+	for (Common::Array<uint16>::iterator iterator = stxt.begin(); iterator != stxt.end(); ++iterator) {
+		_loadedStxts->setVal(*iterator,
+				 new Stxt(*_movieArchive->getResource(MKTAG('S','T','X','T'), *iterator)));
+	}
+	copyCastStxts();
 }
 
 void Score::copyCastStxts() {
