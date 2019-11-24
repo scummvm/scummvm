@@ -295,6 +295,9 @@ void MacText::render() {
 }
 
 void MacText::render(int from, int to) {
+	if (_textLines.empty())
+		return;
+
 	reallocSurface();
 
 	from = MAX<int>(0, from);
@@ -373,6 +376,9 @@ void MacText::setInterLinear(int interLinear) {
 }
 
 void MacText::recalcDims() {
+	if (_textLines.empty())
+		return;
+
 	int y = 0;
 	_textMaxWidth = 0;
 
