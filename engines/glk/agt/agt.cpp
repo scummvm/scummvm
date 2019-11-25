@@ -31,15 +31,22 @@ namespace AGT {
 AGT *g_vm;
 
 extern void glk_main();
-extern int glk_startup_code(int argc, char *argv[]);
+extern int glk_startup_code();
+extern void gagt_finalizer();
 
-AGT::AGT(OSystem *syst, const GlkGameDescription &gameDesc) : GlkAPI(syst, gameDesc) {
+AGT::AGT(OSystem *syst, const GlkGameDescription &gameDesc) : GlkAPI(syst, gameDesc),
+	gagt_gamefile(nullptr), gagt_game_message(nullptr) {
 	g_vm = this;
 }
 
 void AGT::runGame() {
-	glk_startup_code(0, nullptr);
+	_gameFile.close();
+	gagt_gamefile = getFilename().c_str();
+
+	glk_startup_code();
 	glk_main();
+
+	gagt_finalizer();
 }
 
 Common::Error AGT::readSaveData(Common::SeekableReadStream *rs) {

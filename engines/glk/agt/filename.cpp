@@ -550,14 +550,10 @@ rbool filevalid(genfile f, filetype ft) {
 
 
 void binseek(genfile f, long offset) {
-	assert(f != NULL);
-	assert(offset >= 0);
-#ifdef UNIX_IO
-	if (lseek(fileno(f), offset, SEEK_SET) == -1)
-#else
-	if (fseek(f, offset, SEEK_SET) != 0)
-#endif
-		fatal("binseek");
+	Common::SeekableReadStream *rs = dynamic_cast<Common::SeekableReadStream *>(f);
+	assert(rs);
+
+	rs->seek(offset);
 }
 
 

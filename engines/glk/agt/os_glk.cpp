@@ -5067,7 +5067,7 @@ genfile agt_globalfile(int fid) {
  * General initialization for the module; sets some variables, and creates
  * the Glk windows to work in.  Called from the AGiliTy main().
  */
-void init_interface(int argc, char *argv[]) {
+void init_interface() {
 	glui32 status_height;
 
 	/*
@@ -5147,7 +5147,6 @@ void init_interface(int argc, char *argv[]) {
 	}
 
 	agt_clrscr();
-	gagt_debug("init_interface", "argc=%d, argv=%p", argc, argv);
 }
 
 
@@ -5525,15 +5524,6 @@ int __wrap_tolower(int ch) {
 extern void set_default_options();
 
 /*
- * The following values need to be passed between the startup_code and main
- * functions.
- */
-static int gagt_saved_argc = 0;         /* Recorded argc. */
-static char **gagt_saved_argv = NULL,   /* Recorded argv. */
-              *gagt_gamefile = NULL;      /* Name of game file. */
-static const char *gagt_game_message = NULL;  /* Error message. */
-
-/*
  * Flag to set if we want to test for a clean exit.  Without this it's a
  * touch tricky sometimes to corner AGiliTy into calling exit() for us; it
  * tends to require a broken game file.
@@ -5656,59 +5646,12 @@ static int gagt_parse_option(const char *option) {
  * gagt_main()
  *
  * Together, these functions take the place of the original AGiliTy main().
- * The first one is called from glkunix_startup_code(), to parse and
- * generally handle options.  The second is called from glk_main(), and
- * does the real work of running the game.
+ * The first one is called from glkunix_startup_code().  The second is called
+ * from glk_main(), and does the real work of running the game.
  */
-int gagt_startup_code(int argc, char *argv[]) {
-	int argv_index;
-
-	/*
-	 * Before doing anything else, stash argc and argv away for use by
-	 * gagt_main() below.
-	 */
-	gagt_saved_argc = argc;
-	gagt_saved_argv = argv;
-
+bool gagt_startup_code() {
 	/* Make the mandatory call for initialization. */
 	set_default_options();
-
-	/* Handle command line arguments. */
-	for (argv_index = 1;
-	        argv_index < argc && argv[argv_index][0] == '-'; argv_index++) {
-		/*
-		 * Handle an option string coming after "-".  If the options parse
-		 * fails, return FALSE.
-		 */
-		if (!gagt_parse_option(argv[argv_index]))
-			return FALSE;
-	}
-
-	/*
-	 * Get the name of the game file.  Since we need this in our call from
-	 * glk_main, we need to keep it in a module static variable.  If the game
-	 * file name is omitted, then here we'll set the pointer to NULL, and
-	 * complain about it later in main.  Passing the message string around
-	 * like this is a nuisance...
-	 */
-	if (argv_index == argc - 1) {
-		gagt_gamefile = argv[argv_index];
-		gagt_game_message = NULL;
-#ifdef GARGLK
-		char *s;
-		s = strrchr(gagt_gamefile, '\\');
-		if (s) g_vm->garglk_set_story_name(s + 1);
-		s = strrchr(gagt_gamefile, '/');
-		if (s) g_vm->garglk_set_story_name(s + 1);
-#endif /* GARGLK */
-	} else {
-		gagt_gamefile = NULL;
-		if (argv_index < argc - 1)
-			gagt_game_message = "More than one game file was given"
-			                    " on the command line.";
-		else
-			gagt_game_message = "No game file was given on the command line.";
-	}
 
 	/* All startup options were handled successfully. */
 	return TRUE;
@@ -5716,13 +5659,6 @@ int gagt_startup_code(int argc, char *argv[]) {
 
 static void gagt_main() {
 	fc_type fc;
-	assert(gagt_saved_argc != 0 && gagt_saved_argv);
-
-	/* Ensure AGiliTy internal types have the right sizes. */
-	if (sizeof(integer) < 2 || sizeof(int32) < 4 || sizeof(uint32) < 4) {
-		gagt_fatal("GLK: Types sized incorrectly, recompilation is needed");
-		gagt_exit();
-	}
 
 	/*
 	 * Initialize the interface.  As it happens, init_interface() is in our
@@ -5734,7 +5670,7 @@ static void gagt_main() {
 	 * window.  As it doesn't return status, we have to detect this by checking
 	 * that gagt_main_window is not NULL.
 	 */
-	init_interface(gagt_saved_argc, gagt_saved_argv);
+	init_interface();
 	if (!gagt_main_window) {
 		gagt_fatal("GLK: Can't open main window");
 		gagt_exit();
@@ -5743,29 +5679,18 @@ static void gagt_main() {
 	g_vm->glk_set_window(gagt_main_window);
 	g_vm->glk_set_style(style_Normal);
 
-	/* If there's a problem with the game file, complain now. */
-	if (!gagt_gamefile) {
-		assert(gagt_game_message);
-		if (gagt_status_window)
-			g_vm->glk_window_close(gagt_status_window, NULL);
-		gagt_header_string("Glk AGiliTy Error\n\n");
-		gagt_normal_string(gagt_game_message);
-		gagt_normal_char('\n');
-		gagt_exit();
-	}
-
 	/*
 	 * Create a game file context, and try to ensure it will open successfully
 	 * in run_game().
 	 */
-	fc = init_file_context(gagt_gamefile, fDA1);
+	fc = init_file_context(g_vm->gagt_gamefile, fDA1);
 	if (!(gagt_workround_fileexist(fc, fAGX)
 	        || gagt_workround_fileexist(fc, fDA1))) {
 		if (gagt_status_window)
 			g_vm->glk_window_close(gagt_status_window, NULL);
 		gagt_header_string("Glk AGiliTy Error\n\n");
 		gagt_normal_string("Can't find or open game '");
-		gagt_normal_string(gagt_gamefile);
+		gagt_normal_string(g_vm->gagt_gamefile);
 		gagt_normal_char('\'');
 		gagt_normal_char('\n');
 		gagt_exit();
@@ -5860,7 +5785,7 @@ static int gagt_agility_running = FALSE;
  * we do, and interpreter code is still running, it's a sign that we need
  * to take actions we'd hoped not to have to take.
  */
-static void gagt_finalizer() {
+void gagt_finalizer() {
 	/*
 	 * If interpreter code is still active, and we're not in a g_vm->glk_select(),
 	 * the core interpreter code called exit().  Handle cleanup.
@@ -5983,16 +5908,6 @@ void glk_main() {
 	gagt_main_called = TRUE;
 
 	/*
-	 * Register gagt_finalizer() with atexit() to cleanup on exit.  Note that
-	 * this module doesn't expect the atexit() handler to be called on all
-	 * forms of exit -- see comments in gagt_finalizer() for more.
-	 */
-	if (atexit(gagt_finalizer) != 0) {
-		gagt_fatal("GLK: Failed to register finalizer");
-		gagt_exit();
-	}
-
-	/*
 	 * If we're testing for a clean exit, deliberately call exit() to see what
 	 * happens.  We're hoping for a clean process termination, but our exit
 	 * code explores "undefined" ANSI.  If we get something ugly, like a core
@@ -6088,11 +6003,11 @@ glkunix_argumentlist_t glkunix_arguments[] = {
  * function to parse arguments and generally set stuff up.
  */
 
-int glk_startup_code(int argc, char *argv[]) {
+int glk_startup_code() {
 	assert(!gagt_startup_called);
 	gagt_startup_called = TRUE;
 
-	return gagt_startup_code(argc, argv);
+	return gagt_startup_code();
 }
 
 } // End of namespace AGT

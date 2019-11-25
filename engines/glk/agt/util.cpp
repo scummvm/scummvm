@@ -369,7 +369,8 @@ int fseek(genfile stream, long int offset, int whence) {
 size_t fread(void *ptr, size_t size, size_t nmemb, genfile stream) {
 	Common::SeekableReadStream *rs = dynamic_cast<Common::SeekableReadStream *>(stream);
 	assert(rs);
-	return rs->read(ptr, size * nmemb);
+	size_t bytesRead = rs->read(ptr, size * nmemb);
+	return bytesRead / size;
 }
 
 size_t fwrite(const void *ptr, size_t size, size_t nmemb, genfile stream) {

@@ -37,6 +37,9 @@ namespace AGT {
  */
 class AGT : public GlkAPI {
 public:
+	const char *gagt_gamefile = NULL;      /* Name of game file. */
+	const char *gagt_game_message = NULL;  /* Error message. */
+public:
 	/**
 	 * Constructor
 	 */
