@@ -58,6 +58,12 @@ enum GameType {
 	GType_ComposerV2
 };
 
+enum GameFileTypes {
+	GAME_CONFIGFILE     = 1 << 0,    // Game configuration
+	GAME_SCRIPTFILE     = 1 << 1,    // Game script
+	GAME_EXECUTABLE     = 1 << 2,    // Game executable
+};
+
 class Archive;
 struct Animation;
 class ComposerEngine;
@@ -176,6 +182,7 @@ public:
 	uint32 getFeatures() const;
 	Common::Language getLanguage() const;
 	Common::Platform getPlatform() const;
+	void getConfigFile(Common::String &file) const;
 
 	const ComposerGameDescription *_gameDescription;
 

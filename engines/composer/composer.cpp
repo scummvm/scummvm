@@ -85,17 +85,14 @@ Common::Error ComposerEngine::run() {
 		_queuedScripts[i]._scriptId = 0;
 	}
 
-	// NOTE: check book.mac before book.ini for easier platform check (to find the proper section in INI)
-	if (!(_bookIni.loadFromFile("book.mac") || _bookIni.loadFromFile("demo.mac"))) {
-		if (!(_bookIni.loadFromFile("book.ini") || _bookIni.loadFromFile("demo.ini")
-				|| _bookIni.loadFromFile("ls_demo.ini") || _bookIni.loadFromFile("by_demo.ini"))) {
-			_directoriesToStrip = 0;
-			if (!_bookIni.loadFromFile("programs/book.ini")) {
-				// mac version?
-				if (!_bookIni.loadFromFile("Darby the Dragon.ini"))
-					if (!_bookIni.loadFromFile("Gregory.ini"))
-							error("failed to find book.ini");
-			}
+	Common::String configFile;
+	getConfigFile(configFile);
+
+	if (!(_bookIni.loadFromFile(configFile))) {
+		warning("Detected config file is not available - trying other options");
+		_directoriesToStrip = 0;
+		if (!_bookIni.loadFromFile("programs/book.ini")) {
+			error("failed to find book.ini");
 		}
 	}
 
