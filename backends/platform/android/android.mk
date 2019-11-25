@@ -18,7 +18,7 @@ PATH_BUILD_GRADLE = $(PATH_BUILD)/settings.gradle
 PATH_BUILD_SETUPAPK = $(PATH_BUILD)/.setupapk
 
 APK_MAIN = $(PATH_BUILD)/build/outputs/apk/debug/ResidualVM-debug.apk
-APK_MAIN_RELEASE = $(PATH_BUILD)/build/outputs/apk/release/ResidualVM-release-unsigned.apk
+APK_MAIN_RELEASE = $(PATH_BUILD)/build/outputs/apk/release/ResidualVM-release$(if $(KEYSTORE),,-unsigned).apk
 
 $(PATH_BUILD_ASSETS): $(DIST_FILES_THEMES) $(DIST_FILES_ENGINEDATA) $(DIST_FILES_SHADERS) $(DIST_ANDROID_CONTROLS) | $(PATH_BUILD)
 	$(INSTALL) -d $(PATH_BUILD_ASSETS)

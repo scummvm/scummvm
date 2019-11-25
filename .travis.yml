@@ -110,7 +110,7 @@ matrix:
           - $TRAVIS_BUILD_DIR/dependencies
       script: .travis/android-build
       before_deploy:
-        - mkdir artifacts && cp build-*/android/build/outputs/apk/release/ResidualVM-release-unsigned.apk artifacts
+        - mkdir artifacts && cp build/android/build/outputs/apk/release/ResidualVM-release*.apk artifacts
 
 deploy:
   provider: script

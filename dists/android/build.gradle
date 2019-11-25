@@ -47,6 +47,21 @@ android {
 			jniLibs.srcDirs = ["${gradle.buildDir}/android/jni"]
 		}
 	}
+	if ("KEYSTORE" in System.env) {
+		signingConfigs {
+			release {
+				storeFile file(System.env["KEYSTORE"])
+				keyAlias "upload_key"
+				storePassword "ResidualVM"
+				keyPassword "ResidualVM"
+			}
+		}
+		buildTypes {
+			release {
+				signingConfig signingConfigs.release
+			}
+		}
+	}
 }
 
 dependencies {
