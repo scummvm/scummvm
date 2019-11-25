@@ -2543,7 +2543,9 @@ home directory)
 
 **iOS:**
 
-`/var/mobile/Library/ScummVM/scummvm.ini`
+
+For sandboxed version: `/Preferences`
+Otherwise: `/var/mobile/Library/ScummVM/Preferences`
 
 **Others:**
 
