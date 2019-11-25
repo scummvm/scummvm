@@ -56,6 +56,18 @@ Common::Platform ComposerEngine::getPlatform() const {
 	return _gameDescription->desc.platform;
 }
 
+void ComposerEngine::getConfigFile(Common::String &configFile) const {
+	const ADGameFileDescription *res = _gameDescription->desc.filesDescriptions;
+	while (res->fileName != NULL) {
+		if (res->fileType == GAME_CONFIGFILE) {
+			configFile = res->fileName;
+			return;
+		}
+	}
+	// default config file name
+	configFile = "book.ini";
+}
+
 }
 
 static const PlainGameDescriptor composerGames[] = {
@@ -65,9 +77,9 @@ static const PlainGameDescriptor composerGames[] = {
 	{"imoking", "Magic Tales: Imo and the King"},
 	{"liam", "Magic Tales: Liam Finds a Story"},
 	{"littlesamurai", "Magic Tales: The Little Samurai"},
+	{"magictales", "Magic Tales"},
 	{"princess", "Magic Tales: The Princess and the Crab"},
 	{"sleepingcub", "Magic Tales: Sleeping Cub's Test of Courage"},
-	{"magictales", "Magic Tales"},
 	{0, 0}
 };
 
@@ -78,8 +90,11 @@ static const ComposerGameDescription gameDescriptions[] = {
 	{
 		{
 			"babayaga",
-			"",
-			AD_ENTRY1s("book.ini", "412b7f4b0ef07f442009d28e3a819974", 3852),
+			0,
+			{
+				{"book.ini", GAME_CONFIGFILE, "412b7f4b0ef07f442009d28e3a819974", 3852},
+				AD_LISTEND
+			},
 			Common::EN_ANY,
 			Common::kPlatformWindows,
 			ADGF_NO_FLAGS,
@@ -92,8 +107,11 @@ static const ComposerGameDescription gameDescriptions[] = {
 	{
 		{
 			"babayaga",
-			"",
-			AD_ENTRY1s("Baba Yaga", "ae3a4445f42fe10253da7ee4ea0d37d6", 44321),
+			0,
+			{
+				{"Baba Yaga", GAME_EXECUTABLE, "ae3a4445f42fe10253da7ee4ea0d37d6", 44321},
+				AD_LISTEND
+			},
 			Common::EN_ANY,
 			Common::kPlatformMacintosh,
 			ADGF_NO_FLAGS,
@@ -106,8 +124,11 @@ static const ComposerGameDescription gameDescriptions[] = {
 	{
 		{
 			"babayaga",
-			"",
-			AD_ENTRY1s("book.ini", "2a20e73d33ecd0f2fa8123d4f9862f90", 3814),
+			0,
+			{
+				{"book.ini", GAME_CONFIGFILE, "2a20e73d33ecd0f2fa8123d4f9862f90", 3814},
+				AD_LISTEND
+			},
 			Common::DE_DEU,
 			Common::kPlatformWindows,
 			ADGF_NO_FLAGS,
@@ -120,8 +141,11 @@ static const ComposerGameDescription gameDescriptions[] = {
 	{
 		{
 			"imoking",
-			"",
-			AD_ENTRY1s("book.ini", "62b52a1763cce7d7d6ccde9f9d32fd4b", 3299),
+			0,
+			{
+				{"book.ini", GAME_CONFIGFILE, "62b52a1763cce7d7d6ccde9f9d32fd4b", 3299},
+				AD_LISTEND
+			},
 			Common::EN_ANY,
 			Common::kPlatformWindows,
 			ADGF_NO_FLAGS,
@@ -134,9 +158,9 @@ static const ComposerGameDescription gameDescriptions[] = {
 	{
 		{
 			"imoking",
-			"",
+			0,
 			{
-				{"book.ini", 0, "2b3eb997e8f55a03e81f67563c40adf4", 3337},
+				{"book.ini", GAME_CONFIGFILE, "2b3eb997e8f55a03e81f67563c40adf4", 3337},
 				AD_LISTEND
 			},
 			Common::HE_ISR,
@@ -151,9 +175,9 @@ static const ComposerGameDescription gameDescriptions[] = {
 	{
 		{
 			"imoking",
-			"",
+			0,
 			{
-				{"book.mac", 0, "4896a22874bb660f5ba26a0af111f9c0", 1868},
+				{"book.mac", GAME_CONFIGFILE, "4896a22874bb660f5ba26a0af111f9c0", 1868},
 				AD_LISTEND
 			},
 			Common::HE_ISR,
@@ -170,7 +194,7 @@ static const ComposerGameDescription gameDescriptions[] = {
 			"babayaga",
 			"Magic Tales: Baba Yaga and the Magic Geese Demo",
 			{
-				{"by_demo.ini", 0, "4a87806683add232916298d6b62b9420", 224},
+				{"by_demo.ini", GAME_CONFIGFILE, "4a87806683add232916298d6b62b9420", 224},
 				AD_LISTEND
 			},
 			Common::EN_ANY,
@@ -187,7 +211,7 @@ static const ComposerGameDescription gameDescriptions[] = {
 			"littlesamurai",
 			"Magic Tales: The Little Samurai Demo",
 			{
-				{"ls_demo.ini", 0, "462cad83006721d2491dde7ef7a2d243", 223},
+				{"ls_demo.ini", GAME_CONFIGFILE, "462cad83006721d2491dde7ef7a2d243", 223},
 				AD_LISTEND
 			},
 			Common::EN_ANY,
@@ -204,7 +228,7 @@ static const ComposerGameDescription gameDescriptions[] = {
 			"babayaga",
 			"Magic Tales: Baba Yaga and the Magic Geese Demo",
 			{
-				{"book.mac", 0, "ed4a902df3b26d58e9c013f814a30ee8", 134},
+				{"book.mac", GAME_CONFIGFILE, "ed4a902df3b26d58e9c013f814a30ee8", 134},
 				AD_LISTEND
 			},
 			Common::EN_ANY,
@@ -221,7 +245,7 @@ static const ComposerGameDescription gameDescriptions[] = {
 			"littlesamurai",
 			"Magic Tales: The Little Samurai Demo",
 			{
-				{"book.mac", 0, "57a82d563800001ed88b2742c3650a2d", 136},
+				{"book.mac", GAME_CONFIGFILE, "57a82d563800001ed88b2742c3650a2d", 136},
 				AD_LISTEND
 			},
 			Common::EN_ANY,
@@ -236,8 +260,11 @@ static const ComposerGameDescription gameDescriptions[] = {
 	{
 		{
 			"imoking",
-			"",
-			AD_ENTRY1("imo and the king", "b0277885fec943b5f19409f35b33964c"),
+			0,
+			{
+				{"imo and the king", GAME_EXECUTABLE, "b0277885fec943b5f19409f35b33964c", -1},
+				AD_LISTEND
+			},
 			Common::EN_ANY,
 			Common::kPlatformMacintosh,
 			ADGF_NO_FLAGS,
@@ -250,8 +277,11 @@ static const ComposerGameDescription gameDescriptions[] = {
 	{
 		{
 			"imoking",
-			"",
-			AD_ENTRY1s("book.ini", "5925c6d4bf85d89b17208be4fcace5e8", 3274),
+			0,
+			{
+				{"book.ini", GAME_CONFIGFILE, "5925c6d4bf85d89b17208be4fcace5e8", 3274},
+				AD_LISTEND
+			},
 			Common::DE_DEU,
 			Common::kPlatformWindows,
 			ADGF_NO_FLAGS,
@@ -264,8 +294,11 @@ static const ComposerGameDescription gameDescriptions[] = {
 	{
 		{
 			"littlesamurai",
-			"",
-			AD_ENTRY1s("book.ini", "7a851869d022a9041e0dd11e5bace09b", 3747),
+			0,
+			{
+				{"book.ini", GAME_CONFIGFILE, "7a851869d022a9041e0dd11e5bace09b", 3747},
+				AD_LISTEND
+			},
 			Common::EN_ANY,
 			Common::kPlatformWindows,
 			ADGF_NO_FLAGS,
@@ -278,8 +311,11 @@ static const ComposerGameDescription gameDescriptions[] = {
 	{
 		{
 			"littlesamurai",
-			"",
-			AD_ENTRY1("The Little Samurai", "38121dd649c24e8676aa108cf35d44b5"),
+			0,
+			{
+				{"The Little Samurai", GAME_EXECUTABLE, "38121dd649c24e8676aa108cf35d44b5", -1},
+				AD_LISTEND
+			},
 			Common::EN_ANY,
 			Common::kPlatformMacintosh,
 			ADGF_NO_FLAGS,
@@ -292,8 +328,11 @@ static const ComposerGameDescription gameDescriptions[] = {
 	{
 		{
 			"littlesamurai",
-			"",
-			AD_ENTRY1s("book.ini", "c5f2c84df04780e7e67c70ec85b780a8", 3789),
+			0,
+			{
+				{"book.ini", GAME_CONFIGFILE, "c5f2c84df04780e7e67c70ec85b780a8", 3789},
+				AD_LISTEND
+			},
 			Common::HE_ISR,
 			Common::kPlatformWindows,
 			ADGF_NO_FLAGS,
@@ -306,8 +345,11 @@ static const ComposerGameDescription gameDescriptions[] = {
 	{
 		{
 			"littlesamurai",
-			"",
-			AD_ENTRY1s("book.mac", "190158751630f69c2b6cf146aa2f1efc", 1874),
+			0,
+			{
+				{"book.mac", GAME_CONFIGFILE, "190158751630f69c2b6cf146aa2f1efc", 1874},
+				AD_LISTEND
+			},
 			Common::HE_ISR,
 			Common::kPlatformMacintosh,
 			ADGF_NO_FLAGS,
@@ -321,7 +363,10 @@ static const ComposerGameDescription gameDescriptions[] = {
 		{
 			"magictales",
 			"Magic Tales Demo: Baby Yaga, Samurai, Imo",
-			AD_ENTRY1("book.ini", "dbc98c566f4ac61b544443524585dccb"),
+			{
+				{"book.ini", GAME_CONFIGFILE, "dbc98c566f4ac61b544443524585dccb", -1},
+				AD_LISTEND
+			},
 			Common::EN_ANY,
 			Common::kPlatformWindows,
 			ADGF_USEEXTRAASTITLE | ADGF_DEMO,
@@ -335,7 +380,10 @@ static const ComposerGameDescription gameDescriptions[] = {
 		{
 			"magictales",
 			"Magic Tales Demo: Baby Yaga, Samurai, Imo",
-			AD_ENTRY1("demo.ini", "ea784af960375834d655eb7281cd4500"),
+			{
+				{"demo.ini", GAME_CONFIGFILE, "ea784af960375834d655eb7281cd4500", -1},
+				AD_LISTEND
+			},
 			Common::HE_ISR,
 			Common::kPlatformWindows,
 			ADGF_USEEXTRAASTITLE | ADGF_DEMO,
@@ -349,7 +397,10 @@ static const ComposerGameDescription gameDescriptions[] = {
 		{
 			"magictales",
 			"Magic Tales Demo: Baby Yaga, Samurai, Imo",
-			AD_ENTRY1s("demo.mac", "6e775cda6539102d1ddee852bebf32c1", 488),
+			{
+				{"demo.mac", GAME_CONFIGFILE, "6e775cda6539102d1ddee852bebf32c1", 488},
+				AD_LISTEND
+			},
 			Common::HE_ISR,
 			Common::kPlatformMacintosh,
 			ADGF_USEEXTRAASTITLE | ADGF_DEMO,
@@ -362,7 +413,10 @@ static const ComposerGameDescription gameDescriptions[] = {
 		{
 			"liam",
 			0,
-			AD_ENTRY1s("book.ini", "fc9d9b9e72e7301d011b808606eaa15b", 834),
+			{
+				{"book.ini", GAME_CONFIGFILE, "fc9d9b9e72e7301d011b808606eaa15b", 834},
+				AD_LISTEND
+			},
 			Common::EN_ANY,
 			Common::kPlatformWindows,
 			ADGF_NO_FLAGS,
@@ -377,8 +431,8 @@ static const ComposerGameDescription gameDescriptions[] = {
 			"liam",
 			0,
 			{
-				{"liam finds a story.ini", 0, "85a1ca6002ded8572920bbdb73d35b0a", -1},
-				{"page99.rsc", 0, "11b0a19c6b6d73c39e2bd289a457c1dc", -1},
+				{"liam finds a story.ini", GAME_CONFIGFILE, "85a1ca6002ded8572920bbdb73d35b0a", -1},
+				{"page99.rsc", GAME_SCRIPTFILE, "11b0a19c6b6d73c39e2bd289a457c1dc", -1},
 				AD_LISTEND
 			},
 			Common::EN_ANY,
@@ -394,7 +448,10 @@ static const ComposerGameDescription gameDescriptions[] = {
 		{
 			"magictales",
 			"Magic Tales Demo: Sleeping Cub, Princess & Crab",
-			AD_ENTRY1("book.ini", "3dede2522bb0886c95667b082987a87f"),
+			{
+				{"book.ini", GAME_CONFIGFILE, "3dede2522bb0886c95667b082987a87f", -1},
+				AD_LISTEND
+			},
 			Common::EN_ANY,
 			Common::kPlatformWindows,
 			ADGF_USEEXTRAASTITLE | ADGF_DEMO,
@@ -408,8 +465,8 @@ static const ComposerGameDescription gameDescriptions[] = {
 			"darby",
 			0,
 			{
-				{"book.ini", 0, "7e3404c559d058521fff2aebe5c427a8", 2545},
-				{"page99.rsc", 0, "49cc6b16caa1c5ec7d94a3c47eed9a02", 1286480},
+				{"book.ini", GAME_CONFIGFILE, "7e3404c559d058521fff2aebe5c427a8", 2545},
+				{"page99.rsc", GAME_SCRIPTFILE, "49cc6b16caa1c5ec7d94a3c47eed9a02", 1286480},
 				AD_LISTEND
 			},
 			Common::EN_ANY,
@@ -424,7 +481,10 @@ static const ComposerGameDescription gameDescriptions[] = {
 		{
 			"darby",
 			0,
-			AD_ENTRY1("Darby the Dragon.ini", "d81f9214936fa70d42fc578908d4bb3d"),
+			{
+				{"Darby the Dragon.ini", GAME_CONFIGFILE, "d81f9214936fa70d42fc578908d4bb3d", -1},
+				AD_LISTEND
+			},
 			Common::EN_ANY,
 			Common::kPlatformMacintosh,
 			ADGF_NO_FLAGS,
@@ -438,7 +498,7 @@ static const ComposerGameDescription gameDescriptions[] = {
 			"darby",
 			0,
 			{
-				{"page99.rsc", 0, "ca350397f0c009649afc0cb6145921f0", 1286480},
+				{"page99.rsc", GAME_SCRIPTFILE, "ca350397f0c009649afc0cb6145921f0", 1286480},
 				AD_LISTEND
 			},
 			Common::FR_FRA,
@@ -453,7 +513,10 @@ static const ComposerGameDescription gameDescriptions[] = {
 		{
 			"darby",
 			0,
-			AD_ENTRY1("book.ini", "285308372f7dddff2ca5a25c9192cf5c"),
+			{
+				{"book.ini", GAME_CONFIGFILE, "285308372f7dddff2ca5a25c9192cf5c", -1},
+				AD_LISTEND
+			},
 			Common::FR_FRA,
 			Common::kPlatformWindows,
 			ADGF_NO_FLAGS,
@@ -467,8 +530,8 @@ static const ComposerGameDescription gameDescriptions[] = {
 			"darby",
 			0,
 			{
-				{"book.ini", 0, "285308372f7dddff2ca5a25c9192cf5c", 2545},
-				{"page99.rsc", 0, "40b4879e9ba6a34d6aa2a9d2e30c5ef7", 1286480},
+				{"book.ini", GAME_CONFIGFILE, "285308372f7dddff2ca5a25c9192cf5c", 2545},
+				{"page99.rsc", GAME_SCRIPTFILE, "40b4879e9ba6a34d6aa2a9d2e30c5ef7", 1286480},
 				AD_LISTEND
 			},
 			Common::DE_DEU,
@@ -483,7 +546,10 @@ static const ComposerGameDescription gameDescriptions[] = {
 		{
 			"darby",
 			0,
-			AD_ENTRY1("page99.rsc", "183463d18c050563dcdec2d9f9670515"),
+			{
+				{"page99.rsc", GAME_SCRIPTFILE, "183463d18c050563dcdec2d9f9670515", -1},
+				AD_LISTEND
+			},
 			Common::HE_ISR,
 			Common::kPlatformWindows,
 			ADGF_NO_FLAGS,
@@ -497,8 +563,8 @@ static const ComposerGameDescription gameDescriptions[] = {
 			"gregory",
 			0,
 			{
-				{"book.ini", 0, "14a562dcf361773445255af9f3e94790", 2234},
-				{"page99.rsc", 0, "01f9381162467e052dfd4c704169ef3e", 388644},
+				{"book.ini", GAME_CONFIGFILE, "14a562dcf361773445255af9f3e94790", 2234},
+				{"page99.rsc", GAME_SCRIPTFILE, "01f9381162467e052dfd4c704169ef3e", 388644},
 				AD_LISTEND
 			},
 			Common::EN_ANY,
@@ -513,7 +579,10 @@ static const ComposerGameDescription gameDescriptions[] = {
 		{
 			"gregory",
 			0,
-			AD_ENTRY1("Gregory.ini", "fa82f14731f28c7379c5a106df07a0d6"),
+			{
+				{"Gregory.ini", GAME_CONFIGFILE, "fa82f14731f28c7379c5a106df07a0d6", -1},
+				AD_LISTEND
+			},
 			Common::EN_ANY,
 			Common::kPlatformMacintosh,
 			ADGF_NO_FLAGS,
@@ -526,7 +595,10 @@ static const ComposerGameDescription gameDescriptions[] = {
 		{
 			"gregory",
 			0,
-			AD_ENTRY1("book.ini", "e54fc5c00de5f94e908a969e445af5d0"),
+			{
+				{"book.ini", GAME_CONFIGFILE, "e54fc5c00de5f94e908a969e445af5d0", -1},
+				AD_LISTEND
+			},
 			Common::FR_FRA,
 			Common::kPlatformWindows,
 			ADGF_NO_FLAGS,
@@ -540,8 +612,8 @@ static const ComposerGameDescription gameDescriptions[] = {
 			"gregory",
 			0,
 			{
-				{"book.ini", 0, "e54fc5c00de5f94e908a969e445af5d0", 2234},
-				{"page99.rsc", 0, "1ae6610de621a9901bf87b874fbf331f", 388644},
+				{"book.ini", GAME_CONFIGFILE, "e54fc5c00de5f94e908a969e445af5d0", 2234},
+				{"page99.rsc", GAME_SCRIPTFILE, "1ae6610de621a9901bf87b874fbf331f", 388644},
 				AD_LISTEND
 			},
 			Common::DE_DEU,
@@ -557,8 +629,8 @@ static const ComposerGameDescription gameDescriptions[] = {
 			"princess",
 			0,
 			{
-				{"book.ini", 0, "fb32572577b9a41ba299825ef1e3181e", 966},
-				{"page99.rsc", 0, "fd5ebd3b5e36c4651c50241619525355", 45418},
+				{"book.ini", GAME_CONFIGFILE, "fb32572577b9a41ba299825ef1e3181e", 966},
+				{"page99.rsc", GAME_SCRIPTFILE, "fd5ebd3b5e36c4651c50241619525355", 45418},
 				AD_LISTEND
 			},
 			Common::EN_ANY,
@@ -575,8 +647,8 @@ static const ComposerGameDescription gameDescriptions[] = {
 			"princess",
 			0,
 			{
-				{"the princess and the crab.ini", 0, "f6b551a7304643004bd5e4df7ac1e76e", -1},
-				{"page99.rsc", 0, "fd5ebd3b5e36c4651c50241619525355", -1},
+				{"the princess and the crab.ini", GAME_CONFIGFILE, "f6b551a7304643004bd5e4df7ac1e76e", -1},
+				{"page99.rsc", GAME_SCRIPTFILE, "fd5ebd3b5e36c4651c50241619525355", -1},
 				AD_LISTEND
 			},
 			Common::EN_ANY,
@@ -592,8 +664,8 @@ static const ComposerGameDescription gameDescriptions[] = {
 			"sleepingcub",
 			0,
 			{
-				{"book.ini", 0, "0d329e592387009c6387a733a3ea2235", 964},
-				{"page99.rsc", 0, "219fbd9bd2ff87c7023814405d753145", 46916},
+				{"book.ini", GAME_CONFIGFILE, "0d329e592387009c6387a733a3ea2235", 964},
+				{"page99.rsc", GAME_SCRIPTFILE, "219fbd9bd2ff87c7023814405d753145", 46916},
 				AD_LISTEND
 			},
 			Common::EN_ANY,
@@ -610,8 +682,8 @@ static const ComposerGameDescription gameDescriptions[] = {
 			"sleepingcub",
 			0,
 			{
-				{"sleeping cub.ini", 0, "39642a4036cb51443f5e90052c3ad0b2", -1},
-				{"page99.rsc", 0, "219fbd9bd2ff87c7023814405d753145", -1},
+				{"sleeping cub.ini", GAME_CONFIGFILE, "39642a4036cb51443f5e90052c3ad0b2", -1},
+				{"page99.rsc", GAME_SCRIPTFILE, "219fbd9bd2ff87c7023814405d753145", -1},
 				AD_LISTEND
 			},
 			Common::EN_ANY,
