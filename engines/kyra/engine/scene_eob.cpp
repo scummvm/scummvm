@@ -324,19 +324,19 @@ void EoBCoreEngine::loadVcnData(const char *file, const uint8 *cgaMapping) {
 	delete[] _vcnBlocks;
 	uint32 vcnSize = 0;
 
-	if (_flags.platform == Common::kPlatformFMTowns) {
-		_vcnBlocks = _res->fileData(Common::String::format(_vcnFilePattern.c_str(), _lastBlockDataFile).c_str(), &vcnSize);
-		return;
-	}
-
 	Common::String fn = Common::String::format(_vcnFilePattern.c_str(), _lastBlockDataFile);
 
-	if (_flags.gameID == GI_EOB1 && _flags.platform == Common::kPlatformAmiga) {
+	if (_flags.platform == Common::kPlatformFMTowns) {
+		_vcnBlocks = _res->fileData(fn.c_str(), &vcnSize);
+		return;
+	} else if (_flags.gameID == GI_EOB1 && (_flags.platform == Common::kPlatformAmiga || _flags.platform == Common::kPlatformPC98)) {
 		Common::SeekableReadStream *in = _res->createReadStream(fn);
-		vcnSize = in->readUint16LE() * (_vcnSrcBitsPerPixel << 3);
-		_vcnBlocks = new uint8[vcnSize];
-		_screen->getPalette(1).loadAmigaPalette(*in, 1, 5);
-		in->seek(22, SEEK_CUR);
+		vcnSize = _flags.platform == Common::kPlatformPC98 ? in->size() : in->readUint16LE() * (_vcnSrcBitsPerPixel << 3);
+		_vcnBlocks = new uint8[vcnSize];			
+		if (_flags.platform == Common::kPlatformAmiga) {
+			_screen->getPalette(1).loadAmigaPalette(*in, 1, 5);
+			in->seek(22, SEEK_CUR);
+		}
 		in->read(_vcnBlocks, vcnSize);
 		delete in;
 		return;

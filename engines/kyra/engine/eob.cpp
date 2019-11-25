@@ -100,6 +100,7 @@ Common::Error EoBEngine::init() {
 void EoBEngine::startupNew() {
 	_sound->selectAudioResourceSet(kMusicIngame);
 	_sound->loadSoundFile(0);
+	_screen->selectPC98Palette(0, _screen->getPalette(0));
 	_currentLevel = 1;
 	_currentSub = 0;
 	loadLevel(1, 0);
@@ -113,6 +114,7 @@ void EoBEngine::startupNew() {
 void EoBEngine::startupLoad() {
 	_sound->selectAudioResourceSet(kMusicIngame);
 	_sound->loadSoundFile(0);
+	_screen->selectPC98Palette(0, _screen->getPalette(0));
 }
 
 void EoBEngine::drawNpcScene(int npcIndex) {

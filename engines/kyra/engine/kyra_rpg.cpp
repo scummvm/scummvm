@@ -199,9 +199,9 @@ Common::Error KyraRpgEngine::init() {
 	if (_vcnBpp == 2)
 		_vcnDrawLine = new VcnLineDrawingMethods(new VcnDrawProc(this, &KyraRpgEngine::vcnDraw_fw_hiCol), new VcnDrawProc(this, &KyraRpgEngine::vcnDraw_bw_hiCol),
 			new VcnDrawProc(this, &KyraRpgEngine::vcnDraw_fw_trans_hiCol), new VcnDrawProc(this, &KyraRpgEngine::vcnDraw_bw_trans_hiCol));
-	else if (_flags.platform == Common::kPlatformAmiga)
-		_vcnDrawLine = new VcnLineDrawingMethods(new VcnDrawProc(this, &KyraRpgEngine::vcnDraw_fw_Amiga), new VcnDrawProc(this, &KyraRpgEngine::vcnDraw_bw_Amiga),
-			new VcnDrawProc(this, &KyraRpgEngine::vcnDraw_fw_trans_Amiga), new VcnDrawProc(this, &KyraRpgEngine::vcnDraw_bw_trans_Amiga));
+	else if (_flags.platform == Common::kPlatformAmiga || (_flags.gameID == GI_EOB1 && _flags.use16ColorMode))
+		_vcnDrawLine = new VcnLineDrawingMethods(new VcnDrawProc(this, &KyraRpgEngine::vcnDraw_fw_planar), new VcnDrawProc(this, &KyraRpgEngine::vcnDraw_bw_planar),
+			new VcnDrawProc(this, &KyraRpgEngine::vcnDraw_fw_trans_planar), new VcnDrawProc(this, &KyraRpgEngine::vcnDraw_bw_trans_planar));
 	else
 		_vcnDrawLine = new VcnLineDrawingMethods(new VcnDrawProc(this, &KyraRpgEngine::vcnDraw_fw_4bit), new VcnDrawProc(this, &KyraRpgEngine::vcnDraw_bw_4bit),
 			new VcnDrawProc(this, &KyraRpgEngine::vcnDraw_fw_trans_4bit), new VcnDrawProc(this, &KyraRpgEngine::vcnDraw_bw_trans_4bit));

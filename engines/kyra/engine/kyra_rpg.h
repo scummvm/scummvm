@@ -213,10 +213,10 @@ protected:
 	void vcnDraw_bw_hiCol(uint8 *&dst, const uint8 *&src);
 	void vcnDraw_fw_trans_hiCol(uint8 *&dst, const uint8 *&src);
 	void vcnDraw_bw_trans_hiCol(uint8 *&dst, const uint8 *&src);
-	void vcnDraw_fw_Amiga(uint8 *&dst, const uint8 *&src);
-	void vcnDraw_bw_Amiga(uint8 *&dst, const uint8 *&src);
-	void vcnDraw_fw_trans_Amiga(uint8 *&dst, const uint8 *&src);
-	void vcnDraw_bw_trans_Amiga(uint8 *&dst, const uint8 *&src);
+	void vcnDraw_fw_planar(uint8 *&dst, const uint8 *&src);
+	void vcnDraw_bw_planar(uint8 *&dst, const uint8 *&src);
+	void vcnDraw_fw_trans_planar(uint8 *&dst, const uint8 *&src);
+	void vcnDraw_bw_trans_planar(uint8 *&dst, const uint8 *&src);
 
 	typedef Common::Functor2Mem<uint8 *&, const uint8 *&, void, KyraRpgEngine> VcnDrawProc;
 	struct VcnLineDrawingMethods {
