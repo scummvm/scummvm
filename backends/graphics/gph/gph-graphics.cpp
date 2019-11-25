@@ -460,35 +460,33 @@ bool GPHGraphicsManager::loadGFXMode() {
 }
 
 bool GPHGraphicsManager::hasFeature(OSystem::Feature f) const {
-	return
-	    (f == OSystem::kFeatureAspectRatioCorrection) ||
-	    (f == OSystem::kFeatureCursorPalette);
+	switch (f) {
+	case OSystem::kFeatureFullscreenMode:
+	case OSystem::kFeatureIconifyWindow:
+		return false;
+	default:
+		return SurfaceSdlGraphicsManager::hasFeature(f);
+	}
 }
 
 void GPHGraphicsManager::setFeatureState(OSystem::Feature f, bool enable) {
 	switch (f) {
-	case OSystem::kFeatureAspectRatioCorrection:
-		setAspectRatioCorrection(enable);
-		break;
-	case OSystem::kFeatureCursorPalette:
-		_cursorPaletteDisabled = !enable;
-		blitCursor();
+	case OSystem::kFeatureFullscreenMode:
+	case OSystem::kFeatureIconifyWindow:
 		break;
 	default:
+		SurfaceSdlGraphicsManager::setFeatureState(f, enable);
 		break;
 	}
 }
 
 bool GPHGraphicsManager::getFeatureState(OSystem::Feature f) const {
-	assert(_transactionMode == kTransactionNone);
-
 	switch (f) {
-	case OSystem::kFeatureAspectRatioCorrection:
-		return _videoMode.aspectRatioCorrection;
-	case OSystem::kFeatureCursorPalette:
-		return !_cursorPaletteDisabled;
-	default:
+	case OSystem::kFeatureFullscreenMode:
+	case OSystem::kFeatureIconifyWindow:
 		return false;
+	default:
+		return SurfaceSdlGraphicsManager::getFeatureState(f);
 	}
 }
 

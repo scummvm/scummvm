@@ -33,27 +33,33 @@ SamsungTVSdlGraphicsManager::SamsungTVSdlGraphicsManager(SdlEventSource *sdlEven
 }
 
 bool SamsungTVSdlGraphicsManager::hasFeature(OSystem::Feature f) const {
-	return
-		(f == OSystem::kFeatureAspectRatioCorrection) ||
-		(f == OSystem::kFeatureCursorPalette);
+	switch (f) {
+	case OSystem::kFeatureFullscreenMode:
+	case OSystem::kFeatureIconifyWindow:
+		return false;
+	default:
+		return SurfaceSdlGraphicsManager::hasFeature(f);
+	}
 }
 
 void SamsungTVSdlGraphicsManager::setFeatureState(OSystem::Feature f, bool enable) {
 	switch (f) {
-	case OSystem::kFeatureAspectRatioCorrection:
-		SurfaceSdlGraphicsManager::setFeatureState(f, enable);
+	case OSystem::kFeatureFullscreenMode:
+	case OSystem::kFeatureIconifyWindow:
 		break;
 	default:
+		SurfaceSdlGraphicsManager::setFeatureState(f, enable);
 		break;
 	}
 }
 
 bool SamsungTVSdlGraphicsManager::getFeatureState(OSystem::Feature f) const {
 	switch (f) {
-	case OSystem::kFeatureAspectRatioCorrection:
-		return SurfaceSdlGraphicsManager::getFeatureState(f);
-	default:
+	case OSystem::kFeatureFullscreenMode:
+	case OSystem::kFeatureIconifyWindow:
 		return false;
+	default:
+		return SurfaceSdlGraphicsManager::getFeatureState(f);
 	}
 }
 
