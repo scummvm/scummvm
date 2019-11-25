@@ -77,7 +77,7 @@ private:
 	enum IntroPart {
 		kOnlyCredits = 0,
 		kOnlyIntro,
-		kCreditsAndIntro,
+		kCreditsAndIntro
 	};
 
 	void seq_playIntro(int part);

@@ -41,7 +41,7 @@ public:
 	enum IntroPart {
 		kOnlyCredits = 0,
 		kOnlyIntro,
-		kCreditsAndIntro,
+		kCreditsAndIntro
 	};
 
 	void start(int part);
