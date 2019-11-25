@@ -1060,7 +1060,7 @@ void GlkAPI::glk_sound_load_hint(uint snd, uint flag) {
 	// No implementation
 }
 
-schanid_t GlkAPI::glk_schannel_create_ext(glui32 rock, glui32 volume) {
+schanid_t GlkAPI::glk_schannel_create_ext(uint rock, uint volume) {
 	return _sounds->create(rock, volume);
 }
 
