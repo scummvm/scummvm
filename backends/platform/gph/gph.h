@@ -40,6 +40,10 @@ public:
 	void initBackend();
 	void quit();
 
+	void setFeatureState(Feature f, bool enable);
+	bool getFeatureState(Feature f);
+	bool hasFeature(Feature f);
+
 protected:
 	bool _inited;
 	bool _initedSDL;

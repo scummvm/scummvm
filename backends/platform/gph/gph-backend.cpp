@@ -207,4 +207,35 @@ void OSystem_GPH::quit() {
 	OSystem_POSIX::quit();
 }
 
+bool OSystem_GPH::hasFeature(Feature f) const {
+	switch (f) {
+	case kFeatureFullscreenMode:
+	case kFeatureIconifyWindow:
+		return false;
+	default:
+		return OSystem_POSIX::hasFeature(f);
+	}
+}
+
+void OSystem_GPH::setFeatureState(Feature f, bool enable) {
+	switch (f) {
+	case kFeatureFullscreenMode:
+	case kFeatureIconifyWindow:
+		break;
+	default:
+		OSystem_POSIX::setFeatureState(f, enable);
+		break;
+	}
+}
+
+bool OSystem_GPH::getFeatureState(Feature f) const {
+	switch (f) {
+	case kFeatureFullscreenMode:
+	case kFeatureIconifyWindow:
+		return false;
+	default:
+		return OSystem_POSIX::getFeatureState(f);
+	}
+}
+
 #endif

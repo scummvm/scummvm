@@ -26,7 +26,6 @@
 
 #include "backends/platform/samsungtv/samsungtv.h"
 #include "backends/events/samsungtvsdl/samsungtvsdl-events.h"
-#include "backends/graphics/samsungtvsdl/samsungtvsdl-graphics.h"
 #include "backends/saves/default/default-saves.h"
 #include "backends/fs/posix/posix-fs.h"
 #include "common/textconsole.h"
@@ -40,9 +39,6 @@ void OSystem_SDL_SamsungTV::initBackend() {
 	// Create the events manager
 	if (_eventSource == 0)
 		_eventSource = new SamsungTVSdlEventSource();
-
-	if (_graphicsManager == 0)
-		_graphicsManager = new SamsungTVSdlGraphicsManager(_eventSource, _window);
 
 	// Call parent implementation of this method
 	OSystem_POSIX::initBackend();
@@ -68,6 +64,37 @@ Common::String OSystem_SDL_SamsungTV::getDefaultLogFileName() {
 	}
 
 	return "/mtd_ram/scummvm.log";
+}
+
+bool OSystem_SDL_SamsungTV::hasFeature(Feature f) const {
+	switch (f) {
+	case kFeatureFullscreenMode:
+	case kFeatureIconifyWindow:
+		return false;
+	default:
+		return OSystem_POSIX::hasFeature(f);
+	}
+}
+
+void OSystem_SDL_SamsungTV::setFeatureState(Feature f, bool enable) {
+	switch (f) {
+	case kFeatureFullscreenMode:
+	case kFeatureIconifyWindow:
+		break;
+	default:
+		OSystem_POSIX::setFeatureState(f, enable);
+		break;
+	}
+}
+
+bool OSystem_SDL_SamsungTV::getFeatureState(Feature f) const {
+	switch (f) {
+	case kFeatureFullscreenMode:
+	case kFeatureIconifyWindow:
+		return false;
+	default:
+		return OSystem_POSIX::getFeatureState(f);
+	}
 }
 
 #endif

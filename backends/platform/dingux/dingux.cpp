@@ -40,4 +40,35 @@ void OSystem_SDL_Dingux::initBackend() {
 	OSystem_POSIX::initBackend();
 }
 
+bool OSystem_SDL_Dingux::hasFeature(Feature f) const {
+	switch (f) {
+	case kFeatureFullscreenMode:
+	case kFeatureIconifyWindow:
+		return false;
+	default:
+		return OSystem_POSIX::hasFeature(f);
+	}
+}
+
+void OSystem_SDL_Dingux::setFeatureState(Feature f, bool enable) {
+	switch (f) {
+	case kFeatureFullscreenMode:
+	case kFeatureIconifyWindow:
+		break;
+	default:
+		OSystem_POSIX::setFeatureState(f, enable);
+		break;
+	}
+}
+
+bool OSystem_SDL_Dingux::getFeatureState(Feature f) const {
+	switch (f) {
+	case kFeatureFullscreenMode:
+	case kFeatureIconifyWindow:
+		return false;
+	default:
+		return OSystem_POSIX::getFeatureState(f);
+	}
+}
+
 #endif

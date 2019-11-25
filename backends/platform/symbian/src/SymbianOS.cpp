@@ -37,7 +37,6 @@
 #include "backends/fs/symbian/symbian-fs-factory.h"
 #include "backends/saves/default/default-saves.h"
 #include "backends/events/symbiansdl/symbiansdl-events.h"
-#include "backends/graphics/symbiansdl/symbiansdl-graphics.h"
 #include "backends/mixer/symbiansdl/symbiansdl-mixer.h"
 
 #define DEFAULT_CONFIG_FILE "scummvm.ini"
@@ -110,8 +109,6 @@ void OSystem_SDL_Symbian::initBackend() {
 		// Setup and start mixer
 		_mixerManager->init();
 	}
-	if (_graphicsManager == 0)
-		_graphicsManager = new SymbianSdlGraphicsManager(_eventSource, _window);
 
 	// Call parent implementation of this method
 	OSystem_SDL::initBackend();
@@ -169,9 +166,14 @@ Common::String OSystem_SDL_Symbian::getDefaultConfigFileName() {
 }
 
 bool OSystem_SDL_Symbian::hasFeature(Feature f) {
-	if (f == kFeatureJoystickDeadzone) return false;
-
-	return OSystem_SDL::hasFeature(f);
+	switch (f) {
+	case kFeatureJoystickDeadzone:
+	case kFeatureFullscreenMode:
+	case kFeatureIconifyWindow:
+		return false;
+	default:
+		return OSystem_SDL::hasFeature(f);
+	}
 }
 
 

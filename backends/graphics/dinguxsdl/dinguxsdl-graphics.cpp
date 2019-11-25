@@ -470,37 +470,6 @@ bool DINGUXSdlGraphicsManager::loadGFXMode() {
 	return SurfaceSdlGraphicsManager::loadGFXMode();
 }
 
-bool DINGUXSdlGraphicsManager::hasFeature(OSystem::Feature f) const {
-	switch (f) {
-	case OSystem::kFeatureFullscreenMode:
-	case OSystem::kFeatureIconifyWindow:
-		return false;
-	default:
-		return SurfaceSdlGraphicsManager::hasFeature(f);
-	}
-}
-
-void DINGUXSdlGraphicsManager::setFeatureState(OSystem::Feature f, bool enable) {
-	switch (f) {
-	case OSystem::kFeatureFullscreenMode:
-	case OSystem::kFeatureIconifyWindow:
-		break;
-	default:
-		SurfaceSdlGraphicsManager::setFeatureState(f, enable);
-		break;
-	}
-}
-
-bool DINGUXSdlGraphicsManager::getFeatureState(OSystem::Feature f) const {
-	switch (f) {
-	case OSystem::kFeatureFullscreenMode:
-	case OSystem::kFeatureIconifyWindow:
-		return false;
-	default:
-		return SurfaceSdlGraphicsManager::getFeatureState(f);
-	}
-}
-
 void DINGUXSdlGraphicsManager::warpMouse(int x, int y) {
 	if (_cursorX != x || _cursorY != y) {
 		if (_videoMode.mode == GFX_HALF && !_overlayVisible) {

@@ -33,6 +33,10 @@ public:
 	virtual void quit();
 	virtual void fatalError();
 
+	virtual void setFeatureState(Feature f, bool enable);
+	virtual bool getFeatureState(Feature f);
+	virtual bool hasFeature(Feature f);
+
 protected:
 	virtual Common::String getDefaultConfigFileName();
 	virtual Common::String getDefaultLogFileName();
