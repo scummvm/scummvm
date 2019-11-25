@@ -2,6 +2,13 @@
 set -e
 here=$(dirname "$0")
 
+if [ -n "$ANDROID_KEYSTORE_KEY" ]; then
+	echo ">>> Decrypting Android keystore"
+	openssl aes-256-cbc -k "$ANDROID_KEYSTORE_KEY" -in .travis/android.keystore.enc -out /tmp/android.keystore -d
+	export KEYSTORE=/tmp/android.keystore
+	unset ANDROID_KEYSTORE_KEY
+fi
+
 # Build both ABIs first
 for CROSS_HOST in aarch64-linux-android armv7a-linux-androideabi; do (
 	echo ">>> Building libresidualvm.so for $CROSS_HOST"
