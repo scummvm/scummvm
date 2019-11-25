@@ -1,7 +1,7 @@
 # Android specific build targets
 
 # These must be incremented for each market upload
-ANDROID_VERSIONCODE ?= 1000
+ANDROID_VERSIONCODE ?= 50000
 ANDROID_VERSIONNAME ?= 0.4
 
 PATH_DIST = $(srcdir)/dists/android
