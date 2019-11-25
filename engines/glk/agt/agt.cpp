@@ -28,11 +28,18 @@
 namespace Glk {
 namespace AGT {
 
+AGT *g_vm;
+
+extern void glk_main();
+extern int glk_startup_code(int argc, char *argv[]);
+
 AGT::AGT(OSystem *syst, const GlkGameDescription &gameDesc) : GlkAPI(syst, gameDesc) {
+	g_vm = this;
 }
 
 void AGT::runGame() {
-	// TODO
+	glk_startup_code(0, nullptr);
+	glk_main();
 }
 
 Common::Error AGT::readSaveData(Common::SeekableReadStream *rs) {

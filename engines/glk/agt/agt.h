@@ -45,7 +45,9 @@ public:
 	/**
 	 * Returns the running interpreter type
 	 */
-	virtual InterpreterType getInterpreterType() const override { return INTERPRETER_AGT; }
+	virtual InterpreterType getInterpreterType() const override {
+		return INTERPRETER_AGT;
+	}
 
 	/**
 	 * Execute the game
@@ -63,6 +65,8 @@ public:
 	 */
 	virtual Common::Error writeGameData(Common::WriteStream *ws) override;
 };
+
+extern AGT *g_vm;
 
 } // End of namespace AGT
 } // End of namespace Glk

@@ -71,8 +71,27 @@ endif
 
 ifdef ENABLE_GLK_AGT
 MODULE_OBJS += \
+	agt/agil.o \
 	agt/agt.o \
-	agt/detection.o
+	agt/agtread.o \
+	agt/agxfile.o \
+	agt/auxfile.o \
+	agt/debugcmd.o \
+	agt/detection.o \
+	agt/disassemble.o \
+	agt/exec.o \
+	agt/filename.o \
+	agt/gamedata.o \
+	agt/interface.o \
+	agt/metacommand.o \
+	agt/object.o \
+	agt/os_glk.o \
+	agt/parser.o \
+	agt/runverb.o \
+	agt/savegame.o \
+	agt/token.o \
+	agt/util.o \
+	agt/vars.o
 endif
 
 ifdef ENABLE_GLK_ALAN2
