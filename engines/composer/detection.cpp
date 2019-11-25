@@ -63,6 +63,7 @@ void ComposerEngine::getConfigFile(Common::String &configFile) const {
 			configFile = res->fileName;
 			return;
 		}
+		res++;
 	}
 	// default config file name
 	configFile = "book.ini";
