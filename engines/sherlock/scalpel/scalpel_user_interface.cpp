@@ -31,6 +31,7 @@
 #include "sherlock/scalpel/settings.h"
 #include "sherlock/scalpel/scalpel.h"
 #include "sherlock/sherlock.h"
+#include "common/config-manager.h"
 
 #ifdef USE_TTS
 #include "common/text-to-speech.h"
@@ -2062,9 +2063,11 @@ void ScalpelUserInterface::printObjectDesc(const Common::String &str, bool first
 	}
 
         #ifdef USE_TTS
-        Common::TextToSpeechManager *_ttsMan = g_system->getTextToSpeechManager();
-        _ttsMan->stop();
-        _ttsMan->say(str.c_str());
+	if (ConfMan.getBool("tts_narrator")) {
+            Common::TextToSpeechManager *_ttsMan = g_system->getTextToSpeechManager();
+            _ttsMan->stop();
+            _ttsMan->say(str.c_str());
+	}
         #endif 
 }
 

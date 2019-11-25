@@ -62,7 +62,8 @@ static const PlainGameDescriptor sherlockGames[] = {
 #define GAMEOPTION_HELP_STYLE		GUIO_GAMEOPTIONS3
 #define GAMEOPTION_PORTRAITS_ON		GUIO_GAMEOPTIONS4
 #define GAMEOPTION_WINDOW_STYLE		GUIO_GAMEOPTIONS5
-#define GAMEOPTION_TRANSPARENT_WINDOWS		GUIO_GAMEOPTIONS6
+#define GAMEOPTION_TRANSPARENT_WINDOWS	GUIO_GAMEOPTIONS6
+#define GAMEOPTION_TTS_NARRATOR 	GUIO_GAMEOPTIONS7
 
 static const ADExtraGuiOptionsMap optionsList[] = {
 	{
@@ -122,6 +123,16 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 			_s("Show windows with a partially transparent background"),
 			"transparent_windows",
 			true
+		}
+	},
+
+	{
+		GAMEOPTION_TTS_NARRATOR,
+		{
+			_s("TTS Narrator"),
+			_s("Use TTS to read the descriptions (if TTS is available)"),
+			"tts_narrator",
+			false
 		}
 	},
 
