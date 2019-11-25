@@ -30,6 +30,8 @@
 
 namespace Glk {
 
+#define GLK_MAXVOLUME 0x10000
+
 class Sounds;
 
 /**
@@ -41,6 +43,7 @@ private:
 	uint _soundNum;
 	uint _notify;
 	Audio::SoundHandle _handle;
+	uint _defaultVolume;
 public:
 	uint _rock;
 	gidispatch_rock_t _dispRock;
@@ -48,7 +51,7 @@ public:
 	/**
 	 * Constructor
 	 */
-	SoundChannel(Sounds *owner);
+	SoundChannel(Sounds *owner, uint volume);
 
 	/**
 	 * Destructor
@@ -109,7 +112,7 @@ public:
 	/**
 	 * Create a new channel
 	 */
-	schanid_t create(uint rock = 0);
+	schanid_t create(uint rock = 0, uint volume = GLK_MAXVOLUME);
 
 	/**
 	 * Used to iterate over the current list of sound channels

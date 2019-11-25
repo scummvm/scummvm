@@ -46,8 +46,8 @@ void Sounds::removeSound(schanid_t snd) {
 	}
 }
 
-schanid_t Sounds::create(uint rock) {
-	schanid_t snd = new SoundChannel(this);
+schanid_t Sounds::create(uint rock, uint volume) {
+	schanid_t snd = new SoundChannel(this, volume);
 	_sounds.push_back(snd);
 	return snd;
 }
@@ -73,8 +73,10 @@ void Sounds::poll() {
 
 /*--------------------------------------------------------------------------*/
 
-SoundChannel::SoundChannel(Sounds *owner) : _owner(owner), _soundNum(0),
-		_rock(0), _notify(0) {
+SoundChannel::SoundChannel(Sounds *owner, uint volume) : _owner(owner),
+		_soundNum(0), _rock(0), _notify(0) {
+	_defaultVolume = MIN(volume, (uint)GLK_MAXVOLUME);
+
 	if (g_vm->gli_register_obj)
 		_dispRock = (*g_vm->gli_register_obj)(this, gidisp_Class_Schannel);
 }
@@ -145,7 +147,8 @@ uint SoundChannel::play(uint soundNum, uint repeats, uint notify) {
 	}
 
 	// Start playing the audio
-	g_vm->_mixer->playStream(Audio::Mixer::kPlainSoundType, &_handle, stream);
+	g_vm->_mixer->playStream(Audio::Mixer::kPlainSoundType, &_handle, stream, -1,
+		_defaultVolume * 255 / GLK_MAXVOLUME);
 	return 0;
 }
 
@@ -162,7 +165,7 @@ void SoundChannel::poll() {
 }
 
 void SoundChannel::setVolume(uint volume, uint duration, uint notify) {
-	uint newVol = volume * 255 / 0x10000;
+	uint newVol = volume * 255 / GLK_MAXVOLUME;
 	g_vm->_mixer->setChannelVolume(_handle, newVol);
 
 	if (notify) {
