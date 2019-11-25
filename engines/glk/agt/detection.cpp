@@ -45,8 +45,6 @@ GameDescriptor AGTMetaEngine::findGame(const char *gameId) {
 }
 
 bool AGTMetaEngine::detectGames(const Common::FSList &fslist, DetectedGames &gameList) {
-	const char *const EXTENSIONS[] = { ".saga", ".dat", nullptr };
-
 	// Loop through the files of the folder
 	for (Common::FSList::const_iterator file = fslist.begin(); file != fslist.end(); ++file) {
 		// Check for a recognised filename
@@ -54,7 +52,7 @@ bool AGTMetaEngine::detectGames(const Common::FSList &fslist, DetectedGames &gam
 			continue;
 
 		Common::String filename = file->getName();
-		if (!filename.hasSuffixIgnoreCase(".d$$"))
+		if (!filename.hasSuffixIgnoreCase(".d$$") && !filename.hasSuffixIgnoreCase(".agx"))
 			continue;
 
 		Common::File gameFile;
@@ -74,7 +72,9 @@ bool AGTMetaEngine::detectGames(const Common::FSList &fslist, DetectedGames &gam
 		} else {
 			// Found a match
 			PlainGameDescriptor gameDesc = findGame(p->_gameId);
-			gameList.push_back(GlkDetectedGame(p->_gameId, gameDesc.description, filename));
+			DetectedGame gd("glk", p->_gameId, gameDesc.description, p->_language, Common::kPlatformUnknown, p->_extra);
+			gd.addExtraEntry("filename", filename);
+			gameList.push_back(gd);
 		}
 	}
 
