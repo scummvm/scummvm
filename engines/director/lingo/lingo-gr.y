@@ -420,6 +420,7 @@ expr: INT		{
 	| STRING		{
 		$$ = g_lingo->code1(g_lingo->c_stringpush);
 		g_lingo->codeString($1->c_str()); }
+	| reference
 	| FBLTINNOARGS 	{
 		g_lingo->codeFunc($1, 0);
 		delete $1; }
