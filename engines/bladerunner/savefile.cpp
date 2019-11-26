@@ -146,8 +146,10 @@ bool SaveFileManager::readHeader(Common::SeekableReadStream &in, SaveFileHeader 
 
 		s.skip(4); //skip size;
 
-		void *thumbnailData = malloc(kThumbnailSize); // freed by ScummVM's smartptr
-		s.read(thumbnailData, kThumbnailSize);
+		uint16 *thumbnailData = (uint16*)malloc(kThumbnailSize); // freed by ScummVM's smartptr
+		for (uint i = 0; i < kThumbnailSize / 2; ++i) {
+			thumbnailData[i] = s.readUint16LE();
+		}
 
 		header._thumbnail->init(80, 60, 160, thumbnailData, gameDataPixelFormat());
 
