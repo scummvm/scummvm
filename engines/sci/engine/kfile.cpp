@@ -586,18 +586,15 @@ reg_t kFileIOReadRaw(EngineState *s, int argc, reg_t *argv) {
 	uint16 handle = argv[0].toUint16();
 	uint16 size = argv[2].toUint16();
 	int bytesRead = 0;
-	char *buf = new char[size];
+	byte *buf = new byte[size];
 	debugC(kDebugLevelFile, "kFileIO(readRaw): %d, %d", handle, size);
 
 	FileHandle *f = getFileFromHandle(s, handle);
 	if (f)
 		bytesRead = f->_in->read(buf, size);
 
-	// TODO: What happens if less bytes are read than what has
-	// been requested? (i.e. if bytesRead is non-zero, but still
-	// less than size)
 	if (bytesRead > 0)
-		s->_segMan->memcpy(argv[1], (const byte*)buf, size);
+		s->_segMan->memcpy(argv[1], buf, bytesRead);
 
 	delete[] buf;
 	return make_reg(0, bytesRead);
