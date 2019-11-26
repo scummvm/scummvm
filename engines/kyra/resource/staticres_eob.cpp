@@ -781,6 +781,11 @@ void EoBCoreEngine::initMenus() {
 		{  18,  12,  20, 158,  14,  32,  3  },
 		{  19,  12,  37, 158,  14,  50,  3  },
 		{  20,  12,  54, 158,  14,  21,  3  },
+		{  8,  128, 122,  40,  14,  19,  7  },
+		// PC-98 options menu
+		{  17,  12,  20, 158,  14,  32,  3  },
+		{  18,  12,  37, 158,  14,  50,  3  },
+		{  19,  12,  54, 158,  14,  21,  3  },
 		{  8,  128, 122,  40,  14,  19,  7  }
 	};
 
@@ -810,9 +815,13 @@ void EoBCoreEngine::initMenus() {
 		// assign FM-Towns style options menu
 		_menuDefs[2].numButtons = 4;
 		_menuDefs[2].firstButtonStrId = 44;
-	}
-
-	if (_flags.platform == Common::kPlatformAmiga) {
+		_prefMenuPlatformOffset = 32;
+	} else if (_flags.platform == Common::kPlatformPC98) {
+		// assign PC-98 style options menu
+		_menuDefs[2].numButtons = 4;
+		_menuDefs[2].firstButtonStrId = 48;
+		_prefMenuPlatformOffset = 36;
+	} else if (_flags.platform == Common::kPlatformAmiga) {
 		// assign Amiga text colors
 		_menuDefs[0].titleCol = _menuDefs[1].titleCol = _menuDefs[2].titleCol = _menuDefs[4].titleCol = _menuDefs[6].titleCol = guiSettings()->colors.guiColorLightBlue;
 		_menuDefs[3].titleCol = _menuDefs[5].titleCol = guiSettings()->colors.guiColorWhite;

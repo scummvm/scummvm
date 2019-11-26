@@ -1139,6 +1139,7 @@ protected:
 	EoBMenuDef *_menuDefs;
 	const EoBMenuButtonDef *_menuButtonDefs;
 
+	int _prefMenuPlatformOffset;
 	bool _configMouse;
 	bool _config2431;
 

@@ -2155,8 +2155,8 @@ void GUI_EoB::runCampMenu() {
 			if (prevHighlightButton) {
 				int dir = (inputFlag == _vm->_keyMap[Common::KEYCODE_UP]) ? -1 : 1;
 				int s = prevHighlightButton->index + dir;
-				if (lastMenu == 2 && _vm->gameFlags().platform == Common::kPlatformFMTowns)
-					s += 32;
+				if (lastMenu == 2)
+					s += _vm->_prefMenuPlatformOffset;
 				int a = _vm->_menuDefs[lastMenu].firstButtonStrId + 1;
 				int b = a + _vm->_menuDefs[lastMenu].numButtons - 1;
 
@@ -2170,8 +2170,8 @@ void GUI_EoB::runCampMenu() {
 					s += dir;
 				} while (!_vm->shouldQuit());
 
-				if (lastMenu == 2 && _vm->gameFlags().platform == Common::kPlatformFMTowns)
-					s -= 32;
+				if (lastMenu == 2)
+					s -= _vm->_prefMenuPlatformOffset;
 				highlightButton = _vm->gui_getButton(buttonList, s);
 			}
 
@@ -2267,21 +2267,35 @@ void GUI_EoB::runCampMenu() {
 				break;
 
 			case 0x800D:
-				_vm->_configSounds ^= true;
-				_vm->_configMusic = _vm->_configSounds ? 1 : 0;
+				if (_vm->gameFlags().platform == Common::kPlatformPC98) {
+					_vm->_configMusic ^= true;
+					if (_vm->_configMusic)
+						_vm->snd_playSong(_vm->_currentLevel + 1);
+					else
+						_vm->snd_playSong(0);
+				} else {
+					_vm->_configSounds ^= true;
+					_vm->_configMusic = _vm->_configSounds ? 1 : 0;
+				}
 				keepButtons = true;
 				newMenu = 2;
 				break;
 
 			case 0x800E:
-				_vm->_configHpBarGraphs ^= true;
+				if (_vm->gameFlags().platform == Common::kPlatformPC98)
+					_vm->_configSounds ^= true;
+				else
+					_vm->_configHpBarGraphs ^= true;
 				newMenu = 2;
 				redrawPortraits = keepButtons = true;
 				break;
 
 			case 0x800F:
-				if (_vm->gameFlags().platform == Common::kPlatformFMTowns) {
-					_vm->_config2431 ^= true;
+				if (_vm->gameFlags().platform == Common::kPlatformFMTowns || _vm->gameFlags().platform == Common::kPlatformPC98) {
+					if (_vm->gameFlags().platform == Common::kPlatformFMTowns)
+						_vm->_config2431 ^= true;
+					else
+						_vm->_configHpBarGraphs ^= true;
 					newMenu = 2;
 					redrawPortraits = keepButtons = true;
 				} else {
@@ -4070,8 +4084,8 @@ Button *GUI_EoB::initMenu(int id) {
 		b->index = m->firstButtonStrId + i + 1;
 		if (id == 4 && _vm->game() == GI_EOB1)
 			b->index -= 14;
-		else if (id == 2 && _vm->gameFlags().platform == Common::kPlatformFMTowns)
-			b->index -= 32;
+		else if (id == 2)
+			b->index -= _vm->_prefMenuPlatformOffset;
 
 		b->data0Val2 = 12;
 		b->data1Val2 = b->data2Val2 = 15;

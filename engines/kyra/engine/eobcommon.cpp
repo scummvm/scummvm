@@ -227,6 +227,7 @@ EoBCoreEngine::EoBCoreEngine(OSystem *system, const GameFlags &flags) : KyraRpgE
 	_amigaLevelSoundList1 = _amigaLevelSoundList2 = 0;
 	_amigaSoundMap = 0;
 	_amigaCurSoundFile = -1;
+	_prefMenuPlatformOffset = 0;
 	memset(_cgaMappingLevel, 0, sizeof(_cgaMappingLevel));
 	memset(_expRequirementTables, 0, sizeof(_expRequirementTables));
 	memset(_saveThrowTables, 0, sizeof(_saveThrowTables));
