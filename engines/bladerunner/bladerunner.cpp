@@ -2043,7 +2043,12 @@ bool BladeRunnerEngine::saveGame(Common::WriteStream &stream, Graphics::Surface 
 	SaveFileWriteStream s(memoryStream);
 
 	thumbnail.convertToInPlace(gameDataPixelFormat());
-	s.write(thumbnail.getPixels(), SaveFileManager::kThumbnailSize);
+
+	uint16* thumbnailData = (uint16*)thumbnail.getPixels();
+	for (uint i = 0; i < SaveFileManager::kThumbnailSize / 2; ++i) {
+		s.writeUint16LE(thumbnailData[i]);
+	}
+
 	s.writeFloat(1.0f);
 	_settings->save(s);
 	_scene->save(s);
@@ -2126,8 +2131,9 @@ bool BladeRunnerEngine::loadGame(Common::SeekableReadStream &stream) {
 
 	_gameIsLoading = true;
 	_settings->setLoadingGame();
+
 	s.skip(SaveFileManager::kThumbnailSize); // skip the thumbnail
-	s.skip(4);// always float 1.0, but never used
+	s.skip(4);// always float 1.0, but never used, assuming it's the game version
 	_settings->load(s);
 	_scene->load(s);
 	_scene->_exits->load(s);
