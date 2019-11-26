@@ -189,6 +189,7 @@ public:
 	void runTests();
 
 private:
+	Common::String stripComments(const char *s);
 	const char *findNextDefinition(const char *s);
 
 	// lingo-events.cpp

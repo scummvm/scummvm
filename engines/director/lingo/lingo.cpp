@@ -151,6 +151,10 @@ void Lingo::addCode(const char *code, ScriptType type, uint16 id) {
 		return;
 	}
 
+	// Strip comments for ease of the parser
+	Common::String codeNorm = stripComments(code);
+	code = codeNorm.c_str();
+
 	// macros and factories have conflicting grammar. Thus we ease life for the parser.
 	if ((begin = findNextDefinition(code))) {
 		bool first = true;
@@ -209,6 +213,53 @@ void Lingo::addCode(const char *code, ScriptType type, uint16 id) {
 			debugC(2, kDebugLingoCompile, "[%5d] %s", pc, instr.c_str());
 		}
 	}
+}
+
+Common::String Lingo::stripComments(const char *s) {
+	Common::String noComments;
+
+	// Strip comments
+	while (*s) {
+		if (*s == '-' && *(s + 1) == '-') { // At the end of the line we will have \0
+			while (*s && *s != '\n')
+				s++;
+		}
+
+		if (*s)
+			noComments += *s;
+
+		s++;
+	}
+
+	// Strip trailing whitespaces
+	Common::String res;
+	s = noComments.c_str();
+	while (*s) {
+		if (*s == ' ' || *s == '\t') { // If we see a whitespace
+			const char *ps = s; // Remember where we saw it
+
+			while (*ps == ' ' || *ps == '\t')	// Scan until end of whitespaces
+				ps++;
+
+			if (*ps) {	// Not end of the string
+				if (*ps == '\n') {	// If it is newline, then we continue from it
+					s = ps;
+				} else {	// It is not a newline
+					while (s != ps) {	// Add all whitespaces
+						res += *s;
+						s++;
+					}
+				}
+			}
+		}
+
+		if (*s)
+			res += *s;
+
+		s++;
+	}
+
+	return res;
 }
 
 void Lingo::executeScript(ScriptType type, uint16 id, uint16 function) {
