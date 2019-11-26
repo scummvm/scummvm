@@ -110,7 +110,8 @@ static const ComposerGameDescription gameDescriptions[] = {
 			"babayaga",
 			0,
 			{
-				{"Baba Yaga", GAME_EXECUTABLE, "ae3a4445f42fe10253da7ee4ea0d37d6", 44321},
+				{"book.mac", GAME_CONFIGFILE, "d82143cbc4a36093250c7d6f80af1147", -1},
+  				{"Baba Yaga", GAME_EXECUTABLE, "ae3a4445f42fe10253da7ee4ea0d37d6", 44321},
 				AD_LISTEND
 			},
 			Common::EN_ANY,
@@ -263,6 +264,7 @@ static const ComposerGameDescription gameDescriptions[] = {
 			"imoking",
 			0,
 			{
+				{"book.mac", GAME_CONFIGFILE, "190158751630f69c2b6cf146aa2f1efc", -1},
 				{"imo and the king", GAME_EXECUTABLE, "b0277885fec943b5f19409f35b33964c", -1},
 				AD_LISTEND
 			},
@@ -314,6 +316,7 @@ static const ComposerGameDescription gameDescriptions[] = {
 			"littlesamurai",
 			0,
 			{
+				{"book.mac", GAME_CONFIGFILE, "190158751630f69c2b6cf146aa2f1efc", -1},
 				{"The Little Samurai", GAME_EXECUTABLE, "38121dd649c24e8676aa108cf35d44b5", -1},
 				AD_LISTEND
 			},
