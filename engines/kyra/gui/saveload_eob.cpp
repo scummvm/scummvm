@@ -280,7 +280,7 @@ Common::Error EoBCoreEngine::loadGameState(int slot) {
 		_screen->setScreenPalette(_screen->getPalette(0));
 
 	_sceneUpdateRequired = true;
-	_screen->setFont(Screen::FID_6_FNT);
+	_screen->setFont(_flags.use16ColorMode ? Screen::FID_SJIS_FNT : Screen::FID_6_FNT);
 
 	for (int i = 0; i < 6; i++) {
 		for (int ii = 0; ii < 10; ii++) {

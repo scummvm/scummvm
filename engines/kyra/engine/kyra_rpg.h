@@ -86,6 +86,7 @@ struct KyraRpgGUISettings {
 		uint8 labelColor2;
 		uint16 width;
 		uint16 height;
+		int16 txtOffsY;
 		int waitReserve;
 		uint16 waitX[2];
 		uint8 waitY[2];

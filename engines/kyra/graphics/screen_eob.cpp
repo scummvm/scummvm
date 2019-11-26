@@ -92,6 +92,8 @@ bool Screen_EoB::init() {
 			_convertHiColorBuffer = new uint8[SCREEN_H * SCREEN_W];
 			enableHiColorMode(true);			
 			loadFont(FID_SJIS_SMALL_FNT, "FONT.DMP");
+		} else if (_vm->game() == GI_EOB1 && _vm->gameFlags().platform == Common::kPlatformPC98) {
+			loadFont(FID_SJIS_SMALL_FNT, "FONT12.FNT");
 		}
 
 		if (_vm->gameFlags().useHiRes && _renderMode == Common::kRenderEGA) {
@@ -145,7 +147,7 @@ void Screen_EoB::setClearScreenDim(int dim) {
 
 void Screen_EoB::clearCurDim() {
 	static const uint8 amigaColorMap[16] = { 0x00, 0x06, 0x1d, 0x1b, 0x1a, 0x17, 0x18, 0x0e, 0x19, 0x1c, 0x1c, 0x1e, 0x13, 0x0a, 0x11, 0x1f };
-	fillRect(_curDim->sx << 3, _curDim->sy, ((_curDim->sx + _curDim->w) << 3) - 1, (_curDim->sy + _curDim->h) - 1, _isAmiga ? amigaColorMap[_curDim->unkA] : _curDim->unkA);
+	fillRect(_curDim->sx << 3, _curDim->sy, ((_curDim->sx + _curDim->w) << 3) - 1, (_curDim->sy + _curDim->h) - 1, _isAmiga ? amigaColorMap[_curDim->unkA] : _use16ColorMode ? 0 : _curDim->unkA);
 }
 
 void Screen_EoB::setMouseCursor(int x, int y, const byte *shape) {
@@ -236,14 +238,21 @@ void Screen_EoB::loadFileDataToPage(Common::SeekableReadStream *s, int pageNum, 
 }
 
 void Screen_EoB::printShadedText(const char *string, int x, int y, int col1, int col2, int shadowCol) {
-	if (_vm->gameFlags().platform != Common::kPlatformFMTowns) {
+	if (_vm->gameFlags().lang != Common::JA_JPN) {
 		printText(string, x - 1, y, shadowCol, col2);
 		printText(string, x, y + 1, shadowCol, 0);
 		printText(string, x - 1, y + 1, shadowCol, 0);
 	} else if (col2) {
 		fillRect(x, y, x + getTextWidth(string) - 1, y + getFontHeight() - 1, col2);
 	}
+
+	if (_vm->gameFlags().use16ColorMode)
+		_fonts[_currentFont]->setStyle(Font::kFSLeftShadow);
+
 	printText(string, x, y, col1, 0);
+
+	if (_vm->gameFlags().use16ColorMode)
+		_fonts[_currentFont]->setStyle(Font::kFSNone);
 }
 
 void Screen_EoB::loadShapeSetBitmap(const char *file, int tempPage, int destPage) {
@@ -1472,19 +1481,23 @@ const uint8 *Screen_EoB::getEGADitheringTable() {
 }
 
 bool Screen_EoB::loadFont(FontId fontId, const char *filename) {
-	if (scumm_stricmp(filename, "FONT.DMP"))
-		return Screen::loadFont(fontId, filename);
-
 	Font *&fnt = _fonts[fontId];
-	int temp;
+	int temp = 0;
+	if (fnt)
+		delete fnt;
 
-	const uint16 *tbl = _vm->staticres()->loadRawDataBe16(kEoB2FontDmpSearchTbl, temp);
-	assert(tbl);
+	if (!scumm_stricmp(filename, "FONT.DMP"))
+		fnt = new SJISFont12x12(_vm->staticres()->loadRawDataBe16(kEoB2FontDmpSearchTbl, temp));
+	else if (!scumm_stricmp(filename, "FONT12.FNT"))
+		fnt = new Font12x12PC98(12, _vm->staticres()->loadRawDataBe16(kEoB1Ascii2SjisTable1, temp),
+			_vm->staticres()->loadRawDataBe16(kEoB1Ascii2SjisTable2, temp), _vm->staticres()->loadRawData(kEoB1FontLookupTable, temp));
+	else if (_isAmiga)
+		fnt = new AmigaDOSFont(_vm->resource(), _vm->game() == GI_EOB2 && _vm->gameFlags().lang == Common::DE_DEU);
+	else
+		// We use normal VGA rendering in EOB II, since we do the complete EGA dithering in updateScreen().
+		fnt = new OldDOSFont(_useHiResEGADithering ? Common::kRenderVGA : _renderMode, 12);
 
-	if (!fnt) {
-		fnt = new SJISFont12x12(tbl);
-		assert(fnt);
-	}
+	assert(fnt);
 
 	Common::SeekableReadStream *file = _vm->resource()->createReadStream(filename);
 	if (!file)
@@ -2037,10 +2050,11 @@ const uint8 Screen_EoB::_egaMatchTable[] = {
 uint16 *OldDOSFont::_cgaDitheringTable = 0;
 int OldDOSFont::_numRef = 0;
 
-OldDOSFont::OldDOSFont(Common::RenderMode mode) : _renderMode(mode) {
+OldDOSFont::OldDOSFont(Common::RenderMode mode, uint8 shadowColor) : _renderMode(mode), _shadowColor(shadowColor) {
 	_data = 0;
 	_width = _height = _numGlyphs = 0;
 	_bitmapOffsets = 0;
+	_style = kFSNone;
 
 	_numRef++;
 	if (!_cgaDitheringTable && _numRef == 1) {
@@ -2097,13 +2111,134 @@ int OldDOSFont::getCharWidth(uint16 c) const {
 	return _width;
 }
 
+void OldDOSFont::setColorMap(const uint8 *src) {
+	_colorMap8bit = src;
+}
+
 void OldDOSFont::drawChar(uint16 c, byte *dst, int pitch, int bpp) const {
-	static const uint8 renderMaskTable6[] = { 0xFC, 0x00, 0x7E, 0x00, 0x3F, 0x00, 0x1F, 0x80, 0x0F, 0xC0, 0x07, 0xE0, 0x03, 0xF0, 0x01, 0xF8 };
-	static const uint8 renderMaskTable8[] = { 0xFF, 0x00, 0x7F, 0x80, 0x3F, 0xC0, 0x1F, 0xE0, 0x0F, 0xF0, 0x07, 0xF8, 0x03, 0xFC, 0x01, 0xFE };
+	uint16 color1 = _colorMap8bit[1];
+	uint16 color2 = _colorMap8bit[0];
 
-	if (_width != 8 && _width != 6)
-		error("EOB font rendering not implemented for other font widths than 6 and 8.");
+    if (_style == kFSLeftShadow) {
+		drawCharIntern(c, dst + pitch, pitch, 1, _shadowColor, 0);
+		drawCharIntern(c, dst - 1, pitch, 1, _shadowColor, 0);
+		drawCharIntern(c, dst - 1 + pitch, pitch, 1, _shadowColor, 0);
+	}
 
+	if (bpp == 2) {
+		color1 = _colorMap16bit[1];
+		color2 = _colorMap16bit[0];
+	}
+
+	drawCharIntern(c, dst, pitch, bpp, color1, color2);
+}
+
+void OldDOSFont::drawCharIntern(uint16 c, byte *dst, int pitch, int bpp, int col1, int col2) const {
+	static const uint16 renderMaskTable[] = {
+		0x0000, 0x8000, 0xc000, 0xe000, 0xf000, 0xf800, 0xfc00, 0xfe00, 0xff00, 0xff80, 0xffc0, 0xffe0, 0xfff0, 0xfff8, 0xfffc, 0xfffe, 0xffff
+	};
+
+	c = convert(c);
+
+	if (c >= _numGlyphs)
+		return;
+
+	pitch *= bpp;
+	const uint8 *src = &_data[_bitmapOffsets[c]];
+	uint8 *dst2 = dst + pitch;
+
+	int w = (_width - 1) >> 3;
+	pitch -= _width * bpp;
+
+	if (_renderMode == Common::kRenderCGA || _renderMode == Common::kRenderEGA) {
+		col1 &= 0x0F;
+		col2 &= 0x0F;
+	}
+
+	static const uint16 cgaColorMask[] = { 0, 0x5555, 0xAAAA, 0xFFFF };
+	uint16 cgaMask1 = cgaColorMask[col1 & 3];
+	uint16 cgaMask2 = cgaColorMask[col2 & 3];
+
+	int cH = _height;
+	while (cH--) {
+		int cW = w;
+		uint16 mask = renderMaskTable[_width];
+
+		if (_renderMode == Common::kRenderCGA) {
+			uint16 s = (*src++) << 8;
+			if (_width > 8)
+				s |= *src++;
+
+			uint16 cmp1 = 0;
+			uint16 cmp2 = 0;
+
+			if (col1) {
+				s &= mask;
+				cmp1 = _cgaDitheringTable[s >> 8];
+			}
+
+			if (col2) {
+				s = ~s & mask;
+				cmp2 = _cgaDitheringTable[s >> 8];
+			}
+
+			uint16 cDst = 0;
+			uint8 sh = 6;
+			for (int i = 0; i < _width; i++) {
+				cDst |= ((dst[i] & 3) << sh);
+				sh = (sh - 2) & 0x0F;
+			}
+
+			uint16 out = (~(cmp1 | cmp2) & cDst) | (cmp1 & cgaMask1) | (cmp2 & cgaMask2);
+
+			sh = 6;
+			for (int i = 0; i < _width; i++) {
+				*dst++ = (out >> sh) & 3;
+				sh = (sh - 2) & 0x0F;
+			}
+		} else {
+			for (bool runWidthLoop = true; runWidthLoop;) {
+				uint16 s = (*src++) << 8;
+				if (_width > 8)
+					s |= *src++;
+
+				for (uint16 i = 0x8000; i; i >>= 1) {
+					if (!(mask & i)) {
+						runWidthLoop = false;
+						break;
+					}
+
+					if (s & i) {
+						if (bpp == 2)
+							*(uint16*)dst = col1;
+						else if (col1)
+							*dst = col1;
+					} else {
+						if (bpp == 2) {
+							if (col2 != 0xFFFF)
+								*(uint16*)dst = col2;
+						} else if (col2) {
+							*dst = col2;
+						}
+					}
+					dst += bpp;
+				}
+
+				mask >>= 1;
+
+				if (cW)
+					cW--;
+				else
+					runWidthLoop = false;
+			}
+		}
+
+		dst += pitch;
+		dst2 += pitch;
+	}
+}
+
+uint16 OldDOSFont::convert(uint16 c) const {
 	if (_width == 6) {
 		switch (c) {
 		case 0x81:
@@ -2119,8 +2254,6 @@ void OldDOSFont::drawChar(uint16 c, byte *dst, int pitch, int bpp) const {
 			c = 0x40;
 		case 0xE1:
 			// TODO: recheck this: no conversion for 'ß' ?
-			break;
-		default:
 			break;
 		}
 	} else if (_width == 8) {
@@ -2147,114 +2280,9 @@ void OldDOSFont::drawChar(uint16 c, byte *dst, int pitch, int bpp) const {
 		case 0xE1:
 			c = 0x19;
 			break;
-		default:
-			break;
 		}
 	}
-
-	if (c >= _numGlyphs)
-		return;
-
-	pitch *= bpp;
-	const uint8 *src = &_data[_bitmapOffsets[c]];
-	uint8 *dst2 = dst + pitch;
-
-	int w = (_width - 1) >> 3;
-	pitch -= _width * bpp;
-
-	uint16 color1 = _colorMap8bit[1];
-	uint16 color2 = _colorMap8bit[0];
-
-	if (bpp == 2) {
-		color1 = _colorMap16bit[1];
-		color2 = _colorMap16bit[0];
-	} else if (_renderMode == Common::kRenderCGA || _renderMode == Common::kRenderEGA) {
-		color1 &= 0x0F;
-		color2 &= 0x0F;
-	}
-
-	static const uint16 cgaColorMask[] = { 0, 0x5555, 0xAAAA, 0xFFFF };
-	uint16 cgaMask1 = cgaColorMask[color1 & 3];
-	uint16 cgaMask2 = cgaColorMask[color2 & 3];
-
-	int cH = _height;
-	while (cH--) {
-		int cW = w;
-		uint8 last = 0;
-		const uint8 *mtbl = _width == 8 ? renderMaskTable8 : renderMaskTable6;
-
-		if (_renderMode == Common::kRenderCGA) {
-			uint8 s = *src++;
-			uint8 m = *mtbl++;
-
-			uint8 in = s | last;
-			uint16 cmp1 = 0;
-			uint16 cmp2 = 0;
-
-			if (color1) {
-				in &= m;
-				cmp1 = _cgaDitheringTable[in];
-			}
-
-			if (color2) {
-				in = ~in & m;
-				cmp2 = _cgaDitheringTable[in];
-			}
-
-			uint16 cDst = 0;
-			uint8 sh = 6;
-			for (int i = 0; i < _width; i++) {
-				cDst |= ((dst[i] & 3) << sh);
-				sh = (sh - 2) & 0x0F;
-			}
-
-			uint16 out = (~(cmp1 | cmp2) & cDst) | (cmp1 & cgaMask1) | (cmp2 & cgaMask2);
-
-			sh = 6;
-			for (int i = 0; i < _width; i++) {
-				*dst++ = (out >> sh) & 3;
-				sh = (sh - 2) & 0x0F;
-			}
-
-			last = s;
-
-		} else {
-			for (bool runWidthLoop = true; runWidthLoop;) {
-				uint8 s = *src++;
-				uint8 m = *mtbl++;
-
-				for (uint8 i = 0x80; i; i >>= 1) {
-					if (!(m & i)) {
-						runWidthLoop = false;
-						break;
-					}
-
-					if (s & i) {
-						if (bpp == 2)
-							*(uint16*)dst = color1;
-						else if (color1)
-							*dst = color1;
-					} else {
-						if (bpp == 2) {
-							if (color2 != 0xFFFF)
-								*(uint16*)dst = color2;
-						} else if (color2) {
-							*dst = color2;
-						}
-					}
-					dst += bpp;
-				}
-
-				if (cW)
-					cW--;
-				else
-					runWidthLoop = false;
-			}
-		}
-
-		dst += pitch;
-		dst2 += pitch;
-	}
+	return c;
 }
 
 void OldDOSFont::unload() {
@@ -2509,7 +2537,126 @@ void AmigaDOSFont::selectMode(int mode) {
 	_last = _content[mode].data->lastChar;
 }
 
-SJISFontLarge::SJISFontLarge(Common::SharedPtr<Graphics::FontSJIS> &font) : SJISFont(font, 0, false, false, false, 0) {
+SJISFontEoB1PC98::SJISFontEoB1PC98(Common::SharedPtr<Graphics::FontSJIS> &font, uint8 shadowColor, const uint16 *convTable1, const uint16 *convTable2)	: SJISFont(font, 0, false, false, 0),
+	_shadowColor(shadowColor), _convTable1(convTable1), _convTable2(convTable2), _defaultConv(true) {
+	assert(_convTable1);
+	assert(_convTable2);
+}
+
+int SJISFontEoB1PC98::getCharWidth(uint16 c) const {
+	return SJISFont::getCharWidth(convert(c));
+}
+
+void SJISFontEoB1PC98::drawChar(uint16 c, byte *dst, int pitch, int) const {
+	c = convert(c);
+	_font->setDrawingMode(_style == kFSLeftShadow ? Graphics::FontSJIS::kShadowLeftMode : Graphics::FontSJIS::kDefaultMode);
+	_font->toggleFatPrint(false);
+	_font->drawChar(dst, c, 640, 1, _colorMap[1], _colorMap[0], 640, 400);
+}
+
+uint16 SJISFontEoB1PC98::convert(uint16 c) const {
+	uint8 l = c & 0xFF;
+	uint8 h = c >> 8;
+
+	if (c < 128) {
+		c = _convTable2[l - 32];
+	} else if (l > 160 && l < 225) {
+		bool done = false;
+		if (_defaultConv) {
+			if (h == 0xDE) {
+				if ((l >= 182 && l <= 196) || (l >= 202 && l <= 206)) {
+					c = _convTable1[l - 182];
+					done = true;
+				}
+			} else if (h == 0xDF) {
+				if (l >= 202 && l <= 206) {
+					c = _convTable1[l - 177];
+					done = true;
+				}
+			}
+		}
+		if (!done)
+			c = _convTable2[l - 64];
+	}
+
+	return c;
+}
+
+Font12x12PC98::Font12x12PC98(uint8 shadowColor, const uint16 *convTable1, const uint16 *convTable2, const uint8 *lookupTable) : OldDOSFont(Common::kRenderDefault, 12),
+	_convTable1(convTable1), _convTable2(convTable2) {
+	assert(convTable1);
+	assert(convTable2);
+	assert(lookupTable);
+
+	_width = _height = 12;
+	_numGlyphs = 275;
+	_bmpOffs = new uint16[_numGlyphs];
+	for (int i = 0; i < _numGlyphs; ++i)
+		_bmpOffs[i] = lookupTable[i] * 24;
+}
+
+Font12x12PC98::~Font12x12PC98() {
+	delete[] _bmpOffs;
+}
+
+bool Font12x12PC98::load(Common::SeekableReadStream &file) {
+	unload();
+
+	_width = _height = 12;
+	_numGlyphs = 275;
+	_bitmapOffsets = _bmpOffs;
+
+	_data = new uint8[file.size()];
+	assert(_data);
+
+	file.read(_data, file.size());
+	if (file.err())
+		return false;
+
+	return true;
+}
+
+uint16 Font12x12PC98::convert(uint16 c) const {
+	uint8 l = c & 0xFF;
+	uint8 h = c >> 8;
+
+	if (c < 128) {
+		c = _convTable2[l - 32];
+	} else if (l > 160 && l < 225) {
+		bool done = false;
+		if (1) {
+			if (h == 0xDE) {
+				if ((l >= 182 && l <= 196) || (l >= 202 && l <= 206)) {
+					c = _convTable1[l - 182];
+					done = true;
+				}
+			} else if (h == 0xDF) {
+				if (l >= 202 && l <= 206) {
+					c = _convTable1[l - 177];
+					done = true;
+				}
+			}
+		}
+		if (!done)
+			c = _convTable2[l - 64];
+	}
+	
+	c = SWAP_BYTES_16(c);
+	if (c < 0x813F)
+		c = 1;
+	else if (c < 0x824F)
+		c -= 0x813F;
+	else if (c < 0x833F)
+		c -= 0x81EE;
+	else if (c > 0x839F)
+		c = 1;
+	else
+		c -= 0x828D;
+
+	return c;
+}
+
+SJISFontLarge::SJISFontLarge(Common::SharedPtr<Graphics::FontSJIS> &font) : SJISFont(font, 0, false, false, 0) {
 	_sjisWidth = _font->getMaxFontWidth();
 	_fontHeight = _font->getFontHeight();
 	_asciiWidth = _font->getCharWidth('a');

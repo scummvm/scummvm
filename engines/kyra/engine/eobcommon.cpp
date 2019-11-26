@@ -675,7 +675,7 @@ void EoBCoreEngine::runLoop() {
 	_flashShapeTimer = 0;
 	_drawSceneTimer = _system->getMillis();
 
-	_screen->setFont(Screen::FID_6_FNT);
+	_screen->setFont(_flags.use16ColorMode ? Screen::FID_SJIS_FNT : Screen::FID_6_FNT);
 	_screen->setScreenDim(7);
 
 	_runFlag = true;
@@ -719,10 +719,10 @@ bool EoBCoreEngine::checkPartyStatus(bool handleDeath) {
 	gui_drawAllCharPortraitsWithStats();
 
 	if (checkPartyStatusExtra()) {
-		_screen->setFont(Screen::FID_8_FNT);
+		Screen::FontId of = _screen->setFont(_flags.use16ColorMode ? Screen::FID_SJIS_FNT : Screen::FID_8_FNT);
 		gui_updateControls();
 		if (_gui->runLoadMenu(0, 0)) {
-			_screen->setFont(Screen::FID_6_FNT);
+			_screen->setFont(of);
 			return true;
 		}
 	}
@@ -1720,7 +1720,7 @@ int EoBCoreEngine::runDialogue(int dialogueTextId, int numStr, ...) {
 void EoBCoreEngine::restParty_displayWarning(const char *str) {
 	int od = _screen->curDimIndex();
 	_screen->setScreenDim(7);
-	Screen::FontId of = _screen->setFont(Screen::FID_6_FNT);
+	Screen::FontId of = _screen->setFont(_flags.use16ColorMode ? Screen::FID_SJIS_FNT : Screen::FID_6_FNT);
 	_screen->setCurPage(0);
 
 	_txt->printMessage(Common::String::format("\r%s\r", str).c_str());
@@ -1737,7 +1737,7 @@ bool EoBCoreEngine::restParty_updateMonsters() {
 
 	for (int i = 0; i < 5; i++) {
 		_partyResting = true;
-		Screen::FontId of = _screen->setFont(Screen::FID_6_FNT);
+		Screen::FontId of = _screen->setFont(_flags.use16ColorMode ? Screen::FID_SJIS_FNT : Screen::FID_6_FNT);
 		int od = _screen->curDimIndex();
 		_screen->setScreenDim(7);
 		updateMonsters(0);

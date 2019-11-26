@@ -980,8 +980,9 @@ void CharacterGenerator::printStats(int index, int mode) {
 }
 
 void CharacterGenerator::processNameInput(int index, int textColor) {
-	Screen::FontId of = _screen->setFont(Screen::FID_6_FNT);
+	Screen::FontId of = _screen->setFont(_vm->_flags.use16ColorMode ? Screen::FID_SJIS_FNT : Screen::FID_6_FNT);
 	_screen->fillRect(_chargenNameFieldX[index], _chargenNameFieldY[index], _chargenNameFieldX[index] + 59, _chargenNameFieldY[index] + 5, _vm->guiSettings()->colors.guiColorBlack);
+	_screen->setFont(_vm->_flags.use16ColorMode ? Screen::FID_SJIS_SMALL_FNT : Screen::FID_6_FNT);
 	int xOffs = (60 - _screen->getTextWidth(_characters[index].name)) >> 1;
 	_screen->printText(_characters[index].name, _chargenNameFieldX[index] + xOffs, _chargenNameFieldY[index], textColor, 0);
 	_screen->updateScreen();

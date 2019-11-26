@@ -98,6 +98,17 @@ public:
 	* Sets a text 16bit palette map. Only used in in EOB II FM-Towns. The map contains 2 entries.
 	*/
 	virtual void set16bitColorMap(const uint16 *src) {}
+	
+	enum FontStyle {
+		kFSNone = 0,
+		kFSLeftShadow,
+		kFSFat
+	};
+
+	/**
+	* Sets a drawing style. Only rudimentary implementation based on what is needed.
+	*/
+	virtual void setStyle(FontStyle style) {}
 
 	/**
 	 * Draws a specific character.
@@ -144,115 +155,6 @@ private:
 	uint16 *_bitmapOffsets;
 };
 
-#ifdef ENABLE_EOB
-/**
-* Implementation of the Font interface for old DOS fonts used
-* in EOB and EOB II.
-*
-*/
-class OldDOSFont : public Font {
-public:
-	OldDOSFont(Common::RenderMode mode);
-	~OldDOSFont();
-
-	bool load(Common::SeekableReadStream &file);
-	int getHeight() const { return _height; }
-	int getWidth() const { return _width; }
-	int getCharWidth(uint16 c) const;
-	void setColorMap(const uint8 *src) { _colorMap8bit = src; }
-	void set16bitColorMap(const uint16 *src) { _colorMap16bit = src; }
-	void drawChar(uint16 c, byte *dst, int pitch, int bpp) const;
-
-private:
-	void unload();
-
-	uint8 *_data;
-	uint16 *_bitmapOffsets;
-
-	int _width, _height;
-	const uint8 *_colorMap8bit;
-	const uint16 *_colorMap16bit;
-
-	int _numGlyphs;
-
-	Common::RenderMode _renderMode;
-
-	static uint16 *_cgaDitheringTable;
-	static int _numRef;
-};
-
-/**
- * Implementation of the Font interface for native AmigaDOS system fonts (normally to be loaded via diskfont.library)
- */
-class Resource;
-class AmigaDOSFont : public Font {
-public:
-	AmigaDOSFont(Resource *res, bool needsLocalizedFont = false);
-	~AmigaDOSFont() { unload(); }
-
-	bool load(Common::SeekableReadStream &file);
-	int getHeight() const { return _height; }
-	int getWidth() const { return _width; }
-	int getCharWidth(uint16 c) const;
-	void setColorMap(const uint8 *src) { _colorMap = src;  }
-	void drawChar(uint16 c, byte *dst, int pitch, int) const;
-
-	static void errorDialog(int index);
-
-private:
-	void unload();
-
-	struct TextFont {
-		TextFont() : data(0), bitmap(0), location(0), spacing(0), kerning(0), height(0), width(0), baseLine(0), firstChar(0), lastChar(0), modulo(0) {}
-		~TextFont() {
-			delete[] data;
-		}
-
-		uint16 height;
-		uint16 width;
-		uint16 baseLine;
-		uint8 firstChar;
-		uint8 lastChar;		
-		uint16 modulo;
-		const uint8 *data;
-		const uint8 *bitmap;
-		const uint16 *location;
-		const int16 *spacing;
-		const int16 *kerning;
-	};
-
-	TextFont *loadContentFile(const Common::String fileName);
-	void selectMode(int mode);
-
-	struct FontContent {
-		FontContent() : height(0), style(0), flags(0) {}
-		~FontContent() {
-			data.reset();
-		}
-
-		Common::String contentFile;
-		Common::SharedPtr<TextFont> data;
-		uint16 height;
-		uint8 style;
-		uint8 flags;
-	};
-
-	int _width, _height;
-	uint8 _first, _last;
-	FontContent *_content;
-	uint16 _numElements;
-	uint16 _selectedElement;
-
-	const uint8 *_colorMap;
-	const uint16 _maxPathLen;
-	const bool _needsLocalizedFont;
-
-	static uint8 _errorDialogDisplayed;
-
-	Resource *_res;
-};
-#endif // ENABLE_EOB
-
 /**
  * Implementation of the Font interface for Kyra 1 style (non-native AmigaDOS) AMIGA fonts.
  */
@@ -290,7 +192,7 @@ private:
  */
 class SJISFont : public Font {
 public:
-	SJISFont(Common::SharedPtr<Graphics::FontSJIS> &font, const uint8 invisColor, bool is16Color, bool drawOutline, bool fatPrint, int extraSpacing);
+	SJISFont(Common::SharedPtr<Graphics::FontSJIS> &font, const uint8 invisColor, bool is16Color, bool drawOutline, int extraSpacing);
 	virtual ~SJISFont() {}
 
 	virtual bool usesOverlay() const { return true; }
@@ -298,8 +200,9 @@ public:
 	bool load(Common::SeekableReadStream &) { return true; }
 	int getHeight() const;
 	int getWidth() const;
-	int getCharWidth(uint16 c) const;
+	virtual int getCharWidth(uint16 c) const;
 	void setColorMap(const uint8 *src);
+	void setStyle(FontStyle style) { _style = style; }
 	virtual void drawChar(uint16 c, byte *dst, int pitch, int) const;
 
 protected:
@@ -308,7 +211,7 @@ protected:
 	int _sjisWidth, _asciiWidth;
 	int _fontHeight;
 	const bool _drawOutline;
-	const bool _fatPrint;
+	FontStyle _style;
 
 private:
 	const uint8 _invisColor;
@@ -586,6 +489,9 @@ public:
 
 	void setScreenDim(int dim);
 	int curDimIndex() const { return _curDimIndex; }
+
+	void setTextMarginRight(int x) { _textMarginRight = x; }
+	uint16 _textMarginRight;
 
 	const ScreenDim *_curDim;
 

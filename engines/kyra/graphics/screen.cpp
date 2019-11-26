@@ -68,6 +68,7 @@ Screen::Screen(KyraEngine_v1 *vm, OSystem *system, const ScreenDim *dimTable, co
 	_currentFont = FID_8_FNT;
 	_currentFontType = FTYPE_ASCII;
 	_paletteChanged = true;
+	_textMarginRight = SCREEN_W;
 	_curDim = 0;
 }
 
@@ -163,20 +164,23 @@ bool Screen::init() {
 
 		if (_useSJIS) {
 			Common::SharedPtr<Graphics::FontSJIS> font(Graphics::FontSJIS::createFont(_vm->gameFlags().platform));
-
 			if (!font.get())
 				error("Could not load any SJIS font, neither the original nor ScummVM's 'SJIS.FNT'");
 
 			if (_use16ColorMode) {
-				_fonts[FID_SJIS_TEXTMODE_FNT] = new SJISFont(font, _sjisInvisibleColor, true, false, _vm->game() == GI_EOB2 && _vm->gameFlags().platform == Common::kPlatformFMTowns, 0);
-				if (_vm->game() == GI_EOB1)
-					_fonts[FID_SJIS_FNT] = new SJISFont(font, _sjisInvisibleColor, false, false, _vm->game() == GI_EOB2 && _vm->gameFlags().platform == Common::kPlatformFMTowns, 0);
+				_fonts[FID_SJIS_TEXTMODE_FNT] = new SJISFont(font, _sjisInvisibleColor, true, false, 0);
+				if (_vm->game() == GI_EOB1) {
+					int temp;
+					_fonts[FID_SJIS_FNT] = new SJISFontEoB1PC98(font, 12, _vm->staticres()->loadRawDataBe16(kEoB1Ascii2SjisTable1, temp), _vm->staticres()->loadRawDataBe16(kEoB1Ascii2SjisTable2, temp));
+				}
 			} else {
-				_fonts[FID_SJIS_FNT] = new SJISFont(font, _sjisInvisibleColor, false, _vm->game() != GI_LOL && _vm->game() != GI_EOB2, _vm->game() == GI_EOB2 && _vm->gameFlags().platform == Common::kPlatformFMTowns, _vm->game() == GI_LOL ? 1 : 0);
+				_fonts[FID_SJIS_FNT] = new SJISFont(font, _sjisInvisibleColor, false, _vm->game() != GI_LOL && _vm->game() != GI_EOB2, _vm->game() == GI_LOL ? 1 : 0);
 			}
 
-			if (_vm->game() == GI_EOB2 && _vm->gameFlags().platform == Common::kPlatformFMTowns)
-				_fonts[FID_SJIS_LARGE_FNT] = new SJISFontLarge(font);		
+			if (_vm->game() == GI_EOB2 && _vm->gameFlags().platform == Common::kPlatformFMTowns) {
+				_fonts[FID_SJIS_FNT]->setStyle(Font::kFSFat);
+				_fonts[FID_SJIS_LARGE_FNT] = new SJISFontLarge(font);
+			}
 		}
 	}
 
@@ -1383,13 +1387,6 @@ bool Screen::loadFont(FontId fontId, const char *filename) {
 	if (!fnt) {
 		if (_vm->game() == GI_KYRA1 && _isAmiga)
 			fnt = new AMIGAFont();
-#ifdef ENABLE_EOB
-		else if (_isAmiga)
-			fnt = new AmigaDOSFont(_vm->resource(), _vm->game() == GI_EOB2 && _vm->gameFlags().lang == Common::DE_DEU);
-		else if (_vm->game() == GI_EOB1 || _vm->game() == GI_EOB2)
-			// We use normal VGA rendering in EOB II, since we do the complete EGA dithering in updateScreen().
-			fnt = new OldDOSFont(_useHiResEGADithering ? Common::kRenderVGA : _renderMode);
-#endif // ENABLE_EOB
 		else
 			fnt = new DOSFont();
 
@@ -1498,7 +1495,7 @@ void Screen::printText(const char *str, int x, int y, uint8 color1, uint8 color2
 			y += (charHeightFnt + _charOffset);
 		} else {
 			int charWidth = getCharWidth(c);
-			if (x + charWidth > SCREEN_W) {
+			if (x + charWidth > _textMarginRight) {
 				x = x_start;
 				y += (charHeightFnt + _charOffset);
 				if (y >= SCREEN_H)
@@ -3785,8 +3782,8 @@ void AMIGAFont::unload() {
 	memset(_chars, 0, sizeof(_chars));
 }
 
-SJISFont::SJISFont(Common::SharedPtr<Graphics::FontSJIS> &font, const uint8 invisColor, bool is16Color, bool drawOutline, bool fatPrint, int extraSpacing)
-	: _colorMap(0), _font(font), _invisColor(invisColor), _isTextMode(is16Color), _drawOutline(drawOutline), _fatPrint(fatPrint), _sjisWidthOffset(extraSpacing) {
+SJISFont::SJISFont(Common::SharedPtr<Graphics::FontSJIS> &font, const uint8 invisColor, bool is16Color, bool drawOutline, int extraSpacing)
+	: _colorMap(0), _font(font), _invisColor(invisColor), _isTextMode(is16Color), _style(kFSNone), _drawOutline(drawOutline), _sjisWidthOffset(extraSpacing) {
 	assert(_font);
 	_sjisWidth = _font->getMaxFontWidth() >> 1;
 	_fontHeight = _font->getFontHeight() >> 1;
@@ -3830,7 +3827,7 @@ void SJISFont::drawChar(uint16 c, byte *dst, int pitch, int) const {
 	else
 		_font->setDrawingMode(_drawOutline ? Graphics::FontSJIS::kOutlineMode : Graphics::FontSJIS::kDefaultMode);
 
-	_font->toggleFatPrint(_fatPrint);
+	_font->toggleFatPrint(_style == kFSFat);
 	_font->drawChar(dst, c, 640, 1, color1, color2, 640, 400);
 }
 

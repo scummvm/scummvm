@@ -238,7 +238,7 @@ void EoBCoreEngine::removeCharacterEffect(int spell, int charIndex, int showWarn
 
 	if (showWarning) {
 		int od = _screen->curDimIndex();
-		Screen::FontId of = _screen->setFont(Screen::FID_6_FNT);
+		Screen::FontId of = _screen->setFont(_flags.use16ColorMode ? Screen::FID_SJIS_FNT : Screen::FID_6_FNT);
 		_screen->setScreenDim(7);
 		printWarning(Common::String::format(_magicStrings3[_flags.gameID == GI_EOB1 ? 3 : 2], c->name, s->name).c_str());
 		_screen->setScreenDim(od);

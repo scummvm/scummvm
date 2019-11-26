@@ -70,11 +70,13 @@ Common::Error EoBEngine::init() {
 
 	_screen->modifyScreenDim(7, 0x01, 0xB3, 0x22, 0x12);
 	_screen->modifyScreenDim(9, 0x01, 0x7D, 0x26, 0x3F);
-	_screen->modifyScreenDim(12, 0x01, 0x04, 0x14, 0xA0);
 
-	// adjust main menu coords for EOB I PC-98
-	if (_flags.platform == Common::kPlatformPC98)
+	if (_flags.platform == Common::kPlatformPC98) {
 		_screen->modifyScreenDim(28, 0x0A, 0xA4, 0x15, 0x18);
+		_screen->modifyScreenDim(12, 0x01, 0x04, 0x14, 0x9A);
+	} else {
+		_screen->modifyScreenDim(12, 0x01, 0x04, 0x14, 0xA0);
+	}
 
 	_scriptTimersCount = 1;
 
@@ -628,8 +630,10 @@ void EoBEngine::healParty() {
 const KyraRpgGUISettings *EoBEngine::guiSettings() const {
 	if (_flags.platform == Common::kPlatformAmiga)
 		return _useMainMenuGUISettings ? &_guiSettingsAmigaMainMenu : &_guiSettingsAmiga;
-	else if (_flags.platform == Common::kPlatformPC98 || _configRenderMode == Common::kRenderCGA || _configRenderMode == Common::kRenderEGA)
+	else if (_configRenderMode == Common::kRenderCGA || _configRenderMode == Common::kRenderEGA)
 		return &_guiSettingsEGA;
+	else if (_flags.platform == Common::kPlatformPC98)
+		return &_guiSettingsPC98;
 	else
 		return &_guiSettingsVGA;
 }
