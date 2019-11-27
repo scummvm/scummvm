@@ -546,6 +546,9 @@ static void mainloop(void) {
 		if (!menu_mode) {
 			prompt_out(1);
 			s = agt_readline(0);
+			if (g_vm->shouldQuit())
+				return;
+
 			agt_newline();
 			if (!doing_restore) tokenise(s);   /* Tokenizes into input */
 			rfree(s);
@@ -891,6 +894,7 @@ static fc_type setup_game(fc_type fc)
 		pictcmd(3, 0); /* Show title image, if there is one */
 	print_title(fc);
 	have_ins = open_ins_file(fc, 0);
+
 	do {
 		if (have_ins)
 			writestr("Choose <I>nstructions, <A>GiliTy Information, "
@@ -898,11 +902,15 @@ static fc_type setup_game(fc_type fc)
 		else
 			writestr("Choose <A>GiliTy Information or <other> to start the game");
 		choice = tolower(agt_getchar()); /* Wait for keypress */
+		if (g_vm->shouldQuit())
+			return nullptr;
+
 		agt_clrscr();
 		if (have_ins && choice == 'i') print_instructions(fc);
 		else if (choice == 'a') print_license();
 	} while ((choice == 'i' && have_ins) || choice == 'a');
 	close_ins_file();
+
 	if (!intro_first && intro_ptr.size > 0) {
 		print_descr(intro_ptr, 1);
 		wait_return();
@@ -970,8 +978,13 @@ void run_game(fc_type fc) {
 			fc = setup_game(new_game());
 		} else setup_game(fc);
 		doing_restore = 0;
-		mainloop();
+
+		if (!g_vm->shouldQuit())
+			mainloop();
 		close_game();
+
+		if (g_vm->shouldQuit())
+			break;
 	} while (doing_restore == 3);
 	release_file_context(&fc);
 }

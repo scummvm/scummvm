@@ -275,7 +275,12 @@ char *agt_readline(int in_type) {
 		s = get_log();
 	else
 		s = agt_input(in_type);
-	if (PURE_INPUT) agt_textcolor(-2);
+
+	if (g_vm->shouldQuit())
+		return nullptr;
+
+	if (PURE_INPUT)
+		agt_textcolor(-2);
 
 	if (logflag & 1)
 		put_log(s);

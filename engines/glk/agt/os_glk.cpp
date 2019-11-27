@@ -4775,6 +4775,10 @@ char *agt_input(int in_type) {
 	/* Set this up as a read buffer for the main window, and wait. */
 	g_vm->glk_request_line_event(gagt_main_window, buffer, length - 1, 0);
 	gagt_event_wait(evtype_LineInput, &event);
+	if (g_vm->shouldQuit()) {
+		g_vm->glk_cancel_line_event(gagt_main_window, &event);
+		return nullptr;
+	}
 
 	/* Terminate the input line with a NUL. */
 	assert((int)event.val1 < length);
@@ -4994,6 +4998,8 @@ static void gagt_event_wait_2(glui32 wait_type_1, glui32 wait_type_2, event_t *e
 		case evtype_Redraw:
 			gagt_status_redraw();
 			break;
+		case evtype_Quit:
+			return;
 		default:
 			break;
 		}
