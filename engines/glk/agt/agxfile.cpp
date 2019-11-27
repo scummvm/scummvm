@@ -751,9 +751,9 @@ static file_info fi_index[] = {
    byte Extension 0
    */
 
-typedef struct {
-	unsigned long fileid;
-	unsigned long res1; /* Reserved for future use */
+struct file_head_rec  {
+	uint32 fileid;
+	uint32 res1; /* Reserved for future use */
 	uchar res2;
 	uchar eol_chk1;  /* Catch non-binary upload errors */
 	uchar eol_chk2;
@@ -763,7 +763,7 @@ typedef struct {
 	uchar extnum;
 	uchar fallback_ext;  /* For non-'R' extensions, this is the 'R' extension
               to fall back to. */
-} file_head_rec;
+};
 
 static file_info fi_header[] = {
 	{FT_UINT32, DT_LONG, NULL, offsetof(file_head_rec, fileid)}, /* File ID */

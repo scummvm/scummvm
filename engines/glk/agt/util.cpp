@@ -958,7 +958,7 @@ static const uchar zero_block[81] = {0, 0, 0, 0, 0, 0, 0, 0,
                                      0
                                     };
 
-static void read_filerec(const file_info *rec_desc, const uchar *filedata) {
+static void read_filerec(file_info *rec_desc, const uchar *filedata) {
 	uchar mask;
 	rbool past_eob; /* Are we past the end of block? */
 	const uchar *filebase;
@@ -986,17 +986,17 @@ static void read_filerec(const file_info *rec_desc, const uchar *filedata) {
 				*p(integer) = fixsign16(filedata[0], filedata[1]);
 			break;
 		case FT_UINT16:
-			*p(long) = fixu16(filedata[0], filedata[1]);
+			*p(int32) = fixu16(filedata[0], filedata[1]);
 			break;
 		case FT_CMDPTR: /* cmd ptr */
 		case FT_INT32:
-			*p(long) = fixsign32(filedata[0], filedata[1],
+			*p(int32) = fixsign32(filedata[0], filedata[1],
 			                     filedata[2], filedata[3]);
 			break;
 		case FT_UINT32:
 			if (filedata[3] & 0x80)
 				agtwarn("File value out of range", 0);
-			*p(long) = fixsign32(filedata[0], filedata[1],
+			*p(uint32) = fixsign32(filedata[0], filedata[1],
 			                     filedata[2], filedata[3] & 0x7F);
 			break;
 		case FT_BYTE:
@@ -1065,7 +1065,7 @@ static void read_filerec(const file_info *rec_desc, const uchar *filedata) {
 /* Here is the corresponding routien for _writing_ to files */
 /* This copies the contents of a record into a buffer */
 
-static void write_filerec(const file_info *rec_desc, uchar *filedata) {
+static void write_filerec(file_info *rec_desc, uchar *filedata) {
 	uchar mask;
 
 	mask = 1;
@@ -1412,7 +1412,7 @@ char textgetc(genfile f) {
 	Common::ReadStream *rs = dynamic_cast<Common::ReadStream *>(f);
 	assert(rs);
 
-	return rs->readByte();
+	return rs->eos() ? EOF : rs->readByte();
 }
 
 void textungetc(genfile f, char c) {

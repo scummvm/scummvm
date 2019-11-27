@@ -429,25 +429,25 @@ struct prop_struct {
    structures. For global variables, ptr is set to point at the variable
    and offset is 0. For fields, offset is set to the offset of the field
    in the structure and ptr is set internally */
-typedef struct {
+struct file_info {
 	int ftype; /* Type in file */
 	int dtype; /* Data type of field in memory; often ignored */
 	void *ptr;   /* Pointer to variable */
 	size_t offset; /* Offset of field in structure */
-} file_info;
+} ;
 
 
 
 /* This contains all of the information needed to find files. */
 #ifndef REPLACE_FC
-typedef struct {
+struct file_context_rec {
 	char *gamename;   /* Name as entered by user */
 	char *path;       /* The path */
 	char *shortname;  /* The filename w/o directory information */
 	char *ext;        /* The preexisting extension/prefix */
 	filetype ft;      /* The filetype corresponding to ext */
 	int special;      /* Used to mark special files, such as UNIX pipes */
-} file_context_rec;
+};
 
 typedef file_context_rec *fc_type;
 
