@@ -163,6 +163,8 @@ Common::Error PlumbersGame::run() {
 			case PlaySound:
 				playSound();
 				break;
+			default:
+				break;
 			}
 		}
 
