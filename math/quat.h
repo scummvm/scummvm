@@ -197,11 +197,11 @@ public:
 	Angle getAngleBetween(const Quaternion &to);
 
 	/**
-	 * Assignment operator for assigning a vector of values (X,Y,Z,W) to a Quaternion
-	 * @param vec           The source vector
+	 * Assignment operator
+	 * @param vec           The source quaternion
 	 * @return              A reference to this Quaternion
 	 */
-	Quaternion& operator=(Vector4d &vec);
+	Quaternion& operator=(const Quaternion& quat);
 
 	/**
 	 * Multiply two Quaternions

@@ -238,6 +238,15 @@ void Quaternion::getEuler(Angle *first, Angle *second, Angle *third, EulerOrder 
 		*third = t;
 }
 
+Quaternion& Quaternion::operator=(const Quaternion& quat) {
+	x() = quat.x();
+	y() = quat.y();
+	z() = quat.z();
+	w() = quat.w();
+
+	return *this;
+}
+
 Quaternion Quaternion::operator*(const Quaternion &o) const {
 	return Quaternion(
 		w() * o.x() + x() * o.w() + y() * o.z() - z() * o.y(),
