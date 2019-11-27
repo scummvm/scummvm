@@ -60,7 +60,7 @@ extern int yyparse();
 using namespace Director;
 void yyerror(const char *s) {
 	g_lingo->_hadError = true;
-	warning("%s at line %d col %d", s, g_lingo->_linenumber, g_lingo->_colnumber);
+	warning("LINGO: %s at line %d col %d", s, g_lingo->_linenumber, g_lingo->_colnumber);
 }
 
 void checkEnd(Common::String *token, const char *expect, bool required) {
@@ -366,6 +366,12 @@ elseifstmtoneliner1:	elseif cond tTHEN begin stmt end {
 
 elseifstmt1: elseifstmtoneliner
 	| elseif cond tTHEN begin stmtlist end {
+		inst then = 0;
+		WRITE_UINT32(&then, $5 - $1);
+		(*g_lingo->_currentScript)[$1 + 1] = then;	/* thenpart */
+
+		g_lingo->codeLabel($1); }
+	| elseif cond tTHENNL begin stmtlist end {
 		inst then = 0;
 		WRITE_UINT32(&then, $5 - $1);
 		(*g_lingo->_currentScript)[$1 + 1] = then;	/* thenpart */
