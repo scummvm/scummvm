@@ -192,7 +192,10 @@ void Lingo::addCode(const char *code, ScriptType type, uint16 id) {
 			begin = end;
 		}
 
-		_hadError = true; // HACK: This is for preventing test execution
+		// Do not execute event handlers, macros and factories
+		// A side effect of it is that if you had those in your test script,
+		// then the whole script will not be executed
+		_hadError = true;
 
 		debugC(1, kDebugLingoCompile, "Code chunk:\n#####\n%s\n#####", begin);
 		parse(begin);
