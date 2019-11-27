@@ -93,22 +93,22 @@ const char *Lingo::findNextDefinition(const char *s) {
 			return NULL;
 
 		if (!strncmp(res, "macro ", 6)) {
-			debugC(1, kDebugLingoCompile, "See macro");
+			debugC(1, kDebugLingoCompile, "findNextDefinition(): See 'macros ' construct");
 			return res;
 		}
 
 		if (!strncmp(res, "on ", 3)) {
-			debugC(1, kDebugLingoCompile, "See on");
+			debugC(1, kDebugLingoCompile, "findNextDefinition(): See 'on ' construct");
 			return res;
 		}
 
 		if (!strncmp(res, "factory ", 8)) {
-			debugC(1, kDebugLingoCompile, "See factory");
+			debugC(1, kDebugLingoCompile, "findNextDefinition(): See 'factory ' construct");
 			return res;
 		}
 
 		if (!strncmp(res, "method ", 7)) {
-			debugC(1, kDebugLingoCompile, "See method");
+			debugC(1, kDebugLingoCompile, "findNextDefinition(): See 'method ' construct");
 			return res;
 		}
 
@@ -120,7 +120,8 @@ const char *Lingo::findNextDefinition(const char *s) {
 }
 
 void Lingo::addCode(const char *code, ScriptType type, uint16 id) {
-	debugC(1, kDebugLingoCompile, "Add code \"%s\" for type %s with id %d", code, scriptType2str(type), id);
+	debugC(1, kDebugLingoCompile, "Add code for type %s with id %d\n"
+			"***********\n%s\n\n***********", scriptType2str(type), id, code);
 
 	if (_scriptContexts[type].contains(id)) {
 		for (size_t j = 0; j < _scriptContexts[type][id]->functions.size(); j++) {
@@ -193,7 +194,7 @@ void Lingo::addCode(const char *code, ScriptType type, uint16 id) {
 
 		_hadError = true; // HACK: This is for preventing test execution
 
-		debugC(1, kDebugLingoCompile, "Code chunk:\n#####\n%s#####", begin);
+		debugC(1, kDebugLingoCompile, "Code chunk:\n#####\n%s\n#####", begin);
 		parse(begin);
 	} else {
 		parse(code);
