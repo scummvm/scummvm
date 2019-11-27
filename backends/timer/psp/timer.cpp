@@ -49,47 +49,42 @@
 
 #include "backends/platform/psp/trace.h"
 
-bool PspTimer::start() {
+PspTimerManager::PspTimerManager(uint32 interval) : _interval(interval * 1000), _threadId(-1), _init(false) {
 	DEBUG_ENTER_FUNC();
-
-	if (!_interval || !_callback)
-		return false;
 
 	_threadId = sceKernelCreateThread("timerThread", thread, PRIORITY_TIMER_THREAD, STACK_TIMER_THREAD, THREAD_ATTR_USER, 0);
 
 	if (_threadId < 0) {	// error
 		PSP_ERROR("failed to create timer thread. Error code %d\n", _threadId);
-		return false;
+		return;
 	}
 
-	PspTimer *_this = this;	// trick to get into context when the thread starts
+	PspTimerManager *_this = this;	// trick to get into context when the thread starts
 	_init = true;
 
 	if (sceKernelStartThread(_threadId, sizeof(uint32 *), &_this) < 0) {
 		PSP_ERROR("failed to start thread %d\n", _threadId);
-		return false;
+		return;
 	}
 
 	PSP_DEBUG_PRINT("created timer thread[%x]\n", _threadId);
-
-	return true;
 }
 
-int PspTimer::thread(SceSize, void *__this) {
+int PspTimerManager::thread(SceSize, void *__this) {
 	DEBUG_ENTER_FUNC();
-	PspTimer *_this = *(PspTimer **)__this;		// get our this for the context
+	PspTimerManager *_this = *(PspTimerManager **)__this;		// get our this for the context
 
 	_this->timerThread();
 	return 0;
 };
 
-void PspTimer::timerThread() {
+void PspTimerManager::timerThread() {
 	DEBUG_ENTER_FUNC();
 
 	while (_init) {
 		sceKernelDelayThread(_interval);
 		PSP_DEBUG_PRINT("calling callback!\n");
-		_callback();
+		handler();
 	}
 };
 

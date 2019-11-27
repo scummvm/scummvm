@@ -39,7 +39,7 @@
 #include "backends/platform/psp/rtc.h"
 
 #include "backends/saves/default/default-saves.h"
-#include "backends/timer/default/default-timer.h"
+#include "backends/timer/psp/timer.h"
 #include "graphics/surface.h"
 #include "audio/mixer_intern.h"
 
@@ -49,12 +49,6 @@
 #include "backends/platform/psp/trace.h"
 
 #define	SAMPLES_PER_SEC	44100
-
-static int timer_handler(int t) {
-	DefaultTimerManager *tm = (DefaultTimerManager *)g_system->getTimerManager();
-	tm->handler();
-	return t;
-}
 
 OSystem_PSP::~OSystem_PSP() {}
 
@@ -97,12 +91,10 @@ void OSystem_PSP::initBackend() {
 
 	_savefileManager = new DefaultSaveFileManager(PSP_DEFAULT_SAVE_PATH);
 
-	_timerManager = new DefaultTimerManager();
+	_timerManager = new PspTimerManager();
 
 	PSP_DEBUG_PRINT("calling keyboard.load()\n");
 	_keyboard.load();	// Load virtual keyboard files into memory
-
-	setTimerCallback(&timer_handler, 10);
 
 	setupMixer();
 
@@ -356,12 +348,6 @@ uint32 OSystem_PSP::getMillis(bool skipRecord) {
 
 void OSystem_PSP::delayMillis(uint msecs) {
 	PspThread::delayMillis(msecs);
-}
-
-void OSystem_PSP::setTimerCallback(TimerProc callback, int interval) {
-	_pspTimer.setCallback((PspTimer::CallbackFunc)callback);
-	_pspTimer.setIntervalMs(interval);
-	_pspTimer.start();
 }
 
 OSystem::MutexRef OSystem_PSP::createMutex(void) {
