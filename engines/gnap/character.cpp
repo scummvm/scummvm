@@ -375,6 +375,7 @@ int PlayerGnap::getSequenceId(int kind, Common::Point gridPos) {
 				break;
 			case kDirIdleLeft:
 			case kDirIdleRight:
+			default:
 				break;
 			}
 		}
@@ -396,6 +397,7 @@ int PlayerGnap::getSequenceId(int kind, Common::Point gridPos) {
 			break;
 		case kDirIdleLeft:
 		case kDirIdleRight:
+		default:
 			break;
 		}
 		break;
@@ -434,6 +436,9 @@ int PlayerGnap::getSequenceId(int kind, Common::Point gridPos) {
 			sequenceId = 0x7AA;
 			_idleFacing = kDirBottomRight;
 		}
+		break;
+
+	default:
 		break;
 	}
 
@@ -778,6 +783,8 @@ bool PlayerGnap::walkTo(Common::Point gridPos, int animationIndex, int sequenceI
 					break;
 				case 0x7BC:
 					_idleFacing = kDirUpLeft;
+					break;
+				default:
 					break;
 				}
 			}

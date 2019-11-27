@@ -142,6 +142,8 @@ void Scene49::checkObstacles() {
 					_obstacles[j]._splashSequenceId = 0;
 					_obstacles[j]._collisionSequenceId = 211;
 					break;
+				default:
+					break;
 				}
 				_obstacles[j]._prevId = _truckId;
 				_obstacles[j]._currId = _obstacles[j]._prevId;
@@ -178,6 +180,8 @@ void Scene49::updateObstacle(int id) {
 			obstacle._prevId = _truckId;
 		else
 			obstacle._prevId = _truckId - 1;
+		break;
+	default:
 		break;
 	}
 
@@ -316,6 +320,8 @@ void Scene49::run() {
 		_truckSequenceId = 0xAF;
 		_truckLaneNum = 3;
 		break;
+	default:
+		break;
 	}
 
 	int bgWidth1 = gameSys.getSpriteWidthById(0x5E);
@@ -409,6 +415,8 @@ void Scene49::run() {
 				break;
 			case 0xB2:
 				_truckLaneNum = 3;
+				break;
+			default:
 				break;
 			}
 			animToggle3 = !animToggle3;
@@ -682,6 +690,8 @@ void Scene50::playRoundAnim(int roundNum) {
 	case 3:
 		sequenceId = 0xB1;
 		break;
+	default:
+		break;
 	}
 
 	_vm->_gameSys->insertSequence(sequenceId, 256, 0, 0, kSeqNone, 0, 0, 0);
@@ -765,6 +775,8 @@ int Scene50::getRightTongueAction() {
 			case 4:
 				sequenceId = 0xBB;
 				break;
+			default:
+				break;
 			}
 		} else {
 			switch (_vm->getRandom(4)) {
@@ -779,6 +791,8 @@ int Scene50::getRightTongueAction() {
 				break;
 			case 3:
 				sequenceId = 0xBE;
+				break;
+			default:
 				break;
 			}
 		}
@@ -1557,6 +1571,8 @@ void Scene51::updateGuyAnimation() {
 		case 4:
 			_guyNextSequenceId = 0xC7;
 			break;
+		default:
+			break;
 		}
 
 		_vm->_gameSys->insertSequence(_guyNextSequenceId, 39, _guySequenceId, 39, kSeqSyncWait, 0, 0, 0);
@@ -1579,6 +1595,8 @@ int Scene51::incCashAmount(int sequenceId) {
 		_cashAmount -= 10 * _vm->getRandom(5) + 50;
 		if (_cashAmount < 0)
 			_cashAmount = 0;
+		break;
+	default:
 		break;
 	}
 	if (_cashAmount > 1995)

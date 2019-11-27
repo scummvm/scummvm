@@ -183,6 +183,8 @@ void Scene20::run() {
 	case 3:
 		_currStonerGuySequenceId = 0x173;
 		break;
+	default:
+		break;
 	}
 
 	_nextStonerGuySequenceId = -1;
@@ -297,6 +299,8 @@ void Scene20::run() {
 					case PLAT_CURSOR:
 						gnap.playImpossible();
 						break;
+					default:
+						break;
 					}
 				}
 			}
@@ -394,6 +398,8 @@ void Scene20::run() {
 					case PLAT_CURSOR:
 						gnap.playImpossible();
 						break;
+					default:
+						break;
 					}
 				}
 			}
@@ -422,6 +428,8 @@ void Scene20::run() {
 					case PLAT_CURSOR:
 						gnap.playImpossible();
 						break;
+					default:
+						break;
 					}
 				}
 			}
@@ -449,6 +457,8 @@ void Scene20::run() {
 					case TALK_CURSOR:
 					case PLAT_CURSOR:
 						gnap.playImpossible();
+						break;
+					default:
 						break;
 					}
 				}
@@ -501,6 +511,8 @@ void Scene20::run() {
 						break;
 					case 2:
 						gameSys.insertSequence(0x185, 253, 0, 0, kSeqNone, 0, 0, 0);
+						break;
+					default:
 						break;
 					}
 				}
@@ -638,6 +650,8 @@ void Scene20::updateAnimations() {
 		case kAS20GrabJointDone:
 			_vm->setGrabCursorSprite(kItemJoint);
 			gnap._actionStatus = -1;
+			break;
+		default:
 			break;
 		}
 	}
@@ -818,6 +832,8 @@ void Scene21::run() {
 					case PLAT_CURSOR:
 						gnap.playImpossible();
 						break;
+					default:
+						break;
 					}
 				}
 			}
@@ -840,6 +856,7 @@ void Scene21::run() {
 						break;
 					case TALK_CURSOR:
 					case PLAT_CURSOR:
+					default:
 						break;
 					}
 				}
@@ -873,6 +890,8 @@ void Scene21::run() {
 						break;
 					case PLAT_CURSOR:
 						gnap.playImpossible();
+						break;
+					default:
 						break;
 					}
 				}
@@ -986,6 +1005,8 @@ void Scene21::updateAnimations() {
 			break;
 		case kAS21LeaveScene:
 			_vm->_sceneDone = true;
+			break;
+		default:
 			break;
 		}
 	}
@@ -1139,6 +1160,8 @@ void Scene22::run() {
 					case PLAT_CURSOR:
 						gnap.playImpossible();
 						break;
+					default:
+						break;
 					}
 				}
 			}
@@ -1183,6 +1206,8 @@ void Scene22::run() {
 						break;
 					case PLAT_CURSOR:
 						gnap.useDeviceOnPlatypus();
+						break;
+					default:
 						break;
 					}
 				}
@@ -1259,6 +1284,8 @@ void Scene22::updateAnimations() {
 			break;
 		case kAS22TalkCashier:
 			_nextCashierSequenceId = 0x5C;
+			break;
+		default:
 			break;
 		}
 		gnap._actionStatus = -1;
@@ -1366,6 +1393,8 @@ void Scene23::run() {
 					case PLAT_CURSOR:
 						gnap.playImpossible();
 						break;
+					default:
+						break;
 					}
 				}
 			}
@@ -1399,6 +1428,8 @@ void Scene23::run() {
 					case TALK_CURSOR:
 					case PLAT_CURSOR:
 						gnap.playImpossible();
+						break;
+					default:
 						break;
 					}
 				}
@@ -1447,6 +1478,8 @@ void Scene23::run() {
 				case 3:
 					gameSys.insertSequence(0xB9, 256, 0, 0, kSeqNone, 0, 0, 0);
 					break;
+				default:
+					break;
 				}
 			}
 			if (!_vm->_timers[5]) {
@@ -1460,6 +1493,8 @@ void Scene23::run() {
 					break;
 				case 2:
 					_vm->playSound(0xCF, false);
+					break;
+				default:
 					break;
 				}
 			}
@@ -1502,6 +1537,8 @@ void Scene23::updateAnimations() {
 			break;
 		case kAS23LeaveScene:
 			_vm->_sceneDone = true;
+			break;
+		default:
 			break;
 		}
 	}
@@ -1634,6 +1671,8 @@ void Scene24::run() {
 					case PLAT_CURSOR:
 						gnap.playImpossible();
 						break;
+					default:
+						break;
 					}
 				}
 			}
@@ -1706,6 +1745,8 @@ void Scene24::run() {
 				case 2:
 					_nextWomanSequenceId = 0x34;
 					break;
+				default:
+					break;
 				}
 				gameSys.insertSequence(_nextWomanSequenceId, 20, _currWomanSequenceId, 20, kSeqSyncWait, 0, 0, 0);
 				_currWomanSequenceId = _nextWomanSequenceId;
@@ -1721,6 +1762,8 @@ void Scene24::run() {
 					break;
 				case 2:
 					gameSys.insertSequence(0x3A, 253, 0, 0, kSeqNone, 0, 0, 0);
+					break;
+				default:
 					break;
 				}
 			}
@@ -1796,6 +1839,8 @@ void Scene25::playAnims(int index) {
 		break;
 	case 4:
 		_vm->_largeSprite = gameSys.createSurface(0x28);
+		break;
+	default:
 		break;
 	}
 	gameSys.insertSpriteDrawItem(_vm->_largeSprite, 0, 0, 300);
@@ -1881,6 +1926,8 @@ void Scene25::run() {
 					case PLAT_CURSOR:
 						gnap.playImpossible();
 						break;
+					default:
+						break;
 					}
 				}
 			}
@@ -1910,6 +1957,8 @@ void Scene25::run() {
 					case GRAB_CURSOR:
 					case PLAT_CURSOR:
 						gnap.playImpossible();
+						break;
+					default:
 						break;
 					}
 				}
@@ -1969,6 +2018,8 @@ void Scene25::run() {
 					case TALK_CURSOR:
 					case PLAT_CURSOR:
 						gnap.playMoan2();
+						break;
+					default:
 						break;
 					}
 				}
@@ -2086,6 +2137,8 @@ void Scene25::updateAnimations() {
 		case kAS25LeaveScene:
 			_vm->_sceneDone = true;
 			break;
+		default:
+			break;
 		}
 	}
 
@@ -2199,6 +2252,8 @@ void Scene26::run() {
 						break;
 					case PLAT_CURSOR:
 						gnap.playImpossible();
+						break;
+					default:
 						break;
 					}
 				}
@@ -2434,6 +2489,8 @@ void Scene27::run() {
 					case PLAT_CURSOR:
 						gnap.playImpossible();
 						break;
+					default:
+						break;
 					}
 				}
 			}
@@ -2461,6 +2518,8 @@ void Scene27::run() {
 					case PLAT_CURSOR:
 						gnap.playImpossible();
 						break;
+					default:
+						break;
 					}
 				}
 			}
@@ -2483,6 +2542,8 @@ void Scene27::run() {
 					case TALK_CURSOR:
 					case PLAT_CURSOR:
 						gnap.playImpossible();
+						break;
+					default:
 						break;
 					}
 				}
@@ -2606,6 +2667,8 @@ void Scene27::updateAnimations() {
 			case 2:
 				_nextJanitorSequenceId = 0xCE;
 				break;
+			default:
+				break;
 			}
 			break;
 		case kAS27GrabBucket:
@@ -2646,6 +2709,8 @@ void Scene27::updateAnimations() {
 			break;
 		case kAS27LeaveScene:
 			_vm->_sceneDone = true;
+			break;
+		default:
 			break;
 		}
 	}
@@ -2806,6 +2871,8 @@ void Scene28::run() {
 					case PLAT_CURSOR:
 						gnap.playImpossible();
 						break;
+					default:
+						break;
 					}
 				}
 			}
@@ -2838,6 +2905,8 @@ void Scene28::run() {
 					case TALK_CURSOR:
 					case PLAT_CURSOR:
 						gnap.playImpossible();
+						break;
+					default:
 						break;
 					}
 				}
@@ -2879,6 +2948,8 @@ void Scene28::run() {
 					case PLAT_CURSOR:
 						gnap.playImpossible();
 						break;
+					default:
+						break;
 					}
 				}
 			}
@@ -2914,6 +2985,8 @@ void Scene28::run() {
 					case TALK_CURSOR:
 					case PLAT_CURSOR:
 						gnap.playImpossible();
+						break;
+					default:
 						break;
 					}
 				}
@@ -3048,6 +3121,8 @@ void Scene28::updateAnimations() {
 		case kAS28LeaveScene:
 			_vm->_sceneDone = true;
 			break;
+		default:
+			break;
 		}
 	}
 
@@ -3087,6 +3162,8 @@ void Scene28::updateAnimations() {
 			gnap._sequenceId = _nextClownSequenceId;
 			gnap._sequenceDatNum = 0;
 			_nextClownSequenceId = -1;
+			break;
+		default:
 			break;
 		}
 		if (_nextClownSequenceId != -1) {
@@ -3203,6 +3280,8 @@ void Scene29::run() {
 					case PLAT_CURSOR:
 						gnap.playImpossible();
 						break;
+					default:
+						break;
 					}
 				}
 			}
@@ -3230,6 +3309,8 @@ void Scene29::run() {
 					case GRAB_CURSOR:
 					case PLAT_CURSOR:
 						gnap.playImpossible();
+						break;
+					default:
 						break;
 					}
 				}
@@ -3276,6 +3357,8 @@ void Scene29::run() {
 					case TALK_CURSOR:
 					case PLAT_CURSOR:
 						gnap.playImpossible();
+						break;
+					default:
 						break;
 					}
 				}
@@ -3325,6 +3408,8 @@ void Scene29::run() {
 						case 4:
 							_nextManSequenceId = 0xF1;
 							break;
+						default:
+							break;
 						}
 					}
 				}
@@ -3356,6 +3441,8 @@ void Scene29::updateAnimations() {
 			break;
 		case kAS29LeaveScene:
 			_vm->_sceneDone = true;
+			break;
+		default:
 			break;
 		}
 	}
@@ -3406,6 +3493,8 @@ void Scene29::updateAnimations() {
 				break;
 			case 5:
 				_nextMonkeySequenceId = 0xE7;
+				break;
+			default:
 				break;
 			}
 			gameSys.insertSequence(_nextMonkeySequenceId, 159, _currMonkeySequenceId, 159, kSeqSyncWait, 0, 0, 0);

@@ -757,6 +757,8 @@ void GnapEngine::initGameFlags(int num) {
 		setFlag(kGFGrassTaken);
 		setFlag(kGFBarnPadlockOpen);
 		break;
+	default:
+		break;
 	}
 }
 
@@ -1054,6 +1056,8 @@ void GnapEngine::doCallback(int callback) {
 	case 10:
 	case 20:
 		_scene->updateAnimationsCb();
+		break;
+	default:
 		break;
 	}
 }

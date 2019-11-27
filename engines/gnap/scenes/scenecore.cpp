@@ -399,6 +399,8 @@ int GnapEngine::initSceneLogic() {
 		_gameSys->setScaleValues(0, 500, 1, 1000);
 		initSceneGrid(21, 146, 11, 10);
 		break;
+	default:
+		break;
 	}
 
 	return backgroundId;
@@ -607,6 +609,8 @@ void GnapEngine::runSceneLogic() {
 			_gameDone = true;
 		}
 		break;
+	default:
+		break;
 	}
 }
 
@@ -625,6 +629,8 @@ void Scene::playRandomSound(int timerIndex) {
 			break;
 		case 3:
 			_vm->playSound(0x1091D, false);
+			break;
+		default:
 			break;
 		}
 	}

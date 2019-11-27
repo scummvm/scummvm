@@ -213,6 +213,8 @@ void Scene53::runChitChatLine() {
 		case 13:
 			pressPhoneNumberButton(0, _vm->_sceneClickedHotspot - 1);
 			break;
+		default:
+			break;
 		}
 
 		if (flag && sequenceId != -1) {
@@ -364,6 +366,8 @@ void Scene53::run() {
 				gnap._actionStatus = 0;
 				_vm->_newSceneNum = 17;
 			}
+			break;
+		default:
 			break;
 		}
 

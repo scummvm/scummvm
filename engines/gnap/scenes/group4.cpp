@@ -95,6 +95,8 @@ void Scene40::run() {
 					case PLAT_CURSOR:
 						gnap.playImpossible(plat._pos);
 						break;
+					default:
+						break;
 					}
 				}
 			}
@@ -340,6 +342,9 @@ void Scene41::run() {
 				_vm->_timers[4] = _vm->getRandom(100) + 100;
 				_vm->_timers[5] = _vm->getRandom(30) + 20;
 				break;
+
+			default:
+				break;
 			}
 		} else {
 			switch (_vm->_sceneClickedHotspot) {
@@ -368,6 +373,8 @@ void Scene41::run() {
 							break;
 						case PLAT_CURSOR:
 							gnap.playImpossible(plat._pos);
+							break;
+						default:
 							break;
 						}
 					}
@@ -420,6 +427,8 @@ void Scene41::run() {
 					case PLAT_CURSOR:
 						gnap.playImpossible();
 						break;
+					default:
+						break;
 					}
 				}
 				break;
@@ -448,6 +457,8 @@ void Scene41::run() {
 					case PLAT_CURSOR:
 						gnap.playImpossible();
 						break;
+					default:
+						break;
 					}
 				}
 				break;
@@ -463,6 +474,9 @@ void Scene41::run() {
 			case kHS41WalkArea1:
 				if (gnap._actionStatus < 0)
 					gnap.walkTo(Common::Point(-1, -1), -1, -1, 1);
+				break;
+
+			default:
 				break;
 			}
 		}
@@ -528,6 +542,8 @@ void Scene41::run() {
 						break;
 					case 2:
 						_nextToyVendorSequenceId = 0x119;
+						break;
+					default:
 						break;
 					}
 					if (_nextToyVendorSequenceId == _currToyVendorSequenceId)
@@ -659,6 +675,8 @@ void Scene41::updateAnimations() {
 				_vm->clearFlag(kGFGnapControlsToyUFO);
 				updateHotspots();
 			}
+			break;
+		default:
 			break;
 		}
 	}
@@ -856,6 +874,9 @@ void Scene42::run() {
 				_vm->runMenu();
 				updateHotspots();
 				break;
+
+			default:
+				break;
 			}
 		} else {
 			switch (_vm->_sceneClickedHotspot) {
@@ -883,6 +904,8 @@ void Scene42::run() {
 							break;
 						case PLAT_CURSOR:
 							gnap.playImpossible(plat._pos);
+							break;
+						default:
 							break;
 						}
 					}
@@ -935,6 +958,8 @@ void Scene42::run() {
 					case PLAT_CURSOR:
 						gnap.playImpossible();
 						break;
+					default:
+						break;
 					}
 				}
 				break;
@@ -955,6 +980,8 @@ void Scene42::run() {
 					case PLAT_CURSOR:
 						gnap.playImpossible();
 						break;
+					default:
+						break;
 					}
 				}
 				break;
@@ -965,6 +992,8 @@ void Scene42::run() {
 					gnap.walkTo(Common::Point(-1, -1), -1, -1, 1);
 				break;
 
+			default:
+				break;
 			}
 		}
 
@@ -1006,6 +1035,8 @@ void Scene42::run() {
 						break;
 					case 7:
 						_nextBBQVendorSequenceId = 0x14A;
+						break;
+					default:
 						break;
 					}
 					if (_nextBBQVendorSequenceId == _currBBQVendorSequenceId && _nextBBQVendorSequenceId != 0x14D)
@@ -1317,6 +1348,9 @@ void Scene43::run() {
 				_vm->toyUfoFlyTo(497, 143, 0, 799, 0, 300, 3);
 				_vm->_timers[9] = 600;
 				break;
+
+			default:
+				break;
 			}
 		} else {
 			switch (_vm->_sceneClickedHotspot) {
@@ -1344,6 +1378,8 @@ void Scene43::run() {
 							break;
 						case PLAT_CURSOR:
 							gnap.playImpossible(plat._pos);
+							break;
+						default:
 							break;
 						}
 					}
@@ -1391,6 +1427,8 @@ void Scene43::run() {
 					case PLAT_CURSOR:
 						gnap.playImpossible();
 						break;
+					default:
+						break;
 					}
 				}
 				break;
@@ -1413,6 +1451,8 @@ void Scene43::run() {
 					case PLAT_CURSOR:
 						gnap.playImpossible();
 						break;
+					default:
+						break;
 					}
 				}
 				break;
@@ -1421,6 +1461,9 @@ void Scene43::run() {
 			case kHS43WalkArea2:
 				if (gnap._actionStatus < 0)
 					gnap.walkTo(Common::Point(-1, -1), -1, -1, 1);
+				break;
+
+			default:
 				break;
 			}
 		}
@@ -1462,6 +1505,8 @@ void Scene43::run() {
 						break;
 					case 4:
 						_nextTwoHeadedGuySequenceId = 0x13A;
+						break;
+					default:
 						break;
 					}
 					if (_nextTwoHeadedGuySequenceId == _currTwoHeadedGuySequenceId)
@@ -1768,6 +1813,9 @@ void Scene44::run() {
 				updateHotspots();
 				_vm->_timers[4] = _vm->getRandom(20) + 20;
 				break;
+
+			default:
+				break;
 			}
 		} else if (_vm->_sceneClickedHotspot <= 9) {
 			switch (_vm->_sceneClickedHotspot) {
@@ -1795,6 +1843,8 @@ void Scene44::run() {
 							break;
 						case PLAT_CURSOR:
 							gnap.playImpossible(plat._pos);
+							break;
+						default:
 							break;
 						}
 					}
@@ -1849,6 +1899,8 @@ void Scene44::run() {
 						gnap.playIdle(Common::Point(5, 7));
 						plat._actionStatus = 4;
 						break;
+					default:
+						break;
 					}
 				}
 				break;
@@ -1875,6 +1927,8 @@ void Scene44::run() {
 					case PLAT_CURSOR:
 						gnap.playImpossible();
 						break;
+					default:
+						break;
 					}
 				}
 				break;
@@ -1898,6 +1952,8 @@ void Scene44::run() {
 					case PLAT_CURSOR:
 						gnap.playImpossible();
 						break;
+					default:
+						break;
 					}
 				}
 				break;
@@ -1908,6 +1964,8 @@ void Scene44::run() {
 					gnap.walkTo(Common::Point(-1, -1), -1, -1, 1);
 				break;
 
+			default:
+				break;
 			}
 		}
 
@@ -2001,6 +2059,8 @@ void Scene44::updateAnimations() {
 			break;
 		case 2:
 			_nextKissingLadySequenceId = 0xF2;
+			break;
+		default:
 			break;
 		}
 		gnap._actionStatus = -1;
@@ -2262,6 +2322,9 @@ void Scene45::run() {
 				_vm->runMenu();
 				updateHotspots();
 				break;
+
+			default:
+				break;
 			}
 		} else {
 			switch (_vm->_sceneClickedHotspot) {
@@ -2290,6 +2353,8 @@ void Scene45::run() {
 							break;
 						case PLAT_CURSOR:
 							gnap.playImpossible(plat._pos);
+							break;
+						default:
 							break;
 						}
 					}
@@ -2351,6 +2416,8 @@ void Scene45::run() {
 						case PLAT_CURSOR:
 							gnap.playImpossible();
 							break;
+						default:
+							break;
 						}
 					}
 				}
@@ -2359,6 +2426,9 @@ void Scene45::run() {
 			case kHS45WalkArea1:
 				if (gnap._actionStatus < 0)
 					gnap.walkTo(Common::Point(-1, -1), -1, -1, 1);
+				break;
+
+			default:
 				break;
 			}
 		}
@@ -2591,6 +2661,9 @@ void Scene46::run() {
 				_vm->runMenu();
 				updateHotspots();
 				break;
+
+			default:
+				break;
 			}
 		} else {
 			switch (_vm->_sceneClickedHotspot) {
@@ -2618,6 +2691,8 @@ void Scene46::run() {
 						case PLAT_CURSOR:
 							gnap.playImpossible(plat._pos);
 							break;
+						default:
+							break;
 						}
 					}
 				}
@@ -2640,6 +2715,8 @@ void Scene46::run() {
 					case PLAT_CURSOR:
 						gnap.playImpossible();
 						break;
+					default:
+						break;
 					}
 				}
 				break;
@@ -2660,6 +2737,8 @@ void Scene46::run() {
 					case GRAB_CURSOR:
 					case PLAT_CURSOR:
 						gnap.playImpossible();
+						break;
+					default:
 						break;
 					}
 				}
@@ -2691,6 +2770,9 @@ void Scene46::run() {
 			case kHS46WalkArea1:
 				if (gnap._actionStatus < 0)
 					gnap.walkTo(Common::Point(-1, -1), -1, -1, 1);
+				break;
+
+			default:
 				break;
 			}
 		}
@@ -2756,6 +2838,8 @@ void Scene46::updateAnimations() {
 			break;
 		case 2:
 			_nextSackGuySequenceId = 0x4A;
+			break;
+		default:
 			break;
 		}
 		gnap._actionStatus = -1;
