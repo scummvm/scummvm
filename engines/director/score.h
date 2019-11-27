@@ -53,7 +53,7 @@ enum ScriptType {
 	kCastScript = 3,
 	kGlobalScript = 4,
 	kNoneScript = -1,
-	kMaxScriptType = 4
+	kMaxScriptType = 4	// Sync with score.cpp:45, array scriptTypes[]
 };
 
 const char *scriptType2str(ScriptType scr);
