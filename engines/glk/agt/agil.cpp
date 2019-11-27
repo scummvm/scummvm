@@ -697,105 +697,6 @@ static void fix_dummy(void) {
 }
 
 
-/* char *v */
-
-static void print_license(void) {
-	writeln("AGiliTy");
-	writestr("The (Mostly) Universal AGT Interpreter, ");
-	writeln(version_str);
-	writeln("  Copyright (C) 1996-1999,2001 by Robert Masenten");
-	writestr("[");
-	writestr(portstr);
-	writeln("]");
-	writeln("-----------------------------------------------------------");
-	writeln("");
-	writeln("  This is an interpreter for game files created with Malmberg and "
-	        "Welch's _Adventure Game Toolkit_. AGiliTy is universal in the "
-	        "sense that it understands and interprets most of the many versions "
-	        "of the AGT game file format.");
-	writeln("  It is *not* a port of the original interpreters but rather a "
-	        "completely new interpreter built around the game file format; "
-	        "while it follows the original interpreters on most things, there "
-	        "are some differences which are described in the file "
-	        "'readme.agility' which should have come with this program.");
-	writeln("");
-	writeln("  This software is copyright 1996-1999,2001 by Robert Masenten ");
-	writeln("  This program is free software; you can redistribute it and/or "
-	        "modify it under the terms of version 2 of the GNU General "
-	        "Public License as published by the Free Software Foundation.");
-	writeln("  This program is distributed in the hope that it will be useful, "
-	        "but WITHOUT ANY WARRANTY; without even the implied warranty of "
-	        "MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the "
-	        "GNU General Public License for more details.");
-	writeln("  You should have received a copy of the GNU General Public "
-	        "License along with this program; if not, write to the Free "
-	        "Software Foundation, Inc., 51 Franklin Street, Fifth Floor, "
-	        "Boston, MA  02110-1301  USA");
-	writeln("");
-	writeln("  Send comments and bug reports to Robert Masenten at:");
-	writeln("      rcm-math@pacbell.net");
-	writeln("");
-	writeln("ACKNOWLEDGMENTS");
-	writeln("Thanks to Jay Goemmer, who has sent me pages and pages of "
-	        "comments and bug reports; "
-	        "David Kinder, responsible for the Amiga and Windows ports and a "
-	        "source of much valuble feedback; "
-	        "David Youd, who has uncovered many subtle and complex bugs in "
-	        "both AGiliTy and Magx; "
-	        "Mitch Mlinar, who has contributed several patches and other "
-	        "suggestions; "
-	        "all of those who have sent me suggestions and bug reports, "
-	        "including "
-	        "Audrey DeLisle (responsible for the red smoke), David Doherty,"
-	        "Al Golden, "
-	        "John Hartnup, Walter Isaac, Sami Kivela, Alexander Lehmann, "
-	        "Grant E. Metcalf, "
-	        "Paul Mikell, Adam Myrow, Olav Nielsen, "
-	        "D.J. Picton, Kevin Soucy, Ben Straub, \"Grand Moff Tarkin\", "
-	        "Adam Thornton, "
-	        "Mark Tilford, David Turpin, and Gil Williamson; "
-	        "Volker Blasius,"
-	        " original maintainer of the Interactive Fiction Archive; "
-	        "Robert Pelak, who suggested the name \"AGiliTy\"; "
-	        "and to everyone on Rec.arts.int-fiction who suggested names for "
-	        "my interpreter.");
-	writeln("");
-	writeln("SPECIAL VERBS RECOGNIZED");
-	writeln("These are all of the special verbs recognized by the interpreter:");
-	writeln("  SCORE  Print out your score.");
-	writeln("  NOTIFY Turn score notification on and off.");
-	writeln("  INSTRUCTIONS or INS  Display the instructions for the game.");
-	writeln("  INTRODUCTION or INTRO  Repeat the introduction of the game.");
-	writeln("  VIEW <picture>  Views an illustration. (Not supported on all "
-	        "platforms.)");
-	writeln("  BRIEF   Don't print room descriptions for rooms you've seen.");
-	writeln("  VERBOSE  Print room descriptions even  for rooms you've already "
-	        "seen.");
-	writeln("  LIST EXITS  List the exits from a room.");
-	writeln("  LISTEXIT ON/OFF  Turn on/off automatic listing of exits.");
-	writeln("  SCRIPT  Start sending a transcript to a file.");
-	writeln("  UNSCRIPT  Stop creating a transcript.");
-	writeln("  SOUND ON, OFF  Turn sound on/off.");
-	writeln("  LOG  Start sending all of your commands to a file.");
-	writeln("  REPLAY <number>  Replay your commands from a file, "
-	        "executing one every <number> seconds.");
-	writeln("  REPLAY FAST  Replay your commands from a file without waiting "
-	        "for you to read the scrolling text.");
-	writeln("  REPLAY STEP  Replay your commands from a file, "
-	        "one for every keypress.");
-	writeln("  AGILDEBUG  Access debugging commands.");
-	writeln("  MENU  Toggle menu mode on or off.");
-	writeln("  OOPS  Correct a word you just mistyped; must be the first "
-	        "command on a line.");
-	writeln("  UNDO  Undo your last move; must be the first command on a line.");
-	writeln("  SAVE  Save the game.");
-	writeln("  RESTORE  Restore the game.");
-	writeln("  RESTART  Restart the game.");
-	writeln("  QUIT  Quit.");
-	writeln("");
-}
-
-
 /* This is a hack to get rid of the "What Now?" prompt. */
 static void fix_prompt(void) {
 	descr_line *d;
@@ -895,20 +796,19 @@ static fc_type setup_game(fc_type fc)
 	print_title(fc);
 	have_ins = open_ins_file(fc, 0);
 
-	do {
-		if (have_ins)
-			writestr("Choose <I>nstructions, <A>GiliTy Information, "
-			         "or <other> to start the game");
-		else
-			writestr("Choose <A>GiliTy Information or <other> to start the game");
-		choice = tolower(agt_getchar()); /* Wait for keypress */
-		if (g_vm->shouldQuit())
-			return nullptr;
+	if (have_ins) {
+		do {
+			writestr("Choose <I>nstructions, or <other> to start the game");
 
-		agt_clrscr();
-		if (have_ins && choice == 'i') print_instructions(fc);
-		else if (choice == 'a') print_license();
-	} while ((choice == 'i' && have_ins) || choice == 'a');
+			choice = tolower(agt_getchar()); /* Wait for keypress */
+			if (g_vm->shouldQuit())
+				return nullptr;
+
+			agt_clrscr();
+			if (have_ins && choice == 'i')
+				print_instructions(fc);
+		} while (choice == 'i');
+	}
 	close_ins_file();
 
 	if (!intro_first && intro_ptr.size > 0) {
