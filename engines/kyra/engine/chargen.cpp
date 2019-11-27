@@ -410,7 +410,8 @@ void CharacterGenerator::toggleSpecialButton(int index, int bodyCustom, int page
 
 void CharacterGenerator::processSpecialButton(int index) {
 	toggleSpecialButton(index, 1, 0);
-	_vm->snd_playSoundEffect(76);
+	if (!(_vm->game() == GI_EOB1 && _vm->_flags.platform == Common::kPlatformPC98))
+		_vm->snd_playSoundEffect(76);
 	_vm->_system->delayMillis(80);
 	toggleSpecialButton(index, 0, 0);
 }
@@ -930,8 +931,8 @@ void CharacterGenerator::printStats(int index, int mode) {
 		_screen->drawShape(2, c->faceShape, 224, 2, 0);
 
 	_screen->printShadedText(c->name, 160 + ((160 - _screen->getTextWidth(c->name)) / 2), 35, _vm->guiSettings()->colors.guiColorWhite, 0, _vm->guiSettings()->colors.guiColorBlack);
-	_screen->printShadedText(_chargenRaceSexStrings[c->raceSex], 160 + ((20 - strlen(_chargenRaceSexStrings[c->raceSex])) << 2), 45, _vm->guiSettings()->colors.guiColorWhite, 0, _vm->guiSettings()->colors.guiColorBlack);
-	_screen->printShadedText(_chargenClassStrings[c->cClass], 160 + ((20 - strlen(_chargenClassStrings[c->cClass])) << 2), 54, _vm->guiSettings()->colors.guiColorWhite, 0, _vm->guiSettings()->colors.guiColorBlack);
+	_screen->printShadedText(_chargenRaceSexStrings[c->raceSex], 160 + ((160 - _screen->getTextWidth(_chargenRaceSexStrings[c->raceSex])) / 2), 45, _vm->guiSettings()->colors.guiColorWhite, 0, _vm->guiSettings()->colors.guiColorBlack);
+	_screen->printShadedText(_chargenClassStrings[c->cClass], 160 + ((160 - _screen->getTextWidth(_chargenClassStrings[c->cClass])) / 2), 54, _vm->guiSettings()->colors.guiColorWhite, 0, _vm->guiSettings()->colors.guiColorBlack);
 
 	for (int i = 0; i < 6; i++)
 		_screen->printShadedText(_chargenStatStrings[i], 163, (i + 8) << 3, _vm->guiSettings()->colors.guiColorWhite, 0, _vm->guiSettings()->colors.guiColorBlack);
