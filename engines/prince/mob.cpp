@@ -237,6 +237,8 @@ int PrinceEngine::checkMob(Graphics::Surface *screen, Common::Array<Mob> &mobLis
 				case '\xfc':
 					mobName.setChar('\x82', i);
 					break;
+				default:
+					break;
 				}
 			}
 		}
