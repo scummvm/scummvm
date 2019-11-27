@@ -39,7 +39,6 @@
 #include "backends/platform/psp/display_manager.h"
 #include "backends/platform/psp/input.h"
 #include "backends/platform/psp/audio.h"
-#include "backends/timer/psp/timer.h"
 #include "backends/platform/psp/thread.h"
 
 class OSystem_PSP : public EventsBaseBackend, public PaletteManager {
@@ -57,7 +56,6 @@ private:
 	PSPKeyboard _keyboard;
 	InputHandler _inputHandler;
 	PspAudio _audio;
-	PspTimer _pspTimer;
 	ImageViewer _imageViewer;
 
 public:
@@ -126,10 +124,6 @@ public:
 	// Time
 	uint32 getMillis(bool skipRecord = false);
 	void delayMillis(uint msecs);
-
-	// Timer
-	typedef int (*TimerProc)(int interval);
-	void setTimerCallback(TimerProc callback, int interval);
 
 	// Mutex
 	MutexRef createMutex(void);
