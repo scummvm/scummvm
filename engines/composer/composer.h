@@ -182,7 +182,7 @@ public:
 	uint32 getFeatures() const;
 	Common::Language getLanguage() const;
 	Common::Platform getPlatform() const;
-	void getConfigFile(Common::String &file) const;
+	bool loadDetectedConfigFile(Common::INIFile &configFile) const;
 
 	const ComposerGameDescription *_gameDescription;
 

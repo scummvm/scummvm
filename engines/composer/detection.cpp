@@ -56,17 +56,16 @@ Common::Platform ComposerEngine::getPlatform() const {
 	return _gameDescription->desc.platform;
 }
 
-void ComposerEngine::getConfigFile(Common::String &configFile) const {
+bool ComposerEngine::loadDetectedConfigFile(Common::INIFile &configFile) const {
 	const ADGameFileDescription *res = _gameDescription->desc.filesDescriptions;
 	while (res->fileName != NULL) {
 		if (res->fileType == GAME_CONFIGFILE) {
-			configFile = res->fileName;
-			return;
+			return configFile.loadFromFile(res->fileName);
 		}
 		res++;
 	}
 	// default config file name
-	configFile = "book.ini";
+	return configFile.loadFromFile("book.ini") || configFile.loadFromFile("book.mac");
 }
 
 }

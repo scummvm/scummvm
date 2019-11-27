@@ -85,11 +85,8 @@ Common::Error ComposerEngine::run() {
 		_queuedScripts[i]._scriptId = 0;
 	}
 
-	Common::String configFile;
-	getConfigFile(configFile);
-
-	if (!(_bookIni.loadFromFile(configFile))) {
-		warning("Detected config file is not available - trying other options");
+	if (!loadDetectedConfigFile(_bookIni)) {
+		// Config files for Darby the Dragon are located in subdirectory
 		_directoriesToStrip = 0;
 		if (!_bookIni.loadFromFile("programs/book.ini")) {
 			error("failed to find book.ini");
