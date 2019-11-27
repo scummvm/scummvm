@@ -103,7 +103,8 @@ void checkEnd(Common::String *token, const char *expect, bool required) {
 %token tSPRITE tINTERSECTS tWITHIN tTELL tPROPERTY
 %token tON tME
 
-%type<code> asgn begin elseif elsestmtoneliner end expr if when repeatwhile repeatwith stmtlist tell reference
+%type<code> asgn begin elseif elsestmtoneliner end expr if when repeatwhile
+%type<code> repeatwith stmtlist tell reference
 %type<narg> argdef arglist nonemptyarglist
 %type<s> on
 
