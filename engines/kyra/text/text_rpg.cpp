@@ -63,6 +63,8 @@ TextDisplayer_rpg::TextDisplayer_rpg(KyraRpgEngine *engine, Screen *scr) : _vm(e
 
 	if (_vm->gameFlags().platform == Common::kPlatformAmiga)
 		memcpy(_colorMap, amigaColorMap, 16);
+	else if (_vm->game() == GI_EOB1 && _vm->gameFlags().platform == Common::kPlatformPC98)
+		_colorMap[12] = 0;
 
 	for (int i = 0; i < _screen->screenDimTableCount(); i++) {
 		const ScreenDim *d = _screen->getScreenDim(i);
