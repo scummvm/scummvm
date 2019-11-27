@@ -44,6 +44,7 @@ void ActionLoop::deserialize(Archive &archive) {
 		break;
 	default:
 		_style = kForward;
+		break;
 	}
 }
 
@@ -94,6 +95,8 @@ void ActionLoop::update() {
 			ActionCEL::setFrame(_startFrame);
 		}
 		decodeNext();
+		break;
+	default:
 		break;
 	}
 }
