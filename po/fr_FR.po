@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2019-11-17 09:23+0100\n"
-"PO-Revision-Date: 2019-11-13 02:03+0000\n"
-"Last-Translator: Purple T <ZEONK@hotmail.com>\n"
+"PO-Revision-Date: 2019-11-28 00:09+0000\n"
+"Last-Translator: Thierry Crozat <criezy@scummvm.org>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fr/>\n"
 "Language: fr_FR\n"
@@ -2747,7 +2747,6 @@ msgid "Snap to edges"
 msgstr "Aligner sur les bords"
 
 #: backends/platform/3ds/options-dialog.cpp:53
-#, fuzzy
 msgid "Stretch to fit"
 msgstr "Étirer pour s'adapter à l'écran"
 
@@ -2764,17 +2763,14 @@ msgid "Bottom"
 msgstr "du bas"
 
 #: backends/platform/3ds/options-dialog.cpp:63
-#, fuzzy
 msgid "C-Pad Sensitivity:"
-msgstr "Sensibilité du pad circulaire :"
+msgstr "Sensibilité du C-Pad :"
 
 #: backends/platform/3ds/osystem-events.cpp:148
-#, fuzzy
 msgid "Magnify Mode cannot be activated in menus."
 msgstr "Le Mode Loupe ne peut pas être activé dans les menus."
 
 #: backends/platform/3ds/osystem-events.cpp:151
-#, fuzzy
 msgid ""
 "Magnify Mode can only be activated\n"
 " when both screens are enabled."
@@ -2783,48 +2779,38 @@ msgstr ""
 "que lorsque les deux écrans sont activés."
 
 #: backends/platform/3ds/osystem-events.cpp:153
-#, fuzzy
 msgid "In-game resolution too small to magnify."
 msgstr "La résolution durant le jeu est trop réduite pour être agrandie."
 
 #: backends/platform/3ds/osystem-events.cpp:159
-#, fuzzy
 msgid "Magnify Mode On. Switching to Hover Mode..."
 msgstr "Mode Loupe activé. Passage en Mode Survol..."
 
 #: backends/platform/3ds/osystem-events.cpp:161
-#, fuzzy
 msgid "Magnify Mode On"
 msgstr "Mode Loupe activé"
 
 #: backends/platform/3ds/osystem-events.cpp:168
-#, fuzzy
 msgid "Magnify Mode Off. Reactivating Drag Mode..."
-msgstr "Mode Loupe désactivé. Réactivation du Mode Déplacement"
+msgstr "Mode Loupe désactivé. Réactivation du Mode Déplacement..."
 
 #: backends/platform/3ds/osystem-events.cpp:170
-#, fuzzy
 msgid "Magnify Mode Off"
-msgstr "Mode Loupe désactivé."
+msgstr "Mode Loupe désactivé"
 
 #: backends/platform/3ds/osystem-events.cpp:178
-#, fuzzy
 msgid "Hover Mode"
 msgstr "Mode Survol"
 
 #: backends/platform/3ds/osystem-events.cpp:182
-#, fuzzy
 msgid "Drag Mode"
 msgstr "Mode Déplacement"
 
 #: backends/platform/3ds/osystem-events.cpp:184
-#, fuzzy
 msgid "Cannot Switch to Drag Mode while Magnify Mode is On"
-msgstr ""
-"Impossible de passer au Mode Déplacement quand le Mode Loupe est activé"
+msgstr "Impossible de passer au Mode Déplacement quand le Mode Loupe est activé"
 
 #: backends/platform/3ds/osystem-events.cpp:237
-#, fuzzy
 msgid ""
 "Magnify Mode Off. Reactivating Drag Mode.\n"
 "Returning to Launcher..."
@@ -2833,7 +2819,6 @@ msgstr ""
 "Retour au Lanceur..."
 
 #: backends/platform/3ds/osystem-events.cpp:239
-#, fuzzy
 msgid "Magnify Mode Off. Returning to Launcher..."
 msgstr "Mode Loupe désactivé. Retour au Lanceur..."
 
@@ -3614,16 +3599,14 @@ msgstr ""
 "l'utilisation de la fonction delayMillis()."
 
 #: engines/bladerunner/detection.cpp:75
-#, fuzzy
 msgid "Max frames per second limit"
-msgstr "Images par seconde maximum"
+msgstr "Limite haute d'images par seconde"
 
 #: engines/bladerunner/detection.cpp:76
-#, fuzzy
 msgid ""
 "This mode targets a maximum of 120 fps. When disabled, the game targets 60 "
 "fps"
-msgstr "Ce mode vise un maximum de 120 ips. Si désactivé, le jeu vise 60 ips."
+msgstr "Ce mode vise un maximum de 120 ips. Si désactivé, le jeu vise 60 ips"
 
 #: engines/cge/detection.cpp:105 engines/cge2/detection.cpp:111
 msgid "Color Blind Mode"
