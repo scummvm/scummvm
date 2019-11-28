@@ -31,6 +31,7 @@
 #include "director/score.h"
 #include "director/lingo/lingo-gr.h"
 #include "director/lingo/lingo-the.h"
+#include "director/lingo/lingo-bytecode.h"
 
 namespace Director {
 
@@ -88,14 +89,6 @@ struct FuncDesc {
 };
 
 typedef Common::HashMap<void *, FuncDesc *> FuncHash;
-
-struct Opcode {
-	inst func;
-	const char *proto;
-
-	Opcode(inst f, const char *p) { func = f; proto = p; }
-};
-typedef Common::HashMap<int, Opcode *> OpcodeHash;
 
 struct Symbol {	/* symbol table entry */
 	Common::String name;
@@ -589,7 +582,8 @@ private:
 
 	FuncHash _functions;
 
-	OpcodeHash _lingoV4;
+	Common::HashMap<int, LingoV4Bytecode *> _lingoV4;
+	Common::HashMap<int, LingoV4TheEntity *> _lingoV4TheEntity;
 
 	uint _pc;
 

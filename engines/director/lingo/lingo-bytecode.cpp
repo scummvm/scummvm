@@ -24,11 +24,7 @@
 
 namespace Director {
 
-static struct LingoV4Bytecode {
-	const uint8 opcode;
-	const inst func;
-	const char *proto;
-} lingoV4[] = {
+static LingoV4Bytecode lingoV4[] = {
 	{ 0x01, STOP, "" },
 	{ 0x03, Lingo::c_voidpush, "" },
 	{ 0x04, Lingo::c_mul, "" },
@@ -61,9 +57,110 @@ static struct LingoV4Bytecode {
 	{ 0, 0, 0 }
 };
 
+static LingoV4TheEntity lingoV4TheEntity[] {
+	{ 0x00, 0x00, kTheFloatPrecision, kTheNOField, false, kTEANOArgs },
+	{ 0x00, 0x01, kTheMouseDownScript, kTheNOField, true, kTEANOArgs },
+	{ 0x00, 0x02, kTheMouseUpScript, kTheNOField, true, kTEANOArgs },
+	{ 0x00, 0x03, kTheKeyDownScript, kTheNOField, true, kTEANOArgs },
+	{ 0x00, 0x04, kTheKeyUpScript, kTheNOField, true, kTEANOArgs },
+	{ 0x00, 0x05, kTheTimeoutScript, kTheNOField, true, kTEANOArgs },
+	{ 0x00, 0x06, kTheTime, kTheShort, false, kTEANOArgs },
+	{ 0x00, 0x07, kTheTime, kTheAbbr, false, kTEANOArgs },
+	{ 0x00, 0x08, kTheTime, kTheLong, false, kTEANOArgs },
+	{ 0x00, 0x09, kTheDate, kTheShort, false, kTEANOArgs },
+	{ 0x00, 0x0a, kTheDate, kTheAbbr, false, kTEANOArgs },
+	{ 0x00, 0x0b, kTheDate, kTheLong, false, kTEANOArgs },
+	{ 0x00, 0x0c, kTheChars, kTheLast, false, kTEAString },
+	{ 0x00, 0x0d, kTheWords, kTheLast, false, kTEAString },
+	{ 0x00, 0x0e, kTheItems, kTheLast, false, kTEAString },
+	{ 0x00, 0x0f, kTheLines, kTheLast, false, kTEAString },
+	{ 0x01, 0x01, kTheChars, kTheNumber, false, kTEAString },
+	{ 0x01, 0x02, kTheWords, kTheNumber, false, kTEAString },
+	{ 0x01, 0x03, kTheItems, kTheNumber, false, kTEAString },
+	{ 0x01, 0x04, kTheLines, kTheNumber, false, kTEAString },
+	{ 0x02, 0x01, kTheMenu, kTheName, false, kTEAItemId },
+	{ 0x02, 0x02, kTheMenuItems, kTheNumber, false, kTEAItemId },
+	{ 0x03, 0x01, kTheMenuItem, kTheName, true, kTEAMenuIdItemId },
+	{ 0x03, 0x02, kTheMenuItem, kTheCheckMark, true, kTEAMenuIdItemId },
+	{ 0x03, 0x03, kTheMenuItem, kTheEnabled, true, kTEAMenuIdItemId },
+	{ 0x03, 0x04, kTheMenuItem, kTheScript, true, kTEAMenuIdItemId },
+	{ 0x04, 0x01, kTheSound, kTheVolume, true, kTEAItemId },
+	{ 0x06, 0x01, kTheSprite, kTheCursor, true, kTEAItemId },
+	{ 0x06, 0x02, kTheSprite, kTheBackColor, true, kTEAItemId },
+	{ 0x06, 0x03, kTheSprite, kTheBottom, true, kTEAItemId },
+	{ 0x06, 0x04, kTheSprite, kTheCastNum, true, kTEAItemId },
+	{ 0x06, 0x05, kTheSprite, kTheConstraint, true, kTEAItemId },
+	{ 0x06, 0x06, kTheSprite, kTheCursor, true, kTEAItemId },
+	{ 0x06, 0x07, kTheSprite, kTheForeColor, true, kTEAItemId },
+	{ 0x06, 0x08, kTheSprite, kTheHeight, true, kTEAItemId },
+	{ 0x06, 0x0a, kTheSprite, kTheInk, true, kTEAItemId },
+	{ 0x06, 0x0b, kTheSprite, kTheLeft, true, kTEAItemId },
+	{ 0x06, 0x0c, kTheSprite, kTheLineSize, true, kTEAItemId },
+	{ 0x06, 0x0d, kTheSprite, kTheLocH, true, kTEAItemId },
+	{ 0x06, 0x0e, kTheSprite, kTheLocV, true, kTEAItemId },
+	{ 0x06, 0x0f, kTheSprite, kTheMovieRate, true, kTEAItemId },
+	{ 0x06, 0x10, kTheSprite, kTheMovieTime, true, kTEAItemId },
+	{ 0x06, 0x12, kTheSprite, kThePuppet, true, kTEAItemId },
+	{ 0x06, 0x13, kTheSprite, kTheRight, true, kTEAItemId },
+	{ 0x06, 0x14, kTheSprite, kTheStartTime, true, kTEAItemId },
+	{ 0x06, 0x15, kTheSprite, kTheStopTime, true, kTEAItemId },
+	{ 0x06, 0x16, kTheSprite, kTheStretch, true, kTEAItemId },
+	{ 0x06, 0x17, kTheSprite, kTheTop, true, kTEAItemId },
+	{ 0x06, 0x18, kTheSprite, kTheTrails, true, kTEAItemId },
+	{ 0x06, 0x19, kTheSprite, kTheVisible, true, kTEAItemId },
+	{ 0x06, 0x1a, kTheSprite, kTheVolume, true, kTEAItemId },
+	{ 0x06, 0x1b, kTheSprite, kTheWidth, true, kTEAItemId },
+	{ 0x06, 0x1d, kTheSprite, kTheScriptNum, true, kTEAItemId },
+	{ 0x06, 0x1e, kTheSprite, kTheMoveableSprite, true, kTEAItemId },
+	{ 0x06, 0x20, kTheSprite, kTheScoreColor, true, kTEAItemId },
+	{ 0x07, 0x01, kTheBeepOn, kTheNOField, true, kTEANOArgs },
+	{ 0x07, 0x02, kTheButtonStyle, kTheNOField, true, kTEANOArgs },
+	{ 0x07, 0x03, kTheCenterStage, kTheNOField, true, kTEANOArgs },
+	{ 0x07, 0x04, kTheCheckBoxAccess, kTheNOField, true, kTEANOArgs },
+	{ 0x07, 0x05, kTheCheckBoxType, kTheNOField, true, kTEANOArgs },
+	{ 0x07, 0x06, kTheColorDepth, kTheNOField, true, kTEANOArgs },
+	{ 0x07, 0x08, kTheExitLock, kTheNOField, true, kTEANOArgs },
+	{ 0x07, 0x09, kTheFixStageSize, kTheNOField, true, kTEANOArgs },
+	{ 0x07, 0x13, kTheTimeoutLapsed, kTheNOField, true, kTEANOArgs },
+	{ 0x07, 0x17, kTheSelEnd, kTheNOField, true, kTEANOArgs },
+	{ 0x07, 0x18, kTheSelStart, kTheNOField, true, kTEANOArgs },
+	{ 0x07, 0x19, kTheSoundEnabled, kTheNOField, true, kTEANOArgs },
+	{ 0x07, 0x1a, kTheSoundLevel, kTheNOField, true, kTEANOArgs },
+	{ 0x07, 0x1b, kTheStageColor, kTheNOField, true, kTEANOArgs },
+	{ 0x07, 0x1d, kTheStillDown, kTheNOField, true, kTEANOArgs },
+	{ 0x07, 0x1e, kTheTimeoutKeyDown, kTheNOField, true, kTEANOArgs },
+	{ 0x07, 0x1f, kTheTimeoutLength, kTheNOField, true, kTEANOArgs },
+	{ 0x07, 0x20, kTheTimeoutMouse, kTheNOField, true, kTEANOArgs },
+	{ 0x07, 0x21, kTheTimeoutPlay, kTheNOField, true, kTEANOArgs },
+	{ 0x07, 0x22, kTheTimer, kTheNOField, true, kTEANOArgs },
+	{ 0x08, 0x01, kThePerFrameHook, kTheNOField, false, kTEANOArgs },
+	{ 0x08, 0x02, kTheCastMembers, kTheNumber, false, kTEANOArgs },
+	{ 0x08, 0x03, kTheMenus, kTheNumber, false, kTEANOArgs },
+	{ 0x09, 0x01, kTheCast, kTheName, true, kTEAItemId },
+	{ 0x09, 0x02, kTheCast, kTheText, true, kTEAItemId },
+	{ 0x09, 0x08, kTheCast, kThePicture, true, kTEAItemId },
+	{ 0x09, 0x0a, kTheCast, kTheNumber, true, kTEAItemId },
+	{ 0x09, 0x0b, kTheCast, kTheSize, true, kTEAItemId },
+	{ 0x09, 0x11, kTheCast, kTheForeColor, true, kTEAItemId },
+	{ 0x09, 0x12, kTheCast, kTheBackColor, true, kTEAItemId },
+	{ 0x0c, 0x03, kTheField, kTheTextStyle, true, kTEAItemId },
+	{ 0x0c, 0x04, kTheField, kTheTextFont, true, kTEAItemId },
+	{ 0x0c, 0x05, kTheField, kTheTextHeight, true, kTEAItemId },
+	{ 0x0c, 0x06, kTheField, kTheTextAlign, true, kTEAItemId },
+	{ 0x0c, 0x07, kTheField, kTheTextSize, true, kTEAItemId },
+	{ 0x0d, 0x0f, kTheCast, kTheDirectToStage, true, kTEAItemId },
+	{ 0x0d, 0x10, kTheCast, kTheSound, true, kTEAItemId },
+	{ -1, 0, 0, 0, false, kTEANOArgs },
+};
+
+
 void Lingo::initBytecode() {
 	for (LingoV4Bytecode *op = lingoV4; op->opcode; op++) {
-		_lingoV4[op->opcode] = new Opcode( op->func, op->proto );
+		_lingoV4[op->opcode] = op;
+	}
+
+	for (LingoV4TheEntity *ent = lingoV4TheEntity; ent->bank != -1; ent++) {
+		_lingoV4TheEntity[(ent->bank << 16) + ent->firstArg] = ent;
 	}
 }
 
