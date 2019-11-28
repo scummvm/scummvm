@@ -831,5 +831,70 @@ void CutScene::knightsSavedAgain() {
 	_vm->clearUnkFlags(ENGINE_UNK1_FLAG_2);
 }
 
+static uint16 tournamentUpdateCameraX = 0;
+
+void tournamentUpdateFunction() {
+	tournamentUpdateCameraX++;
+	if (tournamentUpdateCameraX > 0x280) {
+		return;
+	}
+	getEngine()->_scene->_camera.x = tournamentUpdateCameraX;
+}
+
+void CutScene::tournamentCutScene() {
+	uint actorId;
+	ushort uVar1;
+	uint16 dialogText[1000];
+//	undefined2 local_218 [256];
+
+	uVar1 = 0;
+	actorId = 0;
+//	do {
+//		uVar1 = uVar1 + 1;
+//		local_218[actorId] = *(undefined2 *)(actorId * 2 + scrFileData_maybe);
+//		actorId = (uint)uVar1;
+//	} while (uVar1 < 0x100);
+
+	tournamentUpdateCameraX = 0x140;
+	_vm->setVsyncUpdateFunction(tournamentUpdateFunction);
+	_vm->_talk->loadText(0x4C40C, dialogText, 1000);
+	_vm->_talk->displayDialogAroundPoint(dialogText,0,0,0x1e01,1,0x4C40C);
+
+	_vm->_talk->loadText(0x4C530, dialogText, 1000);
+	_vm->_talk->displayDialogAroundPoint(dialogText,0,0,0xc01,1,0x4C530);
+
+	_vm->_talk->loadText(0x4C588, dialogText, 1000);
+	_vm->_talk->displayDialogAroundPoint(dialogText,0,0,0x1e01,1, 0x4C588);
+
+	_vm->_talk->loadText(0x4C6B0, dialogText, 1000);
+	_vm->_talk->displayDialogAroundPoint(dialogText,0,0,0xc01,1, 0x4C6B0);
+
+	_vm->_talk->loadText(0x4C6E8, dialogText, 1000);
+	_vm->_talk->displayDialogAroundPoint(dialogText,0,0,0x1e01,1, 0x4C6E8);
+	_vm->setVsyncUpdateFunction(NULL);
+	_vm->setFlags(ENGINE_FLAG_20000);
+	// fade_related_calls_with_1f();
+	Actor *actor = _vm->_dragonINIResource->getRecord(0x02BE)->actor;
+	_vm->_screen->loadPalette(0, actor->getPalette());
+	_vm->_scene->_camera.x = 0;
+	_vm->playSound(0);
+//	call_fade_related_1f();
+	_vm->waitForFrames(300);
+	actor->setFlag(ACTOR_FLAG_1000);
+	actor->waitUntilFlag8And4AreSet();
+	_vm->waitForFrames(0x3c);
+//	fade_related_calls_with_1f();
+	_vm->_screen->loadPalette(0, _vm->_scene->getPalette());
+	_vm->playSound(0x4000);
+	_vm->_scene->_camera.x = 0x3c0;
+//	call_fade_related_1f();
+	_vm->_talk->loadText(0x4C814, dialogText, 1000);
+	_vm->_talk->displayDialogAroundPoint(dialogText,0,0,0xc01,1, 0x4C814);
+	_vm->_talk->loadText(0x4C852, dialogText, 1000);
+	_vm->_talk->displayDialogAroundPoint(dialogText,0,0,0x1e01,1, 0x4C852);
+	_vm->setFlags(ENGINE_FLAG_20000);
+//	fade_related_calls_with_1f();
+}
+
 
 } // End of namespace Dragons

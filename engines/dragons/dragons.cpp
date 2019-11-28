@@ -70,6 +70,7 @@ DragonsEngine::DragonsEngine(OSystem *syst) : Engine(syst) {
 	_sound = new Sound(this);
 	_fontManager = NULL;
 	_sceneUpdateFunction = NULL;
+	_vsyncUpdateFunction = NULL;
 
 	_leftMouseButtonUp = false;
 	_leftMouseButtonDown = false;
@@ -675,7 +676,7 @@ void DragonsEngine::updateHandler() {
 		engineFlag0x20UpdateFunction();
 	}
 
-	//TODO vsync update function
+	runVsyncUpdaterFunction();
 
 	// TODO data_8006a3a0 logic. @ 0x8001c2f4
 
@@ -1307,6 +1308,10 @@ void DragonsEngine::setSceneUpdateFunction(void (*newUpdateFunction)()) {
 	_sceneUpdateFunction = newUpdateFunction;
 }
 
+void DragonsEngine::setVsyncUpdateFunction(void (*newUpdateFunction)()) {
+	_vsyncUpdateFunction = newUpdateFunction;
+}
+
 void DragonsEngine::seedRandom(int32 seed) {
 		_randomState = seed * -0x2b0e2b0f;
 }
@@ -1373,6 +1378,16 @@ void DragonsEngine::setupPalette1() {
 
 bool DragonsEngine::isDebugMode() {
 	return _debugMode;
+}
+
+bool DragonsEngine::isVsyncUpdaterFunctionRunning() {
+	return _vsyncUpdateFunction != NULL;
+}
+
+void DragonsEngine::runVsyncUpdaterFunction() {
+	if (isVsyncUpdaterFunctionRunning()) {
+		_vsyncUpdateFunction();
+	}
 }
 
 void (*DragonsEngine::getSceneUpdateFunction())() {

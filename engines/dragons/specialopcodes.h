@@ -67,6 +67,7 @@ protected:
 
 	// Opcodes
 	void spcCatapultMiniGame(); // 1
+	void spcThumbWrestlingMiniGame(); // 2
 	void spcClearEngineFlag10(); // 3
 	void spcSetEngineFlag10();   // 4
 
@@ -157,6 +158,8 @@ protected:
 	void spcResetInventorySequence(); // 0x64
 	void spcUnk65ScenePaletteRelated(); // 0x65;
 	void spcUnk66();
+	void spcTournamentSetCamera(); // 0x67
+	void spcTournamentCutScene(); // 0x68
 
 	void spcCastleGateSceneLogic(); // 0x6a
 	void spcTransitionToMap(); // 0x6b

@@ -281,6 +281,8 @@ bool Actor::pathfinding_maybe(int16 target_x, int16 target_y, uint16 unkTypeMayb
 			priority = 1;
 		}
 	}
+//	if (((unkTypeMaybe == 0) && (7 < (priority - 1 & 0xffff))) || 	//TODO this is the correct logic I think. need to redo all the pathfinding logic.
+//		((unkTypeMaybe == 1 && (0xf < (priority - 1 & 0xffff))))) {
 	if ((unkTypeMaybe != 0 || priority - 1 < 8) && (unkTypeMaybe != 1 || priority - 1 < 16)) {
 		var_90_1 = (unkTypeMaybe ^ 2) < 1 ? 1 : 0;
 

@@ -62,6 +62,7 @@ public:
 	void knightsSavedBackAtCastle();
 	void flameReturnsCutScene();
 	void knightsSavedAgain();
+	void tournamentCutScene();
 
 private:
 	//Scene 1 related functions
