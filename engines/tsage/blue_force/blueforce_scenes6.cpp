@@ -258,6 +258,8 @@ void Scene666::Action1::signal() {
 	case 1:
 		BF_GLOBALS._game->restartGame();
 		break;
+	default:
+		break;
 	}
 }
 

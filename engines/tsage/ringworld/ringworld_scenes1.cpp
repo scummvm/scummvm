@@ -106,6 +106,8 @@ void Scene10::Action1::signal() {
 		g_globals->_scenePalette.clearListeners();
 		g_globals->_sceneManager.changeScene(15);
 		break;
+	default:
+		break;
 	}
 }
 
@@ -121,6 +123,8 @@ void Scene10::Action2::signal() {
 		scene->_veeshkaRightArm.setFrame(1);
 		scene->_veeshkaRightArm.animate(ANIM_MODE_5, this);
 		_actionIndex = 0;
+		break;
+	default:
 		break;
 	}
 }
@@ -241,6 +245,8 @@ void Scene15::Action1::signal() {
 	case 3:
 		SceneItem::display(0, 0);
 		g_globals->_sceneManager.changeScene(20);
+		break;
+	default:
 		break;
 	}
 }
@@ -1077,6 +1083,8 @@ void Scene40::Action1::signal() {
 		g_globals->_game->endGame(40, 20);
 		remove();
 		break;
+	default:
+		break;
 	}
 }
 
@@ -1160,6 +1168,8 @@ void Scene40::Action2::signal() {
 		g_globals->_player.enableControl();
 		scene->_assassin.setAction(&scene->_action8);
 		break;
+	default:
+		break;
 	}
 }
 
@@ -1196,6 +1206,8 @@ void Scene40::Action3::signal() {
 		g_globals->_player.enableControl();
 		remove();
 		break;
+	default:
+		break;
 	}
 }
 
@@ -1211,6 +1223,8 @@ void Scene40::Action4::signal() {
 		g_globals->_stripNum = 88;
 		g_globals->_player.enableControl();
 		break;
+	default:
+		break;
 	}
 }
 
@@ -1225,6 +1239,9 @@ void Scene40::Action5::signal() {
 	case 1:
 		scene->_seekerTail.animate(ANIM_MODE_8, 1, this);
 		_actionIndex = 0;
+		break;
+	default:
+		break;
 	}
 }
 
@@ -1262,6 +1279,8 @@ void Scene40::Action6::signal() {
 	case 2:
 		remove();
 		break;
+	default:
+		break;
 	}
 }
 
@@ -1290,6 +1309,8 @@ void Scene40::Action7::signal() {
 		scene->_leftEntrance.remove();
 		_actionIndex = 0;
 		setDelay(60);
+		break;
+	default:
 		break;
 	}
 }
@@ -1341,6 +1362,8 @@ void Scene40::Action8::signal() {
 	case 4:
 		g_globals->_game->endGame(40, 45);
 		remove();
+		break;
+	default:
 		break;
 	}
 }
@@ -1636,6 +1659,8 @@ void Scene50::Action1::signal() {
 		g_globals->_stripNum = -1;
 		g_globals->_sceneManager.changeScene(60);
 		break;
+	default:
+		break;
 	}
 }
 
@@ -1657,6 +1682,8 @@ void Scene50::Action2::signal() {
 		g_globals->_sceneManager.changeScene(40);
 		remove();
 		break;
+	default:
+		break;
 	}
 }
 
@@ -1672,6 +1699,8 @@ void Scene50::Action3::signal() {
 	case 1:
 		g_globals->_sceneManager.changeScene(60);
 		remove();
+		break;
+	default:
 		break;
 	}
 }
@@ -1871,6 +1900,8 @@ void Scene50::signal() {
 	case 54:
 		g_globals->_player.enableControl();
 		break;
+	default:
+		break;
 	}
 }
 
@@ -2038,6 +2069,8 @@ void Scene60::Action2::signal() {
 		break;
 	case 3:
 		g_globals->_sceneManager.changeScene(50);
+		break;
+	default:
 		break;
 	}
 }
@@ -2553,6 +2586,8 @@ void Scene90::Action1::signal() {
 		g_globals->_scenePalette.clearListeners();
 		g_globals->_sceneManager.changeScene(95);
 		break;
+	default:
+		break;
 	}
 }
 
@@ -2826,6 +2861,8 @@ void Scene95::Action1::signal() {
 	case 9:
 		g_globals->_sceneManager.changeScene(2300);
 		break;
+	default:
+		break;
 	}
 }
 
@@ -2883,6 +2920,8 @@ void Scene6100::Action1::signal() {
 		scene->showMessage(NULL, 0, NULL);
 		remove();
 		break;
+	default:
+		break;
 	}
 }
 
@@ -2899,6 +2938,8 @@ void Scene6100::Action2::signal() {
 	case 2:
 		scene->showMessage(NULL, 0, NULL);
 		remove();
+		break;
+	default:
 		break;
 	}
 }
@@ -2942,6 +2983,8 @@ void Scene6100::Action3::signal() {
 			(scene->_stripManager._currObj44Id == 135) ? 6100 : 2320);
 		remove();
 		break;
+	default:
+		break;
 	}
 }
 
@@ -2958,6 +3001,8 @@ void Scene6100::Action4::signal() {
 	case 2:
 		scene->showMessage(NULL, 0, NULL);
 		remove();
+		break;
+	default:
 		break;
 	}
 }
@@ -3055,6 +3100,8 @@ void Scene6100::Action5::dispatch() {
 					scene->_probe.setAction(NULL);
 				scene->setAction(&scene->_action3);
 				break;
+			default:
+				break;
 			}
 
 			g_globals->_scenePalette.clearListeners();
@@ -3098,6 +3145,9 @@ void Scene6100::GetBoxAction::signal() {
 		scene->showMessage(NULL, 0, NULL);
 		g_globals->_sceneManager.changeScene(2320);
 		remove();
+		break;
+	default:
+		break;
 	}
 }
 
@@ -3130,6 +3180,8 @@ void Scene6100::Action7::signal() {
 	case 2:
 		g_globals->_sceneManager.changeScene(2100);
 		remove();
+		break;
+	default:
 		break;
 	}
 }

@@ -1255,6 +1255,8 @@ void Scene9700::signal() {
 		g_globals->_soundHandler.play(323);
 		g_globals->_sceneManager.changeScene(9750);
 		break;
+	default:
+		break;
 	}
 }
 

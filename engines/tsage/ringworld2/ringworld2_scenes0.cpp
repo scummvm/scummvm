@@ -1422,6 +1422,9 @@ void Scene160::Action1::signal() {
 		HelpDialog::show();
 		setDelay(4);
 		break;
+
+	default:
+		break;
 	}
 }
 
@@ -1505,6 +1508,8 @@ void Scene180::Action1::signal() {
 		scene->_shipDisplay.setFrame(1);
 		scene->_shipDisplay.animate(ANIM_MODE_5, this);
 		_actionIndex = 0;
+		break;
+	default:
 		break;
 	}
 }
@@ -1894,6 +1899,9 @@ void Scene180::signal() {
 		// but instead we're changing to the previously unused scene 50, which shows
 		// a closeup of Quinn in the floatation bed first
 		R2_GLOBALS._sceneManager.changeScene(50);
+		break;
+
+	default:
 		break;
 	}
 }

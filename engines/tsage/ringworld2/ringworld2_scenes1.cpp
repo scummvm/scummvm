@@ -454,6 +454,9 @@ void Scene1000::signal() {
 		R2_GLOBALS._scenePalette.loadPalette(0);
 		R2_GLOBALS._sceneManager.changeScene(3500);
 		break;
+
+	default:
+		break;
 	}
 }
 

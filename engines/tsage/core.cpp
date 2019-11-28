@@ -1184,6 +1184,8 @@ void PaletteRotation::signal() {
 			}
 		}
 		break;
+	default:
+		break;
 	}
 
 	if (flag) {
@@ -2434,6 +2436,8 @@ void SceneObject::animate(int animMode, ...) {
 			if (_frame == _endFrame)
 				setFrame(getNewFrame());
 		}
+		break;
+	default:
 		break;
 	}
 	va_end(va);

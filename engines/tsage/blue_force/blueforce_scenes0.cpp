@@ -114,6 +114,8 @@ void Scene20::Action1::signal() {
 		BF_GLOBALS._sceneManager.changeScene(100);
 		remove();
 		break;
+	default:
+		break;
 	}
 }
 
@@ -535,6 +537,8 @@ bool Scene60::Ignition::startAction(CursorType action, Event &event) {
 		case 2:
 			if (BF_GLOBALS.getFlag(onDuty) && check2())
 				return true;
+		default:
+			break;
 		}
 
 		BF_GLOBALS._sound1.play(BF_GLOBALS.getFlag(fWithLyle) ? 80 : 31);
@@ -898,6 +902,8 @@ void Scene60::Action1::signal() {
 		_actionIndex = 4;
 		scene->_stripManager.start(633, this);
 		break;
+	default:
+		break;
 	}
 }
 
@@ -923,6 +929,8 @@ void Scene60::Action2::signal() {
 		BF_GLOBALS._player.enableControl();
 		remove();
 		break;
+	default:
+		break;
 	}
 }
 
@@ -944,6 +952,8 @@ void Scene60::Action3::signal() {
 	case 2:
 		BF_GLOBALS._player.enableControl();
 		remove();
+		break;
+	default:
 		break;
 	}
 }
@@ -1110,6 +1120,9 @@ void Scene60::postInit(SceneObjectList *OwnerList) {
 				(BF_GLOBALS._bookmark < bInspectionDone)) {
 			setAction(&_action3);
 		}
+		break;
+	default:
+		break;
 	}
 }
 

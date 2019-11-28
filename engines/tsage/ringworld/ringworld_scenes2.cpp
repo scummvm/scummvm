@@ -66,6 +66,8 @@ void Scene1000::Action1::signal() {
 	case 3:
 		g_globals->_sceneManager.changeScene(1400);
 		break;
+	default:
+		break;
 	}
 
 }
@@ -509,6 +511,8 @@ void Scene1001::Action1::signal() {
 	case 24:
 		g_globals->_sceneManager.changeScene(2000);
 		break;
+	default:
+		break;
 	}
 }
 
@@ -551,6 +555,8 @@ void Scene1250::Action1::signal() {
 		scene->_object1.animate(ANIM_MODE_5, this);
 		_actionIndex = 0;
 		break;
+	default:
+		break;
 	}
 }
 
@@ -569,6 +575,8 @@ void Scene1250::Action2::signal() {
 		case 2:
 			scene->_object2.setPosition(Common::Point(267, 20));
 			break;
+		default:
+			break;
 		}
 
 		setDelay(30);
@@ -576,6 +584,8 @@ void Scene1250::Action2::signal() {
 	case 1:
 		scene->_object2.animate(ANIM_MODE_5, this);
 		_actionIndex = 0;
+		break;
+	default:
 		break;
 	}
 }
@@ -596,6 +606,8 @@ void Scene1250::Action3::signal() {
 	case 3:
 		g_globals->_sceneManager.changeScene(1000);
 		break;
+	default:
+		break;
 	}
 }
 
@@ -614,6 +626,8 @@ void Scene1250::Action4::signal() {
 		break;
 	case 3:
 		g_globals->_sceneManager.changeScene(2000);
+		break;
+	default:
 		break;
 	}
 }
@@ -742,6 +756,8 @@ void Scene1400::Action1::signal() {
 
 		g_globals->_sceneManager.changeScene(1500);
 		break;
+	default:
+		break;
 	}
 }
 
@@ -863,6 +879,8 @@ void Scene1500::Action1::signal() {
 		g_globals->_soundHandler.play(127);
 		g_globals->_sceneManager.changeScene(2000);
 		break;
+	default:
+		break;
 	}
 }
 
@@ -900,6 +918,8 @@ void Scene1500::Action2::signal() {
 		scene->_soundHandler.release();
 		g_globals->_stripNum = 1505;
 		g_globals->_sceneManager.changeScene(2400);
+		break;
+	default:
 		break;
 	}
 }

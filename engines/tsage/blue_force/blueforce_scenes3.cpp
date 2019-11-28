@@ -960,6 +960,8 @@ void Scene315::Action1::signal() {
 		remove();
 		BF_GLOBALS._player.enableControl();
 		break;
+	default:
+		break;
 	}
 }
 
@@ -1907,6 +1909,8 @@ void Scene340::Action6::signal() {
 		scene->_sceneMode = 4;
 		scene->signal();
 		remove();
+		break;
+	default:
 		break;
 	}
 }
@@ -3447,6 +3451,8 @@ void Scene355::Action2::signal() {
 		scene->_sceneMode = 9979;
 		scene->signal();
 		remove();
+		break;
+	default:
 		break;
 	}
 }
@@ -5063,6 +5069,8 @@ void Scene370::signal() {
 		_green.remove();
 		BF_GLOBALS._player.enableControl();
 		break;
+	default:
+		break;
 	}
 }
 
@@ -5277,6 +5285,8 @@ void Scene385::Action1::signal() {
 		BF_GLOBALS._player.enableControl();
 		remove();
 		break;
+	default:
+		break;
 	}
 }
 
@@ -5308,6 +5318,8 @@ void Scene385::Action2::signal() {
 	case 6:
 		BF_GLOBALS._player.enableControl();
 		remove();
+		break;
+	default:
 		break;
 	}
 }
@@ -5525,6 +5537,8 @@ void Scene385::signal() {
 	case 3852:
 		BF_GLOBALS._player.enableControl();
 		break;
+	default:
+		break;
 	}
 }
 
@@ -5610,6 +5624,8 @@ void Scene390::Action1::signal() {
 	case 4:
 		BF_GLOBALS._player.enableControl();
 		remove();
+		break;
+	default:
 		break;
 	}
 }
@@ -5968,6 +5984,8 @@ void Scene390::signal() {
 	case 3906:
 		BF_GLOBALS._deathReason = 18;
 		BF_GLOBALS._sceneManager.changeScene(666);
+		break;
+	default:
 		break;
 	}
 }

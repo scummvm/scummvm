@@ -187,6 +187,8 @@ void RightClickDialog::execute() {
 		// Options dialog
 		BlueForce::OptionsDialog::show();
 		break;
+	default:
+		break;
 	}
 
 	if (cursorNum != CURSOR_NONE)

@@ -51,6 +51,8 @@ void Scene3500::Action1::signal() {
 	case 3:
 		g_globals->_sceneManager.changeScene(9999);
 		break;
+	default:
+		break;
 	}
 }
 
@@ -69,6 +71,8 @@ void Scene3500::Action2::signal() {
 		break;
 	case 3:
 		g_globals->_sceneManager.changeScene(2012);
+		break;
+	default:
 		break;
 	}
 }
@@ -223,6 +227,8 @@ void Scene3700::Action1::signal() {
 		break;
 	case 9:
 		g_globals->_sceneManager.changeScene(2100);
+		break;
+	default:
 		break;
 	}
 }
