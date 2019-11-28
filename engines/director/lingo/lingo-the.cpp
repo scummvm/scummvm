@@ -65,7 +65,6 @@ TheEntity entities[] = {
 	{ kTheKeyDownScript,	"keyDownScript",	false },	// D2 p
 	{ kTheKeyUpScript,		"keyUpScript",		false },	//				D4 p
 	{ kTheLabelList,		"labelList",		false },	//		D3 f
-	{ kTheLast,				"last",				false },	//				D4 f
 	{ kTheLastClick,		"lastClick",		false },	// D2 f
 	{ kTheLastEvent,		"lastEvent",		false },	// D2 f
 	{ kTheLastFrame,		"lastFrame",		false },	//				D4 p
@@ -128,7 +127,7 @@ TheEntity entities[] = {
 	{ kTheStillDown,		"stillDown",		false },	// D2 f
 	{ kTheSwitchColorDepth,	"switchColorDepth",	false },	// D2 p
 	{ kTheTicks,			"ticks",			false },	// D2 f
-	{ kTheTimeoutKeydown,	"timeoutKeydown",	false },	// D2 p
+	{ kTheTimeoutKeyDown,	"timeoutKeyDown",	false },	// D2 p
 	{ kTheTimeoutLapsed,	"timeoutLapsed",	false },	// D2 p
 	{ kTheTimeoutLength,	"timeoutLength",	false },	// D2 p
 	{ kTheTimeoutMouse,		"timeoutMouse",		false },	// D2 p
@@ -224,7 +223,7 @@ TheEntityField fields[] = {
 	// Field fields
 	{ kTheField,	"textAlign",	kTheTextAlign },	//		D3 p
 	{ kTheField,	"textFont",		kTheTextFont },		//		D3 p
-	{ kTheField,	"textHeight",	kTheTextheight },	//		D3 p
+	{ kTheField,	"textHeight",	kTheTextHeight },	//		D3 p
 	{ kTheField,	"textSize",		kTheTextSize },		//		D3 p
 	{ kTheField,	"textStyle",	kTheTextStyle },	//		D3 p
 
@@ -247,11 +246,15 @@ TheEntityField fields[] = {
 
 	{ kTheCastMembers,	"number",	kTheNumber },		// 		D3 p
 	{ kTheChars,	"number",		kTheNumber },		//		D3 p
+	{ kTheChars,	"last",			kTheLast },			//				D4 f
 	{ kTheItems,	"number",		kTheNumber },		//		D3 p
+	{ kTheItems,	"last",			kTheLast },			//				D4 f
 	{ kTheLines,	"number",		kTheNumber },		//		D3 p
+	{ kTheLines,	"last",			kTheLast },			//				D4 f
 	{ kTheMenuItems,"number",		kTheNumber },		//		D3 p
 	{ kTheMenus,	"number",		kTheNumber },		//		D3 p
 	{ kTheWords,	"number",		kTheNumber },		//		D3 p
+	{ kTheWords,	"last",			kTheLast },			//				D4 f
 
 	{ kTheDate,		"short",		kTheShort },		//		D3 f
 	{ kTheDate,		"long",			kTheLong },			//		D3 f
