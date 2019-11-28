@@ -31,14 +31,65 @@
 namespace Glk {
 namespace AGT {
 
+enum DelayMode {
+	DELAY_FULL, DELAY_SHORT, DELAY_OFF
+};
+
+enum FontMode {
+	FONT_AUTOMATIC, FONT_FIXED_WIDTH, FONT_PROPORTIONAL, FONT_DEBUG
+};
 
 /**
  * AGT Adams game interpreter
  */
 class AGT : public GlkAPI {
 public:
-	const char *gagt_gamefile = NULL;      /* Name of game file. */
-	const char *gagt_game_message = NULL;  /* Error message. */
+	const char *gagt_gamefile;      /* Name of game file. */
+	const char *gagt_game_message;  /* Error message. */
+	DelayMode gagt_delay_mode;
+
+	/**
+	 * We use two Glk windows; one is two lines at the top of the display area
+	 * for status, and the other is the remainder of the display area, used for,
+	 * well, everything else.  Where a particular Glk implementation won't do
+	 * more than one window, the status window remains NULL.
+	 */
+	winid_t gagt_main_window, gagt_status_window;
+
+	/**
+	 * Transcript stream and input log.  These are NULL if there is no current
+	 * collection of these strings.
+	 */
+	strid_t gagt_transcript_stream, gagt_inputlog_stream;
+
+	/**
+	 * Input read log stream, for reading back an input log
+	 */
+	strid_t gagt_readlog_stream;
+
+	/* Options that may be turned off or set by command line flags. */
+	FontMode gagt_font_mode = FONT_AUTOMATIC;
+	bool gagt_replacement_enabled, gagt_extended_status_enabled,
+		gagt_abbreviations_enabled, gagt_commands_enabled;
+
+	/**
+	 * Flag to set if we want to test for a clean exit.  Without this it's a
+	 * touch tricky sometimes to corner AGiliTy into calling exit() for us; it
+	 * tends to require a broken game file.
+	 */
+	bool gagt_clean_exit_test;
+
+
+private:
+	/**
+	 * Handles initialization
+	 */
+	void initialize();
+
+	/**
+	 * Handles flag setup from configuration
+	 */
+	void initializeSettings();
 public:
 	/**
 	 * Constructor

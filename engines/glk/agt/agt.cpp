@@ -23,7 +23,6 @@
 #include "glk/agt/agt.h"
 #include "glk/quetzal.h"
 #include "common/config-manager.h"
-#include "common/translation.h"
 
 namespace Glk {
 namespace AGT {
@@ -35,18 +34,62 @@ extern int glk_startup_code();
 extern void gagt_finalizer();
 
 AGT::AGT(OSystem *syst, const GlkGameDescription &gameDesc) : GlkAPI(syst, gameDesc),
-	gagt_gamefile(nullptr), gagt_game_message(nullptr) {
+		gagt_main_window(nullptr), gagt_status_window(nullptr), gagt_gamefile(nullptr),
+		gagt_game_message(nullptr), gagt_delay_mode(DELAY_SHORT), gagt_font_mode(FONT_AUTOMATIC),
+		gagt_transcript_stream(nullptr), gagt_inputlog_stream(nullptr),
+		gagt_readlog_stream(nullptr), gagt_replacement_enabled(true),
+		gagt_extended_status_enabled(true), gagt_abbreviations_enabled(true),
+		gagt_commands_enabled(true), gagt_clean_exit_test(false) {
 	g_vm = this;
 }
 
 void AGT::runGame() {
-	_gameFile.close();
-	gagt_gamefile = getFilename().c_str();
-
-	glk_startup_code();
+	initialize();
 	glk_main();
 
 	gagt_finalizer();
+}
+
+void AGT::initialize() {
+	_gameFile.close();
+	gagt_gamefile = getFilename().c_str();
+
+	initializeSettings();
+	glk_startup_code();
+}
+
+void AGT::initializeSettings() {
+	// Delay
+	if (ConfMan.hasKey("delay")) {
+		Common::String delay = ConfMan.get("delay");
+		switch (tolower(delay.firstChar())) {
+		case 'f':
+			// Full
+			gagt_delay_mode = DELAY_FULL;
+			break;
+		case 's':
+			// Short
+			gagt_delay_mode = DELAY_SHORT;
+			break;
+		case 'n':
+		case 'o':
+			// None/off
+			gagt_delay_mode = DELAY_OFF;
+			break;
+		default:
+			break;
+		}
+	}
+
+	// Boolean flags
+	if (ConfMan.hasKey("replacement"))
+		gagt_replacement_enabled = ConfMan.getBool("replacement");
+	if (ConfMan.hasKey("abbreviations"))
+		gagt_abbreviations_enabled = ConfMan.getBool("abbreviations");
+	if (ConfMan.hasKey("extended_status"))
+		gagt_extended_status_enabled = ConfMan.getBool("extended_status");
+	if (ConfMan.hasKey("commands"))
+		gagt_commands_enabled = ConfMan.getBool("commands");
 }
 
 Common::Error AGT::readSaveData(Common::SeekableReadStream *rs) {

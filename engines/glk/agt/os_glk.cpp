@@ -69,40 +69,6 @@ namespace AGT {
 /* Glk AGiliTy port version number. */
 static const glui32 GAGT_PORT_VERSION = 0x00010701;
 
-/*
- * We use two Glk windows; one is two lines at the top of the display area
- * for status, and the other is the remainder of the display area, used for,
- * well, everything else.  Where a particular Glk implementation won't do
- * more than one window, the status window remains NULL.
- */
-static winid_t gagt_main_window = NULL,
-               gagt_status_window = NULL;
-
-/*
- * Transcript stream and input log.  These are NULL if there is no current
- * collection of these strings.
- */
-static strid_t gagt_transcript_stream = NULL,
-               gagt_inputlog_stream = NULL;
-
-/* Input read log stream, for reading back an input log. */
-static strid_t gagt_readlog_stream = NULL;
-
-/* Options that may be turned off or set by command line flags. */
-enum FontMode {
-	FONT_AUTOMATIC, FONT_FIXED_WIDTH, FONT_PROPORTIONAL, FONT_DEBUG
-};
-static FontMode gagt_font_mode = FONT_AUTOMATIC;
-
-enum DelayMode {
-	DELAY_FULL, DELAY_SHORT, DELAY_OFF
-};
-static DelayMode gagt_delay_mode = DELAY_SHORT;
-static int gagt_replacement_enabled = TRUE,
-           gagt_extended_status_enabled = TRUE,
-           gagt_abbreviations_enabled = TRUE,
-           gagt_commands_enabled = TRUE;
-
 /* Forward declaration of event wait functions. */
 static void gagt_event_wait(glui32 wait_type, event_t *event);
 static void gagt_event_wait_2(glui32 wait_type_1,
@@ -132,15 +98,15 @@ static void gagt_fatal(const char *string) {
 	 * If the failure happens too early for us to have a window, print
 	 * the message to stderr.
 	 */
-	if (!gagt_main_window)
+	if (!g_vm->gagt_main_window)
 		error("INTERNAL ERROR: %s", string);
 
 	/* Cancel all possible pending window input events. */
-	g_vm->glk_cancel_line_event(gagt_main_window, NULL);
-	g_vm->glk_cancel_char_event(gagt_main_window);
+	g_vm->glk_cancel_line_event(g_vm->gagt_main_window, NULL);
+	g_vm->glk_cancel_char_event(g_vm->gagt_main_window);
 
 	/* Print a message indicating the error. */
-	g_vm->glk_set_window(gagt_main_window);
+	g_vm->glk_set_window(g_vm->gagt_main_window);
 	g_vm->glk_set_style(style_Normal);
 	g_vm->glk_put_string("\n\nINTERNAL ERROR: ");
 	g_vm->glk_put_string(string);
@@ -354,11 +320,11 @@ enum {
 void start_interface(fc_type fc) {
 	switch (font_status) {
 	case GAGT_FIXED_REQUIRED:
-		gagt_font_mode = FONT_FIXED_WIDTH;
+		g_vm->gagt_font_mode = FONT_FIXED_WIDTH;
 		break;
 
 	case GAGT_PROPORTIONAL_OKAY:
-		gagt_font_mode = FONT_PROPORTIONAL;
+		g_vm->gagt_font_mode = FONT_PROPORTIONAL;
 		break;
 
 	default:
@@ -731,16 +697,16 @@ void agt_statline(const char *cp_string) {
  */
 static void gagt_status_update_extended() {
 	uint width, height;
-	assert(gagt_status_window);
+	assert(g_vm->gagt_status_window);
 
-	g_vm->glk_window_get_size(gagt_status_window, &width, &height);
+	g_vm->glk_window_get_size(g_vm->gagt_status_window, &width, &height);
 	if (height > 1) {
 		uint32 index;
 		int exit;
 
 		/* Clear the second status line only. */
-		g_vm->glk_window_move_cursor(gagt_status_window, 0, 1);
-		g_vm->glk_set_window(gagt_status_window);
+		g_vm->glk_window_move_cursor(g_vm->gagt_status_window, 0, 1);
+		g_vm->glk_set_window(g_vm->gagt_status_window);
 		g_vm->glk_set_style(style_User1);
 		for (index = 0; index < width; index++)
 			g_vm->glk_put_char(' ');
@@ -749,7 +715,7 @@ static void gagt_status_update_extended() {
 		 * Check bits in the compass rose, and print out exit names from
 		 * the exitname[] array.
 		 */
-		g_vm->glk_window_move_cursor(gagt_status_window, 0, 1);
+		g_vm->glk_window_move_cursor(g_vm->gagt_status_window, 0, 1);
 		g_vm->glk_put_string("  Exits: ");
 		for (exit = 0; exit < (int)sizeof(exitname) / (int)sizeof(exitname[0]); exit++) {
 			if (compass_rose & (1 << exit)) {
@@ -760,12 +726,12 @@ static void gagt_status_update_extended() {
 
 		/* If the delay flag is set, print a waiting indicator at the right. */
 		if (gagt_inside_delay) {
-			g_vm->glk_window_move_cursor(gagt_status_window,
+			g_vm->glk_window_move_cursor(g_vm->gagt_status_window,
 			                             width - strlen("Waiting... "), 1);
 			g_vm->glk_put_string("Waiting... ");
 		}
 
-		g_vm->glk_set_window(gagt_main_window);
+		g_vm->glk_set_window(g_vm->gagt_main_window);
 	}
 }
 
@@ -783,18 +749,18 @@ static void gagt_status_update_extended() {
 static void gagt_status_update() {
 	uint width, height;
 	uint32 index;
-	assert(gagt_status_window);
+	assert(g_vm->gagt_status_window);
 
-	g_vm->glk_window_get_size(gagt_status_window, &width, &height);
+	g_vm->glk_window_get_size(g_vm->gagt_status_window, &width, &height);
 	if (height > 0) {
-		g_vm->glk_window_clear(gagt_status_window);
-		g_vm->glk_window_move_cursor(gagt_status_window, 0, 0);
-		g_vm->glk_set_window(gagt_status_window);
+		g_vm->glk_window_clear(g_vm->gagt_status_window);
+		g_vm->glk_window_move_cursor(g_vm->gagt_status_window, 0, 0);
+		g_vm->glk_set_window(g_vm->gagt_status_window);
 
 		g_vm->glk_set_style(style_User1);
 		for (index = 0; index < width; index++)
 			g_vm->glk_put_char(' ');
-		g_vm->glk_window_move_cursor(gagt_status_window, 0, 0);
+		g_vm->glk_window_move_cursor(g_vm->gagt_status_window, 0, 0);
 
 		/* Call print_statline() to refresh status line buffer contents. */
 		print_statline();
@@ -812,7 +778,7 @@ static void gagt_status_update() {
 			              ? width : strlen(gagt_status_buffer);
 			g_vm->glk_put_buffer(gagt_status_buffer, print_width);
 
-			if (gagt_extended_status_enabled)
+			if (g_vm->gagt_extended_status_enabled)
 				gagt_status_update_extended();
 		} else {
 			/*
@@ -822,7 +788,7 @@ static void gagt_status_update() {
 			g_vm->glk_put_string("Glk AGiliTy version 1.1.1.1");
 		}
 
-		g_vm->glk_set_window(gagt_main_window);
+		g_vm->glk_set_window(g_vm->gagt_main_window);
 	}
 }
 
@@ -881,7 +847,7 @@ static void gagt_status_print() {
  */
 static void gagt_status_notify() {
 	if (!BATCH_MODE) {
-		if (gagt_status_window)
+		if (g_vm->gagt_status_window)
 			gagt_status_update();
 		else
 			gagt_status_print();
@@ -901,7 +867,7 @@ static void gagt_status_notify() {
  */
 static void gagt_status_redraw() {
 	if (!BATCH_MODE) {
-		if (gagt_status_window) {
+		if (g_vm->gagt_status_window) {
 			uint width, height;
 			winid_t parent;
 
@@ -909,7 +875,7 @@ static void gagt_status_redraw() {
 			 * Measure the status window, and update the interpreter's
 			 * status_width variable.
 			 */
-			g_vm->glk_window_get_size(gagt_status_window, &width, &height);
+			g_vm->glk_window_get_size(g_vm->gagt_status_window, &width, &height);
 			status_width = width;
 
 			/*
@@ -923,7 +889,7 @@ static void gagt_status_redraw() {
 			 * Glk libraries other than Xglk, moreover, we're careful to
 			 * activate it only on resize and arrange events.
 			 */
-			parent = g_vm->glk_window_get_parent(gagt_status_window);
+			parent = g_vm->glk_window_get_parent(g_vm->gagt_status_window);
 			g_vm->glk_window_set_arrangement(parent,
 			                                 winmethod_Above | winmethod_Fixed,
 			                                 height, NULL);
@@ -949,7 +915,7 @@ static void gagt_status_in_delay(int inside_delay) {
 		 * Update just the second line of the status window display, if
 		 * extended status is being displayed.
 		 */
-		if (gagt_status_window && gagt_extended_status_enabled)
+		if (g_vm->gagt_status_window && g_vm->gagt_extended_status_enabled)
 			gagt_status_update_extended();
 	}
 }
@@ -1230,7 +1196,7 @@ static void gagt_init_user_styles() {
 static int gagt_confirm_appearance(glui32 style, glui32 stylehint, glui32 expected) {
 	uint result;
 
-	if (g_vm->glk_style_measure(gagt_main_window, style, stylehint, &result)) {
+	if (g_vm->glk_style_measure(g_vm->gagt_main_window, style, stylehint, &result)) {
 		/*
 		 * Measurement succeeded, so return TRUE if the result matches the
 		 * caller's expectation.
@@ -2848,7 +2814,7 @@ static void gagt_mark_specials() {
 	 * Search all paragraphs for special matches, if enabled.  When a special
 	 * match is found, mark the paragraph with a pointer to the matching entry.
 	 */
-	if (gagt_replacement_enabled) {
+	if (g_vm->gagt_replacement_enabled) {
 		gagt_paragraphref_t paragraph;
 
 		for (paragraph = gagt_get_first_paragraph();
@@ -3323,7 +3289,7 @@ static void gagt_output_flush() {
 	 * routines present somewhat different output, and are responsible for
 	 * displaying both the page buffer _and_ any buffered current line text.
 	 */
-	switch (gagt_font_mode) {
+	switch (g_vm->gagt_font_mode) {
 	case FONT_AUTOMATIC:
 		gagt_display_auto();
 		break;
@@ -3365,7 +3331,7 @@ void agt_clrscr() {
 
 		/* Flush any pending buffered output, and clear the main window. */
 		gagt_output_flush();
-		g_vm->glk_window_clear(gagt_main_window);
+		g_vm->glk_window_clear(g_vm->gagt_main_window);
 
 		/* Add a series of newlines to any script file. */
 		if (script_on)
@@ -3472,7 +3438,7 @@ void agt_delay(int seconds) {
 	 * are currently temporarily suspended.
 	 */
 	if (!g_vm->glk_gestalt(gestalt_Timer, 0)
-	        || gagt_delay_mode == DELAY_OFF
+	        || g_vm->gagt_delay_mode == DELAY_OFF
 	        || seconds <= 0 || gagt_delays_suspended)
 		return;
 
@@ -3482,10 +3448,10 @@ void agt_delay(int seconds) {
 
 	/* Calculate the number of milliseconds to delay. */
 	milliseconds = (seconds * GAGT_MS_PER_SEC)
-	               / (gagt_delay_mode == DELAY_SHORT ? 2 : 1);
+	               / (g_vm->gagt_delay_mode == DELAY_SHORT ? 2 : 1);
 
 	/* Request timer events, and let a keypress cancel the delay. */
-	g_vm->glk_request_char_event(gagt_main_window);
+	g_vm->glk_request_char_event(g_vm->gagt_main_window);
 	g_vm->glk_request_timer_events(GAGT_DELAY_TIMEOUT);
 
 	/*
@@ -3509,13 +3475,13 @@ void agt_delay(int seconds) {
 				delay_completed = FALSE;
 				break;
 			} else
-				g_vm->glk_request_char_event(gagt_main_window);
+				g_vm->glk_request_char_event(g_vm->gagt_main_window);
 		}
 	}
 
 	/* Cancel any pending character input, and timer events. */
 	if (delay_completed)
-		g_vm->glk_cancel_char_event(gagt_main_window);
+		g_vm->glk_cancel_char_event(g_vm->gagt_main_window);
 	g_vm->glk_request_timer_events(0);
 
 	/* Clear the waiting indicator. */
@@ -3700,7 +3666,7 @@ static void gagt_command_script(const char *argument) {
 	if (gagt_strcasecmp(argument, "on") == 0) {
 		frefid_t fileref;
 
-		if (gagt_transcript_stream) {
+		if (g_vm->gagt_transcript_stream) {
 			gagt_normal_string("Glk transcript is already on.\n");
 			return;
 		}
@@ -3713,36 +3679,36 @@ static void gagt_command_script(const char *argument) {
 			return;
 		}
 
-		gagt_transcript_stream = g_vm->glk_stream_open_file(fileref,
+		g_vm->gagt_transcript_stream = g_vm->glk_stream_open_file(fileref,
 		                         filemode_WriteAppend, 0);
 		g_vm->glk_fileref_destroy(fileref);
-		if (!gagt_transcript_stream) {
+		if (!g_vm->gagt_transcript_stream) {
 			gagt_standout_string("Glk transcript failed.\n");
 			return;
 		}
 
-		g_vm->glk_window_set_echo_stream(gagt_main_window, gagt_transcript_stream);
+		g_vm->glk_window_set_echo_stream(g_vm->gagt_main_window, g_vm->gagt_transcript_stream);
 
 		gagt_normal_string("Glk transcript is now on.\n");
 	}
 
 	else if (gagt_strcasecmp(argument, "off") == 0) {
-		if (!gagt_transcript_stream) {
+		if (!g_vm->gagt_transcript_stream) {
 			gagt_normal_string("Glk transcript is already off.\n");
 			return;
 		}
 
-		g_vm->glk_stream_close(gagt_transcript_stream, NULL);
-		gagt_transcript_stream = NULL;
+		g_vm->glk_stream_close(g_vm->gagt_transcript_stream, NULL);
+		g_vm->gagt_transcript_stream = NULL;
 
-		g_vm->glk_window_set_echo_stream(gagt_main_window, NULL);
+		g_vm->glk_window_set_echo_stream(g_vm->gagt_main_window, NULL);
 
 		gagt_normal_string("Glk transcript is now off.\n");
 	}
 
 	else if (strlen(argument) == 0) {
 		gagt_normal_string("Glk transcript is ");
-		gagt_normal_string(gagt_transcript_stream ? "on" : "off");
+		gagt_normal_string(g_vm->gagt_transcript_stream ? "on" : "off");
 		gagt_normal_string(".\n");
 	}
 
@@ -3767,7 +3733,7 @@ static void gagt_command_inputlog(const char *argument) {
 	if (gagt_strcasecmp(argument, "on") == 0) {
 		frefid_t fileref;
 
-		if (gagt_inputlog_stream) {
+		if (g_vm->gagt_inputlog_stream) {
 			gagt_normal_string("Glk input logging is already on.\n");
 			return;
 		}
@@ -3780,10 +3746,10 @@ static void gagt_command_inputlog(const char *argument) {
 			return;
 		}
 
-		gagt_inputlog_stream = g_vm->glk_stream_open_file(fileref,
+		g_vm->gagt_inputlog_stream = g_vm->glk_stream_open_file(fileref,
 		                       filemode_WriteAppend, 0);
 		g_vm->glk_fileref_destroy(fileref);
-		if (!gagt_inputlog_stream) {
+		if (!g_vm->gagt_inputlog_stream) {
 			gagt_standout_string("Glk input logging failed.\n");
 			return;
 		}
@@ -3792,20 +3758,20 @@ static void gagt_command_inputlog(const char *argument) {
 	}
 
 	else if (gagt_strcasecmp(argument, "off") == 0) {
-		if (!gagt_inputlog_stream) {
+		if (!g_vm->gagt_inputlog_stream) {
 			gagt_normal_string("Glk input logging is already off.\n");
 			return;
 		}
 
-		g_vm->glk_stream_close(gagt_inputlog_stream, NULL);
-		gagt_inputlog_stream = NULL;
+		g_vm->glk_stream_close(g_vm->gagt_inputlog_stream, NULL);
+		g_vm->gagt_inputlog_stream = NULL;
 
 		gagt_normal_string("Glk input log is now off.\n");
 	}
 
 	else if (strlen(argument) == 0) {
 		gagt_normal_string("Glk input logging is ");
-		gagt_normal_string(gagt_inputlog_stream ? "on" : "off");
+		gagt_normal_string(g_vm->gagt_inputlog_stream ? "on" : "off");
 		gagt_normal_string(".\n");
 	}
 
@@ -3830,7 +3796,7 @@ static void gagt_command_readlog(const char *argument) {
 	if (gagt_strcasecmp(argument, "on") == 0) {
 		frefid_t fileref;
 
-		if (gagt_readlog_stream) {
+		if (g_vm->gagt_readlog_stream) {
 			gagt_normal_string("Glk read log is already on.\n");
 			return;
 		}
@@ -3849,9 +3815,9 @@ static void gagt_command_readlog(const char *argument) {
 			return;
 		}
 
-		gagt_readlog_stream = g_vm->glk_stream_open_file(fileref, filemode_Read, 0);
+		g_vm->gagt_readlog_stream = g_vm->glk_stream_open_file(fileref, filemode_Read, 0);
 		g_vm->glk_fileref_destroy(fileref);
-		if (!gagt_readlog_stream) {
+		if (!g_vm->gagt_readlog_stream) {
 			gagt_standout_string("Glk read log failed.\n");
 			return;
 		}
@@ -3860,20 +3826,20 @@ static void gagt_command_readlog(const char *argument) {
 	}
 
 	else if (gagt_strcasecmp(argument, "off") == 0) {
-		if (!gagt_readlog_stream) {
+		if (!g_vm->gagt_readlog_stream) {
 			gagt_normal_string("Glk read log is already off.\n");
 			return;
 		}
 
-		g_vm->glk_stream_close(gagt_readlog_stream, NULL);
-		gagt_readlog_stream = NULL;
+		g_vm->glk_stream_close(g_vm->gagt_readlog_stream, NULL);
+		g_vm->gagt_readlog_stream = NULL;
 
 		gagt_normal_string("Glk read log is now off.\n");
 	}
 
 	else if (strlen(argument) == 0) {
 		gagt_normal_string("Glk read log is ");
-		gagt_normal_string(gagt_readlog_stream ? "on" : "off");
+		gagt_normal_string(g_vm->gagt_readlog_stream ? "on" : "off");
 		gagt_normal_string(".\n");
 	}
 
@@ -3896,28 +3862,28 @@ static void gagt_command_abbreviations(const char *argument) {
 	assert(argument);
 
 	if (gagt_strcasecmp(argument, "on") == 0) {
-		if (gagt_abbreviations_enabled) {
+		if (g_vm->gagt_abbreviations_enabled) {
 			gagt_normal_string("Glk abbreviation expansions are already on.\n");
 			return;
 		}
 
-		gagt_abbreviations_enabled = TRUE;
+		g_vm->gagt_abbreviations_enabled = TRUE;
 		gagt_normal_string("Glk abbreviation expansions are now on.\n");
 	}
 
 	else if (gagt_strcasecmp(argument, "off") == 0) {
-		if (!gagt_abbreviations_enabled) {
+		if (!g_vm->gagt_abbreviations_enabled) {
 			gagt_normal_string("Glk abbreviation expansions are already off.\n");
 			return;
 		}
 
-		gagt_abbreviations_enabled = FALSE;
+		g_vm->gagt_abbreviations_enabled = FALSE;
 		gagt_normal_string("Glk abbreviation expansions are now off.\n");
 	}
 
 	else if (strlen(argument) == 0) {
 		gagt_normal_string("Glk abbreviation expansions are ");
-		gagt_normal_string(gagt_abbreviations_enabled ? "on" : "off");
+		gagt_normal_string(g_vm->gagt_abbreviations_enabled ? "on" : "off");
 		gagt_normal_string(".\n");
 	}
 
@@ -3934,7 +3900,7 @@ static void gagt_command_abbreviations(const char *argument) {
 /*
  * gagt_command_fonts()
  *
- * Set the value for gagt_font_mode depending on the argument from the
+ * Set the value for g_vm->gagt_font_mode depending on the argument from the
  * user's command escape.
  *
  * Despite our best efforts, font control may still be wrong in some games.
@@ -3944,50 +3910,50 @@ static void gagt_command_fonts(const char *argument) {
 	assert(argument);
 
 	if (gagt_strcasecmp(argument, "fixed") == 0) {
-		if (gagt_font_mode == FONT_FIXED_WIDTH) {
+		if (g_vm->gagt_font_mode == FONT_FIXED_WIDTH) {
 			gagt_normal_string("Glk font control is already 'fixed'.\n");
 			return;
 		}
 
-		gagt_font_mode = FONT_FIXED_WIDTH;
+		g_vm->gagt_font_mode = FONT_FIXED_WIDTH;
 		gagt_normal_string("Glk font control is now 'fixed'.\n");
 	}
 
 	else if (gagt_strcasecmp(argument, "variable") == 0
 	         || gagt_strcasecmp(argument, "proportional") == 0) {
-		if (gagt_font_mode == FONT_PROPORTIONAL) {
+		if (g_vm->gagt_font_mode == FONT_PROPORTIONAL) {
 			gagt_normal_string("Glk font control is already 'proportional'.\n");
 			return;
 		}
 
-		gagt_font_mode = FONT_PROPORTIONAL;
+		g_vm->gagt_font_mode = FONT_PROPORTIONAL;
 		gagt_normal_string("Glk font control is now 'proportional'.\n");
 	}
 
 	else if (gagt_strcasecmp(argument, "auto") == 0
 	         || gagt_strcasecmp(argument, "automatic") == 0) {
-		if (gagt_font_mode == FONT_AUTOMATIC) {
+		if (g_vm->gagt_font_mode == FONT_AUTOMATIC) {
 			gagt_normal_string("Glk font control is already 'automatic'.\n");
 			return;
 		}
 
-		gagt_font_mode = FONT_AUTOMATIC;
+		g_vm->gagt_font_mode = FONT_AUTOMATIC;
 		gagt_normal_string("Glk font control is now 'automatic'.\n");
 	}
 
 	else if (gagt_strcasecmp(argument, "debug") == 0) {
-		if (gagt_font_mode == FONT_DEBUG) {
+		if (g_vm->gagt_font_mode == FONT_DEBUG) {
 			gagt_normal_string("Glk font control is already 'debug'.\n");
 			return;
 		}
 
-		gagt_font_mode = FONT_DEBUG;
+		g_vm->gagt_font_mode = FONT_DEBUG;
 		gagt_normal_string("Glk font control is now 'debug'.\n");
 	}
 
 	else if (strlen(argument) == 0) {
 		gagt_normal_string("Glk font control is set to '");
-		switch (gagt_font_mode) {
+		switch (g_vm->gagt_font_mode) {
 		case FONT_AUTOMATIC:
 			gagt_normal_string("automatic");
 			break;
@@ -4027,7 +3993,7 @@ static void gagt_command_fonts(const char *argument) {
 /*
  * gagt_command_delays()
  *
- * Set a value for gagt_delay_mode depending on the argument from
+ * Set a value for g_vm->gagt_delay_mode depending on the argument from
  * the user's command escape.
  */
 static void gagt_command_delays(const char *argument) {
@@ -4040,40 +4006,40 @@ static void gagt_command_delays(const char *argument) {
 
 	if (gagt_strcasecmp(argument, "full") == 0
 	        || gagt_strcasecmp(argument, "on") == 0) {
-		if (gagt_delay_mode == DELAY_FULL) {
+		if (g_vm->gagt_delay_mode == DELAY_FULL) {
 			gagt_normal_string("Glk delay mode is already 'full'.\n");
 			return;
 		}
 
-		gagt_delay_mode = DELAY_FULL;
+		g_vm->gagt_delay_mode = DELAY_FULL;
 		gagt_normal_string("Glk delay mode is now 'full'.\n");
 	}
 
 	else if (gagt_strcasecmp(argument, "short") == 0
 	         || gagt_strcasecmp(argument, "half") == 0) {
-		if (gagt_delay_mode == DELAY_SHORT) {
+		if (g_vm->gagt_delay_mode == DELAY_SHORT) {
 			gagt_normal_string("Glk delay mode is already 'short'.\n");
 			return;
 		}
 
-		gagt_delay_mode = DELAY_SHORT;
+		g_vm->gagt_delay_mode = DELAY_SHORT;
 		gagt_normal_string("Glk delay mode is now 'short'.\n");
 	}
 
 	else if (gagt_strcasecmp(argument, "none") == 0
 	         || gagt_strcasecmp(argument, "off") == 0) {
-		if (gagt_delay_mode == DELAY_OFF) {
+		if (g_vm->gagt_delay_mode == DELAY_OFF) {
 			gagt_normal_string("Glk delay mode is already 'none'.\n");
 			return;
 		}
 
-		gagt_delay_mode = DELAY_OFF;
+		g_vm->gagt_delay_mode = DELAY_OFF;
 		gagt_normal_string("Glk delay mode is now 'none'.\n");
 	}
 
 	else if (strlen(argument) == 0) {
 		gagt_normal_string("Glk delay mode is set to '");
-		switch (gagt_delay_mode) {
+		switch (g_vm->gagt_delay_mode) {
 		case DELAY_FULL:
 			gagt_normal_string("full");
 			break;
@@ -4123,7 +4089,7 @@ static void gagt_command_width(const char *argument) {
 	char buffer[16];
 	assert(argument);
 
-	if (!gagt_status_window) {
+	if (!g_vm->gagt_status_window) {
 		gagt_normal_string("Glk's current display width is unknown.\n");
 		return;
 	}
@@ -4145,28 +4111,28 @@ static void gagt_command_replacements(const char *argument) {
 	assert(argument);
 
 	if (gagt_strcasecmp(argument, "on") == 0) {
-		if (gagt_replacement_enabled) {
+		if (g_vm->gagt_replacement_enabled) {
 			gagt_normal_string("Glk replacements are already on.\n");
 			return;
 		}
 
-		gagt_replacement_enabled = TRUE;
+		g_vm->gagt_replacement_enabled = TRUE;
 		gagt_normal_string("Glk replacements are now on.\n");
 	}
 
 	else if (gagt_strcasecmp(argument, "off") == 0) {
-		if (!gagt_replacement_enabled) {
+		if (!g_vm->gagt_replacement_enabled) {
 			gagt_normal_string("Glk replacements are already off.\n");
 			return;
 		}
 
-		gagt_replacement_enabled = FALSE;
+		g_vm->gagt_replacement_enabled = FALSE;
 		gagt_normal_string("Glk replacements are now off.\n");
 	}
 
 	else if (strlen(argument) == 0) {
 		gagt_normal_string("Glk replacements are ");
-		gagt_normal_string(gagt_replacement_enabled ? "on" : "off");
+		gagt_normal_string(g_vm->gagt_replacement_enabled ? "on" : "off");
 		gagt_normal_string(".\n");
 	}
 
@@ -4188,44 +4154,44 @@ static void gagt_command_replacements(const char *argument) {
 static void gagt_command_statusline(const char *argument) {
 	assert(argument);
 
-	if (!gagt_status_window) {
+	if (!g_vm->gagt_status_window) {
 		gagt_normal_string("Glk status window is not available.\n");
 		return;
 	}
 
 	if (gagt_strcasecmp(argument, "extended") == 0
 	        || gagt_strcasecmp(argument, "full") == 0) {
-		if (gagt_extended_status_enabled) {
+		if (g_vm->gagt_extended_status_enabled) {
 			gagt_normal_string("Glk status line mode is already 'extended'.\n");
 			return;
 		}
 
 		/* Expand the status window down to a second line. */
-		g_vm->glk_window_set_arrangement(g_vm->glk_window_get_parent(gagt_status_window),
+		g_vm->glk_window_set_arrangement(g_vm->glk_window_get_parent(g_vm->gagt_status_window),
 		                                 winmethod_Above | winmethod_Fixed, 2, NULL);
-		gagt_extended_status_enabled = TRUE;
+		g_vm->gagt_extended_status_enabled = TRUE;
 
 		gagt_normal_string("Glk status line mode is now 'extended'.\n");
 	}
 
 	else if (gagt_strcasecmp(argument, "short") == 0
 	         || gagt_strcasecmp(argument, "normal") == 0) {
-		if (!gagt_extended_status_enabled) {
+		if (!g_vm->gagt_extended_status_enabled) {
 			gagt_normal_string("Glk status line mode is already 'short'.\n");
 			return;
 		}
 
 		/* Shrink the status window down to one line. */
-		g_vm->glk_window_set_arrangement(g_vm->glk_window_get_parent(gagt_status_window),
+		g_vm->glk_window_set_arrangement(g_vm->glk_window_get_parent(g_vm->gagt_status_window),
 		                                 winmethod_Above | winmethod_Fixed, 1, NULL);
-		gagt_extended_status_enabled = FALSE;
+		g_vm->gagt_extended_status_enabled = FALSE;
 
 		gagt_normal_string("Glk status line mode is now 'short'.\n");
 	}
 
 	else if (strlen(argument) == 0) {
 		gagt_normal_string("Glk status line mode is set to '");
-		gagt_normal_string(gagt_extended_status_enabled ? "extended" : "short");
+		gagt_normal_string(g_vm->gagt_extended_status_enabled ? "extended" : "short");
 		gagt_normal_string("'.\n");
 	}
 
@@ -4282,13 +4248,13 @@ static void gagt_command_commands(const char *argument) {
 	}
 
 	else if (gagt_strcasecmp(argument, "off") == 0) {
-		gagt_commands_enabled = FALSE;
+		g_vm->gagt_commands_enabled = FALSE;
 		gagt_normal_string("Glk commands are now off.\n");
 	}
 
 	else if (strlen(argument) == 0) {
 		gagt_normal_string("Glk commands are ");
-		gagt_normal_string(gagt_commands_enabled ? "on" : "off");
+		gagt_normal_string(g_vm->gagt_commands_enabled ? "on" : "off");
 		gagt_normal_string(".\n");
 	}
 
@@ -4743,11 +4709,11 @@ char *agt_input(int in_type) {
 	 * If we have an input log to read from, use that until it is exhausted.
 	 * On end of file, close the stream and resume input from line requests.
 	 */
-	if (gagt_readlog_stream) {
+	if (g_vm->gagt_readlog_stream) {
 		glui32 chars;
 
 		/* Get the next line from the log stream. */
-		chars = g_vm->glk_get_line_stream(gagt_readlog_stream, buffer, length);
+		chars = g_vm->glk_get_line_stream(g_vm->gagt_readlog_stream, buffer, length);
 		if (chars > 0) {
 			/* Echo the line just read in input style. */
 			g_vm->glk_set_style(style_Input);
@@ -4768,15 +4734,15 @@ char *agt_input(int in_type) {
 		 * We're at the end of the log stream.  Close it, and then continue
 		 * on to request a line from Glk.
 		 */
-		g_vm->glk_stream_close(gagt_readlog_stream, NULL);
-		gagt_readlog_stream = NULL;
+		g_vm->glk_stream_close(g_vm->gagt_readlog_stream, NULL);
+		g_vm->gagt_readlog_stream = NULL;
 	}
 
 	/* Set this up as a read buffer for the main window, and wait. */
-	g_vm->glk_request_line_event(gagt_main_window, buffer, length - 1, 0);
+	g_vm->glk_request_line_event(g_vm->gagt_main_window, buffer, length - 1, 0);
 	gagt_event_wait(evtype_LineInput, &event);
 	if (g_vm->shouldQuit()) {
-		g_vm->glk_cancel_line_event(gagt_main_window, &event);
+		g_vm->glk_cancel_line_event(g_vm->gagt_main_window, &event);
 		return nullptr;
 	}
 
@@ -4788,7 +4754,7 @@ char *agt_input(int in_type) {
 	 * If neither abbreviations nor local commands are enabled, use the data
 	 * read above without further massaging.
 	 */
-	if (gagt_abbreviations_enabled || gagt_commands_enabled) {
+	if (g_vm->gagt_abbreviations_enabled || g_vm->gagt_commands_enabled) {
 		char *cmd;
 
 		/*
@@ -4802,14 +4768,14 @@ char *agt_input(int in_type) {
 			memmove(cmd, cmd + 1, strlen(cmd));
 		} else {
 			/* Check for, and expand, any abbreviated commands. */
-			if (gagt_abbreviations_enabled)
+			if (g_vm->gagt_abbreviations_enabled)
 				gagt_expand_abbreviations(buffer, length);
 
 			/*
 			 * Check for standalone "help", then for Glk port special commands;
 			 * suppress the interpreter's use of this input for Glk commands.
 			 */
-			if (gagt_commands_enabled) {
+			if (g_vm->gagt_commands_enabled) {
 				int posn;
 
 				posn = strspn(buffer, "\t ");
@@ -4834,9 +4800,9 @@ char *agt_input(int in_type) {
 	 * by logging here we get any abbreviation expansions but we won't log glk
 	 * special commands, nor any input read from a current open input log.
 	 */
-	if (gagt_inputlog_stream) {
-		g_vm->glk_put_string_stream(gagt_inputlog_stream, buffer);
-		g_vm->glk_put_char_stream(gagt_inputlog_stream, '\n');
+	if (g_vm->gagt_inputlog_stream) {
+		g_vm->glk_put_string_stream(g_vm->gagt_inputlog_stream, buffer);
+		g_vm->glk_put_char_stream(g_vm->gagt_inputlog_stream, '\n');
 	}
 
 	/*
@@ -4884,12 +4850,12 @@ char agt_getkey(rbool echo_char) {
 	 * If we have an input log to read from, use that as above until it is
 	 * exhausted.  We take just the first character of a given line.
 	 */
-	if (gagt_readlog_stream) {
+	if (g_vm->gagt_readlog_stream) {
 		glui32 chars;
 		char logbuffer[GAGT_INPUTBUFFER_LENGTH + 1];
 
 		/* Get the next line from the log stream. */
-		chars = g_vm->glk_get_line_stream(gagt_readlog_stream,
+		chars = g_vm->glk_get_line_stream(g_vm->gagt_readlog_stream,
 		                                  logbuffer, sizeof(logbuffer));
 		if (chars > 0) {
 			/* Take just the first character, adding a newline if necessary. */
@@ -4916,8 +4882,8 @@ char agt_getkey(rbool echo_char) {
 		 * We're at the end of the log stream.  Close it, and then continue
 		 * on to request a character from Glk.
 		 */
-		g_vm->glk_stream_close(gagt_readlog_stream, NULL);
-		gagt_readlog_stream = NULL;
+		g_vm->glk_stream_close(g_vm->gagt_readlog_stream, NULL);
+		g_vm->gagt_readlog_stream = NULL;
 	}
 
 	/*
@@ -4927,7 +4893,7 @@ char agt_getkey(rbool echo_char) {
 	 * though, and we want to pass that back as ASCII return.)
 	 */
 	do {
-		g_vm->glk_request_char_event(gagt_main_window);
+		g_vm->glk_request_char_event(g_vm->gagt_main_window);
 		gagt_event_wait(evtype_CharInput, &event);
 	} while (event.val1 > BYTE_MAX_VAL && event.val1 != keycode_Return);
 
@@ -4940,8 +4906,8 @@ char agt_getkey(rbool echo_char) {
 	buffer[2] = '\0';
 
 	/* If there is an input log active, log this input string to it. */
-	if (gagt_inputlog_stream)
-		g_vm->glk_put_string_stream(gagt_inputlog_stream, buffer);
+	if (g_vm->gagt_inputlog_stream)
+		g_vm->glk_put_string_stream(g_vm->gagt_inputlog_stream, buffer);
 
 	/*
 	 * No matter what echo_char says, as it happens, the output doesn't look
@@ -5095,8 +5061,8 @@ void init_interface() {
 	 * If it fails, we'll return, and the caller can detect this by looking
 	 * for a NULL main window.
 	 */
-	gagt_main_window = g_vm->glk_window_open(0, 0, 0, wintype_TextBuffer, 0);
-	if (!gagt_main_window)
+	g_vm->gagt_main_window = g_vm->glk_window_open(0, 0, 0, wintype_TextBuffer, 0);
+	if (!g_vm->gagt_main_window)
 		return;
 
 	/*
@@ -5104,7 +5070,7 @@ void init_interface() {
 	 * this again in glk_main() -- this call is here just in case this version
 	 * of init_interface() is ever called by AGiliTy's main.
 	 */
-	g_vm->glk_set_window(gagt_main_window);
+	g_vm->glk_set_window(g_vm->gagt_main_window);
 
 	/*
 	 * Screen height is something we don't use.  Linux Xglk returns dimensions
@@ -5129,12 +5095,12 @@ void init_interface() {
 	 * Create a status window, with one or two lines as selected by user
 	 * options or flags.  We can live without a status window if we have to.
 	 */
-	status_height = gagt_extended_status_enabled ? 2 : 1;
+	status_height = g_vm->gagt_extended_status_enabled ? 2 : 1;
 	g_vm->glk_stylehint_set(wintype_TextGrid, style_User1, stylehint_ReverseColor, 1);
-	gagt_status_window = g_vm->glk_window_open(gagt_main_window,
+	g_vm->gagt_status_window = g_vm->glk_window_open(g_vm->gagt_main_window,
 	                     winmethod_Above | winmethod_Fixed,
 	                     status_height, wintype_TextGrid, 0);
-	if (gagt_status_window) {
+	if (g_vm->gagt_status_window) {
 		/*
 		 * Call gagt_status_redraw() to set the interpreter's status_width
 		 * variable initial value.
@@ -5197,7 +5163,7 @@ gagt_confirm(const char *prompt) {
 	/* Wait for a single 'Y' or 'N' character response. */
 	response = ' ';
 	do {
-		g_vm->glk_request_char_event(gagt_main_window);
+		g_vm->glk_request_char_event(g_vm->gagt_main_window);
 		gagt_event_wait(evtype_CharInput, &event);
 
 		if (event.val1 <= BYTE_MAX_VAL)
@@ -5275,7 +5241,7 @@ gagt_get_user_file(glui32 usage, glui32 fmode, const char *fdtype) {
 	}
 
 	/* Get the path to the file from the user. */
-	g_vm->glk_request_line_event(gagt_main_window, filepath, sizeof(filepath) - 1, 0);
+	g_vm->glk_request_line_event(g_vm->gagt_main_window, filepath, sizeof(filepath) - 1, 0);
 	gagt_event_wait(evtype_LineInput, &event);
 
 	/* Terminate the file path with a NUL. */
@@ -5529,123 +5495,6 @@ int __wrap_tolower(int ch) {
 /* External declaration of interface.c's set default options function. */
 extern void set_default_options();
 
-/*
- * Flag to set if we want to test for a clean exit.  Without this it's a
- * touch tricky sometimes to corner AGiliTy into calling exit() for us; it
- * tends to require a broken game file.
- */
-static int gagt_clean_exit_test = FALSE;
-
-
-/*
- * gagt_parse_option()
- *
- * Glk-ified version of AGiliTy's parse_options() function.  In practice,
- * because Glk has got to them first, most options that come in here are
- * probably going to be single-character ones, since this is what we told
- * Glk in the arguments structure above.  The Glk font control and other
- * special tweaky flags will probably be the only multiple-character ones.
- */
-static int gagt_parse_option(const char *option) {
-	unsigned int index;
-	assert(option);
-
-	assert(option[0] == '-');
-	for (index = 1; option[index]; index++) {
-		switch (option[index]) {
-		case 'g':
-			switch (option[++index]) {
-			case 'f':
-				gagt_font_mode = FONT_FIXED_WIDTH;
-				break;
-			case 'p':
-				gagt_font_mode = FONT_PROPORTIONAL;
-				break;
-			case 'a':
-				gagt_font_mode = FONT_AUTOMATIC;
-				break;
-			case 'd':
-				gagt_delay_mode = DELAY_FULL;
-				break;
-			case 'h':
-				gagt_delay_mode = DELAY_SHORT;
-				break;
-			case 'n':
-				gagt_delay_mode = DELAY_OFF;
-				break;
-			case 'r':
-				gagt_replacement_enabled = FALSE;
-				break;
-			case 'x':
-				gagt_abbreviations_enabled = FALSE;
-				break;
-			case 's':
-				gagt_extended_status_enabled = TRUE;
-				break;
-			case 'l':
-				gagt_extended_status_enabled = FALSE;
-				break;
-			case 'c':
-				gagt_commands_enabled = FALSE;
-				break;
-			case 'D':
-				DEBUG_OUT = TRUE;
-				break;
-			case '#':
-				gagt_clean_exit_test = TRUE;
-				break;
-			default:
-				return FALSE;
-			}
-			break;
-
-		case 'p':
-			debug_parse = TRUE;
-			break;
-		case 'a':
-			DEBUG_DISAMBIG = TRUE;
-			break;
-		case 'd':
-			DEBUG_AGT_CMD = TRUE;
-			break;
-		case 'x':
-			DEBUG_EXEC_VERB = TRUE;
-			break;
-		case 's':
-			DEBUG_SMSG = TRUE;
-			break;
-#ifdef MEM_INFO
-		case 'M':
-			DEBUG_MEM = TRUE;
-			break;
-#endif
-		case 'm':
-			descr_maxmem = 0;
-			break;
-		case 't':
-			BATCH_MODE = TRUE;
-			break;
-		case 'c':
-			make_test = TRUE;
-			break;
-		case '1':
-			irun_mode = TRUE;
-			break;
-#ifdef OPEN_FILE_AS_TEXT
-		case 'b':
-			open_as_binary = TRUE;
-			break;
-#endif
-
-		case '?':
-		default:
-			return FALSE;
-		}
-	}
-
-	return TRUE;
-}
-
 
 /*
  * gagt_startup_code()
@@ -5674,15 +5523,15 @@ static void gagt_main() {
 	 *
 	 * init_interface() can fail if there is a problem creating the main
 	 * window.  As it doesn't return status, we have to detect this by checking
-	 * that gagt_main_window is not NULL.
+	 * that g_vm->gagt_main_window is not NULL.
 	 */
 	init_interface();
-	if (!gagt_main_window) {
+	if (!g_vm->gagt_main_window) {
 		gagt_fatal("GLK: Can't open main window");
 		gagt_exit();
 	}
-	g_vm->glk_window_clear(gagt_main_window);
-	g_vm->glk_set_window(gagt_main_window);
+	g_vm->glk_window_clear(g_vm->gagt_main_window);
+	g_vm->glk_set_window(g_vm->gagt_main_window);
 	g_vm->glk_set_style(style_Normal);
 
 	/*
@@ -5692,8 +5541,8 @@ static void gagt_main() {
 	fc = init_file_context(g_vm->gagt_gamefile, fDA1);
 	if (!(gagt_workround_fileexist(fc, fAGX)
 	        || gagt_workround_fileexist(fc, fDA1))) {
-		if (gagt_status_window)
-			g_vm->glk_window_close(gagt_status_window, NULL);
+		if (g_vm->gagt_status_window)
+			g_vm->glk_window_close(g_vm->gagt_status_window, NULL);
 		gagt_header_string("Glk AGiliTy Error\n\n");
 		gagt_normal_string("Can't find or open game '");
 		gagt_normal_string(g_vm->gagt_gamefile);
@@ -5722,17 +5571,17 @@ static void gagt_main() {
 	gagt_status_cleanup();
 
 	/* Close any open transcript, input log, and/or read log. */
-	if (gagt_transcript_stream) {
-		g_vm->glk_stream_close(gagt_transcript_stream, NULL);
-		gagt_transcript_stream = NULL;
+	if (g_vm->gagt_transcript_stream) {
+		g_vm->glk_stream_close(g_vm->gagt_transcript_stream, NULL);
+		g_vm->gagt_transcript_stream = NULL;
 	}
-	if (gagt_inputlog_stream) {
-		g_vm->glk_stream_close(gagt_inputlog_stream, NULL);
-		gagt_inputlog_stream = NULL;
+	if (g_vm->gagt_inputlog_stream) {
+		g_vm->glk_stream_close(g_vm->gagt_inputlog_stream, NULL);
+		g_vm->gagt_inputlog_stream = NULL;
 	}
-	if (gagt_readlog_stream) {
-		g_vm->glk_stream_close(gagt_readlog_stream, NULL);
-		gagt_readlog_stream = NULL;
+	if (g_vm->gagt_readlog_stream) {
+		g_vm->glk_stream_close(g_vm->gagt_readlog_stream, NULL);
+		g_vm->gagt_readlog_stream = NULL;
 	}
 }
 
@@ -5804,7 +5653,7 @@ void gagt_finalizer() {
 		 * status window, or to the main window) and flush any pending buffered
 		 * output.
 		 */
-		if (gagt_main_window) {
+		if (g_vm->gagt_main_window) {
 			gagt_status_notify();
 			gagt_output_flush();
 		}
@@ -5826,13 +5675,13 @@ void gagt_finalizer() {
 		 * g_vm->glk_exit().  If we have no main window, there's no point in doing
 		 * anything more.
 		 */
-		if (gagt_main_window) {
-			g_vm->glk_cancel_char_event(gagt_main_window);
-			g_vm->glk_cancel_line_event(gagt_main_window, NULL);
+		if (g_vm->gagt_main_window) {
+			g_vm->glk_cancel_char_event(g_vm->gagt_main_window);
+			g_vm->glk_cancel_line_event(g_vm->gagt_main_window, NULL);
 
 			g_vm->glk_set_style(style_Alert);
 			g_vm->glk_put_string("\n\nHit any key to exit.\n");
-			g_vm->glk_request_char_event(gagt_main_window);
+			g_vm->glk_request_char_event(g_vm->gagt_main_window);
 			gagt_event_wait(evtype_CharInput, &event);
 		}
 	}
@@ -5892,7 +5741,7 @@ void __wrap_exit(int status) {
 	 * So, if we have a main window, flush it.  This is the same cleanup as
 	 * done by the finalizer.
 	 */
-	if (gagt_main_window) {
+	if (g_vm->gagt_main_window) {
 		gagt_status_notify();
 		gagt_output_flush();
 	}
@@ -5904,7 +5753,7 @@ void __wrap_exit(int status) {
 
 
 /*
- * glk_main()
+ * glk_main)
  *
  * Main entry point for Glk.  Here, all startup is done, and we call our
  * function to run the game.
@@ -5919,7 +5768,7 @@ void glk_main() {
 	 * code explores "undefined" ANSI.  If we get something ugly, like a core
 	 * dump, we'll want to set GLK[AGIL]_CLEAN_EXIT.
 	 */
-	if (gagt_clean_exit_test) {
+	if (g_vm->gagt_clean_exit_test) {
 		gagt_agility_running = TRUE;
 		return;
 	}
