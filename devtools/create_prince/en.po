@@ -9,7 +9,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2018-04-17 19:53+0100\n"
 "PO-Revision-Date: 2019-12-07 04:30+0000\n"
-"Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
+"Last-Translator: Anton <ton4ick@gmail.com>\n"
 "Language-Team: English <https://translations.scummvm.org/projects/prince/"
 "prince/en/>\n"
 "Language: en\n"
@@ -1972,7 +1972,7 @@ msgstr "$1: What goods do you have for trade?"
 
 #: dialog0025.txt:105
 msgid "$2: Czy słyszałeś, a może widziałeś kiedyś... demony?"
-msgstr "$2: Did you hear or see any... demons?"
+msgstr "$2: Have you ever heard about demons… or maybe even seen them?"
 
 #: dialog0025.txt:106
 msgid "$3: Grajcie dalej."
@@ -2290,7 +2290,7 @@ msgstr ""
 msgid "OTHER: Jednym słowem, wszystko co może zainteresować|nowobogackich lub pretensjonalnych szlachetków|czy królewiczów."
 msgstr ""
 "OTHER: In a word, everything that could be|of interest to nouveau riches,|"
-"discriminating noblemen and princes."
+"pretentious noblemen and royals."
 
 #: dialog0027.txt:100208
 msgid "P#OTHER: Oczywiście, ty książę jesteś|wyjątkiem."
