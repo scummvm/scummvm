@@ -236,6 +236,8 @@ void MaxTrax::interrupt() {
 							}
 						}
 						break;
+					default:
+						break;
 					}
 					break;
 
@@ -326,6 +328,9 @@ endOfEventLoop:
 				// Send Audio Packet
 			}
 			voice.stopEventTime = -1;
+			break;
+
+		default:
 			break;
 		}
 
@@ -500,6 +505,8 @@ allNotesOff:
 			if (_voiceCtx[i].channel == &channel)
 				killVoice((byte)i);
 		}
+		break;
+	default:
 		break;
 	}
 }

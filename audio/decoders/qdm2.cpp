@@ -1552,6 +1552,9 @@ void QDM2Stream::fill_coding_method_array(sb_int8_array tone_level_idx, sb_int8_
 						case 4:
 							if (comp < 16)
 								comp = 16;
+							break;
+						default:
+							break;
 					}
 					if (comp <= 5)
 						tmp = 0;
