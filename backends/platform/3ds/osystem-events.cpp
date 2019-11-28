@@ -144,7 +144,6 @@ static void eventThreadFunc(void *arg) {
 		// Button events
 		if (keysPressed & KEY_L) {
 			if (g_gui.isActive()) {
-				// TODO: Prevent the magnify effect from updating while the GUI is active
 				osys->displayMessageOnOSD(_("Magnify Mode cannot be activated in menus."));
 			} else if (config.screen != kScreenBoth && osys->getMagnifyMode() == MODE_MAGOFF) {
 				// TODO: Automatically enable both screens while magnify mode is on

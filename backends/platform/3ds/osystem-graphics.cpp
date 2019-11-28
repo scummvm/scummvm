@@ -25,6 +25,7 @@
 #include "backends/platform/3ds/shader_shbin.h"
 #include "common/rect.h"
 #include "graphics/fontman.h"
+#include "gui/gui-manager.h"
 #include "options-dialog.h"
 #include "config.h"
 
@@ -156,8 +157,8 @@ void OSystem_3DS::initSize(uint width, uint height,
 	_gameHeight = height;
 	_gameTopTexture.create(width, height, _pfGameTexture);
 	_overlay.create(400, 320, _pfGameTexture);
-	_topHalfWidth = _topWidth / 2;
-	_topHalfHeight = _topHeight / 2;
+	_magCenterX = _magWidth / 2;
+	_magCenterY = _magHeight / 2;
 
 	if (format) {
 		debug("pixelformat: %d %d %d %d %d", format->bytesPerPixel, format->rBits(), format->gBits(), format->bBits(), format->aBits());
@@ -461,16 +462,21 @@ void OSystem_3DS::updateMagnify() {
 		_magnifyMode = MODE_MAGOFF;
 	}
 
+	// TODO: When exiting GUI, prevent cursor's position within GUI from changing
+	// position of magnification viewport. Possible solution: save in-game cursor
+	// coordinates separately from GUI cursor coordinates?
 	if (_magnifyMode == MODE_MAGON) {
-		_topX = (_cursorX < _topHalfWidth) ?
-			0 : ((_cursorX < (_gameWidth - _topHalfWidth)) ?
-			_cursorX - _topHalfWidth : _gameWidth - _topWidth);
-		_topY = (_cursorY < _topHalfHeight) ?
-			0 : ((_cursorY < _gameHeight - _topHalfHeight) ?
-			_cursorY - _topHalfHeight : _gameHeight - _topHeight);
+		if (!g_gui.isActive()) {
+			_magX = (_cursorX < _magCenterX) ?
+				0 : ((_cursorX < (_gameWidth - _magCenterX)) ?
+				_cursorX - _magCenterX : _gameWidth - _magWidth);
+			_magY = (_cursorY < _magCenterY) ?
+				0 : ((_cursorY < _gameHeight - _magCenterY) ?
+				_cursorY - _magCenterY : _gameHeight - _magHeight);
+		}
 		_gameTopTexture.setScale(1.f,1.f);
 		_gameTopTexture.setPosition(0,0);
-		_gameTopTexture.setOffset(_topX, _topY);
+		_gameTopTexture.setOffset(_magX, _magY);
 	}
 }
 
