@@ -306,7 +306,7 @@ void Lingo::processEvent(LEvent event, ScriptType st, int entityId) {
 
 		executeScript(st, entityId, 0); // D3 list of scripts.
 	} else {
-		debugC(3, kDebugLingoExec, "STUB: processEvent(%s) for %d", _eventHandlerTypes[event], entityId);
+		debugC(3, kDebugLingoExec, "STUB: processEvent(%s, %s, %d)", _eventHandlerTypes[event], scriptType2str(st), entityId);
 	}
 }
 
