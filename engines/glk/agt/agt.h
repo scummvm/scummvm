@@ -68,7 +68,7 @@ public:
 	strid_t gagt_readlog_stream;
 
 	/* Options that may be turned off or set by command line flags. */
-	FontMode gagt_font_mode = FONT_AUTOMATIC;
+	FontMode gagt_font_mode;
 	bool gagt_replacement_enabled, gagt_extended_status_enabled,
 		gagt_abbreviations_enabled, gagt_commands_enabled;
 
@@ -78,8 +78,6 @@ public:
 	 * tends to require a broken game file.
 	 */
 	bool gagt_clean_exit_test;
-
-
 private:
 	/**
 	 * Handles initialization
