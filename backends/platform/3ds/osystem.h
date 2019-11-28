@@ -174,9 +174,6 @@ private:
 	u16 _gameWidth, _gameHeight;
 	u16 _gameTopX, _gameTopY;
 	u16 _gameBottomX, _gameBottomY;
-	u16 _topWidth, _topHeight;
-	u16 _topHalfWidth, _topHalfHeight;
-	u16 _topX, _topY;
 
 	// Audio
 	Thread audioThread;
@@ -240,7 +237,12 @@ private:
 	float _cursorDeltaX, _cursorDeltaY;
 	int _cursorHotspotX, _cursorHotspotY;
 	uint32 _cursorKeyColor;
+
+	// Magnify
 	MagnifyMode _magnifyMode;
+	u16 _magX, _magY;
+	u16 _magWidth, _magHeight;
+	u16 _magCenterX, _magCenterY;
 };
 
 } // namespace _3DS
