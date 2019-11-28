@@ -37,6 +37,9 @@ public:
 	AGDSMetaEngine() : AdvancedMetaEngine(AGDS::gameDescriptions, sizeof(ADGameDescription), agdsGames) {
 		_maxScanDepth = 3;
 	}
+	virtual const char *getEngineId() const {
+		return "agds";
+	}
 
 	virtual const char *getName() const {
 		return "AGDS Engine";
