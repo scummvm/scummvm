@@ -187,6 +187,7 @@ private:
 	bool _debugMode;
 
 	void (*_sceneUpdateFunction)();
+	void (*_vsyncUpdateFunction)();
 protected:
 	virtual bool hasFeature(EngineFeature f) const;
 public:
@@ -245,6 +246,10 @@ public:
 	void runSceneUpdaterFunction();
 	void setSceneUpdateFunction(void (*newUpdateFunction)());
 	void (*getSceneUpdateFunction())();
+
+	void setVsyncUpdateFunction(void (*newUpdateFunction)());
+	bool isVsyncUpdaterFunctionRunning();
+	void runVsyncUpdaterFunction();
 
 	bool isActionButtonPressed();
 	bool isLeftKeyPressed();

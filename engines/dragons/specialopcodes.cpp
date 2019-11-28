@@ -35,6 +35,7 @@
 #include "dragons/talk.h"
 #include "dragons/specialopcodes.h"
 #include "dragons/minigame1.h"
+#include "dragons/minigame2.h"
 #include "dragons/minigame3.h"
 #include "dragons/minigame4.h"
 
@@ -71,6 +72,7 @@ void SpecialOpcodes::initOpcodes() {
 	}
 	// Register opcodes
 	OPCODE(1, spcCatapultMiniGame);
+	OPCODE(2, spcThumbWrestlingMiniGame);
 	OPCODE(3, spcClearEngineFlag10);
 	OPCODE(4, spcSetEngineFlag10);
 
@@ -162,6 +164,8 @@ void SpecialOpcodes::initOpcodes() {
 	OPCODE(0x64, spcResetInventorySequence);
 	OPCODE(0x65, spcUnk65ScenePaletteRelated);
 	OPCODE(0x66, spcUnk66);
+	OPCODE(0x67, spcTournamentSetCamera);
+	OPCODE(0x68, spcTournamentCutScene);
 
 	OPCODE(0x6a, spcCastleGateSceneLogic);
 	OPCODE(0x6b, spcTransitionToMap);
@@ -200,9 +204,13 @@ void SpecialOpcodes::freeOpcodes() {
 // Opcodes
 
 void SpecialOpcodes::spcCatapultMiniGame() {
-	spcRabbitsMiniGame();
-//	Minigame1 minigame1(_vm);
-//	minigame1.run();
+	Minigame1 minigame1(_vm);
+	minigame1.run();
+}
+
+void SpecialOpcodes::spcThumbWrestlingMiniGame() {
+	Minigame2 minigame2(_vm);
+	minigame2.run();
 }
 
 void SpecialOpcodes::spcClearEngineFlag10() {
@@ -689,6 +697,16 @@ void SpecialOpcodes::spcUnk66() {
 		uVar9 = uVar9 + 1;
 	}
 	_vm->getINI(1)->field_12 = uVar9;
+}
+
+void SpecialOpcodes::spcTournamentSetCamera() {
+	_vm->_scene->_camera.x = 0x140; // TODO should have method for updating camera.
+}
+
+void SpecialOpcodes::spcTournamentCutScene() {
+	CutScene *cutScene = new CutScene(_vm);
+	cutScene->tournamentCutScene();
+	delete cutScene;
 }
 
 void SpecialOpcodes::spcCastleGateSceneLogic() {
