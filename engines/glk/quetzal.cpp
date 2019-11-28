@@ -38,6 +38,8 @@ uint32 QuetzalBase::getInterpreterTag(InterpreterType interpType) {
 		return MKTAG('A', 'D', 'R', 'I');
 	case INTERPRETER_ADVSYS:
 		return MKTAG('A', 'S', 'Y', 'S');
+	case INTERPRETER_AGT:
+		return MKTAG('A', 'G', 'T', ' ');
 	case INTERPRETER_AGILITY:
 		return MKTAG('A', 'G', 'I', 'L');
 	case INTERPRETER_ALAN2:

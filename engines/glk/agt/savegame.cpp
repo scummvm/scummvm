@@ -21,9 +21,9 @@
  */
 
 
-#include "agility.h"
-#include "interp.h"
-#include "exec.h"
+#include "glk/agt/agility.h"
+#include "glk/agt/interp.h"
+#include "glk/agt/exec.h"
 
 namespace Glk {
 namespace AGT {
@@ -337,8 +337,7 @@ void init_state_sys(void)
 /*-------------------------------------------------------------------*/
 /*  SAVE FILE ROUTINES    */
 
-void savegame(void) {
-	genfile savefile;
+extern Common::Error savegame(Common::WriteStream *savefile) {
 	uchar *gs;
 	long size;
 
@@ -349,50 +348,49 @@ void savegame(void) {
 #endif
 	if (gs == NULL) {
 		writeln("Insufficiant memory to support SAVE.");
-		return;
+		return Common::kWritingFailed;
 	}
-	savefile = get_user_file(1);
+
 	if (!filevalid(savefile, fSAV)) {
 		writeln("That is not a valid save file.");
-		return;
+		return Common::kWritingFailed;
 	}
 	size = gs[0] + (((long)gs[1]) << 8) + (((long)gs[2]) << 16) + (((long)gs[3]) << 24);
-	if (!binwrite(savefile, gs, size, 1, 0))
-		writeln("Error writing save file.");
+	bool result = binwrite(savefile, gs, size, 1, 0);
 #ifndef UNDO_SAVE
 	rfree(gs);
 #endif
-	writeclose(savefile, NO_FILE_ID);
+	if (!result) {
+		warning("Error writing save file.");
+		return Common::kWritingFailed;
+	} else {
+		return Common::kNoError;
+	}
 }
 
-
-rbool loadgame(void)
 /* 1=success, 0=failure */
-{
-	genfile loadfile;
+Common::Error loadgame(Common::SeekableReadStream *loadfile) {
 	long size;
 	uchar *gs;
 	const char *errstr;
 
-	loadfile = get_user_file(2);
 	if (!filevalid(loadfile, fSAV)) {
-		writeln("Unable to open file.");
-		return 0;
+		warning("Unable to open file.");
+		return Common::kReadingFailed;
 	}
 	size = binsize(loadfile);
 	if (size == -1) {
-		writeln("Could not access file.");
-		readclose(loadfile);
-		return 0;
+		warning("Could not access file.");
+		return Common::kReadingFailed;
 	}
+
 	gs = (uchar *)rmalloc(size);
 	if (!binread(loadfile, gs, size, 1, &errstr)) {
-		writeln("Error reading file.");
+		warning("Error reading file.");
 		rfree(gs);
-		readclose(loadfile);
-		return 0;
+		return Common::kReadingFailed;
 	}
-	readclose(loadfile);
+
 	if (size != gs[0] + (((long)gs[1]) << 8) + (((long)gs[2]) << 16) + (((long)gs[3]) << 24)) {
 		if (size == gs[0] + (((long)gs[1]) << 8)) {
 			/* Old save file format; patch to look like new format */
@@ -400,16 +398,17 @@ rbool loadgame(void)
 			memmove(gs + 4, gs + 2, size - 2);
 			gs[2] = gs[3] = 0;
 		} else {
-			writeln("Save file corrupted or invalid.");
+			warning("Save file corrupted or invalid.");
 			rfree(gs);
-			return 0;
+			return Common::kReadingFailed;
 		}
 	}
+
 	putstate(gs);
 	rfree(gs);
 	set_statline();
 	look_room();
-	return 1;
+	return Common::kNoError;
 }
 
 void restart_game(void) {

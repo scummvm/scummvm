@@ -494,7 +494,7 @@ static void game_end(void) {
 				done_flag = 1;
 			} else writeln("Sorry, I'm unable to do that because of limited memory.");
 		else if (strncasecmp(s, "RESTORE", 7) == 0)
-			if (loadgame()) {
+			if (g_vm->loadGame().getCode() == Common::kNoError) {
 				done_flag = 1;
 			} else writeln("(RESTORE failed)");
 		else if (strncasecmp(s, "UNDO", 4) == 0)
@@ -556,8 +556,10 @@ static void mainloop(void) {
 		} else
 			menu_cmd();
 		if (doing_restore) {
-			if (doing_restore == 1) loadgame();
-			else if (doing_restore == 2) restart_game();
+			if (doing_restore == 1)
+				g_vm->loadGame();
+			else if (doing_restore == 2)
+				restart_game();
 			else if (doing_restore == 3 || doing_restore == 4)
 				return; /* Quit or New game requested */
 			doing_restore = 0;

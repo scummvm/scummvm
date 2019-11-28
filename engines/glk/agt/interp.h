@@ -435,8 +435,8 @@ extern void debug_newline(integer op, rbool first_nl);
 /* -------------------------------------------------------------------- */
 /* In SAVEGAME.C                            */
 /* -------------------------------------------------------------------- */
-extern void savegame(void);
-extern rbool loadgame(void);
+extern Common::Error savegame(Common::WriteStream *savefile);
+extern Common::Error loadgame(Common::SeekableReadStream *loadfile);
 extern void init_state_sys(void);  /* Must be called before either of the following */
 extern uchar *getstate(uchar *gs);
 /* Returns malloc'd block containing game state. */

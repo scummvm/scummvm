@@ -23,6 +23,9 @@
 #include "glk/agt/agt.h"
 #include "glk/quetzal.h"
 #include "common/config-manager.h"
+#include "glk/agt/agility.h"
+#include "glk/agt/interp.h"
+#include "glk/agt/exec.h"
 
 namespace Glk {
 namespace AGT {
@@ -93,11 +96,11 @@ void AGT::initializeSettings() {
 }
 
 Common::Error AGT::readSaveData(Common::SeekableReadStream *rs) {
-	return Common::kReadingFailed;
+	return loadgame(rs);
 }
 
 Common::Error AGT::writeGameData(Common::WriteStream *ws) {
-	return Common::kWritingFailed;
+	return savegame(ws);
 }
 
 } // End of namespace AGT

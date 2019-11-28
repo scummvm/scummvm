@@ -376,7 +376,8 @@ size_t fread(void *ptr, size_t size, size_t nmemb, genfile stream) {
 size_t fwrite(const void *ptr, size_t size, size_t nmemb, genfile stream) {
 	Common::WriteStream *ws = dynamic_cast<Common::WriteStream *>(stream);
 	assert(ws);
-	return ws->write(ptr, size * nmemb);
+	size_t bytesWritten = ws->write(ptr, size * nmemb);
+	return bytesWritten / size;
 }
 
 size_t ftell(genfile f) {

@@ -1000,7 +1000,7 @@ void replay(int delay) {
 /* They're never called from the rest of the code */
 
 void agt_save(void) {
-	savegame();
+	g_vm->saveGame();
 }
 
 void agt_restore(void) {

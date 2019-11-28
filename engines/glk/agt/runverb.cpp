@@ -1393,7 +1393,7 @@ void exec_verb(void)
 				break;
 			case 45:
 				cmd_saveable = 0;
-				savegame();
+				g_vm->saveGame();
 				break;
 			case 46:
 				cmd_saveable = 0;
