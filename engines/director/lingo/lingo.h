@@ -143,6 +143,7 @@ struct Builtin {
 
 struct ScriptContext {
 	Common::Array<ScriptData *> functions;
+	Common::Array<Datum> constants;
 };
 
 typedef Common::HashMap<int32, ScriptContext *> ScriptContextHash;
@@ -278,6 +279,7 @@ public:
 	static void c_floatpush();
 	static void c_stringpush();
 	static void c_symbolpush();
+	static void c_constpush();
 	static void c_varpush();
 	static void c_argspush();
 	static void c_arraypush();

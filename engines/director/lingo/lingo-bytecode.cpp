@@ -56,12 +56,14 @@ static LingoV4Bytecode lingoV4[] = {
 	{ 0x41, Lingo::c_intpush, "b" },
 	{ 0x42, Lingo::c_argspush, "b" },
 	{ 0x43, Lingo::c_arraypush, "b" },
+	{ 0x44, Lingo::c_constpush, "bv" },
 	{ 0x45, Lingo::c_symbolpush, "b" },
 	{ 0x5c, Lingo::c_v4theentitypush, "b" },
 	{ 0x5d, Lingo::c_v4theentityassign, "b" },
 	{ 0x81, Lingo::c_intpush, "w" },
 	{ 0x82, Lingo::c_argspush, "w" },
 	{ 0x83, Lingo::c_arraypush, "w" },
+	{ 0x84, Lingo::c_constpush, "wv" },
 	{ 0, 0, 0 }
 };
 
@@ -185,6 +187,7 @@ void Lingo::c_v4theentitypush() {
 	if (firstArg.type == INT) {
 		int key = (bank << 8) + firstArg.u.i;
 		if (g_lingo->_lingoV4TheEntity.contains(key)) {
+			debugC(3, kDebugLingoExec, "c_v4theentitypush: mapping 0x%02x, 0x%02x", bank, firstArg.u.i);
 			int entity = g_lingo->_lingoV4TheEntity[key]->entity;
 			int field = g_lingo->_lingoV4TheEntity[key]->field;
 			switch (g_lingo->_lingoV4TheEntity[key]->type) {
@@ -193,26 +196,28 @@ void Lingo::c_v4theentitypush() {
 					Datum id;
 					id.u.s = NULL;
 					id.type = VOID;
+					debugC(3, kDebugLingoExec, "c_v4theentitypush: calling getTheEntity(0x%02x, NULL, 0x%02x)", entity, field);
 					result = g_lingo->getTheEntity(entity, id, field);
 				}
 				break;
 			case kTEAItemId:
 				{
 					Datum id = g_lingo->pop();
+					debugC(3, kDebugLingoExec, "c_v4theentitypush: calling getTheEntity(0x%02x, id, 0x%02x)", entity, field);
 					result = g_lingo->getTheEntity(entity, id, field);
 				}
 				break;
 			case kTEAString:
 				{
 					/*Datum stringArg = */g_lingo->pop();
-					warning("c_v4theentitypush: STUB: mapping 0x%02x 0x%02x kTEAString", bank, firstArg.u.i);
+					warning("c_v4theentitypush: STUB: kTEAString");
 				}
 				break;
 			case kTEAMenuIdItemId:
 				{
 					/*Datum menuId = */g_lingo->pop();
 					/*Datum itemId = */g_lingo->pop();
-					warning("c_v4theentitypush: STUB: mapping 0x%02x 0x%02x kTEAMenuIdItemId", bank, firstArg.u.i);
+					warning("c_v4theentitypush: STUB: kTEAMenuIdItemId");
 				}
 				break;
 			default:
@@ -244,6 +249,7 @@ void Lingo::c_v4theentityassign() {
 	if (firstArg.type == INT) {
 		int key = (bank << 8) + firstArg.u.i;
 		if (g_lingo->_lingoV4TheEntity.contains(key)) {
+			debugC(3, kDebugLingoExec, "c_v4theentityassign: mapping 0x%02x, 0x%02x", bank, firstArg.u.i);
 			if (g_lingo->_lingoV4TheEntity[key]->writable) {
 				int entity = g_lingo->_lingoV4TheEntity[key]->entity;
 				int field = g_lingo->_lingoV4TheEntity[key]->field;
@@ -253,26 +259,28 @@ void Lingo::c_v4theentityassign() {
 						Datum id;
 						id.u.s = NULL;
 						id.type = VOID;
+						debugC(3, kDebugLingoExec, "c_v4theentityassign: calling setTheEntity(0x%02x, NULL, 0x%02x, value)", entity, field);
 						g_lingo->setTheEntity(entity, id, field, value);
 					}
 					break;
 				case kTEAItemId:
 					{
 						Datum id = g_lingo->pop();
+						debugC(3, kDebugLingoExec, "c_v4theentityassign: calling setTheEntity(0x%02x, id, 0x%02x, value)", entity, field);
 						g_lingo->setTheEntity(entity, id, field, value);
 					}
 					break;
 				case kTEAString:
 					{
 						/*Datum stringArg = */g_lingo->pop();
-						warning("c_v4theentityassign: STUB: mapping 0x%02x 0x%02x kTEAString", bank, firstArg.u.i);
+						warning("c_v4theentityassign: STUB: kTEAString");
 					}
 					break;
 				case kTEAMenuIdItemId:
 					{
 						/*Datum menuId = */g_lingo->pop();
 						/*Datum itemId = */g_lingo->pop();
-						warning("c_v4theentityassign: STUB: mapping 0x%02x 0x%02x kTEAMenuIdItemId", bank, firstArg.u.i);
+						warning("c_v4theentityassign: STUB: kTEAMenuIdItemId");
 					}
 					break;
 				default:
@@ -355,8 +363,6 @@ void Lingo::addCodeV4(Common::SeekableSubReadStreamEndian &stream, ScriptType ty
 	byte *constsStore = (byte *)malloc(constsStoreSize);
 	stream.read(constsStore, constsStoreSize);
 
-	Common::Array<Datum> constsData;
-
 	// read each entry in the reference table.
 	stream.seek(constsOffset);
 	for (uint16 i = 0; i < constsCount; i++) {
@@ -412,7 +418,7 @@ void Lingo::addCodeV4(Common::SeekableSubReadStreamEndian &stream, ScriptType ty
 			break;
 		}
 
-		constsData.push_back(constant);
+		_currentScriptContext->constants.push_back(constant);
 	}
 	free(constsStore);
 
@@ -477,23 +483,34 @@ void Lingo::addCodeV4(Common::SeekableSubReadStreamEndian &stream, ScriptType ty
 			if (_lingoV4.contains(opcode)) {
 				offsetList.push_back(_currentScript->size());
 				g_lingo->code1(_lingoV4[opcode]->func);
+
 				size_t argc = strlen(_lingoV4[opcode]->proto);
-				for (uint c = 0; c < argc; c++) {
-					switch (_lingoV4[opcode]->proto[c]) {
-					case 'b':
-						offsetList.push_back(_currentScript->size());
-						g_lingo->codeInt((int8)codeStore[pointer]);
-						pointer += 1;
-						break;
-					case 'w':
-						offsetList.push_back(_currentScript->size());
-						offsetList.push_back(_currentScript->size());
-						g_lingo->codeInt((int16)READ_UINT16(&codeStore[pointer]));
-						pointer += 2;
-						break;
-					default:
-						break;
+				if (argc) {
+					int arg = 0;
+					for (uint c = 0; c < argc; c++) {
+						switch (_lingoV4[opcode]->proto[c]) {
+						case 'b':
+							offsetList.push_back(_currentScript->size());
+							arg = (int8)codeStore[pointer];
+							pointer += 1;
+							break;
+						case 'w':
+							offsetList.push_back(_currentScript->size());
+							offsetList.push_back(_currentScript->size());
+							arg = (int16)READ_UINT16(&codeStore[pointer]);
+							pointer += 2;
+							break;
+						case 'v':
+							if (arg % 6) {
+								warning("Opcode 0x%02x arg %d not multiple of 6!", opcode, arg);
+							}
+							arg /= 6;
+							break;
+						default:
+							break;
+						}
 					}
+					g_lingo->codeInt(arg);
 				}
 			} else {
 				// unimplemented instruction
