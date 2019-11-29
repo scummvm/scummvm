@@ -53,7 +53,7 @@
 namespace Director {
 
 void Lingo::execute(uint pc) {
-	for(_pc = pc; (*_currentScript)[_pc] != STOP && !_returning;) {
+	for (_pc = pc; !_returning && (*_currentScript)[_pc] != STOP;) {
 		Common::String instr = decodeInstruction(_pc);
 
 		if (debugChannelSet(5, kDebugLingoExec))
@@ -66,6 +66,11 @@ void Lingo::execute(uint pc) {
 
 		if (debugChannelSet(5, kDebugLingoExec))
 			printStack("Stack after: ");
+
+		if (_pc >= (*_currentScript).size()) {
+			warning("Lingo::execute(): Bad PC (%d)", _pc);
+			break;
+		}
 	}
 }
 
