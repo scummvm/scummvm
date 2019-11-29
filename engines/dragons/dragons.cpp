@@ -1331,7 +1331,7 @@ uint16 DragonsEngine::getRand(uint16 max) {
 	uint16 rand = 0;
 
 	for (int i = 0; i < 0x10; i++) {
-		rand = shuffleRandState() | rand << i;
+		rand |= shuffleRandState() << i;
 	}
 	return rand % max;
 }

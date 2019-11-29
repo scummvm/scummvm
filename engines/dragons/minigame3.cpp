@@ -105,7 +105,7 @@ void Minigame3::run() {
 	int16 local_5a;
 	int16 local_58;
 	int16 local_56;
-	int16 local_52;
+	int16 hopCounter;
 	uint16 local_50;
 	BunnyStruct bunnyInfo [2];
 	uint16 local_20;
@@ -118,7 +118,8 @@ void Minigame3::run() {
 	int16 origInventoryType;
 	int16 local_10;
 	int16 local_e;
-	UnkStruct UnkStruct_ARRAY_800931a0[5];
+	UnkStruct UnkStruct_ARRAY_800931a0[4];
+	int16 unkXPosTbl[20];
 
 
 	Common::File *fd = new Common::File();
@@ -150,7 +151,7 @@ void Minigame3::run() {
 
 	fd->seek(0x4914);
 
-	for (int i = 0; i < 5; i++) {
+	for (int i = 0; i < 4; i++) {
 		UnkStruct_ARRAY_800931a0[i].position1 = fd->readUint16LE();
 		UnkStruct_ARRAY_800931a0[i].position2 = fd->readUint16LE();
 		UnkStruct_ARRAY_800931a0[i].unk4 = fd->readUint32LE();
@@ -158,6 +159,10 @@ void Minigame3::run() {
 		UnkStruct_ARRAY_800931a0[i].unk12 = fd->readUint32LE();
 		UnkStruct_ARRAY_800931a0[i].unk16 = fd->readUint32LE();
 		UnkStruct_ARRAY_800931a0[i].field_0x14 = fd->readUint32LE();
+	}
+
+	for (int i = 0; i < 20; i++) {
+		unkXPosTbl[i] = fd->readSint16LE();
 	}
 
 	fd->close();
@@ -327,7 +332,7 @@ void Minigame3::run() {
 	currentState = 2;
 	flags = 0;
 	local_58 = 0x1e;
-	local_52 = 0;
+	hopCounter = 0;
 	local_210 = 0;
 	local_1de = 0;
 	local_5a = 0;
@@ -376,8 +381,7 @@ void Minigame3::run() {
 							bunnyInfo[local_1e].field_0xc = bunnyInfo[local_1e].field_0xc + bunnyInfo[local_1e].field_0x10;
 							bunnyActorTbl[local_1a]->x_pos = (int16_t)((int)bunnyInfo[local_1e].x >> 9);
 							bunnyActorTbl[local_1a]->y_pos = (int16_t)((int)bunnyInfo[local_1e].y >> 9);
-//							if ((local_228 < 4) && (*(int16 *)((uint)local_228 * 2 + (uint)local_50 * 8 + -0x7ff6ce00) < bunnyActorTbl[local_1a]->x_pos)) {
-							if ((local_228 < 4) && _vm->_actorManager->getActor(0)->x_pos < bunnyActorTbl[local_1a]->x_pos) {
+							if ((local_228 < 4) && unkXPosTbl[local_50 * 4 + local_228] < bunnyActorTbl[local_1a]->x_pos) {
 								local_228 = local_228 + 1;
 								bunnyActorTbl[local_1a]->updateSequence((uint)local_228 + 6 & 0xffff);
 								bunnyActorTbl[local_1c]->updateSequence((uint)local_228 + 0xd & 0xffff);
@@ -422,7 +426,7 @@ void Minigame3::run() {
 				local_1c = bunnyPositionTbl[bunnyInfo[local_20].positionIdx];
 				bunnyActorTbl[local_1a]->updateSequence(5);
 				bunnyActorTbl[local_1c]->updateSequence(0xc);
-				if (local_52 == 0x1d) {
+				if (hopCounter == 0x1d) {
 					_vm->playSound(2);
 				}
 				else {
@@ -439,7 +443,7 @@ void Minigame3::run() {
 				currentState = 1;
 				break;
 			case 5:
-				local_52 = local_52 + 1;
+				hopCounter = hopCounter + 1;
 				local_5a = local_5a + 1;
 				bunnyActorTbl[local_1a]->updateSequence(0xb);
 				bunnyActorTbl[local_1c]->updateSequence(0x12);
@@ -618,7 +622,7 @@ void Minigame3::run() {
 				tearBlinkActorTbl[1]->y_pos = tearBlinkActorTbl[1]->y_pos + -3;
 			}
 		}
-		if (local_52 == 0x1e) {
+		if (hopCounter == 0x1e) {
 			currentState = 6;
 		}
 		if ((flags & 8) != 0) break;
