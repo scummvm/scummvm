@@ -94,8 +94,8 @@ private:
 	void FUN_8001a7c4(uint32 x1, uint32 y1, uint32 x2, uint32 y2); //clear box maybe?
 	void copyTextToBuffer(uint16 *destBuffer, byte *src, uint32 destBufferLength);
 	uint32 wideStrLen(uint16 *text);
-	TalkDialogEntry *displayTalkDialogMenu();
-	void exitTalkMenu(bool isFlag8Set, bool isFlag100Set);
+	TalkDialogEntry *displayTalkDialogMenu(Common::Array<TalkDialogEntry*> dialogEntries);
+	void exitTalkMenu(bool isFlag8Set, bool isFlag100Set, Common::Array<TalkDialogEntry*> dialogEntries);
 	uint32 getDefaultResponseTextIndex();
 	void initDefaultResponseTable();
 	uint32 strlenUTF16(uint16 *text);

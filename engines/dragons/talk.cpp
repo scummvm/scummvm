@@ -539,6 +539,7 @@ bool Talk::talkToActor(ScriptOpCall &scriptOpCall) {
 	short local_990 [5];
 	uint16 auStack2438 [195];
 	uint16 local_800 [1000];
+	Common::Array<TalkDialogEntry *> dialogEntries;
 
 	bool isFlag8Set = _vm->isFlagSet(ENGINE_FLAG_8);
 	bool isFlag100Set = _vm->isFlagSet(ENGINE_FLAG_100);
@@ -552,25 +553,32 @@ bool Talk::talkToActor(ScriptOpCall &scriptOpCall) {
 	if (numEntries == 0) {
 		return 0;
 	}
+
+	for (Common::Array<TalkDialogEntry*>::iterator it = _dialogEntries.begin(); it != _dialogEntries.end(); it++) {
+		TalkDialogEntry *entry = (TalkDialogEntry *)malloc(sizeof(TalkDialogEntry));
+		memcpy(entry, *it, sizeof(TalkDialogEntry));
+		dialogEntries.push_back(entry);
+	}
+
 	_vm->setFlags(ENGINE_FLAG_100);
 	do {
 		callMaybeResetData();
 		int numActiveDialogEntries = 0;
-		for (Common::Array<TalkDialogEntry*>::iterator it = _dialogEntries.begin(); it != _dialogEntries.end(); it++) {
+		for (Common::Array<TalkDialogEntry*>::iterator it = dialogEntries.begin(); it != dialogEntries.end(); it++) {
 			if (!((*it)->flags & 1)) {
 				numActiveDialogEntries++;
 			}
 		}
 		if (numActiveDialogEntries == 0) {
 			//TODO logic from LAB_80029bc0 reset cursor
-			exitTalkMenu(isFlag8Set, isFlag100Set);
+			exitTalkMenu(isFlag8Set, isFlag100Set, dialogEntries);
 			return 1;
 		}
 
-		selectedDialogText = displayTalkDialogMenu();
+		selectedDialogText = displayTalkDialogMenu(dialogEntries);
 		if (selectedDialogText == NULL) {
 			callMaybeResetData();
-			exitTalkMenu(isFlag8Set, isFlag100Set);
+			exitTalkMenu(isFlag8Set, isFlag100Set, dialogEntries);
 			return 1;
 		}
 		_vm->clearFlags(ENGINE_FLAG_8);
@@ -621,11 +629,12 @@ bool Talk::talkToActor(ScriptOpCall &scriptOpCall) {
 //	LAB_80029bc0:
 //	actors[0].x_pos = cursor_x_var;
 //	actors[0].y_pos = cursor_y_var;
-	exitTalkMenu(isFlag8Set, isFlag100Set);
+
+	exitTalkMenu(isFlag8Set, isFlag100Set, dialogEntries);
 	return 1;
 }
 
-TalkDialogEntry *Talk::displayTalkDialogMenu() {
+TalkDialogEntry *Talk::displayTalkDialogMenu(Common::Array<TalkDialogEntry*> dialogEntries) {
 	bool bVar1;
 	short sVar2;
 	uint uVar3;
@@ -658,11 +667,11 @@ TalkDialogEntry *Talk::displayTalkDialogMenu() {
 	uVar8 = 0;
 	local_60 = 0;
 	local_58 = 0;
-	numEntries = _dialogEntries.size();
+	numEntries = dialogEntries.size();
 	if (numEntries != 0) {
 		uVar3 = 0;
 		do {
-			talkDialogEntry =  _dialogEntries[uVar3];
+			talkDialogEntry =  dialogEntries[uVar3];
 			if ((talkDialogEntry->flags & 1) == 0) {
 				local_60 = local_60 + 1;
 				talkDialogEntry->yPosMaybe = '\0';
@@ -698,7 +707,7 @@ TalkDialogEntry *Talk::displayTalkDialogMenu() {
 	if (hasDialogEntries) {
 		uVar3 = 0;
 		do {
-			talkDialogEntry = _dialogEntries[uVar3];
+			talkDialogEntry = dialogEntries[uVar3];
 			if (((talkDialogEntry->flags & 1) == 0) && (bVar1 = y == uVar8, y = y + 1, bVar1)) break;
 			x = x + 1;
 			uVar3 = (uint)x;
@@ -720,7 +729,7 @@ TalkDialogEntry *Talk::displayTalkDialogMenu() {
 			if (hasDialogEntries) {
 				uVar3 = 0;
 				do {
-					talkDialogEntry = _dialogEntries[uVar3];
+					talkDialogEntry = dialogEntries[uVar3];
 					y = y + 1;
 					if ((talkDialogEntry->flags & 1) == 0) {
 						if (uVar8 == 0) {
@@ -751,7 +760,7 @@ TalkDialogEntry *Talk::displayTalkDialogMenu() {
 		if (hasDialogEntries) {
 			uVar6 = 0;
 			do {
-				talkDialogEntry = _dialogEntries[uVar6];
+				talkDialogEntry = dialogEntries[uVar6];
 				uVar6 = (uint)talkDialogEntry->flags & 1;
 				if ((talkDialogEntry->flags & 1) == 0) {
 					sVar2 = local_50 + 1;
@@ -815,7 +824,7 @@ TalkDialogEntry *Talk::displayTalkDialogMenu() {
 	goto LAB_800317a4;
 }
 
-void Talk::exitTalkMenu(bool isFlag8Set, bool isFlag100Set) {
+void Talk::exitTalkMenu(bool isFlag8Set, bool isFlag100Set, Common::Array<TalkDialogEntry*> dialogEntries) {
 	_vm->clearFlags(ENGINE_FLAG_8);
 	_vm->clearFlags(ENGINE_FLAG_100);
 
@@ -826,6 +835,10 @@ void Talk::exitTalkMenu(bool isFlag8Set, bool isFlag100Set) {
 		_vm->setFlags(ENGINE_FLAG_100);
 	}
 
+	for (Common::Array<TalkDialogEntry*>::iterator it = dialogEntries.begin(); it != dialogEntries.end(); it++) {
+		delete *it;
+	}
+	dialogEntries.clear();
 }
 
 uint Talk::somethingTextAndSpeechAndAnimRelated(Actor *actor, int16 sequenceId1, int16 sequenceId2, uint32 textIndex,
