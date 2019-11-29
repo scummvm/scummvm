@@ -54,10 +54,18 @@ static LingoV4Bytecode lingoV4[] = {
 	{ 0x1c, Lingo::c_tell, "" },
 	{ 0x1d, Lingo::c_telldone, "" },
 	{ 0x41, Lingo::c_intpush, "b" },
+	{ 0x42, Lingo::c_argspush, "b" },
+	{ 0x43, Lingo::c_arraypush, "b" },
+	{ 0x45, Lingo::c_symbolpush, "b" },
+	{ 0x5c, Lingo::c_v4theentitypush, "b" },
+	{ 0x5d, Lingo::c_v4theentityassign, "b" },
+	{ 0x81, Lingo::c_intpush, "w" },
+	{ 0x82, Lingo::c_argspush, "w" },
+	{ 0x83, Lingo::c_arraypush, "w" },
 	{ 0, 0, 0 }
 };
 
-static LingoV4TheEntity lingoV4TheEntity[] {
+static LingoV4TheEntity lingoV4TheEntity[] = {
 	{ 0x00, 0x00, kTheFloatPrecision, kTheNOField, false, kTEANOArgs },
 	{ 0x00, 0x01, kTheMouseDownScript, kTheNOField, true, kTEANOArgs },
 	{ 0x00, 0x02, kTheMouseUpScript, kTheNOField, true, kTEANOArgs },
@@ -150,7 +158,7 @@ static LingoV4TheEntity lingoV4TheEntity[] {
 	{ 0x0c, 0x07, kTheField, kTheTextSize, true, kTEAItemId },
 	{ 0x0d, 0x0f, kTheCast, kTheDirectToStage, true, kTEAItemId },
 	{ 0x0d, 0x10, kTheCast, kTheSound, true, kTEAItemId },
-	{ -1, 0, 0, 0, false, kTEANOArgs },
+	{ -1, 0, 0, 0, false, kTEANOArgs }
 };
 
 
@@ -160,7 +168,126 @@ void Lingo::initBytecode() {
 	}
 
 	for (LingoV4TheEntity *ent = lingoV4TheEntity; ent->bank != -1; ent++) {
-		_lingoV4TheEntity[(ent->bank << 16) + ent->firstArg] = ent;
+		_lingoV4TheEntity[(ent->bank << 8) + ent->firstArg] = ent;
+	}
+}
+
+
+void Lingo::c_v4theentitypush() {
+	inst b = (*g_lingo->_currentScript)[g_lingo->_pc++];
+	int bank = (int)READ_UINT32(&b);
+
+	Datum firstArg = g_lingo->pop();
+	Datum result;
+	result.u.s = NULL;
+	result.type = VOID;
+
+	if (firstArg.type == INT) {
+		int key = (bank << 8) + firstArg.u.i;
+		if (g_lingo->_lingoV4TheEntity.contains(key)) {
+			int entity = g_lingo->_lingoV4TheEntity[key]->entity;
+			int field = g_lingo->_lingoV4TheEntity[key]->field;
+			switch (g_lingo->_lingoV4TheEntity[key]->type) {
+			case kTEANOArgs:
+				{
+					Datum id;
+					id.u.s = NULL;
+					id.type = VOID;
+					result = g_lingo->getTheEntity(entity, id, field);
+				}
+				break;
+			case kTEAItemId:
+				{
+					Datum id = g_lingo->pop();
+					result = g_lingo->getTheEntity(entity, id, field);
+				}
+				break;
+			case kTEAString:
+				{
+					/*Datum stringArg = */g_lingo->pop();
+					warning("c_v4theentitypush: STUB: mapping 0x%02x 0x%02x kTEAString", bank, firstArg.u.i);
+				}
+				break;
+			case kTEAMenuIdItemId:
+				{
+					/*Datum menuId = */g_lingo->pop();
+					/*Datum itemId = */g_lingo->pop();
+					warning("c_v4theentitypush: STUB: mapping 0x%02x 0x%02x kTEAMenuIdItemId", bank, firstArg.u.i);
+				}
+				break;
+			default:
+				warning("c_v4theentitypush: unknown call type %d", g_lingo->_lingoV4TheEntity[key]->type);
+				break;
+			}
+		} else {
+			warning("c_v4theentitypush: unhandled mapping 0x%02x 0x%02x", bank, firstArg.u.i);
+		}
+
+	} else {
+		warning("c_v4theentitypush: first arg should be of type INT, not %s", firstArg.type2str());
+	}
+
+	g_lingo->push(result);
+}
+
+
+void Lingo::c_v4theentityassign() {
+	inst b = (*g_lingo->_currentScript)[g_lingo->_pc++];
+	int bank = (int)READ_UINT32(&b);
+
+	Datum firstArg = g_lingo->pop();
+	Datum value = g_lingo->pop();
+	Datum result;
+	result.u.s = NULL;
+	result.type = VOID;
+
+	if (firstArg.type == INT) {
+		int key = (bank << 8) + firstArg.u.i;
+		if (g_lingo->_lingoV4TheEntity.contains(key)) {
+			if (g_lingo->_lingoV4TheEntity[key]->writable) {
+				int entity = g_lingo->_lingoV4TheEntity[key]->entity;
+				int field = g_lingo->_lingoV4TheEntity[key]->field;
+				switch (g_lingo->_lingoV4TheEntity[key]->type) {
+				case kTEANOArgs:
+					{
+						Datum id;
+						id.u.s = NULL;
+						id.type = VOID;
+						g_lingo->setTheEntity(entity, id, field, value);
+					}
+					break;
+				case kTEAItemId:
+					{
+						Datum id = g_lingo->pop();
+						g_lingo->setTheEntity(entity, id, field, value);
+					}
+					break;
+				case kTEAString:
+					{
+						/*Datum stringArg = */g_lingo->pop();
+						warning("c_v4theentityassign: STUB: mapping 0x%02x 0x%02x kTEAString", bank, firstArg.u.i);
+					}
+					break;
+				case kTEAMenuIdItemId:
+					{
+						/*Datum menuId = */g_lingo->pop();
+						/*Datum itemId = */g_lingo->pop();
+						warning("c_v4theentityassign: STUB: mapping 0x%02x 0x%02x kTEAMenuIdItemId", bank, firstArg.u.i);
+					}
+					break;
+				default:
+					warning("c_v4theentityassign: unknown call type %d", g_lingo->_lingoV4TheEntity[key]->type);
+					break;
+				}
+			} else {
+				warning("c_v4theentityassign: non-writable mapping 0x%02x 0x%02x", bank, firstArg.u.i);
+			}
+		} else {
+			warning("c_v4theentityassign: unhandled mapping 0x%02x 0x%02x", bank, firstArg.u.i);
+		}
+
+	} else {
+		warning("c_v4theentityassign: first arg should be of type INT, not %s", firstArg.type2str());
 	}
 }
 
@@ -368,7 +495,6 @@ void Lingo::addCodeV4(Common::SeekableSubReadStreamEndian &stream, ScriptType ty
 						break;
 					}
 				}
-
 			} else {
 				// unimplemented instruction
 				if (opcode < 0x40) { // 1 byte instruction

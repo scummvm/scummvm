@@ -290,6 +290,8 @@ public:
 
 	static void c_theentitypush();
 	static void c_theentityassign();
+	static void c_v4theentitypush();
+	static void c_v4theentityassign();
 
 	static void c_repeatwhilecode();
 	static void c_repeatwithcode();
