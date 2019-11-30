@@ -419,7 +419,7 @@ void OSystem_PSP::setupMixer(void) {
 		return;
 	}
 	samplesPerSec = _audio.getFrequency();	// may have been changed by audio system
-	_mixer = new Audio::MixerImpl(this, samplesPerSec);
+	_mixer = new Audio::MixerImpl(samplesPerSec);
 	assert(_mixer);
 	_mixer->setReady(true);
 	_audio.unpause();

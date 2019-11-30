@@ -43,7 +43,7 @@ AudioThread::AudioThread() :
 	_muted(true) {
 }
 
-Audio::MixerImpl *AudioThread::Construct(OSystem *system) {
+Audio::MixerImpl *AudioThread::Construct() {
 	logEntered();
 
 	if (IsFailed(EventDrivenThread::Construct(DEFAULT_STACK_SIZE, THREAD_PRIORITY_HIGH))) {
@@ -51,7 +51,7 @@ Audio::MixerImpl *AudioThread::Construct(OSystem *system) {
 		return NULL;
 	}
 
-	_mixer = new Audio::MixerImpl(system, 44100);
+	_mixer = new Audio::MixerImpl(44100);
 	return _mixer;
 }
 

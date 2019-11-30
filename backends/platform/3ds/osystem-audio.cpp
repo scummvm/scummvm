@@ -75,7 +75,7 @@ static void audioThreadFunc(void *arg) {
 }
 
 void OSystem_3DS::initAudio() {
-	_mixer = new Audio::MixerImpl(this, 22050);
+	_mixer = new Audio::MixerImpl(22050);
 
 	hasAudio = R_SUCCEEDED(ndspInit());
 	_mixer->setReady(false);

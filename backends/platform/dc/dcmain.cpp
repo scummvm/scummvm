@@ -58,7 +58,7 @@ void OSystem_Dreamcast::initBackend()
   _timerManager = new DefaultTimerManager();
 
   uint sampleRate = initSound();
-  _mixer = new Audio::MixerImpl(this, sampleRate);
+  _mixer = new Audio::MixerImpl(sampleRate);
   _mixer->setReady(true);
 
   _audiocdManager = new DCCDManager();

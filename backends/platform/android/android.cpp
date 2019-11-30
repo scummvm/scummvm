@@ -347,7 +347,7 @@ void OSystem_Android::initBackend() {
 
 	gettimeofday(&_startTime, 0);
 
-	_mixer = new Audio::MixerImpl(this, _audio_sample_rate);
+	_mixer = new Audio::MixerImpl(_audio_sample_rate);
 	_mixer->setReady(true);
 
 	_timer_thread_exit = false;

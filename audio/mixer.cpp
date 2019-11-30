@@ -23,7 +23,6 @@
 #include "gui/EventRecorder.h"
 
 #include "common/util.h"
-#include "common/system.h"
 #include "common/textconsole.h"
 
 #include "audio/mixer_intern.h"
@@ -173,8 +172,7 @@ private:
 #pragma mark --- Mixer ---
 #pragma mark -
 
-// TODO: parameter "system" is unused
-MixerImpl::MixerImpl(OSystem *system, uint sampleRate)
+MixerImpl::MixerImpl(uint sampleRate)
 	: _mutex(), _sampleRate(sampleRate), _mixerReady(false), _handleSeed(0), _soundTypeSettings() {
 
 	assert(sampleRate > 0);

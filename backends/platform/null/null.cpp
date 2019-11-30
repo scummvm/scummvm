@@ -93,7 +93,7 @@ void OSystem_NULL::initBackend() {
 	_eventManager = new DefaultEventManager(this);
 	_savefileManager = new DefaultSaveFileManager();
 	_graphicsManager = new NullGraphicsManager();
-	_mixer = new Audio::MixerImpl(this, 22050);
+	_mixer = new Audio::MixerImpl(22050);
 
 	((Audio::MixerImpl *)_mixer)->setReady(false);
 

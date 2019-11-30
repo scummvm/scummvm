@@ -378,7 +378,7 @@ OSystem_PS2::OSystem_PS2(const char *elfPath) {
 void OSystem_PS2::init(void) {
 	sioprintf("Timer...\n");
 	_timerManager = new DefaultTimerManager();
-	_scummMixer = new Audio::MixerImpl(this, 48000);
+	_scummMixer = new Audio::MixerImpl(48000);
 	_scummMixer->setReady(true);
 
 	initTimer();
