@@ -26,7 +26,6 @@
 NullMixerManager::NullMixerManager() : MixerManager() {
 	_outputRate = 22050;
 	_callsCounter = 0;
-	_callbackPeriod = 10;
 	_samples = 8192;
 	while (_samples * 16 > _outputRate * 2)
 		_samples >>= 1;
@@ -55,12 +54,12 @@ int NullMixerManager::resumeAudio() {
 	return 0;
 }
 
-void NullMixerManager::update() {
+void NullMixerManager::update(uint8 callbackPeriod) {
 	if (_audioSuspended) {
 		return;
 	}
 	_callsCounter++;
-	if ((_callsCounter % _callbackPeriod) == 0) {
+	if ((_callsCounter % callbackPeriod) == 0) {
 		assert(_mixer);
 		_mixer->mixCallback(_samplesBuf, _samples);
 	}

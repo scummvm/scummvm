@@ -40,7 +40,7 @@ public:
 	virtual ~NullMixerManager();
 
 	virtual void init();
-	void update();
+	void update(uint8 callbackPeriod = 10);
 
 	virtual void suspendAudio();
 	virtual int resumeAudio();
@@ -48,7 +48,6 @@ public:
 private:
 	uint32 _outputRate;
 	uint32 _callsCounter;
-	uint8  _callbackPeriod;
 	uint32 _samples;
 	uint8 *_samplesBuf;
 };

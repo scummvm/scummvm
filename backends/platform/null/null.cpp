@@ -44,6 +44,7 @@
 #include "backends/saves/default/default-saves.h"
 #include "backends/timer/default/default-timer.h"
 #include "backends/events/default/default-events.h"
+#include "backends/mixer/null/null-mixer.h"
 #include "backends/mutex/null/null-mutex.h"
 #include "backends/graphics/null/null-graphics.h"
 #include "audio/mixer_intern.h"
@@ -63,7 +64,7 @@
 	#include "backends/fs/windows/windows-fs-factory.h"
 #endif
 
-class OSystem_NULL : public ModularMutexBackend, public ModularGraphicsBackend, Common::EventSource {
+class OSystem_NULL : public ModularMutexBackend, public ModularMixerBackend, public ModularGraphicsBackend, Common::EventSource {
 public:
 	OSystem_NULL();
 	virtual ~OSystem_NULL();
@@ -76,21 +77,17 @@ public:
 	virtual void delayMillis(uint msecs);
 	virtual void getTimeAndDate(TimeDate &t) const;
 
-	virtual Audio::Mixer *getMixer();
-
 	virtual void quit();
 
 	virtual void logMessage(LogMessageType::Type type, const char *message);
 
 private:
-	Audio::MixerImpl *_mixer;
-
 #ifdef POSIX
 	timeval _startTime;
 #endif
 };
 
-OSystem_NULL::OSystem_NULL() : _mixer(0) {
+OSystem_NULL::OSystem_NULL() {
 	#if defined(__amigaos4__)
 		_fsFactory = new AmigaOSFilesystemFactory();
 	#elif defined(POSIX)
@@ -105,8 +102,6 @@ OSystem_NULL::OSystem_NULL() : _mixer(0) {
 }
 
 OSystem_NULL::~OSystem_NULL() {
-	delete _mixer;
-	_mixer = 0;
 }
 
 #ifdef POSIX
@@ -132,19 +127,16 @@ void OSystem_NULL::initBackend() {
 	_eventManager = new DefaultEventManager(this);
 	_savefileManager = new DefaultSaveFileManager();
 	_graphicsManager = new NullGraphicsManager();
-	_mixer = new Audio::MixerImpl(22050);
-
-	_mixer->setReady(false);
-
-	// Note that the mixer is useless this way; it needs to be hooked
-	// into the system somehow to be functional. Of course, can't do
-	// that in a NULL backend :).
+	_mixerManager = new NullMixerManager();
+	// Setup and start mixer
+	_mixerManager->init();
 
 	BaseBackend::initBackend();
 }
 
 bool OSystem_NULL::pollEvent(Common::Event &event) {
 	((DefaultTimerManager *)getTimerManager())->checkTimers();
+	((NullMixerManager *)_mixerManager)->update(1);
 
 #ifdef POSIX
 	if (intReceived) {
@@ -196,11 +188,6 @@ void OSystem_NULL::getTimeAndDate(TimeDate &td) const {
 	td.tm_mon = t.tm_mon;
 	td.tm_year = t.tm_year;
 	td.tm_wday = t.tm_wday;
-}
-
-Audio::Mixer *OSystem_NULL::getMixer() {
-	assert(_mixer);
-	return (Audio::Mixer *)_mixer;
 }
 
 void OSystem_NULL::quit() {

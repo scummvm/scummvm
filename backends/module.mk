@@ -294,6 +294,11 @@ MODULE_OBJS += \
 	fs/n64/romfsstream.o
 endif
 
+ifeq ($(BACKEND),null)
+MODULE_OBJS += \
+	mixer/null/null-mixer.o
+endif
+
 ifeq ($(BACKEND),openpandora)
 MODULE_OBJS += \
 	events/openpandora/op-events.o \
