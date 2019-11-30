@@ -307,6 +307,7 @@ void FlicDecoder::FlicVideoTrack::decodeDeltaFLC(uint8 *data) {
 				packetCount = opcode;
 				break;
 			case OP_UNDEFINED:
+			default:
 				break;
 			case OP_LASTPIXEL:
 				*((byte *)_surface->getBasePtr(getWidth() - 1, currentLine)) = (opcode & 0xFF);

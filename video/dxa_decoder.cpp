@@ -381,6 +381,7 @@ void DXADecoder::DXAVideoTrack::decode13(int size) {
 					switch (subMask & 0xC0) {
 					// 00: skip
 					case 0x00:
+					default:
 						break;
 					// 01: solid color
 					case 0x40: {
@@ -532,6 +533,8 @@ const Graphics::Surface *DXADecoder::DXAVideoTrack::decodeNextFrame() {
 		break;
 	case S_NONE:
 		_surface->setPixels(_frameBuffer1);
+		break;
+	default:
 		break;
 	}
 

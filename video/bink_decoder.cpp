@@ -1164,6 +1164,9 @@ void BinkDecoder::BinkVideoTrack::readDCTCoeffs(VideoFrame &video, int32 *block,
 				coefList[listPos]      = 0;
 				modeList[listPos++]    = 0;
 				break;
+
+			default:
+				break;
 			}
 		}
 	}
@@ -1256,16 +1259,21 @@ void BinkDecoder::BinkVideoTrack::readResidue(VideoFrame &video, int16 *block, i
 				break;
 
 			case 3:
-				nzCoeff[nzCoeffCount++] = binkScan[ccoef];
+				{
+					nzCoeff[nzCoeffCount++] = binkScan[ccoef];
 
-				int sign = -(int)video.bits->getBit();
-				block[binkScan[ccoef]] = (mask ^ sign) - sign;
+					int sign = -(int)video.bits->getBit();
+					block[binkScan[ccoef]] = (mask ^ sign) - sign;
 
-				coefList[listPos]   = 0;
-				modeList[listPos++] = 0;
-				masksCount--;
-				if (masksCount < 0)
-					return;
+					coefList[listPos]   = 0;
+					modeList[listPos++] = 0;
+					masksCount--;
+					if (masksCount < 0)
+						return;
+				}
+				break;
+
+			default:
 				break;
 			}
 		}
