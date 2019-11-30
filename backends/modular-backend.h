@@ -26,6 +26,7 @@
 #include "backends/base-backend.h"
 
 class GraphicsManager;
+class MixerManager;
 class MutexManager;
 
 /**
@@ -40,7 +41,6 @@ class MutexManager;
  *   OSystem::getMillis()
  *   OSystem::delayMillis()
  *   OSystem::getTimeAndDate()
- *   OSystem::getMixer()
  *   OSystem::quit()
  *
  * And, it should also initialize all the managers variables
@@ -129,6 +129,28 @@ protected:
 	//@{
 
 	GraphicsManager *_graphicsManager;
+
+	//@}
+};
+
+class ModularMixerBackend : virtual public BaseBackend {
+public:
+	ModularMixerBackend();
+	virtual ~ModularMixerBackend();
+
+	/** @name Sound */
+	//@{
+
+	virtual MixerManager *getMixerManager();
+	virtual Audio::Mixer *getMixer() override final;
+
+	//@}
+
+protected:
+	/** @name Managers variables */
+	//@{
+
+	MixerManager *_mixerManager;
 
 	//@}
 };

@@ -36,7 +36,7 @@
 /**
  * Base OSystem class for all SDL ports.
  */
-class OSystem_SDL : public ModularMutexBackend, public ModularGraphicsBackend {
+class OSystem_SDL : public ModularMutexBackend, public ModularMixerBackend, public ModularGraphicsBackend {
 public:
 	OSystem_SDL();
 	virtual ~OSystem_SDL();
@@ -47,13 +47,6 @@ public:
 	 * created here.
 	 */
 	virtual void init() override;
-
-	/**
-	 * Get the Mixer Manager instance. Not to confuse with getMixer(),
-	 * that returns Audio::Mixer. The Mixer Manager is a SDL wrapper class
-	 * for the Audio::Mixer. Used by other managers.
-	 */
-	virtual MixerManager *getMixerManager();
 
 	virtual bool hasFeature(Feature f) override;
 
@@ -83,7 +76,7 @@ public:
 	virtual uint32 getMillis(bool skipRecord = false) override;
 	virtual void delayMillis(uint msecs) override;
 	virtual void getTimeAndDate(TimeDate &td) const override;
-	virtual Audio::Mixer *getMixer() override;
+	virtual MixerManager *getMixerManager() override;
 	virtual Common::TimerManager *getTimerManager() override;
 	virtual Common::SaveFileManager *getSavefileManager() override;
 
@@ -106,12 +99,6 @@ protected:
 	 * editor; for that, we need it only as a string anyway.
 	 */
 	Common::String _logFilePath;
-
-	/**
-	 * Mixer manager that configures and setups SDL for
-	 * the wrapped Audio::Mixer, the true mixer.
-	 */
-	MixerManager *_mixerManager;
 
 	/**
 	 * The event source we use for obtaining SDL events.

@@ -22,7 +22,9 @@
 
 #include "backends/modular-backend.h"
 
+#include "backends/audiocd/audiocd.h"
 #include "backends/graphics/graphics.h"
+#include "backends/mixer/mixer.h"
 #include "backends/mutex/mutex.h"
 #include "gui/EventRecorder.h"
 
@@ -247,6 +249,31 @@ void ModularGraphicsBackend::displayMessageOnOSD(const char *msg) {
 
 void ModularGraphicsBackend::displayActivityIconOnOSD(const Graphics::Surface *icon) {
 	_graphicsManager->displayActivityIconOnOSD(icon);
+}
+
+
+ModularMixerBackend::ModularMixerBackend()
+	:
+	_mixerManager(0) {
+
+}
+
+ModularMixerBackend::~ModularMixerBackend() {
+	// _audiocdManager needs to be deleted before _mixerManager to avoid a crash.
+	delete _audiocdManager;
+	_audiocdManager = 0;
+	delete _mixerManager;
+	_mixerManager = 0;
+}
+
+MixerManager *ModularMixerBackend::getMixerManager() {
+	assert(_mixerManager);
+	return _mixerManager;
+}
+
+Audio::Mixer *ModularMixerBackend::getMixer() {
+	assert(_mixerManager);
+	return getMixerManager()->getMixer();
 }
 
 

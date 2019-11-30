@@ -81,7 +81,6 @@ OSystem_SDL::OSystem_SDL()
 	_initedSDLnet(false),
 #endif
 	_logger(0),
-	_mixerManager(0),
 	_eventSource(0),
 	_eventSourceWrapper(nullptr),
 	_window(0) {
@@ -539,11 +538,6 @@ void OSystem_SDL::getTimeAndDate(TimeDate &td) const {
 	td.tm_mon = t.tm_mon;
 	td.tm_year = t.tm_year;
 	td.tm_wday = t.tm_wday;
-}
-
-Audio::Mixer *OSystem_SDL::getMixer() {
-	assert(_mixerManager);
-	return getMixerManager()->getMixer();
 }
 
 MixerManager *OSystem_SDL::getMixerManager() {
