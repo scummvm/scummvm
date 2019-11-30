@@ -773,6 +773,8 @@ void Interpret(CORO_PARAM, INT_CONTEXT *ic) {
 
 			case OP_LOR:    tmp = (tmp || tmp2); break;
 			case OP_LAND:   tmp = (tmp && tmp2); break;
+
+			default: break;
 			}
 
 			ic->stack[ic->sp] = tmp;
@@ -803,6 +805,7 @@ void Interpret(CORO_PARAM, INT_CONTEXT *ic) {
 			case OP_AND:    tmp &= tmp2; break;
 			case OP_OR:     tmp |= tmp2; break;
 			case OP_EOR:    tmp ^= tmp2; break;
+			default: break;
 			}
 			ic->stack[ic->sp] = tmp;
 			break;

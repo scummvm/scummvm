@@ -511,6 +511,9 @@ void TinGetVersion(WHICH_VER which, char *buffer, int length) {
 	case VER_COMPILE:
 		memcpy(buffer, cptr + VER_LEN, length);
 		break;
+
+	default:
+		break;
 	}
 }
 
@@ -803,6 +806,10 @@ void Control(int param) {
 			EnableTags();		// Tags back on
 
 		RestoreMainCursor();		// Re-instate cursor...
+		break;
+
+	default:
+		break;
 	}
 }
 

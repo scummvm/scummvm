@@ -132,6 +132,8 @@ int Tinsel6_ADPCMStream::readBuffer(int16 *buffer, const int numSamples) {
 				buffer[samples] = decodeTinsel((_chunkData << 2) & 0xFC00, eVal);
 				_blockPos[0]++;
 				break;
+			default:
+				break;
 			}
 
 		}
