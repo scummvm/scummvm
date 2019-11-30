@@ -875,7 +875,7 @@ void CutScene::tournamentCutScene() {
 	_vm->setFlags(ENGINE_FLAG_20000);
 	// fade_related_calls_with_1f();
 	Actor *actor = _vm->_dragonINIResource->getRecord(0x02BE)->actor;
-	_vm->_screen->loadPalette(0, actor->getPalette());
+	_vm->_screen->loadPalette(0, actor->_actorResource->getPalette());
 	_vm->_scene->_camera.x = 0;
 	_vm->playSound(0);
 //	call_fade_related_1f();
