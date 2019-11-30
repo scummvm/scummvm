@@ -31,7 +31,6 @@
 #include "backends/events/openpandora/op-events.h"
 #include "backends/graphics/openpandora/op-graphics.h"
 #include "backends/platform/openpandora/op-sdl.h"
-#include "backends/platform/openpandora/op-options.h"
 
 #include "common/translation.h"
 #include "common/util.h"
