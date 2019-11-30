@@ -93,7 +93,6 @@ Common::String Lingo::decodeInstruction(ScriptData *sd, uint pc, uint *newPc) {
 	if (_functions.contains((void *)sym.u.s)) {
 		res = _functions[(void *)sym.u.s]->name;
 		const char *pars = _functions[(void *)sym.u.s]->proto;
-		inst i;
 
 		while (*pars) {
 			switch (*pars++) {

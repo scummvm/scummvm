@@ -60,7 +60,7 @@ static struct FuncDescr {
 	{ Lingo::c_argspush,	"c_argspush",	"i" },
 	{ Lingo::c_arraypush,	"c_arraypush",	"i" },
 	{ Lingo::c_printtop,	"c_printtop",	"" },
-	{ Lingo::c_intpush,	"c_intpush",	"i" },
+	{ Lingo::c_intpush,		"c_intpush",	"i" },
 	{ Lingo::c_voidpush,	"c_voidpush",	"" },
 	{ Lingo::c_floatpush,	"c_floatpush",	"f" },
 	{ Lingo::c_stringpush,	"c_stringpush",	"s" },
@@ -211,8 +211,7 @@ void Lingo::c_printtop(void) {
 
 void Lingo::c_intpush() {
 	Datum d;
-	inst i = (*g_lingo->_currentScript)[g_lingo->_pc++];
-	d.u.i = READ_UINT32(&i);
+	d.u.i = g_lingo->readInt();
 	d.type = INT;
 	g_lingo->push(d);
 }
@@ -226,12 +225,8 @@ void Lingo::c_voidpush() {
 
 void Lingo::c_floatpush() {
 	Datum d;
-	inst i = (*g_lingo->_currentScript)[g_lingo->_pc];
-	d.u.f = *(double *)(&i);
+	d.u.f = g_lingo->readFloat();
 	d.type = FLOAT;
-
-	g_lingo->_pc += g_lingo->calcCodeAlignment(sizeof(double));
-
 	g_lingo->push(d);
 }
 
@@ -254,16 +249,14 @@ void Lingo::c_symbolpush() {
 
 void Lingo::c_constpush() {
 	Datum d;
-	inst in = (*g_lingo->_currentScript)[g_lingo->_pc++];
-	int i = READ_UINT32(&in);
+	int i = g_lingo->readInt();
 	d = g_lingo->_currentScriptContext->constants[i];
 	g_lingo->push(d);
 }
 
 void Lingo::c_argspush() {
 	Datum d;
-	inst v = (*g_lingo->_currentScript)[g_lingo->_pc++];
-	int argsSize = READ_UINT32(&v);
+	int argsSize = g_lingo->readInt();
 
 	warning("STUB: c_argspush()");
 
@@ -277,8 +270,7 @@ void Lingo::c_argspush() {
 
 void Lingo::c_arraypush() {
 	Datum d;
-	inst v = (*g_lingo->_currentScript)[g_lingo->_pc++];
-	int arraySize = READ_UINT32(&v);
+	int arraySize = g_lingo->readInt();
 
 	warning("STUB: c_arraypush()");
 
@@ -327,9 +319,7 @@ void Lingo::c_varpush() {
 }
 
 void Lingo::c_setImmediate() {
-	inst i = (*g_lingo->_currentScript)[g_lingo->_pc++];
-
-	g_lingo->_immediateMode = READ_UINT32(&i);
+	g_lingo->_immediateMode = g_lingo->readInt();
 }
 
 void Lingo::c_assign() {
@@ -448,24 +438,20 @@ void Lingo::c_eval() {
 }
 
 void Lingo::c_theentitypush() {
-	inst e = (*g_lingo->_currentScript)[g_lingo->_pc++];
-	inst f = (*g_lingo->_currentScript)[g_lingo->_pc++];
 	Datum id = g_lingo->pop();
 
-	int entity = READ_UINT32(&e);
-	int field  = READ_UINT32(&f);
+	int entity = g_lingo->readInt();
+	int field  = g_lingo->readInt();
 
 	Datum d = g_lingo->getTheEntity(entity, id, field);
 	g_lingo->push(d);
 }
 
 void Lingo::c_theentityassign() {
-	inst e = (*g_lingo->_currentScript)[g_lingo->_pc++];
-	inst f = (*g_lingo->_currentScript)[g_lingo->_pc++];
 	Datum id = g_lingo->pop();
 
-	int entity = READ_UINT32(&e);
-	int field  = READ_UINT32(&f);
+	int entity = g_lingo->readInt();
+	int field  = g_lingo->readInt();
 
 	Datum d = g_lingo->pop();
 	g_lingo->setTheEntity(entity, id, field, d);
@@ -907,8 +893,8 @@ void Lingo::c_repeatwhilecode(void) {
 	Datum d;
 	int savepc = g_lingo->_pc;
 
-	uint body = READ_UINT32(&(*g_lingo->_currentScript)[savepc]);
-	uint end =  READ_UINT32(&(*g_lingo->_currentScript)[savepc + 1]);
+	uint body = g_lingo->getInt(savepc);
+	uint end =  g_lingo->getInt(savepc + 1);
 
 	g_lingo->execute(savepc + 2);	/* condition */
 	d = g_lingo->pop();
@@ -937,11 +923,11 @@ void Lingo::c_repeatwithcode(void) {
 	Datum d;
 	int savepc = g_lingo->_pc;
 
-	uint init = READ_UINT32(&(*g_lingo->_currentScript)[savepc]);
-	uint finish =  READ_UINT32(&(*g_lingo->_currentScript)[savepc + 1]);
-	uint body = READ_UINT32(&(*g_lingo->_currentScript)[savepc + 2]);
-	int inc = (int32)READ_UINT32(&(*g_lingo->_currentScript)[savepc + 3]);
-	uint end =  READ_UINT32(&(*g_lingo->_currentScript)[savepc + 4]);
+	uint init = g_lingo->getInt(savepc);
+	uint finish =  g_lingo->getInt(savepc + 1);
+	uint body = g_lingo->getInt(savepc + 2);
+	int inc = (int32)g_lingo->getInt(savepc + 3);
+	uint end = g_lingo->getInt(savepc + 4);
 	Common::String countername((char *)&(*g_lingo->_currentScript)[savepc + 5]);
 	Symbol *counter = g_lingo->lookupVar(countername.c_str());
 
@@ -986,10 +972,10 @@ void Lingo::c_ifcode() {
 	Datum d;
 	int savepc = g_lingo->_pc;	/* then part */
 
-	uint then =    READ_UINT32(&(*g_lingo->_currentScript)[savepc]);
-	uint elsep =   READ_UINT32(&(*g_lingo->_currentScript)[savepc + 1]);
-	uint end =     READ_UINT32(&(*g_lingo->_currentScript)[savepc + 2]);
-	uint skipEnd = READ_UINT32(&(*g_lingo->_currentScript)[savepc + 3]);
+	uint then =    g_lingo->getInt(savepc);
+	uint elsep =   g_lingo->getInt(savepc+1);
+	uint end =     g_lingo->getInt(savepc+2);
+	uint skipEnd = g_lingo->getInt(savepc+3);
 
 	debugC(8, kDebugLingoExec, "executing cond (have to %s end)", skipEnd ? "skip" : "execute");
 	g_lingo->execute(savepc + 4);	/* condition */
@@ -1015,7 +1001,7 @@ void Lingo::c_ifcode() {
 void Lingo::c_whencode() {
 	Datum d;
 	uint start = g_lingo->_pc;
-	uint end = READ_UINT32(&(*g_lingo->_currentScript)[start]) + start - 1;
+	uint end = g_lingo->getInt(start) + start - 1;
 	Common::String eventname((char *)&(*g_lingo->_currentScript)[start + 1]);
 
 	start += g_lingo->calcStringAlignment(eventname.c_str()) + 1;
@@ -1103,7 +1089,7 @@ void Lingo::c_call() {
 	Common::String name((char *)&(*g_lingo->_currentScript)[g_lingo->_pc]);
 	g_lingo->_pc += g_lingo->calcStringAlignment(name.c_str());
 
-	int nargs = READ_UINT32(&(*g_lingo->_currentScript)[g_lingo->_pc++]);
+	int nargs = g_lingo->readInt();
 
 	g_lingo->call(name, nargs);
 }
@@ -1289,27 +1275,21 @@ void Lingo::c_hilite() {
 }
 
 void Lingo::c_unk() {
-	int savepc = g_lingo->_pc;
-	uint opcode = READ_UINT32(&(*g_lingo->_currentScript)[savepc]);
+	uint opcode = g_lingo->readInt();
 	warning("STUB: opcode 0x%02x", opcode);
-	g_lingo->_pc += 1;
 }
 
 void Lingo::c_unk1() {
-	int savepc = g_lingo->_pc;
-	uint opcode = READ_UINT32(&(*g_lingo->_currentScript)[savepc]);
-	uint arg1 = READ_UINT32(&(*g_lingo->_currentScript)[savepc+1]);
+	uint opcode = g_lingo->readInt();
+	uint arg1 = g_lingo->readInt();
 	warning("STUB: opcode 0x%02x (%d)", opcode, arg1);
-	g_lingo->_pc += 2;
 }
 
 void Lingo::c_unk2() {
-	int savepc = g_lingo->_pc;
-	uint opcode = READ_UINT32(&(*g_lingo->_currentScript)[savepc]);
-	uint arg1 = READ_UINT32(&(*g_lingo->_currentScript)[savepc+1]);
-	uint arg2 = READ_UINT32(&(*g_lingo->_currentScript)[savepc+2]);
+	uint opcode = g_lingo->readInt();
+	uint arg1 = g_lingo->readInt();
+	uint arg2 = g_lingo->readInt();
 	warning("STUB: opcode 0x%02x (%d, %d)", opcode, arg1, arg2);
-	g_lingo->_pc += 3;
 }
 
 

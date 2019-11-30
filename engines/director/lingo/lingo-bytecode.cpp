@@ -181,8 +181,7 @@ void Lingo::initBytecode() {
 
 
 void Lingo::c_v4theentitypush() {
-	inst b = (*g_lingo->_currentScript)[g_lingo->_pc++];
-	int bank = (int)READ_UINT32(&b);
+	int bank = g_lingo->readInt();
 
 	Datum firstArg = g_lingo->pop();
 	Datum result;
@@ -242,8 +241,7 @@ void Lingo::c_v4theentitypush() {
 
 
 void Lingo::c_v4theentityassign() {
-	inst b = (*g_lingo->_currentScript)[g_lingo->_pc++];
-	int bank = (int)READ_UINT32(&b);
+	int bank = g_lingo->readInt();
 
 	Datum firstArg = g_lingo->pop();
 	Datum value = g_lingo->pop();

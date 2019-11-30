@@ -238,6 +238,13 @@ public:
 	int codeFloat(double f);
 	void codeFactory(Common::String &s);
 
+	inst readInst() { return getInst(_pc++); }
+	inst getInst(uint pc) { return (*_currentScript)[pc]; }
+	int readInt() { return getInt(_pc++); }
+	int getInt(uint pc) { return (int)READ_UINT32(&((*_currentScript)[pc])); }
+	double readFloat() { double d = getFloat(_pc); _pc += calcCodeAlignment(sizeof(double)); return d; }
+	double getFloat(uint pc) { return *(double *)(&((*_currentScript)[pc])); }
+
 	void pushVoid();
 
 	static void c_xpop();
