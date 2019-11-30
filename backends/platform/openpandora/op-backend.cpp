@@ -70,7 +70,7 @@ void OSystem_OP::initBackend() {
 		printf("Current working directory: %s\n", workDirName.c_str());
 	}
 
-	Common::String savePath = workDirName + "/../saves");
+	Common::String savePath = workDirName + "/../saves";
 	printf("Current save directory: %s\n", savePath.c_str());
 	_savefileManager = new DefaultSaveFileManager(savePath);
 
@@ -164,7 +164,7 @@ void OSystem_OP::addSysArchivesToSearchSet(Common::SearchSet &s, int priority) {
 		error("Error: Could not obtain current working directory.");
 	}
 
-	Common::String enginedataPath = workDirName + "/../data");
+	Common::String enginedataPath = workDirName + "/../data";
 	printf("Default engine data directory: %s\n", enginedataPath.c_str());
 
 	Common::FSNode engineNode(enginedataPath);
