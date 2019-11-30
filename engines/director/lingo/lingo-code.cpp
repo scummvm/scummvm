@@ -108,6 +108,8 @@ static struct FuncDescr {
 	{ Lingo::c_lt,			"c_lt",			"" },
 	{ Lingo::c_ge,			"c_ge",			"" },
 	{ Lingo::c_le,			"c_le",			"" },
+	{ Lingo::c_jump,		"c_jump",		"i" },
+	{ Lingo::c_jumpif,		"c_jumpif",		"i" },
 	{ Lingo::c_repeatwhilecode,"c_repeatwhilecode","oo" },
 	{ Lingo::c_repeatwithcode,"c_repeatwithcode","ooooos" },
 	{ Lingo::c_exitRepeat,	"c_exitRepeat",	"" },
@@ -890,6 +892,15 @@ void Lingo::c_le() {
 		d1.u.i = (d1.u.i <= d2.u.i) ? 1 : 0;
 	}
 	g_lingo->push(d1);
+}
+
+void Lingo::c_jump() {
+	warning("STUB: c_jump()");
+}
+
+void Lingo::c_jumpif() {
+	g_lingo->pop();
+	warning("STUB: c_jumpif()");
 }
 
 void Lingo::c_repeatwhilecode(void) {

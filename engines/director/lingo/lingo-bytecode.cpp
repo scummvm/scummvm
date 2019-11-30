@@ -58,12 +58,17 @@ static LingoV4Bytecode lingoV4[] = {
 	{ 0x43, Lingo::c_arraypush, "b" },
 	{ 0x44, Lingo::c_constpush, "bv" },
 	{ 0x45, Lingo::c_symbolpush, "b" },
+	{ 0x53, Lingo::c_jump, "bj" },
+	{ 0x54, Lingo::c_jump, "bnj" },
+	{ 0x55, Lingo::c_jumpif, "bj" },
 	{ 0x5c, Lingo::c_v4theentitypush, "b" },
 	{ 0x5d, Lingo::c_v4theentityassign, "b" },
 	{ 0x81, Lingo::c_intpush, "w" },
 	{ 0x82, Lingo::c_argspush, "w" },
 	{ 0x83, Lingo::c_arraypush, "w" },
 	{ 0x84, Lingo::c_constpush, "wv" },
+	{ 0x93, Lingo::c_jump, "wj" },
+	{ 0x95, Lingo::c_jumpif, "wj" },
 	{ 0, 0, 0 }
 };
 
@@ -476,6 +481,7 @@ void Lingo::addCodeV4(Common::SeekableSubReadStreamEndian &stream, ScriptType ty
 
 		uint16 pointer = startOffset - codeStoreOffset;
 		Common::Array<uint32> offsetList;
+		Common::Array<uint32> jumpList;
 		while (pointer < startOffset + length - codeStoreOffset) {
 			uint8 opcode = codeStore[pointer];
 
@@ -502,9 +508,15 @@ void Lingo::addCodeV4(Common::SeekableSubReadStreamEndian &stream, ScriptType ty
 							break;
 						case 'v':
 							if (arg % 6) {
-								warning("Opcode 0x%02x arg %d not multiple of 6!", opcode, arg);
+								warning("Opcode 0x%02x arg %d not a multiple of 6!", opcode, arg);
 							}
 							arg /= 6;
+							break;
+						case 'n':
+							arg *= -1;
+							break;
+						case 'j':
+							jumpList.push_back(offsetList.size());
 							break;
 						default:
 							break;
@@ -540,7 +552,6 @@ void Lingo::addCodeV4(Common::SeekableSubReadStreamEndian &stream, ScriptType ty
 				}
 			}
 		}
-
 	}
 	free(codeStore);
 }

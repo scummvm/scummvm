@@ -309,6 +309,8 @@ public:
 	static void c_lt();
 	static void c_ge();
 	static void c_le();
+	static void c_jump();
+	static void c_jumpif();
 	static void c_call();
 
 	void call(Common::String name, int nargs);
