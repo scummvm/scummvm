@@ -196,7 +196,7 @@ void Lingo::c_printtop(void) {
 		warning("%s", d.u.s->c_str());
 		break;
 	case POINT:
-		warning("point(%d, %d)", (int)((*d.u.arr)[0]), (int)((*d.u.arr)[1]));
+		warning("point(%d, %d)", (int)((*d.u.farr)[0]), (int)((*d.u.farr)[1]));
 		break;
 	case SYMBOL:
 		warning("%s", d.type2str(true));
@@ -231,15 +231,13 @@ void Lingo::c_floatpush() {
 }
 
 void Lingo::c_stringpush() {
-	char *s = (char *)&(*g_lingo->_currentScript)[g_lingo->_pc];
-	g_lingo->_pc += g_lingo->calcStringAlignment(s);
+	char *s = g_lingo->readString();
 
 	g_lingo->push(Datum(new Common::String(s)));
 }
 
 void Lingo::c_symbolpush() {
-	char *s = (char *)&(*g_lingo->_currentScript)[g_lingo->_pc];
-	g_lingo->_pc += g_lingo->calcStringAlignment(s);
+	char *s = g_lingo->readString();
 
 	warning("STUB: c_symbolpush()");
 
@@ -283,10 +281,8 @@ void Lingo::c_arraypush() {
 }
 
 void Lingo::c_varpush() {
-	Common::String name((char *)&(*g_lingo->_currentScript)[g_lingo->_pc]);
+	Common::String name(g_lingo->readString());
 	Datum d;
-
-	g_lingo->_pc += g_lingo->calcStringAlignment(name.c_str());
 
 	// In immediate mode we will push variables as strings
 	// This is used for playAccel
@@ -360,7 +356,7 @@ void Lingo::c_assign() {
 		delete d1.u.sym->u.s;
 
 	if (d1.u.sym->type == POINT || d1.u.sym->type == RECT || d1.u.sym->type == ARRAY)
-		delete d1.u.sym->u.arr;
+		delete d1.u.sym->u.farr;
 
 	if (d2.type == INT) {
 		d1.u.sym->u.i = d2.u.i;
@@ -370,8 +366,8 @@ void Lingo::c_assign() {
 		d1.u.sym->u.s = new Common::String(*d2.u.s);
 		delete d2.u.s;
 	} else if (d2.type == POINT) {
-		d1.u.sym->u.arr = new FloatArray(*d2.u.arr);
-		delete d2.u.arr;
+		d1.u.sym->u.farr = new FloatArray(*d2.u.farr);
+		delete d2.u.farr;
 	} else if (d2.type == SYMBOL) {
 		d1.u.sym->u.i = d2.u.i;
 	} else if (d2.type == OBJECT) {
@@ -426,7 +422,7 @@ void Lingo::c_eval() {
 	else if (d.u.sym->type == STRING)
 		d.u.s = new Common::String(*d.u.sym->u.s);
 	else if (d.u.sym->type == POINT)
-		d.u.arr = d.u.sym->u.arr;
+		d.u.farr = d.u.sym->u.farr;
 	else if (d.u.sym->type == SYMBOL)
 		d.u.i = d.u.sym->u.i;
 	else if (d.u.sym->type == VOID)
@@ -889,7 +885,7 @@ void Lingo::c_jumpif() {
 	uint jump = g_lingo->readInt();
 	Datum test = g_lingo->pop();
 	test.toInt();
-	if (test.u.i) {
+	if (test.u.i == 0) {
 		g_lingo->_pc = jump;
 	}
 }
@@ -1006,10 +1002,10 @@ void Lingo::c_ifcode() {
 void Lingo::c_whencode() {
 	Datum d;
 	uint start = g_lingo->_pc;
-	uint end = g_lingo->getInt(start) + start - 1;
-	Common::String eventname((char *)&(*g_lingo->_currentScript)[start + 1]);
+	uint end = g_lingo->readInt() + start - 1;
+	Common::String eventname(g_lingo->readString())
 
-	start += g_lingo->calcStringAlignment(eventname.c_str()) + 1;
+	start = g_lingo->_pc;
 
 	debugC(1, kDebugLingoExec, "c_whencode([%5d][%5d], %s)", start, end, eventname.c_str());
 
@@ -1091,8 +1087,7 @@ void Lingo::c_playdone() {
 }
 
 void Lingo::c_call() {
-	Common::String name((char *)&(*g_lingo->_currentScript)[g_lingo->_pc]);
-	g_lingo->_pc += g_lingo->calcStringAlignment(name.c_str());
+	Common::String name(g_lingo->readString());
 
 	int nargs = g_lingo->readInt();
 
@@ -1223,7 +1218,7 @@ void Lingo::c_procret() {
 }
 
 void Lingo::c_global() {
-	Common::String name((char *)&(*g_lingo->_currentScript)[g_lingo->_pc]);
+	Common::String name(g_lingo->readString());
 
 	Symbol *s = g_lingo->lookupVar(name.c_str(), false);
 	if (s && !s->global) {
@@ -1232,24 +1227,18 @@ void Lingo::c_global() {
 
 	s = g_lingo->lookupVar(name.c_str(), true, true);
 	s->global = true;
-
-	g_lingo->_pc += g_lingo->calcStringAlignment(name.c_str());
 }
 
 void Lingo::c_property() {
-	Common::String name((char *)&(*g_lingo->_currentScript)[g_lingo->_pc]);
-
-	g_lingo->_pc += g_lingo->calcStringAlignment(name.c_str());
+	Common::String name(g_lingo->readString());
 
 	warning("STUB: c_property()");
 }
 
 void Lingo::c_instance() {
-	Common::String name((char *)&(*g_lingo->_currentScript)[g_lingo->_pc]);
+	Common::String name(g_lingo->readString());
 
 	warning("STUB: c_instance(%s)", name.c_str());
-
-	g_lingo->_pc += g_lingo->calcStringAlignment(name.c_str());
 }
 
 void Lingo::c_open() {

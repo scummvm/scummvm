@@ -100,7 +100,7 @@ struct Symbol {	/* symbol table entry */
 		void (*func)();		/* OPCODE */
 		void (*bltin)(int);	/* BUILTIN */
 		Common::String	*s;	/* STRING */
-		FloatArray *arr;	/* ARRAY, POINT, RECT */
+		FloatArray *farr;	/* ARRAY, POINT, RECT */
 	} u;
 	int nargs;		/* number of arguments */
 	int maxArgs;	/* maximal number of arguments, for builtins */
@@ -119,7 +119,7 @@ struct Datum {	/* interpreter stack type */
 		double f;
 		Common::String *s;
 		Symbol	*sym;
-		FloatArray *arr;	/* ARRAY, POINT, RECT */
+		FloatArray *farr;	/* ARRAY, POINT, RECT */
 	} u;
 
 	Datum() { u.sym = NULL; type = VOID; }
@@ -244,6 +244,8 @@ public:
 	int getInt(uint pc) { return (int)READ_UINT32(&((*_currentScript)[pc])); }
 	double readFloat() { double d = getFloat(_pc); _pc += calcCodeAlignment(sizeof(double)); return d; }
 	double getFloat(uint pc) { return *(double *)(&((*_currentScript)[pc])); }
+	char *readString() { char *s = getString(_pc); _pc += calcStringAlignment(s); return s; }
+	char *getString(uint pc) { return (char *)(&((*_currentScript)[pc])); }
 
 	void pushVoid();
 

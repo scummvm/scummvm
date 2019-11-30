@@ -1316,10 +1316,10 @@ void Lingo::b_point(int nargs) {
 	x.toFloat();
 	y.toFloat();
 
-	d.u.arr = new FloatArray;
+	d.u.farr = new FloatArray;
 
-	d.u.arr->push_back(x.u.f);
-	d.u.arr->push_back(y.u.f);
+	d.u.farr->push_back(x.u.f);
+	d.u.farr->push_back(y.u.f);
 	d.type = POINT;
 
 	g_lingo->push(d);
