@@ -31,7 +31,7 @@ DECLARE_SINGLETON(GUI::EventRecorder);
 
 #include "common/debug-channels.h"
 #include "backends/timer/sdl/sdl-timer.h"
-#include "backends/mixer/sdl/sdl-mixer.h"
+#include "backends/mixer/mixer.h"
 #include "common/config-manager.h"
 #include "common/md5.h"
 #include "gui/gui-manager.h"
@@ -349,7 +349,7 @@ bool EventRecorder::checkGameHash(const ADGameDescription *gameDesc) {
 	return true;
 }
 
-void EventRecorder::registerMixerManager(SdlMixerManager *mixerManager) {
+void EventRecorder::registerMixerManager(MixerManager *mixerManager) {
 	_realMixerManager = mixerManager;
 }
 
@@ -362,7 +362,7 @@ void EventRecorder::switchMixer() {
 	}
 }
 
-SdlMixerManager *EventRecorder::getMixerManager() {
+MixerManager *EventRecorder::getMixerManager() {
 	if (_recordMode == kPassthrough) {
 		return _realMixerManager;
 	} else {
