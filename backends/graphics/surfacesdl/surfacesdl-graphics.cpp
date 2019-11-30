@@ -716,6 +716,8 @@ ScalerProc *SurfaceSdlGraphicsManager::getGraphicsScalerProc(int mode) const {
 		newScalerProc = DotMatrix;
 		break;
 #endif // USE_SCALERS
+	default:
+		break;
 	}
 
 	return newScalerProc;
