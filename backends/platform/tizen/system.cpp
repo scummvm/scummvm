@@ -287,7 +287,7 @@ result TizenSystem::initModules() {
 		return E_OUT_OF_MEMORY;
 	}
 
-	_mixer = _audioThread->Construct(this);
+	_mixer = _audioThread->Construct();
 	if (!_mixer) {
 		return E_OUT_OF_MEMORY;
 	}
