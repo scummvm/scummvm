@@ -2552,11 +2552,6 @@ case $_host_os in
 		append_var CXXFLAGS "-fomit-frame-pointer"
 		append_var CXXFLAGS "-I$DEVKITPRO/libctru/include"
 		append_var CXXFLAGS "-I$DEVKITPRO/portlibs/3ds/include"
-		if test "$_dynamic_modules" = no ; then
-			append_var LDFLAGS "-Wl,--gc-sections"
-		else
-			append_var LDFLAGS "-Wl,--no-gc-sections"
-		fi
 		append_var LDFLAGS "-L$DEVKITPRO/libctru/lib"
 		append_var LDFLAGS "-L$DEVKITPRO/portlibs/3ds/lib"
 		append_var LIBS "-lcitro3d -lctru"
@@ -5686,6 +5681,13 @@ case $_backend in
 		fi
 		if test "$_tremor" = yes -o "$_flac" = yes; then
 			append_var LIBS "-logg"
+		fi
+
+		# Moved -Wl,--gc-sections here to avoid it interfering with the library checks
+		if test "$_dynamic_modules" = no ; then
+			append_var LDFLAGS "-Wl,--gc-sections"
+		else
+			append_var LDFLAGS "-Wl,--no-gc-sections"
 		fi
 		;;
 	android)
