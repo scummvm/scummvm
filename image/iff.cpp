@@ -82,6 +82,10 @@ bool IFFDecoder::loadStream(Common::SeekableReadStream &stream) {
 		case ID_PBM:
 			_type = TYPE_PBM;
 			break;
+		case TYPE_UNKNOWN:
+		default:
+			_type = TYPE_UNKNOWN;
+			break;
 	}
 
 	if (type == TYPE_UNKNOWN) {

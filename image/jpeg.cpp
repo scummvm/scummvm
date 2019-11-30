@@ -268,6 +268,8 @@ bool JPEGDecoder::loadStream(Common::SeekableReadStream &stream) {
 	case kColorSpaceYUV:
 		cinfo.out_color_space = JCS_YCbCr;
 		break;
+	default:
+		break;
 	}
 
 	// Actually start decompressing the image
@@ -289,6 +291,8 @@ bool JPEGDecoder::loadStream(Common::SeekableReadStream &stream) {
 		// We use YUV with 3 bytes per pixel otherwise.
 		// This is pretty ugly since our PixelFormat cannot express YUV...
 		_surface.create(cinfo.output_width, cinfo.output_height, Graphics::PixelFormat(3, 0, 0, 0, 0, 0, 0, 0, 0));
+		break;
+	default:
 		break;
 	}
 

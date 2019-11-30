@@ -563,6 +563,8 @@ static void iviMc ## size ##x## size ## suffix(int16 *buf, \
 			for (int j = 0; j < size; j++) \
 				OP(buf[j], (refBuf[j] + refBuf[j+1] + wptr[j] + wptr[j+1]) >> 2); \
 		break; \
+	default: \
+		break; \
 	} \
 } \
 \
