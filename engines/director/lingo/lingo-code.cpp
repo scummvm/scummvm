@@ -881,12 +881,17 @@ void Lingo::c_le() {
 }
 
 void Lingo::c_jump() {
-	warning("STUB: c_jump()");
+	uint jump = g_lingo->readInt();
+	g_lingo->_pc = jump;
 }
 
 void Lingo::c_jumpif() {
-	g_lingo->pop();
-	warning("STUB: c_jumpif()");
+	uint jump = g_lingo->readInt();
+	Datum test = g_lingo->pop();
+	test.toInt();
+	if (test.u.i) {
+		g_lingo->_pc = jump;
+	}
 }
 
 void Lingo::c_repeatwhilecode(void) {

@@ -58,17 +58,18 @@ static LingoV4Bytecode lingoV4[] = {
 	{ 0x43, Lingo::c_arraypush, "b" },
 	{ 0x44, Lingo::c_constpush, "bv" },
 	{ 0x45, Lingo::c_symbolpush, "b" },
-	{ 0x53, Lingo::c_jump, "bj" },
-	{ 0x54, Lingo::c_jump, "bnj" },
-	{ 0x55, Lingo::c_jumpif, "bj" },
+	{ 0x53, Lingo::c_jump, "jb" },
+	{ 0x54, Lingo::c_jump, "jbn" },
+	{ 0x55, Lingo::c_jumpif, "jb" },
 	{ 0x5c, Lingo::c_v4theentitypush, "b" },
 	{ 0x5d, Lingo::c_v4theentityassign, "b" },
 	{ 0x81, Lingo::c_intpush, "w" },
 	{ 0x82, Lingo::c_argspush, "w" },
 	{ 0x83, Lingo::c_arraypush, "w" },
 	{ 0x84, Lingo::c_constpush, "wv" },
-	{ 0x93, Lingo::c_jump, "wj" },
-	{ 0x95, Lingo::c_jumpif, "wj" },
+	{ 0x93, Lingo::c_jump, "jw" },
+	{ 0x94, Lingo::c_jump, "jwn" },
+	{ 0x95, Lingo::c_jumpif, "jw" },
 	{ 0, 0, 0 }
 };
 
@@ -501,7 +502,7 @@ void Lingo::addCodeV4(Common::SeekableSubReadStreamEndian &stream, ScriptType ty
 						case 'w':
 							offsetList.push_back(_currentScript->size());
 							offsetList.push_back(_currentScript->size());
-							arg = (int16)READ_UINT16(&codeStore[pointer]);
+							arg = (int16)READ_BE_UINT16(&codeStore[pointer]);
 							pointer += 2;
 							break;
 						case 'v':
@@ -548,6 +549,22 @@ void Lingo::addCodeV4(Common::SeekableSubReadStreamEndian &stream, ScriptType ty
 					g_lingo->codeInt((uint)codeStore[pointer+1]);
 					pointer += 2;
 				}
+			}
+		}
+
+		// Rewrite every offset flagged as a jump based on the new code alignment.
+		// This converts the relative offset from the bytecode to an absolute one.
+		for (uint j = 0; j < jumpList.size(); j++) {
+			int originalJumpAddressLoc = jumpList[j];
+			int originalJumpInstructionLoc = originalJumpAddressLoc-1;
+			int jumpAddressPc = offsetList[originalJumpAddressLoc];
+			int jump = getInt(jumpAddressPc);
+			int oldTarget = originalJumpInstructionLoc + jump;
+			if ((oldTarget >= 0) && (oldTarget < (int)offsetList.size())) {
+				int newJump = offsetList[oldTarget];
+				WRITE_UINT32(&((*_currentScript)[jumpAddressPc]), newJump);
+			} else {
+				warning("Jump of %d from position %d is outside the function!", jump, originalJumpAddressLoc);
 			}
 		}
 	}
