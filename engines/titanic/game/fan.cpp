@@ -57,6 +57,8 @@ bool CFan::EnterViewMsg(CEnterViewMsg *msg) {
 	case 2:
 		playMovie(63, 65, MOVIE_REPEAT);
 		break;
+	default:
+		break;
 	}
 
 	return true;

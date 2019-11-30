@@ -261,6 +261,9 @@ void CStarControl::doAction(StarControlAction action) {
 	case STAR_19:
 		_view.starDestinationSet();
 		break;
+
+	default:
+		break;
 	}
 }
 

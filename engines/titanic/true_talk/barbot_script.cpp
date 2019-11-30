@@ -851,6 +851,8 @@ ScriptChangedResult BarbotScript::scriptChanged(const TTroomScript *roomScript, 
 		addResponse(getDialogueId(250579));
 		break;
 
+	default:
+		break;
 	}
 
 	if (id >= 250000 && id <= 251900) {

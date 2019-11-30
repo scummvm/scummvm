@@ -218,6 +218,9 @@ bool CDoorbot::TrueTalkTriggerActionMsg(CTrueTalkTriggerActionMsg *msg) {
 		dismissMsg.execute(this);
 		break;
 	}
+
+	default:
+		break;
 	}
 
 	return true;

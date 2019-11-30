@@ -250,6 +250,9 @@ bool CChevCode::CheckChevCode(CCheckChevCode *msg) {
 				else
 					classNum = 5;
 				break;
+
+			default:
+				break;
 			}
 		}
 	}

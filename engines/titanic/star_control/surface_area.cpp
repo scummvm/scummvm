@@ -116,6 +116,9 @@ void CSurfaceArea::pixelToRGB(uint pixel, uint *rgb) {
 	case 4:
 		*rgb = pixel;
 		break;
+
+	default:
+		break;
 	}
 }
 

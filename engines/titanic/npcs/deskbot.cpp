@@ -239,10 +239,15 @@ bool CDeskbot::TrueTalkTriggerActionMsg(CTrueTalkTriggerActionMsg *msg) {
 		break;
 
 	case 26:
-		_npcFlags |= NPCFLAG_MOVE_FINISH;
-		CTurnOff turnOff;
-		turnOff.execute(this);
-		lockMouse();
+		{
+			_npcFlags |= NPCFLAG_MOVE_FINISH;
+			CTurnOff turnOff;
+			turnOff.execute(this);
+			lockMouse();
+		}
+		break;
+
+	default:
 		break;
 	}
 

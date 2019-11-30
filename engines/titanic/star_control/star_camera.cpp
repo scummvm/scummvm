@@ -392,6 +392,7 @@ void CStarCamera::setViewportAngle(const FPoint &angles) {
 	// All three stars are locked on in this case so the camera does not move
 	// in response to the users mouse movements
 	case THREE_LOCKED:
+	default:
 		break;
 	}
 }
