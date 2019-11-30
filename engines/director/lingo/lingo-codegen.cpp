@@ -55,17 +55,18 @@ namespace Director {
 void Lingo::execute(uint pc) {
 	for (_pc = pc; !_returning && (*_currentScript)[_pc] != STOP;) {
 		Common::String instr = decodeInstruction(_currentScript, _pc);
+		uint current = _pc;
 
 		if (debugChannelSet(5, kDebugLingoExec))
-			printStack("Stack before: ");
+			printStack("Stack before: ", current);
 
-		debugC(1, kDebugLingoExec, "[%3d]: %s", _pc, instr.c_str());
+		debugC(1, kDebugLingoExec, "[%3d]: %s", current, instr.c_str());
 
 		_pc++;
 		(*((*_currentScript)[_pc - 1]))();
 
 		if (debugChannelSet(5, kDebugLingoExec))
-			printStack("Stack after: ");
+			printStack("Stack after: ", current);
 
 		if (_pc >= (*_currentScript).size()) {
 			warning("Lingo::execute(): Bad PC (%d)", _pc);
@@ -74,7 +75,7 @@ void Lingo::execute(uint pc) {
 	}
 }
 
-void Lingo::printStack(const char *s) {
+void Lingo::printStack(const char *s, uint pc) {
 	Common::String stack(s);
 
 	for (uint i = 0; i < _stack.size(); i++) {
@@ -82,7 +83,7 @@ void Lingo::printStack(const char *s) {
 		d.toString();
 		stack += Common::String::format("<%s> ", d.u.s->c_str());
 	}
-	debugC(5, kDebugLingoExec, "%s", stack.c_str());
+	debugC(5, kDebugLingoExec, "[%3d]: %s", pc, stack.c_str());
 }
 
 Common::String Lingo::decodeInstruction(ScriptData *sd, uint pc, uint *newPc) {

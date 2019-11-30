@@ -1003,7 +1003,7 @@ void Lingo::c_whencode() {
 	Datum d;
 	uint start = g_lingo->_pc;
 	uint end = g_lingo->readInt() + start - 1;
-	Common::String eventname(g_lingo->readString())
+	Common::String eventname(g_lingo->readString());
 
 	start = g_lingo->_pc;
 
