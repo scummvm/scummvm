@@ -260,7 +260,7 @@ Common::String EventRecorder::generateRecordFileName(const Common::String &targe
 
 
 void EventRecorder::init(Common::String recordFileName, RecordMode mode) {
-	_fakeMixerManager = new NullSdlMixerManager();
+	_fakeMixerManager = new NullMixerManager();
 	_fakeMixerManager->init();
 	_fakeMixerManager->suspendAudio();
 	_fakeTimer = 0;

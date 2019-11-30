@@ -20,11 +20,10 @@
  *
  */
 
-#ifndef BACKENDS_MIXER_NULLSDL_H
-#define BACKENDS_MIXER_NULLSDL_H
+#ifndef BACKENDS_MIXER_NULL_H
+#define BACKENDS_MIXER_NULL_H
 
-#include "backends/mixer/sdl/sdl-mixer.h"
-#include "common/str.h"
+#include "backends/mixer/mixer.h"
 
 /** Audio mixer which in fact does not output audio.
  *
@@ -35,21 +34,16 @@
  *  users could work without modifications.
  */
 
-class NullSdlMixerManager :	public SdlMixerManager {
+class NullMixerManager : public MixerManager {
 public:
-	NullSdlMixerManager();
-	virtual ~NullSdlMixerManager();
+	NullMixerManager();
+	virtual ~NullMixerManager();
 
 	virtual void init();
 	void update();
 
 	virtual void suspendAudio();
 	virtual int resumeAudio();
-
-protected:
-
-	virtual void startAudio();
-	virtual void callbackHandler(byte *samples, int len);
 
 private:
 	uint32 _outputRate;
