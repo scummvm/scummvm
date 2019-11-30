@@ -488,6 +488,8 @@ ArtVpath *art_bez_path_to_vec(const ArtBpath *bez, double flatness) {
 			x = bez[bez_index].x3;
 			y = bez[bez_index].y3;
 			break;
+		default:
+			break;
 		}
 	} while (bez[bez_index++].code != ART_END);
 	return vec;
@@ -767,6 +769,8 @@ static void render_cap(ArtVpath **p_result, int *pn_result, int *pn_result_max,
 		                    ART_LINETO,
 		                    vpath[i1].x + dlx0 - dly0,
 		                    vpath[i1].y + dly0 + dlx0);
+		break;
+	default:
 		break;
 	}
 }
