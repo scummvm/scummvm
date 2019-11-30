@@ -20,10 +20,10 @@
  *
  */
 
-#include "backends/mixer/nullmixer/nullsdl-mixer.h"
+#include "backends/mixer/null/null-mixer.h"
 #include "common/savefile.h"
 
-NullSdlMixerManager::NullSdlMixerManager() : SdlMixerManager() {
+NullMixerManager::NullMixerManager() : MixerManager() {
 	_outputRate = 22050;
 	_callsCounter = 0;
 	_callbackPeriod = 10;
@@ -33,21 +33,21 @@ NullSdlMixerManager::NullSdlMixerManager() : SdlMixerManager() {
 	_samplesBuf = new uint8[_samples * 4];
 }
 
-NullSdlMixerManager::~NullSdlMixerManager() {
+NullMixerManager::~NullMixerManager() {
 	delete _samplesBuf;
 }
 
-void NullSdlMixerManager::init() {
+void NullMixerManager::init() {
 	_mixer = new Audio::MixerImpl(_outputRate);
 	assert(_mixer);
 	_mixer->setReady(true);
 }
 
-void NullSdlMixerManager::suspendAudio() {
+void NullMixerManager::suspendAudio() {
 	_audioSuspended = true;
 }
 
-int NullSdlMixerManager::resumeAudio() {
+int NullMixerManager::resumeAudio() {
 	if (!_audioSuspended) {
 		return -2;
 	}
@@ -55,21 +55,13 @@ int NullSdlMixerManager::resumeAudio() {
 	return 0;
 }
 
-
-void NullSdlMixerManager::startAudio() {
-}
-
-void NullSdlMixerManager::callbackHandler(byte *samples, int len) {
-	assert(_mixer);
-	_mixer->mixCallback(samples, len);
-}
-
-void NullSdlMixerManager::update() {
+void NullMixerManager::update() {
 	if (_audioSuspended) {
 		return;
 	}
 	_callsCounter++;
 	if ((_callsCounter % _callbackPeriod) == 0) {
-		callbackHandler(_samplesBuf, _samples);
+		assert(_mixer);
+		_mixer->mixCallback(_samplesBuf, _samples);
 	}
 }

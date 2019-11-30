@@ -43,7 +43,7 @@
 #include "common/config-manager.h"
 #include "common/recorderfile.h"
 #include "backends/saves/recorder/recorder-saves.h"
-#include "backends/mixer/nullmixer/nullsdl-mixer.h"
+#include "backends/mixer/null/null-mixer.h"
 #include "backends/saves/default/default-saves.h"
 
 
@@ -190,7 +190,7 @@ private:
 	MixerManager *_realMixerManager;
 	DefaultTimerManager *_timerManager;
 	RecorderSaveFileManager _fakeSaveManager;
-	NullSdlMixerManager *_fakeMixerManager;
+	NullMixerManager *_fakeMixerManager;
 	GUI::OnScreenDialog *_controlPanel;
 	Common::RecorderEvent _nextEvent;
 
