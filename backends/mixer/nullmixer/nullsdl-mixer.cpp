@@ -38,7 +38,7 @@ NullSdlMixerManager::~NullSdlMixerManager() {
 }
 
 void NullSdlMixerManager::init() {
-	_mixer = new Audio::MixerImpl(g_system, _outputRate);
+	_mixer = new Audio::MixerImpl(_outputRate);
 	assert(_mixer);
 	_mixer->setReady(true);
 }

@@ -71,7 +71,7 @@ static void * sfx_thread_func(void *arg) {
 }
 
 void OSystem_Wii::initSfx() {
-	_mixer = new Audio::MixerImpl(this, 48000);
+	_mixer = new Audio::MixerImpl(48000);
 
 	sfx_thread_running = false;
 	sfx_thread_quit = false;
