@@ -471,6 +471,7 @@ void RMText::writeText(Common::String text, RMFontColor *font, int *time) {
 
 		switch (_aHorType) {
 		case HLEFT:
+		default:
 			x = 0;
 			break;
 

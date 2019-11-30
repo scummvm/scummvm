@@ -296,6 +296,7 @@ void TonyEngine::playMusic(int nChannel, const Common::String &fname, int nFX, b
 		break;
 
 	case 22:
+	default:
 		break;
 	}
 
@@ -386,6 +387,9 @@ void TonyEngine::playSFX(int nChannel, int nFX) {
 	case 1:
 		_sfx[nChannel]->setLoop(true);
 		break;
+
+	default:
+		break;
 	}
 
 	_sfx[nChannel]->play();
@@ -413,6 +417,9 @@ void TonyEngine::playUtilSFX(int nChannel, int nFX) {
 
 	case 1:
 		_utilSfx[nChannel]->setLoop(true);
+		break;
+
+	default:
 		break;
 	}
 

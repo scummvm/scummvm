@@ -1086,6 +1086,8 @@ void tonyMacbeth(CORO_PARAM, uint32 nPos, uint32, uint32, uint32) {
 	case 9:
 		GLOBALS._nTonyNextTalkType = GLOBALS._tony->TALK_MACBETH9;
 		break;
+	default:
+		break;
 	}
 }
 

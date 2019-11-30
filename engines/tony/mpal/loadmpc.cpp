@@ -283,6 +283,9 @@ static const byte *parseDialog(const byte *lpBuf, LpMpalDialog lpmdDialog) {
 
 			case 2:
 				return NULL;
+
+			default:
+				break;
 			}
 
 			// Attrib
