@@ -212,7 +212,7 @@ void Lingo::cleanLocalVars() {
 	g_lingo->_localvars = 0;
 }
 
-Symbol *Lingo::define(Common::String &name, int start, int nargs, Common::String *prefix, int end) {
+Symbol *Lingo::define(Common::String &name, int start, int nargs, Common::String *prefix, int end, bool removeCode) {
 	if (prefix)
 		name = *prefix + "-" + name;
 
@@ -243,6 +243,12 @@ Symbol *Lingo::define(Common::String &name, int start, int nargs, Common::String
 	sym->u.defn = new ScriptData(&(*_currentScript)[start], end - start + 1);
 	sym->nargs = nargs;
 	sym->maxArgs = nargs;
+
+	// Now remove all defined code from the _currentScript
+	if (removeCode)
+		for (int i = end - 1; i >= start; i--) {
+			_currentScript->remove_at(i);
+		}
 
 	return sym;
 }
