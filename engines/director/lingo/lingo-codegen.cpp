@@ -216,7 +216,7 @@ Symbol *Lingo::define(Common::String &name, int start, int nargs, Common::String
 	if (prefix)
 		name = *prefix + "-" + name;
 
-	debugC(1, kDebugLingoCompile, "define(\"%s\", %d, %d, %d)", name.c_str(), start, _currentScript->size() - 1, nargs);
+	debugC(1, kDebugLingoCompile, "define(\"%s\"(len: %d), %d, %d, \"%s\", %d)", name.c_str(), _currentScript->size() - 1, start, nargs, (prefix ? prefix->c_str() : ""), end);
 
 	Symbol *sym = getHandler(name);
 	if (sym == NULL) { // Create variable if it was not defined
