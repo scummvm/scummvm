@@ -54,7 +54,7 @@ public:
 		SI_CRUSUNK64 = 0x10000,
 		SI_CRUS_NPC  = 0x20000,
 		SI_CRUSUNK66 = 0x40000,
-		SI_CRUSUNK67 = 0x80000,
+		SI_CRUSUNK67 = 0x80000
 	};
 
 	enum SFamily {

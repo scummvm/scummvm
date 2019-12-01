@@ -23,14 +23,14 @@
 #ifndef ULTIMA8_GUMPS_PAGEDGUMP_H
 #define ULTIMA8_GUMPS_PAGEDGUMP_H
 
-#include "modal_gump.h"
+#include "ultima8/gumps/modal_gump.h"
 #include "ultima8/misc/p_dynamic_cast.h"
 
 namespace Ultima8 {
 
 class PagedGump : public ModalGump {
 public:
-	ENABLE_RUNTIME_CLASSTYPE();
+	ENABLE_RUNTIME_CLASSTYPE()
 
 	PagedGump(int left, int right, int top, int shape);
 	virtual ~PagedGump(void);

@@ -21,12 +21,12 @@
  */
 
 #include "ultima8/misc/pent_include.h"
-#include "button_widget.h"
-#include "text_widget.h"
+#include "ultima8/gumps/widgets/button_widget.h"
+#include "ultima8/gumps/widgets/text_widget.h"
 #include "ultima8/games/game_data.h"
-#include "ShapeFrame.h"
-#include "ShapeArchive.h"
-#include "Shape.h"
+#include "ultima8/graphics/shape_frame.h"
+#include "ultima8/graphics/shape_archive.h"
+#include "ultima8/graphics/shape.h"
 #include "ultima8/kernel/mouse.h"
 #include "ultima8/world/get_object.h"
 
@@ -36,7 +36,7 @@
 namespace Ultima8 {
 
 // p_dynamic_class stuff
-DEFINE_RUNTIME_CLASSTYPE_CODE(ButtonWidget, Gump);
+DEFINE_RUNTIME_CLASSTYPE_CODE(ButtonWidget, Gump)
 
 ButtonWidget::ButtonWidget()
 	: Gump() {

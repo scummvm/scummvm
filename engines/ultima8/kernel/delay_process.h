@@ -37,7 +37,7 @@ public:
 	explicit DelayProcess(int count_ = 0);
 	virtual ~DelayProcess();
 
-	ENABLE_RUNTIME_CLASSTYPE();
+	ENABLE_RUNTIME_CLASSTYPE()
 
 	virtual void run();
 

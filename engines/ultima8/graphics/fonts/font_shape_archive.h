@@ -23,7 +23,7 @@
 #ifndef ULTIMA8_GRAPHICS_FONTS_FONTSHAPEARCHIVE_H
 #define ULTIMA8_GRAPHICS_FONTS_FONTSHAPEARCHIVE_H
 
-#include "ShapeArchive.h"
+#include "ultima8/graphics/shape_archive.h"
 #include "ultima8/misc/p_dynamic_cast.h"
 
 namespace Ultima8 {
@@ -32,7 +32,7 @@ class ShapeFont;
 
 class FontShapeArchive : public ShapeArchive {
 public:
-	ENABLE_RUNTIME_CLASSTYPE();
+	ENABLE_RUNTIME_CLASSTYPE()
 
 	FontShapeArchive(uint16 id_, Pentagram::Palette *pal_ = 0,
 	                 const ConvertShapeFormat *format_ = 0)

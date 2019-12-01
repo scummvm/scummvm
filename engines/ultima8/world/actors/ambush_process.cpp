@@ -22,9 +22,9 @@
 
 #include "ultima8/misc/pent_include.h"
 
-#include "ambush_process.h"
+#include "ultima8/world/actors/ambush_process.h"
 #include "ultima8/world/actors/main_actor.h"
-#include "combat_process.h"
+#include "ultima8/world/actors/combat_process.h"
 #include "ultima8/world/get_object.h"
 
 #include "ultima8/filesys/idata_source.h"
@@ -33,7 +33,7 @@
 namespace Ultima8 {
 
 // p_dynamic_cast stuff
-DEFINE_RUNTIME_CLASSTYPE_CODE(AmbushProcess, Process);
+DEFINE_RUNTIME_CLASSTYPE_CODE(AmbushProcess, Process)
 
 AmbushProcess::AmbushProcess() : Process() {
 

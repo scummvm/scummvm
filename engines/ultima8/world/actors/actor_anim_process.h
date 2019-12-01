@@ -24,7 +24,7 @@
 #define WORLD_ACTORS_ACTORANIMPROCESS_H
 
 #include "ultima8/kernel/process.h"
-#include "ultima8/world/actors/Animation.h"
+#include "ultima8/world/actors/animation.h"
 
 namespace Ultima8 {
 
@@ -41,7 +41,7 @@ public:
 	                 uint32 steps = 0);
 
 	// p_dynamic_cast stuff
-	ENABLE_RUNTIME_CLASSTYPE();
+	ENABLE_RUNTIME_CLASSTYPE()
 
 	virtual void run();
 

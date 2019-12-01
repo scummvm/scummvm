@@ -24,7 +24,7 @@
 
 #include "ultima8/usecode/uc_process.h"
 #include "ultima8/usecode/uc_machine.h"
-#include "Usecode.h"
+#include "ultima8/usecode/usecode.h"
 #include "ultima8/games/game_data.h"
 #include "ultima8/filesys/idata_source.h"
 #include "ultima8/filesys/odata_source.h"
@@ -32,7 +32,7 @@
 namespace Ultima8 {
 
 // p_dynamic_cast stuff
-DEFINE_RUNTIME_CLASSTYPE_CODE(UCProcess, Process);
+DEFINE_RUNTIME_CLASSTYPE_CODE(UCProcess, Process)
 
 UCProcess::UCProcess() : Process() { // !! fixme
 	usecode = GameData::get_instance()->getMainUsecode();

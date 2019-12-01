@@ -22,7 +22,7 @@
 
 #include "ultima8/misc/pent_include.h"
 
-#include "ultima8/filesys/Archive.h"
+#include "ultima8/filesys/archive.h"
 #include "ultima8/filesys/idata_source.h"
 #include "ultima8/filesys/archive_file.h"
 #include "ultima8/filesys/zip_file.h"
@@ -33,7 +33,7 @@
 namespace Ultima8 {
 namespace Pentagram {
 
-DEFINE_RUNTIME_CLASSTYPE_CODE_BASE_CLASS(Archive);
+DEFINE_RUNTIME_CLASSTYPE_CODE_BASE_CLASS(Archive)
 
 Archive::Archive() {
 	count = 0;

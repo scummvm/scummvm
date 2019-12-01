@@ -22,9 +22,9 @@
 
 #include "ultima8/misc/pent_include.h"
 
-#include "loiter_process.h"
+#include "ultima8/world/loiter_process.h"
 #include "ultima8/world/actors/actor.h"
-#include "pathfinder_process.h"
+#include "ultima8/world/actors/pathfinder_process.h"
 #include "ultima8/kernel/kernel.h"
 #include "ultima8/kernel/delay_process.h"
 #include "ultima8/world/get_object.h"
@@ -35,7 +35,7 @@
 namespace Ultima8 {
 
 // p_dynamic_cast stuff
-DEFINE_RUNTIME_CLASSTYPE_CODE(LoiterProcess, Process);
+DEFINE_RUNTIME_CLASSTYPE_CODE(LoiterProcess, Process)
 
 LoiterProcess::LoiterProcess() : Process() {
 

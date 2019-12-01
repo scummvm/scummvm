@@ -23,7 +23,7 @@
 #ifndef ULTIMA8_FILESYS_RAWARCHIVE_H
 #define ULTIMA8_FILESYS_RAWARCHIVE_H
 
-#include "ultima8/filesys/Archive.h"
+#include "ultima8/filesys/archive.h"
 #include "ultima8/misc/p_dynamic_cast.h"
 
 namespace Ultima8 {
@@ -33,7 +33,7 @@ class IDataSource;
 
 class RawArchive : public Pentagram::Archive {
 public:
-	ENABLE_RUNTIME_CLASSTYPE();
+	ENABLE_RUNTIME_CLASSTYPE()
 
 	RawArchive() : Archive() { }
 	explicit RawArchive(ArchiveFile *af) : Archive(af) { }

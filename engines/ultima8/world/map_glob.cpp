@@ -22,8 +22,10 @@
 
 #include "ultima8/misc/pent_include.h"
 
-#include "MapGlob.h"
+#include "ultima8/world/map_glob.h"
 #include "ultima8/filesys/idata_source.h"
+
+namespace Ultima8 {
 
 MapGlob::MapGlob() {
 
@@ -52,3 +54,5 @@ void MapGlob::read(IDataSource *ds) {
 		contents[i] = item;
 	}
 }
+
+} // End of namespace Ultima8

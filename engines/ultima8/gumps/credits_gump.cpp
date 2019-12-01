@@ -21,18 +21,20 @@
  */
 
 #include "ultima8/misc/pent_include.h"
-#include "CreditsGump.h"
+#include "ultima8/gumps/credits_gump.h"
 
 #include "ultima8/kernel/gui_app.h"
-#include "desktop_gump.h"
+#include "ultima8/gumps/desktop_gump.h"
 #include "ultima8/graphics/render_surface.h"
-#include "RenderedText.h"
+#include "ultima8/graphics/fonts/rendered_text.h"
 #include "ultima8/graphics/fonts/font.h"
 #include "ultima8/graphics/fonts/font_manager.h"
 #include "ultima8/audio/music_process.h"
 #include "ultima8/conf/setting_manager.h"
 
-DEFINE_RUNTIME_CLASSTYPE_CODE(CreditsGump, ModalGump);
+namespace Ultima8 {
+
+DEFINE_RUNTIME_CLASSTYPE_CODE(CreditsGump, ModalGump)
 
 CreditsGump::CreditsGump()
 	: ModalGump() {
@@ -378,3 +380,5 @@ bool CreditsGump::OnKeyDown(int key, int mod) {
 
 	return true;
 }
+
+} // End of namespace Ultima8

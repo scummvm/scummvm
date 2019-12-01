@@ -21,9 +21,9 @@
  */
 
 #include "ultima8/misc/pent_include.h"
+#include "ultima8/gumps/resizable_gump.h"
 
-#include "ResizableGump.h"
-
+namespace Ultima8 {
 
 ResizableGump::ResizableGump(int X, int Y, int Width, int Height) : Gump(X, Y, Width, Height) {
 }
@@ -31,4 +31,4 @@ ResizableGump::ResizableGump(int X, int Y, int Width, int Height) : Gump(X, Y, W
 ResizableGump::~ResizableGump() {
 }
 
-// Colourless Protection
+} // End of namespace Ultima8

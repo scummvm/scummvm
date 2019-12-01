@@ -59,7 +59,7 @@ namespace Pentagram {
 class AudioMixer;
 
 const unsigned int savegame_version = 5;
-};
+}
 
 // Hack alert
 struct HWMouseCursor;
@@ -69,7 +69,7 @@ struct HWMouseCursor;
 
 class GUIApp : public CoreApp {
 public:
-	ENABLE_RUNTIME_CLASSTYPE();
+	ENABLE_RUNTIME_CLASSTYPE()
 
 	GUIApp(int argc, const char *const *argv);
 	virtual ~GUIApp();

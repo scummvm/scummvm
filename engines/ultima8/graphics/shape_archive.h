@@ -23,7 +23,7 @@
 #ifndef ULTIMA8_GRAPHICS_SHAPEARCHIVE_H
 #define ULTIMA8_GRAPHICS_SHAPEARCHIVE_H
 
-#include "ultima8/filesys/Archive.h"
+#include "ultima8/filesys/archive.h"
 #include "ultima8/misc/p_dynamic_cast.h"
 
 namespace Ultima8 {
@@ -36,7 +36,7 @@ struct Palette;
 
 class ShapeArchive : public Pentagram::Archive {
 public:
-	ENABLE_RUNTIME_CLASSTYPE();
+	ENABLE_RUNTIME_CLASSTYPE()
 
 	ShapeArchive(uint16 id_, Pentagram::Palette *pal_ = 0,
 	             const ConvertShapeFormat *format_ = 0)

@@ -22,7 +22,7 @@
 
 #include "ultima8/misc/pent_include.h"
 
-#include "PNGWriter.h"
+#include "ultima8/graphics/png_writer.h"
 #include "ultima8/filesys/odata_source.h"
 #include "ultima8/graphics/texture.h"
 

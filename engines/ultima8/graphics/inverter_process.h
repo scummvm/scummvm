@@ -36,7 +36,7 @@ public:
 	virtual ~InverterProcess();
 
 	// p_dynamic_class stuff
-	ENABLE_RUNTIME_CLASSTYPE();
+	ENABLE_RUNTIME_CLASSTYPE()
 
 	void setTarget(unsigned int target) {
 		targetstate = target;

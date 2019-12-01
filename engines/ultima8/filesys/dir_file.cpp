@@ -28,7 +28,7 @@
 
 namespace Ultima8 {
 
-DEFINE_RUNTIME_CLASSTYPE_CODE(DirFile, NamedArchiveFile);
+DEFINE_RUNTIME_CLASSTYPE_CODE(DirFile, NamedArchiveFile)
 
 DirFile::DirFile(const std::string &path_) {
 	path = path_;

@@ -26,11 +26,11 @@
 #include "ultima8/world/world.h"
 #include "ultima8/world/actors/actor.h"
 #include "ultima8/world/current_map.h"
-#include "target_gump.h"
+#include "ultima8/gumps/target_gump.h"
 #include "ultima8/world/weapon_info.h"
 #include "ultima8/graphics/palette_fader_process.h"
-#include "ultima8/usecode/UCList.h"
-#include "LoopScript.h"
+#include "ultima8/usecode/uc_list.h"
+#include "ultima8/world/loop_script.h"
 #include "ultima8/misc/direction.h"
 #include "ultima8/kernel/kernel.h"
 #include "ultima8/gumps/gump_notify_process.h"
@@ -45,7 +45,7 @@
 namespace Ultima8 {
 
 // p_dynamic_cast stuff
-DEFINE_RUNTIME_CLASSTYPE_CODE(GrantPeaceProcess, Process);
+DEFINE_RUNTIME_CLASSTYPE_CODE(GrantPeaceProcess, Process)
 
 GrantPeaceProcess::GrantPeaceProcess() : Process() {
 

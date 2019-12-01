@@ -23,7 +23,7 @@
 #ifndef ULTIMA8_GUMPS_TARGETGUMP_H
 #define ULTIMA8_GUMPS_TARGETGUMP_H
 
-#include "modal_gump.h"
+#include "ultima8/gumps/modal_gump.h"
 #include "ultima8/usecode/intrinsics.h"
 #include "ultima8/misc/p_dynamic_cast.h"
 
@@ -33,7 +33,7 @@ class UCProcess;
 
 class TargetGump : public ModalGump {
 public:
-	ENABLE_RUNTIME_CLASSTYPE();
+	ENABLE_RUNTIME_CLASSTYPE()
 
 	TargetGump();
 	TargetGump(int x, int y);

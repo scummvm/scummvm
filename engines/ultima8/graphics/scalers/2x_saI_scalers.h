@@ -20,10 +20,10 @@
  *
  */
 
-#ifndef _2XSAISCALER_H
-#define _2XSAISCALER_H
+#ifndef ULTIMA8_GRAPHICS_SCALERS_2XSAISCALER_H
+#define ULTIMA8_GRAPHICS_SCALERS_2XSAISCALER_H
 
-#include "Scaler.h"
+#include "ultima8/graphics/scalers/scaler.h"
 
 namespace Pentagram {
 

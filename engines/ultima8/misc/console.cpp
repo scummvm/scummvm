@@ -411,22 +411,17 @@ int32 Console::Printf(const MsgMask mm, const char *fmt, ...) {
 
 // printf, and output to stdout (va_list)
 int32 Console::vPrintf(const char *fmt, va_list argptr) {
-	char msg[MAXPRINTMSG];
+	Common::String str = Common::String::format(fmt, argptr);
 
 	if (std_output_enabled & CON_STDOUT) {
-		va_list argptr2;
-		va_copy(argptr2, argptr);
-		Common::String str = Common::String::vformat(fmt, argptr2);
-		va_end(argptr2);
-
 		debug("%s", str.c_str());
 	}
 
-	int32 count = vsnprintf(msg, MAXPRINTMSG, fmt, argptr);
-	if (stdout_redir) stdout_redir->write(msg, count);
-	PrintInternal(msg);
+	if (stdout_redir)
+		stdout_redir->write(str.c_str(), str.size());
+	PrintInternal(str.c_str());
 
-	return count;
+	return str.size();
 }
 
 // Print a text string to the console, and output to stdout
@@ -494,21 +489,16 @@ int32 Console::Printf_err(const MsgMask mm, const char *fmt, ...) {
 
 // printf, and output to stderr (va_list)
 int32 Console::vPrintf_err(const char *fmt, va_list argptr) {
-	char msg[MAXPRINTMSG];
+	Common::String str = Common::String::format(fmt, argptr);
 
-	if (std_output_enabled & CON_STDERR) {
-		va_list argptr2;
-		va_copy(argptr2, argptr);
-		Common::String str = Common::String::vformat(fmt, argptr2);
-		va_end(argptr2);
-
+	if (std_output_enabled & CON_STDERR)
 		debug("%s", str.c_str());
-	}
-	int32 count = vsnprintf(msg, MAXPRINTMSG, fmt, argptr);
-	if (stderr_redir) stderr_redir->write(msg, count);
-	PrintInternal(msg);
 
-	return count;
+	if (stderr_redir)
+		stderr_redir->write(str.c_str(), str.size());
+	PrintInternal(str.c_str());
+
+	return str.size();
 }
 
 // Print a text string to the console, and output to stderr

@@ -31,7 +31,7 @@ namespace Ultima8 {
 
 class DirFile : public NamedArchiveFile {
 public:
-	ENABLE_RUNTIME_CLASSTYPE();
+	ENABLE_RUNTIME_CLASSTYPE()
 
 	//! create DirFile from path
 	explicit DirFile(const std::string &path);

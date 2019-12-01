@@ -41,7 +41,7 @@ public:
 	void init();
 
 	// p_dynamic_cast stuff
-	ENABLE_RUNTIME_CLASSTYPE();
+	ENABLE_RUNTIME_CLASSTYPE()
 
 	virtual void run();
 	virtual void terminate();

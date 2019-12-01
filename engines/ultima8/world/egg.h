@@ -22,7 +22,7 @@
 #ifndef ULTIMA8_WORLD_EGG_H
 #define ULTIMA8_WORLD_EGG_H
 
-#include "ultima8/world/Item.h"
+#include "ultima8/world/item.h"
 #include "ultima8/usecode/intrinsics.h"
 
 namespace Ultima8 {
@@ -33,7 +33,7 @@ public:
 	Egg();
 	virtual ~Egg();
 
-	ENABLE_RUNTIME_CLASSTYPE();
+	ENABLE_RUNTIME_CLASSTYPE()
 
 	int getXRange() const {
 		return (npcnum >> 4) & 0xF;

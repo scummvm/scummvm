@@ -24,7 +24,7 @@
 #define WORLD_ACTORS_TARGETEDANIMPROCESS_H
 
 #include "ultima8/world/actors/actor_anim_process.h"
-#include "ultima8/world/actors/Animation.h"
+#include "ultima8/world/actors/animation.h"
 #include "ultima8/misc/p_dynamic_cast.h"
 
 namespace Ultima8 {
@@ -37,7 +37,7 @@ public:
 	                    int32 coords[3]);
 
 	// p_dynamic_cast stuff
-	ENABLE_RUNTIME_CLASSTYPE();
+	ENABLE_RUNTIME_CLASSTYPE()
 
 	bool loadData(IDataSource *ids, uint32 version);
 protected:

@@ -21,19 +21,21 @@
  */
 
 #include "ultima8/misc/pent_include.h"
-#include "minimap_gump.h"
+#include "ultima8/gumps/minimap_gump.h"
 #include "ultima8/kernel/gui_app.h"
 #include "ultima8/world/world.h"
 #include "ultima8/world/current_map.h"
-#include "Shape.h"
-#include "ShapeFrame.h"
+#include "ultima8/graphics/shape.h"
+#include "ultima8/graphics/shape_frame.h"
 #include "ultima8/world/actors/main_actor.h"
 #include "ultima8/graphics/render_surface.h"
 #include "ultima8/graphics/shape_info.h"
 #include "ultima8/graphics/palette.h"
 #include "ultima8/world/get_object.h"
 
-DEFINE_RUNTIME_CLASSTYPE_CODE(MiniMapGump, Gump);
+namespace Ultima8 {
+
+DEFINE_RUNTIME_CLASSTYPE_CODE(MiniMapGump, Gump)
 
 MiniMapGump::MiniMapGump(int x, int y) :
 	Gump(x, y, MAP_NUM_CHUNKS * 2 + 2, MAP_NUM_CHUNKS * 2 + 2, 0,
@@ -211,3 +213,5 @@ bool MiniMapGump::loadData(IDataSource *ids, uint32 version) {
 	                      MiniMapGump::ConCmd_generateWholeMap);
 	return true;
 }
+
+} // End of namespace Ultima8

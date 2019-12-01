@@ -21,28 +21,30 @@
  */
 
 #include "ultima8/misc/pent_include.h"
-#include "paperdoll_gump.h"
+#include "ultima8/gumps/paperdoll_gump.h"
 
-#include "Shape.h"
-#include "ShapeFrame.h"
+#include "ultima8/graphics/shape.h"
+#include "ultima8/graphics/shape_frame.h"
 #include "ultima8/graphics/shape_info.h"
 #include "ultima8/world/actors/actor.h"
 #include "ultima8/graphics/render_surface.h"
 #include "ultima8/games/game_data.h"
-#include "MainShapeArchive.h"
+#include "ultima8/graphics/main_shape_archive.h"
 #include "ultima8/graphics/fonts/font.h"
 #include "ultima8/graphics/fonts/font_manager.h"
-#include "RenderedText.h"
-#include "GumpShapeArchive.h"
-#include "button_widget.h"
-#include "mini_stats_gump.h"
+#include "ultima8/graphics/fonts/rendered_text.h"
+#include "ultima8/graphics/gump_shape_archive.h"
+#include "ultima8/gumps/widgets/button_widget.h"
+#include "ultima8/gumps/mini_stats_gump.h"
 #include "ultima8/kernel/gui_app.h"
 #include "ultima8/world/get_object.h"
 
 #include "ultima8/filesys/idata_source.h"
 #include "ultima8/filesys/odata_source.h"
 
-DEFINE_RUNTIME_CLASSTYPE_CODE(PaperdollGump, ContainerGump);
+namespace Ultima8 {
+
+DEFINE_RUNTIME_CLASSTYPE_CODE(PaperdollGump, ContainerGump)
 
 
 
@@ -423,3 +425,5 @@ bool PaperdollGump::loadData(IDataSource *ids, uint32 version) {
 
 	return true;
 }
+
+} // End of namespace Ultima8

@@ -53,7 +53,7 @@ protected:
 	RenderedText *cached_text;
 	Font::TextAlign textalign;
 public:
-	ENABLE_RUNTIME_CLASSTYPE();
+	ENABLE_RUNTIME_CLASSTYPE()
 
 	TextWidget();
 	TextWidget(int X, int Y, std::string txt, bool gamefont, int fontnum,

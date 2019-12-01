@@ -54,19 +54,19 @@ struct RunTimeClassType {
 // Define this in the source files of base classes
 //
 #define DEFINE_RUNTIME_CLASSTYPE_CODE_BASE_CLASS(Classname)         \
-	const RunTimeClassType Classname::ClassType = {                     \
-	                                                                    #Classname                                                      \
-	                                              };                                                                  \
+	const RunTimeClassType Classname::ClassType = {                 \
+	#Classname                                                      \
+    };                                                                  \
 	\
-	bool Classname::IsOfType(const RunTimeClassType & type)             \
+	bool Classname::IsOfType(const RunTimeClassType &classType)         \
 	{                                                                   \
-		if (type == ClassType) return true;                             \
+		if (classType == ClassType) return true;                        \
 		return false;                                                   \
 	}                                                                   \
 	\
-	bool Classname::IsOfType(const char * type)                         \
+	bool Classname::IsOfType(const char *classType)                     \
 	{                                                                   \
-		if (!std::strcmp(type,ClassType.class_name)) return true;       \
+		if (!std::strcmp(classType,ClassType.class_name)) return true;  \
 		return false;                                                   \
 	}
 
@@ -79,16 +79,16 @@ struct RunTimeClassType {
 	                                                                    #Classname                                                      \
 	                                              };                                                                  \
 	\
-	bool Classname::IsOfType(const RunTimeClassType & type)             \
+	bool Classname::IsOfType(const RunTimeClassType & classType)        \
 	{                                                                   \
-		if (type == ClassType) return true;                             \
-		return ParentClassname::IsOfType(type);                         \
+		if (classType == ClassType) return true;                        \
+		return ParentClassname::IsOfType(classType);                    \
 	}                                                                   \
 	\
-	bool Classname::IsOfType(const char * type)                         \
+	bool Classname::IsOfType(const char *typeName)                      \
 	{                                                                   \
-		if (!std::strcmp(type,ClassType.class_name)) return true;       \
-		return ParentClassname::IsOfType(type);                         \
+		if (!std::strcmp(typeName,ClassType.class_name)) return true;   \
+		return ParentClassname::IsOfType(typeName);                     \
 	}
 
 

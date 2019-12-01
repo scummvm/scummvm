@@ -41,10 +41,10 @@ public:
 	virtual ~Process() { }
 
 	// p_dynamic_cast stuff
-	ENABLE_RUNTIME_CLASSTYPE();
+	ENABLE_RUNTIME_CLASSTYPE()
 
 	// memory pooling stuff
-	ENABLE_CUSTOM_MEMORY_ALLOCATION();
+	ENABLE_CUSTOM_MEMORY_ALLOCATION()
 
 	uint32 getProcessFlags() const {
 		return flags;
@@ -133,12 +133,12 @@ protected:
 public:
 
 	enum processflags {
-		PROC_ACTIVE      = 0x0001, //!< is the process in the run-list?
-		PROC_SUSPENDED   = 0x0002, //!< suspended? (because it's waiting)
+		PROC_ACTIVE      = 0x0001,   //!< is the process in the run-list?
+		PROC_SUSPENDED   = 0x0002,   //!< suspended? (because it's waiting)
 		PROC_TERMINATED  = 0x0004,
 		PROC_TERM_DEFERRED = 0x0008, //!< automatically call terminate next frame
 		PROC_FAILED      = 0x0010,
-		PROC_RUNPAUSED   = 0x0020, //!< run even if game is paused
+		PROC_RUNPAUSED   = 0x0020    //!< run even if game is paused
 	};
 
 };

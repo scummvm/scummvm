@@ -24,6 +24,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "ultima8/misc/pent_include.h"
 #include "ultima8/misc/istring.h"
 
+namespace Ultima8 {
 namespace Pentagram {
 
 int strncasecmp(const char *s1, const char *s2, uint32 length) {
@@ -90,5 +91,6 @@ int ichar_traits::compare(const char_type *s1, const char_type *s2, size_t lengt
 
 #endif
 
-};
+} // End of namespace Pentagram
+} // ENd of namespace Ultima8
 

@@ -23,7 +23,7 @@
 #ifndef ULTIMA8_GUMPS_BOOKGUMP_H
 #define ULTIMA8_GUMPS_BOOKGUMP_H
 
-#include "modal_gump.h"
+#include "ultima8/gumps/modal_gump.h"
 #include "ultima8/usecode/intrinsics.h"
 #include "ultima8/misc/p_dynamic_cast.h"
 
@@ -34,7 +34,7 @@ class BookGump : public ModalGump {
 	ObjId textwidgetL;
 	ObjId textwidgetR;
 public:
-	ENABLE_RUNTIME_CLASSTYPE();
+	ENABLE_RUNTIME_CLASSTYPE()
 
 	BookGump();
 	BookGump(ObjId owner, std::string msg);

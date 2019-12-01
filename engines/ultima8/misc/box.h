@@ -19,6 +19,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #ifndef ULTIMA8_MISC_BOX_H
 #define ULTIMA8_MISC_BOX_H
 
+#include "common/scummsys.h"
+
 namespace Ultima8 {
 namespace Pentagram {
 

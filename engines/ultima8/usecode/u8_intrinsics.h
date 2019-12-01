@@ -25,10 +25,9 @@
 
 #include "ultima8/usecode/intrinsics.h"
 
-
-#include "ultima8/world/Item.h"
+#include "ultima8/world/item.h"
 #include "ultima8/usecode/uc_machine.h"
-#include "ultima8/world/Container.h"
+#include "ultima8/world/container.h"
 #include "ultima8/world/actors/actor.h"
 #include "ultima8/world/actors/main_actor.h"
 #include "ultima8/kernel/kernel.h"

@@ -40,7 +40,7 @@ class RenderedText;
 
 class EditWidget : public Gump {
 public:
-	ENABLE_RUNTIME_CLASSTYPE();
+	ENABLE_RUNTIME_CLASSTYPE()
 
 	EditWidget(int X, int Y, std::string txt, bool gamefont, int fontnum,
 	           int width, int height, unsigned int maxlength = 0,

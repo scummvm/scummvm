@@ -25,7 +25,7 @@
 
 #include "ultima8/kernel/process.h"
 
-#include "pathfinder.h"
+#include "ultima8/world/actors/pathfinder.h"
 
 namespace Ultima8 {
 
@@ -39,7 +39,7 @@ public:
 	virtual ~PathfinderProcess();
 
 	// p_dynamic_cast stuff
-	ENABLE_RUNTIME_CLASSTYPE();
+	ENABLE_RUNTIME_CLASSTYPE()
 
 	virtual void run();
 	virtual void terminate();

@@ -21,16 +21,16 @@
  */
 
 #include "ultima8/misc/pent_include.h"
-#include "JPFont.h"
-#include "ShapeFont.h"
-#include "Shape.h"
-#include "ShapeFrame.h"
-#include "JPRenderedText.h"
+#include "ultima8/graphics/fonts/jp_font.h"
+#include "ultima8/graphics/fonts/shape_font.h"
+#include "ultima8/graphics/shape.h"
+#include "ultima8/graphics/shape_frame.h"
+#include "ultima8/graphics/fonts/jp_rendered_text.h"
 #include "ultima8/misc/encoding.h"
 
 namespace Ultima8 {
 
-DEFINE_RUNTIME_CLASSTYPE_CODE(JPFont, Pentagram::Font);
+DEFINE_RUNTIME_CLASSTYPE_CODE(JPFont, Pentagram::Font)
 
 
 JPFont::JPFont(ShapeFont *jpfont, unsigned int fontnum_)

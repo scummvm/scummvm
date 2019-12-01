@@ -30,7 +30,7 @@ namespace Ultima8 {
 
 class ModalGump : public Gump {
 public:
-	ENABLE_RUNTIME_CLASSTYPE();
+	ENABLE_RUNTIME_CLASSTYPE()
 
 	ModalGump();
 	ModalGump(int x, int y, int width, int height, uint16 owner = 0,

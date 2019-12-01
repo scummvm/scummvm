@@ -33,7 +33,7 @@ class Container;
 
 class ContainerGump : public ItemRelativeGump {
 public:
-	ENABLE_RUNTIME_CLASSTYPE();
+	ENABLE_RUNTIME_CLASSTYPE()
 
 	ContainerGump();
 	ContainerGump(Shape *shape, uint32 framenum, uint16 owner,

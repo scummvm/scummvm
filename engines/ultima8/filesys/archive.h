@@ -36,7 +36,7 @@ namespace Pentagram {
 
 class Archive {
 public:
-	ENABLE_RUNTIME_CLASSTYPE();
+	ENABLE_RUNTIME_CLASSTYPE()
 
 	//! create Archive without any input sources
 	Archive();

@@ -38,7 +38,7 @@ public:
 	virtual ~MusicProcess();
 
 	// p_dynamic_cast stuff
-	ENABLE_RUNTIME_CLASSTYPE();
+	ENABLE_RUNTIME_CLASSTYPE()
 
 	//! Get the current instance of the Music Processes
 	static MusicProcess *get_instance() {

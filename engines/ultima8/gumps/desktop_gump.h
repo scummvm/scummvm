@@ -31,7 +31,7 @@ namespace Ultima8 {
 class DesktopGump : public Gump {
 	static bool faded_modal;
 public:
-	ENABLE_RUNTIME_CLASSTYPE();
+	ENABLE_RUNTIME_CLASSTYPE()
 
 	DesktopGump();
 	DesktopGump(int32 x, int32 y, int32 width, int32 height);

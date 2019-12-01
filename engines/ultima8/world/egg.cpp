@@ -30,7 +30,9 @@
 #include "ultima8/filesys/idata_source.h"
 #include "ultima8/filesys/odata_source.h"
 
-DEFINE_RUNTIME_CLASSTYPE_CODE(Egg, Item);
+namespace Ultima8 {
+
+DEFINE_RUNTIME_CLASSTYPE_CODE(Egg, Item)
 
 Egg::Egg() : hatched(false) {
 
@@ -122,3 +124,4 @@ uint32 Egg::I_setEggId(const uint8 *args, unsigned int /*argsize*/) {
 	return 0;
 }
 
+} // End of namespace Ultima8

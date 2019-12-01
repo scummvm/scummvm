@@ -21,11 +21,11 @@
  */
 
 #include "ultima8/misc/pent_include.h"
-#include "BilinearScaler.h"
-#include "BilinearScalerInternal.h"
-#include "Manips.h"
+#include "ultima8/graphics/scalers/bilinear_scaler.h"
+#include "ultima8/graphics/scalers/bilinear_scaler_internal.h"
+#include "ultima8/graphics/manips.h"
 
-
+namespace Ultima8 {
 namespace Pentagram {
 
 template<class uintX, class Manip, class uintS> class BilinearScalerInternal {
@@ -130,4 +130,6 @@ const char *GC_BilinearScaler::ScalerCopyright() const {
 
 const GC_BilinearScaler GC_bilinear_scaler;
 #endif
-};
+
+} // End of namespace Pentagram
+} // End of namespace Ultima8

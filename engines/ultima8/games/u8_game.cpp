@@ -18,14 +18,14 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include "ultima8/misc/pent_include.h"
 
-#include "U8Game.h"
+#include "ultima8/games/u8_game.h"
 
 #include "ultima8/graphics/palette_manager.h"
 #include "ultima8/filesys/idata_source.h"
 #include "ultima8/filesys/file_system.h"
 #include "ultima8/games/game_data.h"
 #include "ultima8/graphics/xform_blend.h"
-#include "u8_save_file.h"
+#include "ultima8/filesys/u8_save_file.h"
 #include "ultima8/world/world.h"
 #include "ultima8/world/actors/main_actor.h"
 #include "ultima8/world/item_factory.h"
@@ -33,12 +33,14 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "ultima8/kernel/gui_app.h"
 #include "ultima8/conf/setting_manager.h"
 #include "ultima8/gumps/movie_gump.h"
-#include "raw_archive.h"
-#include "CreditsGump.h"
+#include "ultima8/filesys/raw_archive.h"
+#include "ultima8/gumps/credits_gump.h"
 #include "ultima8/kernel/kernel.h"
 #include "ultima8/audio/music_process.h"
-#include "StartU8Process.h"
+#include "ultima8/games/start_u8_process.h"
 #include "ultima8/world/get_object.h"
+
+namespace Ultima8 {
 
 U8Game::U8Game() : Game() {
 	// Set some defaults for gameplay-related settings
@@ -499,3 +501,5 @@ std::string U8Game::getCreditText(IDataSource *ids) {
 
 	return text;
 }
+
+} // End of namespace Ultima8

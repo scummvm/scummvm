@@ -21,21 +21,23 @@
  */
 
 #include "ultima8/misc/pent_include.h"
-#include "quit_gump.h"
+#include "ultima8/gumps/quit_gump.h"
 
 #include "ultima8/games/game_data.h"
-#include "GumpShapeArchive.h"
-#include "Shape.h"
-#include "ShapeFrame.h"
+#include "ultima8/graphics/gump_shape_archive.h"
+#include "ultima8/graphics/shape.h"
+#include "ultima8/graphics/shape_frame.h"
 #include "ultima8/kernel/gui_app.h"
-#include "desktop_gump.h"
-#include "button_widget.h"
-#include "text_widget.h"
+#include "ultima8/gumps/desktop_gump.h"
+#include "ultima8/gumps/widgets/button_widget.h"
+#include "ultima8/gumps/widgets/text_widget.h"
 
 #include "ultima8/filesys/idata_source.h"
 #include "ultima8/filesys/odata_source.h"
 
-DEFINE_RUNTIME_CLASSTYPE_CODE(QuitGump, ModalGump);
+namespace Ultima8 {
+
+DEFINE_RUNTIME_CLASSTYPE_CODE(QuitGump, ModalGump)
 
 QuitGump::QuitGump(): ModalGump(0, 0, 5, 5) {
 	GUIApp *app = GUIApp::get_instance();
@@ -157,3 +159,4 @@ void QuitGump::saveData(ODataSource *ods) {
 	CANT_HAPPEN_MSG("Trying to save ModalGump");
 }
 
+} // End of namespace Ultima8

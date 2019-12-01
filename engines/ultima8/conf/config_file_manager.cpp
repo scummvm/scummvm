@@ -17,11 +17,10 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
 #include "ultima8/misc/pent_include.h"
-
 #include "ultima8/conf/config_file_manager.h"
-#include "INIFile.h"
+#include "ultima8/conf/ini_file.h"
 
-#include <set>
+namespace Ultima8 {
 
 using Pentagram::istring;
 using std::string;
@@ -243,3 +242,5 @@ INIFile *ConfigFileManager::findWriteINI(istring key) {
 
 	return 0;
 }
+
+} // End of namespace Ultima8

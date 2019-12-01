@@ -41,7 +41,7 @@ class SpriteProcess : public Process {
 	bool    initialized;
 public:
 	// p_dynamic_class stuff
-	ENABLE_RUNTIME_CLASSTYPE();
+	ENABLE_RUNTIME_CLASSTYPE()
 
 	SpriteProcess();
 

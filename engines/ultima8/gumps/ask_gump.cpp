@@ -22,16 +22,17 @@
 
 
 #include "ultima8/misc/pent_include.h"
-#include "ask_gump.h"
-#include "button_widget.h"
-#include "ultima8/usecode/UCList.h"
+#include "ultima8/gumps/ask_gump.h"
+#include "ultima8/gumps/widgets/button_widget.h"
+#include "ultima8/usecode/uc_list.h"
 #include "ultima8/usecode/uc_machine.h"
 #include "ultima8/filesys/idata_source.h"
 #include "ultima8/filesys/odata_source.h"
 
+namespace Ultima8 {
 
 // p_dynamic_class stuff
-DEFINE_RUNTIME_CLASSTYPE_CODE(AskGump, ItemRelativeGump);
+DEFINE_RUNTIME_CLASSTYPE_CODE(AskGump, ItemRelativeGump)
 
 AskGump::AskGump()
 	: ItemRelativeGump(), answers(0) {
@@ -167,4 +168,4 @@ bool AskGump::loadData(IDataSource *ids, uint32 version) {
 	return true;
 }
 
-// You should always use Protection
+} // End of namespace Ultima8

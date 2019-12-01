@@ -22,7 +22,7 @@
 
 #include "ultima8/misc/pent_include.h"
 
-#include "resurrection_process.h"
+#include "ultima8/world/resurrection_process.h"
 #include "ultima8/world/actors/actor.h"
 #include "ultima8/world/get_object.h"
 
@@ -32,7 +32,7 @@
 namespace Ultima8 {
 
 // p_dynamic_cast stuff
-DEFINE_RUNTIME_CLASSTYPE_CODE(ResurrectionProcess, Process);
+DEFINE_RUNTIME_CLASSTYPE_CODE(ResurrectionProcess, Process)
 
 ResurrectionProcess::ResurrectionProcess() : Process() {
 

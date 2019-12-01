@@ -23,18 +23,20 @@
 #include "ultima8/misc/pent_include.h"
 #include "ultima8/gumps/movie_gump.h"
 
-#include "raw_archive.h"
-#include "SKFPlayer.h"
+#include "ultima8/filesys/raw_archive.h"
+#include "ultima8/graphics/skf_player.h"
 #include "ultima8/kernel/gui_app.h"
-#include "desktop_gump.h"
+#include "ultima8/gumps/desktop_gump.h"
 #include "ultima8/gumps/gump_notify_process.h"
 
 #include "ultima8/filesys/file_system.h"
 
 #include "ultima8/filesys/idata_source.h"
-#include "odata_source.h"
+#include "ultima8/filesys/odata_source.h"
 
-DEFINE_RUNTIME_CLASSTYPE_CODE(MovieGump, ModalGump);
+namespace Ultima8 {
+
+DEFINE_RUNTIME_CLASSTYPE_CODE(MovieGump, ModalGump)
 
 MovieGump::MovieGump()
 	: ModalGump(), player(0) {
@@ -126,3 +128,5 @@ bool MovieGump::loadData(IDataSource *ids) {
 void MovieGump::saveData(ODataSource *ods) {
 
 }
+
+} // End of namespace Ultima8

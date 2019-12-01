@@ -23,7 +23,7 @@
 #ifndef ULTIMA8_WORLD_CONTAINER_H
 #define ULTIMA8_WORLD_CONTAINER_H
 
-#include "ultima8/world/Item.h"
+#include "ultima8/world/item.h"
 #include "ultima8/std/containers.h"
 
 #include "ultima8/usecode/intrinsics.h"
@@ -42,7 +42,7 @@ public:
 	virtual ~Container();
 
 	// p_dynamic_cast stuff
-	ENABLE_RUNTIME_CLASSTYPE();
+	ENABLE_RUNTIME_CLASSTYPE()
 
 	//! Check if an item can be added to the container
 	//! \param item The item to check

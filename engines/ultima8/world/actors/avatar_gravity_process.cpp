@@ -22,7 +22,7 @@
 
 #include "ultima8/misc/pent_include.h"
 
-#include "avatar_gravity_process.h"
+#include "ultima8/world/avatar_gravity_process.h"
 #include "ultima8/world/actors/main_actor.h"
 #include "ultima8/world/world.h"
 #include "ultima8/kernel/gui_app.h"
@@ -32,12 +32,10 @@
 #include "ultima8/filesys/idata_source.h"
 #include "ultima8/filesys/odata_source.h"
 
-#include <cmath>
-
 namespace Ultima8 {
 
 // p_dynamic_cast stuff
-DEFINE_RUNTIME_CLASSTYPE_CODE(AvatarGravityProcess, GravityProcess);
+DEFINE_RUNTIME_CLASSTYPE_CODE(AvatarGravityProcess, GravityProcess)
 
 AvatarGravityProcess::AvatarGravityProcess()
 	: GravityProcess() {

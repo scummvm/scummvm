@@ -21,14 +21,12 @@
  */
 
 #include "ultima8/misc/pent_include.h"
-#include "2xSaIScalers.h"
-#include "Manips.h"
+#include "ultima8/graphics/scalers/2x_sal_scalers.h"
+#include "ultima8/graphics/manips.h"
 #include "ultima8/graphics/texture.h"
-#include <cmath>
 
+namespace Ultima8 {
 namespace Pentagram {
-
-
 
 template<class uintX, class Manip, class uintS = uintX> class _2xSaIScalerInternal {
 
@@ -942,5 +940,5 @@ const GC_SuperEagleScaler GC_SuperEagle_scaler;
 
 #endif
 
-};  // Namespace
-
+} // End of namespace Pentagram
+} // End of namespace Ultima8

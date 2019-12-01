@@ -24,7 +24,7 @@
 #define ULTIMA8_GRAPHICS_FONTS_SHAPEFONT_H
 
 #include "ultima8/graphics/fonts/font.h"
-#include "Shape.h"
+#include "ultima8/graphics/shape.h"
 #include "ultima8/misc/p_dynamic_cast.h"
 
 namespace Ultima8 {
@@ -70,7 +70,7 @@ public:
 	                                 std::string::size_type cursor
 	                                 = std::string::npos);
 
-	ENABLE_RUNTIME_CLASSTYPE();
+	ENABLE_RUNTIME_CLASSTYPE()
 };
 
 } // End of namespace Ultima8

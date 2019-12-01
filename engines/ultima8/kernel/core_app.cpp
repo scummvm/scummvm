@@ -39,7 +39,7 @@ static void ToLower(std::string &str);
 
 
 // p_dynamic_cast stuff
-DEFINE_RUNTIME_CLASSTYPE_CODE_BASE_CLASS(CoreApp);
+DEFINE_RUNTIME_CLASSTYPE_CODE_BASE_CLASS(CoreApp)
 
 CoreApp *CoreApp::application = 0;
 

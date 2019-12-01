@@ -21,17 +21,19 @@
  */
 
 #include "ultima8/misc/pent_include.h"
-#include "target_gump.h"
+#include "ultima8/gumps/target_gump.h"
 
 #include "ultima8/kernel/gui_app.h"
 #include "ultima8/gumps/gump_notify_process.h"
-#include "ultima8/world/Item.h"
+#include "ultima8/world/item.h"
 #include "ultima8/world/get_object.h"
 
 #include "ultima8/filesys/idata_source.h"
 #include "ultima8/filesys/odata_source.h"
 
-DEFINE_RUNTIME_CLASSTYPE_CODE(TargetGump, ModalGump);
+namespace Ultima8 {
+
+DEFINE_RUNTIME_CLASSTYPE_CODE(TargetGump, ModalGump)
 
 TargetGump::TargetGump() : ModalGump(), target_tracing(false) {
 
@@ -115,3 +117,5 @@ bool TargetGump::loadData(IDataSource *ids, uint32 versin) {
 	CANT_HAPPEN_MSG("Trying to load ModalGump");
 	return false;
 }
+
+} // End of namespace Ultima8

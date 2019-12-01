@@ -23,7 +23,7 @@
 #ifndef ULTIMA8_GRAPHICS_FONTS_JPRENDEREDTEXT_H
 #define ULTIMA8_GRAPHICS_FONTS_JPRENDEREDTEXT_H
 
-#include "RenderedText.h"
+#include "ultima8/graphics/fonts/rendered_text.h"
 #include "ultima8/graphics/fonts/font.h"
 #include "ultima8/misc/p_dynamic_cast.h"
 
@@ -41,7 +41,7 @@ public:
 	virtual void draw(RenderSurface *surface, int x, int y, bool destmasked = false);
 	virtual void drawBlended(RenderSurface *surface, int x, int y, uint32 col, bool destmasked = false);
 
-	ENABLE_RUNTIME_CLASSTYPE();
+	ENABLE_RUNTIME_CLASSTYPE()
 
 protected:
 	std::list<PositionedText> lines;

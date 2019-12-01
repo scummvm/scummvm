@@ -33,7 +33,7 @@ protected:
 	int32 ix, iy;
 
 public:
-	ENABLE_RUNTIME_CLASSTYPE();
+	ENABLE_RUNTIME_CLASSTYPE()
 
 	ItemRelativeGump();
 	ItemRelativeGump(int32 x, int32 y, int32 width, int32 height, uint16 owner, uint32 _Flags = 0, int32 layer = LAYER_NORMAL);

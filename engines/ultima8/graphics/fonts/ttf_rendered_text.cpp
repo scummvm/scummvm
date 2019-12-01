@@ -22,14 +22,14 @@
 
 #include "ultima8/misc/pent_include.h"
 
-#include "TTFRenderedText.h"
-#include "TTFont.h"
+#include "ultima8/graphics/fonts/ttf_rendered_text.h"
+#include "ultima8/graphics/fonts/tt_font.h"
 #include "ultima8/graphics/render_surface.h"
 #include "ultima8/graphics/texture.h"
 
 namespace Ultima8 {
 
-DEFINE_RUNTIME_CLASSTYPE_CODE(TTFRenderedText, RenderedText);
+DEFINE_RUNTIME_CLASSTYPE_CODE(TTFRenderedText, RenderedText)
 
 
 TTFRenderedText::TTFRenderedText(Texture *texture_, int width_, int height_,

@@ -18,25 +18,27 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include "ultima8/misc/pent_include.h"
 
-#include "StartU8Process.h"
+#include "ultima8/games/start_u8_process.h"
 #include "ultima8/games/game.h"
-#include "LoopScript.h"
-#include "ultima8/usecode/UCList.h"
+#include "ultima8/world/loop_script.h"
+#include "ultima8/usecode/uc_list.h"
 #include "ultima8/world/current_map.h"
 #include "ultima8/world/egg.h"
 #include "ultima8/world/camera_process.h"
 #include "ultima8/world/world.h"
 #include "ultima8/kernel/gui_app.h"
 #include "ultima8/kernel/kernel.h"
-#include "menu_gump.h"
+#include "ultima8/gumps/menu_gump.h"
 #include "ultima8/conf/setting_manager.h"
 #include "ultima8/world/get_object.h"
 
 #include "ultima8/filesys/idata_source.h"
 #include "ultima8/filesys/odata_source.h"
 
+namespace Ultima8 {
+
 // p_dynamic_cast stuff
-DEFINE_RUNTIME_CLASSTYPE_CODE(StartU8Process, Process);
+DEFINE_RUNTIME_CLASSTYPE_CODE(StartU8Process, Process)
 
 StartU8Process::StartU8Process(const std::string &savename_) : Process(), init(false), savename(savename_) {
 	SettingManager::get_instance()->get("skipstart", skipstart);
@@ -115,3 +117,5 @@ bool StartU8Process::loadData(IDataSource *ids, uint32 version) {
 
 	return true;
 }
+
+} // End of namespace Ultima8

@@ -23,7 +23,7 @@
 #ifndef ULTIMA8_GRAPHICS_GUMPSHAPEARCHIVE_H
 #define ULTIMA8_GRAPHICS_GUMPSHAPEARCHIVE_H
 
-#include "ShapeArchive.h"
+#include "ultima8/graphics/shape_archive.h"
 #include "ultima8/misc/p_dynamic_cast.h"
 
 namespace Ultima8 {
@@ -33,7 +33,7 @@ struct Rect;
 
 class GumpShapeArchive : public ShapeArchive {
 public:
-	ENABLE_RUNTIME_CLASSTYPE();
+	ENABLE_RUNTIME_CLASSTYPE()
 
 	GumpShapeArchive(uint16 id_, Pentagram::Palette *pal_ = 0,
 	                 const ConvertShapeFormat *format_ = 0)

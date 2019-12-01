@@ -21,24 +21,22 @@
  */
 
 #include "ultima8/misc/pent_include.h"
-#include "SKFPlayer.h"
+#include "ultima8/graphics/skf_player.h"
 
 #include "u8/ConvertShapeU8.h"
-#include "raw_archive.h"
-#include "Shape.h"
+#include "ultima8/filesys/raw_archive.h"
+#include "ultima8/graphics/shape.h"
 #include "ultima8/graphics/texture.h"
-#include "SoftRenderSurface.h"
+#include "ultima8/graphics/soft_render_surface.h"
 #include "ultima8/graphics/palette_manager.h"
 #include "ultima8/audio/music_process.h"
 #include "ultima8/audio/audio_process.h"
 #include "ultima8/filesys/idata_source.h"
 #include "ultima8/audio/audio_mixer.h"
-#include "RawAudioSample.h"
+#include "ultima8/audio/raw_audio_sample.h"
 #include "ultima8/graphics/fonts/font.h"
 #include "ultima8/graphics/fonts/font_manager.h"
-#include "RenderedText.h"
-
-#include "SDL.h"
+#include "ultima8/graphics/fonts/rendered_text.h"
 
 namespace Ultima8 {
 

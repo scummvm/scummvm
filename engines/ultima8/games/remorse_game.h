@@ -16,10 +16,12 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
-#ifndef REMORSEGAME_H
-#define REMORSEGAME_H
+#ifndef ULTIMA8_GAMES_REMORSEGAME_H
+#define ULTIMA8_GAMES_REMORSEGAME_H
 
 #include "ultima8/games/game.h"
+
+namespace Ultima8 {
 
 class RemorseGame : public Game {
 public:
@@ -49,5 +51,6 @@ protected:
 	static Game *game;
 };
 
+} // End of namespace Ultima8
 
 #endif

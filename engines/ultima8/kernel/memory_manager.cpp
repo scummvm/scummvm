@@ -136,13 +136,13 @@ public:
 		delete n;
 	}
 
-	ENABLE_RUNTIME_CLASSTYPE();
+	ENABLE_RUNTIME_CLASSTYPE()
 
 	TestClassBase *next;
 	int arr[32];
 };
 
-DEFINE_RUNTIME_CLASSTYPE_CODE_BASE_CLASS(TestClassBase);
+DEFINE_RUNTIME_CLASSTYPE_CODE_BASE_CLASS(TestClassBase)
 
 class TestClassOne: public TestClassBase {
 public:
@@ -152,10 +152,10 @@ public:
 	virtual ~TestClassOne() {
 	}
 
-	ENABLE_RUNTIME_CLASSTYPE();
+	ENABLE_RUNTIME_CLASSTYPE()
 };
 
-DEFINE_RUNTIME_CLASSTYPE_CODE(TestClassOne, TestClassBase);
+DEFINE_RUNTIME_CLASSTYPE_CODE(TestClassOne, TestClassBase)
 
 
 class TestClassTwo: public TestClassBase {
@@ -166,12 +166,12 @@ public:
 	virtual ~TestClassTwo() {
 	}
 
-	ENABLE_RUNTIME_CLASSTYPE();
-	ENABLE_CUSTOM_MEMORY_ALLOCATION();
+	ENABLE_RUNTIME_CLASSTYPE()
+	ENABLE_CUSTOM_MEMORY_ALLOCATION()
 };
 
-DEFINE_RUNTIME_CLASSTYPE_CODE(TestClassTwo, TestClassBase);
-DEFINE_CUSTOM_MEMORY_ALLOCATION(TestClassTwo);
+DEFINE_RUNTIME_CLASSTYPE_CODE(TestClassTwo, TestClassBase)
+DEFINE_CUSTOM_MEMORY_ALLOCATION(TestClassTwo)
 
 void MemoryManager::ConCmd_test(const Console::ArgvType &argv) {
 	// Just some numbers of classes to allocate and free

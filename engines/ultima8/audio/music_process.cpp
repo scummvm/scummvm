@@ -39,7 +39,7 @@
 namespace Ultima8 {
 
 // p_dynamic_cast stuff
-DEFINE_RUNTIME_CLASSTYPE_CODE(MusicProcess, Process);
+DEFINE_RUNTIME_CLASSTYPE_CODE(MusicProcess, Process)
 
 MusicProcess *MusicProcess::the_music_process = 0;
 

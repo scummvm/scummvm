@@ -30,9 +30,9 @@
 namespace Ultima8 {
 
 // p_dynamic_cast stuff
-DEFINE_RUNTIME_CLASSTYPE_CODE_BASE_CLASS(Process);
+DEFINE_RUNTIME_CLASSTYPE_CODE_BASE_CLASS(Process)
 
-DEFINE_CUSTOM_MEMORY_ALLOCATION(Process);
+DEFINE_CUSTOM_MEMORY_ALLOCATION(Process)
 
 Process::Process(ObjId it, uint16 ty)
 	: pid(0xFFFF), flags(0), item_num(it), type(ty), result(0) {

@@ -22,7 +22,7 @@
 
 #include "ultima8/misc/pent_include.h"
 
-#include "ultima8/usecode/UCList.h"
+#include "ultima8/usecode/uc_list.h"
 #include "ultima8/usecode/uc_machine.h"
 #include "ultima8/filesys/idata_source.h"
 #include "ultima8/filesys/odata_source.h"

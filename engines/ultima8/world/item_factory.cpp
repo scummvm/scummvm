@@ -24,18 +24,20 @@
 
 #include "ultima8/world/item_factory.h"
 #include "ultima8/games/game_data.h"
-#include "MainShapeArchive.h"
+#include "ultima8/graphics/main_shape_archive.h"
 #include "ultima8/graphics/shape_info.h"
-#include "ultima8/world/Item.h"
-#include "ultima8/world/Container.h"
+#include "ultima8/world/item.h"
+#include "ultima8/world/container.h"
 #include "ultima8/world/actors/actor.h"
 #include "ultima8/world/actors/main_actor.h"
-#include "glob_egg.h"
+#include "ultima8/world/glob_egg.h"
 #include "ultima8/world/egg.h"
-#include "monster_egg.h"
-#include "teleport_egg.h"
+#include "ultima8/world/monster_egg.h"
+#include "ultima8/world/teleport_egg.h"
 #include "ultima8/kernel/core_app.h"
 #include "ultima8/filesys/idata_source.h"
+
+namespace Ultima8 {
 
 Item *ItemFactory::createItem(uint32 shape, uint32 frame, uint16 quality,
                               uint16 flags, uint16 npcnum, uint16 mapnum,
@@ -193,3 +195,5 @@ Actor *ItemFactory::createActor(uint32 shape, uint32 frame, uint16 quality,
 
 	return actor;
 }
+
+} // End of namespace Ultima8

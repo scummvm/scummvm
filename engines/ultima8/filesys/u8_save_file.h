@@ -33,7 +33,7 @@ class IDataSource;
 
 class U8SaveFile : public NamedArchiveFile {
 public:
-	ENABLE_RUNTIME_CLASSTYPE();
+	ENABLE_RUNTIME_CLASSTYPE()
 
 	//! create U8SaveFile from datasource; U8SaveFile takes ownership of ds
 	//! and deletes it when destructed

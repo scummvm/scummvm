@@ -21,22 +21,24 @@
  */
 
 #include "ultima8/misc/pent_include.h"
-#include "mini_stats_gump.h"
+#include "ultima8/gumps/mini_stats_gump.h"
 
 #include "ultima8/games/game_data.h"
-#include "GumpShapeArchive.h"
-#include "Shape.h"
-#include "ShapeFrame.h"
+#include "ultima8/graphics/gump_shape_archive.h"
+#include "ultima8/graphics/shape.h"
+#include "ultima8/graphics/shape_frame.h"
 #include "ultima8/world/actors/main_actor.h"
 #include "ultima8/graphics/render_surface.h"
 #include "ultima8/kernel/mouse.h"
-#include "paperdoll_gump.h"
+#include "ultima8/gumps/paperdoll_gump.h"
 #include "ultima8/world/get_object.h"
 
 #include "ultima8/filesys/idata_source.h"
 #include "ultima8/filesys/odata_source.h"
 
-DEFINE_RUNTIME_CLASSTYPE_CODE(MiniStatsGump, Gump);
+namespace Ultima8 {
+
+DEFINE_RUNTIME_CLASSTYPE_CODE(MiniStatsGump, Gump)
 
 static const int gumpshape = 33;
 static const int hpx = 6;
@@ -138,3 +140,5 @@ bool MiniStatsGump::loadData(IDataSource *ids, uint32 version) {
 
 	return true;
 }
+
+} // End of namespace Ultima8

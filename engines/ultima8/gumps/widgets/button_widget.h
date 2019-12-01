@@ -32,7 +32,7 @@ namespace Ultima8 {
 class ButtonWidget : public Gump {
 public:
 	// p_dynamic_class stuff
-	ENABLE_RUNTIME_CLASSTYPE();
+	ENABLE_RUNTIME_CLASSTYPE()
 
 	ButtonWidget();
 	ButtonWidget(int X, int Y, std::string txt, bool gamefont, int font,

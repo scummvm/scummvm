@@ -36,12 +36,13 @@
 
 #include "ultima8/misc/pent_include.h"
 #include "Scale2xScaler.h"
-#include "Manips.h"
+#include "ultima8/graphics/manips.h"
 
 // SDL_cpuinfo.h needs SDL_types.h, but fails to include it
 #include <SDL_types.h>
 #include <SDL_cpuinfo.h>
 
+namespace Ultima8 {
 namespace Pentagram {
 
 /***************************************************************************/
@@ -1149,4 +1150,5 @@ const char *Scale2xScaler::ScalerCopyright() const {
 
 const Scale2xScaler scale2x_scaler;
 
-};
+} // End of namespace Pentagram
+} // End of namespace Ultima8

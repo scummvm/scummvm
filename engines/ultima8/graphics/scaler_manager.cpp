@@ -21,9 +21,9 @@
  */
 
 #include "ultima8/misc/pent_include.h"
-#include "ScalerManager.h"
-#include "Scaler.h"
-#include "scalers/PointScaler.h"
+#include "ultima8/graphics/scalers/scaler_manager.h"
+#include "ultima8/graphics/scalers/scaler.h"
+#include "ultima8/graphics/scalers/point_scaler.h"
 
 namespace Ultima8 {
 

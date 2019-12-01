@@ -22,12 +22,14 @@
 
 #include "ultima8/misc/pent_include.h"
 
-#include "MissileTracker.h"
+#include "ultima8/world/missile_tracker.h"
 
 #include "ultima8/world/current_map.h"
-#include "ultima8/world/Item.h"
+#include "ultima8/world/item.h"
 #include "ultima8/world/world.h"
 #include "ultima8/world/get_object.h"
+
+namespace Ultima8 {
 
 MissileTracker::MissileTracker(Item *item, int32 sx, int32 sy, int32 sz,
                                int32 tx, int32 ty, int32 tz,
@@ -178,3 +180,5 @@ void MissileTracker::launchItem() {
 
 	item->hurl(speedx, speedy, speedz, gravity);
 }
+
+} // End of namespace Ultima8

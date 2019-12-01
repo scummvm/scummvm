@@ -30,7 +30,7 @@ namespace Ultima8 {
 
 class FastAreaVisGump : public Gump {
 public:
-	ENABLE_RUNTIME_CLASSTYPE();
+	ENABLE_RUNTIME_CLASSTYPE()
 
 	FastAreaVisGump(void);
 	virtual ~FastAreaVisGump(void);

@@ -32,7 +32,7 @@ class IDataSource;
 
 class FlexFile : public ArchiveFile {
 public:
-	ENABLE_RUNTIME_CLASSTYPE();
+	ENABLE_RUNTIME_CLASSTYPE()
 
 	//! create FlexFile from datasource; FlexFile takes ownership of ds
 	//! and deletes it when destructed

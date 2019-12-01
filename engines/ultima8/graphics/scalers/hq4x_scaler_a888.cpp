@@ -24,10 +24,12 @@
 
 #ifdef USE_HQ4X_SCALER
 
-#include "hq4xScaler.inc"
+#include "ultima8/graphics/scalers/hq4xScaler.inc"
 
+namespace Ultima8 {
 namespace Pentagram {
 template Scaler::ScalerFunc hq4xScaler::GetScaler<uint32, Manip_32_A888, uint32>();
-}
+} // End of namespace Pentagram
+} // End of namespace Ultima8
 
 #endif

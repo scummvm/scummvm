@@ -22,13 +22,14 @@
 
 #include "ultima8/misc/pent_include.h"
 
-#include "teleport_egg.h"
+#include "ultima8/world/teleport_egg.h"
 #include "ultima8/world/actors/main_actor.h"
 #include "ultima8/world/get_object.h"
 
 #include "ultima8/filesys/idata_source.h"
 #include "ultima8/filesys/odata_source.h"
 
+namespace Ultima8 {
 
 DEFINE_RUNTIME_CLASSTYPE_CODE(TeleportEgg, Egg);
 
@@ -62,3 +63,5 @@ bool TeleportEgg::loadData(IDataSource *ids, uint32 version) {
 
 	return true;
 }
+
+} // End of namespace Ultima8

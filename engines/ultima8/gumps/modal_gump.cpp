@@ -21,7 +21,7 @@
  */
 
 #include "ultima8/misc/pent_include.h"
-#include "modal_gump.h"
+#include "ultima8/gumps/modal_gump.h"
 
 #include "ultima8/kernel/kernel.h"
 #include "ultima8/kernel/gui_app.h"
@@ -30,7 +30,9 @@
 #include "ultima8/filesys/odata_source.h"
 #include "ultima8/audio/audio_process.h"
 
-DEFINE_RUNTIME_CLASSTYPE_CODE(ModalGump, Gump);
+namespace Ultima8 {
+
+DEFINE_RUNTIME_CLASSTYPE_CODE(ModalGump, Gump)
 
 ModalGump::ModalGump() : Gump() {
 
@@ -103,3 +105,5 @@ bool ModalGump::loadData(IDataSource *ids, uint32 version) {
 	CANT_HAPPEN_MSG("Trying to load ModalGump");
 	return false;
 }
+
+} // End of namespace Ultima8

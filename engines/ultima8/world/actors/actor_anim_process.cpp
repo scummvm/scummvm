@@ -24,7 +24,7 @@
 
 #include "ultima8/world/actors/actor_anim_process.h"
 #include "ultima8/games/game_data.h"
-#include "ultima8/world/actors/Animation.h"
+#include "ultima8/world/actors/animation.h"
 #include "ultima8/graphics/AnimDat.h"
 #include "ultima8/world/actors/AnimAction.h"
 #include "ultima8/world/actors/main_actor.h"
@@ -32,18 +32,18 @@
 #include "ultima8/world/world.h"
 #include "ultima8/world/gravity_process.h"
 #include "ultima8/kernel/kernel.h"
-#include "ultima8/usecode/UCList.h"
-#include "LoopScript.h"
+#include "ultima8/usecode/uc_list.h"
+#include "ultima8/world/loop_script.h"
 #include "ultima8/world/current_map.h"
 #include "ultima8/graphics/shape_info.h"
-#include "AnimationTracker.h"
+#include "ultima8/world/actors/animation_tracker.h"
 #include "ultima8/audio/audio_process.h"
 #include "ultima8/conf/setting_manager.h"
-#include "combat_process.h"
+#include "ultima8/world/actors/combat_process.h"
 #include "ultima8/world/sprite_process.h"
 #include "ultima8/graphics/palette_fader_process.h"
-#include "CreateItemProcess.h"
-#include "destroy_item_process.h"
+#include "ultima8/world/create_item_process.h"
+#include "ultima8/world/destroy_item_process.h"
 #include "ultima8/kernel/delay_process.h"
 #include "ultima8/world/get_object.h"
 
@@ -59,7 +59,7 @@ static const int watchactor = WATCHACTOR;
 #endif
 
 // p_dynamic_cast stuff
-DEFINE_RUNTIME_CLASSTYPE_CODE(ActorAnimProcess, Process);
+DEFINE_RUNTIME_CLASSTYPE_CODE(ActorAnimProcess, Process)
 
 ActorAnimProcess::ActorAnimProcess() : Process(), tracker(0) {
 

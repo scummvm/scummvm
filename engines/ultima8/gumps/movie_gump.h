@@ -23,7 +23,7 @@
 #ifndef ULTIMA8_GUMPS_MOVIEGUMP_H
 #define ULTIMA8_GUMPS_MOVIEGUMP_H
 
-#include "modal_gump.h"
+#include "ultima8/gumps/modal_gump.h"
 #include "ultima8/misc/p_dynamic_cast.h"
 
 namespace Ultima8 {
@@ -33,7 +33,7 @@ class SKFPlayer;
 
 class MovieGump : public ModalGump {
 public:
-	ENABLE_RUNTIME_CLASSTYPE();
+	ENABLE_RUNTIME_CLASSTYPE()
 
 	MovieGump();
 	MovieGump(int width, int height, RawArchive *skf, bool introMusicHack = false,

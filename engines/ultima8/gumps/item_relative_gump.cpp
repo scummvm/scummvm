@@ -22,15 +22,17 @@
 
 #include "ultima8/misc/pent_include.h"
 #include "ultima8/gumps/item_relative_gump.h"
-#include "game_map_gump.h"
-#include "ultima8/world/Item.h"
-#include "ultima8/world/Container.h"
+#include "ultima8/gumps/game_map_gump.h"
+#include "ultima8/world/item.h"
+#include "ultima8/world/container.h"
 #include "ultima8/graphics/shape_info.h"
 #include "ultima8/world/get_object.h"
 #include "ultima8/filesys/idata_source.h"
 #include "ultima8/filesys/odata_source.h"
 
-DEFINE_RUNTIME_CLASSTYPE_CODE(ItemRelativeGump, Gump);
+namespace Ultima8 {
+
+DEFINE_RUNTIME_CLASSTYPE_CODE(ItemRelativeGump, Gump)
 
 ItemRelativeGump::ItemRelativeGump()
 	: Gump(), ix(0), iy(0) {
@@ -180,4 +182,4 @@ bool ItemRelativeGump::loadData(IDataSource *ids, uint32 version) {
 	return true;
 }
 
-// Colourless Protection
+} // End of namespace Ultima8

@@ -32,7 +32,7 @@ class IDataSource;
 
 class ZipFile : public NamedArchiveFile {
 public:
-	ENABLE_RUNTIME_CLASSTYPE();
+	ENABLE_RUNTIME_CLASSTYPE()
 
 	//! create ZipFile from datasource; ZipFile takes ownership of ds
 	//! and deletes it when destructed

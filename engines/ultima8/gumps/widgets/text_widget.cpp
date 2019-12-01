@@ -21,21 +21,21 @@
  */
 
 #include "ultima8/misc/pent_include.h"
-#include "text_widget.h"
-#include "ShapeFont.h"
-#include "RenderedText.h"
+#include "ultima8/gumps/widgets/text_widget.h"
+#include "ultima8/graphics/fonts/shape_font.h"
+#include "ultima8/graphics/fonts/rendered_text.h"
 #include "ultima8/graphics/render_surface.h"
 #include "ultima8/graphics/fonts/font_manager.h"
 #include "ultima8/filesys/idata_source.h"
 #include "ultima8/filesys/odata_source.h"
-#include "TTFont.h"
-#include "bark_gump.h"
-#include "ask_gump.h"
-#include "button_widget.h"
+#include "ultima8/graphics/fonts/tt_font.h"
+#include "ultima8/gumps/bark_gump.h"
+#include "ultima8/gumps/ask_gump.h"
+#include "ultima8/gumps/widgets/button_widget.h"
 
 namespace Ultima8 {
 
-DEFINE_RUNTIME_CLASSTYPE_CODE(TextWidget, Gump);
+DEFINE_RUNTIME_CLASSTYPE_CODE(TextWidget, Gump)
 
 TextWidget::TextWidget()
 	: Gump(), cached_text(0) {
@@ -268,8 +268,5 @@ bool TextWidget::loadData(IDataSource *ids, uint32 version) {
 
 	return true;
 }
-
-
-// COLOURLESS PROTECTION
 
 } // End of namespace Ultima8

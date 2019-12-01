@@ -30,7 +30,7 @@ namespace Ultima8 {
 
 class OptionsGump : public Gump {
 public:
-	ENABLE_RUNTIME_CLASSTYPE();
+	ENABLE_RUNTIME_CLASSTYPE()
 
 	OptionsGump();
 	virtual ~OptionsGump(void);

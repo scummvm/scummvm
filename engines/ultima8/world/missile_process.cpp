@@ -28,15 +28,17 @@
 
 #include "ultima8/misc/pent_include.h"
 
-#include "missile_process.h"
-#include "ultima8/world/Item.h"
+#include "ultima8/world/missile_process.h"
+#include "ultima8/world/item.h"
 #include "ultima8/world/get_object.h"
 
 #include "ultima8/filesys/idata_source.h"
 #include "ultima8/filesys/odata_source.h"
 
+namespace Ultima8 {
+
 // p_dynamic_cast stuff
-DEFINE_RUNTIME_CLASSTYPE_CODE(MissileProcess, Process);
+DEFINE_RUNTIME_CLASSTYPE_CODE(MissileProcess, Process)
 
 MissileProcess::MissileProcess()
 	: Process() {
@@ -111,3 +113,5 @@ bool MissileProcess::loadData(IDataSource *ids, uint32 version) {
 
 	return true;
 }
+
+} // End of namespace Ultima8

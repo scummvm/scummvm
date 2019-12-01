@@ -21,7 +21,7 @@
  */
 
 #include "ultima8/misc/pent_include.h"
-#include "RawAudioSample.h"
+#include "ultima8/audio/raw_audio_sample.h"
 #include "ultima8/filesys/idata_source.h"
 
 namespace Ultima8 {

@@ -17,7 +17,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
 #include "ultima8/misc/pent_include.h"
-#include "INIFile.h"
+#include "ultima8/conf/ini_file.h"
 
 #include "ultima8/filesys/file_system.h"
 #include "ultima8/filesys/idata_source.h"

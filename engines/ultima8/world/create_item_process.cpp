@@ -21,15 +21,17 @@
  */
 
 #include "ultima8/misc/pent_include.h"
-#include "CreateItemProcess.h"
+#include "ultima8/world/create_item_process.h"
 #include "ultima8/world/item_factory.h"
-#include "ultima8/world/Item.h"
+#include "ultima8/world/item.h"
 
 #include "ultima8/filesys/idata_source.h"
 #include "ultima8/filesys/odata_source.h"
 
+namespace Ultima8 {
+
 // p_dynamic_class stuff
-DEFINE_RUNTIME_CLASSTYPE_CODE(CreateItemProcess, Process);
+DEFINE_RUNTIME_CLASSTYPE_CODE(CreateItemProcess, Process)
 
 CreateItemProcess::CreateItemProcess()
 	: Process() {
@@ -91,3 +93,5 @@ bool CreateItemProcess::loadData(IDataSource *ids, uint32 version) {
 	z = static_cast<int32>(ids->read4());
 	return true;
 }
+
+} // End of namespace Ultima8

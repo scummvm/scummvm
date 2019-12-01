@@ -21,18 +21,16 @@
  */
 
 #include "ultima8/misc/pent_include.h"
-#include "JPRenderedText.h"
-
-#include "ShapeFont.h"
+#include "ultima8/graphics/fonts/jp_rendered_text.h"
+#include "ultima8/graphics/fonts/shape_font.h"
 #include "ultima8/graphics/render_surface.h"
-
 #include "ultima8/misc/encoding.h"
-#include "ShapeFrame.h"
+#include "ultima8/graphics/shape_frame.h"
 #include "ultima8/graphics/palette_manager.h"
 
 namespace Ultima8 {
 
-DEFINE_RUNTIME_CLASSTYPE_CODE(JPRenderedText, RenderedText);
+DEFINE_RUNTIME_CLASSTYPE_CODE(JPRenderedText, RenderedText)
 
 
 JPRenderedText::JPRenderedText(std::list<PositionedText> &lines_,

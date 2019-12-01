@@ -34,7 +34,7 @@ class EditWidget;
 
 class U8SaveGump : public Gump {
 public:
-	ENABLE_RUNTIME_CLASSTYPE();
+	ENABLE_RUNTIME_CLASSTYPE()
 
 	U8SaveGump(bool save, int page);
 	virtual ~U8SaveGump();

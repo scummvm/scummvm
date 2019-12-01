@@ -23,6 +23,8 @@
 #ifndef ULTIMA8_USECODE_INTRINSICS_H
 #define ULTIMA8_USECODE_INTRINSICS_H
 
+#include "common/scummsys.h"
+
 namespace Ultima8 {
 
 typedef uint32(*Intrinsic)(const uint8 *args, unsigned int argsize);

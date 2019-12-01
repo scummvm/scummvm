@@ -34,7 +34,7 @@ class GumpNotifyProcess : public Process {
 	uint16 gump;
 
 public:
-	ENABLE_RUNTIME_CLASSTYPE();
+	ENABLE_RUNTIME_CLASSTYPE()
 
 	GumpNotifyProcess();
 	GumpNotifyProcess(uint16 it);

@@ -57,7 +57,7 @@ public:
 	                                 std::string::size_type cursor
 	                                 = std::string::npos);
 
-	ENABLE_RUNTIME_CLASSTYPE();
+	ENABLE_RUNTIME_CLASSTYPE()
 protected:
 
 	unsigned int fontnum;

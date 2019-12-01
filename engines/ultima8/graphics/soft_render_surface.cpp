@@ -21,19 +21,18 @@
  */
 
 #include "ultima8/misc/pent_include.h"
-#include <SDL.h>
 
-#include "SoftRenderSurface.h"
+#include "ultima8/graphics/soft_render_surface.h"
 #include "ultima8/graphics/texture.h"
-#include "Shape.h"
-#include "ShapeFrame.h"
+#include "ultima8/graphics/shape.h"
+#include "ultima8/graphics/shape_frame.h"
 #include "ultima8/graphics/palette.h"
 #include "ultima8/graphics/fonts/fixed_width_font.h"
-#include "memset_n.h"
+#include "ultima8/misc/memset_n.h"
 
 #include "ultima8/graphics/xform_blend.h"
-#include "scalers/PointScaler.h"
-#include "scalers/BilinearScaler.h"
+#include "ultima8/graphics/scalers/point_scaler.h"
+#include "ultima8/graphics/scalers/bilinear_scaler.h"
 
 namespace Ultima8 {
 

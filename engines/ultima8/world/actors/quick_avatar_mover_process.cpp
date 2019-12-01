@@ -30,7 +30,7 @@
 #include "ultima8/kernel/gui_app.h"
 #include "ultima8/graphics/shape_info.h"
 #include "ultima8/world/get_object.h"
-#include "avatar_mover_process.h"
+#include "ultima8/world/avatar_mover_process.h"
 
 #include "ultima8/filesys/idata_source.h"
 #include "ultima8/filesys/odata_source.h"
@@ -38,7 +38,7 @@
 namespace Ultima8 {
 
 // p_dynamic_cast stuff
-DEFINE_RUNTIME_CLASSTYPE_CODE(QuickAvatarMoverProcess, Process);
+DEFINE_RUNTIME_CLASSTYPE_CODE(QuickAvatarMoverProcess, Process)
 
 ProcId QuickAvatarMoverProcess::amp[6] = { 0, 0, 0, 0, 0, 0 };
 bool QuickAvatarMoverProcess::clipping = false;

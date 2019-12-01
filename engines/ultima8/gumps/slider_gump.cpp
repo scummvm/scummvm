@@ -21,17 +21,17 @@
  */
 
 #include "ultima8/misc/pent_include.h"
-#include "SliderGump.h"
+#include "ultima8/gumps/slider_gump.h"
 
 #include "ultima8/games/game_data.h"
-#include "ShapeFrame.h"
-#include "GumpShapeArchive.h"
-#include "Shape.h"
-#include "sliding_widget.h"
+#include "ultima8/graphics/shape_frame.h"
+#include "ultima8/graphics/gump_shape_archive.h"
+#include "ultima8/graphics/shape.h"
+#include "ultima8/gumps/widgets/sliding_widget.h"
 #include "ultima8/graphics/fonts/font.h"
-#include "RenderedText.h"
+#include "ultima8/graphics/fonts/rendered_text.h"
 #include "ultima8/graphics/fonts/font_manager.h"
-#include "button_widget.h"
+#include "ultima8/gumps/widgets/button_widget.h"
 #include "ultima8/usecode/uc_process.h"
 #include "ultima8/kernel/kernel.h"
 #include "ultima8/kernel/gui_app.h"
@@ -39,7 +39,9 @@
 #include "ultima8/filesys/idata_source.h"
 #include "ultima8/filesys/odata_source.h"
 
-DEFINE_RUNTIME_CLASSTYPE_CODE(SliderGump, ModalGump);
+namespace Ultima8 {
+
+DEFINE_RUNTIME_CLASSTYPE_CODE(SliderGump, ModalGump)
 
 SliderGump::SliderGump() : ModalGump() {
 	renderedtext = 0;
@@ -258,3 +260,5 @@ bool SliderGump::loadData(IDataSource *ids, uint32 version) {
 
 	return false;
 }
+
+} // End of namespace Ultima8

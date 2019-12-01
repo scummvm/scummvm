@@ -21,30 +21,32 @@
  */
 
 #include "ultima8/misc/pent_include.h"
-#include "container_gump.h"
+#include "ultima8/gumps/container_gump.h"
 
-#include "Shape.h"
-#include "ShapeFrame.h"
+#include "ultima8/graphics/shape.h"
+#include "ultima8/graphics/shape_frame.h"
 #include "ultima8/graphics/shape_info.h"
-#include "ultima8/world/Container.h"
+#include "ultima8/world/container.h"
 #include "ultima8/graphics/render_surface.h"
 #include "ultima8/kernel/gui_app.h"
 #include "ultima8/kernel/kernel.h"
 #include "ultima8/games/game_data.h"
-#include "MainShapeArchive.h"
+#include "ultima8/graphics/main_shape_archive.h"
 #include "ultima8/kernel/mouse.h"
-#include "SliderGump.h"
+#include "ultima8/gumps/slider_gump.h"
 #include "ultima8/gumps/gump_notify_process.h"
 #include "ultima8/world/item_factory.h"
-#include "split_item_process.h"
-#include "game_map_gump.h"
+#include "ultima8/world/split_item_process.h"
+#include "ultima8/gumps/game_map_gump.h"
 #include "ultima8/world/actors/main_actor.h"
 #include "ultima8/world/get_object.h"
 
 #include "ultima8/filesys/idata_source.h"
 #include "ultima8/filesys/odata_source.h"
 
-DEFINE_RUNTIME_CLASSTYPE_CODE(ContainerGump, ItemRelativeGump);
+namespace Ultima8 {
+
+DEFINE_RUNTIME_CLASSTYPE_CODE(ContainerGump, ItemRelativeGump)
 
 ContainerGump::ContainerGump()
 	: ItemRelativeGump(), display_dragging(false) {
@@ -555,3 +557,5 @@ bool ContainerGump::loadData(IDataSource *ids, uint32 version) {
 
 	return true;
 }
+
+} // End of namespace Ultima8

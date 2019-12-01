@@ -22,7 +22,7 @@
 
 #include "ultima8/misc/pent_include.h"
 
-#include "ultima8/filesys/Savegame.h"
+#include "ultima8/filesys/savegame.h"
 #include "ultima8/filesys/idata_source.h"
 #include "ultima8/filesys/zip_file.h"
 

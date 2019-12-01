@@ -23,7 +23,7 @@
 #ifndef ULTIMA8_GUMPS_READABLEGUMP_H
 #define ULTIMA8_GUMPS_READABLEGUMP_H
 
-#include "modal_gump.h"
+#include "ultima8/gumps/modal_gump.h"
 #include "ultima8/usecode/intrinsics.h"
 #include "ultima8/misc/p_dynamic_cast.h"
 
@@ -34,7 +34,7 @@ class ReadableGump : public ModalGump {
 	int fontnum;
 	std::string text;
 public:
-	ENABLE_RUNTIME_CLASSTYPE();
+	ENABLE_RUNTIME_CLASSTYPE()
 
 	ReadableGump();
 	ReadableGump(ObjId owner, uint16 shape, int font, std::string msg);

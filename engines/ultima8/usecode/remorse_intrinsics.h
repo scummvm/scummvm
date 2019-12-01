@@ -24,8 +24,7 @@
 #define ULTIMA8_USECODE_REMORSEINTRINSICS_H
 
 #include "ultima8/usecode/intrinsics.h"
-
-#include "ultima8/world/Item.h"
+#include "ultima8/world/item.h"
 
 namespace Ultima8 {
 

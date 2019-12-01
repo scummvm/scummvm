@@ -22,17 +22,20 @@
 
 #include "ultima8/misc/pent_include.h"
 
-#include "egg_hatcher_process.h"
+#include "ultima8/world/egg_hatcher_process.h"
 #include "ultima8/world/egg.h"
 #include "ultima8/world/actors/main_actor.h"
-#include "teleport_egg.h"
+#include "ultima8/world/teleport_egg.h"
 #include "ultima8/world/get_object.h"
 
 #include "ultima8/filesys/idata_source.h"
-#include "odata_source.h"
+#include "ultima8/filesys/odata_source.h"
 
-DEFINE_RUNTIME_CLASSTYPE_CODE(EggHatcherProcess, Process);
-#include "ultima8/filesys/odata_source.h"EggHatcherProcess::EggHatcherProcess() {
+namespace Ultima8 {
+
+DEFINE_RUNTIME_CLASSTYPE_CODE(EggHatcherProcess, Process)
+
+EggHatcherProcess::EggHatcherProcess() {
 
 }
 
@@ -107,3 +110,5 @@ bool EggHatcherProcess::loadData(IDataSource *ids, uint32 version) {
 
 	return true;
 }
+
+} // End of namespace Ultima8

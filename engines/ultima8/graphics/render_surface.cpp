@@ -22,9 +22,7 @@
 
 #include "ultima8/misc/pent_include.h"
 #include "ultima8/graphics/render_surface.h"
-#include "SoftRenderSurface.h"
-#include <SDL.h>
-#include <cmath>
+#include "ultima8/graphics/soft_render_surface.h"
 
 #if defined(WIN32) && defined(I_AM_COLOURLESS_EXPERIMENTING_WITH_D3D)
 #include "D3D9SoftRenderSurface.h"

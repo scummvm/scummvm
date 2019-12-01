@@ -42,7 +42,7 @@ class ConsoleGump : public Gump {
 	uint32 scroll_frame;
 
 public:
-	ENABLE_RUNTIME_CLASSTYPE();
+	ENABLE_RUNTIME_CLASSTYPE()
 
 	ConsoleGump();
 	ConsoleGump(int x, int y, int w, int h);

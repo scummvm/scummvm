@@ -46,7 +46,7 @@ void Args::process(const int32 argc, const char *const *const argv) {
 				if (options[j].option == argv[i]) {
 					// We want the _next_ argument
 					if (++i >= argc) {
-						warning("Data not specified for argument '%d'. Using default", options[j].option.c_str());
+						warning("Data not specified for argument '%s'. Using default", options[j].option.c_str());
 						break;
 					}
 					*(options[j]._sint_val) = strtol(argv[i], 0, 10);
@@ -57,7 +57,7 @@ void Args::process(const int32 argc, const char *const *const argv) {
 				if (options[j].option == argv[i]) {
 					// We want the _next_ argument
 					if (++i >= argc) {
-						warning("Data not specified for argument '%d'. Using default", options[j].option.c_str());
+						warning("Data not specified for argument '%s'. Using default", options[j].option.c_str());
 						break;
 					}
 					*(options[j]._uint_val) = strtoul(argv[i], 0, 10);

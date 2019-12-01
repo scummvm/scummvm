@@ -21,22 +21,21 @@
  */
 
 #include "ultima8/misc/pent_include.h"
-
-#include <stack>
-
-#include "Map.h"
+#include "ultima8/world/map.h"
 #include "ultima8/filesys/idata_source.h"
 #include "ultima8/filesys/odata_source.h"
 #include "ultima8/world/item_factory.h"
-#include "ultima8/world/Item.h"
-#include "ultima8/world/Container.h"
+#include "ultima8/world/item.h"
+#include "ultima8/world/container.h"
 #include "ultima8/kernel/object_manager.h"
 #include "ultima8/kernel/core_app.h"
 #include "ultima8/games/game_info.h"
 
 #include "ultima8/graphics/shape_info.h" // debugging only
-#include "ultima8/games/game_data.h" // ""
-#include "MainShapeArchive.h" // ""
+#include "ultima8/games/game_data.h"
+#include "ultima8/graphics/main_shape_archive.h"
+
+namespace Ultima8 {
 
 //#define DUMP_ITEMS
 
@@ -405,3 +404,5 @@ bool Map::load(IDataSource *ids, uint32 version) {
 
 	return true;
 }
+
+} // End of namespace Ultima8

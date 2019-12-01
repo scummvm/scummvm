@@ -23,7 +23,7 @@
 #ifndef ULTIMA8_GUMPS_SHAPEVIEWERGUMP_H
 #define ULTIMA8_GUMPS_SHAPEVIEWERGUMP_H
 
-#include "modal_gump.h"
+#include "ultima8/gumps/modal_gump.h"
 
 #include "ultima8/std/containers.h"
 #include "ultima8/misc/p_dynamic_cast.h"
@@ -35,7 +35,7 @@ class ShapeArchive;
 
 class ShapeViewerGump : public ModalGump {
 public:
-	ENABLE_RUNTIME_CLASSTYPE();
+	ENABLE_RUNTIME_CLASSTYPE()
 
 	ShapeViewerGump();
 	ShapeViewerGump(int width, int height,

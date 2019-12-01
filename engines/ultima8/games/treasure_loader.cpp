@@ -17,10 +17,12 @@
  */
 
 #include "ultima8/misc/pent_include.h"
-#include "TreasureLoader.h"
+#include "ultima8/games/treasure_loader.h"
 
 #include "ultima8/conf/config_file_manager.h"
 #include "ultima8/misc/util.h"
+
+namespace Ultima8 {
 
 TreasureLoader::TreasureLoader() {
 
@@ -199,3 +201,5 @@ bool TreasureLoader::parseInt(std::string val, int &i) {
 	i = std::strtol(val.c_str(), 0, 0);
 	return true;
 }
+
+} // End of namespace Ultima8

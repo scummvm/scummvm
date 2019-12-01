@@ -79,7 +79,7 @@ void ShutdownJoystick() {
 #endif
 }
 
-DEFINE_RUNTIME_CLASSTYPE_CODE(JoystickCursorProcess, Process);
+DEFINE_RUNTIME_CLASSTYPE_CODE(JoystickCursorProcess, Process)
 
 JoystickCursorProcess::JoystickCursorProcess()
 	: Process(), js(JOY1), x_axis(0), y_axis(1), ticks(0), accel(0) {

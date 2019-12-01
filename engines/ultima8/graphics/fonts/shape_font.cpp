@@ -21,10 +21,10 @@
  */
 
 #include "ultima8/misc/pent_include.h"
-#include "ShapeFont.h"
-#include "Shape.h"
-#include "ShapeFrame.h"
-#include "ShapeRenderedText.h"
+#include "ultima8/graphics/fonts/shape_font.h"
+#include "ultima8/graphics/shape.h"
+#include "ultima8/graphics/shape_frame.h"
+#include "ultima8/graphics/fonts/shape_rendered_text.h"
 
 namespace Ultima8 {
 

@@ -19,10 +19,11 @@
 
 #ifdef USE_HQ3X_SCALER
 
-#include "hq3xScaler.h"
-#include "Manips.h"
+#include "ultima8/graphics/scalers/hq3x_scaler.h"
+#include "ultima8/graphics/manips.h"
 #include "ultima8/graphics/texture.h"
 
+namespace Ultima8 {
 namespace Pentagram {
 
 static bool InitedLUT = false;
@@ -4022,6 +4023,7 @@ template<class uintX, class Manip, class uintS> Scaler::ScalerFunc hq3xScaler::G
 	return hq3xScalerInternal<uintX, Manip, uintS>::hq3x_32;
 }
 
-};	// namespace Pentagram
+} // End of namespace Pentagram
+} // End of namespace Ultima8
 
 #endif

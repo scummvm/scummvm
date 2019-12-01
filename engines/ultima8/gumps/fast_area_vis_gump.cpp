@@ -21,13 +21,15 @@
  */
 
 #include "ultima8/misc/pent_include.h"
-#include "fast_area_vis_gump.h"
+#include "ultima8/gumps/fast_area_vis_gump.h"
 #include "ultima8/kernel/gui_app.h"
 #include "ultima8/world/world.h"
 #include "ultima8/world/current_map.h"
 #include "ultima8/graphics/render_surface.h"
 
-DEFINE_RUNTIME_CLASSTYPE_CODE(FastAreaVisGump, Gump);
+namespace Ultima8 {
+
+DEFINE_RUNTIME_CLASSTYPE_CODE(FastAreaVisGump, Gump)
 
 FastAreaVisGump::FastAreaVisGump(void) : Gump(0, 0, MAP_NUM_CHUNKS + 2, MAP_NUM_CHUNKS + 2, 0, FLAG_DRAGGABLE | FLAG_DONT_SAVE, LAYER_NORMAL) {
 }
@@ -71,3 +73,5 @@ uint16 FastAreaVisGump::TraceObjId(int mx, int my) {
 
 	return objid;
 }
+
+} // End of namespace Ultima8

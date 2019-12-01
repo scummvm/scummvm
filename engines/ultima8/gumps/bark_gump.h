@@ -38,7 +38,7 @@ protected:
 	uint32 totaltextheight;
 
 public:
-	ENABLE_RUNTIME_CLASSTYPE();
+	ENABLE_RUNTIME_CLASSTYPE()
 
 	BarkGump();
 	BarkGump(uint16 owner, std::string msg, uint32 speechshapenum = 0);

@@ -21,21 +21,19 @@
  */
 
 #include "ultima8/misc/pent_include.h"
-#include "EditWidget.h"
-#include "ShapeFont.h"
-#include "RenderedText.h"
+#include "ultima8/gumps/widgets/edit_widget.h"
+#include "ultima8/graphics/fonts/shape_font.h"
+#include "ultima8/graphics/fonts/rendered_text.h"
 #include "ultima8/graphics/render_surface.h"
 #include "ultima8/graphics/fonts/font_manager.h"
 #include "ultima8/filesys/idata_source.h"
 #include "ultima8/filesys/odata_source.h"
-#include "TTFont.h"
+#include "ultima8/graphics/fonts/tt_font.h"
 #include "ultima8/misc/encoding.h"
-
-#include "SDL.h"
 
 namespace Ultima8 {
 
-DEFINE_RUNTIME_CLASSTYPE_CODE(EditWidget, Gump);
+DEFINE_RUNTIME_CLASSTYPE_CODE(EditWidget, Gump)
 
 EditWidget::EditWidget(int X, int Y, std::string txt, bool gamefont_, int font,
                        int w, int h, unsigned int maxlength_, bool multiline_)

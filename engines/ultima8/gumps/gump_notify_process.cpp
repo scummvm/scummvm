@@ -28,7 +28,9 @@
 #include "ultima8/filesys/idata_source.h"
 #include "ultima8/filesys/odata_source.h"
 
-DEFINE_RUNTIME_CLASSTYPE_CODE(GumpNotifyProcess, Process);
+namespace Ultima8 {
+
+DEFINE_RUNTIME_CLASSTYPE_CODE(GumpNotifyProcess, Process)
 
 GumpNotifyProcess::GumpNotifyProcess()
 	: Process() {
@@ -86,4 +88,4 @@ bool GumpNotifyProcess::loadData(IDataSource *ids, uint32 version) {
 	return true;
 }
 
-// Colourless Protection
+} // End of namespace Ultima8

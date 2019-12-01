@@ -23,7 +23,7 @@
 #ifndef ULTIMA8_GUMPS_CREDITSGUMP_H
 #define ULTIMA8_GUMPS_CREDITSGUMP_H
 
-#include "modal_gump.h"
+#include "ultima8/gumps/modal_gump.h"
 #include "ultima8/misc/p_dynamic_cast.h"
 
 namespace Ultima8 {
@@ -32,7 +32,7 @@ class RenderedText;
 
 class CreditsGump : public ModalGump {
 public:
-	ENABLE_RUNTIME_CLASSTYPE();
+	ENABLE_RUNTIME_CLASSTYPE()
 
 	CreditsGump();
 	CreditsGump(const std::string &text, int parskip = 24,

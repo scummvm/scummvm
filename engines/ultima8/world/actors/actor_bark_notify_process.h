@@ -29,7 +29,7 @@ namespace Ultima8 {
 
 class ActorBarkNotifyProcess : public GumpNotifyProcess {
 public:
-	ENABLE_RUNTIME_CLASSTYPE();
+	ENABLE_RUNTIME_CLASSTYPE()
 
 	ActorBarkNotifyProcess();
 	ActorBarkNotifyProcess(uint16 it);

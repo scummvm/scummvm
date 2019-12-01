@@ -22,14 +22,14 @@
 
 #include "ultima8/misc/pent_include.h"
 
-#include "MainShapeArchive.h"
-#include "TypeFlags.h"
+#include "ultima8/graphics/main_shape_archive.h"
+#include "ultima8/graphics/type_flags.h"
 #include "ultima8/graphics/shape_info.h"
 #include "ultima8/graphics/AnimDat.h"
 
 namespace Ultima8 {
 
-DEFINE_RUNTIME_CLASSTYPE_CODE(MainShapeArchive, ShapeArchive);
+DEFINE_RUNTIME_CLASSTYPE_CODE(MainShapeArchive, ShapeArchive)
 
 
 MainShapeArchive::~MainShapeArchive() {

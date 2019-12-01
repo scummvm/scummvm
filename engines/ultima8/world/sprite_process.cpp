@@ -23,7 +23,7 @@
 #include "ultima8/misc/pent_include.h"
 #include "ultima8/world/sprite_process.h"
 #include "ultima8/world/item_factory.h"
-#include "ultima8/world/Item.h"
+#include "ultima8/world/item.h"
 #include "ultima8/world/current_map.h"
 #include "ultima8/kernel/kernel.h"
 #include "ultima8/world/get_object.h"
@@ -31,8 +31,10 @@
 #include "ultima8/filesys/idata_source.h"
 #include "ultima8/filesys/odata_source.h"
 
+namespace Ultima8 {
+
 // p_dynamic_class stuff
-DEFINE_RUNTIME_CLASSTYPE_CODE(SpriteProcess, Process);
+DEFINE_RUNTIME_CLASSTYPE_CODE(SpriteProcess, Process)
 
 SpriteProcess::SpriteProcess()
 	: Process() {
@@ -142,3 +144,5 @@ bool SpriteProcess::loadData(IDataSource *ids, uint32 version) {
 
 	return true;
 }
+
+} // End of namespace Ultima8
