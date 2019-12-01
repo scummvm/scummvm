@@ -26,7 +26,6 @@
 #include "graphics/font.h"
 
 namespace Graphics {
-class MacFont;
 class ManagedSurface;
 class MacText;
 class MacWindowManager;
@@ -41,7 +40,6 @@ private:
 	int _width;
 	TextCast *const _textCast;
 	Graphics::MacWindowManager *_wm;
-	Graphics::MacFont *_macFont;
 	Graphics::MacText *_macText;
 	Graphics::TextAlign _align;
 	bool _dirty;
