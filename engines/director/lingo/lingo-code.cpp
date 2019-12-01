@@ -1016,7 +1016,7 @@ void Lingo::c_whencode() {
 		}
 	}
 
-	g_lingo->_pc = end;
+	g_lingo->_pc = end + 1;
 }
 
 void Lingo::c_tellcode() {
