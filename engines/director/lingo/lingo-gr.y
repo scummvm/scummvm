@@ -255,11 +255,10 @@ stmt: stmtoneliner
 
 		checkEnd($11, "repeat", true); }
 	| when stmtoneliner end {
-			inst end = 0;
-			WRITE_UINT32(&end, $3 - $1);
-			g_lingo->code1(STOP);
-			(*g_lingo->_currentScript)[$1 + 1] = end;
-		}
+		inst end = 0;
+		WRITE_UINT32(&end, $3 - $1);
+		g_lingo->code1(STOP);
+		(*g_lingo->_currentScript)[$1 + 1] = end; }
 	| tell expr nl stmtlist end ENDCLAUSE {
 			warning("STUB: TELL is not implemented");
 			checkEnd($6, "tell", true); }
@@ -634,28 +633,24 @@ defn: tMACRO ID { g_lingo->_indef = true; g_lingo->_currentFactory.clear(); }
 			g_lingo->code1(g_lingo->c_procret);
 			g_lingo->define(*$2, $4, $5);
 			g_lingo->_indef = false; }
-	| tFACTORY ID	{
-			g_lingo->codeFactory(*$2);
-		}
+	| tFACTORY ID	{ g_lingo->codeFactory(*$2); }
 	| tMETHOD ID { g_lingo->_indef = true; }
 		begin argdef nl argstore stmtlist 		{
 			g_lingo->code1(g_lingo->c_procret);
 			g_lingo->define(*$2, $4, $5 + 1, &g_lingo->_currentFactory);
-			g_lingo->_indef = false; }	;
+			g_lingo->_indef = false; }
 	| on begin  argdef nl argstore stmtlist ENDCLAUSE {	// D3
-				g_lingo->code1(g_lingo->c_procret);
-				g_lingo->define(*$1, $2, $3);
-				g_lingo->_indef = false;
-				g_lingo->_ignoreMe = false;
+		g_lingo->code1(g_lingo->c_procret);
+		g_lingo->define(*$1, $2, $3);
+		g_lingo->_indef = false;
+		g_lingo->_ignoreMe = false;
 
-				checkEnd($7, $1->c_str(), false);
-			}
+		checkEnd($7, $1->c_str(), false); }
 	| on begin argdef nl argstore stmtlist {	// D4. No 'end' clause
-				g_lingo->code1(g_lingo->c_procret);
-				g_lingo->define(*$1, $2, $3);
-				g_lingo->_indef = false;
-				g_lingo->_ignoreMe = false;
-			}
+		g_lingo->code1(g_lingo->c_procret);
+		g_lingo->define(*$1, $2, $3);
+		g_lingo->_indef = false;
+		g_lingo->_ignoreMe = false; }
 
 on:  tON ID { $$ = $2; g_lingo->_indef = true; g_lingo->_currentFactory.clear(); g_lingo->_ignoreMe = true; }
 
