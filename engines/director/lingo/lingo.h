@@ -179,7 +179,7 @@ public:
 	void addNamesV4(Common::SeekableSubReadStreamEndian &stream);
 	void executeScript(ScriptType type, uint16 id, uint16 function);
 	void printStack(const char *s);
-	Common::String decodeInstruction(uint pc, uint *newPC = NULL);
+	Common::String decodeInstruction(ScriptData *sd, uint pc, uint *newPC = NULL);
 
 	void initBuiltIns();
 	void initFuncs();
@@ -214,7 +214,7 @@ public:
 	void popContext();
 	Symbol *lookupVar(const char *name, bool create = true, bool putInGlobalList = false);
 	void cleanLocalVars();
-	void define(Common::String &s, int start, int nargs, Common::String *prefix = NULL, int end = -1);
+	Symbol *define(Common::String &s, int start, int nargs, Common::String *prefix = NULL, int end = -1);
 	void processIf(int elselabel, int endlabel);
 
 	int alignTypes(Datum &d1, Datum &d2);

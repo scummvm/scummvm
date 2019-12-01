@@ -1002,14 +1002,14 @@ void Lingo::c_whencode() {
 	int entity = g_lingo->_currentEntityId;
 	g_lingo->_currentEntityId = 0;
 
-	g_lingo->define(eventname, start, 0, NULL, end);
+	Symbol *sym = g_lingo->define(eventname, start, 0, NULL, end);
 
 	g_lingo->_currentEntityId = entity;
 
 	if (debugChannelSet(1, kDebugLingoExec)) {
-		uint pc = start;
-		while (pc <= end) {
-			Common::String instr = g_lingo->decodeInstruction(pc, &pc);
+		uint pc = 0;
+		while (pc < sym->u.defn->size()) {
+			Common::String instr = g_lingo->decodeInstruction(sym->u.defn, pc, &pc);
 			debugC(1, kDebugLingoExec, "[%5d] %s", pc, instr.c_str());
 		}
 	}

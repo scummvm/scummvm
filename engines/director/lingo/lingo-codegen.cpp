@@ -54,7 +54,7 @@ namespace Director {
 
 void Lingo::execute(uint pc) {
 	for (_pc = pc; !_returning && (*_currentScript)[_pc] != STOP;) {
-		Common::String instr = decodeInstruction(_pc);
+		Common::String instr = decodeInstruction(_currentScript, _pc);
 
 		if (debugChannelSet(5, kDebugLingoExec))
 			printStack("Stack before: ");
@@ -85,11 +85,11 @@ void Lingo::printStack(const char *s) {
 	debugC(5, kDebugLingoExec, "%s", stack.c_str());
 }
 
-Common::String Lingo::decodeInstruction(uint pc, uint *newPc) {
+Common::String Lingo::decodeInstruction(ScriptData *sd, uint pc, uint *newPc) {
 	Symbol sym;
 	Common::String res;
 
-	sym.u.func = (*_currentScript)[pc++];
+	sym.u.func = (*sd)[pc++];
 	if (_functions.contains((void *)sym.u.s)) {
 		res = _functions[(void *)sym.u.s]->name;
 		const char *pars = _functions[(void *)sym.u.s]->proto;
@@ -99,7 +99,7 @@ Common::String Lingo::decodeInstruction(uint pc, uint *newPc) {
 			switch (*pars++) {
 			case 'i':
 				{
-					i = (*_currentScript)[pc++];
+					i = (*sd)[pc++];
 					int v = READ_UINT32(&i);
 
 					res += Common::String::format(" %d", v);
@@ -108,7 +108,7 @@ Common::String Lingo::decodeInstruction(uint pc, uint *newPc) {
 			case 'f':
 				{
 					Datum d;
-					i = (*_currentScript)[pc++];
+					i = (*sd)[pc++];
 					d.u.f = *(double *)(&i);
 
 					res += Common::String::format(" %f", d.u.f);
@@ -116,7 +116,7 @@ Common::String Lingo::decodeInstruction(uint pc, uint *newPc) {
 				}
 			case 'o':
 				{
-					i = (*_currentScript)[pc++];
+					i = (*sd)[pc++];
 					int v = READ_UINT32(&i);
 
 					res += Common::String::format(" [%5d]", v);
@@ -124,7 +124,7 @@ Common::String Lingo::decodeInstruction(uint pc, uint *newPc) {
 				}
 			case 's':
 				{
-					char *s = (char *)&(*_currentScript)[pc];
+					char *s = (char *)&(*sd)[pc];
 					pc += calcStringAlignment(s);
 
 					res += Common::String::format(" \"%s\"", s);
@@ -212,7 +212,7 @@ void Lingo::cleanLocalVars() {
 	g_lingo->_localvars = 0;
 }
 
-void Lingo::define(Common::String &name, int start, int nargs, Common::String *prefix, int end) {
+Symbol *Lingo::define(Common::String &name, int start, int nargs, Common::String *prefix, int end) {
 	if (prefix)
 		name = *prefix + "-" + name;
 
@@ -243,6 +243,8 @@ void Lingo::define(Common::String &name, int start, int nargs, Common::String *p
 	sym->u.defn = new ScriptData(&(*_currentScript)[start], end - start + 1);
 	sym->nargs = nargs;
 	sym->maxArgs = nargs;
+
+	return sym;
 }
 
 int Lingo::codeString(const char *str) {
