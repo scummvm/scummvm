@@ -199,6 +199,8 @@ void GfxPalette::createFromData(const SciSpan<const byte> &data, Palette *palett
 				paletteOut->colors[colorNo].b = data[palOffset++];
 			}
 			break;
+		default:
+			break;
 	}
 }
 

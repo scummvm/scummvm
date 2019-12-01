@@ -456,6 +456,9 @@ void GfxTransitions::straight(int16 number, bool blackoutFlag) {
 			newScreenRect.translate(0, 1);
 		}
 		break;
+
+	default:
+		break;
 	}
 }
 
@@ -552,6 +555,9 @@ void GfxTransitions::scroll(int16 number) {
 				updateScreenAndWait(msecCount);
 			}
 		}
+		break;
+
+	default:
 		break;
 	}
 

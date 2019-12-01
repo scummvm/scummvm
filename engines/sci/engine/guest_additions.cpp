@@ -842,6 +842,7 @@ void GuestAdditions::syncMessageTypeFromScummVM() const {
 		break;
 #endif
 	case kMessageTypeSyncStrategyNone:
+	default:
 		break;
 	}
 }
@@ -940,6 +941,7 @@ void GuestAdditions::syncMessageTypeToScummVM(const int index, const reg_t value
 		// LSL6hires synchronisation happens via send_selector
 #endif
 	case kMessageTypeSyncStrategyNone:
+	default:
 		break;
 	}
 }
@@ -1325,6 +1327,8 @@ void GuestAdditions::syncAudioVolumeGlobalsToScummVM(const int index, const reg_
 				break;
 			case kGlobalVarTorinSpeechVolume:
 				ConfMan.setInt("speech_volume", volume);
+				break;
+			default:
 				break;
 			}
 		}

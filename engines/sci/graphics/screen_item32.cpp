@@ -473,16 +473,18 @@ CelObj &ScreenItem::getCelObj() const {
 		switch (_celInfo.type) {
 			case kCelTypeView:
 				_celObj.reset(new CelObjView(_celInfo.resourceId, _celInfo.loopNo, _celInfo.celNo));
-			break;
+				break;
 			case kCelTypePic:
 				error("Internal error, pic screen item with no cel.");
-			break;
+				break;
 			case kCelTypeMem:
 				_celObj.reset(new CelObjMem(_celInfo.bitmap));
-			break;
+				break;
 			case kCelTypeColor:
 				_celObj.reset(new CelObjColor(_celInfo.color, _insetRect.width(), _insetRect.height()));
-			break;
+				break;
+			default:
+				break;
 		}
 	}
 

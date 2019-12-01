@@ -92,6 +92,8 @@ reg_t kDoSoundPhantasmagoriaMac(EngineState *s, int argc, reg_t *argv) {
 		return g_sci->_soundCmd->kDoSoundSetLoop(s, argc - 1, argv + 1);
 	case 10:
 		return g_sci->_soundCmd->kDoSoundUpdateCues(s, argc - 1, argv + 1);
+	default:
+		break;
 	}
 
 	error("Unknown kDoSound Phantasmagoria Mac subop %d", argv[0].toUint16());

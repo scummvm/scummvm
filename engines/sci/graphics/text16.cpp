@@ -138,6 +138,8 @@ int16 GfxText16::CodeProcessing(const char *&text, GuiResourceId orgFontId, int1
 			}
 		}
 		break;
+	default:
+		break;
 	}
 	return textCodeSize;
 }
@@ -244,6 +246,9 @@ int16 GfxText16::GetLongest(const char *&textPtr, int16 maxWidth, GuiResourceId 
 		case ' ':
 			lastSpaceCharCount = curCharCount; // return count up to (but not including) breaking space
 			lastSpacePtr = textPtr + 1; // remember position right after the current space
+			break;
+
+		default:
 			break;
 		}
 		tempWidth += _font->getCharWidth(curChar);

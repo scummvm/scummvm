@@ -52,7 +52,7 @@ AudioVolumeResourceSource::AudioVolumeResourceSource(ResourceManager *resMan, co
 	switch (compressionType) {
 	case MKTAG('M','P','3',' '):
 	case MKTAG('O','G','G',' '):
-	case MKTAG('F','L','A','C'):
+	case MKTAG('F','L','A','C'): {
 		_audioCompressionType = compressionType;
 		const uint32 numEntries = fileStream->readUint32LE();
 		if (!numEntries) {
@@ -73,6 +73,9 @@ AudioVolumeResourceSource::AudioVolumeResourceSource(ResourceManager *resMan, co
 		}
 
 		lastEntry->size = fileStream->size() - lastEntry->offset;
+		}
+		break;
+	default:
 		break;
 	}
 

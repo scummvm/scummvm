@@ -601,6 +601,7 @@ void unpackCelData(const SciSpan<const byte> &inBuffer, SciSpan<byte> &celBitmap
 					memset(outPtr + pixelNr, *literalPtr++, MIN<uint16>(runLength, pixelCount - pixelNr));
 				break;
 			case 0xC0: // skip the next pixels (transparency)
+			default:
 				break;
 			}
 

@@ -724,6 +724,8 @@ void GfxScreen::debugShowMap(int mapNo) {
 	case 3:
 		_activeScreen = _displayScreen;
 		break;
+	default:
+		break;
 	}
 	copyToScreen();
 }

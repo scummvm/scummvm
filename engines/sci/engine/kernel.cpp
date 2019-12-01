@@ -300,6 +300,9 @@ static uint16 *parseKernelSignature(const char *kernelName, const char *writtenS
 					writePos++;
 					signature = 0;
 				}
+				break;
+			default:
+				break;
 			}
 		}
 		switch (curChar) {

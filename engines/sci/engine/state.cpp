@@ -264,7 +264,11 @@ Common::String SciEngine::getSciLanguageString(const Common::String &str, kLangu
 						fullWidth += 0x0D; // CR
 						textPtr += 2;
 						continue;
+					default:
+						break;
 					}
+				default:
+					break;
 				}
 
 				textPtr++;

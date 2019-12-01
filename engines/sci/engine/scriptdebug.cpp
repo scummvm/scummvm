@@ -1111,6 +1111,9 @@ void logBacktrace() {
 			con->debugPrintf(" %x:[%x] vs%s %s::%s (", i, call.debugOrigin, (call.argc) ? "write" : "read",
 			          objname, g_sci->getKernel()->getSelectorName(call.debugSelector).c_str());
 			break;
+
+		default:
+			break;
 		}
 
 		totalparamc = call.argc;

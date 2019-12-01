@@ -531,6 +531,8 @@ void Vocabulary::debugDecipherSaidBlock(const SciSpan<const byte> &data) {
 				case 0xf9:
 					debugN(">");
 					break;
+				default:
+					break;
 			}
 		}
 	} while (nextItem != 0xff && addr != data.cend());

@@ -17305,6 +17305,9 @@ void ScriptPatcher::applyPatch(const SciScriptPatcherEntry *patchEntry, SciSpan<
 		case PATCH_CODE_BYTE:
 			scriptData[offset] = patchValue & PATCH_BYTEMASK;
 			offset++;
+			break;
+		default:
+			break;
 		}
 		patchData++;
 		patchWord = *patchData;
@@ -17383,6 +17386,9 @@ bool ScriptPatcher::verifySignature(uint32 byteOffset, const uint16 *signatureDa
 			} else {
 				sigWord = SIG_MISMATCH; // out of bounds
 			}
+			break;
+		default:
+			break;
 		}
 
 		if (sigWord == SIG_MISMATCH)
@@ -17493,6 +17499,8 @@ void ScriptPatcher::calculateMagicDWordAndVerify(const char *signatureDescriptio
 				}
 				break;
 			}
+			default:
+				break;
 			}
 			magicOffset -= 2;
 			if (magicDWordLeft) {

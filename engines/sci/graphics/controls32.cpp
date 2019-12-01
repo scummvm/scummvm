@@ -172,6 +172,8 @@ reg_t GfxControls32::kernelEditText(const reg_t controlObject) {
 			case kSciKeyEnter:
 				focused = false;
 				break;
+			default:
+				break;
 			}
 		}
 

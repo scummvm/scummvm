@@ -860,6 +860,8 @@ void _k_GenericDrawControl(EngineState *s, reg_t controlObject, bool hilite) {
 	case SCI_CONTROLS_TYPE_TEXT:
 		splitText = g_sci->strSplitLanguage(text.c_str(), &languageSplitter);
 		break;
+	default:
+		break;
 	}
 
 	switch (type) {

@@ -3923,6 +3923,10 @@ void Console::printBreakpoint(int index, const Breakpoint &bp) {
 		break;
 	case BREAK_KERNEL:
 		debugPrintf("Kernel call k%s%s\n", bp._name.c_str(), bpaction);
+		break;
+	default:
+		debugPrintf("UNKNOWN TYPE\n");
+		break;
 	}
 }
 

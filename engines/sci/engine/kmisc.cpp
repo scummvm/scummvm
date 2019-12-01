@@ -369,6 +369,8 @@ reg_t kMemory(EngineState *s, int argc, reg_t *argv) {
 		}
 		break;
 	}
+	default:
+		break;
 	}
 
 	return s->r_acc;
@@ -757,6 +759,8 @@ reg_t kKawaHacks(EngineState *s, int argc, reg_t *argv) {
 	case 3: // IsDebug
  		// Return 1 if running with an internal debugger, 2 if we have AddMenu support, 3 if both.
 		return make_reg(0, 3);
+	default:
+		break;
 	}
 	return NULL_REG;
 }

@@ -1219,6 +1219,8 @@ const char *ResourceManager::versionDescription(ResVersion version) const {
 		return "SCI2/2.1";
 	case kResVersionSci3:
 		return "SCI3";
+	default:
+		break;
 	}
 
 	return "Version not valid";
@@ -2364,7 +2366,7 @@ ViewType ResourceManager::detectViewType() {
 					return kViewAmiga64;
 
 				return kViewVga;
-			case 0:
+			case 0: {
 				// EGA or Amiga, try to read as Amiga view
 
 				if (res->size() < 10)
@@ -2411,6 +2413,10 @@ ViewType ResourceManager::detectViewType() {
 				}
 
 				return kViewAmiga;
+			}
+
+			default:
+				break;
 			}
 		}
 	}

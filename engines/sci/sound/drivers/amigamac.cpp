@@ -267,6 +267,8 @@ void MidiDriver_AmigaMac::playInstrument(int16 *dest, Voice *channel, int count)
 						/* Stop envelope */
 						channel->envelope_samples = -1;
 						break;
+					default:
+						break;
 					}
 			} else {
 				/* We haven't reached the target yet */

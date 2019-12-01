@@ -752,8 +752,11 @@ public:
 			}
 			break;
 		}
+
 		case kArrayTypeInvalid:
+		default:
 			error("Attempted write to uninitialized SciArray");
+			break;
 		}
 	}
 
