@@ -182,6 +182,9 @@ Common::String ResourceManager::convertString(const Common::String &s) {
 				// falls through
 			case 1:
 				r = wc + r;
+				break;
+			default:
+				break;
 		}
 		res += r;
 	}
