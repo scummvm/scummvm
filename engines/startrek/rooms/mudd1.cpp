@@ -181,6 +181,9 @@ void Room::mudd1SpockPressedRedButton() {
 		_awayMission->mudd.torpedoStatus = 1;
 		showText(TX_SPEAKER_UHURA, TX_STATICU1);
 		break;
+
+	default:
+		break;
 	}
 }
 

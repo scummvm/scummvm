@@ -508,6 +508,8 @@ void Room::feather1ClimbedUpVine() {
 	case OBJECT_KIRK:
 		walkCrewman(OBJECT_KIRK, 0xa0, 0x30);
 		break;
+	default:
+		break;
 	}
 }
 
@@ -537,6 +539,8 @@ void Room::feather1ClimbedDownVine() {
 		break;
 	case OBJECT_KIRK:
 		walkCrewman(OBJECT_KIRK, 0x87, 0xba);
+		break;
+	default:
 		break;
 	}
 }

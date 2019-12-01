@@ -172,6 +172,8 @@ void Room::demon0TalkToPrelate() {
 	case 2:
 		demon0BadResponse();
 		break;
+	default:
+		break;
 	}
 
 	if (response != nullptr)

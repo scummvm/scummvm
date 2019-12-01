@@ -356,6 +356,8 @@ void StarTrekEngine::awayMissionLeftClick() {
 		break;
 	}
 
+	default:
+		break;
 	}
 }
 

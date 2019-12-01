@@ -140,6 +140,9 @@ void StarTrekEngine::chooseMousePositionFromSprites(Sprite *sprites, int numSpri
 				mouseY2 = vCenter;
 			}
 			break;
+
+		default:
+			break;
 		}
 	}
 
@@ -1001,6 +1004,8 @@ void StarTrekEngine::showTextConfigurationMenu(bool fromOptionMenu) {
 		break;
 	case 2:
 		_textDisplayMode = TEXTDISPLAY_NONE;
+		break;
+	default:
 		break;
 	}
 }

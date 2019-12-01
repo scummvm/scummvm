@@ -80,6 +80,7 @@ common:
 	// fall through
 
 	case BOTTLETYPE_NONE:
+	default:
 		break;
 	}
 

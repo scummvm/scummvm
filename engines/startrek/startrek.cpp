@@ -197,6 +197,7 @@ Common::Error StarTrekEngine::runGameMode(int mode, bool resume) {
 
 			case GAMEMODE_BEAMDOWN:
 			case GAMEMODE_BEAMUP:
+			default:
 				break;
 			}
 
@@ -227,6 +228,9 @@ Common::Error StarTrekEngine::runGameMode(int mode, bool resume) {
 				_sound->stopAllVocSounds();
 				_sound->playVoc("bridloop");
 				continue; // Back to start of loop
+
+			default:
+				break;
 			}
 		}
 
@@ -244,6 +248,9 @@ Common::Error StarTrekEngine::runGameMode(int mode, bool resume) {
 		case GAMEMODE_BEAMDOWN:
 		case GAMEMODE_BEAMUP:
 			error("Can't be here.");
+			break;
+
+		default:
 			break;
 		}
 	}

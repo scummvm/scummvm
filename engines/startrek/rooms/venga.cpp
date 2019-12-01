@@ -128,6 +128,9 @@ void Room::vengaUseMccoyOnDeadGuy() {
 	case 5:
 		showText(TX_SPEAKER_MCCOY, TX_VEN0_016);
 		break;
+
+	default:
+		break;
 	}
 }
 

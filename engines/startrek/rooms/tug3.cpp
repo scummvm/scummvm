@@ -258,6 +258,9 @@ void Room::tug3TalkToElasi1() {
 		// BUGFIX: they're going to surrender, so stop the firefight.
 		_awayMission->timers[0] = 0;
 		break;
+
+	default:
+		break;
 	}
 }
 

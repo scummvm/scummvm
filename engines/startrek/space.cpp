@@ -170,6 +170,8 @@ void StarTrekEngine::updateStarfieldAndShips(bool arg0) {
 		case 3:
 			r3 = sub_19f24(r3);
 			break;
+		default:
+			break;
 		}
 
 		if (r3 != nullptr)
@@ -193,6 +195,8 @@ void StarTrekEngine::updateStarfieldAndShips(bool arg0) {
 					// TODO
 				} else
 					drawR3Shape(r3);
+				break;
+			default:
 				break;
 			}
 		}

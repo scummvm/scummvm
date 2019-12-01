@@ -172,6 +172,9 @@ void StarTrekEngine::playIntro() {
 			_gfx->delSprite(&subtitleSprite);
 			_byte_45b3c = 1;
 			break;
+
+		default:
+			break;
 		}
 
 		if (!buttonPressed) {

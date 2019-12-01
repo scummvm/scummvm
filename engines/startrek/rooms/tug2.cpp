@@ -694,6 +694,9 @@ void Room::tug2Timer0Expired() {
 			tug2GuardShootsCrewman();
 		}
 		break;
+
+	default:
+		break;
 	}
 }
 

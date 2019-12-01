@@ -145,6 +145,9 @@ void Room::mudd4ShowLeftConsoleMenu() {
 		_awayMission->crewDirectionsAfterWalk[OBJECT_SPOCK] = DIR_N;
 		walkCrewman(OBJECT_SPOCK, 0x69, 0xb7);
 		break;
+
+	default:
+		break;
 	}
 }
 
@@ -241,6 +244,9 @@ void Room::mudd4ShowRightConsoleMenu() {
 	case 2: // Done
 		_awayMission->crewDirectionsAfterWalk[OBJECT_KIRK] = DIR_N;
 		walkCrewman(OBJECT_KIRK, 0x83, 0xb6);
+		break;
+
+	default:
 		break;
 	}
 }
