@@ -60,7 +60,7 @@ extern int yyparse();
 using namespace Director;
 void yyerror(const char *s) {
 	g_lingo->_hadError = true;
-	warning("LINGO: %s at line %d col %d", s, g_lingo->_linenumber, g_lingo->_colnumber);
+	warning("######################  LINGO: %s at line %d col %d", s, g_lingo->_linenumber, g_lingo->_colnumber);
 }
 
 void checkEnd(Common::String *token, const char *expect, bool required) {
@@ -109,10 +109,11 @@ void checkEnd(Common::String *token, const char *expect, bool required) {
 %type<s> on
 
 %right '='
-%left tLT tLE tGT tGE tNEQ tCONTAINS tSTARTS
+%left tAND tOR
+%left tLT tLE tGT tGE tNEQ tCONTAINS tSTARTS tEQ
 %left '&'
 %left '+' '-'
-%left '*' '/' '%' tAND tOR tMOD
+%left '*' '/' '%' tMOD
 %right UNARY
 
 %%
@@ -378,10 +379,15 @@ elseifstmt1: elseifstmtoneliner
 		g_lingo->codeLabel($1); }
 	;
 
-cond:	   expr 				{ g_lingo->code1(STOP); }
-	| expr '=' expr				{ g_lingo->code2(g_lingo->c_eq, STOP); }
-	| '(' cond ')'
+cond:	begincond expr endcond	{ g_lingo->code1(STOP); }
 	;
+
+begincond:	  /* nothing */		{ g_lingo->_inCond = true; }
+	;
+
+endcond:	  /* nothing */		{ g_lingo->_inCond = false; }
+	;
+
 
 repeatwhile:	tREPEAT tWHILE		{ $$ = g_lingo->code3(g_lingo->c_repeatwhilecode, STOP, STOP); }
 	;
@@ -479,6 +485,7 @@ expr: INT		{
 	| expr tMOD expr			{ g_lingo->code1(g_lingo->c_mod); }
 	| expr '>' expr				{ g_lingo->code1(g_lingo->c_gt); }
 	| expr '<' expr				{ g_lingo->code1(g_lingo->c_lt); }
+	| expr tEQ expr				{ g_lingo->code1(g_lingo->c_eq); }
 	| expr tNEQ expr			{ g_lingo->code1(g_lingo->c_neq); }
 	| expr tGE expr				{ g_lingo->code1(g_lingo->c_ge); }
 	| expr tLE expr				{ g_lingo->code1(g_lingo->c_le); }

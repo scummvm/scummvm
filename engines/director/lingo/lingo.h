@@ -565,6 +565,7 @@ public:
 
 	bool _inFactory;
 	Common::String _currentFactory;
+	bool _inCond;
 
 	bool _exitRepeat;
 

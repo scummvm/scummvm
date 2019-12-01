@@ -3,6 +3,8 @@ set x = 1
 if x = 5 then exit
 else put 10.0
 
+set y = 4
+
 repeat with x = 1 to 6
 	if x = 3 then put 30
 	else if x = 4 then put 40
@@ -42,5 +44,8 @@ end repeat
         go to frame 1
     end if
 
---  specialized macros to determine which sub-menu to return to
---  (these two files appear in two different menus)
+if abs(y) = x and abs(x) = y then
+  put TRUE
+else
+  put FALSE
+end if

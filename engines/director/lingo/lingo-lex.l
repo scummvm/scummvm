@@ -71,7 +71,7 @@ identifier [_[:alpha:]][_[:alnum:]]*
 constfloat [[:digit:]]+\.[[:digit:]]*
 constinteger [[:digit:]]+
 conststring \"[^\"\r\n]*\"
-operator [-+*/%=^:,()><&\[\]]
+operator [-+*/%^:,()><&\[\]]
 newline [ \t]*[\n\r]
 whitespace [\t ]
 
@@ -257,6 +257,7 @@ whitespace [\t ]
 [>][=]					{ count(); return tGE; }
 [<][=]					{ count(); return tLE; }
 [&][&]					{ count(); return tCONCAT; }
+[=]							{ count(); return g_lingo->_inCond ? tEQ : '='; }
 
 {identifier}		{
 		count();

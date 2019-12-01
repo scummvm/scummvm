@@ -59,6 +59,7 @@ Lingo::Lingo(DirectorEngine *vm) : _vm(vm) {
 	_hadError = false;
 
 	_inFactory = false;
+	_inCond = false;
 
 	_floatPrecision = 4;
 	_floatPrecisionFormat = "%.4f";
