@@ -240,7 +240,7 @@ Symbol *Lingo::define(Common::String &name, int start, int nargs, Common::String
 	if (end == -1)
 		end = _currentScript->size();
 
-	sym->u.defn = new ScriptData(&(*_currentScript)[start], end - start + 1);
+	sym->u.defn = new ScriptData(&(*_currentScript)[start], end - start);
 	sym->nargs = nargs;
 	sym->maxArgs = nargs;
 
@@ -256,6 +256,7 @@ Symbol *Lingo::define(Common::String &name, int start, int nargs, Common::String
 			Common::String instr = g_lingo->decodeInstruction(sym->u.defn, pc, &pc);
 			debugC(1, kDebugLingoExec, "[%5d] %s", pc, instr.c_str());
 		}
+		debugC(1, kDebugLingoExec, "<end define code>");
 	}
 
 	return sym;
