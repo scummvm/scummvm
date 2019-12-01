@@ -2,9 +2,9 @@ Source: residualvm
 Section: games
 Priority: optional
 Maintainer: Pawel Kolodziejski <aquadran@residualvm.org>
-Build-Depends: debhelper (>= 9)
+Build-Depends: debhelper (>= 9), autotools-dev
               ,libasound2-dev [linux-any]
-              ,libsdl2-dev
+              ,libsdl2-dev | libsdl1.2-dev
               ,libmad0-dev
               ,libz-dev
               ,libmpeg2-4-dev
@@ -13,7 +13,9 @@ Build-Depends: debhelper (>= 9)
               ,libvorbis-dev
               ,libglew-dev
               ,libfreetype6-dev
-Standards-Version: 3.9.5
+              ,nasm [i386]
+              ,python
+Standards-Version: 3.9.8
 Homepage: https://www.residualvm.org
 
 Package: residualvm
