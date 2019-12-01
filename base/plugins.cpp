@@ -641,15 +641,18 @@ const Plugin *EngineManager::findPlugin(const Common::String &engineId) const {
 	}
 
 	// We failed to find it using the engine ID. Scan the list of plugins
-	PluginMan.loadFirstPlugin();
-	do {
-		plugin = findLoadedPlugin(engineId);
-		if (plugin) {
-			// Update with new plugin file name
-			PluginMan.updateConfigWithFileName(engineId);
-			return plugin;
-		}
-	} while (PluginMan.loadNextPlugin());
+	const PluginList &plugins = getPlugins();
+	if (!plugins.empty()) {
+		PluginMan.loadFirstPlugin();
+		do {
+			plugin = findLoadedPlugin(engineId);
+			if (plugin) {
+				// Update with new plugin file name
+				PluginMan.updateConfigWithFileName(engineId);
+				return plugin;
+			}
+		} while (PluginMan.loadNextPlugin());
+	}
 
 	return 0;
 }
