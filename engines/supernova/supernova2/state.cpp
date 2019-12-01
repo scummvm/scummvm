@@ -824,6 +824,8 @@ void GameManager2::taxiPayment(int price, int destination) {
 		case 11:
 			changeRoom(CITY2);
 			break;
+		default:
+			break;
 		}
 	}
 }
@@ -1065,6 +1067,8 @@ void GameManager2::passageConstruction() {
 			_rooms[PYR_ENTRANCE]->setSectionVisible(21, kShownTrue);
 			_rooms[PYR_ENTRANCE]->getObject(0)->_click = 9;
 			break;
+		default:
+			break;
 		}
 	}
 	_rooms[PYR_ENTRANCE]->setSectionVisible(9, 
@@ -1158,6 +1162,8 @@ byte GameManager2::wall(int s, int z, int direction, int stepsForward, int steps
 			return wall(s + stepsForward, z, newR, stepsRight, 0);
 		case 3:
 			return wall(s - stepsForward, z, newR, stepsRight, 0);
+		default:
+			break;
 		}
 	}
 	switch (direction) {
@@ -1169,6 +1175,8 @@ byte GameManager2::wall(int s, int z, int direction, int stepsForward, int steps
 		return horizontal[_state._pyraE][z][s     + stepsForward] == 0;
 	case 3:
 		return horizontal[_state._pyraE][z][s + 1 - stepsForward] == 0;
+	default:
+		break;
 	}
 	return 0;
 }
@@ -1187,6 +1195,8 @@ bool GameManager2::move(Action verb, Object &obj) {
 				break;
 			case 3:
 				_state._pyraS--;
+				break;
+			default:
 				break;
 		}
 	} else if (verb == ACTION_WALK && obj._id == G_RIGHT) {

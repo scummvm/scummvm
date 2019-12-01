@@ -1990,6 +1990,9 @@ bool ArsanoEntrance::interact(Action verb, Object &obj1, Object &obj2) {
 						break;
 					case 3:
 						_gm->reply(kStringArsanoEntrance9, 1, _gm->invertSection(1));
+						break;
+					default:
+						break;
 					}
 				} while (e != 4);
 			} else if (_gm->dialog(5, row2, _dialog2, 0) != 4)
@@ -2042,6 +2045,8 @@ bool ArsanoEntrance::interact(Action verb, Object &obj1, Object &obj2) {
 						setSectionVisible(4, false);
 						_gm->wait(2);
 						_vm->renderImage(_gm->invertSection(3));
+						break;
+					default:
 						break;
 					}
 					removeSentence(0, 1);
@@ -2307,6 +2312,9 @@ void ArsanoRemaining::animation() {
 		break;
 	case 34:
 		_vm->renderImage(4);
+		break;
+	default:
+		break;
 	}
 
 	_i = (_i + 1) % 35;
@@ -2430,6 +2438,9 @@ bool ArsanoRoger::interact(Action verb, Object &obj1, Object &obj2) {
 				_gm->reply(kStringArsanoRoger33, 2, 2 + kSectionInvert);
 				_gm->say(kStringArsanoRoger34);
 				_gm->reply(kStringArsanoRoger35, 2, 2 + kSectionInvert);
+				break;
+			default:
+				break;
 			}
 		}
 	} else if (((verb == ACTION_USE) && Object::combine(obj1, obj2, CHESS, ROGER_W)) ||
@@ -2557,6 +2568,9 @@ bool ArsanoGlider::interact(Action verb, Object &obj1, Object &obj2) {
 					_vm->renderImage(_gm->invertSection(r + 15));
 					r--;
 				}
+				break;
+			default:
+				break;
 			}
 		}
 		_gm->wait(4);
@@ -2835,6 +2849,9 @@ bool ArsanoMeetup3::interact(Action verb, Object &obj1, Object &obj2) {
 				_gm->say(kStringArsanoMeetup3_23);
 				_gm->reply(kStringArsanoMeetup3_24, 1, 1 + kSectionInvert);
 				_gm->reply(kStringArsanoMeetup3_25, 1, 1 + kSectionInvert);
+				break;
+			default:
+				break;
 			}
 			removeSentence(2, 2);
 		} while (!allSentencesRemoved(4, 2));
@@ -3263,6 +3280,8 @@ bool AxacussCorridor5::handleMoneyDialog() {
 				return true;
 			}
 			_gm->reply(kStringAxacussCorridor5_6, 1, 1 + kSectionInvert);
+			break;
+		default:
 			break;
 		}
 	}

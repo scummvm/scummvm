@@ -417,6 +417,7 @@ void GameManager::processInput() {
 				_inventoryScroll += 2;
 			break;
 		case onNone:
+		default:
 			break;
 		}
 
@@ -502,6 +503,7 @@ void GameManager::processInput() {
 				break;
 			case onObject:
 			case onNone:
+			default:
 				// Fallthrough
 				break;
 			}
@@ -539,6 +541,7 @@ void GameManager::processInput() {
 				_currentInputObject = _currentRoom->getObject(_mouseField);
 				break;
 			case onNone:
+			default:
 				break;
 			}
 		}

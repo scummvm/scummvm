@@ -459,6 +459,8 @@ void Street::animation() {
 			setSectionVisible(4, kShownTrue);
 			setSectionVisible(5, kShownTrue);
 			break;
+		default:
+			break;
 		}
 		banks++;
 		if (banks == 10) banks = 0;
@@ -779,6 +781,8 @@ bool Kiosk::interact(Action verb, Object &obj1, Object &obj2) {
 		case 2:
 			_gm->reply(kStringImSorry, 1, 1 + kSectionInvert);
 			break;
+		default:
+			break;
 		}
 		_gm->drawGUI();
 	} else 
@@ -893,6 +897,8 @@ bool CulturePalace::interact(Action verb, Object &obj1, Object &obj2) {
 					_gm->reply(kStringMakeOffer, 2, 1);
 					_shown[kMaxSection - 2] = true;
 				}
+				break;
+			default:
 				break;
 			}
 		}
@@ -1135,6 +1141,8 @@ bool Checkout::interact(Action verb, Object &obj1, Object &obj2) {
 				case 2:
 					_gm->reply(kStringCheckout47, 1, 1 + kSectionInvert);
 					break;
+				default:
+					break;
 				}
 				_gm->drawGUI();
 				break;
@@ -1143,6 +1151,8 @@ bool Checkout::interact(Action verb, Object &obj1, Object &obj2) {
 				break;
 			case 2:
 				_gm->reply(kStringCheckout49, 1, 1 + kSectionInvert);
+				break;
+			default:
 				break;
 			}
 		}
@@ -1661,6 +1671,8 @@ bool Elevator2::interact(Action verb, Object &obj1, Object &obj2) {
 				setSectionVisible(2, kShownFalse);
 				_vm->renderImage(1 + kSectionInvert);
 				break;
+			default:
+				break;
 			}
 			_gm->drawGUI();
 		} else
@@ -1756,6 +1768,8 @@ void Elevator2::jobDescription() {
 			break;
 		case 2:
 			_gm->reply(kStringElevator52, 1, 1 + kSectionInvert);
+			break;
+		default:
 			break;
 		}
 		if (e == 1 || e == 2)

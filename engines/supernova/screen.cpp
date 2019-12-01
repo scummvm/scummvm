@@ -547,6 +547,7 @@ void Screen::renderMessage(const char *text, MessagePosition position, int posit
 
 	switch (position) {
 	case kMessageNormal:
+	default:
 		x = 160 - rowWidthMax / 2;
 		textColor = kColorWhite99;
 		break;

@@ -513,7 +513,8 @@ void GameManager1::telomat(int nr) {
 				_currentRoom->removeSentence(1, 1);
 
 			switch (dialog(3, rows1, dial1, 1)) {
-			case 1: _vm->renderMessage(kStringTelomat18, kMessageTop);
+			case 1:
+				_vm->renderMessage(kStringTelomat18, kMessageTop);
 				wait(_messageDuration, true);
 				_vm->removeMessage();
 				if ((_state._destination == 255) && !_rooms[BCORRIDOR]->isSectionVisible(7)) {
@@ -523,7 +524,8 @@ void GameManager1::telomat(int nr) {
 					_state._destination = nr;
 				}
 				break;
-			case 0: _vm->renderMessage(kStringTelomat19, kMessageTop);
+			case 0:
+				_vm->renderMessage(kStringTelomat19, kMessageTop);
 				wait(_messageDuration, true);
 				_vm->removeMessage();
 				if (dialog(4, rows2, dial2, 0) != 3) {
@@ -534,6 +536,9 @@ void GameManager1::telomat(int nr) {
 				_rooms[BCORRIDOR]->setSectionVisible(i + 1, true);
 				_state._eventTime = kMaxTimerValue;
 				_currentRoom->addSentence(0, 1);
+				break;
+			default:
+				break;
 			}
 			_guiEnabled = true;
 			drawMapExits();
@@ -845,6 +850,9 @@ void GameManager1::guardWalkEvent() {
 		case 3:
 			walk(19);
 			walk(18);
+			break;
+		default:
+			break;
 		}
 
 		if (!_state._playerHidden) {
@@ -881,6 +889,9 @@ void GameManager1::guardWalkEvent() {
 		case 3:
 			for (int i = 18; i <= 20; i++)
 				walk(i);
+			break;
+		default:
+			break;
 		}
 
 		if (behind) {
