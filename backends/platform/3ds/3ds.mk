@@ -28,7 +28,7 @@ clean_3ds:
 	$(RM) -rf romfs
 	$(RM) -rf dist_3ds
 
-romfs: $(DIST_FILES_THEMES) $(DIST_FILES_ENGINEDATA) $(DIST_FILES_NETWORKING) $(DIST_FILES_VKEYBD) $(DIST_3DS_EXTRA_FILES)
+romfs: $(DIST_FILES_THEMES) $(DIST_FILES_ENGINEDATA) $(DIST_FILES_NETWORKING) $(DIST_FILES_VKEYBD) $(DIST_3DS_EXTRA_FILES) $(PLUGINS)
 	@rm -rf romfs
 	@mkdir -p romfs
 	@cp $(DIST_FILES_THEMES) romfs/
@@ -43,6 +43,10 @@ ifdef DIST_FILES_VKEYBD
 endif
 ifdef DIST_3DS_EXTRA_FILES
 	@cp -a $(DIST_3DS_EXTRA_FILES) romfs/
+endif
+ifeq ($(DYNAMIC_MODULES),1)
+	@mkdir -p romfs/plugins
+	@for i in $(PLUGINS); do $(STRIP) --strip-debug $$i -o romfs/plugins/`basename $$i`; done
 endif
 
 $(TARGET).smdh: $(APP_ICON)
