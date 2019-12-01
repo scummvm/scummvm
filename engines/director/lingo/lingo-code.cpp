@@ -341,7 +341,9 @@ void Lingo::c_assign() {
 			}
 		}
 
-		warning("STUB: c_assing REFERENCE");
+		d2.toString();
+
+		g_director->getCurrentScore()->_loadedText->getVal(d1.u.i)->setText(d2.u.s->c_str());
 
 		return;
 	}

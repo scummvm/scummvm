@@ -128,6 +128,8 @@ class TextCast : public Cast {
 public:
 	TextCast(Common::ReadStreamEndian &stream, uint16 version = 2);
 
+	void setText(const char *text);
+
 	SizeType _borderSize;
 	SizeType _gutterSize;
 	SizeType _boxShadow;

@@ -34,6 +34,7 @@ void CachedMacText::makeMacText() {
 	assert(_wm != NULL);
 
 	delete _macText;
+	_macText = nullptr;
 
 	if ((int)_textCast->_textAlign == -1)
 		_align = (Graphics::TextAlign)3;

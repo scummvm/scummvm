@@ -217,12 +217,18 @@ void TextCast::importStxt(const Stxt *stxt) {
 	_ftext = stxt->_ftext;
 }
 
-void TextCast::importRTE(byte* text) 	{
+void TextCast::importRTE(byte *text) 	{
 	//assert(rteList.size() == 3);
 	//child0 is probably font data.
 	//child1 is the raw text.
 	_ftext = Common::String((char*)text);
 	//child2 is positional?
+}
+
+void TextCast::setText(const char *text) {
+	_ftext = text;
+
+	_cachedMacText->forceDirty();
 }
 
 ShapeCast::ShapeCast(Common::ReadStreamEndian &stream, uint16 version) {
