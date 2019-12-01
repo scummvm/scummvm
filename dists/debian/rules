@@ -1,7 +1,9 @@
 #!/usr/bin/make -f
 
+DEB_HOST_GNU_TYPE ?= $(shell dpkg-architecture -qDEB_HOST_GNU_TYPE)
+
 %:
-	dh $@ --parallel --max-parallel=`nproc`
+	dh $@ --parallel --max-parallel=`nproc` --with autotools_dev
 
 ifeq ($(DEB_BUILD_ARCH_OS),hurd)
 ARCH_OPTS:= --disable-alsa
@@ -11,7 +13,13 @@ ARCH_OPTS:= --disable-alsa
 endif
 
 override_dh_auto_configure:
-	./configure --prefix=/usr --bindir=/usr/games --datadir=/usr/share/residualvm --enable-release ${ARCH_OPTS}
+	./configure \
+            --host=$(DEB_HOST_GNU_TYPE) \
+            --prefix=/usr \
+            --bindir=/usr/games \
+            --datadir=/usr/share/residualvm \
+            --enable-release \
+            ${ARCH_OPTS}
 
 override_dh_auto_test:
 
