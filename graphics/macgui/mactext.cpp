@@ -49,7 +49,6 @@ const Common::String MacFontRun::toString() {
 
 MacText::~MacText() {
 	delete _surface;
-	delete _macFont;
 }
 
 MacText::MacText(Common::U32String s, MacWindowManager *wm, const MacFont *macFont, int fgcolor, int bgcolor, int maxWidth, TextAlign textAlignment, int interlinear) {
