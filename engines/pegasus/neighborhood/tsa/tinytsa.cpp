@@ -251,6 +251,8 @@ void TinyTSA::clickInHotspot(const Input &input, const Hotspot *clickedSpot) {
 			requestExtraSequence(kTinyTSA37WSCToDepart, 0, kFilterNoInput);
 			requestExtraSequence(kTinyTSA37PegasusDepart, kExtraCompletedFlag, kFilterNoInput);
 			return;
+		default:
+			break;
 		}
 	}
 
@@ -286,6 +288,8 @@ void TinyTSA::arriveAt(const RoomID room, const DirectionConstant direction) {
 		break;
 	case kPlayerLockedInPegasus:
 		showMainJumpMenu();
+		break;
+	default:
 		break;
 	}
 }
@@ -362,6 +366,8 @@ void TinyTSA::receiveNotification(Notification *notification, const Notification
 				GameState.setWSCRobotDead(false);
 				GameState.setWSCRobotGone(false);
 				break;
+			default:
+				break;
 			};
 			break;
 		case kTinyTSA37TimeJumpToPegasus:
@@ -394,6 +400,8 @@ void TinyTSA::receiveNotification(Notification *notification, const Notification
 				case kPlayerOnWayToWSC:
 					g_opticalChip->playOpMemMovie(kMercurySpotID);
 					break;
+				default:
+					break;
 				}
 			}
 
@@ -418,6 +426,8 @@ void TinyTSA::receiveNotification(Notification *notification, const Notification
 		case kTinyTSA37CancelMars:
 		case kTinyTSA37CancelWSC:
 			showMainJumpMenu();
+			break;
+		default:
 			break;
 		}
 	}

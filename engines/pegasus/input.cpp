@@ -200,6 +200,8 @@ uint InputDeviceManager::convertJoystickToKey(uint joybutton) {
 		return Common::KEYCODE_LEFT;
 	case Common::JOYSTICK_BUTTON_DPAD_RIGHT:
 		return Common::KEYCODE_RIGHT;
+	default:
+		break;
 	}
 	return 0;
 }

@@ -402,6 +402,8 @@ void Neighborhood::popActionQueue() {
 		case kDelayRequest:
 			_delayTimer.stop();
 			break;
+		default:
+			break;
 		}
 
 		serviceActionQueue();
@@ -433,6 +435,8 @@ void Neighborhood::serviceActionQueue() {
 				_delayCallBack.scheduleCallBack(kTriggerAtStop, 0, 0);
 				_interruptionFilter = topRequest.interruptionFilter;
 				_delayTimer.start();
+				break;
+			default:
 				break;
 			}
 		}
@@ -1072,6 +1076,8 @@ void Neighborhood::startTurnPush(const TurnDirection turnDirection, const TimeVa
 		break;
 	case kTurnDown:
 		_turnPush.setSlideDirection(kSlideUpMask);
+		break;
+	default:
 		break;
 	}
 

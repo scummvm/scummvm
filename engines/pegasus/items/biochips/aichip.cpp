@@ -165,6 +165,8 @@ void AIChip::activateAIHotspots() {
 	case 1:
 		_hint1Spot.setActive();
 		break;
+	default:
+		break;
 	}
 
 	if (GameState.getWalkthroughMode() && vm->canSolve())
@@ -240,6 +242,8 @@ void AIChip::clickInAIHotspot(HotSpotID id) {
 		break;
 	case kAISolveSpotID:
 		g_neighborhood->doSolve();
+		break;
+	default:
 		break;
 	}
 

@@ -375,6 +375,8 @@ void Interface::receiveNotification(Notification *notification, const Notificati
 		case kBiochipDrawerDownFlag:
 			biochipDrawerDown(true);
 			break;
+		default:
+			break;
 		}
 	}
 }

@@ -316,6 +316,8 @@ void NoradDelta::checkContinuePoint(const RoomID room, const DirectionConstant d
 	case MakeRoomView(kNorad79, kWest):
 		makeContinuePoint();
 		break;
+	default:
+		break;
 	}
 }
 
@@ -633,6 +635,8 @@ void NoradDelta::receiveNotification(Notification *notification, const Notificat
 		case kN60RobotDisappears:
 			recallToTSASuccess();
 			break;
+		default:
+			break;
 		}
 
 		_interruptionFilter = kFilterAllInput;
@@ -682,6 +686,8 @@ void NoradDelta::pickedUpItem(Item *item) {
 				startExtraSequence(kN60RobotDisappears, kExtraCompletedFlag, kFilterNoInput);
 		}
 		break;
+	default:
+		break;
 	}
 
 	Norad::pickedUpItem(item);
@@ -698,6 +704,8 @@ void NoradDelta::takeItemFromRoom(Item *item) {
 	case kOpticalBiochip:
 		_privateFlags.setFlag(kNoradPrivateGotOpticalChipFlag, true);
 		break;
+	default:
+		break;
 	}
 
 	Norad::takeItemFromRoom(item);
@@ -713,6 +721,8 @@ void NoradDelta::dropItemIntoRoom(Item *item, Hotspot *hotspot) {
 		break;
 	case kRetinalScanBiochip:
 		_privateFlags.setFlag(kNoradPrivateGotRetScanChipFlag, false);
+		break;
+	default:
 		break;
 	}
 
@@ -740,6 +750,8 @@ Hotspot *NoradDelta::getItemScreenSpot(Item *item, DisplayElement *element) {
 			id = kDelta59RobotRetinalBiochipSpotID;
 		else
 			id = kDelta60RobotRetinalBiochipSpotID;
+		break;
+	default:
 		break;
 	}
 
@@ -782,6 +794,8 @@ uint NoradDelta::getNumHints() {
 			} else if (!GameState.isCurrentDoorOpen()) {
 				numHints = 2;
 			}
+			break;
+		default:
 			break;
 		}
 	}
@@ -826,6 +840,8 @@ Common::String NoradDelta::getHintMovie(uint hintNum) {
 				return "Images/AI/Globals/XGLOB1B";
 
 			return "Images/AI/Globals/XGLOB3B";
+		default:
+			break;
 		}
 	}
 

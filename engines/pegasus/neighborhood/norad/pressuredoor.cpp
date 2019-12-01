@@ -343,6 +343,8 @@ void PressureDoor::receiveNotification(Notification *notification, const Notific
 				((NoradDelta *)owner)->playerBeatRobotWithDoor();
 				owner->requestDeleteCurrentInteraction();
 				break;
+			default:
+				break;
 			}
 		}
 
@@ -367,6 +369,8 @@ void PressureDoor::receiveNotification(Notification *notification, const Notific
 				_typeMovie.hide();
 				if (!_playingAgainstRobot)
 					((Norad *)_owner)->doneWithPressureDoor();
+				break;
+			default:
 				break;
 			}
 		}
@@ -397,6 +401,8 @@ void PressureDoor::receiveNotification(Notification *notification, const Notific
 			_downButton.hide();
 			owner->startExtraSequence(kN59PlayerWins2, kExtraCompletedFlag, kFilterNoInput);
 			break;
+		default:
+			break;
 		}
 	} else if (notification == &_utilityNotification) {
 		switch (flags) {
@@ -422,6 +428,8 @@ void PressureDoor::receiveNotification(Notification *notification, const Notific
 			_typeMovie.hide();
 			_upButton.hide();
 			_downButton.hide();
+			break;
+		default:
 			break;
 		}
 	}

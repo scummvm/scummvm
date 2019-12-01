@@ -2480,6 +2480,8 @@ uint PegasusEngine::getNeighborhoodCD(const NeighborhoodID neighborhood) const {
 		// Tiny TSA exists on three of the CD's, so just continue
 		// with the CD we're on
 		return _currentCD;
+	default:
+		break;
 	}
 
 	// Can't really happen, but it's a good fallback anyway :P

@@ -256,6 +256,8 @@ void NoradAlphaFillingStation::dispenseGas() {
 				setSegmentState(kFSNIncompatibleStart, kFSNIncompatibleStop,
 						kFSIntakeWarningFinishedFlag, kNoState);
 				break;
+			default:
+				break;
 			}
 		else {
 			if (_dispenseItemID == kArgonCanister) {
@@ -287,6 +289,8 @@ void NoradAlphaFillingStation::dispenseGas() {
 			break;
 		case kNitrogenCanister:
 			setStaticState(kFSNAttach, kWaitingForDispense);
+			break;
+		default:
 			break;
 		}
 	}
@@ -349,6 +353,8 @@ void NoradAlphaFillingStation::receiveNotification(Notification *, const Notific
 	case kFSNHiliteFinishedFlag:
 		NHighlightFinished();
 		break;
+	default:
+		break;
 	}
 }
 
@@ -409,6 +415,8 @@ void NoradAlphaFillingStation::clickInHotspot(const Input &input, const Hotspot 
 	case kNorad01NSpotID:
 		clickInN();
 		break;
+	default:
+		break;
 	}
 }
 
@@ -426,6 +434,8 @@ void NoradAlphaFillingStation::activateHotspots() {
 		g_allHotspots.activateOneHotspot(kNorad01HeSpotID);
 		g_allHotspots.activateOneHotspot(kNorad01OSpotID);
 		g_allHotspots.activateOneHotspot(kNorad01NSpotID);
+		break;
+	default:
 		break;
 	}
 }

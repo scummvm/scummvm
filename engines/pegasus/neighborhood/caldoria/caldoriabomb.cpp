@@ -1266,6 +1266,8 @@ void CaldoriaBomb::receiveNotification(Notification *notification, const Notific
 			GameState.setScoringDisarmedNuke(true);
 			_owner->loadAmbientLoops();
 			break;
+		default:
+			break;
 		}
 	} else if (notification == &_timerNotification) {
 		_grid.hide();
@@ -1428,8 +1430,12 @@ void CaldoriaBomb::handleInput(const Input &input, const Hotspot *hotspot) {
 				_owner->_navMovie.setVolume(((PegasusEngine *)g_engine)->getSoundFXLevel());
 				_owner->startExtraSequence(kCaldoria56BombStage7, kExtraCompletedFlag, kFilterNoInput);
 				break;
+			default:
+				break;
 			}
 		}
+		break;
+	default:
 		break;
 	}
 }

@@ -91,6 +91,8 @@ Item::Item(const ItemID id, const NeighborhoodID neighborhood, const RoomID room
 				_itemInfo.infoRightStart -= 600 * kGapForGroup4;
 				_itemInfo.infoRightStop -= 600 * kGapForGroup4;
 				break;
+			default:
+				break;
 			}
 		}
 

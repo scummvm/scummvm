@@ -167,6 +167,8 @@ void SpaceJunk::rebound(const TimeValue reboundTime) {
 		_bounceStop.x = 640 - kMaxBounceSize / 2 + 1;
 		_bounceStop.y = kMaxBounceSize / 2 + 1 + vm->getRandomNumber(kBounceTargetVRange - 1);
 		break;
+	default:
+		break;
 	}
 
 	_bounceSizeStart = bounds.width();

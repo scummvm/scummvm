@@ -135,6 +135,8 @@ void OpticalChip::playOpMemMovie(HotSpotID id) {
 	case kPoseidonSpotID:
 		movieName = "Images/AI/Globals/OMPI";
 		break;
+	default:
+		break;
 	}
 
 	ItemState state = getItemState(), newState;

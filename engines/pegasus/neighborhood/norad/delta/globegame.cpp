@@ -107,6 +107,8 @@ void GlobeTracker::setTrackParameters(const Hotspot *trackSpot, GlobeTrackDirect
 		_globeMovie->setSegment(0, _globeMovie->getDuration());
 		_globeMovie->setFlags(0);
 		break;
+	default:
+		break;
 	}
 }
 
@@ -183,6 +185,8 @@ void GlobeTracker::trackGlobeMovie() {
 
 		_downHighlight->show();
 		break;
+	default:
+		break;
 	}
 }
 
@@ -203,6 +207,8 @@ void GlobeTracker::stopGlobeMovie() {
 	case kTrackDown:
 		_downHighlight->hide();
 		_trackTime = tickCount() - kVerticalDuration;
+		break;
+	default:
 		break;
 	}
 }
@@ -724,6 +730,8 @@ void GlobeGame::receiveNotification(Notification *notification, const Notificati
 				_owner->requestDelay(1, 5, kFilterNoInput, 0);
 				_owner->requestSpotSound(kFiftySecondsIn, kFiftySecondsOut,
 						kFilterNoInput, kSpotSoundCompletedFlag);
+				break;
+			default:
 				break;
 			}
 			// fall through

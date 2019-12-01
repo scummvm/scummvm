@@ -75,6 +75,8 @@ void CaldoriaMirror::activateHotspots() {
 		g_allHotspots.activateOneHotspot(kCaHairStyle3SpotID);
 		g_allHotspots.deactivateOneHotspot(kCaBathroomMirrorSpotID);
 		break;
+	default:
+		break;
 	}
 }
 
@@ -93,6 +95,8 @@ void CaldoriaMirror::clickInHotspot(const Input &input, const Hotspot *spot) {
 			break;
 		case kCaBathroomGeoWave:
 			_owner->startExtraSequence(kCaBathroomGeoWaveReturn, kExtraCompletedFlag, kFilterNoInput);
+			break;
+		default:
 			break;
 		}
 		break;
@@ -127,6 +131,8 @@ void CaldoriaMirror::receiveNotification(Notification *, const NotificationFlags
 		_owner->requestDeleteCurrentInteraction();
 		GameState.setScoringFixedHair(true);
 		GameState.setCaldoriaDoneHygiene(true);
+		break;
+	default:
 		break;
 	}
 

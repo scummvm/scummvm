@@ -293,6 +293,8 @@ void MainMenu::handleInput(const Input &input, const Hotspot *cursorSpot) {
 				_quitButton.hide();
 				setLastCommand(kMenuCmdQuit);
 				break;
+			default:
+				break;
 			}
 		} else {
 			switch (_menuSelection) {
@@ -333,6 +335,8 @@ void MainMenu::handleInput(const Input &input, const Hotspot *cursorSpot) {
 				_quitButton.hide();
 				setLastCommand(kMenuCmdQuit);
 				break;
+			default:
+				break;
 			}
 		}
 	}
@@ -359,6 +363,8 @@ void MainMenu::updateDisplay() {
 			_largeSelect.moveElementTo(kMainMenuQuitSelectLeftDemo, kMainMenuQuitSelectTopDemo);
 			_largeSelect.show();
 			_smallSelect.hide();
+			break;
+		default:
 			break;
 		}
 	} else {
@@ -400,6 +406,8 @@ void MainMenu::updateDisplay() {
 			_smallSelect.moveElementTo(kMainMenuQuitSelectLeft, kMainMenuQuitSelectTop);
 			_smallSelect.show();
 			_largeSelect.hide();
+			break;
+		default:
 			break;
 		}
 
@@ -521,6 +529,8 @@ void CreditsMenu::newMenuSelection(const int newSelection) {
 		case kCreditsMenuMainMenu:
 			_smallSelect.hide();
 			_largeSelect.show();
+			break;
+		default:
 			break;
 		}
 
@@ -778,6 +788,8 @@ void DeathMenu::handleInput(const Input &input, const Hotspot *cursorSpot) {
 				_mainMenuButton.hide();
 				setLastCommand(kMenuCmdDeathMainMenuDemo);
 				break;
+			default:
+				break;
 			}
 		} else {
 			switch (_menuSelection) {
@@ -798,6 +810,8 @@ void DeathMenu::handleInput(const Input &input, const Hotspot *cursorSpot) {
 				vm->delayShell(kMenuButtonHiliteTime, kMenuButtonHiliteScale);
 				_mainMenuButton.hide();
 				setLastCommand(kMenuCmdDeathMainMenu);
+				break;
+			default:
 				break;
 			}
 		}
@@ -824,6 +838,8 @@ void DeathMenu::updateDisplay() {
 			_smallSelect.show();
 			_largeSelect.hide();
 			break;
+		default:
+			break;
 		}
 	} else {
 		switch (_menuSelection) {
@@ -841,6 +857,8 @@ void DeathMenu::updateDisplay() {
 			_largeSelect.moveElementTo(kMainMenuSelectLeft, kMainMenuSelectTop);
 			_largeSelect.show();
 			_smallSelect.hide();
+			break;
+		default:
 			break;
 		}
 	}
@@ -916,6 +934,8 @@ void DeathMenu::drawAllScores() {
 				kDeathScreenScoreLeft + kDeathScreenScoreWidth, kDeathScreenScoreTop - kDeathScreenScoreSkipVert * 6 + kDeathScreenScoreHeight);
 
 		drawScore(GameState.getTotalScore(), kMaxTotalScore, scoreBounds, &numbers);
+		break;
+	default:
 		break;
 	}
 }
@@ -1081,6 +1101,8 @@ void PauseMenu::handleInput(const Input &input, const Hotspot *cursorSpot) {
 				case kPauseMenuQuitToMainMenu:
 					_menuSelection = kPauseMenuAmbience;
 					break;
+				default:
+					break;
 				}
 				updateDisplay();
 			}
@@ -1102,6 +1124,8 @@ void PauseMenu::handleInput(const Input &input, const Hotspot *cursorSpot) {
 					break;
 				case kPauseMenuAmbience:
 					_menuSelection = kPauseMenuQuitToMainMenu;
+					break;
+				default:
 					break;
 				}
 				updateDisplay();
@@ -1173,6 +1197,8 @@ void PauseMenu::handleInput(const Input &input, const Hotspot *cursorSpot) {
 			_quitButton.hide();
 			setLastCommand(kMenuCmdPauseQuit);
 			break;
+		default:
+			break;
 		}
 	}
 
@@ -1215,6 +1241,8 @@ void PauseMenu::updateDisplay() {
 		_smallSelect.moveElementTo(kQuitSelectLeft, kQuitSelectTop);
 		_smallSelect.show();
 		_largeSelect.hide();
+		break;
+	default:
 		break;
 	}
 

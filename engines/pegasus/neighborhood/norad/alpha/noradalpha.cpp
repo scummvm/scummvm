@@ -218,6 +218,8 @@ GameInteraction *NoradAlpha::makeInteraction(const InteractionID interactionID) 
 		return new NoradAlphaECRMonitor(this);
 	case kNoradFillingStationInteractionID:
 		return new NoradAlphaFillingStation(this);
+	default:
+		break;
 	}
 
 	return Norad::makeInteraction(interactionID);
@@ -299,6 +301,8 @@ void NoradAlpha::checkContinuePoint(const RoomID room, const DirectionConstant d
 	case MakeRoomView(kNorad21, kSouth):
 		makeContinuePoint();
 		break;
+	default:
+		break;
 	}
 }
 
@@ -326,6 +330,8 @@ void NoradAlpha::arriveAt(const RoomID room, const DirectionConstant direction) 
 		break;
 	case kNorad22:
 		arriveAtNorad22();
+		break;
+	default:
 		break;
 	}
 }
@@ -377,6 +383,8 @@ void NoradAlpha::receiveNotification(Notification *notification, const Notificat
 			_interruptionFilter = kFilterAllInput;
 			makeContinuePoint();
 			break;
+		default:
+			break;
 		}
 	}
 
@@ -394,6 +402,8 @@ void NoradAlpha::receiveNotification(Notification *notification, const Notificat
 			// Force ArriveAt to do its thing...
 			GameState.setCurrentRoom(kNorad21);
 			arriveAt(kNorad22, kSouth);
+			break;
+		default:
 			break;
 		}
 	}
@@ -554,6 +564,8 @@ void NoradAlpha::activateHotspots() {
 		if (GameState.isCurrentDoorOpen())
 			_vm->getAllHotspots().deactivateOneHotspot(kNorad21WestSpotID);
 		break;
+	default:
+		break;
 	}
 }
 
@@ -624,6 +636,8 @@ Hotspot *NoradAlpha::getItemScreenSpot(Item *item, DisplayElement *element) {
 		return _vm->getAllHotspots().findHotspotByID(kN01ArgonCanisterSpotID);
 	case kNitrogenCanister:
 		return _vm->getAllHotspots().findHotspotByID(kN01NitrogenCanisterSpotID);
+	default:
+		break;
 	}
 
 	return Norad::getItemScreenSpot(item, element);
@@ -672,6 +686,8 @@ uint NoradAlpha::getNumHints() {
 		case MakeRoomView(kNorad22, kWest):
 			numHints = 1;
 			break;
+		default:
+			break;
 		}
 	}
 
@@ -707,12 +723,16 @@ Common::String NoradAlpha::getHintMovie(uint hintNum) {
 				return "Images/AI/Globals/XGLOB5C";
 			case 3:
 				return "Images/AI/Norad/XN01SH";
+			default:
+				break;
 			}
 			break;
 		case MakeRoomView(kNorad19West, kWest):
 			return "Images/AI/Norad/XN19NH";
 		case MakeRoomView(kNorad22, kWest):
 			return "Images/AI/Globals/XGLOB1C";
+		default:
+			break;
 		}
 	}
 
