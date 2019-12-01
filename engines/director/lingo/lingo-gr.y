@@ -646,7 +646,7 @@ defn: tMACRO ID { g_lingo->_indef = true; g_lingo->_currentFactory.clear(); }
 			g_lingo->code1(g_lingo->c_procret);
 			g_lingo->define(*$2, $4, $5 + 1, &g_lingo->_currentFactory);
 			g_lingo->_indef = false; }
-	| on begin  argdef nl argstore stmtlist ENDCLAUSE {	// D3
+	| on begin  argdef nl argstore stmtlist ENDCLAUSE endargdef {	// D3
 		g_lingo->code1(g_lingo->c_procret);
 		g_lingo->define(*$1, $2, $3);
 		g_lingo->_indef = false;
@@ -665,6 +665,11 @@ argdef:  /* nothing */ 		{ $$ = 0; }
 	| ID					{ g_lingo->codeArg($1); $$ = 1; }
 	| argdef ',' ID			{ g_lingo->codeArg($3); $$ = $1 + 1; }
 	| argdef nl ',' ID		{ g_lingo->codeArg($4); $$ = $1 + 1; }
+	;
+
+endargdef:	/* nothing */
+	| ID
+	| endargdef ',' ID
 	;
 
 argstore:	  /* nothing */		{ g_lingo->codeArgStore(); }
