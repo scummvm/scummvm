@@ -14,7 +14,7 @@ Build-Depends: debhelper (>= 9)
               ,libglew-dev
               ,libfreetype6-dev
 Standards-Version: 3.9.5
-Homepage: http://www.residualvm.org
+Homepage: https://www.residualvm.org
 
 Package: residualvm
 Architecture: any
