@@ -41,8 +41,8 @@ enum TheEntityArgsType {
 };
 
 struct LingoV4TheEntity {
-	const int bank;
-	const int firstArg;
+	const uint8 bank;
+	const uint8 firstArg;
 	const int entity;
 	const int field;
 	const bool writable;

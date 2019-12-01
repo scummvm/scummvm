@@ -72,8 +72,6 @@ static struct FuncDescr {
 	{ Lingo::c_eval,		"c_eval",		"s" },
 	{ Lingo::c_theentitypush,"c_theentitypush","ii" }, // entity, field
 	{ Lingo::c_theentityassign,"c_theentityassign","ii" },
-	{ Lingo::c_v4theentitypush,"c_v4theentitypush","i" },
-	{ Lingo::c_v4theentityassign,"c_v4theentityassign","i" },
 	{ Lingo::c_swap,		"c_swap",		"" },
 	{ Lingo::c_add,			"c_add",		"" },
 	{ Lingo::c_sub,			"c_sub",		"" },
@@ -109,7 +107,7 @@ static struct FuncDescr {
 	{ Lingo::c_ge,			"c_ge",			"" },
 	{ Lingo::c_le,			"c_le",			"" },
 	{ Lingo::c_jump,		"c_jump",		"i" },
-	{ Lingo::c_jumpif,		"c_jumpif",		"i" },
+	{ Lingo::c_jumpifz,		"c_jumpifz",	"i" },
 	{ Lingo::c_repeatwhilecode,"c_repeatwhilecode","oo" },
 	{ Lingo::c_repeatwithcode,"c_repeatwithcode","ooooos" },
 	{ Lingo::c_exitRepeat,	"c_exitRepeat",	"" },
@@ -134,6 +132,8 @@ static struct FuncDescr {
 	{ Lingo::c_unk,         "c_unk",        "i" },
 	{ Lingo::c_unk1,        "c_unk1",       "ii" },
 	{ Lingo::c_unk2,        "c_unk2",       "iii" },
+	{ Lingo::cb_v4theentitypush,"c_v4theentitypush","i" },
+	{ Lingo::cb_v4theentityassign,"c_v4theentityassign","i" },
 	{ 0, 0, 0 }
 };
 
@@ -881,7 +881,7 @@ void Lingo::c_jump() {
 	g_lingo->_pc = jump;
 }
 
-void Lingo::c_jumpif() {
+void Lingo::c_jumpifz() {
 	uint jump = g_lingo->readInt();
 	Datum test = g_lingo->pop();
 	test.toInt();

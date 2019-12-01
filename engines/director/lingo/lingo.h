@@ -301,8 +301,6 @@ public:
 
 	static void c_theentitypush();
 	static void c_theentityassign();
-	static void c_v4theentitypush();
-	static void c_v4theentityassign();
 
 	static void c_repeatwhilecode();
 	static void c_repeatwithcode();
@@ -319,7 +317,7 @@ public:
 	static void c_ge();
 	static void c_le();
 	static void c_jump();
-	static void c_jumpif();
+	static void c_jumpifz();
 	static void c_call();
 
 	void call(Common::String name, int nargs);
@@ -347,11 +345,16 @@ public:
 	static void c_unk1();
 	static void c_unk2();
 
+	// bytecode-related instructions
+	static void cb_v4theentitypush();
+	static void cb_v4theentityassign();
+
 	void printSTUBWithArglist(const char *funcname, int nargs, const char *prefix = "STUB:");
 	void convertVOIDtoString(int arg, int nargs);
 	void dropStack(int nargs);
 	void drop(uint num);
 
+	// builtin functions
 	static void b_abs(int nargs);
 	static void b_atan(int nargs);
 	static void b_cos(int nargs);
