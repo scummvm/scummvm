@@ -275,6 +275,8 @@ void ScalpelPerson::setWalking() {
 					case WALK_RIGHT:
 						_sequenceNumber = WALK_DOWNRIGHT;
 						break;
+					default:
+						break;
 					}
 				}
 			} else if (_delta.y < -150) {
@@ -285,6 +287,8 @@ void ScalpelPerson::setWalking() {
 						break;
 					case WALK_RIGHT:
 						_sequenceNumber = WALK_UPRIGHT;
+						break;
+					default:
 						break;
 					}
 				}

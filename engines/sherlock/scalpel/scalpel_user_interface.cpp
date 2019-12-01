@@ -1738,6 +1738,8 @@ void ScalpelUserInterface::doTalkControl() {
 			case 3:
 				people._portraitSide = 120;
 				break;
+			default:
+				break;
 			}
 
 			// Check for flipping Holmes

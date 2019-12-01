@@ -130,6 +130,7 @@ bool BaseObject::hasAborts() const {
 			case TELEPORT_CODE:	idx += 4; break;
 			case CALL_TALK_CODE:idx += 8; break;
 			case HIDE_CODE:		idx += 2; break;
+			default: break;
 			}
 		}
 	} while (idx < _seqSize);
@@ -1281,6 +1282,7 @@ void Object::setObjTalkSequence(int seq) {
 			case TELEPORT_CODE: idx += 4; break;
 			case CALL_TALK_CODE: idx += 8; break;
 			case HIDE_CODE: idx += 2; break;
+			default: break;
 			}
 		}
 

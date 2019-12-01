@@ -314,6 +314,7 @@ void TattooPerson::gotoStand() {
 		case WALK_DOWNLEFT: _sequenceNumber = STOP_DOWNLEFT;break;
 		case WALK_LEFT: _sequenceNumber = STOP_LEFT;		break;
 		case WALK_UPLEFT: _sequenceNumber = STOP_UPLEFT;	break;
+		default: break;
 		}
 	}
 
@@ -439,6 +440,8 @@ void TattooPerson::setWalking() {
 				case WALK_RIGHT:
 					_sequenceNumber = WALK_DOWNRIGHT;
 					break;
+				default:
+					break;
 				}
 			} else if (_delta.y < -1500) {
 				if (_sequenceNumber == WALK_LEFT || _sequenceNumber == WALK_RIGHT) {
@@ -454,6 +457,8 @@ void TattooPerson::setWalking() {
 					break;
 				case WALK_RIGHT:
 					_sequenceNumber = WALK_UPRIGHT;
+					break;
+				default:
 					break;
 				}
 			}
@@ -773,6 +778,8 @@ void TattooPerson::updateNPC() {
 						case NPCPATH_IFFLAG_GOTO_LABEL:
 							_npcIndex += 4;
 							break;
+						default:
+							break;
 						}
 					}
 					break;
@@ -818,6 +825,8 @@ void TattooPerson::updateNPC() {
 								break;
 							case NPCPATH_IFFLAG_GOTO_LABEL:
 								_npcIndex += 4;
+								break;
+							default:
 								break;
 							}
 						}
