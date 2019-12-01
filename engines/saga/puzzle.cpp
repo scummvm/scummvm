@@ -517,6 +517,9 @@ void Puzzle::handleReply(int reply) {
 		_vm->getTimerManager()->installTimerProc(&hintTimerCallback, kPuzzleHintTime * 2, this, "sagaPuzzleHint");
 		clearHint();
 		break;
+
+	default:
+		break;
 	}
 }
 

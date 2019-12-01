@@ -237,6 +237,8 @@ Common::Error SagaEngine::run() {
 			_resource = new Resource_HRS(this);
 			break;
 #endif
+		default:
+			break;
 	}
 
 	// Detect game and open resource files
@@ -484,6 +486,8 @@ const char *SagaEngine::getObjectName(uint16 objectId) const {
 			return "";
 
 		return _scene->_sceneStrings.getString(hitZone->getNameIndex());
+	default:
+		break;
 	}
 	warning("SagaEngine::getObjectName name not found for 0x%X", objectId);
 	return NULL;

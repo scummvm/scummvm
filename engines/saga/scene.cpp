@@ -657,6 +657,8 @@ void Scene::loadScene(LoadSceneParams &loadSceneParams) {
 		_sceneNumber = loadSceneParams.sceneDescriptor;
 		_sceneResourceId = getSceneResourceId(_sceneNumber);
 		break;
+	default:
+		break;
 	}
 
 	debug(3, "Loading scene number %d:", _sceneNumber);

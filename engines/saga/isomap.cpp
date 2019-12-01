@@ -447,6 +447,7 @@ void IsoMap::drawTiles(const Location *location) {
 				case kEdgeTypeBlack:
 					continue;
 				case kEdgeTypeFill0:
+				default:
 					break;
 				case kEdgeTypeFill1:
 					metaTileIndex = 1;
@@ -491,6 +492,7 @@ void IsoMap::drawTiles(const Location *location) {
 				case kEdgeTypeBlack:
 					continue;
 				case kEdgeTypeFill0:
+				default:
 					break;
 				case kEdgeTypeFill1:
 					metaTileIndex = 1;
@@ -744,6 +746,7 @@ void IsoMap::drawTile(uint16 tileIndex, const Point &point, const Location *loca
 				case kMaskRuleNever:
 					return;
 				case kMaskRuleAlways:
+				default:
 					break;
 				case kMaskRuleUMIN:
 					if (location->u() < THRESH0) {
@@ -1009,6 +1012,7 @@ int16 IsoMap::getTileIndex(int16 u, int16 v, int16 z) {
 		case kEdgeTypeBlack:
 			return 0;
 		case kEdgeTypeFill0:
+		default:
 			break;
 		case kEdgeTypeFill1:
 			metaTileIndex = 1;
@@ -1430,6 +1434,8 @@ void IsoMap::findDragonTilePath(ActorData* actor, const Location &start, const L
 					pushDragonPoint(tilePoint->u - 1, tilePoint->v + 1, kDirDownLeft);
 					pushDragonPoint(tilePoint->u + 1, tilePoint->v + 1, kDirUpRight);
 				}
+				break;
+			default:
 				break;
 		}
 

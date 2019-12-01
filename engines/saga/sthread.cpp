@@ -149,6 +149,9 @@ void Script::executeThreads(uint msec) {
 				if (thread._frameWait < _vm->_frameCount)
 					thread._flags &= ~kTFlagWaiting;
 				break;
+
+			default:
+				break;
 			}
 		}
 

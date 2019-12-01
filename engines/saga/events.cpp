@@ -489,6 +489,8 @@ int Events::handleOneShot(Event *event) {
 		case kEventThreadWake:
 			_vm->_script->wakeUpThreads(event->param);
 			break;
+		default:
+			break;
 		}
 		break;
 	case kCursorEvent:
@@ -604,6 +606,8 @@ void Events::initializeEvent(Event &event) {
 		event.time += event.duration;
 		break;
 	case kEvTInterval:
+		break;
+	default:
 		break;
 	}
 }

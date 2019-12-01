@@ -263,6 +263,9 @@ bool Scene::playTitle(int title, int time, int mode) {
 		case 9: // end
 			done = true;
 			break;
+
+		default:
+			break;
 		}
 
 		_vm->_system->updateScreen();

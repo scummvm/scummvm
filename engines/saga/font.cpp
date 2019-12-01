@@ -656,6 +656,7 @@ Font::FontId Font::knownFont2FontIdx(KnownFont font) {
 	if (_vm->getGameId() == GID_ITE || _vm->isIHNMDemo()) {
 		switch (font) {
 		case (kKnownFontSmall):
+		default:
 			fontId = kSmallFont;
 			break;
 		case (kKnownFontMedium):
@@ -679,6 +680,7 @@ Font::FontId Font::knownFont2FontIdx(KnownFont font) {
 	} else if (_vm->getGameId() == GID_IHNM && !_vm->isIHNMDemo()) {
 		switch (font) {
 		case (kKnownFontSmall):
+		default:
 			fontId = kSmallFont;
 			break;
 		case (kKnownFontMedium):
