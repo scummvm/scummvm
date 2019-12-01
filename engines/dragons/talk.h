@@ -48,6 +48,11 @@ struct TalkDialogEntry {
 
 
 class Talk {
+public:
+	uint32 DAT_8008e7e8_dialogBox_x1;
+	uint32 DAT_8008e844_dialogBox_y1;
+	uint32 DAT_8008e848_dialogBox_x2;
+	uint32 DAT_8008e874_dialogBox_y2;
 private:
 	DragonsEngine *_vm;
 	BigfileArchive *_bigfileArchive;
@@ -57,10 +62,6 @@ private:
 	uint8 DAT_800726ec_tfont_field0;
 	uint8 DAT_800726f0_tfont_field2;
 
-	uint32 DAT_8008e7e8_dialogBox_x1;
-	uint32 DAT_8008e844_dialogBox_y1;
-	uint32 DAT_8008e848_dialogBox_x2;
-	uint32 DAT_8008e874_dialogBox_y2;
 	uint8 DAT_800633f8_talkDialogFlag;
 
 public:

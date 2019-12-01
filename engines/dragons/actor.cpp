@@ -888,7 +888,6 @@ bool Actor::waitUntilFlag4IsSetAllowSkip() {
 byte *Actor::getPalette() {
 	if (!isFlagSet(ACTOR_FLAG_4000)) {
 		if (!isFlagSet(ACTOR_FLAG_8000)) {
-			//TODO need to support per actor custom palettes.
 			if ((frame_flags & 0x30) != 0) {
 				return _actorResource->getPalette();
 			}
