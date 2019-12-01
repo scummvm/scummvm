@@ -207,18 +207,16 @@ void Score::loadArchive() {
 
 	// Now process STXTs
 	Common::Array<uint16> stxt = _movieArchive->getResourceIDList(MKTAG('S','T','X','T'));
-
-	// Try to load movie script, it sits in resource A11
-	if (_vm->getVersion() <= 3) {
-		if (stxt.size() > 0) {
-			loadScriptText(*_movieArchive->getResource(MKTAG('S','T','X','T'), *stxt.begin()));
-		}
-	}
-
 	debugC(2, kDebugLoading, "****** Loading %d STXT resources", stxt.size());
 	for (Common::Array<uint16>::iterator iterator = stxt.begin(); iterator != stxt.end(); ++iterator) {
 		_loadedStxts->setVal(*iterator,
 				 new Stxt(*_movieArchive->getResource(MKTAG('S','T','X','T'), *iterator)));
+
+		// Try to load movie script, it starts with a comment
+		if (_vm->getVersion() <= 3) {
+			loadScriptText(*_movieArchive->getResource(MKTAG('S','T','X','T'), *iterator));
+		}
+
 	}
 	copyCastStxts();
 }
@@ -231,11 +229,8 @@ void Score::copyCastStxts() {
 			tc->_key + 1024 :
 			tc->_value->_children[0].index;
 		if (_loadedStxts->getVal(stxtid)) {
-			debugC(3, kDebugLoading,"Yes to STXT: %d", stxtid);
 			const Stxt *stxt = _loadedStxts->getVal(stxtid);
 			tc->_value->importStxt(stxt);
-		} else {
-			debugC(3, "No to STXT: %d", stxtid);
 		}
 	}
 
