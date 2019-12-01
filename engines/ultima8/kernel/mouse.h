@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef MOUSE_H
-#define MOUSE_H
+#ifndef ULTIMA8_KERNEL_MOUSE_H
+#define ULTIMA8_KERNEL_MOUSE_H
 
 const unsigned int DOUBLE_CLICK_TIMEOUT = 200;
 

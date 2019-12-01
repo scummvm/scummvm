@@ -47,7 +47,7 @@
 #include "ultima8/world/get_object.h"
 
 #include "ultima8/filesys/savegame_writer.h"
-#include "ultima8/filesys/Savegame.h"
+#include "ultima8/filesys/savegame.h"
 
 #include "ultima8/gumps/gump.h"
 #include "ultima8/gumps/desktop_gump.h"
@@ -110,9 +110,9 @@
 #include "common/system.h"
 
 #if defined(WIN32) && defined(I_AM_COLOURLESS_EXPERIMENTING_WITH_HW_CURSORS)
-#include "Shape.h"
-#include "ShapeFrame.h"
-#include "SoftRenderSurface.h"
+#include "ultima8/graphics/shape.h"
+#include "ultima8/graphics/shape_frame.h"
+#include "ultima8/graphics/soft_render_surface.h"
 #include "SDL_syswm.h"
 
 struct HWMouseCursor {
@@ -131,10 +131,10 @@ namespace Ultima8 {
 	
 using std::string;
 
-DEFINE_RUNTIME_CLASSTYPE_CODE(GUIApp, CoreApp);
+DEFINE_RUNTIME_CLASSTYPE_CODE(GUIApp, CoreApp)
 
-GUIApp::GUIApp(int argc, const char *const *argv)
-	: CoreApp(argc, argv), save_count(0), game(0), kernel(0), objectmanager(0),
+GUIApp::GUIApp(int argc_, const char *const *argv_)
+	: CoreApp(argc_, argv_), save_count(0), game(0), kernel(0), objectmanager(0),
 	  hidmanager(0), ucmachine(0), screen(0), fullscreen(false), palettemanager(0),
 	  gamedata(0), world(0), desktopGump(0), consoleGump(0), gameMapGump(0),
 	  avatarMoverProcess(0), runSDLInit(false),

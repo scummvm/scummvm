@@ -22,52 +22,52 @@
 
 #include "ultima8/misc/pent_include.h"
 
-#include "ultima8/world/Item.h"
+#include "ultima8/world/item.h"
 #include "ultima8/kernel/gui_app.h"
-#include "Usecode.h"
+#include "ultima8/usecode/usecode.h"
 #include "ultima8/games/game_data.h"
 #include "ultima8/usecode/uc_machine.h"
-#include "ultima8/usecode/UCList.h"
+#include "ultima8/usecode/uc_list.h"
 #include "ultima8/world/world.h"
 #include "ultima8/kernel/delay_process.h"
-#include "ultima8/world/Container.h"
+#include "ultima8/world/container.h"
 #include "ultima8/world/actors/actor.h"
 #include "ultima8/kernel/kernel.h"
 #include "ultima8/world/get_object.h"
-#include "MainShapeArchive.h"
-#include "GumpShapeArchive.h"
-#include "Shape.h"
+#include "ultima8/graphics/main_shape_archive.h"
+#include "ultima8/graphics/gump_shape_archive.h"
+#include "ultima8/graphics/shape.h"
 #include "ultima8/graphics/shape_info.h"
 #include "ultima8/world/item_factory.h"
 #include "ultima8/world/current_map.h"
 #include "ultima8/usecode/uc_stack.h"
 #include "ultima8/misc/direction.h"
-#include "bark_gump.h"
-#include "ask_gump.h"
+#include "ultima8/gumps/bark_gump.h"
+#include "ultima8/gumps/ask_gump.h"
 #include "ultima8/gumps/gump_notify_process.h"
-#include "actor_bark_notify_process.h"
-#include "container_gump.h"
-#include "paperdoll_gump.h"
-#include "game_map_gump.h"
-#include "WorldPoint.h"
+#include "ultima8/world/actor_bark_notify_process.h"
+#include "ultima8/gumps/container_gump.h"
+#include "ultima8/gumps/paperdoll_gump.h"
+#include "ultima8/gumps/game_map_gump.h"
+#include "ultima8/world/world_point.h"
 #include "ultima8/world/gravity_process.h"
-#include "LoopScript.h"
+#include "ultima8/world/loop_script.h"
 #include "ultima8/filesys/idata_source.h"
 #include "ultima8/filesys/odata_source.h"
 #include "ultima8/world/camera_process.h"
 #include "ultima8/world/sprite_process.h"
-#include "SliderGump.h"
+#include "ultima8/gumps/slider_gump.h"
 #include "ultima8/usecode/uc_process.h"
-#include "destroy_item_process.h"
+#include "ultima8/world/destroy_item_process.h"
 #include "ultima8/audio/audio_process.h"
 #include "ultima8/games/game_info.h"
 #include "ultima8/world/actors/main_actor.h"
-#include "MissileTracker.h"
+#include "ultima8/world/missile_tracker.h"
 
-#include <cstdlib>
+namespace Ultima8 {
 
 // p_dynamic_cast stuff
-DEFINE_RUNTIME_CLASSTYPE_CODE(Item, Object);
+DEFINE_RUNTIME_CLASSTYPE_CODE(Item, Object)
 
 Item::Item()
 	: shape(0), frame(0), x(0), y(0), z(0),
@@ -2865,3 +2865,5 @@ uint32 Item::I_isCrusTypeNPC(const uint8 *args, unsigned int /*argsize*/) {
 	else
 		return 0;
 }
+
+} // End of namespace Ultima8

@@ -20,8 +20,8 @@
  *
  */
 
-#include "BilinearScaler.h"
-#include "Manips.h"
+#include "ultima8/graphics/scalers/bilinear_scaler.h"
+#include "ultima8/graphics/manips.h"
 
 
 namespace Pentagram {

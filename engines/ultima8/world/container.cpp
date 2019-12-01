@@ -22,11 +22,11 @@
 
 #include "ultima8/misc/pent_include.h"
 
-#include "ultima8/world/Container.h"
+#include "ultima8/world/container.h"
 
 #include "ultima8/kernel/object_manager.h"
 #include "ultima8/usecode/uc_machine.h"
-#include "ultima8/usecode/UCList.h"
+#include "ultima8/usecode/uc_list.h"
 #include "ultima8/filesys/idata_source.h"
 #include "ultima8/filesys/odata_source.h"
 #include "ultima8/world/item_factory.h"
@@ -36,8 +36,10 @@
 
 #include "ultima8/graphics/shape_info.h"
 
+namespace Ultima8 {
+
 // p_dynamic_cast stuff
-DEFINE_RUNTIME_CLASSTYPE_CODE(Container, Item);
+DEFINE_RUNTIME_CLASSTYPE_CODE(Container, Item)
 
 Container::Container() {
 
@@ -345,3 +347,5 @@ uint32 Container::I_destroyContents(const uint8 *args, unsigned int /*argsize*/)
 	container->destroyContents();
 	return 0;
 }
+
+} // End of namespace Ultima8

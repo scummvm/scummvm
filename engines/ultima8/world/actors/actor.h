@@ -23,9 +23,9 @@
 #ifndef WORLD_ACTORS_ACTOR_H
 #define WORLD_ACTORS_ACTOR_H
 
-#include "ultima8/world/Container.h"
+#include "ultima8/world/container.h"
 #include "ultima8/usecode/intrinsics.h"
-#include "ultima8/world/actors/Animation.h"
+#include "ultima8/world/actors/animation.h"
 
 namespace Ultima8 {
 
@@ -218,7 +218,7 @@ public:
 	bool loadData(IDataSource *ids, uint32 version);
 
 	// p_dynamic_cast stuff
-	ENABLE_RUNTIME_CLASSTYPE();
+	ENABLE_RUNTIME_CLASSTYPE()
 
 	INTRINSIC(I_isNPC);
 	INTRINSIC(I_getDir);

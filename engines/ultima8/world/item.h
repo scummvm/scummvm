@@ -46,7 +46,7 @@ public:
 	virtual ~Item();
 
 	// p_dynamic_cast stuff
-	ENABLE_RUNTIME_CLASSTYPE();
+	ENABLE_RUNTIME_CLASSTYPE()
 
 	//! Get the Container this Item is in, if any. (0 if not in a Container)
 	ObjId getParent() const {

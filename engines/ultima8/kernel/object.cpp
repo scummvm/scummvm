@@ -36,9 +36,9 @@
 namespace Ultima8 {
 
 // p_dynamic_cast stuff
-DEFINE_RUNTIME_CLASSTYPE_CODE_BASE_CLASS(Object);
+DEFINE_RUNTIME_CLASSTYPE_CODE_BASE_CLASS(Object)
 
-DEFINE_CUSTOM_MEMORY_ALLOCATION(Object);
+DEFINE_CUSTOM_MEMORY_ALLOCATION(Object)
 
 Object::~Object() {
 	if (objid != 0xFFFF)

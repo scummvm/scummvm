@@ -21,7 +21,7 @@
  */
 
 #include "ultima8/misc/pent_include.h"
-#include "ultima8/world/actors/Animation.h"
+#include "ultima8/world/actors/animation.h"
 
 namespace Ultima8 {
 namespace Animation {

@@ -23,21 +23,21 @@
 #include "ultima8/misc/pent_include.h"
 
 #if defined(HAVE_SDL_SDL_TTF_H)
-#include <SDL/SDL_ttf.h>
+include SDL/SDL_ttf.h
 #else
-#include "SDL_ttf.h"
+include SDL_ttf.h
 #endif
 
 #include "ultima8/graphics/fonts/font_manager.h"
 
 #include "ultima8/graphics/fonts/font.h"
 #include "ultima8/games/game_data.h"
-#include "ShapeFont.h"
-#include "FontShapeArchive.h"
+#include "ultima8/graphics/fonts/shape_font.h"
+#include "ultima8/graphics/fonts/font_shape_archive.h"
 #include "ultima8/filesys/idata_source.h"
 #include "ultima8/filesys/file_system.h"
-#include "TTFont.h"
-#include "JPFont.h"
+#include "ultima8/graphics/fonts/tt_font.h"
+#include "ultima8/graphics/fonts/jp_font.h"
 #include "ultima8/graphics/palette_manager.h"
 #include "ultima8/graphics/palette.h"
 #include "ultima8/conf/setting_manager.h"

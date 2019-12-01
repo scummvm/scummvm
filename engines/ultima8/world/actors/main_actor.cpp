@@ -23,27 +23,27 @@
 #include "ultima8/misc/pent_include.h"
 
 #include "ultima8/world/actors/main_actor.h"
-#include "teleport_egg.h"
+#include "ultima8/world/teleport_egg.h"
 #include "ultima8/world/current_map.h"
 #include "ultima8/kernel/process.h"
 #include "ultima8/kernel/kernel.h"
-#include "teleport_to_egg_process.h"
+#include "ultima8/world/actors/teleport_to_egg_process.h"
 #include "ultima8/world/camera_process.h"
-#include "ultima8/world/actors/Animation.h"
+#include "ultima8/world/actors/animation.h"
 #include "ultima8/kernel/gui_app.h"
-#include "avatar_death_process.h"
+#include "ultima8/world/actors/avatar_death_process.h"
 #include "ultima8/kernel/delay_process.h"
 #include "ultima8/conf/setting_manager.h"
 #include "ultima8/kernel/core_app.h"
 #include "ultima8/games/game_data.h"
-#include "WpnOvlayDat.h"
+#include "ultima8/graphics/wpn_ovlay_dat.h"
 #include "ultima8/graphics/shape_info.h"
 #include "ultima8/audio/audio_process.h"
 #include "ultima8/world/world.h"
 #include "ultima8/world/get_object.h"
-#include "ultima8/usecode/UCList.h"
-#include "LoopScript.h"
-#include "avatar_gravity_process.h"
+#include "ultima8/usecode/uc_list.h"
+#include "ultima8/world/loop_script.h"
+#include "ultima8/world/avatar_gravity_process.h"
 #include "ultima8/audio/music_process.h"
 
 #include "ultima8/filesys/idata_source.h"
@@ -52,7 +52,7 @@
 namespace Ultima8 {
 
 // p_dynamic_cast stuff
-DEFINE_RUNTIME_CLASSTYPE_CODE(MainActor, Actor);
+DEFINE_RUNTIME_CLASSTYPE_CODE(MainActor, Actor)
 
 MainActor::MainActor() : justTeleported(false), accumStr(0), accumDex(0),
 	accumInt(0) {

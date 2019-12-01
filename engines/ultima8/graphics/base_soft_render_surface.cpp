@@ -21,9 +21,8 @@
  */
 
 #include "ultima8/misc/pent_include.h"
-#include <SDL.h>
 
-#include "SoftRenderSurface.h"
+#include "ultima8/graphics/soft_render_surface.h"
 #include "ultima8/graphics/palette.h"
 #include "ultima8/graphics/texture.h"
 

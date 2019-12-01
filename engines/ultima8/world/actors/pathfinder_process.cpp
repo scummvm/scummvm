@@ -21,10 +21,10 @@
  */
 
 #include "ultima8/misc/pent_include.h"
-#include "pathfinder_process.h"
+#include "ultima8/world/actors/pathfinder_process.h"
 
 #include "ultima8/world/actors/actor.h"
-#include "pathfinder.h"
+#include "ultima8/world/actors/pathfinder.h"
 #include "ultima8/world/get_object.h"
 
 #include "ultima8/filesys/idata_source.h"
@@ -36,7 +36,7 @@ static const unsigned int PATH_OK = 1;
 static const unsigned int PATH_FAILED = 0;
 
 // p_dynamic_cast stuff
-DEFINE_RUNTIME_CLASSTYPE_CODE(PathfinderProcess, Process);
+DEFINE_RUNTIME_CLASSTYPE_CODE(PathfinderProcess, Process)
 
 PathfinderProcess::PathfinderProcess() : Process() {
 

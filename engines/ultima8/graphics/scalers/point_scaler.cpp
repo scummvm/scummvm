@@ -21,9 +21,10 @@
  */
 
 #include "ultima8/misc/pent_include.h"
-#include "PointScaler.h"
-#include "Manips.h"
+#include "ultima8/graphics/scalers/point_scaler.h"
+#include "ultima8/graphics/manips.h"
 
+namespace Ultima8 {
 namespace Pentagram {
 
 // Very very simple point scaler
@@ -312,4 +313,5 @@ const char *PointScaler::ScalerCopyright() const {
 
 const PointScaler point_scaler;
 
-};
+} // End of namespace Pentagram
+} // End of namespace Ultima8

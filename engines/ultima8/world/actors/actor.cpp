@@ -26,26 +26,26 @@
 #include "ultima8/kernel/object_manager.h"
 #include "ultima8/kernel/kernel.h"
 #include "ultima8/usecode/uc_machine.h"
-#include "ultima8/usecode/UCList.h"
+#include "ultima8/usecode/uc_list.h"
 #include "ultima8/world/world.h"
 #include "ultima8/world/actors/actor_anim_process.h"
-#include "AnimationTracker.h"
+#include "ultima8/world/actors/animation_tracker.h"
 #include "ultima8/world/current_map.h"
 #include "ultima8/misc/direction.h"
 #include "ultima8/games/game_data.h"
-#include "MainShapeArchive.h"
+#include "ultima8/graphics/main_shape_archive.h"
 #include "ultima8/world/actors/AnimAction.h"
 #include "ultima8/graphics/shape_info.h"
-#include "pathfinder.h"
-#include "ultima8/world/actors/Animation.h"
+#include "ultima8/world/actors/pathfinder.h"
+#include "ultima8/world/actors/animation.h"
 #include "ultima8/kernel/delay_process.h"
-#include "resurrection_process.h"
-#include "destroy_item_process.h"
-#include "clear_feign_death_process.h"
-#include "pathfinder_process.h"
-#include "Shape.h"
-#include "loiter_process.h"
-#include "combat_process.h"
+#include "ultima8/world/resurrection_process.h"
+#include "ultima8/world/destroy_item_process.h"
+#include "ultima8/world/actors/clear_feign_death_process.h"
+#include "ultima8/world/actors/pathfinder_process.h"
+#include "ultima8/graphics/shape.h"
+#include "ultima8/world/loiter_process.h"
+#include "ultima8/world/actors/combat_process.h"
 #include "ultima8/audio/audio_process.h"
 #include "ultima8/world/sprite_process.h"
 #include "ultima8/world/actors/main_actor.h"
@@ -53,14 +53,14 @@
 #include "ultima8/world/get_object.h"
 
 #include "ultima8/world/item_factory.h"
-#include "LoopScript.h"
+#include "ultima8/world/loop_script.h"
 #include "ultima8/filesys/idata_source.h"
 #include "ultima8/filesys/odata_source.h"
 
 namespace Ultima8 {
 
 // p_dynamic_cast stuff
-DEFINE_RUNTIME_CLASSTYPE_CODE(Actor, Container);
+DEFINE_RUNTIME_CLASSTYPE_CODE(Actor, Container)
 
 Actor::Actor()
 	: strength(0), dexterity(0), intelligence(0),

@@ -23,6 +23,8 @@
 #ifndef ULTIMA8_GRAPHICS_FRAMEID_H
 #define ULTIMA8_GRAPHICS_FRAMEID_H
 
+#include "common/scummsys.h"
+
 namespace Ultima8 {
 
 class IDataSource;

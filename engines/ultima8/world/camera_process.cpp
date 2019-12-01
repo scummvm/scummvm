@@ -25,20 +25,21 @@
 #include "ultima8/world/camera_process.h"
 #include "ultima8/world/world.h"
 #include "ultima8/world/current_map.h"
-#include "ultima8/world/Item.h"
+#include "ultima8/world/item.h"
 #include "ultima8/world/actors/actor.h"
 #include "ultima8/usecode/uc_machine.h"
 #include "ultima8/graphics/shape_info.h"
 #include "ultima8/kernel/kernel.h"
 #include "ultima8/kernel/core_app.h"
 #include "ultima8/world/get_object.h"
-#include <cstdlib>
-
+#inc
 #include "ultima8/filesys/idata_source.h"
 #include "ultima8/filesys/odata_source.h"
 
+namespace Ultima8 {
+
 // p_dynamic_cast stuff
-DEFINE_RUNTIME_CLASSTYPE_CODE(CameraProcess, Process);
+DEFINE_RUNTIME_CLASSTYPE_CODE(CameraProcess, Process)
 
 //
 // Statics
@@ -349,3 +350,4 @@ uint32 CameraProcess::I_stopQuake(const uint8 * /*args*/, unsigned int /*argsize
 	return 0;
 }
 
+} // End of namespace Ultima8

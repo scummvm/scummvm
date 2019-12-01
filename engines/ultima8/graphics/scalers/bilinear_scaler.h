@@ -20,10 +20,10 @@
  *
  */
 
-#ifndef BILINEARSCALER_H
-#define BILINEARSCALER_H
+#ifndef ULTIMA8_GRAPHICS_SCALERS_BILINEARSCALER_H
+#define ULTIMA8_GRAPHICS_SCALERS_BILINEARSCALER_H
 
-#include "Scaler.h"
+#include "ultima8/graphics/scalers/scaler.h"
 
 namespace Pentagram {
 

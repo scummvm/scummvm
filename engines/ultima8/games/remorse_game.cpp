@@ -17,9 +17,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
 #include "ultima8/misc/pent_include.h"
-
-#include "RemorseGame.h"
-
+#include "ultima8/games/remorse_game.h"
 #include "ultima8/conf/setting_manager.h"
 #include "ultima8/filesys/file_system.h"
 #include "ultima8/filesys/idata_source.h"
@@ -29,9 +27,11 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "ultima8/graphics/xform_blend.h"
 #include "ultima8/games/game_data.h"
 #include "ultima8/kernel/gui_app.h"
-#include "raw_archive.h"
+#include "ultima8/filesys/raw_archive.h"
 #include "ultima8/world/item_factory.h"
 #include "ultima8/world/actors/main_actor.h"
+
+namespace Ultima8 {
 
 RemorseGame::RemorseGame() : Game() {
 	// Set some defaults for gameplay-related settings
@@ -156,3 +156,5 @@ void RemorseGame::writeSaveInfo(ODataSource *ods) {
 	}
 #endif
 }
+
+} // End of namespace Ultima8

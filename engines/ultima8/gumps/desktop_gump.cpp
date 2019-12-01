@@ -21,16 +21,18 @@
  */
 
 #include "ultima8/misc/pent_include.h"
-#include "desktop_gump.h"
+#include "ultima8/gumps/desktop_gump.h"
 #include "ultima8/graphics/render_surface.h"
 #include "ultima8/kernel/gui_app.h"
 #include "ultima8/filesys/idata_source.h"
 #include "ultima8/filesys/odata_source.h"
-#include "console_gump.h"
-#include "modal_gump.h"
-#include "target_gump.h"
+#include "ultima8/gumps/console_gump.h"
+#include "ultima8/gumps/modal_gump.h"
+#include "ultima8/gumps/target_gump.h"
 
-DEFINE_RUNTIME_CLASSTYPE_CODE(DesktopGump, Gump);
+namespcae Ultima8 {
+
+DEFINE_RUNTIME_CLASSTYPE_CODE(DesktopGump, Gump)
 
 bool DesktopGump::faded_modal = true;
 
@@ -127,4 +129,4 @@ bool DesktopGump::loadData(IDataSource *ids, uint32 version) {
 	return false;
 }
 
-// Colourless Protection
+} // End of namespace Ultima8

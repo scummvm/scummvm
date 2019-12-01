@@ -23,31 +23,33 @@
 #include "ultima8/misc/pent_include.h"
 #include "ultima8/gumps/shape_viewer_gump.h"
 
-#include "ShapeArchive.h"
+#include "ultima8/graphics/shape_archive.h"
 #include "ultima8/graphics/render_surface.h"
 #include "ultima8/kernel/gui_app.h"
-#include "Shape.h"
+#include "ultima8/graphics/shape.h"
 #include "ultima8/graphics/shape_info.h"
 
-#include "RenderedText.h"
+#include "ultima8/graphics/fonts/rendered_text.h"
 #include "ultima8/graphics/fonts/font.h"
 #include "ultima8/graphics/fonts/font_manager.h"
 
 #include "ultima8/games/game_data.h"
-#include "FontShapeArchive.h"
-#include "MainShapeArchive.h"
-#include "GumpShapeArchive.h"
-#include "desktop_gump.h"
+#include "ultima8/graphics/fonts/font_shape_archive.h"
+#include "ultima8/graphics/main_shape_archive.h"
+#include "ultima8/graphics/gump_shape_archive.h"
+#include "ultima8/gumps/desktop_gump.h"
 
 #include "ultima8/filesys/file_system.h"
 #include "u8/ConvertShapeU8.h"
 #include "ultima8/graphics/palette_manager.h"
-#include "Usecode.h"
+#include "ultima8/usecode/usecode.h"
 
 #include "ultima8/filesys/idata_source.h"
 #include "ultima8/filesys/odata_source.h"
 
-DEFINE_RUNTIME_CLASSTYPE_CODE(ShapeViewerGump, ModalGump);
+namespace Ultima8 {
+
+DEFINE_RUNTIME_CLASSTYPE_CODE(ShapeViewerGump, ModalGump)
 
 ShapeViewerGump::ShapeViewerGump()
 	: ModalGump(), curflex(0), flex(0), curshape(0), curframe(0), background(0) {
@@ -283,3 +285,5 @@ bool ShapeViewerGump::loadData(IDataSource *ids) {
 void ShapeViewerGump::saveData(ODataSource *ods) {
 	CANT_HAPPEN_MSG("Trying to save ModalGump");
 }
+
+} // End of namespace Ultima8

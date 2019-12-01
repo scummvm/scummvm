@@ -25,7 +25,7 @@
 
 namespace Ultima8 {
 
-DEFINE_RUNTIME_CLASSTYPE_CODE(SegmentedAllocator, Allocator);
+DEFINE_RUNTIME_CLASSTYPE_CODE(SegmentedAllocator, Allocator)
 
 SegmentedAllocator::SegmentedAllocator(size_t nodeCapacity_, uint32 nodes_): Allocator(), nodes(nodes_) {
 	pools.push_back(new SegmentedPool(nodeCapacity_, nodes_));

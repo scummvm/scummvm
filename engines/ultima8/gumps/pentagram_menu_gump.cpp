@@ -21,20 +21,22 @@
  */
 
 #include "ultima8/misc/pent_include.h"
-#include "pentagram_menu_gump.h"
+#include "ultima8/gumps/pentagram_menu_gump.h"
 
 #include "ultima8/graphics/render_surface.h"
 #include "ultima8/kernel/gui_app.h"
-#include "GameWidget.h"
+#include "ultima8/gumps/rwidgets/game_widget.h"
 #include "ultima8/conf/setting_manager.h"
 #include "ultima8/filesys/file_system.h"
 #include "ultima8/filesys/idata_source.h"
 #include "ultima8/graphics/texturePNG.h"
-#include "U8SaveGump.h"
+#include "ultima8/gumps/u8_save_gump.h"
 #include "ultima8/gumps/gump_notify_process.h"
 #include "ultima8/kernel/kernel.h"
 
-DEFINE_RUNTIME_CLASSTYPE_CODE(PentagramMenuGump, ModalGump);
+namespace Ultima8 {
+
+DEFINE_RUNTIME_CLASSTYPE_CODE(PentagramMenuGump, ModalGump)
 
 PentagramMenuGump::PentagramMenuGump(int X, int Y, int Width, int Height) :
 	ModalGump(X, Y, Width, Height) {
@@ -236,3 +238,5 @@ void PentagramMenuGump::ProcessCallback(std::string gamename, int message) {
 	UnhideGump();
 	GUIApp::get_instance()->menuInitMinimal("pentagram");
 }
+
+} // End of namespace Ultima8

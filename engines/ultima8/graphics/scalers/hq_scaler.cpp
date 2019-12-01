@@ -24,14 +24,15 @@
 
 #if defined(USE_HQ2X_SCALER) || defined(USE_HQ3X_SCALER) || defined(USE_HQ4X_SCALER)
 
-#include "hqScaler.h"
-#include "Manips.h"
+#include "ultima8/graphics/scalers/hq_scaler.h"
+#include "ultima8/graphics/manips.h"
 #include "ultima8/graphics/texture.h"
 
-#include "hq2xScaler.h"
-#include "hq3xScaler.h"
-#include "hq4xScaler.h"
+#include "ultima8/graphics/scalers/hq2x_scaler.h"
+#include "ultima8/graphics/scalers/hq3x_scaler.h"
+#include "ultima8/graphics/scalers/hq4x_scaler.h"
 
+namespcae Ultima8 {
 namespace Pentagram {
 
 #ifdef USE_HQ2X_SCALER
@@ -176,6 +177,7 @@ const char *hqScaler::ScalerCopyright() const {
 
 const hqScaler hq_scaler;
 
-};  // namespace Pentagram
+} // End of namespace Pentagram
+} // End of namespace Ultima8
 
 #endif

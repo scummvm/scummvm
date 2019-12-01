@@ -21,18 +21,18 @@
  */
 
 #include "ultima8/misc/pent_include.h"
-#include "GameWidget.h"
+#include "ultima8/gumps/rwidgets/game_widget.h"
 
 #include "ultima8/kernel/gui_app.h"
 #include "ultima8/games/game_info.h"
 #include "ultima8/graphics/render_surface.h"
-#include "text_widget.h"
-#include "button_widget.h"
-#include "pentagram_menu_gump.h"
+#include "ultima8/gumps/widgets/text_widget.h"
+#include "ultima8/gumps/widgets/button_widget.h"
+#include "ultima8/gumps/pentagram_menu_gump.h"
 
 namespace Ultima8 {
 
-DEFINE_RUNTIME_CLASSTYPE_CODE(GameWidget, Gump);
+DEFINE_RUNTIME_CLASSTYPE_CODE(GameWidget, Gump)
 
 
 GameWidget::GameWidget(int X, int Y, Pentagram::istring &game)

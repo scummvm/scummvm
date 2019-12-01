@@ -22,14 +22,14 @@
 
 #include "ultima8/misc/pent_include.h"
 
-#include "ShapeArchive.h"
-#include "Shape.h"
+#include "ultima8/graphics/shape_archive.h"
+#include "ultima8/graphics/shape.h"
 #include "ultima8/graphics/palette.h"
 #include "ConvertShape.h"
 
 namespace Ultima8 {
 
-DEFINE_RUNTIME_CLASSTYPE_CODE(ShapeArchive, Pentagram::Archive);
+DEFINE_RUNTIME_CLASSTYPE_CODE(ShapeArchive, Pentagram::Archive)
 
 ShapeArchive::~ShapeArchive() {
 	Archive::uncache();

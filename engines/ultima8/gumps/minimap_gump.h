@@ -40,7 +40,7 @@ class MiniMapGump : public Gump {
 	uint32              sampleAtPoint(int x, int y, CurrentMap *map);
 
 public:
-	ENABLE_RUNTIME_CLASSTYPE();
+	ENABLE_RUNTIME_CLASSTYPE()
 
 	MiniMapGump(void);
 	MiniMapGump(int x, int y);

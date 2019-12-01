@@ -33,7 +33,7 @@ public:
 	TeleportEgg();
 	virtual ~TeleportEgg();
 
-	ENABLE_RUNTIME_CLASSTYPE();
+	ENABLE_RUNTIME_CLASSTYPE()
 
 	bool isTeleporter() const {
 		return frame != 1;

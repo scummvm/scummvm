@@ -32,7 +32,7 @@ class IDataSource;
 
 class ArchiveFile {
 public:
-	ENABLE_RUNTIME_CLASSTYPE();
+	ENABLE_RUNTIME_CLASSTYPE()
 
 	virtual ~ArchiveFile() { }
 

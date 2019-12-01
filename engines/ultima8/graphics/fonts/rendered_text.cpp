@@ -21,8 +21,7 @@
  */
 
 #include "ultima8/misc/pent_include.h"
-
-#include "RenderedText.h"
+#include "ultima8/graphics/fonts/rendered_text.h"
 
 namespace Ultima8 {
 

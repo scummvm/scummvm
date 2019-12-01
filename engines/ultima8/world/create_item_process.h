@@ -29,7 +29,7 @@
 class CreateItemProcess : public Process {
 public:
 	// p_dynamic_class stuff
-	ENABLE_RUNTIME_CLASSTYPE();
+	ENABLE_RUNTIME_CLASSTYPE()
 
 	CreateItemProcess();
 	CreateItemProcess(uint32 shape, uint32 frame, uint16 quality,

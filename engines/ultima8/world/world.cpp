@@ -23,12 +23,12 @@
 #include "ultima8/misc/pent_include.h"
 
 #include "ultima8/world/world.h"
-#include "Map.h"
+#include "ultima8/world/map.h"
 #include "ultima8/world/current_map.h"
 #include "ultima8/filesys/idata_source.h"
 #include "ultima8/filesys/odata_source.h"
-#include "flex_file.h"
-#include "raw_archive.h"
+#include "ultima8/filesys/flex_file.h"
+#include "ultima8/filesys/raw_archive.h"
 #include "ultima8/world/item_factory.h"
 #include "ultima8/world/actors/actor.h"
 #include "ultima8/world/actors/main_actor.h"
@@ -39,10 +39,12 @@
 #include "ultima8/kernel/gui_app.h"
 #include "ultima8/world/camera_process.h" // for resetting the camera
 #include "ultima8/gumps/gump.h" // For CloseItemDependents notification
-#include "ultima8/world/actors/Animation.h"
+#include "ultima8/world/actors/animation.h"
 #include "ultima8/world/get_object.h"
 #include "ultima8/kernel/memory_manager.h"
 #include "ultima8/audio/audio_process.h"
+
+namespace Ultima8 {
 
 //#define DUMP_ITEMS
 
@@ -392,3 +394,5 @@ bool World::loadMaps(IDataSource *ids, uint32 version) {
 
 	return true;
 }
+
+} // End of namespace Ultima8

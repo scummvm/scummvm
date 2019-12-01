@@ -33,7 +33,7 @@ struct GameInfo;
 class GameWidget : public Gump {
 public:
 	// p_dynamic_class stuff
-	ENABLE_RUNTIME_CLASSTYPE();
+	ENABLE_RUNTIME_CLASSTYPE()
 
 	GameWidget(int X, int Y, Pentagram::istring &game);
 	virtual ~GameWidget();

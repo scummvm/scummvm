@@ -35,7 +35,7 @@ public:
 	SegmentedAllocator(size_t nodeCapacity, uint32 nodes);
 	virtual ~SegmentedAllocator();
 
-	ENABLE_RUNTIME_CLASSTYPE();
+	ENABLE_RUNTIME_CLASSTYPE()
 
 	virtual void *allocate(size_t size);
 

@@ -44,7 +44,7 @@ struct GameInfo;
 
 class CoreApp {
 public:
-	ENABLE_RUNTIME_CLASSTYPE();
+	ENABLE_RUNTIME_CLASSTYPE()
 	CoreApp(int argc, const char *const *argv);
 	virtual ~CoreApp();
 

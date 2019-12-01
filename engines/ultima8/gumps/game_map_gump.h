@@ -37,7 +37,7 @@ protected:
 	ItemSorter      *display_list;
 
 public:
-	ENABLE_RUNTIME_CLASSTYPE();
+	ENABLE_RUNTIME_CLASSTYPE()
 
 	GameMapGump();
 	GameMapGump(int x, int y, int w, int h);

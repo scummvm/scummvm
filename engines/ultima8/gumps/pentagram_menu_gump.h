@@ -23,7 +23,7 @@
 #ifndef ULTIMA8_GUMPS_PENTAGRAMMENUGUMP_H
 #define ULTIMA8_GUMPS_PENTAGRAMMENUGUMP_H
 
-#include "modal_gump.h"
+#include "ultima8/gumps/modal_gump.h"
 #include "ultima8/kernel/process.h"
 #include "ultima8/kernel/object_manager.h"
 #include "ultima8/misc/p_dynamic_cast.h"
@@ -49,7 +49,7 @@ class PentagramMenuGump : public ModalGump {
 	};
 
 public:
-	ENABLE_RUNTIME_CLASSTYPE();
+	ENABLE_RUNTIME_CLASSTYPE()
 
 	PentagramMenuGump(int x, int y, int w, int h);
 	virtual ~PentagramMenuGump();

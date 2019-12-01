@@ -21,8 +21,8 @@
  */
 
 #include "ultima8/misc/pent_include.h"
-#include "bark_gump.h"
-#include "text_widget.h"
+#include "ultima8/gumps/bark_gump.h"
+#include "ultima8/gumps/widgets/text_widget.h"
 #include "ultima8/kernel/kernel.h"
 #include "ultima8/audio/audio_process.h"
 #include "ultima8/world/get_object.h"
@@ -31,7 +31,9 @@
 #include "ultima8/filesys/idata_source.h"
 #include "ultima8/filesys/odata_source.h"
 
-DEFINE_RUNTIME_CLASSTYPE_CODE(BarkGump, ItemRelativeGump);
+namespace Ultima8 {
+
+DEFINE_RUNTIME_CLASSTYPE_CODE(BarkGump, ItemRelativeGump)
 
 // TODO: Remove all the hacks
 
@@ -225,4 +227,4 @@ bool BarkGump::loadData(IDataSource *ids, uint32 version) {
 	return true;
 }
 
-// Colourless Protection
+} // End of namespace Ultima8

@@ -23,7 +23,7 @@
 #ifndef ULTIMA8_GUMPS_ScalerGump_H
 #define ULTIMA8_GUMPS_ScalerGump_H
 
-#include "desktop_gump.h"
+#include "ultima8/gumps/desktop_gump.h"
 #include "ultima8/std/containers.h"
 #include "ultima8/misc/p_dynamic_cast.h"
 
@@ -34,11 +34,11 @@ struct Texture;
 
 namespace Pentagram {
 class Scaler;
-};
+}
 
 class ScalerGump : public DesktopGump {
 public:
-	ENABLE_RUNTIME_CLASSTYPE();
+	ENABLE_RUNTIME_CLASSTYPE()
 
 	//! ScalerGump constructor
 	//! \param x x coordinate of our top-left corner in parent

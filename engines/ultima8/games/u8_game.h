@@ -16,8 +16,8 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
-#ifndef U8GAME_H
-#define U8GAME_H
+#ifndef ULTIMA8_GAMES_U8GAME_H
+#define ULTIMA8_GAMES_U8GAME_H
 
 #include "ultima8/games/game.h"
 

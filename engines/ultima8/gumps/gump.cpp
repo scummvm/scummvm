@@ -23,19 +23,21 @@
 #include "ultima8/misc/pent_include.h"
 #include "ultima8/gumps/gump.h"
 #include "ultima8/graphics/render_surface.h"
-#include "Shape.h"
-#include "ShapeFrame.h"
-#include "ShapeArchive.h"
+#include "ultima8/graphics/shape.h"
+#include "ultima8/graphics/shape_frame.h"
+#include "ultima8/graphics/shape_archive.h"
 #include "ultima8/games/game_data.h"
 #include "ultima8/gumps/gump_notify_process.h"
 #include "ultima8/kernel/kernel.h"
 #include "ultima8/filesys/idata_source.h"
 #include "ultima8/filesys/odata_source.h"
 #include "ultima8/kernel/object_manager.h"
-#include "scaler_gump.h"
+#include "ultima8/gumps/scaler_gump.h"
 #include "ultima8/kernel/gui_app.h"
 
-DEFINE_RUNTIME_CLASSTYPE_CODE(Gump, Object);
+namespace Ultima8 {
+
+DEFINE_RUNTIME_CLASSTYPE_CODE(Gump, Object)
 
 Gump::Gump()
 	: Object(), parent(0), children() {
@@ -857,4 +859,4 @@ bool Gump::loadData(IDataSource *ids, uint32 version) {
 	return true;
 }
 
-// Colourless Protection
+} // End of namespace Ultima8

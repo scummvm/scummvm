@@ -33,7 +33,7 @@ public:
 	Allocator();
 	virtual ~Allocator();
 
-	ENABLE_RUNTIME_CLASSTYPE();
+	ENABLE_RUNTIME_CLASSTYPE()
 
 	virtual void *allocate(size_t size) = 0;
 

@@ -22,7 +22,7 @@
 
 #include "ultima8/misc/pent_include.h"
 
-#include "UsecodeFlex.h"
+#include "ultima8/usecode/usecode_flex.h"
 #include "ultima8/kernel/core_app.h"
 #include "ultima8/games/game_info.h"
 

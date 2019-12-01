@@ -32,7 +32,7 @@
 #include "ultima8/audio/audio_mixer.h"
 
 #include "ultima8/world/get_object.h"
-#include "ultima8/world/Item.h"
+#include "ultima8/world/item.h"
 #include "ultima8/world/camera_process.h"
 
 #include "ultima8/filesys/idata_source.h"
@@ -44,7 +44,7 @@ using Pentagram::AudioSample;
 using Pentagram::AudioMixer;
 
 // p_dynamic_class stuff
-DEFINE_RUNTIME_CLASSTYPE_CODE(AudioProcess, Process);
+DEFINE_RUNTIME_CLASSTYPE_CODE(AudioProcess, Process)
 
 AudioProcess *AudioProcess::the_audio_process = 0;
 

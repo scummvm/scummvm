@@ -28,7 +28,7 @@
 namespace Ultima8 {
 
 // p_dynamic_class stuff
-DEFINE_RUNTIME_CLASSTYPE_CODE(SpeechFlex, SoundFlex);
+DEFINE_RUNTIME_CLASSTYPE_CODE(SpeechFlex, SoundFlex)
 
 SpeechFlex::SpeechFlex(IDataSource *ds) : SoundFlex(ds) {
 	uint32 size = getRawSize(0);

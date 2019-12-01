@@ -22,8 +22,8 @@
 
 #include "ultima8/misc/pent_include.h"
 
-#include "glob_egg.h"
-#include "MapGlob.h"
+#include "ultima8/world/glob_egg.h"
+#include "ultima8/world/map_glob.h"
 #include "ultima8/games/game_data.h"
 #include "ultima8/world/item_factory.h"
 #include "ultima8/world/current_map.h"
@@ -31,8 +31,10 @@
 #include "ultima8/filesys/idata_source.h"
 #include "ultima8/filesys/odata_source.h"
 
+namespace Ultima8 {
+
 // p_dynamic_cast stuff
-DEFINE_RUNTIME_CLASSTYPE_CODE(GlobEgg, Item);
+DEFINE_RUNTIME_CLASSTYPE_CODE(GlobEgg, Item)
 
 GlobEgg::GlobEgg() {
 
@@ -87,3 +89,5 @@ bool GlobEgg::loadData(IDataSource *ids, uint32 version) {
 
 	return true;
 }
+
+} // End of namespace Ultima8

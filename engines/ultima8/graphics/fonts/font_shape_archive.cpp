@@ -22,14 +22,14 @@
 
 #include "ultima8/misc/pent_include.h"
 
-#include "FontShapeArchive.h"
+#include "ultima8/graphics/fonts/font_shape_archive.h"
 #include "ultima8/misc/util.h"
-#include "ShapeFont.h"
+#include "ultima8/graphics/fonts/shape_font.h"
 #include "ultima8/conf/config_file_manager.h"
 
 namespace Ultima8 {
 
-DEFINE_RUNTIME_CLASSTYPE_CODE(FontShapeArchive, ShapeArchive);
+DEFINE_RUNTIME_CLASSTYPE_CODE(FontShapeArchive, ShapeArchive)
 
 ShapeFont *FontShapeArchive::getFont(uint32 fontnum) {
 	return p_dynamic_cast<ShapeFont *>(getShape(fontnum));

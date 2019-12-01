@@ -22,7 +22,7 @@
 
 #include "ultima8/misc/pent_include.h"
 
-#include "monster_egg.h"
+#include "ultima8/world/monster_egg.h"
 #include "ultima8/usecode/uc_machine.h"
 #include "ultima8/world/actors/actor.h"
 #include "ultima8/world/item_factory.h"
@@ -30,11 +30,15 @@
 #include "ultima8/graphics/shape_info.h"
 #include "ultima8/world/actors/monster_info.h"
 #include "ultima8/world/world.h"
-#include "get_object.h"
+#include "ultima8/world/get_object.h"
 
 #include "ultima8/filesys/idata_source.h"
 #include "ultima8/filesys/odata_source.h"
-#include "ultima8/world/get_object.h"DEFINE_RUNTIME_CLASSTYPE_CODE(MonsterEgg, Item);
+#include "ultima8/world/get_object.h"
+
+namespace Ultima8 {
+
+DEFINE_RUNTIME_CLASSTYPE_CODE(MonsterEgg, Item);
 
 MonsterEgg::MonsterEgg() {
 
@@ -112,3 +116,5 @@ uint32 MonsterEgg::I_getMonId(const uint8 *args, unsigned int /*argsize*/) {
 
 	return megg->getMapNum() >> 3;
 }
+
+} // End of namespace Ultima8

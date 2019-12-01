@@ -21,16 +21,18 @@
  */
 
 #include "ultima8/misc/pent_include.h"
-#include "PagedGump.h"
+#include "ultima8/gumps/paged_gump.h"
 
 #include "ultima8/games/game_data.h"
-#include "GumpShapeArchive.h"
-#include "Shape.h"
-#include "ShapeFrame.h"
+#include "ultima8/graphics/gump_shape_archive.h"
+#include "ultima8/graphics/shape.h"
+#include "ultima8/graphics/shape_frame.h"
 #include "ultima8/kernel/gui_app.h"
-#include "button_widget.h"
+#include "ultima8/gumps/widgets/button_widget.h"
 
-DEFINE_RUNTIME_CLASSTYPE_CODE(PagedGump, ModalGump);
+namespace Ultima8 {
+
+DEFINE_RUNTIME_CLASSTYPE_CODE(PagedGump, ModalGump)
 
 PagedGump::PagedGump(int left, int right, int top, int shape):
 	ModalGump(0, 0, 5, 5), leftOff(left), rightOff(right), topOff(top),
@@ -166,3 +168,4 @@ void PagedGump::saveData(ODataSource *ods) {
 	CANT_HAPPEN_MSG("Trying to save ModalGump");
 }
 
+} // End of namespace Ultima8

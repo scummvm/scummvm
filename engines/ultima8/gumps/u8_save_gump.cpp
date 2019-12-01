@@ -21,28 +21,30 @@
  */
 
 #include "ultima8/misc/pent_include.h"
-#include "U8SaveGump.h"
+#include "ultima8/gumps/u8_save_gump.h"
 
 #include "ultima8/graphics/render_surface.h"
-#include "desktop_gump.h"
-#include "EditWidget.h"
-#include "text_widget.h"
+#include "ultima8/gumps/desktop_gump.h"
+#include "ultima8/gumps/widgets/edit_widget.h"
+#include "ultima8/gumps/widgets/text_widget.h"
 #include "ultima8/kernel/gui_app.h"
 #include "ultima8/games/game_data.h"
-#include "Shape.h"
-#include "ShapeFrame.h"
+#include "ultima8/graphics/shape.h"
+#include "ultima8/graphics/shape_frame.h"
 #include "ultima8/filesys/file_system.h"
-#include "ultima8/filesys/Savegame.h"
-#include "PagedGump.h"
+#include "ultima8/filesys/savegame.h"
+#include "ultima8/gumps/paged_gump.h"
 #include "ultima8/world/get_object.h"
 #include "ultima8/world/actors/main_actor.h"
 
 #include "ultima8/filesys/idata_source.h"
 #include "ultima8/filesys/odata_source.h"
 
+namespace Ultima8 {
+
 static const int entryfont = 4;
 
-DEFINE_RUNTIME_CLASSTYPE_CODE(U8SaveGump, Gump);
+DEFINE_RUNTIME_CLASSTYPE_CODE(U8SaveGump, Gump)
 
 U8SaveGump::U8SaveGump(bool save_, int page_)
 	: Gump(0, 0, 5, 5), save(save_), page(page_) {
@@ -354,3 +356,4 @@ Gump *U8SaveGump::showLoadSaveGump(Gump *parent, bool save) {
 	return gump;
 }
 
+} // End of namespace Ultima8

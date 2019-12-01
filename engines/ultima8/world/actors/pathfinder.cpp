@@ -21,14 +21,12 @@
  */
 
 #include "ultima8/misc/pent_include.h"
-#include "pathfinder.h"
+#include "ultima8/world/actors/pathfinder.h"
 #include "ultima8/world/actors/actor.h"
-#include "AnimationTracker.h"
-#include "SDL_timer.h"
-#include <cmath>
+#include "ultima8/world/actors/animation_tracker.h"
 
 #include "ultima8/graphics/render_surface.h"
-#include "game_map_gump.h"
+#include "ultima8/gumps/game_map_gump.h"
 #include "ultima8/kernel/gui_app.h"
 
 namespace Ultima8 {

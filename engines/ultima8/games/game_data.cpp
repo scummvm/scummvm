@@ -1,20 +1,24 @@
-/*
-Copyright (C) 2003-2006 The Pentagram team
-
-This program is free software; you can redistribute it and/or
-modify it under the terms of the GNU General Public License
-as published by the Free Software Foundation; either version 2
-of the License, or (at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program; if not, write to the Free Software
-Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
-*/
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ */
 
 #include "ultima8/misc/pent_include.h"
 
@@ -22,24 +26,26 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "ultima8/games/game_data.h"
 #include "ultima8/filesys/file_system.h"
 #include "ultima8/filesys/idata_source.h"
-#include "UsecodeFlex.h"
-#include "MainShapeArchive.h"
-#include "FontShapeArchive.h"
-#include "GumpShapeArchive.h"
-#include "raw_archive.h"
-#include "MapGlob.h"
+#include "ultima8/usecode/usecode_flex.h"
+#include "ultima8/graphics/main_shape_archive.h"
+#include "ultima8/graphics/fonts/font_shape_archive.h"
+#include "ultima8/graphics/gump_shape_archive.h"
+#include "ultima8/filesys/raw_archive.h"
+#include "ultima8/world/map_glob.h"
 #include "ultima8/graphics/palette_manager.h"
-#include "Shape.h"
-#include "MusicFlex.h"
-#include "WpnOvlayDat.h"
+#include "ultima8/graphics/shape.h"
+#include "ultima8/graphics/wpn_ovlay_dat.h"
 #include "ultima8/kernel/core_app.h"
 #include "ultima8/conf/config_file_manager.h"
 #include "ultima8/graphics/fonts/font_manager.h"
 #include "ultima8/games/game_info.h"
 #include "ultima8/conf/setting_manager.h"
+#include "crusader/ConvertShapeCrusader.h"
+#include "MusicFlex.h"
 #include "SoundFlex.h"
 #include "SpeechFlex.h"
-#include "crusader/ConvertShapeCrusader.h"
+
+namespace Ultima8 {
 
 GameData *GameData::gamedata = 0;
 
@@ -640,3 +646,5 @@ void GameData::loadRemorseData() {
 
 	loadTranslation();
 }
+
+} // End of namespace Ultima8

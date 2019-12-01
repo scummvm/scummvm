@@ -23,7 +23,7 @@
 #ifndef ULTIMA8_WORLD_MONSTEREGG_H
 #define ULTIMA8_WORLD_MONSTEREGG_H
 
-#include "ultima8/world/Item.h"
+#include "ultima8/world/item.h"
 #include "ultima8/usecode/intrinsics.h"
 
 namespace Ultima8 {
@@ -34,7 +34,7 @@ public:
 	MonsterEgg();
 	virtual ~MonsterEgg();
 
-	ENABLE_RUNTIME_CLASSTYPE();
+	ENABLE_RUNTIME_CLASSTYPE()
 
 	int getProb() const {
 		return (quality >> 11) & 0x1F;

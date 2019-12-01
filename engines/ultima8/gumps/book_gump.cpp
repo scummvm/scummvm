@@ -21,22 +21,23 @@
  */
 
 #include "ultima8/misc/pent_include.h"
-#include "book_gump.h"
-#include "text_widget.h"
+#include "ultima8/gumps/book_gump.h"
+#include "ultima8/gumps/widgets/text_widget.h"
 #include "ultima8/games/game_data.h"
-#include "Shape.h"
-#include "GumpShapeArchive.h"
-#include "ShapeFrame.h"
+#include "ultima8/graphics/shape.h"
+#include "ultima8/graphics/gump_shape_archive.h"
+#include "ultima8/graphics/shape_frame.h"
 #include "ultima8/usecode/uc_machine.h"
 #include "ultima8/gumps/gump_notify_process.h"
-#include "ultima8/world/Item.h"
+#include "ultima8/world/item.h"
 #include "ultima8/world/get_object.h"
-
 
 #include "ultima8/filesys/idata_source.h"
 #include "ultima8/filesys/odata_source.h"
 
-DEFINE_RUNTIME_CLASSTYPE_CODE(BookGump, ModalGump);
+namespace Ultima8 {
+
+DEFINE_RUNTIME_CLASSTYPE_CODE(BookGump, ModalGump)
 
 // TODO: Remove all the hacks
 
@@ -122,3 +123,5 @@ bool BookGump::loadData(IDataSource *ids, uint32 version) {
 
 	return false;
 }
+
+} // End of namespace Ultima8

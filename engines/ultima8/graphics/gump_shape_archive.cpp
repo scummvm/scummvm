@@ -22,13 +22,13 @@
 
 #include "ultima8/misc/pent_include.h"
 
-#include "GumpShapeArchive.h"
+#include "ultima8/graphics/gump_shape_archive.h"
 #include "ultima8/misc/rect.h"
 #include "ultima8/filesys/idata_source.h"
 
 namespace Ultima8 {
 
-DEFINE_RUNTIME_CLASSTYPE_CODE(GumpShapeArchive, ShapeArchive);
+DEFINE_RUNTIME_CLASSTYPE_CODE(GumpShapeArchive, ShapeArchive)
 
 GumpShapeArchive::~GumpShapeArchive() {
 	for (unsigned int i = 0; i < gumpItemArea.size(); ++i)

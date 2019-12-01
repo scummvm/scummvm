@@ -25,7 +25,7 @@
 #include "ultima8/std/containers.h"
 #include "ultima8/misc/id_man.h"
 #include "ultima8/kernel/object.h"
-#include "ultima8/world/Item.h"
+#include "ultima8/world/item.h"
 #include "ultima8/world/actors/actor.h"
 #include "ultima8/gumps/gump.h"
 #include "ultima8/filesys/idata_source.h"

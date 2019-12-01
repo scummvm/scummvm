@@ -21,35 +21,37 @@
  */
 
 #include "ultima8/misc/pent_include.h"
-#include "menu_gump.h"
+#include "ultima8/gumps/menu_gump.h"
 
 #include "ultima8/games/game_data.h"
-#include "GumpShapeArchive.h"
-#include "Shape.h"
-#include "ShapeFrame.h"
+#include "ultima8/graphics/gump_shape_archive.h"
+#include "ultima8/graphics/shape.h"
+#include "ultima8/graphics/shape_frame.h"
 #include "ultima8/kernel/gui_app.h"
-#include "desktop_gump.h"
-#include "button_widget.h"
-#include "text_widget.h"
-#include "quit_gump.h"
-#include "ControlsGump.h"
-#include "OptionsGump.h"
-#include "PagedGump.h"
+#include "ultima8/gumps/desktop_gump.h"
+#include "ultima8/gumps/widgets/button_widget.h"
+#include "ultima8/gumps/widgets/text_widget.h"
+#include "ultima8/gumps/quit_gump.h"
+#include "ultima8/gumps/controls_gump.h"
+#include "ultima8/gumps/options_gump.h"
+#include "ultima8/gumps/paged_gump.h"
 #include "ultima8/games/game.h"
 #include "ultima8/world/actors/main_actor.h"
 #include "ultima8/graphics/fonts/font.h"
-#include "RenderedText.h"
+#include "ultima8/graphics/fonts/rendered_text.h"
 #include "ultima8/graphics/fonts/font_manager.h"
 #include "ultima8/conf/setting_manager.h"
 #include "ultima8/audio/music_process.h"
-#include "EditWidget.h"
-#include "U8SaveGump.h"
+#include "ultima8/gumps/widgets/edit_widget.h"
+#include "ultima8/gumps/u8_save_gump.h"
 #include "ultima8/world/get_object.h"
 
 #include "ultima8/filesys/idata_source.h"
 #include "ultima8/filesys/odata_source.h"
 
-DEFINE_RUNTIME_CLASSTYPE_CODE(MenuGump, ModalGump);
+namespace Ultima8 {
+
+DEFINE_RUNTIME_CLASSTYPE_CODE(MenuGump, ModalGump)
 
 MenuGump::MenuGump(bool nameEntryMode_)
 	: ModalGump(0, 0, 5, 5, 0, FLAG_DONT_SAVE) {
@@ -262,3 +264,5 @@ void MenuGump::inputName() {
 	gump->InitGump(0);
 	gump->setRelativePosition(CENTER);
 }
+
+} // End of namespace Ultima8

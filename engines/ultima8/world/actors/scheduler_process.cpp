@@ -33,7 +33,7 @@
 namespace Ultima8 {
 
 // p_dynamic_cast stuff
-DEFINE_RUNTIME_CLASSTYPE_CODE(SchedulerProcess, Process);
+DEFINE_RUNTIME_CLASSTYPE_CODE(SchedulerProcess, Process)
 
 SchedulerProcess::SchedulerProcess() : Process() {
 	lastRun = 0;

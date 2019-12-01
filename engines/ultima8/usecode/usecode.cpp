@@ -22,7 +22,7 @@
 
 #include "ultima8/misc/pent_include.h"
 
-#include "Usecode.h"
+#include "ultima8/usecode/usecode.h"
 #include "ultima8/kernel/core_app.h"
 
 namespace Ultima8 {

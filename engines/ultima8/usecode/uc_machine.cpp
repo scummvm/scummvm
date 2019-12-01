@@ -24,7 +24,7 @@
 
 #include "ultima8/usecode/uc_machine.h"
 #include "ultima8/usecode/uc_process.h"
-#include "Usecode.h"
+#include "ultima8/usecode/usecode.h"
 #include "ultima8/kernel/kernel.h"
 #include "ultima8/kernel/delay_process.h"
 #include "ultima8/kernel/core_app.h"
@@ -33,10 +33,10 @@
 #include "ultima8/filesys/odata_source.h"
 #include "ultima8/world/current_map.h"
 #include "ultima8/world/world.h"
-#include "BitSet.h"
-#include "ultima8/usecode/UCList.h"
+#include "ultima8/usecode/bit_set.h"
+#include "ultima8/usecode/uc_list.h"
 #include "ultima8/misc/id_man.h"
-#include "console_gump.h"
+#include "ultima8/gumps/console_gump.h"
 #include "ultima8/world/get_object.h"
 
 #define INCLUDE_CONVERTUSECODEU8_WITHOUT_BRINGING_IN_FOLD

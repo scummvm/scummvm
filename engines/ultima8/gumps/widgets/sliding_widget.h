@@ -30,7 +30,7 @@ namespace Ultima8 {
 
 class SlidingWidget : public Gump {
 public:
-	ENABLE_RUNTIME_CLASSTYPE();
+	ENABLE_RUNTIME_CLASSTYPE()
 
 	SlidingWidget();
 	SlidingWidget(int x, int y, Shape *shape, uint32 framenum);

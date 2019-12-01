@@ -64,7 +64,7 @@ class AudioProcess :
 
 public:
 	// p_dynamic_class stuff
-	ENABLE_RUNTIME_CLASSTYPE();
+	ENABLE_RUNTIME_CLASSTYPE()
 
 	AudioProcess(void);
 	virtual ~AudioProcess(void);

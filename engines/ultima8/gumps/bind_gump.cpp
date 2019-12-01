@@ -21,11 +21,11 @@
  */
 
 #include "ultima8/misc/pent_include.h"
-#include "BindGump.h"
+#include "ultima8/gumps/bind_gump.h"
 
 #include "ultima8/graphics/fonts/font.h"
 #include "ultima8/graphics/render_surface.h"
-#include "text_widget.h"
+#include "ultima8/gumps/widgets/text_widget.h"
 #include "ultima8/kernel/mouse.h"
 
 #include "ultima8/kernel/hid_manager.h"
@@ -33,7 +33,9 @@
 #include "ultima8/filesys/idata_source.h"
 #include "ultima8/filesys/odata_source.h"
 
-DEFINE_RUNTIME_CLASSTYPE_CODE(BindGump, ModalGump);
+namespace Ultima8 {
+
+DEFINE_RUNTIME_CLASSTYPE_CODE(BindGump, ModalGump)
 
 BindGump::BindGump(Pentagram::istring *b, Gump *g): ModalGump(0, 0, 160, 80), binding(b), invoker(g) {
 }
@@ -95,3 +97,5 @@ bool BindGump::loadData(IDataSource *ids) {
 void BindGump::saveData(ODataSource *ods) {
 	CANT_HAPPEN_MSG("Trying to save ModalGump");
 }
+
+} // End of namespace Ultima8

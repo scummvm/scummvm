@@ -32,7 +32,7 @@ class PagedGump;
 
 class ControlsGump : public Gump {
 public:
-	ENABLE_RUNTIME_CLASSTYPE();
+	ENABLE_RUNTIME_CLASSTYPE()
 
 	ControlsGump();
 	virtual ~ControlsGump(void);

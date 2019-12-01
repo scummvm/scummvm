@@ -21,16 +21,16 @@
  */
 
 #include "ultima8/misc/pent_include.h"
-#include "sliding_widget.h"
-#include "ShapeFrame.h"
-#include "Shape.h"
+#include "ultima8/gumps/widgets/sliding_widget.h"
+#include "ultima8/graphics/shape_frame.h"
+#include "ultima8/graphics/shape.h"
 
 #include "ultima8/filesys/idata_source.h"
 #include "ultima8/filesys/odata_source.h"
 
 namespace Ultima8 {
 
-DEFINE_RUNTIME_CLASSTYPE_CODE(SlidingWidget, Gump);
+DEFINE_RUNTIME_CLASSTYPE_CODE(SlidingWidget, Gump)
 
 SlidingWidget::SlidingWidget()
 	: Gump() {

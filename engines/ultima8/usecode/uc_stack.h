@@ -23,6 +23,8 @@
 #ifndef ULTIMA8_USECODE_BaseUCStack_H
 #define ULTIMA8_USECODE_BaseUCStack_H
 
+#include "common/scummsys.h"
+
 namespace Ultima8 {
 
 class IDataSource;

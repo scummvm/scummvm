@@ -25,7 +25,7 @@
 
 namespace Ultima8 {
 
-DEFINE_RUNTIME_CLASSTYPE_CODE(SegmentedPool, Pool);
+DEFINE_RUNTIME_CLASSTYPE_CODE(SegmentedPool, Pool)
 
 //	Memory is aligned to the next largest multiple of sizeof(x) from
 //  the base address plus the size. Although, this may not be very helpful

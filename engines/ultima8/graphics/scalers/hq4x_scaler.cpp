@@ -24,10 +24,11 @@
 
 #ifdef USE_HQ4X_SCALER
 
-#include "hq4xScaler.h"
-#include "Manips.h"
+#include "ultima8/graphics/scalers/hq4x_scaler.h"
+#include "ultima8/graphics/manips.h"
 #include "ultima8/graphics/texture.h"
 
+namespace Ultima8 {
 namespace Pentagram {
 
 hq4xScaler::hq4xScaler() : Scaler() {
@@ -59,6 +60,7 @@ const char *hq4xScaler::ScalerCopyright() const {
 
 const hq4xScaler hq4x_scaler;
 
-};  // namespace Pentagram
+} // End of namespace Pentagram
+} // End of namespace Ultima8
 
 #endif

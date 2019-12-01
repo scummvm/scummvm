@@ -21,11 +21,11 @@
  */
 
 #include "ultima8/misc/pent_include.h"
-#include "actor_bark_notify_process.h"
+#include "ultima8/world/actor_bark_notify_process.h"
 #include "ultima8/gumps/gump.h"
 #include "ultima8/kernel/delay_process.h"
 #include "ultima8/world/actors/actor.h"
-#include "ultima8/world/actors/Animation.h"
+#include "ultima8/world/actors/animation.h"
 #include "ultima8/kernel/kernel.h"
 #include "ultima8/world/get_object.h"
 
@@ -34,7 +34,7 @@
 
 namespace Ultima8 {
 
-DEFINE_RUNTIME_CLASSTYPE_CODE(ActorBarkNotifyProcess, GumpNotifyProcess);
+DEFINE_RUNTIME_CLASSTYPE_CODE(ActorBarkNotifyProcess, GumpNotifyProcess)
 
 ActorBarkNotifyProcess::ActorBarkNotifyProcess()
 	: GumpNotifyProcess() {

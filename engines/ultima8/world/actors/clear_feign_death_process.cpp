@@ -22,7 +22,7 @@
 
 #include "ultima8/misc/pent_include.h"
 
-#include "clear_feign_death_process.h"
+#include "ultima8/world/actors/clear_feign_death_process.h"
 #include "ultima8/world/actors/actor.h"
 #include "ultima8/audio/audio_process.h"
 #include "ultima8/world/get_object.h"
@@ -33,7 +33,7 @@
 namespace Ultima8 {
 
 // p_dynamic_cast stuff
-DEFINE_RUNTIME_CLASSTYPE_CODE(ClearFeignDeathProcess, Process);
+DEFINE_RUNTIME_CLASSTYPE_CODE(ClearFeignDeathProcess, Process)
 
 ClearFeignDeathProcess::ClearFeignDeathProcess() : Process() {
 

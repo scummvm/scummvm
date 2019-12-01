@@ -37,10 +37,10 @@ public:
 	virtual ~Object();
 
 	// p_dynamic_cast stuff
-	ENABLE_RUNTIME_CLASSTYPE();
+	ENABLE_RUNTIME_CLASSTYPE()
 
 	// memory pooling stuff
-	ENABLE_CUSTOM_MEMORY_ALLOCATION();
+	ENABLE_CUSTOM_MEMORY_ALLOCATION()
 
 	//! get this Object's objID
 	inline ObjId getObjId() const {

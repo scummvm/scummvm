@@ -23,7 +23,7 @@
 #ifndef ULTIMA8_GUMPS_INVERTERGUMP_H
 #define ULTIMA8_GUMPS_INVERTERGUMP_H
 
-#include "desktop_gump.h"
+#include "ultima8/gumps/desktop_gump.h"
 #include "ultima8/std/containers.h"
 #include "ultima8/misc/p_dynamic_cast.h"
 
@@ -33,7 +33,7 @@ class RenderSurface;
 
 class InverterGump : public DesktopGump {
 public:
-	ENABLE_RUNTIME_CLASSTYPE();
+	ENABLE_RUNTIME_CLASSTYPE()
 
 	InverterGump(int32 x, int32 y, int32 width, int32 height);
 	virtual ~InverterGump(void);

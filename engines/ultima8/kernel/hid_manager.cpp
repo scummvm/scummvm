@@ -22,13 +22,11 @@
 
 #include "ultima8/misc/pent_include.h"
 #include "ultima8/kernel/hid_manager.h"
-
-#include "SDL_timer.h"
 #include "ultima8/conf/setting_manager.h"
 #include "ultima8/misc/console.h"
 #include "ultima8/misc/util.h"
-
 #include "ultima8/conf/config_file_manager.h" // temporary!
+ //#include "SDL_timer.h"
 
 namespace Ultima8 {
 

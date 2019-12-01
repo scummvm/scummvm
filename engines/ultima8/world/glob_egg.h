@@ -23,7 +23,7 @@
 #ifndef ULTIMA8_WORLD_GLOBEGG_H
 #define ULTIMA8_WORLD_GLOBEGG_H
 
-#include "ultima8/world/Item.h"
+#include "ultima8/world/item.h"
 
 namespace Ultima8 {
 
@@ -36,7 +36,7 @@ public:
 	virtual ~GlobEgg();
 
 	// p_dynamic_cast stuff
-	ENABLE_RUNTIME_CLASSTYPE();
+	ENABLE_RUNTIME_CLASSTYPE()
 
 	//! The item has entered the fast area
 	virtual void enterFastArea();

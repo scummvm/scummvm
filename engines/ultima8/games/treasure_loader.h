@@ -16,12 +16,14 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
-#ifndef TREASURELOADER_H
-#define TREASURELOADER_H
+#ifndef ULTIMA8_GAMES_TREASURELOADER_H
+#define ULTIMA8_GAMES_TREASURELOADER_H
 
-#include "TreasureInfo.h"
+#include "ultima8/world/actors/treasure_info.h"
 #include "ultima8/std/containers.h"
 #include "ultima8/std/containers.h"
+
+namespace Ultima8 {
 
 class TreasureLoader {
 public:
@@ -44,5 +46,7 @@ private:
 	bool parseDouble(std::string val, double &d);
 	bool parseInt(std::string val, int &i);
 };
+
+} // End of namespace Ultima8
 
 #endif

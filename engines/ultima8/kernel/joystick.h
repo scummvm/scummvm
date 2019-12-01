@@ -46,7 +46,7 @@ public:
 	JoystickCursorProcess(Joystick js_, int x_axis_, int y_axis_);
 	virtual ~JoystickCursorProcess();
 
-	ENABLE_RUNTIME_CLASSTYPE();
+	ENABLE_RUNTIME_CLASSTYPE()
 
 	virtual void run();
 

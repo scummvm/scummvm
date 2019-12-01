@@ -23,23 +23,23 @@
 #include "ultima8/misc/pent_include.h"
 
 #if defined(HAVE_SDL_SDL_TTF_H)
-#include <SDL/SDL_ttf.h>
+//include <SDL/SDL_ttf.h>
 #else
-#include "SDL_ttf.h"
+//include "SDL_ttf.h"
 #endif
 
 #include "ultima8/graphics/render_surface.h"
-#include "TTFont.h"
-#include "TTFRenderedText.h"
+#include "ultima8/graphics/fonts/tt_font.h"
+#include "ultima8/graphics/fonts/ttf_rendered_text.h"
 #include "ultima8/graphics/texture.h"
 #include "ultima8/filesys/idata_source.h"
 #include "ultima8/misc/encoding.h"
 
-#include <iomanip>
+//include iomanip
 
 namespace Ultima8 {
 
-DEFINE_RUNTIME_CLASSTYPE_CODE(TTFont, Pentagram::Font);
+DEFINE_RUNTIME_CLASSTYPE_CODE(TTFont, Pentagram::Font)
 
 // various unicode characters which look like small black circles
 static const Uint16 bullets[] = { 0x2022, 0x30FB, 0x25CF, 0 };

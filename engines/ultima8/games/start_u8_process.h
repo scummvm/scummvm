@@ -16,11 +16,13 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
-#ifndef STARTU8PROCESS_H
-#define STARTU8PROCESS_H
+#ifndef ULTIMA8_GAMES_STARTU8PROCESS_H
+#define ULTIMA8_GAMES_STARTU8PROCESS_H
 
 #include "ultima8/kernel/process.h"
 #include "ultima8/misc/p_dynamic_cast.h"
+
+namespace Ultima8 {
 
 class Item;
 
@@ -29,7 +31,7 @@ public:
 	StartU8Process(const std::string &savename);
 
 	// p_dynamic_cast stuff
-	ENABLE_RUNTIME_CLASSTYPE();
+	ENABLE_RUNTIME_CLASSTYPE()
 
 	virtual void run();
 
@@ -42,5 +44,6 @@ protected:
 	std::string savename;
 };
 
+} // End of namespace Ultima8
 
 #endif

@@ -22,8 +22,8 @@
 
 #include "ultima8/misc/pent_include.h"
 
-#include "MainMenuProcess.h"
-#include "menu_gump.h"
+#include "ultima8/gumps/main_menu_process.h"
+#include "ultima8/gumps/menu_gump.h"
 #include "ultima8/world/get_object.h"
 #include "ultima8/audio/music_process.h"
 #include "ultima8/world/actors/main_actor.h"
@@ -31,8 +31,10 @@
 #include "ultima8/filesys/idata_source.h"
 #include "ultima8/filesys/odata_source.h"
 
+namespace Ultima8 {
+
 // p_dynamic_cast stuff
-DEFINE_RUNTIME_CLASSTYPE_CODE(MainMenuProcess, Process);
+DEFINE_RUNTIME_CLASSTYPE_CODE(MainMenuProcess, Process)
 
 MainMenuProcess::MainMenuProcess() : Process() {
 	init = false;
@@ -62,3 +64,5 @@ bool MainMenuProcess::loadData(IDataSource *ids, uint32 version) {
 
 	return true;
 }
+
+} // End of namespace Ultima8

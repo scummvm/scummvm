@@ -92,7 +92,11 @@ private:
 	};
 
 	struct TTFHash {
-		uint operator()(const TTFId &x) const { return (uint)&x; }
+		uint operator()(const TTFId &x) const {
+			// TODO: See if something better can be used as a hash key
+			int64 val = (int64)&x;
+			return (uint)val;
+		}
 	};
 
 	typedef std::map<TTFId, TTF_Font *, TTFHash> TTFFonts;

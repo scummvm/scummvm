@@ -28,7 +28,7 @@
 
 namespace Ultima8 {
 
-DEFINE_RUNTIME_CLASSTYPE_CODE(MusicFlex, Pentagram::Archive);
+DEFINE_RUNTIME_CLASSTYPE_CODE(MusicFlex, Pentagram::Archive)
 
 
 MusicFlex::MusicFlex(IDataSource *ds) : Archive(ds) {

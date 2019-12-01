@@ -22,8 +22,8 @@
 
 #include "ultima8/misc/pent_include.h"
 
-#include "Shape.h"
-#include "ShapeFrame.h"
+#include "ultima8/graphics/shape.h"
+#include "ultima8/graphics/shape_frame.h"
 #include "ConvertShape.h"
 #include "u8/ConvertShapeU8.h"
 #include "crusader/ConvertShapeCrusader.h"
@@ -31,9 +31,9 @@
 
 namespace Ultima8 {
 
-DEFINE_RUNTIME_CLASSTYPE_CODE_BASE_CLASS(Shape);
+DEFINE_RUNTIME_CLASSTYPE_CODE_BASE_CLASS(Shape)
 
-DEFINE_CUSTOM_MEMORY_ALLOCATION(Shape);
+DEFINE_CUSTOM_MEMORY_ALLOCATION(Shape)
 
 Shape::Shape(const uint8 *data, uint32 size, const ConvertShapeFormat *format,
              const uint16 id, const uint32 shape) : flexId(id), shapenum(shape) {

@@ -519,6 +519,12 @@ public:
 		return *this;
 	}
 
+	console_err_ostream &operator<<(const void *ptr) {
+		Common::String str = Common::String::format("%p", ptr);
+		write(str.c_str(), str.size());
+		return *this;
+	}
+
 	console_err_ostream &operator<<(const Common::String &str) {
 		write(str.c_str(), str.size());
 		return *this;

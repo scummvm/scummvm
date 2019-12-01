@@ -23,7 +23,7 @@
 #ifndef ULTIMA8_AUDIO_SOUNDFLEX_H
 #define ULTIMA8_AUDIO_SOUNDFLEX_H
 
-#include "ultima8/filesys/Archive.h"
+#include "ultima8/filesys/archive.h"
 #include "ultima8/misc/p_dynamic_cast.h"
 
 namespace Ultima8 {
@@ -33,7 +33,7 @@ class AudioSample;
 
 class SoundFlex : protected Pentagram::Archive {
 public:
-	ENABLE_RUNTIME_CLASSTYPE();
+	ENABLE_RUNTIME_CLASSTYPE()
 
 	SoundFlex(IDataSource *ds);
 	~SoundFlex();

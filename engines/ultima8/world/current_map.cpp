@@ -21,32 +21,31 @@
  */
 
 #include "ultima8/misc/pent_include.h"
-
-#include <climits>
-
 #include "ultima8/world/current_map.h"
-#include "Map.h"
-#include "ultima8/world/Item.h"
-#include "glob_egg.h"
+#include "ultima8/world/map.h"
+#include "ultima8/world/item.h"
+#include "ultima8/world/glob_egg.h"
 #include "ultima8/world/egg.h"
 #include "ultima8/world/actors/actor.h"
 #include "ultima8/world/world.h"
 #include "ultima8/misc/rect.h"
-#include "ultima8/world/Container.h"
-#include "ultima8/usecode/UCList.h"
+#include "ultima8/world/container.h"
+#include "ultima8/usecode/uc_list.h"
 #include "ultima8/graphics/shape_info.h"
-#include "teleport_egg.h"
-#include "egg_hatcher_process.h"
+#include "ultima8/world/teleport_egg.h"
+#include "ultima8/world/egg_hatcher_process.h"
 #include "ultima8/kernel/kernel.h"
 #include "ultima8/games/game_data.h"
-#include "MainShapeArchive.h"
+#include "ultima8/graphics/main_shape_archive.h"
 #include "ultima8/kernel/gui_app.h"
-#include "game_map_gump.h"
+#include "ultima8/gumps/game_map_gump.h"
 #include "ultima8/misc/direction.h"
 #include "ultima8/world/get_object.h"
 
 #include "ultima8/filesys/idata_source.h"
 #include "ultima8/filesys/odata_source.h"
+
+namespace Ultima8 {
 
 using std::list; // too messy otherwise
 using Pentagram::Rect;
@@ -1241,3 +1240,5 @@ uint32 CurrentMap::I_canExistAt(const uint8 *args, unsigned int /*argsize*/) {
 	else
 		return 0;
 }
+
+} // End of namespace Ultima8

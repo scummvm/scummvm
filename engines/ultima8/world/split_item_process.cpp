@@ -22,16 +22,18 @@
 
 #include "ultima8/misc/pent_include.h"
 
-#include "split_item_process.h"
-#include "ultima8/world/Item.h"
+#include "ultima8/world/split_item_process.h"
+#include "ultima8/world/item.h"
 #include "ultima8/graphics/shape_info.h"
 #include "ultima8/world/get_object.h"
 
 #include "ultima8/filesys/idata_source.h"
 #include "ultima8/filesys/odata_source.h"
 
+namespace Ultima8 {
+
 // p_dynamic_cast stuff
-DEFINE_RUNTIME_CLASSTYPE_CODE(SplitItemProcess, Process);
+DEFINE_RUNTIME_CLASSTYPE_CODE(SplitItemProcess, Process)
 
 SplitItemProcess::SplitItemProcess() : Process() {
 
@@ -104,3 +106,5 @@ bool SplitItemProcess::loadData(IDataSource *ids, uint32 version) {
 
 	return true;
 }
+
+} // End of namespace Ultima8

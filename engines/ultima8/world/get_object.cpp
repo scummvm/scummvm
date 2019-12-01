@@ -27,6 +27,8 @@
 #include "ultima8/world/actors/main_actor.h"
 #include "ultima8/gumps/gump.h"
 
+namespace Ultima8 {
+
 // utility functions for getting objects by ObjId in various forms
 
 Object *getObject(ObjId id) {
@@ -52,3 +54,5 @@ MainActor *getMainActor() {
 Gump *getGump(ObjId id) {
 	return p_dynamic_cast<Gump *>(ObjectManager::get_instance()->getObject(id));
 }
+
+} // End of namespace Ultima8

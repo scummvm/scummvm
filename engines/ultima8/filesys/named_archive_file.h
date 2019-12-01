@@ -30,7 +30,7 @@ namespace Ultima8 {
 
 class NamedArchiveFile : public ArchiveFile {
 public:
-	ENABLE_RUNTIME_CLASSTYPE();
+	ENABLE_RUNTIME_CLASSTYPE()
 
 	NamedArchiveFile() : indexCount(0) { }
 	virtual ~NamedArchiveFile() { }

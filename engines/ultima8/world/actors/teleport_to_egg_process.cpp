@@ -22,7 +22,7 @@
 
 #include "ultima8/misc/pent_include.h"
 
-#include "teleport_to_egg_process.h"
+#include "ultima8/world/actors/teleport_to_egg_process.h"
 #include "ultima8/world/actors/main_actor.h"
 #include "ultima8/world/get_object.h"
 
@@ -31,7 +31,7 @@
 
 namespace Ultima8 {
 
-DEFINE_RUNTIME_CLASSTYPE_CODE(TeleportToEggProcess, Process);
+DEFINE_RUNTIME_CLASSTYPE_CODE(TeleportToEggProcess, Process)
 
 TeleportToEggProcess::TeleportToEggProcess() : Process() {
 

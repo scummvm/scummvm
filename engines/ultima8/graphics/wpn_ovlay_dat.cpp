@@ -22,13 +22,13 @@
 
 #include "ultima8/misc/pent_include.h"
 
-#include "WpnOvlayDat.h"
+#include "ultima8/graphics/wpn_ovlay_dat.h"
 
 #include "ultima8/filesys/idata_source.h"
-#include "WeaponOverlay.h"
-#include "raw_archive.h"
+#include "ultima8/world/actors/weapon_overlay.h"
+#include "ultima8/filesys/raw_archive.h"
 #include "ultima8/games/game_data.h"
-#include "MainShapeArchive.h"
+#include "ultima8/graphics/main_shape_archive.h"
 #include "ultima8/world/actors/AnimAction.h"
 
 namespace Ultima8 {

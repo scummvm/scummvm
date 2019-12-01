@@ -20,13 +20,11 @@
  *
  */
 
-#include "ultima8/misc/pent_include.h"
+ // zip API
+#include "ultima8/filesys/zip/zip.h"
 
 #include "ultima8/filesys/savegame_writer.h"
 #include "ultima8/filesys/odata_source.h"
-
-// zip API
-#include "ultima8/filesys/zip/zip.h"
 
 namespace Ultima8 {
 

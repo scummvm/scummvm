@@ -22,7 +22,7 @@
 
 #include "ultima8/misc/pent_include.h"
 
-#include "ShapeFrame.h"
+#include "ultima8/graphics/shape_frame.h"
 #include "ConvertShape.h"
 #include "u8/ConvertShapeU8.h"
 #include "ultima8/filesys/idata_source.h"

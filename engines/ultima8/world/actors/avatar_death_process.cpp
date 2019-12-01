@@ -22,12 +22,12 @@
 
 #include "ultima8/misc/pent_include.h"
 
-#include "avatar_death_process.h"
+#include "ultima8/world/actors/avatar_death_process.h"
 #include "ultima8/world/actors/main_actor.h"
-#include "readable_gump.h"
+#include "ultima8/gumps/readable_gump.h"
 #include "ultima8/games/game_data.h"
 #include "ultima8/kernel/kernel.h"
-#include "MainMenuProcess.h"
+#include "ultima8/gumps/main_menu_process.h"
 #include "ultima8/gumps/gump_notify_process.h"
 #include "ultima8/audio/music_process.h"
 #include "ultima8/world/get_object.h"
@@ -38,7 +38,7 @@
 namespace Ultima8 {
 
 // p_dynamic_cast stuff
-DEFINE_RUNTIME_CLASSTYPE_CODE(AvatarDeathProcess, Process);
+DEFINE_RUNTIME_CLASSTYPE_CODE(AvatarDeathProcess, Process)
 
 AvatarDeathProcess::AvatarDeathProcess() : Process() {
 	item_num = 1;

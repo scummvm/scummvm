@@ -21,14 +21,14 @@
  */
 
 #include "ultima8/misc/pent_include.h"
-#include "ShapeRenderedText.h"
+#include "ultima8/graphics/fonts/shape_rendered_text.h"
 
-#include "ShapeFont.h"
+#include "ultima8/graphics/fonts/shape_font.h"
 #include "ultima8/graphics/render_surface.h"
 
 namespace Ultima8 {
 
-DEFINE_RUNTIME_CLASSTYPE_CODE(ShapeRenderedText, RenderedText);
+DEFINE_RUNTIME_CLASSTYPE_CODE(ShapeRenderedText, RenderedText)
 
 
 ShapeRenderedText::ShapeRenderedText(std::list<PositionedText> &lines_,

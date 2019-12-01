@@ -20,6 +20,8 @@
  *
  */
 
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
+
 #include "ultima8/misc/pent_include.h"
 
 #include "ultima8/filesys/zip_file.h"
@@ -33,7 +35,7 @@ namespace Ultima8 {
 
 DEFINE_RUNTIME_CLASSTYPE_CODE(NamedArchiveFile, ArchiveFile)
 
-DEFINE_RUNTIME_CLASSTYPE_CODE(ZipFile, NamedArchiveFile);
+DEFINE_RUNTIME_CLASSTYPE_CODE(ZipFile, NamedArchiveFile)
 
 
 

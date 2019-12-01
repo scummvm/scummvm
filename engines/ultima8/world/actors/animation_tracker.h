@@ -23,8 +23,8 @@
 #ifndef WORLD_ACTORS_ANIMATIONTRACKER_H
 #define WORLD_ACTORS_ANIMATIONTRACKER_H
 
-#include "ultima8/world/actors/Animation.h"
-#include "pathfinder.h"
+#include "ultima8/world/actors/animation.h"
+#include "ultima8/world/actors/pathfinder.h"
 
 namespace Ultima8 {
 

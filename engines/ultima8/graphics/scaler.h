@@ -25,7 +25,7 @@
 
 #include "ultima8/graphics/texture.h"
 #include "ultima8/graphics/render_surface.h"
-#include "ScalerManager.h"
+#include "ultima8/graphics/scalers/scaler_manager.h"
 
 namespace Ultima8 {
 namespace Pentagram {

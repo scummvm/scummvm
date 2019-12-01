@@ -30,19 +30,9 @@ namespace Pentagram {
 
 template<class T> T to_uppercase(const T s) {
 	T str = s;
-	typename T::iterator X;
-	for (X = str.begin(); X != str.end(); ++X) {
-#if (defined(BEOS) || defined(OPENBSD) || defined(CYGWIN) || defined(__MORPHOS__))
-		if ((*X >= 'a') && (*X <= 'z')) *X -= 32;
-#else
-		*X = static_cast<char>(std::toupper(*X));
-#endif
-	}
+	str.toUppercase();
 	return str;
 }
-
-template std::string to_uppercase<std::string>(const std::string s);
-template Pentagram::istring to_uppercase<Pentagram::istring>(const Pentagram::istring s);
 
 template<class T> void StringToArgv(const T &args, std::vector<T> &argv) {
 	// Clear the vector
@@ -105,8 +95,8 @@ template<class T> void StringToArgv(const T &args, std::vector<T> &argv) {
 	if (!arg.empty()) argv.push_back(arg);
 }
 
-template void StringToArgv<std::string>(const std::string &args, std::vector<std::string> &argv);
-template void StringToArgv<Pentagram::istring>(const Pentagram::istring &args, std::vector<Pentagram::istring> &argv);
+//template void StringToArgv<std::string>(const std::string &args, std::vector<std::string> &argv);
+//template void StringToArgv<Pentagram::istring>(const Pentagram::istring &args, std::vector<Pentagram::istring> &argv);
 
 template<class T> void ArgvToString(const std::vector<T> &argv, T &args) {
 	// Clear the string
@@ -142,8 +132,8 @@ template<class T> void ArgvToString(const std::vector<T> &argv, T &args) {
 	}
 }
 
-template void ArgvToString<std::string>(const std::vector<std::string> &argv, std::string &args);
-template void ArgvToString<Pentagram::istring>(const std::vector<Pentagram::istring> &argv, Pentagram::istring &args);
+//template void ArgvToString<std::string>(const std::vector<std::string> &argv, std::string &args);
+//template void ArgvToString<Pentagram::istring>(const std::vector<Pentagram::istring> &argv, Pentagram::istring &args);
 
 template<class T> void TrimSpaces(T &str) {
 	if (str.empty()) return;
@@ -158,8 +148,8 @@ template<class T> void TrimSpaces(T &str) {
 	str = str.substr(pos1, pos2 - pos1 + 1);
 }
 
-template void TrimSpaces<std::string>(std::string &str);
-template void TrimSpaces<Pentagram::istring>(Pentagram::istring &str);
+//template void TrimSpaces<std::string>(std::string &str);
+//template void TrimSpaces<Pentagram::istring>(Pentagram::istring &str);
 
 
 template<class T> void TabsToSpaces(T &str, unsigned int n) {
@@ -169,9 +159,8 @@ template<class T> void TabsToSpaces(T &str, unsigned int n) {
 		str.replace(p, 1, repl);
 }
 
-template void TabsToSpaces<std::string>(std::string &str, unsigned int n);
-template void TabsToSpaces<Pentagram::istring>(Pentagram::istring &str,
-        unsigned int n);
+//template void TabsToSpaces<std::string>(std::string &str, unsigned int n);
+//template void TabsToSpaces<Pentagram::istring>(Pentagram::istring &str, unsigned int n);
 
 
 template<class T> void SplitString(const T &args, char sep,
@@ -196,8 +185,8 @@ template<class T> void SplitString(const T &args, char sep,
 }
 
 
-template void SplitString<std::string>(const std::string &args, char sep, std::vector<std::string> &argv);
-template void SplitString<Pentagram::istring>(const Pentagram::istring &args, char sep, std::vector<Pentagram::istring> &argv);
+//template void SplitString<std::string>(const std::string &args, char sep, std::vector<std::string> &argv);
+//template void SplitString<Pentagram::istring>(const Pentagram::istring &args, char sep, std::vector<Pentagram::istring> &argv);
 
 
 
@@ -229,8 +218,8 @@ template<class T> void SplitStringKV(const T &args, char sep,
 	}
 }
 
-template void SplitStringKV<std::string>(const std::string &args, char sep, std::vector<std::pair<std::string, std::string> > &argv);
-template void SplitStringKV<Pentagram::istring>(const Pentagram::istring &args, char sep, std::vector<std::pair<Pentagram::istring, Pentagram::istring> > &argv);
+//template void SplitStringKV<std::string>(const std::string &args, char sep, std::vector<std::pair<std::string, std::string> > &argv);
+//template void SplitStringKV<Pentagram::istring>(const Pentagram::istring &args, char sep, std::vector<std::pair<Pentagram::istring, Pentagram::istring> > &argv);
 
 } // End of namespace Pentagram
 } // End of namespace Ultima8

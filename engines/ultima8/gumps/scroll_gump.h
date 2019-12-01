@@ -23,7 +23,7 @@
 #ifndef ULTIMA8_GUMPS_SCROLLGUMP_H
 #define ULTIMA8_GUMPS_SCROLLGUMP_H
 
-#include "modal_gump.h"
+#include "ultima8/gumps/modal_gump.h"
 #include "ultima8/usecode/intrinsics.h"
 #include "ultima8/misc/p_dynamic_cast.h"
 
@@ -33,7 +33,7 @@ class ScrollGump : public ModalGump {
 	std::string text;
 	ObjId textwidget;
 public:
-	ENABLE_RUNTIME_CLASSTYPE();
+	ENABLE_RUNTIME_CLASSTYPE()
 
 	ScrollGump();
 	ScrollGump(ObjId owner, std::string msg);

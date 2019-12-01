@@ -123,7 +123,7 @@ public:
 	static void ConCmd_toggleCombat(const Console::ArgvType &argv);
 
 	// p_dynamic_cast stuff
-	ENABLE_RUNTIME_CLASSTYPE();
+	ENABLE_RUNTIME_CLASSTYPE()
 
 	INTRINSIC(I_teleportToEgg);
 	INTRINSIC(I_accumulateStrength);

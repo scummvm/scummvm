@@ -21,19 +21,16 @@
  */
 
 #include "ultima8/misc/pent_include.h"
-
-#include "game_map_gump.h"
+#include "ultima8/gumps/game_map_gump.h"
 #include "ultima8/graphics/render_surface.h"
-
 #include "ultima8/kernel/kernel.h"
-
 #include "ultima8/world/world.h"
-#include "Map.h"
+#include "ultima8/world/map.h"
 #include "ultima8/world/current_map.h"
-#include "ultima8/world/Item.h"
+#include "ultima8/world/item.h"
 #include "ultima8/world/actors/actor.h"
 #include "ultima8/world/actors/main_actor.h"
-#include "ItemSorter.h"
+#include "ultima8/world/item_sorter.h"
 #include "ultima8/world/camera_process.h"
 #include "ultima8/kernel/gui_app.h"
 #include "ultima8/graphics/shape_info.h"
@@ -41,24 +38,24 @@
 #include "ultima8/filesys/odata_source.h"
 #include "ultima8/kernel/mouse.h"
 #include "ultima8/world/get_object.h"
-#include "avatar_mover_process.h"
-#include "MissileTracker.h"
+#include "ultima8/world/avatar_mover_process.h"
+#include "ultima8/world/missile_tracker.h"
 #include "ultima8/misc/direction.h"
-
 
 #include "ultima8/world/gravity_process.h" // hack...
 #include "ultima8/kernel/object_manager.h" // hack...
-#include "pathfinder_process.h"
-#include "ultima8/usecode/UCList.h"
-#include "LoopScript.h"
+#include "ultima8/world/actors/pathfinder_process.h"
+#include "ultima8/usecode/uc_list.h"
+#include "ultima8/world/loop_script.h"
 
 // map dumping
 #include "ultima8/graphics/texture.h"
 #include "ultima8/filesys/file_system.h"
-#include "PNGWriter.h"
+#include "ultima8/graphics/png_writer.h"
 
+namespace Ultima8 {
 
-DEFINE_RUNTIME_CLASSTYPE_CODE(GameMapGump, Gump);
+DEFINE_RUNTIME_CLASSTYPE_CODE(GameMapGump, Gump)
 
 bool GameMapGump::highlightItems = false;
 
@@ -757,5 +754,4 @@ bool GameMapGump::loadData(IDataSource *ids, uint32 version) {
 	return false;
 }
 
-
-// Colourless Protection
+} // End of namespace Ultima8

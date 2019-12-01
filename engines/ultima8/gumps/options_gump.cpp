@@ -21,23 +21,23 @@
  */
 
 #include "ultima8/misc/pent_include.h"
-#include "OptionsGump.h"
+#include "ultima8/gumps/options_gump.h"
 
 #include "ultima8/graphics/render_surface.h"
-#include "desktop_gump.h"
-#include "button_widget.h"
-#include "text_widget.h"
-#include "ControlsGump.h"
-#include "PagedGump.h"
+#include "ultima8/gumps/desktop_gump.h"
+#include "ultima8/gumps/widgets/button_widget.h"
+#include "ultima8/gumps/widgets/text_widget.h"
+#include "ultima8/gumps/controls_gump.h"
+#include "ultima8/gumps/paged_gump.h"
 
 #include "ultima8/filesys/idata_source.h"
 #include "ultima8/filesys/odata_source.h"
 
-#include <SDL.h>
+namespace Ultima8 {
 
 static const int font = 0;
 
-DEFINE_RUNTIME_CLASSTYPE_CODE(OptionsGump, Gump);
+DEFINE_RUNTIME_CLASSTYPE_CODE(OptionsGump, Gump)
 
 OptionsGump::OptionsGump(): Gump(0, 0, 5, 5) {
 }
@@ -145,3 +145,4 @@ bool OptionsGump::loadData(IDataSource *ids) {
 void OptionsGump::saveData(ODataSource *ods) {
 }
 
+} // End of namespace Ultima8

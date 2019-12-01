@@ -20,12 +20,12 @@
  *
  */
 
-#ifndef HQ4XSCALER_H
-#define HQ4XSCALER_H
+#ifndef ULTIMA8_GRAPHICS_SCALERS_HQ4XSCALER_H
+#define ULTIMA8_GRAPHICS_SCALERS_HQ4XSCALER_H
 
 #ifdef USE_HQ4X_SCALER
 
-#include "Scaler.h"
+#include "ultima8/graphics/scalers/scaler.h"
 
 namespace Pentagram {
 

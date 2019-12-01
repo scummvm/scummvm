@@ -20,10 +20,10 @@
  *
  */
 
-#ifndef POINTSCALER_H
-#define POINTSCALER_H
+#ifndef ULTIMA8_GRAPHICS_SCALERS_POINTSCALER_H
+#define ULTIMA8_GRAPHICS_SCALERS_POINTSCALER_H
 
-#include "Scaler.h"
+#include "ultima8/graphics/scalers/scaler.h"
 
 namespace Pentagram {
 

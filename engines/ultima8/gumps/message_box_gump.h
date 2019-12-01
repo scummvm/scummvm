@@ -23,7 +23,7 @@
 #ifndef ULTIMA8_GUMPS_MESSAGEBOXGUMP_H
 #define ULTIMA8_GUMPS_MESSAGEBOXGUMP_H
 
-#include "modal_gump.h"
+#include "ultima8/gumps/modal_gump.h"
 #include "ultima8/usecode/intrinsics.h"
 
 #include "ultima8/std/containers.h"
@@ -37,7 +37,7 @@ class MessageBoxGump : public ModalGump {
 	std::vector<std::string> buttons;
 	int title_colour;
 public:
-	ENABLE_RUNTIME_CLASSTYPE();
+	ENABLE_RUNTIME_CLASSTYPE()
 
 	MessageBoxGump();
 	MessageBoxGump(const std::string &title, const std::string &message, uint32 title_colour, std::vector<std::string> *buttons);

@@ -35,7 +35,7 @@ class SpeechFlex : public SoundFlex {
 
 public:
 	// p_dynamic_class stuff
-	ENABLE_RUNTIME_CLASSTYPE();
+	ENABLE_RUNTIME_CLASSTYPE()
 
 	SpeechFlex(IDataSource *ds);
 	virtual ~SpeechFlex(void);

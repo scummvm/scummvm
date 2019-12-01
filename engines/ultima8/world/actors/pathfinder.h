@@ -25,7 +25,7 @@
 
 #include "ultima8/std/containers.h"
 #include "ultima8/std/containers.h"
-#include "ultima8/world/actors/Animation.h"
+#include "ultima8/world/actors/animation.h"
 
 namespace Ultima8 {
 

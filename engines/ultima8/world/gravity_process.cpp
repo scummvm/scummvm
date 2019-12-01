@@ -34,11 +34,10 @@
 #include "ultima8/filesys/idata_source.h"
 #include "ultima8/filesys/odata_source.h"
 
-#include <cmath>
-
+namespace Ultima8 {
 
 // p_dynamic_cast stuff
-DEFINE_RUNTIME_CLASSTYPE_CODE(GravityProcess, Process);
+DEFINE_RUNTIME_CLASSTYPE_CODE(GravityProcess, Process)
 
 GravityProcess::GravityProcess()
 	: Process() {
@@ -370,3 +369,5 @@ bool GravityProcess::loadData(IDataSource *ids, uint32 version) {
 
 	return true;
 }
+
+} // End of namespace Ultima8

@@ -21,16 +21,18 @@
  */
 
 #include "ultima8/misc/pent_include.h"
-#include "scaler_gump.h"
+#include "ultima8/gumps/scaler_gump.h"
 
 #include "ultima8/graphics/render_surface.h"
 #include "ultima8/graphics/texture.h"
-#include "Scaler.h"
-#include "ScalerManager.h"
+#include "ultima8/graphics/scalers/scaler.h"
+#include "ultima8/graphics/scalers/scaler_manager.h"
 #include "ultima8/conf/setting_manager.h"
 #include "ultima8/kernel/gui_app.h"
 
-DEFINE_RUNTIME_CLASSTYPE_CODE(ScalerGump, DesktopGump);
+namespace Ultima8 {
+
+DEFINE_RUNTIME_CLASSTYPE_CODE(ScalerGump, DesktopGump)
 
 ScalerGump::ScalerGump(int32 _x, int32 _y, int32 _width, int32 _height) :
 	DesktopGump(_x, _y, _width, _height),
@@ -306,3 +308,4 @@ void ScalerGump::ConCmd_listScalers(const Console::ArgvType &argv) {
 	}
 }
 
+} // End of namespace Ultima8

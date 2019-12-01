@@ -34,7 +34,7 @@
 #include "ultima8/filesys/file_system.h"
 #include "ultima8/filesys/output_logger.h"
 */
-#include "ultima8/filesys/Archive.h"
+#include "ultima8/filesys/archive.h"
 #include "ultima8/filesys/archive_file.h"
 #include "ultima8/filesys/dir_file.h"
 #include "ultima8/filesys/file_system.h"
@@ -44,7 +44,7 @@
 #include "ultima8/filesys/odata_source.h"
 #include "ultima8/filesys/output_logger.h"
 #include "ultima8/filesys/raw_archive.h"
-#include "ultima8/filesys/Savegame.h"
+#include "ultima8/filesys/savegame.h"
 #include "ultima8/filesys/savegame_writer.h"
 #include "ultima8/filesys/u8_save_file.h"
 #include "ultima8/filesys/zip_file.h"

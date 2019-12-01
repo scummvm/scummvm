@@ -21,22 +21,24 @@
  */
 
 #include "ultima8/misc/pent_include.h"
-#include "ItemSorter.h"
+#include "ultima8/world/item_sorter.h"
 
-#include "ultima8/world/Item.h"
-#include "Shape.h"
-#include "ShapeFrame.h"
+#include "ultima8/world/item.h"
+#include "ultima8/graphics/shape.h"
+#include "ultima8/graphics/shape_frame.h"
 #include "ultima8/graphics/shape_info.h"
-#include "MainShapeArchive.h"
+#include "ultima8/graphics/main_shape_archive.h"
 #include "ultima8/graphics/render_surface.h"
 #include "ultima8/misc/rect.h"
 #include "ultima8/games/game_data.h"
 
 // temp
-#include "WeaponOverlay.h"
+#include "ultima8/world/actors/weapon_overlay.h"
 #include "ultima8/world/actors/main_actor.h"
 #include "ultima8/world/get_object.h"
 // --
+
+namespace Ultima8 {
 
 using Pentagram::Rect;
 
@@ -1244,5 +1246,4 @@ uint16 ItemSorter::Trace(int32 x, int32 y, HitFace *face, bool item_highlight) {
 	return 0;
 }
 
-
-// End of file
+} // End of namespace Ultima8

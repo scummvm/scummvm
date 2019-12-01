@@ -23,8 +23,8 @@
 #ifndef ULTIMA8_USECODE_USECODEFLEX_H
 #define ULTIMA8_USECODE_USECODEFLEX_H
 
-#include "Usecode.h"
-#include "raw_archive.h"
+#include "ultima8/usecode/usecode.h"
+#include "ultima8/filesys/raw_archive.h"
 
 namespace Ultima8 {
 

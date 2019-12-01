@@ -30,7 +30,7 @@ namespace Ultima8 {
 
 class MiniStatsGump : public Gump {
 public:
-	ENABLE_RUNTIME_CLASSTYPE();
+	ENABLE_RUNTIME_CLASSTYPE()
 
 	MiniStatsGump();
 	MiniStatsGump(int x, int y, uint32 _Flags = FLAG_DRAGGABLE,

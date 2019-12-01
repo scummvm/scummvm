@@ -33,7 +33,7 @@ public:
 	virtual ~Pool();
 
 	// p_dynamic_cast stuff
-	ENABLE_RUNTIME_CLASSTYPE();
+	ENABLE_RUNTIME_CLASSTYPE()
 
 	virtual void *allocate(size_t size) = 0;
 	virtual void deallocate(void *ptr) = 0;

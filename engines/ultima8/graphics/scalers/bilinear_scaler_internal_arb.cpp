@@ -21,9 +21,10 @@
  */
 
 #include "ultima8/misc/pent_include.h"
-#include "BilinearScalerInternal.h"
-#include "Manips.h"
+#include "ultima8/graphics/scalers/bilinear_scaler_internal.h"
+#include "ultima8/graphics/manips.h"
 
+namespace Ultima8 {
 namespace Pentagram {
 
 template<class uintX, class Manip, class uintS>
@@ -247,5 +248,5 @@ bool BilinearScalerInternal_Arb(Texture *tex, int32 sx, int32 sy, int32 sw, int3
 
 InstantiateBilinearScalerFunc(BilinearScalerInternal_Arb);
 
-};
-
+} // End of namespace Pentagram
+} // End of namespace Ultima8

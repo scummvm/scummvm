@@ -21,25 +21,27 @@
  */
 
 #include "ultima8/misc/pent_include.h"
-#include "ControlsGump.h"
+#include "ultima8/gumps/controls_gump.h"
 
 #include "ultima8/graphics/render_surface.h"
-#include "desktop_gump.h"
-#include "button_widget.h"
-#include "text_widget.h"
-#include "BindGump.h"
-#include "PagedGump.h"
+#include "ultima8/gumps/desktop_gump.h"
+#include "ultima8/gumps/widgets/button_widget.h"
+#include "ultima8/gumps/widgets/text_widget.h"
+#include "ultima8/gumps/bind_gump.h"
+#include "ultima8/gumps/paged_gump.h"
 #include "ultima8/kernel/hid_manager.h"
 
 #include "ultima8/filesys/idata_source.h"
 #include "ultima8/filesys/odata_source.h"
 #include "ultima8/misc/p_dynamic_cast.h"
 
+namespace Ultima8 {
+
 static const int font = 9;
 
 class ControlEntryGump : public Gump {
 public:
-	ENABLE_RUNTIME_CLASSTYPE();
+	ENABLE_RUNTIME_CLASSTYPE()
 	ControlEntryGump(int x, int y, int width, const char *binding, const char *name);
 	virtual ~ControlEntryGump(void);
 	virtual void InitGump(Gump *newparent, bool take_focus = true);
@@ -51,7 +53,7 @@ protected:
 	Gump *button;
 };
 
-DEFINE_RUNTIME_CLASSTYPE_CODE(ControlEntryGump, Gump);
+DEFINE_RUNTIME_CLASSTYPE_CODE(ControlEntryGump, Gump)
 
 ControlEntryGump::ControlEntryGump(int x, int y, int width, const char *binding, const char *name)
 	: Gump(x, y, width, 5), bindingName(binding), displayedName(name) {
@@ -112,7 +114,7 @@ void ControlEntryGump::ChildNotify(Gump *child, uint32 message) {
 	}
 }
 
-DEFINE_RUNTIME_CLASSTYPE_CODE(ControlsGump, Gump);
+DEFINE_RUNTIME_CLASSTYPE_CODE(ControlsGump, Gump)
 
 ControlsGump::ControlsGump(): Gump(0, 0, 5, 5) {
 }
@@ -204,3 +206,4 @@ bool ControlsGump::loadData(IDataSource *ids) {
 void ControlsGump::saveData(ODataSource *ods) {
 }
 
+} // End of namespace Ultima8

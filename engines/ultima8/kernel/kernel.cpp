@@ -145,7 +145,7 @@ void Kernel::removeProcess(Process *proc) {
 		if (*it == proc) {
 			proc->flags &= ~Process::PROC_ACTIVE;
 
-			perr << "[Kernel] Removing process " << (uint)proc << std::endl;
+			perr << "[Kernel] Removing process " << proc << std::endl;
 
 			processes.erase(it);
 

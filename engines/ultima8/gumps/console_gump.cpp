@@ -21,7 +21,7 @@
  */
 
 #include "ultima8/misc/pent_include.h"
-#include "console_gump.h"
+#include "ultima8/gumps/console_gump.h"
 #include "ultima8/kernel/kernel.h"
 #include "ultima8/graphics/render_surface.h"
 #include "ultima8/filesys/idata_source.h"
@@ -29,7 +29,9 @@
 
 #include "ultima8/kernel/gui_app.h"
 
-DEFINE_RUNTIME_CLASSTYPE_CODE(ConsoleGump, Gump);
+namespace Ultima8 {
+
+DEFINE_RUNTIME_CLASSTYPE_CODE(ConsoleGump, Gump)
 
 using Pentagram::istring;
 
@@ -332,4 +334,4 @@ void ConsoleGump::OnFocus(bool gain) {
 
 }
 
-// Colourless Protection
+} // End of namespace Ultima8
