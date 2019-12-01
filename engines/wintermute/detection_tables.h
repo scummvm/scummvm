@@ -276,6 +276,18 @@ static const WMEGameDescription gameDescriptions[] = {
 		WME_ENTRY2s("data.dcp", "481b1bff44178ef2f3d879df05f65a96", 706580987,
 					"russian_language_pack.dcp", "f39ad478a711fa4b34d419ed4aac97bf", 49395113), Common::RU_RUS, ADGF_UNSTABLE, WME_1_9_3),
 
+	// Alpha Polaris (English Demo)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("alphapolaris", "Demo",
+		WME_ENTRY2s("data.dcp", "68f93edfb69de8f8c06c81566f279e07", 409562809,
+					"data.dcp", "68f93edfb69de8f8c06c81566f279e07", 409562809), Common::EN_ANY, ADGF_UNSTABLE | ADGF_DEMO, WME_1_9_3),
+
+	// Alpha Polaris (German Demo)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("alphapolaris", "Demo",
+		WME_ENTRY2s("data.dcp", "130545e152d0b53d84c2c99ce118d5e5", 409564920,
+					"german language pack.dcp", "71e19682f93399018bef90ceda0a1bfd", 16174995), Common::DE_DEU, ADGF_UNSTABLE | ADGF_DEMO, WME_1_9_3),
+
 	// Apeiron
 	WME_WINENTRY("apeiron", "",
 		WME_ENTRY1s("data.dcp", "c0d6190de52b3da9995cbd4b78976bc8", 89912566), Common::SE_SWE, ADGF_UNSTABLE, WME_1_9_1),
@@ -309,6 +321,18 @@ static const WMEGameDescription gameDescriptions[] = {
 	WME_WINENTRY("artofmurder1", "",
 		WME_ENTRY2s("data.dcp", "592862a5dd1ae90d53561815a535ab2e", 630734278,
 					"i18n.dcp", "b43bd7b64991ad9d5d285753767fe3f4", 176591837), Common::PL_POL, ADGF_UNSTABLE, WME_1_8_1),
+
+	// Art of Murder: FBI Confidential (English Demo)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("artofmurder1", "Demo",
+		WME_ENTRY2s("data.dcp", "d0073ddf2b25527c83785ae7a0978867", 47676670,
+					"data.dcp", "d0073ddf2b25527c83785ae7a0978867", 47676670), Common::EN_ANY, ADGF_UNSTABLE | ADGF_DEMO, WME_1_8_1),
+
+	// Art of Murder: FBI Confidential (Polish Demo)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("artofmurder1", "Demo",
+		WME_ENTRY2s("data.dcp", "d0073ddf2b25527c83785ae7a0978867", 47676670,
+					"pl.dcp", "4dbc02aa9f67d22226d22dc0d837d20e", 49208405), Common::PL_POL, ADGF_UNSTABLE | ADGF_DEMO, WME_1_8_1),
 
 	// Basis Octavus
 	// NOTE: This is a 2.5D game that is out of ScummVM scope
@@ -571,6 +595,24 @@ static const WMEGameDescription gameDescriptions[] = {
 	WME_WINENTRY("facenoir", "",
 		WME_ENTRY1s("data.dcp", "e162db79d9091faa1d670fc5cdcb4ba9", 555549627), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_1),
 
+	// Face Noir (English Demo)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope	
+	WME_WINENTRY("facenoir", "Demo",
+		WME_ENTRY2s("data.dcp", "545a87636e2f8762d2765d99fddc3806", 289889447,
+					"data2.dcp", "bb3c7bd14526006b7abd9db4982c8cfd", 197898807), Common::EN_ANY, ADGF_UNSTABLE | ADGF_DEMO, WME_1_9_1),
+
+	// Face Noir (German Demo)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope	
+	WME_WINENTRY("facenoir", "Demo",
+		WME_ENTRY2s("data.dcp", "dbf0f4545cc31f8bea82387229abe266", 259084466,
+					"data2.dcp", "b8bb3b1b5ae3bce3c132cb34c11056fe", 55447397), Common::DE_DEU, ADGF_UNSTABLE | ADGF_DEMO, WME_1_9_1),
+
+	// Face Noir (Polish Demo)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope	
+	WME_WINENTRY("facenoir", "Demo",
+		WME_ENTRY2s("data.dcp", "8add477c70ffa712a81db4af5fcaa0e1", 293911404,
+					"data2.dcp", "1874aa7d51121cc43e78f71dbe9c41b7", 197953641), Common::PL_POL, ADGF_UNSTABLE | ADGF_DEMO, WME_1_9_1),
+
 	// Finding Hope (English)
 	WME_WINENTRY("findinghope", "",
 		WME_ENTRY1s("data.dcp", "d7c3857b622e038781bf42abd3c64962", 110247769), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_1),
@@ -596,6 +638,10 @@ static const WMEGameDescription gameDescriptions[] = {
 	// Ghost in the Sheet (Demo)
 	WME_WINENTRY("ghostsheet", "Demo",
 		WME_ENTRY1s("data.dcp", "dc1f6595f412ac25a52eaf47dad4ab81", 169083), Common::EN_ANY, ADGF_UNSTABLE | ADGF_DEMO, WME_1_8_0),
+
+	// Ghost in the Sheet (Italian Demo)
+	WME_WINENTRY("ghostsheet", "Demo",
+		WME_ENTRY1s("data.dcp", "4995d69dd43e8aa00bcb026c37f00009", 171757), Common::IT_ITA, ADGF_UNSTABLE | ADGF_DEMO, WME_1_8_0),
 
 	// Hamlet or the last game without MMORPG features, shaders and product placement (English)
 	WME_WINENTRY("hamlet", "",
@@ -777,6 +823,10 @@ static const WMEGameDescription gameDescriptions[] = {
 		WME_ENTRY2s("german.dcp", "bf4c2b8c26342342441a6d64934ab832", 107027865,
 					"data.dcp", "50de0beaa5ad621aa9f020df901d1e74", 1342214), Common::DE_DEU, ADGF_UNSTABLE, WME_1_9_1),
 
+	// Machu Mayu (Demo)
+	WME_WINENTRY("machumayu", "Demo",
+		WME_ENTRY1s("data.dcp", "79f17943b93c3ff37b5544a5da0d17d0", 12328601), Common::EN_ANY, ADGF_UNSTABLE | ADGF_DEMO, WME_1_9_1),
+
 	// Mental Repairs Inc (English)
 	// NOTE: This is a 2.5D game that is out of ScummVM scope
 	WME_WINENTRY("mentalrepairs", "",
@@ -796,6 +846,10 @@ static const WMEGameDescription gameDescriptions[] = {
 	// Night Train Demo
 	WME_WINENTRY("nighttrain", "Demo",
 		WME_ENTRY1s("data.dcp", "5a027ef84b083a730c9a4c85ec1d3a32", 131760816), Common::EN_ANY, ADGF_UNSTABLE | ADGF_DEMO, WME_1_9_1),
+
+	// Night Train Demo 2
+	WME_WINENTRY("nighttrain", "Demo",
+		WME_ENTRY1s("data.dcp", "c4c29461bb070735e564ef6612ea371a", 124495883), Common::EN_ANY, ADGF_UNSTABLE | ADGF_DEMO, WME_1_9_1),
 
 	// Oknytt
 	WME_WINENTRY("oknytt", "Version 1.0",
@@ -2300,6 +2354,10 @@ static const WMEGameDescription gameDescriptions[] = {
 		WME_ENTRY2s("data.dcp", "5ac416cee605d3a30f4d59687b1cdab2", 364260278,
 				"string3.tab", "e9d0e6341e8994be5fa6d70d39ac630b", 813982), Common::RU_RUS, ADGF_UNSTABLE, WME_1_8_6),
 
+	// 1 1/2 Ritter: Auf der Suche nach der hinreissenden Herzelinde (German demo)
+	WME_WINENTRY("ritter", "Demo",
+		WME_ENTRY1s("data.dcp", "408474b813553978880cf4f36cc38793", 99975952), Common::DE_DEU, ADGF_UNSTABLE | ADGF_DEMO, WME_1_8_6),
+
 	// Satan and Sons (Demo)
 	WME_WINENTRY("satanandsons", "Demo",
 		WME_ENTRY1s("data.dcp", "16a6ba8174b697bbba9299619d1e20c4", 67539054), Common::EN_ANY, ADGF_UNSTABLE | ADGF_DEMO, WME_1_3_2),
@@ -2479,7 +2537,15 @@ static const WMEGameDescription gameDescriptions[] = {
 
 	// Wilma Tetris
 	WME_WINENTRY("wtetris", "",
+		WME_ENTRY1s("wtetris.exe", "0898412c1d7c5b759089b2408a9591fe", 2779976), Common::EN_ANY, ADGF_UNSTABLE, WME_1_1_39),
+	
+	// Wilma Tetris
+	WME_WINENTRY("wtetris", "",
 		WME_ENTRY1s("data.dcp", "946e3a0496e6c12fb344c9ed861ff015", 2780093), Common::EN_ANY, ADGF_UNSTABLE, WME_1_1_39),
+
+	// WME 3D characters technology demo
+	WME_WINENTRY("wmedemo3d", "Demo",
+		WME_ENTRY1s("data.dcp", "9ca18ca52f873ca8fbc78bf408e0a68d", 3224894), Common::EN_ANY, ADGF_UNSTABLE | ADGF_DEMO, WME_1_8_0),
 
 	// Wilma Tetris
 	WME_WINENTRY("wtetris", "",
