@@ -152,6 +152,9 @@ IMPLEMENT_FUNCTION_II(10, Milos, enterCompartmentDialog, CarIndex, EntityPositio
 			case 2:
 				getSound()->playSound(kEntityPlayer, "CAT1014B");
 				break;
+
+			default:
+				break;
 			}
 		} else {
 			getSound()->excuseMeCath();
