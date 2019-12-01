@@ -174,17 +174,19 @@ void Lingo::addCode(const char *code, ScriptType type, uint16 id) {
 			parse(chunk.c_str());
 
 			if (debugChannelSet(3, kDebugLingoCompile)) {
+				debugC(2, kDebugLingoCompile, "<current code>");
 				uint pc = 0;
 				while (pc < _currentScript->size()) {
 					Common::String instr = decodeInstruction(_currentScript, pc, &pc);
 					debugC(2, kDebugLingoCompile, "[%5d] %s", pc, instr.c_str());
 				}
+				debugC(2, kDebugLingoCompile, "<end code>");
 			}
 
 			begin = end;
 		} while ((end = findNextDefinition(begin + 1)));
 
-		debugC(1, kDebugLingoCompile, "Code chunk:\n#####\n%s\n#####", begin);
+		debugC(1, kDebugLingoCompile, "Last code chunk:\n#####\n%s\n#####", begin);
 		parse(begin);
 
 		code1(STOP);
@@ -200,11 +202,13 @@ void Lingo::addCode(const char *code, ScriptType type, uint16 id) {
 		if (_currentScript->size() && !_hadError)
 			Common::hexdump((byte *)&_currentScript->front(), _currentScript->size() * sizeof(inst));
 
+		debugC(2, kDebugLingoCompile, "<resulting code>");
 		uint pc = 0;
 		while (pc < _currentScript->size()) {
 			Common::String instr = decodeInstruction(_currentScript, pc, &pc);
 			debugC(2, kDebugLingoCompile, "[%5d] %s", pc, instr.c_str());
 		}
+		debugC(2, kDebugLingoCompile, "<end code>");
 	}
 }
 
