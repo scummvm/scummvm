@@ -210,7 +210,7 @@ void SpecialOpcodes::spcCatapultMiniGame() {
 
 void SpecialOpcodes::spcThumbWrestlingMiniGame() {
 	Minigame2 minigame2(_vm);
-	minigame2.run();
+	minigame2.run(0,1,1);
 }
 
 void SpecialOpcodes::spcClearEngineFlag10() {

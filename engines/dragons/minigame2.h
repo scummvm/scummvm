@@ -31,10 +31,27 @@ class DragonsEngine;
 class Minigame2 {
 private:
 	DragonsEngine *_vm;
+	uint16 DAT_80093cb4;
+	uint16 DAT_80093cbc;
+	uint16 DAT_80093cb8;
+	uint16 DAT_80093cc0;
+
+	uint16 DAT_80093ca4;
+	uint16 DAT_80093c90;
+	uint16 DAT_80093c94;
+
+	uint16 DAT_80093cac;
+	uint16 DAT_80093cb0;
+	uint16 DAT_80093c9c;
+
+	uint16 DAT_80093c98;
+	uint16 DAT_80093ca0;
+	uint16 DAT_80093cc4;
+	uint16 DAT_80093cc8;
 public:
 	Minigame2(DragonsEngine *vm);
 
-	void run();
+	void run(int16 param_1, uint16 param_2, int16 param_3);
 };
 
 } // End of namespace Dragons
