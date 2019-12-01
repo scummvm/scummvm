@@ -199,6 +199,8 @@ void Lingo::addCode(const char *code, ScriptType type, uint16 id) {
 
 		debugC(1, kDebugLingoCompile, "Code chunk:\n#####\n%s\n#####", begin);
 		parse(begin);
+
+		code1(STOP);
 	} else {
 		parse(code);
 
