@@ -3986,6 +3986,13 @@ _mak_plugins=
 if test "$_dynamic_modules" = yes ; then
 	echo_n "Checking whether building plugins is supported... "
 	case $_host_os in
+	3ds)
+		_elf_loader=yes
+		append_var DEFINES "-DUNCACHED_PLUGINS"
+_mak_plugins='
+PLUGIN_LDFLAGS		+= -Wl,-T$(srcdir)/backends/plugins/3ds/plugin.ld -march=armv6k -mfloat-abi=hard
+'
+		;;
 	amigaos)
 		_plugin_prefix="lib"
 		_plugin_suffix=".so"
@@ -5576,6 +5583,9 @@ case $_host_os in
 esac
 
 case $_backend in
+	3ds)
+		append_var DEFINES "-DPLUGIN_DIRECTORY=\\\"$datadir/plugins\\\""
+		;;
 	openpandora)
 		# Add ../plugins as a path so plugins can be found when running from a .PND.
 		append_var DEFINES "-DPLUGIN_DIRECTORY=\\\"../plugins\\\""

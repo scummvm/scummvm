@@ -20,7 +20,6 @@ Table of Contents:
  * * [4.1.1 Compiling third-party libraries](#411-compiling-third-party-libraries)
  * * [4.1.2 Manually setting up the environment](#412-manually-setting-up-the-environment)
  * [4.2 Compiling ScummVM](#42-compiling-scummvm)
- * [4.3 Warning for build sizes](#43-warning-for-build-sizes)
 
 1.0) Installation
 -----------------
@@ -222,7 +221,7 @@ The name of the file must be `cacert.pem`.
 
 From the root of the scummvm repository:
 ```
- $ ./configure --host=3ds
+ $ ./configure --host=3ds --enable-plugins --default-dynamic
  $ make
 ```
 Additionally compile to specific formats to be used on the 3DS:
@@ -230,7 +229,6 @@ Additionally compile to specific formats to be used on the 3DS:
  $ make scummvm.3dsx
  $ make scummvm.cia
 ```
-**_Read the warning about build sizes below._**
 
 Assuming everything was successful, you'll be able to find the binary
 files in the root of your scummvm folder.
@@ -238,14 +236,5 @@ files in the root of your scummvm folder.
 Note: for the CIA format, you will need the 'makerom' and 'bannertool' tools which are
 not supplied with devkitPro.
 
-4.3) Warning for build sizes
----------------------------
-The above configuration command will include all game engines by default and will
-likely be too massive to be stable using either the 3DSX or the CIA format.
-Until dynamic modules are figured out, you should configure engines like this:
-```
- $ ./configure --host=3ds --disable-all-engines --enable-engine=scumm-7-8,myst,riven, \
-     sword1,sword2,sword25,sci,lure,sky,agi,agos
-```
-Choose whatever engines you want, but if the ELF's .text section exceeds ~10MB-12MB,
-you may experience crashes in memory-intensive games such as COMI, Broken Sword and Discworld 2.
+Note: using dynamic plugins as suggested is required when building with most or all of the
+game engines enabled in order to keep the memory usage low and avoid stability issues.

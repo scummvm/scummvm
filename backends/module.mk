@@ -260,6 +260,11 @@ MODULE_OBJS += \
 	timer/tizen/timer.o
 endif
 
+ifeq ($(BACKEND),3ds)
+MODULE_OBJS += \
+	plugins/3ds/3ds-provider.o
+endif
+
 ifeq ($(BACKEND),ds)
 MODULE_OBJS += \
 	fs/ds/ds-fs.o \

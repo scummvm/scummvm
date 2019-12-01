@@ -22,7 +22,7 @@
 
 #include "common/scummsys.h"
 
-#if defined(DYNAMIC_MODULES) && defined(POSIX)
+#if defined(DYNAMIC_MODULES) && defined(POSIX) && !defined(__3DS__)
 
 #include "backends/plugins/posix/posix-provider.h"
 #include "backends/plugins/dynamic-plugin.h"

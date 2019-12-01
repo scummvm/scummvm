@@ -20,48 +20,18 @@
  *
  */
 
-#include "osystem.h"
-#include "backends/plugins/3ds/3ds-provider.h"
+#if defined(DYNAMIC_MODULES) && defined(__3DS__)
 
-#include <3ds.h>
-#include <malloc.h>
+#ifndef BACKENDS_PLUGINS_3DS_PROVIDER_H
+#define BACKENDS_PLUGINS_3DS_PROVIDER_H
 
-int main(int argc, char *argv[]) {
-	// Initialize basic libctru stuff
-	gfxInitDefault();
-	cfguInit();
-	romfsInit();
-	osSetSpeedupEnable(true);
-// 	consoleInit(GFX_TOP, NULL);
+#include "backends/plugins/elf/elf-provider.h"
 
-#ifdef USE_LIBCURL
-	const uint32 soc_sharedmem_size = 0x10000;
-	void *soc_sharedmem = memalign(0x1000, soc_sharedmem_size);
-	socInit((u32 *)soc_sharedmem, soc_sharedmem_size);
-#endif
+class CTRPluginProvider : public ELFPluginProvider {
+public:
+	Plugin *createPlugin(const Common::FSNode &node) const;
+};
 
-	g_system = new _3DS::OSystem_3DS();
-	assert(g_system);
+#endif // BACKENDS_PLUGINS_3DS_PROVIDER_H
 
-#ifdef DYNAMIC_MODULES
-	PluginManager::instance().addPluginProvider(new CTRPluginProvider());
-#endif
-
-	int res = scummvm_main(argc, argv);
-
-	g_system->destroy();
-
-	// Turn on both screen backlights before exiting.
-	if (R_SUCCEEDED(gspLcdInit())) {
-		GSPLCD_PowerOnBacklight(GSPLCD_SCREEN_BOTH);
-		gspLcdExit();
-	}
-
-#ifdef USE_LIBCURL
-	socExit();
-#endif
-	romfsExit();
-	cfguExit();
-	gfxExit();
-	return res;
-}
+#endif // defined(DYNAMIC_MODULES) && defined(__3DS__)
