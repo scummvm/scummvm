@@ -476,6 +476,8 @@ void Score::loadConfig(Common::SeekableSubReadStreamEndian &stream) {
 	_castArrayStart = stream.readUint16();
 	_castArrayEnd = stream.readUint16();
 	_currentFrameRate = stream.readByte();
+
+	debugC(1, kDebugLoading, "Config. Framerate: %d", _currentFrameRate);
 	stream.skip(9);
 	_stageColor = stream.readUint16();
 }
@@ -1359,7 +1361,7 @@ void Score::update() {
 
 	_lingo->processEvent(kEventExitFrame);
 
-	_nextFrameTime = g_system->getMillis() + (float)_currentFrameRate / 60 * 1000;
+	_nextFrameTime = g_system->getMillis() + 1000.0 / (float)_currentFrameRate;
 }
 
 Sprite *Score::getSpriteById(uint16 id) {

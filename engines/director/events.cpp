@@ -43,7 +43,7 @@ void processQuitEvent() {
 void DirectorEngine::processEvents() {
 	Common::Event event;
 
-	uint endTime = g_system->getMillis() + 200;
+	uint endTime = g_system->getMillis() + 10;
 
 	Score *sc = getCurrentScore();
 	if (sc->getCurrentFrame() >= sc->_frames.size()) {
