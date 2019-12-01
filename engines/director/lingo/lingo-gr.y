@@ -210,14 +210,14 @@ stmt: stmtoneliner
 	//   statements
 	// end repeat
 	//
-	| repeatwhile '(' cond ')' stmtlist end ENDCLAUSE	{
+	| repeatwhile cond stmtlist end ENDCLAUSE	{
 		inst body = 0, end = 0;
-		WRITE_UINT32(&body, $5 - $1);
-		WRITE_UINT32(&end, $6 - $1);
+		WRITE_UINT32(&body, $3 - $1);
+		WRITE_UINT32(&end, $4 - $1);
 		(*g_lingo->_currentScript)[$1 + 1] = body;	/* body of loop */
 		(*g_lingo->_currentScript)[$1 + 2] = end;	/* end, if cond fails */
 
-		checkEnd($7, "repeat", true); }
+		checkEnd($5, "repeat", true); }
 	;
 	// repeat with index = start to end
 	//   statements

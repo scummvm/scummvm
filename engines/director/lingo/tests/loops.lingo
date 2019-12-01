@@ -20,3 +20,8 @@ end repeat
 repeat with y = 5 down to 1
 put y
 end repeat
+
+repeat while y < 5
+set y = y + 1
+put y
+end repeat
