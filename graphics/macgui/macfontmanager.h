@@ -70,7 +70,7 @@ class MacFont {
 public:
 	MacFont(int id = kMacFontChicago, int size = 12, int slant = kMacFontRegular, FontManager::FontUsage fallback = Graphics::FontManager::kBigGUIFont) {
 		_id = id;
-		_size = size;
+		_size = size ? size : 12;
 		_slant = slant;
 		_fallback = fallback;
 		_generated = false;

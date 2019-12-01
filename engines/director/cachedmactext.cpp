@@ -66,6 +66,7 @@ CachedMacText::CachedMacText(TextCast *const textCast,
 	:
 	_surface(NULL), _macText(NULL), _width(defaultWidth), _dirty(true),
 	_textCast(textCast), _wm(wm) {
+
 	if (_width == -1)  {
 		if (version >= 4) {
 			// This came from frame.cpp
