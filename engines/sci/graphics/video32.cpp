@@ -671,7 +671,7 @@ VMDPlayer::EventFlags VMDPlayer::kernelPlayUntilEvent(const EventFlags flags, co
 
 	const int32 maxFrameNo = _decoder->getFrameCount() - 1;
 
-	if (flags & kEventFlagToFrame) {
+	if ((flags & kEventFlagToFrame) && lastFrameNo) {
 		_yieldFrame = MIN<int32>(lastFrameNo, maxFrameNo);
 	} else {
 		_yieldFrame = maxFrameNo;
