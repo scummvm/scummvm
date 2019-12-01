@@ -226,6 +226,10 @@ void TextCast::importRTE(byte *text) 	{
 }
 
 void TextCast::setText(const char *text) {
+	// Do nothing if text did not change
+	if (_ftext.equals(text))
+		return;
+
 	_ftext = text;
 
 	_cachedMacText->forceDirty();
