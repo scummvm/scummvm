@@ -495,26 +495,31 @@ void Lingo::addCodeV4(Common::SeekableSubReadStreamEndian &stream, ScriptType ty
 					for (uint c = 0; c < argc; c++) {
 						switch (_lingoV4[opcode]->proto[c]) {
 						case 'b':
+							// read one uint8 as an argument
 							offsetList.push_back(_currentScript->size());
-							arg = (int8)codeStore[pointer];
+							arg = (uint8)codeStore[pointer];
 							pointer += 1;
 							break;
 						case 'w':
+							// read one uint16 as an argument
 							offsetList.push_back(_currentScript->size());
 							offsetList.push_back(_currentScript->size());
-							arg = (int16)READ_BE_UINT16(&codeStore[pointer]);
+							arg = (uint16)READ_BE_UINT16(&codeStore[pointer]);
 							pointer += 2;
 							break;
 						case 'v':
+							// argument refers to a variable; remove struct size alignment
 							if (arg % 6) {
 								warning("Opcode 0x%02x arg %d not a multiple of 6!", opcode, arg);
 							}
 							arg /= 6;
 							break;
 						case 'n':
+							// argument is negative
 							arg *= -1;
 							break;
 						case 'j':
+							// argument refers to a code offset; fix alignment in post
 							jumpList.push_back(offsetList.size());
 							break;
 						default:
