@@ -155,17 +155,11 @@ void Lingo::addCode(const char *code, ScriptType type, uint16 id) {
 	// Strip comments for ease of the parser
 	Common::String codeNorm = stripComments(code);
 	code = codeNorm.c_str();
+	begin = code;
 
 	// macros and factories have conflicting grammar. Thus we ease life for the parser.
-	if ((begin = findNextDefinition(code))) {
-		bool first = true;
-
-		while ((end = findNextDefinition(begin + 1))) {
-
-			if (first) {
-				begin = code;
-				first = false;
-			}
+	if ((end = findNextDefinition(code))) {
+		do {
 			Common::String chunk(begin, end);
 
 			if (chunk.hasPrefix("factory") || chunk.hasPrefix("method"))
@@ -187,15 +181,8 @@ void Lingo::addCode(const char *code, ScriptType type, uint16 id) {
 				}
 			}
 
-			_currentScript->clear();
-
 			begin = end;
-		}
-
-		// Do not execute event handlers, macros and factories
-		// A side effect of it is that if you had those in your test script,
-		// then the whole script will not be executed
-		_hadError = true;
+		} while ((end = findNextDefinition(begin + 1)));
 
 		debugC(1, kDebugLingoCompile, "Code chunk:\n#####\n%s\n#####", begin);
 		parse(begin);
