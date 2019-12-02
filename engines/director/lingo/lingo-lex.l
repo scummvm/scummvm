@@ -153,6 +153,13 @@ whitespace [\t ]
 
 		return THEENTITYWITHID;
 	}
+(?i:the[ \t]+value[\t ]+of[\t ]*)	{
+		count();
+
+		yylval.s = new Common::String("value");
+
+		return FBLTINONEARG;
+	}
 (?i:the[ \t]+[[:alpha:]]+[\t ]+of[\t ]+[[:alpha:]]+)	{
 		count();
 
