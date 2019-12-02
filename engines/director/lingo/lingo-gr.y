@@ -156,7 +156,6 @@ then: tTHEN { g_lingo->_inCond = false; }
 
 programline: /* empty */
 	| defn
-	| macro
 	| stmt
 	;
 
@@ -211,7 +210,8 @@ asgn: tPUT expr tINTO ID 		{
 		$$ = $5; }
 	;
 
-stmtoneliner: expr
+stmtoneliner: macro
+	| expr
 	| proc
 	;
 

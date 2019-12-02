@@ -21,6 +21,7 @@ exit
 end if
 if x >1 then
 put x
+check x, 5
 exit
 end if
 
