@@ -77,7 +77,7 @@ whitespace [\t ]
 
 %%
 
-{whitespace}\xC2[\r\n]	{ g_lingo->_linenumber++; g_lingo->_colnumber = 0; }
+{whitespace}*\xC2[\r\n]	{ g_lingo->_linenumber++; g_lingo->_colnumber = 0; }
 --[^\r\n]*
 ^{whitespace}+	{ count(); }
 [\t]+			{ count(); return ' '; }
