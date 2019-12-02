@@ -126,22 +126,33 @@ program: program nl programline
 nl:	'\n' {
 		g_lingo->_linenumber++;
 		g_lingo->_colnumber = 1;
-	}
+
+		g_lingo->_inCond = false; }
+	;
 
 thennl:	tTHENNL {
 		g_lingo->_linenumber++;
 		g_lingo->_colnumber = 1;
-	}
+
+		g_lingo->_inCond = false; }
+	;
 
 nlelse:	tNLELSE {
 		g_lingo->_linenumber++;
 		g_lingo->_colnumber = 5;
-	}
+
+		g_lingo->_inCond = false; }
+	;
 
 nlelsif: tNLELSIF {
 		g_lingo->_linenumber++;
 		g_lingo->_colnumber = 8;
-	}
+
+		g_lingo->_inCond = false; 	}
+	;
+
+then: tTHEN { g_lingo->_inCond = false; }
+	;
 
 programline: /* empty */
 	| defn
@@ -312,7 +323,7 @@ ifstmt:	if cond thennl stmtlist end ENDCLAUSE		{
 		(*g_lingo->_currentScript)[$1 + 3] = end;	/* end, if cond fails */
 
 		g_lingo->processIf(0, $9 - $1); }
-	| if cond tTHEN begin stmtoneliner end elseifstmtoneliner end elsestmtoneliner end {
+	| if cond then begin stmtoneliner end elseifstmtoneliner end elsestmtoneliner end {
 		inst then = 0, else1 = 0, end = 0;
 		WRITE_UINT32(&then, $4 - $1);
 		WRITE_UINT32(&else1, $6 - $1);
@@ -322,7 +333,7 @@ ifstmt:	if cond thennl stmtlist end ENDCLAUSE		{
 		(*g_lingo->_currentScript)[$1 + 3] = end; 	/* end, if cond fails */
 
 		g_lingo->processIf(0, $10 - $1); }
-	| if cond tTHEN begin stmtoneliner end nlelse begin stmtoneliner end {
+	| if cond then begin stmtoneliner end nlelse begin stmtoneliner end {
 		inst then = 0, else1 = 0, end = 0;
 		WRITE_UINT32(&then, $4 - $1);
 		WRITE_UINT32(&else1, $8 - $1);
@@ -332,7 +343,7 @@ ifstmt:	if cond thennl stmtlist end ENDCLAUSE		{
 		(*g_lingo->_currentScript)[$1 + 3] = end; 	/* end, if cond fails */
 
 		g_lingo->processIf(0, 0); }
-	| if cond tTHEN begin stmtoneliner end {
+	| if cond then begin stmtoneliner end {
 		inst then = 0, else1 = 0, end = 0;
 		WRITE_UINT32(&then, $4 - $1);
 		WRITE_UINT32(&else1, 0);
@@ -356,7 +367,7 @@ elseifstmtoneliner: elseifstmtoneliner elseifstmtoneliner1
 	| elseifstmtoneliner1
 	;
 
-elseifstmtoneliner1:	elseif cond tTHEN begin stmt end {
+elseifstmtoneliner1:	elseif cond then begin stmt end {
 		inst then = 0;
 		WRITE_UINT32(&then, $4 - $1);
 		(*g_lingo->_currentScript)[$1 + 1] = then;	/* thenpart */
@@ -365,13 +376,13 @@ elseifstmtoneliner1:	elseif cond tTHEN begin stmt end {
 	;
 
 elseifstmt1: elseifstmtoneliner
-	| elseif cond tTHEN begin stmtlist end {
+	| elseif cond then begin stmtlist end {
 		inst then = 0;
 		WRITE_UINT32(&then, $5 - $1);
 		(*g_lingo->_currentScript)[$1 + 1] = then;	/* thenpart */
 
 		g_lingo->codeLabel($1); }
-	| elseif cond tTHENNL begin stmtlist end {
+	| elseif cond thennl begin stmtlist end {
 		inst then = 0;
 		WRITE_UINT32(&then, $5 - $1);
 		(*g_lingo->_currentScript)[$1 + 1] = then;	/* thenpart */
@@ -379,15 +390,11 @@ elseifstmt1: elseifstmtoneliner
 		g_lingo->codeLabel($1); }
 	;
 
-cond:	begincond expr endcond	{ g_lingo->code1(STOP); }
+cond:	begincond expr	{ g_lingo->code1(STOP); }
 	;
 
 begincond:	  /* nothing */		{ g_lingo->_inCond = true; }
 	;
-
-endcond:	  /* nothing */		{ g_lingo->_inCond = false; }
-	;
-
 
 repeatwhile:	tREPEAT tWHILE		{ $$ = g_lingo->code3(g_lingo->c_repeatwhilecode, STOP, STOP); }
 	;
@@ -425,7 +432,7 @@ stmtlist: /* nothing */		{ $$ = g_lingo->_currentScript->size(); }
 	| stmtlist stmt
 	;
 
-when:	  tWHEN	ID tTHEN	{
+when:	  tWHEN	ID then	{
 		$$ = g_lingo->code1(g_lingo->c_whencode);
 		g_lingo->code1(STOP);
 		g_lingo->codeString($2->c_str());
