@@ -108,7 +108,6 @@ void checkEnd(Common::String *token, const char *expect, bool required) {
 %type<narg> argdef arglist nonemptyarglist
 %type<s> on
 
-%right '='
 %left tAND tOR
 %left tLT tLE tGT tGE tNEQ tCONTAINS tSTARTS tEQ
 %left '&'
@@ -170,25 +169,19 @@ asgn: tPUT expr tINTO ID 		{
 			$$ = $2; }
 	| tPUT expr tAFTER expr 		{ $$ = g_lingo->code1(g_lingo->c_after); }		// D3
 	| tPUT expr tBEFORE expr 		{ $$ = g_lingo->code1(g_lingo->c_before); }		// D3
-	| tSET ID '=' expr			{
+	| tSET ID tEQ expr			{
 		g_lingo->code1(g_lingo->c_varpush);
 		g_lingo->codeString($2->c_str());
 		g_lingo->code1(g_lingo->c_assign);
 		$$ = $4;
 		delete $2; }
-	| tSET THEENTITY '=' expr	{
+	| tSET THEENTITY tEQ expr	{
 		g_lingo->code1(g_lingo->c_intpush);
 		g_lingo->codeInt(0); // Put dummy id
 		g_lingo->code1(g_lingo->c_theentityassign);
 		g_lingo->codeInt($2[0]);
 		g_lingo->codeInt($2[1]);
 		$$ = $4; }
-	| tSET THEENTITYWITHID expr '=' expr	{
-		g_lingo->code1(g_lingo->c_swap);
-		g_lingo->code1(g_lingo->c_theentityassign);
-		g_lingo->codeInt($2[0]);
-		g_lingo->codeInt($2[1]);
-		$$ = $5; }
 	| tSET ID tTO expr			{
 		g_lingo->code1(g_lingo->c_varpush);
 		g_lingo->codeString($2->c_str());
@@ -234,7 +227,7 @@ stmt: stmtoneliner
 	//   statements
 	// end repeat
 	//
-	| repeatwith '=' expr end tTO expr end stmtlist end ENDCLAUSE {
+	| repeatwith tEQ expr end tTO expr end stmtlist end ENDCLAUSE {
 		inst init = 0, finish = 0, body = 0, end = 0, inc = 0;
 		WRITE_UINT32(&init, $3 - $1);
 		WRITE_UINT32(&finish, $6 - $1);
@@ -252,7 +245,7 @@ stmt: stmtoneliner
 	//   statements
 	// end repeat
 	//
-	| repeatwith '=' expr end tDOWN tTO expr end stmtlist end ENDCLAUSE {
+	| repeatwith tEQ expr end tDOWN tTO expr end stmtlist end ENDCLAUSE {
 		inst init = 0, finish = 0, body = 0, end = 0, inc = 0;
 		WRITE_UINT32(&init, $3 - $1);
 		WRITE_UINT32(&finish, $7 - $1);

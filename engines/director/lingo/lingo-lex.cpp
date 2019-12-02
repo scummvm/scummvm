@@ -1513,7 +1513,7 @@ YY_RULE_SETUP
 case 68:
 YY_RULE_SETUP
 #line 267 "engines/director/lingo/lingo-lex.l"
-{ count(); return g_lingo->_inCond ? tEQ : '='; }
+{ count(); return tEQ; }
 	YY_BREAK
 case 69:
 YY_RULE_SETUP

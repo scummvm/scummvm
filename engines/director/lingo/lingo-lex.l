@@ -253,18 +253,18 @@ whitespace [\t ]
 (?i:then)				{ count(); return tTHEN; }
 (?i:then[\n\r]+)		{ count(); return tTHENNL; }
 (?i:to)					{ count(); return tTO; }
-(?i:sprite)			{ count(); return tSPRITE; }
+(?i:sprite)				{ count(); return tSPRITE; }
 (?i:with)				{ count(); return tWITH; }
-(?i:within)			{ count(); return tWITHIN; }
+(?i:within)				{ count(); return tWITHIN; }
 (?i:when)				{ count(); return tWHEN; }
-(?i:while)			{ count(); return tWHILE; }
+(?i:while)				{ count(); return tWHILE; }
 (?i:word)				{ count(); return tWORD; }
 
 [<][>]					{ count(); return tNEQ; }
 [>][=]					{ count(); return tGE; }
 [<][=]					{ count(); return tLE; }
 [&][&]					{ count(); return tCONCAT; }
-[=]							{ count(); return g_lingo->_inCond ? tEQ : '='; }
+[=]						{ count(); return tEQ; }
 
 {identifier}		{
 		count();
