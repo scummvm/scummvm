@@ -265,6 +265,8 @@ void CSTimeInterface::mouseDown(Common::Point pos) {
 	case 13:
 		cursorChangeShape(14);
 		break;
+	default:
+		break;
 	}
 
 	if (_book->getState() == 2) {
@@ -441,6 +443,8 @@ void CSTimeInterface::mouseUp(Common::Point pos) {
 		break;
 	case 14:
 		cursorChangeShape(13);
+		break;
+	default:
 		break;
 	}
 

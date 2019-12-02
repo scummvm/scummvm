@@ -106,6 +106,8 @@ struct LBValue {
 		case kLBValueList:
 			list = val.list;
 			break;
+		default:
+			break;
 		}
 	}
 

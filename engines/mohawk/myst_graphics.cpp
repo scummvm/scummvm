@@ -534,6 +534,8 @@ void MystGraphics::transitionDissolve(Common::Rect rect, uint step) {
 				case 4:
 					*((uint32 *)screen->getBasePtr(x, y)) = *((const uint32 *)_backBuffer->getBasePtr(x, y));
 					break;
+				default:
+					break;
 				}
 			}
 		}

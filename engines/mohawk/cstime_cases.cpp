@@ -49,6 +49,8 @@ bool CSTimeCase1::checkConvCondition(uint16 conditionId) {
 	case 2:
 		// Is the bag on the boat, but player hasn't taken the torch?
 		return (hotspots[5].state != 1 && !gotTorch);
+	default:
+		break;
 	}
 
 	return false;
@@ -73,6 +75,8 @@ bool CSTimeCase1::checkObjectCondition(uint16 objectId) {
 		case 3:
 			// Hide torch if it's been picked up.
 			return (hotspots[4].state == 1);
+		default:
+			break;
 		}
 		break;
 
@@ -102,6 +106,10 @@ bool CSTimeCase1::checkObjectCondition(uint16 objectId) {
 		// The third note piece.
 		if (objectId == 1)
 			return !_vm->getInterface()->getCarmenNote()->havePiece(2);
+		break;
+
+	default:
+		break;
 	}
 
 	return true;
@@ -339,6 +347,9 @@ void CSTimeCase1::handleConditionalEvent(const CSTimeEvent &event) {
 				incorrectBodySequence(6, 14562, event.param1);
 			else
 				incorrectBodySequence(3, 14562, event.param1);
+			break;
+
+		default:
 			break;
 		}
 

@@ -113,6 +113,9 @@ Common::Error MohawkEngine_CSTime::run() {
 		case kCSTStateNormal:
 			update();
 			break;
+
+		default:
+			break;
 		}
 	}
 

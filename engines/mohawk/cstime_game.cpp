@@ -1030,6 +1030,8 @@ void CSTimeScene::mouseMove(Common::Point &pos) {
 			case 11:
 				_vm->getInterface()->cursorSetShape(10);
 				break;
+			default:
+				break;
 		}
 	}
 

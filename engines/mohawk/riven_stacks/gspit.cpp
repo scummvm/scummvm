@@ -339,6 +339,8 @@ void GSpit::xgplaywhark(const ArgumentArray &args) {
 			// Red alert! Shields online! Brace yourself for impact!
 			_vm->getCard()->playMovie(8);
 			break;
+		default:
+			break;
 	}
 
 	// For whatever reason the devs felt fit, code 31 is used for all of the videos
