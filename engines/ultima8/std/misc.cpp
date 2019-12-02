@@ -59,6 +59,10 @@ int strncmp(const char *str1, const char *str2, size_t n) {
 	return ::strncmp(str1, str2, n);
 }
 
+int memcmp(const void *ptr1, const void *ptr2, size_t num) {
+	return ::memcmp(ptr1, ptr2, num);
+}
+
 long int strtol(const char *str, char **endptr, int base) {
 	return ::strtol(str, endptr, base);
 }

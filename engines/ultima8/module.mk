@@ -9,6 +9,9 @@ MODULE_OBJS := \
 	conf/config_file_manager.o \
 	conf/ini_file.o \
 	conf/setting_manager.o \
+	convert/convert_shape.o \
+	convert/u8/convert_shape_u8.o \
+	convert/crusader/convert_shape_crusader.o \
 	filesys/archive.o \
 	filesys/archive_file.o \
 	filesys/data.o \
