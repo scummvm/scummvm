@@ -107,7 +107,7 @@ public:
 	virtual uint32 getPos() const = 0;
 	virtual bool eof() const = 0;
 
-	virtual Common::ReadStream *GetRawIfstream() {
+	virtual Common::SeekableReadStream *GetRawStream() {
 		return nullptr;
 	}
 
@@ -241,7 +241,7 @@ public:
 		return _in->eos();
 	}
 
-	virtual Common::SeekableReadStream *GetRawIfstream() override {
+	virtual Common::SeekableReadStream *GetRawStream() override {
 		return _in;
 	}
 };

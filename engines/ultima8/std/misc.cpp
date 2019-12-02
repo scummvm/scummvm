@@ -75,5 +75,9 @@ double sqrt(double val) {
 	return ::sqrt(val);
 }
 
+const char *strstr(const char *str, const char *substr) {
+	return ::strstr(str, substr);
+}
+
 } // End of namespace std
 } // End of namespace Ultima8

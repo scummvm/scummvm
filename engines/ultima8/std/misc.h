@@ -44,6 +44,7 @@ extern int strcmp(const char *leftStr, const char *rightStr);
 extern int strncmp(const char *str1, const char *str2, size_t n);
 extern int memcmp(const void *ptr1, const void *ptr2, size_t num);
 extern long int strtol(const char *str, char **endptr, int base);
+extern const char *strstr(const char *str, const char *substr);
 
 #ifdef rand
 #undef rand

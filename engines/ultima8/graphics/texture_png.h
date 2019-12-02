@@ -28,8 +28,7 @@
 namespace Ultima8 {
 // container structure for graphics read from a PNG file
 struct TexturePNG : public Texture {
-	TexturePNG() : Texture() {
-	}
+	TexturePNG() : Texture() {}
 
 	// False on Error
 	virtual bool Read(IDataSource *ds);

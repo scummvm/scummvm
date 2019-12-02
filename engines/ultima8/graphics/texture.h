@@ -23,6 +23,8 @@
 #ifndef ULTIMA8_GRAPHICS_TEXTURE_H
 #define ULTIMA8_GRAPHICS_TEXTURE_H
 
+#include "graphics/surface.h"
+
 namespace Ultima8 {
 
 //
@@ -122,6 +124,8 @@ struct Texture {
 	// Create a texture from a Data Source (filename is use to help detection of type)
 	static Texture *Create(IDataSource *ds, const char *filename = NULL);
 
+	// Loads the data from the passed surfcae
+	void loadSurface(const Graphics::Surface *surf);
 protected:
 
 	// Read from a File. No filetype supported by this class
