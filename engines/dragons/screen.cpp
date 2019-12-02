@@ -34,6 +34,7 @@ Screen::Screen() {
 	initGraphics(320, 200, &_pixelFormat);
 	_backSurface = new Graphics::Surface();
 	_backSurface->create(320, 200, _pixelFormat);
+	_screenShakeOffset = 0;
 }
 
 void Screen::updateScreen() {
@@ -283,6 +284,10 @@ void Screen::drawRect(uint16 colour, Common::Rect rect, int id) {
 	//left
 	_backSurface->drawLine(clippedRect.left, clippedRect.top, clippedRect.left, clippedRect.bottom, colour);
 
+}
+
+void Screen::setScreenShakeOffset(int16 newOffset) {
+	_screenShakeOffset = newOffset;
 }
 
 } // End of namespace Dragons

@@ -167,6 +167,8 @@ ActorFrame *ActorResource::loadFrameHeader(uint16 frameOffset) {
 	frame->frameDataOffset = &_data[frameDataOffset];
 	frame->flags = stream->readUint16LE();
 	frame->field_c = stream->readUint16LE();
+	frame->field_e = stream->readSint16LE();
+	frame->field_10 = stream->readSint16LE();
 
 	delete stream;
 	return frame;

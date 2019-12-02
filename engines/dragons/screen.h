@@ -32,6 +32,7 @@ private:
 	Graphics::PixelFormat _pixelFormat;
 	Graphics::Surface *_backSurface;
 	byte _palettes[DRAGONS_NUM_PALETTES][512];
+	int16 _screenShakeOffset;
 public:
 	virtual ~Screen();
 
@@ -51,6 +52,7 @@ public:
 	Common::Rect clipRectToScreen(int destX, int destY, const Common::Rect rect);
 	Common::Rect clipRectToRect(int destX, int destY, const Common::Rect rect, const Common::Rect containerRect);
 
+	void setScreenShakeOffset(int16 newOffset);
 private:
 	void copyRectToSurface(const void *buffer, int srcPitch, int srcWidth, int srcXOffset, int destX, int destY, int width, int height, bool flipX, uint8 alpha);
 	void copyRectToSurface8bpp(const void *buffer, byte* palette, int srcPitch, int srcWidth, int srcXOffset, int destX, int destY, int width, int height, bool flipX, uint8 alpha);

@@ -37,6 +37,8 @@ struct ActorFrame {
 	byte *frameDataOffset;
 	uint16 flags;
 	uint16 field_c;
+	int16 field_e;
+	int16 field_10;
 };
 
 enum FrameFlags {
