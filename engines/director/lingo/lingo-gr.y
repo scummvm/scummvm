@@ -427,7 +427,7 @@ begin:	  /* nothing */		{ $$ = g_lingo->_currentScript->size(); }
 end:	  /* nothing */		{ g_lingo->code1(STOP); $$ = g_lingo->_currentScript->size(); }
 	;
 
-stmtlist: /* nothing */		{ $$ = g_lingo->_currentScript->size(); }
+stmtlist: begin				{ $$ = g_lingo->_currentScript->size(); }
 	| stmtlist nl
 	| stmtlist stmt
 	;
