@@ -334,6 +334,18 @@ static const WMEGameDescription gameDescriptions[] = {
 		WME_ENTRY2s("data.dcp", "d0073ddf2b25527c83785ae7a0978867", 47676670,
 					"pl.dcp", "4dbc02aa9f67d22226d22dc0d837d20e", 49208405), Common::PL_POL, ADGF_UNSTABLE | ADGF_DEMO, WME_1_8_1),
 
+	// Art of Murder: FBI Confidential (German Demo 1)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("artofmurder1", "Demo",
+		WME_ENTRY2s("data.dcp", "d7f3dd0e87e4904292d19778b8af2ed1", 47662172,
+					"de.dcp", "c0bbfee40b79af1f837a9f3f8fcef78c", 42741523), Common::DE_DEU, ADGF_UNSTABLE | ADGF_DEMO, WME_1_8_1),
+
+	// Art of Murder: FBI Confidential (German Demo 2)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("artofmurder1", "Demo",
+		WME_ENTRY2s("data.dcp", "99d63dfee4ea97d31530649c929bee45", 81127581,
+					"de.dcp", "e97e2e18b26e5eff916c73f720d5f4f2", 17737492), Common::DE_DEU, ADGF_UNSTABLE | ADGF_DEMO, WME_1_8_1),
+
 	// Basis Octavus
 	// NOTE: This is a 2.5D game that is out of ScummVM scope
 	WME_WINENTRY("basisoctavus", "",
