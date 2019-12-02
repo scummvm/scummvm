@@ -467,6 +467,7 @@ public:
 	static void b_restart(int nargs);
 	static void b_shutDown(int nargs);
 	static void b_startTimer(int nargs);
+	static void b_return(int nargs);
 
 	static void b_closeDA(int nargs);
 	static void b_closeResFile(int nargs);
@@ -512,7 +513,7 @@ public:
 	static void b_enter(int nargs);
 	static void b_false(int nargs);
 	static void b_quote(int nargs);
-	static void b_return(int nargs);
+	static void b_returnconst(int nargs);
 	static void b_tab(int nargs);
 	static void b_true(int nargs);
 	static void b_version(int nargs);

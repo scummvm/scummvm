@@ -116,6 +116,7 @@ static struct BuiltinProto {
 	{ "preLoadCast",	Lingo::b_preLoadCast,	-1,0, false },	//		D3 c
 	{ "quit",			Lingo::b_quit,			0, 0, false },	// D2 c
 	{ "restart",		Lingo::b_restart,		0, 0, false },	// D2 c
+	{ "return",			Lingo::b_return,		1, 1, false },	// D2 function
 	{ "shutDown",		Lingo::b_shutDown,		0, 0, false },	// D2 c
 	{ "startTimer",		Lingo::b_startTimer,	0, 0, false },	// D2 c
 		// when keyDown											// D2
@@ -202,7 +203,7 @@ static struct BuiltinProto {
 	{ "enter",			Lingo::b_enter,			0, 0, false },	// D2
 	{ "false",			Lingo::b_false,			0, 0, false },	// D2
 	{ "quote",			Lingo::b_quote,			0, 0, false },	// D2
-	{ "return",			Lingo::b_return,		0, 0, false },	// D2
+//	{ "return",			Lingo::b_returnconst,	0, 0, false },	// D2 // FIXME
 	{ "tab",			Lingo::b_tab,			0, 0, false },	// D2
 	{ "true",			Lingo::b_true,			0, 0, false },	// D2
 	{ "version",		Lingo::b_version,		0, 0, false },	//		D3
@@ -956,6 +957,11 @@ void Lingo::b_quit(int nargs) {
 	g_lingo->pushVoid();
 }
 
+void Lingo::b_return(int nargs) {
+	// We do not touch the top of the stack, it will be returned
+	c_procret();
+}
+
 void Lingo::b_restart(int nargs) {
 	b_quit(nargs);
 
@@ -1463,7 +1469,7 @@ void Lingo::b_quote(int nargs) {
 	g_lingo->push(Datum(new Common::String("\"")));
 }
 
-void Lingo::b_return(int nargs) {
+void Lingo::b_returnconst(int nargs) {
 	g_lingo->push(Datum(new Common::String("\r")));
 }
 
