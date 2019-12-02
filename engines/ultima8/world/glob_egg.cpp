@@ -47,10 +47,10 @@ GlobEgg::~GlobEgg() {
 
 // Called when an item has entered the fast area
 void GlobEgg::enterFastArea() {
-	uint32 coordmask = ~0x1FF;
+	uint32 coordmask = ~0x1FFU;
 	unsigned int coordshift = 1;
 	if (GAME_IS_CRUSADER) {
-		coordmask = ~0x3FF;
+		coordmask = ~0x3FFU;
 		coordshift = 2;
 	}
 

@@ -25,6 +25,8 @@
 
 #include "ultima8/std/containers.h"
 
+namespace Ultima8 {
+
 class IDataSource;
 
 struct GlobItem {
@@ -47,5 +49,7 @@ public:
 private:
 	std::vector<GlobItem> contents;
 };
+
+} // End of namespace Ultima8
 
 #endif

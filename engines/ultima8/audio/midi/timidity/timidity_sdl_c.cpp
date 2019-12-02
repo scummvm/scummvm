@@ -95,7 +95,7 @@ static int cmsg(int type, int verbosity_level, const char *fmt, ...) {
 	va_start(ap, fmt);
 	vsprintf(timidity_error, fmt, ap);
 	va_end(ap);
-	//perr.printf ("%s\n", timidity_error);
+	//perr.Print ("%s\n", timidity_error);
 	return 0;
 }
 

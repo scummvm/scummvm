@@ -26,6 +26,8 @@
 #include "ultima8/kernel/process.h"
 #include "ultima8/misc/p_dynamic_cast.h"
 
+namespace Ultima8 {
+
 class CreateItemProcess : public Process {
 public:
 	// p_dynamic_class stuff
@@ -52,5 +54,7 @@ protected:
 	uint32 extendedflags;
 	int32 x, y, z;
 };
+
+} // End of namespace Ultima8
 
 #endif

@@ -20,8 +20,10 @@
  *
  */
 
-#ifndef ITEMFACTORY_H
-#define ITEMFACTORY_H
+#ifndef ULTIMA8_WORLD_ITEMFACTORY_H
+#define ULTIMA8_WORLD_ITEMFACTORY_H
+
+namespace Ultima8 {
 
 class Item;
 class Actor;
@@ -45,5 +47,7 @@ public:
 	                          uint16 flags, uint16 npcnum, uint16 mapnum,
 	                          uint32 extendedflags, bool objid);
 };
+
+} // End of namespace Ultima8
 
 #endif

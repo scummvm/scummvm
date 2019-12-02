@@ -25,6 +25,8 @@
 
 #include "ultima8/std/containers.h"
 
+namespace Ultima8 {
+
 class Item;
 class IDataSource;
 class ODataSource;
@@ -73,5 +75,6 @@ private:
 	uint32 mapnum;
 };
 
+} // End of namespace Ultima8
 
 #endif

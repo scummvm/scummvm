@@ -59,7 +59,17 @@ public:
 
 	uint32 getFeatures() const;
 
+	/**
+	 * Returns a file system node for the game directory
+	 */
 	Common::FSNode getGameDirectory() const;
+
+	/**
+	 * Returns a random number
+	 */
+	uint getRandomNumber(uint maxVal) {
+		return _randomSource.getRandomNumber(maxVal);
+	}
 };
 
 extern Ultima8Engine *g_vm;

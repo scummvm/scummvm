@@ -186,12 +186,12 @@ bool Container::moveItemToEnd(Item *item) {
 void Container::removeContents() {
 	// CHECKME: ethereal items?
 
-	Container *parent = getParentAsContainer();
-	if (parent) {
+	Container *parentCon = getParentAsContainer();
+	if (parentCon) {
 		// move contents to parent
 		while (contents.begin() != contents.end()) {
 			Item *item = *(contents.begin());
-			item->moveToContainer(parent);
+			item->moveToContainer(parentCon);
 		}
 	} else {
 		// move contents to our coordinates
@@ -280,10 +280,10 @@ void Container::containerSearch(UCList *itemlist, const uint8 *loopscript,
 	for (iter = contents.begin(); iter != contents.end(); ++iter) {
 		// check item against loopscript
 		if ((*iter)->checkLoopScript(loopscript, scriptsize)) {
-			uint16 objid = (*iter)->getObjId();
+			uint16 oId = (*iter)->getObjId();
 			uint8 buf[2];
-			buf[0] = static_cast<uint8>(objid);
-			buf[1] = static_cast<uint8>(objid >> 8);
+			buf[0] = static_cast<uint8>(oId);
+			buf[1] = static_cast<uint8>(oId >> 8);
 			itemlist->append(buf);
 		}
 

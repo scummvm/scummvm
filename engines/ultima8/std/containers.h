@@ -36,6 +36,18 @@ class vector : public Common::Array<T> {
 public:
 	typedef T reference;
 	typedef const T const_reference;
+
+	Common::Array<T>::iterator erase(Common::Array<T>::iterator pos) {
+		return Common::Array<T>::erase(pos);
+	}
+
+	Common::Array<T>::iterator erase(Common::Array<T>::iterator first, Common::Array<T>::iterator last) {
+		bool flag = false;
+		for (Common::Array<T>::iterator i = first; i != Common::Array<T>::end() && !flag; ) {
+			flag = i == last;
+			i = erase(i);
+		}
+	}
 };
 
 template<class Key, class Val, class HashFunc = Common::Hash<Key>,
@@ -49,6 +61,11 @@ class deque : public Common::List<VAL> {
 
 template<class VAL>
 class list : public Common::List<VAL> {
+public:
+	Common::List<VAL>::iterator insert(Common::List<VAL>::iterator pos, const VAL &element) {
+		Common::List<VAL>::insert(pos, element);
+		return pos;
+	}
 };
 
 template<class VAL>

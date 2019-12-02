@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef WORLD_ACTORS_PATHFINDER_H
-#define WORLD_ACTORS_PATHFINDER_H
+#ifndef ULTIMA8_WORLD_ACTORS_PATHFINDER_H
+#define ULTIMA8_WORLD_ACTORS_PATHFINDER_H
 
 #include "ultima8/std/containers.h"
 #include "ultima8/std/containers.h"

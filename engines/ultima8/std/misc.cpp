@@ -21,6 +21,7 @@
  */
 
 #include "ultima8/std/misc.h"
+#include "ultima8/ultima8.h"
 #include "common/algorithm.h"
 
 namespace Ultima8 {
@@ -60,6 +61,10 @@ int strncmp(const char *str1, const char *str2, size_t n) {
 
 long int strtol(const char *str, char **endptr, int base) {
 	return ::strtol(str, endptr, base);
+}
+
+uint rand() {
+	return g_vm->getRandomNumber(0x7fffffff);
 }
 
 } // End of namespace std

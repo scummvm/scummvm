@@ -44,6 +44,12 @@ extern int strcmp(const char *leftStr, const char *rightStr);
 extern int strncmp(const char *str1, const char *str2, size_t n);
 extern long int strtol(const char *str, char **endptr, int base);
 
+#ifdef rand
+#undef rand
+#endif
+
+extern uint rand();
+
 } // End of namespace std
 } // End of namespace Ultima8
 

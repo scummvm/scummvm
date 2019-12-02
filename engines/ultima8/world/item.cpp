@@ -45,7 +45,7 @@
 #include "ultima8/gumps/bark_gump.h"
 #include "ultima8/gumps/ask_gump.h"
 #include "ultima8/gumps/gump_notify_process.h"
-#include "ultima8/world/actor_bark_notify_process.h"
+#include "ultima8/world/actors/actor_bark_notify_process.h"
 #include "ultima8/gumps/container_gump.h"
 #include "ultima8/gumps/paperdoll_gump.h"
 #include "ultima8/gumps/game_map_gump.h"
@@ -117,15 +117,15 @@ Container *Item::getParentAsContainer() const {
 }
 
 Item *Item::getTopItem() {
-	Container *parent = getParentAsContainer();
+	Container *parentItem = getParentAsContainer();
 
-	if (!parent) return this;
+	if (!parentItem) return this;
 
-	while (parent->getParentAsContainer()) {
-		parent = parent->getParentAsContainer();
+	while (parentItem->getParentAsContainer()) {
+		parentItem = parentItem->getParentAsContainer();
 	}
 
-	return parent;
+	return parentItem;
 }
 
 void Item::setLocation(int32 X, int32 Y, int32 Z) {
@@ -140,7 +140,7 @@ void Item::move(int32 X, int32 Y, int32 Z) {
 	int mapChunkSize = map->getChunkSize();
 
 	if (getObjId() == 1 && Z < 0) {
-		perr.printf("Warning: moving avatar below Z=0. (%d,%d,%d)\n", X, Y, Z);
+		perr.Print("Warning: moving avatar below Z=0. (%d,%d,%d)\n", X, Y, Z);
 	}
 
 	// It's currently in the ethereal void, remove it from there
@@ -824,12 +824,12 @@ bool Item::checkLoopScript(const uint8 *script, uint32 scriptsize) {
 		break;
 
 		default:
-			perr.printf("Unknown loopscript opcode %02X\n", script[i]);
+			perr.Print("Unknown loopscript opcode %02X\n", script[i]);
 		}
 
 		i++;
 	}
-	perr.printf("Didn't encounter $ in loopscript\n");
+	perr.Print("Didn't encounter $ in loopscript\n");
 	return false;
 }
 

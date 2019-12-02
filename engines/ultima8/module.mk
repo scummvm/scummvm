@@ -42,7 +42,31 @@ MODULE_OBJS := \
 	misc/util.o \
 	misc/version.o \
 	std/misc.o \
-	std/string.o
+	std/string.o \
+	world/camera_process.o \
+	world/container.o \
+	world/create_item_process.o \
+	world/current_map.o \
+	world/destroy_item_process.o \
+	world/egg.o \
+	world/egg_hatcher_process.o \
+	world/fireball_process.o \
+	world/get_object.o \
+	world/glob_egg.o \
+	world/gravity_process.o \
+	world/item.o \
+	world/item_factory.o \
+	world/item_sorter.o \
+	world/map.o \
+	world/map_glob.o \
+	world/missile_process.o \
+	world/missile_tracker.o \
+	world/monster_egg.o \
+	world/split_item_process.o \
+	world/sprite_process.o \
+	world/teleport_egg.o \
+	world/world.o
+
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_ULTIMA8), DYNAMIC_PLUGIN)

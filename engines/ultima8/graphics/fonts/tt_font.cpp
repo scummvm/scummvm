@@ -95,7 +95,7 @@ static uint16 *toUnicode(const std::string &text, uint16 bullet) {
 	for (unsigned int i = 0; i < l; ++i) {
 		uint32 u = T::unicode(iter);
 		if (u > 0xFFFF) {
-			perr.printf("Warning: unicode character out of range for SDL_ttf: %x\n", u);
+			perr.Print("Warning: unicode character out of range for SDL_ttf: %x\n", u);
 			unicodetext[i] = '?';
 		} else if (u == 64) {
 			unicodetext[i] = bullet;

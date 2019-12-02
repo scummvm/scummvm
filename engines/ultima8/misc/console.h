@@ -400,9 +400,17 @@ public:
 };
 */
 
+namespace std {
+enum Precision { hex = 16, dec = 10 };
+}
+
 template<class T>
 class console_ostream : public Common::WriteStream {
+private:
+	std::Precision _precision;
 public:
+	console_ostream() : Common::WriteStream(), _precision(std::Precision::hex) {}
+
 	virtual uint32 write(const void *dataPtr, uint32 dataSize) override {
 		Common::String str((const char *)dataPtr, (const char *)dataPtr + dataSize);
 		debug("%s", str.c_str());
@@ -424,7 +432,8 @@ public:
 	}
 
 	console_ostream &operator<<(int val) {
-		Common::String str = Common::String::format("%d", val);
+		Common::String str = Common::String::format(
+			(_precision == std::hex) ? "%x" : "%d", val);
 		write(str.c_str(), str.size());
 		return *this;
 	}
@@ -512,6 +521,15 @@ public:
 
 	virtual int32 pos() const override {
 		return 0;
+	}
+
+	void Print(const char *fmt, ...) {
+		va_list argptr;
+		va_start(argptr, fmt);
+		Common::String str = Common::String::vformat(fmt, argptr);
+		va_end(argptr);
+
+		write(str.c_str(), str.size());
 	}
 
 	console_err_ostream &operator<<(const char *s) {
