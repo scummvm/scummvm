@@ -173,7 +173,7 @@ void ConvertShapeFrame::Read(IDataSource *source, const ConvertShapeFormat *csf,
 		// Line offsets
 		line_offsets = new uint32 [height];
 
-		for(sint32 i = 0; i < height; ++i) 
+		for (int32 i = 0; i < height; ++i) 
 		{
 			line_offsets[i] = source->readX(csf->bytes_line_offset);
 
@@ -227,11 +227,11 @@ void ConvertShapeFrame::ReadCmpFrame(IDataSource *source, const ConvertShapeForm
 	if (!rlebuf) rlebuf = new OAutoBufferDataSource(1024);
 	rlebuf->clear();
 
-	for(sint32 y = 0; y < height; ++y) 
+	for(int32 y = 0; y < height; ++y) 
 	{
 		line_offsets[y] = rlebuf->getPos();
 
-		sint32 xpos = 0;
+		int32 xpos = 0;
 
 		do
 		{
@@ -274,14 +274,14 @@ void ConvertShapeFrame::ReadCmpFrame(IDataSource *source, const ConvertShapeForm
 					uint8 c = source->read1();
 
 					if (special[c] && prev) {
-						sint32 count = special[c];
+						int32 count = special[c];
 						prev->GetPixels(o,count,xpos-xoff,y-yoff);
 						o+=count;
 						extra += count-1;
 						xpos += count;
 					}
 					else if (c == 0xFF && prev) {
-						sint32 count = source->read1();
+						int32 count = source->read1();
 						prev->GetPixels(o,count,xpos-xoff,y-yoff);
 						o+=count;
 						extra += count-2;
@@ -315,14 +315,14 @@ void ConvertShapeFrame::ReadCmpFrame(IDataSource *source, const ConvertShapeForm
 	memcpy (rle_data, rlebuf->getBuf(), bytes_rle);
 }
 
-void ConvertShapeFrame::GetPixels(uint8 *buf, sint32 count, sint32 x, sint32 y)
+void ConvertShapeFrame::GetPixels(uint8 *buf, int32 count, int32 x, int32 y)
 {
 	x += xoff;
 	y += yoff;
 
 	if (y > height) return;
 
-	sint32 xpos = 0;
+	int32 xpos = 0;
 	const uint8 * linedata = rle_data + line_offsets[y];
 
 	do {
@@ -330,7 +330,7 @@ void ConvertShapeFrame::GetPixels(uint8 *buf, sint32 count, sint32 x, sint32 y)
 	  
 		if (xpos == width) break;
 
-		sint32 dlen = *linedata++;
+		int32 dlen = *linedata++;
 		int type = 0;
 		
 		if (compression) 
@@ -504,7 +504,7 @@ bool ConvertShape::Check(IDataSource *source, const ConvertShapeFormat *csf, uin
 		if (frame->height)
 		{
 			// Line offsets
-			sint32 highest_offset_byte = 0;
+			int32 highest_offset_byte = 0;
 
 			// Calculate the number of bytes of RLE data
 			frame->bytes_rle = frame_length - (csf->len_frameheader2+(frame->height*csf->bytes_line_offset));
@@ -525,7 +525,7 @@ bool ConvertShape::Check(IDataSource *source, const ConvertShapeFormat *csf, uin
 				// Loop through each of the frames and find the last rle run
 				for (int i = 0; i < frame->height; i++) 
 				{
-					sint32 line_offset = source->readX(csf->bytes_line_offset);
+					int32 line_offset = source->readX(csf->bytes_line_offset);
 
 					// Now fudge with the value and turn it into an offset into the rle data
 					// if required
@@ -578,7 +578,7 @@ bool ConvertShape::Check(IDataSource *source, const ConvertShapeFormat *csf, uin
 				} while (xpos < frame->width);
 
 				// Calc 'real' bytes rle
-				sint32 highest_rle_byte = source->getPos();
+				int32 highest_rle_byte = source->getPos();
 				highest_rle_byte -= start_pos + frame_offset + csf->len_frameheader2 + frame->height*csf->bytes_line_offset;
 
 				// Too many bytes
@@ -775,9 +775,9 @@ void ConvertShape::Write(ODataSource *dest, const ConvertShapeFormat *csf, uint3
 		dest->writeX(frame->yoff, csf->bytes_frame_yoff);
 
 		// Line offsets
-		for (sint32 i = 0; i < frame->height; i++) 
+		for (int32 i = 0; i < frame->height; i++) 
 		{
-			sint32 actual_offset = frame->line_offsets[i];
+			int32 actual_offset = frame->line_offsets[i];
 			
 			// Unfudge the value and write it, if requiretd
 			if (!csf->line_offset_absolute)  

@@ -23,6 +23,8 @@
 #ifndef ULTIMA8_CONVERT_CONVERTSHAPE_H
 #define ULTIMA8_CONVERT_CONVERTSHAPE_H
 
+#include "common/scummsys.h"
+
 namespace Ultima8 {
 
 class IDataSource;
@@ -68,14 +70,14 @@ struct ConvertShapeFrame
 
 	uint8				unknown[8];
 	uint32				compression;
-	sint32				width;
-	sint32				height;
-	sint32				xoff;
-	sint32				yoff;
+	int32				width;
+	int32				height;
+	int32				xoff;
+	int32				yoff;
 
 	uint32				*line_offsets;		// Note these are offsets into rle_data
 
-	sint32				bytes_rle;			// Number of bytes of RLE Data
+	int32				bytes_rle;			// Number of bytes of RLE Data
 	uint8				*rle_data;
 
 	void Free()
@@ -91,7 +93,7 @@ struct ConvertShapeFrame
 
 	void ReadCmpFrame(IDataSource *source, const ConvertShapeFormat *csf, const uint8 special[256], ConvertShapeFrame *prev);
 
-	void GetPixels(uint8 *buf, sint32 count, sint32 x, sint32 y);
+	void GetPixels(uint8 *buf, int32 count, int32 x, int32 y);
 };
 
 
