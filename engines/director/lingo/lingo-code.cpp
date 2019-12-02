@@ -152,8 +152,7 @@ void Lingo::pushVoid() {
 }
 
 Datum Lingo::pop(void) {
-	if (_stack.size() == 0)
-		assert(0);
+	assert (_stack.size() != 0);
 
 	Datum ret = _stack.back();
 	_stack.pop_back();
