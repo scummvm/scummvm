@@ -592,7 +592,7 @@ private:
 	Datum pop(void);
 
 	Common::HashMap<uint32, const char *> _eventHandlerTypes;
-	Common::HashMap<Common::String, uint32> _eventHandlerTypeIds;
+	Common::HashMap<Common::String, uint32, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _eventHandlerTypeIds;
 	Common::HashMap<Common::String, Audio::AudioStream *> _audioAliases;
 
 	ScriptContextHash _scriptContexts[kMaxScriptType + 1];
