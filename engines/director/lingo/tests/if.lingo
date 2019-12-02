@@ -49,3 +49,8 @@ if abs(y) = x and abs(x) = y then
 else
   put FALSE
 end if
+
+macro WindowHorzP X
+    set X1 = constrainH( 14, X )
+    if X1 = X then return( TRUE )
+    else return( FALSE )
