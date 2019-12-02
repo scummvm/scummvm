@@ -2586,5 +2586,5 @@ int Lingo::parse(const char *code) {
 	return 0;
 }
 
-}
+} // End of namespace Director
 
