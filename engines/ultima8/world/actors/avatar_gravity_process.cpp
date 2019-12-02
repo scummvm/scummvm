@@ -22,7 +22,7 @@
 
 #include "ultima8/misc/pent_include.h"
 
-#include "ultima8/world/avatar_gravity_process.h"
+#include "ultima8/world/actors/avatar_gravity_process.h"
 #include "ultima8/world/actors/main_actor.h"
 #include "ultima8/world/world.h"
 #include "ultima8/kernel/gui_app.h"

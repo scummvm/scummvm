@@ -30,7 +30,7 @@
 #include "ultima8/kernel/gui_app.h"
 #include "ultima8/graphics/shape_info.h"
 #include "ultima8/world/get_object.h"
-#include "ultima8/world/avatar_mover_process.h"
+#include "ultima8/world/actors/avatar_mover_process.h"
 
 #include "ultima8/filesys/idata_source.h"
 #include "ultima8/filesys/odata_source.h"
@@ -70,61 +70,61 @@ void QuickAvatarMoverProcess::run() {
 
 	CurrentMap *cm = World::get_instance()->getCurrentMap();
 
-	int32 dx = this->dx;
-	int32 dy = this->dy;
-	int32 dz = this->dz;
+	int32 dxv = this->dx;
+	int32 dyv = this->dy;
+	int32 dzv = this->dz;
 
 	for (int j = 0; j < 3; j++) {
-		dx = this->dx;
-		dy = this->dy;
-		dz = this->dz;
+		dxv = this->dx;
+		dyv = this->dy;
+		dzv = this->dz;
 
-		if (j == 1) dx = 0;
-		else if (j == 2) dy = 0;
+		if (j == 1) dxv = 0;
+		else if (j == 2) dyv = 0;
 
 		if (quarter) {
-			dx /= 4;
-			dy /= 4;
-			dz /= 4;
+			dxv /= 4;
+			dyv /= 4;
+			dzv /= 4;
 		}
 
 		bool ok = false;
 
-		while (dx || dy || dz) {
-			uint32 flags = avatar->getShapeInfo()->flags;
+		while (dxv || dyv || dzv) {
+			uint32 shapeFlags = avatar->getShapeInfo()->flags;
 
-			if (!clipping || cm->isValidPosition(x + dx, y + dy, z + dz, ixd, iyd, izd, flags, 1, 0, 0)) {
-				if (clipping && !dz) {
-					if (cm->isValidPosition(x + dx, y + dy, z - 8, ixd, iyd, izd, flags, 1, 0, 0) &&
+			if (!clipping || cm->isValidPosition(x + dxv, y + dyv, z + dzv, ixd, iyd, izd, flags, 1, 0, 0)) {
+				if (clipping && !dzv) {
+					if (cm->isValidPosition(x + dxv, y + dyv, z - 8, ixd, iyd, izd, flags, 1, 0, 0) &&
 					        !cm->isValidPosition(x, y, z - 8, ixd, iyd, izd, flags, 1, 0, 0)) {
-						dz = -8;
-					} else if (cm->isValidPosition(x + dx, y + dy, z - 16, ixd, iyd, izd, flags, 1, 0, 0) &&
+						dzv = -8;
+					} else if (cm->isValidPosition(x + dxv, y + dyv, z - 16, ixd, iyd, izd, flags, 1, 0, 0) &&
 					           !cm->isValidPosition(x, y, z - 16, ixd, iyd, izd, flags, 1, 0, 0)) {
-						dz = -16;
-					} else if (cm->isValidPosition(x + dx, y + dy, z - 24, ixd, iyd, izd, flags, 1, 0, 0) &&
+						dzv = -16;
+					} else if (cm->isValidPosition(x + dxv, y + dyv, z - 24, ixd, iyd, izd, flags, 1, 0, 0) &&
 					           !cm->isValidPosition(x, y, z - 24, ixd, iyd, izd, flags, 1, 0, 0)) {
-						dz = -24;
-					} else if (cm->isValidPosition(x + dx, y + dy, z - 32, ixd, iyd, izd, flags, 1, 0, 0) &&
+						dzv = -24;
+					} else if (cm->isValidPosition(x + dxv, y + dyv, z - 32, ixd, iyd, izd, flags, 1, 0, 0) &&
 					           !cm->isValidPosition(x, y, z - 32, ixd, iyd, izd, flags, 1, 0, 0)) {
-						dz = -32;
+						dzv = -32;
 					}
 				}
 				ok = true;
 				break;
-			} else if (cm->isValidPosition(x + dx, y + dy, z + dz + 8, ixd, iyd, izd, flags, 1, 0, 0)) {
-				dz += 8;
+			} else if (cm->isValidPosition(x + dxv, y + dyv, z + dzv + 8, ixd, iyd, izd, shapeFlags, 1, 0, 0)) {
+				dzv += 8;
 				ok = true;
 				break;
 			}
-			dx /= 2;
-			dy /= 2;
-			dz /= 2;
+			dxv /= 2;
+			dyv /= 2;
+			dzv /= 2;
 		}
 		if (ok) break;
 	}
 
 	// Yes, i know, not entirely correct
-	avatar->collideMove(x + dx, y + dy, z + dz, false, true);
+	avatar->collideMove(x + dxv, y + dyv, z + dzv, false, true);
 
 
 	// Prevent avatar from running an idle animation while moving around

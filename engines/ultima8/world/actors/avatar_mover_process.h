@@ -66,7 +66,7 @@ protected:
 	uint32 lastAttack;
 
 	// shake head when idle
-	int32 idleTime;
+	uint32 idleTime;
 	Animation::Sequence lastHeadShakeAnim;
 
 	MButton mouseButton[2];

@@ -38,7 +38,7 @@
 #include "ultima8/filesys/odata_source.h"
 #include "ultima8/kernel/mouse.h"
 #include "ultima8/world/get_object.h"
-#include "ultima8/world/avatar_mover_process.h"
+#include "ultima8/world/actors/avatar_mover_process.h"
 #include "ultima8/world/missile_tracker.h"
 #include "ultima8/misc/direction.h"
 

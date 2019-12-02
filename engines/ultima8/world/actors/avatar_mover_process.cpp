@@ -21,24 +21,22 @@
  */
 
 #include "ultima8/misc/pent_include.h"
-
-#include "ultima8/world/avatar_mover_process.h"
+#include "ultima8/world/actors/avatar_mover_process.h"
 #include "ultima8/world/actors/animation.h"
-
 #include "ultima8/kernel/gui_app.h"
 #include "ultima8/world/actors/main_actor.h"
 #include "ultima8/gumps/game_map_gump.h"
 #include "ultima8/kernel/kernel.h"
 #include "ultima8/world/actors/actor_anim_process.h"
 #include "ultima8/world/actors/targeted_anim_process.h"
-#include "ultima8/world/avatar_gravity_process.h"
+#include "ultima8/world/actors/avatar_gravity_process.h"
 #include "ultima8/graphics/shape_info.h"
 #include "ultima8/conf/setting_manager.h"
 #include "ultima8/audio/music_process.h"
 #include "ultima8/world/get_object.h"
-
 #include "ultima8/filesys/idata_source.h"
 #include "ultima8/filesys/odata_source.h"
+#include "common/system.h"
 
 namespace Ultima8 {
 
@@ -104,7 +102,7 @@ void AvatarMoverProcess::run() {
 void AvatarMoverProcess::handleHangingMode() {
 	GUIApp *guiapp = GUIApp::get_instance();
 	MainActor *avatar = getMainActor();
-	uint32 now = SDL_GetTicks();
+	uint32 now = g_system->getMillis();
 	bool stasis = guiapp->isAvatarInStasis();
 
 	idleTime = 0;
@@ -149,7 +147,7 @@ void AvatarMoverProcess::handleCombatMode() {
 	Animation::Sequence lastanim = avatar->getLastAnim();
 	Animation::Sequence nextanim = Animation::walk;
 	int32 direction = avatar->getDir();
-	uint32 now = SDL_GetTicks();
+	uint32 now = g_system->getMillis();
 	bool stasis = guiapp->isAvatarInStasis();
 
 	int mx, my;
@@ -322,7 +320,7 @@ void AvatarMoverProcess::handleNormalMode() {
 	Animation::Sequence lastanim = avatar->getLastAnim();
 	Animation::Sequence nextanim = Animation::walk;
 	int32 direction = avatar->getDir();
-	uint32 now = SDL_GetTicks();
+	uint32 now = g_system->getMillis();
 	bool stasis = guiapp->isAvatarInStasis();
 	bool combatRun = (avatar->getActorFlags() & Actor::ACT_COMBATRUN) != 0;
 
@@ -334,7 +332,7 @@ void AvatarMoverProcess::handleNormalMode() {
 	int32 mousedir = (guiapp->getMouseDirection(mx, my) + 7) % 8;
 
 	// Store current idle time. (Also see end of function.)
-	int32 currentIdleTime = idleTime;
+	uint32 currentIdleTime = idleTime;
 	idleTime = 0;
 
 	// User toggled combat while in combatRun
@@ -391,7 +389,7 @@ void AvatarMoverProcess::handleNormalMode() {
 		// if we were running in combat mode, slow to a walk, draw weapon
 		// (even in stasis)
 		if (combatRun) {
-			MainActor *avatar = getMainActor();
+			avatar = getMainActor();
 			avatar->clearActorFlag(Actor::ACT_COMBATRUN);
 			avatar->toggleInCombat();
 			ProcId walkpid = avatar->doAnim(Animation::walk, direction);
@@ -796,7 +794,7 @@ void AvatarMoverProcess::OnMouseDown(int button, int mx, int my) {
 	};
 
 	mouseButton[bid].lastDown = mouseButton[bid].curDown;
-	mouseButton[bid].curDown = SDL_GetTicks();
+	mouseButton[bid].curDown = g_system->getMillis();
 	mouseButton[bid].state |= MBS_DOWN;
 	mouseButton[bid].state &= ~MBS_HANDLED;
 }

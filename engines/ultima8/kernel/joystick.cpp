@@ -112,7 +112,7 @@ JoystickCursorProcess::~JoystickCursorProcess() {
 void JoystickCursorProcess::run() {
 #ifdef TODO
 	int dx = 0, dy = 0;
-	int now = SDL_GetTicks();
+	int now = g_system->getMillis();
 
 	if (joy[js] && ticks) {
 		int tx = now - ticks;

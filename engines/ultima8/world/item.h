@@ -266,7 +266,7 @@ public:
 	bool isOn(Item &item2) const;
 
 	//! Check if this item can exist at the given coordinates
-	bool canExistAt(int32 x, int32 y, int32 z, bool needsupport = false) const;
+	bool canExistAt(int32 x_, int32 y_, int32 z_, bool needsupport = false) const;
 
 	//! Get direction from centre to another item's centre.
 	//! Undefined if either item is contained or equipped.
@@ -358,7 +358,7 @@ public:
 	virtual void receiveHit(ObjId other, int dir, int damage, uint16 type);
 
 	//! count nearby objects of a given shape
-	unsigned int countNearby(uint32 shape, uint16 range);
+	unsigned int countNearby(uint32 shape_, uint16 range);
 
 	//! can this item be dragged?
 	bool canDrag();

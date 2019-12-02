@@ -22,11 +22,11 @@
 
 #include "ultima8/misc/pent_include.h"
 
-#include "ultima8/graphics/AnimDat.h"
+#include "ultima8/graphics/anim_dat.h"
 
 #include "ultima8/filesys/idata_source.h"
 #include "ultima8/world/actors/ActorAnim.h"
-#include "ultima8/world/actors/AnimAction.h"
+#include "ultima8/world/actors/anim_action.h"
 #include "ultima8/kernel/core_app.h"
 #include "ultima8/games/game_info.h"
 

@@ -25,7 +25,7 @@
 #include "ultima8/graphics/main_shape_archive.h"
 #include "ultima8/graphics/type_flags.h"
 #include "ultima8/graphics/shape_info.h"
-#include "ultima8/graphics/AnimDat.h"
+#include "ultima8/graphics/anim_dat.h"
 
 namespace Ultima8 {
 

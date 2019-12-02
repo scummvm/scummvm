@@ -29,7 +29,7 @@
 #include "ultima8/filesys/raw_archive.h"
 #include "ultima8/games/game_data.h"
 #include "ultima8/graphics/main_shape_archive.h"
-#include "ultima8/world/actors/AnimAction.h"
+#include "ultima8/world/actors/anim_action.h"
 
 namespace Ultima8 {
 

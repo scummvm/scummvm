@@ -28,7 +28,7 @@
 #include "ultima8/world/world.h"
 #include "ultima8/world/current_map.h"
 #include "ultima8/graphics/main_shape_archive.h"
-#include "ultima8/world/actors/AnimAction.h"
+#include "ultima8/world/actors/anim_action.h"
 #include "ultima8/misc/direction.h"
 #include "ultima8/graphics/shape_info.h"
 #include "ultima8/usecode/uc_list.h"
@@ -132,7 +132,7 @@ bool AnimationTracker::stepFrom(int32 x_, int32 y_, int32 z_) {
 	return step();
 }
 
-void AnimationTracker::evaluateMaxAnimTravel(int32 &max_endx, int32 &max_endy, uint32 dir) {
+void AnimationTracker::evaluateMaxAnimTravel(int32 &max_endx, int32 &max_endy, uint32 dir_) {
 	max_endx = x;
 	max_endy = y;
 
@@ -148,10 +148,10 @@ void AnimationTracker::evaluateMaxAnimTravel(int32 &max_endx, int32 &max_endy, u
 		testframe = getNextFrame(currentframe);
 
 	for (;;) {
-		AnimFrame &f = animaction->frames[dir][testframe];
+		AnimFrame &f = animaction->frames[dir_][testframe];
 		// determine movement for this frame
-		int32 dx = 4 * x_fact[dir] * f.deltadir;
-		int32 dy = 4 * y_fact[dir] * f.deltadir;
+		int32 dx = 4 * x_fact[dir_] * f.deltadir;
+		int32 dy = 4 * y_fact[dir_] * f.deltadir;
 		max_endx += dx;
 		max_endy += dy;
 		testframe = getNextFrame(testframe);

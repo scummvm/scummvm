@@ -38,12 +38,12 @@ public:
 	virtual bool addItem(Item *item, bool checkwghtvol = false);
 
 	//! teleport to the given location on the given map
-	virtual void teleport(int mapnum, int32 x, int32 y, int32 z);
+	virtual void teleport(int mapNum_, int32 x_, int32 y_, int32 z_);
 
 	//! teleport to a teleport-destination egg
 	//! \param mapnum The map to teleport to
 	//! \param teleport_id The ID of the egg to teleport to
-	void teleport(int mapnum, int teleport_id); // to teleportegg
+	void teleport(int mapNum_, int teleport_id); // to teleportegg
 
 	bool hasJustTeleported() const {
 		return justTeleported;
@@ -133,7 +133,7 @@ public:
 	INTRINSIC(I_setAvatarInCombat);
 	INTRINSIC(I_isAvatarInCombat);
 
-	void getWeaponOverlay(const WeaponOverlayFrame *&frame, uint32 &shape);
+	void getWeaponOverlay(const WeaponOverlayFrame *&frame_, uint32 &shape_);
 
 
 protected:

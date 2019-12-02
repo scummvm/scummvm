@@ -47,7 +47,7 @@ public:
 
 	//! evaluate the maximum distance the actor will travel if the current
 	//! animation runs to completion by incremental calls to step
-	void evaluateMaxAnimTravel(int32 &max_endx, int32 &max_endy, uint32 dir);
+	void evaluateMaxAnimTravel(int32 &max_endx, int32 &max_endy, uint32 dir_);
 
 	//! do a single step of the animation
 	//! returns true if everything ok, false if not

@@ -102,5 +102,16 @@ string &string::erase(size_t pos, size_t len) {
 	return *this;
 }
 
+void string::resize(size_t count) {
+	if (count == 0)
+		clear();
+	else if (count < size())
+		*this = string(_str, _str + count);
+	else {
+		while (size() < count)
+			*this += ' ';
+	}
+}
+
 } // End of namespace std
 } // End of namespace Ultima8

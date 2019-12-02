@@ -34,17 +34,17 @@
 #include "ultima8/misc/direction.h"
 #include "ultima8/games/game_data.h"
 #include "ultima8/graphics/main_shape_archive.h"
-#include "ultima8/world/actors/AnimAction.h"
+#include "ultima8/world/actors/anim_action.h"
 #include "ultima8/graphics/shape_info.h"
 #include "ultima8/world/actors/pathfinder.h"
 #include "ultima8/world/actors/animation.h"
 #include "ultima8/kernel/delay_process.h"
-#include "ultima8/world/resurrection_process.h"
+#include "ultima8/world/actors/resurrection_process.h"
 #include "ultima8/world/destroy_item_process.h"
 #include "ultima8/world/actors/clear_feign_death_process.h"
 #include "ultima8/world/actors/pathfinder_process.h"
 #include "ultima8/graphics/shape.h"
-#include "ultima8/world/loiter_process.h"
+#include "ultima8/world/actors/loiter_process.h"
 #include "ultima8/world/actors/combat_process.h"
 #include "ultima8/audio/audio_process.h"
 #include "ultima8/world/sprite_process.h"
@@ -116,9 +116,9 @@ bool Actor::loadMonsterStats() {
 		dex = mi->min_dex + std::rand() % (mi->max_dex - mi->min_dex);
 	setDex(dex);
 
-	uint8 alignment = mi->alignment;
-	setAlignment(alignment & 0x0F);
-	setEnemyAlignment((alignment & 0xF0) >> 4); // !! CHECKME
+	uint8 new_alignment = mi->alignment;
+	setAlignment(new_alignment & 0x0F);
+	setEnemyAlignment((new_alignment & 0xF0) >> 4); // !! CHECKME
 
 	return true;
 }
@@ -189,23 +189,23 @@ bool Actor::giveTreasure() {
 				}
 			} else if (ti.special == "sorcfocus") {
 				// CONSTANTS! (and lots of them...)
-				int shape = 397;
-				int frame;
-				uint16 quality;
+				int shapeNum = 397;
+				int frameNum;
+				uint16 qualityNum;
 
 				if (std::rand() % 10 < 8) {
 					// wand
 					if (std::rand() % 10 < 4) {
 						// charged
-						frame = 0;
-						quality = 3 + (std::rand() % 4) + // charges
+						frameNum = 0;
+						qualityNum = 3 + (std::rand() % 4) + // charges
 						          ((1 + (std::rand() % 4)) << 8); // spell
 					} else {
-						frame = 15;
-						quality = 0;
+						frameNum = 15;
+						qualityNum = 0;
 					}
 
-					item = ItemFactory::createItem(shape, frame, quality,
+					item = ItemFactory::createItem(shapeNum, frameNum, qualityNum,
 					                               Item::FLG_DISPOSABLE,
 					                               0, 0, 0, true);
 					item->moveToContainer(this);
@@ -216,15 +216,15 @@ bool Actor::giveTreasure() {
 					// rod
 					if (std::rand() % 10 < 2) {
 						// charged
-						frame = 3;
-						quality = 3 + (std::rand() % 4) + // charges
+						frameNum = 3;
+						qualityNum = 3 + (std::rand() % 4) + // charges
 						          ((1 + (std::rand() % 7)) << 8); // spell
 					} else {
-						frame = 16;
-						quality = 0;
+						frameNum = 16;
+						qualityNum = 0;
 					}
 
-					item = ItemFactory::createItem(shape, frame, quality,
+					item = ItemFactory::createItem(shapeNum, frameNum, qualityNum,
 					                               Item::FLG_DISPOSABLE,
 					                               0, 0, 0, true);
 					item->moveToContainer(this);
@@ -235,22 +235,22 @@ bool Actor::giveTreasure() {
 					// symbol
 					if (std::rand() % 10 < 5) {
 						// charged
-						frame = 12;
+						frameNum = 12;
 						uint8 spell = 1 + (std::rand() % 11);
-						quality = spell << 8;
+						qualityNum = spell << 8;
 						if (spell < 4) {
-							quality += 3 + (std::rand() % 4);
+							qualityNum += 3 + (std::rand() % 4);
 						} else {
 							// symbol can only have one charge of anything
 							// other than ignite/extinguish
-							quality += 1;
+							qualityNum += 1;
 						}
 					} else {
-						frame = 19;
-						quality = 0;
+						frameNum = 19;
+						qualityNum = 0;
 					}
 
-					item = ItemFactory::createItem(shape, frame, quality,
+					item = ItemFactory::createItem(shapeNum, frameNum, qualityNum,
 					                               Item::FLG_DISPOSABLE,
 					                               0, 0, 0, true);
 					item->moveToContainer(this);
@@ -261,15 +261,15 @@ bool Actor::giveTreasure() {
 					// demon talisman
 					if (std::rand() % 10 < 2) {
 						// charged
-						frame = 9;
-						quality = 1 + (std::rand() % 2) +  // charges
+						frameNum = 9;
+						qualityNum = 1 + (std::rand() % 2) +  // charges
 						          ((10 + (std::rand() % 2)) << 8); // spell
 					} else {
-						frame = 18;
-						quality = 0;
+						frameNum = 18;
+						qualityNum = 0;
 					}
 
-					item = ItemFactory::createItem(shape, frame, quality,
+					item = ItemFactory::createItem(shapeNum, frameNum, qualityNum,
 					                               Item::FLG_DISPOSABLE,
 					                               0, 0, 0, true);
 					item->moveToContainer(this);
@@ -287,16 +287,16 @@ bool Actor::giveTreasure() {
 		// then produce a stack of that shape (ignoring frame)
 
 		if (ti.shapes.size() == 1) {
-			uint32 shape = ti.shapes[0];
-			ShapeInfo *si = mainshapes->getShapeInfo(shape);
+			uint32 shapeNum = ti.shapes[0];
+			ShapeInfo *si = mainshapes->getShapeInfo(shapeNum);
 			if (!si) {
-				perr << "Trying to create treasure with an invalid shape ("
-				     << shape << ")" << std::endl;
+				perr << "Trying to create treasure with an invalid shapeNum ("
+				     << shapeNum << ")" << std::endl;
 				continue;
 			}
 			if (si->hasQuantity()) {
 				// CHECKME: which flags?
-				item = ItemFactory::createItem(shape,
+				item = ItemFactory::createItem(shapeNum,
 				                               0, // frame
 				                               count, // quality
 				                               Item::FLG_DISPOSABLE, // flags
@@ -316,20 +316,20 @@ bool Actor::giveTreasure() {
 		}
 
 		// we need to produce a number of items
-		for (int i = 0; i < count; ++i) {
+		for (i = 0; (int)i < count; ++i) {
 			// pick shape
 			int n = std::rand() % ti.shapes.size();
-			uint32 shape = ti.shapes[n];
+			uint32 shapeNum = ti.shapes[n];
 
 			// pick frame
 			n = std::rand() % ti.frames.size();
-			uint32 frame = ti.frames[n];
+			uint32 frameNum = ti.frames[n];
 
 			ShapeInfo *si = GameData::get_instance()->getMainShapes()->
-			                getShapeInfo(shape);
+			                getShapeInfo(shapeNum);
 			if (!si) {
-				perr << "Trying to create treasure with an invalid shape ("
-				     << shape << ")" << std::endl;
+				perr << "Trying to create treasure with an invalid shapeNum ("
+				     << shapeNum << ")" << std::endl;
 				continue;
 			}
 			uint16 qual = 0;
@@ -337,8 +337,8 @@ bool Actor::giveTreasure() {
 				qual = 1;
 
 			// CHECKME: flags?
-			item = ItemFactory::createItem(shape,
-			                               frame, // frame
+			item = ItemFactory::createItem(shapeNum,
+			                               frameNum, // frameNum
 			                               qual, // quality
 			                               Item::FLG_DISPOSABLE, // flags
 			                               0, // npcnum,
@@ -625,10 +625,10 @@ void Actor::receiveHit(uint16 other, int dir, int damage, uint16 damage_type) {
 			end = 25;
 		}
 
-		int32 x, y, z;
-		getLocation(x, y, z);
-		z += (std::rand() % 24);
-		Process *sp = new SpriteProcess(620, start, end, 1, 1, x, y, z);
+		int32 xv, yv, zv;
+		getLocation(xv, yv, zv);
+		zv += (std::rand() % 24);
+		Process *sp = new SpriteProcess(620, start, end, 1, 1, xv, yv, zv);
 		Kernel::get_instance()->addProcess(sp);
 	}
 

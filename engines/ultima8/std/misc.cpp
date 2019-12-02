@@ -67,5 +67,9 @@ uint rand() {
 	return g_vm->getRandomNumber(0x7fffffff);
 }
 
+double sqrt(double val) {
+	return ::sqrt(val);
+}
+
 } // End of namespace std
 } // End of namespace Ultima8

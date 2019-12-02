@@ -50,6 +50,8 @@ extern long int strtol(const char *str, char **endptr, int base);
 
 extern uint rand();
 
+extern double sqrt(double val);
+
 } // End of namespace std
 } // End of namespace Ultima8
 

@@ -42,6 +42,21 @@ public:
 	string(size_t n, char c);
 
 	/**
+	 * String square brackets allows modifying characters
+	 */
+	char &operator[](size_t idx) {
+		assert(idx < _size);
+		return _str[idx];
+	}
+
+	/**
+	 * Square brackets for const strings simply returns characters
+	 */
+	char operator[](size_t idx) const {
+		return Common::String::operator[](idx);
+	}
+
+	/**
 	 * Finds the index of a character in the string
 	 */
 	size_t find(char c, size_t pos = 0) const;
@@ -80,6 +95,11 @@ public:
 	 * Erases len number of characters from pos
 	 */
 	string &erase(size_t pos = 0, size_t len = npos);
+
+	/**
+	 * Resizes a string
+	 */
+	void resize(size_t count);
 };
 
 extern const char *const endl;

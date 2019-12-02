@@ -328,8 +328,8 @@ void Map::loadFixedFormatObjects(std::list<Item *> &itemlist, IDataSource *ds,
 		uint32 frame = ds->read1();
 		uint16 flags = ds->read2();
 		uint16 quality = ds->read2();
-		uint16 npcnum = static_cast<uint16>(ds->read1());
-		uint16 mapnum = static_cast<uint16>(ds->read1());
+		uint16 npcNum = static_cast<uint16>(ds->read1());
+		uint16 mapNum = static_cast<uint16>(ds->read1());
 		uint16 next = ds->read2(); // do we need next for anything?
 
 		// find container this item belongs to, if any.
@@ -345,13 +345,13 @@ void Map::loadFixedFormatObjects(std::list<Item *> &itemlist, IDataSource *ds,
 		}
 
 #ifdef DUMP_ITEMS
-		pout << shape << "," << frame << ":\t(" << x << "," << y << "," << z << "),\t" << std::hex << flags << std::dec << ", " << quality << ", " << npcnum << ", " << mapnum << ", " << next << std::endl;
+		pout << shape << "," << frame << ":\t(" << x << "," << y << "," << z << "),\t" << std::hex << flags << std::dec << ", " << quality << ", " << npcNum << ", " << mapNum << ", " << next << std::endl;
 #endif
 
-		Item *item = ItemFactory::createItem(shape, frame, quality, flags, npcnum,
-		                                     mapnum, extendedflags, false);
+		Item *item = ItemFactory::createItem(shape, frame, quality, flags, npcNum,
+		                                     mapNum, extendedflags, false);
 		if (!item) {
-			pout << shape << "," << frame << ":\t(" << x << "," << y << "," << z << "),\t" << std::hex << flags << std::dec << ", " << quality << ", " << npcnum << ", " << mapnum << ", " << next;
+			pout << shape << "," << frame << ":\t(" << x << "," << y << "," << z << "),\t" << std::hex << flags << std::dec << ", " << quality << ", " << npcNum << ", " << mapNum << ", " << next;
 
 			ShapeInfo *info = GameData::get_instance()->getMainShapes()->
 			                  getShapeInfo(shape);
