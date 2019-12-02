@@ -48,12 +48,12 @@ void Minigame2::run(int16 param_1, uint16 param_2, int16 param_3) {
 	DragonINI *flicker;
 	uint32 origEngineFlags;
 	Actor *uVar5;
-	Actor *uVar6;
-	Actor *uVar7;
+	Actor *loungealotHeadActor;
+	Actor *loungealotLeftUpperArm;
 	Actor *uVar8;
-	Actor *uVar9;
-	Actor *uVar10;
-	Actor *uVar11;
+	Actor *loungealotRightArm;
+	Actor *flickerArm;
+	Actor *loungealotThumb;
 	Actor *uVar12;
 	Actor *uVar13;
 	Actor *uVar14;
@@ -174,46 +174,46 @@ void Minigame2::run(int16 param_1, uint16 param_2, int16 param_3) {
 	_vm->_screen->updatePaletteTransparency(1,0x40,0x7f,true);
 
 	uVar5 = _vm->_actorManager->loadActor(0x11,0,0,0,6);
-	uVar6 = _vm->_actorManager->loadActor(0xd,0,0x7d,199,4);
-	uVar7 = _vm->_actorManager->loadActor(0xb,2,0x7d,199,4);
+	loungealotHeadActor = _vm->_actorManager->loadActor(0xd, 0, 0x7d, 199, 4);
+	loungealotLeftUpperArm = _vm->_actorManager->loadActor(0xb, 2, 0x7d, 199, 4);
 	uVar8 = _vm->_actorManager->loadActor(0xf,0,0x7d,199,4);
-	uVar9 = _vm->_actorManager->loadActor(0x10,0,0x7d,199,4);
-	actorFrameData = uVar7->frame->frameDataOffset;
-	uVar10 = _vm->_actorManager->loadActor(9,(uint)(ushort)actorSequenceIdTbl[(uint)DAT_80093cb4 * 3 + (uint)DAT_80093cbc],
-								uVar7->x_pos - READ_LE_INT16(actorFrameData + 0xe),
-								uVar7->y_pos - READ_LE_INT16(actorFrameData + 0x10),4);
-	uVar11 = _vm->_actorManager->loadActor(0x12,(uint)(ushort)actorSequenceIdTbl[(uint)DAT_80093cb4 * 3 + (uint)DAT_80093cbc],
-								uVar7->x_pos - READ_LE_INT16(actorFrameData + 0xe),
-								uVar7->y_pos - READ_LE_INT16(actorFrameData + 0x10),4);
-	actorFrameData = uVar10->frame->frameDataOffset;
-	uVar12 = _vm->_actorManager->loadActor(10,(uint)(ushort)actorSequenceIdTbl[(uint)DAT_80093cb8 * 3 + (uint)DAT_80093cc0],
-			uVar10->x_pos - READ_LE_INT16(actorFrameData + 0xe),
-			uVar10->y_pos - READ_LE_INT16(actorFrameData + 0x10),4);
-	uVar13 = _vm->_actorManager->loadActor(0x13,(uint)(ushort)actorSequenceIdTbl[(uint)DAT_80093cb8 * 3 + (uint)DAT_80093cc0],
-			uVar10->x_pos - READ_LE_INT16(actorFrameData + 0xe),
-			uVar10->y_pos - READ_LE_INT16(actorFrameData + 0x10),4);
+	loungealotRightArm = _vm->_actorManager->loadActor(0x10, 0, 0x7d, 199, 4);
+	actorFrameData = loungealotLeftUpperArm->frame->frameDataOffset;
+	flickerArm = _vm->_actorManager->loadActor(9, (uint)(ushort)actorSequenceIdTbl[(uint)DAT_80093cb4 * 3 + (uint)DAT_80093cbc],
+											   loungealotLeftUpperArm->x_pos - READ_LE_INT16(actorFrameData + 0xe),
+											   loungealotLeftUpperArm->y_pos - READ_LE_INT16(actorFrameData + 0x10), 4);
+	loungealotThumb = _vm->_actorManager->loadActor(0x12, (uint)(ushort)actorSequenceIdTbl[(uint)DAT_80093cb4 * 3 + (uint)DAT_80093cbc],
+													loungealotLeftUpperArm->x_pos - READ_LE_INT16(actorFrameData + 0xe),
+													loungealotLeftUpperArm->y_pos - READ_LE_INT16(actorFrameData + 0x10), 4);
+	actorFrameData = flickerArm->frame->frameDataOffset;
+	uVar12 = _vm->_actorManager->loadActor(10, (uint)(ushort)actorSequenceIdTbl[(uint)DAT_80093cb8 * 3 + (uint)DAT_80093cc0],
+										   flickerArm->x_pos - READ_LE_INT16(actorFrameData + 0xe),
+										   flickerArm->y_pos - READ_LE_INT16(actorFrameData + 0x10), 4);
+	uVar13 = _vm->_actorManager->loadActor(0x13, (uint)(ushort)actorSequenceIdTbl[(uint)DAT_80093cb8 * 3 + (uint)DAT_80093cc0],
+										   flickerArm->x_pos - READ_LE_INT16(actorFrameData + 0xe),
+										   flickerArm->y_pos - READ_LE_INT16(actorFrameData + 0x10), 4);
 	uVar14 = _vm->_actorManager->loadActor(0x27,0,0x10,0xac,4);
 	uVar15 = _vm->_actorManager->loadActor(0x27,1,0x10,0x8c,4);
 	uVar5->setFlag(ACTOR_FLAG_100);
-	uVar6->setFlag(ACTOR_FLAG_100);
-	uVar7->setFlag(ACTOR_FLAG_100);
+	loungealotHeadActor->setFlag(ACTOR_FLAG_100);
+	loungealotLeftUpperArm->setFlag(ACTOR_FLAG_100);
 	uVar8->setFlag(ACTOR_FLAG_100);
-	uVar9->setFlag(ACTOR_FLAG_100);
-	uVar10->setFlag(ACTOR_FLAG_100);
-	uVar11->setFlag(ACTOR_FLAG_100);
+	loungealotRightArm->setFlag(ACTOR_FLAG_100);
+	flickerArm->setFlag(ACTOR_FLAG_100);
+	loungealotThumb->setFlag(ACTOR_FLAG_100);
 	uVar12->setFlag(ACTOR_FLAG_100);
 	uVar13->setFlag(ACTOR_FLAG_100);
 	uVar14->setFlag(ACTOR_FLAG_100);
 	uVar15->setFlag(ACTOR_FLAG_100);
 
 	uVar5->priorityLayer = 6;
-	uVar10->priorityLayer = 5;
+	flickerArm->priorityLayer = 5;
 	uVar12->priorityLayer = 5;
-	uVar11->priorityLayer = 4;
+	loungealotThumb->priorityLayer = 4;
 	uVar13->priorityLayer = 3;
-	uVar9->priorityLayer = 3;
-	uVar7->priorityLayer = 2;
-	uVar6->priorityLayer = 2;
+	loungealotRightArm->priorityLayer = 3;
+	loungealotLeftUpperArm->priorityLayer = 2;
+	loungealotHeadActor->priorityLayer = 2;
 	uVar8->priorityLayer = 1;
 	uVar14->priorityLayer = 0;
 	uVar15->priorityLayer = 0;
@@ -223,34 +223,34 @@ void Minigame2::run(int16 param_1, uint16 param_2, int16 param_3) {
 //	(&DAT_80083178)[(uint)uVar16 * 0xb] = (&DAT_80083178)[(uint)uVar16 * 0xb] & 0xfffe;
 //	(&DAT_80083178)[(uint)uVar17 * 0xb] = (&DAT_80083178)[(uint)uVar17 * 0xb] & 0xfffe;
 //	EnableVSyncEvent();
-	uVar6->setFlag(ACTOR_FLAG_1);
-	uVar7->setFlag(ACTOR_FLAG_1);
+	loungealotHeadActor->setFlag(ACTOR_FLAG_1);
+	loungealotLeftUpperArm->setFlag(ACTOR_FLAG_1);
 	uVar8->setFlag(ACTOR_FLAG_1);
-	uVar9->setFlag(ACTOR_FLAG_1);
-	uVar10->setFlag(ACTOR_FLAG_1);
-	uVar11->setFlag(ACTOR_FLAG_1);
+	loungealotRightArm->setFlag(ACTOR_FLAG_1);
+	flickerArm->setFlag(ACTOR_FLAG_1);
+	loungealotThumb->setFlag(ACTOR_FLAG_1);
 	uVar12->setFlag(ACTOR_FLAG_1);
 	uVar13->setFlag(ACTOR_FLAG_1);
-	uVar10->waitUntilFlag8And4AreSet();
+	flickerArm->waitUntilFlag8And4AreSet();
 	uVar12->waitUntilFlag8And4AreSet();
-	uVar11->waitUntilFlag8And4AreSet();
+	loungealotThumb->waitUntilFlag8And4AreSet();
 	uVar13->waitUntilFlag8And4AreSet();
-	uVar7->waitUntilFlag8And4AreSet();
-	uVar9->waitUntilFlag8And4AreSet();
-	uVar6->waitUntilFlag8And4AreSet();
+	loungealotLeftUpperArm->waitUntilFlag8And4AreSet();
+	loungealotRightArm->waitUntilFlag8And4AreSet();
+	loungealotHeadActor->waitUntilFlag8And4AreSet();
 	uVar8->waitUntilFlag8And4AreSet();
 
 	uVar5->setFlag(ACTOR_FLAG_400);
-	actorFrameData = uVar7->frame->frameDataOffset;
-	uVar10->x_pos = uVar7->x_pos - READ_LE_INT16(actorFrameData + 0xe);
-	uVar10->y_pos = uVar7->y_pos - READ_LE_INT16(actorFrameData + 0x10);
-	uVar11->x_pos = uVar7->x_pos - READ_LE_INT16(actorFrameData + 0xe);
-	uVar11->y_pos = uVar7->y_pos - READ_LE_INT16(actorFrameData + 0x10);
-	actorFrameData = uVar10->frame->frameDataOffset;
-	uVar12->x_pos = uVar7->x_pos - READ_LE_INT16(actorFrameData + 0xe);
-	uVar12->y_pos = uVar7->y_pos - READ_LE_INT16(actorFrameData + 0x10);
-	uVar13->x_pos = uVar7->x_pos - READ_LE_INT16(actorFrameData + 0xe);
-	uVar13->y_pos = uVar7->y_pos - READ_LE_INT16(actorFrameData + 0x10);
+	actorFrameData = loungealotLeftUpperArm->frame->frameDataOffset;
+	flickerArm->x_pos = loungealotLeftUpperArm->x_pos - loungealotLeftUpperArm->frame->field_e; //READ_LE_INT16(actorFrameData + 0xe);
+	flickerArm->y_pos = loungealotLeftUpperArm->y_pos - loungealotLeftUpperArm->frame->field_10; //READ_LE_INT16(actorFrameData + 0x10);
+	loungealotThumb->x_pos = loungealotLeftUpperArm->x_pos - loungealotLeftUpperArm->frame->field_e; //READ_LE_INT16(actorFrameData + 0xe);
+	loungealotThumb->y_pos = loungealotLeftUpperArm->y_pos - loungealotLeftUpperArm->frame->field_10; //READ_LE_INT16(actorFrameData + 0x10);
+	actorFrameData = flickerArm->frame->frameDataOffset;
+	uVar12->x_pos = loungealotLeftUpperArm->x_pos - flickerArm->frame->field_e; //READ_LE_INT16(actorFrameData + 0xe);
+	uVar12->y_pos = loungealotLeftUpperArm->y_pos - flickerArm->frame->field_10; //READ_LE_INT16(actorFrameData + 0x10);
+	uVar13->x_pos = loungealotLeftUpperArm->x_pos - flickerArm->frame->field_e; //READ_LE_INT16(actorFrameData + 0xe);
+	uVar13->y_pos = loungealotLeftUpperArm->y_pos - flickerArm->frame->field_10; //READ_LE_INT16(actorFrameData + 0x10);
 	_vm->waitForFrames(200);
 	// call_fade_related_1f();
 
@@ -276,12 +276,12 @@ void Minigame2::run(int16 param_1, uint16 param_2, int16 param_3) {
 				flicker->actorResourceId = 0xd2; //TODO is this correct?
 				_vm->_dragonINIResource->getRecord(0x120)->sceneId = 0x17;
 			}
-			uVar6->clearFlag(ACTOR_FLAG_40);
-			uVar7->clearFlag(ACTOR_FLAG_40);
+			loungealotHeadActor->clearFlag(ACTOR_FLAG_40);
+			loungealotLeftUpperArm->clearFlag(ACTOR_FLAG_40);
 			uVar8->clearFlag(ACTOR_FLAG_40);
-			uVar9->clearFlag(ACTOR_FLAG_40);
-			uVar10->clearFlag(ACTOR_FLAG_40);
-			uVar11->clearFlag(ACTOR_FLAG_40);
+			loungealotRightArm->clearFlag(ACTOR_FLAG_40);
+			flickerArm->clearFlag(ACTOR_FLAG_40);
+			loungealotThumb->clearFlag(ACTOR_FLAG_40);
 			uVar12->clearFlag(ACTOR_FLAG_40);
 			uVar13->clearFlag(ACTOR_FLAG_40);
 //			EnableVSyncEvent();
@@ -303,28 +303,26 @@ void Minigame2::run(int16 param_1, uint16 param_2, int16 param_3) {
 			return;
 		}
 		_vm->waitForFrames(1);
-		shouldExit = true;
-		/*
-		if ((DAT_80093c9c != 0) && ((engine_flags_maybe & 0x8000) == 0)) {
-			actor_update_sequenceID((uint)uVar6,0);
-			FUN_8001a7c4((uint)DAT_8008e7e8,(uint)DAT_8008e844,(uint)DAT_8008e848,(uint)DAT_8008e874);
+
+		if ((DAT_80093c9c != 0) && !_vm->isFlagSet(ENGINE_FLAG_8000)) {
+			loungealotHeadActor->updateSequence(0);
+			//TODO _vm->_talk->FUN_8001a7c4((uint)DAT_8008e7e8,(uint)DAT_8008e844,(uint)DAT_8008e848,(uint)DAT_8008e874);
 			DAT_80093c9c = 0;
 		}
 		if (DAT_80093c94 != 0) {
 			local_264 = 0;
 		}
-		if (*(short *)&Actor[uVar8].field_0x7a == 1) {
+		if (uVar8->field_7a == 1) {
 			shouldShakeScreen = true;
-			*(undefined2 *)&Actor[uVar8].field_0x7a = 0;
+			uVar8->field_7a = 0;
 			screenShakeCounter = 0;
 		}
 		if (shouldShakeScreen) {
-			uVar18 = (uint)screenShakeCounter;
-			screenShakeCounter = screenShakeCounter + 1;
-			screenShakeOffset = screenShakeTbl[uVar18];
-			if (screenShakeOffset == 0) {
+			_vm->_screen->setScreenShakeOffset(screenShakeTbl[screenShakeCounter]);
+			if (screenShakeTbl[screenShakeCounter] == 0) {
 				shouldShakeScreen = false;
 			}
+			screenShakeCounter = screenShakeCounter + 1;
 		}
 		if (DAT_80093ca4 == 0) {
 			DAT_80093ca4 = DAT_80093cc8;
@@ -344,6 +342,7 @@ void Minigame2::run(int16 param_1, uint16 param_2, int16 param_3) {
 		else {
 			DAT_80093cc4 = DAT_80093cc4 - 1;
 		}
+		/*
 		if (local_27a == 0) {
 			(&DAT_80083178)[(uint)uVar16 * 0xb] = (&DAT_80083178)[(uint)uVar16 * 0xb] & 0xfffe;
 		}
@@ -382,20 +381,19 @@ void Minigame2::run(int16 param_1, uint16 param_2, int16 param_3) {
 			uVar15->priorityLayer = 0;
 			bVar4 = false;
 		}
-		DisableVSyncEvent();
-		actorFrameData = Actor[uVar7].frame_pointer_maybe;
-		Actor[uVar11].x_pos = Actor[uVar7].x_pos - *(short *)((int)actorFrameData + 0xe);
-		Actor[uVar10].x_pos = Actor[uVar11].x_pos;
-		sVar2 = Actor[uVar10].x_pos;
-		Actor[uVar11].y_pos = Actor[uVar7].y_pos - *(short *)((int)actorFrameData + 0x10);
-		Actor[uVar10].y_pos = Actor[uVar11].y_pos;
-		sVar3 = Actor[uVar10].y_pos;
-		actorFrameData = Actor[uVar10].frame_pointer_maybe;
-		Actor[uVar13].x_pos = sVar2 - *(short *)((int)actorFrameData + 0xe);
-		Actor[uVar12].x_pos = Actor[uVar13].x_pos;
-		Actor[uVar13].y_pos = sVar3 - *(short *)((int)actorFrameData + 0x10);
-		Actor[uVar12].y_pos = Actor[uVar13].y_pos;
-		EnableVSyncEvent();
+*/
+		//DisableVSyncEvent();
+		loungealotThumb->x_pos = loungealotLeftUpperArm->x_pos - loungealotLeftUpperArm->frame->field_e;
+		flickerArm->x_pos = loungealotThumb->x_pos;
+		sVar2 = flickerArm->x_pos;
+		loungealotThumb->y_pos = loungealotLeftUpperArm->y_pos - loungealotLeftUpperArm->frame->field_10;
+		flickerArm->y_pos = loungealotThumb->y_pos;
+		sVar3 = flickerArm->y_pos;
+		uVar13->x_pos = sVar2 - flickerArm->frame->field_e;
+		uVar12->x_pos = uVar13->x_pos;
+		uVar13->y_pos = sVar3 - flickerArm->frame->field_10;
+		uVar12->y_pos = uVar13->y_pos;
+//		EnableVSyncEvent();
 		local_282 = DAT_80093cc0;
 		local_286 = DAT_80093cbc;
 		local_284 = DAT_80093cb8;
@@ -414,16 +412,16 @@ void Minigame2::run(int16 param_1, uint16 param_2, int16 param_3) {
 					else {
 						local_264 = 0;
 						local_260 = 300;
-						playSoundFromTxtIndex(textIdTbl[local_262]);
-						actor_update_sequenceID((uint)uVar6,(uint)local_2b0[(uint)local_262 * 2]);
+//						playSoundFromTxtIndex(textIdTbl[local_262]);
+						loungealotHeadActor->updateSequence((uint)local_2b0[(uint)local_262 * 2]);
 						uVar18 = (uint)local_262;
 						local_262 = local_262 + 1;
 						FUN_80093aec_dialog(textIdTbl[uVar18],0x14,1);
 						if (local_262 == 3) {
 							while (((DAT_80093cb4 != 2 || (DAT_80093cbc != 0)) ||
 									((DAT_80093cb8 != 2 || (DAT_80093cc0 != 0))))) {
-								ContinueGame?();
-								if ((Actor[uVar10].flags & 4) != 0) {
+								_vm->waitForFrames(1);
+								if (flickerArm->isFlagSet(ACTOR_FLAG_4)) {
 									if (DAT_80093cbc != 0) {
 										DAT_80093cbc = DAT_80093cbc - 1;
 									}
@@ -434,7 +432,7 @@ void Minigame2::run(int16 param_1, uint16 param_2, int16 param_3) {
 										DAT_80093cb4 = DAT_80093cb4 + 1;
 									}
 								}
-								if ((Actor[uVar12].flags & 4) != 0) {
+								if ((uVar12->flags & 4) != 0) {
 									if (DAT_80093cc0 != 0) {
 										DAT_80093cc0 = DAT_80093cc0 - 1;
 									}
@@ -445,51 +443,37 @@ void Minigame2::run(int16 param_1, uint16 param_2, int16 param_3) {
 										DAT_80093cb8 = DAT_80093cb8 + 1;
 									}
 								}
-								if (Actor[uVar10]._sequenceID !=
-									actorSequenceIdTbl[(uint)DAT_80093cb4 * 3 + (uint)DAT_80093cbc]) {
-									actor_update_sequenceID
-											((uint)uVar10,
-											 (uint)(ushort)actorSequenceIdTbl
-											 [(uint)DAT_80093cb4 * 3 + (uint)DAT_80093cbc]);
-									actor_update_sequenceID
-											((uint)uVar11,
-											 (uint)(ushort)actorSequenceIdTbl
-											 [(uint)DAT_80093cb4 * 3 + (uint)DAT_80093cbc]);
+								if (flickerArm->_sequenceID != actorSequenceIdTbl[(uint)DAT_80093cb4 * 3 + (uint)DAT_80093cbc]) {
+									flickerArm->updateSequence((uint)(ushort)actorSequenceIdTbl[(uint)DAT_80093cb4 * 3 + (uint)DAT_80093cbc]);
+									loungealotThumb->updateSequence((uint)(ushort)actorSequenceIdTbl[(uint)DAT_80093cb4 * 3 + (uint)DAT_80093cbc]);
 								}
-								if (Actor[uVar12]._sequenceID !=
+								if (uVar12->_sequenceID !=
 									actorSequenceIdTbl[(uint)DAT_80093cb8 * 3 + (uint)DAT_80093cc0]) {
-									actor_update_sequenceID
-											((uint)uVar12,
-											 (uint)(ushort)actorSequenceIdTbl
-											 [(uint)DAT_80093cb8 * 3 + (uint)DAT_80093cc0]);
-									actor_update_sequenceID
-											((uint)uVar13,
-											 (uint)(ushort)actorSequenceIdTbl
-											 [(uint)DAT_80093cb8 * 3 + (uint)DAT_80093cc0]);
+									uVar12->updateSequence((uint)(ushort)actorSequenceIdTbl[(uint)DAT_80093cb8 * 3 + (uint)DAT_80093cc0]);
+									uVar13->updateSequence((uint)(ushort)actorSequenceIdTbl[(uint)DAT_80093cb8 * 3 + (uint)DAT_80093cc0]);
 								}
 							}
-							waitForFrames_times0x3c(2);
-							DisableVSyncEvent();
+							_vm->waitForFrames(2 * 0x3c);
+//							DisableVSyncEvent();
 							memset(paletteData,0,0x200);
-							Actor[uVar5].flags = Actor[uVar5].flags & 0xfbff;
-							Actor[uVar6].flags = Actor[uVar6].flags | 0x400;
-							Actor[uVar7].flags = Actor[uVar7].flags | 0x400;
-							Actor[uVar9].flags = Actor[uVar9].flags | 0x400;
-							Actor[uVar8].flags = Actor[uVar8].flags | 0x400;
-							Actor[uVar10].flags = Actor[uVar10].flags | 0x400;
-							Actor[uVar11].flags = Actor[uVar11].flags | 0x400;
-							Actor[uVar12].flags = Actor[uVar12].flags | 0x400;
-							Actor[uVar13].flags = Actor[uVar13].flags | 0x400;
-							EnableVSyncEvent();
+							uVar5->flags = uVar5->flags & 0xfbff;
+							loungealotHeadActor->setFlag(ACTOR_FLAG_400);
+							loungealotLeftUpperArm->setFlag(ACTOR_FLAG_400);
+							loungealotRightArm->setFlag(ACTOR_FLAG_400);
+							uVar8->flags = uVar8->flags | 0x400;
+							flickerArm->setFlag(ACTOR_FLAG_400);
+							loungealotThumb->setFlag(ACTOR_FLAG_400);
+							uVar12->setFlag(ACTOR_FLAG_400);
+							uVar13->setFlag(ACTOR_FLAG_400);
+//							EnableVSyncEvent();
 							_vm->waitForFrames(6);
-							actor_update_sequenceID((uint)uVar5,1);
-							do {
-							} while ((Actor[uVar5].flags & 4) == 0);
-							ContinueGame?();
-							load_palette_into_frame_buffer(0,paletteData);
-							load_palette_into_frame_buffer(1,paletteData);
-							FUN_8001a7c4((uint)DAT_8008e7e8,(uint)DAT_8008e844,(uint)DAT_8008e848,
-										 (uint)DAT_8008e874);
+							uVar5->updateSequence(1);
+							uVar5->waitUntilFlag4IsSet();
+							_vm->waitForFrames(1);
+							_vm->_screen->loadPalette(0,paletteData);
+							_vm->_screen->loadPalette(1,paletteData);
+//	TODO						FUN_8001a7c4((uint)DAT_8008e7e8,(uint)DAT_8008e844,(uint)DAT_8008e848,
+//										 (uint)DAT_8008e874);
 							shouldExit = true;
 							goto LAB_80090188;
 						}
@@ -504,37 +488,29 @@ void Minigame2::run(int16 param_1, uint16 param_2, int16 param_3) {
 						local_27a = local_27a - 1;
 					}
 					local_268 = 2;
-					uVar18 = IsPressedLeft(0);
-					if ((uVar18 & 0xffff) != 0) {
+					if (_vm->isLeftKeyPressed()) {
 						local_268 = 1;
 					}
-					uVar18 = FUN_80093520();
-					if ((uVar18 & 0xffff) != 0) {
+					if (FUN_80093520()) {
 						local_268 = local_268 - 1;
 					}
-					uVar18 = IsPressedRight(0);
-					if ((uVar18 & 0xffff) != 0) {
+					if (_vm->isRightKeyPressed()) {
 						local_268 = local_268 + 1;
 					}
-					uVar18 = FUN_80093248();
-					if ((uVar18 & 0xffff) != 0) {
+					if (FUN_80093248()) {
 						local_268 = local_268 + 1;
 					}
-					if (Actor[uVar7]._sequenceID != local_268) {
-						actor_update_sequenceID((uint)uVar7,(uint)local_268);
+					if (loungealotLeftUpperArm->_sequenceID != local_268) {
+						loungealotLeftUpperArm->updateSequence(local_268);
 					}
-					if ((Actor[uVar10].flags & 4) != 0) {
-						uVar18 = IsPressedRight(0);
-						if (((uVar18 & 0xffff) != 0) && (local_288 != 0)) {
+					if ((flickerArm->flags & 4) != 0) {
+						if (_vm->isRightKeyPressed() && (local_288 != 0)) {
 							local_288 = local_288 - 1;
 						}
-						uVar18 = IsPressedLeft(0);
-						if (((uVar18 & 0xffff) != 0) && (local_288 < 4)) {
+						if (_vm->isLeftKeyPressed() && (local_288 < 4)) {
 							local_288 = local_288 + 1;
 						}
-						uVar18 = IsPressedLeft(0);
-						if ((((uVar18 & 0xffff) == 0) && (uVar18 = IsPressedRight(0), (uVar18 & 0xffff) == 0))
-							&& (local_288 != 2)) {
+						if ((!_vm->isLeftKeyPressed() && !_vm->isRightKeyPressed()) && (local_288 != 2)) {
 							if (local_288 < 2) {
 								local_288 = local_288 + 1;
 							}
@@ -542,8 +518,7 @@ void Minigame2::run(int16 param_1, uint16 param_2, int16 param_3) {
 								local_288 = local_288 - 1;
 							}
 						}
-						iVar20 = IsButtonBeingPressed((uint)buttonMap_Action,0);
-						if ((iVar20 == 0) || (local_26c != 0)) {
+						if (!_vm->isActionButtonPressed() || (local_26c != 0)) {
 							if (local_286 != 0) {
 								local_286 = local_286 - 1;
 							}
@@ -568,18 +543,14 @@ void Minigame2::run(int16 param_1, uint16 param_2, int16 param_3) {
 					else {
 						local_264 = 0;
 					}
-					if ((Actor[uVar12].flags & 4) != 0) {
-						uVar18 = FUN_80093248();
-						if (((uVar18 & 0xffff) != 0) && (local_284 != 0)) {
+					if ((uVar12->flags & 4) != 0) {
+						if (FUN_80093248() && (local_284 != 0)) {
 							local_284 = local_284 - 1;
 						}
-						uVar18 = FUN_80093520();
-						if (((uVar18 & 0xffff) != 0) && (local_284 < 4)) {
+						if (FUN_80093520() && (local_284 < 4)) {
 							local_284 = local_284 + 1;
 						}
-						uVar18 = FUN_80093520();
-						if ((((uVar18 & 0xffff) == 0) && (uVar18 = FUN_80093248(), (uVar18 & 0xffff) == 0)) &&
-							(local_284 != 2)) {
+						if ((!FUN_80093520() && !FUN_80093248()) && (local_284 != 2)) {
 							if (local_284 < 2) {
 								local_284 = local_284 + 1;
 							}
@@ -587,8 +558,7 @@ void Minigame2::run(int16 param_1, uint16 param_2, int16 param_3) {
 								local_284 = local_284 - 1;
 							}
 						}
-						uVar18 = FUN_80093800();
-						if (((uVar18 & 0xffff) == 0) || (local_26c != 0)) {
+						if (!FUN_80093800() || (local_26c != 0)) {
 							if (local_282 != 0) {
 								local_282 = local_282 - 1;
 							}
@@ -619,30 +589,20 @@ void Minigame2::run(int16 param_1, uint16 param_2, int16 param_3) {
 						if ((local_286 != DAT_80093cbc) || (local_288 != DAT_80093cb4)) {
 							DAT_80093cb4 = local_288;
 							DAT_80093cbc = local_286;
-							actor_update_sequenceID
-									((uint)uVar10,
-									 (uint)(ushort)actorSequenceIdTbl[(uint)local_288 * 3 + (uint)local_286]);
-							actor_update_sequenceID
-									((uint)uVar11,
-									 (uint)(ushort)actorSequenceIdTbl
-									 [(uint)DAT_80093cb4 * 3 + (uint)DAT_80093cbc]);
+							flickerArm->updateSequence((uint)(ushort)actorSequenceIdTbl[(uint)local_288 * 3 + (uint)local_286]);
+							loungealotThumb->updateSequence((uint)(ushort)actorSequenceIdTbl[(uint)DAT_80093cb4 * 3 + (uint)DAT_80093cbc]);
 						}
 						if ((local_282 != DAT_80093cc0) || (local_284 != DAT_80093cb8)) {
 							DAT_80093cb8 = local_284;
 							DAT_80093cc0 = local_282;
-							actor_update_sequenceID
-									((uint)uVar12,
-									 (uint)(ushort)actorSequenceIdTbl[(uint)local_284 * 3 + (uint)local_282]);
-							actor_update_sequenceID
-									((uint)uVar13,
-									 (uint)(ushort)actorSequenceIdTbl
-									 [(uint)DAT_80093cb8 * 3 + (uint)DAT_80093cc0]);
+							uVar12->updateSequence((uint)(ushort)actorSequenceIdTbl[(uint)local_284 * 3 + (uint)local_282]);
+							uVar13->updateSequence((uint)(ushort)actorSequenceIdTbl[(uint)DAT_80093cb8 * 3 + (uint)DAT_80093cc0]);
 						}
 					}
 					else {
 						if (local_258 == 1) {
-							actor_update_sequenceID((uint)uVar6,1);
-							actor_update_sequenceID((uint)uVar8,1);
+							loungealotHeadActor->updateSequence(1);
+							uVar8->updateSequence(1);
 							if (local_288 == 2) {
 								local_28 = 1;
 							}
@@ -663,8 +623,8 @@ void Minigame2::run(int16 param_1, uint16 param_2, int16 param_3) {
 							}
 						}
 						else {
-							actor_update_sequenceID((uint)uVar6,3);
-							actor_update_sequenceID((uint)uVar9,1);
+							loungealotHeadActor->updateSequence(3);
+							loungealotRightArm->updateSequence(1);
 							if (local_284 == 2) {
 								local_28 = 4;
 							}
@@ -684,10 +644,10 @@ void Minigame2::run(int16 param_1, uint16 param_2, int16 param_3) {
 								}
 							}
 						}
-						Actor[uVar12].flags = Actor[uVar12].flags | 0x400;
-						Actor[uVar13].flags = Actor[uVar13].flags | 0x400;
-						actor_update_sequenceID((uint)uVar10,(uint)local_28 + 0xf);
-						actor_update_sequenceID((uint)uVar11,(uint)local_28 + 0xf);
+						uVar12->flags = uVar12->flags | 0x400;
+						uVar13->flags = uVar13->flags | 0x400;
+						flickerArm->updateSequence((uint)local_28 + 0xf);
+						loungealotThumb->updateSequence((uint)local_28 + 0xf);
 						DAT_80093c94 = 1;
 						DAT_80093c90 = 0x1e;
 					}
@@ -695,30 +655,32 @@ void Minigame2::run(int16 param_1, uint16 param_2, int16 param_3) {
 			}
 			else {
 				if (DAT_80093c94 == 2) {
-					Actor[uVar12].flags = Actor[uVar12].flags | 0x1000;
-					Actor[uVar13].flags = Actor[uVar13].flags | 0x1000;
-					Actor[uVar10].flags = Actor[uVar10].flags | 0x1000;
-					Actor[uVar11].flags = Actor[uVar11].flags | 0x1000;
-					screenShakeOffset = 0;
+					uVar12->flags = uVar12->flags | 0x1000;
+					uVar13->flags = uVar13->flags | 0x1000;
+					flickerArm->flags = flickerArm->flags | 0x1000;
+					loungealotThumb->flags = loungealotThumb->flags | 0x1000;
+					_vm->_screen->setScreenShakeOffset(0);
 					if (local_258 == 1) {
-						playSoundFromTxtIndex(DAT_80063ad0);
-						actor_update_sequenceID((uint)uVar6,9);
-						FUN_80093aec_dialog(DAT_80063ad0,0x14,1);
+//						playSoundFromTxtIndex(DAT_80063ad0);
+						loungealotHeadActor->updateSequence(9);
+						FUN_80093aec_dialog(0x46BC,0x14,1);
 						do {
-						} while ((engine_flags_maybe & 0x8000) != 0);
-						actor_update_sequenceID((uint)uVar6,2);
-						actor_update_sequenceID((uint)uVar9,3);
+							_vm->waitForFrames(1);
+						} while (_vm->isFlagSet(ENGINE_FLAG_8000));
+						loungealotHeadActor->updateSequence(2);
+						loungealotRightArm->updateSequence(3);
 					}
 					else {
-						playSoundFromTxtIndex(DAT_80063ad4);
-						actor_update_sequenceID((uint)uVar6,10);
-						FUN_80093aec_dialog(DAT_80063ad4,0x14,1);
-						actor_update_sequenceID((uint)uVar9,2);
+//						playSoundFromTxtIndex(DAT_80063ad4);
+						loungealotHeadActor->updateSequence(10);
+						FUN_80093aec_dialog(0x4718,0x14,1);
+						loungealotRightArm->updateSequence(2);
 						do {
-						} while ((engine_flags_maybe & 0x8000) != 0);
-						actor_update_sequenceID((uint)uVar6,4);
+							_vm->waitForFrames(1);
+						} while (_vm->isFlagSet(ENGINE_FLAG_8000));
+						loungealotHeadActor->updateSequence(4);
 					}
-					waitForFrames_times0x3c(2);
+					_vm->waitForFrames(2 * 0x3c);
 					shouldExit = true;
 				}
 			}
@@ -736,18 +698,14 @@ void Minigame2::run(int16 param_1, uint16 param_2, int16 param_3) {
 		else {
 			local_272 = local_272 + -1;
 		}
-		uVar18 = PressedThisFrameR2(0);
-		uVar19 = PressedThisFrameR1(0);
-		if (((uVar18 | uVar19) & 0xffff) != 0) {
+
+		if (_vm->isR1ButtonPressed()) { //TODO || _vm->isR2ButtonPressed()) {
 			local_27a = local_27a + 4;
 		}
-		uVar18 = PressedThisFrameL2(0);
-		uVar19 = PressedThisFrameL1(0);
-		if (((uVar18 | uVar19) & 0xffff) != 0) {
+		if (_vm->isL1ButtonPressed()) { //TODO || _vm->isL2ButtonPressed()) {
 			local_27a = local_27a + 4;
 		}
-		uVar18 = FUN_80093990();
-		if ((uVar18 & 0xffff) != 0) {
+		if (FUN_80093990()) {
 			if (param_1 == 1) {
 				local_278 = local_278 + 4;
 			}
@@ -755,8 +713,7 @@ void Minigame2::run(int16 param_1, uint16 param_2, int16 param_3) {
 				local_278 = local_278 + 6;
 			}
 		}
-		uVar18 = FUN_80093a30();
-		if ((uVar18 & 0xffff) != 0) {
+		if (FUN_80093a30()) {
 			if (param_1 == 1) {
 				local_278 = local_278 + 4;
 			}
@@ -765,9 +722,9 @@ void Minigame2::run(int16 param_1, uint16 param_2, int16 param_3) {
 			}
 		}
 		if ((0x3f < local_278) || (0x3f < local_27a)) {
-			Actor[uVar6].flags = Actor[uVar6].flags | 0x1000;
-			Actor[uVar8].flags = Actor[uVar8].flags | 0x1000;
-			Actor[uVar9].flags = Actor[uVar9].flags | 0x1000;
+			loungealotHeadActor->setFlag(ACTOR_FLAG_1000);
+			uVar8->setFlag(ACTOR_FLAG_1000);
+			loungealotRightArm->setFlag(ACTOR_FLAG_1000);
 			if (0x40 < local_27a) {
 				local_27a = 0x40;
 			}
@@ -777,34 +734,26 @@ void Minigame2::run(int16 param_1, uint16 param_2, int16 param_3) {
 			if (((local_278 == local_27a) || ((local_258 == 2 && (local_278 < local_27a)))) ||
 				((local_258 == 1 && (local_27a < local_278)))) {
 				if (local_258 == 1) {
-					playSoundFromTxtIndex(DAT_80063ad8);
-					actor_update_sequenceID((uint)uVar6,0xb);
-					FUN_80093aec_dialog(DAT_80063ad8,0x14,1);
+//					playSoundFromTxtIndex(DAT_80063ad8);
+					loungealotHeadActor->updateSequence(0xb);
+					FUN_80093aec_dialog(0x475E,0x14,1);
 				}
 				else {
-					playSoundFromTxtIndex(DAT_80063adc);
-					actor_update_sequenceID((uint)uVar6,0xc);
-					FUN_80093aec_dialog(DAT_80063adc,0x14,1);
+//					playSoundFromTxtIndex(DAT_80063adc);
+					loungealotHeadActor->updateSequence(0xc);
+					FUN_80093aec_dialog(0x4774,0x14,1);
 				}
 				local_258 = 0;
 				DAT_80093cb4 = 2;
 				DAT_80093cbc = 1;
 				DAT_80093cb8 = 0;
 				DAT_80093cc0 = 1;
-				Actor[uVar12].flags = Actor[uVar12].flags & 0xfbff;
-				Actor[uVar13].flags = Actor[uVar13].flags & 0xfbff;
-				actor_update_sequenceID
-						((uint)uVar10,
-						 (uint)(ushort)actorSequenceIdTbl[(uint)DAT_80093cb4 * 3 + (uint)DAT_80093cbc]);
-				actor_update_sequenceID
-						((uint)uVar11,
-						 (uint)(ushort)actorSequenceIdTbl[(uint)DAT_80093cb4 * 3 + (uint)DAT_80093cbc]);
-				actor_update_sequenceID
-						((uint)uVar12,
-						 (uint)(ushort)actorSequenceIdTbl[(uint)DAT_80093cb8 * 3 + (uint)DAT_80093cc0]);
-				actor_update_sequenceID
-						((uint)uVar13,
-						 (uint)(ushort)actorSequenceIdTbl[(uint)DAT_80093cb8 * 3 + (uint)DAT_80093cc0]);
+				uVar12->flags = uVar12->flags & 0xfbff;
+				uVar13->flags = uVar13->flags & 0xfbff;
+				flickerArm->updateSequence((uint)(ushort)actorSequenceIdTbl[(uint)DAT_80093cb4 * 3 + (uint)DAT_80093cbc]);
+				loungealotThumb->updateSequence((uint)(ushort)actorSequenceIdTbl[(uint)DAT_80093cb4 * 3 + (uint)DAT_80093cbc]);
+				uVar12->updateSequence((uint)(ushort)actorSequenceIdTbl[(uint)DAT_80093cb8 * 3 + (uint)DAT_80093cc0]);
+				uVar13->updateSequence((uint)(ushort)actorSequenceIdTbl[(uint)DAT_80093cb8 * 3 + (uint)DAT_80093cc0]);
 				DAT_80093c94 = 0;
 				local_26c = 0x1e;
 			}
@@ -812,9 +761,33 @@ void Minigame2::run(int16 param_1, uint16 param_2, int16 param_3) {
 				DAT_80093c94 = 2;
 			}
 		}
-		 */
+		
 	} while( true );
 
+}
+
+void Minigame2::FUN_80093aec_dialog(uint32 textId, int16 x, int16 y) {
+
+}
+
+bool Minigame2::FUN_80093520() {
+	return false; //TODO
+}
+
+bool Minigame2::FUN_80093248() {
+	return false; //TODO
+}
+
+bool Minigame2::FUN_80093800() {
+	return false; //TODO
+}
+
+bool Minigame2::FUN_80093a30() {
+	return false; //TODO
+}
+
+bool Minigame2::FUN_80093990() {
+	return false; //TODO
 }
 
 } // End of namespace Dragons

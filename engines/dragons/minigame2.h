@@ -52,6 +52,13 @@ public:
 	Minigame2(DragonsEngine *vm);
 
 	void run(int16 param_1, uint16 param_2, int16 param_3);
+private:
+	void FUN_80093aec_dialog(uint32 textId, int16 x, int16 y);
+	bool FUN_80093520();
+	bool FUN_80093a30();
+	bool FUN_80093248();
+	bool FUN_80093800();
+	bool FUN_80093990();
 };
 
 } // End of namespace Dragons
