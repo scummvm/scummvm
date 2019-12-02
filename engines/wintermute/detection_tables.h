@@ -1787,6 +1787,186 @@ static const WMEGameDescription gameDescriptions[] = {
 			"xlanguage_ru.dcp", "4e01e8d4759fddbcb6eb07d19c0c3335", 10866770,
 					"Mac.dcp", "50911598561dc0ac7d050aeadbb58815", 4866263), Common::RU_RUS, Common::kPlatformMacintosh, ADGF_UNSTABLE, WME_LITE),
 
+	// Reversion: The Escape (Steam, July 2019) (Spanish)
+	WME_WINENTRY("reversion1", "",
+		WME_ENTRY2s("data.dcp", "371f8cde148050eda33e60cf059bf894", 283546874,
+					"data.dcp", "371f8cde148050eda33e60cf059bf894", 283546874), Common::ES_ESP, ADGF_UNSTABLE, WME_1_9_3),
+
+	// Reversion: The Escape (Steam, July 2019) (German)
+	WME_WINENTRY("reversion1", "",
+		WME_ENTRY2s("data.dcp", "371f8cde148050eda33e60cf059bf894", 283546874,
+			"xlanguage_de.dcp", "d2471dceea100734afeb4ea77a0153ec", 14036212), Common::DE_DEU, ADGF_UNSTABLE, WME_1_9_3),
+
+	// Reversion: The Escape (Steam, July 2019) (English)
+	WME_WINENTRY("reversion1", "",
+		WME_ENTRY2s("data.dcp", "371f8cde148050eda33e60cf059bf894", 283546874,
+			"xlanguage_en.dcp", "bf22fff27640014127929fe5347e1460", 11336876), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_3),
+
+	// Reversion: The Escape (Steam, July 2019) (French)
+	WME_WINENTRY("reversion1", "",
+		WME_ENTRY2s("data.dcp", "371f8cde148050eda33e60cf059bf894", 283546874,
+			"xlanguage_fr.dcp", "5beabe999a110f31bddbc868f743c640", 11961697), Common::FR_FRA, ADGF_UNSTABLE, WME_1_9_3),
+
+	// Reversion: The Escape (Steam, July 2019) (Italian)
+	WME_WINENTRY("reversion1", "",
+		WME_ENTRY2s("data.dcp", "371f8cde148050eda33e60cf059bf894", 283546874,
+			"xlanguage_it.dcp", "a98fa205490f7205d8cc301ab05ed115", 11564269), Common::IT_ITA, ADGF_UNSTABLE, WME_1_9_3),
+
+	// Reversion: The Escape (Steam, July 2019) (Latvian)
+	WME_WINENTRY("reversion1", "",
+		WME_ENTRY2s("data.dcp", "371f8cde148050eda33e60cf059bf894", 283546874,
+			"xlanguage_lv.dcp", "6983daaf6bba6a496a73e272dbe274c4", 11436318), Common::LV_LAT, ADGF_UNSTABLE, WME_1_9_3),
+
+	// Reversion: The Escape (Steam, July 2019) (Chinese)
+	WME_WINENTRY("reversion1", "",
+		WME_ENTRY2s("data.dcp", "371f8cde148050eda33e60cf059bf894", 283546874,
+			"xlanguage_nz.dcp", "51b9d4cb6c4a571503e1d75fc4b4024c", 13739377), Common::ZH_CNA, ADGF_UNSTABLE, WME_1_9_3),
+
+	// Reversion: The Escape (Steam, July 2019) (Polish)
+	WME_WINENTRY("reversion1", "",
+		WME_ENTRY2s("data.dcp", "371f8cde148050eda33e60cf059bf894", 283546874,
+			"xlanguage_pl.dcp", "bf880fbe62c7743063b37447e228d3a8", 11551855), Common::PL_POL, ADGF_UNSTABLE, WME_1_9_3),
+
+	// Reversion: The Escape (Steam, July 2019) (Portuguese)
+	WME_WINENTRY("reversion1", "",
+		WME_ENTRY2s("data.dcp", "371f8cde148050eda33e60cf059bf894", 283546874,
+			"xlanguage_pt.dcp", "44a1ec3499e968373140dfef041099af", 10642716), Common::PT_BRA, ADGF_UNSTABLE, WME_1_9_3),
+
+	// Reversion: The Escape (Steam, July 2019) (Russian)
+	WME_WINENTRY("reversion1", "",
+		WME_ENTRY2s("data.dcp", "371f8cde148050eda33e60cf059bf894", 283546874,
+			"xlanguage_ru.dcp", "c5860426055e72a0d1ce3467e1835572", 10843778), Common::RU_RUS, ADGF_UNSTABLE, WME_1_9_3),
+
+	// Reversion: The Escape (Steam, July 2019) (Simplified Chinese)
+	WME_WINENTRY("reversion1", "",
+		WME_ENTRY2s("data.dcp", "371f8cde148050eda33e60cf059bf894", 283546874,
+			"xlanguage_zh_s.dcp", "9df07bd28ee2378f684892f079e4166b", 12625743), Common::ZH_CNA, ADGF_UNSTABLE, WME_1_9_3),
+
+	// Reversion: The Escape (Steam, July 2019) (Traditional Chinese)
+	WME_WINENTRY("reversion1", "",
+		WME_ENTRY2s("data.dcp", "371f8cde148050eda33e60cf059bf894", 283546874,
+			"xlanguage_zh_t.dcp", "3ddeeddbc625077fe8ea0e53108fcdba", 12551685), Common::ZH_TWN, ADGF_UNSTABLE, WME_1_9_3),
+
+	// Reversion: The Escape (Steam, July 2019) (Spanish)
+	WME_PLATENTRY("reversion1", "",
+		WME_ENTRY3s("data.dcp", "8e8e5f889b93be60ec9b4fb49fa57f35", 283564473,
+					"data.dcp", "8e8e5f889b93be60ec9b4fb49fa57f35", 283564473,
+					"Linux.dcp", "2e27778dce77db368b8353895a32930f", 3788181), Common::ES_ESP, Common::kPlatformLinux, ADGF_UNSTABLE, WME_LITE),
+
+	// Reversion: The Escape (Steam, July 2019) (German)
+	WME_PLATENTRY("reversion1", "",
+		WME_ENTRY3s("data.dcp", "8e8e5f889b93be60ec9b4fb49fa57f35", 283564473,
+			"xlanguage_de.dcp", "41e6f33c9c9fd9c8942153cc75975c06", 14036212,
+					"Linux.dcp", "2e27778dce77db368b8353895a32930f", 3788181), Common::DE_DEU, Common::kPlatformLinux, ADGF_UNSTABLE, WME_LITE),
+
+	// Reversion: The Escape (Steam, July 2019) (English)
+	WME_PLATENTRY("reversion1", "",
+		WME_ENTRY3s("data.dcp", "8e8e5f889b93be60ec9b4fb49fa57f35", 283564473,
+			"xlanguage_en.dcp", "1740dfcf1008d5bf5cfff091d17df145", 11336876,
+					"Linux.dcp", "2e27778dce77db368b8353895a32930f", 3788181), Common::EN_ANY, Common::kPlatformLinux, ADGF_UNSTABLE, WME_LITE),
+
+	// Reversion: The Escape (Steam, July 2019) (French)
+	WME_PLATENTRY("reversion1", "",
+		WME_ENTRY3s("data.dcp", "8e8e5f889b93be60ec9b4fb49fa57f35", 283564473,
+			"xlanguage_fr.dcp", "3638aba23c17a06ee03253352345cf74", 11961697,
+					"Linux.dcp", "2e27778dce77db368b8353895a32930f", 3788181), Common::FR_FRA, Common::kPlatformLinux, ADGF_UNSTABLE, WME_LITE),
+
+	// Reversion: The Escape (Steam, July 2019) (Italian)
+	WME_PLATENTRY("reversion1", "",
+		WME_ENTRY3s("data.dcp", "8e8e5f889b93be60ec9b4fb49fa57f35", 283564473,
+			"xlanguage_it.dcp", "80abe88fb49b8e30aa9eb7ce8bfa1600", 11564269,
+					"Linux.dcp", "2e27778dce77db368b8353895a32930f", 3788181), Common::IT_ITA, Common::kPlatformLinux, ADGF_UNSTABLE, WME_LITE),
+
+	// Reversion: The Escape (Steam, July 2019) (Latvian)
+	WME_PLATENTRY("reversion1", "",
+		WME_ENTRY3s("data.dcp", "8e8e5f889b93be60ec9b4fb49fa57f35", 283564473,
+			"xlanguage_lv.dcp", "aa6be87b3227a7786206f05786e9982a", 11436318,
+					"Linux.dcp", "2e27778dce77db368b8353895a32930f", 3788181), Common::LV_LAT, Common::kPlatformLinux, ADGF_UNSTABLE, WME_LITE),
+
+	// Reversion: The Escape (Steam, July 2019) (Chinese)
+	WME_PLATENTRY("reversion1", "",
+		WME_ENTRY3s("data.dcp", "8e8e5f889b93be60ec9b4fb49fa57f35", 283564473,
+			"xlanguage_nz.dcp", "858fcd838458a584b4c0c71e1b7524c8", 15649035,
+					"Linux.dcp", "2e27778dce77db368b8353895a32930f", 3788181), Common::ZH_CNA, Common::kPlatformLinux, ADGF_UNSTABLE, WME_LITE),
+
+	// Reversion: The Escape (Steam, July 2019) (Polish)
+	WME_PLATENTRY("reversion1", "",
+		WME_ENTRY3s("data.dcp", "8e8e5f889b93be60ec9b4fb49fa57f35", 283564473,
+			"xlanguage_pl.dcp", "8ba30c378de8a7a7102ef14f17ad7687", 11982966,
+					"Linux.dcp", "2e27778dce77db368b8353895a32930f", 3788181), Common::PL_POL, Common::kPlatformLinux, ADGF_UNSTABLE, WME_LITE),
+
+	// Reversion: The Escape (Steam, July 2019) (Portuguese)
+	WME_PLATENTRY("reversion1", "",
+		WME_ENTRY3s("data.dcp", "8e8e5f889b93be60ec9b4fb49fa57f35", 283564473,
+			"xlanguage_pt.dcp", "f3c2c3fa8fa63a41552cae6789c7138d", 10642716,
+					"Linux.dcp", "2e27778dce77db368b8353895a32930f", 3788181), Common::PT_BRA, Common::kPlatformLinux, ADGF_UNSTABLE, WME_LITE),
+
+	// Reversion: The Escape (Steam, July 2019) (Russian)
+	WME_PLATENTRY("reversion1", "",
+		WME_ENTRY3s("data.dcp", "8e8e5f889b93be60ec9b4fb49fa57f35", 283564473,
+			"xlanguage_ru.dcp", "4e01e8d4759fddbcb6eb07d19c0c3335", 10866770,
+					"Linux.dcp", "2e27778dce77db368b8353895a32930f", 3788181), Common::RU_RUS, Common::kPlatformLinux, ADGF_UNSTABLE, WME_LITE),
+
+	// Reversion: The Escape (Steam, July 2019) (Spanish)
+	WME_PLATENTRY("reversion1", "",
+		WME_ENTRY3s("data.dcp", "5a68f570fa4ff84b1479794447d69f48", 283564473,
+					"data.dcp", "5a68f570fa4ff84b1479794447d69f48", 283564473,
+					"Mac.dcp", "50911598561dc0ac7d050aeadbb58815", 4866263), Common::ES_ESP, Common::kPlatformMacintosh, ADGF_UNSTABLE, WME_LITE),
+
+	// Reversion: The Escape (Steam, July 2019) (German)
+	WME_PLATENTRY("reversion1", "",
+		WME_ENTRY3s("data.dcp", "5a68f570fa4ff84b1479794447d69f48", 283564473,
+			"xlanguage_de.dcp", "41e6f33c9c9fd9c8942153cc75975c06", 14036212,
+					"Mac.dcp", "50911598561dc0ac7d050aeadbb58815", 4866263), Common::DE_DEU, Common::kPlatformMacintosh, ADGF_UNSTABLE, WME_LITE),
+
+	// Reversion: The Escape (Steam, July 2019) (English)
+	WME_PLATENTRY("reversion1", "",
+		WME_ENTRY3s("data.dcp", "5a68f570fa4ff84b1479794447d69f48", 283564473,
+			"xlanguage_en.dcp", "1740dfcf1008d5bf5cfff091d17df145", 11336876,
+					"Mac.dcp", "50911598561dc0ac7d050aeadbb58815", 4866263), Common::EN_ANY, Common::kPlatformMacintosh, ADGF_UNSTABLE, WME_LITE),
+
+	// Reversion: The Escape (Steam, July 2019) (French)
+	WME_PLATENTRY("reversion1", "",
+		WME_ENTRY3s("data.dcp", "5a68f570fa4ff84b1479794447d69f48", 283564473,
+			"xlanguage_fr.dcp", "3638aba23c17a06ee03253352345cf74", 11961697,
+					"Mac.dcp", "50911598561dc0ac7d050aeadbb58815", 4866263), Common::FR_FRA, Common::kPlatformMacintosh, ADGF_UNSTABLE, WME_LITE),
+
+	// Reversion: The Escape (Steam, July 2019) (Italian)
+	WME_PLATENTRY("reversion1", "",
+		WME_ENTRY3s("data.dcp", "5a68f570fa4ff84b1479794447d69f48", 283564473,
+			"xlanguage_it.dcp", "80abe88fb49b8e30aa9eb7ce8bfa1600", 11564269,
+					"Mac.dcp", "50911598561dc0ac7d050aeadbb58815", 4866263), Common::IT_ITA, Common::kPlatformMacintosh, ADGF_UNSTABLE, WME_LITE),
+
+	// Reversion: The Escape (Steam, July 2019) (Latvian)
+	WME_PLATENTRY("reversion1", "",
+		WME_ENTRY3s("data.dcp", "5a68f570fa4ff84b1479794447d69f48", 283564473,
+			"xlanguage_lv.dcp", "aa6be87b3227a7786206f05786e9982a", 11436318,
+					"Mac.dcp", "50911598561dc0ac7d050aeadbb58815", 4866263), Common::LV_LAT, Common::kPlatformMacintosh, ADGF_UNSTABLE, WME_LITE),
+
+	// Reversion: The Escape (Steam, July 2019) (Chinese)
+	WME_PLATENTRY("reversion1", "",
+		WME_ENTRY3s("data.dcp", "5a68f570fa4ff84b1479794447d69f48", 283564473,
+			"xlanguage_nz.dcp", "858fcd838458a584b4c0c71e1b7524c8", 15649035,
+					"Mac.dcp", "50911598561dc0ac7d050aeadbb58815", 4866263), Common::ZH_CNA, Common::kPlatformMacintosh, ADGF_UNSTABLE, WME_LITE),
+
+	// Reversion: The Escape (Steam, July 2019) (Polish)
+	WME_PLATENTRY("reversion1", "",
+		WME_ENTRY3s("data.dcp", "5a68f570fa4ff84b1479794447d69f48", 283564473,
+			"xlanguage_pl.dcp", "8762cbda33ddb6def83890761c608652", 11551887,
+					"Mac.dcp", "50911598561dc0ac7d050aeadbb58815", 4866263), Common::PL_POL, Common::kPlatformMacintosh, ADGF_UNSTABLE, WME_LITE),
+
+	// Reversion: The Escape (Steam, July 2019) (Portuguese)
+	WME_PLATENTRY("reversion1", "",
+		WME_ENTRY3s("data.dcp", "5a68f570fa4ff84b1479794447d69f48", 283564473,
+			"xlanguage_pt.dcp", "f3c2c3fa8fa63a41552cae6789c7138d", 10642716,
+					"Mac.dcp", "50911598561dc0ac7d050aeadbb58815", 4866263), Common::PT_BRA, Common::kPlatformMacintosh, ADGF_UNSTABLE, WME_LITE),
+
+	// Reversion: The Escape (Steam, July 2019) (Russian)
+	WME_PLATENTRY("reversion1", "",
+		WME_ENTRY3s("data.dcp", "5a68f570fa4ff84b1479794447d69f48", 283564473,
+			"xlanguage_ru.dcp", "4e01e8d4759fddbcb6eb07d19c0c3335", 10866770,
+					"Mac.dcp", "50911598561dc0ac7d050aeadbb58815", 4866263), Common::RU_RUS, Common::kPlatformMacintosh, ADGF_UNSTABLE, WME_LITE),
+
 	// Reversion: The Meeting (Chinese)
 	WME_WINENTRY("reversion2", "",
 		WME_ENTRY2s("xlanguage_nz.dcp", "8c3709474a87a7876109025dff41ff3f", 8746015,
@@ -2163,7 +2343,25 @@ static const WMEGameDescription gameDescriptions[] = {
 		WME_ENTRY3s("data.dcp", "3c34d583c658b75650f0c978d47fd59d", 272228767,
 					"xlanguage_fr.dcp", "0e7d28a0fec59b2613ab67673fff9e54", 8844755,
 					"Linux.dcp", "16c3a8627216aab5b31c43186e0dfa70", 984535), Common::FR_FRA, Common::kPlatformLinux, ADGF_UNSTABLE, WME_LITE),
-	
+
+	// Reversion: The Meeting (Steam, August 2019) (Italian)
+	WME_PLATENTRY("reversion2", "",
+		WME_ENTRY3s("data.dcp", "3c34d583c658b75650f0c978d47fd59d", 272228767,
+			"xlanguage_it.dcp", "b2cc0807a94d94befb4350db13659ef6", 11498415,
+					"Linux.dcp", "16c3a8627216aab5b31c43186e0dfa70", 984535), Common::IT_ITA, Common::kPlatformLinux, ADGF_UNSTABLE, WME_LITE),
+
+	// Reversion: The Meeting (Steam, August 2019) (Chinese)
+	WME_PLATENTRY("reversion2", "",
+		WME_ENTRY3s("data.dcp", "3c34d583c658b75650f0c978d47fd59d", 272228767,
+			"xlanguage_nz.dcp", "fcceb1300b9819abaee6832b7aef7f90", 10757594,
+					"Linux.dcp", "16c3a8627216aab5b31c43186e0dfa70", 984535), Common::ZH_CNA, Common::kPlatformLinux, ADGF_UNSTABLE, WME_LITE),
+
+	// Reversion: The Meeting (Steam, August 2019) (Russian)
+	WME_PLATENTRY("reversion2", "",
+		WME_ENTRY3s("data.dcp", "3c34d583c658b75650f0c978d47fd59d", 272228767,
+			"xlanguage_ru.dcp", "227b88befc98e5c8c0e25825ac80b6ca", 10454450,
+					"Linux.dcp", "16c3a8627216aab5b31c43186e0dfa70", 984535), Common::RU_RUS, Common::kPlatformLinux, ADGF_UNSTABLE, WME_LITE),
+
 	// Reversion: The Meeting (Steam, August 2019) (Spanish)
 	WME_PLATENTRY("reversion2", "",
 		WME_ENTRY3s("data.dcp", "99ab5a155c60377a7a1e64d9dd8f71aa", 272228767,
@@ -2181,6 +2379,24 @@ static const WMEGameDescription gameDescriptions[] = {
 		WME_ENTRY3s("data.dcp", "99ab5a155c60377a7a1e64d9dd8f71aa", 272228767,
 					"xlanguage_fr.dcp", "b7f68c7a9dc6f75eb995cdda77a89692", 8844755,
 					"Mac.dcp", "0b8d95dcb1f7e8c7c2c49e58db2764b6", 1728476), Common::FR_FRA, Common::kPlatformMacintosh, ADGF_UNSTABLE, WME_LITE),
+
+	// Reversion: The Meeting (Steam, August 2019) (Italian)
+	WME_PLATENTRY("reversion2", "",
+		WME_ENTRY3s("data.dcp", "99ab5a155c60377a7a1e64d9dd8f71aa", 272228767,
+					"xlanguage_it.dcp", "b2cc0807a94d94befb4350db13659ef6", 11498415,
+					"Mac.dcp", "0b8d95dcb1f7e8c7c2c49e58db2764b6", 1728476), Common::IT_ITA, Common::kPlatformMacintosh, ADGF_UNSTABLE, WME_LITE),
+
+	// Reversion: The Meeting (Steam, August 2019) (Chinese)
+	WME_PLATENTRY("reversion2", "",
+		WME_ENTRY3s("data.dcp", "99ab5a155c60377a7a1e64d9dd8f71aa", 272228767,
+					"xlanguage_nz.dcp", "fcceb1300b9819abaee6832b7aef7f90", 10757594,
+					"Mac.dcp", "0b8d95dcb1f7e8c7c2c49e58db2764b6", 1728476), Common::ZH_CNA, Common::kPlatformMacintosh, ADGF_UNSTABLE, WME_LITE),
+
+	// Reversion: The Meeting (Steam, August 2019) (Russian)
+	WME_PLATENTRY("reversion2", "",
+		WME_ENTRY3s("data.dcp", "99ab5a155c60377a7a1e64d9dd8f71aa", 272228767,
+					"xlanguage_ru.dcp", "227b88befc98e5c8c0e25825ac80b6ca", 10454450,
+					"Mac.dcp", "0b8d95dcb1f7e8c7c2c49e58db2764b6", 1728476), Common::RU_RUS, Common::kPlatformMacintosh, ADGF_UNSTABLE, WME_LITE),
 
 	// Reversion: The Meeting (Steam, November 2019) (Spanish)
 	WME_WINENTRY("reversion2", "",
@@ -2206,6 +2422,11 @@ static const WMEGameDescription gameDescriptions[] = {
 	WME_WINENTRY("reversion2", "",
 		WME_ENTRY2s("data.dcp", "5b1f360d29a650ea202a89903412e539", 272211168,
 					"xlanguage_it.dcp", "2c2e8d80719bcb5d350d88efa738ea8c", 11495758), Common::IT_ITA, ADGF_UNSTABLE, WME_1_9_3),
+
+	// Reversion: The Meeting (Steam, November 2019) (Chinese)
+	WME_WINENTRY("reversion2", "",
+		WME_ENTRY2s("data.dcp", "5b1f360d29a650ea202a89903412e539", 272211168,
+					"xlanguage_nz.dcp", "45f52816d5ec5f8e0c1bd70a7aa17f7c", 8847936), Common::ZH_CNA, ADGF_UNSTABLE, WME_1_9_3),
 	
 	// Reversion: The Meeting (Steam, November 2019) (Portuguese)
 	WME_WINENTRY("reversion2", "",
@@ -2257,6 +2478,12 @@ static const WMEGameDescription gameDescriptions[] = {
 					"xlanguage_it.dcp", "f3743347c7f6a99a0e0c476146bc778b", 11495758,
 					"Linux.dcp", "16c3a8627216aab5b31c43186e0dfa70", 984535), Common::IT_ITA, Common::kPlatformLinux, ADGF_UNSTABLE, WME_LITE),
 
+	// Reversion: The Meeting (Steam, November 2019) (Chinese)
+	WME_PLATENTRY("reversion2", "",
+		WME_ENTRY3s("data.dcp", "3c34d583c658b75650f0c978d47fd59d", 272228767,
+					"xlanguage_nz.dcp", "fcceb1300b9819abaee6832b7aef7f90", 10757594,
+					"Linux.dcp", "16c3a8627216aab5b31c43186e0dfa70", 984535), Common::ZH_CNA, Common::kPlatformLinux, ADGF_UNSTABLE, WME_LITE),
+
 	// Reversion: The Meeting (Steam, November 2019) (Portuguese)
 	WME_PLATENTRY("reversion2", "",
 		WME_ENTRY3s("data.dcp", "3c34d583c658b75650f0c978d47fd59d", 272228767,
@@ -2304,6 +2531,12 @@ static const WMEGameDescription gameDescriptions[] = {
 		WME_ENTRY3s("data.dcp", "99ab5a155c60377a7a1e64d9dd8f71aa", 272228767,
 					"xlanguage_it.dcp", "8f84605a6d58cf118a441e64a8fd0992", 11495758,
 					"Mac.dcp", "0b8d95dcb1f7e8c7c2c49e58db2764b6", 1728476), Common::IT_ITA, Common::kPlatformMacintosh, ADGF_UNSTABLE, WME_LITE),
+
+	// Reversion: The Meeting (Steam, November 2019) (Chinese)
+	WME_PLATENTRY("reversion2", "",
+		WME_ENTRY3s("data.dcp", "99ab5a155c60377a7a1e64d9dd8f71aa", 272228767,
+					"xlanguage_nz.dcp", "fcceb1300b9819abaee6832b7aef7f90", 10757594,
+					"Mac.dcp", "0b8d95dcb1f7e8c7c2c49e58db2764b6", 1728476), Common::ZH_CNA, Common::kPlatformMacintosh, ADGF_UNSTABLE, WME_LITE),
 
 	// Reversion: The Meeting (Steam, November 2019) (Portuguese)
 	WME_PLATENTRY("reversion2", "",
@@ -2562,6 +2795,10 @@ static const WMEGameDescription gameDescriptions[] = {
 	// Wilma Tetris
 	WME_WINENTRY("wtetris", "",
 		WME_ENTRY1s("wtetris.exe", "fb89ec8c4fa2279120a8939449c0bda9", 3918669), Common::EN_ANY, ADGF_UNSTABLE, WME_1_1_39),
+
+	// Zilm: A Game of Reflex
+	WME_WINENTRY("Zilm", "",
+		WME_ENTRY1s("data.dcp", "81cece0c8105b4725fc35064a32b4b52", 351726), Common::EN_ANY, ADGF_UNSTABLE, LATEST_VERSION),
 
 	// Zilm: A Game of Reflex 1.0
 	WME_WINENTRY("Zilm", "1.0",
