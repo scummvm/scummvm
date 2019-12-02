@@ -93,22 +93,22 @@ const char *Lingo::findNextDefinition(const char *s) {
 		if (!*res)
 			return NULL;
 
-		if (!strncmp(res, "macro ", 6)) {
+		if (!scumm_strnicmp(res, "macro ", 6)) {
 			debugC(1, kDebugLingoCompile, "findNextDefinition(): See 'macros ' construct");
 			return res;
 		}
 
-		if (!strncmp(res, "on ", 3)) {
+		if (!scumm_strnicmp(res, "on ", 3)) {
 			debugC(1, kDebugLingoCompile, "findNextDefinition(): See 'on ' construct");
 			return res;
 		}
 
-		if (!strncmp(res, "factory ", 8)) {
+		if (!scumm_strnicmp(res, "factory ", 8)) {
 			debugC(1, kDebugLingoCompile, "findNextDefinition(): See 'factory ' construct");
 			return res;
 		}
 
-		if (!strncmp(res, "method ", 7)) {
+		if (!scumm_strnicmp(res, "method ", 7)) {
 			debugC(1, kDebugLingoCompile, "findNextDefinition(): See 'method ' construct");
 			return res;
 		}
@@ -163,9 +163,9 @@ void Lingo::addCode(const char *code, ScriptType type, uint16 id) {
 		do {
 			Common::String chunk(begin, end);
 
-			if (chunk.hasPrefix("factory") || chunk.hasPrefix("method"))
+			if (chunk.hasPrefixIgnoreCase("factory") || chunk.hasPrefixIgnoreCase("method"))
 				_inFactory = true;
-			else if (chunk.hasPrefix("macro") || chunk.hasPrefix("on"))
+			else if (chunk.hasPrefixIgnoreCase("macro") || chunk.hasPrefixIgnoreCase("on"))
 				_inFactory = false;
 			else
 				_inFactory = false;
