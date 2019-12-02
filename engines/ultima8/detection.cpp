@@ -28,8 +28,6 @@
 #include "common/memstream.h"
 #include "common/system.h"
 #include "common/translation.h"
-#include "graphics/colormasks.h"
-#include "graphics/surface.h"
 
 static const PlainGameDescriptor agsGames[] = {
 	{ "ultima8", "Ultima 8 - Pagan" },

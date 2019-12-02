@@ -22,9 +22,9 @@
 
 #include "ultima8/misc/pent_include.h"
 #include "ultima8/graphics/texture.h"
-#include "ultima8/graphics/textureBitmap.h"
-#include "ultima8/graphics/textureTarga.h"
-#include "ultima8/graphics/texturePNG.h"
+#include "ultima8/graphics/texture_bitmap.h"
+#include "ultima8/graphics/texture_targa.h"
+#include "ultima8/graphics/texture_png.h"
 
 #include <cstring>
 
@@ -93,6 +93,34 @@ Texture *Texture::Create(IDataSource *ds, const char *filename) {
 
 	// Couldn't find it
 	return 0;
+}
+
+void Texture::loadSurface(const Graphics::Surface *surf) {
+	assert(surf->format.bytesPerPixel == 2 || surf->format.bytesPerPixel == 4);
+	this->width = surf->w;
+	this->height = surf->h;
+	this->format = TEX_FMT_STANDARD;
+	this->wlog2 = -1;
+	this->hlog2 = -1;
+
+	buffer = new uint32[width * height];
+
+	// Repack RGBA
+	uint32 pixel, i = 0;
+	byte r, g, b, a;
+	for (int y = 0; y < surf->h; ++y) {
+		const byte *srcP = (const byte *)surf->getBasePtr(0, y);
+
+		for (int x = 0; x < surf->w; ++x, srcP += surf->format.bytesPerPixel) {
+			pixel = (surf->format.bytesPerPixel == 2) ? *((uint16 *)srcP) : *((uint32 *)srcP);
+			surf->format.colorToARGB(pixel, a, r, g, b);
+
+			buffer[i++] = (r << TEX32_R_SHIFT)
+				| (g << TEX32_G_SHIFT)
+				| (b << TEX32_B_SHIFT)
+				| (a << TEX32_A_SHIFT);
+		}
+	}
 }
 
 } // End of namespace Ultima8

@@ -25,6 +25,10 @@ MODULE_OBJS := \
 	filesys/savegame_writer.o \
 	filesys/u8_save_file.o \
 	filesys/zip_file.o \
+	graphics/texture.o \
+	graphics/texture_bitmap.o \
+	graphics/texture_png.o \
+	graphics/texture_targa.o \
 	kernel/allocator.o \
 	kernel/core_app.o \
 	kernel/delay_process.o \
@@ -114,40 +118,3 @@ endif
 
 # Include common rules
 include $(srcdir)/rules.mk
-
-# graphics/AnimDat.o \
-# graphics/BaseSoftRenderSurface.o \
-# graphics/FrameID.o \
-# graphics/GumpShapeArchive.o \
-# graphics/InverterProcess.o \
-# graphics/MainShapeArchive.o \
-# graphics/Palette.o \
-# graphics/PaletteFaderProcess.o \
-# graphics/PaletteManager.o \
-# graphics/PNGWriter.o \
-# graphics/RenderSurface.o \
-# graphics/ScalerManager.o \
-# graphics/Shape.o \
-# graphics/ShapeArchive.o \
-# graphics/ShapeFrame.o \
-# graphics/ShapeInfo.o \
-# graphics/SKFPlayer.o \
-# graphics/SoftRenderSurface.o \
-# graphics/Texture.o \
-# graphics/TextureBitmap.o \
-# graphics/TexturePNG.o \
-# graphics/TextureTarga.o \
-# graphics/TypeFlags.o \
-# graphics/WpnOvlayDat.o \
-# graphics/XFormBlend.o \
-# graphics/fonts/FixedWidthFont.o \
-# graphics/fonts/Font.o \
-# graphics/fonts/FontManager.o \
-# graphics/fonts/FontShapeArchive.o \
-# graphics/fonts/JPFont.o \
-# graphics/fonts/JPRenderedText.o \
-# graphics/fonts/RenderedText.o \
-# graphics/fonts/ShapeFont.o \
-# graphics/fonts/ShapeRenderedText.o \
-# graphics/fonts/TTFont.o \
-# graphics/fonts/TTFRenderedText.o \

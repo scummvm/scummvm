@@ -29,8 +29,7 @@ namespace Ultima8 {
 
 // container structure for bitmaps .BMP file
 struct TextureBitmap : public Texture {
-	TextureBitmap() : Texture() {
-	}
+	TextureBitmap() : Texture() {}
 
 	// False on Error
 	virtual bool Read(IDataSource *ds);

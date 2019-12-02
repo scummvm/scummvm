@@ -31,15 +31,10 @@ struct TGA;
 
 // container structure for bitmaps .BMP file
 struct TextureTarga : public Texture {
-	TextureTarga() : Texture() {
-	}
+	TextureTarga() : Texture() {}
 
 	// False on Error
 	virtual bool Read(IDataSource *ds);
-
-protected:
-
-	void ConvertFormat(uint8 *buffer, TGA &tga);
 };
 
 } // End of namespace Ultima8
