@@ -3,6 +3,12 @@ MODULE := engines/ultima8
 MODULE_OBJS := \
 	detection.o \
 	ultima8.o \
+	conf/convert_shape.o \
+	conf/convert_shape_u8.o \
+	conf/convert_shape_crusader.o \
+	conf/config_file_manager.o \
+	conf/ini_file.o \
+	conf/setting_manager.o \
 	filesys/archive.o \
 	filesys/archive_file.o \
 	filesys/data.o \
@@ -43,6 +49,13 @@ MODULE_OBJS := \
 	misc/version.o \
 	std/misc.o \
 	std/string.o \
+	usecode/bit_set.o \
+	usecode/uc_list.o \
+	usecode/uc_machine.o \
+	usecode/uc_process.o \
+	usecode/uc_stack.o \
+	usecode/usecode.o \
+	usecode/usecode_flex.o \
 	world/camera_process.o \
 	world/container.o \
 	world/create_item_process.o \

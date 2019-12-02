@@ -404,120 +404,11 @@ namespace std {
 enum Precision { hex = 16, dec = 10 };
 }
 
-template<class T>
-class console_ostream : public Common::WriteStream {
+class ConsoleStream : public Common::WriteStream {
 private:
 	std::Precision _precision;
 public:
-	console_ostream() : Common::WriteStream(), _precision(std::Precision::hex) {}
-
-	virtual uint32 write(const void *dataPtr, uint32 dataSize) override {
-		Common::String str((const char *)dataPtr, (const char *)dataPtr + dataSize);
-		debug("%s", str.c_str());
-		return dataSize;
-	}
-
-	virtual int32 pos() const override {
-		return 0;
-	}
-
-	console_ostream &operator<<(const char *str) {
-		write(str, strlen(str));
-		return *this;
-	}
-
-	console_ostream &operator<<(const Common::String &str) {
-		write(str.c_str(), str.size());
-		return *this;
-	}
-
-	console_ostream &operator<<(int val) {
-		Common::String str = Common::String::format(
-			(_precision == std::hex) ? "%x" : "%d", val);
-		write(str.c_str(), str.size());
-		return *this;
-	}
-};
-
-//
-// Standard Output Stream Object
-//
-#ifndef SAFE_CONSOLE_STREAMS
-extern console_ostream<char>        pout;
-extern console_ostream<char>        *ppout;
-#else
-#define pout (*ppout)
-extern console_ostream<char>        *ppout;
-#endif
-
-/*
-//
-// Error Output Streambuf
-//
-template<class _E, class _Tr = std::char_traits<_E> >
-class console_err_streambuf : public std::basic_streambuf<_E, _Tr>
-{
-public:
-    console_err_streambuf() : std::basic_streambuf<_E, _Tr>() { }
-    virtual ~console_err_streambuf() { }
-    typedef typename _Tr::int_type int_type;
-    typedef typename _Tr::char_type char_type;
-
-protected:
-
-    // Output a character
-    virtual int_type overflow(int_type c = _Tr::eof())
-    {
-        if (!_Tr::eq_int_type(_Tr::eof(), c)) con.Putchar_err(_Tr::to_char_type(c));
-        return (_Tr::not_eof(c));
-    }
-
-    // Flush
-    virtual int sync()
-    {
-        return 0;
-    }
-};
-
-//
-// Error Output Stream
-//
-template<class _E, class _Tr = std::char_traits<_E> >
-class console_err_ostream : public std::basic_ostream<_E, _Tr>
-{
-//#ifndef SAFE_CONSOLE_STREAMS
-    console_err_streambuf<_E, _Tr> _Fb;
-//#endif
-
-public:
-    console_err_ostream() : std::basic_ostream<_E, _Tr>(&_Fb), _Fb() {}
-    console_err_ostream(console_err_streambuf<_E, _Tr> *Fb) : std::basic_ostream<_E, _Tr>(Fb) {}
-    virtual ~console_err_ostream() { }
-
-#if defined(MACOSX) && defined(__GNUC__)
-    // Work around a bug in Apple GCC 3.x which incorrectly tries to inline this method
-    int __attribute__ ((noinline)) printf (const char *fmt, ...)
-#else
-    int printf (const char *fmt, ...)
-#endif
-    {
-        va_list argptr;
-        va_start (argptr,fmt);
-        int ret = con.vPrintf_err(fmt, argptr);
-        va_end (argptr);
-        return ret;
-    }
-
-};
-*/
-
-template<class T>
-class console_err_ostream : public Common::WriteStream {
-public:
-	virtual uint32 write(const void *dataPtr, uint32 dataSize) override {
-		Common::String str((const char *)dataPtr, dataSize);
-		::error("%s", str.c_str());
-	}
+	ConsoleStream() : Common::WriteStream(), _precision(std::Precision::hex) {}
 
 	virtual int32 pos() const override {
 		return 0;
@@ -532,26 +423,55 @@ public:
 		write(str.c_str(), str.size());
 	}
 
-	console_err_ostream &operator<<(const char *s) {
+	ConsoleStream &operator<<(const char *s) {
 		write(s, strlen(s));
 		return *this;
 	}
 
-	console_err_ostream &operator<<(const void *ptr) {
+	ConsoleStream &operator<<(const void *ptr) {
 		Common::String str = Common::String::format("%p", ptr);
 		write(str.c_str(), str.size());
 		return *this;
 	}
 
-	console_err_ostream &operator<<(const Common::String &str) {
+	ConsoleStream &operator<<(const Common::String &str) {
 		write(str.c_str(), str.size());
 		return *this;
 	}
 
-	console_err_ostream &operator<<(int val) {
+	ConsoleStream &operator<<(int val) {
 		Common::String str = Common::String::format("%d", val);
 		write(str.c_str(), str.size());
 		return *this;
+	}
+};
+
+template<class T>
+class console_ostream : public ConsoleStream {
+	virtual uint32 write(const void *dataPtr, uint32 dataSize) override {
+		Common::String str((const char *)dataPtr, (const char *)dataPtr + dataSize);
+		debug("%s", str.c_str());
+		return dataSize;
+	}
+};
+
+//
+// Standard Output Stream Object
+//
+#ifndef SAFE_CONSOLE_STREAMS
+extern console_ostream<char>        pout;
+extern console_ostream<char>        *ppout;
+#else
+#define pout (*ppout)
+extern console_ostream<char>        *ppout;
+#endif
+
+template<class T>
+class console_err_ostream : public ConsoleStream {
+public:
+	virtual uint32 write(const void *dataPtr, uint32 dataSize) override {
+		Common::String str((const char *)dataPtr, dataSize);
+		::error("%s", str.c_str());
 	}
 };
 

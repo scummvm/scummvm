@@ -23,6 +23,7 @@
 #ifndef ULTIMA8_STD_CONTAINERS_H
 #define ULTIMA8_STD_CONTAINERS_H
 
+#include "common/algorithm.h"
 #include "common/array.h"
 #include "common/hashmap.h"
 #include "common/list.h"
@@ -47,6 +48,33 @@ public:
 			flag = i == last;
 			i = erase(i);
 		}
+
+		return first;
+	}
+};
+template<class T>
+class set {
+	struct Comparitor {
+		bool operator()(const T &a, const T &b) const {
+			return a.Compare(b);
+		}
+	};
+private:
+	Common::Array<T> _items;
+	Comparitor _comparitor;
+public:
+	typedef T *iterator;
+	typedef const T *const_iterator;
+
+	iterator begin() { return _items.begin(); }
+	iterator end() { return _items.end(); }
+
+	/**
+	 * Inserts a new item
+	 */
+	void insert(T val) {
+		_items.push_back(val);
+		Common::sort(begin(), end(), _comparitor);
 	}
 };
 

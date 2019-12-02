@@ -64,9 +64,27 @@ size_t string::rfind(char c, size_t pos) const {
 	return npos;
 }
 
+size_t string::find_first_of(const char *chars) const {
+	for (uint idx = 0; idx < _size; ++idx) {
+		if (strchr(chars, (*this)[idx]))
+			return idx;
+	}
+
+	return npos;
+}
+
 size_t string::find_first_not_of(char c) const {
 	for (uint idx = 0; idx < _size; ++idx) {
 		if ((*this)[idx] != c)
+			return idx;
+	}
+
+	return npos;
+}
+
+size_t string::find_first_not_of(const char *chars) const {
+	for (uint idx = 0; idx < _size; ++idx) {
+		if (!strchr(chars, (*this)[idx]))
 			return idx;
 	}
 
@@ -77,6 +95,15 @@ size_t string::find_last_not_of(char c) const {
 	for (int idx = (int)_size - 1; idx >= 0; --idx) {
 		if ((*this)[idx] != c)
 			return c;
+	}
+
+	return npos;
+}
+
+size_t string::find_last_not_of(const char *chars) const {
+	for (int idx = (int)_size - 1; idx >= 0; --idx) {
+		if (!strchr(chars, (*this)[idx]))
+			return idx;
 	}
 
 	return npos;

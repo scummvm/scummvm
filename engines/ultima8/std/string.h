@@ -41,6 +41,8 @@ public:
 	explicit string(char c) : Common::String(c) {}
 	string(size_t n, char c);
 
+	size_t length() const { return size(); }
+
 	/**
 	 * String square brackets allows modifying characters
 	 */
@@ -54,6 +56,10 @@ public:
 	 */
 	char operator[](size_t idx) const {
 		return Common::String::operator[](idx);
+	}
+
+	virtual int Compare(const string &s) const {
+		return compareTo(s);
 	}
 
 	/**
@@ -77,14 +83,29 @@ public:
 	size_t rfind(char c, size_t pos = npos) const;
 
 	/**
+	 * Find first character in the string that's any character of the passed string
+	 */
+	size_t find_first_of(const char *chars) const;
+
+	/**
 	 * Find first character in the string that's not the specified character
 	 */
 	size_t find_first_not_of(char c) const;
 
 	/**
+	 * Find first character in the string that's not any character of the passed string
+	 */
+	size_t find_first_not_of(const char *chars) const;
+
+	/**
 	 * Find the last character in the string that's not the specified character
 	 */
 	size_t find_last_not_of(char c) const;
+
+	/**
+	 * Find the last character in the string that's not in any of the passed characters
+	 */
+	size_t find_last_not_of(const char *chars) const;
 
 	/**
 	 * Return a substring of this string

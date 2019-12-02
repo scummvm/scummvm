@@ -22,12 +22,9 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "ultima8/std/string.h"
 #include "ultima8/misc/istring.h"
 #include "ultima8/std/containers.h"
+#include "ultima8/conf/ini_file.h"
 
 namespace Ultima8 {
-
-typedef std::map<Pentagram::istring, std::string, Common::CaseSensitiveString_Hash> KeyMap;
-
-class INIFile;
 
 class ConfigFileManager {
 public:

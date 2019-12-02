@@ -17,9 +17,10 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
 #include "ultima8/misc/pent_include.h"
-
 #include "ultima8/conf/setting_manager.h"
 #include "ultima8/conf/config_file_manager.h"
+
+namespace Ultima8 {
 
 using Pentagram::istring;
 
@@ -156,12 +157,11 @@ void SettingManager::registerCallback(istring key, ConfigCallback callback) {
 }
 
 void SettingManager::unregisterCallback(istring key, ConfigCallback callback) {
-	std::map<istring, std::vector<ConfigCallback> >::iterator i;
-	i = callbacks.find(key);
+	Callbacks::iterator i = callbacks.find(key);
+	if (i == callbacks.end())
+		return;
 
-	if (i == callbacks.end()) return;
-
-	std::vector<ConfigCallback> &cb = (*i).second;
+	std::vector<ConfigCallback> &cb = (*i)._value;
 	std::vector<ConfigCallback>::iterator iter;
 	for (iter = cb.begin(); iter != cb.end(); ++iter) {
 		if (*iter == callback) {
@@ -245,14 +245,16 @@ istring SettingManager::getConfigKey(istring key, Domain dom) {
 }
 
 void SettingManager::callCallbacks(istring key) {
-	std::map<istring, std::vector<ConfigCallback> >::iterator i;
+	Callbacks::iterator i;
 	i = callbacks.find(key);
 
 	if (i == callbacks.end()) return;
 
-	std::vector<ConfigCallback> &cb = (*i).second;
+	std::vector<ConfigCallback> &cb = (*i)._value;
 	std::vector<ConfigCallback>::iterator iter;
 	for (iter = cb.begin(); iter != cb.end(); ++iter) {
 		(*iter)(key);
 	}
 }
+
+} // End of namespace Ultima8

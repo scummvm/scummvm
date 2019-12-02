@@ -49,6 +49,9 @@ public:
 		DOM_CURRENT  = 100
 	};
 
+	typedef void (*ConfigCallback)(Pentagram::istring key);
+	typedef std::map<Common::String, std::vector<ConfigCallback>, Common::CaseSensitiveString_Hash > Callbacks;
+
 	//! read a config file. Multiple files may be read. Order is important.
 	//! \param fname The file to read
 	//! \param readonly If true, don't write to this file's tree (or the file)
@@ -94,8 +97,6 @@ public:
 	//! set the configuration section for a domain
 	void setDomainName(Domain dom, Pentagram::istring section);
 
-	typedef void (*ConfigCallback)(Pentagram::istring key);
-
 	//! register a function to be called when the key changes
 	void registerCallback(Pentagram::istring key, ConfigCallback callback);
 	//! unregister a callback
@@ -120,7 +121,7 @@ private:
 	Pentagram::istring getConfigKey(Pentagram::istring key, Domain dom);
 	void callCallbacks(Pentagram::istring key);
 
-	std::map<Common::String, std::vector<ConfigCallback>, Common::CaseSensitiveString_Hash > callbacks;
+	Callbacks callbacks;
 	std::vector<Pentagram::istring> domains;
 
 	Domain currentDomain;
