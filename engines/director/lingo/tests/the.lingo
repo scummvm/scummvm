@@ -14,3 +14,4 @@ set a = 5
 
 set gravityConst = the value of ( the text of cast A14)
 set the hilite of cast A32 to (a = 3)
+set the text of cast A14 = string( gravityConst )

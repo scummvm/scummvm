@@ -104,7 +104,7 @@ void checkEnd(Common::String *token, const char *expect, bool required) {
 %token tON tME
 
 %type<code> asgn begin elseif elsestmtoneliner end expr if when repeatwhile
-%type<code> repeatwith stmtlist tell reference
+%type<code> repeatwith stmtlist tell reference simpleexpr
 %type<narg> argdef arglist nonemptyarglist
 %type<s> on
 
@@ -185,6 +185,12 @@ asgn: tPUT expr tINTO ID 		{
 		g_lingo->codeInt($2[1]);
 		$$ = $4; }
 	| tSET THEENTITYWITHID expr tTO expr	{
+		g_lingo->code1(g_lingo->c_swap);
+		g_lingo->code1(g_lingo->c_theentityassign);
+		g_lingo->codeInt($2[0]);
+		g_lingo->codeInt($2[1]);
+		$$ = $5; }
+	| tSET THEENTITYWITHID simpleexpr tEQ expr	{
 		g_lingo->code1(g_lingo->c_swap);
 		g_lingo->code1(g_lingo->c_theentityassign);
 		g_lingo->codeInt($2[0]);
@@ -418,7 +424,7 @@ tell:	  tTELL				{
 		$$ = g_lingo->code1(g_lingo->c_tellcode);
 		g_lingo->code1(STOP); }
 
-expr: INT		{
+simpleexpr: INT		{
 		$$ = g_lingo->code1(g_lingo->c_intpush);
 		g_lingo->codeInt($1); }
 	| FLOAT		{
@@ -430,6 +436,13 @@ expr: INT		{
 	| STRING		{
 		$$ = g_lingo->code1(g_lingo->c_stringpush);
 		g_lingo->codeString($1->c_str()); }
+	| ID		{
+		$$ = g_lingo->code1(g_lingo->c_eval);
+		g_lingo->codeString($1->c_str());
+		delete $1; }
+	;
+
+expr: simpleexpr { $$ = $1; }
 	| reference
 	| FBLTINNOARGS 	{
 		g_lingo->codeFunc($1, 0);
@@ -441,10 +454,6 @@ expr: INT		{
 	| FBLTINARGLIST '(' nonemptyarglist ')'	{ g_lingo->codeFunc($1, $3); }
 	| ID '(' arglist ')'	{
 		$$ = g_lingo->codeFunc($1, $3);
-		delete $1; }
-	| ID		{
-		$$ = g_lingo->code1(g_lingo->c_eval);
-		g_lingo->codeString($1->c_str());
 		delete $1; }
 	| THEENTITY	{
 		$$ = g_lingo->code1(g_lingo->c_intpush);
