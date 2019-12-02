@@ -2821,7 +2821,7 @@ yyreduce:
 
   case 108:
 #line 505 "engines/director/lingo/lingo-gr.y"
-    { g_lingo->codeMe(0, 0); ;}
+    { g_lingo->codeMe(nullptr, 0); ;}
     break;
 
   case 109:
