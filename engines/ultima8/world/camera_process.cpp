@@ -32,7 +32,7 @@
 #include "ultima8/kernel/kernel.h"
 #include "ultima8/kernel/core_app.h"
 #include "ultima8/world/get_object.h"
-#inc
+
 #include "ultima8/filesys/idata_source.h"
 #include "ultima8/filesys/odata_source.h"
 
@@ -99,7 +99,7 @@ void CameraProcess::GetCameraLocation(int32 &x, int32 &y, int32 &z) {
 
 // Track item, do nothing
 CameraProcess::CameraProcess(uint16 _itemnum) :
-	time(0), elapsed(0), itemnum(_itemnum), last_framenum(0) {
+	_time(0), elapsed(0), itemnum(_itemnum), last_framenum(0) {
 	GetCameraLocation(sx, sy, sz);
 
 	if (itemnum) {
@@ -123,16 +123,16 @@ CameraProcess::CameraProcess(uint16 _itemnum) :
 
 // Stay over point
 CameraProcess::CameraProcess(int32 _x, int32 _y, int32 _z) :
-	ex(_x), ey(_y), ez(_z), time(0), elapsed(0), itemnum(0), last_framenum(0) {
+	ex(_x), ey(_y), ez(_z), _time(0), elapsed(0), itemnum(0), last_framenum(0) {
 	GetCameraLocation(sx, sy, sz);
 }
 
 // Scroll
 CameraProcess::CameraProcess(int32 _x, int32 _y, int32 _z, int32 _time) :
-	ex(_x), ey(_y), ez(_z), time(_time), elapsed(0), itemnum(0), last_framenum(0) {
+	ex(_x), ey(_y), ez(_z), _time(_time), elapsed(0), itemnum(0), last_framenum(0) {
 	GetCameraLocation(sx, sy, sz);
 	//pout << "Scrolling from (" << sx << "," << sy << "," << sz << ") to (" <<
-	//  ex << "," << ey << "," << ez << ") in " << time << " frames" << std::endl;
+	//  ex << "," << ey << "," << ez << ") in " << _time << " frames" << std::endl;
 }
 
 void CameraProcess::terminate() {
@@ -153,7 +153,7 @@ void CameraProcess::run() {
 		eq_y = 0;
 	}
 
-	if (time && elapsed > time) {
+	if (_time && elapsed > _time) {
 		result = 0; // do we need this
 		CameraProcess::SetCameraProcess(0); // This will terminate us
 		return;
@@ -179,7 +179,7 @@ void CameraProcess::ItemMoved() {
 }
 
 void CameraProcess::GetLerped(int32 &x, int32 &y, int32 &z, int32 factor, bool noupdate) {
-	if (time == 0) {
+	if (_time == 0) {
 		if (!noupdate) {
 
 			bool inBetween = true;
@@ -231,16 +231,16 @@ void CameraProcess::GetLerped(int32 &x, int32 &y, int32 &z, int32 factor, bool n
 		int32 sfactor = elapsed;
 		int32 efactor = elapsed + 1;
 
-		if (sfactor > time) sfactor = time;
-		if (efactor > time) efactor = time;
+		if (sfactor > _time) sfactor = _time;
+		if (efactor > _time) efactor = _time;
 
-		int32 lsx = ((sx * (time - sfactor) + ex * sfactor) / time);
-		int32 lsy = ((sy * (time - sfactor) + ey * sfactor) / time);
-		int32 lsz = ((sz * (time - sfactor) + ez * sfactor) / time);
+		int32 lsx = ((sx * (_time - sfactor) + ex * sfactor) / _time);
+		int32 lsy = ((sy * (_time - sfactor) + ey * sfactor) / _time);
+		int32 lsz = ((sz * (_time - sfactor) + ez * sfactor) / _time);
 
-		int32 lex = ((sx * (time - efactor) + ex * efactor) / time);
-		int32 ley = ((sy * (time - efactor) + ey * efactor) / time);
-		int32 lez = ((sz * (time - efactor) + ez * efactor) / time);
+		int32 lex = ((sx * (_time - efactor) + ex * efactor) / _time);
+		int32 ley = ((sy * (_time - efactor) + ey * efactor) / _time);
+		int32 lez = ((sz * (_time - efactor) + ez * efactor) / _time);
 
 		// Update the fast area
 		if (!noupdate) World::get_instance()->getCurrentMap()->updateFastArea(lsx, lsy, lsz, lex, ley, lez);
@@ -280,7 +280,7 @@ void CameraProcess::saveData(ODataSource *ods) {
 	ods->write4(static_cast<uint32>(ex));
 	ods->write4(static_cast<uint32>(ey));
 	ods->write4(static_cast<uint32>(ez));
-	ods->write4(static_cast<uint32>(time));
+	ods->write4(static_cast<uint32>(_time));
 	ods->write4(static_cast<uint32>(elapsed));
 	ods->write2(itemnum);
 	ods->write4(last_framenum);
@@ -298,7 +298,7 @@ bool CameraProcess::loadData(IDataSource *ids, uint32 version) {
 	ex = static_cast<int32>(ids->read4());
 	ey = static_cast<int32>(ids->read4());
 	ez = static_cast<int32>(ids->read4());
-	time = static_cast<int32>(ids->read4());
+	_time = static_cast<int32>(ids->read4());
 	elapsed = static_cast<int32>(ids->read4());
 	itemnum = ids->read2();
 	last_framenum = ids->read4();

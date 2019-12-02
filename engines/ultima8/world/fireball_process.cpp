@@ -21,7 +21,6 @@
  */
 
 #include "ultima8/misc/pent_include.h"
-
 #include "ultima8/world/fireball_process.h"
 #include "ultima8/world/item.h"
 #include "ultima8/world/current_map.h"
@@ -34,11 +33,12 @@
 
 #include "ultima8/filesys/idata_source.h"
 #include "ultima8/filesys/odata_source.h"
+#include "ultima8/std/misc.h"
 
 namespace Ultima8 {
 
 // p_dynamic_cast stuff
-DEFINE_RUNTIME_CLASSTYPE_CODE(FireballProcess, Process);
+DEFINE_RUNTIME_CLASSTYPE_CODE(FireballProcess, Process)
 
 FireballProcess::FireballProcess()
 	: Process() {

@@ -20,8 +20,10 @@
  *
  */
 
-#ifndef ITEMSORTER_H
-#define ITEMSORTER_H
+#ifndef ULTIMA8_WORLD_ITEMSORTER_H
+#define ULTIMA8_WORLD_ITEMSORTER_H
+
+namespace Ultima8 {
 
 class MainShapeArchive;
 class Item;
@@ -74,5 +76,6 @@ private:
 	bool NullPaintSortItem(SortItem *);
 };
 
+} // End of namespace Ultima8
 
-#endif //ITEMSORTER_H
+#endif

@@ -1033,7 +1033,7 @@ bool CurrentMap::sweepTest(const int32 start[3], const int32 end[3],
 
 				//find the possible first and last times
 				//of overlap along each axis
-				for (long i = 0 ; i < 3 ; i++) {
+				for (i = 0 ; i < 3; i++) {
 					int32 A_max = ext[i];
 					int32 A_min = -ext[i];
 					int32 B_max = other[i] + oext[i];
@@ -1092,9 +1092,10 @@ bool CurrentMap::sweepTest(const int32 start[3], const int32 end[3],
 
 				// store directions in which we're being blocked
 				uint8 dirs = 0;
-				for (int i = 0; i <= 2; ++i)
+				for (i = 0; i <= 2; ++i) {
 					if (first == u_0[i])
 						dirs |= (1 << i);
+				}
 
 				//they could have only collided if
 				//the first time of overlap occurred

@@ -23,6 +23,8 @@
 #ifndef ULTIMA8_WORLD_MISSILETRACKER_H
 #define ULTIMA8_WORLD_MISSILETRACKER_H
 
+namespace Ultima8 {
+
 class Item;
 
 class MissileTracker {
@@ -48,5 +50,7 @@ private:
 	int32 gravity;
 	int frames;
 };
+
+} // End of namespace Ultima8
 
 #endif

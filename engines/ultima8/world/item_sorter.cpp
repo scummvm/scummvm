@@ -300,11 +300,8 @@ inline bool SortItem::occludes(const SortItem &si2) const {
 	const bool bot_left_res = dot_bot_left <= 0;
 	const bool bot_right_res = dot_bot_right <= 0;
 
-	const bool occluded = right_res & left_res &
-	                      bot_right_res & bot_left_res &
-	                      top_right_res & top_left_res;
-
-	return occluded;
+	return right_res & left_res & bot_right_res & bot_left_res &
+		top_right_res & top_left_res;
 }
 
 inline bool SortItem::operator<(const SortItem &si2) const {

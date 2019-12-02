@@ -622,7 +622,7 @@ void UCMachine::execProcess(UCProcess *p) {
 			if (si16a != 0) {
 				p->stack.push2(static_cast<uint16>(si16b / si16a));
 			} else {
-				perr.printf("division by zero.\n");
+				perr.Print("division by zero.\n");
 				p->stack.push2(0);
 			}
 			LOGPF(("div\n"));
@@ -636,7 +636,7 @@ void UCMachine::execProcess(UCProcess *p) {
 			if (si32a != 0) {
 				p->stack.push4(static_cast<uint32>(si32b / si32a));
 			} else {
-				perr.printf("division by zero.\n");
+				perr.Print("division by zero.\n");
 				p->stack.push4(0);
 			}
 			LOGPF(("div\n"));
@@ -652,7 +652,7 @@ void UCMachine::execProcess(UCProcess *p) {
 			if (si16a != 0) {
 				p->stack.push2(static_cast<uint16>(si16b % si16a));
 			} else {
-				perr.printf("division by zero.\n");
+				perr.Print("division by zero.\n");
 				p->stack.push2(0);
 			}
 			LOGPF(("mod\n"));
@@ -667,7 +667,7 @@ void UCMachine::execProcess(UCProcess *p) {
 			if (si32a != 0) {
 				p->stack.push4(static_cast<uint32>(si32b % si32a));
 			} else {
-				perr.printf("division by zero.\n");
+				perr.Print("division by zero.\n");
 				p->stack.push4(0);
 			}
 			LOGPF(("mod long\n"));
@@ -1955,17 +1955,17 @@ void UCMachine::execProcess(UCProcess *p) {
 			// shouldn't happen
 			//! 0x79 is U8 only. Should be removed
 			LOGPF(("end\n"));
-			perr.printf("end of function opcode reached!\n");
+			perr.Print("end of function opcode reached!\n");
 			error = true;
 			break;
 
 		case 0x5B:
 		case 0x5C: // debugging
-			perr.printf("unhandled opcode %02X\n", opcode);
+			perr.Print("unhandled opcode %02X\n", opcode);
 			break;
 
 		default:
-			perr.printf("unhandled opcode %02X\n", opcode);
+			perr.Print("unhandled opcode %02X\n", opcode);
 
 		} // switch(opcode)
 
@@ -1979,7 +1979,7 @@ void UCMachine::execProcess(UCProcess *p) {
 	} // while(!cede && !error && !p->terminated && !p->terminate_deferred)
 
 	if (error) {
-		perr.printf("Process %d caused an error at %04X:%04X. Killing process.\n",
+		perr.Print("Process %d caused an error at %04X:%04X. Killing process.\n",
 		            p->pid, p->classid, p->ip);
 		p->terminateDeferred();
 	}

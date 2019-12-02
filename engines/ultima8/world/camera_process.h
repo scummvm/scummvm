@@ -88,7 +88,7 @@ private:
 
 	int32 sx, sy, sz;
 	int32 ex, ey, ez;
-	int32 time;
+	int32 _time;
 	int32 elapsed;
 	uint16 itemnum;
 
