@@ -24,7 +24,7 @@
 #define WORLD_ACTORS_ACTORANIM_H
 
 #include "ultima8/std/containers.h"
-#include "ultima8/world/actors/AnimAction.h"
+#include "ultima8/world/actors/anim_action.h"
 
 namespace Ultima8 {
 

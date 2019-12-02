@@ -51,8 +51,8 @@ public:
 protected:
 	virtual void saveData(ODataSource *ods);
 
-	bool isValidTarget(Actor *target);
-	bool isEnemy(Actor *target);
+	bool isValidTarget(Actor *target_);
+	bool isEnemy(Actor *target_);
 	bool inAttackRange();
 	int getTargetDirection();
 

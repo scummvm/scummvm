@@ -183,7 +183,7 @@ void MemoryManager::ConCmd_test(const Console::ArgvType &argv) {
 
 	t = new TestClassBase();
 
-	unpooled = SDL_GetTicks();
+	unpooled = g_system->getMillis();
 	for (repeat = 0; repeat < 100; ++repeat) {
 		for (i = 0; i < 10; ++i) {
 			// allocate
@@ -199,9 +199,9 @@ void MemoryManager::ConCmd_test(const Console::ArgvType &argv) {
 			t->removeNext();
 		}
 	}
-	unpooled = SDL_GetTicks() - unpooled;
+	unpooled = g_system->getMillis() - unpooled;
 
-	pooled = SDL_GetTicks();
+	pooled = g_system->getMillis();
 	for (repeat = 0; repeat < 100; ++repeat) {
 		for (i = 0; i < 10; ++i) {
 			// allocate
@@ -217,7 +217,7 @@ void MemoryManager::ConCmd_test(const Console::ArgvType &argv) {
 			t->removeNext();
 		}
 	}
-	pooled = SDL_GetTicks() - pooled;
+	pooled = g_system->getMillis() - pooled;
 
 	delete t;
 

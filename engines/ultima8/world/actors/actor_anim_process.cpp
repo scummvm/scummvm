@@ -25,8 +25,8 @@
 #include "ultima8/world/actors/actor_anim_process.h"
 #include "ultima8/games/game_data.h"
 #include "ultima8/world/actors/animation.h"
-#include "ultima8/graphics/AnimDat.h"
-#include "ultima8/world/actors/AnimAction.h"
+#include "ultima8/graphics/anim_dat.h"
+#include "ultima8/world/actors/anim_action.h"
 #include "ultima8/world/actors/main_actor.h"
 #include "ultima8/misc/direction.h"
 #include "ultima8/world/world.h"
@@ -187,16 +187,16 @@ void ActorAnimProcess::run() {
 		return;
 	}
 
-	bool result = true;
+	bool resultVal = true;
 	if (repeatcounter == 0) {
 		// next step:
 		int32 x, y, z;
 		a->getLocation(x, y, z);
-		result = tracker->stepFrom(x, y, z);
+		resultVal = tracker->stepFrom(x, y, z);
 		tracker->updateActorFlags();
 		currentstep++;
 
-		if (!result) {
+		if (!resultVal) {
 			// check possible error conditions
 
 			if (tracker->isDone() || (steps && currentstep >= steps)) {
@@ -382,8 +382,8 @@ void ActorAnimProcess::doSpecial() {
 			skull->setFlag(Item::FLG_FAST_ONLY);
 			int32 x, y, z;
 			a->getLocation(x, y, z);
-			int dir = a->getDir();
-			skull->move(x + 32 * x_fact[dir], y + 32 * y_fact[dir], z);
+			int dirNum = a->getDir();
+			skull->move(x + 32 * x_fact[dirNum], y + 32 * y_fact[dirNum], z);
 			hostile = skull;
 		} else if (a->getMapNum() != 54) { // Khumash-Gor doesn't summon ghouls
 			// otherwise, summon ghoul

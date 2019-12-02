@@ -509,22 +509,22 @@ bool Item::isOn(Item &item2) const {
 	return false;
 }
 
-bool Item::canExistAt(int32 x, int32 y, int32 z, bool needsupport) const {
+bool Item::canExistAt(int32 x_, int32 y_, int32 z_, bool needsupport) const {
 	CurrentMap *cm = World::get_instance()->getCurrentMap();
 	Item *support;
-	bool valid = cm->isValidPosition(x, y, z, getShape(), getObjId(),
+	bool valid = cm->isValidPosition(x_, y_, z_, getShape(), getObjId(),
 	                                 &support, 0);
 	return valid && (!needsupport || support);
 }
 
 int Item::getDirToItemCentre(Item &item2) const {
-	int32 ix, iy, iz;
-	getCentre(ix, iy, iz);
+	int32 xv, yv, zv;
+	getCentre(xv, yv, zv);
 
 	int32 i2x, i2y, i2z;
 	item2.getCentre(i2x, i2y, i2z);
 
-	return Get_WorldDirection(i2y - iy, i2x - ix);
+	return Get_WorldDirection(i2y - yv, i2x - xv);
 }
 
 int Item::getRange(Item &item2, bool checkz) const {
@@ -1001,10 +1001,10 @@ int32 Item::collideMove(int32 dx, int32 dy, int32 dz, bool teleport, bool force,
 	return 0;
 }
 
-unsigned int Item::countNearby(uint32 shape, uint16 range) {
+unsigned int Item::countNearby(uint32 shape_, uint16 range) {
 	CurrentMap *currentmap = World::get_instance()->getCurrentMap();
 	UCList itemlist(2);
-	LOOPSCRIPT(script, LS_SHAPE_EQUAL(shape));
+	LOOPSCRIPT(script, LS_SHAPE_EQUAL(shape_));
 	currentmap->areaSearch(&itemlist, script, sizeof(script),
 	                       this, range, false);
 	return itemlist.getSize();
@@ -1353,19 +1353,19 @@ void Item::leaveFastArea() {
 uint16 Item::openGump(uint32 gumpshape) {
 	if (flags & FLG_GUMP_OPEN) return 0;
 	assert(gump == 0);
-	Shape *shape = GameData::get_instance()->getGumps()->getShape(gumpshape);
+	Shape *shapeP = GameData::get_instance()->getGumps()->getShape(gumpshape);
 
 	ContainerGump *cgump;
 
 	if (getObjId() != 1) { //!! constant
-		cgump = new ContainerGump(shape, 0, objid, Gump::FLAG_ITEM_DEPENDENT |
+		cgump = new ContainerGump(shapeP, 0, objid, Gump::FLAG_ITEM_DEPENDENT |
 		                          Gump::FLAG_DRAGGABLE);
 	} else {
-		cgump = new PaperdollGump(shape, 0, objid, Gump::FLAG_ITEM_DEPENDENT |
+		cgump = new PaperdollGump(shapeP, 0, objid, Gump::FLAG_ITEM_DEPENDENT |
 		                          Gump::FLAG_DRAGGABLE);
 	}
 	//!!TODO: clean up the way this is set
-	//!! having the itemarea associated with the shape through the
+	//!! having the itemarea associated with the shapeP through the
 	//!! GumpShapeFlex maybe
 	cgump->setItemArea(GameData::get_instance()->
 	                   getGumps()->getGumpItemArea(gumpshape));
@@ -1419,9 +1419,9 @@ int32 Item::ascend(int delta) {
 	}
 
 	// move self
-	int32 ix, iy, iz;
-	getLocation(ix, iy, iz);
-	int dist = collideMove(ix, iy, iz + delta, false, false);
+	int32 xv, yv, zv;
+	getLocation(xv, yv, zv);
+	int dist = collideMove(xv, yv, zv + delta, false, false);
 	delta = (delta * dist) / 0x4000;
 
 //	pout << "Ascend: dist=" << dist << std::endl;
@@ -1516,8 +1516,8 @@ void Item::explode() {
 	AudioProcess *audioproc = AudioProcess::get_instance();
 	if (audioproc) audioproc->playSFX(sfx, 0x60, 0, 0);
 
-	int32 x, y, z;
-	getLocation(x, y, z);
+	int32 xv, yv, zv;
+	getLocation(xv, yv, zv);
 
 	destroy(); // delete self
 	// WARNING: we are deleted at this point
@@ -1526,15 +1526,15 @@ void Item::explode() {
 	LOOPSCRIPT(script, LS_TOKEN_TRUE); // we want all items
 	CurrentMap *currentmap = World::get_instance()->getCurrentMap();
 	currentmap->areaSearch(&itemlist, script, sizeof(script), 0,
-	                       160, false, x, y); //! CHECKME: 128?
+	                       160, false, xv, yv); //! CHECKME: 128?
 
 	for (unsigned int i = 0; i < itemlist.getSize(); ++i) {
 		Item *item = getItem(itemlist.getuint16(i));
 		if (!item) continue;
 		if (getRange(*item, true) > 160) continue; // check vertical distance
-		int32 ix, iy, iz;
-		item->getLocation(ix, iy, iz);
-		int dir = Get_WorldDirection(ix - x, iy - y); //!! CHECKME
+
+		item->getLocation(xv, yv, zv);
+		int dir = Get_WorldDirection(xv - xv, yv - yv); //!! CHECKME
 		item->receiveHit(0, dir, 6 + (std::rand() % 6),
 		                 WeaponInfo::DMG_BLUNT | WeaponInfo::DMG_FIRE);
 	}
@@ -2305,7 +2305,6 @@ uint32 Item::I_legalCreateInCont(const uint8 *args, unsigned int /*argsize*/) {
 	if (newitem->moveToContainer(container)) {
 		uint16 objID = newitem->getObjId();
 
-		uint8 buf[2];
 		buf[0] = static_cast<uint8>(objID);
 		buf[1] = static_cast<uint8>(objID >> 8);
 		UCMachine::get_instance()->assignPointer(itemptr, buf, 2);

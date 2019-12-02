@@ -113,17 +113,17 @@ public:
 
 	void push(const typename _Container::value_type &_Val) {
 		c.push_back(_Val);
-		push_heap(c.begin(), c.end(), comp);
+		//push_heap(c.begin(), c.end(), comp);
 	}
 
 	void pop() {
-		pop_heap(c.begin(), c.end(), comp);
+		//pop_heap(c.begin(), c.end(), comp);
 		c.pop_back();
 	}
 
 	void swap(priority_queue &_Right) {
-		_Swap_adl(c, _Right.c);
-		_Swap_adl(comp, _Right.comp);
+		SWAP(c, _Right.c);
+		SWAP(comp, _Right.comp);
 	}
 
 protected:

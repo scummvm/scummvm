@@ -56,5 +56,3 @@ Sequence checkWeapon(const Sequence nextanim,
 
 } // End of namespace Animation
 } // End of namespace Ultima8
-
-} // End of namespace Ultima8

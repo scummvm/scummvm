@@ -21,7 +21,7 @@
  */
 
 #include "ultima8/misc/pent_include.h"
-#include "ultima8/world/actor_bark_notify_process.h"
+#include "ultima8/world/actors/actor_bark_notify_process.h"
 #include "ultima8/gumps/gump.h"
 #include "ultima8/kernel/delay_process.h"
 #include "ultima8/world/actors/actor.h"

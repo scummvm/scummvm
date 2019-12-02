@@ -36,7 +36,7 @@
 #include "ultima8/graphics/shape_info.h"
 #include "ultima8/world/actors/monster_info.h"
 #include "ultima8/world/get_object.h"
-#include "ultima8/world/loiter_process.h"
+#include "ultima8/world/actors/loiter_process.h"
 #include "ultima8/world/actors/ambush_process.h"
 
 #include "ultima8/filesys/idata_source.h"
@@ -178,22 +178,22 @@ void CombatProcess::setTarget(ObjId newtarget) {
 	target = newtarget;
 }
 
-bool CombatProcess::isValidTarget(Actor *target) {
-	assert(target);
+bool CombatProcess::isValidTarget(Actor *target_) {
+	assert(target_);
 	Actor *a = getActor(item_num);
 	if (!a) return false; // uh oh
 
-	// don't target self
-	if (target == a) return false;
+	// don't target_ self
+	if (target_ == a) return false;
 
 	// not in the fastarea
-	if (!(target->getFlags() & Item::FLG_FASTAREA)) return false;
+	if (!(target_->getFlags() & Item::FLG_FASTAREA)) return false;
 
 	// dead actors don't make good targets
-	if (target->isDead()) return false;
+	if (target_->isDead()) return false;
 
 	// feign death only works on undead and demons
-	if (target->getActorFlags() & Actor::ACT_FEIGNDEATH) {
+	if (target_->getActorFlags() & Actor::ACT_FEIGNDEATH) {
 
 		if ((a->getDefenseType() & WeaponInfo::DMG_UNDEAD) ||
 		        (a->getShape() == 96)) return false; // CONSTANT!
@@ -203,13 +203,13 @@ bool CombatProcess::isValidTarget(Actor *target) {
 	return true;
 }
 
-bool CombatProcess::isEnemy(Actor *target) {
-	assert(target);
+bool CombatProcess::isEnemy(Actor *target_) {
+	assert(target_);
 
 	Actor *a = getActor(item_num);
 	if (!a) return false; // uh oh
 
-	return ((a->getEnemyAlignment() & target->getAlignment()) != 0);
+	return ((a->getEnemyAlignment() & target_->getAlignment()) != 0);
 }
 
 ObjId CombatProcess::seekTarget() {

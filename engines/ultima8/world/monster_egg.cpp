@@ -53,17 +53,17 @@ uint16 MonsterEgg::hatch() {
 	//!! do we need to check probability here?
 	//!! monster activity? combat? anything?
 
-	int shape = getMonsterShape();
+	int shapeNum = getMonsterShape();
 
 	// CHECKME: why does this happen? (in the plane of Earth near the end)
-	if (shape == 0)
+	if (shapeNum == 0)
 		return 0;
 
-	Actor *newactor = ItemFactory::createActor(shape, 0, 0,
+	Actor *newactor = ItemFactory::createActor(shapeNum, 0, 0,
 	                  FLG_FAST_ONLY | FLG_DISPOSABLE | FLG_IN_NPC_LIST,
 	                  0, 0, 0, true);
 	if (!newactor) {
-		perr << "MonsterEgg::hatch failed to create actor (" << shape
+		perr << "MonsterEgg::hatch failed to create actor (" << shapeNum
 		     << ")." << std::endl;
 		return 0;
 	}
@@ -71,7 +71,7 @@ uint16 MonsterEgg::hatch() {
 
 	// set stats
 	if (!newactor->loadMonsterStats()) {
-		perr << "MonsterEgg::hatch failed to set stats for actor (" << shape
+		perr << "MonsterEgg::hatch failed to set stats for actor (" << shapeNum
 		     << ")." << std::endl;
 	}
 

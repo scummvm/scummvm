@@ -43,7 +43,7 @@
 #include "ultima8/world/get_object.h"
 #include "ultima8/usecode/uc_list.h"
 #include "ultima8/world/loop_script.h"
-#include "ultima8/world/avatar_gravity_process.h"
+#include "ultima8/world/actors/avatar_gravity_process.h"
 #include "ultima8/audio/music_process.h"
 
 #include "ultima8/filesys/idata_source.h"
@@ -115,23 +115,23 @@ bool MainActor::addItem(Item *item, bool checkwghtvol) {
 	return true;
 }
 
-void MainActor::teleport(int mapnum, int32 x, int32 y, int32 z) {
+void MainActor::teleport(int mapNum_, int32 x_, int32 y_, int32 z_) {
 	World *world = World::get_instance();
 
 	// (attempt to) load the new map
-	if (!world->switchMap(mapnum)) {
+	if (!world->switchMap(mapNum_)) {
 		perr << "MainActor::teleport(): switchMap() failed!" << std::endl;
 		return;
 	}
 
-	Actor::teleport(mapnum, x, y, z);
+	Actor::teleport(mapNum_, x_, y_, z_);
 	justTeleported = true;
 }
 
 // teleport to TeleportEgg
 // NB: be careful when calling this from a process, as it might kill
 // all running processes
-void MainActor::teleport(int mapnum, int teleport_id) {
+void MainActor::teleport(int mapNum_, int teleport_id) {
 	int oldmap = getMapNum();
 	int32 oldx, oldy, oldz;
 	getLocation(oldx, oldy, oldz);
@@ -139,13 +139,13 @@ void MainActor::teleport(int mapnum, int teleport_id) {
 	World *world = World::get_instance();
 	CurrentMap *currentmap = world->getCurrentMap();
 
-	pout << "MainActor::teleport(): teleporting to map " << mapnum
+	pout << "MainActor::teleport(): teleporting to map " << mapNum_
 	     << ", egg " << teleport_id << std::endl;
 
-	setMapNum(mapnum);
+	setMapNum(mapNum_);
 
 	// (attempt to) load the new map
-	if (!world->switchMap(mapnum)) {
+	if (!world->switchMap(mapNum_)) {
 		perr << "MainActor::teleport(): switchMap() failed!" << std::endl;
 		setMapNum(oldmap);
 		return;
@@ -159,13 +159,13 @@ void MainActor::teleport(int mapnum, int teleport_id) {
 		teleport(oldmap, oldx, oldy, oldz);
 		return;
 	}
-	int32 x, y, z;
-	egg->getLocation(x, y, z);
+	int32 xv, yv, zv;
+	egg->getLocation(xv, yv, zv);
 
-	pout << "Found destination: " << x << "," << y << "," << z << std::endl;
+	pout << "Found destination: " << xv << "," << yv << "," << zv << std::endl;
 	egg->dumpInfo();
 
-	Actor::teleport(mapnum, x, y, z);
+	Actor::teleport(mapNum_, xv, yv, zv);
 	justTeleported = true;
 }
 
@@ -174,10 +174,10 @@ uint16 MainActor::getDefenseType() {
 
 	std::list<Item *>::iterator iter;
 	for (iter = contents.begin(); iter != contents.end(); ++iter) {
-		uint32 frame = (*iter)->getFrame();
+		uint32 frameNum = (*iter)->getFrame();
 		ShapeInfo *si = (*iter)->getShapeInfo();
 		if (si->armourinfo) {
-			type |= si->armourinfo[frame].defense_type;
+			type |= si->armourinfo[frameNum].defense_type;
 		}
 	}
 
@@ -189,10 +189,10 @@ uint32 MainActor::getArmourClass() {
 
 	std::list<Item *>::iterator iter;
 	for (iter = contents.begin(); iter != contents.end(); ++iter) {
-		uint32 frame = (*iter)->getFrame();
+		uint32 frameNum = (*iter)->getFrame();
 		ShapeInfo *si = (*iter)->getShapeInfo();
 		if (si->armourinfo) {
-			armour += si->armourinfo[frame].armour_class;
+			armour += si->armourinfo[frameNum].armour_class;
 		}
 		if (si->weaponinfo) {
 			armour += si->weaponinfo->armour_bonus;
@@ -499,10 +499,9 @@ void MainActor::accumulateInt(int n) {
 	}
 }
 
-void MainActor::getWeaponOverlay(const WeaponOverlayFrame *&frame,
-                                 uint32 &shape) {
-	shape = 0;
-	frame = 0;
+void MainActor::getWeaponOverlay(const WeaponOverlayFrame *&frame_, uint32 &shape_) {
+	shape_ = 0;
+	frame_ = 0;
 
 	if (!isInCombat() && lastanim != Animation::unreadyWeapon) return;
 
@@ -516,13 +515,13 @@ void MainActor::getWeaponOverlay(const WeaponOverlayFrame *&frame,
 	WeaponInfo *weaponinfo = shapeinfo->weaponinfo;
 	if (!weaponinfo) return;
 
-	shape = weaponinfo->overlay_shape;
+	shape_ = weaponinfo->overlay_shape;
 
 	WpnOvlayDat *wpnovlay = GameData::get_instance()->getWeaponOverlay();
-	frame = wpnovlay->getOverlayFrame(lastanim, weaponinfo->overlay_type,
+	frame_ = wpnovlay->getOverlayFrame(lastanim, weaponinfo->overlay_type,
 	                                  direction, animframe);
 
-	if (frame == 0) shape = 0;
+	if (frame_ == 0) shape_ = 0;
 }
 
 void MainActor::saveData(ODataSource *ods) {
@@ -655,8 +654,8 @@ void MainActor::useInventoryItem(uint32 shapenum) {
 	if (uclist.getSize() < 1)
 		return;
 
-	uint16 objid = uclist.getuint16(0);
-	Item *item = getItem(objid);
+	uint16 oId = uclist.getuint16(0);
+	Item *item = getItem(oId);
 	item->callUsecodeEvent_use();
 
 }

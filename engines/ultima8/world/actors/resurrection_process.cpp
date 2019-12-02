@@ -21,11 +21,9 @@
  */
 
 #include "ultima8/misc/pent_include.h"
-
-#include "ultima8/world/resurrection_process.h"
+#include "ultima8/world/actors/resurrection_process.h"
 #include "ultima8/world/actors/actor.h"
 #include "ultima8/world/get_object.h"
-
 #include "ultima8/filesys/idata_source.h"
 #include "ultima8/filesys/odata_source.h"
 

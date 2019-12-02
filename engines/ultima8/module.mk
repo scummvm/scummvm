@@ -65,7 +65,30 @@ MODULE_OBJS := \
 	world/split_item_process.o \
 	world/sprite_process.o \
 	world/teleport_egg.o \
-	world/world.o
+	world/world.o \
+	world/actors/actor.o \
+	world/actors/actor_anim_process.o \
+	world/actors/actor_bark_notify_process.o \
+	world/actors/ambush_process.o \
+	world/actors/animation.o \
+	world/actors/animation_tracker.o \
+	world/actors/anim_action.o \
+	world/actors/avatar_death_process.o \
+	world/actors/avatar_gravity_process.o \
+	world/actors/avatar_mover_process.o \
+	world/actors/clear_feign_death_process.o \
+	world/actors/combat_process.o \
+	world/actors/grant_peace_process.o \
+	world/actors/heal_process.o \
+	world/actors/loiter_process.o \
+	world/actors/main_actor.o \
+	world/actors/pathfinder.o \
+	world/actors/pathfinder_process.o \
+	world/actors/quick_avatar_mover_process.o \
+	world/actors/resurrection_process.o \
+	world/actors/scheduler_process.o \
+	world/actors/targeted_anim_process.o \
+	world/actors/teleport_to_egg_process.o \
 
 
 # This module can be built as a plugin

@@ -28,6 +28,7 @@
 #include "ultima8/graphics/render_surface.h"
 #include "ultima8/gumps/game_map_gump.h"
 #include "ultima8/kernel/gui_app.h"
+#include "common/system.h"
 
 namespace Ultima8 {
 
@@ -466,7 +467,6 @@ void Pathfinder::expandNode(PathNode *node) {
 			steps++;
 			tracker.updateState(state);
 
-			int sqrddist;
 			sqrddist = (targetx - state.x + actor_xd / 2) *
 			           (targetx - state.x + actor_xd / 2);
 			sqrddist += (targety - state.y + actor_yd / 2) *
@@ -536,13 +536,13 @@ bool Pathfinder::pathfind(std::vector<PathfindingAction> &path) {
 	nodelist.push_back(startnode);
 	nodes.push(startnode);
 
-	unsigned int expandednodes = 0;
+	unsigned int expandedNodes = 0;
 	const unsigned int NODELIMIT_MIN = 30;  //! constant
 	const unsigned int NODELIMIT_MAX = 200; //! constant
 	bool found = false;
-	Uint32 starttime = SDL_GetTicks();
+	uint32 starttime = g_system->getMillis();
 
-	while (expandednodes < NODELIMIT_MAX && !nodes.empty() && !found) {
+	while (expandedNodes < NODELIMIT_MAX && !nodes.empty() && !found) {
 		PathNode *node = nodes.top();
 		nodes.pop();
 
@@ -598,20 +598,20 @@ bool Pathfinder::pathfind(std::vector<PathfindingAction> &path) {
 				path[length - 1].direction = path[length - 2].direction;
 			}
 
-			expandtime = SDL_GetTicks() - starttime;
+			expandtime = g_system->getMillis() - starttime;
 			return true;
 		}
 
 		expandNode(node);
-		expandednodes++;
+		expandedNodes++;
 
-		if (expandednodes >= NODELIMIT_MIN && ((expandednodes) % 5) == 0) {
-			Uint32 elapsed_ms = SDL_GetTicks() - starttime;
+		if (expandedNodes >= NODELIMIT_MIN && ((expandedNodes) % 5) == 0) {
+			uint32 elapsed_ms = g_system->getMillis() - starttime;
 			if (elapsed_ms > 350) break;
 		}
 	}
 
-	expandtime = SDL_GetTicks() - starttime;
+	expandtime = g_system->getMillis() - starttime;
 
 #if 0
 	static int32 pfcalls = 0;
