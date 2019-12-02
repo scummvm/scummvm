@@ -606,7 +606,7 @@ static const yytype_uint16 yyprhs[] =
        0,     0,     3,     7,     9,    12,    14,    16,    18,    20,
       21,    23,    25,    27,    32,    37,    42,    47,    52,    57,
       63,    68,    73,    79,    81,    83,    85,    87,    93,   104,
-     116,   120,   127,   132,   139,   149,   159,   169,   176,   187,
+     116,   120,   127,   132,   139,   149,   159,   169,   180,   191,
      198,   199,   203,   206,   208,   211,   213,   220,   222,   229,
      236,   240,   241,   242,   245,   249,   251,   253,   254,   255,
      257,   260,   263,   267,   269,   271,   273,   275,   277,   279,
@@ -643,9 +643,9 @@ static const yytype_int16 yyrhs[] =
      122,   109,   131,   130,   110,   131,   130,    32,    -1,   127,
      122,   109,   131,   130,   129,   118,   130,    32,    -1,   127,
      122,   109,   131,   130,   110,   129,   114,   130,    -1,   127,
-     122,    52,   129,   114,   130,    -1,   127,   122,    52,   129,
-     114,   130,   110,   129,   114,   130,    -1,   127,   122,    52,
-     129,   114,   130,   119,   130,   117,   130,    -1,    -1,   110,
+     122,    52,   129,   114,   130,   119,   130,   117,   130,    -1,
+     127,   122,    52,   129,   114,   130,   110,   129,   114,   130,
+      -1,   127,   122,    52,   129,   114,   130,    -1,    -1,   110,
      129,   114,    -1,   118,   121,    -1,   121,    -1,   119,   120,
       -1,   120,    -1,   128,   122,    52,   129,   115,   130,    -1,
      119,    -1,   128,   122,    52,   129,   131,   130,    -1,   128,
@@ -798,7 +798,7 @@ static const yytype_uint8 yyr2[] =
        0,     2,     3,     1,     2,     1,     1,     1,     1,     0,
        1,     1,     1,     4,     4,     4,     4,     4,     4,     5,
        4,     4,     5,     1,     1,     1,     1,     5,    10,    11,
-       3,     6,     4,     6,     9,     9,     9,     6,    10,    10,
+       3,     6,     4,     6,     9,     9,     9,    10,    10,     6,
        0,     3,     2,     1,     2,     1,     6,     1,     6,     6,
        3,     0,     0,     2,     3,     1,     1,     0,     0,     1,
        2,     2,     3,     1,     1,     1,     1,     1,     1,     1,
@@ -850,12 +850,12 @@ static const yytype_uint8 yydefact[] =
       58,     0,   167,     0,    22,    19,     0,     0,     0,     0,
        0,     0,    27,     0,     0,    58,    57,     0,   162,     0,
       57,   167,   167,   103,   105,   107,   109,   126,     0,    58,
-      37,    33,     7,    57,     0,    31,   163,   158,    57,    57,
+      39,    33,     7,    57,     0,    31,   163,   158,    57,    57,
       58,    57,     8,    57,    56,    58,    45,    51,    59,    58,
       58,    47,    43,    51,   164,   153,   156,    57,    58,     0,
       44,    40,     0,    58,     0,    42,     0,     0,   165,   157,
       58,     0,    58,    57,    58,    57,    36,    34,    35,    57,
-      57,     0,     0,    28,    38,     0,    39,     0,    57,    57,
+      57,     0,     0,    28,    38,     0,    37,     0,    57,    57,
      166,    29,    41,    58,    58,    58,    46,    48,    49
 };
 
@@ -2413,14 +2413,14 @@ yyreduce:
 #line 315 "engines/director/lingo/lingo-gr.y"
     {
 		inst then = 0, else1 = 0, end = 0;
-		WRITE_UINT32(&then, (yyvsp[(4) - (6)].code) - (yyvsp[(1) - (6)].code));
-		WRITE_UINT32(&else1, 0);
-		WRITE_UINT32(&end, (yyvsp[(6) - (6)].code) - (yyvsp[(1) - (6)].code));
-		(*g_lingo->_currentScript)[(yyvsp[(1) - (6)].code) + 1] = then;	/* thenpart */
-		(*g_lingo->_currentScript)[(yyvsp[(1) - (6)].code) + 2] = else1;	/* elsepart */
-		(*g_lingo->_currentScript)[(yyvsp[(1) - (6)].code) + 3] = end; 	/* end, if cond fails */
+		WRITE_UINT32(&then, (yyvsp[(4) - (10)].code) - (yyvsp[(1) - (10)].code));
+		WRITE_UINT32(&else1, (yyvsp[(6) - (10)].code) - (yyvsp[(1) - (10)].code));
+		WRITE_UINT32(&end, (yyvsp[(10) - (10)].code) - (yyvsp[(1) - (10)].code));
+		(*g_lingo->_currentScript)[(yyvsp[(1) - (10)].code) + 1] = then;	/* thenpart */
+		(*g_lingo->_currentScript)[(yyvsp[(1) - (10)].code) + 2] = else1;	/* elsepart */
+		(*g_lingo->_currentScript)[(yyvsp[(1) - (10)].code) + 3] = end; 	/* end, if cond fails */
 
-		g_lingo->processIf(0, 0); ;}
+		g_lingo->processIf(0, (yyvsp[(10) - (10)].code) - (yyvsp[(1) - (10)].code)); ;}
     break;
 
   case 38:
@@ -2441,14 +2441,14 @@ yyreduce:
 #line 335 "engines/director/lingo/lingo-gr.y"
     {
 		inst then = 0, else1 = 0, end = 0;
-		WRITE_UINT32(&then, (yyvsp[(4) - (10)].code) - (yyvsp[(1) - (10)].code));
-		WRITE_UINT32(&else1, (yyvsp[(6) - (10)].code) - (yyvsp[(1) - (10)].code));
-		WRITE_UINT32(&end, (yyvsp[(10) - (10)].code) - (yyvsp[(1) - (10)].code));
-		(*g_lingo->_currentScript)[(yyvsp[(1) - (10)].code) + 1] = then;	/* thenpart */
-		(*g_lingo->_currentScript)[(yyvsp[(1) - (10)].code) + 2] = else1;	/* elsepart */
-		(*g_lingo->_currentScript)[(yyvsp[(1) - (10)].code) + 3] = end; 	/* end, if cond fails */
+		WRITE_UINT32(&then, (yyvsp[(4) - (6)].code) - (yyvsp[(1) - (6)].code));
+		WRITE_UINT32(&else1, 0);
+		WRITE_UINT32(&end, (yyvsp[(6) - (6)].code) - (yyvsp[(1) - (6)].code));
+		(*g_lingo->_currentScript)[(yyvsp[(1) - (6)].code) + 1] = then;	/* thenpart */
+		(*g_lingo->_currentScript)[(yyvsp[(1) - (6)].code) + 2] = else1;	/* elsepart */
+		(*g_lingo->_currentScript)[(yyvsp[(1) - (6)].code) + 3] = end; 	/* end, if cond fails */
 
-		g_lingo->processIf(0, (yyvsp[(10) - (10)].code) - (yyvsp[(1) - (10)].code)); ;}
+		g_lingo->processIf(0, 0); ;}
     break;
 
   case 40:

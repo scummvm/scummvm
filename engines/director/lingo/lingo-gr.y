@@ -312,26 +312,6 @@ ifstmt:	if cond thennl stmtlist end ENDCLAUSE		{
 		(*g_lingo->_currentScript)[$1 + 3] = end;	/* end, if cond fails */
 
 		g_lingo->processIf(0, $9 - $1); }
-	| if cond tTHEN begin stmtoneliner end {
-		inst then = 0, else1 = 0, end = 0;
-		WRITE_UINT32(&then, $4 - $1);
-		WRITE_UINT32(&else1, 0);
-		WRITE_UINT32(&end, $6 - $1);
-		(*g_lingo->_currentScript)[$1 + 1] = then;	/* thenpart */
-		(*g_lingo->_currentScript)[$1 + 2] = else1;	/* elsepart */
-		(*g_lingo->_currentScript)[$1 + 3] = end; 	/* end, if cond fails */
-
-		g_lingo->processIf(0, 0); }
-	| if cond tTHEN begin stmtoneliner end nlelse begin stmtoneliner end {
-		inst then = 0, else1 = 0, end = 0;
-		WRITE_UINT32(&then, $4 - $1);
-		WRITE_UINT32(&else1, $8 - $1);
-		WRITE_UINT32(&end, $10 - $1);
-		(*g_lingo->_currentScript)[$1 + 1] = then;	/* thenpart */
-		(*g_lingo->_currentScript)[$1 + 2] = else1;	/* elsepart */
-		(*g_lingo->_currentScript)[$1 + 3] = end; 	/* end, if cond fails */
-
-		g_lingo->processIf(0, 0); }
 	| if cond tTHEN begin stmtoneliner end elseifstmtoneliner end elsestmtoneliner end {
 		inst then = 0, else1 = 0, end = 0;
 		WRITE_UINT32(&then, $4 - $1);
@@ -342,6 +322,26 @@ ifstmt:	if cond thennl stmtlist end ENDCLAUSE		{
 		(*g_lingo->_currentScript)[$1 + 3] = end; 	/* end, if cond fails */
 
 		g_lingo->processIf(0, $10 - $1); }
+	| if cond tTHEN begin stmtoneliner end nlelse begin stmtoneliner end {
+		inst then = 0, else1 = 0, end = 0;
+		WRITE_UINT32(&then, $4 - $1);
+		WRITE_UINT32(&else1, $8 - $1);
+		WRITE_UINT32(&end, $10 - $1);
+		(*g_lingo->_currentScript)[$1 + 1] = then;	/* thenpart */
+		(*g_lingo->_currentScript)[$1 + 2] = else1;	/* elsepart */
+		(*g_lingo->_currentScript)[$1 + 3] = end; 	/* end, if cond fails */
+
+		g_lingo->processIf(0, 0); }
+	| if cond tTHEN begin stmtoneliner end {
+		inst then = 0, else1 = 0, end = 0;
+		WRITE_UINT32(&then, $4 - $1);
+		WRITE_UINT32(&else1, 0);
+		WRITE_UINT32(&end, $6 - $1);
+		(*g_lingo->_currentScript)[$1 + 1] = then;	/* thenpart */
+		(*g_lingo->_currentScript)[$1 + 2] = else1;	/* elsepart */
+		(*g_lingo->_currentScript)[$1 + 3] = end; 	/* end, if cond fails */
+
+		g_lingo->processIf(0, 0); }
 	;
 
 elsestmtoneliner: /* nothing */		{ $$ = 0; }
