@@ -2601,7 +2601,7 @@ static const WMEGameDescription gameDescriptions[] = {
 
 	// 1 1/2 Ritter: Auf der Suche nach der hinreissenden Herzelinde (German demo)
 	WME_WINENTRY("ritter", "Demo",
-		WME_ENTRY1s("data.dcp", "408474b813553978880cf4f36cc38793", 99975952), Common::DE_DEU, ADGF_UNSTABLE | ADGF_DEMO, WME_1_8_6),
+		WME_ENTRY1s("data.dcp", "7fadb30dbe987528489f50bd85cc0c12", 99975952), Common::DE_DEU, ADGF_UNSTABLE | ADGF_DEMO, WME_1_8_6),
 
 	// Satan and Sons (Demo)
 	WME_WINENTRY("satanandsons", "Demo",
