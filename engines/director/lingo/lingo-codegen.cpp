@@ -358,6 +358,14 @@ int Lingo::codeFunc(Common::String *s, int numpar) {
 }
 
 int Lingo::codeMe(Common::String *method, int numpar) {
+	// Check if need to encode reference to the factory
+	if (method == nullptr) {
+		int ret = g_lingo->code1(g_lingo->c_factory);
+		g_lingo->codeString(g_lingo->_currentFactory.c_str());
+
+		return ret;
+	}
+
 	int ret = g_lingo->code1(g_lingo->c_call);
 
 	Common::String m(g_lingo->_currentFactory);

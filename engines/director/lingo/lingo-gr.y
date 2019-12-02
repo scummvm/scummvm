@@ -502,6 +502,7 @@ expr: simpleexpr { $$ = $1; }
 	| tLINE expr tTO expr tOF expr		{ g_lingo->code1(g_lingo->c_lineToOf); }
 	| tWORD expr tOF expr				{ g_lingo->code1(g_lingo->c_wordOf); }
 	| tWORD expr tTO expr tOF expr		{ g_lingo->code1(g_lingo->c_wordToOf); }
+	| tME 							{ g_lingo->codeMe(nullptr, 0); }
 	;
 
 reference: 	RBLTINONEARG expr		{

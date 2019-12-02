@@ -332,6 +332,7 @@ public:
 	static void c_gotoprevious();
 	static void c_global();
 	static void c_instance();
+	static void c_factory();
 	static void c_property();
 
 	static void c_play();

@@ -1241,6 +1241,18 @@ void Lingo::c_instance() {
 	warning("STUB: c_instance(%s)", name.c_str());
 }
 
+void Lingo::c_factory() {
+	Common::String name(g_lingo->readString());
+	Datum d;
+
+	warning("STUB: c_factory(%s)", name.c_str());
+
+	d.type = OBJECT;
+	d.u.s = new Common::String(name);
+
+	g_lingo->push(d);
+}
+
 void Lingo::c_open() {
 	Datum d2 = g_lingo->pop();
 	Datum d1 = g_lingo->pop();
