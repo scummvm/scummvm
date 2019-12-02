@@ -22,6 +22,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "ultima8/filesys/file_system.h"
 #include "ultima8/filesys/idata_source.h"
 
+namespace Ultima8 {
+
 using Pentagram::istring;
 using std::string;
 
@@ -177,7 +179,7 @@ bool INIFile::readConfigString(string config) {
 			// Get the section name, and check whether it's valid (that
 			// is, verify that it only consists of alphanumerics,
 			// dashes, underscores and colons).
-			while (p < line.size() && (isalnum(line[p]) || line[p] == '-' ||
+			while (p < line.size() && (Common::isAlnum(line[p]) || line[p] == '-' ||
 			                           line[p] == '_' || line[p] == ':'))
 				p++;
 
@@ -467,8 +469,7 @@ void INIFile::listSections(std::set<istring> &sections_, bool longformat) {
 	}
 }
 
-void INIFile::listKeyValues(std::map<istring, string> &keyvalues,
-                            istring section_, bool longformat) {
+void INIFile::listKeyValues(KeyMap &keyvalues, istring section_, bool longformat) {
 	if (!stripRoot(section_)) return;
 
 	Section *section = getSection(section_);
@@ -485,3 +486,5 @@ void INIFile::listKeyValues(std::map<istring, string> &keyvalues,
 		keyvalues[k] = i->value;
 	}
 }
+
+} // End of namespace Ultima8

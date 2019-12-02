@@ -16,11 +16,14 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
-#ifndef INIFILE_H
-#define INIFILE_H
+#ifndef ULTIMA8_CONF_INIFILE_H
+#define ULTIMA8_CONF_INIFILE_H
 
-#include <set>
 #include "ultima8/std/containers.h"
+
+namespace Ultima8 {
+
+typedef std::map<Pentagram::istring, std::string, Common::CaseSensitiveString_Hash> KeyMap;
 
 class INIFile {
 public:
@@ -70,7 +73,7 @@ public:
 	void listSections(std::set<Pentagram::istring> &sections,
 	                  bool longformat = false);
 
-	void listKeyValues(std::map<Pentagram::istring, std::string> &keyvalues,
+	void listKeyValues(KeyMap &keyvalues,
 	                   Pentagram::istring section,
 	                   bool longformat = false);
 
@@ -108,5 +111,7 @@ private:
 	              Pentagram::istring &sectionkey);
 
 };
+
+} // End of namespace Ultima8
 
 #endif

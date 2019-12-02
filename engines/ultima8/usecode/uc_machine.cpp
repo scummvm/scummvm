@@ -21,7 +21,6 @@
  */
 
 #include "ultima8/misc/pent_include.h"
-
 #include "ultima8/usecode/uc_machine.h"
 #include "ultima8/usecode/uc_process.h"
 #include "ultima8/usecode/usecode.h"
@@ -40,14 +39,13 @@
 #include "ultima8/world/get_object.h"
 
 #define INCLUDE_CONVERTUSECODEU8_WITHOUT_BRINGING_IN_FOLD
-#include "u8/ConvertUsecodeU8.h"
-
+#include "ultima8/convert/u8/convert_usecode_u8.h"
 #include "ultima8/world/actors/main_actor.h"
 
 namespace Ultima8 {
 
 #ifdef DEBUG
-#define LOGPF(X) do { if (trace_show(trace_pid, trace_objid, trace_classid)) pout.printf X; } while (0)
+#define LOGPF(X) do { if (trace_show(trace_pid, trace_objid, trace_classid)) pout.Print X; } while (0)
 #else
 #define LOGPF(X)
 #endif
@@ -430,9 +428,9 @@ void UCMachine::execProcess(UCProcess *p) {
 			p->call(new_classid, new_offset);
 
 			// Update the code segment
-			uint32 base = p->usecode->get_class_base_offset(p->classid);
-			cs.load(p->usecode->get_class(p->classid) + base,
-			        p->usecode->get_class_size(p->classid) - base);
+			uint32 base_ = p->usecode->get_class_base_offset(p->classid);
+			cs.load(p->usecode->get_class(p->classid) + base_,
+			        p->usecode->get_class_size(p->classid) - base_);
 			cs.seek(p->ip);
 
 			// Resume execution
@@ -1232,9 +1230,9 @@ void UCMachine::execProcess(UCProcess *p) {
 				// return value is stored in temp32 register
 
 				// Update the code segment
-				uint32 base = p->usecode->get_class_base_offset(p->classid);
-				cs.load(p->usecode->get_class(p->classid) + base,
-				        p->usecode->get_class_size(p->classid) - base);
+				uint32 base_ = p->usecode->get_class_base_offset(p->classid);
+				cs.load(p->usecode->get_class(p->classid) + base_,
+				        p->usecode->get_class_size(p->classid) - base_);
 				cs.seek(p->ip);
 			}
 
@@ -1387,7 +1385,7 @@ void UCMachine::execProcess(UCProcess *p) {
 			uint16 offset = cs.read2();
 			uint16 delta = cs.read2();
 			int this_size = cs.read1();
-			uint32 unknown = cs.read1(); // ??
+			(void)cs.read1(); // ??
 
 			LOGPF(("spawn inline\t%04X:%04X+%04X=%04X %02X %02X\n",
 			       classid, offset, delta, offset + delta, this_size, unknown));
@@ -2258,9 +2256,9 @@ void UCMachine::saveStrings(ODataSource *ods) {
 
 	std::map<uint16, std::string>::iterator iter;
 	for (iter = stringHeap.begin(); iter != stringHeap.end(); ++iter) {
-		ods->write2((*iter).first);
-		ods->write4((*iter).second.size());
-		ods->write((*iter).second.c_str(), (*iter).second.size());
+		ods->write2((*iter)._key);
+		ods->write4((*iter)._value.size());
+		ods->write((*iter)._value.c_str(), (*iter)._value.size());
 	}
 }
 
@@ -2270,8 +2268,8 @@ void UCMachine::saveLists(ODataSource *ods) {
 
 	std::map<uint16, UCList *>::iterator iter;
 	for (iter = listHeap.begin(); iter != listHeap.end(); ++iter) {
-		ods->write2((*iter).first);
-		(*iter).second->save(ods);
+		ods->write2((*iter)._key);
+		(*iter)._value->save(ods);
 	}
 }
 
@@ -2371,7 +2369,7 @@ void UCMachine::ConCmd_getGlobal(const Console::ArgvType &argv) {
 	unsigned int offset = strtol(argv[1].c_str(), 0, 0);
 	unsigned int size = strtol(argv[2].c_str(), 0, 0);
 
-	pout.printf("[%04X %02X] = %d\n", offset, size,
+	pout.Print("[%04X %02X] = %d\n", offset, size,
 	            uc->globals->getBits(offset, size));
 }
 
@@ -2388,7 +2386,7 @@ void UCMachine::ConCmd_setGlobal(const Console::ArgvType &argv) {
 
 	uc->globals->setBits(offset, size, value);
 
-	pout.printf("[%04X %02X] = %d\n", offset, size,
+	pout.Print("[%04X %02X] = %d\n", offset, size,
 	            uc->globals->getBits(offset, size));
 }
 

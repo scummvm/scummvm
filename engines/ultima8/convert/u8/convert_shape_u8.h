@@ -20,39 +20,25 @@
  *
  */
 
-#include "ultima8/misc/pent_include.h"
+#ifndef ULTIMA8_CONVERT_U8_CONVERTSHAPEU8_H
+#define ULTIMA8_CONVERT_U8_CONVERTSHAPEU8_H
 
-#include "ultima8/usecode/usecode.h"
-#include "ultima8/kernel/core_app.h"
+#include "ultima8/convert/convert_shape.h"
 
 namespace Ultima8 {
 
-uint32 Usecode::get_class_event(uint32 classid, uint32 eventid) {
-	if (get_class_size(classid) == 0) return 0;
+// Shape format configuration for Ultima 8
+extern const ConvertShapeFormat		U8ShapeFormat;
 
-	if (eventid >= get_class_event_count(classid)) {
-		perr << "eventid too high: " << eventid << " >= " << get_class_event_count(classid) << " for class " << classid << std::endl;
-		CANT_HAPPEN();
-	}
+// Shape format configuration for Ultima 8 2D
+extern const ConvertShapeFormat		U82DShapeFormat;
 
-	const uint8 *data = get_class(classid);
+// Shape format configuration for Ultima 8 SKF file shapes
+extern const ConvertShapeFormat		U8SKFShapeFormat;
 
-	uint32 offset = 0;
-	if (GAME_IS_U8) {
-		offset = data[12 + (eventid * 4) + 0];
-		offset += data[12 + (eventid * 4) + 1] << 8;
-		offset += data[12 + (eventid * 4) + 2] << 16;
-		offset += data[12 + (eventid * 4) + 3] << 24;
-	} else if (GAME_IS_REMORSE) {
-		offset = data[20 + (eventid * 6) + 2];
-		offset += data[20 + (eventid * 6) + 3] << 8;
-		offset += data[20 + (eventid * 6) + 4] << 16;
-		offset += data[20 + (eventid * 6) + 5] << 24;
-	} else {
-		CANT_HAPPEN_MSG("Invalid game type.");
-	}
-
-	return offset;
-}
+// Shape format configuration for Compressed Ultima 8 shapes
+extern const ConvertShapeFormat		U8CMPShapeFormat;
 
 } // End of namespace Ultima8
+
+#endif

@@ -114,12 +114,12 @@ bool UCProcess::ret() {
 		return false;
 }
 
-void UCProcess::freeOnTerminate(uint16 index, int type) {
-	assert(type >= 1 && type <= 3);
+void UCProcess::freeOnTerminate(uint16 index, int type_) {
+	assert(type_ >= 1 && type_ <= 3);
 
 	std::pair<uint16, int> p;
 	p.first = index;
-	p.second = type;
+	p.second = type_;
 
 	freeonterminate.push_back(p);
 }
@@ -129,9 +129,9 @@ void UCProcess::terminate() {
 
 	for (i = freeonterminate.begin(); i != freeonterminate.end(); ++i) {
 		uint16 index = (*i).first;
-		int type = (*i).second;
+		int typeNum = (*i).second;
 
-		switch (type) {
+		switch (typeNum) {
 		case 1: // string
 			UCMachine::get_instance()->freeString(index);
 			break;
@@ -153,11 +153,11 @@ void UCProcess::dumpInfo() {
 	Process::dumpInfo();
 
 	if (classid == 0xFFFF) {
-		pout.printf("IP undefined\n");
+		pout.Print("IP undefined\n");
 	} else {
 		const char *classname = GameData::get_instance()->getMainUsecode()->
 		                        get_class_name(classid);
-		pout.printf("classname: %s, IP: %04X:%04X\n", classname, classid, ip);
+		pout.Print("classname: %s, IP: %04X:%04X\n", classname, classid, ip);
 	}
 }
 
@@ -172,7 +172,7 @@ void UCProcess::saveData(ODataSource *ods) {
 	std::list<std::pair<uint16, int> >::iterator iter;
 	for (iter = freeonterminate.begin(); iter != freeonterminate.end(); ++iter) {
 		ods->write2(iter->first);
-		ods->write4(static_cast<uint32>(iter->_value));
+		ods->write4(static_cast<uint32>(iter->second));
 	}
 	stack.save(ods);
 }

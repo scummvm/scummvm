@@ -50,7 +50,7 @@ public:
 
 	virtual void terminate();
 
-	void freeOnTerminate(uint16 index, int type);
+	void freeOnTerminate(uint16 index, int type_);
 
 	void setReturnValue(uint32 retval) {
 		temp32 = retval;
