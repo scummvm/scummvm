@@ -251,13 +251,13 @@ Symbol *Lingo::define(Common::String &name, int start, int nargs, Common::String
 			_currentScript->remove_at(i);
 		}
 
-	if (debugChannelSet(1, kDebugLingoExec)) {
+	if (debugChannelSet(1, kDebugLingoCompile)) {
 		uint pc = 0;
 		while (pc < sym->u.defn->size()) {
 			Common::String instr = g_lingo->decodeInstruction(sym->u.defn, pc, &pc);
-			debugC(1, kDebugLingoExec, "[%5d] %s", pc, instr.c_str());
+			debugC(1, kDebugLingoCompile, "[%5d] %s", pc, instr.c_str());
 		}
-		debugC(1, kDebugLingoExec, "<end define code>");
+		debugC(1, kDebugLingoCompile, "<end define code>");
 	}
 
 	return sym;
