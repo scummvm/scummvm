@@ -21,7 +21,7 @@
  */
 
 #include "ultima8/misc/pent_include.h"
-#include "ultima8/gumps/rwidgets/game_widget.h"
+#include "ultima8/gumps/widgets/game_widget.h"
 
 #include "ultima8/kernel/gui_app.h"
 #include "ultima8/games/game_info.h"

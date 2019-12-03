@@ -121,6 +121,11 @@ public:
 	 * Resizes a string
 	 */
 	void resize(size_t count);
+
+	void insert(size_t pos, size_t n, char c) {
+		for (uint idx = 0; idx < n; ++idx)
+			insertChar(c, pos);
+	}
 };
 
 extern const char *const endl;

@@ -110,7 +110,7 @@ void SKFPlayer::start() {
 	MusicProcess *musicproc = MusicProcess::get_instance();
 	if (musicproc) musicproc->playMusic(0);
 	playing = true;
-	lastupdate = SDL_GetTicks();
+	lastupdate = g_system->getMillis();
 }
 
 void SKFPlayer::stop() {
@@ -154,7 +154,7 @@ void SKFPlayer::run() {
 	}
 
 	// CHECKME: this timing may not be accurate enough...
-	uint32 now = SDL_GetTicks();
+	uint32 now = g_system->getMillis();
 	if (lastupdate + (1000 / framerate) > now) return;
 
 	lastupdate += (1000 / framerate);

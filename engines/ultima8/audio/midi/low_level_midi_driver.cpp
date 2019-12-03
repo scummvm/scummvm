@@ -502,7 +502,7 @@ int LowLevelMidiDriver::threadMain() {
 
 	// Execute the play loop
 	for (;;) {
-		xmidi_clock = SDL_GetTicks() * 6;
+		xmidi_clock = g_system->getMillis() * 6;
 		if (playSequences()) break;
 
 		int32 time_till_next = 0x7FFFFFFF;
@@ -903,10 +903,10 @@ void LowLevelMidiDriver::sequenceSendSysEx(uint16 sequence_id, uint8 status, con
 
 	// Just send it
 
-	int ticks = SDL_GetTicks();
+	int ticks = g_system->getMillis();
 	if (next_sysex > ticks) SDL_Delay(next_sysex - ticks); // Wait till we think the buffer is empty
 	send_sysex(status, msg, length);
-	next_sysex = SDL_GetTicks() + 40;
+	next_sysex = g_system->getMillis() + 40;
 }
 
 uint32 LowLevelMidiDriver::getTickCount(uint16 sequence_id) {
@@ -1312,10 +1312,10 @@ void LowLevelMidiDriver::sendMT32SystemMessage(uint32 address_base, uint16 addre
 
 	// Just send it
 
-	int ticks = SDL_GetTicks();
+	int ticks = g_system->getMillis();
 	if (next_sysex > ticks) SDL_Delay(next_sysex - ticks);  // Wait till we think the buffer is empty
 	send_sysex(0xF0, sysex_buffer, sysex_data_start + len + 2);
-	next_sysex = SDL_GetTicks() + 40;
+	next_sysex = g_system->getMillis() + 40;
 }
 
 void LowLevelMidiDriver::setPatchBank(int bank, int patch) {

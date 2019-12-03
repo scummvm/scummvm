@@ -64,6 +64,11 @@ MODULE_OBJS := \
 	gumps/slider_gump.o \
 	gumps/target_gump.o \
 	gumps/u8_save_gump.o \
+	gumps/widgets/button_widget.o \
+	gumps/widgets/edit_widget.o \
+	gumps/widgets/game_widget.o \
+	gumps/widgets/sliding_widget.o \
+	gumps/widgets/text_widget.o \
 	kernel/allocator.o \
 	kernel/core_app.o \
 	kernel/delay_process.o \

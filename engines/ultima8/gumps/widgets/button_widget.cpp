@@ -92,9 +92,9 @@ void ButtonWidget::InitGump(Gump *newparent, bool take_focus) {
 int ButtonWidget::getVlead() {
 	if (textwidget != 0) {
 		Gump *widget = getGump(textwidget);
-		TextWidget *textwidget = p_dynamic_cast<TextWidget *>(widget);
-		assert(textwidget);
-		return textwidget->getVlead();
+		TextWidget *txtWidget = p_dynamic_cast<TextWidget *>(widget);
+		assert(txtWidget);
+		return txtWidget->getVlead();
 	} else {
 		return 0;
 	}
@@ -159,9 +159,9 @@ void ButtonWidget::OnMouseOver() {
 	if (mouseOver) {
 		if (textwidget) {
 			Gump *widget = getGump(textwidget);
-			TextWidget *textwidget = p_dynamic_cast<TextWidget *>(widget);
-			assert(textwidget);
-			textwidget->setBlendColour(mouseOverBlendCol);
+			TextWidget *txtWidget = p_dynamic_cast<TextWidget *>(widget);
+			assert(txtWidget);
+			txtWidget->setBlendColour(mouseOverBlendCol);
 		} else {
 			shape = shape_down;
 			framenum = framenum_down;
@@ -173,9 +173,9 @@ void ButtonWidget::OnMouseLeft() {
 	if (mouseOver) {
 		if (textwidget) {
 			Gump *widget = getGump(textwidget);
-			TextWidget *textwidget = p_dynamic_cast<TextWidget *>(widget);
-			assert(textwidget);
-			textwidget->setBlendColour(0);
+			TextWidget *txtWidget = p_dynamic_cast<TextWidget *>(widget);
+			assert(txtWidget);
+			txtWidget->setBlendColour(0);
 		} else {
 			shape = shape_up;
 			framenum = framenum_up;

@@ -30,6 +30,8 @@
 #include "ultima8/filesys/odata_source.h"
 #include "ultima8/graphics/fonts/tt_font.h"
 #include "ultima8/misc/encoding.h"
+#include "common/system.h"
+#include "common/events.h"
 
 namespace Ultima8 {
 
@@ -61,8 +63,8 @@ void EditWidget::InitGump(Gump *newparent, bool take_focus) {
 	dims.x = 0;
 
 	if (gamefont && getFont()->isHighRes()) {
-		int x = 0, y = 0, w = 0;
-		ScreenSpaceToGumpRect(x, y, w, dims.y, ROUND_OUTSIDE);
+		int x_ = 0, y_ = 0, w = 0;
+		ScreenSpaceToGumpRect(x_, y_, w, dims.y, ROUND_OUTSIDE);
 	}
 }
 
@@ -81,7 +83,7 @@ void EditWidget::setText(const std::string &t) {
 
 void EditWidget::ensureCursorVisible() {
 	cursor_visible = true;
-	cursor_changed = SDL_GetTicks();
+	cursor_changed = g_system->getMillis();
 }
 
 bool EditWidget::textFits(std::string &t) {
@@ -93,8 +95,8 @@ bool EditWidget::textFits(std::string &t) {
 	int max_width = multiline ? dims.w : 0;
 	int max_height = dims.h;
 	if (gamefont && font->isHighRes()) {
-		int x = 0, y = 0;
-		GumpRectToScreenSpace(x, y, max_width, max_height, ROUND_INSIDE);
+		int x_ = 0, y_ = 0;
+		GumpRectToScreenSpace(x_, y_, max_width, max_height, ROUND_INSIDE);
 	}
 
 	font->getTextSize(t, width, height, remaining,
@@ -102,8 +104,8 @@ bool EditWidget::textFits(std::string &t) {
 	                  Pentagram::Font::TEXT_LEFT, false);
 
 	if (gamefont && font->isHighRes()) {
-		int x = 0, y = 0;
-		ScreenSpaceToGumpRect(x, y, width, height, ROUND_OUTSIDE);
+		int x_ = 0, y_ = 0;
+		ScreenSpaceToGumpRect(x_, y_, width, height, ROUND_OUTSIDE);
 	}
 
 	if (multiline)
@@ -117,7 +119,7 @@ void EditWidget::renderText() {
 	if (!IsFocus()) {
 		cv = false;
 	} else {
-		uint32 now = SDL_GetTicks();
+		uint32 now = g_system->getMillis();
 		if (now > cursor_changed + 750) {
 			cv = !cursor_visible;
 			cursor_changed = now;
@@ -135,8 +137,8 @@ void EditWidget::renderText() {
 		int max_width = multiline ? dims.w : 0;
 		int max_height = dims.h;
 		if (gamefont && font->isHighRes()) {
-			int x = 0, y = 0;
-			GumpRectToScreenSpace(x, y, max_width, max_height, ROUND_INSIDE);
+			int x_ = 0, y_ = 0;
+			GumpRectToScreenSpace(x_, y_, max_width, max_height, ROUND_INSIDE);
 		}
 
 		unsigned int remaining;
