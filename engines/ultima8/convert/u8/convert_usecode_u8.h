@@ -102,8 +102,8 @@ const char* const ConvertUsecodeU8::_intrinsics[] = {
 	"word Item::getCX()",
 	"word Item::getCY()",
 	"word Item::getCZ()",
-	"word Item::getGumpX()",					// Unused
-	"word Item::getGumpY()",					// Unused
+	"word Item::Ultima8::getGumpX()",					// Unused
+	"word Item::Ultima8::getGumpY()",					// Unused
 	"void Item::setGumpXY(word x, word y)",		// Unused
 	"Item::getPoint(WorldPoint*)",
 	"uword Item::getType()",

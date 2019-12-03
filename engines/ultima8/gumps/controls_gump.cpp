@@ -134,12 +134,12 @@ void ControlsGump::InitGump(Gump *newparent, bool take_focus) {
 	widget->InitGump(this, false);
 }
 
-void ControlsGump::addEntry(const char *binding, const char *name, int &x, int &y) {
+void ControlsGump::addEntry(const char *binding, const char *name, int &x_, int &y_) {
 	Pentagram::Rect rect;
-	Gump *widget = new ControlEntryGump(x, y, dims.w - x, binding, name);
+	Gump *widget = new ControlEntryGump(x_, y_, dims.w - x_, binding, name);
 	widget->InitGump(this);
 	widget->GetDims(rect);
-	y += rect.h;
+	y_ += rect.h;
 }
 
 void ControlsGump::ChildNotify(Gump *child, uint32 message) {

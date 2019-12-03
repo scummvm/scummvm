@@ -113,8 +113,8 @@ void MenuGump::InitGump(Gump *newparent, bool take_focus) {
 		settingman->get("endgame", endgame);
 		settingman->get("quotes", quotes);
 
-		int x = dims.w / 2 + 14;
-		int y = 18;
+		int x_ = dims.w / 2 + 14;
+		int y_ = 18;
 		Gump *widget;
 		for (int i = 0; i < 8; ++i) {
 			if ((quotes || i != 6) && (endgame || i != 7)) {
@@ -122,12 +122,12 @@ void MenuGump::InitGump(Gump *newparent, bool take_focus) {
 				FrameID frame_down(GameData::GUMPS, menuEntryShape, i * 2 + 1);
 				frame_up = _TL_SHP_(frame_up);
 				frame_down = _TL_SHP_(frame_down);
-				widget = new ButtonWidget(x, y, frame_up, frame_down, true);
+				widget = new ButtonWidget(x_, y_, frame_up, frame_down, true);
 				widget->InitGump(this, false);
 				widget->SetIndex(i + 1);
 			}
 
-			y += 14;
+			y_ += 14;
 		}
 
 		MainActor *av = getMainActor();
@@ -168,13 +168,13 @@ bool MenuGump::OnKeyDown(int key, int mod) {
 
 	if (!nameEntryMode) {
 
-		if (key == SDLK_ESCAPE) {
+		if (key == Common::KEYCODE_ESCAPE) {
 			// FIXME: this check should probably be in Game or GUIApp
 			MainActor *av = getMainActor();
 			if (av && !(av->getActorFlags() & Actor::ACT_DEAD))
 				Close(); // don't allow closing if dead/game over
-		} else if (key >= SDLK_1 && key <= SDLK_9) {
-			selectEntry(key - SDLK_1 + 1);
+		} else if (key >= Common::KEYCODE_1 && key <= Common::KEYCODE_9) {
+			selectEntry(key - Common::KEYCODE_1 + 1);
 		}
 
 	}

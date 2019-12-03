@@ -25,11 +25,11 @@
 
 #include "ultima8/graphics/render_surface.h"
 #include "ultima8/kernel/gui_app.h"
-#include "ultima8/gumps/rwidgets/game_widget.h"
+#include "ultima8/gumps/widgets/game_widget.h"
 #include "ultima8/conf/setting_manager.h"
 #include "ultima8/filesys/file_system.h"
 #include "ultima8/filesys/idata_source.h"
-#include "ultima8/graphics/texturePNG.h"
+#include "ultima8/graphics/texture_png.h"
 #include "ultima8/gumps/u8_save_gump.h"
 #include "ultima8/gumps/gump_notify_process.h"
 #include "ultima8/kernel/kernel.h"
@@ -208,9 +208,9 @@ void PentagramMenuGump::run() {
 bool PentagramMenuGump::OnKeyDown(int key, int mod) {
 	int delta = 0;
 
-	if (key == SDLK_DOWN) {
+	if (key == Common::KEYCODE_DOWN) {
 		delta = -114;
-	} else if (key == SDLK_UP) {
+	} else if (key == Common::KEYCODE_UP) {
 		delta = 114;
 	}
 

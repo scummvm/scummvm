@@ -29,6 +29,41 @@ MODULE_OBJS := \
 	graphics/texture_bitmap.o \
 	graphics/texture_png.o \
 	graphics/texture_targa.o \
+	gumps/ask_gump.o \
+	gumps/bark_gump.o \
+	gumps/bind_gump.o \
+	gumps/book_gump.o \
+	gumps/console_gump.o \
+	gumps/container_gump.o \
+	gumps/controls_gump.o \
+	gumps/credits_gump.o \
+	gumps/desktop_gump.o \
+	gumps/fast_area_vis_gump.o \
+	gumps/game_map_gump.o \
+	gumps/gump.o \
+	gumps/gump_notify_process.o \
+	gumps/inverter_gump.o \
+	gumps/item_relative_gump.o \
+	gumps/main_menu_process.o \
+	gumps/menu_gump.o \
+	gumps/message_box_gump.o \
+	gumps/minimap_gump.o \
+	gumps/mini_stats_gump.o \
+	gumps/modal_gump.o \
+	gumps/movie_gump.o \
+	gumps/options_gump.o \
+	gumps/paged_gump.o \
+	gumps/paperdoll_gump.o \
+	gumps/pentagram_menu_gump.o \
+	gumps/quit_gump.o \
+	gumps/readable_gump.o \
+	gumps/resizable_gump.o \
+	gumps/scaler_gump.o \
+	gumps/scroll_gump.o \
+	gumps/shape_viewer_gump.o \
+	gumps/slider_gump.o \
+	gumps/target_gump.o \
+	gumps/u8_save_gump.o \
 	kernel/allocator.o \
 	kernel/core_app.o \
 	kernel/delay_process.o \

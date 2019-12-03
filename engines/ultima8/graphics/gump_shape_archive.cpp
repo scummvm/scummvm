@@ -49,7 +49,7 @@ void GumpShapeArchive::loadGumpage(IDataSource *ds) {
 	}
 }
 
-Pentagram::Rect *GumpShapeArchive::getGumpItemArea(uint32 shapenum) {
+Pentagram::Rect *GumpShapeArchive::Ultima8::getGumpItemArea(uint32 shapenum) {
 	if (shapenum >= gumpItemArea.size()) return 0;
 	return gumpItemArea[shapenum];
 }

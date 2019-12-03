@@ -252,66 +252,66 @@ bool ConsoleGump::OnKeyDown(int key, int mod) {
 	if (scroll_state == NORMAL_DISPLAY) {
 		switch (key) {
 		// Command completion
-		case SDLK_TAB:
+		case Common::KEYCODE_TAB:
 			con.AddCharacterToCommandBuffer(Console::Tab);
 			break;
 
-		case SDLK_ESCAPE:
+		case Common::KEYCODE_ESCAPE:
 			ToggleConsole();
 			break;
 
-		case SDLK_RETURN:
-		case SDLK_KP_ENTER:
+		case Common::KEYCODE_RETURN:
+		case Common::KEYCODE_KP_ENTER:
 			con.AddCharacterToCommandBuffer(Console::Enter);
 			break;
 
-		case SDLK_BACKSPACE:
+		case Common::KEYCODE_BACKSPACE:
 			con.DeleteCommandBufferChars(-1);
 			break;
 
-		case SDLK_DELETE:
+		case Common::KEYCODE_DELETE:
 			con.DeleteCommandBufferChars(1);
 			break;
 
-		case SDLK_PAGEUP:
+		case Common::KEYCODE_PAGEUP:
 			con.ScrollConsole(-3);
 			break;
 
-		case SDLK_PAGEDOWN:
+		case Common::KEYCODE_PAGEDOWN:
 			con.ScrollConsole(3);
 			break;
 
-		case SDLK_UP:
+		case Common::KEYCODE_UP:
 			con.ScrollCommandHistory(-1);
 			break;
 
-		case SDLK_DOWN:
+		case Common::KEYCODE_DOWN:
 			con.ScrollCommandHistory(1);
 			break;
 
-		case SDLK_LEFT:
+		case Common::KEYCODE_LEFT:
 			con.MoveCommandCursor(-1);
 			break;
 
-		case SDLK_RIGHT:
+		case Common::KEYCODE_RIGHT:
 			con.MoveCommandCursor(1);
 			break;
 
-		case SDLK_INSERT:
+		case Common::KEYCODE_INSERT:
 			con.ToggleCommandInsert();
 			break;
 
-		case SDLK_KP0:
-		case SDLK_KP1:
-		case SDLK_KP2:
-		case SDLK_KP3:
-		case SDLK_KP4:
-		case SDLK_KP5:
-		case SDLK_KP6:
-		case SDLK_KP7:
-		case SDLK_KP8:
-		case SDLK_KP9:
-			OnTextInput(key - SDLK_KP0 + '0');
+		case Common::KEYCODE_KP0:
+		case Common::KEYCODE_KP1:
+		case Common::KEYCODE_KP2:
+		case Common::KEYCODE_KP3:
+		case Common::KEYCODE_KP4:
+		case Common::KEYCODE_KP5:
+		case Common::KEYCODE_KP6:
+		case Common::KEYCODE_KP7:
+		case Common::KEYCODE_KP8:
+		case Common::KEYCODE_KP9:
+			OnTextInput(key - Common::KEYCODE_KP0 + '0');
 			break;
 
 		default:

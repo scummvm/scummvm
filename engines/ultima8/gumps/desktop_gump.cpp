@@ -30,7 +30,7 @@
 #include "ultima8/gumps/modal_gump.h"
 #include "ultima8/gumps/target_gump.h"
 
-namespcae Ultima8 {
+namespace Ultima8 {
 
 DEFINE_RUNTIME_CLASSTYPE_CODE(DesktopGump, Gump)
 

@@ -95,25 +95,25 @@ void CreditsGump::Close(bool no_del) {
 	if (musicproc) musicproc->playMusic(0);
 }
 
-void CreditsGump::extractLine(std::string &text,
+void CreditsGump::extractLine(std::string &text_,
                               char &modifier, std::string &line) {
-	if (text.empty()) {
+	if (text_.empty()) {
 		line = "";
 		modifier = 0;
 		return;
 	}
 
-	if (text[0] == '+' || text[0] == '&' || text[0] == '}' || text[0] == '~' ||
-	        text[0] == '@') {
-		modifier = text[0];
-		text.erase(0, 1);
+	if (text_[0] == '+' || text_[0] == '&' || text_[0] == '}' || text_[0] == '~' ||
+	        text_[0] == '@') {
+		modifier = text_[0];
+		text_.erase(0, 1);
 	} else {
 		modifier = 0;
 	}
 
-	std::string::size_type starpos = text.find('*');
+	std::string::size_type starpos = text_.find('*');
 
-	line = text.substr(0, starpos);
+	line = text_.substr(0, starpos);
 
 	// replace '%%' by '%'.
 	// (Original interpreted these strings as format strings??)
@@ -123,7 +123,7 @@ void CreditsGump::extractLine(std::string &text,
 	}
 
 	if (starpos != std::string::npos) starpos++;
-	text.erase(0, starpos);
+	text_.erase(0, starpos);
 }
 
 
@@ -354,23 +354,23 @@ void CreditsGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scaled)
 	if (h > 0)
 		surf->Blit(tex, 0, currenty, 256, h, 32, 44);
 
-	int y = h;
+	int y_ = h;
 	for (int i = 1; i < 4; i++) {
 		if (h == 156) break;
 
 		int s = (currentsurface + i) % 4;
 		tex = scroll[s]->GetSurfaceAsTexture();
 		h = scrollheight[s];
-		if (h > 156 - y) h = 156 - y;
+		if (h > 156 - y_) h = 156 - y_;
 		if (h > 0)
-			surf->Blit(tex, 0, 0, 256, h, 32, 44 + y);
-		y += h;
+			surf->Blit(tex, 0, 0, 256, h, 32, 44 + y_);
+		y_ += h;
 	}
 }
 
 bool CreditsGump::OnKeyDown(int key, int mod) {
 	switch (key) {
-	case SDLK_ESCAPE: {
+	case Common::KEYCODE_ESCAPE: {
 		Close();
 	}
 	break;

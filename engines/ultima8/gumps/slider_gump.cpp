@@ -226,17 +226,17 @@ void SliderGump::StopDraggingChild(Gump *gump) {
 
 bool SliderGump::OnKeyDown(int key, int mod) {
 	switch (key) {
-	case SDLK_LEFT:
+	case Common::KEYCODE_LEFT:
 		value -= delta;
 		if (value < min) value = min;
 		setSliderPos();
 		break;
-	case SDLK_RIGHT:
+	case Common::KEYCODE_RIGHT:
 		value += delta;
 		if (value > max) value = max;
 		setSliderPos();
 		break;
-	case SDLK_RETURN:
+	case Common::KEYCODE_RETURN:
 		Close();
 		break;
 	default:

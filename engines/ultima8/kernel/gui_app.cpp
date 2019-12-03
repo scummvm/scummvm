@@ -1665,13 +1665,13 @@ void GUIApp::handleEvent(const Common::Event &event) {
 
 		/*
 		switch (event.kbd.keycode) {
-		    case SDLK_KP_PLUS: {
+		    case Common::KEYCODE_KP_PLUS: {
 		        midi_volume+=8;
 		        if (midi_volume>255) midi_volume =255;
 		        pout << "Midi Volume is now: " << midi_volume << std::endl;
 		        if (midi_driver) midi_driver->setGlobalVolume(midi_volume);
 		    } break;
-		    case SDLK_KP_MINUS: {
+		    case Common::KEYCODE_KP_MINUS: {
 		        midi_volume-=8;
 		        if (midi_volume<0) midi_volume = 0;
 		        pout << "Midi Volume is now: " << midi_volume << std::endl;

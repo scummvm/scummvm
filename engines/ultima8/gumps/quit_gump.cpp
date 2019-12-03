@@ -105,7 +105,7 @@ void QuitGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scaled) {
 
 bool QuitGump::OnKeyDown(int key, int mod) {
 	switch (key) {
-	case SDLK_ESCAPE: {
+	case Common::KEYCODE_ESCAPE: {
 		Close();
 	}
 	break;

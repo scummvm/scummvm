@@ -51,7 +51,14 @@ public:
 
 		return first;
 	}
+
+	void swap(vector &arr) {
+		SWAP(this->_capacity, arr._capacity);
+		SWAP(this->_size, arr._size);
+		SWAP(this->_storage, arr._storage);
+	}
 };
+
 template<class T>
 class set {
 	struct Comparitor {
@@ -59,8 +66,17 @@ class set {
 			return a.Compare(b);
 		}
 	};
+
+	class Items : public Common::Array<T> {
+	public:
+		void swap(Items &arr) {
+			SWAP(_capacity, arr._capacity);
+			SWAP(_size, arr._size);
+			SWAP(_storage, arr._storage);
+		}
+	};
 private:
-	Common::Array<T> _items;
+	Items _items;
 	Comparitor _comparitor;
 public:
 	typedef T *iterator;
@@ -75,6 +91,13 @@ public:
 	void insert(T val) {
 		_items.push_back(val);
 		Common::sort(begin(), end(), _comparitor);
+	}
+
+	/**
+	 * Swaps a set
+	 */
+	void swap(set<T> &arr) {
+		_items.swap(arr);
 	}
 };
 

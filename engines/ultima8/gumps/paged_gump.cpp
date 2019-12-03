@@ -97,7 +97,7 @@ bool PagedGump::OnKeyDown(int key, int mod) {
 		if ((*current)->OnKeyDown(key, mod)) return true;
 
 	switch (key) {
-	case SDLK_ESCAPE:
+	case Common::KEYCODE_ESCAPE:
 		Close();
 		return true;
 	default:

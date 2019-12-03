@@ -69,11 +69,11 @@ void BookGump::InitGump(Gump *newparent, bool take_focus) {
 	text.clear(); // no longer need this
 
 	//!! constant
-	Shape *shape = GameData::get_instance()->getGumps()->getShape(6);
+	Shape *shapeP = GameData::get_instance()->getGumps()->getShape(6);
 
-	SetShape(shape, 0);
+	SetShape(shapeP, 0);
 
-	ShapeFrame *sf = shape->getFrame(0);
+	ShapeFrame *sf = shapeP->getFrame(0);
 	assert(sf);
 
 	dims.w = sf->width;
