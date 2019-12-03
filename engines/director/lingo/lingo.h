@@ -115,9 +115,9 @@ struct Datum {	/* interpreter stack type */
 	int type;
 
 	union {
-		int	i;
-		double f;
-		Common::String *s;
+		int	i;				/* INT, ARGC, ARGCNORET */
+		double f;			/* FLOAT */
+		Common::String *s;	/* STRING */
 		Symbol	*sym;
 		FloatArray *farr;	/* ARRAY, POINT, RECT */
 	} u;
@@ -290,7 +290,8 @@ public:
 	static void c_symbolpush();
 	static void c_constpush();
 	static void c_varpush();
-	static void c_argspush();
+	static void c_argcpush();
+	static void c_argcnoretpush();
 	static void c_arraypush();
 	static void c_assign();
 	bool verify(Symbol *s);
@@ -347,6 +348,8 @@ public:
 	static void c_unk2();
 
 	// bytecode-related instructions
+	static void cb_localcall();
+	static void cb_call();
 	static void cb_v4theentitypush();
 	static void cb_v4theentitynamepush();
 	static void cb_v4theentityassign();

@@ -366,12 +366,17 @@ Common::String *Datum::toString() {
 	case INT:
 		*s = Common::String::format("%d", u.i);
 		break;
+	case ARGC:
+		*s = Common::String::format("argc: %d", u.i);
+		break;
+	case ARGCNORET:
+		*s = Common::String::format("argcnoret: %d", u.i);
+		break;
 	case FLOAT:
 		*s = Common::String::format(g_lingo->_floatPrecisionFormat.c_str(), u.f);
 		break;
 	case STRING:
-		delete s;
-		s = u.s;
+		*s = Common::String::format("\"%s\"", u.s->c_str());
 		break;
 	case SYMBOL:
 		switch (u.i) {

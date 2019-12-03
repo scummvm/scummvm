@@ -88,7 +88,7 @@ void checkEnd(Common::String *token, const char *expect, bool required) {
 
 %token UNARY
 %token CASTREF VOID VAR POINT RECT ARRAY OBJECT REFERENCE
-%token<i> INT
+%token<i> INT ARGC ARGCNORET
 %token<e> THEENTITY THEENTITYWITHID
 %token<f> FLOAT
 %token<s> BLTIN BLTINNOARGS BLTINNOARGSORONE BLTINONEARG BLTINARGLIST TWOWORDBUILTIN

@@ -54,18 +54,19 @@ static LingoV4Bytecode lingoV4[] = {
 	{ 0x1c, Lingo::c_tell, "" },
 	{ 0x1d, Lingo::c_telldone, "" },
 	{ 0x41, Lingo::c_intpush, "b" },
-	{ 0x42, Lingo::c_argspush, "b" },
-	{ 0x43, Lingo::c_arraypush, "b" },
+	{ 0x42, Lingo::c_argcpush, "b" },
 	{ 0x44, Lingo::c_constpush, "bv" },
 	{ 0x45, Lingo::c_symbolpush, "b" },
 	{ 0x53, Lingo::c_jump, "jb" },
 	{ 0x54, Lingo::c_jump, "jbn" },
 	{ 0x55, Lingo::c_jumpifz, "jb" },
+	{ 0x56, Lingo::cb_localcall, "b" },
+	{ 0x57, Lingo::cb_call, "b" },
 	{ 0x5c, Lingo::cb_v4theentitypush, "b" },
 	{ 0x5d, Lingo::cb_v4theentityassign, "b" },
 	{ 0x66, Lingo::cb_v4theentitynamepush, "b" },
 	{ 0x81, Lingo::c_intpush, "w" },
-	{ 0x82, Lingo::c_argspush, "w" },
+	{ 0x82, Lingo::c_argcpush, "w" },
 	{ 0x83, Lingo::c_arraypush, "w" },
 	{ 0x84, Lingo::c_constpush, "wv" },
 	{ 0x93, Lingo::c_jump, "jw" },
@@ -182,6 +183,36 @@ void Lingo::initBytecode() {
 }
 
 
+void Lingo::cb_localcall() {
+	int nameId = g_lingo->readInt();
+	Common::String name = g_lingo->_namelist[nameId];
+
+	Datum nargs = g_lingo->pop();
+	if ((nargs.type == ARGC) || (nargs.type == ARGCNORET)) {
+		warning("STUB: cb_localcall(%s)", name.c_str());
+
+	} else {
+		warning("cb_localcall: first arg should be of type ARGC or ARGCNORET, not %s", nargs.type2str());
+	}
+
+}
+
+
+void Lingo::cb_call() {
+	int nameId = g_lingo->readInt();
+	Common::String name = g_lingo->_namelist[nameId];
+
+	Datum nargs = g_lingo->pop();
+	if ((nargs.type == ARGC) || (nargs.type == ARGCNORET)) {
+		g_lingo->call(name, nargs.u.i);
+
+	} else {
+		warning("cb_call: first arg should be of type ARGC or ARGCNORET, not %s", nargs.type2str());
+	}
+
+}
+
+
 void Lingo::cb_v4theentitypush() {
 	int bank = g_lingo->readInt();
 
@@ -252,7 +283,8 @@ void Lingo::cb_v4theentitynamepush() {
 
 	TheEntity *entity = g_lingo->_theEntities[name];
 
-	debugC(3, kDebugLingoExec, "cb_v4theentitynamepush: calling getTheEntity(0x%02x, id, kTheNOField)", entity->entity, name.c_str());
+	debugC(3, kDebugLingoExec, "cb_v4theentitynamepush: %s", name.c_str());
+	debugC(3, kDebugLingoExec, "cb_v4theentitynamepush: calling getTheEntity(0x%02x, id, kTheNOField)", entity->entity);
 	Datum result = g_lingo->getTheEntity(entity->entity, id, kTheNOField);
 
 	g_lingo->push(result);

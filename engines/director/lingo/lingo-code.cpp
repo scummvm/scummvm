@@ -57,7 +57,8 @@ static struct FuncDescr {
 } funcDescr[] = {
 	{ 0,					"STOP",			"" },
 	{ Lingo::c_xpop,		"c_xpop",		"" },
-	{ Lingo::c_argspush,	"c_argspush",	"i" },
+	{ Lingo::c_argcpush,	"c_argcpush",	"i" },
+	{ Lingo::c_argcnoretpush,	"c_argcnoretpush",	"i" },
 	{ Lingo::c_arraypush,	"c_arraypush",	"i" },
 	{ Lingo::c_printtop,	"c_printtop",	"" },
 	{ Lingo::c_intpush,		"c_intpush",	"i" },
@@ -132,6 +133,8 @@ static struct FuncDescr {
 	{ Lingo::c_unk,         "c_unk",        "i" },
 	{ Lingo::c_unk1,        "c_unk1",       "ii" },
 	{ Lingo::c_unk2,        "c_unk2",       "iii" },
+	{ Lingo::cb_call,		"cb_call",		"i" },
+	{ Lingo::cb_localcall,	"cb_localcall",	"i" },
 	{ Lingo::cb_v4theentitypush,"c_v4theentitypush","i" },
 	{ Lingo::cb_v4theentitynamepush,"c_v4theentitynamepush","i" },
 	{ Lingo::cb_v4theentityassign,"c_v4theentityassign","i" },
@@ -253,17 +256,21 @@ void Lingo::c_constpush() {
 	g_lingo->push(d);
 }
 
-void Lingo::c_argspush() {
+void Lingo::c_argcpush() {
 	Datum d;
 	int argsSize = g_lingo->readInt();
 
-	warning("STUB: c_argspush()");
+	d.u.i = argsSize;
+	d.type = ARGC;
+	g_lingo->push(d);
+}
 
-	for (int i = 0; i < argsSize; i++)
-		g_lingo->pop();
+void Lingo::c_argcnoretpush() {
+	Datum d;
+	int argsSize = g_lingo->readInt();
 
 	d.u.i = argsSize;
-	d.type = INT;
+	d.type = ARGCNORET;
 	g_lingo->push(d);
 }
 
