@@ -457,6 +457,7 @@ public:
 	static void b_dontPassEvent(int nargs);
 	static void b_delay(int nargs);
 	static void b_do(int nargs);
+	static void b_go(int nargs);
 	static void b_halt(int nargs);
 	static void b_nothing(int nargs);
 	static void b_pass(int nargs);

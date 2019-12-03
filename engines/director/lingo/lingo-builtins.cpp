@@ -105,6 +105,7 @@ static struct BuiltinProto {
 	{ "dontPassEvent",	Lingo::b_dontPassEvent,	0, 0, false },	// D2 c
 	{ "delay",	 		Lingo::b_delay,			1, 1, false },	// D2 c
 	{ "do",		 		Lingo::b_do,			1, 1, false },	// D2 c
+	{ "go",				Lingo::b_go, 			1, 2, false },
 	{ "halt",	 		Lingo::b_halt,			0, 0, false },	//			D4 c
 	{ "nothing",		Lingo::b_nothing,		0, 0, false },	// D2 c
 	{ "pass",			Lingo::b_pass,			0, 0, false },	//			D4 c
@@ -886,6 +887,12 @@ void Lingo::b_do(int nargs) {
 	Datum d = g_lingo->pop();
 	d.toString();
 	warning("STUB: b_do(%s)", d.u.s->c_str());
+}
+
+void Lingo::b_go(int nargs) {
+	g_lingo->printSTUBWithArglist("b_go", nargs);
+
+	g_lingo->dropStack(nargs);
 }
 
 void Lingo::b_halt(int nargs) {
