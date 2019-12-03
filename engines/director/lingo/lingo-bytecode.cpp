@@ -63,6 +63,7 @@ static LingoV4Bytecode lingoV4[] = {
 	{ 0x55, Lingo::c_jumpifz, "jb" },
 	{ 0x5c, Lingo::cb_v4theentitypush, "b" },
 	{ 0x5d, Lingo::cb_v4theentityassign, "b" },
+	{ 0x66, Lingo::cb_v4theentitynamepush, "b" },
 	{ 0x81, Lingo::c_intpush, "w" },
 	{ 0x82, Lingo::c_argspush, "w" },
 	{ 0x83, Lingo::c_arraypush, "w" },
@@ -236,6 +237,23 @@ void Lingo::cb_v4theentitypush() {
 	} else {
 		warning("cb_v4theentitypush: first arg should be of type INT, not %s", firstArg.type2str());
 	}
+
+	g_lingo->push(result);
+}
+
+
+void Lingo::cb_v4theentitynamepush() {
+	int nameId = g_lingo->readInt();
+	Common::String name = g_lingo->_namelist[nameId];
+
+	Datum id;
+	id.u.s = NULL;
+	id.type = VOID;
+
+	TheEntity *entity = g_lingo->_theEntities[name];
+
+	debugC(3, kDebugLingoExec, "cb_v4theentitynamepush: calling getTheEntity(0x%02x, id, kTheNOField)", entity->entity, name.c_str());
+	Datum result = g_lingo->getTheEntity(entity->entity, id, kTheNOField);
 
 	g_lingo->push(result);
 }

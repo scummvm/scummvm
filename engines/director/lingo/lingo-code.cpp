@@ -133,6 +133,7 @@ static struct FuncDescr {
 	{ Lingo::c_unk1,        "c_unk1",       "ii" },
 	{ Lingo::c_unk2,        "c_unk2",       "iii" },
 	{ Lingo::cb_v4theentitypush,"c_v4theentitypush","i" },
+	{ Lingo::cb_v4theentitynamepush,"c_v4theentitynamepush","i" },
 	{ Lingo::cb_v4theentityassign,"c_v4theentityassign","i" },
 	{ 0, 0, 0 }
 };

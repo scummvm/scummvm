@@ -348,6 +348,7 @@ public:
 
 	// bytecode-related instructions
 	static void cb_v4theentitypush();
+	static void cb_v4theentitynamepush();
 	static void cb_v4theentityassign();
 
 	void printSTUBWithArglist(const char *funcname, int nargs, const char *prefix = "STUB:");
