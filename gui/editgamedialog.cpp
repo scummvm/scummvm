@@ -223,11 +223,13 @@ EditGameDialog::EditGameDialog(const String &domain)
 
 	addVolumeControls(tab, "GameOptions_Volume.");
 
+	bool showMidi = !_guioptions.contains(GUIO_NOMIDI) && !_guioptions.contains(GUIO_NOMUSIC);
+
 	//
 	// 6) The MIDI tab
 	//
 	_globalMIDIOverride = NULL;
-	if (!_guioptions.contains(GUIO_NOMIDI)) {
+	if (showMidi) {
 		tab->addTab(_("MIDI"));
 
 		if (g_system->getOverlayWidth() > 320)
@@ -242,7 +244,7 @@ EditGameDialog::EditGameDialog(const String &domain)
 	// 7) The MT-32 tab
 	//
 	_globalMT32Override = NULL;
-	if (!_guioptions.contains(GUIO_NOMIDI)) {
+	if (showMidi) {
 		tab->addTab(_("MT-32"));
 
 		if (g_system->getOverlayWidth() > 320)
