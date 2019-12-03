@@ -1,0 +1,13 @@
+-- This file is binary. Watch for 0xC2 symbol at the line ends
+
+    if the text of cast A16 <> the text of cast A17 then Â
+    set the text of cast A16 = the text of cast A17
+
+if the text of cast A16 <> the text of cast A17 then Â
+set the text of cast A16 = the text of cast A17
+
+set the selStart to Â
+	0
+
+set the selStart to Â
+0
