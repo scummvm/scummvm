@@ -2904,6 +2904,48 @@ static const WMEGameDescription gameDescriptions[] = {
 					"data_sd.dcp", "8864e2e552bb7816916d8c6630e8f1a5", 97821007,
 					"i18n_ru_strings.dcp", "5cecc876ec1b364f22780d18a0821349", 45546), Common::RU_RUS, ADGF_UNSTABLE, WME_1_9_3),
 
+	// Shadows on the Vatican - Act I: Greed (Steam, Jun 2018) (German SD)
+	WME_WINENTRY("sotv1", "",
+		WME_ENTRY3s("data.dcp", "e0d5b1276cf80c858b7404f1f3381e2b", 95890675,
+					"data_sd.dcp", "551feca25b9e0ac9d467c105efb373e8", 97979104,
+					"i18n_de_strings.dcp", "59d15bb3c32354b5104475df0ff6c50b", 43136), Common::DE_DEU, ADGF_UNSTABLE, WME_1_9_3),
+
+	// Shadows on the Vatican - Act I: Greed (Steam, Jun 2018) (English SD)
+	WME_WINENTRY("sotv1", "",
+		WME_ENTRY3s("data.dcp", "e0d5b1276cf80c858b7404f1f3381e2b", 95890675,
+					"data_sd.dcp", "551feca25b9e0ac9d467c105efb373e8", 97979104,
+					"i18n_en_strings.dcp", "733a53213ab5be27941c34dcef531e0e", 75119), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_3),
+
+	// Shadows on the Vatican - Act I: Greed (Steam, Jun 2018) (Spanish SD)
+	WME_WINENTRY("sotv1", "",
+		WME_ENTRY3s("data.dcp", "e0d5b1276cf80c858b7404f1f3381e2b", 95890675,
+					"data_sd.dcp", "551feca25b9e0ac9d467c105efb373e8", 97979104,
+					"i18n_es_strings.dcp", "18876a252741b8bda888805ca860f600", 40153), Common::ES_ESP, ADGF_UNSTABLE, WME_1_9_3),
+
+	// Shadows on the Vatican - Act I: Greed (Steam, Jun 2018) (French SD)
+	WME_WINENTRY("sotv1", "",
+		WME_ENTRY3s("data.dcp", "e0d5b1276cf80c858b7404f1f3381e2b", 95890675,
+					"data_sd.dcp", "551feca25b9e0ac9d467c105efb373e8", 97979104,
+					"i18n_fr_strings.dcp", "850cce9217d83785e4b56028441b0d71", 40807), Common::FR_FRA, ADGF_UNSTABLE, WME_1_9_3),
+
+	// Shadows on the Vatican - Act I: Greed (Steam, Jun 2018) (Italian SD)
+	WME_WINENTRY("sotv1", "",
+		WME_ENTRY3s("data.dcp", "e0d5b1276cf80c858b7404f1f3381e2b", 95890675,
+					"data_sd.dcp", "551feca25b9e0ac9d467c105efb373e8", 97979104,
+					"i18n_it_strings.dcp", "de567598fba43589841c354306a80377", 40502), Common::IT_ITA, ADGF_UNSTABLE, WME_1_9_3),
+
+	// Shadows on the Vatican - Act I: Greed (Steam, Jun 2018) (Polish SD)
+	WME_WINENTRY("sotv1", "",
+		WME_ENTRY3s("data.dcp", "e0d5b1276cf80c858b7404f1f3381e2b", 95890675,
+					"data_sd.dcp", "551feca25b9e0ac9d467c105efb373e8", 97979104,
+					"i18n_pl_strings.dcp", "daa4b251caec6c6e2c3b96aaf87ae33a", 40062), Common::PL_POL, ADGF_UNSTABLE, WME_1_9_3),
+
+	// Shadows on the Vatican - Act I: Greed (Steam, Jun 2018) (Russian SD)
+	WME_WINENTRY("sotv1", "",
+		WME_ENTRY3s("data.dcp", "e0d5b1276cf80c858b7404f1f3381e2b", 95890675,
+					"data_sd.dcp", "551feca25b9e0ac9d467c105efb373e8", 97979104,
+					"i18n_ru_strings.dcp", "ebf28ca1475b3be9754a323966807683", 45546), Common::RU_RUS, ADGF_UNSTABLE, WME_1_9_3),
+
 	// Shadows on the Vatican - Act I: Greed (Steam, Jul 2014) (German HD)
 	WME_WINENTRY("sotv1", "",
 		WME_ENTRY3s("data.dcp", "e19b63c6aa19d491a4f533ac9c1609ef", 97061505,
@@ -3059,6 +3101,48 @@ static const WMEGameDescription gameDescriptions[] = {
 		WME_ENTRY3s("data.dcp", "46bb5822abf6d422d08a68070e05bd86", 95890675,
 					"data_hd.dcp", "79a5c4ae560817a149506dce894274d0", 197155130,
 					"i18n_ru_strings.dcp", "5cecc876ec1b364f22780d18a0821349", 45546), Common::RU_RUS, ADGF_UNSTABLE, WME_1_9_3),
+
+	// Shadows on the Vatican - Act I: Greed (Steam, Jun 2018) (German HD)
+	WME_WINENTRY("sotv1", "",
+		WME_ENTRY3s("data.dcp", "e0d5b1276cf80c858b7404f1f3381e2b", 95890675,
+					"data_hd.dcp", "05ce36b4c7b947c503496a1d895671e5", 197431006,
+					"i18n_de_strings.dcp", "59d15bb3c32354b5104475df0ff6c50b", 43136), Common::DE_DEU, ADGF_UNSTABLE, WME_1_9_3),
+
+	// Shadows on the Vatican - Act I: Greed (Steam, Jun 2018) (English HD)
+	WME_WINENTRY("sotv1", "",
+		WME_ENTRY3s("data.dcp", "e0d5b1276cf80c858b7404f1f3381e2b", 95890675,
+					"data_hd.dcp", "05ce36b4c7b947c503496a1d895671e5", 197431006,
+					"i18n_en_strings.dcp", "733a53213ab5be27941c34dcef531e0e", 75119), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_3),
+
+	// Shadows on the Vatican - Act I: Greed (Steam, Jun 2018) (Spanish HD)
+	WME_WINENTRY("sotv1", "",
+		WME_ENTRY3s("data.dcp", "e0d5b1276cf80c858b7404f1f3381e2b", 95890675,
+					"data_hd.dcp", "05ce36b4c7b947c503496a1d895671e5", 197431006,
+					"i18n_es_strings.dcp", "18876a252741b8bda888805ca860f600", 40153), Common::ES_ESP, ADGF_UNSTABLE, WME_1_9_3),
+
+	// Shadows on the Vatican - Act I: Greed (Steam, Jun 2018) (French HD)
+	WME_WINENTRY("sotv1", "",
+		WME_ENTRY3s("data.dcp", "e0d5b1276cf80c858b7404f1f3381e2b", 95890675,
+					"data_hd.dcp", "05ce36b4c7b947c503496a1d895671e5", 197431006,
+					"i18n_fr_strings.dcp", "850cce9217d83785e4b56028441b0d71", 40807), Common::FR_FRA, ADGF_UNSTABLE, WME_1_9_3),
+
+	// Shadows on the Vatican - Act I: Greed (Steam, Jun 2018) (Italian HD)
+	WME_WINENTRY("sotv1", "",
+		WME_ENTRY3s("data.dcp", "e0d5b1276cf80c858b7404f1f3381e2b", 95890675,
+					"data_hd.dcp", "05ce36b4c7b947c503496a1d895671e5", 197431006,
+					"i18n_it_strings.dcp", "de567598fba43589841c354306a80377", 40502), Common::IT_ITA, ADGF_UNSTABLE, WME_1_9_3),
+
+	// Shadows on the Vatican - Act I: Greed (Steam, Jun 2018) (Polish HD)
+	WME_WINENTRY("sotv1", "",
+		WME_ENTRY3s("data.dcp", "e0d5b1276cf80c858b7404f1f3381e2b", 95890675,
+					"data_hd.dcp", "05ce36b4c7b947c503496a1d895671e5", 197431006,
+					"i18n_pl_strings.dcp", "daa4b251caec6c6e2c3b96aaf87ae33a", 40062), Common::PL_POL, ADGF_UNSTABLE, WME_1_9_3),
+
+	// Shadows on the Vatican - Act I: Greed (Steam, Jun 2018) (Russian HD)
+	WME_WINENTRY("sotv1", "",
+		WME_ENTRY3s("data.dcp", "e0d5b1276cf80c858b7404f1f3381e2b", 95890675,
+					"data_hd.dcp", "05ce36b4c7b947c503496a1d895671e5", 197431006,
+					"i18n_ru_strings.dcp", "ebf28ca1475b3be9754a323966807683", 45546), Common::RU_RUS, ADGF_UNSTABLE, WME_1_9_3),
 
 	// Shadows on the Vatican - Act II: Wrath (Steam, Oct 26th 2015) (English SD)
 	WME_WINENTRY("sotv2", "",
@@ -3336,6 +3420,48 @@ static const WMEGameDescription gameDescriptions[] = {
 					"data_sd.dcp", "eedb6e8addffd6cd882f18b231e439a4", 97327255,
 					"i18n_pl_strings.dcp", "43df37eaa12d9a60561297a199ba0e70", 119077), Common::PL_POL, ADGF_UNSTABLE, WME_1_9_3),
 
+	// Shadows on the Vatican - Act II: Wrath (Steam, Jun 2018) (English SD)
+	WME_WINENTRY("sotv2", "",
+		WME_ENTRY3s("data.dcp", "0410ed71d9d6f133c703009edab38da4", 273131997,
+					"data_sd.dcp", "e235c10ece56ac3056ebfa851726dca6", 97169915,
+					"i18n_en_strings.dcp", "4b6a631516bd9bd1aa20028b0c7266bd", 114808), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_3),
+
+	// Shadows on the Vatican - Act II: Wrath (Steam, Jun 2018) (Italian SD)
+	WME_WINENTRY("sotv2", "",
+		WME_ENTRY3s("data.dcp", "0410ed71d9d6f133c703009edab38da4", 273131997,
+					"data_sd.dcp", "e235c10ece56ac3056ebfa851726dca6", 97169915,
+					"i18n_it_strings.dcp", "ba71ea60d10a440b6604add1452994f6", 127751), Common::IT_ITA, ADGF_UNSTABLE, WME_1_9_3),
+
+	// Shadows on the Vatican - Act II: Wrath (Steam, Jun 2018) (German SD)
+	WME_WINENTRY("sotv2", "",
+		WME_ENTRY3s("data.dcp", "0410ed71d9d6f133c703009edab38da4", 273131997,
+					"data_sd.dcp", "e235c10ece56ac3056ebfa851726dca6", 97169915,
+					"i18n_de_strings.dcp", "999727c3c9bae93f06d19c71337b5d66", 60429), Common::DE_DEU, ADGF_UNSTABLE, WME_1_9_3),
+
+	// Shadows on the Vatican - Act II: Wrath (Steam, Jun 2018) (Spanish SD)
+	WME_WINENTRY("sotv2", "",
+		WME_ENTRY3s("data.dcp", "0410ed71d9d6f133c703009edab38da4", 273131997,
+					"data_sd.dcp", "e235c10ece56ac3056ebfa851726dca6", 97169915,
+					"i18n_es_strings.dcp", "fe5b26d90019d9601de6b3fb13daee87", 54964), Common::ES_ESP, ADGF_UNSTABLE, WME_1_9_3),
+
+	// Shadows on the Vatican - Act II: Wrath (Steam, Jun 2018) (French SD)
+	WME_WINENTRY("sotv2", "",
+		WME_ENTRY3s("data.dcp", "0410ed71d9d6f133c703009edab38da4", 273131997,
+					"data_sd.dcp", "e235c10ece56ac3056ebfa851726dca6", 97169915,
+					"i18n_fr_strings.dcp", "4f336e2ba1941c006dab3c9ec543db69", 59086), Common::FR_FRA, ADGF_UNSTABLE, WME_1_9_3),
+
+	// Shadows on the Vatican - Act II: Wrath (Steam, Jun 2018) (Russian SD)
+	WME_WINENTRY("sotv2", "",
+		WME_ENTRY3s("data.dcp", "0410ed71d9d6f133c703009edab38da4", 273131997,
+					"data_sd.dcp", "e235c10ece56ac3056ebfa851726dca6", 97169915,
+					"i18n_ru_strings.dcp", "f7243c0c9b1a9393fdd97b0c2496ba05", 73757), Common::RU_RUS, ADGF_UNSTABLE, WME_1_9_3),
+
+	// Shadows on the Vatican - Act II: Wrath (Steam, Jun 2018) (Polish SD)
+	WME_WINENTRY("sotv2", "",
+		WME_ENTRY3s("data.dcp", "0410ed71d9d6f133c703009edab38da4", 273131997,
+					"data_sd.dcp", "e235c10ece56ac3056ebfa851726dca6", 97169915,
+					"i18n_pl_strings.dcp", "67c194c45375d2e26f8bf5ae17800944", 119354), Common::PL_POL, ADGF_UNSTABLE, WME_1_9_3),
+
 	// Shadows on the Vatican - Act II: Wrath (Steam, Oct 26th 2015) (English HD)
 	WME_WINENTRY("sotv2", "",
 		WME_ENTRY3s("data.dcp", "cfea0d6c7e4a96627d16887c3480266a", 273132663,
@@ -3611,6 +3737,48 @@ static const WMEGameDescription gameDescriptions[] = {
 		WME_ENTRY3s("data.dcp", "f04bc0d4fb2034adea3e7f9652b617ec", 273131946,
 					"data_hd.dcp", "5e4f57e77da13286bfa22ab157fcf147", 271652871,
 					"i18n_pl_strings.dcp", "43df37eaa12d9a60561297a199ba0e70", 119077), Common::PL_POL, ADGF_UNSTABLE, WME_1_9_3),
+
+	// Shadows on the Vatican - Act II: Wrath (Steam, Jun 2018) (English HD)
+	WME_WINENTRY("sotv2", "",
+		WME_ENTRY3s("data.dcp", "0410ed71d9d6f133c703009edab38da4", 273131997,
+					"data_hd.dcp", "61b79bd9f732e48bb097227ee615463b", 272405838,
+					"i18n_en_strings.dcp", "4b6a631516bd9bd1aa20028b0c7266bd", 114808), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_3),
+
+	// Shadows on the Vatican - Act II: Wrath (Steam, Jun 2018) (Italian HD)
+	WME_WINENTRY("sotv2", "",
+		WME_ENTRY3s("data.dcp", "0410ed71d9d6f133c703009edab38da4", 273131997,
+					"data_hd.dcp", "61b79bd9f732e48bb097227ee615463b", 272405838,
+					"i18n_it_strings.dcp", "ba71ea60d10a440b6604add1452994f6", 127751), Common::IT_ITA, ADGF_UNSTABLE, WME_1_9_3),
+
+	// Shadows on the Vatican - Act II: Wrath (Steam, Jun 2018) (German HD)
+	WME_WINENTRY("sotv2", "",
+		WME_ENTRY3s("data.dcp", "0410ed71d9d6f133c703009edab38da4", 273131997,
+					"data_hd.dcp", "61b79bd9f732e48bb097227ee615463b", 272405838,
+					"i18n_de_strings.dcp", "999727c3c9bae93f06d19c71337b5d66", 60429), Common::DE_DEU, ADGF_UNSTABLE, WME_1_9_3),
+
+	// Shadows on the Vatican - Act II: Wrath (Steam, Jun 2018) (Spanish HD)
+	WME_WINENTRY("sotv2", "",
+		WME_ENTRY3s("data.dcp", "0410ed71d9d6f133c703009edab38da4", 273131997,
+					"data_hd.dcp", "61b79bd9f732e48bb097227ee615463b", 272405838,
+					"i18n_es_strings.dcp", "fe5b26d90019d9601de6b3fb13daee87", 54964), Common::ES_ESP, ADGF_UNSTABLE, WME_1_9_3),
+
+	// Shadows on the Vatican - Act II: Wrath (Steam, Jun 2018) (French HD)
+	WME_WINENTRY("sotv2", "",
+		WME_ENTRY3s("data.dcp", "0410ed71d9d6f133c703009edab38da4", 273131997,
+					"data_hd.dcp", "61b79bd9f732e48bb097227ee615463b", 272405838,
+					"i18n_fr_strings.dcp", "4f336e2ba1941c006dab3c9ec543db69", 59086), Common::FR_FRA, ADGF_UNSTABLE, WME_1_9_3),
+
+	// Shadows on the Vatican - Act II: Wrath (Steam, Jun 2018) (Russian HD)
+	WME_WINENTRY("sotv2", "",
+		WME_ENTRY3s("data.dcp", "0410ed71d9d6f133c703009edab38da4", 273131997,
+					"data_hd.dcp", "61b79bd9f732e48bb097227ee615463b", 272405838,
+					"i18n_ru_strings.dcp", "f7243c0c9b1a9393fdd97b0c2496ba05", 73757), Common::RU_RUS, ADGF_UNSTABLE, WME_1_9_3),
+
+	// Shadows on the Vatican - Act II: Wrath (Steam, Jun 2018) (Polish HD)
+	WME_WINENTRY("sotv2", "",
+		WME_ENTRY3s("data.dcp", "0410ed71d9d6f133c703009edab38da4", 273131997,
+					"data_hd.dcp", "61b79bd9f732e48bb097227ee615463b", 272405838,
+					"i18n_pl_strings.dcp", "67c194c45375d2e26f8bf5ae17800944", 119354), Common::PL_POL, ADGF_UNSTABLE, WME_1_9_3),
 
 	// The Shine of a Star
 	WME_WINENTRY("shinestar", "",
