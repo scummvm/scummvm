@@ -188,6 +188,7 @@ void SpecialOpcodes::initOpcodes() {
 	OPCODE(0x82, spc82CallResetDataMaybe);
 	OPCODE(0x83, spcStopScreenShakeUpdater);
 
+	OPCODE(0x88, spc88SetScene1To0x16);
 	OPCODE(0x89, spcSetUnkFlag2);
 	OPCODE(0x8a, spcClearUnkFlag2);
 	OPCODE(0x8b, spcUnk8b);
@@ -783,6 +784,10 @@ void SpecialOpcodes::spcStopScreenShakeUpdater() {
 	//TODO spcStopScreenShakeUpdater
 //	DAT_8006339a = 0;
 //	screenShakeOffset = 0;
+}
+
+void SpecialOpcodes::spc88SetScene1To0x16() {
+	_vm->_sceneId1 = 0x16;
 }
 
 void SpecialOpcodes::spcSetUnkFlag2() {
