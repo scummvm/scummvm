@@ -225,6 +225,8 @@ void HDBGame::changeGameState() {
 		break;
 	case GAME_LOADING:
 		break;
+	default:
+		break;
 	}
 }
 
@@ -361,17 +363,21 @@ void HDBGame::paint() {
 		_gfx->drawPointer();
 		break;
 	case GAME_LOADING:
-		// clear video, then draw HDB logo
-		drawLoadingScreen();
+		{
+			// clear video, then draw HDB logo
+			drawLoadingScreen();
 
-		// if the graphic has never been loaded, load it now and leave it in memory
-		if (!_logoGfx)
-			_logoGfx = _gfx->loadPic(TITLELOGO);
-		_logoGfx->drawMasked(_screenWidth / 2 - _logoGfx->_width / 2, 10);
+			// if the graphic has never been loaded, load it now and leave it in memory
+			if (!_logoGfx)
+				_logoGfx = _gfx->loadPic(TITLELOGO);
+			_logoGfx->drawMasked(_screenWidth / 2 - _logoGfx->_width / 2, 10);
 
-		int	x = _screenWidth / 2 - _progressGfx->_width / 2;
-		int pixels = _progressGfx->_width - _progressMarkGfx->_width;
-		_progressXOffset = (int)(((double)pixels / _progressMax) * (double)_progressCurrent) + x;
+			int	x = _screenWidth / 2 - _progressGfx->_width / 2;
+			int pixels = _progressGfx->_width - _progressMarkGfx->_width;
+			_progressXOffset = (int)(((double)pixels / _progressMax) * (double)_progressCurrent) + x;
+		}
+		break;
+	default:
 		break;
 	}
 
@@ -725,6 +731,7 @@ void HDBGame::useEntity(AIEntity *e) {
 				e->state = STATE_DIVERTER_TR;
 				break;
 			case DIR_NONE:
+			default:
 				break;
 			}
 		}
@@ -760,6 +767,7 @@ void HDBGame::useEntity(AIEntity *e) {
 			p->drawXOff = 10;
 			break;
 		case DIR_NONE:
+		default:
 			break;
 		}
 

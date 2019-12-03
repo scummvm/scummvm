@@ -1238,6 +1238,8 @@ void Gfx::turnOnBonusStars(int which) {
 			_starsInfo.gfx[0] = loadPic(SECRETSTAR_BLUE1);
 			_starsInfo.gfx[1] = loadPic(SECRETSTAR_BLUE2);
 			break;
+		default:
+			break;
 		}
 	}
 

@@ -51,6 +51,7 @@ void AI::addAnimateTarget(int x, int y, int start, int end, AnimSpeed speed, boo
 		at->animFrame = 10;
 		break;
 	case ANIM_NORMAL:
+	default:
 		at->animCycle = 6;
 		at->animFrame = 6;
 		break;
@@ -215,6 +216,7 @@ void AI::animateBridges() {
 			}
 			break;
 		case DIR_NONE:
+		default:
 			break;
 		}
 
@@ -747,6 +749,7 @@ bool AI::checkTeleportList(AIEntity *e, int x, int y) {
 				setEntityGoal(e, e->tileX + 1, e->tileY);
 				break;
 			case DIR_NONE:
+			default:
 				break;
 			}
 

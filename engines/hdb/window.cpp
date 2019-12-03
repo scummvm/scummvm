@@ -1858,7 +1858,9 @@ void Window::drawPanicZone() {
 				return;
 			}
 		}
-	break;
+		break;
+	default:
+		break;
 	}
 }
 

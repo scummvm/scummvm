@@ -114,6 +114,7 @@ void aiOmniBotAction(AIEntity *e) {
 					}
 					break;
 				case DIR_NONE:
+				default:
 					break;
 				}
 
@@ -361,6 +362,7 @@ void aiRightBotInit2(AIEntity *e) {
 		e->state = STATE_MOVERIGHT;
 		break;
 	case DIR_NONE:
+	default:
 		break;
 	}
 }
@@ -457,6 +459,7 @@ void aiRightBotFindGoal(AIEntity *e) {
 					e->dir = DIR_DOWN;
 					break;
 				case DIR_NONE:
+				default:
 					break;
 				}
 			} else if (!bg && !e1) {
@@ -474,6 +477,7 @@ void aiRightBotFindGoal(AIEntity *e) {
 					e->dir = DIR_UP;
 					break;
 				case DIR_NONE:
+				default:
 					break;
 				}
 			} else {
@@ -499,6 +503,7 @@ void aiRightBotFindGoal(AIEntity *e) {
 					xv = -1;
 					break;
 				case DIR_NONE:
+				default:
 					break;
 				}
 				sx += xv;
@@ -522,6 +527,7 @@ void aiRightBotFindGoal(AIEntity *e) {
 		e->state = STATE_MOVERIGHT;
 		break;
 	case DIR_NONE:
+	default:
 		break;
 	}
 
@@ -718,6 +724,7 @@ void aiRailRiderAction(AIEntity *e) {
 				e->yVel = 0;
 				break;
 			case DIR_NONE:
+			default:
 				break;
 			}
 		}
@@ -739,6 +746,8 @@ void aiRailRiderAction(AIEntity *e) {
 			e->dir = arrowPath->dir;
 			e->value1 = 0;	// Not in a tunnel
 		}
+		break;
+	default:
 		break;
 	}
 
@@ -849,6 +858,7 @@ void aiRailRiderOnAction(AIEntity *e) {
 							g_hdb->_ai->setEntityGoal(p, e->tileX, e->tileY + 1);
 						break;
 					case DIR_NONE:
+					default:
 						break;
 					}
 					g_hdb->_ai->setPlayerInvisible(false);
@@ -881,8 +891,9 @@ void aiRailRiderOnAction(AIEntity *e) {
 		case DIR_RIGHT:
 			e->draw = e->moverightGfx[0];
 			break;
+		case DIR_NONE:
 		default:
-			break; // DIR_NONE
+			break;
 		}
 		g_hdb->_map->centerMapXY(e->x + 16, e->y + 16);
 
@@ -924,6 +935,8 @@ void aiRailRiderOnAction(AIEntity *e) {
 			e->animFrame = 0;
 
 		e->draw = e->standupGfx[e->animFrame];
+		break;
+	default:
 		break;
 	}
 }
@@ -1020,6 +1033,8 @@ void aiMaintBotAction(AIEntity *e) {
 				g_hdb->_ai->findPath(e);
 				g_hdb->_ai->animateEntity(e);
 				break;
+			default:
+				break;
 			}
 		// Deciding where to go at 4-way
 		else {
@@ -1046,11 +1061,15 @@ void aiMaintBotAction(AIEntity *e) {
 				break;
 			// Decide direction and GO
 			case 0:
-				int dir = (g_hdb->_rnd->getRandomNumber(3)) + 1;
-				e->dir = dirList[dir];
-				g_hdb->_ai->findPath(e);
-				if (e->onScreen && !g_hdb->isDemo())
-					g_hdb->_sound->playSound(whistles[g_hdb->_rnd->getRandomNumber(2)]);
+				{
+					int dir = (g_hdb->_rnd->getRandomNumber(3)) + 1;
+					e->dir = dirList[dir];
+					g_hdb->_ai->findPath(e);
+					if (e->onScreen && !g_hdb->isDemo())
+						g_hdb->_sound->playSound(whistles[g_hdb->_rnd->getRandomNumber(2)]);
+				}
+				break;
+			default:
 				break;
 			}
 		}
@@ -1168,6 +1187,7 @@ void aiFourFirerAction(AIEntity *e) {
 		}
 		break;
 	case DIR_NONE:
+	default:
 		break;
 	}
 
@@ -1241,6 +1261,9 @@ void aiDeadEyeWalkInPlace(AIEntity *e) {
 		break;
 	case 0:
 		e->sequence = 64;
+		break;
+	default:
+		break;
 	}
 	g_hdb->_ai->animEntFrames(e);
 }
@@ -1278,6 +1301,7 @@ void aiDeadEyeAction(AIEntity *e) {
 					nuts = true;
 				break;
 			case DIR_NONE:
+			default:
 				break;
 			}
 
@@ -1343,35 +1367,39 @@ void aiDeadEyeAction(AIEntity *e) {
 			}
 			break;
 		case 0:
-			// Pick a random direction and random number of tiles in that direction
-			int dir = g_hdb->_rnd->getRandomNumber(3) + 1;
-			int walk = g_hdb->_rnd->getRandomNumber(4) + 1;
+			{
+				// Pick a random direction and random number of tiles in that direction
+				int dir = g_hdb->_rnd->getRandomNumber(3) + 1;
+				int walk = g_hdb->_rnd->getRandomNumber(4) + 1;
 
-			e->dir = (AIDir)dir;
-			e->state = state[dir];
+				e->dir = (AIDir)dir;
+				e->state = state[dir];
 
-			int xv = xvAhead[dir] * walk;
-			if (e->tileX + xv < 1)
-				xv = 1 - e->tileX;
-			if (e->tileX + xv > g_hdb->_map->_width)
-				xv = g_hdb->_map->_width - e->tileX - 1;
+				int xv = xvAhead[dir] * walk;
+				if (e->tileX + xv < 1)
+					xv = 1 - e->tileX;
+				if (e->tileX + xv > g_hdb->_map->_width)
+					xv = g_hdb->_map->_width - e->tileX - 1;
 
-			int yv = yvAhead[dir] * walk;
-			if (e->tileY + yv < 1)
-				yv = 1 - e->tileY;
-			if (e->tileY + yv > g_hdb->_map->_height)
-				yv = g_hdb->_map->_height - e->tileY - 1;
+				int yv = yvAhead[dir] * walk;
+				if (e->tileY + yv < 1)
+					yv = 1 - e->tileY;
+				if (e->tileY + yv > g_hdb->_map->_height)
+					yv = g_hdb->_map->_height - e->tileY - 1;
 
-			e->value1 = xvAhead[dir];
-			e->value2 = yvAhead[dir];
-			e->moveSpeed = kPlayerMoveSpeed;
-			int result;
-			AIEntity *hit = g_hdb->_ai->legalMove(e->tileX + xvAhead[e->dir], e->tileY + yvAhead[e->dir], e->level, &result);
-			if (hit && hit->type == AI_GUY)
-				hit = nullptr;
+				e->value1 = xvAhead[dir];
+				e->value2 = yvAhead[dir];
+				e->moveSpeed = kPlayerMoveSpeed;
+				int result;
+				AIEntity *hit = g_hdb->_ai->legalMove(e->tileX + xvAhead[e->dir], e->tileY + yvAhead[e->dir], e->level, &result);
+				if (hit && hit->type == AI_GUY)
+					hit = nullptr;
 
-			if (!hit && result)
-				g_hdb->_ai->setEntityGoal(e, e->tileX + xv, e->tileY + yv);
+				if (!hit && result)
+					g_hdb->_ai->setEntityGoal(e, e->tileX + xv, e->tileY + yv);
+			}
+			break;
+		default:
 			break;
 		}
 		g_hdb->_ai->animEntFrames(e);
@@ -1477,6 +1505,7 @@ void aiLaserAction(AIEntity *e) {
 					hit->int1 = 1;
 					break;
 				case DIR_NONE:
+				default:
 					break;
 				}
 			} else {
@@ -1497,6 +1526,7 @@ void aiLaserAction(AIEntity *e) {
 					hit->int2 = -1;
 					break;
 				case DIR_NONE:
+				default:
 					break;
 				}
 			}
@@ -1640,6 +1670,7 @@ void aiLaserDraw(AIEntity *e, int mx, int my) {
 		}
 	}
 		break;
+	case DIR_NONE:
 	default:
 		break;
 	}
@@ -1691,6 +1722,7 @@ void aiDiverterInit2(AIEntity *e) {
 		e->draw = e->standrightGfx[0];
 		break;
 	case DIR_NONE:
+	default:
 		break;
 	}
 
@@ -1721,6 +1753,7 @@ void aiDiverterAction(AIEntity *e) {
 			e->draw = e->standrightGfx[0];
 			break;
 		case DIR_NONE:
+		default:
 			break;
 		}
 	}
@@ -1811,6 +1844,7 @@ void aiDiverterDraw(AIEntity *e, int mx, int my) {
 		}
 		break;
 	case DIR_NONE:
+	default:
 		break;
 	}
 	e->movedownFrames++;
@@ -1984,6 +2018,9 @@ void aiMeerkatAction(AIEntity *e) {
 			e->animFrame = 0;
 			e->animDelay = e->animCycle;
 		}
+		break;
+
+	default:
 		break;
 	}
 
@@ -2262,6 +2299,8 @@ void aiFatFrogTongueDraw(AIEntity *e, int mx, int my) {
 			g_hdb->_ai->_tileFroglickMiddleUD->drawMasked(nx - mx, ny - my);
 			g_hdb->_ai->_tileFroglickWiggleUD[2]->drawMasked(nx - mx, ny + 32 - my);
 			break;
+		default:
+			break;
 		}
 		break;
 
@@ -2300,6 +2339,8 @@ void aiFatFrogTongueDraw(AIEntity *e, int mx, int my) {
 			g_hdb->_ai->_tileFroglickMiddleLR->drawMasked(nx - mx, ny - my);
 			g_hdb->_ai->_tileFroglickWiggleLeft[2]->drawMasked(nx - 32 - mx, ny - my);
 			break;
+		default:
+			break;
 		}
 		break;
 
@@ -2337,6 +2378,8 @@ void aiFatFrogTongueDraw(AIEntity *e, int mx, int my) {
 			ny = e->y;
 			g_hdb->_ai->_tileFroglickMiddleLR->drawMasked(nx - mx, ny - my);
 			g_hdb->_ai->_tileFroglickWiggleRight[2]->drawMasked(nx + 32 - mx, ny - my);
+			break;
+		default:
 			break;
 		}
 		break;
@@ -2491,6 +2534,9 @@ void aiGoodFairyAction(AIEntity *e) {
 				e->sequence = 1;
 				e->value1 = e->value2 = e->xVel = e->yVel = 0;
 			}
+			break;
+		default:
+			break;
 		}
 		g_hdb->_ai->animEntFrames(e);
 		return;
@@ -2641,6 +2687,9 @@ void aiBadFairyAction(AIEntity *e) {
 				e->sequence = 1;
 				e->value1 = e->value2 = e->xVel = e->yVel = 0;
 			}
+			break;
+		default:
+			break;
 		}
 		g_hdb->_ai->animEntFrames(e);
 		return;
@@ -2669,9 +2718,10 @@ void aiBadFairyAction(AIEntity *e) {
 			}
 		}
 		g_hdb->_ai->animateEntity(e);
-	} else
+	} else {
 		// if not, start looking around!
 		e->sequence = 20;
+	}
 }
 
 //-------------------------------------------------------------------
@@ -2728,6 +2778,7 @@ void aiGatePuddleAction(AIEntity *e) {
 						g_hdb->_ai->setEntityGoal(p, p->tileX + 1, p->tileY);
 						break;
 					case DIR_NONE:
+					default:
 						break;
 					}
 					g_hdb->_ai->_playerEmerging = true;
@@ -2762,6 +2813,7 @@ void aiGatePuddleAction(AIEntity *e) {
 						g_hdb->_ai->setEntityGoal(p, p->tileX + 1, p->tileY);
 						break;
 					case DIR_NONE:
+					default:
 						break;
 					}
 					g_hdb->_ai->_playerEmerging = true;
@@ -2946,6 +2998,8 @@ void aiIcePuffAction(AIEntity *e) {
 			e->draw = e->blinkGfx[3];
 			e->sequence = 30;
 			break;
+		default:
+			break;
 		}
 
 		// can we see the player? (and no snowball is out)
@@ -3128,6 +3182,10 @@ void aiBuzzflyAction(AIEntity *e) {
 			if (e->onScreen)
 				g_hdb->_sound->playSound(SND_BUZZFLY_FLY);
 			e->sequence = 0;
+			break;
+
+		default:
+			break;
 		}
 	} else {
 		g_hdb->_ai->animateEntity(e);
@@ -3313,6 +3371,9 @@ void aiDragonAction(AIEntity *e) {
 			}
 		}
 		break;
+
+	default:
+		break;
 	}
 }
 
@@ -3337,6 +3398,8 @@ void aiDragonDraw(AIEntity *e, int mx, int my) {
 	// flapping 3 times
 	case 4:
 		g_hdb->_ai->_gfxDragonBreathe[e->animFrame & 1]->drawMasked(e->x - 32 - mx, e->y - 96 - my);
+		break;
+	default:
 		break;
 	}
 }

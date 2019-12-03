@@ -413,6 +413,7 @@ Tile *AI::getStandFrameDir(AIEntity *e) {
 			return e->moverightGfx[0];
 		break;
 	case DIR_NONE:
+	default:
 		break;
 	}
 	return e->standdownGfx[0];

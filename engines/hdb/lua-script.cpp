@@ -1018,6 +1018,8 @@ static int animation(lua_State *L) {
 		if (playsnd)
 			g_hdb->_sound->playSound(SND_CHICKEN_DEATH);
 		break;
+	default:
+		break;
 	}
 
 	lua_pop(L, 3);

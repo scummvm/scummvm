@@ -600,6 +600,8 @@ void Menu::drawMenu() {
 				case 2:
 					_newgameActive = true;
 					break;
+				default:
+					break;
 				}
 
 				_oBannerY = 0;
@@ -1160,6 +1162,9 @@ void Menu::drawTitle() {
 		_titleLogo->drawMasked(centerPic(_titleLogo), _rocketY + _mTitleY);
 
 		break;
+
+	default:
+		break;
 	}
 
 	// timer countdown...
@@ -1292,6 +1297,9 @@ void Menu::drawTitle() {
 	case 12:
 		_titleActive = false;
 		g_hdb->changeGameState();
+		break;
+
+	default:
 		break;
 	}
 }
@@ -1710,6 +1718,8 @@ void Menu::drawRocketAndSelections() {
 		break;
 	case 2:
 		_newGfx->drawMasked(centerPic(_newGfx), _oBannerY);
+		break;
+	default:
 		break;
 	}
 

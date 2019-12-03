@@ -55,6 +55,7 @@ void aiPlayerInit(AIEntity *e) {
 		e->state = STATE_STANDRIGHT;
 		break;
 	case DIR_NONE:
+	default:
 		break;
 	}
 
@@ -493,6 +494,7 @@ void aiPlayerDraw(AIEntity *e, int mx, int my) {
 			g_hdb->_ai->_stunLightningGfx[frame]->drawMasked(e->x + 64 - mx, e->y - my);
 			break;
 		case DIR_NONE:
+		default:
 			break;
 		}
 
@@ -590,25 +592,29 @@ void aiGemAttackAction(AIEntity *e) {
 		break;
 		// coming back to daddy?
 	case 1:
-		AIEntity *p = g_hdb->_ai->getPlayer();
-		if (e->x < p->x)
-			e->x++;
-		else
-			e->x--;
-
-		if (e->y < p->y)
-			e->y++;
-		else
-			e->y--;
-
-		if (abs(e->x - p->x) < 4 && abs(e->y - p->y) < 4)
 		{
-			int	amt = g_hdb->_ai->getGemAmount();
-			g_hdb->_ai->setGemAmount(amt + 1);
-			g_hdb->_ai->addAnimateTarget(e->x, e->y, 0, 3, ANIM_NORMAL, false, false, GEM_FLASH);
-			g_hdb->_ai->removeEntity(e);
-			g_hdb->_sound->playSound(SND_GET_GEM);
+			AIEntity *p = g_hdb->_ai->getPlayer();
+			if (e->x < p->x)
+				e->x++;
+			else
+				e->x--;
+
+			if (e->y < p->y)
+				e->y++;
+			else
+				e->y--;
+
+			if (abs(e->x - p->x) < 4 && abs(e->y - p->y) < 4)
+			{
+				int	amt = g_hdb->_ai->getGemAmount();
+				g_hdb->_ai->setGemAmount(amt + 1);
+				g_hdb->_ai->addAnimateTarget(e->x, e->y, 0, 3, ANIM_NORMAL, false, false, GEM_FLASH);
+				g_hdb->_ai->removeEntity(e);
+				g_hdb->_sound->playSound(SND_GET_GEM);
+			}
 		}
+		break;
+	default:
 		break;
 	}
 }

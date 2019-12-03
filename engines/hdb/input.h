@@ -68,6 +68,7 @@ public:
 		case 2: _keyLeft = keyPressed; return;
 		case 3: _keyRight = keyPressed; return;
 		case 4: _keyUse = keyPressed; return;
+		default: break;
 		}
 	}
 

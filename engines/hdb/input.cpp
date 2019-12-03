@@ -413,6 +413,8 @@ void Input::stylusDown(int x, int y) {
 		}
 	case GAME_LOADING:
 		break;
+	default:
+		break;
 	}
 }
 
