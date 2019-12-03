@@ -55,6 +55,7 @@ static LingoV4Bytecode lingoV4[] = {
 	{ 0x1d, Lingo::c_telldone, "" },
 	{ 0x41, Lingo::c_intpush, "b" },
 	{ 0x42, Lingo::c_argcpush, "b" },
+	{ 0x43, Lingo::c_argcnoretpush, "b" },
 	{ 0x44, Lingo::c_constpush, "bv" },
 	{ 0x45, Lingo::c_symbolpush, "b" },
 	{ 0x53, Lingo::c_jump, "jb" },
@@ -67,7 +68,7 @@ static LingoV4Bytecode lingoV4[] = {
 	{ 0x66, Lingo::cb_v4theentitynamepush, "b" },
 	{ 0x81, Lingo::c_intpush, "w" },
 	{ 0x82, Lingo::c_argcpush, "w" },
-	{ 0x83, Lingo::c_arraypush, "w" },
+	{ 0x83, Lingo::c_argcnoretpush, "w" },
 	{ 0x84, Lingo::c_constpush, "wv" },
 	{ 0x93, Lingo::c_jump, "jw" },
 	{ 0x94, Lingo::c_jump, "jwn" },
@@ -190,6 +191,9 @@ void Lingo::cb_localcall() {
 	Datum nargs = g_lingo->pop();
 	if ((nargs.type == ARGC) || (nargs.type == ARGCNORET)) {
 		warning("STUB: cb_localcall(%s)", name.c_str());
+		for (int i = 0; i < nargs.u.i; i++) {
+			g_lingo->pop();
+		}
 
 	} else {
 		warning("cb_localcall: first arg should be of type ARGC or ARGCNORET, not %s", nargs.type2str());
@@ -274,6 +278,18 @@ void Lingo::cb_v4theentitypush() {
 
 
 void Lingo::cb_v4theentitynamepush() {
+	Datum args = g_lingo->pop();
+	if ((args.type == ARGC) || (args.type == ARGCNORET)) {
+		if (args.u.i > 0) {
+			warning("cb_v4theentitynamepush: expecting argc to be 0, not %d", args.u.i);
+			for (int i = 0; i < args.u.i; i++) {
+				g_lingo->pop();
+			}
+		}
+	} else {
+		warning("cb_v4theentitynamepush: expecting first arg to be of type ARGC or ARGCNORET, not %s", args.type2str());
+	}
+
 	int nameId = g_lingo->readInt();
 	Common::String name = g_lingo->_namelist[nameId];
 
