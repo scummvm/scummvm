@@ -50,6 +50,52 @@ else
   put FALSE
 end if
 
+if the selection = the text of cast A31 then
+    go to frame "sEnd"
+    exit
+else if whichTry = 1 then go to frame "sTell"
+else if whichTry = 2 then go to frame "sShow"
+else if whichTry = 3 then go to frame "sDo"
+
+if the selection = the text of cast A31 then
+    go to frame "sEnd"
+    exit
+else if whichTry = 1 then
+	go to frame "sTell"
+else if whichTry = 2 then
+	put 5
+	go to frame "sShow"
+else if whichTry = 3 then go to frame "sDo"
+else put 6
+
+if the selection = the text of cast A31 then go to frame "sEnd" else put 7
+
+if the selection = the text of cast A31 then go to frame "sEnd"
+else if whichTry = 1 then
+	go to frame "sTell"
+else if whichTry = 2 then
+	put 5
+	go to frame "sShow"
+else if whichTry = 3 then go to frame "sDo"
+else
+	put 6
+	put 7
+end if
+
+if the selection = the text of cast A31 then go to frame "sEnd"
+else if whichTry = 1 then
+	go to frame "sTell"
+else if whichTry = 2 then
+	put 5
+	go to frame "sShow"
+else if whichTry = 3 then go to frame "sDo"
+
+if rollOver(2) then
+  put "The cursor is INSIDE the square." into field "Cursor Status"
+else
+  put "The cursor is OUTSIDE the square." into field "Cursor Status"
+end if
+
 macro WindowHorzP X
     set X1 = constrainH( 14, X )
     if X1 = X then return( TRUE )

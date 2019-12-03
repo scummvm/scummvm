@@ -38,20 +38,27 @@
 using namespace Director;
 
 int yyparse();
+
 static void count() {
 	if (debugChannelSet(-1, kDebugLingoParse))
 		debug("LEXER: Read '%s' at %d:%d", yytext, g_lingo->_linenumber, g_lingo->_colnumber);
 
-	g_lingo->_colnumber += strlen(yytext);
-}
-
-static void countnl() {
 	char *p = yytext;
 
-	while(*p == '\n' || *p == '\r')
+	while (*p && *p != '\n' && *p != '\r') {
 		p++;
+		g_lingo->_colnumber++;
+	}
 
-	g_lingo->_linenumber++;
+	while (*p == '\n' || *p == '\r') {
+		if (*p == '\n') {
+			g_lingo->_linenumber++;
+			g_lingo->_colnumber = 0;
+		}
+
+		p++;
+	}
+
 	g_lingo->_colnumber = strlen(p);
 }
 
@@ -77,7 +84,7 @@ whitespace [\t ]
 
 %%
 
-{whitespace}*\xC2[\r\n]	{ g_lingo->_linenumber++; g_lingo->_colnumber = 0; }
+{whitespace}*\xC2[\r\n]	{ count(); }
 --[^\r\n]*
 ^{whitespace}+	{ count(); }
 [\t]+			{ count(); return ' '; }
@@ -92,8 +99,8 @@ whitespace [\t ]
 (?i:done)		{ count(); return tDONE; }
 (?i:down)		{ count(); return tDOWN; }
 (?i:if)			{ count(); return tIF; }
-(?i:[\n\r]+[\t ]*else[\t ]+if)	{ countnl(); return tNLELSIF; }
-(?i:[\n\r]+[\t ]*else)	{ countnl(); return tNLELSE; }
+(?i:[\n\r]+[\t ]*else[\t ]+if)	{ count(); return tNLELSIF; }
+(?i:[\n\r]+[\t ]*else)	{ count(); return tNLELSE; }
 (?i:else)		{ count(); return tELSE; }
 (?i:end)([\t ]*{identifier})?	{
 		count();
@@ -314,7 +321,7 @@ whitespace [\t ]
 {constfloat}	{ count(); yylval.f = atof(yytext); return FLOAT; }
 {constinteger}	{ count(); yylval.i = strtol(yytext, NULL, 10); return INT; }
 {operator}		{ count(); return *yytext; }
-{newline}		{ return '\n'; }
+{newline}		{ count(); return '\n'; }
 {conststring}	{ count(); yylval.s = new Common::String(&yytext[1]); yylval.s->deleteLastChar(); return STRING; }
 .				{ count(); }
 
