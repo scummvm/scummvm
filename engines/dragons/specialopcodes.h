@@ -181,6 +181,7 @@ protected:
 	void spc82CallResetDataMaybe(); // 0x82
 	void spcStopScreenShakeUpdater(); // 0x83
 
+	void spc88SetScene1To0x16(); //0x88
 	void spcSetUnkFlag2(); // 0x89
 	void spcClearUnkFlag2(); //0x8a
 	void spcUnk8b(); //0x8b

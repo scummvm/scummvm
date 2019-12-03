@@ -33,7 +33,7 @@
 
 namespace Dragons {
 
-Minigame2::Minigame2(DragonsEngine *vm) : _vm(vm) {}
+Minigame2::Minigame2(DragonsEngine *vm) : _vm(vm), DAT_80093c70(false), DAT_80093c72(false), DAT_80093c74(0), DAT_80093ca8(false) {}
 
 static const uint16 unkArray[5] = {
 		0xC, 0xA, 0x8, 0x6, 0x4
@@ -144,7 +144,7 @@ void Minigame2::run(int16 param_1, uint16 param_2, int16 param_3) {
 	DAT_80093cb8 = 2;
 	DAT_80093cc0 = 0;
 	DAT_80093cac = 0;
-	DAT_80093cb0 = 0;
+	DAT_80093cb0 = false;
 	DAT_80093c9c = 0;
 	_vm->_talk->DAT_8008e874_dialogBox_y2 = 0;
 	_vm->_talk->DAT_8008e844_dialogBox_y1 = 0;
@@ -767,27 +767,195 @@ void Minigame2::run(int16 param_1, uint16 param_2, int16 param_3) {
 }
 
 void Minigame2::FUN_80093aec_dialog(uint32 textId, int16 x, int16 y) {
-
+	uint16 auStack4024 [2000];
+//TODO
+//	if ((((DAT_8008e7e8_dialogBox_x1 != 0) || (DAT_8008e848_dialogBox_x2 != 0)) ||
+//		 (DAT_8008e844_dialogBox_y1 != 0)) || (DAT_8008e874_dialogBox_y2 != 0)) {
+//		_vm->_talk->FUN_8001a7c4((uint)DAT_8008e7e8_dialogBox_x1,(uint)DAT_8008e844_dialogBox_y1,
+//					 (uint)DAT_8008e848_dialogBox_x2,(uint)DAT_8008e874_dialogBox_y2);
+//	}
+	_vm->_talk->loadText(textId, auStack4024, 2000);
+	_vm->_talk->displayDialogAroundPoint(auStack4024, x, y, 0, 0, textId);
+	DAT_80093c9c = 1;
 }
 
 bool Minigame2::FUN_80093520() {
-	return false; //TODO
+	bool uVar2;
+
+	if (DAT_80093ca0 == 0) {
+		if (!DAT_80093c70) {
+			if (!DAT_80093c72 || (3 < DAT_80093cb8)) {
+				DAT_80093c72 = false;
+				DAT_80093c74 = DAT_80093c74 + 1;
+				if (DAT_80093c74 < 2) {
+					DAT_80093c70 = true;
+					DAT_80093cac = 0;
+					uVar2 = false;
+				}
+				else {
+					if (DAT_80093ca4 == 0) {
+						DAT_80093cac = 0;
+						if (DAT_80093cb8 == DAT_80093cb4) {
+							if (DAT_80093cbc < DAT_80093cc0) {
+								DAT_80093cac = (ushort)(DAT_80093cb8 < 4);
+							}
+							else {
+								if (!DAT_80093cb0 && _vm->getRand(8) < 3) {
+									if (_vm->getRand(8) < 3) {
+										DAT_80093c72 = 1;
+										DAT_80093c74 = 0;
+										DAT_80093cac = 1;
+									} else {
+										DAT_80093ca4 = DAT_80093cc8 + _vm->getRand(10);
+										DAT_80093cac = 1;
+									}
+									return true;
+								}
+								if (DAT_80093cb4 == 4) {
+									DAT_80093cac = 1;
+								}
+							}
+						}
+						else {
+							if ((DAT_80093cb8 < DAT_80093cb4) && (DAT_80093cb4 != 2)) {
+								DAT_80093cac = 1;
+							}
+						}
+					}
+					uVar2 = (uint)DAT_80093cac;
+				}
+			}
+			else {
+				DAT_80093cac = 1;
+				uVar2 = true;
+			}
+		}
+		else {
+			DAT_80093cac = 0;
+			uVar2 = false;
+		}
+	}
+	else {
+		uVar2 = _vm->isLeftKeyPressed();
+	}
+	return uVar2;
 }
 
 bool Minigame2::FUN_80093248() {
-	return false; //TODO
+	bool uVar2;
+
+	if (DAT_80093ca0 == 0) {
+		if (!DAT_80093c72) {
+			if (!DAT_80093c70 || (DAT_80093cb8 == 0)) {
+				DAT_80093c70 = false;
+				DAT_80093c74 = DAT_80093c74 + 1;
+				if (DAT_80093c74 < 2) {
+					DAT_80093c72 = true;
+					DAT_80093cb0 = false;
+					uVar2 = false;
+				}
+				else {
+					if (DAT_80093ca4 == 0) {
+						DAT_80093cb0 = false;
+						if (DAT_80093cb8 == DAT_80093cb4) {
+							if (DAT_80093cbc < DAT_80093cc0) {
+								DAT_80093cb0 = (bool)(DAT_80093cb8 != 0);
+							}
+							else {
+								if ((DAT_80093cac == 0) &&  _vm->getRand(8) < 3) {
+									if (_vm->getRand(8) < 3) {
+										DAT_80093c70 = true;
+										DAT_80093c74 = 0;
+										DAT_80093cb0 = true;
+									} else {
+										DAT_80093ca4 = DAT_80093cc8 + _vm->getRand(10);
+										DAT_80093cb0 = true;
+									}
+
+									return true;
+								}
+								if (DAT_80093cb4 == 0) {
+									DAT_80093cb0 = true;
+								}
+							}
+						}
+						else {
+							if ((DAT_80093cb4 < DAT_80093cb8) && (DAT_80093cb4 != 2)) {
+								DAT_80093cb0 = true;
+							}
+						}
+					}
+					uVar2 = DAT_80093cb0;
+				}
+			}
+			else {
+				DAT_80093cb0 = true;
+				uVar2 = true;
+			}
+		}
+		else {
+			DAT_80093cb0 = false;
+			uVar2 = false;
+		}
+	}
+	else {
+		uVar2 = _vm->isRightKeyPressed();
+	}
+	return uVar2;
 }
 
 bool Minigame2::FUN_80093800() {
-	return false; //TODO
+	bool uVar2;
+
+	if (DAT_80093ca0 == 0) {
+		if (DAT_80093ca4 == 0) {
+			DAT_80093ca8 = false;
+			if ((DAT_80093cb8 == DAT_80093cb4) && (DAT_80093cc0 < DAT_80093cbc)) {
+				DAT_80093ca8 = true;
+			}
+			else {
+				if (_vm->getRand(8) < 3) {
+					DAT_80093ca4 = _vm->getRand(10);
+					DAT_80093ca4 = DAT_80093cc8 + DAT_80093ca4;
+					DAT_80093ca8 = true;
+				}
+			}
+		}
+		uVar2 = DAT_80093ca8;
+	}
+	else {
+		uVar2 = false;
+		if (_vm->isSquareButtonPressed() || _vm->isCrossButtonPressed() ||
+			 _vm->isCircleButtonPressed() ||
+			_vm->isTriangleButtonPressed()) {
+			uVar2 = true;
+		}
+	}
+	return uVar2;
 }
 
 bool Minigame2::FUN_80093a30() {
-	return false; //TODO
+	bool uVar1;
+
+	if (DAT_80093ca0 == 0) {
+		uVar1 = (uint) DAT_80093c90 == (uint) DAT_80093cc8 / 3;
+	}
+	else {
+		uVar1 = _vm->isL1ButtonPressed(); // TODO || _vm->isL2ButtonPressed();
+	}
+	return uVar1;
 }
 
 bool Minigame2::FUN_80093990() {
-	return false; //TODO
+	bool uVar1;
+
+	if (DAT_80093ca0 == 0) {
+		uVar1 = DAT_80093c90 == 0;
+	}
+	else {
+		uVar1 = _vm->isR1ButtonPressed(); // TODO || _vm->isR2ButtonPressed();
+	}
+	return uVar1;
 }
 
 } // End of namespace Dragons

@@ -41,13 +41,18 @@ private:
 	uint16 DAT_80093c94;
 
 	uint16 DAT_80093cac;
-	uint16 DAT_80093cb0;
+	bool DAT_80093cb0;
 	uint16 DAT_80093c9c;
 
 	uint16 DAT_80093c98;
 	uint16 DAT_80093ca0;
 	uint16 DAT_80093cc4;
 	uint16 DAT_80093cc8;
+
+	bool DAT_80093c70;
+	bool DAT_80093c72;
+	uint16 DAT_80093c74;
+	bool DAT_80093ca8;
 public:
 	Minigame2(DragonsEngine *vm);
 

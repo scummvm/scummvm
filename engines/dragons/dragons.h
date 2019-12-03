@@ -145,6 +145,7 @@ public:
 	uint16 videoFlags; // TODO move to screen?
 
 	Screen *_screen;
+	uint16 _sceneId1; //TODO wire this up. I think it might be where to restore save game from?
 private:
 	BigfileArchive *_bigfileArchive;
 	DragonFLG *_dragonFLG;
@@ -155,7 +156,6 @@ private:
 	uint32 _flags;
 	uint32 _unkFlags1;
 	Common::Point _cursorPosition;
-	uint16 _sceneId1;
 	uint32 _counter;
 	uint32 bit_flags_8006fbd8;
 	//unk
