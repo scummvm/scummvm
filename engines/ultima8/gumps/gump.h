@@ -134,7 +134,7 @@ public:
 	//! If this gump doesn't want to set the cursor, the gump list will
 	//! attempt to get the cursor shape from the next lower gump.
 	//! \return true if this gump wants to set the cursor, false otherwise
-	virtual bool        GetMouseCursor(int mx, int my, Shape &shape,
+	virtual bool        GetMouseCursor(int mx, int my, Shape &shape_,
 	                                   int32 &frame);
 
 	// Notify gumps the render surface changed.

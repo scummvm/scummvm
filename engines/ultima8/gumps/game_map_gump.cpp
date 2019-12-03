@@ -51,7 +51,7 @@
 // map dumping
 #include "ultima8/graphics/texture.h"
 #include "ultima8/filesys/file_system.h"
-#include "ultima8/graphics/png_writer.h"
+#include "image/png.h"
 
 namespace Ultima8 {
 
@@ -160,9 +160,9 @@ void GameMapGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scaled)
 						if (item->getExtFlags() & Item::EXT_TRANSPARENT)
 							continue;
 
-						int32 x, y, z;
-						item->getLerped(x, y, z);
-						display_list->AddItem(x, y, z, item->getShape(), item->getFrame(), item->getFlags() & ~Item::FLG_INVISIBLE, item->getExtFlags() | Item::EXT_TRANSPARENT, 1);
+						int32 x_, y_, z_;
+						item->getLerped(x_, y_, z_);
+						display_list->AddItem(x_, y_, z_, item->getShape(), item->getFrame(), item->getFlags() & ~Item::FLG_INVISIBLE, item->getExtFlags() | Item::EXT_TRANSPARENT, 1);
 					}
 
 					continue;
@@ -186,8 +186,8 @@ void GameMapGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scaled)
 
 // Trace a click, and return ObjId
 uint16 GameMapGump::TraceObjId(int mx, int my) {
-	uint16 objid = Gump::TraceObjId(mx, my);
-	if (objid && objid != 65535) return objid;
+	uint16 objId_ = Gump::TraceObjId(mx, my);
+	if (objId_ && objId_ != 65535) return objId_;
 
 	ParentToGump(mx, my);
 	return display_list->Trace(mx, my, 0, highlightItems);
@@ -321,8 +321,8 @@ void GameMapGump::OnMouseClick(int button, int mx, int my) {
 		uint16 objID = TraceObjId(mx, my);
 		Item *item = getItem(objID);
 		if (item) {
-			int32 x, y, z;
-			item->getLocation(x, y, z);
+			int32 xv, yv, zv;
+			item->getLocation(xv, yv, zv);
 			item->dumpInfo();
 
 			// call the 'look' event
@@ -334,13 +334,13 @@ void GameMapGump::OnMouseClick(int button, int mx, int my) {
 		uint16 objID = TraceObjId(mx, my);
 		Item *item = getItem(objID);
 		if (item) {
-			int32 x, y, z;
-			item->getLocation(x, y, z);
+			int32 xv, yv, zv;
+			item->getLocation(xv, yv, zv);
 			item->dumpInfo();
 
 #if 1
 			Actor *devon = getActor(1);
-			PathfinderProcess *pfp = new PathfinderProcess(devon, x, y, z);
+			PathfinderProcess *pfp = new PathfinderProcess(devon, xv, yv, zv);
 //			PathfinderProcess* pfp = new PathfinderProcess(devon, objID, false);
 			Kernel::get_instance()->addProcess(pfp);
 #elif 0
@@ -389,8 +389,8 @@ void GameMapGump::OnMouseDouble(int button, int mx, int my) {
 		uint16 objID = TraceObjId(mx, my);
 		Item *item = getItem(objID);
 		if (item) {
-			int32 x, y, z;
-			item->getLocation(x, y, z);
+			int32 xv, yv, zv;
+			item->getLocation(xv, yv, zv);
 			item->dumpInfo();
 
 			if (p_dynamic_cast<Actor *>(item) ||
@@ -564,6 +564,7 @@ void GameMapGump::ConCmd_toggleHighlightItems(const Console::ArgvType &argv) {
 }
 
 void GameMapGump::ConCmd_dumpMap(const Console::ArgvType &) {
+#ifdef TODO
 	// We only support 32 bits per pixel for now
 	if (RenderSurface::format.s_bpp != 32) return;
 
@@ -712,6 +713,7 @@ void GameMapGump::ConCmd_dumpMap(const Console::ArgvType &) {
 	GUIApp::get_instance()->loadGame(savefile);
 
 	pout << "Map stored in " << filename << "." << std::endl;
+#endif
 }
 
 void GameMapGump::ConCmd_incrementSortOrder(const Console::ArgvType &argv) {

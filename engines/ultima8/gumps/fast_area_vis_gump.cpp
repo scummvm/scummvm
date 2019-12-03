@@ -45,9 +45,9 @@ void FastAreaVisGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool sca
 	surf->Fill32(0, 1, 1, MAP_NUM_CHUNKS, MAP_NUM_CHUNKS);
 
 
-	for (int y = 0; y < MAP_NUM_CHUNKS; y++)
-		for (int x = 0; x < MAP_NUM_CHUNKS; x++)
-			if (currentmap->isChunkFast(x, y)) surf->Fill32(0xFFFFFFFF, x + 1, y + 1, 1, 1);
+	for (int yp = 0; yp < MAP_NUM_CHUNKS; yp++)
+		for (int xp = 0; xp < MAP_NUM_CHUNKS; xp++)
+			if (currentmap->isChunkFast(xp, yp)) surf->Fill32(0xFFFFFFFF, xp + 1, yp + 1, 1, 1);
 }
 
 void FastAreaVisGump::ConCmd_toggle(const Console::ArgvType &argv) {
@@ -65,13 +65,13 @@ void FastAreaVisGump::ConCmd_toggle(const Console::ArgvType &argv) {
 }
 
 uint16 FastAreaVisGump::TraceObjId(int mx, int my) {
-	uint16 objid = Gump::TraceObjId(mx, my);
+	uint16 objId_ = Gump::TraceObjId(mx, my);
 
-	if (!objid || objid == 65535)
+	if (!objId_ || objId_ == 65535)
 		if (PointOnGump(mx, my))
-			objid = getObjId();
+			objId_ = getObjId();
 
-	return objid;
+	return objId_;
 }
 
 } // End of namespace Ultima8

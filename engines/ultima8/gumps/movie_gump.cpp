@@ -38,10 +38,10 @@ namespace Ultima8 {
 
 DEFINE_RUNTIME_CLASSTYPE_CODE(MovieGump, ModalGump)
 
-MovieGump::MovieGump()
-	: ModalGump(), player(0) {
+MovieGump::MovieGump() : ModalGump(), player(0) {
 
-#include "ultima8/filesys/odata_source.h"
+}
+
 MovieGump::MovieGump(int width, int height, RawArchive *movie,
                      bool introMusicHack, uint32 _Flags, int32 layer)
 	: ModalGump(50, 50, width, height, 0, _Flags, layer) {
@@ -81,7 +81,7 @@ void MovieGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scaled) {
 
 bool MovieGump::OnKeyDown(int key, int mod) {
 	switch (key) {
-	case SDLK_ESCAPE: {
+	case Common::KEYCODE_ESCAPE: {
 		Close();
 	}
 	break;

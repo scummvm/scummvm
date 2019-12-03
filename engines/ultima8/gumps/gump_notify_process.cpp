@@ -60,7 +60,7 @@ void GumpNotifyProcess::terminate() {
 	Process::terminate();
 
 	if (gump) {
-		Gump *g = ::getGump(gump);
+		Gump *g = ::Ultima8::getGump(gump);
 		assert(g);
 		g->Close();
 	}

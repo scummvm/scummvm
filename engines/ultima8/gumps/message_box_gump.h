@@ -62,7 +62,7 @@ public:
 		return Show(title, message, 0xFF30308F, buttons);
 	}
 
-	virtual void ChildNotify(Gump *child, uint32 message);
+	virtual void ChildNotify(Gump *child, uint32 msg);
 
 protected:
 	virtual void saveData(ODataSource *ods);

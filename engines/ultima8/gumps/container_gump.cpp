@@ -158,8 +158,8 @@ void ContainerGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scale
 // Find object (if any) at (mx,my)
 // (mx,my) are relative to parent
 uint16 ContainerGump::TraceObjId(int mx, int my) {
-	uint16 objid = Gump::TraceObjId(mx, my);
-	if (objid && objid != 65535) return objid;
+	uint16 objId_ = Gump::TraceObjId(mx, my);
+	if (objId_ && objId_ != 65535) return objId_;
 
 	ParentToGump(mx, my);
 
@@ -170,9 +170,10 @@ uint16 ContainerGump::TraceObjId(int mx, int my) {
 	bool paintEditorItems = GUIApp::get_instance()->isPaintEditorItems();
 
 	std::list<Item *> &contents = c->contents;
-	std::list<Item *>::reverse_iterator iter;
+	std::list<Item *>::iterator iter;
+
 	// iterate backwards, since we're painting from begin() to end()
-	for (iter = contents.rbegin(); iter != contents.rend(); ++iter) {
+	for (iter = contents.end(); iter != contents.begin(); --iter) {
 		Item *item = *iter;
 		if (!paintEditorItems && item->getShapeInfo()->is_editor())
 			continue;
@@ -197,9 +198,9 @@ uint16 ContainerGump::TraceObjId(int mx, int my) {
 bool ContainerGump::GetLocationOfItem(uint16 itemid, int &gx, int &gy,
                                       int32 lerp_factor) {
 	Item *item = getItem(itemid);
-	Item *parent = item->getParentAsContainer();
-	if (!parent) return false;
-	if (parent->getObjId() != owner) return false;
+	Item *parent_ = item->getParentAsContainer();
+	if (!parent_) return false;
+	if (parent_->getObjId() != owner) return false;
 
 	//!!! need to use lerp_factor
 
@@ -486,10 +487,10 @@ void ContainerGump::DropItem(Item *item, int mx, int my) {
 		                                        item->getQuality());
 		slidergump->InitGump(0);
 		slidergump->CreateNotifier(); // manually create notifier
-		Process *notifier = slidergump->GetNotifyProcess();
+		Process *notifier_ = slidergump->GetNotifyProcess();
 		SplitItemProcess *splitproc = new SplitItemProcess(item, splittarget);
 		Kernel::get_instance()->addProcess(splitproc);
-		splitproc->waitFor(notifier);
+		splitproc->waitFor(notifier_);
 
 		return;
 	}

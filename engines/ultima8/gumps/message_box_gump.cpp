@@ -56,8 +56,10 @@ MessageBoxGump::MessageBoxGump()
 MessageBoxGump::MessageBoxGump(const std::string &title_, const std::string &message_, uint32 title_colour_,
                                std::vector<std::string> *buttons_) :
 	ModalGump(0, 0, 100, 100), title(title_), message(message_), title_colour(title_colour_) {
-	if (buttons_) buttons_->swap(buttons);
-	if (buttons.empty()) buttons.push_back(std::string("Ok"));
+	if (buttons_)
+		buttons_->swap(buttons);
+	
+		if (buttons.empty()) buttons.push_back(std::string("Ok"));
 }
 
 MessageBoxGump::~MessageBoxGump(void) {
@@ -151,9 +153,8 @@ void MessageBoxGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool /*sc
 	else surf->Fill32(0xFF000000, 1, 1, dims.w - 2, 22);
 }
 
-void MessageBoxGump::ChildNotify(Gump *child, uint32 message) {
-	if (child->IsOfType<ButtonWidget>() &&
-	        message == ButtonWidget::BUTTON_CLICK) {
+void MessageBoxGump::ChildNotify(Gump *child, uint32 msg) {
+	if (child->IsOfType<ButtonWidget>() && msg == ButtonWidget::BUTTON_CLICK) {
 		process_result = child->GetIndex();
 		Close();
 	}

@@ -63,12 +63,12 @@ void BindGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scaled) {
 }
 
 bool BindGump::OnKeyDown(int key, int mod) {
-	if (key != SDLK_ESCAPE && binding) {
+	if (key != Common::KEYCODE_ESCAPE && binding) {
 		HIDManager *hidmanager = HIDManager::get_instance();
-		if (key == SDLK_BACKSPACE) {
+		if (key == Common::KEYCODE_BACKSPACE) {
 			hidmanager->unbind(*binding);
 		} else {
-			Pentagram::istring control = SDL_GetKeyName(static_cast<SDLKey>(key));
+//			Pentagram::istring control = SDL_GetKeyName(static_cast<SDLKey>(key));
 //			hidmanager->bind(control, *binding);
 		}
 		if (invoker)

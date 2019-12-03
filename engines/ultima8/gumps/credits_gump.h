@@ -58,7 +58,7 @@ public:
 
 protected:
 
-	void extractLine(std::string &text, char &modifier, std::string &line);
+	void extractLine(std::string &text_, char &modifier, std::string &line);
 
 	std::string text;
 	int parskip;

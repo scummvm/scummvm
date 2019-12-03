@@ -25,8 +25,8 @@
 
 #include "ultima8/graphics/render_surface.h"
 #include "ultima8/graphics/texture.h"
-#include "ultima8/graphics/scalers/scaler.h"
-#include "ultima8/graphics/scalers/scaler_manager.h"
+#include "ultima8/graphics/scaler.h"
+#include "ultima8/graphics/scaler_manager.h"
 #include "ultima8/conf/setting_manager.h"
 #include "ultima8/kernel/gui_app.h"
 
@@ -87,16 +87,16 @@ void ScalerGump::Paint(RenderSurface *surf, int32 lerp_factor, bool scaled) {
 	int32 scaley = (height << 16) / sheight1;
 
 	// Iterate all children
-	std::list<Gump *>::reverse_iterator it = children.rbegin();
-	std::list<Gump *>::reverse_iterator end = children.rend();
+	std::list<Gump *>::iterator it = children.end();
+	std::list<Gump *>::iterator begin = children.begin();
 
-	while (it != end) {
+	while (it != begin) {
 		Gump *g = *it;
 		// Paint if not closing
 		if (!g->IsClosing())
 			g->PaintCompositing(surf, lerp_factor, scalex, scaley);
 
-		++it;
+		--it;
 	}
 }
 

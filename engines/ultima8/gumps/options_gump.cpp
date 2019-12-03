@@ -32,6 +32,7 @@
 
 #include "ultima8/filesys/idata_source.h"
 #include "ultima8/filesys/odata_source.h"
+#include "common/events.h"
 
 namespace Ultima8 {
 
@@ -51,35 +52,35 @@ void OptionsGump::InitGump(Gump *newparent, bool take_focus) {
 	dims.w = 220;
 	dims.h = 120;
 
-	int x = dims.w / 2 + 14;
-	int y = 4;
+	int x_ = dims.w / 2 + 14;
+	int y_ = 4;
 	Gump *widget;
 
 #if 0
-	widget = new ButtonWidget(x, y, "1. Video", true, font, 0x804000B0);
+	widget = new ButtonWidget(x_, y_, "1. Video", true, font, 0x804000B0);
 	widget->InitGump(this);
 	widget->SetIndex(1);
 #endif
-	y += 14;
+	y_ += 14;
 
 #if 0
-	widget = new ButtonWidget(x, y, "2. Audio", true, font, 0x804000B0);
+	widget = new ButtonWidget(x_, y_, "2. Audio", true, font, 0x804000B0);
 	widget->InitGump(this);
 	widget->SetIndex(2);
 #endif
-	y += 14;
+	y_ += 14;
 
-	widget = new ButtonWidget(x, y, "3. Controls", true, font, 0x804000B0);
+	widget = new ButtonWidget(x_, y_, "3. Controls", true, font, 0x804000B0);
 	widget->InitGump(this);
 	widget->SetIndex(3);
-	y += 14;
+	y_ += 14;
 
 #if 0
-	widget = new ButtonWidget(x, y, "4. Gameplay", true, font, 0x804000B0);
+	widget = new ButtonWidget(x_, y_, "4. Gameplay", true, font, 0x804000B0);
 	widget->InitGump(this);
 	widget->SetIndex(4);
 #endif
-	y += 14;
+	y_ += 14;
 }
 
 void OptionsGump::ChildNotify(Gump *child, uint32 message) {
@@ -95,11 +96,11 @@ void OptionsGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scaled)
 static const int gumpShape = 35;
 
 bool OptionsGump::OnKeyDown(int key, int mod) {
-	if (key == SDLK_ESCAPE) {
+	if (key == Common::KEYCODE_ESCAPE) {
 		parent->Close();
-	} else if (key >= SDLK_1 && key <= SDLK_9) {
+	} else if (key >= Common::KEYCODE_1 && key <= Common::KEYCODE_9) {
 		// Minor hack.
-		selectEntry(key - SDLK_1 + 1);
+		selectEntry(key - Common::KEYCODE_1 + 1);
 		return true;
 	}
 	return true;

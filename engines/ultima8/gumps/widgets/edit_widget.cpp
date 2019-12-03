@@ -186,34 +186,34 @@ Gump *EditWidget::OnMouseMotion(int mx, int my) {
 
 bool EditWidget::OnKeyDown(int key, int mod) {
 	switch (key) {
-	case SDLK_RETURN:
-	case SDLK_KP_ENTER:
+	case Common::KEYCODE_RETURN:
+	case Common::KEYCODE_KP_ENTER:
 		parent->ChildNotify(this, EDIT_ENTER);
 		break;
-	case SDLK_ESCAPE:
+	case Common::KEYCODE_ESCAPE:
 		parent->ChildNotify(this, EDIT_ESCAPE);
 		break;
-	case SDLK_BACKSPACE:
+	case Common::KEYCODE_BACKSPACE:
 		if (cursor > 0) {
 			text.erase(--cursor, 1);
 			FORGET_OBJECT(cached_text);
 			ensureCursorVisible();
 		}
 		break;
-	case SDLK_DELETE:
+	case Common::KEYCODE_DELETE:
 		if (cursor != text.size()) {
 			text.erase(cursor, 1);
 			FORGET_OBJECT(cached_text);
 		}
 		break;
-	case SDLK_LEFT:
+	case Common::KEYCODE_LEFT:
 		if (cursor > 0) {
 			cursor--;
 			FORGET_OBJECT(cached_text);
 			ensureCursorVisible();
 		}
 		break;
-	case SDLK_RIGHT:
+	case Common::KEYCODE_RIGHT:
 		if (cursor < text.size()) {
 			cursor++;
 			FORGET_OBJECT(cached_text);

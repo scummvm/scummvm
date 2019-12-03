@@ -40,7 +40,7 @@
 #include "ultima8/gumps/desktop_gump.h"
 
 #include "ultima8/filesys/file_system.h"
-#include "u8/ConvertShapeU8.h"
+#include "ultima8/convert/u8/convert_shape_u8.h"
 #include "ultima8/graphics/palette_manager.h"
 #include "ultima8/usecode/usecode.h"
 
@@ -82,9 +82,9 @@ void ShapeViewerGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool /*s
 	int32 posx = (dims.w - shapew) / 2 + shapex;
 	int32 posy = (dims.h - shapeh) / 2 + shapey;
 
-	Shape *shape = flex->getShape(curshape);
-	if (shape && curframe < shape->frameCount())
-		surf->Paint(shape, curframe, posx, posy);
+	Shape *shape_ = flex->getShape(curshape);
+	if (shape_ && curframe < shape_->frameCount())
+		surf->Paint(shape_, curframe, posx, posy);
 
 	RenderedText *rendtext;
 	Pentagram::Font *font = FontManager::get_instance()->getGameFont(0, true);
@@ -92,10 +92,10 @@ void ShapeViewerGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool /*s
 
 	char buf1[50];
 	char buf2[200];
-	if (!shape) {
+	if (!shape_) {
 		sprintf(buf1, "NULL");
 	} else {
-		sprintf(buf1, "Frame %d of %d", curframe, shape->frameCount());
+		sprintf(buf1, "Frame %d of %d", curframe, shape_->frameCount());
 	}
 	sprintf(buf2, "%s\nShape %d, %s", flexes[curflex].first.c_str(),
 	        curshape, buf1);
@@ -104,7 +104,7 @@ void ShapeViewerGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool /*s
 	delete rendtext;
 
 	MainShapeArchive *mainshapes = p_dynamic_cast<MainShapeArchive *>(flex);
-	if (!mainshapes || !shape) return;
+	if (!mainshapes || !shape_) return;
 
 	char buf3[128];
 	char buf4[128];
@@ -129,10 +129,10 @@ void ShapeViewerGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool /*s
 bool ShapeViewerGump::OnKeyDown(int key, int mod) {
 	bool shapechanged = false;
 	unsigned int delta = 1;
-	if (mod & KMOD_SHIFT) delta = 10;
+	if (mod & Common::KBD_SHIFT) delta = 10;
 
 	switch (key) {
-	case SDLK_UP:
+	case Common::KEYCODE_UP:
 		if (delta >= flex->getCount()) delta = 1;
 		if (curshape < delta)
 			curshape = flex->getCount() + curshape - delta;
@@ -141,7 +141,7 @@ bool ShapeViewerGump::OnKeyDown(int key, int mod) {
 		shapechanged = true;
 		curframe = 0;
 		break;
-	case SDLK_DOWN:
+	case Common::KEYCODE_DOWN:
 		if (delta >= flex->getCount()) delta = 1;
 		if (curshape + delta >= flex->getCount())
 			curshape = curshape + delta - flex->getCount();
@@ -150,29 +150,29 @@ bool ShapeViewerGump::OnKeyDown(int key, int mod) {
 		curframe = 0;
 		shapechanged = true;
 		break;
-	case SDLK_LEFT: {
-		Shape *shape = flex->getShape(curshape);
-		if (shape && shape->frameCount()) {
-			if (delta >= shape->frameCount()) delta = 1;
+	case Common::KEYCODE_LEFT: {
+		Shape *shape_ = flex->getShape(curshape);
+		if (shape_ && shape_->frameCount()) {
+			if (delta >= shape_->frameCount()) delta = 1;
 			if (curframe < delta)
-				curframe = shape->frameCount() + curframe - delta;
+				curframe = shape_->frameCount() + curframe - delta;
 			else
 				curframe -= delta;
 		}
 	}
 	break;
-	case SDLK_RIGHT: {
-		Shape *shape = flex->getShape(curshape);
-		if (shape && shape->frameCount()) {
-			if (delta >= shape->frameCount()) delta = 1;
-			if (curframe + delta >= shape->frameCount())
-				curframe = curframe + delta - shape->frameCount();
+	case Common::KEYCODE_RIGHT: {
+		Shape *shape_ = flex->getShape(curshape);
+		if (shape_ && shape_->frameCount()) {
+			if (delta >= shape_->frameCount()) delta = 1;
+			if (curframe + delta >= shape_->frameCount())
+				curframe = curframe + delta - shape_->frameCount();
 			else
 				curframe += delta;
 		}
 	}
 	break;
-	case SDLK_PAGEUP: {
+	case Common::KEYCODE_PAGEUP: {
 		if (curflex == 0)
 			curflex = flexes.size() - 1;
 		else
@@ -184,7 +184,7 @@ bool ShapeViewerGump::OnKeyDown(int key, int mod) {
 		curframe = 0;
 	}
 	break;
-	case SDLK_PAGEDOWN: {
+	case Common::KEYCODE_PAGEDOWN: {
 		if (curflex + 1 == flexes.size())
 			curflex = 0;
 		else
@@ -196,7 +196,7 @@ bool ShapeViewerGump::OnKeyDown(int key, int mod) {
 		curframe = 0;
 	}
 	break;
-	case SDLK_ESCAPE: {
+	case Common::KEYCODE_ESCAPE: {
 		Close();
 	}
 	break;
