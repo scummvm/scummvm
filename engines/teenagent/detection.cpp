@@ -51,7 +51,7 @@ static const ADGameDescription teenAgentGameDescriptions[] = {
 			{"sam_mmm.res", 0, NULL, -1},
 			{"sam_sam.res", 0, NULL, -1},
 			//{"unlogic.res", 0, NULL, -1}, //skipped if not present
-			{NULL, 0, NULL, 0}
+			AD_LISTEND
 		},
 		Common::EN_ANY,
 		Common::kPlatformDOS,
@@ -71,7 +71,7 @@ static const ADGameDescription teenAgentGameDescriptions[] = {
 			{"sam_sam.res", 0, NULL, -1},
 			{"voices.res", 0, NULL, -1},
 			{"cdlogo.res", 0, NULL, -1},
-			{NULL, 0, NULL, 0}
+			AD_LISTEND
 		},
 		Common::CZ_CZE,
 		Common::kPlatformDOS,
