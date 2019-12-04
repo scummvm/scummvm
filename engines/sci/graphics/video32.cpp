@@ -731,7 +731,7 @@ VMDPlayer::EventFlags VMDPlayer::playUntilEvent(const EventFlags flags, const ui
 VMDPlayer::EventFlags VMDPlayer::checkForEvent(const EventFlags flags) {
 	const int currentFrameNo = _decoder->getCurFrame();
 
-	if (currentFrameNo == _yieldFrame) {
+	if (currentFrameNo >= _yieldFrame) {
 		return kEventFlagEnd;
 	}
 
