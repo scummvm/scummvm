@@ -245,8 +245,8 @@ void World::loadItemCachNPCData(IDataSource *itemcach, IDataSource *npcdata) {
 		itemds->seek(0x1D400 + i * 1);
 		uint16 mapnum = static_cast<uint8>(itemds->read1());
 		itemds->seek(0x1F800 + i * 2);
-		uint16 next;
-		next = itemds->read2();
+		//uint16 next;
+		(void)itemds->read2();
 
 		// half the frame number is stored in npcdata.dat
 		npcds->seek(7 + i * 0x31);

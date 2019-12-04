@@ -79,7 +79,7 @@
 
 #define LOOPSCRIPT(name,tokens) const uint8 name[] = { tokens, LS_TOKEN_END }
 
-#define LS_CONSTANT(val)            ((val)&0xFF), ((val>>8)&0xFF)
+#define LS_CONSTANT(val)            ((uint8)(val)), ((uint8)((val)>>8))
 #define LS_INT(val)                 LS_TOKEN_INT, LS_CONSTANT(val)
 
 #define LS_OP(left, op, right)      left, right, op

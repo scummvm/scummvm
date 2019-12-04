@@ -44,8 +44,8 @@ ButtonWidget::ButtonWidget()
 
 ButtonWidget::ButtonWidget(int X, int Y, std::string txt, bool gamefont,
                            int font, uint32 mouseOverBlendCol_,
-                           int w, int h, int32 layer) :
-	Gump(X, Y, w, h, 0, 0, layer), shape_up(0), shape_down(0),
+                           int w, int h, int32 layer_) :
+	Gump(X, Y, w, h, 0, 0, layer_), shape_up(0), shape_down(0),
 	mouseOver(false), origw(w), origh(h) {
 	TextWidget *widget = new TextWidget(0, 0, txt, gamefont, font, w, h);
 	textwidget = widget->getObjId();
@@ -54,8 +54,8 @@ ButtonWidget::ButtonWidget(int X, int Y, std::string txt, bool gamefont,
 }
 
 ButtonWidget::ButtonWidget(int X, int Y, FrameID frame_up, FrameID frame_down,
-                           bool _mouseOver, int32 layer)
-	: Gump(X, Y, 5, 5, 0, 0, layer), textwidget(0), mouseOver(_mouseOver) {
+                           bool _mouseOver, int32 layer_)
+	: Gump(X, Y, 5, 5, 0, 0, layer_), textwidget(0), mouseOver(_mouseOver) {
 	shape_up = GameData::get_instance()->getShape(frame_up);
 	shape_down = GameData::get_instance()->getShape(frame_down);
 	framenum_up = frame_up.framenum;

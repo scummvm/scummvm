@@ -48,9 +48,9 @@ SliderGump::SliderGump() : ModalGump() {
 }
 
 
-SliderGump::SliderGump(int x, int y, int16 min_, int16 max_,
+SliderGump::SliderGump(int x_, int y_, int16 min_, int16 max_,
                        int16 value_, int16 delta_)
-	: ModalGump(x, y, 5, 5), min(min_), max(max_), delta(delta_), value(value_) {
+	: ModalGump(x_, y_, 5, 5), min(min_), max(max_), delta(delta_), value(value_) {
 	usecodeNotifyPID = 0;
 	renderedtext = 0;
 }

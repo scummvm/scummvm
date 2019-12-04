@@ -1231,7 +1231,7 @@ void Item::animateItem() {
 	if (!info->animtype) return;
 
 	int anim_data = info->animdata;
-	bool dirty = false;
+	//bool dirty = false;
 
 	if ((static_cast<int>(last_setup) % 6) != (objid % 6) && info->animtype != 1)
 		return;
@@ -1252,20 +1252,20 @@ void Item::animateItem() {
 			unsigned int num = (frame - 1) / anim_data;
 			if (frame == ((num + 1)*anim_data)) frame = num * anim_data;
 		}
-		dirty = true;
+		//dirty = true;
 		break;
 
 	case 4:
 		if (!(std::rand() % anim_data)) break;
 		frame ++;
 		if (shp && frame == shp->frameCount()) frame = 0;
-		dirty = true;
+		//dirty = true;
 		break;
 
 
 	case 5:
 		callUsecodeEvent_anim();
-		dirty = true;
+		//dirty = true;
 		break;
 
 	case 6:
@@ -1279,7 +1279,7 @@ void Item::animateItem() {
 			unsigned int num = (frame - 1) / anim_data;
 			if (frame == ((num + 1)*anim_data)) frame = num * anim_data + 1;
 		}
-		dirty = true;
+		//dirty = true;
 		break;
 
 	default:

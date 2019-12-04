@@ -122,14 +122,14 @@ CameraProcess::CameraProcess(uint16 _itemnum) :
 }
 
 // Stay over point
-CameraProcess::CameraProcess(int32 _x, int32 _y, int32 _z) :
-	ex(_x), ey(_y), ez(_z), _time(0), elapsed(0), itemnum(0), last_framenum(0) {
+CameraProcess::CameraProcess(int32 x_, int32 y_, int32 z_) :
+	ex(x_), ey(y_), ez(z_), _time(0), elapsed(0), itemnum(0), last_framenum(0) {
 	GetCameraLocation(sx, sy, sz);
 }
 
 // Scroll
-CameraProcess::CameraProcess(int32 _x, int32 _y, int32 _z, int32 _time) :
-	ex(_x), ey(_y), ez(_z), _time(_time), elapsed(0), itemnum(0), last_framenum(0) {
+CameraProcess::CameraProcess(int32 x_, int32 y_, int32 z_, int32 time_) :
+	ex(x_), ey(y_), ez(z_), _time(time_), elapsed(0), itemnum(0), last_framenum(0) {
 	GetCameraLocation(sx, sy, sz);
 	//pout << "Scrolling from (" << sx << "," << sy << "," << sz << ") to (" <<
 	//  ex << "," << ey << "," << ez << ") in " << _time << " frames" << std::endl;
