@@ -66,7 +66,7 @@ static const PARALLACTIONGameDescription gameDescriptions[] = {
 				{ "fr",		0, "ac20c743ea10f2cb4491f76c5644582c", 410624},
 				{ "ge",		0, "50916bfa34aee1380e0e959b37eceb5a", 410624},
 				{ "it",		0, "89964aef04d2c53a615ee8983caf2775", 410624},
-				{ NULL, 0, NULL, 0}
+				AD_LISTEND
 			},
 			Common::UNK_LANG,
 			Common::kPlatformDOS,
@@ -90,7 +90,7 @@ static const PARALLACTIONGameDescription gameDescriptions[] = {
 				{ "en",		0, "c9ec4f2267d736eef4877c5133e1c6e1", 174074},
 				{ "ge",		0, "42d6f10a4ebdadb25a6161d53ea4f450", 182298},
 				{ "fr",		0, "cf17defc24f143d1a9acb52eaa5c2406", 179958},
-				{ NULL, 0, NULL, 0}
+				AD_LISTEND
 			},
 			Common::UNK_LANG,
 			Common::kPlatformAmiga,
@@ -108,7 +108,7 @@ static const PARALLACTIONGameDescription gameDescriptions[] = {
 			{
 				{ "disk0",	0, "6fed2e18a6bfe5e8bb49144fcc95fd11", 624640},
 				{ "fr",		0, "72f04be4320dfac719431419ec2b9a0d", 12778},
-				{ NULL, 0, NULL, 0}
+				AD_LISTEND
 			},
 			Common::EN_ANY,
 			Common::kPlatformAmiga,
@@ -131,7 +131,7 @@ static const PARALLACTIONGameDescription gameDescriptions[] = {
 				{ "disk3",	0, "0486972962b2bfc230e789b9f88f9ec8", 901120},
 				{ "disk4",	0, "6f625e7f05da4a2f57d6b62d57013614", 901120},
 				{ "it",		0, "746088eb8de2b2713685d243a4e4678f", 185344},
-				{ NULL, 0, NULL, 0}
+				AD_LISTEND
 			},
 			Common::IT_ITA,
 			Common::kPlatformAmiga,
@@ -149,7 +149,7 @@ static const PARALLACTIONGameDescription gameDescriptions[] = {
 			{
 				{ "tbra.bmp",	0, "3174c095a0e1a4eaf05c403445711e9b", 80972 },
 				{ "russia.fnt",	0, "57f85ff62aeca6334fdcaf718e313b49", 18344 },
-				{ NULL, 0, NULL, 0}
+				AD_LISTEND
 			},
 			Common::UNK_LANG,
 			Common::kPlatformDOS,
@@ -166,7 +166,7 @@ static const PARALLACTIONGameDescription gameDescriptions[] = {
 			"Demo",
 			{
 				{ "russia.fnt",	0, "0dd55251d2886d6783718df2b184bf97", 10649 },
-				{ NULL, 0, NULL, 0}
+				AD_LISTEND
 			},
 			Common::UNK_LANG,
 			Common::kPlatformDOS,
@@ -183,7 +183,7 @@ static const PARALLACTIONGameDescription gameDescriptions[] = {
 			"Multi-lingual",
 			{
 				{ "request.win", 0, "7a844b9518310e4cc72eabb9c0340314", 6497 },
-				{ NULL, 0, NULL, 0}
+				AD_LISTEND
 			},
 			Common::UNK_LANG,
 			Common::kPlatformAmiga,
@@ -200,7 +200,7 @@ static const PARALLACTIONGameDescription gameDescriptions[] = {
 			"Demo",
 			{
 				{ "request.win", 0, "3b6a99ffd626e324b663839bbad59cb3", 5326 },
-				{ NULL, 0, NULL, 0}
+				AD_LISTEND
 			},
 			Common::UNK_LANG,
 			Common::kPlatformAmiga,
