@@ -71,10 +71,10 @@ BilinearScaler::BilinearScaler() : Scaler() {
 #endif
 }
 
-const uint32 BilinearScaler::ScaleBits() const {
+uint32 BilinearScaler::ScaleBits() const {
 	return 0xFFFFFFFF;
 }
-const bool BilinearScaler::ScaleArbitrary() const {
+bool BilinearScaler::ScaleArbitrary() const {
 	return true;
 }
 
@@ -111,10 +111,10 @@ GC_BilinearScaler::GC_BilinearScaler() : Scaler() {
 #endif
 }
 
-const uint32 GC_BilinearScaler::ScaleBits() const {
+uint32 GC_BilinearScaler::ScaleBits() const {
 	return 0xFFFFFFFF;
 }
-const bool GC_BilinearScaler::ScaleArbitrary() const {
+bool GC_BilinearScaler::ScaleArbitrary() const {
 	return true;
 }
 

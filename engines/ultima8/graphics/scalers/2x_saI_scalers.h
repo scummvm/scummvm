@@ -31,8 +31,8 @@ class _2xSaIScaler : public Scaler {
 public:
 	_2xSaIScaler();
 
-	virtual const uint32    ScaleBits() const;          //< bits for supported integer scaling
-	virtual const bool      ScaleArbitrary() const;     //< supports arbitrary scaling of any degree
+	virtual uint32    ScaleBits() const;          //< bits for supported integer scaling
+	virtual bool      ScaleArbitrary() const;     //< supports arbitrary scaling of any degree
 
 	virtual const char     *ScalerName() const;         //< Name Of the Scaler (1 word)
 	virtual const char     *ScalerDesc() const;         //< Desciption of the Scaler
@@ -43,8 +43,8 @@ class Super2xSaIScaler : public Scaler {
 public:
 	Super2xSaIScaler();
 
-	virtual const uint32    ScaleBits() const;          //< bits for supported integer scaling
-	virtual const bool      ScaleArbitrary() const;     //< supports arbitrary scaling of any degree
+	virtual uint32    ScaleBits() const;          //< bits for supported integer scaling
+	virtual bool      ScaleArbitrary() const;     //< supports arbitrary scaling of any degree
 
 	virtual const char     *ScalerName() const;         //< Name Of the Scaler (1 word)
 	virtual const char     *ScalerDesc() const;         //< Desciption of the Scaler
@@ -55,8 +55,8 @@ class SuperEagleScaler : public Scaler {
 public:
 	SuperEagleScaler();
 
-	virtual const uint32    ScaleBits() const;          //< bits for supported integer scaling
-	virtual const bool      ScaleArbitrary() const;     //< supports arbitrary scaling of any degree
+	virtual uint32    ScaleBits() const;          //< bits for supported integer scaling
+	virtual bool      ScaleArbitrary() const;     //< supports arbitrary scaling of any degree
 
 	virtual const char     *ScalerName() const;         //< Name Of the Scaler (1 word)
 	virtual const char     *ScalerDesc() const;         //< Desciption of the Scaler
@@ -73,8 +73,8 @@ class GC_2xSaIScaler : public Scaler {
 public:
 	GC_2xSaIScaler();
 
-	virtual const uint32    ScaleBits() const;          //< bits for supported integer scaling
-	virtual const bool      ScaleArbitrary() const;     //< supports arbitrary scaling of any degree
+	virtual uint32    ScaleBits() const;          //< bits for supported integer scaling
+	virtual bool      ScaleArbitrary() const;     //< supports arbitrary scaling of any degree
 
 	virtual const char     *ScalerName() const;         //< Name Of the Scaler (1 word)
 	virtual const char     *ScalerDesc() const;         //< Desciption of the Scaler
@@ -85,8 +85,8 @@ class GC_Super2xSaIScaler : public Scaler {
 public:
 	GC_Super2xSaIScaler();
 
-	virtual const uint32    ScaleBits() const;          //< bits for supported integer scaling
-	virtual const bool      ScaleArbitrary() const;     //< supports arbitrary scaling of any degree
+	virtual uint32    ScaleBits() const;          //< bits for supported integer scaling
+	virtual bool      ScaleArbitrary() const;     //< supports arbitrary scaling of any degree
 
 	virtual const char     *ScalerName() const;         //< Name Of the Scaler (1 word)
 	virtual const char     *ScalerDesc() const;         //< Desciption of the Scaler
@@ -97,8 +97,8 @@ class GC_SuperEagleScaler : public Scaler {
 public:
 	GC_SuperEagleScaler();
 
-	virtual const uint32    ScaleBits() const;          //< bits for supported integer scaling
-	virtual const bool      ScaleArbitrary() const;     //< supports arbitrary scaling of any degree
+	virtual uint32    ScaleBits() const;          //< bits for supported integer scaling
+	virtual bool      ScaleArbitrary() const;     //< supports arbitrary scaling of any degree
 
 	virtual const char     *ScalerName() const;         //< Name Of the Scaler (1 word)
 	virtual const char     *ScalerDesc() const;         //< Desciption of the Scaler

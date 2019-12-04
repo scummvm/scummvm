@@ -41,10 +41,10 @@ hq4xScaler::hq4xScaler() : Scaler() {
 	Scale32_888A = GetScaler<uint32, Manip_32_888A, uint32>();
 }
 
-const uint32 hq4xScaler::ScaleBits() const {
+uint32 hq4xScaler::ScaleBits() const {
 	return 1 << 4;
 }
-const bool hq4xScaler::ScaleArbitrary() const {
+bool hq4xScaler::ScaleArbitrary() const {
 	return false;
 }
 
