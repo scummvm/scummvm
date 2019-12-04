@@ -45,7 +45,8 @@ namespace Director {
 
 enum DirectorGameID {
 	GID_GENERIC,
-	GID_TEST
+	GID_TEST,
+	GID_ARCHIVE
 };
 
 class Archive;

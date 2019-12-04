@@ -48,7 +48,9 @@ Archive *DirectorEngine::createArchive() {
 }
 
 void DirectorEngine::loadInitialMovie(const Common::String movie) {
-	if (getPlatform() == Common::kPlatformWindows)
+	if (getGameID() == GID_ARCHIVE)
+		openMainArchive(movie);
+	else if (getPlatform() == Common::kPlatformWindows)
 		loadEXE(movie);
 	else
 		loadMac(movie);

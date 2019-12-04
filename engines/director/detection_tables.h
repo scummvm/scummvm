@@ -46,6 +46,19 @@ static const DirectorGameDescription gameDescriptions[] = {
 		GID_TEST,
 		3
 	},
+	{
+		{
+			"directortestarch",
+			"",
+			AD_ENTRY1("test.dir", 0),
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GID_ARCHIVE,
+		4
+	},
 
 	// Generic D3 Mac entry
 	MACGAME("director", "", "D3-mac", 0, -1, 3),
