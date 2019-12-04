@@ -2561,12 +2561,6 @@ static const WMEGameDescription gameDescriptions[] = {
 					"xlanguage_it.dcp", "f3743347c7f6a99a0e0c476146bc778b", 11495758,
 					"Linux.dcp", "16c3a8627216aab5b31c43186e0dfa70", 984535), Common::IT_ITA, Common::kPlatformLinux, ADGF_UNSTABLE, WME_LITE),
 
-	// Reversion: The Meeting (Steam, November 2019) (Chinese)
-	WME_PLATENTRY("reversion2", "",
-		WME_ENTRY3s("data.dcp", "3c34d583c658b75650f0c978d47fd59d", 272228767,
-					"xlanguage_nz.dcp", "fcceb1300b9819abaee6832b7aef7f90", 10757594,
-					"Linux.dcp", "16c3a8627216aab5b31c43186e0dfa70", 984535), Common::ZH_CNA, Common::kPlatformLinux, ADGF_UNSTABLE, WME_LITE),
-
 	// Reversion: The Meeting (Steam, November 2019) (Portuguese)
 	WME_PLATENTRY("reversion2", "",
 		WME_ENTRY3s("data.dcp", "3c34d583c658b75650f0c978d47fd59d", 272228767,
@@ -2614,12 +2608,6 @@ static const WMEGameDescription gameDescriptions[] = {
 		WME_ENTRY3s("data.dcp", "99ab5a155c60377a7a1e64d9dd8f71aa", 272228767,
 					"xlanguage_it.dcp", "8f84605a6d58cf118a441e64a8fd0992", 11495758,
 					"Mac.dcp", "0b8d95dcb1f7e8c7c2c49e58db2764b6", 1728476), Common::IT_ITA, Common::kPlatformMacintosh, ADGF_UNSTABLE, WME_LITE),
-
-	// Reversion: The Meeting (Steam, November 2019) (Chinese)
-	WME_PLATENTRY("reversion2", "",
-		WME_ENTRY3s("data.dcp", "99ab5a155c60377a7a1e64d9dd8f71aa", 272228767,
-					"xlanguage_nz.dcp", "fcceb1300b9819abaee6832b7aef7f90", 10757594,
-					"Mac.dcp", "0b8d95dcb1f7e8c7c2c49e58db2764b6", 1728476), Common::ZH_CNA, Common::kPlatformMacintosh, ADGF_UNSTABLE, WME_LITE),
 
 	// Reversion: The Meeting (Steam, November 2019) (Portuguese)
 	WME_PLATENTRY("reversion2", "",
