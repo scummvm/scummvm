@@ -435,6 +435,32 @@ reg_t kPlayVMDShowCursor(EngineState *s, int argc, reg_t *argv) {
 	return s->r_acc;
 }
 
+reg_t kPlayVMDStartBlob(EngineState *s, int argc, reg_t *argv) {
+	g_sci->_video32->getVMDPlayer().deleteBlobs();
+	return NULL_REG;
+}
+
+reg_t kPlayVMDStopBlobs(EngineState *s, int argc, reg_t *argv) {
+	g_sci->_video32->getVMDPlayer().deleteBlobs();
+	return NULL_REG;
+}
+
+reg_t kPlayVMDAddBlob(EngineState *s, int argc, reg_t *argv) {
+	int16 squareSize = argv[0].toSint16();
+	int16 top = argv[1].toSint16();
+	int16 left = argv[2].toSint16();
+	int16 bottom = argv[3].toSint16();
+	int16 right = argv[4].toSint16();
+	int16 blobNumber = g_sci->_video32->getVMDPlayer().addBlob(squareSize, top, left, bottom, right);
+	return make_reg(0, blobNumber);
+}
+
+reg_t kPlayVMDDeleteBlob(EngineState *s, int argc, reg_t *argv) {
+	int16 blobNumber = argv[0].toSint16();
+	g_sci->_video32->getVMDPlayer().deleteBlob(blobNumber);
+	return SIGNAL_REG;
+}
+
 reg_t kPlayVMDSetBlackoutArea(EngineState *s, int argc, reg_t *argv) {
 	const int16 scriptWidth = g_sci->_gfxFrameout->getScriptWidth();
 	const int16 scriptHeight = g_sci->_gfxFrameout->getScriptHeight();
