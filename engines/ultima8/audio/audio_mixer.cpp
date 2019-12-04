@@ -27,8 +27,8 @@
 
 #include "ultima8/audio/audio_process.h"
 #include "ultima8/audio/music_process.h"
-#include "ultima8/audio/AudioChannel.h"
-#include "ultima8/audio/midi/MidiDriver.h"
+#include "ultima8/audio/audio_channel.h"
+#include "ultima8/audio/midi/midi_driver.h"
 
 //include SDL.h
 
@@ -45,7 +45,7 @@ AudioMixer::AudioMixer(int sample_rate_, bool stereo_, int num_channels_) :
 	the_audio_mixer = this;
 
 	con.Print(MM_INFO, "Creating AudioMixer...\n");
-
+#ifdef TODO
 	SDL_AudioSpec desired, obtained;
 
 	desired.format = AUDIO_S16SYS;
@@ -83,6 +83,7 @@ AudioMixer::AudioMixer(int sample_rate_, bool stereo_, int num_channels_) :
 		// GO GO GO!
 		SDL_PauseAudio(0);
 	}
+#endif
 }
 
 void AudioMixer::createProcesses() {
@@ -99,9 +100,9 @@ AudioMixer::~AudioMixer(void) {
 	con.Print(MM_INFO, "Destroying AudioMixer...\n");
 
 	closeMidiOutput();
-
+#ifdef TODO
 	SDL_CloseAudio();
-
+#endif
 	the_audio_mixer = 0;
 
 	if (channels) for (int i = 0; i < num_channels; i++) delete channels[i];
@@ -109,11 +110,15 @@ AudioMixer::~AudioMixer(void) {
 }
 
 void AudioMixer::Lock() {
+#ifdef TODO
 	SDL_LockAudio();
+#endif
 }
 
 void AudioMixer::Unlock() {
+#ifdef TODO
 	SDL_UnlockAudio();
+#endif
 }
 
 void AudioMixer::reset() {
@@ -230,7 +235,7 @@ void AudioMixer::getVolume(int chan, int &lvol, int &rvol) {
 }
 
 
-void AudioMixer::sdlAudioCallback(void *userdata, Uint8 *stream, int len) {
+void AudioMixer::sdlAudioCallback(void *userdata, uint8 *stream, int len) {
 	AudioMixer *mixer = reinterpret_cast<AudioMixer *>(userdata);
 
 	mixer->MixAudio(reinterpret_cast<int16 *>(stream), len);

@@ -41,8 +41,8 @@
 #include "ultima8/games/game_info.h"
 #include "ultima8/conf/setting_manager.h"
 #include "crusader/ConvertShapeCrusader.h"
-#include "MusicFlex.h"
-#include "SoundFlex.h"
+#include "ultima8/audio/music_flex.h"
+#include "ultima8/audio/sound_flex.h"
 #include "SpeechFlex.h"
 
 namespace Ultima8 {

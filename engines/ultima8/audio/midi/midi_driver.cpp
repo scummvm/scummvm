@@ -21,10 +21,10 @@
  */
 
 #include "ultima8/misc/pent_include.h"
-#include "ultima8/audio/midi/MidiDriver.h"
+#include "ultima8/audio/midi/ultima8/audio/midi/midi_driver.h"
 #include "ultima8/std/containers.h"
 
-#include "ultima8/audio/midi/MidiDriver.h"
+#include "ultima8/audio/midi/ultima8/audio/midi/midi_driver.h"
 #include "WindowsMidiDriver.h"
 #include "CoreMidiDriver.h"
 #include "CoreAudioMidiDriver.h"

@@ -24,7 +24,7 @@
 
 #include "XMidiSequence.h"
 #include "XMidiSequenceHandler.h"
-#include "XMidiFile.h"
+#include "ultima8/audio/midi/xmidi_file.h"
 
 namespace Ultima8 {
 

@@ -23,7 +23,7 @@
 #ifndef ULTIMA8_AUDIO_MIDI_LOWLEVELMIDIDRIVER_H
 #define ULTIMA8_AUDIO_MIDI_LOWLEVELMIDIDRIVER_H
 
-#include "ultima8/audio/midi/MidiDriver.h"
+#include "ultima8/audio/midi/ultima8/audio/midi/midi_driver.h"
 #include "XMidiSequenceHandler.h"
 
 #include <queue>

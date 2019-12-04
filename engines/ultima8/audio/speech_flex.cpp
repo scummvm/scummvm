@@ -21,7 +21,7 @@
  */
 
 #include "ultima8/misc/pent_include.h"
-#include "SpeechFlex.h"
+#include "ultima8/audio/speech_flex.h"
 #include "ultima8/audio/audio_sample.h"
 #include "ultima8/misc/util.h"
 
@@ -71,7 +71,7 @@ int SpeechFlex::getIndexForPhrase(const std::string &phrase,
 //	pout << "Looking for string: \"" << text << "\"" << std::endl;
 
 	for (it = phrases.begin(); it != phrases.end(); ++it) {
-		if (text.find(*it) == 0) {
+		if (text.find(it->c_str()) == 0) {
 //			pout << "Found: " << i << std::endl;
 			end = (*it).size() + start + pos1;
 			if (end >= start + pos2)
@@ -98,13 +98,13 @@ uint32 SpeechFlex::getSpeechLength(const std::string &phrase) {
 		Pentagram::AudioSample *sample = getSample(index);
 		if (!sample) break;
 
-		uint32 samples = sample->getLength();
+		uint32 samples_ = sample->getLength();
 		uint32 rate = sample->getRate();
 		bool stereo = sample->isStereo();
 		if (stereo) rate *= 2;
 
-		length += (samples * 1000) / rate;
-		length += 33; // one engine frame of overhead between speech samples
+		length += (samples_ * 1000) / rate;
+		length += 33; // one engine frame of overhead between speech samples_
 	}
 
 	return length;

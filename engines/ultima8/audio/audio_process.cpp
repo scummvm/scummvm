@@ -26,8 +26,8 @@
 #include "ultima8/kernel/object.h"
 
 #include "ultima8/games/game_data.h"
-#include "SoundFlex.h"
-#include "SpeechFlex.h"
+#include "ultima8/audio/sound_flex.h"
+#include "ultima8/audio/speech_flex.h"
 #include "ultima8/audio/audio_sample.h"
 #include "ultima8/audio/audio_mixer.h"
 
@@ -559,7 +559,7 @@ void AudioProcess::ConCmd_listSFX(const Console::ArgvType &argv) {
 
 	std::list<SampleInfo>::iterator it;
 	for (it = ap->sample_info.begin(); it != ap->sample_info.end(); ++it) {
-		pout.printf("Sample: num %d, obj %d, loop %d, prio %d",
+		pout.Print("Sample: num %d, obj %d, loop %d, prio %d",
 		            it->sfxnum, it->objid, it->loops, it->priority);
 		if (!it->barked.empty()) {
 			pout << ", speech: \"" << it->barked.substr(it->curspeech_start, it->curspeech_end - it->curspeech_start) << "\"";

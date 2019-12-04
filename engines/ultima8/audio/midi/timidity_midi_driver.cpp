@@ -29,10 +29,10 @@
 
 #ifndef PENTAGRAM_IN_EXULT
 #include "ultima8/games/game_data.h"
-#include "MusicFlex.h"
-#include "XMidiFile.h"
+#include "ultima8/audio/music_flex.h"
+#include "ultima8/audio/midi/xmidi_file.h"
 #include "XMidiEvent.h"
-#include "XMidiEventList.h"
+#include "ultima8/audio/midi/xmidi_event_list.h"
 #endif
 
 namespace Ultima8 {

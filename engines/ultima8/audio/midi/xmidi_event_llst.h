@@ -25,7 +25,7 @@
 #ifndef ULTIMA8_AUDIO_MIDI_XMIDIEVENTLIST_H
 #define ULTIMA8_AUDIO_MIDI_XMIDIEVENTLIST_H
 
-#include "XMidiEvent.h"
+#include "ultima8/audio/midi/xmidi_event.h"
 
 namespace Ultima8 {
 

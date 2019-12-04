@@ -22,7 +22,7 @@
 
 #include "ultima8/misc/pent_include.h"
 #include "XMidiEvent.h"
-#include "XMidiEventList.h"
+#include "ultima8/audio/midi/xmidi_event_list.h"
 
 #ifdef PENTAGRAM_IN_EXULT
 #include "databuf.h"

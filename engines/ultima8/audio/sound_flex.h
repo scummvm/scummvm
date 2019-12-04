@@ -29,7 +29,7 @@
 namespace Ultima8 {
 namespace Pentagram {
 class AudioSample;
-};
+}
 
 class SoundFlex : protected Pentagram::Archive {
 public:
