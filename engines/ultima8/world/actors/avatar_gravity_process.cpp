@@ -42,8 +42,8 @@ AvatarGravityProcess::AvatarGravityProcess()
 
 }
 
-AvatarGravityProcess::AvatarGravityProcess(MainActor *avatar, int gravity)
-	: GravityProcess(avatar, gravity) {
+AvatarGravityProcess::AvatarGravityProcess(MainActor *avatar, int gravity_)
+	: GravityProcess(avatar, gravity_) {
 
 }
 

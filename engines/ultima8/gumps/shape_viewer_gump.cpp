@@ -58,8 +58,8 @@ ShapeViewerGump::ShapeViewerGump()
 
 ShapeViewerGump::ShapeViewerGump(int width, int height,
                                  std::vector<std::pair<std::string, ShapeArchive *> > &flexes_,
-                                 uint32 _Flags, int32 layer)
-	: ModalGump(50, 50, width, height, 0, _Flags, layer),
+                                 uint32 _Flags, int32 layer_)
+	: ModalGump(50, 50, width, height, 0, _Flags, layer_),
 	  flexes(flexes_), curflex(0), curshape(0), curframe(0), background(0) {
 	if (flexes.size())
 		flex = flexes[0].second;

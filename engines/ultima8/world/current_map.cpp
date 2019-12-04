@@ -51,6 +51,8 @@ using std::list; // too messy otherwise
 using Pentagram::Rect;
 typedef list<Item *> item_list;
 
+const int INT_MAX_VALUE = 0x7fffffff;
+
 CurrentMap::CurrentMap()
 	: current_map(0), egghatcher(0),
 	  fast_x_min(-1), fast_y_min(-1),
@@ -639,7 +641,7 @@ bool CurrentMap::isValidPosition(int32 x, int32 y, int32 z,
 	zd = si->z * 8;
 
 	return isValidPosition(x, y, z,
-	                       INT_MAX / 2, INT_MAX / 2, INT_MAX / 2,
+	                       INT_MAX_VALUE / 2, INT_MAX_VALUE / 2, INT_MAX_VALUE / 2,
 	                       xd, yd, zd,
 	                       si->flags, item, support, roof);
 }
@@ -649,7 +651,7 @@ bool CurrentMap::isValidPosition(int32 x, int32 y, int32 z,
                                  uint32 shapeflags,
                                  ObjId item_, Item **support_, uint16 *roof_) {
 	return isValidPosition(x, y, z,
-	                       INT_MAX / 2, INT_MAX / 2, INT_MAX / 2,
+	                       INT_MAX_VALUE / 2, INT_MAX_VALUE / 2, INT_MAX_VALUE / 2,
 	                       xd, yd, zd,
 	                       shapeflags, item_, support_, roof_);
 }

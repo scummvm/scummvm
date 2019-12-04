@@ -420,7 +420,7 @@ void ConvertUsecodeU8::readheader(IDataSource *ucfile, UsecodeHeader &uch, uint3
 	read4(ucfile); // unknown
 	curOffset_ = 0;
 	#endif
-};
+}
 
 } // End of namespace Ultima8
 
