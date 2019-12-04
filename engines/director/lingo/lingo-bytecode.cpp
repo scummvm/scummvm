@@ -278,16 +278,16 @@ void Lingo::cb_v4theentitypush() {
 
 
 void Lingo::cb_v4theentitynamepush() {
-	Datum args = g_lingo->pop();
-	if ((args.type == ARGC) || (args.type == ARGCNORET)) {
-		if (args.u.i > 0) {
-			warning("cb_v4theentitynamepush: expecting argc to be 0, not %d", args.u.i);
-			for (int i = 0; i < args.u.i; i++) {
+	Datum nargs = g_lingo->pop();
+	if ((nargs.type == ARGC) || (nargs.type == ARGCNORET)) {
+		if (nargs.u.i > 0) {
+			warning("cb_v4theentitynamepush: expecting argc to be 0, not %d", nargs.u.i);
+			for (int i = 0; i < nargs.u.i; i++) {
 				g_lingo->pop();
 			}
 		}
 	} else {
-		warning("cb_v4theentitynamepush: expecting first arg to be of type ARGC or ARGCNORET, not %s", args.type2str());
+		warning("cb_v4theentitynamepush: first arg should be of type ARGC or ARGCNORET, not %s", nargs.type2str());
 	}
 
 	int nameId = g_lingo->readInt();
