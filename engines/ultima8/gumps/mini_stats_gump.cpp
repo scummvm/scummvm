@@ -54,8 +54,8 @@ MiniStatsGump::MiniStatsGump() : Gump() {
 
 }
 
-MiniStatsGump::MiniStatsGump(int x, int y, uint32 _Flags, int32 layer)
-	: Gump(x, y, 5, 5, 0, _Flags, layer) {
+MiniStatsGump::MiniStatsGump(int x_, int y_, uint32 _Flags, int32 layer_)
+	: Gump(x_, y_, 5, 5, 0, _Flags, layer_) {
 
 }
 
@@ -106,8 +106,8 @@ void MiniStatsGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scale
 }
 
 uint16 MiniStatsGump::TraceObjId(int mx, int my) {
-	uint16 objid = Gump::TraceObjId(mx, my);
-	if (objid && objid != 65535) return objid;
+	uint16 objId_ = Gump::TraceObjId(mx, my);
+	if (objId_ && objId_ != 65535) return objId_;
 
 	if (PointOnGump(mx, my)) return getObjId();
 

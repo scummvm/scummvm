@@ -408,7 +408,7 @@ class ConsoleStream : public Common::WriteStream {
 private:
 	std::Precision _precision;
 public:
-	ConsoleStream() : Common::WriteStream(), _precision(std::Precision::hex) {}
+	ConsoleStream() : Common::WriteStream(), _precision(std::dec) {}
 
 	virtual int32 pos() const override {
 		return 0;

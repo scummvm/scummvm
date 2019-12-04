@@ -50,8 +50,8 @@ ReadableGump::ReadableGump()
 
 }
 
-ReadableGump::ReadableGump(ObjId owner, uint16 shape, int font, std::string msg) :
-	ModalGump(0, 0, 100, 100, owner), shapenum(shape), fontnum(font), text(msg) {
+ReadableGump::ReadableGump(ObjId owner_, uint16 shape_, int font, std::string msg) :
+	ModalGump(0, 0, 100, 100, owner_), shapenum(shape_), fontnum(font), text(msg) {
 }
 
 ReadableGump::~ReadableGump(void) {
@@ -60,11 +60,11 @@ ReadableGump::~ReadableGump(void) {
 void ReadableGump::InitGump(Gump *newparent, bool take_focus) {
 	ModalGump::InitGump(newparent, take_focus);
 
-	Shape *shape = GameData::get_instance()->getGumps()->getShape(shapenum);
+	Shape *shape_ = GameData::get_instance()->getGumps()->getShape(shapenum);
 
-	SetShape(shape, 0);
+	SetShape(shape_, 0);
 
-	ShapeFrame *sf = shape->getFrame(0);
+	ShapeFrame *sf = shape_->getFrame(0);
 	assert(sf);
 
 	dims.w = sf->width;

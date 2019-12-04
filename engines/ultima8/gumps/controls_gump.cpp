@@ -42,7 +42,7 @@ static const int font = 9;
 class ControlEntryGump : public Gump {
 public:
 	ENABLE_RUNTIME_CLASSTYPE()
-	ControlEntryGump(int x, int y, int width, const char *binding, const char *name);
+	ControlEntryGump(int x_, int y_, int width, const char *binding, const char *name);
 	virtual ~ControlEntryGump(void);
 	virtual void InitGump(Gump *newparent, bool take_focus = true);
 	virtual void ChildNotify(Gump *child, uint32 message);
@@ -55,8 +55,8 @@ protected:
 
 DEFINE_RUNTIME_CLASSTYPE_CODE(ControlEntryGump, Gump)
 
-ControlEntryGump::ControlEntryGump(int x, int y, int width, const char *binding, const char *name)
-	: Gump(x, y, width, 5), bindingName(binding), displayedName(name) {
+ControlEntryGump::ControlEntryGump(int x_, int y_, int width, const char *binding, const char *name)
+	: Gump(x_, y_, width, 5), bindingName(binding), displayedName(name) {
 }
 
 ControlEntryGump::~ControlEntryGump() {

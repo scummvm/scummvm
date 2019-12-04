@@ -36,7 +36,7 @@ public:
 
 	CreditsGump();
 	CreditsGump(const std::string &text, int parskip = 24,
-	            uint32 _Flags = 0, int32 layer = LAYER_MODAL);
+	            uint32 _Flags = 0, int32 layer_ = LAYER_MODAL);
 	virtual ~CreditsGump(void);
 
 	// Init the gump, call after construction

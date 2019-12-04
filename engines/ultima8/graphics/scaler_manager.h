@@ -29,7 +29,7 @@
 namespace Ultima8 {
 namespace Pentagram {
 class Scaler;
-};
+}
 
 //
 // This entire class is just static

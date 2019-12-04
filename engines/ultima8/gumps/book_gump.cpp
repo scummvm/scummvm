@@ -46,8 +46,8 @@ BookGump::BookGump()
 
 }
 
-BookGump::BookGump(ObjId owner, std::string msg) :
-	ModalGump(0, 0, 100, 100, owner), text(msg) {
+BookGump::BookGump(ObjId owner_, std::string msg) :
+	ModalGump(0, 0, 100, 100, owner_), text(msg) {
 }
 
 BookGump::~BookGump(void) {

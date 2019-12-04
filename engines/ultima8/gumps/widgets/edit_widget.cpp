@@ -169,16 +169,16 @@ void EditWidget::PaintComposited(RenderSurface *surf, int32 lerp_factor, int32 s
 
 	if (!gamefont || !font->isHighRes()) return;
 
-	int x = 0, y = 0;
-	GumpToScreenSpace(x, y, ROUND_BOTTOMRIGHT);
+	int x_ = 0, y_ = 0;
+	GumpToScreenSpace(x_, y_, ROUND_BOTTOMRIGHT);
 
-	cached_text->draw(surf, x, y, true);
+	cached_text->draw(surf, x_, y_, true);
 
-	x = dims.x;
-	y = dims.y;
+	x_ = dims.x;
+	y_ = dims.y;
 	int w = dims.w, h = dims.h;
-	GumpRectToScreenSpace(x, y, w, h, ROUND_OUTSIDE);
-	surf->FillAlpha(0x00, x, y, w, h);
+	GumpRectToScreenSpace(x_, y_, w, h, ROUND_OUTSIDE);
+	surf->FillAlpha(0x00, x_, y_, w, h);
 }
 
 // don't handle any mouse motion events, so let parent handle them for us.

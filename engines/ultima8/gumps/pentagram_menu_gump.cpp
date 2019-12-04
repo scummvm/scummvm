@@ -59,28 +59,26 @@ PentagramMenuGump::~PentagramMenuGump() {
 void PentagramMenuGump::InitGump(Gump *newparent, bool take_focus) {
 	ModalGump::InitGump(newparent, take_focus);
 
-	Pentagram::istring game;
-
 	GameWidget *g;
-	int y = 50;
+	int y_ = 50;
 
 	std::vector<Pentagram::istring> games;
 	// TODO: listGames() should probably be in CoreApp
 	games = SettingManager::get_instance()->listGames();
-	unsigned int index = 0;
+	unsigned int gameIndex = 0;
 	for (unsigned int i = 0; i < games.size(); ++i) {
-		Pentagram::istring game = games[i];
+		Pentagram::istring gameName = games[i];
 
-		if (game == "pentagram") continue;
-		if (!GUIApp::get_instance()->getGameInfo(game)) continue;
+		if (gameName == "pentagram") continue;
+		if (!GUIApp::get_instance()->getGameInfo(gameName)) continue;
 
-		g = new GameWidget(150, y, game);
+		g = new GameWidget(150, y_, gameName);
 		g->InitGump(this, false);
-		g->SetIndex(index++);
-		y += 114;
+		g->SetIndex(gameIndex++);
+		y_ += 114;
 	}
 
-	gamecount = index;
+	gamecount = gameIndex;
 
 	IDataSource *ds = FileSystem::get_instance()->ReadFile("@data/title.png");
 	titleImage = Texture::Create(ds, "title.png");

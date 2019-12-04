@@ -43,8 +43,8 @@ MovieGump::MovieGump() : ModalGump(), player(0) {
 }
 
 MovieGump::MovieGump(int width, int height, RawArchive *movie,
-                     bool introMusicHack, uint32 _Flags, int32 layer)
-	: ModalGump(50, 50, width, height, 0, _Flags, layer) {
+                     bool introMusicHack, uint32 _Flags, int32 layer_)
+	: ModalGump(50, 50, width, height, 0, _Flags, layer_) {
 	player = new SKFPlayer(movie, width, height, introMusicHack);
 }
 

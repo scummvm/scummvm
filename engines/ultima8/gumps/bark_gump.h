@@ -41,7 +41,7 @@ public:
 	ENABLE_RUNTIME_CLASSTYPE()
 
 	BarkGump();
-	BarkGump(uint16 owner, std::string msg, uint32 speechshapenum = 0);
+	BarkGump(uint16 owner_, std::string msg, uint32 speechshapenum = 0);
 	virtual ~BarkGump(void);
 
 	// Run the gump (decrement the counter)

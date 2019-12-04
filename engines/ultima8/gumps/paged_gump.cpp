@@ -34,9 +34,9 @@ namespace Ultima8 {
 
 DEFINE_RUNTIME_CLASSTYPE_CODE(PagedGump, ModalGump)
 
-PagedGump::PagedGump(int left, int right, int top, int shape):
+PagedGump::PagedGump(int left, int right, int top, int shape_):
 	ModalGump(0, 0, 5, 5), leftOff(left), rightOff(right), topOff(top),
-	gumpShape(shape), nextButton(0), prevButton(0), buttonsEnabled(true) {
+	gumpShape(shape_), nextButton(0), prevButton(0), buttonsEnabled(true) {
 	current = gumps.end();
 }
 

@@ -205,9 +205,9 @@ bool ShapeViewerGump::OnKeyDown(int key, int mod) {
 	}
 
 	if (shapechanged) {
-		Shape *shape = flex->getShape(curshape);
-		if (shape)
-			shape->getTotalDimensions(shapew, shapeh, shapex, shapey);
+		Shape *shape_ = flex->getShape(curshape);
+		if (shape_)
+			shape_->getTotalDimensions(shapew, shapeh, shapex, shapey);
 	}
 
 	return true;

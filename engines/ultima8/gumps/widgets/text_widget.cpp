@@ -69,21 +69,21 @@ void TextWidget::InitGump(Gump *newparent, bool take_focus) {
 
 	if (gamefont && getFont()->isHighRes()) {
 		int w = 0;
-		int x = 0, y = 0;
-		ScreenSpaceToGumpRect(x, y, w, dims.y, ROUND_OUTSIDE);
+		int x_ = 0, y_ = 0;
+		ScreenSpaceToGumpRect(x_, y_, w, dims.y, ROUND_OUTSIDE);
 
-		int tx = dims.x;
-		int ty = dims.y;
+		int tx_ = dims.x;
+		int ty_ = dims.y;
 
 		// Note that GumpRectToScreenSpace is guaranteed to keep
 		// targetwidth/targetheight zero if they already were.
-		GumpRectToScreenSpace(tx, ty, targetwidth, targetheight, ROUND_OUTSIDE);
+		GumpRectToScreenSpace(tx_, ty_, targetwidth, targetheight, ROUND_OUTSIDE);
 
 		dims.w = targetwidth;
 		dims.h = targetheight;
-		x = 0;
-		y = 0;
-		ScreenSpaceToGumpRect(x, y, dims.w, dims.h, ROUND_OUTSIDE);
+		x_ = 0;
+		y_ = 0;
+		ScreenSpaceToGumpRect(x_, y_, dims.w, dims.h, ROUND_OUTSIDE);
 	}
 
 	setupNextText();
@@ -96,8 +96,8 @@ int TextWidget::getVlead() {
 	int vlead = cached_text->getVlead();
 
 	if (gamefont && getFont()->isHighRes()) {
-		int x = 0, y = 0, w = 0;
-		ScreenSpaceToGumpRect(x, y, w, vlead, ROUND_OUTSIDE);
+		int xv = 0, yv = 0, w = 0;
+		ScreenSpaceToGumpRect(xv, yv, w, vlead, ROUND_OUTSIDE);
 	}
 
 	return vlead;
@@ -132,15 +132,15 @@ bool TextWidget::setupNextText() {
 	cached_text = 0;
 
 	if (gamefont) {
-		Pentagram::Font *font = getFont();
-		if (font->isHighRes()) {
-			int x = 0, y = 0;
-			ScreenSpaceToGumpRect(x, y, dims.w, dims.h, ROUND_OUTSIDE);
+		Pentagram::Font *fontP = getFont();
+		if (fontP->isHighRes()) {
+			int x_ = 0, y_ = 0;
+			ScreenSpaceToGumpRect(x_, y_, dims.w, dims.h, ROUND_OUTSIDE);
 
 			int w = 0;
-			x = 0;
-			y = 0;
-			ScreenSpaceToGumpRect(x, y, w, dims.y, ROUND_OUTSIDE);
+			x_ = 0;
+			y_ = 0;
+			ScreenSpaceToGumpRect(x_, y_, w, dims.y, ROUND_OUTSIDE);
 		}
 	}
 
@@ -188,23 +188,23 @@ void TextWidget::PaintComposited(RenderSurface *surf, int32 lerp_factor, int32 s
 
 	if (!gamefont || !font->isHighRes()) return;
 
-	int x = 0, y = 0;
-	GumpToScreenSpace(x, y, ROUND_BOTTOMRIGHT);
+	int x_ = 0, y_ = 0;
+	GumpToScreenSpace(x_, y_, ROUND_BOTTOMRIGHT);
 
 	if (!blendColour)
-		cached_text->draw(surf, x, y, true);
+		cached_text->draw(surf, x_, y_, true);
 	else
-		cached_text->drawBlended(surf, x, y, blendColour, true);
+		cached_text->drawBlended(surf, x_, y_, blendColour, true);
 
 	if (parent->IsOfType<BarkGump>()) return;
 
 	if (parent->IsOfType<ButtonWidget>() && parent->GetParent()->IsOfType<AskGump>()) return;
 
-	x = dims.x;
-	y = dims.y;
+	x_ = dims.x;
+	y_ = dims.y;
 	int w = dims.w, h = dims.h;
-	GumpRectToScreenSpace(x, y, w, h, ROUND_OUTSIDE);
-	surf->FillAlpha(0x00, x, y, w, h);
+	GumpRectToScreenSpace(x_, y_, w, h, ROUND_OUTSIDE);
+	surf->FillAlpha(0x00, x_, y_, w, h);
 }
 
 // don't handle any mouse motion events, so let parent handle them for us.
@@ -255,15 +255,15 @@ bool TextWidget::loadData(IDataSource *ids, uint32 version) {
 	// after loading.
 	Pentagram::Font *font = getFont();
 
-	int tx, ty;
+	int tx_, ty_;
 	unsigned int remaining;
-	font->getTextSize(text.substr(current_start), tx, ty, remaining,
+	font->getTextSize(text.substr(current_start), tx_, ty_, remaining,
 	                  targetwidth, targetheight, textalign, true);
 
 	// Y offset is always baseline
 	dims.y = -font->getBaseline();
-	dims.w = tx;
-	dims.h = ty;
+	dims.w = tx_;
+	dims.h = ty_;
 	current_end = current_start + remaining;
 
 	return true;
