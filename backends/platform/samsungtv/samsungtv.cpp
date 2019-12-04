@@ -27,6 +27,8 @@
 #include "backends/platform/samsungtv/samsungtv.h"
 #include "backends/events/samsungtvsdl/samsungtvsdl-events.h"
 #include "backends/graphics/samsungtvsdl/samsungtvsdl-graphics.h"
+#include "backends/saves/default/default-saves.h"
+#include "backends/fs/posix/posix-fs.h"
 #include "common/textconsole.h"
 
 OSystem_SDL_SamsungTV::OSystem_SDL_SamsungTV()
@@ -57,8 +59,7 @@ void OSystem_SDL_SamsungTV::quit() {
 
 void OSystem_SDL_SamsungTV::fatalError() {
 	delete this;
-	// FIXME
-	warning("fatal error");
+	warning("ScummVM: Fatal internal error.");
 	for (;;) {}
 }
 
