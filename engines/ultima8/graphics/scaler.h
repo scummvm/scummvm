@@ -58,8 +58,8 @@ public:
 	// Scaler Capabilites
 	//
 
-	virtual const uint32    ScaleBits() const = 0;          //< bits for supported integer scaling
-	virtual const bool      ScaleArbitrary() const = 0;     //< supports arbitrary scaling of any degree
+	virtual uint32    ScaleBits() const = 0;          //< bits for supported integer scaling
+	virtual bool      ScaleArbitrary() const = 0;     //< supports arbitrary scaling of any degree
 
 	virtual const char     *ScalerName() const = 0;         //< Name Of the Scaler (1 word)
 	virtual const char     *ScalerDesc() const = 0;         //< Desciption of the Scaler

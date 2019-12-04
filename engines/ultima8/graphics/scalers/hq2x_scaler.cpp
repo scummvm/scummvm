@@ -41,10 +41,10 @@ hq2xScaler::hq2xScaler() : Scaler() {
 	Scale32_888A = GetScaler<uint32, Manip_32_888A, uint32>();
 }
 
-const uint32 hq2xScaler::ScaleBits() const {
+uint32 hq2xScaler::ScaleBits() const {
 	return 1 << 2;
 }
-const bool hq2xScaler::ScaleArbitrary() const {
+bool hq2xScaler::ScaleArbitrary() const {
 	return false;
 }
 

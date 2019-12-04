@@ -750,10 +750,10 @@ _2xSaIScaler::_2xSaIScaler() : Scaler() {
 	Scale32_888A = _2xSaIScalerInternal<uint32, Manip_32_888A, uint32>::Scale2xSaI;
 }
 
-const uint32 _2xSaIScaler::ScaleBits() const {
+uint32 _2xSaIScaler::ScaleBits() const {
 	return 1 << 2;
 }
-const bool _2xSaIScaler::ScaleArbitrary() const {
+bool _2xSaIScaler::ScaleArbitrary() const {
 	return false;
 }
 
@@ -782,10 +782,10 @@ Super2xSaIScaler::Super2xSaIScaler() : Scaler() {
 	Scale32_888A = _2xSaIScalerInternal<uint32, Manip_32_888A, uint32>::ScaleSuper2xSaI;
 }
 
-const uint32 Super2xSaIScaler::ScaleBits() const {
+uint32 Super2xSaIScaler::ScaleBits() const {
 	return 1 << 2;
 }
-const bool Super2xSaIScaler::ScaleArbitrary() const {
+bool Super2xSaIScaler::ScaleArbitrary() const {
 	return false;
 }
 
@@ -814,10 +814,10 @@ SuperEagleScaler::SuperEagleScaler() : Scaler() {
 	Scale32_888A = _2xSaIScalerInternal<uint32, Manip_32_888A, uint32>::ScaleSuperEagle;
 }
 
-const uint32 SuperEagleScaler::ScaleBits() const {
+uint32 SuperEagleScaler::ScaleBits() const {
 	return 1 << 2;
 }
-const bool SuperEagleScaler::ScaleArbitrary() const {
+bool SuperEagleScaler::ScaleArbitrary() const {
 	return false;
 }
 
@@ -851,10 +851,10 @@ GC_2xSaIScaler::GC_2xSaIScaler() : Scaler() {
 
 }
 
-const uint32 GC_2xSaIScaler::ScaleBits() const {
+uint32 GC_2xSaIScaler::ScaleBits() const {
 	return 1 << 2;
 }
-const bool GC_2xSaIScaler::ScaleArbitrary() const {
+bool GC_2xSaIScaler::ScaleArbitrary() const {
 	return false;
 }
 
@@ -886,10 +886,10 @@ GC_Super2xSaIScaler::GC_Super2xSaIScaler() : Scaler() {
 
 }
 
-const uint32 GC_Super2xSaIScaler::ScaleBits() const {
+uint32 GC_Super2xSaIScaler::ScaleBits() const {
 	return 1 << 2;
 }
-const bool GC_Super2xSaIScaler::ScaleArbitrary() const {
+bool GC_Super2xSaIScaler::ScaleArbitrary() const {
 	return false;
 }
 
@@ -919,10 +919,10 @@ GC_SuperEagleScaler::GC_SuperEagleScaler() : Scaler() {
 	Scale32_888A = _2xSaIScalerInternal<uint32, Manip_32_888A_GC, uint32>::ScaleSuperEagle;
 }
 
-const uint32 GC_SuperEagleScaler::ScaleBits() const {
+uint32 GC_SuperEagleScaler::ScaleBits() const {
 	return 1 << 2;
 }
-const bool GC_SuperEagleScaler::ScaleArbitrary() const {
+bool GC_SuperEagleScaler::ScaleArbitrary() const {
 	return false;
 }
 

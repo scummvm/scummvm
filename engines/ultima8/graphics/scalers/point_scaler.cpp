@@ -294,10 +294,10 @@ PointScaler::PointScaler() : Scaler() {
 	Scale32_888A = PointScalerInternal<uint32, Manip_32_888A, uint32>::Scale;
 }
 
-const uint32 PointScaler::ScaleBits() const {
+uint32 PointScaler::ScaleBits() const {
 	return 0xFFFFFFFF;
 }
-const bool PointScaler::ScaleArbitrary() const {
+bool PointScaler::ScaleArbitrary() const {
 	return true;
 }
 

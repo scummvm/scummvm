@@ -1131,10 +1131,10 @@ Scale2xScaler::Scale2xScaler() : Scaler() {
 #endif
 }
 
-const uint32 Scale2xScaler::ScaleBits() const {
+uint32 Scale2xScaler::ScaleBits() const {
 	return 1 << 2;
 }
-const bool Scale2xScaler::ScaleArbitrary() const {
+bool Scale2xScaler::ScaleArbitrary() const {
 	return false;
 }
 

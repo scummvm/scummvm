@@ -138,7 +138,7 @@ hqScaler::hqScaler() : Scaler() {
 	Scale32_888A = _Scale32_888A;
 }
 
-const uint32 hqScaler::ScaleBits() const {
+uint32 hqScaler::ScaleBits() const {
 	return 0
 #ifdef USE_HQ2X_SCALER
 	       | 1 << 2
@@ -151,7 +151,7 @@ const uint32 hqScaler::ScaleBits() const {
 #endif
 	       ;
 }
-const bool hqScaler::ScaleArbitrary() const {
+bool hqScaler::ScaleArbitrary() const {
 	return false;
 }
 
