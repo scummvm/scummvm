@@ -62,6 +62,7 @@ static const TinselGameDescription gameDescriptions[] = {
 			{
 				{"dw.gra", 0, "ef5a2518c9e205f786f5a4526396e661", 781676},
 				{"english.smp", 0, NULL, -1},
+				AD_LISTEND
 			},
 			Common::EN_ANY,
 			Common::kPlatformDOS,
@@ -82,6 +83,7 @@ static const TinselGameDescription gameDescriptions[] = {
 				{"dw.scn", 0, "cfc40a8d5d476a1c9d3abf826fa46f8c", 1272686},
 				{"english.txt", 0, "c69b5d2067e9114a63569a61e9a82faa", 228878},
 				{"english.smp", 0, NULL, -1},
+				AD_LISTEND
 			},
 			Common::EN_ANY,
 			Common::kPlatformMacintosh,
@@ -210,6 +212,7 @@ static const TinselGameDescription gameDescriptions[] = {
 			{
 				{"dw.gra", 0, "c8808ccd988d603dd35dff42013ae7fd", 781656},
 				{"english.smp", 0, NULL, -1},
+				AD_LISTEND
 			},
 			Common::EN_ANY,
 			Common::kPlatformDOS,
@@ -229,6 +232,7 @@ static const TinselGameDescription gameDescriptions[] = {
 			{
 				{"dw.gra", 0, "ef05bbd2a754bd11a2e87bcd84ab5ccf", 781864},
 				{"english.smp", 0, NULL, -1},
+				AD_LISTEND
 			},
 			Common::EN_ANY,
 			Common::kPlatformDOS,
