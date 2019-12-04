@@ -71,6 +71,7 @@ static const PlainGameDescriptor wintermuteGames[] = {
 	{"foxtail",         "FoxTail"},
 	{"framed",          "Framed"},
 	{"ghostsheet",      "Ghost in the Sheet"},
+	{"goldencalf",      "The Golden Calf"},
 	{"hamlet",          "Hamlet or the last game without MMORPG features, shaders and product placement"},
 	{"helga",           "Helga Deep In Trouble"},
 	{"jamesperis",      "James Peris: No License Nor Control"},
@@ -84,9 +85,11 @@ static const PlainGameDescriptor wintermuteGames[] = {
 	{"juliastars",      "J.U.L.I.A.: Among the Stars"},
 	{"juliastarshd",    "J.U.L.I.A.: Among the Stars HD"},
 	{"juliauntold",     "J.U.L.I.A.: Untold"},
+	{"lotl",            "Limbo of the Lost"},
 	{"machumayu",       "Machu Mayu"},
 	{"mentalrepairs",   "Mental Repairs Inc"},
 	{"mirage",          "Mirage"},
+	{"msos",            "Monday Starts on Saturday"},
 	{"nighttrain",      "Night Train"},
 	{"oknytt",          "Oknytt"},
 	{"one",             "One"},
@@ -799,6 +802,14 @@ static const WMEGameDescription gameDescriptions[] = {
 	WME_WINENTRY("ghostsheet", "Demo",
 		WME_ENTRY1s("data.dcp", "4995d69dd43e8aa00bcb026c37f00009", 171757), Common::IT_ITA, ADGF_UNSTABLE | ADGF_DEMO, WME_1_8_0),
 
+	// The Golden Calf (Russian)
+	WME_WINENTRY("goldencalf", "",
+		WME_ENTRY1s("data.dcp", "c70536681d839f9b4357938891402af3", 488532641), Common::RU_RUS, ADGF_UNSTABLE, WME_1_8_11),
+
+	// The Golden Calf (German)
+	WME_WINENTRY("goldencalf", "",
+		WME_ENTRY1s("data.dcp", "c611503c2c10137d1195878080cee2d1", 1174552), Common::DE_DEU, ADGF_UNSTABLE, WME_1_8_11),
+
 	// Hamlet or the last game without MMORPG features, shaders and product placement (English)
 	WME_WINENTRY("hamlet", "",
 		WME_ENTRY1s("data.dcp", "f624add957a77c9930529fb28cc2450f", 88183022), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_1),
@@ -955,6 +966,10 @@ static const WMEGameDescription gameDescriptions[] = {
 	WME_WINENTRY("juliauntold", "",
 		WME_ENTRY1s("data.dcp", "fe995e26253f6e0a925dd7850fce17a9", 26459827), Common::EN_ANY, ADGF_UNSTABLE, WME_LITE),
 
+	// K'NOSSOS
+	WME_WINENTRY("knossos", "",
+		WME_ENTRY1s("K'NOSSOS.exe", "694e488cc99bb78d2fe906f82d3ee9e1", 1654383903), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_3),
+
 	// K'NOSSOS (Alpha Demo)
 	WME_WINENTRY("knossos", "Alpha Demo",
 		WME_ENTRY1s("K'NOSSOS.exe", "694e488cc99bb78d2fe906f82d3ee9e1", 867516208), Common::EN_ANY, ADGF_UNSTABLE | ADGF_DEMO, WME_1_9_3),
@@ -991,6 +1006,14 @@ static const WMEGameDescription gameDescriptions[] = {
 		WME_ENTRY2s("german.dcp", "bf4c2b8c26342342441a6d64934ab832", 107027865,
 					"data.dcp", "50de0beaa5ad621aa9f020df901d1e74", 1342214), Common::DE_DEU, ADGF_UNSTABLE, WME_1_9_1),
 
+	// Limbo of the Lost (English)
+	WME_WINENTRY("lotl", "",
+		WME_ENTRY1s("data.dcp", "637f2195a08f59e809ca48194a2ee73d", 354879400), Common::EN_ANY, ADGF_UNSTABLE, WME_1_7_2),
+
+	// Limbo of the Lost (Russian)
+	WME_WINENTRY("lotl", "",
+		WME_ENTRY1s("data.dcp", "2042ea14f2d7c52a139d768e962040c1", 354370575), Common::RU_RUS, ADGF_UNSTABLE, WME_1_7_2),
+
 	// Machu Mayu (Demo)
 	WME_WINENTRY("machumayu", "Demo",
 		WME_ENTRY1s("data.dcp", "79f17943b93c3ff37b5544a5da0d17d0", 12328601), Common::EN_ANY, ADGF_UNSTABLE | ADGF_DEMO, WME_1_9_1),
@@ -1010,6 +1033,10 @@ static const WMEGameDescription gameDescriptions[] = {
 	// Mirage
 	WME_WINENTRY("mirage", "",
 		WME_ENTRY1s("data.dcp", "d230b0b99c0aa77b9ecd094d8ee5573b", 17844056), Common::EN_ANY, ADGF_UNSTABLE, WME_1_8_11),
+
+	// Monday Starts on Saturday
+	WME_WINENTRY("msos", "",
+		WME_ENTRY1s("data.dcp", "2aa5ab924b05c9539a5a118bc263c2f8", 1049803074), Common::RU_RUS, ADGF_UNSTABLE, WME_1_9_1),
 
 	// Night Train Demo
 	WME_WINENTRY("nighttrain", "Demo",
@@ -2475,6 +2502,13 @@ static const WMEGameDescription gameDescriptions[] = {
 		WME_ENTRY2s("data.dcp", "28256eacb651a82cb07ffd99d0102988", 272211168,
 					"xlanguage_it.dcp", "afc13347351b3d35f0d73d2340d6f2d9", 11495758), Common::IT_ITA, ADGF_UNSTABLE, WME_1_9_3),
 
+	/* DISABLED: Language conflict
+	// Reversion: The Meeting (Steam, August 2019) (Chinese)
+	WME_WINENTRY("reversion2", "",
+		WME_ENTRY2s("data.dcp", "28256eacb651a82cb07ffd99d0102988", 272211168,
+					"xlanguage_nz.dcp", "45f52816d5ec5f8e0c1bd70a7aa17f7c", 8847936), Common::ZH_CNA, ADGF_UNSTABLE, WME_1_9_3),
+	*/
+	
 	// Reversion: The Meeting (Steam, August 2019) (Russian)
 	WME_WINENTRY("reversion2", "",
 		WME_ENTRY2s("data.dcp", "28256eacb651a82cb07ffd99d0102988", 272211168,
@@ -2587,10 +2621,12 @@ static const WMEGameDescription gameDescriptions[] = {
 		WME_ENTRY2s("data.dcp", "5b1f360d29a650ea202a89903412e539", 272211168,
 					"xlanguage_it.dcp", "2c2e8d80719bcb5d350d88efa738ea8c", 11495758), Common::IT_ITA, ADGF_UNSTABLE, WME_1_9_3),
 
+	/* DISABLED: Language conflict
 	// Reversion: The Meeting (Steam, November 2019) (Chinese)
 	WME_WINENTRY("reversion2", "",
 		WME_ENTRY2s("data.dcp", "5b1f360d29a650ea202a89903412e539", 272211168,
 					"xlanguage_nz.dcp", "45f52816d5ec5f8e0c1bd70a7aa17f7c", 8847936), Common::ZH_CNA, ADGF_UNSTABLE, WME_1_9_3),
+	*/
 	
 	// Reversion: The Meeting (Steam, November 2019) (Portuguese)
 	WME_WINENTRY("reversion2", "",
@@ -3946,10 +3982,25 @@ static const WMEGameDescription gameDescriptions[] = {
 	WME_WINENTRY("thelastcrown", "",
 		WME_ENTRY1s("theatre.dcp", "741867f67bfb639ac0c96f6990822893", 78078952), Common::EN_ANY, ADGF_UNSTABLE, WME_1_8_2),
 
+	// The Last Crown - A Ghost Hunting Adventure (DVD version, German)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("thelastcrown", "",
+		WME_ENTRY1s("theatre.dcp", "3deed61c6f6f02e7422b639c52b9169a", 78455706), Common::DE_DEU, ADGF_UNSTABLE, WME_1_8_2),
+
 	// The Last Crown - A Ghost Hunting Adventure (Steam, Jul 2014)
 	// NOTE: This is a 2.5D game that is out of ScummVM scope
 	WME_WINENTRY("thelastcrown", "",
 		WME_ENTRY1s("theatre.dcp", "25e005501162a96743ae3d3d33e7bbc3", 88472760), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_3),
+
+	// The Last Crown - A Ghost Hunting Adventure (Steam, Jun 2014) (German)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("thelastcrown", "",
+		WME_ENTRY1s("theatre.dcp", "46cf3cfa4c4a1007b94c00d779bb24bd", 89163239), Common::DE_DEU, ADGF_UNSTABLE, WME_1_9_3),
+
+	// The Last Crown - A Ghost Hunting Adventure (Steam, Jul 2014) (German)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("thelastcrown", "",
+		WME_ENTRY1s("theatre.dcp", "21e943958e69c3f80803c649b6290140", 89163394), Common::DE_DEU, ADGF_UNSTABLE, WME_1_9_3),
 
 	// Fairy Tales About Toshechka and Boshechka
 	WME_WINENTRY("tib", "",
