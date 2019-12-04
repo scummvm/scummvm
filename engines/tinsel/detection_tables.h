@@ -105,7 +105,7 @@ static const TinselGameDescription gameDescriptions[] = {
 				{"german.txt", 0, NULL, -1},
 				{"italian.txt", 0, NULL, -1},
 				{"spanish.txt", 0, NULL, -1},
-				{NULL, 0, NULL, 0}
+				AD_LISTEND
 			},
 			Common::FR_FRA,
 			Common::kPlatformDOS,
@@ -128,7 +128,7 @@ static const TinselGameDescription gameDescriptions[] = {
 				{"german.txt", 0, NULL, -1},
 				{"italian.txt", 0, NULL, -1},
 				{"spanish.txt", 0, NULL, -1},
-				{NULL, 0, NULL, 0}
+				AD_LISTEND
 			},
 			Common::DE_DEU,
 			Common::kPlatformDOS,
@@ -151,7 +151,7 @@ static const TinselGameDescription gameDescriptions[] = {
 				{"german.txt", 0, NULL, -1},
 				{"italian.txt", 0, NULL, -1},
 				{"spanish.txt", 0, NULL, -1},
-				{NULL, 0, NULL, 0}
+				AD_LISTEND
 			},
 			Common::IT_ITA,
 			Common::kPlatformDOS,
@@ -174,7 +174,7 @@ static const TinselGameDescription gameDescriptions[] = {
 				{"german.txt", 0, NULL, -1},
 				{"italian.txt", 0, NULL, -1},
 				{"spanish.txt", 0, NULL, -1},
-				{NULL, 0, NULL, 0}
+				AD_LISTEND
 			},
 			Common::ES_ESP,
 			Common::kPlatformDOS,
@@ -266,7 +266,7 @@ static const TinselGameDescription gameDescriptions[] = {
 				{"dw.gra", 0, "c8808ccd988d603dd35dff42013ae7fd", 781656},
 				{"english.txt", 0, "15f0703f85477d7fab4280bf938b61c1", 237774},
 				{"english.smp", 0, NULL, -1},
-				{NULL, 0, NULL, 0}
+				AD_LISTEND
 			},
 			Common::IT_ITA,
 			Common::kPlatformDOS,
@@ -291,7 +291,7 @@ static const TinselGameDescription gameDescriptions[] = {
 				{"german.txt", 0, NULL, -1},
 				{"italian.txt", 0, NULL, -1},
 				{"spanish.txt", 0, NULL, -1},
-				{NULL, 0, NULL, 0}
+				AD_LISTEND
 			},
 			Common::FR_FRA,
 			Common::kPlatformDOS,
@@ -315,7 +315,7 @@ static const TinselGameDescription gameDescriptions[] = {
 				{"german.txt", 0, NULL, -1},
 				{"italian.txt", 0, NULL, -1},
 				{"spanish.txt", 0, NULL, -1},
-				{NULL, 0, NULL, 0}
+				AD_LISTEND
 			},
 			Common::DE_DEU,
 			Common::kPlatformDOS,
@@ -338,7 +338,7 @@ static const TinselGameDescription gameDescriptions[] = {
 				{"german.txt", 0, NULL, -1},
 				{"italian.txt", 0, NULL, -1},
 				{"spanish.txt", 0, NULL, -1},
-				{NULL, 0, NULL, 0}
+				AD_LISTEND
 			},
 			Common::IT_ITA,
 			Common::kPlatformDOS,
@@ -361,7 +361,7 @@ static const TinselGameDescription gameDescriptions[] = {
 				{"german.txt", 0, NULL, -1},
 				{"italian.txt", 0, NULL, -1},
 				{"spanish.txt", 0, NULL, -1},
-				{NULL, 0, NULL, 0}
+				AD_LISTEND
 			},
 			Common::ES_ESP,
 			Common::kPlatformDOS,
@@ -381,7 +381,7 @@ static const TinselGameDescription gameDescriptions[] = {
 			{
 				{"dw.scn", 0, "70955425870c7720d6eebed903b2ef41", 776188},
 				{"english.smp", 0, NULL, -1},
-				{NULL, 0, NULL, 0}
+				AD_LISTEND
 			},
 			Common::EN_ANY,
 			Common::kPlatformDOS,
@@ -401,7 +401,7 @@ static const TinselGameDescription gameDescriptions[] = {
 			{
 				{"dw.scn", 0, "759d1374b4f02af6d52fc07c96679936", 770780},
 				{"english.smp", 0, NULL, -1},
-				{NULL, 0, NULL, 0}
+				AD_LISTEND
 			},
 			Common::HE_ISR,
 			Common::kPlatformDOS,
@@ -420,7 +420,7 @@ static const TinselGameDescription gameDescriptions[] = {
 			"CD",
 			{
 				{"english.txt", 0, "7526cfc3a64e00f223795de476b4e2c9", 230326},
-				{NULL, 0, NULL, 0}
+				AD_LISTEND
 			},
 			Common::EN_ANY,
 			Common::kPlatformPSX,
@@ -443,7 +443,7 @@ static const TinselGameDescription gameDescriptions[] = {
 				{"italian.txt", 0, "15f0703f85477d7fab4280bf938b61c1", 239834},
 				{"spanish.txt", 0, "c324170c3f1922c605c5cc09ba265aa5", 236702},
 				{"english.txt", 0, "7526cfc3a64e00f223795de476b4e2c9", 230326},
-				{NULL, 0, NULL, 0}
+				AD_LISTEND
 			},
 			Common::EN_ANY,
 			Common::kPlatformPSX,
@@ -464,7 +464,7 @@ static const TinselGameDescription gameDescriptions[] = {
 			{
 				{"dw.scn", 0, "6803f293c88758057cc685b9437f7637", 382248},
 				{"english.smp", 0, NULL, -1},
-				{NULL, 0, NULL, 0}
+				AD_LISTEND
 			},
 			Common::EN_ANY,
 			Common::kPlatformDOS,
@@ -485,7 +485,7 @@ static const TinselGameDescription gameDescriptions[] = {
 			{
 				{"dw.scn", 0, "114643df0d1f1530a0a9c5d4e38917bc", 1268553},
 				{"english.smp", 0, NULL, -1},
-				{NULL, 0, NULL, 0}
+				AD_LISTEND
 			},
 			Common::EN_ANY,
 			Common::kPlatformMacintosh,
@@ -505,7 +505,7 @@ static const TinselGameDescription gameDescriptions[] = {
 			{
 				{"dw.scn", 0, "cfc40a8d5d476a1c9d3abf826fa46f8c", 1265532},
 				{"english.smp", 0, NULL, -1},
-				{NULL, 0, NULL, 0}
+				AD_LISTEND
 			},
 			Common::EN_ANY,
 			Common::kPlatformMacintosh,
@@ -543,7 +543,7 @@ static const TinselGameDescription gameDescriptions[] = {
 				{"dw.scn", 0, "133041bde59d05c1bf084fd6f1bdce4b", 776524},
 				{"english.txt", 0, "f73dcbd7b136b37c2adf7c9448ea336d", 231821},
 				{"english.smp", 0, NULL, -1},
-				{NULL, 0, NULL, 0}
+				AD_LISTEND
 			},
 			Common::RU_RUS,
 			Common::kPlatformDOS,
@@ -563,7 +563,7 @@ static const TinselGameDescription gameDescriptions[] = {
 			{
 				{"dw.scn", 0, "36795d539e290838fa1d4c11789cb142", 776188},
 				{"english.smp", 0, NULL, -1},
-				{NULL, 0, NULL, 0}
+				AD_LISTEND
 			},
 			Common::EN_ANY,
 			Common::kPlatformDOS,
@@ -584,7 +584,7 @@ static const TinselGameDescription gameDescriptions[] = {
 				{"dw.scn", 0, "133041bde59d05c1bf084fd6f1bdce4b", 776524},
 				{"english.txt", 0, "317542cf2e50106d9c9421ddcf821e22", 221656},
 				{"english.smp", 0, NULL, -1},
-				{NULL, 0, NULL, 0}
+				AD_LISTEND
 			},
 			Common::RU_RUS,
 			Common::kPlatformDOS,
@@ -605,7 +605,7 @@ static const TinselGameDescription gameDescriptions[] = {
 				{"dw.scn", 0, "fa169d2c98660215ebd84b49c1899eef", 776396},
 				{"english.txt", 0, "c1a53eb7ec812689dab70e2bb22cf2ab", 224151},
 				{"english.smp", 0, NULL, -1},
-				{NULL, 0, NULL, 0}
+				AD_LISTEND
 			},
 			Common::PL_POL,
 			Common::kPlatformDOS,
@@ -628,7 +628,7 @@ static const TinselGameDescription gameDescriptions[] = {
 			{
 				{"dw2.scn", 0, "853ab998f5136b69bc586991175d6eeb", 4231121},
 				{"english.smp", 0, "b5660a0e031cb4710bcb0ef5629ea61d", 28562357},
-				{NULL, 0, NULL, 0}
+				AD_LISTEND
 			},
 			Common::EN_ANY,
 			Common::kPlatformDOS,
@@ -648,7 +648,7 @@ static const TinselGameDescription gameDescriptions[] = {
 			{
 				{"dw2.scn", 0, "c6d15ce9720a9d8fef06e6582dcf3f34", 103593},
 				{"english1.smp", 0, NULL, -1},
-				{NULL, 0, NULL, 0}
+				AD_LISTEND
 			},
 			Common::EN_GRB,
 			Common::kPlatformDOS,
@@ -668,7 +668,7 @@ static const TinselGameDescription gameDescriptions[] = {
 			{
 				{"dw2.scn", 0, "c6d15ce9720a9d8fef06e6582dcf3f34", 103593},
 				{"us1.smp", 0, NULL, -1},
-				{NULL, 0, NULL, 0}
+				AD_LISTEND
 			},
 			Common::EN_USA,
 			Common::kPlatformDOS,
@@ -688,7 +688,7 @@ static const TinselGameDescription gameDescriptions[] = {
 			{
 				{"dw2.scn", 0, "c6d15ce9720a9d8fef06e6582dcf3f34", 103593},
 				{"french1.smp", 0, NULL, -1},
-				{NULL, 0, NULL, 0}
+				AD_LISTEND
 			},
 			Common::FR_FRA,
 			Common::kPlatformDOS,
@@ -708,7 +708,7 @@ static const TinselGameDescription gameDescriptions[] = {
 			{
 				{"dw2.scn", 0, "c6d15ce9720a9d8fef06e6582dcf3f34", 103593},
 				{"german1.smp", 0, NULL, -1},
-				{NULL, 0, NULL, 0}
+				AD_LISTEND
 			},
 			Common::DE_DEU,
 			Common::kPlatformDOS,
@@ -729,7 +729,7 @@ static const TinselGameDescription gameDescriptions[] = {
 				{"dw2.scn", 0, "c6d15ce9720a9d8fef06e6582dcf3f34", 103593},
 				{"english1.smp", 0, NULL, -1},
 				{"italian1.txt", 0, "d443249f8b55489b5888c227b9096f4e", 246495},
-				{NULL, 0, NULL, 0}
+				AD_LISTEND
 			},
 			Common::IT_ITA,
 			Common::kPlatformDOS,
@@ -749,7 +749,7 @@ static const TinselGameDescription gameDescriptions[] = {
 				{"dw2.scn", 0, "c6d15ce9720a9d8fef06e6582dcf3f34", 103593},
 				{"english1.smp", 0, NULL, -1},
 				{"spanish1.txt", 0, "bc6e147c5f542db228ac577357e4d897", 230323},
-				{NULL, 0, NULL, 0}
+				AD_LISTEND
 			},
 			Common::ES_ESP,
 			Common::kPlatformDOS,
@@ -770,7 +770,7 @@ static const TinselGameDescription gameDescriptions[] = {
 				{"dw2.scn", 0, "c6d15ce9720a9d8fef06e6582dcf3f34", 103593},
 				{"english1.smp", 0, NULL, -1},
 				{"english1.txt", 0, "b522e19d7b2cd7b85e50e36fe48e36a9", 274444},
-				{NULL, 0, NULL, 0}
+				AD_LISTEND
 			},
 			Common::RU_RUS,
 			Common::kPlatformDOS,
