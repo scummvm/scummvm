@@ -25,7 +25,7 @@
 
 #include "XMidiSequenceHandler.h"
 #include "XMidiEvent.h"
-#include "XMidiEventList.h"
+#include "ultima8/audio/midi/xmidi_event_list.h"
 #include "XMidiNoteStack.h"
 
 namespace Ultima8 {

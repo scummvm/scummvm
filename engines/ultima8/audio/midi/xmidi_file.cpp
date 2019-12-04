@@ -21,9 +21,9 @@
  */
 
 #include "ultima8/misc/pent_include.h"
-#include "XMidiFile.h"
+#include "ultima8/audio/midi/xmidi_file.h"
 #include "XMidiEvent.h"
-#include "XMidiEventList.h"
+#include "ultima8/audio/midi/xmidi_event_list.h"
 #include "XMidiNoteStack.h"
 
 #ifdef PENTAGRAM_IN_EXULT

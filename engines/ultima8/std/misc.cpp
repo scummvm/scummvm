@@ -87,5 +87,10 @@ double pow(double x, double y) {
 	return ::pow(x, y);
 }
 
+void free(void *&p) {
+	::free(p);
+	p = nullptr;
+}
+
 } // End of namespace std
 } // End of namespace Ultima8

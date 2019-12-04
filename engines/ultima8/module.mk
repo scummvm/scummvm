@@ -3,6 +3,16 @@ MODULE := engines/ultima8
 MODULE_OBJS := \
 	detection.o \
 	ultima8.o \
+	audio/audio_channel.o \
+	audio/audio_mixer.o \
+	audio/audio_process.o \
+	audio/audio_sample.o \
+	audio/music_flex.o \
+	audio/music_process.o \
+	audio/raw_audio_sample.o \
+	audio/sonarc_audio_sample.o \
+	audio/sound_flex.o \
+	audio/speech_flex.o \
 	conf/config_file_manager.o \
 	conf/ini_file.o \
 	conf/setting_manager.o \

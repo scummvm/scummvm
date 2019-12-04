@@ -22,8 +22,8 @@
 
 #include "ultima8/misc/pent_include.h"
 
-#include "MusicFlex.h"
-#include "XMidiFile.h"
+#include "ultima8/audio/music_flex.h"
+#include "ultima8/audio/midi/xmidi_file.h"
 #include "ultima8/filesys/idata_source.h"
 
 namespace Ultima8 {
@@ -113,8 +113,7 @@ void MusicFlex::loadSongInfo() {
 	uint8 *buf = getRawObject(0, &size);
 
 	if (!buf || !size) {
-		perr << "Unable to load song info from sound/music.flx. Exiting" << std::endl;
-		std::exit(-1);
+		error("Unable to load song info from sound/music.flx");
 	}
 	IBufferDataSource ds(buf, size);
 	std::string line;
@@ -149,15 +148,11 @@ void MusicFlex::loadSongInfo() {
 		int loop_jump = std::atoi(line.substr(begIdx, endIdx - begIdx).c_str());
 
 		// Uh oh
-		if (num < 0 || num > 127) {
-			perr << "Invalid Section 1 song info data. num out of range. Exiting." << std::endl;
-			std::exit(-1);
-		}
+		if (num < 0 || num > 127)
+			error("Invalid Section 1 song info data. num out of range");
 
-		if (info[num]) {
-			perr << "Invalid Section 1 song info data. num already defined. Exiting." << std::endl;
-			std::exit(-1);
-		}
+		if (info[num])
+			error("Invalid Section 1 song info data. num already defined");
 
 		info[num] = new SongInfo();
 
@@ -208,10 +203,8 @@ void MusicFlex::loadSongInfo() {
 			if (info[fi] && from == info[fi]->filename) break;
 		}
 
-		if (fi == 128) {
-			perr << "Invalid Section 4 song info data. Unable to find 'from' index (" << from << "). Exiting." << std::endl;
-			std::exit(-1);
-		}
+		if (fi == 128)
+			error("Invalid Section 4 song info data. Unable to find 'from' index (%s)", from.c_str());
 
 		// Find index of to name
 		int ti;
@@ -219,10 +212,8 @@ void MusicFlex::loadSongInfo() {
 			if (info[ti] && to == info[ti]->filename) break;
 		}
 
-		if (ti == 128) {
-			perr << "Invalid Section 4 song info data. Unable to find 'to' index (" << to << "). Exiting." << std::endl;
-			std::exit(-1);
-		}
+		if (ti == 128)
+			error("Invalid Section 4 song info data. Unable to find 'to' index (%s)", to.c_str());
 
 		// Allocate Transition info
 		info[fi]->transitions[ti] = new int[info[fi]->num_measures];
@@ -233,10 +224,8 @@ void MusicFlex::loadSongInfo() {
 			begIdx = line.find_first_not_of(' ', endIdx);
 			endIdx = line.find_first_of(' ', begIdx);
 
-			if (begIdx == std::string::npos) {
-				perr << "Invalid Section 4 song info data. Unable to read transitions for all measures. Exiting." << std::endl;
-				std::exit(-1);
-			}
+			if (begIdx == std::string::npos)
+				error("Invalid Section 4 song info data. Unable to read transitions for all measures");
 
 			std::string trans = line.substr(begIdx, endIdx - begIdx);
 			const char *str = trans.c_str();

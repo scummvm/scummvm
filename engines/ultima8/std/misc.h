@@ -52,8 +52,10 @@ extern double pow(double x, double y);
 #endif
 
 extern uint rand();
-
 extern double sqrt(double val);
+
+extern void free(void *&p);
+
 
 } // End of namespace std
 } // End of namespace Ultima8

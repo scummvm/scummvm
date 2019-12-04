@@ -59,6 +59,11 @@ public:
 		return Common::String::operator[](idx);
 	}
 
+	/**
+	 * Get a character at an index
+	 */
+	char at(size_t idx) { return operator[](idx); }
+
 	virtual int Compare(const string &s) const {
 		return compareTo(s);
 	}
@@ -84,19 +89,24 @@ public:
 	size_t rfind(char c, size_t pos = npos) const;
 
 	/**
+	 * Find first character in the string matching the passed character
+	 */
+	size_t find_first_of(char c, size_t pos = 0) const;
+
+	/**
 	 * Find first character in the string that's any character of the passed string
 	 */
-	size_t find_first_of(const char *chars) const;
+	size_t find_first_of(const char *chars, size_t pos = 0) const;
 
 	/**
 	 * Find first character in the string that's not the specified character
 	 */
-	size_t find_first_not_of(char c) const;
+	size_t find_first_not_of(char c, size_t pos = 0) const;
 
 	/**
 	 * Find first character in the string that's not any character of the passed string
 	 */
-	size_t find_first_not_of(const char *chars) const;
+	size_t find_first_not_of(const char *chars, size_t pos = 0) const;
 
 	/**
 	 * Find the last character in the string that's not the specified character

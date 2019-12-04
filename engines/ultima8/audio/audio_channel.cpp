@@ -22,7 +22,7 @@
 
 #include "ultima8/misc/pent_include.h"
 
-#include "ultima8/audio/AudioChannel.h"
+#include "ultima8/audio/audio_channel.h"
 #include "ultima8/audio/audio_sample.h"
 
 namespace Ultima8 {

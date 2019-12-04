@@ -32,7 +32,7 @@
 #else
 #include "ultima8/filesys/idata_source.h"
 #include "ultima8/games/game_data.h"
-#include "MusicFlex.h"
+#include "ultima8/audio/music_flex.h"
 #endif
 
 #include <cmath>

@@ -64,8 +64,13 @@ size_t string::rfind(char c, size_t pos) const {
 	return npos;
 }
 
-size_t string::find_first_of(const char *chars) const {
-	for (uint idx = 0; idx < _size; ++idx) {
+size_t string::find_first_of(char c, size_t pos) const {
+	const char *strP = (pos >= _size) ? nullptr : strchr(_str, c);
+	return strP ? strP - _str : npos;
+}
+
+size_t string::find_first_of(const char *chars, size_t pos) const {
+	for (uint idx = pos; idx < _size; ++idx) {
 		if (strchr(chars, (*this)[idx]))
 			return idx;
 	}
@@ -73,8 +78,8 @@ size_t string::find_first_of(const char *chars) const {
 	return npos;
 }
 
-size_t string::find_first_not_of(char c) const {
-	for (uint idx = 0; idx < _size; ++idx) {
+size_t string::find_first_not_of(char c, size_t pos) const {
+	for (uint idx = pos; idx < _size; ++idx) {
 		if ((*this)[idx] != c)
 			return idx;
 	}
@@ -82,8 +87,8 @@ size_t string::find_first_not_of(char c) const {
 	return npos;
 }
 
-size_t string::find_first_not_of(const char *chars) const {
-	for (uint idx = 0; idx < _size; ++idx) {
+size_t string::find_first_not_of(const char *chars, size_t pos) const {
+	for (uint idx = pos; idx < _size; ++idx) {
 		if (!strchr(chars, (*this)[idx]))
 			return idx;
 	}

@@ -23,8 +23,7 @@
 #ifndef ULTIMA8_AUDIO_SPEECHFLEX_H
 #define ULTIMA8_AUDIO_SPEECHFLEX_H
 
-#include "SoundFlex.h"
-
+#include "ultima8/audio/sound_flex.h"
 #include "ultima8/std/containers.h"
 #include "ultima8/misc/p_dynamic_cast.h"
 
