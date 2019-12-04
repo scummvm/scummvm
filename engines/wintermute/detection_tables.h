@@ -79,6 +79,7 @@ static const PlainGameDescriptor wintermuteGames[] = {
 	{"lifein3minutes",  "Life In 3 Minutes"},
 	{"lonelyrobot",     "Project Lonely Robot"},
 	{"looky",           "Looky"},
+	{"lovmamuta",       "Lov Mamuta"},
 	{"julia",           "J.U.L.I.A."},
 	{"juliastars",      "J.U.L.I.A.: Among the Stars"},
 	{"juliastarshd",    "J.U.L.I.A.: Among the Stars HD"},
@@ -95,6 +96,7 @@ static const PlainGameDescriptor wintermuteGames[] = {
 	{"palladion",       "Palladion"},
 	{"pigeons",         "Pigeons in the Park"},
 	{"pizzamorgana",    "Pizza Morgana: Episode 1 - Monsters and Manipulations in the Magical Forest"},
+	{"polechudes",      "Pole Chudes"},
 	{"projectdoom",     "Project: Doom"},
 	{"projectjoe",      "Project Joe"},
 	{"rebeccacarlson1", "Rebecca Carlson Mystery 01 - Silent Footsteps"},
@@ -118,9 +120,10 @@ static const PlainGameDescriptor wintermuteGames[] = {
 	{"theancientmark1", "The Ancient Mark - Episode 1"},
 	{"thebox",          "The Box"},
 	{"thekite",         "The Kite"},
+	{"thelastcrown",    "The Last Crown"},
 	{"tib",             "Fairy Tales About Toshechka and Boshechka"},
 	{"tradestory",      "The Trader of Stories"},
-	{"twc",             "the white chamber"},
+	{"twc",             "The White Chamber"},
 	{"war",             "War"},
 	{"vsevolod",        "Vsevolod"},
 	{"wintermute",      "Wintermute engine game"},
@@ -237,6 +240,21 @@ static const WMEGameDescription gameDescriptions[] = {
 	WME_WINENTRY("alimardan2", "",
 		WME_ENTRY2s("language.dcp", "0cbb7e1e84a342782c24938af4da1402", 686580,
 					"data.dcp", "e3ffb5d177737a57bb391995d9361055", 413397623), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_3),
+
+	// Alpha Polaris (English)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("alphapolaris", "",
+		WME_ENTRY1s("data.dcp", "6d5d2264a3135dae3a9a74de50b4ea68", 706780438), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_1),
+
+	// Alpha Polaris (Polish)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("alphapolaris", "",
+		WME_ENTRY1s("data.dcp", "24ebca07b7cf0bd94ec994f26bdccf83", 710319064), Common::PL_POL, ADGF_UNSTABLE, WME_1_9_1),
+
+	// Alpha Polaris (Russian)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("alphapolaris", "",
+		WME_ENTRY1s("data.dcp", "dd8c252e039cd3a935c7490614e5e6f6", 706780433), Common::RU_RUS, ADGF_UNSTABLE, WME_1_9_1),
 
 	// Alpha Polaris (English) (1.1.0) (1280x800 Steam)
 	// NOTE: This is a 2.5D game that is out of ScummVM scope
@@ -393,6 +411,14 @@ static const WMEGameDescription gameDescriptions[] = {
 	WME_WINENTRY("carolreed4", "",
 		WME_ENTRY1s("data.dcp", "b26377797f060afc2d440d820100c1ce", 529320536), Common::EN_ANY, ADGF_UNSTABLE, WME_1_7_2),
 
+	// Carol Reed 4 - East Side Story (German)
+	WME_WINENTRY("carolreed4", "",
+		WME_ENTRY1s("data.dcp", "b3c30d1c6af3e4699a55ceffd4543f35", 602546719), Common::DE_DEU, ADGF_UNSTABLE, WME_1_8_3),
+
+	// Carol Reed 4 - East Side Story (Spanish)
+	WME_WINENTRY("carolreed4", "",
+		WME_ENTRY1s("data.dcp", "ef8a5aaec2f754a04017a97fed771b43", 601616328), Common::ES_ESP, ADGF_UNSTABLE, WME_1_8_3),
+
 	// Carol Reed 4 - East Side Story (Russian)
 	WME_WINENTRY("carolreed4", "",
 		WME_ENTRY1s("data.dcp", "549e6fb7afebcc4a8092e3898a5c5cc3", 618787625), Common::RU_RUS, ADGF_UNSTABLE, WME_1_8_3),
@@ -401,9 +427,13 @@ static const WMEGameDescription gameDescriptions[] = {
 	WME_WINENTRY("carolreed4", "Demo",
 		WME_ENTRY1s("data.dcp", "b3f8b09bb4b05ee3e9d14697525257f9", 59296246), Common::EN_ANY, ADGF_UNSTABLE | ADGF_DEMO, WME_1_7_2),
 
-	// Carol Reed 5 - The Colour of Murder
+	// Carol Reed 5 - The Colour of Murder (English)
 	WME_WINENTRY("carolreed5", "",
 		WME_ENTRY1s("data.dcp", "3fcfca44209545d0e26774156427b494", 603660415), Common::EN_ANY, ADGF_UNSTABLE, WME_1_8_6),
+
+	// Carol Reed 5 - The Colour of Murder (Spanish)
+	WME_WINENTRY("carolreed5", "",
+		WME_ENTRY1s("data.dcp", "a2885bbc31a7f0b0f616ec7f4d9a6fae", 617467065), Common::ES_ESP, ADGF_UNSTABLE, WME_1_8_6),
 
 	// Carol Reed 5 - The Colour of Murder (1.0 Demo)
 	WME_WINENTRY("carolreed5", "Demo",
@@ -413,6 +443,14 @@ static const WMEGameDescription gameDescriptions[] = {
 	WME_WINENTRY("carolreed6", "",
 		WME_ENTRY1s("data.dcp", "0e4c532beecf23d85012168753f41189", 456258147), Common::EN_ANY, ADGF_UNSTABLE, WME_1_8_11),
 
+	// Carol Reed 6 - Black Circle (BigFish)
+	WME_WINENTRY("carolreed6", "",
+		WME_ENTRY1s("data.dcp", "6df00158f120bfe1f6671df94064daa9", 456465173), Common::EN_ANY, ADGF_UNSTABLE, WME_1_8_11),
+
+	// Carol Reed 6 - Black Circle (Merscom Games)
+	WME_WINENTRY("carolreed6", "",
+		WME_ENTRY1s("data.dcp", "050048bc81f700c8e22ed9d1ace6d853", 456267557), Common::EN_ANY, ADGF_UNSTABLE, WME_1_8_11),
+
 	// Carol Reed 6 - Black Circle (Demo)
 	WME_WINENTRY("carolreed6", "Demo",
 		WME_ENTRY1s("data.dcp", "e18bc4adc843e6dcf08cc20be00d1608", 94399373), Common::EN_ANY, ADGF_UNSTABLE | ADGF_DEMO, WME_1_8_11),
@@ -420,6 +458,10 @@ static const WMEGameDescription gameDescriptions[] = {
 	// Carol Reed 7 - Blue Madonna
 	WME_WINENTRY("carolreed7", "",
 		WME_ENTRY1s("data.dcp", "24e3db3e2fabfc956713796d87a3efb0", 495471147), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_1),
+
+	// Carol Reed 7 - Blue Madonna (iWin.com / Digi Ronin Games)
+	WME_WINENTRY("carolreed7", "",
+		WME_ENTRY1s("data.dcp", "79610b483fc62a60687c6432ee54ef97", 495185438), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_1),
 
 	// Carol Reed 7 - Blue Madonna (Demo)
 	WME_WINENTRY("carolreed7", "Demo",
@@ -453,6 +495,14 @@ static const WMEGameDescription gameDescriptions[] = {
 	WME_WINENTRY("carolreed11", "",
 		WME_ENTRY1s("data.dcp", "a1e9f54b48493e9c6d737e3a94779d8c", 525450069), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_3),
 
+	// Carol Reed 11 - Shades Of Black (MDNA Games)
+	WME_WINENTRY("carolreed11", "",
+		WME_ENTRY1s("data.dcp", "459f4a851ea053cc4d204e45e2f88afc", 853256580), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_3),
+
+	// Carol Reed 11 - Shades Of Black (MDNA Games)
+	WME_WINENTRY("carolreed11", "",
+		WME_ENTRY1s("data.dcp", "c47314872afbbdc587dae0bc976a3375", 525502344), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_3),
+
 	// Carol Reed 11 - Shades Of Black (Demo)
 	WME_WINENTRY("carolreed11", "Demo",
 		WME_ENTRY1s("data.dcp", "8c27236d29747b6bb6a0a563fb769f20", 52692061), Common::EN_ANY, ADGF_UNSTABLE | ADGF_DEMO, WME_1_9_3),
@@ -465,9 +515,17 @@ static const WMEGameDescription gameDescriptions[] = {
 	WME_WINENTRY("carolreed12", "",
 		WME_ENTRY1s("data.dcp", "edc1e69dc52ec2a65fa431a51c783c2e", 944403699), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_3),
 
+	// Carol Reed 12 - Profound Red (MDNA Games)
+	WME_WINENTRY("carolreed12", "",
+		WME_ENTRY1s("data.dcp", "84d296ab65b89e87f6d56accb9360f19", 627095895), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_3),
+
 	// Carol Reed 13 - The Birdwatcher
 	WME_WINENTRY("carolreed13", "",
 		WME_ENTRY1s("data.dcp", "954392d19f0c928b700f17badd35d488", 1267391173), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_3),
+
+	// Carol Reed 13 - The Birdwatcher (MDNA Games)
+	WME_WINENTRY("carolreed13", "",
+		WME_ENTRY1s("data.dcp", "4c5e1094a2e05b76b2ee5a8d9af5de4a", 774352150), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_3),
 
 	// Carol Reed 14 - The Fall Of April
 	WME_WINENTRY("carolreed14", "",
@@ -612,10 +670,25 @@ static const WMEGameDescription gameDescriptions[] = {
 	WME_WINENTRY("everydaygray", "",
 		WME_ENTRY1s("data.dcp", "77afff4101adbddac07ecf22ffbb8212", 24436150), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_1),
 
-	// Face Noir
+	// Face Noir (English)
 	// NOTE: This is a 2.5D game that is out of ScummVM scope	
 	WME_WINENTRY("facenoir", "",
 		WME_ENTRY1s("data.dcp", "dcf71678be9432dcbfb1d9bda640a1a9", 555533343), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_1),
+
+	// Face Noir (German)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope	
+	WME_WINENTRY("facenoir", "",
+		WME_ENTRY1s("data.dcp", "a4febf6707f60d37835870cee4e21b14", 551512773), Common::DE_DEU, ADGF_UNSTABLE, WME_1_9_1),
+
+	// Face Noir (Italian)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope	
+	WME_WINENTRY("facenoir", "",
+		WME_ENTRY1s("data.dcp", "e6e9bd5072f9be8a0d8fda94f73f7fba", 559646789), Common::IT_ITA, ADGF_UNSTABLE, WME_1_9_1),
+
+	// Face Noir (Polish)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope	
+	WME_WINENTRY("facenoir", "",
+		WME_ENTRY1s("data.dcp", "97259a073e36b1f2d06d3045e8cdeb77", 551511755), Common::PL_POL, ADGF_UNSTABLE, WME_1_9_1),
 
 	// Face Noir (Steam Jul 2014)
 	// NOTE: This is a 2.5D game that is out of ScummVM scope	
@@ -830,6 +903,10 @@ static const WMEGameDescription gameDescriptions[] = {
 	WME_WINENTRY("jamesperis", "Demo",
 		WME_ENTRY1s("data.dcp", "edb9f9c7a08993c1e28f4e477b5f9830", 116113507), Common::ES_ESP, ADGF_UNSTABLE | ADGF_DEMO, WME_1_9_1),
 
+	// Lov Mamuta
+	WME_WINENTRY("lovmamuta", "",
+		WME_ENTRY1s("data.dcp", "ce2be4691fa0104cfdd63656cedaf810", 11198933), Common::CZ_CZE, ADGF_UNSTABLE, WME_1_9_1),
+
 	// J.U.L.I.A. (English)
 	// NOTE: This is a 2.5D game that is out of ScummVM scope, however it is reported as completable with VFX low
 	WME_WINENTRY("julia", "",
@@ -1015,6 +1092,10 @@ static const WMEGameDescription gameDescriptions[] = {
 	WME_WINENTRY("pizzamorgana", "Demo",
 		WME_ENTRY2s("english.dcp", "7fa6149bb44574109668ce585d6c41c9", 9282608,
 					"data.dcp", "a69994c463ff5fcc6fe1800662f5b7d0", 34581370), Common::EN_ANY, ADGF_UNSTABLE | ADGF_DEMO, WME_1_9_1),
+
+	// Pole Chudes
+	WME_WINENTRY("polechudes", "",
+		WME_ENTRY1s("data.dcp", "3329e9af9cb41e052de8d929ea49b594", 76297454), Common::RU_RUS, ADGF_UNSTABLE, WME_1_9_0),
 
 	// Project: Doom (Beta)
 	WME_WINENTRY("projectdoom", "Beta",
@@ -3855,6 +3936,21 @@ static const WMEGameDescription gameDescriptions[] = {
 	WME_WINENTRY("thekite", "Version 1.4.r",
 		WME_ENTRY1s("data.dcp", "16618c3488b07fae5d00fb94c408d2b8", 47472358), Common::RU_RUS, ADGF_UNSTABLE, WME_1_9_1),
 
+	// The Last Crown - A Ghost Hunting Adventure (2CD version)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("thelastcrown", "",
+		WME_ENTRY1s("theatre.dcp", "d0ee83038af66a6a4bb7c513e9550cbb", 77989556), Common::EN_ANY, ADGF_UNSTABLE, WME_1_8_2),
+
+	// The Last Crown - A Ghost Hunting Adventure (DVD version)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("thelastcrown", "",
+		WME_ENTRY1s("theatre.dcp", "741867f67bfb639ac0c96f6990822893", 78078952), Common::EN_ANY, ADGF_UNSTABLE, WME_1_8_2),
+
+	// The Last Crown - A Ghost Hunting Adventure (Steam, Jul 2014)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("thelastcrown", "",
+		WME_ENTRY1s("theatre.dcp", "25e005501162a96743ae3d3d33e7bbc3", 88472760), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_3),
+
 	// Fairy Tales About Toshechka and Boshechka
 	WME_WINENTRY("tib", "",
 		WME_ENTRY1s("data.dcp", "87d296ef3f46570ed18f000d3885db77", 340264526), Common::RU_RUS, ADGF_UNSTABLE, WME_1_7_2),
@@ -3863,11 +3959,11 @@ static const WMEGameDescription gameDescriptions[] = {
 	WME_WINENTRY("tradestory", "Demo",
 		WME_ENTRY1s("data.dcp", "0a0b51191636cc8ead89b905281c3218", 40401902), Common::EN_ANY, ADGF_UNSTABLE | ADGF_DEMO, WME_1_9_0),
 
-	// the white chamber (Version 1.7 - Definitive Edition) (built 2008.06.26) (multi-language)
+	// The White Chamber (Version 1.7 - Definitive Edition) (built 2008.06.26) (multi-language)
 	WME_WINENTRY("twc", "Definitive Edition",
 		WME_ENTRY1s("data.dcp", "325abfaeb5fbfcc30d91296f1390a454", 186451273), Common::UNK_LANG, ADGF_UNSTABLE, WME_1_8_6),
 
-	// the white chamber (Version 1.7 - Definitive Edition) (built 2008.06.29) (multi-language)
+	// The White Chamber (Version 1.7 - Definitive Edition) (built 2008.06.29) (multi-language)
 	WME_WINENTRY("twc", "Definitive Edition",
 		WME_ENTRY1s("data.dcp", "0011d01142547c61e51ba24dc42b579e", 186451273), Common::UNK_LANG, ADGF_UNSTABLE, WME_1_8_6),
 
