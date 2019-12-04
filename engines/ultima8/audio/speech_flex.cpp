@@ -22,7 +22,7 @@
 
 #include "ultima8/misc/pent_include.h"
 #include "SpeechFlex.h"
-#include "ultima8/audio/AudioSample.h"
+#include "ultima8/audio/audio_sample.h"
 #include "ultima8/misc/util.h"
 
 namespace Ultima8 {

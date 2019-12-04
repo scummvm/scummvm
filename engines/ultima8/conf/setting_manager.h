@@ -50,7 +50,7 @@ public:
 	};
 
 	typedef void (*ConfigCallback)(Pentagram::istring key);
-	typedef std::map<Common::String, std::vector<ConfigCallback>, Common::CaseSensitiveString_Hash > Callbacks;
+	typedef std::map<Common::String, std::vector<ConfigCallback>, Common::IgnoreCase_Hash > Callbacks;
 
 	//! read a config file. Multiple files may be read. Order is important.
 	//! \param fname The file to read

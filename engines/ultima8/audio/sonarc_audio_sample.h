@@ -23,7 +23,7 @@
 #ifndef ULTIMA8_AUDIO_SONARCAUDIOSAMPLE_H
 #define ULTIMA8_AUDIO_SONARCAUDIOSAMPLE_H
 
-#include "ultima8/audio/AudioSample.h"
+#include "ultima8/audio/audio_sample.h"
 
 namespace Ultima8 {
 namespace Pentagram {

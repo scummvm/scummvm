@@ -23,7 +23,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 namespace Ultima8 {
 
-typedef std::map<Pentagram::istring, std::string, Common::CaseSensitiveString_Hash> KeyMap;
+typedef std::map<Pentagram::istring, std::string, Common::IgnoreCase_Hash> KeyMap;
 
 class INIFile {
 public:

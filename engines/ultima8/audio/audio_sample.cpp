@@ -21,7 +21,7 @@
  */
 
 #include "ultima8/misc/pent_include.h"
-#include "ultima8/audio/AudioSample.h"
+#include "ultima8/audio/audio_sample.h"
 
 namespace Ultima8 {
 namespace Pentagram {

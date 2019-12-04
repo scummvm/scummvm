@@ -25,7 +25,7 @@
 
 #ifdef USE_HQ2X_SCALER
 
-#include "ultima8/graphics/scalers/scaler.h"
+#include "ultima8/graphics/scaler.h"
 
 namespace Pentagram {
 

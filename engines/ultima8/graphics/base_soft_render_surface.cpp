@@ -37,11 +37,11 @@ using Pentagram::Rect;
 ///////////////////////////
 
 //
-// BaseSoftRenderSurface::BaseSoftRenderSurface(SDL_Surface *s)
+// BaseSoftRenderSurface::BaseSoftRenderSurface(Graphics::Surface *s)
 //
 // Desc: Constructor for BaseSoftRenderSurface from a SDL_Surface
 //
-BaseSoftRenderSurface::BaseSoftRenderSurface(SDL_Surface *s) :
+BaseSoftRenderSurface::BaseSoftRenderSurface(Graphics::ManagedSurface *s) :
 	pixels(0), pixels00(0), zbuffer(0), zbuffer00(0),
 	bytes_per_pixel(0), bits_per_pixel(0), format_type(0),
 	ox(0), oy(0), width(0), height(0), pitch(0), zpitch(0),
@@ -49,27 +49,27 @@ BaseSoftRenderSurface::BaseSoftRenderSurface(SDL_Surface *s) :
 	sdl_surf(s), rtt_tex(0) {
 	clip_window.ResizeAbs(width = sdl_surf->w, height = sdl_surf->h);
 	pitch = sdl_surf->pitch;
-	bits_per_pixel = sdl_surf->format->BitsPerPixel;
-	bytes_per_pixel = sdl_surf->format->BytesPerPixel;
+	bits_per_pixel = sdl_surf->format.bpp();
+	bytes_per_pixel = sdl_surf->format.bytesPerPixel;
 
 	RenderSurface::format.s_bpp = bits_per_pixel;
 	RenderSurface::format.s_bytes_per_pixel = bytes_per_pixel;
-	RenderSurface::format.r_loss = sdl_surf->format->Rloss;
-	RenderSurface::format.g_loss = sdl_surf->format->Gloss;
-	RenderSurface::format.b_loss = sdl_surf->format->Bloss;
-	RenderSurface::format.a_loss = sdl_surf->format->Aloss;
+	RenderSurface::format.r_loss = sdl_surf->format.rLoss;
+	RenderSurface::format.g_loss = sdl_surf->format.gLoss;
+	RenderSurface::format.b_loss = sdl_surf->format.bLoss;
+	RenderSurface::format.a_loss = sdl_surf->format.aLoss;
 	RenderSurface::format.r_loss16 = format.r_loss + 8;
 	RenderSurface::format.g_loss16 = format.g_loss + 8;
 	RenderSurface::format.b_loss16 = format.b_loss + 8;
 	RenderSurface::format.a_loss16 = format.a_loss + 8;
-	RenderSurface::format.r_shift = sdl_surf->format->Rshift;
-	RenderSurface::format.g_shift = sdl_surf->format->Gshift;
-	RenderSurface::format.b_shift = sdl_surf->format->Bshift;
-	RenderSurface::format.a_shift = sdl_surf->format->Ashift;
-	RenderSurface::format.r_mask = sdl_surf->format->Rmask;
-	RenderSurface::format.g_mask = sdl_surf->format->Gmask;
-	RenderSurface::format.b_mask = sdl_surf->format->Bmask;
-	RenderSurface::format.a_mask = sdl_surf->format->Amask;
+	RenderSurface::format.r_shift = sdl_surf->format.rShift;
+	RenderSurface::format.g_shift = sdl_surf->format.gShift;
+	RenderSurface::format.b_shift = sdl_surf->format.bShift;
+	RenderSurface::format.a_shift = sdl_surf->format.aShift;
+	RenderSurface::format.r_mask = sdl_surf->format.rMax();
+	RenderSurface::format.g_mask = sdl_surf->format.gMax();
+	RenderSurface::format.b_mask = sdl_surf->format.bMax();
+	RenderSurface::format.a_mask = sdl_surf->format.aMax();
 
 	SetPixelsPointer();
 
@@ -256,20 +256,10 @@ ECode BaseSoftRenderSurface::BeginPainting() {
 	if (!lock_count) {
 
 		if (sdl_surf) {
-
-			// SDL_Surface requires locking
-			if (SDL_MUSTLOCK(sdl_surf)) {
-				// Did the lock fail?
-				if (SDL_LockSurface(sdl_surf) != 0) {
-					pixels = pixels00 = 0;
-					// TODO: SetLastError(GR_SOFT_ERROR_SDL_LOCK_FAILED, "SDL Surface Lock Failed!");
-					perr << "Error: SDL Surface Lock Failed!" << std::endl;
-					return GR_SOFT_ERROR_SDL_LOCK_FAILED;
-				}
-			}
-
 			// Pixels pointer
-			pixels00 = static_cast<uint8 *>(sdl_surf->pixels);
+			Graphics::Surface s = sdl_surf->getSubArea(Common::Rect(0, 0, sdl_surf->w, sdl_surf->h));
+			pixels00 = static_cast<uint8 *>(s.getPixels());
+
 			pitch = sdl_surf->pitch;
 			if (flipped) pitch = -pitch;
 		} else  {
@@ -313,14 +303,13 @@ ECode BaseSoftRenderSurface::EndPainting() {
 
 	if (!lock_count) {
 		if (sdl_surf) {
-			// Unlock the SDL_Surface if required
-			if (SDL_MUSTLOCK(sdl_surf)) SDL_UnlockSurface(sdl_surf);
-
 			// Clear pointers
-			pixels = pixels00 = 0;
+			pixels = pixels00 = nullptr;
 
 			// Present
+#ifdef TODO
 			SDL_Flip(sdl_surf);
+#endif
 		} else {
 			ECode ret = GenericUnlock();
 			if (ret.failed()) return ret;

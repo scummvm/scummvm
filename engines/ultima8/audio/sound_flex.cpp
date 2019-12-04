@@ -23,7 +23,7 @@
 #include "ultima8/misc/pent_include.h"
 
 #include "SoundFlex.h"
-#include "SonarcAudioSample.h"
+#include "Sonarcaudio_sample.h"
 #include "ultima8/filesys/idata_source.h"
 
 namespace Ultima8 {

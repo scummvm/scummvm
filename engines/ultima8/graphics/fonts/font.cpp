@@ -293,7 +293,7 @@ std::list<PositionedText> typesetText(Pentagram::Font *font,
 					// FIXME: this is rather inefficient; binary search?
 					// FIXME: clean up...
 					iter = nextword;
-					std::string::const_iterator saveiter;
+					std::string::const_iterator saveiter = nextword;	// Dummy initialization
 					std::string::const_iterator saveiter_fail;
 					std::string curline_fail;
 					newline = spaces;

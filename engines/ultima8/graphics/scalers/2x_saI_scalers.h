@@ -23,7 +23,7 @@
 #ifndef ULTIMA8_GRAPHICS_SCALERS_2XSAISCALER_H
 #define ULTIMA8_GRAPHICS_SCALERS_2XSAISCALER_H
 
-#include "ultima8/graphics/scalers/scaler.h"
+#include "ultima8/graphics/scaler.h"
 
 namespace Pentagram {
 

@@ -24,10 +24,6 @@
 #include "ultima8/graphics/render_surface.h"
 #include "ultima8/graphics/soft_render_surface.h"
 
-#if defined(WIN32) && defined(I_AM_COLOURLESS_EXPERIMENTING_WITH_D3D)
-#include "D3D9SoftRenderSurface.h"
-#endif
-
 namespace Ultima8 {
 
 RenderSurface::Format   RenderSurface::format = {
@@ -48,66 +44,20 @@ uint8 RenderSurface::Gamma22toGamma10[256];
 // Returns: Created RenderSurface or 0
 //
 
-RenderSurface *RenderSurface::SetVideoMode(uint32 width,        // Width of desired mode
-        uint32 height,      // Height of desired mode
-        uint32 bpp,         // Bits Per Pixel of desired mode
-        bool fullscreen,    // Fullscreen if true, Windowed if false
-        bool use_opengl) {  // Use OpenGL if true, Software if false
-	// TODO: Add in OpenGL
-	if (use_opengl) {
-		pout << "OpenGL Mode not enabled" << std::endl;
-		// TODO: Set Error Code
-		return 0;
+RenderSurface *RenderSurface::SetVideoMode(uint32 width, uint32 height, int bpp) {
+	// Set up the pixel format to use
+	Graphics::PixelFormat pixelFormat;
+
+	if (bpp == 16) {
+		pixelFormat = Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0);
+	} else if (bpp == 32) {
+		pixelFormat = Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0);
+	} else {
+		error("Only 16 bit and 32 bit video modes supported");
 	}
 
-	// check to make sure a 16 bit or 32 bit Mode has been requested
-	if (bpp != 16 && bpp != 32) {
-		pout << "Only 16 bit and 32 bit video modes supported" << std::endl;
-		// TODO: Set Error Code
-		return 0;
-	}
-
-	// SDL Flags to set
-	uint32 flags = 0;
-
-	// Get Current Video Mode details
-	const SDL_VideoInfo *vinfo = SDL_GetVideoInfo();
-
-	if (!vinfo) {
-		pout << "SDL_GetVideoInfo() failed: " << SDL_GetError() << std::endl;
-		return 0;
-	}
-
-	// Specific Windowed code
-	if (!fullscreen) {
-		// Use the BPP of the desktop
-		//bpp = vinfo->vfmt->BitsPerPixel;
-
-		// check to make sure we are in 16 bit or 32 bit
-		if (bpp != 16 && bpp != 32) {
-			pout << bpp << " bit windowed mode unsupported" << std::endl;
-			// TODO: Set Error Code
-			return 0;
-		}
-	}
-	// Fullscreen Specific
-	else {
-		// Enable Fullscreen
-		flags |= SDL_FULLSCREEN;
-	}
-
-	// Double buffered (sdl will emulate if we don't have)
-	// Um, no, it's been decided that this is a very bad idea
-	// Transparency is very very slow with hardware
-	//flags |= SDL_HWSURFACE|SDL_DOUBLEBUF;
-	flags |= SDL_SWSURFACE;
-
-	SDL_Surface *sdl_surf = SDL_SetVideoMode(width, height, bpp, flags);
-
-	if (!sdl_surf) {
-		// TODO: Set Error Code
-		return 0;
-	}
+	Graphics::ManagedSurface *sdl_surf = new Graphics::ManagedSurface(width, height, pixelFormat);
+	assert(sdl_surf);
 
 	// Now create the SoftRenderSurface
 	RenderSurface *surf;
@@ -117,7 +67,7 @@ RenderSurface *RenderSurface::SetVideoMode(uint32 width,        // Width of desi
 	if (bpp == 32) surf = new D3D9SoftRenderSurface<uint32>(width, height, fullscreen);
 	else surf = new D3D9SoftRenderSurface<uint16>(width, height, fullscreen);
 #else
-	if (bpp == 32) surf = new SoftRenderSurface<uint32>(sdl_surf);
+	if (pixelFormat.bytesPerPixel == 32) surf = new SoftRenderSurface<uint32>(sdl_surf);
 	else surf = new SoftRenderSurface<uint16>(sdl_surf);
 #endif
 

@@ -193,13 +193,13 @@ const int32 neg = (FLIP_CONDITIONAL)?-1:0;
 										&(s->getPalette()->xform[0]);
 #endif
 
-	int32 width = frame->width;
-	int32 height = frame->height;
+	int32 width_ = frame->width;
+	int32 height_ = frame->height;
 	x -= XNEG(frame->xoff);
 	y -= frame->yoff;
 
 	// Do it this way if compressed
-	if (frame->compressed) for (int i=0; i<height; i++) 
+	if (frame->compressed) for (int i=0; i<height_; i++) 
 	{
 		xpos = 0;
 		line = y+i;
@@ -216,7 +216,7 @@ const int32 neg = (FLIP_CONDITIONAL)?-1:0;
 			{
 				xpos += *linedata++;
 			  
-				if (xpos == width) break;
+				if (xpos == width_) break;
 
 				dlen = *linedata++;
 				int type = dlen & 1;
@@ -276,11 +276,11 @@ const int32 neg = (FLIP_CONDITIONAL)?-1:0;
 
 				xpos += dlen;
 
-			} while (xpos < width);
+			} while (xpos < width_);
 		}
 	}
 	// Uncompressed
-	else for (int i=0; i<height; i++) 
+	else for (int i=0; i<height_; i++) 
 	{
 		linedata = rle_data + line_offsets[i];
 		xpos = 0;
@@ -295,7 +295,7 @@ const int32 neg = (FLIP_CONDITIONAL)?-1:0;
 			{
 				xpos += *linedata++;
 			  
-				if (xpos == width) break;
+				if (xpos == width_) break;
 
 				dlen = *linedata++;
 
@@ -323,7 +323,7 @@ const int32 neg = (FLIP_CONDITIONAL)?-1:0;
 
 				xpos += dlen;
 
-			} while (xpos < width);
+			} while (xpos < width_);
 		}
 	}
 

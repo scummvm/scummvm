@@ -25,7 +25,7 @@
 #include "ultima8/graphics/anim_dat.h"
 
 #include "ultima8/filesys/idata_source.h"
-#include "ultima8/world/actors/ActorAnim.h"
+#include "ultima8/world/actors/actor_anim.h"
 #include "ultima8/world/actors/anim_action.h"
 #include "ultima8/kernel/core_app.h"
 #include "ultima8/games/game_info.h"

@@ -83,5 +83,9 @@ const char *strstr(const char *str, const char *substr) {
 	return ::strstr(str, substr);
 }
 
+double pow(double x, double y) {
+	return ::pow(x, y);
+}
+
 } // End of namespace std
 } // End of namespace Ultima8
