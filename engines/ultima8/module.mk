@@ -26,6 +26,17 @@ MODULE_OBJS := \
 	graphics/texture_bitmap.o \
 	graphics/texture_png.o \
 	graphics/texture_targa.o \
+	graphics/fonts/fixed_width_font.o \
+	graphics/fonts/font.o \
+	graphics/fonts/font_manager.o \
+	graphics/fonts/font_shape_archive.o \
+	graphics/fonts/jp_font.o \
+	graphics/fonts/jp_rendered_text.o \
+	graphics/fonts/rendered_text.o \
+	graphics/fonts/shape_font.o \
+	graphics/fonts/shape_rendered_text.o \
+	graphics/fonts/ttf_rendered_text.o \
+	graphics/fonts/tt_font.o \
 	gumps/ask_gump.o \
 	gumps/bark_gump.o \
 	gumps/bind_gump.o \

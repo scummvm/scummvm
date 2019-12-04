@@ -127,6 +127,10 @@ public:
 		for (uint idx = 0; idx < n; ++idx)
 			insertChar(c, pos);
 	}
+
+	void append(const string &str) {
+		*this += str;
+	}
 };
 
 extern const char *const endl;

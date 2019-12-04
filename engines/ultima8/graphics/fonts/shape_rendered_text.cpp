@@ -53,9 +53,9 @@ void ShapeRenderedText::draw(RenderSurface *surface, int x, int y, bool /*destma
 		int line_x = x + iter->dims.x;
 		int line_y = y + iter->dims.y;
 
-		std::size_t textsize = iter->text.size();
+		size_t textsize = iter->text.size();
 
-		for (std::size_t i = 0; i < textsize; ++i) {
+		for (size_t i = 0; i < textsize; ++i) {
 			surface->Paint(font, static_cast<unsigned char>(iter->text[i]),
 			               line_x, line_y);
 
@@ -84,9 +84,9 @@ void ShapeRenderedText::drawBlended(RenderSurface *surface, int x, int y,
 		int line_x = x + iter->dims.x;
 		int line_y = y + iter->dims.y;
 
-		std::size_t textsize = iter->text.size();
+		size_t textsize = iter->text.size();
 
-		for (std::size_t i = 0; i < textsize; ++i) {
+		for (size_t i = 0; i < textsize; ++i) {
 			surface->PaintHighlight(font,
 			                        static_cast<unsigned char>(iter->text[i]),
 			                        line_x, line_y, false, false, col);

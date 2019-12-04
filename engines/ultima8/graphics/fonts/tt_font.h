@@ -25,15 +25,13 @@
 
 #include "ultima8/graphics/fonts/font.h"
 #include "ultima8/misc/p_dynamic_cast.h"
+#include "graphics/font.h"
 
 namespace Ultima8 {
 
-// This is TTF_Font struct from SDL_ttf
-typedef struct _TTF_Font TTF_Font;
-
 class TTFont : public Pentagram::Font {
 public:
-	TTFont(TTF_Font *font, uint32 rgb, int bordersize,
+	TTFont(Graphics::Font *font, uint32 rgb, int bordersize,
 	       bool antiAliased, bool SJIS);
 	virtual ~TTFont();
 
@@ -64,7 +62,7 @@ public:
 
 	ENABLE_RUNTIME_CLASSTYPE()
 protected:
-	TTF_Font *ttf_font;
+	Graphics::Font *ttf_font;
 	uint32 rgb;
 	int bordersize;
 	bool antiAliased;

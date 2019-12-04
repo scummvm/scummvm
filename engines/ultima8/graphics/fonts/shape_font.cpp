@@ -28,13 +28,13 @@
 
 namespace Ultima8 {
 
-DEFINE_RUNTIME_CLASSTYPE_CODE_MULTI2(ShapeFont, Pentagram::Font, Shape);
+DEFINE_RUNTIME_CLASSTYPE_CODE_MULTI2(ShapeFont, Pentagram::Font, Shape)
 
 
-ShapeFont::ShapeFont(const uint8 *data, uint32 size,
+ShapeFont::ShapeFont(const uint8 *data_, uint32 size_,
                      const ConvertShapeFormat *format,
-                     const uint16 flexId, const uint32 shapenum)
-	: Font(), Shape(data, size, format, flexId, shapenum),
+                     const uint16 flexId_, const uint32 shapeNum_)
+	: Font(), Shape(data_, size_, format, flexId_, shapeNum_),
 	  height(0), baseline(0), vlead(-1), hlead(0) {
 
 }
@@ -76,9 +76,9 @@ int ShapeFont::getBaselineSkip() {
 	return getHeight() + getVlead();
 }
 
-void ShapeFont::getStringSize(const std::string &text, int &width, int &height) {
+void ShapeFont::getStringSize(const std::string &text, int &width, int &height_) {
 	width = hlead;
-	height = getHeight();
+	height_ = getHeight();
 
 	for (unsigned int i = 0; i < text.size(); ++i) {
 		if (text[i] == '\n' || text[i] == '\r') {
@@ -91,13 +91,13 @@ void ShapeFont::getStringSize(const std::string &text, int &width, int &height) 
 
 RenderedText *ShapeFont::renderText(const std::string &text,
                                     unsigned int &remaining,
-                                    int width, int height, TextAlign align,
+                                    int width, int height_, TextAlign align,
                                     bool u8specials,
                                     std::string::size_type cursor) {
 	int resultwidth, resultheight;
 	std::list<PositionedText> lines;
 	lines = typesetText<Traits>(this, text, remaining,
-	                            width, height, align, u8specials,
+	                            width, height_, align, u8specials,
 	                            resultwidth, resultheight, cursor);
 
 	return new ShapeRenderedText(lines, resultwidth, resultheight,

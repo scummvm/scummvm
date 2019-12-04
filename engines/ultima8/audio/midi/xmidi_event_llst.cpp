@@ -38,7 +38,7 @@ using std::atoi;
 using std::memcmp;
 using std::memcpy;
 using std::memset;
-using std::size_t;
+using size_t;
 #endif
 using std::string;
 using std::endl;

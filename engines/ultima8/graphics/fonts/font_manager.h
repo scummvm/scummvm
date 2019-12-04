@@ -24,7 +24,7 @@
 #define ULTIMA8_GRAPHICS_FONTS_FONTMANAGER_H
 
 #include "ultima8/std/containers.h"
-#include "ultima8/std/containers.h"
+#include "graphics/font.h"
 
 namespace Ultima8 {
 namespace Pentagram {
@@ -40,6 +40,46 @@ class TTFont;
 
 
 class FontManager {
+private:
+	struct TTFId {
+		std::string filename;
+		int pointsize;
+		bool operator<(const TTFId &other) const {
+			return (pointsize < other.pointsize ||
+			        (pointsize == other.pointsize &&
+			         filename < other.filename));
+		}
+	};
+
+	struct TTFHash {
+		uint operator()(const TTFId &x) const {
+			// TODO: See if something better can be used as a hash key
+			int64 val = (int64)&x;
+			return (uint)val;
+		}
+	};
+	struct TTFEqual {
+		bool operator()(const TTFId &x, const TTFId &y) const {
+			return x.filename == y.filename && x.pointsize == y.pointsize;
+		}
+	};
+
+	typedef std::map<TTFId, Graphics::Font *, TTFHash, TTFEqual> TTFFonts;
+	TTFFonts ttf_fonts;
+	bool ttf_antialiasing;
+
+	//! Get a (possibly cached) TTF_Font structure for filename/pointsize,
+	//! loading it if necessary.
+	Graphics::Font *getTTF_Font(std::string filename, int pointsize);
+
+	//! Override fontnum with specified font
+	void setOverride(unsigned int fontnum, Pentagram::Font *newFont);
+
+	std::vector<Pentagram::Font *> overrides;
+
+	std::vector<Pentagram::Font *> ttfonts;
+
+	static FontManager *fontmanager;
 public:
 	FontManager(bool ttf_antialiasing);
 	~FontManager();
@@ -80,41 +120,6 @@ public:
 
 	// Reset the game fonts
 	void resetGameFonts();
-private:
-	struct TTFId {
-		std::string filename;
-		int pointsize;
-		bool operator<(const TTFId &other) const {
-			return (pointsize < other.pointsize ||
-			        (pointsize == other.pointsize &&
-			         filename < other.filename));
-		}
-	};
-
-	struct TTFHash {
-		uint operator()(const TTFId &x) const {
-			// TODO: See if something better can be used as a hash key
-			int64 val = (int64)&x;
-			return (uint)val;
-		}
-	};
-
-	typedef std::map<TTFId, TTF_Font *, TTFHash> TTFFonts;
-	TTFFonts ttf_fonts;
-	bool ttf_antialiasing;
-
-	//! Get a (possibly cached) TTF_Font structure for filename/pointsize,
-	//! loading it if necessary.
-	TTF_Font *getTTF_Font(std::string filename, int pointsize);
-
-	//! Override fontnum with override
-	void setOverride(unsigned int fontnum, Pentagram::Font *override);
-
-	std::vector<Pentagram::Font *> overrides;
-
-	std::vector<Pentagram::Font *> ttfonts;
-
-	static FontManager *fontmanager;
 };
 
 } // End of namespace Ultima8 // End of namespace Ultima8

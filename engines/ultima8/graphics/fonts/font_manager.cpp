@@ -22,12 +22,6 @@
 
 #include "ultima8/misc/pent_include.h"
 
-#if defined(HAVE_SDL_SDL_TTF_H)
-include SDL/SDL_ttf.h
-#else
-include SDL_ttf.h
-#endif
-
 #include "ultima8/graphics/fonts/font_manager.h"
 
 #include "ultima8/graphics/fonts/font.h"
@@ -41,6 +35,7 @@ include SDL_ttf.h
 #include "ultima8/graphics/palette_manager.h"
 #include "ultima8/graphics/palette.h"
 #include "ultima8/conf/setting_manager.h"
+#include "graphics/fonts/ttf.h"
 
 namespace Ultima8 {
 
@@ -54,8 +49,6 @@ FontManager::FontManager(bool ttf_antialiasing_) : ttf_antialiasing(ttf_antialia
 
 	SettingManager *settingman = SettingManager::get_instance();
 	settingman->setDefault("ttf_highres", true);
-
-	TTF_Init();
 }
 
 FontManager::~FontManager() {
@@ -67,12 +60,10 @@ FontManager::~FontManager() {
 		delete ttfonts[i];
 	ttfonts.clear();
 
-	std::map<TTFId, TTF_Font *>::iterator iter;
+	TTFFonts::iterator iter;
 	for (iter = ttf_fonts.begin(); iter != ttf_fonts.end(); ++iter)
-		TTF_CloseFont(iter->_value);
+		delete iter->_value;
 	ttf_fonts.clear();
-
-	TTF_Quit();
 
 	assert(fontmanager == this);
 	fontmanager = 0;
@@ -100,12 +91,12 @@ Pentagram::Font *FontManager::getTTFont(unsigned int fontnum) {
 }
 
 
-TTF_Font *FontManager::getTTF_Font(std::string filename, int pointsize) {
+Graphics::Font *FontManager::getTTF_Font(std::string filename, int pointsize) {
 	TTFId id;
 	id.filename = filename;
 	id.pointsize = pointsize;
 
-	std::map<TTFId, TTF_Font *>::iterator iter;
+	TTFFonts::iterator iter;
 	iter = ttf_fonts.find(id);
 
 	if (iter != ttf_fonts.end())
@@ -120,11 +111,11 @@ TTF_Font *FontManager::getTTF_Font(std::string filename, int pointsize) {
 
 	// open font using SDL_RWops.
 	// Note: The RWops and IDataSource will be deleted by the TTF_Font
-	TTF_Font *font = TTF_OpenFontRW(fontids->getRWops(), 1, pointsize);
+	Common::SeekableReadStream *rs = fontids->GetRawStream();
+	Graphics::Font *font = Graphics::loadTTFFont(*rs, pointsize);
 
 	if (!font) {
-		perr << "Failed to open TTF: @data/" << filename
-		     << ": " << TTF_GetError() << std::endl;
+		perr << "Failed to open TTF: @data/" << filename << std::endl;
 		return 0;
 	}
 
@@ -137,21 +128,21 @@ TTF_Font *FontManager::getTTF_Font(std::string filename, int pointsize) {
 	return font;
 }
 
-void FontManager::setOverride(unsigned int fontnum, Pentagram::Font *override) {
+void FontManager::setOverride(unsigned int fontnum, Pentagram::Font *newFont) {
 	if (fontnum >= overrides.size())
 		overrides.resize(fontnum + 1);
 
 	if (overrides[fontnum])
 		delete overrides[fontnum];
 
-	overrides[fontnum] = override;
+	overrides[fontnum] = newFont;
 }
 
 
 bool FontManager::addTTFOverride(unsigned int fontnum, std::string filename,
                                  int pointsize, uint32 rgb, int bordersize,
                                  bool SJIS) {
-	TTF_Font *f = getTTF_Font(filename, pointsize);
+	Graphics::Font *f = getTTF_Font(filename, pointsize);
 	if (!f)
 		return false;
 
@@ -205,7 +196,7 @@ bool FontManager::addJPOverride(unsigned int fontnum,
 
 bool FontManager::loadTTFont(unsigned int fontnum, std::string filename,
                              int pointsize, uint32 rgb, int bordersize) {
-	TTF_Font *f = getTTF_Font(filename, pointsize);
+	Graphics::Font *f = getTTF_Font(filename, pointsize);
 	if (!f)
 		return false;
 

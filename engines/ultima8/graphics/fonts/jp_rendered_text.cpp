@@ -62,9 +62,9 @@ void JPRenderedText::draw(RenderSurface *surface, int x, int y, bool /*destmaske
 		int line_x = x + iter->dims.x;
 		int line_y = y + iter->dims.y;
 
-		std::size_t textsize = iter->text.size();
+		size_t textsize = iter->text.size();
 
-		for (std::size_t i = 0; i < textsize; ++i) {
+		for (size_t i = 0; i < textsize; ++i) {
 			uint16 sjis = iter->text[i] & 0xFF;
 			if (sjis >= 0x80) {
 				uint16 t = iter->text[++i] & 0xFF;
@@ -107,9 +107,9 @@ void JPRenderedText::drawBlended(RenderSurface *surface, int x, int y,
 		int line_x = x + iter->dims.x;
 		int line_y = y + iter->dims.y;
 
-		std::size_t textsize = iter->text.size();
+		size_t textsize = iter->text.size();
 
-		for (std::size_t i = 0; i < textsize; ++i) {
+		for (size_t i = 0; i < textsize; ++i) {
 			uint16 sjis = iter->text[i] & 0xFF;
 			if (sjis >= 0x80) {
 				uint16 t = iter->text[++i] & 0xFF;

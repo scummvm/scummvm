@@ -67,6 +67,10 @@ long int strtol(const char *str, char **endptr, int base) {
 	return ::strtol(str, endptr, base);
 }
 
+int atoi(const char *str) {
+	return ::atoi(str);
+}
+
 uint rand() {
 	return g_vm->getRandomNumber(0x7fffffff);
 }
