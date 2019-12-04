@@ -69,7 +69,9 @@ public:
 
 	VideoPlayer(EventManager *eventMan, Video::VideoDecoder *decoder = nullptr) :
 		_eventMan(eventMan),
-		_decoder(decoder)
+		_decoder(decoder),
+		_needsUpdate(false),
+		_currentFrame(nullptr)
 #ifdef USE_RGB_COLOR
 		,
 		_hqVideoMode(false)
@@ -170,6 +172,18 @@ protected:
 	 * The rectangle where the video will be drawn, in screen coordinates.
 	 */
 	Common::Rect _drawRect;
+
+	/**
+	 * If true, playUntilEvent() will immediately render a frame.
+	 * Used by VMDPlayer when censorship blobs are added or removed in Phant1
+	 * in order to immediately update the screen upon resuming playback.
+	 */
+	bool _needsUpdate;
+
+	/**
+	 * Current frame rendered by playUntilEvent() 
+	 */
+	const Graphics::Surface* _currentFrame;
 
 #ifdef USE_RGB_COLOR
 	/**
@@ -614,6 +628,37 @@ private:
 	 * Whether or not the mouse cursor should be shown during playback.
 	 */
 	bool _showCursor;
+
+#pragma mark -
+#pragma mark VMDPlayer - Censorship blobs
+public:
+	/**
+	 * Censorship blobs are pixelated rectangles which are added and removed by
+	 * game scripts. Phant1 is the only game known to use this and always sets a
+	 * blockSize of 10. Each block's color comes from the pixel in the upper left
+	 * corner of the block's location.
+	 */
+	int16 addBlob(int16 blockSize, int16 top, int16 left, int16 bottom, int16 right);
+	void deleteBlobs();
+	void deleteBlob(int16 blobNumber);
+
+private:
+	enum {
+		kMaxBlobs = 10
+	};
+
+	struct Blob {
+		int16 blobNumber;
+		int16 blockSize;
+		int16 top;
+		int16 left;
+		int16 bottom;
+		int16 right;
+	};
+
+	Common::List<Blob> _blobs;
+
+	void drawBlobs(Graphics::Surface& frame) const;
 };
 
 #pragma mark -
