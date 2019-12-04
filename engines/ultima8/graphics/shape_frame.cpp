@@ -23,8 +23,8 @@
 #include "ultima8/misc/pent_include.h"
 
 #include "ultima8/graphics/shape_frame.h"
-#include "ConvertShape.h"
-#include "u8/ConvertShapeU8.h"
+#include "ultima8/convert/convert_shape.h"
+#include "ultima8/convert/u8/convert_shape_u8.h"
 #include "ultima8/filesys/idata_source.h"
 
 namespace Ultima8 {

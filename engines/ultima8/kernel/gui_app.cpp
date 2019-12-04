@@ -1288,11 +1288,11 @@ void GUIApp::GraphicSysInit() {
 	// Set Screen Resolution
 	con.Printf(MM_INFO, "Setting Video Mode %ix%ix%i %s...\n", width, height, bpp, fullscreen ? "fullscreen" : "windowed");
 
-	RenderSurface *new_screen = RenderSurface::SetVideoMode(width, height, bpp, fullscreen, false);
+	RenderSurface *new_screen = RenderSurface::SetVideoMode(width, height, bpp);
 
 	if (!new_screen) {
 		perr << "Unable to set new video mode. Trying 640x480x32 windowed" << std::endl;
-		new_screen = RenderSurface::SetVideoMode(640, 480, 32, fullscreen = false, false);
+		new_screen = RenderSurface::SetVideoMode(640, 480, 32);
 	}
 
 	if (!new_screen) {

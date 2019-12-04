@@ -23,7 +23,8 @@
 #ifndef ULTIMA8_GRAPHICS_SOFTRENDERSURFACE_H
 #define ULTIMA8_GRAPHICS_SOFTRENDERSURFACE_H
 
-#include "ultima8/graphics/BaseSoftRenderSurface.h"
+#include "ultima8/graphics/base_soft_render_surface.h"
+#include "graphics/managed_surface.h"
 
 namespace Ultima8 {
 
@@ -40,7 +41,7 @@ protected:
 public:
 
 	// Create from a SDL_Surface
-	SoftRenderSurface(Graphics::Surface *);
+	SoftRenderSurface(Graphics::ManagedSurface *);
 
 	// Create a Generic surface that matches current screen parameters
 	SoftRenderSurface(int w, int h, uint8 *buf);

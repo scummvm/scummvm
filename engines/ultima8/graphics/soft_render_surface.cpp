@@ -44,11 +44,11 @@ namespace Ultima8 {
 
 
 //
-// SoftRenderSurface::SoftRenderSurface(SDL_Surface *s)
+// SoftRenderSurface::SoftRenderSurface(Graphics::Surface *s)
 //
 // Desc: Create a SoftRenderSurface from a SDL_Surface
 //
-template<class uintX> SoftRenderSurface<uintX>::SoftRenderSurface(SDL_Surface *s)
+template<class uintX> SoftRenderSurface<uintX>::SoftRenderSurface(Graphics::ManagedSurface *s)
 	: BaseSoftRenderSurface(s) {
 }
 
@@ -821,7 +821,7 @@ template<class uintX> void SoftRenderSurface<uintX>::PrintTextFixed(FixedWidthFo
 // Desc: Standard shape drawing functions. Clips but doesn't do anything else
 //
 template<class uintX> void SoftRenderSurface<uintX>::Paint(Shape *s, uint32 framenum, int32 x, int32 y, bool untformed_pal) {
-#include "SoftRenderSurface.inl"
+#include "ultima8/graphics/soft_render_surface.inl"
 }
 
 
@@ -832,7 +832,7 @@ template<class uintX> void SoftRenderSurface<uintX>::Paint(Shape *s, uint32 fram
 //
 template<class uintX> void SoftRenderSurface<uintX>::PaintNoClip(Shape *s, uint32 framenum, int32 x, int32 y, bool untformed_pal) {
 #define NO_CLIPPING
-#include "SoftRenderSurface.inl"
+#include "ultima8/graphics/soft_render_surface.inl"
 #undef NO_CLIPPING
 }
 
@@ -844,7 +844,7 @@ template<class uintX> void SoftRenderSurface<uintX>::PaintNoClip(Shape *s, uint3
 //
 template<class uintX> void SoftRenderSurface<uintX>::PaintTranslucent(Shape *s, uint32 framenum, int32 x, int32 y, bool untformed_pal) {
 #define XFORM_SHAPES
-#include "SoftRenderSurface.inl"
+#include "ultima8/graphics/soft_render_surface.inl"
 #undef XFORM_SHAPES
 }
 
@@ -859,7 +859,7 @@ template<class uintX> void SoftRenderSurface<uintX>::PaintMirrored(Shape *s, uin
 #define XFORM_SHAPES
 #define XFORM_CONDITIONAL trans
 
-#include "SoftRenderSurface.inl"
+#include "ultima8/graphics/soft_render_surface.inl"
 
 #undef FLIP_SHAPES
 #undef XFORM_SHAPES
@@ -880,7 +880,7 @@ template<class uintX> void SoftRenderSurface<uintX>::PaintInvisible(Shape *s, ui
 #define XFORM_CONDITIONAL trans
 #define BLEND_SHAPES(src,dst) BlendInvisible(src,dst)
 
-#include "SoftRenderSurface.inl"
+#include "ultima8/graphics/soft_render_surface.inl"
 
 #undef FLIP_SHAPES
 #undef FLIP_CONDITIONAL
@@ -908,7 +908,7 @@ template<class uintX> void SoftRenderSurface<uintX>::PaintHighlight(Shape *s, ui
 	uint32 cg = TEX32_G(col32);
 	uint32 cb = TEX32_B(col32);
 
-#include "SoftRenderSurface.inl"
+#include "ultima8/graphics/soft_render_surface.inl"
 
 #undef FLIP_SHAPES
 #undef FLIP_CONDITIONAL
@@ -935,7 +935,7 @@ template<class uintX> void SoftRenderSurface<uintX>::PaintHighlightInvis(Shape *
 	uint32 cg = TEX32_G(col32);
 	uint32 cb = TEX32_B(col32);
 
-#include "SoftRenderSurface.inl"
+#include "ultima8/graphics/soft_render_surface.inl"
 
 #undef FLIP_SHAPES
 #undef FLIP_CONDITIONAL
@@ -963,7 +963,7 @@ template<class uintX> void SoftRenderSurface<uintX>::PaintMasked(Shape *s, uint3
 	uint32 cg = TEX32_G(col32);
 	uint32 cb = TEX32_B(col32);
 
-#include "SoftRenderSurface.inl"
+#include "ultima8/graphics/soft_render_surface.inl"
 
 #undef FLIP_SHAPES
 #undef FLIP_CONDITIONAL

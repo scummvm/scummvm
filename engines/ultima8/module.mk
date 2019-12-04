@@ -22,9 +22,30 @@ MODULE_OBJS := \
 	filesys/savegame_writer.o \
 	filesys/u8_save_file.o \
 	filesys/zip_file.o \
+	graphics/anim_dat.o \
+	graphics/base_soft_render_surface.o \
+	graphics/frame_id.o \
+	graphics/gump_shape_archive.o \
+	graphics/inverter_process.o \
+	graphics/main_shape_archive.o \
+	graphics/palette.o \
+	graphics/palette_fader_process.o \
+	graphics/palette_manager.o \
+	graphics/render_surface.o \
+	graphics/scaler_manager.o \
+	graphics/shape.o \
+	graphics/shape_archive.o \
+	graphics/shape_frame.o \
+	graphics/shape_info.o \
+	graphics/skf_player.o \
+	graphics/soft_render_surface.o \
 	graphics/texture.o \
 	graphics/texture_bitmap.o \
 	graphics/texture_png.o \
+	graphics/texture_targa.o \
+	graphics/type_flags.o \
+	graphics/wpn_ovlay_dat.o \
+	graphics/xform_blend.o \
 	graphics/texture_targa.o \
 	graphics/fonts/fixed_width_font.o \
 	graphics/fonts/font.o \

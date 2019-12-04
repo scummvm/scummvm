@@ -46,7 +46,7 @@ extern int memcmp(const void *ptr1, const void *ptr2, size_t num);
 extern long int strtol(const char *str, char **endptr, int base);
 extern int atoi(const char *str);
 extern const char *strstr(const char *str, const char *substr);
-
+extern double pow(double x, double y);
 #ifdef rand
 #undef rand
 #endif

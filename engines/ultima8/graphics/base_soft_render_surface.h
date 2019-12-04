@@ -25,7 +25,7 @@
 
 #include "ultima8/graphics/render_surface.h"
 #include "ultima8/misc/rect.h"
-#include "graphics/surface.h"
+#include "graphics/managed_surface.h"
 
 namespace Ultima8 {
 
@@ -62,13 +62,13 @@ protected:
 	// Locking count
 	uint32          lock_count;             // Number of locks on surface
 
-	Graphics::Surface *sdl_surf;
+	Graphics::ManagedSurface *sdl_surf;
 
 	// Renderint to a texture
 	Texture         *rtt_tex;
 
 	// Create from a SDL_Surface
-	BaseSoftRenderSurface(Graphics::Surface *);
+	BaseSoftRenderSurface(Graphics::ManagedSurface *);
 
 	// Create with Texture
 	BaseSoftRenderSurface(int w, int h);

@@ -23,8 +23,9 @@
 #ifndef ULTIMA8_GRAPHICS_SCALERS_BILINEARSCALER_H
 #define ULTIMA8_GRAPHICS_SCALERS_BILINEARSCALER_H
 
-#include "ultima8/graphics/scalers/scaler.h"
+#include "ultima8/graphics/scaler.h"
 
+namespace Ultima8 {
 namespace Pentagram {
 
 class BilinearScaler : public Scaler {
@@ -58,6 +59,7 @@ public:
 extern const GC_BilinearScaler GC_bilinear_scaler;
 #endif
 
-};
+} // End of namespace Pentagram
+} // End of namespace Ultima8
 
 #endif

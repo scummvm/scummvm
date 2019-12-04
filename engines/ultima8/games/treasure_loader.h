@@ -37,7 +37,7 @@ public:
 	bool parse(std::string, std::vector<TreasureInfo> &treasure);
 
 private:
-	std::map<Pentagram::istring, TreasureInfo> defaultTreasure;
+	std::map<Pentagram::istring, TreasureInfo, Common::IgnoreCase_Hash> defaultTreasure;
 
 	bool internalParse(std::string desc, TreasureInfo &ti, bool loadingDefault);
 

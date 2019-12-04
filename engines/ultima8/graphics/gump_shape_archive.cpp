@@ -37,9 +37,9 @@ GumpShapeArchive::~GumpShapeArchive() {
 }
 
 void GumpShapeArchive::loadGumpage(IDataSource *ds) {
-	unsigned int count = ds->getSize() / 8;
-	gumpItemArea.resize(count + 1);
-	for (unsigned int i = 1; i <= count; ++i) {
+	unsigned int total = ds->getSize() / 8;
+	gumpItemArea.resize(total + 1);
+	for (unsigned int i = 1; i <= total; ++i) {
 		int x, y, w, h;
 		x = static_cast<int16>(ds->read2());
 		y = static_cast<int16>(ds->read2());
@@ -49,7 +49,7 @@ void GumpShapeArchive::loadGumpage(IDataSource *ds) {
 	}
 }
 
-Pentagram::Rect *GumpShapeArchive::Ultima8::getGumpItemArea(uint32 shapenum) {
+Pentagram::Rect *GumpShapeArchive::getGumpItemArea(uint32 shapenum) {
 	if (shapenum >= gumpItemArea.size()) return 0;
 	return gumpItemArea[shapenum];
 }

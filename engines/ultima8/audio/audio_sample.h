@@ -71,8 +71,7 @@ public:
 	virtual void rewind(void *DecompData) const = 0;
 };
 
-};
-
+} // End of namespace Ultima8
 } // End of namespace Ultima8
 
 #endif

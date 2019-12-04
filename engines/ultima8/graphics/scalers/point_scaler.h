@@ -23,8 +23,9 @@
 #ifndef ULTIMA8_GRAPHICS_SCALERS_POINTSCALER_H
 #define ULTIMA8_GRAPHICS_SCALERS_POINTSCALER_H
 
-#include "ultima8/graphics/scalers/scaler.h"
+#include "ultima8/graphics/scaler.h"
 
+namespace Ultima8 {
 namespace Pentagram {
 
 class PointScaler : public Scaler {
@@ -41,6 +42,7 @@ public:
 
 extern const PointScaler point_scaler;
 
-};
+} // End of namespace Pentagram
+} // End of namespace Ultima8
 
 #endif

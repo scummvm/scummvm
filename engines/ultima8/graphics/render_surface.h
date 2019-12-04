@@ -24,6 +24,7 @@
 #define ULTIMA8_GRAPHICS_RENDERSURFACE_H
 
 #include "ultima8/graphics/graphics_errors.h"
+#include "graphics/pixelformat.h"
 
 namespace Ultima8 {
 
@@ -73,7 +74,7 @@ public:
 	//
 
 	//! Create a standard RenderSurface
-	static RenderSurface *SetVideoMode(uint32 width, uint32 height, uint32 bpp, bool fullscreen, bool use_opengl);
+	static RenderSurface *SetVideoMode(uint32 width, uint32 height, int bpp);
 
 	//! Create a SecondaryRenderSurface with an associated Texture object
 	static RenderSurface *CreateSecondaryRenderSurface(uint32 width, uint32 height);

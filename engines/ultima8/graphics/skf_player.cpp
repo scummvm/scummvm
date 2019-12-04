@@ -23,7 +23,7 @@
 #include "ultima8/misc/pent_include.h"
 #include "ultima8/graphics/skf_player.h"
 
-#include "u8/ConvertShapeU8.h"
+#include "ultima8/convert/u8/convert_shape_u8.h"
 #include "ultima8/filesys/raw_archive.h"
 #include "ultima8/graphics/shape.h"
 #include "ultima8/graphics/texture.h"
@@ -37,6 +37,7 @@
 #include "ultima8/graphics/fonts/font.h"
 #include "ultima8/graphics/fonts/font_manager.h"
 #include "ultima8/graphics/fonts/rendered_text.h"
+#include "common/system.h"
 
 namespace Ultima8 {
 
@@ -221,12 +222,12 @@ void SKFPlayer::run() {
 //			pout << "PlaySound " << events[curevent]->data << std::endl;
 
 			if (audioproc) {
-				uint8 *buffer = skf->get_object(events[curevent]->data);
+				uint8 *buf = skf->get_object(events[curevent]->data);
 				uint32 bufsize = skf->get_size(events[curevent]->data);
 				Pentagram::AudioSample *s;
-				uint32 rate = buffer[6] + (buffer[7] << 8);
-				bool stereo = (buffer[8] == 2);
-				s = new Pentagram::RawAudioSample(buffer + 34, bufsize - 34,
+				uint32 rate = buf[6] + (buf[7] << 8);
+				bool stereo = (buf[8] == 2);
+				s = new Pentagram::RawAudioSample(buf + 34, bufsize - 34,
 				                                  rate, true, stereo);
 				audioproc->playSample(s, 0x60, 0);
 				// FIXME: memory leak! (sample is never deleted)

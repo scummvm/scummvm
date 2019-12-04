@@ -24,9 +24,9 @@
 
 #include "ultima8/graphics/shape.h"
 #include "ultima8/graphics/shape_frame.h"
-#include "ConvertShape.h"
-#include "u8/ConvertShapeU8.h"
-#include "crusader/ConvertShapeCrusader.h"
+#include "ultima8/convert/convert_shape.h"
+#include "ultima8/convert/u8/convert_shape_u8.h"
+#include "ultima8/convert/crusader/convert_shape_crusader.h"
 #include "ultima8/filesys/idata_source.h"
 
 namespace Ultima8 {
@@ -35,15 +35,15 @@ DEFINE_RUNTIME_CLASSTYPE_CODE_BASE_CLASS(Shape)
 
 DEFINE_CUSTOM_MEMORY_ALLOCATION(Shape)
 
-Shape::Shape(const uint8 *data, uint32 size, const ConvertShapeFormat *format,
+Shape::Shape(const uint8 *data_, uint32 size_, const ConvertShapeFormat *format,
              const uint16 id, const uint32 shape) : flexId(id), shapenum(shape) {
 	// NB: U8 style!
 
-	this->data = data;
-	this->size = size;
+	this->data = data_;
+	this->size = size_;
 	this->palette = 0;
 
-	if (!format) format = DetectShapeFormat(data, size);
+	if (!format) format = DetectShapeFormat(data_, size_);
 
 	if (!format) {
 		// Should be fatal?
@@ -53,11 +53,11 @@ Shape::Shape(const uint8 *data, uint32 size, const ConvertShapeFormat *format,
 
 	// Load it as u8
 	if (format == &U8ShapeFormat || format == &U82DShapeFormat)
-		LoadU8Format(data, size, format);
+		LoadU8Format(data_, size_, format);
 	else if (format == &PentagramShapeFormat)
-		LoadPentagramFormat(data, size, format);
+		LoadPentagramFormat(data_, size_, format);
 	else
-		LoadGenericFormat(data, size, format);
+		LoadGenericFormat(data_, size_, format);
 }
 
 Shape::Shape(IDataSource *src, const ConvertShapeFormat *format)
@@ -106,49 +106,49 @@ void Shape::getShapeId(uint16 &id, uint32 &shape) {
 #define READ4(data,offset) (data[offset] + (data[offset+1] << 8) + (data[offset+2] << 16) + (data[offset+3] << 24))
 
 // This will load a u8 style shape 'optimzed'.
-void Shape::LoadU8Format(const uint8 *data, uint32 size, const ConvertShapeFormat *format) {
-	unsigned int framecount = READ2(data, 4);
+void Shape::LoadU8Format(const uint8 *data_, uint32 size_, const ConvertShapeFormat *format) {
+	unsigned int framecount = READ2(data_, 4);
 
 	if (framecount == 0) {
-		LoadGenericFormat(data, size, format);
+		LoadGenericFormat(data_, size_, format);
 		return;
 	}
 
 	frames.reserve(framecount);
 
 	for (unsigned int i = 0; i < framecount; ++i) {
-		uint32 frameoffset = READ3(data, 6 + 6 * i);
-		uint32 framesize = READ2(data, 10 + 6 * i);
+		uint32 frameoffset = READ3(data_, 6 + 6 * i);
+		uint32 framesize = READ2(data_, 10 + 6 * i);
 
-		frames.push_back(new ShapeFrame(data + frameoffset, framesize, format));
+		frames.push_back(new ShapeFrame(data_ + frameoffset, framesize, format));
 	}
 }
 
 // This will load a pentagram style shape 'optimzed'.
-void Shape::LoadPentagramFormat(const uint8 *data, uint32 size, const ConvertShapeFormat *format) {
-	unsigned int framecount = READ4(data, 4);
+void Shape::LoadPentagramFormat(const uint8 *data_, uint32 size_, const ConvertShapeFormat *format) {
+	unsigned int framecount = READ4(data_, 4);
 
 	if (framecount == 0) {
-		LoadGenericFormat(data, size, format);
+		LoadGenericFormat(data_, size_, format);
 		return;
 	}
 
 	frames.reserve(framecount);
 
 	for (unsigned int i = 0; i < framecount; ++i) {
-		uint32 frameoffset = READ4(data, 8 + 8 * i);
-		uint32 framesize = READ4(data, 12 + 8 * i);
+		uint32 frameoffset = READ4(data_, 8 + 8 * i);
+		uint32 framesize = READ4(data_, 12 + 8 * i);
 
-		frames.push_back(new ShapeFrame(data + frameoffset, framesize, format));
+		frames.push_back(new ShapeFrame(data_ + frameoffset, framesize, format));
 	}
 }
 
 // This will load any sort of shape via a ConvertShapeFormat struct
-void Shape::LoadGenericFormat(const uint8 *data, uint32 size, const ConvertShapeFormat *format) {
+void Shape::LoadGenericFormat(const uint8 *data_, uint32 size_, const ConvertShapeFormat *format) {
 	uint32 framecount;
 	uint32 frameoffset;
 	uint32 framesize;
-	IBufferDataSource ds(data, size);
+	IBufferDataSource ds(data_, size_);
 
 	if (format->bytes_ident) {
 		uint8 *ident = new uint8[format->bytes_ident];
@@ -175,7 +175,7 @@ void Shape::LoadGenericFormat(const uint8 *data, uint32 size, const ConvertShape
 	// Read framecount, default 1 if no
 	if (format->bytes_num_frames) framecount = ds.readX(format->bytes_num_frames);
 	else framecount = 1;
-	if (framecount == 0) framecount = ConvertShape::CalcNumFrames(&ds, format, size, 0);
+	if (framecount == 0) framecount = ConvertShape::CalcNumFrames(&ds, format, size_, 0);
 
 	frames.reserve(framecount);
 
@@ -189,7 +189,7 @@ void Shape::LoadGenericFormat(const uint8 *data, uint32 size, const ConvertShape
 
 		// Read frame_length
 		if (format->bytes_frame_length) framesize = ds.readX(format->bytes_frame_length) + format->bytes_frame_length_kludge;
-		else framesize = size - frameoffset;
+		else framesize = size_ - frameoffset;
 
 		ConvertShapeFrame *prev = 0, p;
 
@@ -198,32 +198,32 @@ void Shape::LoadGenericFormat(const uint8 *data, uint32 size, const ConvertShape
 			frames[i - 1]->getConvertShapeFrame(p);
 		}
 
-		frames.push_back(new ShapeFrame(data + frameoffset, framesize, format, special, prev));
+		frames.push_back(new ShapeFrame(data_ + frameoffset, framesize, format, special, prev));
 	}
 }
 
 // This will detect the format of a shape
-const ConvertShapeFormat *Shape::DetectShapeFormat(const uint8 *data, uint32 size) {
-	IBufferDataSource ds(data, size);
-	return Shape::DetectShapeFormat(&ds, size);
+const ConvertShapeFormat *Shape::DetectShapeFormat(const uint8 *data_, uint32 size_) {
+	IBufferDataSource ds(data_, size_);
+	return Shape::DetectShapeFormat(&ds, size_);
 }
 
-const ConvertShapeFormat *Shape::DetectShapeFormat(IDataSource *ds, uint32 size) {
+const ConvertShapeFormat *Shape::DetectShapeFormat(IDataSource *ds, uint32 size_) {
 	const ConvertShapeFormat *ret = 0;
 
-	if (ConvertShape::CheckUnsafe(ds, &PentagramShapeFormat, size))
+	if (ConvertShape::CheckUnsafe(ds, &PentagramShapeFormat, size_))
 		ret = &PentagramShapeFormat;
-	else if (ConvertShape::CheckUnsafe(ds, &U8SKFShapeFormat, size))
+	else if (ConvertShape::CheckUnsafe(ds, &U8SKFShapeFormat, size_))
 		ret = &U8SKFShapeFormat;
-	else if (ConvertShape::CheckUnsafe(ds, &U8ShapeFormat, size))
+	else if (ConvertShape::CheckUnsafe(ds, &U8ShapeFormat, size_))
 		ret = &U8ShapeFormat;
-	else if (ConvertShape::CheckUnsafe(ds, &U82DShapeFormat, size))
+	else if (ConvertShape::CheckUnsafe(ds, &U82DShapeFormat, size_))
 		ret = &U82DShapeFormat;
-	else if (ConvertShape::CheckUnsafe(ds, &CrusaderShapeFormat, size))
+	else if (ConvertShape::CheckUnsafe(ds, &CrusaderShapeFormat, size_))
 		ret = &CrusaderShapeFormat;
-	else if (ConvertShape::CheckUnsafe(ds, &Crusader2DShapeFormat, size))
+	else if (ConvertShape::CheckUnsafe(ds, &Crusader2DShapeFormat, size_))
 		ret = &Crusader2DShapeFormat;
-	else if (ConvertShape::CheckUnsafe(ds, &U8CMPShapeFormat, size))
+	else if (ConvertShape::CheckUnsafe(ds, &U8CMPShapeFormat, size_))
 		ret = &U8CMPShapeFormat;
 
 	return ret;

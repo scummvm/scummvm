@@ -28,7 +28,7 @@
 #include "ultima8/games/game_data.h"
 #include "SoundFlex.h"
 #include "SpeechFlex.h"
-#include "ultima8/audio/AudioSample.h"
+#include "ultima8/audio/audio_sample.h"
 #include "ultima8/audio/audio_mixer.h"
 
 #include "ultima8/world/get_object.h"
