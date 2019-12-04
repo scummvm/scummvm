@@ -145,7 +145,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			{
 				{ "bc-d1.img", BooterDisk1, "1d29a82b41c9c7491e2b68d16864bd11", 368640},
 				{ "bc-d2.img", BooterDisk2, "5568f7a52e787305656246f95e2aa375", 368640},
-				{ NULL, 0, NULL, 0}
+				AD_LISTEND
 			},
 			Common::EN_ANY,
 			Common::kPlatformDOS,
@@ -166,7 +166,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			{
 				{ "bc-d1.img", BooterDisk1, "98a51d3a372baa9df288b6c0f0232567", 368640},
 				{ "bc-d2.img", BooterDisk2, "5568f7a52e787305656246f95e2aa375", 368640},
-				{ NULL, 0, NULL, 0}
+				AD_LISTEND
 			},
 			Common::EN_ANY,
 			Common::kPlatformDOS,
@@ -187,7 +187,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			{
 				{ "bc-d1.img", BooterDisk1, "edc0e5befbe5e44bb109cdf9137ee12d", 368640},
 				{ "bc-d2.img", BooterDisk2, "5568f7a52e787305656246f95e2aa375", 368640},
-				{ NULL, 0, NULL, 0}
+				AD_LISTEND
 			},
 			Common::EN_ANY,
 			Common::kPlatformDOS,
@@ -267,7 +267,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			{
 				{ "grdir", 0, "db733d199238d4009a9e95f11ece34e9", 2399},
 				{ "vol.0", 0, "4b6423d143674d3757ab1b875d25951d", 25070},
-				{ NULL, 0, NULL, 0}
+				AD_LISTEND
 			},
 			Common::EN_ANY,
 			Common::kPlatformMacintosh,
@@ -592,7 +592,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			{
 				{ "logdir", 0, "28add5125484302d213911df60d2aded", 426},
 				{ "object", 0, "5dc52be721257719f4b311a84ce22b16", 372},
-				{ NULL, 0, NULL, 0}
+				AD_LISTEND
 			},
 			Common::EN_ANY,
 			Common::kPlatformAmiga,
