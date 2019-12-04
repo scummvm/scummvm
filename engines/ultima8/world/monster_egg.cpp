@@ -38,7 +38,7 @@
 
 namespace Ultima8 {
 
-DEFINE_RUNTIME_CLASSTYPE_CODE(MonsterEgg, Item);
+DEFINE_RUNTIME_CLASSTYPE_CODE(MonsterEgg, Item)
 
 MonsterEgg::MonsterEgg() {
 

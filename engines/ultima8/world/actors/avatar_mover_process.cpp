@@ -110,7 +110,7 @@ void AvatarMoverProcess::handleHangingMode() {
 	if (stasis) return;
 
 	bool m0clicked = false;
-	bool m1clicked = false;
+	//bool m1clicked = false;
 	if (!(mouseButton[0].state & MBS_HANDLED) &&
 	        now - mouseButton[0].curDown > DOUBLE_CLICK_TIMEOUT) {
 		m0clicked = true;
@@ -118,7 +118,7 @@ void AvatarMoverProcess::handleHangingMode() {
 	}
 	if (!(mouseButton[1].state & MBS_HANDLED) &&
 	        now - mouseButton[1].curDown > DOUBLE_CLICK_TIMEOUT) {
-		m1clicked = true;
+		//m1clicked = true;
 		mouseButton[1].state |= MBS_HANDLED;
 	}
 	if (!(mouseButton[0].state & MBS_RELHANDLED))

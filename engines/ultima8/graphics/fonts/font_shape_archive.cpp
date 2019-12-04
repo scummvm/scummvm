@@ -64,12 +64,11 @@ void FontShapeArchive::cache(uint32 shapenum) {
 void FontShapeArchive::setHVLeads() {
 	ConfigFileManager *config = ConfigFileManager::get_instance();
 
-	std::map<Pentagram::istring, std::string> leadkeyvals;
+	KeyMap leadkeyvals = config->listKeyValues("game/fontleads");
+	KeyMap::iterator iter;
 
-	leadkeyvals = config->listKeyValues("game/fontleads");
-	std::map<Pentagram::istring, std::string>::iterator iter;
 	for (iter = leadkeyvals.begin(); iter != leadkeyvals.end(); ++iter) {
-		int fontnum = std::atoi(iter->first.c_str());
+		int fontnum = std::atoi(iter->_key.c_str());
 		std::string leaddesc = iter->_value;
 
 		std::vector<std::string> vals;

@@ -40,8 +40,8 @@ TargetGump::TargetGump() : ModalGump(), target_tracing(false) {
 }
 
 
-TargetGump::TargetGump(int x, int y)
-	: ModalGump(x, y, 0, 0), target_tracing(false) {
+TargetGump::TargetGump(int x_, int y_)
+	: ModalGump(x_, y_, 0, 0), target_tracing(false) {
 
 }
 
