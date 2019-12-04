@@ -38,13 +38,14 @@ public:
 	typedef T reference;
 	typedef const T const_reference;
 
-	Common::Array<T>::iterator erase(Common::Array<T>::iterator pos) {
+	typename Common::Array<T>::iterator erase(typename Common::Array<T>::iterator pos) {
 		return Common::Array<T>::erase(pos);
 	}
 
-	Common::Array<T>::iterator erase(Common::Array<T>::iterator first, Common::Array<T>::iterator last) {
+	typename Common::Array<T>::iterator erase(typename Common::Array<T>::iterator first,
+			typename Common::Array<T>::iterator last) {
 		bool flag = false;
-		for (Common::Array<T>::iterator i = first; i != Common::Array<T>::end() && !flag; ) {
+		for (typename Common::Array<T>::iterator i = first; i != Common::Array<T>::end() && !flag; ) {
 			flag = i == last;
 			i = erase(i);
 		}
@@ -70,9 +71,9 @@ class set {
 	class Items : public Common::Array<T> {
 	public:
 		void swap(Items &arr) {
-			SWAP(_capacity, arr._capacity);
-			SWAP(_size, arr._size);
-			SWAP(_storage, arr._storage);
+			SWAP(this->_capacity, arr._capacity);
+			SWAP(this->_size, arr._size);
+			SWAP(this->_storage, arr._storage);
 		}
 	};
 private:
@@ -113,7 +114,8 @@ class deque : public Common::List<VAL> {
 template<class VAL>
 class list : public Common::List<VAL> {
 public:
-	Common::List<VAL>::iterator insert(Common::List<VAL>::iterator pos, const VAL &element) {
+	typename Common::List<VAL>::iterator insert(typename Common::List<VAL>::iterator pos,
+			const VAL &element) {
 		Common::List<VAL>::insert(pos, element);
 		return pos;
 	}

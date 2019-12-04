@@ -37,7 +37,7 @@ public:
 	ENABLE_RUNTIME_CLASSTYPE()
 
 	AskGump();
-	AskGump(uint16 owner, UCList *answers);
+	AskGump(uint16 owner_, UCList *answers_);
 	virtual ~AskGump();
 
 	// Init the gump, call after construction

@@ -112,7 +112,7 @@ void Texture::loadSurface(const Graphics::Surface *surf) {
 		const byte *srcP = (const byte *)surf->getBasePtr(0, y);
 
 		for (int x = 0; x < surf->w; ++x, srcP += surf->format.bytesPerPixel) {
-			pixel = (surf->format.bytesPerPixel == 2) ? *((uint16 *)srcP) : *((uint32 *)srcP);
+			pixel = (surf->format.bytesPerPixel == 2) ? *((const uint16 *)srcP) : *((const uint32 *)srcP);
 			surf->format.colorToARGB(pixel, a, r, g, b);
 
 			buffer[i++] = (r << TEX32_R_SHIFT)

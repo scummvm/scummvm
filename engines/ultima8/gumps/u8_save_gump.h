@@ -61,8 +61,8 @@ protected:
 
 	void loadDescriptions();
 
-	bool loadgame(int index);
-	bool savegame(int index, const std::string &name);
+	bool loadgame(int saveIndex);
+	bool savegame(int saveIndex, const std::string &name);
 };
 
 } // End of namespace Ultima8

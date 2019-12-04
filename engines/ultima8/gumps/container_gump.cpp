@@ -53,9 +53,9 @@ ContainerGump::ContainerGump()
 
 }
 
-ContainerGump::ContainerGump(Shape *shape_, uint32 framenum_, uint16 owner,
-                             uint32 Flags_, int32 layer)
-	: ItemRelativeGump(0, 0, 5, 5, owner, Flags_, layer),
+ContainerGump::ContainerGump(Shape *shape_, uint32 framenum_, uint16 owner_,
+                             uint32 Flags_, int32 layer_)
+	: ItemRelativeGump(0, 0, 5, 5, owner_, Flags_, layer_),
 	  display_dragging(false) {
 	shape = shape_;
 	framenum = framenum_;

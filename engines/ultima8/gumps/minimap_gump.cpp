@@ -37,8 +37,8 @@ namespace Ultima8 {
 
 DEFINE_RUNTIME_CLASSTYPE_CODE(MiniMapGump, Gump)
 
-MiniMapGump::MiniMapGump(int x, int y) :
-	Gump(x, y, MAP_NUM_CHUNKS * 2 + 2, MAP_NUM_CHUNKS * 2 + 2, 0,
+MiniMapGump::MiniMapGump(int x_, int y_) :
+	Gump(x_, y_, MAP_NUM_CHUNKS * 2 + 2, MAP_NUM_CHUNKS * 2 + 2, 0,
 	     FLAG_DRAGGABLE, LAYER_NORMAL), minimap(), lastMapNum(0) {
 	minimap.format = TEX_FMT_NATIVE;
 	minimap.width = minimap.height = MAP_NUM_CHUNKS * MINMAPGUMP_SCALE;
@@ -71,18 +71,19 @@ void MiniMapGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scaled)
 	surf->Fill32(0xFFFFAF00, 1, MAP_NUM_CHUNKS * 2 + 1, MAP_NUM_CHUNKS * 2 + 1, 1);
 	surf->Fill32(0xFFFFAF00, MAP_NUM_CHUNKS * 2 + 1, 1, 1, MAP_NUM_CHUNKS * 2 + 1);
 
-	for (int y = 0; y < MAP_NUM_CHUNKS; y++) for (int x = 0; x < MAP_NUM_CHUNKS; x++) {
-			if (currentmap->isChunkFast(x, y)) {
-
+	for (int yv = 0; yv < MAP_NUM_CHUNKS; yv++) {
+		for (int xv = 0; xv < MAP_NUM_CHUNKS; xv++) {
+			if (currentmap->isChunkFast(xv, yv)) {
 				for (int j = 0; j < MINMAPGUMP_SCALE; j++) for (int i = 0; i < MINMAPGUMP_SCALE; i++) {
-						if (texbuffer[y * MINMAPGUMP_SCALE + j][x * MINMAPGUMP_SCALE + i] == 0)
-							texbuffer[y * MINMAPGUMP_SCALE + j][x * MINMAPGUMP_SCALE + i] = sampleAtPoint(
-							            x * mapChunkSize + mapChunkSize / (MINMAPGUMP_SCALE * 2) + (mapChunkSize * i) / MINMAPGUMP_SCALE,
-							            y * mapChunkSize + mapChunkSize / (MINMAPGUMP_SCALE * 2) + (mapChunkSize * j) / MINMAPGUMP_SCALE,
-							            currentmap);
-					}
+					if (texbuffer[yv * MINMAPGUMP_SCALE + j][xv * MINMAPGUMP_SCALE + i] == 0)
+						texbuffer[yv * MINMAPGUMP_SCALE + j][xv * MINMAPGUMP_SCALE + i] = sampleAtPoint(
+							xv * mapChunkSize + mapChunkSize / (MINMAPGUMP_SCALE * 2) + (mapChunkSize * i) / MINMAPGUMP_SCALE,
+							yv * mapChunkSize + mapChunkSize / (MINMAPGUMP_SCALE * 2) + (mapChunkSize * j) / MINMAPGUMP_SCALE,
+							currentmap);
+				}
 			}
 		}
+	}
 
 	// Center on avatar
 	int sx = 0, sy = 0, ox = 0, oy = 0, lx = 0, ly = 0;
@@ -123,16 +124,16 @@ void MiniMapGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scaled)
 	surf->Fill32(0xFFFFFF00, 1 + ax + 0, 1 + ay + 1, 1, 2);
 }
 
-uint32 MiniMapGump::sampleAtPoint(int x, int y, CurrentMap *currentmap) {
-	Item *item = currentmap->traceTopItem(x, y, 1 << 15, -1, 0, ShapeInfo::SI_ROOF | ShapeInfo::SI_OCCL | ShapeInfo::SI_LAND | ShapeInfo::SI_SEA);
+uint32 MiniMapGump::sampleAtPoint(int x_, int y_, CurrentMap *currentmap) {
+	Item *item = currentmap->traceTopItem(x_, y_, 1 << 15, -1, 0, ShapeInfo::SI_ROOF | ShapeInfo::SI_OCCL | ShapeInfo::SI_LAND | ShapeInfo::SI_SEA);
 
 	if (item) {
 		int32 ix, iy, iz, idx, idy, idz;
 		item->getLocation(ix, iy, iz);
 		item->getFootpadWorld(idx, idy, idz);
 
-		ix -= x;
-		iy -= y;
+		ix -= x_;
+		iy -= y_;
 
 		Shape *sh = item->getShapeObject();
 		if (!sh) return 0;
@@ -143,9 +144,9 @@ uint32 MiniMapGump::sampleAtPoint(int x, int y, CurrentMap *currentmap) {
 		const Pentagram::Palette *pal = sh->getPalette();
 		if (!pal) return 0;
 
-		// Screenspace bounding box bottom x coord (RNB x coord)
+		// Screenspace bounding box bottom x_ coord (RNB x_ coord)
 		int sx = (ix - iy) / 4;
-		// Screenspace bounding box bottom extent  (RNB y coord)
+		// Screenspace bounding box bottom extent  (RNB y_ coord)
 		int sy = (ix + iy) / 8 + idz;
 
 		uint16 r = 0, g = 0, b = 0, c = 0;
@@ -188,13 +189,13 @@ void MiniMapGump::ConCmd_generateWholeMap(const Console::ArgvType &argv) {
 }
 
 uint16 MiniMapGump::TraceObjId(int mx, int my) {
-	uint16 objid = Gump::TraceObjId(mx, my);
+	uint16 objId_ = Gump::TraceObjId(mx, my);
 
-	if (!objid || objid == 65535)
+	if (!objId_ || objId_ == 65535)
 		if (PointOnGump(mx, my))
-			objid = getObjId();
+			objId_ = getObjId();
 
-	return objid;
+	return objId_;
 }
 
 void MiniMapGump::saveData(ODataSource *ods) {

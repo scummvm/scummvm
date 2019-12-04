@@ -85,15 +85,15 @@ void TargetGump::OnMouseUp(int button, int mx, int my) {
 	parent->GumpToScreenSpace(mx, my);
 
 	Gump *desktopgump = parent;
-	ObjId objid = desktopgump->TraceObjId(mx, my);
-	Item *item = getItem(objid);
+	ObjId objId_ = desktopgump->TraceObjId(mx, my);
+	Item *item = getItem(objId_);
 
 	if (item) {
 		// done
 		pout << "Target result: ";
 		item->dumpInfo();
 
-		process_result = objid;
+		process_result = objId_;
 		Close();
 	}
 

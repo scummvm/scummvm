@@ -3,9 +3,6 @@ MODULE := engines/ultima8
 MODULE_OBJS := \
 	detection.o \
 	ultima8.o \
-	conf/convert_shape.o \
-	conf/convert_shape_u8.o \
-	conf/convert_shape_crusader.o \
 	conf/config_file_manager.o \
 	conf/ini_file.o \
 	conf/setting_manager.o \

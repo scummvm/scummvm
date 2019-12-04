@@ -69,6 +69,7 @@ public:
 	istring(const String &str) : std::string(str) {}
 	explicit istring(char c) : std::string(c) {}
 	istring(size_t n, char c) : std::string(n, c) {}
+	virtual ~istring() {}
 
 	virtual int Compare(const string &s) const override {
 		return compareToIgnoreCase(s);

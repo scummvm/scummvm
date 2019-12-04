@@ -92,17 +92,17 @@ void GameWidget::InitGump(Gump *newparent, bool take_focus) {
 void GameWidget::ChildNotify(Gump *child, uint32 message) {
 	if (child->IsOfType<ButtonWidget>() &&
 	        message == ButtonWidget::BUTTON_CLICK) {
-		int32 index = child->GetIndex();
+		int32 index_ = child->GetIndex();
 
 		if (parent)
-			parent->ChildNotify(this, static_cast<uint32>(index));
+			parent->ChildNotify(this, static_cast<uint32>(index_));
 	}
 }
 
 uint16 GameWidget::TraceObjId(int mx, int my) {
-	uint16 objid = Gump::TraceObjId(mx, my);
-	if (!objid) objid = getObjId();
-	return objid;
+	uint16 objId_ = Gump::TraceObjId(mx, my);
+	if (!objId_) objId_ = getObjId();
+	return objId_;
 }
 
 Gump *GameWidget::OnMouseDown(int button, int mx, int my) {

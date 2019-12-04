@@ -39,8 +39,8 @@ AskGump::AskGump()
 
 }
 
-AskGump::AskGump(uint16 owner, UCList *answers_) :
-	ItemRelativeGump(0, 0, 0, 0, owner, FLAG_KEEP_VISIBLE, LAYER_ABOVE_NORMAL),
+AskGump::AskGump(uint16 owner_, UCList *answers_) :
+	ItemRelativeGump(0, 0, 0, 0, owner_, FLAG_KEEP_VISIBLE, LAYER_ABOVE_NORMAL),
 	answers(new UCList(2)) {
 	answers->copyStringList(*answers_);
 }

@@ -38,9 +38,9 @@ ItemRelativeGump::ItemRelativeGump()
 	: Gump(), ix(0), iy(0) {
 }
 
-ItemRelativeGump::ItemRelativeGump(int x, int y, int width, int height,
-                                   uint16 owner, uint32 _Flags, int32 _Layer)
-	: Gump(x, y, width, height, owner, _Flags, _Layer), ix(0), iy(0) {
+ItemRelativeGump::ItemRelativeGump(int x_, int y_, int width, int height,
+                                   uint16 owner_, uint32 _Flags, int32 _Layer)
+	: Gump(x_, y_, width, height, owner_, _Flags, _Layer), ix(0), iy(0) {
 }
 
 ItemRelativeGump::~ItemRelativeGump(void) {

@@ -80,7 +80,7 @@ void U8SaveGump::InitGump(Gump *newparent, bool take_focus) {
 	loadDescriptions();
 
 	for (int i = 0; i < 6; ++i) {
-		int index = page * 6 + i;
+		int index_ = page * 6 + i;
 
 
 		int xbase = 3;
@@ -94,37 +94,37 @@ void U8SaveGump::InitGump(Gump *newparent, bool take_focus) {
 		gump->SetShape(entry_id, true);
 		gump->InitGump(this, false);
 
-		int x = xbase + 2 + entrywidth;
+		int x_ = xbase + 2 + entrywidth;
 
-		if (index >= 9) { // index 9 is labelled "10"
-			FrameID entrynum1_id(GameData::GUMPS, 36, (index + 1) / 10 - 1);
+		if (index_ >= 9) { // index_ 9 is labelled "10"
+			FrameID entrynum1_id(GameData::GUMPS, 36, (index_ + 1) / 10 - 1);
 			entrynum1_id = _TL_SHP_(entrynum1_id);
 			entryShape = GameData::get_instance()->getShape(entrynum1_id);
 			sf = entryShape->getFrame(entrynum1_id.framenum);
-			x += 1 + sf->width;
+			x_ += 1 + sf->width;
 
 			gump = new Gump(xbase + 2 + entrywidth, 3 + 40 * yi, 1, 1);
 			gump->SetShape(entrynum1_id, true);
 			gump->InitGump(this, false);
 		}
 
-		FrameID entrynum_id(GameData::GUMPS, 36, index % 10);
+		FrameID entrynum_id(GameData::GUMPS, 36, index_ % 10);
 		entrynum_id = _TL_SHP_(entrynum_id);
 
-		gump = new Gump(x, 3 + 40 * yi, 1, 1);
+		gump = new Gump(x_, 3 + 40 * yi, 1, 1);
 		gump->SetShape(entrynum_id, true);
 
-		if (index % 10 == 9) {
+		if (index_ % 10 == 9) {
 			// HACK: There is no frame for '0', so we re-use part of the
 			// frame for '10', cutting off the first 6 pixels.
-			Pentagram::Rect dims;
-			gump->GetDims(dims);
-			dims.x += 6;
-			gump->SetDims(dims);
+			Pentagram::Rect rect;
+			gump->GetDims(rect);
+			rect.x += 6;
+			gump->SetDims(rect);
 		}
 		gump->InitGump(this, false);
 
-		if (index == 0) {
+		if (index_ == 0) {
 			// special case for 'The Beginning...' save
 			Gump *widget = new TextWidget(xbase, 12 + entryheight,
 			                              _TL_("The Beginning..."),
@@ -181,26 +181,26 @@ void U8SaveGump::OnMouseClick(int button, int mx, int my) {
 
 	ParentToGump(mx, my);
 
-	int x;
+	int x_;
 	if (mx >= 3 && mx <= 100)
-		x = 0;
+		x_ = 0;
 	else if (mx >= dims.w / 2 + 10)
-		x = 1;
+		x_ = 1;
 	else
 		return;
 
-	int y;
+	int y_;
 	if (my >= 3 && my <= 40)
-		y = 0;
+		y_ = 0;
 	else if (my >= 43 && my <= 80)
-		y = 1;
+		y_ = 1;
 	else if (my >= 83 && my <= 120)
-		y = 2;
+		y_ = 2;
 	else
 		return;
 
-	int i = 3 * x + y;
-	int index = 6 * page + i + 1;
+	int i = 3 * x_ + y_;
+	int index_ = 6 * page + i + 1;
 
 	if (save && !focus_child && editwidgets[i]) {
 		editwidgets[i]->MakeFocus();
@@ -214,14 +214,14 @@ void U8SaveGump::OnMouseClick(int button, int mx, int my) {
 		GumpNotifyProcess *p = parent->GetNotifyProcess();
 		if (p) {
 			// Do nothing in this case
-			if (index != 1 && descriptions[i].empty()) return;
+			if (index_ != 1 && descriptions[i].empty()) return;
 
-			parent->SetResult(index);
+			parent->SetResult(index_);
 			parent->Close(); // close PagedGump (and us)
 			return;
 		}
 
-		loadgame(index); // 'this' will be deleted here!
+		loadgame(index_); // 'this' will be deleted here!
 	}
 }
 
@@ -278,26 +278,26 @@ std::string U8SaveGump::getFilename(int index) {
 	return filename;
 }
 
-bool U8SaveGump::loadgame(int index) {
-	if (index == 1) {
+bool U8SaveGump::loadgame(int saveIndex) {
+	if (saveIndex == 1) {
 		GUIApp::get_instance()->newGame(std::string());
 		return true;
 	}
 
-	pout << "Load " << index << std::endl;
+	pout << "Load " << saveIndex << std::endl;
 
-	std::string filename = getFilename(index);
+	std::string filename = getFilename(saveIndex);
 	GUIApp::get_instance()->loadGame(filename);
 
 	return true;
 }
 
-bool U8SaveGump::savegame(int index, const std::string &name) {
-	pout << "Save " << index << ": \"" << name << "\"" << std::endl;
+bool U8SaveGump::savegame(int saveIndex, const std::string &name) {
+	pout << "Save " << saveIndex << ": \"" << name << "\"" << std::endl;
 
 	if (name.empty()) return false;
 
-	std::string filename = getFilename(index);
+	std::string filename = getFilename(saveIndex);
 	GUIApp::get_instance()->saveGame(filename, name, true);
 	return true;
 }
@@ -306,9 +306,9 @@ void U8SaveGump::loadDescriptions() {
 	descriptions.resize(6);
 
 	for (int i = 0; i < 6; ++i) {
-		int index = 6 * page + i + 1;
+		int saveIndex = 6 * page + i + 1;
 
-		std::string filename = getFilename(index);
+		std::string filename = getFilename(saveIndex);
 		IDataSource *ids = FileSystem::get_instance()->ReadFile(filename);
 		if (!ids) continue;
 

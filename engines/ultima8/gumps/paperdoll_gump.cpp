@@ -93,9 +93,9 @@ PaperdollGump::PaperdollGump()
 		cached_text[i] = 0;
 }
 
-PaperdollGump::PaperdollGump(Shape *shape_, uint32 framenum_, uint16 owner,
-                             uint32 Flags_, int32 layer)
-	: ContainerGump(shape_, framenum_, owner, Flags_, layer) {
+PaperdollGump::PaperdollGump(Shape *shape_, uint32 framenum_, uint16 owner_,
+                             uint32 Flags_, int32 layer_)
+	: ContainerGump(shape_, framenum_, owner_, Flags_, layer_) {
 	statbuttongid = 0;
 	for (int i = 0; i < 14; ++i) // ! constant
 		cached_text[i] = 0;
@@ -227,8 +227,8 @@ void PaperdollGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scale
 // Find object (if any) at (mx,my)
 // (mx,my) are relative to parent
 uint16 PaperdollGump::TraceObjId(int mx, int my) {
-	uint16 objid = Gump::TraceObjId(mx, my);
-	if (objid && objid != 65535) return objid;
+	uint16 objId_ = Gump::TraceObjId(mx, my);
+	if (objId_ && objId_ != 65535) return objId_;
 
 	ParentToGump(mx, my);
 
@@ -270,9 +270,9 @@ bool PaperdollGump::GetLocationOfItem(uint16 itemid, int &gx, int &gy,
                                       int32 lerp_factor) {
 
 	Item *item = getItem(itemid);
-	Item *parent = item->getParentAsContainer();
-	if (!parent) return false;
-	if (parent->getObjId() != owner) return false;
+	Item *parent_ = item->getParentAsContainer();
+	if (!parent_) return false;
+	if (parent_->getObjId() != owner) return false;
 
 	//!!! need to use lerp_factor
 

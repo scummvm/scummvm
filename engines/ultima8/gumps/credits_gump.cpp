@@ -42,8 +42,8 @@ CreditsGump::CreditsGump()
 }
 
 CreditsGump::CreditsGump(const std::string &text_, int parskip_,
-                         uint32 _Flags, int32 layer)
-	: ModalGump(0, 0, 320, 200, 0, _Flags, layer) {
+                         uint32 _Flags, int32 layer_)
+	: ModalGump(0, 0, 320, 200, 0, _Flags, layer_) {
 	text = text_;
 	parskip = parskip_;
 

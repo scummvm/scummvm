@@ -40,6 +40,7 @@ public:
 	string(const String &str) : Common::String(str) {}
 	explicit string(char c) : Common::String(c) {}
 	string(size_t n, char c);
+	virtual ~string() {}
 
 	size_t length() const { return size(); }
 
