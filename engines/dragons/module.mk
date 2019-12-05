@@ -22,6 +22,7 @@ MODULE_OBJS := \
 	minigame2.o \
 	minigame3.o \
 	minigame4.o \
+	minigame5.o \
 	saveload.o \
 	scene.o \
 	screen.o \
