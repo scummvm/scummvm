@@ -103,6 +103,12 @@ MODULE_OBJS := \
 	graphics/fonts/shape_rendered_text.o \
 	graphics/fonts/ttf_rendered_text.o \
 	graphics/fonts/tt_font.o \
+	graphics/scalers/bilinear_scaler.o \
+	graphics/scalers/bilinear_scaler_internal_2x.o \
+	graphics/scalers/bilinear_scaler_internal_arb.o \
+	graphics/scalers/bilinear_scaler_internal_x1y12.o \
+	graphics/scalers/bilinear_scaler_internal_x2y24.o \
+	graphics/scalers/point_scaler.o \
 	gumps/ask_gump.o \
 	gumps/bark_gump.o \
 	gumps/bind_gump.o \

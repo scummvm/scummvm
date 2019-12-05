@@ -23,7 +23,7 @@
 #include "ultima8/graphics/scalers/bilinear_scaler.h"
 #include "ultima8/graphics/manips.h"
 
-
+namespace Ultima8 {
 namespace Pentagram {
 
 #define SimpleLerp(a,b,fac) ((b<<8)+((a)-(b))*(fac))
@@ -207,4 +207,6 @@ namespace Pentagram {
 	InstantiateFunc(func,uint32,Manip_Nat2Nat_32,uint32); \
 	InstantiateFunc(func,uint32,Manip_Sta2Nat_32,uint32)
 #endif
-	};
+
+} // End of namespace Pentagram
+} // End of namespace Ultima8
