@@ -45,6 +45,7 @@
 
 
 %debug
+%glr-parser
 
 %{
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
@@ -247,17 +248,7 @@ stmt: stmtoneliner
 		}
 	;
 
-ifstmt: if expr tTHEN begin stmtoneliner end '\n' {
-		inst then = 0, else1 = 0, end = 0;
-		WRITE_UINT32(&then, $4 - $1);
-		WRITE_UINT32(&else1, 0);
-		WRITE_UINT32(&end, $6 - $1);
-		(*g_lingo->_currentScript)[$1 + 1] = then;	/* thenpart */
-		(*g_lingo->_currentScript)[$1 + 2] = else1;	/* elsepart */
-		(*g_lingo->_currentScript)[$1 + 3] = end; 	/* end, if cond fails */
-
-		g_lingo->processIf(0, 0); }
-	| if expr tTHEN begin stmtoneliner end elseifstmtlist end endifstmt end {
+ifstmt: if expr tTHEN begin stmtoneliner end elseifstmtlist end endifstmt end {
 		inst then = 0, else1 = 0, end = 0;
 		WRITE_UINT32(&then, $4 - $1);
 		WRITE_UINT32(&else1, $6 - $1);
@@ -267,14 +258,14 @@ ifstmt: if expr tTHEN begin stmtoneliner end '\n' {
 		(*g_lingo->_currentScript)[$1 + 3] = end;	/* end, if cond fails */
 
 		g_lingo->processIf(0, $10 - $1); }
-	| if expr tTHENNL stmtlist end ENDCLAUSE {
-		inst then = 0, end = 0;
+	| if expr tTHEN begin stmtoneliner end {
+		inst then = 0, else1 = 0, end = 0;
 		WRITE_UINT32(&then, $4 - $1);
-		WRITE_UINT32(&end, $5 - $1);
+		WRITE_UINT32(&else1, 0);
+		WRITE_UINT32(&end, $6 - $1);
 		(*g_lingo->_currentScript)[$1 + 1] = then;	/* thenpart */
-		(*g_lingo->_currentScript)[$1 + 3] = end;	/* end, if cond fails */
-
-		checkEnd($6, "if", true);
+		(*g_lingo->_currentScript)[$1 + 2] = else1;	/* elsepart */
+		(*g_lingo->_currentScript)[$1 + 3] = end; 	/* end, if cond fails */
 
 		g_lingo->processIf(0, 0); }
 	| if expr tTHENNL stmtlist end elseifstmtlist end endifstmt end {
@@ -285,6 +276,16 @@ ifstmt: if expr tTHEN begin stmtoneliner end '\n' {
 		(*g_lingo->_currentScript)[$1 + 1] = then;	/* thenpart */
 		(*g_lingo->_currentScript)[$1 + 2] = else1;	/* elsepart */
 		(*g_lingo->_currentScript)[$1 + 3] = end;	/* end, if cond fails */
+
+		g_lingo->processIf(0, 0); }
+	| if expr tTHENNL stmtlist end ENDCLAUSE {
+		inst then = 0, end = 0;
+		WRITE_UINT32(&then, $4 - $1);
+		WRITE_UINT32(&end, $5 - $1);
+		(*g_lingo->_currentScript)[$1 + 1] = then;	/* thenpart */
+		(*g_lingo->_currentScript)[$1 + 3] = end;	/* end, if cond fails */
+
+		checkEnd($6, "if", true);
 
 		g_lingo->processIf(0, 0); }
 	;
@@ -307,7 +308,8 @@ elseifstmt: elseif expr tTHEN begin stmtoneliner end {
 		g_lingo->codeLabel($1); }
 	;
 
-endifstmt: elseif expr tTHEN begin stmtoneliner end tELSE stmtoneliner end {
+endifstmt:  ENDCLAUSE
+	| elseif expr tTHEN begin stmtoneliner end tELSE stmtoneliner end {
 		inst then = 0;
 		WRITE_UINT32(&then, $4 - $1);
 		(*g_lingo->_currentScript)[$1 + 1] = then;	/* thenpart */
@@ -401,7 +403,6 @@ expr: simpleexpr { $$ = $1; }
 		g_lingo->codeFunc($1, 1);
 		delete $1; }
 	| FBLTINARGLIST nonemptyarglist			{ g_lingo->codeFunc($1, $2); }
-	| FBLTINARGLIST '(' nonemptyarglist ')'	{ g_lingo->codeFunc($1, $3); }
 	| ID '(' arglist ')'	{
 		$$ = g_lingo->codeFunc($1, $3);
 		delete $1; }
@@ -482,7 +483,6 @@ proc: tPUT expr				{ g_lingo->code1(g_lingo->c_printtop); }
 		g_lingo->codeFunc($1, 1);
 		delete $1; }
 	| BLTINARGLIST nonemptyarglist			{ g_lingo->codeFunc($1, $2); }
-	| BLTINARGLIST '(' nonemptyarglist ')'	{ g_lingo->codeFunc($1, $3); }
 	| tME '(' ID ')'				{ g_lingo->codeMe($3, 0); }
 	| tME '(' ID ',' arglist ')'	{ g_lingo->codeMe($3, $5); }
 	| tOPEN expr tWITH expr	{ g_lingo->code1(g_lingo->c_open); }
