@@ -233,13 +233,8 @@ bool BaseFileManager::registerPackages() {
 					if (_language != Common::EN_ANY) {
 						continue;
 					}
-				// Chinese
-				} else if (fileName == "chinese.dcp" || fileName == "xlanguage_nz.dcp" || fileName == "chinese_language_pack.dcp") {
-					if (_language != Common::ZH_ANY) {
-						continue;
-					}
 				// Simplified Chinese
-				} else if (fileName == "xlanguage_zh_s.dcp") {
+				} else if (fileName == "chinese.dcp" || fileName == "xlanguage_nz.dcp" || fileName == "xlanguage_zh_s.dcp" || fileName == "chinese_language_pack.dcp") {
 					if (_language != Common::ZH_CNA) {
 						continue;
 					}
