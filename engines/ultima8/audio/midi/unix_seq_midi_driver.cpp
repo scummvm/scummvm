@@ -25,10 +25,10 @@
   Adapted from ScummVM's backends/midi/seq.cpp
 */
 
+#ifdef USE_UNIX_SEQ_MIDI
+
 #include "ultima8/misc/pent_include.h"
 #include "ultima8/audio/midi/unix_seq_midi_driver.h"
-
-#ifdef USE_UNIX_SEQ_MIDI
 
 #include <fcntl.h>
 #include <unistd.h>
