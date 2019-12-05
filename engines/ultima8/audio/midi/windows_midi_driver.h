@@ -23,7 +23,8 @@
 #ifndef ULTIMA8_AUDIO_MIDI_WINDOWSMIDIDRIVER_H
 #define ULTIMA8_AUDIO_MIDI_WINDOWSMIDIDRIVER_H
 
-#if defined(WIN32) && !defined(UNDER_CE)
+//if defined(WIN32) && !defined(UNDER_CE)
+#ifdef USE_WINDOWS_MIDI
 #define USE_WINDOWS_MIDI
 
 #include "ultima8/audio/midi/low_level_midi_driver.h"
@@ -36,13 +37,10 @@
 #define WIN32_LEAN_AND_MEAN
 #endif
 
-#include <windows.h>
-#include <mmsystem.h>
-
 namespace Ultima8 {
 
 class WindowsMidiDriver : public LowLevelMidiDriver {
-	signed int          dev_num;
+	int          dev_num;
 	HMIDIOUT            midi_port;
 #ifdef WIN32_USE_DUAL_MIDIDRIVERS
 	HMIDIOUT            midi_port2;

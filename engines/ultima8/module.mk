@@ -27,6 +27,19 @@ MODULE_OBJS := \
 	audio/midi/xmidi_event_list.o \
 	audio/midi/xmidi_file.o \
 	audio/midi/xmidi_sequence.o \
+	audio/midi/timidity/timidity.o \
+	audio/midi/timidity/timidity_common.o \
+	audio/midi/timidity/timidity_controls.o \
+	audio/midi/timidity/timidity_filter.o \
+	audio/midi/timidity/timidity_instrum.o \
+	audio/midi/timidity/timidity_mix.o \
+	audio/midi/timidity/timidity_output.o \
+	audio/midi/timidity/timidity_playmidi.o \
+	audio/midi/timidity/timidity_readmidi.o \
+	audio/midi/timidity/timidity_resample.o \
+	audio/midi/timidity/timidity_sdl_a.o \
+	audio/midi/timidity/timidity_sdl_c.o \
+	audio/midi/timidity/timidity_tables.o \
 	conf/config_file_manager.o \
 	conf/ini_file.o \
 	conf/setting_manager.o \
