@@ -128,6 +128,8 @@ void Module2600::createScene(int sceneNum, int which) {
 	case 9999:
 		createDemoScene();
 		break;
+	default:
+		break;
 	}
 	SetUpdateHandler(&Module2600::updateScene);
 	_childObject->handleUpdate();
@@ -216,6 +218,8 @@ void Module2600::updateScene() {
 		case 9999:
 			createScene(_vm->gameState().sceneNum, -1);
 			break;
+		default:
+			break;
 		}
 	}
 }
@@ -253,6 +257,8 @@ uint32 Scene2609::handleMessage(int messageNum, const MessageParam &param, Entit
 	case NM_POSITION_CHANGE:
 		_isBusy = false;
 		sendMessage(_asWater, NM_POSITION_CHANGE, 0);
+		break;
+	default:
 		break;
 	}
 	return 0;

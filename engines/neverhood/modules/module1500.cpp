@@ -55,6 +55,8 @@ void Module1500::createScene(int sceneNum, int which) {
 		_vm->gameState().sceneNum = 3;
 		_childObject = new Scene1501(_vm, this, 0x0CA04202, 0, 110, 48);
 		break;
+	default:
+		break;
 	}
 	SetUpdateHandler(&Module1500::updateScene);
 	_childObject->handleUpdate();
@@ -126,6 +128,8 @@ uint32 Scene1501::handleMessage(int messageNum, const MessageParam &param, Entit
 	switch (messageNum) {
 	case NM_KEYPRESS_SPACE:
 		_skip = true;
+		break;
+	default:
 		break;
 	}
 	return messageResult;

@@ -63,6 +63,8 @@ void Module1200::createScene(int sceneNum, int which) {
 		createSmackerScene(0x31890001, true, true, false);
 		setGlobalVar(V_SEEN_CREATURE_EXPLODE_VID, 1);
 		break;
+	default:
+		break;
 	}
 	SetUpdateHandler(&Module1200::updateScene);
 	_childObject->handleUpdate();
@@ -88,6 +90,8 @@ void Module1200::updateScene() {
 		case 2:
 			_vm->_soundMan->startMusic(0x62222CAE, 0, 0);
 			createScene(0, 3);
+			break;
+		default:
 			break;
 		}
 	}
@@ -349,6 +353,8 @@ uint32 Scene1201::handleMessage(int messageNum, const MessageParam &param, Entit
 	case 0x8000:
 		sendMessage(_asKlaymenHead, NM_KLAYMEN_STOP_CLIMBING, 0);
 		break;
+	default:
+		break;
 	}
 	return messageResult;
 }
@@ -437,6 +443,8 @@ uint32 Scene1202::handleMessage(int messageNum, const MessageParam &param, Entit
 	case NM_POSITION_CHANGE:
 		_counter--;
 		break;
+	default:
+		break;
 	}
 	return messageResult;
 }
@@ -447,6 +455,8 @@ uint32 Scene1202::hmSolved(int messageNum, const MessageParam &param, Entity *se
 	case NM_MOUSE_CLICK:
 		if (param.asPoint().x <= 20 || param.asPoint().x >= 620)
 			leaveScene(0);
+		break;
+	default:
 		break;
 	}
 	return 0;

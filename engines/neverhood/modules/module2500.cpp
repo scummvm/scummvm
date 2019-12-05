@@ -136,6 +136,8 @@ void Module2500::createScene(int sceneNum, int which) {
 		else
 			createStaticScene(0x7A343546, 0x435427AB);
 		break;
+	default:
+		break;
 	}
 	SetUpdateHandler(&Module2500::updateScene);
 	_childObject->handleUpdate();
@@ -200,6 +202,8 @@ void Module2500::updateScene() {
 		case 9:
 			createScene(8, 2);
 			break;
+		default:
+			break;
 		}
 	}
 }
@@ -212,6 +216,8 @@ uint32 Module2500::handleMessage(int messageNum, const MessageParam &param, Enti
 		_soundIndex++;
 		if (_soundIndex >= 4)
 			_soundIndex = 0;
+		break;
+	default:
 		break;
 	}
 	return messageResult;
@@ -392,6 +398,8 @@ uint32 Scene2501::handleMessage(int messageNum, const MessageParam &param, Entit
 	case 0x200D:
 		sendMessage(_parentModule, 0x200D, 0);
 		break;
+	default:
+		break;
 	}
 	return messageResult;
 }
@@ -422,6 +430,8 @@ uint32 Scene2501::hmRidingCar(int messageNum, const MessageParam &param, Entity 
 	case 0x200D:
 		sendMessage(_parentModule, 0x200D, 0);
 		break;
+	default:
+		break;
 	}
 	return messageResult;
 }
@@ -434,6 +444,8 @@ uint32 Scene2501::hmCarAtHome(int messageNum, const MessageParam &param, Entity 
 		break;
 	case 0x200D:
 		sendMessage(_parentModule, 0x200D, 0);
+		break;
+	default:
 		break;
 	}
 	return messageResult;
@@ -494,6 +506,8 @@ uint32 Scene2504::handleMessage(int messageNum, const MessageParam &param, Entit
 	case NM_MOUSE_CLICK:
 		if (param.asPoint().x <= 20 || param.asPoint().x >= 620)
 			leaveScene(0);
+		break;
+	default:
 		break;
 	}
 	return messageResult;

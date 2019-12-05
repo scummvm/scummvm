@@ -166,6 +166,8 @@ uint32 SsScene2901LocationButton::handleMessage(int messageNum, const MessagePar
 		}
 		messageResult = 1;
 		break;
+	default:
+		break;
 	}
 	return messageResult;
 }
@@ -224,6 +226,8 @@ uint32 SsScene2901BigButton::handleMessage(int messageNum, const MessageParam &p
 			_countdown1 = 4;
 		}
 		messageResult = 1;
+		break;
+	default:
 		break;
 	}
 	return messageResult;

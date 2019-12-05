@@ -72,6 +72,8 @@ uint32 SsScene2609Button::handleMessage(int messageNum, const MessageParam &para
 		}
 		messageResult = 1;
 		break;
+	default:
+		break;
 	}
 	return messageResult;
 }
@@ -107,6 +109,8 @@ uint32 AsScene2609Water::handleMessage(int messageNum, const MessageParam &param
 		startAnimation(0x9C210C90, 0, -1);
 		setVisible(true);
 		_vm->_soundMan->playSoundLooping(0xDC2769B0);
+		break;
+	default:
 		break;
 	}
 	return messageResult;

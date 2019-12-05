@@ -85,6 +85,8 @@ uint32 KmScene2001::xHandleMessage(int messageNum, const MessageParam &param) {
 	case 0x483E:
 		teleporterDisappear(0x18AB4ED4);
 		break;
+	default:
+		break;
 	}
 	return messageResult;
 }

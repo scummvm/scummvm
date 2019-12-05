@@ -108,6 +108,8 @@ void Module2300::createScene(int sceneNum, int which) {
 	case 9999:
 		createDemoScene();
 		break;
+	default:
+		break;
 	}
 	SetUpdateHandler(&Module2300::updateScene);
 	_childObject->handleUpdate();
@@ -157,6 +159,8 @@ void Module2300::updateScene() {
 		case 9999:
 			createScene(1, -1);
 			break;
+		default:
+			break;
 		}
 	} else {
 		switch (_sceneNum) {
@@ -178,6 +182,8 @@ void Module2300::updateScene() {
 				_waterfallSoundVolume--;
 				_vm->_soundMan->setSoundVolume(0x90F0D1C3, _waterfallSoundVolume);
 			}
+			break;
+		default:
 			break;
 		}
 	}

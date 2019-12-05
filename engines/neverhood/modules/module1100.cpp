@@ -126,6 +126,8 @@ void Module1100::createScene(int sceneNum, int which) {
 		_vm->_soundMan->setTwoSoundsPlayFlag(true);
 		createSmackerScene(0x00012211, true, true, false);
 		break;
+	default:
+		break;
 	}
 	SetUpdateHandler(&Module1100::updateScene);
 	_childObject->handleUpdate();
@@ -211,6 +213,8 @@ void Module1100::updateScene() {
 			_vm->_soundMan->playTwoSounds(0x0002C818, 0x48498E46, 0x50399F64, 0);
 			createScene(1, 1);
 			break;
+		default:
+			break;
 		}
 	} else {
 		switch (_sceneNum) {
@@ -237,6 +241,8 @@ void Module1100::updateScene() {
 				_vm->_soundMan->setSoundVolume(0x48498E46, 65);
 				_vm->_soundMan->setSoundVolume(0x50399F64, 65);
 			}
+			break;
+		default:
 			break;
 		}
 	}
@@ -374,6 +380,8 @@ uint32 Scene1105::handleMessage(int messageNum, const MessageParam &param, Entit
 				}
 			}
 		}
+		break;
+	default:
 		break;
 	}
 	return messageResult;
@@ -526,6 +534,8 @@ uint32 Scene1109::handleMessage(int messageNum, const MessageParam &param, Entit
 			setRectList(0x004B6398);
 			_klaymen->setKlaymenIdleTable1();
 		}
+		break;
+	default:
 		break;
 	}
 	return 0;

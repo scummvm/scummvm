@@ -84,6 +84,8 @@ uint32 AsScene2201Door::handleMessage(int messageNum, const MessageParam &param,
 		if (!_isOpen)
 			stOpenDoor();
 		break;
+	default:
+		break;
 	}
 	return messageResult;
 }
@@ -165,6 +167,8 @@ uint32 SsScene2202PuzzleCube::handleMessage(int messageNum, const MessageParam &
 	case 0x2001:
 		_isMoving = true;
 		moveCube(param.asInteger());
+		break;
+	default:
 		break;
 	}
 	return messageResult;
@@ -347,6 +351,9 @@ uint32 AsCommonKey::handleMessage(int messageNum, const MessageParam &param, Ent
 		setSubVar(VA_HAS_KEY, _keyIndex, 1);
 		setVisible(false);
 		SetMessageHandler(NULL);
+		break;
+	default:
+		break;
 	}
 	return messageResult;
 }
@@ -399,6 +406,8 @@ uint32 AsScene2203Door::handleMessage(int messageNum, const MessageParam &param,
 		closeDoor();
 		sendMessage(_parentScene, 0x2003, 0);
 		break;
+	default:
+		break;
 	}
 	return messageResult;
 }
@@ -427,6 +436,8 @@ uint32 SsScene2205DoorFrame::handleMessage(int messageNum, const MessageParam &p
 	switch (messageNum) {
 	case NM_ANIMATION_UPDATE:
 		loadSprite(getGlobalVar(V_LIGHTS_ON) ? 0x24306227 : 0xD90032A0, kSLFDefDrawOffset | kSLFDefPosition);
+		break;
+	default:
 		break;
 	}
 	return messageResult;
@@ -469,6 +480,8 @@ uint32 AsScene2206DoorSpikes::handleMessage(int messageNum, const MessageParam &
 		playSound(0, 0x002642C0);
 		SetMessageHandler(NULL);
 		SetSpriteUpdate(&AsScene2206DoorSpikes::suClose);
+		break;
+	default:
 		break;
 	}
 	return messageResult;
@@ -515,6 +528,8 @@ uint32 AsScene2206Platform::handleMessage(int messageNum, const MessageParam &pa
 		SetMessageHandler(NULL);
 		SetSpriteUpdate(&AsScene2206Platform::suMoveDown);
 		break;
+	default:
+		break;
 	}
 	return messageResult;
 }
@@ -547,6 +562,8 @@ uint32 SsScene2206TestTube::handleMessage(int messageNum, const MessageParam &pa
 		setGlobalVar(V_HAS_TEST_TUBE, 1);
 		setVisible(false);
 		SetMessageHandler(NULL);
+		break;
+	default:
 		break;
 	}
 	return messageResult;
@@ -632,6 +649,8 @@ uint32 AsScene2207Elevator::handleMessage(int messageNum, const MessageParam &pa
 	case NM_ANIMATION_UPDATE:
 		moveToY(param.asInteger());
 		break;
+	default:
+		break;
 	}
 	return messageResult;
 }
@@ -700,6 +719,8 @@ uint32 AsScene2207Lever::handleMessage(int messageNum, const MessageParam &param
 		break;
 	case NM_MOVE_TO_FRONT:
 		sendMessage(_parentScene, NM_PRIORITY_CHANGE, 1010);
+		break;
+	default:
 		break;
 	}
 	return messageResult;
@@ -778,6 +799,8 @@ uint32 AsScene2207WallRobotAnimation::handleMessage(int messageNum, const Messag
 	case NM_ANIMATION_STOP:
 		gotoNextState();
 		break;
+	default:
+		break;
 	}
 	return messageResult;
 }
@@ -830,6 +853,8 @@ uint32 AsScene2207WallCannonAnimation::handleMessage(int messageNum, const Messa
 		break;
 	case NM_ANIMATION_STOP:
 		gotoNextState();
+		break;
+	default:
 		break;
 	}
 	return messageResult;
@@ -927,6 +952,8 @@ uint32 KmScene2201::xHandleMessage(int messageNum, const MessageParam &param) {
 	case 0x4840:
 		startSpecialWalkLeft(param.asInteger());
 		break;
+	default:
+		break;
 	}
 	return 0;
 }
@@ -997,6 +1024,8 @@ uint32 KmScene2203::xHandleMessage(int messageNum, const MessageParam &param) {
 	case 0x4840:
 		startSpecialWalkLeft(param.asInteger());
 		break;
+	default:
+		break;
 	}
 	return 0;
 }
@@ -1019,6 +1048,8 @@ uint32 KmScene2203::hmClayDoorOpen(int messageNum, const MessageParam &param, En
 		if (param.asInteger() == 0x040D4186) {
 			sendMessage(_attachedSprite, NM_KLAYMEN_OPEN_DOOR, 0);
 		}
+		break;
+	default:
 		break;
 	}
 	return messageResult;
@@ -1066,6 +1097,8 @@ uint32 KmScene2205::xHandleMessage(int messageNum, const MessageParam &param) {
 		break;
 	case 0x4840:
 		startSpecialWalkLeft(param.asInteger());
+		break;
+	default:
 		break;
 	}
 	return 0;
@@ -1166,6 +1199,8 @@ uint32 KmScene2206::xHandleMessage(int messageNum, const MessageParam &param) {
 	case 0x4840:
 		startSpecialWalkLeft(param.asInteger());
 		break;
+	default:
+		break;
 	}
 	return 0;
 }
@@ -1250,6 +1285,8 @@ uint32 KmScene2207::xHandleMessage(int messageNum, const MessageParam &param) {
 	case 0x4840:
 		startSpecialWalkLeft(param.asInteger());
 		break;
+	default:
+		break;
 	}
 	return 0;
 }
@@ -1317,6 +1354,8 @@ uint32 KmScene2242::xHandleMessage(int messageNum, const MessageParam &param) {
 	case 0x4837:
 		stopWalking();
 		break;
+	default:
+		break;
 	}
 	return 0;
 }
@@ -1368,6 +1407,8 @@ uint32 KmHallOfRecords::xHandleMessage(int messageNum, const MessageParam &param
 		break;
 	case 0x4837:
 		stopWalking();
+		break;
+	default:
 		break;
 	}
 	return 0;
@@ -1421,6 +1462,8 @@ uint32 KmScene2247::xHandleMessage(int messageNum, const MessageParam &param) {
 		break;
 	case 0x4837:
 		stopWalking();
+		break;
+	default:
 		break;
 	}
 	return 0;
