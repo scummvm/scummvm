@@ -22,51 +22,10 @@
 
 #include "ultima8/ultima8.h"
 #include "ultima8/detection.h"
+#include "ultima8/kernel/gui_app.h"
 #include "common/scummsys.h"
 #include "common/config-manager.h"
 #include "common/debug-channels.h"
-
-/*
-//#include "ultima8/misc/pent_include.h"
-#include "ultima8/kernel/gui_app.h"
-#include "ultima8/kernel/memory_manager.h"
-#include "ultima8/misc/version.h"
-#include "ultima8/filesys/file_system.h"
-#include "ultima8/filesys/output_logger.h"
-*/
-#include "ultima8/filesys/archive.h"
-#include "ultima8/filesys/archive_file.h"
-#include "ultima8/filesys/dir_file.h"
-#include "ultima8/filesys/file_system.h"
-#include "ultima8/filesys/flex_file.h"
-#include "ultima8/filesys/idata_source.h"
-#include "ultima8/filesys/named_archive_file.h"
-#include "ultima8/filesys/odata_source.h"
-#include "ultima8/filesys/output_logger.h"
-#include "ultima8/filesys/raw_archive.h"
-#include "ultima8/filesys/savegame.h"
-#include "ultima8/filesys/savegame_writer.h"
-#include "ultima8/filesys/u8_save_file.h"
-#include "ultima8/filesys/zip_file.h"
-
-#include "ultima8/misc/args.h"
-#include "ultima8/misc/box.h"
-#include "ultima8/misc/common_types.h"
-#include "ultima8/misc/console.h"
-#include "ultima8/misc/direction.h"
-#include "ultima8/misc/encoding.h"
-#include "ultima8/misc/errors.h"
-#include "ultima8/misc/id_man.h"
-#include "ultima8/misc/istring.h"
-#include "ultima8/misc/md5.h"
-#include "ultima8/misc/memset_n.h"
-#include "ultima8/misc/pent_include.h"
-#include "ultima8/misc/pent_valgrind.h"
-#include "ultima8/misc/p_dynamic_cast.h"
-#include "ultima8/misc/rect.h"
-#include "ultima8/misc/util.h"
-#include "ultima8/misc/version.h"
-
 
 namespace Ultima8 {
 
@@ -86,7 +45,9 @@ uint32 Ultima8Engine::getFeatures() const {
 }
 
 Common::Error Ultima8Engine::run() {
-
+	GUIApp app(0, nullptr);
+	app.startup();
+	app.run();
 
 	return Common::kNoError;
 }

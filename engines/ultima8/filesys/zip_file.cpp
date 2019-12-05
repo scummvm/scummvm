@@ -28,34 +28,14 @@
 #include "ultima8/filesys/idata_source.h"
 #include "ultima8/filesys/file_system.h"
 
-// unzip API
-#include "ultima8/filesys/zip/unzip.h"
-
 namespace Ultima8 {
 
 DEFINE_RUNTIME_CLASSTYPE_CODE(NamedArchiveFile, ArchiveFile)
 
 DEFINE_RUNTIME_CLASSTYPE_CODE(ZipFile, NamedArchiveFile)
 
-
-
-// ioapi IDataSource wrapper functions
-
-static voidpf ids_open(voidpf opaque, const char *filename, int mode);
-static uLong ids_read(voidpf opaque, voidpf stream, void *buf, uLong size);
-static uLong ids_write(voidpf opaque, voidpf stream,
-                       const void *buf, uLong size);
-static long ids_tell(voidpf opaque, voidpf stream);
-static long ids_seek(voidpf opaque, voidpf stream, uLong offset, int origin);
-static int ids_close(voidpf opaque, voidpf stream);
-static int ids_error(voidpf opaque, voidpf stream);
-
-PentZip::zlib_filefunc_def IDS_filefunc_templ = {
-	ids_open, ids_read, ids_write, ids_tell, ids_seek, ids_close, ids_error, 0
-};
-
-
 ZipFile::ZipFile(IDataSource *ds_) {
+#ifdef TODO
 	ds = ds_;
 	PentZip::zlib_filefunc_def filefuncs = IDS_filefunc_templ;
 	filefuncs.opaque = static_cast<void *>(ds);
@@ -71,19 +51,23 @@ ZipFile::ZipFile(IDataSource *ds_) {
 		valid = readMetadata();
 		if (!valid) PentZip::unzClose(unzfile);
 	}
+#endif
 }
 
 
 ZipFile::~ZipFile() {
+#ifdef TODO
 	if (valid) {
 		PentZip::unzFile unzfile = static_cast<PentZip::unzFile>(unzipfile);
 		PentZip::unzClose(unzfile);
 	}
 	delete ds;
+#endif
 }
 
 //static
 bool ZipFile::isZipFile(IDataSource *ids) {
+#ifdef TODO
 	PentZip::zlib_filefunc_def filefuncs = IDS_filefunc_templ;
 	filefuncs.opaque = static_cast<void *>(ids);
 
@@ -94,11 +78,12 @@ bool ZipFile::isZipFile(IDataSource *ids) {
 		PentZip::unzClose(unzfile);
 		return true;
 	}
-
+#endif
 	return false;
 }
 
 bool ZipFile::readMetadata() {
+#ifdef TODO
 	PentZip::unzFile unzfile = static_cast<PentZip::unzFile>(unzipfile);
 
 	PentZip::unz_global_info ginfo;
@@ -131,24 +116,32 @@ bool ZipFile::readMetadata() {
 
 		done = (PentZip::unzGoToNextFile(unzfile) != UNZ_OK);
 	}
-
+#endif
 	return true;
 }
 
 bool ZipFile::exists(const std::string &name) {
+#ifdef TODO
 	std::map<Common::String, uint32>::iterator iter;
 	iter = sizes.find(name);
 	return (iter != sizes.end());
+#endif
+	return false;
 }
 
 uint32 ZipFile::getSize(const std::string &name) {
+#ifdef TODO
 	std::map<Common::String, uint32>::iterator iter;
 	iter = sizes.find(name);
 	if (iter == sizes.end()) return 0;
 	return (iter->_value);
+#else
+	return 0;
+#endif
 }
 
 uint8 *ZipFile::getObject(const std::string &name, uint32 *sizep) {
+#ifdef TODO
 	PentZip::unzFile unzfile = static_cast<PentZip::unzFile>(unzipfile);
 	if (sizep) *sizep = 0;
 
@@ -179,60 +172,9 @@ uint8 *ZipFile::getObject(const std::string &name, uint32 *sizep) {
 	if (sizep) *sizep = size;
 
 	return buf;
-}
-
-
-
-// ------------
-
-static voidpf ids_open(voidpf opaque, const char *filename, int mode) {
-	// read-only, for now
-	if (mode != (ZLIB_FILEFUNC_MODE_READ | ZLIB_FILEFUNC_MODE_EXISTING))
-		return 0;
-
-	// opaque is actually the IDataSource*
-	return opaque;
-}
-
-static uLong ids_read(voidpf opaque, voidpf stream, void *buf, uLong size) {
-	IDataSource *ids = static_cast<IDataSource *>(stream);
-	return ids->read(buf, size);
-}
-
-static uLong ids_write(voidpf opaque, voidpf stream,
-                       const void *buf, uLong size) {
-	return 0;
-}
-
-static long ids_tell(voidpf opaque, voidpf stream) {
-	IDataSource *ids = static_cast<IDataSource *>(stream);
-	return ids->getPos();
-}
-
-static long ids_seek(voidpf opaque, voidpf stream, uLong offset, int origin) {
-	IDataSource *ids = static_cast<IDataSource *>(stream);
-	switch (origin) {
-	case ZLIB_FILEFUNC_SEEK_CUR:
-		ids->skip(offset);
-		break;
-	case ZLIB_FILEFUNC_SEEK_END:
-		ids->seek(ids->getSize() + offset);
-		break;
-	case ZLIB_FILEFUNC_SEEK_SET:
-		ids->seek(offset);
-		break;
-	default:
-		return -1;
-	}
-	return 0;
-}
-
-static int ids_close(voidpf opaque, voidpf stream) {
-	return 0;
-}
-
-static int ids_error(voidpf opaque, voidpf stream) {
-	return 0;
+#else
+	return nullptr;
+#endif
 }
 
 } // End of namespace Ultima8
