@@ -51,7 +51,7 @@ MusicProcess::MusicProcess()
 MusicProcess::MusicProcess(MidiDriver *drv) :
 	driver(drv), state(MUSIC_NORMAL), current_track(0),
 	wanted_track(0), last_request(0), queued_track(0) {
-	std::memset(song_branches, -1, 128 * sizeof(int));
+	std::memset(song_branches, (byte)-1, 128 * sizeof(int));
 
 	the_music_process = this;
 	flags |= PROC_RUNPAUSED;

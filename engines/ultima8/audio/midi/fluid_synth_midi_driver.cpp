@@ -27,8 +27,6 @@
 
 namespace Ultima8 {
 
-//#include <cstring>
-
 const MidiDriver::MidiDriverDesc FluidSynthMidiDriver::desc =
     MidiDriver::MidiDriverDesc("FluidSynth", createInstance);
 

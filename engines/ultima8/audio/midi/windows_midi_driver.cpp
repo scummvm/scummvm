@@ -40,11 +40,6 @@ using std::endl;
 #define WIN32_LEAN_AND_MEAN
 #endif
 
-#include <windows.h>
-#include <mmsystem.h>
-#include <winbase.h>
-#include <cstdlib>
-
 WindowsMidiDriver::WindowsMidiDriver() :
 	LowLevelMidiDriver(), dev_num(-1), midi_port(0),
 	_streamBuffer(0), _streamBufferSize(0), _streamEvent(0) {
