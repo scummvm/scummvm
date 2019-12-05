@@ -27,7 +27,6 @@
 namespace Common {
 
 const LanguageDescription g_languages[] = {
-	{    "nz",    "nz", "Chinese", ZH_ANY }, // Generic Chinese (when only one game version exist)
 	{ "zh-cn", "zh_CN", "Chinese (China)", ZH_CNA },
 	{    "zh", "zh_TW", "Chinese (Taiwan)", ZH_TWN },
 	{    "hr", "hr_HR", "Croatian", HR_HRV },
