@@ -95,7 +95,16 @@ public:
 	void decodeBIN(const uint8 *src, uint8 *dst, uint16 inSize);
 	void decodePC98PlanarBitmap(uint8 *srcDstBuffer, uint8 *tmpBuffer, uint16 size = 64000);
 
-	uint8 *_decodeTempBuffer;
+	struct PalCycleData {
+		const int8 *data;
+		uint8 delay;
+	};
+
+	void initPC98PaletteCycle(int paletteIndex, PalCycleData *data);
+	void updatePC98PaletteCycle(int brightness);
+
+	PalCycleData *_activePalCycle;
+	uint8 *_cyclePalette;
 
 	// Amiga specific
 	void loadSpecialAmigaCPS(const char *fileName, int destPage, bool isGraphics);

@@ -36,19 +36,26 @@ namespace Kyra {
 class EoBSeqPlayerCommon {
 public:
 	EoBSeqPlayerCommon(EoBEngine *vm, Screen_EoB *screen);
-	virtual ~EoBSeqPlayerCommon() {}
+	virtual ~EoBSeqPlayerCommon();
 
 protected:
 	void boxMorphTransition(int targetDestX, int targetDestY, int targetFinalX, int targetFinalY, int targetSrcX, int targetSrcY, int targetFinalW, int targetFinalH, int originX1, int originY1, int originW, int originH, int fillColor = -1);
 	void printSubtitle(const char *str, int textmodeX, int textmodeY, int col, int mode = 0);
+	void releaseShapes();
+	void clearTextField();
 
 	const uint8 _fillColor1;
 	const uint8 _fillColor2;
 
+	uint8 **_shapes;
+
 	EoBEngine *_vm;
 	Screen_EoB *_screen;
+	const uint8 _tickLength;
 
 private:
+	virtual void wait(uint32 ticks) { _vm->delay(ticks * _tickLength); }
+	Common::Array<Common::Rect> _textFields;
 	uint8 _textColor;
 };
 
@@ -109,6 +116,48 @@ private:
 	const uint8 *_tvlH;
 };
 
+class EoBPC98FinalePlayer : public EoBSeqPlayerCommon {
+public:
+	EoBPC98FinalePlayer(EoBEngine *vm, Screen_EoB *screen);
+	virtual ~EoBPC98FinalePlayer();
+
+	void start(bool xdt);
+
+private:
+	void beholder(bool xdt);
+	void teleport();
+	void king();
+	void inspection();
+	void congratulation();
+	void credits();
+	void bonus();
+	
+	template<int brStart, int brEnd, int inc> void pc98FadePalette(int palId, uint32 del);
+	void fadeToBlack(int palId, uint32 delay) { pc98FadePalette<0, -16, -1>(palId, delay); }
+	void fadeFromBlack(int palId, uint32 delay) { pc98FadePalette<-15, 1, 1>(palId, delay); }
+	void fadeToWhite(int palId, uint32 delay) { pc98FadePalette<0, 16, 1>(palId, delay); }
+	void fadeFromWhite(int palId, uint32 delay) { pc98FadePalette<15, -1, -1>(palId, delay); }
+
+	void startPaletteCycle(int palId, int style);
+	void stopPaletteCycle();
+	void resetPaletteCycle();
+
+	virtual void wait(uint32 millis);
+
+	const char *const *_strings;
+	const uint8 *_eyesAnimData;
+	const int16 *_handsAnimData;
+	const int16 *_handsAnimData2;
+	const int8 *_handsAnimData3;
+	const uint8 *_creditsStrings;
+	const uint8 *_creditsCharWdth;
+
+	bool _updatePalCycle;
+	Screen_EoB::PalCycleData *_palCycleType1, *_palCycleType2;
+	const uint8 _palCycleDelay;
+};
+
+
 class EoBAmigaFinalePlayer : public EoBSeqPlayerCommon {
 public:
 	EoBAmigaFinalePlayer(EoBEngine *vm, Screen_EoB *screen);
@@ -142,7 +191,14 @@ private:
 
 EoBSeqPlayerCommon::EoBSeqPlayerCommon(EoBEngine *vm, Screen_EoB *screen) : _vm(vm), _screen(screen), _textColor(0xE1),
 	_fillColor1(vm->gameFlags().platform == Common::kPlatformAmiga ? 19 : (vm->gameFlags().platform == Common::kPlatformPC98 ? 0 : 12)),
-	_fillColor2(vm->gameFlags().platform == Common::kPlatformAmiga ? 10 : 157) {
+	_fillColor2(vm->gameFlags().platform == Common::kPlatformAmiga ? 10 : 157), _tickLength(16) {
+	_shapes = new uint8*[64];
+	memset(_shapes, 0, 64 * sizeof(uint8*));
+}
+
+EoBSeqPlayerCommon::~EoBSeqPlayerCommon() {
+	releaseShapes();
+	delete[] _shapes;
 }
 
 void EoBSeqPlayerCommon::boxMorphTransition(int targetDestX, int targetDestY, int targetFinalX, int targetFinalY, int targetSrcX, int targetSrcY, int targetFinalW, int targetFinalH, int originX1, int originY1, int originW, int originH, int fillColor) {
@@ -221,6 +277,9 @@ void EoBSeqPlayerCommon::printSubtitle(const char *str, int textmodeX, int textm
 	Screen::FontId of = _screen->setFont(Screen::FID_SJIS_TEXTMODE_FNT);
 	int cp = _screen->setCurPage(0);
 
+	int x1 = textmodeX << 2;
+	int y1 = textmodeY << 3;
+
 	for (int i = 0; str[i] &&!_vm->shouldQuit() && !_vm->skipFlag(); ) {
 		uint8 c = str[i++];
 		if (c == 13) {
@@ -229,8 +288,11 @@ void EoBSeqPlayerCommon::printSubtitle(const char *str, int textmodeX, int textm
 		} else if (c == 10) {
 			_textColor = str[i++];
 		} else if (c == 7) {
-			_vm->delay(960);
-			_screen->fillRect(0, 160, 319, 199, _fillColor1, 0);
+			wait(120);
+			int x22 = ((textmodeX << 2) + (curX << 3)) + _screen->getFontWidth() - 1;
+			int y22 = (textmodeY << 3) + _screen->getFontHeight() - 1;
+			_textFields.push_back(Common::Rect(x1, y1, x22, y22));
+			clearTextField();
 			curX = 0;
 		}
 
@@ -245,19 +307,39 @@ void EoBSeqPlayerCommon::printSubtitle(const char *str, int textmodeX, int textm
 		}
 
 		if (mode == 0) {
-			_vm->_system->delayMillis(40);
+			wait(5);
 			_screen->updateScreen();
 		} else if (mode == 1) {
-			_vm->delay(40);
+			wait(5);
 			_screen->updateScreen();
 		}
 	}
+
+	int x2 = ((textmodeX << 2) + (curX << 3)) + _screen->getFontWidth() - 1;
+	int y2 = (textmodeY << 3) + _screen->getFontHeight() - 1;
+	_textFields.push_back(Common::Rect(x1, y1, x2, y2));
 
 	if (mode == 2)
 		_screen->updateScreen();
 
 	_screen->setFont(of);
 	_screen->setCurPage(cp);
+}
+void EoBSeqPlayerCommon::releaseShapes() {
+	for (int i = 0; i < 64; ++i) {
+		delete[] _shapes[i];
+		_shapes[i] = 0;
+	}
+}
+void EoBSeqPlayerCommon::clearTextField() {
+	for (Common::Array<Common::Rect>::iterator i = _textFields.begin(); i != _textFields.end(); ++i)
+		_screen->fillRect(i->left, i->top, i->right, i->bottom, 0);
+	_textFields.clear();
+
+	if (_vm->shouldQuit() || _vm->skipFlag())
+		_screen->clearPage(0);
+
+	_screen->updateScreen();
 }
 
 EoBIntroPlayer::EoBIntroPlayer(EoBEngine *vm, Screen_EoB *screen) : EoBSeqPlayerCommon(vm, screen) {
@@ -1105,7 +1187,7 @@ void EoBIntroPlayer::tunnel() {
 
 	_screen->setCurPage(0);
 	_screen->updateScreen();
-	_vm->delay((_vm->gameFlags().platform == Common::kPlatformPC98 ? 130 : 50) * _vm->_tickLength);
+	_vm->delay(50 * _vm->_tickLength);
 }
 
 void EoBIntroPlayer::loadAndSetPalette(const char *dosPaletteFile, int pc98PaletteID) {
@@ -1206,6 +1288,478 @@ void EoBIntroPlayer::whirlTransition() {
 	}
 }
 
+EoBPC98FinalePlayer::EoBPC98FinalePlayer(EoBEngine *vm, Screen_EoB *screen) : EoBSeqPlayerCommon(vm, screen), _palCycleDelay(16) {
+	int temp = 0;
+	_strings = _vm->staticres()->loadStrings(kEoB1FinaleStrings, temp);
+	_eyesAnimData = _vm->staticres()->loadRawData(kEoB1FinaleEyesAnim, temp);
+	_handsAnimData = (const int16*)_vm->staticres()->loadRawDataBe16(kEoB1FinaleHandsAnim, temp);
+	_handsAnimData2 = (const int16*)_vm->staticres()->loadRawDataBe16(kEoB1FinaleHandsAnim2, temp);
+	_handsAnimData3 = (const int8*)_vm->staticres()->loadRawData(kEoB1FinaleHandsAnim3, temp);
+	_creditsStrings = _vm->staticres()->loadRawData(kEoB1CreditsStrings, temp);
+	_creditsCharWdth = _vm->staticres()->loadRawData(kEoB1CreditsCharWdth, temp);
+
+	_palCycleType1 = new Screen_EoB::PalCycleData[48];
+	_palCycleType2 = new Screen_EoB::PalCycleData[48];
+	_updatePalCycle = false;
+	
+	resetPaletteCycle();
+}
+
+EoBPC98FinalePlayer::~EoBPC98FinalePlayer() {
+	delete[] _palCycleType1;
+	delete[] _palCycleType2;
+}
+
+void EoBPC98FinalePlayer::start(bool xdt) {
+	uint32 tick = _vm->_system->getMillis() + 60 * _vm->_tickLength;
+	_screen->hideMouse();
+
+	_screen->fadeToBlack();
+	_screen->clearPage(2);
+	_screen->clearPage(0);
+	_screen->setScreenDim(0);
+
+	_vm->delayUntil(tick);
+	_vm->_eventList.clear();
+	_vm->_allowSkip = true;
+
+	_vm->snd_playSong(1);
+
+	beholder(xdt);
+	teleport();
+	king();
+	inspection();
+	congratulation();
+	credits();
+	bonus();
+
+	while (!_vm->skipFlag() && !_vm->shouldQuit()) {
+		_vm->updateInput();
+		_vm->delay(10);
+	}
+
+	_vm->_allowSkip = false;
+	_vm->_eventList.clear();
+
+	_screen->fadeToBlack();
+}
+
+void EoBPC98FinalePlayer::beholder(bool xdt) {
+	if (_vm->shouldQuit() || _vm->skipFlag())
+		return;
+
+	if (xdt) {
+		_screen->loadBitmap("END1.BIN", 3, 5, 0);
+		_screen->convertPage(5, 2, 0);
+		_screen->copyRegion(0, 0, 56, 0, 216, 200, 2, 0, Screen::CR_NO_P_CHECK);
+		startPaletteCycle(5, 0);
+		fadeFromBlack(5, 3);
+		printSubtitle(_strings[0], 8, 24, 225);
+	} else {
+		printSubtitle(_strings[1], 23, 10, 225);
+		printSubtitle(_strings[2], 15, 12, 225);
+		printSubtitle(_strings[3], 27, 14, 225);
+	}
+
+	wait(150);
+	clearTextField();
+	fadeToBlack(5, 3);
+	stopPaletteCycle();
+}
+
+void EoBPC98FinalePlayer::teleport() {
+	if (_vm->shouldQuit() || _vm->skipFlag())
+		return;
+
+	_screen->loadBitmap("END2.BIN", 3, 5, 0);
+	_screen->convertPage(5, 2, 0);
+	_screen->copyRegion(0, 0, 56, 0, 216, 200, 2, 0, Screen::CR_NO_P_CHECK);
+	startPaletteCycle(6, 1);
+	fadeFromBlack(6, 3);
+	printSubtitle(_strings[4], 14, 24, 225);
+	wait(150);
+	fadeToWhite(6, 3);
+	stopPaletteCycle();
+	clearTextField();
+}
+
+void EoBPC98FinalePlayer::king() {
+	if (_vm->shouldQuit() || _vm->skipFlag())
+		return;
+
+	uint32 xylen = 0;
+	uint8 *xydata = _vm->resource()->fileData("xytbl.dat", &xylen);
+	xylen >>= 1;
+	
+	_screen->loadBitmap("KING.BIN", 3, 5, 0);
+	_screen->convertPage(5, 2, 0);
+	_screen->copyRegion(0, 0, 0, 0, 320, 200, 2, 0, Screen::CR_NO_P_CHECK);
+
+	_screen->loadBitmap("KG.BIN", 3, 4, 0);
+	_screen->setCurPage(4);
+
+	_shapes[0] = _screen->encodeShape(32, 0, 8, 128);	
+	for (int i = 0; i < 4; ++i) {
+		_shapes[2 + i] = _screen->encodeShape(i << 3, 0, 8, 80);
+		if (i < 3)
+			_shapes[6 + i] = _screen->encodeShape(i << 3, 80, 8, 120);
+	}
+	_screen->setCurPage(2);
+
+	_screen->drawShape(2, _shapes[0], 0, 0);
+	_screen->drawShape(2, _shapes[2], 0, 48);
+	_screen->copyRegion(0, 0, 128, 16, 64, 128, 2, 0, Screen::CR_NO_P_CHECK);
+	fadeFromWhite(3, 4);
+
+	_screen->loadBitmap("ADVENTUR.BIN", 3, 5, 0);
+	_screen->convertPage(5, 2, 0);
+	_shapes[1] = _screen->encodeShape(8, 0, 8, 64);
+
+	static uint8 xOff[] = { 0, 48, 96, 152 };
+	static uint8 maxW[] = { 48, 48, 56, 48 };
+
+	for (int i = 0; i < 4 && !_vm->skipFlag() && !_vm->shouldQuit(); ++i) {
+		const uint8 *xypos = xydata;
+		uint16 cx = xOff[i];
+		uint32 nextDelay = _vm->_system->getMillis() + 5;
+		for (uint32 ii = 0; ii < xylen && !_vm->skipFlag() && !_vm->shouldQuit(); ++ii) {
+			uint8 x = *xypos++;
+			uint8 y = *xypos++;
+			uint8 col = _screen->getPagePixel(2, cx + x, y);
+			if (!col || maxW[i] <= x)
+				continue;
+			if (col)
+				_screen->setPagePixel(0, cx + x + 64, y + 84, col);
+			if (ii % 48 == 0) {
+				_screen->updateScreen();
+				uint32 cur = _vm->_system->getMillis();
+				if (nextDelay > cur)
+					_vm->_system->delayMillis(nextDelay - cur);
+				nextDelay += 5;
+			}
+		}
+		_screen->updateScreen();
+	}
+
+	printSubtitle(_strings[5], 9, 24, 225);
+	printSubtitle(_strings[6], 18, 24, 225);
+	printSubtitle(_strings[7], 23, 24, 225);
+	printSubtitle(_strings[8], 8, 24, 225);
+
+	wait(60);
+	clearTextField();
+
+	for (int i = 0; i < 7 && !_vm->skipFlag() && !_vm->shouldQuit(); ++i) {
+		uint32 end = _vm->_system->getMillis() + 12 * _tickLength;
+		_screen->fillRect(0, 0, 64, 128, 0, 2);
+		_screen->drawShape(2, _shapes[0], 0, 0);
+		_screen->drawShape(2, _shapes[2 + i], 0, i < 4 ? 48 : 16);
+		_screen->drawShape(2, _shapes[1], 0, 68);
+		_screen->copyRegion(0, 0, 128, 16, 64, 128, 2, 0, Screen::CR_NO_P_CHECK);
+		_screen->updateScreen();
+		_vm->delayUntil(end);
+	}
+
+	wait(150);
+	fadeToBlack(3, 3);
+
+	delete[] xydata;
+	releaseShapes();
+}
+
+void EoBPC98FinalePlayer::inspection() {
+	if (_vm->shouldQuit() || _vm->skipFlag())
+		return;
+
+	_screen->clearPage(0);
+	_screen->setCurPage(4);
+	_screen->loadBitmap("CLB.BIN", 3, 5, 0);
+
+	_shapes[2] = _screen->encodeShape(24, 29, 16, 80);
+	_shapes[1] = _screen->encodeShape(0, 0, 8, 40);
+	_shapes[0] = _screen->encodeShape(0, 40, 12, 120);
+	for (int i = 0; i < 5; ++i)
+		_shapes[3 + i] = _screen->encodeShape(8 + (i << 2), 0, 4, 24);
+
+	_screen->drawShape(2, _shapes[2], 0, 0);
+	_screen->copyRegion(0, 0, 88, 50, 128, 80, 2, 0, Screen::CR_NO_P_CHECK);
+	fadeFromBlack(8, 2);
+	wait(180);
+	fadeToBlack(8, 0);
+
+	_screen->clearPage(0);
+	_screen->clearPage(2);
+	_screen->drawShape(2, _shapes[1], 0, 0);
+	_screen->drawShape(2, _shapes[1], 64, 0, -1, 1);
+	_screen->copyRegion(0, 0, 88, 90, 128, 40, 2, 0, Screen::CR_NO_P_CHECK);
+	fadeFromBlack(7, 0);
+
+	for (const uint8 *e = _eyesAnimData; *e != 100 && !_vm->skipFlag() && !_vm->shouldQuit(); ) {
+		_screen->drawShape(2, _shapes[3 + *e], 16, 8);
+		_screen->drawShape(2, _shapes[3 + *e++], 80, 8, -1, 1);
+		_screen->copyRegion(0, 0, 88, 90, 128, 40, 2, 0, Screen::CR_NO_P_CHECK);
+		_screen->updateScreen();
+		wait(*e++);
+	}
+
+	wait(30);
+	fadeToBlack(7, 1);
+
+	_screen->clearPage(0);
+	_screen->drawShape(2, _shapes[0], 0, 0);
+	_screen->copyRegion(0, 0, 104, 30, 96, 120, 2, 0, Screen::CR_NO_P_CHECK);
+	fadeFromBlack(7, 1);
+	
+	wait(30);
+	
+	printSubtitle(_strings[12], 2, 22, 225);
+	printSubtitle(_strings[13], 18, 22, 225);
+	printSubtitle(_strings[14], 14, 22, 225);
+	printSubtitle(_strings[15], 10, 22, 225);
+	printSubtitle(_strings[16], 3, 22, 225);
+
+	wait(60);
+	clearTextField();
+	fadeToBlack(7, 3);
+	releaseShapes();
+}
+
+void EoBPC98FinalePlayer::congratulation() {
+	if (_vm->shouldQuit() || _vm->skipFlag())
+		return;
+
+	_screen->clearPage(0);
+	_screen->setCurPage(4);
+	_shapes[0] = _screen->encodeShape(12, 24, 12, 64);
+	_shapes[1] = _screen->encodeShape(12, 88, 12, 67);
+	_shapes[2] = _screen->encodeShape(24, 109, 16, 63);
+	fadeFromBlack(7, 0);
+
+	for (int i = 0; _handsAnimData[i] != 777 && !_vm->skipFlag() && !_vm->shouldQuit(); i += 2) {
+		uint32 end = _vm->_system->getMillis() + 60;
+		_screen->fillRect(40, 20, 240, 180, 0, 2);
+		_screen->drawShape(2, _shapes[1], 80 + _handsAnimData2[i], 20 + _handsAnimData2[i + 1]);
+		_screen->drawShape(2, _shapes[0], 80 + _handsAnimData[i], 20 + _handsAnimData[i + 1]);
+		_screen->copyRegion(80, 20, 88, 20, 160, 140, 2, 0, Screen::CR_NO_P_CHECK);
+		_screen->updateScreen();
+		_vm->delayUntil(end);
+	}
+
+	for (int i = 0; i < 32 && !_vm->skipFlag() && !_vm->shouldQuit(); i++) {
+		uint32 end = _vm->_system->getMillis() + 120;
+		_screen->fillRect(40, 20, 240, 180, 0, 2);
+		_screen->drawShape(2, _shapes[2], 80, 60 + _handsAnimData3[i]);
+		_screen->copyRegion(80, 20, 88, 20, 160, 140, 2, 0, Screen::CR_NO_P_CHECK);
+		_screen->updateScreen();
+		_vm->delayUntil(end);
+	}
+
+	fadeToBlack(7, 7);
+	releaseShapes();
+}
+
+void EoBPC98FinalePlayer::credits() {
+	if (_vm->shouldQuit() || _vm->skipFlag())
+		return;
+
+	_screen->clearPage(0);
+	_screen->setCurPage(4);
+	_screen->loadBitmap("NEWTEXT.BIN", 3, 5, 0);
+
+	for (int i = 0; i < 64; ++i)
+		_shapes[i] = _screen->encodeShape((i % 8) << 1, (i / 8) << 4, 2, 16);
+
+	_screen->loadBitmap("CLC-2.BIN", 3, 5, 0);
+	_screen->convertPage(5, 4, 0);
+	_screen->copyRegion(0, 0, 88, 10, 128, 80, 4, 0, Screen::CR_NO_P_CHECK);
+	fadeFromBlack(9, 2);
+
+	_screen->setCurPage(2);
+	_screen->clearPage(2);
+	int x = 50;
+	int y = 100;
+	bool skipPageReset = false;
+
+	for (const uint8 *pos = _creditsStrings; *pos && !_vm->skipFlag() && !_vm->shouldQuit(); ++pos) {
+		switch (*pos) {
+		case 8:
+			x = 50;
+			y += 8;
+			if (y > 183)
+				y = 0;
+			break;
+
+		case 9:
+			x = 100;
+			break;
+
+		case 12:
+			_screen->crossFadeRegion(50, 100, 50, 100, 200, 17, 2, 0);
+			_screen->fillRect(50, 100, 249, 116, 0, 2);
+			_screen->crossFadeRegion(50, 125, 50, 125, 230, 51, 2, 0);
+			_screen->fillRect(50, 125, 279, 175, 0, 2);
+			if (!skipPageReset) {
+				wait(360);
+				_screen->crossFadeRegion(50, 100, 50, 100, 236, 85, 2, 0);
+				_screen->fillRect(50, 100, 285, 184, 0, 2);
+				wait(60);
+				x = 50;
+				y = 100;
+			}
+			break;
+
+		case 13:
+			x = 50;
+			y += 17;
+			if (y > 183)
+				y = 0;
+			break;
+
+		case 32:
+			x += 12;
+			break;
+
+		case 64:
+			skipPageReset = true;
+			break;
+
+		default:
+			if (*pos >= 65) {
+				_screen->drawShape(2, _shapes[*pos - 65], x, y);
+				x += _creditsCharWdth[*pos - 65];
+			}
+			break;
+		}
+	}
+
+	wait(120);
+	_screen->copyRegion(128, 0, 88, 10, 128, 80, 4, 0, Screen::CR_NO_P_CHECK);
+	_screen->updateScreen();
+	wait(20);
+	_screen->copyRegion(0, 88, 88, 10, 128, 80, 4, 0, Screen::CR_NO_P_CHECK);
+	_screen->updateScreen();
+
+	releaseShapes();
+}
+
+void EoBPC98FinalePlayer::bonus() {
+	if (_vm->shouldQuit() || _vm->skipFlag())
+		return;
+
+	wait(300);
+	if (!_vm->checkScriptFlags(0x1FFE))
+		return;
+
+	fadeToBlack(9, 3);
+	_screen->setCurPage(0);
+	_screen->clearCurPage();
+	_vm->gui_drawBox(40, 30, 241, 151, _vm->guiSettings()->colors.frame1, _vm->guiSettings()->colors.frame2, _vm->guiSettings()->colors.fill);
+	_screen->printShadedText(_strings[9], 132, 40, _vm->guiSettings()->colors.guiColorWhite, 0, 0);
+	_screen->printShadedText(_strings[10], 72, 52, _vm->guiSettings()->colors.guiColorWhite, 0, 0);
+	_screen->printShadedText(_strings[11], 120, 70, _vm->guiSettings()->colors.guiColorWhite, 0, 0);
+	_screen->printShadedText(_vm->_finBonusStrings[0], 72, 82, _vm->guiSettings()->colors.guiColorWhite, 0, 0);
+
+	int cnt = 0;
+	for (int i = 0; i < 6; i++) {
+		if (_vm->_characters[i].flags & 1) {
+			_screen->printShadedText(_vm->_characters[i].name, 78 + (cnt / 3) * 90, 104 + (cnt % 3) * 15, _vm->guiSettings()->colors.guiColorLightRed, 0, 0);
+			cnt++;
+		}
+	}
+
+	uint32 password = 0;
+	for (int i = 0; i < 6; i++) {
+		if (!(_vm->_characters[i].flags & 1))
+			continue;
+
+		int len = strlen(_vm->_characters[i].name);
+		for (int ii = 0; ii < len; ii++) {
+			uint32 c = _vm->_characters[i].name[ii];
+			password += (c * c);
+		}
+	}
+
+	_screen->printShadedText(Common::String::format(_vm->_finBonusStrings[2], password).c_str(), 120, 156, _vm->guiSettings()->colors.guiColorWhite, 0, 0);
+	fadeFromBlack(0, 3);
+}
+
+template<int brStart, int brEnd, int brInc> void EoBPC98FinalePlayer::pc98FadePalette(int palId, uint32 del) {
+	if (_vm->gameFlags().platform != Common::kPlatformPC98)
+		return;
+
+	if (_vm->shouldQuit() || _vm->skipFlag())
+		return;
+
+	del = del * _tickLength;
+
+	for (int i = brStart; i != brEnd && !_vm->skipFlag() && !_vm->shouldQuit(); i += brInc) {
+		uint32 end = _vm->_system->getMillis() + del;
+		if (_updatePalCycle) {			
+			for (uint32 cur = _vm->_system->getMillis(); end > cur; cur = _vm->_system->getMillis()) {
+				_screen->updatePC98PaletteCycle(i);
+				_screen->updateScreen();
+				int step = MIN<int>(end - cur, _palCycleDelay);
+				if (step > 0)
+					_vm->delay(step);
+			}
+		} else {
+			_screen->selectPC98Palette(palId, _screen->getPalette(0), i, true);
+			_screen->updateScreen();
+			_vm->delayUntil(end);
+		}
+	}
+
+	if (_vm->skipFlag() || _vm->shouldQuit()) {
+		_screen->selectPC98Palette(palId, _screen->getPalette(0), brEnd, true);
+		_screen->updateScreen();
+	}
+}
+
+void EoBPC98FinalePlayer::startPaletteCycle(int palId, int style) {
+	if (style == 0)
+		_screen->initPC98PaletteCycle(palId, _palCycleType1);
+	else if (style == 1)
+		_screen->initPC98PaletteCycle(palId, _palCycleType2);
+	
+	if (style == 0 || style == 1)
+		resetPaletteCycle();
+
+	_updatePalCycle = true;
+}
+
+void EoBPC98FinalePlayer::stopPaletteCycle() {
+	_updatePalCycle = false;
+	_screen->initPC98PaletteCycle(0, 0);
+}
+
+void EoBPC98FinalePlayer::resetPaletteCycle() {
+	int temp = 0;
+	const uint8 *data = _vm->staticres()->loadRawData(kEoB1PalCycleData, temp);
+	const uint16 *stl1 = _vm->staticres()->loadRawDataBe16(kEoB1PalCycleStyle1, temp);
+	const uint16 *stl2 = _vm->staticres()->loadRawDataBe16(kEoB1PalCycleStyle2, temp);
+
+	for (int i = 0; i < 48; ++i) {
+		_palCycleType1[i].data = (const int8*)(data + stl1[i * 2]);
+		_palCycleType1[i].delay = stl1[i * 2 + 1];
+		_palCycleType2[i].data = (const int8*)(data + stl2[i * 2]);
+		_palCycleType2[i].delay = stl2[i * 2 + 1];
+	}
+}
+
+void EoBPC98FinalePlayer::wait(uint32 ticks) {
+	uint32 millis = ticks * _tickLength;
+	uint32 end = _vm->_system->getMillis() + millis;
+	for (uint32 cur = _vm->_system->getMillis(); end > cur && !_vm->skipFlag() && !_vm->shouldQuit(); cur = _vm->_system->getMillis()) {
+		if (_updatePalCycle) {
+			_screen->updatePC98PaletteCycle(0);
+			_screen->updateScreen();
+		}
+		int step = MIN<int>(end - cur, _palCycleDelay);
+		if (step > 0)
+			_vm->delay(step);
+	}
+}
+
 EoBAmigaFinalePlayer::EoBAmigaFinalePlayer(EoBEngine *vm, Screen_EoB *screen) : EoBSeqPlayerCommon(vm, screen) {
 	_animCurFrame = 0;
 	int size = 0;
@@ -1248,7 +1802,7 @@ void EoBAmigaFinalePlayer::start() {
 	_vm->_eventList.clear();
 	_vm->_allowSkip = true;
 
-	_vm->sound()->playTrack(0);
+	_vm->snd_playSong(0);
 
 	entry();
 	delivery();
@@ -1724,6 +2278,11 @@ void EoBEngine::seq_playIntro(int part) {
 }
 
 void EoBEngine::seq_playFinale() {
+	if (_flags.platform == Common::kPlatformPC98) {
+		EoBPC98FinalePlayer(this, _screen).start(_xdth);
+		return;
+	} 
+
 	Common::SeekableReadStream *s = _res->createReadStream("TEXT.DAT");
 	_screen->loadFileDataToPage(s, 5, 32000);
 	delete s;
@@ -1768,6 +2327,7 @@ void EoBEngine::seq_playFinale() {
 void EoBEngine::seq_xdeath() {
 	uint8 *shapes1[5];
 	uint8 *shapes2;
+	_xdth = true;
 
 	_screen->loadShapeSetBitmap("XDEATH2", 5, 3);
 	for (int i = 0; i < 4; i++)

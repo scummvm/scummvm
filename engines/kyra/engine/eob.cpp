@@ -46,6 +46,7 @@ EoBEngine::EoBEngine(OSystem *system, const GameFlags &flags)
 	_dscDoorCoordsExt = 0;
 	_useMainMenuGUISettings = false;
 	_ttlCfg = 0;
+	_xdth = false;
 }
 
 EoBEngine::~EoBEngine() {

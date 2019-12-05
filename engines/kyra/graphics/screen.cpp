@@ -178,6 +178,7 @@ bool Screen::init() {
 			}
 
 			if (_vm->game() == GI_EOB2 && _vm->gameFlags().platform == Common::kPlatformFMTowns) {
+				assert(_fonts[FID_SJIS_FNT]);
 				_fonts[FID_SJIS_FNT]->setStyle(Font::kFSFat);
 				_fonts[FID_SJIS_LARGE_FNT] = new SJISFontLarge(font);
 			}

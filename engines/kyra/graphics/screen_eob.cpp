@@ -63,8 +63,9 @@ Screen_EoB::Screen_EoB(EoBCoreEngine *vm, OSystem *system) : Screen(vm, system, 
 	_cgaMappingDefault = 0;
 	_cgaDitheringTables[0] = _cgaDitheringTables[1] = 0;
 	_useHiResEGADithering = _dualPaletteMode = false;
-	_decodeTempBuffer = 0;
+	_cyclePalette = 0;
 	_cpsFilePattern = "%s.";
+	_activePalCycle = 0;
 	for (int i = 0; i < 10; ++i)
 		_palette16c[i] = 0;	
 }
@@ -78,7 +79,7 @@ Screen_EoB::~Screen_EoB() {
 	delete[] _egaDitheringTempPage;
 	delete[] _cgaDitheringTables[0];
 	delete[] _cgaDitheringTables[1];
-	delete[] _decodeTempBuffer;
+	delete[] _cyclePalette;
 }
 
 bool Screen_EoB::init() {
@@ -125,7 +126,8 @@ bool Screen_EoB::init() {
 		int ci = 0;
 		if (_vm->game() == GI_EOB1) {
 			if (_vm->gameFlags().platform == Common::kPlatformPC98) {
-				_decodeTempBuffer = new uint8[2048];
+				_cyclePalette = new uint8[48];
+				memset(_cyclePalette, 0, 48);
 				ci = 3;
 			} else if (_renderMode == Common::kRenderEGA || _renderMode == Common::kRenderCGA) {
 				ci = 1;
@@ -246,8 +248,10 @@ void Screen_EoB::printShadedText(const char *string, int x, int y, int col1, int
 		fillRect(x, y, x + getTextWidth(string) - 1, y + getFontHeight() - 1, col2);
 	}
 
-	if (_vm->gameFlags().use16ColorMode)
+	if (_vm->gameFlags().use16ColorMode) {
+		assert(_fonts[_currentFont]);
 		_fonts[_currentFont]->setStyle(Font::kFSLeftShadow);
+	}
 
 	printText(string, x, y, col1, 0);
 
@@ -268,7 +272,7 @@ void Screen_EoB::loadBitmap(const char *filename, int tempPage, int dstPage, Pal
 		str->skip(2);
 		uint16 imgSize = str->readUint16LE();
 		assert(imgSize == str->size() - 4);
-		uint8 *buf = new uint8[SCREEN_W * SCREEN_H];
+		uint8 *buf = new uint8[MAX<uint16>(imgSize, SCREEN_W * SCREEN_H)];
 		str->read(buf, imgSize);
 		delete str;
 
@@ -1594,7 +1598,7 @@ void Screen_EoB::selectPC98Palette(int paletteIndex, Palette &dest, int brightne
 
 void Screen_EoB::decodeBIN(const uint8 *src, uint8 *dst, uint16 inSize) {
 	const uint8 *end = src + inSize;
-	memset(_decodeTempBuffer, 0, 2048);
+	memset(_dsTempPage, 0, 2048);
 	int tmpDstOffs = 0;
 
 	while (src < end) {
@@ -1608,12 +1612,12 @@ void Screen_EoB::decodeBIN(const uint8 *src, uint8 *dst, uint16 inSize) {
 			const uint8 *tmpSrc2 = dst;
 
 			for (int len2 = len; len2; len2--) {
-				*dst++ = _decodeTempBuffer[tmpSrcOffs++];
+				*dst++ = _dsTempPage[tmpSrcOffs++];
 				tmpSrcOffs &= 0x7FF;
 			}
 
 			while (len--) {
-				_decodeTempBuffer[tmpDstOffs++] = *tmpSrc2++;
+				_dsTempPage[tmpDstOffs++] = *tmpSrc2++;
 				tmpDstOffs &= 0x7FF;
 			}
 
@@ -1626,14 +1630,14 @@ void Screen_EoB::decodeBIN(const uint8 *src, uint8 *dst, uint16 inSize) {
 			int planes = ((code >> 3) & 3) + 1;
 			while (len--) {
 				for (int i = 0; i < planes; ++i) {
-					*dst++ = _decodeTempBuffer[tmpDstOffs++] = src[i];
+					*dst++ = _dsTempPage[tmpDstOffs++] = src[i];
 					tmpDstOffs &= 0x7FF;
 				}
 			}
 			src += planes;
 		} else {
 			for (int len = (code & 0x3F) + 1; len; len--) {
-				*dst++ = _decodeTempBuffer[tmpDstOffs++] = *src++;
+				*dst++ = _dsTempPage[tmpDstOffs++] = *src++;
 				tmpDstOffs &= 0x7FF;
 			}
 		}
@@ -1662,6 +1666,44 @@ void Screen_EoB::decodePC98PlanarBitmap(uint8 *srcDstBuffer, uint8 *tmpBuffer, u
 		dst1 += 4;
 		dst2 += 4;
 	}
+}
+
+void Screen_EoB::initPC98PaletteCycle(int paletteIndex, PalCycleData *data) {
+	if (!_use16ColorMode || !_cyclePalette)
+		return;
+
+	_activePalCycle = data;
+
+	if (data)
+		memcpy(_cyclePalette, _palette16c[paletteIndex], 48);
+	else
+		memset(_cyclePalette, 0, 48);
+}
+
+void Screen_EoB::updatePC98PaletteCycle(int brightness) {
+	if (_activePalCycle) {
+		for (int i = 0; i < 48; ++i) {
+			if (--_activePalCycle[i].delay)
+				continue;
+			for (int8 in = 32; in == 32; ) {
+				in = *_activePalCycle[i].data++;
+				if (in < 16 && in > -16) {
+					_cyclePalette[i] += in;
+					_activePalCycle[i].delay = *_activePalCycle[i].data++;
+				} else if (in < 32) {
+					_cyclePalette[i] = in - 16;
+					_activePalCycle[i].delay = *_activePalCycle[i].data++;
+				} else if (in == 32)
+					_activePalCycle[i].data += READ_BE_INT16(_activePalCycle[i].data);
+			}
+		}
+	}
+
+	uint8 pal[48];
+	for (int i = 0; i < 48; ++i)
+		pal[i] = CLIP<int>(_cyclePalette[i] + brightness, 0, 15);
+	loadPalette(pal, *_palettes[0], 48);
+	setScreenPalette(*_palettes[0]);
 }
 
 static uint32 _decodeFrameAmiga_x = 0;

@@ -425,7 +425,7 @@ Common::Error EoBCoreEngine::init() {
 	assert(_sound);
 	_sound->init();
 
-	// This if for EOB1 / PC98 only
+	// This if for EOB1 PC-98 only
 	_sound->loadSfxFile("EFECT.OBJ");
 
 	// Setup volume settings (and read in all ConfigManager settings)
@@ -450,7 +450,7 @@ Common::Error EoBCoreEngine::init() {
 	assert(_inf);
 	_debugger = new Debugger_EoB(this);
 	assert(_debugger);
-
+	
 	if (_flags.platform == Common::kPlatformAmiga) {
 		if (_res->exists("EOBF6.FONT"))
 			_screen->loadFont(Screen::FID_6_FNT, "EOBF6.FONT");
