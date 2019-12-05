@@ -21,17 +21,12 @@
  */
 
 #include "ultima8/misc/pent_include.h"
-#include <cstring>
-
-#ifndef PENTAGRAM_IN_EXULT
-#include "ultima8/filesys/idata_source.h"
-#endif
-
-#include "LowLevelMidiDriver.h"
-#include "XMidiSequence.h"
+#include "ultima8/audio/midi/low_level_midi_driver.h"
+#include "ultima8/audio/midi/xmidi_sequence.h"
 #include "ultima8/audio/midi/xmidi_file.h"
-#include "XMidiEvent.h"
+#include "ultima8/audio/midi/xmidi_event.h"
 #include "ultima8/audio/midi/xmidi_event_list.h"
+#include "ultima8/filesys/idata_source.h"
 
 namespace Ultima8 {
 
@@ -149,9 +144,23 @@ static inline int ConvBaseToActual(uint32 address_base) {
 using std::string;
 using std::endl;
 
-LowLevelMidiDriver::LowLevelMidiDriver() :
-	MidiDriver(), mutex(0), cbmutex(0), cond(0),
-	global_volume(255), thread(0) {
+void SDLCond::setup() {
+	// TODO
+}
+
+void SDLCond::clear() {
+	//		SDL_DestroyCond(cond);
+}
+void SDLCond::signal() {
+	// TODO
+}
+
+int SDLCond::waitTimeout(Common::Mutex *mutex, uint32 ms) {
+	// TODO
+	return 0;
+}
+
+LowLevelMidiDriver::LowLevelMidiDriver() : MidiDriver(), global_volume(255), thread(0) {
 }
 
 LowLevelMidiDriver::~LowLevelMidiDriver() {
@@ -159,7 +168,9 @@ LowLevelMidiDriver::~LowLevelMidiDriver() {
 	if (initialized) {
 		perr << "Warning: Destructing LowLevelMidiDriver and destroyMidiDriver() wasn't called!" << std::endl;
 		//destroyMidiDriver();
+#ifdef TODO
 		if (thread) SDL_KillThread(thread);
+#endif
 	}
 	thread = 0;
 }
@@ -176,16 +187,17 @@ int LowLevelMidiDriver::initMidiDriver(uint32 samp_rate, bool is_stereo) {
 
 	// Reset the current stream states
 	std::memset(sequences, 0, sizeof(XMidiSequence *) * LLMD_NUM_SEQ);
-	std::memset(chan_locks, -1, sizeof(int32) * 16);
-	std::memset(chan_map, -1, sizeof(int32) * LLMD_NUM_SEQ * 16);
+	std::memset(chan_locks, (byte)-1, sizeof(int32) * 16);
+	std::memset(chan_map, (byte)-1, sizeof(int32) * LLMD_NUM_SEQ * 16);
 	for (int i = 0; i < LLMD_NUM_SEQ; i++) {
 		playing[i] = false;
 		callback_data[i] = -1;
 	}
 
-	mutex = SDL_CreateMutex();
-	cbmutex = SDL_CreateMutex();
-	cond = SDL_CreateCond();
+//	mutex = SDL_CreateMutex();
+//	cbmutex = SDL_CreateMutex();
+	_cond.setup();
+
 	thread = 0;
 	sample_rate = samp_rate;
 	stereo = is_stereo;
@@ -195,7 +207,7 @@ int LowLevelMidiDriver::initMidiDriver(uint32 samp_rate, bool is_stereo) {
 	// Zero the memory
 	std::memset(mt32_patch_banks, 0, sizeof(mt32_patch_banks[0]) * 128);
 	std::memset(mt32_timbre_banks, 0, sizeof(mt32_timbre_banks[0]) * 128);
-	std::memset(mt32_timbre_used, -1, sizeof(mt32_timbre_used[0]) * 64);
+	std::memset(mt32_timbre_used, (byte)-1, sizeof(mt32_timbre_used[0]) * 64);
 	std::memset(mt32_bank_sel, 0, sizeof(mt32_bank_sel[0])*LLMD_NUM_SEQ);
 	std::memset(mt32_patch_bank_sel, 0, sizeof(mt32_patch_bank_sel[0]) * 128);
 	std::memset(mt32_rhythm_bank, 0, sizeof(mt32_rhythm_bank[0]) * 128);
@@ -207,13 +219,8 @@ int LowLevelMidiDriver::initMidiDriver(uint32 samp_rate, bool is_stereo) {
 
 	if (code) {
 		perr << "Failed to initialize midi player (code: " << code << ")" << endl;
-		SDL_DestroyMutex(mutex);
-		SDL_DestroyMutex(cbmutex);
-		SDL_DestroyCond(cond);
+		_cond.clear();
 		thread = 0;
-		mutex = 0;
-		cbmutex = 0;
-		cond = 0;
 	} else
 		initialized = true;
 
@@ -230,13 +237,11 @@ void LowLevelMidiDriver::destroyMidiDriver() {
 
 	initialized = false;
 
-	SDL_DestroyMutex(mutex);
-	SDL_DestroyMutex(cbmutex);
+#ifdef TODO
 	SDL_DestroyCond(cond);
-	cbmutex = 0;
-	mutex = 0;
+#endif
 	thread = 0;
-	cond = 0;
+	_cond.clear();
 
 	giveinfo();
 }
@@ -366,9 +371,8 @@ void LowLevelMidiDriver::unpauseSequence(int seq_num) {
 uint32 LowLevelMidiDriver::getSequenceCallbackData(int seq_num) {
 	if (seq_num >= LLMD_NUM_SEQ || seq_num < 0) return 0;
 
-	SDL_mutexP(cbmutex);
+	Common::StackLock stackLock(_cbMutex);
 	uint32 ret = callback_data[seq_num];
-	SDL_mutexV(cbmutex);
 
 	return ret;
 }
@@ -388,7 +392,7 @@ int32 LowLevelMidiDriver::peekComMessageType() {
 void LowLevelMidiDriver::sendComMessage(ComMessage &message) {
 	lockComMessage();
 	messages.push(message);
-	SDL_CondSignal(cond);
+	_cond.signal();
 	unlockComMessage();
 }
 
@@ -397,11 +401,11 @@ void LowLevelMidiDriver::waitTillNoComMessages() {
 }
 
 void LowLevelMidiDriver::lockComMessage() {
-	SDL_mutexP(mutex);
+	_mutex.lock();
 }
 
 void LowLevelMidiDriver::unlockComMessage() {
-	SDL_mutexV(mutex);
+	_mutex.unlock();
 }
 
 //
@@ -415,8 +419,9 @@ int LowLevelMidiDriver::initThreadedSynth() {
 	ComMessage message(LLMD_MSG_THREAD_INIT);
 	sendComMessage(message);
 
+#ifdef TODO
 	thread = SDL_CreateThread(threadMain_Static, static_cast<void *>(this));
-
+#endif
 	while (peekComMessageType() == LLMD_MSG_THREAD_INIT)
 		yield();
 
@@ -446,7 +451,7 @@ void LowLevelMidiDriver::destroyThreadedSynth() {
 		// Wait 1 MS before trying again
 		if (peekComMessageType() != 0) {
 			yield();
-			SDL_Delay(1);
+			g_system->delayMillis(1);
 		} else break;
 
 		count++;
@@ -455,7 +460,9 @@ void LowLevelMidiDriver::destroyThreadedSynth() {
 	// We waited a while and it still didn't terminate
 	if (count == 400 && peekComMessageType() != 0) {
 		perr << "MidiPlayer Thread failed to stop in time. Killing it." << std::endl;
+#ifdef TODO
 		SDL_KillThread(thread);
+#endif
 	}
 
 	lockComMessage();
@@ -532,7 +539,8 @@ int LowLevelMidiDriver::threadMain() {
 			lockComMessage();
 			if (messages.empty()) {
 				//printf("Waiting %i ms\n", time_till_next-2);
-				SDL_CondWaitTimeout(cond, mutex, time_till_next - 2);
+				_cond.waitTimeout(&_mutex, time_till_next - 2);
+				
 				//printf("Finished Waiting\n");
 			} else {
 				//printf("Messages in queue, not waiting\n");
@@ -545,7 +553,7 @@ int LowLevelMidiDriver::threadMain() {
 	const char exit_display[] = "Poor Poor Avatar... ";
 	sendMT32SystemMessage(display_base, 0, display_mem_size, exit_display);
 	sendMT32SystemMessage(all_dev_reset_base, 0, 1, exit_display);
-	SDL_Delay(40);
+	g_system->delayMillis(40);
 
 	// Close the device
 	close();
@@ -904,7 +912,8 @@ void LowLevelMidiDriver::sequenceSendSysEx(uint16 sequence_id, uint8 status, con
 	// Just send it
 
 	int ticks = g_system->getMillis();
-	if (next_sysex > ticks) SDL_Delay(next_sysex - ticks); // Wait till we think the buffer is empty
+	if (next_sysex > ticks)
+		g_system->delayMillis(next_sysex - ticks); // Wait till we think the buffer is empty
 	send_sysex(status, msg, length);
 	next_sysex = g_system->getMillis() + 40;
 }
@@ -914,9 +923,8 @@ uint32 LowLevelMidiDriver::getTickCount(uint16 sequence_id) {
 }
 
 void LowLevelMidiDriver::handleCallbackTrigger(uint16 sequence_id, uint8 data) {
-	SDL_mutexP(cbmutex);
+	Common::StackLock stackLock(_cbMutex);
 	callback_data[sequence_id] = data;
-	SDL_mutexV(cbmutex);
 }
 
 int LowLevelMidiDriver::protectChannel(uint16 sequence_id, int chan, bool protect) {
@@ -1097,7 +1105,7 @@ void LowLevelMidiDriver::loadTimbreLibrary(IDataSource *ds, TimbreLibraryType ty
 	std::memset(mt32_timbre_banks, 0, sizeof(mt32_timbre_banks[0]) * 128);
 
 	// Mask it out
-	std::memset(mt32_timbre_used, -1, sizeof(mt32_timbre_used[0]) * 64);
+	std::memset(mt32_timbre_used, (byte)-1, sizeof(mt32_timbre_used[0]) * 64);
 
 	// Zero the memory
 	std::memset(mt32_bank_sel, 0, sizeof(mt32_bank_sel[0])*LLMD_NUM_SEQ);
@@ -1313,7 +1321,8 @@ void LowLevelMidiDriver::sendMT32SystemMessage(uint32 address_base, uint16 addre
 	// Just send it
 
 	int ticks = g_system->getMillis();
-	if (next_sysex > ticks) SDL_Delay(next_sysex - ticks);  // Wait till we think the buffer is empty
+	if (next_sysex > ticks)
+		g_system->delayMillis(next_sysex - ticks);  // Wait till we think the buffer is empty
 	send_sysex(0xF0, sysex_buffer, sysex_data_start + len + 2);
 	next_sysex = g_system->getMillis() + 40;
 }

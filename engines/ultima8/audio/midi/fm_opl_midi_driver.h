@@ -25,7 +25,7 @@
 
 #ifdef USE_FMOPL_MIDI
 
-#include "LowLevelMidiDriver.h"
+#include "ultima8/audio/midi/low_level_midi_driver.h"
 #include "fmopl.h"
 
 namespace Ultima8 {

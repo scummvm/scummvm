@@ -23,12 +23,10 @@
 #ifndef ULTIMA8_AUDIO_MIDI_LOWLEVELMIDIDRIVER_H
 #define ULTIMA8_AUDIO_MIDI_LOWLEVELMIDIDRIVER_H
 
-#include "ultima8/audio/midi/ultima8/audio/midi/midi_driver.h"
-#include "XMidiSequenceHandler.h"
-
-#include <queue>
-#include <SDL.h>
-#include <SDL_thread.h>
+#include "ultima8/audio/midi/midi_driver.h"
+#include "ultima8/audio/midi/xmidi_sequence_handler.h"
+#include "ultima8/std/containers.h"
+#include "common/mutex.h"
 
 namespace Ultima8 {
 
@@ -38,6 +36,14 @@ class XMidiSequence;
 //! Specifies the max number of simultaneous playing sequences supported
 //! \note Only 2 simultaneous playing sequences required for Ultima 8
 #define LLMD_NUM_SEQ    4
+
+class SDLCond {
+public:
+	void setup();
+	void clear();
+	void signal();
+	int waitTimeout(Common::Mutex *mutex, uint32 ms);
+};
 
 //! An Abstract implementation of MidiDriver for Simple Low Level support of Midi playback
 //!
@@ -104,7 +110,8 @@ protected:
 
 	//! Yield execution of the current thread
 	virtual void        yield() {
-		SDL_Delay(1);
+		// TODO
+		warning("SDL_Delay(1)");
 	}
 
 private:
@@ -159,9 +166,9 @@ private:
 
 	// Communications
 	std::queue<ComMessage>  messages;
-	SDL_mutex               *mutex;
-	SDL_mutex               *cbmutex;
-	SDL_cond                *cond;
+	Common::Mutex           _mutex;
+	Common::Mutex           _cbMutex;
+	SDLCond                _cond;
 	int32                   peekComMessageType();
 	void                    sendComMessage(ComMessage &message);
 	void                    waitTillNoComMessages();
@@ -186,7 +193,11 @@ private:
 	uint32                  samples_per_iteration;
 
 	// Thread Based Only Data
+#ifdef TODO
 	SDL_Thread              *thread;
+#else
+	void *thread;
+#endif
 
 	// Timbre Banks
 	struct MT32Timbre {

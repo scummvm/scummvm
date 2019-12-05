@@ -21,7 +21,7 @@
  */
 
 #include "ultima8/misc/pent_include.h"
-#include "TimidityMidiDriver.h"
+#include "ultima8/audio/midi/timidity_midi_driver.h"
 
 #ifdef USE_TIMIDITY_MIDI
 
@@ -31,7 +31,7 @@
 #include "ultima8/games/game_data.h"
 #include "ultima8/audio/music_flex.h"
 #include "ultima8/audio/midi/xmidi_file.h"
-#include "XMidiEvent.h"
+#include "ultima8/audio/midi/xmidi_event.h"
 #include "ultima8/audio/midi/xmidi_event_list.h"
 #endif
 

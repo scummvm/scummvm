@@ -26,7 +26,7 @@
 #include "ultima8/audio/music_flex.h"
 #include "ultima8/audio/midi/midi_driver.h"
 #include "ultima8/audio/midi/xmidi_file.h"
-#include "ultima8/audio/midi/xmidi_event_llst.h"
+#include "ultima8/audio/midi/xmidi_event_list.h"
 #include "ultima8/audio/audio_mixer.h"
 
 #include "ultima8/kernel/object_manager.h"

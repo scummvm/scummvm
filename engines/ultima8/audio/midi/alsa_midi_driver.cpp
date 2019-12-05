@@ -21,7 +21,7 @@
  */
 
 #include "ultima8/misc/pent_include.h"
-#include "ALSAMidiDriver.h"
+#include "ultima8/audio/midi/alsa_midi_driver.h"
 
 #ifdef USE_ALSA_MIDI
 

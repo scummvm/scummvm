@@ -26,7 +26,7 @@
 #if (defined(UNIX) || defined(__unix__))
 #define USE_UNIX_SEQ_MIDI
 
-#include "LowLevelMidiDriver.h"
+#include "ultima8/audio/midi/low_level_midi_driver.h"
 #include "ultima8/std/string.h"
 
 namespace Ultima8 {

@@ -25,7 +25,7 @@
 
 #ifdef USE_TIMIDITY_MIDI
 
-#include "LowLevelMidiDriver.h"
+#include "ultima8/audio/midi/low_level_midi_driver.h"
 
 namespace Ultima8 {
 

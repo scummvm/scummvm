@@ -21,7 +21,7 @@
  */
 
 #include "ultima8/misc/pent_include.h"
-#include "XMidiEvent.h"
+#include "ultima8/audio/midi/xmidi_event.h"
 #include "ultima8/audio/midi/xmidi_event_list.h"
 
 #ifdef PENTAGRAM_IN_EXULT
@@ -38,7 +38,6 @@ using std::atoi;
 using std::memcmp;
 using std::memcpy;
 using std::memset;
-using size_t;
 #endif
 using std::string;
 using std::endl;

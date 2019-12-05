@@ -21,11 +21,11 @@
  */
 
 #include "ultima8/misc/pent_include.h"
-#include "FMOplMidiDriver.h"
+#include "ultima8/audio/midi/fm_opl_midi_driver.h"
 
 #ifdef USE_FMOPL_MIDI
 
-#include "XMidiEvent.h"
+#include "ultima8/audio/midi/xmidi_event.h"
 
 #ifdef PENTAGRAM_IN_EXULT
 #include "databuf.h"

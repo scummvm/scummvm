@@ -26,7 +26,7 @@
 #if defined(WIN32) && !defined(UNDER_CE)
 #define USE_WINDOWS_MIDI
 
-#include "LowLevelMidiDriver.h"
+#include "ultima8/audio/midi/low_level_midi_driver.h"
 
 // Slight hack here. Uncomment it to enable the ability to use
 // both A and B devices on an SB Live to distribute the notes

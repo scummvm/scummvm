@@ -26,7 +26,7 @@
 */
 
 #include "ultima8/misc/pent_include.h"
-#include "UnixSeqMidiDriver.h"
+#include "ultima8/audio/midi/unix_seq_midi_driver.h"
 
 #ifdef USE_UNIX_SEQ_MIDI
 
