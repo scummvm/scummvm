@@ -33,6 +33,7 @@ class String;
  * List of game language.
  */
 enum Language {
+	ZH_ANY,     // Generic Chinese (when only one game version exist)
 	ZH_CNA,
 	ZH_TWN,
 	HR_HRV,
