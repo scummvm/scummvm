@@ -27,6 +27,7 @@ Copyright (C) 1999-2004 Free Software Foundation, Inc.
 
 #include "ultima8/misc/encoding.h"
 
+namespace Ultima8 {
 namespace Pentagram {
 
 // U8's encoding to unicode
@@ -1440,4 +1441,5 @@ uint32 shiftjis_to_unicode(uint16 sjis) {
 	return val;
 }
 
-}
+} // End of namespace Pentagram
+} // End of namespace Ultima8

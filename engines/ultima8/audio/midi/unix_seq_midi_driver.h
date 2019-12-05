@@ -23,6 +23,7 @@
 #ifndef ULTIMA8_AUDIO_MIDI_UNIXSEQMIDIDRIVER_H
 #define ULTIMA8_AUDIO_MIDI_UNIXSEQMIDIDRIVER_H
 
+#ifdef TODO
 #if (defined(UNIX) || defined(__unix__))
 #define USE_UNIX_SEQ_MIDI
 
@@ -58,6 +59,7 @@ protected:
 
 } // End of namespace Ultima8
 
+#endif
 #endif
 
 #endif
