@@ -22,9 +22,9 @@
 
 #include "ultima8/misc/pent_include.h"
 #include "ultima8/audio/midi/xmidi_file.h"
-#include "XMidiEvent.h"
+#include "ultima8/audio/midi/xmidi_event.h"
 #include "ultima8/audio/midi/xmidi_event_list.h"
-#include "XMidiNoteStack.h"
+#include "ultima8/audio/midi/xmidi_note_stack.h"
 
 #ifdef PENTAGRAM_IN_EXULT
 #include "ultima8/games/game.h"
@@ -42,7 +42,6 @@ using std::atoi;
 using std::memcmp;
 using std::memcpy;
 using std::memset;
-using size_t;
 #endif
 using std::string;
 using std::endl;
@@ -966,8 +965,10 @@ struct uint64 {
 	}
 
 	void printx() {
-		if (high) std::printf("%X%08X", high, low);
-		else printf("%X", low);
+		if (high)
+			debug("%X%08X", high, low);
+		else
+			debug("%X", low);
 	}
 };
 #endif
@@ -1329,7 +1330,7 @@ int XMidiFile::ConvertFiletoList(IDataSource *source, const bool is_xmi, first_s
 		case MIDI_STATUS_SYSEX:
 			if (status == 0xFF) {
 				int pos = source->getPos();
-				uint32  data = source->read1();
+				data = source->read1();
 
 				if (data == 0x2F)                   // End, of track
 					end = 1;
@@ -1412,7 +1413,7 @@ int XMidiFile::ExtractTracksFromXmi(IDataSource *source) {
 	return num;
 }
 
-int XMidiFile::ExtractTracksFromMid(IDataSource *source, const uint32 ppqn, const int num_tracks, const bool type1) {
+int XMidiFile::ExtractTracksFromMid(IDataSource *source, const uint32 ppqn, const int num_tracks_, const bool type1) {
 	int         num = 0;
 	uint32      len = 0;
 	char        buf[32];
@@ -1424,7 +1425,7 @@ int XMidiFile::ExtractTracksFromMid(IDataSource *source, const uint32 ppqn, cons
 	list = NULL;
 	branches = NULL;
 
-	while (source->getPos() < source->getSize() && num != num_tracks) {
+	while (source->getPos() < source->getSize() && num != num_tracks_) {
 		// Read first 4 bytes of name
 		source->read(buf, 4);
 		len = source->read4high();
@@ -1460,7 +1461,7 @@ int XMidiFile::ExtractTracksFromMid(IDataSource *source, const uint32 ppqn, cons
 		AdjustTimings(ppqn);
 		events[0]->events = list;
 		events[0]->branches = branches;
-		return num == num_tracks ? 1 : 0;
+		return num == num_tracks_ ? 1 : 0;
 	}
 
 	// Return how many were converted
@@ -1613,8 +1614,6 @@ int XMidiFile::ExtractTracks(IDataSource *source) {
 
 		if (count != num_tracks) {
 			perr << "Error: unable to extract all (" << num_tracks << ") tracks specified from XMidiFile. Only (" << count << ")" << endl;
-
-			int i = 0;
 
 			for (i = 0; i < num_tracks; i++) {
 				events[i]->decerementCounter();
@@ -1900,8 +1899,6 @@ void XMidiFile::InsertDisplayEvents() {
 	// Display
 	//
 
-	const char *display = ::display;
-	const char *display_beginning = ::display_beginning;
 #ifdef PENTAGRAM_IN_EXULT
 	if (Game::get_game_type() == SERPENT_ISLE) {
 		display = display_serpent_isle;

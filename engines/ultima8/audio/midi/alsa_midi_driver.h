@@ -27,7 +27,7 @@
 
 #include <alsa/asoundlib.h>
 #include "ultima8/std/string.h"
-#include "LowLevelMidiDriver.h"
+#include "ultima8/audio/midi/low_level_midi_driver.h"
 
 namespace Ultima8 {
 

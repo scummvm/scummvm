@@ -13,6 +13,20 @@ MODULE_OBJS := \
 	audio/sonarc_audio_sample.o \
 	audio/sound_flex.o \
 	audio/speech_flex.o \
+	audio/midi/alsa_midi_driver.o \
+	audio/midi/core_audio_midi_driver.o \
+	audio/midi/core_midi_driver.o \
+	audio/midi/fluid_synth_midi_driver.o \
+	audio/midi/fm_opl.o \
+	audio/midi/fm_opl_midi_driver.o \
+	audio/midi/low_level_midi_driver.o \
+	audio/midi/midi_driver.o \
+	audio/midi/timidity_midi_driver.o \
+	audio/midi/unix_seq_midi_driver.o \
+	audio/midi/windows_midi_driver.o \
+	audio/midi/xmidi_event_list.o \
+	audio/midi/xmidi_file.o \
+	audio/midi/xmidi_sequence.o \
 	conf/config_file_manager.o \
 	conf/ini_file.o \
 	conf/setting_manager.o \

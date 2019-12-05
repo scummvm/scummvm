@@ -21,7 +21,7 @@
  */
 
 #include "ultima8/misc/pent_include.h"
-#include "WindowsMidiDriver.h"
+#include "ultima8/audio/midi/windows_midi_driver.h"
 
 #ifdef USE_WINDOWS_MIDI
 

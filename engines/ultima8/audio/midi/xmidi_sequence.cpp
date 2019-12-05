@@ -22,8 +22,8 @@
 
 #include "ultima8/misc/pent_include.h"
 
-#include "XMidiSequence.h"
-#include "XMidiSequenceHandler.h"
+#include "ultima8/audio/midi/xmidi_sequence.h"
+#include "ultima8/audio/midi/xmidi_sequence_handler.h"
 #include "ultima8/audio/midi/xmidi_file.h"
 
 namespace Ultima8 {

@@ -21,7 +21,7 @@
  */
 
 #include "ultima8/misc/pent_include.h"
-#include "FluidSynthMidiDriver.h"
+#include "ultima8/audio/midi/fluid_synth_midi_driver.h"
 
 #ifdef USE_FLUIDSYNTH_MIDI
 

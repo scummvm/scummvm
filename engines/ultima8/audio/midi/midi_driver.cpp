@@ -21,35 +21,19 @@
  */
 
 #include "ultima8/misc/pent_include.h"
-#include "ultima8/audio/midi/ultima8/audio/midi/midi_driver.h"
+#include "ultima8/audio/midi/midi_driver.h"
 #include "ultima8/std/containers.h"
 
-#include "ultima8/audio/midi/ultima8/audio/midi/midi_driver.h"
-#include "WindowsMidiDriver.h"
-#include "CoreMidiDriver.h"
-#include "CoreAudioMidiDriver.h"
-#include "FMOplMidiDriver.h"
-#include "TimidityMidiDriver.h"
-#include "ALSAMidiDriver.h"
-#include "UnixSeqMidiDriver.h"
-#include "FluidSynthMidiDriver.h"
-
-// Legacy Exult Midi Drivers
-#ifdef PENTAGRAM_IN_EXULT
-#include "MT32EmuMidiDriver.h"
-#include "mixer_midiout.h"
-#include "amiga_midi.h"
-#include "be_midi.h"
-#include "forked_player.h"
-#include "KMIDI.h"
-#endif
-
-
-#ifdef PENTAGRAM_IN_EXULT
-#include "Configuration.h"
-#else
+#include "ultima8/audio/midi/midi_driver.h"
+#include "ultima8/audio/midi/windows_midi_driver.h"
+#include "ultima8/audio/midi/core_midi_driver.h"
+#include "ultima8/audio/midi/core_audio_midi_driver.h"
+#include "ultima8/audio/midi/fm_opl_midi_driver.h"
+#include "ultima8/audio/midi/timidity_midi_driver.h"
+#include "ultima8/audio/midi/alsa_midi_driver.h"
+#include "ultima8/audio/midi/unix_seq_midi_driver.h"
+#include "ultima8/audio/midi/fluid_synth_midi_driver.h"
 #include "ultima8/conf/setting_manager.h"
-#endif
 
 namespace Ultima8 {
 

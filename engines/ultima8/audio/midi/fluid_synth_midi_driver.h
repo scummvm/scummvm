@@ -22,7 +22,7 @@
 
 #ifdef USE_FLUIDSYNTH_MIDI
 
-#include "LowLevelMidiDriver.h"
+#include "ultima8/audio/midi/low_level_midi_driver.h"
 #include <fluidsynth.h>
 
 namespace Ultima8 {

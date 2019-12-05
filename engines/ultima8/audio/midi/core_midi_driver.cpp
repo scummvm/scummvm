@@ -21,7 +21,7 @@
  */
 
 #include "ultima8/misc/pent_include.h"
-#include "CoreMidiDriver.h"
+#include "ultima8/audio/midi/core_midi_driver.h"
 
 #ifdef USE_CORE_MIDI
 

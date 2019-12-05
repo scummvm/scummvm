@@ -27,7 +27,7 @@
 #ifdef MACOSX
 #define USE_CORE_AUDIO_MIDI
 
-#include "LowLevelMidiDriver.h"
+#include "ultima8/audio/midi/low_level_midi_driver.h"
 
 #include <AudioToolbox/AUGraph.h>
 #include <CoreServices/CoreServices.h>

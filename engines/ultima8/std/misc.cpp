@@ -31,12 +31,16 @@ void memset(void *data, byte val, size_t count) {
 	::memset(data, val, count);
 }
 
-void strncpy(char *buffer, const char *src, size_t bufSize) {
-	::strncpy(buffer, src, bufSize);
+int memcmp(const void *ptr1, const void *ptr2, size_t num) {
+	return ::memcmp(ptr1, ptr2, num);
 }
 
 void *memcpy(void *destination, const void *source, size_t num) {
 	return ::memcpy(destination, source, num);
+}
+
+void strncpy(char *buffer, const char *src, size_t bufSize) {
+	::strncpy(buffer, src, bufSize);
 }
 
 size_t strlen(const char *str) {
@@ -59,16 +63,16 @@ int strncmp(const char *str1, const char *str2, size_t n) {
 	return ::strncmp(str1, str2, n);
 }
 
-int memcmp(const void *ptr1, const void *ptr2, size_t num) {
-	return ::memcmp(ptr1, ptr2, num);
-}
-
 long int strtol(const char *str, char **endptr, int base) {
 	return ::strtol(str, endptr, base);
 }
 
 int atoi(const char *str) {
 	return ::atoi(str);
+}
+
+double atof(const char *str) {
+	return ::atof(str);
 }
 
 uint rand() {
@@ -85,6 +89,14 @@ const char *strstr(const char *str, const char *substr) {
 
 double pow(double x, double y) {
 	return ::pow(x, y);
+}
+
+void *malloc(size_t size) {
+	return ::malloc(size);
+}
+
+void *calloc(size_t num, size_t size) {
+	return ::calloc(num, size);
 }
 
 void free(void *&p) {

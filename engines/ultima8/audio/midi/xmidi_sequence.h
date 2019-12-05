@@ -23,10 +23,10 @@
 #ifndef ULTIMA8_AUDIO_MIDI_XMIDISEQUENCE_H
 #define ULTIMA8_AUDIO_MIDI_XMIDISEQUENCE_H
 
-#include "XMidiSequenceHandler.h"
-#include "XMidiEvent.h"
+#include "ultima8/audio/midi/xmidi_sequence_handler.h"
+#include "ultima8/audio/midi/xmidi_event.h"
 #include "ultima8/audio/midi/xmidi_event_list.h"
-#include "XMidiNoteStack.h"
+#include "ultima8/audio/midi/xmidi_note_stack.h"
 
 namespace Ultima8 {
 

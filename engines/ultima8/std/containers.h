@@ -27,6 +27,7 @@
 #include "common/array.h"
 #include "common/hashmap.h"
 #include "common/list.h"
+#include "common/queue.h"
 #include "common/stack.h"
 
 namespace Ultima8 {
@@ -123,6 +124,10 @@ public:
 
 template<class VAL>
 class stack : public Common::Stack<VAL> {
+};
+
+template<class T>
+class queue : public Common::Queue<T> {
 };
 
 template <class _Ty, class _Container, class _Pr>
