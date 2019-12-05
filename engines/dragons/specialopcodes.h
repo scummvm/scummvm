@@ -93,6 +93,8 @@ protected:
 	void spcActivatePizzaMakerActor(); // 0x1a
 	void spcDeactivatePizzaMakerActor(); // 0x1b
 	void spcPizzaMakerActorStopWorking(); // 0x1c
+	void spcDragonArrivesAtTournament(); // 0x1d
+	void spcDragonCatapultMiniGame(); // 0x1e
 
 	void spcSetEngineFlag0x20000(); // 0x21
 	void spcClearEngineFlag0x20000(); // 0x22
@@ -181,6 +183,7 @@ protected:
 	void spc82CallResetDataMaybe(); // 0x82
 	void spcStopScreenShakeUpdater(); // 0x83
 
+	void spc87SetScene1To0x17(); //0x87
 	void spc88SetScene1To0x16(); //0x88
 	void spcSetUnkFlag2(); // 0x89
 	void spcClearUnkFlag2(); //0x8a

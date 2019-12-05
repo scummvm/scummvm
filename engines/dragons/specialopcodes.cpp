@@ -38,6 +38,7 @@
 #include "dragons/minigame2.h"
 #include "dragons/minigame3.h"
 #include "dragons/minigame4.h"
+#include "dragons/minigame5.h"
 
 
 namespace Dragons {
@@ -99,6 +100,8 @@ void SpecialOpcodes::initOpcodes() {
 	OPCODE(0x1a, spcActivatePizzaMakerActor);
 	OPCODE(0x1b, spcDeactivatePizzaMakerActor);
 	OPCODE(0x1c, spcPizzaMakerActorStopWorking);
+	OPCODE(0x1d, spcDragonArrivesAtTournament);
+	OPCODE(0x1e, spcDragonCatapultMiniGame);
 
 	OPCODE(0x21, spcSetEngineFlag0x20000);
 	OPCODE(0x22, spcClearEngineFlag0x20000);
@@ -188,6 +191,7 @@ void SpecialOpcodes::initOpcodes() {
 	OPCODE(0x82, spc82CallResetDataMaybe);
 	OPCODE(0x83, spcStopScreenShakeUpdater);
 
+	OPCODE(0x87, spc87SetScene1To0x17);
 	OPCODE(0x88, spc88SetScene1To0x16);
 	OPCODE(0x89, spcSetUnkFlag2);
 	OPCODE(0x8a, spcClearUnkFlag2);
@@ -375,6 +379,17 @@ void SpecialOpcodes::spcDeactivatePizzaMakerActor() {
 void SpecialOpcodes::spcPizzaMakerActorStopWorking() {
 	spcDeactivatePizzaMakerActor();
 	pizzaMakerStopWorking();
+}
+
+void SpecialOpcodes::spcDragonArrivesAtTournament() {
+	_vm->_dragonINIResource->getRecord(0x123)->actor->setFlag(ACTOR_FLAG_400);
+	_vm->_dragonINIResource->getRecord(0x124)->actor->setFlag(ACTOR_FLAG_400);
+	_vm->_dragonINIResource->getRecord(0)->actor->setFlag(ACTOR_FLAG_400);
+}
+
+void SpecialOpcodes::spcDragonCatapultMiniGame() {
+	Minigame5 minigame5(_vm);
+	minigame5.run();
 }
 
 void SpecialOpcodes::spcSetEngineFlag0x20000() {
@@ -784,6 +799,10 @@ void SpecialOpcodes::spcStopScreenShakeUpdater() {
 	//TODO spcStopScreenShakeUpdater
 //	DAT_8006339a = 0;
 //	screenShakeOffset = 0;
+}
+
+void SpecialOpcodes::spc87SetScene1To0x17() {
+	_vm->_sceneId1 = 0x17;
 }
 
 void SpecialOpcodes::spc88SetScene1To0x16() {
