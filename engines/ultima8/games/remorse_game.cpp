@@ -79,10 +79,8 @@ bool RemorseGame::startGame() {
 	// FIXME: fix flags and such
 	Actor *actor = ItemFactory::createActor(1, 0, 0, Item::FLG_IN_NPC_LIST,
 	                                        1, 1, Item::EXT_PERMANENT_NPC, false);
-	if (!actor) {
-		perr << "Couldn't create MainActor. Exiting." << std::endl;
-		exit(-1);
-	}
+	if (!actor)
+		error("Couldn't create MainActor");
 
 	ObjectManager::get_instance()->assignActorObjId(actor, 1);
 

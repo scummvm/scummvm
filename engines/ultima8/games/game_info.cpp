@@ -41,24 +41,24 @@ struct GameLangDesc {
 };
 
 // Keep order the same as the GameType enum!
-static GameTypeDesc gametypes[] = {
+static const GameTypeDesc gametypes[] = {
 	{ "", "" },
 	{ "ultima8", "Ultima VIII: Pagan" },
 	{ "remorse", "Crusader: No Remorse" },
 	{ "regret", "Crusader: No Regret" },
 	{ "pentmenu", "Pentagram Menu" },
-	{ 0, 0 }
+	{ nullptr, nullptr }
 };
 
 // Keep order the same as the GameLanguage enum!
-static GameLangDesc gamelangs[] = {
+static const GameLangDesc gamelangs[] = {
 	{ 0, 0, "unknown" },
 	{ 'e', 'e', "English" },
 	{ 'f', 'f', "French" },
 	{ 'g', 'g', "German" },
 	{ 'e', 'e', "Spanish" },
 	{ 'e', 'j', "Japanese" },
-	{ 0, 0 }
+	{ '\0', '\0', nullptr }
 };
 
 
@@ -181,13 +181,13 @@ void GameInfo::save(ODataSource *ods) {
 	char buf[16];
 	sprintf(buf, "%d", version);
 	std::string ver = buf;
-	std::string md5 = getPrintableMD5();
+	std::string md5Str = getPrintableMD5();
 
-	std::string d = game + "," + lang + "," + ver + "," + md5 + "\n";
+	std::string d = game + "," + lang + "," + ver + "," + md5Str + "\n";
 	ods->write(d.c_str(), d.size());
 }
 
-bool GameInfo::load(IDataSource *ids, uint32 version) {
+bool GameInfo::load(IDataSource *ids, uint32 version_) {
 	std::string s;
 	std::vector<std::string> parts;
 
@@ -217,7 +217,7 @@ bool GameInfo::load(IDataSource *ids, uint32 version) {
 
 	this->version = std::strtol(parts[2].c_str(), 0, 0);
 
-	for (int i = 0; i < 16; ++i) {
+	for (i = 0; i < 16; ++i) {
 		char buf[3];
 		buf[0] = parts[3][2 * i];
 		buf[1] = parts[3][2 * i + 1];
