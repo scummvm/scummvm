@@ -21,6 +21,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include "ultima8/games/game.h"
 
+namespace Ultima8 {
+
 class IDataSource;
 
 class U8Game: public Game {
@@ -53,5 +55,6 @@ protected:
 	std::string getCreditText(IDataSource *ids);
 };
 
+} // End of namespace Ultima8
 
 #endif

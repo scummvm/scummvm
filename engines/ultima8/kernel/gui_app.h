@@ -30,6 +30,7 @@
 #include "ultima8/kernel/core_app.h"
 #include "ultima8/kernel/mouse.h"
 #include "ultima8/kernel/hid_keys.h"
+#include "ultima8/misc/console.h"
 #include "ultima8/misc/p_dynamic_cast.h"
 #include "common/events.h"
 

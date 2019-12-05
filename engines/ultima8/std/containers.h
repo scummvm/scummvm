@@ -39,6 +39,11 @@ public:
 	typedef T reference;
 	typedef const T const_reference;
 
+	vector() : Common::Array<T>() {}
+	vector(size_t size) : Common::Array<T>() {
+		Common::Array<T>::reserve(size);
+	}
+
 	typename Common::Array<T>::iterator erase(typename Common::Array<T>::iterator pos) {
 		return Common::Array<T>::erase(pos);
 	}
@@ -48,7 +53,7 @@ public:
 		bool flag = false;
 		for (typename Common::Array<T>::iterator i = first; i != Common::Array<T>::end() && !flag; ) {
 			flag = i == last;
-			i = erase(i);
+			i = Common::Array<T>::erase(i);
 		}
 
 		return first;

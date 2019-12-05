@@ -45,7 +45,7 @@ MusicProcess *MusicProcess::the_music_process = 0;
 
 MusicProcess::MusicProcess()
 	: current_track(0) {
-	std::memset(song_branches, -1, 128 * sizeof(int));
+	std::memset(song_branches, (byte)-1, 128 * sizeof(int));
 }
 
 MusicProcess::MusicProcess(MidiDriver *drv) :

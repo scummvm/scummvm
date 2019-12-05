@@ -59,6 +59,14 @@ MODULE_OBJS := \
 	filesys/savegame_writer.o \
 	filesys/u8_save_file.o \
 	filesys/zip_file.o \
+	games/game.o \
+	games/game_data.o \
+	games/game_detector.o \
+	games/game_info.o \
+	games/remorse_game.o \
+	games/start_u8_process.o \
+	games/treasure_loader.o \
+	games/u8_game.o \
 	graphics/anim_dat.o \
 	graphics/base_soft_render_surface.o \
 	graphics/frame_id.o \

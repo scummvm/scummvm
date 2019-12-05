@@ -27,7 +27,7 @@
 #include "ultima8/games/game_info.h"
 #include "ultima8/filesys/raw_archive.h"
 #include "ultima8/games/game_md5.h"
-#include "md5.h"
+#include "ultima8/misc/md5.h"
 
 namespace Ultima8 {
 
@@ -123,9 +123,9 @@ bool GameDetector::detect(std::string path, GameInfo *info) {
 				// distinguish between english and spanish
 				RawArchive *f = new RawArchive(ids);
 				const char *buf = reinterpret_cast<const char *>((f->get_object_nodel(183)));
-				unsigned int size = f->get_size(183);
+				int size = f->get_size(183);
 				if (buf) {
-					for (unsigned int i = 0; i + 9 < size; ++i) {
+					for (i = 0; i + 9 < size; ++i) {
 						if (strncmp(buf + i, "tableware", 9) == 0) {
 							info->language = GameInfo::GAMELANG_ENGLISH;
 							break;

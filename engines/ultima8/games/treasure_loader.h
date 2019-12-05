@@ -25,6 +25,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 namespace Ultima8 {
 
+typedef std::map<Pentagram::istring, TreasureInfo, Common::IgnoreCase_Hash> TreasureMap;
+
 class TreasureLoader {
 public:
 	TreasureLoader();
@@ -37,7 +39,7 @@ public:
 	bool parse(std::string, std::vector<TreasureInfo> &treasure);
 
 private:
-	std::map<Pentagram::istring, TreasureInfo, Common::IgnoreCase_Hash> defaultTreasure;
+	TreasureMap defaultTreasure;
 
 	bool internalParse(std::string desc, TreasureInfo &ti, bool loadingDefault);
 

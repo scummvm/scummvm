@@ -34,19 +34,19 @@ TreasureLoader::~TreasureLoader() {
 
 void TreasureLoader::loadDefaults() {
 	ConfigFileManager *config = ConfigFileManager::get_instance();
-	std::map<Pentagram::istring, std::string> lootkeyvals;
+	KeyMap lootkeyvals;
 
 	// load default treasure types
 	lootkeyvals = config->listKeyValues("game/treasure");
-	std::map<Pentagram::istring, std::string>::iterator defaultiter;
+	KeyMap::iterator defaultiter;
 	for (defaultiter = lootkeyvals.begin();
 	        defaultiter != lootkeyvals.end(); ++defaultiter) {
 		TreasureInfo ti;
 		bool ok = internalParse(defaultiter->_value, ti, true);
 		if (ok) {
-			defaultTreasure[defaultiter->first] = ti;
+			defaultTreasure[defaultiter->_key] = ti;
 		} else {
-			perr << "Failed to parse treasure type '" << defaultiter->first
+			perr << "Failed to parse treasure type '" << defaultiter->_key
 			     << "': " << defaultiter->_value << std::endl;
 		}
 	}
@@ -118,7 +118,7 @@ bool TreasureLoader::internalParse(std::string desc, TreasureInfo &ti,
 		} else if (key == "type" && !loadingDefault) {
 			if (loadedDefault)
 				return false;
-			std::map<Pentagram::istring, TreasureInfo>::iterator iter;
+			TreasureMap::iterator iter;
 			iter = defaultTreasure.find(val);
 			if (iter != defaultTreasure.end())
 				ti = iter->_value;
@@ -192,7 +192,7 @@ bool TreasureLoader::parseUIntRange(std::string val,
 
 bool TreasureLoader::parseDouble(std::string val, double &d) {
 	// TODO: error checking
-	d = std::strtod(val.c_str(), 0);
+	d = std::atof(val.c_str());
 	return true;
 }
 
