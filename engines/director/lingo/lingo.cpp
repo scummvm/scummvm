@@ -214,7 +214,7 @@ void Lingo::addCode(const char *code, ScriptType type, uint16 id) {
 }
 
 Common::String Lingo::stripComments(const char *s) {
-	Common::String noComments;
+	Common::String res;
 
 	// Strip comments
 	while (*s) {
@@ -224,14 +224,16 @@ Common::String Lingo::stripComments(const char *s) {
 		}
 
 		if (*s)
-			noComments += *s;
+			res += *s;
 
 		s++;
 	}
 
+	Common::String tmp(res);
+	res.clear();
+
 	// Strip trailing whitespaces
-	Common::String res;
-	s = noComments.c_str();
+	s = tmp.c_str();
 	while (*s) {
 		if (*s == ' ' || *s == '\t') { // If we see a whitespace
 			const char *ps = s; // Remember where we saw it
@@ -255,6 +257,66 @@ Common::String Lingo::stripComments(const char *s) {
 			res += *s;
 
 		s++;
+	}
+
+	// Preprocess if statements
+	tmp = res;
+	int level = 0;
+
+	s = tmp.c_str();
+	const char *stringStart;
+
+	while (*s) {
+		// Scan first non-whitespace
+		while (*s && (*s == ' ' || *s == '\t' || *s == '\xc2')) { // If we see a whitespace
+			res += *s++;
+
+			if (*s && *(s - 1) == '\xc2') { // if it is a continuation synbol, eat next one
+				res += *s++;
+			}
+		}
+
+		if (!*s)	// end of input string
+			break;
+
+		stringStart = s;
+
+		if (!scumm_stricmp(s, "if")) {
+			level++;
+		}
+
+		// copy rest of the line
+		while (*s && *s != '\n') {
+			res += *s++;
+
+			if (*s && *(s - 1) == '\xc2') { // if it is a continuation synbol, eat next one
+				res += *s++;
+			}
+		}
+
+		// Now look if we have 'end if' at the end
+		if (s - stringStart >= strlen("end if")) {
+			if (tolower(*(s - 2)) == 'i' && tolower(*(s - 1)) == 'f') {
+				const char *tmps = s - strlen("end if");
+
+				while (tmps - stringStart > 0 && (*tmps == ' ' || *tmps == '\t')) // if we ended up with 'end     if'
+					tmps--;
+
+				if (tmps != s - strlen("end if")) {// if we were backtracking, then we're at end of 'end' now
+					if (tmps - stringStart > strlen("end")) {
+						tmps -= strlen("end");
+
+						if (!scumm_stricmp(s, "end"))
+							level--;
+					}
+				}
+			}
+		}
+
+		if (level) {
+
+		}
+
 	}
 
 	return res;
