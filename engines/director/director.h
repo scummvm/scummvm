@@ -56,13 +56,14 @@ class Score;
 class Cast;
 
 enum {
-	kDebugLingoExec		= 1 << 0,
-	kDebugLingoCompile	= 1 << 1,
-	kDebugLoading		= 1 << 2,
-	kDebugImages		= 1 << 3,
-	kDebugText			= 1 << 4,
-	kDebugEvents		= 1 << 5,
-	kDebugLingoParse	= 1 << 6
+	kDebugLingoExec			= 1 << 0,
+	kDebugLingoCompile		= 1 << 1,
+	kDebugLoading			= 1 << 2,
+	kDebugImages			= 1 << 3,
+	kDebugText				= 1 << 4,
+	kDebugEvents			= 1 << 5,
+	kDebugLingoParse		= 1 << 6,
+	kDebugLingoCompileOnly	= 1 << 7
 };
 
 struct MovieReference {

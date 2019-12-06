@@ -650,10 +650,12 @@ void Lingo::runTests() {
 			_hadError = false;
 			addCode(script, kMovieScript, counter);
 
-			if (!_hadError)
-				executeScript(kMovieScript, counter, 0);
-			else
-				debug(">> Skipping execution");
+			if (!debugChannelSet(-1, kDebugLingoCompileOnly)) {
+				if (!_hadError)
+					executeScript(kMovieScript, counter, 0);
+				else
+					debug(">> Skipping execution");
+			}
 
 			free(script);
 
