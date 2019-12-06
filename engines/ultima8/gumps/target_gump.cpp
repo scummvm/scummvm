@@ -23,7 +23,7 @@
 #include "ultima8/misc/pent_include.h"
 #include "ultima8/gumps/target_gump.h"
 
-#include "ultima8/kernel/gui_app.h"
+#include "ultima8/ultima8.h"
 #include "ultima8/gumps/gump_notify_process.h"
 #include "ultima8/world/item.h"
 #include "ultima8/world/get_object.h"
@@ -59,13 +59,13 @@ void TargetGump::InitGump(Gump *newparent, bool take_focus) {
 	// we need a notifier process
 	CreateNotifier();
 
-	GUIApp *guiapp = GUIApp::get_instance();
+	Ultima8Engine *guiapp = Ultima8Engine::get_instance();
 	guiapp->pushMouseCursor();
-	guiapp->setMouseCursor(GUIApp::MOUSE_TARGET);
+	guiapp->setMouseCursor(Ultima8Engine::MOUSE_TARGET);
 }
 
 void TargetGump::Close(bool no_del) {
-	GUIApp *guiapp = GUIApp::get_instance();
+	Ultima8Engine *guiapp = Ultima8Engine::get_instance();
 	guiapp->popMouseCursor();
 
 	ModalGump::Close(no_del);

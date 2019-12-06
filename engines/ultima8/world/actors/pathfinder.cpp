@@ -27,7 +27,7 @@
 
 #include "ultima8/graphics/render_surface.h"
 #include "ultima8/gumps/game_map_gump.h"
-#include "ultima8/kernel/gui_app.h"
+#include "ultima8/ultima8.h"
 #include "common/system.h"
 
 namespace Ultima8 {
@@ -244,10 +244,10 @@ unsigned int Pathfinder::costHeuristic(PathNode *node) {
 // (and the whole system is generally a very big hack...)
 
 static void drawbox(Item *item) {
-	RenderSurface *screen = GUIApp::get_instance()->getScreen();
+	RenderSurface *screen = Ultima8Engine::get_instance()->getScreen();
 	int32 cx, cy, cz;
 
-	GUIApp::get_instance()->getGameMapGump()->GetCameraLocation(cx, cy, cz);
+	Ultima8Engine::get_instance()->getGameMapGump()->GetCameraLocation(cx, cy, cz);
 
 	Pentagram::Rect d;
 	screen->GetSurfaceDims(d);
@@ -284,10 +284,10 @@ static void drawbox(Item *item) {
 }
 
 static void drawdot(int32 x, int32 y, int32 z, int size, uint32 rgb) {
-	RenderSurface *screen = GUIApp::get_instance()->getScreen();
+	RenderSurface *screen = Ultima8Engine::get_instance()->getScreen();
 	int32 cx, cy, cz;
 
-	GUIApp::get_instance()->getGameMapGump()->GetCameraLocation(cx, cy, cz);
+	Ultima8Engine::get_instance()->getGameMapGump()->GetCameraLocation(cx, cy, cz);
 
 	Pentagram::Rect d;
 	screen->GetSurfaceDims(d);
@@ -301,10 +301,10 @@ static void drawdot(int32 x, int32 y, int32 z, int size, uint32 rgb) {
 }
 
 static void drawedge(PathNode *from, PathNode *to, uint32 rgb) {
-	RenderSurface *screen = GUIApp::get_instance()->getScreen();
+	RenderSurface *screen = Ultima8Engine::get_instance()->getScreen();
 	int32 cx, cy, cz;
 
-	GUIApp::get_instance()->getGameMapGump()->GetCameraLocation(cx, cy, cz);
+	Ultima8Engine::get_instance()->getGameMapGump()->GetCameraLocation(cx, cy, cz);
 
 	Pentagram::Rect d;
 	screen->GetSurfaceDims(d);
@@ -318,7 +318,7 @@ static void drawedge(PathNode *from, PathNode *to, uint32 rgb) {
 	x0 = (d.w / 2) + (cx - cy) / 2;
 	y0 = (d.h / 2) + (cx + cy) / 4 - cz * 2;
 
-	GUIApp::get_instance()->getGameMapGump()->GetCameraLocation(cx, cy, cz);
+	Ultima8Engine::get_instance()->getGameMapGump()->GetCameraLocation(cx, cy, cz);
 
 	cx = to->state.x - cx;
 	cy = to->state.y - cy;
@@ -404,7 +404,7 @@ void Pathfinder::newNode(PathNode *oldnode, PathfindingState &state,
 
 #ifdef DEBUG
 	if (actor->getObjId() == visualdebug_actor) {
-		RenderSurface *screen = GUIApp::get_instance()->getScreen();
+		RenderSurface *screen = Ultima8Engine::get_instance()->getScreen();
 		screen->BeginPainting();
 		drawpath(newnode, 0xFFFFFF00, done);
 		screen->EndPainting();
@@ -514,7 +514,7 @@ bool Pathfinder::pathfind(std::vector<PathfindingAction> &path) {
 
 #ifdef DEBUG
 	if (actor->getObjId() == visualdebug_actor) {
-		RenderSurface *screen = GUIApp::get_instance()->getScreen();
+		RenderSurface *screen = Ultima8Engine::get_instance()->getScreen();
 		screen->BeginPainting();
 		if (targetitem)
 			drawbox(targetitem);

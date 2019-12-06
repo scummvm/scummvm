@@ -33,7 +33,7 @@
 #include "ultima8/filesys/odata_source.h"
 #include "ultima8/kernel/object_manager.h"
 #include "ultima8/gumps/scaler_gump.h"
-#include "ultima8/kernel/gui_app.h"
+#include "ultima8/ultima8.h"
 
 namespace Ultima8 {
 
@@ -72,7 +72,7 @@ void Gump::InitGump(Gump *newparent, bool take_focus) {
 	if (newparent)
 		newparent->AddChild(this, take_focus);
 	else
-		GUIApp::get_instance()->addGump(this);
+		Ultima8Engine::get_instance()->addGump(this);
 
 	if (owner && !notifier) CreateNotifier();
 }

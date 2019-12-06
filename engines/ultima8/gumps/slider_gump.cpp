@@ -34,7 +34,7 @@
 #include "ultima8/gumps/widgets/button_widget.h"
 #include "ultima8/usecode/uc_process.h"
 #include "ultima8/kernel/kernel.h"
-#include "ultima8/kernel/gui_app.h"
+#include "ultima8/ultima8.h"
 
 #include "ultima8/filesys/idata_source.h"
 #include "ultima8/filesys/odata_source.h"
@@ -205,7 +205,7 @@ void SliderGump::Close(bool no_del) {
 bool SliderGump::StartDraggingChild(Gump *gump, int mx, int my) {
 	if (gump->GetIndex() == SLIDER_INDEX) {
 		gump->ParentToGump(mx, my);
-		GUIApp::get_instance()->setDraggingOffset(mx, 0);
+		Ultima8Engine::get_instance()->setDraggingOffset(mx, 0);
 		return true;
 	}
 
@@ -215,7 +215,7 @@ bool SliderGump::StartDraggingChild(Gump *gump, int mx, int my) {
 void SliderGump::DraggingChild(Gump *gump, int mx, int my) {
 	if (gump->GetIndex() == SLIDER_INDEX) {
 		int dox, doy;
-		GUIApp::get_instance()->getDraggingOffset(dox, doy);
+		Ultima8Engine::get_instance()->getDraggingOffset(dox, doy);
 		setValueFromSlider(mx - dox);
 		gump->Move(getSliderPos(), slidery);
 	}

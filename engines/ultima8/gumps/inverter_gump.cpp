@@ -25,7 +25,7 @@
 
 #include "ultima8/graphics/render_surface.h"
 #include "ultima8/graphics/texture.h"
-#include "ultima8/kernel/gui_app.h"
+#include "ultima8/ultima8.h"
 
 namespace Ultima8 {
 
@@ -74,7 +74,7 @@ void InverterGump::Paint(RenderSurface *surf, int32 lerp_factor, bool scaled) {
 
 
 void InverterGump::PaintChildren(RenderSurface *surf, int32 lerp_factor, bool scaled) {
-	unsigned int state = GUIApp::get_instance()->getInversion();
+	unsigned int state = Ultima8Engine::get_instance()->getInversion();
 
 	if (state == 0) {
 		DesktopGump::PaintChildren(surf, lerp_factor, scaled);
@@ -116,7 +116,7 @@ void InverterGump::ParentToGump(int &px, int &py, PointRoundDir) {
 	px -= x;
 	px += dims.x;
 	py -= y;
-	if (GUIApp::get_instance()->isInverted()) py = dims.h - py - 1;
+	if (Ultima8Engine::get_instance()->isInverted()) py = dims.h - py - 1;
 	py += dims.y;
 }
 
@@ -125,7 +125,7 @@ void InverterGump::GumpToParent(int &gx, int &gy, PointRoundDir) {
 	gx -= dims.x;
 	gx += x;
 	gy -= dims.y;
-	if (GUIApp::get_instance()->isInverted()) gy = dims.h - gy - 1;
+	if (Ultima8Engine::get_instance()->isInverted()) gy = dims.h - gy - 1;
 	gy += y;
 }
 

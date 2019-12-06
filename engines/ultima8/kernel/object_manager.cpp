@@ -31,7 +31,7 @@
 #include "ultima8/filesys/idata_source.h"
 #include "ultima8/filesys/odata_source.h"
 #include "ultima8/world/item_factory.h"
-#include "ultima8/kernel/gui_app.h"
+#include "ultima8/ultima8.h"
 
 #include "ultima8/world/actors/main_actor.h"
 #include "ultima8/world/egg.h"
@@ -290,7 +290,7 @@ bool ObjectManager::load(IDataSource *ids, uint32 version) {
 		// top level gumps have to be added to the correct core gump
 		Gump *gump = p_dynamic_cast<Gump *>(obj);
 		if (gump) {
-			GUIApp::get_instance()->addGump(gump);
+			Ultima8Engine::get_instance()->addGump(gump);
 		}
 
 	} while (true);

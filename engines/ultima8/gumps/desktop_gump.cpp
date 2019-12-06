@@ -23,7 +23,7 @@
 #include "ultima8/misc/pent_include.h"
 #include "ultima8/gumps/desktop_gump.h"
 #include "ultima8/graphics/render_surface.h"
-#include "ultima8/kernel/gui_app.h"
+#include "ultima8/ultima8.h"
 #include "ultima8/filesys/idata_source.h"
 #include "ultima8/filesys/odata_source.h"
 #include "ultima8/gumps/console_gump.h"
@@ -52,7 +52,7 @@ void DesktopGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scaled)
 	// Just fill it (only if console showing, or in debug mode)
 
 #ifndef DEBUG
-	ConsoleGump *console = GUIApp::get_instance()->getConsoleGump();
+	ConsoleGump *console = Ultima8Engine::get_instance()->getConsoleGump();
 	if (console->ConsoleIsVisible() || (children.size() && children.front()->IsOfType<ConsoleGump>()))
 #endif
 		surf->Fill32(0x000000, 0, 0, dims.w, dims.h);
@@ -84,14 +84,14 @@ void DesktopGump::PaintChildren(RenderSurface *surf, int32 lerp_factor, bool sca
 
 bool DesktopGump::StartDraggingChild(Gump *gump, int mx, int my) {
 	gump->ParentToGump(mx, my);
-	GUIApp::get_instance()->setDraggingOffset(mx, my);
+	Ultima8Engine::get_instance()->setDraggingOffset(mx, my);
 	MoveChildToFront(gump);
 	return true;
 }
 
 void DesktopGump::DraggingChild(Gump *gump, int mx, int my) {
 	int dx, dy;
-	GUIApp::get_instance()->getDraggingOffset(dx, dy);
+	Ultima8Engine::get_instance()->getDraggingOffset(dx, dy);
 	gump->Move(mx - dx, my - dy);
 }
 

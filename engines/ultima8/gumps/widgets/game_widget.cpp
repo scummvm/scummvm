@@ -23,7 +23,7 @@
 #include "ultima8/misc/pent_include.h"
 #include "ultima8/gumps/widgets/game_widget.h"
 
-#include "ultima8/kernel/gui_app.h"
+#include "ultima8/ultima8.h"
 #include "ultima8/games/game_info.h"
 #include "ultima8/graphics/render_surface.h"
 #include "ultima8/gumps/widgets/text_widget.h"
@@ -37,7 +37,7 @@ DEFINE_RUNTIME_CLASSTYPE_CODE(GameWidget, Gump)
 
 GameWidget::GameWidget(int X, int Y, Pentagram::istring &game)
 	: Gump(X, Y, 443, 109), highlight(false) {
-	info = GUIApp::get_instance()->getGameInfo(game);
+	info = Ultima8Engine::get_instance()->getGameInfo(game);
 	assert(info);
 }
 

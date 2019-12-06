@@ -23,7 +23,7 @@
 #include "ultima8/misc/pent_include.h"
 
 #include "ultima8/world/item.h"
-#include "ultima8/kernel/gui_app.h"
+#include "ultima8/ultima8.h"
 #include "ultima8/usecode/usecode.h"
 #include "ultima8/games/game_data.h"
 #include "ultima8/usecode/uc_machine.h"
@@ -835,7 +835,7 @@ bool Item::checkLoopScript(const uint8 *script, uint32 scriptsize) {
 
 
 int32 Item::collideMove(int32 dx, int32 dy, int32 dz, bool teleport, bool force, ObjId *hititem, uint8 *dirs) {
-	GUIApp *guiapp = GUIApp::get_instance();
+	Ultima8Engine *guiapp = Ultima8Engine::get_instance();
 	World *world = World::get_instance();
 	CurrentMap *map = world->getCurrentMap();
 
@@ -1319,7 +1319,7 @@ void Item::leaveFastArea() {
 
 	// If we have a gump open, close it (unless we're in a container)
 	if (!parent && (flags & FLG_GUMP_OPEN)) {
-		Gump *g = GUIApp::get_instance()->getGump(gump);
+		Gump *g = Ultima8Engine::get_instance()->getGump(gump);
 		if (g) g->Close();
 	}
 
@@ -1379,7 +1379,7 @@ uint16 Item::openGump(uint32 gumpshape) {
 void Item::closeGump() {
 	if (!(flags & FLG_GUMP_OPEN)) return;
 
-	Gump *g = GUIApp::get_instance()->getGump(gump);
+	Gump *g = Ultima8Engine::get_instance()->getGump(gump);
 	assert(g);
 	g->Close();
 

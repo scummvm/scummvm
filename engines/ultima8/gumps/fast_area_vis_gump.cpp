@@ -22,7 +22,7 @@
 
 #include "ultima8/misc/pent_include.h"
 #include "ultima8/gumps/fast_area_vis_gump.h"
-#include "ultima8/kernel/gui_app.h"
+#include "ultima8/ultima8.h"
 #include "ultima8/world/world.h"
 #include "ultima8/world/current_map.h"
 #include "ultima8/graphics/render_surface.h"
@@ -51,7 +51,7 @@ void FastAreaVisGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool sca
 }
 
 void FastAreaVisGump::ConCmd_toggle(const Console::ArgvType &argv) {
-	GUIApp *app = GUIApp::get_instance();
+	Ultima8Engine *app = Ultima8Engine::get_instance();
 	Gump *desktop = app->getDesktopGump();
 	Gump *favg = desktop->FindGump(FastAreaVisGump::ClassType);
 

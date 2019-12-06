@@ -26,7 +26,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "ultima8/world/egg.h"
 #include "ultima8/world/camera_process.h"
 #include "ultima8/world/world.h"
-#include "ultima8/kernel/gui_app.h"
+#include "ultima8/ultima8.h"
 #include "ultima8/kernel/kernel.h"
 #include "ultima8/gumps/menu_gump.h"
 #include "ultima8/conf/setting_manager.h"
@@ -57,7 +57,7 @@ void StartU8Process::run() {
 	}
 
 	// Try to load the save game, if succeeded this pointer will no longer be valid
-	if (!savename.empty() && GUIApp::get_instance()->loadGame(savename)) {
+	if (!savename.empty() && Ultima8Engine::get_instance()->loadGame(savename)) {
 		return;
 	}
 
@@ -100,7 +100,7 @@ void StartU8Process::run() {
 	if (!skipstart)
 		MenuGump::inputName();
 	else
-		GUIApp::get_instance()->setAvatarInStasis(false);
+		Ultima8Engine::get_instance()->setAvatarInStasis(false);
 
 
 	terminate();

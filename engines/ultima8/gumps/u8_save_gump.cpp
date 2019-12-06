@@ -27,7 +27,7 @@
 #include "ultima8/gumps/desktop_gump.h"
 #include "ultima8/gumps/widgets/edit_widget.h"
 #include "ultima8/gumps/widgets/text_widget.h"
-#include "ultima8/kernel/gui_app.h"
+#include "ultima8/ultima8.h"
 #include "ultima8/games/game_data.h"
 #include "ultima8/graphics/shape.h"
 #include "ultima8/graphics/shape_frame.h"
@@ -164,9 +164,9 @@ void U8SaveGump::Close(bool no_del) {
 void U8SaveGump::OnFocus(bool gain) {
 	if (gain) {
 		if (save)
-			GUIApp::get_instance()->setMouseCursor(GUIApp::MOUSE_QUILL);
+			Ultima8Engine::get_instance()->setMouseCursor(Ultima8Engine::MOUSE_QUILL);
 		else
-			GUIApp::get_instance()->setMouseCursor(GUIApp::MOUSE_MAGGLASS);
+			Ultima8Engine::get_instance()->setMouseCursor(Ultima8Engine::MOUSE_MAGGLASS);
 	}
 }
 
@@ -280,14 +280,14 @@ std::string U8SaveGump::getFilename(int index) {
 
 bool U8SaveGump::loadgame(int saveIndex) {
 	if (saveIndex == 1) {
-		GUIApp::get_instance()->newGame(std::string());
+		Ultima8Engine::get_instance()->newGame(std::string());
 		return true;
 	}
 
 	pout << "Load " << saveIndex << std::endl;
 
 	std::string filename = getFilename(saveIndex);
-	GUIApp::get_instance()->loadGame(filename);
+	Ultima8Engine::get_instance()->loadGame(filename);
 
 	return true;
 }
@@ -298,7 +298,7 @@ bool U8SaveGump::savegame(int saveIndex, const std::string &name) {
 	if (name.empty()) return false;
 
 	std::string filename = getFilename(saveIndex);
-	GUIApp::get_instance()->saveGame(filename, name, true);
+	Ultima8Engine::get_instance()->saveGame(filename, name, true);
 	return true;
 }
 

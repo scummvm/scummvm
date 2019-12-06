@@ -36,7 +36,7 @@
 #include "ultima8/graphics/gump_shape_archive.h"
 #include "ultima8/gumps/widgets/button_widget.h"
 #include "ultima8/gumps/mini_stats_gump.h"
-#include "ultima8/kernel/gui_app.h"
+#include "ultima8/ultima8.h"
 #include "ultima8/world/get_object.h"
 
 #include "ultima8/filesys/idata_source.h"
@@ -305,7 +305,7 @@ bool PaperdollGump::StartDraggingItem(Item *item, int mx, int my) {
 	ShapeFrame *frame = s->getFrame(item->getFrame());
 	assert(frame);
 
-	GUIApp::get_instance()->setDraggingOffset(frame->width / 2 - frame->xoff,
+	Ultima8Engine::get_instance()->setDraggingOffset(frame->width / 2 - frame->xoff,
 	        frame->height / 2 - frame->yoff);
 
 	return ret;
@@ -387,7 +387,7 @@ void PaperdollGump::ChildNotify(Gump *child, uint32 message) {
 	if (child->getObjId() == statbuttongid &&
 	        message == ButtonWidget::BUTTON_CLICK) {
 		// check if there already is an open MiniStatsGump
-		Gump *desktop = GUIApp::get_instance()->getDesktopGump();
+		Gump *desktop = Ultima8Engine::get_instance()->getDesktopGump();
 		Gump *statsgump = desktop->FindGump(MiniStatsGump::ClassType);
 
 		if (!statsgump) {

@@ -30,7 +30,7 @@
 #include "ultima8/world/actors/teleport_to_egg_process.h"
 #include "ultima8/world/camera_process.h"
 #include "ultima8/world/actors/animation.h"
-#include "ultima8/kernel/gui_app.h"
+#include "ultima8/ultima8.h"
 #include "ultima8/world/actors/avatar_death_process.h"
 #include "ultima8/kernel/delay_process.h"
 #include "ultima8/conf/setting_manager.h"
@@ -302,7 +302,7 @@ void MainActor::clearInCombat() {
 ProcId MainActor::die(uint16 damageType) {
 	ProcId animprocid = Actor::die(damageType);
 
-	GUIApp *app = p_dynamic_cast<GUIApp *>(GUIApp::get_instance());
+	Ultima8Engine *app = p_dynamic_cast<Ultima8Engine *>(Ultima8Engine::get_instance());
 	assert(app);
 
 	app->setAvatarInStasis(true);
@@ -328,7 +328,7 @@ ProcId MainActor::die(uint16 damageType) {
 
 
 void MainActor::ConCmd_teleport(const Console::ArgvType &argv) {
-	if (!GUIApp::get_instance()->areCheatsEnabled()) {
+	if (!Ultima8Engine::get_instance()->areCheatsEnabled()) {
 		pout << "Cheats are disabled" << std::endl;
 		return;
 	}
@@ -389,7 +389,7 @@ void MainActor::ConCmd_mark(const Console::ArgvType &argv) {
 }
 
 void MainActor::ConCmd_recall(const Console::ArgvType &argv) {
-	if (!GUIApp::get_instance()->areCheatsEnabled()) {
+	if (!Ultima8Engine::get_instance()->areCheatsEnabled()) {
 		pout << "Cheats are disabled" << std::endl;
 		return;
 	}
@@ -428,7 +428,7 @@ void MainActor::ConCmd_listmarks(const Console::ArgvType &argv) {
 }
 
 void MainActor::ConCmd_maxstats(const Console::ArgvType &argv) {
-	if (!GUIApp::get_instance()->areCheatsEnabled()) {
+	if (!Ultima8Engine::get_instance()->areCheatsEnabled()) {
 		pout << "Cheats are disabled" << std::endl;
 		return;
 	}
@@ -446,7 +446,7 @@ void MainActor::ConCmd_maxstats(const Console::ArgvType &argv) {
 }
 
 void MainActor::ConCmd_heal(const Console::ArgvType &argv) {
-	if (!GUIApp::get_instance()->areCheatsEnabled()) {
+	if (!Ultima8Engine::get_instance()->areCheatsEnabled()) {
 		pout << "Cheats are disabled" << std::endl;
 		return;
 	}
@@ -624,7 +624,7 @@ void MainActor::ConCmd_name(const Console::ArgvType &argv) {
 }
 
 void MainActor::ConCmd_useBackpack(const Console::ArgvType &argv) {
-	if (GUIApp::get_instance()->isAvatarInStasis()) {
+	if (Ultima8Engine::get_instance()->isAvatarInStasis()) {
 		pout << "Can't: avatarInStasis" << std::endl;
 		return;
 	}
@@ -635,7 +635,7 @@ void MainActor::ConCmd_useBackpack(const Console::ArgvType &argv) {
 }
 
 void MainActor::ConCmd_useInventory(const Console::ArgvType &argv) {
-	if (GUIApp::get_instance()->isAvatarInStasis()) {
+	if (Ultima8Engine::get_instance()->isAvatarInStasis()) {
 		pout << "Can't: avatarInStasis" << std::endl;
 		return;
 	}
@@ -644,7 +644,7 @@ void MainActor::ConCmd_useInventory(const Console::ArgvType &argv) {
 }
 
 void MainActor::useInventoryItem(uint32 shapenum) {
-	if (GUIApp::get_instance()->isAvatarInStasis()) {
+	if (Ultima8Engine::get_instance()->isAvatarInStasis()) {
 		pout << "Can't: avatarInStasis" << std::endl;
 		return;
 	}
@@ -676,7 +676,7 @@ void MainActor::ConCmd_useKeyring(const Console::ArgvType &argv) {
 }
 
 void MainActor::ConCmd_toggleCombat(const Console::ArgvType &argv) {
-	if (GUIApp::get_instance()->isAvatarInStasis()) {
+	if (Ultima8Engine::get_instance()->isAvatarInStasis()) {
 		pout << "Can't: avatarInStasis" << std::endl;
 		return;
 	}
@@ -685,7 +685,7 @@ void MainActor::ConCmd_toggleCombat(const Console::ArgvType &argv) {
 }
 
 void MainActor::ConCmd_toggleInvincibility(const Console::ArgvType &argv) {
-	if (!GUIApp::get_instance()->areCheatsEnabled()) {
+	if (!Ultima8Engine::get_instance()->areCheatsEnabled()) {
 		pout << "Cheats are disabled" << std::endl;
 		return;
 	}

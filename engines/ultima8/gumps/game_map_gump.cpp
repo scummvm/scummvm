@@ -32,7 +32,7 @@
 #include "ultima8/world/actors/main_actor.h"
 #include "ultima8/world/item_sorter.h"
 #include "ultima8/world/camera_process.h"
-#include "ultima8/kernel/gui_app.h"
+#include "ultima8/ultima8.h"
 #include "ultima8/graphics/shape_info.h"
 #include "ultima8/filesys/idata_source.h"
 #include "ultima8/filesys/odata_source.h"
@@ -126,7 +126,7 @@ void GameMapGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scaled)
 
 	uint32 gametick = Kernel::get_instance()->getFrameNum();
 
-	bool paintEditorItems = GUIApp::get_instance()->isPaintEditorItems();
+	bool paintEditorItems = Ultima8Engine::get_instance()->isPaintEditorItems();
 
 	// Get all the required items
 	for (int cy = 0; cy < MAP_NUM_CHUNKS; cy++) {
@@ -284,7 +284,7 @@ Gump *GameMapGump::OnMouseDown(int button, int mx, int my) {
 	ParentToGump(sx, sy);
 	GumpToScreenSpace(sx, sy);
 
-	AvatarMoverProcess *amp = GUIApp::get_instance()->getAvatarMoverProcess();
+	AvatarMoverProcess *amp = Ultima8Engine::get_instance()->getAvatarMoverProcess();
 	if (button == BUTTON_RIGHT || button == BUTTON_LEFT) {
 		amp->OnMouseDown(button, sx, sy);
 	}
@@ -299,7 +299,7 @@ Gump *GameMapGump::OnMouseDown(int button, int mx, int my) {
 }
 
 void GameMapGump::OnMouseUp(int button, int mx, int my) {
-	AvatarMoverProcess *amp = GUIApp::get_instance()->getAvatarMoverProcess();
+	AvatarMoverProcess *amp = Ultima8Engine::get_instance()->getAvatarMoverProcess();
 	if (button == BUTTON_RIGHT || button == BUTTON_LEFT) {
 		amp->OnMouseUp(button);
 	}
@@ -311,9 +311,9 @@ void GameMapGump::OnMouseClick(int button, int mx, int my) {
 	case BUTTON_LEFT: {
 		if (avatar->isInCombat()) break;
 
-		if (GUIApp::get_instance()->isMouseDown(BUTTON_RIGHT)) break;
+		if (Ultima8Engine::get_instance()->isMouseDown(BUTTON_RIGHT)) break;
 
-		if (GUIApp::get_instance()->isAvatarInStasis()) {
+		if (Ultima8Engine::get_instance()->isAvatarInStasis()) {
 			pout << "Can't: avatarInStasis" << std::endl;
 			break;
 		}
@@ -379,9 +379,9 @@ void GameMapGump::OnMouseDouble(int button, int mx, int my) {
 	case BUTTON_LEFT: {
 		if (avatar->isInCombat()) break;
 
-		if (GUIApp::get_instance()->isMouseDown(BUTTON_RIGHT)) break;
+		if (Ultima8Engine::get_instance()->isMouseDown(BUTTON_RIGHT)) break;
 
-		if (GUIApp::get_instance()->isAvatarInStasis()) {
+		if (Ultima8Engine::get_instance()->isAvatarInStasis()) {
 			pout << "Can't: avatarInStasis" << std::endl;
 			break;
 		}
@@ -398,7 +398,7 @@ void GameMapGump::OnMouseDouble(int button, int mx, int my) {
 				// call the 'use' event
 				item->use();
 			} else {
-				GUIApp::get_instance()->flashCrossCursor();
+				Ultima8Engine::get_instance()->flashCrossCursor();
 			}
 		}
 		break;
@@ -424,7 +424,7 @@ bool GameMapGump::StartDraggingItem(Item *item, int mx, int my) {
 	// get item offset
 	int itemx, itemy;
 	GetLocationOfItem(item->getObjId(), itemx, itemy);
-	GUIApp::get_instance()->setDraggingOffset(mx - itemx, my - itemy);
+	Ultima8Engine::get_instance()->setDraggingOffset(mx - itemx, my - itemy);
 
 	return true;
 }
@@ -432,7 +432,7 @@ bool GameMapGump::StartDraggingItem(Item *item, int mx, int my) {
 bool GameMapGump::DraggingItem(Item *item, int mx, int my) {
 	// determine target location and set dragging_x/y/z
 	int dox, doy;
-	GUIApp::get_instance()->getDraggingOffset(dox, doy);
+	Ultima8Engine::get_instance()->getDraggingOffset(dox, doy);
 
 	dragging_shape = item->getShape();
 	dragging_frame = item->getFrame();
@@ -479,7 +479,7 @@ bool GameMapGump::DraggingItem(Item *item, int mx, int my) {
 		return false;
 
 	if (throwing)
-		GUIApp::get_instance()->setMouseCursor(GUIApp::MOUSE_TARGET);
+		Ultima8Engine::get_instance()->setMouseCursor(Ultima8Engine::MOUSE_TARGET);
 
 	return true;
 }
@@ -500,7 +500,7 @@ void GameMapGump::StopDraggingItem(Item *item, bool moved) {
 
 void GameMapGump::DropItem(Item *item, int mx, int my) {
 	int dox, doy;
-	GUIApp::get_instance()->getDraggingOffset(dox, doy);
+	Ultima8Engine::get_instance()->getDraggingOffset(dox, doy);
 
 	display_dragging = false;
 	Actor *avatar = getMainActor();
@@ -571,7 +571,7 @@ void GameMapGump::ConCmd_dumpMap(const Console::ArgvType &) {
 	// Save because we're going to potentially break the game by enlarging
 	// the fast area and available object IDs.
 	std::string savefile = "@save/dumpmap";
-	GUIApp::get_instance()->saveGame(savefile, "Pre-dumpMap save");
+	Ultima8Engine::get_instance()->saveGame(savefile, "Pre-dumpMap save");
 
 	// Increase number of available object IDs.
 	ObjectManager::get_instance()->allow64kObjects();
@@ -710,21 +710,21 @@ void GameMapGump::ConCmd_dumpMap(const Console::ArgvType &) {
 	delete s;
 
 	// Reload
-	GUIApp::get_instance()->loadGame(savefile);
+	Ultima8Engine::get_instance()->loadGame(savefile);
 
 	pout << "Map stored in " << filename << "." << std::endl;
 #endif
 }
 
 void GameMapGump::ConCmd_incrementSortOrder(const Console::ArgvType &argv) {
-	GameMapGump *gameMapGump = GUIApp::get_instance()->getGameMapGump();
+	GameMapGump *gameMapGump = Ultima8Engine::get_instance()->getGameMapGump();
 	if (gameMapGump) {
 		gameMapGump->IncSortOrder(1);
 	}
 }
 
 void GameMapGump::ConCmd_decrementSortOrder(const Console::ArgvType &argv) {
-	GameMapGump *gameMapGump = GUIApp::get_instance()->getGameMapGump();
+	GameMapGump *gameMapGump = Ultima8Engine::get_instance()->getGameMapGump();
 	if (gameMapGump) {
 		gameMapGump->IncSortOrder(-1);
 	}

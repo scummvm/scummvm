@@ -27,7 +27,7 @@
 #include "ultima8/graphics/gump_shape_archive.h"
 #include "ultima8/graphics/shape.h"
 #include "ultima8/graphics/shape_frame.h"
-#include "ultima8/kernel/gui_app.h"
+#include "ultima8/ultima8.h"
 #include "ultima8/gumps/desktop_gump.h"
 #include "ultima8/gumps/widgets/button_widget.h"
 #include "ultima8/gumps/widgets/text_widget.h"
@@ -57,12 +57,12 @@ MenuGump::MenuGump(bool nameEntryMode_)
 	: ModalGump(0, 0, 5, 5, 0, FLAG_DONT_SAVE) {
 	nameEntryMode = nameEntryMode_;
 
-	GUIApp *app = GUIApp::get_instance();
+	Ultima8Engine *app = Ultima8Engine::get_instance();
 	app->pushMouseCursor();
 	if (!nameEntryMode)
-		app->setMouseCursor(GUIApp::MOUSE_HAND);
+		app->setMouseCursor(Ultima8Engine::MOUSE_HAND);
 	else
-		app->setMouseCursor(GUIApp::MOUSE_NONE);
+		app->setMouseCursor(Ultima8Engine::MOUSE_NONE);
 
 	// Save old music state
 	MusicProcess *musicprocess = MusicProcess::get_instance();
@@ -78,7 +78,7 @@ void MenuGump::Close(bool no_del) {
 	MusicProcess *musicprocess = MusicProcess::get_instance();
 	if (musicprocess) musicprocess->playMusic(oldMusicTrack);
 
-	GUIApp *guiapp = GUIApp::get_instance();
+	Ultima8Engine *guiapp = Ultima8Engine::get_instance();
 	guiapp->popMouseCursor();
 
 	ModalGump::Close(no_del);

@@ -27,7 +27,7 @@
 #include "ultima8/graphics/gump_shape_archive.h"
 #include "ultima8/graphics/shape.h"
 #include "ultima8/graphics/shape_frame.h"
-#include "ultima8/kernel/gui_app.h"
+#include "ultima8/ultima8.h"
 #include "ultima8/gumps/desktop_gump.h"
 #include "ultima8/gumps/widgets/button_widget.h"
 #include "ultima8/gumps/widgets/text_widget.h"
@@ -40,13 +40,13 @@ namespace Ultima8 {
 DEFINE_RUNTIME_CLASSTYPE_CODE(QuitGump, ModalGump)
 
 QuitGump::QuitGump(): ModalGump(0, 0, 5, 5) {
-	GUIApp *app = GUIApp::get_instance();
+	Ultima8Engine *app = Ultima8Engine::get_instance();
 	app->pushMouseCursor();
-	app->setMouseCursor(GUIApp::MOUSE_HAND);
+	app->setMouseCursor(Ultima8Engine::MOUSE_HAND);
 }
 
 QuitGump::~QuitGump() {
-	GUIApp::get_instance()->popMouseCursor();
+	Ultima8Engine::get_instance()->popMouseCursor();
 }
 
 static const int gumpShape = 17;
@@ -120,7 +120,7 @@ void QuitGump::ChildNotify(Gump *child, uint32 message) {
 	ObjId cid = child->getObjId();
 	if (message == ButtonWidget::BUTTON_CLICK) {
 		if (cid == yesWidget) {
-			GUIApp::get_instance()->ForceQuit();
+			Ultima8Engine::get_instance()->ForceQuit();
 		} else if (cid == noWidget) {
 			Close();
 		}
@@ -131,7 +131,7 @@ bool QuitGump::OnTextInput(int unicode) {
 	if (!(unicode & 0xFF80)) {
 		char c = unicode & 0x7F;
 		if (_TL_("Yy").find(c) != std::string::npos) {
-			GUIApp::get_instance()->ForceQuit();
+			Ultima8Engine::get_instance()->ForceQuit();
 		} else if (_TL_("Nn").find(c) != std::string::npos) {
 			Close();
 		}

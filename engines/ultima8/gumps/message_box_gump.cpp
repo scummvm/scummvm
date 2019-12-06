@@ -38,7 +38,7 @@
 #include "ultima8/misc/util.h"
 #include "ultima8/graphics/fonts/font_manager.h"
 #include "ultima8/graphics/fonts/font.h"
-#include "ultima8/kernel/gui_app.h"
+#include "ultima8/ultima8.h"
 #include "ultima8/graphics/render_surface.h"
 
 #include "ultima8/filesys/idata_source.h"
@@ -118,13 +118,13 @@ void MessageBoxGump::InitGump(Gump *newparent, bool take_focus) {
 		off += width + MBG_PADDING;
 	}
 
-	GUIApp *guiapp = GUIApp::get_instance();
+	Ultima8Engine *guiapp = Ultima8Engine::get_instance();
 	guiapp->pushMouseCursor();
-	guiapp->setMouseCursor(GUIApp::MOUSE_POINTER);
+	guiapp->setMouseCursor(Ultima8Engine::MOUSE_POINTER);
 }
 
 void MessageBoxGump::Close(bool no_del) {
-	GUIApp *guiapp = GUIApp::get_instance();
+	Ultima8Engine *guiapp = Ultima8Engine::get_instance();
 	guiapp->popMouseCursor();
 
 	ModalGump::Close(no_del);

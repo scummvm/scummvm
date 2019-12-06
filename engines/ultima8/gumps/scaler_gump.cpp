@@ -28,7 +28,7 @@
 #include "ultima8/graphics/scaler.h"
 #include "ultima8/graphics/scaler_manager.h"
 #include "ultima8/conf/setting_manager.h"
-#include "ultima8/kernel/gui_app.h"
+#include "ultima8/ultima8.h"
 
 namespace Ultima8 {
 
@@ -282,7 +282,7 @@ void ScalerGump::ConCmd_changeScaler(const Console::ArgvType &argv) {
 		return;
 	}
 
-	ScalerGump *scalerGump = static_cast<ScalerGump *>(GUIApp::get_instance()->getDesktopGump()->FindGump<ScalerGump>());
+	ScalerGump *scalerGump = static_cast<ScalerGump *>(Ultima8Engine::get_instance()->getDesktopGump()->FindGump<ScalerGump>());
 
 	if (scalerGump) {
 		if (argv.size() != 2)

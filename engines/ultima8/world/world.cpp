@@ -36,7 +36,7 @@
 #include "ultima8/games/game_data.h"
 #include "ultima8/kernel/kernel.h"
 #include "ultima8/kernel/object_manager.h"
-#include "ultima8/kernel/gui_app.h"
+#include "ultima8/ultima8.h"
 #include "ultima8/world/camera_process.h" // for resetting the camera
 #include "ultima8/gumps/gump.h" // For CloseItemDependents notification
 #include "ultima8/world/actors/animation.h"
@@ -140,7 +140,7 @@ bool World::switchMap(uint32 newmap) {
 	if (ap) ap->stopAllExceptSpeech();
 
 	// Notify all the gumps of the mapchange
-	GUIApp *gui = GUIApp::get_instance();
+	Ultima8Engine *gui = Ultima8Engine::get_instance();
 	if (gui) {
 		Gump *desktop = gui->getDesktopGump();
 		if (desktop) desktop->CloseItemDependents();

@@ -164,7 +164,7 @@ void setAllocationFunctions(allocFunc a, deallocFunc d);
 #include "ultima8/world/world.h"
 #include "ultima8/world/current_map.h"
 #include "ultima8/kernel/object_manager.h"
-#include "ultima8/kernel/gui_app.h"
+#include "ultima8/ultima8.h"
 #include "ultima8/usecode/usecode.h"
 #include "ultima8/usecode/uc_list.h"
 #include "ultima8/usecode/uc_machine.h"

@@ -25,7 +25,7 @@
 
 #include "ultima8/filesys/raw_archive.h"
 #include "ultima8/graphics/skf_player.h"
-#include "ultima8/kernel/gui_app.h"
+#include "ultima8/ultima8.h"
 #include "ultima8/gumps/desktop_gump.h"
 #include "ultima8/gumps/gump_notify_process.h"
 
@@ -56,12 +56,12 @@ void MovieGump::InitGump(Gump *newparent, bool take_focus) {
 	ModalGump::InitGump(newparent, take_focus);
 	player->start();
 
-	GUIApp::get_instance()->pushMouseCursor();
-	GUIApp::get_instance()->setMouseCursor(GUIApp::MOUSE_NONE);
+	Ultima8Engine::get_instance()->pushMouseCursor();
+	Ultima8Engine::get_instance()->setMouseCursor(Ultima8Engine::MOUSE_NONE);
 }
 
 void MovieGump::Close(bool no_del) {
-	GUIApp::get_instance()->popMouseCursor();
+	Ultima8Engine::get_instance()->popMouseCursor();
 
 	ModalGump::Close(no_del);
 }

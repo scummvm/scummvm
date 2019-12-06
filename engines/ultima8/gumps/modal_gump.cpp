@@ -24,7 +24,7 @@
 #include "ultima8/gumps/modal_gump.h"
 
 #include "ultima8/kernel/kernel.h"
-#include "ultima8/kernel/gui_app.h"
+#include "ultima8/ultima8.h"
 
 #include "ultima8/filesys/idata_source.h"
 #include "ultima8/filesys/odata_source.h"
@@ -52,7 +52,7 @@ void ModalGump::InitGump(Gump *newparent, bool take_focus) {
 	Gump::InitGump(newparent, take_focus);
 
 	// lock keyboard
-	GUIApp::get_instance()->enterTextMode(this);
+	Ultima8Engine::get_instance()->enterTextMode(this);
 
 	Kernel::get_instance()->pause();
 
@@ -80,7 +80,7 @@ uint16 ModalGump::TraceObjId(int mx, int my) {
 
 void ModalGump::Close(bool no_del) {
 	// free keyboard
-	GUIApp::get_instance()->leaveTextMode(this);
+	Ultima8Engine::get_instance()->leaveTextMode(this);
 
 	Kernel::get_instance()->unpause();
 

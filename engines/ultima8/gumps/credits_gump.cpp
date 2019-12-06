@@ -23,7 +23,7 @@
 #include "ultima8/misc/pent_include.h"
 #include "ultima8/gumps/credits_gump.h"
 
-#include "ultima8/kernel/gui_app.h"
+#include "ultima8/ultima8.h"
 #include "ultima8/gumps/desktop_gump.h"
 #include "ultima8/graphics/render_surface.h"
 #include "ultima8/graphics/fonts/rendered_text.h"
@@ -82,12 +82,12 @@ void CreditsGump::InitGump(Gump *newparent, bool take_focus) {
 	currentsurface = 0;
 	currenty = 0;
 
-	GUIApp::get_instance()->pushMouseCursor();
-	GUIApp::get_instance()->setMouseCursor(GUIApp::MOUSE_NONE);
+	Ultima8Engine::get_instance()->pushMouseCursor();
+	Ultima8Engine::get_instance()->setMouseCursor(Ultima8Engine::MOUSE_NONE);
 }
 
 void CreditsGump::Close(bool no_del) {
-	GUIApp::get_instance()->popMouseCursor();
+	Ultima8Engine::get_instance()->popMouseCursor();
 
 	ModalGump::Close(no_del);
 

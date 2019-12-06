@@ -22,7 +22,7 @@
 
 #include "ultima8/misc/pent_include.h"
 #include "ultima8/kernel/joystick.h"
-#include "ultima8/kernel/gui_app.h"
+#include "ultima8/ultima8.h"
 #include "ultima8/std/string.h"
  //#include "SDL_timer.h"
  //#include "SDL_events.h"
@@ -129,7 +129,7 @@ void JoystickCursorProcess::run() {
 
 	if (dx || dy) {
 		int mx, my;
-		GUIApp *app = GUIApp::get_instance();
+		Ultima8Engine *app = Ultima8Engine::get_instance();
 		app->getMouseCoords(mx, my);
 		mx += dx;
 		my += dy;
