@@ -24,7 +24,7 @@
 #include "ultima8/gumps/pentagram_menu_gump.h"
 
 #include "ultima8/graphics/render_surface.h"
-#include "ultima8/kernel/gui_app.h"
+#include "ultima8/ultima8.h"
 #include "ultima8/gumps/widgets/game_widget.h"
 #include "ultima8/conf/setting_manager.h"
 #include "ultima8/filesys/file_system.h"
@@ -70,7 +70,7 @@ void PentagramMenuGump::InitGump(Gump *newparent, bool take_focus) {
 		Pentagram::istring gameName = games[i];
 
 		if (gameName == "pentagram") continue;
-		if (!GUIApp::get_instance()->getGameInfo(gameName)) continue;
+		if (!Ultima8Engine::get_instance()->getGameInfo(gameName)) continue;
 
 		g = new GameWidget(150, y_, gameName);
 		g->InitGump(this, false);
@@ -153,12 +153,12 @@ void PentagramMenuGump::ChildNotify(Gump *child, uint32 message) {
 
 		switch (message) {
 		case GameWidget::GAME_PLAY:
-			GUIApp::get_instance()->changeGame(gamename);
+			Ultima8Engine::get_instance()->changeGame(gamename);
 			break;
 		case GameWidget::GAME_LOAD: {
-			GameInfo *info = GUIApp::get_instance()->getGameInfo(gamename);
+			GameInfo *info = Ultima8Engine::get_instance()->getGameInfo(gamename);
 			if (info && info->type == GameInfo::GAME_U8) {
-				GUIApp::get_instance()->menuInitMinimal(gamename);
+				Ultima8Engine::get_instance()->menuInitMinimal(gamename);
 				Gump *gump = U8SaveGump::showLoadSaveGump(0, false);
 				if (gump) {
 					HideGump();
@@ -169,18 +169,18 @@ void PentagramMenuGump::ChildNotify(Gump *child, uint32 message) {
 					Kernel::get_instance()->addProcess(p);
 					p->waitFor(gump->GetNotifyProcess());
 				} else {
-					GUIApp::get_instance()->menuInitMinimal("pentagram");
+					Ultima8Engine::get_instance()->menuInitMinimal("pentagram");
 				}
 			} else {
-				GUIApp::get_instance()->Error("Load Savegame not yet implemented");
+				Ultima8Engine::get_instance()->Error("Load Savegame not yet implemented");
 			}
 		}
 		break;
 		case GameWidget::GAME_SETTINGS:
-			GUIApp::get_instance()->Error("Settings not yet implemented");
+			Ultima8Engine::get_instance()->Error("Settings not yet implemented");
 			break;
 		case GameWidget::GAME_REMOVE:
-			GUIApp::get_instance()->Error("Remove not yet implemented");
+			Ultima8Engine::get_instance()->Error("Remove not yet implemented");
 			break;
 		}
 	}
@@ -230,11 +230,11 @@ void PentagramMenuGump::ProcessCallback(std::string gamename, int message) {
 	if (message != 0) {
 		SettingManager *settingman = SettingManager::get_instance();
 		settingman->set("lastSave", message != 1 ? U8SaveGump::getFilename(message) : std::string());
-		GUIApp::get_instance()->changeGame(gamename);
+		Ultima8Engine::get_instance()->changeGame(gamename);
 	}
 
 	UnhideGump();
-	GUIApp::get_instance()->menuInitMinimal("pentagram");
+	Ultima8Engine::get_instance()->menuInitMinimal("pentagram");
 }
 
 } // End of namespace Ultima8

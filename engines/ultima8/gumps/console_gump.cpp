@@ -27,7 +27,7 @@
 #include "ultima8/filesys/idata_source.h"
 #include "ultima8/filesys/odata_source.h"
 
-#include "ultima8/kernel/gui_app.h"
+#include "ultima8/ultima8.h"
 
 namespace Ultima8 {
 
@@ -133,7 +133,7 @@ void ConsoleGump::ToggleConsole() {
 
 	case NORMAL_DISPLAY:
 		scroll_state = WAITING_TO_HIDE;
-		GUIApp::get_instance()->leaveTextMode(this);
+		Ultima8Engine::get_instance()->leaveTextMode(this);
 		con.ClearCommandBuffer();
 		break;
 
@@ -152,7 +152,7 @@ void ConsoleGump::HideConsole() {
 
 	case NORMAL_DISPLAY:
 		scroll_state = WAITING_TO_HIDE;
-		GUIApp::get_instance()->leaveTextMode(this);
+		Ultima8Engine::get_instance()->leaveTextMode(this);
 		con.ClearCommandBuffer();
 		break;
 
@@ -212,7 +212,7 @@ void ConsoleGump::run() {
 		}
 		scroll_frame = 8;
 		scroll_state = NORMAL_DISPLAY;
-		GUIApp::get_instance()->enterTextMode(this);
+		Ultima8Engine::get_instance()->enterTextMode(this);
 		con.ClearCommandBuffer();
 		break;
 
@@ -222,7 +222,7 @@ void ConsoleGump::run() {
 }
 
 void ConsoleGump::ConCmd_toggle(const Console::ArgvType &argv) {
-	ConsoleGump *consoleGump = GUIApp::get_instance()->getConsoleGump();
+	ConsoleGump *consoleGump = Ultima8Engine::get_instance()->getConsoleGump();
 	consoleGump->ToggleConsole();
 }
 
@@ -326,9 +326,9 @@ void ConsoleGump::OnFocus(bool gain) {
 	/*
 	if (scroll_state == NORMAL_DISPLAY) {
 	    if (gain)
-	        GUIApp::get_instance()->enterTextMode(this);
+	        Ultima8Engine::get_instance()->enterTextMode(this);
 	    else
-	        GUIApp::get_instance()->leaveTextMode(this);
+	        Ultima8Engine::get_instance()->leaveTextMode(this);
 	}
 	*/
 

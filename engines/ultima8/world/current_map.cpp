@@ -37,7 +37,7 @@
 #include "ultima8/kernel/kernel.h"
 #include "ultima8/games/game_data.h"
 #include "ultima8/graphics/main_shape_archive.h"
-#include "ultima8/kernel/gui_app.h"
+#include "ultima8/ultima8.h"
 #include "ultima8/gumps/game_map_gump.h"
 #include "ultima8/misc/direction.h"
 #include "ultima8/world/get_object.h"
@@ -223,7 +223,7 @@ void CurrentMap::loadMap(Map *map) {
 		// Schedule
 		// CHECKME: is this the right time to pass?
 		if (callCacheIn)
-			actor->schedule(GUIApp::get_instance()->getGameTimeInSeconds() / 60);
+			actor->schedule(Ultima8Engine::get_instance()->getGameTimeInSeconds() / 60);
 
 		if (actor->getMapNum() == getNum()) {
 			addItemToEnd(actor);
@@ -381,7 +381,7 @@ void CurrentMap::updateFastArea(int32 from_x, int32 from_y, int32 from_z, int32 
 
 	// Work out Fine (screenspace) Limits of chunks with half chunk border
 	Pentagram::Rect dims;
-	GUIApp::get_instance()->getGameMapGump()->GetDims(dims);
+	Ultima8Engine::get_instance()->getGameMapGump()->GetDims(dims);
 
 	int32 sleft  = ((x_min - y_min) / 4)         - (dims.w / 2 + mapChunkSize / 4);
 	int32 stop   = ((x_min + y_min) / 8 - z_max) - (dims.h / 2 + mapChunkSize / 8);

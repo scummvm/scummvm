@@ -23,7 +23,7 @@
 #include "ultima8/misc/pent_include.h"
 #include "ultima8/world/actors/avatar_mover_process.h"
 #include "ultima8/world/actors/animation.h"
-#include "ultima8/kernel/gui_app.h"
+#include "ultima8/ultima8.h"
 #include "ultima8/world/actors/main_actor.h"
 #include "ultima8/gumps/game_map_gump.h"
 #include "ultima8/kernel/kernel.h"
@@ -100,7 +100,7 @@ void AvatarMoverProcess::run() {
 }
 
 void AvatarMoverProcess::handleHangingMode() {
-	GUIApp *guiapp = GUIApp::get_instance();
+	Ultima8Engine *guiapp = Ultima8Engine::get_instance();
 	MainActor *avatar = getMainActor();
 	uint32 now = g_system->getMillis();
 	bool stasis = guiapp->isAvatarInStasis();
@@ -142,7 +142,7 @@ void AvatarMoverProcess::handleHangingMode() {
 }
 
 void AvatarMoverProcess::handleCombatMode() {
-	GUIApp *guiapp = GUIApp::get_instance();
+	Ultima8Engine *guiapp = Ultima8Engine::get_instance();
 	MainActor *avatar = getMainActor();
 	Animation::Sequence lastanim = avatar->getLastAnim();
 	Animation::Sequence nextanim = Animation::walk;
@@ -243,7 +243,7 @@ void AvatarMoverProcess::handleCombatMode() {
 		mouseButton[1].state |= MBS_HANDLED;
 		mouseButton[1].lastDown = 0;
 
-		Gump *desktopgump = GUIApp::get_instance()->getDesktopGump();
+		Gump *desktopgump = Ultima8Engine::get_instance()->getDesktopGump();
 		if (desktopgump->TraceObjId(mx, my) == 1) {
 			// double right click on avatar = toggle combat mode
 			avatar->toggleInCombat();
@@ -315,7 +315,7 @@ void AvatarMoverProcess::handleCombatMode() {
 }
 
 void AvatarMoverProcess::handleNormalMode() {
-	GUIApp *guiapp = GUIApp::get_instance();
+	Ultima8Engine *guiapp = Ultima8Engine::get_instance();
 	MainActor *avatar = getMainActor();
 	Animation::Sequence lastanim = avatar->getLastAnim();
 	Animation::Sequence nextanim = Animation::walk;
@@ -505,7 +505,7 @@ void AvatarMoverProcess::handleNormalMode() {
 	if ((mouseButton[1].state & MBS_DOWN) &&
 	        !(mouseButton[1].state & MBS_HANDLED) &&
 	        mouseButton[1].curDown - mouseButton[1].lastDown <= DOUBLE_CLICK_TIMEOUT) {
-		Gump *desktopgump = GUIApp::get_instance()->getDesktopGump();
+		Gump *desktopgump = Ultima8Engine::get_instance()->getDesktopGump();
 		if (desktopgump->TraceObjId(mx, my) == 1) {
 			// double right click on avatar = toggle combat mode
 			mouseButton[1].state |= MBS_HANDLED;
@@ -637,7 +637,7 @@ void AvatarMoverProcess::step(Animation::Sequence action, int direction,
 }
 
 void AvatarMoverProcess::jump(Animation::Sequence action, int direction) {
-	GUIApp *guiapp = GUIApp::get_instance();
+	Ultima8Engine *guiapp = Ultima8Engine::get_instance();
 	MainActor *avatar = getMainActor();
 	int mx, my;
 	guiapp->getMouseCoords(mx, my);

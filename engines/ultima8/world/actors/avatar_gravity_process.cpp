@@ -25,7 +25,7 @@
 #include "ultima8/world/actors/avatar_gravity_process.h"
 #include "ultima8/world/actors/main_actor.h"
 #include "ultima8/world/world.h"
-#include "ultima8/kernel/gui_app.h"
+#include "ultima8/ultima8.h"
 #include "ultima8/world/current_map.h"
 #include "ultima8/world/get_object.h"
 
@@ -48,7 +48,7 @@ AvatarGravityProcess::AvatarGravityProcess(MainActor *avatar, int gravity_)
 }
 
 void AvatarGravityProcess::run() {
-	if (!GUIApp::get_instance()->isMouseDown(BUTTON_RIGHT)) {
+	if (!Ultima8Engine::get_instance()->isMouseDown(BUTTON_RIGHT)) {
 		// right mouse button not down, so fall normally
 
 		GravityProcess::run();

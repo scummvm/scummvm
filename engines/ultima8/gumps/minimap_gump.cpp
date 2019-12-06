@@ -22,7 +22,7 @@
 
 #include "ultima8/misc/pent_include.h"
 #include "ultima8/gumps/minimap_gump.h"
-#include "ultima8/kernel/gui_app.h"
+#include "ultima8/ultima8.h"
 #include "ultima8/world/world.h"
 #include "ultima8/world/current_map.h"
 #include "ultima8/graphics/shape.h"
@@ -168,7 +168,7 @@ uint32 MiniMapGump::sampleAtPoint(int x_, int y_, CurrentMap *currentmap) {
 }
 
 void MiniMapGump::ConCmd_toggle(const Console::ArgvType &argv) {
-	GUIApp *app = GUIApp::get_instance();
+	Ultima8Engine *app = Ultima8Engine::get_instance();
 	Gump *desktop = app->getDesktopGump();
 	Gump *mmg = desktop->FindGump(MiniMapGump::ClassType);
 

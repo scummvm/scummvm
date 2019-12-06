@@ -24,7 +24,7 @@
 
 #include "ultima8/graphics/inverter_process.h"
 #include "ultima8/kernel/kernel.h"
-#include "ultima8/kernel/gui_app.h"
+#include "ultima8/ultima8.h"
 
 #include "ultima8/filesys/idata_source.h"
 #include "ultima8/filesys/odata_source.h"
@@ -64,7 +64,7 @@ InverterProcess::~InverterProcess(void) {
 }
 
 void InverterProcess::run() {
-	GUIApp *app = GUIApp::get_instance();
+	Ultima8Engine *app = Ultima8Engine::get_instance();
 
 	unsigned int state = app->getInversion();
 	if (state == targetstate) {
@@ -101,7 +101,7 @@ ProcId InverterProcess::invertScreen() {
 		return inverter->getPid();
 	} else {
 		unsigned int target = 0x8000;
-		if (GUIApp::get_instance()->isInverted()) target = 0;
+		if (Ultima8Engine::get_instance()->isInverted()) target = 0;
 		inverter = new InverterProcess(target);
 		return Kernel::get_instance()->addProcess(inverter);
 	}

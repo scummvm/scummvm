@@ -76,7 +76,7 @@ double atof(const char *str) {
 }
 
 uint rand() {
-	return g_vm->getRandomNumber(0x7fffffff);
+	return Ultima8Engine::get_instance()->getRandomNumber(0x7fffffff);
 }
 
 double sqrt(double val) {

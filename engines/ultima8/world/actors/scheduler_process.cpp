@@ -24,7 +24,7 @@
 
 #include "ultima8/world/actors/scheduler_process.h"
 #include "ultima8/world/actors/actor.h"
-#include "ultima8/kernel/gui_app.h"
+#include "ultima8/ultima8.h"
 #include "ultima8/world/get_object.h"
 
 #include "ultima8/filesys/idata_source.h"
@@ -48,7 +48,7 @@ void SchedulerProcess::run() {
 		Actor *a = getActor(nextActor);
 		if (a) {
 			// CHECKME: is this the right time to pass? CONSTANT
-			uint32 stime = GUIApp::get_instance()->getGameTimeInSeconds() / 60;
+			uint32 stime = Ultima8Engine::get_instance()->getGameTimeInSeconds() / 60;
 			ProcId schedpid = a->callUsecodeEvent_schedule(stime);
 			if (schedpid) waitFor(schedpid);
 		}
@@ -66,7 +66,7 @@ void SchedulerProcess::run() {
 	}
 
 	// CONSTANT!
-	uint32 currenthour = GUIApp::get_instance()->getGameTimeInSeconds() / 900;
+	uint32 currenthour = Ultima8Engine::get_instance()->getGameTimeInSeconds() / 900;
 
 	if (currenthour > lastRun) {
 		// schedule a new scheduling run

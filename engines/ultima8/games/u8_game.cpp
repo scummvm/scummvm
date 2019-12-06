@@ -30,7 +30,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "ultima8/world/actors/main_actor.h"
 #include "ultima8/world/item_factory.h"
 #include "ultima8/kernel/object_manager.h"
-#include "ultima8/kernel/gui_app.h"
+#include "ultima8/ultima8.h"
 #include "ultima8/conf/setting_manager.h"
 #include "ultima8/gumps/movie_gump.h"
 #include "ultima8/filesys/raw_archive.h"
@@ -51,7 +51,7 @@ U8Game::U8Game() : Game() {
 	settingman->setDefault("footsteps", true);
 	settingman->setDefault("targetedjump", true);
 
-	GameInfo *info = GUIApp::get_instance()->getGameInfo();
+	GameInfo *info = Ultima8Engine::get_instance()->getGameInfo();
 	if (info->language == GameInfo::GAMELANG_JAPANESE) {
 		settingman->setDefault("textdelay", 20);
 	} else {
@@ -140,13 +140,13 @@ bool U8Game::startGame() {
 
 	World::get_instance()->switchMap(av->getMapNum());
 
-	GUIApp::get_instance()->setAvatarInStasis(true);
+	Ultima8Engine::get_instance()->setAvatarInStasis(true);
 
 	return true;
 }
 
 void U8Game::ConCmd_cheatItems(const Console::ArgvType &argv) {
-	if (!GUIApp::get_instance()->areCheatsEnabled()) {
+	if (!Ultima8Engine::get_instance()->areCheatsEnabled()) {
 		pout << "Cheats are disabled" << std::endl;
 		return;
 	}
@@ -293,7 +293,7 @@ void U8Game::ConCmd_cheatItems(const Console::ArgvType &argv) {
 }
 
 void U8Game::ConCmd_cheatEquip(const Console::ArgvType &argv) {
-	if (!GUIApp::get_instance()->areCheatsEnabled()) {
+	if (!Ultima8Engine::get_instance()->areCheatsEnabled()) {
 		pout << "Cheats are disabled" << std::endl;
 		return;
 	}

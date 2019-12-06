@@ -152,7 +152,6 @@ MODULE_OBJS := \
 	kernel/allocator.o \
 	kernel/core_app.o \
 	kernel/delay_process.o \
-	kernel/gui_app.o \
 	kernel/hid_keys.o \
 	kernel/hid_manager.o \
 	kernel/joystick.o \

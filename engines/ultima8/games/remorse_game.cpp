@@ -26,7 +26,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "ultima8/world/world.h"
 #include "ultima8/graphics/xform_blend.h"
 #include "ultima8/games/game_data.h"
-#include "ultima8/kernel/gui_app.h"
+#include "ultima8/ultima8.h"
 #include "ultima8/filesys/raw_archive.h"
 #include "ultima8/world/item_factory.h"
 #include "ultima8/world/actors/main_actor.h"
@@ -89,7 +89,7 @@ bool RemorseGame::startGame() {
 
 	World::get_instance()->switchMap(1);
 
-	GUIApp::get_instance()->setAvatarInStasis(true);
+	Ultima8Engine::get_instance()->setAvatarInStasis(true);
 
 	return true;
 }

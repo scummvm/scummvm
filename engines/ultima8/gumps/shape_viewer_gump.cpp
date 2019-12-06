@@ -25,7 +25,7 @@
 
 #include "ultima8/graphics/shape_archive.h"
 #include "ultima8/graphics/render_surface.h"
-#include "ultima8/kernel/gui_app.h"
+#include "ultima8/ultima8.h"
 #include "ultima8/graphics/shape.h"
 #include "ultima8/graphics/shape_info.h"
 
@@ -265,7 +265,7 @@ void ShapeViewerGump::U8ShapeViewer() {
 		// !! memory leak
 	}
 
-	Gump *desktopGump = GUIApp::get_instance()->getDesktopGump();
+	Gump *desktopGump = Ultima8Engine::get_instance()->getDesktopGump();
 	Pentagram::Rect res;
 	desktopGump->GetDims(res);
 

@@ -213,7 +213,7 @@ Intrinsic RemorseIntrinsics[] = {
 	0, // call usecode event B
 	0,
 	Item::I_andStatus,
-	GUIApp::I_getCurrentTimerTick,
+	Ultima8Engine::I_getCurrentTimerTick,
 	0,
 	0,
 	0,

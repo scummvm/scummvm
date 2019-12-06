@@ -28,7 +28,7 @@
 #include "ultima8/graphics/shape_info.h"
 #include "ultima8/world/container.h"
 #include "ultima8/graphics/render_surface.h"
-#include "ultima8/kernel/gui_app.h"
+#include "ultima8/ultima8.h"
 #include "ultima8/kernel/kernel.h"
 #include "ultima8/games/game_data.h"
 #include "ultima8/graphics/main_shape_archive.h"
@@ -125,7 +125,7 @@ void ContainerGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scale
 	int32 gametick = Kernel::get_instance()->getFrameNum();
 
 	//!! TODO: check these painting commands (flipped? translucent?)
-	bool paintEditorItems = GUIApp::get_instance()->isPaintEditorItems();
+	bool paintEditorItems = Ultima8Engine::get_instance()->isPaintEditorItems();
 
 	std::list<Item *>::iterator iter;
 	for (iter = contents.begin(); iter != contents.end(); ++iter) {
@@ -167,7 +167,7 @@ uint16 ContainerGump::TraceObjId(int mx, int my) {
 
 	if (!c) return 0; // Container gone!?
 
-	bool paintEditorItems = GUIApp::get_instance()->isPaintEditorItems();
+	bool paintEditorItems = Ultima8Engine::get_instance()->isPaintEditorItems();
 
 	std::list<Item *> &contents = c->contents;
 	std::list<Item *>::iterator iter;
@@ -316,7 +316,7 @@ Gump *ContainerGump::OnMouseDown(int button, int mx, int my) {
 
 void ContainerGump::OnMouseClick(int button, int mx, int my) {
 	if (button == BUTTON_LEFT) {
-		if (GUIApp::get_instance()->isAvatarInStasis()) {
+		if (Ultima8Engine::get_instance()->isAvatarInStasis()) {
 			pout << "Can't: avatarInStasis" << std::endl;
 			return;
 		}
@@ -335,7 +335,7 @@ void ContainerGump::OnMouseClick(int button, int mx, int my) {
 
 void ContainerGump::OnMouseDouble(int button, int mx, int my) {
 	if (button == BUTTON_LEFT) {
-		if (GUIApp::get_instance()->isAvatarInStasis()) {
+		if (Ultima8Engine::get_instance()->isAvatarInStasis()) {
 			pout << "Can't: avatarInStasis" << std::endl;
 			return;
 		}
@@ -355,7 +355,7 @@ void ContainerGump::OnMouseDouble(int button, int mx, int my) {
 				// call the 'use' event
 				item->use();
 			} else {
-				GUIApp::get_instance()->flashCrossCursor();
+				Ultima8Engine::get_instance()->flashCrossCursor();
 			}
 		}
 	}
@@ -376,7 +376,7 @@ bool ContainerGump::StartDraggingItem(Item *item, int mx, int my) {
 	int32 itemx, itemy;
 	getItemCoords(item, itemx, itemy);
 
-	GUIApp::get_instance()->setDraggingOffset(mx - itemx, my - itemy);
+	Ultima8Engine::get_instance()->setDraggingOffset(mx - itemx, my - itemy);
 
 	return true;
 }
@@ -393,8 +393,8 @@ bool ContainerGump::DraggingItem(Item *item, int mx, int my) {
 	}
 
 	int dox, doy;
-	GUIApp::get_instance()->getDraggingOffset(dox, doy);
-	GUIApp::get_instance()->setMouseCursor(GUIApp::MOUSE_TARGET);
+	Ultima8Engine::get_instance()->getDraggingOffset(dox, doy);
+	Ultima8Engine::get_instance()->setMouseCursor(Ultima8Engine::MOUSE_TARGET);
 	display_dragging = true;
 
 	dragging_shape = item->getShape();
@@ -531,7 +531,7 @@ void ContainerGump::DropItem(Item *item, int mx, int my) {
 		}
 
 		int dox, doy;
-		GUIApp::get_instance()->getDraggingOffset(dox, doy);
+		Ultima8Engine::get_instance()->getDraggingOffset(dox, doy);
 		dragging_x = mx - itemarea.x - dox;
 		dragging_y = my - itemarea.y - doy;
 		item->setGumpLocation(dragging_x, dragging_y);

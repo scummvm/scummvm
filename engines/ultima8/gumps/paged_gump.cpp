@@ -27,7 +27,7 @@
 #include "ultima8/graphics/gump_shape_archive.h"
 #include "ultima8/graphics/shape.h"
 #include "ultima8/graphics/shape_frame.h"
-#include "ultima8/kernel/gui_app.h"
+#include "ultima8/ultima8.h"
 #include "ultima8/gumps/widgets/button_widget.h"
 
 namespace Ultima8 {
@@ -45,7 +45,7 @@ PagedGump::~PagedGump(void) {
 }
 
 void PagedGump::Close(bool no_del) {
-	GUIApp::get_instance()->popMouseCursor();
+	Ultima8Engine::get_instance()->popMouseCursor();
 	std::vector<Gump *>::iterator iter;
 	for (iter = gumps.begin(); iter != gumps.end(); ++iter) {
 		(*iter)->Close(no_del); // CHECKME: no_del?
@@ -81,9 +81,9 @@ void PagedGump::InitGump(Gump *newparent, bool take_focus) {
 	prevButton->setRelativePosition(TOP_LEFT, leftOff, topOff);
 	prevButton->HideGump();
 
-	GUIApp *guiapp = GUIApp::get_instance();
+	Ultima8Engine *guiapp = Ultima8Engine::get_instance();
 	guiapp->pushMouseCursor();
-	guiapp->setMouseCursor(GUIApp::MOUSE_HAND); // default cursor
+	guiapp->setMouseCursor(Ultima8Engine::MOUSE_HAND); // default cursor
 }
 
 void PagedGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scaled) {

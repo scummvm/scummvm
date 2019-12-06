@@ -27,7 +27,7 @@
 #include "ultima8/world/world.h"
 #include "ultima8/world/current_map.h"
 #include "ultima8/kernel/kernel.h"
-#include "ultima8/kernel/gui_app.h"
+#include "ultima8/ultima8.h"
 #include "ultima8/graphics/shape_info.h"
 #include "ultima8/world/get_object.h"
 #include "ultima8/world/actors/avatar_mover_process.h"
@@ -57,7 +57,7 @@ QuickAvatarMoverProcess::~QuickAvatarMoverProcess() {
 }
 
 void QuickAvatarMoverProcess::run() {
-	if (GUIApp::get_instance()->isAvatarInStasis()) {
+	if (Ultima8Engine::get_instance()->isAvatarInStasis()) {
 		terminate();
 		return;
 	}
@@ -128,7 +128,7 @@ void QuickAvatarMoverProcess::run() {
 
 
 	// Prevent avatar from running an idle animation while moving around
-	GUIApp::get_instance()->getAvatarMoverProcess()->resetIdleTime();
+	Ultima8Engine::get_instance()->getAvatarMoverProcess()->resetIdleTime();
 }
 
 void QuickAvatarMoverProcess::terminate() {
@@ -149,7 +149,7 @@ void QuickAvatarMoverProcess::terminateMover(int _dir) {
 }
 
 void QuickAvatarMoverProcess::startMover(int x, int y, int z, int _dir) {
-	GUIApp *g = GUIApp::get_instance();
+	Ultima8Engine *g = Ultima8Engine::get_instance();
 	if (! g->isAvatarInStasis()) {
 		Process *p = new QuickAvatarMoverProcess(x, y, z, _dir);
 		Kernel::get_instance()->addProcess(p);
@@ -180,32 +180,32 @@ bool QuickAvatarMoverProcess::loadData(IDataSource *ids, uint32 version) {
 }
 
 void QuickAvatarMoverProcess::ConCmd_startMoveUp(const Console::ArgvType &argv) {
-	if (!GUIApp::get_instance()->areCheatsEnabled()) return;
+	if (!Ultima8Engine::get_instance()->areCheatsEnabled()) return;
 	QuickAvatarMoverProcess::startMover(-64, -64, 0, 0);
 }
 
 void QuickAvatarMoverProcess::ConCmd_startMoveDown(const Console::ArgvType &argv) {
-	if (!GUIApp::get_instance()->areCheatsEnabled()) return;
+	if (!Ultima8Engine::get_instance()->areCheatsEnabled()) return;
 	QuickAvatarMoverProcess::startMover(+64, +64, 0, 1);
 }
 
 void QuickAvatarMoverProcess::ConCmd_startMoveLeft(const Console::ArgvType &argv) {
-	if (!GUIApp::get_instance()->areCheatsEnabled()) return;
+	if (!Ultima8Engine::get_instance()->areCheatsEnabled()) return;
 	QuickAvatarMoverProcess::startMover(-64, +64, 0, 2);
 }
 
 void QuickAvatarMoverProcess::ConCmd_startMoveRight(const Console::ArgvType &argv) {
-	if (!GUIApp::get_instance()->areCheatsEnabled()) return;
+	if (!Ultima8Engine::get_instance()->areCheatsEnabled()) return;
 	QuickAvatarMoverProcess::startMover(+64, -64, 0, 3);
 }
 
 void QuickAvatarMoverProcess::ConCmd_startAscend(const Console::ArgvType &argv) {
-	if (!GUIApp::get_instance()->areCheatsEnabled()) return;
+	if (!Ultima8Engine::get_instance()->areCheatsEnabled()) return;
 	QuickAvatarMoverProcess::startMover(0, 0, 8, 4);
 }
 
 void QuickAvatarMoverProcess::ConCmd_startDescend(const Console::ArgvType &argv) {
-	if (!GUIApp::get_instance()->areCheatsEnabled()) return;
+	if (!Ultima8Engine::get_instance()->areCheatsEnabled()) return;
 	QuickAvatarMoverProcess::startMover(0, 0, -8, 5);
 }
 
@@ -238,7 +238,7 @@ void QuickAvatarMoverProcess::ConCmd_toggleQuarterSpeed(const Console::ArgvType 
 }
 
 void QuickAvatarMoverProcess::ConCmd_toggleClipping(const Console::ArgvType &argv) {
-	if (!GUIApp::get_instance()->areCheatsEnabled()) return;
+	if (!Ultima8Engine::get_instance()->areCheatsEnabled()) return;
 	QuickAvatarMoverProcess::toggleClipping();
 	pout << "QuickAvatarMoverProcess::clipping = " << QuickAvatarMoverProcess::isClipping() << std::endl;
 }

@@ -52,7 +52,7 @@ public:
 		return application;
 	};
 
-	virtual void run() = 0; // FIXME: Need stub
+	virtual void runGame() = 0;
 	virtual void paint() = 0; // probably shouldn't exist
 	virtual bool isPainting() {
 		return false;

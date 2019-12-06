@@ -23,7 +23,7 @@
 #include "ultima8/misc/pent_include.h"
 
 #include "ultima8/world/egg.h"
-#include "ultima8/kernel/gui_app.h"
+#include "ultima8/ultima8.h"
 #include "ultima8/world/get_object.h"
 #include "ultima8/usecode/uc_machine.h"
 

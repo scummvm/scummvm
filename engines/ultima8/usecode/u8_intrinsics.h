@@ -32,7 +32,7 @@
 #include "ultima8/world/actors/main_actor.h"
 #include "ultima8/kernel/kernel.h"
 #include "ultima8/world/camera_process.h"
-#include "ultima8/kernel/gui_app.h"
+#include "ultima8/ultima8.h"
 #include "ultima8/world/egg.h"
 #include "ultima8/world/monster_egg.h"
 #include "ultima8/world/current_map.h"
@@ -246,7 +246,7 @@ Intrinsic U8Intrinsics[] = {
 	Actor::I_schedule,
 	Actor::I_getEquip,
 	Actor::I_setEquip,
-	GUIApp::I_closeItemGumps,
+	Ultima8Engine::I_closeItemGumps,
 	CameraProcess::I_scrollTo,
 	UCMachine::I_urandom,
 	UCMachine::I_rndRange,
@@ -274,20 +274,20 @@ Intrinsic U8Intrinsics[] = {
 	MainActor::I_teleportToEgg,
 	Kernel::I_resetRef,
 	0, // setRef
-	GUIApp::I_getAvatarInStasis,
+	Ultima8Engine::I_getAvatarInStasis,
 	// 0x0D0
-	GUIApp::I_setAvatarInStasis,
+	Ultima8Engine::I_setAvatarInStasis,
 	Item::I_getEtherealTop,
-	GUIApp::I_getCurrentTimerTick,
+	Ultima8Engine::I_getCurrentTimerTick,
 	0, //U (canGetThere)
 	CurrentMap::I_canExistAt,
 	SpriteProcess::I_createSprite,
 	SpriteProcess::I_createSprite,
 	Item::I_getFamilyOfType,
-	GUIApp::I_getTimeInGameHours,
-	GUIApp::I_getTimeInMinutes,
-	GUIApp::I_getTimeInSeconds,
-	GUIApp::I_setTimeInGameHours,
+	Ultima8Engine::I_getTimeInGameHours,
+	Ultima8Engine::I_getTimeInMinutes,
+	Ultima8Engine::I_getTimeInSeconds,
+	Ultima8Engine::I_setTimeInGameHours,
 	0, // U (SetTimeInMinutes)
 	0, // U (SetTimeInSeconds)
 	PaletteFaderProcess::I_fadeToBlack,
@@ -322,8 +322,8 @@ Intrinsic U8Intrinsics[] = {
 	0, //U
 	0, //U
 	FireballProcess::I_TonysBalls,
-	GUIApp::I_avatarCanCheat,
-	GUIApp::I_makeAvatarACheater,
+	Ultima8Engine::I_avatarCanCheat,
+	Ultima8Engine::I_makeAvatarACheater,
 	UCMachine::I_true, // isGameRunning
 	0, //U
 	// 0x100

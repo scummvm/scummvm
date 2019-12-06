@@ -270,7 +270,7 @@ bool FileSystem::MkDir(const string &path) {
  */
 
 std::string FileSystem::getHomePath() {
-	Common::FSNode gameDir = g_vm->getGameDirectory();
+	Common::FSNode gameDir = Ultima8Engine::get_instance()->getGameDirectory();
 	return gameDir.getPath();
 }
 
