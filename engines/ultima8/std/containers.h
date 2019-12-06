@@ -36,6 +36,29 @@ namespace std {
 template<class T>
 class vector : public Common::Array<T> {
 public:
+	struct reverse_iterator {
+	private:
+		vector<T> *_owner;
+		int _index;
+	public:
+		reverse_iterator(vector<T> *owner, int index) : _owner(owner), _index(index) {}
+		reverse_iterator() : _owner(nullptr), _index(-1) {}
+
+		T operator*() const { return (*_owner)[_index]; }
+
+		reverse_iterator &operator++() {
+			--_index;
+			return *this;
+		}
+
+		bool operator==(const reverse_iterator &rhs) {
+			return _owner == rhs._owner && _index == rhs._index;
+		}
+		bool operator!=(const reverse_iterator &rhs) {
+			return !operator==(rhs);
+		}
+	};
+public:
 	typedef T reference;
 	typedef const T const_reference;
 
@@ -63,6 +86,13 @@ public:
 		SWAP(this->_capacity, arr._capacity);
 		SWAP(this->_size, arr._size);
 		SWAP(this->_storage, arr._storage);
+	}
+
+	reverse_iterator rbegin() {
+		return reverse_iterator(this, (int)Common::Array<T>::size() - 1);
+	}
+	reverse_iterator rend() {
+		return reverse_iterator(this, -1);
 	}
 };
 
@@ -117,13 +147,38 @@ template<class VAL>
 class deque : public Common::List<VAL> {
 };
 
-template<class VAL>
-class list : public Common::List<VAL> {
+template<class T>
+class list : public Common::List<T> {
 public:
-	typename Common::List<VAL>::iterator insert(typename Common::List<VAL>::iterator pos,
-			const VAL &element) {
-		Common::List<VAL>::insert(pos, element);
+	struct reverse_iterator {
+	private:
+		typename Common::List<T>::iterator _it;
+	public:
+		reverse_iterator(typename Common::List<T>::iterator it) : _it(it) {}
+		reverse_iterator() {}
+
+		T operator*() const { return *_it; }
+
+		reverse_iterator &operator++() {
+			--_it;
+			return *this;
+		}
+
+		bool operator==(const reverse_iterator &rhs) { return _it == rhs._it; }
+		bool operator!=(const reverse_iterator &rhs) { return _it != rhs._it; }
+	};
+public:
+	typename Common::List<T>::iterator insert(typename Common::List<T>::iterator pos,
+			const T &element) {
+		Common::List<T>::insert(pos, element);
 		return pos;
+	}
+
+	reverse_iterator rbegin() {
+		return reverse_iterator(Common::List<T>::reverse_begin());
+	}
+	reverse_iterator rend() {
+		return reverse_iterator(Common::List<T>::end());
 	}
 };
 

@@ -32,6 +32,29 @@ class string : public Common::String {
 public:
 	typedef size_t size_type;
 	static const size_type npos = (size_type) - 1;
+
+	struct reverse_iterator {
+	private:
+		string *_owner;
+		int _index;
+	public:
+		reverse_iterator(string *owner, int index) : _owner(owner), _index(index) {}
+		reverse_iterator() : _owner(nullptr), _index(-1) {}
+
+		char &operator*() const { return (*_owner)[_index]; }
+
+		reverse_iterator &operator++() {
+			--_index;
+			return *this;
+		}
+
+		bool operator==(const reverse_iterator &rhs) {
+			return _owner == rhs._owner && _index == rhs._index;
+		}
+		bool operator!=(const reverse_iterator &rhs) {
+			return !operator==(rhs);
+		}
+	};
 public:
 	string() : Common::String() {}
 	string(const char *str) : Common::String(str) {}
@@ -140,6 +163,13 @@ public:
 
 	void append(const string &str) {
 		*this += str;
+	}
+
+	reverse_iterator rbegin() {
+		return reverse_iterator(this, (int)size() - 1);
+	}
+	reverse_iterator rend() {
+		return reverse_iterator(this, -1);
 	}
 };
 

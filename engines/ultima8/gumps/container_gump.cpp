@@ -170,10 +170,10 @@ uint16 ContainerGump::TraceObjId(int mx, int my) {
 	bool paintEditorItems = Ultima8Engine::get_instance()->isPaintEditorItems();
 
 	std::list<Item *> &contents = c->contents;
-	std::list<Item *>::iterator iter;
+	std::list<Item *>::reverse_iterator iter;
 
 	// iterate backwards, since we're painting from begin() to end()
-	for (iter = contents.end(); iter != contents.begin(); --iter) {
+	for (iter = contents.rbegin(); iter != contents.rend(); ++iter) {
 		Item *item = *iter;
 		if (!paintEditorItems && item->getShapeInfo()->is_editor())
 			continue;

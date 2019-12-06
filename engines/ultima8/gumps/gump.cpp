@@ -127,12 +127,12 @@ void Gump::Close(bool no_del) {
 
 void Gump::RenderSurfaceChanged() {
 	// Iterate all children
-	std::list<Gump *>::iterator it = children.end();
-	std::list<Gump *>::iterator begin = children.begin();
+	std::list<Gump *>::reverse_iterator it = children.rbegin();
+	std::list<Gump *>::reverse_iterator end = children.rend();
 
-	while (it != begin) {
+	while (it != end) {
 		(*it)->RenderSurfaceChanged();
-		--it;
+		++it;
 	}
 }
 
@@ -190,12 +190,12 @@ void Gump::CloseItemDependents() {
 bool Gump::GetMouseCursor(int mx, int my, Shape &shape_, int32 &frame) {
 	ParentToGump(mx, my);
 
-
 	bool ret = false;
 
 	// This reverse iterates the children
-	std::list<Gump *>::iterator it;
-	for (it = children.end(); it != children.begin(); --it) {
+	std::list<Gump *>::reverse_iterator it;
+	for (it = children.rbegin(); it != children.rend(); ++it)
+	{
 		Gump *g = *it;
 
 		// Not if closing
@@ -307,16 +307,16 @@ void Gump::PaintCompositing(RenderSurface *surf, int32 lerp_factor,
 	surf->SetClippingRect(new_rect);
 
 	// Iterate all children
-	std::list<Gump *>::iterator it = children.end();
-	std::list<Gump *>::iterator begin = children.begin();
+	std::list<Gump *>::reverse_iterator it = children.rbegin();
+	std::list<Gump *>::reverse_iterator end = children.rend();
 
-	while (it != begin) {
+	while (it != end) {
 		Gump *g = *it;
 		// Paint if not closing
 		if (!g->IsClosing())
 			g->PaintCompositing(surf, lerp_factor, sx, sy);
 
-		--it;
+		++it;
 	}
 
 	// Paint This
@@ -338,13 +338,13 @@ Gump *Gump::FindGump(int mx, int my) {
 	Gump *gump = 0;
 
 	// Iterate all children
-	std::list<Gump *>::iterator it = children.end();
-	std::list<Gump *>::iterator begin = children.begin();
+	std::list<Gump *>::reverse_iterator it = children.rbegin();
+	std::list<Gump *>::reverse_iterator end = children.rend();
 
-	while (it != begin && !gump) {
+	while (it != end && !gump) {
 		Gump *g = *it;
 		gump = g->FindGump(gx, gy);
-		--it;
+		++it;
 	}
 
 	// it's over a child
@@ -411,8 +411,8 @@ bool Gump::PointOnGump(int mx, int my) {
 	}
 
 	// reverse-iterate children
-	std::list<Gump *>::iterator it;
-	for (it = children.end(); it != children.begin(); --it) {
+	std::list<Gump *>::reverse_iterator it;
+	for (it = children.rbegin(); it != children.rend(); ++it) {
 		Gump *g = *it;
 
 		// It's got the point
@@ -498,17 +498,17 @@ uint16 Gump::TraceObjId(int mx, int my) {
 	uint16 objId_ = 0;
 
 	// reverse-iterate children
-	std::list<Gump *>::iterator it;
-	for (it = children.end(); it != children.begin(); --it) {
+	std::list<Gump *>::reverse_iterator it;
+	for (it = children.rbegin(); it != children.rend(); ++it) {
 		Gump *g = *it;
 
 		// Not if closing
 		if (g->flags & FLAG_CLOSING) continue;
 
 		// It's got the point
-		if (g->PointOnGump(gx, gy)) objId_ = g->TraceObjId(gx, gy);
+		if (g->PointOnGump(gx, gy)) objid = g->TraceObjId(gx, gy);
 
-		if (objId_ && objId_ != 65535) break;
+		if (objid && objid != 65535) break;
 	}
 
 //	if (!objId_ || objId_ == 65535)
@@ -581,9 +581,9 @@ void Gump::FindNewFocusChild() {
 	focus_child = 0;
 
 	// Now add the gump to use as the new focus
-	std::list<Gump *>::iterator  it = children.end();
+	std::list<Gump *>::reverse_iterator	it = children.rbegin();
 
-	if (it != children.begin()) {
+	if (it != children.rend()) {
 		(*it)->MakeFocus();
 	}
 }
@@ -689,8 +689,8 @@ Gump *Gump::OnMouseDown(int button, int mx, int my) {
 	Gump *handled = 0;
 
 	// Iterate children backwards
-	std::list<Gump *>::iterator it;
-	for (it = children.end(); it != children.begin(); --it) {
+	std::list<Gump *>::reverse_iterator it;
+	for (it = children.rbegin(); it != children.rend(); ++it) {
 		Gump *g = *it;
 
 		// Not if closing
@@ -712,8 +712,8 @@ Gump *Gump::OnMouseMotion(int mx, int my) {
 	Gump *handled = 0;
 
 	// Iterate children backwards
-	std::list<Gump *>::iterator it;
-	for (it = children.end(); it != children.begin(); --it) {
+	std::list<Gump *>::reverse_iterator it;
+	for (it = children.rbegin(); it != children.rend(); ++it) {
 		Gump *g = *it;
 
 		// Not if closing
