@@ -2534,6 +2534,9 @@ void Scene109::step() {
 			case 71:
 				_scene->_reloadSceneFlag = true;
 				break;
+
+			default:
+				break;
 			}
 		}
 	}
@@ -2640,6 +2643,9 @@ void Scene109::actions() {
 							_hoovicDifficultFl = (_game._difficulty == DIFFICULTY_HARD);
 							_globals._spriteIndexes[8] = _scene->_sprites.addSprites(formAnimName('H', (_hoovicDifficultFl ? 3 : 1)));
 							break;
+
+						default:
+							break;
 						}
 
 						_vm->_palette->refreshSceneColors();
@@ -2669,6 +2675,8 @@ void Scene109::actions() {
 							_globals._sequenceIndexes[2] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[2], false, 4, 1, 0, 0);
 							_scene->_sequences.addSubEntry(_globals._sequenceIndexes[2], SEQUENCE_TRIGGER_SPRITE, 2, 2);
 							_hoovicTrigger = 3;
+							break;
+						default:
 							break;
 						}
 						break;
@@ -2774,6 +2782,9 @@ void Scene109::actions() {
 					case 8:
 						_globals._sequenceIndexes[3] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[3], false, 7, 1, 0, 0);
 						_scene->_sequences.setAnimRange(_globals._sequenceIndexes[3], 5, 16);
+						break;
+
+					default:
 						break;
 					}
 					_action._inProgress = false;
@@ -2927,6 +2938,8 @@ void Scene110::actions() {
 			_game._player._visible = true;
 			_game._player._stepEnabled = true;
 			_scene->_nextSceneId = 111;
+			break;
+		default:
 			break;
 		}
 	} else if ((_action._lookFlag) || _action.isAction(VERB_LOOK, NOUN_CAVE))
@@ -3089,6 +3102,9 @@ void Scene111::actions() {
 
 		case 1:
 			_scene->_nextSceneId = 110;
+			break;
+
+		default:
 			break;
 		}
 	} else if (_action.isAction(VERB_LOOK, NOUN_CAVE_FLOOR))

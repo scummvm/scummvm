@@ -1059,6 +1059,9 @@ void Scene402::step() {
 
 		}
 		break;
+
+	default:
+		break;
 	}
 
 	switch (_game._trigger) {
@@ -1158,6 +1161,9 @@ void Scene402::step() {
 
 		}
 		break;
+
+	default:
+		break;
 	}
 
 	switch (_game._trigger) {
@@ -1226,6 +1232,9 @@ void Scene402::step() {
 		_bartenderReady = true;
 		}
 		break;
+
+	default:
+		break;
 	}
 
 	if (!_waitingGinnyMove && !_ginnyLooking) {
@@ -1275,6 +1284,9 @@ void Scene402::step() {
 		_globals._sequenceIndexes[5] = _scene->_sequences.startCycle(_globals._spriteIndexes[5], false, 1);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[5], 1);
 		_waitingGinnyMove = false;
+		break;
+
+	default:
 		break;
 	}
 
@@ -1430,6 +1442,9 @@ void Scene402::step() {
 
 	case 31:
 		_blowingSmoke = false;
+		break;
+
+	default:
 		break;
 	}
 
@@ -2127,7 +2142,7 @@ void Scene402::actions() {
 
 			default:
 				break;
-		}
+			}
 		}
 		break;
 
@@ -2165,6 +2180,9 @@ void Scene402::actions() {
 			default:
 				break;
 			}
+			break;
+
+		default:
 			break;
 		}
 	} else if (_action.isAction(VERB_TALKTO, NOUN_WOMAN_IN_CHAIR) && !_firstTalkToGirlInChair) {
@@ -3826,6 +3844,9 @@ void Scene411::actions() {
 			_game._player._stepEnabled = true;
 			_game._objects[OBJ_CHARGE_CASES].setQuality(3, 1);
 			_vm->_dialogs->showItem(OBJ_CHARGE_CASES, 41142);
+			break;
+
+		default:
 			break;
 		}
 		_action._inProgress = false;

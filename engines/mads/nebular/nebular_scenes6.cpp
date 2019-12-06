@@ -4414,6 +4414,9 @@ void Scene611::actions() {
 			case 3:
 				nextQuote = 0x27D;
 				break;
+
+			default:
+				break;
 			}
 			_scene->_kernelMessages.reset();
 			_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, _game.getQuote(nextQuote));

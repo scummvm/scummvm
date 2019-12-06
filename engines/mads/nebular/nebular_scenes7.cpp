@@ -1826,6 +1826,9 @@ void Scene706::handleTakeVase() {
 		_vm->_dialogs->showItem(OBJ_VASE, 70630);
 		_game._player._stepEnabled = true;
 		break;
+
+	default:
+		break;
 	}
 }
 
