@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2019-12-05 22:41+0000\n"
+"POT-Creation-Date: 2019-12-06 04:34+0000\n"
 "PO-Revision-Date: 2019-12-04 17:19+0000\n"
 "Last-Translator: Lothar Serra Mari <serra@scummvm.org>\n"
 "Language-Team: German <https://translations.scummvm.org/projects/scummvm/"
@@ -4024,7 +4024,7 @@ msgstr ""
 "\"import_savefile\" verwenden.\n"
 "\n"
 
-#: engines/kyra/graphics/screen_eob.cpp:2254
+#: engines/kyra/graphics/screen_eob.cpp:2258
 msgid ""
 "This AMIGA version requires the following font files:\n"
 "\n"
@@ -4049,7 +4049,7 @@ msgstr ""
 "Ihrer AmigaDOS-Installation befinden. Bitte kopieren Sie diese\n"
 "Dateien in das Spieldaten-Verzeichnis von EOB.\n"
 
-#: engines/kyra/graphics/screen_eob.cpp:2262
+#: engines/kyra/graphics/screen_eob.cpp:2266
 msgid ""
 "This AMIGA version requires the following font files:\n"
 "\n"
