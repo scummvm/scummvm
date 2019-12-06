@@ -45,7 +45,6 @@
 
 
 %debug
-%glr-parser
 
 %{
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
