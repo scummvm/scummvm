@@ -87,16 +87,16 @@ void ScalerGump::Paint(RenderSurface *surf, int32 lerp_factor, bool scaled) {
 	int32 scaley = (height << 16) / sheight1;
 
 	// Iterate all children
-	std::list<Gump *>::iterator it = children.end();
-	std::list<Gump *>::iterator begin = children.begin();
+	std::list<Gump *>::reverse_iterator it = children.rbegin();
+	std::list<Gump *>::reverse_iterator end = children.rend();
 
-	while (it != begin) {
+	while (it != end) {
 		Gump *g = *it;
 		// Paint if not closing
 		if (!g->IsClosing())
 			g->PaintCompositing(surf, lerp_factor, scalex, scaley);
 
-		--it;
+		++it;
 	}
 }
 

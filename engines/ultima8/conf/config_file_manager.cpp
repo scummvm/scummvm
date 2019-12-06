@@ -224,8 +224,8 @@ KeyMap ConfigFileManager::listKeyValues(istring section,
 
 
 INIFile *ConfigFileManager::findKeyINI(istring key) {
-	for (std::vector<INIFile *>::iterator i = inifiles.end();
-	        i != inifiles.begin(); --i) {
+	for (std::vector<INIFile *>::reverse_iterator i = inifiles.rbegin();
+	        i != inifiles.rend(); ++i) {
 		if ((*i)->hasKey(key))
 			return (*i);
 	}
@@ -234,8 +234,8 @@ INIFile *ConfigFileManager::findKeyINI(istring key) {
 }
 
 INIFile *ConfigFileManager::findWriteINI(istring key) {
-	for (std::vector<INIFile *>::iterator i = inifiles.end();
-	        i != inifiles.begin(); --i) {
+	for (std::vector<INIFile *>::reverse_iterator i = inifiles.rbegin();
+	        i != inifiles.rend(); ++i) {
 		if (!(*i)->isReadonly() && (*i)->checkRoot(key))
 			return (*i);
 	}

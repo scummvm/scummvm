@@ -123,8 +123,8 @@ bool FileSystem::base_to_uppercase(string &str, int count) {
 
 	int todo = count;
 	// Go backwards.
-	string::iterator X;
-	for (X = str.end(); X >= str.begin(); --X) {
+	string::reverse_iterator X;
+	for (X = str.rend(); X != str.rbegin(); ++X) {
 		// Stop at separator.
 		if (*X == '/' || *X == '\\' || *X == ':')
 			todo--;
@@ -137,7 +137,7 @@ bool FileSystem::base_to_uppercase(string &str, int count) {
 		*X = static_cast<char>(std::toupper(*X));
 #endif
 	}
-	if (X >= str.begin())
+	if (X == str.rend())
 		todo--; // start of pathname counts as separator too
 
 	// false if it didn't reach 'count' parts
