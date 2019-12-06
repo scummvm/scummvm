@@ -37,6 +37,7 @@ FileSystem::FileSystem(bool noforced)
 
 	assert(filesystem == 0);
 	filesystem = this;
+	AddVirtualPath("@home", "");
 
 #ifdef UNDER_CE
 	TCHAR module_filename[256];
@@ -82,12 +83,13 @@ IDataSource *FileSystem::ReadFile(const string &vfn, bool is_text) {
 	IDataSource *data = checkBuiltinData(vfn, is_text);
 
 	// allow data-override?
-	if (!allowdataoverride && data) return data;
+	if (!allowdataoverride && data)
+		return data;
 
 	Common::File *f = new Common::File();
-	if (!f->open(filename)) {
+	if (!rawOpen(*f, filename)) {
 		delete f;
-		return data;
+		return nullptr;
 	}
 
 	return new IFileDataSource(f);
@@ -98,12 +100,64 @@ ODataSource *FileSystem::WriteFile(const string &vfn, bool is_text) {
 	string filename = vfn;
 	Common::DumpFile *f = new Common::DumpFile();
 
-	if (!f->open(filename)) {
+	if (!rawOpen(*f, filename)) {
 		delete f;
 		return nullptr;
 	}
 
 	return new OFileDataSource(f);
+}
+
+bool FileSystem::rawOpen(Common::File &in,	const string &fname) {
+	string name = fname;
+
+	if (name.hasPrefix("@data/")) {
+		// It's a file specifically from the ultima8.dat file
+		return in.open(
+			Common::String::format("ultima8/%s", name.substr(6).c_str()),
+			*Ultima8Engine::get_instance()->_dataArchive);
+	}
+	
+	if (!rewrite_virtual_path(name))
+		return false;
+
+	switch_slashes(name);
+	in.close();
+
+	int uppercasecount = 0;
+	do {
+		if (in.open(name))
+			return true;
+	} while (base_to_uppercase(name, ++uppercasecount));
+
+	// file not found.
+	return false;
+}
+
+
+bool FileSystem::rawOpen(Common::DumpFile &out,  const string &fname) {
+	string name = fname;
+	if (!rewrite_virtual_path(name)) {
+		con.Print_err(MM_MAJOR_WARN, "Illegal file access\n");
+		return false;
+	}
+
+	switch_slashes(name);
+
+	// We first "clear" the stream object. This is done to prevent
+	// problems when re-using stream objects
+	out.close();
+
+	int uppercasecount = 0;
+
+	do {
+		if (out.open(name))
+			return true;
+
+	} while (base_to_uppercase(name, ++uppercasecount));
+
+	// file not found
+	return false;
 }
 
 void FileSystem::switch_slashes(string &name) {
@@ -124,18 +178,14 @@ bool FileSystem::base_to_uppercase(string &str, int count) {
 	int todo = count;
 	// Go backwards.
 	string::reverse_iterator X;
-	for (X = str.rend(); X != str.rbegin(); ++X) {
+	for (X = str.rbegin(); X != str.rend(); ++X) {
 		// Stop at separator.
 		if (*X == '/' || *X == '\\' || *X == ':')
 			todo--;
 		if (todo <= 0)
 			break;
 
-#if (defined(BEOS) || defined(OPENBSD) || defined(CYGWIN) || defined(__MORPHOS__))
-		if ((*X >= 'a') && (*X <= 'z')) *X -= 32;
-#else
 		*X = static_cast<char>(std::toupper(*X));
-#endif
 	}
 	if (X == str.rend())
 		todo--; // start of pathname counts as separator too
@@ -235,7 +285,7 @@ bool FileSystem::rewrite_virtual_path(string &vfn) {
 		if (p != virtualpaths.end()) {
 			ret = true;
 			// rewrite first part of path
-			vfn = p->_value + vfn.substr(pos);
+			vfn = p->_value + vfn.substr(pos + 1);
 			pos = string::npos;
 		} else {
 			if (pos == 0)

@@ -92,6 +92,24 @@ private:
 
 	static FileSystem *filesystem;
 
+	/**
+	 *	Open a file for reading,
+	 *	Output: false if couldn't open.
+	 */
+	bool rawOpen(
+		Common::File &in,           // Input file to open.
+		const std::string &fname    // May be converted to upper-case.
+	);
+
+	/**
+	 *	Open a file for writing,
+	 *	Output: false if couldn't open.
+	 */
+	bool rawOpen(
+		Common::DumpFile &out,      // Output file to open.
+		const std::string &fname    // May be converted to upper-case.
+	);
+
 	// This will disable the usage of forced virtual paths.
 	// It's useful for 'tools'
 	bool    noforcedvpaths;

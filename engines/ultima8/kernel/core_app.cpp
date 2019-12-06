@@ -90,7 +90,6 @@ void CoreApp::startup() {
 
 	sysInit();
 
-	setupVirtualPaths(); // setup @home, @data
 	loadConfig(); // load config files
 }
 
@@ -112,44 +111,6 @@ void CoreApp::sysInit() {
 	settingman->setDomainName(SettingManager::DOM_GLOBAL, "pentagram");
 	settingman->setCurrentDomain(SettingManager::DOM_GLOBAL);
 
-}
-
-void CoreApp::setupVirtualPaths() {
-	// setup the 'base' virtual paths:
-	// @home - $HOME/.pentagram/ - for config files, saves,... (OS dependant)
-	// @data - /usr/share/pentagram/ - for config files, data,.. (OS dependant)
-	//       NB: @data can be overwritten by config files
-	//       this should be a default set by configure (or other build systems)
-
-	bool ok;
-
-	const std::string &home = FileSystem::getHomePath();
-
-	ok = filesystem->AddVirtualPath("@home", home, true);
-	if (!ok) {
-		pout << "Error opening default home directory: " << home << std::endl;
-	} else {
-		pout << "Default home path: " << home << std::endl;
-	}
-
-	std::string data;
-#ifdef DATA_PATH
-	data = DATA_PATH;
-#elif defined(MACOSX)
-	data = macosxResourcePath();
-#else
-	data = "data";
-#endif
-	ok = filesystem->AddVirtualPath("@data", data);
-	if (!ok) {
-#ifndef BUILTIN_DATA
-		pout << "Error opening default data directory: " << data << std::endl;
-		pout << "Trying custom data path specified in configuration file."
-		     << std::endl;
-#endif
-	} else {
-		pout << "Default data path: " << data << std::endl;
-	}
 }
 
 // load configuration files

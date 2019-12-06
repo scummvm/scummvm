@@ -123,9 +123,6 @@ private:
 	//! \return true if detected all the fields, false if detection failed
 	bool getGameInfo(Pentagram::istring &game, GameInfo *gameinfo);
 
-	//! setup default virtual paths (@home, @data)
-	void setupVirtualPaths();
-
 	//! load configuration files
 	void loadConfig();
 
