@@ -183,22 +183,21 @@ GameInfo *CoreApp::getDefaultGame() {
 	if (oGamename != "") {
 		// game specified on commandline
 		gamename = oGamename;
+
 	} else if (defaultset) {
 		// default game specified in config file
 		gamename = defaultgame;
+
 	} else if (games.size() == 2) {// TODO - Do this in a better method
 		// only one game in config file, so pick that
 		for (GameMap::iterator i = games.begin(); i != games.end(); ++i) {
 			if (i->_value->name != "pentagram")
 				gamename = i->_value->name;
 		}
+
 	} else if (games.size() == 1) {
-		perr << "----------------------------------------" << std::endl
-		     << "No games set up in configuration. " << std::endl
-		     << "Please read the README for instructions." << std::endl
-		     << "----------------------------------------" << std::endl;
-		// FIXME - report more useful error message
-		return 0;
+		gamename = games.begin()->_value->name;
+
 	} else {
 		perr << "Multiple games found in configuration, but no default "
 		     << "game is selected." << std::endl
