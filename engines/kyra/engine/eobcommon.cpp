@@ -573,9 +573,9 @@ Common::Error EoBCoreEngine::go() {
 
 	// Import original save game files (especially the "Quick Start Party")
 	if (ConfMan.getBool("importOrigSaves")) {
-		//importOriginalSaveFile(-1);
-		//ConfMan.setBool("importOrigSaves", false);
-		//ConfMan.flushToDisk();
+		importOriginalSaveFile(-1);
+		ConfMan.setBool("importOrigSaves", false);
+		ConfMan.flushToDisk();
 	}
 
 	loadItemDefs();
