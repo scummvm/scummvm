@@ -23,6 +23,8 @@
 #include "ultima8/misc/pent_include.h"
 #include "ultima8/graphics/render_surface.h"
 #include "ultima8/graphics/soft_render_surface.h"
+#include "engines/util.h"
+#include "graphics/screen.h"
 
 namespace Ultima8 {
 
@@ -56,20 +58,17 @@ RenderSurface *RenderSurface::SetVideoMode(uint32 width, uint32 height, int bpp)
 		error("Only 16 bit and 32 bit video modes supported");
 	}
 
-	Graphics::ManagedSurface *sdl_surf = new Graphics::ManagedSurface(width, height, pixelFormat);
+	// Set up screen mode
+	initGraphics(width, height, &pixelFormat);
+
+	// Set up blitting surface
+	Graphics::ManagedSurface *sdl_surf = new Graphics::Screen(width, height, pixelFormat);
 	assert(sdl_surf);
 
 	// Now create the SoftRenderSurface
 	RenderSurface *surf;
-
-	// TODO: Change this
-#if defined(WIN32) && defined(I_AM_COLOURLESS_EXPERIMENTING_WITH_D3D)
-	if (bpp == 32) surf = new D3D9SoftRenderSurface<uint32>(width, height, fullscreen);
-	else surf = new D3D9SoftRenderSurface<uint16>(width, height, fullscreen);
-#else
 	if (pixelFormat.bytesPerPixel == 32) surf = new SoftRenderSurface<uint32>(sdl_surf);
 	else surf = new SoftRenderSurface<uint16>(sdl_surf);
-#endif
 
 	// Initialize gamma correction tables
 	for (int i = 0; i < 256; i++) {

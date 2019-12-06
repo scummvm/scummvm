@@ -21,10 +21,10 @@
  */
 
 #include "ultima8/misc/pent_include.h"
-
 #include "ultima8/graphics/soft_render_surface.h"
 #include "ultima8/graphics/palette.h"
 #include "ultima8/graphics/texture.h"
+#include "graphics/screen.h"
 
 namespace Ultima8 {
 
@@ -306,10 +306,11 @@ ECode BaseSoftRenderSurface::EndPainting() {
 			// Clear pointers
 			pixels = pixels00 = nullptr;
 
-			// Present
-#ifdef TODO
-			SDL_Flip(sdl_surf);
-#endif
+			// Render the screen
+			Graphics::Screen *screen = dynamic_cast<Graphics::Screen *>(sdl_surf);
+			assert(screen);
+			screen->update();
+
 		} else {
 			ECode ret = GenericUnlock();
 			if (ret.failed()) return ret;
