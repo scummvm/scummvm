@@ -25,6 +25,7 @@
 
 #include "common/scummsys.h"
 #include "common/system.h"
+#include "common/archive.h"
 #include "common/error.h"
 #include "common/random.h"
 #include "common/hash-str.h"
@@ -101,6 +102,21 @@ private:
 	const Ultima8GameDescription *_gameDescription;
 	Common::RandomSource _randomSource;
 	std::list<ObjId> textmodes;      //!< Gumps that want text mode
+
+	/**
+	 * Does basic engine initialization
+	 */
+	bool initialize();
+	
+	/**
+	 * Does engine deinitialization
+	 */
+	void deinitialize();
+	
+	/**
+	 * Loads the Ultima 8 engine data file and hooks it into ScumMVM's search manager
+	 */
+	bool loadData();
 
 	// Load and save games from arbitrary filenames from the console
 	static void ConCmd_saveGame(const Console::ArgvType &argv);         //!< "Ultima8Engine::saveGame <filename>" console command
@@ -257,6 +273,8 @@ protected:
 	virtual bool hasFeature(EngineFeature f) const;
 
 	virtual void DeclareArgs();
+public:
+	Common::Archive *_dataArchive;
 public:
 	ENABLE_RUNTIME_CLASSTYPE()
 

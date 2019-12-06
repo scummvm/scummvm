@@ -23,6 +23,8 @@
 #include "common/scummsys.h"
 #include "common/config-manager.h"
 #include "common/debug-channels.h"
+#include "common/translation.h"
+#include "common/unzip.h"
 #include "ultima8/ultima8.h"
 #include "ultima8/detection.h"
 #include "ultima8/ultima8.h"
@@ -124,24 +126,24 @@ using std::string;
 
 DEFINE_RUNTIME_CLASSTYPE_CODE(Ultima8Engine, CoreApp)
 
+#define DATA_FILENAME "ultima.dat"
+#define DATA_VERSION_MAJOR 1
+#define DATA_VERSION_MINOR 0
+
 Ultima8Engine::Ultima8Engine(OSystem *syst, const Ultima8GameDescription *gameDesc) : 
 		Engine(syst), CoreApp(0, nullptr), _gameDescription(gameDesc),
-		_randomSource("Ultima8"), save_count(0), game(0), kernel(0), objectmanager(0),
-		hidmanager(0), ucmachine(0), screen(0), fullscreen(false), palettemanager(0),
-		gamedata(0), world(0), desktopGump(0), consoleGump(0), gameMapGump(0),
-		avatarMoverProcess(0), runSDLInit(false),
-		frameSkip(false), frameLimit(true), interpolate(true),
+		_randomSource("Ultima8"), save_count(0), game(nullptr), kernel(nullptr),
+		_dataArchive(nullptr), objectmanager(nullptr), hidmanager(nullptr),
+		ucmachine(nullptr), screen(nullptr), fontmanager(nullptr), fullscreen(false),
+		palettemanager(nullptr), gamedata(nullptr), world(nullptr), desktopGump(nullptr),
+		consoleGump(nullptr), gameMapGump(nullptr), avatarMoverProcess(nullptr),
+		runSDLInit(false), frameSkip(false), frameLimit(true), interpolate(true),
 		animationRate(100), avatarInStasis(false), paintEditorItems(false),
-		painting(false), showTouching(false), mouseX(0), mouseY(0),
-		defMouse(0), flashingcursor(0),
-		mouseOverGump(0), dragging(DRAG_NOT), dragging_offsetX(0),
-		dragging_offsetY(0), inversion(0), timeOffset(0),
-		has_cheated(false), cheats_enabled(false),
-		drawRenderStats(false), ttfoverrides(false), audiomixer(0) {
+		painting(false), showTouching(false), mouseX(0), mouseY(0), defMouse(0),
+		flashingcursor(0), mouseOverGump(0), dragging(DRAG_NOT), dragging_offsetX(0),
+		dragging_offsetY(0), inversion(0), timeOffset(0), has_cheated(false),
+		cheats_enabled(false), drawRenderStats(false), ttfoverrides(false), audiomixer(0) {
 	application = this;
-
-	DebugMan.addDebugChannel(kDebugPath, "Path", "Pathfinding debug level");
-	DebugMan.addDebugChannel(kDebugGraphics, "Graphics", "Graphics debug level");
 
 	for (int i = 0; i < MOUSE_LAST; ++i) {
 		mouseButton[i].downGump = 0;
@@ -153,6 +155,47 @@ Ultima8Engine::Ultima8Engine(OSystem *syst, const Ultima8GameDescription *gameDe
 		lastDown[key] = 0;
 		down[key] = 0;
 	}
+}
+
+Ultima8Engine::~Ultima8Engine() {
+	FORGET_OBJECT(kernel);
+	FORGET_OBJECT(defMouse);
+	FORGET_OBJECT(objectmanager);
+	FORGET_OBJECT(hidmanager);
+	FORGET_OBJECT(audiomixer);
+	FORGET_OBJECT(ucmachine);
+	FORGET_OBJECT(palettemanager);
+	FORGET_OBJECT(gamedata);
+	FORGET_OBJECT(world);
+	FORGET_OBJECT(ucmachine);
+	FORGET_OBJECT(fontmanager);
+	FORGET_OBJECT(screen);
+}
+
+uint32 Ultima8Engine::getFeatures() const {
+	return _gameDescription->desc.flags;
+}
+
+Common::Error Ultima8Engine::run() {
+	if (initialize()) {
+		startup();
+
+		runGame();
+
+		deinitialize();
+		shutdown();
+	}
+
+	return Common::kNoError;
+}
+
+
+bool Ultima8Engine::initialize() {
+	if (!loadData())
+		return false;
+
+	DebugMan.addDebugChannel(kDebugPath, "Path", "Pathfinding debug level");
+	DebugMan.addDebugChannel(kDebugGraphics, "Graphics", "Graphics debug level");
 
 	con.AddConsoleCommand("quit", ConCmd_quit);
 	con.AddConsoleCommand("Ultima8Engine::quit", ConCmd_quit);
@@ -238,12 +281,43 @@ Ultima8Engine::Ultima8Engine(OSystem *syst, const Ultima8GameDescription *gameDe
 	con.AddConsoleCommand("AudioProcess::playSFX", AudioProcess::ConCmd_playSFX);
 	con.AddConsoleCommand("AudioProcess::stopSFX", AudioProcess::ConCmd_stopSFX);
 
-	// Game related console commands are now added in startupGame
+	return true;
 }
 
-Ultima8Engine::~Ultima8Engine() {
-	shutdown();
+bool Ultima8Engine::loadData() {
+	Common::File f;
 
+	if (!Common::File::exists(DATA_FILENAME) ||
+			(_dataArchive = Common::makeZipArchive(DATA_FILENAME)) == nullptr ||
+			!f.open("ultima8/version.txt", *_dataArchive)) {
+		delete _dataArchive;
+		GUIError(Common::String::format(_("Could not locate engine data %s"), DATA_FILENAME));
+		return false;
+	}
+
+	// Validate the version
+	char buffer[5];
+	f.read(buffer, 4);
+	buffer[4] = '\0';
+
+	int major = 0, minor = 0;
+	if (buffer[1] == '.') {
+		major = buffer[0] - '0';
+		minor = atoi(&buffer[2]);
+	}
+
+	if (major != DATA_VERSION_MAJOR || minor != DATA_VERSION_MINOR) {
+		delete _dataArchive;
+		GUIError(Common::String::format(_("Out of date engine data. Expected %d.%d, but got version %d.%d"),
+			DATA_VERSION_MAJOR, DATA_VERSION_MINOR, major, minor));
+		return false;
+	}
+
+	SearchMan.add("data", _dataArchive);
+	return true;
+}
+
+void Ultima8Engine::deinitialize() {
 	con.RemoveConsoleCommand(Ultima8Engine::ConCmd_quit);
 	con.RemoveConsoleCommand(QuitGump::ConCmd_verifyQuit);
 	con.RemoveConsoleCommand(ShapeViewerGump::ConCmd_U8ShapeViewer);
@@ -301,36 +375,14 @@ Ultima8Engine::~Ultima8Engine() {
 	con.RemoveConsoleCommand(AudioProcess::ConCmd_listSFX);
 	con.RemoveConsoleCommand(AudioProcess::ConCmd_stopSFX);
 	con.RemoveConsoleCommand(AudioProcess::ConCmd_playSFX);
-
-	// Game related console commands are now removed in shutdownGame
-
-	FORGET_OBJECT(kernel);
-	FORGET_OBJECT(defMouse);
-	FORGET_OBJECT(objectmanager);
-	FORGET_OBJECT(hidmanager);
-	FORGET_OBJECT(audiomixer);
-	FORGET_OBJECT(ucmachine);
-	FORGET_OBJECT(palettemanager);
-	FORGET_OBJECT(gamedata);
-	FORGET_OBJECT(world);
-	FORGET_OBJECT(ucmachine);
-	FORGET_OBJECT(fontmanager);
-	FORGET_OBJECT(screen);
-}
-
-uint32 Ultima8Engine::getFeatures() const {
-	return _gameDescription->desc.flags;
-}
-
-Common::Error Ultima8Engine::run() {
-	startup();
-	runGame();
-
-	return Common::kNoError;
 }
 
 Common::FSNode Ultima8Engine::getGameDirectory() const {
 	return Common::FSNode(ConfMan.get("path"));
+}
+
+void Ultima8Engine::GUIError(const Common::String &msg) {
+	GUIErrorMessage(msg);
 }
 
 void Ultima8Engine::startup() {
