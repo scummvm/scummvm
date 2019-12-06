@@ -371,6 +371,9 @@ void KyraEngine_LoK::seq_createAmuletJewel(int jewel, int page, int noSound, int
 		case 3:
 			opcodes = specialJewelTable4;
 			break;
+
+		default:
+			break;
 		}
 
 		if (opcodes) {

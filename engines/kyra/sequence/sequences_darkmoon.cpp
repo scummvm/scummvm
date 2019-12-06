@@ -193,6 +193,9 @@ int DarkMoonEngine::mainMenu() {
 			// quit
 			menuChoice = -5;
 			break;
+
+		default:
+			break;
 		}
 	}
 

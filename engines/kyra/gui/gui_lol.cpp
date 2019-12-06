@@ -2636,6 +2636,8 @@ int GUI_LoL::clickedMainMenu(Button *button) {
 	case 0x4005:
 		_displayMenu = false;
 		break;
+	default:
+		break;
 	}
 	return 1;
 }

@@ -1997,6 +1997,8 @@ void OldDOSFont::drawChar(uint16 c, byte *dst, int pitch, int bpp) const {
 		case 0xE1:
 			// TODO: recheck this: no conversion for 'ß' ?
 			break;
+		default:
+			break;
 		}
 	} else if (_width == 8) {
 		switch (c) {
@@ -2021,6 +2023,8 @@ void OldDOSFont::drawChar(uint16 c, byte *dst, int pitch, int bpp) const {
 			break;
 		case 0xE1:
 			c = 0x19;
+			break;
+		default:
 			break;
 		}
 	}

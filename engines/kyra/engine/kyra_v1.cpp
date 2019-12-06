@@ -655,6 +655,9 @@ void KyraEngine_v1::setVolume(kVolumeEntry vol, uint8 value) {
 	case kVolumeSpeech:
 		ConfMan.setInt("speech_volume", convertVolumeToMixer(value));
 		break;
+
+	default:
+		break;
 	}
 
 	// Resetup mixer
@@ -678,6 +681,9 @@ uint8 KyraEngine_v1::getVolume(kVolumeEntry vol) {
 			return convertVolumeFromMixer(ConfMan.getInt("speech_volume"));
 		else
 			return 2;
+		break;
+
+	default:
 		break;
 	}
 

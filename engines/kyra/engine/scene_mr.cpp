@@ -62,6 +62,9 @@ void KyraEngine_MR::enterNewScene(uint16 sceneId, int facing, int unk1, int unk2
 		case 6:
 			x = -24;
 			break;
+
+		default:
+			break;
 		}
 
 		moveCharacter(facing, x, y);

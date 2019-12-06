@@ -48,6 +48,8 @@ void KyraEngine_LoK::waitForChatToFinish(int vocFile, int16 chatDuration, const 
 		case 3:
 			chatDuration = -1;
 			break;
+		default:
+			break;
 		}
 	}
 

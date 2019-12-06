@@ -1484,6 +1484,9 @@ int EoBEngine::mainMenu() {
 
 			menuChoice = 0;
 			break;
+
+		default:
+			break;
 		}
 	}
 

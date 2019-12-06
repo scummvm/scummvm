@@ -2985,6 +2985,9 @@ int SeqPlayer_HOF::cbHOFDEMO_outhome(WSAMovie_v2 *wsaObj, int x, int y, int frm)
 	case 137:
 		playSoundAndDisplaySubTitle(6);
 		break;
+
+	default:
+		break;
 	}
 
 	return 0;
@@ -3125,6 +3128,9 @@ int SeqPlayer_HOF::cbHOFDEMO_dinob2(WSAMovie_v2 *wsaObj, int x, int y, int frm) 
 
 	case 79:
 		_animCurrentFrame = 4;
+		break;
+
+	default:
 		break;
 	}
 
