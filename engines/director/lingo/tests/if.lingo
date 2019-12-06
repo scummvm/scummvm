@@ -50,6 +50,9 @@ else
   put FALSE
 end if
 
+if abs(y) = x and abs(x) = y then put 5
+if abs(y) = x and abs(x) = y then put 5 else put 6
+
 if the selection = the text of cast A31 then
     go to frame "sEnd"
     exit
@@ -88,13 +91,32 @@ else if whichTry = 1 then
 else if whichTry = 2 then
 	put 5
 	go to frame "sShow"
-else if whichTry = 3 then go to frame "sDo"
+else if whichTry = 3 then go to frame "sDo" else put 7 end if
 
 if rollOver(2) then
   put "The cursor is INSIDE the square." into field "Cursor Status"
 else
   put "The cursor is OUTSIDE the square." into field "Cursor Status"
 end if
+
+if the selection = the text of cast A31 then
+    if whichTry = 3 then go to frame "sDo"
+else if whichTry = 1 then
+	if whichTry = 3 then go to frame "sDo" else
+		put 5
+	end      if
+else if whichTry = 2 then
+	if whichTry = 3 then go to frame "sDo" else
+		if the selection = the text of cast A21 then
+		    if whichTry = 3 then go to frame "Foo"
+		else if abra = 5 then put 6 else
+			put 7
+			if abra = 7 thhen put 5
+		end if
+	end if
+else if whichTry = 3 then go to frame "sDo"
+else put 6
+
 
 macro WindowHorzP X
     set X1 = constrainH( 14, X )
