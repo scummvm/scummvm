@@ -99,8 +99,7 @@ whitespace [\t ]
 (?i:done)		{ count(); return tDONE; }
 (?i:down)		{ count(); return tDOWN; }
 (?i:if)			{ count(); return tIF; }
-(?i:[\n\r]+[\t ]*else[\t ]+if)	{ count(); return tNLELSIF; }
-(?i:[\n\r]+[\t ]*else)	{ count(); return tNLELSE; }
+(?i:else[\t ]+if)	{ count(); return tELSIF; }
 (?i:else)		{ count(); return tELSE; }
 (?i:end)([\t ]*{identifier})?	{
 		count();
@@ -108,6 +107,13 @@ whitespace [\t ]
 		const char *ptr = &yytext[4]; // Skip 'end '
 		while (*ptr == ' ' || *ptr == '\t')
 			ptr++;
+
+		if (!scumm_stricmp(ptr, "if"))
+			return tENDIF;
+		else if (!scumm_stricmp(ptr, "repeat"))
+			return tENDREPEAT;
+		else if (!scumm_stricmp(ptr, "tell"))
+			return tENDTELL;
 
 		yylval.s = new Common::String(ptr);
 
@@ -258,7 +264,6 @@ whitespace [\t ]
 		warning("Unhandled the entity %s", ptr);
 	}
 (?i:then)			{ count(); return tTHEN; }
-(?i:then[\n\r]+)	{ count(); return tTHENNL; }
 (?i:to)				{ count(); return tTO; }
 (?i:sprite)			{ count(); return tSPRITE; }
 (?i:with)			{ count(); return tWITH; }

@@ -74,7 +74,7 @@
      tPLAYACCEL = 290,
      tDOWN = 291,
      tELSE = 292,
-     tNLELSIF = 293,
+     tELSIF = 293,
      tEXIT = 294,
      tFRAME = 295,
      tGLOBAL = 296,
@@ -91,44 +91,46 @@
      tREPEAT = 307,
      tSET = 308,
      tTHEN = 309,
-     tTHENNL = 310,
-     tTO = 311,
-     tWHEN = 312,
-     tWITH = 313,
-     tWHILE = 314,
-     tNLELSE = 315,
-     tFACTORY = 316,
-     tMETHOD = 317,
-     tOPEN = 318,
-     tPLAY = 319,
-     tDONE = 320,
-     tINSTANCE = 321,
-     tGE = 322,
-     tLE = 323,
-     tGT = 324,
-     tLT = 325,
-     tEQ = 326,
-     tNEQ = 327,
-     tAND = 328,
-     tOR = 329,
-     tNOT = 330,
-     tMOD = 331,
-     tAFTER = 332,
-     tBEFORE = 333,
-     tCONCAT = 334,
-     tCONTAINS = 335,
-     tSTARTS = 336,
-     tCHAR = 337,
-     tITEM = 338,
-     tLINE = 339,
-     tWORD = 340,
-     tSPRITE = 341,
-     tINTERSECTS = 342,
-     tWITHIN = 343,
-     tTELL = 344,
-     tPROPERTY = 345,
-     tON = 346,
-     tME = 347
+     tTO = 310,
+     tWHEN = 311,
+     tWITH = 312,
+     tWHILE = 313,
+     tNLELSE = 314,
+     tFACTORY = 315,
+     tMETHOD = 316,
+     tOPEN = 317,
+     tPLAY = 318,
+     tDONE = 319,
+     tINSTANCE = 320,
+     tGE = 321,
+     tLE = 322,
+     tGT = 323,
+     tLT = 324,
+     tEQ = 325,
+     tNEQ = 326,
+     tAND = 327,
+     tOR = 328,
+     tNOT = 329,
+     tMOD = 330,
+     tAFTER = 331,
+     tBEFORE = 332,
+     tCONCAT = 333,
+     tCONTAINS = 334,
+     tSTARTS = 335,
+     tCHAR = 336,
+     tITEM = 337,
+     tLINE = 338,
+     tWORD = 339,
+     tSPRITE = 340,
+     tINTERSECTS = 341,
+     tWITHIN = 342,
+     tTELL = 343,
+     tPROPERTY = 344,
+     tON = 345,
+     tME = 346,
+     tENDIF = 347,
+     tENDREPEAT = 348,
+     tENDTELL = 349
    };
 #endif
 /* Tokens.  */
@@ -167,7 +169,7 @@
 #define tPLAYACCEL 290
 #define tDOWN 291
 #define tELSE 292
-#define tNLELSIF 293
+#define tELSIF 293
 #define tEXIT 294
 #define tFRAME 295
 #define tGLOBAL 296
@@ -184,44 +186,46 @@
 #define tREPEAT 307
 #define tSET 308
 #define tTHEN 309
-#define tTHENNL 310
-#define tTO 311
-#define tWHEN 312
-#define tWITH 313
-#define tWHILE 314
-#define tNLELSE 315
-#define tFACTORY 316
-#define tMETHOD 317
-#define tOPEN 318
-#define tPLAY 319
-#define tDONE 320
-#define tINSTANCE 321
-#define tGE 322
-#define tLE 323
-#define tGT 324
-#define tLT 325
-#define tEQ 326
-#define tNEQ 327
-#define tAND 328
-#define tOR 329
-#define tNOT 330
-#define tMOD 331
-#define tAFTER 332
-#define tBEFORE 333
-#define tCONCAT 334
-#define tCONTAINS 335
-#define tSTARTS 336
-#define tCHAR 337
-#define tITEM 338
-#define tLINE 339
-#define tWORD 340
-#define tSPRITE 341
-#define tINTERSECTS 342
-#define tWITHIN 343
-#define tTELL 344
-#define tPROPERTY 345
-#define tON 346
-#define tME 347
+#define tTO 310
+#define tWHEN 311
+#define tWITH 312
+#define tWHILE 313
+#define tNLELSE 314
+#define tFACTORY 315
+#define tMETHOD 316
+#define tOPEN 317
+#define tPLAY 318
+#define tDONE 319
+#define tINSTANCE 320
+#define tGE 321
+#define tLE 322
+#define tGT 323
+#define tLT 324
+#define tEQ 325
+#define tNEQ 326
+#define tAND 327
+#define tOR 328
+#define tNOT 329
+#define tMOD 330
+#define tAFTER 331
+#define tBEFORE 332
+#define tCONCAT 333
+#define tCONTAINS 334
+#define tSTARTS 335
+#define tCHAR 336
+#define tITEM 337
+#define tLINE 338
+#define tWORD 339
+#define tSPRITE 340
+#define tINTERSECTS 341
+#define tWITHIN 342
+#define tTELL 343
+#define tPROPERTY 344
+#define tON 345
+#define tME 346
+#define tENDIF 347
+#define tENDREPEAT 348
+#define tENDTELL 349
 
 
 
@@ -239,7 +243,7 @@ typedef union YYSTYPE
 	Common::Array<double> *arr;
 }
 /* Line 1529 of yacc.c.  */
-#line 243 "engines/director/lingo/lingo-gr.hpp"
+#line 247 "engines/director/lingo/lingo-gr.hpp"
 	YYSTYPE;
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
 # define YYSTYPE_IS_DECLARED 1

@@ -3,6 +3,8 @@ set x = 1
 if x = 5 then exit
 else put 10.0
 
+if x = 6 then put 2
+
 set y = 4
 
 repeat with x = 1 to 6
@@ -100,7 +102,7 @@ else
 end if
 
 if the selection = the text of cast A31 then
-    if whichTry = 3 then go to frame "sDo"
+    if whichTry = 3 then go to frame "sDo" end if
 else if whichTry = 1 then
 	if whichTry = 3 then go to frame "sDo" else
 		put 5
@@ -108,15 +110,16 @@ else if whichTry = 1 then
 else if whichTry = 2 then
 	if whichTry = 3 then go to frame "sDo" else
 		if the selection = the text of cast A21 then
-		    if whichTry = 3 then go to frame "Foo"
+		    if whichTry = 3 then go to frame "Foo" end if
 		else if abra = 5 then put 6 else
 			put 7
-			if abra = 7 thhen put 5
+			if abra = 7 then put 5
 		end if
 	end if
 else if whichTry = 3 then go to frame "sDo"
 else put 6
 
+if the selection = the text of cast A31 then go to frame "sEnd" else put 7 end if
 
 macro WindowHorzP X
     set X1 = constrainH( 14, X )

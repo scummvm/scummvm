@@ -213,6 +213,40 @@ void Lingo::addCode(const char *code, ScriptType type, uint16 id) {
 	}
 }
 
+static Common::String nexttok(const char *s, const char **newP = nullptr) {
+	Common::String res;
+
+	// Scan first non-whitespace
+	while (*s && (*s == ' ' || *s == '\t')) // If we see a whitespace
+		s++;
+
+	// Now copy everything till whitespace
+	while (*s && *s != ' ' && *s != '\t' && *s != '\n')
+		res += *s++;
+
+	if (newP)
+		*newP = s;
+
+	return res;
+}
+
+static Common::String prevtok(const char *s, const char *lineStart, const char **newP = nullptr) {
+	Common::String res;
+
+	// Scan first non-whitespace
+	while (s >= lineStart && (*s == ' ' || *s == '\t')) // If we see a whitespace
+		s--;
+
+	// Now copy everything till whitespace
+	while (s >= lineStart && *s != ' ' && *s != '\t')
+		res = *s-- + res;
+
+	if (newP)
+		*newP = s;
+
+	return res;
+}
+
 Common::String Lingo::stripComments(const char *s) {
 	Common::String res;
 
@@ -259,64 +293,127 @@ Common::String Lingo::stripComments(const char *s) {
 		s++;
 	}
 
-	// Preprocess if statements
 	tmp = res;
-	int level = 0;
-
 	s = tmp.c_str();
-	const char *stringStart;
+	res.clear();
+
+	// Preprocess if statements
+	Common::String line, tok;
+	const char *lineStart, *prevEnd;
+	int iflevel = 0;
 
 	while (*s) {
-		// Scan first non-whitespace
-		while (*s && (*s == ' ' || *s == '\t' || *s == '\xc2')) { // If we see a whitespace
-			res += *s++;
+		line.clear();
 
-			if (*s && *(s - 1) == '\xc2') { // if it is a continuation synbol, eat next one
+		// Get next line
+		while (*s && *s != '\n') { // If we see a whitespace
+			if (*s == '\xc2') {
 				res += *s++;
+				if (*s == '\n') {
+					line += ' ';
+					res += *s++;
+				}
+			} else {
+				res += *s;
+				line += tolower(*s++);
 			}
 		}
 
-		if (!*s)	// end of input string
-			break;
-
-		stringStart = s;
-
-		if (!scumm_stricmp(s, "if")) {
-			level++;
-		}
-
-		// copy rest of the line
-		while (*s && *s != '\n') {
-			res += *s++;
-
-			if (*s && *(s - 1) == '\xc2') { // if it is a continuation synbol, eat next one
+		if (line.size() < 4) { // If line is too small, then skip it
+			if (*s)	// copy newline symbol
 				res += *s++;
-			}
+
+			continue;
 		}
 
-		// Now look if we have 'end if' at the end
-		if (s - stringStart >= strlen("end if")) {
-			if (tolower(*(s - 2)) == 'i' && tolower(*(s - 1)) == 'f') {
-				const char *tmps = s - strlen("end if");
+		tok = nexttok(line.c_str(), &lineStart);
+		if (tok.equals("if")) {
+			tok = prevtok(&line.c_str()[line.size() - 1], lineStart, &prevEnd);
 
-				while (tmps - stringStart > 0 && (*tmps == ' ' || *tmps == '\t')) // if we ended up with 'end     if'
-					tmps--;
+			if (tok.equals("if")) {
+				tok = prevtok(prevEnd, lineStart);
 
-				if (tmps != s - strlen("end if")) {// if we were backtracking, then we're at end of 'end' now
-					if (tmps - stringStart > strlen("end")) {
-						tmps -= strlen("end");
+				if (tok.equals("end")) {
+					// do nothing, we open and close same line
+				} else {
+					iflevel++;
+				}
+			} else if (tok.equals("then")) {
+				iflevel++;
+			} else if (tok.equals("else")) {
+				iflevel++;
+			} else { // other token
+				// Now check if we have tNLELSE
+				if (!*s) {
+					iflevel++;	// end, we have to add 'end if'
+					break;
+				}
+				const char *s1 = s + 1;
 
-						if (!scumm_stricmp(s, "end"))
-							level--;
-					}
+				while (*s1 && *s1 == '\n')
+					s1++;
+				tok = nexttok(s1);
+
+				if (tok.equalsIgnoreCase("else")) { // ignore case because it is look-ahead
+					iflevel++;
+				} else {
+					res += " end if";
+					iflevel--;
 				}
 			}
+		} else if (tok.equals("else")) {
+			bool elseif = false;
+
+			tok = nexttok(lineStart);
+			if (tok.equals("if")) {
+				elseif = true;
+			} else if (tok.empty()) {
+				continue;
+			}
+
+			tok = prevtok(&line.c_str()[line.size() - 1], lineStart, &prevEnd);
+
+			if (tok.equals("if")) {
+				tok = prevtok(prevEnd, lineStart);
+
+				if (tok.equals("end")) {
+					iflevel--;
+				}
+			} else if (tok.equals("then")) {
+				if (elseif == false) {
+					warning("Badly nested then");
+				}
+			} else if (tok.equals("else")) {
+				if (elseif == false) {
+					warning("Badly nested else");
+				}
+			} else { // check if we have tNLELSE
+				if (!*s) {
+					break;
+				}
+				const char *s1 = s + 1;
+
+				while (*s1 && *s1 == '\n')
+					s1++;
+				tok = nexttok(s1);
+
+				if (tok.equalsIgnoreCase("else")) {
+					// Nothing to do here, same level
+				} else {
+					res += " end if";
+					iflevel--;
+				}
+			}
+		} else if (tok.equals("end")) {
+			tok = nexttok(lineStart);
+			if (tok.equals("if")) {
+				iflevel--;
+			}
 		}
+	}
 
-		if (level) {
-
-		}
-
+	for (int i = 0; i < iflevel; i++) {
+		res += "\nend if";
 	}
 
 	return res;
