@@ -901,7 +901,7 @@ public:
 	/**
 	 * Fills the screen with a given color value.
 	 */
-	virtual void fillScreen(uint32 col) = 0;
+	virtual void fillScreen(uint32 col);
 
 	/**
 	 * Flush the whole screen, that is render the current content of the screen
@@ -1290,13 +1290,12 @@ public:
 	 * The message is expected to be provided in the current TranslationManager
 	 * charset.
 	 *
-	 * @note There is a default implementation in BaseBackend which uses a
-	 *       TimedMessageDialog to display the message. Hence implementing
-	 *       this is optional.
+	 * @note There is a default implementation which uses a TimedMessageDialog
+         *       to display the message. Hence implementing this is optional.
 	 *
 	 * @param msg	the message to display on screen
 	 */
-	virtual void displayMessageOnOSD(const char *msg) = 0;
+	virtual void displayMessageOnOSD(const char *msg);
 
 	/**
 	 * Display an icon indicating background activity
@@ -1315,7 +1314,7 @@ public:
 	 *
 	 * @param icon the icon to display on screen
 	 */
-	virtual void displayActivityIconOnOSD(const Graphics::Surface *icon) = 0;
+	virtual void displayActivityIconOnOSD(const Graphics::Surface *icon) {}
 
 	/**
 	 * Return the SaveFileManager, used to store and load savestates

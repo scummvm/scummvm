@@ -37,6 +37,8 @@
 #include "backends/fs/fs-factory.h"
 #include "backends/timer/default/default-timer.h"
 
+#include "gui/message.h"
+
 OSystem *g_system = nullptr;
 
 OSystem::OSystem() {
@@ -167,6 +169,19 @@ bool OSystem::setStretchMode(const char *name) {
 	}
 
 	return false;
+}
+
+void OSystem::fillScreen(uint32 col) {
+	Graphics::Surface *screen = lockScreen();
+	if (screen)
+		screen->fillRect(Common::Rect(screen->w, screen->h), col);
+	unlockScreen();
+}
+
+void OSystem::displayMessageOnOSD(const char *msg) {
+	// Display the message for 1.5 seconds
+	GUI::TimedMessageDialog dialog(msg, 1500);
+	dialog.runModal();
 }
 
 void OSystem::fatalError() {
