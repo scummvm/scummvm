@@ -34,6 +34,7 @@
 #include "dragons/minigame1.h"
 #include "dragons/talk.h"
 #include "dragons/specialopcodes.h"
+#include "dragons/screen.h"
 #include "dragons/minigame1.h"
 #include "dragons/minigame2.h"
 #include "dragons/minigame3.h"
@@ -102,6 +103,7 @@ void SpecialOpcodes::initOpcodes() {
 	OPCODE(0x1c, spcPizzaMakerActorStopWorking);
 	OPCODE(0x1d, spcDragonArrivesAtTournament);
 	OPCODE(0x1e, spcDragonCatapultMiniGame);
+	OPCODE(0x1f, spcStGeorgeDragonLanded);
 
 	OPCODE(0x21, spcSetEngineFlag0x20000);
 	OPCODE(0x22, spcClearEngineFlag0x20000);
@@ -169,13 +171,15 @@ void SpecialOpcodes::initOpcodes() {
 	OPCODE(0x66, spcUnk66);
 	OPCODE(0x67, spcTournamentSetCamera);
 	OPCODE(0x68, spcTournamentCutScene);
-
+	OPCODE(0x69, spcInsideBlackDragonUpdatePalette);
 	OPCODE(0x6a, spcCastleGateSceneLogic);
 	OPCODE(0x6b, spcTransitionToMap);
 	OPCODE(0x6c, spcTransitionFromMap);
 	OPCODE(0x6d, spcCaveOfDilemmaSceneLogic);
 
 	OPCODE(0x70, spcLoadLadyOfTheLakeActor);
+
+	OPCODE(0x74, spcUseClickerOnLever);
 
 	OPCODE(0x77, spcJesterInLibrarySceneLogic);
 
@@ -190,7 +194,9 @@ void SpecialOpcodes::initOpcodes() {
 	OPCODE(0x81, spcShakeScreenSceneLogic);
 	OPCODE(0x82, spc82CallResetDataMaybe);
 	OPCODE(0x83, spcStopScreenShakeUpdater);
-
+	OPCODE(0x84, spcInsideBlackDragonScreenShake);
+	OPCODE(0x85, spc85SetScene1To0x35);
+	OPCODE(0x86, spc86SetScene1To0x33);
 	OPCODE(0x87, spc87SetScene1To0x17);
 	OPCODE(0x88, spc88SetScene1To0x16);
 	OPCODE(0x89, spcSetUnkFlag2);
@@ -390,6 +396,22 @@ void SpecialOpcodes::spcDragonArrivesAtTournament() {
 void SpecialOpcodes::spcDragonCatapultMiniGame() {
 	Minigame5 minigame5(_vm);
 	minigame5.run();
+}
+
+void SpecialOpcodes::spcStGeorgeDragonLanded() {
+//	DisableVSyncEvent();
+	DragonINI *ini121 = _vm->_dragonINIResource->getRecord(0x121);
+	Actor *origActor = ini121->actor;
+	ini121->actor = _vm->_actorManager->loadActor(0x48, 4, ini121->actor->x_pos, ini121->actor->y_pos);
+	origActor->reset_maybe();
+//	reset_actor_maybe();
+	ini121->actor->setFlag(ACTOR_FLAG_80);
+	ini121->actor->scale = 0x100;
+	ini121->actor->priorityLayer = 2;
+	ini121->actorResourceId = 0x48;
+
+	_vm->updateActorSequences();
+	_vm->_scene->draw();
 }
 
 void SpecialOpcodes::spcSetEngineFlag0x20000() {
@@ -725,6 +747,13 @@ void SpecialOpcodes::spcTournamentCutScene() {
 	delete cutScene;
 }
 
+void SpecialOpcodes::spcInsideBlackDragonUpdatePalette() {
+	memcpy(_vm->_scene->getPalette() + 0x180,
+			_vm->_dragonINIResource->getRecord(0x2b2)->actor->_actorResource->getPalette() + 0x180,
+			0x80);
+	_vm->_screen->loadPalette(0, _vm->_scene->getPalette());
+}
+
 void SpecialOpcodes::spcCastleGateSceneLogic() {
 //TODO spcCastleGateSceneLogic
 }
@@ -799,6 +828,22 @@ void SpecialOpcodes::spcStopScreenShakeUpdater() {
 	//TODO spcStopScreenShakeUpdater
 //	DAT_8006339a = 0;
 //	screenShakeOffset = 0;
+}
+
+void SpecialOpcodes::spcInsideBlackDragonScreenShake() {
+	const int16 shakeTbl[5] = {5, -2, 4, -1, 0};
+	for (int i = 0; i < 5; i ++) {
+		_vm->_screen->setScreenShakeOffset(shakeTbl[i]);
+		_vm->waitForFrames(1);
+	}
+}
+
+void SpecialOpcodes::spc85SetScene1To0x35() {
+	_vm->_sceneId1 = 0x35;
+}
+
+void SpecialOpcodes::spc86SetScene1To0x33() {
+	_vm->_sceneId1 = 0x33;
 }
 
 void SpecialOpcodes::spc87SetScene1To0x17() {
@@ -890,6 +935,15 @@ void SpecialOpcodes::spcLoadLadyOfTheLakeActor() {
 //	dragon_ini_pointer[iVar18 + -1].x = 0xcd;
 //	LAB_8002ad94:
 	//EnableVSyncEvent();
+}
+
+void SpecialOpcodes::spcUseClickerOnLever() {
+	if (_vm->_inventory->getType() != 0) {
+		_vm->_talk->flickerRandomDefaultResponse();
+		_vm->_dragonINIResource->getRecord(0)->field_12 = 1;
+	} else {
+		_vm->_dragonINIResource->getRecord(0)->field_12 = 0;
+	}
 }
 
 void SpecialOpcodes::spcJesterInLibrarySceneLogic() {
