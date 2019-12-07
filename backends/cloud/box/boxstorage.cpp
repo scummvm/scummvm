@@ -35,142 +35,34 @@
 #include "common/debug.h"
 #include "common/json.h"
 
-#ifdef ENABLE_RELEASE
-#include "dists/clouds/cloud_keys.h"
-#endif
-
 namespace Cloud {
 namespace Box {
 
-#define BOX_OAUTH2_TOKEN "https://api.box.com/oauth2/token"
 #define BOX_API_FOLDERS "https://api.box.com/2.0/folders"
 #define BOX_API_FILES_CONTENT "https://api.box.com/2.0/files/%s/content"
 #define BOX_API_USERS_ME "https://api.box.com/2.0/users/me"
 
-char *BoxStorage::KEY = nullptr; //can't use CloudConfig there yet, loading it on instance creation/auth
-char *BoxStorage::SECRET = nullptr;
+BoxStorage::BoxStorage(Common::String token, Common::String refreshToken, bool enabled):
+	IdStorage(token, refreshToken, enabled) {}
 
-void BoxStorage::loadKeyAndSecret() {
-#ifdef ENABLE_RELEASE
-	KEY = RELEASE_BOX_KEY;
-	SECRET = RELEASE_BOX_SECRET;
-#else
-	Common::String k = ConfMan.get("BOX_KEY", ConfMan.kCloudDomain);
-	KEY = new char[k.size() + 1];
-	memcpy(KEY, k.c_str(), k.size());
-	KEY[k.size()] = 0;
-
-	k = ConfMan.get("BOX_SECRET", ConfMan.kCloudDomain);
-	SECRET = new char[k.size() + 1];
-	memcpy(SECRET, k.c_str(), k.size());
-	SECRET[k.size()] = 0;
-#endif
-}
-
-BoxStorage::BoxStorage(Common::String token, Common::String refreshToken):
-	_token(token), _refreshToken(refreshToken) {}
-
-BoxStorage::BoxStorage(Common::String code) {
-	getAccessToken(
-		new Common::Callback<BoxStorage, BoolResponse>(this, &BoxStorage::codeFlowComplete),
-		new Common::Callback<BoxStorage, Networking::ErrorResponse>(this, &BoxStorage::codeFlowFailed),
-		code
-	);
+BoxStorage::BoxStorage(Common::String code, Networking::ErrorCallback cb) {
+	getAccessToken(code, cb);
 }
 
 BoxStorage::~BoxStorage() {}
 
-void BoxStorage::getAccessToken(BoolCallback callback, Networking::ErrorCallback errorCallback, Common::String code) {
-	if (!KEY || !SECRET)
-		loadKeyAndSecret();
-	bool codeFlow = (code != "");
+Common::String BoxStorage::cloudProvider() { return "box"; }
 
-	if (!codeFlow && _refreshToken == "") {
-		warning("BoxStorage: no refresh token available to get new access token.");
-		if (callback) (*callback)(BoolResponse(nullptr, false));
-		return;
-	}
+uint32 BoxStorage::storageIndex() { return kStorageBoxId; }
 
-	Networking::JsonCallback innerCallback = new Common::CallbackBridge<BoxStorage, BoolResponse, Networking::JsonResponse>(this, &BoxStorage::tokenRefreshed, callback);
-	if (errorCallback == nullptr)
-		errorCallback = getErrorPrintingCallback();
+bool BoxStorage::needsRefreshToken() { return true; }
 
-	Networking::CurlJsonRequest *request = new Networking::CurlJsonRequest(innerCallback, errorCallback, BOX_OAUTH2_TOKEN);
-	if (codeFlow) {
-		request->addPostField("grant_type=authorization_code");
-		request->addPostField("code=" + code);
-	} else {
-		request->addPostField("grant_type=refresh_token");
-		request->addPostField("refresh_token=" + _refreshToken);
-	}
-	request->addPostField("client_id=" + Common::String(KEY));
-	request->addPostField("client_secret=" + Common::String(SECRET));
-	/*
-	if (Cloud::CloudManager::couldUseLocalServer()) {
-	    request->addPostField("&redirect_uri=http%3A%2F%2Flocalhost%3A12345");
-	} else {
-	    request->addPostField("&redirect_uri=https%3A%2F%2Fwww.scummvm.org/c/code");
-	}
-	*/
-	addRequest(request);
-}
-
-void BoxStorage::tokenRefreshed(BoolCallback callback, Networking::JsonResponse response) {
-	Common::JSONValue *json = response.value;
-	if (!json) {
-		warning("BoxStorage: got NULL instead of JSON");
-		if (callback)
-			(*callback)(BoolResponse(nullptr, false));
-		delete callback;
-		return;
-	}
-
-	if (!Networking::CurlJsonRequest::jsonIsObject(json, "BoxStorage")) {
-		if (callback)
-			(*callback)(BoolResponse(nullptr, false));
-		delete json;
-		delete callback;
-		return;
-	}
-
-	Common::JSONObject result = json->asObject();
-	if (!Networking::CurlJsonRequest::jsonContainsString(result, "access_token", "BoxStorage") ||
-		!Networking::CurlJsonRequest::jsonContainsString(result, "refresh_token", "BoxStorage")) {
-		warning("BoxStorage: bad response, no token passed");
-		debug(9, "%s", json->stringify().c_str());
-		if (callback)
-			(*callback)(BoolResponse(nullptr, false));
-	} else {
-		_token = result.getVal("access_token")->asString();
-		_refreshToken = result.getVal("refresh_token")->asString();
-		CloudMan.save(); //ask CloudManager to save our new refreshToken
-		if (callback)
-			(*callback)(BoolResponse(nullptr, true));
-	}
-	delete json;
-	delete callback;
-}
-
-void BoxStorage::codeFlowComplete(BoolResponse response) {
-	if (!response.value) {
-		warning("BoxStorage: failed to get access token through code flow");
-		CloudMan.removeStorage(this);
-		return;
-	}
-
-	CloudMan.replaceStorage(this, kStorageBoxId);
-	ConfMan.flushToDisk();
-}
-
-void BoxStorage::codeFlowFailed(Networking::ErrorResponse error) {
-	debug(9, "BoxStorage: code flow failed (%s, %ld):", (error.failed ? "failed" : "interrupted"), error.httpResponseCode);
-	debug(9, "%s", error.response.c_str());
-	CloudMan.removeStorage(this);
-}
+bool BoxStorage::canReuseRefreshToken() { return false; }
 
 void BoxStorage::saveConfig(Common::String keyPrefix) {
 	ConfMan.set(keyPrefix + "access_token", _token, ConfMan.kCloudDomain);
 	ConfMan.set(keyPrefix + "refresh_token", _refreshToken, ConfMan.kCloudDomain);
+	saveIsEnabledFlag(keyPrefix);
 }
 
 Common::String BoxStorage::name() const {
@@ -321,8 +213,6 @@ Networking::Request *BoxStorage::info(StorageInfoCallback callback, Networking::
 Common::String BoxStorage::savesDirectoryPath() { return "scummvm/saves/"; }
 
 BoxStorage *BoxStorage::loadFromConfig(Common::String keyPrefix) {
-	loadKeyAndSecret();
-
 	if (!ConfMan.hasKey(keyPrefix + "access_token", ConfMan.kCloudDomain)) {
 		warning("BoxStorage: no access_token found");
 		return nullptr;
@@ -335,7 +225,13 @@ BoxStorage *BoxStorage::loadFromConfig(Common::String keyPrefix) {
 
 	Common::String accessToken = ConfMan.get(keyPrefix + "access_token", ConfMan.kCloudDomain);
 	Common::String refreshToken = ConfMan.get(keyPrefix + "refresh_token", ConfMan.kCloudDomain);
-	return new BoxStorage(accessToken, refreshToken);
+	return new BoxStorage(accessToken, refreshToken, loadIsEnabledFlag(keyPrefix));
+}
+
+void BoxStorage::removeFromConfig(Common::String keyPrefix) {
+	ConfMan.removeKey(keyPrefix + "access_token", ConfMan.kCloudDomain);
+	ConfMan.removeKey(keyPrefix + "refresh_token", ConfMan.kCloudDomain);
+	removeIsEnabledFlag(keyPrefix);
 }
 
 Common::String BoxStorage::getRootDirectoryId() {

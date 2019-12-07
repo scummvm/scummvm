@@ -11,8 +11,9 @@
 #define IDI_ICON  1001
 #define IDI_COUNT 1002
 
-IDI_ICON               ICON    DISCARDABLE     "icons/residualvm.ico"
-IDI_COUNT              ICON    DISCARDABLE     "icons/count.ico"
+CREATEPROCESS_MANIFEST_RESOURCE_ID RT_MANIFEST "dists/win32/residualvm.exe.manifest"
+IDI_ICON               ICON    "icons/residualvm.ico"
+IDI_COUNT              ICON    "icons/count.ico"
 
 residualvm-grim-patch.lab        FILE    "dists/engine-data/residualvm-grim-patch.lab"
 residualvm-emi-patch.m4b        FILE    "dists/engine-data/residualvm-emi-patch.m4b"

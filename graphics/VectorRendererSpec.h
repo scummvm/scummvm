@@ -51,29 +51,18 @@ public:
 	VectorRendererSpec(PixelFormat format);
 
 	void drawLine(int x1, int y1, int x2, int y2);
-	void drawLineClip(int x1, int y1, int x2, int y2, Common::Rect clipping);
 	void drawCircle(int x, int y, int r);
-	void drawCircleClip(int x, int y, int r, Common::Rect clipping);
 	void drawSquare(int x, int y, int w, int h);
-	void drawSquareClip(int x, int y, int w, int h, Common::Rect clipping);
 	void drawRoundedSquare(int x, int y, int r, int w, int h);
-	void drawRoundedSquareClip(int x, int y, int r, int w, int h, Common::Rect clipping);
 	void drawTriangle(int x, int y, int base, int height, TriangleOrientation orient);
-	void drawTriangleClip(int x, int y, int base, int height, TriangleOrientation orient, Common::Rect clipping);
 	void drawTab(int x, int y, int r, int w, int h);
-	void drawTabClip(int x, int y, int r, int w, int h, Common::Rect clipping);
-	void drawBeveledSquare(int x, int y, int w, int h, int bevel) {
-		drawBevelSquareAlg(x, y, w, h, bevel, _bevelColor, _fgColor, Base::_fillMode != kFillDisabled);
-	}
-	void drawBeveledSquareClip(int x, int y, int w, int h, int bevel, Common::Rect clipping) {
-		bool useClippingVersions = !(clipping.isEmpty() || clipping.contains(Common::Rect(x, y, x + w, y + h)));
+
+	void drawBeveledSquare(int x, int y, int w, int h) {
+		bool useClippingVersions = !_clippingArea.contains(Common::Rect(x, y, x + w, y + h));
 		if (useClippingVersions) {
-			Common::Rect backup = _clippingArea;
-			_clippingArea = clipping;
-			drawBevelSquareAlgClip(x, y, w, h, bevel, _bevelColor, _fgColor, Base::_fillMode != kFillDisabled);
-			_clippingArea = backup;
+			drawBevelSquareAlgClip(x, y, w, h, _bevel, _bevelColor, _fgColor);
 		} else {
-			drawBevelSquareAlg(x, y, w, h, bevel, _bevelColor, _fgColor, Base::_fillMode != kFillDisabled);
+			drawBevelSquareAlg(x, y, w, h, _bevel, _bevelColor, _fgColor);
 		}
 	}
 	void drawString(const Graphics::Font *font, const Common::String &text,
@@ -84,17 +73,15 @@ public:
 	void setBgColor(uint8 r, uint8 g, uint8 b) { _bgColor = _format.RGBToColor(r, g, b); }
 	void setBevelColor(uint8 r, uint8 g, uint8 b) { _bevelColor = _format.RGBToColor(r, g, b); }
 	void setGradientColors(uint8 r1, uint8 g1, uint8 b1, uint8 r2, uint8 g2, uint8 b2);
+	void setClippingRect(const Common::Rect &clippingArea) override { _clippingArea = clippingArea; }
 
 	void copyFrame(OSystem *sys, const Common::Rect &r);
 	void copyWholeFrame(OSystem *sys) { copyFrame(sys, Common::Rect(0, 0, _activeSurface->w, _activeSurface->h)); }
 
 	void fillSurface();
-	void fillSurfaceClip(Common::Rect clipping);
 	void blitSurface(const Graphics::Surface *source, const Common::Rect &r);
-	void blitSubSurface(const Graphics::Surface *source, const Common::Rect &r);
-	void blitSubSurfaceClip(const Graphics::Surface *source, const Common::Rect &r, const Common::Rect &clipping);
-	void blitKeyBitmap(const Graphics::Surface *source, const Common::Rect &r);
-	void blitKeyBitmapClip(const Graphics::Surface *source, const Common::Rect &r, const Common::Rect &clipping);
+	void blitSubSurface(const Graphics::Surface *source, const Common::Point &p);
+	void blitKeyBitmap(const Graphics::Surface *source, const Common::Point &p);
 	void blitAlphaBitmap(Graphics::TransparentSurface *source, const Common::Rect &r,
 			GUI::ThemeEngine::AutoScaleMode autoscale = GUI::ThemeEngine::kAutoScaleNone,
 			Graphics::DrawStep::VectorAlignment xAlign = Graphics::DrawStep::kVectorAlignManual,
@@ -223,10 +210,10 @@ protected:
 	    bool inverted, PixelType color, FillMode fill_m);
 
 	virtual void drawBevelSquareAlg(int x, int y, int w, int h,
-	    int bevel, PixelType top_color, PixelType bottom_color, bool fill);
+	    int bevel, PixelType top_color, PixelType bottom_color);
 
 	virtual void drawBevelSquareAlgClip(int x, int y, int w, int h,
-		int bevel, PixelType top_color, PixelType bottom_color, bool fill);
+		int bevel, PixelType top_color, PixelType bottom_color);
 
 	virtual void drawTabAlg(int x, int y, int w, int h, int r,
 	    PixelType color, VectorRenderer::FillMode fill_m,

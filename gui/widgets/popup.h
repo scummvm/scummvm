@@ -23,6 +23,7 @@
 #ifndef GUI_WIDGETS_POPUP_H
 #define GUI_WIDGETS_POPUP_H
 
+#include "gui/dialog.h"
 #include "gui/widget.h"
 #include "common/str.h"
 #include "common/array.h"
@@ -41,7 +42,6 @@ enum {
  * is broadcast, with data being equal to the tag value of the selected entry.
  */
 class PopUpWidget : public Widget, public CommandSender {
-	friend class PopUpDialog;
 	typedef Common::String String;
 
 	struct Entry {
@@ -83,6 +83,62 @@ public:
 	virtual void reflowLayout();
 protected:
 	void drawWidget();
+};
+
+/**
+ * A small dialog showing a list of items and allowing the user to chose one of them
+ *
+ * Used by PopUpWidget and DropdownButtonWidget.
+ */
+class PopUpDialog : public Dialog {
+protected:
+	Widget		*_boss;
+	int			_clickX, _clickY;
+	int			_selection;
+	int			_initialSelection;
+	uint32		_openTime;
+	bool		_twoColumns;
+	int			_entriesPerColumn;
+
+	int			_leftPadding;
+	int			_rightPadding;
+	int			_lineHeight;
+
+	int			_lastRead;
+
+	typedef Common::Array<Common::String> EntryList;
+	EntryList		_entries;
+
+public:
+	PopUpDialog(Widget *boss, const Common::String &name, int clickX, int clickY);
+
+	void open() override;
+	void reflowLayout() override;
+	void drawDialog(DrawLayer layerToDraw) override;
+
+	void handleMouseUp(int x, int y, int button, int clickCount) override;
+	void handleMouseWheel(int x, int y, int direction) override;	// Scroll through entries with scroll wheel
+	void handleMouseMoved(int x, int y, int button) override;	// Redraw selections depending on mouse position
+	void handleKeyDown(Common::KeyState state) override;	// Scroll through entries with arrow keys etc.
+
+	void setPosition(int x, int y);
+	void setPadding(int left, int right);
+	void setLineHeight(int lineHeight);
+	void setWidth(uint16 width);
+
+	void appendEntry(const Common::String &entry);
+	void clearEntries();
+	void setSelection(int item);
+
+protected:
+	void drawMenuEntry(int entry, bool hilite);
+
+	int findItem(int x, int y) const;
+	bool isMouseDown();
+
+	void moveUp();
+	void moveDown();
+	void read(Common::String);
 };
 
 } // End of namespace GUI

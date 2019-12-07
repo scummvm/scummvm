@@ -203,21 +203,24 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 class Myst3MetaEngine : public AdvancedMetaEngine {
 public:
 	Myst3MetaEngine() : AdvancedMetaEngine(gameDescriptions, sizeof(Myst3GameDescription), myst3Games, optionsList) {
-		_singleId = "myst3";
 		_guiOptions = GUIO5(GUIO_NOMIDI, GUIO_NOSFX, GUIO_NOSPEECH, GUIO_NOSUBTITLES, GAMEOPTION_WIDESCREEN_MOD);
 		_maxScanDepth = 3;
 		_directoryGlobs = directoryGlobs;
 	}
 
-	virtual const char *getName() const {
-		return "Myst III Engine";
+	const char *getName() const override {
+		return "Myst III";
 	}
 
-	virtual const char *getOriginalCopyright() const {
+	const char *getEngineId() const override {
+		return "myst3";
+	}
+
+	const char *getOriginalCopyright() const override {
 		return "Myst III Exile (C) Presto Studios";
 	}
 
-	virtual bool hasFeature(MetaEngineFeature f) const {
+	bool hasFeature(MetaEngineFeature f) const override {
 		return
 			(f == kSupportsListSaves) ||
 			(f == kSupportsDeleteSave) ||
@@ -228,7 +231,7 @@ public:
 			(f == kSavesSupportPlayTime);
 	}
 
-	virtual SaveStateList listSaves(const char *target) const {
+	SaveStateList listSaves(const char *target) const override {
 		Common::Platform platform = Common::parsePlatform(ConfMan.get("platform", target));
 		Common::StringArray filenames = Saves::list(g_system->getSavefileManager(), platform);
 
@@ -252,7 +255,7 @@ public:
 		return description;
 	}
 
-	virtual SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const {
+	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override {
 		SaveStateDescriptor saveInfos = getSaveDescription(target, slot);
 
 		if (saveInfos.getDescription().empty()) {
@@ -291,16 +294,16 @@ public:
 		return saveInfos;
 	}
 
-	void removeSaveState(const char *target, int slot) const {
+	void removeSaveState(const char *target, int slot) const override {
 		SaveStateDescriptor saveInfos = getSaveDescription(target, slot);
 		g_system->getSavefileManager()->removeSavefile(saveInfos.getDescription());
 	}
 
-	virtual int getMaximumSaveSlot() const {
+	int getMaximumSaveSlot() const override {
 		return 999;
 	}
 
-	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const;
+	bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
 };
 
 bool Myst3MetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {

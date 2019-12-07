@@ -26,6 +26,7 @@
 #include "backends/networking/curl/networkreadstream.h"
 #include "backends/networking/curl/connectionmanager.h"
 #include "base/version.h"
+#include "common/debug.h"
 
 namespace Networking {
 
@@ -64,6 +65,7 @@ int NetworkReadStream::curlProgressCallbackOlder(void *p, double dltotal, double
 
 void NetworkReadStream::init(const char *url, curl_slist *headersList, const byte *buffer, uint32 bufferSize, bool uploading, bool usingPatch, bool post) {
 	_eos = _requestComplete = false;
+	_errorBuffer = (char *)calloc(CURL_ERROR_SIZE, 1);
 	_sendingContentsBuffer = nullptr;
 	_sendingContentsSize = _sendingContentsPos = 0;
 	_progressDownloaded = _progressTotal = 0;
@@ -77,6 +79,7 @@ void NetworkReadStream::init(const char *url, curl_slist *headersList, const byt
 	curl_easy_setopt(_easy, CURLOPT_HEADERDATA, this);
 	curl_easy_setopt(_easy, CURLOPT_HEADERFUNCTION, curlHeadersCallback);
 	curl_easy_setopt(_easy, CURLOPT_URL, url);
+	curl_easy_setopt(_easy, CURLOPT_ERRORBUFFER, _errorBuffer);
 	curl_easy_setopt(_easy, CURLOPT_VERBOSE, 0L);
 	curl_easy_setopt(_easy, CURLOPT_FOLLOWLOCATION, 1L); //probably it's OK to have it always on
 	curl_easy_setopt(_easy, CURLOPT_HTTPHEADER, headersList);
@@ -84,6 +87,12 @@ void NetworkReadStream::init(const char *url, curl_slist *headersList, const byt
 	curl_easy_setopt(_easy, CURLOPT_NOPROGRESS, 0L);
 	curl_easy_setopt(_easy, CURLOPT_PROGRESSFUNCTION, curlProgressCallbackOlder);
 	curl_easy_setopt(_easy, CURLOPT_PROGRESSDATA, this);
+
+	const char *caCertPath = ConnMan.getCaCertPath();
+	if (caCertPath) {
+		curl_easy_setopt(_easy, CURLOPT_CAINFO, caCertPath);
+	}
+
 #if LIBCURL_VERSION_NUM >= 0x072000
 	// CURLOPT_XFERINFOFUNCTION introduced in libcurl 7.32.0
 	// CURLOPT_PROGRESSFUNCTION is used as a backup plan in case older version is used
@@ -116,6 +125,7 @@ void NetworkReadStream::init(const char *url, curl_slist *headersList, const byt
 
 void NetworkReadStream::init(const char *url, curl_slist *headersList, Common::HashMap<Common::String, Common::String> formFields, Common::HashMap<Common::String, Common::String> formFiles) {
 	_eos = _requestComplete = false;
+	_errorBuffer = (char *)calloc(CURL_ERROR_SIZE, 1);
 	_sendingContentsBuffer = nullptr;
 	_sendingContentsSize = _sendingContentsPos = 0;
 	_progressDownloaded = _progressTotal = 0;
@@ -129,6 +139,7 @@ void NetworkReadStream::init(const char *url, curl_slist *headersList, Common::H
 	curl_easy_setopt(_easy, CURLOPT_HEADERDATA, this);
 	curl_easy_setopt(_easy, CURLOPT_HEADERFUNCTION, curlHeadersCallback);
 	curl_easy_setopt(_easy, CURLOPT_URL, url);
+	curl_easy_setopt(_easy, CURLOPT_ERRORBUFFER, _errorBuffer);
 	curl_easy_setopt(_easy, CURLOPT_VERBOSE, 0L);
 	curl_easy_setopt(_easy, CURLOPT_FOLLOWLOCATION, 1L); //probably it's OK to have it always on
 	curl_easy_setopt(_easy, CURLOPT_HTTPHEADER, headersList);
@@ -136,6 +147,12 @@ void NetworkReadStream::init(const char *url, curl_slist *headersList, Common::H
 	curl_easy_setopt(_easy, CURLOPT_NOPROGRESS, 0L);
 	curl_easy_setopt(_easy, CURLOPT_PROGRESSFUNCTION, curlProgressCallbackOlder);
 	curl_easy_setopt(_easy, CURLOPT_PROGRESSDATA, this);
+
+	const char *caCertPath = ConnMan.getCaCertPath();
+	if (caCertPath) {
+		curl_easy_setopt(_easy, CURLOPT_CAINFO, caCertPath);
+	}
+
 #if LIBCURL_VERSION_NUM >= 0x072000
 	// CURLOPT_XFERINFOFUNCTION introduced in libcurl 7.32.0
 	// CURLOPT_PROGRESSFUNCTION is used as a backup plan in case older version is used
@@ -197,6 +214,7 @@ NetworkReadStream::~NetworkReadStream() {
 	if (_easy)
 		curl_easy_cleanup(_easy);
 	free(_bufferCopy);
+	free(_errorBuffer);
 }
 
 bool NetworkReadStream::eos() const {
@@ -215,8 +233,18 @@ uint32 NetworkReadStream::read(void *dataPtr, uint32 dataSize) {
 	return actuallyRead;
 }
 
-void NetworkReadStream::finished() {
+void NetworkReadStream::finished(uint32 errorCode) {
 	_requestComplete = true;
+
+	char *url = nullptr;
+	curl_easy_getinfo(_easy, CURLINFO_EFFECTIVE_URL, &url);
+
+	if (errorCode == CURLE_OK) {
+		debug(9, "NetworkReadStream: %s - Request succeeded", url);
+	} else {
+		warning("NetworkReadStream: %s - Request failed (%d - %s)", url, errorCode,
+		        strlen(_errorBuffer) ? _errorBuffer : curl_easy_strerror((CURLcode)errorCode));
+	}
 }
 
 long NetworkReadStream::httpResponseCode() const {
@@ -238,6 +266,78 @@ Common::String NetworkReadStream::currentLocation() const {
 
 Common::String NetworkReadStream::responseHeaders() const {
 	return _responseHeaders;
+}
+
+Common::HashMap<Common::String, Common::String> NetworkReadStream::responseHeadersMap() const {
+	// HTTP headers are described at RFC 2616: https://tools.ietf.org/html/rfc2616#section-4.2
+	// this implementation tries to follow it, but for simplicity it does not support multi-line header values
+
+	Common::HashMap<Common::String, Common::String> headers;
+	Common::String headerName, headerValue, trailingWhitespace;
+	char c;
+	bool readingName = true;
+
+	for (uint i = 0; i < _responseHeaders.size(); ++i) {
+		c = _responseHeaders[i];
+
+		if (readingName) {
+			if (c == ' ' || c == '\r' || c == '\n' || c == '\t') {
+				// header names should not contain any whitespace, this is invalid
+				// ignore what's been before
+				headerName = "";
+				continue;
+			}
+			if (c == ':') {
+				if (!headerName.empty()) {
+					readingName = false;
+				}
+				continue;
+			}
+			headerName += c;
+			continue;
+		}
+
+		// reading value:
+		if (c == ' ' || c == '\t') {
+			if (headerValue.empty()) {
+				// skip leading whitespace
+				continue;
+			} else {
+				// accumulate trailing whitespace
+				trailingWhitespace += c;
+				continue;
+			}
+		}
+
+		if (c == '\r' || c == '\n') {
+			// not sure if RFC allows empty values, we'll ignore such
+			if (!headerName.empty() && !headerValue.empty()) {
+				// add header value
+				// RFC allows header with the same name to be sent multiple times
+				// and requires it to be equivalent of just listing all header values separated with comma
+				// so if header already was met, we'll add new value to the old one
+				headerName.toLowercase();
+				if (headers.contains(headerName)) {
+					headers[headerName] += "," + headerValue;
+				} else {
+					headers[headerName] = headerValue;
+				}
+			}
+
+			headerName = "";
+			headerValue = "";
+			trailingWhitespace = "";
+			readingName = true;
+			continue;
+		}
+
+		// if we meet non-whitespace character, turns out those "trailing" whitespace characters were not so trailing
+		headerValue += trailingWhitespace;
+		trailingWhitespace = "";
+		headerValue += c;
+	}
+
+	return headers;
 }
 
 uint32 NetworkReadStream::fillWithSendingContents(char *bufferToFill, uint32 maxSize) {

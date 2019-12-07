@@ -364,6 +364,7 @@ void MSBuildProvider::outputGlobalPropFile(const BuildSetup &setup, std::ofstrea
 	              "\t\t\t<TreatWarningAsError>false</TreatWarningAsError>\n"
 	              "\t\t\t<CompileAs>Default</CompileAs>\n"
 	              "\t\t\t<MultiProcessorCompilation>true</MultiProcessorCompilation>\n"
+	              "\t\t\t<ConformanceMode>true</ConformanceMode>\n"
 	              "\t\t</ClCompile>\n"
 	              "\t\t<Link>\n"
 	              "\t\t\t<IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>\n"
@@ -398,6 +399,7 @@ void MSBuildProvider::createBuildProp(const BuildSetup &setup, bool isRelease, b
 	              "\t<PropertyGroup>\n"
 	              "\t\t<_PropertySheetDisplayName>" << setup.projectDescription << "_" << configuration << outputBitness << "</_PropertySheetDisplayName>\n"
 	              "\t\t<LinkIncremental>" << (isRelease ? "false" : "true") << "</LinkIncremental>\n"
+	              "\t\t<GenerateManifest>false</GenerateManifest>\n"
 	              "\t</PropertyGroup>\n"
 	              "\t<ItemDefinitionGroup>\n"
 	              "\t\t<ClCompile>\n";

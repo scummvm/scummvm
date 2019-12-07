@@ -86,7 +86,8 @@ enum EventType {
 	EVENT_VIRTUAL_KEYBOARD = 20,
 #endif
 
-	EVENT_DROP_FILE = 23
+	EVENT_DROP_FILE = 23,
+	EVENT_CLIPBOARD_UPDATE = 27
 
 /* START of ResidualVM-specific code */
 	,

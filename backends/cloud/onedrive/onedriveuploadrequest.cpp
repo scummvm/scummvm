@@ -33,8 +33,8 @@
 namespace Cloud {
 namespace OneDrive {
 
-#define ONEDRIVE_API_SPECIAL_APPROOT_UPLOAD "https://api.onedrive.com/v1.0/drive/special/approot:/%s:/upload.createSession"
-#define ONEDRIVE_API_SPECIAL_APPROOT_CONTENT "https://api.onedrive.com/v1.0/drive/special/approot:/%s:/content"
+#define ONEDRIVE_API_SPECIAL_APPROOT_UPLOAD "https://graph.microsoft.com/v1.0/drive/special/approot:/%s:/upload.createSession"
+#define ONEDRIVE_API_SPECIAL_APPROOT_CONTENT "https://graph.microsoft.com/v1.0/drive/special/approot:/%s:/content"
 
 OneDriveUploadRequest::OneDriveUploadRequest(OneDriveStorage *storage, Common::String path, Common::SeekableReadStream *contents, Storage::UploadCallback callback, Networking::ErrorCallback ecb):
 	Networking::Request(nullptr, ecb), _storage(storage), _savePath(path), _contentsStream(contents), _uploadCallback(callback),
@@ -56,12 +56,12 @@ void OneDriveUploadRequest::start() {
 		_workingRequest->finish();
 	if (_contentsStream == nullptr) {
 		warning("OneDriveUploadRequest: cannot restart because no stream given");
-		finishError(Networking::ErrorResponse(this, false, true, "No stream given", -1));
+		finishError(Networking::ErrorResponse(this, false, true, "OneDriveUploadRequest::start: can't restart, because no stream given", -1));
 		return;
 	}
 	if (!_contentsStream->seek(0)) {
 		warning("OneDriveUploadRequest: cannot restart because stream couldn't seek(0)");
-		finishError(Networking::ErrorResponse(this, false, true, "", -1));
+		finishError(Networking::ErrorResponse(this, false, true, "OneDriveUploadRequest::start: can't restart, because seek(0) didn't work", -1));
 		return;
 	}
 	_ignoreCallback = false;

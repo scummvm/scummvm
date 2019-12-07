@@ -20,8 +20,6 @@
  *
  */
 
-#define FORBIDDEN_SYMBOL_EXCEPTION_exit
-
 #include "backends/modular-backend.h"
 
 #include "backends/graphics/graphics.h"
@@ -301,8 +299,4 @@ void ModularBackend::displayMessageOnOSD(const char *msg) {
 
 void ModularBackend::displayActivityIconOnOSD(const Graphics::Surface *icon) {
 	_graphicsManager->displayActivityIconOnOSD(icon);
-}
-
-void ModularBackend::quit() {
-	exit(0);
 }

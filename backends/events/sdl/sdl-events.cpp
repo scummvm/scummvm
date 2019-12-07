@@ -661,6 +661,10 @@ bool SdlEventSource::dispatchSDLEvent(SDL_Event &ev, Common::Event &event) {
 		event.path = Common::String(ev.drop.file);
 		SDL_free(ev.drop.file);
 		return true;
+
+	case SDL_CLIPBOARDUPDATE:
+		event.type = Common::EVENT_CLIPBOARD_UPDATE;
+		return true;
 #else
 	case SDL_VIDEOEXPOSE:
 		if (_graphicsManager)

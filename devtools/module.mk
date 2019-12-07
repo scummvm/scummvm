@@ -29,6 +29,11 @@ clean-devtools:
 # Build rules for the devtools
 #
 
+# Rule to explicitly rebuild the wwwroot archive
+wwwroot:
+	$(srcdir)/devtools/make-www-archive.py $(srcdir)/dists/networking/
+	
+
 #
 # Rules to explicitly rebuild the credits / MD5 tables.
 # The rules for the files in the "web" resp. "docs" modules
@@ -44,11 +49,6 @@ credits:
 	$(srcdir)/devtools/credits.pl --xml-website > $(srcdir)/../../residualvm-web/data/credits.xml
 #	$(srcdir)/devtools/credits.pl --xml-docbook > $(srcdir)/../../docs/trunk/docbook/credits.xml
 
-
-# Rule to explicitly rebuild the wwwroot archive
-wwwroot:
-	$(srcdir)/devtools/make-www-archive.py $(srcdir)/dists/networking/
-	
 
 #
 # Rules which automatically and implicitly rebuild the credits and

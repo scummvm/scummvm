@@ -40,6 +40,7 @@ class MutexManager;
  *   OSystem::getMillis()
  *   OSystem::delayMillis()
  *   OSystem::getTimeAndDate()
+ *   OSystem::quit()
  *
  * And, it should also initialize all the managers variables
  * declared in this class, or override their related functions.
@@ -138,7 +139,6 @@ public:
 	/** @name Miscellaneous */
 	//@{
 
-	virtual void quit() override;
 	virtual void displayMessageOnOSD(const char *msg) override;
 	virtual void displayActivityIconOnOSD(const Graphics::Surface *icon) override;
 

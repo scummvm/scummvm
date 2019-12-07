@@ -57,35 +57,35 @@ void CreateDirectoryHandler::handle(Client &client) {
 
 	// check that <path> is not an absolute root
 	if (path == "" || path == "/") {
-		handleError(client, _("Can't create directory here!"));
+		handleError(client, HandlerUtils::toUtf8(_("Can't create directory here!")));
 		return;
 	}
 
 	// check that <path> contains no '../'
 	if (HandlerUtils::hasForbiddenCombinations(path)) {
-		handleError(client, _("Invalid path!"));
+		handleError(client, HandlerUtils::toUtf8(_("Invalid path!")));
 		return;
 	}
 
 	// transform virtual path to actual file system one
 	Common::String prefixToRemove = "", prefixToAdd = "";
 	if (!transformPath(path, prefixToRemove, prefixToAdd) || path.empty()) {
-		handleError(client, _("Invalid path!"));
+		handleError(client, HandlerUtils::toUtf8(_("Invalid path!")));
 		return;
 	}
 
 	// check that <path> exists, is directory and isn't forbidden
 	AbstractFSNode *node = g_system->getFilesystemFactory()->makeFileNodePath(path);
 	if (!HandlerUtils::permittedPath(node->getPath())) {
-		handleError(client, _("Invalid path!"));
+		handleError(client, HandlerUtils::toUtf8(_("Invalid path!")));
 		return;
 	}
 	if (!node->exists()) {
-		handleError(client, _("Parent directory doesn't exists!"));
+		handleError(client, HandlerUtils::toUtf8(_("Parent directory doesn't exists!")));
 		return;
 	}
 	if (!node->isDirectory()) {
-		handleError(client, _("Can't create a directory within a file!"));
+		handleError(client, HandlerUtils::toUtf8(_("Can't create a directory within a file!")));
 		return;
 	}
 
@@ -95,20 +95,20 @@ void CreateDirectoryHandler::handle(Client &client) {
 	node = g_system->getFilesystemFactory()->makeFileNodePath(path + name);
 	if (node->exists()) {
 		if (!node->isDirectory()) {
-			handleError(client, _("There is a file with that name in the parent directory!"));
+			handleError(client, HandlerUtils::toUtf8(_("There is a file with that name in the parent directory!")));
 			return;
 		}
 	} else {
 		// create the <directory_name> in <path>
-		if (!node->create(true)) {
-			handleError(client, _("Failed to create the directory!"));
+		if (!node->createDirectory()) {
+			handleError(client, HandlerUtils::toUtf8(_("Failed to create the directory!")));
 			return;
 		}
 	}
 
 	// if json requested, respond with it
 	if (client.queryParameter("answer_json") == "true") {
-		setJsonResponseHandler(client, "success", _("Directory created successfully!"));
+		setJsonResponseHandler(client, "success", HandlerUtils::toUtf8(_("Directory created successfully!")));
 		return;
 	}
 
@@ -117,9 +117,9 @@ void CreateDirectoryHandler::handle(Client &client) {
 		client,
 		Common::String::format(
 			"%s<br/><a href=\"files?path=%s\">%s</a>",
-			_("Directory created successfully!"),
+			HandlerUtils::toUtf8(_("Directory created successfully!")).c_str(),
 			client.queryParameter("path").c_str(),
-			_("Back to parent directory")
+			HandlerUtils::toUtf8(_("Back to parent directory")).c_str()
 		),
 		(client.queryParameter("ajax") == "true" ? "/filesAJAX?path=" : "/files?path=") +
 		LocalWebserver::urlEncodeQueryParameterValue(client.queryParameter("path"))

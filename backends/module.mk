@@ -17,6 +17,7 @@ ifdef USE_CLOUD
 
 ifdef USE_LIBCURL
 MODULE_OBJS += \
+	cloud/basestorage.o \
 	cloud/cloudicon.o \
 	cloud/cloudmanager.o \
 	cloud/iso8601.o \
@@ -58,6 +59,7 @@ MODULE_OBJS += \
 	networking/curl/networkreadstream.o \
 	networking/curl/curlrequest.o \
 	networking/curl/curljsonrequest.o \
+	networking/curl/postrequest.o \
 	networking/curl/request.o
 endif
 
@@ -141,6 +143,7 @@ ifdef POSIX
 MODULE_OBJS += \
 	fs/posix/posix-fs.o \
 	fs/posix/posix-fs-factory.o \
+	fs/posix/posix-iostream.o \
 	fs/chroot/chroot-fs-factory.o \
 	fs/chroot/chroot-fs.o \
 	plugins/posix/posix-provider.o \
@@ -191,6 +194,7 @@ ifdef PLAYSTATION3
 MODULE_OBJS += \
 	fs/posix/posix-fs.o \
 	fs/posix/posix-fs-factory.o \
+	fs/posix/posix-iostream.o \
 	fs/ps3/ps3-fs-factory.o \
 	events/ps3sdl/ps3sdl-events.o
 endif
@@ -269,6 +273,7 @@ endif
 ifeq ($(BACKEND),psp2)
 MODULE_OBJS += \
 	fs/posix/posix-fs.o \
+	fs/posix/posix-iostream.o \
 	fs/psp2/psp2-fs-factory.o \
 	fs/psp2/psp2-dirent.o \
 	events/psp2sdl/psp2sdl-events.o \

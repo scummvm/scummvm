@@ -443,9 +443,9 @@ Common::WriteStream *AmigaOSFilesystemNode::createWriteStream() {
 	return StdioStream::makeFromPath(getPath(), true);
 }
 
-bool AmigaOSFilesystemNode::create(bool isDirectoryFlag) {
-	error("Not supported");
-	return false;
+bool AmigaOSFilesystemNode::createDirectory() {
+	warning("AmigaOSFilesystemNode::createDirectory(): Not supported");
+	return _bIsValid && _bIsDirectory;
 }
 
 #endif //defined(__amigaos4__)

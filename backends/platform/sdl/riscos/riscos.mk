@@ -1,7 +1,7 @@
-ifeq ($(shell echo a | iconv --to-code=RISCOS-LATIN1//TRANSLIT >/dev/null 2>&1; echo $$?),0)
-ENCODING=RISCOS-LATIN1//TRANSLIT
+ifeq ($(shell echo a | iconv --to-code=RISCOS-LATIN1//IGNORE//TRANSLIT >/dev/null 2>&1; echo $$?),0)
+ENCODING=RISCOS-LATIN1//IGNORE//TRANSLIT
 else
-ENCODING=ISO-8859-1//TRANSLIT
+ENCODING=ISO-8859-1//IGNORE//TRANSLIT
 endif
 
 APP_NAME=!ResidualVM
@@ -26,6 +26,9 @@ endif
 ifdef USE_OPENGL_SHADERS
 	mkdir -p $(APP_NAME)/data/shaders
 	cp $(DIST_FILES_SHADERS) $(APP_NAME)/data/shaders/
+endif
+ifdef DIST_FILES_VKEYBD
+	cp $(DIST_FILES_VKEYBD) $(APP_NAME)/data/
 endif
 ifdef DYNAMIC_MODULES
 	mkdir -p $(APP_NAME)/plugins

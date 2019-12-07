@@ -43,7 +43,9 @@ PNGDecoder::PNGDecoder() :
         _outputSurface(0),
         _palette(0),
         _paletteColorCount(0),
-        _skipSignature(false) {
+        _skipSignature(false),
+		_keepTransparencyPaletted(false),
+		_transparentColor(-1) {
 }
 
 PNGDecoder::~PNGDecoder() {
@@ -159,7 +161,7 @@ bool PNGDecoder::loadStream(Common::SeekableReadStream &stream) {
 
 	// Images of all color formats except PNG_COLOR_TYPE_PALETTE
 	// will be transformed into ARGB images
-	if (colorType == PNG_COLOR_TYPE_PALETTE && !png_get_valid(pngPtr, infoPtr, PNG_INFO_tRNS)) {
+	if (colorType == PNG_COLOR_TYPE_PALETTE && (_keepTransparencyPaletted || !png_get_valid(pngPtr, infoPtr, PNG_INFO_tRNS))) {
 		int numPalette = 0;
 		png_colorp palette = NULL;
 		uint32 success = png_get_PLTE(pngPtr, infoPtr, &palette, &numPalette);
@@ -175,6 +177,16 @@ bool PNGDecoder::loadStream(Common::SeekableReadStream &stream) {
 			_palette[(i * 3) + 2] = palette[i].blue;
 
 		}
+
+		if (png_get_valid(pngPtr, infoPtr, PNG_INFO_tRNS)) {
+			png_bytep trans;
+			int numTrans;
+			png_color_16p transColor;
+			png_get_tRNS(pngPtr, infoPtr, &trans, &numTrans, &transColor);
+			assert(numTrans == 1);
+			_transparentColor = *trans;
+		}
+
 		_outputSurface->create(width, height, Graphics::PixelFormat::createFormatCLUT8());
 		png_set_packing(pngPtr);
 	} else {
@@ -252,16 +264,6 @@ bool writePNG(Common::WriteStream &out, const Graphics::Surface &input, const bo
 	const Graphics::PixelFormat requiredFormat_3byte(3, 8, 8, 8, 0, 16, 8, 0, 0);
 	const Graphics::PixelFormat requiredFormat_4byte(4, 8, 8, 8, 8, 24, 16, 8, 0);
 #endif
-
-	if (input.format.bytesPerPixel == 3) {
-		if (input.format != requiredFormat_3byte) {
-			warning("Cannot currently write PNG with 3-byte pixel format other than %s", requiredFormat_3byte.toString().c_str());
-			return false;
-		}
-	} else if (input.format.bytesPerPixel != 4) {
-		warning("Cannot currently write PNG with pixel format of bpp other than 3, 4");
-		return false;
-	}
 
 	int colorType;
 	Graphics::Surface *tmp = NULL;

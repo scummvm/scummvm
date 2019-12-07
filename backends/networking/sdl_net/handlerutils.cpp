@@ -171,8 +171,13 @@ bool HandlerUtils::permittedPath(const Common::String path) {
 	return hasPermittedPrefix(path) && !isBlacklisted(path);
 }
 
+Common::String HandlerUtils::toUtf8(const char *text) {
+	// FIXME: Convert the GUI to use UTF8
+	return Common::String(text);
+}
+
 void HandlerUtils::setMessageHandler(Client &client, Common::String message, Common::String redirectTo) {
-	Common::String response = "<html><head><title>ScummVM</title></head><body>{message}</body></html>";
+	Common::String response = "<html><head><title>ResidualVM</title><meta charset=\"utf-8\"/></head><body>{message}</body></html>";
 
 	// load stylish response page from the archive
 	Common::SeekableReadStream *const stream = getArchiveFile(INDEX_PAGE_NAME);
@@ -194,7 +199,7 @@ void HandlerUtils::setFilesManagerErrorMessageHandler(Client &client, Common::St
 			message.c_str(),
 			client.queryParameter("ajax") == "true" ? "AJAX" : "",
 			"%2F", //that's encoded "/"
-			_("Back to the files manager")
+			toUtf8(_("Back to the files manager")).c_str()
 		),
 		redirectTo
 	);

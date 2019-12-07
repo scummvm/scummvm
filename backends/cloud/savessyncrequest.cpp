@@ -72,7 +72,7 @@ void SavesSyncRequest::start() {
 		new Common::Callback<SavesSyncRequest, Storage::ListDirectoryResponse>(this, &SavesSyncRequest::directoryListedCallback),
 		new Common::Callback<SavesSyncRequest, Networking::ErrorResponse>(this, &SavesSyncRequest::directoryListedErrorCallback)
 	);
-	if (!_workingRequest) finishError(Networking::ErrorResponse(this));
+	if (!_workingRequest) finishError(Networking::ErrorResponse(this, "SavesSyncRequest::start: Storage couldn't create Request to list directory"));
 }
 
 void SavesSyncRequest::directoryListedCallback(Storage::ListDirectoryResponse response) {
@@ -90,17 +90,19 @@ void SavesSyncRequest::directoryListedCallback(Storage::ListDirectoryResponse re
 	//determine which files to download and which files to upload
 	Common::Array<StorageFile> &remoteFiles = response.value;
 	uint64 totalSize = 0;
+	debug(9, "SavesSyncRequest decisions:");
 	for (uint32 i = 0; i < remoteFiles.size(); ++i) {
 		StorageFile &file = remoteFiles[i];
 		if (file.isDirectory())
 			continue;
 		totalSize += file.size();
-		if (file.name() == DefaultSaveFileManager::TIMESTAMPS_FILENAME)
+		if (file.name() == DefaultSaveFileManager::TIMESTAMPS_FILENAME || !CloudMan.canSyncFilename(file.name()))
 			continue;
 
 		Common::String name = file.name();
 		if (!_localFilesTimestamps.contains(name)) {
 			_filesToDownload.push_back(file);
+			debug(9, "- downloading file %s, because it is not present on local", name.c_str());
 		} else {
 			localFileNotAvailableInCloud[name] = false;
 
@@ -113,6 +115,13 @@ void SavesSyncRequest::directoryListedCallback(Storage::ListDirectoryResponse re
 				_filesToUpload.push_back(file.name());
 			else
 				_filesToDownload.push_back(file);
+
+			if (_localFilesTimestamps[name] == DefaultSaveFileManager::INVALID_TIMESTAMP)
+				debug(9, "- uploading file %s, because it is has invalid timestamp", name.c_str());
+			else if (_localFilesTimestamps[name] > file.timestamp())
+				debug(9, "- uploading file %s, because it is %d seconds newer than remote\n\tlocal = %d; \tremote = %d", name.c_str(), _localFilesTimestamps[name] - file.timestamp(), _localFilesTimestamps[name], file.timestamp());
+			else
+				debug(9, "- downloading file %s, because it is %d seconds older than remote\n\tlocal = %d; \tremote = %d", name.c_str(), file.timestamp() - _localFilesTimestamps[name], _localFilesTimestamps[name], file.timestamp());
 		}
 	}
 
@@ -120,24 +129,41 @@ void SavesSyncRequest::directoryListedCallback(Storage::ListDirectoryResponse re
 
 	//upload files which are unavailable in cloud
 	for (Common::HashMap<Common::String, bool>::iterator i = localFileNotAvailableInCloud.begin(); i != localFileNotAvailableInCloud.end(); ++i) {
-		if (i->_key == DefaultSaveFileManager::TIMESTAMPS_FILENAME)
+		if (i->_key == DefaultSaveFileManager::TIMESTAMPS_FILENAME || !CloudMan.canSyncFilename(i->_key))
 			continue;
-		if (i->_value)
+		if (i->_value) {
 			_filesToUpload.push_back(i->_key);
+			debug(9, "- uploading file %s, because it is not present on remote", i->_key.c_str());
+		}
 	}
 
-	debug(9, "\nSavesSyncRequest: download files:");
-	for (uint32 i = 0; i < _filesToDownload.size(); ++i) {
-		debug(9, "%s", _filesToDownload[i].name().c_str());
+	debug(9, "\nSavesSyncRequest: ");
+	if (_filesToDownload.size() > 0) {
+		debug(9, "download files:");
+		for (uint32 i = 0; i < _filesToDownload.size(); ++i) {
+			debug(9, " %s", _filesToDownload[i].name().c_str());
+		}
+		debug(9, "%s", "");
+	} else {
+		debug(9, "nothing to download");
 	}
-	debug(9, "\nSavesSyncRequest: upload files:");
-	for (uint32 i = 0; i < _filesToUpload.size(); ++i) {
-		debug(9, "%s", _filesToUpload[i].c_str());
+	debug(9, "SavesSyncRequest: ");
+	if (_filesToUpload.size() > 0) {
+		debug(9, "upload files:");
+		for (uint32 i = 0; i < _filesToUpload.size(); ++i) {
+			debug(9, " %s", _filesToUpload[i].c_str());
+		}
+	} else {
+		debug(9, "nothing to upload");
 	}
 	_totalFilesToHandle = _filesToDownload.size() + _filesToUpload.size();
 
 	//start downloading files
-	downloadNextFile();
+	if (!_filesToDownload.empty()) {
+		downloadNextFile();
+	} else {
+		uploadNextFile();
+	}
 }
 
 void SavesSyncRequest::directoryListedErrorCallback(Networking::ErrorResponse error) {
@@ -145,9 +171,22 @@ void SavesSyncRequest::directoryListedErrorCallback(Networking::ErrorResponse er
 	if (_ignoreCallback)
 		return;
 
+	if (error.failed) debug(9, "%s", error.response.c_str());
+
 	bool irrecoverable = error.interrupted || error.failed;
 	if (error.failed) {
 		Common::JSONValue *value = Common::JSON::parse(error.response.c_str());
+
+		// somehow OneDrive returns JSON with '.' in unexpected places, try fixing it
+		if (!value) {
+			Common::String fixedResponse = error.response;
+			for (uint32 i = 0; i < fixedResponse.size(); ++i) {
+				if (fixedResponse[i] == '.')
+					fixedResponse.replace(i, 1, " ");
+			}
+			value = Common::JSON::parse(fixedResponse.c_str());
+		}
+
 		if (value) {
 			if (value->isObject()) {
 				Common::JSONObject object = value->asObject();
@@ -174,11 +213,13 @@ void SavesSyncRequest::directoryListedErrorCallback(Networking::ErrorResponse er
 			delete value;
 		}
 
-		//Google Drive and Box-related ScummVM-based error
+		//Google Drive, Box and OneDrive-related ScummVM-based error
 		if (error.response.contains("subdirectory not found")) {
 			irrecoverable = false; //base "/ScummVM/" folder not found
 		} else if (error.response.contains("no such file found in its parent directory")) {
 			irrecoverable = false; //"Saves" folder within "/ScummVM/" not found
+		} else if (error.response.contains("itemNotFound") && error.response.contains("Item does not exist")) {
+			irrecoverable = false; //"saves" folder within application folder is not found
 		}
 	}
 
@@ -191,14 +232,14 @@ void SavesSyncRequest::directoryListedErrorCallback(Networking::ErrorResponse er
 	Common::String dir = _storage->savesDirectoryPath();
 	if (dir.lastChar() == '/')
 		dir.deleteLastChar();
-	debug(9, "SavesSyncRequest: creating %s", dir.c_str());
+	debug(9, "\nSavesSyncRequest: creating %s", dir.c_str());
 	_workingRequest = _storage->createDirectory(
 		dir,
 		new Common::Callback<SavesSyncRequest, Storage::BoolResponse>(this, &SavesSyncRequest::directoryCreatedCallback),
 		new Common::Callback<SavesSyncRequest, Networking::ErrorResponse>(this, &SavesSyncRequest::directoryCreatedErrorCallback)
 	);
 	if (!_workingRequest)
-		finishError(Networking::ErrorResponse(this));
+		finishError(Networking::ErrorResponse(this, "SavesSyncRequest::directoryListedErrorCallback: Storage couldn't create Request to create remote directory"));
 }
 
 void SavesSyncRequest::directoryCreatedCallback(Storage::BoolResponse response) {
@@ -208,7 +249,7 @@ void SavesSyncRequest::directoryCreatedCallback(Storage::BoolResponse response) 
 
 	//stop syncing if failed to create saves directory
 	if (!response.value) {
-		finishError(Networking::ErrorResponse(this, false, true, "", -1));
+		finishError(Networking::ErrorResponse(this, false, true, "SavesSyncRequest::directoryCreatedCallback: failed to create remote directory", -1));
 		return;
 	}
 
@@ -239,7 +280,7 @@ void SavesSyncRequest::downloadNextFile() {
 
 	sendCommand(GUI::kSavesSyncProgressCmd, (int)(getDownloadingProgress() * 100));
 
-	debug(9, "SavesSyncRequest: downloading %s (%d %%)", _currentDownloadingFile.name().c_str(), (int)(getProgress() * 100));
+	debug(9, "\nSavesSyncRequest: downloading %s (%d %%)", _currentDownloadingFile.name().c_str(), (int)(getProgress() * 100));
 	_workingRequest = _storage->downloadById(
 		_currentDownloadingFile.id(),
 		DefaultSaveFileManager::concatWithSavesPath(_currentDownloadingFile.name()),
@@ -247,7 +288,7 @@ void SavesSyncRequest::downloadNextFile() {
 		new Common::Callback<SavesSyncRequest, Networking::ErrorResponse>(this, &SavesSyncRequest::fileDownloadedErrorCallback)
 	);
 	if (!_workingRequest)
-		finishError(Networking::ErrorResponse(this));
+		finishError(Networking::ErrorResponse(this, "SavesSyncRequest::downloadNextFile: Storage couldn't create Request to download a file"));
 }
 
 void SavesSyncRequest::fileDownloadedCallback(Storage::BoolResponse response) {
@@ -259,7 +300,7 @@ void SavesSyncRequest::fileDownloadedCallback(Storage::BoolResponse response) {
 	if (!response.value) {
 		//delete the incomplete file
 		g_system->getSavefileManager()->removeSavefile(_currentDownloadingFile.name());
-		finishError(Networking::ErrorResponse(this, false, true, "", -1));
+		finishError(Networking::ErrorResponse(this, false, true, "SavesSyncRequest::fileDownloadedCallback: failed to download a file", -1));
 		return;
 	}
 
@@ -290,7 +331,7 @@ void SavesSyncRequest::uploadNextFile() {
 	_currentUploadingFile = _filesToUpload.back();
 	_filesToUpload.pop_back();
 
-	debug(9, "SavesSyncRequest: uploading %s (%d %%)", _currentUploadingFile.c_str(), (int)(getProgress() * 100));
+	debug(9, "\nSavesSyncRequest: uploading %s (%d %%)", _currentUploadingFile.c_str(), (int)(getProgress() * 100));
 	if (_storage->uploadStreamSupported()) {
 		_workingRequest = _storage->upload(
 			_storage->savesDirectoryPath() + _currentUploadingFile,
@@ -306,7 +347,7 @@ void SavesSyncRequest::uploadNextFile() {
 			new Common::Callback<SavesSyncRequest, Networking::ErrorResponse>(this, &SavesSyncRequest::fileUploadedErrorCallback)
 		);
 	}
-	if (!_workingRequest) finishError(Networking::ErrorResponse(this));
+	if (!_workingRequest) finishError(Networking::ErrorResponse(this, "SavesSyncRequest::uploadNextFile: Storage couldn't create Request to upload a file"));
 }
 
 void SavesSyncRequest::fileUploadedCallback(Storage::UploadResponse response) {

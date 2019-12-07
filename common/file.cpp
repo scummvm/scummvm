@@ -166,7 +166,7 @@ bool DumpFile::open(const String &filename, bool createPath) {
 					delete node;
 					continue;
 				}
-				if (!node->create(true)) warning("DumpFile: unable to create directories from path prefix");
+				if (!node->createDirectory()) warning("DumpFile: unable to create directories from path prefix");
 				delete node;
 			}
 		}

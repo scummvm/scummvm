@@ -38,6 +38,7 @@ class NetworkReadStream: public Common::ReadStream {
 	CURL *_easy;
 	Common::MemoryReadWriteStream _backingStream;
 	bool _eos, _requestComplete;
+	char *_errorBuffer;
 	const byte *_sendingContentsBuffer;
 	uint32 _sendingContentsSize;
 	uint32 _sendingContentsPos;
@@ -111,7 +112,7 @@ public:
 	 *
 	 * @note It's called on failure too.
 	 */
-	void finished();
+	void finished(uint32 errorCode);
 
 	/**
 	 * Returns HTTP response code from inner CURL handle.
@@ -135,6 +136,14 @@ public:
 	* @note This method should be called when eos() == true.
 	*/
 	Common::String responseHeaders() const;
+
+	/**
+	* Return response headers as HashMap. All header names in
+	* it are lowercase.
+	*
+	* @note This method should be called when eos() == true.
+	*/
+	Common::HashMap<Common::String, Common::String> responseHeadersMap() const;
 
 	/** Returns a number in range [0, 1], where 1 is "complete". */
 	double getProgress() const;

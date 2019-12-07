@@ -142,6 +142,7 @@ bool JSON::extractString(const char **data, String &str) {
 	while (**data != 0) {
 		// Save the char so we can change it if need be
 		char next_char = **data;
+		uint32 next_uchar = 0;
 
 		// Escaping something?
 		if (next_char == '\\') {
@@ -167,31 +168,24 @@ bool JSON::extractString(const char **data, String &str) {
 			case 't': next_char = '\t';
 				break;
 			case 'u': {
-				// We need 5 chars (4 hex + the 'u') or its not valid
-				if (!simplejson_wcsnlen(*data, 5))
-					return false;
-
-				// Deal with the chars
 				next_char = 0;
-				for (int i = 0; i < 4; i++) {
-					// Do it first to move off the 'u' and leave us on the
-					// final hex digit as we move on by one later on
+				next_uchar = parseUnicode(data);
+				// If the codepoint is a high surrogate, we should have a low surrogate now
+				if (next_uchar >= 0xD800 && next_uchar <= 0xDBFF) {
 					(*data)++;
-
-					next_char <<= 4;
-
-					// Parse the hex digit
-					if (**data >= '0' && **data <= '9')
-						next_char |= (**data - '0');
-					else if (**data >= 'A' && **data <= 'F')
-						next_char |= (10 + (**data - 'A'));
-					else if (**data >= 'a' && **data <= 'f')
-						next_char |= (10 + (**data - 'a'));
-					else {
-						// Invalid hex digit = invalid JSON
+					if (**data != '\\')
 						return false;
-					}
-				}
+					(*data)++;
+					uint32 low_surrogate = parseUnicode(data);
+					if (low_surrogate < 0xDC00 || low_surrogate > 0xDFFF)
+						return false;
+					//next_uchar = 0x10000 + (next_uchar - 0xD800) * 0x400 + (low_surrogate - 0xDC00);
+					next_uchar = (next_uchar << 10) + low_surrogate - 0x35FDC00u;
+				} else if (next_uchar >= 0xDC00 && next_uchar <= 0xDFFF)
+					return false; // low surrogate, which should only follow a high surrogate
+				// Check this is a valid code point
+				if (next_uchar > 0x10FFFF)
+					return false;
 				break;
 			}
 
@@ -215,7 +209,29 @@ bool JSON::extractString(const char **data, String &str) {
 		}
 
 		// Add the next char
-		str += next_char;
+		if (next_char != 0)
+			str += next_char;
+		else {
+			if (next_uchar < 0x80)
+				// 1-byte character (ASCII)
+				str += (char)next_uchar;
+			else if (next_uchar <= 0x7FF) {
+				// 2-byte characters: 110xxxxx 10xxxxxx
+				str += (char)(0xC0 | (next_uchar >> 6));
+				str += (char)(0x80 | (next_uchar & 0x3F));
+			} else if (next_uchar <= 0xFFFF) {
+				// 3-byte characters: 1110xxxx 10xxxxxx 10xxxxxx
+				str += (char)(0xE0 | (next_uchar >> 12));
+				str += (char)(0x80 | ((next_uchar >> 6) & 0x3F));
+				str += (char)(0x80 | (next_uchar & 0x3F));
+			} else {
+				// 4-byte characters: 11110xxx 10xxxxxx 10xxxxxx 10xxxxxx
+				str += (char)(0xF0 | (next_uchar >> 18));
+				str += (char)(0x80 | ((next_uchar >> 12) & 0x3F));
+				str += (char)(0x80 | ((next_uchar >> 6) & 0x3F));
+				str += (char)(0x80 | (next_uchar & 0x3F));
+			}
+		}
 
 		// Move on
 		(*data)++;
@@ -223,6 +239,48 @@ bool JSON::extractString(const char **data, String &str) {
 
 	// If we're here, the string ended incorrectly
 	return false;
+}
+
+/**
+* Parses some text as though it is a unicode hexadecimal sequence.
+* It assumes that the data is currently pointing on the 'u' part of '\uXXXX`.
+*
+* @access protected
+*
+* @param char** data Pointer to a char* that contains the JSON text
+* @param String& str Reference to a String to receive the extracted string
+*
+* @return uint32 Returns the unicode code point value or 0xFFFFFFFF in case of error.
+*/
+uint32 JSON::parseUnicode(const char **data) {
+	if (**data != 'u')
+		return 0xFFFFFFFF;
+	// We need 5 chars (4 hex + the 'u') or its not valid
+	if (!simplejson_wcsnlen(*data, 5))
+		return 0xFFFFFFFF;
+
+	// Deal with the chars
+	uint32 codepoint = 0;
+	for (int i = 0; i < 4; i++) {
+		// Do it first to move off the 'u' and leave us on the
+		// final hex digit as we move on by one later on
+		(*data)++;
+
+		codepoint <<= 4;
+
+		// Parse the hex digit
+		if (**data >= '0' && **data <= '9')
+			codepoint |= (**data - '0');
+		else if (**data >= 'A' && **data <= 'F')
+			codepoint |= (10 + (**data - 'A'));
+		else if (**data >= 'a' && **data <= 'f')
+			codepoint |= (10 + (**data - 'a'));
+		else {
+			// Invalid hex digit
+			return 0xFFFFFFFF;
+		}
+	}
+	return codepoint;
 }
 
 /**
@@ -644,6 +702,8 @@ JSONValue::JSONValue(const JSONValue &source) {
 		break;
 	}
 
+	default:
+		// fallthrough intended
 	case JSONType_Null:
 		// Nothing to do.
 		break;
@@ -963,6 +1023,8 @@ String JSONValue::stringifyImpl(size_t const indentDepth) const {
 	String const indentStr1 = indent(indentDepth1);
 
 	switch (_type) {
+	default:
+		// fallthrough intended
 	case JSONType_Null:
 		ret_string = "null";
 		break;
@@ -1039,33 +1101,30 @@ String JSONValue::stringifyString(const String &str) {
 
 	String::const_iterator iter = str.begin();
 	while (iter != str.end()) {
-		char chr = *iter;
+		uint32 uchr = decodeUtf8Char(iter, str.end());
+		if (uchr == 0xFFFFFFFF)
+			break; // error - truncate the result
 
-		if (chr == '"' || chr == '\\' || chr == '/') {
+		if (uchr == '"' || uchr == '\\' || uchr == '/') {
 			str_out += '\\';
-			str_out += chr;
-		} else if (chr == '\b') {
+			str_out += (char)uchr;
+		} else if (uchr == '\b') {
 			str_out += "\\b";
-		} else if (chr == '\f') {
+		} else if (uchr == '\f') {
 			str_out += "\\f";
-		} else if (chr == '\n') {
+		} else if (uchr == '\n') {
 			str_out += "\\n";
-		} else if (chr == '\r') {
+		} else if (uchr == '\r') {
 			str_out += "\\r";
-		} else if (chr == '\t') {
+		} else if (uchr == '\t') {
 			str_out += "\\t";
-		} else if (chr < ' ' || chr > 126) {
-			str_out += "\\u";
-			for (int i = 0; i < 4; i++) {
-				int value = (chr >> 12) & 0xf;
-				if (value >= 0 && value <= 9)
-					str_out += (char)('0' + value);
-				else if (value >= 10 && value <= 15)
-					str_out += (char)('A' + (value - 10));
-				chr <<= 4;
-			}
+		} else if (uchr >= ' ' && uchr <= 126 ) {
+			str_out += (char)uchr;
 		} else {
-			str_out += chr;
+			if (uchr <= 0xFFFF)
+				str_out += String::format("\\u%04x", uchr);
+			else
+				str_out += String::format("\\u%04x\\u%04x", 0xD7C0 + (uchr >> 10), 0xDC00 + (uchr & 0x3FF));
 		}
 
 		iter++;
@@ -1073,6 +1132,86 @@ String JSONValue::stringifyString(const String &str) {
 
 	str_out += "\"";
 	return str_out;
+}
+
+/**
+* Decode the next utf-8 character in the String pointed to by begin.
+*
+* @param String::const_iterator &iter Iterator pointing to the start of the character to decode.
+*
+* @param const String::const_iterator &end Iterator pointing past the end of the string being decoded.
+*
+* @return The codepoint value for the next utf-8 character starting at the current iterator position,
+* or 0xFFFFFFFF in case of error.
+*/
+uint32 JSONValue::decodeUtf8Char(String::const_iterator &iter, const String::const_iterator &end) {
+	uint8 state = 0;
+	uint32 codepoint = 0;
+	int nbRead = 0;
+	do {
+		uint8 byte = uint8(*iter);
+		state = decodeUtf8Byte(state, codepoint, byte);
+		++nbRead;
+		if (state == 0)
+			return codepoint;
+	} while (state != 1 && ++iter != end);
+	if (state == 1) {
+		// We failed to read this as a UTF-8 character. The string might be encoded differently, which
+		// would be invalid (since the json standard indicate the string has to be in utf-8) but rather
+		// that return 0FFFFFFFF and truncate, try to recover from it by rewinding and returning the
+		// raw byte.
+		while (--nbRead > 0) { --iter; }
+		uint8 byte = uint8(*iter);
+		warning("Invalid UTF-8 character 0x%x in JSON string.", byte);
+		return byte;
+	}
+	return 0xFFFFFFFF;
+}
+
+/**
+* Decode one byte from a UTF-8 string.
+*
+* The function must initially (for the first byte) be called with a state of 0, and then
+* with the state from the previous byte until it returns 0 (success) or 1 (failure).
+*
+* Copyright (c) 2008-2009 Bjoern Hoehrmann <bjoern@hoehrmann.de>
+* See http://bjoern.hoehrmann.de/utf-8/decoder/dfa/ for details.
+*
+* @access private
+*
+* @param uint8 state The state from the previous byte, or 0 when decoding the first byte.
+*
+* @param uint32 &codepoint The codepoint value. Unless the returned state is 0, the codepoint is
+* a partial reasult and the function needs to be called again with the next byte.
+*
+* @param uint8 byte The byte to decode.
+*
+* @return The state of the utf8 decoder: 0 if a character has been decoded, 1 in case of
+* error, and any other value for decoding in progress.
+*/
+uint8 JSONValue::decodeUtf8Byte(uint8 state, uint32 &codepoint, uint8 byte) {
+	static const uint8 utf8d[] = {
+		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, // 00..1F
+		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, // 20..3F
+		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, // 40..5F
+		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, // 60..7F
+		1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, // 80..9F
+		7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, // A0..BF
+		8, 8, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, // C0..DF
+		0xA, 0x3, 0x3, 0x3, 0x3, 0x3, 0x3, 0x3, 0x3, 0x3, 0x3, 0x3, 0x3, 0x4, 0x3, 0x3, // E0..EF
+		0xB, 0x6, 0x6, 0x6, 0x5, 0x8, 0x8, 0x8, 0x8, 0x8, 0x8, 0x8, 0x8, 0x8, 0x8, 0x8, // F0..FF
+		0x0, 0x1, 0x2, 0x3, 0x5, 0x8, 0x7, 0x1, 0x1, 0x1, 0x4, 0x6, 0x1, 0x1, 0x1, 0x1, // s0..s0
+		1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 0, 1, 0, 1, 1, 1, 1, 1, 1, // s1..s2
+		1, 2, 1, 1, 1, 1, 1, 2, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, // s3..s4
+		1, 2, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 3, 1, 3, 1, 1, 1, 1, 1, 1, // s5..s6
+		1, 3, 1, 1, 1, 1, 1, 3, 1, 3, 1, 1, 1, 1, 1, 1, 1, 3, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 // s7..s8
+	};
+
+	const uint8 type = utf8d[byte];
+	codepoint = state != 0 ?
+		(codepoint << 6) | (byte & 0x3f) :
+		(0xFF >> type) & byte;
+	return utf8d[256 + state * 16 + type];
 }
 
 /**

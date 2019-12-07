@@ -43,6 +43,8 @@
 		<def var = 'Predictive.Button.Height' value = '15' />
 		<def var = 'Predictive.ShowDeletePic' value = '0'/>
 
+		<def var = 'DropdownButton.Width' value = '7'/>
+
 		<widget name = 'Button'
 				size = '72, 16'
 		/>
@@ -1706,5 +1708,7 @@
 				/>
 			</layout>
 		</layout>
+	</dialog>
+	<dialog name = 'DropdownDialog' overlays = 'screen_center'>
 	</dialog>
 </layout_info>

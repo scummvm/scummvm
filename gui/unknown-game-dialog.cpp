@@ -198,13 +198,13 @@ Common::String UnknownGameDialog::generateBugtrackerURL() {
 	Common::String report = generateUnknownGameReport(_detectedGame, false, false);
 	report = encodeUrlString(report);
 
-	Common::String engineName = encodeUrlString(_detectedGame.engineName);
+	Common::String engineId = encodeUrlString(_detectedGame.engineId);
 
 	return Common::String::format(
 		"https://www.scummvm.org/unknowngame?"
 		"engine=%s"
 		"&description=%s",
-		engineName.c_str(),
+		engineId.c_str(),
 		report.c_str());
 }
 

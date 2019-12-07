@@ -70,6 +70,9 @@ protected:
 	/** FolderDownloadRequest-related */
 	FolderDownloadRequest *_downloadFolderRequest;
 
+	/** Whether user manually enabled the Storage. */
+	bool _isEnabled;
+
 	/** Returns default error callback (printErrorResponse). */
 	virtual Networking::ErrorCallback getErrorPrintingCallback();
 
@@ -114,6 +117,16 @@ public:
 	* @returns  some unique storage name (for example, "Dropbox (user@example.com)")
 	*/
 	virtual Common::String name() const = 0;
+
+	/**
+	 * Return whether Storage has been manually enabled by user.
+	 */
+	bool isEnabled() const;
+
+	/**
+	 * Set _isEnabled to true.
+	 */
+	void enable();
 
 	/**
 	 * Public Cloud API comes down there.

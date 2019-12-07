@@ -162,6 +162,12 @@ public:
 	 */
 	void deleteChar(uint32 p);
 
+	/** Remove the last character from the string. */
+	void deleteLastChar();
+
+	/** Remove all characters from position p to the p + len. If len = String::npos, removes all characters to the end */
+	void erase(uint32 p, uint32 len = npos);
+
 	/** Clears the string, making it empty. */
 	void clear();
 

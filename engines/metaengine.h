@@ -65,6 +65,9 @@ class MetaEngine : public PluginObject {
 public:
 	virtual ~MetaEngine() {}
 
+	/** Get the engine ID */
+	virtual const char *getEngineId() const = 0;
+
 	/** Returns some copyright information about the original engine. */
 	virtual const char *getOriginalCopyright() const = 0;
 
@@ -267,10 +270,30 @@ public:
  */
 class EngineManager : public Common::Singleton<EngineManager> {
 public:
-	PlainGameDescriptor findGameInLoadedPlugins(const Common::String &gameName, const Plugin **plugin = NULL) const;
-	PlainGameDescriptor findGame(const Common::String &gameName, const Plugin **plugin = NULL) const;
+	/**
+	 * Given a list of FSNodes in a given directory, detect a set of games contained within
+	 *
+	 * Returns an empty list if none are found.
+	 */
 	DetectionResults detectGames(const Common::FSList &fslist) const;
+
+	/** Find a plugin by its engine ID */
+	const Plugin *findPlugin(const Common::String &engineId) const;
+
+	/** Get the list of all engine plugins */
 	const PluginList &getPlugins() const;
+
+	/** Find a target */
+	QualifiedGameDescriptor findTarget(const Common::String &target, const Plugin **plugin = NULL) const;
+
+	/**
+	 * List games matching the specified criteria
+	 *
+	 * If the engine id is not specified, this scans all the plugins,
+	 * loading them from disk if necessary. This is a slow operation on
+	 * some platforms and should not be used for the happy path.
+	 */
+	QualifiedGameList findGamesMatching(const Common::String &engineId, const Common::String &gameId) const;
 
 	/**
 	 * Create a target from the supplied game descriptor
@@ -278,6 +301,19 @@ public:
 	 * Returns the created target name.
 	 */
 	Common::String createTargetForGame(const DetectedGame &game);
+
+	/** Upgrade a target to the current configuration format */
+	void upgradeTargetIfNecessary(const Common::String &target) const;
+
+private:
+	/** Find a game across all loaded plugins */
+	QualifiedGameList findGameInLoadedPlugins(const Common::String &gameId) const;
+
+	/** Find a loaded plugin with the given engine ID */
+	const Plugin *findLoadedPlugin(const Common::String &engineId) const;
+
+	/** Use heuristics to complete a target lacking an engine ID */
+	void upgradeTargetForEngineId(const Common::String &target) const;
 };
 
 /** Convenience shortcut for accessing the engine manager. */

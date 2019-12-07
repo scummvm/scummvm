@@ -181,6 +181,7 @@ void ThemeLayoutStacked::reflowLayoutVertical() {
 	int curX, curY;
 	int resize[8];
 	int rescount = 0;
+	bool fixedWidth = _w != -1;
 
 	curX = _padding.left;
 	curY = _padding.top;
@@ -203,7 +204,7 @@ void ThemeLayoutStacked::reflowLayoutVertical() {
 		_children[i]->offsetY(curY);
 
 		// Center child if it this has been requested *and* the space permits it.
-		if (_centered && _children[i]->getWidth() < _w && _w != -1) {
+		if (_centered && _children[i]->getWidth() < (_w - _padding.left - _padding.right) && _w != -1) {
 			_children[i]->offsetX((_w >> 1) - (_children[i]->getWidth() >> 1));
 		} else
 			_children[i]->offsetX(curX);
@@ -213,7 +214,9 @@ void ThemeLayoutStacked::reflowLayoutVertical() {
 		curY += _children[i]->getHeight() + _spacing;
 
 		// Update width and height of this stack layout
-		_w = MAX(_w, (int16)(_children[i]->getWidth() + _padding.left + _padding.right));
+		if (!fixedWidth) {
+			_w = MAX(_w, (int16)(_children[i]->getWidth() + _padding.left + _padding.right));
+		}
 		_h += _children[i]->getHeight() + _spacing;
 	}
 
@@ -244,6 +247,7 @@ void ThemeLayoutStacked::reflowLayoutHorizontal() {
 	int curX, curY;
 	int resize[8];
 	int rescount = 0;
+	bool fixedHeight = _h != -1;
 
 	curX = _padding.left;
 	curY = _padding.top;
@@ -266,7 +270,7 @@ void ThemeLayoutStacked::reflowLayoutHorizontal() {
 		_children[i]->offsetX(curX);
 
 		// Center child if it this has been requested *and* the space permits it.
-		if (_centered && _children[i]->getHeight() < _h && _h != -1)
+		if (_centered && _children[i]->getHeight() < (_h - _padding.top - _padding.bottom) && _h != -1)
 			_children[i]->offsetY((_h >> 1) - (_children[i]->getHeight() >> 1));
 		else
 			_children[i]->offsetY(curY);
@@ -277,7 +281,9 @@ void ThemeLayoutStacked::reflowLayoutHorizontal() {
 
 		// Update width and height of this stack layout
 		_w += _children[i]->getWidth() + _spacing;
-		_h = MAX(_h, (int16)(_children[i]->getHeight() + _padding.top + _padding.bottom));
+		if (!fixedHeight) {
+			_h = MAX(_h, (int16)(_children[i]->getHeight() + _padding.top + _padding.bottom));
+		}
 	}
 
 	// If there are any children at all, then we added the spacing value once

@@ -50,6 +50,8 @@ public:
 	virtual Common::String getScreenshotsPath();
 
 protected:
+	virtual Common::String getDefaultLogFileName();
+
 	// Override createAudioCDManager() to get our Mac-specific
 	// version.
 	virtual AudioCDManager *createAudioCDManager();

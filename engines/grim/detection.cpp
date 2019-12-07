@@ -600,24 +600,28 @@ public:
 		return Engines::findGameID(gameid, _gameIds, obsoleteGameIDsTable);
 	}
 
-	virtual const char *getName() const override {
-		return "Grim Engine";
+	const char *getName() const override {
+		return "Grim";
 	}
 
-	virtual const char *getOriginalCopyright() const override {
+	const char *getEngineId() const override {
+		return "grim";
+	}
+
+	const char *getOriginalCopyright() const override {
 		return "LucasArts GrimE Games (C) LucasArts";
 	}
 
-	virtual Common::Error createInstance(OSystem *syst, Engine **engine) const override {
+	Common::Error createInstance(OSystem *syst, Engine **engine) const override {
 		Engines::upgradeTargetIfNecessary(obsoleteGameIDsTable);
 		return AdvancedMetaEngine::createInstance(syst, engine);
 	}
 
-	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
+	bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
 
-	virtual bool hasFeature(MetaEngineFeature f) const override;
+	bool hasFeature(MetaEngineFeature f) const override;
 
-	virtual SaveStateList listSaves(const char *target) const override;
+	SaveStateList listSaves(const char *target) const override;
 };
 
 bool GrimMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {

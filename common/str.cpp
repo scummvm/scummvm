@@ -518,7 +518,7 @@ void String::wordWrap(const uint32 maxLength) {
 
 	makeUnique();
 
-	enum { kNoSpace = 0xFFFFFFFF };
+	const uint32 kNoSpace = 0xFFFFFFFF;
 
 	uint32 i = 0;
 	while (i < _size) {
@@ -603,6 +603,31 @@ void String::replace(uint32 posOri, uint32 countOri, const char *str,
 	for (uint32 i = 0; i < countDest; i++)
 		_str[posOri + i] = str[posDest + i];
 
+}
+
+uint32 String::find(const String &str, uint32 pos) const {
+	if (pos >= _size) {
+		return npos;
+	}
+
+	const char *strP = str.c_str();
+
+	for (const_iterator cur = begin() + pos; *cur; ++cur) {
+		uint i = 0;
+		while (true) {
+			if (!strP[i]) {
+				return cur - begin();
+			}
+
+			if (cur[i] != strP[i]) {
+				break;
+			}
+
+			++i;
+		}
+	}
+
+	return npos;
 }
 
 // static

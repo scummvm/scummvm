@@ -168,6 +168,8 @@ public:
 	bool contains(const char *x) const;
 	bool contains(char x) const;
 
+	uint32 find(const String &str, uint32 pos = 0) const;
+
 	/** Return uint64 corrensponding to String's contents. */
 	uint64 asUint64() const;
 

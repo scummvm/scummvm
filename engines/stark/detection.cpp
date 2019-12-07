@@ -32,9 +32,8 @@
 namespace Stark {
 
 static const PlainGameDescriptor starkGames[] = {
-	{"stark", "Stark Game"},
-	{"tlj", "The Longest Journey"},
-	{nullptr, nullptr}
+	{ "tlj", "The Longest Journey" },
+	{ nullptr, nullptr }
 };
 
 static const ADGameDescription gameDescriptions[] = {
@@ -374,12 +373,15 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 class StarkMetaEngine : public AdvancedMetaEngine {
 public:
 	StarkMetaEngine() : AdvancedMetaEngine(gameDescriptions, sizeof(ADGameDescription), starkGames, optionsList) {
-		_singleId = "stark";
 		_guiOptions = GUIO4(GUIO_NOMIDI, GAMEOPTION_ASSETS_MOD, GAMEOPTION_LINEAR_FILTERING, GAMEOPTION_FONT_ANTIALIASING);
 	}
 
 	const char *getName() const override {
-		return "Stark Engine";
+		return "Stark";
+	}
+
+	const char *getEngineId() const override {
+		return "stark";
 	}
 
 	const char *getOriginalCopyright() const override {

@@ -23,30 +23,35 @@
 #ifndef BACKENDS_CLOUD_DROPBOX_STORAGE_H
 #define BACKENDS_CLOUD_DROPBOX_STORAGE_H
 
-#include "backends/cloud/storage.h"
+#include "backends/cloud/basestorage.h"
 #include "common/callback.h"
 #include "backends/networking/curl/curljsonrequest.h"
 
 namespace Cloud {
 namespace Dropbox {
 
-class DropboxStorage: public Cloud::Storage {
-	static char *KEY, *SECRET;
-
-	static void loadKeyAndSecret();
-
-	Common::String _token, _uid;
-
+class DropboxStorage: public Cloud::BaseStorage {
 	/** This private constructor is called from loadFromConfig(). */
-	DropboxStorage(Common::String token, Common::String uid);
+	DropboxStorage(Common::String token, bool enabled);
 
-	void getAccessToken(Common::String code);
-	void codeFlowComplete(Networking::JsonResponse response);
-	void codeFlowFailed(Networking::ErrorResponse error);
+protected:
+	/**
+	 * @return "dropbox"
+	 */
+	virtual Common::String cloudProvider();
+
+	/**
+	 * @return kStorageDropboxId
+	 */
+	virtual uint32 storageIndex();
+
+	virtual bool needsRefreshToken();
+
+	virtual bool canReuseRefreshToken();
 
 public:
 	/** This constructor uses OAuth code flow to get tokens. */
-	DropboxStorage(Common::String code);
+	DropboxStorage(Common::String code, Networking::ErrorCallback cb);
 	virtual ~DropboxStorage();
 
 	/**
@@ -93,6 +98,11 @@ public:
 	 * @return pointer to the newly created DropboxStorage or 0 if some problem occured.
 	 */
 	static DropboxStorage *loadFromConfig(Common::String keyPrefix);
+
+	/**
+	 * Remove all DropboxStorage-related data from config.
+	 */
+	static void removeFromConfig(Common::String keyPrefix);
 };
 
 } // End of namespace Dropbox

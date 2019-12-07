@@ -148,12 +148,17 @@ void CloudManager::replaceStorage(Storage *storage, uint32 index) {
 	}
 	_activeStorage = storage;
 	_currentStorageIndex = index;
+	if (_storages[index].username == "") {
+		// options' Cloud tab believes Storage is connected once it has non-empty username
+		_storages[index].username = _("<syncing...>");
+		_storages[index].lastSyncDate = _("<right now>");
+		_storages[index].usedBytes = 0;
+	}
 	save();
 
 	//do what should be done on first Storage connect
 	if (_activeStorage) {
 		_activeStorage->info(nullptr, nullptr); //automatically calls setStorageUsername()
-		_activeStorage->syncSaves(nullptr, nullptr);
 	}
 }
 
@@ -250,21 +255,21 @@ void CloudManager::setStorageLastSync(uint32 index, Common::String date) {
 	save();
 }
 
-void CloudManager::connectStorage(uint32 index, Common::String code) {
+void CloudManager::connectStorage(uint32 index, Common::String code, Networking::ErrorCallback cb) {
 	freeStorages();
 
 	switch (index) {
 	case kStorageDropboxId:
-		new Dropbox::DropboxStorage(code);
+		new Dropbox::DropboxStorage(code, cb);
 		break;
 	case kStorageOneDriveId:
-		new OneDrive::OneDriveStorage(code);
+		new OneDrive::OneDriveStorage(code, cb);
 		break;
 	case kStorageGoogleDriveId:
-		new GoogleDrive::GoogleDriveStorage(code);
+		new GoogleDrive::GoogleDriveStorage(code, cb);
 		break;
 	case kStorageBoxId:
-		new Box::BoxStorage(code);
+		new Box::BoxStorage(code, cb);
 		break;
 	}
 	// in these constructors Storages request token using the passed code
@@ -272,6 +277,42 @@ void CloudManager::connectStorage(uint32 index, Common::String code) {
 	// or removeStorage(), if some error occurred
 	// thus, no memory leak happens
 }
+
+void CloudManager::disconnectStorage(uint32 index) {
+	if (index >= kStorageTotal)
+		error("CloudManager::disconnectStorage: invalid index passed");
+
+	Common::String name = getStorageConfigName(index);
+	switch (index) {
+	case kStorageDropboxId:
+		Dropbox::DropboxStorage::removeFromConfig(kStoragePrefix + name + "_");
+		break;
+	case kStorageOneDriveId:
+		OneDrive::OneDriveStorage::removeFromConfig(kStoragePrefix + name + "_");
+		break;
+	case kStorageGoogleDriveId:
+		GoogleDrive::GoogleDriveStorage::removeFromConfig(kStoragePrefix + name + "_");
+		break;
+	case kStorageBoxId:
+		Box::BoxStorage::removeFromConfig(kStoragePrefix + name + "_");
+		break;
+	}
+
+	switchStorage(kStorageNoneId);
+
+	ConfMan.removeKey(kStoragePrefix + name + "_username", ConfMan.kCloudDomain);
+	ConfMan.removeKey(kStoragePrefix + name + "_lastSync", ConfMan.kCloudDomain);
+	ConfMan.removeKey(kStoragePrefix + name + "_usedBytes", ConfMan.kCloudDomain);
+
+	StorageConfig config;
+	config.name = _(name);
+	config.username = "";
+	config.lastSyncDate = "";
+	config.usedBytes = 0;
+
+	_storages[index] = config;
+}
+
 
 Networking::Request *CloudManager::listDirectory(Common::String path, Storage::ListDirectoryCallback callback, Networking::ErrorCallback errorCallback, bool recursive) {
 	Storage *storage = getCurrentStorage();
@@ -316,6 +357,28 @@ Common::String CloudManager::savesDirectoryPath() {
 	return "";
 }
 
+bool CloudManager::canSyncFilename(const Common::String &filename) const {
+	if (filename == "" || filename[0] == '.')
+		return false;
+
+	return true;
+}
+
+bool CloudManager::isStorageEnabled() const {
+	Storage *storage = getCurrentStorage();
+	if (storage)
+		return storage->isEnabled();
+	return false;
+}
+
+void CloudManager::enableStorage() {
+	Storage *storage = getCurrentStorage();
+	if (storage) {
+		storage->enable();
+		save();
+	}
+}
+
 SavesSyncRequest *CloudManager::syncSaves(Storage::BoolCallback callback, Networking::ErrorCallback errorCallback) {
 	Storage *storage = getCurrentStorage();
 	if (storage) {
@@ -334,14 +397,6 @@ bool CloudManager::isWorking() const {
 	if (storage)
 		return storage->isWorking();
 	return false;
-}
-
-bool CloudManager::couldUseLocalServer() {
-#ifdef USE_SDL_NET
-	return Networking::LocalWebserver::getPort() == Networking::LocalWebserver::DEFAULT_SERVER_PORT;
-#else
-	return false;
-#endif
 }
 
 ///// SavesSyncRequest-related /////

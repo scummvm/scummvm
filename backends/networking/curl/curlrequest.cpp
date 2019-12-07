@@ -53,7 +53,7 @@ void CurlRequest::handle() {
 	if (_stream && _stream->eos()) {
 		if (_stream->httpResponseCode() != 200) {
 			warning("CurlRequest: HTTP response code is not 200 OK (it's %ld)", _stream->httpResponseCode());
-			ErrorResponse error(this, false, true, "", _stream->httpResponseCode());
+			ErrorResponse error(this, false, true, "HTTP response code is not 200 OK", _stream->httpResponseCode());
 			finishError(error);
 			return;
 		}
@@ -71,20 +71,9 @@ void CurlRequest::restart() {
 
 Common::String CurlRequest::date() const {
 	if (_stream) {
-		Common::String headers = _stream->responseHeaders();
-		const char *cstr = headers.c_str();
-		const char *position = strstr(cstr, "Date: ");
-
-		if (position) {
-			Common::String result = "";
-			char c;
-			for (const char *i = position + 6; c = *i, c != 0; ++i) {
-				if (c == '\n' || c == '\r')
-					break;
-				result += c;
-			}
-			return result;
-		}
+		Common::HashMap<Common::String, Common::String> headers = _stream->responseHeadersMap();
+		if (headers.contains("date"))
+			return headers["date"];
 	}
 	return "";
 }

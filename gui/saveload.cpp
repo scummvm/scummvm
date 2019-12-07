@@ -74,11 +74,7 @@ Common::String SaveLoadChooser::createDefaultSaveDescription(const int slot) con
 }
 
 int SaveLoadChooser::runModalWithCurrentTarget() {
-	const Common::String gameId = ConfMan.get("gameid");
-
-	const Plugin *plugin = 0;
-	EngineMan.findGame(gameId, &plugin);
-
+	const Plugin *plugin = EngineMan.findPlugin(ConfMan.get("engineid"));
 	return runModalWithPluginAndTarget(plugin, ConfMan.getActiveDomainName());
 }
 

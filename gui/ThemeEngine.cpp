@@ -61,10 +61,6 @@ const char *const ThemeEngine::kImageStopSmallButton = "stopbtn_small.bmp";
 const char *const ThemeEngine::kImageEditSmallButton = "editbtn_small.bmp";
 const char *const ThemeEngine::kImageSwitchModeSmallButton = "switchbtn_small.bmp";
 const char *const ThemeEngine::kImageFastReplaySmallButton = "fastreplay_small.bmp";
-const char *const ThemeEngine::kImageDropboxLogo = "dropbox.bmp";
-const char *const ThemeEngine::kImageOneDriveLogo = "onedrive.bmp";
-const char *const ThemeEngine::kImageGoogleDriveLogo = "googledrive.bmp";
-const char *const ThemeEngine::kImageBoxLogo = "box.bmp";
 
 struct TextDrawData {
 	const Graphics::Font *_fontPtr;
@@ -130,9 +126,16 @@ static const DrawDataInfo kDrawDataDefaults[] = {
 	{kDDWidgetBackgroundSlider,     "widget_slider",    kDrawLayerBackground,   kDDNone},
 
 	{kDDButtonIdle,                 "button_idle",      kDrawLayerBackground,   kDDNone},
-	{kDDButtonHover,                "button_hover",     kDrawLayerForeground,  kDDButtonIdle},
+	{kDDButtonHover,                "button_hover",     kDrawLayerForeground,   kDDButtonIdle},
 	{kDDButtonDisabled,             "button_disabled",  kDrawLayerBackground,   kDDNone},
-	{kDDButtonPressed,              "button_pressed",   kDrawLayerForeground,  kDDButtonIdle},
+	{kDDButtonPressed,              "button_pressed",   kDrawLayerForeground,   kDDButtonIdle},
+
+	{kDDDropDownButtonIdle,         "dropdown_button_idle",          kDrawLayerBackground, kDDNone},
+	{kDDDropDownButtonHoverLeft,    "dropdown_button_hover_left",    kDrawLayerForeground, kDDDropDownButtonIdle},
+	{kDDDropDownButtonHoverRight,   "dropdown_button_hover_right",   kDrawLayerForeground, kDDDropDownButtonIdle},
+	{kDDDropDownButtonDisabled,     "dropdown_button_disabled",      kDrawLayerForeground, kDDNone},
+	{kDDDropDownButtonPressedLeft,  "dropdown_button_pressed_left",  kDrawLayerForeground, kDDDropDownButtonIdle},
+	{kDDDropDownButtonPressedRight, "dropdown_button_pressed_right", kDrawLayerForeground, kDDDropDownButtonIdle},
 
 	{kDDSliderFull,                 "slider_full",      kDrawLayerForeground,  kDDNone},
 	{kDDSliderHover,                "slider_hover",     kDrawLayerForeground,  kDDNone},
@@ -869,7 +872,7 @@ void ThemeEngine::drawDD(DrawData type, const Common::Rect &r, uint32 dynamic, b
 	if (drawData->_layer == _layerToDraw) {
 		Common::List<Graphics::DrawStep>::const_iterator step;
 		for (step = drawData->_steps.begin(); step != drawData->_steps.end(); ++step) {
-			_vectorRenderer->drawStepClip(area, _clip, *step, dynamic);
+			_vectorRenderer->drawStep(area, _clip, *step, dynamic);
 		}
 
 		addDirtyRect(extendedRect);
@@ -906,23 +909,6 @@ void ThemeEngine::drawDDText(TextData type, TextColor color, const Common::Rect 
 	addDirtyRect(dirty);
 }
 
-void ThemeEngine::drawBitmap(const Graphics::Surface *bitmap, const Common::Rect &r, bool alpha) {
-	if (_layerToDraw == kDrawLayerBackground)
-		return;
-
-	Common::Rect area = r;
-	area.clip(_screen.w, _screen.h);
-
-	if (alpha)
-		_vectorRenderer->blitKeyBitmapClip(bitmap, area, _clip);
-	else
-		_vectorRenderer->blitSubSurfaceClip(bitmap, area, _clip);
-
-	Common::Rect dirtyRect = area;
-	dirtyRect.clip(_clip);
-	addDirtyRect(dirtyRect);
-}
-
 /**********************************************************
  * Widget drawing functions
  *********************************************************/
@@ -943,6 +929,35 @@ void ThemeEngine::drawButton(const Common::Rect &r, const Common::String &str, W
 
 	drawDD(dd, r, 0, hints & WIDGET_CLEARBG);
 	drawDDText(getTextData(dd), getTextColor(dd), r, str, false, true, _widgets[dd]->_textAlignH,
+	           _widgets[dd]->_textAlignV);
+}
+
+void ThemeEngine::drawDropDownButton(const Common::Rect &r, uint32 dropdownWidth, const Common::String &str,
+                                     ThemeEngine::WidgetStateInfo buttonState, bool inButton, bool inDropdown) {
+	if (!ready())
+		return;
+
+	DrawData dd;
+	if (buttonState == kStateHighlight && inButton)
+		dd = kDDDropDownButtonHoverLeft;
+	else if (buttonState == kStateHighlight && inDropdown)
+		dd = kDDDropDownButtonHoverRight;
+	else if (buttonState == kStateDisabled)
+		dd = kDDDropDownButtonDisabled;
+	else if (buttonState == kStatePressed && inButton)
+		dd = kDDDropDownButtonPressedLeft;
+	else if (buttonState == kStatePressed && inDropdown)
+		dd = kDDDropDownButtonPressedRight;
+	else
+		dd = kDDDropDownButtonIdle;
+
+	drawDD(dd, r);
+
+	// Center the text in the button without using the area of the drop down button
+	Common::Rect textRect = r;
+	textRect.left  = r.left  + dropdownWidth;
+	textRect.right = r.right - dropdownWidth;
+	drawDDText(getTextData(dd), getTextColor(dd), textRect, str, false, true, _widgets[dd]->_textAlignH,
 	           _widgets[dd]->_textAlignV);
 }
 
@@ -1034,7 +1049,7 @@ void ThemeEngine::drawScrollbar(const Common::Rect &r, int sliderY, int sliderHe
 	drawDD(kDDScrollbarBase, r);
 
 	Common::Rect r2 = r;
-	const int buttonExtra = (r.width() * 120) / 100;
+	const int buttonExtra = r.width() + 1; // scrollbar.cpp's UP_DOWN_BOX_HEIGHT
 
 	r2.bottom = r2.top + buttonExtra;
 	drawDD(scrollState == kScrollbarStateUp ? kDDScrollbarButtonHover : kDDScrollbarButtonIdle, r2,
@@ -1114,11 +1129,22 @@ void ThemeEngine::drawPopUpWidget(const Common::Rect &r, const Common::String &s
 	}
 }
 
-void ThemeEngine::drawSurface(const Common::Rect &r, const Graphics::Surface &surface, bool themeTrans) {
+void ThemeEngine::drawSurface(const Common::Point &p, const Graphics::Surface &surface, bool themeTrans) {
 	if (!ready())
 		return;
 
-	drawBitmap(&surface, r, themeTrans);
+	if (_layerToDraw == kDrawLayerBackground)
+		return;
+
+	_vectorRenderer->setClippingRect(_clip);
+	if (themeTrans)
+		_vectorRenderer->blitKeyBitmap(&surface, p);
+	else
+		_vectorRenderer->blitSubSurface(&surface, p);
+
+	Common::Rect dirtyRect = Common::Rect(p.x, p.y, p.x + surface.w, p.y + surface.h);
+	dirtyRect.clip(_clip);
+	addDirtyRect(dirtyRect);
 }
 
 void ThemeEngine::drawWidgetBackground(const Common::Rect &r, uint16 hints, WidgetBackground background) {
@@ -1896,6 +1922,10 @@ Common::Rect ThemeEngine::swapClipRect(const Common::Rect &newRect) {
 	Common::Rect oldRect = _clip;
 	_clip = newRect;
 	return oldRect;
+}
+
+void ThemeEngine::disableClipRect() {
+	_clip = Common::Rect(_screen.w, _screen.h);
 }
 
 } // End of namespace GUI.

@@ -31,7 +31,8 @@
 namespace Cloud {
 namespace OneDrive {
 
-#define ONEDRIVE_API_SPECIAL_APPROOT_CHILDREN "https://api.onedrive.com/v1.0/drive/special/approot:/%s:/children"
+#define ONEDRIVE_API_SPECIAL_APPROOT_CHILDREN "https://graph.microsoft.com/v1.0/drive/special/approot:/%s:/children"
+#define ONEDRIVE_API_SPECIAL_APPROOT_CHILDREN_ROOT_ITSELF "https://graph.microsoft.com/v1.0/drive/special/approot/children"
 
 OneDriveListDirectoryRequest::OneDriveListDirectoryRequest(OneDriveStorage *storage, Common::String path, Storage::ListDirectoryCallback cb, Networking::ErrorCallback ecb, bool recursive):
 	Networking::Request(nullptr, ecb),
@@ -77,6 +78,7 @@ void OneDriveListDirectoryRequest::listNextDirectory() {
 	Common::String dir = _currentDirectory;
 	dir.deleteLastChar();
 	Common::String url = Common::String::format(ONEDRIVE_API_SPECIAL_APPROOT_CHILDREN, ConnMan.urlEncode(dir).c_str());
+	if (dir == "") url = Common::String(ONEDRIVE_API_SPECIAL_APPROOT_CHILDREN_ROOT_ITSELF);
 	makeRequest(url);
 }
 
@@ -84,7 +86,7 @@ void OneDriveListDirectoryRequest::makeRequest(Common::String url) {
 	Networking::JsonCallback callback = new Common::Callback<OneDriveListDirectoryRequest, Networking::JsonResponse>(this, &OneDriveListDirectoryRequest::listedDirectoryCallback);
 	Networking::ErrorCallback failureCallback = new Common::Callback<OneDriveListDirectoryRequest, Networking::ErrorResponse>(this, &OneDriveListDirectoryRequest::listedDirectoryErrorCallback);
 	Networking::CurlJsonRequest *request = new OneDriveTokenRefresher(_storage, callback, failureCallback, url.c_str());
-	request->addHeader("Authorization: Bearer " + _storage->accessToken());
+	request->addHeader("Authorization: bearer " + _storage->accessToken());
 	_workingRequest = ConnMan.addRequest(request);
 }
 
@@ -100,7 +102,7 @@ void OneDriveListDirectoryRequest::listedDirectoryCallback(Networking::JsonRespo
 	if (response.request)
 		_date = response.request->date();
 
-	Networking::ErrorResponse error(this);
+	Networking::ErrorResponse error(this, "OneDriveListDirectoryRequest::listedDirectoryCallback: unknown error");
 	Networking::CurlJsonRequest *rq = (Networking::CurlJsonRequest *)response.request;
 	if (rq && rq->getNetworkReadStream())
 		error.httpResponseCode = rq->getNetworkReadStream()->httpResponseCode();

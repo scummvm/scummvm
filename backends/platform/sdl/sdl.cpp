@@ -191,8 +191,6 @@ void OSystem_SDL::initBackend() {
 	sdlDriverName[0] = '\0';
 	SDL_VideoDriverName(sdlDriverName, maxNameLen);
 #endif
-	// Using printf rather than debug() here as debug()/logging
-	// is not active by this point.
 	debug(1, "Using SDL Video Driver \"%s\"", sdlDriverName);
 
 // ResidualVM specific code start
@@ -384,7 +382,7 @@ void OSystem_SDL::initSDL() {
 		if (ConfMan.hasKey("disable_sdl_parachute"))
 			sdlFlags |= SDL_INIT_NOPARACHUTE;
 
-		// Initialize SDL (SDL Subsystems are initiliazed in the corresponding sdl managers)
+		// Initialize SDL (SDL Subsystems are initialized in the corresponding sdl managers)
 		if (SDL_Init(sdlFlags) == -1)
 			error("Could not initialize SDL: %s", SDL_GetError());
 
@@ -504,6 +502,22 @@ void OSystem_SDL::logMessage(LogMessageType::Type type, const char *message) {
 		_logger->print(message);
 }
 
+Common::WriteStream *OSystem_SDL::createLogFile() {
+	// Start out by resetting _logFilePath, so that in case
+	// of a failure, we know that no log file is open.
+	_logFilePath.clear();
+
+	Common::String logFile = getDefaultLogFileName();
+	if (logFile.empty())
+		return nullptr;
+
+	Common::FSNode file(logFile);
+	Common::WriteStream *stream = file.createWriteStream();
+	if (stream)
+		_logFilePath = logFile;
+	return stream;
+}
+
 Common::String OSystem_SDL::getSystemLanguage() const {
 #if defined(USE_DETECTLANG) && !defined(WIN32)
 	// Activating current locale settings
@@ -538,18 +552,14 @@ Common::String OSystem_SDL::getSystemLanguage() const {
 #endif // USE_DETECTLANG
 }
 
-bool OSystem_SDL::hasTextInClipboard() {
 #if SDL_VERSION_ATLEAST(2, 0, 0)
+bool OSystem_SDL::hasTextInClipboard() {
 	return SDL_HasClipboardText() == SDL_TRUE;
-#else
-	return false;
-#endif
 }
 
 Common::String OSystem_SDL::getTextFromClipboard() {
 	if (!hasTextInClipboard()) return "";
 
-#if SDL_VERSION_ATLEAST(2, 0, 0)
 	char *text = SDL_GetClipboardText();
 	// The string returned by SDL is in UTF-8. Convert to the
 	// current TranslationManager encoding or ISO-8859-1.
@@ -566,13 +576,9 @@ Common::String OSystem_SDL::getTextFromClipboard() {
 	SDL_free(text);
 
 	return strText;
-#else
-	return "";
-#endif
 }
 
 bool OSystem_SDL::setTextInClipboard(const Common::String &text) {
-#if SDL_VERSION_ATLEAST(2, 0, 0)
 	// The encoding we need to use is UTF-8. Assume we currently have the
 	// current TranslationManager encoding or ISO-8859-1.
 #ifdef USE_TRANSLATION
@@ -586,10 +592,8 @@ bool OSystem_SDL::setTextInClipboard(const Common::String &text) {
 		return status == 0;
 	}
 	return SDL_SetClipboardText(text.c_str()) == 0;
-#else
-	return false;
-#endif
 }
+#endif
 
 uint32 OSystem_SDL::getMillis(bool skipRecord) {
 	uint32 millis = SDL_GetTicks();

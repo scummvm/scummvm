@@ -20,22 +20,20 @@
  *
  */
 
-#if !defined(BACKEND_POSIX_SAVES_H) && !defined(DISABLE_DEFAULT_SAVEFILEMANAGER)
-#define BACKEND_POSIX_SAVES_H
+#ifndef BACKENDS_FS_POSIX_POSIXIOSTREAM_H
+#define BACKENDS_FS_POSIX_POSIXIOSTREAM_H
 
-#include "backends/saves/default/default-saves.h"
+#include "backends/fs/stdiostream.h"
 
-#if defined(POSIX) && !defined(DISABLE_DEFAULT_SAVEFILEMANAGER)
 /**
- * Customization of the DefaultSaveFileManager for POSIX platforms.
- * The only two differences are that the default constructor sets
- * up the savepath based on HOME, and that checkPath tries to
- * create the savedir, if missing, via the mkdir() syscall.
+ * A file input / output stream using POSIX interfaces
  */
-class POSIXSaveFileManager : public DefaultSaveFileManager {
+class PosixIoStream : public StdioStream {
 public:
-	POSIXSaveFileManager();
+	static PosixIoStream *makeFromPath(const Common::String &path, bool writeMode);
+	PosixIoStream(void *handle);
+
+	int32 size() const override;
 };
-#endif
 
 #endif

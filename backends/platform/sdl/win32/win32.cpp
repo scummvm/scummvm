@@ -110,7 +110,7 @@ void OSystem_Win32::initBackend() {
 
 #if defined(USE_SPARKLE)
 	// Initialize updates manager
-	_updateManager = new Win32UpdateManager();
+	_updateManager = new Win32UpdateManager((SdlWindow_Win32*)_window);
 #endif
 
 	// Invoke parent implementation of this method
@@ -278,31 +278,22 @@ Common::String OSystem_Win32::getDefaultConfigFileName() {
 	return configFile;
 }
 
-Common::WriteStream *OSystem_Win32::createLogFile() {
-	// Start out by resetting _logFilePath, so that in case
-	// of a failure, we know that no log file is open.
-	_logFilePath.clear();
-
+Common::String OSystem_Win32::getDefaultLogFileName() {
 	char logFile[MAXPATHLEN];
 
 	// Use the Application Data directory of the user profile.
-	if (SHGetFolderPathFunc(NULL, CSIDL_APPDATA, NULL, SHGFP_TYPE_CURRENT, logFile) == S_OK) {
-		strcat(logFile, "\\ResidualVM");
-		CreateDirectory(logFile, NULL);
-		strcat(logFile, "\\Logs");
-		CreateDirectory(logFile, NULL);
-		strcat(logFile, "\\residualvm.log");
-
-		Common::FSNode file(logFile);
-		Common::WriteStream *stream = file.createWriteStream();
-		if (stream)
-			_logFilePath= logFile;
-
-		return stream;
-	} else {
+	if (SHGetFolderPathFunc(NULL, CSIDL_APPDATA, NULL, SHGFP_TYPE_CURRENT, logFile) != S_OK) {
 		warning("Unable to access application data directory");
-		return 0;
+		return Common::String();
 	}
+
+	strcat(logFile, "\\ResidualVM");
+	CreateDirectory(logFile, NULL);
+	strcat(logFile, "\\Logs");
+	CreateDirectory(logFile, NULL);
+	strcat(logFile, "\\residualvm.log");
+
+	return logFile;
 }
 
 namespace {

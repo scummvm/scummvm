@@ -90,7 +90,7 @@ U32String::U32String(const char *beginP, const char *endP) : _size(0), _str(_sto
 	initWithCStr(beginP, endP - beginP);
 }
 
-U32String::U32String(const String &str) : _size(0) {
+U32String::U32String(const String &str) : _size(0), _str(_storage) {
 	initWithCStr(str.c_str(), str.size());
 }
 
@@ -230,6 +230,30 @@ void U32String::deleteChar(uint32 p) {
 	while (p++ < _size)
 		_str[p - 1] = _str[p];
 	_size--;
+}
+
+void U32String::deleteLastChar() {
+	if (_size > 0)
+		deleteChar(_size - 1);
+}
+
+void U32String::erase(uint32 p, uint32 len) {
+	assert(p < _size);
+
+	makeUnique();
+	// If len == npos or p + len is over the end, remove all the way to the end
+	if (len == npos || p + len >= _size) {
+		// Delete char at p as well. So _size = (p - 1) + 1
+		_size = p;
+		// Null terminate
+		_str[_size] = 0;
+		return;
+	}
+
+	for ( ; p + len <= _size; p++) {
+		_str[p] = _str[p + len];
+	}
+	_size -= len;
 }
 
 void U32String::clear() {
@@ -423,7 +447,7 @@ void U32String::initWithCStr(const char *str, uint32 len) {
 
 	// Copy the string into the storage area
 	for (size_t idx = 0; idx < len; ++idx, ++str)
-		_str[idx] = *str;
+		_str[idx] = (byte)(*str);
 
 	_str[len] = 0;
 }

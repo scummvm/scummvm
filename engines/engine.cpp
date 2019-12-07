@@ -266,7 +266,6 @@ void splashScreen() {
 	uint time0 = g_system->getMillis();
 	Common::Event event;
 	while (time0 + 600 > g_system->getMillis()) {
-		(void)g_system->getEventManager()->pollEvent(event);
 		g_system->delayMillis(10);
 	}
 	g_system->hideOverlay();
@@ -305,7 +304,7 @@ void initGraphics(int width, int height, const Graphics::PixelFormat *format) {
 	// Error out on size switch failure
 	if (gfxError & OSystem::kTransactionSizeChangeFailed) {
 		Common::String message;
-		message = Common::String::format("Could not switch to resolution: '%dx%d'.", width, height);
+		message = Common::String::format(_("Could not switch to resolution '%dx%d'."), width, height);
 
 		GUIErrorMessage(message);
 		error("%s", message.c_str());
@@ -322,18 +321,16 @@ void initGraphics(int width, int height, const Graphics::PixelFormat *format) {
 #endif
 
 	if (gfxError & OSystem::kTransactionModeSwitchFailed) {
-		Common::String message = _("Could not switch to video mode: '");
-		message += ConfMan.get("gfx_mode");
-		message += "'.";
+		Common::String message;
+		message = Common::String::format(_("Could not switch to video mode '%s'."), ConfMan.get("gfx_mode").c_str());
 
 		GUI::MessageDialog dialog(message);
 		dialog.runModal();
 	}
 
 	if (gfxError & OSystem::kTransactionStretchModeSwitchFailed) {
-		Common::String message = _("Could not switch to stretch mode: '");
-		message += ConfMan.get("stretch_mode");
-		message += "'.";
+		Common::String message;
+		message = Common::String::format(_("Could not switch to stretch mode '%s'."), ConfMan.get("stretch_mode").c_str());
 
 		GUI::MessageDialog dialog(message);
 		dialog.runModal();
@@ -523,7 +520,7 @@ void Engine::openMainMenuDialog() {
 
 	// Load savegame after main menu execution
 	// (not from inside the menu loop to avoid
-	// mouse cursor glitches and simliar bugs,
+	// mouse cursor glitches and similar bugs,
 	// e.g. #2822778).
 	if (_saveSlotToLoad >= 0) {
 		Common::Error status = loadGameState(_saveSlotToLoad);
@@ -665,12 +662,7 @@ bool Engine::shouldQuit() {
 
 /*
 EnginePlugin *Engine::getMetaEnginePlugin() const {
-
-	const EnginePlugin *plugin = 0;
-	Common::String gameid = ConfMan.get("gameid");
-	gameid.toLowercase();
-	EngineMan.findGame(gameid, &plugin);
-	return plugin;
+	return EngineMan.findPlugin(ConfMan.get("engineid"));
 }
 
 */

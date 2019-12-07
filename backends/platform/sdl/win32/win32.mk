@@ -3,12 +3,12 @@
 #
 
 # ResidualVM: Added DIST_FILES_SHADERS
-residualvmwinres.o: $(srcdir)/icons/residualvm.ico $(DIST_FILES_THEMES) $(DIST_FILES_NETWORKING) $(DIST_FILES_ENGINEDATA) $(DIST_FILES_SHADERS) $(srcdir)/dists/residualvm.rc
-	$(QUIET_WINDRES)$(WINDRES) -DHAVE_CONFIG_H $(WINDRESFLAGS) $(DEFINES) -I. -I$(srcdir) $(srcdir)/dists/residualvm.rc residualvmwinres.o
+dists/residualvm.o: $(srcdir)/icons/residualvm.ico $(DIST_FILES_THEMES) $(DIST_FILES_NETWORKING) $(DIST_FILES_ENGINEDATA) $(DIST_FILES_SHADERS) config.h $(srcdir)/base/internal_version.h
 
 # Special target to create a win32 snapshot binary (for Inno Setup)
 win32dist: all
 	mkdir -p $(WIN32PATH)
+	mkdir -p $(WIN32PATH)/graphics
 	mkdir -p $(WIN32PATH)/doc
 	$(STRIP) $(EXECUTABLE) -o $(WIN32PATH)/$(EXECUTABLE)
 	cp $(srcdir)/AUTHORS $(WIN32PATH)/AUTHORS.txt

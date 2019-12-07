@@ -23,33 +23,39 @@
 #ifndef BACKENDS_CLOUD_ONEDRIVE_ONEDRIVESTORAGE_H
 #define BACKENDS_CLOUD_ONEDRIVE_ONEDRIVESTORAGE_H
 
-#include "backends/cloud/storage.h"
+#include "backends/cloud/basestorage.h"
 #include "backends/networking/curl/curljsonrequest.h"
 
 namespace Cloud {
 namespace OneDrive {
 
-class OneDriveStorage: public Cloud::Storage {
-	static char *KEY, *SECRET;
-
-	static void loadKeyAndSecret();
-
-	Common::String _token, _uid, _refreshToken;
-
+class OneDriveStorage: public Cloud::BaseStorage {
 	/** This private constructor is called from loadFromConfig(). */
-	OneDriveStorage(Common::String token, Common::String uid, Common::String refreshToken);
-
-	void tokenRefreshed(BoolCallback callback, Networking::JsonResponse response);
-	void codeFlowComplete(BoolResponse response);
-	void codeFlowFailed(Networking::ErrorResponse error);
+	OneDriveStorage(Common::String token, Common::String refreshToken, bool enabled);
 
 	/** Constructs StorageInfo based on JSON response from cloud. */
 	void infoInnerCallback(StorageInfoCallback outerCallback, Networking::JsonResponse json);
 
 	void fileInfoCallback(Networking::NetworkReadStreamCallback outerCallback, Networking::JsonResponse response);
+
+protected:
+	/**
+	 * @return "onedrive"
+	 */
+	virtual Common::String cloudProvider();
+
+	/**
+	 * @return kStorageOneDriveId
+	 */
+	virtual uint32 storageIndex();
+
+	virtual bool needsRefreshToken();
+
+	virtual bool canReuseRefreshToken();
+
 public:
 	/** This constructor uses OAuth code flow to get tokens. */
-	OneDriveStorage(Common::String code);
+	OneDriveStorage(Common::String code, Networking::ErrorCallback cb);
 	virtual ~OneDriveStorage();
 
 	/**
@@ -98,11 +104,9 @@ public:
 	static OneDriveStorage *loadFromConfig(Common::String keyPrefix);
 
 	/**
-	 * Gets new access_token. If <code> passed is "", refresh_token is used.
-	 * Use "" in order to refresh token and pass a callback, so you could
-	 * continue your work when new token is available.
+	 * Remove all OneDriveStorage-related data from config.
 	 */
-	void getAccessToken(BoolCallback callback, Networking::ErrorCallback errorCallback = nullptr, Common::String code = "");
+	static void removeFromConfig(Common::String keyPrefix);
 
 	Common::String accessToken() const { return _token; }
 };

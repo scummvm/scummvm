@@ -38,10 +38,11 @@ namespace Networking {
 class NetworkReadStream;
 
 class ConnectionManager : public Common::Singleton<ConnectionManager> {
-	static const uint32 FRAMES_PER_SECOND = 20;
+	static const uint32 FRAMES_PER_SECOND = 25;
 	static const uint32 TIMER_INTERVAL = 1000000 / FRAMES_PER_SECOND;
-	static const uint32 CLOUD_PERIOD = 20; //every 20th frame
+	static const uint32 CLOUD_PERIOD = 1; //every frame
 	static const uint32 CURL_PERIOD = 1; //every frame
+	static const uint32 DEBUG_PRINT_PERIOD = FRAMES_PER_SECOND; // once per second
 
 	friend void connectionsThread(void *); //calls handle()
 
@@ -117,6 +118,9 @@ public:
 	Common::String urlEncode(Common::String s) const;
 
 	static uint32 getCloudRequestsPeriodInMicroseconds();
+
+	/** Return the path to the CA certificates bundle. */
+	static const char *getCaCertPath();
 };
 
 /** Shortcut for accessing the connection manager. */

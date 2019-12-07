@@ -600,7 +600,7 @@ void EventRecorder::setFileHeader() {
 		return;
 	}
 	TimeDate t;
-	PlainGameDescriptor desc = EngineMan.findGame(ConfMan.getActiveDomainName());
+	QualifiedGameDescriptor desc = EngineMan.findTarget(ConfMan.getActiveDomainName());
 	g_system->getTimeAndDate(t);
 	if (_author.empty()) {
 		setAuthor("Unknown Author");
@@ -619,9 +619,7 @@ SDL_Surface *EventRecorder::getSurface(int width, int height) {
 }
 
 bool EventRecorder::switchMode() {
-	const Common::String gameId = ConfMan.get("gameid");
-	const Plugin *plugin = nullptr;
-	EngineMan.findGame(gameId, &plugin);
+	const Plugin *plugin = EngineMan.findPlugin(ConfMan.get("engineid"));
 	bool metaInfoSupport = plugin->get<MetaEngine>().hasFeature(MetaEngine::kSavesSupportMetaInfo);
 	bool featuresSupport = metaInfoSupport &&
 						  g_engine->canSaveGameStateCurrently() &&
@@ -631,8 +629,10 @@ bool EventRecorder::switchMode() {
 		return false;
 	}
 
+	const Common::String target = ConfMan.getActiveDomainName();
+	SaveStateList saveList = plugin->get<MetaEngine>().listSaves(target.c_str());
+
 	int emptySlot = 1;
-	SaveStateList saveList = plugin->get<MetaEngine>().listSaves(gameId.c_str());
 	for (SaveStateList::const_iterator x = saveList.begin(); x != saveList.end(); ++x) {
 		int saveSlot = x->getSaveSlot();
 		if (saveSlot == 0) {
@@ -667,10 +667,9 @@ bool EventRecorder::checkForContinueGame() {
 
 void EventRecorder::deleteTemporarySave() {
 	if (_temporarySlot == -1) return;
-	const Common::String gameId = ConfMan.get("gameid");
-	const Plugin *plugin = 0;
-	EngineMan.findGame(gameId, &plugin);
-	 plugin->get<MetaEngine>().removeSaveState(gameId.c_str(), _temporarySlot);
+	const Plugin *plugin = EngineMan.findPlugin(ConfMan.get("engineid"));
+	const Common::String target = ConfMan.getActiveDomainName();
+	 plugin->get<MetaEngine>().removeSaveState(target.c_str(), _temporarySlot);
 	_temporarySlot = -1;
 }
 

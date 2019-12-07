@@ -193,13 +193,11 @@ public:
 	virtual Common::WriteStream *createWriteStream() = 0;
 
 	/**
-	* Creates a file referred by this node.
+	* Creates a directory referred by this node.
 	*
-	* @param isDirectoryFlag true if created file must be a directory
-	*
-	* @return true if file is created successfully
+	* @return true if the directory is created successfully
 	*/
-	virtual bool create(bool isDirectoryFlag) = 0;
+	virtual bool createDirectory() = 0;
 };
 
 

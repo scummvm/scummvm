@@ -128,8 +128,9 @@ End Sub
 
 ' Output revision header file
 Sub OutputRevisionHeader(str)
-	FSO.CopyFile rootFolder & "\\base\\internal_revision.h.in", targetFolder & "\\internal_revision.h"
-	FindReplaceInFile targetFolder & "\\internal_revision.h", "@REVISION@", str
+	FSO.CopyFile rootFolder & "\\base\\internal_revision.h.in", targetFolder & "\\internal_revision.h.tmp"
+	FindReplaceInFile targetFolder & "\\internal_revision.h.tmp", "@REVISION@", str
+	CompareFileAndReplace targetFolder & "\\internal_revision.h.tmp", targetFolder & "\\internal_revision.h"
 End Sub
 
 Function DetermineTortoiseSVNVersion()
@@ -481,4 +482,24 @@ Sub FindReplaceInFile(filename, to_find, replacement)
 	Set file = FSO.CreateTextFile(filename, -1, 0)
 	file.Write data
 	file.Close
+End Sub
+
+Sub CompareFileAndReplace(src_filename, dst_filename)
+	Dim file, src_data, dst_data
+	Set file = FSO.OpenTextFile(src_filename, 1, 0, 0)
+	src_data = file.ReadAll
+	file.Close
+	If Not FSO.FileExists(dst_filename) Then
+		FSO.CopyFile src_filename, dst_filename, True
+	Else
+		Set file = FSO.OpenTextFile(dst_filename, 1, 0, 0)
+		dst_data = file.ReadAll
+		file.Close
+		If StrComp(src_data, dst_data, vbBinaryCompare) <> 0 Then
+			' Files are different, overwrite the destination
+			FSO.CopyFile src_filename, dst_filename, True
+		End If
+	End If
+	' Remove temporary source
+	FSO.DeleteFile src_filename
 End Sub

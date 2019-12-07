@@ -58,6 +58,8 @@
 		<def var = 'Predictive.Button.Width' value = '60' />
 		<def var = 'Predictive.ShowDeletePic' value = '1'/>
 
+		<def var = 'DropdownButton.Width' value = '13'/>
+
 		<widget name = 'OptionsLabel'
 				size = '115, Globals.Line.Height'
 				textalign = 'right'
@@ -68,6 +70,9 @@
 
 		<widget name = 'Button'
 				size = '108, 24'
+		/>
+		<widget name = 'LauncherButton'
+				size = '130, 24'
 		/>
 
 		<widget name = 'Slider'
@@ -151,31 +156,31 @@
 				<widget name = 'GameList'/>
 				<layout type = 'vertical' padding = '10, 0, 0, 0'>
 					<widget name = 'StartButton'
-							type = 'Button'
+							type = 'LauncherButton'
 					/>
 					<widget name = 'LoadGameButton'
-							type = 'Button'
+							type = 'LauncherButton'
 					/>
 					<space size = '10' />
 					<widget name = 'AddGameButton'
-							type = 'Button'
+							type = 'LauncherButton'
 					/>
 					<widget name = 'EditGameButton'
-							type = 'Button'
+							type = 'LauncherButton'
 					/>
 					<widget name = 'RemoveGameButton'
-							type = 'Button'
+							type = 'LauncherButton'
 					/>
 					<space size = '10' />
 					<widget name = 'OptionsButton'
-							type = 'Button'
+							type = 'LauncherButton'
 					/>
 					<widget name = 'AboutButton'
-							type = 'Button'
+							type = 'LauncherButton'
 					/>
 					<space size = '10' />
 					<widget name = 'QuitButton'
-							type = 'Button'
+							type = 'LauncherButton'
 					/>
 				</layout>
 			</layout>
@@ -1729,4 +1734,6 @@
 		</layout>
 	</dialog>
 
+	<dialog name = 'DropdownDialog' overlays = 'screen_center'>
+	</dialog>
 </layout_info>

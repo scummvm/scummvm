@@ -32,34 +32,7 @@ namespace Graphics {
 /********************************************************************
  * DRAWSTEP handling functions
  ********************************************************************/
-void VectorRenderer::drawStep(const Common::Rect &area, const DrawStep &step, uint32 extra) {
-
-	if (step.bgColor.set)
-		setBgColor(step.bgColor.r, step.bgColor.g, step.bgColor.b);
-
-	if (step.fgColor.set)
-		setFgColor(step.fgColor.r, step.fgColor.g, step.fgColor.b);
-
-	if (step.bevelColor.set)
-		setBevelColor(step.bevelColor.r, step.bevelColor.g, step.bevelColor.b);
-
-	if (step.gradColor1.set && step.gradColor2.set)
-		setGradientColors(step.gradColor1.r, step.gradColor1.g, step.gradColor1.b,
-						  step.gradColor2.r, step.gradColor2.g, step.gradColor2.b);
-
-	setShadowOffset(_disableShadows ? 0 : step.shadow);
-	setBevel(step.bevel);
-	setGradientFactor(step.factor);
-	setStrokeWidth(step.stroke);
-	setFillMode((FillMode)step.fillMode);
-
-	_dynamicData = extra;
-
-	Common::Rect noClip = Common::Rect(0, 0, 0, 0);
-	(this->*(step.drawingCall))(area, step, noClip);
-}
-
-void VectorRenderer::drawStepClip(const Common::Rect &area, const Common::Rect &clip, const DrawStep &step, uint32 extra) {
+void VectorRenderer::drawStep(const Common::Rect &area, const Common::Rect &clip, const DrawStep &step, uint32 extra) {
 
 	if (step.bgColor.set)
 		setBgColor(step.bgColor.r, step.bgColor.g, step.bgColor.b);
@@ -79,10 +52,46 @@ void VectorRenderer::drawStepClip(const Common::Rect &area, const Common::Rect &
 	setGradientFactor(step.factor);
 	setStrokeWidth(step.stroke);
 	setFillMode((FillMode)step.fillMode);
+	setClippingRect(applyStepClippingRect(area, clip, step));
 
 	_dynamicData = extra;
 
-	(this->*(step.drawingCall))(area, step, clip);
+	(this->*(step.drawingCall))(area, step);
+}
+
+Common::Rect VectorRenderer::applyStepClippingRect(const Common::Rect &area, const Common::Rect &clip, const DrawStep &step) {
+	if (step.clip == Common::Rect()) {
+		return clip;
+	}
+
+	Common::Rect finalClip = clip;
+	if (step.clip.left > 0) {
+		finalClip.left = area.left + step.clip.left;
+	} else if (step.clip.left < 0) {
+		finalClip.left = area.right + step.clip.left;
+	}
+
+	if (step.clip.top > 0) {
+		finalClip.top = area.top + step.clip.top;
+	} else if (step.clip.top < 0) {
+		finalClip.top = area.bottom + step.clip.top;
+	}
+
+	if (step.clip.right > 0) {
+		finalClip.right = area.left + step.clip.right;
+	} else if (step.clip.right < 0) {
+		finalClip.right = area.right + step.clip.right;
+	}
+
+	if (step.clip.bottom > 0) {
+		finalClip.bottom = area.top + step.clip.bottom;
+	} else if (step.clip.bottom < 0) {
+		finalClip.bottom = area.bottom + step.clip.bottom;
+	}
+
+	finalClip.clip(clip);
+
+	return finalClip;
 }
 
 int VectorRenderer::stepGetRadius(const DrawStep &step, const Common::Rect &area) {
@@ -128,7 +137,7 @@ void VectorRenderer::stepGetPositions(const DrawStep &step, const Common::Rect &
 		}
 	} else {
 		in_x = area.left + step.padding.left;
-		in_w = area.width();
+		in_w = area.width() - step.padding.left - step.padding.right;
 	}
 
 	if (!step.autoHeight) {
@@ -159,7 +168,7 @@ void VectorRenderer::stepGetPositions(const DrawStep &step, const Common::Rect &
 		}
 	} else {
 		in_y = area.top + step.padding.top;
-		in_h = area.height();
+		in_h = area.height() - step.padding.top - step.padding.bottom;
 	}
 
 	if (step.scale != (1 << 16) && step.scale != 0) {

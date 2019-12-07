@@ -100,16 +100,14 @@ protected:
 
 EditGameDialog::EditGameDialog(const String &domain)
 	: OptionsDialog(domain, "GameOptions") {
+	EngineMan.upgradeTargetIfNecessary(domain);
+
 	// Retrieve all game specific options.
-	const Plugin *plugin = nullptr;
-	// To allow for game domains without a gameid.
-	// TODO: Is it intentional that this is still supported?
-	String gameId(ConfMan.get("gameid", domain));
-	if (gameId.empty())
-		gameId = domain;
+
 	// Retrieve the plugin, since we need to access the engine's MetaEngine
 	// implementation.
-	PlainGameDescriptor pgd = EngineMan.findGame(gameId, &plugin);
+	const Plugin *plugin = nullptr;
+	QualifiedGameDescriptor qgd = EngineMan.findTarget(domain, &plugin);
 	if (plugin) {
 		_engineOptions = plugin->get<MetaEngine>().getExtraGuiOptions(domain);
 	} else {
@@ -123,8 +121,8 @@ EditGameDialog::EditGameDialog(const String &domain)
 
 	// GAME: Determine the description string
 	String description(ConfMan.get("description", domain));
-	if (description.empty() && pgd.description) {
-		description = pgd.description;
+	if (description.empty() && qgd.description) {
+		description = qgd.description;
 	}
 
 	// GUI:  Add tab widget

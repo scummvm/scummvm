@@ -20,22 +20,37 @@
  *
  */
 
-#if !defined(BACKEND_POSIX_SAVES_H) && !defined(DISABLE_DEFAULT_SAVEFILEMANAGER)
-#define BACKEND_POSIX_SAVES_H
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
 
-#include "backends/saves/default/default-saves.h"
+#include "backends/fs/posix/posix-iostream.h"
 
-#if defined(POSIX) && !defined(DISABLE_DEFAULT_SAVEFILEMANAGER)
-/**
- * Customization of the DefaultSaveFileManager for POSIX platforms.
- * The only two differences are that the default constructor sets
- * up the savepath based on HOME, and that checkPath tries to
- * create the savedir, if missing, via the mkdir() syscall.
- */
-class POSIXSaveFileManager : public DefaultSaveFileManager {
-public:
-	POSIXSaveFileManager();
-};
-#endif
+#include <sys/stat.h>
 
-#endif
+PosixIoStream *PosixIoStream::makeFromPath(const Common::String &path, bool writeMode) {
+	FILE *handle = fopen(path.c_str(), writeMode ? "wb" : "rb");
+
+	if (handle)
+		return new PosixIoStream(handle);
+
+	return nullptr;
+}
+
+PosixIoStream::PosixIoStream(void *handle) :
+		StdioStream(handle) {
+}
+
+int32 PosixIoStream::size() const {
+	int fd = fileno((FILE *)_handle);
+	if (fd == -1) {
+		return StdioStream::size();
+	}
+
+	// Using fstat to obtain the file size is generally faster than fseek / ftell
+	// because it does not affect the IO buffer.
+	struct stat st;
+	if (fstat(fd, &st) == -1) {
+		return StdioStream::size();
+	}
+
+	return st.st_size;
+}

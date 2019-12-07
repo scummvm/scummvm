@@ -204,8 +204,16 @@ public:
 	 *
 	 * @param   index   Storage's index
 	 * @param   code    OAuth2 code received from user
+	 * @param	cb		callback to notify of success or error
 	 */
-	void connectStorage(uint32 index, Common::String code);
+	void connectStorage(uint32 index, Common::String code, Networking::ErrorCallback cb = nullptr);
+
+	/**
+	 * Remove Storage with a given index from config.
+	 *
+	 * @param   index   Storage's index
+	 */
+	void disconnectStorage(uint32 index);
 
 	/** Returns ListDirectoryResponse with list of files. */
 	Networking::Request *listDirectory(Common::String path, Storage::ListDirectoryCallback callback, Networking::ErrorCallback errorCallback, bool recursive = false);
@@ -219,6 +227,15 @@ public:
 	/** Returns storage's saves directory path with the trailing slash. */
 	Common::String savesDirectoryPath();
 
+	/** Returns whether given filename could be uploaded to or downloaded from storage. */
+	bool canSyncFilename(const Common::String &filename) const;
+
+	/** Returns whether current Storage is manually enabled by user (or false, if there is no active Storage). */
+	bool isStorageEnabled() const;
+
+	/** Sets Storage::_isEnabled to true and updates the config. */
+	void enableStorage();
+
 	/**
 	 * Starts saves syncing process in currently active storage if there is any.
 	 */
@@ -226,9 +243,6 @@ public:
 
 	/** Returns whether there are any requests running. */
 	bool isWorking() const;
-
-	/** Returns whether LocalWebserver is available to use for auth. */
-	static bool couldUseLocalServer();
 
 	///// SavesSyncRequest-related /////
 

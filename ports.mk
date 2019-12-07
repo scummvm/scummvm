@@ -17,7 +17,7 @@ install:
 	$(INSTALL) -d "$(DESTDIR)$(docdir)"
 	$(INSTALL) -c -m 644 $(DIST_FILES_DOCS) "$(DESTDIR)$(docdir)"
 	$(INSTALL) -d "$(DESTDIR)$(datadir)"
-	$(INSTALL) -c -m 644 $(DIST_FILES_THEMES) $(DIST_FILES_NETWORKING) $(DIST_FILES_ENGINEDATA) "$(DESTDIR)$(datadir)/"
+	$(INSTALL) -c -m 644 $(DIST_FILES_THEMES) $(DIST_FILES_NETWORKING) $(DIST_FILES_VKEYBD) $(DIST_FILES_ENGINEDATA) "$(DESTDIR)$(datadir)/"
 	$(INSTALL) -d "$(DESTDIR)$(datarootdir)/applications"
 	$(INSTALL) -c -m 644 "$(srcdir)/dists/residualvm.desktop" "$(DESTDIR)$(datarootdir)/applications/residualvm.desktop"
 	$(INSTALL) -d "$(DESTDIR)$(datarootdir)/appdata"
@@ -44,7 +44,7 @@ install-strip:
 	$(INSTALL) -d "$(DESTDIR)$(docdir)"
 	$(INSTALL) -c -m 644 $(DIST_FILES_DOCS) "$(DESTDIR)$(docdir)"
 	$(INSTALL) -d "$(DESTDIR)$(datadir)"
-	$(INSTALL) -c -m 644 $(DIST_FILES_THEMES) $(DIST_FILES_NETWORKING) $(DIST_FILES_ENGINEDATA) "$(DESTDIR)$(datadir)/"
+	$(INSTALL) -c -m 644 $(DIST_FILES_THEMES) $(DIST_FILES_NETWORKING) $(DIST_FILES_VKEYBD) $(DIST_FILES_ENGINEDATA) "$(DESTDIR)$(datadir)/"
 	$(INSTALL) -d "$(DESTDIR)$(datarootdir)/applications"
 	$(INSTALL) -c -m 644 "$(srcdir)/dists/residualvm.desktop" "$(DESTDIR)$(datarootdir)/applications/residualvm.desktop"
 	$(INSTALL) -d "$(DESTDIR)$(datarootdir)/appdata"
@@ -77,6 +77,8 @@ deb:
 	ln -sf dists/debian;
 	debian/prepare
 	fakeroot debian/rules binary
+
+# Special target to create a application wrapper for Mac OS X
 
 ifdef USE_DOCKTILEPLUGIN
 
@@ -166,6 +168,9 @@ endif
 ifdef DIST_FILES_ENGINEDATA
 	cp $(DIST_FILES_ENGINEDATA) $(bundle_name)/
 endif
+ifdef DIST_FILES_VKEYBD
+	cp $(DIST_FILES_VKEYBD) $(bundle_name)/
+endif
 	$(STRIP) residualvm
 	ldid -S residualvm
 	chmod 755 residualvm
@@ -176,8 +181,9 @@ endif
 
 # Location of static libs for the iPhone
 ifneq ($(BACKEND), iphone)
-# Static libaries, used for the residualvm-static and iphone targets
-OSX_STATIC_LIBS := `$(SDLCONFIG) --static-libs`
+ifneq ($(BACKEND), ios7)
+# Static libaries, used for the scummvm-static and iphone targets
+OSX_STATIC_LIBS := `$(SDLCONFIG) --prefix=$(STATICLIBPATH) --static-libs`
 ifdef USE_SDL_NET
 ifdef USE_SDL2
 OSX_STATIC_LIBS += $(STATICLIBPATH)/lib/libSDL2_net.a
@@ -187,6 +193,7 @@ endif
 endif
 # With sdl2-config we don't always get the OpenGL framework
 OSX_STATIC_LIBS += -framework OpenGL
+endif
 endif
 
 ifdef USE_LIBCURL
@@ -262,10 +269,12 @@ OSX_ZLIB ?= $(STATICLIBPATH)/lib/libz.a
 endif
 
 ifdef USE_SPARKLE
+ifdef MACOSX
 ifneq ($(SPARKLEPATH),)
 OSX_STATIC_LIBS += -F$(SPARKLEPATH)
 endif
 OSX_STATIC_LIBS += -framework Sparkle -Wl,-rpath,@loader_path/../Frameworks
+endif
 endif
 
 # ResidualVM specific:
@@ -350,7 +359,7 @@ endif
 	@echo Creating Code::Blocks project files...
 	@cd $(srcdir)/dists/codeblocks && ../../devtools/create_project/create_project ../.. --codeblocks >/dev/null && git add -f engines/plugins_table.h *.workspace *.cbp
 	@echo Creating MSVC project files...
-	@cd $(srcdir)/dists/msvc && ../../devtools/create_project/create_project ../.. --msvc >/dev/null && git add -f engines/plugins_table.h *.sln *.vcxproj *.vcxproj.filters *.props
+	@cd $(srcdir)/dists/msvc && ../../devtools/create_project/create_project ../.. --msvc-version 12 --msvc >/dev/null && git add -f engines/plugins_table.h *.sln *.vcxproj *.vcxproj.filters *.props
 	@echo
 	@echo All is done.
 	@echo Now run

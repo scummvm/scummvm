@@ -222,6 +222,7 @@ _amigaospath="Games:ResidualVM"
 _staticlibpath=
 _xcodetoolspath=
 _sparklepath=
+_pkgconfig=pkg-config
 _sdlconfig=sdl2-config
 _libcurlconfig=curl-config
 _freetypeconfig=freetype-config
@@ -235,8 +236,8 @@ NASM=""
 _tainted_build=no
 PANDOC=""
 _pandocpath="$PATH"
-_pandocoutput="README"
-_pandocformat="plain"
+_pandocformat="default"
+_pandocext="default"
 # The following variables are automatically detected, and should not
 # be modified otherwise. Consider them read-only.
 _posix=no
@@ -533,7 +534,7 @@ get_system_exe_extension() {
 	riscos)
 		_exeext=",e1f"
 		;;
-	3ds | dreamcast | ds | gamecube | n64 | ps2 | psp | wii)
+	3ds | dreamcast | ds | gamecube | n64 | ps2 | psp | switch | wii)
 		_exeext=".elf"
 		;;
 	gph-linux)
@@ -666,6 +667,26 @@ engine_enable_all() {
 engine_disable_all() {
 	for engine in $_engines; do
 		set_var _engine_${engine}_build "no"
+	done
+}
+
+# Enable all unstable engines
+engine_enable_all_unstable() {
+	for engine in $_engines; do
+		engine_build_default=`get_engine_build_default $engine`
+		if test $engine_build_default = no ; then
+			set_var _engine_${engine}_build "yes"
+		fi
+	done
+}
+
+# Disable all unstable engines
+engine_disable_all_unstable() {
+	for engine in $_engines; do
+		engine_build_default=`get_engine_build_default $engine`
+		if test $engine_build_default = no ; then
+			set_var _engine_${engine}_build "no"
+		fi
 	done
 }
 
@@ -959,6 +980,10 @@ Game engines:
   --enable-all-engines     enable all engines, including those which are
                            broken or unsupported
   --disable-all-engines    disable all engines
+  --enable-all-unstable-engines     enable the engines which are
+                                    broken or unsupported
+  --disable-all-unstable-engines    disable only the engines which are
+                                    broken or unsupported
   --enable-engine=<engine name>[,<engine name>...] enable engine(s) listed
   --disable-engine=<engine name>[,<engine name>...] disable engine(s) listed
   --enable-engine-static=<engine name>[,<engine name>...]
@@ -1016,6 +1041,7 @@ Optional Libraries:
 
   --with-mpeg2-prefix=DIR  prefix where libmpeg2 is installed (optional)
   --enable-mpeg2           enable mpeg2 codec for cutscenes [autodetect]
+
   --with-a52-prefix=DIR    Prefix where liba52 is installed (optional)
   --enable-a52             enable a52 codec for MPEG decoder [autodetect]
 
@@ -1430,6 +1456,12 @@ for ac_option in $@; do
 	--disable-all-engines)
 		engine_disable_all
 		;;
+	--enable-all-unstable-engines)
+		engine_enable_all_unstable
+		;;
+	--disable-all-unstable-engines)
+		engine_disable_all_unstable
+		;;
 	--enable-engine=* | --enable-engines=*)
 		for engine_name in `echo $ac_option | cut -d '=' -f 2- | tr ',' '\n'`; do
 			engine_enable "${engine_name}"
@@ -1672,6 +1704,15 @@ samsungtv)
 	_host_cpu=arm
 	_host_alias=arm-linux-gnueabi
 	;;
+switch)
+	_host_os=switch
+	_host_cpu=aarch64
+	_host_alias=aarch64-none-elf
+	test "x$prefix" = xNONE && prefix=.
+	datarootdir='${prefix}/data'
+	datadir='${datarootdir}'
+	docdir='${prefix}/doc'
+	;;
 tizen)
  	_host_os=tizen
 	_host_cpu=arm
@@ -1725,7 +1766,7 @@ else
 fi
 
 case $_host in
-caanoo | gp2x | gp2xwiz | openpandora | ps2 | psp2)
+arm-*riscos | caanoo | gp2x | gp2xwiz | openpandora | ps2 | psp | psp2 | switch)
 	if test "$_debug_build" = auto; then
 		# If you want to debug one of these platforms, use '--disable-optimizations --enable-debug'
 		_debug_build=no
@@ -1776,7 +1817,7 @@ android)
 		exit 1
 	fi
 	;;
-3ds | ds | gamecube | wii)
+3ds | ds | gamecube | switch | wii)
 	if test -z "$DEVKITPRO"; then
 		echo "Please set DEVKITPRO in your environment. export DEVKITPRO=<path to devkitPRO>"
 		exit 1
@@ -1828,6 +1869,15 @@ psp)
 		echo "Please set PSPSDK in your environment. export PSPSDK=<path to psp sdk>"
 		exit 1
 	fi
+
+	# These have to be set early because the compiler will not link successfully
+	# during testing otherwise
+	if test -d "$PSPDEV/psp/lib"; then
+		append_var LDFLAGS "-L$PSPDEV/psp/lib"
+	fi
+	append_var LDFLAGS "-L$PSPSDK/lib"
+	append_var LDFLAGS "-specs=$_srcdir/backends/platform/psp/psp.spec"
+
 	;;
 riscos)
 	if test -z "$GCCSDK_INSTALL_ENV"; then
@@ -1839,6 +1889,11 @@ riscos)
 		add_line_to_config_mk "TOKENIZE := $GCCSDK_INSTALL_ENV/bin/tokenize"
 	elif `which tokenize >/dev/null 2>&1`; then
 		add_line_to_config_mk "TOKENIZE := tokenize"
+	fi
+	if test -e "$GCCSDK_INSTALL_ENV/bin/bindhelp"; then
+		add_line_to_config_mk "BINDHELP := $GCCSDK_INSTALL_ENV/bin/bindhelp"
+	elif `which bindhelp >/dev/null 2>&1`; then
+		add_line_to_config_mk "BINDHELP := bindhelp"
 	fi
 	;;
 tizen)
@@ -2079,7 +2134,7 @@ if test "$have_gcc" = yes ; then
 			case $_host_os in
 			# newlib-based system include files suppress non-C89 function
 			# declarations under __STRICT_ANSI__
-			3ds | amigaos* | android | androidsdl | dreamcast | ds | gamecube | mingw* | mint* | n64 | psp | ps2 | ps3 | psp2 | tizen | wii | wince )
+			3ds | amigaos* | android | androidsdl | dreamcast | ds | gamecube | mingw* | mint* | n64 | psp | ps2 | ps3 | psp2 | switch | tizen | wii | wince )
 				;;
 			*)
 				append_var CXXFLAGS "-ansi"
@@ -2153,7 +2208,7 @@ fi
 # However, some platforms use GNU extensions in system header files, so
 # for these we must not use -pedantic.
 case $_host_os in
-3ds | android | androidsdl | gamecube | ps2 | psp | tizen | wii | webos)
+3ds | android | androidsdl | gamecube | ps2 | psp | switch | tizen | wii | webos)
 	;;
 *)
 	# ICC does not support pedantic, while GCC and clang do.
@@ -2228,20 +2283,20 @@ echo_n "Checking endianness... "
 cat > tmp_endianness_check.cpp << EOF
 unsigned short ascii_mm[] = { 0x4249, 0x4765, 0x6E44, 0x6961, 0x6E53, 0x7953, 0 };
 unsigned short ascii_ii[] = { 0x694C, 0x5454, 0x656C, 0x6E45, 0x6944, 0x6E61, 0 };
-void _ascii() { char* s = (char*) ascii_mm; s = (char*) ascii_ii; }
+const char * _ascii() { char* s = (char*) ascii_mm; s = (char*) ascii_ii; return s; }
 unsigned short ebcdic_ii[] = { 0x89D3, 0xE3E3, 0x8593, 0x95C5, 0x89C4, 0x9581, 0 };
 unsigned short ebcdic_mm[] = { 0xC2C9, 0xC785, 0x95C4, 0x8981, 0x95E2, 0xA8E2, 0 };
-void _ebcdic() { char* s = (char*) ebcdic_mm; s = (char*) ebcdic_ii; }
+const char * _ebcdic() { char* s = (char*) ebcdic_mm; s = (char*) ebcdic_ii; return s; }
 int main() { _ascii (); _ebcdic (); return 0; }
 EOF
-$CXX $CXXFLAGS -c -o $TMPO.o tmp_endianness_check.cpp
-if $_strings $TMPO.o | grep BIGenDianSyS >/dev/null; then
+$CXX $LDFLAGS $CXXFLAGS -o $TMPO$HOSTEXEEXT tmp_endianness_check.cpp
+if $_strings $TMPO$HOSTEXEEXT | grep BIGenDianSyS >/dev/null; then
 	_endian=big
-elif $_strings $TMPO.o | grep LiTTleEnDian >/dev/null; then
+elif $_strings $TMPO$HOSTEXEEXT | grep LiTTleEnDian >/dev/null; then
 	_endian=little
 fi
 echo $_endian;
-cc_check_clean tmp_endianness_check.cpp
+cc_check_clean tmp_endianness_check.cpp tmp_endianness_check.dwo
 
 case $_endian in
 	big)
@@ -2728,10 +2783,10 @@ case $_host_os in
 		;;
 	mingw*)
 		append_var DEFINES "-DWIN32"
-		append_var DEFINES "-D__USE_MINGW_ANSI_STDIO=0"
+		# append_var DEFINES "-D__USE_MINGW_ANSI_STDIO=0"  # Modern MinGW does not need it
 		append_var LDFLAGS "-static-libgcc -static-libstdc++"
 		append_var LIBS "-lmingw32 -lwinmm -lgdi32"
-		append_var OBJS "residualvmwinres.o"
+		append_var OBJS "dists/residualvm.o"
 		add_line_to_config_mk 'WIN32 = 1'
 		_port_mk="backends/platform/sdl/win32/win32.mk"
 		;;
@@ -2810,22 +2865,17 @@ case $_host_os in
 		add_line_to_config_h "#define PREFIX \"${prefix}\""
 		;;
 	psp)
-		if test -d "$PSPDEV/psp/lib"; then
-			append_var LDFLAGS "-L$PSPDEV/psp/lib"
-		fi
-		append_var LDFLAGS "-L$PSPSDK/lib"
-		append_var LDFLAGS "-specs=$_srcdir/backends/platform/psp/psp.spec"
-		_optimization_level=-O3
+		_optimization_level=-O2
 		append_var CXXFLAGS "-I$PSPSDK/include"
 		# FIXME: Why is the following in CXXFLAGS and not in DEFINES? Change or document this.
 		append_var CXXFLAGS "-D_PSP_FW_VERSION=150"
 		add_line_to_config_mk 'PSP = 1'
 		;;
 	riscos)
-		append_var DEFINES "-DRISCOS"
-		add_line_to_config_mk 'RISCOS = 1'
+		define_in_config_if_yes yes 'RISCOS'
 		append_var LDFLAGS "-L$GCCSDK_INSTALL_ENV/lib"
-		append_var CXXFLAGS "-I$GCCSDK_INSTALL_ENV/include"
+		append_var CXXFLAGS "-isystem $GCCSDK_INSTALL_ENV/include"
+		_pkgconfig=$GCCSDK_INSTALL_ENV/ro-pkg-config
 		_sdlpath=$GCCSDK_INSTALL_ENV/bin
 		_freetypepath=$GCCSDK_INSTALL_ENV/bin
 		_libcurlpath=$GCCSDK_INSTALL_ENV/bin
@@ -2843,6 +2893,23 @@ case $_host_os in
 		append_var DEFINES "-DSYSTEM_NOT_SUPPORTING_D_TYPE"
 		# Needs -lbind -lsocket for the timidity MIDI driver
 		append_var LIBS "-lnsl -lsocket"
+		;;
+	switch)
+		_pkgconfig="$DEVKITPRO/portlibs/switch/bin/aarch64-none-elf-pkg-config"
+		_libcurlpath="$DEVKITPRO/portlibs/switch/bin"
+		_sdlpath="$DEVKITPRO/portlibs/switch/bin"
+		append_var DEFINES "-DSWITCH -D__SWITCH__ -DNINTENDO_SWITCH"
+		append_var CXXFLAGS "-march=armv8-a -mtune=cortex-a57 -mtp=soft -fPIE -ftls-model=local-exec"
+		append_var CXXFLAGS "-ffunction-sections -fdata-sections"
+		append_var CXXFLAGS "-I$DEVKITPRO/libnx/include -I$DEVKITPRO/portlibs/switch/include"
+		append_var LDFLAGS "-L$DEVKITPRO/libnx/lib -L$DEVKITPRO/portlibs/switch/lib"
+		append_var LDFLAGS "-specs=$DEVKITPRO/libnx/switch.specs"
+		add_line_to_config_mk 'SWITCH = 1'
+		if test "$_debug_build" = yes; then
+			append_var DEFINES "-D__SWITCH_DEBUG__"
+		else
+			_optimization_level=-O3
+		fi
 		;;
 	tizen)
 		add_line_to_config_mk "TIZEN_ROOTSTRAP = $TIZEN_ROOTSTRAP"
@@ -2922,7 +2989,7 @@ if test -n "$_host"; then
 			_vorbis=no
 			_port_mk="backends/platform/3ds/3ds.mk"
 			;;
-		android | android-arm | android-v7a | android-arm-v7a | android-mips | android-x86 | ouya | android-arm64-v8a)
+		android | android-arm | android-v7a | android-arm-v7a | android-arm64-v8a | android-mips | android-x86 | ouya)
 			# we link a .so as default
 			append_var LDFLAGS "-shared"
 			append_var LDFLAGS "-Wl,-Bsymbolic,--no-undefined"
@@ -2946,7 +3013,7 @@ if test -n "$_host"; then
 			;;
 		arm-*riscos)
 			_opengl_mode=none
-			_build_hq_scalers=no
+			_vorbis=no
 			;;
 		bfin*)
 			;;
@@ -3079,7 +3146,7 @@ if test -n "$_host"; then
 		gcw0)
 			_sysroot=`$CXX --print-sysroot`
 			_sdlpath=$_sysroot/usr/bin
-			append_var DEFINES "-DDINGUX -DGCW0 -DGUI_ONLY_FULLSCREEN"
+			append_var DEFINES "-DDINGUX -DGCW0"
 			append_var DEFINES "-DREDUCE_MEMORY_USAGE"
 			append_var CXXFLAGS "-mips32"
 			_backend="dingux"
@@ -3163,7 +3230,7 @@ if test -n "$_host"; then
 		*mingw32*)
 			_sdlconfig=$_host-sdl-config
 			_windres=$_host-windres
-			_ar="$_host-ar cru"
+			_ar="$_host-ar cr"
 			_ranlib=$_host-ranlib
 			;;
 		mips-sgi*)
@@ -3320,7 +3387,6 @@ if test -n "$_host"; then
 			_port_mk="backends/platform/sdl/psp2/psp2.mk"
 			;;
 		psp)
-			append_var DEFINES "-DGUI_ONLY_FULLSCREEN"
 			_backend="psp"
 			_build_scalers=no
 			_mt32emu=no
@@ -3334,6 +3400,16 @@ if test -n "$_host"; then
 			_backend="samsungtv"
 			_mt32emu=no
 			_vkeybd=yes
+			;;
+		switch)
+			_backend="switch"
+			# Switch port crashes when switching between SDL2 and OpenGL
+			# graphics. But OpenGL works when it is enabled from the start.
+			# This might be related to a known crash on OpenGL de-init due
+			# to the OpenGL implementation on this platform.
+			_opengl_mode=gles2
+			_vkeybd=yes
+			_port_mk="backends/platform/sdl/switch/switch.mk"
 			;;
 		tizen)
 			_unix=yes
@@ -3375,7 +3451,9 @@ if test -n "$_host"; then
 			;;
 		wince)
 			append_var LDFLAGS "-Wl,--stack,65536"
-			_tremolo=yes
+			if test "$_tremor" = auto; then
+				_tremolo=yes
+			fi
 			_backend="wince"
 			_detectlang=yes
 			_mt32emu=no
@@ -3419,6 +3497,7 @@ case $_backend in
 		;;
 	dingux)
 		append_var DEFINES "-DDINGUX"
+		_sdl=auto
 		;;
 	ds)
 		append_var INCLUDES '-I$(srcdir)/backends/platform/ds/arm9/source'
@@ -3433,6 +3512,7 @@ case $_backend in
 		if test "$_debug_build" = yes; then
 			append_var DEFINES "-DGPH_DEBUG"
 		fi
+		_sdl=auto
 		;;
 	iphone)
 		append_var LIBS "-lobjc -framework UIKit -framework CoreGraphics -framework OpenGLES"
@@ -3454,9 +3534,11 @@ case $_backend in
 		;;
 	linuxmoto)
 		append_var DEFINES "-DLINUXMOTO"
+		_sdl=auto
 		;;
 	maemo)
 		append_var DEFINES "-DMAEMO"
+		_sdl=auto
 		;;
 	n64)
 		append_var INCLUDES '-I$(N64SDK)/include'
@@ -3470,6 +3552,7 @@ case $_backend in
 		append_var DEFINES "-DUSE_NULL_DRIVER"
 		;;
 	openpandora)
+		_sdl=auto
 		;;
 	ps2)
 		append_var DEFINES "-D_EE"
@@ -3505,9 +3588,8 @@ case $_backend in
 		append_var LIBS "-lSceAudio_stub -lSceCtrl_stub -lScePower_stub"
 		append_var LIBS "-lSceNet_stub -lSceNetCtl_stub -lSceAppMgr_stub -lScePgf_stub"
 		append_var LIBS "-lSceTouch_stub -lSceHid_stub"
-		append_var DEFINES "-DSDL_BACKEND"
-		add_line_to_config_mk "SDL_BACKEND = 1"
-		add_line_to_config_mk "USE_SDL2 = 1"
+		_sdl=yes
+		_sdlversion=2.0.0
 		append_var MODULES "backends/platform/sdl"
 		append_var INCLUDES "-I$VITASDK/arm-vita-eabi/include/SDL2"
 		;;
@@ -3515,8 +3597,14 @@ case $_backend in
 		append_var DEFINES "-DSAMSUNGTV"
 		append_var LDFLAGS "-shared"
 		append_var LDFLAGS "-fpic"
+		_sdl=auto
 		;;
 	sdl)
+		_sdl=auto
+		;;
+	switch)
+		_sdl=auto
+		append_var MODULES "backends/platform/sdl"
 		;;
 	tizen)
 		# dirent.h not available. NONSTANDARD_PORT==ensure portdefs.h is included
@@ -3542,9 +3630,9 @@ case $_backend in
 		# The PDL library acts as the WebOS device toolchain, and is required to control the virtual keyboard among other OS-level events.
 		append_var LIBS "-lSDL -lpdl"
 		append_var DEFINES "-DWEBOS"
-		append_var DEFINES "-DSDL_BACKEND"
-		add_line_to_config_mk "SDL_BACKEND = 1"
 		append_var MODULES "backends/platform/sdl"
+		_sdl=yes
+		_sdlversion=1.2.0
 		;;
 	wii)
 		append_var DEFINES "-D__WII__"
@@ -3562,9 +3650,10 @@ case $_backend in
 		append_var INCLUDES '-I$(srcdir)/backends/platform/wince'
 		append_var INCLUDES '-I$(srcdir)/backends/platform/wince/CEgui'
 		append_var INCLUDES '-I$(srcdir)/backends/platform/wince/CEkeys'
+		append_var INCLUDES '-I$(srcdir)/backends/platform/wince/missing'
 		append_var LIBS "-static -lSDL"
-		append_var DEFINES "-DSDL_BACKEND"
-		add_line_to_config_mk "SDL_BACKEND = 1"
+		_sdl=yes
+		_sdlversion=1.2.0
 		;;
 	*)
 		echo "support for $_backend backend not implemented in configure script yet"
@@ -3574,58 +3663,128 @@ esac
 append_var MODULES "backends/platform/$_backend"
 
 #
+# Check for pkg-config
+#
+echocheck "pkg-config"
+_pkg_config=no
+command -v $_pkgconfig >/dev/null 2>&1 && _pkg_config=yes
+echo "$_pkg_config"
+
+if test "$_pkg_config" = yes && test -n "$_host" && test -z "$PKG_CONFIG_LIBDIR"; then
+	echo "WARNING: When cross-compiling PKG_CONFIG_LIBDIR must be set to the location of the .pc files for the target"
+fi
+
+#
 # Setup SDL specifics for SDL based backends
 #
-case $_backend in
-	androidsdl | dingux | gph | linuxmoto | maemo | openpandora | samsungtv | sdl)
-		find_sdlconfig
-		append_var INCLUDES "`$_sdlconfig --prefix="$_sdlpath" --cflags`"
-		if test "$_static_build" = yes ; then
-			append_var LIBS "`$_sdlconfig --prefix="$_sdlpath" --static-libs`"
+if test "$_sdl" = auto ; then
+	find_sdlconfig
+	append_var SDL_CFLAGS "`$_sdlconfig --prefix="$_sdlpath" --cflags`"
+	if test "$_static_build" = yes ; then
+		append_var SDL_LIBS "`$_sdlconfig --prefix="$_sdlpath" --static-libs`"
+	else
+		append_var SDL_LIBS "`$_sdlconfig --prefix="$_sdlpath" --libs`"
+	fi
+	_sdlversion=`$_sdlconfig --version`
+
+	echocheck "SDL"
+	_sdl=no
+	cat > $TMPC << EOF
+#include "SDL.h"
+int main(int argc, char *argv[]) { SDL_Init(0); return 0; }
+EOF
+	cc_check $LIBS $SDL_LIBS $INCLUDES $SDL_CFLAGS && _sdl=yes
+	echo "$_sdl"
+	if test "$_sdl" = no ; then
+		exit 1
+	fi
+fi
+
+_sdlMajorVersionNumber=0
+if test "$_sdl" = yes ; then
+	append_var DEFINES "-DSDL_BACKEND"
+	add_line_to_config_mk "SDL_BACKEND = 1"
+	append_var INCLUDES "$SDL_CFLAGS"
+	append_var LIBS "$SDL_LIBS"
+	case $_sdlversion in
+		2.0.*)
+			add_line_to_config_mk "USE_SDL2 = 1"
+			_sdlMajorVersionNumber=2
+			;;
+		*)
+			_sdlMajorVersionNumber=1
+			;;
+	esac
+fi
+
+#
+# Some platforms (eg. Android, iOS) may use an edited version
+# of SDL-net or SDL2-net that does not require SDL or SDL2 respectively
+#
+if test "$_sdlnet" = auto ; then
+	# If SDL2 was detected, then test for SDL2_net exclusively
+	# If SDL was detected, then test for SDL_net exclusively
+	# If neither SDL nor SDL2 detected, then test for both (SDL2_net success takes priority)
+	set_var SDL2_NET_LIBS   "$SDL_NET_LIBS"
+	set_var SDL2_NET_CFLAGS "$SDL_NET_CFLAGS"
+	set_var SDL1_NET_LIBS   "$SDL_NET_LIBS"
+	set_var SDL1_NET_CFLAGS "$SDL_NET_CFLAGS"
+
+	if test "$_sdl" = no || test "$_sdlMajorVersionNumber" = 2; then
+		if test "$_pkg_config" = "yes" && $_pkgconfig --exists SDL2_net; then
+			append_var SDL2_NET_LIBS "`$_pkgconfig --libs SDL2_net`"
+			append_var SDL2_NET_CFLAGS "`$_pkgconfig --cflags SDL2_net`"
 		else
-			append_var LIBS "`$_sdlconfig --prefix="$_sdlpath" --libs`"
+			append_var SDL2_NET_LIBS "-lSDL2_net"
 		fi
-		append_var DEFINES "-DSDL_BACKEND"
-		add_line_to_config_mk "SDL_BACKEND = 1"
+	fi
 
-		_sdlversion=`$_sdlconfig --version`
-		case $_sdlversion in
-			2.0.*)
-				add_line_to_config_mk "USE_SDL2 = 1"
-				append_var SDL_NET_LIBS "-lSDL2_net"
-				;;
-			*)
-				append_var SDL_NET_LIBS "-lSDL_net"
-				;;
-		esac
+	if test "$_sdl" = no || test "$_sdlMajorVersionNumber" = 1; then
+		if test "$_pkg_config" = "yes" && $_pkgconfig --exists SDL_net; then
+			append_var SDL1_NET_LIBS "`$_pkgconfig --libs SDL_net`"
+			append_var SDL1_NET_CFLAGS "`$_pkgconfig --cflags SDL_net`"
+		else
+			append_var SDL1_NET_LIBS "-lSDL_net"
+		fi
+	fi
 
-		# Check for SDL_Net
-		echocheck "SDL_Net"
-		if test "$_sdlnet" = auto ; then
-			_sdlnet=no
-			cat > $TMPC << EOF
+	# Check for SDL_Net
+	echocheck "SDL_Net"
+	_sdlnet=no
+	cat > $TMPC << EOF
 #include "SDL_net.h"
 int main(int argc, char *argv[]) { SDLNet_Init(); return 0; }
 EOF
-			cc_check $SDL_NET_LIBS $LIBS $INCLUDES $SDL_NET_CFLAGS && _sdlnet=yes
-		fi
-		if test "$_sdlnet" = yes ; then
-			# Some platforms require SDL to be after SDL_Net, thus we prepend var
-			prepend_var LIBS "$SDL_NET_LIBS"
-			append_var INCLUDES "$SDL_NET_CFLAGS"
-		fi
-		define_in_config_if_yes "$_sdlnet" 'USE_SDL_NET'
-		echo "$_sdlnet"
 
-		;;
-esac
+	cc_check $SDL2_NET_LIBS $LIBS $INCLUDES $SDL2_NET_CFLAGS && _sdlnet=yes
+	if test "$_sdlnet" = yes ; then
+		set_var SDL_NET_LIBS   "$SDL2_NET_LIBS"
+		set_var SDL_NET_CFLAGS "$SDL2_NET_CFLAGS"
+	else
+		cat > $TMPC << EOF
+#include "SDL_net.h"
+int main(int argc, char *argv[]) { SDLNet_Init(); return 0; }
+EOF
+		cc_check $SDL1_NET_LIBS $LIBS $INCLUDES $SDL1_NET_CFLAGS && _sdlnet=yes
+		set_var SDL_NET_LIBS   "$SDL1_NET_LIBS"
+		set_var SDL_NET_CFLAGS "$SDL1_NET_CFLAGS"
+	fi
+
+	if test "$_sdlnet" = yes ; then
+		# Some platforms require SDL to be after SDL_Net, thus we prepend var
+		prepend_var LIBS "$SDL_NET_LIBS"
+		append_var INCLUDES "$SDL_NET_CFLAGS"
+	fi
+	define_in_config_if_yes "$_sdlnet" 'USE_SDL_NET'
+	echo "$_sdlnet"
+fi
 
 
 #
 # Enable 16bit support only for backends which support it
 #
 case $_backend in
-	3ds | android | androidsdl | dingux | dc | gph | iphone | ios7 | maemo | openpandora | psp | psp2 | samsungtv | sdl | tizen | webos | wii)
+	3ds | android | androidsdl | dingux | dc | gph | iphone | ios7 | maemo | openpandora | psp | psp2 | samsungtv | sdl | switch | tizen | webos | wii)
 		if test "$_16bit" = auto ; then
 			_16bit=yes
 		else
@@ -3704,7 +3863,7 @@ case $_host_os in
 	amigaos* | cygwin* | dreamcast | ds | gamecube | mingw* | n64 | ps2 | ps3 | psp2 | psp | riscos | wii | wince)
 		_posix=no
 		;;
-	3ds | android | androidsdl | beos* | bsd* | darwin* | freebsd* | gnu* | gph-linux | haiku* | hpux* | iphone | ios7 | irix*| k*bsd*-gnu* | linux* | maemo | mint* | netbsd* | openbsd* | solaris* | sunos* | uclinux* | webos)
+	3ds | android | androidsdl | beos* | bsd* | darwin* | freebsd* | gnu* | gph-linux | haiku* | hpux* | iphone | ios7 | irix*| k*bsd*-gnu* | linux* | maemo | mint* | netbsd* | openbsd* | solaris* | sunos* | switch | uclinux* | webos)
 		_posix=yes
 		;;
 	os2-emx*)
@@ -4009,18 +4168,6 @@ EOF
 cc_check -lm && append_var LIBS "-lm"
 
 #
-# Check for pkg-config
-#
-echocheck "pkg-config"
-_pkg_config=no
-command -v pkg-config >/dev/null 2>&1 && _pkg_config=yes
-echo "$_pkg_config"
-
-if test "$_pkg_config" = yes && test -n "$_host" && test -z "$PKG_CONFIG_LIBDIR"; then
-	echo "WARNING: When cross-compiling PKG_CONFIG_LIBDIR must be set to the location of the .pc files for the target"
-fi
-
-#
 # Check for Ogg
 #
 echocheck "Ogg"
@@ -4207,6 +4354,12 @@ echo "$_jpeg"
 # Check for PNG
 #
 echocheck "PNG >= 1.2.8"
+if test "$_pkg_config" = "yes" && $_pkgconfig --exists libpng; then
+	append_var PNG_LIBS "`$_pkgconfig --libs libpng`"
+	append_var PNG_CFLAGS "`$_pkgconfig --cflags libpng`"
+else
+	append_var PNG_LIBS "-lpng -lz"
+fi
 if test "$_png" = auto ; then
 	_png=no
 	cat > $TMPC << EOF
@@ -4219,10 +4372,10 @@ int main(void) {
   return 0;
 }
 EOF
-	cc_check $PNG_CFLAGS $PNG_LIBS -lpng -lz && _png=yes
+	cc_check $PNG_CFLAGS $PNG_LIBS && _png=yes
 fi
 if test "$_png" = yes ; then
-	append_var LIBS "$PNG_LIBS -lpng -lz"
+	append_var LIBS "$PNG_LIBS"
 	append_var INCLUDES "$PNG_CFLAGS"
 fi
 define_in_config_if_yes "$_png" 'USE_PNG'
@@ -4434,10 +4587,11 @@ case $_host_os in
 		if test "$_updates" = no; then
 			_sparkle=no
 		else
-			if test ! -z $_sparklepath ; then
-				SPARKLE_CFLAGS="-F$_sparklepath"
-				SPARKLE_LIBS="-F$_sparklepath"
+			if test -z $_sparklepath; then
+				_sparklepath=/Library/Frameworks
 			fi
+			SPARKLE_CFLAGS="-F$_sparklepath"
+			SPARKLE_LIBS="-F$_sparklepath"
 			if test "$_sparkle" = auto ; then
 				_sparkle=no
 				cat > $TMPC << EOF
@@ -4496,12 +4650,20 @@ if test "$_libcurl" != "no"; then
 	if test -z "$_libcurlconfig"; then
 		_libcurl=no
 	else
-		LIBCURL_LIBS=`$_libcurlconfig --libs`
+		if test -n "$_staticlibpath"; then
+			LIBCURL_LIBS=`$_libcurlconfig --static-libs`
+		else
+			LIBCURL_LIBS=`$_libcurlconfig --libs`
+		fi
 		LIBCURL_CFLAGS=`$_libcurlconfig --cflags`
 
 		case $_host_os in
 			amigaos*)
 				append_var LIBCURL_LIBS "-lpthread"
+			;;
+			# macOS does not allow static libs, overriding
+			darwin*)
+				LIBCURL_LIBS=`$_libcurlconfig --libs`
 			;;
 			psp2*)
 				append_var LIBCURL_LIBS "-lssl -lcrypto"
@@ -4725,8 +4887,8 @@ if test "$_libunity" = auto ; then
 			;;
 		*)
 			# Unity has a lots of dependencies, update the libs and cflags var with them
-			LIBUNITY_LIBS="$LIBUNITY_LIBS `pkg-config --libs 'unity > 3.8.1' 2>> "$TMPLOG"`"
-			LIBUNITY_CFLAGS="$LIBUNITY_CFLAGS `pkg-config --cflags 'unity > 3.8.1' 2>> "$TMPLOG"`"
+			LIBUNITY_LIBS="$LIBUNITY_LIBS `$_pkgconfig --libs 'unity > 3.8.1' 2>> "$TMPLOG"`"
+			LIBUNITY_CFLAGS="$LIBUNITY_CFLAGS `$_pkgconfig --cflags 'unity > 3.8.1' 2>> "$TMPLOG"`"
 			_libunity=no
 			cat > $TMPC << EOF
 #include <unity.h>
@@ -4741,11 +4903,11 @@ EOF
 fi
 if test "$_libunity" = yes ; then
 	if test "$LIBUNITY_CFLAGS" = "" || test "$LIBUNITY_LIBS" = ""; then
-		LIBUNITY_LIBS="$LIBUNITY_LIBS `pkg-config --libs 'unity > 3.8.1' 2>> "$TMPLOG"`"
-		LIBUNITY_CFLAGS="$LIBUNITY_CFLAGS `pkg-config --cflags 'unity > 3.8.1' 2>> "$TMPLOG"`"
+		LIBUNITY_LIBS="$LIBUNITY_LIBS `$_pkgconfig --libs 'unity > 3.8.1' 2>> "$TMPLOG"`"
+		LIBUNITY_CFLAGS="$LIBUNITY_CFLAGS `$_pkgconfig --cflags 'unity > 3.8.1' 2>> "$TMPLOG"`"
 	fi
 	append_var LIBS "$LIBUNITY_LIBS"
-	append_var INCLUDES "$LIBUNITY_CFLAGS"
+	append_var CXXFLAGS "$LIBUNITY_CFLAGS"
 fi
 define_in_config_h_if_yes "$_libunity" 'USE_UNITY'
 fi
@@ -4756,14 +4918,14 @@ echo "$_libunity"
 #
 find_freetype() {
         # Wrapper function which tries to find freetype
-        # either by callimg freetype-config or by using
+        # either by calling freetype-config or by using
         # pkg-config.
         # As of freetype-2.9.1 the freetype-config file
         # no longer gets installed by default.
-	if test "$_pkg_config" = "yes" && pkg-config --exists freetype2; then
-		FREETYPE2_LIBS=`pkg-config --libs freetype2`
-		FREETYPE2_CFLAGS=`pkg-config --cflags freetype2`
-		FREETYPE2_STATIC_LIBS=`pkg-config --static --libs freetype2`
+	if test "$_pkg_config" = "yes" && $_pkgconfig --exists freetype2; then
+		FREETYPE2_LIBS=`$_pkgconfig --libs freetype2`
+		FREETYPE2_CFLAGS=`$_pkgconfig --cflags freetype2`
+		FREETYPE2_STATIC_LIBS=`$_pkgconfig --static --libs freetype2`
 		_freetype_found="true"
 	else
 		# Look for the freetype-config script
@@ -4819,7 +4981,7 @@ EOF
 
 		if test "$_freetype2" = "yes"; then
 			append_var LIBS "$FREETYPE2_LIBS"
-			append_var INCLUDES "$FREETYPE2_CFLAGS"
+			append_var CXXFLAGS "$FREETYPE2_CFLAGS"
 		fi
 	fi
 
@@ -5324,16 +5486,17 @@ echo "$_bink"
 # Check whether to build updates support
 #
 echo_n "Building updates support... "
-define_in_config_if_yes $_updates 'USE_UPDATES'
 if test "$_updates" = yes; then
 	if test "$_sparkle" = yes; then
 		echo "Sparkle"
 	else
+		_updates=no;
 		echo "$_updates"
 	fi
 else
 	echo "$_updates"
 fi
+define_in_config_if_yes $_updates 'USE_UPDATES'
 
 #
 # Check whether to activate engines (ResidualVM specific)
@@ -5756,6 +5919,8 @@ vpath %.mm \$(srcdir)
 vpath %.asm \$(srcdir)
 vpath %.s \$(srcdir)
 vpath %.S \$(srcdir)
+vpath %.rc \$(srcdir)
+vpath %.md \$(srcdir)
 include \$(srcdir)/Makefile
 EOF
 

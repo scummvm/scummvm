@@ -74,13 +74,14 @@ void ScrollContainerWidget::recalc() {
 	h = max - min;
 
 	if (h <= _limitH) _scrolledY = 0;
+	if (_scrolledY > h - _limitH) _scrolledY = 0;
 
 	_verticalScroll->_numEntries = h;
 	_verticalScroll->_currentPos = _scrolledY;
 	_verticalScroll->_entriesPerPage = _limitH;
 	_verticalScroll->_singleStep = kLineHeight;
-	_verticalScroll->setPos(_w - scrollbarWidth, _scrolledY+1);
-	_verticalScroll->setSize(scrollbarWidth, _limitH -2);
+	_verticalScroll->setPos(_w - scrollbarWidth, _scrolledY);
+	_verticalScroll->setSize(scrollbarWidth, _limitH-1);
 }
 
 
@@ -146,7 +147,7 @@ void ScrollContainerWidget::reflowLayout() {
 }
 
 void ScrollContainerWidget::drawWidget() {
-	g_gui.theme()->drawDialogBackground(Common::Rect(_x, _y, _x + _w, _y + getHeight() - 1), _backgroundType);
+	g_gui.theme()->drawDialogBackground(Common::Rect(_x, _y, _x + _w, _y + getHeight()), _backgroundType);
 }
 
 bool ScrollContainerWidget::containsWidget(Widget *w) const {
@@ -166,7 +167,7 @@ Widget *ScrollContainerWidget::findWidget(int x, int y) {
 
 Common::Rect ScrollContainerWidget::getClipRect() const {
 	// Make sure the clipping rect contains the scrollbar so it is properly redrawn
-	return Common::Rect(getAbsX(), getAbsY(), getAbsX() + _w, getAbsY() + getHeight());
+	return Common::Rect(getAbsX(), getAbsY(), getAbsX() + _w, getAbsY() + getHeight() - 1); // this -1 is because of container border, which might not be present actually
 }
 
 void ScrollContainerWidget::setBackgroundType(ThemeEngine::DialogBackground backgroundType) {

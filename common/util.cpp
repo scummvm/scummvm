@@ -20,17 +20,7 @@
  *
  */
 
-#define FORBIDDEN_SYMBOL_EXCEPTION_isalnum
-#define FORBIDDEN_SYMBOL_EXCEPTION_isalpha
-#define FORBIDDEN_SYMBOL_EXCEPTION_isdigit
-#define FORBIDDEN_SYMBOL_EXCEPTION_isxdigit
-#define FORBIDDEN_SYMBOL_EXCEPTION_isnumber
-#define FORBIDDEN_SYMBOL_EXCEPTION_islower
-#define FORBIDDEN_SYMBOL_EXCEPTION_isspace
-#define FORBIDDEN_SYMBOL_EXCEPTION_isupper
-#define FORBIDDEN_SYMBOL_EXCEPTION_isprint
-#define FORBIDDEN_SYMBOL_EXCEPTION_ispunct
-
+#define FORBIDDEN_SYMBOL_EXCEPTION_ctype_h
 
 #include "common/util.h"
 #include "common/debug.h"
@@ -161,6 +151,48 @@ bool isPrint(int c) {
 bool isPunct(int c) {
 	ENSURE_ASCII_CHAR(c);
 	return ispunct((byte)c);
+}
+
+bool isCntrl(int c) {
+	ENSURE_ASCII_CHAR(c);
+	return iscntrl((byte)c);
+}
+
+bool isGraph(int c) {
+	ENSURE_ASCII_CHAR(c);
+	return isgraph((byte)c);
+}
+
+
+#pragma mark -
+
+
+Common::String getHumanReadableBytes(uint64 bytes, Common::String &unitsOut) {
+	if (bytes < 1024) {
+		unitsOut = "B";
+		return Common::String::format("%lu", (unsigned long int)bytes);
+	}
+
+	double floating = bytes / 1024.0;
+	unitsOut = "KB";
+
+	if (floating >= 1024) {
+		floating /= 1024.0;
+		unitsOut = "MB";
+	}
+
+	if (floating >= 1024) {
+		floating /= 1024.0;
+		unitsOut = "GB";
+	}
+
+	if (floating >= 1024) { // woah
+		floating /= 1024.0;
+		unitsOut = "TB";
+	}
+
+	// print one digit after floating point
+	return Common::String::format("%.1f", floating);
 }
 
 } // End of namespace Common

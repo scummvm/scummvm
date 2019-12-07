@@ -46,7 +46,7 @@ updatepot:
 	fi;
 	# ResidualVM specific end <-
 
-translations-dat: devtools/create_translations $(POFILES) $(CPFILES)
+translations-dat: devtools/create_translations
 	devtools/create_translations/create_translations $(POFILES) $(CPFILES)
 	mv translations.dat $(srcdir)/gui/themes/
 

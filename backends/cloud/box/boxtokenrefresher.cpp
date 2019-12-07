@@ -41,7 +41,7 @@ void BoxTokenRefresher::tokenRefreshed(Storage::BoolResponse response) {
 	if (!response.value) {
 		//failed to refresh token, notify user with NULL in original callback
 		warning("BoxTokenRefresher: failed to refresh token");
-		finishError(Networking::ErrorResponse(this, false, true, "", -1));
+		finishError(Networking::ErrorResponse(this, false, true, "BoxTokenRefresher::tokenRefreshed: failed to refresh token", -1));
 		return;
 	}
 
@@ -99,7 +99,7 @@ void BoxTokenRefresher::finishJson(Common::JSONValue *json) {
 
 			pause();
 			delete json;
-			_parentStorage->getAccessToken(new Common::Callback<BoxTokenRefresher, Storage::BoolResponse>(this, &BoxTokenRefresher::tokenRefreshed));
+			_parentStorage->refreshAccessToken(new Common::Callback<BoxTokenRefresher, Storage::BoolResponse>(this, &BoxTokenRefresher::tokenRefreshed));
 			return;
 		}
 	}
@@ -111,7 +111,7 @@ void BoxTokenRefresher::finishJson(Common::JSONValue *json) {
 void BoxTokenRefresher::finishError(Networking::ErrorResponse error) {
 	if (error.httpResponseCode == 401) { // invalid_token
 		pause();
-		_parentStorage->getAccessToken(new Common::Callback<BoxTokenRefresher, Storage::BoolResponse>(this, &BoxTokenRefresher::tokenRefreshed));
+		_parentStorage->refreshAccessToken(new Common::Callback<BoxTokenRefresher, Storage::BoolResponse>(this, &BoxTokenRefresher::tokenRefreshed));
 		return;
 	}
 
