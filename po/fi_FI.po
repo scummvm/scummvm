@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2019-12-07 19:15+0000\n"
-"PO-Revision-Date: 2019-11-13 02:03+0000\n"
+"PO-Revision-Date: 2019-12-08 14:34+0000\n"
 "Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fi/>\n"
@@ -639,7 +639,7 @@ msgstr "~L~is‰‰ peli..."
 
 #: gui/launcher.cpp:160 gui/launcher.cpp:170
 msgid "Add games to the list"
-msgstr ""
+msgstr "Lis‰‰ pelit listaan"
 
 #: gui/launcher.cpp:161
 msgid "Mass Add..."
