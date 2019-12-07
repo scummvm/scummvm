@@ -95,6 +95,7 @@ protected:
 	void spcPizzaMakerActorStopWorking(); // 0x1c
 	void spcDragonArrivesAtTournament(); // 0x1d
 	void spcDragonCatapultMiniGame(); // 0x1e
+	void spcStGeorgeDragonLanded(); // 0x1f
 
 	void spcSetEngineFlag0x20000(); // 0x21
 	void spcClearEngineFlag0x20000(); // 0x22
@@ -129,7 +130,7 @@ protected:
 	void spcZigmondFraudSceneLogic1(); // 0x40
 	void spcBrokenBlackDragonSceneLogic(); // 0x41
 	void spcDodoUnderAttackSceneLogic(); //0x42
-	void spcForestWithoutDodoSceneLogic();
+	void spcForestWithoutDodoSceneLogic(); //0x43
 
 	void spcBlackDragonOnHillSceneLogic(); //0x46
 
@@ -162,13 +163,15 @@ protected:
 	void spcUnk66();
 	void spcTournamentSetCamera(); // 0x67
 	void spcTournamentCutScene(); // 0x68
-
+	void spcInsideBlackDragonUpdatePalette(); // 0x69
 	void spcCastleGateSceneLogic(); // 0x6a
 	void spcTransitionToMap(); // 0x6b
 	void spcTransitionFromMap(); // 0x6c
 	void spcCaveOfDilemmaSceneLogic(); // 0x6d
 
 	void spcLoadLadyOfTheLakeActor(); //0x70
+
+	void spcUseClickerOnLever(); // 0x74
 
 	void spcJesterInLibrarySceneLogic(); // 0x77
 
@@ -182,7 +185,9 @@ protected:
 	void spcShakeScreenSceneLogic(); //0x81
 	void spc82CallResetDataMaybe(); // 0x82
 	void spcStopScreenShakeUpdater(); // 0x83
-
+	void spcInsideBlackDragonScreenShake(); // 0x84
+	void spc85SetScene1To0x35(); //0x85
+	void spc86SetScene1To0x33(); //0x86
 	void spc87SetScene1To0x17(); //0x87
 	void spc88SetScene1To0x16(); //0x88
 	void spcSetUnkFlag2(); // 0x89
