@@ -154,7 +154,7 @@ void Lingo::addCode(const char *code, ScriptType type, uint16 id) {
 	}
 
 	// Strip comments for ease of the parser
-	Common::String codeNorm = stripComments(code);
+	Common::String codeNorm = codePreprocessor(code);
 	code = codeNorm.c_str();
 	begin = code;
 
@@ -247,7 +247,7 @@ static Common::String prevtok(const char *s, const char *lineStart, const char *
 	return res;
 }
 
-Common::String Lingo::stripComments(const char *s) {
+Common::String Lingo::codePreprocessor(const char *s) {
 	Common::String res;
 
 	// Strip comments
@@ -298,6 +298,8 @@ Common::String Lingo::stripComments(const char *s) {
 	res.clear();
 
 	// Preprocess if statements
+	// Here we add ' end if' at end of each statement, which lets us
+	// make the grammar very straightforward
 	Common::String line, tok;
 	const char *lineStart, *prevEnd;
 	int iflevel = 0;
