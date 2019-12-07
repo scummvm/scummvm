@@ -186,37 +186,61 @@ void EoBCoreEngine::gui_drawCharPortraitWithStats(int index) {
 				_screen->fillRect(cm2X1[i], cm2Y1[i], cm2X2[i], cm2Y2[i], guiSettings()->colors.sfill);
 
 			_screen->setFont(cf);
-			
+
+			int lineH = MIN(_screen->getFontHeight() + 1, 8);
 			_screen->printShadedText(_characterGuiStringsIn[0], 183, 42, guiSettings()->colors.guiColorWhite, guiSettings()->colors.sfill, guiSettings()->colors.guiColorBlack);
 			_screen->printText(_chargenClassStrings[c->cClass], 183, 55, guiSettings()->colors.guiColorBlack, guiSettings()->colors.sfill);
-			_screen->printText(_chargenAlignmentStrings[c->alignment], 183, 62, guiSettings()->colors.guiColorBlack, guiSettings()->colors.sfill);
-			_screen->printText(_chargenRaceSexStrings[c->raceSex], 183, 69, guiSettings()->colors.guiColorBlack, guiSettings()->colors.sfill);
+			_screen->printText(_chargenAlignmentStrings[c->alignment], 183, 55 + lineH, guiSettings()->colors.guiColorBlack, guiSettings()->colors.sfill);
+			_screen->printText(_chargenRaceSexStrings[c->raceSex], 183, 55 + 2 * lineH, guiSettings()->colors.guiColorBlack, guiSettings()->colors.sfill);
 
-			for (int i = 0; i < 6; i++)
-				_screen->printText(_chargenStatStrings[6 + i], 183, 82 + i * 7, guiSettings()->colors.guiColorBlack, guiSettings()->colors.sfill);
+			lineH = _screen->getFontHeight() + 1;
+			int tX = 183;
+			int tY = _flags.use16ColorMode ? 87 : 82;
+			for (int i = 0; i < 3; i++)
+				_screen->printText(_chargenStatStrings[6 + i], tX, tY + i * lineH, guiSettings()->colors.guiColorBlack, guiSettings()->colors.sfill);
+			
+			if (_flags.use16ColorMode) {
+				tX += 72;
+				tY -= 27;
+			}			
+			for (int i = 3; i < 6; i++)
+				_screen->printText(_chargenStatStrings[6 + i], tX, tY + i * lineH, guiSettings()->colors.guiColorBlack, guiSettings()->colors.sfill);
 
-			_screen->printText(_characterGuiStringsIn[1], 183, 124, guiSettings()->colors.guiColorBlack, guiSettings()->colors.sfill);
-			_screen->printText(_characterGuiStringsIn[2], 239, 138, guiSettings()->colors.guiColorBlack, guiSettings()->colors.sfill);
-			_screen->printText(_characterGuiStringsIn[3], 278, 138, guiSettings()->colors.guiColorBlack, guiSettings()->colors.sfill);
+			_screen->printText(_characterGuiStringsIn[1], 183, tY + 6 * lineH, guiSettings()->colors.guiColorBlack, guiSettings()->colors.sfill);
+			
+			tY = _flags.use16ColorMode ? 127 : 138;
+			_screen->printText(_characterGuiStringsIn[2], 239, tY, guiSettings()->colors.guiColorBlack, guiSettings()->colors.sfill);
+			_screen->printText(_characterGuiStringsIn[3], 278, tY, guiSettings()->colors.guiColorBlack, guiSettings()->colors.sfill);
 
-			_screen->printText(getCharStrength(c->strengthCur, c->strengthExtCur).c_str(), 275, 82, guiSettings()->colors.guiColorWhite, guiSettings()->colors.sfill);
-			_screen->printText(Common::String::format("%d", c->intelligenceCur).c_str(), 275, 89, guiSettings()->colors.guiColorWhite, guiSettings()->colors.sfill);
-			_screen->printText(Common::String::format("%d", c->wisdomCur).c_str(), 275, 96, guiSettings()->colors.guiColorWhite, guiSettings()->colors.sfill);
-			_screen->printText(Common::String::format("%d", c->dexterityCur).c_str(), 275, 103, guiSettings()->colors.guiColorWhite, guiSettings()->colors.sfill);
-			_screen->printText(Common::String::format("%d", c->constitutionCur).c_str(), 275, 110, guiSettings()->colors.guiColorWhite, guiSettings()->colors.sfill);
-			_screen->printText(Common::String::format("%d", c->charismaCur).c_str(), 275, 117, guiSettings()->colors.guiColorWhite, guiSettings()->colors.sfill);
-			_screen->printText(Common::String::format("%d", c->armorClass).c_str(), 275, 124, guiSettings()->colors.guiColorWhite, guiSettings()->colors.sfill);
+			tX = _flags.use16ColorMode ? 210 : 275;
+			tY = _flags.use16ColorMode ? 87 : 82;
+			_screen->printText(getCharStrength(c->strengthCur, c->strengthExtCur).c_str(), tX, tY, guiSettings()->colors.guiColorWhite, guiSettings()->colors.sfill);
+			_screen->printText(Common::String::format("%d", c->intelligenceCur).c_str(), tX, tY + lineH, guiSettings()->colors.guiColorWhite, guiSettings()->colors.sfill);
+			_screen->printText(Common::String::format("%d", c->wisdomCur).c_str(), tX, tY + 2 * lineH, guiSettings()->colors.guiColorWhite, guiSettings()->colors.sfill);
+			
+			if (_flags.use16ColorMode) {
+				tX = 285;
+				tY -= 27;
+			}
+			_screen->printText(Common::String::format("%d", c->dexterityCur).c_str(), tX, tY + 3 * lineH, guiSettings()->colors.guiColorWhite, guiSettings()->colors.sfill);
+			_screen->printText(Common::String::format("%d", c->constitutionCur).c_str(), tX, tY + 4 * lineH, guiSettings()->colors.guiColorWhite, guiSettings()->colors.sfill);
+			_screen->printText(Common::String::format("%d", c->charismaCur).c_str(), tX, tY + 5 * lineH, guiSettings()->colors.guiColorWhite, guiSettings()->colors.sfill);
+			
+			if (_flags.use16ColorMode)
+				tX = 255;
+			_screen->printText(Common::String::format("%d", c->armorClass).c_str(), tX, tY + 6 * lineH, guiSettings()->colors.guiColorWhite, guiSettings()->colors.sfill);
 
+			tY = _flags.use16ColorMode ? 136 : 145;
 			for (int i = 0; i < 3; i++) {
 				int t = getCharacterClassType(c->cClass, i);
 				if (t == -1)
 					continue;
-
-				_screen->printText(_chargenClassStrings[t + 15], 180, 145 + 7 * i, guiSettings()->colors.guiColorBlack, guiSettings()->colors.sfill);
+				tX = (_flags.use16ColorMode) ? 183 : 180;
+				_screen->printText(_chargenClassStrings[t + 15], tX, tY + lineH * i, guiSettings()->colors.guiColorBlack, guiSettings()->colors.sfill);
 				Common::String tmpStr = Common::String::format("%d", c->experience[i]);
-				_screen->printText(tmpStr.c_str(), 251 - tmpStr.size() * 3, 145 + 7 * i, guiSettings()->colors.guiColorWhite, guiSettings()->colors.sfill);
+				_screen->printText(tmpStr.c_str(), 251 - (_screen->getTextWidth(tmpStr.c_str()) >> 1), tY + lineH * i, guiSettings()->colors.guiColorWhite, guiSettings()->colors.sfill);
 				tmpStr = Common::String::format("%d", c->level[i]);
-				_screen->printText(tmpStr.c_str(), 286 - tmpStr.size() * 3, 145 + 7 * i, guiSettings()->colors.guiColorWhite, guiSettings()->colors.sfill);
+				_screen->printText(tmpStr.c_str(), 286 - (_screen->getTextWidth(tmpStr.c_str()) >> 1), tY + lineH * i, guiSettings()->colors.guiColorWhite, guiSettings()->colors.sfill);
 			}
 		}
 
