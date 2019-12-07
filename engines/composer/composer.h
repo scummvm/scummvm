@@ -61,7 +61,7 @@ enum GameType {
 enum GameFileTypes {
 	GAME_CONFIGFILE     = 1 << 0,    // Game configuration
 	GAME_SCRIPTFILE     = 1 << 1,    // Game script
-	GAME_EXECUTABLE     = 1 << 2,    // Game executable
+	GAME_EXECUTABLE     = 1 << 2     // Game executable
 };
 
 class Archive;
