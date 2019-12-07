@@ -411,7 +411,7 @@ int32 Console::Printf(const MsgMask mm, const char *fmt, ...) {
 
 // printf, and output to stdout (va_list)
 int32 Console::vPrintf(const char *fmt, va_list argptr) {
-	Common::String str = Common::String::format(fmt, argptr);
+	Common::String str = Common::String::vformat(fmt, argptr);
 
 	if (std_output_enabled & CON_STDOUT) {
 		debug("%s", str.c_str());

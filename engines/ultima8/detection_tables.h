@@ -27,7 +27,7 @@ static const Ultima8GameDescription gameDescriptions[] = {
 		{
 			"ultima8",
 			"Gold Edition",
-			AD_ENTRY1s("dosboxULTIMA8.conf", "ae990ff69c20bd5fc25ed1edb73ef015", 11448),
+			AD_ENTRY1s("u8.ini", "c09a7ddaf8cde46932d0cb33a6474b20", 80),
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			0,
