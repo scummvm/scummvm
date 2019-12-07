@@ -883,150 +883,6 @@ void Ultima8Engine::conAutoPaint(void) {
 	if (app && !app->isPainting()) app->paint();
 }
 
-#if defined(WIN32) && defined(I_AM_COLOURLESS_EXPERIMENTING_WITH_HW_CURSORS)
-
-WNDPROC oldWindowProc = 0;
-bool allow_set_cursor = true;
-
-LRESULT CALLBACK Ultima8Engine::myWindowProc(
-	HWND hwnd,      // handle to window
-	UINT uMsg,      // message identifier
-	WPARAM wParam,  // first message parameter
-	LPARAM lParam   // second message parameter
-) {
-	if (uMsg == WM_SETCURSOR) {
-		if (allow_set_cursor = (LOWORD(lParam) == HTCLIENT)) {
-			Ultima8Engine *app = Ultima8Engine::get_instance();
-			GameData *gamedata = app->gamedata;
-
-			if (gamedata) {
-				Shape *mouse = gamedata->getMouse();
-				if (mouse) {
-					int frame = app->getMouseFrame();
-					if (frame >= 0)
-						SetCursor(app->hwcursors[frame].hCursor);
-				}
-			}
-			return TRUE;
-		}
-	}
-
-	return CallWindowProc(oldWindowProc, hwnd, uMsg, wParam, lParam);
-}
-
-void Ultima8Engine::CreateHWCursors() {
-	Shape *mouse = gamedata->getMouse();
-	hwcursors = new HWMouseCursor[mouse->frameCount()];
-	std::memset(hwcursors, 0, sizeof(HWMouseCursor) * mouse->frameCount());
-
-	for (uint32 frame = 0; frame < mouse->frameCount(); frame++) {
-		ShapeFrame *f = mouse->getFrame(frame);
-		uint32 bpp = BaseSoftRenderSurface::format.s_bpp;
-		int buf_width = f->width;
-		int buf_height = f->height;
-
-		// DIB must be dword aligned
-		if (bpp != 32) buf_width = (buf_width + 1) & ~1;
-
-		uint8 *buf = new uint8[bpp / 8 * buf_width * buf_height];
-
-		RenderSurface *surf;
-
-		if (bpp == 32)
-			surf = new SoftRenderSurface<uint32>(buf_width, buf_height, buf);
-		else
-			surf = new SoftRenderSurface<uint16>(buf_width, buf_height, buf);
-
-		surf->BeginPainting();
-		surf->Fill32(0x00FF00FF, 0, 0, buf_width, buf_height);
-		surf->Paint(mouse, frame, f->xoff, f->yoff);
-		surf->EndPainting();
-
-		int clear_col = PACK_RGB8(0xFF, 0x00, 0xFF);
-
-		//
-		// Mask
-		//
-
-		// 1 bit bitmap must be word aligned
-		uint32 bit_width = (buf_width + 15) & ~15;
-		uint8 *buf_mask = new uint8[bit_width / 8 * buf_height * 2];
-
-		// Clear it
-		std::memset(buf_mask, 0x00, bit_width / 8 * buf_height * 2);
-
-
-		if (bpp == 32) {
-			uint32 *buf32 = (uint32 *)buf;
-			for (int y = 0; y < buf_height; y++) {
-				for (int x = 0; x < buf_width; x++) {
-					bool black = (x & 1) == (y & 1);
-					uint32 bit = y * bit_width + x;
-					uint32 byte = bit / 8;
-					bit = 7 - (bit % 8);
-
-					// If background is clear colour, mask it out
-					if (buf32[buf_width * y + x] == clear_col) {
-						buf32[buf_width * y + x] = 0;
-						buf_mask[byte] |= 1 << bit;
-					}
-					// Make any non black make white
-					else if (buf32[buf_width * y + x])
-						buf_mask[byte + ((buf_height * bit_width) / 8)] |= 1 << bit;
-				}
-			}
-		}
-		else {
-			uint16 *buf16 = (uint16 *)buf;
-			for (int y = 0; y < buf_height; y++) {
-				for (int x = 0; x < buf_width; x++) {
-					bool black = (x & 1) == (y & 1);
-					uint32 bit = y * bit_width + x;
-					uint32 byte = bit / 8;
-					bit = 7 - (bit % 8);
-
-					// If background is clear colour, mask it out
-					if (buf16[buf_width * y + x] == clear_col) {
-						buf16[buf_width * y + x] = 0;
-						buf_mask[byte] |= 1 << bit;
-					}
-					// Make any non black make white
-					else if (buf16[buf_width * y + x])
-						buf_mask[byte + ((buf_height * bit_width) / 8)] |= 1 << bit;
-				}
-			}
-		}
-
-		// Create an icon for our cursor
-		ICONINFO iconinfo;
-		iconinfo.fIcon = FALSE;
-		iconinfo.xHotspot = f->xoff;
-		iconinfo.yHotspot = f->yoff;
-		iconinfo.hbmMask = CreateBitmap(buf_width, buf_height, 1, 1, buf_mask);
-		iconinfo.hbmColor = CreateBitmap(buf_width, buf_height, 1, bpp, buf);
-
-		hwcursors[frame].hCursor = CreateIconIndirect(&iconinfo);
-
-		DeleteObject(iconinfo.hbmMask);
-		DeleteObject(iconinfo.hbmColor);
-
-		delete[] buf;
-		delete[] buf_mask;
-		delete surf;
-	}
-
-	// Lets screw with the window class
-	SDL_SysWMinfo info;
-	info.version.major = SDL_MAJOR_VERSION;
-	info.version.minor = SDL_MINOR_VERSION;
-	info.version.patch = SDL_PATCHLEVEL;
-	SDL_GetWMInfo(&info);
-	oldWindowProc = (WNDPROC)GetWindowLongPtr(info.window, GWLP_WNDPROC);
-	SetWindowLongPtr(info.window, GWLP_WNDPROC, (LONG)myWindowProc);
-
-}
-#endif
-
 // Paint the screen
 void Ultima8Engine::paint() {
 	static long prev = 0;
@@ -1062,17 +918,12 @@ void Ultima8Engine::paint() {
 		if (mouse) {
 			int frame = getMouseFrame();
 			if (frame >= 0) {
-#if defined(WIN32) && defined(I_AM_COLOURLESS_EXPERIMENTING_WITH_HW_CURSORS)
-				if (allow_set_cursor) SetCursor(hwcursors[frame].hCursor);
-#else
 				screen->Paint(mouse, frame, mouseX, mouseY, true);
-#endif
 			}
 			else if (frame == -2)
 				screen->Blit(defMouse, 0, 0, defMouse->width, defMouse->height, mouseX, mouseY);
 		}
-	}
-	else {
+	} else {
 		if (getMouseFrame() != -1)
 			screen->Blit(defMouse, 0, 0, defMouse->width, defMouse->height, mouseX, mouseY);
 	}

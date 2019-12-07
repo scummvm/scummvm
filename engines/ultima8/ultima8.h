@@ -74,12 +74,6 @@ class AudioMixer;
 const unsigned int savegame_version = 5;
 }
 
-// Hack alert
-struct HWMouseCursor;
-#if defined(WIN32) && defined(I_AM_COLOURLESS_EXPERIMENTING_WITH_HW_CURSORS)
-#include <windows.h>
-#endif
-
 class Ultima8Engine : public CoreApp, public Engine {
 public:
 	enum Ultima8DebugChannels {
@@ -233,9 +227,6 @@ private:
 	int getMouseFrame();
 	std::stack<MouseCursor> cursors;
 	uint32 flashingcursor; // time (g_system->getMillis) mouse started flashing, or 0
-
-	// Hack alert
-	HWMouseCursor *hwcursors; // Shape frames converted into system specific format.
 
 	static void conAutoPaint(void);
 
