@@ -45,10 +45,6 @@ int access(const char *pathname, int mode) {
 	return 0;
 }
 
-OSystem_PS3::OSystem_PS3(Common::String baseConfigName)
-	: _baseConfigName(baseConfigName) {
-}
-
 void OSystem_PS3::init() {
 	// Initialze File System Factory
 	_fsFactory = new PS3FilesystemFactory();
@@ -75,7 +71,7 @@ void OSystem_PS3::initBackend() {
 }
 
 Common::String OSystem_PS3::getDefaultConfigFileName() {
-	return PREFIX "/" + _baseConfigName;
+	return PREFIX "/scummvm.ini";
 }
 
 Common::String OSystem_PS3::getDefaultLogFileName() {

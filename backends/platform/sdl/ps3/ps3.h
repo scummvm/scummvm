@@ -27,18 +27,10 @@
 
 class OSystem_PS3 : public OSystem_SDL {
 public:
-	// Let the subclasses be able to change _baseConfigName in the constructor
-	OSystem_PS3(Common::String baseConfigName = "scummvm.ini");
-	virtual ~OSystem_PS3() {}
-
 	virtual void init();
 	virtual void initBackend();
 
 protected:
-	// Base string for creating the default path and filename
-	// for the configuration file
-	Common::String _baseConfigName;
-
 	virtual Common::String getDefaultConfigFileName();
 	virtual Common::String getDefaultLogFileName();
 };

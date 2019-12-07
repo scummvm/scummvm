@@ -60,11 +60,6 @@
 #endif
 extern char **environ;
 
-OSystem_POSIX::OSystem_POSIX(Common::String baseConfigName)
-	:
-	_baseConfigName(baseConfigName) {
-}
-
 void OSystem_POSIX::init() {
 	// Initialze File System Factory
 	_fsFactory = new POSIXFilesystemFactory();
@@ -108,16 +103,15 @@ bool OSystem_POSIX::hasFeature(Feature f) {
 }
 
 Common::String OSystem_POSIX::getDefaultConfigFileName() {
+	const Common::String baseConfigName = "scummvm.ini";
+
 	Common::String configFile;
 
 	Common::String prefix;
-#ifdef MACOSX
-	prefix = getenv("HOME");
-#elif !defined(SAMSUNGTV)
-	const char *envVar;
+
 	// Our old configuration file path for POSIX systems was ~/.scummvmrc.
 	// If that file exists, we still use it.
-	envVar = getenv("HOME");
+	const char *envVar = getenv("HOME");
 	if (envVar && *envVar) {
 		configFile = envVar;
 		configFile += '/';
@@ -152,14 +146,13 @@ Common::String OSystem_POSIX::getDefaultConfigFileName() {
 	if (!prefix.empty() && Posix::assureDirectoryExists("scummvm", prefix.c_str())) {
 		prefix += "/scummvm";
 	}
-#endif
 
-	if (!prefix.empty() && (prefix.size() + 1 + _baseConfigName.size()) < MAXPATHLEN) {
+	if (!prefix.empty() && (prefix.size() + 1 + baseConfigName.size()) < MAXPATHLEN) {
 		configFile = prefix;
 		configFile += '/';
-		configFile += _baseConfigName;
+		configFile += baseConfigName;
 	} else {
-		configFile = _baseConfigName;
+		configFile = baseConfigName;
 	}
 
 	return configFile;

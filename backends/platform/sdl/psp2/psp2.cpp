@@ -49,10 +49,6 @@ int access(const char *pathname, int mode) {
 	return 0;
 }
 
-OSystem_PSP2::OSystem_PSP2(Common::String baseConfigName)
-	: _baseConfigName(baseConfigName) {
-}
-
 void OSystem_PSP2::init() {
 
 #if __PSP2_DEBUG__
@@ -172,7 +168,7 @@ void OSystem_PSP2::logMessage(LogMessageType::Type type, const char *message) {
 }
 
 Common::String OSystem_PSP2::getDefaultConfigFileName() {
-	return "ux0:data/scummvm/" + _baseConfigName;
+	return "ux0:data/scummvm/scummvm.ini";
 }
 
 Common::String OSystem_PSP2::getDefaultLogFileName() {
