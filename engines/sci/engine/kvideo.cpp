@@ -255,8 +255,8 @@ reg_t kRobotGetIsFinished(EngineState *s, int argc, reg_t *argv) {
 	return make_reg(0, g_sci->_video32->getRobotPlayer().getStatus() == RobotDecoder::kRobotStatusEnd);
 }
 
-reg_t kRobotGetIsPlaying(EngineState *s, int argc, reg_t *argv) {
-	return make_reg(0, g_sci->_video32->getRobotPlayer().getStatus() == RobotDecoder::kRobotStatusPlaying);
+reg_t kRobotGetIsInitialized(EngineState *s, int argc, reg_t *argv) {
+	return make_reg(0, g_sci->_video32->getRobotPlayer().getStatus() != RobotDecoder::kRobotStatusUninitialized);
 }
 
 reg_t kRobotClose(EngineState *s, int argc, reg_t *argv) {

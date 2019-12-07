@@ -448,7 +448,7 @@ reg_t kRobotShowFrame(EngineState *s, int argc, reg_t *argv);
 reg_t kRobotGetFrameSize(EngineState *s, int argc, reg_t *argv);
 reg_t kRobotPlay(EngineState *s, int argc, reg_t *argv);
 reg_t kRobotGetIsFinished(EngineState *s, int argc, reg_t *argv);
-reg_t kRobotGetIsPlaying(EngineState *s, int argc, reg_t *argv);
+reg_t kRobotGetIsInitialized(EngineState *s, int argc, reg_t *argv);
 reg_t kRobotClose(EngineState *s, int argc, reg_t *argv);
 reg_t kRobotGetCue(EngineState *s, int argc, reg_t *argv);
 reg_t kRobotPause(EngineState *s, int argc, reg_t *argv);
