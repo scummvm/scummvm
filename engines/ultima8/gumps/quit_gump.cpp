@@ -40,13 +40,13 @@ namespace Ultima8 {
 DEFINE_RUNTIME_CLASSTYPE_CODE(QuitGump, ModalGump)
 
 QuitGump::QuitGump(): ModalGump(0, 0, 5, 5) {
-	Ultima8Engine *app = Ultima8Engine::get_instance();
-	app->pushMouseCursor();
-	app->setMouseCursor(Ultima8Engine::MOUSE_HAND);
+	Mouse *mouse = Mouse::get_instance();
+	mouse->pushMouseCursor();
+	mouse->setMouseCursor(Mouse::MOUSE_HAND);
 }
 
 QuitGump::~QuitGump() {
-	Ultima8Engine::get_instance()->popMouseCursor();
+	Mouse::get_instance()->popMouseCursor();
 }
 
 static const int gumpShape = 17;

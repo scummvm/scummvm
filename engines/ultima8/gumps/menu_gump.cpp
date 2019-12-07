@@ -57,12 +57,12 @@ MenuGump::MenuGump(bool nameEntryMode_)
 	: ModalGump(0, 0, 5, 5, 0, FLAG_DONT_SAVE) {
 	nameEntryMode = nameEntryMode_;
 
-	Ultima8Engine *app = Ultima8Engine::get_instance();
-	app->pushMouseCursor();
+	Mouse *mouse = Mouse::get_instance();
+	mouse->pushMouseCursor();
 	if (!nameEntryMode)
-		app->setMouseCursor(Ultima8Engine::MOUSE_HAND);
+		mouse->setMouseCursor(Mouse::MOUSE_HAND);
 	else
-		app->setMouseCursor(Ultima8Engine::MOUSE_NONE);
+		mouse->setMouseCursor(Mouse::MOUSE_NONE);
 
 	// Save old music state
 	MusicProcess *musicprocess = MusicProcess::get_instance();
@@ -78,8 +78,8 @@ void MenuGump::Close(bool no_del) {
 	MusicProcess *musicprocess = MusicProcess::get_instance();
 	if (musicprocess) musicprocess->playMusic(oldMusicTrack);
 
-	Ultima8Engine *guiapp = Ultima8Engine::get_instance();
-	guiapp->popMouseCursor();
+	Mouse *mouse = Mouse::get_instance();
+	mouse->popMouseCursor();
 
 	ModalGump::Close(no_del);
 }

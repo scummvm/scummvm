@@ -23,6 +23,12 @@
 #ifndef ULTIMA8_KERNEL_MOUSE_H
 #define ULTIMA8_KERNEL_MOUSE_H
 
+#include "common/rect.h"
+#include "common/stack.h"
+#include "ultima8/graphics/texture.h"
+
+namespace Ultima8 {
+
 const unsigned int DOUBLE_CLICK_TIMEOUT = 200;
 
 struct MButton {
@@ -45,5 +51,128 @@ enum MouseButton {
 	BUTTON_RIGHT,
 	MOUSE_LAST
 };
+
+class Gump;
+
+class Mouse {
+public:
+	enum MouseCursor {
+		MOUSE_NORMAL = 0,
+		MOUSE_NONE = 1,
+		MOUSE_TARGET = 2,
+		MOUSE_PENTAGRAM = 3,
+		MOUSE_HAND = 4,
+		MOUSE_QUILL = 5,
+		MOUSE_MAGGLASS = 6,
+		MOUSE_CROSS = 7,
+		MOUSE_POINTER = 8  //!< Default pointer
+	};
+
+	enum DraggingState {
+		DRAG_NOT = 0,
+		DRAG_OK = 1,
+		DRAG_INVALID = 2,
+		DRAG_TEMPFAIL = 3
+	};
+private:
+	static Mouse *instance;
+	Common::Stack<MouseCursor> _cursors;
+	Texture *_defaultMouse;      //!< Default Pentagram mouse for when there is no GameData
+
+	/**
+	 * Time mouse started flashing, or 0
+	 */
+	uint32 _flashingCursorTime;
+
+	// mouse input state
+	MButton _mouseButton[MOUSE_LAST];
+
+	uint16 _mouseOverGump;
+	Common::Point _mousePos;
+	Common::Point _draggingOffset;
+	DraggingState _dragging;
+
+	ObjId _dragging_objId;
+	uint16 _draggingItem_startGump;
+	uint16 _draggingItem_lastGump;
+private:
+	void startDragging(int mx, int my);
+	void moveDragging(int mx, int my);
+	void stopDragging(int mx, int my);
+public:
+	static Mouse *get_instance() { return instance; }
+public:
+	Mouse();
+
+	/**
+	 * Setup the mouse cursors
+	 */
+	void setup();
+
+	/**
+	 * Called when a mouse button is pressed down
+	 */
+	bool buttonDown(MouseButton button);
+
+	/**
+	 * Called when a mouse ubtton is released
+	 */
+	bool buttonUp(MouseButton button);
+
+	//! get mouse cursor length. 0 = short, 1 = medium, 2 = long
+	int getMouseLength(int mx, int my);
+
+	//! get mouse cursor direction. 0 = up, 1 = up-right, 2 = right, etc...
+	int getMouseDirection(int mx, int my);
+
+	//! get current mouse cursor location
+	void getMouseCoords(int &mx, int &my) const {
+		mx = _mousePos.x;
+		my = _mousePos.y;
+	}
+
+	//! set current mouse cursor location
+	void setMouseCoords(int mx, int my);
+
+	bool isMouseDown(MouseButton button);
+
+	//! remove all existing cursors
+	void popAllCursors();
+
+	//! set the current mouse cursor
+	void setMouseCursor(MouseCursor cursor);
+
+	//! flash the red cross mouse cursor for a brief while
+	void flashCrossCursor();
+
+	//! push the current mouse cursor to the stack
+	void pushMouseCursor();
+
+	//! pop the last mouse cursor from the stack
+	void popMouseCursor();
+
+	//! get the current mouse frame
+	int getMouseFrame();
+
+	DraggingState dragging() const { return _dragging; }
+
+	void setDraggingOffset(int x, int y) {
+		_draggingOffset.x = x;
+		_draggingOffset.y = y;
+	}
+	void getDraggingOffset(int &x, int &y) {
+		x = _draggingOffset.x;
+		y = _draggingOffset.y;
+	}
+
+	void handleDelayedEvents();
+
+	Gump *getMouseOverGump() const;
+	void resetMouseOverGump() { _mouseOverGump = 0; }
+
+	void paint();
+};
+
+} // End of namespace Ultima8
 
 #endif

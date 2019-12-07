@@ -311,7 +311,7 @@ void GameMapGump::OnMouseClick(int button, int mx, int my) {
 	case BUTTON_LEFT: {
 		if (avatar->isInCombat()) break;
 
-		if (Ultima8Engine::get_instance()->isMouseDown(BUTTON_RIGHT)) break;
+		if (Mouse::get_instance()->isMouseDown(BUTTON_RIGHT)) break;
 
 		if (Ultima8Engine::get_instance()->isAvatarInStasis()) {
 			pout << "Can't: avatarInStasis" << std::endl;
@@ -379,7 +379,7 @@ void GameMapGump::OnMouseDouble(int button, int mx, int my) {
 	case BUTTON_LEFT: {
 		if (avatar->isInCombat()) break;
 
-		if (Ultima8Engine::get_instance()->isMouseDown(BUTTON_RIGHT)) break;
+		if (Mouse::get_instance()->isMouseDown(BUTTON_RIGHT)) break;
 
 		if (Ultima8Engine::get_instance()->isAvatarInStasis()) {
 			pout << "Can't: avatarInStasis" << std::endl;
@@ -398,7 +398,7 @@ void GameMapGump::OnMouseDouble(int button, int mx, int my) {
 				// call the 'use' event
 				item->use();
 			} else {
-				Ultima8Engine::get_instance()->flashCrossCursor();
+				Mouse::get_instance()->flashCrossCursor();
 			}
 		}
 		break;
@@ -424,7 +424,7 @@ bool GameMapGump::StartDraggingItem(Item *item, int mx, int my) {
 	// get item offset
 	int itemx, itemy;
 	GetLocationOfItem(item->getObjId(), itemx, itemy);
-	Ultima8Engine::get_instance()->setDraggingOffset(mx - itemx, my - itemy);
+	Mouse::get_instance()->setDraggingOffset(mx - itemx, my - itemy);
 
 	return true;
 }
@@ -432,7 +432,7 @@ bool GameMapGump::StartDraggingItem(Item *item, int mx, int my) {
 bool GameMapGump::DraggingItem(Item *item, int mx, int my) {
 	// determine target location and set dragging_x/y/z
 	int dox, doy;
-	Ultima8Engine::get_instance()->getDraggingOffset(dox, doy);
+	Mouse::get_instance()->getDraggingOffset(dox, doy);
 
 	dragging_shape = item->getShape();
 	dragging_frame = item->getFrame();
@@ -479,7 +479,7 @@ bool GameMapGump::DraggingItem(Item *item, int mx, int my) {
 		return false;
 
 	if (throwing)
-		Ultima8Engine::get_instance()->setMouseCursor(Ultima8Engine::MOUSE_TARGET);
+		Mouse::get_instance()->setMouseCursor(Mouse::MOUSE_TARGET);
 
 	return true;
 }
@@ -500,7 +500,7 @@ void GameMapGump::StopDraggingItem(Item *item, bool moved) {
 
 void GameMapGump::DropItem(Item *item, int mx, int my) {
 	int dox, doy;
-	Ultima8Engine::get_instance()->getDraggingOffset(dox, doy);
+	Mouse::get_instance()->getDraggingOffset(dox, doy);
 
 	display_dragging = false;
 	Actor *avatar = getMainActor();

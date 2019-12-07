@@ -133,38 +133,30 @@ DEFINE_RUNTIME_CLASSTYPE_CODE(Ultima8Engine, CoreApp)
 Ultima8Engine::Ultima8Engine(OSystem *syst, const Ultima8GameDescription *gameDesc) : 
 		Engine(syst), CoreApp(0, nullptr), _gameDescription(gameDesc),
 		_randomSource("Ultima8"), save_count(0), game(nullptr), kernel(nullptr),
-		_dataArchive(nullptr), objectmanager(nullptr), hidmanager(nullptr),
+		_dataArchive(nullptr), objectmanager(nullptr), hidmanager(nullptr), _mouse(nullptr),
 		ucmachine(nullptr), screen(nullptr), fontmanager(nullptr), fullscreen(false),
 		palettemanager(nullptr), gamedata(nullptr), world(nullptr), desktopGump(nullptr),
 		consoleGump(nullptr), gameMapGump(nullptr), avatarMoverProcess(nullptr),
 		runSDLInit(false), frameSkip(false), frameLimit(true), interpolate(true),
-		animationRate(100), avatarInStasis(false), paintEditorItems(false),
-		painting(false), showTouching(false), mouseX(0), mouseY(0), defMouse(0),
-		flashingcursor(0), mouseOverGump(0), dragging(DRAG_NOT), dragging_offsetX(0),
-		dragging_offsetY(0), inversion(0), timeOffset(0), has_cheated(false),
+		animationRate(100), avatarInStasis(false), paintEditorItems(false), inversion(0),
+		painting(false), showTouching(false), timeOffset(0), has_cheated(false),
 		cheats_enabled(false), drawRenderStats(false), ttfoverrides(false), audiomixer(0) {
 	application = this;
 
-	for (int i = 0; i < MOUSE_LAST; ++i) {
-		mouseButton[i].downGump = 0;
-		mouseButton[i].lastDown = 0;
-		mouseButton[i].state = MBS_HANDLED;
-	}
-
 	for (uint16 key = 0; key < HID_LAST; ++key) {
-		lastDown[key] = 0;
-		down[key] = 0;
+		_lastDown[key] = false;
+		_down[key] = false;
 	}
 }
 
 Ultima8Engine::~Ultima8Engine() {
 	FORGET_OBJECT(kernel);
-	FORGET_OBJECT(defMouse);
 	FORGET_OBJECT(objectmanager);
 	FORGET_OBJECT(hidmanager);
 	FORGET_OBJECT(audiomixer);
 	FORGET_OBJECT(ucmachine);
 	FORGET_OBJECT(palettemanager);
+	FORGET_OBJECT(_mouse);
 	FORGET_OBJECT(gamedata);
 	FORGET_OBJECT(world);
 	FORGET_OBJECT(ucmachine);
@@ -473,6 +465,7 @@ void Ultima8Engine::startup() {
 		ProcessLoader<AmbushProcess>::load);
 
 	objectmanager = new ObjectManager();
+	_mouse = new Mouse();
 
 	GraphicSysInit();
 
@@ -554,8 +547,7 @@ void Ultima8Engine::startupGame() {
 	std::string bindingsfile;
 	if (GAME_IS_U8) {
 		bindingsfile = "@data/u8bindings.ini";
-	}
-	else if (GAME_IS_REMORSE) {
+	} else if (GAME_IS_REMORSE) {
 		bindingsfile = "@data/remorsebindings.ini";
 	}
 	if (!bindingsfile.empty()) {
@@ -571,11 +563,9 @@ void Ultima8Engine::startupGame() {
 
 	if (GAME_IS_U8) {
 		ucmachine = new UCMachine(U8Intrinsics, 256);
-	}
-	else if (GAME_IS_REMORSE) {
+	} else if (GAME_IS_REMORSE) {
 		ucmachine = new UCMachine(RemorseIntrinsics, 308);
-	}
-	else {
+	} else {
 		CANT_HAPPEN_MSG("Invalid game type.");
 	}
 
@@ -657,8 +647,8 @@ void Ultima8Engine::shutdownGame(bool reloading) {
 	textmodes.clear();
 
 	// reset mouse cursor
-	while (!cursors.empty()) cursors.pop();
-	pushMouseCursor();
+	_mouse->popAllCursors();
+	_mouse->pushMouseCursor();
 
 	if (audiomixer) {
 		audiomixer->closeMidiOutput();
@@ -682,7 +672,6 @@ void Ultima8Engine::shutdownGame(bool reloading) {
 	inverterGump = 0;
 
 	timeOffset = -(int32)Kernel::get_instance()->getFrameNum();
-	inversion = 0;
 	save_count = 0;
 	has_cheated = false;
 
@@ -802,8 +791,7 @@ void Ultima8Engine::runGame() {
 			inBetweenFrame = false;
 			next_ticks = animationRate + g_system->getMillis() * 3;
 			lerpFactor = 256;
-		}
-		else {
+		} else {
 			int32 ticks = g_system->getMillis() * 3;
 			int32 diff = next_ticks - ticks;
 
@@ -858,8 +846,7 @@ void Ultima8Engine::runGame() {
 					startupGame();
 				else
 					startupPentagramMenu();
-			}
-			else {
+			} else {
 				perr << "Game '" << change_gamename << "' not found" << std::endl;
 				change_gamename.clear();
 			}
@@ -912,21 +899,8 @@ void Ultima8Engine::paint() {
 	desktopGump->Paint(screen, lerpFactor, false);
 	tpaint += g_system->getMillis();
 
-	// Mouse
-	if (gamedata) {
-		Shape *mouse = gamedata->getMouse();
-		if (mouse) {
-			int frame = getMouseFrame();
-			if (frame >= 0) {
-				screen->Paint(mouse, frame, mouseX, mouseY, true);
-			}
-			else if (frame == -2)
-				screen->Blit(defMouse, 0, 0, defMouse->width, defMouse->height, mouseX, mouseY);
-		}
-	} else {
-		if (getMouseFrame() != -1)
-			screen->Blit(defMouse, 0, 0, defMouse->width, defMouse->height, mouseX, mouseY);
-	}
+	// Draw the mouse
+	_mouse->paint();
 
 	if (drawRenderStats) {
 		static long diff = 0;
@@ -963,211 +937,6 @@ void Ultima8Engine::paint() {
 	screen->EndPainting();
 
 	painting = false;
-}
-
-bool Ultima8Engine::isMouseDown(MouseButton button) {
-	return (mouseButton[button].state & MBS_DOWN);
-}
-
-int Ultima8Engine::getMouseLength(int mx, int my) {
-	Pentagram::Rect dims;
-	screen->GetSurfaceDims(dims);
-	// For now, reference point is (near) the center of the screen
-	int dx = mx - dims.w / 2;
-	int dy = (dims.h / 2 + 14) - my; //! constant
-
-	int shortsq = (dims.w / 8);
-	if (dims.h / 6 < shortsq)
-		shortsq = (dims.h / 6);
-	shortsq = shortsq * shortsq;
-
-	int mediumsq = ((dims.w * 4) / 10);
-	if (((dims.h * 4) / 10) < mediumsq)
-		mediumsq = ((dims.h * 4) / 10);
-	mediumsq = mediumsq * mediumsq;
-
-	int dsq = dx * dx + dy * dy;
-
-	// determine length of arrow
-	if (dsq <= shortsq) {
-		return 0;
-	}
-	else if (dsq <= mediumsq) {
-		return 1;
-	}
-	else {
-		return 2;
-	}
-}
-
-int Ultima8Engine::getMouseDirection(int mx, int my) {
-	Pentagram::Rect dims;
-	screen->GetSurfaceDims(dims);
-	// For now, reference point is (near) the center of the screen
-	int dx = mx - dims.w / 2;
-	int dy = (dims.h / 2 + 14) - my; //! constant
-
-	return ((Get_direction(dy * 2, dx)) + 1) % 8;
-}
-
-int Ultima8Engine::getMouseFrame() {
-	// Ultima 8 mouse cursors:
-
-	// 0-7 = short (0 = up, 1 = up-right, 2 = right, ...)
-	// 8-15 = medium
-	// 16-23 = long
-	// 24 = blue dot
-	// 25-32 = combat
-	// 33 = red dot
-	// 34 = target
-	// 35 = pentagram
-	// 36 = skeletal hand
-	// 38 = quill
-	// 39 = magnifying glass
-	// 40 = red cross
-
-	MouseCursor cursor = cursors.top();
-
-	if (flashingcursor > 0) {
-		if (g_system->getMillis() < flashingcursor + 250)
-			cursor = MOUSE_CROSS;
-		else
-			flashingcursor = 0;
-	}
-
-
-	switch (cursor) {
-	case MOUSE_NORMAL: {
-		bool combat = false;
-		MainActor *av = getMainActor();
-		if (av) {
-			combat = av->isInCombat();
-		}
-
-		// Calculate frame based on direction
-		int frame = getMouseDirection(mouseX, mouseY);
-
-		/** length --- frame offset
-		 *    0              0
-		 *    1              8
-		 *    2             16
-		 *  combat          25
-		 **/
-		int offset = getMouseLength(mouseX, mouseY) * 8;
-		if (combat && offset != 16) //combat mouse is off if running
-			offset = 25;
-		return frame + offset;
-	}
-					 //!! constants...
-	case MOUSE_NONE:
-		return -1;
-	case MOUSE_POINTER:
-		return -2;
-	case MOUSE_TARGET:
-		return 34;
-	case MOUSE_PENTAGRAM:
-		return 35;
-	case MOUSE_HAND:
-		return 36;
-	case MOUSE_QUILL:
-		return 38;
-	case MOUSE_MAGGLASS:
-		return 39;
-	case MOUSE_CROSS:
-		return 40;
-	default:
-		return -1;
-	}
-
-}
-
-void Ultima8Engine::setMouseCoords(int mx, int my) {
-	Pentagram::Rect dims;
-	screen->GetSurfaceDims(dims);
-
-	if (mx < dims.x)
-		mx = dims.x;
-	else if (mx > dims.w)
-		mx = dims.w;
-
-	if (my < dims.y)
-		my = dims.y;
-	else if (my > dims.h)
-		my = dims.h;
-
-	mouseX = mx;
-	mouseY = my;
-	Gump *gump = desktopGump->OnMouseMotion(mx, my);
-	if (gump && mouseOverGump != gump->getObjId()) {
-		Gump *oldGump = getGump(mouseOverGump);
-		std::list<Gump *> oldgumplist;
-		std::list<Gump *> newgumplist;
-
-		// create lists of parents of old and new 'mouseover' gumps
-		if (oldGump) {
-			while (oldGump) {
-				oldgumplist.push_front(oldGump);
-				oldGump = oldGump->GetParent();
-			}
-		}
-		Gump *newGump = gump;
-		while (newGump) {
-			newgumplist.push_front(newGump);
-			newGump = newGump->GetParent();
-		}
-
-		std::list<Gump *>::iterator olditer = oldgumplist.begin();
-		std::list<Gump *>::iterator newiter = newgumplist.begin();
-
-		// strip common prefix from lists
-		while (olditer != oldgumplist.end() &&
-			newiter != newgumplist.end() &&
-			*olditer == *newiter) {
-			++olditer;
-			++newiter;
-		}
-
-		// send events to remaining gumps
-		for (; olditer != oldgumplist.end(); ++olditer)
-			(*olditer)->OnMouseLeft();
-
-		mouseOverGump = gump->getObjId();
-
-		for (; newiter != newgumplist.end(); ++newiter)
-			(*newiter)->OnMouseOver();
-	}
-
-	if (dragging == DRAG_NOT) {
-		if (mouseButton[BUTTON_LEFT].state & MBS_DOWN) {
-			int startx = mouseButton[BUTTON_LEFT].downX;
-			int starty = mouseButton[BUTTON_LEFT].downY;
-			if (abs(startx - mx) > 2 ||
-				abs(starty - my) > 2) {
-				startDragging(startx, starty);
-			}
-		}
-	}
-
-	if (dragging == DRAG_OK || dragging == DRAG_TEMPFAIL) {
-		moveDragging(mx, my);
-	}
-}
-
-void Ultima8Engine::setMouseCursor(MouseCursor cursor) {
-	cursors.pop();
-	cursors.push(cursor);
-}
-
-void Ultima8Engine::flashCrossCursor() {
-	flashingcursor = g_system->getMillis();
-}
-
-void Ultima8Engine::pushMouseCursor() {
-	cursors.push(MOUSE_NORMAL);
-}
-
-void Ultima8Engine::popMouseCursor() {
-	cursors.pop();
 }
 
 void Ultima8Engine::GraphicSysInit() {
@@ -1232,14 +1001,7 @@ void Ultima8Engine::GraphicSysInit() {
 
 	// setup normal mouse cursor
 	con.Print(MM_INFO, "Loading Default Mouse Cursor...\n");
-	IDataSource *dm = filesystem->ReadFile("@data/mouse.tga");
-	if (dm) defMouse = Texture::Create(dm, "@data/mouse.tga");
-	else defMouse = 0;
-	if (!defMouse) {
-		error("Unable to load '@data/mouse.tga'. Exiting");
-	}
-	delete dm;
-	pushMouseCursor();
+	_mouse->setup();
 
 	std::string alt_confont;
 	bool confont_loaded = false;
@@ -1331,17 +1093,16 @@ bool Ultima8Engine::LoadConsoleFont(std::string confontini) {
 void Ultima8Engine::enterTextMode(Gump *gump) {
 	uint16 key;
 	for (key = 0; key < HID_LAST; ++key) {
-		if (down[key]) {
-			down[key] = 0;
-			lastDown[key] = 0;
+		if (_down[key]) {
+			_down[key] = false;
+			_lastDown[key] = false;
 			hidmanager->handleEvent((HID_Key)key, HID_EVENT_RELEASE);
 		}
 	}
 
 	if (!textmodes.empty()) {
 		textmodes.remove(gump->getObjId());
-	}
-	else {
+	} else {
 #ifdef TODO
 		SDL_EnableUNICODE(1);
 		SDL_EnableKeyRepeat(SDL_DEFAULT_REPEAT_DELAY, SDL_DEFAULT_REPEAT_INTERVAL);
@@ -1375,7 +1136,7 @@ void Ultima8Engine::handleEvent(const Common::Event &event) {
 	case Common::EVENT_KEYUP:
 		key = HID_translateSDLKey(event.kbd.keycode);
 		evn = HID_EVENT_RELEASE;
-		if (dragging == DRAG_NOT) {
+		if (_mouse->dragging() == Mouse::DRAG_NOT) {
 			switch (event.kbd.keycode) {
 			case Common::KEYCODE_q: // Quick quit
 #ifndef MACOSX
@@ -1427,7 +1188,7 @@ void Ultima8Engine::handleEvent(const Common::Event &event) {
 		break;
 
 	case Common::EVENT_MOUSEMOVE:
-		setMouseCoords(event.mouse.x, event.mouse.y);
+		_mouse->setMouseCoords(event.mouse.x, event.mouse.y);
 		break;
 
 	case Common::EVENT_QUIT:
@@ -1438,7 +1199,7 @@ void Ultima8Engine::handleEvent(const Common::Event &event) {
 		break;
 	}
 
-	if (dragging == DRAG_NOT && evn == HID_EVENT_DEPRESS) {
+	if (_mouse->dragging() == Mouse::DRAG_NOT && evn == HID_EVENT_DEPRESS) {
 		if (hidmanager->handleEvent(key, HID_EVENT_PREEMPT))
 			return;
 	}
@@ -1502,91 +1263,35 @@ void Ultima8Engine::handleEvent(const Common::Event &event) {
 	case Common::EVENT_LBUTTONDOWN:
 	case Common::EVENT_MBUTTONDOWN:
 	case Common::EVENT_RBUTTONDOWN: {
-		int button = 1;
+		MouseButton button = BUTTON_LEFT;
 		if (event.type == Common::EVENT_RBUTTONDOWN)
-			button = 2;
+			button = BUTTON_RIGHT;
 		else if (event.type == Common::EVENT_MBUTTONDOWN)
-			button = 3;
+			button = BUTTON_MIDDLE;
 
-		int mx = event.mouse.x;
-		int my = event.mouse.y;
-
-		if (button >= MOUSE_LAST)
-			break;
-
-		Gump *mousedowngump = desktopGump->OnMouseDown(button, mx, my);
-		if (mousedowngump) {
-			mouseButton[button].downGump = mousedowngump->getObjId();
-			handled = true;
-		}
-		else
-			mouseButton[button].downGump = 0;
-
-		mouseButton[button].curDown = now;
-		mouseButton[button].downX = mx;
-		mouseButton[button].downY = my;
-		mouseButton[button].state |= MBS_DOWN;
-		mouseButton[button].state &= ~MBS_HANDLED;
-
-		if (now - mouseButton[button].lastDown < DOUBLE_CLICK_TIMEOUT) {
-			if (dragging == DRAG_NOT) {
-				Gump *gump = getGump(mouseButton[button].downGump);
-				if (gump) {
-					int mx2 = mx, my2 = my;
-					Gump *parent = gump->GetParent();
-					if (parent) parent->ScreenSpaceToGump(mx2, my2);
-					gump->OnMouseDouble(button, mx2, my2);
-				}
-				mouseButton[button].state |= MBS_HANDLED;
-				mouseButton[button].lastDown = 0;
-			}
-		}
-		mouseButton[button].lastDown = now;
+		_mouse->setMouseCoords(event.mouse.x, event.mouse.y);
+		if (_mouse->buttonDown(button))
+			handled = true;		
 		break;
 	}
 
 	case Common::EVENT_LBUTTONUP:
 	case Common::EVENT_MBUTTONUP:
 	case Common::EVENT_RBUTTONUP: {
-		int button = 1;
+		MouseButton button = BUTTON_LEFT;
 		if (event.type == Common::EVENT_RBUTTONDOWN)
-			button = 2;
+			button = BUTTON_RIGHT;
 		else if (event.type == Common::EVENT_MBUTTONDOWN)
-			button = 3;
-		int mx = event.mouse.x;
-		int my = event.mouse.y;
+			button = BUTTON_MIDDLE;
 
-		if (button >= MOUSE_LAST)
-			break;
-
-		mouseButton[button].state &= ~MBS_DOWN;
-
-		// Need to store the last down position of the mouse
-		// when the button is released.
-		mouseButton[button].downX = mx;
-		mouseButton[button].downY = my;
-
-		// Always send mouse up to the gump
-		Gump *gump = getGump(mouseButton[button].downGump);
-		if (gump) {
-			int mx2 = mx, my2 = my;
-			Gump *parent = gump->GetParent();
-			if (parent)
-				parent->ScreenSpaceToGump(mx2, my2);
-			gump->OnMouseUp(button, mx2, my2);
+		_mouse->setMouseCoords(event.mouse.x, event.mouse.y);
+		if (_mouse->buttonUp(button))
 			handled = true;
-		}
-
-		if (button == BUTTON_LEFT && dragging != DRAG_NOT) {
-			stopDragging(mx, my);
-			handled = true;
-			break;
-		}
+		break;
 	}
-								break;
 
 	case Common::EVENT_KEYDOWN: {
-		if (dragging != DRAG_NOT) break;
+		if (_mouse->dragging() != Mouse::DRAG_NOT) break;
 
 		/*
 		switch (event.kbd.keycode) {
@@ -1615,26 +1320,24 @@ void Ultima8Engine::handleEvent(const Common::Event &event) {
 		break;
 	}
 
-	if (dragging == DRAG_NOT && !handled) {
+	if (_mouse->dragging() == Mouse::DRAG_NOT && !handled) {
 		if (hidmanager->handleEvent(key, evn))
 			handled = true;
 		if (evn == HID_EVENT_DEPRESS) {
-			down[key] = 1;
-			if (now - lastDown[key] < DOUBLE_CLICK_TIMEOUT &&
-				lastDown[key] != 0) {
+			_down[key] = true;
+			if (now - _lastDown[key] < DOUBLE_CLICK_TIMEOUT &&
+				_lastDown[key] != 0) {
 				if (hidmanager->handleEvent(key, HID_EVENT_DOUBLE))
 					handled = true;
-				lastDown[key] = 0;
+				_lastDown[key] = 0;
+			} else {
+				_lastDown[key] = now;
 			}
-			else {
-				lastDown[key] = now;
-			}
-		}
-		else if (evn == HID_EVENT_RELEASE) {
-			down[key] = 0;
-			if (now - lastDown[key] > DOUBLE_CLICK_TIMEOUT &&
-				lastDown[key] != 0) {
-				lastDown[key] = 0;
+		} else if (evn == HID_EVENT_RELEASE) {
+			_down[key] = false;
+			if (now - _lastDown[key] > DOUBLE_CLICK_TIMEOUT &&
+				_lastDown[key] != 0) {
+				_lastDown[key] = 0;
 			}
 		}
 	}
@@ -1642,193 +1345,17 @@ void Ultima8Engine::handleEvent(const Common::Event &event) {
 
 void Ultima8Engine::handleDelayedEvents() {
 	uint32 now = g_system->getMillis();
-	uint16 key;
-	int button;
-	for (button = 0; button < MOUSE_LAST; ++button) {
-		if (!(mouseButton[button].state & (MBS_HANDLED | MBS_DOWN)) &&
-			now - mouseButton[button].lastDown > DOUBLE_CLICK_TIMEOUT) {
-			Gump *gump = getGump(mouseButton[button].downGump);
-			if (gump) {
-				int mx = mouseButton[button].downX;
-				int my = mouseButton[button].downY;
-				Gump *parent = gump->GetParent();
-				if (parent) parent->ScreenSpaceToGump(mx, my);
-				gump->OnMouseClick(button, mx, my);
-			}
 
-			mouseButton[button].downGump = 0;
-			mouseButton[button].state |= MBS_HANDLED;
-		}
-	}
+	_mouse->handleDelayedEvents();
 
-	for (key = 0; key < HID_LAST; ++key) {
-		if (now - lastDown[key] > DOUBLE_CLICK_TIMEOUT &&
-			lastDown[key] != 0 && down[key] == 0) {
-			lastDown[key] = 0;
+	for (uint16 key = 0; key < HID_LAST; ++key) {
+		if (now - _lastDown[key] > DOUBLE_CLICK_TIMEOUT &&
+			_lastDown[key] != 0 && !_down[key]) {
+			_lastDown[key] = 0;
 			hidmanager->handleEvent((HID_Key)key, HID_EVENT_CLICK);
 		}
 	}
 
-}
-
-void Ultima8Engine::startDragging(int startx, int starty) {
-	setDraggingOffset(0, 0); // initialize
-
-	dragging_objid = desktopGump->TraceObjId(startx, starty);
-
-	Gump *gump = getGump(dragging_objid);
-	Item *item = getItem(dragging_objid);
-
-	// for a Gump, notify the Gump's parent that we started
-	// dragging:
-	if (gump) {
-		Gump *parent = gump->GetParent();
-		assert(parent); // can't drag root gump
-		int px = startx, py = starty;
-		parent->ScreenSpaceToGump(px, py);
-		if (gump->IsDraggable() && parent->StartDraggingChild(gump, px, py))
-			dragging = DRAG_OK;
-		else {
-			dragging_objid = 0;
-			return;
-		}
-	}
-	else
-		// for an Item, notify the gump the item is in that we started dragging
-		if (item) {
-			// find gump item was in
-			gump = desktopGump->FindGump(startx, starty);
-			int gx = startx, gy = starty;
-			gump->ScreenSpaceToGump(gx, gy);
-			bool ok = !isAvatarInStasis() &&
-				gump->StartDraggingItem(item, gx, gy);
-			if (!ok) {
-				dragging = DRAG_INVALID;
-			}
-			else {
-				dragging = DRAG_OK;
-
-				// this is the gump that'll get StopDraggingItem
-				dragging_item_startgump = gump->getObjId();
-
-				// this is the gump the item is currently over
-				dragging_item_lastgump = gump->getObjId();
-			}
-		}
-		else {
-			dragging = DRAG_INVALID;
-		}
-
-#if 0
-	Object *obj = ObjectManager::get_instance()->getObject(dragging_objid);
-	perr << "Dragging object " << dragging_objid << " (class=" << (obj ? obj->GetClassType().class_name : "NULL") << ")" << std::endl;
-#endif
-
-	pushMouseCursor();
-	setMouseCursor(MOUSE_NORMAL);
-
-	// pause the kernel
-	kernel->pause();
-
-	mouseButton[BUTTON_LEFT].state |= MBS_HANDLED;
-
-	if (dragging == DRAG_INVALID) {
-		setMouseCursor(MOUSE_CROSS);
-	}
-}
-
-void Ultima8Engine::moveDragging(int mx, int my) {
-	Gump *gump = getGump(dragging_objid);
-	Item *item = getItem(dragging_objid);
-
-	setMouseCursor(MOUSE_NORMAL);
-
-	// for a gump, notify Gump's parent that it was dragged
-	if (gump) {
-		Gump *parent = gump->GetParent();
-		assert(parent); // can't drag root gump
-		int px = mx, py = my;
-		parent->ScreenSpaceToGump(px, py);
-		parent->DraggingChild(gump, px, py);
-	}
-	else
-		// for an item, notify the gump it's on
-		if (item) {
-			gump = desktopGump->FindGump(mx, my);
-			assert(gump);
-
-			if (gump->getObjId() != dragging_item_lastgump) {
-				// item switched gump, so notify previous gump item left
-				Gump *last = getGump(dragging_item_lastgump);
-				if (last) last->DraggingItemLeftGump(item);
-			}
-			dragging_item_lastgump = gump->getObjId();
-			int gx = mx, gy = my;
-			gump->ScreenSpaceToGump(gx, gy);
-			bool ok = gump->DraggingItem(item, gx, gy);
-			if (!ok) {
-				dragging = DRAG_TEMPFAIL;
-			}
-			else {
-				dragging = DRAG_OK;
-			}
-		}
-		else {
-			CANT_HAPPEN();
-		}
-
-	if (dragging == DRAG_TEMPFAIL) {
-		setMouseCursor(MOUSE_CROSS);
-	}
-}
-
-
-void Ultima8Engine::stopDragging(int mx, int my) {
-	//	perr << "Dropping object " << dragging_objid << std::endl;
-
-	Gump *gump = getGump(dragging_objid);
-	Item *item = getItem(dragging_objid);
-	// for a Gump: notify parent
-	if (gump) {
-		Gump *parent = gump->GetParent();
-		assert(parent); // can't drag root gump
-		parent->StopDraggingChild(gump);
-	}
-	else
-		// for an item: notify gumps
-		if (item) {
-			if (dragging != DRAG_INVALID) {
-				Gump *startgump = getGump(dragging_item_startgump);
-				assert(startgump); // can't have disappeared
-				bool moved = (dragging == DRAG_OK);
-
-				if (dragging != DRAG_OK) {
-					Gump *last = getGump(dragging_item_lastgump);
-					if (last && last != startgump)
-						last->DraggingItemLeftGump(item);
-				}
-
-				startgump->StopDraggingItem(item, moved);
-			}
-
-			if (dragging == DRAG_OK) {
-				item->movedByPlayer();
-
-				gump = desktopGump->FindGump(mx, my);
-				int gx = mx, gy = my;
-				gump->ScreenSpaceToGump(gx, gy);
-				gump->DropItem(item, gx, gy);
-			}
-		}
-		else {
-			assert(dragging == DRAG_INVALID);
-		}
-
-	dragging = DRAG_NOT;
-
-	kernel->unpause();
-
-	popMouseCursor();
 }
 
 void Ultima8Engine::writeSaveInfo(ODataSource *ods) {
@@ -1873,8 +1400,9 @@ bool Ultima8Engine::saveGame(std::string filename, std::string desc,
 	pout << "Description: " << desc << std::endl;
 
 	// Hack - don't save mouse over status for gumps
-	Gump *gump = getGump(mouseOverGump);
-	if (gump) gump->OnMouseLeft();
+	Gump *gump = _mouse->getMouseOverGump();
+	if (gump)
+		gump->OnMouseLeft();
 
 	ODataSource *ods = filesystem->WriteFile(filename);
 	if (!ods) return false;
@@ -1971,8 +1499,8 @@ void Ultima8Engine::resetEngine() {
 	textmodes.clear();
 
 	// reset mouse cursor
-	while (!cursors.empty()) cursors.pop();
-	pushMouseCursor();
+	_mouse->popAllCursors();
+	_mouse->pushMouseCursor();
 
 	// FIXME: This breaks loading processes if this process gets an ID
 	//        also present in a savegame.
@@ -2252,18 +1780,14 @@ void Ultima8Engine::addGump(Gump *gump) {
 		) {
 		//		pout << "adding to desktopgump: "; gump->dumpInfo();
 		desktopGump->AddChild(gump);
-	}
-	else if (gump->IsOfType<GameMapGump>()) {
+	} else if (gump->IsOfType<GameMapGump>()) {
 		//		pout << "adding to invertergump: "; gump->dumpInfo();
 		inverterGump->AddChild(gump);
-	}
-	else if (gump->IsOfType<InverterGump>()) {
+	} else if (gump->IsOfType<InverterGump>()) {
 		//		pout << "adding to scalergump: "; gump->dumpInfo();
 		scalerGump->AddChild(gump);
-	}
-	else if (gump->IsOfType<DesktopGump>()) {
-	}
-	else {
+	} else if (gump->IsOfType<DesktopGump>()) {
+	} else {
 		//		pout << "adding to scalergump: "; gump->dumpInfo();
 		scalerGump->AddChild(gump);
 	}
@@ -2299,7 +1823,7 @@ bool Ultima8Engine::load(IDataSource *ids, uint32 version) {
 	avatarInStasis = (ids->read1() != 0);
 
 	// no gump should be moused over after load
-	mouseOverGump = 0;
+	_mouse->resetMouseOverGump();
 
 	int32 absoluteTime = static_cast<int32>(ids->read4());
 	timeOffset = absoluteTime - Kernel::get_instance()->getFrameNum();
@@ -2362,8 +1886,7 @@ void Ultima8Engine::ConCmd_quit(const Console::ArgvType &argv) {
 void Ultima8Engine::ConCmd_drawRenderStats(const Console::ArgvType &argv) {
 	if (argv.size() == 1) {
 		pout << "Ultima8Engine::drawRenderStats = " << Ultima8Engine::get_instance()->drawRenderStats << std::endl;
-	}
-	else {
+	} else {
 		Ultima8Engine::get_instance()->drawRenderStats = std::strtol(argv[1].c_str(), 0, 0) != 0;
 	}
 }
@@ -2378,8 +1901,7 @@ void Ultima8Engine::ConCmd_engineStats(const Console::ArgvType &argv) {
 void Ultima8Engine::ConCmd_changeGame(const Console::ArgvType &argv) {
 	if (argv.size() == 1) {
 		pout << "Current game is: " << Ultima8Engine::get_instance()->gameinfo->name << std::endl;
-	}
-	else {
+	} else {
 		Ultima8Engine::get_instance()->changeGame(argv[1]);
 	}
 }
@@ -2396,8 +1918,7 @@ void Ultima8Engine::ConCmd_listGames(const Console::ArgvType &argv) {
 		if (info) {
 			std::string details = info->getPrintDetails();
 			con.Print(MM_INFO, details.c_str());
-		}
-		else {
+		} else {
 			con.Print(MM_INFO, "(unknown)");
 		}
 		con.Print(MM_INFO, "\n");
@@ -2473,16 +1994,13 @@ void Ultima8Engine::ConCmd_memberVar(const Console::ArgvType &argv) {
 	if (argv[1] == "frameLimit") {
 		b = &g->frameLimit;
 		ini = "frameLimit";
-	}
-	else if (argv[1] == "frameSkip") {
+	} else if (argv[1] == "frameSkip") {
 		b = &g->frameSkip;
 		ini = "frameSkip";
-	}
-	else if (argv[1] == "interpolate") {
+	} else if (argv[1] == "interpolate") {
 		b = &g->interpolate;
 		ini = "interpolate";
-	}
-	else {
+	} else {
 		pout << "Unknown member: " << argv[1] << std::endl;
 		return;
 	}

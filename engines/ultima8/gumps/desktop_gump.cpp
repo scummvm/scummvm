@@ -84,14 +84,14 @@ void DesktopGump::PaintChildren(RenderSurface *surf, int32 lerp_factor, bool sca
 
 bool DesktopGump::StartDraggingChild(Gump *gump, int mx, int my) {
 	gump->ParentToGump(mx, my);
-	Ultima8Engine::get_instance()->setDraggingOffset(mx, my);
+	Mouse::get_instance()->setDraggingOffset(mx, my);
 	MoveChildToFront(gump);
 	return true;
 }
 
 void DesktopGump::DraggingChild(Gump *gump, int mx, int my) {
 	int dx, dy;
-	Ultima8Engine::get_instance()->getDraggingOffset(dx, dy);
+	Mouse::get_instance()->getDraggingOffset(dx, dy);
 	gump->Move(mx - dx, my - dy);
 }
 

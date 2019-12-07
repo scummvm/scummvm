@@ -143,6 +143,7 @@ void AvatarMoverProcess::handleHangingMode() {
 
 void AvatarMoverProcess::handleCombatMode() {
 	Ultima8Engine *guiapp = Ultima8Engine::get_instance();
+	Mouse *mouse = Mouse::get_instance();
 	MainActor *avatar = getMainActor();
 	Animation::Sequence lastanim = avatar->getLastAnim();
 	Animation::Sequence nextanim = Animation::walk;
@@ -151,11 +152,11 @@ void AvatarMoverProcess::handleCombatMode() {
 	bool stasis = guiapp->isAvatarInStasis();
 
 	int mx, my;
-	guiapp->getMouseCoords(mx, my);
-	unsigned int mouselength = guiapp->getMouseLength(mx, my);
+	mouse->getMouseCoords(mx, my);
+	unsigned int mouselength = mouse->getMouseLength(mx, my);
 
 	// adjust to world direction
-	int32 mousedir = (guiapp->getMouseDirection(mx, my) + 7) % 8;
+	int32 mousedir = (mouse->getMouseDirection(mx, my) + 7) % 8;
 
 	// never idle when in combat
 	idleTime = 0;
@@ -316,6 +317,7 @@ void AvatarMoverProcess::handleCombatMode() {
 
 void AvatarMoverProcess::handleNormalMode() {
 	Ultima8Engine *guiapp = Ultima8Engine::get_instance();
+	Mouse *mouse = Mouse::get_instance();
 	MainActor *avatar = getMainActor();
 	Animation::Sequence lastanim = avatar->getLastAnim();
 	Animation::Sequence nextanim = Animation::walk;
@@ -325,11 +327,11 @@ void AvatarMoverProcess::handleNormalMode() {
 	bool combatRun = (avatar->getActorFlags() & Actor::ACT_COMBATRUN) != 0;
 
 	int mx, my;
-	guiapp->getMouseCoords(mx, my);
-	unsigned int mouselength = guiapp->getMouseLength(mx, my);
+	mouse->getMouseCoords(mx, my);
+	unsigned int mouselength = mouse->getMouseLength(mx, my);
 
 	// adjust to world direction
-	int32 mousedir = (guiapp->getMouseDirection(mx, my) + 7) % 8;
+	int32 mousedir = (mouse->getMouseDirection(mx, my) + 7) % 8;
 
 	// Store current idle time. (Also see end of function.)
 	uint32 currentIdleTime = idleTime;
@@ -638,9 +640,10 @@ void AvatarMoverProcess::step(Animation::Sequence action, int direction,
 
 void AvatarMoverProcess::jump(Animation::Sequence action, int direction) {
 	Ultima8Engine *guiapp = Ultima8Engine::get_instance();
+	Mouse *mouse = Mouse::get_instance();
 	MainActor *avatar = getMainActor();
 	int mx, my;
-	guiapp->getMouseCoords(mx, my);
+	mouse->getMouseCoords(mx, my);
 
 	// running jump
 	if (action == Animation::runningJump) {

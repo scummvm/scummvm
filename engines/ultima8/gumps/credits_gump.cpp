@@ -82,12 +82,12 @@ void CreditsGump::InitGump(Gump *newparent, bool take_focus) {
 	currentsurface = 0;
 	currenty = 0;
 
-	Ultima8Engine::get_instance()->pushMouseCursor();
-	Ultima8Engine::get_instance()->setMouseCursor(Ultima8Engine::MOUSE_NONE);
+	Mouse::get_instance()->pushMouseCursor();
+	Mouse::get_instance()->setMouseCursor(Mouse::MOUSE_NONE);
 }
 
 void CreditsGump::Close(bool no_del) {
-	Ultima8Engine::get_instance()->popMouseCursor();
+	Mouse::get_instance()->popMouseCursor();
 
 	ModalGump::Close(no_del);
 
