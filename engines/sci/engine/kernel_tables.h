@@ -487,7 +487,7 @@ static const SciKernelMapSubEntry kRobot_subops[] = {
 	{ SIG_SINCE_SCI21,     2, MAP_CALL(RobotGetFrameSize),         "r",                    NULL },
 	{ SIG_SINCE_SCI21,     4, MAP_CALL(RobotPlay),                 "",                     NULL },
 	{ SIG_SINCE_SCI21,     5, MAP_CALL(RobotGetIsFinished),        "",                     NULL },
-	{ SIG_SINCE_SCI21,     6, MAP_CALL(RobotGetIsPlaying),         "",                     NULL },
+	{ SIG_SINCE_SCI21,     6, MAP_CALL(RobotGetIsInitialized),     "",                     NULL },
 	{ SIG_SINCE_SCI21,     7, MAP_CALL(RobotClose),                "",                     NULL },
 	{ SIG_SINCE_SCI21,     8, MAP_CALL(RobotGetCue),               "o",                    NULL },
 	{ SIG_SINCE_SCI21,    10, MAP_CALL(RobotPause),                "",                     NULL },
