@@ -52,9 +52,13 @@ Screen::Screen(KyraEngine_v1 *vm, OSystem *system, const ScreenDim *dimTable, co
 
 	memset(_pagePtrs, 0, sizeof(_pagePtrs));
 	memset(_pageMapping, 0, sizeof(_pageMapping));
+	memset(_sjisOverlayPtrs, 0, sizeof(_sjisOverlayPtrs));
 
 	_renderMode = Common::kRenderDefault;
 	_sjisMixedFontMode = false;
+
+	_screenPalette = _internFadePalette = 0;
+	_animBlockPtr = _decodeShapeBuffer = 0;
 
 	_useHiColorScreen = _vm->gameFlags().useHiColorMode;
 	_use256ColorMode = true;
@@ -69,6 +73,7 @@ Screen::Screen(KyraEngine_v1 *vm, OSystem *system, const ScreenDim *dimTable, co
 	_currentFontType = FTYPE_ASCII;
 	_paletteChanged = true;
 	_textMarginRight = SCREEN_W;
+	_customDimTable = 0;
 	_curDim = 0;
 }
 
@@ -91,15 +96,15 @@ Screen::~Screen() {
 	for (uint i = 0; i < _palettes.size(); ++i)
 		delete _palettes[i];
 
-	for (int i = 0; i < _dimTableCount; ++i)
-		delete _customDimTable[i];
-	delete[] _customDimTable;
+	if (_customDimTable) {
+		for (int i = 0; i < _dimTableCount; ++i)
+			delete _customDimTable[i];
+		delete[] _customDimTable;
+	}
 }
 
 bool Screen::init() {
 	_debugEnabled = false;
-
-	memset(_sjisOverlayPtrs, 0, sizeof(_sjisOverlayPtrs));
 	_useOverlays = false;
 	_useSJIS = false;
 	_use16ColorMode = _vm->gameFlags().use16ColorMode;
