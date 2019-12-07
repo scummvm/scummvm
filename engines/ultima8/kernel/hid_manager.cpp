@@ -33,7 +33,7 @@ namespace Ultima8 {
 HIDManager *HIDManager::hidmanager = 0;
 
 HIDManager::HIDManager() {
-	con.Print(MM_INFO, "Creating HIDManager...\n");
+	con->Print(MM_INFO, "Creating HIDManager...\n");
 
 	assert(hidmanager == 0);
 	hidmanager = this;
@@ -45,7 +45,7 @@ HIDManager::HIDManager() {
 
 HIDManager::~HIDManager() {
 	std::vector<Console::ArgvType *>::iterator it;
-	con.Print(MM_INFO, "Destroying HIDManager...\n");
+	con->Print(MM_INFO, "Destroying HIDManager...\n");
 
 	for (it = commands.begin(); it != commands.end(); ++it) {
 		if (*it) {
@@ -64,7 +64,7 @@ bool HIDManager::handleEvent(const HID_Key key, const HID_Event evn) {
 	if (key < HID_LAST && evn < HID_EVENT_LAST) {
 		Console::ArgvType *command = bindings[key][evn];
 		if (command) {
-			con.ExecuteConsoleCommand(*command);
+			con->ExecuteConsoleCommand(*command);
 			handled = true;
 		}
 	}
@@ -97,7 +97,7 @@ void HIDManager::resetBindings() {
 void HIDManager::loadBindings() {
 	Console::ArgsType args;
 
-	con.Print(MM_INFO, "Loading HIDBindings...\n");
+	con->Print(MM_INFO, "Loading HIDBindings...\n");
 
 	SettingManager *settings = SettingManager::get_instance();
 	KeyMap keys;
@@ -107,7 +107,7 @@ void HIDManager::loadBindings() {
 	KeyMap::iterator end = keys.end();
 
 	if (i == end) {
-		con.Print(MM_INFO, "Loading default HIDBindings...\n");
+		con->Print(MM_INFO, "Loading default HIDBindings...\n");
 		ConfigFileManager *config = ConfigFileManager::get_instance();
 		keys = config->listKeyValues("bindings/bindings");
 		i = keys.begin();

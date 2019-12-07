@@ -58,13 +58,13 @@ U8Game::U8Game() : Game() {
 		settingman->setDefault("textdelay", 8);
 	}
 
-	con.AddConsoleCommand("Cheat::items", U8Game::ConCmd_cheatItems);
-	con.AddConsoleCommand("Cheat::equip", U8Game::ConCmd_cheatEquip);
+	con->AddConsoleCommand("Cheat::items", U8Game::ConCmd_cheatItems);
+	con->AddConsoleCommand("Cheat::equip", U8Game::ConCmd_cheatEquip);
 }
 
 U8Game::~U8Game() {
-	con.RemoveConsoleCommand(U8Game::ConCmd_cheatItems);
-	con.RemoveConsoleCommand(U8Game::ConCmd_cheatEquip);
+	con->RemoveConsoleCommand(U8Game::ConCmd_cheatItems);
+	con->RemoveConsoleCommand(U8Game::ConCmd_cheatEquip);
 }
 
 bool U8Game::loadFiles() {

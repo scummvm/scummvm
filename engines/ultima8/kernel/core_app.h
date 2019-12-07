@@ -30,6 +30,7 @@
 
 namespace Ultima8 {
 
+class Console;
 class FileSystem;
 class ConfigFileManager;
 class SettingManager;
@@ -110,6 +111,7 @@ protected:
 private:
 	int argc;
 	const char *const *argv;
+	Console *_console;
 
 	//! start filesystem, kernel, config
 	virtual void sysInit();

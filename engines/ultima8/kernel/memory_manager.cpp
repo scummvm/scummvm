@@ -62,7 +62,7 @@ void *MemoryManager::_allocate(size_t size) {
 	// else
 	void *ptr = malloc(size);
 #ifdef DEBUG
-	con.Printf("MemoryManager::allocate - Allocated %d bytes to 0x%X\n", size, ptr);
+	con->Printf("MemoryManager::allocate - Allocated %d bytes to 0x%X\n", size, ptr);
 #endif
 
 	return ptr;
@@ -80,7 +80,7 @@ void MemoryManager::_deallocate(void *ptr) {
 	}
 
 #ifdef DEBUG
-	con.Printf("MemoryManager::deallocate - deallocating memory at 0x%X\n", ptr);
+	con->Printf("MemoryManager::deallocate - deallocating memory at 0x%X\n", ptr);
 #endif
 	// Pray!
 	free(ptr);
@@ -221,7 +221,7 @@ void MemoryManager::ConCmd_test(const Console::ArgvType &argv) {
 
 	delete t;
 
-	con.Printf("Unpooled Allocation: %d ms\nPooled Allocation: %d ms\n", unpooled, pooled);
+	con->Printf("Unpooled Allocation: %d ms\nPooled Allocation: %d ms\n", unpooled, pooled);
 }
 
 #else

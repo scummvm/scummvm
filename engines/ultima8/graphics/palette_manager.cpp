@@ -33,7 +33,7 @@ PaletteManager *PaletteManager::palettemanager = 0;
 
 PaletteManager::PaletteManager(RenderSurface *rs)
 	: rendersurface(rs) {
-	con.Print(MM_INFO, "Creating PaletteManager...\n");
+	con->Print(MM_INFO, "Creating PaletteManager...\n");
 
 	assert(palettemanager == 0);
 	palettemanager = this;
@@ -41,13 +41,13 @@ PaletteManager::PaletteManager(RenderSurface *rs)
 
 PaletteManager::~PaletteManager() {
 	reset();
-	con.Print(MM_INFO, "Destroying PaletteManager...\n");
+	con->Print(MM_INFO, "Destroying PaletteManager...\n");
 	palettemanager = 0;
 }
 
 // Reset the Palette Manager
 void PaletteManager::reset() {
-	con.Print(MM_INFO, "Resetting PaletteManager...\n");
+	con->Print(MM_INFO, "Resetting PaletteManager...\n");
 
 	for (unsigned int i = 0; i < palettes.size(); ++i)
 		delete palettes[i];
@@ -62,7 +62,7 @@ void PaletteManager::updatedFont(PalIndex index) {
 
 // Reset all the transforms back to default
 void PaletteManager::resetTransforms() {
-	con.Print(MM_INFO, "Resetting Palette Transforms...\n");
+	con->Print(MM_INFO, "Resetting Palette Transforms...\n");
 
 	int16 matrix[12];
 	getTransformMatrix(matrix, Pentagram::Transform_None);

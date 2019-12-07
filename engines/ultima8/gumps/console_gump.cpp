@@ -37,31 +37,31 @@ using Pentagram::istring;
 
 ConsoleGump::ConsoleGump()
 	: Gump() {
-	con.AddConsoleCommand("ConsoleGump::toggle",
+	con->AddConsoleCommand("ConsoleGump::toggle",
 	                      ConsoleGump::ConCmd_toggle);
 }
 
 ConsoleGump::ConsoleGump(int X, int Y, int Width, int Height) :
 	Gump(X, Y, Width, Height, 0, FLAG_DONT_SAVE | FLAG_CORE_GUMP, LAYER_CONSOLE),
 	scroll_state(NORMAL_DISPLAY), scroll_frame(8) {
-	con.ClearCommandBuffer();
+	con->ClearCommandBuffer();
 
 	// Resize it
-	con.CheckResize(Width);
+	con->CheckResize(Width);
 
-	con.AddConsoleCommand("ConsoleGump::toggle",
+	con->AddConsoleCommand("ConsoleGump::toggle",
 	                      ConsoleGump::ConCmd_toggle);
 }
 
 ConsoleGump::~ConsoleGump() {
-	con.RemoveConsoleCommand(ConsoleGump::ConCmd_toggle);
+	con->RemoveConsoleCommand(ConsoleGump::ConCmd_toggle);
 }
 
 void ConsoleGump::RenderSurfaceChanged() {
 	// Resize the desktop gump to match the RenderSurface
 	Pentagram::Rect new_dims;
 	parent->GetDims(new_dims);
-	con.CheckResize(new_dims.w);
+	con->CheckResize(new_dims.w);
 	dims.w = new_dims.w;
 	dims.h = new_dims.h;
 
@@ -76,7 +76,7 @@ void ConsoleGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scaled)
 	switch (scroll_state) {
 	case NOTIFY_OVERLAY:
 #ifdef DEBUG
-		con.DrawConsoleNotify(surf);
+		con->DrawConsoleNotify(surf);
 #endif
 		return;
 	case WAITING_TO_SHOW:
@@ -112,7 +112,7 @@ void ConsoleGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scaled)
 
 	// This line shows some draw lag when uncommented
 	//surf->Fill32(0x00FFFFFF,0,h-1,dims.w,h);
-	con.DrawConsole(surf, h);
+	con->DrawConsole(surf, h);
 }
 
 void ConsoleGump::ToggleConsole() {
@@ -134,7 +134,7 @@ void ConsoleGump::ToggleConsole() {
 	case NORMAL_DISPLAY:
 		scroll_state = WAITING_TO_HIDE;
 		Ultima8Engine::get_instance()->leaveTextMode(this);
-		con.ClearCommandBuffer();
+		con->ClearCommandBuffer();
 		break;
 
 	default:
@@ -153,7 +153,7 @@ void ConsoleGump::HideConsole() {
 	case NORMAL_DISPLAY:
 		scroll_state = WAITING_TO_HIDE;
 		Ultima8Engine::get_instance()->leaveTextMode(this);
-		con.ClearCommandBuffer();
+		con->ClearCommandBuffer();
 		break;
 
 	default:
@@ -185,7 +185,7 @@ bool ConsoleGump::ConsoleIsVisible() {
 void ConsoleGump::run() {
 	Gump::run();
 
-	con.setFrameNum(Kernel::get_instance()->getFrameNum());
+	con->setFrameNum(Kernel::get_instance()->getFrameNum());
 
 	switch (scroll_state) {
 	case WAITING_TO_HIDE:
@@ -213,7 +213,7 @@ void ConsoleGump::run() {
 		scroll_frame = 8;
 		scroll_state = NORMAL_DISPLAY;
 		Ultima8Engine::get_instance()->enterTextMode(this);
-		con.ClearCommandBuffer();
+		con->ClearCommandBuffer();
 		break;
 
 	default:
@@ -240,7 +240,7 @@ bool ConsoleGump::OnTextInput(int unicode) {
 	bool handled = false;
 	if (scroll_state == NORMAL_DISPLAY) {
 
-		con.AddCharacterToCommandBuffer(unicode);
+		con->AddCharacterToCommandBuffer(unicode);
 		handled = true;
 	}
 	return handled;
@@ -253,7 +253,7 @@ bool ConsoleGump::OnKeyDown(int key, int mod) {
 		switch (key) {
 		// Command completion
 		case Common::KEYCODE_TAB:
-			con.AddCharacterToCommandBuffer(Console::Tab);
+			con->AddCharacterToCommandBuffer(Console::Tab);
 			break;
 
 		case Common::KEYCODE_ESCAPE:
@@ -262,43 +262,43 @@ bool ConsoleGump::OnKeyDown(int key, int mod) {
 
 		case Common::KEYCODE_RETURN:
 		case Common::KEYCODE_KP_ENTER:
-			con.AddCharacterToCommandBuffer(Console::Enter);
+			con->AddCharacterToCommandBuffer(Console::Enter);
 			break;
 
 		case Common::KEYCODE_BACKSPACE:
-			con.DeleteCommandBufferChars(-1);
+			con->DeleteCommandBufferChars(-1);
 			break;
 
 		case Common::KEYCODE_DELETE:
-			con.DeleteCommandBufferChars(1);
+			con->DeleteCommandBufferChars(1);
 			break;
 
 		case Common::KEYCODE_PAGEUP:
-			con.ScrollConsole(-3);
+			con->ScrollConsole(-3);
 			break;
 
 		case Common::KEYCODE_PAGEDOWN:
-			con.ScrollConsole(3);
+			con->ScrollConsole(3);
 			break;
 
 		case Common::KEYCODE_UP:
-			con.ScrollCommandHistory(-1);
+			con->ScrollCommandHistory(-1);
 			break;
 
 		case Common::KEYCODE_DOWN:
-			con.ScrollCommandHistory(1);
+			con->ScrollCommandHistory(1);
 			break;
 
 		case Common::KEYCODE_LEFT:
-			con.MoveCommandCursor(-1);
+			con->MoveCommandCursor(-1);
 			break;
 
 		case Common::KEYCODE_RIGHT:
-			con.MoveCommandCursor(1);
+			con->MoveCommandCursor(1);
 			break;
 
 		case Common::KEYCODE_INSERT:
-			con.ToggleCommandInsert();
+			con->ToggleCommandInsert();
 			break;
 
 		case Common::KEYCODE_KP0:

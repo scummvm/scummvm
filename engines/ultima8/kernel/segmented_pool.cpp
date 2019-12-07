@@ -117,7 +117,7 @@ void *SegmentedPool::allocate(size_t size) {
 
 	node->nextFree = 0;
 
-//	con.Printf("Allocating Node 0x%08X\n", node);
+//	con->Printf("Allocating Node 0x%08X\n", node);
 	uint8 *p = reinterpret_cast<uint8 *>(node) +
 	           OFFSET_ALIGN(sizeof(SegmentedPoolNode) + redzoneSize);
 
@@ -141,7 +141,7 @@ void SegmentedPool::deallocate(void *ptr) {
 		VALGRIND_MEMPOOL_FREE(startOfPool, ptr);
 		VALGRIND_DISCARD(node->valgrind_handle);
 
-//	con.Printf("Free Node 0x%08X\n", node);
+//	con->Printf("Free Node 0x%08X\n", node);
 		if (isFull()) {
 			firstFree = node;
 			lastFree = node;
@@ -158,11 +158,11 @@ void SegmentedPool::printInfo() {
 	size_t max, min, total;
 	SegmentedPoolNode *node;
 
-	con.Printf("   start address 0x%X\tend address 0x%X\tnodeOffset 0x%X\n",
+	con->Printf("   start address 0x%X\tend address 0x%X\tnodeOffset 0x%X\n",
 	           startOfPool, endOfPool, nodeOffset);
-	con.Printf("   nodeCapacity %d b\n   total nodes %d\tfree nodes %d\n",
+	con->Printf("   nodeCapacity %d b\n   total nodes %d\tfree nodes %d\n",
 	           nodeCapacity, nodes, freeNodeCount);
-	con.Printf("   total memory: %d\tfree memory: %d\n",
+	con->Printf("   total memory: %d\tfree memory: %d\n",
 	           nodeCapacity * nodes, nodeCapacity * freeNodeCount);
 
 	max = 0;
@@ -179,10 +179,10 @@ void SegmentedPool::printInfo() {
 	}
 
 	if (nodes > freeNodeCount) {
-		con.Printf("   smallest node: %d b\tlargest node: %d b\taverage size: %d b\n",
+		con->Printf("   smallest node: %d b\tlargest node: %d b\taverage size: %d b\n",
 		           min, max, total / (nodes - freeNodeCount));
 	} else {
-		con.Printf("   Empty pool!!!\n");
+		con->Printf("   Empty pool!!!\n");
 	}
 }
 

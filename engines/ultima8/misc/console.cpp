@@ -18,6 +18,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 */
 
+#include "ultima8/misc/console.h"
 #include "ultima8/misc/pent_include.h"
 #include "ultima8/filesys/odata_source.h"
 #include "ultima8/graphics/render_surface.h"
@@ -34,9 +35,7 @@ namespace Ultima8 {
 #define MAXPRINTMSG 4096
 
 // The console
-Console     con;
-
-
+Console *con;
 
 // Standard Output Stream Object
 #ifndef SAFE_CONSOLE_STREAMS
@@ -54,6 +53,41 @@ console_err_ostream<char>   *pperr = &perr;
 console_err_ostream<char>   *pperr = 0;
 #endif
 
+
+
+//
+// Constructor
+//
+Console::Console() : current(0), xoff(0), display(0), linewidth(-1),
+		totallines(0), vislines(0), wordwrap(true), cr(false),
+		putchar_count(0), std_output_enabled(0xFFFFFFFF),
+		stdout_redir(0), stderr_redir(0), confont(0),
+		auto_paint(0), msgMask(MM_ALL), framenum(0),
+		commandCursorPos(0), commandInsert(true), commandHistoryPos(0) {
+	con = this;
+	linewidth = -1;
+
+	CheckResize(0);
+
+	std::memset(times, 0, sizeof(times));
+
+	// Lets try adding a Console command!
+	AddConsoleCommand("Console::CmdList", ConCmd_CmdList);
+	AddConsoleCommand("Console::CmdHistory", ConCmd_CmdHistory);
+
+	PrintInternal("Console initialized.\n");
+}
+
+//
+// Destructor
+//
+Console::~Console() {
+	RemoveConsoleCommand(Console::ConCmd_CmdList);
+	RemoveConsoleCommand(Console::ConCmd_CmdHistory);
+
+	// Need to do this first
+	PrintPutchar();
+}
 
 /*
 ================
@@ -177,39 +211,6 @@ void Console::CheckResize(int scrwidth) {
 
 	current = totallines - 1;
 	display = current;
-}
-
-//
-// Constructor
-//
-Console::Console() : current(0), xoff(0), display(0), linewidth(-1),
-	totallines(0), vislines(0), wordwrap(true), cr(false),
-	putchar_count(0), std_output_enabled(0xFFFFFFFF),
-	stdout_redir(0), stderr_redir(0), confont(0),
-	auto_paint(0), msgMask(MM_ALL), framenum(0),
-	commandCursorPos(0), commandInsert(true), commandHistoryPos(0) {
-	linewidth = -1;
-
-	CheckResize(0);
-
-	std::memset(times, 0, sizeof(times));
-
-	// Lets try adding a Console command!
-	AddConsoleCommand("Console::CmdList", ConCmd_CmdList);
-	AddConsoleCommand("Console::CmdHistory", ConCmd_CmdHistory);
-
-	PrintInternal("Console initialized.\n");
-}
-
-//
-// Destructor
-//
-Console::~Console() {
-	RemoveConsoleCommand(Console::ConCmd_CmdList);
-	RemoveConsoleCommand(Console::ConCmd_CmdHistory);
-
-	// Need to do this first
-	PrintPutchar();
 }
 
 
@@ -723,7 +724,7 @@ void Console::ConCmd_CmdList(const Console::ArgvType &argv) {
 		for (size_t a = 1; a < argv.size(); a++) {
 			const ArgsType &arg = argv[a];
 
-			for (it = con.ConsoleCommands.begin(); it != con.ConsoleCommands.end(); ++it)
+			for (it = con->ConsoleCommands.begin(); it != con->ConsoleCommands.end(); ++it)
 				if (it->_value) {
 					if (it->_key.compareToIgnoreCase(arg)) continue;
 
@@ -733,7 +734,7 @@ void Console::ConCmd_CmdList(const Console::ArgvType &argv) {
 				}
 		}
 	} else {
-		for (it = con.ConsoleCommands.begin(); it != con.ConsoleCommands.end(); ++it)
+		for (it = con->ConsoleCommands.begin(); it != con->ConsoleCommands.end(); ++it)
 			if (it->_value) {
 				// TODO
 				//pout << " " << it->_key << std::endl;
@@ -749,10 +750,10 @@ void Console::ConCmd_CmdHistory(const Console::ArgvType & /*argv*/) {
 #ifdef TODO
 	std::vector<ArgsType>::iterator it;
 
-	for (it = con.commandHistory.begin(); it != con.commandHistory.end(); ++it)
+	for (it = con->commandHistory.begin(); it != con->commandHistory.end(); ++it)
 		pout << " " << *it << std::endl;
 
-	pout << con.commandHistory.size() << " commands" << std::endl;
+	pout << con->commandHistory.size() << " commands" << std::endl;
 #endif
 }
 
@@ -864,7 +865,7 @@ void Console::DrawConsoleNotify(RenderSurface *surf) {
 	v = 0;
 	for (i = current - CON_NUM_TIMES + 1 ; i <= current ; i++) {
 		if (i < 0) continue;
-		time = con.times[i % CON_NUM_TIMES];
+		time = con->times[i % CON_NUM_TIMES];
 		if (time == 0) continue;
 
 		time = framenum - time;
@@ -873,7 +874,7 @@ void Console::DrawConsoleNotify(RenderSurface *surf) {
 			continue;
 		txt = text + (i % totallines) * linewidth;
 
-		for (x = 0 ; x < con.linewidth ; x++)
+		for (x = 0 ; x < con->linewidth ; x++)
 			surf->PrintCharFixed(confont, txt[x], (x + 1)*confont->width, v);
 
 		v += confont->height;
