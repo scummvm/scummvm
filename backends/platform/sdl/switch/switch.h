@@ -27,10 +27,6 @@
 
 class OSystem_Switch : public OSystem_SDL {
 public:
-	// Let the subclasses be able to change _baseConfigName in the constructor
-	OSystem_Switch(Common::String baseConfigName = "scummvm.ini");
-	virtual ~OSystem_Switch() {}
-
 	virtual void init() override;
 	virtual void initBackend() override;
 	virtual bool hasFeature(Feature f) override;
@@ -39,11 +35,6 @@ public:
 	virtual void logMessage(LogMessageType::Type type, const char *message) override;
 
 protected:
-	// Base string for creating the default path and filename
-	// for the configuration file
-	Common::String _baseConfigName;
-
-	virtual Common::String getDefaultConfigFileName() override;
 	virtual Common::String getDefaultLogFileName() override;
 };
 
