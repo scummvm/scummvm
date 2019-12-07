@@ -251,16 +251,18 @@ ifstmt: if expr tTHEN begin stmtlist end elseifstmtlist end tENDIF {
 		(*g_lingo->_currentScript)[$1 + 3] = end;	/* end, if cond fails */
 
 		g_lingo->processIf(0, $8 - $1); }
-	| if expr tTHEN begin stmtlist end elseifstmtlist end tELSE stmtlist tENDIF {
+	| if expr tTHEN begin stmtlist end elseifstmtlist end tELSE stmtlist end tENDIF {
 		inst then = 0, else1 = 0, end = 0;
 		WRITE_UINT32(&then, $4 - $1);
 		WRITE_UINT32(&else1, $6 - $1);
-		WRITE_UINT32(&end, $8 - $1);
+		WRITE_UINT32(&end, $11 - $1);
 		(*g_lingo->_currentScript)[$1 + 1] = then;	/* thenpart */
 		(*g_lingo->_currentScript)[$1 + 2] = else1;	/* elsepart */
 		(*g_lingo->_currentScript)[$1 + 3] = end;	/* end, if cond fails */
 
-		g_lingo->processIf(0, $8 - $1); }
+		g_lingo->codeLabel($8);
+
+		g_lingo->processIf(0, $11 - $1); }
 	;
 
 elseifstmtlist:	/* nothing */
@@ -269,7 +271,7 @@ elseifstmtlist:	/* nothing */
 
 elseifstmt: elseif expr tTHEN begin stmtlist end {
 		inst then = 0;
-		WRITE_UINT32(&then, $5 - $1);
+		WRITE_UINT32(&then, $4 - $1);
 		(*g_lingo->_currentScript)[$1 + 1] = then;	/* thenpart */
 
 		g_lingo->codeLabel($1); }
