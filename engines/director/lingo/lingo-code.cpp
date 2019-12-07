@@ -1027,8 +1027,9 @@ void Lingo::c_whencode() {
 	if (debugChannelSet(1, kDebugLingoExec)) {
 		uint pc = 0;
 		while (pc < sym->u.defn->size()) {
+			uint spc = pc;
 			Common::String instr = g_lingo->decodeInstruction(sym->u.defn, pc, &pc);
-			debugC(1, kDebugLingoExec, "[%5d] %s", pc, instr.c_str());
+			debugC(1, kDebugLingoExec, "[%5d] %s", spc, instr.c_str());
 		}
 	}
 

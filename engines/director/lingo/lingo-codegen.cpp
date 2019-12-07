@@ -95,6 +95,7 @@ Common::String Lingo::decodeInstruction(ScriptData *sd, uint pc, uint *newPc) {
 		res = _functions[(void *)sym.u.s]->name;
 		const char *pars = _functions[(void *)sym.u.s]->proto;
 		inst i;
+		uint start = pc;
 
 		while (*pars) {
 			switch (*pars++) {
@@ -120,7 +121,7 @@ Common::String Lingo::decodeInstruction(ScriptData *sd, uint pc, uint *newPc) {
 					i = (*sd)[pc++];
 					int v = READ_UINT32(&i);
 
-					res += Common::String::format(" [%5d]", v);
+					res += Common::String::format(" [%5d]", v + start - 1);
 					break;
 				}
 			case 's':
@@ -254,8 +255,9 @@ Symbol *Lingo::define(Common::String &name, int start, int nargs, Common::String
 	if (debugChannelSet(1, kDebugLingoCompile)) {
 		uint pc = 0;
 		while (pc < sym->u.defn->size()) {
+			uint spc = pc;
 			Common::String instr = g_lingo->decodeInstruction(sym->u.defn, pc, &pc);
-			debugC(1, kDebugLingoCompile, "[%5d] %s", pc, instr.c_str());
+			debugC(1, kDebugLingoCompile, "[%5d] %s", spc, instr.c_str());
 		}
 		debugC(1, kDebugLingoCompile, "<end define code>");
 	}
