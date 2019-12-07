@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2019-12-06 04:34+0000\n"
+"POT-Creation-Date: 2019-12-07 19:15+0000\n"
 "PO-Revision-Date: 2019-06-22 10:59+0000\n"
 "Last-Translator: DreadnoughtPT <Dreadnoughtpt@gmail.com>\n"
 "Language-Team: Portuguese (Portugal) <https://translations.scummvm.org/"
@@ -55,7 +55,7 @@ msgctxt "lowres"
 msgid "Go up"
 msgstr "Subir"
 
-#: gui/browser.cpp:82 gui/chooser.cpp:46 gui/editgamedialog.cpp:297
+#: gui/browser.cpp:82 gui/chooser.cpp:46 gui/editgamedialog.cpp:299
 #: gui/editrecorddialog.cpp:67 gui/filebrowser-dialog.cpp:65
 #: gui/fluidsynth-dialog.cpp:153 gui/KeysDialog.cpp:39 gui/massadd.cpp:92
 #: gui/options.cpp:1825 gui/predictivedialog.cpp:73 gui/recorderdialog.cpp:69
@@ -88,7 +88,7 @@ msgstr "Escolher"
 msgid "Select directory where to download game data"
 msgstr "Selecione a pasta de transferências de ficheiros do jogo"
 
-#: gui/downloaddialog.cpp:50 gui/editgamedialog.cpp:480 gui/launcher.cpp:210
+#: gui/downloaddialog.cpp:50 gui/editgamedialog.cpp:482 gui/launcher.cpp:210
 msgid "Select directory with game data"
 msgstr "Selecione a pasta com os ficheiros do jogo"
 
@@ -153,7 +153,7 @@ msgstr ""
 "Não é possível criar a pasta de transferências - já existe um ficheiro com o "
 "mesmo nome."
 
-#: gui/downloaddialog.cpp:147 gui/editgamedialog.cpp:298
+#: gui/downloaddialog.cpp:147 gui/editgamedialog.cpp:300
 #: gui/fluidsynth-dialog.cpp:154 gui/KeysDialog.cpp:38 gui/launcher.cpp:490
 #: gui/launcher.cpp:494 gui/massadd.cpp:89 gui/options.cpp:1827
 #: gui/saveload-dialog.cpp:1144 engines/engine.cpp:458 engines/engine.cpp:469
@@ -311,81 +311,81 @@ msgctxt "lowres"
 msgid "Override global volume settings"
 msgstr "Substituir configurações gerais de volume"
 
-#: gui/editgamedialog.cpp:231 gui/options.cpp:1596
+#: gui/editgamedialog.cpp:233 gui/options.cpp:1596
 msgid "MIDI"
 msgstr "MIDI"
 
-#: gui/editgamedialog.cpp:234
+#: gui/editgamedialog.cpp:236
 msgid "Override global MIDI settings"
 msgstr "Substituir configurações gerais de MIDI"
 
-#: gui/editgamedialog.cpp:236
+#: gui/editgamedialog.cpp:238
 msgctxt "lowres"
 msgid "Override global MIDI settings"
 msgstr "Substituir configurações gerais de MIDI"
 
-#: gui/editgamedialog.cpp:246 gui/options.cpp:1606
+#: gui/editgamedialog.cpp:248 gui/options.cpp:1606
 msgid "MT-32"
 msgstr "MT-32"
 
-#: gui/editgamedialog.cpp:249
-msgid "Override global MT-32 settings"
-msgstr "Substituir configurações gerais de MT-32"
-
 #: gui/editgamedialog.cpp:251
+msgid "Override global MT-32 settings"
+msgstr "Substituir configurações gerais de MT-32"
+
+#: gui/editgamedialog.cpp:253
 msgctxt "lowres"
 msgid "Override global MT-32 settings"
 msgstr "Substituir configurações gerais de MT-32"
 
-#: gui/editgamedialog.cpp:260 gui/options.cpp:1613
+#: gui/editgamedialog.cpp:262 gui/options.cpp:1613
 msgid "Paths"
 msgstr "Pastas"
 
-#: gui/editgamedialog.cpp:262 gui/options.cpp:1615
+#: gui/editgamedialog.cpp:264 gui/options.cpp:1615
 msgctxt "lowres"
 msgid "Paths"
 msgstr "Pastas"
-
-#: gui/editgamedialog.cpp:269
-msgid "Game Path:"
-msgstr "Jogo:"
 
 #: gui/editgamedialog.cpp:271
+msgid "Game Path:"
+msgstr "Jogo:"
+
+#: gui/editgamedialog.cpp:273
 msgctxt "lowres"
 msgid "Game Path:"
 msgstr "Jogo:"
 
-#: gui/editgamedialog.cpp:276 gui/options.cpp:1639
+#: gui/editgamedialog.cpp:278 gui/options.cpp:1639
 msgid "Extra Path:"
 msgstr "Extras:"
 
-#: gui/editgamedialog.cpp:276 gui/editgamedialog.cpp:278
-#: gui/editgamedialog.cpp:279
+#: gui/editgamedialog.cpp:278 gui/editgamedialog.cpp:280
+#: gui/editgamedialog.cpp:281
 msgid "Specifies path to additional data used by the game"
 msgstr "Especifica o caminho para dados adicionais usados pelo jogo"
 
-#: gui/editgamedialog.cpp:278 gui/options.cpp:1641
+#: gui/editgamedialog.cpp:280 gui/options.cpp:1641
 msgctxt "lowres"
 msgid "Extra Path:"
 msgstr "Extras:"
 
-#: gui/editgamedialog.cpp:285 gui/options.cpp:1623
+#: gui/editgamedialog.cpp:287 gui/options.cpp:1623
 msgid "Save Path:"
 msgstr "Jogos Guardados:"
 
-#: gui/editgamedialog.cpp:285 gui/editgamedialog.cpp:287
-#: gui/editgamedialog.cpp:288 gui/options.cpp:1623 gui/options.cpp:1625
+#: gui/editgamedialog.cpp:287 gui/editgamedialog.cpp:289
+#: gui/editgamedialog.cpp:290 gui/options.cpp:1623 gui/options.cpp:1625
 #: gui/options.cpp:1626
 msgid "Specifies where your saved games are put"
 msgstr "Especifica onde os jogos guardados são colocados"
 
-#: gui/editgamedialog.cpp:287 gui/options.cpp:1625
+#: gui/editgamedialog.cpp:289 gui/options.cpp:1625
 msgctxt "lowres"
 msgid "Save Path:"
 msgstr "J. Guardados:"
 
-#: gui/editgamedialog.cpp:311 gui/editgamedialog.cpp:408
-#: gui/editgamedialog.cpp:467 gui/editgamedialog.cpp:528 gui/options.cpp:1634
+#: gui/editgamedialog.cpp:313 gui/editgamedialog.cpp:410
+#: gui/editgamedialog.cpp:469 gui/editgamedialog.cpp:530 gui/options.cpp:1634
 #: gui/options.cpp:1642 gui/options.cpp:1651 gui/options.cpp:1852
 #: gui/options.cpp:1858 gui/options.cpp:1866 gui/options.cpp:1890
 #: gui/options.cpp:2018 gui/options.cpp:2024 gui/options.cpp:2031
@@ -395,31 +395,31 @@ msgctxt "path"
 msgid "None"
 msgstr "Nenhum"
 
-#: gui/editgamedialog.cpp:316 gui/editgamedialog.cpp:414
-#: gui/editgamedialog.cpp:532 gui/options.cpp:1846 gui/options.cpp:2012
+#: gui/editgamedialog.cpp:318 gui/editgamedialog.cpp:416
+#: gui/editgamedialog.cpp:534 gui/options.cpp:1846 gui/options.cpp:2012
 #: gui/options.cpp:2272 backends/platform/wii/options.cpp:56
 msgid "Default"
 msgstr "Padrão"
 
-#: gui/editgamedialog.cpp:460 gui/options.cpp:2282
+#: gui/editgamedialog.cpp:462 gui/options.cpp:2282
 msgid "Select SoundFont"
 msgstr "Selecione o SoundFont"
 
-#: gui/editgamedialog.cpp:499
+#: gui/editgamedialog.cpp:501
 msgid "Select additional game directory"
 msgstr "Selecione a pasta adicional para o jogo"
 
-#: gui/editgamedialog.cpp:512 gui/options.cpp:2201
+#: gui/editgamedialog.cpp:514 gui/options.cpp:2201
 msgid "Select directory for saved games"
 msgstr "Selecione a pasta para jogos guardados"
 
-#: gui/editgamedialog.cpp:518
+#: gui/editgamedialog.cpp:520
 msgid ""
 "Saved games sync feature doesn't work with non-default directories. If you "
 "want your saved games to sync, use default directory."
 msgstr "Só é possível sincronizar os jogos guardados com as pastas padrão."
 
-#: gui/editgamedialog.cpp:544
+#: gui/editgamedialog.cpp:546
 msgid "This game ID is already taken. Please choose another one."
 msgstr "Este ID já se encontra em utilização. Por favor escolha outro."
 
