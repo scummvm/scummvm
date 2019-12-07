@@ -355,7 +355,7 @@ void ContainerGump::OnMouseDouble(int button, int mx, int my) {
 				// call the 'use' event
 				item->use();
 			} else {
-				Ultima8Engine::get_instance()->flashCrossCursor();
+				Mouse::get_instance()->flashCrossCursor();
 			}
 		}
 	}
@@ -376,7 +376,7 @@ bool ContainerGump::StartDraggingItem(Item *item, int mx, int my) {
 	int32 itemx, itemy;
 	getItemCoords(item, itemx, itemy);
 
-	Ultima8Engine::get_instance()->setDraggingOffset(mx - itemx, my - itemy);
+	Mouse::get_instance()->setDraggingOffset(mx - itemx, my - itemy);
 
 	return true;
 }
@@ -393,8 +393,8 @@ bool ContainerGump::DraggingItem(Item *item, int mx, int my) {
 	}
 
 	int dox, doy;
-	Ultima8Engine::get_instance()->getDraggingOffset(dox, doy);
-	Ultima8Engine::get_instance()->setMouseCursor(Ultima8Engine::MOUSE_TARGET);
+	Mouse::get_instance()->getDraggingOffset(dox, doy);
+	Mouse::get_instance()->setMouseCursor(Mouse::MOUSE_TARGET);
 	display_dragging = true;
 
 	dragging_shape = item->getShape();
@@ -531,7 +531,7 @@ void ContainerGump::DropItem(Item *item, int mx, int my) {
 		}
 
 		int dox, doy;
-		Ultima8Engine::get_instance()->getDraggingOffset(dox, doy);
+		Mouse::get_instance()->getDraggingOffset(dox, doy);
 		dragging_x = mx - itemarea.x - dox;
 		dragging_y = my - itemarea.y - doy;
 		item->setGumpLocation(dragging_x, dragging_y);

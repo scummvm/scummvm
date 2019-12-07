@@ -45,7 +45,7 @@ PagedGump::~PagedGump(void) {
 }
 
 void PagedGump::Close(bool no_del) {
-	Ultima8Engine::get_instance()->popMouseCursor();
+	Mouse::get_instance()->popMouseCursor();
 	std::vector<Gump *>::iterator iter;
 	for (iter = gumps.begin(); iter != gumps.end(); ++iter) {
 		(*iter)->Close(no_del); // CHECKME: no_del?
@@ -81,9 +81,9 @@ void PagedGump::InitGump(Gump *newparent, bool take_focus) {
 	prevButton->setRelativePosition(TOP_LEFT, leftOff, topOff);
 	prevButton->HideGump();
 
-	Ultima8Engine *guiapp = Ultima8Engine::get_instance();
-	guiapp->pushMouseCursor();
-	guiapp->setMouseCursor(Ultima8Engine::MOUSE_HAND); // default cursor
+	Mouse *mouse = Mouse::get_instance();
+	mouse->pushMouseCursor();
+	mouse->setMouseCursor(Mouse::MOUSE_HAND); // default cursor
 }
 
 void PagedGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scaled) {

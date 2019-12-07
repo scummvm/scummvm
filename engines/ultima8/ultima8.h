@@ -63,6 +63,7 @@ class World;
 class ObjectManager;
 class FontManager;
 class HIDManager;
+class Mouse;
 class AvatarMoverProcess;
 class IDataSource;
 class ODataSource;
@@ -79,18 +80,6 @@ public:
 	enum Ultima8DebugChannels {
 		kDebugPath = 1 << 0,
 		kDebugGraphics = 1 << 1
-	};
-
-	enum MouseCursor {
-		MOUSE_NORMAL = 0,
-		MOUSE_NONE = 1,
-		MOUSE_TARGET = 2,
-		MOUSE_PENTAGRAM = 3,
-		MOUSE_HAND = 4,
-		MOUSE_QUILL = 5,
-		MOUSE_MAGGLASS = 6,
-		MOUSE_CROSS = 7,
-		MOUSE_POINTER = 8  //!< Default pointer
 	};
 private:
 	const Ultima8GameDescription *_gameDescription;
@@ -178,6 +167,7 @@ private:
 	UCMachine *ucmachine;
 	RenderSurface *screen;
 	bool fullscreen;
+	Mouse *_mouse;
 	PaletteManager *palettemanager;
 	GameData *gamedata;
 	World *world;
@@ -219,45 +209,15 @@ private:
 
 	bool showTouching;          //!< If true, highlight items touching Avatar
 
-	int mouseX, mouseY;
-
-	Texture *defMouse;      //!< Default Pentagram mouse for when there is no GameData
-
-	//! get the current mouse frame
-	int getMouseFrame();
-	std::stack<MouseCursor> cursors;
-	uint32 flashingcursor; // time (g_system->getMillis) mouse started flashing, or 0
-
 	static void conAutoPaint(void);
-
-	// mouse input state
-	MButton mouseButton[MOUSE_LAST];
-
-	uint16 mouseOverGump;
-
-	enum DraggingState {
-		DRAG_NOT = 0,
-		DRAG_OK = 1,
-		DRAG_INVALID = 2,
-		DRAG_TEMPFAIL = 3
-	} dragging;
-	ObjId dragging_objid;
-	uint16 dragging_item_startgump;
-	uint16 dragging_item_lastgump;
-
-	int dragging_offsetX, dragging_offsetY;
-	unsigned int inversion;
-
-	uint32 lastDown[HID_LAST];
-	uint8 down[HID_LAST];
 private:
-	void startDragging(int mx, int my);
-	void moveDragging(int mx, int my);
-	void stopDragging(int mx, int my);
-
 	int32 timeOffset;
 	bool has_cheated;
 	bool cheats_enabled;
+
+	uint32 _lastDown[HID_LAST];
+	bool _down[HID_LAST];
+	unsigned int inversion;
 protected:
 	// Engine APIs
 	virtual Common::Error run() override;
@@ -387,35 +347,6 @@ public:
 	//! \return true if succesful.
 	bool newGame(const std::string &savegame);
 
-	//! get mouse cursor length. 0 = short, 1 = medium, 2 = long
-	int getMouseLength(int mx, int my);
-
-	//! get mouse cursor direction. 0 = up, 1 = up-right, 2 = right, etc...
-	int getMouseDirection(int mx, int my);
-
-	//! get current mouse cursor location
-	void getMouseCoords(int &mx, int &my) {
-		mx = mouseX;
-		my = mouseY;
-	}
-
-	//! set current mouse cursor location
-	void setMouseCoords(int mx, int my);
-
-	bool isMouseDown(MouseButton button);
-
-	//! set the current mouse cursor
-	void setMouseCursor(MouseCursor cursor);
-
-	//! flash the red cross mouse cursor for a brief while
-	void flashCrossCursor();
-
-	//! push the current mouse cursor to the stack
-	void pushMouseCursor();
-
-	//! pop the last mouse cursor from the stack
-	void popMouseCursor();
-
 	//! Enter gump text mode (aka SDL Unicode keyhandling)
 	void enterTextMode(Gump *);
 
@@ -427,15 +358,6 @@ public:
 	//! \param exit_to_menu If true, then exit to the Pentagram menu then display the message
 	void Error(std::string message, std::string title = std::string(), bool exit_to_menu = false);
 public:
-	void setDraggingOffset(int x, int y) {
-		dragging_offsetX = x;
-		dragging_offsetY = y;
-	}
-	void getDraggingOffset(int &x, int &y) {
-		x = dragging_offsetX;
-		y = dragging_offsetY;
-	}
-
 	unsigned int getInversion() const {
 		return inversion;
 	}

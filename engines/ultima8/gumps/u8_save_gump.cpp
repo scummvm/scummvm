@@ -164,9 +164,9 @@ void U8SaveGump::Close(bool no_del) {
 void U8SaveGump::OnFocus(bool gain) {
 	if (gain) {
 		if (save)
-			Ultima8Engine::get_instance()->setMouseCursor(Ultima8Engine::MOUSE_QUILL);
+			Mouse::get_instance()->setMouseCursor(Mouse::MOUSE_QUILL);
 		else
-			Ultima8Engine::get_instance()->setMouseCursor(Ultima8Engine::MOUSE_MAGGLASS);
+			Mouse::get_instance()->setMouseCursor(Mouse::MOUSE_MAGGLASS);
 	}
 }
 

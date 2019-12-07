@@ -59,14 +59,14 @@ void TargetGump::InitGump(Gump *newparent, bool take_focus) {
 	// we need a notifier process
 	CreateNotifier();
 
-	Ultima8Engine *guiapp = Ultima8Engine::get_instance();
-	guiapp->pushMouseCursor();
-	guiapp->setMouseCursor(Ultima8Engine::MOUSE_TARGET);
+	Mouse *mouse = Mouse::get_instance();
+	mouse->pushMouseCursor();
+	mouse->setMouseCursor(Mouse::MOUSE_TARGET);
 }
 
 void TargetGump::Close(bool no_del) {
-	Ultima8Engine *guiapp = Ultima8Engine::get_instance();
-	guiapp->popMouseCursor();
+	Mouse *mouse = Mouse::get_instance();
+	mouse->popMouseCursor();
 
 	ModalGump::Close(no_del);
 }

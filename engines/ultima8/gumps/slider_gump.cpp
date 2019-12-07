@@ -205,7 +205,7 @@ void SliderGump::Close(bool no_del) {
 bool SliderGump::StartDraggingChild(Gump *gump, int mx, int my) {
 	if (gump->GetIndex() == SLIDER_INDEX) {
 		gump->ParentToGump(mx, my);
-		Ultima8Engine::get_instance()->setDraggingOffset(mx, 0);
+		Mouse::get_instance()->setDraggingOffset(mx, 0);
 		return true;
 	}
 
@@ -215,7 +215,7 @@ bool SliderGump::StartDraggingChild(Gump *gump, int mx, int my) {
 void SliderGump::DraggingChild(Gump *gump, int mx, int my) {
 	if (gump->GetIndex() == SLIDER_INDEX) {
 		int dox, doy;
-		Ultima8Engine::get_instance()->getDraggingOffset(dox, doy);
+		Mouse::get_instance()->getDraggingOffset(dox, doy);
 		setValueFromSlider(mx - dox);
 		gump->Move(getSliderPos(), slidery);
 	}

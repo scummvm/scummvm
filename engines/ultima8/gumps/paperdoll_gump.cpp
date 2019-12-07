@@ -305,7 +305,7 @@ bool PaperdollGump::StartDraggingItem(Item *item, int mx, int my) {
 	ShapeFrame *frame = s->getFrame(item->getFrame());
 	assert(frame);
 
-	Ultima8Engine::get_instance()->setDraggingOffset(frame->width / 2 - frame->xoff,
+	Mouse::get_instance()->setDraggingOffset(frame->width / 2 - frame->xoff,
 	        frame->height / 2 - frame->yoff);
 
 	return ret;
