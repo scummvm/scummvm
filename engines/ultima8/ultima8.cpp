@@ -978,17 +978,17 @@ void Ultima8Engine::GraphicSysInit() {
 	fullscreen = new_fullscreen;
 
 	// Set Screen Resolution
-	con.Printf(MM_INFO, "Setting Video Mode %ix%ix%i %s...\n", width, height, bpp, fullscreen ? "fullscreen" : "windowed");
+	con.Printf(MM_INFO, "Setting Video Mode %dx%dx%d...\n", width, height, bpp);
 
 	RenderSurface *new_screen = RenderSurface::SetVideoMode(width, height, bpp);
 
 	if (!new_screen) {
-		perr << "Unable to set new video mode. Trying 640x480x32 windowed" << std::endl;
+		perr << "Unable to set new video mode. Trying 640x480x32" << std::endl;
 		new_screen = RenderSurface::SetVideoMode(SCREEN_WIDTH, SCREEN_HEIGHT, 32);
 	}
 
 	if (!new_screen) {
-		error("Unable to set video mode. Exiting");
+		error("Unable to set video mode");
 	}
 
 	if (desktopGump) {
