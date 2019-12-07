@@ -318,10 +318,13 @@ Common::String Lingo::stripComments(const char *s) {
 				line += tolower(*s++);
 			}
 		}
+		debugC(2, kDebugLingoParse, "line: %d                         '%s'", iflevel, line.c_str());
 
 		if (line.size() < 4) { // If line is too small, then skip it
 			if (*s)	// copy newline symbol
 				res += *s++;
+
+			debugC(2, kDebugLingoParse, "too small");
 
 			continue;
 		}
@@ -329,18 +332,23 @@ Common::String Lingo::stripComments(const char *s) {
 		tok = nexttok(line.c_str(), &lineStart);
 		if (tok.equals("if")) {
 			tok = prevtok(&line.c_str()[line.size() - 1], lineStart, &prevEnd);
+			debugC(2, kDebugLingoParse, "start-if <%s>", tok.c_str());
 
 			if (tok.equals("if")) {
+				debugC(2, kDebugLingoParse, "end-if");
 				tok = prevtok(prevEnd, lineStart);
 
 				if (tok.equals("end")) {
 					// do nothing, we open and close same line
+					debugC(2, kDebugLingoParse, "end-end");
 				} else {
 					iflevel++;
 				}
 			} else if (tok.equals("then")) {
+				debugC(2, kDebugLingoParse, "last-then");
 				iflevel++;
 			} else if (tok.equals("else")) {
+				debugC(2, kDebugLingoParse, "last-else");
 				iflevel++;
 			} else { // other token
 				// Now check if we have tNLELSE
@@ -355,35 +363,46 @@ Common::String Lingo::stripComments(const char *s) {
 				tok = nexttok(s1);
 
 				if (tok.equalsIgnoreCase("else")) { // ignore case because it is look-ahead
+					debugC(2, kDebugLingoParse, "tNLELSE");
 					iflevel++;
 				} else {
+					debugC(2, kDebugLingoParse, "++++ end if (no nlelse after single liner)");
 					res += " end if";
 					iflevel--;
 				}
 			}
 		} else if (tok.equals("else")) {
+			debugC(2, kDebugLingoParse, "start-else");
 			bool elseif = false;
 
 			tok = nexttok(lineStart);
 			if (tok.equals("if")) {
+				debugC(2, kDebugLingoParse, "second-if");
 				elseif = true;
 			} else if (tok.empty()) {
+				debugC(2, kDebugLingoParse, "lonely-else");
 				continue;
 			}
 
 			tok = prevtok(&line.c_str()[line.size() - 1], lineStart, &prevEnd);
+			debugC(2, kDebugLingoParse, "last: '%s'", tok.c_str());
 
 			if (tok.equals("if")) {
+				debugC(2, kDebugLingoParse, "end-if");
 				tok = prevtok(prevEnd, lineStart);
 
 				if (tok.equals("end")) {
+					debugC(2, kDebugLingoParse, "end-end");
 					iflevel--;
 				}
 			} else if (tok.equals("then")) {
+				debugC(2, kDebugLingoParse, "last-then");
+
 				if (elseif == false) {
 					warning("Badly nested then");
 				}
 			} else if (tok.equals("else")) {
+				debugC(2, kDebugLingoParse, "last-else");
 				if (elseif == false) {
 					warning("Badly nested else");
 				}
@@ -399,22 +418,31 @@ Common::String Lingo::stripComments(const char *s) {
 
 				if (tok.equalsIgnoreCase("else")) {
 					// Nothing to do here, same level
+					debugC(2, kDebugLingoParse, "tNLELSE");
 				} else {
+					debugC(2, kDebugLingoParse, "++++ end if (no tNLELSE)");
 					res += " end if";
 					iflevel--;
 				}
 			}
 		} else if (tok.equals("end")) {
+			debugC(2, kDebugLingoParse, "start-end");
+
 			tok = nexttok(lineStart);
 			if (tok.equals("if")) {
+				debugC(2, kDebugLingoParse, "second-if");
 				iflevel--;
 			}
 		}
 	}
 
 	for (int i = 0; i < iflevel; i++) {
+		debugC(2, kDebugLingoParse, "++++ end if (unclosed)");
 		res += "\nend if";
 	}
+
+
+	debugC(2, kDebugLingoParse, "#############\n%s\n#############", res.c_str());
 
 	return res;
 }
