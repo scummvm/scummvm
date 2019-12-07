@@ -67,7 +67,7 @@ RenderSurface *RenderSurface::SetVideoMode(uint32 width, uint32 height, int bpp)
 
 	// Now create the SoftRenderSurface
 	RenderSurface *surf;
-	if (pixelFormat.bytesPerPixel == 32) surf = new SoftRenderSurface<uint32>(sdl_surf);
+	if (pixelFormat.bytesPerPixel == 4) surf = new SoftRenderSurface<uint32>(sdl_surf);
 	else surf = new SoftRenderSurface<uint16>(sdl_surf);
 
 	// Initialize gamma correction tables

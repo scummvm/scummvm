@@ -123,7 +123,7 @@ void PentagramMenuGump::PaintChildren(RenderSurface *surf, int32 lerp_factor, bo
 	std::list<Gump *>::iterator it = children.begin();
 	std::list<Gump *>::iterator end = children.end();
 
-	Pentagram::Rect game_clip_rect(0, 45, 640, dims.h - 58);
+	Pentagram::Rect game_clip_rect(0, 45, SCREEN_WIDTH, dims.h - 58);
 	Pentagram::Rect cur_clip_rect;
 	surf->GetClippingRect(cur_clip_rect);
 
