@@ -368,7 +368,6 @@ Common::String Lingo::stripComments(const char *s) {
 				} else {
 					debugC(2, kDebugLingoParse, "++++ end if (no nlelse after single liner)");
 					res += " end if";
-					iflevel--;
 				}
 			}
 		} else if (tok.equals("else")) {
