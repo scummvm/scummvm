@@ -33,7 +33,7 @@ FileSystem *FileSystem::filesystem = 0;
 
 FileSystem::FileSystem(bool noforced)
 	: noforcedvpaths(noforced), allowdataoverride(true) {
-	con.Print(MM_INFO, "Creating FileSystem...\n");
+	con->Print(MM_INFO, "Creating FileSystem...\n");
 
 	assert(filesystem == 0);
 	filesystem = this;
@@ -70,7 +70,7 @@ FileSystem::FileSystem(bool noforced)
 }
 
 FileSystem::~FileSystem() {
-	con.Print(MM_INFO, "Destroying FileSystem...\n");
+	con->Print(MM_INFO, "Destroying FileSystem...\n");
 
 	filesystem = 0;
 }
@@ -138,7 +138,7 @@ bool FileSystem::rawOpen(Common::File &in,	const string &fname) {
 bool FileSystem::rawOpen(Common::DumpFile &out,  const string &fname) {
 	string name = fname;
 	if (!rewrite_virtual_path(name)) {
-		con.Print_err(MM_MAJOR_WARN, "Illegal file access\n");
+		con->Print_err(MM_MAJOR_WARN, "Illegal file access\n");
 		return false;
 	}
 
@@ -205,7 +205,7 @@ bool FileSystem::AddVirtualPath(const string &vpath, const string &realpath, con
 		rp.erase(rp.rfind('/'));
 
 	if (rp.find("..") != string::npos) {
-		con.Printf_err(MM_MINOR_ERR,
+		con->Printf_err(MM_MINOR_ERR,
 		               "Error mounting virtual path \"%s\": \"..\" not allowed.\n",
 		               vp.c_str());
 		return false;
@@ -214,7 +214,7 @@ bool FileSystem::AddVirtualPath(const string &vpath, const string &realpath, con
 	// Finding Reserved Virtual Path Names
 	// memory path is reserved
 	if (vp == "@memory" || vp.substr(0, 8) == "@memory/") {
-		con.Printf_err(MM_MINOR_ERR,
+		con->Printf_err(MM_MINOR_ERR,
 		               "Error mounting virtual path \"%s\": %s\"@memory\" is a reserved virtual path name.\n",
 		               vp.c_str());
 		return false;
@@ -224,13 +224,13 @@ bool FileSystem::AddVirtualPath(const string &vpath, const string &realpath, con
 	rewrite_virtual_path(fullpath);
 	// When mounting a memory file, it wont exist, so don't attempt to create the dir
 #ifdef DEBUG
-	con.Printf(MM_INFO, "virtual path \"%s\": %s\n", vp.c_str(), fullpath.c_str());
+	con->Printf(MM_INFO, "virtual path \"%s\": %s\n", vp.c_str(), fullpath.c_str());
 #endif
 	if (!(fullpath.substr(0, 8) == "@memory/")) {
 		if (!IsDir(fullpath)) {
 			if (!create) {
 #ifdef DEBUG
-				con.Printf_err(MM_MINOR_WARN,
+				con->Printf_err(MM_MINOR_WARN,
 				               "Problem mounting virtual path \"%s\": directory not found: %s\n",
 				               vp.c_str(), fullpath.c_str());
 #endif

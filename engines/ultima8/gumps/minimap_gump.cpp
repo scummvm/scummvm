@@ -44,16 +44,16 @@ MiniMapGump::MiniMapGump(int x_, int y_) :
 	minimap.width = minimap.height = MAP_NUM_CHUNKS * MINMAPGUMP_SCALE;
 	minimap.buffer = texbuffer[0];
 
-	con.AddConsoleCommand("MiniMapGump::generateWholeMap",
+	con->AddConsoleCommand("MiniMapGump::generateWholeMap",
 	                      MiniMapGump::ConCmd_generateWholeMap);
 }
 
 MiniMapGump::MiniMapGump() : Gump() {
-	con.RemoveConsoleCommand(MiniMapGump::ConCmd_generateWholeMap);
+	con->RemoveConsoleCommand(MiniMapGump::ConCmd_generateWholeMap);
 }
 
 MiniMapGump::~MiniMapGump(void) {
-	con.RemoveConsoleCommand(MiniMapGump::ConCmd_generateWholeMap);
+	con->RemoveConsoleCommand(MiniMapGump::ConCmd_generateWholeMap);
 }
 
 void MiniMapGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scaled) {
@@ -210,7 +210,7 @@ bool MiniMapGump::loadData(IDataSource *ids, uint32 version) {
 	minimap.width = minimap.height = MAP_NUM_CHUNKS * MINMAPGUMP_SCALE;
 	minimap.buffer = texbuffer[0];
 
-	con.AddConsoleCommand("MiniMapGump::generateWholeMap",
+	con->AddConsoleCommand("MiniMapGump::generateWholeMap",
 	                      MiniMapGump::ConCmd_generateWholeMap);
 	return true;
 }

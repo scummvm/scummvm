@@ -42,7 +42,7 @@ namespace Ultima8 {
 FontManager *FontManager::fontmanager = 0;
 
 FontManager::FontManager(bool ttf_antialiasing_) : ttf_antialiasing(ttf_antialiasing_) {
-	con.Print(MM_INFO, "Creating Font Manager...\n");
+	con->Print(MM_INFO, "Creating Font Manager...\n");
 
 	assert(fontmanager == 0);
 	fontmanager = this;
@@ -52,7 +52,7 @@ FontManager::FontManager(bool ttf_antialiasing_) : ttf_antialiasing(ttf_antialia
 }
 
 FontManager::~FontManager() {
-	con.Print(MM_INFO, "Destroying Font Manager...\n");
+	con->Print(MM_INFO, "Destroying Font Manager...\n");
 
 	resetGameFonts();
 

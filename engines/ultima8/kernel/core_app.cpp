@@ -49,6 +49,7 @@ CoreApp::CoreApp(int argc_, const char *const *argv_)
 	  argv(argv_), oHelp(false), oQuiet(false), oVQuiet(false) {
 	assert(application == 0);
 	application = this;
+	_console = new Console();
 }
 
 CoreApp::~CoreApp() {
@@ -61,6 +62,7 @@ CoreApp::~CoreApp() {
 	FORGET_OBJECT(settingman);
 	FORGET_OBJECT(configfileman);
 	FORGET_OBJECT(gameinfo);
+	FORGET_OBJECT(_console);
 
 	application = 0;
 }
@@ -76,10 +78,10 @@ void CoreApp::startup() {
 		oQuiet = oVQuiet = true;
 	}
 	if (oQuiet)
-		con.setMsgMask(static_cast<MsgMask>(MM_ALL & ~MM_INFO &
+		con->setMsgMask(static_cast<MsgMask>(MM_ALL & ~MM_INFO &
 		                                    ~MM_MINOR_WARN));
 	if (oVQuiet)
-		con.setMsgMask(static_cast<MsgMask>(MM_ALL & ~MM_INFO & ~MM_MINOR_WARN
+		con->setMsgMask(static_cast<MsgMask>(MM_ALL & ~MM_INFO & ~MM_MINOR_WARN
 		                                    & ~MM_MAJOR_WARN & ~MM_MINOR_ERR));
 
 	if (oHelp) {
@@ -149,7 +151,7 @@ void CoreApp::loadConfig() {
 void CoreApp::setupGameList() {
 	std::vector<Pentagram::istring> gamelist;
 	gamelist = settingman->listGames();
-	con.Print(MM_INFO, "Scanning config file for games:\n");
+	con->Print(MM_INFO, "Scanning config file for games:\n");
 	std::vector<Pentagram::istring>::iterator iter;
 	Pentagram::istring gamename;
 
@@ -159,17 +161,17 @@ void CoreApp::setupGameList() {
 		bool detected = getGameInfo(game, info);
 
 		// output detected game info
-		con.Printf(MM_INFO, "%s: ", game.c_str());
+		con->Printf(MM_INFO, "%s: ", game.c_str());
 		if (detected) {
 			// add game to games map
 			games[game] = info;
 
 			std::string details = info->getPrintDetails();
-			con.Print(MM_INFO, details.c_str());
+			con->Print(MM_INFO, details.c_str());
 		} else {
-			con.Print(MM_INFO, "unknown, skipping");
+			con->Print(MM_INFO, "unknown, skipping");
 		}
-		con.Print(MM_INFO, "\n");
+		con->Print(MM_INFO, "\n");
 	}
 }
 
@@ -338,7 +340,7 @@ void CoreApp::setupGamePaths(GameInfo *ginfo) {
 	std::string gpath;
 	settingman->get("path", gpath, SettingManager::DOM_GAME);
 	filesystem->AddVirtualPath("@game", gpath);
-	con.Printf(MM_INFO, "Game Path: %s\n", gpath.c_str());
+	con->Printf(MM_INFO, "Game Path: %s\n", gpath.c_str());
 
 
 	// load work path. Default is @home/game-work
@@ -354,7 +356,7 @@ void CoreApp::setupGamePaths(GameInfo *ginfo) {
 	//       I'd prefer them to be created when needed. (-wjp)
 
 	filesystem->AddVirtualPath("@work", work, true);
-	con.Printf(MM_INFO, "U8 Workdir: %s\n", work.c_str()); //!!FIXME (u8)
+	con->Printf(MM_INFO, "U8 Workdir: %s\n", work.c_str()); //!!FIXME (u8)
 
 	// make sure we've got a minimal sane filesystem under there...
 	filesystem->MkDir("@work/usecode");
@@ -370,7 +372,7 @@ void CoreApp::setupGamePaths(GameInfo *ginfo) {
 
 	// force creation if it doesn't exist
 	filesystem->AddVirtualPath("@save", save, true);
-	con.Printf(MM_INFO, "Savegame directory: %s\n", save.c_str());
+	con->Printf(MM_INFO, "Savegame directory: %s\n", save.c_str());
 }
 
 void CoreApp::ParseArgs(const int argc_, const char *const *const argv_) {
@@ -378,10 +380,10 @@ void CoreApp::ParseArgs(const int argc_, const char *const *const argv_) {
 }
 
 void CoreApp::helpMe() {
-	con.Print("\t-h\t\t- quick help menu (this)\n");
-	con.Print("\t-q\t\t- silence general logging messages\n");
-	con.Print("\t-qq\t\t- silence general logging messages and\n\t\t\t  non-critical warnings/errors\n");
-	con.Print("\t--game {name}\t- select a game\n");
+	con->Print("\t-h\t\t- quick help menu (this)\n");
+	con->Print("\t-q\t\t- silence general logging messages\n");
+	con->Print("\t-qq\t\t- silence general logging messages and\n\t\t\t  non-critical warnings/errors\n");
+	con->Print("\t--game {name}\t- select a game\n");
 }
 
 GameInfo *CoreApp::getGameInfo(Pentagram::istring game) const {

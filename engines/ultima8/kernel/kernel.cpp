@@ -37,7 +37,7 @@ typedef std::list<Process *>::iterator ProcessIterator;
 Kernel *Kernel::kernel = 0;
 
 Kernel::Kernel() : loading(false) {
-	con.Print(MM_INFO, "Creating Kernel...\n");
+	con->Print(MM_INFO, "Creating Kernel...\n");
 
 	assert(kernel == 0);
 	kernel = this;
@@ -51,7 +51,7 @@ Kernel::Kernel() : loading(false) {
 
 Kernel::~Kernel() {
 	reset();
-	con.Print(MM_INFO, "Destroying Kernel...\n");
+	con->Print(MM_INFO, "Destroying Kernel...\n");
 
 	kernel = 0;
 
@@ -59,7 +59,7 @@ Kernel::~Kernel() {
 }
 
 void Kernel::reset() {
-	con.Print(MM_INFO, "Resetting Kernel...\n");
+	con->Print(MM_INFO, "Resetting Kernel...\n");
 
 	for (ProcessIterator it = processes.begin(); it != processes.end(); ++it) {
 		delete(*it);

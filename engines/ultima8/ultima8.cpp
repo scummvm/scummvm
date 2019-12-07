@@ -189,89 +189,89 @@ bool Ultima8Engine::initialize() {
 	DebugMan.addDebugChannel(kDebugPath, "Path", "Pathfinding debug level");
 	DebugMan.addDebugChannel(kDebugGraphics, "Graphics", "Graphics debug level");
 
-	con.AddConsoleCommand("quit", ConCmd_quit);
-	con.AddConsoleCommand("Ultima8Engine::quit", ConCmd_quit);
-	con.AddConsoleCommand("QuitGump::verifyQuit", QuitGump::ConCmd_verifyQuit);
-	con.AddConsoleCommand("ShapeViewerGump::U8ShapeViewer", ShapeViewerGump::ConCmd_U8ShapeViewer);
-	con.AddConsoleCommand("MenuGump::showMenu", MenuGump::ConCmd_showMenu);
-	con.AddConsoleCommand("Ultima8Engine::drawRenderStats", ConCmd_drawRenderStats);
-	con.AddConsoleCommand("Ultima8Engine::engineStats", ConCmd_engineStats);
+	con->AddConsoleCommand("quit", ConCmd_quit);
+	con->AddConsoleCommand("Ultima8Engine::quit", ConCmd_quit);
+	con->AddConsoleCommand("QuitGump::verifyQuit", QuitGump::ConCmd_verifyQuit);
+	con->AddConsoleCommand("ShapeViewerGump::U8ShapeViewer", ShapeViewerGump::ConCmd_U8ShapeViewer);
+	con->AddConsoleCommand("MenuGump::showMenu", MenuGump::ConCmd_showMenu);
+	con->AddConsoleCommand("Ultima8Engine::drawRenderStats", ConCmd_drawRenderStats);
+	con->AddConsoleCommand("Ultima8Engine::engineStats", ConCmd_engineStats);
 
-	con.AddConsoleCommand("Ultima8Engine::changeGame", ConCmd_changeGame);
-	con.AddConsoleCommand("Ultima8Engine::listGames", ConCmd_listGames);
+	con->AddConsoleCommand("Ultima8Engine::changeGame", ConCmd_changeGame);
+	con->AddConsoleCommand("Ultima8Engine::listGames", ConCmd_listGames);
 
-	con.AddConsoleCommand("Ultima8Engine::memberVar", &Ultima8Engine::ConCmd_memberVar);
-	con.AddConsoleCommand("Ultima8Engine::setVideoMode", ConCmd_setVideoMode);
-	con.AddConsoleCommand("Ultima8Engine::toggleFullscreen", ConCmd_toggleFullscreen);
+	con->AddConsoleCommand("Ultima8Engine::memberVar", &Ultima8Engine::ConCmd_memberVar);
+	con->AddConsoleCommand("Ultima8Engine::setVideoMode", ConCmd_setVideoMode);
+	con->AddConsoleCommand("Ultima8Engine::toggleFullscreen", ConCmd_toggleFullscreen);
 
-	con.AddConsoleCommand("Ultima8Engine::toggleAvatarInStasis", ConCmd_toggleAvatarInStasis);
-	con.AddConsoleCommand("Ultima8Engine::togglePaintEditorItems", ConCmd_togglePaintEditorItems);
-	con.AddConsoleCommand("Ultima8Engine::toggleShowTouchingItems", ConCmd_toggleShowTouchingItems);
+	con->AddConsoleCommand("Ultima8Engine::toggleAvatarInStasis", ConCmd_toggleAvatarInStasis);
+	con->AddConsoleCommand("Ultima8Engine::togglePaintEditorItems", ConCmd_togglePaintEditorItems);
+	con->AddConsoleCommand("Ultima8Engine::toggleShowTouchingItems", ConCmd_toggleShowTouchingItems);
 
-	con.AddConsoleCommand("Ultima8Engine::closeItemGumps", ConCmd_closeItemGumps);
+	con->AddConsoleCommand("Ultima8Engine::closeItemGumps", ConCmd_closeItemGumps);
 
-	con.AddConsoleCommand("HIDManager::bind", HIDManager::ConCmd_bind);
-	con.AddConsoleCommand("HIDManager::unbind", HIDManager::ConCmd_unbind);
-	con.AddConsoleCommand("HIDManager::listbinds",
+	con->AddConsoleCommand("HIDManager::bind", HIDManager::ConCmd_bind);
+	con->AddConsoleCommand("HIDManager::unbind", HIDManager::ConCmd_unbind);
+	con->AddConsoleCommand("HIDManager::listbinds",
 		HIDManager::ConCmd_listbinds);
-	con.AddConsoleCommand("HIDManager::save", HIDManager::ConCmd_save);
-	con.AddConsoleCommand("Kernel::processTypes", Kernel::ConCmd_processTypes);
-	con.AddConsoleCommand("Kernel::processInfo", Kernel::ConCmd_processInfo);
-	con.AddConsoleCommand("Kernel::listProcesses",
+	con->AddConsoleCommand("HIDManager::save", HIDManager::ConCmd_save);
+	con->AddConsoleCommand("Kernel::processTypes", Kernel::ConCmd_processTypes);
+	con->AddConsoleCommand("Kernel::processInfo", Kernel::ConCmd_processInfo);
+	con->AddConsoleCommand("Kernel::listProcesses",
 		Kernel::ConCmd_listProcesses);
-	con.AddConsoleCommand("Kernel::toggleFrameByFrame",
+	con->AddConsoleCommand("Kernel::toggleFrameByFrame",
 		Kernel::ConCmd_toggleFrameByFrame);
-	con.AddConsoleCommand("Kernel::advanceFrame", Kernel::ConCmd_advanceFrame);
-	con.AddConsoleCommand("ObjectManager::objectTypes",
+	con->AddConsoleCommand("Kernel::advanceFrame", Kernel::ConCmd_advanceFrame);
+	con->AddConsoleCommand("ObjectManager::objectTypes",
 		ObjectManager::ConCmd_objectTypes);
-	con.AddConsoleCommand("ObjectManager::objectInfo",
+	con->AddConsoleCommand("ObjectManager::objectInfo",
 		ObjectManager::ConCmd_objectInfo);
-	con.AddConsoleCommand("MemoryManager::MemInfo",
+	con->AddConsoleCommand("MemoryManager::MemInfo",
 		MemoryManager::ConCmd_MemInfo);
-	con.AddConsoleCommand("MemoryManager::test",
+	con->AddConsoleCommand("MemoryManager::test",
 		MemoryManager::ConCmd_test);
 
-	con.AddConsoleCommand("QuickAvatarMoverProcess::startMoveUp",
+	con->AddConsoleCommand("QuickAvatarMoverProcess::startMoveUp",
 		QuickAvatarMoverProcess::ConCmd_startMoveUp);
-	con.AddConsoleCommand("QuickAvatarMoverProcess::startMoveDown",
+	con->AddConsoleCommand("QuickAvatarMoverProcess::startMoveDown",
 		QuickAvatarMoverProcess::ConCmd_startMoveDown);
-	con.AddConsoleCommand("QuickAvatarMoverProcess::startMoveLeft",
+	con->AddConsoleCommand("QuickAvatarMoverProcess::startMoveLeft",
 		QuickAvatarMoverProcess::ConCmd_startMoveLeft);
-	con.AddConsoleCommand("QuickAvatarMoverProcess::startMoveRight",
+	con->AddConsoleCommand("QuickAvatarMoverProcess::startMoveRight",
 		QuickAvatarMoverProcess::ConCmd_startMoveRight);
-	con.AddConsoleCommand("QuickAvatarMoverProcess::startAscend",
+	con->AddConsoleCommand("QuickAvatarMoverProcess::startAscend",
 		QuickAvatarMoverProcess::ConCmd_startAscend);
-	con.AddConsoleCommand("QuickAvatarMoverProcess::startDescend",
+	con->AddConsoleCommand("QuickAvatarMoverProcess::startDescend",
 		QuickAvatarMoverProcess::ConCmd_startDescend);
-	con.AddConsoleCommand("QuickAvatarMoverProcess::stopMoveUp",
+	con->AddConsoleCommand("QuickAvatarMoverProcess::stopMoveUp",
 		QuickAvatarMoverProcess::ConCmd_stopMoveUp);
-	con.AddConsoleCommand("QuickAvatarMoverProcess::stopMoveDown",
+	con->AddConsoleCommand("QuickAvatarMoverProcess::stopMoveDown",
 		QuickAvatarMoverProcess::ConCmd_stopMoveDown);
-	con.AddConsoleCommand("QuickAvatarMoverProcess::stopMoveLeft",
+	con->AddConsoleCommand("QuickAvatarMoverProcess::stopMoveLeft",
 		QuickAvatarMoverProcess::ConCmd_stopMoveLeft);
-	con.AddConsoleCommand("QuickAvatarMoverProcess::stopMoveRight",
+	con->AddConsoleCommand("QuickAvatarMoverProcess::stopMoveRight",
 		QuickAvatarMoverProcess::ConCmd_stopMoveRight);
-	con.AddConsoleCommand("QuickAvatarMoverProcess::stopAscend",
+	con->AddConsoleCommand("QuickAvatarMoverProcess::stopAscend",
 		QuickAvatarMoverProcess::ConCmd_stopAscend);
-	con.AddConsoleCommand("QuickAvatarMoverProcess::stopDescend",
+	con->AddConsoleCommand("QuickAvatarMoverProcess::stopDescend",
 		QuickAvatarMoverProcess::ConCmd_stopDescend);
-	con.AddConsoleCommand("QuickAvatarMoverProcess::toggleQuarterSpeed",
+	con->AddConsoleCommand("QuickAvatarMoverProcess::toggleQuarterSpeed",
 		QuickAvatarMoverProcess::ConCmd_toggleQuarterSpeed);
-	con.AddConsoleCommand("QuickAvatarMoverProcess::toggleClipping",
+	con->AddConsoleCommand("QuickAvatarMoverProcess::toggleClipping",
 		QuickAvatarMoverProcess::ConCmd_toggleClipping);
 
-	con.AddConsoleCommand("GameMapGump::toggleHighlightItems",
+	con->AddConsoleCommand("GameMapGump::toggleHighlightItems",
 		GameMapGump::ConCmd_toggleHighlightItems);
-	con.AddConsoleCommand("GameMapGump::dumpMap",
+	con->AddConsoleCommand("GameMapGump::dumpMap",
 		GameMapGump::ConCmd_dumpMap);
-	con.AddConsoleCommand("GameMapGump::incrementSortOrder",
+	con->AddConsoleCommand("GameMapGump::incrementSortOrder",
 		GameMapGump::ConCmd_incrementSortOrder);
-	con.AddConsoleCommand("GameMapGump::decrementSortOrder",
+	con->AddConsoleCommand("GameMapGump::decrementSortOrder",
 		GameMapGump::ConCmd_decrementSortOrder);
 
-	con.AddConsoleCommand("AudioProcess::listSFX", AudioProcess::ConCmd_listSFX);
-	con.AddConsoleCommand("AudioProcess::playSFX", AudioProcess::ConCmd_playSFX);
-	con.AddConsoleCommand("AudioProcess::stopSFX", AudioProcess::ConCmd_stopSFX);
+	con->AddConsoleCommand("AudioProcess::listSFX", AudioProcess::ConCmd_listSFX);
+	con->AddConsoleCommand("AudioProcess::playSFX", AudioProcess::ConCmd_playSFX);
+	con->AddConsoleCommand("AudioProcess::stopSFX", AudioProcess::ConCmd_stopSFX);
 
 	return true;
 }
@@ -310,63 +310,63 @@ bool Ultima8Engine::loadData() {
 }
 
 void Ultima8Engine::deinitialize() {
-	con.RemoveConsoleCommand(Ultima8Engine::ConCmd_quit);
-	con.RemoveConsoleCommand(QuitGump::ConCmd_verifyQuit);
-	con.RemoveConsoleCommand(ShapeViewerGump::ConCmd_U8ShapeViewer);
-	con.RemoveConsoleCommand(MenuGump::ConCmd_showMenu);
-	con.RemoveConsoleCommand(Ultima8Engine::ConCmd_drawRenderStats);
-	con.RemoveConsoleCommand(Ultima8Engine::ConCmd_engineStats);
+	con->RemoveConsoleCommand(Ultima8Engine::ConCmd_quit);
+	con->RemoveConsoleCommand(QuitGump::ConCmd_verifyQuit);
+	con->RemoveConsoleCommand(ShapeViewerGump::ConCmd_U8ShapeViewer);
+	con->RemoveConsoleCommand(MenuGump::ConCmd_showMenu);
+	con->RemoveConsoleCommand(Ultima8Engine::ConCmd_drawRenderStats);
+	con->RemoveConsoleCommand(Ultima8Engine::ConCmd_engineStats);
 
-	con.RemoveConsoleCommand(Ultima8Engine::ConCmd_changeGame);
-	con.RemoveConsoleCommand(Ultima8Engine::ConCmd_listGames);
+	con->RemoveConsoleCommand(Ultima8Engine::ConCmd_changeGame);
+	con->RemoveConsoleCommand(Ultima8Engine::ConCmd_listGames);
 
-	con.RemoveConsoleCommand(Ultima8Engine::ConCmd_memberVar);
-	con.RemoveConsoleCommand(Ultima8Engine::ConCmd_setVideoMode);
-	con.RemoveConsoleCommand(Ultima8Engine::ConCmd_toggleFullscreen);
+	con->RemoveConsoleCommand(Ultima8Engine::ConCmd_memberVar);
+	con->RemoveConsoleCommand(Ultima8Engine::ConCmd_setVideoMode);
+	con->RemoveConsoleCommand(Ultima8Engine::ConCmd_toggleFullscreen);
 
-	con.RemoveConsoleCommand(Ultima8Engine::ConCmd_toggleAvatarInStasis);
-	con.RemoveConsoleCommand(Ultima8Engine::ConCmd_togglePaintEditorItems);
-	con.RemoveConsoleCommand(Ultima8Engine::ConCmd_toggleShowTouchingItems);
+	con->RemoveConsoleCommand(Ultima8Engine::ConCmd_toggleAvatarInStasis);
+	con->RemoveConsoleCommand(Ultima8Engine::ConCmd_togglePaintEditorItems);
+	con->RemoveConsoleCommand(Ultima8Engine::ConCmd_toggleShowTouchingItems);
 
-	con.RemoveConsoleCommand(Ultima8Engine::ConCmd_closeItemGumps);
+	con->RemoveConsoleCommand(Ultima8Engine::ConCmd_closeItemGumps);
 
-	con.RemoveConsoleCommand(HIDManager::ConCmd_bind);
-	con.RemoveConsoleCommand(HIDManager::ConCmd_unbind);
-	con.RemoveConsoleCommand(HIDManager::ConCmd_listbinds);
-	con.RemoveConsoleCommand(HIDManager::ConCmd_save);
-	con.RemoveConsoleCommand(Kernel::ConCmd_processTypes);
-	con.RemoveConsoleCommand(Kernel::ConCmd_processInfo);
-	con.RemoveConsoleCommand(Kernel::ConCmd_listProcesses);
-	con.RemoveConsoleCommand(Kernel::ConCmd_toggleFrameByFrame);
-	con.RemoveConsoleCommand(Kernel::ConCmd_advanceFrame);
-	con.RemoveConsoleCommand(ObjectManager::ConCmd_objectTypes);
-	con.RemoveConsoleCommand(ObjectManager::ConCmd_objectInfo);
-	con.RemoveConsoleCommand(MemoryManager::ConCmd_MemInfo);
-	con.RemoveConsoleCommand(MemoryManager::ConCmd_test);
+	con->RemoveConsoleCommand(HIDManager::ConCmd_bind);
+	con->RemoveConsoleCommand(HIDManager::ConCmd_unbind);
+	con->RemoveConsoleCommand(HIDManager::ConCmd_listbinds);
+	con->RemoveConsoleCommand(HIDManager::ConCmd_save);
+	con->RemoveConsoleCommand(Kernel::ConCmd_processTypes);
+	con->RemoveConsoleCommand(Kernel::ConCmd_processInfo);
+	con->RemoveConsoleCommand(Kernel::ConCmd_listProcesses);
+	con->RemoveConsoleCommand(Kernel::ConCmd_toggleFrameByFrame);
+	con->RemoveConsoleCommand(Kernel::ConCmd_advanceFrame);
+	con->RemoveConsoleCommand(ObjectManager::ConCmd_objectTypes);
+	con->RemoveConsoleCommand(ObjectManager::ConCmd_objectInfo);
+	con->RemoveConsoleCommand(MemoryManager::ConCmd_MemInfo);
+	con->RemoveConsoleCommand(MemoryManager::ConCmd_test);
 
-	con.RemoveConsoleCommand(QuickAvatarMoverProcess::ConCmd_startMoveUp);
-	con.RemoveConsoleCommand(QuickAvatarMoverProcess::ConCmd_startMoveDown);
-	con.RemoveConsoleCommand(QuickAvatarMoverProcess::ConCmd_startMoveLeft);
-	con.RemoveConsoleCommand(QuickAvatarMoverProcess::ConCmd_startMoveRight);
-	con.RemoveConsoleCommand(QuickAvatarMoverProcess::ConCmd_startAscend);
-	con.RemoveConsoleCommand(QuickAvatarMoverProcess::ConCmd_startDescend);
-	con.RemoveConsoleCommand(QuickAvatarMoverProcess::ConCmd_stopMoveUp);
-	con.RemoveConsoleCommand(QuickAvatarMoverProcess::ConCmd_stopMoveDown);
-	con.RemoveConsoleCommand(QuickAvatarMoverProcess::ConCmd_stopMoveLeft);
-	con.RemoveConsoleCommand(QuickAvatarMoverProcess::ConCmd_stopMoveRight);
-	con.RemoveConsoleCommand(QuickAvatarMoverProcess::ConCmd_stopAscend);
-	con.RemoveConsoleCommand(QuickAvatarMoverProcess::ConCmd_stopDescend);
-	con.RemoveConsoleCommand(QuickAvatarMoverProcess::ConCmd_toggleQuarterSpeed);
-	con.RemoveConsoleCommand(QuickAvatarMoverProcess::ConCmd_toggleClipping);
+	con->RemoveConsoleCommand(QuickAvatarMoverProcess::ConCmd_startMoveUp);
+	con->RemoveConsoleCommand(QuickAvatarMoverProcess::ConCmd_startMoveDown);
+	con->RemoveConsoleCommand(QuickAvatarMoverProcess::ConCmd_startMoveLeft);
+	con->RemoveConsoleCommand(QuickAvatarMoverProcess::ConCmd_startMoveRight);
+	con->RemoveConsoleCommand(QuickAvatarMoverProcess::ConCmd_startAscend);
+	con->RemoveConsoleCommand(QuickAvatarMoverProcess::ConCmd_startDescend);
+	con->RemoveConsoleCommand(QuickAvatarMoverProcess::ConCmd_stopMoveUp);
+	con->RemoveConsoleCommand(QuickAvatarMoverProcess::ConCmd_stopMoveDown);
+	con->RemoveConsoleCommand(QuickAvatarMoverProcess::ConCmd_stopMoveLeft);
+	con->RemoveConsoleCommand(QuickAvatarMoverProcess::ConCmd_stopMoveRight);
+	con->RemoveConsoleCommand(QuickAvatarMoverProcess::ConCmd_stopAscend);
+	con->RemoveConsoleCommand(QuickAvatarMoverProcess::ConCmd_stopDescend);
+	con->RemoveConsoleCommand(QuickAvatarMoverProcess::ConCmd_toggleQuarterSpeed);
+	con->RemoveConsoleCommand(QuickAvatarMoverProcess::ConCmd_toggleClipping);
 
-	con.RemoveConsoleCommand(GameMapGump::ConCmd_toggleHighlightItems);
-	con.RemoveConsoleCommand(GameMapGump::ConCmd_dumpMap);
-	con.RemoveConsoleCommand(GameMapGump::ConCmd_incrementSortOrder);
-	con.RemoveConsoleCommand(GameMapGump::ConCmd_decrementSortOrder);
+	con->RemoveConsoleCommand(GameMapGump::ConCmd_toggleHighlightItems);
+	con->RemoveConsoleCommand(GameMapGump::ConCmd_dumpMap);
+	con->RemoveConsoleCommand(GameMapGump::ConCmd_incrementSortOrder);
+	con->RemoveConsoleCommand(GameMapGump::ConCmd_decrementSortOrder);
 
-	con.RemoveConsoleCommand(AudioProcess::ConCmd_listSFX);
-	con.RemoveConsoleCommand(AudioProcess::ConCmd_stopSFX);
-	con.RemoveConsoleCommand(AudioProcess::ConCmd_playSFX);
+	con->RemoveConsoleCommand(AudioProcess::ConCmd_listSFX);
+	con->RemoveConsoleCommand(AudioProcess::ConCmd_stopSFX);
+	con->RemoveConsoleCommand(AudioProcess::ConCmd_playSFX);
 }
 
 Common::FSNode Ultima8Engine::getGameDirectory() const {
@@ -379,7 +379,7 @@ void Ultima8Engine::GUIError(const Common::String &msg) {
 
 void Ultima8Engine::startup() {
 	// Set the console to auto paint, till we have finished initing
-	con.SetAutoPaint(conAutoPaint);
+	con->SetAutoPaint(conAutoPaint);
 
 	pout << "-- Initializing Pentagram -- " << std::endl;
 
@@ -489,57 +489,57 @@ void Ultima8Engine::startup() {
 		startupPentagramMenu();
 
 	// Unset the console auto paint, since we have finished initing
-	con.SetAutoPaint(0);
+	con->SetAutoPaint(0);
 
 	//	pout << "Paint Initial display" << std::endl;
 	paint();
 }
 
 void Ultima8Engine::startupGame() {
-	con.SetAutoPaint(conAutoPaint);
+	con->SetAutoPaint(conAutoPaint);
 
 	pout  << std::endl << "-- Initializing Game: " << gameinfo->name << " --" << std::endl;
 
 	GraphicSysInit();
 
 	// Generic Commands
-	con.AddConsoleCommand("Ultima8Engine::saveGame", ConCmd_saveGame);
-	con.AddConsoleCommand("Ultima8Engine::loadGame", ConCmd_loadGame);
-	con.AddConsoleCommand("Ultima8Engine::newGame", ConCmd_newGame);
+	con->AddConsoleCommand("Ultima8Engine::saveGame", ConCmd_saveGame);
+	con->AddConsoleCommand("Ultima8Engine::loadGame", ConCmd_loadGame);
+	con->AddConsoleCommand("Ultima8Engine::newGame", ConCmd_newGame);
 #ifdef DEBUG
-	con.AddConsoleCommand("Pathfinder::visualDebug",
+	con->AddConsoleCommand("Pathfinder::visualDebug",
 		Pathfinder::ConCmd_visualDebug);
 #endif
 
 	// U8 Game commands
-	con.AddConsoleCommand("MainActor::teleport", MainActor::ConCmd_teleport);
-	con.AddConsoleCommand("MainActor::mark", MainActor::ConCmd_mark);
-	con.AddConsoleCommand("MainActor::recall", MainActor::ConCmd_recall);
-	con.AddConsoleCommand("MainActor::listmarks", MainActor::ConCmd_listmarks);
-	con.AddConsoleCommand("Cheat::maxstats", MainActor::ConCmd_maxstats);
-	con.AddConsoleCommand("Cheat::heal", MainActor::ConCmd_heal);
-	con.AddConsoleCommand("Cheat::toggleInvincibility", MainActor::ConCmd_toggleInvincibility);
-	con.AddConsoleCommand("Cheat::toggle", Ultima8Engine::ConCmd_toggleCheatMode);
-	con.AddConsoleCommand("MainActor::name", MainActor::ConCmd_name);
-	con.AddConsoleCommand("MovieGump::play", MovieGump::ConCmd_play);
-	con.AddConsoleCommand("MusicProcess::playMusic", MusicProcess::ConCmd_playMusic);
-	con.AddConsoleCommand("InverterProcess::invertScreen",
+	con->AddConsoleCommand("MainActor::teleport", MainActor::ConCmd_teleport);
+	con->AddConsoleCommand("MainActor::mark", MainActor::ConCmd_mark);
+	con->AddConsoleCommand("MainActor::recall", MainActor::ConCmd_recall);
+	con->AddConsoleCommand("MainActor::listmarks", MainActor::ConCmd_listmarks);
+	con->AddConsoleCommand("Cheat::maxstats", MainActor::ConCmd_maxstats);
+	con->AddConsoleCommand("Cheat::heal", MainActor::ConCmd_heal);
+	con->AddConsoleCommand("Cheat::toggleInvincibility", MainActor::ConCmd_toggleInvincibility);
+	con->AddConsoleCommand("Cheat::toggle", Ultima8Engine::ConCmd_toggleCheatMode);
+	con->AddConsoleCommand("MainActor::name", MainActor::ConCmd_name);
+	con->AddConsoleCommand("MovieGump::play", MovieGump::ConCmd_play);
+	con->AddConsoleCommand("MusicProcess::playMusic", MusicProcess::ConCmd_playMusic);
+	con->AddConsoleCommand("InverterProcess::invertScreen",
 		InverterProcess::ConCmd_invertScreen);
-	con.AddConsoleCommand("FastAreaVisGump::toggle",
+	con->AddConsoleCommand("FastAreaVisGump::toggle",
 		FastAreaVisGump::ConCmd_toggle);
-	con.AddConsoleCommand("MiniMapGump::toggle",
+	con->AddConsoleCommand("MiniMapGump::toggle",
 		MiniMapGump::ConCmd_toggle);
-	con.AddConsoleCommand("MainActor::useBackpack",
+	con->AddConsoleCommand("MainActor::useBackpack",
 		MainActor::ConCmd_useBackpack);
-	con.AddConsoleCommand("MainActor::useInventory",
+	con->AddConsoleCommand("MainActor::useInventory",
 		MainActor::ConCmd_useInventory);
-	con.AddConsoleCommand("MainActor::useRecall",
+	con->AddConsoleCommand("MainActor::useRecall",
 		MainActor::ConCmd_useRecall);
-	con.AddConsoleCommand("MainActor::useBedroll",
+	con->AddConsoleCommand("MainActor::useBedroll",
 		MainActor::ConCmd_useBedroll);
-	con.AddConsoleCommand("MainActor::useKeyring",
+	con->AddConsoleCommand("MainActor::useKeyring",
 		MainActor::ConCmd_useKeyring);
-	con.AddConsoleCommand("MainActor::toggleCombat",
+	con->AddConsoleCommand("MainActor::toggleCombat",
 		MainActor::ConCmd_toggleCombat);
 
 	gamedata = new GameData(gameinfo);
@@ -554,9 +554,9 @@ void Ultima8Engine::startupGame() {
 		// system-wide config
 		if (configfileman->readConfigFile(bindingsfile,
 			"bindings", true))
-			con.Printf(MM_INFO, "%s... Ok\n", bindingsfile.c_str());
+			con->Printf(MM_INFO, "%s... Ok\n", bindingsfile.c_str());
 		else
-			con.Printf(MM_MINOR_WARN, "%s... Failed\n", bindingsfile.c_str());
+			con->Printf(MM_MINOR_WARN, "%s... Failed\n", bindingsfile.c_str());
 	}
 
 	hidmanager->loadBindings();
@@ -597,7 +597,7 @@ void Ultima8Engine::startupGame() {
 	gamedata->setupFontOverrides();
 
 	// Unset the console auto paint (can't have it from here on)
-	con.SetAutoPaint(0);
+	con->SetAutoPaint(0);
 
 	// Create Midi Driver for Ultima 8
 	if (getGameInfo()->type == GameInfo::GAME_U8)
@@ -615,7 +615,7 @@ void Ultima8Engine::startupGame() {
 }
 
 void Ultima8Engine::startupPentagramMenu() {
-	con.SetAutoPaint(conAutoPaint);
+	con->SetAutoPaint(conAutoPaint);
 
 	pout << std::endl << "-- Initializing Pentagram Menu -- " << std::endl;
 
@@ -625,7 +625,7 @@ void Ultima8Engine::startupPentagramMenu() {
 	GraphicSysInit();
 
 	// Unset the console auto paint, since we have finished initing
-	con.SetAutoPaint(0);
+	con->SetAutoPaint(0);
 	consoleGump->HideConsole();
 
 	Pentagram::Rect dims;
@@ -676,34 +676,34 @@ void Ultima8Engine::shutdownGame(bool reloading) {
 	has_cheated = false;
 
 	// Generic Game
-	con.RemoveConsoleCommand(Ultima8Engine::ConCmd_saveGame);
-	con.RemoveConsoleCommand(Ultima8Engine::ConCmd_loadGame);
-	con.RemoveConsoleCommand(Ultima8Engine::ConCmd_newGame);
+	con->RemoveConsoleCommand(Ultima8Engine::ConCmd_saveGame);
+	con->RemoveConsoleCommand(Ultima8Engine::ConCmd_loadGame);
+	con->RemoveConsoleCommand(Ultima8Engine::ConCmd_newGame);
 #ifdef DEBUG
-	con.RemoveConsoleCommand(Pathfinder::ConCmd_visualDebug);
+	con->RemoveConsoleCommand(Pathfinder::ConCmd_visualDebug);
 #endif
 
 	// U8 Only kind of
-	con.RemoveConsoleCommand(MainActor::ConCmd_teleport);
-	con.RemoveConsoleCommand(MainActor::ConCmd_mark);
-	con.RemoveConsoleCommand(MainActor::ConCmd_recall);
-	con.RemoveConsoleCommand(MainActor::ConCmd_listmarks);
-	con.RemoveConsoleCommand(MainActor::ConCmd_maxstats);
-	con.RemoveConsoleCommand(MainActor::ConCmd_heal);
-	con.RemoveConsoleCommand(MainActor::ConCmd_toggleInvincibility);
-	con.RemoveConsoleCommand(Ultima8Engine::ConCmd_toggleCheatMode);
-	con.RemoveConsoleCommand(MainActor::ConCmd_name);
-	con.RemoveConsoleCommand(MovieGump::ConCmd_play);
-	con.RemoveConsoleCommand(MusicProcess::ConCmd_playMusic);
-	con.RemoveConsoleCommand(InverterProcess::ConCmd_invertScreen);
-	con.RemoveConsoleCommand(FastAreaVisGump::ConCmd_toggle);
-	con.RemoveConsoleCommand(MiniMapGump::ConCmd_toggle);
-	con.RemoveConsoleCommand(MainActor::ConCmd_useBackpack);
-	con.RemoveConsoleCommand(MainActor::ConCmd_useInventory);
-	con.RemoveConsoleCommand(MainActor::ConCmd_useRecall);
-	con.RemoveConsoleCommand(MainActor::ConCmd_useBedroll);
-	con.RemoveConsoleCommand(MainActor::ConCmd_useKeyring);
-	con.RemoveConsoleCommand(MainActor::ConCmd_toggleCombat);
+	con->RemoveConsoleCommand(MainActor::ConCmd_teleport);
+	con->RemoveConsoleCommand(MainActor::ConCmd_mark);
+	con->RemoveConsoleCommand(MainActor::ConCmd_recall);
+	con->RemoveConsoleCommand(MainActor::ConCmd_listmarks);
+	con->RemoveConsoleCommand(MainActor::ConCmd_maxstats);
+	con->RemoveConsoleCommand(MainActor::ConCmd_heal);
+	con->RemoveConsoleCommand(MainActor::ConCmd_toggleInvincibility);
+	con->RemoveConsoleCommand(Ultima8Engine::ConCmd_toggleCheatMode);
+	con->RemoveConsoleCommand(MainActor::ConCmd_name);
+	con->RemoveConsoleCommand(MovieGump::ConCmd_play);
+	con->RemoveConsoleCommand(MusicProcess::ConCmd_playMusic);
+	con->RemoveConsoleCommand(InverterProcess::ConCmd_invertScreen);
+	con->RemoveConsoleCommand(FastAreaVisGump::ConCmd_toggle);
+	con->RemoveConsoleCommand(MiniMapGump::ConCmd_toggle);
+	con->RemoveConsoleCommand(MainActor::ConCmd_useBackpack);
+	con->RemoveConsoleCommand(MainActor::ConCmd_useInventory);
+	con->RemoveConsoleCommand(MainActor::ConCmd_useRecall);
+	con->RemoveConsoleCommand(MainActor::ConCmd_useBedroll);
+	con->RemoveConsoleCommand(MainActor::ConCmd_useKeyring);
+	con->RemoveConsoleCommand(MainActor::ConCmd_toggleCombat);
 
 	// Kill Game
 	CoreApp::killGame();
@@ -714,24 +714,24 @@ void Ultima8Engine::shutdownGame(bool reloading) {
 		Pentagram::Rect dims;
 		screen->GetSurfaceDims(dims);
 
-		con.Print(MM_INFO, "Creating Desktop...\n");
+		con->Print(MM_INFO, "Creating Desktop...\n");
 		desktopGump = new DesktopGump(0, 0, dims.w, dims.h);
 		desktopGump->InitGump(0);
 		desktopGump->MakeFocus();
 
-		con.Print(MM_INFO, "Creating ScalerGump...\n");
+		con->Print(MM_INFO, "Creating ScalerGump...\n");
 		scalerGump = new ScalerGump(0, 0, dims.w, dims.h);
 		scalerGump->InitGump(0);
 
 		Pentagram::Rect scaled_dims;
 		scalerGump->GetDims(scaled_dims);
 
-		con.Print(MM_INFO, "Creating Graphics Console...\n");
+		con->Print(MM_INFO, "Creating Graphics Console...\n");
 		consoleGump = new ConsoleGump(0, 0, dims.w, dims.h);
 		consoleGump->InitGump(0);
 		consoleGump->HideConsole();
 
-		con.Print(MM_INFO, "Creating Inverter...\n");
+		con->Print(MM_INFO, "Creating Inverter...\n");
 		inverterGump = new InverterGump(0, 0, scaled_dims.w, scaled_dims.h);
 		inverterGump->InitGump(0);
 
@@ -907,7 +907,7 @@ void Ultima8Engine::paint() {
 		static long fps = 0;
 		static long paint = 0;
 		char buf[256] = { '\0' };
-		FixedWidthFont *confont = con.GetConFont();
+		FixedWidthFont *confont = con->GetConFont();
 		int v_offset = 0;
 		int char_w = confont->width;
 
@@ -978,7 +978,7 @@ void Ultima8Engine::GraphicSysInit() {
 	fullscreen = new_fullscreen;
 
 	// Set Screen Resolution
-	con.Printf(MM_INFO, "Setting Video Mode %dx%dx%d...\n", width, height, bpp);
+	con->Printf(MM_INFO, "Setting Video Mode %dx%dx%d...\n", width, height, bpp);
 
 	RenderSurface *new_screen = RenderSurface::SetVideoMode(width, height, bpp);
 
@@ -1000,19 +1000,19 @@ void Ultima8Engine::GraphicSysInit() {
 	}
 
 	// setup normal mouse cursor
-	con.Print(MM_INFO, "Loading Default Mouse Cursor...\n");
+	con->Print(MM_INFO, "Loading Default Mouse Cursor...\n");
 	_mouse->setup();
 
 	std::string alt_confont;
 	bool confont_loaded = false;
 
 	if (settingman->get("console_font", alt_confont)) {
-		con.Print(MM_INFO, "Alternate console font found...\n");
+		con->Print(MM_INFO, "Alternate console font found...\n");
 		confont_loaded = LoadConsoleFont(alt_confont);
 	}
 
 	if (!confont_loaded) {
-		con.Print(MM_INFO, "Loading default console font...\n");
+		con->Print(MM_INFO, "Loading default console font...\n");
 		if (!LoadConsoleFont("@data/fixedfont.ini")) {
 			error("Failed to load console font. Exiting");
 		}
@@ -1070,7 +1070,7 @@ void Ultima8Engine::changeVideoMode(int width, int height, int new_fullscreen) {
 
 bool Ultima8Engine::LoadConsoleFont(std::string confontini) {
 	// try to load the file
-	con.Printf(MM_INFO, "Loading console font config: %s... ", confontini.c_str());
+	con->Printf(MM_INFO, "Loading console font config: %s... ", confontini.c_str());
 	if (configfileman->readConfigFile(confontini, "confont", true))
 		pout << "Ok" << std::endl;
 	else {
@@ -1085,7 +1085,7 @@ bool Ultima8Engine::LoadConsoleFont(std::string confontini) {
 		return false;
 	}
 
-	con.SetConFont(confont);
+	con->SetConFont(confont);
 
 	return true;
 }
@@ -1475,7 +1475,7 @@ bool Ultima8Engine::saveGame(std::string filename, std::string desc,
 }
 
 void Ultima8Engine::resetEngine() {
-	con.Print(MM_INFO, "-- Resetting Engine --\n");
+	con->Print(MM_INFO, "-- Resetting Engine --\n");
 
 	// kill music
 	if (audiomixer) audiomixer->reset();
@@ -1511,37 +1511,37 @@ void Ultima8Engine::resetEngine() {
 	save_count = 0;
 	has_cheated = false;
 
-	con.Print(MM_INFO, "-- Engine Reset --\n");
+	con->Print(MM_INFO, "-- Engine Reset --\n");
 }
 
 void Ultima8Engine::setupCoreGumps() {
-	con.Print(MM_INFO, "Setting up core game gumps...\n");
+	con->Print(MM_INFO, "Setting up core game gumps...\n");
 
 	Pentagram::Rect dims;
 	screen->GetSurfaceDims(dims);
 
-	con.Print(MM_INFO, "Creating Desktop...\n");
+	con->Print(MM_INFO, "Creating Desktop...\n");
 	desktopGump = new DesktopGump(0, 0, dims.w, dims.h);
 	desktopGump->InitGump(0);
 	desktopGump->MakeFocus();
 
-	con.Print(MM_INFO, "Creating ScalerGump...\n");
+	con->Print(MM_INFO, "Creating ScalerGump...\n");
 	scalerGump = new ScalerGump(0, 0, dims.w, dims.h);
 	scalerGump->InitGump(0);
 
 	Pentagram::Rect scaled_dims;
 	scalerGump->GetDims(scaled_dims);
 
-	con.Print(MM_INFO, "Creating Graphics Console...\n");
+	con->Print(MM_INFO, "Creating Graphics Console...\n");
 	consoleGump = new ConsoleGump(0, 0, dims.w, dims.h);
 	consoleGump->InitGump(0);
 	consoleGump->HideConsole();
 
-	con.Print(MM_INFO, "Creating Inverter...\n");
+	con->Print(MM_INFO, "Creating Inverter...\n");
 	inverterGump = new InverterGump(0, 0, scaled_dims.w, scaled_dims.h);
 	inverterGump->InitGump(0);
 
-	con.Print(MM_INFO, "Creating GameMapGump...\n");
+	con->Print(MM_INFO, "Creating GameMapGump...\n");
 	gameMapGump = new GameMapGump(0, 0, scaled_dims.w, scaled_dims.h);
 	gameMapGump->InitGump(0);
 
@@ -1559,7 +1559,7 @@ void Ultima8Engine::setupCoreGumps() {
 }
 
 bool Ultima8Engine::newGame(const std::string &savegame) {
-	con.Print(MM_INFO, "Starting New Game...\n");
+	con->Print(MM_INFO, "Starting New Game...\n");
 
 	resetEngine();
 
@@ -1567,10 +1567,10 @@ bool Ultima8Engine::newGame(const std::string &savegame) {
 
 	game->startGame();
 
-	con.Print(MM_INFO, "Create Camera...\n");
+	con->Print(MM_INFO, "Create Camera...\n");
 	CameraProcess::SetCameraProcess(new CameraProcess(1)); // Follow Avatar
 
-	con.Print(MM_INFO, "Create persistent Processes...\n");
+	con->Print(MM_INFO, "Create persistent Processes...\n");
 	avatarMoverProcess = new AvatarMoverProcess();
 	kernel->addProcess(avatarMoverProcess);
 
@@ -1597,7 +1597,7 @@ bool Ultima8Engine::newGame(const std::string &savegame) {
 }
 
 bool Ultima8Engine::loadGame(std::string filename) {
-	con.Print(MM_INFO, "Loading...\n");
+	con->Print(MM_INFO, "Loading...\n");
 
 	IDataSource *ids = filesystem->ReadFile(filename);
 	if (!ids) {
@@ -1914,14 +1914,14 @@ void Ultima8Engine::ConCmd_listGames(const Console::ArgvType &argv) {
 	for (iter = games.begin(); iter != games.end(); ++iter) {
 		Pentagram::istring game = *iter;
 		GameInfo *info = app->getGameInfo(game);
-		con.Printf(MM_INFO, "%s: ", game.c_str());
+		con->Printf(MM_INFO, "%s: ", game.c_str());
 		if (info) {
 			std::string details = info->getPrintDetails();
-			con.Print(MM_INFO, details.c_str());
+			con->Print(MM_INFO, details.c_str());
 		} else {
-			con.Print(MM_INFO, "(unknown)");
+			con->Print(MM_INFO, "(unknown)");
 		}
-		con.Print(MM_INFO, "\n");
+		con->Print(MM_INFO, "\n");
 	}
 }
 

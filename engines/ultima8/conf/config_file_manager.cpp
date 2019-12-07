@@ -28,14 +28,14 @@ using std::string;
 ConfigFileManager *ConfigFileManager::configfilemanager = 0;
 
 ConfigFileManager::ConfigFileManager() {
-	con.Print(MM_INFO, "Creating ConfigFileManager...\n");
+	con->Print(MM_INFO, "Creating ConfigFileManager...\n");
 
 	assert(configfilemanager == 0);
 	configfilemanager = this;
 }
 
 ConfigFileManager::~ConfigFileManager() {
-	con.Print(MM_INFO, "Destroying ConfigFileManager...\n");
+	con->Print(MM_INFO, "Destroying ConfigFileManager...\n");
 
 	clear();
 	configfilemanager = 0;

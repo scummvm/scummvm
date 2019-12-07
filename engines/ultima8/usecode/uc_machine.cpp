@@ -82,7 +82,7 @@ enum UCSegments {
 UCMachine *UCMachine::ucmachine = 0;
 
 UCMachine::UCMachine(Intrinsic *iset, unsigned int icount) {
-	con.Print(MM_INFO, "Creating UCMachine...\n");
+	con->Print(MM_INFO, "Creating UCMachine...\n");
 
 	assert(ucmachine == 0);
 	ucmachine = this;
@@ -96,15 +96,15 @@ UCMachine::UCMachine(Intrinsic *iset, unsigned int icount) {
 	listIDs = new idMan(1, 65534, 128);
 	stringIDs = new idMan(1, 65534, 256);
 
-	con.AddConsoleCommand("UCMachine::getGlobal", ConCmd_getGlobal);
-	con.AddConsoleCommand("UCMachine::setGlobal", ConCmd_setGlobal);
+	con->AddConsoleCommand("UCMachine::getGlobal", ConCmd_getGlobal);
+	con->AddConsoleCommand("UCMachine::setGlobal", ConCmd_setGlobal);
 #ifdef DEBUG
-	con.AddConsoleCommand("UCMachine::traceObjID", ConCmd_traceObjID);
-	con.AddConsoleCommand("UCMachine::tracePID", ConCmd_tracePID);
-	con.AddConsoleCommand("UCMachine::traceClass", ConCmd_traceClass);
-	con.AddConsoleCommand("UCMachine::traceEvents", ConCmd_traceEvents);
-	con.AddConsoleCommand("UCMachine::traceAll", ConCmd_traceAll);
-	con.AddConsoleCommand("UCMachine::stopTrace", ConCmd_stopTrace);
+	con->AddConsoleCommand("UCMachine::traceObjID", ConCmd_traceObjID);
+	con->AddConsoleCommand("UCMachine::tracePID", ConCmd_tracePID);
+	con->AddConsoleCommand("UCMachine::traceClass", ConCmd_traceClass);
+	con->AddConsoleCommand("UCMachine::traceEvents", ConCmd_traceEvents);
+	con->AddConsoleCommand("UCMachine::traceAll", ConCmd_traceAll);
+	con->AddConsoleCommand("UCMachine::stopTrace", ConCmd_stopTrace);
 
 	tracing_enabled = false;
 	trace_all = false;
@@ -113,16 +113,16 @@ UCMachine::UCMachine(Intrinsic *iset, unsigned int icount) {
 
 
 UCMachine::~UCMachine() {
-	con.Print(MM_INFO, "Destroying UCMachine...\n");
+	con->Print(MM_INFO, "Destroying UCMachine...\n");
 
-	con.RemoveConsoleCommand(UCMachine::ConCmd_getGlobal);
-	con.RemoveConsoleCommand(UCMachine::ConCmd_setGlobal);
+	con->RemoveConsoleCommand(UCMachine::ConCmd_getGlobal);
+	con->RemoveConsoleCommand(UCMachine::ConCmd_setGlobal);
 #ifdef DEBUG
-	con.RemoveConsoleCommand(UCMachine::ConCmd_traceObjID);
-	con.RemoveConsoleCommand(UCMachine::ConCmd_tracePID);
-	con.RemoveConsoleCommand(UCMachine::ConCmd_traceClass);
-	con.RemoveConsoleCommand(UCMachine::ConCmd_traceAll);
-	con.RemoveConsoleCommand(UCMachine::ConCmd_stopTrace);
+	con->RemoveConsoleCommand(UCMachine::ConCmd_traceObjID);
+	con->RemoveConsoleCommand(UCMachine::ConCmd_tracePID);
+	con->RemoveConsoleCommand(UCMachine::ConCmd_traceClass);
+	con->RemoveConsoleCommand(UCMachine::ConCmd_traceAll);
+	con->RemoveConsoleCommand(UCMachine::ConCmd_stopTrace);
 #endif
 
 	ucmachine = 0;
@@ -138,7 +138,7 @@ UCMachine::~UCMachine() {
 }
 
 void UCMachine::reset() {
-	con.Print(MM_INFO, "Resetting UCMachine\n");
+	con->Print(MM_INFO, "Resetting UCMachine\n");
 
 	// clear globals
 	globals->setSize(0x1000);

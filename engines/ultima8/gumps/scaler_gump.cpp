@@ -39,15 +39,15 @@ ScalerGump::ScalerGump(int32 _x, int32 _y, int32 _width, int32 _height) :
 	swidth1(_width), sheight1(_height), scaler1(0), buffer1(0),
 	swidth2(_width), sheight2(_height), scaler2(0), buffer2(0),
 	width(_width), height(_height) {
-	con.AddConsoleCommand("ScalerGump::changeScaler", ConCmd_changeScaler);
-	con.AddConsoleCommand("ScalerGump::listScalers", ConCmd_listScalers);
+	con->AddConsoleCommand("ScalerGump::changeScaler", ConCmd_changeScaler);
+	con->AddConsoleCommand("ScalerGump::listScalers", ConCmd_listScalers);
 
 	SetupScalers();
 }
 
 ScalerGump::~ScalerGump() {
-	con.RemoveConsoleCommand(ConCmd_changeScaler);
-	con.RemoveConsoleCommand(ConCmd_listScalers);
+	con->RemoveConsoleCommand(ConCmd_changeScaler);
+	con->RemoveConsoleCommand(ConCmd_listScalers);
 
 	FORGET_OBJECT(buffer1);
 	FORGET_OBJECT(buffer2);
@@ -240,7 +240,7 @@ void ScalerGump::SetupScalers() {
 	if (swidth1 == width && sheight1 == height) return;
 
 	buffer1 = RenderSurface::CreateSecondaryRenderSurface(swidth1, sheight1);
-	con.Printf(MM_INFO, "Using Scaler: %s. %s\n", scaler1->ScalerDesc(), scaler1->ScalerCopyright());
+	con->Printf(MM_INFO, "Using Scaler: %s. %s\n", scaler1->ScalerDesc(), scaler1->ScalerCopyright());
 
 	// scaler2's factor isn't set so auto detect
 	if (swidth2 == 0 || sheight2 == 0) {
@@ -272,7 +272,7 @@ void ScalerGump::SetupScalers() {
 		}
 
 		buffer2 = RenderSurface::CreateSecondaryRenderSurface(swidth2, sheight2);
-		con.Printf(MM_INFO, "Using Secondary Scaler: %s. %s\n", scaler2->ScalerDesc(), scaler2->ScalerCopyright());
+		con->Printf(MM_INFO, "Using Secondary Scaler: %s. %s\n", scaler2->ScalerDesc(), scaler2->ScalerCopyright());
 	}
 }
 

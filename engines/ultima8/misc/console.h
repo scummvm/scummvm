@@ -334,7 +334,7 @@ private:
 };
 
 // Console object
-extern  Console     con;
+extern  Console *con;
 
 //
 // Console Ouput Streams
@@ -358,7 +358,7 @@ protected:
     // Output a character
     virtual int_type overflow(int_type c = _Tr::eof())
     {
-        if (!_Tr::eq_int_type(_Tr::eof(), c)) con.Putchar(_Tr::to_char_type(c));
+        if (!_Tr::eq_int_type(_Tr::eof(), c)) con->Putchar(_Tr::to_char_type(c));
         return (_Tr::not_eof(c));
     }
 
@@ -393,7 +393,7 @@ public:
     {
         va_list argptr;
         va_start (argptr,fmt);
-        int ret = con.vPrintf(fmt, argptr);
+        int ret = con->vPrintf(fmt, argptr);
         va_end (argptr);
         return ret;
     }
