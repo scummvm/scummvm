@@ -941,8 +941,8 @@ void Ultima8Engine::paint() {
 
 void Ultima8Engine::GraphicSysInit() {
 	settingman->setDefault("fullscreen", false);
-	settingman->setDefault("width", 640);
-	settingman->setDefault("height", 480);
+	settingman->setDefault("width", SCREEN_WIDTH);
+	settingman->setDefault("height", SCREEN_HEIGHT);
 	settingman->setDefault("bpp", 32);
 
 	bool new_fullscreen;
@@ -984,7 +984,7 @@ void Ultima8Engine::GraphicSysInit() {
 
 	if (!new_screen) {
 		perr << "Unable to set new video mode. Trying 640x480x32 windowed" << std::endl;
-		new_screen = RenderSurface::SetVideoMode(640, 480, 32);
+		new_screen = RenderSurface::SetVideoMode(SCREEN_WIDTH, SCREEN_HEIGHT, 32);
 	}
 
 	if (!new_screen) {
