@@ -398,6 +398,7 @@ void Lingo::processIf(int startlabel, int endlabel, int finalElse) {
 	WRITE_UINT32(&iend, endlabel);
 
 	int finalElsePos = -1;
+	bool multiIf = _labelstack.size() > 1;
 
 	while (true) {
 		if (_labelstack.empty()) {
@@ -430,7 +431,7 @@ void Lingo::processIf(int startlabel, int endlabel, int finalElse) {
 		else1 = label;
 	}
 
-	if (finalElsePos != -1) {
+	if (multiIf && finalElsePos != -1) {
 		debugC(4, kDebugLingoCompile, "processIf: storing %d to %d", finalElse - finalElsePos + startlabel, finalElsePos);
 		WRITE_UINT32(&ielse1, finalElse - finalElsePos + startlabel);
 		(*_currentScript)[finalElsePos + 2] = ielse1;
