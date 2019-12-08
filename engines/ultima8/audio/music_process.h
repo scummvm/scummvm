@@ -26,15 +26,14 @@
 #include "ultima8/kernel/process.h"
 #include "ultima8/usecode/intrinsics.h"
 #include "ultima8/misc/p_dynamic_cast.h"
+#include "audio/mididrv.h"
 
 namespace Ultima8 {
-
-class MidiDriver;
 
 class MusicProcess : public Process {
 public:
 	MusicProcess();
-	MusicProcess(MidiDriver *); // Note that this does NOT delete the driver
+	MusicProcess(::MidiDriver *); // Note that this does NOT delete the driver
 	virtual ~MusicProcess();
 
 	// p_dynamic_cast stuff
@@ -76,7 +75,7 @@ private:
 
 	static MusicProcess    *the_music_process;
 
-	MidiDriver *driver;
+	::MidiDriver *driver;
 	int         state;
 	int         current_track;      // Currently playing track (don't save)
 	int         wanted_track;       // Track we want to play (save this)

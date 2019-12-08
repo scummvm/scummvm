@@ -21,9 +21,11 @@
  */
 
 #include "ultima8/misc/pent_include.h"
-
 #include "ultima8/audio/audio_channel.h"
 #include "ultima8/audio/audio_sample.h"
+#include "common/memstream.h"
+#include "audio/audiostream.h"
+#include "audio/decoders/raw.h"
 
 namespace Ultima8 {
 namespace Pentagram {
@@ -39,12 +41,12 @@ namespace Pentagram {
 // floating point, we approximate that by 27/32
 #define RANGE_REDUX(x)  (((x) * 27) >> 5)
 
-AudioChannel::AudioChannel(uint32 sample_rate_, bool stereo_) :
-	playdata(0), playdata_size(0), decompressor_size(0), frame_size(0),
-	sample_rate(sample_rate_), stereo(stereo_),
-	loop(0), sample(0),
-	frame_evenodd(0), frame0_size(0), frame1_size(0), position(0), paused(false),
-	fp_pos(0), fp_speed(0) {
+AudioChannel::AudioChannel(Audio::Mixer *mixer, uint32 sample_rate_, bool stereo_) :
+		_mixer(mixer), sample_rate(sample_rate_), stereo(stereo_),
+		playdata(0), playdata_size(0), decompressor_size(0), frame_size(0),
+		loop(0), sample(0),
+		frame_evenodd(0), frame0_size(0), frame1_size(0), position(0), paused(false),
+		fp_pos(0), fp_speed(0) {
 }
 
 AudioChannel::~AudioChannel(void) {
@@ -80,11 +82,36 @@ void AudioChannel::playSample(AudioSample *sample_, int loop_, int priority_, bo
 	fp_pos = 0;
 	fp_speed = (pitch_shift * sample->getRate()) / sample_rate;
 
+#ifdef TODO
 	// Decompress frame 0
 	frame0_size = sample->decompressFrame(playdata, playdata + decompressor_size);
 
 	// Decompress frame 1
 	DecompressNextFrame();
+#else
+	// Get the data for the sample
+	Common::MemoryWriteStreamDynamic streamData(DisposeAfterUse::NO);
+	int frameSize;
+	byte *framePtr = playdata + decompressor_size;
+
+	while ((frameSize = sample->decompressFrame(playdata, framePtr)) != 0)
+		streamData.write(framePtr, frameSize);
+
+	// Create the sample
+	Audio::SeekableAudioStream *audioStream = Audio::makeRawStream(
+		new Common::MemoryReadStream(streamData.getData(), streamData.size(), DisposeAfterUse::YES),
+		sample->getRate(),
+		sample->isStereo() ? Audio::FLAG_STEREO | Audio::FLAG_UNSIGNED : Audio::FLAG_UNSIGNED,
+		DisposeAfterUse::YES
+	);
+
+	Audio::AudioStream *stream = !loop_ ? (Audio::AudioStream *)audioStream :
+		new Audio::LoopingAudioStream(audioStream, loop_);
+
+	// Play it
+	_mixer->playStream(Audio::Mixer::kPlainSoundType, &_soundHandle, stream);
+
+#endif
 
 	// Setup resampler
 	if (sample->getBits() == 8 && !sample->isStereo()) {
@@ -102,6 +129,7 @@ void AudioChannel::playSample(AudioSample *sample_, int loop_, int priority_, bo
 }
 
 void AudioChannel::resampleAndMix(int16 *stream, uint32 bytes) {
+#ifdef TODO
 	if (!sample || paused) return;
 
 	// Update fp_speed
@@ -168,6 +196,10 @@ void AudioChannel::resampleAndMix(int16 *stream, uint32 bytes) {
 		}
 
 	} while (bytes != 0);
+#else
+	error("TODO: Unused");
+
+#endif
 }
 
 // Decompress a frame
@@ -186,6 +218,7 @@ void AudioChannel::DecompressNextFrame() {
 
 // Resample a frame of mono 8bit unsigned to Stereo 16bit
 void AudioChannel::resampleFrameM8toS(int16 *&stream, uint32 &bytes) {
+#ifdef TODO
 	uint8 *src = playdata + decompressor_size + (frame_size * frame_evenodd);
 	uint8 *src2 = playdata + decompressor_size + (frame_size * (1 - frame_evenodd));
 
@@ -240,10 +273,14 @@ void AudioChannel::resampleFrameM8toS(int16 *&stream, uint32 &bytes) {
 	} while (bytes != 0 && src != src_end);
 
 	position = frame0_size - (src_end - src);
+#else
+	error("TODO: Unused");
+#endif
 }
 
 // Resample a frame of mono 8bit unsigned to Mono 16bit
 void AudioChannel::resampleFrameM8toM(int16 *&stream, uint32 &bytes) {
+#ifdef TODO
 	uint8 *src = playdata + decompressor_size + (frame_size * frame_evenodd);
 	uint8 *src2 = playdata + decompressor_size + (frame_size * (1 - frame_evenodd));
 
@@ -294,6 +331,9 @@ void AudioChannel::resampleFrameM8toM(int16 *&stream, uint32 &bytes) {
 	} while (bytes != 0 && src != src_end);
 
 	position = frame0_size - (src_end - src);
+#else
+	error("TODO: unused");
+#endif
 }
 
 } // End of namespace Pentagram

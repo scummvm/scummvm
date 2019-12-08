@@ -48,7 +48,7 @@ MusicProcess::MusicProcess()
 	std::memset(song_branches, (byte)-1, 128 * sizeof(int));
 }
 
-MusicProcess::MusicProcess(MidiDriver *drv) :
+MusicProcess::MusicProcess(::MidiDriver *drv) :
 	driver(drv), state(MUSIC_NORMAL), current_track(0),
 	wanted_track(0), last_request(0), queued_track(0) {
 	std::memset(song_branches, (byte)-1, 128 * sizeof(int));
@@ -109,6 +109,7 @@ void MusicProcess::playMusic_internal(int track) {
 		return;
 	}
 
+#ifdef TODO
 	// No current track if not playing
 	if (driver && !driver->isSequencePlaying(0))
 		wanted_track = current_track = 0;
@@ -167,9 +168,11 @@ void MusicProcess::playMusic_internal(int track) {
 
 		state = MUSIC_TRANSITION;
 	}
+#endif
 }
 
 void MusicProcess::run() {
+#ifdef TODO
 	switch (state) {
 	case MUSIC_NORMAL:
 		if (driver && !driver->isSequencePlaying(0) && queued_track) {
@@ -226,6 +229,7 @@ void MusicProcess::run() {
 	}
 	break;
 	}
+#endif
 }
 
 void MusicProcess::saveData(ODataSource *ods) {

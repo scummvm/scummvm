@@ -23,21 +23,49 @@
 #ifndef ULTIMA8_AUDIO_AUDIOMIXER_H
 #define ULTIMA8_AUDIO_AUDIOMIXER_H
 
+#include "audio/mixer.h"
+#include "audio/mididrv.h"
+#include "common/array.h"
+
 namespace Ultima8 {
 
-class MidiDriver;
+#define SAMPLE_RATE 22050
+#define CHANNEL_COUNT 8
 
 namespace Pentagram {
 class AudioChannel;
 class AudioSample;
 
 class AudioMixer {
-public:
-	AudioMixer(int sample_rate, bool stereo, int num_channels);
-	~AudioMixer(void);
+private:
+	static AudioMixer *the_audio_mixer;
+	Audio::Mixer *_mixer;
+	::MidiDriver *_midiDriver;
+	Common::Array<AudioChannel *> _channels;
 
-	MidiDriver *getMidiDriver() const {
-		return midi_driver;
+/*
+	bool            audio_ok;
+	uint32          sample_rate;
+	bool            stereo;
+	MidiDriver     *midi_driver;
+	int             midi_volume;
+
+	int             num_channels;
+	AudioChannel    **channels;
+
+	void            init_midi();
+	static void     sdlAudioCallback(void *userdata, uint8 *stream, int len);
+
+	void            MixAudio(int16 *stream, uint32 bytes);
+*/
+	void            Lock();
+	void            Unlock();
+public:
+	AudioMixer(Audio::Mixer *mixer);
+	~AudioMixer();
+
+	::MidiDriver *getMidiDriver() const {
+		return _midiDriver;
 	}
 
 	static AudioMixer  *get_instance() {
@@ -59,26 +87,6 @@ public:
 
 	void            openMidiOutput();
 	void            closeMidiOutput();
-
-private:
-	bool            audio_ok;
-	uint32          sample_rate;
-	bool            stereo;
-	MidiDriver     *midi_driver;
-	int             midi_volume;
-
-	int             num_channels;
-	AudioChannel    **channels;
-
-	void            init_midi();
-	static void     sdlAudioCallback(void *userdata, uint8 *stream, int len);
-
-	void            MixAudio(int16 *stream, uint32 bytes);
-
-	static AudioMixer *the_audio_mixer;
-
-	void            Lock();
-	void            Unlock();
 };
 
 } // End of namespace Pentagram
