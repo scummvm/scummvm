@@ -23,6 +23,8 @@
 #ifndef ULTIMA8_AUDIO_AUDIOCHANNEL_H
 #define ULTIMA8_AUDIO_AUDIOCHANNEL_H
 
+#include "audio/mixer.h"
+
 namespace Ultima8 {
 namespace Pentagram {
 
@@ -32,6 +34,8 @@ class AudioChannel {
 	// We have:
 	// 1x decompressor size
 	// 2x frame size
+	Audio::SoundHandle _soundHandle;
+	Audio::Mixer *_mixer;
 	uint8           *playdata;          //
 	uint32          playdata_size;
 	uint32          decompressor_size;  // Persistent data for the decompressor
@@ -54,7 +58,7 @@ class AudioChannel {
 	bool            paused;         // true/false
 
 public:
-	AudioChannel(uint32 sample_rate, bool stereo);
+	AudioChannel(Audio::Mixer *mixer, uint32 sample_rate, bool stereo);
 	~AudioChannel(void);
 
 	void stop() {

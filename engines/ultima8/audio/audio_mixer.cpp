@@ -22,68 +22,27 @@
 
 #include "ultima8/misc/pent_include.h"
 #include "ultima8/audio/audio_mixer.h"
-#include "ultima8/conf/setting_manager.h"
-#include "ultima8/kernel/kernel.h"
-
 #include "ultima8/audio/audio_process.h"
 #include "ultima8/audio/music_process.h"
 #include "ultima8/audio/audio_channel.h"
 #include "ultima8/audio/midi/midi_driver.h"
-
-//include SDL.h
+#include "ultima8/conf/setting_manager.h"
+#include "ultima8/kernel/kernel.h"
+#include "audio/decoders/raw.h"
 
 namespace Ultima8 {
 namespace Pentagram {
 
 AudioMixer *AudioMixer::the_audio_mixer = 0;
 
-AudioMixer::AudioMixer(int sample_rate_, bool stereo_, int num_channels_) :
-	audio_ok(false),
-	sample_rate(sample_rate_), stereo(stereo_),
-	midi_driver(0), midi_volume(255),
-	num_channels(num_channels_), channels(0) {
+AudioMixer::AudioMixer(Audio::Mixer *mixer) : _mixer(mixer), _midiDriver(nullptr) {
 	the_audio_mixer = this;
+	
+	_channels.resize(CHANNEL_COUNT);
+	for (int idx = 0; idx < CHANNEL_COUNT; ++idx)
+		_channels[idx] = new AudioChannel(_mixer, SAMPLE_RATE, true);
 
 	con->Print(MM_INFO, "Creating AudioMixer...\n");
-#ifdef TODO
-	SDL_AudioSpec desired, obtained;
-
-	desired.format = AUDIO_S16SYS;
-	desired.freq = sample_rate_;
-	desired.channels = stereo_ ? 2 : 1;
-	desired.samples = 1024;
-	desired.callback = sdlAudioCallback;
-	desired.userdata = reinterpret_cast<void *>(this);
-
-#ifdef UNDER_CE
-	desired.freq = 11025;
-	desired.channels = 1;
-#endif
-
-	// Open SDL Audio (even though we may not need it)
-	SDL_InitSubSystem(SDL_INIT_AUDIO);
-	int ret = SDL_OpenAudio(&desired, &obtained);
-	audio_ok = (ret == 0);
-
-	if (audio_ok) {
-		pout << "Audio opened using format: " << obtained.freq << " Hz " << (int) obtained.channels << " Channels" <<  std::endl;
-		// Lock the audio
-		Lock();
-
-		sample_rate = obtained.freq;
-		stereo = obtained.channels == 2;
-
-		channels = new AudioChannel*[num_channels];
-		for (int i = 0; i < num_channels; i++)
-			channels[i] = new AudioChannel(sample_rate, stereo);
-
-		// Unlock it
-		Unlock();
-
-		// GO GO GO!
-		SDL_PauseAudio(0);
-	}
-#endif
 }
 
 void AudioMixer::createProcesses() {
@@ -92,56 +51,35 @@ void AudioMixer::createProcesses() {
 	// Create the Audio Process
 	kernel->addProcess(new AudioProcess());
 
+#ifdef TODO
 	// Create the Music Process
 	kernel->addProcess(new MusicProcess(midi_driver));
+#endif
 }
 
 AudioMixer::~AudioMixer(void) {
 	con->Print(MM_INFO, "Destroying AudioMixer...\n");
 
 	closeMidiOutput();
-#ifdef TODO
-	SDL_CloseAudio();
-#endif
-	the_audio_mixer = 0;
 
-	if (channels) for (int i = 0; i < num_channels; i++) delete channels[i];
-	delete [] channels;
+	for (int idx = 0; idx < CHANNEL_COUNT; ++idx)
+		delete _channels[idx];
 }
 
 void AudioMixer::Lock() {
-#ifdef TODO
-	SDL_LockAudio();
-#endif
+	// No implementation
 }
 
 void AudioMixer::Unlock() {
-#ifdef TODO
-	SDL_UnlockAudio();
-#endif
+	// No implementation
 }
 
 void AudioMixer::reset() {
-	if (!audio_ok) return;
-
-	con->Print(MM_INFO, "Resetting AudioMixer...\n");
-
-	Lock();
-
-	if (midi_driver) {
-		for (int i = 0; i < midi_driver->maxSequences(); i++) {
-			midi_driver->finishSequence(i);
-		}
-	}
-
-	if (channels) for (int i = 0; i < num_channels; i++) channels[i]->stop();
-
+	_mixer->stopAll();
 	Unlock();
 }
 
 int AudioMixer::playSample(AudioSample *sample, int loop, int priority, bool paused, uint32 pitch_shift_, int lvol, int rvol) {
-	if (!audio_ok || !channels) return -1;
-
 	int lowest = -1;
 	int lowprior = 65536;
 
@@ -149,18 +87,19 @@ int AudioMixer::playSample(AudioSample *sample, int loop, int priority, bool pau
 	Lock();
 
 	int i;
-	for (i = 0; i < num_channels; i++) {
-		if (!channels[i]->isPlaying()) {
+	for (i = 0; i < CHANNEL_COUNT; i++) {
+		if (!_channels[i]->isPlaying()) {
 			lowest = i;
 			break;
-		} else if (channels[i]->getPriority() < priority) {
-			lowprior = channels[i]->getPriority();
+		}
+		else if (_channels[i]->getPriority() < priority) {
+			lowprior = _channels[i]->getPriority();
 			lowest = i;
 		}
 	}
 
-	if (i != num_channels || lowprior < priority)
-		channels[lowest]->playSample(sample, loop, priority, paused, pitch_shift_, lvol, rvol);
+	if (i != CHANNEL_COUNT || lowprior < priority)
+		_channels[lowest]->playSample(sample, loop, priority, paused, pitch_shift_, lvol, rvol);
 	else
 		lowest = -1;
 
@@ -171,11 +110,12 @@ int AudioMixer::playSample(AudioSample *sample, int loop, int priority, bool pau
 }
 
 bool AudioMixer::isPlaying(int chan) {
-	if (chan > num_channels || chan < 0 || !channels || !audio_ok) return 0;
+	if (chan >= CHANNEL_COUNT || chan < 0)
+		return false;
 
 	Lock();
 
-	bool playing = channels[chan]->isPlaying();
+	bool playing = _channels[chan]->isPlaying();
 
 	Unlock();
 
@@ -183,31 +123,34 @@ bool AudioMixer::isPlaying(int chan) {
 }
 
 void AudioMixer::stopSample(int chan) {
-	if (chan > num_channels || chan < 0 || !channels || !audio_ok) return;
+	if (chan >= CHANNEL_COUNT || chan < 0)
+		return;
 
 	Lock();
 
-	channels[chan]->stop();
+	_channels[chan]->stop();
 
 	Unlock();
 }
 
 void AudioMixer::setPaused(int chan, bool paused) {
-	if (chan > num_channels || chan < 0 || !channels || !audio_ok) return;
+	if (chan >= CHANNEL_COUNT || chan < 0)
+		return;
 
 	Lock();
 
-	channels[chan]->setPaused(paused);
+	_channels[chan]->setPaused(paused);
 
 	Unlock();
 }
 
 bool AudioMixer::isPaused(int chan) {
-	if (chan > num_channels || chan < 0 || !channels || !audio_ok) return false;
+	if (chan >= CHANNEL_COUNT|| chan < 0)
+		return false;
 
 	Lock();
 
-	bool ret = channels[chan]->isPaused();
+	bool ret = _channels[chan]->isPaused();
 
 	Unlock();
 
@@ -215,43 +158,27 @@ bool AudioMixer::isPaused(int chan) {
 }
 
 void AudioMixer::setVolume(int chan, int lvol, int rvol) {
-	if (chan > num_channels || chan < 0 || !channels || !audio_ok) return;
+	if (chan >= CHANNEL_COUNT || chan < 0) return;
 
 	Lock();
 
-	channels[chan]->setVolume(lvol, rvol);
+	_channels[chan]->setVolume(lvol, rvol);
 
 	Unlock();
 }
 
 void AudioMixer::getVolume(int chan, int &lvol, int &rvol) {
-	if (chan > num_channels || chan < 0 || !channels || !audio_ok) return;
+	if (chan >= CHANNEL_COUNT || chan < 0) return;
 
 	Lock();
 
-	channels[chan]->getVolume(lvol, rvol);
+	_channels[chan]->getVolume(lvol, rvol);
 
 	Unlock();
 }
 
-
-void AudioMixer::sdlAudioCallback(void *userdata, uint8 *stream, int len) {
-	AudioMixer *mixer = reinterpret_cast<AudioMixer *>(userdata);
-
-	mixer->MixAudio(reinterpret_cast<int16 *>(stream), len);
-}
-
-void AudioMixer::MixAudio(int16 *stream, uint32 bytes) {
-	if (!audio_ok) return;
-
-	if (midi_driver && midi_driver->isSampleProducer())
-		midi_driver->produceSamples(stream, bytes);
-
-	if (channels) for (int i = 0; i < num_channels; i++)
-			if (channels[i]->isPlaying()) channels[i]->resampleAndMix(stream, bytes);
-}
-
 void AudioMixer::openMidiOutput() {
+/*
 	if (midi_driver) return;
 	if (!audio_ok) return;
 
@@ -275,9 +202,11 @@ void AudioMixer::openMidiOutput() {
 		Unlock();
 		midi_driver->setGlobalVolume(midi_volume);
 	}
+*/
 }
 
 void AudioMixer::closeMidiOutput() {
+/*
 	if (!midi_driver) return;
 	con->Print(MM_INFO, "Destroying MidiDriver...\n");
 
@@ -287,6 +216,7 @@ void AudioMixer::closeMidiOutput() {
 	delete midi_driver;
 	midi_driver = 0;
 	Unlock();
+*/
 }
 
 } // End of namespace Pentagram

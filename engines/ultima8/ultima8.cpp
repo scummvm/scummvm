@@ -478,7 +478,7 @@ void Ultima8Engine::startup() {
 	hidmanager = new HIDManager();
 
 	// Audio Mixer
-	audiomixer = new Pentagram::AudioMixer(22050, true, 8);
+	audiomixer = new Pentagram::AudioMixer(_mixer);
 
 	pout << "-- Pentagram Initialized -- " << std::endl << std::endl;
 
