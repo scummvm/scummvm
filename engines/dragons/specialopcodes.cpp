@@ -178,6 +178,8 @@ void SpecialOpcodes::initOpcodes() {
 	OPCODE(0x6d, spcCaveOfDilemmaSceneLogic);
 
 	OPCODE(0x70, spcLoadLadyOfTheLakeActor);
+	OPCODE(0x71, spcFadeCreditsToBackStageScene);
+	OPCODE(0x72, spcRunCredits);
 
 	OPCODE(0x74, spcUseClickerOnLever);
 
@@ -916,6 +918,40 @@ void SpecialOpcodes::spcTransitionFromMap() {
 
 void SpecialOpcodes::spcCaveOfDilemmaSceneLogic() {
 	_vm->setSceneUpdateFunction(caveOfDilemmaUpdateFunction);
+}
+
+void SpecialOpcodes::spcFadeCreditsToBackStageScene() {
+//	call_fade_related();
+	_vm->_screen->loadPalette(0, _vm->_scene->getPalette());
+	_vm->_scene->_camera.x = 0x140;
+	_vm->waitForFrames(0x3c);
+//	Call_SomeShadeTexThingB1E();
+//TODO
+}
+
+void SpecialOpcodes::spcRunCredits() {
+//	int iVar1;
+//	DAT_8006a440 = 0x1a;
+//	DAT_80087270 = 0x78;
+	_vm->setUnkFlags(ENGINE_UNK1_FLAG_1);
+	_vm->setUnkFlags(ENGINE_UNK1_FLAG_2);
+//	open_files_slot_number_tbl = 0;
+//	DAT_80072de4 = 0;
+//	buf2048bytes = actor_dictionary;
+//	DAT_8007273c = actor_dictionary;
+	_vm->_cursor->setActorFlag400();
+	_vm->clearFlags(ENGINE_FLAG_8);
+	_vm->setFlags(ENGINE_FLAG_8000000);
+//	iVar1 = file_read_to_buffer(strCredits_txt);
+//	DAT_800728ec = iVar1 + (int)DAT_8007273c;
+//	buf2048bytes = (int32_t *)((iVar1 + 3U & 0xfffffffc) + (int)buf2048bytes);
+//	memcpy2((byte *)buf2048bytes,scrFileData_maybe,0x200);
+//	buf2048bytes = buf2048bytes + 0x80;
+	_vm->_screen->loadPalette(0, _vm->_dragonINIResource->getRecord(0x2C8)->actor->_actorResource->getPalette());
+	_vm->_scene->setMgLayerPriority(0);
+	_vm->_scene->setFgLayerPriority(0);
+//	vsync_updater_function = creditsUpdateFunction;
+//TODO
 }
 
 void SpecialOpcodes::spcLoadLadyOfTheLakeActor() {
