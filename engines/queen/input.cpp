@@ -111,8 +111,6 @@ void Input::delay(uint amount) {
 
 			case Common::EVENT_LBUTTONDOWN:
 				_mouseButton |= MOUSE_LBUTTON;
-				if (_dialogueRunning)
-					_talkQuit = true;
 				break;
 
 			case Common::EVENT_RBUTTONDOWN:
