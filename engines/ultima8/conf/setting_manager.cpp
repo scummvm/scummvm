@@ -29,7 +29,6 @@ SettingManager *SettingManager::settingmanager = 0;
 SettingManager::SettingManager() {
 	con->Print(MM_INFO, "Creating SettingManager...\n");
 
-	assert(settingmanager == 0);
 	settingmanager = this;
 
 	domains.resize(DOM_GAME + 1);

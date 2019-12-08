@@ -84,7 +84,6 @@ UCMachine *UCMachine::ucmachine = 0;
 UCMachine::UCMachine(Intrinsic *iset, unsigned int icount) {
 	con->Print(MM_INFO, "Creating UCMachine...\n");
 
-	assert(ucmachine == 0);
 	ucmachine = this;
 
 	// zero globals

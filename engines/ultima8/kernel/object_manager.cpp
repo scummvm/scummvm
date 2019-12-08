@@ -74,7 +74,6 @@ struct ObjectLoader {
 ObjectManager::ObjectManager() {
 	con->Print(MM_INFO, "Creating ObjectManager...\n");
 
-	assert(objectmanager == 0);
 	objectmanager = this;
 
 	setupLoaders();

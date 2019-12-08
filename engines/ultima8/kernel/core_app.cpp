@@ -43,7 +43,6 @@ CoreApp *CoreApp::application = 0;
 CoreApp::CoreApp(const Ultima8GameDescription *gameDesc)
 		: _gameDesc(gameDesc), isRunning(false), gameinfo(0), filesystem(0),
 		configfileman(0), settingman(0), oHelp(false), oQuiet(false), oVQuiet(false) {
-	assert(application == 0);
 	application = this;
 	_console = new Console();
 }

@@ -55,7 +55,6 @@ GameData::GameData(GameInfo *gameinfo_)
 	  mouse(0), music(0), weaponoverlay(0), soundflex(0), speech(1024), gameinfo(gameinfo_) {
 	con->Print(MM_INFO, "Creating GameData...\n");
 
-	assert(gamedata == 0);
 	gamedata = this;
 }
 

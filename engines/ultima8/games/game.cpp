@@ -35,7 +35,6 @@ namespace Ultima8 {
 Game *Game::game = 0;
 
 Game::Game() {
-	assert(game == 0);
 	game = this;
 }
 

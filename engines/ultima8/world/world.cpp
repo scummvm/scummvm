@@ -53,7 +53,6 @@ World *World::world = 0;
 World::World()
 	: currentmap(0) {
 	con->Print(MM_INFO, "Creating World...\n");
-	assert(world == 0);
 
 	world = this;
 }

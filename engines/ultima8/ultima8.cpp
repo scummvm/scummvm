@@ -162,6 +162,7 @@ Ultima8Engine::~Ultima8Engine() {
 	FORGET_OBJECT(ucmachine);
 	FORGET_OBJECT(fontmanager);
 	FORGET_OBJECT(screen);
+	FORGET_OBJECT(_memoryManager);
 }
 
 uint32 Ultima8Engine::getFeatures() const {
@@ -393,6 +394,7 @@ void Ultima8Engine::startup() {
 	filesystem->initBuiltinData(dataoverride);
 
 	kernel = new Kernel();
+	_memoryManager = new MemoryManager();
 
 	//!! move this elsewhere
 	kernel->addProcessLoader("DelayProcess",

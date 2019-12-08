@@ -35,7 +35,6 @@ PaletteManager::PaletteManager(RenderSurface *rs)
 	: rendersurface(rs) {
 	con->Print(MM_INFO, "Creating PaletteManager...\n");
 
-	assert(palettemanager == 0);
 	palettemanager = this;
 }
 

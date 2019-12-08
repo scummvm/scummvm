@@ -72,7 +72,7 @@ bool U8Game::loadFiles() {
 	pout << "Load Palette" << std::endl;
 	IDataSource *pf = FileSystem::get_instance()->ReadFile("@game/static/u8pal.pal");
 	if (!pf) {
-		perr << "Unable to load static/u8pal.pal." << std::endl;
+		perr << "Unabl-e to load static/u8pal.pal." << std::endl;
 		return false;
 	}
 	pf->seek(4); // seek past header

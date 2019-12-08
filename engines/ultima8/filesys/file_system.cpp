@@ -35,7 +35,6 @@ FileSystem::FileSystem(bool noforced)
 	: noforcedvpaths(noforced), allowdataoverride(true) {
 	con->Print(MM_INFO, "Creating FileSystem...\n");
 
-	assert(filesystem == 0);
 	filesystem = this;
 	AddVirtualPath("@home", "");
 
@@ -162,8 +161,8 @@ bool FileSystem::rawOpen(Common::DumpFile &out,  const string &fname) {
 
 void FileSystem::switch_slashes(string &name) {
 	for (string::iterator X = name.begin(); X != name.end(); ++X) {
-		if (*X == '/')
-			*X =  '\\';
+		if (*X == '\\')
+			*X =  '/';
 	}
 }
 
