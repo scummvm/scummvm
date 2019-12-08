@@ -39,7 +39,6 @@ Kernel *Kernel::kernel = 0;
 Kernel::Kernel() : loading(false) {
 	con->Print(MM_INFO, "Creating Kernel...\n");
 
-	assert(kernel == 0);
 	kernel = this;
 	pIDs = new idMan(1, 32766, 128);
 	current_process = processes.end();

@@ -35,7 +35,6 @@ HIDManager *HIDManager::hidmanager = 0;
 HIDManager::HIDManager() {
 	con->Print(MM_INFO, "Creating HIDManager...\n");
 
-	assert(hidmanager == 0);
 	hidmanager = this;
 
 	InitJoystick();

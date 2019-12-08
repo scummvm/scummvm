@@ -65,7 +65,7 @@ size_t string::rfind(char c, size_t pos) const {
 }
 
 size_t string::find_first_of(char c, size_t pos) const {
-	const char *strP = (pos >= _size) ? nullptr : strchr(_str, c);
+	const char *strP = (pos >= _size) ? nullptr : strchr(_str + pos, c);
 	return strP ? strP - _str : npos;
 }
 

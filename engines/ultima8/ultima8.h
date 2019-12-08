@@ -49,6 +49,7 @@ namespace Ultima8 {
 #define SCREEN_HEIGHT 480
 
 class Kernel;
+class MemoryManager;
 class UCMachine;
 class Game;
 class Gump;
@@ -162,6 +163,7 @@ private:
 	std::string error_title;
 
 	Kernel *kernel;
+	MemoryManager *_memoryManager;
 	ObjectManager *objectmanager;
 	HIDManager *hidmanager;
 	UCMachine *ucmachine;

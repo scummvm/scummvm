@@ -26,10 +26,9 @@
 
 namespace Ultima8 {
 
-MemoryManager *MemoryManager::memorymanager = 0;
+MemoryManager *MemoryManager::memorymanager;
 
 MemoryManager::MemoryManager() {
-	assert(memorymanager == 0);
 	memorymanager = this;
 
 	//!!! CONSTANT !!!!
