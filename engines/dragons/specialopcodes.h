@@ -170,6 +170,8 @@ protected:
 	void spcCaveOfDilemmaSceneLogic(); // 0x6d
 
 	void spcLoadLadyOfTheLakeActor(); //0x70
+	void spcFadeCreditsToBackStageScene(); //0x71
+	void spcRunCredits(); //0x72
 
 	void spcUseClickerOnLever(); // 0x74
 
