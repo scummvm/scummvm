@@ -131,7 +131,7 @@ DEFINE_RUNTIME_CLASSTYPE_CODE(Ultima8Engine, CoreApp)
 #define DATA_VERSION_MINOR 0
 
 Ultima8Engine::Ultima8Engine(OSystem *syst, const Ultima8GameDescription *gameDesc) : 
-		Engine(syst), CoreApp(0, nullptr), _gameDescription(gameDesc),
+		Engine(syst), CoreApp(gameDesc), _gameDescription(gameDesc),
 		_randomSource("Ultima8"), save_count(0), game(nullptr), kernel(nullptr),
 		_dataArchive(nullptr), objectmanager(nullptr), hidmanager(nullptr), _mouse(nullptr),
 		ucmachine(nullptr), screen(nullptr), fontmanager(nullptr), fullscreen(false),
