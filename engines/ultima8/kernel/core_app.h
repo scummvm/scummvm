@@ -27,6 +27,7 @@
 #include "ultima8/misc/args.h"
 #include "ultima8/games/game_info.h"
 #include "ultima8/misc/p_dynamic_cast.h"
+#include "ultima8/detection.h"
 
 namespace Ultima8 {
 
@@ -46,7 +47,7 @@ struct GameInfo;
 class CoreApp {
 public:
 	ENABLE_RUNTIME_CLASSTYPE()
-	CoreApp(int argc, const char *const *argv);
+	CoreApp(const Ultima8GameDescription *gameDesc);
 	virtual ~CoreApp();
 
 	static CoreApp *get_instance() {
@@ -109,8 +110,7 @@ protected:
 	static CoreApp *application;
 
 private:
-	int argc;
-	const char *const *argv;
+	const Ultima8GameDescription *_gameDesc;
 	Console *_console;
 
 	//! start filesystem, kernel, config

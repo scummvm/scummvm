@@ -35,18 +35,14 @@ namespace Ultima8 {
 
 using std::string;
 
-static void ToLower(std::string &str);
-
-
 // p_dynamic_cast stuff
 DEFINE_RUNTIME_CLASSTYPE_CODE_BASE_CLASS(CoreApp)
 
 CoreApp *CoreApp::application = 0;
 
-CoreApp::CoreApp(int argc_, const char *const *argv_)
-	: isRunning(false), gameinfo(0), filesystem(0),
-	  configfileman(0), settingman(0), argc(argc_),
-	  argv(argv_), oHelp(false), oQuiet(false), oVQuiet(false) {
+CoreApp::CoreApp(const Ultima8GameDescription *gameDesc)
+		: _gameDesc(gameDesc), isRunning(false), gameinfo(0), filesystem(0),
+		configfileman(0), settingman(0), oHelp(false), oQuiet(false), oVQuiet(false) {
 	assert(application == 0);
 	application = this;
 	_console = new Console();
@@ -70,7 +66,7 @@ CoreApp::~CoreApp() {
 void CoreApp::startup() {
 	DeclareArgs(); // Note: this is virtual
 
-	ParseArgs(argc, argv);
+	ParseArgs(0, nullptr);
 
 	// if we're spitting out help, we probably want to avoid having the
 	// other cruft dumped too...
@@ -272,57 +268,35 @@ bool CoreApp::getGameInfo(Pentagram::istring &game, GameInfo *ginfo) {
 	if (game == "pentagram") {
 		ginfo->type = GameInfo::GAME_PENTAGRAM_MENU;
 		ginfo->language = GameInfo::GAMELANG_ENGLISH;
-	} else {
-		std::string gametype;
-		if (!configfileman->get(gamekey + "/type", gametype))
-			gametype = "unknown";
-		ToLower(gametype);
 
-		if (gametype == "u8") {
-			ginfo->type = GameInfo::GAME_U8;
-		} else if (gametype == "remorse") {
-			ginfo->type = GameInfo::GAME_REMORSE;
+	} else {
+		assert(game == "ultima8");
+
+		ginfo->type = GameInfo::GAME_U8;
+		
+		switch (_gameDesc->desc.language) {
+		case Common::EN_ANY:
+			ginfo->language = GameInfo::GAMELANG_ENGLISH;
+			break;
+		case Common::FR_FRA:
+			ginfo->language = GameInfo::GAMELANG_FRENCH;
+			break;
+		case Common::DE_DEU:
+			ginfo->language = GameInfo::GAMELANG_GERMAN;
+			break;
+		case Common::ES_ESP:
+			ginfo->language = GameInfo::GAMELANG_SPANISH;
+			break;
+		case Common::JA_JPN:
+			ginfo->language = GameInfo::GAMELANG_JAPANESE;
+			break;
+		default:
+			error("Unknown language");
+			break;
 		}
 	}
 
-	std::string version;
-	if (!configfileman->get(gamekey + "/version", version))
-		version = "unknown";
-
-	std::string language;
-	if (!configfileman->get(gamekey + "/language", language))
-		language = "unknown";
-	ToLower(language);
-
-
-	//!! TODO: version parsing
-
-	if (language == "english") {
-		ginfo->language = GameInfo::GAMELANG_ENGLISH;
-	} else if (language == "french") {
-		ginfo->language = GameInfo::GAMELANG_FRENCH;
-	} else if (language == "german") {
-		ginfo->language = GameInfo::GAMELANG_GERMAN;
-	} else if (language == "spanish") {
-		ginfo->language = GameInfo::GAMELANG_SPANISH;
-	} else if (language == "japanese") {
-		ginfo->language = GameInfo::GAMELANG_JAPANESE;
-	}
-
-	if (ginfo->type == GameInfo::GAME_UNKNOWN ||
-	        /* ginfo->version == 0 || */
-	        ginfo->language == GameInfo::GAMELANG_UNKNOWN) {
-		std::string path;
-		if (!configfileman->get(gamekey + "/path", path)) return false;
-
-		return GameDetector::detect(path, ginfo);
-	}
-
-	if (ginfo->type == GameInfo::GAME_UNKNOWN) {
-		return false;
-	}
-
-	return true;
+	return ginfo->type != GameInfo::GAME_UNKNOWN;
 }
 
 void CoreApp::setupGamePaths(GameInfo *ginfo) {
@@ -340,8 +314,6 @@ void CoreApp::setupGamePaths(GameInfo *ginfo) {
 	std::string gpath;
 	settingman->get("path", gpath, SettingManager::DOM_GAME);
 	filesystem->AddVirtualPath("@game", gpath);
-	con->Printf(MM_INFO, "Game Path: %s\n", gpath.c_str());
-
 
 	// load work path. Default is @home/game-work
 	// where 'game' in the above is the specified 'game' loaded
@@ -394,12 +366,6 @@ GameInfo *CoreApp::getGameInfo(Pentagram::istring game) const {
 		return i->_value;
 	else
 		return 0;
-}
-
-static void ToLower(std::string &str) {
-	for (unsigned int i = 0; i < str.size(); ++i) {
-		str.setChar(std::tolower(str[i]), i);
-	}
 }
 
 } // End of namespace Ultima8

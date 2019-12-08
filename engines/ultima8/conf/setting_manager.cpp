@@ -172,20 +172,9 @@ void SettingManager::unregisterCallback(istring key, ConfigCallback callback) {
 }
 
 std::vector<istring> SettingManager::listGames() {
-	// identifies if a section is a game section by checking for a 'path' key
-
-	std::vector<istring> sections, games;
-	sections = conffileman->listSections("settings", false);
-
+	std::vector<istring> games;
 	games.push_back("pentagram");
-
-	for (unsigned int i = 0; i < sections.size(); ++i) {
-		istring name = sections[i];
-
-		istring pathkey = "settings/" + name + "/path";
-		if (name.find(':') == istring::npos && conffileman->exists(pathkey) && name != "pentagram")
-			games.push_back(name);
-	}
+	games.push_back("ultima8");
 
 	return games;
 }
