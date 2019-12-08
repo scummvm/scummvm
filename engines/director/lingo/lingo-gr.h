@@ -104,33 +104,31 @@
      tINSTANCE = 320,
      tGE = 321,
      tLE = 322,
-     tGT = 323,
-     tLT = 324,
-     tEQ = 325,
-     tNEQ = 326,
-     tAND = 327,
-     tOR = 328,
-     tNOT = 329,
-     tMOD = 330,
-     tAFTER = 331,
-     tBEFORE = 332,
-     tCONCAT = 333,
-     tCONTAINS = 334,
-     tSTARTS = 335,
-     tCHAR = 336,
-     tITEM = 337,
-     tLINE = 338,
-     tWORD = 339,
-     tSPRITE = 340,
-     tINTERSECTS = 341,
-     tWITHIN = 342,
-     tTELL = 343,
-     tPROPERTY = 344,
-     tON = 345,
-     tME = 346,
-     tENDIF = 347,
-     tENDREPEAT = 348,
-     tENDTELL = 349
+     tEQ = 323,
+     tNEQ = 324,
+     tAND = 325,
+     tOR = 326,
+     tNOT = 327,
+     tMOD = 328,
+     tAFTER = 329,
+     tBEFORE = 330,
+     tCONCAT = 331,
+     tCONTAINS = 332,
+     tSTARTS = 333,
+     tCHAR = 334,
+     tITEM = 335,
+     tLINE = 336,
+     tWORD = 337,
+     tSPRITE = 338,
+     tINTERSECTS = 339,
+     tWITHIN = 340,
+     tTELL = 341,
+     tPROPERTY = 342,
+     tON = 343,
+     tME = 344,
+     tENDIF = 345,
+     tENDREPEAT = 346,
+     tENDTELL = 347
    };
 #endif
 /* Tokens.  */
@@ -199,33 +197,31 @@
 #define tINSTANCE 320
 #define tGE 321
 #define tLE 322
-#define tGT 323
-#define tLT 324
-#define tEQ 325
-#define tNEQ 326
-#define tAND 327
-#define tOR 328
-#define tNOT 329
-#define tMOD 330
-#define tAFTER 331
-#define tBEFORE 332
-#define tCONCAT 333
-#define tCONTAINS 334
-#define tSTARTS 335
-#define tCHAR 336
-#define tITEM 337
-#define tLINE 338
-#define tWORD 339
-#define tSPRITE 340
-#define tINTERSECTS 341
-#define tWITHIN 342
-#define tTELL 343
-#define tPROPERTY 344
-#define tON 345
-#define tME 346
-#define tENDIF 347
-#define tENDREPEAT 348
-#define tENDTELL 349
+#define tEQ 323
+#define tNEQ 324
+#define tAND 325
+#define tOR 326
+#define tNOT 327
+#define tMOD 328
+#define tAFTER 329
+#define tBEFORE 330
+#define tCONCAT 331
+#define tCONTAINS 332
+#define tSTARTS 333
+#define tCHAR 334
+#define tITEM 335
+#define tLINE 336
+#define tWORD 337
+#define tSPRITE 338
+#define tINTERSECTS 339
+#define tWITHIN 340
+#define tTELL 341
+#define tPROPERTY 342
+#define tON 343
+#define tME 344
+#define tENDIF 345
+#define tENDREPEAT 346
+#define tENDTELL 347
 
 
 
@@ -243,7 +239,7 @@ typedef union YYSTYPE
 	Common::Array<double> *arr;
 }
 /* Line 1529 of yacc.c.  */
-#line 247 "engines/director/lingo/lingo-gr.hpp"
+#line 243 "engines/director/lingo/lingo-gr.hpp"
 	YYSTYPE;
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
 # define YYSTYPE_IS_DECLARED 1

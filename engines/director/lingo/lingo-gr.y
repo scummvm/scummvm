@@ -98,7 +98,7 @@ void checkEnd(Common::String *token, const char *expect, bool required) {
 %token tDOWN tELSE tELSIF tEXIT tFRAME tGLOBAL tGO tIF tINTO tLOOP tMACRO
 %token tMOVIE tNEXT tOF tPREVIOUS tPUT tREPEAT tSET tTHEN tTO tWHEN
 %token tWITH tWHILE tNLELSE tFACTORY tMETHOD tOPEN tPLAY tDONE tINSTANCE
-%token tGE tLE tGT tLT tEQ tNEQ tAND tOR tNOT tMOD
+%token tGE tLE tEQ tNEQ tAND tOR tNOT tMOD
 %token tAFTER tBEFORE tCONCAT tCONTAINS tSTARTS tCHAR tITEM tLINE tWORD
 %token tSPRITE tINTERSECTS tWITHIN tTELL tPROPERTY
 %token tON tME tENDIF tENDREPEAT tENDTELL
@@ -109,7 +109,7 @@ void checkEnd(Common::String *token, const char *expect, bool required) {
 %type<s> on
 
 %left tAND tOR
-%left tLT tLE tGT tGE tNEQ tCONTAINS tSTARTS tEQ
+%left '<' tLE '>' tGE tEQ tNEQ tCONTAINS tSTARTS
 %left '&'
 %left '+' '-'
 %left '*' '/' '%' tMOD
