@@ -92,7 +92,7 @@ void AudioChannel::playSample(AudioSample *sample, int loop, int priority, bool 
 		DisposeAfterUse::YES
 	);
 
-	Audio::AudioStream *stream = !_loop ? (Audio::AudioStream *)audioStream :
+	Audio::AudioStream *stream = _loop <= 1 ? (Audio::AudioStream *)audioStream :
 		new Audio::LoopingAudioStream(audioStream, _loop);
 
 	// Play it
@@ -122,14 +122,7 @@ void AudioChannel::decompressNextFrame() {
 	// Get next frame of data
 	uint8 *playData = &_playData[0];
 	uint8 *src2 = playData + _decompressorSize + (_frameSize * (1 - _frameEvenOdd));
-	int frame1Size = _sample->decompressFrame(playData, src2);
-
-	// No stream, go back to beginning and get first frame
-	if (!frame1Size && _loop) {
-		if (_loop != -1) _loop--;
-		_sample->rewind(playData);
-		(void)_sample->decompressFrame(playData, src2);
-	}
+	(void)_sample->decompressFrame(playData, src2);
 }
 
 } // End of namespace Pentagram
