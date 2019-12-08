@@ -999,11 +999,13 @@ void Lingo::c_ifcode() {
 		g_lingo->execute(elsep + savepc - 1);
 	}
 
+	// Since we do recursive calls, we want to skip behind end of the 'if'
+	// statement only once, and not after every 'end if' call
 	if (!g_lingo->_returning && !skipEnd) {
 		g_lingo->_pc = end + savepc - 1; /* next stmt */
 		debugC(8, kDebugLingoExec, "executing end");
 	} else {
-		debugC(8, kDebugLingoExec, "Skipped end");
+		debugC(8, kDebugLingoExec, "skipped end");
 	}
 }
 

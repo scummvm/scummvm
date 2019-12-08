@@ -386,13 +386,18 @@ int Lingo::codeMe(Common::String *method, int numpar) {
 
 void Lingo::codeLabel(int label) {
 	_labelstack.push_back(label);
+	debugC(4, kDebugLingoCompile, "codeLabel: Added label %d", label);
 }
 
-void Lingo::processIf(int elselabel, int endlabel) {
+void Lingo::processIf(int startlabel, int endlabel, int finalElse) {
 	inst ielse1, iend;
-	int  else1 = elselabel;
+	int  else1 = 0;
+
+	debugC(4, kDebugLingoCompile, "processIf(%d, %d, %d)", startlabel, endlabel, finalElse);
 
 	WRITE_UINT32(&iend, endlabel);
+
+	int finalElsePos = -1;
 
 	while (true) {
 		if (_labelstack.empty()) {
@@ -410,11 +415,25 @@ void Lingo::processIf(int elselabel, int endlabel) {
 		if (else1)
 			else1 = else1 - label;
 
+		// Store position of the last 'if', so we could set reference to the
+		// 'finalElse' part
+		if (finalElse && finalElsePos == -1) {
+			finalElsePos = label;
+		}
+
+		debugC(4, kDebugLingoCompile, "processIf: %d: %d %d", label, else1 + label, endlabel + label);
+
 		WRITE_UINT32(&ielse1, else1);
 		(*_currentScript)[label + 2] = ielse1;    /* elsepart */
 		(*_currentScript)[label + 3] = iend;      /* end, if cond fails */
 
 		else1 = label;
+	}
+
+	if (finalElsePos != -1) {
+		debugC(4, kDebugLingoCompile, "processIf: storing %d to %d", finalElse - finalElsePos + startlabel, finalElsePos);
+		WRITE_UINT32(&ielse1, finalElse - finalElsePos + startlabel);
+		(*_currentScript)[finalElsePos + 2] = ielse1;
 	}
 }
 
