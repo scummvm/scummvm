@@ -73,11 +73,14 @@ public:
 
 	typename Common::Array<T>::iterator erase(typename Common::Array<T>::iterator first,
 			typename Common::Array<T>::iterator last) {
-		bool flag = false;
-		for (typename Common::Array<T>::iterator i = first; i != Common::Array<T>::end() && !flag; ) {
-			flag = i == last;
-			i = Common::Array<T>::erase(i);
-		}
+		Common::copy(last, this->_storage + this->_size, first);
+
+		int count = (last - first);
+		this->_size -= count;
+
+		// We also need to destroy the objects beyond the new size
+		for (uint idx = this->_size; idx < (this->_size + count); ++idx)
+			this->_storage[idx].~T();
 
 		return first;
 	}
