@@ -419,7 +419,7 @@ Common::String Lingo::codePreprocessor(const char *s) {
 					s1++;
 				tok = nexttok(s1);
 
-				if (tok.equalsIgnoreCase("else")) {
+				if (tok.equalsIgnoreCase("else") && elseif) {
 					// Nothing to do here, same level
 					debugC(2, kDebugLingoParse, "tNLELSE");
 				} else {
