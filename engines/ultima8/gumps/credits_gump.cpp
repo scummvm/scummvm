@@ -260,7 +260,7 @@ void CreditsGump::run() {
 						continue;
 					}
 
-					if (outline[0] == '&') {
+					if (outline.hasPrefix("&")) {
 						// horizontal line
 
 						if (scrollheight[nextblock] + height + 7 > 200) {
