@@ -47,7 +47,22 @@ namespace Common {
 #define MAXNAMELEN 63
 
 MacResManager::MacResManager() {
-	memset(this, 0, sizeof(MacResManager));
+	_stream = nullptr;
+	// _baseFileName cleared by String constructor
+
+	_mode = kResForkNone;
+
+	_resForkOffset = 0;
+	_resForkSize = 0;
+
+	_dataOffset = 0;
+	_dataLength = 0;
+	_mapOffset = 0;
+	_mapLength = 0;
+	_resMap.reset();
+	_resTypes = nullptr;
+	_resLists = nullptr;
+
 	close();
 }
 
