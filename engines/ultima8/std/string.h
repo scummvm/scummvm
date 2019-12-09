@@ -171,6 +171,22 @@ public:
 	reverse_iterator rend() {
 		return reverse_iterator(this, -1);
 	}
+
+	bool operator==(const string &x) const {
+		return !Compare(x);
+	}
+
+	bool operator==(const char *x) const {
+		return !Compare(x);
+	}
+
+	bool operator!=(const string &x) const {
+		return Compare(x) != 0;
+	}
+
+	bool operator !=(const char *x) const {
+		return Compare(x) != 0;
+	}
 };
 
 extern const char *const endl;
