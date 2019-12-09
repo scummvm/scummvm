@@ -195,7 +195,7 @@ void Lingo::runMovieScript(LEvent event) {
 					 i);
 		// TODO: How do know which script handles the message?
 	}
-	debugC(3, kDebugLingoExec, "STUB: processEvent(event, kMovieScript, ?)");
+	debugC(3, kDebugEvents, "STUB: processEvent(event, kMovieScript, ?)");
 }
 
 void Lingo::processFrameEvent(LEvent event) {
@@ -306,7 +306,7 @@ void Lingo::processEvent(LEvent event, ScriptType st, int entityId) {
 
 		executeScript(st, entityId, 0); // D3 list of scripts.
 	} else {
-		debugC(3, kDebugLingoExec, "STUB: processEvent(%s, %s, %d)", _eventHandlerTypes[event], scriptType2str(st), entityId);
+		debugC(3, kDebugEvents, "STUB: processEvent(%s, %s, %d)", _eventHandlerTypes[event], scriptType2str(st), entityId);
 	}
 }
 
