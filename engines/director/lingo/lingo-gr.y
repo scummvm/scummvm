@@ -110,7 +110,7 @@ void checkEnd(Common::String *token, const char *expect, bool required) {
 
 %left tAND tOR
 %left '<' tLE '>' tGE tEQ tNEQ tCONTAINS tSTARTS
-%left '&'
+%left '&' tCONCAT
 %left '+' '-'
 %left '*' '/' '%' tMOD
 %right UNARY
