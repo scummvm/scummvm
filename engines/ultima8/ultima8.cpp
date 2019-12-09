@@ -1292,31 +1292,12 @@ void Ultima8Engine::handleEvent(const Common::Event &event) {
 		break;
 	}
 
-	case Common::EVENT_KEYDOWN: {
-		if (_mouse->dragging() != Mouse::DRAG_NOT) break;
+	case Common::EVENT_KEYDOWN:
+		if (_mouse->dragging() != Mouse::DRAG_NOT)
+			break;
 
-		/*
-		switch (event.kbd.keycode) {
-			case Common::KEYCODE_KP_PLUS: {
-				midi_volume+=8;
-				if (midi_volume>255) midi_volume =255;
-				pout << "Midi Volume is now: " << midi_volume << std::endl;
-				if (midi_driver) midi_driver->setGlobalVolume(midi_volume);
-			} break;
-			case Common::KEYCODE_KP_MINUS: {
-				midi_volume-=8;
-				if (midi_volume<0) midi_volume = 0;
-				pout << "Midi Volume is now: " << midi_volume << std::endl;
-				if (midi_driver) midi_driver->setGlobalVolume(midi_volume);
-			} break;
-			default:
-				break;
-		}
-		*/
+		// Any special key handling goes here
 		break;
-	}
-
-							  // any more useful events?
 
 	default:
 		break;
