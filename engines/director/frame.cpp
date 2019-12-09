@@ -998,4 +998,12 @@ bool Frame::checkSpriteIntersection(uint16 spriteId, Common::Point pos) {
 	return false;
 }
 
+Common::Rect *Frame::getSpriteRect(uint16 spriteId) {
+	for (int dr = _drawRects.size() - 1; dr >= 0; dr--)
+		if (_drawRects[dr]->spriteId == spriteId)
+			return &_drawRects[dr]->rect;
+
+	return nullptr;
+}
+
 } // End of namespace Director

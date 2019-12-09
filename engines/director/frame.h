@@ -118,6 +118,7 @@ public:
 	void prepareFrame(Score *score);
 	uint16 getSpriteIDFromPos(Common::Point pos);
 	bool checkSpriteIntersection(uint16 spriteId, Common::Point pos);
+	Common::Rect *getSpriteRect(uint16 spriteId);
 
 	void executeImmediateScripts();
 

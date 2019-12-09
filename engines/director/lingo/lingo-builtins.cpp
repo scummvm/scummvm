@@ -1278,9 +1278,55 @@ void Lingo::b_unLoadCast(int nargs) {
 }
 
 void Lingo::b_zoomBox(int nargs) {
+	// zoomBox startSprite, endSprite [, delatTicks]
+	//   ticks are in 1/60th, default 1
+
 	g_lingo->printSTUBWithArglist("b_zoomBox", nargs);
 
-	g_lingo->dropStack(nargs);
+	if (nargs < 2 || nargs > 3) {
+		warning("b_zoomBox: expected 2 or 3 arguments, got %d", nargs);
+
+		g_lingo->dropStack(nargs);
+
+		return;
+	}
+
+	int delayTicks = 1;
+	if (nargs > 2) {
+		Datum d = g_lingo->pop();
+		d.toInt();
+
+		delayTicks = d.u.i;
+	}
+
+	Datum endSprite = g_lingo->pop();
+	Datum startSprite = g_lingo->pop();
+
+	startSprite.toInt();
+	endSprite.toInt();
+
+	Frame *frame = g_director->getCurrentScore()->_frames[g_director->getCurrentScore()->getCurrentFrame()];
+	Frame *frame2 = nullptr;
+	if (g_director->getCurrentScore()->_frames.size() > g_director->getCurrentScore()->getCurrentFrame())
+		frame2 = g_director->getCurrentScore()->_frames[g_director->getCurrentScore()->getCurrentFrame() + 1];
+
+	Common::Rect *startRect = frame->getSpriteRect(startSprite.u.i);
+	if (!startRect) {
+		warning("b_zoomBox: unknown start sprite #%d", startSprite.u.i);
+		return;
+	}
+
+	Common::Rect *endRect = frame->getSpriteRect(endSprite.u.i);
+	if (!endRect && frame2)
+		endRect = frame2->getSpriteRect(endSprite.u.i);
+
+	if (!endRect) {
+		warning("b_zoomBox: unknown end sprite #%d", endSprite.u.i);
+		return;
+	}
+
+	startRect->debugPrint(0, "b_zoomBox: start: ");
+	endRect->debugPrint(0, "b_zoomBox: end: ");
 }
 
 void Lingo::b_updateStage(int nargs) {
