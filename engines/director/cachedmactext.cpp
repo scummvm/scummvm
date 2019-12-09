@@ -55,7 +55,7 @@ void CachedMacText::makeMacText() {
 										1);
 	// TODO destroy me
 
-	debug(5, "CachedMacText::makeMacText(): rendering '%s'", _textCast->_ftext.c_str());
+	debug(5, "CachedMacText::makeMacText(): rendering '%s'", Common::toPrintable(_textCast->_ftext).c_str());
 }
 
 CachedMacText::CachedMacText(TextCast *const textCast,
