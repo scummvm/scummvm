@@ -1281,9 +1281,9 @@ void Ultima8Engine::handleEvent(const Common::Event &event) {
 	case Common::EVENT_MBUTTONUP:
 	case Common::EVENT_RBUTTONUP: {
 		MouseButton button = BUTTON_LEFT;
-		if (event.type == Common::EVENT_RBUTTONDOWN)
+		if (event.type == Common::EVENT_RBUTTONUP)
 			button = BUTTON_RIGHT;
-		else if (event.type == Common::EVENT_MBUTTONDOWN)
+		else if (event.type == Common::EVENT_MBUTTONUP)
 			button = BUTTON_MIDDLE;
 
 		_mouse->setMouseCoords(event.mouse.x, event.mouse.y);
