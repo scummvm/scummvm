@@ -3326,6 +3326,13 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO_PHANTASMAGORIA },
 
+	// Phantasmagoria - German Patch V3 externally applied to GOG English DOS/Windows version
+	{"phantasmagoria", "", {
+		{"ressci.000", 0, "cd5967f9b9586e3380645961c0765be3", 116817874},
+		{"resmap.000", 0, "59a0362e4133d4d82d546d75333813ae", 16486},
+		AD_LISTEND},
+		Common::DE_DEU, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO_PHANTASMAGORIA },
+
 	// Phantasmagoria - English Macintosh
 	// NOTE: This only contains disc 1 files (as well as the two persistent files:
 	// Data1 and Data13. Other discs have conflicting names :(
