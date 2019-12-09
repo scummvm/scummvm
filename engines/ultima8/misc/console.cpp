@@ -554,9 +554,16 @@ void Console::ExecuteConsoleCommand(const Console::ArgvType &argv) {
 	CommandsMap::iterator it;
 
 	// Empty?!?
-	if (argv.empty()) return;
+	if (argv.empty())
+		return;
 
-	it = ConsoleCommands.find(argv[0]);
+	// Get the command name. Transparently handle conversions from original GUIApp
+	Common::String commandName = argv[0];
+	if (commandName.hasPrefix("GUIApp::"))
+		commandName = "Ultima8Engine::" + Common::String(commandName.c_str() + 8);
+
+	// Handle the command
+	it = ConsoleCommands.find(commandName);
 
 	if (it != ConsoleCommands.end() && it->_value)
 		it->_value(argv);
