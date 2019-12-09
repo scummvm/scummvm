@@ -2297,6 +2297,8 @@ uint16 OldDOSFont::convert(uint16 c) const {
 		case 0xE1:
 			// TODO: recheck this: no conversion for 'ß' ?
 			break;
+		default:
+			break;
 		}
 	} else if (_width == 8) {
 		switch (c) {
@@ -2321,6 +2323,8 @@ uint16 OldDOSFont::convert(uint16 c) const {
 			break;
 		case 0xE1:
 			c = 0x19;
+			break;
+		default:
 			break;
 		}
 	}
