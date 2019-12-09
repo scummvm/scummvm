@@ -3217,7 +3217,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		Common::EN_ANY, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO_PHANTASMAGORIA },
 
 	// Phantasmagoria - English DOS (from jvprat)
-	// Executable scanning reports "2.100.002", VERSION file reports "1.100.000UK"
+	// Executable scanning reports "2.100.002", VERSION file reports "1.000.001UK"
 	{"phantasmagoria", "", {
 		{"resmap.001", 0, "416138651ea828219ca454cae18341a3", 11518},
 		{"ressci.001", 0, "3aae6559aa1df273bc542d5ac6330d75", 65844612},
@@ -3327,7 +3327,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 	// Phantasmagoria - English DOS/Windows (GOG version) - ressci.* merged in ressci.000
 	// Windows executable scanning reports "2.100.002" - "Sep 19 1995 15:09:43"
 	// DOS executable scanning reports "2.100.002" - "Sep 19 1995 09:15:40"
-	// VERSION file reports "1.100.001UK"
+	// VERSION file reports "1.000.001UK"
 	// Supplied by littleboy in patch #3112884
 	{"phantasmagoria", "", {
 		{"ressci.000", 0, "cd5967f9b9586e3380645961c0765be3", 116822037},
@@ -3338,6 +3338,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 	// Phantasmagoria - English Macintosh
 	// NOTE: This only contains disc 1 files (as well as the two persistent files:
 	// Data1 and Data13. Other discs have conflicting names :(
+	// Game script sets version to "1.000.000"
 	{"phantasmagoria", "", {
 		{"Data1", 0, "0fcb42802f49edb5af60532bd7b60c4f", 14705669},
 		{"Data2", 0, "d52f612058ec78e300385df3336a4ba2", 14516712},
