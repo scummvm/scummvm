@@ -1831,6 +1831,22 @@ const KYRAGameDescription adGameDescs[] = {
 
 	{
 		{
+			"eob",
+			0,
+			{
+				{ "PLAYFLD", 0, "e9dbc6944e6c00801f3932808f98e443", -1 },
+				{ 0, 0, 0, 0 }
+			},
+			Common::EN_ANY,
+			Common::kPlatformSegaCD,
+			ADGF_NO_FLAGS,
+			GUIO3(GUIO_NOSPEECH, GUIO_NOMIDI, GAMEOPTION_EOB_HPGRAPHS)
+		},
+		EOB_FLAGS
+	},
+
+	{
+		{
 			"eob2",
 			0,
 			{
