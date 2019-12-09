@@ -407,6 +407,8 @@ void Frame::prepareFrame(Score *score) {
 	renderSprites(*score->_surface, false);
 	renderSprites(*score->_trailSurface, true);
 
+	score->renderZoomBox();
+
 	if (_transType != 0)
 		// TODO Handle changing area case
 		playTransition(score);
@@ -414,6 +416,8 @@ void Frame::prepareFrame(Score *score) {
 	if (_sound1 != 0 || _sound2 != 0) {
 		playSoundChannel();
 	}
+
+	score->_backSurface->copyFrom(*score->_surface);
 
 	g_system->copyRectToScreen(score->_surface->getPixels(), score->_surface->pitch, 0, 0, score->_surface->getBounds().width(), score->_surface->getBounds().height());
 }

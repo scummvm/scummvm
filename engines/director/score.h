@@ -46,6 +46,15 @@ struct Label;
 class Lingo;
 class Sprite;
 
+struct ZoomBox {
+	Common::Rect start;
+	Common::Rect end;
+	int delay;
+	int step;
+	uint32 startTime;
+	uint32 nextTime;
+};
+
 enum ScriptType {
 	kMovieScript = 0,
 	kSpriteScript = 1,
@@ -94,6 +103,9 @@ public:
 	int getCurrentLabelNumber();
 	int getNextLabelNumber(int referenceFrame);
 
+	void addZoomBox(ZoomBox *box);
+	void renderZoomBox(bool redraw = false);
+
 private:
 	void update();
 	void readVersion(uint32 rid);
@@ -123,6 +135,7 @@ public:
 	Common::HashMap<uint16, Common::String> _fontMap;
 	Graphics::ManagedSurface *_surface;
 	Graphics::ManagedSurface *_trailSurface;
+	Graphics::ManagedSurface *_backSurface;
 	Graphics::Font *_font;
 	Archive *_movieArchive;
 	Common::Rect _movieRect;
@@ -158,6 +171,8 @@ private:
 	Lingo *_lingo;
 	DirectorSound *_soundManager;
 	DirectorEngine *_vm;
+
+	Common::Array<ZoomBox *> _zoomBoxes;
 };
 
 } // End of namespace Director
