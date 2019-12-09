@@ -566,7 +566,7 @@ Common::String *Datum::toString() {
 		*s = Common::String::format(g_lingo->_floatPrecisionFormat.c_str(), u.f);
 		break;
 	case STRING:
-		*s = Common::String::format("\"%s\"", u.s->c_str());
+		*s = *u.s;
 		break;
 	case SYMBOL:
 		switch (u.i) {
