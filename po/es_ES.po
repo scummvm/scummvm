@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2019-12-07 19:15+0000\n"
-"PO-Revision-Date: 2019-11-21 20:32+0000\n"
+"PO-Revision-Date: 2019-12-12 15:17+0000\n"
 "Last-Translator: Rodrigo Vegas Sánchez-Ferrero <rodrigo.vegas@gmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/es/>\n"
@@ -642,7 +642,7 @@ msgstr "~A~ñadir juego..."
 
 #: gui/launcher.cpp:160 gui/launcher.cpp:170
 msgid "Add games to the list"
-msgstr ""
+msgstr "Añadir juegos a la lista"
 
 #: gui/launcher.cpp:161
 msgid "Mass Add..."
