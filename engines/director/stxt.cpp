@@ -42,6 +42,8 @@ Stxt::Stxt(Common::SeekableSubReadStreamEndian &textStream) {
 	if (strLen < 200)
 		debugC(3, kDebugText, "text: '%s'", Common::toPrintable(text).c_str());
 
+	_ptext = text;
+
 	uint16 formattingCount = textStream.readUint16();
 	uint32 prevPos = 0;
 

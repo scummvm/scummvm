@@ -33,6 +33,7 @@ public:
 
 public:
 	Common::String _ftext;
+	Common::String _ptext;
 	uint32 _fontId;
 	uint16 _fontSize;
 	TextType _textType;
