@@ -172,7 +172,7 @@ protected:
 	void spcLoadLadyOfTheLakeActor(); //0x70
 	void spcFadeCreditsToBackStageScene(); //0x71
 	void spcRunCredits(); //0x72
-
+	void spcEndCreditsAndRestartGame(); //0x73
 	void spcUseClickerOnLever(); // 0x74
 
 	void spcJesterInLibrarySceneLogic(); // 0x77

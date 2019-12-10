@@ -6,6 +6,7 @@ MODULE_OBJS := \
     background.o \
     bag.o \
     bigfile.o \
+    credits.o \
     cursor.o \
     cutscene.o \
 	detection.o \

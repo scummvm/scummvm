@@ -64,9 +64,15 @@ Graphics::Surface *Font::render(uint16 *text, uint16 length) {
 	Graphics::Surface *surface = new Graphics::Surface();
 	surface->create(length * 8, 8, Graphics::PixelFormat::createFormatCLUT8());
 
+	renderToSurface(surface, 0, 0, text, length);
 
+	return surface;
+}
+
+void Font::renderToSurface(Graphics::Surface *surface, int16 x, int16 y, uint16 *text, uint16 length) {
+	byte *startPixelOffset = (byte *)surface->getPixels() + y * surface->pitch + x * surface->format.bytesPerPixel;
 	for (int i = 0; i < length; i++) {
-		byte *pixels = (byte *)surface->getPixels();
+		byte *pixels = startPixelOffset;
 		pixels += i * 8;
 //		debug("char: %d size: %d %d", (text[i] - 0x20), _numChars, (30 + i));
 		byte *data = _pixels + mapChar(text[i]) * 64;
@@ -76,8 +82,6 @@ Graphics::Surface *Font::render(uint16 *text, uint16 length) {
 			pixels += surface->pitch;
 		}
 	}
-
-	return surface;
 }
 
 FontManager::FontManager(DragonsEngine *vm, Screen *screen, BigfileArchive *bigfileArchive): _vm(vm), _screen(screen) {

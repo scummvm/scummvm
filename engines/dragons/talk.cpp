@@ -496,9 +496,10 @@ Talk::displayDialogAroundPoint(uint16 *dialogText, uint16 x, uint16 y, uint16 pa
 }
 
 void Talk::displayDialogAroundActor(Actor *actor, uint16 param_2, uint16 *dialogText, uint32 textIndex) {
+	int16 frameYOffset = actor->frame ? actor->frame->yOffset : 0;
 	displayDialogAroundPoint
 			(dialogText,(ushort)((int)(((uint)actor->x_pos - _vm->_scene->_camera.x) * 0x10000) >> 0x13),
-			 (short)((int)((((uint)actor->y_pos - (uint)actor->frame->yOffset) - (uint)_vm->_scene->_camera.y) * 0x10000) >> 0x13) - 3,
+			 (short)((int)((((uint)actor->y_pos - (uint)frameYOffset) - (uint)_vm->_scene->_camera.y) * 0x10000) >> 0x13) - 3,
 			 param_2,1,textIndex);
 }
 

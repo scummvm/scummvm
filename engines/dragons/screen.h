@@ -53,6 +53,9 @@ public:
 	Common::Rect clipRectToRect(int destX, int destY, const Common::Rect rect, const Common::Rect containerRect);
 
 	void setScreenShakeOffset(int16 newOffset);
+
+	void copyRectToSurface8bppWrappedY(const Graphics::Surface &srcSurface, byte *palette, int yOffset);
+
 private:
 	void copyRectToSurface(const void *buffer, int srcPitch, int srcWidth, int srcXOffset, int destX, int destY, int width, int height, bool flipX, uint8 alpha);
 	void copyRectToSurface8bpp(const void *buffer, byte* palette, int srcPitch, int srcWidth, int srcXOffset, int destX, int destY, int width, int height, bool flipX, uint8 alpha);

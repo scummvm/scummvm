@@ -29,6 +29,7 @@
 #include "background.h"
 #include "bigfile.h"
 #include "cursor.h"
+#include "credits.h"
 #include "dragonflg.h"
 #include "dragonimg.h"
 #include "dragonini.h"
@@ -66,6 +67,7 @@ DragonsEngine::DragonsEngine(OSystem *syst) : Engine(syst) {
 	_engine = this;
 	_inventory = new Inventory(this);
 	_cursor = new Cursor(this);
+	_credits = NULL;
 	_talk = NULL;
 	_sound = new Sound(this);
 	_fontManager = NULL;
@@ -197,6 +199,7 @@ Common::Error DragonsEngine::run() {
 	_dragonVAR = new DragonVAR(_bigfileArchive);
 	_dragonINIResource = new DragonINIResource(_bigfileArchive);
 	_fontManager = new FontManager(this, _screen, _bigfileArchive);
+	_credits = new Credits(this, _fontManager, _bigfileArchive);
 	ActorResourceLoader *actorResourceLoader = new ActorResourceLoader(_bigfileArchive);
 	_actorManager = new ActorManager(actorResourceLoader);
 	_scriptOpcodes = new ScriptOpcodes(this, _dragonFLG);
