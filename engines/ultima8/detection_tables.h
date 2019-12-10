@@ -27,8 +27,32 @@ static const Ultima8GameDescription gameDescriptions[] = {
 		{
 			"ultima8",
 			"Gold Edition",
-			AD_ENTRY1s("u8.ini", "c09a7ddaf8cde46932d0cb33a6474b20", 80),
+			AD_ENTRY1s("eusecode.flx", "c61f1dacde591cb39d452264e281f234", 1251108),
 			Common::EN_ANY,
+			Common::kPlatformDOS,
+			0,
+			GUIO1(GUIO_NOMIDI)
+		},
+	},
+
+	{
+		{
+			"ultima8",
+			"Gold Edition",
+			AD_ENTRY1s("fusecode.flx", "4017eb8678ee24af0ce8c7647a05509b", 1300957),
+			Common::FR_FRA,
+			Common::kPlatformDOS,
+			0,
+			GUIO1(GUIO_NOMIDI)
+		},
+	},
+
+	{
+		{
+			"ultima8",
+			"Gold Edition",
+			AD_ENTRY1s("gusecode.flx", "d69599a46870b66c1b7c02710ed185bd", 1378604),
+			Common::DE_DEU,
 			Common::kPlatformDOS,
 			0,
 			GUIO1(GUIO_NOMIDI)

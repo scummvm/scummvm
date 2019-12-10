@@ -229,7 +229,7 @@ public:
 	}
 
 	typename _Container::const_reference top() const {
-		return c.front();
+		return c.back();
 	}
 
 	void push(const typename _Container::value_type &_Val) {
