@@ -27,6 +27,9 @@
 #include "director/frame.h"
 #include "director/sprite.h"
 
+#include "graphics/macgui/macwindowmanager.h"
+#include "graphics/macgui/macmenu.h"
+
 namespace Director {
 
 static struct BuiltinProto {
@@ -1155,7 +1158,83 @@ void Lingo::b_importFileInto(int nargs) {
 }
 
 void Lingo::b_installMenu(int nargs) {
+	// installMenu castNum
 	Datum d = g_lingo->pop();
+
+	d.toInt();
+
+	if (g_director->getVersion() < 4)
+		d.u.i += 1024;
+
+	const Stxt *stxt = g_director->getCurrentScore()->_loadedStxts->getVal(d.u.i, nullptr);
+
+	if (!stxt) {
+		warning("installMenu: Unknown cast number #%d", d.u.i);
+		return;
+	}
+
+	Common::String menuStxt = g_lingo->codePreprocessor(stxt->_ptext.c_str(), true);
+	Common::String line;
+	int linenum = -1; // We increment it before processing
+
+	//Graphics::MacMenu *menu = g_director->_wm->addMenu();
+	//Graphics::MacMenuSubMenu *submenu = nullptr;
+
+	for (const byte *s = (const byte *)menuStxt.c_str(); *s; s++) {
+		// Get next line
+		line.clear();
+		while (*s && *s != '\n') { // If we see a whitespace
+			if (*s == (byte)'\xc2') {
+				s++;
+				if (*s == '\n') {
+					line += ' ';
+
+					s++;
+				}
+			} else {
+				line += *s++;
+			}
+		}
+
+		linenum++;
+
+		if (line.empty())
+			continue;
+
+		if (line.hasPrefixIgnoreCase("menu:")) {
+			const char *p = &line.c_str()[5];
+
+			while (*p && (*p == ' ' || *p == '\t'))
+				p++;
+
+			warning("menu: '%s'", Common::toPrintable(p).c_str());
+			//menu->addMenuItem(nullptr, Common::String(p));
+
+			//submenu = menu->addSubMenu(nullptr);
+
+			continue;
+		}
+
+		// We have either '=' or \xc5 as a separator
+		const char *p = strchr(line.c_str(), '=');
+
+		if (!p)
+			p = strchr(line.c_str(), '\xc5');
+
+		if (!p) {
+			warning("installMenu: syntax error at line %d", linenum);
+			continue;
+		}
+
+		Common::String text(line.c_str(), p);
+		Common::String command(p + 1);
+
+		text.trim();
+		command.trim();
+
+		warning("text: '%s'  command: '%s'", Common::toPrintable(text).c_str(), Common::toPrintable(command).c_str());
+	}
+
 	warning("STUB: b_installMenu(%d)", d.u.i);
 }
 
