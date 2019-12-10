@@ -958,6 +958,9 @@ void Score::loadScriptText(Common::SeekableSubReadStreamEndian &stream) {
 	if (ConfMan.getBool("dump_scripts"))
 		dumpScript(script.c_str(), kMovieScript, _movieScriptCount);
 
+	if (script.contains("\nmenu:") || script.hasPrefix("menu:"))
+		return;
+
 	_lingo->addCode(script.c_str(), kMovieScript, _movieScriptCount);
 
 	_movieScriptCount++;
