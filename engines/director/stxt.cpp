@@ -40,7 +40,7 @@ Stxt::Stxt(Common::SeekableSubReadStreamEndian &textStream) {
 	}
 	debugC(3, kDebugText, "Stxt init: unk1: %d strLen: %d dataLen: %d textlen: %u", unk1, strLen, dataLen, text.size());
 	if (strLen < 200)
-		debugC(3, kDebugText, "text: '%s'", text.c_str());
+		debugC(3, kDebugText, "text: '%s'", Common::toPrintable(text).c_str());
 
 	uint16 formattingCount = textStream.readUint16();
 	uint32 prevPos = 0;
@@ -92,7 +92,7 @@ Stxt::Stxt(Common::SeekableSubReadStreamEndian &textStream) {
 		formattingCount--;
 	}
 
-	debugC(4, kDebugText, "%s", text.c_str());
+	debugC(4, kDebugText, "#### text:\n%s\n####", Common::toPrintable(_ftext).c_str());
 	_ftext += text;
 }
 
