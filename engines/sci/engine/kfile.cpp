@@ -900,9 +900,13 @@ reg_t kFileIORename(EngineState *s, int argc, reg_t *argv) {
 	oldName = g_sci->wrapFilename(oldName);
 	newName = g_sci->wrapFilename(newName);
 
+	// Phantasmagoria 1 files are small and interoperable with the
+	//  original interpreter so they aren't compressed, see file_open().
+	bool isCompressed = (g_sci->getGameId() != GID_PHANTASMAGORIA);
+
 	// SCI1.1 returns 0 on success and a DOS error code on fail. SCI32
 	// returns -1 on fail. We just return -1 for all versions.
-	if (g_sci->getSaveFileManager()->renameSavefile(oldName, newName))
+	if (g_sci->getSaveFileManager()->renameSavefile(oldName, newName, isCompressed))
 		return NULL_REG;
 	else
 		return SIGNAL_REG;
