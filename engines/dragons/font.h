@@ -43,6 +43,7 @@ public:
 	Font(Common::SeekableReadStream &stream, uint32 mapSize, uint32 pixelOffset, uint32 pixelSize);
 	~Font();
 	Graphics::Surface *render(uint16 *text, uint16 length);
+	void renderToSurface(Graphics::Surface *surface, int16 x, int16 y, uint16 *text, uint16 length);
 private:
 	uint16 mapChar(uint16 in);
 };
@@ -53,10 +54,11 @@ struct ScreenTextEntry {
 };
 
 class FontManager {
-	uint16 DAT_80086f48_fontColor_flag;
-private:
-	DragonsEngine *_vm;
+public:
 	Font *_fonts[3];
+private:
+	uint16 DAT_80086f48_fontColor_flag;
+	DragonsEngine *_vm;
 	Screen *_screen;
 	Common::List<ScreenTextEntry *> _screenTexts;
 	byte *_palettes;

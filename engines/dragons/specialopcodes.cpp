@@ -23,6 +23,7 @@
 #include "dragons/actorresource.h"
 #include "dragons/cursor.h"
 #include "dragons/cutscene.h"
+#include "dragons/credits.h"
 #include "dragons/dragons.h"
 #include "dragons/dragonflg.h"
 #include "dragons/dragonini.h"
@@ -180,7 +181,7 @@ void SpecialOpcodes::initOpcodes() {
 	OPCODE(0x70, spcLoadLadyOfTheLakeActor);
 	OPCODE(0x71, spcFadeCreditsToBackStageScene);
 	OPCODE(0x72, spcRunCredits);
-
+	OPCODE(0x73, spcEndCreditsAndRestartGame);
 	OPCODE(0x74, spcUseClickerOnLever);
 
 	OPCODE(0x77, spcJesterInLibrarySceneLogic);
@@ -951,7 +952,19 @@ void SpecialOpcodes::spcRunCredits() {
 	_vm->_scene->setMgLayerPriority(0);
 	_vm->_scene->setFgLayerPriority(0);
 //	vsync_updater_function = creditsUpdateFunction;
-//TODO
+	_vm->_credits->start();
+}
+
+void SpecialOpcodes::spcEndCreditsAndRestartGame() {
+//	call_fade_related();
+//	_volumeSFX = 0;
+//	setCDAVolumes();
+	while (_vm->_credits->isRunning()) {
+		_vm->waitForFrames(1);
+	}
+//	ReloadGameFlag = 2;
+//	Exec_FMV_RELOADTT();
+//TODO need to return to main menu here.
 }
 
 void SpecialOpcodes::spcLoadLadyOfTheLakeActor() {

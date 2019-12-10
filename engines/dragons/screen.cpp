@@ -290,4 +290,18 @@ void Screen::setScreenShakeOffset(int16 newOffset) {
 	_screenShakeOffset = newOffset;
 }
 
+void Screen::copyRectToSurface8bppWrappedY(const Graphics::Surface &srcSurface, byte *palette, int yOffset) {
+	byte *dst = (byte *)_backSurface->getBasePtr(0, 0);
+	for (int i = 0; i < 200; i++) {
+		byte *src = (byte *)srcSurface.getPixels() + ((yOffset + i) % srcSurface.h) * srcSurface.pitch;
+		for (int j = 0; j < 320; j++) {
+			uint16 c = READ_LE_UINT16(&palette[src[j] * 2]);
+			if (c != 0) {
+					WRITE_LE_UINT16(&dst[j * 2], c & ~0x8000);
+			}
+		}
+		dst += _backSurface->pitch;
+	}
+}
+
 } // End of namespace Dragons

@@ -105,6 +105,7 @@ struct opCode1AStruct {
 class BigfileArchive;
 class BackgroundResourceLoader;
 class Cursor;
+class Credits;
 class DragonFLG;
 class DragonIMG;
 class DragonOBD;
@@ -136,6 +137,7 @@ public:
 	uint16 data_800633fa;
 	Inventory *_inventory;
 	Cursor *_cursor;
+	Credits *_credits;
 	Talk *_talk;
 	Sound *_sound;
 

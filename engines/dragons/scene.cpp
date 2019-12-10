@@ -24,6 +24,7 @@
 #include "actor.h"
 #include "background.h"
 #include "cursor.h"
+#include "credits.h"
 #include "dragonini.h"
 #include "dragonimg.h"
 #include "font.h"
@@ -389,6 +390,10 @@ void Scene::draw() {
 		}
 	}
 	_vm->_fontManager->draw();
+	if (_vm->_credits->isRunning()) {
+		_vm->_credits->draw();
+	}
+
 	if (_vm->isDebugMode()) {
 		_vm->_fontManager->clearText();
 	}
