@@ -249,7 +249,7 @@ static Common::String prevtok(const char *s, const char *lineStart, const char *
 	return res;
 }
 
-Common::String Lingo::codePreprocessor(const char *s) {
+Common::String Lingo::codePreprocessor(const char *s, bool simple) {
 	Common::String res;
 
 	// Strip comments
@@ -259,7 +259,9 @@ Common::String Lingo::codePreprocessor(const char *s) {
 				s++;
 		}
 
-		if (*s)
+		if (*s == '\r')
+			res += '\n';
+		else if (*s)
 			res += *s;
 
 		s++;
@@ -294,6 +296,9 @@ Common::String Lingo::codePreprocessor(const char *s) {
 
 		s++;
 	}
+
+	if (simple)
+		return res;
 
 	tmp = res;
 	s = tmp.c_str();
