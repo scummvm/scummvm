@@ -60,7 +60,7 @@ MissileTracker::MissileTracker(Item *item, int32 tx, int32 ty, int32 tz,
 }
 
 void MissileTracker::init(int32 x, int32 y, int32 z, int32 speed) {
-	int range = abs(x - destx) + abs(y - desty);
+	int range = ABS(x - destx) + ABS(y - desty);
 
 	// rounded division: range/speed
 	frames = (range + (speed / 2)) / speed;

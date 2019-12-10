@@ -315,8 +315,8 @@ void Mouse::setMouseCoords(int mx, int my) {
 		if (_mouseButton[BUTTON_LEFT].state & MBS_DOWN) {
 			int startx = _mouseButton[BUTTON_LEFT].downX;
 			int starty = _mouseButton[BUTTON_LEFT].downY;
-			if (abs(startx - mx) > 2 ||
-				abs(starty - my) > 2) {
+			if (ABS(startx - mx) > 2 ||
+				ABS(starty - my) > 2) {
 				startDragging(startx, starty);
 			}
 		}

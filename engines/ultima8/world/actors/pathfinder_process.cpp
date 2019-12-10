@@ -149,8 +149,8 @@ void PathfinderProcess::run() {
 		}
 
 		item->getLocation(curx, cury, curz);
-		if (abs(curx - targetx) >= 32 || abs(cury - targety) >= 32 ||
-		        abs(curz - targetz) >= 8) {
+		if (ABS(curx - targetx) >= 32 || ABS(cury - targety) >= 32 ||
+		        ABS(curz - targetz) >= 8) {
 			// target moved
 			ok = false;
 		}

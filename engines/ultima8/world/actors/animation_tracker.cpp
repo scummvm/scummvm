@@ -259,7 +259,7 @@ bool AnimationTracker::step() {
 	tz = z + dz;
 
 	// Only for particularly large steps we do a full sweepTest
-	if (abs(dx) >= xd - 8 || abs(dy) >= yd - 8 || abs(dz) >= zd - 8) {
+	if (ABS(dx) >= xd - 8 || ABS(dy) >= yd - 8 || ABS(dz) >= zd - 8) {
 
 		int32 start[3] = { x, y, z };
 		int32 end[3] = { tx, ty, tz };

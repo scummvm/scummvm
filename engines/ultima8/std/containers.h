@@ -234,11 +234,9 @@ public:
 
 	void push(const typename _Container::value_type &_Val) {
 		c.push_back(_Val);
-		//push_heap(c.begin(), c.end(), comp);
 	}
 
 	void pop() {
-		//pop_heap(c.begin(), c.end(), comp);
 		c.pop_back();
 	}
 

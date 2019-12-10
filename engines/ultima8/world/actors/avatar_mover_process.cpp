@@ -283,7 +283,7 @@ void AvatarMoverProcess::handleCombatMode() {
 			// want to run while in combat mode?
 			// first sheath weapon
 			nextanim = Animation::readyWeapon;
-		} else if (abs(direction - mousedir) == 4) {
+		} else if (ABS(direction - mousedir) == 4) {
 			nextanim = Animation::retreat;
 			nextdir = direction;
 		} else
@@ -752,11 +752,11 @@ bool AvatarMoverProcess::checkTurn(int direction, bool moving) {
 	// Note: don't need to turn if moving backward in combat stance
 	// CHECKME: currently, first turn in the right direction
 	if (direction != curdir && !(
-	            combat && abs(direction - curdir) == 4)) {
+	            combat && ABS(direction - curdir) == 4)) {
 		if (moving &&
 		        (lastanim == Animation::walk || lastanim == Animation::run ||
 		         lastanim == Animation::combatStand) &&
-		        (abs(direction - curdir) + 1 % 8 <= 2)) {
+		        (ABS(direction - curdir) + 1 % 8 <= 2)) {
 			// don't need to explicitly do a turn animation
 			return false;
 		}
