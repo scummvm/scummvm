@@ -245,8 +245,32 @@ int Screen_LoK::getRectSize(int x, int y) {
 	return ((x * y) << 3);
 }
 
+void Screen_LoK::setInterfacePalette(const Palette &pal, uint8 r, uint8 g, uint8 b) {
+	if (!_isAmiga)
+		return;
+
+	uint8 screenPal[32 * 3];
+
+	assert(32 <= pal.getNumColors());
+
+	for (int i = 0; i < pal.getNumColors(); ++i) {
+		if (i != 0x10) {
+			screenPal[3 * i + 0] = (pal[i * 3 + 0] * 0xFF) / 0x3F;
+			screenPal[3 * i + 1] = (pal[i * 3 + 1] * 0xFF) / 0x3F;
+			screenPal[3 * i + 2] = (pal[i * 3 + 2] * 0xFF) / 0x3F;
+		} else {
+			screenPal[3 * i + 0] = (r * 0xFF) / 0x3F;
+			screenPal[3 * i + 1] = (g * 0xFF) / 0x3F;
+			screenPal[3 * i + 2] = (b * 0xFF) / 0x3F;
+		}
+	}
+
+	_paletteChanged = true;
+	_system->getPaletteManager()->setPalette(screenPal, 32, pal.getNumColors());
+}
+
 void Screen_LoK::postProcessCursor(uint8 *data, int width, int height, int pitch) {
-	if (_vm->gameFlags().platform == Common::kPlatformAmiga && _interfacePaletteEnabled) {
+	if (_vm->gameFlags().platform == Common::kPlatformAmiga && _dualPaletteModeSplitY) {
 		pitch -= width;
 
 		for (int y = 0; y < height; ++y) {

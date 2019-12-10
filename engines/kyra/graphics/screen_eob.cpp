@@ -62,7 +62,7 @@ Screen_EoB::Screen_EoB(EoBCoreEngine *vm, OSystem *system) : Screen(vm, system, 
 	_egaDitheringTempPage = 0;
 	_cgaMappingDefault = 0;
 	_cgaDitheringTables[0] = _cgaDitheringTables[1] = 0;
-	_useHiResEGADithering = _dualPaletteMode = false;
+	_useHiResEGADithering = false;
 	_cyclePalette = 0;
 	_cpsFilePattern = "%s.";
 	_activePalCycle = 0;
@@ -189,7 +189,7 @@ void Screen_EoB::setMouseCursor(int x, int y, const byte *shape, const uint8 *ov
 		copyRegionToBuffer(6, 0, 0, mouseW, mouseH, cursor);
 
 	// Mouse cursor post processing for EOB II Amiga	
-	if (_dualPaletteMode) {
+	if (_dualPaletteModeSplitY) {
 		int len = mouseW * mouseH;
 		while (--len > -1)
 			cursor[len] |= 0x20;
@@ -1828,54 +1828,24 @@ void Screen_EoB::loadSpecialAmigaCPS(const char *fileName, int destPage, bool is
 		convertAmigaGfx(_pagePtrs[destPage], 320, 200);
 }
 
-void Screen_EoB::setupDualPalettesSplitScreen(Palette &top, Palette &bottom) {
+void Screen_EoB::setDualPalettes(Palette &top, Palette &bottom) {
 	// The original supports simultaneous fading of both palettes, but doesn't make any use of that
 	// feature. The fade rate is always set to 0. So I see no need to implement that.
 	_palettes[0]->copy(top, 0, 32, 0);
 	_palettes[0]->copy(bottom, 0, 32, 32);
 	setScreenPalette(*_palettes[0]);
-	_dualPaletteMode = _forceFullUpdate = true;
-}
-
-void Screen_EoB::disableDualPalettesSplitScreen() {
-	_dualPaletteMode = false;
-	_forceFullUpdate = true;
+	enableDualPaletteMode(120);
 }
 
 void Screen_EoB::updateDirtyRects() {
-	if (!_useHiResEGADithering && !_dualPaletteMode) {
+	if (!_useHiResEGADithering) {
 		Screen::updateDirtyRects();
 		return;
 	}
 
-	if (_dualPaletteMode && _forceFullUpdate) {
-		uint32 *pos = (uint32*)(_pagePtrs[0] + 120 * SCREEN_W);
-		uint16 h = 80 * (SCREEN_W >> 2);
-		while (h--)
-			*pos++ |= 0x20202020;		
-		_system->copyRectToScreen(getCPagePtr(0), SCREEN_W, 0, 0, SCREEN_W, SCREEN_H);
-
-	} else if (_dualPaletteMode) {
-		Common::List<Common::Rect>::iterator it;
-		for (it = _dirtyRects.begin(); it != _dirtyRects.end(); ++it) {
-			if (it->bottom > 119) {
-				int16 startY = MAX<int16>(120, it->top);
-				int16 h = it->bottom - startY + 1;
-				int16 w = it->width();
-				uint8 *pos = _pagePtrs[0] + startY * SCREEN_W + it->left;
-				while (h--) {
-					for (int x = 0; x < w; ++x)
-						*pos++ |= 0x20;
-					pos += (SCREEN_W - w);
-				}
-			}
-			_system->copyRectToScreen(_pagePtrs[0] + it->top * SCREEN_W + it->left, SCREEN_W, it->left, it->top, it->width(), it->height());
-		}
-
-	} else if (_forceFullUpdate) {
+	if (_forceFullUpdate) {
 		ditherRect(getCPagePtr(0), _egaDitheringTempPage, SCREEN_W * 2, SCREEN_W, SCREEN_H);
 		_system->copyRectToScreen(_egaDitheringTempPage, SCREEN_W * 2, 0, 0, SCREEN_W * 2, SCREEN_H * 2);
-
 	} else {
 		const uint8 *page0 = getCPagePtr(0);
 		Common::List<Common::Rect>::iterator it;

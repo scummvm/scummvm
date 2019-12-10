@@ -453,9 +453,9 @@ public:
 	virtual void setScreenPalette(const Palette &pal);
 
 	// AMIGA version only
-	bool isInterfacePaletteEnabled() const { return _interfacePaletteEnabled; }
-	void enableInterfacePalette(bool e);
-	void setInterfacePalette(const Palette &pal, uint8 r, uint8 g, uint8 b);
+	bool isInterfacePaletteEnabled() const { return _dualPaletteModeSplitY; }
+	void enableDualPaletteMode(int splitY);
+	void disableDualPaletteMode();
 
 	virtual void getRealPalette(int num, uint8 *dst);
 	Palette &getPalette(int num);
@@ -716,7 +716,7 @@ protected:
 	int _drawShapeVar5;
 
 	// AMIGA version
-	bool _interfacePaletteEnabled;
+	int _dualPaletteModeSplitY;
 
 	// debug
 	bool _debugEnabled;

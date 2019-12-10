@@ -1217,7 +1217,7 @@ void KyraEngine_LoK::seq_playCredits() {
 	typedef Common::List<CreditsLine> CreditsLineList;
 	CreditsLineList lines;
 
-	_screen->enableInterfacePalette(false);
+	_screen->disableDualPaletteMode();
 
 	_screen->hideMouse();
 	if (!_flags.isTalkie) {

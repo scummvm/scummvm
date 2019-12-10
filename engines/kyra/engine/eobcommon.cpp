@@ -1682,7 +1682,7 @@ void EoBCoreEngine::drawSequenceBitmap(const char *file, int destRect, int x1, i
 		_screen->drawClippedLine(0, 121, 319, 121, guiSettings()->colors.fill);
 		_screen->setPagePixel(0, 319, 121, 9);
 		_screen->setCurPage(cp);
-		_screen->setupDualPalettesSplitScreen(_screen->getPalette(amigaPalIndex), _screen->getPalette(7));
+		_screen->setDualPalettes(_screen->getPalette(amigaPalIndex), _screen->getPalette(7));
 		_dialogueFieldAmiga = true;
 	}
 

@@ -1560,7 +1560,7 @@ void DarkmoonSequenceHelper::init(DarkmoonSequenceHelper::Mode mode) {
 	}
 
 	_screen->enableHiColorMode(false);
-	_screen->disableDualPalettesSplitScreen();
+	_screen->disableDualPaletteMode();
 	int numColors = 256;
 
 	if (_vm->_flags.platform == Common::kPlatformAmiga) {

@@ -66,7 +66,7 @@ void EoBCoreEngine::gui_drawPlayField(bool refresh) {
 		if (_flags.gameID == GI_EOB1) {
 			_screen->getPalette(0).copy(_screen->getPalette(1), 1, 5, 1);
 		} else {
-			_screen->setupDualPalettesSplitScreen(_screen->getPalette(6), _screen->getPalette(1));
+			_screen->setDualPalettes(_screen->getPalette(6), _screen->getPalette(1));
 			_screen->getPalette(7).copy(_screen->getPalette(1), 0, 32);
 		}
 	}
