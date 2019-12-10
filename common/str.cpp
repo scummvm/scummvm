@@ -1103,7 +1103,7 @@ String toPrintable(const String &in, bool keepNewLines) {
 					"\x10\x11\x12\x13\x14\x15\x16\x17"
 					"\x18\x19\x1a" "e\x1c\x1d\x1e\x1f";
 
-	for (const char *p = in.c_str(); *p; p++) {
+	for (const byte *p = (const byte *)in.c_str(); *p; p++) {
 		if (*p == '\n') {
 			if (keepNewLines)
 				res += *p;
@@ -1124,6 +1124,8 @@ String toPrintable(const String &in, bool keepNewLines) {
 			} else {
 				res += *p;	// We will escape it
 			}
+		} else if (*p > 0x7e) {
+			res += Common::String::format("\\x%02x", *p);
 		} else
 			res += *p;
 	}
