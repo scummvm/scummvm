@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: Prince\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2018-04-17 19:53+0100\n"
-"PO-Revision-Date: 2019-12-07 04:30+0000\n"
-"Last-Translator: Anton <ton4ick@gmail.com>\n"
+"PO-Revision-Date: 2019-12-15 06:26+0000\n"
+"Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: English <https://translations.scummvm.org/projects/prince/"
 "prince/en/>\n"
 "Language: en\n"
@@ -5220,7 +5220,7 @@ msgstr "OTHER: Well, the hardest part is behind you."
 
 #: dialog0150.txt:100016
 msgid "OTHER: Teraz tylko wbij mu kołek w pierś|i po krzyku.#B0"
-msgstr ""
+msgstr "OTHER: Now just stab him with a stake|and we're done here.#B0"
 
 #: dialog0150.txt:100101
 msgid "OTHER: Och to nieważne!..."
@@ -5229,6 +5229,8 @@ msgstr "OTHER: Oh, nevermind!..."
 #: dialog0150.txt:100102
 msgid "OTHER: Pospiesz się tylko z ratowaniem, bo|nudzę się tu już od ponad roku."
 msgstr ""
+"OTHER: Just hurry up with the saving,|'cause I've been waiting here for over "
+"a year."
 
 #: dialog0150.txt:100103
 msgid "HERO: Roku?!"
@@ -5244,15 +5246,15 @@ msgstr "OTHER: No kidding?"
 
 #: dialog0150.txt:100106
 msgid "P#OTHER: Jesteś tu jeszcze czy już poszedłeś|mnie ratować?#B0"
-msgstr ""
+msgstr "P#OTHER: You still here?|Or have you gone saving me?#B0"
 
 #: dialog0150.txt:100201
 msgid "OTHER: Słuchaj, później będziemy mieli|mnóstwo czasu na pogawędki."
-msgstr ""
+msgstr "OTHER: Look, we're gonna have|lots of time to talk later."
 
 #: dialog0150.txt:100202
 msgid "OTHER: Ale teraz proszę, pospiesz się,|bo już tutaj nie wytrzymam!"
-msgstr ""
+msgstr "OTHER: Now please hurry up.|I can't stand it any longer!"
 
 #: dialog0150.txt:100203
 msgid "HERO: Dobrze, już dobrze.#B0"
@@ -5376,7 +5378,7 @@ msgstr ""
 
 #: dialog0158.txt:4
 msgid "OTHER: Lepiej powiedz, jak było?"
-msgstr ""
+msgstr "OTHER: Better tell, how was it?"
 
 #: dialog0158.txt:5
 msgid "HERO: Jak tylko to sobie poukładam w głowie."
@@ -5392,19 +5394,19 @@ msgstr ""
 
 #: dialog0158.txt:8
 msgid "HERO: Nie mogę, muszę ratować nieznajomą."
-msgstr ""
+msgstr "HERO: I can't, I have to save somebody."
 
 #: dialog0158.txt:9
 msgid "P#HERO: Ha! Ratuję kogoś!"
-msgstr ""
+msgstr "P#HERO: Ha! I'll save somebody!"
 
 #: dialog0158.txt:10
 msgid "HERO: Właśnie to sobie uświadomiłem!"
-msgstr ""
+msgstr "HERO: Just realized that!"
 
 #: dialog0158.txt:11
 msgid "HERO: Zostanę bohaterem!"
-msgstr ""
+msgstr "HERO: I'll become a hero!"
 
 #: dialog0158.txt:12
 msgid "HERO: Będą o mnie śpiewać pieśni i układać poematy."
@@ -5428,7 +5430,7 @@ msgstr "OTHER: Wow!"
 
 #: dialog0159.txt:3
 msgid "OTHER: Znowu mamy problem."
-msgstr ""
+msgstr "OTHER: Again we've got a problem."
 
 #: dialog0159.txt:4
 msgid "OTHER: Chętnie posłucham, tylko mów|szybko i krótko."
@@ -5440,19 +5442,19 @@ msgstr "HERO: Dragon."
 
 #: dialog0159.txt:6
 msgid "HERO: Pokonać."
-msgstr ""
+msgstr "HERO: Defeat."
 
 #: dialog0159.txt:7
 msgid "HERO: Pomoc."
-msgstr ""
+msgstr "HERO: Help."
 
 #: dialog0159.txt:8
 msgid "HERO: Teraz."
-msgstr ""
+msgstr "HERO: Now."
 
 #: dialog0159.txt:9
 msgid "P#HERO: Koniec."
-msgstr ""
+msgstr "P#HERO: End."
 
 #: dialog0159.txt:10
 msgid "OTHER: Hmmm..."
@@ -5460,31 +5462,31 @@ msgstr ""
 
 #: dialog0159.txt:11
 msgid "P#OTHER: No dobra."
-msgstr ""
+msgstr "P#OTHER: All right."
 
 #: dialog0159.txt:12
 msgid "OTHER: Koniec lenistwa."
-msgstr ""
+msgstr "OTHER: End of laziness."
 
 #: dialog0159.txt:13
 msgid "OTHER: Czas ruszać w drogę!"
-msgstr ""
+msgstr "OTHER: Time to hit the road!"
 
 #: dialog0159.txt:14
 msgid "HERO: Naprawdę?"
-msgstr ""
+msgstr "HERO: Really?"
 
 #: dialog0159.txt:15
 msgid "HERO: Zabijesz za mnie smoka?"
-msgstr ""
+msgstr "HERO: You will kill the dragon for me?"
 
 #: dialog0159.txt:16
 msgid "HERO: To cudo..."
-msgstr ""
+msgstr "HERO: That's a miracle..."
 
 #: dialog0159.txt:17
 msgid "OTHER: Spokojnie, spokojnie."
-msgstr ""
+msgstr "OTHER: Easy, easy."
 
 #: dialog0159.txt:18
 msgid "OTHER: Zaraz znajdziemy się w najcudowniejszym|miejscu na świecie."
