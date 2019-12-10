@@ -176,7 +176,6 @@ private:
 	void animateCouncil2(int numFrames, int skipFrame, bool withSpeechAnim);
 	void playDialogue(int line, bool withAnim);
 
-	uint8 **_textShapes;
 	uint8 *_councilAnimData1;
 	uint8 *_councilAnimData2;
 	
@@ -325,12 +324,14 @@ void EoBSeqPlayerCommon::printSubtitle(const char *str, int textmodeX, int textm
 	_screen->setFont(of);
 	_screen->setCurPage(cp);
 }
+
 void EoBSeqPlayerCommon::releaseShapes() {
 	for (int i = 0; i < 64; ++i) {
 		delete[] _shapes[i];
 		_shapes[i] = 0;
 	}
 }
+
 void EoBSeqPlayerCommon::clearTextField() {
 	for (Common::Array<Common::Rect>::iterator i = _textFields.begin(); i != _textFields.end(); ++i)
 		_screen->fillRect(i->left, i->top, i->right, i->bottom, 0);
@@ -470,7 +471,7 @@ void EoBIntroPlayer::tower() {
 	_screen->loadBitmap(_filesTower[1], 5, 3, 0);
 
 	_screen->setCurPage(2);
-	uint8 *shp = _screen->encodeShape(0, 0, 16, 56, true, _vm->_cgaMappingAlt);
+	_shapes[10] = _screen->encodeShape(0, 0, 16, 56, true, _vm->_cgaMappingAlt);
 	_screen->convertPage(3, 4, _vm->_cgaMappingAlt);
 	_screen->clearCurPage();
 
@@ -532,7 +533,7 @@ void EoBIntroPlayer::tower() {
 			_screen->copyRegion(152, 0, 152, 32, 80, i + 1, 4, 2, Screen::CR_NO_P_CHECK);
 		}
 
-		_screen->drawShape(2, shp, 128, i - 55, 0);
+		_screen->drawShape(2, _shapes[10], 128, i - 55, 0);
 		_screen->copyRegion(128, 0, 96, 0, 128, i + 1, 2, 0, Screen::CR_NO_P_CHECK);
 		_screen->copyRegion(0, 0, 96, i + 89, 128, 79 - i, 2, 0, Screen::CR_NO_P_CHECK);
 		_screen->updateScreen();
@@ -543,24 +544,22 @@ void EoBIntroPlayer::tower() {
 	displaySubtitle(32, 168, 32, _stringsTower, 2, 20, 23, 0xE1, 0);
 	_screen->updateScreen();
 	_vm->delay(65 * _vm->_tickLength);
-	delete[] shp;
 }
 
 void EoBIntroPlayer::orb() {
 	if (_vm->shouldQuit() || _vm->skipFlag())
 		return;
 
-	uint8 *shp[5];
 	_screen->loadBitmap(_filesOrb[0], 5, 3, 0);
 	_screen->setCurPage(2);
-	shp[4] = _screen->encodeShape(0, 0, 20, 136, true, _vm->_cgaMappingAlt);
+	_shapes[4] = _screen->encodeShape(0, 0, 20, 136, true, _vm->_cgaMappingAlt);
 	_screen->loadBitmap(_filesOrb[1], 5, 3, 0);
-	shp[3] = _screen->encodeShape(16, 0, 16, 104, true, _vm->_cgaMappingAlt);
+	_shapes[3] = _screen->encodeShape(16, 0, 16, 104, true, _vm->_cgaMappingAlt);
 
 	_screen->fillRect(0, 0, 127, 103, _fillColor1);
 	for (int i = 1; i < 4; i++) {
 		copyBlurRegion(128, 0, 0, 0, 128, 104, i);
-		shp[3 - i] = _screen->encodeShape(0, 0, 16, 104, true, _vm->_cgaMappingAlt);
+		_shapes[3 - i] = _screen->encodeShape(0, 0, 16, 104, true, _vm->_cgaMappingAlt);
 	}
 
 	_screen->fillRect(0, 0, 159, 135, _fillColor1);
@@ -580,8 +579,8 @@ void EoBIntroPlayer::orb() {
 	for (int i = startFrame; i < 4 && !_vm->shouldQuit() && !_vm->skipFlag(); i++) {
 		uint32 end = _vm->_system->getMillis() + 3 * _vm->_tickLength;
 		if (i >= 0)
-			_screen->drawShape(2, shp[i], 16, 16, 0);
-		_screen->drawShape(2, shp[4], 0, 0, 0);
+			_screen->drawShape(2, _shapes[i], 16, 16, 0);
+		_screen->drawShape(2, _shapes[4], 0, 0, 0);
 		_screen->copyRegion(0, 0, 80, 24, 160, 136, 2, 0, Screen::CR_NO_P_CHECK);
 		_screen->updateScreen();
 		if (startFrame < 0)
@@ -605,8 +604,8 @@ void EoBIntroPlayer::orb() {
 		uint32 end = _vm->_system->getMillis() + 3 * _vm->_tickLength;
 		_screen->fillRect(16, 16, 143, 119, _fillColor1, 2);
 		if (i >= 0)
-			_screen->drawShape(2, shp[i], 16, 16, 0);
-		_screen->drawShape(2, shp[4], 0, 0, 0);
+			_screen->drawShape(2, _shapes[i], 16, 16, 0);
+		_screen->drawShape(2, _shapes[4], 0, 0, 0);
 		_screen->copyRegion(0, 0, 80, 24, 160, 136, 2, 0, Screen::CR_NO_P_CHECK);
 		_screen->updateScreen();
 		if (startFrame > 0)
@@ -616,17 +615,12 @@ void EoBIntroPlayer::orb() {
 	if (startFrame > 0)
 		_vm->delay(40 * _vm->_tickLength);
 
-	for (int i = 0; i < 5; i++)
-		delete[] shp[i];
+	releaseShapes();
 }
 
 void EoBIntroPlayer::waterdeepEntry() {
 	if (_vm->shouldQuit() || _vm->skipFlag())
 		return;
-
-	uint8 *shp[4];
-	uint8 *shp2[31];
-	uint8 *shp3[3];
 
 	if (_vm->gameFlags().platform != Common::kPlatformPC98)
 		loadAndSetPalette(_filesWdEntry[0], -1);
@@ -636,10 +630,10 @@ void EoBIntroPlayer::waterdeepEntry() {
 		_screen->fadePalette(_screen->getPalette(0), 16);
 
 	_screen->setCurPage(2);
-	shp[3] = _screen->encodeShape(0, 0, 20, 136, true, _vm->_cgaMappingAlt);
+	_shapes[43] = _screen->encodeShape(0, 0, 20, 136, true, _vm->_cgaMappingAlt);
 	for (int i = 1; i < 4; i++) {
 		copyBlurRegion(0, 0, 0, 0, 160, 136, i);
-		shp[3 - i] = _screen->encodeShape(0, 0, 20, 136, true, _vm->_cgaMappingAlt);
+		_shapes[43 - i] = _screen->encodeShape(0, 0, 20, 136, true, _vm->_cgaMappingAlt);
 	}
 	_screen->setCurPage(0);
 
@@ -650,8 +644,7 @@ void EoBIntroPlayer::waterdeepEntry() {
 	int startFrame = (_vm->gameFlags().platform == Common::kPlatformAmiga) ? 3 : 0;
 	for (int i = startFrame; i < 4 && !_vm->shouldQuit() && !_vm->skipFlag(); i++) {
 		uint32 end = _vm->_system->getMillis() + 3 * _vm->_tickLength;
-		_screen->drawShape(0, shp[i], 80, 24, 0);
-		delete[] shp[i];
+		_screen->drawShape(0, _shapes[40 + i], 80, 24, 0);
 		_screen->updateScreen();
 		_vm->delayUntil(end);
 	}
@@ -662,23 +655,23 @@ void EoBIntroPlayer::waterdeepEntry() {
 	_vm->delay(50 * _vm->_tickLength);
 
 	_screen->setCurPage(2);
-	shp[0] = _screen->encodeShape(20, 0, 20, 136, true, _vm->_cgaMappingAlt);
+	_shapes[45] = _screen->encodeShape(20, 0, 20, 136, true, _vm->_cgaMappingAlt);
 	_screen->loadBitmap(_filesWdEntry[2], 5, 3, 0);
-	shp[1] = _screen->encodeShape(0, 0, 20, 136, true, _vm->_cgaMappingAlt);
-	shp[2] = _screen->encodeShape(20, 0, 20, 136, true, _vm->_cgaMappingAlt);
+	_shapes[46] = _screen->encodeShape(0, 0, 20, 136, true, _vm->_cgaMappingAlt);
+	_shapes[47] = _screen->encodeShape(20, 0, 20, 136, true, _vm->_cgaMappingAlt);
 	_screen->loadBitmap(_filesWdEntry[3], 5, 3, 0);
 
 	for (int i = 0; i < 31; i++)
-		shp2[i] = _screen->encodeShape(_wdEncodeX[i], 136 + (_wdEncodeY[i] << 3), _wdEncodeWH[i], _wdEncodeWH[i] << 3, true, _vm->_cgaMappingAlt);
+		_shapes[i] = _screen->encodeShape(_wdEncodeX[i], 136 + (_wdEncodeY[i] << 3), _wdEncodeWH[i], _wdEncodeWH[i] << 3, true, _vm->_cgaMappingAlt);
 	for (int i = 0; i < 3; i++)
-		shp3[i] = _screen->encodeShape(5 * i, 152, 5, 32, true, _vm->_cgaMappingAlt);
+		_shapes[50 + i] = _screen->encodeShape(5 * i, 152, 5, 32, true, _vm->_cgaMappingAlt);
 
 	_screen->convertPage(3, 4, _vm->_cgaMappingAlt);
 
 	for (int i = 0; i < 3 && !_vm->shouldQuit() && !_vm->skipFlag(); i++) {
 		uint32 end = _vm->_system->getMillis() + 3 * _vm->_tickLength;
 		_screen->fillRect(0, 0, 159, 135, _fillColor1, 2);
-		_screen->drawShape(2, shp[i], 0, 0, 0);
+		_screen->drawShape(2, _shapes[45 + i], 0, 0, 0);
 		_screen->copyRegion(0, 0, 80, 24, 160, 136, 2, 0, Screen::CR_NO_P_CHECK);
 		_screen->updateScreen();
 		_vm->delayUntil(end);
@@ -700,7 +693,7 @@ void EoBIntroPlayer::waterdeepEntry() {
 		uint32 end = _vm->_system->getMillis() + 3 * _vm->_tickLength;
 
 		_screen->copyRegion(cx - 2, cy - 2, 0, 0, 48, 36, 4, 4, Screen::CR_NO_P_CHECK);
-		_screen->drawShape(4, shp3[((i & 3) == 3) ? 1 : (i & 3)], cx, cy, 0);
+		_screen->drawShape(4, _shapes[(i & 3) == 3 ? 51 : 50 + (i & 3)], cx, cy, 0);
 		_screen->copyRegion(cx - 2, cy - 2, cx - 82, cy + 22, 48, 36, 4, 0, Screen::CR_NO_P_CHECK);
 		_screen->copyRegion(0, 0, cx - 2, cy - 2, 48, 36, 4, 4, Screen::CR_NO_P_CHECK);
 		cx--;
@@ -708,7 +701,7 @@ void EoBIntroPlayer::waterdeepEntry() {
 
 		for (int ii = 0; ii < 5; ii++) {
 			int s = _vm->_rnd.getRandomNumber(255) % 31;
-			_screen->drawShape(0, shp2[s], _wdDsX[s] - 80, _wdDsY[s] + 24, 0);
+			_screen->drawShape(0, _shapes[s], _wdDsX[s] - 80, _wdDsY[s] + 24, 0);
 		}
 
 		if (!(_vm->_rnd.getRandomNumber(255) & 7))
@@ -718,13 +711,7 @@ void EoBIntroPlayer::waterdeepEntry() {
 		_vm->delayUntil(end);
 	}
 
-	for (int i = 0; i < 3; i++) {
-		delete[] shp[i];
-		delete[] shp3[i];
-	}
-
-	for (int i = 0; i < 31; i++)
-		delete[] shp2[i];
+	releaseShapes();
 }
 
 void EoBIntroPlayer::king() {
@@ -763,7 +750,6 @@ void EoBIntroPlayer::king() {
 
 	_vm->delay(25 * _vm->_tickLength);
 
-	uint8 *shp[4];
 	int16 dy[4];
 	int16 stepY[4];
 
@@ -774,7 +760,7 @@ void EoBIntroPlayer::king() {
 	_screen->loadBitmap(_filesKing[1], 5, 3, 0);
 	_screen->setCurPage(2);
 	for (int i = 0; i < 4; i++) {
-		shp[i] = _screen->encodeShape(advEncX[i], 0, advEncW[i], 98, true, _vm->_cgaMappingAlt);
+		_shapes[i] = _screen->encodeShape(advEncX[i], 0, advEncW[i], 98, true, _vm->_cgaMappingAlt);
 		dy[i] = 180 + ((_vm->_rnd.getRandomNumber(255) & 3) << 3);
 		stepY[i] = (i * 5) & 3;
 	}
@@ -796,7 +782,7 @@ void EoBIntroPlayer::king() {
 
 			if (dy[i] < 180) {
 				_screen->copyRegion((advEncX[i] + 8) << 3, dy[i] - 2, 0, dy[i] - 2, advEncW[i] << 3, 182 - dy[i], 4, 4, Screen::CR_NO_P_CHECK);
-				_screen->drawShape(4, shp[i], 0, dy[i], 0);
+				_screen->drawShape(4, _shapes[i], 0, dy[i], 0);
 				_screen->copyRegion(0, dy[i] - 2, (advEncX[i] + 8) << 3, dy[i] - 2, advEncW[i] << 3, 182 - dy[i], 4, 0, Screen::CR_NO_P_CHECK);
 			}
 
@@ -814,8 +800,7 @@ void EoBIntroPlayer::king() {
 	_screen->updateScreen();
 	_vm->delay(70 * _vm->_tickLength);
 
-	for (int i = 0; i < 4; i++)
-		delete[] shp[i];
+	releaseShapes();
 }
 
 void EoBIntroPlayer::hands() {
@@ -824,8 +809,8 @@ void EoBIntroPlayer::hands() {
 
 	_screen->setCurPage(2);
 	_screen->clearPage(0);
-	uint8 *shp1 = _screen->encodeShape(0, 140, 21, 60, true, _vm->_cgaMappingAlt);
-	uint8 *shp2 = _screen->encodeShape(21, 140, 12, 60, true, _vm->_cgaMappingAlt);
+	_shapes[0] = _screen->encodeShape(0, 140, 21, 60, true, _vm->_cgaMappingAlt);
+	_shapes[1] = _screen->encodeShape(21, 140, 12, 60, true, _vm->_cgaMappingAlt);
 	_screen->loadBitmap(_filesHands[0], 3, 5, 0);
 
 	if (_vm->gameFlags().platform == Common::kPlatformPC98) {
@@ -838,8 +823,8 @@ void EoBIntroPlayer::hands() {
 
 	_screen->fillRect(0, 160, 319, 199, _fillColor1, 0);
 	_screen->fillRect(0, 0, 191, 63, _fillColor2, 2);
-	_screen->drawShape(2, shp1, 0, 4, 0);
-	_screen->drawShape(2, shp2, 151, 4, 0);
+	_screen->drawShape(2, _shapes[0], 0, 4, 0);
+	_screen->drawShape(2, _shapes[1], 151, 4, 0);
 	boxMorphTransition(25, 8, 18, 4, 3, 0, 21, 8, 6, 0, 28, 23);
 
 	displaySubtitle(128, 176, 16, _stringsHands, 0, 24, 23, 0xE1, 0);
@@ -851,36 +836,33 @@ void EoBIntroPlayer::hands() {
 	for (int i = -22; i <= 20 && !_vm->shouldQuit() && !_vm->skipFlag(); i += 4) {
 		uint32 end = _vm->_system->getMillis() + _vm->_tickLength;
 		_screen->fillRect(0, 0, 167, 63, _fillColor2);
-		_screen->drawShape(2, shp1, i, 4, 0);
-		_screen->drawShape(2, shp2, 105 - i, 4, 0);
+		_screen->drawShape(2, _shapes[0], i, 4, 0);
+		_screen->drawShape(2, _shapes[1], 105 - i, 4, 0);
 		_screen->copyRegion(0, 0, 144, 32, 168, 64, 2, 0, Screen::CR_NO_P_CHECK);
 		_screen->updateScreen();
 		_vm->delayUntil(end);
 	}
 
 	_vm->snd_playSoundEffect(10);
-
-	delete[] shp1;
-	delete[] shp2;
 	_vm->delay(15 * _vm->_tickLength);
 
 	_screen->setCurPage(4);
-	shp1 = _screen->encodeShape(17, 0, 11, 120, true, _vm->_cgaMappingAlt);
-	shp2 = _screen->encodeShape(28, 112, 1, 31, true, _vm->_cgaMappingAlt);
-	uint8 *shp3 = _screen->encodeShape(9, 138, 14, 54, true, _vm->_cgaMappingAlt);
+	_shapes[5] = _screen->encodeShape(17, 0, 11, 120, true, _vm->_cgaMappingAlt);
+	_shapes[6] = _screen->encodeShape(28, 112, 1, 31, true, _vm->_cgaMappingAlt);
+	_shapes[7] = _screen->encodeShape(9, 138, 14, 54, true, _vm->_cgaMappingAlt);
 
 	_screen->setCurPage(2);
 	_screen->fillRect(0, 0, 135, 63, _fillColor2);
-	_screen->drawShape(2, shp1, 32, -80, 0);
-	_screen->drawShape(2, shp2, 40, -16, 0);
+	_screen->drawShape(2, _shapes[5], 32, -80, 0);
+	_screen->drawShape(2, _shapes[6], 40, -16, 0);
 	boxMorphTransition(18, 16, 10, 12, 0, 0, 17, 8, 17, 3, 25, 10);
 	_vm->delay(15 * _vm->_tickLength);
 
 	for (int i = -80; i <= 0 && !_vm->shouldQuit() && !_vm->skipFlag(); i += 4) {
 		uint32 end = _vm->_system->getMillis() + _vm->_tickLength;
 		_screen->fillRect(0, 0, 135, 63, _fillColor2);
-		_screen->drawShape(2, shp1, 32, i, 0);
-		_screen->drawShape(2, shp2, 40, i + 64, 0);
+		_screen->drawShape(2, _shapes[5], 32, i, 0);
+		_screen->drawShape(2, _shapes[6], 40, i + 64, 0);
 		_screen->copyRegion(0, 0, 80, 96, 136, 64, 2, 0, Screen::CR_NO_P_CHECK);
 		_screen->updateScreen();
 		_vm->delayUntil(end);
@@ -892,26 +874,23 @@ void EoBIntroPlayer::hands() {
 	for (int i = 0; i > -54 && !_vm->shouldQuit() && !_vm->skipFlag(); i -= 4) {
 		uint32 end = _vm->_system->getMillis() + _vm->_tickLength;
 		_screen->fillRect(0, 0, 135, 63, _fillColor2);
-		_screen->drawShape(2, shp3, 12, 64 + i, 0);
-		_screen->drawShape(2, shp1, 32, i, 0);
+		_screen->drawShape(2, _shapes[7], 12, 64 + i, 0);
+		_screen->drawShape(2, _shapes[5], 32, i, 0);
 		_screen->copyRegion(0, 0, 80, 96, 136, 64, 2, 0, Screen::CR_NO_P_CHECK);
 		_screen->updateScreen();
 		_vm->delayUntil(end);
 	}
 
-	delete[] shp1;
-	delete[] shp2;
-	delete[] shp3;
 	_vm->delay(15 * _vm->_tickLength);
 
 	_screen->setCurPage(4);
-	shp1 = _screen->encodeShape(0, 0, 17, 136, true, _vm->_cgaMappingAlt);
-	shp2 = _screen->encodeShape(0, 136, 9, 48, true, _vm->_cgaMappingAlt);
+	_shapes[10] = _screen->encodeShape(0, 0, 17, 136, true, _vm->_cgaMappingAlt);
+	_shapes[11] = _screen->encodeShape(0, 136, 9, 48, true, _vm->_cgaMappingAlt);
 
 	_screen->setCurPage(2);
 	_screen->fillRect(0, 0, 143, 95, _fillColor2);
-	_screen->drawShape(2, shp1, -56, -56, 0);
-	_screen->drawShape(2, shp2, 52, 49, 0);
+	_screen->drawShape(2, _shapes[10], -56, -56, 0);
+	_screen->drawShape(2, _shapes[11], 52, 49, 0);
 	boxMorphTransition(9, 6, 0, 0, 0, 0, 18, 12, 8, 11, 21, 10);
 	_vm->delay(15 * _vm->_tickLength);
 	_vm->snd_playSoundEffect(11);
@@ -919,25 +898,23 @@ void EoBIntroPlayer::hands() {
 	for (int i = -56; i <= -8 && !_vm->shouldQuit() && !_vm->skipFlag(); i += 4) {
 		uint32 end = _vm->_system->getMillis() + _vm->_tickLength;
 		_screen->fillRect(0, 0, 143, 95, _fillColor2);
-		_screen->drawShape(2, shp1, i, i, 0);
-		_screen->drawShape(2, shp2, (i == -8) ? 55 : 52, (i == -8) ? 52 : 49, 0);
+		_screen->drawShape(2, _shapes[10], i, i, 0);
+		_screen->drawShape(2, _shapes[11], (i == -8) ? 55 : 52, (i == -8) ? 52 : 49, 0);
 		_screen->copyRegion(0, 0, 0, 0, 144, 96, 2, 0, Screen::CR_NO_P_CHECK);
 		_screen->updateScreen();
 		_vm->delayUntil(end);
 	}
 
 	_vm->snd_playSoundEffect(10);
-	delete[] shp1;
-	delete[] shp2;
 	_vm->delay(30 * _vm->_tickLength);
 
 	_screen->setCurPage(4);
-	shp1 = _screen->encodeShape(28, 0, 11, 40, true, _vm->_cgaMappingAlt);
-	shp2 = _screen->encodeShape(28, 40, 10, 72, true, _vm->_cgaMappingAlt);
+	_shapes[15] = _screen->encodeShape(28, 0, 11, 40, true, _vm->_cgaMappingAlt);
+	_shapes[16] = _screen->encodeShape(28, 40, 10, 72, true, _vm->_cgaMappingAlt);
 
 	_screen->setCurPage(2);
 	_screen->fillRect(0, 0, 87, 112, _fillColor2);
-	_screen->drawShape(2, shp2, 0, 90, 0);
+	_screen->drawShape(2, _shapes[16], 0, 90, 0);
 	boxMorphTransition(20, 13, 15, 6, 0, 0, 11, 14, 0, 0, 24, 16);
 	_vm->delay(15 * _vm->_tickLength);
 
@@ -945,7 +922,7 @@ void EoBIntroPlayer::hands() {
 	for (int i = -40; i <= 0 && !_vm->shouldQuit() && !_vm->skipFlag(); i += 4) {
 		uint32 end = _vm->_system->getMillis() + _vm->_tickLength;
 		_screen->fillRect(0, 0, 87, 112, _fillColor2);
-		_screen->drawShape(2, shp2, 0, dy, 0);
+		_screen->drawShape(2, _shapes[16], 0, dy, 0);
 		_screen->copyRegion(0, 0, 120, 48, 88, 112, 2, 0, Screen::CR_NO_P_CHECK);
 		_screen->updateScreen();
 		_vm->delayUntil(end);
@@ -957,14 +934,13 @@ void EoBIntroPlayer::hands() {
 	for (int i = -40; i <= 0 && !_vm->shouldQuit() && !_vm->skipFlag(); i += 4) {
 		uint32 end = _vm->_system->getMillis() + _vm->_tickLength;
 		_screen->fillRect(0, 0, 87, 39, _fillColor2);
-		_screen->drawShape(2, shp1, 0, i, 0);
+		_screen->drawShape(2, _shapes[15], 0, i, 0);
 		_screen->copyRegion(0, 0, 120, 48, 88, 112, 2, 0, Screen::CR_NO_P_CHECK);
 		_screen->updateScreen();
 		_vm->delayUntil(end);
 	}
 
-	delete[] shp1;
-	delete[] shp2;
+	releaseShapes();
 	_vm->delay(48 * _vm->_tickLength);
 }
 
@@ -972,16 +948,13 @@ void EoBIntroPlayer::waterdeepExit() {
 	if (_vm->shouldQuit() || _vm->skipFlag())
 		return;
 
-	uint8 *shp2[31];
-	uint8 *shp3[3];
-
 	_screen->loadBitmap(_filesWdExit[0], 5, 3, 0);
 	_screen->setCurPage(2);
 	for (int i = 0; i < 31; i++)
-		shp2[i] = _screen->encodeShape(_wdEncodeX[i], 136 + (_wdEncodeY[i] << 3), _wdEncodeWH[i], _wdEncodeWH[i] << 3, true, _vm->_cgaMappingAlt);
+		_shapes[i] = _screen->encodeShape(_wdEncodeX[i], 136 + (_wdEncodeY[i] << 3), _wdEncodeWH[i], _wdEncodeWH[i] << 3, true, _vm->_cgaMappingAlt);
 	for (int i = 0; i < 3; i++)
-		shp3[i] = _screen->encodeShape(5 * i + 15, 152, 5, 32, true, _vm->_cgaMappingAlt);
-	uint8 *shp1 = _screen->encodeShape(31, 136, 5, 32, true, _vm->_cgaMappingAlt);
+		_shapes[40 + i] = _screen->encodeShape(5 * i + 15, 152, 5, 32, true, _vm->_cgaMappingAlt);
+	_shapes[50] = _screen->encodeShape(31, 136, 5, 32, true, _vm->_cgaMappingAlt);
 	_screen->convertPage(3, 4, _vm->_cgaMappingAlt);
 	_screen->copyRegion(0, 0, 0, 136, 48, 36, 4, 4, Screen::CR_NO_P_CHECK);
 	_screen->fillRect(0, 168, 319, 199, _fillColor1, 0);
@@ -1000,8 +973,8 @@ void EoBIntroPlayer::waterdeepExit() {
 			fy = 98;
 
 		_screen->copyRegion(fx, fy, 0, 0, 48, 36, 4, 4, Screen::CR_NO_P_CHECK);
-		_screen->drawShape(4, shp3[((i & 3) == 3) ? 1 : (i & 3)], cx, cy, 0);
-		_screen->drawShape(4, shp1, 160, 104, 0);
+		_screen->drawShape(4, _shapes[(i & 3) == 3 ? 41 : 40 + (i & 3)], cx, cy, 0);
+		_screen->drawShape(4, _shapes[50], 160, 104, 0);
 		_screen->copyRegion(fx, fy, fx - 80, fy + 24, 48, 36, 4, 0, Screen::CR_NO_P_CHECK);
 		_screen->copyRegion(0, 0, fx, fy, 48, 36, 4, 4, Screen::CR_NO_P_CHECK);
 		cx++;
@@ -1009,7 +982,7 @@ void EoBIntroPlayer::waterdeepExit() {
 
 		for (int ii = 0; ii < 5; ii++) {
 			int s = _vm->_rnd.getRandomNumber(255) % 31;
-			_screen->drawShape(0, shp2[s], _wdDsX[s] - 80, _wdDsY[s] + 24, 0);
+			_screen->drawShape(0, _shapes[s], _wdDsX[s] - 80, _wdDsY[s] + 24, 0);
 		}
 
 		if (!(_vm->_rnd.getRandomNumber(255) & 7))
@@ -1019,12 +992,7 @@ void EoBIntroPlayer::waterdeepExit() {
 		_vm->delayUntil(end);
 	}
 
-	for (int i = 0; i < 3; i++)
-		delete[] shp3[i];
-
-	for (int i = 0; i < 31; i++)
-		delete[] shp2[i];
-	delete[] shp1;
+	releaseShapes();
 
 	_screen->setCurPage(0);
 	_screen->fillRect(0, 168, 319, 199, _fillColor1, 0);
@@ -1092,12 +1060,10 @@ void EoBIntroPlayer::tunnel() {
 		return;
 
 	_screen->setCurPage(4);
-	uint8 *shp2 = _screen->encodeShape(20, 0, 20, 120, true, _vm->_cgaMappingAlt);
-	uint8 *shp1 = _screen->encodeShape(0, 0, 20, 120, true, _vm->_cgaMappingAlt);
-	_vm->drawBlockObject(1, 4, shp2, 160, 0, 0);
-	_vm->drawBlockObject(1, 4, shp1, 0, 0, 0);
-	delete[] shp1;
-	delete[] shp2;
+	_shapes[2] = _screen->encodeShape(20, 0, 20, 120, true, _vm->_cgaMappingAlt);
+	_shapes[1] = _screen->encodeShape(0, 0, 20, 120, true, _vm->_cgaMappingAlt);
+	_vm->drawBlockObject(1, 4, _shapes[2], 160, 0, 0);
+	_vm->drawBlockObject(1, 4, _shapes[1], 0, 0, 0);
 
 	for (int i = 0; i < 3 && !_vm->shouldQuit() && !_vm->skipFlag(); i++) {
 		uint32 end = _vm->_system->getMillis() + 8 * _vm->_tickLength;
@@ -1188,6 +1154,7 @@ void EoBIntroPlayer::tunnel() {
 	_screen->setCurPage(0);
 	_screen->updateScreen();
 	_vm->delay(50 * _vm->_tickLength);
+	releaseShapes();
 }
 
 void EoBIntroPlayer::loadAndSetPalette(const char *dosPaletteFile, int pc98PaletteID) {
@@ -1763,8 +1730,6 @@ void EoBPC98FinalePlayer::wait(uint32 ticks) {
 EoBAmigaFinalePlayer::EoBAmigaFinalePlayer(EoBEngine *vm, Screen_EoB *screen) : EoBSeqPlayerCommon(vm, screen) {
 	_animCurFrame = 0;
 	int size = 0;
-	_textShapes = new uint8*[10];
-	memset(_textShapes, 0, sizeof(uint8*) * 10);
 	_councilAnimData1 = new uint8[78];
 	memcpy(_councilAnimData1, _vm->staticres()->loadRawData(kEoB1FinaleCouncilAnim1, size), 78);
 	_councilAnimData2 = new uint8[78];
@@ -1777,9 +1742,6 @@ EoBAmigaFinalePlayer::EoBAmigaFinalePlayer(EoBEngine *vm, Screen_EoB *screen) : 
 }
 
 EoBAmigaFinalePlayer::~EoBAmigaFinalePlayer() {
-	for (int i = 0; i < 10; ++i)
-		delete[] _textShapes[i];
-	delete[] _textShapes;
 	delete[] _councilAnimData1;
 	delete[] _councilAnimData2;
 }
@@ -1792,7 +1754,7 @@ void EoBAmigaFinalePlayer::start() {
 	_screen->clearPage(2);
 	_screen->loadShapeSetBitmap("TEXT2", 5, 3);
 	for (int i = 0; i < 10; ++i)
-		_textShapes[i] = _screen->encodeShape(0, i << 4, 40, 15);
+		_shapes[i] = _screen->encodeShape(0, i << 4, 40, 15);
 	_screen->clearPage(2);
 
 	_screen->loadBitmap("COUNCILA.CPS", 2, 4, 0);
@@ -1857,12 +1819,12 @@ void EoBAmigaFinalePlayer::delivery() {
 		return;
 
 	_screen->setCurPage(4);
-	uint8 *shp = _screen->encodeShape(0, 72, 3, 32, true);
+	_shapes[20] = _screen->encodeShape(0, 72, 3, 32, true);
 
 	for (int i = 0; i < 5 && !_vm->skipFlag() && !_vm->shouldQuit(); ++i) {
 		static const uint8 y[5] = { 152,  139,  131,  129,  127 };
 		_screen->copyRegion(120, 30, 120, 110, 56, 42, 2, 2, Screen::CR_NO_P_CHECK);
-		_screen->drawShape(2, shp, 153, y[i], 0);
+		_screen->drawShape(2, _shapes[20], 153, y[i], 0);
 		_screen->copyRegion(120, 110, 120, 78, 56, 42, 2, 0, Screen::CR_NO_P_CHECK);
 		animateCouncil1(2, -1);
 		_screen->updateScreen();
@@ -1884,25 +1846,19 @@ void EoBAmigaFinalePlayer::delivery() {
 		_screen->updateScreen();
 		_vm->delay(4 * _vm->_tickLength);
 	}
-
-	delete[] shp;
 }
 
 void EoBAmigaFinalePlayer::inspection() {
 	if (_vm->shouldQuit() || _vm->skipFlag())
 		return;
 
-	uint8 *shp[5];
-	memset(shp, 0, sizeof(shp));
-	
 	_screen->fillRect(0, 170, 319, 186, 31, 0);
 	_screen->clearPage(2);
 
 	_screen->setCurPage(6);
-	shp[0] = _screen->encodeShape(0, 0, 8, 40, true);
-	_screen->drawShape(2, shp[0], 96, 24, 0, 0);
-	_screen->drawShape(2, shp[0], 160, 24, 0, 1);
-	delete[] shp[0];
+	_shapes[21] = _screen->encodeShape(0, 0, 8, 40, true);
+	_screen->drawShape(2, _shapes[21], 96, 24, 0, 0);
+	_screen->drawShape(2, _shapes[21], 160, 24, 0, 1);
 
 	_screen->fillRect(0, 48, 9, 120, 31, 0);
 	_screen->fillRect(312, 48, 319, 120, 31, 0);
@@ -1910,7 +1866,7 @@ void EoBAmigaFinalePlayer::inspection() {
 	boxMorphTransition(18, 6, 12, 3, 12, 3, 16, 5, 1, 5, 39, 10, 31);
 
 	for (int i = 0; i < 5; ++i)
-		shp[i] = _screen->encodeShape((i << 2) + 8, 0, 4, 24, true);
+		_shapes[30 + i] = _screen->encodeShape((i << 2) + 8, 0, 4, 24, true);
 
 	_vm->delay(10 * _vm->_tickLength);
 
@@ -1928,16 +1884,13 @@ void EoBAmigaFinalePlayer::inspection() {
 			continue;
 		}
 
-		_screen->drawShape(2, shp[_eyesAnimData[i]], 112, 32, 0, 0);
-		_screen->drawShape(2, shp[_eyesAnimData[i]], 176, 32, 0, 1);
+		_screen->drawShape(2, _shapes[30 + _eyesAnimData[i]], 112, 32, 0, 0);
+		_screen->drawShape(2, _shapes[30 + _eyesAnimData[i]], 176, 32, 0, 1);
 		_screen->copyRegion(112, 32, 112, 32, 96, 24, 2, 0, Screen::CR_NO_P_CHECK);
 		_screen->updateScreen();
 
 		_vm->delay(_vm->_tickLength);	
 	}
-
-	for (int i = 0; i < 5; ++i)
-		delete[] shp[i];
 }
 
 void EoBAmigaFinalePlayer::surprise() {
@@ -1975,13 +1928,10 @@ void EoBAmigaFinalePlayer::congratulation() {
 	if (_vm->shouldQuit() || _vm->skipFlag())
 		return;
 
-	uint8 *shp[3];
-	memset(shp, 0, sizeof(shp));
-
 	_screen->setCurPage(6);
-	shp[0] = _screen->encodeShape(12, 24, 12, 64, true);
-	shp[1] = _screen->encodeShape(12, 88, 12, 72, true);
-	shp[2] = _screen->encodeShape(24, 136, 15, 64, true);
+	_shapes[40] = _screen->encodeShape(12, 24, 12, 64, true);
+	_shapes[41] = _screen->encodeShape(12, 88, 12, 72, true);
+	_shapes[42] = _screen->encodeShape(24, 136, 15, 64, true);
 	
 	_screen->clearPage(2);
 	_screen->fadeFromBlack(1);
@@ -2000,7 +1950,7 @@ void EoBAmigaFinalePlayer::congratulation() {
 	_screen->fadeFromBlack(1);
 
 	for (int i = 0; i < 10 && !_vm->skipFlag() && !_vm->shouldQuit(); i += 2) {
-		_screen->drawShape(2, shp[0], _handsAnimData[i], _handsAnimData[i + 1], 0);
+		_screen->drawShape(2, _shapes[40], _handsAnimData[i], _handsAnimData[i + 1], 0);
 		_screen->copyRegion(0, 50, 0, 50, 320, 90, 2, 0, Screen::CR_NO_P_CHECK);
 		_screen->clearPage(2);
 		_screen->updateScreen();
@@ -2012,8 +1962,8 @@ void EoBAmigaFinalePlayer::congratulation() {
 	_vm->delay(50 * _vm->_tickLength);
 
 	for (int i = 10; i < 18 && !_vm->skipFlag() && !_vm->shouldQuit(); i += 2) {
-		_screen->drawShape(2, shp[1], _handsAnimData[i], _handsAnimData[i + 1], 0);
-		_screen->drawShape(2, shp[0], _handsAnimData[8], _handsAnimData[9], 0);
+		_screen->drawShape(2, _shapes[41], _handsAnimData[i], _handsAnimData[i + 1], 0);
+		_screen->drawShape(2, _shapes[40], _handsAnimData[8], _handsAnimData[9], 0);
 		_screen->copyRegion(0, 50, 0, 50, 320, 90, 2, 0, Screen::CR_NO_P_CHECK);
 		_screen->clearPage(2);
 		_screen->updateScreen();
@@ -2021,7 +1971,7 @@ void EoBAmigaFinalePlayer::congratulation() {
 	}
 
 	for (int i = 18; i < 24 && !_vm->skipFlag() && !_vm->shouldQuit(); i += 2) {
-		_screen->drawShape(2, shp[2], _handsAnimData[i], _handsAnimData[i + 1], 0);
+		_screen->drawShape(2, _shapes[42], _handsAnimData[i], _handsAnimData[i + 1], 0);
 		_screen->copyRegion(0, 50, 0, 50, 320, 90, 2, 0, Screen::CR_NO_P_CHECK);
 		_screen->clearPage(2);
 		_screen->updateScreen();
@@ -2030,23 +1980,20 @@ void EoBAmigaFinalePlayer::congratulation() {
 
 	for (int i = 0; i < 3 && !_vm->skipFlag() && !_vm->shouldQuit(); ++i) {
 		for (int ii = 0; ii < 12 && !_vm->skipFlag() && !_vm->shouldQuit(); ii += 4) {
-			_screen->drawShape(2, shp[2], 91, ii + 51, 0);
+			_screen->drawShape(2, _shapes[42], 91, ii + 51, 0);
 			_screen->copyRegion(0, 50, 0, 50, 320, 90, 2, 0, Screen::CR_NO_P_CHECK);
 			_screen->clearPage(2);
 			_screen->updateScreen();
 			_vm->delay(25);
 		}
 		for (int ii = 12; ii > 0 && !_vm->skipFlag() && !_vm->shouldQuit(); ii -= 4) {
-			_screen->drawShape(2, shp[2], 91, ii + 51, 0);
+			_screen->drawShape(2, _shapes[42], 91, ii + 51, 0);
 			_screen->copyRegion(0, 50, 0, 50, 320, 90, 2, 0, Screen::CR_NO_P_CHECK);
 			_screen->clearPage(2);
 			_screen->updateScreen();
 			_vm->delay(25);
 		}
 	}
-
-	for (int i = 0; i < 3; ++i)
-		delete[] shp[i];
 
 	_vm->delay(40 * _vm->_tickLength);
 	_screen->fadeToBlack(48);
@@ -2141,7 +2088,7 @@ void EoBAmigaFinalePlayer::playDialogue(int line, bool withAnim) {
 	_screen->fillRect(0, 170, 319, 186, 31, 0);
 
 	if (withAnim) {
-		_screen->drawShape(0, _textShapes[line], 0, 170);
+		_screen->drawShape(0, _shapes[line], 0, 170);
 		const uint8 *len = &_textFrameDuration[line * 17];
 		int offs = 2;
 
@@ -2157,7 +2104,7 @@ void EoBAmigaFinalePlayer::playDialogue(int line, bool withAnim) {
 		_screen->copyRegion(crds[2] << 3, crds[3], 152, 72, 16, 8, 4, 0, Screen::CR_NO_P_CHECK);
 
 	} else {
-		_screen->drawShape(0, _textShapes[line], 0, line == 9 ? 92 : 170);
+		_screen->drawShape(0, _shapes[line], 0, line == 9 ? 92 : 170);
 	}	
 }
 
