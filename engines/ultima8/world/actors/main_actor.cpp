@@ -320,8 +320,11 @@ ProcId MainActor::die(uint16 damageType) {
 
 	deathproc->waitFor(delayproc);
 
-	MusicProcess::get_instance()->unqueueMusic();
-	MusicProcess::get_instance()->playCombatMusic(44); // CONSTANT!!
+	MusicProcess *music = MusicProcess::get_instance();
+	if (music) {
+		music->unqueueMusic();
+		music->playCombatMusic(44); // CONSTANT!!
+	};
 
 	return animprocid;
 }
