@@ -214,10 +214,10 @@ unsigned int Pathfinder::costHeuristic(PathNode *node) {
 #else
 	// This calculates the distance to the target using only lines in
 	// the 8 available directions (instead of the straight line above)
-	int xd = abs(targetx - node->state.x + actor_xd / 2);
-	int yd = abs(targety - node->state.y + actor_yd / 2);
+	int xd = ABS(targetx - node->state.x + actor_xd / 2);
+	int yd = ABS(targety - node->state.y + actor_yd / 2);
 	double m = (xd < yd) ? xd : yd;
-	unsigned int dist = abs(xd - yd) + static_cast<unsigned int>(m * 1.41421356);
+	unsigned int dist = ABS(xd - yd) + static_cast<unsigned int>(m * 1.41421356);
 
 #endif
 
@@ -449,9 +449,9 @@ void Pathfinder::expandNode(PathNode *node) {
 		tracker.evaluateMaxAnimTravel(max_endx, max_endy, dir);
 		if (alreadyVisited(max_endx, max_endy, state.z)) continue;
 		int sqrddist;
-		int x_travel = abs(max_endx - state.x);
+		int x_travel = ABS(max_endx - state.x);
 		int xy_maxtravel = x_travel;    // don't have the max(a,b) macro...
-		int y_travel = abs(max_endy - state.y);
+		int y_travel = ABS(max_endy - state.y);
 		if (y_travel > xy_maxtravel) xy_maxtravel = y_travel;
 
 		sqrddist = x_travel * x_travel + y_travel * y_travel;

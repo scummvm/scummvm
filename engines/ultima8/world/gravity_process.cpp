@@ -187,7 +187,7 @@ void GravityProcess::run() {
 				int zspeedold = zspeed;
 #endif
 				zspeed = 0 - zspeed / 3;
-				int approx_v = abs(xspeed) + abs(yspeed) + zspeed;
+				int approx_v = ABS(xspeed) + ABS(yspeed) + zspeed;
 
 				// Apply an impulse on the x/y plane in a random direction
 				// in a 180 degree pie around the orginal vector in x/y
@@ -217,8 +217,8 @@ void GravityProcess::run() {
 					// Not on land; this bounce approximates what's seen
 					// in the original U8 when Kilandra's daughters ghost
 					// throws a key at the Avatar's head
-					if (abs(yspeed) > 2) yspeed /= 2;
-					if (abs(xspeed) > 2) xspeed /= 2;
+					if (ABS(yspeed) > 2) yspeed /= 2;
+					if (ABS(xspeed) > 2) xspeed /= 2;
 				}
 #ifdef BOUNCE_DIAG
 				pout << "item " << item_num << " bounce ["

@@ -868,9 +868,9 @@ int32 Item::collideMove(int32 dx, int32 dy, int32 dz, bool teleport, bool force,
 
 
 	// the force of the hit, used for the gotHit/hit usecode calls
-	int deltax = abs(start[0] - end[0]) / 4;
-	int deltay = abs(start[1] - end[1]) / 4;
-	int deltaz = abs(start[2] - end[2]);
+	int deltax = ABS(start[0] - end[0]) / 4;
+	int deltay = ABS(start[1] - end[1]) / 4;
+	int deltaz = ABS(start[2] - end[2]);
 	int maxdirdelta = deltay;
 	if (deltay > maxdirdelta) maxdirdelta = deltay;
 	if (deltaz > maxdirdelta) maxdirdelta = deltaz;

@@ -291,7 +291,7 @@ template<class uintX> void SoftRenderSurface<uintX>::DrawLine32(uint32 rgb, int3
 		Fill32(rgb, sx, sy, 1, h);
 	} else {
 		int32 t;
-		bool steep = abs(ey - sy) > abs(ex - sx);
+		bool steep = ABS(ey - sy) > ABS(ex - sx);
 		if (steep) {
 			t = sx;
 			sx = sy;
@@ -309,7 +309,7 @@ template<class uintX> void SoftRenderSurface<uintX>::DrawLine32(uint32 rgb, int3
 			ey = t;
 		}
 		int deltax = ex - sx;
-		int deltay = abs(ey - sy);
+		int deltay = ABS(ey - sy);
 		int error = -deltax / 2;
 		int y = sy;
 		int ystep = (sy < ey) ? 1 : -1;
