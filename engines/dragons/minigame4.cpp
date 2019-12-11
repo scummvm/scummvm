@@ -113,7 +113,7 @@ void Minigame4::run() {
 	_vm->_scene->loadScene(uVar1,0x1e);
 }
 
-void Minigame4::actorTalk(Actor *actorId,ushort param_2,uint32 textIndex)
+void Minigame4::actorTalk(Actor *actorId,uint16 param_2,uint32 textIndex)
 {
 	actorId->waitUntilFlag8SetThenSet1000AndWaitFor4();
 	if (actorId == bruteActor) {
@@ -133,7 +133,7 @@ void Minigame4::actorTalk(Actor *actorId,ushort param_2,uint32 textIndex)
 	}
 }
 
-void Minigame4::actorDialog(Actor *actorId, ushort param_2, uint32 textIndex) {
+void Minigame4::actorDialog(Actor *actorId, uint16 param_2, uint32 textIndex) {
 	uint16 buf[1000];
 	_vm->_talk->loadText(textIndex, buf, 1000);
 	_vm->_talk->displayDialogAroundActor(actorId, param_2, buf, textIndex);

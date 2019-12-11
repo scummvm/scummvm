@@ -31,6 +31,7 @@ MODULE_OBJS := \
 	sequenceopcodes.o \
 	specialopcodes.o \
 	sound.o \
+	VabSound.o \
 	talk.o
 
 MODULE_DIRS += \

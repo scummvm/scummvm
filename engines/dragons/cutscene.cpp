@@ -94,9 +94,9 @@ void CutScene::scene1() {
 						closeUpShotOnActor(0xd8, 0, 0xfd, 0x60); //close up flicker
 						//playSoundFromTxtIndex(0x51fc);
 						if (_vm->_talk->somethingTextAndSpeechAndAnimRelated(DAT_80072de8,3,0,0x51fc,0x701) != 2) {
-							_vm->playSound(0x8004);
+							_vm->playOrStopSound(0x8004);
 							_vm->waitForFrames(0x28);
-							_vm->playSound(0x8003);
+							_vm->playOrStopSound(0x8003);
 							fadeScreenAndResetActor(DAT_80072de8);
 							DAT_80063514 = DAT_80063514 | 0x40;
 							FUN_8003d8e8(0xd6,0,0x37a,0x280);
@@ -154,7 +154,7 @@ void CutScene::scene1() {
 																	fadeScreenAndResetActor(DAT_80072dec);
 																	DAT_80063514 = DAT_80063514 & 0xffbf;
 																	closeUpKnightsAtTable(); // close up of knights at table.
-																	_vm->playSound(0x8003);
+																	_vm->playOrStopSound(0x8003);
 																	//playSoundFromTxtIndex(0x5b96);
 																	if (_vm->_talk->somethingTextAndSpeechAndAnimRelated(DAT_80072dec,8,4,0x5b96,0xc01) != 2) {
 																		//playSoundFromTxtIndex(0x5c4a);
@@ -196,7 +196,7 @@ void CutScene::scene1() {
 																								//playSoundFromTxtIndex(0x5de8);
 																								if (_vm->_talk->somethingTextAndSpeechAndAnimRelated(DAT_80072df8,0xb,2,0x5de8,0xc01) != 2) {
 																									wideAngleEveryoneAtTable();
-																									_vm->playSound(1);
+																									_vm->playOrStopSound(1);
 																									DAT_80072df0->updateSequence(8);
 																									DAT_80072df4->updateSequence(0xd);
 																									DAT_80072df8->updateSequence(0x11);
@@ -620,7 +620,7 @@ void CutScene::knightsSavedBackAtCastle() {
 							wideAngleEveryoneAtTable();
 							if (_vm->_talk->somethingTextAndSpeechAndAnimRelated(DAT_80072df0,9,5,0x7c20,0xc01) != 2) {
 								if (_vm->_talk->somethingTextAndSpeechAndAnimRelated(DAT_80072de8,0x17,0x16,0x7c9c,0x701) != 2) {
-									_vm->playSound(0x800f);
+									_vm->playOrStopSound(0x800f);
 									_vm->waitForFrames(10);
 									if (_vm->_talk->somethingTextAndSpeechAndAnimRelated(DAT_80072de8,0x17,0x16,0x7cf2,0x701) != 2) {
 										closeUpKnightsAtTable();
@@ -877,7 +877,7 @@ void CutScene::tournamentCutScene() {
 	Actor *actor = _vm->_dragonINIResource->getRecord(0x02BE)->actor;
 	_vm->_screen->loadPalette(0, actor->_actorResource->getPalette());
 	_vm->_scene->_camera.x = 0;
-	_vm->playSound(0);
+	_vm->playOrStopSound(0);
 //	call_fade_related_1f();
 	_vm->waitForFrames(300);
 	actor->setFlag(ACTOR_FLAG_1000);
@@ -885,7 +885,7 @@ void CutScene::tournamentCutScene() {
 	_vm->waitForFrames(0x3c);
 //	fade_related_calls_with_1f();
 	_vm->_screen->loadPalette(0, _vm->_scene->getPalette());
-	_vm->playSound(0x4000);
+	_vm->playOrStopSound(0x4000);
 	_vm->_scene->_camera.x = 0x3c0;
 //	call_fade_related_1f();
 	_vm->_talk->loadText(0x4C814, dialogText, 1000);

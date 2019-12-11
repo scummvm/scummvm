@@ -26,6 +26,10 @@
 #include "audio/decoders/raw.h"
 #include "audio/decoders/xa.h"
 #include "common/file.h"
+#include "common/memstream.h"
+#include "bigfile.h"
+#include "dragonrms.h"
+#include "VabSound.h"
 
 #define RAW_CD_SECTOR_SIZE 2352
 
@@ -97,7 +101,7 @@ void Sound::playSpeech(uint32 textIndex) {
 	}
 	_audioTrack->getAudioStream()->finish();
 	_vm->setFlags(ENGINE_FLAG_8000);
-	_vm->_mixer->playStream(Audio::Mixer::kSpeechSoundType, &_speechHandle, _audioTrack->getAudioStream());
+	_vm->_mixer->playStream(Audio::Mixer::kSpeechSoundType, &_speechHandle, _audioTrack->getAudioStream(), -1, 0);
 	delete _audioTrack;
 }
 
@@ -247,6 +251,167 @@ void Sound::PSXAudioTrack::queueAudioFromSector(Common::SeekableReadStream *sect
 
 	_audStream->queueBuffer((byte *)dst, AUDIO_DATA_SAMPLE_COUNT * 2, DisposeAfterUse::YES, flags);
 	delete[] buf;
+}
+
+SoundManager::SoundManager(DragonsEngine *vm, BigfileArchive *bigFileArchive, DragonRMS *dragonRMS)
+		: _vm(vm),
+		  _bigFileArchive(bigFileArchive),
+		  _dragonRMS(dragonRMS) {
+	// TODO: Set volumes
+	SomeInitSound_FUN_8003f64c();
+	loadMusAndGlob();
+}
+
+SoundManager::~SoundManager() {
+	delete _vabMusx;
+	delete _vabGlob;
+}
+
+void SoundManager::SomeInitSound_FUN_8003f64c() {
+	// TODO: Check if this changes on different game versions?
+	memset(_soundArr, 0x10, sizeof(_soundArr));
+
+	_soundArr[192] = 0x0b;
+	_soundArr[193] = 0x0b;
+	_soundArr[226] = _soundArr[226] | 0x80u;
+	_soundArr[229] = 0x0b;
+	_soundArr[230] = 0x0b;
+	_soundArr[450] = 0x0b;
+	_soundArr[451] = 0x0b;
+	_soundArr[514] = 0x8b;
+	_soundArr[515] = 0x0b;
+	_soundArr[516] = 0x0b;
+	_soundArr[578] = 0x0b;
+	_soundArr[579] = 0x0b;
+	_soundArr[580] = 0x0b;
+	_soundArr[611] = 0x0b;
+	_soundArr[674] = 0x8b;
+	_soundArr[675] = 0x88;
+	_soundArr[711] = 0x08;
+	_soundArr[866] = 0x0b;
+	_soundArr[896] = 0x0b;
+	_soundArr[897] = _soundArr[897] | 0x80u;
+	_soundArr[930] = _soundArr[930] | 0x80u;
+	_soundArr[934] = 0x8b;
+	_soundArr[935] = 0x8b;
+	_soundArr[936] = 0x0b;
+	_soundArr[937] = 0x88;
+	_soundArr[941] = 0x0b;
+	_soundArr[964] = 0x0b;
+	_soundArr[995] = _soundArr[995] | 0x80u;
+	_soundArr[1027] = 0x08;
+	_soundArr[1056] = 0x8b;
+	_soundArr[1059] = _soundArr[1059] | 0x80u;
+	_soundArr[1122] = 0x0b;
+	_soundArr[1250] = 0x08;
+	_soundArr[1252] = 0x0b;
+	_soundArr[1256] = 0x0b;
+	_soundArr[1257] = 0x08;
+	_soundArr[1258] = 0x0b;
+	_soundArr[1284] = 0x0b;
+	_soundArr[1378] = 0x0b;
+	_soundArr[1379] = _soundArr[1379] | 0x80u;
+	_soundArr[1380] = 0x0b;
+	_soundArr[1385] = 0x0b;
+	_soundArr[1443] = 0x8b;
+	_soundArr[1444] = _soundArr[1444] | 0x80u;
+	_soundArr[1445] = _soundArr[1445] | 0x80u;
+	_soundArr[1446] = 0x8b;
+	_soundArr[1472] = 0x8b;
+	_soundArr[1508] = _soundArr[1508] | 0x80u;
+	_soundArr[1575] = 0x08;
+	_soundArr[1576] = 0x08;
+	_soundArr[1577] = 0x08;
+	_soundArr[1604] = 0x08;
+	_soundArr[1605] = 0x08;
+	_soundArr[1610] = 0x0b;
+	_soundArr[1611] = 0x0b;
+	_soundArr[1612] = 0x0b;
+}
+
+void SoundManager::loadMusAndGlob() {
+	_vabMusx = loadVab("musx.vh", "musx.vb");
+	_vabGlob = loadVab("glob.vh", "glob.vb");
+}
+
+VabSound * SoundManager::loadVab(const char *headerFilename, const char *bodyFilename) {
+	uint32 headSize, bodySize;
+
+	auto headData = _bigFileArchive->load(headerFilename, headSize);
+	auto bodyData = _bigFileArchive->load(bodyFilename, bodySize);
+
+	auto *headStream = new Common::MemoryReadStream(headData, headSize, DisposeAfterUse::YES);
+	auto *bodyStream = new Common::MemoryReadStream(bodyData, bodySize, DisposeAfterUse::YES);
+
+	return new VabSound(headStream, bodyStream);
+}
+
+/**
+ *
+ * @param soundId Bit 0x4000 set indicates STOP SOUND, bit 0x8000 set indicates SOUND IS GLOBAL (comes from glob.v[hb])
+ */
+void SoundManager::playOrStopSound(uint16 soundId) {
+	uint16 volumeId;
+	if ((soundId & 0x8000u) == 0) {
+		volumeId = soundId + _vm->getCurrentSceneId() * 0x20;
+	} else {
+		volumeId = soundId & 0x7fffu;
+	}
+
+	if ((soundId & 0x4000u) == 0) {
+		playSound(soundId, volumeId);
+	} else {
+		stopSound(soundId, volumeId);
+	}
+}
+
+void SoundManager::playSound(uint16 soundId, uint16 volumeId) {
+	byte volume = 0;
+
+	volume = _soundArr[volumeId];
+	_soundArr[volumeId] = _soundArr[volumeId] | 0x40u;      // Set bit 0x40
+
+	auto vabSound = ((soundId & 0x8000u) != 0) ? _vabGlob : _vabMusx;
+
+	// TODO: CdVolume!
+	auto cdVolume = 1;
+	auto newVolume = cdVolume * volume;
+	if (newVolume < 0) {
+		newVolume += 0xf;
+	}
+
+	auto realId = soundId & 0x7fffu;
+
+	auto program = realId >> 4u;
+	auto key = ((realId & 0xfu) << 1u | 0x40u);
+
+	// TODO: Volume
+	vabSound->playSound(program, key);
+}
+
+void SoundManager::stopSound(uint16 soundId, uint16 volumeId) {
+	_soundArr[volumeId] = _soundArr[volumeId] & 0xbfu;      // Clear bit 0x40
+
+	auto vabId = getVabFromSoundId(soundId);
+	// TODO: Actually stop sound
+}
+
+uint16 SoundManager::getVabFromSoundId(uint16 soundId) {
+	// TODO
+	return -1;
+}
+
+void SoundManager::loadMsf(uint32 sceneId) {
+	char msfFileName[] = "XXXX.MSF";
+	memcpy(msfFileName, _dragonRMS->getSceneName(sceneId), 4);
+
+	uint32 msfSize;
+	byte *msfData = _bigFileArchive->load(msfFileName, msfSize);
+
+	auto *msfStream = new Common::MemoryReadStream(msfData, msfSize, DisposeAfterUse::YES);
+
+	delete _vabMusx;
+	_vabMusx = new VabSound(msfStream, _vm);
 }
 
 } // End of namespace Dragons

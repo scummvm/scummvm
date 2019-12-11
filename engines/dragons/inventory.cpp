@@ -34,10 +34,10 @@ namespace Dragons {
 
 
 static const Common::Point positionTable[4] = {
-		{2,0},
-		{0xce,0},
-		{2,0x9e},
-		{0xce,0x9e}
+		Common::Point(2,0),
+		Common::Point(0xce,0),
+		Common::Point(2,0x9e),
+		Common::Point(0xce,0x9e)
 };
 
 static const int16 bagBounceTable[4] = {
@@ -202,7 +202,7 @@ void Inventory::animateBagIn() {
 		accel += 2;
 	}
 
-	_vm->playSound(0x8001);
+	_vm->playOrStopSound(0x8001);
 
 	// Shake bag at the end.
 	for (int i = 0; i < 4; i++) {
@@ -216,7 +216,7 @@ void Inventory::animateBagIn() {
 }
 
 void Inventory::animateBagOut() {
-	_vm->playSound(0x8000);
+	_vm->playOrStopSound(0x8000);
 	Common::Point pos = _bag->getPosition();
 	if (pos.y != 0xc8) {
 		for (;pos.y != 0xc8; pos.y += 0x19) {
