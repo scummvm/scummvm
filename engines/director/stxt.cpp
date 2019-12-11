@@ -83,13 +83,7 @@ Stxt::Stxt(Common::SeekableSubReadStreamEndian &textStream) {
 
 		debugCN(4, kDebugText, "*");
 
-		_ftext += Common::String::format("\001\015%c%c%c%c%c%c%c%c%c%c%c",
-										 (_fontId >> 8) & 0xff, _fontId & 0xff,
-										 _textSlant & 0xff,
-										 (_fontSize >> 8) & 0xff, _fontSize & 0xff,
-										 (_palinfo1 >> 8) & 0xff, _palinfo1 & 0xff,
-										 (_palinfo2 >> 8) & 0xff, _palinfo2 & 0xff,
-										 (_palinfo3 >> 8) & 0xff, _palinfo3 & 0xff);
+		_ftext += Common::String::format("\001\016%04x%02x%04x%04x%04x%04x", _fontId, _textSlant, _fontSize, _palinfo1, _palinfo2, _palinfo3);
 
 		formattingCount--;
 	}

@@ -38,13 +38,7 @@ const Font *MacFontRun::getFont() {
 }
 
 const Common::String MacFontRun::toString() {
-	return Common::String::format("\001\015%c%c%c%c%c%c%c%c%c%c%c",
-			(fontId >> 8) & 0xff, fontId & 0xff,
-			textSlant & 0xff,
-			(fontSize >> 8) & 0xff, fontSize & 0xff,
-			(palinfo1 >> 8) & 0xff, palinfo1 & 0xff,
-			(palinfo2 >> 8) & 0xff, palinfo2 & 0xff,
-			(palinfo3 >> 8) & 0xff, palinfo3 & 0xff);
+	return Common::String::format("\001\016%04x%02x%04x%04x%04x%04x", fontId, textSlant, fontSize, palinfo1, palinfo2, palinfo3);
 }
 
 MacText::~MacText() {
@@ -129,6 +123,22 @@ void MacText::setMaxWidth(int maxWidth) {
 	}
 }
 
+static const Common::U32String::value_type *readHex(uint16 *res, const Common::U32String::value_type *s, int len) {
+	*res = 0;
+
+	for (int i = 0; i < len; i++) {
+		char b = (char)*s++;
+
+		*res <<= 8;
+		if (tolower(b) > 'a')
+			*res |= tolower(b) - 'a';
+		else
+			*res |= tolower(b) - '0';
+	}
+
+	return s;
+}
+
 void MacText::splitString(Common::U32String &str) {
 	const Common::U32String::value_type *s = str.c_str();
 
@@ -161,9 +171,8 @@ void MacText::splitString(Common::U32String &str) {
 			s++;
 			if (*s == '\001') {
 				// Copy it verbatim
-			} else {
-				if (*s++ != '\015')
-					error("MacText: formatting error");
+			} else if (*s == '\015') {
+				s++;
 
 				uint16 fontId = *s++; fontId = (fontId << 8) | *s++;
 				byte textSlant = *s++;
@@ -182,8 +191,32 @@ void MacText::splitString(Common::U32String &str) {
 					previousFormatting = _currentFormatting;
 
 				nextChunk = true;
+			} else if (*s == '\016') {
+				s++;
+
+				uint16 fontId, textSlant, fontSize, palinfo1, palinfo2, palinfo3;
+
+				s = readHex(&fontId, s, 4);
+				s = readHex(&textSlant, s, 2);
+				s = readHex(&fontSize, s, 4);
+				s = readHex(&palinfo1, s, 4);
+				s = readHex(&palinfo2, s, 4);
+				s = readHex(&palinfo3, s, 4);
+
+				debug(8, "******** splitString: fontId: %d, textSlant: %d, fontSize: %d, p0: %x p1: %x p2: %x",
+						fontId, textSlant, fontSize, palinfo1, palinfo2, palinfo3);
+
+				previousFormatting = _currentFormatting;
+				_currentFormatting.setValues(_wm, fontId, textSlant, fontSize, palinfo1, palinfo2, palinfo3);
+
+				if (curLine == 0 && curChunk == 0 && tmp.empty())
+					previousFormatting = _currentFormatting;
+
+				nextChunk = true;
+			} else {
+				error("MacText: formatting error, got %02x", *s);
 			}
-		} else if (*s == '\n' && prevCR) {	// trean \r\n as one
+		} else if (*s == '\n' && prevCR) {	// treat \r\n as one
 			prevCR = false;
 
 			s++;
