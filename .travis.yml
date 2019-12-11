@@ -54,7 +54,7 @@ matrix:
           - zlib1g-dev
       script:
         - dists/debian/prepare
-        - dpkg-buildpackage -b -nc -uc
+        - dpkg-buildpackage -rfakeroot -b -nc -uc
       before_deploy:
         - mkdir artifacts && cp ../*deb artifacts
     - os: osx
