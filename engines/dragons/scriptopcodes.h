@@ -116,7 +116,7 @@ protected:
 	void opSetActorFlag0x1000(ScriptOpCall &scriptOpCall);
 	void opPlayMusic(ScriptOpCall &scriptOpCall);
 	void opUnk20(ScriptOpCall &scriptOpCall);
-	void opUnk21(ScriptOpCall &scriptOpCall);
+	void opPauseCurrentSpeechAndFetchNextDialog(ScriptOpCall &scriptOpCall);
 
 	bool evaluateExpression(ScriptOpCall &scriptOpCall);
 	void opCode_UnkA_setsProperty(ScriptOpCall &scriptOpCall);

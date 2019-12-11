@@ -32,6 +32,7 @@
 #include "dragons/scriptopcodes.h"
 #include "dragons/specialopcodes.h"
 #include "dragons/actor.h"
+#include "dragons/sound.h"
 #include "dragons/talk.h"
 #include "scriptopcodes.h"
 
@@ -128,7 +129,7 @@ void ScriptOpcodes::initOpcodes() {
 	OPCODE(0x1E, opUnk1ESetActorFlag0x400);
 	OPCODE(0x1F, opPlayMusic);
 	OPCODE(0x20, opUnk20);
-	OPCODE(0x21, opUnk21);
+	OPCODE(0x21, opPauseCurrentSpeechAndFetchNextDialog);
 	OPCODE(0x22, opCodeActorTalk);
 }
 
@@ -443,12 +444,13 @@ void ScriptOpcodes::opUnk20(ScriptOpCall &scriptOpCall) {
 	}
 }
 
-void ScriptOpcodes::opUnk21(ScriptOpCall &scriptOpCall) {
+void ScriptOpcodes::opPauseCurrentSpeechAndFetchNextDialog(ScriptOpCall &scriptOpCall) {
 	ARG_INT16(field0);
 	ARG_UINT32(textIndex);
 
 	if (scriptOpCall._field8 == 0) {
-		//TODO play dialog audio without text on screen.
+		_vm->_sound->PauseCDMusic();
+		//The original starts seeking the CD-ROM here for the `textIndex` dialog but we don't need to do that.
 	}
 }
 
@@ -818,7 +820,7 @@ void ScriptOpcodes::opUnk12LoadScene(ScriptOpCall &scriptOpCall) {
 
 	//TODO fade_related_calls_with_1f();
 	_vm->setSceneUpdateFunction(NULL);
-	// PauseCDMusic();
+	_vm->_sound->PauseCDMusic();
 
 	if (newSceneID != 0) {
 		// load scene here.

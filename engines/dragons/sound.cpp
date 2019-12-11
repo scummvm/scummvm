@@ -96,6 +96,8 @@ void SoundManager::playSpeech(uint32 textIndex) {
 		_audioTrack->queueAudioFromSector(fd);
 	}
 	_audioTrack->getAudioStream()->finish();
+	fd->close();
+	delete fd;
 	_vm->setFlags(ENGINE_FLAG_8000);
 	_vm->_mixer->playStream(Audio::Mixer::kSpeechSoundType, &_speechHandle, _audioTrack->getAudioStream());
 	delete _audioTrack;
@@ -136,7 +138,11 @@ bool SoundManager::getSpeechLocation(uint32 talkId, struct SpeechLocation *locat
 }
 
 void SoundManager::PauseCDMusic() {
-	//TODO PauseCDMusic()
+	//TODO check PauseCDMusic() to see if we need any more logic.
+	if(isSpeechPlaying()) {
+		_vm->_mixer->stopHandle(_speechHandle);
+		_vm->clearFlags(ENGINE_FLAG_8000);
+	}
 }
 
 SoundManager::PSXAudioTrack::PSXAudioTrack(Common::SeekableReadStream *sector, Audio::Mixer::SoundType soundType) {
