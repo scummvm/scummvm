@@ -110,7 +110,7 @@ bool PathfindingState::checkHit(Actor *actor, Actor *target) {
 }
 
 bool PathNodeCmp::operator()(PathNode *n1, PathNode *n2) {
-	return (n1->heuristicTotalCost > n2->heuristicTotalCost);
+	return (n1->heuristicTotalCost < n2->heuristicTotalCost);
 }
 
 Pathfinder::Pathfinder() {
