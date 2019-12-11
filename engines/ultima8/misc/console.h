@@ -471,7 +471,8 @@ class console_err_ostream : public ConsoleStream {
 public:
 	virtual uint32 write(const void *dataPtr, uint32 dataSize) override {
 		Common::String str((const char *)dataPtr, dataSize);
-		::error("%s", str.c_str());
+		::warning("%s", str.c_str());
+		return str.size();
 	}
 };
 
