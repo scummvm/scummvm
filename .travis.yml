@@ -31,6 +31,32 @@ matrix:
            make -j4"
       before_deploy:
         - mkdir artifacts && cp -r build/residualvm.exe artifacts
+    - os: linux
+      dist: buster
+      addons:
+        apt:
+          packages:
+          - debhelper
+          - dpkg-dev
+          - fakeroot
+          - g++
+          - make
+          - libsdl2-dev
+          - libjpeg62-turbo-dev
+          - libmpeg2-4-dev
+          - libogg-dev
+          - libvorbis-dev
+          - libgl1-mesa-dev
+          - libmad0-dev
+          - libpng-dev
+          - libglew-dev
+          - libfreetype6-dev
+          - zlib1g-dev
+      script:
+        - dists/debian/prepare
+        - dpkg-buildpackage -b -nc -uc
+      before_deploy:
+        - mkdir artifacts && cp ../*deb artifacts
     - os: osx
       addons:
         homebrew:
@@ -39,10 +65,8 @@ matrix:
             - sdl2
             - sdl2_net
             - libvorbis
-            - flac
+            - jpeg-turbo
             - mad
-            - theora
-            - faad2
             - libmpeg2
             - glew
             - bzip2
