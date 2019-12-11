@@ -1272,6 +1272,8 @@ void Score::startLoop() {
 	_trailSurface->create(_movieRect.width(), _movieRect.height());
 	_backSurface->create(_movieRect.width(), _movieRect.height());
 
+	g_director->_wm->setScreen(_surface);
+
 	if (_stageColor == 0)
 		_trailSurface->clear(_vm->getPaletteColorCount() - 1);
 	else

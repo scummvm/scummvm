@@ -1177,7 +1177,9 @@ void Lingo::b_installMenu(int nargs) {
 	Common::String line;
 	int linenum = -1; // We increment it before processing
 
-	//Graphics::MacMenu *menu = g_director->_wm->addMenu();
+	Graphics::MacMenu *menu = g_director->_wm->addMenu();
+	int submenu;
+	Common::String submenuText;
 	//Graphics::MacMenuSubMenu *submenu = nullptr;
 
 	for (const byte *s = (const byte *)menuStxt.c_str(); *s; s++) {
@@ -1207,10 +1209,14 @@ void Lingo::b_installMenu(int nargs) {
 			while (*p && (*p == ' ' || *p == '\t'))
 				p++;
 
-			warning("menu: '%s'", Common::toPrintable(p).c_str());
-			//menu->addMenuItem(nullptr, Common::String(p));
+			if (!submenuText.empty()) {
+				menu->createSubMenuFromString(submenu, submenuText.c_str(), 100);
+			}
 
-			//submenu = menu->addSubMenu(nullptr);
+			warning("menu: '%s'", Common::toPrintable(p).c_str());
+			submenu = menu->addMenuItem(nullptr, Common::String(p));
+
+			submenuText.clear();
 
 			continue;
 		}
@@ -1233,6 +1239,15 @@ void Lingo::b_installMenu(int nargs) {
 		command.trim();
 
 		warning("text: '%s'  command: '%s'", Common::toPrintable(text).c_str(), Common::toPrintable(command).c_str());
+
+		if (!submenuText.empty())
+			submenuText += ';';
+
+		submenuText += text;
+	}
+
+	if (!submenuText.empty()) {
+		menu->createSubMenuFromString(submenu, submenuText.c_str(), 100);
 	}
 
 	warning("STUB: b_installMenu(%d)", d.u.i);
