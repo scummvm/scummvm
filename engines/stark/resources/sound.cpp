@@ -114,6 +114,10 @@ Audio::Mixer::SoundType Sound::getMixerSoundType() {
 }
 
 void Sound::play() {
+	if (isPlaying()) {
+		return;
+	}
+
 	Audio::RewindableAudioStream *rewindableStream = makeAudioStream();
 
 	if (!rewindableStream) {
