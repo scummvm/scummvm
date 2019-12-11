@@ -32,7 +32,7 @@ matrix:
       before_deploy:
         - mkdir artifacts && cp -r build/residualvm.exe artifacts
     - os: linux
-      dist: buster
+      dist: xenial
       addons:
         apt:
           packages:
@@ -42,7 +42,7 @@ matrix:
           - g++
           - make
           - libsdl2-dev
-          - libjpeg62-turbo-dev
+          - libjpeg-turbo8-dev
           - libmpeg2-4-dev
           - libogg-dev
           - libvorbis-dev
@@ -54,7 +54,7 @@ matrix:
           - zlib1g-dev
       script:
         - dists/debian/prepare
-        - dpkg-buildpackage -rfakeroot -b -nc -uc
+        - dpkg-buildpackage -b -nc -uc
       before_deploy:
         - mkdir artifacts && cp ../*deb artifacts
     - os: osx
