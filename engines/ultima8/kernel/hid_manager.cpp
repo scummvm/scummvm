@@ -90,7 +90,6 @@ void HIDManager::resetBindings() {
 
 	bind(HID_BACKQUOTE, HID_EVENT_PREEMPT, "ConsoleGump::toggle");
 	bind(HID_TILDE, HID_EVENT_PREEMPT, "ConsoleGump::toggle");
-	bind(HID_F5, HID_EVENT_PREEMPT, "ConsoleGump::toggle");
 }
 
 void HIDManager::loadBindings() {
