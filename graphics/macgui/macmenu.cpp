@@ -1042,6 +1042,22 @@ bool MacMenu::mouseMove(int x, int y) {
 	return false;
 }
 
+bool MacMenu::checkCallback(bool unicode) {
+	if (unicode) {
+		if (_unicodeccallback == nullptr) {
+			warning("MacMenu: no Unicode callback set");
+			return false;
+		}
+	} else {
+		if (_ccallback == nullptr) {
+			warning("MacMenu: no callback set");
+			return false;
+		}
+	}
+
+	return true;
+}
+
 bool MacMenu::mouseRelease(int x, int y) {
 	if (_menuActivated) {
 		_menuActivated = false;
@@ -1056,11 +1072,13 @@ bool MacMenu::mouseRelease(int x, int y) {
 
 		if (_activeItem != -1 && _activeSubItem != -1 && _menustack.back()->items[_activeSubItem]->enabled) {
 			if (_menustack.back()->items[_activeSubItem]->unicode) {
-				(*_unicodeccallback)(_menustack.back()->items[_activeSubItem]->action,
-							  _menustack.back()->items[_activeSubItem]->unicodeText, _cdata);
+				if (checkCallback(true))
+					(*_unicodeccallback)(_menustack.back()->items[_activeSubItem]->action,
+								  _menustack.back()->items[_activeSubItem]->unicodeText, _cdata);
 			} else {
-				(*_ccallback)(_menustack.back()->items[_activeSubItem]->action,
-							  _menustack.back()->items[_activeSubItem]->text, _cdata);
+				if (checkCallback())
+					(*_ccallback)(_menustack.back()->items[_activeSubItem]->action,
+								  _menustack.back()->items[_activeSubItem]->text, _cdata);
 			}
 		}
 
@@ -1085,9 +1103,11 @@ bool MacMenu::processMenuShortCut(byte flags, uint16 ascii) {
 				for (uint j = 0; j < _items[i]->submenu->items.size(); j++)
 					if (_items[i]->submenu->items[j]->enabled && tolower(_items[i]->submenu->items[j]->shortcut) == ascii) {
 						if (_items[i]->submenu->items[j]->unicode) {
-							(*_unicodeccallback)(_items[i]->submenu->items[j]->action, _items[i]->submenu->items[j]->unicodeText, _cdata);
+							if (checkCallback(true))
+								(*_unicodeccallback)(_items[i]->submenu->items[j]->action, _items[i]->submenu->items[j]->unicodeText, _cdata);
 						} else {
-							(*_ccallback)(_items[i]->submenu->items[j]->action, _items[i]->submenu->items[j]->text, _cdata);
+							if (checkCallback())
+								(*_ccallback)(_items[i]->submenu->items[j]->action, _items[i]->submenu->items[j]->text, _cdata);
 						}
 						return true;
 					}

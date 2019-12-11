@@ -92,6 +92,7 @@ private:
 	ManagedSurface _tempSurface;
 
 private:
+	bool checkCallback(bool unicode = false);
 	const Font *getMenuFont();
 	const Common::String getAcceleratorString(MacMenuItem *item, const char *prefix);
 	void processTabs();
