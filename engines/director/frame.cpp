@@ -419,7 +419,8 @@ void Frame::prepareFrame(Score *score) {
 		playSoundChannel();
 	}
 
-	score->_backSurface->copyFrom(*score->_surface);
+	if (_vm->getCurrentScore()->haveZoomBox())
+		score->_backSurface->copyFrom(*score->_surface);
 
 	g_system->copyRectToScreen(score->_surface->getPixels(), score->_surface->pitch, 0, 0, score->_surface->getBounds().width(), score->_surface->getBounds().height());
 }

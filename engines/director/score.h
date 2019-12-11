@@ -105,6 +105,7 @@ public:
 
 	void addZoomBox(ZoomBox *box);
 	void renderZoomBox(bool redraw = false);
+	bool haveZoomBox() { return !_zoomBoxes.empty(); }
 
 private:
 	void update();
