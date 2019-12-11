@@ -159,8 +159,8 @@ function generateSwitchBlock(variableName, getCaseBody) {
 	const switchStatements = orderedPairs
 		.map(([body, matrixes]) => generateCaseBlock(matrixes, body))
 		.join('\n');
-	const comment = '// Note: There is a case label for every possible value, so we don\'t need a default label.';
-	return `${comment}\nswitch (${variableName}) {\n${switchStatements}\n}`;
+	const comment = '// Note: There is a case label for every possible value, so we don\'t need a default label, but one is added to avoid any compiler warnings.';
+	return `${comment}\nswitch (${variableName}) {\ndefault: ${switchStatements}\n}`;
 }
 
 const PixelType = {
