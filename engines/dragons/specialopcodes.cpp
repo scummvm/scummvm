@@ -31,6 +31,7 @@
 #include "dragons/inventory.h"
 #include "dragons/specialopcodes.h"
 #include "dragons/scene.h"
+#include "dragons/sound.h"
 #include "dragons/actor.h"
 #include "dragons/minigame1.h"
 #include "dragons/talk.h"
@@ -285,7 +286,7 @@ void SpecialOpcodes::spcLadyOfTheLakeCapturedSceneLogic() {
 void SpecialOpcodes::spcStopLadyOfTheLakeCapturedSceneLogic() {
 	_vm->setSceneUpdateFunction(NULL);
 // TODO
-//	PauseCDMusic();
+	_vm->_sound->PauseCDMusic();
 //	if ((DAT_80083148 != 0) || (DAT_80083154 != 0)) {
 //		FUN_8001ac5c((uint)DAT_80083148,(uint)DAT_80083150,(uint)DAT_80083154,(uint)DAT_80083158);
 //	}

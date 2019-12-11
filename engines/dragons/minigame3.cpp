@@ -27,6 +27,7 @@
 #include "dragons/inventory.h"
 #include "dragons/scene.h"
 #include "dragons/screen.h"
+#include "dragons/sound.h"
 #include "dragons/talk.h"
 #include "dragons.h"
 
@@ -751,7 +752,7 @@ void Minigame3::run() {
 		_vm->_dragonINIResource->getRecord(0x178)->field_14 = 0;
 	}
 	_vm->waitForFrames(0x3c * 2);
-//	PauseCDMusic();
+	_vm->_sound->PauseCDMusic();
 //	fade_related_calls_with_1f();
 //	FUN_80017f28_noop();
 //	DAT_80093234 = DAT_80093234 + 1;

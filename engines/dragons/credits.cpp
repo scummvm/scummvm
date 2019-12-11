@@ -71,12 +71,11 @@ void Credits::cleanup() {
 void Credits::update() {
 	uint16 line[41];
 	if (_updateCounter == 0) {
-		_updateCounter = 3;
+		_updateCounter = 2;
 		_yOffset = (_yOffset + 1) % 208;
 		if (_yOffset % 8 == 0) {
 			if (_curPosition <= _dataLength) {
 				uint32 length = strlen(_curPtr);
-				//TODO add line here.
 				debug("Credit line: %s", _curPtr);
 				convertToWideChar(line, (byte *)_curPtr, 40);
 				_curPtr += length + 1;
