@@ -69,7 +69,15 @@ void Talk::printWideText(byte *text) {
 	char buf[2000];
 	int i = 0;
 	for (; READ_LE_INT16(text) != 0 && i < 1999; i++) {
-		buf[i] = *text;
+	    auto c = *text;
+	    if (c < 0x20) {
+	        buf[i++] = '0';
+	        buf[i++] = 'x';
+	        buf[i++] = (c & 0xF0 >> 4) + '0';
+	        buf[i] = (c & 0x0F) + '0';
+	    } else {
+            buf[i] = *text;
+        }
 		text += 2;
 	}
 	buf[i] = 0;
@@ -722,7 +730,7 @@ TalkDialogEntry *Talk::displayTalkDialogMenu(Common::Array<TalkDialogEntry*> dia
 	}
 	if (local_50 != -2) {
 		if (_vm->checkForActionButtonRelease()) {
-			_vm->playSound(0x800a);
+			_vm->playOrStopSound(0x800a);
 
 			_vm->clearFlags(ENGINE_FLAG_8);
 			y = 0;
@@ -753,7 +761,7 @@ TalkDialogEntry *Talk::displayTalkDialogMenu(Common::Array<TalkDialogEntry*> dia
 		_vm->checkForDownKeyRelease()) {
 		uVar8 = uVar8 + 1;
 		LAB_800319a0:
-		_vm->playSound(0x8009);
+		_vm->playOrStopSound(0x8009);
 		LAB_800319a8:
 		y = 0x18 - local_58;
 		local_50 = -1;

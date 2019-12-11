@@ -48,8 +48,8 @@ public:
 
 	void run();
 private:
-	void actorTalk(Actor *actorId,ushort param_2,uint32 textIndex);
-	void actorDialog(Actor *actorId,ushort param_2,uint32 textIndex);
+	void actorTalk(Actor *actorId,uint16 param_2,uint32 textIndex);
+	void actorDialog(Actor *actorId,uint16 param_2,uint32 textIndex);
 	uint16 runDanceBattle();
 	uint16 singleDanceRound(uint16 desiredPosition, uint16 duration);
 	void resetActors();

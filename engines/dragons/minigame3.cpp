@@ -427,10 +427,10 @@ void Minigame3::run() {
 				bunnyActorTbl[local_1a]->updateSequence(5);
 				bunnyActorTbl[local_1c]->updateSequence(0xc);
 				if (hopCounter == 0x1d) {
-					_vm->playSound(2);
+					_vm->playOrStopSound(2);
 				}
 				else {
-					_vm->playSound((uint)local_1c2);
+					_vm->playOrStopSound((uint)local_1c2);
 					local_1c2 = 1 - local_1c2;
 				}
 				local_228 = 0;

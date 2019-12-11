@@ -568,7 +568,7 @@ void ScriptOpcodes::opUnkCSoundRelatedMaybe(ScriptOpCall &scriptOpCall) {
 	ARG_INT16(soundId);
 
 	if (scriptOpCall._field8 == 0) {
-		_vm->playSound((uint16)soundId);
+		_vm->playOrStopSound((uint16) soundId);
 	}
 }
 

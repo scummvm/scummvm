@@ -134,7 +134,7 @@ void Scene::loadSceneData(uint32 sceneId, uint32 cameraPointId) {
 	_vm->clearFlags(ENGINE_FLAG_100000);
 	_vm->clearFlags(ENGINE_FLAG_200000);
 
-	// TODO   UnkSoundFunc4(dragon_Rms_Offset[(uint)local_b0].sceneName);
+	_vm->loadCurrentSceneMsf();
 
 	DragonINI *flicker = _vm->_dragonINIResource->getFlickerRecord();
 

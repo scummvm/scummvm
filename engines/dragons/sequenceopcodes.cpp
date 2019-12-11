@@ -212,7 +212,7 @@ void SequenceOpcodes::opPlaySound(Actor *actor, OpCall &opCall) {
 	ARG_INT16(soundId);
 	debug(5, "opPlaySound actorId: %d soundId: %d", actor->_actorID, soundId);
 
-	_vm->playSound((uint16)soundId);
+	_vm->playOrStopSound((uint16) soundId);
 	updateReturn(opCall, 1);
 }
 

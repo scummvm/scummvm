@@ -219,7 +219,7 @@ void Minigame5::run() {
 										}
 										if (flickerActor->_sequenceID != 0x1a) {
 											flickerActor->updateSequence(0x1a);
-											_vm->playSound(2);
+											_vm->playOrStopSound(2);
 										}
 									}
 									else {
@@ -231,7 +231,7 @@ void Minigame5::run() {
 											}
 											if (flickerActor->_sequenceID != 0x1e) {
 												flickerActor->updateSequence(0x1e);
-												_vm->playSound(3);
+												_vm->playOrStopSound(3);
 											}
 										}
 										else {
@@ -243,7 +243,7 @@ void Minigame5::run() {
 												}
 												if (flickerActor->_sequenceID != 0x1f) {
 													flickerActor->updateSequence(0x1f);
-													_vm->playSound(4);
+													_vm->playOrStopSound(4);
 												}
 											}
 										}
@@ -281,7 +281,7 @@ void Minigame5::run() {
 									bombActor->y_pos = 0x5a;
 									local_70 = 0x100;
 									bombActor->scale = 0x100;
-									_vm->playSound(10);
+									_vm->playOrStopSound(10);
 									bombActor->priorityLayer = 3;
 									flickerActor->updateSequence(8);
 									currentState = 3;
@@ -289,7 +289,7 @@ void Minigame5::run() {
 							}
 							else {
 								flickerActor->updateSequence(0x1b);
-								_vm->playSound(1);
+								_vm->playOrStopSound(1);
 							}
 							break;
 						case 3:

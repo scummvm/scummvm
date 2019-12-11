@@ -28,6 +28,8 @@
 
 namespace Dragons {
 
+#define ushort uint16
+
 enum {
 	kGameIdDragons = 1
 };
@@ -121,6 +123,7 @@ class SequenceOpcodes;
 class ScriptOpcodes;
 class Talk;
 class Sound;
+class SoundManager;
 struct DragonINI;
 
 
@@ -140,11 +143,14 @@ public:
 	Credits *_credits;
 	Talk *_talk;
 	Sound *_sound;
+	SoundManager *_soundManager;
 
 	opCode1AStruct opCode1A_tbl[8];
 
 	uint16 data_800633fc;
 	uint16 videoFlags; // TODO move to screen?
+
+	void loadCurrentSceneMsf();
 
 	Screen *_screen;
 	uint16 _sceneId1; //TODO wire this up. I think it might be where to restore save game from?
@@ -224,13 +230,13 @@ public:
 	DragonINI *getINI(uint32 index);
 	uint16 getVar(uint16 offset);
 	void setVar(uint16 offset, uint16 value);
-	uint16 getCurrentSceneId();
+	uint16 getCurrentSceneId() const;
 
 	void waitForFrames(uint16 numFrames);
 	void waitForFramesAllowSkip(uint16 numFrames);
 
 
-	void playSound(uint16 soundId);
+	void playOrStopSound(uint16 soundId);
 
 	//TODO what are these functions really doing?
 	void call_fade_related_1f();
@@ -295,6 +301,11 @@ private:
 
 	void seedRandom(int32 seed);
 	uint32 shuffleRandState();
+	void FUN_8002931c();
+
+	void initializeSound();
+
+	void SomeInitSound_FUN_8003f64c();
 };
 
 DragonsEngine *getEngine();

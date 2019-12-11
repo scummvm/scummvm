@@ -319,7 +319,7 @@ void Minigame1::run() {
 									}
 									if (flickerActor->_sequenceID != 1) {
 										flickerActor->updateSequence(1);
-										_vm->playSound(2);
+										_vm->playOrStopSound(2);
 									}
 								}
 								else {
@@ -331,7 +331,7 @@ void Minigame1::run() {
 										}
 										if (flickerActor->_sequenceID != 2) {
 											flickerActor->updateSequence(2);
-											_vm->playSound(3);
+											_vm->playOrStopSound(3);
 										}
 									}
 									else {
@@ -343,7 +343,7 @@ void Minigame1::run() {
 											}
 											if (flickerActor->_sequenceID != 3) {
 												flickerActor->updateSequence(3);
-												_vm->playSound(4);
+												_vm->playOrStopSound(4);
 											}
 										}
 									}
@@ -384,7 +384,7 @@ void Minigame1::run() {
 							catFieldE_scaleMaybe = 0x100;
 							catActor->scale = 0x100;
 							catActor->updateSequence(0xc);
-							_vm->playSound(5);
+							_vm->playOrStopSound(5);
 							catActor->priorityLayer = 3;
 							flickerActor->updateSequence(8);
 							gameState = 3;
@@ -392,7 +392,7 @@ void Minigame1::run() {
 					}
 					else {
 						flickerActor->updateSequence(7);
-						_vm->playSound(1);
+						_vm->playOrStopSound(1);
 					}
 					break;
 				case 3: // cat flying through the air
@@ -441,7 +441,7 @@ void Minigame1::run() {
 							}
 							else {
 								catActor->updateSequence(0xd);
-								_vm->playSound(6);
+								_vm->playOrStopSound(6);
 								gameState = 8;
 								local_234 = 0;
 							}
@@ -479,7 +479,7 @@ void Minigame1::run() {
 							dustSpriteActor->priorityLayer = 3;
 							catActor->updateSequence(0xd);
 							gameState = 4;
-							_vm->playSound(6);
+							_vm->playOrStopSound(6);
 						}
 					}
 					if (catFieldE_scaleMaybe < 0x7f) {
@@ -511,7 +511,7 @@ void Minigame1::run() {
 							}
 							else {
 								catActor->updateSequence(0xf);
-								_vm->playSound(7);
+								_vm->playOrStopSound(7);
 								gameState = 6;
 							}
 						}
@@ -519,7 +519,7 @@ void Minigame1::run() {
 							dustSpriteActor->priorityLayer = 0;
 							catActor->priorityLayer = 3;
 							catActor->updateSequence(0xe);
-							_vm->playSound(8);
+							_vm->playOrStopSound(8);
 							local_23a = 0x40;
 						}
 					}
