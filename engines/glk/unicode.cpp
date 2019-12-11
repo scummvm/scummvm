@@ -54,6 +54,8 @@ uint bufferChangeCase(uint32 *buf, uint len, uint numchars, BufferChangeCase des
 			dest_spec_rest = CASE_IDENT;
 		dest_spec_first = destcase;
 		break;
+	default:
+		break;
 	}
 
 	dest_block_rest = dest_spec_rest;
