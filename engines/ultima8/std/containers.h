@@ -97,6 +97,10 @@ public:
 	reverse_iterator rend() {
 		return reverse_iterator(this, -1);
 	}
+
+	void pop_front() {
+		Common::Array<T>::remove_at(0);
+	}
 };
 
 template<class T>
@@ -193,6 +197,11 @@ template<class T>
 class queue : public Common::Queue<T> {
 };
 
+/**
+ * Queue ordered by a provided priority function
+ * NOTE: Unlike in the C std library, we have to provde a comparitor that sorts
+ * the array so that the smallest priority comes last
+ */
 template <class _Ty, class _Container, class _Pr>
 class priority_queue {
 public:
@@ -229,15 +238,16 @@ public:
 	}
 
 	typename _Container::const_reference top() const {
-		return c.back();
+		return c.front();
 	}
 
 	void push(const typename _Container::value_type &_Val) {
 		c.push_back(_Val);
+		Common::sort(c.begin(), c.end(), comp);
 	}
 
 	void pop() {
-		c.pop_back();
+		c.pop_front();
 	}
 
 	void swap(priority_queue &_Right) {
