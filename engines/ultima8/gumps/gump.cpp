@@ -506,9 +506,9 @@ uint16 Gump::TraceObjId(int mx, int my) {
 		if (g->flags & FLAG_CLOSING) continue;
 
 		// It's got the point
-		if (g->PointOnGump(gx, gy)) objid = g->TraceObjId(gx, gy);
+		if (g->PointOnGump(gx, gy)) objId_ = g->TraceObjId(gx, gy);
 
-		if (objid && objid != 65535) break;
+		if (objId_ && objId_ != 65535) break;
 	}
 
 //	if (!objId_ || objId_ == 65535)
