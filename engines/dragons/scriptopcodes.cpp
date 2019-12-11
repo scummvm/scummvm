@@ -798,7 +798,10 @@ void ScriptOpcodes::opUnk11FlickerTalk(ScriptOpCall &scriptOpCall) {
 	ARG_SKIP(2);
 	ARG_INT16(iniId)
 	ARG_UINT32(textIndex)
-	// TODO implement me!
+
+	if (scriptOpCall._field8 != 0) {
+		return;
+	}
 
 	_vm->_talk->talkFromIni(iniId, textIndex);
 }
