@@ -23,7 +23,7 @@
 #ifndef ULTIMA8_AUDIO_MIDI_COREMIDIDRIVER_H
 #define ULTIMA8_AUDIO_MIDI_COREMIDIDRIVER_H
 
-#ifdef MACOSX
+#if 0
 #define USE_CORE_MIDI
 
 #include "ultima8/audio/midi/low_level_midi_driver.h"
@@ -62,6 +62,6 @@ protected:
 
 } // End of namespace Ultima8
 
-#endif //MACOSX
+#endif
 
 #endif
