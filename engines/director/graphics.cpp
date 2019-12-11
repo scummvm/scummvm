@@ -267,7 +267,7 @@ void DirectorEngine::testFontScaling() {
 		x += width + 1;
 	}
 
-	g_system->copyRectToScreen(surface.getPixels(), surface.pitch, 0, 0, w, h);
+	g_system->copyRectToScreen(surface.getPixels(), surface.pitch, 0, 0, w, h); // testing fonts
 
 	Common::Event event;
 

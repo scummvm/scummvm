@@ -450,7 +450,7 @@ void Frame::playTransition(Score *score) {
 				g_system->delayMillis(stepDuration);
 				processQuitEvent();
 
-				g_system->copyRectToScreen(score->_surface->getPixels(), score->_surface->pitch, 0, 0, r.width(), r.height());
+				g_system->copyRectToScreen(score->_surface->getPixels(), score->_surface->pitch, 0, 0, r.width(), r.height()); // transition
 				g_system->updateScreen();
 			}
 		}
@@ -466,7 +466,7 @@ void Frame::playTransition(Score *score) {
 				g_system->delayMillis(stepDuration);
 				processQuitEvent();
 
-				g_system->copyRectToScreen(score->_surface->getPixels(), score->_surface->pitch, 0, score->_movieRect.height() - stepSize * i, r.width(), r.height());
+				g_system->copyRectToScreen(score->_surface->getPixels(), score->_surface->pitch, 0, score->_movieRect.height() - stepSize * i, r.width(), r.height()); // transition
 				g_system->updateScreen();
 			}
 		}
@@ -481,7 +481,7 @@ void Frame::playTransition(Score *score) {
 				g_system->delayMillis(stepDuration);
 				processQuitEvent();
 
-				g_system->copyRectToScreen(score->_surface->getPixels(), score->_surface->pitch, 0, 0, r.width(), r.height());
+				g_system->copyRectToScreen(score->_surface->getPixels(), score->_surface->pitch, 0, 0, r.width(), r.height()); // transition
 				g_system->updateScreen();
 			}
 		}
@@ -496,7 +496,7 @@ void Frame::playTransition(Score *score) {
 				g_system->delayMillis(stepDuration);
 				processQuitEvent();
 
-				g_system->copyRectToScreen(score->_surface->getPixels(), score->_surface->pitch, score->_movieRect.width() - stepSize * i, 0, r.width(), r.height());
+				g_system->copyRectToScreen(score->_surface->getPixels(), score->_surface->pitch, score->_movieRect.width() - stepSize * i, 0, r.width(), r.height()); // transition
 				g_system->updateScreen();
 			}
 		}
@@ -512,7 +512,7 @@ void Frame::playTransition(Score *score) {
 				g_system->delayMillis(stepDuration);
 				processQuitEvent();
 
-				g_system->copyRectToScreen(score->_surface->getPixels(), score->_surface->pitch, score->_movieRect.width() - stepSize * i, score->_movieRect.height() - stepSize * i, r.width(), r.height());
+				g_system->copyRectToScreen(score->_surface->getPixels(), score->_surface->pitch, score->_movieRect.width() - stepSize * i, score->_movieRect.height() - stepSize * i, r.width(), r.height()); // transition
 				g_system->updateScreen();
 			}
 		}
@@ -528,7 +528,7 @@ void Frame::playTransition(Score *score) {
 				g_system->delayMillis(stepDuration);
 				processQuitEvent();
 
-				g_system->copyRectToScreen(score->_surface->getPixels(), score->_surface->pitch, 0, score->_movieRect.height() - stepSize * i, r.width(), r.height());
+				g_system->copyRectToScreen(score->_surface->getPixels(), score->_surface->pitch, 0, score->_movieRect.height() - stepSize * i, r.width(), r.height()); // transition
 				g_system->updateScreen();
 			}
 		}
@@ -544,7 +544,7 @@ void Frame::playTransition(Score *score) {
 				g_system->delayMillis(stepDuration);
 				processQuitEvent();
 
-				g_system->copyRectToScreen(score->_surface->getPixels(), score->_surface->pitch, score->_movieRect.width() - stepSize * i, 0, r.width(), r.height());
+				g_system->copyRectToScreen(score->_surface->getPixels(), score->_surface->pitch, score->_movieRect.width() - stepSize * i, 0, r.width(), r.height()); // transition
 				g_system->updateScreen();
 			}
 		}
@@ -560,7 +560,7 @@ void Frame::playTransition(Score *score) {
 				g_system->delayMillis(stepDuration);
 				processQuitEvent();
 
-				g_system->copyRectToScreen(score->_surface->getPixels(), score->_surface->pitch, 0, 0, r.width(), r.height());
+				g_system->copyRectToScreen(score->_surface->getPixels(), score->_surface->pitch, 0, 0, r.width(), r.height()); // transition
 				g_system->updateScreen();
 			}
 		}

@@ -1444,7 +1444,7 @@ void Score::renderZoomBox(bool redraw) {
 	box->nextTime = box->startTime + 1000 * box->step * box->delay / 60;
 
 	if (redraw) {
-		g_system->copyRectToScreen(_surface->getPixels(), _surface->pitch, 0, 0, _surface->getBounds().width(), _surface->getBounds().height());
+		g_system->copyRectToScreen(_surface->getPixels(), _surface->pitch, 0, 0, _surface->getBounds().width(), _surface->getBounds().height()); // zoomBox
 	}
 }
 
