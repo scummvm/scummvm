@@ -215,6 +215,8 @@ void TextCast::importStxt(const Stxt *stxt) {
 	_palinfo2 = stxt->_palinfo2;
 	_palinfo3 = stxt->_palinfo3;
 	_ftext = stxt->_ftext;
+
+	_cachedMacText->setStxt(this);
 }
 
 void TextCast::importRTE(byte *text) 	{
