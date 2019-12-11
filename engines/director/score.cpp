@@ -1297,6 +1297,9 @@ void Score::startLoop() {
 void Score::update() {
 	if (g_system->getMillis() < _nextFrameTime) {
 		renderZoomBox(true);
+
+		_vm->_wm->draw();
+
 		return;
 	}
 

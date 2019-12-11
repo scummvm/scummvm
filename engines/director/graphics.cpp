@@ -220,6 +220,8 @@ Graphics::MacPatterns &DirectorEngine::getPatterns() {
 void DirectorEngine::setPalette(byte *palette, uint16 count) {
 	_currentPalette = palette;
 	_currentPaletteLength = count;
+
+	_wm->passPalette(palette, count);
 }
 
 void DirectorEngine::testFontScaling() {

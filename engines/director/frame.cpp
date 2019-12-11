@@ -409,6 +409,8 @@ void Frame::prepareFrame(Score *score) {
 
 	score->renderZoomBox();
 
+	_vm->_wm->draw();
+
 	if (_transType != 0)
 		// TODO Handle changing area case
 		playTransition(score);
