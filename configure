@@ -1979,9 +1979,9 @@ EOF
 
 	if test -n "$_host"; then
 		# In cross-compiling mode, we cannot run the result
-		eval "$1 $CXXFLAGS -o $TMPO.o -c tmp_cxx_compiler.cpp" 2> /dev/null && cc_check_clean tmp_cxx_compiler.cpp
+		eval "$1 $CXXFLAGS -o $TMPO.o -c tmp_cxx_compiler.cpp" 2>> "$TMPLOG" && cc_check_clean tmp_cxx_compiler.cpp
 	else
-		eval "$1 $CXXFLAGS $LDFLAGS -o $TMPO$HOSTEXEEXT tmp_cxx_compiler.cpp" 2> /dev/null && eval "$TMPO$HOSTEXEEXT 2> /dev/null" && cc_check_clean tmp_cxx_compiler.cpp
+		eval "$1 $CXXFLAGS $LDFLAGS -o $TMPO$HOSTEXEEXT tmp_cxx_compiler.cpp" 2>> "$TMPLOG" && eval "$TMPO$HOSTEXEEXT 2>> $TMPLOG" && cc_check_clean tmp_cxx_compiler.cpp
 	fi
 }
 
