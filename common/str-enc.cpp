@@ -395,7 +395,7 @@ String U32String::encode(CodePage page) const {
 	        page >= ARRAYSIZE(g_codePageMap)) {
 		error("Invalid codepage");
 	}
-	char *result = Encoding::convert(g_codePageMap[page], "UTF-32", (const char *)_str, _size);
+	char *result = Encoding::convert(g_codePageMap[page], "UTF-32", (const char *)_str, _size * 4);
 	if (result) {
 		// Encodings in CodePage all use '\0' as string ending
 		// That would be problematic if CodePage has UTF-16 or UTF-32
