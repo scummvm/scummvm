@@ -13980,15 +13980,23 @@ static const uint16 qfg4ChaseRepeatsPatch[] = {
 // We fix this by disposing of each cast member before painting black instead of
 //  hiding them. This hides them and terminates their motions. This exposes the
 //  previously unused 300 cycle delay, which is much longer than normal, so we
-//  also change that to 2 seconds. This is consistent with existing behavior
-//  and it's the same delay used in room 290's working version of this script.
+//  also change that to 4 seconds. This is consistent with existing behavior
+//  and close to the delay used in room 290's working version of this script.
 //  The majority of this patch is to free up the single byte needed to change
 //  the 8-bit hide selector to 16-bit dispose.
+//
+// Several rooms that sBlackOut takes place in, such as 557, have doit methods
+//  that can initiate new necrotaur motions after the cast has been disposed,
+//  which also crashes. We fix this by clearing flag 35 as each of these rooms
+//  requires it to be set to set a necrotaur motion. This is the "hunt" flag.
+//  It's okay to clear it here as it gets cleared in the dungeon.
 //
 // Applies to: All versions
 // Responsible method: sBlackOut:changeState(3)
 // Fixes bug: #11056
 static const uint16 qfg4NecrotaurBlackoutSignature[] = {
+	0x31, 0x4f,                         // bnt 4f [ next state ]
+	SIG_ADDTOOFFSET(+11),
 	SIG_MAGICDWORD,
 	0x39, SIG_SELECTOR8(hide),          // pushi hide
 	0x81, 0x05,                         // lag 05
@@ -14010,11 +14018,18 @@ static const uint16 qfg4NecrotaurBlackoutSignature[] = {
 	0x36,                               // push [ room:plane for kUpdatePlane ]
 	SIG_ADDTOOFFSET(+29),
 	0x34, SIG_UINT16(0x012c),           // ldi 012c
-	0x65,                               // aTop cycles [ cycles = 300 ]
+	0x65, SIG_ADDTOOFFSET(+1),          // aTop cycles [ cycles = 300 ]
+	0x33, 0x1c,                         // jmp 1c [ end of method ]
+	0x3c,                               // dup
+	0x35, SIG_ADDTOOFFSET(+1),          // ldi 04 or 05
+	0x1a,                               // eq?
+	0x31, 0x16,                         // bnt 16 [ end of method ]
 	SIG_END
 };
 
 static const uint16 qfg4NecrotaurBlackoutPatch[] = {
+	0x31, 0x55,                         // bnt 55 [ next state ]
+	PATCH_ADDTOOFFSET(+11),
 	0x38, PATCH_SELECTOR16(dispose),    // pushi dispose
 	0x81, 0x05,                         // lag 05
 	0x4a, PATCH_UINT16(0x0006),         // send 06 [ cast eachElementDo: dispose ]
@@ -14027,13 +14042,18 @@ static const uint16 qfg4NecrotaurBlackoutPatch[] = {
 	0x39, PATCH_SELECTOR8(back),        // pushi back
 	0x39, 0x01,                         // pushi 01
 	0x39, 0x00,                         // pushi 00
-	0x39, PATCH_GETORIGINALBYTE(+13),   // pushi picture
+	0x39, PATCH_GETORIGINALBYTE(+26),   // pushi picture
 	0x39, 0x01,                         // pushi 01
 	0x39, 0xff,                         // pushi ff
 	0x4a, PATCH_UINT16(0x000c),         // send 0c [ room:plane back: 0 picture: -1 ]
 	PATCH_ADDTOOFFSET(+29),
-	0x34, PATCH_UINT16(0x0002),         // ldi 0002
-	0x65, PATCH_GETORIGINALBYTEADJUST(+65, +2), // aTop seconds [ seconds = 2 ]
+	0x35, 0x04,                         // ldi 04
+	0x65, PATCH_GETORIGINALBYTEADJUST(+78, +2), // aTop seconds [ seconds = 4 ]
+	0x78,                               // push1
+	0x39, 0x23,                         // pushi 23
+	0x45, 0x03, PATCH_UINT16(0x0002),   // callb proc0_3 02 [ clear flag 35 ]
+	0x3a,                               // toss
+	0x48,                               // ret
 	PATCH_END
 };
 
