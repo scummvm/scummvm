@@ -1410,7 +1410,7 @@ void Lingo::b_zoomBox(int nargs) {
 	// Looks for endSprite in the next frame
 	Common::Rect *endRect = frame->getSpriteRect(endSprite.u.i);
 	if (!endRect) {
-		if (curFrame + 1 < score->_frames.size())
+		if ((uint)curFrame + 1 < score->_frames.size())
 			score->_frames[curFrame + 1]->getSpriteRect(endSprite.u.i);
 	}
 
