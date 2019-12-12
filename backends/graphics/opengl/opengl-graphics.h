@@ -68,8 +68,6 @@ public:
 	virtual bool setGraphicsMode(int mode) override;
 	virtual int getGraphicsMode() const override;
 
-	virtual void resetGraphicsScale() override {}
-
 #ifdef USE_RGB_COLOR
 	virtual Graphics::PixelFormat getScreenFormat() const override;
 	virtual Common::List<Graphics::PixelFormat> getSupportedFormats() const override;
