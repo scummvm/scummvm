@@ -1244,6 +1244,9 @@ void Lingo::b_installMenu(int nargs) {
 			submenuText += ';';
 
 		submenuText += text;
+
+		if (!*s) // if we reached end of string, do not increment it but break
+			break;
 	}
 
 	if (!submenuText.empty()) {
