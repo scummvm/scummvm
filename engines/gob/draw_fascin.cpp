@@ -299,6 +299,9 @@ void Draw_Fascination::spriteOperation(int16 operation) {
 
 		dirtiedRect(_destSurface, _destSpriteX, _destSpriteY, _spriteRight, _spriteBottom);
 		break;
+
+	default:
+		break;
 	}
 
 	_spriteLeft = spriteLeft;

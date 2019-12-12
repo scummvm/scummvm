@@ -354,6 +354,9 @@ void Goblin_v2::moveAdvance(Mult::Mult_Object *obj, Gob_Object *gobDesc,
 		if (animData->frame >= framesCount)
 			animData->isPaused = 1;
 		break;
+
+	default:
+		break;
 	}
 
 	switch (animData->state) {
@@ -403,6 +406,9 @@ void Goblin_v2::moveAdvance(Mult::Mult_Object *obj, Gob_Object *gobDesc,
 	case 29:
 		if (animData->pathExistence == 4)
 			animData->pathExistence = 5;
+		break;
+
+	default:
 		break;
 	}
 
@@ -698,6 +704,9 @@ void Goblin_v2::advMovement(Mult::Mult_Object *obj, int8 state) {
 	case 7:
 		obj->goblinX--;
 		obj->goblinY++;
+		break;
+
+	default:
 		break;
 	}
 }
