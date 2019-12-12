@@ -47,7 +47,7 @@ String addUtfEndianness(const String &str) {
 		return String(str);
 }
 
-Encoding::Encoding(const String &to, const String &from) 
+Encoding::Encoding(const String &to, const String &from)
 	: _to(to)
 	, _from(from) {
 }
