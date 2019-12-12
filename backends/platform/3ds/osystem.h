@@ -39,11 +39,6 @@
 
 namespace _3DS {
 
-enum {
-	GFX_LINEAR = 0,
-	GFX_NEAREST = 1
-};
-
 enum MagnifyMode {
 	MODE_MAGON,
 	MODE_MAGOFF,
@@ -52,11 +47,6 @@ enum MagnifyMode {
 enum InputMode {
 	MODE_HOVER,
 	MODE_DRAG,
-};
-
-static const OSystem::GraphicsMode s_graphicsModes[] = {
-	{"default", "Default Test", GFX_LINEAR},
-	{ 0, 0, 0 }
 };
 
 class OSystem_3DS : public EventsBaseBackend, public PaletteManager {
@@ -96,11 +86,6 @@ public:
 	void addSysArchivesToSearchSet(Common::SearchSet &s, int priority) override;
 
 	// Graphics
-	virtual const OSystem::GraphicsMode *getSupportedGraphicsModes() const;
-	int getDefaultGraphicsMode() const;
-	bool setGraphicsMode(int mode);
-	void resetGraphicsScale();
-	int getGraphicsMode() const;
 	inline Graphics::PixelFormat getScreenFormat() const { return _pfGame; }
 	virtual Common::List<Graphics::PixelFormat> getSupportedFormats() const;
 	void initSize(uint width, uint height,

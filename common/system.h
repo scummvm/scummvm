@@ -559,7 +559,10 @@ public:
 	 * The list is terminated by an all-zero entry.
 	 * @return a list of supported graphics modes
 	 */
-	virtual const GraphicsMode *getSupportedGraphicsModes() const = 0;
+	virtual const GraphicsMode *getSupportedGraphicsModes() const {
+		static const GraphicsMode noGraphicsModes[] = {{"NONE", "Normal", 0}, {nullptr, nullptr, 0 }};
+		return noGraphicsModes;
+    }
 
 	/**
 	 * Return the ID of the 'default' graphics mode. What exactly this means
@@ -569,7 +572,7 @@ public:
 	 *
 	 * @return the ID of the 'default' graphics mode
 	 */
-	virtual int getDefaultGraphicsMode() const = 0;
+	virtual int getDefaultGraphicsMode() const { return 0; }
 
 	/**
 	 * Switch to the specified graphics mode. If switching to the new mode
@@ -578,7 +581,7 @@ public:
 	 * @param mode	the ID of the new graphics mode
 	 * @return true if the switch was successful, false otherwise
 	 */
-	virtual bool setGraphicsMode(int mode) = 0;
+	virtual bool setGraphicsMode(int mode) { return (mode == 0); }
 
 	/**
 	 * Switch to the graphics mode with the given name. If 'name' is unknown,
@@ -596,7 +599,7 @@ public:
 	 * Determine which graphics mode is currently active.
 	 * @return the ID of the active graphics mode
 	 */
-	virtual int getGraphicsMode() const = 0;
+	virtual int getGraphicsMode() const { return 0; }
 
 	/**
 	 * Sets the graphics scale factor to x1. Games with large screen sizes
