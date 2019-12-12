@@ -1178,7 +1178,7 @@ void Lingo::b_installMenu(int nargs) {
 	int linenum = -1; // We increment it before processing
 
 	Graphics::MacMenu *menu = g_director->_wm->addMenu();
-	int submenu;
+	int submenu = -1;
 	Common::String submenuText;
 	//Graphics::MacMenuSubMenu *submenu = nullptr;
 
