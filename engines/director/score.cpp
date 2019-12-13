@@ -815,6 +815,11 @@ void Score::setCastMemberModified(int castId) {
 }
 
 void Score::loadLabels(Common::SeekableSubReadStreamEndian &stream) {
+	if (debugChannelSet(5, kDebugLoading)) {
+		debug("Score::loadLabels()");
+		stream.hexdump(stream.size());
+	}
+
 	_labels = new Common::SortedArray<Label *>(compareLabels);
 	uint16 count = stream.readUint16() + 1;
 	uint32 offset = count * 4 + 2;
@@ -845,7 +850,7 @@ void Score::loadLabels(Common::SeekableSubReadStreamEndian &stream) {
 
 	debugC(2, kDebugLoading, "****** Loading labels");
 	for (j = _labels->begin(); j != _labels->end(); ++j) {
-		debugC(2, kDebugLoading, "Frame %d, Label %s", (*j)->number, (*j)->name.c_str());
+		debugC(2, kDebugLoading, "Frame %d, Label '%s'", (*j)->number, Common::toPrintable((*j)->name).c_str());
 	}
 }
 
