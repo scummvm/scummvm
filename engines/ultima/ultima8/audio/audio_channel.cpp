@@ -103,14 +103,14 @@ void AudioChannel::playSample(AudioSample *sample, int loop, int priority, bool 
 
 bool AudioChannel::isPlaying() {
 	if (!_mixer->isSoundHandleActive(_soundHandle))
-		_sample = nullptr;
+		_sample = 0;
 
-	return _sample != nullptr;
+	return _sample != 0;
 }
 
 void AudioChannel::stop() {
 	_mixer->stopHandle(_soundHandle);
-	_sample = nullptr;
+	_sample = 0;
 }
 
 void AudioChannel::setPaused(bool paused) {

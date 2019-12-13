@@ -173,7 +173,7 @@ uint8 *ZipFile::getObject(const std::string &name, uint32 *sizep) {
 
 	return buf;
 #else
-	return nullptr;
+	return 0;
 #endif
 }
 

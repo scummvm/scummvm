@@ -47,7 +47,7 @@ static const GameTypeDesc gametypes[] = {
 	{ "remorse", "Crusader: No Remorse" },
 	{ "regret", "Crusader: No Regret" },
 	{ "pentmenu", "Pentagram Menu" },
-	{ nullptr, nullptr }
+	{ 0, 0 }
 };
 
 // Keep order the same as the GameLanguage enum!
@@ -58,7 +58,7 @@ static const GameLangDesc gamelangs[] = {
 	{ 'g', 'g', "German" },
 	{ 'e', 'e', "Spanish" },
 	{ 'e', 'j', "Japanese" },
-	{ '\0', '\0', nullptr }
+	{ '\0', '\0', 0 }
 };
 
 

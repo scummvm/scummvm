@@ -65,7 +65,7 @@ CoreApp::~CoreApp() {
 void CoreApp::startup() {
 	DeclareArgs(); // Note: this is virtual
 
-	ParseArgs(0, nullptr);
+	ParseArgs(0, 0);
 
 	// if we're spitting out help, we probably want to avoid having the
 	// other cruft dumped too...

@@ -35,7 +35,7 @@ namespace Pentagram {
 
 AudioMixer *AudioMixer::the_audio_mixer = 0;
 
-AudioMixer::AudioMixer(Audio::Mixer *mixer) : _mixer(mixer), _midiDriver(nullptr) {
+AudioMixer::AudioMixer(Audio::Mixer *mixer) : _mixer(mixer), _midiDriver(0) {
 	the_audio_mixer = this;
 	
 	_channels.resize(CHANNEL_COUNT);

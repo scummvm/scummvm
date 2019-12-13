@@ -304,7 +304,7 @@ ECode BaseSoftRenderSurface::EndPainting() {
 	if (!lock_count) {
 		if (sdl_surf) {
 			// Clear pointers
-			pixels = pixels00 = nullptr;
+			pixels = pixels00 = 0;
 
 			// Render the screen
 			Graphics::Screen *screen = dynamic_cast<Graphics::Screen *>(sdl_surf);

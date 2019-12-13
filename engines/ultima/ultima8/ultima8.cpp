@@ -131,11 +131,11 @@ DEFINE_RUNTIME_CLASSTYPE_CODE(Ultima8Engine, CoreApp)
 
 Ultima8Engine::Ultima8Engine(OSystem *syst, const Ultima::UltimaGameDescription *gameDesc) : 
 		Engine(syst), CoreApp(gameDesc), _gameDescription(gameDesc),
-		_randomSource("Ultima8"), save_count(0), game(nullptr), kernel(nullptr),
-		_dataArchive(nullptr), objectmanager(nullptr), hidmanager(nullptr), _mouse(nullptr),
-		ucmachine(nullptr), screen(nullptr), fontmanager(nullptr), fullscreen(false),
-		palettemanager(nullptr), gamedata(nullptr), world(nullptr), desktopGump(nullptr),
-		consoleGump(nullptr), gameMapGump(nullptr), avatarMoverProcess(nullptr),
+		_randomSource("Ultima8"), save_count(0), game(0), kernel(0),
+		_dataArchive(0), objectmanager(0), hidmanager(0), _mouse(0),
+		ucmachine(0), screen(0), fontmanager(0), fullscreen(false),
+		palettemanager(0), gamedata(0), world(0), desktopGump(0),
+		consoleGump(0), gameMapGump(0), avatarMoverProcess(0),
 		runSDLInit(false), frameSkip(false), frameLimit(true), interpolate(true),
 		animationRate(100), avatarInStasis(false), paintEditorItems(false), inversion(0),
 		painting(false), showTouching(false), timeOffset(0), has_cheated(false),

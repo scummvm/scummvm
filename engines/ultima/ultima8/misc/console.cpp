@@ -539,7 +539,7 @@ void Console::RemoveConsoleCommand(Console::Function function) {
 	for (CommandsMap::iterator it = ConsoleCommands.begin(); it != ConsoleCommands.end(); ++it) {
 		if (it->_value == function) {
 			//pout << "Removing command: " << it->_key << std::endl;
-			it->_value = nullptr;
+			it->_value = 0;
 		}
 	}
 }

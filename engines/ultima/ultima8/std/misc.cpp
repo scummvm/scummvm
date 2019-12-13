@@ -101,7 +101,7 @@ void *calloc(size_t num, size_t size) {
 
 void free(void *&p) {
 	::free(p);
-	p = nullptr;
+	p = 0;
 }
 
 } // End of namespace std

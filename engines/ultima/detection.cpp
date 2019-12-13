@@ -33,7 +33,7 @@ static const PlainGameDescriptor ULTIMA_GAMES[] = {
 #ifdef ENABLE_ULTIMA8
 	{ "ultima8", "Ultima 8 - Pagan" },
 #endif
-	{ nullptr, nullptr }
+	{ 0, 0 }
 };
 
 #include "ultima/detection_tables.h"
@@ -41,7 +41,7 @@ static const PlainGameDescriptor ULTIMA_GAMES[] = {
 UltimaMetaEngine::UltimaMetaEngine() : AdvancedMetaEngine(Ultima::GAME_DESCRIPTIONS,
 	        sizeof(Ultima::UltimaGameDescription), ULTIMA_GAMES) {
 #ifdef ENABLE_ULTIMA8
-	static const char *const DIRECTORY_GLOBS[2] = { "usecode", nullptr };
+	static const char *const DIRECTORY_GLOBS[2] = { "usecode", 0 };
 	_maxScanDepth = 2;
 	_directoryGlobs = DIRECTORY_GLOBS;
 #endif
