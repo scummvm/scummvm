@@ -1842,25 +1842,11 @@ bool Ultima8Engine::load(IDataSource *ids, uint32 version) {
 //
 
 void Ultima8Engine::ConCmd_saveGame(const Console::ArgvType &argv) {
-	if (argv.size() == 1) {
-		pout << "Usage: Ultima8Engine::saveGame <filename>" << std::endl;
-		return;
-	}
-
-	std::string filename = "@save/";
-	filename += argv[1].c_str();
-	Ultima8Engine::get_instance()->saveGame(filename, argv[1]);
+	Ultima8Engine::get_instance()->saveGame("@save/1", "Quicksave");
 }
 
 void Ultima8Engine::ConCmd_loadGame(const Console::ArgvType &argv) {
-	if (argv.size() == 1) {
-		pout << "Usage: Ultima8Engine::loadGame <filename>" << std::endl;
-		return;
-	}
-
-	std::string filename = "@save/";
-	filename += argv[1].c_str();
-	Ultima8Engine::get_instance()->loadGame(filename);
+	Ultima8Engine::get_instance()->loadGame("@save/1");
 }
 
 void Ultima8Engine::ConCmd_newGame(const Console::ArgvType &argv) {
