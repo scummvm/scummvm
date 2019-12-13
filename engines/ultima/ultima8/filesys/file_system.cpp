@@ -25,6 +25,7 @@
 #include "ultima/ultima8/std/string.h"
 #include "ultima/ultima8/ultima8.h"
 #include "common/system.h"
+#include "common/memstream.h"
 #include "common/savefile.h"
 
 namespace Ultima8 {
@@ -33,41 +34,29 @@ using std::string;
 
 FileSystem *FileSystem::filesystem = 0;
 
+/**
+ * Simple wrapper for OutSaveFile. The zip file code that uses it needs
+ * access to a seekable write stream
+ */
+class OutSaveFileWrapper : public Common::MemoryWriteStreamDynamic {
+private:
+	Common::WriteStream *_saveFile;
+public:
+	OutSaveFileWrapper(Common::WriteStream *saveFile) :
+		Common::MemoryWriteStreamDynamic(DisposeAfterUse::YES), _saveFile(saveFile) {}
+	~OutSaveFileWrapper() {
+		_saveFile->write(getData(), size());
+		delete _saveFile;
+	}
+};
+
+
 FileSystem::FileSystem(bool noforced)
 	: noforcedvpaths(noforced), allowdataoverride(true) {
 	con->Print(MM_INFO, "Creating FileSystem...\n");
 
 	filesystem = this;
 	AddVirtualPath("@home", "");
-
-#ifdef UNDER_CE
-	TCHAR module_filename[256];
-	TCHAR *c = module_filename;
-	TCHAR *last = NULL;
-	GetModuleFileName(NULL, module_filename, 256);
-
-	while (*c) {
-		if (*c == '/' || *c == '\\')
-			last = c;
-
-		c++;
-	}
-
-	if (last) {
-		*last = 0;
-	} else {
-		module_filename[0] = '\\';
-		module_filename[1] = 0;
-	}
-
-	size_t len = _tcslen(module_filename) + 1;
-	char *str = (char *) _alloca(len);
-	WideCharToMultiByte(CP_ACP, 0, module_filename, -1, str, len, NULL, NULL);
-
-	AddVirtualPath(".", str);
-
-#endif
-
 }
 
 FileSystem::~FileSystem() {
@@ -129,7 +118,7 @@ bool FileSystem::rawOpen(Common::SeekableReadStream *&in, const string &fname) {
 		std::string saveFilename = Ultima8Engine::get_instance()->getSaveFilename(slotNumber);
 
 		in = g_system->getSavefileManager()->openForLoading(saveFilename);
-		return in != nullptr;
+		return in != 0;
 	}
 
 	if (!rewrite_virtual_path(name))
@@ -161,7 +150,11 @@ bool FileSystem::rawOpen(Common::WriteStream *&out,  const string &fname) {
 		std::string saveFilename = Ultima8Engine::get_instance()->getSaveFilename(slotNumber);
 
 		out = g_system->getSavefileManager()->openForSaving(saveFilename, false);
-		return out != nullptr;
+		if (!out)
+			return 0;
+
+		out = new OutSaveFileWrapper(out);
+		return true;
 	} else {
 		return false;
 	}
