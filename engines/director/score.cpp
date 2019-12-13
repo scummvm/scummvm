@@ -418,6 +418,8 @@ void Score::loadFrames(Common::SeekableSubReadStreamEndian &stream) {
 	uint16 channelOffset;
 
 	Frame *initial = new Frame(_vm);
+	// Push a frame at frame#0 position.
+	// This makes all indexing simpler
 	_frames.push_back(initial);
 
 	// This is a representation of the channelData. It gets overridden
@@ -1305,33 +1307,9 @@ void Score::update() {
 		return;
 	}
 
-	debugC(1, kDebugImages, "******************************  Current frame: %d", _currentFrame + 1);
-
-	_surface->clear();
-	_surface->copyFrom(*_trailSurface);
-
-	_lingo->executeImmediateScripts(_frames[_currentFrame]);
-
-	// Enter and exit from previous frame (Director 4)
-	_lingo->processEvent(kEventEnterFrame);
-	_lingo->processEvent(kEventNone);
-	// TODO Director 6 - another order
-
-	if (_vm->getVersion() >= 6) {
-		_lingo->processEvent(kEventBeginSprite);
-		// TODO Director 6 step: send beginSprite event to any sprites whose span begin in the upcoming frame
-		_lingo->processEvent(kEventPrepareFrame);
-		// TODO: Director 6 step: send prepareFrame event to all sprites and the script channel in upcoming frame
-	}
-
-	Common::SortedArray<Label *>::iterator i;
-	if (_labels != NULL) {
-		for (i = _labels->begin(); i != _labels->end(); ++i) {
-			if ((*i)->number == _currentFrame) {
-				_currentLabel = (*i)->name;
-			}
-		}
-	}
+	// For previous frame
+	if (_currentFrame > 0)
+		_lingo->processEvent(kEventExitFrame);
 
 	if (!_vm->_playbackPaused && !_vm->_skipFrameAdvance)
 		_currentFrame++;
@@ -1341,8 +1319,36 @@ void Score::update() {
 	if (_currentFrame >= _frames.size())
 		return;
 
+	debugC(1, kDebugImages, "******************************  Current frame: %d", _currentFrame);
+
+	_surface->clear();
+	_surface->copyFrom(*_trailSurface);
+
+	_lingo->executeImmediateScripts(_frames[_currentFrame]);
+
+	if (_vm->getVersion() >= 6) {
+		_lingo->processEvent(kEventBeginSprite);
+		// TODO Director 6 step: send beginSprite event to any sprites whose span begin in the upcoming frame
+		_lingo->processEvent(kEventPrepareFrame);
+		// TODO: Director 6 step: send prepareFrame event to all sprites and the script channel in upcoming frame
+	}
+
 	_frames[_currentFrame]->prepareFrame(this);
-	// Stage is drawn between the prepareFrame and enterFrame events (Lingo in a Nutshell)
+	// Stage is drawn between the prepareFrame and enterFrame events (Lingo in a Nutshell, p.100)
+
+	// Enter and exit from previous frame (Director 4)
+	_lingo->processEvent(kEventEnterFrame);
+	_lingo->processEvent(kEventNone);
+	// TODO Director 6 - another order
+
+	Common::SortedArray<Label *>::iterator i;
+	if (_labels != NULL) {
+		for (i = _labels->begin(); i != _labels->end(); ++i) {
+			if ((*i)->number == _currentFrame) {
+				_currentLabel = (*i)->name;
+			}
+		}
+	}
 
 	byte tempo = _frames[_currentFrame]->_tempo;
 
@@ -1374,8 +1380,6 @@ void Score::update() {
 			}
 		}
 	}
-
-	_lingo->processEvent(kEventExitFrame);
 
 	_nextFrameTime = g_system->getMillis() + 1000.0 / (float)_currentFrameRate;
 }
