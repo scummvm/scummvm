@@ -269,13 +269,7 @@ bool U8SaveGump::OnKeyDown(int key, int mod) {
 }
 
 std::string U8SaveGump::getFilename(int index) {
-	char buf[32];
-	sprintf(buf, "%02d", index);
-
-	std::string filename = "@save/pent";
-	filename += buf;
-	filename += ".sav";
-	return filename;
+	return std::string::format("@save/%d", index);
 }
 
 bool U8SaveGump::loadgame(int saveIndex) {
