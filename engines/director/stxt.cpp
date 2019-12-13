@@ -88,8 +88,9 @@ Stxt::Stxt(Common::SeekableSubReadStreamEndian &textStream) {
 		formattingCount--;
 	}
 
-	debugC(4, kDebugText, "#### text:\n%s\n####", Common::toPrintable(_ftext).c_str());
 	_ftext += text;
+
+	debugC(4, kDebugText, "#### text:\n%s\n####", Common::toPrintable(_ftext).c_str());
 }
 
 } // End of namespace Director
