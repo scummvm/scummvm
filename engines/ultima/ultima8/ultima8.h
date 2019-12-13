@@ -248,6 +248,13 @@ public:
 	Common::FSNode getGameDirectory() const;
 
 	/**
+	 * Returns the filename for a savegame given it's slot
+	 */
+	std::string getSaveFilename(int slotNumber) {
+		return Common::String::format("%s.%.3d", _targetName.c_str(), slotNumber);
+	}
+
+	/**
 	 * Returns a random number
 	 */
 	uint getRandomNumber(uint maxVal) {

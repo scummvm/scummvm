@@ -96,19 +96,13 @@ private:
 	 *	Open a file for reading,
 	 *	Output: false if couldn't open.
 	 */
-	bool rawOpen(
-		Common::File &in,           // Input file to open.
-		const std::string &fname    // May be converted to upper-case.
-	);
+	bool rawOpen(Common::SeekableReadStream *&in, const std::string &fname);
 
 	/**
 	 *	Open a file for writing,
 	 *	Output: false if couldn't open.
 	 */
-	bool rawOpen(
-		Common::DumpFile &out,      // Output file to open.
-		const std::string &fname    // May be converted to upper-case.
-	);
+	bool rawOpen(Common::WriteStream *&out, const std::string &fname);
 
 	// This will disable the usage of forced virtual paths.
 	// It's useful for 'tools'

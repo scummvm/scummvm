@@ -24,6 +24,8 @@
 #include "ultima/ultima8/filesys/file_system.h"
 #include "ultima/ultima8/std/string.h"
 #include "ultima/ultima8/ultima8.h"
+#include "common/system.h"
+#include "common/savefile.h"
 
 namespace Ultima8 {
 
@@ -85,70 +87,92 @@ IDataSource *FileSystem::ReadFile(const string &vfn, bool is_text) {
 	if (!allowdataoverride && data)
 		return data;
 
-	Common::File *f = new Common::File();
-	if (!rawOpen(*f, filename)) {
-		delete f;
+	Common::SeekableReadStream *readStream;
+	if (!rawOpen(readStream, filename))
 		return 0;
-	}
 
-	return new IFileDataSource(f);
+	return new IFileDataSource(readStream);
 }
 
 // Open a streaming file as writeable. Streamed (0 on failure)
 ODataSource *FileSystem::WriteFile(const string &vfn, bool is_text) {
 	string filename = vfn;
-	Common::DumpFile *f = new Common::DumpFile();
+	Common::WriteStream *writeStream;
 
-	if (!rawOpen(*f, filename)) {
-		delete f;
+	if (!rawOpen(writeStream, filename))
 		return 0;
-	}
 
-	return new OFileDataSource(f);
+	return new OFileDataSource(writeStream);
 }
 
-bool FileSystem::rawOpen(Common::File &in,	const string &fname) {
+bool FileSystem::rawOpen(Common::SeekableReadStream *&in, const string &fname) {
 	string name = fname;
+	Common::File *f;
 
+	// Handle reading files from the ultima.dat data
 	if (name.hasPrefix("@data/")) {
-		// It's a file specifically from the ultima8.dat file
-		return in.open(
-			Common::String::format("ultima8/%s", name.substr(6).c_str()),
-			*Ultima8Engine::get_instance()->_dataArchive);
+		// It's a file specifically from the ultima.dat file
+		f = new Common::File();
+		if (f->open(Common::String::format("ultima8/%s", name.substr(6).c_str()),
+			*Ultima8Engine::get_instance()->_dataArchive)) {
+			in = f;
+			return true;
+		}
+
+		f->close();
+		delete f;
 	}
-	
+
+	// Handle opening savegames
+	if (name.hasPrefix("@save/")) {
+		int slotNumber = std::atoi(name.c_str() + 6);
+		std::string saveFilename = Ultima8Engine::get_instance()->getSaveFilename(slotNumber);
+
+		in = g_system->getSavefileManager()->openForLoading(saveFilename);
+		return in != nullptr;
+	}
+
 	if (!rewrite_virtual_path(name))
 		return false;
 
 	switch_slashes(name);
-	in.close();
 
 	int uppercasecount = 0;
+	f = new Common::File();
 	do {
-		if (in.open(name))
+		if (f->open(name)) {
+			in = f;
 			return true;
+		}
 	} while (base_to_uppercase(name, ++uppercasecount));
 
-	// file not found.
+	// file not found
+	delete f;
 	return false;
 }
 
 
-bool FileSystem::rawOpen(Common::DumpFile &out,  const string &fname) {
+bool FileSystem::rawOpen(Common::WriteStream *&out,  const string &fname) {
 	string name = fname;
+	switch_slashes(name);
+
+	if (name.hasPrefix("@save/")) {
+		int slotNumber = std::atoi(name.c_str() + 6);
+		std::string saveFilename = Ultima8Engine::get_instance()->getSaveFilename(slotNumber);
+
+		out = g_system->getSavefileManager()->openForSaving(saveFilename, false);
+		return out != nullptr;
+	} else {
+		return false;
+	}
+
+#if 0
 	if (!rewrite_virtual_path(name)) {
 		con->Print_err(MM_MAJOR_WARN, "Illegal file access\n");
 		return false;
 	}
 
-	switch_slashes(name);
-
-	// We first "clear" the stream object. This is done to prevent
-	// problems when re-using stream objects
-	out.close();
-
 	int uppercasecount = 0;
-
 	do {
 		if (out.open(name))
 			return true;
@@ -157,6 +181,7 @@ bool FileSystem::rawOpen(Common::DumpFile &out,  const string &fname) {
 
 	// file not found
 	return false;
+#endif
 }
 
 void FileSystem::switch_slashes(string &name) {
