@@ -108,7 +108,7 @@ public:
 	virtual bool eof() const = 0;
 
 	virtual Common::SeekableReadStream *GetRawStream() {
-		return nullptr;
+		return 0;
 	}
 
 	/* SDL_RWops functions: */

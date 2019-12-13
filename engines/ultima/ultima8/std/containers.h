@@ -42,7 +42,7 @@ public:
 		int _index;
 	public:
 		reverse_iterator(vector<T> *owner, int index) : _owner(owner), _index(index) {}
-		reverse_iterator() : _owner(nullptr), _index(-1) {}
+		reverse_iterator() : _owner(0), _index(-1) {}
 
 		T operator*() const { return (*_owner)[_index]; }
 

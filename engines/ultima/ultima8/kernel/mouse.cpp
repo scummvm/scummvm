@@ -38,7 +38,7 @@ namespace Ultima8 {
 
 Mouse *Mouse::instance;
 
-Mouse::Mouse() : _flashingCursorTime(0), _mouseOverGump(0), _defaultMouse(nullptr),
+Mouse::Mouse() : _flashingCursorTime(0), _mouseOverGump(0), _defaultMouse(0),
 		_dragging(DRAG_NOT), _dragging_objId(0), _draggingItem_startGump(0),
 		_draggingItem_lastGump(0) {
 	instance = this;
@@ -53,7 +53,7 @@ Mouse::Mouse() : _flashingCursorTime(0), _mouseOverGump(0), _defaultMouse(nullpt
 void Mouse::setup() {
 	FileSystem *filesys = FileSystem::get_instance();
 	IDataSource *dm = filesys->ReadFile("@data/mouse.tga");
-	_defaultMouse = dm ? Texture::Create(dm, "@data/mouse.tga") : nullptr;
+	_defaultMouse = dm ? Texture::Create(dm, "@data/mouse.tga") : 0;
 
 	if (!_defaultMouse)
 		error("Unable to load '@data/mouse.tga'");

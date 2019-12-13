@@ -88,7 +88,7 @@ IDataSource *FileSystem::ReadFile(const string &vfn, bool is_text) {
 	Common::File *f = new Common::File();
 	if (!rawOpen(*f, filename)) {
 		delete f;
-		return nullptr;
+		return 0;
 	}
 
 	return new IFileDataSource(f);
@@ -101,7 +101,7 @@ ODataSource *FileSystem::WriteFile(const string &vfn, bool is_text) {
 
 	if (!rawOpen(*f, filename)) {
 		delete f;
-		return nullptr;
+		return 0;
 	}
 
 	return new OFileDataSource(f);
