@@ -55,7 +55,7 @@ void CachedMacText::makeMacText() {
 										1);
 	// TODO destroy me
 
-	debug(5, "CachedMacText::makeMacText(): rendering '%s'", Common::toPrintable(_textCast->_ftext).c_str());
+	debug(5, "CachedMacText::makeMacText(): font id: %d '%s'", _textCast->_fontId, Common::toPrintable(_textCast->_ftext).c_str());
 }
 
 CachedMacText::CachedMacText(TextCast *const textCast,
@@ -66,6 +66,8 @@ CachedMacText::CachedMacText(TextCast *const textCast,
 	:
 	_surface(NULL), _macText(NULL), _width(defaultWidth), _dirty(true),
 	_textCast(textCast), _wm(wm) {
+
+	debug(5, "CachedMacText::CachedMacText(): font id: %d '%s'", _textCast->_fontId, Common::toPrintable(_textCast->_ftext).c_str());
 
 	if (_width == -1)  {
 		if (version >= 4) {
