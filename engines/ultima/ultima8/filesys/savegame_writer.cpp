@@ -22,18 +22,33 @@
 
 #include "ultima/ultima8/filesys/savegame_writer.h"
 #include "ultima/ultima8/filesys/odata_source.h"
+#include "ultima/ultima8/filesys/zip/zip.h"
 
 namespace Ultima8 {
 
+// ioapi ODataSource wrapper functions
+
+static voidpf ods_open(voidpf opaque, const char *filename, int mode);
+static uLong ods_read(voidpf opaque, voidpf stream, void *buf, uLong size);
+static uLong ods_write(voidpf opaque, voidpf stream,
+	const void *buf, uLong size);
+static long ods_tell(voidpf opaque, voidpf stream);
+static long ods_seek(voidpf opaque, voidpf stream, uLong offset, int origin);
+static int ods_close(voidpf opaque, voidpf stream);
+static int ods_error(voidpf opaque, voidpf stream);
+
+PentZip::zlib_filefunc_def ODS_filefunc_templ = {
+	ods_open, ods_read, ods_write, ods_tell, ods_seek, ods_close, ods_error, 0
+};
+
 SavegameWriter::SavegameWriter(ODataSource *ds_) {
 	ds = ds_;
-#ifdef TODO
+
 	PentZip::zlib_filefunc_def filefuncs = ODS_filefunc_templ;
 	filefuncs.opaque = static_cast<void *>(ds);
 
 	PentZip::zipFile zfile = PentZip::zipOpen2("", 0, 0, &filefuncs);
 	zipfile = static_cast<void *>(zfile);
-#endif
 }
 
 SavegameWriter::~SavegameWriter() {
@@ -43,11 +58,9 @@ SavegameWriter::~SavegameWriter() {
 }
 
 bool SavegameWriter::finish() {
-#ifdef TODO
 	PentZip::zipFile zfile = static_cast<PentZip::zipFile>(zipfile);
 	zipfile = 0;
 	if (PentZip::zipClose(zfile, comment.c_str()) != ZIP_OK) return false;
-#endif
 
 	return true;
 }
@@ -55,7 +68,6 @@ bool SavegameWriter::finish() {
 
 bool SavegameWriter::writeFile(const char *name,
                                const uint8 *data, uint32 size) {
-#ifdef TODO
 	PentZip::zipFile zfile = static_cast<PentZip::zipFile>(zipfile);
 	perr << name << ": " << size << std::endl;
 
@@ -73,7 +85,7 @@ bool SavegameWriter::writeFile(const char *name,
 
 	if (PentZip::zipCloseFileInZip(zfile) != ZIP_OK)
 		return false;
-#endif
+
 	return true;
 }
 
@@ -94,8 +106,6 @@ bool SavegameWriter::writeDescription(const std::string &desc) {
 	comment = desc;
 	return true;
 }
-
-#ifdef TODO
 
 // ------------
 
@@ -149,7 +159,5 @@ static int ods_close(voidpf opaque, voidpf stream) {
 static int ods_error(voidpf opaque, voidpf stream) {
 	return 0;
 }
-
-#endif
 
 } // End of namespace Ultima8
