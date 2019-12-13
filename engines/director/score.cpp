@@ -83,6 +83,7 @@ Score::Score(DirectorEngine *vm) {
 	_currentFrameRate = 20;
 	_castArrayStart = _castArrayEnd = 0;
 	_currentFrame = 0;
+	_currentLabel = 0;
 	_nextFrameTime = 0;
 	_flags = 0;
 	_stopPlay = false;
@@ -1059,18 +1060,11 @@ void Score::loadCastInfo(Common::SeekableSubReadStreamEndian &stream, uint16 id)
 void Score::gotoLoop() {
 	// This command has the playback head contonuously return to the first marker to to the left and then loop back.
 	// If no marker are to the left of the playback head, the playback head continues to the right.
-	Common::SortedArray<Label *>::iterator i;
-
 	if (_labels == NULL) {
 		_currentFrame = 0;
 		return;
 	} else {
-		for (i = _labels->begin(); i != _labels->end(); ++i) {
-			if ((*i)->name == _currentLabel) {
-				_currentFrame = (*i)->number;
-				return;
-			}
-		}
+		_currentFrame = _currentLabel;
 	}
 
 	_vm->_skipFrameAdvance = true;
@@ -1328,7 +1322,7 @@ void Score::update() {
 	if (_labels != NULL) {
 		for (i = _labels->begin(); i != _labels->end(); ++i) {
 			if ((*i)->number == _currentFrame) {
-				_currentLabel = (*i)->name;
+				_currentLabel = _currentFrame;
 			}
 		}
 	}

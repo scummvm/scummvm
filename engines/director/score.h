@@ -164,7 +164,7 @@ private:
 	byte _currentFrameRate;
 	uint16 _castArrayStart;
 	uint16 _currentFrame;
-	Common::String _currentLabel;
+	int _currentLabel;
 	uint32 _flags;
 	uint16 _castArrayEnd;
 	uint16 _movieScriptCount;
