@@ -581,7 +581,7 @@ void Frame::renderSprites(Graphics::ManagedSurface &surface, bool renderTrail) {
 
 			CastType castType = kCastTypeNull;
 			if (_vm->getVersion() < 4) {
-				debugC(1, kDebugImages, "Channel: %d type: %d", i, _sprites[i]->_spriteType);
+				debugC(1, kDebugImages, "Frame::renderSprites(): Channel: %d type: %d", i, _sprites[i]->_spriteType);
 				switch (_sprites[i]->_spriteType) {
 				case 1:
 					castType = kCastBitmap;
@@ -950,7 +950,7 @@ void Frame::drawMatteSprite(Graphics::ManagedSurface &target, const Graphics::Su
 	}
 
 	if (whiteColor == -1) {
-		debugC(1, kDebugImages, "No white color for Matte image");
+		debugC(1, kDebugImages, "Frame::drawMatteSprite(): No white color for Matte image");
 
 		for (int yy = 0; yy < tmp.h; yy++) {
 			const byte *src = (const byte *)tmp.getBasePtr(0, yy);

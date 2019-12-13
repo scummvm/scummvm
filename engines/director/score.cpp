@@ -284,7 +284,7 @@ void Score::loadSpriteImages(bool isSharedCast) {
 				break;
 			case MKTAG('B', 'I', 'T', 'D'):
 				if (isSharedCast) {
-					debugC(4, kDebugImages, "Shared cast BMP: id: %d", imgId);
+					debugC(4, kDebugImages, "Score::loadSpriteImages(): Shared cast BMP: id: %d", imgId);
 					pic = _vm->getSharedBMP()->getVal(imgId);
 					if (pic != NULL)
 						pic->seek(0); // TODO: this actually gets re-read every loop... we need to rewind it!
@@ -298,7 +298,7 @@ void Score::loadSpriteImages(bool isSharedCast) {
 			}
 
 			int w = bitmapCast->_initialRect.width(), h = bitmapCast->_initialRect.height();
-			debugC(4, kDebugImages, "id: %d, w: %d, h: %d, flags: %x, some: %x, unk1: %d, unk2: %d",
+			debugC(4, kDebugImages, "Score::loadSpriteImages(): id: %d, w: %d, h: %d, flags: %x, some: %x, unk1: %d, unk2: %d",
 				imgId, w, h, bitmapCast->_flags, bitmapCast->_someFlaggyThing, bitmapCast->_unk1, bitmapCast->_unk2);
 
 			if (pic != NULL && bitmapCast != NULL && w > 0 && h > 0) {
@@ -1266,6 +1266,9 @@ Common::Rect Score::readRect(Common::ReadStreamEndian &stream) {
 }
 
 void Score::startLoop() {
+
+	debugC(1, kDebugImages, "Score dims: %dx%d", _movieRect.width(), _movieRect.height());
+
 	initGraphics(_movieRect.width(), _movieRect.height());
 
 	_surface->create(_movieRect.width(), _movieRect.height());
@@ -1286,7 +1289,6 @@ void Score::startLoop() {
 	_frames[_currentFrame]->prepareFrame(this);
 
 	while (!_stopPlay && _currentFrame < _frames.size()) {
-		debugC(1, kDebugImages, "******************************  Current frame: %d", _currentFrame + 1);
 		update();
 
 		if (_currentFrame < _frames.size())
@@ -1302,6 +1304,8 @@ void Score::update() {
 
 		return;
 	}
+
+	debugC(1, kDebugImages, "******************************  Current frame: %d", _currentFrame + 1);
 
 	_surface->clear();
 	_surface->copyFrom(*_trailSurface);
