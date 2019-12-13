@@ -48,6 +48,7 @@ DirectorEngine::DirectorEngine(OSystem *syst, const DirectorGameDescription *gam
 	DebugMan.addDebugChannel(kDebugImages, "images", "Image drawing");
 	DebugMan.addDebugChannel(kDebugText, "text", "Text rendering");
 	DebugMan.addDebugChannel(kDebugEvents, "events", "Event processing");
+	DebugMan.addDebugChannel(kDebugSlow, "slow", "Slow playback");
 
 	g_director = this;
 

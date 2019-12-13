@@ -1384,6 +1384,9 @@ void Score::update() {
 	}
 
 	_nextFrameTime = g_system->getMillis() + 1000.0 / (float)_currentFrameRate;
+
+	if (debugChannelSet(-1, kDebugSlow))
+		_nextFrameTime += 1000;
 }
 
 Sprite *Score::getSpriteById(uint16 id) {
