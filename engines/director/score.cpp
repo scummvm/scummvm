@@ -1324,6 +1324,15 @@ void Score::update() {
 	if (_currentFrame >= _frames.size())
 		return;
 
+	Common::SortedArray<Label *>::iterator i;
+	if (_labels != NULL) {
+		for (i = _labels->begin(); i != _labels->end(); ++i) {
+			if ((*i)->number == _currentFrame) {
+				_currentLabel = (*i)->name;
+			}
+		}
+	}
+
 	debugC(1, kDebugImages, "******************************  Current frame: %d", _currentFrame);
 
 	_surface->clear();
@@ -1345,15 +1354,6 @@ void Score::update() {
 	_lingo->processEvent(kEventEnterFrame);
 	_lingo->processEvent(kEventNone);
 	// TODO Director 6 - another order
-
-	Common::SortedArray<Label *>::iterator i;
-	if (_labels != NULL) {
-		for (i = _labels->begin(); i != _labels->end(); ++i) {
-			if ((*i)->number == _currentFrame) {
-				_currentLabel = (*i)->name;
-			}
-		}
-	}
 
 	byte tempo = _frames[_currentFrame]->_tempo;
 
