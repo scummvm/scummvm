@@ -287,7 +287,7 @@ bool Ultima8Engine::loadData() {
 	Common::File f;
 
 	if (!Common::File::exists(DATA_FILENAME) ||
-			(_dataArchive = Common::makeZipArchive(DATA_FILENAME)) == nullptr ||
+			(_dataArchive = Common::makeZipArchive(DATA_FILENAME)) == 0 ||
 			!f.open("ultima8/version.txt", *_dataArchive)) {
 		delete _dataArchive;
 		GUIError(Common::String::format(_("Could not locate engine data %s"), DATA_FILENAME));
