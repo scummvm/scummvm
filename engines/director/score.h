@@ -164,6 +164,7 @@ private:
 	byte _currentFrameRate;
 	uint16 _castArrayStart;
 	uint16 _currentFrame;
+	uint16 _nextFrame;
 	int _currentLabel;
 	uint32 _flags;
 	uint16 _castArrayEnd;

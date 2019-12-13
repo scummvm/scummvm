@@ -83,6 +83,7 @@ Score::Score(DirectorEngine *vm) {
 	_currentFrameRate = 20;
 	_castArrayStart = _castArrayEnd = 0;
 	_currentFrame = 0;
+	_nextFrame = 0;
 	_currentLabel = 0;
 	_nextFrameTime = 0;
 	_flags = 0;
@@ -984,7 +985,7 @@ void Score::setStartToLabel(Common::String label) {
 
 	for (i = _labels->begin(); i != _labels->end(); ++i) {
 		if ((*i)->name.equalsIgnoreCase(label)) {
-			_currentFrame = (*i)->number;
+			_nextFrame = (*i)->number;
 			return;
 		}
 	}
@@ -1061,10 +1062,10 @@ void Score::gotoLoop() {
 	// This command has the playback head contonuously return to the first marker to to the left and then loop back.
 	// If no marker are to the left of the playback head, the playback head continues to the right.
 	if (_labels == NULL) {
-		_currentFrame = 0;
+		_nextFrame = 1;
 		return;
 	} else {
-		_currentFrame = _currentLabel;
+		_nextFrame = _currentLabel;
 	}
 
 	_vm->_skipFrameAdvance = true;
@@ -1085,16 +1086,12 @@ int Score::getCurrentLabelNumber() {
 
 void Score::gotoNext() {
 	// we can just try to use the current frame and get the next label
-	_currentFrame = getNextLabelNumber(_currentFrame);
-
-	_vm->_skipFrameAdvance = true;
+	_nextFrame = getNextLabelNumber(_currentFrame);
 }
 
 void Score::gotoPrevious() {
 	// we actually need the frame of the label prior to the most recent label.
-	_currentFrame = getPreviousLabelNumber(getCurrentLabelNumber());
-
-	_vm->_skipFrameAdvance = true;
+	_nextFrame = getPreviousLabelNumber(getCurrentLabelNumber());
 }
 
 int Score::getNextLabelNumber(int referenceFrame) {
@@ -1310,8 +1307,14 @@ void Score::update() {
 	if (_currentFrame > 0)
 		_lingo->processEvent(kEventExitFrame);
 
-	if (!_vm->_playbackPaused && !_vm->_skipFrameAdvance)
-		_currentFrame++;
+	if (!_vm->_playbackPaused) {
+		if (_nextFrame)
+			_currentFrame = _nextFrame;
+		else
+			_currentFrame++;
+	}
+
+	_nextFrame = 0;
 
 	_vm->_skipFrameAdvance = false;
 
