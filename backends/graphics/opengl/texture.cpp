@@ -26,24 +26,12 @@
 #include "backends/graphics/opengl/pipelines/clut8.h"
 #include "backends/graphics/opengl/framebuffer.h"
 
+#include "common/algorithm.h"
 #include "common/endian.h"
 #include "common/rect.h"
 #include "common/textconsole.h"
 
 namespace OpenGL {
-
-static GLuint nextHigher2(GLuint v) {
-	if (v == 0)
-		return 1;
-	v--;
-	v |= v >> 1;
-	v |= v >> 2;
-	v |= v >> 4;
-	v |= v >> 8;
-	v |= v >> 16;
-	return ++v;
-}
-
 
 GLTexture::GLTexture(GLenum glIntFormat, GLenum glFormat, GLenum glType)
     : _glIntFormat(glIntFormat), _glFormat(glFormat), _glType(glType),
@@ -107,8 +95,8 @@ void GLTexture::setSize(uint width, uint height) {
 	const uint oldHeight = _height;
 
 	if (!g_context.NPOTSupported) {
-		_width  = nextHigher2(width);
-		_height = nextHigher2(height);
+		_width  = Common::nextHigher2(width);
+		_height = Common::nextHigher2(height);
 	} else {
 		_width  = width;
 		_height = height;
