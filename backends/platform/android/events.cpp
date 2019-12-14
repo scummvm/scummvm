@@ -97,7 +97,7 @@ void OSystem_Android::pushEvent(int type, int arg1, int arg2, int arg3,
 
 		switch (arg2) {
 
-		// special case. we'll only get it's up event
+		// special case. we'll only get its key-up event
 		case JKEYCODE_BACK:
 			if (_swap_menu_and_back) {
 				e.type = Common::EVENT_MAINMENU;
@@ -109,7 +109,7 @@ void OSystem_Android::pushEvent(int type, int arg1, int arg2, int arg3,
 			}
 			return;
 
-		// special case. we'll only get it's up event
+		// special case. we'll only get its key-up event
 		case JKEYCODE_MENU:
 			if (_swap_menu_and_back) {
 				e.kbd.keycode = Common::KEYCODE_ESCAPE;
