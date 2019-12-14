@@ -60,11 +60,7 @@ MODULE_OBJS += \
 	ultima8/filesys/output_logger.o \
 	ultima8/filesys/raw_archive.o \
 	ultima8/filesys/savegame.o \
-	ultima8/filesys/savegame_writer.o \
 	ultima8/filesys/u8_save_file.o \
-	ultima8/filesys/zip_file.o \
-	ultima8/filesys/zip/ioapi.o \
-	ultima8/filesys/zip/zip.o \
 	ultima8/games/game.o \
 	ultima8/games/game_data.o \
 	ultima8/games/game_detector.o \
