@@ -178,16 +178,19 @@ public class ScummVMEvents implements
 			return true;
 		}
 
+		int type;
 		switch (keyCode) {
 		case KeyEvent.KEYCODE_DPAD_UP:
 		case KeyEvent.KEYCODE_DPAD_DOWN:
 		case KeyEvent.KEYCODE_DPAD_LEFT:
 		case KeyEvent.KEYCODE_DPAD_RIGHT:
 		case KeyEvent.KEYCODE_DPAD_CENTER:
-			_scummvm.pushEvent(JE_DPAD, action, keyCode,
-								(int)(e.getEventTime() - e.getDownTime()),
-								e.getRepeatCount(), 0, 0);
-			return true;
+			if (e.getSource() == InputDevice.SOURCE_DPAD) {
+				type = JE_DPAD;
+			} else {
+				type = JE_KEY;
+			}
+			break;
 		case KeyEvent.KEYCODE_BUTTON_A:
 		case KeyEvent.KEYCODE_BUTTON_B:
 		case KeyEvent.KEYCODE_BUTTON_C:
@@ -203,15 +206,17 @@ public class ScummVMEvents implements
 		case KeyEvent.KEYCODE_BUTTON_START:
 		case KeyEvent.KEYCODE_BUTTON_SELECT:
 		case KeyEvent.KEYCODE_BUTTON_MODE:
-			_scummvm.pushEvent(JE_GAMEPAD, action, keyCode,
-								(int)(e.getEventTime() - e.getDownTime()),
-								e.getRepeatCount(), 0, 0);
-			return true;
+			type = JE_GAMEPAD;
+			break;
+		default:
+			type = JE_KEY;
+			break;
 		}
 
-		_scummvm.pushEvent(JE_KEY, action, keyCode,
+		_scummvm.pushEvent(type, action, keyCode,
 					e.getUnicodeChar() & KeyCharacterMap.COMBINING_ACCENT_MASK,
-					e.getMetaState(), e.getRepeatCount(), 0);
+					e.getMetaState(), e.getRepeatCount(),
+					(int)(e.getEventTime() - e.getDownTime()));
 
 		return true;
 	}
