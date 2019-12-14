@@ -73,12 +73,14 @@ public class ScummVMEvents implements
 	}
 
 	final static int MSG_SMENU_LONG_PRESS = 1;
-	final static int MSG_SBACK_LONG_PRESS = 1;
+	final static int MSG_SBACK_LONG_PRESS = 2;
 
 	final private Handler keyHandler = new Handler() {
 		@Override
 		public void handleMessage(Message msg) {
 			if (msg.what == MSG_SMENU_LONG_PRESS) {
+				// this displays the android keyboard (see showVirtualKeyboard() in ScummVMActivity.java)
+				// when menu key is long-pressed
 				InputMethodManager imm = (InputMethodManager)
 					_context.getSystemService(Context.INPUT_METHOD_SERVICE);
 
