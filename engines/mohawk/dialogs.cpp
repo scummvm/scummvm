@@ -289,9 +289,7 @@ void MystOptionsDialog::setTransitions(bool enabled) {
 
 #ifdef ENABLE_RIVEN
 
-RivenOptionsDialog::RivenOptionsDialog(MohawkEngine_Riven* vm) :
-		MohawkOptionsDialog(),
-		_vm(vm) {
+RivenOptionsDialog::RivenOptionsDialog() : MohawkOptionsDialog() {
 	_zipModeCheckbox = new GUI::CheckboxWidget(this, 15, 10, 220, 15, _("~Z~ip Mode Activated"), nullptr, kZipCmd);
 	_waterEffectCheckbox = new GUI::CheckboxWidget(this, 15, 35, 220, 15, _("~W~ater Effect Enabled"), nullptr, kWaterCmd);
 

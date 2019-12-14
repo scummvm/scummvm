@@ -136,7 +136,7 @@ Common::Error MohawkEngine_Riven::run() {
 	_sound = new RivenSoundManager(this);
 	_console = new RivenConsole(this);
 	_saveLoad = new RivenSaveLoad(this, _saveFileMan);
-	_optionsDialog = new RivenOptionsDialog(this);
+	_optionsDialog = new RivenOptionsDialog();
 	_scriptMan = new RivenScriptManager(this);
 	_inventory = new RivenInventory(this);
 
