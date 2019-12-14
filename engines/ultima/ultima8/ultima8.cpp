@@ -52,8 +52,6 @@
 #include "ultima/ultima8/misc/direction.h"
 #include "ultima/ultima8/games/game.h"
 #include "ultima/ultima8/world/get_object.h"
-
-#include "ultima/ultima8/filesys/savegame_writer.h"
 #include "ultima/ultima8/filesys/savegame.h"
 
 #include "ultima/ultima8/gumps/gump.h"
@@ -1595,7 +1593,7 @@ bool Ultima8Engine::loadGame(std::string filename) {
 		return false;
 	}
 
-	Savegame *sg = new Savegame(ids);
+	SavegameReader *sg = new SavegameReader(ids);
 	uint32 version = sg->getVersion();
 	if (version == 0) {
 		Error("Invalid or corrupt savegame", "Error Loading savegame " + filename);

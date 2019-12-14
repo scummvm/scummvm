@@ -24,26 +24,73 @@
 #define ULTIMA8_FILESYS_SAVEGAME_H
 
 #include "ultima/ultima8/std/string.h"
+#include "common/hashmap.h"
+#include "common/memstream.h"
+#include "common/hash-str.h"
 
 namespace Ultima8 {
 
 class ZipFile;
 class IDataSource;
+class ODataSource;
+class OAutoBufferDataSource;
 
-class Savegame {
+class SavegameReader {
+	struct FileEntry {
+		uint _offset;
+		uint _size;
+		FileEntry() : _offset(0), _size(0) {}
+	};
+private:
+	IDataSource *_file;
+	Common::HashMap<Common::String, FileEntry> _index;
+	std::string _comments;
 public:
-	explicit Savegame(IDataSource *ds);
-	virtual ~Savegame();
+	explicit SavegameReader(IDataSource *ds);
+	~SavegameReader();
 
 	//! get the savegame's global version
 	uint32 getVersion();
 
 	//! get the savegame's description
-	std::string getDescription();
+	std::string getDescription() const;
 
 	IDataSource *getDataSource(const std::string &name);
-protected:
-	ZipFile *zipfile;
+};
+
+class SavegameWriter {
+	class FileEntry : public Common::MemoryWriteStreamDynamic {
+	public:
+		std::string _name;
+		FileEntry() : Common::MemoryWriteStreamDynamic(DisposeAfterUse::YES) {}
+	};
+private:
+	ODataSource *_file;
+	Common::Array<FileEntry> _index;
+	std::string _comments;
+public:
+	explicit SavegameWriter(ODataSource *ds);
+	virtual ~SavegameWriter();
+
+	//! write the savegame's description.
+	bool writeDescription(const std::string &desc);
+
+	//! write the savegame's global version
+	bool writeVersion(uint32 version);
+
+	//! write a file to the savegame
+	//! \param name name of the file
+	//! \param data the data
+	//! \param size (in bytes) of data
+	bool writeFile(const std::string &name, const uint8 *data, uint32 size);
+
+	//! write a file to the savegame from an OAutoBufferDataSource
+	//! \param name name of the file
+	//! \param buf the OBufferDataSource to save
+	bool writeFile(const std::string &name, OAutoBufferDataSource *buf);
+
+	//! finish savegame
+	bool finish();
 };
 
 } // End of namespace Ultima8

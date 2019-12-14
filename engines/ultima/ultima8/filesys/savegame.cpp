@@ -21,22 +21,19 @@
  */
 
 #include "ultima/ultima8/misc/pent_include.h"
-
 #include "ultima/ultima8/filesys/savegame.h"
 #include "ultima/ultima8/filesys/idata_source.h"
-#include "ultima/ultima8/filesys/zip_file.h"
+#include "ultima/ultima8/filesys/odata_source.h"
 
 namespace Ultima8 {
 
-Savegame::Savegame(IDataSource *ds) {
-	zipfile = new ZipFile(ds);
+SavegameReader::SavegameReader(IDataSource *ds) : _file(ds) {
 }
 
-Savegame::~Savegame() {
-	delete zipfile;
+SavegameReader::~SavegameReader() {
 }
 
-uint32 Savegame::getVersion() {
+uint32 SavegameReader::getVersion() {
 	IDataSource *ids = getDataSource("VERSION");
 	if (!ids || ids->getSize() != 4) return 0;
 
@@ -46,14 +43,70 @@ uint32 Savegame::getVersion() {
 	return version;
 }
 
-std::string Savegame::getDescription() {
-	return zipfile->getComment();
+std::string SavegameReader::getDescription() const {
+	return _comments;
 }
 
-IDataSource *Savegame::getDataSource(const std::string &name) {
-	uint32 size;
-	uint8 *data = zipfile->getObject(name, &size);
-	return new IBufferDataSource(data, size, false, true);
+IDataSource *SavegameReader::getDataSource(const std::string &name) {
+	assert(_index.contains(name));
+
+	const FileEntry &fe = _index[name];
+	uint8 *data = (uint8 *)malloc(fe._size);
+	return new IBufferDataSource(data, fe._size, false, true);
+}
+
+
+SavegameWriter::SavegameWriter(ODataSource *ds) : _file(ds) {
+/*
+	PentZip::zlib_filefunc_def filefuncs = ODS_filefunc_templ;
+	filefuncs.opaque = static_cast<void *>(ds);
+
+	PentZip::zipFile zfile = PentZip::zipOpen2("", 0, 0, &filefuncs);
+	zipfile = static_cast<void *>(zfile);
+	*/
+}
+
+SavegameWriter::~SavegameWriter() {
+	if (_file)
+		delete _file;
+}
+
+bool SavegameWriter::finish() {
+/*
+	PentZip::zipFile zfile = static_cast<PentZip::zipFile>(zipfile);
+	zipfile = 0;
+	if (PentZip::zipClose(zfile, comment.c_str()) != ZIP_OK) return false;
+*/
+	return true;
+}
+
+
+bool SavegameWriter::writeFile(const std::string &name, const uint8 *data, uint32 size) {
+	_index.push_back(FileEntry());
+
+	FileEntry &fe = _index.back();
+	fe._name = name;
+	fe.write(data, size);
+
+	return true;
+}
+
+bool SavegameWriter::writeFile(const std::string &name, OAutoBufferDataSource *ods) {
+	return writeFile(name, ods->getBuf(), ods->getSize());
+}
+
+bool SavegameWriter::writeVersion(uint32 version) {
+	uint8 buf[4];
+	buf[0] = version & 0xFF;
+	buf[1] = (version >> 8) & 0xFF;
+	buf[2] = (version >> 16) & 0xFF;
+	buf[3] = (version >> 24) & 0xFF;
+	return writeFile("VERSION", buf, 4);
+}
+
+bool SavegameWriter::writeDescription(const std::string &desc) {
+	_comments = desc;
+	return true;
 }
 
 } // End of namespace Ultima8

@@ -25,12 +25,15 @@
 #include "ultima/ultima8/filesys/archive.h"
 #include "ultima/ultima8/filesys/idata_source.h"
 #include "ultima/ultima8/filesys/archive_file.h"
-#include "ultima/ultima8/filesys/zip_file.h"
+#include "ultima/ultima8/filesys/named_archive_file.h"
 #include "ultima/ultima8/filesys/flex_file.h"
 #include "ultima/ultima8/filesys/u8_save_file.h"
 #include "ultima/ultima8/filesys/dir_file.h"
 
 namespace Ultima8 {
+
+DEFINE_RUNTIME_CLASSTYPE_CODE(NamedArchiveFile, ArchiveFile)
+
 namespace Pentagram {
 
 DEFINE_RUNTIME_CLASSTYPE_CODE_BASE_CLASS(Archive)
@@ -79,8 +82,6 @@ bool Archive::addSource(IDataSource *ids) {
 		s = new FlexFile(ids);
 	} else if (U8SaveFile::isU8SaveFile(ids)) {
 		s = new U8SaveFile(ids);
-	} else if (ZipFile::isZipFile(ids)) {
-		s = new ZipFile(ids);
 	}
 
 	if (!s) return false;

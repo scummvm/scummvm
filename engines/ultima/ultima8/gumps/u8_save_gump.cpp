@@ -306,7 +306,7 @@ void U8SaveGump::loadDescriptions() {
 		IDataSource *ids = FileSystem::get_instance()->ReadFile(filename);
 		if (!ids) continue;
 
-		Savegame *sg = new Savegame(ids);
+		SavegameReader *sg = new SavegameReader(ids);
 		uint32 version = sg->getVersion();
 		descriptions[i] = "";
 
