@@ -72,17 +72,20 @@ public class ScummVMEvents implements
 		return false;
 	}
 
-	final static int MSG_MENU_LONG_PRESS = 1;
+	final static int MSG_SMENU_LONG_PRESS = 1;
+	final static int MSG_SBACK_LONG_PRESS = 1;
 
 	final private Handler keyHandler = new Handler() {
 		@Override
 		public void handleMessage(Message msg) {
-			if (msg.what == MSG_MENU_LONG_PRESS) {
+			if (msg.what == MSG_SMENU_LONG_PRESS) {
 				InputMethodManager imm = (InputMethodManager)
 					_context.getSystemService(Context.INPUT_METHOD_SERVICE);
 
 				if (imm != null)
 					imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
+			} else if (msg.what == MSG_SBACK_LONG_PRESS) {
+				_scummvm.pushEvent(JE_SYS_KEY, KeyEvent.ACTION_UP, KeyEvent.KEYCODE_MENU, 0, 0, 0, 0);
 			}
 		}
 	};
@@ -98,15 +101,9 @@ public class ScummVMEvents implements
 		}
 
 		if (keyCode == KeyEvent.KEYCODE_BACK) {
-			if (action != KeyEvent.ACTION_UP) {
-				// only send event from back button on up event, since down event is sent on right mouse click and
-				// cannot be caught (thus rmb click would send escape key first)
-				return true;
-			}
-
 			if (_mouseHelper != null) {
 				if (_mouseHelper.getRmbGuard()) {
-					// right mouse button was just clicked which sends an extra back button press
+					// right mouse button was just clicked which sends an extra back button press (which should be ignored)
 					return true;
 				}
 			}
@@ -135,24 +132,43 @@ public class ScummVMEvents implements
 			// ourselves, since we are otherwise hijacking the menu key :(
 			// See com.android.internal.policy.impl.PhoneWindow.onKeyDownPanel()
 			// for the usual Android implementation of this feature.
-			if (keyCode == KeyEvent.KEYCODE_MENU) {
-				final boolean fired =
-					!keyHandler.hasMessages(MSG_MENU_LONG_PRESS);
+			//
+			// We adopt a similar behavior for the Back system button, as well.
+			if (keyCode == KeyEvent.KEYCODE_MENU || keyCode == KeyEvent.KEYCODE_BACK) {
+				//
+				// Upon pressing the system menu or system back key:
+				// (The example below assumes that system Back key was pressed)
+				// 1. keyHandler.hasMessages(MSG_SBACK_LONG_PRESS) = false, and thus: fired = true
+				// 2. Action will be KeyEvent.ACTION_DOWN, so a delayed message "MSG_SBACK_LONG_PRESS" will be sent to keyHandler after _longPress time
+				//    The "MSG_SBACK_LONG_PRESS" will be handled (and removed) in the keyHandler.
+				//    For the Back button, the keyHandler should forward a ACTION_UP for MENU (the alternate func of Back key!) to native)
+				//    But if the code enters this section before the "MSG_SBACK_LONG_PRESS" was handled in keyHandler (probably due to a ACTION_UP)
+				//        then fired = false and the message is removed from keyHandler, meaning we should treat the button press as a SHORT key press
+				final int typeOfLongPressMessage;
+				if (keyCode == KeyEvent.KEYCODE_MENU) {
+					typeOfLongPressMessage = MSG_SMENU_LONG_PRESS;
+				} else { // back button
+					typeOfLongPressMessage = MSG_SBACK_LONG_PRESS;
+				}
 
-				keyHandler.removeMessages(MSG_MENU_LONG_PRESS);
+				final boolean fired = !keyHandler.hasMessages(typeOfLongPressMessage);
+
+				keyHandler.removeMessages(typeOfLongPressMessage);
 
 				if (action == KeyEvent.ACTION_DOWN) {
 					keyHandler.sendMessageDelayed(keyHandler.obtainMessage(
-									MSG_MENU_LONG_PRESS), _longPress);
+									typeOfLongPressMessage), _longPress);
 					return true;
 				}
 
-				if (fired)
+				if (fired) {
 					return true;
+				}
 
-				// only send up events of the menu button to the native side
-				if (action != KeyEvent.ACTION_UP)
+				// only send up events of the menu or back button to the native side
+				if (action != KeyEvent.ACTION_UP) {
 					return true;
+				}
 			}
 
 			_scummvm.pushEvent(JE_SYS_KEY, action, keyCode, 0, 0, 0, 0);
