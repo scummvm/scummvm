@@ -377,15 +377,22 @@ int MacText::getLineWidth(int line, bool enforce) {
 	int width = 0;
 	int height = 0;
 
+	bool hastext = false;
+
 	for (uint i = 0; i < _textLines[line].chunks.size(); i++) {
 		if (enforce)
 			_textLines[line].chunks[i].font = nullptr;
 
-		if (!_textLines[line].chunks[i].text.empty())
+		if (!_textLines[line].chunks[i].text.empty()) {
 			width += _textLines[line].chunks[i].getFont()->getStringWidth(_textLines[line].chunks[i].text);
+			hastext = true;
+		}
 
 		height = MAX(height, _textLines[line].chunks[i].getFont()->getFontHeight());
 	}
+
+	if (!hastext)
+		height -= 3;
 
 	_textLines[line].width = width;
 	_textLines[line].height = height;
