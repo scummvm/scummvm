@@ -131,7 +131,7 @@ static const Common::U32String::value_type *readHex(uint16 *res, const Common::U
 
 		*res <<= 4;
 		if (tolower(b) > 'a')
-			*res |= tolower(b) - 'a';
+			*res |= tolower(b) - 'a' + 10;
 		else
 			*res |= tolower(b) - '0';
 	}
