@@ -1397,7 +1397,6 @@ bool Ultima8Engine::saveGame(std::string filename, std::string desc,
 	save_count++;
 
 	SavegameWriter *sgw = new SavegameWriter(ods);
-	sgw->writeVersion(Pentagram::savegame_version);
 	sgw->writeDescription(desc);
 
 	// We'll make it 2KB initially
@@ -1594,24 +1593,25 @@ bool Ultima8Engine::loadGame(std::string filename) {
 	}
 
 	SavegameReader *sg = new SavegameReader(ids);
-	uint32 version = sg->getVersion();
-	if (version == 0) {
+	SavegameReader::State state = sg->isValid();
+	if (state == SavegameReader::SAVE_CORRUPT) {
 		Error("Invalid or corrupt savegame", "Error Loading savegame " + filename);
 		delete sg;
 		settingman->set("lastSave", "");
 		return false;
 	}
 
-	if (version == 1 || version > Pentagram::savegame_version) {
-		Common::String vstring = Common::String::format("%i", version);
-		Error(std::string("Unsupported savegame version (") + vstring + ")", "Error Loading savegame " + filename);
+	if (state != SavegameReader::SAVE_VALID) {
+		Error("Unsupported savegame version", "Error Loading savegame " + filename);
 		delete sg;
 		settingman->set("lastSave", "");
 		return false;
 	}
+
 	IDataSource *ds;
 	GameInfo saveinfo;
 	ds = sg->getDataSource("GAME");
+	uint32 version = sg->getVersion();
 	bool ok = saveinfo.load(ds, version);
 
 	if (!ok) {

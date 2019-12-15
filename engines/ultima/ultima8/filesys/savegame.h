@@ -25,8 +25,9 @@
 
 #include "ultima/ultima8/std/string.h"
 #include "common/hashmap.h"
-#include "common/memstream.h"
-#include "common/hash-str.h"
+#include "common/serializer.h"
+#include "engines/metaengine.h"
+#include "graphics/surface.h"
 
 namespace Ultima8 {
 
@@ -42,41 +43,45 @@ class SavegameReader {
 		FileEntry() : _offset(0), _size(0) {}
 	};
 private:
-	IDataSource *_file;
+	ExtendedSavegameHeader _header;
 	Common::HashMap<Common::String, FileEntry> _index;
-	std::string _comments;
+	uint32 _version;
 public:
-	explicit SavegameReader(IDataSource *ds);
+	explicit SavegameReader(IDataSource *ds, bool metadataOnly = false);
 	~SavegameReader();
 
-	//! get the savegame's global version
-	uint32 getVersion();
+	enum State { SAVE_CORRUPT, SAVE_VALID, SAVE_OUT_OF_DATE, SAVE_TOO_RECENT };
+	State isValid() const;
 
-	//! get the savegame's description
-	std::string getDescription() const;
+	uint32 getVersion() const { return _version; }
 
+	std::string getDescription() const { return _header.description; }
+
+	/**
+	 * Get an entry/section within the save
+	 */
 	IDataSource *getDataSource(const std::string &name);
 };
 
 class SavegameWriter {
-	class FileEntry : public Common::MemoryWriteStreamDynamic {
+	class FileEntry : public Common::Array<byte> {
 	public:
 		std::string _name;
-		FileEntry() : Common::MemoryWriteStreamDynamic(DisposeAfterUse::YES) {}
+		FileEntry() : Common::Array<byte>() {}
 	};
 private:
 	ODataSource *_file;
 	Common::Array<FileEntry> _index;
-	std::string _comments;
+	std::string _description;
 public:
 	explicit SavegameWriter(ODataSource *ds);
 	virtual ~SavegameWriter();
 
 	//! write the savegame's description.
-	bool writeDescription(const std::string &desc);
-
-	//! write the savegame's global version
-	bool writeVersion(uint32 version);
+	bool writeDescription(const std::string &desc) {
+		_description = desc;
+		return true;
+	}
 
 	//! write a file to the savegame
 	//! \param name name of the file

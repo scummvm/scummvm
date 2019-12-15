@@ -73,7 +73,6 @@ struct Texture;
 
 namespace Pentagram {
 class AudioMixer;
-const unsigned int savegame_version = 5;
 }
 
 class Ultima8Engine : public CoreApp, public Engine {
