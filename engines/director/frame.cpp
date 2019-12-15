@@ -398,7 +398,7 @@ void Frame::readSprite(Common::SeekableSubReadStreamEndian &stream, uint16 offse
 			break;
 		}
 	}
-	warning("%03d(%d)[%x,%x,%04x,%d/%d/%d/%d]", sprite._castId, sprite._enabled, x1, x2, sprite._flags, sprite._startPoint.x, sprite._startPoint.y, sprite._width, sprite._height);
+	warning("Frame::readSprite(): %03d(%d)[%x,%x,%04x,%d/%d/%d/%d]", sprite._castId, sprite._enabled, x1, x2, sprite._flags, sprite._startPoint.x, sprite._startPoint.y, sprite._width, sprite._height);
 
 }
 
@@ -723,6 +723,11 @@ void Frame::renderButton(Graphics::ManagedSurface &surface, uint16 spriteId) {
 }
 
 void Frame::inkBasedBlit(Graphics::ManagedSurface &targetSurface, const Graphics::Surface &spriteSurface, uint16 spriteId, Common::Rect drawRect) {
+	// drawRect could be bigger than the spriteSurface. Clip it
+	Common::Rect t(spriteSurface.w, spriteSurface.h);
+	t.moveTo(drawRect.left, drawRect.top);
+	drawRect.clip(t);
+
 	switch (_sprites[spriteId]->_ink) {
 	case kInkTypeCopy:
 		targetSurface.blitFrom(spriteSurface, Common::Point(drawRect.left, drawRect.top));
