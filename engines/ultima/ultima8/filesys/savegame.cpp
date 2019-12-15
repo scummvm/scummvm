@@ -24,27 +24,59 @@
 #include "ultima/ultima8/filesys/savegame.h"
 #include "ultima/ultima8/filesys/idata_source.h"
 #include "ultima/ultima8/filesys/odata_source.h"
+#include "common/system.h"
+#include "common/savefile.h"
+#include "graphics/thumbnail.h"
 
 namespace Ultima8 {
 
-SavegameReader::SavegameReader(IDataSource *ds) : _file(ds) {
+#define SAVEGAME_IDENT MKTAG('V', 'M', 'U', '8')
+#define SAVEGAME_VERSION 5
+
+SavegameReader::SavegameReader(IDataSource *ds, bool metadataOnly) : _version(0) {
+	if (!MetaEngine::readSavegameHeader(ds->GetRawStream(), &_header, false))
+		return;
+
+	// Validate the identifier for a valid savegame
+	uint32 ident = ds->read4();
+	if (ident != SAVEGAME_IDENT)
+		return;
+
+	_version = ds->read4();
+	if (metadataOnly)
+		return;
+
+	// Load the index
+	uint count = ds->read2();
+
+	for (uint idx = 0; idx < count; ++idx) {
+		char name[12];
+		ds->read(name, 12);
+		name[11] = '\0';
+
+		FileEntry fe;
+		fe._size = ds->read4();
+		fe._offset = ds->getPos();
+
+		_index[Common::String(name)] = fe;
+		ds->skip(fe._size);
+	}
+
+	delete ds;
 }
 
 SavegameReader::~SavegameReader() {
 }
 
-uint32 SavegameReader::getVersion() {
-	IDataSource *ids = getDataSource("VERSION");
-	if (!ids || ids->getSize() != 4) return 0;
-
-	uint32 version = ids->read4();
-	delete ids;
-
-	return version;
-}
-
-std::string SavegameReader::getDescription() const {
-	return _comments;
+SavegameReader::State SavegameReader::isValid() const {
+	if (_version == 0)
+		return SAVE_CORRUPT;
+	else if (_version < SAVEGAME_VERSION)
+		return SAVE_OUT_OF_DATE;
+	else if (_version > SAVEGAME_VERSION)
+		return SAVE_TOO_RECENT;
+	else
+		return SAVE_VALID;
 }
 
 IDataSource *SavegameReader::getDataSource(const std::string &name) {
@@ -57,56 +89,55 @@ IDataSource *SavegameReader::getDataSource(const std::string &name) {
 
 
 SavegameWriter::SavegameWriter(ODataSource *ds) : _file(ds) {
-/*
-	PentZip::zlib_filefunc_def filefuncs = ODS_filefunc_templ;
-	filefuncs.opaque = static_cast<void *>(ds);
-
-	PentZip::zipFile zfile = PentZip::zipOpen2("", 0, 0, &filefuncs);
-	zipfile = static_cast<void *>(zfile);
-	*/
+	assert(_file);
 }
 
 SavegameWriter::~SavegameWriter() {
-	if (_file)
-		delete _file;
 }
 
 bool SavegameWriter::finish() {
-/*
-	PentZip::zipFile zfile = static_cast<PentZip::zipFile>(zipfile);
-	zipfile = 0;
-	if (PentZip::zipClose(zfile, comment.c_str()) != ZIP_OK) return false;
-*/
+	 // Write ident and savegame version
+	_file->write4(SAVEGAME_IDENT);
+	_file->write4(SAVEGAME_VERSION);
+
+	// Iterate through writing out the files
+	_file->write2(_index.size());
+	for (uint idx = 0; idx < _index.size(); ++idx) {
+		// Set up a 12 byte space containing the resource name
+		FileEntry &fe = _index[idx];
+		char name[12];
+		Common::fill(&name[0], &name[12], '\0');
+		strncpy(name, fe._name.c_str(), 11);
+
+		// Write out name, size, and data
+		_file->write(name, 12);
+		_file->write4(fe.size());
+		_file->write(&fe[0], fe.size());
+	}
+	
+	// Handle adding savegame header
+	Common::OutSaveFile *dest = dynamic_cast<Common::OutSaveFile *>(_file->GetRawStream());
+	uint32 totalPlayTime = 0;		// TODO: Total playtime
+	MetaEngine::appendExtendedSave(dest, totalPlayTime, _description);
+	dest->finalize();
+
 	return true;
 }
 
-
 bool SavegameWriter::writeFile(const std::string &name, const uint8 *data, uint32 size) {
+	assert(name.size() <= 11);
 	_index.push_back(FileEntry());
 
 	FileEntry &fe = _index.back();
 	fe._name = name;
-	fe.write(data, size);
+	fe.resize(size);
+	Common::copy(data, data + size, &fe[0]);
 
 	return true;
 }
 
 bool SavegameWriter::writeFile(const std::string &name, OAutoBufferDataSource *ods) {
 	return writeFile(name, ods->getBuf(), ods->getSize());
-}
-
-bool SavegameWriter::writeVersion(uint32 version) {
-	uint8 buf[4];
-	buf[0] = version & 0xFF;
-	buf[1] = (version >> 8) & 0xFF;
-	buf[2] = (version >> 16) & 0xFF;
-	buf[3] = (version >> 24) & 0xFF;
-	return writeFile("VERSION", buf, 4);
-}
-
-bool SavegameWriter::writeDescription(const std::string &desc) {
-	_comments = desc;
-	return true;
 }
 
 } // End of namespace Ultima8

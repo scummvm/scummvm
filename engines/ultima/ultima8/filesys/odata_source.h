@@ -62,6 +62,11 @@ public:
 		write4(int_float.i);
 	}
 
+
+	virtual Common::WriteStream *GetRawStream() {
+		return 0;
+	}
+
 	virtual void seek(uint32 pos) = 0;
 	virtual void skip(int32 delta) = 0;
 	virtual uint32 getSize() const = 0;
@@ -138,6 +143,10 @@ public:
 		Common::SeekableWriteStream *ws = dynamic_cast<Common::SeekableWriteStream *>(_out);
 		assert(ws);
 		return _out->pos();
+	}
+
+	virtual Common::WriteStream *GetRawStream() {
+		return _out;
 	}
 };
 

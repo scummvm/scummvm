@@ -306,17 +306,23 @@ void U8SaveGump::loadDescriptions() {
 		IDataSource *ids = FileSystem::get_instance()->ReadFile(filename);
 		if (!ids) continue;
 
-		SavegameReader *sg = new SavegameReader(ids);
-		uint32 version = sg->getVersion();
+		SavegameReader *sg = new SavegameReader(ids, true);
+		SavegameReader::State state = sg->isValid();
 		descriptions[i] = "";
 
 		// FIXME: move version checks elsewhere!!
-		if (version == 0) {
+		switch (state) {
+		case SavegameReader::SAVE_CORRUPT:
 			descriptions[i] = "[corrupt] ";
-		} else if (version == 1) {
+			break;
+		case SavegameReader::SAVE_OUT_OF_DATE:
 			descriptions[i] = "[outdated] ";
-		} else if (version > Pentagram::savegame_version) {
+			break;
+		case SavegameReader::SAVE_TOO_RECENT:
 			descriptions[i] = "[too modern] ";
+			break;
+		default:
+			break;
 		}
 
 		descriptions[i] += sg->getDescription();

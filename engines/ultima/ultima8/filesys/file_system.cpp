@@ -34,23 +34,6 @@ using std::string;
 
 FileSystem *FileSystem::filesystem = 0;
 
-/**
- * Simple wrapper for OutSaveFile. The zip file code that uses it needs
- * access to a seekable write stream
- */
-class OutSaveFileWrapper : public Common::MemoryWriteStreamDynamic {
-private:
-	Common::WriteStream *_saveFile;
-public:
-	OutSaveFileWrapper(Common::WriteStream *saveFile) :
-		Common::MemoryWriteStreamDynamic(DisposeAfterUse::YES), _saveFile(saveFile) {}
-	~OutSaveFileWrapper() {
-		_saveFile->write(getData(), size());
-		delete _saveFile;
-	}
-};
-
-
 FileSystem::FileSystem(bool noforced)
 	: noforcedvpaths(noforced), allowdataoverride(true) {
 	con->Print(MM_INFO, "Creating FileSystem...\n");
@@ -150,11 +133,7 @@ bool FileSystem::rawOpen(Common::WriteStream *&out,  const string &fname) {
 		std::string saveFilename = Ultima8Engine::get_instance()->getSaveFilename(slotNumber);
 
 		out = g_system->getSavefileManager()->openForSaving(saveFilename, false);
-		if (!out)
-			return 0;
-
-		out = new OutSaveFileWrapper(out);
-		return true;
+		return out != 0;
 	} else {
 		return false;
 	}
