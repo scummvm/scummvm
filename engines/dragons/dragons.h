@@ -122,7 +122,6 @@ class ActorManager;
 class SequenceOpcodes;
 class ScriptOpcodes;
 class Talk;
-class Sound;
 class SoundManager;
 struct DragonINI;
 
@@ -142,8 +141,7 @@ public:
 	Cursor *_cursor;
 	Credits *_credits;
 	Talk *_talk;
-	Sound *_sound;
-	SoundManager *_soundManager;
+	SoundManager *_sound;
 
 	opCode1AStruct opCode1A_tbl[8];
 

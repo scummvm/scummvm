@@ -69,7 +69,6 @@ DragonsEngine::DragonsEngine(OSystem *syst) : Engine(syst) {
 	_cursor = new Cursor(this);
 	_credits = NULL;
 	_talk = NULL;
-	_sound = new Sound(this);
 	_fontManager = NULL;
 	_sceneUpdateFunction = NULL;
 	_vsyncUpdateFunction = NULL;
@@ -206,7 +205,7 @@ Common::Error DragonsEngine::run() {
 	_backgroundResourceLoader = new BackgroundResourceLoader(_bigfileArchive, _dragonRMS);
 	_scene = new Scene(this, _screen, _scriptOpcodes, _bigfileArchive, _actorManager, _dragonRMS, _dragonINIResource, _backgroundResourceLoader);
 
-	_soundManager = new SoundManager(this, _bigfileArchive, _dragonRMS);
+	_sound = new SoundManager(this, _bigfileArchive, _dragonRMS);
 
 	if (ConfMan.hasKey("save_slot")) {
 		loadGameState(ConfMan.getInt("save_slot"));
@@ -229,7 +228,7 @@ Common::Error DragonsEngine::run() {
 	delete _fontManager;
 	delete _bigfileArchive;
 	delete _screen;
-	delete _soundManager;
+	delete _sound;
 
 	debug("Ok");
 	return Common::kNoError;
@@ -1011,7 +1010,7 @@ void DragonsEngine::waitForFramesAllowSkip(uint16 numFrames) {
 void DragonsEngine::playOrStopSound(uint16 soundId) {
 	debug("play sound 0x%x", soundId);
 
-	this->_soundManager->playOrStopSound(soundId);
+	this->_sound->playOrStopSound(soundId);
 }
 
 void DragonsEngine::updatePathfindingActors() {
@@ -1399,7 +1398,7 @@ void DragonsEngine::runVsyncUpdaterFunction() {
 }
 
 void DragonsEngine::loadCurrentSceneMsf() {
-	_soundManager->loadMsf(getCurrentSceneId());
+	_sound->loadMsf(getCurrentSceneId());
 }
 
 void (*DragonsEngine::getSceneUpdateFunction())() {
