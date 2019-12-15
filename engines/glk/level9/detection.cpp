@@ -64,14 +64,18 @@ const L9V1GameInfo &Scanner::v1Game() const {
 }
 
 long Scanner::scan(byte *startFile, uint32 size) {
-	byte *Chk = (byte *)malloc(size + 1);
-	byte *Image = (byte *)calloc(size, 1);
 	uint32 i, num, Size, MaxSize = 0;
 	int j;
 	uint16 d0 = 0, l9, md, ml, dd, dl;
 	uint32 Min, Max;
 	long offset = -1;
 	bool JumpKill, DriverV4;
+
+	if (size < 33)
+		return -1;
+
+	byte *Chk = (byte *)malloc(size + 1);
+	byte *Image = (byte *)calloc(size, 1);
 
 	if ((Chk == nullptr) || (Image == nullptr)) {
 		error("Unable to allocate memory for game scan! Exiting...");
@@ -128,14 +132,18 @@ long Scanner::scan(byte *startFile, uint32 size) {
 }
 
 long Scanner::ScanV2(byte *startFile, uint32 size) {
-	byte *Chk = (byte *)malloc(size + 1);
-	byte *Image = (byte *)calloc(size, 1);
 	uint32 i, Size, MaxSize = 0, num;
 	int j;
 	uint16 d0 = 0, l9;
 	uint32 Min, Max;
 	long offset = -1;
 	bool JumpKill;
+
+	if (size < 28)
+		return -1;
+
+	byte *Chk = (byte *)malloc(size + 1);
+	byte *Image = (byte *)calloc(size, 1);
 
 	if ((Chk == nullptr) || (Image == nullptr)) {
 		error("Unable to allocate memory for game scan! Exiting...");
@@ -179,7 +187,6 @@ long Scanner::ScanV2(byte *startFile, uint32 size) {
 }
 
 long Scanner::ScanV1(byte *startFile, uint32 size) {
-	byte *Image = (byte *)calloc(size, 1);
 	uint32 i, Size;
 	int Replace;
 	byte *ImagePtr;
@@ -191,6 +198,10 @@ long Scanner::ScanV1(byte *startFile, uint32 size) {
 	int dictOff1 = 0, dictOff2 = 0;
 	byte dictVal1 = 0xff, dictVal2 = 0xff;
 
+	if (size < 20)
+		return -1;
+
+	byte *Image = (byte *)calloc(size, 1);
 	if (Image == nullptr) {
 		error("Unable to allocate memory for game scan! Exiting...");
 	}
