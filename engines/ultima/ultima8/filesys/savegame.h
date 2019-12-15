@@ -45,6 +45,7 @@ class SavegameReader {
 private:
 	ExtendedSavegameHeader _header;
 	Common::HashMap<Common::String, FileEntry> _index;
+	IDataSource *_file;
 	uint32 _version;
 public:
 	explicit SavegameReader(IDataSource *ds, bool metadataOnly = false);
