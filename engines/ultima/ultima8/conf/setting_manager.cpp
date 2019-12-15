@@ -19,6 +19,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/conf/setting_manager.h"
 #include "ultima/ultima8/conf/config_file_manager.h"
+#include "common/config-manager.h"
 
 namespace Ultima8 {
 
@@ -36,6 +37,17 @@ SettingManager::SettingManager() {
 	conffileman = ConfigFileManager::get_instance();
 
 	conffileman->readConfigString("", "defaultsettings", false);
+
+	// Setup ScummVM configuration settings
+	setupScummVMSettings();
+}
+
+void SettingManager::setupScummVMSettings() {
+	conffileman->readConfigString("", "ScummVM", false);
+
+	int saveSlot = ConfMan.hasKey("save_slot") ? ConfMan.getInt("save_slot") : -1;
+	if (saveSlot != -1)
+		set("lastSave", std::string::format("@save/%d", saveSlot), DOM_SCUMMVM);
 }
 
 SettingManager::~SettingManager() {
@@ -217,6 +229,8 @@ istring SettingManager::getConfigKey(istring key, Domain dom) {
 
 	if (dom == DOM_DEFAULTS) {
 		ckey = "defaultsettings/";
+	} else if (dom == DOM_SCUMMVM) {
+		ckey = "ScummVM/";
 	} else {
 		ckey = "settings/" + domains[dom];
 	}

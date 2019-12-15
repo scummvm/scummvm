@@ -44,8 +44,9 @@ public:
 
 	enum Domain {
 		DOM_DEFAULTS = 0,
-		DOM_GLOBAL   = 1,
-		DOM_GAME     = 2,
+		DOM_SCUMMVM  = 1,
+		DOM_GLOBAL   = 2,
+		DOM_GAME     = 3,
 		DOM_CURRENT  = 100
 	};
 
@@ -120,6 +121,7 @@ private:
 	bool findKeyDomain(Pentagram::istring key, Domain dom, Domain &keydom);
 	Pentagram::istring getConfigKey(Pentagram::istring key, Domain dom);
 	void callCallbacks(Pentagram::istring key);
+	void setupScummVMSettings();
 
 	Callbacks callbacks;
 	std::vector<Pentagram::istring> domains;

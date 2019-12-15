@@ -107,7 +107,6 @@ void CoreApp::sysInit() {
 	settingman = new SettingManager();
 	settingman->setDomainName(SettingManager::DOM_GLOBAL, "pentagram");
 	settingman->setCurrentDomain(SettingManager::DOM_GLOBAL);
-
 }
 
 // load configuration files
