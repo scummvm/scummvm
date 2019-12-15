@@ -737,116 +737,93 @@ bool UIEdit::display(int offsetX, int offsetY) {
 
 //////////////////////////////////////////////////////////////////////////
 bool UIEdit::handleKeypress(Common::Event *event, bool printable) {
-	bool handled = false;
+	if (event->type != Common::EVENT_KEYDOWN) {
+		return false;
+	}
 
-	if (event->type == Common::EVENT_KEYDOWN && !printable) {
-		switch (event->kbd.keycode) {
-		case Common::KEYCODE_ESCAPE:
-		case Common::KEYCODE_TAB:
-		case Common::KEYCODE_RETURN:
-			return false;
+	switch (event->kbd.keycode) {
 
-			// ctrl+A
-		case Common::KEYCODE_a:
-			if (BaseKeyboardState::isControlDown()) {
-				_selStart = 0;
-				_selEnd = strlen(_text);
-				handled = true;
-			}
-			break;
+	// Those keys are 'printable' in WME 1.x, let's ignore them
+	case Common::KEYCODE_ESCAPE:
+	case Common::KEYCODE_TAB:
+	case Common::KEYCODE_KP_ENTER:
+	case Common::KEYCODE_RETURN:
+		return false;
 
-		case Common::KEYCODE_BACKSPACE:
-			if (_selStart == _selEnd) {
-				if (_gameRef->_textRTL) {
-					deleteChars(_selStart, _selStart + 1);
-				} else {
-					deleteChars(_selStart - 1, _selStart);
-				}
-			} else {
-				deleteChars(_selStart, _selEnd);
-			}
-			if (_selEnd >= _selStart) {
-				_selEnd -= MAX<int32>(1, _selEnd - _selStart);
-			}
-			_selStart = _selEnd;
-
-			handled = true;
-			break;
-
-		case Common::KEYCODE_LEFT:
-		case Common::KEYCODE_UP:
+	// Movement keys are controlling _selEnd and _selStart
+	case Common::KEYCODE_HOME:
+	case Common::KEYCODE_END:
+	case Common::KEYCODE_LEFT:
+	case Common::KEYCODE_UP:
+	case Common::KEYCODE_RIGHT:
+	case Common::KEYCODE_DOWN:
+		if (event->kbd.keycode == Common::KEYCODE_HOME) {
+			_selEnd = _gameRef->_textRTL ? strlen(_text) : 0;
+		} else if (event->kbd.keycode == Common::KEYCODE_END) {
+			_selEnd = _gameRef->_textRTL ? 0 : strlen(_text);
+		} else if (event->kbd.keycode == Common::KEYCODE_LEFT ||
+				   event->kbd.keycode == Common::KEYCODE_UP) {
 			_selEnd--;
-			if (!BaseKeyboardState::isShiftDown()) {
-				_selStart = _selEnd;
-			}
-			handled = true;
-			break;
-
-		case Common::KEYCODE_RIGHT:
-		case Common::KEYCODE_DOWN:
+		} else {
 			_selEnd++;
-			if (!BaseKeyboardState::isShiftDown()) {
-				_selStart = _selEnd;
-			}
-			handled = true;
-			break;
-
-		case Common::KEYCODE_HOME:
-			if (_gameRef->_textRTL) {
-				_selEnd = strlen(_text);
-				if (!BaseKeyboardState::isShiftDown()) {
-					_selStart = _selEnd;
-				}
-			} else {
-				_selEnd = 0;
-				if (!BaseKeyboardState::isShiftDown()) {
-					_selStart = _selEnd;
-				}
-			}
-			handled = true;
-			break;
-
-		case Common::KEYCODE_END:
-			if (_gameRef->_textRTL) {
-				_selEnd = 0;
-				if (!BaseKeyboardState::isShiftDown()) {
-					_selStart = _selEnd;
-				}
-			} else {
-				_selEnd = strlen(_text);
-				if (!BaseKeyboardState::isShiftDown()) {
-					_selStart = _selEnd;
-				}
-			}
-			handled = true;
-			break;
-
-		case Common::KEYCODE_DELETE:
-			if (_selStart == _selEnd) {
-				if (_gameRef->_textRTL) {
-					deleteChars(_selStart - 1, _selStart);
-					_selEnd--;
-					if (_selEnd < 0) {
-						_selEnd = 0;
-					}
-				} else {
-					deleteChars(_selStart, _selStart + 1);
-				}
-			} else {
-				deleteChars(_selStart, _selEnd);
-			}
-			if (_selEnd > _selStart) {
-				_selEnd -= (_selEnd - _selStart);
-			}
-
-			_selStart = _selEnd;
-			handled = true;
-			break;
-		default:
-			break;
 		}
-		return handled;
-	} else if (event->type == Common::EVENT_KEYDOWN && printable) {
+			
+		if (!BaseKeyboardState::isShiftDown()) {
+			_selStart = _selEnd;
+		}
+		return true;
+
+	// Delete right
+	case Common::KEYCODE_DELETE:
+		if (_selStart == _selEnd) {
+			if (_gameRef->_textRTL) {
+				deleteChars(_selStart - 1, _selStart);
+				_selEnd--;
+				if (_selEnd < 0) {
+					_selEnd = 0;
+				}
+			} else {
+				deleteChars(_selStart, _selStart + 1);
+			}
+		} else {
+			deleteChars(_selStart, _selEnd);
+		}
+		if (_selEnd > _selStart) {
+			_selEnd -= (_selEnd - _selStart);
+		}
+		_selStart = _selEnd;
+		return true;
+
+	// Delete left
+	case Common::KEYCODE_BACKSPACE:
+		if (_selStart == _selEnd) {
+			if (_gameRef->_textRTL) {
+				deleteChars(_selStart, _selStart + 1);
+			} else {
+				deleteChars(_selStart - 1, _selStart);
+			}
+		} else {
+			deleteChars(_selStart, _selEnd);
+		}
+		if (_selEnd >= _selStart) {
+			_selEnd -= MAX<int32>(1, _selEnd - _selStart);
+		}
+		_selStart = _selEnd;
+		return true;
+
+	default:
+		break;
+	}
+
+	// Ctrl+A = Select All
+	if (BaseKeyboardState::isControlDown() && event->kbd.keycode == Common::KEYCODE_a) {
+		_selStart = 0;
+		_selEnd = strlen(_text);
+		return true;
+	}
+
+	// Those are actually printable characters
+	else if (printable) {
 		if (_selStart != _selEnd) {
 			deleteChars(_selStart, _selEnd);
 		}
