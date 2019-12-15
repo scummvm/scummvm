@@ -27,7 +27,7 @@
 namespace Glk {
 namespace Archetype {
 
-const int WORD_LEN = 32;
+//const int WORD_LEN = 32; // FIXME: Unused. Remove?
 
 struct ParseType {
 	StringPtr word;
