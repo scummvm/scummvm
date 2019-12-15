@@ -257,7 +257,7 @@ uint16 KyraRpgEngine::processDialogue() {
 
 	for (int i = 0; i < _dialogueNumButtons; i++) {
 		int x = _dialogueButtonPosX[i];
-		int y = ((_flags.lang == Common::JA_JPN && _flags.use16ColorMode) ? ((_dialogueButtonYoffs + _dialogueButtonPosY[i]) & ~7) - 1 : (_dialogueButtonYoffs + _dialogueButtonPosY[i]));
+		int y = ((_flags.gameID == GI_LOL && _flags.use16ColorMode) ? ((_dialogueButtonYoffs + _dialogueButtonPosY[i]) & ~7) - 1 : (_dialogueButtonYoffs + _dialogueButtonPosY[i]));
 		Common::Point p = getMousePos();
 		if (posWithinRect(p.x, p.y, x, y, x + _dialogueButtonWidth, y + guiSettings()->buttons.height)) {
 			_dialogueHighlightedButton = i;
@@ -293,7 +293,7 @@ uint16 KyraRpgEngine::processDialogue() {
 		if ((_flags.gameID == GI_LOL && (e == 200 || e == 202)) || (_flags.gameID != GI_LOL && (e == 199 || e == 201))) {
 			for (int i = 0; i < _dialogueNumButtons; i++) {
 				int x = _dialogueButtonPosX[i];
-				int y = (gameFlags().use16ColorMode ? ((_dialogueButtonYoffs + _dialogueButtonPosY[i]) & ~7) - 1 : (_dialogueButtonYoffs + _dialogueButtonPosY[i]));
+				int y = ((_flags.gameID == GI_LOL && _flags.use16ColorMode) ? ((_dialogueButtonYoffs + _dialogueButtonPosY[i]) & ~7) - 1 : (_dialogueButtonYoffs + _dialogueButtonPosY[i]));
 				Common::Point p = getMousePos();
 				if (posWithinRect(p.x, p.y, x, y, x + _dialogueButtonWidth, y + guiSettings()->buttons.height)) {
 					_dialogueHighlightedButton = i;
