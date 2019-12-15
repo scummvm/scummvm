@@ -161,9 +161,9 @@ void MacText::splitString(Common::U32String &str) {
 			debugN(7, "%2d ", i);
 
 			for (uint j = 0; j < _textLines[i].chunks.size(); j++)
-				debugN(7, "[%d] \"%s\"", _textLines[i].chunks[j].fontId, _textLines[i].chunks[j].text.c_str());
+				debugN(7, "[%d] \"%s\"", _textLines[i].chunks[j].fontId, Common::toPrintable(_textLines[i].chunks[j].text.encode()).c_str());
 
-			debug(7, " --> %c %d, '%s'", (*s > 0x20 ? *s : ' '), (byte)*s, tmp.c_str());
+			debug(7, " --> %c %d, '%s'", (*s > 0x20 ? *s : ' '), (byte)*s, Common::toPrintable(tmp.encode()).c_str());
 		}
 #endif
 
