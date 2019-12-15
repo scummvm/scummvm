@@ -69,12 +69,10 @@ public:
 		return "Ultima games (C) Origin Systems Inc.";
 	}
 
+	virtual const char *getSavegamePattern(const char *target = nullptr) const;
 	virtual bool hasFeature(MetaEngineFeature f) const;
 	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const;
-	virtual SaveStateList listSaves(const char *target) const;
 	virtual int getMaximumSaveSlot() const;
-	virtual void removeSaveState(const char *target, int slot) const;
-	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const;
 };
 
 #endif

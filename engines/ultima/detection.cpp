@@ -73,22 +73,15 @@ bool UltimaMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGa
 	return gd != 0;
 }
 
-SaveStateList UltimaMetaEngine::listSaves(const char *target) const {
-	SaveStateList saveList;
-	return saveList;
-}
-
 int UltimaMetaEngine::getMaximumSaveSlot() const {
 	return MAX_SAVES;
 }
 
-void UltimaMetaEngine::removeSaveState(const char *target, int slot) const {
-	Common::String filename = Common::String::format("%s.%03d", target, slot);
-	g_system->getSavefileManager()->removeSavefile(filename);
-}
+const char *UltimaMetaEngine::getSavegamePattern(const char *target) const {
+	static char buffer[100];
+	snprintf(buffer, 200, "%s.###", target == nullptr ? getEngineId() : target);
 
-SaveStateDescriptor UltimaMetaEngine::querySaveMetaInfos(const char *target, int slot) const {
-	return SaveStateDescriptor();
+	return buffer;
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(ULTIMA)
