@@ -612,6 +612,11 @@ static const WMEGameDescription gameDescriptions[] = {
 	WME_WINENTRY("everydaygray", "",
 		WME_ENTRY1s("data.dcp", "77afff4101adbddac07ecf22ffbb8212", 24436150), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_1),
 
+	// Face Noir (Bundle version)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope	
+	WME_WINENTRY("facenoir", "",
+		WME_ENTRY1s("data.dcp", "50a7a01b97cd3658fc84f2bec7c1212b", 555533359), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_1),
+
 	// Face Noir
 	// NOTE: This is a 2.5D game that is out of ScummVM scope	
 	WME_WINENTRY("facenoir", "",
