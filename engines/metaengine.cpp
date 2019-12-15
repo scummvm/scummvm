@@ -241,7 +241,7 @@ SaveStateList MetaEngine::listSaves(const char *target) const {
 
 	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
 	Common::StringArray filenames;
-	Common::String pattern(getSavegamePattern());
+	Common::String pattern(getSavegamePattern(target));
 
 	filenames = saveFileMan->listSavefiles(pattern);
 
