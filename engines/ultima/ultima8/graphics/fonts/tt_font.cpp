@@ -207,7 +207,7 @@ RenderedText *TTFont::renderText(const std::string &text,
 #endif
 
 		// render the text surface into our texture buffer
-		for (int y = 0; y < textSurf.w; y++) {
+		for (int y = 0; y < textSurf.h; y++) {
 			byte *surfrow = (byte *)textSurf.getBasePtr(0, y);
 
 			// CHECKME: bordersize!
