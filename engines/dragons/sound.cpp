@@ -46,10 +46,6 @@ struct SpeechLocation {
 	uint16 sectorEnd;
 } SpeechLocation;
 
-Sound::Sound(DragonsEngine *vm): _vm(vm) {
-	DAT_8006bb60_sound_related = 0;
-}
-
 void CdIntToPos_0(uint32 param_1)//, byte *param_2)
 {
 	int iVar1;
@@ -77,7 +73,7 @@ void CdIntToPos_0(uint32 param_1)//, byte *param_2)
 	return;
 }
 
-void Sound::playSpeech(uint32 textIndex) {
+void SoundManager::playSpeech(uint32 textIndex) {
 	if (isSpeechPlaying()) {
 //		_vm->_mixer->stopHandle(_speechHandle);
 		return;
@@ -101,15 +97,15 @@ void Sound::playSpeech(uint32 textIndex) {
 	}
 	_audioTrack->getAudioStream()->finish();
 	_vm->setFlags(ENGINE_FLAG_8000);
-	_vm->_mixer->playStream(Audio::Mixer::kSpeechSoundType, &_speechHandle, _audioTrack->getAudioStream(), -1, 0);
+	_vm->_mixer->playStream(Audio::Mixer::kSpeechSoundType, &_speechHandle, _audioTrack->getAudioStream());
 	delete _audioTrack;
 }
 
-bool Sound::isSpeechPlaying() {
+bool SoundManager::isSpeechPlaying() {
 	return _vm->_mixer->isSoundHandleActive(_speechHandle);
 }
 
-bool Sound::getSpeechLocation(uint32 talkId, struct SpeechLocation *location) {
+bool SoundManager::getSpeechLocation(uint32 talkId, struct SpeechLocation *location) {
 	Common::File *fd = new Common::File();
 	if (!fd->open("dragon.exe")) {
 		error("Failed to open dragon.exe");
@@ -139,11 +135,11 @@ bool Sound::getSpeechLocation(uint32 talkId, struct SpeechLocation *location) {
 	return foundId;
 }
 
-void Sound::PauseCDMusic() {
+void SoundManager::PauseCDMusic() {
 	//TODO PauseCDMusic()
 }
 
-Sound::PSXAudioTrack::PSXAudioTrack(Common::SeekableReadStream *sector, Audio::Mixer::SoundType soundType) {
+SoundManager::PSXAudioTrack::PSXAudioTrack(Common::SeekableReadStream *sector, Audio::Mixer::SoundType soundType) {
 	sector->skip(19);
 	byte format = sector->readByte();
 	bool stereo = (format & (1 << 0)) != 0;
@@ -153,7 +149,7 @@ Sound::PSXAudioTrack::PSXAudioTrack(Common::SeekableReadStream *sector, Audio::M
 	memset(&_adpcmStatus, 0, sizeof(_adpcmStatus));
 }
 
-Sound::PSXAudioTrack::~PSXAudioTrack() {
+SoundManager::PSXAudioTrack::~PSXAudioTrack() {
 }
 
 // Ha! It's palindromic!
@@ -168,7 +164,7 @@ static const int s_xaTable[5][2] = {
 		{ 122, -60 }
 };
 
-void Sound::PSXAudioTrack::queueAudioFromSector(Common::SeekableReadStream *sector) {
+void SoundManager::PSXAudioTrack::queueAudioFromSector(Common::SeekableReadStream *sector) {
 	sector->skip(24);
 
 	// This XA audio is different (yet similar) from normal XA audio! Watch out!
@@ -257,6 +253,7 @@ SoundManager::SoundManager(DragonsEngine *vm, BigfileArchive *bigFileArchive, Dr
 		: _vm(vm),
 		  _bigFileArchive(bigFileArchive),
 		  _dragonRMS(dragonRMS) {
+	DAT_8006bb60_sound_related = 0;
 	// TODO: Set volumes
 	SomeInitSound_FUN_8003f64c();
 	loadMusAndGlob();

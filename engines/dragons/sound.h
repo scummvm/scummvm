@@ -35,19 +35,47 @@ class DragonRMS;
 class VabSound;
 struct SpeechLocation;
 
-class Sound {
-private:
-	DragonsEngine *_vm;
-	Audio::SoundHandle _speechHandle;
+class SoundManager {
 public:
-	uint16 DAT_8006bb60_sound_related;
+	SoundManager(DragonsEngine *vm, BigfileArchive* bigFileArchive, DragonRMS *dragonRms);
+	~SoundManager();
 
-public:
-	Sound(DragonsEngine *vm);
+	void loadMsf(uint32 sceneId);
+	void playOrStopSound(uint16 soundId);
+
 	void playSpeech(uint32 textIndex);
 	bool isSpeechPlaying();
 	void PauseCDMusic();
+
+public:
+	uint16 DAT_8006bb60_sound_related;
+
 private:
+	DragonsEngine *_vm;
+	BigfileArchive *_bigFileArchive;
+	DragonRMS *_dragonRMS;
+
+	// SOUND_ARR_DAT_80071f6c
+	uint8_t _soundArr[0x780];
+
+	VabSound* _vabMusx;
+	VabSound* _vabGlob;
+
+	Audio::SoundHandle _speechHandle;
+
+private:
+	void SomeInitSound_FUN_8003f64c();
+
+	void loadMusAndGlob();
+
+	void playSound(uint16 soundId, uint16 i);
+
+	void stopSound(uint16 id, uint16 i);
+
+	uint16 getVabFromSoundId(uint16 id);
+
+	VabSound * loadVab(const char *headerFilename, const char *bodyFilename);
+
 	bool getSpeechLocation(uint32 talkId, struct SpeechLocation *location);
 
 private:
@@ -67,39 +95,6 @@ private:
 			int16 sample[2];
 		} _adpcmStatus[2];
 	};
-};
-
-class SoundManager {
-public:
-	SoundManager(DragonsEngine *vm, BigfileArchive* bigFileArchive, DragonRMS *dragonRms);
-	~SoundManager();
-
-	void loadMsf(uint32 sceneId);
-	void playOrStopSound(uint16 soundId);
-
-private:
-	const DragonsEngine *_vm;
-	BigfileArchive *_bigFileArchive;
-	DragonRMS *_dragonRMS;
-
-	// SOUND_ARR_DAT_80071f6c
-	uint8_t _soundArr[0x780];
-
-	VabSound* _vabMusx;
-	VabSound* _vabGlob;
-
-private:
-	void SomeInitSound_FUN_8003f64c();
-
-	void loadMusAndGlob();
-
-	void playSound(uint16 soundId, uint16 i);
-
-	void stopSound(uint16 id, uint16 i);
-
-	uint16 getVabFromSoundId(uint16 id);
-
-	VabSound * loadVab(const char *headerFilename, const char *bodyFilename);
 };
 
 } // End of namespace Dragons

@@ -8,18 +8,18 @@
 #include "dragons.h"
 
 namespace Dragons {
-	VabSound::VabSound(Common::SeekableReadStream *msfData, const DragonsEngine *_vm) {
+	VabSound::VabSound(Common::SeekableReadStream *msfData, const DragonsEngine *_vm): _toneAttrs(NULL), _vbData(NULL) {
 		loadHeader(msfData);
 
 		auto dataSize = msfData->size() - msfData->pos();
 		byte *newData = new byte[dataSize];
 		msfData->read(newData, dataSize);
 
-		_vbData = new Common::MemoryReadStream(newData, dataSize, DisposeAfterUse::YES);
-
-		Audio::AudioStream *str = Audio::makeXAStream(_vbData, 11025);
-		Audio::SoundHandle _speechHandle;
-		_vm->_mixer->playStream(Audio::Mixer::kSFXSoundType, &_speechHandle, str);
+//		_vbData = new Common::MemoryReadStream(newData, dataSize, DisposeAfterUse::YES);
+//
+//		Audio::AudioStream *str = Audio::makeXAStream(_vbData, 11025);
+//		Audio::SoundHandle _speechHandle;
+//		_vm->_mixer->playStream(Audio::Mixer::kSFXSoundType, &_speechHandle, str);
 
 		delete msfData;
 	}

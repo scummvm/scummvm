@@ -31,8 +31,8 @@ MODULE_OBJS := \
 	sequenceopcodes.o \
 	specialopcodes.o \
 	sound.o \
-	VabSound.o \
-	talk.o
+	talk.o \
+	VabSound.o
 
 MODULE_DIRS += \
 	engines/dragons
