@@ -33,7 +33,7 @@ namespace Ultima8 {
 #define SAVEGAME_IDENT MKTAG('V', 'M', 'U', '8')
 #define SAVEGAME_VERSION 5
 
-SavegameReader::SavegameReader(IDataSource *ds, bool metadataOnly) : _version(0) {
+SavegameReader::SavegameReader(IDataSource *ds, bool metadataOnly) : _file(ds), _version(0) {
 	if (!MetaEngine::readSavegameHeader(ds->GetRawStream(), &_header, false))
 		return;
 
@@ -61,11 +61,10 @@ SavegameReader::SavegameReader(IDataSource *ds, bool metadataOnly) : _version(0)
 		_index[Common::String(name)] = fe;
 		ds->skip(fe._size);
 	}
-
-	delete ds;
 }
 
 SavegameReader::~SavegameReader() {
+	delete _file;
 }
 
 SavegameReader::State SavegameReader::isValid() const {
@@ -84,6 +83,9 @@ IDataSource *SavegameReader::getDataSource(const std::string &name) {
 
 	const FileEntry &fe = _index[name];
 	uint8 *data = (uint8 *)malloc(fe._size);
+	_file->seek(fe._offset);
+	_file->read(data, fe._size);
+
 	return new IBufferDataSource(data, fe._size, false, true);
 }
 
