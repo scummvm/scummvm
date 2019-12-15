@@ -25,7 +25,8 @@
 #include "engines/advancedDetector.h"
 #include "engines/engine.h"
 #include "common/savefile.h"
-
+#include "common/system.h"
+#include "common/translation.h"
 #include "lure/lure.h"
 
 namespace Lure {
@@ -62,6 +63,23 @@ static const PlainGameDescriptor lureGames[] = {
 };
 
 
+#ifdef USE_TTS
+#define GAMEOPTION_TTS_NARRATOR 	GUIO_GAMEOPTIONS1
+
+static const ADExtraGuiOptionsMap optionsList[] = {
+
+                GAMEOPTION_TTS_NARRATOR,
+		{
+			_s("TTS Narrator"),
+			_s("Use TTS to read the descriptions (if TTS is available)"),
+			"tts_narrator",
+			false
+		}
+
+};
+
+#endif
+
 namespace Lure {
 
 static const LureGameDescription gameDescriptions[] = {
@@ -73,7 +91,11 @@ static const LureGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
+                        #ifdef USE_TTS
+                        GUIO1(GAMEOPTION_TTS_NARRATOR)
+			#else
 			GUIO0()
+			#endif
 		},
 		GF_FLOPPY,
 	},
@@ -86,7 +108,12 @@ static const LureGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
+			#ifdef USE_TTS
+                        GUIO1(GAMEOPTION_TTS_NARRATOR)
+			#else
 			GUIO0()
+			#endif
+
 		},
 		GF_FLOPPY | GF_EGA,
 	},
@@ -205,7 +232,11 @@ static const LureGameDescription gameDescriptions[] = {
 
 class LureMetaEngine : public AdvancedMetaEngine {
 public:
-	LureMetaEngine() : AdvancedMetaEngine(Lure::gameDescriptions, sizeof(Lure::LureGameDescription), lureGames) {
+	LureMetaEngine() : AdvancedMetaEngine(Lure::gameDescriptions, sizeof(Lure::LureGameDescription), lureGames
+			#ifdef USE_TTS
+			, optionsList
+                        #endif
+			) {
 		_md5Bytes = 1024;
 
 		// Use kADFlagUseExtraAsHint to distinguish between EGA and VGA versions
