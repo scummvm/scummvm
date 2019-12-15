@@ -45,6 +45,10 @@ void CachedMacText::makeMacText() {
 										_textCast->_fontSize,
 										_textCast->_textSlant);
 
+	debug(5, "CachedMacText::makeMacText(): font id: %d size: %d slant: %d name: %s '%s'",
+		_textCast->_fontId, _textCast->_fontSize, _textCast->_textSlant, macFont->getName().c_str(),
+		Common::toPrintable(_textCast->_ftext).c_str());
+
 	_macText = new Graphics::MacText(_textCast->_ftext,
 										_wm,
 										macFont,
@@ -54,8 +58,6 @@ void CachedMacText::makeMacText() {
 										_align,
 										1);
 	// TODO destroy me
-
-	debug(5, "CachedMacText::makeMacText(): font id: %d '%s'", _textCast->_fontId, Common::toPrintable(_textCast->_ftext).c_str());
 }
 
 CachedMacText::CachedMacText(TextCast *const textCast,
