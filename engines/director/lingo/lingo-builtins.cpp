@@ -1180,7 +1180,7 @@ void Lingo::b_installMenu(int nargs) {
 	Graphics::MacMenu *menu = g_director->_wm->addMenu();
 	int submenu = -1;
 	Common::String submenuText;
-	//Graphics::MacMenuSubMenu *submenu = nullptr;
+	int commandId = 100;
 
 	for (const byte *s = (const byte *)menuStxt.c_str(); *s; s++) {
 		// Get next line
@@ -1210,8 +1210,14 @@ void Lingo::b_installMenu(int nargs) {
 				p++;
 
 			if (!submenuText.empty()) {
-				menu->createSubMenuFromString(submenu, submenuText.c_str(), 100);
+				submenuText += Common::String::format("[%d]", commandId);
+				commandId++;
+
+				menu->createSubMenuFromString(submenu, submenuText.c_str(), 0);
 			}
+
+			if (!strcmp(p, "@"))
+				p = "\xf0";	// Apple symbol
 
 			warning("menu: '%s'", Common::toPrintable(p).c_str());
 			submenu = menu->addMenuItem(nullptr, Common::String(p));
@@ -1238,10 +1244,10 @@ void Lingo::b_installMenu(int nargs) {
 		text.trim();
 		command.trim();
 
-		warning("text: '%s'  command: '%s'", Common::toPrintable(text).c_str(), Common::toPrintable(command).c_str());
-
-		if (!submenuText.empty())
-			submenuText += ';';
+		if (!submenuText.empty()) {
+			submenuText += Common::String::format("[%d];", commandId);
+			commandId++;
+		}
 
 		submenuText += text;
 
@@ -1250,7 +1256,11 @@ void Lingo::b_installMenu(int nargs) {
 	}
 
 	if (!submenuText.empty()) {
-		menu->createSubMenuFromString(submenu, submenuText.c_str(), 100);
+		submenuText += Common::String::format("[%d]", commandId);
+
+		menu->createSubMenuFromString(submenu, submenuText.c_str(), 0);
+
+		commandId++;
 	}
 
 	warning("STUB: b_installMenu(%d)", d.u.i);
