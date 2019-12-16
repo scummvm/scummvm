@@ -26,9 +26,7 @@
 #include "common/translation.h"
 #include "common/unzip.h"
 #include "ultima/ultima8/ultima8.h"
-#include "ultima/ultima8/ultima8.h"
 #include "ultima/ultima8/misc/pent_include.h"
-#include "ultima/ultima8/ultima8.h"
 
  //!! a lot of these includes are just for some hacks... clean up sometime
 #include "ultima/ultima8/kernel/kernel.h"
