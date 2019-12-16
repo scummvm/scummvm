@@ -592,6 +592,7 @@ public:
 private:
 	int parse(const char *code);
 	void parseMenu(const char *code);
+	Common::String genMenuHandler(int *commandId, Common::String &command);
 
 	void push(Datum d);
 	Datum pop(void);

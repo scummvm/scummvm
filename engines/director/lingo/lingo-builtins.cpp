@@ -1180,7 +1180,10 @@ void Lingo::b_installMenu(int nargs) {
 	Graphics::MacMenu *menu = g_director->_wm->addMenu();
 	int submenu = -1;
 	Common::String submenuText;
+	Common::String command;
 	int commandId = 100;
+
+	Common::String handlers;
 
 	for (const byte *s = (const byte *)menuStxt.c_str(); *s; s++) {
 		// Get next line
@@ -1209,8 +1212,9 @@ void Lingo::b_installMenu(int nargs) {
 			while (*p && (*p == ' ' || *p == '\t'))
 				p++;
 
-			if (!submenuText.empty()) {
+			if (!submenuText.empty()) { // Adding submenu for previous menu
 				submenuText += Common::String::format("[%d]", commandId);
+				handlers += g_lingo->genMenuHandler(&commandId, command);
 				commandId++;
 
 				menu->createSubMenuFromString(submenu, submenuText.c_str(), 0);
@@ -1239,13 +1243,14 @@ void Lingo::b_installMenu(int nargs) {
 		}
 
 		Common::String text(line.c_str(), p);
-		Common::String command(p + 1);
+		command = Common::String(p + 1);
 
 		text.trim();
 		command.trim();
 
 		if (!submenuText.empty()) {
 			submenuText += Common::String::format("[%d];", commandId);
+			handlers += g_lingo->genMenuHandler(&commandId, command);
 			commandId++;
 		}
 
@@ -1257,13 +1262,21 @@ void Lingo::b_installMenu(int nargs) {
 
 	if (!submenuText.empty()) {
 		submenuText += Common::String::format("[%d]", commandId);
-
+		handlers += g_lingo->genMenuHandler(&commandId, command);
 		menu->createSubMenuFromString(submenu, submenuText.c_str(), 0);
-
-		commandId++;
 	}
+}
 
-	warning("STUB: b_installMenu(%d)", d.u.i);
+Common::String Lingo::genMenuHandler(int *commandId, Common::String &command) {
+	Common::String name;
+
+	do {
+		(*commandId)++;
+
+		name = Common::String::format("scummvmMenu%d", *commandId);
+	} while (getHandler(name) != NULL);
+
+	return Common::String::format("on %s\n  %s\nend %s\n\n", name.c_str(), command.c_str(), name.c_str());
 }
 
 void Lingo::b_label(int nargs) {
