@@ -977,8 +977,10 @@ bool MacMenu::mouseClick(int x, int y) {
 				_contentIsDirty = true;
 				_wm->setFullRefresh(true);
 
-				if (_wm->_mode & kWMModalMenuMode)
+				if (_wm->_mode & kWMModalMenuMode) {
+					draw(_wm->_screen);
 					eventLoop();
+				}
 
 				return true;
 			}
@@ -1124,7 +1126,7 @@ bool MacMenu::mouseRelease(int x, int y) {
 		_activeSubItem = -1;
 		_menustack.clear();
 
-		_wm->setFullRefresh(true);
+		_wm->setFullRefresh((_wm->_mode & kWMModalMenuMode) ? false : true);
 
 		return true;
 	}
@@ -1233,8 +1235,10 @@ void MacMenu::eventLoop() {
 			draw(_wm->_screen);
 		}
 
-		g_system->updateScreen();
-		g_system->delayMillis(10);
+		if (_menuActivated) {
+			g_system->updateScreen();
+			g_system->delayMillis(10);
+		}
 	}
 }
 
