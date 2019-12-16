@@ -1062,6 +1062,9 @@ static void debug_dump_object(sc_gameref_t game, sc_int object) {
 	case OBJ_LOCKED:
 		if_print_debug(", Locked");
 		break;
+	default:
+		if_print_debug(", Unknown openness");
+		break;
 	}
 	if_print_debug_character('\n');
 

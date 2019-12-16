@@ -994,6 +994,9 @@ static sc_bool lib_can_go(sc_gameref_t game, sc_int room, sc_int direction) {
 			}
 			break;
 		}
+
+		default:
+			break;
 		}
 	}
 
@@ -2375,6 +2378,8 @@ sc_bool lib_cmd_examine_self(sc_gameref_t game) {
 		                               "You are lying down",
 		                               "I am lying down",
 		                               "%player% is lying down");
+		break;
+	default:
 		break;
 	}
 
@@ -8372,6 +8377,9 @@ sc_bool lib_cmd_locate_object(sc_gameref_t game) {
 		} else
 			pf_buffer_string(filter, "I don't know where that is.\n");
 		return TRUE;
+
+	default:
+		break;
 	}
 
 	/*
