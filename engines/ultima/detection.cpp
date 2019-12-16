@@ -21,13 +21,15 @@
  */
 
 #include "ultima/detection.h"
-#include "ultima/ultima8/ultima8.h"
 #include "base/plugins.h"
 #include "common/savefile.h"
 #include "common/str-array.h"
 #include "common/memstream.h"
 #include "common/system.h"
 #include "common/translation.h"
+#ifdef ENABLE_ULTIMA8
+#include "ultima/ultima8/ultima8.h"
+#endif
 
 static const PlainGameDescriptor ULTIMA_GAMES[] = {
 #ifdef ENABLE_ULTIMA8
@@ -63,9 +65,11 @@ bool UltimaMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGa
 	const Ultima::UltimaGameDescription *gd = (const Ultima::UltimaGameDescription *)desc;
 	if (gd) {
 		switch (gd->gameId) {
+#ifdef ENABLE_ULTIMA8
 		case Ultima::GAME_ULTIMA8:
 			*engine = new Ultima8::Ultima8Engine(syst, gd);
 			break;
+#endif
 		default:
 			error("Unsupported game specified");
 		}
