@@ -111,6 +111,8 @@ private:
 
 	void drawSubMenuArrow(ManagedSurface *dst, int x, int y, int color);
 
+	void eventLoop();
+
 	ItemArray _items;
 
 	const Font *_font;

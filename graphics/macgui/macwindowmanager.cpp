@@ -240,7 +240,6 @@ void MacWindowManager::activateMenu() {
 		return;
 
 	if (_mode & kWMModalMenuMode) {
-		warning("HHERE");
 		if (!_screenCopy)
 			_screenCopy = new ManagedSurface(*_screen);	// Create a copy
 		else

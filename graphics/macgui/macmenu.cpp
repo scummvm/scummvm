@@ -954,12 +954,16 @@ bool MacMenu::mouseClick(int x, int y) {
 					_items[_activeItem]->submenu->highlight = -1;
 				}
 
+				if (!_menuActivated)
+					_wm->activateMenu();
+
 				_menuActivated = true;
 
 				_contentIsDirty = true;
 				_wm->setFullRefresh(true);
 
-				_wm->activateMenu();
+				if (_wm->_mode & kWMModalMenuMode)
+					eventLoop();
 
 				return true;
 			}
@@ -1183,6 +1187,23 @@ void MacMenu::disableAllMenus() {
 				_items[i]->submenu->items[j]->enabled = false;
 
 	_contentIsDirty = true;
+}
+
+void MacMenu::eventLoop() {
+	_contentIsDirty = true;
+
+	while (_menuActivated) {
+		Common::Event event;
+
+		while (g_system->getEventManager()->pollEvent(event)) {
+			processEvent(event);
+
+			draw(_wm->_screen);
+		}
+
+		g_system->updateScreen();
+		g_system->delayMillis(10);
+	}
 }
 
 } // End of namespace Wage
