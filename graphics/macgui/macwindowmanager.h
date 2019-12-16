@@ -172,7 +172,7 @@ public:
 	 * Mutator to indicate that the entire desktop must be refreshed.
 	 * @param redraw Currently unused.
 	 */
-	void setFullRefresh(bool redraw) { _fullRefresh = true; }
+	void setFullRefresh(bool redraw) { _fullRefresh = redraw; }
 
 	/**
 	 * Method to draw the desktop into the screen,
