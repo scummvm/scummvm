@@ -1157,6 +1157,12 @@ void Lingo::b_importFileInto(int nargs) {
 	g_lingo->dropStack(nargs);
 }
 
+void menuCommandsCallback(int action, Common::String &text, void *data) {
+	Common::String name = Common::String::format("scummvmMenu%d", action);
+
+	g_lingo->call(name, 0);
+}
+
 void Lingo::b_installMenu(int nargs) {
 	// installMenu castNum
 	Datum d = g_lingo->pop();
@@ -1184,6 +1190,8 @@ void Lingo::b_installMenu(int nargs) {
 	int commandId = 100;
 
 	Common::String handlers;
+
+	menu->setCommandsCallback(menuCommandsCallback, g_director);
 
 	for (const byte *s = (const byte *)menuStxt.c_str(); *s; s++) {
 		// Get next line
@@ -1213,9 +1221,8 @@ void Lingo::b_installMenu(int nargs) {
 				p++;
 
 			if (!submenuText.empty()) { // Adding submenu for previous menu
-				submenuText += Common::String::format("[%d]", commandId);
 				handlers += g_lingo->genMenuHandler(&commandId, command);
-				commandId++;
+				submenuText += Common::String::format("[%d]", commandId);
 
 				menu->createSubMenuFromString(submenu, submenuText.c_str(), 0);
 			}
@@ -1223,7 +1230,6 @@ void Lingo::b_installMenu(int nargs) {
 			if (!strcmp(p, "@"))
 				p = "\xf0";	// Apple symbol
 
-			warning("menu: '%s'", Common::toPrintable(p).c_str());
 			submenu = menu->addMenuItem(nullptr, Common::String(p));
 
 			submenuText.clear();
@@ -1249,9 +1255,8 @@ void Lingo::b_installMenu(int nargs) {
 		command.trim();
 
 		if (!submenuText.empty()) {
-			submenuText += Common::String::format("[%d];", commandId);
 			handlers += g_lingo->genMenuHandler(&commandId, command);
-			commandId++;
+			submenuText += Common::String::format("[%d];", commandId);
 		}
 
 		submenuText += text;
@@ -1261,8 +1266,8 @@ void Lingo::b_installMenu(int nargs) {
 	}
 
 	if (!submenuText.empty()) {
-		submenuText += Common::String::format("[%d]", commandId);
 		handlers += g_lingo->genMenuHandler(&commandId, command);
+		submenuText += Common::String::format("[%d]", commandId);
 		menu->createSubMenuFromString(submenu, submenuText.c_str(), 0);
 	}
 
