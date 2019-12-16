@@ -1265,6 +1265,8 @@ void Lingo::b_installMenu(int nargs) {
 		handlers += g_lingo->genMenuHandler(&commandId, command);
 		menu->createSubMenuFromString(submenu, submenuText.c_str(), 0);
 	}
+
+	g_lingo->addCode(handlers.c_str(), kMovieScript, 1337);
 }
 
 Common::String Lingo::genMenuHandler(int *commandId, Common::String &command) {
