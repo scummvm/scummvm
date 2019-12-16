@@ -893,9 +893,40 @@ void Lingo::b_do(int nargs) {
 }
 
 void Lingo::b_go(int nargs) {
-	g_lingo->printSTUBWithArglist("b_go", nargs);
+	if (nargs >= 1 && nargs <= 2) {
+		Datum frame = g_lingo->pop();
+		nargs -= 1;
+		if (frame.type == STRING) {
+			if (*frame.u.s == "loop") {
+				g_lingo->func_gotoloop();
+			} else if (*frame.u.s == "next") {
+				g_lingo->func_gotonext();
+			} else if (*frame.u.s == "previous") {
+				g_lingo->func_gotoprevious();
+			} else {
+				Datum movie;
+				if (nargs > 0) {
+					movie = g_lingo->pop();
+					nargs -= 1;
+					if (movie.type != STRING) {
+						warning("b_go: movie arg should be of type STRING, not %s", movie.type2str());
+					}
+				}
+				g_lingo->func_goto(frame, movie);
+			}
+			if (nargs > 0) {
+				warning("b_go: ignoring %d extra args", nargs);
+				g_lingo->dropStack(nargs);
+			}
 
-	g_lingo->dropStack(nargs);
+		} else {
+			warning("b_go: frame arg should be of type STRING, not %s", frame.type2str());
+			g_lingo->dropStack(nargs);
+		}
+	} else {
+		warning("b_go: expected 1 or 2 args, not %d", nargs);
+		g_lingo->dropStack(nargs);
+	}
 }
 
 void Lingo::b_halt(int nargs) {
