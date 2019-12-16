@@ -2954,6 +2954,7 @@ void Magnetic::gms_command_gamma(const char *argument) {
 		gms_normal_string("Glk automatic gamma correction mode is '");
 		switch (gms_gamma_mode) {
 		case GAMMA_OFF:
+		default:
 			gms_normal_string("off");
 			break;
 		case GAMMA_NORMAL:
