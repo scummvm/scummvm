@@ -149,7 +149,7 @@ static void menuTimerHandler(void *refCon);
 
 MacWindowManager::MacWindowManager(uint32 mode) {
 	_screen = 0;
-	_screenCopy = 0;
+	_screenCopy = nullptr;
 	_lastId = 0;
 	_activeWindow = -1;
 	_needsRemoval = false;
