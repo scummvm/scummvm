@@ -40,14 +40,14 @@ namespace Ultima8 {
 // p_dynamic_cast stuff
 DEFINE_RUNTIME_CLASSTYPE_CODE(StartU8Process, Process)
 
-StartU8Process::StartU8Process(const std::string &savename_) : Process(), init(false), savename(savename_) {
-	SettingManager::get_instance()->get("skipstart", skipstart);
+StartU8Process::StartU8Process(const std::string &saveName) : Process(),
+		_init(false), _saveName(saveName), _skipStart(!saveName.empty()) {
 }
 
 
 void StartU8Process::run() {
-	if (!skipstart && !init) {
-		init = true;
+	if (!_skipStart && !_init) {
+		_init = true;
 		ProcId moviepid = Game::get_instance()->playIntroMovie();
 		Process *movieproc = Kernel::get_instance()->getProcess(moviepid);
 		if (movieproc) {
@@ -57,14 +57,14 @@ void StartU8Process::run() {
 	}
 
 	// Try to load the save game, if succeeded this pointer will no longer be valid
-	if (!savename.empty() && Ultima8Engine::get_instance()->loadGame(savename)) {
+	if (!_saveName.empty() && Ultima8Engine::get_instance()->loadGame(_saveName)) {
 		return;
 	}
 
 	CurrentMap *currentmap = World::get_instance()->getCurrentMap();
 	UCList uclist(2);
 
-	if (!skipstart) {
+	if (!_skipStart) {
 		LOOPSCRIPT(script, LS_AND(LS_SHAPE_EQUAL1(73), LS_Q_EQUAL(36)));
 		currentmap->areaSearch(&uclist, script, sizeof(script),
 		                       0, 256, false, 16188, 7500);
@@ -97,7 +97,7 @@ void StartU8Process::run() {
 		musicEgg->callUsecodeEvent_cachein();
 	}
 
-	if (!skipstart)
+	if (!_skipStart)
 		MenuGump::inputName();
 	else
 		Ultima8Engine::get_instance()->setAvatarInStasis(false);
