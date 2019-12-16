@@ -27,8 +27,14 @@ namespace Ultima8 {
 class Item;
 
 class StartU8Process : public Process {
+protected:
+	bool _init;
+	bool _skipStart;
+	std::string _saveName;
+
+	virtual void saveData(ODataSource *ods);
 public:
-	StartU8Process(const std::string &savename);
+	StartU8Process(const std::string &saveName);
 
 	// p_dynamic_cast stuff
 	ENABLE_RUNTIME_CLASSTYPE()
@@ -36,12 +42,6 @@ public:
 	virtual void run();
 
 	bool loadData(IDataSource *ids, uint32 version);
-protected:
-	virtual void saveData(ODataSource *ods);
-
-	bool init;
-	bool skipstart;
-	std::string savename;
 };
 
 } // End of namespace Ultima8
