@@ -1193,6 +1193,8 @@ void Lingo::b_installMenu(int nargs) {
 
 	menu->setCommandsCallback(menuCommandsCallback, g_director);
 
+	debugC(3, kDebugLingoExec, "installMenu: '%s'", Common::toPrintable(menuStxt).c_str());
+
 	for (const byte *s = (const byte *)menuStxt.c_str(); *s; s++) {
 		// Get next line
 		line.clear();
@@ -1221,8 +1223,10 @@ void Lingo::b_installMenu(int nargs) {
 				p++;
 
 			if (!submenuText.empty()) { // Adding submenu for previous menu
-				handlers += g_lingo->genMenuHandler(&commandId, command);
-				submenuText += Common::String::format("[%d]", commandId);
+				if (!command.empty()) {
+					handlers += g_lingo->genMenuHandler(&commandId, command);
+					submenuText += Common::String::format("[%d]", commandId);
+				}
 
 				menu->createSubMenuFromString(submenu, submenuText.c_str(), 0);
 			}
@@ -1243,20 +1247,24 @@ void Lingo::b_installMenu(int nargs) {
 		if (!p)
 			p = strchr(line.c_str(), '\xc5');
 
-		if (!p) {
-			warning("installMenu: syntax error at line %d", linenum);
-			continue;
-		}
+		Common::String text;
 
-		Common::String text(line.c_str(), p);
-		command = Common::String(p + 1);
+		if (p) {
+			text = Common::String(line.c_str(), p);
+			command = Common::String(p + 1);
+		} else {
+			text = line;
+			command = "";
+		}
 
 		text.trim();
 		command.trim();
 
 		if (!submenuText.empty()) {
-			handlers += g_lingo->genMenuHandler(&commandId, command);
-			submenuText += Common::String::format("[%d];", commandId);
+			if (!command.empty()) {
+				handlers += g_lingo->genMenuHandler(&commandId, command);
+				submenuText += Common::String::format("[%d];", commandId);
+			}
 		}
 
 		submenuText += text;
@@ -1266,8 +1274,10 @@ void Lingo::b_installMenu(int nargs) {
 	}
 
 	if (!submenuText.empty()) {
-		handlers += g_lingo->genMenuHandler(&commandId, command);
-		submenuText += Common::String::format("[%d]", commandId);
+		if (!command.empty()) {
+			handlers += g_lingo->genMenuHandler(&commandId, command);
+			submenuText += Common::String::format("[%d]", commandId);
+		}
 		menu->createSubMenuFromString(submenu, submenuText.c_str(), 0);
 	}
 
