@@ -1719,6 +1719,9 @@ case YY_STATE_EOF(INITIAL):
 				yy_cp = (yy_c_buf_p);
 				yy_bp = (yytext_ptr) + YY_MORE_ADJ;
 				goto yy_find_action;
+
+			default:
+				break;
 			}
 		break;
 		}
