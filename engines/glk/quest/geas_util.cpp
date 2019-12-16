@@ -93,6 +93,8 @@ int eval_int(String s) {
 	case '/':
 		return arg1 / arg2;
 		// TODO: division should use accountant's round
+	default:
+		break;
 	}
 	return 0;
 }
