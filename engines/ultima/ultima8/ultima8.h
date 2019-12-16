@@ -102,9 +102,10 @@ private:
 	bool loadData();
 
 	// Load and save games from arbitrary filenames from the console
-	static void ConCmd_saveGame(const Console::ArgvType &argv);         //!< "Ultima8Engine::saveGame <filename>" console command
-	static void ConCmd_loadGame(const Console::ArgvType &argv);         //!< "Ultima8Engine::loadGame <filename>" console command
+	static void ConCmd_saveGame(const Console::ArgvType &argv);         //!< "Ultima8Engine::saveGame <optional filename>" console command
+	static void ConCmd_loadGame(const Console::ArgvType &argv);         //!< "Ultima8Engine::loadGame <optional filename>" console command
 	static void ConCmd_newGame(const Console::ArgvType &argv);          //!< "Ultima8Engine::newGame" console command
+	static void ConCmd_ForceQuit(const Console::ArgvType &argv);
 
 	static void ConCmd_quit(const Console::ArgvType &argv);             //!< "quit" console command
 
@@ -112,7 +113,6 @@ private:
 	static void ConCmd_listGames(const Console::ArgvType &argv);            //!< "Ultima8Engine::listGames" console command
 
 	static void ConCmd_setVideoMode(const Console::ArgvType &argv);     //!< "Ultima8Engine::setVideoMode" console command
-	static void ConCmd_toggleFullscreen(const Console::ArgvType &argv); //!< "Ultima8Engine::toggleFullscreen" console command
 
 	// This should be a console variable once they are implemented
 	bool drawRenderStats;

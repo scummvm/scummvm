@@ -207,7 +207,6 @@ bool Ultima8Engine::initialize() {
 
 	con->AddConsoleCommand("Ultima8Engine::memberVar", &Ultima8Engine::ConCmd_memberVar);
 	con->AddConsoleCommand("Ultima8Engine::setVideoMode", ConCmd_setVideoMode);
-	con->AddConsoleCommand("Ultima8Engine::toggleFullscreen", ConCmd_toggleFullscreen);
 
 	con->AddConsoleCommand("Ultima8Engine::toggleAvatarInStasis", ConCmd_toggleAvatarInStasis);
 	con->AddConsoleCommand("Ultima8Engine::togglePaintEditorItems", ConCmd_togglePaintEditorItems);
@@ -327,7 +326,6 @@ void Ultima8Engine::deinitialize() {
 
 	con->RemoveConsoleCommand(Ultima8Engine::ConCmd_memberVar);
 	con->RemoveConsoleCommand(Ultima8Engine::ConCmd_setVideoMode);
-	con->RemoveConsoleCommand(Ultima8Engine::ConCmd_toggleFullscreen);
 
 	con->RemoveConsoleCommand(Ultima8Engine::ConCmd_toggleAvatarInStasis);
 	con->RemoveConsoleCommand(Ultima8Engine::ConCmd_togglePaintEditorItems);
@@ -1131,32 +1129,16 @@ void Ultima8Engine::leaveTextMode(Gump *gump) {
 void Ultima8Engine::handleEvent(const Common::Event &event) {
 	uint32 now = g_system->getMillis();
 	HID_Key key = HID_LAST;
-	HID_Event evn = HID_EVENT_LAST;
+	uint16 evn = HID_EVENT_LAST;
 	bool handled = false;
 
 	switch (event.type) {
 	case Common::EVENT_KEYDOWN:
 		key = HID_translateSDLKey(event.kbd.keycode);
-		evn = HID_EVENT_DEPRESS;
+		evn = HID_translateSDLKeyFlags(event.kbd.flags);
 		break;
 	case Common::EVENT_KEYUP:
-		key = HID_translateSDLKey(event.kbd.keycode);
-		evn = HID_EVENT_RELEASE;
-		if (_mouse->dragging() == Mouse::DRAG_NOT) {
-			switch (event.kbd.keycode) {
-			case Common::KEYCODE_q: // Quick quit
-#ifndef MACOSX
-				if (event.kbd.flags & Common::KBD_CTRL)
-					ForceQuit();
-#else
-				if (event.kbd.flags & Common::KBD_META)
-					ForceQuit();
-#endif
-				return;
-			default:
-				break;
-			}
-		}
+		// Any system keys not in the bindings can be handled here
 		break;
 
 	case Common::EVENT_LBUTTONDOWN:
@@ -1301,6 +1283,9 @@ void Ultima8Engine::handleEvent(const Common::Event &event) {
 			break;
 
 		// Any special key handling goes here
+		if ((event.kbd.keycode == Common::KEYCODE_x || event.kbd.keycode == Common::KEYCODE_x) &&
+			(event.kbd.flags & (Common::KBD_CTRL | Common::KBD_ALT | Common::KBD_META)) != 0)
+			ForceQuit();
 		break;
 
 	default:
@@ -1851,7 +1836,6 @@ void Ultima8Engine::ConCmd_newGame(const Console::ArgvType &argv) {
 	Ultima8Engine::get_instance()->newGame(std::string());
 }
 
-
 void Ultima8Engine::ConCmd_quit(const Console::ArgvType &argv) {
 	Ultima8Engine::get_instance()->isRunning = false;
 }
@@ -1912,10 +1896,6 @@ void Ultima8Engine::ConCmd_setVideoMode(const Console::ArgvType &argv) {
 	}
 
 	Ultima8Engine::get_instance()->changeVideoMode(strtol(argv[1].c_str(), 0, 0), strtol(argv[2].c_str(), 0, 0), fullscreen);
-}
-
-void Ultima8Engine::ConCmd_toggleFullscreen(const Console::ArgvType &argv) {
-	Ultima8Engine::get_instance()->changeVideoMode(-1, -1, -2);
 }
 
 void Ultima8Engine::ConCmd_toggleAvatarInStasis(const Console::ArgvType &argv) {

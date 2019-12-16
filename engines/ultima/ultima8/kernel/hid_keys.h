@@ -165,13 +165,6 @@ enum HID_Key {
 	HID_PAUSE,
 	HID_ESCAPE,
 
-	HID_LEFTSHIFT,
-	HID_RIGHTSHIFT,
-	HID_LEFTCONTROL,
-	HID_RIGHTCONTROL,
-	HID_LEFTALT,
-	HID_RIGHTALT,
-
 	/* Mouse Buttons */
 	HID_MOUSE1,
 	HID_MOUSE2,
@@ -224,11 +217,18 @@ enum HID_Event {
 	HID_EVENT_DOUBLE,
 	HID_EVENT_CLICK,
 	HID_EVENT_PREEMPT,
-	HID_EVENT_LAST
+	HID_EVENT_LAST,
+	HID_FLAGS_CTRL = 0x100,
+	HID_FLAGS_ALT = 0x200,
+	HID_FLAGS_SHIFT = 0x400,
+	HID_FLAGS_META = 0x800,
+	HID_FLAGS_LAST = 0xffff
 };
+typedef uint16 HID_Events;
 
-const char *HID_GetEventName(HID_Event event);
-HID_Event HID_GetEventFromName(Pentagram::istring &name);
+HID_Events HID_translateSDLKeyFlags(byte flags);
+const char *HID_GetEventsName(HID_Events event);
+HID_Events HID_GetEventFromName(const Pentagram::istring &name);
 
 } // End of namespace Ultima8
 

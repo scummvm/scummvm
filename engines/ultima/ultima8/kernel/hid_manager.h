@@ -32,20 +32,27 @@ namespace Ultima8 {
 
 //! Responsible to loading the keybindings and storing them
 class HIDManager {
+private:
+	static HIDManager *_hidManager;
+	std::vector<Console::ArgvType *> _commands;
+	typedef Common::HashMap<uint32, Console::ArgvType *> Bindings;
+	Bindings _bindings;
+
+	void listBindings();
 public:
 	HIDManager();
 	~HIDManager();
 
 	//! obtain the singleton instance of the HIDManager
 	static HIDManager *get_instance() {
-		return hidmanager;
+		return _hidManager;
 	}
 
 	//! execute the Console command associated with the event
 	//! \param key a HID_KEY used to find an appropriate Console command
-	//! \param evn a HID_Event used to find an appropriate Console command
+	//! \param events is a bitset of event/flags
 	//! \return true if a console command is executed
-	bool handleEvent(const HID_Key key, const HID_Event evn);
+	bool handleEvent(HID_Key key, HID_Events events);
 
 	//! Reset the keybindings
 	void resetBindings();
@@ -62,8 +69,8 @@ public:
 	void bind(const Pentagram::istring &control, const Console::ArgvType &argv);
 
 	void bind(const Pentagram::istring &control, const Console::ArgsType &args);
-	void bind(HID_Key key, HID_Event event, const Console::ArgvType &argv);
-	void bind(HID_Key key, HID_Event event, const Console::ArgsType &args);
+	void bind(HID_Key key, HID_Events event, const Console::ArgvType &argv);
+	void bind(HID_Key key, HID_Events event, const Console::ArgsType &args);
 
 	//! removes all controls to a HIDBinding or the binding to one specified key
 	//! \param bindingName name of a HIDBinding or the name of key
@@ -80,14 +87,6 @@ public:
 
 	//! "save" console command
 	static void ConCmd_save(const Console::ArgvType &argv);
-
-private:
-	void listBindings();
-
-	std::vector<Console::ArgvType *> commands;
-	Console::ArgvType *bindings[HID_LAST][HID_EVENT_LAST];
-
-	static HIDManager *hidmanager;
 };
 
 } // End of namespace Ultima8
