@@ -253,52 +253,6 @@ void Normal3x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPit
 	}
 }
 
-#define interpolate_1_1		interpolate16_1_1<ColorMask>
-#define interpolate_1_1_1_1	interpolate16_1_1_1_1<ColorMask>
-
-/**
- * Trivial nearest-neighbor 1.5x scaler.
- */
-template<typename ColorMask>
-void Normal1o5xTemplate(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch,
-							int width, int height) {
-	uint8 *r;
-	const uint32 dstPitch2 = dstPitch * 2;
-	const uint32 dstPitch3 = dstPitch * 3;
-	const uint32 srcPitch2 = srcPitch * 2;
-
-	assert(IS_ALIGNED(dstPtr, 2));
-	while (height > 0) {
-		r = dstPtr;
-		for (int i = 0; i < width; i += 2, r += 6) {
-			uint16 color0 = *(((const uint16 *)srcPtr) + i);
-			uint16 color1 = *(((const uint16 *)srcPtr) + i + 1);
-			uint16 color2 = *(((const uint16 *)(srcPtr + srcPitch)) + i);
-			uint16 color3 = *(((const uint16 *)(srcPtr + srcPitch)) + i + 1);
-
-			*(uint16 *)(r + 0) = color0;
-			*(uint16 *)(r + 2) = interpolate_1_1(color0, color1);
-			*(uint16 *)(r + 4) = color1;
-			*(uint16 *)(r + 0 + dstPitch) = interpolate_1_1(color0, color2);
-			*(uint16 *)(r + 2 + dstPitch) = interpolate_1_1_1_1(color0, color1, color2, color3);
-			*(uint16 *)(r + 4 + dstPitch) = interpolate_1_1(color1, color3);
-			*(uint16 *)(r + 0 + dstPitch2) = color2;
-			*(uint16 *)(r + 2 + dstPitch2) = interpolate_1_1(color2, color3);
-			*(uint16 *)(r + 4 + dstPitch2) = color3;
-		}
-		srcPtr += srcPitch2;
-		dstPtr += dstPitch3;
-		height -= 2;
-	}
-}
-
-void Normal1o5x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, int width, int height) {
-	if (gBitFormat == 565)
-		Normal1o5xTemplate<Graphics::ColorMasks<565> >(srcPtr, srcPitch, dstPtr, dstPitch, width, height);
-	else
-		Normal1o5xTemplate<Graphics::ColorMasks<555> >(srcPtr, srcPitch, dstPtr, dstPitch, width, height);
-}
-
 /**
  * The Scale2x filter, also known as AdvMame2x.
  * See also http://scale2x.sourceforge.net
