@@ -393,13 +393,13 @@ int main(int argc, char *argv[]) {
 	bool updatesEnabled = false, curlEnabled = false, sdlnetEnabled = false, ttsEnabled = false;
 	for (FeatureList::const_iterator i = setup.features.begin(); i != setup.features.end(); ++i) {
 		if (i->enable) {
-			if (!strcmp(i->name, "updates"))
+			if (!updatesEnabled && !strcmp(i->name, "updates"))
 				updatesEnabled = true;
-			else if (!strcmp(i->name, "libcurl"))
+			else if (!curlEnabled && !strcmp(i->name, "libcurl"))
 				curlEnabled = true;
-			else if (!strcmp(i->name, "sdlnet"))
+			else if (!sdlnetEnabled && !strcmp(i->name, "sdlnet"))
 				sdlnetEnabled = true;
-			else if (!strcmp(i->name, "tts"))
+			else if (!ttsEnabled && !strcmp(i->name, "tts"))
 				ttsEnabled = true;
 		}
 	}
@@ -423,11 +423,10 @@ int main(int argc, char *argv[]) {
 		if (sdlnetEnabled) {
 			setup.libraries.push_back("iphlpapi");
 		}
+		if (ttsEnabled) {
+			setup.libraries.push_back("sapi");
+		}
 		setup.libraries.push_back("winmm");
-	}
-
-	if (ttsEnabled) {
-		setup.libraries.push_back("sapi");
 	}
 
 	setup.defines.push_back("SDL_BACKEND");
@@ -1095,7 +1094,7 @@ const Feature s_features[] = {
 	{      "langdetect",                "USE_DETECTLANG",  "", true,  "System language detection support" }, // This feature actually depends on "translation", there
 	                                                                                                         // is just no current way of properly detecting this...
 	{    "text-console", "USE_TEXT_CONSOLE_FOR_DEBUGGER",  "", false, "Text console debugger" }, // This feature is always applied in xcode projects
-	{             "tts",                       "USE_TTS",  "", true, "Text to speech support"}
+	{             "tts",                       "USE_TTS",  "", true,  "Text to speech support"}
 };
 
 const Tool s_tools[] = {
