@@ -3426,6 +3426,8 @@ int select_next() {
 				}
 			}
 			break;
+		default:
+			break;
 		}
 	}
 
