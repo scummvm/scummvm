@@ -71,6 +71,9 @@ AssetInputStream::AssetInputStream(AAssetManager *as, const Common::String &path
 }
 
 AssetInputStream::~AssetInputStream() {
+	if (_asset != NULL) {
+		AAsset_close(_asset);
+	}
 }
 
 void AssetInputStream::close() {

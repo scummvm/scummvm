@@ -41,8 +41,22 @@ AbstractFSNode *POSIXFilesystemFactory::makeRootFileNode() const {
 }
 
 AbstractFSNode *POSIXFilesystemFactory::makeCurrentDirectoryFileNode() const {
+#if defined(__ANDROID__)
+	// For Android it does not make sense to have "." in Search Manager as a current directory file node, so we skip it here
+	// Otherwise this can potentially lead to a crash since, in Android getcwd() returns the root path "/"
+	// and when SearchMan is used (eg. SearchSet::createReadStreamForMember) and it tries to search root path (and calls POSIXFilesystemNode::getChildren())
+	// then a JNI call is made (JNI::getAllStorageLocations()) which leads to a crash if done from the wrong context -- and is also useless overhead as a call in that case.
+	// This fixes the error case: Loading "Beneath A Steel Sky" with Adlib or FluidSynth audio once, exiting to Launcher via in-game ScummVM menu and re-launching the game.
+	// Don't return NULL here, since it causes crash with other engines (eg. Blade Runner)
+	// Returning '.' here will cause POSIXFilesystemNode::getChildren() to ignore it
+	//
+	// We also skip adding the '.' directory to SearchManager (in archive.cpp, SearchManager::clear())
+	char buf[MAXPATHLEN] = {'.', '\0'};
+	return new POSIXFilesystemNode(buf);
+#else
 	char buf[MAXPATHLEN];
 	return getcwd(buf, MAXPATHLEN) ? new POSIXFilesystemNode(buf) : NULL;
+#endif
 }
 
 AbstractFSNode *POSIXFilesystemFactory::makeFileNodePath(const Common::String &path) const {
