@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: Prince\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2018-04-17 19:53+0100\n"
-"PO-Revision-Date: 2019-12-15 06:26+0000\n"
+"PO-Revision-Date: 2019-12-16 15:49+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: English <https://translations.scummvm.org/projects/prince/"
 "prince/en/>\n"
@@ -5434,7 +5434,7 @@ msgstr "OTHER: Again we've got a problem."
 
 #: dialog0159.txt:4
 msgid "OTHER: Chętnie posłucham, tylko mów|szybko i krótko."
-msgstr ""
+msgstr "OTHER: I'd love to listen, just speak|quickly and briefly."
 
 #: dialog0159.txt:5
 msgid "HERO: Smok."
@@ -5491,18 +5491,21 @@ msgstr "OTHER: Easy, easy."
 #: dialog0159.txt:18
 msgid "OTHER: Zaraz znajdziemy się w najcudowniejszym|miejscu na świecie."
 msgstr ""
+"OTHER: Now we will find ourselves in the most wonderful|place in the world."
 
 #: dialog0159.txt:19
 msgid "OTHER: W przewspaniałej, przeogromnej Silmanionie!"
-msgstr ""
+msgstr "OTHER: In a magnificent, enormous Silmanion!"
 
 #: dialog0160.txt:1
 msgid "HERO: Co właściwie jest w Silmanionie?"
-msgstr ""
+msgstr "HERO: What exactly is in Silmanion?"
 
 #: dialog0160.txt:2
 msgid "OTHER: Kolebka wiedzy. Miejsce studiów największych|magów. Największa biblioteka świata."
 msgstr ""
+"OTHER: Cradle of knowledge. Place of study of the greatest|magicians. The "
+"world's largest library."
 
 #: dialog0161.txt:1
 msgid "OTHER: Kahem."
@@ -5510,11 +5513,11 @@ msgstr ""
 
 #: dialog0161.txt:2
 msgid "OTHER: No cóż."
-msgstr ""
+msgstr "OTHER: Well."
 
 #: dialog0161.txt:3
 msgid "OTHER: Latka lecą."
-msgstr ""
+msgstr "OTHER: Years are flying by."
 
 #: dialog0162.txt:1
 msgid "OTHER: Na szczycie jednej ze ścian jest chyba księga,|której potrzebujemy."
@@ -5535,22 +5538,24 @@ msgstr ""
 #: dialog0163.txt:3
 msgid "OTHER: Jak tylko wypowiesz \"Yukkakoppamakki\",|staniesz się na sekundę silny jak troll!"
 msgstr ""
+"OTHER: As soon as you pronounce \"Yukkakoppamakki\",|for a moment you will "
+"become as strong as a troll!"
 
 #: dialog0163.txt:4
 msgid "OTHER: O właśnie."
-msgstr ""
+msgstr "OTHER: Exactly."
 
 #: dialog0163.txt:5
 msgid "OTHER: Chyba domyślasz się, co wtedy trzeba|zrobić..."
-msgstr ""
+msgstr "OTHER: You must be guessing what to do|then..."
 
 #: dialog0163.txt:6
 msgid "HERO: Yukkakopp?..."
-msgstr ""
+msgstr "HERO: Yukkakopp?..."
 
 #: dialog0163.txt:7
 msgid "OTHER: Sza! Nie marnuj czaru na byle okazję!"
-msgstr ""
+msgstr "OTHER: Shhh! Don't waste your magic on any occasion!"
 
 #: dialog0164.txt:1
 msgid "HERO: Jest tak zafascynowany lekturą,|że żal przerywać."
@@ -5574,75 +5579,76 @@ msgstr ""
 
 #: dialog0165.txt:4
 msgid "OTHER: Nieudane eksperymenty, dodajmy."
-msgstr ""
+msgstr "OTHER: Failed experiments, by the way."
 
 #: dialog0165.txt:5
 msgid "OTHER: Chyba że ktoś umyślnie chciał zniszczyć|Silmanionę..."
-msgstr ""
+msgstr "OTHER: Unless someone intentionally wanted to destroy|Silmanion..."
 
 #: dialog0166.txt:1
 msgid "OTHER: Po opowiedzeniu całej historii..."
-msgstr ""
+msgstr "OTHER: After telling the whole story..."
 
 #: dialog0167.txt:1
 msgid "OTHER: No, no..."
-msgstr ""
+msgstr "OTHER: No, no..."
 
 #: dialog0167.txt:2
 msgid "OTHER: Zdaje się, że pomóc ci może tylko|jeden czło... Hm, demon."
 msgstr ""
+"OTHER: It seems that help could be provided|only by some hu...Hm, demon."
 
 #: dialog0167.txt:3
 msgid "OTHER: A nawet demon nad demonami."
-msgstr ""
+msgstr "OTHER: And even demon over demons."
 
 #: dialog0167.txt:4
 msgid "OTHER: W skrócie: szef Piekła."
-msgstr ""
+msgstr "OTHER: In short, the chief of Hell."
 
 #: dialog0167.txt:5
 msgid "OTHER: Lucyfer."
-msgstr ""
+msgstr "OTHER: Lucifer."
 
 #: dialog0167.txt:6
 msgid "P#OTHER: No, no..."
-msgstr ""
+msgstr "P#OTHER: No, no..."
 
 #: dialog0167.txt:7
 msgid "OTHER: Dostać się do Piekła to nie taka|prosta sprawa."
-msgstr ""
+msgstr "OTHER: Getting to Hell is not such|a simple matter."
 
 #: dialog0167.txt:8
 msgid "OTHER: Ja tam, na przykład, nigdy nie|byłem."
-msgstr ""
+msgstr "OTHER: I have never been there,|for example."
 
 #: dialog0167.txt:9
 msgid "OTHER: A byłem w naprawdę wielu|miejscach."
-msgstr ""
+msgstr "OTHER: And I've been to so many|places."
 
 #: dialog0167.txt:10
 msgid "HERO: Do Piekła?!"
-msgstr ""
+msgstr "HERO: To Hell?!"
 
 #: dialog0167.txt:11
 msgid "HERO: Chyba gorzej już nie mogło być..."
-msgstr ""
+msgstr "HERO: I guess it couldn't be worse..."
 
 #: dialog0167.txt:12
 msgid "OTHER: Wierz mi: mogło."
-msgstr ""
+msgstr "OTHER: Believe me: it could."
 
 #: dialog0168.txt:1
 msgid "HERO: Sam sobie nie poradzę!"
-msgstr ""
+msgstr "HERO: I can't do it alone!"
 
 #: dialog0168.txt:2
 msgid "HERO: Pomo..."
-msgstr ""
+msgstr "HERO: Give me some hel..."
 
 #: dialog0168.txt:3
 msgid "OTHER: Powtarzasz się. Bądź mężczyzną|i weź się w garść."
-msgstr ""
+msgstr "OTHER: You're repeating yourself. Be a man|and bite the bullet."
 
 #: dialog0168.txt:4
 msgid "OTHER: Jak nie będziesz skomlał tylko działał,|to na pewno sobie poradzisz."
@@ -5666,7 +5672,7 @@ msgstr ""
 
 #: dialog0168.txt:9
 msgid "OTHER: Zgoda?"
-msgstr ""
+msgstr "OTHER: Agreed?"
 
 #: dialog0168.txt:10
 msgid "P#HERO: <westchnienie>"
@@ -5674,7 +5680,7 @@ msgstr ""
 
 #: dialog0168.txt:11
 msgid "HERO: Zgoda."
-msgstr ""
+msgstr "HERO: Agreed."
 
 #: dialog0168.txt:12
 msgid "HERO: Ale jak będę miał coś naprawdę ważnego..."
@@ -5682,7 +5688,7 @@ msgstr ""
 
 #: dialog0168.txt:13
 msgid "OTHER: To wal jak w dym."
-msgstr ""
+msgstr "OTHER: Go ahead."
 
 #: dialog0169.txt:1
 msgid "HERO: Witam!"
@@ -5710,11 +5716,11 @@ msgstr ""
 
 #: dialog0172.txt:2
 msgid "OTHER: O nie..."
-msgstr ""
+msgstr "OTHER: Oh no..."
 
 #: dialog0172.txt:3
 msgid "OTHER: To nie tak..."
-msgstr ""
+msgstr "OTHER: It's not like that..."
 
 #: dialog0172.txt:4
 msgid "OTHER: Potrafię odnajdywać rzeczy, ale muszę|wiedzieć, jak wyglądają."
@@ -5722,23 +5728,23 @@ msgstr ""
 
 #: dialog0172.txt:5
 msgid "OTHER: Owszem, do uzyskania wizji potrzebna jest|jakaś rzecz..."
-msgstr ""
+msgstr "OTHER: In short, to get the vision you need|some thing..."
 
 #: dialog0172.txt:6
 msgid "OTHER: ...rzecz..."
-msgstr ""
+msgstr "OTHER: ...thing..."
 
 #: dialog0172.txt:7
 msgid "OTHER: ...eee..."
-msgstr ""
+msgstr "OTHER: ...errrr..."
 
 #: dialog0172.txt:8
 msgid "HERO: Obiektu?"
-msgstr ""
+msgstr "HERO: Object?"
 
 #: dialog0172.txt:9
 msgid "OTHER: ...obiektu, ale tylko jako pomoc."
-msgstr ""
+msgstr "OTHER: ...object, but only as a helper."
 
 #: dialog0172.txt:10
 msgid "OTHER: Najpierw opowiedz mi, jak wygląda, to czego|mam szukać, a potem spróbujemy to znaleźć."
@@ -5762,7 +5768,7 @@ msgstr ""
 
 #: dialog0173.txt:1
 msgid "HERO: Sklep otwarty, czyżby studia nad księgą|zostały zakończone?"
-msgstr "HERO: E¥t jnrhskcz vfufpby? F pfyznbz gj rybut pfrjyxbkbcm?"
+msgstr "HERO: The store is open, have studies on the book|been completed?"
 
 #: dialog0173.txt:2
 msgid "OTHER: Ech, książę, nadal masz powietrze w głowie."
@@ -5835,14 +5841,17 @@ msgstr "HERO: Learn."
 #: dialog0173.txt:19
 msgid "HERO: Nie uganiać już więcej za dziewczętami, tylko|poświęcić sprawom poważnym i wzniosłym."
 msgstr ""
+"HERO: Stop chasing after girls anymore, just sacrifice|myself to the serious "
+"and sublime matters."
 
 #: dialog0173.txt:20
 msgid "HERO: Na przykład nauce."
-msgstr ""
+msgstr "HERO: For instance, science."
 
 #: dialog0174.txt:1
 msgid "OTHER: Jestem zdumiony i wzruszony. Skoro tak się|sprawy mają nie mogę ci odmówić."
 msgstr ""
+"OTHER: I am amazed and touched. If this is the case,|I can't refuse you."
 
 #: dialog0174.txt:2
 msgid "OTHER: Poczekaj tu chwilkę."
@@ -7394,7 +7403,7 @@ msgstr ""
 
 #: dialog0233.txt:5
 msgid "P#HERO: <westchnienie>"
-msgstr ""
+msgstr "P#HERO: <sigh>"
 
 #: dialog0233.txt:6
 msgid "P#HERO: <ciężkie westchnienie>"
