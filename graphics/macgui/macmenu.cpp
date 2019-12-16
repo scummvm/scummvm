@@ -488,8 +488,24 @@ void MacMenu::createSubMenuFromString(int id, const char *str, int commandId) {
 		submenu = addSubMenu(nullptr, id);
 
 	for (uint i = 0; i < string.size(); i++) {
-		while(i < string.size() && string[i] != ';') // Read token
+		while (i < string.size() && string[i] != ';') // Read token
 			item += string[i++];
+
+		if (item.lastChar() == ']') { // we have command id
+			item.deleteLastChar();
+
+			const char *p = strrchr(item.c_str(), '[');
+
+			p++;
+
+			if (p == NULL) {
+				error("MacMenu::createSubMenuFromString(): Malformed menu item: '%s', bad format for actionId", item.c_str());
+			}
+
+			commandId = atoi(p);
+
+			item = Common::String(item.c_str(), p - 1);
+		}
 
 		if (item == "(-") {
 			addMenuItem(submenu, NULL, 0);
@@ -504,7 +520,7 @@ void MacMenu::createSubMenuFromString(int id, const char *str, int commandId) {
 					item.deleteChar(shortPtr - item.c_str());
 					item.deleteChar(shortPtr - item.c_str());
 				} else {
-					error("Unexpected shortcut: '%s', item '%s' in menu '%s'", shortPtr, item.c_str(), string.c_str());
+					error("MacMenu::createSubMenuFromString(): Unexpected shortcut: '%s', item '%s' in menu '%s'", shortPtr, item.c_str(), string.c_str());
 				}
 			}
 
