@@ -239,6 +239,15 @@ void MacWindowManager::activateMenu() {
 	if (!_menu)
 		return;
 
+	if (_mode & kWMModalMenuMode) {
+		warning("HHERE");
+		if (!_screenCopy)
+			_screenCopy = new ManagedSurface(*_screen);	// Create a copy
+		else
+			*_screenCopy = *_screen;
+		pauseEngine(true);
+	}
+
 	_menu->setVisible(true);
 }
 
@@ -355,13 +364,6 @@ static void menuTimerHandler(void *refCon) {
 
 	if (wm->_menuHotzone.contains(wm->_lastMousePos)) {
 		wm->activateMenu();
-		if (wm->_mode & kWMModalMenuMode) {
-			if (!wm->_screenCopy)
-				wm->_screenCopy = new ManagedSurface(*wm->_screen);	// Create a copy
-			else
-				*wm->_screenCopy = *wm->_screen;
-			wm->pauseEngine(true);
-		}
 	}
 
 	wm->_menuTimerActive = false;
@@ -539,6 +541,8 @@ void MacWindowManager::passPalette(const byte *pal, uint size) {
 void MacWindowManager::pauseEngine(bool pause) {
 	if (_engineP && _pauseEngineCallback) {
 		_pauseEngineCallback(_engineP, pause);
+	} else {
+		warning("MacWindowManager::pauseEngine(): no pauseEngineCallback is set");
 	}
 }
 

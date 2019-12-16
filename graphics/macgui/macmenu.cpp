@@ -959,6 +959,8 @@ bool MacMenu::mouseClick(int x, int y) {
 				_contentIsDirty = true;
 				_wm->setFullRefresh(true);
 
+				_wm->activateMenu();
+
 				return true;
 			}
 	}

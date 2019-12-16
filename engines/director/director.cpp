@@ -124,7 +124,7 @@ Common::Error DirectorEngine::run() {
 	_macBinary = nullptr;
 	_soundManager = nullptr;
 
-	_wm = new Graphics::MacWindowManager;
+	_wm = new Graphics::MacWindowManager(Graphics::kWMModalMenuMode);
 
 	_lingo = new Lingo(this);
 	_soundManager = new DirectorSound();
