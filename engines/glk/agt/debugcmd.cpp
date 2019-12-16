@@ -182,6 +182,8 @@ static void var_edit(int vtype)
 		case 2:
 			writeln("Flags ( f=false [OFF]  and t=true [ON] )");
 			break;
+		default:
+			break;
 		}
 		writeln("");
 		for (i = 0; i <= imax; i++) {
@@ -194,6 +196,8 @@ static void var_edit(int vtype)
 				break;
 			case 2:
 				sprintf(sbuff, "%3d%c", i, flag[i] ? 't' : 'f');
+				break;
+			default:
 				break;
 			}
 			writetbl(sbuff, (vtype == 2) ? 5 : 20);
@@ -210,6 +214,8 @@ static void var_edit(int vtype)
 				break;
 			case 2:
 				writestr("Flag to toggle");
+				break;
+			default:
 				break;
 			}
 			writestr(" (-1 to quit): ");
@@ -300,6 +306,8 @@ static void writegender(const char *gendername, uchar genderval) {
 		break;
 	case 0:
 		writestr("Thing");
+		break;
+	default:
 		break;
 	}
 	next_col();

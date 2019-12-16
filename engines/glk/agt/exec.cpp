@@ -106,6 +106,8 @@ void set_statline() {
 	case 5:
 		sprintf(r_stat, "Score: %ld", tscore);
 		break;
+	default:
+		break;
 	}
 }
 
@@ -204,6 +206,7 @@ static word it_pronoun(int item, rbool ind_form)
 	if (tcreat(item))
 		switch (creature[item - first_creat].gender) {
 		case 0:
+		default:
 			return ext_code[wit];
 		case 1:
 			return (ind_form ? ext_code[wher] : ext_code[wshe]);
@@ -484,6 +487,7 @@ static char *wordvar_match(const char **pvarname, char match_type,
 		/* Now need to fix capitalization */
 		switch (capstate(start)) {
 		case 0:
+		default:
 			break; /* $word$ */
 		case 1:  /* $WORD$ */
 			for (i = 0; fill_buff[i] != '\0'; i++)
@@ -1242,6 +1246,8 @@ static void set_pronoun(int item) {
 		break;
 	case 2:
 		last_he = item;
+		break;
+	default:
 		break;
 	}
 }
