@@ -30,15 +30,13 @@
 
 namespace Ultima8 {
 
-HIDManager *HIDManager::hidmanager = 0;
+HIDManager *HIDManager::_hidManager = 0;
 
 HIDManager::HIDManager() {
+	_hidManager = this;
 	con->Print(MM_INFO, "Creating HIDManager...\n");
 
-	hidmanager = this;
-
 	InitJoystick();
-
 	resetBindings();
 }
 
@@ -46,47 +44,40 @@ HIDManager::~HIDManager() {
 	std::vector<Console::ArgvType *>::iterator it;
 	con->Print(MM_INFO, "Destroying HIDManager...\n");
 
-	for (it = commands.begin(); it != commands.end(); ++it) {
+	for (it = _commands.begin(); it != _commands.end(); ++it) {
 		if (*it) {
 			delete *it;
 		}
 	}
-	commands.clear();
+	_commands.clear();
 
 	ShutdownJoystick();
-	hidmanager = 0;
+	_hidManager = 0;
 }
 
-bool HIDManager::handleEvent(const HID_Key key, const HID_Event evn) {
+bool HIDManager::handleEvent(HID_Key key, HID_Events events) {
 	bool handled = false;
+	uint32 keyEvent = (uint32)key | ((uint32)events << 16);
 
-	if (key < HID_LAST && evn < HID_EVENT_LAST) {
-		Console::ArgvType *command = bindings[key][evn];
-		if (command) {
-			con->ExecuteConsoleCommand(*command);
-			handled = true;
-		}
+ 	if (_bindings.contains(keyEvent)) {
+		con->ExecuteConsoleCommand(*_bindings[keyEvent]);
+		handled = true;
 	}
 
 	return handled;
 }
 
 void HIDManager::resetBindings() {
-	uint16 key, event;
 	std::vector<Console::ArgvType *>::iterator it;
 
-	for (key = 0; key < HID_LAST; ++key) {
-		for (event = 0; event < HID_EVENT_LAST; ++event) {
-			bindings[key][event] = 0;
-		}
-	}
+	_bindings.clear();
 
-	for (it = commands.begin(); it != commands.end(); ++it) {
+	for (it = _commands.begin(); it != _commands.end(); ++it) {
 		if (*it) {
 			delete *it;
 		}
 	}
-	commands.clear();
+	_commands.clear();
 
 	bind(HID_BACKQUOTE, HID_EVENT_PREEMPT, "ConsoleGump::toggle");
 	bind(HID_TILDE, HID_EVENT_PREEMPT, "ConsoleGump::toggle");
@@ -117,34 +108,33 @@ void HIDManager::loadBindings() {
 		bind(i->_key, args);
 		++i;
 	}
+
 	listBindings();
 }
 
 void HIDManager::saveBindings() {
-	uint16 key, event;
+	uint16 key, events;
 	SettingManager *settings = SettingManager::get_instance();
 	Pentagram::istring section = "keys/";
 	Pentagram::istring confkey;
 
-	for (key = 0; key < HID_LAST; ++key) {
-		for (event = 0; event < HID_EVENT_LAST; ++event) {
-			confkey = section +
-			          HID_GetEventName((HID_Event) event) + ' ' +
-			          HID_GetKeyName((HID_Key) key);
-			if (bindings[key][event]) {
-				Console::ArgsType command;
-				Pentagram::ArgvToString(*bindings[key][event], command);
-				settings->set(confkey, command);
-			} else if (settings->exists(confkey)) {
-				settings->unset(confkey);
-			}
-		}
+	for (Bindings::iterator it = _bindings.begin(); it != _bindings.end(); ++it) {
+		key = it->_key & 0xffff;
+		events = it->_key >> 16;
+
+		confkey = section + HID_GetEventsName((HID_Events)events) + ' ' +
+			HID_GetKeyName((HID_Key) key);
+
+		Console::ArgsType command;
+		Pentagram::ArgvToString(*(it->_value), command);
+		settings->set(confkey, command);
+//		settings->unset(confkey);
 	}
 }
 
 void HIDManager::bind(const Pentagram::istring &control, const Console::ArgvType &argv) {
 	HID_Key key = HID_LAST;
-	HID_Event event = HID_EVENT_DEPRESS;
+	HID_Events event = HID_EVENT_DEPRESS;
 	std::vector<Pentagram::istring> ctrl_argv;
 
 	Pentagram::StringToArgv(control, ctrl_argv);
@@ -152,15 +142,11 @@ void HIDManager::bind(const Pentagram::istring &control, const Console::ArgvType
 		key = HID_GetKeyFromName(ctrl_argv[0]);
 	} else if (ctrl_argv.size() > 1) {
 		// we have a event
-		event = HID_GetEventFromName(ctrl_argv[0]);
 		key = HID_GetKeyFromName(ctrl_argv[1]);
+		event = HID_GetEventFromName(ctrl_argv[0]);
 	}
 
-	if (event < HID_EVENT_LAST && key < HID_LAST) {
-		bind(key, event, argv);
-	} else {
-		pout << "Error: Cannot bind " << control << std::endl;
-	}
+	bind(key, event, argv);
 }
 
 void HIDManager::bind(const Pentagram::istring &control, const Console::ArgsType &args) {
@@ -169,11 +155,13 @@ void HIDManager::bind(const Pentagram::istring &control, const Console::ArgsType
 	bind(control, argv);
 }
 
-void HIDManager::bind(HID_Key key, HID_Event event, const Console::ArgvType &argv) {
+void HIDManager::bind(HID_Key key, HID_Events event, const Console::ArgvType &argv) {
+	uint32 keyEvent = (uint32)key | ((uint32)event << 16);
+
 	Console::ArgvType *command = 0;
 	if (! argv.empty()) {
 		std::vector<Console::ArgvType *>::iterator it;
-		for (it = commands.begin(); it != commands.end(); ++it) {
+		for (it = _commands.begin(); it != _commands.end(); ++it) {
 			if (argv == (**it)) {
 				// Change from iterator to pointer
 				command = *it;
@@ -183,13 +171,15 @@ void HIDManager::bind(HID_Key key, HID_Event event, const Console::ArgvType &arg
 
 		if (!command) {
 			command = new Console::ArgvType(argv);
-			commands.push_back(command);
+			_commands.push_back(command);
 		}
 	}
-	bindings[key][event] = command;
+
+	assert(command);
+	_bindings[keyEvent] = command;
 }
 
-void HIDManager::bind(HID_Key key, HID_Event event, const Console::ArgsType &args) {
+void HIDManager::bind(HID_Key key, HID_Events event, const Console::ArgsType &args) {
 	Console::ArgvType argv;
 	Pentagram::StringToArgv(args, argv);
 	bind(key, event, argv);
@@ -251,19 +241,16 @@ void HIDManager::listBindings() {
 	uint16 key, event;
 	Console::ArgsType command;
 
-	for (key = 0; key < HID_LAST; ++key) {
-		for (event = 0; event < HID_EVENT_LAST; ++event) {
-			if (bindings[key][event]) {
-				Pentagram::ArgvToString(*bindings[key][event], command);
-				if (event != HID_EVENT_DEPRESS) {
-					pout << HID_GetEventName((HID_Event) event) << ' ' <<
-					     HID_GetKeyName((HID_Key) key) <<
-					     " = " << command << std::endl;
-				} else {
-					pout << HID_GetKeyName((HID_Key) key) <<
-					     " = " << command << std::endl;
-				}
-			}
+	for (Bindings::iterator it = _bindings.begin(); it != _bindings.end(); ++it) {
+		key = it->_key & 0xffff;
+		event = it->_key >> 16;
+		Pentagram::ArgvToString(*(it->_value), command);
+
+		if (event == HID_EVENT_DEPRESS) {
+			pout << HID_GetKeyName((HID_Key)key) << " = " << command << std::endl;
+		} else {
+			pout << HID_GetEventsName((HID_Events)event);
+			pout << ' ' << HID_GetKeyName((HID_Key) key) << " = " << command << std::endl;
 		}
 	}
 }

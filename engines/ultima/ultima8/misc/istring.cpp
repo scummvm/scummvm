@@ -63,33 +63,22 @@ void strcpy_s(char *dest, size_t size, const char *src) {
 	dest[-1] = 0;
 }
 
-#if 0
+void istring::split(Common::Array<istring> &arr) const {
+	const char *startP = _str, *endP;
 
-bool ichar_traits::eq(const char_type &c1, const char_type &c2) {
-	uint32 c3 = c1;
-	uint32 c4 = c2;
-	if (c3 >= 'a' && c3 <= 'z')
-		c3 -= ('a' - 'A');
-	if (c4 >= 'a' && c4 <= 'z')
-		c4 -= ('a' - 'A');
-	return c3 == c4;
+	arr.clear();
+	if (empty())
+		return;
+
+	for (;;) {
+		endP = strchr(startP + 1, ',');
+		arr.push_back(Pentagram::istring(startP, endP ? endP : _str + _size));
+
+		if (!endP)
+			break;
+		startP = endP;
+	}
 }
-
-bool ichar_traits::lt(const char_type &c1, const char_type &c2) {
-	uint32 c3 = c1;
-	uint32 c4 = c2;
-	if (c3 >= 'a' && c3 <= 'z')
-		c3 -= ('a' - 'A');
-	if (c4 >= 'a' && c4 <= 'z')
-		c4 -= ('a' - 'A');
-	return c3 < c4;
-}
-
-int ichar_traits::compare(const char_type *s1, const char_type *s2, size_t length) {
-	return strncasecmp(s1, s2, length);
-}
-
-#endif
 
 } // End of namespace Pentagram
 } // ENd of namespace Ultima8

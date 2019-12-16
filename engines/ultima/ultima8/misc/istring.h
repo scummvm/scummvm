@@ -25,6 +25,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include "ultima/ultima8/std/misc.h"
 #include "ultima/ultima8/std/string.h"
+#include "common/array.h"
 
 #ifdef strcasecmp
 #undef strcasecmp
@@ -74,6 +75,8 @@ public:
 	virtual int Compare(const string &s) const override {
 		return compareToIgnoreCase(s);
 	}
+
+	void split(Common::Array<istring> &arr) const ;
 };
 
 

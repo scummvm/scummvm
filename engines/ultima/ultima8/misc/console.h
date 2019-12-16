@@ -450,7 +450,7 @@ template<class T>
 class console_ostream : public ConsoleStream {
 	virtual uint32 write(const void *dataPtr, uint32 dataSize) override {
 		Common::String str((const char *)dataPtr, (const char *)dataPtr + dataSize);
-		debug("%s", str.c_str());
+		debugN("%s", str.c_str());
 		return dataSize;
 	}
 };

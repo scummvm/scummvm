@@ -234,18 +234,6 @@ static const KeyName keyNames[] = {
 	{HID_SCROLL_LOCK, "Scroll-Lock"},
 	{HID_PAUSE, "Pause"},
 
-	{HID_LEFTSHIFT, "Left-Shift"},
-	{HID_RIGHTSHIFT, "Right-Shift"},
-
-	{HID_LEFTCONTROL, "Left-Control"},
-	{HID_LEFTCONTROL, "Left-Ctrl"},
-
-	{HID_RIGHTCONTROL, "Right-Control"},
-	{HID_RIGHTCONTROL, "Right-Ctrl"},
-
-	{HID_LEFTALT, "Left-Alt"},
-	{HID_RIGHTALT, "Right-Alt"},
-
 	{HID_MOUSE1, "Mouse1"},
 	{HID_MOUSE2, "Mouse2"},
 	{HID_MOUSE3, "Mouse3"},
@@ -288,13 +276,18 @@ struct EventName {
 	const char *name;
 };
 
-static const EventName eventNames[] = {
-	{HID_EVENT_DEPRESS, "<Depress>"},
-	{HID_EVENT_RELEASE, "<Release>"},
-	{HID_EVENT_DOUBLE, "<Double>"},
-	{HID_EVENT_CLICK, "<Click>"},
-	{HID_EVENT_PREEMPT, "<Preempt>"},
-	{HID_EVENT_LAST, ""}
+static const EventName EVENT_NAMES[] = {
+	{ HID_EVENT_DEPRESS, "Depress" },
+	{ HID_EVENT_RELEASE, "Release" },
+	{ HID_EVENT_DOUBLE, "Double" },
+	{ HID_EVENT_CLICK, "Click" },
+	{ HID_EVENT_PREEMPT, "Preempt" },
+	{ HID_EVENT_LAST, "" },
+	{ HID_FLAGS_CTRL, "Ctrl" },
+	{ HID_FLAGS_ALT, "Alt" },
+	{ HID_FLAGS_SHIFT, "Shift" },
+	{ HID_FLAGS_META, "Meta" },
+	{ HID_FLAGS_LAST, "" }
 };
 
 const char *HID_GetKeyName(HID_Key key) {
@@ -303,6 +296,7 @@ const char *HID_GetKeyName(HID_Key key) {
 		if (key == keyNames[i].key)
 			return keyNames[i].name;
 	}
+
 	return "";
 }
 
@@ -312,6 +306,7 @@ HID_Key HID_GetKeyFromName(Pentagram::istring &name) {
 		if (name == keyNames[i].name)
 			return keyNames[i].key;
 	}
+
 	return HID_LAST;
 }
 
@@ -552,22 +547,25 @@ HID_Key HID_translateSDLKey(Common::KeyCode key) {
 		return HID_PAUSE;
 	case Common::KEYCODE_ESCAPE:
 		return HID_ESCAPE;
-	case Common::KEYCODE_RSHIFT:
-		return HID_RIGHTSHIFT;
-	case Common::KEYCODE_LSHIFT:
-		return HID_LEFTSHIFT;
-	case Common::KEYCODE_RCTRL:
-		return HID_RIGHTCONTROL;
-	case Common::KEYCODE_LCTRL:
-		return HID_LEFTCONTROL;
-	case Common::KEYCODE_RALT:
-		return HID_RIGHTALT;
-	case Common::KEYCODE_LALT:
-		return HID_LEFTALT;
 	default:
 		break;
 	}
 	return HID_LAST;
+}
+
+HID_Events HID_translateSDLKeyFlags(byte flags) {
+	HID_Events result = 0;
+
+	if (flags & Common::KBD_CTRL)
+		result |= HID_FLAGS_CTRL;
+	if (flags & Common::KBD_ALT)
+		result |= HID_FLAGS_ALT;
+	if (flags & Common::KBD_SHIFT)
+		result |= HID_FLAGS_SHIFT;
+	if (flags & Common::KBD_META)
+		result |= HID_FLAGS_META;
+
+	return result;
 }
 
 HID_Key HID_translateSDLMouseButton(uint8 button) {
@@ -650,22 +648,55 @@ HID_Key HID_translateSDLJoystickButton(uint8 button) {
 	return HID_LAST;
 }
 
-const char *HID_GetEventName(HID_Event event) {
+const char *HID_GetEventsName(HID_Events events) {
+	static char buffer[32];
+	strcpy(buffer, "<");
+
 	int i;
-	for (i = 0; eventNames[i].event != HID_EVENT_LAST; ++i) {
-		if (event == eventNames[i].event)
-			return eventNames[i].name;
+	for (i = 0; EVENT_NAMES[i].event != HID_FLAGS_LAST; ++i) {
+		if ((EVENT_NAMES[i].event <= HID_EVENT_LAST) ? (events & 0xff) == EVENT_NAMES[i].event :
+				(events & EVENT_NAMES[i].event) != 0) {
+			if (EVENT_NAMES[i].event == HID_EVENT_DEPRESS && events != HID_EVENT_DEPRESS)
+				continue;
+			
+			strcat(buffer, EVENT_NAMES[i].name);
+			strcat(buffer, ",");
+		}
 	}
-	return "";
+
+	buffer[strlen(buffer) - 1] = '>';
+	return buffer;
 }
 
-HID_Event HID_GetEventFromName(Pentagram::istring &name) {
-	int i;
-	for (i = 0; eventNames[i].event != HID_EVENT_LAST; ++i) {
-		if (name == eventNames[i].name)
-			return eventNames[i].event;
+HID_Events HID_GetEventFromName(const Pentagram::istring &name) {
+	// Split up the name(s)
+	Pentagram::istring str = name;
+	if (name.hasPrefix("<") && name.hasSuffix(">")) {
+		str.deleteChar(0);
+		str.deleteLastChar();
 	}
-	return HID_EVENT_LAST;
+
+	Common::Array<Pentagram::istring> events;
+	str.split(events);
+
+	HID_Events result = 0;
+
+	for (uint termIdx = 0; termIdx < events.size(); ++termIdx) {
+		// Scan for matching event/flag name
+		for (int i = 0; EVENT_NAMES[i].event != HID_FLAGS_LAST; ++i) {
+			if (EVENT_NAMES[i].event == HID_EVENT_LAST)
+				continue;
+
+			if (events[termIdx] == EVENT_NAMES[i].name) {
+				if (EVENT_NAMES[i].event < HID_EVENT_LAST)
+					result = (result & ~0xff) | EVENT_NAMES[i].event;
+				else
+					result |= EVENT_NAMES[i].event;
+			}
+		}
+	}
+
+	return result;
 }
 
 } // End of namespace Ultima8
