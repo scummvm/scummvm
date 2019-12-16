@@ -68,7 +68,7 @@ void main()
 
 	vec4 projectedPos = projMatrix * pos;
 	if (isBillboard)
-		projectedPos.z = round(projectedPos.z);
+		projectedPos.z = ROUND(projectedPos.z);
 
 	gl_Position = projectedPos;
 

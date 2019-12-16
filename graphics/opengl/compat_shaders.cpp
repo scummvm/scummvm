@@ -29,18 +29,16 @@ namespace BuiltinShaders {
 
 const char *compatVertex =
 	"#if defined(GL_ES)\n"
-		"mediump float round(in mediump float x) {\n"
-			"return sign(x) * floor(abs(x) + .5);\n"
-		"}\n"
+		"#define ROUND(x) (sign(x) * floor(abs(x) + .5))\n"
 		"#define in attribute\n"
 		"#define out varying\n"
 	"#elif __VERSION__ < 130\n"
-		"float round(in float x) {\n"
-		"return sign(x) * floor(abs(x) + .5);\n"
-		"}\n"
+		"#define ROUND(x) (sign(x) * floor(abs(x) + .5))\n"
 		"#define highp\n"
 		"#define in attribute\n"
 		"#define out varying\n"
+	"#else\n"
+		"#define ROUND(x) round(x)\n"
 	"#endif\n";
 
 const char *compatFragment =
