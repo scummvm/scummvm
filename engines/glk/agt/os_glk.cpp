@@ -3094,10 +3094,12 @@ static glui32 gagt_display_hinted_line(const gagt_lineref_t line, glui32 current
 	case HINT_NONE:
 		gagt_fatal("GLK: Page buffer line with no font hint");
 		gagt_exit();
+		break;
 
 	default:
 		gagt_fatal("GLK: Invalid font hint encountered");
 		gagt_exit();
+		break;
 	}
 
 	return style;

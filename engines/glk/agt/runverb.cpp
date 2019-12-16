@@ -1421,6 +1421,7 @@ void exec_verb(void)
 					doing_restore = 2;
 					return;
 				}
+				break;
 			case (OLD_VERB+4):
 				cmd_saveable = 0;  /* NOTIFY */
 				notify_flag = !notify_flag;
@@ -1620,7 +1621,7 @@ int check_obj(parse_rec *act, int verbid,
 		case 14: /* THROW dobj prep_ iobj */
 		case 29: /* PUT dobj prep_ iobj */
 			if (do_disambig == 2 && genvisible(iorec)) return DISAMBIG_SUCC;
-		/* ... fall through to next case ... */
+		// fallthrough
 		case 41: /* DROP */
 			if (do_disambig == 1 && it_possess(dobj)) return DISAMBIG_SUCC;
 			break;
