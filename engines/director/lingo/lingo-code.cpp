@@ -67,6 +67,7 @@ static struct FuncDescr {
 	{ Lingo::c_stringpush,	"c_stringpush",	"s" },
 	{ Lingo::c_symbolpush,	"c_symbolpush",	"s" },	// D3
 	{ Lingo::c_constpush,	"c_constpush",	"i" },
+	{ Lingo::c_namepush,	"c_namepush",	"i" },
 	{ Lingo::c_varpush,		"c_varpush",	"s" },
 	{ Lingo::c_setImmediate,"c_setImmediate","i" },
 	{ Lingo::c_assign,		"c_assign",		"" },
@@ -254,6 +255,12 @@ void Lingo::c_constpush() {
 	int i = g_lingo->readInt();
 	d = g_lingo->_currentScriptContext->constants[i];
 	g_lingo->push(d);
+}
+
+void Lingo::c_namepush() {
+	Datum d;
+	int i = g_lingo->readInt();
+	g_lingo->push(Datum(new Common::String(g_lingo->_namelist[i])));
 }
 
 void Lingo::c_argcpush() {

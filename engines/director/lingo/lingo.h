@@ -289,6 +289,7 @@ public:
 	static void c_stringpush();
 	static void c_symbolpush();
 	static void c_constpush();
+	static void c_namepush();
 	static void c_varpush();
 	static void c_argcpush();
 	static void c_argcnoretpush();

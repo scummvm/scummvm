@@ -57,7 +57,7 @@ static LingoV4Bytecode lingoV4[] = {
 	{ 0x42, Lingo::c_argcpush, "b" },
 	{ 0x43, Lingo::c_argcnoretpush, "b" },
 	{ 0x44, Lingo::c_constpush, "bv" },
-	{ 0x45, Lingo::c_symbolpush, "b" },
+	{ 0x45, Lingo::c_namepush, "b" },
 	{ 0x53, Lingo::c_jump, "jb" },
 	{ 0x54, Lingo::c_jump, "jbn" },
 	{ 0x55, Lingo::c_jumpifz, "jb" },
