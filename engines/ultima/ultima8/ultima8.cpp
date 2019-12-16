@@ -25,6 +25,9 @@
 #include "common/debug-channels.h"
 #include "common/translation.h"
 #include "common/unzip.h"
+#include "common/translation.h"
+#include "gui/saveload.h"
+
 #include "ultima/ultima8/ultima8.h"
 #include "ultima/ultima8/misc/pent_include.h"
 
@@ -1348,6 +1351,51 @@ void Ultima8Engine::writeSaveInfo(ODataSource *ods) {
 	game->writeSaveInfo(ods);
 }
 
+bool Ultima8Engine::saveGame() {
+	if (!canSaveGameStateCurrently())
+		return false;
+
+	GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(_("Save game:"), _("Save"), true);
+	bool result = false;
+
+	pauseEngine(true);
+	int slot = dialog->runModalWithCurrentTarget();
+	pauseEngine(false);
+
+	if (slot >= 0) {
+		Common::String desc = dialog->getResultString();
+
+		if (desc.empty()) {
+			// create our own description for the saved game, the user didn't enter it
+			desc = dialog->createDefaultSaveDescription(slot);
+		}
+
+		// Save the game
+		result = saveGameState(slot, desc).getCode() == Common::kNoError;
+	}
+
+	delete dialog;
+	return result;
+}
+
+bool Ultima8Engine::canSaveGameStateCurrently() {
+	if (desktopGump->FindGump<ModalGump>())
+		// Can't save when a modal gump is open
+		return false;
+
+	// Don't allow saving when avatar is dead.
+	MainActor *av = getMainActor();
+	if (!av || (av->getActorFlags() & Actor::ACT_DEAD))
+		return false;
+
+	return true;
+}
+
+Common::Error Ultima8Engine::saveGameState(int slot, const Common::String &desc) {
+	return saveGame(std::string::format("@save/%d", slot), desc) ?
+		Common::kNoError : Common::kWritingFailed;
+}
+
 bool Ultima8Engine::saveGame(std::string filename, std::string desc,
 	bool ignore_modals) {
 	// Don't allow saving with Modals open
@@ -1563,6 +1611,30 @@ bool Ultima8Engine::newGame(const std::string &savegame) {
 	settingman->set("lastSave", savegame);
 
 	return true;
+}
+
+bool Ultima8Engine::loadGame() {
+	if (!canLoadGameStateCurrently())
+		return false;
+
+	GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(_("Restore game:"), _("Restore"), false);
+	bool result = false;
+
+	pauseEngine(true);
+	int slot = dialog->runModalWithCurrentTarget();
+	pauseEngine(false);
+
+	if (slot >= 0) {
+		result = loadGameState(slot).getCode() == Common::kNoError;
+	}
+
+	delete dialog;
+	return result;
+}
+
+Common::Error Ultima8Engine::loadGameState(int slot) {
+	return loadGame(std::string::format("@save/%d", slot)) ?
+		Common::kNoError : Common::kReadingFailed;
 }
 
 bool Ultima8Engine::loadGame(std::string filename) {
@@ -1823,11 +1895,22 @@ bool Ultima8Engine::load(IDataSource *ids, uint32 version) {
 //
 
 void Ultima8Engine::ConCmd_saveGame(const Console::ArgvType &argv) {
-	Ultima8Engine::get_instance()->saveGame("@save/1", "Quicksave");
+	if (argv.size() == 2) {
+		// Save a game with the given name into the quicksave slot
+		Ultima8Engine::get_instance()->saveGame("@save/1", argv[1]);
+	} else {
+
+	}
 }
 
 void Ultima8Engine::ConCmd_loadGame(const Console::ArgvType &argv) {
-	Ultima8Engine::get_instance()->loadGame("@save/1");
+	if (argv.size() == 2) {
+		// Load a game from the quicksave slot. The second parameter is ignored,
+		// it just needs to be present to differentiate from showing the GUI load dialog
+		Ultima8Engine::get_instance()->loadGame("@save/1");
+	} else {
+		Ultima8Engine::get_instance()->loadGame();
+	}
 }
 
 void Ultima8Engine::ConCmd_newGame(const Console::ArgvType &argv) {

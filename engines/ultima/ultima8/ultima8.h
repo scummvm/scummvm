@@ -340,11 +340,28 @@ public:
 		return avatarMoverProcess;
 	}
 
+	/**
+	 * Returns true if a savegame can be loaded
+	 */
+	virtual bool canLoadGameStateCurrently() { return true; }
+
+	/**
+	 * Returns true if the game can be saved
+	 */
+	virtual bool canSaveGameStateCurrently();
+
+	virtual Common::Error loadGameState(int slot);
+	virtual Common::Error saveGameState(int slot, const Common::String &desc);
+
+	bool saveGame();
+
 	//! save a game
 	//! \param filename the file to save to
 	//! \return true if succesful
 	bool saveGame(std::string filename, std::string desc,
 	              bool ignore_modals = false);
+
+	bool loadGame();
 
 	//! load a game
 	//! \param filename the savegame to load
