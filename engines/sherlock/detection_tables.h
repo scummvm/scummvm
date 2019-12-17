@@ -128,6 +128,22 @@ static const SherlockGameDescription gameDescriptions[] = {
 	},
 
 	{
+		// Case of the Serrated Scalpel - Spanish 3.5" Floppy
+		// Provided by lorz on bug #11283
+		{
+			"scalpel",
+			0,
+			AD_ENTRY1s("talk.lib", "27697804b637a7f3b77234bf16f15dce", 171419),
+			Common::ES_ESP,
+			Common::kPlatformDOS,
+			ADGF_NO_FLAGS,
+			GUIO6(GUIO_NOSPEECH, GAMEOPTION_ORIGINAL_SAVES, GAMEOPTION_FADE_STYLE, GAMEOPTION_HELP_STYLE,
+				GAMEOPTION_PORTRAITS_ON, GAMEOPTION_WINDOW_STYLE)
+		},
+		GType_SerratedScalpel,
+	},
+
+	{
 		// Case of the Serrated Scalpel - Italian fan translation
 		{
 			"scalpel",
