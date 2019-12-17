@@ -25,9 +25,9 @@
 #include <cstring>
 #include <cmath>
 
-#include "nuvieDefs.h"
+#include "ultima/ultima6/core/nuvie_defs.h"
 #include "Game.h"
-#include "Configuration.h"
+#include "ultima/ultima6/conf/configuration.h"
 #include "NuvieIO.h"
 #include "U6Lib_n.h"
 #include "U6Lzw.h"

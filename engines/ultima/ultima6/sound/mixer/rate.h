@@ -23,7 +23,7 @@
 #ifndef SOUND_RATE_H
 #define SOUND_RATE_H
 
-#include "nuvieDefs.h"
+#include "ultima/ultima6/core/nuvie_defs.h"
 //#include "engines/engine.h"
 
 class AudioStream;

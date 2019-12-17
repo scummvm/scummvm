@@ -20,7 +20,7 @@
  *
  */
 
-#include "nuvieDefs.h"
+#include "ultima/ultima6/core/nuvie_defs.h"
 #include "Actor.h"
 #include "Path.h"
 #include "ActorPathFinder.h"

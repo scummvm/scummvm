@@ -20,7 +20,7 @@
  *
  */
 
-#include "nuvieDefs.h"
+#include "ultima/ultima6/core/nuvie_defs.h"
 
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -28,7 +28,7 @@
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
-#include <string>
+#include "ultima/shared/std/string.h"
 #include <list>
 #include <dirent.h>
 

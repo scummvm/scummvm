@@ -26,10 +26,10 @@
 
 #include "SDL.h"
 
-#include "nuvieDefs.h"
+#include "ultima/ultima6/core/nuvie_defs.h"
 #include "U6misc.h"
 #include "NuvieIOFile.h"
-#include "Configuration.h"
+#include "ultima/ultima6/conf/configuration.h"
 #include "Screen.h"
 #include "Dither.h"
 #include "GamePalette.h"

@@ -25,7 +25,7 @@
 
 #include <vector>
 #include <list>
-#include <string>
+#include "ultima/shared/std/string.h"
 #include <map>
 
 using std::map;

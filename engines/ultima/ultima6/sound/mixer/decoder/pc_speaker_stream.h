@@ -19,7 +19,7 @@
  *
  */
 #include <cstdio>
-#include <string>
+#include "ultima/shared/std/string.h"
 #include <list>
 
 #include "audiostream.h"

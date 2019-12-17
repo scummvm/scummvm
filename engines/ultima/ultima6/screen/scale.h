@@ -23,7 +23,7 @@
 #ifndef ULTIMA6_SCREEN_SCALE_H
 #define ULTIMA6_SCREEN_SCALE_H
 
-#include <string>
+#include "ultima/shared/std/string.h"
 
 namespace Ultima {
 namespace Ultima6 {

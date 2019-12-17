@@ -24,7 +24,7 @@
 #define ULTIMA6_PATHFINDER_PATH_H
 
 #include <cstdio>
-#include "nuvieDefs.h"
+#include "ultima/ultima6/core/nuvie_defs.h"
 #include "PathFinder.h"
 
 namespace Ultima {

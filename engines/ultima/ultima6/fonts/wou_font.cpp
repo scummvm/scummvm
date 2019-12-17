@@ -25,9 +25,9 @@
 #include <string.h>
 #include <cctype>
 
-#include "nuvieDefs.h"
+#include "ultima/ultima6/core/nuvie_defs.h"
 
-#include "Configuration.h"
+#include "ultima/ultima6/conf/configuration.h"
 
 #include "Screen.h"
 #include "U6Lzw.h"

@@ -34,8 +34,8 @@
 #define ULTIMA6_SOUND_SOUND_MANAGER_H
 #include "Sound.h"
 #include "Song.h"
-#include "nuvieDefs.h"
-#include "Configuration.h"
+#include "ultima/ultima6/core/nuvie_defs.h"
+#include "ultima/ultima6/conf/configuration.h"
 #include "NuvieIOFile.h"
 #include "sdl-mixer.h"
 #include "sfx.h"

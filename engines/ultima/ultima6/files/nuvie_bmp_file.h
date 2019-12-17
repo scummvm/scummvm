@@ -23,7 +23,7 @@
 #ifndef ULTIMA6_FILES_NUVIE_BMP_FILE_H
 #define ULTIMA6_FILES_NUVIE_BMP_FILE_H
 
-#include <string>
+#include "ultima/shared/std/string.h"
 #include "SDL.h"
 #include "NuvieIOFile.h"
 #include "TileManager.h"

@@ -28,7 +28,7 @@
 
 #include <SDL.h>
 //#include "common/scummsys.h"
-#include "nuvieDefs.h"
+#include "ultima/ultima6/core/nuvie_defs.h"
 
 #if SDL_BYTEORDER == SDL_BIG_ENDIAN
 #define SCUMM_BIG_ENDIAN

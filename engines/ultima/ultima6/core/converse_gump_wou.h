@@ -29,7 +29,7 @@
 
 #include <list>
 #include <vector>
-#include <string>
+#include "ultima/shared/std/string.h"
 
 namespace Ultima {
 namespace Ultima6 {

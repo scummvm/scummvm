@@ -29,7 +29,7 @@
 #include <stdlib.h>
 #include "SDL.h"
 #include "SDL_endian.h"
-#include "nuvieDefs.h"
+#include "ultima/ultima6/core/nuvie_defs.h"
 #include "U6misc.h"
 #include "U6Lzw.h"
 #include "U6Lib_n.h"

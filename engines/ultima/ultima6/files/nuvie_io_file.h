@@ -24,7 +24,7 @@
 #define ULTIMA6_FILES_NUVIE_IO_FILE_H
 
 #include <stdio.h>
-#include <string>
+#include "ultima/shared/std/string.h"
 
 #include "NuvieIO.h"
 

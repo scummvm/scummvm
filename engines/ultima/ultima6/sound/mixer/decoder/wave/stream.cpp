@@ -24,7 +24,7 @@
  */
 #include <string.h>
 #include <assert.h>
-#include "nuvieDefs.h"
+#include "ultima/ultima6/core/nuvie_defs.h"
 #include "types.h"
 #include "decoder/wave/stream.h"
 #include "decoder/wave/memstream.h"

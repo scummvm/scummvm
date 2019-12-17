@@ -26,8 +26,8 @@
 //#include "common/util.h"
 //#include "common/scummsys.h"
 #include <vector>
-#include <string>
-#include "nuvieDefs.h"
+#include "ultima/shared/std/string.h"
+#include "ultima/ultima6/core/nuvie_defs.h"
 #include "types.h"
 
 #include "timestamp.h"

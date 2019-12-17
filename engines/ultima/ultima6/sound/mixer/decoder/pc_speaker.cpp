@@ -23,7 +23,7 @@
 
 #include <math.h>
 #include "SDL.h"
-#include "nuvieDefs.h"
+#include "ultima/ultima6/core/nuvie_defs.h"
 
 #include "mixer.h"
 #include "decoder/PCSpeaker.h"

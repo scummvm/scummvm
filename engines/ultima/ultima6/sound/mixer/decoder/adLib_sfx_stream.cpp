@@ -17,10 +17,10 @@
  *
  */
 
-#include "nuvieDefs.h"
+#include "ultima/ultima6/core/nuvie_defs.h"
 #include "OplClass.h"
 #include "OriginFXAdLibDriver.h"
-#include "Configuration.h"
+#include "ultima/ultima6/conf/configuration.h"
 
 #include "AdLibSfxStream.h"
 

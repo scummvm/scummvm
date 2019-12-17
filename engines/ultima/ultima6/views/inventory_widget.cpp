@@ -21,9 +21,9 @@
  */
 
 #include <cassert>
-#include "nuvieDefs.h"
+#include "ultima/ultima6/core/nuvie_defs.h"
 #include "U6LList.h"
-#include "Configuration.h"
+#include "ultima/ultima6/conf/configuration.h"
 
 #include "GUI.h"
 #include "GamePalette.h"

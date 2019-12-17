@@ -27,7 +27,7 @@
 #define COMMON_STREAM_H
 
 #include <stdio.h>
-#include <string>
+#include "ultima/shared/std/string.h"
 #include "types.h"
 #include "decoder/wave/endian.h"
 

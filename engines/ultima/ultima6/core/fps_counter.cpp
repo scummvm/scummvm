@@ -24,9 +24,9 @@
 #include <string.h>
 #include "SDL.h"
 
-#include "Configuration.h"
+#include "ultima/ultima6/conf/configuration.h"
 
-#include "nuvieDefs.h"
+#include "ultima/ultima6/core/nuvie_defs.h"
 #include "U6misc.h"
 #include "Game.h"
 #include "Screen.h"

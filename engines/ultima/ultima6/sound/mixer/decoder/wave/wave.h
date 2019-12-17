@@ -41,7 +41,7 @@
 #define SOUND_WAVE_H
 
 //#include "common/scummsys.h"
-#include "nuvieDefs.h"
+#include "ultima/ultima6/core/nuvie_defs.h"
 #include "types.h"
 
 namespace Common {

@@ -23,8 +23,8 @@
 #ifndef __Nuvie_h__
 #define __Nuvie_h__
 
-#include <string>
-#include "Configuration.h"
+#include "ultima/shared/std/string.h"
+#include "ultima/ultima6/conf/configuration.h"
 
 namespace Ultima {
 

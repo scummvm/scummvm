@@ -23,7 +23,7 @@
 #ifndef ULTIMA6_ACTORS_ACTOR_MANAGER_H
 #define ULTIMA6_ACTORS_ACTOR_MANAGER_H
 
-#include <string>
+#include "ultima/shared/std/string.h"
 #include <set>
 #include "ObjManager.h"
 #include "ActorList.h"

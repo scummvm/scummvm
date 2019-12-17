@@ -21,7 +21,7 @@
  */
 
 //#include "SDL.h"
-#include "nuvieDefs.h"
+#include "ultima/ultima6/core/nuvie_defs.h"
 
 #ifdef HAVE_JOYSTICK_SUPPORT
 #include "GUI.h"
@@ -34,7 +34,7 @@
 
 #include "GUI_Dialog.h"
 #include "JoystickDialog.h"
-#include "Configuration.h"
+#include "ultima/ultima6/conf/configuration.h"
 #include "Keys.h"
 //#include <math.h>
 

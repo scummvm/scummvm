@@ -23,7 +23,7 @@
 #ifndef ULTIMA6_FONTS_FONT_MANAGER_H
 #define ULTIMA6_FONTS_FONT_MANAGER_H
 
-#include <string>
+#include "ultima/shared/std/string.h"
 #include <list>
 
 namespace Ultima {

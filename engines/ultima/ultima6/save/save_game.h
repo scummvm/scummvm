@@ -30,7 +30,7 @@
 
 #define MAX_SAVE_DESC_LENGTH    52
 
-#include <string>
+#include "ultima/shared/std/string.h"
 #include "SDL.h"
 
 namespace Ultima {

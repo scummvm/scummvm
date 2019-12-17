@@ -24,7 +24,7 @@
 #define ULTIMA6_CORE_MAP_H
 
 #include <cstdlib>
-#include <string>
+#include "ultima/shared/std/string.h"
 
 #include "ObjManager.h"
 

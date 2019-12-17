@@ -27,7 +27,7 @@
 //#include "common/mutex.h"
 //#include "common/noncopyable.h"
 
-//#include "nuvieDefs.h"
+//#include "ultima/ultima6/core/nuvie_defs.h"
 
 
 #include "timestamp.h"

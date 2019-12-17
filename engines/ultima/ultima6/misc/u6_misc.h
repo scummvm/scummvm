@@ -31,8 +31,8 @@
  *  Copyright (c) 2003. All rights reserved.
  *
  */
-#include <string>
-#include "nuvieDefs.h"
+#include "ultima/shared/std/string.h"
+#include "ultima/ultima6/core/nuvie_defs.h"
 
 namespace Ultima {
 namespace Ultima6 {

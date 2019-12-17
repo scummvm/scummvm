@@ -23,7 +23,7 @@
 #ifndef ULTIMA6_CORE_COMMAND_BAR_NEW_UI_H
 #define ULTIMA6_CORE_COMMAND_BAR_NEW_UI_H
 
-#include <string>
+#include "ultima/shared/std/string.h"
 #include "GUI_widget.h"
 #include "CallBack.h"
 #include "CommandBar.h"

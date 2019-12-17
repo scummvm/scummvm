@@ -18,7 +18,7 @@
  */
 
 #include <stdlib.h>
-#include "nuvieDefs.h"
+#include "ultima/ultima6/core/nuvie_defs.h"
 #include "NuvieIO.h"
 #include "U6Lib_n.h"
 #include "U6Lzw.h"

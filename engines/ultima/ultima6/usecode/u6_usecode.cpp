@@ -23,7 +23,7 @@
 #include <cstdlib>
 #include <cassert>
 #include <cstdio>
-#include "nuvieDefs.h"
+#include "ultima/ultima6/core/nuvie_defs.h"
 #include "U6LList.h"
 #include "U6misc.h"
 #include "MapEntity.h"

@@ -24,8 +24,8 @@
 //#include "Application.h"
 #include <cstring>
 
-#include "nuvieDefs.h"
-#include "misc.h"
+#include "ultima/ultima6/core/nuvie_defs.h"
+#include "ultima/ultima6/conf/misc.h"
 #include "Scale.h"
 #include "Surface.h"
 // Include all the Template Scaler Code

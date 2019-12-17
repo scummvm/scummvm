@@ -29,7 +29,7 @@
 
 #include "GUI_Console.h"
 #include "Screen.h"
-#include "Configuration.h"
+#include "ultima/ultima6/conf/configuration.h"
 
 namespace Ultima {
 namespace Ultima6 {

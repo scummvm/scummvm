@@ -23,7 +23,7 @@
 #ifndef ULTIMA6_CORE_WEATHER_H
 #define ULTIMA6_CORE_WEATHER_H
 
-#include "nuvieDefs.h"
+#include "ultima/ultima6/core/nuvie_defs.h"
 #include "CallBack.h"
 #include "Map.h"
 

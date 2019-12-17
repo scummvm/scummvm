@@ -24,7 +24,7 @@
 #include <cstdlib>
 #include <cstring>
 
-#include "nuvieDefs.h"
+#include "ultima/ultima6/core/nuvie_defs.h"
 
 #include "NuvieIO.h"
 

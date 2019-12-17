@@ -23,7 +23,7 @@
 #ifndef ULTIMA6_USECODE_USECODE_H
 #define ULTIMA6_USECODE_USECODE_H
 
-#include <string>
+#include "ultima/shared/std/string.h"
 #include "CallBack.h"
 #include "MapEntity.h"
 #include "ObjManager.h"

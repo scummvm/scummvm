@@ -24,7 +24,7 @@
 #include <config.h>
 #endif
 
-#include "nuvieDefs.h"
+#include "ultima/ultima6/core/nuvie_defs.h"
 #include "U6misc.h"
 #include "U6objects.h"
 #include "emuopl.h"

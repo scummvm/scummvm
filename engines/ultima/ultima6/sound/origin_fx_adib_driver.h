@@ -23,8 +23,8 @@
 #ifndef ULTIMA6_SOUND_ORIGIN_FX_ADLIB_DRIVER_H
 #define ULTIMA6_SOUND_ORIGIN_FX_ADLIB_DRIVER_H
 
-#include "nuvieDefs.h"
-#include "Configuration.h"
+#include "ultima/ultima6/core/nuvie_defs.h"
+#include "ultima/ultima6/conf/configuration.h"
 
 namespace Ultima {
 namespace Ultima6 {

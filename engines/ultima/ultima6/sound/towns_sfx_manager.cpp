@@ -20,9 +20,9 @@
  *
  */
 
-#include <string>
-#include "nuvieDefs.h"
-#include "Configuration.h"
+#include "ultima/shared/std/string.h"
+#include "ultima/ultima6/core/nuvie_defs.h"
+#include "ultima/ultima6/conf/configuration.h"
 #include "mixer.h"
 #include "U6Lzw.h"
 #include "NuvieIO.h"

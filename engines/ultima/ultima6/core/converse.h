@@ -24,7 +24,7 @@
 #define ULTIMA6_CORE_CONVERSE_H
 
 #include <cstdio>
-#include <string>
+#include "ultima/shared/std/string.h"
 #include <stack>
 #include <vector>
 

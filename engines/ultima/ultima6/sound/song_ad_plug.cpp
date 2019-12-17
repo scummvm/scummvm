@@ -22,7 +22,7 @@
 
 //Mix_HookMusicFinished
 
-#include "nuvieDefs.h"
+#include "ultima/ultima6/core/nuvie_defs.h"
 #include "adplug/emuopl.h"
 #include "adplug/u6m.h"
 

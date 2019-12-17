@@ -33,9 +33,9 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include <string>
+#include "ultima/shared/std/string.h"
 
-#include "nuvieDefs.h"
+#include "ultima/ultima6/core/nuvie_defs.h"
 #include "NuvieIOFile.h"
 #include "U6Lzw.h"
 #include "U6misc.h"

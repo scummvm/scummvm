@@ -23,9 +23,7 @@
 #ifndef ULTIMA6_MISC_SDL_COMPAT_H
 #define ULTIMA6_MISC_SDL_COMPAT_H
 
-#include <SDL.h>
-
-#if !SDL_VERSION_ATLEAST(1,3,0)
+#if 0
 #define SDLK_UNKNOWN SDLK_LAST
 #define SDL_Keycode SDLKey
 #define SDL_Keymod SDLMod
@@ -53,4 +51,4 @@
 #else
 
 #endif
-#endif //NUVIE_SDL_COMPAT_H
+#endif

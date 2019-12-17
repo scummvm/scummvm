@@ -20,8 +20,8 @@
  *
  */
 
-#include <cstdio>
-#include <string>
+#include "ultima/shared/std/string.h"
+#include "common/stream.h"
 
 #ifndef ULTIMA6_CONF_MISC_H
 #define ULTIMA6_CONF_MISC_H
@@ -29,10 +29,9 @@
 namespace Ultima {
 namespace Ultima6 {
 
-// moved to nuvieDefs.h and superseded by DEBUG(x...)
-//#define PERR(x) fprintf(stderr,x)
-
 extern bool string_i_compare(const std::string &s1, const std::string &s2);
+
+extern std::string readLine(Common::ReadStream *stream);
 
 } // End of namespace Ultima6
 } // End of namespace Ultima

@@ -24,7 +24,7 @@
 #define ULTIMA6_CORE_EVENT_H
 
 #include <list>
-#include <string>
+#include "ultima/shared/std/string.h"
 
 #include <SDL.h>
 #include <script/Script.h>

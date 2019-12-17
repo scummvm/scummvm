@@ -23,8 +23,9 @@
 #ifndef ULTIMA6_CONF_XML_TREE_H
 #define ULTIMA6_CONF_XML_TREE_H
 
-#include <string>
-#include <vector>
+#include "ultima/shared/std/string.h"
+#include "ultima/shared/std/containers.h"
+#include "ultima/shared/std/misc.h"
 
 namespace Ultima {
 namespace Ultima6 {

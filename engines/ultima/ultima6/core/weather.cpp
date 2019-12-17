@@ -23,8 +23,8 @@
 #include <list>
 #include <cassert>
 #include <cmath>
-#include "nuvieDefs.h"
-#include "Configuration.h"
+#include "ultima/ultima6/core/nuvie_defs.h"
+#include "ultima/ultima6/conf/configuration.h"
 #include "CallBack.h"
 
 #include "NuvieIO.h"

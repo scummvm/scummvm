@@ -21,7 +21,7 @@
  */
 
 #include "SDL.h"
-#include "nuvieDefs.h"
+#include "ultima/ultima6/core/nuvie_defs.h"
 
 #include "GUI.h"
 #include "GUI_types.h"
@@ -38,7 +38,7 @@
 #include "U6misc.h"
 #include "Converse.h"
 #include "ConverseGump.h"
-#include "Configuration.h"
+#include "ultima/ultima6/conf/configuration.h"
 #include "Background.h"
 #include "Keys.h"
 

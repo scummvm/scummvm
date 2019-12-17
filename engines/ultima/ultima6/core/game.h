@@ -24,7 +24,7 @@
 #define ULTIMA6_CORE_GAME_H
 
 #include <vector>
-#include <string>
+#include "ultima/shared/std/string.h"
 
 namespace Ultima {
 namespace Ultima6 {

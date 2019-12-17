@@ -23,7 +23,7 @@
 #ifndef ULTIMA6_SCRIPT_SCRIPT_H
 #define ULTIMA6_SCRIPT_SCRIPT_H
 
-#include <string>
+#include "ultima/shared/std/string.h"
 #include <list>
 #include "GUI.h"
 

@@ -23,8 +23,8 @@
 #ifndef ULTIMA6_SOUND_ADLIB_SFX_MANAGER_H
 #define ULTIMA6_SOUND_ADLIB_SFX_MANAGER_H
 
-#include "nuvieDefs.h"
-#include "Configuration.h"
+#include "ultima/ultima6/core/nuvie_defs.h"
+#include "ultima/ultima6/conf/configuration.h"
 #include "mixer.h"
 #include "SfxManager.h"
 #include "audiostream.h"

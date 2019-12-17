@@ -23,7 +23,7 @@
 #ifndef ULTIMA6_CORE_CURSOR_H
 #define ULTIMA6_CORE_CURSOR_H
 
-#include <string>
+#include "ultima/shared/std/string.h"
 #include <vector>
 #include "SDL.h"
 

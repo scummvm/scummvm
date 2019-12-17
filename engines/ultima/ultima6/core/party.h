@@ -23,7 +23,7 @@
 #ifndef ULTIMA6_CORE_PARTY_H
 #define ULTIMA6_CORE_PARTY_H
 
-#include <string>
+#include "ultima/shared/std/string.h"
 //#include <cassert>
 #include "ObjManager.h"
 #include "Map.h"

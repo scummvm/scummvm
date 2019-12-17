@@ -21,7 +21,7 @@
  */
 
 #include <cmath>
-#include "nuvieDefs.h"
+#include "ultima/ultima6/core/nuvie_defs.h"
 
 #include "Actor.h"
 #include "Party.h"
@@ -33,7 +33,7 @@
 #include "Script.h"
 #include "MsgScroll.h"
 #include "Event.h"
-#include "Configuration.h"
+#include "ultima/ultima6/conf/configuration.h"
 #include "CommandBar.h"
 #include "UseCode.h"
 #include "MapWindow.h"

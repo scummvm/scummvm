@@ -34,6 +34,9 @@ template<class T1, class T2>
 struct pair {
 	T1 first;
 	T2 second;
+
+	pair() {}
+	pair(T1 first_, T2 second_) : first(first_), second(second_) {}
 };
 
 extern void memset(void *data, byte val, size_t count);

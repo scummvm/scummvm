@@ -20,11 +20,11 @@
  *
  */
 
-#include "nuvieDefs.h"
+#include "ultima/ultima6/core/nuvie_defs.h"
 #include "U6misc.h"
 #include "GUI.h"
 #include "GUI_button.h"
-#include "Configuration.h"
+#include "ultima/ultima6/conf/configuration.h"
 #include "ViewManager.h"
 #include "MsgScroll.h"
 #include "DraggableView.h"

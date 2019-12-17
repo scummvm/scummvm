@@ -20,13 +20,11 @@
  *
  */
 
-#include "nuvieDefs.h"
-
-#include "misc.h"
-
-#include "Configuration.h"
-#include "XMLTree.h"
-#include "ConfigNode.h"
+#include "ultima/ultima6/core/nuvie_defs.h"
+#include "ultima/ultima6/conf/misc.h"
+#include "ultima/ultima6/conf/configuration.h"
+#include "ultima/ultima6/conf/xml_tree.h"
+#include "ultima/ultima6/conf/config_node.h"
 
 namespace Ultima {
 namespace Ultima6 {
