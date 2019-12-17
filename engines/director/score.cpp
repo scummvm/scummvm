@@ -198,7 +198,8 @@ void Score::loadArchive() {
 	}
 
 	// Try to load compiled Lingo scripts
-	if (_vm->getVersion() >= 4 && 0) {
+	// FIXME. Disabled by default, requires --debugflags=bytecode for now
+	if (_vm->getVersion() >= 4 && debugChannelSet(-1, kDebugBytecode)) {
 		Common::Array<uint16> lscr =  _movieArchive->getResourceIDList(MKTAG('L','s','c','r'));
 		if (lscr.size() > 0) {
 			debugC(2, kDebugLoading, "****** Loading %d Lscr resources", lscr.size());
