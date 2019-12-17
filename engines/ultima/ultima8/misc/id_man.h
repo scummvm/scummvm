@@ -23,7 +23,7 @@
 #ifndef ULTIMA8_MISC_IDMAN_H
 #define ULTIMA8_MISC_IDMAN_H
 
-#include "ultima/ultima8/std/containers.h"
+#include "ultima/shared/std/containers.h"
 
 namespace Ultima {
 namespace Ultima8 {

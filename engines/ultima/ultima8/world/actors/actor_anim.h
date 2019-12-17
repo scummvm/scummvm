@@ -23,7 +23,7 @@
 #ifndef WORLD_ACTORS_ACTORANIM_H
 #define WORLD_ACTORS_ACTORANIM_H
 
-#include "ultima/ultima8/std/containers.h"
+#include "ultima/shared/std/containers.h"
 #include "ultima/ultima8/world/actors/anim_action.h"
 
 namespace Ultima {

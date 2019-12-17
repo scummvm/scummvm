@@ -40,7 +40,7 @@
 //
 // Strings
 //
-//#include "ultima/ultima8/std/string.h"
+//#include "ultima/shared/std/string.h"
 //#include <cstring>
 //#include <cstdlib>
 #include "ultima/ultima8/misc/istring.h"
@@ -143,8 +143,8 @@ void setAllocationFunctions(allocFunc a, deallocFunc d);
 // C Standard Library and STL
 #include <fstream>
 #include <cstdio>
-#include "ultima/ultima8/std/containers.h"
-#include "ultima/ultima8/std/containers.h"
+#include "ultima/shared/std/containers.h"
+#include "ultima/shared/std/containers.h"
 
 // Useful Pentagram headers
 #include "ultima/ultima8/world/get_object.h"

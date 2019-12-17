@@ -33,7 +33,7 @@
 #include "engines/engine.h"
 #include "graphics/surface.h"
 #include "ultima/detection.h"
-#include "ultima/ultima8/std/containers.h"
+#include "ultima/shared/std/containers.h"
 #include "ultima/ultima8/usecode/intrinsics.h"
 #include "ultima/ultima8/misc/args.h"
 

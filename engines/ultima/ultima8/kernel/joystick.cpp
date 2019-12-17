@@ -23,7 +23,7 @@
 #include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/kernel/joystick.h"
 #include "ultima/ultima8/ultima8.h"
-#include "ultima/ultima8/std/string.h"
+#include "ultima/shared/std/string.h"
  //#include "SDL_timer.h"
  //#include "SDL_events.h"
 

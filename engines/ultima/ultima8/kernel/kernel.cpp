@@ -21,14 +21,13 @@
  */
 
 #include "ultima/ultima8/misc/pent_include.h"
-
 #include "ultima/ultima8/kernel/kernel.h"
 #include "ultima/ultima8/kernel/process.h"
 #include "ultima/ultima8/misc/id_man.h"
-
 #include "ultima/ultima8/filesys/idata_source.h"
 #include "ultima/ultima8/filesys/odata_source.h"
-#include "ultima/ultima8/std/containers.h"
+#include "ultima/shared/std/containers.h"
+#include "ultima/ultima8/ultima8.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -453,6 +452,10 @@ uint32 Kernel::I_resetRef(const uint8 *args, unsigned int /*argsize*/) {
 
 	Kernel::get_instance()->killProcesses(item, type, true);
 	return 0;
+}
+
+uint getRandom() {
+	return Ultima8Engine::get_instance()->getRandomNumber(0x7fffffff);
 }
 
 } // End of namespace Ultima8

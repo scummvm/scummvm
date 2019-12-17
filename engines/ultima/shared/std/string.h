@@ -20,13 +20,12 @@
  *
  */
 
-#ifndef ULTIMA8_STD_STRING_H
-#define ULTIMA8_STD_STRING_H
+#ifndef ULTIMA_STD_STRING_H
+#define ULTIMA_STD_STRING_H
 
 #include "common/str.h"
 
 namespace Ultima {
-namespace Ultima8 {
 namespace std {
 
 class string : public Common::String {
@@ -193,7 +192,6 @@ public:
 extern const char *const endl;
 
 } // End of namespace std
-} // End of namespace Ultima8
 } // End of namespace Ultima
 
 #endif

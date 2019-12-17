@@ -22,7 +22,7 @@
 
 #include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/kernel/object_manager.h"
-#include "ultima/ultima8/std/containers.h"
+#include "ultima/shared/std/containers.h"
 #include "ultima/ultima8/misc/id_man.h"
 #include "ultima/ultima8/kernel/object.h"
 #include "ultima/ultima8/world/item.h"

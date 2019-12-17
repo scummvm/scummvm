@@ -232,8 +232,8 @@ void AvatarMoverProcess::handleCombatMode() {
 			lastAttack = lastframe;
 
 			// attacking gives str/dex
-			avatar->accumulateStr(1 + (std::rand() % 2));
-			avatar->accumulateDex(2 + (std::rand() % 2));
+			avatar->accumulateStr(1 + (getRandom() % 2));
+			avatar->accumulateDex(2 + (getRandom() % 2));
 		}
 
 		return;
@@ -263,8 +263,8 @@ void AvatarMoverProcess::handleCombatMode() {
 			lastAttack = lastframe;
 
 			// kicking gives str/dex
-			avatar->accumulateStr(1 + (std::rand() % 2));
-			avatar->accumulateDex(2 + (std::rand() % 2));
+			avatar->accumulateStr(1 + (getRandom() % 2));
+			avatar->accumulateDex(2 + (getRandom() % 2));
 		}
 
 		return;
@@ -555,15 +555,15 @@ void AvatarMoverProcess::handleNormalMode() {
 
 	// currently shaking head?
 	if (lastanim == Animation::lookLeft || lastanim == Animation::lookRight) {
-		if ((std::rand() % 1500) + 30 < idleTime) {
+		if ((getRandom() % 1500) + 30 < idleTime) {
 			lastHeadShakeAnim = lastanim;
 			waitFor(avatar->doAnim(Animation::stand, direction));
 			idleTime = 0;
 			return;
 		}
 	} else {
-		if ((std::rand() % 3000) + 150 < idleTime) {
-			if (std::rand() % 5 == 0)
+		if ((getRandom() % 3000) + 150 < idleTime) {
+			if (getRandom() % 5 == 0)
 				nextanim = lastHeadShakeAnim;
 			else if (lastHeadShakeAnim == Animation::lookLeft)
 				nextanim = Animation::lookRight;

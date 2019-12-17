@@ -23,7 +23,7 @@
 #ifndef ULTIMA8_GRAPHICS_FONTS_FIXEDWIDTHFONT_H
 #define ULTIMA8_GRAPHICS_FONTS_FIXEDWIDTHFONT_H
 
-#include "ultima/ultima8/std/string.h"
+#include "ultima/shared/std/string.h"
 
 namespace Ultima {
 namespace Ultima8 {

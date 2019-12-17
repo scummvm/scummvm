@@ -99,8 +99,8 @@ void ContainerGump::getItemCoords(Item *item, int32 &itemx, int32 &itemy) {
 		// randomize position
 		// TODO: maybe try to put it somewhere where it doesn't overlap others?
 
-		itemx = std::rand() % itemarea.w;
-		itemy = std::rand() % itemarea.h;
+		itemx = getRandom() % itemarea.w;
+		itemy = getRandom() % itemarea.h;
 
 		item->setGumpLocation(itemx, itemy);
 	}

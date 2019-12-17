@@ -364,7 +364,7 @@ void ActorAnimProcess::doSpecial() {
 	if (item_num == 1 && (action == Animation::readyWeapon ||
 	                      action == Animation::unreadyWeapon) &&
 	        a->getEquip(ShapeInfo::SE_WEAPON) != 0) {
-		int sfx = (std::rand() % 2) ? 0x51 : 0x52; // constants!
+		int sfx = (getRandom() % 2) ? 0x51 : 0x52; // constants!
 		AudioProcess *audioproc = AudioProcess::get_instance();
 		if (audioproc) audioproc->playSFX(sfx, 0x60, 1, 0);
 		return;
@@ -393,8 +393,8 @@ void ActorAnimProcess::doSpecial() {
 
 			int32 x, y, z;
 			a->getLocation(x, y, z);
-			x += (std::rand() % (6 * 256)) - 3 * 256;
-			y += (std::rand() % (6 * 256)) - 3 * 256;
+			x += (getRandom() % (6 * 256)) - 3 * 256;
+			y += (getRandom() % (6 * 256)) - 3 * 256;
 
 			Actor *ghoul = Actor::createActor(0x8e, 0);
 			if (!ghoul) return;
@@ -476,7 +476,7 @@ void ActorAnimProcess::doSpecial() {
 
 		if (sfx) {
 			AudioProcess *audioproc = AudioProcess::get_instance();
-			if (audioproc) audioproc->playSFX(sfx, 0x60, item_num, 0, false, 0x10000 + (std::rand() & 0x1FFF) - 0x1000);
+			if (audioproc) audioproc->playSFX(sfx, 0x60, item_num, 0, false, 0x10000 + (getRandom() & 0x1FFF) - 0x1000);
 		}
 
 		if (splash) {
@@ -512,7 +512,7 @@ void ActorAnimProcess::doHitSpecial(Item *hit) {
 		switch (weaponshape) {
 		case 0x32F: // magic hammer
 			if (audioproc) audioproc->playSFX(23, 0x60, 1, 0, false,
-				                                  0x10000 + (std::rand() & 0x1FFF) - 0x1000);
+				                                  0x10000 + (getRandom() & 0x1FFF) - 0x1000);
 			break;
 		case 0x330: { // Slayer
 			// if we killed somebody, thunder&lightning
@@ -520,7 +520,7 @@ void ActorAnimProcess::doHitSpecial(Item *hit) {
 				// calling intrinsic...
 				PaletteFaderProcess::I_lightningBolt(0, 0);
 				int sfx;
-				switch (std::rand() % 3) {
+				switch (getRandom() % 3) {
 				case 0:
 					sfx = 91;
 					break;
@@ -537,9 +537,9 @@ void ActorAnimProcess::doHitSpecial(Item *hit) {
 		}
 		case 0x331: { // Flame Sting
 			int sfx = 33;
-			if (std::rand() % 2 == 0) sfx = 101;
+			if (getRandom() % 2 == 0) sfx = 101;
 			if (audioproc) audioproc->playSFX(sfx, 0x60, 1, 0, false,
-				                                  0x10000 + (std::rand() & 0x1FFF) - 0x1000);
+				                                  0x10000 + (getRandom() & 0x1FFF) - 0x1000);
 
 			int32 x, y, z;
 			a->getLocation(x, y, z);
@@ -568,7 +568,7 @@ void ActorAnimProcess::doHitSpecial(Item *hit) {
 			        0, 0, 0, fx, fy, fz);
 			ProcId cipid = kernel->addProcess(cip);
 
-			DelayProcess *dp2 = new DelayProcess(60 + (std::rand() % 60)); //2-4s
+			DelayProcess *dp2 = new DelayProcess(60 + (getRandom() % 60)); //2-4s
 			ProcId dp2id = kernel->addProcess(dp2);
 
 			DestroyItemProcess *dip = new DestroyItemProcess(0);

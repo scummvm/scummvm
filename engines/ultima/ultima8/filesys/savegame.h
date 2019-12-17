@@ -23,7 +23,7 @@
 #ifndef ULTIMA8_FILESYS_SAVEGAME_H
 #define ULTIMA8_FILESYS_SAVEGAME_H
 
-#include "ultima/ultima8/std/string.h"
+#include "ultima/shared/std/string.h"
 #include "common/hashmap.h"
 #include "common/serializer.h"
 #include "engines/metaengine.h"

@@ -20,8 +20,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #define ULTIMA8_GAMES_TREASURELOADER_H
 
 #include "ultima/ultima8/world/actors/treasure_info.h"
-#include "ultima/ultima8/std/containers.h"
-#include "ultima/ultima8/std/containers.h"
+#include "ultima/shared/std/containers.h"
+#include "ultima/shared/std/containers.h"
 
 namespace Ultima {
 namespace Ultima8 {

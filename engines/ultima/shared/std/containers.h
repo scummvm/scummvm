@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef ULTIMA8_STD_CONTAINERS_H
-#define ULTIMA8_STD_CONTAINERS_H
+#ifndef ULTIMA_STD_CONTAINERS_H
+#define ULTIMA_STD_CONTAINERS_H
 
 #include "common/algorithm.h"
 #include "common/array.h"
@@ -31,7 +31,6 @@
 #include "common/stack.h"
 
 namespace Ultima {
-namespace Ultima8 {
 namespace std {
 
 template<class T>
@@ -262,7 +261,6 @@ protected:
 };
 
 } // End of namespace std
-} // End of namespace Ultima8
 } // End of namespace Ultima
 
 #endif

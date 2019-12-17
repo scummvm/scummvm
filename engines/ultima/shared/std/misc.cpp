@@ -20,12 +20,10 @@
  *
  */
 
-#include "ultima/ultima8/std/misc.h"
-#include "ultima/ultima8/ultima8.h"
+#include "ultima/shared/std/misc.h"
 #include "common/algorithm.h"
 
 namespace Ultima {
-namespace Ultima8 {
 namespace std {
 
 void memset(void *data, byte val, size_t count) {
@@ -76,10 +74,6 @@ double atof(const char *str) {
 	return ::atof(str);
 }
 
-uint rand() {
-	return Ultima8Engine::get_instance()->getRandomNumber(0x7fffffff);
-}
-
 double sqrt(double val) {
 	return ::sqrt(val);
 }
@@ -106,5 +100,4 @@ void free(void *&p) {
 }
 
 } // End of namespace std
-} // End of namespace Ultima8
 } // End of namespace Ultima

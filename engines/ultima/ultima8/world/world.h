@@ -57,7 +57,7 @@
 //  game data need this, actually.)
 
 #include "ultima/ultima8/misc/common_types.h"
-#include "ultima/ultima8/std/containers.h"
+#include "ultima/shared/std/containers.h"
 
 namespace Ultima {
 namespace Ultima8 {

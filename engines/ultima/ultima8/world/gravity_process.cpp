@@ -193,7 +193,7 @@ void GravityProcess::run() {
 				// Apply an impulse on the x/y plane in a random direction
 				// in a 180 degree pie around the orginal vector in x/y
 				double heading_r = atan2((double)yspeed, (double)xspeed);
-				double deltah_r = static_cast<double>(rand())
+				double deltah_r = static_cast<double>(getRandom())
 				                  * M_PI / RAND_MAX - M_PI / 2;
 #ifdef BOUNCE_DIAG
 				double headingold_r = heading_r;

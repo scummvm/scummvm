@@ -24,7 +24,7 @@
 #define ULTIMA8_GRAPHICS_PALETTEMANAGER_H
 
 #include "ultima/ultima8/graphics/palette.h"
-#include "ultima/ultima8/std/containers.h"
+#include "ultima/shared/std/containers.h"
 
 namespace Ultima {
 namespace Ultima8 {

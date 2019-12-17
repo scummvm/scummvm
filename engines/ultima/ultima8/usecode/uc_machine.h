@@ -23,7 +23,7 @@
 #ifndef ULTIMA8_USECODE_UCMACHINE_H
 #define ULTIMA8_USECODE_UCMACHINE_H
 
-#include "ultima/ultima8/std/containers.h"
+#include "ultima/shared/std/containers.h"
 #include "ultima/ultima8/usecode/intrinsics.h"
 
 namespace Ultima {

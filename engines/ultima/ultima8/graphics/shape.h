@@ -23,7 +23,7 @@
 #ifndef ULTIMA8_GRAPHICS_SHAPE_H
 #define ULTIMA8_GRAPHICS_SHAPE_H
 
-#include "ultima/ultima8/std/containers.h"
+#include "ultima/shared/std/containers.h"
 #include "ultima/ultima8/misc/p_dynamic_cast.h"
 
 namespace Ultima {

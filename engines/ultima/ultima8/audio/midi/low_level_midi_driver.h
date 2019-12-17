@@ -25,7 +25,7 @@
 
 #include "ultima/ultima8/audio/midi/midi_driver.h"
 #include "ultima/ultima8/audio/midi/xmidi_sequence_handler.h"
-#include "ultima/ultima8/std/containers.h"
+#include "ultima/shared/std/containers.h"
 #include "common/mutex.h"
 
 namespace Ultima {

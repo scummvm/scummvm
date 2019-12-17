@@ -447,7 +447,7 @@ inline void OPL_CALC_CH(OPL_CH *CH) {
 #define WHITE_NOISE_db 6.0
 inline void OPL_CALC_RH(OPL_CH *CH) {
 	uint32 env_tam, env_sd, env_top, env_hh;
-	int whitenoise = int((std::rand() & 1) * (WHITE_NOISE_db / EG_STEP));
+	int whitenoise = int((getRandom() & 1) * (WHITE_NOISE_db / EG_STEP));
 	int tone8;
 
 	OPL_SLOT *SLOT;

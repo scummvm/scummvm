@@ -33,7 +33,7 @@
 
 #include "ultima/ultima8/filesys/idata_source.h"
 #include "ultima/ultima8/filesys/odata_source.h"
-#include "ultima/ultima8/std/misc.h"
+#include "ultima/shared/std/misc.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -77,7 +77,7 @@ void FireballProcess::run() {
 		return;
 	}
 
-	if (age > 300 && (std::rand() % 20 == 0)) {
+	if (age > 300 && (getRandom() % 20 == 0)) {
 		// chance of 5% to disappear every frame after 10 seconds
 		terminate();
 		return;
@@ -143,7 +143,7 @@ void FireballProcess::run() {
 		Actor *hit = getActor(hititem);
 		if (hit) {
 			// hit an actor: deal damage and explode
-			hit->receiveHit(0, 8 - targetdir, 5 + (std::rand() % 5),
+			hit->receiveHit(0, 8 - targetdir, 5 + (getRandom() % 5),
 			                WeaponInfo::DMG_FIRE);
 			terminate();
 			return;

@@ -260,7 +260,7 @@ int MainActor::getDamageAmount() {
 			kick_bonus = si->armourinfo[legs->getFrame()].kick_attack_bonus;
 		}
 
-		damage = (std::rand() % (getStr() / 2 + 1)) + kick_bonus;
+		damage = (getRandom() % (getStr() / 2 + 1)) + kick_bonus;
 
 		return damage;
 
@@ -278,14 +278,14 @@ int MainActor::getDamageAmount() {
 		int base = si->weaponinfo->base_damage;
 		int mod = si->weaponinfo->damage_modifier;
 
-		damage = (std::rand() % (mod + 1)) + base + getStr() / 5;
+		damage = (getRandom() % (mod + 1)) + base + getStr() / 5;
 
 		return damage;
 	}
 
 	// no weapon?
 
-	damage = (std::rand() % (getStr() / 2 + 1)) + 1;
+	damage = (getRandom() % (getStr() / 2 + 1)) + 1;
 
 	return damage;
 }
@@ -466,7 +466,7 @@ void MainActor::accumulateStr(int n) {
 	if (strength == 25) return; //!! constant
 
 	accumStr += n;
-	if (accumStr >= 650 || std::rand() % (650 - accumStr) == 0) { //!! constant
+	if (accumStr >= 650 || getRandom() % (650 - accumStr) == 0) { //!! constant
 		strength++;
 		accumStr = 0;
 		AudioProcess *audioproc = AudioProcess::get_instance();
@@ -480,7 +480,7 @@ void MainActor::accumulateDex(int n) {
 	if (dexterity == 25) return; //!! constant
 
 	accumDex += n;
-	if (accumDex >= 650 || std::rand() % (650 - accumDex) == 0) { //!! constant
+	if (accumDex >= 650 || getRandom() % (650 - accumDex) == 0) { //!! constant
 		dexterity++;
 		accumDex = 0;
 		AudioProcess *audioproc = AudioProcess::get_instance();
@@ -494,7 +494,7 @@ void MainActor::accumulateInt(int n) {
 	if (intelligence == 25) return; //!! constant
 
 	accumInt += n;
-	if (accumInt >= 650 || std::rand() % (650 - accumInt) == 0) { //!! constant
+	if (accumInt >= 650 || getRandom() % (650 - accumInt) == 0) { //!! constant
 		intelligence++;
 		accumInt = 0;
 		AudioProcess *audioproc = AudioProcess::get_instance();
