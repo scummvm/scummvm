@@ -27,6 +27,7 @@
 
 #include "ultima/ultima8/audio/midi/low_level_midi_driver.h"
 
+namespace Ultima {
 namespace Ultima8 {
 
 class TimidityMidiDriver : public LowLevelMidiDriver {
@@ -62,6 +63,7 @@ protected:
 };
 
 } // End of namespace Ultima8
+} // End of namespace Ultima
 
 #endif
 

@@ -26,6 +26,7 @@
 #include "ultima/ultima8/filesys/idata_source.h"
 #include "ultima/ultima8/filesys/odata_source.h"
 
+namespace Ultima {
 namespace Ultima8 {
 
 BitSet::BitSet() : size(0), bytes(0), data(0) {
@@ -131,3 +132,4 @@ bool BitSet::load(IDataSource *ids, uint32 version) {
 }
 
 } // End of namespace Ultima8
+} // End of namespace Ultima

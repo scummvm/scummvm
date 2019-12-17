@@ -33,6 +33,7 @@
 #include "ultima/ultima8/gumps/ask_gump.h"
 #include "ultima/ultima8/gumps/widgets/button_widget.h"
 
+namespace Ultima {
 namespace Ultima8 {
 
 DEFINE_RUNTIME_CLASSTYPE_CODE(TextWidget, Gump)
@@ -270,3 +271,4 @@ bool TextWidget::loadData(IDataSource *ids, uint32 version) {
 }
 
 } // End of namespace Ultima8
+} // End of namespace Ultima

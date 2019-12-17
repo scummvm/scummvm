@@ -28,6 +28,7 @@
 #include "ultima/ultima8/graphics/manips.h"
 #include "ultima/ultima8/graphics/texture.h"
 
+namespace Ultima {
 namespace Ultima8 {
 namespace Pentagram {
 
@@ -62,5 +63,6 @@ const hq4xScaler hq4x_scaler;
 
 } // End of namespace Pentagram
 } // End of namespace Ultima8
+} // End of namespace Ultima
 
 #endif

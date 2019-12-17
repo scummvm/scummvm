@@ -28,6 +28,7 @@
 #include "ultima/ultima8/conf/config_file_manager.h"
 #include "ultima/ultima8/filesys/file_system.h"
 
+namespace Ultima {
 namespace Ultima8 {
 
 FixedWidthFont *FixedWidthFont::Create(std::string iniroot) {
@@ -90,3 +91,4 @@ FixedWidthFont *FixedWidthFont::Create(std::string iniroot) {
 }
 
 } // End of namespace Ultima8
+} // End of namespace Ultima

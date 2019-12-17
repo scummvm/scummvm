@@ -37,6 +37,7 @@
 #include "ultima/ultima8/kernel/core_app.h"
 #include "ultima/ultima8/filesys/idata_source.h"
 
+namespace Ultima {
 namespace Ultima8 {
 
 Item *ItemFactory::createItem(uint32 shape, uint32 frame, uint16 quality,
@@ -197,3 +198,4 @@ Actor *ItemFactory::createActor(uint32 shape, uint32 frame, uint16 quality,
 }
 
 } // End of namespace Ultima8
+} // End of namespace Ultima

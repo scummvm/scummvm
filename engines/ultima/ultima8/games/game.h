@@ -26,6 +26,7 @@
 #include "ultima/ultima8/games/game_info.h"
 #include "ultima/ultima8/usecode/intrinsics.h"
 
+namespace Ultima {
 namespace Ultima8 {
 
 class ODataSource;
@@ -65,5 +66,6 @@ protected:
 };
 
 } // End of namespace Ultima8
+} // End of namespace Ultima
 
 #endif

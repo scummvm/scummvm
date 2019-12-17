@@ -23,6 +23,7 @@
 #ifndef ULTIMA8_KERNEL_MEMORYMANAGER_H
 #define ULTIMA8_KERNEL_MEMORYMANAGER_H
 
+namespace Ultima {
 namespace Ultima8 {
 
 class Allocator;
@@ -73,5 +74,6 @@ private:
 };
 
 } // End of namespace Ultima8
+} // End of namespace Ultima
 
 #endif

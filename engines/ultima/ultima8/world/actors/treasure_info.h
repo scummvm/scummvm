@@ -26,6 +26,7 @@
 #include "ultima/ultima8/std/containers.h"
 #include "ultima/ultima8/std/string.h"
 
+namespace Ultima {
 namespace Ultima8 {
 
 struct TreasureInfo {
@@ -40,5 +41,6 @@ struct TreasureInfo {
 };
 
 } // End of namespace Ultima8
+} // End of namespace Ultima
 
 #endif

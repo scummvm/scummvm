@@ -26,6 +26,7 @@
 #include "ultima/ultima8/graphics/graphics_errors.h"
 #include "graphics/pixelformat.h"
 
+namespace Ultima {
 namespace Ultima8 {
 
 struct Texture;
@@ -256,5 +257,6 @@ public:
 };
 
 } // End of namespace Ultima8
+} // End of namespace Ultima
 
 #endif

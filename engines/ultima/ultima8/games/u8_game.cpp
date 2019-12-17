@@ -40,6 +40,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "ultima/ultima8/games/start_u8_process.h"
 #include "ultima/ultima8/world/get_object.h"
 
+namespace Ultima {
 namespace Ultima8 {
 
 U8Game::U8Game() : Game() {
@@ -503,3 +504,4 @@ std::string U8Game::getCreditText(IDataSource *ids) {
 }
 
 } // End of namespace Ultima8
+} // End of namespace Ultima

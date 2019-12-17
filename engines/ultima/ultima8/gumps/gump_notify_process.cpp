@@ -28,6 +28,7 @@
 #include "ultima/ultima8/filesys/idata_source.h"
 #include "ultima/ultima8/filesys/odata_source.h"
 
+namespace Ultima {
 namespace Ultima8 {
 
 DEFINE_RUNTIME_CLASSTYPE_CODE(GumpNotifyProcess, Process)
@@ -60,7 +61,7 @@ void GumpNotifyProcess::terminate() {
 	Process::terminate();
 
 	if (gump) {
-		Gump *g = ::Ultima8::getGump(gump);
+		Gump *g = Ultima8::getGump(gump);
 		assert(g);
 		g->Close();
 	}
@@ -89,3 +90,4 @@ bool GumpNotifyProcess::loadData(IDataSource *ids, uint32 version) {
 }
 
 } // End of namespace Ultima8
+} // End of namespace Ultima

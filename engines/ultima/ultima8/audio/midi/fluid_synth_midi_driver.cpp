@@ -25,6 +25,7 @@
 
 #ifdef USE_FLUIDSYNTH_MIDI
 
+namespace Ultima {
 namespace Ultima8 {
 
 const MidiDriver::MidiDriverDesc FluidSynthMidiDriver::desc =
@@ -158,5 +159,6 @@ void FluidSynthMidiDriver::lowLevelProduceSamples(int16 *samples, uint32 num_sam
 }
 
 } // End of namespace Ultima8
+} // End of namespace Ultima
 
 #endif

@@ -25,6 +25,7 @@
 
 #include "common/str.h"
 
+namespace Ultima {
 namespace Ultima8 {
 namespace std {
 
@@ -193,5 +194,6 @@ extern const char *const endl;
 
 } // End of namespace std
 } // End of namespace Ultima8
+} // End of namespace Ultima
 
 #endif

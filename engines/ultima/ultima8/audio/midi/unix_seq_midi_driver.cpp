@@ -34,6 +34,7 @@
 #include <unistd.h>
 #include <cerrno>
 
+namespace Ultima {
 namespace Ultima8 {
 
 const MidiDriver::MidiDriverDesc UnixSeqMidiDriver::desc =
@@ -140,5 +141,6 @@ void UnixSeqMidiDriver::send_sysex(uint8 status, const uint8 *msg, uint16 length
 }
 
 } // End of namespace Ultima8
+} // End of namespace Ultima
 
 #endif

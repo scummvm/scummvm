@@ -23,6 +23,7 @@
 #ifndef ULTIMA8_AUDIO_MIDI_SEQUENCEHANDLER_H
 #define ULTIMA8_AUDIO_MIDI_SEQUENCEHANDLER_H
 
+namespace Ultima {
 namespace Ultima8 {
 
 struct XMidiEvent;
@@ -56,5 +57,6 @@ public:
 };
 
 } // End of namespace Ultima8
+} // End of namespace Ultima
 
 #endif

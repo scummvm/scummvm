@@ -24,6 +24,7 @@
 #include "ultima/ultima8/graphics/scalers/bilinear_scaler_internal.h"
 #include "ultima/ultima8/graphics/manips.h"
 
+namespace Ultima {
 namespace Ultima8 {
 namespace Pentagram {
 
@@ -147,4 +148,5 @@ InstantiateBilinearScalerFunc(BilinearScalerInternal_X2Y24);
 
 } // End of namespace Pentagram
 } // End of namespace Ultima8
+} // End of namespace Ultima
 

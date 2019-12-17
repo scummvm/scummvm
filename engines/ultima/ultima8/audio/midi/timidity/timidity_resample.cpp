@@ -37,6 +37,7 @@
 #include "timidity_tables.h"
 #include "timidity_resample.h"
 
+namespace Ultima {
 namespace Ultima8 {
 
 #ifdef NS_TIMIDITY
@@ -664,5 +665,6 @@ void pre_resample(Sample *sp) {
 #endif
 
 } // End of namespace Ultima8
+} // End of namespace Ultima
 
 #endif

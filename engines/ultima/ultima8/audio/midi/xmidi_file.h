@@ -23,6 +23,7 @@
 #ifndef ULTIMA8_AUDIO_MIDI_XMIDIFILE_H
 #define ULTIMA8_AUDIO_MIDI_XMIDIFILE_H
 
+namespace Ultima {
 namespace Ultima8 {
 
 class IDataSource;
@@ -121,5 +122,6 @@ private:
 };
 
 } // End of namespace Ultima8
+} // End of namespace Ultima
 
 #endif

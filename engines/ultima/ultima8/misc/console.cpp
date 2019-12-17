@@ -30,6 +30,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 using namespace std;
 
+namespace Ultima {
 namespace Ultima8 {
 
 #define MAXPRINTMSG 4096
@@ -889,3 +890,4 @@ void Console::DrawConsoleNotify(RenderSurface *surf) {
 }
 
 } // End of namespace Ultima8
+} // End of namespace Ultima

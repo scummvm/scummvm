@@ -27,6 +27,7 @@
 #include "audio/audiostream.h"
 #include "audio/decoders/raw.h"
 
+namespace Ultima {
 namespace Ultima8 {
 namespace Pentagram {
 
@@ -127,3 +128,4 @@ void AudioChannel::decompressNextFrame() {
 
 } // End of namespace Pentagram
 } // End of namespace Ultima8
+} // End of namespace Ultima

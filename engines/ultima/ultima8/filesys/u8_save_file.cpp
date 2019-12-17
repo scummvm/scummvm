@@ -25,6 +25,7 @@
 #include "ultima/ultima8/filesys/u8_save_file.h"
 #include "ultima/ultima8/filesys/idata_source.h"
 
+namespace Ultima {
 namespace Ultima8 {
 
 DEFINE_RUNTIME_CLASSTYPE_CODE(U8SaveFile, NamedArchiveFile)
@@ -116,3 +117,4 @@ uint32 U8SaveFile::getSize(const std::string &name) {
 }
 
 } // End of namespace Ultima8
+} // End of namespace Ultima

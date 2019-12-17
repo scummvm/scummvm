@@ -23,6 +23,7 @@
 #ifndef ULTIMA8_GRAPHICS_PALETTE_H
 #define ULTIMA8_GRAPHICS_PALETTE_H
 
+namespace Ultima {
 namespace Ultima8 {
 
 class IDataSource;
@@ -90,5 +91,6 @@ struct Palette {
 
 } // End of namespace Pentagram
 } // End of namespace Ultima8
+} // End of namespace Ultima
 
 #endif

@@ -32,6 +32,7 @@
 #include <AudioToolbox/AUGraph.h>
 #include <CoreServices/CoreServices.h>
 
+namespace Ultima {
 namespace Ultima8 {
 
 class CoreAudioMidiDriver : public LowLevelMidiDriver {
@@ -60,6 +61,7 @@ protected:
 };
 
 } // End of namespace Ultima8
+} // End of namespace Ultima
 
 #endif
 

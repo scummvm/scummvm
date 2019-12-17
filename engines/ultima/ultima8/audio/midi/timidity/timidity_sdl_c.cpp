@@ -35,6 +35,7 @@
 #include "timidity_instrum.h"
 #include "timidity_playmidi.h"
 
+namespace Ultima {
 namespace Ultima8 {
 
 #ifdef NS_TIMIDITY
@@ -130,5 +131,6 @@ static void ctl_reset(void) {}
 #endif
 
 } // End of namespace Ultima8
+} // End of namespace Ultima
 
 #endif

@@ -28,6 +28,7 @@
 #include "timidity_output.h"
 #include "timidity_tables.h"
 
+namespace Ultima {
 namespace Ultima8 {
 
 #ifdef NS_TIMIDITY
@@ -135,5 +136,6 @@ void s32toulaw(void *dp, int32 *lp, int32 c) {
 #endif
 
 } // End of namespace Ultima8
+} // End of namespace Ultima
 
 #endif //USE_TIMIDITY_MIDI

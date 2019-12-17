@@ -21,6 +21,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include "ultima/ultima8/games/game.h"
 
+namespace Ultima {
 namespace Ultima8 {
 
 class RemorseGame : public Game {
@@ -52,5 +53,6 @@ protected:
 };
 
 } // End of namespace Ultima8
+} // End of namespace Ultima
 
 #endif

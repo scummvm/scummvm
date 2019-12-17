@@ -25,6 +25,7 @@
 
 #include "ultima/ultima8/graphics/scaler.h"
 
+namespace Ultima {
 namespace Ultima8 {
 namespace Pentagram {
 
@@ -61,5 +62,6 @@ extern const GC_BilinearScaler GC_bilinear_scaler;
 
 } // End of namespace Pentagram
 } // End of namespace Ultima8
+} // End of namespace Ultima
 
 #endif

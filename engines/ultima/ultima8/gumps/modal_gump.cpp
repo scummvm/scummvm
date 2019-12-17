@@ -30,6 +30,7 @@
 #include "ultima/ultima8/filesys/odata_source.h"
 #include "ultima/ultima8/audio/audio_process.h"
 
+namespace Ultima {
 namespace Ultima8 {
 
 DEFINE_RUNTIME_CLASSTYPE_CODE(ModalGump, Gump)
@@ -107,3 +108,4 @@ bool ModalGump::loadData(IDataSource *ids, uint32 version) {
 }
 
 } // End of namespace Ultima8
+} // End of namespace Ultima

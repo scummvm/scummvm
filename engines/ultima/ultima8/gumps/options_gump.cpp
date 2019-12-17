@@ -34,6 +34,7 @@
 #include "ultima/ultima8/filesys/odata_source.h"
 #include "common/events.h"
 
+namespace Ultima {
 namespace Ultima8 {
 
 static const int font = 0;
@@ -147,3 +148,4 @@ void OptionsGump::saveData(ODataSource *ods) {
 }
 
 } // End of namespace Ultima8
+} // End of namespace Ultima

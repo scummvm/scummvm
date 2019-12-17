@@ -35,6 +35,7 @@
 #include "ultima/ultima8/filesys/odata_source.h"
 #include "ultima/ultima8/misc/p_dynamic_cast.h"
 
+namespace Ultima {
 namespace Ultima8 {
 
 static const int font = 9;
@@ -207,3 +208,4 @@ void ControlsGump::saveData(ODataSource *ods) {
 }
 
 } // End of namespace Ultima8
+} // End of namespace Ultima

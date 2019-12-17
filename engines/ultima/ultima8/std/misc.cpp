@@ -24,6 +24,7 @@
 #include "ultima/ultima8/ultima8.h"
 #include "common/algorithm.h"
 
+namespace Ultima {
 namespace Ultima8 {
 namespace std {
 
@@ -106,3 +107,4 @@ void free(void *&p) {
 
 } // End of namespace std
 } // End of namespace Ultima8
+} // End of namespace Ultima

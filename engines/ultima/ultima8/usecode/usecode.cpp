@@ -25,6 +25,7 @@
 #include "ultima/ultima8/usecode/usecode.h"
 #include "ultima/ultima8/kernel/core_app.h"
 
+namespace Ultima {
 namespace Ultima8 {
 
 uint32 Usecode::get_class_event(uint32 classid, uint32 eventid) {
@@ -56,3 +57,4 @@ uint32 Usecode::get_class_event(uint32 classid, uint32 eventid) {
 }
 
 } // End of namespace Ultima8
+} // End of namespace Ultima

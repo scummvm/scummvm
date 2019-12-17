@@ -118,6 +118,7 @@
 
 #include "ultima/ultima8/misc/util.h"
 
+namespace Ultima {
 namespace Ultima8 {
 
 using std::string;
@@ -2137,3 +2138,4 @@ uint32 Ultima8Engine::I_closeItemGumps(const uint8 *args, unsigned int /*argsize
 }
 
 } // End of namespace Ultima8
+} // End of namespace Ultima

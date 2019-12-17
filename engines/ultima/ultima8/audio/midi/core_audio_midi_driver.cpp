@@ -30,6 +30,7 @@
 #include <sched.h>
 #include <iostream>
 
+namespace Ultima {
 namespace Ultima8 {
 
 // With the release of Mac OS X 10.5 in October 2007, Apple deprecated the
@@ -231,5 +232,6 @@ void CoreAudioMidiDriver::yield() {
 }
 
 } // End of namespace Ultima8
+} // End of namespace Ultima
 
 #endif

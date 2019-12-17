@@ -23,6 +23,7 @@
 #include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/kernel/pool.h"
 
+namespace Ultima {
 namespace Ultima8 {
 
 // p_dynamic_cast stuff
@@ -35,3 +36,4 @@ Pool::~Pool() {
 }
 
 } // End of namespace Ultima8
+} // End of namespace Ultima

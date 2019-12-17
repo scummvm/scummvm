@@ -22,6 +22,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "ultima/ultima8/filesys/file_system.h"
 #include "ultima/ultima8/filesys/idata_source.h"
 
+namespace Ultima {
 namespace Ultima8 {
 
 using Pentagram::istring;
@@ -488,3 +489,4 @@ void INIFile::listKeyValues(KeyMap &keyvalues, istring section_, bool longformat
 }
 
 } // End of namespace Ultima8
+} // End of namespace Ultima

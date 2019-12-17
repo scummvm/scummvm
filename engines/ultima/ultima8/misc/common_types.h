@@ -22,6 +22,7 @@
 
 #include "common/scummsys.h"
 
+namespace Ultima {
 namespace Ultima8 {
 
 //
@@ -60,6 +61,7 @@ typedef uint16 ObjId;
 typedef uint16 ProcId;
 
 } // End of namespace Ultima8
+} // End of namespace Ultima
 
 #endif
 

@@ -27,6 +27,7 @@
 
 #include "ultima/ultima8/audio/midi/xmidi_event.h"
 
+namespace Ultima {
 namespace Ultima8 {
 
 class ODataSource;
@@ -75,5 +76,6 @@ public:
 };
 
 } // End of namespace Ultima8
+} // End of namespace Ultima
 
 #endif

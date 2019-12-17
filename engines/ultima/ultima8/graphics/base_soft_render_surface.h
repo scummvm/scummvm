@@ -27,6 +27,7 @@
 #include "ultima/ultima8/misc/rect.h"
 #include "graphics/managed_surface.h"
 
+namespace Ultima {
 namespace Ultima8 {
 
 //
@@ -168,5 +169,6 @@ public:
 };
 
 } // End of namespace Ultima8
+} // End of namespace Ultima
 
 #endif

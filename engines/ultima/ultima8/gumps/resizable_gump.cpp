@@ -23,6 +23,7 @@
 #include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/gumps/resizable_gump.h"
 
+namespace Ultima {
 namespace Ultima8 {
 
 ResizableGump::ResizableGump(int X, int Y, int Width, int Height) : Gump(X, Y, Width, Height) {
@@ -32,3 +33,4 @@ ResizableGump::~ResizableGump() {
 }
 
 } // End of namespace Ultima8
+} // End of namespace Ultima

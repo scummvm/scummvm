@@ -22,6 +22,7 @@
 
 #include "ultima/ultima8/misc/pent_include.h"
 
+namespace Ultima {
 namespace Ultima8 {
 
 // We will define c_empty_string here, unless we say not to
@@ -41,3 +42,4 @@ void setAllocationFunctions(allocFunc a, deallocFunc d) {
 
 } // End of namespace Pentagram
 } // End of namespace Ultima8
+} // End of namespace Ultima

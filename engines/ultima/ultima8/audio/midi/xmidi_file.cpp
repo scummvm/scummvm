@@ -34,6 +34,7 @@
 #include "ultima/ultima8/filesys/odata_source.h"
 #endif
 
+namespace Ultima {
 namespace Ultima8 {
 
 #ifndef UNDER_CE
@@ -1917,3 +1918,4 @@ void XMidiFile::InsertDisplayEvents() {
 }
 
 } // End of namespace Ultima8
+} // End of namespace Ultima

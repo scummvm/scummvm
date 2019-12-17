@@ -25,6 +25,7 @@
 
 #include "ultima/ultima8/kernel/pool.h"
 
+namespace Ultima {
 namespace Ultima8 {
 
 // Think about adding magic to the front of the
@@ -82,5 +83,6 @@ private:
 };
 
 } // End of namespace Ultima8
+} // End of namespace Ultima
 
 #endif

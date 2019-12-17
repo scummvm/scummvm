@@ -23,6 +23,7 @@
 #ifndef ULTIMA8_GRAPHICS_WPNOVLAYDAT_H
 #define ULTIMA8_GRAPHICS_WPNOVLAYDAT_H
 
+namespace Ultima {
 namespace Ultima8 {
 
 class RawArchive;
@@ -47,5 +48,6 @@ private:
 };
 
 } // End of namespace Ultima8
+} // End of namespace Ultima
 
 #endif

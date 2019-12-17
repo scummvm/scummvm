@@ -24,6 +24,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/misc/istring.h"
 
+namespace Ultima {
 namespace Ultima8 {
 namespace Pentagram {
 
@@ -81,5 +82,6 @@ void istring::split(Common::Array<istring> &arr) const {
 }
 
 } // End of namespace Pentagram
-} // ENd of namespace Ultima8
+} // End of namespace Ultima8
+} // End of namespace Ultima
 

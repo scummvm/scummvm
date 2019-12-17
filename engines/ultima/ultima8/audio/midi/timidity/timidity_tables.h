@@ -29,6 +29,7 @@
 
 #include <cmath>
 
+namespace Ultima {
 namespace Ultima8 {
 
 #ifdef NS_TIMIDITY
@@ -63,6 +64,7 @@ extern void init_tables(void);
 #endif
 
 } // End of namespace Ultima8
+} // End of namespace Ultima
 
 #endif
 

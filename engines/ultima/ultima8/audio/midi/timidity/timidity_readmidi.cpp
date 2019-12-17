@@ -32,6 +32,7 @@
 #include "timidity_output.h"
 #include "timidity_controls.h"
 
+namespace Ultima {
 namespace Ultima8 {
 
 static int errno = 0;
@@ -600,5 +601,6 @@ MidiEvent *read_midi_file(FILE *mfp, int32 *count, int32 *sp) {
 #endif
 
 } // End of namespace Ultima8
+} // End of namespace Ultima
 
 #endif //USE_TIMIDITY_MIDI

@@ -27,6 +27,7 @@
 #include "ultima/ultima8/convert/u8/convert_shape_u8.h"
 #include "ultima/ultima8/filesys/idata_source.h"
 
+namespace Ultima {
 namespace Ultima8 {
 
 /*
@@ -244,3 +245,4 @@ void ShapeFrame::getConvertShapeFrame(ConvertShapeFrame &csf, bool need_bytes_rl
 }
 
 } // End of namespace Ultima8
+} // End of namespace Ultima

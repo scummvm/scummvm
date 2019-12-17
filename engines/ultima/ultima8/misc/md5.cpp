@@ -26,6 +26,7 @@
 #include "ultima/ultima8/misc/md5.h"
 #include "ultima/ultima8/filesys/idata_source.h"
 
+namespace Ultima {
 namespace Ultima8 {
 namespace Pentagram {
 
@@ -269,3 +270,4 @@ bool md5_file(IDataSource *input, uint8 digest[16], uint32 length) {
 
 } // End of namespace Pentagram
 } // End of namespace Ultima8
+} // End of namespace Ultima

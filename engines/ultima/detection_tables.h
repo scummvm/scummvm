@@ -77,4 +77,4 @@ static const Ultima::UltimaGameDescription GAME_DESCRIPTIONS[] = {
 	{ AD_TABLE_END_MARKER }
 };
 
-} // End of namespace Hopkins
+} // End of namespace Ultima

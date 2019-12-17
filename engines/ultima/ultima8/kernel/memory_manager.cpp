@@ -24,6 +24,7 @@
 #include "ultima/ultima8/kernel/memory_manager.h"
 #include "ultima/ultima8/kernel/segmented_allocator.h"
 
+namespace Ultima {
 namespace Ultima8 {
 
 MemoryManager *MemoryManager::memorymanager;
@@ -230,3 +231,4 @@ void MemoryManager::ConCmd_test(const Console::ArgvType &argv) {
 #endif
 
 } // End of namespace Ultima8
+} // End of namespace Ultima

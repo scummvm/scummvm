@@ -28,6 +28,7 @@
 #include "ultima/ultima8/filesys/idata_source.h"
 #include "ultima/ultima8/filesys/odata_source.h"
 
+namespace Ultima {
 namespace Ultima8 {
 
 #define PALETTEFADER_COUNTER    30
@@ -192,3 +193,4 @@ uint32 PaletteFaderProcess::I_lightningBolt(const uint8 * /*args*/,
 }
 
 } // End of namespace Ultima8
+} // End of namespace Ultima

@@ -19,6 +19,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #ifndef ULTIMA8_MISC_ERRORS_H
 #define ULTIMA8_MISC_ERRORS_H
 
+namespace Ultima {
 namespace Ultima8 {
 
 ////////////////////////////////
@@ -129,5 +130,6 @@ struct ECode {
 #define P_MEMORY_ALLOC_ERRO                 (-3)
 
 } // End of namespace Ultima8
+} // End of namespace Ultima
 
 #endif

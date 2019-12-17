@@ -28,6 +28,7 @@
 #include "ultima/ultima8/std/containers.h"
 #include "common/mutex.h"
 
+namespace Ultima {
 namespace Ultima8 {
 
 class XMidiEventList;
@@ -271,5 +272,6 @@ private:
 };
 
 } // End of namespace Ultima8
+} // End of namespace Ultima
 
 #endif

@@ -26,10 +26,12 @@
 
 #include "ultima/ultima8/graphics/scalers/hq3x_scaler.inc"
 
+namespace Ultima {
 namespace Ultima8 {
 namespace Pentagram {
 template Scaler::ScalerFunc hq3xScaler::GetScaler<uint32, Manip_Nat2Nat_32, uint32>();
 } // End of namespace Pentagram
 } // End of namespace Ultima8
+} // End of namespace Ultima
 
 #endif

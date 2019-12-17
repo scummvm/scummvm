@@ -23,6 +23,7 @@
 #ifndef WORLD_ACTORS_ANIMATION_H
 #define WORLD_ACTORS_ANIMATION_H
 
+namespace Ultima {
 namespace Ultima8 {
 namespace Animation {
 
@@ -106,5 +107,6 @@ Sequence checkWeapon(const Sequence nextanim, const Sequence lastanim);
 
 } // End of namespace Animation
 } // End of namespace Ultima8
+} // End of namespace Ultima
 
 #endif

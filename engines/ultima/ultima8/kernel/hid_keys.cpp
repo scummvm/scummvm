@@ -23,6 +23,7 @@
 #include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/kernel/hid_keys.h"
 
+namespace Ultima {
 namespace Ultima8 {
 
 struct KeyName {
@@ -700,3 +701,4 @@ HID_Events HID_GetEventFromName(const Pentagram::istring &name) {
 }
 
 } // End of namespace Ultima8
+} // End of namespace Ultima

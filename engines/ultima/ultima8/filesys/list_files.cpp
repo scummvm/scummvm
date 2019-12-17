@@ -26,6 +26,7 @@
 #include "ultima/ultima8/std/string.h"
 #include "ultima/ultima8/filesys/file_system.h"
 
+namespace Ultima {
 namespace Ultima8 {
 
 int FileSystem::ListFiles(const std::string mask, FileList &files) {
@@ -85,5 +86,6 @@ int FileSystem::ListFiles(const std::string mask, FileList &files) {
 }
 
 } // End of namespace Ultima8
+} // End of namespace Ultima
 
 #endif

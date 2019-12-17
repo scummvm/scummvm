@@ -24,6 +24,7 @@
 
 #include "ultima/ultima8/graphics/fonts/font.h"
 
+namespace Ultima {
 namespace Ultima8 {
 namespace Pentagram {
 
@@ -389,3 +390,4 @@ std::list<PositionedText> typesetText<Pentagram::Font::SJISTraits>
  int &resultwidth, int &resultheight, std::string::size_type cursor);
 
 } // End of namespace Ultima8
+} // End of namespace Ultima

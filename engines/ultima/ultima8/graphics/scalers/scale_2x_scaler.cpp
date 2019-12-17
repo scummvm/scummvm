@@ -42,6 +42,7 @@
 #include <SDL_types.h>
 #include <SDL_cpuinfo.h>
 
+namespace Ultima {
 namespace Ultima8 {
 namespace Pentagram {
 
@@ -1152,3 +1153,4 @@ const Scale2xScaler scale2x_scaler;
 
 } // End of namespace Pentagram
 } // End of namespace Ultima8
+} // End of namespace Ultima

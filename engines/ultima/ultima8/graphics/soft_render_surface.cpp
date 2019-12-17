@@ -34,6 +34,7 @@
 #include "ultima/ultima8/graphics/scalers/point_scaler.h"
 #include "ultima/ultima8/graphics/scalers/bilinear_scaler.h"
 
+namespace Ultima {
 namespace Ultima8 {
 
 ///////////////////////
@@ -980,3 +981,4 @@ template class SoftRenderSurface<uint16>;
 template class SoftRenderSurface<uint32>;
 
 } // End of namespace Ultima8
+} // End of namespace Ultima

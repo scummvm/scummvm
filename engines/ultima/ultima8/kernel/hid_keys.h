@@ -25,6 +25,7 @@
 
 #include "common/events.h"
 
+namespace Ultima {
 namespace Ultima8 {
 
 enum HID_Key {
@@ -231,5 +232,6 @@ const char *HID_GetEventsName(HID_Events event);
 HID_Events HID_GetEventFromName(const Pentagram::istring &name);
 
 } // End of namespace Ultima8
+} // End of namespace Ultima
 
 #endif

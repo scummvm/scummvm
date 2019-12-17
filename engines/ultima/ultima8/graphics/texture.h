@@ -25,6 +25,7 @@
 
 #include "graphics/surface.h"
 
+namespace Ultima {
 namespace Ultima8 {
 
 //
@@ -135,5 +136,6 @@ protected:
 };
 
 } // End of namespace Ultima8
+} // End of namespace Ultima
 
 #endif

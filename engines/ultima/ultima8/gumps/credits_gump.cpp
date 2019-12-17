@@ -32,6 +32,7 @@
 #include "ultima/ultima8/audio/music_process.h"
 #include "ultima/ultima8/conf/setting_manager.h"
 
+namespace Ultima {
 namespace Ultima8 {
 
 DEFINE_RUNTIME_CLASSTYPE_CODE(CreditsGump, ModalGump)
@@ -382,3 +383,4 @@ bool CreditsGump::OnKeyDown(int key, int mod) {
 }
 
 } // End of namespace Ultima8
+} // End of namespace Ultima

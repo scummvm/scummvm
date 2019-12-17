@@ -45,6 +45,7 @@
 #include "Configuration.h"
 #endif
 
+namespace Ultima {
 namespace Ultima8 {
 
 #ifdef NS_TIMIDITY
@@ -442,5 +443,6 @@ char *Timidity_Error(void) {
 #endif
 
 } // End of namespace Ultima8
+} // End of namespace Ultima
 
 #endif

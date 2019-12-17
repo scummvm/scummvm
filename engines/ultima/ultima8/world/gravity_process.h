@@ -25,6 +25,7 @@
 
 #include "ultima/ultima8/kernel/process.h"
 
+namespace Ultima {
 namespace Ultima8 {
 
 class Item;
@@ -59,5 +60,6 @@ protected:
 };
 
 } // End of namespace Ultima8
+} // End of namespace Ultima
 
 #endif

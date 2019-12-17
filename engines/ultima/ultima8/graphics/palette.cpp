@@ -25,6 +25,7 @@
 #include "ultima/ultima8/filesys/idata_source.h"
 #include "ultima/ultima8/graphics/texture.h"
 
+namespace Ultima {
 namespace Ultima8 {
 namespace Pentagram {
 
@@ -67,3 +68,4 @@ void Palette::load(IDataSource &ds) {
 
 } // End of namespace Pentagram
 } // End of namespace Ultima8
+} // End of namespace Ultima

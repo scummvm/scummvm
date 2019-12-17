@@ -26,6 +26,7 @@
 #include "ultima/ultima8/audio/midi/xmidi_file.h"
 #include "ultima/ultima8/filesys/idata_source.h"
 
+namespace Ultima {
 namespace Ultima8 {
 
 DEFINE_RUNTIME_CLASSTYPE_CODE(MusicFlex, Pentagram::Archive)
@@ -248,3 +249,4 @@ void MusicFlex::loadSongInfo() {
 }
 
 } // End of namespace Ultima8
+} // End of namespace Ultima

@@ -29,6 +29,7 @@
 #include "ultima/ultima8/usecode/intrinsics.h"
 #include "ultima/ultima8/misc/box.h"
 
+namespace Ultima {
 namespace Ultima8 {
 
 class Container;
@@ -643,5 +644,6 @@ inline void Item::getLocation(int32 &X, int32 &Y, int32 &Z) const {
 }
 
 } // End of namespace Ultima8
+} // End of namespace Ultima
 
 #endif

@@ -26,6 +26,7 @@
 #include "ultima/ultima8/kernel/process.h"
 #include "ultima/ultima8/world/actors/animation.h"
 
+namespace Ultima {
 namespace Ultima8 {
 
 class Actor;
@@ -81,5 +82,6 @@ protected:
 };
 
 } // End of namespace Ultima8
+} // End of namespace Ultima
 
 #endif

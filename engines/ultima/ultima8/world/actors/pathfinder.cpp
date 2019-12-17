@@ -30,6 +30,7 @@
 #include "ultima/ultima8/ultima8.h"
 #include "common/system.h"
 
+namespace Ultima {
 namespace Ultima8 {
 
 #ifdef DEBUG
@@ -644,3 +645,4 @@ void Pathfinder::ConCmd_visualDebug(const Console::ArgvType &argv) {
 #endif
 
 } // End of namespace Ultima8
+} // End of namespace Ultima

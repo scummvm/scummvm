@@ -23,6 +23,7 @@
 #ifndef ULTIMA8_AUDIO_MIDI_XMIDIEVENT_H
 #define ULTIMA8_AUDIO_MIDI_XMIDIEVENT_H
 
+namespace Ultima {
 namespace Ultima8 {
 
 // Midi Status Bytes
@@ -135,5 +136,6 @@ struct XMidiEvent {
 };
 
 } // End of namespace Ultima8
+} // End of namespace Ultima
 
 #endif

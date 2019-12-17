@@ -37,6 +37,7 @@
 #define WIN32_LEAN_AND_MEAN
 #endif
 
+namespace Ultima {
 namespace Ultima8 {
 
 class WindowsMidiDriver : public LowLevelMidiDriver {
@@ -75,6 +76,7 @@ protected:
 };
 
 } // End of namespace Ultima8
+} // End of namespace Ultima
 
 #endif //WIN32
 

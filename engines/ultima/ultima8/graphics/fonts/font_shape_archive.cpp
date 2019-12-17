@@ -27,6 +27,7 @@
 #include "ultima/ultima8/graphics/fonts/shape_font.h"
 #include "ultima/ultima8/conf/config_file_manager.h"
 
+namespace Ultima {
 namespace Ultima8 {
 
 DEFINE_RUNTIME_CLASSTYPE_CODE(FontShapeArchive, ShapeArchive)
@@ -91,3 +92,4 @@ void FontShapeArchive::setHVLeads() {
 }
 
 } // End of namespace Ultima8
+} // End of namespace Ultima

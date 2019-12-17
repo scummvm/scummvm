@@ -30,6 +30,7 @@
 #include "ultima/ultima8/kernel/core_app.h"
 #include "ultima/ultima8/games/game_info.h"
 
+namespace Ultima {
 namespace Ultima8 {
 
 AnimDat::AnimDat() {
@@ -150,3 +151,4 @@ void AnimDat::load(IDataSource *ds) {
 }
 
 } // End of namespace Ultima8
+} // End of namespace Ultima

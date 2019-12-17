@@ -28,6 +28,7 @@
 #include "common/memstream.h"
 #include "common/savefile.h"
 
+namespace Ultima {
 namespace Ultima8 {
 
 using std::string;
@@ -321,3 +322,4 @@ std::string FileSystem::getHomePath() {
 }
 
 } // End of namespace Ultima8
+} // End of namespace Ultima

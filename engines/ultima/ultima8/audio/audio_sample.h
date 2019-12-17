@@ -23,6 +23,7 @@
 #ifndef ULTIMA8_AUDIO_AUDIOSAMPLE_H
 #define ULTIMA8_AUDIO_AUDIOSAMPLE_H
 
+namespace Ultima {
 namespace Ultima8 {
 
 class IDataSource;
@@ -71,7 +72,8 @@ public:
 	virtual void rewind(void *DecompData) const = 0;
 };
 
+} // End of namespace Pentagram
 } // End of namespace Ultima8
-} // End of namespace Ultima8
+} // End of namespace Ultima
 
 #endif

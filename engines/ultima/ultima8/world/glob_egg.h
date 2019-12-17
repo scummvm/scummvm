@@ -25,6 +25,7 @@
 
 #include "ultima/ultima8/world/item.h"
 
+namespace Ultima {
 namespace Ultima8 {
 
 class MapGlob;
@@ -47,5 +48,6 @@ protected:
 };
 
 } // End of namespace Ultima8
+} // End of namespace Ultima
 
 #endif

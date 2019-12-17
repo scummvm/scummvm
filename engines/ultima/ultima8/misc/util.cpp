@@ -25,6 +25,7 @@
 #include "ultima/ultima8/misc/istring.h"
 #include "ultima/ultima8/std/string.h"
 
+namespace Ultima {
 namespace Ultima8 {
 namespace Pentagram {
 
@@ -223,3 +224,4 @@ template void SplitStringKV<Pentagram::istring>(const Pentagram::istring &args, 
 
 } // End of namespace Pentagram
 } // End of namespace Ultima8
+} // End of namespace Ultima

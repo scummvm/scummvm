@@ -27,6 +27,7 @@
 #include "ultima/ultima8/misc/p_dynamic_cast.h"
 #include "ultima/ultima8/std/string.h"
 
+namespace Ultima {
 namespace Ultima8 {
 
 DEFINE_RUNTIME_CLASSTYPE_CODE(DelayProcess, Process)
@@ -67,3 +68,4 @@ void DelayProcess::saveData(ODataSource *ods) {
 }
 
 } // End of namespace Ultima8
+} // End of namespace Ultima

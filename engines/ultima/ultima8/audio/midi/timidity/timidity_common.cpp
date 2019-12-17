@@ -33,6 +33,7 @@
 #include "timidity_output.h"
 #include "timidity_controls.h"
 
+namespace Ultima {
 namespace Ultima8 {
 
 static int errno = 0;
@@ -235,5 +236,6 @@ void add_to_pathlist(const char *s) {
 #endif
 
 } // End of namespace Ultima8
+} // End of namespace Ultima
 
 #endif //USE_TIMIDITY_MIDI

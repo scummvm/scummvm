@@ -25,6 +25,7 @@
 #include "ultima/ultima8/graphics/scaler.h"
 #include "ultima/ultima8/graphics/scalers/point_scaler.h"
 
+namespace Ultima {
 namespace Ultima8 {
 
 ScalerManager *ScalerManager::scaler_man = 0;
@@ -123,3 +124,4 @@ const Pentagram::Scaler *ScalerManager::GetPointScaler() {
 }
 
 } // End of namespace Ultima8
+} // End of namespace Ultima

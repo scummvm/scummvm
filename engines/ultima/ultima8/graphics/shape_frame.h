@@ -23,6 +23,7 @@
 #ifndef ULTIMA8_GRAPHICS_SHAPEFRAME_H
 #define ULTIMA8_GRAPHICS_SHAPEFRAME_H
 
+namespace Ultima {
 namespace Ultima8 {
 
 struct ConvertShapeFormat;
@@ -70,5 +71,6 @@ protected:
 };
 
 } // End of namespace Ultima8
+} // End of namespace Ultima
 
 #endif

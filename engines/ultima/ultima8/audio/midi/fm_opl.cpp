@@ -32,6 +32,7 @@
 #include <iostream>
 #include "fmopl.h"
 
+namespace Ultima {
 namespace Ultima8 {
 namespace FMOpl_Pentagram {
 
@@ -1132,6 +1133,7 @@ void OPLSetPan(FM_OPL *OPL, int c, int pan) {
 
 } // End of namespace FMOpl_Pentagram
 } // End of namespace Ultima8
+} // End of namespace Ultima
 
 #endif
 

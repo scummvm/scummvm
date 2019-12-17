@@ -25,6 +25,7 @@
 
 #include "ultima/ultima8/games/game_info.h"
 
+namespace Ultima {
 namespace Ultima8 {
 namespace Pentagram {
 
@@ -134,4 +135,5 @@ static GameMD5Entry md5table[] = {
 
 } // End of namespace Pentagram
 } // End of namespace Ultima8
+} // End of namespace Ultima
 

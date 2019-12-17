@@ -27,6 +27,7 @@
 #include "timidity.h"
 #include "timidity_controls.h"
 
+namespace Ultima {
 namespace Ultima8 {
 
 #ifdef NS_TIMIDITY
@@ -54,5 +55,6 @@ ControlMode *ctl = DEFAULT_CONTROL_MODE;
 #endif
 
 } // End of namespace Ultima8
+} // End of namespace Ultima
 
 #endif

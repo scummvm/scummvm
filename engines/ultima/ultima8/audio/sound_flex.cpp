@@ -26,6 +26,7 @@
 #include "ultima/ultima8/audio/sonarc_audio_sample.h"
 #include "ultima/ultima8/filesys/idata_source.h"
 
+namespace Ultima {
 namespace Ultima8 {
 
 DEFINE_RUNTIME_CLASSTYPE_CODE(SoundFlex, Pentagram::Archive)
@@ -75,3 +76,4 @@ bool SoundFlex::isCached(uint32 index) {
 }
 
 } // End of namespace Ultima8
+} // End of namespace Ultima

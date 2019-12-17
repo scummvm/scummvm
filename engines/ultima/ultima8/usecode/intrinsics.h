@@ -25,6 +25,7 @@
 
 #include "common/scummsys.h"
 
+namespace Ultima {
 namespace Ultima8 {
 
 typedef uint32(*Intrinsic)(const uint8 *args, unsigned int argsize);
@@ -92,5 +93,6 @@ typedef uint32(*Intrinsic)(const uint8 *args, unsigned int argsize);
 #define ARG_NULL32() args+=4;
 
 } // End of namespace Ultima8
+} // End of namespace Ultima
 
 #endif

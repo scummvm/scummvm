@@ -26,6 +26,7 @@
 #include "ultima/ultima8/graphics/shape_frame.h"
 #include "ultima/ultima8/graphics/fonts/shape_rendered_text.h"
 
+namespace Ultima {
 namespace Ultima8 {
 
 DEFINE_RUNTIME_CLASSTYPE_CODE_MULTI2(ShapeFont, Pentagram::Font, Shape)
@@ -105,3 +106,4 @@ RenderedText *ShapeFont::renderText(const std::string &text,
 }
 
 } // End of namespace Ultima8
+} // End of namespace Ultima

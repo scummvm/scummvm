@@ -24,6 +24,7 @@
 #include "ultima/ultima8/audio/sonarc_audio_sample.h"
 #include "ultima/ultima8/filesys/idata_source.h"
 
+namespace Ultima {
 namespace Ultima8 {
 namespace Pentagram {
 
@@ -245,3 +246,4 @@ void SonarcAudioSample::rewind(void *DecompData) const {
 
 } // End of namespace Pentagram
 } // End of namespace Ultima8
+} // End of namespace Ultima

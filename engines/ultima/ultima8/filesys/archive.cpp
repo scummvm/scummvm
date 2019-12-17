@@ -30,6 +30,7 @@
 #include "ultima/ultima8/filesys/u8_save_file.h"
 #include "ultima/ultima8/filesys/dir_file.h"
 
+namespace Ultima {
 namespace Ultima8 {
 
 DEFINE_RUNTIME_CLASSTYPE_CODE(NamedArchiveFile, ArchiveFile)
@@ -139,3 +140,4 @@ ArchiveFile *Archive::findArchiveFile(uint32 index) {
 
 } // End of namespace Pentagram
 } // End of namespace Ultima8
+} // End of namespace Ultima

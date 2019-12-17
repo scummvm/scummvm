@@ -26,6 +26,7 @@
 #include "ultima/ultima8/graphics/texture.h"
 #include "graphics/screen.h"
 
+namespace Ultima {
 namespace Ultima8 {
 
 using Pentagram::Rect;
@@ -523,3 +524,4 @@ bool BaseSoftRenderSurface::IsFlipped() const {
 }
 
 } // End of namespace Ultima8
+} // End of namespace Ultima

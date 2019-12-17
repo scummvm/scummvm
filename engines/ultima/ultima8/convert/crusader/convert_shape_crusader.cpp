@@ -23,6 +23,7 @@
 #include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/convert/crusader/convert_shape_crusader.h"
 
+namespace Ultima {
 namespace Ultima8 {
 
 // Shape format configuration for Crusader
@@ -82,3 +83,4 @@ const ConvertShapeFormat Crusader2DShapeFormat = {
 };
 
 } // End of namespace Ultima8
+} // End of namespace Ultima

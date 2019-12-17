@@ -27,6 +27,7 @@
 #include "ultima/ultima8/kernel/mouse.h"
 #include "ultima/ultima8/world/actors/animation.h"
 
+namespace Ultima {
 namespace Ultima8 {
 
 class AvatarMoverProcess : public Process {
@@ -73,5 +74,6 @@ protected:
 };
 
 } // End of namespace Ultima8
+} // End of namespace Ultima
 
 #endif

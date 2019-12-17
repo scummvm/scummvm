@@ -25,6 +25,7 @@
 
 #include "ultima/ultima8/world/egg.h"
 
+namespace Ultima {
 namespace Ultima8 {
 
 class TeleportEgg : public Egg {
@@ -51,5 +52,6 @@ protected:
 };
 
 } // End of namespace Ultima8
+} // End of namespace Ultima
 
 #endif

@@ -29,6 +29,7 @@
 #include "timidity_common.h"
 #include "timidity_tables.h"
 
+namespace Ultima {
 namespace Ultima8 {
 
 #ifdef NS_TIMIDITY
@@ -895,5 +896,6 @@ uint8 *_l2u = _l2u_ + 4096;
 #endif
 
 } // End of namespace Ultima8
+} // End of namespace Ultima
 
 #endif //USE_TIMIDITY_MIDI

@@ -28,6 +28,7 @@
 #include "common/savefile.h"
 #include "graphics/thumbnail.h"
 
+namespace Ultima {
 namespace Ultima8 {
 
 #define SAVEGAME_IDENT MKTAG('V', 'M', 'U', '8')
@@ -143,3 +144,4 @@ bool SavegameWriter::writeFile(const std::string &name, OAutoBufferDataSource *o
 }
 
 } // End of namespace Ultima8
+} // End of namespace Ultima

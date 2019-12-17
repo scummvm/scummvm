@@ -27,6 +27,7 @@
  //#include "SDL_timer.h"
  //#include "SDL_events.h"
 
+namespace Ultima {
 namespace Ultima8 {
 
 //static SDL_Joystick *joy[JOY_LAST] = {0};
@@ -156,3 +157,4 @@ void JoystickCursorProcess::saveData(ODataSource *ods) {
 }
 
 } // End of namespace Ultima8
+} // End of namespace Ultima

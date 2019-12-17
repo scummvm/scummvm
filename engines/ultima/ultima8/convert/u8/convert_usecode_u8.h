@@ -27,6 +27,7 @@
 #include "ultima/ultima8/convert/convert.h"
 #else
 
+namespace Ultima {
 namespace Ultima8 {
 
 class ConvertUsecode {
@@ -55,9 +56,11 @@ public:
 };
 
 } // End of namespace Ultima8
+} // End of namespace Ultima
 
 #endif
 
+namespace Ultima {
 namespace Ultima8 {
 
 class ConvertUsecodeU8 : public ConvertUsecode {
@@ -423,5 +426,6 @@ void ConvertUsecodeU8::readheader(IDataSource *ucfile, UsecodeHeader &uch, uint3
 }
 
 } // End of namespace Ultima8
+} // End of namespace Ultima
 
 #endif

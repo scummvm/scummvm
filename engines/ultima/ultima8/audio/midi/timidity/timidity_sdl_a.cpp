@@ -27,6 +27,7 @@
 #include "timidity.h"
 #include "timidity_output.h"
 
+namespace Ultima {
 namespace Ultima8 {
 
 #ifdef NS_TIMIDITY
@@ -47,5 +48,6 @@ PlayMode dpm = {
 #endif
 
 } // End of namespace Ultima8
+} // End of namespace Ultima
 
 #endif //USE_TIMIDITY_MIDI

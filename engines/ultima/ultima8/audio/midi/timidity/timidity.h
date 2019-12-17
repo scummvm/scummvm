@@ -25,6 +25,7 @@
 #ifndef ULTIMA8_AUDIO_MIDI_TIMIDITY_TIMIDITY_H
 #define ULTIMA8_AUDIO_MIDI_TIMIDITY_TIMIDITY_H
 
+namespace Ultima {
 namespace Ultima8 {
 
 #define NS_TIMIDITY Timidity_Pentagram
@@ -296,6 +297,7 @@ typedef int32 final_volume_t;
 #endif
 
 } // End of namespace Ultima8
+} // End of namespace Ultima
 
 #endif
 

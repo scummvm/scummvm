@@ -30,6 +30,7 @@
 
 #include <CoreMIDI/CoreMIDI.h>
 
+namespace Ultima {
 namespace Ultima8 {
 
 class CoreMidiDriver : public LowLevelMidiDriver {
@@ -61,6 +62,7 @@ protected:
 };
 
 } // End of namespace Ultima8
+} // End of namespace Ultima
 
 #endif
 

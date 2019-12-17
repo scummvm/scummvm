@@ -30,6 +30,7 @@
 #include "ultima/ultima8/conf/setting_manager.h"
 #include "ultima/ultima8/ultima8.h"
 
+namespace Ultima {
 namespace Ultima8 {
 
 DEFINE_RUNTIME_CLASSTYPE_CODE(ScalerGump, DesktopGump)
@@ -309,3 +310,4 @@ void ScalerGump::ConCmd_listScalers(const Console::ArgvType &argv) {
 }
 
 } // End of namespace Ultima8
+} // End of namespace Ultima

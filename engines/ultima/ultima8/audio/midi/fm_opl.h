@@ -25,6 +25,7 @@
 
 #ifdef USE_FMOPL_MIDI
 
+namespace Ultima {
 namespace Ultima8 {
 namespace FMOpl_Pentagram {
 
@@ -194,6 +195,7 @@ void YM3812UpdateOne_Stereo(FM_OPL *OPL, int16 *buffer, int length);
 
 } // End of namespace FMOpl_Pentagram
 } // End of namespace Ultima8
+} // End of namespace Ultima
 
 #endif
 

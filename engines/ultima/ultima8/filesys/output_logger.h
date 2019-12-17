@@ -26,6 +26,7 @@
 #include "ultima/ultima8/std/string.h"
 #include "common/stream.h"
 
+namespace Ultima {
 namespace Ultima8 {
 
 //! Class that will duplicate output sent to FILE into another file
@@ -49,5 +50,6 @@ public:
 };
 
 } // End of namespace Ultima8
+} // End of namespace Ultima
 
 #endif

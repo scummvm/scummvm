@@ -23,6 +23,7 @@
 #ifndef ULTIMA8_MISC_ENCODING_H
 #define ULTIMA8_MISC_ENCODING_H
 
+namespace Ultima {
 namespace Ultima8 {
 namespace Pentagram {
 
@@ -38,5 +39,6 @@ uint32 shiftjis_to_unicode(uint16 sjis);
 
 } // End of namespace Pentagram
 } // End of namespace Ultima8
+} // End of namespace Ultima
 
 #endif

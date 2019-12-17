@@ -26,6 +26,7 @@
 #include "ultima/ultima8/std/containers.h"
 #include "ultima/ultima8/world/actors/anim_action.h"
 
+namespace Ultima {
 namespace Ultima8 {
 
 class ActorAnim {
@@ -48,5 +49,6 @@ private:
 };
 
 } // End of namespace Ultima8
+} // End of namespace Ultima
 
 #endif

@@ -27,6 +27,7 @@
 #include "ultima/ultima8/graphics/frame_id.h"
 #include "ultima/ultima8/misc/p_dynamic_cast.h"
 
+namespace Ultima {
 namespace Ultima8 {
 
 class ButtonWidget : public Gump {
@@ -83,5 +84,6 @@ protected:
 };
 
 } // End of namespace Ultima8
+} // End of namespace Ultima
 
 #endif

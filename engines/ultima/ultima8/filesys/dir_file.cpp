@@ -26,6 +26,7 @@
 #include "ultima/ultima8/filesys/idata_source.h"
 #include "ultima/ultima8/filesys/file_system.h"
 
+namespace Ultima {
 namespace Ultima8 {
 
 DEFINE_RUNTIME_CLASSTYPE_CODE(DirFile, NamedArchiveFile)
@@ -109,3 +110,4 @@ uint8 *DirFile::getObject(const std::string &name, uint32 *sizep) {
 }
 
 } // End of namespace Ultima8
+} // End of namespace Ultima

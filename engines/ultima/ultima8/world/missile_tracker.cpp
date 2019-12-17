@@ -29,6 +29,7 @@
 #include "ultima/ultima8/world/world.h"
 #include "ultima/ultima8/world/get_object.h"
 
+namespace Ultima {
 namespace Ultima8 {
 
 MissileTracker::MissileTracker(Item *item, int32 sx, int32 sy, int32 sz,
@@ -182,3 +183,4 @@ void MissileTracker::launchItem() {
 }
 
 } // End of namespace Ultima8
+} // End of namespace Ultima

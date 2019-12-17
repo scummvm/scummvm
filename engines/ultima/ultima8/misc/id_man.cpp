@@ -26,6 +26,7 @@
 #include "ultima/ultima8/filesys/idata_source.h"
 #include "ultima/ultima8/filesys/odata_source.h"
 
+namespace Ultima {
 namespace Ultima8 {
 
 idMan::idMan(uint16 Begin, uint16 MaxEnd, uint16 StartCount)
@@ -223,3 +224,4 @@ bool idMan::load(IDataSource *ds, uint32 version) {
 }
 
 } // End of namespace Ultima8
+} // End of namespace Ultima

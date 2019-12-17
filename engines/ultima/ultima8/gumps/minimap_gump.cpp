@@ -33,6 +33,7 @@
 #include "ultima/ultima8/graphics/palette.h"
 #include "ultima/ultima8/world/get_object.h"
 
+namespace Ultima {
 namespace Ultima8 {
 
 DEFINE_RUNTIME_CLASSTYPE_CODE(MiniMapGump, Gump)
@@ -216,3 +217,4 @@ bool MiniMapGump::loadData(IDataSource *ids, uint32 version) {
 }
 
 } // End of namespace Ultima8
+} // End of namespace Ultima

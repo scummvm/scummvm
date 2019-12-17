@@ -26,6 +26,7 @@
 #include "common/file.h"
 #include "ultima/ultima8/std/misc.h"
 
+namespace Ultima {
 namespace Ultima8 {
 
 class IDataSource {
@@ -397,5 +398,6 @@ public:
 };
 
 } // End of namespace Ultima8
+} // End of namespace Ultima
 
 #endif

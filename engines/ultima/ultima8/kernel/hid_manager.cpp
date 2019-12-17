@@ -28,6 +28,7 @@
 #include "ultima/ultima8/conf/config_file_manager.h" // temporary!
  //#include "SDL_timer.h"
 
+namespace Ultima {
 namespace Ultima8 {
 
 HIDManager *HIDManager::_hidManager = 0;
@@ -256,3 +257,4 @@ void HIDManager::listBindings() {
 }
 
 } // End of namespace Ultima8
+} // End of namespace Ultima

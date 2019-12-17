@@ -26,6 +26,7 @@
 #include "ultima/ultima8/filesys/idata_source.h"
 #include "ultima/ultima8/filesys/odata_source.h"
 
+namespace Ultima {
 namespace Ultima8 {
 
 void FrameID::save(ODataSource *ods) {
@@ -42,3 +43,4 @@ bool FrameID::load(IDataSource *ids) {
 }
 
 } // End of namespace Ultima8
+} // End of namespace Ultima

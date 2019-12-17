@@ -30,6 +30,7 @@
 #include "ultima/ultima8/filesys/odata_source.h"
 #include "ultima/ultima8/std/containers.h"
 
+namespace Ultima {
 namespace Ultima8 {
 
 typedef std::list<Process *>::iterator ProcessIterator;
@@ -455,3 +456,4 @@ uint32 Kernel::I_resetRef(const uint8 *args, unsigned int /*argsize*/) {
 }
 
 } // End of namespace Ultima8
+} // End of namespace Ultima

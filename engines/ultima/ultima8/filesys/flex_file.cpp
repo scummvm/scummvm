@@ -24,6 +24,7 @@
 #include "ultima/ultima8/filesys/flex_file.h"
 #include "ultima/ultima8/filesys/idata_source.h"
 
+namespace Ultima {
 namespace Ultima8 {
 
 DEFINE_RUNTIME_CLASSTYPE_CODE(FlexFile, ArchiveFile)
@@ -101,3 +102,4 @@ bool FlexFile::nameToIndex(const std::string &name, uint32 &index) {
 }
 
 } // End of namespace Ultima8
+} // End of namespace Ultima

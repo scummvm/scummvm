@@ -32,6 +32,7 @@
 #include "ultima/ultima8/games/treasure_loader.h"
 #include "ultima/ultima8/games/game_info.h"
 
+namespace Ultima {
 namespace Ultima8 {
 
 TypeFlags::TypeFlags() {
@@ -367,3 +368,4 @@ void TypeFlags::loadMonsterInfo() {
 }
 
 } // End of namespace Ultima8
+} // End of namespace Ultima

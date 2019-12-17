@@ -28,6 +28,7 @@
 #include "ultima/ultima8/graphics/fonts/jp_rendered_text.h"
 #include "ultima/ultima8/misc/encoding.h"
 
+namespace Ultima {
 namespace Ultima8 {
 
 DEFINE_RUNTIME_CLASSTYPE_CODE(JPFont, Pentagram::Font)
@@ -107,3 +108,4 @@ RenderedText *JPFont::renderText(const std::string &text,
 }
 
 } // End of namespace Ultima8
+} // End of namespace Ultima

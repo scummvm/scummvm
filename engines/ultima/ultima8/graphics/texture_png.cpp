@@ -26,6 +26,7 @@
 #include "image/png.h"
 #include "graphics/surface.h"
 
+namespace Ultima {
 namespace Ultima8 {
 
 bool TexturePNG::Read(IDataSource *ds) {
@@ -42,3 +43,4 @@ bool TexturePNG::Read(IDataSource *ds) {
 }
 
 } // End of namespace Ultima8
+} // End of namespace Ultima

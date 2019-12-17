@@ -5,7 +5,6 @@ MODULE_OBJS := \
 
 ifdef ENABLE_ULTIMA8
 MODULE_OBJS += \
-	ultima8/detection.o \
 	ultima8/ultima8.o \
 	ultima8/audio/audio_channel.o \
 	ultima8/audio/audio_mixer.o \

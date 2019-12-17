@@ -26,6 +26,7 @@
 #include "ultima/ultima8/kernel/process.h"
 #include "ultima/ultima8/usecode/uc_stack.h"
 
+namespace Ultima {
 namespace Ultima8 {
 
 class Usecode;
@@ -86,5 +87,6 @@ protected:
 };
 
 } // End of namespace Ultima8
+} // End of namespace Ultima
 
 #endif

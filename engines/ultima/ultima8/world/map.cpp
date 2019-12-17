@@ -35,6 +35,7 @@
 #include "ultima/ultima8/games/game_data.h"
 #include "ultima/ultima8/graphics/main_shape_archive.h"
 
+namespace Ultima {
 namespace Ultima8 {
 
 //#define DUMP_ITEMS
@@ -406,3 +407,4 @@ bool Map::load(IDataSource *ids, uint32 version) {
 }
 
 } // End of namespace Ultima8
+} // End of namespace Ultima

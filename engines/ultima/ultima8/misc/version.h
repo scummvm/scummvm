@@ -19,6 +19,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #ifndef ULTIMA8_MISC_VERSION_H
 #define ULTIMA8_MISC_VERSION_H
 
+namespace Ultima {
 namespace Ultima8 {
 namespace PentagramVersion {
 
@@ -28,5 +29,6 @@ extern const char *buildtime;
 
 } // End of namespace PentagramVersion
 } // End of namespace Ultima8
+} // End of namespace Ultima
 
 #endif

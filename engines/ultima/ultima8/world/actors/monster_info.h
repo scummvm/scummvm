@@ -25,6 +25,7 @@
 
 #include "ultima/ultima8/world/actors/treasure_info.h"
 
+namespace Ultima {
 namespace Ultima8 {
 
 struct MonsterInfo {
@@ -46,5 +47,6 @@ struct MonsterInfo {
 };
 
 } // End of namespace Ultima8
+} // End of namespace Ultima
 
 #endif

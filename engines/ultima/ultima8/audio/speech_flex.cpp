@@ -25,6 +25,7 @@
 #include "ultima/ultima8/audio/audio_sample.h"
 #include "ultima/ultima8/misc/util.h"
 
+namespace Ultima {
 namespace Ultima8 {
 
 // p_dynamic_class stuff
@@ -111,3 +112,4 @@ uint32 SpeechFlex::getSpeechLength(const std::string &phrase) {
 }
 
 } // End of namespace Ultima8
+} // End of namespace Ultima

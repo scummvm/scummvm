@@ -19,6 +19,7 @@
 #include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/misc/args.h"
 
+namespace Ultima {
 namespace Ultima8 {
 
 void Args::process(const int32 argc, const char *const *const argv) {
@@ -70,3 +71,4 @@ void Args::process(const int32 argc, const char *const *const argv) {
 }
 
 } // End of namespace Ultima8
+} // End of namespace Ultima

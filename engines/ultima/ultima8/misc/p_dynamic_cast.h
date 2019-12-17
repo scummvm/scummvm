@@ -21,6 +21,7 @@
 #ifndef ULTIMA8_MISC_P_DYNAMIC_CAST_H
 #define ULTIMA8_MISC_P_DYNAMIC_CAST_H
 
+namespace Ultima {
 namespace Ultima8 {
 
 // The Pentagram dynamic cast
@@ -122,5 +123,6 @@ struct RunTimeClassType {
 	}
 
 } // End of namespace Ultima8
+} // End of namespace Ultima
 
 #endif

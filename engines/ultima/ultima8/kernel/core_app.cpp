@@ -31,6 +31,7 @@
 #include "ultima/ultima8/games/game_detector.h"
 #include "ultima/ultima8/std/misc.h"
 
+namespace Ultima {
 namespace Ultima8 {
 
 using std::string;
@@ -367,3 +368,4 @@ GameInfo *CoreApp::getGameInfo(Pentagram::istring game) const {
 }
 
 } // End of namespace Ultima8
+} // End of namespace Ultima

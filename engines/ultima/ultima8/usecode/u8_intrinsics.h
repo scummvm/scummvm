@@ -50,6 +50,7 @@
 #include "ultima/ultima8/audio/audio_process.h"
 #include "ultima/ultima8/games/game.h"
 
+namespace Ultima {
 namespace Ultima8 {
 
 // Ultima 8 Intrinsics
@@ -332,5 +333,6 @@ Intrinsic U8Intrinsics[] = {
 };
 
 } // End of namespace Ultima8
+} // End of namespace Ultima
 
 #endif
