@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: Prince\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2018-04-17 19:53+0100\n"
-"PO-Revision-Date: 2019-12-07 04:30+0000\n"
-"Last-Translator: Anton <ton4ick@gmail.com>\n"
+"PO-Revision-Date: 2019-12-22 12:08+0000\n"
+"Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Russian <https://translations.scummvm.org/projects/prince/"
 "prince/ru/>\n"
 "Language: ru\n"
@@ -5155,7 +5155,8 @@ msgstr "OTHER: И немного чеснока не помешает."
 
 #: dialog0157.txt:12
 msgid "OTHER: Odstraszał też, co prawda, piękne|kobiety, ale to tylko skutek uboczny."
-msgstr "OTHER: Он, кстати/6 отпугивает и красивых девушек, но|это так, побочный эффект."
+msgstr ""
+"OTHER: Он, также отпугивает и красивых девушек, но|это так, побочный эффект."
 
 #: dialog0157.txt:13
 msgid "HERO: Ale ten ...czosnek..."
@@ -9915,7 +9916,7 @@ msgstr "Человек - Или он попал к плохому парикма
 
 #: mob.lst:5004
 msgid "krasnolud - Całkiem spory, jak na krasnoluda.*+Ba, całkiem spory jak na człowieka."
-msgstr "Гном. - Для гнома он большой."
+msgstr "Гном - Великоват как для гнома.*+Гм, да и великоват как для человека."
 
 #: mob.lst:5005
 msgid "Arivald - No, nareszcie będziemy mogli dłużej|porozmawiać!"
@@ -9927,11 +9928,11 @@ msgstr "Аривальд - Мой друг и моя помощь в тяжел�
 
 #: mob.lst:5007
 msgid "ognisko - Cieplutki, przyjemny ogień."
-msgstr "Камин - Красивый огСундукСундук..+Раз это выставили, значит, там| пусто, а деньги в кассе."
+msgstr "Камин - Тёплое, приятное пламя."
 
 #: mob.lst:5008
 msgid "skrzynka - Skoro stoi na widoku publicznym, to|chyba jest pusta. A pieniądze pewnie|w skarpecie."
-msgstr "кСундук.. - Раз это выставили, значит, там| пусто, а деньги в кассе."
+msgstr "Сундук - Раз это выставили, значит, там|пусто, а деньги в кассе."
 
 #: mob.lst:5009
 msgid "karczmarz - Prawidłowo rozwinięty mięsień piwny..."
@@ -10672,7 +10673,7 @@ msgstr "Девушка - Проклятье!Паутинтина+Заколдо�
 
 #: mob.lst:25008
 msgid "pajęczyna - Obrzydliwa, zaczarowana pajęczyna."
-msgstr "утинтина - Заколдованные"
+msgstr "паутина - Отвратительная, заколдованная паутина."
 
 #: mob.lst:25009
 msgid "skała - Wystający kawałek skały."
@@ -10764,7 +10765,7 @@ msgstr "Бутылки - пусто, как в голове у Шейлы."
 
 #: mob.lst:29005
 msgid "pajęczyna - Pajączek, pajączek bez nóżek i bez rączek."
-msgstr "Шпиндель. - Верчусь, верчусь..."
+msgstr "паутина - паучок, паучок без ручек и без ножек."
 
 #: mob.lst:30001
 msgid "elegancka dama - Nigdy nie widziałem wcześniej tak wystrojonej|kobiety.+Pewnie to jakaś ważna osobistość, ciesząca się|wielkim szacunkiem."
@@ -11100,7 +11101,7 @@ msgstr "Камень - Он огромен. Его невозможно сдви
 
 #: mob.lst:41002
 msgid "łańcuch - Grube, solidne ogniwa."
-msgstr "Прутья - Толстые, солидные прутья."
+msgstr "цепь - Толстые, солидные звенья."
 
 #: mob.lst:41003
 msgid "prycza - Malutka. Widać nie przewidują gości."
@@ -11604,7 +11605,7 @@ msgstr "Никогда. Я не разговариваю по-обезьяньи
 
 #: variatxt.txt:3301
 msgid "Kobiety..."
-msgstr "Бенщины..."
+msgstr "Девушки..."
 
 #: variatxt.txt:3302
 msgid "Chyba czeka nas rozwiązanie siłowe."
@@ -11720,7 +11721,7 @@ msgstr "Пламя слишком слабое."
 
 #: variatxt.txt:4005
 msgid "Nareszcie!"
-msgstr "Самое время!"
+msgstr "Наконец-то!"
 
 #: variatxt.txt:4006
 msgid "Nie ma sensu zabarwiać tak małej|powłoczki."
