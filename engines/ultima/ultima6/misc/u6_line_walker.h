@@ -23,7 +23,7 @@
 #ifndef ULTIMA6_MISC_U6_LINE_WALKER_H
 #define ULTIMA6_MISC_U6_LINE_WALKER_H
 
-#include "nuvieDefs.h"
+#include "ultima/ultima6/core/nuvie_defs.h"
 
 namespace Ultima {
 namespace Ultima6 {

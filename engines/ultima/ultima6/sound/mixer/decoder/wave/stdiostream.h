@@ -26,9 +26,9 @@
 #ifndef STDIOSTREAM_H
 #define STDIOSTREAM_H
 
-#include <string>
+#include "ultima/shared/std/string.h"
 
-#include "nuvieDefs.h"
+#include "ultima/ultima6/core/nuvie_defs.h"
 #include "NuvieIOFile.h"
 #include "types.h"
 #include "decoder/wave/stream.h"

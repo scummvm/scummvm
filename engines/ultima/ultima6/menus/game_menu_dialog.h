@@ -24,7 +24,7 @@
 #define ULTIMA6_MENUS_GAME_MENU_DIALOG_H
 
 #include "GUI_Dialog.h"
-#include "nuvieDefs.h"
+#include "ultima/ultima6/core/nuvie_defs.h"
 
 namespace Ultima {
 namespace Ultima6 {

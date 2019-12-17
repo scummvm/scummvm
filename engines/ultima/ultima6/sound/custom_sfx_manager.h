@@ -23,8 +23,8 @@
 #ifndef ULTIMA6_SOUND_CUSTOMS_FX_MANAGER_H
 #define ULTIMA6_SOUND_CUSTOMS_FX_MANAGER_H
 
-#include "nuvieDefs.h"
-#include "Configuration.h"
+#include "ultima/ultima6/core/nuvie_defs.h"
+#include "ultima/ultima6/conf/configuration.h"
 #include "mixer.h"
 #include "decoder/wave/wave.h"
 #include "SfxManager.h"

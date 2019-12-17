@@ -27,7 +27,7 @@
 #include "GUI_widget.h"
 #include "U6Shape.h"
 #include "WOUFont.h"
-#include "Configuration.h"
+#include "ultima/ultima6/conf/configuration.h"
 
 namespace Ultima {
 namespace Ultima6 {

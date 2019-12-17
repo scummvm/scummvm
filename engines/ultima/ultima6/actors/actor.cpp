@@ -20,7 +20,7 @@
  *
  */
 
-#include "nuvieDefs.h" /* include before cmath to get roundf() */
+#include "ultima/ultima6/core/nuvie_defs.h" /* include before cmath to get roundf() */
 #include <cstdlib>
 #include <cmath>
 #include <cassert>

@@ -24,7 +24,7 @@
 #define ULTIMA6_FILES_NUVIE_FILE_LIST_H
 
 #include <sys/types.h>
-#include <string>
+#include "ultima/shared/std/string.h"
 #include <list>
 #include <set>
 

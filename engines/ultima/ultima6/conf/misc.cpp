@@ -20,44 +20,18 @@
  *
  */
 
-#include "ultima/shared/std/string.h"
-
-#include "ultima/ultima6/core/nuvie_defs.h"
-#include "ultima/ultima6/conf/configuration.h"
-
-#include "U6Lib_n.h"
-#include "U6misc.h"
-
-#include "Book.h"
+#include "ultima/ultima6/conf/misc.h"
 
 namespace Ultima {
 namespace Ultima6 {
 
-Book::Book(Configuration *cfg) {
-	config = cfg;
-	books = new U6Lib_n;
-}
+std::string readLine(Common::ReadStream *stream) {
+	std::string line;
+	char c;
+	while (!stream->eos() && (c = stream->readByte()) != '\n')
+		line += c;
 
-Book::~Book() {
-	delete books;
-}
-
-bool Book::init() {
-	std::string filename;
-
-	config_get_path(config, "book.dat", filename);
-
-	if (books->open(filename, 2) == false)
-		return false;
-
-	return true;
-}
-
-char *Book::get_book_data(uint16 num) {
-	if (num >= books->get_num_items())
-		return NULL;
-
-	return reinterpret_cast<char *>(books->get_item(num));
+	return line;
 }
 
 } // End of namespace Ultima6

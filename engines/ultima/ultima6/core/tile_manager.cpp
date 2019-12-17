@@ -22,9 +22,9 @@
 
 #include <cmath>
 #include <cstdlib>
-#include "nuvieDefs.h"
+#include "ultima/ultima6/core/nuvie_defs.h"
 
-#include "Configuration.h"
+#include "ultima/ultima6/conf/configuration.h"
 
 #include "Console.h"
 #include "NuvieIOFile.h"

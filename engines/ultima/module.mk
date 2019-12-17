@@ -5,6 +5,14 @@ MODULE_OBJS := \
 	shared/std/misc.o \
 	shared/std/string.o
 
+ifdef ENABLE_ULTIMA6
+MODULE_OBJS += \
+	ultima6/conf/configuration.o \
+	ultima6/conf/misc.o \
+	ultima6/conf/xml_node.o \
+	ultima6/conf/xml_tree.o
+endif
+
 ifdef ENABLE_ULTIMA8
 MODULE_OBJS += \
 	ultima8/ultima8.o \

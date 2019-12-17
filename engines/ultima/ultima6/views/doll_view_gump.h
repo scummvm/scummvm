@@ -23,7 +23,7 @@
 #ifndef ULTIMA6_VIEWS_DOLL_VIEW_GUMP_H
 #define ULTIMA6_VIEWS_DOLL_VIEW_GUMP_H
 
-#include "nuvieDefs.h"
+#include "ultima/ultima6/core/nuvie_defs.h"
 #include "DraggableView.h"
 
 namespace Ultima {

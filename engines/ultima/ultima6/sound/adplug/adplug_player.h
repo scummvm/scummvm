@@ -23,7 +23,7 @@
 #ifndef H_ADPLUG_PLAYER
 #define H_ADPLUG_PLAYER
 
-#include <string>
+#include "ultima/shared/std/string.h"
 
 #include "opl.h"
 

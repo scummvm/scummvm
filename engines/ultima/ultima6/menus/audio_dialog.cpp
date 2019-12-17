@@ -21,7 +21,7 @@
  */
 
 #include "SDL.h"
-#include "nuvieDefs.h"
+#include "ultima/ultima6/core/nuvie_defs.h"
 
 #include "GUI.h"
 #include "GUI_types.h"
@@ -34,7 +34,7 @@
 #include "GUI_Dialog.h"
 #include "AudioDialog.h"
 #include "SoundManager.h"
-#include "Configuration.h"
+#include "ultima/ultima6/conf/configuration.h"
 #include "Keys.h"
 #include "Party.h"
 #include "Converse.h"

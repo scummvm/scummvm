@@ -22,10 +22,10 @@
 
 #include <stdio.h>
 
-#include <string>
+#include "ultima/shared/std/string.h"
 #include <cctype>
 
-#include "nuvieDefs.h"
+#include "ultima/ultima6/core/nuvie_defs.h"
 
 #include "Screen.h"
 #include "ConvFont.h"

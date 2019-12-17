@@ -20,16 +20,10 @@
  *
  */
 
-#include "nuvieDefs.h"
-
-#include <cassert>
-#include <cstring>
-#include <string>
-
-//#include "pent_include.h"
-#include "misc.h"
-
-#include "XMLNode.h"
+#include "ultima/ultima6/core/nuvie_defs.h"
+#include "ultima/ultima6/conf/misc.h"
+#include "ultima/ultima6/conf/xml_node.h"
+#include "ultima/shared/std/string.h"
 
 namespace Ultima {
 namespace Ultima6 {
@@ -209,8 +203,8 @@ static string encode_entity(const string &s) {
 	return ret;
 }
 
-static string decode_entity(const string &s, std::size_t &pos) {
-	std::size_t old_pos = pos;
+static string decode_entity(const string &s, size_t &pos) {
+	size_t old_pos = pos;
 	string::size_type entity_name_len = s.find_first_of("; \t\r\n", pos) - pos - 1;
 
 	/* Call me paranoid... but I don't think having an end-of-line or similar
@@ -251,7 +245,7 @@ static void trim(string &s) {
 	}
 }
 
-void XMLNode::xmlparse(const string &s, std::size_t &pos) {
+void XMLNode::xmlparse(const string &s, size_t &pos) {
 	bool intag = true;
 
 	id = "";

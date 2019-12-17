@@ -23,7 +23,7 @@
 #ifndef SOUND_TIMESTAMP_H
 #define SOUND_TIMESTAMP_H
 
-#include "nuvieDefs.h"
+#include "ultima/ultima6/core/nuvie_defs.h"
 
 namespace Audio {
 

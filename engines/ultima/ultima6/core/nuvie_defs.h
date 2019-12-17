@@ -23,36 +23,15 @@
 #ifndef ULTIMA6_CORE_NUVIE_DEFS_H
 #define ULTIMA6_CORE_NUVIE_DEFS_H
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
+#include "common/scummsys.h"
+#include "ultima/ultima6/misc/sdl_compat.h"
 
 namespace Ultima {
 namespace Ultima6 {
 
-#ifdef _MSC_VER
-
-#if _MSC_VER < 1300
-#include "msvc/msvc_kludges.h"
-#elif _MSC_VER >= 1300
-#include "msvc/msvc_inc.h"
-#endif
-
-#endif
-
-#if defined(__GNUC__) && (__GNUC__ < 3)
-# ifndef _GNU_SOURCE
-# define _GNU_SOURCE
-# endif
-#endif
-
-typedef unsigned char uint8;
-typedef unsigned short uint16;
-typedef unsigned int uint32;
-
-typedef signed char sint8;
-typedef signed short sint16;
-typedef signed int sint32;
+typedef int8 sint8;
+typedef int16 sint16;
+typedef int32 sint32;
 
 typedef uint8 nuvie_game_t; // Game type (1=u6,2=md,4=se)
 
@@ -154,7 +133,5 @@ typedef unsigned char BOOL;
 
 } // End of namespace Ultima6
 } // End of namespace Ultima
-
-#include "SDL_compat.h"
 
 #endif

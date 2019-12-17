@@ -24,7 +24,7 @@
 #define ULTIMA6_FILES_U6LIB_N_H
 
 #include <vector>
-#include <string>
+#include "ultima/shared/std/string.h"
 #include <cstdio> /* FILE */
 
 namespace Ultima {

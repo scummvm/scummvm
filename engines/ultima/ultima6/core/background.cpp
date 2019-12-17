@@ -21,10 +21,10 @@
  */
 
 #include <ctype.h>
-#include <string>
+#include "ultima/shared/std/string.h"
 
-#include "nuvieDefs.h"
-#include "Configuration.h"
+#include "ultima/ultima6/core/nuvie_defs.h"
+#include "ultima/ultima6/conf/configuration.h"
 #include "U6misc.h"
 #include "U6Lib_n.h"
 #include "U6Bmp.h"

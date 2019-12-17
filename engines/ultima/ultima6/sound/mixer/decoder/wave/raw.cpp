@@ -25,7 +25,7 @@
 
 #include <stdlib.h>
 #include <string.h>
-#include "nuvieDefs.h"
+#include "ultima/ultima6/core/nuvie_defs.h"
 #include "types.h"
 #include "decoder/wave/endian.h"
 #include "decoder/wave/memstream.h"

@@ -1,4 +1,5 @@
 # This file is included from the main "configure" script
 # add_engine [name] [desc] [build-by-default] [subengines] [base games] [deps]
-add_engine ultima "Ultima games" no "ultima8"
+add_engine ultima "Ultima games" no "ultima6 ultima8"
+add_engine ultima6 "Ultima VI - The False Prophet" no "" "" "highres 16bit"
 add_engine ultima8 "Ultima 8 - Pagan" no "" "" "highres 16bit freetype2"

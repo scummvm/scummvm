@@ -20,12 +20,12 @@
  *
  */
 
-#include <string>
+#include "ultima/shared/std/string.h"
 #include <cctype>
 #include <iostream>
 
-#include "nuvieDefs.h"
-#include "Configuration.h"
+#include "ultima/ultima6/core/nuvie_defs.h"
+#include "ultima/ultima6/conf/configuration.h"
 #include "U6misc.h"
 #include "FontManager.h"
 #include "Font.h"

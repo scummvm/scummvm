@@ -21,7 +21,7 @@
  */
 
 #include "SDL.h"
-#include "nuvieDefs.h"
+#include "ultima/ultima6/core/nuvie_defs.h"
 
 #include "GUI.h"
 #include "GUI_types.h"
@@ -37,7 +37,7 @@
 #include "MapWindow.h"
 #include "GUI_Dialog.h"
 #include "VideoDialog.h"
-#include "Configuration.h"
+#include "ultima/ultima6/conf/configuration.h"
 #include "ViewManager.h"
 #include "InventoryView.h"
 #include "Keys.h"

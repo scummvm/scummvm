@@ -20,14 +20,14 @@
  *
  */
 
-#include "nuvieDefs.h"
+#include "ultima/ultima6/core/nuvie_defs.h"
 
 #include "U6misc.h"
 #include "NuvieIO.h"
 #include "Game.h"
 #include "Converse.h"
 #include "TimedEvent.h"
-#include "Configuration.h"
+#include "ultima/ultima6/conf/configuration.h"
 #include "ActorManager.h"
 #include "SoundManager.h"
 #include "ViewManager.h"

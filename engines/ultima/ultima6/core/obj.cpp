@@ -22,7 +22,7 @@
 
 #include <string.h>
 
-#include "nuvieDefs.h"
+#include "ultima/ultima6/core/nuvie_defs.h"
 
 #include "ObjManager.h"
 #include "Game.h"

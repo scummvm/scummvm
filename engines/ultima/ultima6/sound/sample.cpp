@@ -21,7 +21,7 @@
  */
 
 // NOT USED AT THE MOMENT
-#include "nuvieDefs.h"
+#include "ultima/ultima6/core/nuvie_defs.h"
 #include "Sample.h"
 
 namespace Ultima {

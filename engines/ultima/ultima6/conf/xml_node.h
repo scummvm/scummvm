@@ -23,8 +23,9 @@
 #ifndef ULTIMA6_CONF_XML_NODE_H
 #define ULTIMA6_CONF_XML_NODE_H
 
-#include <string>
-#include <vector>
+#include "ultima/shared/std/string.h"
+#include "ultima/shared/std/containers.h"
+#include "ultima/shared/std/misc.h"
 
 namespace Ultima {
 namespace Ultima6 {
@@ -71,7 +72,7 @@ public:
 	std::string dump(int depth = 0);
 
 	void xmlassign(const std::string &key, const std::string &value);
-	void xmlparse(const std::string &s, std::size_t &pos);
+	void xmlparse(const std::string &s, size_t &pos);
 
 	void listkeys(const std::string &, std::vector<std::string> &,
 	              bool longformat = true) const;

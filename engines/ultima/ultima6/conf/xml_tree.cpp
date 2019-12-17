@@ -20,26 +20,13 @@
  *
  */
 
-#include "nuvieDefs.h"
-#include <stdlib.h>
-
-#include <ctype.h>
-
-#include <string>
-#include <fstream>
-
-//#include "U6File.h"
-
-//#include "pent_include.h"
-#include "misc.h"
-
-#include "XMLTree.h"
-#include "XMLNode.h"
-
-//#include "IDataSource.h"
-//#include "FileSystem.h"
-
-//#include "util.h"
+#include "ultima/ultima6/core/nuvie_defs.h"
+#include "ultima/ultima6/conf/misc.h"
+#include "ultima/ultima6/conf/xml_tree.h"
+#include "ultima/ultima6/conf/xml_node.h"
+#include "ultima/shared/std/string.h"
+#include "common/algorithm.h"
+#include "common/file.h"
 
 namespace Ultima {
 namespace Ultima6 {
@@ -82,21 +69,20 @@ void XMLTree::clear(std::string root_) {
 }
 
 bool XMLTree::readConfigFile(std::string fname) {
-	std::ifstream f;
+	Common::File f;
 
 //	if (!FileSystem::get_instance()->rawopen(f, fname, true))
 //		return false;
 // mode = std::ios::in;
 
-	f.open(fname.c_str(), std::ios::in);
-	if (f.is_open() == false) {
+	if (f.open(fname)) {
 		DEBUG(0, LEVEL_CRITICAL, "Error opening config file");
 		return false;
 	}
 
 	std::string sbuf, line;
-	while (f.good()) {
-		std::getline(f, line);
+	while (!f.err() && !f.eos()) {
+		line = readLine(&f);
 		sbuf += line;
 	}
 
@@ -114,8 +100,9 @@ bool XMLTree::readConfigString(std::string s) {
 	is_file = false;
 
 	std::string sbuf(s);
-	std::size_t nn = 0;
-	while (isspace(s[nn])) ++nn;
+	size_t nn = 0;
+	while (Common::isSpace(s[nn]))
+		++nn;
 
 	if (s[nn] != '<') {
 		DEBUG(0, LEVEL_ERROR, "expected '<' while reading config file, found %c\n", s[nn]);
@@ -136,14 +123,13 @@ void XMLTree::write() {
 	if (!is_file || readonly)
 		return;
 
-	std::ofstream f;
-	//if (!FileSystem::get_instance()->rawopen(f, filename, true))
-	//  return;
-	f.open(filename.c_str(), std::ios::out);
+	Common::DumpFile df;
 
-	f << dump();
-
-	f.close();
+	if (df.open(filename)) {
+		std::string content = dump();
+		df.write(content.c_str(), content.size());
+		df.close();
+	}
 }
 
 bool XMLTree::hasNode(std::string key) const {

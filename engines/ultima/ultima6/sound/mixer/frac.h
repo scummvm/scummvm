@@ -23,7 +23,7 @@
 #ifndef COMMON_FRAC_H
 #define COMMON_FRAC_H
 
-#include "nuvieDefs.h"
+#include "ultima/ultima6/core/nuvie_defs.h"
 
 /**
  * The precision of the fractional (fixed point) type we define below.

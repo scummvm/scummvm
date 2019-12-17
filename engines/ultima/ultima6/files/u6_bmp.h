@@ -23,7 +23,7 @@
 #ifndef ULTIMA6_FILES_U6BMP_H
 #define ULTIMA6_FILES_U6BMP_H
 
-#include <string>
+#include "ultima/shared/std/string.h"
 
 #include "U6Shape.h"
 

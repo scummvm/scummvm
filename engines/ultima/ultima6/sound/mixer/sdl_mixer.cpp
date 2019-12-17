@@ -24,7 +24,7 @@
 #include <string.h>
 
 #include "SDL.h"
-#include "nuvieDefs.h"
+#include "ultima/ultima6/core/nuvie_defs.h"
 #include "sdl-mixer.h"
 //#include "common/system.h"
 //#include "common/config-manager.h"

@@ -32,7 +32,7 @@
 
 #include "SDL_events.h"
 #include "KeysEnum.h"
-#include "nuvieDefs.h"
+#include "ultima/ultima6/core/nuvie_defs.h"
 
 #ifdef HAVE_JOYSTICK_SUPPORT
 typedef enum { AXES_PAIR1, AXES_PAIR2, AXES_PAIR3, AXES_PAIR4, UNHANDLED_AXES_PAIR } joy_axes_pairs;
@@ -40,7 +40,7 @@ typedef enum { AXES_PAIR1, AXES_PAIR2, AXES_PAIR3, AXES_PAIR4, UNHANDLED_AXES_PA
 
 #include <vector>
 #include <map>
-#include <string>
+#include "ultima/shared/std/string.h"
 
 namespace Ultima {
 namespace Ultima6 {

@@ -22,8 +22,8 @@
 
 #include <list>
 #include <cassert>
-#include "nuvieDefs.h"
-#include "Configuration.h"
+#include "ultima/ultima6/core/nuvie_defs.h"
+#include "ultima/ultima6/conf/configuration.h"
 
 #include "Actor.h"
 #include "TileManager.h"

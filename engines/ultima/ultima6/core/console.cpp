@@ -22,8 +22,8 @@
 
 #include <assert.h>
 #include <cmath>
-#include <string>
-#include "nuvieDefs.h"
+#include "ultima/shared/std/string.h"
+#include "ultima/ultima6/core/nuvie_defs.h"
 #include "U6misc.h"
 #include "GUI.h"
 #include "Console.h"

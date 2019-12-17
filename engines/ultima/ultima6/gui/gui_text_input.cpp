@@ -20,7 +20,7 @@
  *
  */
 
-#include "nuvieDefs.h"
+#include "ultima/ultima6/core/nuvie_defs.h"
 
 #include "GUI_TextInput.h"
 #include "GUI_font.h"

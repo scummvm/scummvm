@@ -38,7 +38,7 @@
 #define SOUND_ADPCM_H
 
 //#include "common/scummsys.h"
-#include "nuvieDefs.h"
+#include "ultima/ultima6/core/nuvie_defs.h"
 #include "types.h"
 #include "decoder/wave/stream.h"
 

@@ -23,7 +23,7 @@
 #ifndef ULTIMA6_CORE_OBJ_H
 #define ULTIMA6_CORE_OBJ_H
 
-#include "nuvieDefs.h"
+#include "ultima/ultima6/core/nuvie_defs.h"
 #include "U6LList.h"
 
 namespace Ultima {

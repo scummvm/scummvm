@@ -24,7 +24,7 @@
 #define ULTIMA6_KEYBINDING_UTILS_H
 
 #include <fstream>
-#include <string> // exception handling include
+#include "ultima/shared/std/string.h" // exception handling include
 
 namespace Ultima {
 namespace Ultima6 {

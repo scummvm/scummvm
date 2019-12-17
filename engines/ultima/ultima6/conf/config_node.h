@@ -23,8 +23,8 @@
 #ifndef ULTIMA6_CONF_CONFIG_NODE_H
 #define ULTIMA6_CONF_CONFIG_NODE_H
 
-#include <string>
-#include "Configuration.h"
+#include "ultima/shared/std/string.h"
+#include "ultima/ultima6/conf/configuration.h"
 
 namespace Ultima {
 namespace Ultima6 {

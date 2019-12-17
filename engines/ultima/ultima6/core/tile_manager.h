@@ -23,8 +23,8 @@
 #ifndef ULTIMA6_CORE_TILE_MANAGER_H
 #define ULTIMA6_CORE_TILE_MANAGER_H
 
-#include "nuvieDefs.h"
-#include <string>
+#include "ultima/ultima6/core/nuvie_defs.h"
+#include "ultima/shared/std/string.h"
 
 namespace Ultima {
 namespace Ultima6 {

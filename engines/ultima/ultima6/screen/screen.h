@@ -23,7 +23,7 @@
 #ifndef ULTIMA6_SCREEN_SCREEN_H
 #define ULTIMA6_SCREEN_SCREEN_H
 
-#include <string>
+#include "ultima/shared/std/string.h"
 
 #include "SDL.h"
 

@@ -32,6 +32,9 @@
 #endif
 
 static const PlainGameDescriptor ULTIMA_GAMES[] = {
+#ifdef ENABLE_ULTIMA6
+	{ "ultima6", "Ultima VI - The False Prophet" },
+#endif
 #ifdef ENABLE_ULTIMA8
 	{ "ultima8", "Ultima 8 - Pagan" },
 #endif

@@ -24,7 +24,7 @@
 #include <stdio.h>
 #include <math.h>
 #include <string.h>
-#include "nuvieDefs.h"
+#include "ultima/ultima6/core/nuvie_defs.h"
 #include "U6misc.h"
 #include "U6Lib_n.h"
 #include "Game.h"

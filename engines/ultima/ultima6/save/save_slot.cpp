@@ -21,7 +21,7 @@
  */
 
 #include "SDL.h"
-#include "nuvieDefs.h"
+#include "ultima/ultima6/core/nuvie_defs.h"
 #include "U6misc.h"
 
 #include "GUI.h"

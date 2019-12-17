@@ -23,9 +23,9 @@
 #include <cassert>
 #include <sstream>
 #include <cstdlib>
-#include "nuvieDefs.h"
+#include "ultima/ultima6/core/nuvie_defs.h"
 #include "U6misc.h"
-#include "Configuration.h"
+#include "ultima/ultima6/conf/configuration.h"
 #include "NuvieFileList.h"
 #include "Objlist.h"
 

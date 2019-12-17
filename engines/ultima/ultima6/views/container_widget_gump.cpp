@@ -20,8 +20,8 @@
  *
  */
 
-#include "nuvieDefs.h"
-#include "Configuration.h"
+#include "ultima/ultima6/core/nuvie_defs.h"
+#include "ultima/ultima6/conf/configuration.h"
 
 #include "GUI.h"
 #include "ContainerWidgetGump.h"

@@ -20,7 +20,7 @@
  *
  */
 
-#include <string>
+#include "ultima/shared/std/string.h"
 
 #ifdef MACOS
 #include <stat.h>

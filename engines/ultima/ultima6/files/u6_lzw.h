@@ -23,7 +23,7 @@
 #ifndef ULTIMA6_FILES_U6_LZW_H
 #define ULTIMA6_FILES_U6_LZW_H
 
-#include <string>
+#include "ultima/shared/std/string.h"
 
 namespace Ultima {
 namespace Ultima6 {

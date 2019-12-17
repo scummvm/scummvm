@@ -23,7 +23,7 @@
 #ifndef ULTIMA6_CORE_EGG_MANAGER_H
 #define ULTIMA6_CORE_EGG_MANAGER_H
 
-#include <string>
+#include "ultima/shared/std/string.h"
 #include <list>
 
 #include "ObjManager.h"

@@ -25,7 +25,7 @@
 
 #include "SDL.h"
 
-#include "nuvieDefs.h"
+#include "ultima/ultima6/core/nuvie_defs.h"
 #include "U6misc.h"
 #include "NuvieIO.h"
 #include "NuvieIOFile.h"
@@ -33,7 +33,7 @@
 #include "GUI.h"
 #include "Console.h"
 #include "SaveGame.h"
-#include "Configuration.h"
+#include "ultima/ultima6/conf/configuration.h"
 #include "Game.h"
 #include "ObjManager.h"
 #include "Objlist.h"

@@ -24,7 +24,7 @@
 #define ULTIMA6_CORE_TIMED_EVENT_H
 
 #include <list>
-#include <string>
+#include "ultima/shared/std/string.h"
 #include <cstdio>
 #include "CallBack.h"
 #include "ObjManager.h"

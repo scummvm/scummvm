@@ -33,7 +33,7 @@
 
 #include "SDL.h"
 
-#include <string>
+#include "ultima/shared/std/string.h"
 #include <stdlib.h>
 #include <list>
 #include <vector>

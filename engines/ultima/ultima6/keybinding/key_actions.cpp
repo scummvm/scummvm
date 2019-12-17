@@ -39,7 +39,7 @@
 #include "GUI.h"
 #include "SoundManager.h"
 #include "Background.h"
-#include "Configuration.h"
+#include "ultima/ultima6/conf/configuration.h"
 #include "U6misc.h"
 
 namespace Ultima {
