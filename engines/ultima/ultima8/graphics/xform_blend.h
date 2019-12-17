@@ -26,6 +26,7 @@
 #include "ultima/ultima8/graphics/texture.h"
 #include "ultima/ultima8/graphics/render_surface.h"
 
+namespace Ultima {
 namespace Ultima8 {
 
 #ifndef P_FASTCALL
@@ -94,5 +95,6 @@ inline uint32 P_FASTCALL BlendHighlightInvis(uint32 src, uint32 dst, uint32 cr, 
 }
 
 } // End of namespace Ultima8
+} // End of namespace Ultima
 
 #endif

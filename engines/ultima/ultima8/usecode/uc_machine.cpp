@@ -42,6 +42,7 @@
 #include "ultima/ultima8/convert/u8/convert_usecode_u8.h"
 #include "ultima/ultima8/world/actors/main_actor.h"
 
+namespace Ultima {
 namespace Ultima8 {
 
 #ifdef DEBUG
@@ -2467,3 +2468,4 @@ void UCMachine::ConCmd_stopTrace(const Console::ArgvType &/*argv*/) {
 #endif
 
 } // End of namespace Ultima8
+} // End of namespace Ultima

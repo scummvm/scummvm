@@ -25,6 +25,7 @@
 
 #include "common/scummsys.h"
 
+namespace Ultima {
 namespace Ultima8 {
 namespace std {
 
@@ -62,5 +63,6 @@ extern void free(void *&p);
 
 } // End of namespace std
 } // End of namespace Ultima8
+} // End of namespace Ultima
 
 #endif

@@ -34,6 +34,7 @@
 
 //include iomanip
 
+namespace Ultima {
 namespace Ultima8 {
 
 DEFINE_RUNTIME_CLASSTYPE_CODE(TTFont, Pentagram::Font)
@@ -310,3 +311,4 @@ RenderedText *TTFont::renderText(const std::string &text,
 }
 
 } // End of namespace Ultima8
+} // End of namespace Ultima

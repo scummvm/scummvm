@@ -23,6 +23,7 @@
 #ifndef ULTIMA8_MISC_DIRECTION_H
 #define ULTIMA8_MISC_DIRECTION_H
 
+namespace Ultima {
 namespace Ultima8 {
 
 /*
@@ -93,5 +94,6 @@ inline Direction Get_WorldDirection(int deltay, int deltax) {
 }
 
 } // End of namespace Ultima8
+} // End of namespace Ultima
 
 #endif

@@ -26,6 +26,7 @@
 #include "ultima/ultima8/usecode/intrinsics.h"
 #include "ultima/ultima8/world/item.h"
 
+namespace Ultima {
 namespace Ultima8 {
 
 // Crusader: No Remorse Intrinsics
@@ -361,5 +362,6 @@ Intrinsic RemorseIntrinsics[] = {
 };
 
 } // End of namespace Ultima8
+} // End of namespace Ultima
 
 #endif

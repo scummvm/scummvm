@@ -29,6 +29,7 @@
 #include "engines/metaengine.h"
 #include "graphics/surface.h"
 
+namespace Ultima {
 namespace Ultima8 {
 
 class ZipFile;
@@ -100,5 +101,6 @@ public:
 };
 
 } // End of namespace Ultima8
+} // End of namespace Ultima
 
 #endif

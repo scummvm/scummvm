@@ -26,6 +26,7 @@
 #include "ultima/ultima8/graphics/base_soft_render_surface.h"
 #include "graphics/managed_surface.h"
 
+namespace Ultima {
 namespace Ultima8 {
 
 //
@@ -155,5 +156,6 @@ public:
 };
 
 } // End of namespace Ultima8
+} // End of namespace Ultima
 
 #endif

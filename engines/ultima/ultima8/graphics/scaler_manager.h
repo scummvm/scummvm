@@ -26,6 +26,7 @@
 #include "ultima/ultima8/std/containers.h"
 #include "ultima/ultima8/misc/istring.h"
 
+namespace Ultima {
 namespace Ultima8 {
 namespace Pentagram {
 class Scaler;
@@ -76,5 +77,6 @@ public:
 };
 
 } // End of namespace Ultima8
+} // End of namespace Ultima
 
 #endif

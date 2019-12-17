@@ -36,6 +36,7 @@
 #include "ultima/ultima8/filesys/odata_source.h"
 #include "ultima/ultima8/world/get_object.h"
 
+namespace Ultima {
 namespace Ultima8 {
 
 DEFINE_RUNTIME_CLASSTYPE_CODE(MonsterEgg, Item)
@@ -118,3 +119,4 @@ uint32 MonsterEgg::I_getMonId(const uint8 *args, unsigned int /*argsize*/) {
 }
 
 } // End of namespace Ultima8
+} // End of namespace Ultima

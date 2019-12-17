@@ -28,6 +28,7 @@
 #include "ultima/ultima8/filesys/odata_source.h"
 #include "ultima/ultima8/misc/util.h"
 
+namespace Ultima {
 namespace Ultima8 {
 
 struct GameTypeDesc {
@@ -230,3 +231,4 @@ bool GameInfo::load(IDataSource *ids, uint32 version_) {
 }
 
 } // End of namespace Ultima8
+} // End of namespace Ultima

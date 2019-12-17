@@ -26,6 +26,7 @@
 #include "engines/util.h"
 #include "graphics/screen.h"
 
+namespace Ultima {
 namespace Ultima8 {
 
 RenderSurface::Format   RenderSurface::format = {
@@ -94,3 +95,4 @@ RenderSurface::~RenderSurface() {
 }
 
 } // End of namespace Ultima8
+} // End of namespace Ultima

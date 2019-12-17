@@ -27,6 +27,7 @@
 #include "ultima/ultima8/usecode/intrinsics.h"
 #include "ultima/ultima8/misc/p_dynamic_cast.h"
 
+namespace Ultima {
 namespace Ultima8 {
 
 class ScrollGump : public ModalGump {
@@ -60,5 +61,6 @@ protected:
 };
 
 } // End of namespace Ultima8
+} // End of namespace Ultima
 
 #endif

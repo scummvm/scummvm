@@ -23,6 +23,7 @@
 #include "ultima/ultima8/std/string.h"
 #include "common/algorithm.h"
 
+namespace Ultima {
 namespace Ultima8 {
 namespace std {
 
@@ -147,3 +148,4 @@ void string::resize(size_t count) {
 
 } // End of namespace std
 } // End of namespace Ultima8
+} // End of namespace Ultima

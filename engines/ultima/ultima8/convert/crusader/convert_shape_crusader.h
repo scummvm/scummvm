@@ -25,6 +25,7 @@
 
 #include "ultima/ultima8/convert/convert_shape.h"
 
+namespace Ultima {
 namespace Ultima8 {
 
 // Shape format configuration for Crusader
@@ -33,6 +34,7 @@ extern const ConvertShapeFormat		CrusaderShapeFormat;
 // Shape format configuration for Crusader 2D Interface Elements
 extern const ConvertShapeFormat		Crusader2DShapeFormat;
 
-} // End of namespace ultima8
+} // End of namespace Ultima8
+} // End of namespace Ultima
 
 #endif

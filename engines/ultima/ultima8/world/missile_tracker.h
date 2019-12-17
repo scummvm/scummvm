@@ -23,6 +23,7 @@
 #ifndef ULTIMA8_WORLD_MISSILETRACKER_H
 #define ULTIMA8_WORLD_MISSILETRACKER_H
 
+namespace Ultima {
 namespace Ultima8 {
 
 class Item;
@@ -52,5 +53,6 @@ private:
 };
 
 } // End of namespace Ultima8
+} // End of namespace Ultima
 
 #endif

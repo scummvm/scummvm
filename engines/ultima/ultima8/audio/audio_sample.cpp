@@ -23,6 +23,7 @@
 #include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/audio/audio_sample.h"
 
+namespace Ultima {
 namespace Ultima8 {
 namespace Pentagram {
 
@@ -38,3 +39,4 @@ AudioSample::~AudioSample(void) {
 
 } // End of namespace Pentagram
 } // End of namespace Ultima8
+} // End of namespace Ultima

@@ -40,6 +40,7 @@
 #include "ultima/ultima8/filesys/idata_source.h"
 #include "ultima/ultima8/filesys/odata_source.h"
 
+namespace Ultima {
 namespace Ultima8 {
 
 static const int entryfont = 4;
@@ -357,3 +358,4 @@ Gump *U8SaveGump::showLoadSaveGump(Gump *parent, bool save) {
 }
 
 } // End of namespace Ultima8
+} // End of namespace Ultima

@@ -29,6 +29,7 @@
 #include "ultima/ultima8/filesys/idata_source.h"
 #include "ultima/ultima8/filesys/odata_source.h"
 
+namespace Ultima {
 namespace Ultima8 {
 
 static unsigned int states[] = { 0, 8, 63, 211, 493, 945, 1594, 2459, 3552,
@@ -118,3 +119,4 @@ void InverterProcess::ConCmd_invertScreen(const Console::ArgvType &argv) {
 }
 
 } // End of namespace Ultima8
+} // End of namespace Ultima

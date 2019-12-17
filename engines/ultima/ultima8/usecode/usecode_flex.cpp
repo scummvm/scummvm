@@ -26,6 +26,7 @@
 #include "ultima/ultima8/kernel/core_app.h"
 #include "ultima/ultima8/games/game_info.h"
 
+namespace Ultima {
 namespace Ultima8 {
 
 const uint8 *UsecodeFlex::get_class(uint32 classid) {
@@ -80,3 +81,4 @@ uint32 UsecodeFlex::get_class_event_count(uint32 classid) {
 }
 
 } // End of namespace Ultima8
+} // End of namespace Ultima

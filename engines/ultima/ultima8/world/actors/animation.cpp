@@ -23,6 +23,7 @@
 #include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/world/actors/animation.h"
 
+namespace Ultima {
 namespace Ultima8 {
 namespace Animation {
 
@@ -56,3 +57,4 @@ Sequence checkWeapon(const Sequence nextanim,
 
 } // End of namespace Animation
 } // End of namespace Ultima8
+} // End of namespace Ultima

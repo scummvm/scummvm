@@ -27,6 +27,7 @@
 
 #include "timidity.h"
 
+namespace Ultima {
 namespace Ultima8 {
 
 #ifdef NS_TIMIDITY
@@ -48,6 +49,7 @@ extern void antialiasing(Sample *sp, int32 output_rate);
 #endif
 
 } // End of namespace Ultima8
+} // End of namespace Ultima
 
 #endif
 

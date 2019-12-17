@@ -39,6 +39,7 @@
 #include "ultima/ultima8/graphics/fonts/rendered_text.h"
 #include "common/system.h"
 
+namespace Ultima {
 namespace Ultima8 {
 
 enum SKFAction {
@@ -313,3 +314,4 @@ void SKFPlayer::run() {
 }
 
 } // End of namespace Ultima8
+} // End of namespace Ultima

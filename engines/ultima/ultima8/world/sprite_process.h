@@ -26,6 +26,7 @@
 #include "ultima/ultima8/kernel/process.h"
 #include "ultima/ultima8/usecode/intrinsics.h"
 
+namespace Ultima {
 namespace Ultima8 {
 
 //! Creates a Sprite. Animates it. Destroys it.
@@ -78,5 +79,6 @@ protected:
 };
 
 } // End of namespace Ultima8
+} // End of namespace Ultima
 
 #endif

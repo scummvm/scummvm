@@ -27,6 +27,7 @@
 #include "audio/mididrv.h"
 #include "common/array.h"
 
+namespace Ultima {
 namespace Ultima8 {
 
 #define SAMPLE_RATE 22050
@@ -91,5 +92,6 @@ public:
 
 } // End of namespace Pentagram
 } // End of namespace Ultima8
+} // End of namespace Ultima
 
 #endif

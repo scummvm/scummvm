@@ -25,6 +25,7 @@
 #include "ultima/ultima8/filesys/idata_source.h"
 #include "image/bmp.h"
 
+namespace Ultima {
 namespace Ultima8 {
 
 //
@@ -44,3 +45,4 @@ bool TextureBitmap::Read(IDataSource *ds) {
 }
 
 } // End of namespace Ultima8
+} // End of namespace Ultima

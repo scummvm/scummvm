@@ -23,6 +23,7 @@
 #include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/kernel/segmented_pool.h"
 
+namespace Ultima {
 namespace Ultima8 {
 
 DEFINE_RUNTIME_CLASSTYPE_CODE(SegmentedPool, Pool)
@@ -192,3 +193,4 @@ SegmentedPoolNode *SegmentedPool::getPoolNode(void *ptr) {
 }
 
 } // End of namespace Ultima8
+} // End of namespace Ultima

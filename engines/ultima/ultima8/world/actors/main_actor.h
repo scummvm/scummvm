@@ -25,6 +25,7 @@
 
 #include "ultima/ultima8/world/actors/actor.h"
 
+namespace Ultima {
 namespace Ultima8 {
 
 struct WeaponOverlayFrame;
@@ -151,5 +152,6 @@ protected:
 };
 
 } // End of namespace Ultima8
+} // End of namespace Ultima
 
 #endif

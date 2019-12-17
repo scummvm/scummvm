@@ -27,6 +27,7 @@
 
 #include <iomanip>
 
+namespace Ultima {
 namespace Ultima8 {
 
 using namespace std;
@@ -194,5 +195,6 @@ void CoreMidiDriver::yield() {
 }
 
 } // End of namespace Ultima8
+} // End of namespace Ultima
 
 #endif

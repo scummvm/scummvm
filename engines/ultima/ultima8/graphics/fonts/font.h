@@ -28,6 +28,7 @@
 #include "ultima/ultima8/misc/encoding.h"
 #include "ultima/ultima8/misc/p_dynamic_cast.h"
 
+namespace Ultima {
 namespace Ultima8 {
 
 class RenderedText;
@@ -183,5 +184,6 @@ std::list<PositionedText> typesetText(Pentagram::Font *font,
                                       = std::string::npos);
 
 } // End of namespace Ultima8
+} // End of namespace Ultima
 
 #endif

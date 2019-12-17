@@ -26,6 +26,7 @@
 #include "ultima/ultima8/filesys/idata_source.h"
 #include "ultima/ultima8/filesys/archive_file.h"
 
+namespace Ultima {
 namespace Ultima8 {
 
 DEFINE_RUNTIME_CLASSTYPE_CODE(RawArchive, Pentagram::Archive)
@@ -96,3 +97,4 @@ IDataSource *RawArchive::get_datasource(uint32 index) {
 }
 
 } // End of namespace Ultima8
+} // End of namespace Ultima

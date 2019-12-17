@@ -28,6 +28,7 @@
 #include "ultima/ultima8/graphics/shape_frame.h"
 #include "ultima/ultima8/graphics/palette_manager.h"
 
+namespace Ultima {
 namespace Ultima8 {
 
 DEFINE_RUNTIME_CLASSTYPE_CODE(JPRenderedText, RenderedText)
@@ -128,3 +129,4 @@ void JPRenderedText::drawBlended(RenderSurface *surface, int x, int y,
 }
 
 } // End of namespace Ultima8
+} // End of namespace Ultima

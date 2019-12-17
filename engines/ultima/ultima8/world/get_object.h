@@ -23,6 +23,7 @@
 #ifndef ULTIMA8_WORLD_GETOBJECT_H
 #define ULTIMA8_WORLD_GETOBJECT_H
 
+namespace Ultima {
 namespace Ultima8 {
 
 // utility functions for getting objects by ObjId in various forms
@@ -43,5 +44,6 @@ MainActor *getMainActor();
 Gump *getGump(ObjId id);
 
 } // End of namespace Ultima8
+} // End of namespace Ultima
 
 #endif

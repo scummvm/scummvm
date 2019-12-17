@@ -23,6 +23,7 @@
 #include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/filesys/output_logger.h"
 
+namespace Ultima {
 namespace Ultima8 {
 
 OutputLogger::OutputLogger(Common::WriteStream *file, const std::string &filename) :
@@ -161,3 +162,4 @@ int OutputLogger::ThreadMain() {
 }
 
 } // End of namespace Ultima8
+} // End of namespace Ultima

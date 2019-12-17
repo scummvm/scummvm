@@ -25,6 +25,7 @@
 
 #include "ultima/ultima8/std/containers.h"
 
+namespace Ultima {
 namespace Ultima8 {
 
 struct WeaponOverlayFrame {
@@ -64,5 +65,6 @@ struct AnimWeaponOverlay {
 };
 
 } // End of namespace Ultima8
+} // End of namespace Ultima
 
 #endif

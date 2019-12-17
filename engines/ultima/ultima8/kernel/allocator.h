@@ -26,6 +26,7 @@
 #include "ultima/ultima8/kernel/pool.h"
 #include "ultima/ultima8/misc/p_dynamic_cast.h"
 
+namespace Ultima {
 namespace Ultima8 {
 
 class Allocator {
@@ -48,5 +49,6 @@ public:
 };
 
 } // End of namespace Ultima8
+} // End of namespace Ultima
 
 #endif

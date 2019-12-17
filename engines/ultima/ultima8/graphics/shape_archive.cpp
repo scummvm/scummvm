@@ -27,6 +27,7 @@
 #include "ultima/ultima8/graphics/palette.h"
 #include "ultima/ultima8/convert/convert_shape.h"
 
+namespace Ultima {
 namespace Ultima8 {
 
 DEFINE_RUNTIME_CLASSTYPE_CODE(ShapeArchive, Pentagram::Archive)
@@ -87,3 +88,4 @@ bool ShapeArchive::isCached(uint32 shapenum) {
 }
 
 } // End of namespace Ultima8
+} // End of namespace Ultima

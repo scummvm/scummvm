@@ -33,6 +33,7 @@
 #include "common/system.h"
 #include "common/events.h"
 
+namespace Ultima {
 namespace Ultima8 {
 
 DEFINE_RUNTIME_CLASSTYPE_CODE(EditWidget, Gump)
@@ -256,3 +257,4 @@ bool EditWidget::OnTextInput(int unicode) {
 }
 
 } // End of namespace Ultima8
+} // End of namespace Ultima

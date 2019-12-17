@@ -34,6 +34,7 @@
 #include "ultima/ultima8/gumps/gump_notify_process.h"
 #include "ultima/ultima8/kernel/kernel.h"
 
+namespace Ultima {
 namespace Ultima8 {
 
 DEFINE_RUNTIME_CLASSTYPE_CODE(PentagramMenuGump, ModalGump)
@@ -238,3 +239,4 @@ void PentagramMenuGump::ProcessCallback(std::string gamename, int message) {
 }
 
 } // End of namespace Ultima8
+} // End of namespace Ultima

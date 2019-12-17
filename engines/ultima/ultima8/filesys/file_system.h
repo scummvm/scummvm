@@ -28,6 +28,7 @@
 #include "ultima/ultima8/filesys/odata_source.h"
 #include "common/file.h"
 
+namespace Ultima {
 namespace Ultima8 {
 
 class FileSystem {
@@ -131,5 +132,6 @@ private:
 };
 
 } // End of namespace Ultima8
+} // End of namespace Ultima
 
 #endif

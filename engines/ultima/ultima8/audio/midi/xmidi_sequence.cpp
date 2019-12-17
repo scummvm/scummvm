@@ -26,6 +26,7 @@
 #include "ultima/ultima8/audio/midi/xmidi_sequence_handler.h"
 #include "ultima/ultima8/audio/midi/xmidi_file.h"
 
+namespace Ultima {
 namespace Ultima8 {
 
 // Define this to stop the Midisequencer from attempting to
@@ -476,3 +477,4 @@ int XMidiSequence::countNotesOn(int chan) {
 }
 
 } // End of namespace Ultima8
+} // End of namespace Ultima

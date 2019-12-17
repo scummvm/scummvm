@@ -31,6 +31,7 @@
 #include "ultima/ultima8/graphics/main_shape_archive.h"
 #include "ultima/ultima8/world/actors/anim_action.h"
 
+namespace Ultima {
 namespace Ultima8 {
 
 WpnOvlayDat::WpnOvlayDat() {
@@ -113,3 +114,4 @@ void WpnOvlayDat::load(RawArchive *overlaydat) {
 }
 
 } // End of namespace Ultima8
+} // End of namespace Ultima

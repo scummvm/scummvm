@@ -35,6 +35,7 @@
 #include "ultima/ultima8/audio/midi/fluid_synth_midi_driver.h"
 #include "ultima/ultima8/conf/setting_manager.h"
 
+namespace Ultima {
 namespace Ultima8 {
 
 static MidiDriver *Disabled_CreateInstance() {
@@ -206,3 +207,4 @@ std::string MidiDriver::getConfigSetting(std::string name,
 #endif
 
 } // End of namespace Ultima8
+} // End of namespace Ultima

@@ -25,6 +25,7 @@
 
 #include "common/scummsys.h"
 
+namespace Ultima {
 namespace Ultima8 {
 
 class IDataSource;
@@ -145,5 +146,6 @@ public:
 extern const ConvertShapeFormat		PentagramShapeFormat;
 
 } // End of namespace Ultima8
+} // End of namespace Ultima
 
 #endif

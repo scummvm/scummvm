@@ -32,6 +32,7 @@
 
 #include "ultima/ultima8/misc/errors.h"
 
+namespace Ultima {
 namespace Ultima8 {
 
 //
@@ -78,5 +79,6 @@ namespace Ultima8 {
 //
 
 } // End of namespace Ultima8
+} // End of namespace Ultima
 
 #endif

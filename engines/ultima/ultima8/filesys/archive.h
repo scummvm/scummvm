@@ -27,6 +27,7 @@
 #include "ultima/ultima8/std/containers.h"
 #include "ultima/ultima8/misc/p_dynamic_cast.h"
 
+namespace Ultima {
 namespace Ultima8 {
 
 class ArchiveFile;
@@ -103,5 +104,6 @@ private:
 
 } // End of namespace Pentagram
 } // End of namespace Ultima8
+} // End of namespace Ultima
 
 #endif

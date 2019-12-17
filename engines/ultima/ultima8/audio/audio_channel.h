@@ -25,6 +25,7 @@
 
 #include "audio/mixer.h"
 
+namespace Ultima {
 namespace Ultima8 {
 namespace Pentagram {
 
@@ -109,5 +110,6 @@ public:
 
 } // End of namespace Pentagram
 } // End of namespace Ultima8
+} // End of namespace Ultima
 
 #endif

@@ -28,6 +28,7 @@
 #include "ultima/ultima8/kernel/joystick.h"
 //#include "SDL_events.h"
 
+namespace Ultima {
 namespace Ultima8 {
 
 //! Responsible to loading the keybindings and storing them
@@ -90,5 +91,6 @@ public:
 };
 
 } // End of namespace Ultima8
+} // End of namespace Ultima
 
 #endif

@@ -27,6 +27,7 @@
 
 #include "timidity.h"
 
+namespace Ultima {
 namespace Ultima8 {
 
 #ifdef NS_TIMIDITY
@@ -132,6 +133,7 @@ extern void dumb_pass_playing_list(int number_of_files, char *list_of_files[]);
 #endif
 
 } // End of namespace Ultima8
+} // End of namespace Ultima
 
 #endif
 

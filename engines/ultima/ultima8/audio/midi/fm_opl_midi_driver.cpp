@@ -37,6 +37,7 @@
 
 #include <cmath>
 
+namespace Ultima {
 namespace Ultima8 {
 
 const MidiDriver::MidiDriverDesc FMOplMidiDriver::desc =
@@ -1036,5 +1037,6 @@ void FMOplMidiDriver::loadU7VoiceTimbres(IDataSource *ds) {
 }
 
 } // End of namespace Ultima8
+} // End of namespace Ultima
 
 #endif

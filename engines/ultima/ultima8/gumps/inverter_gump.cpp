@@ -27,6 +27,7 @@
 #include "ultima/ultima8/graphics/texture.h"
 #include "ultima/ultima8/ultima8.h"
 
+namespace Ultima {
 namespace Ultima8 {
 
 DEFINE_RUNTIME_CLASSTYPE_CODE(InverterGump, DesktopGump)
@@ -135,3 +136,4 @@ void InverterGump::RenderSurfaceChanged() {
 }
 
 } // End of namespace Ultima8
+} // End of namespace Ultima

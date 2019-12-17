@@ -29,6 +29,7 @@
 #include "ultima/ultima8/games/game_md5.h"
 #include "ultima/ultima8/misc/md5.h"
 
+namespace Ultima {
 namespace Ultima8 {
 
 bool GameDetector::detect(std::string path, GameInfo *info) {
@@ -181,3 +182,4 @@ bool GameDetector::detect(std::string path, GameInfo *info) {
 }
 
 } // End of namespace Ultima8
+} // End of namespace Ultima

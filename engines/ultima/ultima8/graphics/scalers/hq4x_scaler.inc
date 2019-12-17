@@ -23,6 +23,7 @@
 #include "ultima/ultima8/graphics/manips.h"
 #include "ultima/ultima8/graphics/texture.h"
 
+namespace Ultima {
 namespace Ultima8 {
 namespace Pentagram {
 
@@ -5505,5 +5506,6 @@ template<class uintX, class Manip, class uintS> Scaler::ScalerFunc hq4xScaler::G
 
 } // End of namespace Pentagram
 } // End of namespace Ultima8
+} // End of namespace Ultima
 
 #endif

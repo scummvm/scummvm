@@ -26,6 +26,7 @@
 #include "ultima/ultima8/std/containers.h"
 #include "ultima/ultima8/graphics/frame_id.h"
 
+namespace Ultima {
 namespace Ultima8 {
 
 class RawArchive;
@@ -124,5 +125,6 @@ private:
 #define _TL_SHP_(x) (GameData::get_instance()->translate(x))
 
 } // End of namespace Ultima8
+} // End of namespace Ultima
 
 #endif

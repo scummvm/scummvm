@@ -27,6 +27,7 @@
 #include "ultima/ultima8/graphics/render_surface.h"
 #include "ultima/ultima8/graphics/texture.h"
 
+namespace Ultima {
 namespace Ultima8 {
 
 PaletteManager *PaletteManager::palettemanager = 0;
@@ -324,3 +325,4 @@ void PaletteManager::getTransformMatrix(int16 matrix[12], uint32 col32) {
 }
 
 } // End of namespace Ultima8
+} // End of namespace Ultima

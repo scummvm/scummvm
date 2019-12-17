@@ -44,6 +44,7 @@
 #include "ultima/ultima8/misc/p_dynamic_cast.h"
 #include "common/events.h"
 
+namespace Ultima {
 namespace Ultima8 {
 
 #define SCREEN_WIDTH 640
@@ -408,5 +409,6 @@ public:
 };
 
 } // End of namespace Ultima8
+} // End of namespace Ultima
 
 #endif

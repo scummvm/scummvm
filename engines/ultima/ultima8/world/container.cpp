@@ -36,6 +36,7 @@
 
 #include "ultima/ultima8/graphics/shape_info.h"
 
+namespace Ultima {
 namespace Ultima8 {
 
 // p_dynamic_cast stuff
@@ -349,3 +350,4 @@ uint32 Container::I_destroyContents(const uint8 *args, unsigned int /*argsize*/)
 }
 
 } // End of namespace Ultima8
+} // End of namespace Ultima

@@ -25,6 +25,7 @@
 
 #include "ultima/ultima8/std/containers.h"
 
+namespace Ultima {
 namespace Ultima8 {
 
 struct SKFEvent;
@@ -72,5 +73,6 @@ private:
 };
 
 } // End of namespace Ultima8
+} // End of namespace Ultima
 
 #endif

@@ -25,6 +25,7 @@
 
 #include "ultima/ultima8/graphics/texture.h"
 
+namespace Ultima {
 namespace Ultima8 {
 // container structure for graphics read from a PNG file
 struct TexturePNG : public Texture {
@@ -35,5 +36,6 @@ struct TexturePNG : public Texture {
 };
 
 } // End of namespace Ultima8
+} // End of namespace Ultima
 
 #endif

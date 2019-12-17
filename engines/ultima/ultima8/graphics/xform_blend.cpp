@@ -24,6 +24,7 @@
 #include "ultima/ultima8/graphics/xform_blend.h"
 #include "ultima/ultima8/graphics/texture.h"
 
+namespace Ultima {
 namespace Ultima8 {
 
 const uint8 U8XFormPal[1024] = {
@@ -175,3 +176,4 @@ const xformBlendFuncType    U8XFormFuncs[256] = {
 #endif
 
 } // End of namespace Ultima8
+} // End of namespace Ultima

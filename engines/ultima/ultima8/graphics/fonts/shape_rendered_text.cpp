@@ -26,6 +26,7 @@
 #include "ultima/ultima8/graphics/fonts/shape_font.h"
 #include "ultima/ultima8/graphics/render_surface.h"
 
+namespace Ultima {
 namespace Ultima8 {
 
 DEFINE_RUNTIME_CLASSTYPE_CODE(ShapeRenderedText, RenderedText)
@@ -97,3 +98,4 @@ void ShapeRenderedText::drawBlended(RenderSurface *surface, int x, int y,
 }
 
 } // End of namespace Ultima8
+} // End of namespace Ultima

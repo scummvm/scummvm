@@ -50,6 +50,7 @@
 #include "ultima/ultima8/filesys/idata_source.h"
 #include "ultima/ultima8/filesys/odata_source.h"
 
+namespace Ultima {
 namespace Ultima8 {
 
 //#define WATCHACTOR 1
@@ -679,3 +680,4 @@ bool ActorAnimProcess::loadData(IDataSource *ids, uint32 version) {
 }
 
 } // End of namespace Ultima8
+} // End of namespace Ultima

@@ -49,6 +49,7 @@
 #include "ultima/ultima8/filesys/idata_source.h"
 #include "ultima/ultima8/filesys/odata_source.h"
 
+namespace Ultima {
 namespace Ultima8 {
 
 DEFINE_RUNTIME_CLASSTYPE_CODE(MenuGump, ModalGump)
@@ -266,3 +267,4 @@ void MenuGump::inputName() {
 }
 
 } // End of namespace Ultima8
+} // End of namespace Ultima

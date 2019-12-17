@@ -25,6 +25,7 @@
 #include "ultima/ultima8/filesys/idata_source.h"
 #include "image/tga.h"
 
+namespace Ultima {
 namespace Ultima8 {
 
 bool TextureTarga::Read(IDataSource *ds) {
@@ -41,3 +42,4 @@ bool TextureTarga::Read(IDataSource *ds) {
 }
 
 } // End of namespace Ultima8
+} // End of namespace Ultima

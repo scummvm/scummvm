@@ -25,6 +25,7 @@
 
 #ifdef USE_ALSA_MIDI
 
+namespace Ultima {
 namespace Ultima8 {
 
 const MidiDriver::MidiDriverDesc ALSAMidiDriver::desc =
@@ -212,5 +213,6 @@ void ALSAMidiDriver::send_event(int do_flush) {
 }
 
 } // End of namespace Ultima8
+} // End of namespace Ultima
 
 #endif

@@ -29,6 +29,7 @@
 #include "common/hashmap.h"
 #include "common/file.h"
 
+namespace Ultima {
 namespace Ultima8 {
 
 //
@@ -488,5 +489,6 @@ extern console_err_ostream<char>    *pperr;
 #endif
 
 } // End of namespace Ultima8
+} // End of namespace Ultima
 
 #endif

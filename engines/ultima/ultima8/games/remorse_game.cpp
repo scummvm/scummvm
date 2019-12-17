@@ -31,6 +31,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "ultima/ultima8/world/item_factory.h"
 #include "ultima/ultima8/world/actors/main_actor.h"
 
+namespace Ultima {
 namespace Ultima8 {
 
 RemorseGame::RemorseGame() : Game() {
@@ -156,3 +157,4 @@ void RemorseGame::writeSaveInfo(ODataSource *ods) {
 }
 
 } // End of namespace Ultima8
+} // End of namespace Ultima

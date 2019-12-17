@@ -23,6 +23,7 @@
 #ifndef ULTIMA8_WORLD_ITEMFACTORY_H
 #define ULTIMA8_WORLD_ITEMFACTORY_H
 
+namespace Ultima {
 namespace Ultima8 {
 
 class Item;
@@ -49,5 +50,6 @@ public:
 };
 
 } // End of namespace Ultima8
+} // End of namespace Ultima
 
 #endif

@@ -28,6 +28,7 @@
 #include "data/data.h"
 #endif
 
+namespace Ultima {
 namespace Ultima8 {
 
 void FileSystem::initBuiltinData(bool allowoverride) {
@@ -57,3 +58,4 @@ void FileSystem::initBuiltinData(bool allowoverride) {
 }
 
 } // End of namespace Ultima8
+} // End of namespace Ultima

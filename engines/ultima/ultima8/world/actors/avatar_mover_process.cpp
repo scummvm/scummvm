@@ -38,6 +38,7 @@
 #include "ultima/ultima8/filesys/odata_source.h"
 #include "common/system.h"
 
+namespace Ultima {
 namespace Ultima8 {
 
 // p_dynamic_cast stuff
@@ -837,3 +838,4 @@ bool AvatarMoverProcess::loadData(IDataSource *ids, uint32 version) {
 }
 
 } // End of namespace Ultima8
+} // End of namespace Ultima

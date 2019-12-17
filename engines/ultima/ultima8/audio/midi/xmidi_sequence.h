@@ -28,6 +28,7 @@
 #include "ultima/ultima8/audio/midi/xmidi_event_list.h"
 #include "ultima/ultima8/audio/midi/xmidi_note_stack.h"
 
+namespace Ultima {
 namespace Ultima8 {
 
 class XMidiSequence {
@@ -187,5 +188,6 @@ private:
 };
 
 } // End of namespace Ultima8
+} // End of namespace Ultima
 
 #endif

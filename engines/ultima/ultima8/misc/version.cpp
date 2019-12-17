@@ -22,6 +22,7 @@
 
 #include "ultima/ultima8/misc/pent_include.h"
 
+namespace Ultima {
 namespace Ultima8 {
 namespace PentagramVersion {
 
@@ -64,3 +65,4 @@ const char *buildtime = __DATE__ " " __TIME__;
 
 } // End of namespace PentagramVersion
 } // End of namespace Ultima8
+} // End of namespace Ultima

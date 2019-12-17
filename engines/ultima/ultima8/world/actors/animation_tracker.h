@@ -26,6 +26,7 @@
 #include "ultima/ultima8/world/actors/animation.h"
 #include "ultima/ultima8/world/actors/pathfinder.h"
 
+namespace Ultima {
 namespace Ultima8 {
 
 class Actor;
@@ -145,5 +146,6 @@ private:
 };
 
 } // End of namespace Ultima8
+} // End of namespace Ultima
 
 #endif

@@ -29,6 +29,7 @@
 #include "common/stream.h"
 #include "common/algorithm.h"
 
+namespace Ultima {
 namespace Ultima8 {
 
 class ODataSource {
@@ -448,5 +449,6 @@ public:
 };
 
 } // End of namespace Ultima8
+} // End of namespace Ultima
 
 #endif

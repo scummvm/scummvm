@@ -25,6 +25,7 @@
 #include "ultima/ultima8/graphics/shape_info.h"
 #include "ultima/ultima8/kernel/core_app.h"
 
+namespace Ultima {
 namespace Ultima8 {
 
 bool ShapeInfo::getTypeFlag(int typeflag) {
@@ -98,3 +99,4 @@ bool ShapeInfo::getTypeFlagCrusader(int typeflag) {
 }
 
 } // End of namespace Ultima8
+} // End of namespace Ultima

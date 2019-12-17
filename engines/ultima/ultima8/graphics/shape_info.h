@@ -27,6 +27,7 @@
 #include "ultima/ultima8/world/armour_info.h"
 #include "ultima/ultima8/world/actors/monster_info.h"
 
+namespace Ultima {
 namespace Ultima8 {
 
 class ShapeInfo {
@@ -173,5 +174,6 @@ inline void ShapeInfo::getFootpadWorld(int32 &X, int32 &Y, int32 &Z, uint16 flip
 }
 
 } // End of namespace Ultima8
+} // End of namespace Ultima
 
 #endif

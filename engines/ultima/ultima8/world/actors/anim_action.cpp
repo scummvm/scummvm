@@ -24,6 +24,7 @@
 #include "ultima/ultima8/world/actors/anim_action.h"
 #include "ultima/ultima8/world/actors/actor.h"
 
+namespace Ultima {
 namespace Ultima8 {
 
 void AnimAction::getAnimRange(unsigned int lastanim, int lastdir,
@@ -67,3 +68,4 @@ void AnimAction::getAnimRange(Actor *actor, int dir,
 }
 
 } // End of namespace Ultima8
+} // End of namespace Ultima

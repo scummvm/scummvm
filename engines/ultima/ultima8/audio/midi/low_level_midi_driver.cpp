@@ -28,6 +28,7 @@
 #include "ultima/ultima8/audio/midi/xmidi_event_list.h"
 #include "ultima/ultima8/filesys/idata_source.h"
 
+namespace Ultima {
 namespace Ultima8 {
 
 #define LLMD_MSG_PLAY                   1
@@ -1558,3 +1559,4 @@ void LowLevelMidiDriver::loadXMidiTimbreLibrary(IDataSource *ds) {
 }
 
 } // End of namespace Ultima8
+} // End of namespace Ultima

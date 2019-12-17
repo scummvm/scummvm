@@ -25,6 +25,7 @@
 #include "ultima/ultima8/filesys/archive_file.h"
 #include "ultima/ultima8/filesys/idata_source.h"
 
+namespace Ultima {
 namespace Ultima8 {
 
 DEFINE_RUNTIME_CLASSTYPE_CODE_BASE_CLASS(ArchiveFile)
@@ -67,3 +68,4 @@ IDataSource *ArchiveFile::getDataSource(const std::string &name, bool is_text) {
 }
 
 } // End of namespace Ultima8
+} // End of namespace Ultima

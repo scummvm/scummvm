@@ -25,6 +25,7 @@
 
 #include "common/scummsys.h"
 
+namespace Ultima {
 namespace Ultima8 {
 
 class IDataSource;
@@ -45,5 +46,6 @@ struct FrameID {
 };
 
 } // End of namespace Ultima8
+} // End of namespace Ultima
 
 #endif

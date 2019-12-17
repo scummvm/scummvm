@@ -35,6 +35,7 @@
 #include "ultima/ultima8/audio/midi/xmidi_event_list.h"
 #endif
 
+namespace Ultima {
 namespace Ultima8 {
 
 const MidiDriver::MidiDriverDesc TimidityMidiDriver::desc =
@@ -110,5 +111,6 @@ void TimidityMidiDriver::lowLevelProduceSamples(int16 *samples, uint32 num_sampl
 }
 
 } // End of namespace Ultima8
+} // End of namespace Ultima
 
 #endif

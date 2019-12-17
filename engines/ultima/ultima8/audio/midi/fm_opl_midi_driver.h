@@ -28,6 +28,7 @@
 #include "ultima/ultima8/audio/midi/low_level_midi_driver.h"
 #include "fmopl.h"
 
+namespace Ultima {
 namespace Ultima8 {
 
 class IDataSource;
@@ -112,6 +113,7 @@ private:
 };
 
 } // End of namespace Ultima8
+} // End of namespace Ultima
 
 #endif //USE_FMOPL_MIDI
 

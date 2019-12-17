@@ -30,6 +30,7 @@
 #include "ultima/ultima8/kernel/kernel.h"
 #include "ultima/ultima8/gumps/main_menu_process.h"
 
+namespace Ultima {
 namespace Ultima8 {
 
 Game *Game::game = 0;
@@ -79,3 +80,4 @@ uint32 Game::I_playEndgame(const uint8 *args, unsigned int /*argsize*/) {
 }
 
 } // End of namespace Ultima8
+} // End of namespace Ultima

@@ -46,9 +46,11 @@
 #include "ultima/ultima8/misc/istring.h"
 
 // Empty string
+namespace Ultima {
 namespace Ultima8 {
 extern const std::string c_empty_string;
-}
+} // End of namespace Ultima8
+} // End of namespace Ultima
 
 //
 // Base Errors
@@ -107,6 +109,7 @@ extern const std::string c_empty_string;
 // Wrapper around valgrind functions.
 #include "ultima/ultima8/misc/pent_valgrind.h"
 
+namespace Ultima {
 namespace Ultima8 {
 
 // Memory Management through Allocators
@@ -172,5 +175,6 @@ void setAllocationFunctions(allocFunc a, deallocFunc d);
 #endif
 
 } // End of namespace Ultima8
+} // End of namespace Ultima
 
 #endif

@@ -36,6 +36,7 @@
 #include "ultima/ultima8/filesys/idata_source.h"
 #include "ultima/ultima8/filesys/odata_source.h"
 
+namespace Ultima {
 namespace Ultima8 {
 
 // p_dynamic_cast stuff
@@ -351,3 +352,4 @@ uint32 CameraProcess::I_stopQuake(const uint8 * /*args*/, unsigned int /*argsize
 }
 
 } // End of namespace Ultima8
+} // End of namespace Ultima

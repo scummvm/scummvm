@@ -23,6 +23,7 @@
 #ifndef ULTIMA8_USECODE_BITSET_H
 #define ULTIMA8_USECODE_BITSET_H
 
+namespace Ultima {
 namespace Ultima8 {
 
 class IDataSource;
@@ -60,5 +61,6 @@ private:
 };
 
 } // End of namespace Ultima8
+} // End of namespace Ultima
 
 #endif

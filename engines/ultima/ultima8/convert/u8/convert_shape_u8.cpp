@@ -23,6 +23,7 @@
 #include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/convert/u8/convert_shape_u8.h"
 
+namespace Ultima {
 namespace Ultima8 {
 
 // Shape format configuration for Ultima8
@@ -138,3 +139,4 @@ const ConvertShapeFormat U8CMPShapeFormat = {
 };
 
 } // End of namespace Ultima8
+} // End of namespace Ultima

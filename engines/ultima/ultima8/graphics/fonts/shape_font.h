@@ -27,6 +27,7 @@
 #include "ultima/ultima8/graphics/shape.h"
 #include "ultima/ultima8/misc/p_dynamic_cast.h"
 
+namespace Ultima {
 namespace Ultima8 {
 
 class ShapeFont : public Pentagram::Font, public Shape {
@@ -74,5 +75,6 @@ public:
 };
 
 } // End of namespace Ultima8
+} // End of namespace Ultima
 
 #endif

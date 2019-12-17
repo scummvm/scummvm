@@ -26,6 +26,7 @@
 #include "ultima/ultima8/std/containers.h"
 #include "graphics/font.h"
 
+namespace Ultima {
 namespace Ultima8 {
 namespace Pentagram {
 class Font;
@@ -122,6 +123,7 @@ public:
 	void resetGameFonts();
 };
 
-} // End of namespace Ultima8 // End of namespace Ultima8
+} // End of namespace Ultima8
+} // End of namespace Ultima // End of namespace Ultima8
 
 #endif

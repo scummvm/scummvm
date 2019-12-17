@@ -38,6 +38,7 @@
 #include "timidity_tables.h"
 #include "timidity_filter.h"
 
+namespace Ultima {
 namespace Ultima8 {
 
 #ifdef NS_TIMIDITY
@@ -609,5 +610,6 @@ int set_default_instrument(char *name) {
 #endif
 
 } // End of namespace Ultima8
+} // End of namespace Ultima
 
 #endif //USE_TIMIDITY_MIDI

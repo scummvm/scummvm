@@ -27,6 +27,7 @@
 
 #include "timidity.h"
 
+namespace Ultima {
 namespace Ultima8 {
 
 #ifdef NS_TIMIDITY
@@ -62,6 +63,7 @@ template<class T> T *safe_Malloc(size_t count = 1) {
 #endif
 
 } // End of namespace Ultima8
+} // End of namespace Ultima
 
 #endif
 

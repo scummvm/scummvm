@@ -38,6 +38,7 @@
 #include "timidity_resample.h"
 #include "timidity_mix.h"
 
+namespace Ultima {
 namespace Ultima8 {
 
 #ifdef NS_TIMIDITY
@@ -501,5 +502,6 @@ void mix_voice(int32 *buf, int v, int32 c) {
 #endif
 
 } // End of namespace Ultima8
+} // End of namespace Ultima
 
 #endif //USE_TIMIDITY_MIDI

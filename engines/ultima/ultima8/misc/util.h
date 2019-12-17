@@ -23,6 +23,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "ultima/ultima8/std/misc.h"
 #include "ultima/ultima8/misc/istring.h"
 
+namespace Ultima {
 namespace Ultima8 {
 namespace Pentagram {
 
@@ -43,5 +44,6 @@ template<class T> void SplitStringKV(const T &args, char sep,
 
 } // End of namespace Pentagram
 } // End of namespace Ultima8
+} // End of namespace Ultima
 
 #endif

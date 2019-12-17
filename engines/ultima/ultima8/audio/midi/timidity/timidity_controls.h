@@ -27,6 +27,7 @@
 
 #include "timidity.h"
 
+namespace Ultima {
 namespace Ultima8 {
 
 #ifdef NS_TIMIDITY
@@ -105,6 +106,7 @@ extern char timidity_error[];
 #endif
 
 } // End of namespace Ultima8
+} // End of namespace Ultima
 
 #endif
 

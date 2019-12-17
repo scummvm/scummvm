@@ -29,6 +29,7 @@
 #include "ultima/ultima8/std/containers.h"
 #include "ultima/ultima8/std/containers.h"
 
+namespace Ultima {
 namespace Ultima8 {
 
 class ConfigFileManager;
@@ -134,5 +135,6 @@ private:
 };
 
 } // End of namespace Ultima8
+} // End of namespace Ultima
 
 #endif

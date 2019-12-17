@@ -27,6 +27,7 @@
 #include "ultima/ultima8/misc/p_dynamic_cast.h"
 #include "ultima/ultima8/std/string.h"
 
+namespace Ultima {
 namespace Ultima8 {
 
 class DirFile : public NamedArchiveFile {
@@ -55,5 +56,6 @@ protected:
 };
 
 } // End of namespace Ultima8
+} // End of namespace Ultima
 
 #endif

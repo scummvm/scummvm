@@ -23,6 +23,7 @@
 #ifndef ULTIMA8_GAMES_GAMEDETECTOR_H
 #define ULTIMA8_GAMES_GAMEDETECTOR_H
 
+namespace Ultima {
 namespace Ultima8 {
 
 struct GameInfo;
@@ -37,5 +38,6 @@ public:
 };
 
 } // End of namespace Ultima8
+} // End of namespace Ultima
 
 #endif

@@ -25,6 +25,7 @@
 
 #include "ultima/ultima8/gumps/gump_notify_process.h"
 
+namespace Ultima {
 namespace Ultima8 {
 
 class ActorBarkNotifyProcess : public GumpNotifyProcess {
@@ -43,5 +44,6 @@ protected:
 };
 
 } // End of namespace Ultima8
+} // End of namespace Ultima
 
 #endif

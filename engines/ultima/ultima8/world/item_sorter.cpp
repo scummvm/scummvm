@@ -38,6 +38,7 @@
 #include "ultima/ultima8/world/get_object.h"
 // --
 
+namespace Ultima {
 namespace Ultima8 {
 
 using Pentagram::Rect;
@@ -1244,3 +1245,4 @@ uint16 ItemSorter::Trace(int32 x, int32 y, HitFace *face, bool item_highlight) {
 }
 
 } // End of namespace Ultima8
+} // End of namespace Ultima

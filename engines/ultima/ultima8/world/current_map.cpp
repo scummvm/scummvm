@@ -45,6 +45,7 @@
 #include "ultima/ultima8/filesys/idata_source.h"
 #include "ultima/ultima8/filesys/odata_source.h"
 
+namespace Ultima {
 namespace Ultima8 {
 
 using std::list; // too messy otherwise
@@ -1245,3 +1246,4 @@ uint32 CurrentMap::I_canExistAt(const uint8 *args, unsigned int /*argsize*/) {
 }
 
 } // End of namespace Ultima8
+} // End of namespace Ultima

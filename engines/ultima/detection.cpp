@@ -67,7 +67,7 @@ bool UltimaMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGa
 		switch (gd->gameId) {
 #ifdef ENABLE_ULTIMA8
 		case Ultima::GAME_ULTIMA8:
-			*engine = new Ultima8::Ultima8Engine(syst, gd);
+			*engine = new Ultima::Ultima8::Ultima8Engine(syst, gd);
 			break;
 #endif
 		default:

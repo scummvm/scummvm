@@ -26,6 +26,7 @@
 #include "ultima/ultima8/gumps/gump.h"
 #include "ultima/ultima8/misc/p_dynamic_cast.h"
 
+namespace Ultima {
 namespace Ultima8 {
 
 class SlidingWidget : public Gump {
@@ -45,5 +46,6 @@ protected:
 };
 
 } // End of namespace Ultima8
+} // End of namespace Ultima
 
 #endif

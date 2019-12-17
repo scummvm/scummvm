@@ -38,6 +38,7 @@
 #include "timidity_controls.h"
 #include "timidity_tables.h"
 
+namespace Ultima {
 namespace Ultima8 {
 
 #ifdef NS_TIMIDITY
@@ -1032,5 +1033,6 @@ void Timidity_FinalInit(bool patches[128], bool drums[128]) {
 #endif
 
 } // End of namespace Ultima8
+} // End of namespace Ultima
 
 #endif //USE_TIMIDITY_MIDI

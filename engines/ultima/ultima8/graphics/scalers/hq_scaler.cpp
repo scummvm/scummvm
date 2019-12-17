@@ -179,5 +179,6 @@ const hqScaler hq_scaler;
 
 } // End of namespace Pentagram
 } // End of namespace Ultima8
+} // End of namespace Ultima
 
 #endif

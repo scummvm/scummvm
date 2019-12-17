@@ -25,6 +25,7 @@
 
 #include "ultima/ultima8/std/string.h"
 
+namespace Ultima {
 namespace Ultima8 {
 
 struct Texture;
@@ -44,5 +45,6 @@ struct FixedWidthFont {
 };
 
 } // End of namespace Ultima8
+} // End of namespace Ultima
 
 #endif

@@ -25,6 +25,7 @@
 
 #include "ultima/ultima8/graphics/texture.h"
 
+namespace Ultima {
 namespace Ultima8 {
 
 // container structure for bitmaps .BMP file
@@ -36,5 +37,6 @@ struct TextureBitmap : public Texture {
 };
 
 } // End of namespace Ultima8
+} // End of namespace Ultima
 
 #endif

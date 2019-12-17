@@ -27,6 +27,7 @@
 #include "ultima/ultima8/world/actors/main_actor.h"
 #include "ultima/ultima8/gumps/gump.h"
 
+namespace Ultima {
 namespace Ultima8 {
 
 // utility functions for getting objects by ObjId in various forms
@@ -56,3 +57,4 @@ Gump *getGump(ObjId id) {
 }
 
 } // End of namespace Ultima8
+} // End of namespace Ultima

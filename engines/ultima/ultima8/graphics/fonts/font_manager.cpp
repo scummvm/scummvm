@@ -37,6 +37,7 @@
 #include "ultima/ultima8/conf/setting_manager.h"
 #include "graphics/fonts/ttf.h"
 
+namespace Ultima {
 namespace Ultima8 {
 
 FontManager *FontManager::fontmanager = 0;
@@ -219,3 +220,4 @@ bool FontManager::loadTTFont(unsigned int fontnum, std::string filename,
 }
 
 } // End of namespace Ultima8
+} // End of namespace Ultima

@@ -22,6 +22,7 @@
 #include "ultima/ultima8/conf/config_file_manager.h"
 #include "ultima/ultima8/misc/util.h"
 
+namespace Ultima {
 namespace Ultima8 {
 
 TreasureLoader::TreasureLoader() {
@@ -203,3 +204,4 @@ bool TreasureLoader::parseInt(std::string val, int &i) {
 }
 
 } // End of namespace Ultima8
+} // End of namespace Ultima

@@ -27,6 +27,7 @@
 #include "ultima/ultima8/graphics/shape_info.h"
 #include "ultima/ultima8/graphics/anim_dat.h"
 
+namespace Ultima {
 namespace Ultima8 {
 
 DEFINE_RUNTIME_CLASSTYPE_CODE(MainShapeArchive, ShapeArchive)
@@ -83,3 +84,4 @@ AnimAction *MainShapeArchive::getAnim(uint32 shape, uint32 action) const {
 }
 
 } // End of namespace Ultima8
+} // End of namespace Ultima

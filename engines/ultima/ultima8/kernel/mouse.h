@@ -27,6 +27,7 @@
 #include "common/stack.h"
 #include "ultima/ultima8/graphics/texture.h"
 
+namespace Ultima {
 namespace Ultima8 {
 
 const unsigned int DOUBLE_CLICK_TIMEOUT = 200;
@@ -174,5 +175,6 @@ public:
 };
 
 } // End of namespace Ultima8
+} // End of namespace Ultima
 
 #endif

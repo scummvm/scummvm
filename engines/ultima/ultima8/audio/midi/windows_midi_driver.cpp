@@ -25,6 +25,7 @@
 
 #ifdef USE_WINDOWS_MIDI
 
+namespace Ultima {
 namespace Ultima8 {
 
 const MidiDriver::MidiDriverDesc WindowsMidiDriver::desc =
@@ -230,5 +231,6 @@ void WindowsMidiDriver::yield() {
 }
 
 } // End of namespace Ultima8
+} // End of namespace Ultima
 
 #endif

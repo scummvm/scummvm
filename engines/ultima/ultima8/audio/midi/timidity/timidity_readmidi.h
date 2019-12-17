@@ -27,6 +27,7 @@
 
 #include "timidity.h"
 
+namespace Ultima {
 namespace Ultima8 {
 
 #ifdef NS_TIMIDITY
@@ -47,6 +48,7 @@ extern MidiEvent *read_midi_file(FILE *mfp, int32 *count, int32 *sp);
 #endif
 
 } // End of namespace Ultima8
+} // End of namespace Ultima
 
 #endif
 

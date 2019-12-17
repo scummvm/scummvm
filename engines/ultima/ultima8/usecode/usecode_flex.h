@@ -26,6 +26,7 @@
 #include "ultima/ultima8/usecode/usecode.h"
 #include "ultima/ultima8/filesys/raw_archive.h"
 
+namespace Ultima {
 namespace Ultima8 {
 
 // multiple inheritance. um, yes :-)
@@ -42,5 +43,6 @@ public:
 };
 
 } // End of namespace Ultima8
+} // End of namespace Ultima
 
 #endif

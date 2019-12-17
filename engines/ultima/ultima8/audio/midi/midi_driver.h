@@ -23,6 +23,7 @@
 #ifndef ULTIMA8_AUDIO_MIDI_MIDIDRIVER_H
 #define ULTIMA8_AUDIO_MIDI_MIDIDRIVER_H
 
+namespace Ultima {
 namespace Ultima8 {
 
 class XMidiEventList;
@@ -168,5 +169,6 @@ protected:
 };
 
 } // End of namespace Ultima8
+} // End of namespace Ultima
 
 #endif

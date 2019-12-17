@@ -26,6 +26,7 @@
 #include "ultima/ultima8/kernel/process.h"
 #include "ultima/ultima8/misc/p_dynamic_cast.h"
 
+namespace Ultima {
 namespace Ultima8 {
 
 class SchedulerProcess : public Process {
@@ -46,5 +47,6 @@ protected:
 };
 
 } // End of namespace Ultima8
+} // End of namespace Ultima
 
 #endif

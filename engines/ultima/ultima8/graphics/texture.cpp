@@ -28,6 +28,7 @@
 
 #include <cstring>
 
+namespace Ultima {
 namespace Ultima8 {
 
 //
@@ -124,3 +125,4 @@ void Texture::loadSurface(const Graphics::Surface *surf) {
 }
 
 } // End of namespace Ultima8
+} // End of namespace Ultima

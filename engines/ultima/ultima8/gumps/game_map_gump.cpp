@@ -53,6 +53,7 @@
 #include "ultima/ultima8/filesys/file_system.h"
 #include "image/png.h"
 
+namespace Ultima {
 namespace Ultima8 {
 
 DEFINE_RUNTIME_CLASSTYPE_CODE(GameMapGump, Gump)
@@ -757,3 +758,4 @@ bool GameMapGump::loadData(IDataSource *ids, uint32 version) {
 }
 
 } // End of namespace Ultima8
+} // End of namespace Ultima

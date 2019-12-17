@@ -30,6 +30,7 @@
 #include "ultima/ultima8/gumps/widgets/button_widget.h"
 #include "ultima/ultima8/gumps/pentagram_menu_gump.h"
 
+namespace Ultima {
 namespace Ultima8 {
 
 DEFINE_RUNTIME_CLASSTYPE_CODE(GameWidget, Gump)
@@ -204,3 +205,4 @@ void GameWidget::PaintThis(RenderSurface *surf, int32 lerp_factor, bool /*scaled
 }
 
 } // End of namespace Ultima8
+} // End of namespace Ultima

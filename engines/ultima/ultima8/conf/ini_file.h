@@ -21,6 +21,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include "ultima/ultima8/std/containers.h"
 
+namespace Ultima {
 namespace Ultima8 {
 
 typedef std::map<Pentagram::istring, std::string, Common::IgnoreCase_Hash> KeyMap;
@@ -113,5 +114,6 @@ private:
 };
 
 } // End of namespace Ultima8
+} // End of namespace Ultima
 
 #endif

@@ -19,6 +19,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #ifndef ULTIMA8_MISC_MD5_H
 #define ULTIMA8_MISC_MD5_H
 
+namespace Ultima {
 namespace Ultima8 {
 
 class IDataSource;
@@ -29,5 +30,6 @@ bool md5_file(IDataSource *input, uint8 digest[16], uint32 length = 0);
 
 } // End of namespace Pentagram
 } // End of namespace Ultima8
+} // End of namespace Ultima
 
 #endif

@@ -30,6 +30,7 @@
 #include "ultima/ultima8/kernel/kernel.h"
 #include "audio/decoders/raw.h"
 
+namespace Ultima {
 namespace Ultima8 {
 namespace Pentagram {
 
@@ -221,3 +222,4 @@ void AudioMixer::closeMidiOutput() {
 
 } // End of namespace Pentagram
 } // End of namespace Ultima8
+} // End of namespace Ultima

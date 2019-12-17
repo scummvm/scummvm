@@ -25,6 +25,7 @@
 
 #include "ultima/ultima8/graphics/texture.h"
 
+namespace Ultima {
 namespace Ultima8 {
 
 struct TGA;
@@ -38,5 +39,6 @@ struct TextureTarga : public Texture {
 };
 
 } // End of namespace Ultima8
+} // End of namespace Ultima
 
 #endif

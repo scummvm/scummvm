@@ -64,6 +64,7 @@
 #include "ultima/ultima8/world/actors/main_actor.h"
 #include "ultima/ultima8/world/missile_tracker.h"
 
+namespace Ultima {
 namespace Ultima8 {
 
 // p_dynamic_cast stuff
@@ -2866,3 +2867,4 @@ uint32 Item::I_isCrusTypeNPC(const uint8 *args, unsigned int /*argsize*/) {
 }
 
 } // End of namespace Ultima8
+} // End of namespace Ultima

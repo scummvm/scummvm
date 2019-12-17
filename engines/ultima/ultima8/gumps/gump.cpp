@@ -35,6 +35,7 @@
 #include "ultima/ultima8/gumps/scaler_gump.h"
 #include "ultima/ultima8/ultima8.h"
 
+namespace Ultima {
 namespace Ultima8 {
 
 DEFINE_RUNTIME_CLASSTYPE_CODE(Gump, Object)
@@ -860,3 +861,4 @@ bool Gump::loadData(IDataSource *ids, uint32 version) {
 }
 
 } // End of namespace Ultima8
+} // End of namespace Ultima

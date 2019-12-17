@@ -26,6 +26,7 @@
 #include "ultima/ultima8/misc/rect.h"
 #include "ultima/ultima8/filesys/idata_source.h"
 
+namespace Ultima {
 namespace Ultima8 {
 
 DEFINE_RUNTIME_CLASSTYPE_CODE(GumpShapeArchive, ShapeArchive)
@@ -55,3 +56,4 @@ Pentagram::Rect *GumpShapeArchive::getGumpItemArea(uint32 shapenum) {
 }
 
 } // End of namespace Ultima8
+} // End of namespace Ultima

@@ -27,6 +27,7 @@
 
 #include "timidity.h"
 
+namespace Ultima {
 namespace Ultima8 {
 
 #ifdef NS_TIMIDITY
@@ -42,6 +43,7 @@ extern void apply_envelope_to_amp(int v);
 #endif
 
 } // End of namespace Ultima8
+} // End of namespace Ultima
 
 #endif
 

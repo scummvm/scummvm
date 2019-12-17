@@ -25,6 +25,7 @@
 
 #include "ultima/ultima8/gumps/gump.h"
 
+namespace Ultima {
 namespace Ultima8 {
 
 //
@@ -39,5 +40,6 @@ public:
 };
 
 } // End of namespace Ultima8
+} // End of namespace Ultima
 
 #endif

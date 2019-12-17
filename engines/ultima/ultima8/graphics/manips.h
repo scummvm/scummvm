@@ -26,6 +26,7 @@
 #include "ultima/ultima8/graphics/render_surface.h"
 #include "ultima/ultima8/graphics/texture.h"
 
+namespace Ultima {
 namespace Ultima8 {
 
 template<class uintX> class Manip_Nat2Nat {
@@ -343,5 +344,6 @@ public:
 };
 
 } // End of namespace Ultima8
+} // End of namespace Ultima
 
 #endif

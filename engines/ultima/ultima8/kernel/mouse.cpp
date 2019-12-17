@@ -34,6 +34,7 @@
 #include "ultima/ultima8/world/get_object.h"
 #include "ultima/ultima8/world/actors/main_actor.h"
 
+namespace Ultima {
 namespace Ultima8 {
 
 Mouse *Mouse::instance;
@@ -545,3 +546,4 @@ void Mouse::paint() {
 }
 
 } // End of namespace Ultima8
+} // End of namespace Ultima
