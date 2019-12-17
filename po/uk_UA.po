@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2019-12-14 13:24+0000\n"
-"PO-Revision-Date: 2019-11-05 01:55+0000\n"
+"PO-Revision-Date: 2019-12-18 20:26+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/uk/>\n"
@@ -17,9 +17,9 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=iso-8859-5\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
-"%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
-"X-Generator: Weblate 3.7.1\n"
+"Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<="
+"4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
+"X-Generator: Weblate 3.9.1\n"
 "X-Language-name: Ukrainian\n"
 
 #: gui/about.cpp:102
@@ -645,7 +645,7 @@ msgstr "~Д~одати гру..."
 
 #: gui/launcher.cpp:160 gui/launcher.cpp:170
 msgid "Add games to the list"
-msgstr ""
+msgstr "Додати гри до списку"
 
 #: gui/launcher.cpp:161
 msgid "Mass Add..."
@@ -673,7 +673,6 @@ msgid "~A~dd Game..."
 msgstr "~Д~одати гру..."
 
 #: gui/launcher.cpp:171
-#, fuzzy
 msgctxt "lowres"
 msgid "Mass Add..."
 msgstr "Дод. багато..."
@@ -2710,81 +2709,80 @@ msgid "Snap to edges"
 msgstr "Прикріпити до країв"
 
 #: backends/platform/3ds/options-dialog.cpp:53
-#, fuzzy
 msgid "Stretch to fit"
-msgstr "Протягніть до вікна"
+msgstr "Розтягнути під розмір"
 
 #: backends/platform/3ds/options-dialog.cpp:56
-#, fuzzy
 msgid "Use Screen:"
-msgstr "Швидкість:"
+msgstr "Застос. екран:"
 
 #: backends/platform/3ds/options-dialog.cpp:58
 msgid "Top"
-msgstr ""
+msgstr "Верхій"
 
 #: backends/platform/3ds/options-dialog.cpp:59
 msgid "Bottom"
-msgstr ""
+msgstr "Нижній"
 
 #: backends/platform/3ds/options-dialog.cpp:63
-#, fuzzy
 msgid "C-Pad Sensitivity:"
-msgstr "Чутливість GC паду:"
+msgstr "Чутливість С-паду:"
 
 #: backends/platform/3ds/osystem-events.cpp:147
 msgid "Magnify Mode cannot be activated in menus."
-msgstr ""
+msgstr "Режим збілшення не може бути активовано у меню."
 
 #: backends/platform/3ds/osystem-events.cpp:150
 msgid ""
 "Magnify Mode can only be activated\n"
 " when both screens are enabled."
 msgstr ""
+"Режим збільшення може бути активовано\n"
+" коли увімкнено обидва екрани."
 
 #: backends/platform/3ds/osystem-events.cpp:152
 msgid "In-game resolution too small to magnify."
-msgstr ""
+msgstr "Розгалуження екрану гри замале для збільшення."
 
 #: backends/platform/3ds/osystem-events.cpp:158
 msgid "Magnify Mode On. Switching to Hover Mode..."
-msgstr ""
+msgstr "Режим збільшення увімкнено. Переключаюся до режиму огляду..."
 
 #: backends/platform/3ds/osystem-events.cpp:160
 msgid "Magnify Mode On"
-msgstr ""
+msgstr "Режим збільшення увімкнено"
 
 #: backends/platform/3ds/osystem-events.cpp:167
 msgid "Magnify Mode Off. Reactivating Drag Mode..."
-msgstr ""
+msgstr "Режим збільшення вимкнено. Вмикаю режим протягування..."
 
 #: backends/platform/3ds/osystem-events.cpp:169
 msgid "Magnify Mode Off"
-msgstr ""
+msgstr "Режим збільшення вимкнено"
 
 #: backends/platform/3ds/osystem-events.cpp:177
-#, fuzzy
 msgid "Hover Mode"
-msgstr "Режим з кров'ю"
+msgstr "Режим огляду"
 
 #: backends/platform/3ds/osystem-events.cpp:181
-#, fuzzy
 msgid "Drag Mode"
-msgstr "Режим з кров'ю"
+msgstr "Режим протягування"
 
 #: backends/platform/3ds/osystem-events.cpp:183
 msgid "Cannot Switch to Drag Mode while Magnify Mode is On"
-msgstr ""
+msgstr "Не можу переключитися до режима протягування, під час режиму збільшення"
 
 #: backends/platform/3ds/osystem-events.cpp:236
 msgid ""
 "Magnify Mode Off. Reactivating Drag Mode.\n"
 "Returning to Launcher..."
 msgstr ""
+"Режим збільнення вимкнено. Включаю режим протягування\n"
+"Повертаюся до головного меню..."
 
 #: backends/platform/3ds/osystem-events.cpp:238
 msgid "Magnify Mode Off. Returning to Launcher..."
-msgstr ""
+msgstr "Режим збільнення вимкнено. Повертаюся до головного меню..."
 
 #: backends/platform/ds/arm9/source/dsoptions.cpp:57
 msgid "ScummVM Main Menu"
@@ -3431,17 +3429,19 @@ msgid ""
 "function."
 msgstr ""
 "Цей режим може призвести до високого використання процесора! Це дозволяє "
-"уникнути використання функції delayMillis ()."
+"уникнути використання функції delayMillis()."
 
 #: engines/bladerunner/detection.cpp:75
 msgid "Max frames per second limit"
-msgstr ""
+msgstr "Ліміт кадрів на секунду"
 
 #: engines/bladerunner/detection.cpp:76
 msgid ""
 "This mode targets a maximum of 120 fps. When disabled, the game targets 60 "
 "fps"
 msgstr ""
+"Цей режим перемикає на максимум 120 кадрів/с. Коли вимкнений, гра видає 60 "
+"кадрів/с"
 
 #: engines/cge/detection.cpp:105 engines/cge2/detection.cpp:111
 msgid "Color Blind Mode"
