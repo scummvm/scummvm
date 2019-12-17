@@ -24,7 +24,7 @@
 #define ULTIMA8_FILESYS_IDATASOURCE_H
 
 #include "common/file.h"
-#include "ultima/ultima8/std/misc.h"
+#include "ultima/shared/std/misc.h"
 
 namespace Ultima {
 namespace Ultima8 {

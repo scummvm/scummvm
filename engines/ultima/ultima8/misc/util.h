@@ -19,8 +19,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #ifndef ULTIMA8_MISC_UTIL_H
 #define ULTIMA8_MISC_UTIL_H
 
-#include "ultima/ultima8/std/containers.h"
-#include "ultima/ultima8/std/misc.h"
+#include "ultima/shared/std/containers.h"
+#include "ultima/shared/std/misc.h"
 #include "ultima/ultima8/misc/istring.h"
 
 namespace Ultima {

@@ -534,8 +534,8 @@ void GameMapGump::DropItem(Item *item, int mx, int my) {
 		ty = dragging_pos[1];
 		int inaccuracy = 4 * (30 - avatar->getDex());
 		if (inaccuracy < 20) inaccuracy = 20; // just in case dex > 25
-		tx += (std::rand() % inaccuracy) - (std::rand() % inaccuracy);
-		ty += (std::rand() % inaccuracy) - (std::rand() % inaccuracy);
+		tx += (getRandom() % inaccuracy) - (getRandom() % inaccuracy);
+		ty += (getRandom() % inaccuracy) - (getRandom() % inaccuracy);
 		MissileTracker t(item, tx, ty, dragging_pos[2],
 		                 speed, 4);
 		t.launchItem();

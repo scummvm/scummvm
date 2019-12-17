@@ -23,7 +23,7 @@
 #ifndef WORLD_ACTORS_WEAPONOVERLAY_H
 #define WORLD_ACTORS_WEAPONOVERLAY_H
 
-#include "ultima/ultima8/std/containers.h"
+#include "ultima/shared/std/containers.h"
 
 namespace Ultima {
 namespace Ultima8 {

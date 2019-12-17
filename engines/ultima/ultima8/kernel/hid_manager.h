@@ -23,7 +23,7 @@
 #ifndef ULTIMA8_KERNEL_HIDMANAGER_H
 #define ULTIMA8_KERNEL_HIDMANAGER_H
 
-#include "ultima/ultima8/std/containers.h"
+#include "ultima/shared/std/containers.h"
 #include "ultima/ultima8/kernel/hid_keys.h"
 #include "ultima/ultima8/kernel/joystick.h"
 //#include "SDL_events.h"

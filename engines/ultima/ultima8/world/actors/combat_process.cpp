@@ -112,7 +112,7 @@ void CombatProcess::run() {
 		bool hasidle1 = a->hasAnim(Animation::idle1);
 		bool hasidle2 = a->hasAnim(Animation::idle2);
 
-		if ((hasidle1 || hasidle2) && (std::rand() % 5) == 0) {
+		if ((hasidle1 || hasidle2) && (getRandom() % 5) == 0) {
 			// every once in a while, act threatening instead of attacking
 			// TODO: maybe make frequency depend on monster type
 			Animation::Sequence idleanim;
@@ -122,7 +122,7 @@ void CombatProcess::run() {
 			} else if (!hasidle2) {
 				idleanim = Animation::idle1;
 			} else {
-				if (std::rand() % 2)
+				if (getRandom() % 2)
 					idleanim = Animation::idle1;
 				else
 					idleanim = Animation::idle2;
@@ -306,7 +306,7 @@ void CombatProcess::waitForTarget() {
 	MonsterInfo *mi = 0;
 	if (shapeinfo) mi = shapeinfo->monsterinfo;
 
-	if (mi && mi->shifter && a->getMapNum() != 43 && (std::rand() % 2) == 0) {
+	if (mi && mi->shifter && a->getMapNum() != 43 && (getRandom() % 2) == 0) {
 		// changelings (except the ones at the U8 endgame pentagram)
 
 		// shift into a tree if nobody is around

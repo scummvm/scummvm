@@ -29,7 +29,7 @@
 #include "ultima/ultima8/misc/args.h"
 #include "ultima/ultima8/games/game_info.h"
 #include "ultima/ultima8/games/game_detector.h"
-#include "ultima/ultima8/std/misc.h"
+#include "ultima/shared/std/misc.h"
 
 namespace Ultima {
 namespace Ultima8 {

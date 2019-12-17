@@ -24,8 +24,8 @@
 // but it suffices quite well at the moment.
 
 #include "ultima/ultima8/misc/common_types.h"
-#include "ultima/ultima8/std/containers.h"
-#include "ultima/ultima8/std/string.h"
+#include "ultima/shared/std/containers.h"
+#include "ultima/shared/std/string.h"
 
 namespace Ultima {
 namespace Ultima8 {

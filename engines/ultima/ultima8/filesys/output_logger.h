@@ -23,7 +23,7 @@
 #ifndef ULTIMA8_FILESYS_OUTPUTLOGGER_H
 #define ULTIMA8_FILESYS_OUTPUTLOGGER_H
 
-#include "ultima/ultima8/std/string.h"
+#include "ultima/shared/std/string.h"
 #include "common/stream.h"
 
 namespace Ultima {

@@ -23,7 +23,7 @@
 #ifndef ULTIMA8_WORLD_MAP_H
 #define ULTIMA8_WORLD_MAP_H
 
-#include "ultima/ultima8/std/containers.h"
+#include "ultima/shared/std/containers.h"
 
 namespace Ultima {
 namespace Ultima8 {

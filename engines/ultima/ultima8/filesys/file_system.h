@@ -23,7 +23,7 @@
 #ifndef ULTIMA8_FILESYS_FILESYSTEM_H
 #define ULTIMA8_FILESYS_FILESYSTEM_H
 
-#include "ultima/ultima8/std/string.h"
+#include "ultima/shared/std/string.h"
 #include "ultima/ultima8/filesys/idata_source.h"
 #include "ultima/ultima8/filesys/odata_source.h"
 #include "common/file.h"

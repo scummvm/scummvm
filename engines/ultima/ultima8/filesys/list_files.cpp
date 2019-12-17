@@ -23,7 +23,7 @@
 #ifndef ULTIMA8_FILESYS_LISTFILES_H
 #define ULTIMA8_FILESYS_LISTFILES_H
 
-#include "ultima/ultima8/std/string.h"
+#include "ultima/shared/std/string.h"
 #include "ultima/ultima8/filesys/file_system.h"
 
 namespace Ultima {

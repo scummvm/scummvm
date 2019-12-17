@@ -22,7 +22,7 @@
 
 #include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/filesys/file_system.h"
-#include "ultima/ultima8/std/string.h"
+#include "ultima/shared/std/string.h"
 #include "ultima/ultima8/ultima8.h"
 #include "common/system.h"
 #include "common/memstream.h"

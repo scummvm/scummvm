@@ -1240,12 +1240,12 @@ void Item::animateItem() {
 	switch (info->animtype) {
 	case 2:
 		// 50 % chance
-		if (std::rand() & 1) break;
+		if (getRandom() & 1) break;
 
 	case 1:
 	case 3:
 		// 50 % chance
-		if (anim_data == 1 && (std::rand() & 1)) break;
+		if (anim_data == 1 && (getRandom() & 1)) break;
 		frame ++;
 		if (anim_data < 2) {
 			if (shp && frame == shp->frameCount()) frame = 0;
@@ -1257,7 +1257,7 @@ void Item::animateItem() {
 		break;
 
 	case 4:
-		if (!(std::rand() % anim_data)) break;
+		if (!(getRandom() % anim_data)) break;
 		frame ++;
 		if (shp && frame == shp->frameCount()) frame = 0;
 		//dirty = true;
@@ -1513,7 +1513,7 @@ void Item::explode() {
 	                               x, y, z);
 	Kernel::get_instance()->addProcess(p);
 
-	int sfx = (std::rand() % 2) ? 31 : 158;
+	int sfx = (getRandom() % 2) ? 31 : 158;
 	AudioProcess *audioproc = AudioProcess::get_instance();
 	if (audioproc) audioproc->playSFX(sfx, 0x60, 0, 0);
 
@@ -1536,7 +1536,7 @@ void Item::explode() {
 
 		item->getLocation(xv, yv, zv);
 		int dir = Get_WorldDirection(xv - xv, yv - yv); //!! CHECKME
-		item->receiveHit(0, dir, 6 + (std::rand() % 6),
+		item->receiveHit(0, dir, 6 + (getRandom() % 6),
 		                 WeaponInfo::DMG_BLUNT | WeaponInfo::DMG_FIRE);
 	}
 }

@@ -24,7 +24,7 @@
 #define ULTIMA8_AUDIO_SPEECHFLEX_H
 
 #include "ultima/ultima8/audio/sound_flex.h"
-#include "ultima/ultima8/std/containers.h"
+#include "ultima/shared/std/containers.h"
 #include "ultima/ultima8/misc/p_dynamic_cast.h"
 
 namespace Ultima {

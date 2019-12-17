@@ -22,7 +22,7 @@
 
 #include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/audio/midi/midi_driver.h"
-#include "ultima/ultima8/std/containers.h"
+#include "ultima/shared/std/containers.h"
 
 #include "ultima/ultima8/audio/midi/midi_driver.h"
 #include "ultima/ultima8/audio/midi/windows_midi_driver.h"

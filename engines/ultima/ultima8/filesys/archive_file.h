@@ -23,7 +23,7 @@
 #ifndef ULTIMA8_FILESYS_ARCHIVEFILE_H
 #define ULTIMA8_FILESYS_ARCHIVEFILE_H
 
-#include "ultima/ultima8/std/string.h"
+#include "ultima/shared/std/string.h"
 #include "ultima/ultima8/misc/p_dynamic_cast.h"
 
 namespace Ultima {

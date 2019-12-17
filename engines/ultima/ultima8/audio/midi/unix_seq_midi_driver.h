@@ -28,7 +28,7 @@
 #define USE_UNIX_SEQ_MIDI
 
 #include "ultima/ultima8/audio/midi/low_level_midi_driver.h"
-#include "ultima/ultima8/std/string.h"
+#include "ultima/shared/std/string.h"
 
 namespace Ultima {
 namespace Ultima8 {

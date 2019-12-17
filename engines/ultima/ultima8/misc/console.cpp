@@ -24,7 +24,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "ultima/ultima8/graphics/render_surface.h"
 #include "ultima/ultima8/misc/util.h"
 #include "ultima/ultima8/graphics/fonts/fixed_width_font.h"
-#include "ultima/ultima8/std/misc.h"
+#include "ultima/shared/std/misc.h"
 #include "common/file.h"
 #include "common/debug.h"
 

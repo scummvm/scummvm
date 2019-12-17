@@ -147,8 +147,8 @@ void CameraProcess::terminate() {
 
 void CameraProcess::run() {
 	if (earthquake) {
-		eq_x = (std::rand() % (earthquake * 2 + 1)) - earthquake;
-		eq_y = (std::rand() % (earthquake * 2 + 1)) - earthquake;
+		eq_x = (getRandom() % (earthquake * 2 + 1)) - earthquake;
+		eq_y = (getRandom() % (earthquake * 2 + 1)) - earthquake;
 	} else {
 		eq_x = 0;
 		eq_y = 0;

@@ -107,14 +107,14 @@ bool Actor::loadMonsterStats() {
 	if (mi->max_hp <= mi->min_hp)
 		hp = mi->min_hp;
 	else
-		hp = mi->min_hp + std::rand() % (mi->max_hp - mi->min_hp);
+		hp = mi->min_hp + getRandom() % (mi->max_hp - mi->min_hp);
 	setHP(hp);
 
 	uint16 dex;
 	if (mi->max_dex <= mi->min_dex)
 		dex = mi->min_dex;
 	else
-		dex = mi->min_dex + std::rand() % (mi->max_dex - mi->min_dex);
+		dex = mi->min_dex + getRandom() % (mi->max_dex - mi->min_dex);
 	setDex(dex);
 
 	uint8 new_alignment = mi->alignment;
@@ -147,7 +147,7 @@ bool Actor::giveTreasure() {
 
 		// check chance
 		if (ti.chance < 0.999 &&
-		        (static_cast<double>(std::rand()) / RAND_MAX) > ti.chance) {
+		        (static_cast<double>(getRandom()) / RAND_MAX) > ti.chance) {
 			continue;
 		}
 
@@ -156,7 +156,7 @@ bool Actor::giveTreasure() {
 		if (ti.mincount >= ti.maxcount)
 			count = ti.mincount;
 		else
-			count = ti.mincount + (std::rand() % (ti.maxcount - ti.mincount));
+			count = ti.mincount + (getRandom() % (ti.maxcount - ti.mincount));
 
 		if (!ti.special.empty()) {
 			if (ti.special == "weapon") {
@@ -169,7 +169,7 @@ bool Actor::giveTreasure() {
 					int chance = si->weaponinfo->treasure_chance;
 					if (!chance) continue;
 
-					int r = std::rand() % 100;
+					int r = getRandom() % 100;
 #if 0
 					pout << "weapon (" << s << ") chance: " << r << "/"
 					     << chance << std::endl;
@@ -194,13 +194,13 @@ bool Actor::giveTreasure() {
 				int frameNum;
 				uint16 qualityNum;
 
-				if (std::rand() % 10 < 8) {
+				if (getRandom() % 10 < 8) {
 					// wand
-					if (std::rand() % 10 < 4) {
+					if (getRandom() % 10 < 4) {
 						// charged
 						frameNum = 0;
-						qualityNum = 3 + (std::rand() % 4) + // charges
-						          ((1 + (std::rand() % 4)) << 8); // spell
+						qualityNum = 3 + (getRandom() % 4) + // charges
+						          ((1 + (getRandom() % 4)) << 8); // spell
 					} else {
 						frameNum = 15;
 						qualityNum = 0;
@@ -213,13 +213,13 @@ bool Actor::giveTreasure() {
 					item->randomGumpLocation();
 				}
 
-				if (std::rand() % 10 < 6) {
+				if (getRandom() % 10 < 6) {
 					// rod
-					if (std::rand() % 10 < 2) {
+					if (getRandom() % 10 < 2) {
 						// charged
 						frameNum = 3;
-						qualityNum = 3 + (std::rand() % 4) + // charges
-						          ((1 + (std::rand() % 7)) << 8); // spell
+						qualityNum = 3 + (getRandom() % 4) + // charges
+						          ((1 + (getRandom() % 7)) << 8); // spell
 					} else {
 						frameNum = 16;
 						qualityNum = 0;
@@ -232,15 +232,15 @@ bool Actor::giveTreasure() {
 					item->randomGumpLocation();
 				}
 
-				if (std::rand() % 10 < 5) {
+				if (getRandom() % 10 < 5) {
 					// symbol
-					if (std::rand() % 10 < 5) {
+					if (getRandom() % 10 < 5) {
 						// charged
 						frameNum = 12;
-						uint8 spell = 1 + (std::rand() % 11);
+						uint8 spell = 1 + (getRandom() % 11);
 						qualityNum = spell << 8;
 						if (spell < 4) {
-							qualityNum += 3 + (std::rand() % 4);
+							qualityNum += 3 + (getRandom() % 4);
 						} else {
 							// symbol can only have one charge of anything
 							// other than ignite/extinguish
@@ -258,13 +258,13 @@ bool Actor::giveTreasure() {
 					item->randomGumpLocation();
 				}
 
-				if (std::rand() % 10 < 2) {
+				if (getRandom() % 10 < 2) {
 					// demon talisman
-					if (std::rand() % 10 < 2) {
+					if (getRandom() % 10 < 2) {
 						// charged
 						frameNum = 9;
-						qualityNum = 1 + (std::rand() % 2) +  // charges
-						          ((10 + (std::rand() % 2)) << 8); // spell
+						qualityNum = 1 + (getRandom() % 2) +  // charges
+						          ((10 + (getRandom() % 2)) << 8); // spell
 					} else {
 						frameNum = 18;
 						qualityNum = 0;
@@ -319,11 +319,11 @@ bool Actor::giveTreasure() {
 		// we need to produce a number of items
 		for (i = 0; (int)i < count; ++i) {
 			// pick shape
-			int n = std::rand() % ti.shapes.size();
+			int n = getRandom() % ti.shapes.size();
 			uint32 shapeNum = ti.shapes[n];
 
 			// pick frame
-			n = std::rand() % ti.frames.size();
+			n = getRandom() % ti.frames.size();
 			uint32 frameNum = ti.frames[n];
 
 			ShapeInfo *si = GameData::get_instance()->getMainShapes()->
@@ -576,7 +576,7 @@ int Actor::getDamageAmount() {
 		int min = static_cast<int>(si->monsterinfo->min_dmg);
 		int max = static_cast<int>(si->monsterinfo->max_dmg);
 
-		int damage = (std::rand() % (max - min + 1)) + min;
+		int damage = (getRandom() % (max - min + 1)) + min;
 
 		return damage;
 	} else {
@@ -628,7 +628,7 @@ void Actor::receiveHit(uint16 other, int dir, int damage, uint16 damage_type) {
 
 		int32 xv, yv, zv;
 		getLocation(xv, yv, zv);
-		zv += (std::rand() % 24);
+		zv += (getRandom() % 24);
 		Process *sp = new SpriteProcess(620, start, end, 1, 1, xv, yv, zv);
 		Kernel::get_instance()->addProcess(sp);
 	}
@@ -681,9 +681,9 @@ void Actor::receiveHit(uint16 other, int dir, int damage, uint16 damage_type) {
 
 		int sfx;
 		if (damage)
-			sfx = 50 + (std::rand() % 2); // constants!
+			sfx = 50 + (getRandom() % 2); // constants!
 		else
-			sfx = 20 + (std::rand() % 3); // constants!
+			sfx = 20 + (getRandom() % 3); // constants!
 		AudioProcess *audioproc = AudioProcess::get_instance();
 		if (audioproc) audioproc->playSFX(sfx, 0x60, objid, 0);
 		return;
@@ -763,7 +763,7 @@ ProcId Actor::die(uint16 damageType) {
 
 		pout << "Actor::die: scheduling resurrection" << std::endl;
 
-		int timeout = ((std::rand() % 25) + 5) * 30; // 5-30 seconds
+		int timeout = ((getRandom() % 25) + 5) * 30; // 5-30 seconds
 
 		Process *resproc = new ResurrectionProcess(this);
 		Kernel::get_instance()->addProcess(resproc);
@@ -792,19 +792,19 @@ ProcId Actor::die(uint16 damageType) {
 
 		for (int i = 0; i < count; ++i) {
 			Item *piece = ItemFactory::createItem(mi->explode,
-			                                      std::rand() % framecount,
+			                                      getRandom() % framecount,
 			                                      0, // qual
 			                                      Item::FLG_FAST_ONLY, //flags,
 			                                      0, // npcnum
 			                                      0, // mapnum
 			                                      0, true // ext. flags, objid
 			                                     );
-			piece->move(x - 128 + 32 * (std::rand() % 6),
-			            y - 128 + 32 * (std::rand() % 6),
-			            z + std::rand() % 8); // move to near actor's position
-			piece->hurl(-25 + (std::rand() % 50),
-			            -25 + (std::rand() % 50),
-			            10 + (std::rand() % 10),
+			piece->move(x - 128 + 32 * (getRandom() % 6),
+			            y - 128 + 32 * (getRandom() % 6),
+			            z + getRandom() % 8); // move to near actor's position
+			piece->hurl(-25 + (getRandom() % 50),
+			            -25 + (getRandom() % 50),
+			            10 + (getRandom() % 10),
 			            4); // (wrong?) CONSTANTS!
 		}
 	}
@@ -891,7 +891,7 @@ int Actor::calculateAttackDamage(uint16 other, int damage, uint16 damage_type) {
 	// special attacks
 	if (damage && damage_type) {
 		if (damage_type & WeaponInfo::DMG_SLAYER) {
-			if (std::rand() % 10 == 0) {
+			if (getRandom() % 10 == 0) {
 				slayer = true;
 				damage = 255; // instant kill
 			}
@@ -945,7 +945,7 @@ int Actor::calculateAttackDamage(uint16 other, int damage, uint16 damage_type) {
 		if (defenddex <= 0) defenddex = 1;
 
 		if ((getActorFlags() & ACT_STUNNED) ||
-		        (rand() % (attackdex + 3) > rand() % defenddex)) {
+		        (getRandom() % (attackdex + 3) > getRandom() % defenddex)) {
 			hit = true;
 		}
 

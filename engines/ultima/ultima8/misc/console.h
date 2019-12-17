@@ -24,7 +24,8 @@
 #define ULTIMA8_MISC_CONSOLE_H
 
 #include "ultima/ultima8/misc/istring.h"
-#include "ultima/ultima8/std/containers.h"
+#include "ultima/shared/std/containers.h"
+#include "ultima/shared/std/misc.h"
 #include "common/debug.h"
 #include "common/hashmap.h"
 #include "common/file.h"
@@ -400,10 +401,6 @@ public:
     }
 };
 */
-
-namespace std {
-enum Precision { hex = 16, dec = 10 };
-}
 
 class ConsoleStream : public Common::WriteStream {
 private:

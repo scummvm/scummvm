@@ -1,7 +1,9 @@
 MODULE := engines/ultima
 
 MODULE_OBJS := \
-	detection.o
+	detection.o \
+	shared/std/misc.o \
+	shared/std/string.o
 
 ifdef ENABLE_ULTIMA8
 MODULE_OBJS += \
@@ -174,8 +176,6 @@ MODULE_OBJS += \
 	ultima8/misc/pent_include.o \
 	ultima8/misc/util.o \
 	ultima8/misc/version.o \
-	ultima8/std/misc.o \
-	ultima8/std/string.o \
 	ultima8/usecode/bit_set.o \
 	ultima8/usecode/uc_list.o \
 	ultima8/usecode/uc_machine.o \

@@ -67,8 +67,8 @@ void LoiterProcess::run() {
 	int32 x, y, z;
 	a->getLocation(x, y, z);
 
-	x += 32 * ((std::rand() % 20) - 10);
-	y += 32 * ((std::rand() % 20) - 10);
+	x += 32 * ((getRandom() % 20) - 10);
+	y += 32 * ((getRandom() % 20) - 10);
 
 	PathfinderProcess *pfp = new PathfinderProcess(a, x, y, z);
 	Kernel::get_instance()->addProcess(pfp);
@@ -76,7 +76,7 @@ void LoiterProcess::run() {
 	bool hasidle1 = a->hasAnim(Animation::idle1);
 	bool hasidle2 = a->hasAnim(Animation::idle2);
 
-	if ((hasidle1 || hasidle2) && ((std::rand() % 3) == 0)) {
+	if ((hasidle1 || hasidle2) && ((getRandom() % 3) == 0)) {
 		Animation::Sequence idleanim;
 
 		if (!hasidle1) {
@@ -84,7 +84,7 @@ void LoiterProcess::run() {
 		} else if (!hasidle2) {
 			idleanim = Animation::idle1;
 		} else {
-			if (std::rand() % 2)
+			if (getRandom() % 2)
 				idleanim = Animation::idle1;
 			else
 				idleanim = Animation::idle2;
@@ -97,7 +97,7 @@ void LoiterProcess::run() {
 
 	} else {
 		// wait 4-7 sec
-		DelayProcess *dp = new DelayProcess(30 * (4 + (std::rand() % 3)));
+		DelayProcess *dp = new DelayProcess(30 * (4 + (getRandom() % 3)));
 		Kernel::get_instance()->addProcess(dp);
 		dp->waitFor(pfp);
 

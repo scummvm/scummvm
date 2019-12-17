@@ -26,8 +26,9 @@
 #include "common/scummsys.h"
 
 namespace Ultima {
-namespace Ultima8 {
 namespace std {
+
+enum Precision { hex = 16, dec = 10 };
 
 template<class T1, class T2>
 struct pair {
@@ -49,20 +50,13 @@ extern int atoi(const char *str);
 extern double atof(const char *str);
 extern const char *strstr(const char *str, const char *substr);
 extern double pow(double x, double y);
-#ifdef rand
-#undef rand
-#endif
-
-extern uint rand();
 extern double sqrt(double val);
 
 extern void *malloc(size_t size);
 extern void *calloc(size_t num, size_t size);
 extern void free(void *&p);
 
-
 } // End of namespace std
-} // End of namespace Ultima8
 } // End of namespace Ultima
 
 #endif

@@ -26,7 +26,7 @@
 #ifdef USE_ALSA_MIDI
 
 #include <alsa/asoundlib.h>
-#include "ultima/ultima8/std/string.h"
+#include "ultima/shared/std/string.h"
 #include "ultima/ultima8/audio/midi/low_level_midi_driver.h"
 
 namespace Ultima {

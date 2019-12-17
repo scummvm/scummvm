@@ -142,9 +142,9 @@ void GrantPeaceProcess::run() {
 
 				int dir = caster->getDirToItemCentre(*t);
 
-				t->hurl(((std::rand() % 5) + 5) * x_fact[dir],
-				        ((std::rand() % 5) + 5) * y_fact[dir],
-				        ((std::rand() % 5) + 5),
+				t->hurl(((getRandom() % 5) + 5) * x_fact[dir],
+				        ((getRandom() % 5) + 5) * y_fact[dir],
+				        ((getRandom() % 5) + 5),
 				        4);
 #endif
 			}
@@ -157,7 +157,7 @@ void GrantPeaceProcess::run() {
 		if (!(target->getActorFlags() & (Actor::ACT_DEAD |
 		                                 Actor::ACT_IMMORTAL |
 		                                 Actor::ACT_INVINCIBLE))) {
-			if (std::rand() % 10 == 0) {
+			if (getRandom() % 10 == 0) {
 				target->receiveHit(item_num, 8, target->getHP(),
 				                   (WeaponInfo::DMG_MAGIC |
 				                    WeaponInfo::DMG_PIERCE |
@@ -175,7 +175,7 @@ void GrantPeaceProcess::run() {
 		// calling intrinsic...
 		PaletteFaderProcess::I_lightningBolt(0, 0);
 		int sfx;
-		switch (std::rand() % 3) {
+		switch (getRandom() % 3) {
 		case 0:
 			sfx = 91;
 			break;

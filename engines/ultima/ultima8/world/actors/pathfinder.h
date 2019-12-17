@@ -23,8 +23,8 @@
 #ifndef ULTIMA8_WORLD_ACTORS_PATHFINDER_H
 #define ULTIMA8_WORLD_ACTORS_PATHFINDER_H
 
-#include "ultima/ultima8/std/containers.h"
-#include "ultima/ultima8/std/containers.h"
+#include "ultima/shared/std/containers.h"
+#include "ultima/shared/std/containers.h"
 #include "ultima/ultima8/world/actors/animation.h"
 
 namespace Ultima {

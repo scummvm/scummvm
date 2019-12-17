@@ -23,7 +23,7 @@
 #ifndef ULTIMA8_GRAPHICS_FONTS_FONTMANAGER_H
 #define ULTIMA8_GRAPHICS_FONTS_FONTMANAGER_H
 
-#include "ultima/ultima8/std/containers.h"
+#include "ultima/shared/std/containers.h"
 #include "graphics/font.h"
 
 namespace Ultima {

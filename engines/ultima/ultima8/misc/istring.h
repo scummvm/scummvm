@@ -23,8 +23,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #ifndef ULTIMA8_MISC_ISTRING_H
 #define ULTIMA8_MISC_ISTRING_H
 
-#include "ultima/ultima8/std/misc.h"
-#include "ultima/ultima8/std/string.h"
+#include "ultima/shared/std/misc.h"
+#include "ultima/shared/std/string.h"
 #include "common/array.h"
 
 #ifdef strcasecmp
