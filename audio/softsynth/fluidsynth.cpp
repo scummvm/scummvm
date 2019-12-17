@@ -20,10 +20,16 @@
  *
  */
 
-#include "common/scummsys.h"
+#include "config.h"
 
 #ifdef USE_FLUIDSYNTH
 
+// Fluidsynth v2.1+ uses printf in one of it's headers,
+// include/fluidsynth/log.h around line 82 so need to include this
+// prior scummsys.h inclusion and thus forbidden.h
+#include <fluidsynth.h>
+
+#include "common/scummsys.h"
 #include "common/config-manager.h"
 #include "common/error.h"
 #include "common/system.h"
@@ -34,13 +40,6 @@
 #if defined(IPHONE_IOS7) && defined(IPHONE_SANDBOXED)
 #include "backends/platform/ios7/ios7_common.h"
 #endif
-
-// Fluidsynth v2.1+ uses printf in one of it's headers, so this is
-// needed to allow compilation, as reported by eriktorbjorn on 20191215
-// This is in include/fluidsynth/log.h around line 82
-#define FORBIDDEN_SYMBOL_EXCEPTION_printf
-#include <fluidsynth.h>
-#undef FORBIDDEN_SYMBOL_EXCEPTION_printf
 
 class MidiDriver_FluidSynth : public MidiDriver_Emulated {
 private:
