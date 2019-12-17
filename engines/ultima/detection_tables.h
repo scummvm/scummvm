@@ -74,7 +74,7 @@ static const Ultima::UltimaGameDescription GAME_DESCRIPTIONS[] = {
 	},
 #endif
 
-	{ AD_TABLE_END_MARKER }
+	{ AD_TABLE_END_MARKER, (GameId)0 }
 };
 
 } // End of namespace Ultima
