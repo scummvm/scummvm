@@ -93,6 +93,8 @@ Screen::~Screen() {
 	delete[] _16bitPalette;
 	delete[] _16bitConversionPalette;
 
+	_sjisFontShared.reset();
+
 	for (uint i = 0; i < _palettes.size(); ++i)
 		delete _palettes[i];
 
@@ -168,24 +170,19 @@ bool Screen::init() {
 		}
 
 		if (_useSJIS) {
-			Common::SharedPtr<Graphics::FontSJIS> font(Graphics::FontSJIS::createFont(_vm->gameFlags().platform));
-			if (!font.get())
+			_sjisFontShared = Common::SharedPtr<Graphics::FontSJIS>(Graphics::FontSJIS::createFont(_vm->gameFlags().platform));
+			if (!_sjisFontShared.get())
 				error("Could not load any SJIS font, neither the original nor ScummVM's 'SJIS.FNT'");
 
-			if (_use16ColorMode) {
-				_fonts[FID_SJIS_TEXTMODE_FNT] = new SJISFont(font, _sjisInvisibleColor, true, false, 0);
-				if (_vm->game() == GI_EOB1) {
-					int temp;
-					_fonts[FID_SJIS_FNT] = new SJISFontEoB1PC98(font, 12, _vm->staticres()->loadRawDataBe16(kEoB1Ascii2SjisTable1, temp), _vm->staticres()->loadRawDataBe16(kEoB1Ascii2SjisTable2, temp));
-				}
-			} else {
-				_fonts[FID_SJIS_FNT] = new SJISFont(font, _sjisInvisibleColor, false, _vm->game() != GI_LOL && _vm->game() != GI_EOB2, _vm->game() == GI_LOL ? 1 : 0);
-			}
+			if (_use16ColorMode)
+				_fonts[FID_SJIS_TEXTMODE_FNT] = new SJISFont(_sjisFontShared, _sjisInvisibleColor, true, false, 0);
+			else
+				_fonts[FID_SJIS_FNT] = new SJISFont(_sjisFontShared, _sjisInvisibleColor, false, _vm->game() != GI_LOL && _vm->game() != GI_EOB2, _vm->game() == GI_LOL ? 1 : 0);
 
 			if (_vm->game() == GI_EOB2 && _vm->gameFlags().platform == Common::kPlatformFMTowns) {
 				assert(_fonts[FID_SJIS_FNT]);
 				_fonts[FID_SJIS_FNT]->setStyle(Font::kFSFat);
-				_fonts[FID_SJIS_LARGE_FNT] = new SJISFontLarge(font);
+				_fonts[FID_SJIS_LARGE_FNT] = new SJISFontLarge(_sjisFontShared);
 			}
 		}
 	}

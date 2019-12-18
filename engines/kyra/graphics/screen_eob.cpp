@@ -95,6 +95,7 @@ bool Screen_EoB::init() {
 			loadFont(FID_SJIS_SMALL_FNT, "FONT.DMP");
 		} else if (_vm->game() == GI_EOB1 && _vm->gameFlags().platform == Common::kPlatformPC98) {
 			loadFont(FID_SJIS_SMALL_FNT, "FONT12.FNT");
+			_fonts[FID_SJIS_FNT] = new SJISFontEoB1PC98(_sjisFontShared, 12, _vm->staticres()->loadRawDataBe16(kEoB1Ascii2SjisTable1, temp), _vm->staticres()->loadRawDataBe16(kEoB1Ascii2SjisTable2, temp));
 		}
 
 		if (_vm->gameFlags().useHiRes && _renderMode == Common::kRenderEGA) {

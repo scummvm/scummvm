@@ -605,7 +605,8 @@ protected:
 	Common::RenderMode _renderMode;
 	int _bytesPerPixel;
 	int _screenPageSize;
-
+	
+	Common::SharedPtr<Graphics::FontSJIS> _sjisFontShared;
 	uint8 _sjisInvisibleColor;
 	bool _sjisMixedFontMode;
 
