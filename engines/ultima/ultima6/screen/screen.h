@@ -25,9 +25,9 @@
 
 #include "ultima/shared/std/string.h"
 
-#include "SDL.h"
 
-#include "Game.h"
+
+#include "ultima/ultima6/core/game.h"
 #include "Surface.h"
 #include "Scale.h"
 
@@ -44,7 +44,8 @@ class Screen {
 	Configuration *config;
 	Graphics::ManagedSurface *sdl_surface;
 	RenderSurface *surface;
-#if SDL_VERSION_ATLEAST(2, 0, 0)
+//if SDL_VERSION_ATLEAST(2, 0, 0)
+#if 0
 	SDL_Window *sdlWindow;
 	SDL_Renderer *sdlRenderer;
 	SDL_Texture *sdlTexture;
@@ -124,8 +125,8 @@ public:
 	void stipple_8bit(uint8 color_num, uint16 x, uint16 y, uint16 w, uint16 h);
 	void put_pixel(uint8 colour_num, uint16 x, uint16 y);
 
-	bool blit(sint32 dest_x, sint32 dest_y, unsigned char *src_buf, uint16 src_bpp, uint16 src_w, uint16 src_h, uint16 src_pitch, bool trans = false, Common::Rect *clip_rect = NULL, uint8 opacity = 255);
-	void blitbitmap(uint16 dest_x, uint16 dest_y, const unsigned char *src_buf, uint16 src_w, uint16 src_h, uint8 fg_color, uint8 bg_color);
+	bool blit(sint32 dest_x, sint32 dest_y, const byte *src_buf, uint16 src_bpp, uint16 src_w, uint16 src_h, uint16 src_pitch, bool trans = false, Common::Rect *clip_rect = NULL, uint8 opacity = 255);
+	void blitbitmap(uint16 dest_x, uint16 dest_y, const byte *src_buf, uint16 src_w, uint16 src_h, uint8 fg_color, uint8 bg_color);
 
 	void buildalphamap8();
 	void clearalphamap8(uint16 x, uint16 y, uint16 w, uint16 h, uint8 opacity, bool party_light_source);
@@ -164,7 +165,8 @@ public:
 
 	void get_mouse_location(sint32 *x, sint32 *y);
 
-#if SDL_VERSION_ATLEAST(2, 0, 0)
+//if SDL_VERSION_ATLEAST(2, 0, 0)
+#if 0
 	void scale_sdl_window_coords(sint32 *x, sint32 *y);
 #endif
 
@@ -203,14 +205,16 @@ protected:
 	void set_screen_mode();
 	bool try_scaler(int w, int h, uint32 flags, int hwdepth);
 
-#if SDL_VERSION_ATLEAST(2, 0, 0)
+//if SDL_VERSION_ATLEAST(2, 0, 0)
+#if 0
 	bool SDL_VideoModeOK(int scaled_width, int scaled_height, int bbp, int flags);
 #endif
 
 private:
 	int get_screen_bpp();
 
-#if SDL_VERSION_ATLEAST(2, 0, 0)
+//if SDL_VERSION_ATLEAST(2, 0, 0)
+#if 0
 	bool init_sdl2_window(uint16 scale);
 	bool create_sdl_surface_and_texture(sint32 w, sint32 h, uint32 format);
 #else

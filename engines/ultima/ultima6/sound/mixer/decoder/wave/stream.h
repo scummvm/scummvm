@@ -26,9 +26,9 @@
 #ifndef COMMON_STREAM_H
 #define COMMON_STREAM_H
 
-#include <stdio.h>
+//#include <stdio.h>
 #include "ultima/shared/std/string.h"
-#include "types.h"
+#include "ultima/ultima6/sound/mixer/types.h"
 #include "decoder/wave/endian.h"
 
 namespace Common {

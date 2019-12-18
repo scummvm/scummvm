@@ -23,7 +23,7 @@
 #ifndef ULTIMA6_GUI_GUI_DRAG_AREA_H
 #define ULTIMA6_GUI_GUI_DRAG_AREA_H
 
-#include "GUI_CallBack.h"
+#include "ultima/ultima6/gui/gui_CallBack.h"
 
 namespace Ultima {
 namespace Ultima6 {

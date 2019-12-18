@@ -22,7 +22,7 @@
  * $Id: stdiostream.cpp 53961 2010-10-30 21:27:42Z fingolfin $
  *
  */
-#include <assert.h>
+//#include <assert.h>
 #include "decoder/wave/stdiostream.h"
 
 StdioStream::StdioStream(NuvieIOFileRead *handle, DisposeAfterUse::Flag disposeMemory) : _handle(handle), _disposeMemory(disposeMemory) {

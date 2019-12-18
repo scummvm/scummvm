@@ -23,7 +23,7 @@
 #ifndef ULTIMA6_VIEWS_SCROLL_VIEW_GUMP_H
 #define ULTIMA6_VIEWS_SCROLL_VIEW_GUMP_H
 
-#include "DraggableView.h"
+#include "ultima/ultima6/views/draggable_view.h"
 
 namespace Ultima {
 namespace Ultima6 {
@@ -52,7 +52,7 @@ public:
 	GUI_status MouseUp(int x, int y, int button) {
 		return GUI_YUM;
 	}
-	GUI_status KeyDown(SDL_Keysym key);
+	GUI_status KeyDown(Common::KeyState key);
 
 protected:
 

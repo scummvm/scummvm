@@ -25,7 +25,7 @@
 
 #include "ultima/shared/std/containers.h"
 #include "ultima/shared/std/string.h"
-#include <cstdio> /* FILE */
+#include "common/stream.h"
 
 namespace Ultima {
 namespace Ultima6 {
@@ -78,7 +78,7 @@ public:
 	void write_item(uint32 item_number);
 	void write_items();
 
-	void load_index(FILE *index_f);
+	void load_index(Common::ReadStream *index_f);
 	void write_index();
 	void write_header();
 

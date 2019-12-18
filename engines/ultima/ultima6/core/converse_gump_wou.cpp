@@ -21,28 +21,26 @@
  */
 
 #include "ultima/shared/std/string.h"
-#include <cctype>
-#include <iostream>
-
 #include "ultima/ultima6/core/nuvie_defs.h"
 #include "ultima/ultima6/conf/configuration.h"
 #include "ultima/ultima6/misc/u6_misc.h"
-#include "FontManager.h"
-#include "Font.h"
-#include "GamePalette.h"
-#include "GUI.h"
-#include "MsgScroll.h"
-#include "Portrait.h"
-#include "Player.h"
-#include "ConverseGumpWOU.h"
-#include "ActorManager.h"
-#include "Keys.h"
-#include "MapWindow.h"
-#include "Background.h"
-#include "U6Shape.h"
-#include "NuvieBmpFile.h"
-#include "ViewManager.h"
-#include "MDSkyStripWidget.h"
+#include "ultima/ultima6/fonts/font_manager.h"
+#include "ultima/ultima6/fonts/font.h"
+#include "ultima/ultima6/screen/game_palette.h"
+#include "ultima/ultima6/gui/gui.h"
+#include "ultima/ultima6/misc/sdl_compat.h"
+#include "ultima/ultima6/core/msg_scroll.h"
+#include "ultima/ultima6/portraits/portrait.h"
+#include "ultima/ultima6/core/player.h"
+#include "ultima/ultima6/core/converse_gump_wou.h"
+#include "ultima/ultima6/actors/actor_manager.h"
+#include "ultima/ultima6/keybinding/keys.h"
+#include "ultima/ultima6/core/map_window.h"
+#include "ultima/ultima6/core/background.h"
+#include "ultima/ultima6/files/u6_shape.h"
+#include "ultima/ultima6/files/nuvie_bmp_file.h"
+#include "ultima/ultima6/views/view_manager.h"
+#include "ultima/ultima6/views/md_sky_strip_widget.h"
 
 namespace Ultima {
 namespace Ultima6 {
@@ -141,10 +139,10 @@ void ConverseGumpWOU::display_bg() {
 	if (game_type == NUVIE_GAME_U6) {
 		if (game_w >= 335) { // get right size
 			Common::Rect dst;
-			dst.x = x_off;
-			dst.y = y_off;
-			dst.w = 176;
-			dst.h = 176;
+			dst.left = x_off;
+			dst.top = y_off;
+			dst.setWidth(176);
+			dst.setHeight(176);
 			SDL_BlitSurface(bg_image, NULL, game->get_screen()->get_sdl_surface(), &dst);
 			screen->update(x_off, y_off, 176, 176);
 		} else {
@@ -182,7 +180,7 @@ void ConverseGumpWOU::Display(bool full_redraw) {
 	MsgScroll::Display(true);
 	if (game_type == NUVIE_GAME_U6) {
 		Game::get_game()->get_map_window()->drawBorder();
-		screen->update(area.x, area.y, area.w, area.h);
+		screen->update(area.left, area.top, area.width(), area.height());
 	}
 }
 

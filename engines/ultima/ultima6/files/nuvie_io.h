@@ -23,6 +23,8 @@
 #ifndef ULTIMA6_FILES_NUVIE_IO_H
 #define ULTIMA6_FILES_NUVIE_IO_H
 
+#include "common/stream.h"
+
 namespace Ultima {
 namespace Ultima6 {
 
@@ -32,9 +34,7 @@ class NuvieIO {
 protected:
 	uint32 size;
 	uint32 pos;
-
 public:
-
 	NuvieIO();
 	virtual ~NuvieIO();
 
@@ -135,6 +135,8 @@ public:
 
 	void seek(uint32 new_pos);
 };
+
+extern char *strgets(char *str, int n, Common::ReadStream *stream);
 
 } // End of namespace Ultima6
 } // End of namespace Ultima

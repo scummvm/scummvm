@@ -23,7 +23,7 @@
 #ifndef ULTIMA6_PATHFINDER_PATH_H
 #define ULTIMA6_PATHFINDER_PATH_H
 
-#include <cstdio>
+//#include <cstdio>
 #include "ultima/ultima6/core/nuvie_defs.h"
 #include "PathFinder.h"
 

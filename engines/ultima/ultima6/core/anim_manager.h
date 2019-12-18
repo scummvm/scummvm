@@ -23,14 +23,14 @@
 #ifndef ULTIMA6_CORE_ANIM_MANAGER_H
 #define ULTIMA6_CORE_ANIM_MANAGER_H
 
-#include <list>
-#include <cassert>
-#include "SDL.h"
+//#include <list>
+//#include <cassert>
+
 #include "ultima/ultima6/core/nuvie_defs.h"
-#include "MapWindow.h"
-#include "TimedEvent.h"
-#include "CallBack.h"
-#include "MapEntity.h"
+#include "ultima/ultima6/core/map_window.h"
+#include "ultima/ultima6/core/timed_event.h"
+#include "ultima/ultima6/misc/call_back.h"
+#include "ultima/ultima6/misc/map_entity.h"
 #include "ultima/ultima6/misc/u6_line_walker.h"
 
 namespace Ultima {

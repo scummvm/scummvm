@@ -25,7 +25,7 @@
 
 #include "ultima/shared/std/string.h"
 #include "ultima/shared/std/containers.h"
-#include "SDL.h"
+
 
 namespace Ultima {
 namespace Ultima6 {

@@ -20,15 +20,15 @@
  *
  */
 
-#include <stdio.h>
-#include <stdlib.h>
+//#include <stdio.h>
+//#include <stdlib.h>
 
 #include "ultima/shared/std/string.h"
 
 #include "ultima/ultima6/core/nuvie_defs.h"
 
-#include "U6Lzw.h"
-#include "U6Bmp.h"
+#include "ultima/ultima6/files/u6_lzw.h"
+#include "ultima/ultima6/files/u6_bmp.h"
 
 namespace Ultima {
 namespace Ultima6 {

@@ -24,13 +24,11 @@
 #define ULTIMA6_SCRIPT_SCRIPT_H
 
 #include "ultima/shared/std/string.h"
-#include <list>
-#include "GUI.h"
-
+#include "ultima/shared/std/containers.h"
+#include "ultima/ultima6/gui/gui.h"
 #include "ultima/ultima6/misc/u6_misc.h"
-#include "UseCode.h"
-
-#include "lua.hpp"
+#include "ultima/ultima6/usecode/usecode.h"
+#include "common/lua/lua.h"
 
 namespace Ultima {
 namespace Ultima6 {

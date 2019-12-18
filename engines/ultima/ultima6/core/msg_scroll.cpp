@@ -20,23 +20,23 @@
  *
  */
 
-#include <stdarg.h>
+//#include <stdarg.h>
 #include "ultima/shared/std/string.h"
-#include <ctype.h>
-#include <iostream>
+//#include <ctype.h>
+//#include <iostream>
 
 #include "ultima/ultima6/core/nuvie_defs.h"
 #include "ultima/ultima6/conf/configuration.h"
 #include "ultima/ultima6/misc/u6_misc.h"
-#include "FontManager.h"
-#include "Font.h"
-#include "GamePalette.h"
-#include "GUI.h"
-#include "MsgScroll.h"
-#include "Event.h"
-#include "Game.h"
-#include "Effect.h"
-#include "Keys.h"
+#include "ultima/ultima6/fonts/font_manager.h"
+#include "ultima/ultima6/fonts/font.h"
+#include "ultima/ultima6/screen/game_palette.h"
+#include "ultima/ultima6/gui/gui.h"
+#include "ultima/ultima6/core/msg_scroll.h"
+#include "ultima/ultima6/core/event.h"
+#include "ultima/ultima6/core/game.h"
+#include "ultima/ultima6/core/effect.h"
+#include "ultima/ultima6/keybinding/keys.h"
 
 namespace Ultima {
 namespace Ultima6 {
@@ -147,14 +147,14 @@ MsgText *MsgLine::get_text_at_pos(uint16 pos) {
 }
 
 uint16 MsgLine::get_display_width() {
-	uint16 total_length = 0;
+	uint16 len = 0;
 	std::list<MsgText *>::iterator iter;
 	for (iter = text.begin(); iter != text.end() ; iter++) {
 		MsgText *token = *iter;
 
-		total_length += token->font->getStringWidth(token->s.c_str());
+		len += token->font->getStringWidth(token->s.c_str());
 	}
-	return total_length;
+	return len;
 }
 
 // MsgScroll Class
@@ -292,7 +292,7 @@ void MsgScroll::set_scroll_dimensions(uint16 w, uint16 h) {
 	display_pos = 0;
 }
 
-int MsgScroll::printf(std::string format, ...) {
+int MsgScroll::print(std::string format, ...) {
 
 	va_list ap;
 	int printed = 0;
@@ -381,8 +381,7 @@ void MsgScroll::display_string(std::string s, Font *f, uint8 color, bool include
 
 	msg_text = new MsgText(s, f);
 	msg_text->color = color;
-	fprintf(stdout, "%s", msg_text->s.c_str());
-	fflush(stdout);
+	//::debug("%s", msg_text->s.c_str());
 
 	holding_buffer.push_back(msg_text);
 
@@ -714,13 +713,13 @@ void MsgScroll::process_page_break() {
 /* Take input from the main event handler and do something with it
  * if necessary.
  */
-GUI_status MsgScroll::KeyDown(SDL_Keysym key) {
+GUI_status MsgScroll::KeyDown(Common::KeyState key) {
 	char ascii = get_ascii_char_from_keysym(key);
 
 	if (page_break == false && input_mode == false)
 		return (GUI_PASS);
 
-	bool is_printable = isprint(ascii);
+	bool is_printable = Common::isPrint(ascii);
 	KeyBinder *keybinder = Game::get_game()->get_keybinder();
 	ActionType a = keybinder->get_ActionType(key);
 	ActionKeyType action_key_type = keybinder->GetActionKeyType(a);
@@ -731,50 +730,50 @@ GUI_status MsgScroll::KeyDown(SDL_Keysym key) {
 	if (!input_mode || !is_printable) {
 		switch (action_key_type) {
 		case WEST_KEY:
-			key.sym = SDLK_LEFT;
+			key.keycode = Common::KEYCODE_LEFT;
 			break;
 		case EAST_KEY:
-			key.sym = SDLK_RIGHT;
+			key.keycode = Common::KEYCODE_RIGHT;
 			break;
 		case SOUTH_KEY:
-			key.sym = SDLK_DOWN;
+			key.keycode = Common::KEYCODE_DOWN;
 			break;
 		case NORTH_KEY:
-			key.sym = SDLK_UP;
+			key.keycode = Common::KEYCODE_UP;
 			break;
 		case CANCEL_ACTION_KEY:
-			key.sym = SDLK_ESCAPE;
+			key.keycode = Common::KEYCODE_ESCAPE;
 			break;
 		case DO_ACTION_KEY:
-			key.sym = SDLK_RETURN;
+			key.keycode = Common::KEYCODE_RETURN;
 			break;
 		case MSGSCROLL_UP_KEY:
-			key.sym = SDLK_PAGEUP;
+			key.keycode = Common::KEYCODE_PAGEUP;
 			break;
 		case MSGSCROLL_DOWN_KEY:
-			key.sym = SDLK_PAGEDOWN;
+			key.keycode = Common::KEYCODE_PAGEDOWN;
 			break;
 		default:
 			if (keybinder->handle_always_available_keys(a)) return GUI_YUM;
 			break;
 		}
 	}
-	switch (key.sym) {
-	case SDLK_UP :
+	switch (key.keycode) {
+	case Common::KEYCODE_UP :
 		if (input_mode) break; //will select printable ascii
 		move_scroll_up();
 		return (GUI_YUM);
 
-	case SDLK_DOWN:
+	case Common::KEYCODE_DOWN:
 		if (input_mode) break; //will select printable ascii
 		move_scroll_down();
 		return (GUI_YUM);
-	case SDLK_PAGEUP:
+	case Common::KEYCODE_PAGEUP:
 		if (Game::get_game()->is_new_style())
 			move_scroll_up();
 		else page_up();
 		return (GUI_YUM);
-	case SDLK_PAGEDOWN:
+	case Common::KEYCODE_PAGEDOWN:
 		if (Game::get_game()->is_new_style())
 			move_scroll_down();
 		else page_down();
@@ -788,8 +787,8 @@ GUI_status MsgScroll::KeyDown(SDL_Keysym key) {
 		return (GUI_YUM);
 	}
 
-	switch (key.sym) {
-	case SDLK_ESCAPE:
+	switch (key.keycode) {
+	case Common::KEYCODE_ESCAPE:
 		if (permit_inputescape) {
 			// reset input buffer
 			permit_input = NULL;
@@ -797,8 +796,8 @@ GUI_status MsgScroll::KeyDown(SDL_Keysym key) {
 				set_input_mode(false);
 		}
 		return (GUI_YUM);
-	case SDLK_KP_ENTER:
-	case SDLK_RETURN:
+	case Common::KEYCODE_KP_ENTER:
+	case Common::KEYCODE_RETURN:
 		if (permit_inputescape || input_char != 0) { // input_char should only be permit_input
 			if (input_char != 0)
 				input_buf_add_char(get_char_from_input_char());
@@ -806,18 +805,18 @@ GUI_status MsgScroll::KeyDown(SDL_Keysym key) {
 				set_input_mode(false);
 		}
 		return (GUI_YUM);
-	case SDLK_RIGHT:
+	case Common::KEYCODE_RIGHT:
 		if (input_char != 0 && permit_input == NULL)
 			input_buf_add_char(get_char_from_input_char());
 		break;
-	case SDLK_DOWN:
+	case Common::KEYCODE_DOWN:
 		increase_input_char();
 		break;
-	case SDLK_UP:
+	case Common::KEYCODE_UP:
 		decrease_input_char();
 		break;
-	case SDLK_LEFT :
-	case SDLK_BACKSPACE :
+	case Common::KEYCODE_LEFT :
+	case Common::KEYCODE_BACKSPACE :
 		if (input_mode) {
 			if (input_char != 0)
 				input_char = 0;
@@ -825,14 +824,14 @@ GUI_status MsgScroll::KeyDown(SDL_Keysym key) {
 				input_buf_remove_char();
 		}
 		break;
-	case SDLK_LSHIFT :
+	case Common::KEYCODE_LSHIFT :
 		return (GUI_YUM);
-	case SDLK_RSHIFT :
+	case Common::KEYCODE_RSHIFT :
 		return (GUI_YUM);
 	default: // alphanumeric characters
 		if (input_mode && is_printable) {
 			if (permit_input == NULL) {
-				if (!numbers_only || isdigit(ascii)) {
+				if (!numbers_only || Common::isDigit(ascii)) {
 					if (input_char != 0)
 						input_buf_add_char(get_char_from_input_char());
 					input_buf_add_char(ascii);
@@ -895,7 +894,7 @@ GUI_status MsgScroll::MouseUp(int x, int y, int button) {
 			}
 
 			for (i = 0; i < token_str.length(); i++) {
-				if (isalnum(token_str[i]))
+				if (Common::isAlnum(token_str[i]))
 					input_buf_add_char(token_str[i]);
 			}
 
@@ -919,8 +918,8 @@ std::string MsgScroll::get_token_string_at_pos(uint16 x, uint16 y) {
 	MsgText *token = NULL;
 	std::list<MsgLine *>::iterator iter;
 
-	buf_x = (x - area.x) / 8;
-	buf_y = (y - area.y) / 8;
+	buf_x = (x - area.left) / 8;
+	buf_y = (y - area.top) / 8;
 
 	if (buf_x < 0 || buf_x >= scroll_width || // click not in MsgScroll area.
 	        buf_y < 0 || buf_y >= scroll_height)
@@ -957,7 +956,7 @@ void MsgScroll::Display(bool full_redraw) {
 
 
 	if (scroll_updated || full_redraw || Game::get_game()->is_original_plus_full_map()) {
-		screen->fill(bg_color, area.x, area.y, area.w, area.h); //clear whole scroll
+		screen->fill(bg_color, area.left, area.top, area.width(), area.height()); //clear whole scroll
 
 		iter = msg_buf.begin();
 		for (i = 0; i < display_pos; i++)
@@ -969,7 +968,7 @@ void MsgScroll::Display(bool full_redraw) {
 		}
 		scroll_updated = false;
 
-		screen->update(area.x, area.y, area.w, area.h);
+		screen->update(area.left, area.top, area.width(), area.height());
 
 		cursor_y = i - 1;
 		if (msg_line) {
@@ -980,25 +979,25 @@ void MsgScroll::Display(bool full_redraw) {
 				cursor_x = 0;
 			}
 		} else
-			cursor_x = area.x;
+			cursor_x = area.left;
 	} else {
-		clearCursor(area.x + 8 * cursor_x, area.y + cursor_y * 8);
+		clearCursor(area.left + 8 * cursor_x, area.top + cursor_y * 8);
 	}
 
 	if (show_cursor && (msg_buf.size() <= scroll_height || display_pos == msg_buf.size() - scroll_height)) {
-		drawCursor(area.x + left_margin + 8 * cursor_x, area.y + cursor_y * 8);
+		drawCursor(area.left + left_margin + 8 * cursor_x, area.top + cursor_y * 8);
 	}
 
 }
 
-inline void MsgScroll::drawLine(Screen *screen, MsgLine *msg_line, uint16 line_y) {
+inline void MsgScroll::drawLine(Screen *theScreen, MsgLine *msg_line, uint16 line_y) {
 	MsgText *token;
 	std::list<MsgText *>::iterator iter;
 	uint16 total_length = 0;
 
 	for (iter = msg_line->text.begin(); iter != msg_line->text.end() ; iter++) {
 		token = *iter;
-		token->font->drawString(screen, token->s.c_str(), area.x + left_margin + total_length * 8, area.y + line_y * 8, token->color, font_highlight_color); //FIX for hardcoded font height
+		token->font->drawString(theScreen, token->s.c_str(), area.left + left_margin + total_length * 8, area.top + line_y * 8, token->color, font_highlight_color); //FIX for hardcoded font height
 		total_length += token->s.length();
 	}
 }
@@ -1080,14 +1079,14 @@ bool MsgScroll::has_input() {
 }
 
 std::string MsgScroll::get_input() {
-// MsgScroll sets input_mode to false when it receives SDLK_ENTER
+// MsgScroll sets input_mode to false when it receives Common::KEYCODE_ENTER
 	std::string s;
 
 	if (input_mode == false) {
 		s.assign(input_buf);
 	}
-	fprintf(stdout, "%s", s.c_str());
-	fflush(stdout);
+	//::debug("%s", s.c_str());
+
 	return s;
 }
 
@@ -1139,11 +1138,11 @@ void MsgScroll::decrease_input_char() {
 uint8 MsgScroll::get_char_from_input_char() {
 
 	if (input_char > 27)
-		return (input_char - 28 + SDLK_0);
+		return (input_char - 28 + Common::KEYCODE_0);
 	else if (input_char == 27)
-		return SDLK_SPACE;
+		return Common::KEYCODE_SPACE;
 	else
-		return (input_char + SDLK_a - 1);
+		return (input_char + Common::KEYCODE_a - 1);
 }
 
 } // End of namespace Ultima6

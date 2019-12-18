@@ -24,53 +24,54 @@
 #include "ultima/ultima6/conf/configuration.h"
 #include "ultima/ultima6/misc/u6_misc.h"
 
-#include "GUI.h"
-#include "Console.h"
-#include "Dither.h"
+#include "ultima/ultima6/gui/gui.h"
+#include "ultima/ultima6/core/console.h"
+#include "ultima/ultima6/screen/dither.h"
 
-#include "SoundManager.h"
+#include "ultima/ultima6/sound/sound_manager.h"
 
-#include "Actor.h"
-#include "Script.h"
-#include "Screen.h"
-#include "GamePalette.h"
-#include "GameClock.h"
-#include "EggManager.h"
-#include "ObjManager.h"
-#include "ActorManager.h"
-#include "Player.h"
-#include "Party.h"
-#include "Converse.h"
-#include "ConverseGump.h"
-#include "ConverseGumpWOU.h"
-#include "FontManager.h"
-#include "ViewManager.h"
-#include "EffectManager.h"
+#include "ultima/ultima6/actors/actor.h"
+#include "ultima/ultima6/script/script.h"
+#include "ultima/ultima6/screen/screen.h"
+#include "ultima/ultima6/screen/game_palette.h"
+#include "ultima/ultima6/core/game_clock.h"
+#include "ultima/ultima6/core/egg_manager.h"
+#include "ultima/ultima6/core/obj_manager.h"
+#include "ultima/ultima6/actors/actor_manager.h"
+#include "ultima/ultima6/core/player.h"
+#include "ultima/ultima6/core/party.h"
+#include "ultima/ultima6/core/converse.h"
+#include "ultima/ultima6/core/converse_gump.h"
+#include "ultima/ultima6/core/converse_gump_wou.h"
+#include "ultima/ultima6/fonts/font_manager.h"
+#include "ultima/ultima6/views/view_manager.h"
+#include "ultima/ultima6/core/effect_manager.h"
 
-#include "Magic.h"
-#include "MsgScroll.h"
-#include "MsgScrollNewUI.h"
-#include "Map.h"
-#include "MapWindow.h"
-#include "Event.h"
-#include "Portrait.h"
-#include "Background.h"
-#include "CommandBar.h"
-#include "CommandBarNewUI.h"
-#include "PartyView.h"
-#include "ActorView.h"
+#include "ultima/ultima6/core/magic.h"
+#include "ultima/ultima6/core/msg_scroll.h"
+#include "ultima/ultima6/core/msg_scroll_new_ui.h"
+#include "ultima/ultima6/core/map.h"
+#include "ultima/ultima6/core/map_window.h"
+#include "ultima/ultima6/core/event.h"
+#include "ultima/ultima6/portraits/portrait.h"
+#include "ultima/ultima6/core/background.h"
+#include "ultima/ultima6/core/command_bar.h"
+#include "ultima/ultima6/core/command_bar_new_ui.h"
+#include "ultima/ultima6/views/party_view.h"
+#include "ultima/ultima6/views/actor_view.h"
 
-#include "UseCode.h"
-#include "U6UseCode.h"
+#include "ultima/ultima6/usecode/usecode.h"
+#include "ultima/ultima6/usecode/u6_usecode.h"
 
-#include "Cursor.h"
-#include "SaveManager.h"
-#include "Weather.h"
-#include "Book.h"
-#include "Keys.h"
-#include "Utils.h"
+#include "ultima/ultima6/core/cursor.h"
+#include "ultima/ultima6/save/save_manager.h"
+#include "ultima/ultima6/core/weather.h"
+#include "ultima/ultima6/core/book.h"
+#include "ultima/ultima6/keybinding/keys.h"
+#include "ultima/ultima6/keybinding/utils.h"
+#include "ultima/ultima6/core/game.h"
 
-#include "Game.h"
+#include "common/system.h"
 
 namespace Ultima {
 namespace Ultima6 {
@@ -636,8 +637,8 @@ void Game::play() {
 	screen->update();
 
 	//map_window->drawMap();
-
-#if !SDL_VERSION_ATLEAST(2, 0, 0)
+//if !SDL_VERSION_ATLEAST(2, 0, 0)
+#if 0
 	SDL_EnableKeyRepeat(SDL_DEFAULT_REPEAT_DELAY / 2, SDL_DEFAULT_REPEAT_INTERVAL);
 #endif
 
@@ -685,8 +686,8 @@ void Game::update_once(bool process_gui_input, bool run_converse) {
 
 	event->update_timers();
 
-	SDL_Event event;
-	while (SDL_PollEvent(&event)) {
+	Common::Event event;
+	while (g_system->getEventManager()->pollEvent(event)) {
 		if (process_gui_input)
 			gui->HandleEvent(&event);
 	}
@@ -724,6 +725,10 @@ std::string Game::get_data_file_path(std::string datafile) {
 	}
 
 	return path;
+}
+
+uint getRandom(uint maxVal) {
+	::error("TODO");
 }
 
 } // End of namespace Ultima6

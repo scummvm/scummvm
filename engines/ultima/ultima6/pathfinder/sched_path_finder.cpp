@@ -20,11 +20,11 @@
  *
  */
 
-#include <cassert>
+//#include <cassert>
 #include "ultima/ultima6/core/nuvie_defs.h"
 
-#include "Actor.h"
-#include "Map.h"
+#include "ultima/ultima6/actors/actor.h"
+#include "ultima/ultima6/core/map.h"
 #include "Path.h"
 #include "SchedPathFinder.h"
 

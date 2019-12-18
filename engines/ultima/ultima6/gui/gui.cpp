@@ -22,16 +22,16 @@
 
 /* This is a C++ class for handling a GUI, and associated widgets */
 
-#include <stdlib.h>
+//#include <stdlib.h>
 
 #include "ultima/ultima6/core/nuvie_defs.h"
 #include "ultima/ultima6/conf/configuration.h"
 
-#include "GUI.h"
-#include "GUI_types.h"
+#include "ultima/ultima6/gui/gui.h"
+#include "ultima/ultima6/gui/gui_types.h"
 
 #ifdef HAVE_JOYSTICK_SUPPORT
-#include "Keys.h"
+#include "ultima/ultima6/keybinding/keys.h"
 #endif
 
 namespace Ultima {
@@ -230,7 +230,7 @@ GUI:: HandleStatus(GUI_status status) {
 
 /* Handle an event, passing it to widgets until they return a status */
 GUI_status
-GUI:: HandleEvent(SDL_Event *event) {
+GUI:: HandleEvent(Common::Event *event) {
 	int i;
 	int hit;
 	GUI_status status = GUI_PASS;
@@ -351,7 +351,7 @@ GUI:: HandleEvent(SDL_Event *event) {
  */
 void GUI::Run(GUI_IdleProc idle, int once, int multitaskfriendly) {
 	int i;
-	SDL_Event event;
+	Common::Event event;
 
 	/* If there's nothing to do, return immediately */
 	if ((numwidgets == 0) && (idle == NULL)) {

@@ -23,8 +23,8 @@
 #ifndef ULTIMA6_SAVE_SAVE_DIALOG_H
 #define ULTIMA6_SAVE_SAVE_DIALOG_H
 
-#include "GUI_Dialog.h"
-#include "TileManager.h"
+#include "ultima/ultima6/gui/gui_Dialog.h"
+#include "ultima/ultima6/core/tile_manager.h"
 
 namespace Ultima {
 namespace Ultima6 {
@@ -67,7 +67,7 @@ public:
 	bool init(const char *save_directory, const char *search_prefix);
 
 	GUI_status close_dialog();
-	GUI_status KeyDown(SDL_Keysym key);
+	GUI_status KeyDown(Common::KeyState key);
 	GUI_status MouseDown(int x, int y, int button);
 	GUI_status MouseWheel(sint32 x, sint32 y);
 	GUI_Scroller *get_scroller() {

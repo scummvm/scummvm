@@ -20,19 +20,19 @@
  *
  */
 
-#include <cmath>
+//#include <cmath>
 #include "ultima/shared/std/string.h"
 #include "ultima/ultima6/core/nuvie_defs.h"
 #include "ultima/ultima6/misc/u6_misc.h"
-#include "GUI.h"
-#include "GUI_widget.h"
-#include "GUI_ScrollBar.h"
-#include "GUI_Scroller.h"
+#include "ultima/ultima6/gui/gui.h"
+#include "ultima/ultima6/gui/gui_widget.h"
+#include "ultima/ultima6/gui/gui_ScrollBar.h"
+#include "ultima/ultima6/gui/gui_Scroller.h"
 
 namespace Ultima {
 namespace Ultima6 {
 
-GUI_Scroller::GUI_Scroller(int x, int y, int w, int h, Uint8 r, Uint8 g, Uint8 b, uint16 r_height)
+GUI_Scroller::GUI_Scroller(int x, int y, int w, int h, uint8 r, uint8 g, uint8 b, uint16 r_height)
 	: GUI_Widget(NULL, x, y, w, h) {
 
 	R = r;
@@ -130,7 +130,7 @@ GUI_status GUI_Scroller::MouseUp(int x, int y, int button) {
 	return GUI_YUM;
 }
 
-GUI_status GUI_Scroller::MouseMotion(int x, int y, Uint8 state) {
+GUI_status GUI_Scroller::MouseMotion(int x, int y, uint8 state) {
 
 
 //GUI::get_gui()->moveWidget(this,dx,dy);

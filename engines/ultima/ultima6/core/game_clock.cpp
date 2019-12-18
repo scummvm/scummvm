@@ -22,11 +22,11 @@
 
 #include "ultima/ultima6/core/nuvie_defs.h"
 #include "ultima/ultima6/conf/configuration.h"
-#include "NuvieIOFile.h"
-#include "Game.h"
-#include "Objlist.h"
-#include "Weather.h"
-#include "GameClock.h"
+#include "ultima/ultima6/files/nuvie_io_file.h"
+#include "ultima/ultima6/core/game.h"
+#include "ultima/ultima6/save/obj_list.h"
+#include "ultima/ultima6/core/weather.h"
+#include "ultima/ultima6/core/game_clock.h"
 
 namespace Ultima {
 namespace Ultima6 {

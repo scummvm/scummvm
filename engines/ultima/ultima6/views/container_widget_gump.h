@@ -23,8 +23,8 @@
 #ifndef ULTIMA6_VIEWS_CONTAINER_WIDGET_GUMP_H
 #define ULTIMA6_VIEWS_CONTAINER_WIDGET_GUMP_H
 
-#include "GUI_widget.h"
-#include "ObjManager.h"
+#include "ultima/ultima6/gui/gui_widget.h"
+#include "ultima/ultima6/core/obj_manager.h"
 #include "ContainerWidget.h"
 
 namespace Ultima {
@@ -51,7 +51,7 @@ public:
 	bool init(Actor *a, uint16 x, uint16 y, uint8 Cols, uint8 Rows, TileManager *tm, ObjManager *om, Font *f, uint8 check_xoff, uint8 check_yoff);
 
 	void Display(bool full_redraw);
-	GUI_status KeyDown(SDL_Keysym key);
+	GUI_status KeyDown(Common::KeyState key);
 
 	virtual void set_actor(Actor *a);
 private:

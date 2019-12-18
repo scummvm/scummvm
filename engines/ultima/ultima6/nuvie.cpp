@@ -21,35 +21,35 @@
  */
 
 #ifdef HAVE_CONFIG_H
-#include <config.h>
+//#include <config.h>
 #endif
 
-#include <sys/stat.h>
-#include <sys/types.h>
+//#include <sys/stat.h>
+//#include <sys/types.h>
 
-#include <stdlib.h>
-#include <string.h>
+//#include <stdlib.h>
+//#include <string.h>
 
-#include "SDL.h"
 
-#include "Actor.h"
+
+#include "ultima/ultima6/actors/actor.h"
 #include "ultima/ultima6/core/nuvie_defs.h"
 #include "ultima/ultima6/conf/configuration.h"
 #include "ultima/ultima6/misc/u6_misc.h"
-#include "NuvieIOFile.h"
-#include "Screen.h"
-#include "Script.h"
-#include "Game.h"
-#include "GameSelect.h"
-#include "GUI.h"
-#include "Console.h"
-#include "SoundManager.h"
+#include "ultima/ultima6/files/nuvie_io_file.h"
+#include "ultima/ultima6/screen/screen.h"
+#include "ultima/ultima6/script/script.h"
+#include "ultima/ultima6/core/game.h"
+#include "ultima/ultima6/core/game_select.h"
+#include "ultima/ultima6/gui/gui.h"
+#include "ultima/ultima6/core/console.h"
+#include "ultima/ultima6/sound/sound_manager.h"
 
 #include "nuvie.h"
 
 #ifdef WIN32
 #define WIN32_LEAN_AND_MEAN
-#include <windows.h>
+//#include <windows.h>
 #endif
 
 namespace Ultima {

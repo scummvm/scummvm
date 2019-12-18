@@ -20,27 +20,27 @@
  *
  */
 
-#include "SDL.h"
+
 #include "ultima/ultima6/core/nuvie_defs.h"
 
-#include "GUI.h"
-#include "GUI_types.h"
-#include "GUI_button.h"
-#include "GUI_text.h"
-#include "GUI_TextToggleButton.h"
-#include "GUI_CallBack.h"
-#include "GUI_area.h"
+#include "ultima/ultima6/gui/gui.h"
+#include "ultima/ultima6/gui/gui_types.h"
+#include "ultima/ultima6/gui/gui_button.h"
+#include "ultima/ultima6/gui/gui_text.h"
+#include "ultima/ultima6/gui/gui_TextToggleButton.h"
+#include "ultima/ultima6/gui/gui_CallBack.h"
+#include "ultima/ultima6/gui/gui_area.h"
 
-#include "GUI_Dialog.h"
+#include "ultima/ultima6/gui/gui_Dialog.h"
 #include "GameplayDialog.h"
-#include "Party.h"
-#include "Script.h"
+#include "ultima/ultima6/core/party.h"
+#include "ultima/ultima6/script/script.h"
 #include "ultima/ultima6/misc/u6_misc.h"
-#include "Converse.h"
-#include "ConverseGump.h"
+#include "ultima/ultima6/core/converse.h"
+#include "ultima/ultima6/core/converse_gump.h"
 #include "ultima/ultima6/conf/configuration.h"
-#include "Background.h"
-#include "Keys.h"
+#include "ultima/ultima6/core/background.h"
+#include "ultima/ultima6/keybinding/keys.h"
 
 namespace Ultima {
 namespace Ultima6 {
@@ -195,7 +195,7 @@ GUI_status GameplayDialog::close_dialog() {
 	return GUI_YUM;
 }
 
-GUI_status GameplayDialog::KeyDown(SDL_Keysym key) {
+GUI_status GameplayDialog::KeyDown(Common::KeyState key) {
 	KeyBinder *keybinder = Game::get_game()->get_keybinder();
 	ActionType a = keybinder->get_ActionType(key);
 

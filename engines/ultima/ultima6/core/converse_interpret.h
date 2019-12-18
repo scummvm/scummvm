@@ -23,8 +23,8 @@
 #ifndef ULTIMA6_CORE_CONVERSE_INTERPRET_H
 #define ULTIMA6_CORE_CONVERSE_INTERPRET_H
 
-#include <cstring>
-#include "Converse.h"
+//#include <cstring>
+#include "ultima/ultima6/core/converse.h"
 
 namespace Ultima {
 namespace Ultima6 {

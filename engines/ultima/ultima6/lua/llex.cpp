@@ -5,8 +5,8 @@
 */
 
 
-#include <locale.h>
-#include <string.h>
+//#include <locale.h>
+//#include <string.h>
 
 #define llex_c
 #define LUA_CORE
@@ -75,7 +75,7 @@ void luaX_init(lua_State *L) {
 const char *luaX_token2str(LexState *ls, int token) {
 	if (token < FIRST_RESERVED) {  /* single-byte symbols? */
 		lua_assert(token == cast(unsigned char, token));
-		return (lisprint(token)) ? luaO_pushfstring(ls->L, LUA_QL("%c"), token) :
+		return (lCommon::isPrint(token)) ? luaO_pushfstring(ls->L, LUA_QL("%c"), token) :
 		       luaO_pushfstring(ls->L, "char(%d)", token);
 	} else {
 		const char *s = luaX_tokens[token - FIRST_RESERVED];
@@ -230,7 +230,7 @@ static void trydecpoint(LexState *ls, SemInfo *seminfo) {
 static void read_numeral(LexState *ls, SemInfo *seminfo) {
 	const char *expo = "Ee";
 	int first = ls->current;
-	lua_assert(lisdigit(ls->current));
+	lua_assert(lCommon::isDigit(ls->current));
 	save_and_next(ls);
 	if (first == '0' && check_next(ls, "Xx"))  /* hexadecimal? */
 		expo = "Pp";
@@ -329,7 +329,7 @@ static int readhexaesc(LexState *ls) {
 static int readdecesc(LexState *ls) {
 	int c[3], i;
 	int r = 0;  /* result accumulator */
-	for (i = 0; i < 3 && lisdigit(ls->current); i++) {  /* read up to 3 digits */
+	for (i = 0; i < 3 && lCommon::isDigit(ls->current); i++) {  /* read up to 3 digits */
 		c[i] = ls->current;
 		r = 10 * r + c[i] - '0';
 		next(ls);
@@ -400,7 +400,7 @@ static void read_string(LexState *ls, int del, SemInfo *seminfo) {
 				goto no_save;
 			}
 			default: {
-				if (!lisdigit(ls->current))
+				if (!lCommon::isDigit(ls->current))
 					escerror(ls, &ls->current, 1, "invalid escape sequence");
 				/* digital escape \ddd */
 				c = readdecesc(ls);
@@ -518,7 +518,7 @@ static int llex(LexState *ls, SemInfo *seminfo) {
 				if (check_next(ls, "."))
 					return TK_DOTS;   /* '...' */
 				else return TK_CONCAT;   /* '..' */
-			} else if (!lisdigit(ls->current)) return '.';
+			} else if (!lCommon::isDigit(ls->current)) return '.';
 			/* else go through */
 		}
 		case '0':

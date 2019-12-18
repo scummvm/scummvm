@@ -23,7 +23,7 @@
 #ifndef COMMON_MUTEX_H
 #define COMMON_MUTEX_H
 
-#include "SDL.h"
+
 
 namespace Common {
 

@@ -23,24 +23,16 @@
 #ifndef ULTIMA6_KEYBINDING_KEYS_H
 #define ULTIMA6_KEYBINDING_KEYS_H
 
-#include "SDL_version.h"
-//#include "sdl-compat.h" // Nuvie doesn't have this file but likely would whenever compatibility is added
-#if SDL_VERSION_ATLEAST(1, 3, 0)
-#include "SDL_stdinc.h"
-#include "SDL_scancode.h"
-#endif
-
-#include "SDL_events.h"
-#include "KeysEnum.h"
+#include "ultima/ultima6/keybinding/keys_enum.h"
 #include "ultima/ultima6/core/nuvie_defs.h"
+#include "ultima/shared/std/containers.h"
+#include "ultima/shared/std/string.h"
+#include "common/events.h"
 
 #ifdef HAVE_JOYSTICK_SUPPORT
 typedef enum { AXES_PAIR1, AXES_PAIR2, AXES_PAIR3, AXES_PAIR4, UNHANDLED_AXES_PAIR } joy_axes_pairs;
 #endif
 
-#include "ultima/shared/std/containers.h"
-#include <map>
-#include "ultima/shared/std/string.h"
 
 namespace Ultima {
 namespace Ultima6 {
@@ -59,19 +51,19 @@ struct ActionType {
 };
 
 struct ltSDLkeysym {
-	bool operator()(SDL_Keysym k1, SDL_Keysym k2) const {
-		if (k1.sym == k2.sym)
-			return k1.mod < k2.mod;
+	bool operator()(Common::KeyState k1, Common::KeyState k2) const {
+		if (k1.keycode == k2.keycode)
+			return k1.flags < k2.flags;
 		else
-			return k1.sym < k2.sym;
+			return k1.keycode < k2.keycode;
 	}
 };
 
-typedef std::map<SDL_Keysym, ActionType, ltSDLkeysym>   KeyMap;
+typedef std::map<Common::KeyState, ActionType, ltSDLkeysym>   KeyMap;
 
 class Configuration;
 
-char get_ascii_char_from_keysym(SDL_Keysym keysym);
+char get_ascii_char_from_keysym(Common::KeyState keysym);
 
 class KeyBinder {
 private:
@@ -95,11 +87,11 @@ public:
 	KeyBinder(Configuration *config);
 	~KeyBinder();
 	/* Add keybinding */
-	void AddKeyBinding(SDL_Keycode sym, int mod, const Action *action,
+	void AddKeyBinding(Common::KeyCode sym, int mod, const Action *action,
 	                   int nparams, int *params);
 
 	/* Delete keybinding */
-//	void DelKeyBinding(SDL_Keycode sym, int mod); // unused
+//	void DelKeyBinding(Common::KeyCode sym, int mod); // unused
 
 	/* Other methods */
 	void Flush() {
@@ -107,11 +99,11 @@ public:
 		keyhelp.clear();
 		cheathelp.clear();
 	}
-	ActionType get_ActionType(SDL_Keysym key);
+	ActionType get_ActionType(Common::KeyState key);
 	ActionKeyType GetActionKeyType(ActionType a);
 	bool DoAction(ActionType const &a) const;
-	KeyMap::iterator get_sdlkey_index(SDL_Keysym key);
-	bool HandleEvent(const SDL_Event *event);
+	KeyMap::iterator get_sdlkey_index(Common::KeyState key);
+	bool HandleEvent(const Common::Event *event);
 
 	void LoadFromFile(const char *filename);
 	void LoadGameSpecificKeys();
@@ -123,12 +115,12 @@ public:
 #ifdef HAVE_JOYSTICK_SUPPORT
 	uint8 get_axis(uint8 index);
 	void set_axis(uint8 index, uint8 value);
-	SDL_Keycode get_key_from_joy_walk_axes() {
+	Common::KeyCode get_key_from_joy_walk_axes() {
 		return get_key_from_joy_axis_motion(x_axis, true);
 	}
-	SDL_Keycode get_key_from_joy_axis_motion(int axis, bool repeating);
-	SDL_Keycode get_key_from_joy_hat_button(uint8 hat_button);
-	SDL_Keycode get_key_from_joy_events(SDL_Event *event);
+	Common::KeyCode get_key_from_joy_axis_motion(int axis, bool repeating);
+	Common::KeyCode get_key_from_joy_hat_button(uint8 hat_button);
+	Common::KeyCode get_key_from_joy_events(Common::Event *event);
 	void init_joystick(sint8 joy_num);
 	SDL_Joystick *get_joystick() {
 		return joystick;
@@ -165,74 +157,74 @@ private:
 	joy_axes_pairs get_axes_pair(int axis);
 	uint16 get_x_axis_deadzone(joy_axes_pairs axes_pair);
 	uint16 get_y_axis_deadzone(joy_axes_pairs axes_pair);
-	SDL_Keycode get_key_from_joy_button(uint8 button);
-	SDL_Keycode get_key_from_joy_hat(SDL_JoyHatEvent);
+	Common::KeyCode get_key_from_joy_button(uint8 button);
+	Common::KeyCode get_key_from_joy_hat(SDL_JoyHatEvent);
 #endif
 };
 
 #ifdef HAVE_JOYSTICK_SUPPORT
 
-static const SDL_Keycode FIRST_JOY = (SDL_Keycode)400;
-const SDL_Keycode JOY_UP            = FIRST_JOY;               // PS d-pad when analog is disabled. left stick when enabled
-const SDL_Keycode JOY_DOWN          = (SDL_Keycode)(FIRST_JOY + 1);
-const SDL_Keycode JOY_LEFT          = (SDL_Keycode)(FIRST_JOY + 2);
-const SDL_Keycode JOY_RIGHT         = (SDL_Keycode)(FIRST_JOY + 3);
-const SDL_Keycode JOY_RIGHTUP       = (SDL_Keycode)(FIRST_JOY + 4);
-const SDL_Keycode JOY_RIGHTDOWN     = (SDL_Keycode)(FIRST_JOY + 5);
-const SDL_Keycode JOY_LEFTUP        = (SDL_Keycode)(FIRST_JOY + 6);
-const SDL_Keycode JOY_LEFTDOWN      = (SDL_Keycode)(FIRST_JOY + 7);
-const SDL_Keycode JOY_UP2           = (SDL_Keycode)(FIRST_JOY + 8); // PS right stick when analog is enabled
-const SDL_Keycode JOY_DOWN2         = (SDL_Keycode)(FIRST_JOY + 9);
-const SDL_Keycode JOY_LEFT2         = (SDL_Keycode)(FIRST_JOY + 10);
-const SDL_Keycode JOY_RIGHT2        = (SDL_Keycode)(FIRST_JOY + 11);
-const SDL_Keycode JOY_RIGHTUP2      = (SDL_Keycode)(FIRST_JOY + 12);
-const SDL_Keycode JOY_RIGHTDOWN2    = (SDL_Keycode)(FIRST_JOY + 13);
-const SDL_Keycode JOY_LEFTUP2       = (SDL_Keycode)(FIRST_JOY + 14);
-const SDL_Keycode JOY_LEFTDOWN2     = (SDL_Keycode)(FIRST_JOY + 15);
-const SDL_Keycode JOY_UP3           = (SDL_Keycode)(FIRST_JOY + 16);
-const SDL_Keycode JOY_DOWN3         = (SDL_Keycode)(FIRST_JOY + 17);
-const SDL_Keycode JOY_LEFT3         = (SDL_Keycode)(FIRST_JOY + 18);
-const SDL_Keycode JOY_RIGHT3        = (SDL_Keycode)(FIRST_JOY + 19);
-const SDL_Keycode JOY_RIGHTUP3      = (SDL_Keycode)(FIRST_JOY + 20);
-const SDL_Keycode JOY_RIGHTDOWN3    = (SDL_Keycode)(FIRST_JOY + 21);
-const SDL_Keycode JOY_LEFTUP3       = (SDL_Keycode)(FIRST_JOY + 22);
-const SDL_Keycode JOY_LEFTDOWN3     = (SDL_Keycode)(FIRST_JOY + 23);
-const SDL_Keycode JOY_UP4           = (SDL_Keycode)(FIRST_JOY + 24);
-const SDL_Keycode JOY_DOWN4         = (SDL_Keycode)(FIRST_JOY + 25);
-const SDL_Keycode JOY_LEFT4         = (SDL_Keycode)(FIRST_JOY + 26);
-const SDL_Keycode JOY_RIGHT4        = (SDL_Keycode)(FIRST_JOY + 27);
-const SDL_Keycode JOY_RIGHTUP4      = (SDL_Keycode)(FIRST_JOY + 28);
-const SDL_Keycode JOY_RIGHTDOWN4    = (SDL_Keycode)(FIRST_JOY + 29);
-const SDL_Keycode JOY_LEFTUP4       = (SDL_Keycode)(FIRST_JOY + 30);
-const SDL_Keycode JOY_LEFTDOWN4     = (SDL_Keycode)(FIRST_JOY + 31);
-const SDL_Keycode JOY_HAT_UP        = (SDL_Keycode)(FIRST_JOY + 32); // PS d-pad when analog is enabled
-const SDL_Keycode JOY_HAT_DOWN      = (SDL_Keycode)(FIRST_JOY + 33);
-const SDL_Keycode JOY_HAT_LEFT      = (SDL_Keycode)(FIRST_JOY + 34);
-const SDL_Keycode JOY_HAT_RIGHT     = (SDL_Keycode)(FIRST_JOY + 35);
-const SDL_Keycode JOY_HAT_RIGHTUP   = (SDL_Keycode)(FIRST_JOY + 36);
-const SDL_Keycode JOY_HAT_RIGHTDOWN = (SDL_Keycode)(FIRST_JOY + 37);
-const SDL_Keycode JOY_HAT_LEFTUP    = (SDL_Keycode)(FIRST_JOY + 38);
-const SDL_Keycode JOY_HAT_LEFTDOWN  = (SDL_Keycode)(FIRST_JOY + 39);
-const SDL_Keycode JOY0              = (SDL_Keycode)(FIRST_JOY + 40); // PS triangle
-const SDL_Keycode JOY1              = (SDL_Keycode)(FIRST_JOY + 41); // PS circle
-const SDL_Keycode JOY2              = (SDL_Keycode)(FIRST_JOY + 42); // PS x
-const SDL_Keycode JOY3              = (SDL_Keycode)(FIRST_JOY + 43); // PS square
-const SDL_Keycode JOY4              = (SDL_Keycode)(FIRST_JOY + 44); // PS L2
-const SDL_Keycode JOY5              = (SDL_Keycode)(FIRST_JOY + 45); // PS R2
-const SDL_Keycode JOY6              = (SDL_Keycode)(FIRST_JOY + 46); // PS L1
-const SDL_Keycode JOY7              = (SDL_Keycode)(FIRST_JOY + 47); // PS R1
-const SDL_Keycode JOY8              = (SDL_Keycode)(FIRST_JOY + 48); // PS select
-const SDL_Keycode JOY9              = (SDL_Keycode)(FIRST_JOY + 49); // PS start
-const SDL_Keycode JOY10             = (SDL_Keycode)(FIRST_JOY + 50); // PS L3 (analog must be enabled)
-const SDL_Keycode JOY11             = (SDL_Keycode)(FIRST_JOY + 51); // PS R3 (analog must be enabled)
-const SDL_Keycode JOY12             = (SDL_Keycode)(FIRST_JOY + 52);
-const SDL_Keycode JOY13             = (SDL_Keycode)(FIRST_JOY + 53);
-const SDL_Keycode JOY14             = (SDL_Keycode)(FIRST_JOY + 54);
-const SDL_Keycode JOY15             = (SDL_Keycode)(FIRST_JOY + 55);
-const SDL_Keycode JOY16             = (SDL_Keycode)(FIRST_JOY + 56);
-const SDL_Keycode JOY17             = (SDL_Keycode)(FIRST_JOY + 57);
-const SDL_Keycode JOY18             = (SDL_Keycode)(FIRST_JOY + 58);
-const SDL_Keycode JOY19             = (SDL_Keycode)(FIRST_JOY + 59);
+static const Common::KeyCode FIRST_JOY = (Common::KeyCode)400;
+const Common::KeyCode JOY_UP            = FIRST_JOY;               // PS d-pad when analog is disabled. left stick when enabled
+const Common::KeyCode JOY_DOWN          = (Common::KeyCode)(FIRST_JOY + 1);
+const Common::KeyCode JOY_LEFT          = (Common::KeyCode)(FIRST_JOY + 2);
+const Common::KeyCode JOY_RIGHT         = (Common::KeyCode)(FIRST_JOY + 3);
+const Common::KeyCode JOY_RIGHTUP       = (Common::KeyCode)(FIRST_JOY + 4);
+const Common::KeyCode JOY_RIGHTDOWN     = (Common::KeyCode)(FIRST_JOY + 5);
+const Common::KeyCode JOY_LEFTUP        = (Common::KeyCode)(FIRST_JOY + 6);
+const Common::KeyCode JOY_LEFTDOWN      = (Common::KeyCode)(FIRST_JOY + 7);
+const Common::KeyCode JOY_UP2           = (Common::KeyCode)(FIRST_JOY + 8); // PS right stick when analog is enabled
+const Common::KeyCode JOY_DOWN2         = (Common::KeyCode)(FIRST_JOY + 9);
+const Common::KeyCode JOY_LEFT2         = (Common::KeyCode)(FIRST_JOY + 10);
+const Common::KeyCode JOY_RIGHT2        = (Common::KeyCode)(FIRST_JOY + 11);
+const Common::KeyCode JOY_RIGHTUP2      = (Common::KeyCode)(FIRST_JOY + 12);
+const Common::KeyCode JOY_RIGHTDOWN2    = (Common::KeyCode)(FIRST_JOY + 13);
+const Common::KeyCode JOY_LEFTUP2       = (Common::KeyCode)(FIRST_JOY + 14);
+const Common::KeyCode JOY_LEFTDOWN2     = (Common::KeyCode)(FIRST_JOY + 15);
+const Common::KeyCode JOY_UP3           = (Common::KeyCode)(FIRST_JOY + 16);
+const Common::KeyCode JOY_DOWN3         = (Common::KeyCode)(FIRST_JOY + 17);
+const Common::KeyCode JOY_LEFT3         = (Common::KeyCode)(FIRST_JOY + 18);
+const Common::KeyCode JOY_RIGHT3        = (Common::KeyCode)(FIRST_JOY + 19);
+const Common::KeyCode JOY_RIGHTUP3      = (Common::KeyCode)(FIRST_JOY + 20);
+const Common::KeyCode JOY_RIGHTDOWN3    = (Common::KeyCode)(FIRST_JOY + 21);
+const Common::KeyCode JOY_LEFTUP3       = (Common::KeyCode)(FIRST_JOY + 22);
+const Common::KeyCode JOY_LEFTDOWN3     = (Common::KeyCode)(FIRST_JOY + 23);
+const Common::KeyCode JOY_UP4           = (Common::KeyCode)(FIRST_JOY + 24);
+const Common::KeyCode JOY_DOWN4         = (Common::KeyCode)(FIRST_JOY + 25);
+const Common::KeyCode JOY_LEFT4         = (Common::KeyCode)(FIRST_JOY + 26);
+const Common::KeyCode JOY_RIGHT4        = (Common::KeyCode)(FIRST_JOY + 27);
+const Common::KeyCode JOY_RIGHTUP4      = (Common::KeyCode)(FIRST_JOY + 28);
+const Common::KeyCode JOY_RIGHTDOWN4    = (Common::KeyCode)(FIRST_JOY + 29);
+const Common::KeyCode JOY_LEFTUP4       = (Common::KeyCode)(FIRST_JOY + 30);
+const Common::KeyCode JOY_LEFTDOWN4     = (Common::KeyCode)(FIRST_JOY + 31);
+const Common::KeyCode JOY_HAT_UP        = (Common::KeyCode)(FIRST_JOY + 32); // PS d-pad when analog is enabled
+const Common::KeyCode JOY_HAT_DOWN      = (Common::KeyCode)(FIRST_JOY + 33);
+const Common::KeyCode JOY_HAT_LEFT      = (Common::KeyCode)(FIRST_JOY + 34);
+const Common::KeyCode JOY_HAT_RIGHT     = (Common::KeyCode)(FIRST_JOY + 35);
+const Common::KeyCode JOY_HAT_RIGHTUP   = (Common::KeyCode)(FIRST_JOY + 36);
+const Common::KeyCode JOY_HAT_RIGHTDOWN = (Common::KeyCode)(FIRST_JOY + 37);
+const Common::KeyCode JOY_HAT_LEFTUP    = (Common::KeyCode)(FIRST_JOY + 38);
+const Common::KeyCode JOY_HAT_LEFTDOWN  = (Common::KeyCode)(FIRST_JOY + 39);
+const Common::KeyCode JOY0              = (Common::KeyCode)(FIRST_JOY + 40); // PS triangle
+const Common::KeyCode JOY1              = (Common::KeyCode)(FIRST_JOY + 41); // PS circle
+const Common::KeyCode JOY2              = (Common::KeyCode)(FIRST_JOY + 42); // PS x
+const Common::KeyCode JOY3              = (Common::KeyCode)(FIRST_JOY + 43); // PS square
+const Common::KeyCode JOY4              = (Common::KeyCode)(FIRST_JOY + 44); // PS L2
+const Common::KeyCode JOY5              = (Common::KeyCode)(FIRST_JOY + 45); // PS R2
+const Common::KeyCode JOY6              = (Common::KeyCode)(FIRST_JOY + 46); // PS L1
+const Common::KeyCode JOY7              = (Common::KeyCode)(FIRST_JOY + 47); // PS R1
+const Common::KeyCode JOY8              = (Common::KeyCode)(FIRST_JOY + 48); // PS select
+const Common::KeyCode JOY9              = (Common::KeyCode)(FIRST_JOY + 49); // PS start
+const Common::KeyCode JOY10             = (Common::KeyCode)(FIRST_JOY + 50); // PS L3 (analog must be enabled)
+const Common::KeyCode JOY11             = (Common::KeyCode)(FIRST_JOY + 51); // PS R3 (analog must be enabled)
+const Common::KeyCode JOY12             = (Common::KeyCode)(FIRST_JOY + 52);
+const Common::KeyCode JOY13             = (Common::KeyCode)(FIRST_JOY + 53);
+const Common::KeyCode JOY14             = (Common::KeyCode)(FIRST_JOY + 54);
+const Common::KeyCode JOY15             = (Common::KeyCode)(FIRST_JOY + 55);
+const Common::KeyCode JOY16             = (Common::KeyCode)(FIRST_JOY + 56);
+const Common::KeyCode JOY17             = (Common::KeyCode)(FIRST_JOY + 57);
+const Common::KeyCode JOY18             = (Common::KeyCode)(FIRST_JOY + 58);
+const Common::KeyCode JOY19             = (Common::KeyCode)(FIRST_JOY + 59);
 #endif /* HAVE_JOYSTICK_SUPPORT */
 
 } // End of namespace Ultima6

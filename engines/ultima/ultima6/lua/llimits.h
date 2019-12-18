@@ -8,8 +8,8 @@
 #define llimits_h
 
 
-#include <limits.h>
-#include <stddef.h>
+//#include <limits.h>
+//#include <stddef.h>
 
 
 #include "lua.h"
@@ -74,7 +74,7 @@ typedef LUAI_UACNUMBER l_uacNumber;
 #if !defined(luai_apicheck)
 
 #if defined(LUA_USE_APICHECK)
-#include <assert.h>
+//#include <assert.h>
 #define luai_apicheck(L,e)  assert(e)
 #else
 #define luai_apicheck(L,e)  lua_assert(e)
@@ -260,7 +260,7 @@ union luai_Cast {
 #if !defined(lua_number2unsigned)   /* { */
 /* the following definition assures proper modulo behavior */
 #if defined(LUA_NUMBER_DOUBLE) || defined(LUA_NUMBER_FLOAT)
-#include <math.h>
+//#include <math.h>
 #define SUPUNSIGNED ((lua_Number)(~(lua_Unsigned)0) + 1)
 #define lua_number2unsigned(i,n)  \
 	((i)=(lua_Unsigned)((n) - floor((n)/SUPUNSIGNED)*SUPUNSIGNED))
@@ -281,8 +281,8 @@ union luai_Cast {
 
 #if defined(ltable_c) && !defined(luai_hashnum)
 
-#include <float.h>
-#include <math.h>
+//#include <float.h>
+//#include <math.h>
 
 #define luai_hashnum(i,n) { int e;  \
 		n = l_mathop(frexp)(n, &e) * (lua_Number)(INT_MAX - DBL_MAX_EXP);  \

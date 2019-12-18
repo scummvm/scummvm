@@ -20,13 +20,13 @@
  *
  */
 
-#include <string.h>
+//#include <string.h>
 
-#include "SDL.h"
+
 
 #include "ultima/ultima6/core/nuvie_defs.h"
-#include "GUI_button.h"
-#include "GUI_loadimage.h"
+#include "ultima/ultima6/gui/gui_button.h"
+#include "ultima/ultima6/gui/gui_loadimage.h"
 
 namespace Ultima {
 namespace Ultima6 {
@@ -181,17 +181,17 @@ void GUI_Button:: Display(bool full_redraw) {
 		SDL_BlitSurface(checkmarks, &src, surface, &dest);
 	}
 	if (!enabled) {
-		Uint8 *pointer;
+		uint8 *pointer;
 		int pixel = SDL_MapRGB(surface->format, 0, 0, 0);;
-		Uint8 bytepp = surface->format->BytesPerPixel;
+		uint8 bytepp = surface->format->BytesPerPixel;
 
 		if (!SDL_LockSurface(surface)) {
 			for (int y = 0; y < area.h; y += 2) {
-				pointer = (Uint8 *)surface->pixels + surface->pitch * (area.y + y) + (area.x * bytepp);
+				pointer = (uint8 *)surface->pixels + surface->pitch * (area.y + y) + (area.x * bytepp);
 				for (int x = 0; x<area.w >> 1; x++) {
 					switch (bytepp) {
 					case 1:
-						*((Uint8 *)(pointer)) = (Uint8)pixel;
+						*((uint8 *)(pointer)) = (uint8)pixel;
 						pointer += 2;
 						break;
 					case 2:
@@ -199,7 +199,7 @@ void GUI_Button:: Display(bool full_redraw) {
 						pointer += 4;
 						break;
 					case 3:  /* Format/endian independent */
-						Uint8 r, g, b;
+						uint8 r, g, b;
 
 						r = (pixel >> surface->format->Rshift) & 0xFF;
 						g = (pixel >> surface->format->Gshift) & 0xFF;
@@ -253,7 +253,7 @@ GUI_status GUI_Button::Activate_button(int x, int y, int button) {
 	return GUI_YUM;
 }
 
-GUI_status GUI_Button::MouseMotion(int x, int y, Uint8 state) {
+GUI_status GUI_Button::MouseMotion(int x, int y, uint8 state) {
 	if ((pressed[0] == 1) && ((x < 0) || (y < 0))) {
 		pressed[0] = 2;
 		Redraw();

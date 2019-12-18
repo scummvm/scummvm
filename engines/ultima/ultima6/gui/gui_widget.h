@@ -25,15 +25,11 @@
 #ifndef ULTIMA6_GUI_GUI_WIDGET_H
 #define ULTIMA6_GUI_GUI_WIDGET_H
 
-#include <list>
-#include <stdio.h>
-#include <stdarg.h>
-
-#include "SDL.h"
-#include "GUI_status.h"
-#include "GUI_DragArea.h"
-#include "GUI_DragManager.h"
-#include "Screen.h"
+#include "ultima/ultima6/gui/gui_status.h"
+#include "ultima/ultima6/gui/gui_drag_area.h"
+#include "ultima/ultima6/gui/gui_drag_manager.h"
+#include "ultima/ultima6/screen/screen.h"
+#include "common/events.h"
 
 namespace Ultima {
 namespace Ultima6 {
@@ -128,16 +124,16 @@ public:
 
 	/* Return the bounds of the widget */
 	virtual int X() {
-		return area.x;
+		return area.left;
 	}
 	virtual int Y() {
-		return area.y;
+		return area.top;
 	}
 	virtual int W() {
-		return area.w;
+		return area.width();
 	}
 	virtual int H() {
-		return area.h;
+		return area.height();
 	}
 
 	/* Check to see if a point intersects the bounds of the widget.
@@ -173,15 +169,15 @@ public:
 	   or not the event should be passed on to other widgets.
 	   These are called by the default HandleEvent function.
 	*/
-	virtual GUI_status KeyDown(SDL_Keysym key);
-	virtual GUI_status KeyUp(SDL_Keysym key);
+	virtual GUI_status KeyDown(Common::KeyState key);
+	virtual GUI_status KeyUp(Common::KeyState key);
 	virtual GUI_status MouseDown(int x, int y, int button);
 	virtual GUI_status MouseUp(int x, int y, int button);
-	virtual GUI_status MouseMotion(int x, int y, Uint8 state);
+	virtual GUI_status MouseMotion(int x, int y, uint8 state);
 	virtual GUI_status MouseWheel(sint32 x, sint32 y);
 	// <SB-X>
-	virtual GUI_status MouseEnter(Uint8 state);
-	virtual GUI_status MouseLeave(Uint8 state);
+	virtual GUI_status MouseEnter(uint8 state);
+	virtual GUI_status MouseLeave(uint8 state);
 	virtual GUI_status MouseClick(int x, int y, int button);
 	virtual GUI_status MouseDouble(int x, int y, int button);
 	virtual GUI_status MouseDelayed(int x, int y, int button);
@@ -194,7 +190,7 @@ public:
 	/* Main event handler function.
 	   This function gets raw SDL events from the GUI.
 	 */
-	virtual GUI_status HandleEvent(const SDL_Event *event);
+	virtual GUI_status HandleEvent(const Common::Event *event);
 
 	/* Returns NULL if everything is okay, or an error message if not */
 	char *Error(void) {

@@ -20,38 +20,38 @@
  *
  */
 
-#include <math.h>
+//#include <math.h>
 #include "ultima/ultima6/core/nuvie_defs.h"
 #include "ultima/ultima6/conf/configuration.h"
 #include "ultima/ultima6/misc/u6_misc.h"
 
-#include "GUI.h"
+#include "ultima/ultima6/gui/gui.h"
 
-#include "ViewManager.h"
+#include "ultima/ultima6/views/view_manager.h"
 
-#include "Actor.h"
+#include "ultima/ultima6/actors/actor.h"
 
-#include "ActorView.h"
-#include "PortraitView.h"
-#include "InventoryView.h"
+#include "ultima/ultima6/views/actor_view.h"
+#include "ultima/ultima6/views/portrait_view.h"
+#include "ultima/ultima6/views/inventory_view.h"
 #include "DollViewGump.h"
 #include "ContainerViewGump.h"
 #include "PortraitViewGump.h"
 #include "SignViewGump.h"
 #include "ScrollViewGump.h"
-#include "PartyView.h"
-#include "SpellView.h"
+#include "ultima/ultima6/views/party_view.h"
+#include "ultima/ultima6/views/spell_view.h"
 #include "SpellViewGump.h"
 #include "SunMoonRibbon.h"
-#include "MapWindow.h"
+#include "ultima/ultima6/core/map_window.h"
 #include "MapEditorView.h"
-#include "MsgScroll.h"
-#include "Party.h"
-#include "Event.h"
-#include "Portrait.h"
-#include "UseCode.h"
-#include "NuvieBmpFile.h"
-#include "MDSkyStripWidget.h"
+#include "ultima/ultima6/core/msg_scroll.h"
+#include "ultima/ultima6/core/party.h"
+#include "ultima/ultima6/core/event.h"
+#include "ultima/ultima6/portraits/portrait.h"
+#include "ultima/ultima6/usecode/usecode.h"
+#include "ultima/ultima6/files/nuvie_bmp_file.h"
+#include "ultima/ultima6/views/md_sky_strip_widget.h"
 
 namespace Ultima {
 namespace Ultima6 {

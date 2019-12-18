@@ -23,10 +23,10 @@
 #ifndef ULTIMA6_GUI_GUI_DIALOG_H
 #define ULTIMA6_GUI_GUI_DIALOG_H
 
-#include "SDL.h"
 
-#include "GUI_widget.h"
-#include "Screen.h"
+
+#include "ultima/ultima6/gui/gui_widget.h"
+#include "ultima/ultima6/screen/screen.h"
 
 namespace Ultima {
 namespace Ultima6 {
@@ -38,7 +38,7 @@ class GUI_Dialog : public GUI_Widget {
 
 	int old_x, old_y;
 	int button_x, button_y;
-	Uint8 R, G, B;
+	uint8 R, G, B;
 	uint32 bg_color;
 
 	bool drag;
@@ -49,7 +49,7 @@ class GUI_Dialog : public GUI_Widget {
 	Common::Rect backingstore_rect;
 public:
 	/* Passed the area, color and shape */
-	GUI_Dialog(int x, int y, int w, int h, Uint8 r, Uint8 g, Uint8 b, bool is_moveable);
+	GUI_Dialog(int x, int y, int w, int h, uint8 r, uint8 g, uint8 b, bool is_moveable);
 	~GUI_Dialog();
 	/* Map the color to the display */
 	virtual void SetDisplay(Screen *s);
@@ -60,7 +60,7 @@ public:
 	/* events, used for dragging the area. */
 	GUI_status MouseDown(int x, int y, int button);
 	GUI_status MouseUp(int x, int y, int button);
-	GUI_status MouseMotion(int x, int y, Uint8 state);
+	GUI_status MouseMotion(int x, int y, uint8 state);
 	void MoveRelative(int dx, int dy);
 protected:
 	bool can_drag;

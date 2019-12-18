@@ -23,7 +23,7 @@
 #ifndef ULTIMA6_VIEWS_PORTRAIT_VIEW_H
 #define ULTIMA6_VIEWS_PORTRAIT_VIEW_H
 
-#include "View.h"
+#include "ultima/ultima6/views/view.h"
 
 namespace Ultima {
 namespace Ultima6 {
@@ -66,7 +66,7 @@ public:
 
 	bool init(uint16 x, uint16 y, Font *f, Party *p, Player *player, TileManager *tm, ObjManager *om, Portrait *port);
 	void Display(bool full_redraw);
-	GUI_status HandleEvent(const SDL_Event *event);
+	GUI_status HandleEvent(const Common::Event *event);
 
 	bool set_portrait(Actor *actor, const char *name);
 	void set_show_cursor(bool state) {

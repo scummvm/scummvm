@@ -23,7 +23,7 @@
 #ifndef ULTIMA6_GUI_TEXT_TOGGLE_BUTTON_H
 #define ULTIMA6_GUI_TEXT_TOGGLE_BUTTON_H
 
-#include "GUI_button.h"
+#include "ultima/ultima6/gui/gui_button.h"
 
 namespace Ultima {
 namespace Ultima6 {

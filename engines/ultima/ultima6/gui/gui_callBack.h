@@ -23,7 +23,7 @@
 #ifndef ULTIMA6_GUI_GUI_CALLBACK_H
 #define ULTIMA6_GUI_GUI_CALLBACK_H
 
-#include "GUI_status.h"
+#include "ultima/ultima6/gui/gui_status.h"
 
 namespace Ultima {
 namespace Ultima6 {

@@ -47,6 +47,11 @@ public:
 			--_index;
 			return *this;
 		}
+		reverse_iterator operator++(int) {
+			reverse_iterator tmp(_owner, _index);
+			++(*this);
+			return tmp;
+		}
 
 		bool operator==(const reverse_iterator &rhs) {
 			return _owner == rhs._owner && _index == rhs._index;
@@ -61,7 +66,7 @@ public:
 	string(const char *str, uint32 len) : Common::String(str, len) {}
 	string(const char *beginP, const char *endP) : Common::String(beginP, endP) {}
 	string(const String &str) : Common::String(str) {}
-	explicit string(char c) : Common::String(c) {}
+	string(char c) : Common::String(c) {}
 	string(size_t n, char c);
 	virtual ~string() {}
 
@@ -70,11 +75,17 @@ public:
 	/**
 	 * Assign a new string
 	 */
-	void assign(const char *s) {
-		*this = s;
+	void assign(const char *s, size_t count = npos) {
+		if (count == npos)
+			*this = s;
+		else
+			*this = string(s, count);
 	}
-	void assign(const string &s) {
-		*this = s;
+	void assign(const string &s, size_t count = npos) {
+		if (count == npos)
+			*this = s;
+		else
+			*this = string(s.c_str(), count);
 	}
 
 	/**
@@ -173,6 +184,11 @@ public:
 	string &erase(size_t pos = 0, size_t len = npos);
 
 	/**
+	 * Erases len number of characters from pos
+	 */
+	iterator erase(iterator it);
+
+	/**
 	 * Resizes a string
 	 */
 	void resize(size_t count);
@@ -182,8 +198,21 @@ public:
 			insertChar(c, pos);
 	}
 
-	void append(const string &str) {
-		*this += str;
+	/**
+	 * Append another string to this one
+	 */
+	void append(const string &str, size_t size = npos) {
+		if (size == npos)
+			*this += str;
+		else
+			*this += Common::String(str.c_str(), size);
+	}
+
+	/**
+	 * Append a character to the string
+	 */
+	void push_back(char c) {
+		*this += c;
 	}
 
 	reverse_iterator rbegin() {

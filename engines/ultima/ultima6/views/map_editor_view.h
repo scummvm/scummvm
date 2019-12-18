@@ -23,7 +23,7 @@
 #ifndef ULTIMA6_VIEWS_MAP_EDITOR_VIEW_H
 #define ULTIMA6_VIEWS_MAP_EDITOR_VIEW_H
 
-#include "View.h"
+#include "ultima/ultima6/views/view.h"
 
 namespace Ultima {
 namespace Ultima6 {
@@ -46,10 +46,10 @@ public:
 
 	bool init(Screen *tmp_screen, void *view_manager, uint16 x, uint16 y, Font *f, Party *p, TileManager *tm, ObjManager *om);
 	void Display(bool full_redraw);
-	GUI_status KeyDown(SDL_Keysym key);
+	GUI_status KeyDown(Common::KeyState key);
 	GUI_status MouseDown(int x, int y, int button);
 	GUI_status MouseUp(int x, int y, int button);
-	GUI_status MouseMotion(int x, int y, Uint8 state);
+	GUI_status MouseMotion(int x, int y, uint8 state);
 
 	virtual void close_view();
 	GUI_status callback(uint16 msg, GUI_CallBack *caller, void *data);

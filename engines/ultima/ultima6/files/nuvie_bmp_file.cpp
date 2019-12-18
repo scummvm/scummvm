@@ -20,13 +20,8 @@
  *
  */
 
-#include <stdio.h>
-#include <stdlib.h>
-
-#include <string.h>
-
 #include "ultima/ultima6/core/nuvie_defs.h"
-#include "NuvieBmpFile.h"
+#include "ultima/ultima6/files/nuvie_bmp_file.h"
 
 namespace Ultima {
 namespace Ultima6 {
@@ -282,20 +277,18 @@ Graphics::ManagedSurface *NuvieBmpFile::getSdlSurface32(std::string filename) {
 }
 
 Graphics::ManagedSurface *NuvieBmpFile::getSdlSurface32() {
-	uint32 rmask = 0x000000ff;
-	uint32 gmask = 0x0000ff00;
-	uint32 bmask = 0x00ff0000;
-//uint32 amask = 0xff000000;
-
 	if (data == NULL) {
 		return NULL;
 	}
 
-	Graphics::ManagedSurface *surface = SDL_CreateRGBSurface(SDL_SWSURFACE, infoHeader.width, infoHeader.height, 32,
-	                       rmask, gmask, bmask, 0);
+	Graphics::ManagedSurface *surface = new Graphics::ManagedSurface(
+		infoHeader.width, infoHeader.height, 
+		Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0)
+	);
 
 	unsigned char *src_buf = data;
-	uint32 *pixels = (uint32 *)surface->pixels;
+	Graphics::Surface s = surface->getSubArea(Common::Rect(0, 0, surface->w, surface->h));
+	uint32 *pixels = (uint32 *)s.getPixels();
 
 	if (infoHeader.bits == 8) {
 		for (sint32 i = 0; i < infoHeader.height; i++) {

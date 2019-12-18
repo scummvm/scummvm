@@ -23,9 +23,9 @@
 #ifndef ULTIMA6_CORE_MAGIC_H
 #define ULTIMA6_CORE_MAGIC_H
 
-#include <stdlib.h>
-#include "Event.h"
-#include "CallBack.h"
+//#include <stdlib.h>
+#include "ultima/ultima6/core/event.h"
+#include "ultima/ultima6/misc/call_back.h"
 
 namespace Ultima {
 namespace Ultima6 {
@@ -68,8 +68,8 @@ public: /* saves using dumb get / set functions */
 
 	Spell(uint8 new_num, const char *new_name = "undefined name", const char *new_invocation = "kawo", uint8 new_reagents = 255) {
 		num = new_num;
-		name = strdup(new_name);
-		invocation = strdup(new_invocation);
+		name = scumm_strdup(new_name);
+		invocation = scumm_strdup(new_invocation);
 		reagents = new_reagents;
 	};
 	~Spell() {

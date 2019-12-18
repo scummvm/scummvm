@@ -23,8 +23,8 @@
 #ifndef ULTIMA6_CORE_PLAYER_H
 #define ULTIMA6_CORE_PLAYER_H
 
-#include "ObjManager.h"
-#include "Actor.h"
+#include "ultima/ultima6/core/obj_manager.h"
+#include "ultima/ultima6/actors/actor.h"
 
 namespace Ultima {
 namespace Ultima6 {

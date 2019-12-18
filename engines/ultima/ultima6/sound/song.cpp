@@ -22,7 +22,7 @@
 
 //Mix_HookMusicFinished
 #include "ultima/ultima6/core/nuvie_defs.h"
-#include "Song.h"
+#include "ultima/ultima6/sound/song.h"
 /*
 
 Song::Song() {

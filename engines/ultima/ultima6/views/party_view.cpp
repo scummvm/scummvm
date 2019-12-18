@@ -20,23 +20,23 @@
  *
  */
 
-#include <cmath>
+//#include <cmath>
 #include "ultima/ultima6/core/nuvie_defs.h"
 
-#include "Actor.h"
-#include "Party.h"
-#include "Player.h"
-#include "GameClock.h"
-#include "PartyView.h"
-#include "Font.h"
-#include "Weather.h"
-#include "Script.h"
-#include "MsgScroll.h"
-#include "Event.h"
+#include "ultima/ultima6/actors/actor.h"
+#include "ultima/ultima6/core/party.h"
+#include "ultima/ultima6/core/player.h"
+#include "ultima/ultima6/core/game_clock.h"
+#include "ultima/ultima6/views/party_view.h"
+#include "ultima/ultima6/fonts/font.h"
+#include "ultima/ultima6/core/weather.h"
+#include "ultima/ultima6/script/script.h"
+#include "ultima/ultima6/core/msg_scroll.h"
+#include "ultima/ultima6/core/event.h"
 #include "ultima/ultima6/conf/configuration.h"
-#include "CommandBar.h"
-#include "UseCode.h"
-#include "MapWindow.h"
+#include "ultima/ultima6/core/command_bar.h"
+#include "ultima/ultima6/usecode/usecode.h"
+#include "ultima/ultima6/core/map_window.h"
 #include "SunMoonStripWidget.h"
 
 namespace Ultima {

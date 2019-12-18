@@ -24,12 +24,12 @@
 #define ULTIMA6_CORE_MAP_WINDOW_H
 
 #include "ultima/shared/std/containers.h"
-#include "SDL.h"
+
 
 #include "ultima/ultima6/core/nuvie_defs.h"
-#include "ObjManager.h"
-#include "GUI_widget.h"
-#include "Map.h"
+#include "ultima/ultima6/core/obj_manager.h"
+#include "ultima/ultima6/gui/gui_widget.h"
+#include "ultima/ultima6/core/map.h"
 
 namespace Ultima {
 namespace Ultima6 {
@@ -293,14 +293,14 @@ public:
 
 	virtual GUI_status MouseDown(int x, int y, int button);
 	virtual GUI_status MouseUp(int x, int y, int button);
-	virtual GUI_status MouseMotion(int x, int y, Uint8 state);
+	virtual GUI_status MouseMotion(int x, int y, uint8 state);
 	GUI_status MouseDouble(int x, int y, int button);
 	GUI_status MouseClick(int x, int y, int button);
 	GUI_status Idle(void);
-	GUI_status MouseLeave(Uint8 state);
+	GUI_status MouseLeave(uint8 state);
 	GUI_status MouseDelayed(int x, int y, int button);
 	GUI_status MouseHeld(int x, int y, int button);
-	GUI_status KeyDown(SDL_Keysym key);
+	GUI_status KeyDown(Common::KeyState key);
 	GUI_status MouseWheel(sint32 x, sint32 y);
 
 	void drag_drop_success(int x, int y, int message, void *data);

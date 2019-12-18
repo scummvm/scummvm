@@ -22,7 +22,7 @@
 
 #include "ultima/ultima6/core/nuvie_defs.h"
 #include "ultima/ultima6/misc/u6_misc.h"
-#include "Map.h"
+#include "ultima/ultima6/core/map.h"
 #include "DirFinder.h"
 
 namespace Ultima {

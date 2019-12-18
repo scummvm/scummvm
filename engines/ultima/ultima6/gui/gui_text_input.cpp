@@ -22,15 +22,15 @@
 
 #include "ultima/ultima6/core/nuvie_defs.h"
 
-#include "GUI_TextInput.h"
-#include "GUI_font.h"
-#include "Keys.h"
-#include <stdlib.h>
+#include "ultima/ultima6/gui/gui_TextInput.h"
+#include "ultima/ultima6/gui/gui_font.h"
+#include "ultima/ultima6/keybinding/keys.h"
+//#include <stdlib.h>
 
 namespace Ultima {
 namespace Ultima6 {
 
-GUI_TextInput:: GUI_TextInput(int x, int y, Uint8 r, Uint8 g, Uint8 b, char *str,
+GUI_TextInput:: GUI_TextInput(int x, int y, uint8 r, uint8 g, uint8 b, char *str,
                               GUI_Font *gui_font, uint16 width, uint16 height, GUI_CallBack *callback)
 	: GUI_Text(x, y, r, g, b, gui_font, width) {
 	max_height = height;
@@ -80,14 +80,14 @@ GUI_status GUI_TextInput::MouseUp(int x, int y, int button) {
 	return (GUI_PASS);
 }
 
-GUI_status GUI_TextInput::KeyDown(SDL_Keysym key) {
+GUI_status GUI_TextInput::KeyDown(Common::KeyState key) {
 	char ascii = get_ascii_char_from_keysym(key);
 
 	if (!focused)
 		return GUI_PASS;
 
 
-	if (!isprint(ascii) && key.sym != SDLK_BACKSPACE) {
+	if (!Common::isPrint(ascii) && key.sym != SDLK_BACKSPACE) {
 		KeyBinder *keybinder = Game::get_game()->get_keybinder();
 		ActionType a = keybinder->get_ActionType(key);
 		switch (keybinder->GetActionKeyType(a)) {
@@ -187,7 +187,7 @@ GUI_status GUI_TextInput::KeyDown(SDL_Keysym key) {
 			text[pos] = ' ';
 			break;
 		}
-		while (!isalnum(text[pos]))
+		while (!Common::isAlnum(text[pos]))
 			text[pos]++;
 		break;
 
@@ -212,12 +212,12 @@ GUI_status GUI_TextInput::KeyDown(SDL_Keysym key) {
 			text[pos] = ' ';
 			break;
 		}
-		while (!isalnum(text[pos]))
+		while (!Common::isAlnum(text[pos]))
 			text[pos]--;
 		break;
 
 	default :
-		if (isprint(ascii))
+		if (Common::isPrint(ascii))
 			add_char(ascii);
 		break;
 	}

@@ -24,7 +24,7 @@
 #define ULTIMA6_VIEWS_DOLL_VIEW_GUMP_H
 
 #include "ultima/ultima6/core/nuvie_defs.h"
-#include "DraggableView.h"
+#include "ultima/ultima6/views/draggable_view.h"
 
 namespace Ultima {
 namespace Ultima6 {
@@ -74,7 +74,7 @@ public:
 
 	virtual GUI_status MouseDown(int x, int y, int button);
 	virtual GUI_status MouseUp(int x, int y, int button);
-	virtual GUI_status MouseMotion(int x, int y, Uint8 state) {
+	virtual GUI_status MouseMotion(int x, int y, uint8 state) {
 		return DraggableView::MouseMotion(x, y, state);
 	}
 	virtual GUI_status MouseWheel(sint32 xpos, sint32 ypos);
@@ -98,7 +98,7 @@ private:
 	void setColorKey(Graphics::ManagedSurface *image);
 	GUI_status set_cursor_pos(gumpCursorPos pos);
 	GUI_status moveCursorRelative(uint8 direction);
-	GUI_status KeyDown(SDL_Keysym key);
+	GUI_status KeyDown(Common::KeyState key);
 
 };
 

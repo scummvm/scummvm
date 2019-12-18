@@ -20,23 +20,23 @@
  *
  */
 
-#include <list>
-#include <cassert>
+//#include <list>
+//#include <cassert>
 #include "ultima/ultima6/core/nuvie_defs.h"
 #include "ultima/ultima6/conf/configuration.h"
 
-#include "Actor.h"
-#include "TileManager.h"
-#include "ActorManager.h"
+#include "ultima/ultima6/actors/actor.h"
+#include "ultima/ultima6/core/tile_manager.h"
+#include "ultima/ultima6/actors/actor_manager.h"
 #include "ultima/ultima6/misc/u6_misc.h"
 #include "ultima/ultima6/misc/u6_llist.h"
-#include "EggManager.h"
-#include "NuvieIOFile.h"
-#include "GameClock.h"
-#include "Game.h"
-#include "Party.h"
-#include "U6WorkTypes.h"
-#include "U6objects.h" //needed for silver serpent exception
+#include "ultima/ultima6/core/egg_manager.h"
+#include "ultima/ultima6/files/nuvie_io_file.h"
+#include "ultima/ultima6/core/game_clock.h"
+#include "ultima/ultima6/core/game.h"
+#include "ultima/ultima6/core/party.h"
+#include "ultima/ultima6/actors/u6_work_types.h"
+#include "ultima/ultima6/core/u6_objects.h" //needed for silver serpent exception
 
 namespace Ultima {
 namespace Ultima6 {

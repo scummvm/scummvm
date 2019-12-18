@@ -21,15 +21,15 @@
  */
 
 #ifdef HAVE_CONFIG_H
-#include <config.h>
+//#include <config.h>
 #endif
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <iostream>
-#include <cmath>
-#include <SDL.h>
+//#include <stdio.h>
+//#include <stdlib.h>
+//#include <string.h>
+//#include <iostream>
+//#include <cmath>
+//#include <SDL.h>
 
 #include "ultima/ultima6/core/nuvie_defs.h"
 #include "ultima/ultima6/misc/u6_misc.h"
@@ -37,9 +37,9 @@
 
 #include "Surface.h"
 #include "Scale.h"
-#include "Screen.h"
-#include "MapWindow.h"
-#include "Background.h"
+#include "ultima/ultima6/screen/screen.h"
+#include "ultima/ultima6/core/map_window.h"
+#include "ultima/ultima6/core/background.h"
 
 namespace Ultima {
 namespace Ultima6 {
@@ -469,7 +469,7 @@ Graphics::ManagedSurface *Screen::get_sdl_surface() {
 	return NULL;
 }
 
-bool Screen::blit(sint32 dest_x, sint32 dest_y, unsigned char *src_buf, uint16 src_bpp, uint16 src_w, uint16 src_h, uint16 src_pitch, bool trans, Common::Rect *clip_rect, uint8 opacity) {
+bool Screen::blit(sint32 dest_x, sint32 dest_y, const byte *src_buf, uint16 src_bpp, uint16 src_w, uint16 src_h, uint16 src_pitch, bool trans, Common::Rect *clip_rect, uint8 opacity) {
 	uint16 src_x = 0;
 	uint16 src_y = 0;
 
@@ -1359,7 +1359,7 @@ bool Screen::create_sdl_surface_and_texture(sint32 w, sint32 h, uint32 format) {
 	uint32 rmask, gmask, bmask, amask;
 	int bpp;
 
-	if (!SDL_PixelFormatEnumToMasks(format, &bpp, &rmask, &gmask, &bmask, &amask))
+	if (!Graphics::PixelFormatEnumToMasks(format, &bpp, &rmask, &gmask, &bmask, &amask))
 		return false;
 
 	sdl_surface = SDL_CreateRGBSurface(0, w, h, bpp,
@@ -1647,7 +1647,7 @@ unsigned char *Screen::copy_area(Common::Rect *area, uint16 down_scale) {
 }
 
 unsigned char *Screen::copy_area16(Common::Rect *area, uint16 down_scale) {
-	SDL_PixelFormat *fmt;
+	Graphics::PixelFormat *fmt;
 	Graphics::ManagedSurface *main_surface = get_sdl_surface();
 	unsigned char *dst_pixels = NULL;
 	unsigned char *ptr;
@@ -1705,7 +1705,7 @@ unsigned char *Screen::copy_area16(Common::Rect *area, uint16 down_scale) {
 }
 
 unsigned char *Screen::copy_area32(Common::Rect *area, uint16 down_scale) {
-	SDL_PixelFormat *fmt;
+	Graphics::PixelFormat *fmt;
 	Graphics::ManagedSurface *main_surface = get_sdl_surface();
 	unsigned char *dst_pixels = NULL;
 	unsigned char *ptr;

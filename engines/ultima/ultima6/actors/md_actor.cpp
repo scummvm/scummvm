@@ -20,9 +20,9 @@
  *
  */
 
-#include "MDActor.h"
-#include "Game.h"
-#include "GameClock.h"
+#include "MDultima/ultima6/actors/actor.h"
+#include "ultima/ultima6/core/game.h"
+#include "ultima/ultima6/core/game_clock.h"
 #include "DirFinder.h"
 
 namespace Ultima {

@@ -24,9 +24,9 @@
 #define ULTIMA6_SAVE_SAVE_MANAGER_H
 
 #include "ultima/shared/std/string.h"
-#include <list>
+//#include <list>
 
-#include "GUI_CallBack.h"
+#include "ultima/ultima6/gui/gui_CallBack.h"
 
 namespace Ultima {
 namespace Ultima6 {

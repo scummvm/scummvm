@@ -25,7 +25,7 @@
 
 /* Basic GUI data types and classes */
 
-#include "SDL.h"
+#include "ultima/ultima6/misc/sdl_compat.h"
 
 namespace Ultima {
 namespace Ultima6 {

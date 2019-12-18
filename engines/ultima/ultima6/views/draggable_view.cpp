@@ -22,12 +22,12 @@
 
 #include "ultima/ultima6/core/nuvie_defs.h"
 #include "ultima/ultima6/misc/u6_misc.h"
-#include "GUI.h"
-#include "GUI_button.h"
+#include "ultima/ultima6/gui/gui.h"
+#include "ultima/ultima6/gui/gui_button.h"
 #include "ultima/ultima6/conf/configuration.h"
-#include "ViewManager.h"
-#include "MsgScroll.h"
-#include "DraggableView.h"
+#include "ultima/ultima6/views/view_manager.h"
+#include "ultima/ultima6/core/msg_scroll.h"
+#include "ultima/ultima6/views/draggable_view.h"
 
 namespace Ultima {
 namespace Ultima6 {
@@ -58,7 +58,7 @@ DraggableView::~DraggableView() {
 	}
 }
 
-void DraggableView::set_bg_color_key(Uint8 r, Uint8 g, Uint8 b) {
+void DraggableView::set_bg_color_key(uint8 r, uint8 g, uint8 b) {
 	if (bg_image) {
 		bg_color_key = SDL_MapRGB(bg_image->format, 0, 0x70, 0xfc);
 		SDL_SetColorKey(bg_image, SDL_TRUE, bg_color_key);
@@ -95,7 +95,7 @@ GUI_status DraggableView::MouseUp(int x, int y, int button) {
 	return GUI_YUM;
 }
 
-GUI_status DraggableView::MouseMotion(int x, int y, Uint8 state) {
+GUI_status DraggableView::MouseMotion(int x, int y, uint8 state) {
 	int dx, dy;
 
 	if (!drag || state == 0) //state is 0 if no button pressed

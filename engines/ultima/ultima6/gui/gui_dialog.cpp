@@ -20,17 +20,17 @@
  *
  */
 
-#include <cmath>
+//#include <cmath>
 #include "ultima/shared/std/string.h"
 #include "ultima/ultima6/core/nuvie_defs.h"
 #include "ultima/ultima6/misc/u6_misc.h"
-#include "GUI.h"
-#include "GUI_Dialog.h"
+#include "ultima/ultima6/gui/gui.h"
+#include "ultima/ultima6/gui/gui_Dialog.h"
 
 namespace Ultima {
 namespace Ultima6 {
 
-GUI_Dialog::GUI_Dialog(int x, int y, int w, int h, Uint8 r, Uint8 g, Uint8 b, bool is_moveable)
+GUI_Dialog::GUI_Dialog(int x, int y, int w, int h, uint8 r, uint8 g, uint8 b, bool is_moveable)
 	: GUI_Widget(NULL, x, y, w, h) {
 
 	R = r;
@@ -226,7 +226,7 @@ GUI_status GUI_Dialog::MouseUp(int x, int y, int button) {
 	return GUI_YUM;
 }
 
-GUI_status GUI_Dialog::MouseMotion(int x, int y, Uint8 state) {
+GUI_status GUI_Dialog::MouseMotion(int x, int y, uint8 state) {
 	int dx, dy;
 
 	if (!drag)

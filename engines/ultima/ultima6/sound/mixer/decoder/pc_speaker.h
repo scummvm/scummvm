@@ -19,7 +19,7 @@
  *
  */
 
-#include "NuvieIOFile.h"
+#include "ultima/ultima6/files/nuvie_io_file.h"
 
 #define SPKR_OUTPUT_RATE 22050 //11025 //FIXME may need to fiddle with this.
 

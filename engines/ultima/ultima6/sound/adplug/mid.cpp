@@ -20,14 +20,14 @@
  *
  */
 
-#include <stdlib.h>
-#include <stdio.h>
-#include <math.h>
-#include <string.h>
+//#include <stdlib.h>
+//#include <stdio.h>
+//#include <math.h>
+//#include <string.h>
 #include "ultima/ultima6/core/nuvie_defs.h"
 #include "ultima/ultima6/misc/u6_misc.h"
-#include "U6Lib_n.h"
-#include "Game.h"
+#include "ultima/ultima6/files/u6_lib_n.h"
+#include "ultima/ultima6/core/game.h"
 #include "OriginFXAdLibDriver.h"
 #include "mid.h"
 

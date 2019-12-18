@@ -13,12 +13,12 @@
 ** if needed, includes windows header before everything else
 */
 #if defined(_WIN32)
-#include <windows.h>
+//#include <windows.h>
 #endif
 
 
-#include <stdlib.h>
-#include <string.h>
+//#include <stdlib.h>
+//#include <string.h>
 
 
 #define loadlib_c
@@ -124,7 +124,7 @@ static lua_CFunction ll_sym(lua_State *L, void *lib, const char *sym);
 ** =========================================================================
 */
 
-#include <dlfcn.h>
+//#include <dlfcn.h>
 
 static void ll_unloadlib(void *lib) {
 	dlclose(lib);

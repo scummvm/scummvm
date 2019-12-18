@@ -23,7 +23,7 @@
 #ifndef ULTIMA6_PATHFINDER_PATH_FINDER_H
 #define ULTIMA6_PATHFINDER_PATH_FINDER_H
 
-#include "Map.h"
+#include "ultima/ultima6/core/map.h"
 
 namespace Ultima {
 namespace Ultima6 {

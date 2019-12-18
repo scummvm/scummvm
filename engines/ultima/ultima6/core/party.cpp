@@ -23,24 +23,24 @@
 #include "ultima/ultima6/core/nuvie_defs.h"
 
 #include "ultima/ultima6/misc/u6_misc.h"
-#include "NuvieIO.h"
-#include "Game.h"
-#include "Converse.h"
-#include "TimedEvent.h"
+#include "ultima/ultima6/files/nuvie_io.h"
+#include "ultima/ultima6/core/game.h"
+#include "ultima/ultima6/core/converse.h"
+#include "ultima/ultima6/core/timed_event.h"
 #include "ultima/ultima6/conf/configuration.h"
-#include "ActorManager.h"
-#include "SoundManager.h"
-#include "ViewManager.h"
-#include "Player.h"
-#include "Map.h"
-#include "MapWindow.h"
-#include "U6UseCode.h"
-#include "CommandBar.h"
-#include "PartyPathFinder.h"
-#include "Party.h"
-#include "View.h"
-#include "Objlist.h"
-#include "Event.h"
+#include "ultima/ultima6/actors/actor_manager.h"
+#include "ultima/ultima6/sound/sound_manager.h"
+#include "ultima/ultima6/views/view_manager.h"
+#include "ultima/ultima6/core/player.h"
+#include "ultima/ultima6/core/map.h"
+#include "ultima/ultima6/core/map_window.h"
+#include "ultima/ultima6/usecode/u6_usecode.h"
+#include "ultima/ultima6/core/command_bar.h"
+#include "ultima/ultima6/pathfinder/party_path_finder.h"
+#include "ultima/ultima6/core/party.h"
+#include "ultima/ultima6/views/view.h"
+#include "ultima/ultima6/save/obj_list.h"
+#include "ultima/ultima6/core/event.h"
 
 namespace Ultima {
 namespace Ultima6 {
@@ -137,7 +137,7 @@ bool Party::load(NuvieIO *objlist) {
 		hide();
 	}
 
-	for (int i = 0; i < PARTY_MAX_MEMBERS; i++) {
+	for (i = 0; i < PARTY_MAX_MEMBERS; i++) {
 		clear_combat_target(i);
 	}
 

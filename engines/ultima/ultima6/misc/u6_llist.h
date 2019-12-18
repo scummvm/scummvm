@@ -23,7 +23,7 @@
 #ifndef ULTIMA6_MISC_U6_LIST_H
 #define ULTIMA6_MISC_U6_LIST_H
 
-#include <stdio.h>
+//#include <stdio.h>
 
 namespace Ultima {
 namespace Ultima6 {

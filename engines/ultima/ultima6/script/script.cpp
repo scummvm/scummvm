@@ -20,40 +20,40 @@
  *
  */
 
-#include <list>
-#include <stack>
-#include <cassert>
+//#include <list>
+//#include <stack>
+//#include <cassert>
 #include "ultima/ultima6/core/nuvie_defs.h"
 #include "ultima/ultima6/conf/configuration.h"
 #include "ultima/ultima6/misc/u6_misc.h"
-#include "U6objects.h"
+#include "ultima/ultima6/core/u6_objects.h"
 
-#include "Game.h"
-#include "GameClock.h"
-#include "Effect.h"
-#include "MsgScroll.h"
-#include "Player.h"
-#include "Party.h"
-#include "ActorManager.h"
-#include "TileManager.h"
-#include "ViewManager.h"
-#include "InventoryView.h"
-#include "SaveManager.h"
-#include "Actor.h"
-#include "Weather.h"
-#include "UseCode.h"
-#include "SoundManager.h"
-#include "Console.h"
-#include "Cursor.h"
+#include "ultima/ultima6/core/game.h"
+#include "ultima/ultima6/core/game_clock.h"
+#include "ultima/ultima6/core/effect.h"
+#include "ultima/ultima6/core/msg_scroll.h"
+#include "ultima/ultima6/core/player.h"
+#include "ultima/ultima6/core/party.h"
+#include "ultima/ultima6/actors/actor_manager.h"
+#include "ultima/ultima6/core/tile_manager.h"
+#include "ultima/ultima6/views/view_manager.h"
+#include "ultima/ultima6/views/inventory_view.h"
+#include "ultima/ultima6/save/save_manager.h"
+#include "ultima/ultima6/actors/actor.h"
+#include "ultima/ultima6/core/weather.h"
+#include "ultima/ultima6/usecode/usecode.h"
+#include "ultima/ultima6/sound/sound_manager.h"
+#include "ultima/ultima6/core/console.h"
+#include "ultima/ultima6/core/cursor.h"
 
-#include "Script.h"
-#include "ScriptActor.h"
+#include "ultima/ultima6/script/script.h"
+#include "Scriptultima/ultima6/actors/actor.h"
 #include "ScriptCutscene.h"
-#include "Magic.h"
-#include "TMXMap.h"
+#include "ultima/ultima6/core/magic.h"
+#include "ultima/ultima6/files/tmx_map.h"
 
-#include <math.h>
-#include "U6Lib_n.h"
+//#include <math.h>
+#include "ultima/ultima6/files/u6_lib_n.h"
 
 #include "lua.hpp"
 

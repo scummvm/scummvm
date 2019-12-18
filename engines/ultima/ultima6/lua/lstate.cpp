@@ -5,8 +5,8 @@
 */
 
 
-#include <stddef.h>
-#include <string.h>
+//#include <stddef.h>
+//#include <string.h>
 
 #define lstate_c
 #define LUA_CORE
@@ -47,7 +47,7 @@
 ** created; the seed is used to randomize hashes.
 */
 #if !defined(luai_makeseed)
-#include <time.h>
+//#include <time.h>
 #define luai_makeseed()     cast(unsigned int, time(NULL))
 #endif
 

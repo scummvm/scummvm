@@ -39,7 +39,7 @@
 
 //#include "common/scummsys.h"
 #include "ultima/ultima6/core/nuvie_defs.h"
-#include "types.h"
+#include "ultima/ultima6/sound/mixer/types.h"
 #include "decoder/wave/stream.h"
 
 

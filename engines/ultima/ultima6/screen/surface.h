@@ -23,13 +23,11 @@
 #ifndef ULTIMA6_SCREEN_SURFACE_H
 #define ULTIMA6_SCREEN_SURFACE_H
 
-//#include "common_types.h"
+#include "graphics/pixelformat.h"
 
 namespace Ultima {
 namespace Ultima6 {
 
-struct Graphics::ManagedSurface;
-struct SDL_PixelFormat;
 class OpenGL;
 
 class RenderSurface {
@@ -84,8 +82,8 @@ public:
 	// Create a 16 Bit Z Buffer for this surface
 	void create_zbuffer();
 
-	// Set the buffer format from SDL_PixelFormat
-	void set_format(const SDL_PixelFormat *format);
+	// Set the buffer format from Graphics::PixelFormat
+	void set_format(const Graphics::PixelFormat *format);
 
 	// Set a custom 565 format
 	void set_format565(int rsft = 11, int gsft = 5, int bsft = 0);

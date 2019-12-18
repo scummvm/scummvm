@@ -20,14 +20,14 @@
  *
  */
 
-#include <cassert>
+//#include <cassert>
 #include "ultima/shared/std/containers.h"
 #include "ultima/ultima6/misc/u6_misc.h"
-#include "Actor.h"
-#include "Party.h"
+#include "ultima/ultima6/actors/actor.h"
+#include "ultima/ultima6/core/party.h"
 #include "SeekPath.h"
 #include "ActorPathFinder.h"
-#include "PartyPathFinder.h"
+#include "ultima/ultima6/pathfinder/party_path_finder.h"
 
 namespace Ultima {
 namespace Ultima6 {

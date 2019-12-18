@@ -31,7 +31,7 @@
 
 #if !LUA_USE_CTYPE  /* { */
 
-#include <limits.h>
+//#include <limits.h>
 
 #include "llimits.h"
 
@@ -56,9 +56,9 @@
 */
 #define lislalpha(c)    testprop(c, MASK(ALPHABIT))
 #define lislalnum(c)    testprop(c, (MASK(ALPHABIT) | MASK(DIGITBIT)))
-#define lisdigit(c) testprop(c, MASK(DIGITBIT))
+#define lCommon::isDigit(c) testprop(c, MASK(DIGITBIT))
 #define lisspace(c) testprop(c, MASK(SPACEBIT))
-#define lisprint(c) testprop(c, MASK(PRINTBIT))
+#define lCommon::isPrint(c) testprop(c, MASK(PRINTBIT))
 #define lisxdigit(c)    testprop(c, MASK(XDIGITBIT))
 
 /*
@@ -77,14 +77,14 @@ LUAI_DDEC const lu_byte luai_ctype_[UCHAR_MAX + 2];
 ** use standard C ctypes
 */
 
-#include <ctype.h>
+//#include <ctype.h>
 
 
-#define lislalpha(c)    (isalpha(c) || (c) == '_')
-#define lislalnum(c)    (isalnum(c) || (c) == '_')
-#define lisdigit(c) (isdigit(c))
-#define lisspace(c) (isspace(c))
-#define lisprint(c) (isprint(c))
+#define lislalpha(c)    (Common::isAlpha(c) || (c) == '_')
+#define lislalnum(c)    (Common::isAlnum(c) || (c) == '_')
+#define lCommon::isDigit(c) (Common::isDigit(c))
+#define lisspace(c) (Common::isSpace(c))
+#define lCommon::isPrint(c) (Common::isPrint(c))
 #define lisxdigit(c)    (isxdigit(c))
 
 #define ltolower(c) (tolower(c))

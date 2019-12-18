@@ -20,20 +20,20 @@
  *
  */
 
-#include <cstdlib>
-#include <cctype>
-#include <cstring>
-#include <cmath>
+//#include <cstdlib>
+//#include <cctype>
+//#include <cstring>
+//#include <cmath>
 
 #include "ultima/ultima6/core/nuvie_defs.h"
-#include "Game.h"
+#include "ultima/ultima6/core/game.h"
 #include "ultima/ultima6/conf/configuration.h"
-#include "NuvieIO.h"
-#include "U6Lib_n.h"
-#include "U6Lzw.h"
+#include "ultima/ultima6/files/nuvie_io.h"
+#include "ultima/ultima6/files/u6_lib_n.h"
+#include "ultima/ultima6/files/u6_lzw.h"
 
-#include "ConverseSpeech.h"
-#include "SoundManager.h"
+#include "ultima/ultima6/core/converse_speech.h"
+#include "ultima/ultima6/sound/sound_manager.h"
 
 namespace Ultima {
 namespace Ultima6 {

@@ -20,33 +20,33 @@
  *
  */
 
-#include <cassert>
-#include <sstream>
-#include <cstdlib>
+//#include <cassert>
+//#include <sstream>
+//#include <cstdlib>
 #include "ultima/ultima6/core/nuvie_defs.h"
 #include "ultima/ultima6/misc/u6_misc.h"
 #include "ultima/ultima6/conf/configuration.h"
-#include "NuvieFileList.h"
-#include "Objlist.h"
+#include "ultima/ultima6/files/nuvie_file_list.h"
+#include "ultima/ultima6/save/obj_list.h"
 
-#include "Actor.h"
-#include "U6Actor.h"
-#include "SEActor.h"
-#include "MDActor.h"
-#include "U6WorkTypes.h"
-#include "TileManager.h"
+#include "ultima/ultima6/actors/actor.h"
+#include "U6ultima/ultima6/actors/actor.h"
+#include "SEultima/ultima6/actors/actor.h"
+#include "MDultima/ultima6/actors/actor.h"
+#include "ultima/ultima6/actors/u6_work_types.h"
+#include "ultima/ultima6/core/tile_manager.h"
 #include "ultima/ultima6/misc/u6_llist.h"
-#include "ActorManager.h"
-#include "NuvieIOFile.h"
-#include "GameClock.h"
-#include "Game.h"
-#include "Party.h"
-#include "Portrait.h"
-#include "Script.h"
-#include "U6objects.h"
-#include "MapWindow.h"
-#include "ViewManager.h"
-#include "SaveManager.h"
+#include "ultima/ultima6/actors/actor_manager.h"
+#include "ultima/ultima6/files/nuvie_io_file.h"
+#include "ultima/ultima6/core/game_clock.h"
+#include "ultima/ultima6/core/game.h"
+#include "ultima/ultima6/core/party.h"
+#include "ultima/ultima6/portraits/portrait.h"
+#include "ultima/ultima6/script/script.h"
+#include "ultima/ultima6/core/u6_objects.h"
+#include "ultima/ultima6/core/map_window.h"
+#include "ultima/ultima6/views/view_manager.h"
+#include "ultima/ultima6/save/save_manager.h"
 
 namespace Ultima {
 namespace Ultima6 {

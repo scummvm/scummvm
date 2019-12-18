@@ -23,25 +23,25 @@
 #include "ultima/ultima6/core/nuvie_defs.h"
 
 #include "ultima/ultima6/conf/configuration.h"
-#include "Console.h"
-#include "NuvieIOFile.h"
-#include "U6Shape.h"
-#include "Dither.h"
-#include "Game.h"
+#include "ultima/ultima6/core/console.h"
+#include "ultima/ultima6/files/nuvie_io_file.h"
+#include "ultima/ultima6/files/u6_shape.h"
+#include "ultima/ultima6/screen/dither.h"
+#include "ultima/ultima6/core/game.h"
 
-#include "ActorManager.h"
-#include "Actor.h"
+#include "ultima/ultima6/actors/actor_manager.h"
+#include "ultima/ultima6/actors/actor.h"
 
-#include "Portrait.h"
+#include "ultima/ultima6/portraits/portrait.h"
 #include "PortraitU6.h"
 #include "PortraitMD.h"
 #include "PortraitSE.h"
 
-#include "U6Lzw.h"
+#include "ultima/ultima6/files/u6_lzw.h"
 #include "ultima/ultima6/misc/u6_misc.h"
-#include "U6Lib_n.h"
+#include "ultima/ultima6/files/u6_lib_n.h"
 
-#include "U6objects.h"
+#include "ultima/ultima6/core/u6_objects.h"
 
 namespace Ultima {
 namespace Ultima6 {

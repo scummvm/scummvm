@@ -23,14 +23,14 @@
  *
  */
 
-#include <assert.h>
-#include <string.h>
+//#include <assert.h>
+//#include <string.h>
 //#include "common/debug.h"
 //#include "common/util.h"
 #include "decoder/wave/stream.h"
 
 #include "audiostream.h"
-#include "mixer.h"
+#include "audio/mixer.h"
 #include "decoder/wave/wave.h"
 #include "decoder/wave/adpcm.h"
 #include "decoder/wave/raw.h"

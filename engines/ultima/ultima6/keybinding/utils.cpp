@@ -23,12 +23,12 @@
 #include "ultima/shared/std/string.h"
 
 #ifdef MACOS
-#include <stat.h>
+//#include <stat.h>
 #elif !defined(UNDER_CE)
-#include <sys/stat.h>
+//#include <sys/stat.h>
 #endif
 
-#include "Utils.h"
+#include "ultima/ultima6/keybinding/utils.h"
 
 namespace Ultima {
 namespace Ultima6 {

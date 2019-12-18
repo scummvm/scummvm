@@ -86,7 +86,17 @@ const uint16 map_pitch[2] = { 1024, 256 }; // width of 0:surface plane, and 1:al
 #define TRAMMEL_PHASE 1.75
 #define FELUCCA_PHASE 1.1666666666666667
 
-typedef enum { LEVEL_EMERGENCY = 0, LEVEL_ALERT, LEVEL_CRITICAL, LEVEL_ERROR, LEVEL_WARNING, LEVEL_NOTIFICATION, LEVEL_INFORMATIONAL, LEVEL_DEBUGGING } DebugLevelType;
+enum DebugLevelType {
+	LEVEL_EMERGENCY = 0,
+	LEVEL_ALERT,
+	LEVEL_CRITICAL,
+	LEVEL_ERROR,
+	LEVEL_WARNING,
+	LEVEL_NOTIFICATION,
+	LEVEL_INFORMATIONAL,
+	LEVEL_DEBUGGING
+};
+
 #ifdef WITHOUT_DEBUG
 #define DEBUG(...)
 #else
@@ -116,13 +126,8 @@ typedef unsigned char BOOL;
 #endif
 
 
-#ifdef MACOSX
-#define NUVIE_RAND random
 #define NUVIE_RAND_MAX 0x7fffffff // POSIX: 2^(31)-1
-#else
-#define NUVIE_RAND rand
-#define NUVIE_RAND_MAX RAND_MAX
-#endif
+#define NUVIE_RAND() getRandom(NUVIE_RAND_MAX)
 
 #define MAXPATHLEN 256
 

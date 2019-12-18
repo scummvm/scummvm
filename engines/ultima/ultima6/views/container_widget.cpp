@@ -20,27 +20,27 @@
  *
  */
 
-#include <cassert>
+//#include <cassert>
 #include "ultima/ultima6/core/nuvie_defs.h"
 #include "ultima/ultima6/misc/u6_llist.h"
 #include "ultima/ultima6/conf/configuration.h"
 
-#include "GUI.h"
-#include "GamePalette.h"
+#include "ultima/ultima6/gui/gui.h"
+#include "ultima/ultima6/screen/game_palette.h"
 #include "ContainerWidget.h"
-#include "Actor.h"
-#include "GameClock.h"
-#include "Event.h"
-#include "MsgScroll.h"
-#include "TimedEvent.h"
-#include "UseCode.h"
-#include "MapWindow.h"
-#include "Player.h"
-#include "ActorManager.h"
-#include "Script.h"
+#include "ultima/ultima6/actors/actor.h"
+#include "ultima/ultima6/core/game_clock.h"
+#include "ultima/ultima6/core/event.h"
+#include "ultima/ultima6/core/msg_scroll.h"
+#include "ultima/ultima6/core/timed_event.h"
+#include "ultima/ultima6/usecode/usecode.h"
+#include "ultima/ultima6/core/map_window.h"
+#include "ultima/ultima6/core/player.h"
+#include "ultima/ultima6/actors/actor_manager.h"
+#include "ultima/ultima6/script/script.h"
 
-#include "InventoryFont.h"
-#include "ViewManager.h"
+#include "Inventoryultima/ultima6/fonts/font.h"
+#include "ultima/ultima6/views/view_manager.h"
 
 namespace Ultima {
 namespace Ultima6 {
@@ -314,7 +314,7 @@ bool ContainerWidget::down_arrow() {
 	return false;
 }
 
-GUI_status ContainerWidget::MouseMotion(int x, int y, Uint8 state) {
+GUI_status ContainerWidget::MouseMotion(int x, int y, uint8 state) {
 	Tile *tile;
 
 	if (selected_obj && !dragging) {

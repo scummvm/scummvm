@@ -20,15 +20,15 @@
  *
  */
 
-#include <cmath>
+//#include <cmath>
 #include "ultima/ultima6/core/nuvie_defs.h"
-#include "GUI.h"
-#include "GUI_area.h"
+#include "ultima/ultima6/gui/gui.h"
+#include "ultima/ultima6/gui/gui_area.h"
 
 namespace Ultima {
 namespace Ultima6 {
 
-GUI_Area:: GUI_Area(int x, int y, int w, int h, Uint8 r, Uint8 g, Uint8 b, int aShape)
+GUI_Area:: GUI_Area(int x, int y, int w, int h, uint8 r, uint8 g, uint8 b, int aShape)
 	: GUI_Widget(NULL, x, y, w, h) {
 	R = r;
 	G = g;
@@ -39,8 +39,8 @@ GUI_Area:: GUI_Area(int x, int y, int w, int h, Uint8 r, Uint8 g, Uint8 b, int a
 	frameThickness = 0;
 }
 
-GUI_Area:: GUI_Area(int x, int y, int w, int h, Uint8 r, Uint8 g, Uint8 b,
-                    Uint8 fr, Uint8 fg, Uint8 fb, int fthick, int aShape)
+GUI_Area:: GUI_Area(int x, int y, int w, int h, uint8 r, uint8 g, uint8 b,
+                    uint8 fr, uint8 fg, uint8 fb, int fthick, int aShape)
 	: GUI_Widget(NULL, x, y, w, h) {
 	R = r;
 	G = g;

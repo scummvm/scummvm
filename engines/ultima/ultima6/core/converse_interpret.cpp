@@ -20,22 +20,22 @@
  *
  */
 
-#include <ctype.h>
+//#include <ctype.h>
 
 #include "ultima/ultima6/core/nuvie_defs.h"
 #include "ultima/ultima6/misc/u6_misc.h"
 
-#include "Player.h"
-#include "Party.h"
-#include "U6UseCode.h"
-#include "ActorManager.h"
-#include "GameClock.h"
-#include "Map.h"
-#include "MapWindow.h"
-#include "Effect.h"
-#include "Script.h"
-#include "ConverseInterpret.h"
-#include "ConverseSpeech.h"
+#include "ultima/ultima6/core/player.h"
+#include "ultima/ultima6/core/party.h"
+#include "ultima/ultima6/usecode/u6_usecode.h"
+#include "ultima/ultima6/actors/actor_manager.h"
+#include "ultima/ultima6/core/game_clock.h"
+#include "ultima/ultima6/core/map.h"
+#include "ultima/ultima6/core/map_window.h"
+#include "ultima/ultima6/core/effect.h"
+#include "ultima/ultima6/script/script.h"
+#include "ultima/ultima6/core/converse_interpret.h"
+#include "ultima/ultima6/core/converse_speech.h"
 
 namespace Ultima {
 namespace Ultima6 {
@@ -293,10 +293,10 @@ string ConverseInterpret::get_formatted_text(const char *c_str) {
 			else if (!strcmp(symbol, "$Z")) // previous input
 				output.append(converse->get_svar(U6TALK_VAR_INPUT));
 			else if (symbol[0] == '$' // value of a string variable
-			         && isdigit(symbol[1]))
+			         && Common::isDigit(symbol[1]))
 				output.append(converse->get_svar(strtol(&symbol[1], NULL, 10)));
 			else if (symbol[0] == '#' // value of a variable
-			         && isdigit(symbol[1])) {
+			         && Common::isDigit(symbol[1])) {
 				last_value = converse->get_var(strtol(&symbol[1], NULL, 10));
 				snprintf(intval, 16, "%u", last_value);
 
@@ -318,7 +318,7 @@ string ConverseInterpret::get_formatted_text(const char *c_str) {
 				if (c_str[i] == 'P')
 					converse->get_speech()->play_speech(converse->script_num, (int)strtol(&c_str[i + 1], NULL, 10));
 
-				for (i++; isdigit(c_str[i]) && i < len;)
+				for (i++; Common::isDigit(c_str[i]) && i < len;)
 					i++;
 			}
 			break;
@@ -533,20 +533,20 @@ bool WOUConverseInterpret::op_create_new(stack<converse_typed_value> &i) {
 bool ConverseInterpret::op(stack<converse_typed_value> &i) {
 	bool success = true;
 	converse_value v[4] = { 0, 0, 0, 0 }; // args
-	converse_value in;
+	converse_value inVal;
 	ConvScript *cs = converse->script;
 	Actor *cnpc = NULL;
 	Obj *cnpc_obj = NULL;
 	Player *player = converse->player;
 //    converse_db_s *cdb;
 
-	in = pop_arg(i);
+	inVal = pop_arg(i);
 
 #ifdef CONVERSE_DEBUG
-	DEBUG(1, LEVEL_DEBUGGING, "op %s(%x)\n", op_str(in), in);
+	DEBUG(1, LEVEL_DEBUGGING, "op %s(%x)\n", op_str(inVal), inVal);
 #endif
 
-	switch (in) {
+	switch (inVal) {
 	case U6OP_SLEEP: // 0x9e
 		// Note: It's usually unecessary to wait for the effect, as it
 		// pauses input and the user can't continue the conversation until
@@ -610,7 +610,7 @@ bool ConverseInterpret::op(stack<converse_typed_value> &i) {
 	case U6OP_ASSIGN: // 0xa8
 	case U6OP_SETNAME: // 0xd8
 		v[0] = pop_arg(i); // value
-		if (in == U6OP_ASSIGN) { // 0xa8
+		if (inVal == U6OP_ASSIGN) { // 0xa8
 			if (db_lvar) {
 				set_db_integer(db_loc, db_offset, v[0]);
 			} else if (decl_v <= U6TALK_VAR__LAST_) {
@@ -760,12 +760,12 @@ bool ConverseInterpret::op(stack<converse_typed_value> &i) {
 		v[0] = pop_arg(i);
 		if (v[0] != converse->npc_num)
 			DEBUG(0, LEVEL_WARNING,
-			      "Converse: npc number in script (%d) does not"
+			      "Converse: npc number inVal script (%d) does not"
 			      " match actor number (%d)\n", v[0], converse->npc_num);
-		converse->name = strdup(get_text().c_str()); // collected
+		converse->name = scumm_strdup(get_text().c_str()); // collected
 		break;
 	case U6OP_SLOOK: // 0xf1, description follows
-		converse->desc = strdup(get_formatted_text(get_text().c_str()).c_str()); // collected
+		converse->desc = scumm_strdup(get_formatted_text(get_text().c_str()).c_str()); // collected
 		converse->print("\nYou see ");
 		converse->print(converse->desc);
 		converse->print("\n");
@@ -807,7 +807,7 @@ bool ConverseInterpret::op(stack<converse_typed_value> &i) {
 		break;
 	default:
 		converse->print("[Unknown command]\n");
-		DEBUG(0, LEVEL_ERROR, "Converse: UNK OP=%02x\n", in);
+		DEBUG(0, LEVEL_ERROR, "Converse: UNK OP=%02x\n", inVal);
 		success = false;
 	}
 	return (success);
@@ -820,7 +820,7 @@ bool ConverseInterpret::op(stack<converse_typed_value> &i) {
 bool ConverseInterpret::evop(stack<converse_typed_value> &i) {
 	bool success = true;
 	converse_value v[4]; // input
-	converse_typed_value in;
+	converse_typed_value inVal;
 	converse_typed_value out;
 	Actor *cnpc = NULL;
 	Obj *cnpc_obj = NULL;
@@ -830,13 +830,13 @@ bool ConverseInterpret::evop(stack<converse_typed_value> &i) {
 	out.type = U6OP_VAR;
 	out.val = 0;
 
-	in.val = pop_arg(i);
+	inVal.val = pop_arg(i);
 
 #ifdef CONVERSE_DEBUG
-	DEBUG(1, LEVEL_DEBUGGING, "evop %s(%x)\n", evop_str(in.val), in.val);
+	DEBUG(1, LEVEL_DEBUGGING, "evop %s(%x)\n", evop_str(inVal.val), inVal.val);
 #endif
 
-	switch (in.val) {
+	switch (inVal.val) {
 	case U6OP_GT: // 0x81
 		v[1] = pop_arg(i);
 		v[0] = pop_arg(i);
@@ -1115,7 +1115,7 @@ bool ConverseInterpret::evop(stack<converse_typed_value> &i) {
 		}
 		break;
 	default:
-		DEBUG(0, LEVEL_ERROR, "Converse: UNK EVOP=%02x\n", in);
+		DEBUG(0, LEVEL_ERROR, "Converse: UNK EVOP=%02x\n", inVal);
 		success = false;
 	}
 	i.push(out);
@@ -1131,7 +1131,7 @@ converse_value ConverseInterpret::evop_eq(stack<converse_typed_value> &vs) {
 		if (operand1.val == operand2.val)
 			out = 1;
 	} else {
-		if (strcasecmp(get_rstr(operand1.val), get_rstr(operand2.val)) == 0)
+		if (scumm_stricmp(get_rstr(operand1.val), get_rstr(operand2.val)) == 0)
 			out = 1;
 	}
 
@@ -1204,15 +1204,15 @@ bool ConverseInterpret::check_keywords(string keystr, string instr) {
 		if (c == 0 || strt_s[c] == ',') {
 			// copy from keyword start to end of string/keyword
 			uint32 l;
-			tok_s = strdup(&strt_s[(c == 0) ? c : c + 1]);
+			tok_s = scumm_strdup(&strt_s[(c == 0) ? c : c + 1]);
 			for (l = 0; l < strlen(tok_s) && tok_s[l] != ','; l++);
 			tok_s[l] = '\0';
-			cmp_s = strdup(instr.c_str());
+			cmp_s = scumm_strdup(instr.c_str());
 			// trim input to keyword size
 			if (l < strlen(cmp_s))
 				cmp_s[l] = '\0';
 			// compare
-			if (!strcasecmp(tok_s, cmp_s)) {
+			if (!scumm_stricmp(tok_s, cmp_s)) {
 				free(cmp_s);
 				free(tok_s);
 				return (true);

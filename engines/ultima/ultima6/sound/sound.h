@@ -23,6 +23,8 @@
 #ifndef ULTIMA6_SOUND_SOUND_H
 #define ULTIMA6_SOUND_SOUND_H
 
+#include "ultima/ultima6/core/game.h"
+
 //disable some annoying MSC warnings
 #if defined(_MSC_VER)
 #pragma warning( disable : 4503 ) // warning: decorated name length exceeded
@@ -31,21 +33,20 @@
 #endif
 #endif
 
-#include "SDL.h"
+
 
 #include "ultima/shared/std/string.h"
-#include <stdlib.h>
-#include <list>
+//#include <stdlib.h>
+//#include <list>
 #include "ultima/shared/std/containers.h"
-#include <map>
-#include <iterator>
+//#include <map>
+//#include <iterator>
 
 namespace Ultima {
 namespace Ultima6 {
 
 using std::string;
 using std::list;
-using std::iterator;
 using std::map;
 using std::vector;
 

@@ -23,7 +23,7 @@
 #ifndef ULTIMA6_VIEWS_PARTY_VIEW_H
 #define ULTIMA6_VIEWS_PARTY_VIEW_H
 
-#include "View.h"
+#include "ultima/ultima6/views/view.h"
 
 namespace Ultima {
 namespace Ultima6 {

@@ -21,25 +21,25 @@
  */
 
 #ifdef HAVE_CONFIG_H
-#include <config.h>
+//#include <config.h>
 #endif
 
 #include "ultima/ultima6/core/nuvie_defs.h"
 #include "ultima/ultima6/misc/u6_misc.h"
-#include "U6objects.h"
+#include "ultima/ultima6/core/u6_objects.h"
 #include "emuopl.h"
-#include "SoundManager.h"
+#include "ultima/ultima6/sound/sound_manager.h"
 #include "SongAdPlug.h"
 #include "Sample.h"
-#include <algorithm>
-#include <cmath>
+//#include <algorithm>
+//#include <cmath>
 
-#include "Game.h"
-#include "Player.h"
-#include "MapWindow.h"
-#include "Effect.h"
+#include "ultima/ultima6/core/game.h"
+#include "ultima/ultima6/core/player.h"
+#include "ultima/ultima6/core/map_window.h"
+#include "ultima/ultima6/core/effect.h"
 
-#include "mixer.h"
+#include "audio/mixer.h"
 #include "doublebuffersdl-mixer.h"
 #include "decoder/FMtownsDecoderStream.h"
 

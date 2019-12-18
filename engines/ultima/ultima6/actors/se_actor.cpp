@@ -20,7 +20,7 @@
  *
  */
 
-#include "SEActor.h"
+#include "SEultima/ultima6/actors/actor.h"
 
 namespace Ultima {
 namespace Ultima6 {

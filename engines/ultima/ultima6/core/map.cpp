@@ -23,14 +23,14 @@
 #include "ultima/shared/std/string.h"
 
 #include "ultima/ultima6/core/nuvie_defs.h"
-#include "NuvieIOFile.h"
+#include "ultima/ultima6/files/nuvie_io_file.h"
 
 #include "ultima/ultima6/conf/configuration.h"
-#include "Game.h"
-#include "TileManager.h"
-#include "ActorManager.h"
-#include "Map.h"
-#include "MapWindow.h"
+#include "ultima/ultima6/core/game.h"
+#include "ultima/ultima6/core/tile_manager.h"
+#include "ultima/ultima6/actors/actor_manager.h"
+#include "ultima/ultima6/core/map.h"
+#include "ultima/ultima6/core/map_window.h"
 
 #include "ultima/ultima6/misc/u6_misc.h"
 

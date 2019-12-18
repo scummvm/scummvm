@@ -23,10 +23,8 @@
 #ifndef ULTIMA6_FILES_NUVIE_FILE_LIST_H
 #define ULTIMA6_FILES_NUVIE_FILE_LIST_H
 
-#include <sys/types.h>
 #include "ultima/shared/std/string.h"
-#include <list>
-#include <set>
+#include "common/fs.h"
 
 namespace Ultima {
 namespace Ultima6 {
@@ -58,13 +56,13 @@ public:
 
 class NuvieFileList {
 protected:
-
 	std::list<NuvieFileDesc> file_list;
 	std::list<NuvieFileDesc>::iterator list_ptr;
 
 	std::string search_prefix;
 	uint8 sort_mode;
-
+protected:
+	bool add_filename(const Common::FSNode &file);
 public:
 
 	NuvieFileList();
@@ -80,11 +78,6 @@ public:
 	std::set<std::string> get_filenames();
 
 	void close();
-
-protected:
-
-	bool add_filename(const char *directory, const char *filename);
-
 };
 
 

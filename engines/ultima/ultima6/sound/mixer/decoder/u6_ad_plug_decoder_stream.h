@@ -18,11 +18,11 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
  */
-#include <cstdio>
+//#include <cstdio>
 #include "ultima/shared/std/string.h"
-#include <list>
+//#include <list>
 
-#include "SDL.h"
+
 #include "audiostream.h"
 #include "emuopl.h"
 #include "u6m.h"

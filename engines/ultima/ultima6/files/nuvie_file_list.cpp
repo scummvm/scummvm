@@ -21,22 +21,11 @@
  */
 
 #include "ultima/ultima6/core/nuvie_defs.h"
-
-#include <sys/types.h>
-#include <sys/stat.h>
-
-#include <cstdio>
-#include <cstdlib>
-#include <cstring>
 #include "ultima/shared/std/string.h"
-#include <list>
-#include <dirent.h>
-
-#include "Console.h"
-
+#include "ultima/ultima6/core/console.h"
 #include "ultima/ultima6/misc/u6_misc.h"
-
-#include "NuvieFileList.h"
+#include "ultima/ultima6/files/nuvie_file_list.h"
+#include "common/fs.h"
 
 namespace Ultima {
 namespace Ultima6 {
@@ -48,61 +37,32 @@ NuvieFileList::~NuvieFileList() {
 }
 
 bool NuvieFileList::open(const char *directory, const char *search, uint8 s_mode) {
-	DIR *dir;
-	struct dirent *entry;
+	Common::FSNode dir(directory);
+	Common::FSList list;
 
 	search_prefix.assign(search);
 	sort_mode = s_mode;
 
-	dir = opendir(directory);
-	if (dir == NULL) {
+	if (!dir.isDirectory()) {
 		ConsoleAddWarning(std::string("Failed to open ") + directory);
 		return false;
 	}
 
-	for (; (entry = readdir(dir));) {
-		add_filename(directory, entry->d_name);
-	}
+	dir.getChildren(list, Common::FSNode::kListFilesOnly);
+	for (Common::FSList::iterator it = list.begin(); it != list.end(); ++it)
+		add_filename(*it);
 
-	closedir(dir);
-
-#if (_MSC_VER <= 1200)
-	file_list.sort();
-#else
-	file_list.sort(NuvieFileDesc()); //sort list by time last modified in decending order.
-#endif
-
+	//sort list by time last modified in decending order.
+	Common::sort(file_list.begin(), file_list.end(), NuvieFileDesc());
 	list_ptr = file_list.begin();
 
 	return true;
 }
 
-bool NuvieFileList::add_filename(const char *directory, const char *filename) {
-	struct stat sb;
-	const char *sp =  search_prefix.c_str();
+bool NuvieFileList::add_filename(const Common::FSNode &file) {
 	NuvieFileDesc filedesc;
-	std::string fullpath;
-
-	if (filename == NULL || strlen(filename) == 0)
-		return false;
-
-	if (!strcmp(".", filename) || !strcmp("..", filename))
-		return false;
-
-	if (strlen(sp)) {
-		if (strncmp(sp, filename, strlen(sp)) != 0)
-			return false;
-	}
-
-	build_path(directory, filename, fullpath);
-
-	if (stat(fullpath.c_str(), &sb) != 0) {
-		DEBUG(0, LEVEL_ERROR, "Couldn't stat() file %s\n", fullpath.c_str());
-		return false;
-	}
-
-	filedesc.m_time = sb.st_mtime;
-	filedesc.filename.assign(filename);
+	filedesc.m_time = 0;
+	filedesc.filename.assign(file.getName());
 
 	file_list.push_front(filedesc);
 

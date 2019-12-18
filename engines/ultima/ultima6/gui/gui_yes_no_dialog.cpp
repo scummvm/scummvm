@@ -20,16 +20,16 @@
  *
  */
 
-#include "SDL.h"
+
 #include "ultima/ultima6/core/nuvie_defs.h"
 
-#include "GUI.h"
-#include "GUI_button.h"
-#include "GUI_text.h"
+#include "ultima/ultima6/gui/gui.h"
+#include "ultima/ultima6/gui/gui_button.h"
+#include "ultima/ultima6/gui/gui_text.h"
 
-#include "GUI_Dialog.h"
-#include "GUI_YesNoDialog.h"
-#include "Keys.h"
+#include "ultima/ultima6/gui/gui_Dialog.h"
+#include "ultima/ultima6/gui/gui_yes_no_dialog.h"
+#include "ultima/ultima6/keybinding/keys.h"
 
 namespace Ultima {
 namespace Ultima6 {
@@ -58,7 +58,7 @@ GUI_YesNoDialog::GUI_YesNoDialog(GUI *gui, int x, int y, int w, int h, const cha
 GUI_YesNoDialog::~GUI_YesNoDialog() {
 }
 
-GUI_status GUI_YesNoDialog::KeyDown(SDL_Keysym key) {
+GUI_status GUI_YesNoDialog::KeyDown(Common::KeyState key) {
 	if (key.sym == SDLK_y)
 		return yes_callback_object->callback(YESNODIALOG_CB_YES, this, this);
 

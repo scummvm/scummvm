@@ -23,7 +23,7 @@
 #ifndef ULTIMA6_VIEWS_VIEW_MANAGER_H
 #define ULTIMA6_VIEWS_VIEW_MANAGER_H
 
-#include <list>
+//#include <list>
 
 namespace Ultima {
 namespace Ultima6 {

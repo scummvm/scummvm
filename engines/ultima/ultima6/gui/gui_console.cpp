@@ -20,14 +20,14 @@
  *
  */
 
-#include <assert.h>
-#include <cmath>
+//#include <assert.h>
+//#include <cmath>
 #include "ultima/shared/std/string.h"
 #include "ultima/ultima6/core/nuvie_defs.h"
 #include "ultima/ultima6/misc/u6_misc.h"
-#include "GUI.h"
-#include "GUI_widget.h"
-#include "GUI_Console.h"
+#include "ultima/ultima6/gui/gui.h"
+#include "ultima/ultima6/gui/gui_widget.h"
+#include "ultima/ultima6/gui/gui_console.h"
 
 namespace Ultima {
 namespace Ultima6 {
@@ -103,7 +103,7 @@ GUI_status GUI_Console::MouseUp(int x, int y, int button) {
 	return GUI_YUM;
 }
 
-GUI_status GUI_Console::MouseMotion(int x, int y, Uint8 state) {
+GUI_status GUI_Console::MouseMotion(int x, int y, uint8 state) {
 
 
 //GUI::get_gui()->moveWidget(this,dx,dy);

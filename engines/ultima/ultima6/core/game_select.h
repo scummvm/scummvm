@@ -23,6 +23,8 @@
 #ifndef ULTIMA6_CORE_GAME_SELECT_H
 #define ULTIMA6_CORE_GAME_SELECT_H
 
+#include "ultima/ultima6/core/nuvie_defs.h"
+
 namespace Ultima {
 namespace Ultima6 {
 

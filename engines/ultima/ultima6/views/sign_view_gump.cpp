@@ -20,13 +20,13 @@
  *
  */
 
-#include <stdlib.h>
+//#include <stdlib.h>
 #include "ultima/ultima6/core/nuvie_defs.h"
 #include "ultima/ultima6/misc/u6_misc.h"
-#include "Event.h"
-#include "GUI.h"
-#include "BMPFont.h"
-#include "ViewManager.h"
+#include "ultima/ultima6/core/event.h"
+#include "ultima/ultima6/gui/gui.h"
+#include "BMPultima/ultima6/fonts/font.h"
+#include "ultima/ultima6/views/view_manager.h"
 #include "SignViewGump.h"
 
 namespace Ultima {
@@ -121,7 +121,7 @@ GUI_status SignViewGump::MouseDown(int x, int y, int button) {
 	return GUI_YUM;
 }
 
-GUI_status SignViewGump::KeyDown(SDL_Keysym key) {
+GUI_status SignViewGump::KeyDown(Common::KeyState key) {
 	Game::get_game()->get_view_manager()->close_gump(this);
 	return GUI_YUM;
 }

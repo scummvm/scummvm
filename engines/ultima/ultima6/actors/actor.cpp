@@ -21,27 +21,27 @@
  */
 
 #include "ultima/ultima6/core/nuvie_defs.h" /* include before cmath to get roundf() */
-#include <cstdlib>
-#include <cmath>
-#include <cassert>
+//#include <cstdlib>
+//#include <cmath>
+//#include <cassert>
 #include "ultima/ultima6/misc/u6_misc.h"
 #include "ultima/ultima6/misc/u6_llist.h"
-#include "Game.h"
-#include "GameClock.h"
-#include "MapWindow.h"
-#include "ObjManager.h"
-#include "ActorManager.h"
-#include "ViewManager.h"
-#include "U6UseCode.h"
-#include "Party.h"
+#include "ultima/ultima6/core/game.h"
+#include "ultima/ultima6/core/game_clock.h"
+#include "ultima/ultima6/core/map_window.h"
+#include "ultima/ultima6/core/obj_manager.h"
+#include "ultima/ultima6/actors/actor_manager.h"
+#include "ultima/ultima6/views/view_manager.h"
+#include "ultima/ultima6/usecode/u6_usecode.h"
+#include "ultima/ultima6/core/party.h"
 #include "CombatPathFinder.h"
 #include "SeekPath.h"
-#include "Converse.h"
-#include "Effect.h"
-#include "Actor.h"
-#include "Script.h"
-#include "Event.h"
-#include "U6Actor.h"
+#include "ultima/ultima6/core/converse.h"
+#include "ultima/ultima6/core/effect.h"
+#include "ultima/ultima6/actors/actor.h"
+#include "ultima/ultima6/script/script.h"
+#include "ultima/ultima6/core/event.h"
+#include "U6ultima/ultima6/actors/actor.h"
 
 namespace Ultima {
 namespace Ultima6 {

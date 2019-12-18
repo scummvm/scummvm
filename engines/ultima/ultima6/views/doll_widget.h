@@ -23,9 +23,9 @@
 #ifndef ULTIMA6_VIEWS_DOLL_WIDGET_H
 #define ULTIMA6_VIEWS_DOLL_WIDGET_H
 
-#include "GUI_widget.h"
-#include "TileManager.h"
-#include "ObjManager.h"
+#include "ultima/ultima6/gui/gui_widget.h"
+#include "ultima/ultima6/core/tile_manager.h"
+#include "ultima/ultima6/core/obj_manager.h"
 #include "InventoryMessage.h"
 
 namespace Ultima {
@@ -66,7 +66,7 @@ public:
 
 	virtual GUI_status MouseDown(int x, int y, int button);
 	virtual GUI_status MouseUp(int x, int y, int button);
-	virtual GUI_status MouseMotion(int x, int y, Uint8 state);
+	virtual GUI_status MouseMotion(int x, int y, uint8 state);
 	GUI_status MouseDouble(int x, int y, int button);
 	GUI_status MouseClick(int x, int y, int button);
 	GUI_status MouseDelayed(int x, int y, int button);

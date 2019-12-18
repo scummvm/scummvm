@@ -134,6 +134,11 @@ string &string::erase(size_t pos, size_t len) {
 	return *this;
 }
 
+string::iterator string::erase(iterator it) {
+	this->deleteChar(it - _str);
+	return it;
+}
+
 void string::resize(size_t count) {
 	if (count == 0)
 		clear();

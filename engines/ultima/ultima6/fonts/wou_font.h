@@ -23,7 +23,7 @@
 #ifndef ULTIMA6_FONTS_WOU_FONT_H
 #define ULTIMA6_FONTS_WOU_FONT_H
 
-#include "Font.h"
+#include "ultima/ultima6/fonts/font.h"
 
 namespace Ultima {
 namespace Ultima6 {

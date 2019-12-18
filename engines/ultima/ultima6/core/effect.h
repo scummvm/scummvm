@@ -23,11 +23,11 @@
 #ifndef ULTIMA6_CORE_EFFECT_H
 #define ULTIMA6_CORE_EFFECT_H
 
-#include "SDL.h"
-#include "CallBack.h"
-#include "Map.h"
-#include "ObjManager.h"
-#include "AnimManager.h"
+
+#include "ultima/ultima6/misc/call_back.h"
+#include "ultima/ultima6/core/map.h"
+#include "ultima/ultima6/core/obj_manager.h"
+#include "ultima/ultima6/core/anim_manager.h"
 
 namespace Ultima {
 namespace Ultima6 {

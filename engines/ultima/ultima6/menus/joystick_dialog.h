@@ -24,7 +24,7 @@
 #define ULTIMA6_MENUS_JOYSTICK_DIALOG_H
 #ifdef HAVE_JOYSTICK_SUPPORT
 
-#include "GUI_Dialog.h"
+#include "ultima/ultima6/gui/gui_Dialog.h"
 
 namespace Ultima {
 namespace Ultima6 {
@@ -50,7 +50,7 @@ public:
 	bool init();
 
 	GUI_status close_dialog();
-	GUI_status KeyDown(SDL_Keysym key);
+	GUI_status KeyDown(Common::KeyState key);
 	GUI_status callback(uint16 msg, GUI_CallBack *caller, void *data);
 };
 #endif /* HAVE_JOYSTICK_SUPPORT */

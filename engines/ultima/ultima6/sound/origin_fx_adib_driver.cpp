@@ -23,11 +23,11 @@
 #include "ultima/ultima6/core/nuvie_defs.h"
 #include "ultima/ultima6/conf/configuration.h"
 #include "ultima/ultima6/misc/u6_misc.h"
-#include "U6Lib_n.h"
+#include "ultima/ultima6/files/u6_lib_n.h"
 #include "opl.h"
 #include "OriginFXAdLibDriver.h"
-#include <string.h>
-#include <stdlib.h>
+//#include <string.h>
+//#include <stdlib.h>
 
 namespace Ultima {
 namespace Ultima6 {

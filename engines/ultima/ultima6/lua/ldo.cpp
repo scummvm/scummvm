@@ -5,9 +5,9 @@
 */
 
 
-#include <setjmp.h>
-#include <stdlib.h>
-#include <string.h>
+//#include <setjmp.h>
+//#include <stdlib.h>
+//#include <string.h>
 
 #define ldo_c
 #define LUA_CORE

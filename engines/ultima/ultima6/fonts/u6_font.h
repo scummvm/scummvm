@@ -26,7 +26,7 @@
 #define FONT_COLOR_U6_NORMAL    0x48
 #define FONT_COLOR_U6_HIGHLIGHT 0x0c
 
-#include "Font.h"
+#include "ultima/ultima6/fonts/font.h"
 
 namespace Ultima {
 namespace Ultima6 {

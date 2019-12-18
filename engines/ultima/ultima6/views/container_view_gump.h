@@ -23,7 +23,7 @@
 #ifndef ULTIMA6_VIEWS_CONTAINER_VIEW_GUMP_H
 #define ULTIMA6_VIEWS_CONTAINER_VIEW_GUMP_H
 
-#include "DraggableView.h"
+#include "ultima/ultima6/views/draggable_view.h"
 
 namespace Ultima {
 namespace Ultima6 {
@@ -76,11 +76,11 @@ public:
 		return (container_obj == NULL);
 	}
 
-	GUI_status KeyDown(SDL_Keysym key);
+	GUI_status KeyDown(Common::KeyState key);
 
 	virtual GUI_status MouseDown(int x, int y, int button);
 	virtual GUI_status MouseUp(int x, int y, int button);
-	virtual GUI_status MouseMotion(int x, int y, Uint8 state) {
+	virtual GUI_status MouseMotion(int x, int y, uint8 state) {
 		return DraggableView::MouseMotion(x, y, state);
 	}
 	virtual GUI_status MouseWheel(sint32 x, sint32 y);

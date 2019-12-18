@@ -23,7 +23,7 @@
 #ifndef ULTIMA6_GUI_GUI_TEXT_H
 #define ULTIMA6_GUI_GUI_TEXT_H
 
-#include "GUI_widget.h"
+#include "ultima/ultima6/gui/gui_widget.h"
 
 namespace Ultima {
 namespace Ultima6 {
@@ -32,14 +32,14 @@ class GUI_Font;
 
 class GUI_Text : public GUI_Widget {
 protected:
-	Uint8 R, G, B;
+	uint8 R, G, B;
 	char *text;
 	GUI_Font *font;
 	uint16 max_width; //max line width. No limit if set to 0
 
 public:
-	GUI_Text(int x, int y, Uint8 r, Uint8 g, Uint8 b, GUI_Font *gui_font, uint16 line_length);
-	GUI_Text(int x, int y, Uint8 r, Uint8 g, Uint8 b, const char *str, GUI_Font *gui_font, uint16 line_length = 0);
+	GUI_Text(int x, int y, uint8 r, uint8 g, uint8 b, GUI_Font *gui_font, uint16 line_length);
+	GUI_Text(int x, int y, uint8 r, uint8 g, uint8 b, const char *str, GUI_Font *gui_font, uint16 line_length = 0);
 	~GUI_Text();
 
 	/* Show the widget  */

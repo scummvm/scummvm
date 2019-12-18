@@ -25,7 +25,7 @@
 #ifndef COMMON_LIST_H
 #define COMMON_LIST_H
 
-#include <assert.h>
+//#include <assert.h>
 #include "decoder/wave/list_intern.h"
 
 namespace Common {

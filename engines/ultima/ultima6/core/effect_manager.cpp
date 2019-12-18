@@ -21,10 +21,10 @@
  */
 
 #include "ultima/ultima6/core/nuvie_defs.h"
-#include "Map.h"
-#include "TimedEvent.h"
-#include "Effect.h"
-#include "EffectManager.h"
+#include "ultima/ultima6/core/map.h"
+#include "ultima/ultima6/core/timed_event.h"
+#include "ultima/ultima6/core/effect.h"
+#include "ultima/ultima6/core/effect_manager.h"
 
 namespace Ultima {
 namespace Ultima6 {

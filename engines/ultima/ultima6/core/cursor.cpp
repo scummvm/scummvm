@@ -20,19 +20,16 @@
  *
  */
 
-#include <cassert>
-#include <stdlib.h>
-#include <string.h>
 #include "ultima/ultima6/core/nuvie_defs.h"
 #include "ultima/ultima6/conf/configuration.h"
-#include "Screen.h"
-#include "NuvieIO.h"
-#include "NuvieIOFile.h"
+#include "ultima/ultima6/screen/screen.h"
+#include "ultima/ultima6/files/nuvie_io.h"
+#include "ultima/ultima6/files/nuvie_io_file.h"
 #include "ultima/ultima6/misc/u6_misc.h"
-#include "U6Lzw.h"
-#include "U6Shape.h"
-#include "U6Lib_n.h"
-#include "Cursor.h"
+#include "ultima/ultima6/files/u6_lzw.h"
+#include "ultima/ultima6/files/u6_shape.h"
+#include "ultima/ultima6/files/u6_lib_n.h"
+#include "ultima/ultima6/core/cursor.h"
 
 namespace Ultima {
 namespace Ultima6 {
@@ -45,10 +42,8 @@ Cursor::Cursor() {
 	cursor_id = 0;
 	cur_x = cur_y = -1;
 	cleanup = NULL;
-	cleanup_area.x = cleanup_area.y = 0;
-	cleanup_area.w = cleanup_area.h = 0;
-	update_area.x = update_area.y = 0;
-	update_area.w = update_area.h = 0;
+	cleanup_area = Common::Rect();
+	update_area = Common::Rect();
 	hidden = false;
 	screen = NULL;
 	config = NULL;
@@ -205,8 +200,8 @@ void Cursor::clear() {
 	if (cleanup) {
 		screen->restore_area(cleanup, &cleanup_area);
 		cleanup = NULL;
-//        screen->update(cleanup_area.x, cleanup_area.y, cleanup_area.w, cleanup_area.h);
-		add_update(cleanup_area.x, cleanup_area.y, cleanup_area.w, cleanup_area.h);
+//        screen->update(cleanup_area.left, cleanup_area.top, cleanup_area.w, cleanup_area.h);
+		add_update(cleanup_area.left, cleanup_area.top, cleanup_area.width(), cleanup_area.height());
 	}
 }
 
@@ -237,10 +232,10 @@ void Cursor::save_backing(uint32 px, uint32 py, uint32 w, uint32 h) {
 		cleanup = NULL;
 	}
 
-	cleanup_area.x = px; // cursor must be drawn LAST for this to work
-	cleanup_area.y = py;
-	cleanup_area.w = w;
-	cleanup_area.h = h;
+	cleanup_area.left = px; // cursor must be drawn LAST for this to work
+	cleanup_area.top = py;
+	cleanup_area.setWidth(w);
+	cleanup_area.setHeight(h);
 	cleanup = screen->copy_area(&cleanup_area);
 }
 
@@ -248,29 +243,28 @@ void Cursor::save_backing(uint32 px, uint32 py, uint32 w, uint32 h) {
 /* Mark update_area (cleared/displayed) as updated on the screen.
  */
 void Cursor::update() {
-	screen->update(update_area.x, update_area.y, update_area.w, update_area.h);
-	update_area.x = update_area.y = 0;
-	update_area.w = update_area.h = 0;
+	screen->update(update_area.left, update_area.top, update_area.width(), update_area.height());
+	update_area = Common::Rect();
 }
 
 
 /* Add to update_area.
  */
 void Cursor::add_update(uint16 x, uint16 y, uint16 w, uint16 h) {
-	if (update_area.w == 0 || update_area.h == 0) {
-		update_area.x = x;
-		update_area.y = y;
-		update_area.w = w;
-		update_area.h = h;
+	if (update_area.width() == 0 || update_area.height() == 0) {
+		update_area.left = x;
+		update_area.top = y;
+		update_area.setWidth(w);
+		update_area.setHeight(h);
 	} else {
 		uint16 x2 = x + w, y2 = y + h,
-		       update_x2 = update_area.x + update_area.w, update_y2 = update_area.y + update_area.h;
-		if (x <= update_area.x) update_area.x = x;
-		if (y <= update_area.y) update_area.y = y;
+			update_x2 = update_area.right, update_y2 = update_area.bottom;
+		if (x <= update_area.left) update_area.left = x;
+		if (y <= update_area.top) update_area.top = y;
 		if (x2 >= update_x2) update_x2 = x2;
 		if (y2 >= update_y2) update_y2 = y2;
-		update_area.w = update_x2 - update_area.x;
-		update_area.h = update_y2 - update_area.y;
+		update_area.setWidth(update_x2 - update_area.left);
+		update_area.setHeight(update_y2 - update_area.top);
 	}
 }
 

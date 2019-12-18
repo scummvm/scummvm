@@ -21,11 +21,11 @@
  *
  */
 
-#include <math.h>
-#include "SDL.h"
+//#include <math.h>
+
 #include "ultima/ultima6/core/nuvie_defs.h"
 
-#include "mixer.h"
+#include "audio/mixer.h"
 #include "decoder/PCSpeaker.h"
 
 #ifndef PI

@@ -21,37 +21,37 @@
  */
 
 #ifdef HAVE_CONFIG_H
-#include <config.h>
+//#include <config.h>
 #endif
 
 #include "ultima/ultima6/core/nuvie_defs.h"
 #include "ultima/ultima6/conf/configuration.h"
 
-#include "Actor.h"
-#include "ActorManager.h"
+#include "ultima/ultima6/actors/actor.h"
+#include "ultima/ultima6/actors/actor_manager.h"
 #include "ultima/ultima6/misc/u6_misc.h"
 #include "ultima/ultima6/misc/u6_llist.h"
-#include "SaveManager.h"
-#include "NuvieIOFile.h"
-#include "NuvieFileList.h"
+#include "ultima/ultima6/save/save_manager.h"
+#include "ultima/ultima6/files/nuvie_io_file.h"
+#include "ultima/ultima6/files/nuvie_file_list.h"
 
-#include "GUI.h"
-//#include "Game.h"
-#include "Event.h"
-#include "Console.h"
+#include "ultima/ultima6/gui/gui.h"
+//#include "ultima/ultima6/core/game.h"
+#include "ultima/ultima6/core/event.h"
+#include "ultima/ultima6/core/console.h"
 #include "SaveDialog.h"
 #include "SaveSlot.h"
-#include "SaveGame.h"
-#include "MsgScroll.h"
-#include "Utils.h"
-//#include <direct.h>
+#include "Saveultima/ultima6/core/game.h"
+#include "ultima/ultima6/core/msg_scroll.h"
+#include "ultima/ultima6/keybinding/utils.h"
+////#include <direct.h>
 
 #ifdef HAVE_JOYSTICK_SUPPORT
-#include "Keys.h"
+#include "ultima/ultima6/keybinding/keys.h"
 #endif
 
 #if defined __linux__ || MACOSX
-#include <sys/stat.h>
+//#include <sys/stat.h>
 #endif
 
 namespace Ultima {

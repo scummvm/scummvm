@@ -20,18 +20,18 @@
  *
  */
 
-#include <string.h>
-#include <cstdlib>
-#include <cstdio>
-#include <cctype>
+//#include <string.h>
+//#include <cstdlib>
+//#include <cstdio>
+//#include <cctype>
 
 #include "ultima/ultima6/core/nuvie_defs.h"
 #include "ultima/ultima6/misc/u6_misc.h"
 
-#include "NuvieIOFile.h"
-#include "U6Lzw.h"
+#include "ultima/ultima6/files/nuvie_io_file.h"
+#include "ultima/ultima6/files/u6_lzw.h"
 
-#include "U6Lib_n.h"
+#include "ultima/ultima6/files/u6_lib_n.h"
 
 namespace Ultima {
 namespace Ultima6 {
@@ -316,7 +316,7 @@ uint32 U6Lib_n::calculate_num_offsets(bool skip4) { //skip4 bytes of header.
 /* For writing multiple files to a lib, read in source filenames and offsets
  * from an opened index file. Offsets may be ignored when writing.
  */
-void U6Lib_n::load_index(FILE *index_f) {
+void U6Lib_n::load_index(Common::ReadStream *index_f) {
 	char input[256] = "", // input line
 	                  offset_str[9] = "", // listed offset
 	                                  name[256] = ""; // source file name
@@ -325,15 +325,15 @@ void U6Lib_n::load_index(FILE *index_f) {
 
 	if (!index_f)
 		return;
-	while (fgets(input, 256, index_f)) {
+	while (strgets(input, 256, index_f)) {
 		in_len = strlen(input);
 		// skip spaces, read offset, break on #
-		for (c = 0; c < in_len && isspace(input[c]) && input[c] != '#'; c++);
-		for (oc = 0; c < in_len && !isspace(input[c]) && input[c] != '#'; c++)
+		for (c = 0; c < in_len && Common::isSpace(input[c]) && input[c] != '#'; c++);
+		for (oc = 0; c < in_len && !Common::isSpace(input[c]) && input[c] != '#'; c++)
 			offset_str[oc++] = input[c];
 		offset_str[oc] = '\0';
 		// skip spaces, read name, break on # or \n or \r
-		for (; c < in_len && isspace(input[c]) && input[c] != '#'; c++);
+		for (; c < in_len && Common::isSpace(input[c]) && input[c] != '#'; c++);
 		for (oc = 0; c < in_len && input[c] != '\n' && input[c] != '\r' && input[c] != '#'; c++)
 			name[oc++] = input[c];
 		name[oc] = '\0';

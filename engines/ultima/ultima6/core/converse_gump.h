@@ -23,11 +23,11 @@
 #ifndef ULTIMA6_CORE_CONVERSE_GUMP_H
 #define ULTIMA6_CORE_CONVERSE_GUMP_H
 
-#include "CallBack.h"
-#include "GUI_widget.h"
-#include <stdarg.h>
+#include "ultima/ultima6/misc/call_back.h"
+#include "ultima/ultima6/gui/gui_widget.h"
+//#include <stdarg.h>
 
-#include <list>
+//#include <list>
 #include "ultima/shared/std/containers.h"
 #include "ultima/shared/std/string.h"
 
@@ -85,19 +85,19 @@ public:
 
 	void Display(bool full_redraw);
 
-	GUI_status KeyDown(SDL_Keysym key);
+	GUI_status KeyDown(Common::KeyState key);
 	GUI_status MouseUp(int x, int y, int button);
 
 	GUI_status MouseDown(int x, int y, int button) {
 		return GUI_YUM;
 	}
-	GUI_status MouseMotion(int x, int y, Uint8 state) {
+	GUI_status MouseMotion(int x, int y, uint8 state) {
 		return GUI_YUM;
 	}
-	GUI_status MouseEnter(Uint8 state) {
+	GUI_status MouseEnter(uint8 state) {
 		return GUI_YUM;
 	}
-	GUI_status MouseLeave(Uint8 state) {
+	GUI_status MouseLeave(uint8 state) {
 		return GUI_YUM;
 	}
 	GUI_status MouseClick(int x, int y, int button) {

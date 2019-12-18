@@ -23,8 +23,8 @@
 #ifndef ULTIMA6_VIEWS_SPELL_VIEW_GUMP_H
 #define ULTIMA6_VIEWS_SPELL_VIEW_GUMP_H
 
-#include "SpellView.h"
-#include "NuvieBmpFile.h"
+#include "ultima/ultima6/views/spell_view.h"
+#include "ultima/ultima6/files/nuvie_bmp_file.h"
 
 namespace Ultima {
 namespace Ultima6 {
@@ -56,7 +56,7 @@ public:
 
 	virtual GUI_status MouseDown(int x, int y, int button);
 	virtual GUI_status MouseUp(int x, int y, int button);
-	virtual GUI_status MouseMotion(int x, int y, Uint8 state) {
+	virtual GUI_status MouseMotion(int x, int y, uint8 state) {
 		return DraggableView::MouseMotion(x, y, state);
 	}
 	virtual GUI_status MouseWheel(sint32 x, sint32 y);

@@ -9,7 +9,7 @@
 #define lobject_h
 
 
-#include <stdarg.h>
+//#include <stdarg.h>
 
 
 #include "llimits.h"

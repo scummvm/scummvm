@@ -23,8 +23,8 @@
 #ifndef ULTIMA6_GUI_GUI_DRAG_MANAGER_H
 #define ULTIMA6_GUI_GUI_DRAG_MANAGER_H
 
-#include "GUI_status.h"
-#include "GUI_DragArea.h"
+#include "ultima/ultima6/gui/gui_status.h"
+#include "ultima/ultima6/gui/gui_drag_area.h"
 
 namespace Ultima {
 namespace Ultima6 {

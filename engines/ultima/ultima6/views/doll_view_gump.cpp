@@ -20,21 +20,21 @@
  *
  */
 
-#include <cassert>
+//#include <cassert>
 #include "ultima/ultima6/core/nuvie_defs.h"
 #include "ultima/ultima6/misc/u6_misc.h"
-#include "Event.h"
-#include "GUI.h"
-#include "GUI_button.h"
+#include "ultima/ultima6/core/event.h"
+#include "ultima/ultima6/gui/gui.h"
+#include "ultima/ultima6/gui/gui_button.h"
 
-#include "Party.h"
-#include "Actor.h"
-#include "ViewManager.h"
+#include "ultima/ultima6/core/party.h"
+#include "ultima/ultima6/actors/actor.h"
+#include "ultima/ultima6/views/view_manager.h"
 
 #include "ContainerViewGump.h"
 #include "DollWidget.h"
 #include "DollViewGump.h"
-#include "Keys.h"
+#include "ultima/ultima6/keybinding/keys.h"
 
 namespace Ultima {
 namespace Ultima6 {
@@ -591,7 +591,7 @@ GUI_status DollViewGump::moveCursorRelative(uint8 direction) {
 	}
 }
 
-GUI_status DollViewGump::KeyDown(SDL_Keysym key) {
+GUI_status DollViewGump::KeyDown(Common::KeyState key) {
 // I was restricting numpad keys when in numlock but there shouldn't be any needed number input
 //	bool numlock = (key.mod & KMOD_NUM); // SDL doesn't get the proper num lock state in Windows
 	KeyBinder *keybinder = Game::get_game()->get_keybinder();

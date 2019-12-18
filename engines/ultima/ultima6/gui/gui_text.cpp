@@ -22,14 +22,14 @@
 
 #include "ultima/ultima6/core/nuvie_defs.h"
 
-#include "GUI_text.h"
-#include "GUI_font.h"
-#include <stdlib.h>
+#include "ultima/ultima6/gui/gui_text.h"
+#include "ultima/ultima6/gui/gui_font.h"
+//#include <stdlib.h>
 
 namespace Ultima {
 namespace Ultima6 {
 
-GUI_Text:: GUI_Text(int x, int y, Uint8 r, Uint8 g, Uint8 b, GUI_Font *gui_font, uint16 line_length)
+GUI_Text:: GUI_Text(int x, int y, uint8 r, uint8 g, uint8 b, GUI_Font *gui_font, uint16 line_length)
 	: GUI_Widget(NULL, x, y, 0, 0) {
 	R = r;
 	G = g;
@@ -41,7 +41,7 @@ GUI_Text:: GUI_Text(int x, int y, Uint8 r, Uint8 g, Uint8 b, GUI_Font *gui_font,
 }
 
 
-GUI_Text:: GUI_Text(int x, int y, Uint8 r, Uint8 g, Uint8 b, const char *str, GUI_Font *gui_font, uint16 line_length)
+GUI_Text:: GUI_Text(int x, int y, uint8 r, uint8 g, uint8 b, const char *str, GUI_Font *gui_font, uint16 line_length)
 	: GUI_Widget(NULL, x, y, 0, 0) {
 	int w, h;
 
@@ -53,7 +53,7 @@ GUI_Text:: GUI_Text(int x, int y, Uint8 r, Uint8 g, Uint8 b, const char *str, GU
 
 	font = gui_font;
 
-	text = (char *)strdup(str);
+	text = (char *)scumm_strdup(str);
 
 	if (text == NULL) {
 		DEBUG(0, LEVEL_ERROR, "GUI_Text: failed to allocate memory for text\n");

@@ -23,11 +23,11 @@
 #ifndef ULTIMA6_USECODE_U6_USECODE_H
 #define ULTIMA6_USECODE_U6_USECODE_H
 
-#include "ObjManager.h"
-#include "TimedEvent.h"
-#include "UseCode.h"
+#include "ultima/ultima6/core/obj_manager.h"
+#include "ultima/ultima6/core/timed_event.h"
+#include "ultima/ultima6/usecode/usecode.h"
 //object numbers
-#include "U6objects.h"
+#include "ultima/ultima6/core/u6_objects.h"
 
 namespace Ultima {
 namespace Ultima6 {

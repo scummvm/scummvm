@@ -21,14 +21,11 @@
  */
 
 #include "ultima/shared/std/string.h"
-
 #include "ultima/ultima6/core/nuvie_defs.h"
 #include "ultima/ultima6/conf/configuration.h"
-
-#include "U6Lib_n.h"
+#include "ultima/ultima6/files/u6_lib_n.h"
 #include "ultima/ultima6/misc/u6_misc.h"
-
-#include "Book.h"
+#include "ultima/ultima6/core/book.h"
 
 namespace Ultima {
 namespace Ultima6 {

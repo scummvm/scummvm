@@ -29,7 +29,7 @@
  * ==========
  */
 #include "ultima/shared/std/string.h"
-#include "SDL.h"
+
 
 namespace Ultima {
 namespace Ultima6 {

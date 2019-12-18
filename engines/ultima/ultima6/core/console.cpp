@@ -20,13 +20,13 @@
  *
  */
 
-#include <assert.h>
-#include <cmath>
+//#include <assert.h>
+//#include <cmath>
 #include "ultima/shared/std/string.h"
 #include "ultima/ultima6/core/nuvie_defs.h"
 #include "ultima/ultima6/misc/u6_misc.h"
-#include "GUI.h"
-#include "Console.h"
+#include "ultima/ultima6/gui/gui.h"
+#include "ultima/ultima6/core/console.h"
 
 namespace Ultima {
 namespace Ultima6 {
@@ -110,7 +110,7 @@ void ConsolePause() {
 		return;
 
 	//pause here.
-	SDL_Event event;
+	Common::Event event;
 	bool waiting = true;
 	for (; waiting;) {
 		while (!SDL_PollEvent(&event)) {

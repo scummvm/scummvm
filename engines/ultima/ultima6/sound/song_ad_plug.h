@@ -23,8 +23,8 @@
 #ifndef ULTIMA6_SOUND_SONG_ADPLUG_H
 #define ULTIMA6_SOUND_SONG_ADPLUG_H
 
-#include "mixer.h"
-#include "Song.h"
+#include "audio/mixer.h"
+#include "ultima/ultima6/sound/song.h"
 #include "decoder/U6AdPlugDecoderStream.h"
 
 namespace Ultima {

@@ -23,8 +23,8 @@
 #ifndef ULTIMA6_VIEWS_SPELL_VIEW_H
 #define ULTIMA6_VIEWS_SPELL_VIEW_H
 
-#include "DraggableView.h"
-#include "Obj.h"
+#include "ultima/ultima6/views/draggable_view.h"
+#include "ultima/ultima6/core/obj.h"
 
 namespace Ultima {
 namespace Ultima6 {
@@ -72,19 +72,19 @@ public:
 	void Display(bool full_redraw);
 	void PlaceOnScreen(Screen *s, GUI_DragManager *dm, int x, int y);
 	void close_look();
-	GUI_status KeyDown(SDL_Keysym key);
+	GUI_status KeyDown(Common::KeyState key);
 	GUI_status MouseDown(int x, int y, int button);
 
 	GUI_status MouseUp(int x, int y, int button) {
 		return GUI_YUM;
 	}
-	GUI_status MouseMotion(int x, int y, Uint8 state) {
+	GUI_status MouseMotion(int x, int y, uint8 state) {
 		return GUI_YUM;
 	}
-	GUI_status MouseEnter(Uint8 state) {
+	GUI_status MouseEnter(uint8 state) {
 		return GUI_YUM;
 	}
-	GUI_status MouseLeave(Uint8 state) {
+	GUI_status MouseLeave(uint8 state) {
 		return GUI_YUM;
 	}
 	GUI_status MouseClick(int x, int y, int button) {

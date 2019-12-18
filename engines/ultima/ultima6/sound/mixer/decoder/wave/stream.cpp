@@ -22,10 +22,10 @@
  * $Id: stream.cpp 54436 2010-11-23 22:25:53Z fingolfin $
  *
  */
-#include <string.h>
-#include <assert.h>
+//#include <string.h>
+//#include <assert.h>
 #include "ultima/ultima6/core/nuvie_defs.h"
-#include "types.h"
+#include "ultima/ultima6/sound/mixer/types.h"
 #include "decoder/wave/stream.h"
 #include "decoder/wave/memstream.h"
 //#include "common/substream.h"

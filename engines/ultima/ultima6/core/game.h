@@ -421,6 +421,8 @@ private:
 	void update_once(bool process_gui_input, bool run_converse);
 };
 
+extern uint getRandom(uint maxVal);
+
 } // End of namespace Ultima6
 } // End of namespace Ultima
 

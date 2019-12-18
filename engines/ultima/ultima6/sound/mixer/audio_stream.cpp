@@ -25,12 +25,12 @@
 //#include "common/file.h"
 //#include "common/queue.h"
 //#include "common/util.h"
-#include <queue>
-#include <assert.h>
+//#include <queue>
+//#include <assert.h>
 #include "audiostream.h"
 #include "mutex.h"
 //#include "sound/decoders/flac.h"
-#include "mixer.h"
+#include "audio/mixer.h"
 //#include "sound/decoders/mp3.h"
 //#include "sound/decoders/raw.h"
 //#include "sound/decoders/vorbis.h"

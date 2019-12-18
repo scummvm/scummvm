@@ -23,9 +23,9 @@
 #ifndef ULTIMA6_CORE_MSG_SCROLL_H
 #define ULTIMA6_CORE_MSG_SCROLL_H
 
-#include "CallBack.h"
-#include "GUI_widget.h"
-#include <stdarg.h>
+#include "ultima/ultima6/misc/call_back.h"
+#include "ultima/ultima6/gui/gui_widget.h"
+//#include <stdarg.h>
 
 #define MSGSCROLL_U6_WIDTH 17
 #define MSGSCROLL_U6_HEIGHT 10
@@ -42,7 +42,7 @@
 
 #define MSGSCROLL_NO_MAP_DISPLAY false
 
-#include <list>
+//#include <list>
 #include "ultima/shared/std/containers.h"
 
 namespace Ultima {
@@ -237,7 +237,7 @@ public:
 	virtual void set_font(uint8 font_type);
 	virtual bool is_garg_font();
 
-	int printf(const std::string format, ...);
+	int print(const std::string format, ...);
 
 	virtual void display_string(std::string s, Font *f, bool include_on_map_window);
 	void display_string(std::string s, Font *f, uint8 color, bool include_on_map_window);
@@ -281,7 +281,7 @@ public:
 		return (page_break);
 	}
 
-	GUI_status KeyDown(SDL_Keysym key);
+	GUI_status KeyDown(Common::KeyState key);
 	GUI_status MouseUp(int x, int y, int button);
 	GUI_status MouseWheel(sint32 x, sint32 y);
 	virtual std::string get_token_string_at_pos(uint16 x, uint16 y);

@@ -23,7 +23,7 @@
 #ifndef ULTIMA6_VIEWS_INVENTORY_VIEW_H
 #define ULTIMA6_VIEWS_INVENTORY_VIEW_H
 
-#include "View.h"
+#include "ultima/ultima6/views/view.h"
 
 namespace Ultima {
 namespace Ultima6 {
@@ -84,7 +84,7 @@ public:
 
 	void Display(bool full_redraw);
 	void PlaceOnScreen(Screen *s, GUI_DragManager *dm, int x, int y);
-	GUI_status KeyDown(SDL_Keysym key);
+	GUI_status KeyDown(Common::KeyState key);
 	void simulate_CB_callback();
 	bool is_picking_pocket() {
 		return picking_pocket;

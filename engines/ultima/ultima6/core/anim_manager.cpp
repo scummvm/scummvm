@@ -20,24 +20,21 @@
  *
  */
 
-#include <cmath>
 #include "ultima/shared/std/containers.h"
-#include "SDL.h"
 #include "ultima/ultima6/core/nuvie_defs.h"
 #include "ultima/ultima6/misc/u6_misc.h"
-
-#include "Font.h"
-#include "FontManager.h"
-#include "Actor.h"
-#include "ActorManager.h"
-#include "Game.h"
-#include "Map.h"
-#include "MapWindow.h"
-#include "ObjManager.h"
-#include "Screen.h"
-#include "Script.h"
-#include "SoundManager.h"
-#include "AnimManager.h"
+#include "ultima/ultima6/fonts/font.h"
+#include "ultima/ultima6/fonts/font_manager.h"
+#include "ultima/ultima6/actors/actor.h"
+#include "ultima/ultima6/actors/actor_manager.h"
+#include "ultima/ultima6/core/game.h"
+#include "ultima/ultima6/core/map.h"
+#include "ultima/ultima6/core/map_window.h"
+#include "ultima/ultima6/core/obj_manager.h"
+#include "ultima/ultima6/screen/screen.h"
+#include "ultima/ultima6/script/script.h"
+#include "ultima/ultima6/sound/sound_manager.h"
+#include "ultima/ultima6/core/anim_manager.h"
 
 namespace Ultima {
 namespace Ultima6 {
@@ -390,9 +387,9 @@ void TileAnim::shift_tile(uint32 ptile_num, sint32 sx, sint32 sy) {
 		return;
 
 	uint8 tile_pitch = anim_manager->get_tile_pitch();
-	uint16 tx = tiles[ptile_num]->pos_x, ty = tiles[ptile_num]->pos_y;
-	uint16 px = tiles[ptile_num]->px, py = tiles[ptile_num]->py;
-	uint32 total_px = (tx * tile_pitch) + px, total_py = (ty * tile_pitch) + py;
+	uint16 vtx = tiles[ptile_num]->pos_x, vty = tiles[ptile_num]->pos_y;
+	uint16 vpx = tiles[ptile_num]->px, vpy = tiles[ptile_num]->py;
+	uint32 total_px = (vtx * tile_pitch) + vpx, total_py = (vty * tile_pitch) + vpy;
 	total_px += sx;
 	total_py += sy;
 	// move
@@ -947,16 +944,16 @@ void ExplosiveAnim::hit_actor(Actor *actor) {
  * shifted by sx,sy pixels from x,y+px,py.
  * FIXME: duplicated code
  */
-void ExplosiveAnim::get_shifted_location(uint16 &x, uint16 &y, uint16 &px, uint16 &py, uint32 sx, uint32 sy) {
+void ExplosiveAnim::get_shifted_location(uint16 &x, uint16 &y, uint16 &px_, uint16 &py_, uint32 sx, uint32 sy) {
 	uint8 tile_pitch = anim_manager->get_tile_pitch();
-	uint32 total_px = (x * tile_pitch) + px, total_py = (y * tile_pitch) + py;
+	uint32 total_px = (x * tile_pitch) + px_, total_py = (y * tile_pitch) + py_;
 	total_px += sx;
 	total_py += sy;
 
 	x = total_px / tile_pitch;
 	y = total_py / tile_pitch;
-	px = total_px % tile_pitch;
-	px = total_py % tile_pitch;
+	px_ = total_px % tile_pitch;
+	py_ = total_py % tile_pitch;
 }
 
 
@@ -1032,7 +1029,7 @@ bool ProjectileAnim::update() {
 
 	for (uint16 i = 0; i < line.size(); i++) {
 		if (line[i].isRunning) {
-			uint32 x, y;
+			uint32 x = 0, y = 0;
 			bool canContinue = false;
 			//printf("step. speed=%d, time=%d\n",speed,SDL_GetTicks());
 			for (uint16 j = 0; j < speed * 2; j++) {

@@ -29,8 +29,8 @@
 #include "ultima/shared/std/string.h"
 
 #include "ultima/ultima6/core/nuvie_defs.h"
-#include "NuvieIOFile.h"
-#include "types.h"
+#include "ultima/ultima6/files/nuvie_io_file.h"
+#include "ultima/ultima6/sound/mixer/types.h"
 #include "decoder/wave/stream.h"
 
 class StdioStream : public Common::SeekableReadStream {

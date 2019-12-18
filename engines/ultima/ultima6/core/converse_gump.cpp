@@ -21,22 +21,20 @@
  */
 
 #include "ultima/shared/std/string.h"
-#include <cctype>
-#include <iostream>
-
 #include "ultima/ultima6/core/nuvie_defs.h"
 #include "ultima/ultima6/conf/configuration.h"
 #include "ultima/ultima6/misc/u6_misc.h"
-#include "FontManager.h"
-#include "Font.h"
-#include "GamePalette.h"
-#include "GUI.h"
-#include "MsgScroll.h"
-#include "Portrait.h"
-#include "Player.h"
-#include "ConverseGump.h"
-#include "ActorManager.h"
-#include "Keys.h"
+#include "ultima/ultima6/fonts/font_manager.h"
+#include "ultima/ultima6/fonts/font.h"
+#include "ultima/ultima6/screen/game_palette.h"
+#include "ultima/ultima6/gui/gui.h"
+#include "ultima/ultima6/core/msg_scroll.h"
+#include "ultima/ultima6/portraits/portrait.h"
+#include "ultima/ultima6/core/player.h"
+#include "ultima/ultima6/core/converse_gump.h"
+#include "ultima/ultima6/actors/actor_manager.h"
+#include "ultima/ultima6/actors/actor.h"
+#include "ultima/ultima6/keybinding/keys.h"
 
 namespace Ultima {
 namespace Ultima6 {
@@ -371,11 +369,11 @@ bool ConverseGump::parse_token(MsgText *token) {
 		std::string keyword = "";
 		for (i = at_idx + 1; i < len; i++) {
 			char c = token->s[i];
-			if (isalpha(c)) {
+			if (Common::isAlpha(c)) {
 				keyword.push_back(c);
 			}
 
-			if (!isalpha(c) || i == len - 1) {
+			if (!Common::isAlpha(c) || i == len - 1) {
 				token->s.erase(at_idx, 1);
 				i--;
 				at_idx = token->s.find_first_of('@', i);
@@ -400,7 +398,7 @@ void ConverseGump::parse_fm_towns_token(MsgText *token) {
 	while (at_idx != -1 && i < len) {
 		i = at_idx + 1;
 		char c = token->s[i];
-		if (i < len && isdigit(c)) {
+		if (i < len && Common::isDigit(c)) {
 			const char *c_str = token->s.c_str();
 			uint16 actor_num = (int)strtol(&c_str[i], NULL, 10);
 			if (actor_num < 256) {
@@ -409,19 +407,19 @@ void ConverseGump::parse_fm_towns_token(MsgText *token) {
 					has_met = actor->is_met();
 				}
 			}
-			for (; isdigit(c_str[i]);)
+			for (; Common::isDigit(c_str[i]);)
 				i++;
 		}
 
 		std::string keyword = "";
 		for (; i < len; i++) {
-			char c = token->s[i];
+			char ch = token->s[i];
 
-			if (isalpha(c)) {
-				keyword.push_back(c);
+			if (Common::isAlpha(ch)) {
+				keyword.push_back(ch);
 			}
 
-			if (!isalpha(c) || i == len - 1) {
+			if (!Common::isAlpha(ch) || i == len - 1) {
 				token->s.erase(at_idx, (i - at_idx) + 1);
 				i -= i - at_idx;
 				at_idx = token->s.find_first_of('+', i);
@@ -456,7 +454,7 @@ void ConverseGump::add_keyword(std::string keyword) {
 
 std::string ConverseGump::get_token_string_at_pos(uint16 x, uint16 y) {
 	uint16 total_length = 0;
-	uint16 tmp_y = area.y + portrait_height + 8 + 3 + 4;
+	uint16 tmp_y = area.top + portrait_height + 8 + 3 + 4;
 	std::list<MsgText>::iterator iter;
 	for (iter = keyword_list->begin(); iter != keyword_list->end(); iter++) {
 		MsgText t = *iter;
@@ -467,8 +465,8 @@ std::string ConverseGump::get_token_string_at_pos(uint16 x, uint16 y) {
 			total_length = 0;
 			tmp_y += 10;
 		}
-		//t.font->drawString(screen, t.s.c_str(), area.x + portrait_width / 2 + portrait_width + 8 + total_length * 8, y + portrait_height + 8, 0);
-		if (x > area.x + portrait_width / 2 + portrait_width + 8 + total_length && x < area.x + portrait_width / 2 + portrait_width + 8 + total_length + token_len) {
+		//t.font->drawString(screen, t.s.c_str(), area.left + portrait_width / 2 + portrait_width + 8 + total_length * 8, y + portrait_height + 8, 0);
+		if (x > area.left + portrait_width / 2 + portrait_width + 8 + total_length && x < area.left + portrait_width / 2 + portrait_width + 8 + total_length + token_len) {
 			if (y > tmp_y && y < tmp_y + 8) {
 				if (!is_permanent_keyword(t.s))
 					keyword_list->erase(iter);
@@ -519,23 +517,23 @@ void ConverseGump::Display(bool full_redraw) {
 	MsgText *token;
 	//std::list<MsgText>::iterator iter;
 	uint16 total_length = 0;
-	uint16 y = area.y + portrait_height + 8 + 3;
+	uint16 y = area.top + portrait_height + 8 + 3;
 
 	if (converse_bg_color != 255 || force_solid_bg) {
 		if (solid_bg)
-			screen->fill(converse_bg_color, area.x, area.y, area.w, area.h);
+			screen->fill(converse_bg_color, area.left, area.top, area.width(), area.height());
 		else
-			screen->stipple_8bit(converse_bg_color, area.x, area.y, area.w, area.h);
+			screen->stipple_8bit(converse_bg_color, area.left, area.top, area.width(), area.height());
 	}
 
 	bool use_transparency = (game_type == NUVIE_GAME_U6) ? false : true;
 
 	if (npc_portrait) {
-		screen->blit(area.x + 4, area.y + 4, npc_portrait, 8, frame_w, frame_h, frame_w, use_transparency);
+		screen->blit(area.left + 4, area.top + 4, npc_portrait, 8, frame_w, frame_h, frame_w, use_transparency);
 	}
 
 	if (!page_break && input_mode && avatar_portrait && is_talking()) {
-		screen->blit(area.x + portrait_width / 2 + 4, y, avatar_portrait, 8, frame_w, frame_h, frame_w, use_transparency);
+		screen->blit(area.left + portrait_width / 2 + 4, y, avatar_portrait, 8, frame_w, frame_h, frame_w, use_transparency);
 		std::list<MsgText>::iterator iter;
 		sint16 i = 0;
 		for (iter = keyword_list->begin(); iter != keyword_list->end(); i++, iter++) {
@@ -546,23 +544,23 @@ void ConverseGump::Display(bool full_redraw) {
 				total_length = 0;
 				y += 10;
 			}
-			t.font->drawString(screen, t.s.c_str(), area.x + portrait_width / 2 + portrait_width + 8 + total_length, y + 4, 0, 0);
+			t.font->drawString(screen, t.s.c_str(), area.left + portrait_width / 2 + portrait_width + 8 + total_length, y + 4, 0, 0);
 			if (cursor_position == i) {
-				screen->fill(CURSOR_COLOR, area.x + portrait_width / 2 + portrait_width + 16 + total_length, y + 4 + 8, token_len - 8, 1);
+				screen->fill(CURSOR_COLOR, area.left + portrait_width / 2 + portrait_width + 16 + total_length, y + 4 + 8, token_len - 8, 1);
 			}
 			total_length += token_len;
 			//total_length += t.s.length();
 		}
 		y += 16;
-		font->drawString(screen, " *", area.x + portrait_width / 2 + portrait_width + 8, y, 0, 0);
-		font->drawString(screen, input_buf.c_str(), area.x + portrait_width / 2 + portrait_width + 8 + font->getStringWidth(" *"), y, 0, 0);
-		drawCursor(area.x + portrait_width / 2 + portrait_width + 8 + font->getStringWidth(" *") + font->getStringWidth(input_buf.c_str()), y);
+		font->drawString(screen, " *", area.left + portrait_width / 2 + portrait_width + 8, y, 0, 0);
+		font->drawString(screen, input_buf.c_str(), area.left + portrait_width / 2 + portrait_width + 8 + font->getStringWidth(" *"), y, 0, 0);
+		drawCursor(area.left + portrait_width / 2 + portrait_width + 8 + font->getStringWidth(" *") + font->getStringWidth(input_buf.c_str()), y);
 		if (cursor_position == keyword_list->size()) {
-			screen->fill(CURSOR_COLOR, area.x + portrait_width / 2 + portrait_width + 16, y + 8, font->getStringWidth(input_buf.c_str()) + 8, 1);
+			screen->fill(CURSOR_COLOR, area.left + portrait_width / 2 + portrait_width + 16, y + 8, font->getStringWidth(input_buf.c_str()) + 8, 1);
 		}
 	}
 
-	y = area.y + 4;
+	y = area.top + 4;
 	total_length = 0;
 	std::list<MsgLine *>::iterator iter;
 	for (iter = msg_buf.begin(); iter != msg_buf.end(); iter++) {
@@ -572,10 +570,10 @@ void ConverseGump::Display(bool full_redraw) {
 		for (iter1 = msg_line->text.begin(); iter1 != msg_line->text.end() ; iter1++) {
 			token = *iter1;
 
-			total_length += token->font->drawString(screen, token->s.c_str(), area.x + 4 + frame_w + 4 + total_length, y + 4, 0, 0); //FIX for hardcoded font height
+			total_length += token->font->drawString(screen, token->s.c_str(), area.left + 4 + frame_w + 4 + total_length, y + 4, 0, 0); //FIX for hardcoded font height
 
 			//token->s.length();
-			//token->font->drawChar(screen, ' ', area.x + portrait_width + 8 + total_length * 8, y, 0);
+			//token->font->drawChar(screen, ' ', area.left + portrait_width + 8 + total_length * 8, y, 0);
 			//total_length += 1;
 
 		}
@@ -583,12 +581,12 @@ void ConverseGump::Display(bool full_redraw) {
 		total_length = 0;
 	}
 
-	//font->drawString(screen, conv_str.c_str(), area.x, area.y);
-	screen->update(area.x, area.y, area.w, area.h);
+	//font->drawString(screen, conv_str.c_str(), area.left, area.top);
+	screen->update(area.left, area.top, area.width(), area.height());
 }
 
 
-GUI_status ConverseGump::KeyDown(SDL_Keysym key) {
+GUI_status ConverseGump::KeyDown(Common::KeyState key) {
 	char ascii = get_ascii_char_from_keysym(key);
 
 	if (page_break || !is_talking()) {
@@ -603,27 +601,27 @@ GUI_status ConverseGump::KeyDown(SDL_Keysym key) {
 		return (GUI_YUM);
 	}
 
-	if (!input_mode || !isprint(ascii)) {
+	if (!input_mode || !Common::isPrint(ascii)) {
 		KeyBinder *keybinder = Game::get_game()->get_keybinder();
 		ActionType a = keybinder->get_ActionType(key);
 		switch (keybinder->GetActionKeyType(a)) {
 		case WEST_KEY:
-			key.sym = SDLK_LEFT;
+			key.keycode = Common::KEYCODE_LEFT;
 			break;
 		case EAST_KEY:
-			key.sym = SDLK_RIGHT;
+			key.keycode = Common::KEYCODE_RIGHT;
 			break;
 		case SOUTH_KEY:
-			key.sym = SDLK_DOWN;
+			key.keycode = Common::KEYCODE_DOWN;
 			break;
 		case NORTH_KEY:
-			key.sym = SDLK_UP;
+			key.keycode = Common::KEYCODE_UP;
 			break;
 		case CANCEL_ACTION_KEY:
-			key.sym = SDLK_ESCAPE;
+			key.keycode = Common::KEYCODE_ESCAPE;
 			break;
 		case DO_ACTION_KEY:
-			key.sym = SDLK_RETURN;
+			key.keycode = Common::KEYCODE_RETURN;
 			break;
 		default:
 			if (keybinder->handle_always_available_keys(a)) return GUI_YUM;
@@ -631,8 +629,8 @@ GUI_status ConverseGump::KeyDown(SDL_Keysym key) {
 		}
 	}
 
-	switch (key.sym) {
-	case SDLK_LEFT:
+	switch (key.keycode) {
+	case Common::KEYCODE_LEFT:
 		if (cursor_at_input_section() && input_char != 0)
 			input_char = 0;
 		else {
@@ -645,21 +643,21 @@ GUI_status ConverseGump::KeyDown(SDL_Keysym key) {
 			}
 		}
 		break;
-	case SDLK_RIGHT:
+	case Common::KEYCODE_RIGHT:
 		if (cursor_at_input_section() && input_char != 0 && permit_input == NULL)
 			input_buf_add_char(get_char_from_input_char());
 		else
 			cursor_position = (cursor_position + 1) % (keyword_list->size() + 1);
 		break;
-	case SDLK_DOWN:
+	case Common::KEYCODE_DOWN:
 		cursor_move_to_input();
 		increase_input_char();
 		break;
-	case SDLK_UP:
+	case Common::KEYCODE_UP:
 		cursor_move_to_input();
 		decrease_input_char();
 		break;
-	case SDLK_ESCAPE:
+	case Common::KEYCODE_ESCAPE:
 		if (permit_inputescape) {
 			// reset input buffer
 			permit_input = NULL;
@@ -667,8 +665,8 @@ GUI_status ConverseGump::KeyDown(SDL_Keysym key) {
 				set_input_mode(false);
 		}
 		return (GUI_YUM);
-	case SDLK_KP_ENTER:
-	case SDLK_RETURN:
+	case Common::KEYCODE_KP_ENTER:
+	case Common::KEYCODE_RETURN:
 		if (permit_inputescape || !cursor_at_input_section()
 		        || input_char != 0) { // input_char should only be permit_input
 			if (!cursor_at_input_section())
@@ -685,15 +683,15 @@ GUI_status ConverseGump::KeyDown(SDL_Keysym key) {
 		}
 
 		return (GUI_YUM);
-	case SDLK_BACKSPACE :
+	case Common::KEYCODE_BACKSPACE :
 		if (input_mode)
 			input_buf_remove_char();
 		break;
 	default: // alphanumeric characters
-		if (input_mode && isprint(ascii)) {
+		if (input_mode && Common::isPrint(ascii)) {
 			cursor_move_to_input();
 			if (permit_input == NULL) {
-				if (!numbers_only || isdigit(ascii))
+				if (!numbers_only || Common::isDigit(ascii))
 					if (input_char != 0)
 						input_buf_add_char(get_char_from_input_char());
 				input_buf_add_char(ascii);
@@ -748,7 +746,7 @@ GUI_status ConverseGump::MouseUp(int x, int y, int button) {
 void ConverseGump::input_add_string(std::string token_str) {
 	input_buf.clear();
 	for (uint16 i = 0; i < token_str.length(); i++) {
-		if (isalnum(token_str[i]) && (!permit_input || strchr(permit_input, token_str[i])
+		if (Common::isAlnum(token_str[i]) && (!permit_input || strchr(permit_input, token_str[i])
 		                              || strchr(permit_input, tolower(token_str[i]))))
 			input_buf_add_char(token_str[i]);
 	}

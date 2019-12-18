@@ -20,31 +20,31 @@
  *
  */
 
-#include <cstdlib>
+//#include <cstdlib>
 
 #include "ultima/ultima6/core/nuvie_defs.h"
 #include "ultima/ultima6/misc/u6_misc.h"
 #include "ultima/ultima6/misc/u6_llist.h"
 
-#include "Game.h"
-#include "U6UseCode.h"
+#include "ultima/ultima6/core/game.h"
+#include "ultima/ultima6/usecode/u6_usecode.h"
 #include "SchedPathFinder.h"
 #include "U6AStarPath.h"
-#include "MsgScroll.h"
-#include "U6Actor.h"
+#include "ultima/ultima6/core/msg_scroll.h"
+#include "U6ultima/ultima6/actors/actor.h"
 
-#include "Party.h"
-#include "ActorManager.h"
-#include "ViewManager.h"
-#include "SoundManager.h"
-#include "Converse.h"
-#include "Script.h"
-#include "Effect.h"
+#include "ultima/ultima6/core/party.h"
+#include "ultima/ultima6/actors/actor_manager.h"
+#include "ultima/ultima6/views/view_manager.h"
+#include "ultima/ultima6/sound/sound_manager.h"
+#include "ultima/ultima6/core/converse.h"
+#include "ultima/ultima6/script/script.h"
+#include "ultima/ultima6/core/effect.h"
 #include "CombatPathFinder.h"
 
 #include "U6ActorTypes.h"
-#include "U6WorkTypes.h"
-#include "Weather.h"
+#include "ultima/ultima6/actors/u6_work_types.h"
+#include "ultima/ultima6/core/weather.h"
 
 namespace Ultima {
 namespace Ultima6 {

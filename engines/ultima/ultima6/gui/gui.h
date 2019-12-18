@@ -25,11 +25,12 @@
 #ifndef ULTIMA6_GUI_GUI_H
 #define ULTIMA6_GUI_GUI_H
 
-#include "SDL.h"
-#include "GUI_status.h"
-#include "GUI_DragManager.h"
-#include "GUI_widget.h"
-#include "GUI_font.h"
+
+#include "ultima/ultima6/gui/gui_status.h"
+#include "ultima/ultima6/gui/gui_drag_manager.h"
+#include "ultima/ultima6/gui/gui_widget.h"
+#include "ultima/ultima6/gui/gui_font.h"
+#include "common/events.h"
 
 namespace Ultima {
 namespace Ultima6 {
@@ -150,7 +151,7 @@ public:
 	}
 
 	/* Function to pass an event to the GUI widgets */
-	GUI_status HandleEvent(SDL_Event *event);
+	GUI_status HandleEvent(Common::Event *event);
 
 	bool set_focus(GUI_Widget *widget);
 	void clear_focus()  {

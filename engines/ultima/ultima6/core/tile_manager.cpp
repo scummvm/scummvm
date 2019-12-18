@@ -20,26 +20,26 @@
  *
  */
 
-#include <cmath>
-#include <cstdlib>
+//#include <cmath>
+//#include <cstdlib>
 #include "ultima/ultima6/core/nuvie_defs.h"
 
 #include "ultima/ultima6/conf/configuration.h"
 
-#include "Console.h"
-#include "NuvieIOFile.h"
-#include "NuvieBmpFile.h"
-#include "U6Lib_n.h"
-#include "U6Lzw.h"
-#include "Game.h"
-#include "GamePalette.h"
-#include "Dither.h"
+#include "ultima/ultima6/core/console.h"
+#include "ultima/ultima6/files/nuvie_io_file.h"
+#include "ultima/ultima6/files/nuvie_bmp_file.h"
+#include "ultima/ultima6/files/u6_lib_n.h"
+#include "ultima/ultima6/files/u6_lzw.h"
+#include "ultima/ultima6/core/game.h"
+#include "ultima/ultima6/screen/game_palette.h"
+#include "ultima/ultima6/screen/dither.h"
 #include "ultima/ultima6/misc/u6_misc.h"
 #include "Look.h"
-#include "GameClock.h"
-#include "SaveManager.h"
-#include "TileManager.h"
-#include "GUI.h"
+#include "ultima/ultima6/core/game_clock.h"
+#include "ultima/ultima6/save/save_manager.h"
+#include "ultima/ultima6/core/tile_manager.h"
+#include "ultima/ultima6/gui/gui.h"
 
 namespace Ultima {
 namespace Ultima6 {
@@ -325,16 +325,16 @@ void TileManager::set_anim_loop(uint16 tile_num, sint8 loopc, uint8 loop) {
 const char *TileManager::lookAtTile(uint16 tile_num, uint16 qty, bool show_prefix) {
 	const char *desc;
 	bool plural;
-	Tile *tile;
+	Tile *tileP;
 
-	tile = get_original_tile(tile_num);
+	tileP = get_original_tile(tile_num);
 
 	if (qty > 1)
 		plural = true;
 	else
 		plural = false;
 
-	desc = look->get_description(tile->tile_num, &plural);
+	desc = look->get_description(tileP->tile_num, &plural);
 	if (show_prefix == false)
 		return desc;
 
@@ -342,14 +342,14 @@ const char *TileManager::lookAtTile(uint16 tile_num, uint16 qty, bool show_prefi
 	        (plural || Game::get_game()->get_game_type() == NUVIE_GAME_SE))
 		sprintf(desc_buf, "%u %s", qty, desc);
 	else
-		sprintf(desc_buf, "%s%s", article_tbl[tile->article_n], desc);
+		sprintf(desc_buf, "%s%s", article_tbl[tileP->article_n], desc);
 
 	DEBUG(0, LEVEL_DEBUGGING, "%s (%x): flags1:", desc_buf, tile_num);
-	print_b(LEVEL_INFORMATIONAL, tile->flags1);
+	print_b(LEVEL_INFORMATIONAL, tileP->flags1);
 	DEBUG(1, LEVEL_DEBUGGING, " f2:");
-	print_b(LEVEL_INFORMATIONAL, tile->flags2);
+	print_b(LEVEL_INFORMATIONAL, tileP->flags2);
 	DEBUG(1, LEVEL_DEBUGGING, " f3:");
-	print_b(LEVEL_INFORMATIONAL, tile->flags3);
+	print_b(LEVEL_INFORMATIONAL, tileP->flags3);
 	DEBUG(1, LEVEL_DEBUGGING, "\n");
 
 	return desc_buf;
@@ -468,8 +468,8 @@ bool TileManager::loadAnimData() {
 	std::string filename;
 	NuvieIOFileRead file;
 	uint8 i;
-	int game_type;
-	config->value("config/GameType", game_type);
+	int gameType;
+	config->value("config/GameType", gameType);
 	config_get_path(config, "animdata", filename);
 
 	if (file.open(filename) == false)
@@ -498,11 +498,11 @@ bool TileManager::loadAnimData() {
 
 	for (i = 0; i < 32; i++) { // FIXME: any data on which tiles don't start as animated?
 		animdata.loop[i] = 0; // loop forwards
-		if ((game_type == NUVIE_GAME_U6 &&
+		if ((gameType == NUVIE_GAME_U6 &&
 		        (animdata.tile_to_animate[i] == 862 // Crank
 		         || animdata.tile_to_animate[i] == 1009 // Crank
 		         || animdata.tile_to_animate[i] == 1020)) // Chain
-		        || (game_type == NUVIE_GAME_MD
+		        || (gameType == NUVIE_GAME_MD
 		            && ((animdata.tile_to_animate[i] >= 1 && animdata.tile_to_animate[i] <= 4) // cistern
 		                || (animdata.tile_to_animate[i] >= 16 && animdata.tile_to_animate[i] <= 23) // canal
 		                || (animdata.tile_to_animate[i] >= 616 && animdata.tile_to_animate[i] <= 627) // watch --pu62 lists as 416-427
@@ -569,10 +569,10 @@ bool TileManager::loadAnimMask() {
 	unsigned char *tile_data;
 	uint16 bytes2clear;
 	uint16 displacement;
-	int game_type;
+	int gameType;
 
-	config->value("config/GameType", game_type);
-	if (game_type != NUVIE_GAME_U6)               //only U6 has animmask.vga
+	config->value("config/GameType", gameType);
+	if (gameType != NUVIE_GAME_U6)               //only U6 has animmask.vga
 		return true;
 
 	config_get_path(config, "animmask.vga", filename);
@@ -657,62 +657,62 @@ void TileManager::set_anim_first_frame(uint16 anim_number, uint16 new_start_tile
  * **Fixed-point rotate function taken from the SDL Graphics Extension library
  * (SGE) (c)1999-2003 Anders Lindstr�m, licensed under LGPL v2+.**
  */
-Tile *TileManager::get_rotated_tile(Tile *tile, float rotate, uint8 src_y_offset) {
-	Tile *new_tile = new Tile(*tile); // retain properties of original tile
-	get_rotated_tile(tile, new_tile, rotate, src_y_offset);
+Tile *TileManager::get_rotated_tile(Tile *tileP, float rotate, uint8 src_y_offset) {
+	Tile *new_tile = new Tile(*tileP); // retain properties of original tileP
+	get_rotated_tile(tileP, new_tile, rotate, src_y_offset);
 
 	return new_tile;
 }
 
-void TileManager::get_rotated_tile(Tile *tile, Tile *dest_tile, float rotate, uint8 src_y_offset) {
+void TileManager::get_rotated_tile(Tile *tileP, Tile *dest_tile, float rotate, uint8 src_y_offset) {
 	unsigned char tile_data[256];
 
 	memset(&dest_tile->data, 255, 256); // fill output with transparent color
 
-	Sint32 dy, sx, sy;
-	Sint16 rx, ry;
-	Uint16 px = 8, py = 8; // rotate around these coordinates
-	Uint16 xmin = 0, xmax = 15, ymin = 0, ymax = 15; // size
-	Uint16 sxmin = xmin, sxmax = xmax, symin = ymin, symax = ymax;
-	Uint16 qx = 8, qy = 8; // ?? don't remember
+	int32 dy, sx, sy;
+	int16 rx, ry;
+	uint16 px = 8, py = 8; // rotate around these coordinates
+	uint16 xmin = 0, xmax = 15, ymin = 0, ymax = 15; // size
+	uint16 sxmin = xmin, sxmax = xmax, symin = ymin, symax = ymax;
+	uint16 qx = 8, qy = 8; // ?? don't remember
 
 	float theta = float(rotate * M_PI / 180.0); /* Convert to radians.  */
 
-	Sint32 const stx = Sint32((sin(theta)) * 8192.0);
-	Sint32 const ctx = Sint32((cos(theta)) * 8192.0);
-	Sint32 const sty = Sint32((sin(theta)) * 8192.0);
-	Sint32 const cty = Sint32((cos(theta)) * 8192.0);
-	Sint32 const mx = Sint32(px * 8192.0);
-	Sint32 const my = Sint32(py * 8192.0);
+	int32 const stx = int32((sin(theta)) * 8192.0);
+	int32 const ctx = int32((cos(theta)) * 8192.0);
+	int32 const sty = int32((sin(theta)) * 8192.0);
+	int32 const cty = int32((cos(theta)) * 8192.0);
+	int32 const mx = int32(px * 8192.0);
+	int32 const my = int32(py * 8192.0);
 
-	Sint32 const dx = xmin - qx;
-	Sint32 const ctdx = ctx * dx;
-	Sint32 const stdx = sty * dx;
+	int32 const dx = xmin - qx;
+	int32 const ctdx = ctx * dx;
+	int32 const stdx = sty * dx;
 
-	Sint32 const src_pitch = 16;
-	Sint32 const dst_pitch = 16;
-	Uint8 const *src_row = (Uint8 *)&tile->data;
-	Uint8 const *dst_pixels = (Uint8 *)&dest_tile->data;
-	Uint8 *dst_row;
+	int32 const src_pitch = 16;
+	int32 const dst_pitch = 16;
+	uint8 const *src_row = (uint8 *)&tileP->data;
+	uint8 const *dst_pixels = (uint8 *)&dest_tile->data;
+	uint8 *dst_row;
 
 	if (src_y_offset > 0 && src_y_offset < 16) { //shift source down before rotating. This is used by bolt and arrow tiles.
 		memset(&tile_data, 255, 256);
-		memcpy(&tile_data[src_y_offset * 16], &tile->data, 256 - (src_y_offset * 16));
-		src_row = (Uint8 *)&tile_data;
+		memcpy(&tile_data[src_y_offset * 16], &tileP->data, 256 - (src_y_offset * 16));
+		src_row = (uint8 *)&tile_data;
 	}
 
 	for (uint32 y = ymin; y < ymax; y++) {
 		dy = y - qy;
 
-		sx = Sint32(ctdx  + stx * dy + mx); /* Compute source anchor points */
-		sy = Sint32(cty * dy - stdx  + my);
+		sx = int32(ctdx  + stx * dy + mx); /* Compute source anchor points */
+		sy = int32(cty * dy - stdx  + my);
 
 		/* Calculate pointer to dst surface */
-		dst_row = (Uint8 *)dst_pixels + y * dst_pitch;
+		dst_row = (uint8 *)dst_pixels + y * dst_pitch;
 
 		for (uint32 x = xmin; x < xmax; x++) {
-			rx = Sint16(sx >> 13); /* Convert from fixed-point */
-			ry = Sint16(sy >> 13);
+			rx = int16(sx >> 13); /* Convert from fixed-point */
+			ry = int16(sy >> 13);
 
 			/* Make sure the source pixel is actually in the source image. */
 			if ((rx >= sxmin) && (rx <= sxmax) && (ry >= symin) && (ry <= symax))
