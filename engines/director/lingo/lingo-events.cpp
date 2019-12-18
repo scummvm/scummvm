@@ -184,8 +184,8 @@ void Lingo::processInputEvent(LEvent event) {
 		// TODO: is the above condition necessary or useful?
 		g_lingo->processEvent(event, kGlobalScript, 0);
 	}
-	if (!g_lingo->_dontPassEvent)
-		runMovieScript(event);
+
+	runMovieScript(event);
 }
 
 void Lingo::runMovieScript(LEvent event) {
@@ -194,10 +194,11 @@ void Lingo::runMovieScript(LEvent event) {
 	 * window [p.81 of D4 docs]
 	 */
 
+	if (_dontPassEvent)
+		return;
+
 	for (uint i = 0; i < _scriptContexts[kMovieScript].size(); i++) {
-		processEvent(event,
-					 kMovieScript,
-					 i);
+		processEvent(event, kMovieScript, i);
 		// TODO: How do know which script handles the message?
 	}
 	debugC(9, kDebugEvents, "STUB: processEvent(event, kMovieScript, ?)");
@@ -233,8 +234,7 @@ void Lingo::processFrameEvent(LEvent event) {
 	}
 	processEvent(event, kFrameScript, entity);
 
-	if (!g_lingo->_dontPassEvent)
-		runMovieScript(event);
+	runMovieScript(event);
 }
 
 void Lingo::processGenericEvent(LEvent event) {
@@ -292,10 +292,15 @@ void Lingo::processEvent(LEvent event) {
 		default:
 			warning("processEvent: Unhandled event %s", _eventHandlerTypes[event]);
 	}
+
+	_dontPassEvent = false;
 }
 
 void Lingo::processEvent(LEvent event, ScriptType st, int entityId) {
 	if (entityId < 0)
+		return;
+
+	if (_dontPassEvent)
 		return;
 
 	debugC(9, kDebugEvents, "Lingo::processEvent(%s, %s, %d)", _eventHandlerTypes[event], scriptType2str(st), entityId);
