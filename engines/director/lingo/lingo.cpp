@@ -70,6 +70,8 @@ Lingo::Lingo(DirectorEngine *vm) : _vm(vm) {
 
 	_localvars = NULL;
 
+	_dontPassEvent = false;
+
 	initEventHandlerTypes();
 
 	initBuiltIns();

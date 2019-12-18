@@ -620,7 +620,7 @@ private:
 
 	int _floatPrecision;
 
-	bool dontPassEvent;
+	bool _dontPassEvent;
 
 public:
 	void executeImmediateScripts(Frame *frame);

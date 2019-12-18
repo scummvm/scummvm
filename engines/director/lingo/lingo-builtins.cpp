@@ -871,7 +871,7 @@ void Lingo::b_continue(int nargs) {
 }
 
 void Lingo::b_dontPassEvent(int nargs) {
-	g_lingo->dontPassEvent = true;
+	g_lingo->_dontPassEvent = true;
 	warning("dontPassEvent raised");
 }
 
