@@ -31,7 +31,7 @@ namespace Ultima6 {
 
 bool openFile
 (
-    std::ifstream &in,          // Input stream to open.
+    Common::ReadStream *in,          // Input stream to open.
     const char *fname           // May be converted to upper-case.
 );
 
@@ -42,7 +42,7 @@ bool fileExists(
 /*
  *  File errors
  */
-
+#if 0
 class file_exception : public std::exception {
 	std::string  what_;
 public:
@@ -58,6 +58,7 @@ class   file_open_exception : public file_exception {
 public:
 	file_open_exception(const std::string &file): file_exception("Error opening file " + file) {  }
 };
+#endif
 
 } // End of namespace Ultima6
 } // End of namespace Ultima

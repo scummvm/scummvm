@@ -28,12 +28,12 @@
 #include "ultima/ultima6/gui/gui_button.h"
 #include "ultima/ultima6/gui/gui_text.h"
 #include "ultima/ultima6/gui/gui_Scroller.h"
-#include "ultima/ultima6/gui/gui_CallBack.h"
+#include "ultima/ultima6/gui/gui_callback.h"
 #include "ultima/ultima6/gui/gui_area.h"
 
 #include "ultima/ultima6/gui/gui_Dialog.h"
-#include "SaveSlot.h"
-#include "SaveDialog.h"
+#include "ultima/ultima6/save/save_slot.h"
+#include "ultima/ultima6/save/save_dialog.h"
 #include "ultima/ultima6/files/nuvie_file_list.h"
 #include "ultima/ultima6/keybinding/keys.h"
 #include "ultima/ultima6/core/event.h"
@@ -75,8 +75,8 @@ bool SaveDialog::init(const char *save_directory, const char *search_prefix) {
 	std::string *filename;
 	GUI_Widget *widget;
 	GUI *gui = GUI::get_gui();
-	GUI_Color bg_color = GUI_Color(162, 144, 87);
-	GUI_Color bg_color1 = GUI_Color(147, 131, 74);
+	GUI_Color bgColor = GUI_Color(162, 144, 87);
+	GUI_Color bgColor1 = GUI_Color(147, 131, 74);
 	GUI_Color *color_ptr;
 
 	if (filelist.open(save_directory, search_prefix, NUVIE_SORT_TIME_DESC) == false) {
@@ -93,12 +93,12 @@ bool SaveDialog::init(const char *save_directory, const char *search_prefix) {
 
 
 // Add an empty slot at the top.
-	widget = new SaveSlot(this, bg_color1);
+	widget = new SaveSlot(this, bgColor1);
 	((SaveSlot *)widget)->init(NULL, NULL);
 
 	scroller->AddWidget(widget);
 
-	color_ptr = &bg_color;
+	color_ptr = &bgColor;
 
 	for (i = 0; i < num_saves + 1; i++) {
 		if (i < num_saves)
@@ -109,10 +109,10 @@ bool SaveDialog::init(const char *save_directory, const char *search_prefix) {
 		if (((SaveSlot *)widget)->init(save_directory, filename) == true) {
 			scroller->AddWidget(widget);
 
-			if (color_ptr == &bg_color)
-				color_ptr = &bg_color1;
+			if (color_ptr == &bgColor)
+				color_ptr = &bgColor1;
 			else
-				color_ptr = &bg_color;
+				color_ptr = &bgColor;
 		} else
 			delete(SaveSlot *)widget;
 	}
@@ -128,10 +128,10 @@ bool SaveDialog::init(const char *save_directory, const char *search_prefix) {
 
 	       scroller->AddWidget(widget);
 
-	       if(color_ptr == &bg_color)
-	         color_ptr = &bg_color1;
+	       if(color_ptr == &bgColor)
+	         color_ptr = &bgColor1;
 	       else
-	         color_ptr = &bg_color;
+	         color_ptr = &bgColor;
 	      }
 	   }
 	*/
@@ -196,8 +196,8 @@ void SaveDialog::set_cursor_pos(uint8 index_num) {
 		cursor_y = 130;
 		break;
 	}
-	cursor_x += area.x;
-	cursor_y += area.y;
+	cursor_x += area.left;
+	cursor_y += area.top;
 }
 
 GUI_status SaveDialog::close_dialog() {
@@ -291,16 +291,14 @@ GUI_status SaveDialog::KeyDown(Common::KeyState key) {
 		uint16 y = (cursor_y + 8) * screen->get_scale_factor();
 
 		Common::Event fake_event;
-		fake_event.button.x = x;
-		fake_event.button.y = y;
-		fake_event.type = fake_event.button.type = SDL_MOUSEBUTTONDOWN;
-		fake_event.button.state = SDL_RELEASED;
-		fake_event.button.button = SDL_BUTTON_LEFT;
+		fake_event.mouse.x = x;
+		fake_event.mouse.y = y;
+		fake_event.type = Common::EVENT_LBUTTONDOWN;
 		GUI::get_gui()->HandleEvent(&fake_event);
 
-		fake_event.button.x = x; //GUI::HandleEvent divides by scale so we need to restore it
-		fake_event.button.y = y;
-		fake_event.type = fake_event.button.type = SDL_MOUSEBUTTONUP;
+		fake_event.mouse.x = x; //GUI::HandleEvent divides by scale so we need to restore it
+		fake_event.mouse.y = y;
+		fake_event.type = Common::EVENT_LBUTTONUP;
 		GUI::get_gui()->HandleEvent(&fake_event);
 		break;
 	}

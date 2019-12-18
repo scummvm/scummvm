@@ -22,7 +22,7 @@
 
 #include "ultima/ultima6/core/nuvie_defs.h"
 
-#include "ultima/ultima6/gui/gui_TextInput.h"
+#include "ultima/ultima6/gui/gui_text_input.h"
 #include "ultima/ultima6/gui/gui_font.h"
 #include "ultima/ultima6/keybinding/keys.h"
 //#include <stdlib.h>

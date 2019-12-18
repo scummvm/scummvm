@@ -38,7 +38,11 @@ MODULE_OBJS += \
 	ultima6/portraits/portrait.o \
 	ultima6/portraits/portrait_md.o \
 	ultima6/portraits/portrait_se.o \
-	ultima6/portraits/portrait_u6.o
+	ultima6/portraits/portrait_u6.o \
+	ultima6/save/save_dialog.o \
+	ultima6/save/save_game.o \
+	ultima6/save/save_manager.o \
+	ultima6/save/save_slot.o
 endif
 
 ifdef ENABLE_ULTIMA8

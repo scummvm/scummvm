@@ -20,65 +20,45 @@
  *
  */
 
-#ifndef ULTIMA6_SAVE_SAVE_MANAGER_H
-#define ULTIMA6_SAVE_SAVE_MANAGER_H
+#ifndef ULTIMA6_CORE_COMMAND_BAR_NEW_UI_H
+#define ULTIMA6_CORE_COMMAND_BAR_NEW_UI_H
 
 #include "ultima/shared/std/string.h"
-#include "ultima/ultima6/gui/gui_callback.h"
+#include "ultima/ultima6/gui/gui_widget.h"
+#include "ultima/ultima6/misc/call_back.h"
+#include "ultima/ultima6/core/command_bar.h"
 
 namespace Ultima {
 namespace Ultima6 {
 
-#define QUICK_LOAD true
-#define QUICK_SAVE false
+class NuvieIO;
+class Event;
+class Game;
+class GUI_Button;
+class GUI_CallBack;
+class Text;
+class Font;
 
-class Configuration;
+class CommandBarNewUI: public CommandBar {
+protected:
+	uint8 cur_pos;
+	uint8 icon_w;
+	uint8 icon_h;
+	uint8 icon_y_offset;
+	uint16 num_icons;
 
-
-class SaveDialog;
-class SaveGame;
-class SaveSlot;
-
-class SaveManager : public GUI_CallBack {
-	Configuration *config;
-	ActorManager *actor_manager;
-	ObjManager *obj_manager;
-
-	int game_type;
-
-	SaveGame *savegame;
-
-	std::string savedir;
-	std::string search_prefix; //eg. nuvieU6, nuvieMD or nuvieSE
-// gui widgets;
-
-	SaveDialog *dialog;
-
+	Font *font;
 public:
+	CommandBarNewUI(Game *g);
+	~CommandBarNewUI();
 
-	SaveManager(Configuration *cfg);
-	virtual ~SaveManager();
+	virtual void Display(bool full_redraw);
+	virtual GUI_status KeyDown(Common::KeyState key);
+	virtual GUI_status MouseDown(int x, int y, int button);
+	virtual GUI_status MouseUp(int x, int y, int button);
 
-	bool init();
-
-	bool load_save();
-	bool load_latest_save();
-
-	void create_dialog();
-	SaveDialog *get_dialog() {
-		return dialog;
-	}
-
-	bool load(SaveSlot *save_slot);
-	bool save(SaveSlot *save_slot);
-	bool quick_save(int save_num, bool load);
-
-	std::string get_new_savefilename();
-	std::string get_savegame_directory() {
-		return savedir;
-	}
-
-	GUI_status callback(uint16 msg, GUI_CallBack *caller, void *data);
+private:
+	const char *get_command_name(sint8 command_num);
 };
 
 } // End of namespace Ultima6
