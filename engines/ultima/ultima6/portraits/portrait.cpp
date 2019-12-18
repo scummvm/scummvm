@@ -33,9 +33,9 @@
 #include "ultima/ultima6/actors/actor.h"
 
 #include "ultima/ultima6/portraits/portrait.h"
-#include "PortraitU6.h"
-#include "PortraitMD.h"
-#include "PortraitSE.h"
+#include "ultima/ultima6/portraits/portrait_u6.h"
+#include "ultima/ultima6/portraits/portrait_md.h"
+#include "ultima/ultima6/portraits/portrait_se.h"
 
 #include "ultima/ultima6/files/u6_lzw.h"
 #include "ultima/ultima6/misc/u6_misc.h"

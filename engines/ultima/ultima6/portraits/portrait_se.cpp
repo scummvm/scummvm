@@ -31,7 +31,7 @@
 #include "ultima/ultima6/actors/actor_manager.h"
 #include "ultima/ultima6/actors/actor.h"
 #include "ultima/ultima6/core/game_clock.h"
-#include "PortraitSE.h"
+#include "ultima/ultima6/portraits/portrait_se.h"
 #include "ultima/ultima6/misc/u6_misc.h"
 
 namespace Ultima {

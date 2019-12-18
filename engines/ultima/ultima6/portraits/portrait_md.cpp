@@ -30,7 +30,7 @@
 
 #include "ultima/ultima6/actors/actor_manager.h"
 #include "ultima/ultima6/actors/actor.h"
-#include "PortraitMD.h"
+#include "ultima/ultima6/portraits/portrait_md.h"
 #include "ultima/ultima6/misc/u6_misc.h"
 #include "ultima/ultima6/save/obj_list.h"
 #include "ultima/ultima6/script/script.h"

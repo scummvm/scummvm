@@ -34,7 +34,11 @@ MODULE_OBJS += \
 	ultima6/pathfinder/path_finder.o \
 	ultima6/pathfinder/sched_path_finder.o \
 	ultima6/pathfinder/seek_path.o \
-	ultima6/pathfinder/u6_astar_path.o
+	ultima6/pathfinder/u6_astar_path.o \
+	ultima6/portraits/portrait.o \
+	ultima6/portraits/portrait_md.o \
+	ultima6/portraits/portrait_se.o \
+	ultima6/portraits/portrait_u6.o
 endif
 
 ifdef ENABLE_ULTIMA8

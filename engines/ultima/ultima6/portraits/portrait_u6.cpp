@@ -31,7 +31,7 @@
 
 #include "ultima/ultima6/actors/actor_manager.h"
 #include "ultima/ultima6/actors/actor.h"
-#include "PortraitU6.h"
+#include "ultima/ultima6/portraits/portrait_u6.h"
 #include "ultima/ultima6/files/u6_lzw.h"
 #include "ultima/ultima6/misc/u6_misc.h"
 
