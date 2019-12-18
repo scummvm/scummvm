@@ -32,7 +32,7 @@
 #include "ultima/ultima6/files/u6_lzw.h"
 #include "ultima/ultima6/gui/gui.h"
 #include "ultima/ultima6/core/console.h"
-#include "Saveultima/ultima6/core/game.h"
+#include "ultima/ultima6/save/save_game.h"
 #include "ultima/ultima6/conf/configuration.h"
 #include "ultima/ultima6/core/game.h"
 #include "ultima/ultima6/core/obj_manager.h"
@@ -282,6 +282,7 @@ bool SaveGame::load_objlist() {
 }
 
 SaveHeader *SaveGame::load_info(NuvieIOFileRead *loadfile) {
+#ifdef TODO
 	uint32 rmask, gmask, bmask;
 	unsigned char save_desc[MAX_SAVE_DESC_LENGTH + 1];
 	unsigned char player_name[14];
@@ -326,6 +327,9 @@ SaveHeader *SaveGame::load_info(NuvieIOFileRead *loadfile) {
 	header.thumbnail = SDL_CreateRGBSurfaceFrom(header.thumbnail_data, MAPWINDOW_THUMBNAIL_SIZE, MAPWINDOW_THUMBNAIL_SIZE, 24, MAPWINDOW_THUMBNAIL_SIZE * 3, rmask, gmask, bmask, 0);
 
 	return &header;
+#else
+	return nullptr;
+#endif
 }
 
 bool SaveGame::check_version(NuvieIOFileRead *loadfile) {

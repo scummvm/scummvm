@@ -28,7 +28,7 @@
 #include "ultima/ultima6/gui/gui_button.h"
 #include "ultima/ultima6/gui/gui_text.h"
 #include "ultima/ultima6/gui/gui_TextToggleButton.h"
-#include "ultima/ultima6/gui/gui_CallBack.h"
+#include "ultima/ultima6/gui/gui_callback.h"
 #include "ultima/ultima6/gui/gui_area.h"
 
 #include "ultima/ultima6/gui/gui_Dialog.h"

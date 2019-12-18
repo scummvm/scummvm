@@ -20,10 +20,6 @@
  *
  */
 
-#ifdef HAVE_CONFIG_H
-//#include <config.h>
-#endif
-
 #include "ultima/ultima6/core/nuvie_defs.h"
 #include "ultima/ultima6/conf/configuration.h"
 
@@ -39,9 +35,9 @@
 //#include "ultima/ultima6/core/game.h"
 #include "ultima/ultima6/core/event.h"
 #include "ultima/ultima6/core/console.h"
-#include "SaveDialog.h"
-#include "SaveSlot.h"
-#include "Saveultima/ultima6/core/game.h"
+#include "ultima/ultima6/save/save_dialog.h"
+#include "ultima/ultima6/save/save_slot.h"
+#include "ultima/ultima6/save/save_game.h"
 #include "ultima/ultima6/core/msg_scroll.h"
 #include "ultima/ultima6/keybinding/utils.h"
 ////#include <direct.h>
@@ -277,19 +273,19 @@ std::string SaveManager::get_new_savefilename() {
 	uint32 count;
 	std::string *filename;
 	std::string new_filename;
-	std::string search_prefix;
+	std::string searchPrefix;
 	std::string num_str;
 	char end_buf[8]; // 000.sav\0
 	NuvieFileList filelist;
 
 	max_count = 0;
 
-	search_prefix = "nuvie";
-	search_prefix.append(get_game_tag(game_type));
+	searchPrefix = "nuvie";
+	searchPrefix.append(get_game_tag(game_type));
 
-	new_filename = search_prefix;
+	new_filename = searchPrefix;
 
-	filelist.open(savedir.c_str(), search_prefix.c_str(), NUVIE_SORT_TIME_DESC);
+	filelist.open(savedir.c_str(), searchPrefix.c_str(), NUVIE_SORT_TIME_DESC);
 
 	for (; (filename = filelist.next());) {
 		// search for highest save number here.

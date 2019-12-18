@@ -27,18 +27,18 @@
 #include "ultima/ultima6/gui/gui.h"
 #include "ultima/ultima6/gui/gui_types.h"
 #include "ultima/ultima6/gui/gui_text.h"
-#include "ultima/ultima6/gui/gui_TextInput.h"
+#include "ultima/ultima6/gui/gui_text_input.h"
 
-#include "ultima/ultima6/gui/gui_CallBack.h"
+#include "ultima/ultima6/gui/gui_callback.h"
 
 #include "ultima/ultima6/core/game.h"
 #include "ultima/ultima6/files/nuvie_io_file.h"
 #include "ultima/ultima6/core/map_window.h"
 
-#include "Saveultima/ultima6/core/game.h"
-#include "SaveSlot.h"
+#include "ultima/ultima6/save/save_game.h"
+#include "ultima/ultima6/save/save_slot.h"
 #include "ultima/ultima6/save/save_manager.h"
-#include "SaveDialog.h"
+#include "ultima/ultima6/save/save_dialog.h"
 #include "ultima/ultima6/gui/gui_Scroller.h"
 
 namespace Ultima {
@@ -83,6 +83,7 @@ bool SaveSlot::init(const char *directory, std::string *file) {
 }
 
 bool SaveSlot::load_info(const char *directory) {
+#ifdef TODO
 	NuvieIOFileRead loadfile;
 	SaveGame *savegame;
 	SaveHeader *header;
@@ -143,6 +144,7 @@ bool SaveSlot::load_info(const char *directory) {
 	AddWidget(widget);
 
 	delete savegame;
+#endif
 
 	return true;
 }
