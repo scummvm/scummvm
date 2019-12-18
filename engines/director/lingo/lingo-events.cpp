@@ -170,10 +170,12 @@ void Lingo::processInputEvent(LEvent event) {
 			// TODO: Is the kFrameScript call above correct?
 		} else if (event == kEventMouseUp) {
 			// Frame script overrides sprite script
-			if (!currentFrame->_sprites[spriteId]->_scriptId)
+			if (!currentFrame->_sprites[spriteId]->_scriptId) {
 				g_lingo->processEvent(kEventNone, kSpriteScript, currentFrame->_sprites[spriteId]->_castId + 1024);
-			else
+				g_lingo->processEvent(event, kSpriteScript, currentFrame->_sprites[spriteId]->_castId + 1024);
+			} else {
 				g_lingo->processEvent(kEventNone, kFrameScript, currentFrame->_sprites[spriteId]->_scriptId);
+			}
 		}
 		if (event == kEventKeyDown) {
 			// TODO: is the above condition necessary or useful?
