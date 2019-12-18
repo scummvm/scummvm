@@ -46,7 +46,7 @@ const int GUI::mouseclick_delay = 300; /* SB-X */
 GUI *GUI::gui = NULL;
 
 GUI:: GUI(Configuration *c, Screen *s) {
-	SDL_Surface *sdl_surface;
+	Graphics::ManagedSurface *sdl_surface;
 
 	gui = this;
 	config = c;

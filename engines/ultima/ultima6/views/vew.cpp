@@ -21,7 +21,7 @@
  */
 
 #include "ultima/ultima6/core/nuvie_defs.h"
-#include "U6misc.h"
+#include "ultima/ultima6/misc/u6_misc.h"
 #include "Party.h"
 #include "GamePalette.h"
 #include "ViewManager.h"
@@ -116,7 +116,7 @@ bool View::prev_party_member() {
 	return false;
 }
 
-void View::fill_md_background(uint8 color, SDL_Rect area) {
+void View::fill_md_background(uint8 color, Common::Rect area) {
 	Screen *screen = Game::get_game()->get_screen();
 	screen->fill(color, area.x + 1, area.y + 9, 1, 1); // left pillar
 	screen->fill(color, area.x + 2, area.y + 6, 1, 4); // left pillar
@@ -207,7 +207,7 @@ GUI_Button *View::loadButton(std::string dir, std::string name, uint16 x, uint16
 	std::string imagefile;
 	std::string path;
 
-	SDL_Surface *image, *image1;
+	Graphics::ManagedSurface *image, *image1;
 	build_path(dir, name + "_btn_up.bmp", imagefile);
 	image = SDL_LoadBMP(imagefile.c_str());
 	build_path(dir, name + "_btn_down.bmp", imagefile);

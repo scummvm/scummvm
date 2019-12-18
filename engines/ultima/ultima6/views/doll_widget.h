@@ -52,7 +52,7 @@ class DollWidget : public GUI_Widget {
 	Tile *empty_tile, *blocked_tile;
 
 	U6Shape *md_doll_shp;
-	SDL_Surface *actor_doll, *doll_bg;
+	Graphics::ManagedSurface *actor_doll, *doll_bg;
 
 public:
 	DollWidget(Configuration *cfg, GUI_CallBack *callback = NULL);
@@ -60,7 +60,7 @@ public:
 
 	bool init(Actor *a, uint16 x, uint16 y, TileManager *tm, ObjManager *om, bool in_portrat_view = false);
 	void free_doll_shapes();
-	void setColorKey(SDL_Surface *image);
+	void setColorKey(Graphics::ManagedSurface *image);
 	void set_actor(Actor *a);
 	void Display(bool full_redraw);
 
@@ -79,7 +79,7 @@ public:
 
 	void drag_draw(int x, int y, int message, void *data);
 
-	SDL_Rect *get_item_hit_rect(uint8 location);
+	Common::Rect *get_item_hit_rect(uint8 location);
 
 protected:
 

@@ -157,9 +157,9 @@ public:
 
 // custom doll functions shared between DollWidget and DollViewGump
 	std::string getDollDataDirString();
-	SDL_Surface *loadAvatarDollImage(SDL_Surface *avatar_doll, bool orig = false);
-	SDL_Surface *loadCustomActorDollImage(SDL_Surface *actor_doll, uint8 actor_num, bool orig = false);
-	SDL_Surface *loadGenericDollImage(bool orig);
+	Graphics::ManagedSurface *loadAvatarDollImage(Graphics::ManagedSurface *avatar_doll, bool orig = false);
+	Graphics::ManagedSurface *loadCustomActorDollImage(Graphics::ManagedSurface *actor_doll, uint8 actor_num, bool orig = false);
+	Graphics::ManagedSurface *loadGenericDollImage(bool orig);
 
 protected:
 

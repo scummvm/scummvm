@@ -24,7 +24,7 @@
 #include "ultima/ultima6/core/nuvie_defs.h"
 
 #include "Screen.h"
-#include "U6LList.h"
+#include "ultima/ultima6/misc/u6_llist.h"
 #include "GUI_button.h"
 #include "DollWidget.h"
 #include "InventoryWidget.h"
@@ -207,8 +207,8 @@ void InventoryView::add_command_icons(Screen *tmp_screen, void *view_manager) {
 		y = 100;
 	else if (Game::get_game()->get_game_type() == NUVIE_GAME_U6)
 		y = 80;
-	SDL_Surface *button_image;
-	SDL_Surface *button_image2;
+	Graphics::ManagedSurface *button_image;
+	Graphics::ManagedSurface *button_image2;
 //FIX need to handle clicked button image, check image free on destruct.
 
 	tile = tile_manager->get_tile(MD ? 282 : 387); //left arrow icon
@@ -494,7 +494,7 @@ void InventoryView::moveCursorRelative(sint8 new_x, sint8 new_y) {
 /* Update on-screen location (px,py) of cursor.
  */
 void InventoryView::update_cursor() {
-	SDL_Rect *ready_loc;
+	Common::Rect *ready_loc;
 	nuvie_game_t gametype = Game::get_game()->get_game_type();
 	switch (cursor_pos.area) {
 	case INVAREA_LIST:

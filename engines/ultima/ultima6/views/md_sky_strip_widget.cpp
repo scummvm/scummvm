@@ -25,7 +25,7 @@
 #include <math.h>
 
 #include "ultima/ultima6/core/nuvie_defs.h"
-#include "U6misc.h"
+#include "ultima/ultima6/misc/u6_misc.h"
 #include "ultima/ultima6/conf/configuration.h"
 #include "GameClock.h"
 #include "U6Shape.h"

@@ -78,6 +78,10 @@ double sqrt(double val) {
 	return ::sqrt(val);
 }
 
+int labs(int v) {
+	return ABS(v);
+}
+
 const char *strstr(const char *str, const char *substr) {
 	return ::strstr(str, substr);
 }

@@ -24,7 +24,7 @@
 #include <sstream>
 #include <cstdlib>
 #include "ultima/ultima6/core/nuvie_defs.h"
-#include "U6misc.h"
+#include "ultima/ultima6/misc/u6_misc.h"
 #include "ultima/ultima6/conf/configuration.h"
 #include "NuvieFileList.h"
 #include "Objlist.h"
@@ -35,7 +35,7 @@
 #include "MDActor.h"
 #include "U6WorkTypes.h"
 #include "TileManager.h"
-#include "U6LList.h"
+#include "ultima/ultima6/misc/u6_llist.h"
 #include "ActorManager.h"
 #include "NuvieIOFile.h"
 #include "GameClock.h"

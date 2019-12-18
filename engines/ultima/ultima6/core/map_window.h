@@ -23,7 +23,7 @@
 #ifndef ULTIMA6_CORE_MAP_WINDOW_H
 #define ULTIMA6_CORE_MAP_WINDOW_H
 
-#include <vector>
+#include "ultima/shared/std/containers.h"
 #include "SDL.h"
 
 #include "ultima/ultima6/core/nuvie_defs.h"
@@ -89,7 +89,7 @@ class MapWindow: public GUI_Widget {
 
 	uint16 *tmp_map_buf; // tempory buffer for flood fill, hide rooms.
 	uint16 tmp_map_width, tmp_map_height;
-	SDL_Surface *overlay; // used for visual effects
+	Graphics::ManagedSurface *overlay; // used for visual effects
 	uint8 overlay_level; // where the overlay surface is placed
 	int min_brightness;
 
@@ -119,7 +119,7 @@ class MapWindow: public GUI_Widget {
 	uint8 cur_x_add, cur_y_add; // pixel offset from cur_x,cur_y (set by shiftMapRelative)
 	sint32 vel_x, vel_y; // velocity of automatic map movement (pixels per second)
 
-	SDL_Rect clip_rect;
+	Common::Rect clip_rect;
 
 	Obj *selected_obj;
 	Actor *look_actor;
@@ -136,7 +136,7 @@ class MapWindow: public GUI_Widget {
 	bool roof_mode;
 	RoofDisplayType roof_display;
 
-	SDL_Surface *roof_tiles;
+	Graphics::ManagedSurface *roof_tiles;
 
 	WizardEye wizard_eye_info;
 
@@ -171,7 +171,7 @@ public:
 		vel_x = vx;
 		vel_y = vy;
 	}
-	void set_overlay(SDL_Surface *surfpt);
+	void set_overlay(Graphics::ManagedSurface *surfpt);
 	void set_overlay_level(int level = MAP_OVERLAY_DEFAULT) {
 		overlay_level = level;
 	}
@@ -262,10 +262,10 @@ public:
 	AnimManager *get_anim_manager() {
 		return anim_manager;
 	}
-	SDL_Rect *get_clip_rect()       {
+	Common::Rect *get_clip_rect()       {
 		return &clip_rect;
 	}
-	SDL_Surface *get_overlay();
+	Graphics::ManagedSurface *get_overlay();
 
 	void get_level(uint8 *level);
 	void get_pos(uint16 *x, uint16 *y, uint8 *px = NULL, uint8 *py = NULL);
@@ -319,9 +319,9 @@ public:
 
 	unsigned char *make_thumbnail();
 	void free_thumbnail();
-	SDL_Surface *get_sdl_surface();
-	SDL_Surface *get_sdl_surface(uint16 x, uint16 y, uint16 w, uint16 h);
-	SDL_Surface *get_roof_tiles() {
+	Graphics::ManagedSurface *get_sdl_surface();
+	Graphics::ManagedSurface *get_sdl_surface(uint16 x, uint16 y, uint16 w, uint16 h);
+	Graphics::ManagedSurface *get_roof_tiles() {
 		return roof_tiles;
 	}
 

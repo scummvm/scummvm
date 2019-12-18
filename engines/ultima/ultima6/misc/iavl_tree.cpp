@@ -20,8 +20,8 @@
  *
  */
 
-#include <stdlib.h>
-#include "iAVLTree.h"
+#include "ultima/ultima6/misc/iavl_tree.h"
+#include "ultima/ultima6/core/nuvie_defs.h"
 
 namespace Ultima {
 namespace Ultima6 {

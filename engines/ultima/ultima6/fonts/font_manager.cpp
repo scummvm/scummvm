@@ -34,7 +34,7 @@
 #include "ConvFont.h"
 #include "U6Font.h"
 #include "WOUFont.h"
-#include "U6misc.h"
+#include "ultima/ultima6/misc/u6_misc.h"
 
 namespace Ultima {
 namespace Ultima6 {

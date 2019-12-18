@@ -23,7 +23,7 @@
 #ifndef ULTIMA6_FILES_U6LIB_N_H
 #define ULTIMA6_FILES_U6LIB_N_H
 
-#include <vector>
+#include "ultima/shared/std/containers.h"
 #include "ultima/shared/std/string.h"
 #include <cstdio> /* FILE */
 

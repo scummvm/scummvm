@@ -23,6 +23,8 @@
 #ifndef ULTIMA6_MISC_MAP_ENTITY_H
 #define ULTIMA6_MISC_MAP_ENTITY_H
 
+#include "ultima/ultima6/core/nuvie_defs.h"
+
 namespace Ultima {
 namespace Ultima6 {
 

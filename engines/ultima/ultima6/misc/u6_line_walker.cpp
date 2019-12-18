@@ -20,7 +20,7 @@
  *
  */
 
-#include "U6LineWalker.h"
+#include "ultima/ultima6/misc/u6_line_walker.h"
 
 namespace Ultima {
 namespace Ultima6 {

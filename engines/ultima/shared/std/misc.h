@@ -54,6 +54,7 @@ extern double atof(const char *str);
 extern const char *strstr(const char *str, const char *substr);
 extern double pow(double x, double y);
 extern double sqrt(double val);
+extern int labs(int v);
 
 extern void *malloc(size_t size);
 extern void *calloc(size_t num, size_t size);

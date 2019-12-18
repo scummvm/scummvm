@@ -21,10 +21,10 @@
  */
 
 #include <cmath>
-#include <vector>
+#include "ultima/shared/std/containers.h"
 #include "SDL.h"
 #include "ultima/ultima6/core/nuvie_defs.h"
-#include "U6misc.h"
+#include "ultima/ultima6/misc/u6_misc.h"
 
 #include "Font.h"
 #include "FontManager.h"
@@ -86,7 +86,7 @@ static float get_relative_degrees(sint16 sx, sint16 sy, float angle_up) {
 }
 
 
-AnimManager::AnimManager(sint16 x, sint16 y, Screen *screen, SDL_Rect *clipto)
+AnimManager::AnimManager(sint16 x, sint16 y, Screen *screen, Common::Rect *clipto)
 	: next_id(0) {
 	map_window = Game::get_game()->get_map_window();
 	tile_pitch = 16;

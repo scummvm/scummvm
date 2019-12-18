@@ -53,14 +53,14 @@ public:
 
 protected:
 	Uint8 R, G, B;
-	Uint32 color;
+	uint32 color;
 
 	/* flag */
 	int useFrame;
 
 	/* frame color values */
 	Uint8 fR, fG, fB;
-	Uint32 frameColor;
+	uint32 frameColor;
 
 	/* remember me */
 	int frameThickness;

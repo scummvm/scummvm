@@ -43,7 +43,7 @@ class Configuration;
  * ==================
  *
  * U6Shape can load Ultima VI shape files and return the shapes
- * stored into these files either as a SDL_Surface or as raw data.
+ * stored into these files either as a Graphics::ManagedSurface or as raw data.
  */
 class U6Shape {
 private:
@@ -65,7 +65,7 @@ public:
 	bool load_WoU_background(Configuration *config, nuvie_game_t game_type);
 
 	unsigned char *get_data();
-	SDL_Surface *get_shape_surface();
+	Graphics::ManagedSurface *get_shape_surface();
 	bool get_hot_point(uint16 *x, uint16 *y);
 	bool get_size(uint16 *w, uint16 *h);
 

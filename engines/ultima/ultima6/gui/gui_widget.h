@@ -49,7 +49,7 @@ protected:
 
 	Screen *screen;
 	/* The display surface for the widget */
-	SDL_Surface *surface;
+	Graphics::ManagedSurface *surface;
 
 	int offset_x, offset_y; /* original offsets to parent */
 
@@ -85,7 +85,7 @@ protected:
 
 public:
 	/* The area covered by the widget */
-	SDL_Rect area;
+	Common::Rect area;
 
 	GUI_Widget(void *data);
 	GUI_Widget(void *data, int x, int y, int w, int h);
@@ -119,10 +119,10 @@ public:
 	   If 'w' or 'h' is -1, that parameter will not be changed.
 	 */
 	virtual void SetRect(int x, int y, int w, int h);
-	virtual void SetRect(SDL_Rect **bounds);
+	virtual void SetRect(Common::Rect **bounds);
 
 	/* Return the whole area */
-	virtual SDL_Rect GetRect() {
+	virtual Common::Rect GetRect() {
 		return area;
 	}
 
@@ -143,7 +143,7 @@ public:
 	/* Check to see if a point intersects the bounds of the widget.
 	 */
 	virtual int HitRect(int x, int y);
-	virtual int HitRect(int x, int y, SDL_Rect &rect);
+	virtual int HitRect(int x, int y, Common::Rect &rect);
 
 	/* Set the display surface for this widget */
 	virtual void SetDisplay(Screen *s);

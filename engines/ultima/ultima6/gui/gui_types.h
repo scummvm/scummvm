@@ -36,13 +36,13 @@ public:
 	/* Load an image from a BMP file */
 	GUI_image(char *file);
 
-	/* Use a SDL_Surface as the image
+	/* Use a Graphics::ManagedSurface as the image
 	   The surface shouldn't be freed while the miage object exists.
 	 */
-	GUI_image(SDL_Surface *picture, int shouldfree = 0);
+	GUI_image(Graphics::ManagedSurface *picture, int shouldfree = 0);
 
 private:
-	SDL_Surface *image;
+	Graphics::ManagedSurface *image;
 };
 
 class GUI_Color {
@@ -67,7 +67,7 @@ public:
 		r = g = b = 0;
 		sdl_color = 0;
 	};
-	void map_color(SDL_Surface *surface) {
+	void map_color(Graphics::ManagedSurface *surface) {
 		sdl_color = SDL_MapRGB(surface->format, r, g, b);
 	};
 

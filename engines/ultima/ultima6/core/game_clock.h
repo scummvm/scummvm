@@ -23,7 +23,7 @@
 #ifndef ULTIMA6_CORE_GAME_CLOCK_H
 #define ULTIMA6_CORE_GAME_CLOCK_H
 
-#include <vector>
+#include "ultima/shared/std/containers.h"
 #include "SDL.h"
 #include "ultima/ultima6/core/nuvie_defs.h"
 

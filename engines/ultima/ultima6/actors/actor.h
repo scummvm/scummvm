@@ -23,7 +23,7 @@
 #ifndef ULTIMA6_ACTORS_ACTOR_H
 #define ULTIMA6_ACTORS_ACTOR_H
 
-#include <vector>
+#include "ultima/shared/std/containers.h"
 #include <list>
 #include "ultima/shared/std/string.h"
 #include <map>

@@ -26,7 +26,7 @@
 #include "ultima/ultima6/core/nuvie_defs.h"
 #include "ultima/ultima6/conf/configuration.h"
 #include "mixer.h"
-#include "U6misc.h"
+#include "ultima/ultima6/misc/u6_misc.h"
 #include "NuvieIO.h"
 #include "NuvieIOFile.h"
 #include "decoder/wave/stdiostream.h"

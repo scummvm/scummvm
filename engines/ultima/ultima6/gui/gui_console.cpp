@@ -24,7 +24,7 @@
 #include <cmath>
 #include "ultima/shared/std/string.h"
 #include "ultima/ultima6/core/nuvie_defs.h"
-#include "U6misc.h"
+#include "ultima/ultima6/misc/u6_misc.h"
 #include "GUI.h"
 #include "GUI_widget.h"
 #include "GUI_Console.h"
@@ -54,7 +54,7 @@ void GUI_Console::SetDisplay(Screen *s) {
 
 /* Show the widget  */
 void GUI_Console:: Display(bool full_redraw) {
-	SDL_Rect framerect;
+	Common::Rect framerect;
 
 	framerect = area;
 

@@ -27,7 +27,7 @@
 #include <list>
 #include "GUI.h"
 
-#include "U6misc.h"
+#include "ultima/ultima6/misc/u6_misc.h"
 #include "UseCode.h"
 
 #include "lua.hpp"

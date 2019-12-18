@@ -22,7 +22,7 @@
 
 #include <stdlib.h>
 #include "ultima/ultima6/core/nuvie_defs.h"
-#include "U6misc.h"
+#include "ultima/ultima6/misc/u6_misc.h"
 #include "Event.h"
 #include "GUI.h"
 #include "BMPFont.h"
@@ -100,7 +100,7 @@ bool SignViewGump::init(Screen *tmp_screen, void *view_manager, Font *f, Party *
 
 
 void SignViewGump::Display(bool full_redraw) {
-	SDL_Rect dst;
+	Common::Rect dst;
 	dst = area;
 	SDL_BlitSurface(bg_image, NULL, surface, &dst);
 

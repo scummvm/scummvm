@@ -26,7 +26,7 @@
 
 #include "ultima/ultima6/core/nuvie_defs.h"
 #include "ultima/ultima6/conf/configuration.h"
-#include "U6misc.h"
+#include "ultima/ultima6/misc/u6_misc.h"
 #include "FontManager.h"
 #include "Font.h"
 #include "GamePalette.h"
@@ -140,7 +140,7 @@ void ConverseGumpWOU::display_bg() {
 
 	if (game_type == NUVIE_GAME_U6) {
 		if (game_w >= 335) { // get right size
-			SDL_Rect dst;
+			Common::Rect dst;
 			dst.x = x_off;
 			dst.y = y_off;
 			dst.w = 176;

@@ -276,12 +276,12 @@ unsigned char *NuvieBmpFile::getRawIndexedDataCopy() {
 	return copy;
 }
 
-SDL_Surface *NuvieBmpFile::getSdlSurface32(std::string filename) {
+Graphics::ManagedSurface *NuvieBmpFile::getSdlSurface32(std::string filename) {
 	load(filename);
 	return getSdlSurface32();
 }
 
-SDL_Surface *NuvieBmpFile::getSdlSurface32() {
+Graphics::ManagedSurface *NuvieBmpFile::getSdlSurface32() {
 	uint32 rmask = 0x000000ff;
 	uint32 gmask = 0x0000ff00;
 	uint32 bmask = 0x00ff0000;
@@ -291,7 +291,7 @@ SDL_Surface *NuvieBmpFile::getSdlSurface32() {
 		return NULL;
 	}
 
-	SDL_Surface *surface = SDL_CreateRGBSurface(SDL_SWSURFACE, infoHeader.width, infoHeader.height, 32,
+	Graphics::ManagedSurface *surface = SDL_CreateRGBSurface(SDL_SWSURFACE, infoHeader.width, infoHeader.height, 32,
 	                       rmask, gmask, bmask, 0);
 
 	unsigned char *src_buf = data;

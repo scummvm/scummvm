@@ -26,7 +26,7 @@
 
 #include "ultima/ultima6/core/nuvie_defs.h"
 #include "ultima/ultima6/conf/configuration.h"
-#include "U6misc.h"
+#include "ultima/ultima6/misc/u6_misc.h"
 #include "FontManager.h"
 #include "Font.h"
 #include "GamePalette.h"
@@ -184,8 +184,8 @@ GUI_status ScrollWidgetGump::KeyDown(SDL_Keysym key) {
 	return MsgScroll::KeyDown(key);
 }
 
-static SDL_Rect arrow_up_rect[1] = {{SCROLLWIDGETGUMP_W - 8 - 1, 4 + 1, 7, 5}};
-static SDL_Rect arrow_down_rect[1] = {{SCROLLWIDGETGUMP_W - 8 - 1, SCROLLWIDGETGUMP_H - 8 + 3, 7 , 5}};
+static Common::Rect arrow_up_rect[1] = {{SCROLLWIDGETGUMP_W - 8 - 1, 4 + 1, 7, 5}};
+static Common::Rect arrow_down_rect[1] = {{SCROLLWIDGETGUMP_W - 8 - 1, SCROLLWIDGETGUMP_H - 8 + 3, 7 , 5}};
 
 GUI_status ScrollWidgetGump::MouseWheel(sint32 x, sint32 y) {
 	ScrollEventType event = SCROLL_ESCAPE;

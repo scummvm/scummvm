@@ -21,7 +21,7 @@
  */
 
 #include "ultima/ultima6/core/nuvie_defs.h"
-#include "U6misc.h"
+#include "ultima/ultima6/misc/u6_misc.h"
 #include "Event.h"
 #include "GUI.h"
 #include "GUI_button.h"
@@ -85,7 +85,7 @@ bool PortraitViewGump::init(Screen *tmp_screen, void *view_manager, uint16 x, ui
 	font = new GUI_Font(GUI_FONT_GUMP);
 	font->SetColoring(0x08, 0x08, 0x08, 0x80, 0x58, 0x30, 0x00, 0x00, 0x00);
 
-	SDL_Surface *image, *image1;
+	Graphics::ManagedSurface *image, *image1;
 
 	build_path(datadir, "left_arrow.bmp", imagefile);
 	image = SDL_LoadBMP(imagefile.c_str());
@@ -139,7 +139,7 @@ void PortraitViewGump::Display(bool full_redraw) {
 	char buf[6]; //xxxxx\n
 //display_level_text();
 //display_spell_list_text();
-	SDL_Rect dst;
+	Common::Rect dst;
 	dst = area;
 	SDL_BlitSurface(bg_image, NULL, surface, &dst);
 

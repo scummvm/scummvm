@@ -24,7 +24,7 @@
 #define ULTIMA6_CORE_CURSOR_H
 
 #include "ultima/shared/std/string.h"
-#include <vector>
+#include "ultima/shared/std/containers.h"
 #include "SDL.h"
 
 namespace Ultima {
@@ -53,8 +53,8 @@ class Cursor {
 	uint8 cursor_id; // which pointer is active
 
 	unsigned char *cleanup; // restore image behind cursor
-	SDL_Rect cleanup_area;
-	SDL_Rect update_area; // clear & display are updated at once (avoid flicker)
+	Common::Rect cleanup_area;
+	Common::Rect update_area; // clear & display are updated at once (avoid flicker)
 
 	bool hidden;
 

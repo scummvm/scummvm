@@ -27,7 +27,7 @@
 
 #include "ultima/ultima6/core/nuvie_defs.h"
 #include "ultima/ultima6/conf/configuration.h"
-#include "U6misc.h"
+#include "ultima/ultima6/misc/u6_misc.h"
 #include "FontManager.h"
 #include "Font.h"
 #include "GamePalette.h"

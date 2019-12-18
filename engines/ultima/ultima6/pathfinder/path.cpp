@@ -21,7 +21,7 @@
  */
 
 #include <cassert>
-#include "U6misc.h"
+#include "ultima/ultima6/misc/u6_misc.h"
 #include "Map.h"
 #include "Path.h"
 

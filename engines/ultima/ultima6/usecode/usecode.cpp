@@ -23,7 +23,7 @@
 #include <cstring>
 #include "ultima/ultima6/core/nuvie_defs.h"
 
-#include "U6LList.h"
+#include "ultima/ultima6/misc/u6_llist.h"
 #include "MsgScroll.h"
 #include "ActorManager.h"
 #include "Actor.h"

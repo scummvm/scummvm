@@ -29,7 +29,7 @@
 class SunMoonRibbon : public SunMoonStripWidget {
 
 private:
-	SDL_Surface *bg_data;
+	Graphics::ManagedSurface *bg_data;
 	Weather *weather;
 	bool retracted;
 	uint16 current_time;

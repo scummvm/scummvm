@@ -25,7 +25,7 @@
 
 //#include "common/util.h"
 //#include "common/scummsys.h"
-#include <vector>
+#include "ultima/shared/std/containers.h"
 #include "ultima/shared/std/string.h"
 #include "ultima/ultima6/core/nuvie_defs.h"
 #include "types.h"

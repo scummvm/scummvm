@@ -36,7 +36,7 @@
 #include "ultima/shared/std/string.h"
 #include <stdlib.h>
 #include <list>
-#include <vector>
+#include "ultima/shared/std/containers.h"
 #include <map>
 #include <iterator>
 

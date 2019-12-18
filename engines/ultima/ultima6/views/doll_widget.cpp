@@ -24,7 +24,7 @@
 // FIX need to subclass this class for U6, MD & SE
 #include "ultima/ultima6/conf/configuration.h"
 #include "ultima/ultima6/core/nuvie_defs.h"
-#include "U6misc.h"
+#include "ultima/ultima6/misc/u6_misc.h"
 #include "U6Lib_n.h"
 #include "U6Shape.h"
 
@@ -48,7 +48,7 @@ namespace Ultima6 {
 #define ACTION_BUTTON 3
 #define DRAG_BUTTON 1
 
-static SDL_Rect item_hit_rects[8] = { {24, 0, 16, 16}, // ACTOR_HEAD
+static Common::Rect item_hit_rects[8] = { {24, 0, 16, 16}, // ACTOR_HEAD
 	{ 0, 8, 16, 16}, // ACTOR_NECK
 	{48, 8, 16, 16}, // ACTOR_BODY
 	{ 0, 24, 16, 16}, // ACTOR_ARM
@@ -180,9 +180,9 @@ void DollWidget::free_doll_shapes() {
 	}
 }
 
-void DollWidget::setColorKey(SDL_Surface *image) {
+void DollWidget::setColorKey(Graphics::ManagedSurface *image) {
 	if (image) {
-		Uint32 bg_color_key = SDL_MapRGB(image->format, 0xf1, 0x0f, 0xc4);
+		uint32 bg_color_key = SDL_MapRGB(image->format, 0xf1, 0x0f, 0xc4);
 		SDL_SetColorKey(image, SDL_TRUE, bg_color_key);
 	}
 }
@@ -213,7 +213,7 @@ void DollWidget::set_actor(Actor *a) {
 				NuvieBmpFile bmp;
 				doll_bg = bmp.getSdlSurface32(imagefile);
 				if (doll_bg) {
-					SDL_Rect dst;
+					Common::Rect dst;
 					dst.w = 27;
 					dst.h = 30;
 					dst.x = 3;
@@ -256,7 +256,7 @@ void DollWidget::load_md_doll_shp() {
 	}
 }
 
-SDL_Rect *DollWidget::get_item_hit_rect(uint8 location) {
+Common::Rect *DollWidget::get_item_hit_rect(uint8 location) {
 	if (location < 8)
 		return (&item_hit_rects[location]);
 	return (NULL);
@@ -277,7 +277,7 @@ void DollWidget::Display(bool full_redraw) {
 
 inline void DollWidget::display_new_doll() {
 	if (doll_bg) {
-		SDL_Rect dst;
+		Common::Rect dst;
 		dst = area;
 		dst.w = 33;
 		dst.h = 33;

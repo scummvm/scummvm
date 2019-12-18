@@ -44,7 +44,7 @@ public:
 	GUI_Font(char *name);
 
 	/* use given YxY surface */
-	GUI_Font(SDL_Surface *bitmap);
+	GUI_Font(Graphics::ManagedSurface *bitmap);
 
 	/* copy constructor */
 	GUI_Font(GUI_Font &font);
@@ -70,7 +70,7 @@ public:
 	}
 
 	/* put the text onto the given surface using the preset mode and colors */
-	virtual void TextOut(SDL_Surface *context, int x, int y, const char *text, int line_wrap = 0);
+	virtual void TextOut(Graphics::ManagedSurface *context, int x, int y, const char *text, int line_wrap = 0);
 
 	/* yields pixel width and height of a string when printed with this font */
 	void TextExtent(const char *text, int *w, int *h, int line_wrap = 0);
@@ -80,7 +80,7 @@ public:
 
 protected:
 	/* the font source surface */
-	SDL_Surface *fontStore;
+	Graphics::ManagedSurface *fontStore;
 
 	/* flags */
 	int transparent;

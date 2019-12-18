@@ -25,7 +25,7 @@
 #include "SDL.h"
 
 #include "ultima/ultima6/core/nuvie_defs.h"
-#include "U6misc.h"
+#include "ultima/ultima6/misc/u6_misc.h"
 #include "ultima/ultima6/conf/configuration.h"
 #include "Game.h"
 #include "GameClock.h"
@@ -2388,9 +2388,9 @@ void Event::wait() {
 
 //Protected
 
-inline Uint32 Event::TimeLeft() {
-	static Uint32 next_time = 0;
-	Uint32 now;
+inline uint32 Event::TimeLeft() {
+	static uint32 next_time = 0;
+	uint32 now;
 
 	now = clock->get_ticks();
 	if (fps_counter == 60) {
@@ -2406,7 +2406,7 @@ inline Uint32 Event::TimeLeft() {
 		next_time = now + NUVIE_INTERVAL;
 		return (0);
 	}
-	Uint32 delay = next_time - now;
+	uint32 delay = next_time - now;
 	next_time += NUVIE_INTERVAL;
 	return (delay);
 }

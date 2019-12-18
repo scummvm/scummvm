@@ -126,9 +126,9 @@ GUI_status PartyView::MouseUp(int x, int y, int button) {
 		if (party_size > 7) party_size = 7;
 	} else if (party_size > 5) party_size = 5; // can only display/handle 5 at a time
 
-	SDL_Rect arrow_rects_U6[2] = {{0, 18, 8, 8}, {0, 90, 8, 8}};
-	SDL_Rect arrow_rects[2] = {{0, 6, 7, 8}, {0, 102, 7, 8}};
-	SDL_Rect arrow_up_rect_MD[1] = {{0, 15, 7, 8}};
+	Common::Rect arrow_rects_U6[2] = {{0, 18, 8, 8}, {0, 90, 8, 8}};
+	Common::Rect arrow_rects[2] = {{0, 6, 7, 8}, {0, 102, 7, 8}};
+	Common::Rect arrow_up_rect_MD[1] = {{0, 15, 7, 8}};
 
 	if (HitRect(x, y, U6 ? arrow_rects_U6[0] : (MD ? arrow_up_rect_MD[0] : arrow_rects[0]))) { //up arrow hit rect
 		if (up_arrow())

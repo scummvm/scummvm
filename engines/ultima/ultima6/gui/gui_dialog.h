@@ -39,14 +39,14 @@ class GUI_Dialog : public GUI_Widget {
 	int old_x, old_y;
 	int button_x, button_y;
 	Uint8 R, G, B;
-	Uint32 bg_color;
+	uint32 bg_color;
 
 	bool drag;
-	SDL_Surface *border[8];
+	Graphics::ManagedSurface *border[8];
 
 	unsigned char *backingstore;
 
-	SDL_Rect backingstore_rect;
+	Common::Rect backingstore_rect;
 public:
 	/* Passed the area, color and shape */
 	GUI_Dialog(int x, int y, int w, int h, Uint8 r, Uint8 g, Uint8 b, bool is_moveable);

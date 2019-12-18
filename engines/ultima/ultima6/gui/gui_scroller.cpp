@@ -23,7 +23,7 @@
 #include <cmath>
 #include "ultima/shared/std/string.h"
 #include "ultima/ultima6/core/nuvie_defs.h"
-#include "U6misc.h"
+#include "ultima/ultima6/misc/u6_misc.h"
 #include "GUI.h"
 #include "GUI_widget.h"
 #include "GUI_ScrollBar.h"
@@ -103,7 +103,7 @@ void GUI_Scroller::update_viewport(bool update_slider) {
 
 /* Show the widget  */
 void GUI_Scroller:: Display(bool full_redraw) {
-	SDL_Rect framerect;
+	Common::Rect framerect;
 
 	framerect = area;
 	framerect.w -= SCROLLBAR_WIDTH;

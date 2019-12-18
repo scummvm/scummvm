@@ -22,7 +22,7 @@
 
 #include <stdlib.h>
 #include <cmath>
-#include <misc/U6misc.h>
+#include <misc/ultima/ultima6/misc/u6_misc.h>
 #include <misc/SDLUtils.h>
 
 #include "GUI_font.h"
@@ -33,7 +33,7 @@ namespace Ultima6 {
 
 /* use default 8x8 font */
 GUI_Font::GUI_Font(Uint8 fontType) {
-	SDL_Surface *temp;
+	Graphics::ManagedSurface *temp;
 
 	w_data = NULL;
 
@@ -70,7 +70,7 @@ GUI_Font::GUI_Font(char *name) {
 }
 
 /* use given YxY surface */
-GUI_Font::GUI_Font(SDL_Surface *bitmap) {
+GUI_Font::GUI_Font(Graphics::ManagedSurface *bitmap) {
 	if (bitmap == NULL)
 		fontStore = GUI_DefaultFont();
 	else
@@ -84,7 +84,7 @@ GUI_Font::GUI_Font(SDL_Surface *bitmap) {
 
 /* copy constructor */
 GUI_Font::GUI_Font(GUI_Font &font) {
-	SDL_Surface *temp = font.fontStore;
+	Graphics::ManagedSurface *temp = font.fontStore;
 	fontStore = SDL_ConvertSurface(temp, temp->format, SDL_SWSURFACE);
 	charh = fontStore->h / 16;
 	charw = fontStore->w / 16;
@@ -118,12 +118,12 @@ void GUI_Font::SetColoring(Uint8 fr, Uint8 fg, Uint8 fb, Uint8 fr1, Uint8 fg1, U
 }
 
 /* put the text onto the given surface using the preset mode and colors */
-void GUI_Font::TextOut(SDL_Surface *context, int x, int y, const char *text, int line_wrap) {
+void GUI_Font::TextOut(Graphics::ManagedSurface *context, int x, int y, const char *text, int line_wrap) {
 	int i;
 	int j;
 	Uint8 ch;
-	SDL_Rect src;
-	SDL_Rect dst;
+	Common::Rect src;
+	Common::Rect dst;
 
 	src.w = charw;
 	src.h = charh - 1;

@@ -22,7 +22,7 @@
 
 #include "SDL.h"
 #include "ultima/ultima6/core/nuvie_defs.h"
-#include "U6misc.h"
+#include "ultima/ultima6/misc/u6_misc.h"
 
 #include "GUI.h"
 #include "GUI_types.h"
@@ -167,8 +167,8 @@ void SaveSlot::SetDisplay(Screen *s) {
 }
 
 void SaveSlot::Display(bool full_redraw) {
-	SDL_Rect framerect = area;
-	SDL_Rect destrect = area;
+	Common::Rect framerect = area;
+	Common::Rect destrect = area;
 	if (selected) {
 		GUI *gui = GUI::get_gui();
 		SDL_FillRect(surface, &framerect, gui->get_selected_color()->sdl_color);

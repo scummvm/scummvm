@@ -34,7 +34,7 @@
 #include "GUI_Dialog.h"
 #include "CheatsDialog.h"
 #include "EggManager.h"
-#include "U6misc.h"
+#include "ultima/ultima6/misc/u6_misc.h"
 #include "Converse.h"
 #include "ObjManager.h"
 #include "MapWindow.h"

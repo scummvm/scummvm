@@ -70,8 +70,8 @@ class GUI_Button : public GUI_Widget {
 
 public:
 	/* Passed the button data, position, images (pressed/unpressed) and callback */
-	GUI_Button(void *data, int x, int y, SDL_Surface *image,
-	           SDL_Surface *image2, GUI_CallBack *callback, bool free_surfaces = true);
+	GUI_Button(void *data, int x, int y, Graphics::ManagedSurface *image,
+	           Graphics::ManagedSurface *image2, GUI_CallBack *callback, bool free_surfaces = true);
 
 	/* I don't know what this one is for */
 	GUI_Button(void *data, int x, int y, int w, int h,
@@ -117,13 +117,13 @@ public:
 
 protected:
 	/* yields an appropriate image */
-	virtual SDL_Surface *CreateTextButtonImage(int style, const char *text, int alignment);
+	virtual Graphics::ManagedSurface *CreateTextButtonImage(int style, const char *text, int alignment);
 
 	/* The button font */
 	GUI_Font *buttonFont;
 
 	/* The button images */
-	SDL_Surface *button, *button2;
+	Graphics::ManagedSurface *button, *button2;
 
 	/* The activation callback */
 	GUI_CallBack *callback_object;

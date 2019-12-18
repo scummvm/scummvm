@@ -24,8 +24,7 @@
 #define ULTIMA6_MISC_ACTOR_LIST_H
 
 // include this if using ActorList
-#include <vector>
-#include <algorithm>
+#include "ultima/shared/std/containers.h"
 
 namespace Ultima {
 namespace Ultima6 {

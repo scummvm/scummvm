@@ -25,7 +25,7 @@
 #include <math.h>
 
 #include "ultima/ultima6/core/nuvie_defs.h"
-#include "U6misc.h"
+#include "ultima/ultima6/misc/u6_misc.h"
 #include "NuvieBmpFile.h"
 #include "Player.h"
 #include "Weather.h"
@@ -82,7 +82,7 @@ void SunMoonRibbon::loadBgImage(uint8 num) {
 		SDL_FreeSurface(bg_data);
 	bg_data = bmp.getSdlSurface32(imagefile);
 
-	Uint32 bg_color_key = SDL_MapRGB(bg_data->format, 0xb3, 0x94, 0x78);
+	uint32 bg_color_key = SDL_MapRGB(bg_data->format, 0xb3, 0x94, 0x78);
 	SDL_SetColorKey(bg_data, SDL_TRUE, bg_color_key);
 }
 
@@ -153,8 +153,8 @@ void SunMoonRibbon::display_sun_moon(Tile *tile, uint8 pos) {
 }
 
 void SunMoonRibbon::display_surface_strip() {
-	SDL_Rect src;
-	SDL_Rect dest;
+	Common::Rect src;
+	Common::Rect dest;
 
 	src.x = 0;
 	src.y = 0;
@@ -202,8 +202,8 @@ void SunMoonRibbon::display_surface_strip() {
 }
 
 void SunMoonRibbon::display_dungeon_strip() {
-	SDL_Rect src;
-	SDL_Rect dest;
+	Common::Rect src;
+	Common::Rect dest;
 
 	src.x = 0;
 	src.y = 0;
@@ -220,7 +220,7 @@ void SunMoonRibbon::display_dungeon_strip() {
 }
 
 GUI_status SunMoonRibbon::MouseDown(int x, int y, int button) {
-	SDL_Rect rect = area;
+	Common::Rect rect = area;
 
 	if (retracted) {
 		rect.x = area.x + SUNMOON_RIBBON_TOTAL_WIDTH - SUNMOON_RIBBON_END_WIDTH;

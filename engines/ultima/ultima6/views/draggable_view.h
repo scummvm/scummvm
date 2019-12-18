@@ -33,8 +33,8 @@ class GUI_Button;
 
 class DraggableView: public View {
 protected:
-	SDL_Surface *bg_image;
-	Uint32 bg_color_key;
+	Graphics::ManagedSurface *bg_image;
+	uint32 bg_color_key;
 
 private:
 	bool drag, need_full_redraw_when_moved, always_need_full_redraw_when_moved;

@@ -24,7 +24,7 @@
 #define ULTIMA6_MISC_U6_MISC_H
 
 /*
- *  U6misc.h
+ *  ultima/ultima6/misc/u6_misc.h
  *  Nuvie
  *
  *  Created by Eric Fry on Sat Jun 14 2003.
@@ -33,6 +33,8 @@
  */
 #include "ultima/shared/std/string.h"
 #include "ultima/ultima6/core/nuvie_defs.h"
+#include "common/rect.h"
+#include "graphics/managed_surface.h"
 
 namespace Ultima {
 namespace Ultima6 {
@@ -58,7 +60,7 @@ void print_b16(DebugLevelType level, uint16 num);
 void print_indent(DebugLevelType level, uint8 indent);
 void print_bool(DebugLevelType level, bool state, const char *yes = "true", const char *no = "false");
 void print_flags(DebugLevelType level, uint8 num, const char *f[8]);
-bool subtract_rect(SDL_Rect *rect1, SDL_Rect *rect2, SDL_Rect *sub_rect);
+bool subtract_rect(Common::Rect *rect1, Common::Rect *rect2, Common::Rect *sub_rect);
 uint8 get_nuvie_dir_code(uint8 original_dir_code);
 sint8 get_original_dir_code(uint8 nuvie_dir_code);
 uint8 get_direction_code(sint16 rel_x, sint16 rel_y);
@@ -70,20 +72,17 @@ int str_bsearch(const char *str[], int max, const char *value);
 void stringToLower(std::string &str);
 /* Is point x,y within rect?
  */
-inline bool point_in_rect(uint16 x, uint16 y, SDL_Rect *rect) {
-	uint16 rx2 = rect->x + rect->w,
-	       ry2 = rect->y + rect->h;
-	return ((x >= rect->x && x <= rx2 && y >= rect->y && y <= ry2));
+inline bool point_in_rect(uint16 x, uint16 y, Common::Rect *rect) {
+	return rect->contains(x, y);
 }
 
 
 /* Does line xy->x2y2 cross rect, to any extent?
  */
-inline bool line_in_rect(uint16 x1, uint16 y1, uint16 x2, uint16 y2, SDL_Rect *rect) {
-	uint16 rx2 = rect->x + rect->w,
-	       ry2 = rect->y + rect->h;
-	return (((y1 >= rect->y && y1 <= ry2 && x1 <= rx2 && x2 >= rect->x)
-	         || (x1 >= rect->x && x1 <= rx2 && y1 <= ry2 && y2 >= rect->y)));
+inline bool line_in_rect(uint16 x1, uint16 y1, uint16 x2, uint16 y2, Common::Rect *rect) {
+	uint16 rx2 = rect->right, ry2 = rect->bottom;
+	return (((y1 >= rect->top && y1 <= ry2 && x1 <= rx2 && x2 >= rect->left)
+	         || (x1 >= rect->left && x1 <= rx2 && y1 <= ry2 && y2 >= rect->top)));
 }
 
 
@@ -107,7 +106,7 @@ bool string_i_compare(const std::string &s1, const std::string &s2);
 
 void *nuvie_realloc(void *ptr, size_t size);
 
-Uint32 sdl_getpixel(SDL_Surface *surface, int x, int y);
+uint32 sdl_getpixel(Graphics::ManagedSurface *surface, int x, int y);
 
 void scale_rect_8bit(unsigned char *Source, unsigned char *Target, int SrcWidth, int SrcHeight, int TgtWidth, int TgtHeight);
 

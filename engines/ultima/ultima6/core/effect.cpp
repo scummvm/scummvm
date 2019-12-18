@@ -934,20 +934,20 @@ FadeEffect::FadeEffect(FadeType fade, FadeDirection dir, uint32 color, uint32 sp
 }
 
 /* Takes an image to fade from/to. */
-FadeEffect::FadeEffect(FadeType fade, FadeDirection dir, SDL_Surface *capture, uint32 speed) {
+FadeEffect::FadeEffect(FadeType fade, FadeDirection dir, Graphics::ManagedSurface *capture, uint32 speed) {
 	speed = speed ? speed : game->get_map_window()->get_win_area() * 1620; // was 196000
 	init(fade, dir, 0, capture, 0, 0, speed); // color=black
 }
 
 /* Localizes effect to specific coordinates. The size of the effect is determined
  * by the size of the image. */
-FadeEffect::FadeEffect(FadeType fade, FadeDirection dir, SDL_Surface *capture, uint16 x, uint16 y, uint32 speed) {
+FadeEffect::FadeEffect(FadeType fade, FadeDirection dir, Graphics::ManagedSurface *capture, uint16 x, uint16 y, uint32 speed) {
 	speed = speed ? speed : 1024;
 	init(fade, dir, 0, capture, x, y, speed); // color=black
 }
 
 
-void FadeEffect::init(FadeType fade, FadeDirection dir, uint32 color, SDL_Surface *capture, uint16 x, uint16 y, uint32 speed) {
+void FadeEffect::init(FadeType fade, FadeDirection dir, uint32 color, Graphics::ManagedSurface *capture, uint16 x, uint16 y, uint32 speed) {
 	if (current_fade) {
 		delete_self();
 		return;
@@ -956,7 +956,7 @@ void FadeEffect::init(FadeType fade, FadeDirection dir, uint32 color, SDL_Surfac
 
 	screen = game->get_screen();
 	map_window = game->get_map_window();
-	viewport = new SDL_Rect(map_window->GetRect());
+	viewport = new Common::Rect(map_window->GetRect());
 
 	fade_type = fade;
 	fade_dir = dir;
@@ -1012,7 +1012,7 @@ void FadeEffect::init_pixelated_fade() {
 			if (fade_from) { // fade from captured surface to transparent
 				// put surface on transparent background (not checked)
 				fillret = SDL_FillRect(overlay, NULL, uint32(TRANSPARENT_COLOR));
-				SDL_Rect overlay_rect = { (Sint16)fade_x, (Sint16)fade_y, 0, 0 };
+				Common::Rect overlay_rect = { (Sint16)fade_x, (Sint16)fade_y, 0, 0 };
 				fillret = SDL_BlitSurface(fade_from, NULL,
 				                          overlay, &overlay_rect);
 			} else // fade from transparent to color
@@ -1152,8 +1152,8 @@ bool FadeEffect::pixelated_fade_core(uint32 pixels_to_check, sint16 fade_to) {
 		if (fade_to >= 0)
 			SDL_FillRect(overlay, NULL, (uint32)fade_to);
 		else { // Note: assert(fade_from) if(fade_to < 0)
-			SDL_Rect fade_from_rect = { 0, 0, (Uint16)fade_from->w, (Uint16)fade_from->h };
-			SDL_Rect overlay_rect = { (Sint16)fade_x, (Sint16)fade_y, (Uint16)fade_from->w, (Uint16)fade_from->h };
+			Common::Rect fade_from_rect = { 0, 0, (Uint16)fade_from->w, (Uint16)fade_from->h };
+			Common::Rect overlay_rect = { (Sint16)fade_x, (Sint16)fade_y, (Uint16)fade_from->w, (Uint16)fade_from->h };
 			SDL_BlitSurface(fade_from, &fade_from_rect, overlay, &overlay_rect);
 		}
 		return (true);
@@ -1240,7 +1240,7 @@ FadeObjectEffect::FadeObjectEffect(Obj *obj, FadeDirection dir) {
 	fade_obj = obj;
 	fade_dir = dir;
 
-	SDL_Surface *capture = game->get_map_window()->get_sdl_surface();
+	Graphics::ManagedSurface *capture = game->get_map_window()->get_sdl_surface();
 	if (fade_dir == FADE_IN) { // fading IN to object, so fade OUT from capture
 		effect_manager->watch_effect(this, /* call me */
 		                             new FadeEffect(FADE_PIXELATED, FADE_OUT, capture));
@@ -1273,7 +1273,7 @@ uint16 FadeObjectEffect::callback(uint16 msg, CallBack *caller, void *data) {
  */
 VanishEffect::VanishEffect(bool pause_user)
 	: input_blocked(pause_user) {
-	SDL_Surface *capture = game->get_map_window()->get_sdl_surface();
+	Graphics::ManagedSurface *capture = game->get_map_window()->get_sdl_surface();
 //    effect_manager->watch_effect(this, /* call me */
 //                                 new FadeEffect(FADE_PIXELATED, FADE_OUT, capture, 0, 0, 128000));
 	effect_manager->watch_effect(this, /* call me */

@@ -21,7 +21,7 @@
  */
 
 #include "ultima/ultima6/core/nuvie_defs.h"
-#include "U6misc.h"
+#include "ultima/ultima6/misc/u6_misc.h"
 #include "GUI.h"
 #include "GUI_button.h"
 #include "ultima/ultima6/conf/configuration.h"
@@ -67,7 +67,7 @@ void DraggableView::set_bg_color_key(Uint8 r, Uint8 g, Uint8 b) {
 
 GUI_status DraggableView::MouseDown(int x, int y, int button) {
 	if (bg_image && HitRect(x, y)) {
-		Uint32 pixel = sdl_getpixel(bg_image, x - area.x, y - area.y);
+		uint32 pixel = sdl_getpixel(bg_image, x - area.x, y - area.y);
 		if (pixel == bg_color_key) {
 			return GUI_PASS;
 		}

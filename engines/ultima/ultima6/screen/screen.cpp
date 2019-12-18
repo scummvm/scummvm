@@ -32,7 +32,7 @@
 #include <SDL.h>
 
 #include "ultima/ultima6/core/nuvie_defs.h"
-#include "U6misc.h"
+#include "ultima/ultima6/misc/u6_misc.h"
 #include "ultima/ultima6/conf/configuration.h"
 
 #include "Surface.h"
@@ -121,7 +121,7 @@ bool Screen::init() {
 		return false;
 	}
 
-	update_rects = (SDL_Rect *)malloc(sizeof(SDL_Rect) * max_update_rects);
+	update_rects = (Common::Rect *)malloc(sizeof(Common::Rect) * max_update_rects);
 	if (update_rects == NULL)
 		return false;
 
@@ -219,7 +219,7 @@ uint16 Screen::get_translated_y(uint16 y) {
 
 	return y;
 }
-bool Screen::clear(sint16 x, sint16 y, sint16 w, sint16 h, SDL_Rect *clip_rect) {
+bool Screen::clear(sint16 x, sint16 y, sint16 w, sint16 h, Common::Rect *clip_rect) {
 	uint8 *pixels;
 	uint16 i;
 	uint16 x1, y1;
@@ -462,14 +462,14 @@ void *Screen::get_pixels() {
 	return NULL;
 }
 
-SDL_Surface *Screen::get_sdl_surface() {
+Graphics::ManagedSurface *Screen::get_sdl_surface() {
 	if (surface)
 		return surface->get_sdl_surface();
 
 	return NULL;
 }
 
-bool Screen::blit(sint32 dest_x, sint32 dest_y, unsigned char *src_buf, uint16 src_bpp, uint16 src_w, uint16 src_h, uint16 src_pitch, bool trans, SDL_Rect *clip_rect, uint8 opacity) {
+bool Screen::blit(sint32 dest_x, sint32 dest_y, unsigned char *src_buf, uint16 src_bpp, uint16 src_w, uint16 src_h, uint16 src_pitch, bool trans, Common::Rect *clip_rect, uint8 opacity) {
 	uint16 src_x = 0;
 	uint16 src_y = 0;
 
@@ -996,7 +996,7 @@ void Screen::drawalphamap8globe(sint16 x, sint16 y, uint16 r) {
 }
 
 
-void Screen::blitalphamap8(sint16 x, sint16 y, SDL_Rect *clip_rect) {
+void Screen::blitalphamap8(sint16 x, sint16 y, Common::Rect *clip_rect) {
 	//pixel = (dst*(1-alpha))+(src*alpha)   for an interpolation
 	//pixel = pixel * alpha                 for a reduction
 	//We use a reduction here
@@ -1141,8 +1141,8 @@ void Screen::blitalphamap8(sint16 x, sint16 y, SDL_Rect *clip_rect) {
 
 
 /* Return an 8bit surface. Source format is assumed to be identical to screen. */
-SDL_Surface *Screen::create_sdl_surface_8(unsigned char *src_buf, uint16 src_w, uint16 src_h) {
-	SDL_Surface *new_surface = SDL_CreateRGBSurface(SDL_SWSURFACE, src_w, src_h, 8, 0, 0, 0, 0);
+Graphics::ManagedSurface *Screen::create_sdl_surface_8(unsigned char *src_buf, uint16 src_w, uint16 src_h) {
+	Graphics::ManagedSurface *new_surface = SDL_CreateRGBSurface(SDL_SWSURFACE, src_w, src_h, 8, 0, 0, 0, 0);
 	unsigned char *pixels = (unsigned char *)new_surface->pixels;
 
 	if (surface->bits_per_pixel == 16) {
@@ -1166,8 +1166,8 @@ SDL_Surface *Screen::create_sdl_surface_8(unsigned char *src_buf, uint16 src_w, 
 }
 
 
-SDL_Surface *Screen::create_sdl_surface_from(unsigned char *src_buf, uint16 src_bpp, uint16 src_w, uint16 src_h, uint16 src_pitch) {
-	SDL_Surface *new_surface;
+Graphics::ManagedSurface *Screen::create_sdl_surface_from(unsigned char *src_buf, uint16 src_bpp, uint16 src_w, uint16 src_h, uint16 src_pitch) {
+	Graphics::ManagedSurface *new_surface;
 	uint16 i, j;
 
 	new_surface = SDL_CreateRGBSurface(SDL_SWSURFACE, src_w, src_h, surface->bits_per_pixel,
@@ -1262,7 +1262,7 @@ void Screen::update(sint32 x, sint32 y, uint16 w, uint16 h) {
 	}
 
 	if (num_update_rects == max_update_rects) {
-		update_rects = (SDL_Rect *)nuvie_realloc(update_rects, sizeof(SDL_Rect) * (max_update_rects + 10));
+		update_rects = (Common::Rect *)nuvie_realloc(update_rects, sizeof(Common::Rect) * (max_update_rects + 10));
 		max_update_rects += 10;
 	}
 
@@ -1355,7 +1355,7 @@ bool Screen::init_sdl2_window(uint16 scale) {
 	return true;
 }
 
-bool Screen::create_sdl_surface_and_texture(sint32 w, sint32 h, Uint32 format) {
+bool Screen::create_sdl_surface_and_texture(sint32 w, sint32 h, uint32 format) {
 	uint32 rmask, gmask, bmask, amask;
 	int bpp;
 
@@ -1522,7 +1522,7 @@ bool Screen::sdl1_toggle_fullscreen() {
 bool Screen::set_fullscreen(bool value) {
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 	fullscreen = value;
-	Uint32 windowFlags = SDL_GetWindowFlags(sdlWindow);
+	uint32 windowFlags = SDL_GetWindowFlags(sdlWindow);
 
 	if (fullscreen)
 		windowFlags |= SDL_WINDOW_FULLSCREEN_DESKTOP;
@@ -1639,16 +1639,16 @@ bool Screen::try_scaler(int w, int h, uint32 flags, int hwdepth) {
 }
 
 //Note! assumes area divides evenly by down_scale factor
-unsigned char *Screen::copy_area(SDL_Rect *area, uint16 down_scale) {
+unsigned char *Screen::copy_area(Common::Rect *area, uint16 down_scale) {
 	if (surface->bits_per_pixel == 16)
 		return (copy_area16(area, down_scale));
 
 	return (copy_area32(area, down_scale));
 }
 
-unsigned char *Screen::copy_area16(SDL_Rect *area, uint16 down_scale) {
+unsigned char *Screen::copy_area16(Common::Rect *area, uint16 down_scale) {
 	SDL_PixelFormat *fmt;
-	SDL_Surface *main_surface = get_sdl_surface();
+	Graphics::ManagedSurface *main_surface = get_sdl_surface();
 	unsigned char *dst_pixels = NULL;
 	unsigned char *ptr;
 	uint16 *src_pixels;
@@ -1704,9 +1704,9 @@ unsigned char *Screen::copy_area16(SDL_Rect *area, uint16 down_scale) {
 	return dst_pixels;
 }
 
-unsigned char *Screen::copy_area32(SDL_Rect *area, uint16 down_scale) {
+unsigned char *Screen::copy_area32(Common::Rect *area, uint16 down_scale) {
 	SDL_PixelFormat *fmt;
-	SDL_Surface *main_surface = get_sdl_surface();
+	Graphics::ManagedSurface *main_surface = get_sdl_surface();
 	unsigned char *dst_pixels = NULL;
 	unsigned char *ptr;
 	uint32 *src_pixels;
@@ -1764,8 +1764,8 @@ unsigned char *Screen::copy_area32(SDL_Rect *area, uint16 down_scale) {
 
 // surface -> unsigned char *
 // (NULL area = entire screen)
-unsigned char *Screen::copy_area(SDL_Rect *area, unsigned char *buf) {
-	SDL_Rect screen_area = { 0, 0, (uint16)surface->w, (uint16)surface->h };
+unsigned char *Screen::copy_area(Common::Rect *area, unsigned char *buf) {
+	Common::Rect screen_area = { 0, 0, (uint16)surface->w, (uint16)surface->h };
 	if (!area)
 		area = &screen_area;
 
@@ -1778,9 +1778,9 @@ unsigned char *Screen::copy_area(SDL_Rect *area, unsigned char *buf) {
 // unsigned char * -> surface
 // unsigned char * -> target (src area still means location on screen, not relative to target)
 // (NULL area = entire screen)
-void Screen::restore_area(unsigned char *pixels, SDL_Rect *area,
-                          unsigned char *target, SDL_Rect *target_area, bool free_src) {
-	SDL_Rect screen_area = { 0, 0, (Uint16)surface->w, (Uint16)surface->h };
+void Screen::restore_area(unsigned char *pixels, Common::Rect *area,
+                          unsigned char *target, Common::Rect *target_area, bool free_src) {
+	Common::Rect screen_area = { 0, 0, (Uint16)surface->w, (Uint16)surface->h };
 	if (!area)
 		area = &screen_area;
 
@@ -1791,7 +1791,7 @@ void Screen::restore_area(unsigned char *pixels, SDL_Rect *area,
 }
 
 
-unsigned char *Screen::copy_area32(SDL_Rect *area, unsigned char *buf) {
+unsigned char *Screen::copy_area32(Common::Rect *area, unsigned char *buf) {
 	uint32 *copied = (uint32 *)buf;
 	if (buf == NULL) {
 		copied = (uint32 *)malloc(area->w * area->h * 4);
@@ -1835,8 +1835,8 @@ unsigned char *Screen::copy_area32(SDL_Rect *area, unsigned char *buf) {
 }
 
 
-void Screen::restore_area32(unsigned char *pixels, SDL_Rect *area,
-                            unsigned char *target, SDL_Rect *target_area, bool free_src) {
+void Screen::restore_area32(unsigned char *pixels, Common::Rect *area,
+                            unsigned char *target, Common::Rect *target_area, bool free_src) {
 	uint32 *src = (uint32 *)pixels;
 	uint32 *dest = (uint32 *)surface->pixels;
 	dest += area->y * surface->w + area->x;
@@ -1856,7 +1856,7 @@ void Screen::restore_area32(unsigned char *pixels, SDL_Rect *area,
 }
 
 
-unsigned char *Screen::copy_area16(SDL_Rect *area, unsigned char *buf) {
+unsigned char *Screen::copy_area16(Common::Rect *area, unsigned char *buf) {
 	uint16 *copied = (uint16 *)buf;
 	if (buf == NULL) {
 		copied = (uint16 *)malloc(area->w * area->h * 2);
@@ -1900,8 +1900,8 @@ unsigned char *Screen::copy_area16(SDL_Rect *area, unsigned char *buf) {
 }
 
 
-void Screen::restore_area16(unsigned char *pixels, SDL_Rect *area,
-                            unsigned char *target, SDL_Rect *target_area, bool free_src) {
+void Screen::restore_area16(unsigned char *pixels, Common::Rect *area,
+                            unsigned char *target, Common::Rect *target_area, bool free_src) {
 	uint16 *src = (uint16 *)pixels;
 	uint16 *dest = (uint16 *)surface->pixels;
 	dest += area->y * surface->w + area->x;
@@ -1949,7 +1949,7 @@ void Screen::scale_sdl_window_coords(sint32 *mx, sint32 *my) {
 		float sx, sy;
 		SDL_RenderGetScale(sdlRenderer, &sx, &sy);
 
-		SDL_Rect viewport;
+		Common::Rect viewport;
 		SDL_RenderGetViewport(sdlRenderer, &viewport);
 
 		*mx = *mx - (sint32)((float)viewport.x * sx);

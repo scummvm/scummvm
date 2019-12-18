@@ -22,7 +22,7 @@
 
 #include <cassert>
 #include "ultima/ultima6/core/nuvie_defs.h"
-#include "U6LList.h"
+#include "ultima/ultima6/misc/u6_llist.h"
 #include "ultima/ultima6/conf/configuration.h"
 
 #include "GUI.h"
@@ -49,7 +49,7 @@ namespace Ultima6 {
 #define ACTION_BUTTON 3
 #define DRAG_BUTTON 1
 
-static SDL_Rect arrow_rects[2] = {{0, 16, 8, 8}, {0, 3 * 16 + 8, 8, 8}};
+static Common::Rect arrow_rects[2] = {{0, 16, 8, 8}, {0, 3 * 16 + 8, 8, 8}};
 
 InventoryWidget::InventoryWidget(Configuration *cfg, GUI_CallBack *callback): GUI_Widget(NULL, 0, 0, 0, 0) {
 	config = cfg;
