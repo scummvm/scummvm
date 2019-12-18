@@ -876,7 +876,7 @@ void Lingo::b_dontPassEvent(int nargs) {
 }
 
 void Lingo::b_nothing(int nargs) {
-	warning("STUB: b_nothing");
+	// Noop
 }
 
 void Lingo::b_delay(int nargs) {
