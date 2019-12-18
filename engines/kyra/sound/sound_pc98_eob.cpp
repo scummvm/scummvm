@@ -31,7 +31,7 @@
 namespace Kyra {
 
 SoundPC98_EoB::SoundPC98_EoB(KyraEngine_v1 *vm, Audio::Mixer *mixer) : Sound(vm, mixer),
-	_vm(vm), _driver(0), _currentResourceSet(-1), _ready(false) {
+	_vm(vm), _driver(0), _currentResourceSet(-1), _sfxDelay(0), _ready(false) {
 	memset(_resInfo, 0, sizeof(_resInfo));
 }
 
@@ -104,9 +104,11 @@ void SoundPC98_EoB::haltTrack() {
 }
 
 void SoundPC98_EoB::playSoundEffect(uint8 track, uint8) {
-	if (_currentResourceSet != kMusicIngame || !_sfxEnabled || !_ready || track >= 120)
+	if (_currentResourceSet != kMusicIngame || !_sfxEnabled || !_ready || track >= 120 || (track != 28 && _sfxDelay > _vm->_system->getMillis()))
 		return;
 	_driver->startSoundEffect(track);
+	if (track == 28)
+		_sfxDelay = _vm->_system->getMillis() + 1440;
 }
 
 void SoundPC98_EoB::updateVolumeSettings() {

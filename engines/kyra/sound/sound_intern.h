@@ -471,6 +471,8 @@ private:
 	SoundResourceInfo_PC *_resInfo[3];
 	int _currentResourceSet;
 
+	uint32 _sfxDelay;
+
 	bool _ready;
 };
 
